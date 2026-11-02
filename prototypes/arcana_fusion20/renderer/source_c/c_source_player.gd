@@ -49,14 +49,14 @@ var _origin := Vector2.ZERO
 # Kept separately because a selected source layer may align its visual basis
 # to a sibling without changing the actual SOH caster metadata.
 var _cast_caster := Vector2.ZERO
-# Optional real actor, only used by Thorn Opera's source-caster attachment.
+# Optional real actor is observed only for metadata, never for C15 roots.
 var _live_caster_actor: Node2D
 var _target := Vector2.ZERO
 var _rot := 0.0
 var _scale := 1.0
 # #15 world adapter: same 384x216 source pixels rendered into sparse,
-# non-overlapping tiles when real actor movement or clamped focus leaves the
-# original raster. No second simulation and no change to source scale.
+# non-overlapping tiles if clamped focus leaves the original raster.
+# No second simulation and no change to source scale.
 var _thorn_tile := Vector2i.ZERO
 var _thorn_tile_frame: CFrame
 var _thorn_active_tiles: Dictionary = {}
@@ -98,7 +98,7 @@ func _ensure_sprite() -> void:
     _light_sprite.material = additive
     add_child(_light_sprite)
 
-func follow_caster(actor: Node2D) -> void:
+func observe_caster(actor: Node2D) -> void:
     _live_caster_actor = actor
 
 func begin(caster_world: Vector2, target_world: Vector2, kind: String) -> void:
@@ -137,20 +137,25 @@ func begin(caster_world: Vector2, target_world: Vector2, kind: String) -> void:
             _fx = CCinderCrown.new()
             duration = CCinderCrown.DURATION
             _fx.setup()
-    var axis := target_world - caster_world
+    # The visual spell snapshots the actual caller-supplied actor at cast
+    # start. The hero remains free to move; source choreography stays static.
+    var cast_origin := caster_world
+    if kind == "thorn" and is_instance_valid(_live_caster_actor) and _live_caster_actor.is_inside_tree():
+        cast_origin = _live_caster_actor.global_position
+    var axis := target_world - cast_origin
     # Each C spell has its own authored target anchor. Rotation and scale
     # must use the same caster->anchor vector, otherwise events and geometry
     # miss the real target by an angle-dependent amount.
     var source_axis := _anchor_local() - Vector2(112, 126)
     _rot = axis.angle() - source_axis.angle() if axis.length() > 1.0 else 0.0
     _scale = clampf(axis.length() / maxf(1.0, source_axis.length()), 0.6, 3.5) if axis.length() > 1.0 else 1.0
-    _origin = caster_world
+    _origin = cast_origin
     if target_upright:
         # Pin the authored target, not its notional source caster, while
         # retaining the same uniform scale. Local -Y is always world-up.
         _rot = 0.0
         _origin = target_world - source_axis * _scale
-    _cast_caster = caster_world
+    _cast_caster = cast_origin
     _target = target_world
     _thorn_tile = Vector2i.ZERO
     _thorn_active_tiles.clear()
@@ -164,7 +169,6 @@ func begin(caster_world: Vector2, target_world: Vector2, kind: String) -> void:
         # already pins the focus. Only adapt at a clamped cast distance.
         if focus_local.distance_to(CThornOpera.FZ) > 0.001:
             thorn.set_live_focus(focus_local)
-        _sync_thorn_caster()
     _events = _fx.authored_events() if _fx != null and _kind != "crown_outer" else []
     _frame.track_world_fragments = world_pass_mode
     _tick = 0
@@ -203,13 +207,6 @@ func local_to_world(p: Vector2) -> Vector2:
     var sn := sin(_rot)
     return _origin + Vector2(v.x * cs - v.y * sn, v.x * sn + v.y * cs)
 
-func _sync_thorn_caster() -> void:
-    if _kind != "thorn" or not is_instance_valid(_live_caster_actor):
-        return
-    _cast_caster = _live_caster_actor.global_position
-    var local_pos := Vector2(112, 126) + (_cast_caster - _origin).rotated(-_rot) / _scale
-    (_fx as CThornOpera).set_live_caster(local_pos)
-
 func stop() -> void:
     var was := _active
     _active = false
@@ -234,8 +231,6 @@ func advance(dt: float, draw: bool = true) -> void:
         _tick += 1
         _steps += 1
         if _fx != null:
-            if _kind == "thorn":
-                _sync_thorn_caster()
             _fx.update(STEP, source_time())
             if _kind == "crown_outer":
                 _fx.set("fx_shake", 0.0)
@@ -283,8 +278,6 @@ func _fire_due_events() -> void:
         if not bool(ev.emitted) and t >= float(ev.t):
             ev.emitted = true
             var wp := local_to_world(ev.pos_local)
-            if _kind == "thorn" and is_instance_valid(_live_caster_actor) and ev.pos_local == CThornOpera.CASTER:
-                wp = _cast_caster
             var kind := StringName(String(ev.kind))
             visual_event.emit(kind, wp, t)
             if String(ev.kind).ends_with("impact"):
@@ -373,7 +366,7 @@ func _emit_thorn_tiles() -> void:
     _thorn_tile_truncated = false
     # Never extend the untouched original source canvas unless world mounting
     # actually moved its caster or shifted its focus at a clamped distance.
-    var adapted := thorn._live_caster.distance_to(CThornOpera.CASTER) > 0.01 or thorn._focus.distance_to(CThornOpera.FZ) > 0.01
+    var adapted := thorn._focus.distance_to(CThornOpera.FZ) > 0.01
     if adapted:
         for td in thorn._tds:
             var positions: Array = td.pos
@@ -431,7 +424,12 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     var by := Vector2(-sin(_rot), cos(_rot)) * _scale
     var tile_origin := Vector2(_thorn_tile.x * CFrame.W, _thorn_tile.y * CFrame.H)
     result.source_to_world = Transform2D(bx, by, _origin + bx * (tile_origin.x - 112.0) + by * (tile_origin.y - 126.0))
+    # caster_world is the original cast input, not a moving actor alias.
+    # Optional live metadata is independent of the static visual transform.
     result.caster_world = _cast_caster
+    result.cast_origin_world = _cast_caster
+    result.has_live_caster = is_instance_valid(_live_caster_actor) and _live_caster_actor.is_inside_tree()
+    if result.has_live_caster: result.live_caster_world = _live_caster_actor.global_position
     result.target_world = _target
     result.c_ground = _frame.ground
     result.c_ground_coverage = _frame.ground_coverage

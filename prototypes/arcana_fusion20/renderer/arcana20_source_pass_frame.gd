@@ -15,7 +15,12 @@ var source_time: float
 var seeds: PackedInt32Array
 var source_size: Vector2i
 var source_to_world: Transform2D
+# caster_world is the producer's caster anchor; C15 explicitly reports its
+# cast-origin and separately observed live actor, when available.
 var caster_world: Vector2
+var cast_origin_world: Vector2
+var has_live_caster := false
+var live_caster_world: Vector2
 var target_world: Vector2
 
 # C: ground RGB (premultiplied RGBA8 with independent coverage), source

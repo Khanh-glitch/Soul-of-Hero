@@ -462,38 +462,86 @@ func _run() -> void:
         upright.stop()
     upright.free()
 
-    # #15 must attach its authored verlet roots to a real moving caster while
-    # preserving the fixed target and screen-up petal height. Exercise the
-    # actual renderer and optional actor at four cast bearings.
+    # #15 snapshots the real cast origin; movement must not move source roots,
+    # bloom, events or original source clock. Live position is metadata only.
     var thorn_host := Arcana20Renderer.new()
     thorn_host.world_pass_mode = true
     root.add_child(thorn_host)
     var live_caster := Node2D.new()
     root.add_child(live_caster)
     var thorn_id := Arcana20SourceCatalog.canonical_id(15)
-    for delta in [Vector2(140, 0), Vector2(-140, 0), Vector2(0, 140), Vector2(0, -140)]:
+    for distance in [35.0, 140.0, 900.0]:
+        for dir in [Vector2.RIGHT, Vector2.DOWN, Vector2.LEFT, Vector2.UP]:
+            live_caster.global_position = base
+            var dst: Vector2 = base + dir * distance
+            check(thorn_host.cast_skill(thorn_id, base, dst, 1.0, live_caster), "C15 actual renderer cast")
+            var thorn_player := thorn_host._casts[thorn_id] as CSourcePlayer
+            thorn_player.set_process(false)
+            thorn_player.render_enabled = false
+            var thorn := thorn_player._fx as CThornOpera
+            var roots_before: Array = []
+            for td in thorn._tds: roots_before.append(td.base.duplicate())
+            var focus_before := thorn._focus
+            live_caster.global_position = base + Vector2(900, -600)
+            for i in range(50): thorn_player.advance(STEP, false)
+            for i in range(5):
+                check(thorn._tds[i].base == roots_before[i], "C15 roots stay at cast origin %s %s" % [distance, dir])
+            check(thorn._live_caster == CThornOpera.CASTER and thorn._focus == focus_before, "C15 original static caster and fixed bloom")
+            var world_height := thorn.particle_height_axis.rotated(thorn_player._rot)
+            check(world_height.distance_to(Vector2.UP) < 0.0001, "C15 petal ballistic height stays world-up")
+            var tf := thorn_player.source_pass_frame()
+            check(tf.cast_origin_world == base and tf.caster_world == base and tf.has_live_caster and tf.live_caster_world == live_caster.global_position, "C15 cast origin and real moving actor metadata remain distinct")
+            check(thorn_player.local_to_world(thorn._focus).distance_to(dst) < 0.001, "C15 fixed target at all ranges")
+            thorn_host.cancel_skill(thorn_id)
+            check(not thorn_host.is_active(thorn_id), "C15 cancel cleans cast")
+    # Recast snapshots the new live origin, not a stale passed coordinate.
+    live_caster.global_position = base + Vector2(100, 30)
+    check(thorn_host.cast_skill(thorn_id, base, live_caster.global_position + Vector2(140, 0), 1.0, live_caster), "C15 recast with new actor origin")
+    var recast := thorn_host._casts[thorn_id] as CSourcePlayer
+    check(recast.source_pass_frame().cast_origin_world == live_caster.global_position, "C15 recast snapshots actor position")
+    var concurrent_id := Arcana20SourceCatalog.canonical_id(3)
+    check(thorn_host.cast_skill(concurrent_id, live_caster.global_position, live_caster.global_position + Vector2(140, 0)), "C15 overlaps independent B03")
+    thorn_host.cancel_skill(thorn_id)
+    check(not thorn_host.is_active(thorn_id) and thorn_host.is_active(concurrent_id), "C15 cancellation preserves overlapping cast")
+    thorn_host.cancel_skill(concurrent_id)
+    # Two independent renderer instances each own a cast-origin; cancellation
+    # in one must not alter the other's snapshot. A single renderer itself
+    # deliberately replaces an earlier cast of the same canonical id.
+    var thorn_host2 := Arcana20Renderer.new()
+    thorn_host2.world_pass_mode = true
+    root.add_child(thorn_host2)
+    live_caster.global_position = base
+    check(thorn_host.cast_skill(thorn_id, base, base + Vector2(140, 0), 1.0, live_caster), "C15 overlap first origin")
+    live_caster.global_position = base + Vector2(90, 30)
+    check(thorn_host2.cast_skill(thorn_id, live_caster.global_position, live_caster.global_position + Vector2(140, 0), 1.0, live_caster), "C15 overlap second origin")
+    check((thorn_host._casts[thorn_id] as CSourcePlayer)._cast_caster == base and (thorn_host2._casts[thorn_id] as CSourcePlayer)._cast_caster == live_caster.global_position, "C15 independent overlapping snapshots")
+    thorn_host.cancel_skill(thorn_id)
+    check(thorn_host2.is_active(thorn_id), "C15 separate renderer survives other cancel")
+    thorn_host2.cancel_skill(thorn_id)
+    thorn_host2.free()
+    # Compare entire simulated source state and raw base field at bloom under
+    # stationary and moved actors. Same source, seed, ticks, target and CKit
+    # seed; player movement must change no source pixels or physics.
+    var baseline_results: Array = []
+    var saved_seed := CKit._auto_seed
+    for moved in [false, true]:
+        CKit._auto_seed = 0
         live_caster.global_position = base
-        var dst: Vector2 = base + delta
-        check(thorn_host.cast_skill(thorn_id, base, dst, 1.0, live_caster), "C15 actual renderer cast")
-        var thorn_player := thorn_host._casts[thorn_id] as CSourcePlayer
-        thorn_player.set_process(false)
-        thorn_player.render_enabled = false
-        var thorn := thorn_player._fx as CThornOpera
-        var before_base: Array = thorn._tds[0].base
-        var offset := Vector2(float(before_base[0]), float(before_base[1])) - CThornOpera.CASTER
-        live_caster.global_position = base + Vector2(20, -14)
-        thorn_player.advance(STEP, false)
-        var actual_base: Array = thorn._tds[0].base
-        var local_base := Vector2(float(actual_base[0]), float(actual_base[1]))
-        var expected_world := live_caster.global_position + offset.rotated(thorn_player._rot) * thorn_player._scale
-        check(thorn_player.local_to_world(local_base).distance_to(expected_world) < 0.001, "C15 root follows live caster %s" % delta)
-        check(thorn_player.local_to_world(CThornOpera.FZ).distance_to(dst) < 0.001, "C15 bloom target remains fixed %s" % delta)
-        check(thorn_player._cast_caster == live_caster.global_position and thorn_player._target == dst, "C15 real actor metadata updated")
-        var world_height := thorn.particle_height_axis.rotated(thorn_player._rot)
-        check(world_height.distance_to(Vector2.UP) < 0.0001, "C15 petal ballistic height stays world-up %s" % delta)
-        var target_cho: Array = thorn._cho(0, 0.8)
-        check(is_equal_approx(float(target_cho[0]), CThornOpera.TARGETS[0].x) and is_equal_approx(float(target_cho[1]), CThornOpera.TARGETS[0].y - 6.0), "C15 original multi-target choreography preserved")
+        check(thorn_host.cast_skill(thorn_id, base, base + Vector2(140, -14), 1.0, live_caster), "C15 stationary baseline cast")
+        var test_player := thorn_host._casts[thorn_id] as CSourcePlayer
+        test_player.set_process(false)
+        test_player.render_enabled = false
+        if moved: live_caster.global_position += Vector2(900, -600)
+        for i in range(360): test_player.advance(STEP, false)
+        test_player.render_enabled = true
+        test_player._render_frame()
+        var test_fx := test_player._fx as CThornOpera
+        var frame := test_player.source_pass_frame()
+        baseline_results.append({"strands":test_fx._tds.duplicate(true), "particles":test_fx._ps.duplicate(true),
+            "ink":frame.c_ink.duplicate(), "light":frame.c_light.duplicate(), "disp":frame.c_disp.duplicate()})
         thorn_host.cancel_skill(thorn_id)
+    CKit._auto_seed = saved_seed
+    check(baseline_results.size() == 2 and baseline_results[0] == baseline_results[1], "C15 moving player preserves exact stationary source state and bloom frame")
     # Clamp the overall source scale but keep the four target offsets and
     # bloom at the selected world point even at very short/long ranges.
     for delta in [Vector2(20, 0), Vector2(0, -20), Vector2(700, 0), Vector2(0, 700)]:
