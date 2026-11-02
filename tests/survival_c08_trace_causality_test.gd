@@ -772,7 +772,7 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 	# decay test into a second chase, which is exactly what an earlier run measured.
 	var legs: Array = [_route(start_c, near, nav, hero), _route(near, away, nav, hero)]
 	print("C08_C_ROUTE ", JSON.stringify({"near": [near.x, near.y], "away": [away.x, away.y],
-		"home": [outside_c.x, outside_c.y], "legs": [legs[0].size(), legs[1].size(), legs[2].size()]}))
+		"home": [outside_c.x, outside_c.y], "legs": [(legs[0] as Array).size(), (legs[1] as Array).size()]}))
 	if (legs[0] as Array).is_empty() or (legs[1] as Array).is_empty():
 		_expect(false, "C: the cold-trail route is walkable")
 		return {"ok": false}
