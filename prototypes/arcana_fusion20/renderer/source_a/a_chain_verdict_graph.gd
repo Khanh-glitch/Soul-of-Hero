@@ -182,6 +182,13 @@ func _bolt(fb: AFramebuffer, a: Vector2, b: Vector2, t: float, seed: int, width:
     c_channel.draw(fb, a, b, t, float(seed), k, B_CORE, B_MID, width, rough, branch_count)
     ADraw.glow(fb, (a.x + b.x) * 0.5, (a.y + b.y) * 0.5, minf(16.0, a.distance_to(b) * 0.25), B_MID, 0.07 * (k if glow_k < 0.0 else glow_k))
 
+# The faint cascade remnants are A's authored fixed-amplitude boltPath,
+# not a live C channel. C's recursive relative roughness is not interchangeable:
+# 20 / a short actor distance can exceed one and recursively explode into a
+# screen-sized web. Keep C's branching builder on the actual live discharges.
+static func _dissolve_path(a: Vector2, b: Vector2, seed: int) -> Array:
+    return ADraw.bolt_path(a.x, a.y, b.x, b.y, 20.0, seed, 4)
+
 func render(fb: AFramebuffer, t: float) -> void:
     # Translate only raster inputs, never simulation, event or actor state.
     # Integer translation keeps source pixel-grid sampling unchanged.
@@ -265,8 +272,7 @@ func render(fb: AFramebuffer, t: float) -> void:
                 var a: Variant = nodes[int(ev.a)]
                 var b: Variant = nodes[int(ev.b)]
                 if a == null or b == null: continue
-                var length: float = a.distance_to(b)
-                var path := CKit.bolt_pts(float(ev.seed), a.x, a.y, b.x, b.y, 20.0 / maxf(length, 1.0), 4.0)
+                var path := _dissolve_path(a, b, int(ev.seed))
                 for j in range(path.size() - 1):
                     if AMath.hash2(float(ev.seed), j) > dissolve:
                         var p: Vector2 = path[j]

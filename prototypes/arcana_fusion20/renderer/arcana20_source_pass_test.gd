@@ -690,6 +690,31 @@ func _run() -> void:
     check(int(graph.events[0].a) == 0 and int(graph.events[0].b) == 6 and int(graph.events[0].seed) == 990, "A09 original first probe seed and endpoints")
     check(int(graph.events[2].b) == 1 and not bool(graph.events[2].fail) and is_equal_approx(float(graph.events[2].t0), 1.49), "A09 first success ordering and time")
     check(graph.event_local({"node_index": 1}) == null, "A09 absent real target has no contact anchor")
+    # Cascade remnants use original A fixed-amplitude subdivision, even when
+    # real moving actors converge or share a position. The former substitution
+    # of 20/distance as C relative roughness made recursion expand without
+    # bound and painted a huge rectangular web through the actual world.
+    for distance in [0.0, 0.1, 1.0, 5.0, 20.0, 100.0]:
+        var start := Vector2(170, 110)
+        var end := start + Vector2(distance, 0)
+        var dissolve_path := AChainVerdictGraph._dissolve_path(start, end, 990)
+        check(dissolve_path == ADraw.bolt_path(start.x, start.y, end.x, end.y, 20.0, 990, 4), "A09 source-authored dissolve path %s" % distance)
+        check(dissolve_path.size() == 17 and dissolve_path[0] == start and dissolve_path[-1] == end, "A09 dissolve endpoints and four subdivisions %s" % distance)
+        for point in dissolve_path:
+            check(point.x >= start.x - 40 and point.x <= end.x + 40 and absf(point.y - start.y) <= 40, "A09 close-node dissolve remains local %s" % distance)
+    graph.nodes = [Vector2(170, 110), Vector2(170, 110), Vector2(171, 110), Vector2(172, 110), Vector2(173, 110), Vector2(174, 110), Vector2(175, 110), Vector2(176, 110)]
+    var clustered := AFramebuffer.new(624, 352)
+    clustered.track_audit_writes = true
+    clustered.clear()
+    graph.render(clustered, 5.60)
+    var clustered_writes := 0
+    var distant_writes := 0
+    for y in range(clustered.height):
+        for x in range(clustered.width):
+            if clustered.audit_writes[y * clustered.width + x] != 0:
+                clustered_writes += 1
+                if abs(x - 173) > 64 or abs(y - 110) > 64: distant_writes += 1
+    check(clustered_writes > 0 and distant_writes == 0, "A09 full clustered-node dissolve has no runaway raster")
 
     var a := AFramebuffer.new()
     a.track_world_fields = true
