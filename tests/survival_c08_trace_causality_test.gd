@@ -57,6 +57,12 @@ const MAX_STEP := 48.0
 const WOOD_FOR_HOME := 36
 
 var _phase := PHASE_PLAY
+## Which counterfactual this OS process is. Control Tower's P0 order: the three
+## cases are independent native episodes from the same legitimate checkpoint, so no
+## case inherits another case's live marks, its chase or its damage. Empty runs all
+## three in one process, which is a convenience for a local look and is never what
+## CI reports.
+var _case := ""
 var _shots := ""
 var _keep := false
 var _world: Node = null
@@ -73,8 +79,12 @@ func _console() -> void:
 			_phase = arg.substr("--phase=".length())
 		elif arg.begins_with("--shots="):
 			_shots = arg.substr("--shots=".length())
+		elif arg.begins_with("--case="):
+			_case = arg.substr("--case=".length()).to_lower()
 		elif arg == "--keep":
 			_keep = true
+	if _case.is_empty():
+		_case = OS.get_environment("C08_CASE").to_lower()
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("user://tests"))
 	if not _shots.is_empty():
 		DirAccess.make_dir_recursive_absolute(_shots)
@@ -307,62 +317,71 @@ func _body() -> void:
 	_expect(int(enemy.get(&"score_reward")) == 0 and bool(enemy.has_meta(&"loot_drop_processed")),
 		"the creature still awards no score and cannot drop loot")
 
-	# --- A: NO TRACE ------------------------------------------------------
-	# Each counterfactual must complete before the next is attempted: a red A is a
-	# diagnosis, not a licence to keep bolting on evidence.
-	var window_a := await _counterfactual_a(source, encounter, enemy, hero, home)
-	_audit["A_no_trace"] = window_a
-	if not bool(window_a.get("ok", false)):
-		_expect(false, "A must pass before B is attempted")
-		_body_complete = false
-		return
-
-	# --- B: VALID CHAIN ---------------------------------------------------
-	var window_b := await _counterfactual_b(source, encounter, enemy, hero, nav, home)
-	_audit["B_valid_chain"] = window_b
-	if not bool(window_b.get("ok", false)):
-		_expect(false, "B must pass before C is attempted")
-		_body_complete = false
-		return
-
-	# --- C: BROKEN / EXPIRED CHAIN ---------------------------------------
-	var window_c := await _counterfactual_c(source, encounter, enemy, hero, nav, home)
-	_audit["C_broken_chain"] = window_c
-	if not bool(window_c.get("ok", false)):
-		_expect(false, "C must pass before the K8 evidence window")
-		_body_complete = false
-		return
+	# --- episodes ---------------------------------------------------------
+	# One case per OS process. The world, the paid home and the creature mount are
+	# rebuilt by the same production path in each, so the scenario is shared while the
+	# trace store, the creature's pursuit and the Hero's health are not.
+	var episode := _case if not _case.is_empty() else "abc"
+	print("C08_EPISODE ", JSON.stringify({"case": episode, "phase": _phase,
+		"pid": OS.get_process_id()}))
+	if episode in ["a", "abc"]:
+		# --- A: NO TRACE ---------------------------------------------------
+		var window_a := await _counterfactual_a(source, encounter, enemy, hero, home)
+		_audit["A_no_trace"] = window_a
+		if not bool(window_a.get("ok", false)):
+			_expect(false, "A must pass before B is attempted" if episode == "abc" else "A: the no-trace episode passes")
+			_body_complete = false
+			return
+	if episode in ["b", "abc"]:
+		# --- B: VALID CHAIN ------------------------------------------------
+		var window_b := await _counterfactual_b(source, encounter, enemy, hero, nav, home)
+		_audit["B_valid_chain"] = window_b
+		if not bool(window_b.get("ok", false)):
+			_expect(false, "B must pass before C is attempted" if episode == "abc" else "B: the valid-chain episode passes")
+			_body_complete = false
+			return
+	if episode in ["c", "abc"]:
+		# --- C: BROKEN / EXPIRED CHAIN -------------------------------------
+		var window_c := await _counterfactual_c(source, encounter, enemy, hero, nav, home)
+		_audit["C_broken_chain"] = window_c
+		if not bool(window_c.get("ok", false)):
+			_expect(false, "C must pass before the K8 evidence window" if episode == "abc" else "C: the cold-trail episode passes")
+			_body_complete = false
+			return
 
 	# --- K8: a still-valid trail may not be erased by quitting ------------
-	_expect(bool(source.call(&"configure_policy", SPACING, 600.0, MAX_STEP)),
-		"policy for the K8 persistence window: live marks survive the quit")
-	await _walk_to_cell(hero, _door_cell())
-	await _walk_to_cell(hero, _stand_cell())
-	var committed := bool(source.call(&"commit_evidence"))
-	_expect(committed, "the still-valid trail is written to the authoritative save (%s)"
-		% String(source.get(&"ledger_error")))
-	var ledger: Dictionary = (_save().call(&"get_snapshot") as Dictionary).get("c08_traces", {})
-	var marks: Array = ledger.get("marks", []) if ledger.get("marks", []) is Array else []
-	_expect(String(ledger.get("run_id", "")) == String(phase.get("run_id", "")),
-		"the stored ledger belongs to this run")
-	_expect(marks.size() > 0, "the stored ledger holds live marks (%d)" % marks.size())
-	_audit["ledger"] = {"run_id": String(ledger.get("run_id", "")), "marks": marks.size(),
-		"commit": committed, "error": String(source.get(&"ledger_error"))}
+	# Only the episode that owns the second-process proof runs it, so the save this
+	# process leaves behind is the one the relaunch phase must read.
+	if episode in ["a", "abc"]:
+		_expect(bool(source.call(&"configure_policy", SPACING, 600.0, MAX_STEP)),
+			"policy for the K8 persistence window: live marks survive the quit")
+		await _walk_to_cell(hero, _door_cell())
+		await _walk_to_cell(hero, _stand_cell())
+		var committed := bool(source.call(&"commit_evidence"))
+		_expect(committed, "the still-valid trail is written to the authoritative save (%s)"
+			% String(source.get(&"ledger_error")))
+		var ledger: Dictionary = (_save().call(&"get_snapshot") as Dictionary).get("c08_traces", {})
+		var marks: Array = ledger.get("marks", []) if ledger.get("marks", []) is Array else []
+		_expect(String(ledger.get("run_id", "")) == String(phase.get("run_id", "")),
+			"the stored ledger belongs to this run")
+		_expect(marks.size() > 0, "the stored ledger holds live marks (%d)" % marks.size())
+		_audit["ledger"] = {"run_id": String(ledger.get("run_id", "")), "marks": marks.size(),
+			"commit": committed, "error": String(source.get(&"ledger_error"))}
 
-	# --- K8 identity for the second process ------------------------------
-	var run := _run_phase()
-	_audit["run_id"] = String(run.get("run_id", ""))
-	_audit["run_epoch"] = int(run.get("run_epoch", 0))
-	_audit["transactions"] = (_save().call(&"get_snapshot") as Dictionary).get("applied_transactions", {}).size()
-	_audit["hero_health"] = int(hero.get(&"health"))
-	_audit["score"] = int(root.get_node("GameSession").get(&"score"))
-	_audit["deaths"] = int((_survival().call(&"document") as Dictionary).get("counters", {}).get("deaths", 0))
-	_audit["source"] = source.call(&"snapshot")
-	_audit["encounter"] = encounter.call(&"c08_snapshot")
-	_write_audit()
-	_save().call(&"save_now")
-	_keep = true
-	_body_complete = true
+		# --- K8 identity for the second process ------------------------------
+		var run := _run_phase()
+		_audit["run_id"] = String(run.get("run_id", ""))
+		_audit["run_epoch"] = int(run.get("run_epoch", 0))
+		_audit["transactions"] = (_save().call(&"get_snapshot") as Dictionary).get("applied_transactions", {}).size()
+		_audit["hero_health"] = int(hero.get(&"health"))
+		_audit["score"] = int(root.get_node("GameSession").get(&"score"))
+		_audit["deaths"] = int((_survival().call(&"document") as Dictionary).get("counters", {}).get("deaths", 0))
+		_audit["source"] = source.call(&"snapshot")
+		_audit["encounter"] = encounter.call(&"c08_snapshot")
+		_write_audit()
+		_save().call(&"save_now")
+		_keep = true
+		_body_complete = true
 
 
 # ---------------------------------------------------------------------------
@@ -703,9 +722,13 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 	# from the house in B, which is where an evidence pursuit ends and the body's own
 	# aggression begins. What C needs is a creature that is off the defender and a
 	# trail that has gone cold before the run starts.
-	var settled := await _wait_until(func() -> bool:
-		var view: Dictionary = follower.snapshot()
-		return String(view.get("lost_reason", "")) != "" and not bool(view.get("pursuing", false)), 60.0)
+	# In this episode's own process nothing has been pursued yet, so there is no trail
+	# to go cold and waiting sixty seconds for one would be a lie about the clock.
+	var settled := true
+	if bool((follower.snapshot() as Dictionary).get("pursuing", false)):
+		settled = await _wait_until(func() -> bool:
+			var view: Dictionary = follower.snapshot()
+			return String(view.get("lost_reason", "")) != "" and not bool(view.get("pursuing", false)), 60.0)
 	var back_live := _alive_enemy(_enemy())
 	print("C08_C_SETTLE ", JSON.stringify({"cold": settled,
 		"follower": _compact_follower(follower.snapshot()),
