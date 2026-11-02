@@ -87,6 +87,7 @@ jobs:
           (cd "$RUNNER_TEMP/ARCANA20_R31_LAB" && sha256sum -c SHA256SUMS)
           sha256sum "$RUNNER_TEMP/ARCANA20_R31_LAB.zip" > "$RUNNER_TEMP/ARCANA20_R31_LAB.zip.sha256"
           cat "$RUNNER_TEMP/ARCANA20_R31_LAB.zip.sha256"
+          echo "::notice title=R31_LAB_INNER_SHA256::$(sha256sum "$RUNNER_TEMP/ARCANA20_R31_LAB.zip" | cut -d' ' -f1)"
       - uses: actions/upload-artifact@v4
         with:
           name: ARCANA20_R31_VISUAL_DIRECTION_LAB
