@@ -107,7 +107,7 @@ try {
     async function defendNearby(){
       if(defending)return;defending=true;
       try{for(let round=0;round<2;round++){
-        let cur=await state();const threat=cur.creatures.filter(m=>['chase','tell','attack'].includes(m.state)&&Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<96).sort((a,b)=>Math.hypot(a.x-cur.player.x,a.y-cur.player.y)-Math.hypot(b.x-cur.player.x,b.y-cur.player.y))[0];
+        let cur=await state();const threat=cur.creatures.filter(m=>['track','chase','tell','attack'].includes(m.state)&&Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<150).sort((a,b)=>Math.hypot(a.x-cur.player.x,a.y-cur.player.y)-Math.hypot(b.x-cur.player.x,b.y-cur.player.y))[0];
         if(!threat)return;
         if(Math.hypot(threat.x-cur.player.x,threat.y-cur.player.y)>26){try{await walkNear(threat.x,threat.y,22);}catch{return;}}
         await aim(threat.x,threat.y);
