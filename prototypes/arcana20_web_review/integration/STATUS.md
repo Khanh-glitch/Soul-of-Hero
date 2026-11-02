@@ -8,7 +8,7 @@ The creator ZIP `soul-of-hero-game-development.zip` came from `references/gamepl
 
 ## Current source-derived diagnostic paths
 
-The source-derived diagnostics are **dev-only and unapproved**: #02, #03, #04, #06, #07, #08, #10, #11, #12, #13, #14, #17, #18, #19 and #20. They are not matched-frame parity, production HDR/depth, or evidence of visual acceptance. The remaining #01, #05, #09, #15 and #16 do not yet have source-derived web effects. #05 still needs its P0 A opening, C release and both original A/B presentations, with no substitution; #09 needs actual actor-following graph behavior; #15 needs real caster-origin Verlet roots and OUT; #16 requires the selected worldseed fusion. #06 and #12 still lack complete P0 A/C fusion. #11 retains six seeded moving A rotors and C bolt-tree connectors but its P0 selective rotor compositor is not implemented.
+The source-derived diagnostics are **dev-only and unapproved**: #02, #03, #04, #06, #07, #08, #10, #11, #12, #13, #14, #17, #18, #19 and #20. They are not matched-frame parity, production HDR/depth, or evidence of visual acceptance. The remaining #01, #05, #09, #15 and #16 do not yet have source-derived web effects. #05 has an unregistered A opening component scaffold only; it still needs its C release and both original A/B presentations, with no substitution; #09 needs actual actor-following graph behavior; #15 needs real caster-origin Verlet roots and OUT; #16 requires the selected worldseed fusion. #06 and #12 still lack complete P0 A/C fusion. #11 retains six seeded moving A rotors and C bolt-tree connectors but its P0 selective rotor compositor is not implemented.
 
 The priority #17–#20 paths exist as internal candidates. #17 has preliminary blackout and C viewport post; #18 has seeded A event/reversal/release; #19 has 14 seeded nodes, pulses, original sprite/ribbon/poly roles, central star and motes in a GPU-only LDR diagnostic; #20 has seeded C contour and A debris fusion with live terrain sampling and eight shared-hit gameplay segments. P0 actor depth, full post/bloom, overlap arbitration, environment review, visual approval and real hardware performance remain open. D19 does not have a CPU fallback, HDR, bloom or P0 parity. Do not identify this as accepted D19 A.
 
@@ -22,7 +22,7 @@ D19 remains unbatched by default. An opt-in `arcanaDBatch=sprites` candidate pro
 
 ## Validation performed
 
-- 116/116 unit tests, TypeScript, Vite production build, and `node integration/check-catalog.mjs` passed. Catalog validation concerns metadata, not visual ports.
+- 116/116 unit tests before the isolated #05 scaffold, plus 24/24 focused A tests and TypeScript after it; Vite production build and catalog validation passed. TypeScript was also checked separately. Catalog validation concerns metadata, not visual ports.
 - Real dev-fixture casts of #04, #06, #11, #12, #13 and #14 spent a charge (3→2), with explicitly advanced clocks and no page exceptions. #11 sampled source render at about 57–99 ms in software at selected sync frames, a performance concern, not a device FPS measurement.
 - A CPU/GPU transformed synthetic-scene comparisons for each of #04, #06, #11, #12, #13, #14 and #18 across ten samples per skill had max error ≤1/255, with at most two differing pixels in 230,400. These compare the browser compositors to each other, not P0 visuals.
 - Four priority casts ran in four starting regions of the same island; charge 3→2 and no page exceptions with explicit clock jumps. This is smoke coverage, not normal/dim biome approval, real-time throughput or parity.
