@@ -1,0 +1,795 @@
+# Hollow Marches — Verification Status
+
+Last updated against the working branch `arena/54306b59-soul-of-hero`.
+
+This file is the honest scoreboard. It records what was **executed**, with
+numbers, and what could **not** be executed in this environment. Every claim
+below was produced by a command in this repository; nothing is inferred from a
+green exit code.
+
+## 1. Engine
+
+A Godot **4.7-stable** editor binary was built from source in this sandbox
+(`4.7.stable.custom_build`, scons 4.11.1 + a local `pkg-config` shim) because
+every download path to the prebuilt release asset is blocked at the network
+edge (TLS failure on the release CDN; `codeload.github.com` source zips are the
+only reachable Godot artefact). The binary is capable and is what everything
+below ran on:
+
+- `godot --headless --path . --import` → exit 0
+- `godot --headless --path . --check-only --script res://game/overworld/<file>.gd`
+  → parses for all eight overworld scripts
+
+## 2. What was executed, and the result
+
+Static contracts:
+
+| Command | Result |
+| --- | --- |
+| `python3 tools/overworld/author.py` | `baked OK` — 384×256, 23 338 solid cells, 6 328 detail cells, 6 184 props, all ten thresholds/camps/discoveries reachable with shortcuts **closed and** open |
+| `python3 tools/validate_overworld_topology.py` | `OVERWORLD TOPOLOGY VALIDATION PASSED` — 10 landmarks, 4 camps, 8 discoveries, 4 shortcuts |
+| `godot --headless --path . --script res://tests/overworld_regression_guard_test.gd` | `PASSED - 82 checks` |
+| `godot --headless --path . --script res://tests/overworld_static_contracts_test.gd` | `PASSED - 38 checks` |
+
+Native behaviour (real engine, real scene, real save files):
+
+| Command | Result |
+| --- | --- |
+| `... --script res://tests/overworld_scene_runtime_test.gd` | `PASSED - 29 checks` |
+| `... --script res://tests/overworld_movement_runtime_test.gd` | `PASSED - 7 checks` |
+| `... --script res://tests/overworld_gate_runtime_test.gd` | `PASSED - 35 checks` |
+| `... --script res://tests/overworld_provisions_runtime_test.gd` | `PASSED - 15 checks` |
+| `... --script res://tests/overworld_shortcut_runtime_test.gd` | `PASSED - 30 checks` |
+| `... --script res://tests/overworld_persistence_runtime_test.gd` | `PASSED - 26 checks` |
+| `... res://game/app/app_root.tscn -- --overworld-roundtrip-test` | `PASSED - 27 checks` |
+| `... res://game/app/app_root.tscn -- --overworld-acceptance-test` | `64 checks, 0 failures` |
+| `... --script res://tests/overworld_knight_mini_test.gd` | `PASSED - 4 checks` |
+
+The acceptance run is the end-to-end one: HOME → the campaign tab's
+`BƯỚC VÀO VÙNG BIÊN` button → the Marches → walk → terrain collision → a
+discovery (paid once) → a camp → a shortcut (collision + sprite) → L01 enterable
+/ L10 sealed → the **real** `chapter_1_level_1` → the real completion screen →
+back to the Marches → progress retained → save/reload. Account currency moves
+0 → 40 (discovery) → 160 (the L01 clear bundle, `account_currency = 120`).
+
+## 3. Visual evidence — native, and green in CI
+
+`tools/captures/chapter1_overworld_native_capture.tscn` exits **2** with
+`OVERWORLD CAPTURE BLOCKED - no display server` in this container: no `Xvfb`, no
+`libGL` (`ldconfig -p | grep -c libGL` → `0`), no `/dev/dri`, so no framebuffer
+can be created here. That is an environment limit, not a product finding.
+
+In CI it renders, and has since the invocation was fixed. Latest green run
+[`40684317214`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40684317214)
+(commit `979b23ca`), job `VISUAL EVIDENCE`, 1 m 2 s:
+
+| Check | Result |
+| --- | --- |
+| control capture (a scene known to work) | exit 0 |
+| `Capture stations` (Xvfb + real GL) | exit 0, `OVERWORLD CAPTURE PASSED - 13 images` |
+| PNGs on disk | 15, all 1280×720, every station `blank=false` |
+| frame report | 123–239 colours, 17–27 % edges, 11–29 % dominant tone per station (`OVERWORLD LOOK`/`MAP` in the run's notices) |
+| new stations | `archive_approach` (L03, 199 colours, 19 % edges) and `reliquary_approach` (L04, 185 colours, 17 % edges) — the two exteriors that had no frame before |
+| `world_overview.png` | 435 737 bytes, map occupies 60%×71% of the frame |
+| `shortcut_before` / `shortcut_after` | both present, 262 003 / 262 095 bytes |
+| `Script/engine errors:` section of the log | empty |
+| `Verify PNG artifacts (fail-closed)` | passed |
+
+Every station also carries a structure report (`tools/captures/frame_report.gd`):
+colour count, edge density, dominant-tone share, luminance spread and a 32×16
+luminance map, published as numbered CI annotations because one annotation is
+truncated at ~4 KB. A station fails below 24 colours or 8 % edges, so a camera
+that renders a flat fill cannot pass as evidence. `frame_report_probe.gd` runs
+the same report over stored PNGs headlessly.
+
+The capture's log is gated by `tools/ci/gate_log.sh` like every other step, so a
+`SCRIPT ERROR` inside the capture fails the step and the `OVERWORLD CAPTURE
+PASSED` line must be present. That gate is the reason this section exists: it
+found three silent failures — a Godot-3-only `clear_current()` call that aborted
+the overview and produced no PNG and no failure, a boot-order race that left a
+real startup `ERROR` in the evidence log, and a `Camera2D.zoom` sign error that
+turned the "whole world" frame into a 4×2-tile close-up that passed every
+structural check.
+
+Supporting, explicitly **non-native** evidence still exists:
+`python3 tools/overworld/evidence.py` composites the shipped atlas with Pillow
+at the camera's real 2x zoom into 640×360 frames and writes eleven PNGs under
+`docs/overworld/evidence/` (whole-world overview, eight station frames, and the
+crucible bridge closed/open pair — the pair is measured, and opening the
+shortcut changes 13.7% of the frame). It proves the art and the geography are
+what `author.py` authored; it does **not** prove Godot drew them, and it is never
+described as a screenshot.
+
+## 3b. Browser playtest
+
+`.github/workflows/hollow-marches-web-playtest.yml` exports the real game to
+Web, asserts the overworld data is inside `index.pck`, injects startup
+diagnostics, and runs it in headless Chromium under Xvfb before publishing.
+Run [`40691921184`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40691921184)
+on `e205d3aa`: **both jobs green** — `WEB EXPORT PASSED`, `GODOT WEB BROWSER
+SMOKE PASSED`, then a Pages deployment. The playable link is the repository's
+Pages site: <https://khanh-glitch.github.io/Soul-of-Hero/>.
+
+The first attempt failed at the deploy step only, because the `github-pages`
+environment allowed deployments from `main` alone; the owner repointed the job
+at the existing `playtest-preview` environment, which has no such restriction.
+
+## 4. Known gaps
+
+1. **Native frames are measured but not reviewed by eye here.** CI produces all
+   thirteen; this sandbox cannot download the artifact (`gh run download` returns
+   `EOF` at the blob host), so the art judgement rests on the offline composites
+   built from the same atlas and framing. A human should look at the CI artifact
+   before calling the art finished.
+2. **The ten exterior identities are authored from a shared material culture**
+   (grey-violet stone, rusted iron, dried cloth, cold relay cyan) with distinct
+   silhouettes and furniture per landmark. They read as one place, which is the
+   point, but they are generated pixel art, not hand-painted set pieces: the
+   Beacon, Gate and Throne carry the most individual detail, the Archive and
+   Reliquary the least.
+3. **Dungeon-interior art is untouched** — the overworld work is additive by
+   design (see `REVIEW.md`).
+
+---
+
+# Mission 2 status
+
+| item | state | evidence |
+| --- | --- | --- |
+| Traversability system (prop-aware grid, BFS distances, sealed-endpoint report) | shipped | `game/overworld/overworld_traversability.gd`, 26-check runtime test |
+| Occlusion system (rect-anchored, bucketed, hysteresis, role-based depth) | shipped | `game/overworld/overworld_occlusion.gd`, 22-check runtime test |
+| Rewards sealed by prop bodies (`d_crucible_cove`, `d_relay_shard`) | **fixed** | `author.py` body-footprint guard; bake now refuses such a world |
+| Fresh character spawning inside the refuge tent | **fixed** | single `START` constant; scene settles the spawn; asserted in the test |
+| Hybrid override pipeline + manifest + audit | shipped | `tools/overworld/overrides.py`, `data/overworld/art_manifest.json`, `source_audit.py --check` clean |
+| Hand-painted L03 / L04 exteriors | shipped | `tools/overworld/manual_landmarks.py`, re-rendered stations |
+| Local gate suite | 13 gates, 413 checks, 0 failures | `docs/overworld/VALIDATION.md` |
+| Native 17-station capture | CI only (no GL here) | workflow run on this branch |
+| Browser playtest | CI only | workflow run on this branch |
+
+**Not claimed:** that the world *looks* good. That judgement is the owner's, and
+the frames it rests on are the CI artifact plus the offline renders in
+`docs/overworld/evidence/`.
+
+## Mission 2 final state (commit `5580df49`)
+
+* Overworld workflow run `40716220253`: **STATIC CONTRACTS, NATIVE RUNTIME,
+  VISUAL EVIDENCE all green** — 17 stations captured, 13 gates green, including
+  the two new ones.
+* Browser playtest run `40716220155`: **green** (export + headless-Chromium smoke
+  + publish); deployment to `playtest-preview` reports `success` for the SHA.
+* Local suite on a from-source Godot 4.7: **413 checks, 0 failures**.
+* The two repainted exteriors landed better, not just differently: native
+  `std` 0.062 → 0.074 (L03) and 0.066 → 0.076 (L04) with `flat` unchanged.
+* Full write-up, galleries and per-run numbers: `docs/overworld/MISSION_REPORT.md`.
+
+---
+
+# Mission re-scope — pass log (HEAD `07b08bfd`)
+
+The owner rejected the previous reduced-interpretation report and re-scoped back
+to the original world-art mission. This section records the pass that followed,
+in the same terms as everything above: commands, numbers, and what could not run.
+
+## Selective occlusion replaced whole-sprite fading
+
+`game/overworld/occlusion_fade.gdshader` keeps the bottom band of an occluder at
+`base_keep` opacity (landmark 0.24, architecture 0.30, vegetation 0.00, default
+0.22) and fades only the part above the player. Measured by the gates:
+
+| Check | Number |
+| --- | --- |
+| landmark behind the player, occlusion on | `alpha 0.62`, `base_keep 0.24`, `modulate.a 1.00` |
+| tree canopy | `base_keep 0.00` (full clearance) |
+| two overlapping occluders | `0.62 / 0.42` |
+| unregistered ally → `add_focus` → `clear_focus` | `1.00` → `< 0.9` → `1.00` |
+| collision bodies while faded | `1377`, unchanged |
+| teleport away and back | every material restored, `2620` occluders re-registered |
+
+Reuse outside the overworld was proved on the **real** Chapter 1 dungeon
+(`crypt_entrance.tscn`), not on a mock: 59 sprites, 52 tall props, 52 registered,
+prop fades to `0.42` with `base_keep 0.22`, **0** spawned collision bodies (that
+level collides with tiles), transform fingerprint `59:235822761` unchanged, and
+occlusion adds at most one node.
+
+## The world patch pipeline is wired into the bake
+
+`data/overworld/world_patches.json` is applied by `author.main()` between the
+painters and the gates, so a hand correction is validated exactly like authored
+content. Fourteen entries today: four terrain writes (a gravel hearth under each
+camp fire) and ten prop edits (graves lifted out of living camps, two lamps
+added). The ops are `add`, `remove`, `move`, `replace` with an exact position or
+a `within` zone, on any of the three terrain layers.
+
+`patches.py --check` proves determinism (same hash), idempotency (a second
+application changes nothing) and non-destructiveness (an empty document plus a
+fresh paint reproduces the unpatched world). **CI caught a real bug here**: an
+`add` whose destination already held that frame still counted an edit, so a
+correct patch failed its own idempotency check on the second run. Fixed in
+`07b08bfd`; the check now prints `patch check passed: deterministic, idempotent,
+non-destructive`.
+
+## Landmarks and camps, judged from renders
+
+Six exterior frames are now hand-painted overrides instead of generated ones:
+
+| Landmark | What was wrong | What it is now |
+| --- | --- | --- |
+| L05 Blood Crucible | grey slab with a dark red rectangle — read as a bench | coursed furnace wall, fire throat, iron fire-bowls, blood channel down the steps |
+| L06 The Relay | three grey pillars with a slack wire, no base | keeper's hut, braced iron lattice, soul lamp, guy-wires, rust streaks |
+| L01 The Crypt | stone wall with a black arch and a bright slab under it | turf barrow over a timber, iron-banded door, bracketed lantern |
+| L08 The Divided | a pale colonnade pasted against a dark block | one wall, two eras: classical portico, basalt arch, ragged shear, rubble, wedged lintel |
+| L03 Crossfire Archive | (previous pass) featureless gable plate | coursed gatehouse, stepped collapse, recessed portal |
+| L04 Spiral Reliquary | (previous pass) three bare slabs — a wedding cake | four coursed tiers with ledges, lit niches, spiral flight, crown monolith |
+
+The four camps no longer share one composition: Ashen Refuge is a shelter
+(lean-to, cook fire, drying rack, lamp), Wayfarer Stones a crossing (signpost,
+shrine, banner), Relay Foot a depot (stacked crates, barrels, banner, fence),
+Watch Ridge a lookout (brazier, windbreak, bedroll). The tent, fire, bedroll and
+banner props themselves were repainted; at 2x the old tent read as a red bucket.
+
+## Coverage
+
+`tools/overworld/gallery.py` builds two before/after sheets from one station list.
+The "before" side is rendered by checking the old revision into a temporary
+worktree and running *that* revision's renderer, so the two sides cannot come
+from the same code. Diff share of the station frame, old → new:
+
+| Station | Δ | Station | Δ |
+| --- | --- | --- | --- |
+| Ashen Refuge (spawn) | 11.4 % | L07 Beacon | 0.0 % |
+| L01 Crypt | 5.5 % | L08 The Divided | new station |
+| L02 Ossuary | 0.0 % | L09 Crimson Gate | 0.0 % |
+| L03 Archive | 8.2 % | L10 Throne | 0.0 % |
+| L04 Reliquary | 5.9 % | Camp Wayfarer Stones | 89.3 % |
+| L05 Crucible | 9.7 % | Camp Refuge / Relay / Ridge | new stations |
+| L06 Relay | new station | | |
+
+A 0.0 % row is a landmark this pass did not touch; it is reported as untouched
+rather than as improved.
+
+## Performance
+
+`tests/overworld_performance_probe.gd` measures the production scene against
+budgets and fails if they are exceeded. This container has no GPU, so the number
+is **script time**, not rasterisation:
+
+| Measure | Result | Budget |
+| --- | --- | --- |
+| frame script time, median of 90 | 6.48 ms | < 8.0 ms |
+| one occlusion `step()` | 0.381 ms | < 2.0 ms |
+| one traversability query | 0.0005 ms | < 0.5 ms |
+| node count over 30 idle frames | 9074 → 9074 | +4 |
+
+## CI, on this pass
+
+Run [`40721420072`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40721420072)
+on `701fd596`:
+
+- `STATIC CONTRACTS` — success.
+- `NATIVE RUNTIME` — **failure**, and the failure is informative: steps 17–19
+  (`Occlusion`, `Occlusion (selective)`, `Occlusion reuse`) all **succeeded**
+  under Xvfb with a real GL context, and step 20 (`World patches`) failed on the
+  idempotency bug described above. The run is the first native confirmation of
+  the selective-fade and Chapter 1 reuse work.
+- `VISUAL EVIDENCE` — success.
+
+The `07b08bfd` run re-runs all of it with the fix, plus a new performance step.
+
+Local, headless, `tools/overworld/local_suite.sh`: 16 gates. The two occlusion
+tests and the performance probe print their own summaries; everything else is
+unchanged from section 2.
+
+## Second pass — the ground itself (HEAD after `14d3d144`)
+
+The owner's instruction was not to stop after a pilot, so the surfaces were
+measured rather than looked at. "Static" below is the share of horizontally
+adjacent pixel pairs that differ by more than 18 luma at the camera's real 2x
+framing — the thing that makes a surface read as television snow.
+
+| Surface | Before | After | What was wrong |
+| --- | --- | --- | --- |
+| `path` overlay | 13.2 % | 6.3–8.1 % | a 42 % per-pixel coin flip between two tones, i.e. a dither by construction |
+| `road_dirt` | 12.0 % (8.5 on some tiles) | 4.3–7.7 % | 18 % grain at full contrast, plus a dithered dark verge ring |
+| `road_stone` | 13.6 % | 10.2 % | same grain, plus the ditch |
+| dirt ground | 12.7 % of the whole apron | 3.9 % frame average | 16 % grain in 2 px blocks, one spatial frequency |
+| gravel / cliff top | 10.1 / 10.3 % | 9.5 / 9.8 % | same, softer |
+
+The single largest defect found was not in the ground at all: it was
+`detail_road_edge()`, which eroded every road tile's border with a seeded dither
+in a fringe colour much darker than the road. On a one-tile-wide path — which is
+what every guard rail and footpath in this world is — that ring was the dominant
+feature of the surface. It is now a solid two-pixel verge in a tone between the
+road and the ground, with a one-pixel wobbled silhouette and two blend steps.
+
+A second, structural defect: the ground variant is chosen per 3x3 block (a
+per-tile choice turned the four stone tones into a checkerboard), which meant the
+same 16 px tile was drawn nine times in a row and printed a 3-tile lattice across
+open ground. `OverworldTiles.flip_id()` now returns a per-tile alternative-tile
+mirror (`TRANSFORM_FLIP_H` / `_V` / both), so the tone stays coherent per block
+while the detail inside it decorrelates. `tools/overworld/preview.py` applies the
+same mirror, so the offline renders and the game still agree pixel for pixel.
+
+## The performance gate was wrong and is now fixed
+
+`tests/overworld_performance_probe.gd` asserted an absolute budget ("median frame
+script time < 8 ms"). It passed locally at 6.48 ms and **failed CI** on a shared
+two-core runner under software GL. An absolute millisecond budget measures the
+machine, not the design, so the gate now asserts what the design claims:
+
+| Claim | Assertion | Local result |
+| --- | --- | --- |
+| occlusion is a small share of the frame | overhead ≤ 45 % of the frame it sits in | measured and printed both ways |
+| an empty neighbourhood costs no more than a busy one | isolated step ≤ busy step | bucket scan is bounded, not O(world) |
+| a cell query is trivial next to a fade step | query ≤ step / 5 | 0.0005 ms vs 0.381 ms |
+| idle frames allocate nothing | node count +≤4 over 30 frames | 9074 → 9074 |
+
+The raw numbers are printed on every run, so a human can see the machine the
+gate ran on instead of trusting a threshold.
+
+## Third pass — the cliff mass, and a gate instead of an eye
+
+The second pass fixed the ground. It did not fix the largest graphic in the
+world: `#f`, the cliff interior, is 13 545 of ~23 350 solid cells, in bands up to
+380 tiles wide. Every previous attempt at it had been judged at 10x zoom, where
+detail looks like detail. Judged at the camera's own 2x, it was a grey slab.
+
+| Defect | How it was found | Fix |
+| --- | --- | --- |
+| `solid_cliff` interior printed a corduroy dash grid across the whole map | a native 2x render of a cliff band (`cliff rim`, cell 118,13) | the interior carries **no feature at all** — a quiet bed, a per-variant tone step, a whisper of grit |
+| the cliff mass was the same value as walkable ground (79 luma vs 84–101) | measuring the tile families against each other | the mass is 76 against ground at 91–101, with a lit rim on the edge variants |
+| `ground_rock` and `ground_cliff_top` ruled a full-width line in every variant | the new line metric: 100 % coverage on both | wandering cracks inside the tile; a soft bedding seam for the plateau |
+| painted landmark exteriors sat at **0.315** median luminance against a **0.356** ground | the new value metric | every landmark mixed to its own 0.46 target; separation is now **+0.085** |
+| ground blends chose their material per tile, printing a 16 px quilt | a native render of the plateau edge (cell 250,60) | the choice is quantised to a 2×2 clump |
+| the crypt was a smooth green dome — a hill with a door | the L01 approach frame | wandering crest, dense turf, drystone revetment, crown stone: a built barrow |
+| `rock_a` / `rock_b` read as concrete crates (~400 scattered) | the same plateau-edge frame | per-column silhouette profile, lit crown, facets, flat footprint |
+
+**The face now comes from decals, not tiles.** `cliff_ledge_{a,b}`,
+`cliff_buttress_{a,b}` and `cliff_crack_{a,b}` are placed in world space on cliff
+cells ringed by more cliff, clustered 5 tiles at a time. They are not tiled, so
+they cannot form a lattice, and none of them carries a collider, so they cannot
+make the mass walkable. This is the structural conclusion of three failed tile
+attempts: **a surface that repeats on a 3-tile lattice cannot carry structure at
+all**, and structure has to be authored in world space.
+
+## `tools/overworld/art_quality.py` — the gate this pass added
+
+Counting pixels is how the last two passes shipped. This script makes the
+measurements that found each defect above into assertions:
+
+| Metric | What it catches | Threshold | Worst family now |
+| --- | --- | --- | --- |
+| static share | television snow — a surface of one high-contrast tone pair | ≤ 18 / 23 / 34 % by layer | rock 14.7 %, road_stone 20.6 %, cliff 22.6 % |
+| 3-tile lattice | variants that are near-identical, so the tile repeats 9× | ≤ 92 % | cliff_top 81 %, path 84 %, canopy 71 % |
+| longest straight line | a drawn line inside a tile, which tiles into a horizon | ≤ 60 % (ground/overlay) | rock 25 %, cliff_top 12 %, path 12 % |
+| value separation | destinations that do not read above the ground | ≥ +0.01 | +0.085 |
+
+It is wired into `tools/overworld/local_suite.sh` as `ART` and into the
+`Overworld (Hollow Marches) Runtime Validation` workflow as its own step. Both
+run it as a gate, not a report.
+
+`run` on the atlas at `d00621b` (the previous HEAD) exits non-zero: `ground/rock`
+and `ground/cliff_top` both measure 100 % line coverage, and with the previous
+`manual_landmarks.py` the value metric reads −0.041. The gate fails the state that
+shipped it.
+
+### What this pass did not do
+
+- The buttress decal is authored and placed, but at 26×40 px on a 640×360 frame
+  it reads as a slab on the wall rather than as rock relief. It is an
+  improvement over a flat face and it is not yet *good*.
+- Camps, water margins and the L10 approach plaza are unchanged in this pass;
+  the L10 frame still shows a wide empty flagstone plaza in front of the keep.
+
+## Fourth pass — paving, boundaries, and mixes
+
+Three more defects, all found by rendering the world at the camera's own 2x and
+looking at it, then measuring:
+
+| Defect | Cause | Fix |
+| --- | --- | --- |
+| paving never showed a joint, in three passes | `grain()` fills its rect with its base colour first, so the grain pass at the end of `ground_flagstone` repainted the tile and erased the courses drawn before it | grain paints first, courses after |
+| paving printed as graph paper | vertical joints ran the full height of the tile, so every brick aligned with every brick below | a joint belongs to its own course |
+| a paved plaza drew as a patchwork of 16 px slabs | the four floor variants spanned 14 luma | spread under 1 luma; variants differ in layout and wear |
+| every material mix in the world was a quilt of random rectangles | `blend_put` decided with a per-tile coin flip *inside* the threshold band, so the middle of the band - the decisive part - was noise | a mix is now a threshold on a smooth field (`patch_field`, fbm) with a small noise perturbing only the crossing |
+| the material mixes were fed white noise at two-tile resolution | `h01(seed, x // 2, y // 2)` passed as the field | mixes sample `patch_field` |
+| the L10 approach read as a quarry | ~400 boulders scattered over flagstone as well as open ground | paving gets broken columns, wall stubs and staves; boulders stay on open ground |
+| kerbs did not exist | plaza outlines are ellipse stair-steps | `detail_kerb` stamps 2 749 edge cells with a dressed-stone band, lit on top |
+
+The `blend_put` defect is worth singling out: it was written as a reasonable
+"dither toward the alternate material inside a threshold band", and it is the
+reason the forest floor and the whole south-west of the map were unreadable at map
+scale. An earlier attempt to fix the symptom by quantising the decision to a 2×2
+clump only moved the artefact to 32 px stair-steps, and is recorded as such in the
+function's docstring so it is not tried again.
+
+### Honest limits of this pass
+
+- The kerb reads at 4–6× zoom and is close to invisible at 2×. It is an
+  improvement, not a solution to a stepped plaza outline.
+- The cliff buttress decal still reads as a slab on the wall.
+- Camps are unchanged in this pass.
+
+## Fifth pass — water margins and the fen
+
+The mission's "visually problematic travel regions" still had one item open: the
+south-east fen and the marsh west of the basin. Both were called out from native
+screenshots, not statistics.
+
+| Defect | Cause | Fix |
+| --- | --- | --- |
+| the fen read as small blue tiles scattered among olive ones | the bog tile carried three 3 px pale streaks, each reading as a separate object | water removed from the tile entirely; the tile now carries wet *ground* — cool, dark, slightly specular |
+| second attempt printed a striped rug | water run off two tile edges so neighbours would join, which lined every copy up at one offset | abandoned; recorded in the docstring |
+| third attempt printed the same rug at a shorter period | a contained pool in every variant | abandoned: any feature every variant carries at a similar offset becomes a pattern |
+| the overlay version printed a grid | `bog` is chosen per 3×3 block, so a per-block overlay variant ran a pool through nine cells | overlays now get a per-**tile** pick (`OverlayTiles.overlay_variant_index`), deliberately not the ground's block hash |
+| pools read as a scatter of separate puddles | blobs inset from the tile edge left a dry gutter between neighbours | water fills the tile at its edges, so a run of wet cells joins into one sheet |
+
+The structural change is the last one: **a per-cell overlay can only compose into a
+larger form if it reaches its own cell boundary.** Every earlier version inset the
+water, for good local reasons — a ragged shape, a margin, a highlight — and every
+one of them printed the cell grid back into the sheet. The lit shoreline was
+removed for the same reason: a highlight on row 0 of every pool tile is a stripe
+across the water every 16 px.
+
+`detail_variant_count()` / `overlay_variant_index()` are mirrored in
+`tools/overworld/preview.py`, and `tests/overworld_static_contracts_test.gd` now
+asserts that the pool overlay is present, unmasked and carries at least four
+frames — so this cannot silently regress to a single frame.
+
+## Sixth pass — the cliff mass as rock, not as objects
+
+The buttress decal this project shipped last pass was reported as "reads as a slab
+on the wall". Chasing that produced five attempts and one clear diagnosis.
+
+| Attempt | What it was | Why it failed |
+| --- | --- | --- |
+| 1 | ledge: lit top edge, shadow underneath | drawn as an **elevation** on a surface seen from **above**. A shadow under a ledge is meaningless top-down; it read as an object lying on the field |
+| 2 | buttress: lit left flank, dark right flank | same error, bigger object |
+| 3 | rock patch: elliptical, dark ragged rim | the rim is a silhouette; top-down rock has none |
+| 4 | flat full-tile rectangle, low contrast | a straight sprite edge on a surface with no straight lines prints a 44 px rectangle |
+| 5 | soft radial alpha, overlapping, jittered | no boundary at all now, but sparse placement left isolated blobs on a flat field |
+
+The fix that works is 4 + 5 together: a full-tile patch with **alpha falling to
+nothing at its edge**, placed at **~30 % density with a half-tile jitter**, so
+neighbouring patches overlap and blend. There is no sprite boundary to see and no
+gap between features, so the mass reads as continuously mottled rock, and the only
+shapes are the clusters the placement makes.
+
+The general lesson, which now applies to three systems in this world: **top-down
+terrain must be authored as cover, not as objects.** Anything with a silhouette and
+an undercut will read as furniture standing on the ground.
+
+Verified at both scales — the native cliff frame (cell 118,13) and the whole world
+at 50 % — because the previous two passes each fixed one scale and broke the other.
+
+### Still open
+
+- The 380-tile-wide mass is now mottled but its *large-scale* form is uniform: there
+  are no ridges, valleys or buttress masses at the scale of the terrain itself. That
+  is a level-design change, not a tile change, and is out of scope for this pass.
+- Camps are unchanged.
+
+## Seventh pass — the four camps
+
+Camps were the one art item never touched. Reviewed at native scale first, and each
+had the same two defects: an object that read as a slab, and props scattered across
+ground the camp did not own.
+
+### The hearth was a paving slab
+
+Four hand-authored patches painted a 5×3 **rectangle of gravel** under each camp
+fire. Straight edges, one flat tone, in the middle of a dirt clearing: it read as a
+slab dropped on the camp. Removed; hearths are now procedural in `author.py` —
+a noisy disc of gravel and a wider, thinner drift of ash (`z`), both placed by
+ellipse with per-cell noise so the rim is where people stood rather than where a
+rectangle ended.
+
+The four patches were also centred on the *camp*, not on its fire, so at Watch Ridge
+and Relay Foot the gravel sat beside the flames rather than under them. The procedural
+hearth takes the fire's own tile.
+
+### The camp did not own its ground
+
+`paint_scatter` filled camp clearings with whatever the surrounding region scatters —
+twenty-four boulders and several wall stubs inside Watch Ridge, grave markers inside
+Ashen Refuge. Camps now reserve a 13×10 zone in the scatter pass. This is the
+difference between a place someone made and a camp someone dropped into a rockfield.
+
+### The road ran through the middle
+
+Three camps sit on the road network. Their paving overlays are hard-edged, so a
+rectangle of paving appeared inside each clearing. Inside the camp the paving now
+degrades to footpath (`:`), fully at the centre and partially at the rim, and each
+camp has a worn approach path out to the nearest road. From outside, the road still
+runs up to the camp; inside, the camp is a place, not a junction.
+
+### Material boundaries, world-wide
+
+Every ground material met every other on a tile edge, so a clearing, a forest floor
+and a riverbank all ended in a 16 px staircase — the reason a camp read as dropped on
+the terrain rather than standing in it. `feather_boundaries()` dithers every material
+junction on a coherent noise field (4 326 cells this bake), letting the two materials
+interpenetrate over one to two tiles. Water and cells carrying road/path/plaza
+overlays are excluded: a bank and a lane have to stay legible.
+
+### Watch Ridge
+
+The camp's premise is "a brazier and a windbreak facing outward", and it had two
+loose stones and a second camp fire four tiles outside the clearing. It now has a
+five-segment windbreak wall with the brazier behind it, a seat-side cluster, and one
+fire.
+
+### Verified
+
+All four camps re-rendered at native 2x after every change; the world overview
+re-rendered at 50 % to check the feathering did not turn the map into speckle. Gates:
+`ART QUALITY PASSED - 19 families`, `patch check passed`, `OVERWORLD TOPOLOGY
+VALIDATION PASSED`, and the static-contract job green on CI.
+
+### Still open
+
+- Camps are sparse in the middle: the props cluster at the edges and the centre of a
+  large clearing is bare ground. More camp furniture (benches, stacked firewood, a
+  wash line) is the obvious next step and needs new prop art, not new placement.
+- The hearth gravel is still tile-quantised at its edge. It reads as a hearth now,
+  but it would read better with a dedicated edge tile set.
+
+## Eighth pass — tiles that repeat perfectly
+
+Four defects this pass turned out to have the same cause, and it is worth naming
+because it will produce more of them: **a tile pattern whose period divides 16 is
+invisible as a tile and obvious as a field.**
+
+An interior cell of a solid or paved mass uses the same frame as every other
+interior cell — the neighbour mask is identical — so whatever the tile contains
+repeats exactly on a 16 px grid. Anything inside the tile that lines up with the
+tile's own edges is therefore printed on that grid, hundreds of times.
+
+| Surface | What was wrong | What fixed it |
+| --- | --- | --- |
+| paving (`f`) | courses started at a random per-tile offset, so horizontal joints stopped at every tile edge; bricks were random-width, so vertical joints never met | course pitch 6 px and brick pitch 8 px, both dividing 16; only *which* vertical joint appears is randomised |
+| walls (`W`) | 16 px blocks with a per-block bevel — the bevel landed at the same offset in every cell, printing a lattice of bright rectangles across the burial fields | `courses(irregular=True)`: block widths from 5/7/9/4/6/8, seeded course starts, variable course height |
+| canopy (`T`) | per-pixel white noise at two tones — "television snow" repeated three hundred times | overlapping foliage clumps at *scattered* positions; the first attempt used a 5 px lattice and printed a diagonal weave |
+| rock field | four variants spread over 14 points of luminance, chosen per 3×3 block | tone within 1.5 points, variety from crack and grain seeds instead |
+
+Two more of the same family: the forest floor placed single trees by per-tile white
+noise (a checkerboard of isolated colliders, now a threshold on a coherent field),
+and the boulder scatter used two sprites for two hundred placements (now six, chosen
+by hash so the small frames actually appear).
+
+The plateau in the north-east also got a new overlay — `w`, weathered stone mottle,
+placed by the same smooth field that places the fen's water — so the largest surface
+in the world has structure at the scale between the tile and the region. The first
+version of that overlay was a per-2-pixel hash and read as pixel static; the mottle
+is 4–7 px blobs.
+
+### Still open
+
+- The plateau's overlay is subtle by design (it must tint the stone, not repaint it)
+  and at native zoom it is close to invisible. It needs either more contrast or
+  larger-scale landform — probably the latter, which is level design.
+- L10's plaza is furnished now, but the citadel wall behind it is still one flat
+  masonry field with no buttress or gatehouse reading.
+
+## Ninth pass — the gate, and what a red run now says
+
+All three jobs green at `2c2f3978`: STATIC CONTRACTS, VISUAL EVIDENCE and NATIVE
+RUNTIME.
+
+### The Crimson Gate had no gatehouse
+
+The selective-occlusion test failed on `there is more than one tall prop near the
+gate (0)`. The honest reading is not that the test broke. The gate's furniture was two
+braziers fourteen tiles out and two wall stubs nine tiles out — every piece outside
+the gate's own silhouette, so at native scale the Crimson Gate was a sprite standing
+alone on gravel. The only tall props that ever overlapped it were scattered boulders,
+so the test's precondition had been met *by accident*, and fixing the boulder scatter
+removed the accident.
+
+It now has two towers flanking the arch, one tile in front of the gate's foot, with
+broken stumps, braziers and wall stubs around them. Three tall props now intersect the
+gate's rect — measured, not assumed.
+
+Note for anyone placing props here: prop `y` is the sprite's **foot**, so anything at
+or above the target's foot is drawn underneath it. The first attempt put both towers
+behind the gate and they were completely invisible in the render.
+
+### Why the failure took five runs to read
+
+GitHub caps annotations at ten per step and drops the rest, and this job's raw log and
+artifacts are served from a host this sandbox cannot reach. The diagnostics step was
+emitting one annotation per line across about twenty logs, so the failing assertion was
+almost always among the dropped ones and every red run reported only shutdown noise.
+
+`tools/ci/emit_diagnostics.sh` now emits one compact annotation per log, ordered:
+assertion failures first, then script errors, then the tail of anything that printed no
+failure marker. The next run named the cause immediately.
+
+### Still open
+
+- The remaining landmark approaches have the same weakness the gate had: furniture
+  outside the sprite's silhouette, where it cannot compose with it. Reviewed two so
+  far (gate, throne); eight to go.
+- The plateau's stone mottle is nearly invisible at native zoom; it needs either more
+  contrast or large-scale landform, and the latter is level design.
+
+## Tenth pass — scale, not texture
+
+The three art gaps left open by the ninth pass turned out to have one cause between
+them. Each was a defect at a scale *between* the tile and the region: a wall a hundred
+tiles across, a court nine hundred cells across, a camp seven tiles across. Every
+previous attempt had answered them inside a 16 px tile, which cannot work, because a
+tile repeated nine hundred times is the flat field, not a fix for it.
+
+### The citadel face
+
+The cliff mass is 22 000 cells in bands up to 380 tiles wide, and it was one tone from
+rim to centre. It now carries a six-step value ramp painted by a four-neighbour BFS
+distance field from open ground, with each band boundary roughened by value noise so
+the result is not a topographic contour map.
+
+The interesting part is the first attempt. Two levels — 34 % and 58 % — put a **24 %
+alpha step on a 16 px edge**, and at the camera's 2x zoom that prints as a square
+block standing in the rock. Six steps of about 7 % each, with a roughened boundary,
+read as a gradient. Two levels is what "add a value ramp" sounds like; six is what it
+takes.
+
+### Courses and piers on the cliff face
+
+`art_props.py` carried a comment stating that all the structure of a cliff face comes
+from `cliff_ledge_*`, `cliff_crack_*` and `cliff_buttress_*` decals. The cracks existed.
+The other two never did — a doc-to-code drift that had been there long enough to be
+quoted in the code as fact. Both are now built:
+
+* **course** — a 16 px projecting base at the foot of every south-facing face, two
+  joints, a lit top lip and the shadow it throws on the ground: 1251 placements;
+* **pilaster** — a 28x54 pier with a capital and a plinth, one every eight cells along
+  faces six cells or longer: 21 placements.
+
+Both frames carry an explicit dark contour, because a pier rendered in the same stone
+as the wall behind it is invisible however large it is. That is precisely how the first
+attempt at this failed: the frame rendered correctly in isolation and could not be
+found in the world.
+
+### The L10 court
+
+The court is 900-odd cells of a single flagstone, so the fix had to be *different
+tiles*, not a wash. The plateau connected to the keep is flooded from its foot, its
+distance to open ground computed, and the court laid the way a court is laid: a darker
+dressed border course along the flanks, a lighter processional walk running south from
+the keep, and a landing where the walk meets the steps. Measured mean luminance —
+field 88.5, border course 73.3, walk 104.2. Those are steps a player can read at 2x,
+which a 10 % tint was not.
+
+The station's framing changed with it. The keep is ten tiles tall, and the old offset
+(derived from sprite height, so the whole building fits under the top edge) put the
+entire court *below* the bottom edge: the station photographed a wall and none of the
+thing under review. At L10 the subject is the court, so the station frames the court.
+
+The throne also has the only colonnade in the world — two rows of piers, three deep,
+with a statue at the head of each row and lamps down the outer flanks. Everything in it
+stands at |dx| >= 7 against a 2.4-tile approach, so it frames the route without ever
+standing in it; the bake's reachability gate refuses a blocking prop in a walking lane
+and has caught an earlier draft of exactly that.
+
+### Camps
+
+The camps had furniture; they had no furniture at scale. A camp's largest object was a
+46x36 ridge tent — three tiles square — so a ring of three-tile objects left the middle
+of a seven-tile clearing reading as empty ground with litter at its edges. Five new
+frames, all drawn at the size their role implies:
+
+| frame | size | role |
+| --- | --- | --- |
+| `camp_pavilion` | 74x62 | the camp's command structure; peaked canvas, four poles, open front |
+| `camp_cookfire` | 52x40 | a cauldron in a stone hearth, fire showing round the rim |
+| `camp_wagon` | 66x46 | a two-wheeled supply wagon, tipped on its shafts |
+| `camp_table` | 56x30 | a trestle table with a map, a cup and two benches |
+| `camp_rack` | 44x44 | a weapon rack: spears, crossed swords, a hung shield |
+
+They are placed by what the camp *is*, not by filling space: the crossing gets the
+hearth and the wagon and only one bedroll; the supply depot gets the wagon and the rack
+beside its stores; the watch post gets the rack and the watch bill and nothing that
+suggests permanence; the refuge gets the pavilion behind its lean-to.
+
+The cauldron is on its second draft. The first hung a pot from a tripod, which at this
+size put the pot behind the legs and the flames behind the pot, and the whole hearth
+read as a dark blob on a ring of stones.
+
+### Gates
+
+`ART QUALITY PASSED — 19 families`, patch check deterministic / idempotent /
+non-destructive, `OVERWORLD TOPOLOGY VALIDATION PASSED`, `gd scope check passed`.
+
+CI at `628d7d44`: **STATIC CONTRACTS**, **NATIVE RUNTIME** and **VISUAL EVIDENCE**
+all green. That run is the first to exercise the new ground codes (`F`, `G`), the
+cliff-face frames and the five camp frames inside the real runtime, under Xvfb, with
+the occlusion, topology, gate and acceptance suites. The caption change on the throne
+station did not disturb the capture comparison.
+
+### Still open
+
+- The plateau's `w` stone mottle still reads as almost nothing at native zoom. It is
+  now sitting under the depth ramp, which supplies the large-scale cue it was missing,
+  but the mottle itself has not been re-judged against a native capture.
+- The court's border course follows the plateau's real outline, which is ragged; on the
+  north and south ends a two-cell band painted blobs that read as stains, so it is now
+  a single cell and only along the flanks (|dx| >= 8). That is a compromise, not a
+  design.
+- No human has seen any of this as a native Godot screenshot. Everything above is
+  judged from offline renders of the shipped atlas, which share the atlas and the
+  per-cell variant hash with the runtime but are not the runtime.
+
+## Eleventh pass — weathering, and a wall that was not a wall
+
+### The court flood leaked
+
+`paint_court()` floods flagstone from the keep's foot and lays a border course and a
+processional walk. The flood was unbounded, and the paving connected to the keep runs
+ninety tiles east: dressed court stone was appearing around the beacon and a third of
+the way across the map. Found by dumping the ground codes around the beacon and asking
+why a court course was there. The flood is confined to the ground in front of the keep;
+1179 cells became 510.
+
+### The narrow walls had no weathering
+
+Cliff decals were restricted to cells with all eight neighbours solid — which is exactly
+the deep interior, and most of the world's masonry is not deep. The walls between roads,
+and the bands around the beacon and the crypt, are two and three cells thick, so they
+carried the bare tile and read as one repeating brick pattern across half a screen. That
+is the defect the decals exist to answer; they were never reaching it.
+
+The test now returns *how* enclosed a cell is and thins the decal band toward the rim
+instead of stopping dead: full strength at eight enclosed neighbours, a third at four,
+nothing on a bare rim. +1036 weathering decals, every wall keeps a readable edge.
+
+### …which broke the occlusion suite, correctly
+
+NATIVE RUNTIME went red on `nothing is faded from 420 px away (1)`. The cause was real.
+A 44x44 patch centred on a wall cell necessarily overhangs the walkable ground just
+south of it, so a player standing at the foot of such a wall was inside a patch's rect
+and the occlusion system faded a piece of masonry they were nowhere near.
+
+The decals are *surface* — weathered rock, and a projecting lip at the foot of a wall —
+so they now sit in `FLAT_PROPS` with the camp bedroll: drawn under the player, never
+occluders. A wall is not a thing standing in front of you, and neither is the pattern
+on it. Green again at `d4b4d16d`.
+
+The pass also moved `cliff_pilaster`'s foot from two tiles south of the face to one,
+which is where it looked like it was standing but was not where it sorted.
+
+### Camp furniture is solid
+
+The five new camp frames were decoration only, which made a pavilion you could walk
+through. They are now in `SOLID_PROP_PREFIXES` with the tents and carts; all four
+clearings still pass the bake's reachability gate and the topology validator, so no
+piece of furniture is standing in an approach lane.
+
+### Two corrections to the worn-paving pass
+
+Both found by rendering a station nobody had looked at — `road_terrain` at (150, 170),
+which is in the native capture list and had never been reviewed.
+
+* **Thin walls take fractures, not patches.** A 44 px patch is sized for the great
+  mass. On the lattice of one-cell walls north of the crossroads the patches overlap
+  into a continuous smooth grey smear over ground they do not belong to — worse than
+  the flat tile they replaced. Walls under seven enclosed neighbours now carry cracks
+  (a couple of pixels wide, read as fractures in masonry) and no patches.
+* **Worn paving is flagstone only.** Gravel and dirt already have texture from their
+  own tiles, and a flat pale wash over them does not read as wear; it reads as a
+  smear. The first version put 3368 cells of wash over `f`, `d` *and* `g`, which
+  flattened the gravel crossing at the crossroads into a grey blob. Restricted to laid
+  stone: 669 cells, and the flagstone plazas keep the effect.
+* **A field needs to be deep to have a centre.** At a threshold of three cells the
+  wash landed on the small flagstone patches inside the refuge camp and read as pale
+  slabs lying on the dirt — spilled paint, not worn stone. The threshold is now 4.5
+  cells, which leaves the big plazas (crypt, beacon, citadel) and nothing else: 243
+  cells in the whole world. The pebble trim, at 4051 cells, does the rest of the work.
+
+### Still open
+
+- The large paved fields still read as fields. The worn washes and the pebble trim give
+  them tonal variation at the right scale, but they have no *layout* the way the L10
+  court now does, and doing that for every plaza is level design, not decoration.
+- `MIN_OCCLUDER_HEIGHT` is 26 px, so anything shorter than a bedroll is invisible to the
+  occlusion system by construction. That has never been a problem yet; it is the kind of
+  thing that becomes one.

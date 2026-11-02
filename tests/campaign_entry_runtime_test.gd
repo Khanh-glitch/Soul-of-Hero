@@ -225,18 +225,31 @@ func _verify_layout(
 	var pack_member_count := 0
 	_expect(entity_root != null, "%s has a live entity root" % label)
 	if entity_root != null:
+		# EntityRoot can also contain transient combat visuals; population checks
+		# count stable authored entity IDs and the one production player instead.
 		var density_bonus_count := 0
 		var runtime_pack_member_count := 0
+		var managed_entity_child_count := 0
+		var live_entity_id_counts: Dictionary = {}
 		var pack_family_presence := {}
 		var objective_used_as_pack_source := false
+		var live_player := game.get_node_or_null("Level/Entities/Knight")
 		var excluded_pack_sources := _get_deferred_enemy_ids(metadata, authored_entities)
 		for field: String in ["boss_entity_id", "crimson_reaper_id"]:
 			var special_id := String(metadata.get(field, ""))
 			if not special_id.is_empty() and not excluded_pack_sources.has(special_id):
 				excluded_pack_sources.append(special_id)
 		for child: Node in entity_root.get_children():
+			if child == live_player or child.has_meta(&"level_entity_id"):
+				managed_entity_child_count += 1
 			if bool(child.get_meta(&"density_bonus", false)):
 				density_bonus_count += 1
+			elif child.has_meta(&"level_entity_id"):
+				var entity_id := String(child.get_meta(&"level_entity_id", ""))
+				if not entity_id.is_empty():
+					live_entity_id_counts[entity_id] = int(
+						live_entity_id_counts.get(entity_id, 0)
+					) + 1
 			if bool(child.get_meta(&"encounter_pack", false)):
 				pack_member_count += 1
 				pack_family_presence[String(child.get_meta(&"level_entity_type", ""))] = true
@@ -257,9 +270,73 @@ func _verify_layout(
 				directed_alive >= 0 and active_cap > 0 and directed_alive <= active_cap,
 				"%s Chapter 2 director keeps the simultaneous enemy count within its live cap" % label,
 			)
+		var expected_entity_ids: Dictionary = {}
+		for raw_entity: Variant in authored_entities:
+			if not raw_entity is Dictionary:
+				continue
+			var authored_entity: Dictionary = raw_entity
+			var authored_id := String(authored_entity.get("id", ""))
+			var deferred_and_waiting := (
+				deferred_enemy_ids.has(authored_id)
+				and not (chapter_two_directed and live_entity_id_counts.has(authored_id))
+			)
+			if (
+				authored_id.is_empty()
+				or String(authored_entity.get("type", "")) == "player"
+				or deferred_and_waiting
+			):
+				continue
+			expected_entity_ids[authored_id] = true
+		var entity_identity_contract_valid := false
+		if live_player != null:
+			entity_identity_contract_valid = live_player.get_parent() == entity_root
+		for authored_id: String in expected_entity_ids:
+			entity_identity_contract_valid = (
+				entity_identity_contract_valid
+				and int(live_entity_id_counts.get(authored_id, 0)) == 1
+			)
+		for live_id: String in live_entity_id_counts:
+			entity_identity_contract_valid = (
+				entity_identity_contract_valid
+				and expected_entity_ids.has(live_id)
+				and int(live_entity_id_counts[live_id]) == 1
+			)
+		if (
+			managed_entity_child_count - density_bonus_count != expected_authored_children
+			or not entity_identity_contract_valid
+		):
+			print(
+				"CAMPAIGN_ENTRY_POPULATION_DETAIL %s root=%d managed=%d density=%d authored=%d deferred=%d directed=%d alive=%d pending=%d cap=%d expected=%d"
+				% [
+					label,
+					entity_root.get_child_count(),
+					managed_entity_child_count,
+					density_bonus_count,
+					authored_entities.size(),
+					deferred_enemy_ids.size(),
+					directed_enemy_ids.size(),
+					int(chapter_two_director.get("alive", -1)),
+					int(chapter_two_director.get("pending", -1)),
+					int(chapter_two_director.get("active_cap", 0)),
+					expected_authored_children,
+				]
+			)
+			var child_details := PackedStringArray()
+			for child: Node in entity_root.get_children():
+				child_details.append(
+					"%s<%s,id=%s,type=%s,enemies=%s>"
+					% [
+						child.name,
+						child.get_class(),
+						String(child.get_meta(&"level_entity_id", "")),
+						String(child.get_meta(&"level_entity_type", "")),
+						str(child.is_in_group("enemies")),
+					]
+				)
+			print("CAMPAIGN_ENTRY_ENTITY_ROOT_DETAIL %s %s" % [label, ", ".join(child_details)])
 		_expect(
-			entity_root.get_child_count() - density_bonus_count \
-				== expected_authored_children,
+			managed_entity_child_count - density_bonus_count == expected_authored_children
+				and entity_identity_contract_valid,
 			"%s spawns every authored immediate entity exactly once beside its optional density projection or Chapter 2 queue" % label,
 		)
 		if PACK_RULES.uses_pack_model(metadata):
@@ -316,6 +393,50 @@ func _verify_layout(
 		_expect(
 			all_signatures_match,
 			"%s gives every live pack enemy the exact signed population plan" % label,
+		)
+	if chapter_two_directed and entity_root != null:
+		var population: Dictionary = live_level.get("enemy_population", {})
+		var signature := String(population.get("plan_signature", ""))
+		var expected_population := directed_enemy_ids.size()
+		_expect(
+			bool(population.get("valid", false))
+				and String(population.get("source", "")) == "chapter_2_director_queue"
+				and int(population.get("reference_easy_population", -1)) == expected_population
+				and int(population.get("expected_population", -1)) == expected_population
+				and int(population.get("realized_population", -1)) == expected_population
+				and not signature.is_empty(),
+			"%s publishes a signed full-roster XP population for the Chapter 2 queue" % label,
+		)
+		var live_directed_count := 0
+		var live_rewards_current := true
+		var live_signatures_match := true
+		for child: Node in entity_root.get_children():
+			var entity_id := String(child.get_meta(&"level_entity_id", ""))
+			if not directed_enemy_ids.has(entity_id) or not child.is_in_group(&"enemies"):
+				continue
+			live_directed_count += 1
+			live_rewards_current = (
+				live_rewards_current
+				and ENEMY_SCALER.is_experience_reward_current(child)
+			)
+			var projection_value: Variant = child.get_meta(
+				ENEMY_SCALER.EXPERIENCE_PROJECTION_META,
+				{},
+			)
+			live_signatures_match = (
+				live_signatures_match
+				and projection_value is Dictionary
+				and String((projection_value as Dictionary).get(
+					"population_plan_signature",
+					"",
+				)) == signature
+			)
+		_expect(
+			live_directed_count == int(chapter_two_director.get("alive", -1))
+				and live_directed_count > 0
+				and live_rewards_current
+				and live_signatures_match,
+			"%s finalizes every active Chapter 2 enemy's XP against the signed queue population" % label,
 		)
 
 
@@ -484,5 +605,6 @@ func _finish() -> void:
 		print("CAMPAIGN ENTRY RUNTIME PASSED - %d checks across every CAMPAIGN_READY level" % _checks)
 		get_tree().quit(0)
 		return
+	print("CAMPAIGN_ENTRY_FAILURE_DETAILS %s" % JSON.stringify(_failures))
 	print("CAMPAIGN ENTRY RUNTIME FAILED - %d/%d checks failed" % [_failures.size(), _checks])
 	get_tree().quit(1)

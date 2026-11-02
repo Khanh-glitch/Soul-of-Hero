@@ -1,0 +1,206 @@
+{
+  "schema": "chapter1_environment_theme/1",
+  "level": "chapter_1_level_3",
+  "concept": "Crossfire Archive \u2014 warm archive stacks and long sightlines",
+  "tile_size": 16,
+  "palette": {
+    "backdrop": [
+      2.15,
+      2.15,
+      2.15
+    ],
+    "geometry": [
+      0.7,
+      0.7,
+      0.7
+    ],
+    "decor": [
+      1.4,
+      1.4,
+      1.4
+    ],
+    "world": [
+      0.98,
+      0.9,
+      0.77
+    ],
+    "background": [
+      0.07,
+      0.045,
+      0.03
+    ]
+  },
+  "facade": {
+    "rows": 2,
+    "courses": [
+      [
+        0,
+        1,
+        1
+      ],
+      [
+        0,
+        2,
+        1
+      ],
+      [
+        0,
+        3,
+        1
+      ]
+    ],
+    "cap": [
+      [
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        2,
+        0
+      ],
+      [
+        0,
+        3,
+        0
+      ]
+    ],
+    "side": [
+      [
+        0,
+        1,
+        1
+      ],
+      [
+        0,
+        3,
+        1
+      ]
+    ],
+    "backing": [
+      [
+        0,
+        2,
+        1
+      ]
+    ],
+    "backing_color": [
+      0.84,
+      0.76,
+      0.64
+    ],
+    "trim": [
+      {
+        "tiles": [
+          [
+            0,
+            5,
+            1
+          ]
+        ],
+        "light": true,
+        "energy": 1.0,
+        "scale": 2.2
+      },
+      {
+        "tiles": [
+          [
+            0,
+            2,
+            3
+          ],
+          [
+            0,
+            1,
+            2
+          ],
+          [
+            0,
+            2,
+            3
+          ]
+        ],
+        "light": false
+      }
+    ],
+    "trim_spacing": 7,
+    "pier_every": 9
+  },
+  "shadow": {
+    "color": [
+      0.0,
+      0.0,
+      0.0,
+      0.46
+    ],
+    "depth": 8,
+    "side": 4
+  },
+  "floor": {
+    "wear": [
+      [
+        0,
+        2,
+        4
+      ],
+      [
+        0,
+        3,
+        4
+      ],
+      [
+        0,
+        2,
+        6
+      ]
+    ],
+    "rate": 19,
+    "border": [
+      [
+        0,
+        3,
+        4
+      ],
+      [
+        0,
+        2,
+        4
+      ]
+    ],
+    "alpha": 0.5
+  },
+  "bedrock": {
+    "tiles": [
+      [
+        0,
+        2,
+        1
+      ],
+      [
+        0,
+        3,
+        1
+      ],
+      [
+        0,
+        1,
+        1
+      ]
+    ],
+    "color": [
+      0.58,
+      0.52,
+      0.45,
+      1.0
+    ],
+    "bands": [
+      1.0,
+      0.9,
+      0.8,
+      0.7
+    ],
+    "band_width": 8,
+    "patch": 3
+  }
+}

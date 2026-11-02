@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tools/captures/chapter1_overworld_native_capture.gd" id="1_script"]
+
+[node name="Chapter1OverworldNativeCapture" type="Node"]
+script = ExtResource("1_script")

@@ -1,0 +1,293 @@
+{
+  "schema": "chapter1_architecture_evidence/1",
+  "level": "chapter_1_level_5",
+  "branch": "arena/6e89e68d-soul-of-hero",
+  "commit": "29e88fc689ac81e795134cf00b1aaea9e6d8fa0c",
+  "source_pins": {
+    "data/levels/chapter_1_level_5.json": "d0e623097b3cd8d568d8f2834e10b3ffa93306071428c9b8c2a0e615d8c8552a",
+    "data/levels/chapter_1_level_5_architecture.json": "f65ef6c5457ee2f342b7202a05478eea20f27ca53ffd742cfd7b6679465c418f",
+    "assets/environment/chapter1/crucible/crucible_tiles.png": "95135a46ce0fd68e358897fa367644f6bcf0a83527779322882bbbaf1a134ad7",
+    "assets/environment/chapter1/crucible/crucible_props.png": "2fc944ed65a141ac9033e374ff553efc43193c5fecddd8cd117b776d54aedbe5",
+    "tools/level5/art_crucible.py": "76b559606699d726db928188a584c59e690924f6704a518864e3e7cbe0e78525",
+    "tools/level5/architecture.py": "10077804c5579d669adb2a4d33602bd7cd8b2e501542d55ea4c5892c69593ce7",
+    "game/levels/presentation/crucible_art.gd": "fa2cf4d0678cd62019fde7bb92824cd076c8452aac302efd3d557911bda5d569"
+  },
+  "capture": {
+    "level": "chapter_1_level_5",
+    "art": "on",
+    "walls": 3303,
+    "props": 114,
+    "lights": 22,
+    "entities": 83,
+    "perf_nodes": 1011,
+    "draw_calls": 110,
+    "static_mb": 116.4,
+    "fps": 1,
+    "errors": []
+  },
+  "capture_before": {
+    "level": "chapter_1_level_5",
+    "art": "off",
+    "walls": 0,
+    "props": 0,
+    "lights": 0,
+    "entities": 83,
+    "perf_nodes": 867,
+    "draw_calls": 103,
+    "static_mb": 109.2,
+    "fps": 1,
+    "errors": []
+  },
+  "stations": {
+    "f1_spawn": {
+      "tag": "after",
+      "cell": [
+        10,
+        17
+      ],
+      "zoom": 1.0,
+      "ok": false,
+      "extra": ""
+    },
+    "f1_gate": {
+      "tag": "after",
+      "cell": [
+        16,
+        14
+      ],
+      "zoom": 1.0,
+      "ok": false,
+      "extra": ""
+    },
+    "f1_altar": {
+      "tag": "after",
+      "cell": [
+        46,
+        19
+      ],
+      "zoom": 1.0,
+      "ok": false,
+      "extra": ""
+    },
+    "f2_landing": {
+      "tag": "after",
+      "cell": [
+        8,
+        47
+      ],
+      "zoom": 1.0,
+      "ok": false,
+      "extra": ""
+    },
+    "f2_court": {
+      "tag": "after",
+      "cell": [
+        91,
+        47
+      ],
+      "zoom": 1.0,
+      "ok": false,
+      "extra": ""
+    },
+    "f2_encounter": {
+      "tag": "after",
+      "cell": [
+        91,
+        47
+      ],
+      "zoom": 1.0,
+      "ok": false,
+      "extra": ""
+    },
+    "f3_approach": {
+      "tag": "after",
+      "cell": [
+        70,
+        76
+      ],
+      "zoom": 1.0,
+      "ok": false,
+      "extra": ""
+    },
+    "f3_fight": {
+      "tag": "after",
+      "cell": [
+        85,
+        71
+      ],
+      "zoom": 1.0,
+      "ok": false,
+      "extra": "knight_hp=n/a"
+    },
+    "overview_f1": {
+      "tag": "after",
+      "cell": [
+        32,
+        16
+      ],
+      "zoom": 0.5,
+      "ok": false,
+      "extra": ""
+    },
+    "overview_f2": {
+      "tag": "after",
+      "cell": [
+        53,
+        44
+      ],
+      "zoom": 0.4,
+      "ok": false,
+      "extra": ""
+    },
+    "overview_f3": {
+      "tag": "after",
+      "cell": [
+        60,
+        75
+      ],
+      "zoom": 0.45,
+      "ok": false,
+      "extra": ""
+    }
+  },
+  "stations_before": {
+    "f1_spawn": {
+      "tag": "before",
+      "cell": [
+        10,
+        17
+      ],
+      "zoom": 1.0,
+      "ok": false,
+      "extra": ""
+    },
+    "f1_gate": {
+      "tag": "before",
+      "cell": [
+        16,
+        14
+      ],
+      "zoom": 1.0,
+      "ok": false,
+      "extra": ""
+    },
+    "f1_altar": {
+      "tag": "before",
+      "cell": [
+        46,
+        19
+      ],
+      "zoom": 1.0,
+      "ok": false,
+      "extra": ""
+    },
+    "f2_landing": {
+      "tag": "before",
+      "cell": [
+        8,
+        47
+      ],
+      "zoom": 1.0,
+      "ok": false,
+      "extra": ""
+    },
+    "f2_court": {
+      "tag": "before",
+      "cell": [
+        91,
+        47
+      ],
+      "zoom": 1.0,
+      "ok": false,
+      "extra": ""
+    },
+    "f2_encounter": {
+      "tag": "before",
+      "cell": [
+        91,
+        47
+      ],
+      "zoom": 1.0,
+      "ok": false,
+      "extra": ""
+    },
+    "f3_approach": {
+      "tag": "before",
+      "cell": [
+        70,
+        76
+      ],
+      "zoom": 1.0,
+      "ok": false,
+      "extra": ""
+    },
+    "f3_fight": {
+      "tag": "before",
+      "cell": [
+        85,
+        71
+      ],
+      "zoom": 1.0,
+      "ok": false,
+      "extra": "knight_hp=n/a"
+    },
+    "overview_f1": {
+      "tag": "before",
+      "cell": [
+        32,
+        16
+      ],
+      "zoom": 0.5,
+      "ok": false,
+      "extra": ""
+    },
+    "overview_f2": {
+      "tag": "before",
+      "cell": [
+        53,
+        44
+      ],
+      "zoom": 0.4,
+      "ok": false,
+      "extra": ""
+    },
+    "overview_f3": {
+      "tag": "before",
+      "cell": [
+        60,
+        75
+      ],
+      "zoom": 0.45,
+      "ok": false,
+      "extra": ""
+    }
+  },
+  "frames": [
+    "f1_spawn",
+    "f1_gate",
+    "f1_altar",
+    "f2_landing",
+    "f2_court",
+    "f2_encounter",
+    "f3_approach",
+    "f3_fight"
+  ],
+  "pairs": 8,
+  "overviews": [
+    "f1",
+    "f2",
+    "f3"
+  ],
+  "crops": [
+    "f1_spawn",
+    "f1_gate",
+    "f2_court",
+    "f3_fight"
+  ],
+  "evidence_kind": {
+    "images": "native Godot 4.7 frames, 1280x720, production AppRoot -> AppFlow campaign boot",
+    "crops": "integer nearest-neighbour crops of those native frames",
+    "comparisons": "native frames plus the two owner-approved gold references and the rejected baseline",
+    "preview": "PIL composition previews: NOT gameplay evidence, never present these as frames"
+  }
+}

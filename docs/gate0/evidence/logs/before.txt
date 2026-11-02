@@ -1,0 +1,15 @@
+Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
+
+GATE0 LEVEL: res://data/levels/chapter_1_level_3.json sha256=5ea50e9cf37791a6283bfd9a58bd634ec8aa144e9602c5b9f40f0b4600555f54
+GATE0 CAPTURE: res://.artifacts/gate0/before_spawn.png (1280x720) at (280.0, 216.0)
+GATE0 WALK: entry  (280, 216) -> (215, 202)  66 px over 5 cells in 49 frames
+GATE0 CAPTURE: res://.artifacts/gate0/before_entry.png (1280x720) at (215.2491, 201.5247)
+GATE0 WALK: destination  (215, 202) -> (358, 184)  144 px over 10 cells in 95 frames
+GATE0 CAPTURE: res://.artifacts/gate0/before_destination.png (1280x720) at (358.1265, 184.4514)
+GATE0 WALK: combat_space  (358, 184) -> (550, 216)  195 px over 14 cells in 165 frames
+GATE0 CAPTURE: res://.artifacts/gate0/before_combat_space.png (1280x720) at (550.2932, 215.9048)
+GATE0 COLLISION: Knight at (550.2932, 215.9048) is clear of every wall and prop
+GATE0 CAPTURE TEST PASSED: 4 frames (before)

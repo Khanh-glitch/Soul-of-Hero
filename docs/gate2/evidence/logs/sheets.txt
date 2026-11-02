@@ -1,0 +1,1 @@
+GATE2 EVIDENCE: 10 sheets from native 1280x720 frames (6 before/after pairs, 4 labelled 3x crops)

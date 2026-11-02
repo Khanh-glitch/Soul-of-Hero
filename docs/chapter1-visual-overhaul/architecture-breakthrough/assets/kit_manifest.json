@@ -1,0 +1,171 @@
+{
+  "schema": "chapter1_architecture_sources/1",
+  "note": "Every asset here is generated from source; this manifest pins the generators and the produced bytes so a reviewer can regenerate and compare.",
+  "generators": [
+    "tools/level5/art_crucible.py",
+    "tools/level5/architecture.py",
+    "game/levels/presentation/crucible_art.gd"
+  ],
+  "outputs": [
+    {
+      "path": "assets/environment/chapter1/crucible/crucible_tiles.png",
+      "sha256": "95135a46ce0fd68e358897fa367644f6bcf0a83527779322882bbbaf1a134ad7",
+      "bytes": 3457
+    },
+    {
+      "path": "assets/environment/chapter1/crucible/crucible_tiles.json",
+      "sha256": "f3742898ec44d189f35a70260a036cfe00f541497ee7e2628f7d682edb06a3d5",
+      "bytes": 2368
+    },
+    {
+      "path": "assets/environment/chapter1/crucible/crucible_props.png",
+      "sha256": "2fc944ed65a141ac9033e374ff553efc43193c5fecddd8cd117b776d54aedbe5",
+      "bytes": 42722
+    },
+    {
+      "path": "assets/environment/chapter1/crucible/crucible_props.json",
+      "sha256": "98db656ebd0d564e665ef6ddee4540b31e1498de24ccf3e9c1d01d73c87dd9ee",
+      "bytes": 2018
+    },
+    {
+      "path": "assets/environment/chapter1/crucible/light_radial.png",
+      "sha256": "1514cd23d0a5633276ebab6c12419a5e149183bb6465d49ce98c40c8fc659c18",
+      "bytes": 11574
+    },
+    {
+      "path": "assets/environment/chapter1/crucible/sheet_preview.png",
+      "sha256": "6726ad548afbdc64879ea6c1fe692ad9c8696d70ad52b5a3cd01be29a7e9fcd8",
+      "bytes": 58985
+    },
+    {
+      "path": "data/levels/chapter_1_level_5_architecture.json",
+      "sha256": "928bdfe5edaed4dab5d4951cd07d7210375d16889d1118491bc345e7537aedda",
+      "bytes": 90392
+    }
+  ],
+  "kit": {
+    "tiles": [
+      "bedrock_a",
+      "bedrock_b",
+      "floor_a",
+      "floor_aisle_h",
+      "floor_aisle_v",
+      "floor_b",
+      "floor_broken",
+      "floor_c",
+      "floor_channel_end",
+      "floor_channel_h",
+      "floor_channel_v",
+      "floor_channel_x",
+      "floor_d",
+      "floor_grate",
+      "floor_worn",
+      "shadow_edge",
+      "stain_a",
+      "stain_b",
+      "stain_c",
+      "wall_cap",
+      "wall_cornice",
+      "wall_dado_a",
+      "wall_dado_b",
+      "wall_field_a",
+      "wall_field_b",
+      "wall_pier",
+      "wall_plinth"
+    ],
+    "props": {
+      "altar": [
+        64,
+        48
+      ],
+      "altar_dry": [
+        64,
+        48
+      ],
+      "apparatus": [
+        132,
+        124
+      ],
+      "arch_doorway": [
+        88,
+        112
+      ],
+      "arch_monumental": [
+        112,
+        168
+      ],
+      "arch_wide": [
+        208,
+        168
+      ],
+      "banner": [
+        30,
+        62
+      ],
+      "brazier": [
+        36,
+        52
+      ],
+      "brazier_broken": [
+        36,
+        38
+      ],
+      "cage": [
+        40,
+        88
+      ],
+      "chain_long": [
+        16,
+        96
+      ],
+      "chain_short": [
+        16,
+        56
+      ],
+      "column": [
+        36,
+        80
+      ],
+      "column_broken": [
+        36,
+        56
+      ],
+      "crucible": [
+        200,
+        156
+      ],
+      "emblem": [
+        48,
+        48
+      ],
+      "rubble_column": [
+        56,
+        34
+      ],
+      "rubble_large": [
+        48,
+        30
+      ],
+      "rubble_small": [
+        32,
+        22
+      ],
+      "skulls": [
+        32,
+        22
+      ],
+      "slab": [
+        56,
+        48
+      ],
+      "stand": [
+        40,
+        58
+      ],
+      "torch": [
+        20,
+        36
+      ]
+    }
+  }
+}

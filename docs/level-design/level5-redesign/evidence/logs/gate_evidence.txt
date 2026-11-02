@@ -1,0 +1,8 @@
+grep: .artifacts/level5/capture_before.log: No such file or directory
+MISSING completed before pass
+grep: .artifacts/level5/capture_after.log: No such file or directory
+MISSING completed after pass
+CHECKED twelve native frames (6 after + 6 before), 6 pairs, 6 4x crops,
+comparison sheet and both route traces, plus a completed capture pass
+for each tag.
+EVIDENCE GATE FAILED (rc=1)

@@ -1,0 +1,62 @@
+# 2026-10-29 Parallel Agent Dispatch / Scope & Safety Index
+
+**Source-of-truth registration of parallel work orders.** This file is a dispatch checkpoint created while A0/A2 was actively implementing SURV-020 in [Draft PR #11](https://github.com/Khanh-glitch/Soul-of-Hero/pull/11). It intentionally **does not modify** shared `STATE.json` or `WORKLOG.md` to avoid creating cherry-pick/merge conflicts with an actively running agent who owns those files. Instead, each task has (a) a dedicated issue, (b) an independent task branch with its **full work order**, (c) this index, and (d) Google Docs live journal/tab 09. At the actual integration checkpoint, A0 reconciles task state into `STATE.json`/ `WORKLOG.md` after rebasing/merging. This is an explicit temporary coordination boundary, not a claim that Git and Docs automatically sync.
+
+## What is actually happening?
+- **SURV-010:** Verified native (125 checks / 12 test cases at [40845406213](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40845406213)); merged via PR #10 `2709b9f6bd0d1cc7a5b242e617184ddab0431470`.
+- **SURV-020:** A0/A2 actively working per user, confirmed Draft PR #11. Initial code makes chest destruction safer and sweep repeat transactions reproducible; **no roofed room/bed/respawn/native SURV-020 PASS claimed**.
+- **A1/A3/A4/A6/A7/A8:** Independent GitHub issues and pinned task branches prepared. **READY_TO_START, NOT RUNNING;** no agent has yet been launched by creating these GitHub records, and no new gameplay proof is claimed.
+- **A5 POI/AI:** Can start evidence-driven content and access modeling now but defer runtime integration until A1 world POI identities and A3 key/energy item contracts are settled; do not block other six streams.
+
+## Ready-to-start tasks and isolation contracts
+
+| Agent | Issue | Prepared branch / work order | CT and deliverable | Forbidden overlap |
+| --- | --- | --- | --- | --- |
+| A1 World | [#12](https://github.com/Khanh-glitch/Soul-of-Hero/issues/12) | [SURV-050A](https://github.com/Khanh-glitch/Soul-of-Hero/blob/feature/surv-a1-world-050a/docs/survival/tasks/SURV-050A_A1_WORK_ORDER.md) | CT-01/02/06 complete continent masterplan + geography causal source/POI/route graph and 10 dungeon positions | Production overworld scene/controller and A2 build layer |
+| A3 Economy | [#13](https://github.com/Khanh-glitch/Soul-of-Hero/issues/13) | [SURV-030A](https://github.com/Khanh-glitch/Soul-of-Hero/blob/feature/surv-a3-economy-030a/docs/survival/tasks/SURV-030A_A3_WORK_ORDER.md) | CT-03/04/05/06 typed item, recipe, station, research and refinery economic graph, validation fixtures | SaveService and current survival catalog mutation |
+| A4 Gold/Core | [#14](https://github.com/Khanh-glitch/Soul-of-Hero/issues/14) | [SURV-040A](https://github.com/Khanh-glitch/Soul-of-Hero/blob/feature/surv-a4-core-gold-040a/docs/survival/tasks/SURV-040A_A4_WORK_ORDER.md) | CT-10 actual source/parity audit and physical Core item/usage/cast contract; exact FX source proof | Existing Hero/Gold/skill branches and unverified Gold ports |
+| A6 UX/Pixel | [#15](https://github.com/Khanh-glitch/Soul-of-Hero/issues/15) | [SURV-UX-010A](https://github.com/Khanh-glitch/Soul-of-Hero/blob/feature/surv-a6-ux-010a/docs/survival/tasks/SURV-UX-010A_A6_WORK_ORDER.md) | CT-07/03/04/10 interactive UI components and native 2K/4K readability proof | A2 build overlay/strip and existing Hero HUD |
+| A7 Balance/QA | [#16](https://github.com/Khanh-glitch/Soul-of-Hero/issues/16) | [SURV-060A](https://github.com/Khanh-glitch/Soul-of-Hero/blob/feature/surv-a7-balance-060a/docs/survival/tasks/SURV-060A_A7_WORK_ORDER.md) | CT-03..12 real catalog/route/recipe invariant harness and 14-day replay quality simulator | Live SaveService/agent tests; source numbers from different epochs |
+| A8 Reuse/license | [#17](https://github.com/Khanh-glitch/Soul-of-Hero/issues/17) | [SURV-RSCH-010A](https://github.com/Khanh-glitch/Soul-of-Hero/blob/feature/surv-a8-reuse-audit-010a/docs/survival/tasks/SURV-RSCH-010A_A8_WORK_ORDER.md) | Continuous repository discovery + exact SHA/code and art license reuse matrix | No source/asset import without license and integration approval |
+
+All six task branches were forked from the same verified, SURV-010-merged, additive-documentation baseline `e5e0fc3798506484080db92b57fdcb167facc7f2`; subsequent integration commits must be rebased/compared, never blindly overwritten.
+
+## Source recall and source-review fidelity
+This is **not** an assistant's memory claim. On dispatch, the live source was fetched/read again: the original user Atlas contains 44 numbered subsystem sections (SYS-02..45), 21 POI archetypes, 31 DEP chains, 12 journeys, 40 unresolved historic measurements and 28 references, with H1 2019/H2 late-2019/H3 2020 separated from 2021–2026 later reference. The exact-byte archived original is `docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md` SHA256 `b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157`. A previous agent/assistant usually read STATE/WORKLOG/CI rather than rereading all original 1355 lines at every handoff: this is a known failure mode. Read relevant full sections at each design/acceptance gate and the entire source when scoping a broad new system.
+User-locked design: near-complete 2019–2020 survival behavior fused with real top-down SOH; continuous world with geographically causal material placement; 10 Chapter 1 dungeon buildings in starter quarter; real modular shelters, storage, production, research and layered environmental/key/power POIs; physical finite-use Skill Core plus permanent knowledge, exact Gold VFX including enemy and terrain effects; long-term persistent home and optional repeat expeditions, without forced offline wipe/PvP; deep enough that ~14-day journey leaves major goals, with extraordinary early rare Core reward; user-authorized binary F0–F5 gate decisions; **ongoing** source/repo research, not one-time.
+
+## Dispatch vs runtime truth
+An issue/work order/branch means assignment is **READY**, not running; mark IN_PROGRESS only when an agent reports actual session work or commits, and VERIFIED only after source/game tests & screenshot evidence. If no agent orchestration tool is available, the user launches independent sessions and supplies the single-role issue URL; cloud browser/workflow is not automatically invoked from an issue. A0/A2 continues without pausing. Check PR #11 and integration SHA at each checkpoint; issue #9 and Google Docs tab 04 are cross-agent record.
+
+
+## 2026-10-29 — Individually revised full prompts and mandatory adversarial review
+
+The user reiterated **deep source/code inspection is required for acceptance**: never read an agent report, count green tests, and declare full product PASS without inspecting implementation methods, test oracles, native screenshots, real interactions and cross-system value. Canonical independent review policy: [INDEPENDENT_DEEP_REVIEW_PROTOCOL.md](INDEPENDENT_DEEP_REVIEW_PROTOCOL.md), with layers R0 source requirements, R1 diff/code dependency forensics, R2 adversarial test oracle, R3 actual native/visual truth, R4 systemic product experience/14-day long-run, R5 separate binary gate verdicts. SURV-010 125 native checks remain a scoped technical PASS, NOT certification of the finished survival game.
+
+Six **fully separate, expanded** prompts were replaced on each individual agent task branch:
+- **A1 / issue #12 / high-thinking slow-priority:** `feature/surv-a1-world-050a:docs/survival/tasks/SURV-050A_A1_WORK_ORDER.md`. Full continent causal geography, economy/POI topology and long-run exploration. Highest long-duration conceptual reasoning investment; commit checkpoints across explicitly resumed sessions.
+- **A3 / issue #13:** `feature/surv-a3-economy-030a:docs/survival/tasks/SURV-030A_A3_WORK_ORDER.md`. Real source-linked crafting/research/resource economy graph, deep tests against loops and current SaveService.
+- **A4 / issue #14 / high-thinking parity-priority:** `feature/surv-a4-core-gold-040a:docs/survival/tasks/SURV-040A_A4_WORK_ORDER.md`. Exact original Gold source identity and native trace parity, physical Core limited use, full on-enemy/world cues; don't invent VFX.
+- **A6 / issue #15:** `feature/surv-a6-ux-010a:docs/survival/tasks/SURV-UX-010A_A6_WORK_ORDER.md`. Native interactive pixel UX, readability, Codecs and build/crafting/player feedback; do not touch A2 UI branch.
+- **A7 / issue #16 / analytical deep review:** `feature/surv-a7-balance-060a:docs/survival/tasks/SURV-060A_A7_WORK_ORDER.md`. Independent real-code QA and economic/14-day pacing; label unrun empirical gates instead of certifying made-up playtime.
+- **A8 / issue #17:** `feature/surv-a8-reuse-audit-010a:docs/survival/tasks/SURV-RSCH-010A_A8_WORK_ORDER.md`. Ongoing feature-driven repository search, exact SHAs, code vs art licensing, import fit and reuse decisions.
+
+Google Docs tab **10 · PROMPT TỪNG AGENT & REVIEW SÂU** contains the *full text* of these six work orders plus the detailed review protocol. Tab 04 remains the LIVE per-commit record. These prompt rewrites **do not launch agent sessions**. A1 is ideal for a powerful reasoning model that is used across token-reset sessions with Git checkpoints; A4 is also a difficult source-parity task. They need not rush; avoid claiming invisible background execution.
+
+
+## 2026-10-29 CAPACITY CORRECTION — SIX TOTAL AI SLOTS, NOT SIX MORE
+**SUPERSEDES prior suggestion that A1 should use the scarce fast-token-expiring premium model, and supersedes any interpretation that A9 is an additional agent.** The user has approximately 6 AI agents/models TOTAL, including **A0 already running SURV-020** and ONE scarce high-reasoning model. Six is a resource ceiling, not six sessions already running. See [SLOW_LANE_SPECIALIST_POLICY.md](SLOW_LANE_SPECIALIST_POLICY.md) for definitive allocation:
+1. A0 Integration + A2 Construction (actively running).
+2. A1 World + A5 POI planning (regular-throughput).
+3. A3 Economy + balance automation/A7 support (regular-throughput).
+4. A4 Gold/Skill Core (regular-throughput).
+5. A6 UI/UX + asset/reuse audit/A8 support (regular-throughput).
+6. S6 scarce premium model: **nonblocking optional mini-commissions in independent visual/technical art R&D**; not a mandatory World/Core/production deliverable. Former "A9" is a legacy label for **this sixth slot, not a seventh bot**.
+Issues #12, #13, #14, #15 are direct launch packets for slots 2–5. Issues #16/#17 remain valid QA/research packets **distributed to existing slots**, not extra A7/A8 bot sessions. The special slow slot has NOT been issued a prompt, branch or job yet. User said none of the new prompts were sent; A0 remains the only reported active agent. Any prompt line identifying A1 as the scarce premium slow model is outdated and replaced by this correction.
+
+
+## SUPERSEDING STAFFING UPDATE — ACTIVE A4 GOLD IMPORT (2026-10-29)
+Read the latest [ACTIVE_SIX_AGENT_DISPATCH_20261029.md](ACTIVE_SIX_AGENT_DISPATCH_20261029.md) **before** assigning agents. The prior guidance saying A4 is available, six independent Issues #12–#17 can be launched, or scarce S6 should draw generic visual art was based on incomplete staffing information and is OVERRIDDEN.
+Two actual existing agents: A0 SURV-020, **A4 pre-existing source-faithful Gold/VFX library port**. Three normal-throughput agents available: A1 World #12, A3 Economy/physical Core economy #13, A6 UI/asset audit #15. Last scarce slot: **S6/A5-DEEP issue #18**, one optional multi-layer POI design micro-stage at a time with no critical-path dependency. Issues #14/#16/#17 remain work packets/backlogs, not extra separate AI. User has not yet sent new prompts.
+The special task is grounded in source Atlas POI-05/08/09/10, DEP-03/04/05/31 and JOURNEY-11/12; its hard puzzle/key/power/hazard/route/loot graph requires superior design judgment but is explicitly optional. Cocos-side live agent progress is user-reported and not verified by current Godot branch snapshots; do not overclaim ready skills.
+Google Docs **tab 11** will contain only the current four prompts and the corrected staff record; tab 10 is an archived prior plan.

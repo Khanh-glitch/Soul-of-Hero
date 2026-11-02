@@ -1,0 +1,142 @@
+name: Chapter 1 — audit sweep (native Godot 4.7, read-only)
+
+# Photographs every level of Chapter 1 on an overlapping camera grid, then
+# stitches the frames back into one 1:1 mosaic per level. It exists because the
+# review harness only ever sees five named stations, and an audit has to see the
+# whole map.
+#
+# This workflow changes nothing in the game: it runs the same production AppRoot,
+# hides actors and HUD, moves the player camera, and publishes pictures.
+#
+# It writes to docs/chapter1-visual-recovery/after/, not to docs/chapter1-audit/.
+# The audit directory holds the BEFORE evidence for the visual recovery pass and is
+# frozen at e613242: a BEFORE frame that gets overwritten by a later build is no
+# longer evidence of anything. The two sets stay in separate directories on purpose,
+# and the AFTER set is labelled as such wherever it is used.
+on:
+  push:
+    branches:
+      - arena/6e89e68d-soul-of-hero
+    paths:
+      - "tools/captures/chapter1_audit_sweep.*"
+      - "tools/chapter1_audit/*.py"
+      - ".github/workflows/chapter1-visual-audit.yml"
+      # The evidence has to be of the code that is on the branch. A capture that
+      # only re-runs when the sweep script changes can sit for a week while the
+      # presentation layer, the level documents and the kits all move underneath it,
+      # and then the mosaics describe a build nobody can reproduce.
+      - "game/levels/presentation/**"
+      - "data/levels/**"
+      - "data/environment/**"
+      - "assets/environment/chapter1/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+concurrency:
+  group: chapter1-visual-audit
+  cancel-in-progress: true
+
+jobs:
+  sweep:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+
+      - name: Import the project
+        run: |
+          set -euo pipefail
+          mkdir -p .artifacts/audit
+          timeout 900s godot --headless --audio-driver Dummy --editor --path . --import --quit \
+            2>&1 | tee .artifacts/audit/import.log
+
+      - name: Install Xvfb and Mesa
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install --yes xvfb libgl1-mesa-dri fonts-dejavu-core >/dev/null
+
+      - name: Sweep every level
+        continue-on-error: true
+        run: |
+          set +e
+          while read -r slot level_id; do
+            export SOUL_OF_HERO_SAVE_PATH="user://c1_audit_${level_id}_$GITHUB_RUN_ID.json"
+            xvfb-run -a -s "-screen 0 1280x720x24" env LIBGL_ALWAYS_SOFTWARE=1 \
+              timeout 900s godot --path . --audio-driver Dummy \
+              --rendering-method gl_compatibility --rendering-driver opengl3 \
+              --resolution 1280x720 res://tools/captures/chapter1_audit_sweep.tscn \
+              -- --slot="$slot" \
+              --out-dir="res://.artifacts/audit/level_${slot}" \
+              > ".artifacts/audit/${level_id}.log" 2>&1
+            grep -hE "CHAPTER1 AUDIT" ".artifacts/audit/${level_id}.log" | tail -6
+          done <<'LEVELS'
+          1 chapter_1_level_1
+          2 chapter_1_level_2
+          3 chapter_1_level_3
+          4 chapter_1_level_4
+          5 chapter_1_level_5
+          6 chapter_1_level_6
+          7 chapter_1_level_7
+          8 chapter_1_level_8
+          9 chapter_1_level_9
+          10 chapter_1_level_10
+          LEVELS
+
+      - name: Stitch the mosaics
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet pillow
+          python3 tools/chapter1_audit/audit_sheets.py --artifacts .artifacts/audit \
+            --out docs/chapter1-visual-recovery/after
+
+      - name: Publish the mosaics
+        if: always()
+        run: |
+          set -eo pipefail
+          mkdir -p docs/chapter1-visual-recovery/after/logs
+          shopt -s nullglob
+          for logfile in .artifacts/audit/*.log; do
+            cp "$logfile" "docs/chapter1-visual-recovery/after/logs/$(basename "$logfile" .log).txt"
+          done
+          shopt -u nullglob
+          git config user.name "chapter1-art-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add docs/chapter1-visual-recovery/after
+          if git diff --cached --quiet; then
+            echo "audit sweep: nothing new to publish"
+            exit 0
+          fi
+          git commit -m "ci(chapter1): publish audit sweep mosaics [skip ci]"
+          # The branch can move while the sweep runs - a push that merely edits a
+          # doc lands without triggering this workflow, but it still makes this
+          # commit a non-fast-forward. Rebasing used to be the fix, and it is not
+          # one: the visual overhaul job publishes into the same docs tree, so the
+          # rebase conflicts, the abort leaves this commit behind the branch, and
+          # the push fails three times in a row. The mosaics are artefacts, not
+          # history - so the recovery takes the new base and rebuilds the commit on
+          # top of it from the files already generated on disk.
+          for attempt in 1 2 3; do
+            if git push origin "HEAD:refs/heads/${GITHUB_REF_NAME}"; then
+              echo "audit sweep: published on attempt ${attempt}"
+              exit 0
+            fi
+            rm -rf /tmp/published-after
+            cp -a docs/chapter1-visual-recovery/after /tmp/published-after
+            git fetch --quiet origin "${GITHUB_REF_NAME}"
+            git reset --hard "origin/${GITHUB_REF_NAME}"
+            rm -rf docs/chapter1-visual-recovery/after
+            cp -a /tmp/published-after docs/chapter1-visual-recovery/after
+            git add docs/chapter1-visual-recovery/after
+            git commit -m "ci(chapter1): publish audit sweep mosaics [skip ci]"
+            sleep 10
+          done
+          echo "audit sweep: could not publish the mosaics" >&2
+          exit 1

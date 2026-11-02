@@ -1,0 +1,76 @@
+name: GP-B gameplay — physical station output custody (real player, two processes)
+
+on:
+  push:
+    branches: [integration/gameplay-gpb-a3-20261101]
+    paths:
+      - game/survival/economy/economy_session.gd
+      - game/survival/economy/economy_panel.gd
+      - tests/survival_normal_connected_journey_test.gd
+      - .github/workflows/gpb-physical-job-custody.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  physical-job-custody:
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    env:
+      GODOT_SILENCE_ROOT_WARNING: "1"
+      LIBGL_ALWAYS_SOFTWARE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Strict import — real GP-B economy and retained Annex
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          timeout --signal=TERM --kill-after=10s 300s godot --headless --path . --import > artifacts/import.log 2>&1
+          tail -65 artifacts/import.log
+          ! grep -Ea 'SCRIPT ERROR|Parse Error|Compilation failed' artifacts/import.log
+      - name: Play real gather→furnace→fuel→paid smelt; depart (process 1)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/user_data
+          timeout --signal=TERM --kill-after=15s 1500s xvfb-run -a -s "-screen 0 1600x900x24" \
+            bash tools/ci/godot_isolated.sh --path . --windowed --resolution 1280x720 \
+            --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
+            --user-data-dir "$PWD/artifacts/user_data" \
+            --script res://tests/survival_normal_connected_journey_test.gd -- --keep-connected \
+            > artifacts/play.log 2>&1 || { tail -125 artifacts/play.log; exit 1; }
+          tail -70 artifacts/play.log
+          grep -q 'A0 CONNECTED SURVIVAL JOURNEY PASSED' artifacts/play.log
+          ! grep -Ea 'SCRIPT ERROR|Parse Error|  FAIL  |A0_CONNECTED_HALT' artifacts/play.log
+      - name: Real closed-world elapsed time
+        shell: bash
+        run: sleep 25
+      - name: Restart exact save; walk away, remote collect REFUSED, return and collect once
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout --signal=TERM --kill-after=15s 1500s xvfb-run -a -s "-screen 0 1600x900x24" \
+            bash tools/ci/godot_isolated.sh --path . --windowed --resolution 1280x720 \
+            --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
+            --user-data-dir "$PWD/artifacts/user_data" \
+            --script res://tests/survival_normal_connected_journey_test.gd -- --verify-connected --keep-connected \
+            > artifacts/reopen.log 2>&1 || { tail -125 artifacts/reopen.log; exit 1; }
+          tail -100 artifacts/reopen.log
+          grep -q 'A0 CONNECTED SURVIVAL JOURNEY PASSED' artifacts/reopen.log
+          grep -q 'stage=verify_no_remote_pickup' artifacts/reopen.log
+          ! grep -Ea 'SCRIPT ERROR|Parse Error|  FAIL  |A0_CONNECTED_HALT' artifacts/reopen.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gpb-physical-job-custody
+          path: |
+            artifacts/*.log
+            artifacts/user_data/**/capture_*.png
+          if-no-files-found: warn

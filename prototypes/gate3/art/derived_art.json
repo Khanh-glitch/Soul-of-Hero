@@ -1,0 +1,73 @@
+{
+  "note": "Prototype-local derived hazard frames. Only the flat violet plate is cleared to transparency; every spike pixel is the production pixel. The production atlas is not modified.",
+  "frames": [
+    {
+      "derived": "prototypes/gate3/art/peaks_1.png",
+      "source": "assets/environment/dungeon/items/spikes/peaks_1.png",
+      "source_sha256": "fb533481b3f69266f93c3b9af5ff9f5e61503ce4b2cbb3bb9e5468d63bc1ab7f",
+      "derived_sha256": "986d7035109093ad8ae3203c68943bba5e2c3f61a954a65c7bf1353a163d6861",
+      "plate_rgb": [
+        61,
+        37,
+        59
+      ],
+      "plate_pixels_replaced": 151,
+      "violet_shadow_pixels_neutralised": 9,
+      "size": [
+        16,
+        16
+      ]
+    },
+    {
+      "derived": "prototypes/gate3/art/peaks_2.png",
+      "source": "assets/environment/dungeon/items/spikes/peaks_2.png",
+      "source_sha256": "266e18aef1c348b806f40e34d555f2fcf9488b395b62054b61cbb2a94c306f13",
+      "derived_sha256": "a03d0c46a975752ca19d8f4d9b08dc82eb123dae788fbe3dce79a5c8f1c5ce6d",
+      "plate_rgb": [
+        61,
+        37,
+        59
+      ],
+      "plate_pixels_replaced": 175,
+      "violet_shadow_pixels_neutralised": 9,
+      "size": [
+        16,
+        16
+      ]
+    },
+    {
+      "derived": "prototypes/gate3/art/peaks_3.png",
+      "source": "assets/environment/dungeon/items/spikes/peaks_3.png",
+      "source_sha256": "5c17d29182b3cb0a3ebe6be953c14c6796022c678f880fef767be89dfc17f338",
+      "derived_sha256": "c701a386b535076355ad96e9b6d9fbb6840180278feb8a222c576fc64322d193",
+      "plate_rgb": [
+        61,
+        37,
+        59
+      ],
+      "plate_pixels_replaced": 208,
+      "violet_shadow_pixels_neutralised": 12,
+      "size": [
+        16,
+        16
+      ]
+    },
+    {
+      "derived": "prototypes/gate3/art/peaks_4.png",
+      "source": "assets/environment/dungeon/items/spikes/peaks_4.png",
+      "source_sha256": "b2552ae814b6a57588f29f9b4a7611d03de4720273b36c1a424a71f3ee759ee5",
+      "derived_sha256": "edde5247c66a5e3d67fb01f55ca81ec78bc66b7538815dde85d7b0fa8a8e94b3",
+      "plate_rgb": [
+        61,
+        37,
+        59
+      ],
+      "plate_pixels_replaced": 199,
+      "violet_shadow_pixels_neutralised": 9,
+      "size": [
+        16,
+        16
+      ]
+    }
+  ]
+}

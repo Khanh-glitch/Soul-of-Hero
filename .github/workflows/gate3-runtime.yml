@@ -1,0 +1,292 @@
+name: Gate 3 — Architectural rebuild (native Godot 4.7)
+on:
+  push:
+    branches:
+      - arena/6e89e68d-soul-of-hero
+    paths:
+      - "tools/gate3/**"
+      - "prototypes/gate3/**"
+      - "docs/gate3/**"
+      - ".github/workflows/gate3-runtime.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: gate3-native
+  cancel-in-progress: true
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 80
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The provenance check reads Candidate B's files straight out of git
+          # history, so a shallow clone is not enough.
+          fetch-depth: 0
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Derive the Gate 3 architecture and validate entities, props and routes
+        run: |
+          set -euo pipefail
+          mkdir -p .artifacts/gate3 docs/gate3/evidence/logs
+          python3 tools/gate3/author_gate3.py | tee .artifacts/gate3/author.log
+          python3 tools/gate3/author_gate3.py --check | tee .artifacts/gate3/author_check.log
+          python3 tools/gate3/author_gate3.py --stats | tee .artifacts/gate3/stats.log
+          python3 tools/gate3/write_source_manifest.py --check | tee .artifacts/gate3/manifest.log
+          # The hazard frames this prototype derives from production art must be
+          # reproducible from their pinned sources, and the sources must be untouched.
+          # Pillow is a build dependency of the authoring tool, not of the game.
+          python3 -m pip install --quiet pillow
+          python3 tools/gate3/make_derived_art.py --check | tee .artifacts/gate3/derived_art.log
+          # The change manifest must be current, and it refuses to be written at all if
+          # the 79 entities are not identical to Candidate A's.
+          python3 tools/gate3/write_change_manifest.py --check | tee .artifacts/gate3/change_manifest.log
+          # Floor-by-floor reachability: every entity on all three storeys, and the
+          # south ambulatory both ways, on the authored document.
+          python3 tools/gate3/worldmodel.py audit --level prototypes/gate3/level_data/chapter_1_level_3_gate3.json \
+            | tee .artifacts/gate3/audit_gate3.log
+          python3 tools/gate3/worldmodel.py audit --level prototypes/gate0/level_data/chapter_1_level_3_a.json \
+            | tee .artifacts/gate3/audit_base.log || true
+          grep -q "result           OK" .artifacts/gate3/audit_gate3.log
+          # The generated documents must already be committed byte-for-byte.
+          git diff --exit-code -- prototypes/gate3/level_data/chapter_1_level_3_gate3.json prototypes/gate3/visual_placement.json
+          # Candidate A's pinned level, untouched, for the BEFORE run.
+          cp prototypes/gate0/level_data/chapter_1_level_3_a.json data/levels/chapter_1_level_3.json
+          sha256sum data/levels/chapter_1_level_3.json | tee .artifacts/gate3/base_pin.log
+          test -f prototypes/gate3/visual_placement.json
+      - name: Import Godot 4.7
+        run: |
+          set -euo pipefail
+          godot --version | tee .artifacts/gate3/version.log
+          timeout 300s godot --headless --audio-driver Dummy --editor --path . --import --quit 2>&1 | tee .artifacts/gate3/import.log
+          # Compile-check the whole Gate 3 scene graph before spending fifteen minutes
+          # on a capture: a script that fails to load leaves the scene empty, and under
+          # Xvfb that only surfaces as a timeout, which hides the one line that says why.
+          timeout 180s godot --headless --audio-driver Dummy --path . \
+            res://prototypes/gate3/capture_gate3.tscn -- --check \
+            2>&1 | tee .artifacts/gate3/parsecheck.log
+          grep -q "GATE3 SCRIPT CHECK OK" .artifacts/gate3/parsecheck.log
+      - name: Install Xvfb Mesa
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install --yes xvfb libgl1-mesa-dri >/dev/null
+      - name: Capture Candidate A Level 3 baseline with HUD
+        run: |
+          set -euo pipefail
+          export SOUL_OF_HERO_SAVE_PATH="user://g3_before_$GITHUB_RUN_ID.json"
+          xvfb-run -a -s "-screen 0 1280x720x24" env LIBGL_ALWAYS_SOFTWARE=1 timeout 1500s godot --path . \
+            --audio-driver Dummy --rendering-method gl_compatibility --rendering-driver opengl3 \
+            --resolution 1280x720 res://prototypes/gate3/capture_gate3.tscn \
+            2>&1 | tee .artifacts/gate3/before.log || true
+          grep -q "GATE3 CAPTURE TEST PASSED" .artifacts/gate3/before.log
+          # Godot's own shutdown notices are not script errors. `4 resources still in use
+          # at exit` is the engine reporting a leak it already warns about and is checked
+          # separately below; an actual `ERROR:` from the game still fails the step.
+          if grep -E "^ERROR:|^SCRIPT ERROR:" .artifacts/gate3/before.log \
+              | grep -vE "resources still in use at exit|ObjectDB instances were leaked"; then exit 1; fi
+      - name: Capture the Gate 3 rebuild with live Knight collision and HUD
+        run: |
+          set -euo pipefail
+          cp prototypes/gate3/level_data/chapter_1_level_3_gate3.json data/levels/chapter_1_level_3.json
+          sha256sum data/levels/chapter_1_level_3.json | tee .artifacts/gate3/gate3_pin.log
+          cmp data/levels/chapter_1_level_3.json prototypes/gate3/level_data/chapter_1_level_3_gate3.json
+          export SOUL_OF_HERO_SAVE_PATH="user://g3_after_$GITHUB_RUN_ID.json"
+          xvfb-run -a -s "-screen 0 1280x720x24" env LIBGL_ALWAYS_SOFTWARE=1 timeout 1500s godot --path . \
+            --audio-driver Dummy --rendering-method gl_compatibility --rendering-driver opengl3 \
+            --resolution 1280x720 res://prototypes/gate3/capture_gate3.tscn -- --overlay \
+            2>&1 | tee .artifacts/gate3/after.log || true
+          grep -q "GATE3 CAPTURE TEST PASSED" .artifacts/gate3/after.log
+          if grep -E "^ERROR:|^SCRIPT ERROR:" .artifacts/gate3/after.log \
+              | grep -vE "resources still in use at exit|ObjectDB instances were leaked"; then exit 1; fi
+          # Every floor-1 station must have produced a frame, not just the last one.
+          for station in spawn archive_entry landmark descent_landing cloister south_loop \
+                         combat_space return_route; do
+            test -f ".artifacts/gate3/after_$station.png"
+            test -f ".artifacts/gate3/before_$station.png" || echo "no BEFORE frame for $station"
+          done
+          # Camera evaluation frames, both framings at both resolutions.
+          for frame in cam_baseline_1280_landmark cam_archive_1280_landmark \
+                       cam_baseline_1024_landmark cam_archive_1024_landmark; do
+            test -f ".artifacts/gate3/after_$frame.png"
+          done
+      - name: Capture floors 2 and 3 through the real floor doors
+        run: |
+          set -euo pipefail
+          cp prototypes/gate3/level_data/chapter_1_level_3_gate3.json data/levels/chapter_1_level_3.json
+          # A second pass from the authored spawn: the floor-1 tour above spends much of
+          # the Knight's health before the descent, and the lower storeys are what this
+          # pass is for. Nothing is teleported; the descents are the level's own doors.
+          #
+          # This is a damage race the Knight does not always win -- nine or ten fights at
+          # 100-300 health each against 1100, with no working respawn in the shipped level
+          # -- so the *process* is retried, up to three times, the way a player reloads.
+          # Each attempt keeps its own log; every death is in it with its position, and
+          # the successful attempt is copied to deep.log so the evidence always names the
+          # run that produced it.
+          attempt=0
+          winner=0
+          ok=0
+          for attempt in 1 2 3; do
+            export SOUL_OF_HERO_SAVE_PATH="user://g3_deep_${GITHUB_RUN_ID}_${attempt}.json"
+            xvfb-run -a -s "-screen 0 1280x720x24" env LIBGL_ALWAYS_SOFTWARE=1 timeout 900s godot --path . \
+              --audio-driver Dummy --rendering-method gl_compatibility --rendering-driver opengl3 \
+              --resolution 1280x720 res://prototypes/gate3/capture_gate3.tscn -- --overlay --deep \
+              2>&1 | tee ".artifacts/gate3/deep_attempt_${attempt}.log" || true
+            if grep -q "GATE3 CAPTURE TEST PASSED" ".artifacts/gate3/deep_attempt_${attempt}.log"; then
+              ok=1
+              winner=$attempt
+              break
+            fi
+            echo "GATE3 DEEP: attempt $attempt did not reach the lower storeys; see deep_attempt_${attempt}.log"
+            grep -hE "GATE3 (FAILURE|DEPTH|RETRY|DAMAGE)" ".artifacts/gate3/deep_attempt_${attempt}.log" || true
+            cp ".artifacts/gate3/deep_attempt_${attempt}.log" .artifacts/gate3/deep.log
+          done
+          if [ "$ok" = 1 ]; then
+            cp ".artifacts/gate3/deep_attempt_${winner}.log" .artifacts/gate3/deep.log
+            echo "GATE3 DEEP: completed on attempt ${winner} of 3"
+          else
+            echo "GATE3 DEEP: all three attempts ended without reaching the lower storeys"
+          fi
+          test "$ok" = 1
+          if grep -E "^ERROR:|^SCRIPT ERROR:" .artifacts/gate3/deep.log \
+              | grep -vE "resources still in use at exit|ObjectDB instances were leaked"; then exit 1; fi
+          # Floor 2 is what this pass has to deliver, and it delivers it every run. The
+          # floor 3 leg is printed by name whether it happened or not, so that a log
+          # which stops on floor 2 can never be read as if it had gone all the way down.
+          grep -q "GATE3 DEPTH: floor 2 reached" .artifacts/gate3/deep.log
+          for station in floor2_arrival floor2_stacks; do
+            test -f ".artifacts/gate3/after_$station.png"
+          done
+          # A native frame taken while a fight was happening, not a room that happens to
+          # contain an enemy: this pass fights, so the frame must exist.
+          test -f .artifacts/gate3/after_combat_load.png
+          if grep -q "GATE3 DEPTH: floor 3 reached" .artifacts/gate3/deep.log; then
+            test -f .artifacts/gate3/after_floor3_camp.png
+          else
+            echo "GATE3 DEPTH LIMIT: floor 3 was not reached in this run"
+            grep -h "GATE3 DEPTH" .artifacts/gate3/deep.log || true
+          fi
+      - name: Four headless stability descents
+        run: |
+          set -uo pipefail
+          cp prototypes/gate3/level_data/chapter_1_level_3_gate3.json data/levels/chapter_1_level_3.json
+          # Round 4, package F. Balance cannot be tested by one lucky run: the same
+          # descent is replayed four times with no rendering at all (the frames are the
+          # other passes' job), and every point of health lost is attributed to a
+          # hazard or an enemy by the harness's own ledger. A run that dies and comes
+          # back at a checkpoint is a result, not a failed step.
+          for run in 1 2 3 4; do
+            export SOUL_OF_HERO_SAVE_PATH="user://g3_stability_${GITHUB_RUN_ID}_${run}.json"
+            timeout 600s godot --headless --audio-driver Dummy --path . \
+              res://prototypes/gate3/capture_gate3.tscn -- --stability \
+              > ".artifacts/gate3/stability_run_${run}.log" 2>&1 || true
+            grep -h "GATE3 STABILITY:" ".artifacts/gate3/stability_run_${run}.log" || \
+              echo "GATE3 STABILITY: descent run ${run} produced no summary"
+          done
+          cat .artifacts/gate3/stability_run_*.log > .artifacts/gate3/stability.log
+          python3 tools/gate3/stability_report.py .artifacts/gate3/stability.log \
+            > .artifacts/gate3/stability_table.log
+          cat .artifacts/gate3/stability_table.log
+          grep -q "GATE3 STABILITY SUMMARY" .artifacts/gate3/stability_table.log
+
+      - name: Die on a floor-2 hazard and come back at the checkpoint
+        run: |
+          set -euo pipefail
+          cp prototypes/gate3/level_data/chapter_1_level_3_gate3.json data/levels/chapter_1_level_3.json
+          # Round 4, package E. In the shipped HUD the death overlay has a "HỒI SINH"
+          # button that is hidden in _ready() and connected to nothing, and nothing in
+          # the project calls KnightController.respawn(). This pass proves the round-4
+          # director supplies that missing call: the Knight activates the floor-2 flag,
+          # dies of a real hazard tick, and is placed back at the checkpoint with full
+          # health and the tree unpaused.
+          export SOUL_OF_HERO_SAVE_PATH="user://g3_respawn_${GITHUB_RUN_ID}.json"
+          xvfb-run -a -s "-screen 0 1280x720x24" env LIBGL_ALWAYS_SOFTWARE=1 timeout 900s godot --path . \
+            --audio-driver Dummy --rendering-method gl_compatibility --rendering-driver opengl3 \
+            --resolution 1280x720 res://prototypes/gate3/capture_gate3.tscn -- --respawn \
+            2>&1 | tee .artifacts/gate3/respawn.log || true
+          if grep -E "^ERROR:|^SCRIPT ERROR:" .artifacts/gate3/respawn.log \
+              | grep -vE "resources still in use at exit|ObjectDB instances were leaked"; then exit 1; fi
+          grep -q "GATE3 CAPTURE TEST PASSED" .artifacts/gate3/respawn.log
+          grep -q "GATE3 RESPAWN: floor-2 checkpoint active" .artifacts/gate3/respawn.log
+          grep -q "GATE3 RESPAWN SUMMARY" .artifacts/gate3/respawn.log
+          test -f .artifacts/gate3/after_respawn_death.png
+          test -f .artifacts/gate3/after_respawn_after.png
+
+      - name: Identify the objects that survive shutdown
+        if: always()
+        run: |
+          # Gate 2's report counted three leak notices and Gate 1's counted seven
+          # instances, and this gate has been quoting both without knowing which is
+          # which. Godot only names the leaked instances under --verbose, so this asks
+          # it, on the short script-check run rather than on a fifteen-minute capture.
+          set -uo pipefail
+          timeout 240s godot --headless --verbose --audio-driver Dummy --path . \
+            res://prototypes/gate3/capture_gate3.tscn -- --check \
+            > .artifacts/gate3/leaks_raw.log 2>&1 || true
+          {
+            echo "== leak notices in the checked-in run logs =="
+            for logfile in before after deep; do
+              notices="$(grep -c "ObjectDB instances were leaked" ".artifacts/gate3/$logfile.log" || true)"
+              instances="$(sed -n "s/.*WARNING: \([0-9][0-9]*\) ObjectDB instances were leaked.*/\1/p" \
+                ".artifacts/gate3/$logfile.log" | awk "{ total += \$1 } END { print total + 0 }")"
+              printf "%-8s notices=%s instances=%s\n" "$logfile" "$notices" "$instances"
+            done
+            echo
+            echo "== unused/leaked instances named by --verbose =="
+            grep -E "Leaked instance|ObjectDB instances were leaked|Orphan StringName|orphan" \
+              .artifacts/gate3/leaks_raw.log | head -40 || echo "(none named)"
+            echo
+            echo "== the same notice in the named run =="
+            grep -c "ObjectDB instances were leaked" .artifacts/gate3/leaks_raw.log || true
+          } | tee .artifacts/gate3/leaks.log
+          rm -f .artifacts/gate3/leaks_raw.log
+      - name: Scan the runtime logs
+        if: always()
+        run: |
+          set -uo pipefail
+          {
+            echo "== ObjectDB / leak notices =="
+            grep -hE "ObjectDB|leaked|Leak" .artifacts/gate3/*.log || echo "(none)"
+            echo
+            echo "== counts per log =="
+            for logfile in .artifacts/gate3/*.log; do
+              printf "%-28s ObjectDB=%s ERROR=%s SCRIPT_ERROR=%s WARNING=%s\n" "$(basename "$logfile")" \
+                "$(grep -c "ObjectDB" "$logfile" || true)" \
+                "$(grep -c "^ERROR:" "$logfile" || true)" \
+                "$(grep -c "^SCRIPT ERROR:" "$logfile" || true)" \
+                "$(grep -c "^WARNING:" "$logfile" || true)"
+            done
+            echo
+            echo "== gate3 route / collision / camera evidence =="
+            grep -hE "GATE3 (WALK|ROUTE|COLLISION|CAMERA|RESOLUTION|OBJECTS|FLOOR DOOR|SHADE|PROPS|MATERIAL)" \
+              .artifacts/gate3/*.log || echo "(none)"
+          } | tee .artifacts/gate3/logscan.log
+      - name: Persist native frames and logs
+        if: always()
+        run: |
+          # Deliberately forgiving: a failed capture must still publish its own
+          # logs and whatever frames it did produce, or a red run is undebuggable.
+          set -uo pipefail
+          mkdir -p docs/gate3/evidence/logs
+          shopt -s nullglob
+          for frame in .artifacts/gate3/*.png; do cp "$frame" docs/gate3/evidence/; done
+          for logfile in .artifacts/gate3/*.log; do
+            cp "$logfile" "docs/gate3/evidence/logs/$(basename "$logfile" .log).txt"
+          done
+          shopt -u nullglob
+          python3 -m pip install --quiet pillow || true
+          python3 tools/gate3/make_evidence_sheets.py \
+            > docs/gate3/evidence/logs/sheets.txt 2>&1 \
+            || echo "evidence sheets skipped: a native frame is missing" \
+               | tee -a docs/gate3/evidence/logs/sheets.txt
+          git config user.name "gate3-capture-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add docs/gate3/evidence
+          if ! git diff --cached --quiet; then
+            git commit -m "ci(gate3): publish native Godot rebuild evidence [skip ci]"
+            git push
+          fi

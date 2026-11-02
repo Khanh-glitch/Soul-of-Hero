@@ -1,0 +1,76 @@
+# Ossuary Fork (L02) - visual review
+
+- Level id: `chapter_1_level_2`
+- Map source: `data/levels/chapter_1_level_2.json`
+- Source sha256: `abff2dcd9694b791d2903f1e38fada91067a542275577879afeee493eca68a0e`
+- Status: `COMPLETE — AWAITING OWNER VISUAL REVIEW`
+- Art direction: Ossuary Fork — burial galleries, bone masonry
+
+## What the native frames show
+
+- Derived facade cells: 6424
+- Landmark lights: 1
+- Authored entities preserved: 64
+
+### Improved
+
+- The Ossuary Fork's walls are built from what the place is made of: coursed long bones with dark seams, a skull frieze set into the framed course at eye height, and plain bone coursing above it. The frieze is one band, not a stamped motif on every row.
+- A bone arch stands over the crossing the level is named for, with a lantern either side of it, and banks of skulls are built into the wall where the fork's ways meet.
+- The halls are furnished as an ossuary is: ranks of bone stacks in three kinds (a plain stack, one crowned with a skull, one with a shaft), with passages between them.
+- Charnel fires burn cold in two places and are the only cool light in the level, which gives the warm bone stone something to answer.
+- A hypostyle of long-bone shafts stands through the middle of the halls, so the widest camera frame has architecture in it rather than paving with one cabinet against a wall. The standing shafts are solid and the opened ones are not.
+- The crown of the wall is its own order - a projecting pale lintel carried on corbel tabs with a shadow under it - instead of the skull frieze repeated at the top of the storey, so a wall reads bottom-up as plinth, coursing, frieze, crown.
+- The charnel drift is dust that settles into the joints and the low corner of a slab, in runs, not single pale pixels scattered over the stone.
+
+### Still missing against the brief
+
+- The fork does not yet tell the player which way is dangerous: both branches are furnished and lit the same way, and the brief asks the environment to signal the choice.
+- The broken case is the same cabinet as the standing one, so a rank of them is still one ossuary, but the opened ones give the rank a hierarchy and mark the bays that can be crossed.
+- The plain bone coursing is close to the value of bleach, so in a wide frame the walls out-punch the props standing in front of them.
+
+### Next correction pass
+
+- Signal the risky branch with a spill, a rubble fall or a darker paving family, and leave the safe branch plain.
+- Give the hall shaft a second order - a heavier base or a different crown - so the colonnade has two ranks to count.
+- Drop the wall coursing a value so the props carry the light.
+
+## Cost of the layer
+
+- Nodes: 695 (art off) -> 975 (art on)
+- Draw calls: 72 -> 94
+- Static memory: 145.0 MiB with the layer on
+
+## Frames
+
+- `images/after_checkpoint.png`
+- `images/after_checkpoint_2.png`
+- `images/after_entry.png`
+- `images/after_exit.png`
+- `images/after_landmark.png`
+- `images/after_landmark_2.png`
+- `images/after_landmark_3.png`
+- `images/after_landmark_4.png`
+- `images/before_checkpoint.png`
+- `images/before_checkpoint_2.png`
+- `images/before_entry.png`
+- `images/before_exit.png`
+- `images/before_landmark.png`
+- `images/before_landmark_2.png`
+- `images/before_landmark_3.png`
+- `images/before_landmark_4.png`
+- `images/crop3x_entry.png`
+- `images/crop3x_exit.png`
+- `images/crop3x_landmark.png`
+- `images/pair_checkpoint.png`
+- `images/pair_checkpoint_2.png`
+- `images/pair_entry.png`
+- `images/pair_exit.png`
+- `images/pair_landmark.png`
+- `images/pair_landmark_2.png`
+- `images/pair_landmark_3.png`
+- `images/pair_landmark_4.png`
+
+Every image above is a native Godot frame from the production `AppRoot`
+campaign boot at 1280x720. `before_*` is the same map with the art layer
+disabled, so the pair isolates the layer and nothing else. Nothing in this
+folder is a plan diagram, a PIL preview or a generated image.

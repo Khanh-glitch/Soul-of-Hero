@@ -1,0 +1,40 @@
+Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
+
+GATE2 LEVEL: res://data/levels/chapter_1_level_3.json sha256=3ee945f8110b336db6365bbffcc5aef59ad65248e7d652d7f5471e74298056b5
+GATE2 CAMPAIGN ROUTE: chapter_1_level_3, real HUD and active Level 3
+GATE2 PROPS: 20 sprites (10 solid) attached to /root/Gate2NativeCapture/AppRoot/RouteHost/Game/Level/Entities
+GATE2 MATERIAL: Gate2_vault_b5  1882 cells  z=-17
+GATE2 MATERIAL: Gate2_vault_b4  595 cells  z=-16
+GATE2 MATERIAL: Gate2_vault_b3  644 cells  z=-15
+GATE2 MATERIAL: Gate2_vault_b2  1081 cells  z=-14
+GATE2 MATERIAL: Gate2_vault_b1  1414 cells  z=-13
+GATE2 MATERIAL: Gate2_floor  3363 cells  z=-8
+GATE2 MATERIAL: Gate2_water  70 cells  z=-7
+GATE2 MATERIAL: Gate2_water_edge  34 cells  z=-6
+GATE2 MATERIAL: Gate2_shadow  501 cells  z=-6
+GATE2 MATERIAL: Gate2_weather  284 cells  z=-5
+GATE2 MATERIAL: Gate2_mass  493 cells  z=0
+GATE2 MATERIAL: Gate2_wall_face  1214 cells  z=1
+GATE2 TINT: Decor -> (0.966, 0.816, 0.6708, 1.0)
+GATE2 LIGHTS: 3 local lanterns
+GATE2 OVERLAY ATTACHED: 20 props, 10 solid bodies, 12 material layers, 3 lights
+GATE2 CAPTURE: res://.artifacts/gate2/after_spawn.png (1280x720) at (280.0, 216.0)
+GATE2 WALK: archive_entry  (280, 216) -> (376, 201)  97 px over 7 cells in 69 frames
+GATE2 CAPTURE: res://.artifacts/gate2/after_archive_entry.png (1280x720) at (376.219, 200.536)
+GATE2 WALK: landmark  (376, 201) -> (489, 201)  113 px over 7 cells in 62 frames
+GATE2 CAPTURE: res://.artifacts/gate2/after_landmark.png (1280x720) at (488.8025, 200.536)
+GATE2 WALK: cloister  (489, 201) -> (615, 297)  159 px over 14 cells in 186 frames
+GATE2 CAPTURE: res://.artifacts/gate2/after_cloister.png (1280x720) at (614.6093, 297.4901)
+GATE2 WALK: combat_space  (615, 297) -> (935, 343)  323 px over 27 cells in 278 frames
+GATE2 CAPTURE: res://.artifacts/gate2/after_combat_space.png (1280x720) at (934.6696, 342.8706)
+GATE2 WALK: return_route  (935, 343) -> (713, 344)  222 px over 18 cells in 169 frames
+GATE2 CAPTURE: res://.artifacts/gate2/after_return_route.png (1280x720) at (713.1164, 343.9882)
+GATE2 COLLISION: Knight at (713.1164, 343.9882) is clear of every wall and prop
+GATE2 COLLISION: 10 solid prop footprints probed, each covered by a body
+GATE2 COLLISION: open floor at (713.1164, 339.9882) is free of prop bodies
+GATE2 CAPTURE TEST PASSED: 6 frames (after)
+WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2535)

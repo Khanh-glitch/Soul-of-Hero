@@ -16,6 +16,13 @@ func configure(_payload: Dictionary = {}) -> void:
 
 func _continue_profile() -> void:
 	_set_actions_enabled(false)
+	# Old profiles legitimately predate D051. Do not silently send them to a
+	# Knight-looking world; collect an A0-authoritative Adventurer choice first.
+	var save_service := get_node_or_null("/root/SaveService")
+	if save_service != null and save_service.has_method(&"has_player_avatar"):
+		if not bool(save_service.call(&"has_player_avatar")):
+			AppFlow.open_avatar_choice()
+			return
 	AppFlow.open_home()
 
 
@@ -32,7 +39,9 @@ func _start_new_game() -> void:
 	if not reset_ok:
 		_show_reset_error("Không thể tạo hồ sơ mới. Dữ liệu cũ vẫn được giữ nguyên.")
 		return
-	AppFlow.open_home()
+	# Identity is a real player choice, not a Knight fallback. The run clock
+	# begins after selecting the avatar, not while the selection menu is open.
+	AppFlow.open_avatar_choice()
 
 
 func _set_actions_enabled(enabled: bool) -> void:

@@ -1,0 +1,22 @@
+Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
+
+CRUCIBLE ART: floor_detail=392 wall_cells=2248 bedrock=4933 props=113 lights=20
+ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _finish_boot (res://game/app/app_root.gd:270)
+CRUCIBLE ART: floor_detail=392 wall_cells=2248 bedrock=4933 props=113 lights=20
+LEVEL5 REVIEW CAPTURE: level doc=res://data/levels/chapter_1_level_5.json floors=5584 entities=83
+LEVEL5 REVIEW STATION tag=before station=f1_spawn cell=(10, 17) size=1280x720 out=res://.artifacts/level5/before/before_f1_spawn.png ok=true
+LEVEL5 REVIEW STATION tag=before station=f1_camp cell=(66, 16) size=1280x720 out=res://.artifacts/level5/before/before_f1_camp.png ok=true
+LEVEL5 REVIEW STATION MOVED tag=before station=f2_court (30, 48) -> (29, 47)
+LEVEL5 REVIEW STATION tag=before station=f2_court cell=(29, 47) size=1280x720 out=res://.artifacts/level5/before/before_f2_court.png ok=true
+LEVEL5 REVIEW STATION tag=before station=f2_checkpoint cell=(10, 49) size=1280x720 out=res://.artifacts/level5/before/before_f2_checkpoint.png ok=true
+LEVEL5 REVIEW STATION tag=before station=f3_approach cell=(64, 76) size=1280x720 out=res://.artifacts/level5/before/before_f3_approach.png ok=true
+LEVEL5 REVIEW STATION tag=before station=f3_archer cell=(105, 74) size=1280x720 out=res://.artifacts/level5/before/before_f3_archer.png ok=true
+LEVEL5 REVIEW CAPTURE DONE: tag=before stations=all
+WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2535)

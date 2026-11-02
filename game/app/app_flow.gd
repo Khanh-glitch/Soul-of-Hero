@@ -5,6 +5,8 @@ extends Node
 
 const BOOT_SCENE := "res://game/ui/screens/boot/boot_screen.tscn"
 const TITLE_SCENE := "res://game/ui/screens/title/title_screen.tscn"
+## One shared A6 identity-selection route; owned state remains in A0 SaveService.
+const AVATAR_CHOICE_SCENE := "res://game/ui/screens/avatar_choice/avatar_choice_screen.tscn"
 const HOME_SCENE := "res://game/ui/screens/home/home_map_screen.tscn"
 # Compatibility constant for old tools/bookmarks. Product navigation now calls
 # this place Home and enters it without opening a menu panel by default.
@@ -13,6 +15,7 @@ const LEVEL_DETAILS_SCENE := "res://game/ui/screens/level_details/training_detai
 const SETTINGS_SCENE := "res://game/ui/screens/settings/settings_screen.tscn"
 const CREDITS_SCENE := "res://game/ui/screens/credits/credits_screen.tscn"
 const GAMEPLAY_SCENE := "res://game/main.tscn"
+const OVERWORLD_SCENE := "res://game/overworld/chapter1_overworld.tscn"
 const DEFAULT_CAMPAIGN_LEVEL_ID := &"chapter_1_level_1"
 const TRAINING_LEVEL_ID := &"training_crypt"
 const CAMPAIGN_UNLOCK_RECONCILIATION_TRANSACTION := "campaign:unlock_reconciliation:v2"
@@ -31,6 +34,8 @@ var _credits_return := &"home"
 var _current_route := &""
 var _current_home_function := &""
 var _run_serial := 0
+var _pending_return_to_overworld := false
+var _pending_overworld_payload: Dictionary = {}
 
 
 func attach_app_root(app_root: Node) -> void:
@@ -78,6 +83,10 @@ func open_title() -> void:
 	_show(TITLE_SCENE, {}, &"title")
 
 
+func open_avatar_choice() -> void:
+	_show(AVATAR_CHOICE_SCENE, {}, &"avatar_choice")
+
+
 func open_home(function_id: StringName = &"") -> void:
 	var normalized := function_id
 	# Keep the old route as a compatibility alias for stale bookmarks and saved
@@ -117,6 +126,47 @@ func open_level_details(level_id: StringName = DEFAULT_CAMPAIGN_LEVEL_ID) -> voi
 func open_settings(return_route: StringName = &"home") -> void:
 	_settings_return = return_route
 	_show(SETTINGS_SCENE, {"return_route": return_route}, &"settings")
+
+
+func open_overworld(payload: Dictionary = {}) -> void:
+	# Enter the Chapter 1 overworld. Payload may carry a return-from-dungeon flag.
+	# Any active dungeon run must be explicitly cleared before entering the overworld
+	# to avoid stale state; dungeon completions already commit through their own
+	# transaction before routing here.
+	_active_run.clear()
+	_last_result.clear()
+	_pending_return_to_overworld = false
+	_pending_overworld_payload.clear()
+	_show(OVERWORLD_SCENE, payload.duplicate(true), &"overworld")
+
+
+func set_pending_overworld_return(payload: Dictionary = {}) -> void:
+	# Called by the overworld just before launching a dungeon run, so that the
+	# standard completion/abort flows offer a Return-to-Marches path instead of
+	# always dumping the player back to Home.
+	_pending_return_to_overworld = true
+	_pending_overworld_payload = payload.duplicate(true)
+
+
+func clear_pending_overworld_return() -> void:
+	_pending_return_to_overworld = false
+	_pending_overworld_payload.clear()
+
+
+func has_pending_overworld_return() -> bool:
+	return _pending_return_to_overworld
+
+
+func return_to_overworld_after_completion() -> void:
+	# Consume the pending flag and route back to the overworld. Used by the
+	# completion/abort screens when the run was launched from the overworld.
+	_active_run.clear()
+	_last_result.clear()
+	var payload := _pending_overworld_payload.duplicate(true)
+	_pending_return_to_overworld = false
+	_pending_overworld_payload.clear()
+	payload["from_return"] = true
+	_show(OVERWORLD_SCENE, payload, &"overworld")
 
 
 func return_from_settings() -> void:
@@ -287,6 +337,9 @@ func complete_training(result: Dictionary = {}) -> void:
 func abort_to_hub(tab_id: StringName = &"") -> void:
 	_active_run.clear()
 	_last_result.clear()
+	if _pending_return_to_overworld:
+		return_to_overworld_after_completion()
+		return
 	open_home(tab_id)
 
 
@@ -379,6 +432,9 @@ func start_campaign_level_from_picker(
 func return_home_after_completion() -> void:
 	_active_run.clear()
 	_last_result.clear()
+	if _pending_return_to_overworld:
+		return_to_overworld_after_completion()
+		return
 	open_home(&"campaign")
 
 
@@ -390,7 +446,7 @@ func get_level_details(level_id: StringName) -> Dictionary:
 			"mode_id": &"training",
 			"display_name": "Sân Tập Hầm Mộ",
 			"objective_summary": sandbox.objective_summary if sandbox != null else "Luyện tập tự do trong hầm mộ.",
-			"layout_data_path": sandbox.layout_data_path if sandbox != null else "res://data/levels/crypt_entrance.json",
+			"layout_data_path": sandbox.layout_data_path if sandbox != null else "res://data/levels/crypt_training_sandbox.json",
 			"unlocked": true,
 			"completed": false,
 			"selected_difficulty": DIFFICULTY_RULES.EASY,

@@ -1,0 +1,531 @@
+name: Godot 4.7 Runtime Validation
+
+on:
+  push:
+    branches:
+      - main
+      - "arena/**"
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  headless-runtime:
+    name: Import and headless runtime tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v4
+
+      - name: Install Godot 4.7 stable
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+
+      - name: Record exact Godot version
+        run: |
+          mkdir -p .artifacts
+          godot --version | tee .artifacts/godot-version.txt
+          echo "Godot CLI version: $(cat .artifacts/godot-version.txt)" >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Import project in the Godot Editor
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --editor --path . --import --quit 2>&1 | tee .artifacts/editor-import.log
+          result=${PIPESTATUS[0]}
+          set -e
+          echo "Editor import exit code: ${result}"
+          exit "${result}"
+
+      - name: Verify redesigned map generators are reproducible
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . --script res://tools/generators/generate_chapter_1_level_6.gd 2>&1 | tee .artifacts/chapter-1-level-6-generator.log
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . --script res://tools/generators/generate_crypt_training_sandbox.gd 2>&1 | tee .artifacts/training-sandbox-generator.log
+          git diff --stat -- data/levels/chapter_1_level_6.json data/levels/crypt_training_sandbox.json
+          git diff --quiet --exit-code -- data/levels/chapter_1_level_6.json data/levels/crypt_training_sandbox.json
+
+      - name: Run Chapter 2 map design and loader checks
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . --script res://tests/chapter_2_campaign_map_design_test.gd 2>&1 | tee .artifacts/chapter-2-map-design.log
+          result=${PIPESTATUS[0]}
+          set -e
+          echo "Chapter 2 map test exit code: ${result}"
+          exit "${result}"
+
+      - name: Run Chapter 1 campaign map geometry checks
+        if: always()
+        run: |
+          mkdir -p .artifacts
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . --script res://tests/chapter_1_campaign_map_design_test.gd 2>&1 | tee .artifacts/chapter-1-campaign-map-design.log
+          campaign_result=${PIPESTATUS[0]}
+          set -e
+          echo "Chapter 1 campaign-map design exit code: ${campaign_result}"
+          set +e
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . --script res://tests/chapter_1_map_design_test.gd 2>&1 | tee .artifacts/chapter-1-three-floor-map-design.log
+          legacy_result=${PIPESTATUS[0]}
+          set -e
+          echo "Chapter 1 three-floor map design exit code: ${legacy_result}"
+          {
+            echo "### Chapter 1 map design results"
+            grep -E '^CHAPTER 1 CAMPAIGN MAP DESIGN (PASSED|FAILED)' .artifacts/chapter-1-campaign-map-design.log || true
+            grep -E '^CHAPTER 1 MAP DESIGN [0-9]+/[0-9]+' .artifacts/chapter-1-three-floor-map-design.log || true
+          } >> "${GITHUB_STEP_SUMMARY}"
+          if [[ ${campaign_result} -ne 0 ]]; then exit "${campaign_result}"; fi
+          exit "${legacy_result}"
+
+      - name: Run live collision-clear routes through Chapter 1
+        if: always()
+        timeout-minutes: 10
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=10s 480s godot --headless --path . res://tests/chapter_1_collision_route_test.tscn 2>&1 | tee .artifacts/chapter-1-collision-routes.log
+          result=${PIPESTATUS[0]}
+          set -e
+          echo "Chapter 1 live collision-route exit code: ${result}"
+          grep -E '^CHAPTER 1 COLLISION ROUTE(TEST)? (PASSED|FAILED)|^CHAPTER 1 COLLISION ROUTE: slot=' .artifacts/chapter-1-collision-routes.log >> "${GITHUB_STEP_SUMMARY}" || true
+          python3 tools/ci/publish_godot_failure_annotations.py \
+            .artifacts/chapter-1-collision-routes.log "Chapter 1 live collision routes"
+          exit "${result}"
+
+      - name: Run Chapter 1 objective, route, and Training gates
+        if: always()
+        timeout-minutes: 30
+        shell: bash
+        run: |
+          set -uo pipefail
+          failures=0
+          diagnostics=()
+          tests=(
+            "res://tests/content/content_contracts_test.tscn"
+            "res://tests/training_sandbox_live_route_test.tscn"
+            "res://tests/level_5_archer_pickup_test.gd"
+            "res://tests/level_one_tutorial_learning_test.gd"
+            "res://tests/chapter_1_level_6_vertical_slice_test.gd"
+            "res://tests/chapter_1_level_6_live_runtime_test.tscn"
+            "res://tests/chapter_1_level_6_promotion_route_test.gd"
+            "res://tests/chapter_1_level_7_vertical_slice_test.gd"
+            "res://tests/chapter_1_level_7_live_runtime_test.tscn"
+            "res://tests/chapter_1_level_7_promotion_route_test.gd"
+            "res://tests/chapter_1_level_8_vertical_slice_test.gd"
+            "res://tests/chapter_1_level_8_live_runtime_test.tscn"
+            "res://tests/chapter_1_level_8_authority_failure_test.tscn"
+            "res://tests/chapter_1_level_8_fresh_route_test.tscn"
+            "res://tests/chapter_1_level_9_vertical_slice_test.gd"
+            "res://tests/chapter_1_level_9_live_runtime_test.tscn"
+            "res://tests/chapter_1_level_9_authority_failure_test.tscn"
+            "res://tests/chapter_1_level_9_fresh_route_test.tscn"
+            "res://tests/chapter_1_level_10_vertical_slice_test.gd"
+            "res://tests/chapter_1_level_10_live_runtime_test.tscn"
+            "res://tests/chapter_1_level_10_fresh_route_test.tscn"
+          )
+          for test_path in "${tests[@]}"; do
+            test_name=${test_path##*/}
+            test_name=${test_name%.*}
+            echo "Running Chapter 1/Training gate: ${test_path}"
+            export SOUL_OF_HERO_SAVE_PATH="user://tests/ci_ch1_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}_${test_name}.json"
+            export LIVING_ARSENAL_SAVE_PATH="${SOUL_OF_HERO_SAVE_PATH}"
+            set +e
+            if [[ ${test_path} == *.tscn ]]; then
+              timeout --signal=TERM --kill-after=10s 180s godot --headless --path . "${test_path}" 2>&1 | tee ".artifacts/${test_name}.log"
+              result=${PIPESTATUS[0]}
+            else
+              timeout --signal=TERM --kill-after=10s 180s godot --headless --path . --script "${test_path}" 2>&1 | tee ".artifacts/${test_name}.log"
+              result=${PIPESTATUS[0]}
+            fi
+            set -e
+            if [[ ${test_path} == *chapter_1_level_8_fresh_route_test.tscn || ${test_path} == *chapter_1_level_9_fresh_route_test.tscn || ${test_path} == *chapter_1_level_10_fresh_route_test.tscn ]]; then
+              if grep -Fq "Can't use get_node() with absolute paths from outside the active scene tree." ".artifacts/${test_name}.log"; then
+                echo "${test_path} emitted an out-of-tree absolute-path engine error"
+                result=1
+              fi
+            fi
+            if [[ ${test_path} == *training_sandbox_live_route_test.tscn ]]; then
+              if grep -Eq "SCRIPT ERROR:|Can't use get_node\(\) with absolute paths from outside the active scene tree\." ".artifacts/${test_name}.log"; then
+                echo "${test_path} emitted a script or out-of-tree engine error"
+                result=1
+              fi
+            fi
+            echo "${test_path} exit code: ${result}"
+            if [[ ${result} -ne 0 ]]; then
+              failures=$((failures + 1))
+              diagnostics+=(".artifacts/${test_name}.log" "Failed Chapter 1/Training gate: ${test_name}")
+            else
+              diagnostics+=(".artifacts/${test_name}.log" "Passed Chapter 1/Training gate: ${test_name}")
+            fi
+          done
+          {
+            echo "### Chapter 1 / Training runtime gates: $(( ${#tests[@]} - failures ))/${#tests[@]} passed"
+            for test_path in "${tests[@]}"; do
+              test_name=${test_path##*/}
+              test_name=${test_name%.*}
+              grep -E 'PASSED|FAILED' ".artifacts/${test_name}.log" || true
+            done
+          } >> "${GITHUB_STEP_SUMMARY}"
+          if [[ ${#diagnostics[@]} -gt 0 ]]; then
+            python3 tools/ci/publish_godot_failure_annotations.py "${diagnostics[@]}"
+          fi
+          exit "${failures}"
+
+      - name: Run Chapter 2 campaign entry and scenario runtime checks
+        timeout-minutes: 3
+        run: |
+          set -uo pipefail
+          export SOUL_OF_HERO_SAVE_PATH="user://tests/ci_campaign_entry_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.json"
+          export LIVING_ARSENAL_SAVE_PATH="${SOUL_OF_HERO_SAVE_PATH}"
+          set +e
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . -- --campaign-entry-runtime-test 2>&1 | tee .artifacts/campaign-entry-runtime.log
+          result=${PIPESTATUS[0]}
+          set -e
+          echo "Campaign entry runtime test exit code: ${result}"
+          if [[ ${result} -ne 0 ]]; then
+            echo "### Campaign-entry runtime failure (last 160 log lines)" >> "${GITHUB_STEP_SUMMARY}"
+            tail -n 160 .artifacts/campaign-entry-runtime.log >> "${GITHUB_STEP_SUMMARY}"
+          fi
+          exit "${result}"
+
+      - name: Run production gameplay smoke test
+        if: always()
+        timeout-minutes: 3
+        run: |
+          set -uo pipefail
+          export SOUL_OF_HERO_SAVE_PATH="user://tests/ci_smoke_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.json"
+          export LIVING_ARSENAL_SAVE_PATH="${SOUL_OF_HERO_SAVE_PATH}"
+          set +e
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . -- --smoke-test 2>&1 | tee .artifacts/gameplay-smoke.log
+          result=${PIPESTATUS[0]}
+          set -e
+          echo "Gameplay smoke test exit code: ${result}"
+          exit "${result}"
+
+      - name: Run combat regression checks
+        if: always()
+        timeout-minutes: 3
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . --script res://tests/axe_combat_test.gd 2>&1 | tee .artifacts/axe-combat.log
+          axe_result=${PIPESTATUS[0]}
+          echo "Axe combat test exit code: ${axe_result}"
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . --script res://tests/chapter_1_level_5_miniboss_test.gd 2>&1 | tee .artifacts/chapter-1-level-5-miniboss.log
+          boss_result=${PIPESTATUS[0]}
+          echo "Chapter 1 Level 5 boss/combat test exit code: ${boss_result}"
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . -- --archer-hero-combat-test 2>&1 | tee .artifacts/archer-hero-combat.log
+          archer_result=${PIPESTATUS[0]}
+          echo "Archer explicit-equip combat test exit code: ${archer_result}"
+          set -e
+          if [[ ${axe_result} -ne 0 ]]; then exit "${axe_result}"; fi
+          if [[ ${boss_result} -ne 0 ]]; then exit "${boss_result}"; fi
+          exit "${archer_result}"
+
+      - name: Upload runtime logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: godot-4.7-headless-logs
+          path: .artifacts/
+          if-no-files-found: warn
+          retention-days: 14
+          include-hidden-files: true
+
+      - name: Publish concise Godot failure context
+        if: always()
+        run: |
+          python3 tools/ci/publish_godot_failure_annotations.py \
+            .artifacts/godot-version.txt "Godot CLI version" \
+            .artifacts/chapter-1-campaign-map-design.log "Chapter 1 campaign map geometry" \
+            .artifacts/chapter-1-three-floor-map-design.log "Chapter 1 three-floor map design" \
+            .artifacts/campaign-entry-runtime.log "Campaign entry runtime" \
+            .artifacts/gameplay-smoke.log "Production gameplay smoke" \
+            .artifacts/axe-combat.log "Axe combat regression" \
+            .artifacts/chapter-1-level-5-miniboss.log "Chapter 1 Level 5 combat" \
+            .artifacts/archer-hero-combat.log "Archer explicit-equip combat regression"
+
+  original-main-baseline:
+    name: Original main baseline comparison
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out original main baseline
+        uses: actions/checkout@v4
+        with:
+          ref: 5214788933b1a827f3a177d11ff486433dfe5e8a
+          path: original-main
+
+      - name: Check out current-branch validation tools
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          path: validation-tools
+
+      - name: Apply identical corrected runtime tests to baseline
+        run: |
+          for test_name in \
+            campaign_entry_runtime_test.gd \
+            smoke_test.gd \
+            chapter_1_level_5_miniboss_test.gd; do
+            cp "validation-tools/tests/${test_name}" "original-main/tests/${test_name}"
+          done
+
+      - name: Install the same Godot 4.7 stable binary
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+
+      - name: Record baseline commit and exact Godot version
+        working-directory: original-main
+        run: |
+          mkdir -p .artifacts
+          git rev-parse HEAD | tee .artifacts/baseline-sha.txt
+          godot --version | tee .artifacts/godot-version.txt
+          echo "Baseline: $(cat .artifacts/baseline-sha.txt); Godot: $(cat .artifacts/godot-version.txt)" >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Import original main in the Godot Editor
+        working-directory: original-main
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --editor --path . --import --quit 2>&1 | tee .artifacts/editor-import.log
+          result=${PIPESTATUS[0]}
+          set -e
+          echo "Baseline editor import exit code: ${result}"
+          exit "${result}"
+
+      - name: Run the same campaign-entry runtime test on original main
+        working-directory: original-main
+        timeout-minutes: 3
+        run: |
+          set -uo pipefail
+          export SOUL_OF_HERO_SAVE_PATH="user://tests/ci_baseline_campaign_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.json"
+          export LIVING_ARSENAL_SAVE_PATH="${SOUL_OF_HERO_SAVE_PATH}"
+          set +e
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . -- --campaign-entry-runtime-test 2>&1 | tee .artifacts/campaign-entry-runtime.log
+          result=${PIPESTATUS[0]}
+          set -e
+          echo "Baseline campaign entry exit code: ${result}"
+          exit "${result}"
+
+      - name: Run the same production smoke test on original main
+        if: always()
+        working-directory: original-main
+        timeout-minutes: 3
+        run: |
+          set -uo pipefail
+          export SOUL_OF_HERO_SAVE_PATH="user://tests/ci_baseline_smoke_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.json"
+          export LIVING_ARSENAL_SAVE_PATH="${SOUL_OF_HERO_SAVE_PATH}"
+          set +e
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . -- --smoke-test 2>&1 | tee .artifacts/gameplay-smoke.log
+          result=${PIPESTATUS[0]}
+          set -e
+          echo "Baseline gameplay smoke exit code: ${result}"
+          exit "${result}"
+
+      - name: Run the same combat regression tests on original main
+        if: always()
+        working-directory: original-main
+        timeout-minutes: 3
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . --script res://tests/axe_combat_test.gd 2>&1 | tee .artifacts/axe-combat.log
+          axe_result=${PIPESTATUS[0]}
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . --script res://tests/chapter_1_level_5_miniboss_test.gd 2>&1 | tee .artifacts/chapter-1-level-5-miniboss.log
+          boss_result=${PIPESTATUS[0]}
+          set -e
+          echo "Baseline Axe combat exit code: ${axe_result}; Level 5 miniboss exit code: ${boss_result}"
+          if [[ ${axe_result} -ne 0 ]]; then exit "${axe_result}"; fi
+          exit "${boss_result}"
+
+      - name: Upload original-main logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: godot-4.7-original-main-baseline
+          path: original-main/.artifacts/
+          if-no-files-found: warn
+          retention-days: 14
+          include-hidden-files: true
+
+      - name: Publish baseline failure context
+        if: always()
+        run: |
+          python3 validation-tools/tools/ci/publish_godot_failure_annotations.py \
+            original-main/.artifacts/godot-version.txt "Baseline Godot CLI version" \
+            original-main/.artifacts/campaign-entry-runtime.log "Original main campaign entry" \
+            original-main/.artifacts/gameplay-smoke.log "Original main gameplay smoke" \
+            original-main/.artifacts/axe-combat.log "Original main Axe combat" \
+            original-main/.artifacts/chapter-1-level-5-miniboss.log "Original main Level 5 combat"
+
+  rendered-gameplay:
+    name: Xvfb rendered gameplay captures
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v4
+
+      - name: Install Godot 4.7 stable
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+
+      - name: Install software-rendering display support
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes xvfb libgl1-mesa-dri
+
+      - name: Import project in the Godot Editor
+        run: |
+          mkdir -p .artifacts
+          set +e
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --editor --path . --import --quit 2>&1 | tee .artifacts/editor-import.log
+          result=${PIPESTATUS[0]}
+          set -e
+          echo "Editor import exit code: ${result}"
+          exit "${result}"
+
+      - name: Capture production Chapter 2 gameplay maps
+        shell: bash
+        run: |
+          set -uo pipefail
+          for slot in 11 15 20; do
+            echo "Capturing production gameplay scene for Chapter 2 Level ${slot}"
+            set +e
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+              SOUL_OF_HERO_SAVE_PATH="user://tests/ci_visual_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}_${slot}.json" \
+              timeout --signal=TERM --kill-after=10s 90s godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+              --resolution 1280x720 res://tests/chapter_2_level_visual_capture.tscn -- \
+              --level-slot="${slot}" --expected-width=1280 --expected-height=720 \
+              2>&1 | tee ".artifacts/chapter-2-level-${slot}-visual.log"
+            result=${PIPESTATUS[0]}
+            set -e
+            echo "Chapter 2 Level ${slot} rendered capture exit code: ${result}"
+            if [[ ${result} -ne 0 ]]; then exit "${result}"; fi
+          done
+
+      - name: Capture the existing production Level 10 boss scene
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            SOUL_OF_HERO_SAVE_PATH="user://tests/ci_level10_visual_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.json" \
+            timeout --signal=TERM --kill-after=10s 90s godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+            --resolution 1280x720 res://tests/chapter_1_level_10_visual_capture.tscn -- \
+            --expected-width=1280 --expected-height=720 \
+            2>&1 | tee .artifacts/chapter-1-level-10-visual.log
+          result=${PIPESTATUS[0]}
+          set -e
+          echo "Chapter 1 Level 10 rendered capture exit code: ${result}"
+          exit "${result}"
+
+      - name: Capture production Chapter 1 campaign maps
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          capture_failures=0
+          capture_count=0
+          diagnostics=()
+          for slot in {1..10}; do
+            for point in spawn mid end; do
+              echo "Capturing real campaign route: Chapter 1 Level ${slot}, ${point}"
+              set +e
+              xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+                SOUL_OF_HERO_SAVE_PATH="user://tests/ci_visual_ch1_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}_${slot}_${point}.json" \
+                LIVING_ARSENAL_SAVE_PATH="user://tests/ci_visual_ch1_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}_${slot}_${point}.json" \
+                timeout --signal=TERM --kill-after=10s 90s godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+                --resolution 1280x720 res://tests/chapter_1_campaign_level_visual_capture.tscn -- \
+                --level-slot="${slot}" --capture-point="${point}" --expected-width=1280 --expected-height=720 \
+                2>&1 | tee ".artifacts/chapter-1-level-${slot}-${point}-visual.log"
+              result=${PIPESTATUS[0]}
+              set -e
+              echo "Chapter 1 Level ${slot} ${point} capture exit code: ${result}"
+              if [[ ${result} -ne 0 ]]; then
+                capture_failures=$((capture_failures + 1))
+                diagnostics+=(".artifacts/chapter-1-level-${slot}-${point}-visual.log" "Chapter 1 Level ${slot} ${point} production capture")
+              else
+                capture_count=$((capture_count + 1))
+              fi
+            done
+          done
+          echo "Chapter 1 route captures passed: ${capture_count}/30; failed: ${capture_failures}"
+          {
+            echo "### Chapter 1 production route captures: ${capture_count}/30 passed (spawn, mid, end for each level)"
+            for slot in {1..10}; do
+              for point in spawn mid end; do
+                grep -E '^CHAPTER 1 CAMPAIGN CAPTURE TEST PASSED' ".artifacts/chapter-1-level-${slot}-${point}-visual.log" || true
+            done
+          done
+          } >> "${GITHUB_STEP_SUMMARY}"
+          if [[ ${#diagnostics[@]} -gt 0 ]]; then
+            python3 tools/ci/publish_godot_failure_annotations.py "${diagnostics[@]}"
+          fi
+          exit "${capture_failures}"
+
+      - name: Capture the production Training sandbox
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          capture_failures=0
+          capture_count=0
+          diagnostics=()
+          for point in spawn mid end; do
+            echo "Capturing real Training sandbox route: ${point}"
+            set +e
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+              SOUL_OF_HERO_SAVE_PATH="user://tests/ci_visual_training_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}_${point}.json" \
+              LIVING_ARSENAL_SAVE_PATH="user://tests/ci_visual_training_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}_${point}.json" \
+              timeout --signal=TERM --kill-after=10s 90s godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+              --resolution 1280x720 res://tests/chapter_1_campaign_level_visual_capture.tscn -- \
+              --training --capture-point="${point}" --expected-width=1280 --expected-height=720 \
+              2>&1 | tee ".artifacts/training-sandbox-${point}-visual.log"
+            result=${PIPESTATUS[0]}
+            set -e
+            if grep -Eq "SCRIPT ERROR:|Can't use get_node\(\) with absolute paths from outside the active scene tree\." ".artifacts/training-sandbox-${point}-visual.log"; then
+              echo "Training sandbox ${point} emitted a script or out-of-tree engine error"
+              result=1
+            fi
+            echo "Training sandbox ${point} capture exit code: ${result}"
+            if [[ ${result} -ne 0 ]]; then
+              capture_failures=$((capture_failures + 1))
+              diagnostics+=(".artifacts/training-sandbox-${point}-visual.log" "Training sandbox ${point} production capture")
+            else
+              capture_count=$((capture_count + 1))
+            fi
+          done
+          echo "Training sandbox route captures passed: ${capture_count}/3; failed: ${capture_failures}"
+          echo "### Training sandbox production captures: ${capture_count}/3 passed (spawn, combat loop, exit)" >> "${GITHUB_STEP_SUMMARY}"
+          if [[ ${#diagnostics[@]} -gt 0 ]]; then
+            python3 tools/ci/publish_godot_failure_annotations.py "${diagnostics[@]}"
+          fi
+          exit "${capture_failures}"
+
+      - name: Upload screenshots and rendered logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: godot-4.7-rendered-gameplay
+          path: .artifacts/
+          if-no-files-found: warn
+          retention-days: 14
+          include-hidden-files: true

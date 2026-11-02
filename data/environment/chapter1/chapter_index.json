@@ -1,0 +1,85 @@
+{
+  "schema": "chapter1_overhaul_index/1",
+  "levels": [
+    {
+      "slot": 1,
+      "level_id": "chapter_1_level_1",
+      "title": "Crypt Entrance",
+      "map": "crypt_entrance.json",
+      "theme": "crypt_entrance.json",
+      "folder": "L01"
+    },
+    {
+      "slot": 2,
+      "level_id": "chapter_1_level_2",
+      "title": "Ossuary Fork",
+      "map": "chapter_1_level_2.json",
+      "theme": "chapter_1_level_2.json",
+      "folder": "L02"
+    },
+    {
+      "slot": 3,
+      "level_id": "chapter_1_level_3",
+      "title": "Crossfire Archive",
+      "map": "chapter_1_level_3.json",
+      "theme": "chapter_1_level_3.json",
+      "folder": "L03"
+    },
+    {
+      "slot": 4,
+      "level_id": "chapter_1_level_4",
+      "title": "Spiral Reliquary",
+      "map": "chapter_1_level_4.json",
+      "theme": "chapter_1_level_4.json",
+      "folder": "L04"
+    },
+    {
+      "slot": 5,
+      "level_id": "chapter_1_level_5",
+      "title": "Blood Crucible",
+      "map": "chapter_1_level_5.json",
+      "theme": "chapter_1_level_5.json",
+      "folder": "L05"
+    },
+    {
+      "slot": 6,
+      "level_id": "chapter_1_level_6",
+      "title": "Soul Anchor Relay",
+      "map": "chapter_1_level_6.json",
+      "theme": "chapter_1_level_6.json",
+      "folder": "L06"
+    },
+    {
+      "slot": 7,
+      "level_id": "chapter_1_level_7",
+      "title": "The Failing Beacon",
+      "map": "chapter_1_level_7.json",
+      "theme": "chapter_1_level_7.json",
+      "folder": "L07"
+    },
+    {
+      "slot": 8,
+      "level_id": "chapter_1_level_8",
+      "title": "Divided Reliquary",
+      "map": "chapter_1_level_8.json",
+      "theme": "chapter_1_level_8.json",
+      "folder": "L08"
+    },
+    {
+      "slot": 9,
+      "level_id": "chapter_1_level_9",
+      "title": "The Crimson Gate",
+      "map": "chapter_1_level_9.json",
+      "theme": "chapter_1_level_9.json",
+      "folder": "L09"
+    },
+    {
+      "slot": 10,
+      "level_id": "chapter_1_level_10",
+      "title": "Castellan Throne",
+      "map": "chapter_1_level_10.json",
+      "theme": "chapter_1_level_10.json",
+      "folder": "L10"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "tile_size": 16,
+  "frames": {
+    "bone_arch": {
+      "x": 0,
+      "y": 0,
+      "w": 104,
+      "h": 126
+    },
+    "skull_bank": {
+      "x": 106,
+      "y": 0,
+      "w": 48,
+      "h": 38
+    },
+    "ossuary_stack": {
+      "x": 156,
+      "y": 0,
+      "w": 36,
+      "h": 92
+    },
+    "ossuary_stack_skull": {
+      "x": 194,
+      "y": 0,
+      "w": 36,
+      "h": 92
+    },
+    "ossuary_stack_shaft": {
+      "x": 232,
+      "y": 0,
+      "w": 36,
+      "h": 92
+    },
+    "ossuary_stack_broken": {
+      "x": 270,
+      "y": 0,
+      "w": 36,
+      "h": 92
+    },
+    "bone_lantern": {
+      "x": 308,
+      "y": 0,
+      "w": 26,
+      "h": 66
+    },
+    "bone_bundle": {
+      "x": 336,
+      "y": 0,
+      "w": 30,
+      "h": 40
+    },
+    "charnel_hearth": {
+      "x": 368,
+      "y": 0,
+      "w": 40,
+      "h": 34
+    }
+  }
+}

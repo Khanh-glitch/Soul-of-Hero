@@ -1,0 +1,1 @@
+GATE3 SOURCE MANIFEST OK: 5 copies byte-identical to Candidate B

@@ -1,0 +1,1 @@
+GATE3 MANIFEST OK: change manifest current, entities identical

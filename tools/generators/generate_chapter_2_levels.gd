@@ -13,7 +13,12 @@ func _init() -> void:
 		var level := MapBuilder.new().build(definition)
 		var validation: Dictionary = LevelSchemaValidator.validate_level(level)
 		if not bool(validation.get("ok", false)):
-			push_error("Refusing invalid Chapter 2 map %s: %s" % [definition.get("id", "unknown"), validation.get("error", "unknown")])
+			push_error(
+				"Refusing invalid Chapter 2 map %s: %s" % [
+					definition.get("id", "unknown"),
+					validation.get("error", "unknown"),
+				]
+			)
 			quit(1)
 			return
 		var output_path := "res://data/levels/%s.json" % String(definition.get("id", ""))
@@ -24,9 +29,13 @@ func _init() -> void:
 			return
 		file.store_string(JSON.stringify(level, "  ", false) + "\n")
 		file.close()
-		print("Generated %s with %d entities." % [definition.get("id", ""), (level.get("entities", []) as Array).size()])
+		print(
+			"Generated %s with %d entities." % [
+				definition.get("id", ""),
+				(level.get("entities", []) as Array).size(),
+			]
+		)
 	quit(0)
-
 
 func _definitions() -> Array[Dictionary]:
 	return [
@@ -155,6 +164,7 @@ func _build_level(
 		pits = [Rect2i(27, 30, 5, 5), Rect2i(68, 30, 5, 5)]
 	elif slot != 15:
 		pits = [Rect2i(36, 24, 4, 4), Rect2i(60, 24, 4, 4)]
+	pits.append_array(_signature_pits(slot))
 	return {
 		"id": "chapter_2_level_%d" % slot,
 		"name": "Xưởng Hắc Phù — %s" % title,
@@ -198,10 +208,56 @@ func _build_level(
 			"roster_id": "chapter_2_level_%d_roster" % slot,
 			"chapter_2_director": true,
 			"chapter_2_profile": profile,
+			"map_design_revision": 2,
+			"mapplay_signature": _mapplay_signature(slot),
 			"world_tint": _world_tint(slot),
 			"boss_entity_id": _boss_entity_id(prefix, special),
 		},
 	}
+
+
+func _mapplay_signature(slot: int) -> String:
+	var signatures := {
+		11: "Broken bridge bays and offset cover; two open approach angles.",
+		12: "Twin long poison channels with dry, flanking shoulders.",
+		13: "Lanternwood side groves frame a clear central escort lane.",
+		14: "Alchemy workbench islands create short, readable lane changes.",
+		15: "Four broken arena buttresses frame a clean Axe duel circle.",
+		16: "Staggered gate walls form a legible, loopable chicane maze.",
+		17: "Four radial cover pads surround an unobstructed fire objective.",
+		18: "Vault pinch-points split the relic approach into two flank routes.",
+		19: "Broken outer ring gates make a three-stage hunt arena readable.",
+		20: "Wizard's heart uses mirrored side pylons and a clear boss centerline.",
+	}
+	return String(signatures.get(slot, "Distinct tactical chamber layout."))
+
+
+## Each chapter stage gets authored hard-cover / broken-floor signatures. These
+## subtractive rectangles stay clear of all marker cells and the central escape
+## spine, while making rooms play differently instead of merely changing tint.
+func _signature_pits(slot: int) -> Array[Rect2i]:
+	var plans: Dictionary = {
+		11: [Rect2i(24, 20, 3, 5), Rect2i(73, 20, 3, 5), Rect2i(24, 36, 3, 5), Rect2i(73, 36, 3, 5)],
+		12: [Rect2i(24, 21, 3, 7), Rect2i(71, 21, 3, 7), Rect2i(24, 37, 3, 7), Rect2i(71, 37, 3, 7)],
+		13: [
+			Rect2i(24, 20, 4, 4), Rect2i(72, 20, 4, 4), Rect2i(24, 33, 4, 4),
+			Rect2i(72, 33, 4, 4), Rect2i(33, 26, 2, 5), Rect2i(65, 26, 2, 5),
+		],
+		14: [
+			Rect2i(30, 22, 3, 4), Rect2i(67, 22, 3, 4), Rect2i(30, 31, 3, 4),
+			Rect2i(67, 31, 3, 4), Rect2i(42, 43, 3, 2), Rect2i(55, 43, 3, 2),
+		],
+		15: [Rect2i(38, 22, 2, 4), Rect2i(61, 22, 2, 4), Rect2i(38, 31, 2, 4), Rect2i(61, 31, 2, 4)],
+		16: [Rect2i(29, 24, 2, 8), Rect2i(69, 33, 2, 8), Rect2i(29, 45, 2, 6), Rect2i(69, 22, 2, 6)],
+		17: [Rect2i(35, 29, 3, 2), Rect2i(62, 29, 3, 2), Rect2i(35, 44, 3, 2), Rect2i(62, 44, 3, 2)],
+		18: [Rect2i(27, 28, 3, 6), Rect2i(65, 28, 3, 6), Rect2i(24, 23, 4, 4), Rect2i(72, 23, 4, 4)],
+		19: [Rect2i(30, 29, 3, 6), Rect2i(67, 29, 3, 6), Rect2i(24, 22, 4, 4), Rect2i(72, 22, 4, 4)],
+		20: [Rect2i(30, 27, 3, 8), Rect2i(67, 27, 3, 8), Rect2i(41, 34, 3, 2), Rect2i(56, 34, 3, 2)],
+	}
+	var result: Array[Rect2i] = []
+	for value: Variant in plans.get(slot, []):
+		result.append(value as Rect2i)
+	return result
 
 
 func _enemy_cells(slot: int) -> Array:
@@ -234,7 +290,13 @@ func _enemy_entity(
 	return result
 
 
-func _entity(id: String, type: String, cell_x: int, cell_y: int, extra: Dictionary = {}) -> Dictionary:
+func _entity(
+		id: String,
+		type: String,
+		cell_x: int,
+		cell_y: int,
+		extra: Dictionary = {},
+) -> Dictionary:
 	var result := {"id": id, "type": type, "position": [cell_x * 16 + 8, cell_y * 16 + 8]}
 	for key: Variant in extra:
 		result[key] = extra[key]

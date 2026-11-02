@@ -1,0 +1,1680 @@
+{
+  "a6_projection": {
+    "discovered_clues": [
+      "The hand-crank bypass needs a salvage tool, two iron scrap and one oak wood.",
+      "The breaker can be reset after power is restored.",
+      "The copper upgrade panel is dark; copper is not yet a catalog item."
+    ],
+    "hazard_telegraphs": [
+      {
+        "clue": "Heat shimmer and ash drift mark the eastern seam; a filter is required.",
+        "hazard_id": "hz_crown_heat",
+        "required_capability": "cap_filter"
+      },
+      {
+        "clue": "Rot spores collect in the low seam; a filter is required.",
+        "hazard_id": "hz_crown_rot",
+        "required_capability": "cap_filter"
+      }
+    ],
+    "hidden_until_discovered": true,
+    "map_status_values": [
+      "HIDDEN",
+      "DISCOVERED",
+      "MISSING_PREREQUISITE",
+      "POWERED",
+      "DEFERRED_UPGRADE"
+    ],
+    "missing_prerequisite_reasons": [
+      "MISSING_CAPABILITY:cap_salvage",
+      "MISSING_ITEM:iron_scrap",
+      "MISSING_ITEM:oak_wood",
+      "DEFERRED:ITEM_NOT_IN_A3_CATALOG:copper"
+    ]
+  },
+  "actions": [
+    {
+      "action_id": "hand_crank_bypass",
+      "consumes_items": [
+        {
+          "item_id": "iron_scrap",
+          "quantity": 2
+        },
+        {
+          "item_id": "oak_wood",
+          "quantity": 1
+        }
+      ],
+      "cooldown_active_seconds": 0,
+      "enabled": true,
+      "grants_capabilities": [
+        "cap_power_1"
+      ],
+      "interaction_radius_px": 24,
+      "missing_prerequisite_reasons": [
+        "NOT_DISCOVERED",
+        "OUT_OF_RANGE",
+        "MISSING_CAPABILITY:cap_salvage",
+        "MISSING_ITEM:iron_scrap",
+        "MISSING_ITEM:oak_wood",
+        "ALREADY_APPLIED"
+      ],
+      "one_time": true,
+      "requires_capabilities": [
+        "cap_salvage"
+      ],
+      "reward_items": [],
+      "reward_right_id": "rr_relay_power_bypass",
+      "stand_cells": [
+        [
+          442,
+          234
+        ]
+      ],
+      "state_writes": {
+        "breaker_tripped": false,
+        "bus_powered": true,
+        "bypass_installed": true
+      },
+      "transaction_key_template": "a1slice:poi_crown_relay_shed:hand_crank_bypass:1",
+      "trigger_node_id": "node_relay_hand_crank"
+    },
+    {
+      "action_id": "breaker_reset",
+      "consumes_items": [],
+      "cooldown_active_seconds": 0,
+      "enabled": true,
+      "grants_capabilities": [],
+      "interaction_radius_px": 24,
+      "missing_prerequisite_reasons": [
+        "NOT_DISCOVERED",
+        "OUT_OF_RANGE",
+        "MISSING_CAPABILITY:cap_power_1"
+      ],
+      "one_time": false,
+      "requires_capabilities": [
+        "cap_power_1"
+      ],
+      "reward_items": [],
+      "reward_right_id": "",
+      "stand_cells": [
+        [
+          443,
+          236
+        ]
+      ],
+      "state_writes": {
+        "breaker_tripped": false,
+        "bus_powered": true
+      },
+      "transaction_key_template": "",
+      "trigger_node_id": "node_relay_breaker"
+    },
+    {
+      "action_id": "copper_upgrade",
+      "consumes_items": [
+        {
+          "item_id": "copper",
+          "quantity": 2
+        },
+        {
+          "item_id": "iron_scrap",
+          "quantity": 1
+        }
+      ],
+      "cooldown_active_seconds": 0,
+      "deferred_reason": "ITEM_NOT_IN_A3_CATALOG:copper",
+      "enabled": false,
+      "grants_capabilities": [
+        "cap_power_2"
+      ],
+      "interaction_radius_px": 24,
+      "missing_prerequisite_reasons": [
+        "DEFERRED:ITEM_NOT_IN_A3_CATALOG:copper",
+        "MISSING_CAPABILITY:cap_power_1",
+        "MISSING_ITEM:copper",
+        "MISSING_ITEM:iron_scrap"
+      ],
+      "one_time": true,
+      "requires_capabilities": [
+        "cap_power_1"
+      ],
+      "reward_items": [],
+      "reward_right_id": "rr_relay_copper_upgrade",
+      "stand_cells": [
+        [
+          443,
+          238
+        ]
+      ],
+      "state_writes": {
+        "copper_upgraded": true
+      },
+      "transaction_key_template": "a1slice:poi_crown_relay_shed:copper_upgrade:1",
+      "trigger_node_id": "node_relay_copper_panel"
+    }
+  ],
+  "chunk_ids": [
+    "chunk:6:3"
+  ],
+  "immutable_geography": {
+    "anchor_cell": [
+      440,
+      236
+    ],
+    "approach_path": {
+      "cells": [
+        [
+          392,
+          200
+        ],
+        [
+          393,
+          201
+        ],
+        [
+          394,
+          201
+        ],
+        [
+          395,
+          202
+        ],
+        [
+          396,
+          203
+        ],
+        [
+          397,
+          204
+        ],
+        [
+          398,
+          204
+        ],
+        [
+          399,
+          205
+        ],
+        [
+          400,
+          206
+        ],
+        [
+          401,
+          207
+        ],
+        [
+          402,
+          207
+        ],
+        [
+          403,
+          208
+        ],
+        [
+          404,
+          209
+        ],
+        [
+          405,
+          210
+        ],
+        [
+          406,
+          210
+        ],
+        [
+          407,
+          211
+        ],
+        [
+          408,
+          212
+        ],
+        [
+          409,
+          213
+        ],
+        [
+          410,
+          213
+        ],
+        [
+          411,
+          214
+        ],
+        [
+          412,
+          215
+        ],
+        [
+          413,
+          216
+        ],
+        [
+          414,
+          216
+        ],
+        [
+          415,
+          217
+        ],
+        [
+          416,
+          218
+        ],
+        [
+          417,
+          219
+        ],
+        [
+          418,
+          219
+        ],
+        [
+          419,
+          220
+        ],
+        [
+          420,
+          221
+        ],
+        [
+          421,
+          222
+        ],
+        [
+          422,
+          222
+        ],
+        [
+          423,
+          223
+        ],
+        [
+          424,
+          224
+        ],
+        [
+          425,
+          225
+        ],
+        [
+          426,
+          226
+        ],
+        [
+          427,
+          226
+        ],
+        [
+          428,
+          227
+        ],
+        [
+          429,
+          228
+        ],
+        [
+          430,
+          229
+        ],
+        [
+          431,
+          230
+        ],
+        [
+          432,
+          230
+        ],
+        [
+          433,
+          231
+        ],
+        [
+          434,
+          232
+        ],
+        [
+          435,
+          232
+        ],
+        [
+          436,
+          232
+        ],
+        [
+          437,
+          232
+        ],
+        [
+          438,
+          232
+        ],
+        [
+          439,
+          232
+        ],
+        [
+          440,
+          232
+        ],
+        [
+          440,
+          233
+        ],
+        [
+          440,
+          234
+        ],
+        [
+          440,
+          235
+        ],
+        [
+          440,
+          236
+        ]
+      ],
+      "hazard_exposure_tiles": 0,
+      "polyline": [
+        [
+          392,
+          200
+        ],
+        [
+          424,
+          224
+        ],
+        [
+          434,
+          232
+        ],
+        [
+          436,
+          232
+        ],
+        [
+          440,
+          232
+        ],
+        [
+          440,
+          236
+        ]
+      ],
+      "requires_capabilities": [
+        "cap_salvage"
+      ],
+      "route_id": "sp_poi_crown_relay_shed"
+    },
+    "build_permission_delegation": "A0_SURVIVAL_BUILD_VALIDATOR",
+    "dynamic_spawns": [],
+    "entrances": [
+      {
+        "cell": [
+          434,
+          232
+        ],
+        "clearance_cells": [
+          [
+            433,
+            231
+          ],
+          [
+            434,
+            231
+          ],
+          [
+            435,
+            231
+          ],
+          [
+            433,
+            232
+          ],
+          [
+            434,
+            232
+          ],
+          [
+            435,
+            232
+          ],
+          [
+            433,
+            233
+          ],
+          [
+            434,
+            233
+          ],
+          [
+            435,
+            233
+          ]
+        ],
+        "entrance_id": "ent_relay_northwest",
+        "required": true
+      }
+    ],
+    "filter_gated_shortcut": {
+      "hazard_rect_ids": [
+        "hz_crown_heat",
+        "hz_crown_rot"
+      ],
+      "required_for_slice": false,
+      "requires_capabilities": [
+        "cap_filter"
+      ],
+      "route_id": "rt_east_seam",
+      "unprepared_behavior": "BLOCKED_WITH_TELEGRAPH"
+    },
+    "footprint_rect": [
+      434,
+      230,
+      13,
+      13
+    ],
+    "hazard_rect_ids": [],
+    "hero_body_px": [
+      12,
+      16
+    ],
+    "hero_offset_px": [
+      0,
+      -8
+    ],
+    "hero_return_cell": [
+      392,
+      200
+    ],
+    "hero_spawn_cell": [
+      392,
+      200
+    ],
+    "required_nav_cells": [
+      [
+        392,
+        200
+      ],
+      [
+        393,
+        201
+      ],
+      [
+        394,
+        201
+      ],
+      [
+        395,
+        202
+      ],
+      [
+        396,
+        203
+      ],
+      [
+        397,
+        204
+      ],
+      [
+        398,
+        204
+      ],
+      [
+        399,
+        205
+      ],
+      [
+        400,
+        206
+      ],
+      [
+        401,
+        207
+      ],
+      [
+        402,
+        207
+      ],
+      [
+        403,
+        208
+      ],
+      [
+        404,
+        209
+      ],
+      [
+        405,
+        210
+      ],
+      [
+        406,
+        210
+      ],
+      [
+        407,
+        211
+      ],
+      [
+        408,
+        212
+      ],
+      [
+        409,
+        213
+      ],
+      [
+        410,
+        213
+      ],
+      [
+        411,
+        214
+      ],
+      [
+        412,
+        215
+      ],
+      [
+        413,
+        216
+      ],
+      [
+        414,
+        216
+      ],
+      [
+        415,
+        217
+      ],
+      [
+        416,
+        218
+      ],
+      [
+        417,
+        219
+      ],
+      [
+        418,
+        219
+      ],
+      [
+        419,
+        220
+      ],
+      [
+        420,
+        221
+      ],
+      [
+        421,
+        222
+      ],
+      [
+        422,
+        222
+      ],
+      [
+        423,
+        223
+      ],
+      [
+        424,
+        224
+      ],
+      [
+        425,
+        225
+      ],
+      [
+        426,
+        226
+      ],
+      [
+        427,
+        226
+      ],
+      [
+        428,
+        227
+      ],
+      [
+        429,
+        228
+      ],
+      [
+        430,
+        229
+      ],
+      [
+        431,
+        230
+      ],
+      [
+        432,
+        230
+      ],
+      [
+        433,
+        231
+      ],
+      [
+        434,
+        232
+      ],
+      [
+        435,
+        232
+      ],
+      [
+        436,
+        232
+      ],
+      [
+        437,
+        232
+      ],
+      [
+        438,
+        232
+      ],
+      [
+        439,
+        232
+      ],
+      [
+        440,
+        232
+      ],
+      [
+        440,
+        233
+      ],
+      [
+        440,
+        234
+      ],
+      [
+        440,
+        235
+      ],
+      [
+        440,
+        236
+      ],
+      [
+        440,
+        237
+      ],
+      [
+        440,
+        238
+      ],
+      [
+        440,
+        239
+      ],
+      [
+        440,
+        240
+      ],
+      [
+        440,
+        241
+      ],
+      [
+        440,
+        242
+      ],
+      [
+        440,
+        243
+      ],
+      [
+        439,
+        242
+      ],
+      [
+        438,
+        241
+      ],
+      [
+        437,
+        240
+      ],
+      [
+        437,
+        239
+      ],
+      [
+        436,
+        238
+      ],
+      [
+        435,
+        237
+      ],
+      [
+        434,
+        236
+      ],
+      [
+        433,
+        235
+      ],
+      [
+        432,
+        234
+      ],
+      [
+        432,
+        233
+      ],
+      [
+        431,
+        232
+      ],
+      [
+        430,
+        231
+      ],
+      [
+        429,
+        230
+      ],
+      [
+        428,
+        229
+      ],
+      [
+        427,
+        228
+      ],
+      [
+        427,
+        227
+      ],
+      [
+        422,
+        223
+      ],
+      [
+        418,
+        220
+      ],
+      [
+        414,
+        217
+      ],
+      [
+        410,
+        214
+      ],
+      [
+        406,
+        211
+      ],
+      [
+        402,
+        208
+      ],
+      [
+        398,
+        205
+      ],
+      [
+        394,
+        202
+      ],
+      [
+        434,
+        231
+      ],
+      [
+        435,
+        231
+      ],
+      [
+        433,
+        232
+      ],
+      [
+        433,
+        233
+      ],
+      [
+        434,
+        233
+      ],
+      [
+        435,
+        233
+      ],
+      [
+        442,
+        234
+      ],
+      [
+        443,
+        236
+      ]
+    ],
+    "retreat_path": {
+      "cells": [
+        [
+          440,
+          236
+        ],
+        [
+          440,
+          237
+        ],
+        [
+          440,
+          238
+        ],
+        [
+          440,
+          239
+        ],
+        [
+          440,
+          240
+        ],
+        [
+          440,
+          241
+        ],
+        [
+          440,
+          242
+        ],
+        [
+          440,
+          243
+        ],
+        [
+          439,
+          242
+        ],
+        [
+          438,
+          241
+        ],
+        [
+          437,
+          240
+        ],
+        [
+          437,
+          239
+        ],
+        [
+          436,
+          238
+        ],
+        [
+          435,
+          237
+        ],
+        [
+          434,
+          236
+        ],
+        [
+          433,
+          235
+        ],
+        [
+          432,
+          234
+        ],
+        [
+          432,
+          233
+        ],
+        [
+          431,
+          232
+        ],
+        [
+          430,
+          231
+        ],
+        [
+          429,
+          230
+        ],
+        [
+          428,
+          229
+        ],
+        [
+          427,
+          228
+        ],
+        [
+          427,
+          227
+        ],
+        [
+          426,
+          226
+        ],
+        [
+          425,
+          225
+        ],
+        [
+          424,
+          224
+        ],
+        [
+          423,
+          223
+        ],
+        [
+          422,
+          223
+        ],
+        [
+          421,
+          222
+        ],
+        [
+          420,
+          221
+        ],
+        [
+          419,
+          220
+        ],
+        [
+          418,
+          220
+        ],
+        [
+          417,
+          219
+        ],
+        [
+          416,
+          218
+        ],
+        [
+          415,
+          217
+        ],
+        [
+          414,
+          217
+        ],
+        [
+          413,
+          216
+        ],
+        [
+          412,
+          215
+        ],
+        [
+          411,
+          214
+        ],
+        [
+          410,
+          214
+        ],
+        [
+          409,
+          213
+        ],
+        [
+          408,
+          212
+        ],
+        [
+          407,
+          211
+        ],
+        [
+          406,
+          211
+        ],
+        [
+          405,
+          210
+        ],
+        [
+          404,
+          209
+        ],
+        [
+          403,
+          208
+        ],
+        [
+          402,
+          208
+        ],
+        [
+          401,
+          207
+        ],
+        [
+          400,
+          206
+        ],
+        [
+          399,
+          205
+        ],
+        [
+          398,
+          205
+        ],
+        [
+          397,
+          204
+        ],
+        [
+          396,
+          203
+        ],
+        [
+          395,
+          202
+        ],
+        [
+          394,
+          202
+        ],
+        [
+          393,
+          201
+        ],
+        [
+          392,
+          200
+        ]
+      ],
+      "hazard_exposure_tiles": 0,
+      "polyline": [
+        [
+          440,
+          236
+        ],
+        [
+          440,
+          243
+        ],
+        [
+          424,
+          224
+        ],
+        [
+          424,
+          224
+        ],
+        [
+          392,
+          200
+        ]
+      ],
+      "route_id": "retreat_relay_safe"
+    },
+    "spawn_forbidden_cells": [
+      [
+        392,
+        200
+      ],
+      [
+        393,
+        201
+      ],
+      [
+        394,
+        201
+      ],
+      [
+        395,
+        202
+      ],
+      [
+        396,
+        203
+      ],
+      [
+        397,
+        204
+      ],
+      [
+        398,
+        204
+      ],
+      [
+        399,
+        205
+      ],
+      [
+        400,
+        206
+      ],
+      [
+        401,
+        207
+      ],
+      [
+        402,
+        207
+      ],
+      [
+        403,
+        208
+      ],
+      [
+        404,
+        209
+      ],
+      [
+        405,
+        210
+      ],
+      [
+        406,
+        210
+      ],
+      [
+        407,
+        211
+      ],
+      [
+        408,
+        212
+      ],
+      [
+        409,
+        213
+      ],
+      [
+        410,
+        213
+      ],
+      [
+        411,
+        214
+      ],
+      [
+        412,
+        215
+      ],
+      [
+        413,
+        216
+      ],
+      [
+        414,
+        216
+      ],
+      [
+        415,
+        217
+      ],
+      [
+        416,
+        218
+      ],
+      [
+        417,
+        219
+      ],
+      [
+        418,
+        219
+      ],
+      [
+        419,
+        220
+      ],
+      [
+        420,
+        221
+      ],
+      [
+        421,
+        222
+      ],
+      [
+        422,
+        222
+      ],
+      [
+        423,
+        223
+      ],
+      [
+        424,
+        224
+      ],
+      [
+        425,
+        225
+      ],
+      [
+        426,
+        226
+      ],
+      [
+        427,
+        226
+      ],
+      [
+        428,
+        227
+      ],
+      [
+        429,
+        228
+      ],
+      [
+        430,
+        229
+      ],
+      [
+        431,
+        230
+      ],
+      [
+        432,
+        230
+      ],
+      [
+        433,
+        231
+      ],
+      [
+        434,
+        232
+      ],
+      [
+        435,
+        232
+      ],
+      [
+        436,
+        232
+      ],
+      [
+        437,
+        232
+      ],
+      [
+        438,
+        232
+      ],
+      [
+        439,
+        232
+      ],
+      [
+        440,
+        232
+      ],
+      [
+        440,
+        233
+      ],
+      [
+        440,
+        234
+      ],
+      [
+        440,
+        235
+      ],
+      [
+        440,
+        236
+      ],
+      [
+        440,
+        237
+      ],
+      [
+        440,
+        238
+      ],
+      [
+        440,
+        239
+      ],
+      [
+        440,
+        240
+      ],
+      [
+        440,
+        241
+      ],
+      [
+        440,
+        242
+      ],
+      [
+        440,
+        243
+      ],
+      [
+        439,
+        242
+      ],
+      [
+        438,
+        241
+      ],
+      [
+        437,
+        240
+      ],
+      [
+        437,
+        239
+      ],
+      [
+        436,
+        238
+      ],
+      [
+        435,
+        237
+      ],
+      [
+        434,
+        236
+      ],
+      [
+        433,
+        235
+      ],
+      [
+        432,
+        234
+      ],
+      [
+        432,
+        233
+      ],
+      [
+        431,
+        232
+      ],
+      [
+        430,
+        231
+      ],
+      [
+        429,
+        230
+      ],
+      [
+        428,
+        229
+      ],
+      [
+        427,
+        228
+      ],
+      [
+        427,
+        227
+      ],
+      [
+        422,
+        223
+      ],
+      [
+        418,
+        220
+      ],
+      [
+        414,
+        217
+      ],
+      [
+        410,
+        214
+      ],
+      [
+        406,
+        211
+      ],
+      [
+        402,
+        208
+      ],
+      [
+        398,
+        205
+      ],
+      [
+        394,
+        202
+      ],
+      [
+        434,
+        231
+      ],
+      [
+        435,
+        231
+      ],
+      [
+        433,
+        232
+      ],
+      [
+        433,
+        233
+      ],
+      [
+        434,
+        233
+      ],
+      [
+        435,
+        233
+      ],
+      [
+        442,
+        234
+      ],
+      [
+        443,
+        236
+      ],
+      [
+        439,
+        235
+      ],
+      [
+        441,
+        235
+      ],
+      [
+        439,
+        236
+      ],
+      [
+        441,
+        236
+      ],
+      [
+        439,
+        237
+      ],
+      [
+        441,
+        237
+      ]
+    ],
+    "static_obstacles": [
+      {
+        "blocks_nav": true,
+        "cells": [
+          [
+            443,
+            234
+          ]
+        ],
+        "kind": "static_body",
+        "obstacle_id": "obs_relay_crank_cabinet"
+      },
+      {
+        "blocks_nav": true,
+        "cells": [
+          [
+            444,
+            236
+          ]
+        ],
+        "kind": "static_body",
+        "obstacle_id": "obs_relay_breaker_panel"
+      },
+      {
+        "blocks_nav": true,
+        "cells": [
+          [
+            436,
+            230
+          ],
+          [
+            437,
+            230
+          ],
+          [
+            438,
+            230
+          ]
+        ],
+        "kind": "static_body",
+        "obstacle_id": "obs_relay_shed_wall"
+      },
+      {
+        "blocks_nav": true,
+        "cells": [
+          [
+            435,
+            239
+          ],
+          [
+            436,
+            239
+          ]
+        ],
+        "kind": "static_body",
+        "obstacle_id": "obs_relay_cable_spool"
+      }
+    ],
+    "tile_px": 16
+  },
+  "initial_persistent_state": {
+    "breaker_tripped": false,
+    "bus_powered": false,
+    "bypass_installed": false,
+    "copper_upgraded": false,
+    "discovered": false,
+    "last_transaction_key": "",
+    "reward_receipts": {}
+  },
+  "integration_status": "NATIVE_READY_CONTRACT_NOT_MOUNTED",
+  "interaction_nodes": [
+    {
+      "action_ids": [
+        "hand_crank_bypass"
+      ],
+      "area_trigger": true,
+      "cell": [
+        443,
+        234
+      ],
+      "node_id": "node_relay_hand_crank",
+      "stand_cells": [
+        [
+          442,
+          234
+        ]
+      ]
+    },
+    {
+      "action_ids": [
+        "breaker_reset"
+      ],
+      "area_trigger": true,
+      "cell": [
+        444,
+        236
+      ],
+      "node_id": "node_relay_breaker",
+      "stand_cells": [
+        [
+          443,
+          236
+        ]
+      ]
+    },
+    {
+      "action_ids": [
+        "copper_upgrade"
+      ],
+      "area_trigger": true,
+      "cell": [
+        444,
+        238
+      ],
+      "enabled": false,
+      "node_id": "node_relay_copper_panel",
+      "stand_cells": [
+        [
+          443,
+          238
+        ]
+      ]
+    }
+  ],
+  "name": "Crown Relay Shed",
+  "native_playable": false,
+  "persistence": {
+    "atomic_commit": "SaveService.transact_once",
+    "death_policy": "Death/respawn does not reset POI flags, receipts, cooldowns or reward rights",
+    "owner": "A0",
+    "reload_policy": "Durable state and journal survive reload; in-memory pending operations are discarded",
+    "reward_atomicity": "A0 mutator must apply item consumption, capability grants, POI state writes and receipt in ONE candidate document; failure consumes nothing",
+    "save_namespace": "world_slice",
+    "save_path": [
+      "world_slice",
+      "pois",
+      "poi_crown_relay_shed"
+    ],
+    "state_schema": "soh.world.slice_state.v1",
+    "transaction_key_prefix": "a1slice:poi_crown_relay_shed:"
+  },
+  "poi_id": "poi_crown_relay_shed",
+  "schema": "soh.world.poi_slice.v1",
+  "source_spec_ref": "poi_authoring/poi_crown_relay_shed.v1.json",
+  "source_spec_sha256": "ce450be63c341011fe1d472f3194f9cbe128e4b5e36f2bb9ef207c6818bfda22",
+  "test_vector_refs": [
+    "VS-01",
+    "VS-02",
+    "VS-03",
+    "VS-04",
+    "VS-05",
+    "VS-06",
+    "VS-07"
+  ],
+  "world_plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4"
+}

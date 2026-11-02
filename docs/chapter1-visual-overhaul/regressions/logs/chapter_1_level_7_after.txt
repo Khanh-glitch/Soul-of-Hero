@@ -1,0 +1,27 @@
+Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
+
+AUTHORED ART: kit=crypt floor_detail=7720 wall_cells=2190 bedrock=5468 props=59 lights=6 shadows=296
+CRUCIBLE ART: floor_detail=7720 wall_cells=2190 bedrock=5468 props=59 lights=6 shadows=296
+AUTHORED PROPS: missing=0 clamped=0 solid=0
+AUTHORED ART: kit=vigil floor_detail=7211 wall_cells=844 bedrock=3132 props=213 lights=26 shadows=108
+CRUCIBLE ART: floor_detail=7211 wall_cells=844 bedrock=3132 props=213 lights=26 shadows=108
+AUTHORED PROPS: missing=0 clamped=0 solid=0
+ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _finish_boot (res://game/app/app_root.gd:270)
+AUTHORED ART: kit=vigil floor_detail=7211 wall_cells=844 bedrock=3132 props=213 lights=26 shadows=108
+CRUCIBLE ART: floor_detail=7211 wall_cells=844 bedrock=3132 props=213 lights=26 shadows=108
+AUTHORED PROPS: missing=0 clamped=0 solid=0
+CHAPTER1 CAPTURE: level=chapter_1_level_7 slot=7 art=on facade_cells=844 lights=26 entities=44
+CHAPTER1 PERF: level=chapter_1_level_7 art=on nodes=909 draw_calls=120 static_mb=116.0 fps=6
+CHAPTER1 STATION tag=after level=chapter_1_level_7 station=entry cell=(48, 43) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_7/after/after_entry.png ok=true
+CHAPTER1 STATION tag=after level=chapter_1_level_7 station=landmark cell=(48, 35) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_7/after/after_landmark.png ok=true
+CHAPTER1 STATION tag=after level=chapter_1_level_7 station=checkpoint cell=(48, 47) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_7/after/after_checkpoint.png ok=true
+CHAPTER1 STATION tag=after level=chapter_1_level_7 station=exit cell=(44, 7) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_7/after/after_exit.png ok=true
+CHAPTER1 CAPTURE DONE: tag=after level=chapter_1_level_7
+WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2535)

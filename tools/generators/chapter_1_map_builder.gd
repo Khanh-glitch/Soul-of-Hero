@@ -41,7 +41,14 @@ func build(definition: Dictionary) -> Dictionary:
 
 	var metadata: Dictionary = definition.get("metadata", {}).duplicate(true)
 	metadata["required_sigils"] = int(definition.get("required_sigils", 3))
-	metadata["camera_bounds"] = [0, 0, width * 16, height * 16]
+	# Six rows of headroom above the map's first row. The authored architecture needs
+	# it: wall stacks extrude, cornice and cap upward, and banners, columns and gate
+	# towers are taller than the wall they hang on. Without the headroom that paint
+	# lands outside the camera limit and every top wall in the chapter is sliced flat
+	# by the top of the screen. The rock fill and the wall pass reach into this strip,
+	# so the camera is looking at stone, not at a gap.
+	const HEADROOM_ROWS := 6
+	metadata["camera_bounds"] = [0, -HEADROOM_ROWS * 16, width * 16, height * 16]
 	metadata["layout_profile"] = String(definition.get("layout_profile", "chapter_1_crypt"))
 	metadata["tileset"] = "0x72 DungeonTileset II v1.7 (CC0)"
 	metadata["rooms"] = _serialize_rooms(definition.get("rooms", []))

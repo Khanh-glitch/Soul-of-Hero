@@ -101,11 +101,37 @@ func _test_representative_sandbox_registry() -> void:
 	_expect(errors.is_empty(), "representative sandbox registry validates: %s" % "; ".join(errors))
 	var enemy := registry.find_enemy(&"skeleton_chaser_sandbox")
 	_expect(enemy != null and enemy.development_only, "registry resolves development-only Skeleton definition")
+	_expect(
+		enemy != null and not enemy.density_eligible,
+		"Training keeps five authored actors without density or mutant extras",
+	)
 	var encounter := registry.find_encounter(&"crypt_skeleton_sandbox")
 	_expect(encounter != null and encounter.get_group(&"crypt_patrol_group") != null, "registry resolves encounter and ordered group")
 	var level := registry.find_level(&"crypt_entrance_sandbox")
 	_expect(level != null and level.content_status == LevelDefinition.ContentStatus.SANDBOX, "representative crypt definition is explicitly SANDBOX")
 	_expect(level != null and level.campaign_slot == 0, "sandbox crypt occupies no campaign slot")
+	_expect(
+		level != null and level.layout_data_path == "res://data/levels/crypt_training_sandbox.json",
+		"Training owns a dedicated layout instead of reusing Campaign Level 01",
+	)
+	_expect(
+		encounter != null
+		and encounter.completion.reward_bundle_id.is_empty()
+		and encounter.completion.reward_transaction_id.is_empty(),
+		"Training encounter declares no reward transaction",
+	)
+	if encounter != null:
+		var group := encounter.get_group(&"crypt_patrol_group")
+		var markers := PackedStringArray()
+		if group != null and not group.spawn_entries.is_empty() and group.spawn_entries[0] != null:
+			markers = group.spawn_entries[0].spawn_marker_ids
+		_expect(
+			markers == PackedStringArray([
+				"training_skeleton_01", "training_skeleton_02", "training_skeleton_03",
+				"training_skeleton_04", "training_skeleton_05",
+			]),
+			"Training encounter binds all five live layout markers",
+		)
 	_expect(registry.get_ordered_campaign_levels().is_empty(), "sandbox registry makes no fake campaign-level claim")
 	_expect(registry.find_campaign_level(1) == null, "un-authored campaign slot lookup returns null")
 

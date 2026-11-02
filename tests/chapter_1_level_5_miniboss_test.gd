@@ -172,11 +172,11 @@ func _test_archer_runtime_identity_and_counterplay_profile() -> void:
 	var hard_modifiers := ENEMY_SCALER.apply_to(archer, 5, &"hard")
 	var hard_profile := archer.get_combat_profile()
 	_expect(
-		int(hard_profile.get("max_health", 0)) == roundi(360.0 * float(hard_modifiers.get("health_multiplier", 1.0))),
+		int(hard_profile.get("max_health", 0)) == roundi(360.0 * float(hard_modifiers.get("runtime_health_multiplier", 1.0))),
 		"Hard stage projection scales the live Archer health"
 	)
 	_expect(
-		int(hard_profile.get("damage", 0)) == roundi(12.0 * float(hard_modifiers.get("damage_multiplier", 1.0))),
+		int(hard_profile.get("damage", 0)) == roundi(12.0 * float(hard_modifiers.get("runtime_damage_multiplier", 1.0))),
 		"Hard stage projection scales the Archer projectile damage"
 	)
 	_expect(

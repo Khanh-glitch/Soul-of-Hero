@@ -72,3 +72,33 @@ custom_minimum_size = Vector2(120, 38)
 layout_mode = 2
 theme_type_variation = &"PrimaryButton"
 text = "VÀO SÂN TẬP"
+
+[node name="OverworldPanel" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(0, 55)
+layout_mode = 2
+theme_type_variation = &"CardPanel"
+
+[node name="Row" type="HBoxContainer" parent="OverworldPanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Info" type="VBoxContainer" parent="OverworldPanel/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="OverworldPanel/Row/Info"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.85, 0.95, 1)
+text = "THE HOLLOW MARCHES"
+
+[node name="Description" type="Label" parent="OverworldPanel/Row/Info"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+text = "Vùng biên cương Chương 1 — khám phá, trại nghỉ và tiến vào 10 địa điểm chiến dịch."
+
+[node name="EnterOverworldButton" type="Button" parent="OverworldPanel/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 38)
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+text = "BƯỚC VÀO VÙNG BIÊN"

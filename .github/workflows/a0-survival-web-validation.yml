@@ -1,0 +1,106 @@
+name: A0 survival Web fixture validation
+on:
+  push:
+    branches: [arena/dea2428e-soul-of-hero]
+    paths:
+      - game/survival/**
+      - game/overworld/**
+      - game/characters/knight/**
+      - game/autoload/**
+      - game/ui/**
+      - data/survival/**
+      - tools/survival/web_probe.*
+      - .github/workflows/a0-survival-web-validation.yml
+      - export_presets.cfg
+      - project.godot
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  web-survival-fixture:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    env:
+      GODOT_SILENCE_ROOT_WARNING: 1
+      LIBGL_ALWAYS_SOFTWARE: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: true
+      - name: Compose temporary browser-only entry scene
+        run: |
+          set -euo pipefail
+          printf '%s  %s\n' \
+            edf62b0aab6dd0dee5acd36e129286a553dd1234a96bd20455a782a31246b8ba game/survival/economy/a0_economy_adapter.gd \
+            109c268036bb92e5dcca2d23ec5f5c1664e1f8645c01abf189d6b5c90f06302c game/survival/economy/vendor/a3_economy_service.gd \
+            8bab244159e17acc34d51a22ab05112090e4f08f146511aa5c61683c7d999a47 game/survival/economy/world_source_adapter.gd \
+            7b9670f4971d2f161138e0754cbbe66dfe2a239bf0d15d3079a766d729dd230b data/survival/items/world_source_bindings.v3.json \
+            bc88143efb61f2202ae37c96373e07a1643cc29b7fc9a38abc84e4958fe2b984 data/survival/items/sources.json \
+            cd1a27c48078a69489904e86182dc63750941d9fc296830f711dd5d574615520 data/survival/items/items.json \
+            4dbf48da0dbb841bedd3333f0def33f328af4ed55c0e1f919b4a19cc3385539c data/survival/recipes/recipes.json \
+            6cca178ac00a99e4d2acfa441869331d325d9bb4d7d1637709b0692db5d512b2 data/survival/recipes/research.json \
+            aa05487252b8064729252994954eb73007fe525d2201f8aa725065dd0ee01851 data/survival/recipes/stations.json \
+            689a9b89dba4d756387b6b5c5f09b54d90ff0a787395f5e2fb523da496836efe game/survival/economy/vendor/a3_world_source_c23292be.gd \
+            b1d291d035c9e543e69281da268b378c8e1bb498be561b2f15e67c840792b353 data/survival/connector/a0_legacy/world_source_bindings.c23292be.v3.json \
+            3ad267e47a4d1d47980887fbf9b8d1547323c0b695b3696e499d2a246d2f387f data/survival/world/art/compiled/crown_roadside_visual_treatment.presentation.v1.json \
+            617fc36d866653d67eb1b890ddcf5501b8660d87031ae04fefdb73941393326e data/survival/world/art/atlas.v1.json \
+            ff88e06852af61c50019f85c3de2c54409a953624b952c1e11f538e8ccdd1279 assets/environment/survival_world/props.png | sha256sum -c -
+          cp tools/survival/web_probe.gd game/survival/web_probe_ci.gd
+          cp tools/survival/web_probe.tscn game/survival/web_probe_ci.tscn
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('project.godot')
+          s = p.read_text()
+          old = 'run/main_scene="res://game/app/app_root.tscn"'
+          assert s.count(old) == 1
+          p.write_text(s.replace(old, 'run/main_scene="res://game/survival/web_probe_ci.tscn"'))
+          # Read-only breadcrumbs in this temporary checkout locate a native
+          # Web engine abort inside the synchronous world builder.
+          world = Path('game/overworld/chapter1_overworld.gd')
+          s = world.read_text()
+          for marker in ('_build_survival()', '_build_economy_session()', '_build_occlusion()', '_build_hud()', '_build_economy_panel()', '_connect_run_events()', '_apply_hud()'):
+              needle = '\t' + marker + '\n'
+              assert s.count(needle) >= 1, marker
+              crumb = "\tJavaScriptBridge.eval(\"window.__survivalBuildTrace=(window.__survivalBuildTrace||[]).concat('%s');\", true)\n" % marker
+              s = s.replace(needle, needle + crumb, 1)
+          world.write_text(s)
+          PY
+          echo "Temporary CI fixture from A0 $(git rev-parse HEAD); production entrypoint not changed in Git." >> "$GITHUB_STEP_SUMMARY"
+      - name: Import and export real Web runtime
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/web-survival build/web
+          timeout --signal=TERM --kill-after=10s 240s godot --headless --audio-driver Dummy --editor --path . --import 2>&1 | tee artifacts/web-survival/import.log
+          timeout --signal=TERM --kill-after=10s 480s godot --headless --audio-driver Dummy --path . --export-release 'Web Playtest' build/web/index.html 2>&1 | tee artifacts/web-survival/export.log
+          for file in index.html index.js index.wasm index.pck; do test -s "build/web/$file"; done
+          ! grep -E 'SCRIPT ERROR|Parse Error|^ERROR:' artifacts/web-survival/import.log artifacts/web-survival/export.log
+      - name: Drive production survival overworld in Chromium
+        run: |
+          set -euo pipefail
+          npm install --prefix "$RUNNER_TEMP/web-probe" --no-save --no-audit --no-fund playwright-core@1.56.1
+          export NODE_PATH="$RUNNER_TEMP/web-probe/node_modules"
+          export CHROME_BIN="$(command -v google-chrome || command -v chromium || true)"
+          test -n "$CHROME_BIN"
+          python3 -m http.server 8787 --bind 127.0.0.1 --directory build/web > artifacts/web-survival/http.log 2>&1 &
+          web_pid=$!
+          trap 'kill "$web_pid" 2>/dev/null || true' EXIT
+          export WEB_SMOKE_URL=http://127.0.0.1:8787/
+          export WEB_SMOKE_OUTPUT=artifacts/web-survival
+          timeout --signal=TERM --kill-after=10s 150s node tools/survival/web_probe.cjs 2>&1 | tee artifacts/web-survival/browser.log
+          grep -q 'SURVIVAL WEB BROWSER FIXTURE PASSED' artifacts/web-survival/browser.log
+      - name: Surface outcome
+        if: always()
+        run: |
+          for file in artifacts/web-survival/*.log; do
+            test -f "$file" || continue
+            printf '::notice::%s: %s\n' "$file" "$(grep -E 'SURVIVAL WEB|SCRIPT ERROR|Parse Error|^ERROR:' "$file" | tail -5 | tr '\n' '~' | cut -c1-2500)"
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: survival-web-fixture-evidence
+          path: artifacts/web-survival/
+          if-no-files-found: warn

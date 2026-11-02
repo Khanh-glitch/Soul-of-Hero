@@ -1,0 +1,42 @@
+{
+  "schema": "soh.economy.offline_operations.v1",
+  "policy": {
+    "policy_id": "a3_prepared_operations_v1",
+    "status": "OPT_IN_A3_ENGINEERING_DEFAULT_A0_MOUNT_REQUIRED",
+    "user_rate_approval": "NOT_USER_LOCKED",
+    "run_deadline_seconds": 1209600,
+    "operation_tick_microseconds": 1000000,
+    "operation_tick_provenance": "A0 PR21 f599a62231f030f0e12cf77e5b821451c7259745 game/survival/economy/economy_session.gd increments record.ticks once per 1000000 monotonic microseconds while gameplay is active; TICKS_PER_SECOND=60 is only the diagnostic sub-step scale.",
+    "max_armed_operations": 256,
+    "output_custody": "EXISTING_JOB_ESCROW_UNTIL_PLAYER_COLLECT",
+    "auto_collect": false,
+    "auto_start_next_queue": false,
+    "eligible_craft_recipes": ["burn_charcoal", "smelt_iron"],
+    "eligible_research_recipes": ["iron_pick"],
+    "eligible_technologies": ["tech_smelting", "tech_precision"],
+    "ineligible_categories": ["core", "reconstruction"],
+    "cultivation": {
+      "status": "DISABLED_PENDING_A1_PHYSICAL_SOURCE_AND_A0_SITE_PROJECTION",
+      "reason": "grow_moonleaf exists as a proposed closed-loop recipe, but current A1/A0 production data has no approved planted plot, water/soil/season projection, or offline crop yield authority. No crop yield is invented."
+    },
+    "collectors": {
+      "status": "DISABLED_PENDING_SOURCE_AUTHORIZED_RECIPE_AND_PHYSICAL_OBJECT",
+      "reason": "No approved rainwater/dew collector recipe, tank capacity, or A1 precipitation custody exists in the pinned sources."
+    },
+    "active_only_sources_unchanged": [
+      "a1_waystation_roadside_cache_v3",
+      "a1_roadside_notes_01_v4",
+      "a1_waystation_approach_deadfall_v3"
+    ],
+    "forbidden_offline_effects": [
+      "POI loot claims",
+      "source cooldown reduction",
+      "Skill Core grants or casts",
+      "new research/craft queue creation",
+      "free materials",
+      "automatic harvest/replant",
+      "monster raids or base damage",
+      "HP/hunger mutation by A3"
+    ]
+  }
+}
