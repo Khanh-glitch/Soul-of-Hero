@@ -102,3 +102,4 @@ func _initialize() -> void:
             return
     print("A04_BLADE_PASS coverage=%d dark_material=%s; candidate only" % [count, str(material)])
     quit(0)
+# R28: replay on the same source tree after the unrelated Rootwake parser fix.
