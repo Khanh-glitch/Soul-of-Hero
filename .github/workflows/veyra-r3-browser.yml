@@ -4,7 +4,30 @@ on:
     paths: ['world/**', 'tools/world/**', '.github/workflows/veyra-r3-browser.yml']
   workflow_dispatch:
 jobs:
+  spatial:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install pillow numpy
+      - name: Rebuild world from GOLD
+        run: |
+          python tools/world/art_registry.py
+          python tools/world/veyra_compile.py
+      - name: Spatial + behavioural gates (fails the job when a mandatory gate is red)
+        run: python tools/world/validate.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: veyra-spatial-validation
+          path: |
+            docs/map_tower/SPATIAL_VALIDATION.json
+            out/world_meta.json
+
   browser-capture:
+    needs: spatial
+    if: always()          # evidence is captured even when the spatial gate is red
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
