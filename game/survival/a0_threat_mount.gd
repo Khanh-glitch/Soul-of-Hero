@@ -40,13 +40,18 @@ var _world: Node
 var _hero: Node2D
 var _nav: OverworldTraversability
 var _build: Node
+## C08 evidence source, read-only. Present only when the world mounted one.
+var _trace_source: Node = null
+var c08_attached := false
 
 
-func mount(world: Node, hero: Node2D, navigation: OverworldTraversability, build: Node) -> Dictionary:
+func mount(world: Node, hero: Node2D, navigation: OverworldTraversability, build: Node,
+		trace_source: Node = null) -> Dictionary:
 	_world = world
 	_hero = hero
 	_nav = navigation
 	_build = build
+	_trace_source = trace_source
 	last_error = ""
 	mounted = false
 	attempts = 0
@@ -64,13 +69,15 @@ func mount(world: Node, hero: Node2D, navigation: OverworldTraversability, build
 	world.add_child(node)
 	# `configure` returns a bool and fails closed without a reason string; the
 	# mount's validator is the reason authority, so re-run it for a truthful error.
-	if not bool(node.call(&"configure", hero, build, navigation, site_cell)):
+	if not bool(node.call(&"configure", hero, build, navigation, site_cell, _trace_source)):
 		var refused: Dictionary = ENCOUNTER_SCRIPT.validate_site(hero, build, navigation, site_cell)
 		last_error = "encounter_refused:" + String(refused.get("reason", "unknown"))
 		node.queue_free()
 		return snapshot()
 	encounter = node
 	mounted = true
+	var adapter: Dictionary = node.call(&"c08_snapshot")
+	c08_attached = bool(adapter.get("enabled", false))
 	return snapshot()
 
 
@@ -100,6 +107,13 @@ func _find_site() -> Dictionary:
 				site_cell = cell
 				return {"ok": true, "cell": cell}
 	return {"ok": false, "reason": "no_valid_site_in_ring:%d..%d" % [RING_MIN, RING_MAX]}
+
+
+## C08 evidence adapter state, or an empty dictionary when it is not mounted.
+func c08_snapshot() -> Dictionary:
+	if encounter == null or not is_instance_valid(encounter):
+		return {}
+	return encounter.call(&"c08_snapshot")
 
 
 func snapshot() -> Dictionary:

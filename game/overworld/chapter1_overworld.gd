@@ -63,6 +63,11 @@ const A0_WORLD_ART_CANDIDATE := preload("res://game/survival/a0_world_art_candid
 ## A0 Round 12 production threat (CT decision T1). Off by default; when on, it is
 ## the ONE way the survival world ever exposes an enemy.
 const A0_THREAT_MOUNT := preload("res://game/survival/a0_threat_mount.gd")
+## C08: run-local footprint evidence from the real Hero body, mounted by the world
+## because the world owns the body, the traversability grid and the K2 surface.
+## Emission alone changes no rule; only a `survival/c08_trace_follow` creature can
+## read it, and that is still default OFF.
+const C08_TRACE_SOURCE := preload("res://game/survival/c08_trace_source.gd")
 const WAYSTATION_CANDIDATE_SETTING := "survival/a0_waystation_candidate"
 ## R13: which world is authoritative. "authored" is A1's 1024x768 continent and is
 ## the default production world; "annex" is the retained 384x256 Hollow Marches
@@ -134,6 +139,7 @@ var authored_world_active := false
 var authored_sources: Array = []
 var economy_composition: Node
 var threat_mount: Node
+var c08_traces: Node
 var economy_panel: CanvasLayer
 var chest_panel: CanvasLayer
 var _death_bags: Dictionary = {}
@@ -402,6 +408,7 @@ func _build_authored_world() -> void:
 	chest_panel = CHEST_PANEL_SCRIPT.new()
 	chest_panel.name = "ChestInventoryPanel"
 	add_child(chest_panel)
+	_mount_c08_traces()
 	_mount_optional_threat()
 	_mount_authored_sites()
 	_connect_run_events()
@@ -554,6 +561,7 @@ func _build_annex_world() -> void:
 		if not bool(art_result.get("ok", false)):
 			_fail("A1 roadside art candidate refused: " + String(art_result.get("reason", "unknown")))
 			return
+	_mount_c08_traces()
 	_mount_optional_threat()
 	_build_economy_panel()
 	chest_panel = CHEST_PANEL_SCRIPT.new()
@@ -613,11 +621,24 @@ func _build_economy_composition() -> void:
 ## live world by the encounter seam itself; a refusal is a build failure, never a
 ## silent "no danger today", so a player can never be told one thing while the
 ## world holds another.
+func _mount_c08_traces() -> void:
+	# Mounted after traversability and the survival world exist, so a sample can be
+	# judged against the collision bodies the player really touches. Default ON
+	# because footprints are data, not a rule: with no creature wired to read them
+	# the shipped game behaves identically.
+	var source: Node = C08_TRACE_SOURCE.new()
+	source.name = "C08Traces"
+	add_child(source)
+	source.call(&"configure", self, player, traversability, world_authority)
+	c08_traces = source if bool(source.call(&"is_active")) else null
+	print("A0_C08_TRACES ", JSON.stringify(source.call(&"snapshot")))
+
+
 func _mount_optional_threat() -> void:
 	var mount := A0_THREAT_MOUNT.new()
 	mount.name = "A0ThreatMount"
 	add_child(mount)
-	var report: Dictionary = mount.call(&"mount", self, player, traversability, survival_build)
+	var report: Dictionary = mount.call(&"mount", self, player, traversability, survival_build, c08_traces)
 	threat_mount = mount
 	if not bool(report.get("enabled", false)):
 		return

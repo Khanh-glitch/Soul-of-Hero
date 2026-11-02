@@ -1,0 +1,158 @@
+name: C08 trace causality (native)
+# LW1 takeover gate for the canonical C08 causal slice.
+#
+# Two independently reported jobs:
+#   unit     : the bounded evidence index contract, headless, real Godot parser.
+#   native   : the three C08 counterfactuals on the production overworld, with a
+#              real Hero body, real key/pointer input, the real K8 run clock and
+#              the real SkeletonEnemy. Three OS processes: play, relaunch (same
+#              save) and new run (fresh profile). Native PNG frames are uploaded,
+#              and tools/ci/gate_log.sh refuses a run that printed a script error
+#              or never reached its PASS summary.
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/136e69c5-soul-of-hero]
+    paths:
+      - 'game/survival/c08_*.gd'
+      - 'game/survival/a0_threat_mount.gd'
+      - 'game/survival/optional_skeleton_encounter.gd'
+      - 'game/characters/enemies/skeleton_enemy.gd'
+      - 'game/overworld/chapter1_overworld.gd'
+      - 'tests/c08_*.gd'
+      - 'tests/survival_c08_*.gd'
+      - '.github/workflows/c08-trace-causality.yml'
+permissions:
+  contents: read
+
+env:
+  ARTIFACT_DIR: artifacts
+
+jobs:
+  unit:
+    name: C08 EVIDENCE INDEX UNIT
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import project (real engine parser)
+        run: |
+          mkdir -p "$ARTIFACT_DIR" artifacts/ud_import
+          timeout --signal=TERM --kill-after=10s 300s godot --headless --path . \
+            --user-data-dir artifacts/ud_import --import > "$ARTIFACT_DIR/c08-import.log" 2>&1
+          rc=$?
+          tail -30 "$ARTIFACT_DIR/c08-import.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/c08-import.log" "C08 import"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+      - name: C08 evidence index unit contract
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=10s 180s godot --headless --path . \
+            --user-data-dir artifacts/ud_unit \
+            --script res://tests/c08_trace_store_unit_test.gd > "$ARTIFACT_DIR/c08-unit.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/c08-unit.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/c08-unit.log" "C08 unit" "C08 TRACE STORE UNIT PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: c08-unit-logs
+          path: artifacts/*.log
+
+  native:
+    name: C08 NATIVE CAUSAL SLICE (A / B / C + K8 relaunch)
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import project assets
+        run: |
+          mkdir -p "$ARTIFACT_DIR" artifacts/shots artifacts/ud_import artifacts/ud_c08
+          timeout --signal=TERM --kill-after=10s 300s godot --headless --path . \
+            --user-data-dir artifacts/ud_import --import > "$ARTIFACT_DIR/c08-import.log" 2>&1
+          rc=$?
+          tail -30 "$ARTIFACT_DIR/c08-import.log"
+          exit $rc
+      - name: Phase 1 - play A/B/C on the production scene
+        shell: bash
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=20s 3300s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+            --audio-driver Dummy --user-data-dir artifacts/ud_c08 --resolution 1280x720 --windowed \
+            --script res://tests/survival_c08_trace_causality_test.gd \
+            -- --phase=play --keep "--shots=$PWD/artifacts/shots" > "$ARTIFACT_DIR/c08-play.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/c08-play.log"
+          echo "::notice::c08 play exit=$rc $(grep -E 'C08_(SOURCE|ROUTE|A|B|C|FRAME)|  FAIL  |SCRIPT ERROR|Parse Error' "$ARTIFACT_DIR/c08-play.log" | tail -16 | tr '\n' '~')"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/c08-play.log" "C08 play" "C08 TRACE CAUSALITY PLAY PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+      - name: Phase 2 - second OS process, same save (K8 relaunch)
+        shell: bash
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=20s 900s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+            --audio-driver Dummy --user-data-dir artifacts/ud_c08 --resolution 1280x720 --windowed \
+            --script res://tests/survival_c08_trace_causality_test.gd \
+            -- --phase=relaunch --keep > "$ARTIFACT_DIR/c08-relaunch.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/c08-relaunch.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/c08-relaunch.log" "C08 relaunch" "C08 TRACE CAUSALITY RELAUNCH PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+      - name: Phase 3 - fresh profile, new run (no inherited evidence)
+        shell: bash
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=20s 900s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+            --audio-driver Dummy --user-data-dir artifacts/ud_c08 --resolution 1280x720 --windowed \
+            --script res://tests/survival_c08_trace_causality_test.gd \
+            -- --phase=newrun --keep "--shots=$PWD/artifacts/shots" > "$ARTIFACT_DIR/c08-newrun.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/c08-newrun.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/c08-newrun.log" "C08 new run" "C08 TRACE CAUSALITY NEWRUN PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+      - name: Copy audits and frames into the artifact directory
+        if: always()
+        run: |
+          mkdir -p "$ARTIFACT_DIR/evidence"
+          find artifacts/ud_c08 -name '*.json' -path '*tests*' -exec cp -v {} "$ARTIFACT_DIR/evidence/" \; 2>/dev/null || true
+          ls -l "$ARTIFACT_DIR/shots" 2>/dev/null || true
+          python3 - <<'PY'
+          import glob, os, struct, zlib
+          for path in sorted(glob.glob("artifacts/shots/*.png")):
+              with open(path, "rb") as handle:
+                  head = handle.read(33)
+              if head[:8] != b"\x89PNG\r\n\x1a\n" or head[12:16] != b"IHDR":
+                  print("::error::not a decoded PNG: %s" % path)
+                  continue
+              width, height = struct.unpack(">II", head[16:24])
+              print("%s %dx%d %d bytes" % (os.path.basename(path), width, height, os.path.getsize(path)))
+              if width < 640 or height < 360:
+                  print("::error::frame below the required resolution:", path)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: c08-native-evidence
+          path: |
+            artifacts/*.log
+            artifacts/shots
+            artifacts/evidence
