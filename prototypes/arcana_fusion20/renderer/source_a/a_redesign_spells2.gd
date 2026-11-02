@@ -374,48 +374,39 @@ class ChronoshardR:
                 if Geometry2D.is_point_in_polygon(sample, hex) and Geometry2D.is_point_in_polygon(sample, points):
                     fb.add_px(x, y, 1.4, 1.4, 2.0, intensity)
 
+    func _held_tau(index: int, t: float) -> float:
+        # Reverse the same retained moment as its crystal releases; the
+        # temporal image runs backward while the carrier moves to the common
+        # arrival. Visual only, never a combat receipt.
+        return float(STORED_TAU[index]) * (1.0 - AMath.ease_in(_release(index, t), 2.0))
+
     func _mini_attack(fb: AFramebuffer, hex: PackedVector2Array, center: Vector2, tau: float, color: Vector3, intensity: float) -> void:
+        # Retell the B-like event with an unmistakable directional head and
+        # continuous trailing body rather than the subpixel clipped B dots.
+        # Every shard displays the SAME icon at a distinct time, with the
+        # last one showing the burst; this is NEW design, not B raster parity.
         if tau < 0.0 or tau > 2.2:
             return
-        var a := CASTER + Vector2(6, -14)
-        var b := C + Vector2(0, -4)
-        var middle := (a + b) * 0.5 + Vector2(0, -6)
-        # The original B clip transform is 0.42, not our earlier 0.30.
-        var scale := 0.42
-        # A faint, clipped trajectory is a temporal reference, not a world
-        # hit: the same stored event is visible at a different moment in each
-        # crystal. Use hard pixels so the mark is readable without bloom.
-        for q in range(21):
-            var u := float(q) / 20.0
-            var p := a.lerp(b, u) + Vector2(0, -sin(u * PI) * 24.0)
-            var guide := center + (p - middle) * scale
-            if q % 2 == 0:
-                _mini_disc(fb, guide, 0.8, hex, color, intensity * 0.35)
         if tau <= 1.0:
-            # Original B arc and nine trailing discs at the stored instant.
-            for m in range(9, -1, -1):
-                var u := maxf(0.0, tau - float(m) * 0.025)
-                var p := a.lerp(b, u) + Vector2(0, -sin(u * PI) * 24.0)
-                var at := center + (p - middle) * scale
-                _mini_disc(fb, at, (3.0 - float(m) * 0.25) * scale, hex,
-                    color, intensity * (1.0 - float(m) / 10.0) * 0.7)
-            var head := a.lerp(b, tau) + Vector2(0, -sin(tau * PI) * 24.0)
-            var stored_head := center + (head - middle) * scale
-            _mini_disc(fb, stored_head, 3.0, hex, Vector3(2.0, 1.6, 0.8), intensity)
-            _mini_star(fb, stored_head, tau, 0.68, hex, intensity)
+            var u := AMath.cl01(tau)
+            var head := center + Vector2(lerpf(-11.0, 10.0, u), -2.0 - 3.0 * sin(u * PI))
+            var shape := PackedVector2Array([
+                head + Vector2(7, 0), head + Vector2(-2, -5),
+                head + Vector2(-2, -2), head + Vector2(-11, -2),
+                head + Vector2(-11, 2), head + Vector2(-2, 2),
+                head + Vector2(-2, 5)])
+            for y in range(floori(head.y - 6), ceili(head.y + 6) + 1):
+                for x in range(floori(head.x - 12), ceili(head.x + 8) + 1):
+                    var pixel := Vector2(float(x) + 0.5, float(y) + 0.5)
+                    if Geometry2D.is_point_in_polygon(pixel, hex) and Geometry2D.is_point_in_polygon(pixel, shape):
+                        fb.add_px(x, y, color.x, color.y, color.z, intensity)
         else:
-            var e := tau - 1.0
-            var target := center + (b - middle) * scale
-            var radius := AMath.ease_out(e / 1.2) * 34.0 * scale
-            for q in range(36):
-                var angle := float(q) * TAU / 36.0
-                var point := target + Vector2(cos(angle), sin(angle) * 0.7) * radius
-                _mini_disc(fb, point, 0.7, hex, color, intensity * maxf(0.0, 1.0 - e / 1.2))
-            for q in range(24):
-                var angle := AMath.hash2(float(q), 18.0) * TAU
-                var velocity := 30.0 + AMath.hash2(float(q + 1), 18.0) * 50.0
-                var point := target + Vector2(cos(angle) * velocity * e, (sin(angle) * velocity * 0.7 - 20.0) * e + 30.0 * e * e) * scale
-                _mini_disc(fb, point, 0.7, hex, color, intensity * AMath.cl01(1.4 - e))
+            var impact := center + Vector2(9, -2)
+            for q in range(8):
+                var angle := float(q) * TAU / 8.0
+                for step in range(3, 11):
+                    _mini_disc(fb, impact + Vector2(cos(angle), sin(angle)) * float(step), 0.8, hex, color, intensity)
+            _mini_disc(fb, impact, 3.0, hex, Vector3(2.0, 1.6, 0.8), intensity)
 
     func _central_tau(t: float) -> float:
         # B's physical attack advances, freezes, then resumes into the shared
@@ -445,12 +436,11 @@ class ChronoshardR:
                 var trail := a.lerp(b, u) + Vector2(0, -sin(u * PI) * 24.0)
                 ADraw.disc(fb, trail.x, trail.y, 3.0 - float(m) * 0.25, tint, k * (1.0 - float(m) / 10.0) * 0.7)
             var head := a.lerp(b, tau) + Vector2(0, -sin(tau * PI) * 24.0)
-            var points: Array = []
-            for q in range(4):
-                var angle := tau * 20.0 + float(q) * PI * 0.5
-                var radius := 3.0 if q % 2 else 6.0
-                points.append(head + Vector2(cos(angle), sin(angle)) * radius)
-            ADraw.poly_fill_solid(fb, points, Vector3(1.4, 1.4, 2.0), false, k)
+            var heading := (b - a).normalized()
+            var side := Vector2(-heading.y, heading.x)
+            var arrow := [head + heading * 8.0, head - heading * 3.0 + side * 5.0,
+                head - heading * 2.0, head - heading * 3.0 - side * 5.0]
+            ADraw.poly_fill_solid(fb, arrow, Vector3(2.0, 1.4, 0.55), false, k)
         else:
             var e := tau - 1.0
             var radius := AMath.ease_out(e / 1.2) * 34.0
@@ -533,7 +523,7 @@ class ChronoshardR:
                 # Five sequential snapshots of one amber event, in capture
                 # order around the ring; release travels in reverse order.
                 var mark := Vector3(2.0, 1.2, 0.45)
-                _mini_attack(fb, PackedVector2Array(hex), cur, float(STORED_TAU[i]), mark, captured * resolve)
+                _mini_attack(fb, PackedVector2Array(hex), cur, _held_tau(i, t), mark, captured * resolve)
             ADraw.glow(fb, cur.x, cur.y, sz * 1.4, AMath.R("frost", 0.75), captured * resolve * 0.35)
             if captured > 0.0 and rel < 1.0:
                 ADraw.streak(fb, cur.x, cur.y, C.x, C.y, 0.7, 0.3, AMath.R("frost", 0.6), captured * 0.4 * resolve)
@@ -548,12 +538,11 @@ class ChronoshardR:
                 var tail := previous_crystal.lerp(C, AMath.ease_out(prev_rel, 2.0))
                 var k := captured * resolve * (1.0 - AMath.seg(rel, 0.84, 1.0))
                 ADraw.streak(fb, tail.x, tail.y, head.x, head.y, 1.4, 0.7, Vector3(1.8, 1.3, 0.5), k * 0.8)
-                var star: Array = []
-                for q in range(4):
-                    var a := float(STORED_TAU[i]) * 20.0 + float(q) * PI * 0.5
-                    var radius := 3.0 if q % 2 else 6.0
-                    star.append(head + Vector2(cos(a), sin(a)) * radius)
-                ADraw.poly_fill_solid(fb, star, Vector3(1.4, 1.4, 2.0), false, k)
+                var forward := (C - head).normalized()
+                var side := Vector2(-forward.y, forward.x)
+                var arrow := [head + forward * 7.0, head - forward * 3.0 + side * 4.0,
+                    head - forward * 2.0, head - forward * 3.0 - side * 4.0]
+                ADraw.poly_fill_solid(fb, arrow, Vector3(2.0, 1.4, 0.55), false, k)
         var it := t - 6.2
         if it >= 0.0 and it < 0.7:
             ADraw.disc(fb, C.x, C.y, 5.0 * (1.0 - it / 0.7), AMath.R("frost", 1.0), 1.0 - it / 0.7)

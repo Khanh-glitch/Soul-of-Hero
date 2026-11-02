@@ -326,6 +326,8 @@ func _init() -> void:
     if chrono._release(4, 5.3) <= chrono._release(0, 5.3):
         _fail("crystal release is not reverse ordered")
     for i in range(5):
+        if not (chrono._held_tau(i, 5.9) < chrono._held_tau(i, 4.0) and absf(chrono._held_tau(i, 6.2)) < 0.00001):
+            _fail("crystal %d does not reverse its stored event" % i)
         if chrono._release(i, 6.2 - 1.0 / 60.0) >= 1.0 or chrono._release(i, 6.2) < 1.0:
             _fail("crystal %d does not arrive at the common impact beat" % i)
     if chrono._resolve(4, 7.7) >= chrono._resolve(0, 7.7):
