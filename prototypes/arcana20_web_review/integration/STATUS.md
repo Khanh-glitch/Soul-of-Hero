@@ -1,0 +1,28 @@
+# ARCANA20 web integration — baseline only / incomplete
+
+**Not the requested 20-skill or performance delivery.** The playable preview is the unmodified web game from creator reference ZIP `soul-of-hero-game-development.zip`, except `vite.config.ts` allows the Arena preview host; the archived reference Bible has one trailing blank line removed. Neither affects game behavior. It contains only its original four Cores (Ember, Quake, Storm, Rime). There are no ported P0 effects, 20-item equipment integration, art for those new items, quality modes, benchmark on a physical GPU, or P0-equivalence claim. The one island has multiple biomes and four starts; it is not evidence of multiple independent maps.
+
+## Provenance
+
+Reference ZIP retrieved by GitHub blob `5a667c979a597d5d26e80453f7f16756db98f150` from `references/gameplay-prototypes-20261102:reference_prototypes/20261102/soul-of-hero-game-development.zip`, SHA-256 `fa95538271fd46a70f5737b58b8671124e091e8f6196479950a25dca741a2403` (matches reference branch README). This folder is an isolated prototype copy, not production gameplay authority. The archived Bible is stale; no source branch is modified. The preferred reference for the 20 designs is the P0 package AVFX `b9b8cfa904d8c4126da63bdfca41b38b0f4718eb`; its #05 A/B remain separate and unchosen. `p0-catalog.json` is a passive 20-row inventory of the P0 source catalog, not an implementation. P0 footage was assembled from multiple historical capture SHAs; do not call the videos all captured at the build SHA. Catalog durations can differ from actual fusion clocks.
+
+## Facts discovered
+
+* This ZIP is TypeScript/React, Canvas 2D. P0 is a separate Godot/GDScript visual renderer, with individual A/B/C/D pipelines and world compositors. Merely loading the original A/B/C/D reference demos, inventing 20 placeholder effects, tinting the four base Core visuals, or playing videos over the world is **not** porting P0. The 20 actual simulations/render paths and their scene blending have to be adapted to the browser and visually validated.
+* The game has real finite-use item custody and cast commit logic, but only four native Core definitions in `src/game/catalog.ts` and four combat cases in `src/game/sim.ts`. Adding 20 genuinely different combat abilities cannot be inferred from VFX metadata; do not fabricate damage, targets, statuses, hit receipts, or silently map them to the four cases. A visual-only 20-Core testing integration can consume the existing item/charge mechanism with explicit test-only definitions, while preserving existing game rules, but it still requires the real P0 port and clear no-damage labeling.
+* The renderer paints 640×360 logical pixels, scaled to 1280×720 at 2× on this viewport; the hero sprite is 16×24 logical pixels. It has depth sorting, roofs, world lighting and several biomes, but no existing general P0 world-pass API or evidence of correct P0 terrain compositing and actor occlusion. Test actual placement, scene colors, moving camera, four starts and diverse biomes—not a fake map or static image.
+* Proposed modes, NOT yet implemented: **High** matches chosen P0 look (all source roles, seed, timing, OUT, actor/world compositing; prove by aligned visual comparison); **Balance** preserves key silhouette, beats and target, cautiously reducing secondary work only after matched review; **Performance** prioritizes runtime but keeps essential action readability. All modes must retain the exact same gameplay events, charge, casting and cleanup. Same outcome on device and exact High parity cannot be promised before measurement.
+
+## Validation so far
+
+- `npm run build` passes; original `npm test` passes 13/13. These are baseline-game tests, **not 20-Core or performance tests**.
+- Headless Chromium 1280×720 loaded the original title, selected Meadow Bay and entered the real game, with no page exceptions. In `scripts/arcana_baseline_qa.mjs`, isolated test-only inventory fixtures supplied each existing Core; actual mouse casts consumed a charge for all four, and the inventory opened. This does not test P0 or production gameplay approval.
+- A single 180-interval requestAnimationFrame sample in software/headless Chromium after entering Meadow Bay produced p50 16.7 ms, p95 16.8 ms, p99 833.3 ms and max 2216.6 ms. This was uncontrolled, includes scheduling/chunk work and does not isolate VFX or represent a physical GPU or target player FPS. It warns against claiming smoothness. Repeat with warmed and cold scenes, frame CPU/GPU instrumentation and multiple runs on target devices.
+
+## Unfinished work, in order
+
+1. Define non-destructive preview-only item registration and cast-event identity while keeping original finite charge/cancel/custody and unrelated systems intact; never infer combat events.
+2. Port P0's exact selected source/simulation/visual layers to a browser rendering path, including both #05 alternatives and D19 A restoration. Keep world/actor/HUD separation and real map sampling; validate individual fixed times and complete motion against P0, plus native-size normal/dim scenes. Do not use rework R32 as baseline.
+3. Profile the browser port on real target GPUs and integrate measured zero-visual-loss optimizations first; only then add clearly separated Balance/Performance fallbacks with explicit visual diff tests.
+4. Test every one of 20 equipped Core items in each available quality profile, cast/cancel/recast and finite charges; test meaningful biome/camera/occlusion changes. Separate visual-only review from authorized real gameplay. Preserve original title/HUD and mark the isolated test build.
+5. Publish the playing link as an actual 20-Core build only once those checks pass. The currently running preview is **reference baseline only**.

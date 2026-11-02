@@ -1,0 +1,280 @@
+{
+  "source_commit": "b9b8cfa904d8c4126da63bdfca41b38b0f4718eb",
+  "notice": "Metadata only. No skill has been ported or implemented here. Catalog timings may differ from actual fusion clocks.",
+  "skills": [
+    {
+      "id": 1,
+      "key": "arcana_fusion20_01",
+      "name": "Cinder Crown",
+      "school": "fire",
+      "lead": "A+C",
+      "parts": [
+        "A:01",
+        "C:01"
+      ],
+      "catalog_duration_s": 7.8,
+      "catalog_climax_s": 4.82,
+      "web_visual_implemented": false
+    },
+    {
+      "id": 2,
+      "key": "arcana_fusion20_02",
+      "name": "Furnace Wyrm",
+      "school": "fire",
+      "lead": "B",
+      "parts": [
+        "B:02"
+      ],
+      "catalog_duration_s": 7.6,
+      "catalog_climax_s": 5.12,
+      "web_visual_implemented": false
+    },
+    {
+      "id": 3,
+      "key": "arcana_fusion20_03",
+      "name": "Meteor Loom",
+      "school": "fire",
+      "lead": "B",
+      "parts": [
+        "B:03"
+      ],
+      "catalog_duration_s": 10.0,
+      "catalog_climax_s": 7.25,
+      "web_visual_implemented": false
+    },
+    {
+      "id": 4,
+      "key": "arcana_fusion20_04",
+      "name": "Ashen Guillotine",
+      "school": "fire",
+      "lead": "NEW",
+      "parts": [
+        "C:04_STUDY",
+        "A:04_STUDY"
+      ],
+      "catalog_duration_s": 8.0,
+      "catalog_climax_s": 4.25,
+      "web_visual_implemented": false
+    },
+    {
+      "id": 5,
+      "key": "arcana_fusion20_05",
+      "name": "Abyssal Bloom",
+      "school": "water",
+      "lead": "A+C",
+      "parts": [
+        "A:05",
+        "C:05"
+      ],
+      "catalog_duration_s": 8.6,
+      "catalog_climax_s": 5.4,
+      "web_visual_implemented": false
+    },
+    {
+      "id": 6,
+      "key": "arcana_fusion20_06",
+      "name": "Riptide Calligraphy",
+      "school": "water",
+      "lead": "NEW",
+      "parts": [
+        "C:06_STUDY",
+        "A:06_STUDY"
+      ],
+      "catalog_duration_s": 8.8,
+      "catalog_climax_s": 6.15,
+      "web_visual_implemented": false
+    },
+    {
+      "id": 7,
+      "key": "arcana_fusion20_07",
+      "name": "Mirrorfrost Basilica",
+      "school": "ice",
+      "lead": "C",
+      "parts": [
+        "C:07"
+      ],
+      "catalog_duration_s": 9.2,
+      "catalog_climax_s": 6.62,
+      "web_visual_implemented": false
+    },
+    {
+      "id": 8,
+      "key": "arcana_fusion20_08",
+      "name": "Undertow Maw",
+      "school": "water",
+      "lead": "B",
+      "parts": [
+        "B:08"
+      ],
+      "catalog_duration_s": 8.5,
+      "catalog_climax_s": 5.3,
+      "web_visual_implemented": false
+    },
+    {
+      "id": 9,
+      "key": "arcana_fusion20_09",
+      "name": "Chain Verdict",
+      "school": "volt",
+      "lead": "A+B+C",
+      "parts": [
+        "A:09",
+        "B:09",
+        "C:09"
+      ],
+      "catalog_duration_s": 7.8,
+      "catalog_climax_s": 6.08,
+      "web_visual_implemented": false
+    },
+    {
+      "id": 10,
+      "key": "arcana_fusion20_10",
+      "name": "Thunderloom",
+      "school": "volt",
+      "lead": "C",
+      "parts": [
+        "C:10"
+      ],
+      "catalog_duration_s": 7.4,
+      "catalog_climax_s": 4.84,
+      "web_visual_implemented": false
+    },
+    {
+      "id": 11,
+      "key": "arcana_fusion20_11",
+      "name": "Volt Carousel",
+      "school": "volt",
+      "lead": "A+C09",
+      "parts": [
+        "A:11",
+        "C:09_ARCS"
+      ],
+      "catalog_duration_s": 8.2,
+      "catalog_climax_s": 6.12,
+      "web_visual_implemented": false
+    },
+    {
+      "id": 12,
+      "key": "arcana_fusion20_12",
+      "name": "Skybreaker Script",
+      "school": "volt",
+      "lead": "NEW",
+      "parts": [
+        "A:12_STUDY",
+        "C:09_ARCS_STUDY"
+      ],
+      "catalog_duration_s": 8.8,
+      "catalog_climax_s": 7.14,
+      "web_visual_implemented": false
+    },
+    {
+      "id": 13,
+      "key": "arcana_fusion20_13",
+      "name": "Rootwake",
+      "school": "verdant",
+      "lead": "NEW",
+      "parts": [
+        "B:13_STUDY",
+        "C:13_STUDY"
+      ],
+      "catalog_duration_s": 9.4,
+      "catalog_climax_s": 6.72,
+      "web_visual_implemented": false
+    },
+    {
+      "id": 14,
+      "key": "arcana_fusion20_14",
+      "name": "Spore Nebula",
+      "school": "verdant",
+      "lead": "NEW",
+      "parts": [
+        "A:14_STUDY",
+        "B:14_STUDY",
+        "C:14_STUDY"
+      ],
+      "catalog_duration_s": 9.4,
+      "catalog_climax_s": 7.12,
+      "web_visual_implemented": false
+    },
+    {
+      "id": 15,
+      "key": "arcana_fusion20_15",
+      "name": "Thorn Opera",
+      "school": "verdant",
+      "lead": "C",
+      "parts": [
+        "C:15"
+      ],
+      "catalog_duration_s": 8.4,
+      "catalog_climax_s": 6.0,
+      "web_visual_implemented": false
+    },
+    {
+      "id": 16,
+      "key": "arcana_fusion20_16",
+      "name": "Worldseed",
+      "school": "verdant",
+      "lead": "A+C",
+      "parts": [
+        "A:16",
+        "C:16"
+      ],
+      "catalog_duration_s": 10.2,
+      "catalog_climax_s": 7.72,
+      "web_visual_implemented": false
+    },
+    {
+      "id": 17,
+      "key": "arcana_fusion20_17",
+      "name": "Event Horizon",
+      "school": "astral",
+      "lead": "C",
+      "parts": [
+        "C:17"
+      ],
+      "catalog_duration_s": 8.8,
+      "catalog_climax_s": 6.45,
+      "web_visual_implemented": false
+    },
+    {
+      "id": 18,
+      "key": "arcana_fusion20_18",
+      "name": "Chronoshard",
+      "school": "astral",
+      "lead": "NEW",
+      "parts": [
+        "B:18_STUDY"
+      ],
+      "catalog_duration_s": 10.0,
+      "catalog_climax_s": 5.2,
+      "web_visual_implemented": false
+    },
+    {
+      "id": 19,
+      "key": "arcana_fusion20_19",
+      "name": "Constellation Engine",
+      "school": "astral",
+      "lead": "D",
+      "parts": [
+        "D:19",
+        "A:19_COMBAT"
+      ],
+      "catalog_duration_s": 9.8,
+      "catalog_climax_s": 8.15,
+      "web_visual_implemented": false
+    },
+    {
+      "id": 20,
+      "key": "arcana_fusion20_20",
+      "name": "Reality Ripper",
+      "school": "astral",
+      "lead": "A+C",
+      "parts": [
+        "A:20",
+        "C:20"
+      ],
+      "catalog_duration_s": 10.4,
+      "catalog_climax_s": 6.3,
+      "web_visual_implemented": false
+    }
+  ]
+}
