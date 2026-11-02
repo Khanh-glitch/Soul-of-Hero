@@ -128,7 +128,7 @@ class RootwakeR:
                 # and aims toward the target with the visible tension. This
                 # remains visual-only: no asserted contact or on-body effect.
                 var attack := AMath.ease_in(AMath.seg(t, 4.65, 5.4), 2.0) * attached * retract
-                var direction := (_tips[i] - tp).normalized()
+                var direction: Vector2 = (_tips[i] as Vector2 - tp).normalized()
                 var thorn_side := Vector2(-direction.y, direction.x)
                 var thorn_base: Vector2 = points[8]
                 var point: Vector2 = thorn_base.lerp(_tips[i] + direction * 7.0, attack)
