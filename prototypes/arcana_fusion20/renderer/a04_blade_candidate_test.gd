@@ -41,13 +41,13 @@ func _initialize() -> void:
         return
     # A cocked blade resolves onto the actual contact line. A static growing
     # bar could otherwise satisfy the translation check above.
-    if absf(spell._blade_direction(3.18).angle_to(direction)) < 0.15 or absf(spell._blade_direction(3.4).angle_to(direction)) > 0.001:
+    if absf(spell._blade_direction(3.04).angle_to(direction)) < 0.15 or absf(spell._blade_direction(3.4).angle_to(direction)) > 0.001:
         push_error("A04_BLADE_FAIL swing does not resolve to contact line")
         quit(1)
         return
     # The cocked tip is still inside the native framebuffer at maximum
     # draw-back: increased travel must not silently crop the physical blade.
-    var cocked_dir: Vector2 = spell._blade_direction(3.18)
+    var cocked_dir: Vector2 = spell._blade_direction(3.04)
     var cocked_n := Vector2(-cocked_dir.y, cocked_dir.x)
     var cocked_tip: Vector2 = ARedesignSpells.C + cocked_dir * 100.0 + cocked_n * (ready + 3.6)
     if cocked_tip.x < 0.0 or cocked_tip.y < 0.0 or cocked_tip.x >= AFramebuffer.W or cocked_tip.y >= AFramebuffer.H:
