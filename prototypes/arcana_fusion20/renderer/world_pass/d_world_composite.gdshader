@@ -6,6 +6,7 @@ render_mode unshaded, blend_disabled;
 uniform sampler2D live_world : hint_screen_texture, repeat_disable, filter_nearest;
 uniform sampler2D light_tex : repeat_disable, filter_nearest;
 uniform sampler2D star_tex : repeat_disable, filter_nearest;
+uniform sampler2D center_tex : repeat_disable, filter_nearest;
 uniform sampler2D body_tex : repeat_disable, filter_nearest;
 uniform sampler2D warp_tex : repeat_disable, filter_nearest;
 uniform sampler2D influence_tex : repeat_disable, filter_nearest;
@@ -69,7 +70,7 @@ void fragment() {
         // luminance compression reserves headroom before the authored star
         // is layered; no screen-wide exposure or fabricated geometry.
         vec3 star = texelFetch(star_tex, p, 0).rgb;
-        vec3 body = texelFetch(body_tex, p, 0).rgb;
+        vec3 body = texelFetch(body_tex, p, 0).rgb + texelFetch(center_tex, p, 0).rgb;
         float star_amount = max(star.r, max(star.g, star.b));
         if (star_amount > 0.0) {
             vec3 body_soft = body / (vec3(1.0) + body);
@@ -84,7 +85,9 @@ void fragment() {
     } else if (light_presentation == 4) {
         base = tone(texelFetch(star_tex, p, 0).rgb, p); // star only
     } else if (light_presentation == 5) {
-        base = tone(texelFetch(body_tex, p, 0).rgb, p); // body only
+        base = tone(texelFetch(body_tex, p, 0).rgb, p); // outer nodes/graph and other light
+    } else if (light_presentation == 6) {
+        base = tone(texelFetch(center_tex, p, 0).rgb, p); // central quads + radial lines
     }
     vec3 delta = base - tone(original, p);
     COLOR = vec4(clamp(original + delta * clamp(warp_fade, 0.0, 1.0), 0.0, 1.0), 1.0);

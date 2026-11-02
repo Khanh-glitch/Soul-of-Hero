@@ -28,9 +28,11 @@ func consume(frame: Arcana20SourcePassFrame) -> void:
     var light := PackedFloat32Array()
     var influence := PackedFloat32Array()
     var star := PackedFloat32Array()
+    var center := PackedFloat32Array()
     var body := PackedFloat32Array()
     if frame.d_has_light_layers:
         star.resize(DFx.N * 4)
+        center.resize(DFx.N * 4)
         body.resize(DFx.N * 4)
     light.resize(DFx.N * 4)
     influence.resize(DFx.N * 4)
@@ -41,12 +43,14 @@ func consume(frame: Arcana20SourcePassFrame) -> void:
         if frame.d_has_light_layers:
             for channel in range(3):
                 star[p * 4 + channel] = frame.d_star_rgb[p * 3 + channel]
+                center[p * 4 + channel] = frame.d_center_rgb[p * 3 + channel]
                 body[p * 4 + channel] = frame.d_body_rgb[p * 3 + channel]
         influence[p * 4 + 3] = float(frame.d_influence[p] | frame.d_warp_influence[p])
     _sprite.texture = _set_texture("light", light)
     _material.set_shader_parameter("light_tex", _sprite.texture)
     if frame.d_has_light_layers:
         _material.set_shader_parameter("star_tex", _set_texture("star", star))
+        _material.set_shader_parameter("center_tex", _set_texture("center", center))
         _material.set_shader_parameter("body_tex", _set_texture("body", body))
     _material.set_shader_parameter("warp_tex", _set_texture("warp", frame.d_world_warp))
     _material.set_shader_parameter("influence_tex", _set_texture("influence", influence))

@@ -32,8 +32,10 @@ var buf := PackedFloat32Array()
 # R29 presentation-only decomposition, populated by the SAME raster calls.
 # It never replaces or feeds back into the source-normalized D buffer.
 var world_star := PackedFloat32Array()
+var world_center := PackedFloat32Array()
 var world_body := PackedFloat32Array()
 var world_layer_star := false
+var world_layer_center := false
 # The additional accumulation is opt-in; the rejected experiment must not
 # tax ordinary D rendering or be mistaken for production HDR.
 var collect_world_layers := false
@@ -74,6 +76,7 @@ static func source_rng(seed: int) -> BMath.BRng:
 func _init() -> void:
     buf.resize(N * 3)
     world_star.resize(N * 3)
+    world_center.resize(N * 3)
     world_body.resize(N * 3)
     world_influence.resize(N)
     world_warp.resize(N * 4)
@@ -85,8 +88,10 @@ func clear() -> void:
     if track_world_fields:
         if collect_world_layers:
             world_star.fill(0.0)
+            world_center.fill(0.0)
             world_body.fill(0.0)
         world_layer_star = false
+        world_layer_center = false
         world_influence.fill(0)
         world_bends.clear()
         # Original D renderer ping-pongs warp with exp(-3.4*dt) decay.
@@ -244,6 +249,10 @@ func _add_px(x: int, y: int, r: float, g: float, b: float) -> void:
             world_star[i] += r
             world_star[i + 1] += g
             world_star[i + 2] += b
+        elif collect_world_layers and world_layer_center:
+            world_center[i] += r
+            world_center[i + 1] += g
+            world_center[i + 2] += b
         elif collect_world_layers:
             world_body[i] += r
             world_body[i + 1] += g

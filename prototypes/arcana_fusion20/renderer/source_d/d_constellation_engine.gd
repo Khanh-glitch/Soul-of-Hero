@@ -160,6 +160,9 @@ func update(t: float, dt: float) -> void:
             fx.line([float(A.x), float(A.y), lerpf(float(A.x), CENTER.x, 0.5), lerpf(float(A.y), CENTER.y, 0.5), CENTER.x, CENTER.y],
                 [0.7, 1.4, 0.3], c3, {"hard": 1.0, "glow": 1.0, "flow": 3.2})
         var su := _ease_out_expo(_phase(t, 7.55, 8.1)) * out_f
+        # Diagnostic category for the eight authored central quads and
+        # their radial filaments, distinct from outer node/graph light.
+        fx.world_layer_center = true
         for i in range(8):
             var a := float(i) / 8.0 * BMath.TAU + t * 0.4
             var rr := 22.0 * su * (0.45 if i % 2 else 1.0)
@@ -169,6 +172,7 @@ func update(t: float, dt: float) -> void:
             var lc := DFx.ramp(P, 1.0, 1.0)
             lc.a = 0.7 * su
             fx.line([CENTER.x, CENTER.y, CENTER.x + cos(a) * rr * 1.2, CENTER.y + sin(a) * rr * 0.9], 0.6, lc, {"hard": 1.0, "glow": 1.0})
+        fx.world_layer_center = false
         var sc1 := DFx.ramp(P, 1.0, 1.0)
         sc1.a = 0.95 * su
         # Tag only the original central STAR operation for the optional LDR
