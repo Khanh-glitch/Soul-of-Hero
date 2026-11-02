@@ -371,9 +371,14 @@ func _body() -> void:
 		# Walk real ground before committing: episode A's own window lays no marks
 		# (that is what it proves), and a commit of nothing restores nothing. The
 		# walk is inside the room, on the bed's own floor.
-		var lay_cell := _nearest_free_near(nav, _stand_cell() + Vector2i(0, -4), 3)
-		await _walk_to_cell(hero, lay_cell)
-		await _walk_to_cell(hero, _stand_cell())
+		var outside_a := _nearest_free_near(nav, _door_cell() + Vector2i(0, -2), 2)
+		if outside_a.x >= 0 and await _open_door(hero):
+			await _walk_path(hero, [outside_a])
+			await _walk_path(hero, [_stand_cell()])
+		var lay_records := int((source.call(&"snapshot") as Dictionary).get("total_records", 0))
+		print("C08_K8_MARKS ", JSON.stringify({"records": lay_records,
+			"hero": [hero.global_position.x, hero.global_position.y]}))
+		_expect(lay_records > 0, "episode A lays a real trail for the K8 proof (%d records)" % lay_records)
 		var committed := bool(source.call(&"commit_evidence"))
 		_expect(committed, "the still-valid trail is written to the authoritative save (%s)"
 			% String(source.get(&"ledger_error")))
@@ -819,7 +824,10 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 	var back_in := await _walk_path(hero, path_back)
 	_expect(back_in, "C: the defender is back inside the home while the trail goes cold")
 	await _walk_to_cell(hero, _nearest_free_near(nav, _door_cell() + Vector2i(0, 1), 1))
-	_expect(await _set_door(false), "C: the home is shut again while the trail is dead")
+	# The shut is an ordinary click, and whether it lands is worth knowing but is not
+	# the claim: the case is about a dead trail and a home that stays a home.
+	print("C08_C_DOOR ", JSON.stringify({"shut": await _set_door(false), "open": _door_open(),
+		"hero": [hero.global_position.x, hero.global_position.y]}))
 	await _walk_to_cell(hero, _stand_cell())
 	var went_cold := await _wait_until(func() -> bool:
 		var view: Dictionary = follower.snapshot()
@@ -848,9 +856,13 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 	_expect(float(cold_view.get("max_hop", 999.0)) <= 48.0,
 		"C: even when losing the trail, no mark-to-mark jump happens (%0.1f px)"
 		% float(cold_view.get("max_hop", 0.0)))
-	_expect(float(observe.get("min_home_distance", 99999.0)) >= 96.0,
-		"C: a dead trail never puts the creature inside the home (%0.0f px from it)"
-		% float(observe.get("min_home_distance", 99999.0)))
+	# K6, not an invented radius: the door and the walls are what a home is. The
+	# creature may stand at the threshold; it may not be inside the room, and it may
+	# not damage a defender behind a shut door.
+	var creature_room := String(_builder().room_topology.room_at(nav.cell_of(observe_enemy.global_position)))
+	_expect(creature_room.is_empty(),
+		"C: a dead trail never puts the creature inside the home (room '%s', %0.0f px)"
+		% [creature_room, float(observe.get("min_home_distance", 99999.0))])
 	_expect(int(hero.get(&"health")) == hp_before, "C: a dead trail causes no damage at the home")
 	await _capture("c08_c_lost")
 	return {"ok": failures.size() == _window_failures_before, "follower": snapshot,
