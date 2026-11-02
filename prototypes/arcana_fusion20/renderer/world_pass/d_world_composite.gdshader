@@ -48,6 +48,23 @@ vec3 reinhard_display(vec3 c, ivec2 p) {
     c = clamp(mix(vec3(l), c, 1.1), 0.0, 1.0);
     return floor(c * 26.0 + vec3(bayer(p))) / 26.0;
 }
+// Diagnostic: map the displayed LDR world through the analytic inverse of
+// D's source ACES curve before source light is added, then use the original
+// curve and 26-level Bayer quantization. This constructs a virtual compatible
+// input, not recovered linear/HDR world values or production HDR parity.
+float inverse_aces(float y) {
+    y = clamp(y, 0.0, 1.0);
+    float a = 2.43 * y - 2.51;
+    float b = 0.59 * y - 0.03;
+    float c = 0.14 * y;
+    return max(0.0, (-b - sqrt(max(0.0, b * b - 4.0 * a * c))) / (2.0 * a));
+}
+vec3 virtual_source_input(vec3 display) {
+    // Invert the source's 1.1 saturation around the same linear luma.
+    float l = dot(display, vec3(0.2126, 0.7152, 0.0722));
+    vec3 unsaturated = clamp(vec3(l) + (display - vec3(l)) / 1.1, 0.0, 1.0);
+    return vec3(inverse_aces(unsaturated.r), inverse_aces(unsaturated.g), inverse_aces(unsaturated.b));
+}
 vec3 sample_world(vec2 delta, vec2 screen_uv, vec2 pixel_size) {
     vec2 offset = (screen_dx * delta.x + screen_dy * delta.y) * pixel_size;
     return texture(live_world, clamp(screen_uv + offset, vec2(0.0), vec2(1.0))).rgb;
@@ -79,6 +96,11 @@ void fragment() {
     if (light_presentation == 9) {
         base = reinhard_display(warped + light, p);
         reference = reinhard_display(original, p);
+    } else if (light_presentation == 10) {
+        // Baseline correction restores exact no-FX LDR pixels, despite the
+        // source's ordered quantization. Applied only inside D influence.
+        base = tone(virtual_source_input(warped) + light, p);
+        reference = tone(virtual_source_input(original), p);
     } else if (light_presentation == 1 || light_presentation == 8) {
         // An independently accumulated star layer and body layer prevent
         // per-draw RGBA8 saturation from erasing their overlap. Local soft

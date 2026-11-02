@@ -1606,8 +1606,8 @@ func _phase_sweep(app: Node, world: Node, player: Node2D, enemy: Node2D, camera:
                     check(star_peak > 0.0 and center_peak > 0.0 and body_peak > 0.0, "D19 independently accumulated star and body layers")
                     # Same source frame, world and camera for all comparisons.
                     # [shimmer mode, light mode]; do not change source fields.
-                    var states := [[0,0],[1,0],[2,0],[2,1],[2,2],[2,3],[2,4],[2,5],[2,6],[2,7],[2,8],[2,9],[0,0]]
-                    var names := ["source_formula", "shimmer_off", "bounded", "layered", "warp_only", "source_light", "star_only", "body_only", "center_only", "star_pretransfer", "pretransfer_layered", "reinhard_local", "source_restored"]
+                    var states := [[0,0],[1,0],[2,0],[2,1],[2,2],[2,3],[2,4],[2,5],[2,6],[2,7],[2,8],[2,9],[2,10],[0,0]]
+                    var names := ["source_formula", "shimmer_off", "bounded", "layered", "warp_only", "source_light", "star_only", "body_only", "center_only", "star_pretransfer", "pretransfer_layered", "reinhard_local", "virtual_source_input", "source_restored"]
                     var captures: Array[Image] = []
                     for index in range(states.size()):
                         d_viewer._material.set_shader_parameter("shimmer_presentation", states[index][0])
@@ -1615,7 +1615,7 @@ func _phase_sweep(app: Node, world: Node, player: Node2D, enemy: Node2D, camera:
                         await process_frame
                         await process_frame
                         captures.append(await save_frame("d19_%d_%s" % [requested, names[index]]))
-                    check(images_equal(captures[0], captures[12]), "D19 identical source formula restored at tick %d" % requested)
+                    check(images_equal(captures[0], captures[13]), "D19 identical source formula restored at tick %d" % requested)
                     check(not images_equal(captures[0], captures[1]), "D19 heat shimmer has a visible world effect at tick %d" % requested)
                     check(not images_equal(captures[0], captures[2]), "D19 bounded presentation differs at tick %d" % requested)
                     print("D19_ISOLATION ", JSON.stringify({"tick":requested,"lighting":lighting,"warp_alpha_min":alpha_min,"warp_alpha_max":alpha_max,"active_warp_pixels":active_count,"source_light_max":light_max,"independent_star_peak":star_peak,"star_pretransfer_peak":star_raw_peak,"independent_body_peak":body_peak,"independent_center_peak":center_peak,"rgba8_all_channel_saturated_pixels":source_clipped,"warp_fade":d_frame.d_warp_fade,"source_to_world":str(d_frame.source_to_world),"world":"real frozen overworld; unchanged actors and camera", "formula":"0 legacy / 1 off / 2 amplitude/(1+abs(amplitude)) / 0 restore", "source_fields_unchanged":true}))
