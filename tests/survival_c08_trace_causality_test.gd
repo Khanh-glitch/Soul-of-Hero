@@ -540,6 +540,7 @@ func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
 				"probe": _trace_probe(source, enemy)}))
 			break
 		print("C08_B_LEG ", JSON.stringify({"leg": index, "cells": leg.size(),
+			"skipped": int(stats.get("skipped", 0)),
 			"hero": [snappedf(hero.global_position.x, 0.1), snappedf(hero.global_position.y, 0.1)],
 			"source": _source_probe(source), "probe": _trace_probe(source, enemy)}))
 		if index == 0:
@@ -817,14 +818,14 @@ func _trace_probe(source: Node, enemy: Node2D) -> Dictionary:
 
 func _walk_stats() -> Dictionary:
 	return {"samples": 0, "min_home_distance": 99999.0, "direct_ticks": 0,
-		"investigate_ticks": 0, "first_direct_distance": -1.0}
+		"investigate_ticks": 0, "first_direct_distance": -1.0, "skipped": 0}
 
 
 ## Walk one planned path while recording what the creature could see. Each cell of
 ## the plan is walked with the inherited ordinary-input walker.
 func _walk_with_observation(hero: CharacterBody2D, enemy: CharacterBody2D, home: Vector2,
 		path: Array[Vector2i], stats: Dictionary) -> Dictionary:
-	for key: String in ["samples", "direct_ticks", "investigate_ticks", "first_direct_distance"]:
+	for key: String in ["samples", "direct_ticks", "investigate_ticks", "first_direct_distance", "skipped"]:
 		if not stats.has(key):
 			stats[key] = 0
 	if not stats.has("min_home_distance"):
@@ -856,6 +857,7 @@ func _observe_walk(hero: CharacterBody2D, enemy: CharacterBody2D, home: Vector2,
 		var escape_frames := 0
 		var escape_direction := Vector2.ZERO
 		var closest := hero.global_position.distance_to(point)
+		var skipped := false
 		while hero.global_position.distance_to(point) > 4.5 and Time.get_ticks_msec() < deadline:
 			if is_instance_valid(enemy) and not enemy.is_queued_for_deletion():
 				stats.samples = int(stats.samples) + 1
@@ -878,17 +880,22 @@ func _observe_walk(hero: CharacterBody2D, enemy: CharacterBody2D, home: Vector2,
 			stalled = stalled + 1 if now >= closest - 0.05 else 0
 			closest = minf(closest, now)
 			if stalled >= 5:
+				if _blocked_by_body(hero):
+					# A living body is not terrain. A player does not shove at the
+					# same pixel for six seconds while something stands on it: he
+					# steps around it and picks up the path at the next cell. The
+					# skip is counted and printed, never silent.
+					skipped = true
+					stats["skipped"] = int(stats.get("skipped", 0)) + 1
+					break
 				escapes += 1
 				if escapes > 10:
 					break
 				_report_wedge(hero, cell, before, escapes)
 				escape_direction = _escape_direction(hero, before, point, escapes)
-				# A living body is not a wall: it moves, and it is 14 px wide. A
-				# player steps aside for longer than a wall needs, so the sidestep
-				# is 24 frames instead of 10 and the walker tries ten times.
 				escape_frames = 24
 				stalled = 0
-		if hero.global_position.distance_to(point) > 4.5:
+		if not skipped and hero.global_position.distance_to(point) > 4.5:
 			_set_direction(Vector2.ZERO)
 			walked = false
 			# One compact fact line: GitHub truncates annotations at 4 KB, so the
@@ -923,6 +930,41 @@ func _door_cell() -> Vector2i:
 		if structure != null and is_instance_valid(structure) and structure.piece_id == SurvivalStructure.PIECE_DOOR:
 			return structure.cell
 	return Vector2i(-1, -1)
+
+
+## A body pressed against another body slides a few tenths of a pixel per frame.
+## Reported separately from a terrain wedge so the two failures never look alike.
+func _blocked_by_body(hero: CharacterBody2D) -> bool:
+	for index in range(hero.get_slide_collision_count()):
+		var other: Variant = hero.get_slide_collision(index).get_collider()
+		if other is CharacterBody2D or other is RigidBody2D:
+			return true
+	return false
+
+
+## Overrides the inherited wiggle: it keeps the clearance test but returns no
+## direction when nothing is clear. The inherited fallback picks a cardinal
+## anyway, which once walked the Hero seventeen cells away from his own route.
+func _escape_direction(hero: CharacterBody2D, at: Vector2, point: Vector2, attempt: int) -> Vector2:
+	var to_target := (point - at).normalized()
+	var order: Array[Vector2] = []
+	if absf(to_target.x) >= absf(to_target.y):
+		order = [Vector2(0, -signf(to_target.x)), Vector2(0, signf(to_target.x)),
+			Vector2(to_target.x, 0), Vector2(-to_target.x, 0)]
+	else:
+		order = [Vector2(-signf(to_target.y), 0), Vector2(signf(to_target.y), 0),
+			Vector2(0, to_target.y), Vector2(0, -to_target.y)]
+	for candidate: Vector2 in order:
+		if candidate.length() < 0.5:
+			continue
+		var query := _shape_query(hero)
+		var body := hero.get_node_or_null("BodyShape") as CollisionShape2D
+		query.transform = Transform2D(0.0, hero.global_position + (body.position if body != null else Vector2.ZERO))
+		query.motion = candidate * 10.0
+		var fractions := hero.get_world_2d().direct_space_state.cast_motion(query)
+		if fractions.size() >= 2 and fractions[0] > 0.5:
+			return candidate
+	return Vector2.ZERO
 
 
 func _door_open() -> bool:
