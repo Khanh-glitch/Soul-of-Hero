@@ -25,8 +25,8 @@ const sleepUntil = async (fn, message, timeout = 8000) => page.waitForFunction(f
 const inputCount = async key => (await state())?.counts[key] || 0;
 
 try {
-  const [{ getWorld }, { WW, WH, T }, { MAP_CONTENT_PACKS, validateContentPack }] = await Promise.all([
-    vite.ssrLoadModule('/src/game/world.ts'), vite.ssrLoadModule('/src/game/core.ts'), vite.ssrLoadModule('/src/game/content.ts'),
+  const [{ getWorld, SRC_KEYS }, { WW, WH, T }, { MAP_CONTENT_PACKS, validateContentPack }, { SOURCES }] = await Promise.all([
+    vite.ssrLoadModule('/src/game/world.ts'), vite.ssrLoadModule('/src/game/core.ts'), vite.ssrLoadModule('/src/game/content.ts'), vite.ssrLoadModule('/src/game/catalog.ts'),
   ]);
   const invalid = structuredClone(MAP_CONTENT_PACKS.dev_delta); invalid.pois[0].width = 0; invalid.pois[0].loot.outer[0].item = 'not_a_real_item';
   const rejected = validateContentPack(invalid); assert(rejected.some(e => e.includes('footprint')) && rejected.some(e => e.includes('unknown loot item')));
@@ -70,7 +70,7 @@ try {
     const pass = (x,y,current) => {
       if(x<1||y<1||x>=W-1||y>=H-1)return false;
       const i=y*W+x; if(blocks.has(world.tiles[i])||entityBlocked.has(i))return false;
-      const si=world.src[i]; if(si>=0){const node=current.sources?.[i];if(!node||node.stock>0)return false;}
+      const si=world.src[i]; if(si>=0){const key=SRC_KEYS[si],node=current.sources?.[i];if(SOURCES[key]?.block&&(!node||node.stock>0))return false;}
       return true;
     };
     async function walkNear(wx,wy,radius=22){
