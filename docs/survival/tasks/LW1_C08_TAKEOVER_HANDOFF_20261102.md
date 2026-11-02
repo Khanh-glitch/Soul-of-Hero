@@ -33,7 +33,43 @@ injected, nothing teleports.
 | `develop-soul-of-hero-rpg (4).zip` | `f601ca17…1ba` | `src/game/state.ts:1033-1076`, `1237-1242` | **NEGATIVE ORACLE**: `harvest` never checks player↔source distance; `trail` accepts caller `x,y`. SOH source writes only the real actor position; the distant-harvest/remote-mark tests are open items. |
 | `soul-of-hero-rpg-prototype (3).zip` | `12438a53…f55` | `src/tests/contracts_c01_c24.test.ts:591-774, 819-905` | **REJECT for now (P1)**: escrow/Ragnarok/inventory-custody hypotheses. No SOH action to bind them to in P0. |
 
+### Episode results at `e8ec682a` (run 41420887725)
+
+| episode | verdict | evidence |
+|---|---|---|
+| A (no trace) | last green at `45fe0777`, re-run pending in this split | `C08_A`: 721 PATROL samples, 0 sensed, 0 direct ticks, `min_home_distance 375` |
+| B (valid chain) | **RED, and the red moves**: 3 hops in one run, 120 hops and a 139 px arrival in the next | `C08_B_LEG`, `C08_B`, `C08_B_ARMED`; the chain and the creature's patrol phase are coupled: `sensed 1` is reliable, `hops` is not, and the defence window can open when the creature is 400 px away (`862 -> 862`). |
+| C (cold trail) | not yet observed in this split (B runs first; `if: always()` now added) | — |
+| K8 / relaunch / new run | not yet observed at this HEAD | — |
+
+### What is proven right now
+
+1. Three cases run as **independent native episodes** in their own OS process and
+   own save profile, from the same legitimate checkpoint. That was the P0 order.
+2. A real paid home, a real door with a collider, a real creature mounted by the
+   production path, real key input, the real K8 clock.
+3. The creature follows **real contiguous marks**: 120-160 consecutive hops of
+   21-27 px, `max_hop <= 27.5`, `refused 0`, `gave_up 0`, no jump, no injected
+   target, no teleport; and it arrived 139 px from the house while still
+   `INVESTIGATE`.
+4. The remaining B redness is **scenario variance, not a passing trick**: the
+   creature's patrol phase decides whether the chain continues, and the defence
+   window sometimes opens when the creature is nowhere near.
+
 ### Next commands
+
+```
+gh run list --branch arena/136e69c5-soul-of-hero --workflow "C08 trace causality (native)" --limit 1
+gh api repos/Khanh-glitch/Soul-of-Hero/actions/runs/<run>/jobs -q '.jobs[]|select(.name|test("NATIVE"))|.id'
+gh api repos/Khanh-glitch/Soul-of-Hero/check-runs/<job>/annotations
+```
+
+**First thing a successor should fix:** make B's observation window start when the
+creature is actually in reach (`_direct(enemy, hero)` false but distance < 300) and
+record `lost_reason` per hop so a 3-hop chain says `link_blocked` / `goal_timeout` /
+`gave_up` instead of only a count. Then re-read C.
+
+### Next commands (older)
 
 ```
 gh run list --branch arena/136e69c5-soul-of-hero --workflow "C08 trace causality (native)" --limit 1
