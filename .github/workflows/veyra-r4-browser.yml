@@ -125,7 +125,7 @@ jobs:
           set -euo pipefail
           git config user.name "veyra-evidence"
           git config user.email "actions@users.noreply.github.com"
-          git add -f docs/map_tower/evidence/browser
+          git add -f docs/map_tower/evidence/browser docs/map_tower/SPATIAL_VALIDATION.json
           if git diff --cached --quiet; then echo "no evidence changes"; exit 0; fi
           git commit -m "R6 evidence: real Chromium captures at ${GITHUB_SHA}"
           git push origin "HEAD:${GITHUB_REF_NAME}"
