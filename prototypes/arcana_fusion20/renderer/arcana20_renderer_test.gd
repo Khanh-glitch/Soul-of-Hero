@@ -241,6 +241,18 @@ func _init() -> void:
         if pos.distance_to(calligraphy._stroke_pt(i, 0.98)) > 0.001:
             _fail("calligraphy stroke %d cue position wrong" % i)
 
+    # The visible water tip follows the same authored, animated ribbon, and
+    # the single wave advances from its actual first-stroke release location.
+    for i in range(3):
+        var u := 0.41
+        var base: Vector2 = calligraphy._stroke_pt(i, u)
+        var animated: Vector2 = calligraphy._ink_point(i, u, 2.5)
+        if absf(animated.x - base.x) > 0.001 or absf(animated.y - base.y) > 1.601:
+            _fail("calligraphy water tip left its authored ribbon")
+    var wave_origin: Vector2 = calligraphy._wave_front(4.6)
+    if wave_origin.distance_to(stroke_events[3].pos_local) > 0.001 or calligraphy._wave_front(6.0).x <= wave_origin.x:
+        _fail("calligraphy wave did not advance from first stroke")
+
     # Temporal ordering regression checks for redesign OUT phases. These
     # are structural checks, not visual acceptance or a motion-quality score.
     var chain := AFusionSpells.ChainVerdict.new()

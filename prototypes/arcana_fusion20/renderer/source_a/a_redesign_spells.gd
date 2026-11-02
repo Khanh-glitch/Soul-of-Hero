@@ -192,6 +192,16 @@ class RiptideCalligraphyR:
         ]
     func _stroke_pt(si: int, u: float) -> Vector2:
         return AMath.catmull_pt(_strokes[si], u)
+    func _ink_point(si: int, u: float, t: float) -> Vector2:
+        # Both ribbon and moving visual tip use the same actual water path.
+        var point := _stroke_pt(si, u)
+        point.y += sin(u * 9.0 - t * 5.0 + float(si)) * 1.6 * (1.0 - u)
+        return point
+    func _wave_front(t: float) -> Vector2:
+        # The wave is released from the first authored stroke and advects in
+        # one direction, rather than appearing as unrelated expanding rings.
+        var u := AMath.seg(t, 4.6, 6.4)
+        return _stroke_pt(0, 0.5) + Vector2(76.0 * u, 0.0)
     func authored_events() -> Array:
         var ev: Array = []
         for i in range(3):
@@ -212,33 +222,59 @@ class RiptideCalligraphyR:
             var pts: Array = []
             for k in range(25):
                 var progress := u * float(k) / 24.0
-                var point := _stroke_pt(i, progress)
-                # Original A tide.ts stroke inertia, adapted to the new
-                # three-stroke glyph, not the rejected A choreography.
-                point.y += sin(progress * 9.0 - t * 5.0 + float(i)) * 1.6 * (1.0 - progress)
-                pts.append(point)
+                # A tide.ts stroke inertia, adapted to this new glyph; not
+                # a claim of full original A/C source-fusion parity.
+                pts.append(_ink_point(i, progress, t))
             var charge := AMath.seg(t, 4.2, 4.6)
+            # Explicit translucent water body carries dark, saturated liquid
+            # and a light foam edge. It is geometric coverage, never an RGB
+            # brightness key; the thinner source-inspired light remains.
             ADraw.ribbon(fb, pts,
                 func(s: float, _i: int) -> float:
-                    return 5.0 * (0.35 + sin(pow(s, 0.8) * PI) * 0.95) * (1.0 + charge * 0.4),
+                    return 7.2 * (0.35 + sin(pow(s, 0.8) * PI) * 0.95) * (1.0 + charge * 0.25),
                 func(s: float, _i: int, edge: float) -> Variant:
-                    # A source foam/flow logic; this is an A-buffer candidate,
-                    # not a complete A/C source-fusion parity claim.
+                    var flow := AMath.fbm(s * 14.0 - t * 2.4 + float(i) * 9.0, edge * 3.0, 3)
+                    var foam := pow(edge, 3.0)
+                    return Vector3(0.04 + flow * 0.07 + foam * 0.32, 0.20 + flow * 0.12 + foam * 0.38, 0.28 + flow * 0.18 + foam * 0.42),
+                true, diss * 0.64)
+            ADraw.ribbon(fb, pts,
+                func(s: float, _i: int) -> float:
+                    return 4.5 * (0.35 + sin(pow(s, 0.8) * PI) * 0.95) * (1.0 + charge * 0.4),
+                func(s: float, _i: int, edge: float) -> Variant:
                     var flow := AMath.fbm(s * 14.0 - t * 2.4 + float(i) * 9.0, edge * 3.0, 3)
                     var h := (0.24 + flow * 0.3 + pow(edge, 2.6) * 0.65 + maxf(0.0, sin(s * 18.0 - t * 26.0 + i * 2.0)) * charge * 0.7) * diss
                     if h < 0.05: return null
                     var c := ACommon.ramp_step("water", AMath.cl01(h), 8.0)
                     return Vector3(c.x * 0.55, c.y * 0.55, c.z * 0.6))
             if u < 1.0:
-                var tip := _stroke_pt(i, u)
+                var tip := _ink_point(i, u, t)
+                ADraw.disc_blend(fb, tip.x, tip.y, 2.8, Vector3(0.16, 0.49, 0.58), diss * 0.65)
                 ADraw.disc(fb, tip.x, tip.y, 2.2, AMath.R("water", 0.95), diss)
-                ADraw.glow(fb, tip.x, tip.y, 8.0, AMath.R("water", 0.75), diss)
-        # weaponised wave fronts travel along stroke direction
-        if t > 4.6:
+        # One coherent mass of water departs the written glyph. The curved
+        # crest travels across the real ground; its shoulders expand and its
+        # foam dissolves, rather than three unrelated thin radial arcs.
+        if t > 4.6 and t < 6.4:
             var wu := AMath.seg(t, 4.6, 6.4)
-            for i in range(3):
-                var base_p := _stroke_pt(i, 0.5)
-                ADraw.arc_px(fb, base_p.x, base_p.y, 8.0 + wu * 76.0, -0.7 + float(i) * 0.3, 0.9 + float(i) * 0.3, AMath.R("water", 0.8), (1.0 - wu) * diss, 1.6)
+            var front := _wave_front(t)
+            var wave_pts: Array = []
+            var height := 12.0 + 48.0 * AMath.ease_out(wu, 2.0)
+            for k in range(33):
+                var v := float(k) / 32.0
+                var side := v * 2.0 - 1.0
+                var curl := side * side * (5.0 + 19.0 * wu)
+                wave_pts.append(front + Vector2(-curl + sin(v * PI * 4.0 - t * 4.0) * 1.5, side * height))
+            var wave_fade := (1.0 - AMath.seg(t, 5.7, 6.4)) * diss
+            ADraw.ribbon(fb, wave_pts,
+                func(v: float, _i: int) -> float: return (3.5 + 6.5 * sin(v * PI)) * (0.55 + 0.45 * wu),
+                func(v: float, _i: int, edge: float) -> Variant:
+                    var foam := pow(edge, 2.4)
+                    var flow := 0.5 + 0.5 * sin(v * 19.0 - t * 12.0)
+                    return Vector3(0.05 + 0.30 * foam, 0.24 + 0.28 * foam + 0.06 * flow, 0.34 + 0.30 * foam + 0.08 * flow),
+                true, wave_fade * 0.68)
+            ADraw.ribbon(fb, wave_pts,
+                func(v: float, _i: int) -> float: return 1.3 + 1.0 * sin(v * PI),
+                func(v: float, _i: int, edge: float) -> Variant:
+                    return AMath.R("water", 0.58 + 0.20 * sin(v * 20.0 - t * 12.0)), false, wave_fade * 0.55)
 
 # ------------------------------------------- #12 skybreaker script
 class SkybreakerScriptR:
