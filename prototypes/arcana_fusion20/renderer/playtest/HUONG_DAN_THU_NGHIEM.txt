@@ -4,6 +4,10 @@ Bản thử nghiệm độc lập dùng một bản lưu riêng. Không phải b
 phải xác nhận Gold, không dùng cho tiến độ chính. Chất lượng và tích hợp chiến
 đấu còn thiếu; nhiều kỹ năng vẫn đang được thiết kế.
 
+Batch F gồm #01/#09/#11/#16/#20 được CT cho phép đưa vào creator review
+với giới hạn; xem BATCH_F_REVIEW.txt để biết vai trò nguồn và các điều kiện.
+Điều này không thay cho lựa chọn thẩm mỹ của creator hay xác nhận Gold.
+
 Mở ứng dụng, chọn New Game, đi đến Campaign ở Home rồi vào Overworld. Bảng
 AVFX xuất hiện khi thế giới thực đã tải xong. Di chuyển theo hướng dẫn của game.
 Chọn một trong 20 kỹ năng và chọn mục tiêu là bộ xương gần nhất hoặc vị trí chuột.

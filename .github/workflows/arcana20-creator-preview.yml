@@ -791,10 +791,10 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-  creator-f-provisional:
+  creator-f-review:
     # Bounded same-SHA package: S and #05 implementations remain in the build,
     # with their existing review records. Do not re-record accepted S footage.
-    # Art status is provisional until native motion review/CT decisions.
+    # CT authorizes five creator-review candidates with named gates, not Gold.
     if: ${{ contains(github.event.head_commit.message, '[f-five]') }}
     needs: [build, windows-current-runtime, live-motion, source-review]
     runs-on: ubuntu-latest
@@ -817,6 +817,16 @@ jobs:
         run: |
           set -euo pipefail
           python3 -m pip install --quiet pillow
+          python3 tools/arcana20_join/test_worldseed_tip_trace.py
+          python3 - "$GITHUB_SHA" <<'PY'
+          import json, pathlib, sys
+          root=pathlib.Path('deliverable/build')
+          manifest=json.loads((root/'arcana20_join_manifest.json').read_text())
+          assert manifest['shas']['avfx']==sys.argv[1], manifest['shas']
+          for name in ('SOH_AVFX_EXPERIMENTAL_linux.zip','SOH_AVFX_EXPERIMENTAL_windows.zip','SHA256SUMS.txt'):
+              assert (root/name).is_file(), name
+          PY
+          (cd deliverable/build && sha256sum -c SHA256SUMS.txt && unzip -tq SOH_AVFX_EXPERIMENTAL_linux.zip && unzip -tq SOH_AVFX_EXPERIMENTAL_windows.zip)
           for id in F01 F09 F11 F16 F20; do
             for light in normal dimmed; do
               dir="deliverable/fusion-full-cast/r20-${id}-${light}-lock0"
@@ -870,16 +880,22 @@ jobs:
           find deliverable/fusion-full-cast -type f -name '*.mkv' -delete
           cp prototypes/arcana_fusion20/renderer/playtest/HUONG_DAN_THU_NGHIEM.txt deliverable/HUONG_DAN.txt
           cp prototypes/arcana_fusion20/renderer/playtest/BATCH_S_REVIEW.txt deliverable/BATCH_S_REVIEW.txt
-          cp prototypes/arcana_fusion20/renderer/playtest/BATCH_F_REVIEW_PROVISIONAL.txt deliverable/BATCH_F_REVIEW.txt
-          printf 'AVFX code SHA: %s\nProvisional visual-only; not Gold or PLAYTEST_READY.\n' "$GITHUB_SHA" > deliverable/CODE_SHA.txt
+          cp prototypes/arcana_fusion20/renderer/playtest/BATCH_F_REVIEW.txt deliverable/BATCH_F_REVIEW.txt
+          printf 'AVFX code SHA: %s\nREVIEW_CANDIDATES_WITH_CT_GATES; visual-only, not Gold or PLAYTEST_READY.\n' "$GITHUB_SHA" > deliverable/CODE_SHA.txt
           (cd deliverable && find . -type f ! -name SHA256SUMS.txt -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS.txt && sha256sum -c SHA256SUMS.txt > "$RUNNER_TEMP/f-deliverable-checksums.log")
-          (cd deliverable && zip -q -r "$RUNNER_TEMP/SOH_AVFX_F_PROVISIONAL.zip" .)
-          (cd "$RUNNER_TEMP" && sha256sum SOH_AVFX_F_PROVISIONAL.zip > SOH_AVFX_F_PROVISIONAL.zip.sha256 && sha256sum -c SOH_AVFX_F_PROVISIONAL.zip.sha256 && unzip -tq SOH_AVFX_F_PROVISIONAL.zip)
+          (cd deliverable && zip -q -r "$RUNNER_TEMP/ARCANA_FIVE_FUSIONS_CREATOR_REVIEW.zip" .)
+          (cd "$RUNNER_TEMP" && sha256sum ARCANA_FIVE_FUSIONS_CREATOR_REVIEW.zip > ARCANA_FIVE_FUSIONS_CREATOR_REVIEW.zip.sha256 && sha256sum -c ARCANA_FIVE_FUSIONS_CREATOR_REVIEW.zip.sha256 && unzip -tq ARCANA_FIVE_FUSIONS_CREATOR_REVIEW.zip)
+          unzip -l "$RUNNER_TEMP/ARCANA_FIVE_FUSIONS_CREATOR_REVIEW.zip" > "$RUNNER_TEMP/f-final-contents.txt"
+          for required in CODE_SHA.txt BATCH_F_REVIEW.txt BATCH_S_REVIEW.txt HUONG_DAN.txt SHA256SUMS.txt SOH_AVFX_EXPERIMENTAL_linux.zip SOH_AVFX_EXPERIMENTAL_windows.zip; do
+            grep -Fq "$required" "$RUNNER_TEMP/f-final-contents.txt"
+          done
+          echo "::notice title=F_FINAL_ZIP_SHA256::$(cat "$RUNNER_TEMP/ARCANA_FIVE_FUSIONS_CREATOR_REVIEW.zip.sha256")"
       - uses: actions/upload-artifact@v4
         with:
-          name: SOH-AVFX-F-PROVISIONAL-SAME-SHA
+          name: ARCANA_FIVE_FUSIONS_CREATOR_REVIEW
           path: |
-            ${{ runner.temp }}/SOH_AVFX_F_PROVISIONAL.zip
-            ${{ runner.temp }}/SOH_AVFX_F_PROVISIONAL.zip.sha256
+            ${{ runner.temp }}/ARCANA_FIVE_FUSIONS_CREATOR_REVIEW.zip
+            ${{ runner.temp }}/ARCANA_FIVE_FUSIONS_CREATOR_REVIEW.zip.sha256
+            ${{ runner.temp }}/f-final-contents.txt
           if-no-files-found: error
           retention-days: 14
