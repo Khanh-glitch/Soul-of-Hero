@@ -14,7 +14,7 @@ extends RefCounted
 ## files placed at their own canonical paths so their own preloads resolve.
 const A3_OWNER_COMMIT := "57577d0dff1a3e1ed7216d8cb538229a3cf305b1"
 const DATA := {
-	"res://data/survival/items/items.json": "24a5fbc2e7e9b9e22b3fd3c4ed369e737b9e32cc914dc2df2bbde3e0092b80f0",
+	"res://data/survival/items/items.json": "537753c2c0ccdd407963ebfb2fd27ab98588d6c606c6823163cdc8a978f9469b",
 	"res://data/survival/items/sources.json": "bc88143efb61f2202ae37c96373e07a1643cc29b7fc9a38abc84e4958fe2b984",
 	"res://data/survival/items/world_source_bindings.v3.json": "7b9670f4971d2f161138e0754cbbe66dfe2a239bf0d15d3079a766d729dd230b",
 	"res://data/survival/recipes/recipes.json": "962fb9bb045ec25c77f7c4bdbaaca23a5a4d2ac832b9e3684ebe4142d715d975",
@@ -36,8 +36,17 @@ const SCRIPTS := {
 ## A3 R13 canonical service custody pins (new authority). Retained V7 vendor
 ## pins below apply to replay/migration regressions only, not a second runtime queue.
 const R13_SCRIPTS := {
-	"res://game/survival/economy/economy_service.gd": "98932d25b73a03b9412f0f72f82dc5c2b6451e3ba894a134fdff2d1924252ee0",
+	"res://game/survival/economy/economy_service.gd": "5bfba3f2cd0b8d3439e76bdd243196ed7a79f5cc58a86d2faeeba8fce6804c44",
 	"res://game/survival/economy/a3_economy_service.gd": "f0695cdd05c23490a42fa92cc6fb6de9d87a3ce2933e8563cc7d85fccde09e8b",
+}
+
+## New composition seam is explicitly pinned alongside, not substituted for, the
+## owner service checks. Every mutation path therefore refuses unreviewed script
+## drift before mounting gameplay.
+const COMPOSITION_SCRIPTS := {
+	"res://game/survival/composition/capability_contract.gd": "0868a5c0f3657dcbdb83187f20d2dfc03e1b6b1efb6cb400e428a85ca9956889",
+	"res://game/survival/economy/a0_economy_adapter.gd": "25129902f9642b83d707dd814c14d1ca293e9b0630f521bec9fc518c6284529e",
+	"res://game/survival/survival_service.gd": "a08407ae30e95f116ce8f649a42f3c21f32ac1f5455a6df54a07cb46e941750d",
 }
 
 static func verify() -> String:
@@ -54,7 +63,7 @@ static func verify_with(overrides: Dictionary) -> String:
 			return "a3_data_pin_mismatch:" + path
 		if FileAccess.get_sha256(path) != expected:
 			return "a3_data_pin_mismatch:" + path
-	var script_pins: Dictionary = SCRIPTS.merged(R13_SCRIPTS)
+	var script_pins: Dictionary = SCRIPTS.merged(R13_SCRIPTS).merged(COMPOSITION_SCRIPTS)
 	for path: String in script_pins:
 		var expected := String(overrides.get(path, script_pins[path]))
 		var script := load(path) as Script

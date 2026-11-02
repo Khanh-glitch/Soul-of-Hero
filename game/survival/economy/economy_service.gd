@@ -17,6 +17,7 @@ extends RefCounted
 const WorldSources = preload("res://game/survival/economy/world_source_adapter.gd")
 const OfflineOperations = preload("res://game/survival/economy/offline_operation_planner.gd")
 const MetaEconomy = preload("res://game/survival/economy/meta_economy_planner.gd")
+const CapabilityContract = preload("res://game/survival/composition/capability_contract.gd")
 const ROOT := "survival_economy"
 const WORLD_ROOT := "world_slice"
 const SCHEMA := 2
@@ -26,7 +27,10 @@ const TOKEN_PREFIX := "soh_i_"
 const TIME_CONTRACT := "soh.economy.active_tick.v1"
 const SKILL_CONTRACT := "soh.economy.skill_attestation.v1"
 const TOOL_USE_CONTRACT := "soh.economy.tool_use.v1"
-const TOOL_USE_RESOURCE_KINDS := {
+## Migration-only compatibility for older fixture catalogs pinned before the
+## capability schema existed. Canonical items declare capabilities below; only
+## these three historical tool ids may fall back to their previous targets.
+const LEGACY_TOOL_USE_TARGETS := {
 	"stone_pick": ["stone_outcrop", "iron_vein"],
 	"iron_pick": ["iron_vein", "scrap_pile"],
 	"salvage_hammer": ["scrap_pile"]
@@ -252,17 +256,17 @@ func plan_tool_use_candidate(candidate: Dictionary, request: Variant) -> Diction
 		return {"ok": false, "reason": "TOOL_NOT_OWNED", "allowed": false, "detail": token_error}
 	var record: Dictionary = state["instances"][tool_id]
 	var tool_item := str(record.get("item_id", ""))
-	if not TOOL_USE_RESOURCE_KINDS.has(tool_item):
+	var item_defs: Dictionary = catalog.get("items", {})
+	var item_def: Dictionary = item_defs.get(tool_item, {})
+	var harvest_targets := _harvest_targets_for_item(tool_item, item_def)
+	if harvest_targets.is_empty():
 		return {"ok": false, "reason": "TOOL_KIND_MISMATCH", "allowed": false, "tool_item_id": tool_item}
 	if int(record.get("revision", -1)) != int(req.expected_tool_revision):
 		return {"ok": false, "reason": "TOOL_REVISION_STALE", "allowed": false, "tool_item_id": tool_item}
 	if int(record.get("condition", 0)) <= 0:
 		return {"ok": false, "reason": "TOOL_BROKEN", "allowed": false, "tool_item_id": tool_item}
 	var kind := str(req.resource_kind)
-	var known_kinds := ["stone_outcrop", "iron_vein", "scrap_pile"]
-	if not kind in known_kinds:
-		return {"ok": false, "reason": "NODE_KIND_UNKNOWN", "allowed": false, "tool_item_id": tool_item}
-	if not (TOOL_USE_RESOURCE_KINDS[tool_item] as Array).has(kind):
+	if not kind in harvest_targets:
 		return {"ok": false, "reason": "TOOL_KIND_MISMATCH", "allowed": false, "tool_item_id": tool_item}
 	var condition_cost := 1
 	var plan_id := JSON.stringify({"request": req, "tool_item_id": tool_item, "condition_before": int(record.condition),
@@ -295,6 +299,16 @@ func apply_tool_use_plan(candidate: Dictionary, plan: Dictionary) -> Dictionary:
 	return _ok({"tool_instance_id": tool_id, "condition": int(record.condition), "revision": int(record.revision),
 		"yield_multiplier": 1, "receipt_metadata": fresh.receipt_metadata})
 
+func _harvest_targets_for_item(item_id: String, item_def: Dictionary) -> Array[String]:
+	if item_def.has("capabilities"):
+		return CapabilityContract.harvest_targets(item_def)
+	var legacy: Array[String] = []
+	if LEGACY_TOOL_USE_TARGETS.has(item_id):
+		for target: Variant in LEGACY_TOOL_USE_TARGETS[item_id]:
+			legacy.append(String(target))
+	return legacy
+
+
 func load_catalog() -> bool:
 	catalog = {}
 	for pair in [["items","items/items.json"],["recipes","recipes/recipes.json"],
@@ -309,6 +323,17 @@ func load_catalog() -> bool:
 		if not parsed is Dictionary or not parsed.get(pair[0]) is Dictionary:
 			last_error = "invalid_catalog:" + pair[1]
 			return false
+		if String(pair[0]) == "items":
+			var item_defs: Dictionary = parsed[pair[0]]
+			for item_id: Variant in item_defs.keys():
+				var item_def: Variant = item_defs[item_id]
+				if not item_def is Dictionary:
+					last_error = "invalid_item_definition:" + String(item_id)
+					return false
+				var capability_error := CapabilityContract.validate_item(item_def)
+				if not capability_error.is_empty():
+					last_error = "invalid_item_capabilities:%s:%s" % [String(item_id), capability_error]
+					return false
 		catalog[pair[0]] = parsed[pair[0]]
 	var world_file := FileAccess.open(CATALOG_ROOT + "items/world_source_bindings.v3.json", FileAccess.READ)
 	if world_file == null:

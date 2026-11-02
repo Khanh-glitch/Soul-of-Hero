@@ -40,3 +40,6 @@ VFX Free Pack/
 Waterfalls/
 vuvvu_lyric_video/
 __pycache__/
+
+# Keep unrelated media out of the game checkout.
+vuvvu_lyric_video/
