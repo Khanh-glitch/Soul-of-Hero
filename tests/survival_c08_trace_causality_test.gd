@@ -515,7 +515,22 @@ func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
 		print("C08_DOOR_FAIL cell=%s open=%s hero=%s" % [str(_door_cell()), str(_door_open()),
 			str(hero.global_position)])
 		return {"ok": false}
-	var route := _route_plan(hero, nav, home)
+	# Cross the doorway once, straight out, with the walker the home-journey gate
+	# already proves: a 16 px door and a wider body is not something to ask a cell
+	# planner to solve. Every cell after this is outdoors.
+	var outside := _nearest_free_near(nav, _door_cell() + Vector2i(0, -2), 2)
+	if outside.x < 0:
+		_expect(false, "B: a free cell exists just outside the paid door")
+		return {"ok": false}
+	var path_out: Array[Vector2i] = [outside]
+	var stepped_out := await _walk_path(hero, path_out)
+	_expect(stepped_out and nav.cell_of(hero.global_position) == outside,
+		"B: ordinary movement leaves through the paid door (%s)" % str(nav.cell_of(hero.global_position)))
+	if not stepped_out:
+		print("C08_DOORWAY_FAIL ", JSON.stringify({"outside": [outside.x, outside.y],
+			"hero": [hero.global_position.x, hero.global_position.y], "open": _door_open()}))
+		return {"ok": false}
+	var route := _route_plan(hero, nav, home, outside)
 	_expect(bool(route.get("ok", false)), "B: a real walkable route exists past the creature and back home")
 	if not bool(route.get("ok", false)):
 		return {"ok": false}
@@ -551,6 +566,16 @@ func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
 			await _capture("c08_b_outbound")
 	_expect(walked_home, "B: ordinary input walks the whole out-and-back route and home")
 	if not walked_home:
+		return {"ok": false, "stats": stats}
+	var path_in: Array[Vector2i] = [_stand_cell()]
+	var stepped_in := await _walk_path(hero, path_in)
+	var inside_room := String(_builder().room_topology.room_at(nav.cell_of(hero.global_position)))
+	_expect(stepped_in and not inside_room.is_empty(),
+		"B: ordinary movement carries the defender back inside his own home (%s)" % inside_room)
+	if not stepped_in:
+		print("C08_REENTRY_FAIL ", JSON.stringify({"hero": [hero.global_position.x, hero.global_position.y],
+			"cell": [nav.cell_of(hero.global_position).x, nav.cell_of(hero.global_position).y],
+			"open": _door_open(), "room": inside_room}))
 		return {"ok": false, "stats": stats}
 	await _walk_to_cell(hero, _stand_cell())
 	# The Hero is now behind a wall, 26 tiles from the creature: it can neither see
@@ -633,16 +658,16 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 		return {"ok": false}
 	# Ordinary retreat: the defender walks out of his own door and a few cells away,
 	# so the creature is not cornered inside the paid room when the trail goes cold.
-	if await _open_door(hero):
-		var outside := _nearest_free_near(nav, _door_cell() + Vector2i(0, -2), 2)
-		if outside.x >= 0:
-			await _walk_to_cell(hero, outside)
+	var outside_c := _nearest_free_near(nav, _door_cell() + Vector2i(0, -2), 2)
+	if await _open_door(hero) and outside_c.x >= 0:
+		var path_c: Array[Vector2i] = [outside_c]
+		await _walk_path(hero, path_c)
 	var returned := await _wait_until(func() -> bool:
 		return is_instance_valid(enemy) and enemy.global_position.distance_to(habitat.global_position) <= 120.0, 60.0)
 	_expect(returned, "C: the creature returns to its habitat before the trail test")
 	var _window_failures_before := failures.size()
 	follower.begin_window("C_broken_chain")
-	var route := _route_plan(hero, nav, home)
+	var route := _route_plan(hero, nav, home, outside_c)
 	_expect(bool(route.get("ok", false)), "C: the same walkable route is used again")
 	if not bool(route.get("ok", false)):
 		return {"ok": false}
@@ -661,7 +686,11 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 				"follower": _compact_follower(follower.snapshot()), "probe": _trace_probe(source, enemy)}))
 			break
 	_expect(walked_all, "C: ordinary input walks the same route again")
-	await _walk_to_cell(hero, _stand_cell())
+	if not walked_all:
+		return {"ok": false, "stats": stats}
+	var path_back: Array[Vector2i] = [_stand_cell()]
+	var back_in := await _walk_path(hero, path_back)
+	_expect(back_in, "C: the defender is back inside the home while the trail goes cold")
 	var hp_before := int(hero.get(&"health"))
 	var observe := await _observe(enemy, hero, home, 25.0)
 	var snapshot: Dictionary = follower.snapshot()
@@ -1061,15 +1090,17 @@ func _open_door(hero: CharacterBody2D) -> bool:
 ## creature can find does not walk back through it: he walks past, keeps going
 ## until the creature has lost him, comes home on a second lane, and shuts himself
 ## in. So the plan is: out past the creature, further out, north, home.
-func _route_plan(hero: CharacterBody2D, nav: OverworldTraversability, home: Vector2) -> Dictionary:
+func _route_plan(hero: CharacterBody2D, nav: OverworldTraversability, home: Vector2,
+		trail_end: Vector2i = Vector2i(-1, -1)) -> Dictionary:
 	var encounter := _encounter()
 	if encounter == null:
 		return {"ok": false, "reason": "encounter_absent"}
 	var site: Vector2 = encounter.global_position
 	var site_cell := nav.cell_of(site)
-	# The bed cell itself is occupied by the paid structure, so the walk home is
-	# planned to a free interior cell, exactly like a player stepping inside.
-	var home_cell := _stand_cell()
+	# Where the evidence must end. The caller passes the cell just outside the paid
+	# door: a 1-cell doorway is 16 px wide and the Hero's own body is wider, so the
+	# door is crossed once, deliberately, and never used as a path cell.
+	var home_cell := trail_end if trail_end.x >= 0 else _stand_cell()
 	var start := nav.cell_of(hero.global_position)
 	# A stand cell beside the creature: the marks there are inside its local query.
 	var near := _nearest_free_near(nav, site_cell + Vector2i(0, 2), 4)
