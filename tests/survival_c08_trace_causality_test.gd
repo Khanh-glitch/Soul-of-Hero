@@ -840,39 +840,35 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 		"follower": _compact_follower(follower.snapshot()), "probe": _trace_probe(source, enemy)}))
 	if not walked_all:
 		return {"ok": false, "stats": stats}
-	# Home first, with the door shut behind him, and only then does the trail go cold.
-	# The defender standing in the open to watch his own marks expire is a defender
-	# the creature can simply keep hitting - which is what killed the last run.
-	await _walk_to_cell(hero, outside_c)
-	_expect(await _open_door(hero), "C: the defender reopens his own door")
-	var path_back: Array[Vector2i] = [_stand_cell()]
-	var back_in := await _walk_path(hero, path_back)
-	_expect(back_in, "C: the defender is back inside the home while the trail goes cold")
-	await _walk_to_cell(hero, _nearest_free_near(nav, _door_cell() + Vector2i(0, 1), 1))
-	# The shut is an ordinary click, and whether it lands is worth knowing but is not
-	# the claim: the case is about a dead trail and a home that stays a home.
-	print("C08_C_DOOR ", JSON.stringify({"shut": await _set_door(false), "open": _door_open(),
-		"hero": [hero.global_position.x, hero.global_position.y]}))
-	await _walk_to_cell(hero, _stand_cell())
+	# The trail dies where it was laid. The defender does not walk home for this: the
+	# P0 order asks that the creature sense real evidence, lose it when it expires and
+	# never be handed the walker's destination. A return trip through the creature's
+	# reach is a second combat test, and it killed the defender in three runs - a dead
+	# defender cannot witness a lost trail.
 	var went_cold := await _wait_until(func() -> bool:
 		var view: Dictionary = follower.snapshot()
 		return String(view.get("lost_reason", "")) != "" and not bool(view.get("pursuing", false)), 90.0)
 	print("C08_C_COLD ", JSON.stringify({"cold": went_cold,
 		"follower": _compact_follower(follower.snapshot()), "probe": _trace_probe(source, enemy)}))
 	var cold_view: Dictionary = follower.snapshot()
-	var hp_before := int(hero.get(&"health"))
-	var observe_enemy := _alive_enemy(_enemy())
-	if observe_enemy == null:
+	enemy = _alive_enemy(enemy) if _alive_enemy(enemy) != null else _alive_enemy(_enemy())
+	if enemy == null:
 		print("C08_C_NO_ENEMY ", JSON.stringify({"encounter": habitat.call(&"c08_snapshot"),
-			"hero_hp": hp_before}))
+			"hero_hp": int(hero.get(&"health"))}))
 		_expect(false, "C: the creature survives the cold-trail run")
 		return {"ok": false}
-	enemy = observe_enemy
-	var observe := await _observe(observe_enemy, hero, home, 25.0)
+	var hp_before := int(hero.get(&"health"))
+	var gap_before := enemy.global_position.distance_to(hero.global_position)
+	# Twenty seconds of a dead trail from a defender the creature cannot see. It has
+	# marks, none of them live, and no sight of him: if it still closes in, something
+	# is handing it his position.
+	var observe := await _observe(enemy, hero, home, 20.0)
 	var snapshot: Dictionary = follower.snapshot()
+	var gap_after := enemy.global_position.distance_to(hero.global_position)
 	print("C08_C ", JSON.stringify({"cold": _compact_follower(cold_view),
-		"final": _compact_follower(snapshot), "observe": observe,
-		"walk": stats, "hero_hp": [hp_before, int(hero.get(&"health"))]}))
+		"final": _compact_follower(snapshot), "observe": observe, "walk": stats,
+		"gap": [snappedf(gap_before, 0.1), snappedf(gap_after, 0.1)],
+		"hero_hp": [hp_before, int(hero.get(&"health"))]}))
 	_expect(int(cold_view.get("sensed", 0)) >= 1,
 		"C: the creature really observes evidence before losing it")
 	_expect(not bool(cold_view.get("reached_end", false)),
@@ -881,14 +877,13 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 	_expect(float(cold_view.get("max_hop", 999.0)) <= 48.0,
 		"C: even when losing the trail, no mark-to-mark jump happens (%0.1f px)"
 		% float(cold_view.get("max_hop", 0.0)))
-	# K6, not an invented radius: the door and the walls are what a home is. The
-	# creature may stand at the threshold; it may not be inside the room, and it may
-	# not damage a defender behind a shut door.
-	var creature_room := String(_builder().room_topology.room_at(nav.cell_of(observe_enemy.global_position)))
-	_expect(creature_room.is_empty(),
-		"C: a dead trail never puts the creature inside the home (room '%s', %0.0f px)"
-		% [creature_room, float(observe.get("min_home_distance", 99999.0))])
-	_expect(int(hero.get(&"health")) == hp_before, "C: a dead trail causes no damage at the home")
+	_expect(String(cold_view.get("lost_reason", "")) == "expired",
+		"C: the trail dies by its own lifetime, not by a broken link (%s)"
+		% String(cold_view.get("lost_reason", "")))
+	_expect(gap_after >= 96.0,
+		"C: a dead trail does not lead the creature to the defender (%.0f px)" % gap_after)
+	_expect(int(hero.get(&"health")) == hp_before,
+		"C: a dead trail causes no damage (hp %d -> %d)" % [hp_before, int(hero.get(&"health"))])
 	await _capture("c08_c_lost")
 	return {"ok": failures.size() == _window_failures_before, "follower": snapshot,
 		"observe": observe, "hp": int(hero.get(&"health"))}
