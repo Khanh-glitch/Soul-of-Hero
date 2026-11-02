@@ -725,11 +725,14 @@ func _route_plan(hero: CharacterBody2D, nav: OverworldTraversability, home: Vect
 		return {"ok": false, "reason": "encounter_absent"}
 	var site: Vector2 = encounter.global_position
 	var site_cell := nav.cell_of(site)
-	var home_cell := nav.cell_of(home)
+	# The bed cell itself is occupied by the paid structure, so the walk home is
+	# planned to a free interior cell, exactly like a player stepping inside.
+	var home_cell := _stand_cell()
 	var start := nav.cell_of(hero.global_position)
 	# A stand cell beside the creature: the marks there are inside its local query.
 	var near := _nearest_free_near(nav, site_cell + Vector2i(0, 2), 4)
 	if near.x < 0:
+		print("C08_ROUTE_FAIL reason=no_stand_cell_near_creature site=%s" % str(site_cell))
 		return {"ok": false, "reason": "no_stand_cell_near_creature"}
 	# Continue outward, away from the home, so the trail is a journey and not a
 	# circle around the house.
@@ -741,11 +744,14 @@ func _route_plan(hero: CharacterBody2D, nav: OverworldTraversability, home: Vect
 	var outbound := _route(start, near, nav, hero)
 	var second := _route(near, far, nav, hero)
 	if outbound.is_empty() and start != near:
+		print("C08_ROUTE_FAIL reason=no_route_to_creature start=%s near=%s site=%s hero=%s"
+			% [str(start), str(near), str(site_cell), str(hero.global_position)])
 		return {"ok": false, "reason": "no_route_to_creature"}
 	for cell: Vector2i in second:
 		outbound.append(cell)
 	var inbound := _route(far, home_cell, nav, hero)
 	if inbound.is_empty() and far != home_cell:
+		print("C08_ROUTE_FAIL reason=no_route_home far=%s home=%s site=%s" % [str(far), str(home_cell), str(site_cell)])
 		return {"ok": false, "reason": "no_route_home"}
 	var report := {"near": [near.x, near.y], "far": [far.x, far.y],
 		"site": [site_cell.x, site_cell.y], "home": [home_cell.x, home_cell.y],
