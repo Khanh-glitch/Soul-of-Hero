@@ -349,6 +349,19 @@ func _body() -> void:
 			_body_complete = false
 			return
 
+	# An episode that owns only one counterfactual is finished when that
+	# counterfactual is: its own body is complete even though it never reaches the K8
+	# block, which belongs to episode A.
+	if episode in ["b", "c"]:
+		_audit["source"] = source.call(&"snapshot")
+		_audit["encounter"] = encounter.call(&"c08_snapshot")
+		_audit["hero_health"] = int(hero.get(&"health"))
+		_write_audit()
+		_save().call(&"save_now")
+		_keep = true
+		_body_complete = true
+		return
+
 	# --- K8: a still-valid trail may not be erased by quitting ------------
 	# Only the episode that owns the second-process proof runs it, so the save this
 	# process leaves behind is the one the relaunch phase must read.
