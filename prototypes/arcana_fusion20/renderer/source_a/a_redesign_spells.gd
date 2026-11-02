@@ -293,7 +293,9 @@ class RiptideCalligraphyR:
                 # front, rather than tracing one smooth paddle silhouette.
                 var broken := sin(v * PI * 6.0 - t * 5.0) * (2.0 + 3.5 * wu) + sin(v * PI * 13.0 + t * 2.0) * 1.8
                 wave_pts.append(front + Vector2(-curl + broken, side * height + sin(v * PI * 8.0 - t * 3.0) * 1.8))
-            var wave_fade := (1.0 - AMath.seg(t, 6.45, 6.75)) * diss
+            # The released water has its own fade, independent of the
+            # draining glyph: it must not disappear as it gains mass.
+            var wave_fade := 1.0 - AMath.seg(t, 6.45, 6.75)
             # A covered trough follows the crest as an actual mass, with a
             # broad center and thin shoulders. The crest remains separate,
             # advancing beyond the static glyph on its authored trajectory.
@@ -303,11 +305,11 @@ class RiptideCalligraphyR:
                 var wake := (10.0 + 16.0 * sin(u_side * PI)) * AMath.ease_out(wu, 2.0)
                 trough.append((wave_pts[v] as Vector2) - Vector2(wake, 0))
             ADraw.ribbon(fb, trough,
-                func(v: float, _i: int) -> float: return (4.0 + 10.0 * sin(v * PI)) * AMath.ease_out(wu, 2.0),
+                func(v: float, _i: int) -> float: return (6.0 + 15.0 * sin(v * PI)) * AMath.ease_out(wu, 2.0),
                 func(v: float, _i: int, edge: float) -> Variant:
                     var current := 0.5 + 0.5 * sin(v * 24.0 - t * 8.0)
                     return Vector3(0.03 + edge * 0.08, 0.16 + 0.10 * current, 0.23 + 0.12 * current),
-                true, wave_fade * 0.44)
+                true, wave_fade * 0.64)
             ADraw.ribbon(fb, wave_pts,
                 func(v: float, _i: int) -> float: return (3.5 + 6.5 * sin(v * PI)) * (0.55 + 0.45 * wu),
                 func(v: float, _i: int, edge: float) -> Variant:

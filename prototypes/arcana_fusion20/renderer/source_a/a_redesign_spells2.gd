@@ -223,6 +223,13 @@ class SporeNebulaR:
     func _draw_shelves(fb: AFramebuffer, c: Vector2, growth: float, fade: float, seed: int) -> void:
         # A low overlapping shelf colony is a different morphology from the
         # upright mushrooms, attached directly to the local mycelium bed.
+        # A single irregular woody fungal mound physically supports the
+        # shelves; previously they read as detached magenta discs.
+        var mound := [c + Vector2(-12, 5) * growth, c + Vector2(-9, -3) * growth,
+            c + Vector2(-3, -11) * growth, c + Vector2(5, -12) * growth,
+            c + Vector2(10, -4) * growth, c + Vector2(14, 5) * growth,
+            c + Vector2(2, 8) * growth]
+        ADraw.poly_fill_solid(fb, mound, Vector3(0.25, 0.20, 0.16), true, fade * growth * 0.9)
         for shelf in range(3):
             var r := AMath.hash2(float(seed * 9 + shelf), 82.0)
             var center := c + Vector2(float(shelf - 1) * 8.0, -float(shelf) * 3.0) * growth
@@ -458,16 +465,19 @@ class ChronoshardR:
             return
         if tau <= 1.0:
             var u := AMath.cl01(tau)
-            var head := center + Vector2(lerpf(-4.0, 4.0, u), -1.0 - 1.5 * sin(u * PI))
-            # Miniature of the same spherical ember event in the world.
-            # Dots are clipped to this physical crystal, not a UI pointer.
-            _mini_disc(fb, head, 4.0, hex, color, intensity)
-            _mini_disc(fb, head + Vector2(-1.0, -1.0), 2.0, hex, Vector3(2.0, 1.7, 0.8), intensity)
-            for mote in range(3):
-                var tail := head + Vector2(-5.0 - float(mote) * 2.5, sin(float(mote) * 2.1 + tau * 4.0) * (1.0 + float(mote)))
-                _mini_disc(fb, tail, 0.55, hex, color, intensity * (0.75 - float(mote) * 0.15))
+            # Across the five faces the same fireball travels from left to
+            # right, over a much larger fraction of the aperture. A round
+            # ember, hot core and ragged attached wake are all clipped to the
+            # glass, so its position changes are visible even at native size.
+            var head := center + Vector2(lerpf(-13.0, 12.0, u), -2.0 - 2.5 * sin(u * PI))
+            for mote in range(5):
+                var tail := head + Vector2(-4.5 - float(mote) * 2.0, sin(float(mote) * 2.1 + tau * 4.0) * (0.8 + float(mote) * 0.35))
+                _mini_disc(fb, tail, maxf(1.0, 2.6 - float(mote) * 0.35), hex, Vector3(1.4, 0.31, 0.08), intensity * (0.85 - float(mote) * 0.12))
+            _mini_disc(fb, head, 5.2, hex, Vector3(1.2, 0.32, 0.10), intensity)
+            _mini_disc(fb, head + Vector2(-0.6, -0.8), 3.2, hex, color, intensity)
+            _mini_disc(fb, head + Vector2(-1.2, -1.4), 1.5, hex, Vector3(2.0, 1.7, 0.8), intensity)
         else:
-            var impact := center + Vector2(9, -2)
+            var impact := center + Vector2(12, -2)
             for q in range(8):
                 var angle := float(q) * TAU / 8.0
                 for step in range(3, 11):
