@@ -20,13 +20,34 @@
 | Native frames | captured 1280×720, non-flat, inspected next | `artifacts/shots/*.png` |
 | Regressions (Godot 4.7 Runtime Validation on this branch) | see run list | re-check after every push |
 
+## Progress ledger (newest last)
+
+| commit | finding |
+|---|---|
+| `0eda95fd` | takeover handoff + Draft PR #34; route refusal printed |
+| `e7af4962` | the paid room is sealed by a real door collider: the walk now opens it by ordinary click |
+| `7f9d62b7` | the detection counter must stay inside detection range (A reported 723 phantom ticks) |
+| `1d603992` | wedge diagnostics |
+| `27bb86df` | stand cell chosen against real furniture; source counts chain breaks; follower counts `drive_calls`/`block_reason` |
+| `fb0a033d` | the real defect: `stats.samples` raised a SCRIPT ERROR on a missing key and silently truncated a 56-cell walk |
+| `2f7f53e1` | CI evidence split into short per-line annotations (GitHub truncates at 4 KB / 10 per step) |
+
 ## Exact failing point and next action
 
-`survival_c08_trace_causality_test.gd::_route_plan()` planned the walk home to
-`nav.cell_of(home)`, which is the paid bed's own cell and therefore not shape-clear
-for the Hero. It now plans to `_stand_cell()` (a free interior cell) and prints
-`C08_ROUTE_FAIL reason=…` for every refusal. Next: push, read the new
-`C08_B` line, then C.
+Measured on `2f7f53e1`: the outbound leg completes and lays real marks
+(`records_written` 130, `live` 34, source sampled 3292 times), but the return leg
+wedges. `C08_WEDGE` names the cause exactly: `cell [108,222]`, `state: ATTACK`,
+creature body 11 px from the Hero on the route. A living body is not a wall - the
+simplest honest answer is that a player does not walk back through a creature that
+is standing in the doorway of his own returning path. The return leg now plans a
+second lane seven cells to the north of the creature, and the walker's sidestep
+around a blocking body is 24 frames x 10 attempts instead of 10 x 6.
+
+B's arrival claim is now measured on the creature itself: at the first sample
+inside 160 px of the house, its own `state_label()` must be `INVESTIGATE` and its
+hop counter must be at least 6. A creature that chased the defender would be in
+CHASE and one that was handed a target would still be in PATROL, so "it found the
+house by following the trail" is a property of the creature, not of the test.
 
 ## Commands that must be run next (no re-research needed)
 

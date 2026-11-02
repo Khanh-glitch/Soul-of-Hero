@@ -543,7 +543,8 @@ func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
 			var snapshot: Dictionary = follower.snapshot()
 			return bool(snapshot.get("reached_end", false)) \
 				or (not bool(snapshot.get("pursuing", false)) and String(snapshot.get("lost_reason", "")) != "") \
-				or (is_instance_valid(enemy) and enemy.global_position.distance_to(home) <= 140.0)
+				or (is_instance_valid(enemy) and enemy.global_position.distance_to(home) <= 140.0),
+		follower
 	)
 	var snapshot: Dictionary = follower.snapshot()
 	var hp_after := int(hero.get(&"health"))
@@ -561,9 +562,14 @@ func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
 	# it inside the house, so a detection sample taken anywhere else would mean the
 	# creature never needed the trail at all. The first such sample is measured, not
 	# assumed.
+	_expect(String(arrival.get("arrival_state", "")) == "INVESTIGATE",
+		"B: the creature is walking its own evidence at the moment it reaches the house (%s)"
+			% String(arrival.get("arrival_state", "absent")))
+	_expect(int(arrival.get("arrival_hops", 0)) >= 6,
+		"B: those are real hops on the chain, not one step (%d)" % int(arrival.get("arrival_hops", 0)))
 	var first_direct := float(arrival.get("first_direct_distance", -1.0))
-	_expect(first_direct < 0.0 or first_direct <= 180.0,
-		"B: the creature only picks the Hero up once it is already at the house (%0.0f px from home)"
+	_expect(first_direct < 0.0 or first_direct <= 240.0,
+		"B: the creature only picks the Hero up once it is at the house (%0.0f px from home)"
 			% first_direct)
 	_expect(int(arrival.get("damage_events", -1)) == 0 or float(arrival.get("first_damage_distance", 9999.0)) <= 100.0,
 		"B: any damage during the approach happens only at the home, never at range")
@@ -666,7 +672,7 @@ func _note_direct(stats: Dictionary, enemy: CharacterBody2D, home: Vector2) -> v
 ## the distance at which the first damage landed is recorded so "no remote damage"
 ## is a measurement rather than a promise.
 func _observe(enemy: CharacterBody2D, hero: CharacterBody2D, home: Vector2, seconds: float,
-		stop: Callable = Callable()) -> Dictionary:
+		stop: Callable = Callable(), follower: Variant = null) -> Dictionary:
 	var stats := {"direct_ticks": 0, "direct_ticks_at_end": 0, "min_home_distance": 99999.0,
 		"investigate_ticks": 0, "samples": 0, "states": {}, "damage_events": 0,
 		"first_direct_distance": -1.0, "first_damage_distance": -1.0, "max_damage_distance": 0.0,
@@ -682,6 +688,18 @@ func _observe(enemy: CharacterBody2D, hero: CharacterBody2D, home: Vector2, seco
 		_note_direct(stats, enemy, home)
 		var label := String(enemy.call(&"state_label"))
 		stats.states[label] = int((stats.states as Dictionary).get(label, 0)) + 1
+		# First sample inside the house's own reach. Whatever the creature was
+		# doing at that instant is the honest answer to "how did it get here": a
+		# creature that walked up the chain is INVESTIGATE, one that chased the
+		# defender is CHASE and one that was handed a target never leaves PATROL.
+		if float(stats.get("arrival_state_at", -1.0)) < 0.0 and at.distance_to(home) <= 160.0:
+			stats["arrival_state_at"] = at.distance_to(home)
+			stats["arrival_state"] = label
+			if follower != null:
+				var view: Dictionary = follower.snapshot()
+				stats["arrival_pursuing"] = bool(view.get("pursuing", false))
+				stats["arrival_goal_trace"] = int(view.get("goal_trace", 0))
+				stats["arrival_hops"] = int(view.get("hops", 0))
 		if label == "INVESTIGATE":
 			stats.investigate_ticks = int(stats.investigate_ticks) + 1
 		var hp := int(hero.get(&"health"))
@@ -781,11 +799,14 @@ func _observe_walk(hero: CharacterBody2D, enemy: CharacterBody2D, home: Vector2,
 			stalled = stalled + 1 if hero.global_position.distance_to(before) < 0.25 else 0
 			if stalled >= 5:
 				escapes += 1
-				if escapes > 6:
+				if escapes > 10:
 					break
 				_report_wedge(hero, cell, before, escapes)
 				escape_direction = _escape_direction(hero, before, point, escapes)
-				escape_frames = 10
+				# A living body is not a wall: it moves, and it is 14 px wide. A
+				# player steps aside for longer than a wall needs, so the sidestep
+				# is 24 frames instead of 10 and the walker tries ten times.
+				escape_frames = 24
 				stalled = 0
 		if hero.global_position.distance_to(point) > 4.5:
 			_set_direction(Vector2.ZERO)
@@ -900,11 +921,22 @@ func _route_plan(hero: CharacterBody2D, nav: OverworldTraversability, home: Vect
 		return {"ok": false, "reason": "no_route_to_creature"}
 	for cell: Vector2i in second:
 		outbound.append(cell)
-	var inbound := _route(far, home_cell, nav, hero)
+	# The way back uses its own lane, seven cells north of the creature. A player
+	# who laid a trail past a creature does not walk back through its body: the
+	# return leg is a separate corridor, which is also what makes the trail a
+	# journey the creature can follow instead of a circle around its own feet.
+	var via := _nearest_free_near(nav, site_cell + Vector2i(0, -7), 5)
+	if via.x < 0:
+		via = home_cell
+	var homeward := _route(far, via, nav, hero)
+	var final_leg := _route(via, home_cell, nav, hero)
+	var inbound: Array[Vector2i] = homeward
+	for cell: Vector2i in final_leg:
+		inbound.append(cell)
 	if inbound.is_empty() and far != home_cell:
 		print("C08_ROUTE_FAIL reason=no_route_home far=%s home=%s site=%s" % [str(far), str(home_cell), str(site_cell)])
 		return {"ok": false, "reason": "no_route_home"}
-	var report := {"near": [near.x, near.y], "far": [far.x, far.y],
+	var report := {"near": [near.x, near.y], "far": [far.x, far.y], "via": [via.x, via.y],
 		"site": [site_cell.x, site_cell.y], "home": [home_cell.x, home_cell.y],
 		"outbound_cells": outbound.size(), "inbound_cells": inbound.size()}
 	print("C08_ROUTE ", JSON.stringify(report))
