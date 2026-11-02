@@ -1199,7 +1199,13 @@ func _sidestep_direction(hero: CharacterBody2D, point: Vector2, attempt: int) ->
 	if to_target.length() < 0.5:
 		return Vector2.ZERO
 	var perp := Vector2(-to_target.y, to_target.x)
-	var order: Array[Vector2] = [-perp, perp] if attempt % 2 == 1 else [perp, -perp]
+	var order: Array[Vector2] = []
+	if attempt % 2 == 1:
+		order.append(-perp)
+		order.append(perp)
+	else:
+		order.append(perp)
+		order.append(-perp)
 	for candidate: Vector2 in order:
 		var query := _shape_query(hero)
 		var body := hero.get_node_or_null("BodyShape") as CollisionShape2D
