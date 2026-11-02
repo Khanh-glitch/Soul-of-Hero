@@ -281,8 +281,12 @@ Then continue the already ordered F → N → D work without asking for permissi
   with C's selected original flame tongues at clamped/unclamped distances. The
   current run supplied real normal/dim full-cast 720p; its sequential reduced
   frames were inspected, not creator-approved or native-60fps certified. A new
-  source test checks aligned A/C burst timing and natural cleanup; check its
-  post-commit quick CI result. Next code work: F09 graph/palette/bolts, F11
+  source test checks aligned A/C burst timing and natural cleanup. Quick CI
+  `41379987423` passed at `afa3f0c6`: A impact is observed no later than one
+  60 Hz tick after its authored 3.95s beat, with C burst and no duplicate C
+  impact. Initial test `41379874570` failed because it assumed exact floating-
+  point tick equality; the corrected tolerance is bounded to one fixed tick.
+  Next code work: F09 graph/palette/bolts, F11
   strongest rotor/C09 lightning, F16 growth/material/debris and F20 rift/world
   warp/debris/restitch; then N and D. Do not restart rejected experiments.
 - CT still owns real combat receipts, same-frame linear/HDR pre-HUD world,
