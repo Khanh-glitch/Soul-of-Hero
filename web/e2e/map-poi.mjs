@@ -109,7 +109,8 @@ try {
       try{for(let round=0;round<2;round++){
         let cur=await state();const threat=cur.creatures.filter(m=>['chase','tell','attack'].includes(m.state)&&Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<96).sort((a,b)=>Math.hypot(a.x-cur.player.x,a.y-cur.player.y)-Math.hypot(b.x-cur.player.x,b.y-cur.player.y))[0];
         if(!threat)return;
-        await walkNear(threat.x,threat.y,22);await aim(threat.x,threat.y);
+        if(Math.hypot(threat.x-cur.player.x,threat.y-cur.player.y)>26){try{await walkNear(threat.x,threat.y,22);}catch{return;}}
+        await aim(threat.x,threat.y);
         for(let hit=0;hit<7;hit++){
           cur=await state();const target=cur.creatures.find(m=>m.id===threat.id);if(!target||target.hp<=0||Math.hypot(target.x-cur.player.x,target.y-cur.player.y)>36)break;
           await page.mouse.down();await pause(80);await page.mouse.up();await pause(340);
