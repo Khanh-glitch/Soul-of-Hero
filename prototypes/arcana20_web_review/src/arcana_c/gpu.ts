@@ -40,7 +40,7 @@ export class CGpuComposite {
   gl.disable(gl.BLEND);gl.disable(gl.DITHER);gl.viewport(0,0,width,height);
  }
  render(scene:HTMLCanvasElement,f:Frame,m:BTransform,cx:number,cy:number,revision?:number,clip?:{x:number;y:number;w:number;h:number}){
-  const begin=performance.now();const gl=this.gl;gl.useProgram(this.program);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,1);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.textures[0]);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,scene);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,0);
+  const begin=performance.now();const gl=this.gl;if(gl.isContextLost())throw new Error('WebGL context lost');gl.useProgram(this.program);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,1);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.textures[0]);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,scene);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,0);
   const sceneEnd=performance.now();
   // A caller supplying a revision guarantees the same Frame is immutable until
   // that revision changes. Do not cache across frames or unversioned callers.
@@ -80,3 +80,8 @@ export class CGpuComposite {
   gl.drawArrays(gl.TRIANGLE_STRIP,0,4);const submitEnd=performance.now();this.lastProfile={sceneMs:sceneEnd-begin,packMs:packEnd-sceneEnd,fieldUploadMs:fieldEnd-packEnd,atlasPackMs:atlasPackEnd-fieldEnd,atlasUploadMs:uploadEnd-atlasPackEnd,submitMs:submitEnd-uploadEnd,fieldsReused};
  }
 }
+
+// One live viewport compositor per family, reused across sequential effects.
+// Individual source-frame/revision tracking remains inside the compositor.
+const shared=new Map<string,CGpuComposite>();
+export function sharedCGpuComposite(width:number,height:number):CGpuComposite{const key=`${width}x${height}`;let instance=shared.get(key);if(!instance){instance=new CGpuComposite(width,height);shared.set(key,instance);}return instance;}

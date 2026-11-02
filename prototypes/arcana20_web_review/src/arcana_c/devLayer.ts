@@ -6,9 +6,9 @@ import { bDiagnosticEnabled } from '../arcana_b/devLayer';
 import { CSource,type CId } from './player';
 import { compositeC } from './composite';
 import { worldRect } from '../arcana_b/worldRect';
-import { CGpuComposite } from './gpu';
+import { CGpuComposite,sharedCGpuComposite } from './gpu';
 import { bayer } from './engine/math';
-import {combineCPost,hasCPost,compositeCPost} from './post';import {CPostGpu} from './postGpu';
+import {combineCPost,hasCPost,compositeCPost} from './post';import {CPostGpu,sharedCPostGpu} from './postGpu';
 type Active={source:CSource;runId:string;startMs:number;tick:number;frame:ReturnType<CSource['renderAtSeconds']>;sourceMs:number;localBounds:InfluenceBounds|null};
 const active:Active[]=[];
 const gpuRequested=bDiagnosticEnabled && new URLSearchParams(location.search).get('arcanaGpu')==='1';const fullGpu=new URLSearchParams(location.search).get('arcanaCFull')==='1';let gpu:CGpuComposite|null=null;let gpuFailed=false;
@@ -41,7 +41,7 @@ export function drawCDiagnostic(g:CanvasRenderingContext2D,cx:number,cy:number){
   // Stage, blackout and post continue to run independently as authored.
   if(!a.localBounds){if(cDiagnosticTimings.length<1200)cDiagnosticTimings.push({id:a.source.id,time:a.frame.t,sourceMs:a.sourceMs,compositeMs:0,liveOps:0,maxOverlap:0});continue;}
   const box=fullGpu?worldRect(a.frame.transform,cx,cy,g.canvas.width,g.canvas.height):influenceWorldRect(a.localBounds,a.frame.transform,cx,cy,g.canvas.width,g.canvas.height);if(!box.w||!box.h)continue;const start=performance.now();let gpuInitMs=0,gpuCopyMs=0;
-  if(gpuRequested&&!gpuFailed){try{if(!gpu){const init=performance.now();gpu=new CGpuComposite(g.canvas.width,g.canvas.height);gpuInitMs=performance.now()-init;}gpu.render(g.canvas,a.frame.frame,a.frame.transform,cx,cy,a.tick,fullGpu?undefined:box);
+  if(gpuRequested&&!gpuFailed){try{if(!gpu){const init=performance.now();gpu=sharedCGpuComposite(g.canvas.width,g.canvas.height);gpuInitMs=performance.now()-init;}gpu.render(g.canvas,a.frame.frame,a.frame.transform,cx,cy,a.tick,fullGpu?undefined:box);
     const copy=performance.now();g.save();try{g.setTransform(1,0,0,1,0,0);if(fullGpu)g.drawImage(gpu.canvas,0,0);else g.drawImage(gpu.canvas,box.x,box.y,box.w,box.h,box.x,box.y,box.w,box.h);}finally{g.restore();}gpuCopyMs=performance.now()-copy;
    }catch(e){gpuFailed=true;console.warn('Experimental GPU C pass failed; falling back to CPU',e);}}
   if(!gpuRequested||gpuFailed){ // CPU samples displaced pixels from the whole source window, not only the destination ROI.
@@ -67,4 +67,4 @@ export function blackoutCDiagnostic(g:CanvasRenderingContext2D,cx:number,cy:numb
 
 let postGpu:CPostGpu|null=null,postGpuFailed=false;
 /** Diagnostic B/C-compatible pre-HUD policy for C source metadata only. */
-export function postCDiagnostic(g:CanvasRenderingContext2D){if(!bDiagnosticEnabled)return;const inputs=active.flatMap(a=>a.frame?[{tick:a.source.tick,transform:a.frame.transform,...a.frame.post}]:[]),post=combineCPost(inputs);if(!hasCPost(post))return;if(gpuRequested&&!postGpuFailed){try{if(!postGpu)postGpu=new CPostGpu(g.canvas.width,g.canvas.height);postGpu.render(g.canvas,post);g.save();g.setTransform(1,0,0,1,0,0);g.drawImage(postGpu.canvas,0,0);g.restore();return;}catch(e){postGpuFailed=true;console.warn('Experimental C post GPU failed; falling back to CPU',e);}}const image=g.getImageData(0,0,g.canvas.width,g.canvas.height);compositeCPost(image.data,image.width,image.height,post);g.putImageData(image,0,0);}
+export function postCDiagnostic(g:CanvasRenderingContext2D){if(!bDiagnosticEnabled)return;const inputs=active.flatMap(a=>a.frame?[{tick:a.source.tick,transform:a.frame.transform,...a.frame.post}]:[]),post=combineCPost(inputs);if(!hasCPost(post))return;if(gpuRequested&&!postGpuFailed){try{if(!postGpu)postGpu=sharedCPostGpu(g.canvas.width,g.canvas.height);postGpu.render(g.canvas,post);g.save();g.setTransform(1,0,0,1,0,0);g.drawImage(postGpu.canvas,0,0);g.restore();return;}catch(e){postGpuFailed=true;console.warn('Experimental C post GPU failed; falling back to CPU',e);}}const image=g.getImageData(0,0,g.canvas.width,g.canvas.height);compositeCPost(image.data,image.width,image.height,post);g.putImageData(image,0,0);}
