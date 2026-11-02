@@ -470,9 +470,13 @@ func _run() -> void:
     var live_caster := Node2D.new()
     root.add_child(live_caster)
     var thorn_id := Arcana20SourceCatalog.canonical_id(15)
+    var thorn_open_events: Array[Vector2] = []
+    thorn_host.visual_event.connect(func(id: StringName, kind: StringName, pos: Vector2, _time: float) -> void:
+        if id == thorn_id and kind == &"tendrils_open": thorn_open_events.append(pos))
     for distance in [35.0, 140.0, 900.0]:
         for dir in [Vector2.RIGHT, Vector2.DOWN, Vector2.LEFT, Vector2.UP]:
             live_caster.global_position = base
+            thorn_open_events.clear()
             var dst: Vector2 = base + dir * distance
             check(thorn_host.cast_skill(thorn_id, base, dst, 1.0, live_caster), "C15 actual renderer cast")
             var thorn_player := thorn_host._casts[thorn_id] as CSourcePlayer
@@ -487,6 +491,7 @@ func _run() -> void:
             for i in range(5):
                 check(thorn._tds[i].base == roots_before[i], "C15 roots stay at cast origin %s %s" % [distance, dir])
             check(thorn._live_caster == CThornOpera.CASTER and thorn._focus == focus_before, "C15 original static caster and fixed bloom")
+            check(thorn_open_events.size() == 1 and thorn_open_events[0].distance_to(base) < 0.001, "C15 source root event stays at cast origin")
             var world_height := thorn.particle_height_axis.rotated(thorn_player._rot)
             check(world_height.distance_to(Vector2.UP) < 0.0001, "C15 petal ballistic height stays world-up")
             var tf := thorn_player.source_pass_frame()
@@ -542,6 +547,16 @@ func _run() -> void:
         thorn_host.cancel_skill(thorn_id)
     CKit._auto_seed = saved_seed
     check(baseline_results.size() == 2 and baseline_results[0] == baseline_results[1], "C15 moving player preserves exact stationary source state and bloom frame")
+    live_caster.global_position = base
+    check(thorn_host.cast_skill(thorn_id, base, base + Vector2(35, 0), 1.0, live_caster), "C15 natural OUT cast")
+    var out_cast := thorn_host._casts[thorn_id] as CSourcePlayer
+    out_cast.set_process(false)
+    out_cast.render_enabled = false
+    live_caster.global_position = base + Vector2(900, 0)
+    for i in range(510):
+        if not thorn_host.is_active(thorn_id): break
+        out_cast.advance(STEP, false)
+    check(not thorn_host.is_active(thorn_id), "C15 natural OUT finishes with moving actor and retires")
     # Clamp the overall source scale but keep the four target offsets and
     # bloom at the selected world point even at very short/long ranges.
     for delta in [Vector2(20, 0), Vector2(0, -20), Vector2(700, 0), Vector2(0, 700)]:
