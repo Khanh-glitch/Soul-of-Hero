@@ -738,7 +738,16 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 		var path_c: Array[Vector2i] = [outside_c]
 		await _walk_path(hero, path_c)
 	await _walk_to_cell(hero, _nearest_free_near(nav, _door_cell() + Vector2i(0, -1), 1))
-	_expect(await _set_door(false), "C: the home is shut before the cold-trail run")
+	var shut_before := await _set_door(false)
+	_expect(shut_before, "C: the home is shut before the cold-trail run")
+	if not shut_before:
+		# An open door is not a detail: the last run left it open, the creature walked
+		# in and killed the defender, and the case then failed as if the trail were at
+		# fault. Say what actually happened.
+		print("C08_C_DOOR_FAIL ", JSON.stringify({"open": _door_open(),
+			"hero": [hero.global_position.x, hero.global_position.y],
+			"door": [_door_cell().x, _door_cell().y]}))
+		return {"ok": false}
 	for step in range(5):
 		var live := _alive_enemy(_enemy())
 		if live == null or live.global_position.distance_to(hero.global_position) > 320.0:
@@ -1313,10 +1322,15 @@ func _set_door(open_it: bool) -> bool:
 	var structure := build.structure_node(build.entity_at_layer(cell, "object")) as SurvivalStructure
 	if structure == null:
 		return false
-	await _click_structure(structure.global_position + Vector2(8, 8))
-	await physics_frame
-	await physics_frame
-	return _door_open() == open_it
+	# One click can miss the interaction window while the camera settles. A player
+	# clicks again; so does this, up to three times, and it says whether it landed.
+	for attempt in range(3):
+		await _click_structure(structure.global_position + Vector2(8, 8))
+		await physics_frame
+		await physics_frame
+		if _door_open() == open_it:
+			return true
+	return false
 
 
 ## A real walkable route that passes physically close to the creature (so its own
