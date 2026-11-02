@@ -1,9 +1,12 @@
-# R18 #09 real enemy ring; normal AI moves between frozen paired comparisons.
-name: ARCANA20 R18 controlled chain occlusion comparison
+# R24 #09 real enemy ring; source-authored memory vs prior C ghost.
+name: ARCANA20 R24 matched chain memory comparison
 on:
   workflow_dispatch:
+  push:
+    branches: [arena/c7b0c4e8-soul-of-hero]
+    paths: ['.github/workflows/arcana20-r17-expanded-chain-capture.yml']
 permissions:
-  contents: read
+  contents: write
 jobs:
   capture:
     strategy:
@@ -24,6 +27,13 @@ jobs:
           git fetch --depth=1 --no-tags origin "$AVFX" 04eacf62f1a3740a57e08691c3a9006d454aaa2c 6b801554a6af95424b4e39dd29f43c146aa13848 2cb1a3c5f093724eb9fecbdf45909ccb611f7b32 18e7afcbd576bbd9bfbcc509b2ee13216186a522 e505173edd119fdd955cf6249511b575a5468440
           python3 tools/arcana20_join/assemble.py --out "$RUNNER_TEMP/r17" --avfx-sha "$AVFX" --a0-sha 04eacf62f1a3740a57e08691c3a9006d454aaa2c
           cp tools/arcana20_join/controlled_chain_probe.gd "$RUNNER_TEMP/r17/prototypes/arcana_fusion20/renderer/playtest/arcana20_controlled_chain_probe.gd"
+          python3 - "$RUNNER_TEMP/r17/prototypes/arcana_fusion20/renderer/source_a/a_chain_verdict_graph.gd" <<'PY'
+          import pathlib,sys
+          p=pathlib.Path(sys.argv[1]); s=p.read_text()
+          old='    return ADraw.bolt_path(a.x, a.y, b.x, b.y, a.distance_to(b) * 0.3, seed, 4)'
+          assert s.count(old)==1
+          p.write_text(s.replace(old, '    if OS.get_environment("AVFX_R24_LEGACY_GHOST") == "1":\n        return CKit.bolt_pts(float(seed), a.x, a.y, b.x, b.y, 0.3, 4.0)\n'+old))
+          PY
           python3 - "$RUNNER_TEMP/r17" <<'PY'
           import pathlib,sys
           p=pathlib.Path(sys.argv[1])/'prototypes/arcana_fusion20/renderer/playtest/arcana20_playtest.gd'; s=p.read_text(); old='res://prototypes/arcana_fusion20/renderer/playtest/arcana20_live_capture.gd'; assert s.count(old)==1
@@ -73,11 +83,27 @@ jobs:
           if [ -n "$file" ]; then cp -a "$(dirname "$file")"/. "$RUNNER_TEMP/output/"; fi
           cp "$RUNNER_TEMP/r17/arcana20_join_manifest.json" "$RUNNER_TEMP/output/" || true
           cp "$RUNNER_TEMP/live.log" "$RUNNER_TEMP/output/" || true
-      - name: Check controlled viewport pairs
+      - name: Validate and surface matched pairs
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          if ! command -v ffmpeg; then sudo apt-get update -qq && sudo apt-get install -y ffmpeg; fi
-          python3 -m pip install --quiet numpy pillow
-          python3 tools/arcana20_join/compare_controlled_chain.py "$RUNNER_TEMP/output"
+          python3 -m pip install --quiet pillow
+          python3 - "$RUNNER_TEMP/output" <<'PY'
+          import base64,json,os,pathlib,subprocess,sys
+          from PIL import Image,ImageChops,ImageStat
+          p=pathlib.Path(sys.argv[1])
+          for index in range(2):
+              r=json.loads((p/f'chain_pair_{index}.json').read_text()); assert r['stable']
+              imgs=[Image.open(p/n).convert('RGB') for n in r['files']]
+              assert not ImageChops.difference(imgs[0],imgs[2]).getbbox(), 'legacy restoration differs'
+              print('::notice title=R24_CHAIN_PAIR::'+json.dumps(r,separators=(',',':')))
+              print('::notice title=R24_CHAIN_DIFFERENCE::'+str(ImageStat.Stat(ImageChops.difference(imgs[0],imgs[1])).mean))
+              for label,img in zip(('baseline','corrected'),imgs[:2]):
+                  out=p/f'chain_pair_{index}_{label}.jpg';img.save(out,quality=90)
+                  body=json.dumps({'content':base64.b64encode(out.read_bytes()).decode(),'encoding':'base64'})
+                  blob=subprocess.check_output(['gh','api','--method','POST','repos/'+os.environ['GITHUB_REPOSITORY']+'/git/blobs','--input','-','--jq','.sha'],input=body.encode()).decode().strip()
+                  print(f'::notice title=R24_CHAIN_{index}_{label.upper()}::{blob}')
+          PY
       - name: Encode genuine capture using recorded wall-time PTS
         run: |
           set -euo pipefail

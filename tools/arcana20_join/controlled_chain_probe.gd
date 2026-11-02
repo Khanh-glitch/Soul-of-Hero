@@ -1,64 +1,68 @@
-## Diagnostic-only controlled A/B. Uses the real route and cast; briefly
-## pauses the SAME scene between captures, changing only #09 A pass draw order.
-## Foreground is an occlusion hypothesis, not an actor-depth implementation.
+## Disposable matched-world #09 ghost comparison. Real route/input/AI; freeze
+## actors and source only for each pair, then restore everything and continue.
 extends "res://prototypes/arcana_fusion20/renderer/playtest/arcana20_live_capture.gd"
 
-var controlled: Array = []
+var _targets: Array[int] = [160, 300]
+var _next := 0
+
+func _settle() -> void:
+    for frame in range(4):
+        await get_tree().process_frame
+        await RenderingServer.frame_post_draw
 
 func _frame(path: String, player: Node2D, enemy: Node2D, camera: Camera2D) -> bool:
     if not await super._frame(path, player, enemy, camera): return false
+    if _next >= _targets.size(): return true
     var renderer := host.get("renderer") as Arcana20Renderer
-    var mount := host.get("mount") as Arcana20WorldPassMount
     if not is_instance_valid(renderer) or not renderer.is_active(cast_id): return true
     var source := renderer._casts.get(cast_id) as ASourcePlayer
-    var viewer := (mount._passes.get(cast_id, {}) as Dictionary).get(&"A") as Arcana20AWorldPass
-    if not is_instance_valid(source) or not is_instance_valid(viewer): return true
-    var original_z := viewer.z_index
-    var old_scale := Engine.time_scale
-    var old_pause := get_tree().paused
-    get_tree().paused = true
-    Engine.time_scale = 0.0
-    # Synchronize the frozen camera/render tree before recording the lock.
-    await RenderingServer.frame_post_draw
-    await RenderingServer.frame_post_draw
-    var tick := source._tick
-    var position_before := player.global_position
-    var camera_before := camera.get_screen_center_position()
-    var actors: Array = []
-    for actor in host.get("spawned"):
-        actors.append([actor.global_position.x, actor.global_position.y])
-    var i := samples.size() - 1
-    var files: Array[String] = []
-    for z in [original_z, 1, original_z]:
-        viewer.z_index = z
-        # Two draws allow screen-copy order and the same frozen viewport to settle.
-        await RenderingServer.frame_post_draw
-        await RenderingServer.frame_post_draw
-        var img := get_viewport().get_texture().get_image()
-        var name := "controlled_%05d_%d.png" % [i, files.size()]
-        if img == null or img.is_empty() or img.save_png(path.path_join(name)) != OK:
-            get_tree().paused = old_pause
-            Engine.time_scale = old_scale
-            viewer.z_index = original_z
-            return false
-        files.append(name)
-    var unchanged := source._tick == tick and player.global_position == position_before and camera.get_screen_center_position() == camera_before
+    if not is_instance_valid(source) or source._tick < _targets[_next]: return true
+    var tree := get_tree()
+    var suspended: Array = [host.get("world"), player, camera, source]
     var spawned: Array = host.get("spawned")
-    var actor_after: Array = []
-    for n in range(spawned.size()):
-        actor_after.append([spawned[n].global_position.x, spawned[n].global_position.y])
-        unchanged = unchanged and spawned[n].global_position == Vector2(actors[n][0], actors[n][1])
-    if not unchanged:
-        print("R18_STATE_MISMATCH ", JSON.stringify({"tick_before":tick,"tick_after":source._tick,"player_before":str(position_before),"player_after":str(player.global_position),"camera_before":str(camera_before),"camera_after":str(camera.get_screen_center_position()),"actors_before":actors,"actors_after":actor_after}))
-    viewer.z_index = original_z
-    get_tree().paused = old_pause
-    Engine.time_scale = old_scale
-    if not unchanged:
-        push_error("R18_CONTROLLED_FAIL source, actors or camera moved during paired capture")
+    for actor in spawned:
+        if is_instance_valid(actor): suspended.append(actor)
+    var old_modes: Array = []
+    for node in suspended:
+        old_modes.append(node.process_mode)
+        node.process_mode = Node.PROCESS_MODE_DISABLED
+    var old_pause := tree.paused
+    tree.paused = true
+    var before_player := player.global_position
+    var before_camera := camera.get_screen_center_position()
+    var tick := source._tick
+    var positions: Array = []
+    for actor in spawned: positions.append(actor.global_position)
+    var names: Array[String] = []
+    for legacy in [true, false, true]:
+        OS.set_environment("AVFX_R24_LEGACY_GHOST", "1" if legacy else "0")
+        source._render_frame()
+        await _settle()
+        var image := get_viewport().get_texture().get_image()
+        var name := "chain_pair_%d_%d.png" % [_next, names.size()]
+        if image == null or image.is_empty() or image.save_png(path.path_join(name)) != OK:
+            push_error("R24_CHAIN_FAIL cannot save image")
+            return false
+        names.append(name)
+    var stable := tick == source._tick and before_player == player.global_position and before_camera == camera.get_screen_center_position()
+    var coordinates: Array = []
+    for i in range(spawned.size()):
+        stable = stable and positions[i] == spawned[i].global_position
+        coordinates.append([positions[i].x, positions[i].y])
+    var report := {"tick": tick, "player": [before_player.x, before_player.y],
+        "camera": [before_camera.x, before_camera.y], "actors": coordinates,
+        "stable": stable, "files": names,
+        "note": "actual AI; paused same-state old C ghost/new A ghost/old C ghost; C live branches unchanged"}
+    var output := FileAccess.open(path.path_join("chain_pair_%d.json" % _next), FileAccess.WRITE)
+    output.store_string(JSON.stringify(report, "  "))
+    output.close()
+    OS.set_environment("AVFX_R24_LEGACY_GHOST", "0")
+    source._render_frame()
+    tree.paused = old_pause
+    for i in range(suspended.size()): suspended[i].process_mode = old_modes[i]
+    _next += 1
+    print("R24_CHAIN_PAIR ", JSON.stringify(report))
+    if not stable:
+        push_error("R24_CHAIN_FAIL source, actors or camera moved during pair")
         return false
-    samples[-1]["controlled_tick"] = tick
-    samples[-1]["controlled_files"] = files
-    samples[-1]["controlled_actor_positions"] = actors
-    samples[-1]["controlled_z"] = [original_z, 1, original_z]
-    controlled.append(tick)
     return true
