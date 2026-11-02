@@ -252,6 +252,9 @@ func _init() -> void:
     var wave_origin: Vector2 = calligraphy._wave_front(4.6)
     if wave_origin.distance_to(stroke_events[3].pos_local) > 0.001 or calligraphy._wave_front(6.0).x <= wave_origin.x:
         _fail("calligraphy wave did not advance from first stroke")
+    var released_front: Vector2 = calligraphy._wave_front(6.1)
+    if released_front.x <= 322.0 or released_front.x >= float(AFramebuffer.W) - 12.0:
+        _fail("calligraphy wave failed to clear glyph inside source frame")
 
     # Temporal ordering regression checks for redesign OUT phases. These
     # are structural checks, not visual acceptance or a motion-quality score.
