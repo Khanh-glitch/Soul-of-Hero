@@ -132,6 +132,7 @@ export function initPfx(): Promise<boolean> {
   for (const e of pilotList) manifest.set(e.id, e);
   const q = typeof location !== 'undefined' ? new URLSearchParams(location.search).get('pfxbase') : null;
   if (q) base = q.endsWith('/') ? q : q + '/';
+  if (typeof location !== 'undefined' && location.protocol === 'file:') return (fullManifest = Promise.resolve(false)); // offline single-file: pilot only, no fetch noise
   fullManifest = (typeof fetch === 'undefined' ? Promise.reject(new Error('no fetch')) : fetch(base + 'index.json').then(r => { if (!r.ok) throw new Error('no full pack'); return r.json(); }))
     .then((j: any) => { for (const e of j.effects as PfxEntry[]) if (!manifest.has(e.id)) manifest.set(e.id, e); return true; })
     .catch(() => false);
