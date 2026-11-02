@@ -236,7 +236,7 @@ const thunderloom: SpellDef = {
           for (const fr of fract) drawBoltTree(f, fr, 1.8 * Math.exp(-a * 2.2) + 0.15 * flick(fr.length, t, 15), CORE, HALO, clamp(a * 8));
           if (a < 0.6) {
             const slot = Math.floor(t * 30), dec = 1 - a / 0.6;
-            for (let y = 0; y < H; y++) { const h = hash(((y >> 2) + slot * 57) | 0); if (h > 0.82) { const dx = (hash(y * 3 + slot) - 0.5) * 16 * dec; for (let x = 0; x < W; x++) { f.D(x, y, dx, 0); if (h > 0.95) f.C(x, y, 3 * dec); } } }
+            for (let y = 0; y < H; y++) { const h = hash(((y >> 2) + slot * 57) | 0); if (h > 0.82) { const dx = (hash(y * 3 + slot) - 0.5) * 16 * dec; f.stageScanline(y, dx, h > 0.95 ? 3 * dec : 0); } }
             shock(f, Tg.x, Tg.y, a * 220, 14, 7 * dec, 0.7, 2);
           }
           const g = Math.exp(-a * 1.1);

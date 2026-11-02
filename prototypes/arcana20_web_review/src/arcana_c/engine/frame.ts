@@ -25,12 +25,13 @@ export class Frame {
   private mark = new Uint32Array(N);
   private gen = 1;
   t = 0;
-  stageShade = 1; stageBlackout = false;
+  stageShade = 1; stageBlackout = false; readonly stageScanlines = new Float32Array(H * 2);
   blackoutStage() { this.stageBlackout = true; }
   shadeStage(m:number) { this.stageShade *= m; }
+  stageScanline(y:number,dx:number,chroma:number) { if(y>=0&&y<H){this.stageScanlines[y*2]+=dx;this.stageScanlines[y*2+1]+=chroma;} }
 
   clear() {
-    this.stageShade = 1; this.stageBlackout = false; this.worldFragment.fill(0); this.liveLight.clear();
+    this.stageShade = 1; this.stageBlackout = false; this.stageScanlines.fill(0); this.worldFragment.fill(0); this.liveLight.clear();
     this.ground.fill(0);
     this.groundCoverage.fill(0); this.worldInfluence.fill(0);
     this.ink.fill(0);

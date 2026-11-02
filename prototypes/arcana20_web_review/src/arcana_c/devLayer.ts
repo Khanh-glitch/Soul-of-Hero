@@ -1,3 +1,5 @@
+import {visualTick} from '../game/visualQuality';
+import {combineCStage,hasCStage,compositeCStage} from './stage';import {CStageGpu} from './stageGpu';
 /** Developer-only C7/C10/C17/C20 live-field diagnostic, not playtest/visual approval. */
 import { bDiagnosticEnabled } from '../arcana_b/devLayer';
 import { CSource,type CId } from './player';
@@ -20,13 +22,15 @@ export function startCDiagnostic(e:any){
 export function prepareCDiagnostic(runId:string,simMs:number){
  if(!bDiagnosticEnabled)return;
  for(let i=active.length-1;i>=0;i--){const a=active[i],seconds=(simMs-a.startMs)/1000;if(a.runId!==runId||seconds>=a.source.duration){active.splice(i,1);continue;}
-  const tick=Math.floor(seconds*60+1e-8);a.sourceMs=0;if(tick!==a.tick){const start=performance.now();a.frame=a.source.renderAtSeconds(seconds);a.sourceMs=performance.now()-start;a.tick=tick;}
+  const tick=visualTick(a.source.id,seconds);a.sourceMs=0;if(tick!==a.tick){const start=performance.now();a.frame=a.source.renderAtSeconds(tick/60);a.sourceMs=performance.now()-start;a.tick=tick;}
  }
 }
-/** P0 C stage shade belongs below local source effects and actors. */
-export function shadeCDiagnostic(g:CanvasRenderingContext2D,cx:number,cy:number){
- if(!bDiagnosticEnabled)return;let shade=1;for(const a of active)if(a.frame)shade*=a.frame.post.stageShade;
- if(shade>=1)return;g.save();g.fillStyle=`rgba(0,0,0,${Math.max(0,Math.min(1,1-shade))})`;g.fillRect(cx,cy,g.canvas.width,g.canvas.height);g.restore();
+let stageGpu:CStageGpu|null=null,stageGpuFailed=false;
+/** P0 C stage policy: viewport-aligned scanlines and shade below effects/actors. */
+export function shadeCDiagnostic(g:CanvasRenderingContext2D,_cx:number,_cy:number){
+ if(!bDiagnosticEnabled)return;if(!active.length){(window as any).__arcanaCStage={shade:1,activeLines:0,time:[]};return;}const stage=combineCStage(active.flatMap(a=>a.frame?[a.frame.frame]:[]));(window as any).__arcanaCStage={shade:stage.shade,activeLines:stage.scan.reduce((n,v,i)=>n+(i%2===0&&(v!==0||stage.scan[i+1]!==0)?1:0),0),time:active.map(a=>a.frame?.t??-1)};if(!hasCStage(stage))return;
+ if(gpuRequested&&!stageGpuFailed){try{if(!stageGpu)stageGpu=new CStageGpu(g.canvas.width,g.canvas.height);stageGpu.render(g.canvas,stage);g.save();g.setTransform(1,0,0,1,0,0);g.drawImage(stageGpu.canvas,0,0);g.restore();return;}catch(e){stageGpuFailed=true;console.warn('Experimental C stage GPU failed; falling back to CPU',e);}}
+ const image=g.getImageData(0,0,g.canvas.width,g.canvas.height);compositeCStage(image.data,image.width,image.height,stage);g.putImageData(image,0,0);
 }
 export function drawCDiagnostic(g:CanvasRenderingContext2D,cx:number,cy:number){
  if(!bDiagnosticEnabled||!active.length)return;

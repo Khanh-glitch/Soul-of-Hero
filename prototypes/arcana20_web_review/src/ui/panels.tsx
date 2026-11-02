@@ -1,3 +1,4 @@
+import {getVisualQuality,saveVisualQuality,type VisualQuality} from '../game/visualQuality';
 import { arcanaLabEnabled } from '../game/previewFlags';
 import { ARCANA_CORES } from '../game/arcana20';
 import { grantReviewCore } from '../game/arcanaLab';
@@ -47,6 +48,7 @@ export function InventoryPanel({ api, quickTo, x = 404 }: { api: Api; quickTo?: 
     <Grid api={api} cid="inv" quickTo={quickTo} hotRow />
     {arcanaLabEnabled && <div style={{borderTop:'1px solid #3a2e46', marginTop:5, paddingTop:4}}>
       <div style={{color:'#ffad7d',fontSize:10}}>Internal Core fixtures — visuals incomplete, NOT playtest-ready</div>
+      <label style={{fontSize:10}}>Experimental visual cadence <select aria-label="Experimental visual cadence" defaultValue={getVisualQuality()} onChange={e=>saveVisualQuality(e.target.value as VisualQuality)}><option value="high">High (unreduced)</option><option value="balance">Balance (up to 30 Hz outside impacts)</option><option value="performance">Performance (up to 20 Hz outside impacts)</option></select></label>
       <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:2,marginTop:3}}>{ARCANA_CORES.map(core =>
         <button key={core.id} className="btn" title={core.name} aria-label={`Add ${core.name} Core`} onClick={() => {
           const result=grantReviewCore(api.gs,core.id);if(result.ok){save(api.gs);api.rerender();api.toast(`${core.name} Core added (QA only).`);}else api.toast(result.reason || 'Could not add Core.','bad');

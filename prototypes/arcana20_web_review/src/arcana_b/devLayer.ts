@@ -1,3 +1,4 @@
+import {visualTick} from '../game/visualQuality';
 /** Diagnostic preview of only three source-B effects. Deliberately disabled
  * unless explicitly enabled on a Vite dev server. NOT a delivery mode. */
 import { BSource,type BId } from './player';
@@ -21,8 +22,8 @@ export function startBDiagnostic(e:any) {
 export function drawBDiagnostic(g:CanvasRenderingContext2D,runId:string,simMs:number,cx:number,cy:number) {
   if(!bDiagnosticEnabled || !active.length)return;
   for(let i=active.length-1;i>=0;i--){const a=active[i],seconds=(simMs-a.startMs)/1000;if(a.runId!==runId||seconds>=a.source.duration){active.splice(i,1);continue;}
-    const tick=Math.floor(seconds*60+1e-8);let sourceMs=0;
-    if(tick!==a.tick){const start=performance.now();a.frame=a.source.renderAtSeconds(seconds);sourceMs=performance.now()-start;a.tick=tick;}
+    const tick=visualTick(a.source.id,seconds);let sourceMs=0;
+    if(tick!==a.tick){const start=performance.now();a.frame=a.source.renderAtSeconds(tick/60);sourceMs=performance.now()-start;a.tick=tick;}
     if(!a.frame)continue;
     const start=performance.now();
     if(gpuRequested&&!gpuFailed){

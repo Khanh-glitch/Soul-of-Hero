@@ -8,6 +8,9 @@
 import { sourceTransform } from './sourceTransform';
 import { aTransform } from '../arcana_a/anchors';
 import { riptideFront } from '../arcana_a/riptide';
+import { CUT_P0,CUT_P1 } from '../arcana_a/guillotine';
+import { SPORE_COLONIES } from '../arcana_a/spore';
+import { ROOT_TIPS } from '../arcana_a/rootwake';
 import { RipperContour } from '../arcana_c/fusion20/contour';
 import catalog from '../../integration/p0-catalog.json';
 import { bTransform, transformPoint } from '../arcana_b/anchors';
@@ -48,7 +51,12 @@ export function planArcana(id:number,x:number,y:number,angle:number,aimX:number,
       for(const [vertex,time,size,dmg] of events){const an=-Math.PI/2+vertex/7*Math.PI*2;const q=transformPoint(m,vertex<0?{x:208,y:112}:{x:208+Math.cos(an)*92,y:112+Math.sin(an)*66});circle(q.x,q.y,Math.max(9,size*2*m.a),dmg,time);}
       break;
     }
-    case 4: line(x,y,a,reach+8,14,42); for(let i=1;i<=3;i++) cAt(reach*i/3,0,11,12,peak+120*i); break;
+    case 4: {
+      // Proposed collision follows the single diagonal source cut and its delayed ruptures.
+      const m=aTransform({x,y},{x:tx,y:ty}),p0=transformPoint(m,CUT_P0),p1=transformPoint(m,CUT_P1),scale=Math.hypot(m.a,m.b);
+      line(p0.x,p0.y,Math.atan2(p1.y-p0.y,p1.x-p0.x),Math.hypot(p1.x-p0.x,p1.y-p0.y),18*scale,44,3400);
+      for(let i=0;i<5;i++){const u=(i+.5)/5,q=transformPoint(m,{x:CUT_P0.x+(CUT_P1.x-CUT_P0.x)*u,y:CUT_P0.y+(CUT_P1.y-CUT_P0.y)*u});circle(q.x,q.y,11*scale,10,4600+i*80);}break;
+    }
     case 5: circle(tx,ty,32,30); ring(tx,ty,54,15,peak+250); break;
     case 6: { // Provisional collision follows four sampled P0 wavefront slices.
       const m=aTransform({x,y},{x:tx,y:ty}),scale=Math.hypot(m.a,m.b);
@@ -65,10 +73,28 @@ export function planArcana(id:number,x:number,y:number,angle:number,aimX:number,
       const q=transformPoint(cTransform(10,{x,y},{x:tx,y:ty}),C_ANCHOR[10]);
       circle(q.x,q.y,20,42,4800);for(const delay of [5350,5650,6000])ring(q.x,q.y,35,9,delay);break;
     }
-    case 11: for(let i=0;i<3;i++)ring(tx,ty,20+i*17,13,peak+i*160);break;
-    case 12: circle(tx,ty,26,40); for(let i=0;i<4;i++)circle(tx+Math.cos(i*Math.PI/2)*35,ty+Math.sin(i*Math.PI/2)*35,12,13,peak-300+i*80);break;
-    case 13: line(x,y,a,reach+10,15,32,peak-120);circle(tx,ty,14,26,peak+60);break;
-    case 14: for(let i=0;i<5;i++)cAt(reach*(i+1)/5,Math.sin(i*2.3)*20,18,14,peak-400+i*130);break;
+    case 11: {
+      // Proposed center impact plus outward shock based on the real sync beat.
+      const m=aTransform({x,y},{x:tx,y:ty}),q=transformPoint(m,{x:232,y:124}),scale=Math.hypot(m.a,m.b);
+      circle(q.x,q.y,20*scale,22,5300);ring(q.x,q.y,204*scale,8,5300);break;
+    }
+    case 12: {
+      // Proposed impact volumes follow three source circuit strikes and the final bolt.
+      const m=aTransform({x,y},{x:tx,y:ty}),scale=Math.hypot(m.a,m.b);
+      for(let i=0;i<3;i++){const q=transformPoint(m,{x:200+i*34,y:118});circle(q.x,q.y,12*scale,13,4400+i*700);}
+      const q=transformPoint(m,{x:232,y:150});circle(q.x,q.y,26*scale,40,6800);break;
+    }
+    case 13: {
+      // Proposed root-tip contacts and a snap at the authored target.
+      const m=aTransform({x,y},{x:tx,y:ty}),scale=Math.hypot(m.a,m.b);
+      ROOT_TIPS.forEach((tip,i)=>{const p=transformPoint(m,tip);circle(p.x,p.y,10*scale,12,3000+i*400);});
+      const q=transformPoint(m,{x:232,y:124});circle(q.x,q.y,14*scale,26,5400);break;
+    }
+    case 14: {
+      // Proposed spore damage at the six real source colonies, not canonical combat.
+      const m=aTransform({x,y},{x:tx,y:ty}),scale=Math.hypot(m.a,m.b);
+      SPORE_COLONIES.forEach((p,i)=>{const q=transformPoint(m,p);circle(q.x,q.y,14*scale,14,5400+i*55);});break;
+    }
     case 15: for(let i=-2;i<=2;i++)line(x,y,a+i*.13,reach+10,7,14,peak+i*55);break;
     case 16: circle(tx,ty,35,38);for(let i=0;i<4;i++)circle(tx+Math.cos(i*Math.PI/2)*42,ty+Math.sin(i*Math.PI/2)*42,14,14,peak+230+i*80);break;
     case 17: { // Rebound impact; stage blackout and post still require an owner.
