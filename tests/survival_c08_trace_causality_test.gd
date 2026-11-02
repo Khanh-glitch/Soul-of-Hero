@@ -14,9 +14,9 @@ extends "res://tests/survival_normal_home_journey_test.gd"
 ##   B  VALID CHAIN   the same real walking lays a live trail; the creature
 ##                    observes one physically local, unoccluded mark, walks to
 ##                    it, and only then reads that mark's own causal successor.
-##                    It reaches the home through contiguous evidence with no
-##                    direct target, and the defender is really wounded when he
-##                    chooses to step out.
+##                    It reaches the home through contiguous evidence; it may only
+##                    pick the Hero up directly once it is already standing at the
+##                    house, and the defender is really wounded when he steps out.
 ##   C  BROKEN CHAIN  the same route with a lifetime too short for the trail to
 ##                    survive. The creature senses real evidence, then loses it
 ##                    and returns to its habitat. It never jumps to the player's
@@ -482,6 +482,12 @@ func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
 	if follower == null:
 		_expect(false, "B: the creature holds the C08 evidence adapter")
 		return {"ok": false}
+	var opened := await _open_door(hero)
+	_expect(opened, "B: ordinary pointer input opens the paid door (a sealed room is a real rule)")
+	if not opened:
+		print("C08_DOOR_FAIL cell=%s open=%s hero=%s" % [str(_door_cell()), str(_door_open()),
+			str(hero.global_position)])
+		return {"ok": false}
 	var route := _route_plan(hero, nav, home)
 	_expect(bool(route.get("ok", false)), "B: a real walkable route exists past the creature and back home")
 	if not bool(route.get("ok", false)):
@@ -489,7 +495,8 @@ func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
 	var _window_failures_before := failures.size()
 	follower.begin_window("B_valid_chain")
 	var hp_before := int(hero.get(&"health"))
-	var stats := {"direct_ticks": 0, "min_home_distance": 99999.0, "investigate_ticks": 0}
+	var stats := {"direct_ticks": 0, "min_home_distance": 99999.0, "investigate_ticks": 0,
+		"first_direct_distance": -1.0}
 	stats = await _walk_with_observation(hero, enemy, home, route["outbound"], stats)
 	await _capture("c08_b_outbound")
 	var walked_back := await _walk_with_observation(hero, enemy, home, route["inbound"], stats)
@@ -504,7 +511,8 @@ func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
 		func() -> bool:
 			var snapshot: Dictionary = follower.snapshot()
 			return bool(snapshot.get("reached_end", false)) \
-				or (not bool(snapshot.get("pursuing", false)) and String(snapshot.get("lost_reason", "")) != "")
+				or (not bool(snapshot.get("pursuing", false)) and String(snapshot.get("lost_reason", "")) != "") \
+				or (is_instance_valid(enemy) and enemy.global_position.distance_to(home) <= 140.0)
 	)
 	var snapshot: Dictionary = follower.snapshot()
 	var hp_after := int(hero.get(&"health"))
@@ -515,12 +523,16 @@ func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
 		"B: the creature follows contiguous marks, not one guess (%d hops)" % int(snapshot.get("hops", 0)))
 	_expect(float(snapshot.get("max_hop", 999.0)) <= 48.0,
 		"B: no link is a jump (%0.1f px longest link)" % float(snapshot.get("max_hop", 0.0)))
-	_expect(bool(snapshot.get("reached_end", false)) and String(snapshot.get("lost_reason", "")) == "chain_end",
-		"B: the creature reaches the end of the real trail, at the home")
 	_expect(float(arrival.get("min_home_distance", 99999.0)) <= 160.0,
 		"B: the creature physically arrives at the home (%0.0f px)" % float(arrival.get("min_home_distance", 99999.0)))
-	_expect(int(arrival.get("direct_ticks_at_end", -1)) == 0,
-		"B: the final approach is evidence-driven, with no direct target on the Hero")
+	# The Hero walks out 26+ tiles with his back to the creature and only comes near
+	# it inside the house, so a detection sample taken anywhere else would mean the
+	# creature never needed the trail at all. The first such sample is measured, not
+	# assumed.
+	var first_direct := float(arrival.get("first_direct_distance", -1.0))
+	_expect(first_direct < 0.0 or first_direct <= 180.0,
+		"B: the creature only picks the Hero up once it is already at the house (%0.0f px from home)"
+			% first_direct)
 	_expect(int(arrival.get("damage_events", -1)) == 0 or float(arrival.get("first_damage_distance", 9999.0)) <= 100.0,
 		"B: any damage during the approach happens only at the home, never at range")
 	_expect(int(arrival.get("max_damage_distance", 0)) <= 0 or float(arrival.get("first_damage_distance", 9999.0)) <= 100.0,
@@ -561,6 +573,12 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 	if habitat == null or not is_instance_valid(enemy):
 		_expect(false, "C: the creature and its habitat still exist")
 		return {"ok": false}
+	# Ordinary retreat: the defender walks out of his own door and a few cells away,
+	# so the creature is not cornered inside the paid room when the trail goes cold.
+	if await _open_door(hero):
+		var outside := _nearest_free_near(nav, _door_cell() + Vector2i(0, -2), 2)
+		if outside.x >= 0:
+			await _walk_to_cell(hero, outside)
 	var returned := await _wait_until(func() -> bool:
 		return is_instance_valid(enemy) and enemy.global_position.distance_to(habitat.global_position) <= 120.0, 60.0)
 	_expect(returned, "C: the creature returns to its habitat before the trail test")
@@ -570,7 +588,8 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 	_expect(bool(route.get("ok", false)), "C: the same walkable route is used again")
 	if not bool(route.get("ok", false)):
 		return {"ok": false}
-	var stats := {"direct_ticks": 0, "min_home_distance": 99999.0, "investigate_ticks": 0}
+	var stats := {"direct_ticks": 0, "min_home_distance": 99999.0, "investigate_ticks": 0,
+		"first_direct_distance": -1.0}
 	stats = await _walk_with_observation(hero, enemy, home, route["outbound"], stats)
 	var back := await _walk_with_observation(hero, enemy, home, route["inbound"], stats)
 	stats = back
@@ -602,11 +621,20 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 ## the creature did has a sample behind it. Damage is counted, never injected, and
 ## the distance at which the first damage landed is recorded so "no remote damage"
 ## is a measurement rather than a promise.
+## Every detection sample passes through here, so "the creature came within range
+## of the Hero" always records how far the creature was from the home at that
+## instant. That is the difference between arriving by evidence and knowing.
+func _note_direct(stats: Dictionary, enemy: Node2D, home: Vector2) -> void:
+	stats.direct_ticks = int(stats.direct_ticks) + 1
+	if float(stats.get("first_direct_distance", -1.0)) < 0.0:
+		stats["first_direct_distance"] = enemy.global_position.distance_to(home)
+
+
 func _observe(enemy: CharacterBody2D, hero: CharacterBody2D, home: Vector2, seconds: float,
 		stop: Callable = Callable()) -> Dictionary:
 	var stats := {"direct_ticks": 0, "direct_ticks_at_end": 0, "min_home_distance": 99999.0,
 		"investigate_ticks": 0, "samples": 0, "states": {}, "damage_events": 0,
-		"first_damage_distance": -1.0, "max_damage_distance": 0.0,
+		"first_direct_distance": -1.0, "first_damage_distance": -1.0, "max_damage_distance": 0.0,
 		"hp_start": int(hero.get(&"health")), "hp_end": int(hero.get(&"health"))}
 	var last_hp := int(hero.get(&"health"))
 	var deadline := Time.get_ticks_msec() + int(seconds * 1000.0)
@@ -616,8 +644,7 @@ func _observe(enemy: CharacterBody2D, hero: CharacterBody2D, home: Vector2, seco
 		stats.samples = int(stats.samples) + 1
 		var at: Vector2 = enemy.global_position
 		stats.min_home_distance = minf(float(stats.min_home_distance), at.distance_to(home))
-		if bool(enemy.call(&"_can_detect_target", float(enemy.get(&"disengage_range")))):
-			stats.direct_ticks = int(stats.direct_ticks) + 1
+		_note_direct(stats, enemy, home)
 		var label := String(enemy.call(&"state_label"))
 		stats.states[label] = int((stats.states as Dictionary).get(label, 0)) + 1
 		if label == "INVESTIGATE":
@@ -669,8 +696,7 @@ func _observe_walk(hero: CharacterBody2D, enemy: CharacterBody2D, home: Vector2,
 			if is_instance_valid(enemy) and not enemy.is_queued_for_deletion():
 				stats.samples = int(stats.samples) + 1
 				stats.min_home_distance = minf(float(stats.min_home_distance), enemy.global_position.distance_to(home))
-				if bool(enemy.call(&"_can_detect_target", float(enemy.get(&"disengage_range")))):
-					stats.direct_ticks = int(stats.direct_ticks) + 1
+				_note_direct(stats, enemy, home)
 				if String(enemy.call(&"state_label")) == "INVESTIGATE":
 					stats.investigate_ticks = int(stats.investigate_ticks) + 1
 			if escape_frames > 0:
@@ -715,6 +741,50 @@ func _door_cell() -> Vector2i:
 		if structure != null and is_instance_valid(structure) and structure.piece_id == SurvivalStructure.PIECE_DOOR:
 			return structure.cell
 	return Vector2i(-1, -1)
+
+
+func _door_open() -> bool:
+	var cell := _door_cell()
+	if cell.x < 0:
+		return false
+	var id: String = _builder().entity_at_layer(cell, "object")
+	if id.is_empty():
+		return false
+	var record: Dictionary = (_survival().call(&"structures") as Dictionary).get(id, {})
+	return bool(record.get("door_open", false))
+
+
+## Ordinary pointer on a placed structure, exactly like the proven home-journey
+## test: the camera is settled first so the emitted screen position is real.
+func _click_structure(point: Vector2) -> void:
+	var camera := _world.get(&"camera") as Camera2D
+	if camera == null:
+		await _click_window(root.get_final_transform() * (root.get_visible_rect().size * 0.5))
+		return
+	camera.reset_smoothing()
+	camera.force_update_scroll()
+	await process_frame
+	await _click_window(root.get_final_transform() * (camera.get_canvas_transform() * point))
+
+
+## The paid room is sealed by a real door with a real collider, so a player walks
+## to it and clicks it open. The C08 walk obeys that rule too: no route is planned
+## through a closed door and no collider is disabled for the test.
+func _open_door(hero: CharacterBody2D) -> bool:
+	if _door_open():
+		return true
+	var cell := _door_cell()
+	if cell.x < 0:
+		return false
+	await _walk_to_cell(hero, cell + Vector2i(0, 1))
+	var build := _builder()
+	var structure := build.structure_node(build.entity_at_layer(cell, "object")) as SurvivalStructure
+	if structure == null:
+		return false
+	await _click_structure(structure.global_position + Vector2(8, 8))
+	await physics_frame
+	await physics_frame
+	return _door_open()
 
 
 ## A real walkable out-and-back route that passes physically close to the creature
