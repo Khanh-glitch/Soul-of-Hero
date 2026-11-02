@@ -41,6 +41,7 @@ jobs:
           ARCANA20_PHASE_LIGHT: ${{ matrix.lighting }}
           ARCANA20_PHASE_LAST: ${{ matrix.first == 19 && '19' || '0' }}
           ARCANA20_D19_ISOLATION: ${{ matrix.first == 19 && '1' || '0' }}
+          ARCANA20_D19_LAYERS: ${{ matrix.first == 19 && '1' || '0' }}
         run: |
           set -o pipefail
           timeout --signal=TERM --kill-after=10s 2100s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 ARCANA20_PHASE_FIRST="$FIRST" \

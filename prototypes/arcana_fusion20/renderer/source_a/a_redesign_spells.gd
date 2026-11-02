@@ -153,7 +153,7 @@ class AshenGuillotineR:
                     ADraw.poly_fill_solid(fb, [q0 - side, q1 - side, q1 + side, q0 + side], Vector3(0.075, 0.052, 0.045), true, open * 0.8)
                 for side in [-1.0, 1.0]:
                     for chip in range(2):
-                        var seed := float(section * 7 + chip * 2) + side
+                        var seed: float = float(section * 7 + chip * 2) + float(side)
                         var r := AMath.hash2(seed, 24.0)
                         var center: Vector2 = a.lerp(b, 0.19 + float(chip) * 0.46 + r * 0.08) + section_normal * side * gap * (1.3 + r)
                         var axis: Vector2 = (b - a).normalized()

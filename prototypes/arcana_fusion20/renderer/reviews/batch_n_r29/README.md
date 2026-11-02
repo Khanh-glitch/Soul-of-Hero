@@ -1,0 +1,5 @@
+# R29 N04/N13 first experimental motion — rejected
+
+These files are full native 1280x720 world recordings with metadata at source SHA `702a7b346c6bdee9f40d92259e726094eb7e8f57`, [run 41427686853](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41427686853), normal/dim, Godot 4.7 Linux software GL, real SOH route with moving camera/player/enemies. Wall-time encoded; software capture skips source ticks, and is not a measured device frame rate. Visual-only: no fabricated combat receipts. Run metadata contains sample timings and source tick labels. JPEG/video compression applies; the frame pixels are not enlarged crops.
+
+Inspection of intermediate frames and OUT: N04's connected wound still reads as a long brown plank, despite the irregular centerline. N13 still closes into an arch/cage despite asymmetric trunks; thorn intent remains weak. Neither is accepted. The subsequent experiment `0d5c9456` breaks N04 into separated chips and spreads N13 tips; it has **not** been visually reviewed here. Historical P0 and S/F/#05 choices are unchanged.

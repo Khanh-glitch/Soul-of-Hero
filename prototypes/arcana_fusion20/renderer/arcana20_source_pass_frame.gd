@@ -87,6 +87,7 @@ var a_impact_tint: Vector3
 # bloom, decal and full WebGL post remain unresolved, not source parity.
 var d_rgb: PackedFloat32Array
 # Non-authoritative decomposed floating contributions for D LDR presentation.
+var d_has_light_layers := false
 var d_star_rgb: PackedFloat32Array
 var d_body_rgb: PackedFloat32Array
 var d_influence: PackedByteArray

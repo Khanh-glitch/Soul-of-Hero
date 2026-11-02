@@ -34,6 +34,9 @@ var buf := PackedFloat32Array()
 var world_star := PackedFloat32Array()
 var world_body := PackedFloat32Array()
 var world_layer_star := false
+# The additional accumulation is opt-in; the rejected experiment must not
+# tax ordinary D rendering or be mistaken for production HDR.
+var collect_world_layers := false
 var track_world_fields := false
 # Experimental intermediate-fixed-step elision: simulation, warp and events
 # still run; only an additive buffer cleared on the next step may be skipped.
@@ -80,8 +83,9 @@ func _init() -> void:
 func clear() -> void:
     buf.fill(0.0)
     if track_world_fields:
-        world_star.fill(0.0)
-        world_body.fill(0.0)
+        if collect_world_layers:
+            world_star.fill(0.0)
+            world_body.fill(0.0)
         world_layer_star = false
         world_influence.fill(0)
         world_bends.clear()
@@ -236,11 +240,11 @@ func _add_px(x: int, y: int, r: float, g: float, b: float) -> void:
         # Accumulate independent unquantized inputs from the authored D
         # operations. This avoids mistaking saturated RGBA8 source light for
         # missing source geometry; source `buf` below remains unchanged.
-        if world_layer_star:
+        if collect_world_layers and world_layer_star:
             world_star[i] += r
             world_star[i + 1] += g
             world_star[i + 2] += b
-        else:
+        elif collect_world_layers:
             world_body[i] += r
             world_body[i + 1] += g
             world_body[i + 2] += b

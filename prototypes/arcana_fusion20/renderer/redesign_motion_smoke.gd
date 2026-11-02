@@ -55,6 +55,21 @@ func _initialize() -> void:
                 push_error("REDESIGN_SMOKE_FAIL #18 stored head invisible")
                 quit(1)
                 return
+            clip_frame.clear()
+            spell._mini_attack(clip_frame, clip, Vector2(200, 100), 0.45, Vector3(1.0, 0.7, 0.4), 1.0)
+            var stored_pixels := 0
+            for y in range(AFramebuffer.H):
+                for x in range(AFramebuffer.W):
+                    if clip_frame.audit_writes[y * AFramebuffer.W + x] == 0: continue
+                    stored_pixels += 1
+                    if not Geometry2D.is_point_in_polygon(Vector2(float(x) + 0.5, float(y) + 0.5), clip):
+                        push_error("REDESIGN_SMOKE_FAIL #18 stored event escaped crystal")
+                        quit(1)
+                        return
+            if stored_pixels == 0:
+                push_error("REDESIGN_SMOKE_FAIL #18 stored event invisible")
+                quit(1)
+                return
             # Verify capture order represents progressively later moments and
             # reverse release actually converges together; not art approval.
             var previous_tau := -1.0

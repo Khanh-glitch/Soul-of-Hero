@@ -63,6 +63,7 @@ func begin(caster_world: Vector2, target_world: Vector2) -> void:
     _eng.fx.rgba8_fragment_transfer = true
     _eng.fx.rgba8_scene_blend = true
     _eng.fx.track_world_fields = world_pass_mode
+    _eng.fx.collect_world_layers = world_pass_mode and OS.get_environment("ARCANA20_D19_LAYERS") == "1"
     _events = _eng.authored_events()
     var axis := target_world - caster_world
     var src_axis := DConstellationEngine.CENTER - Vector2(148, 172)
@@ -169,6 +170,7 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     result.caster_world = _origin
     result.target_world = _target
     result.d_rgb = _eng.fx.buf
+    result.d_has_light_layers = _eng.fx.collect_world_layers
     result.d_star_rgb = _eng.fx.world_star
     result.d_body_rgb = _eng.fx.world_body
     result.d_influence = _eng.fx.world_influence

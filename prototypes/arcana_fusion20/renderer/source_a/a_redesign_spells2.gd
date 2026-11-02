@@ -430,19 +430,13 @@ class ChronoshardR:
         if tau <= 1.0:
             var u := AMath.cl01(tau)
             var head := center + Vector2(lerpf(-11.0, 10.0, u), -2.0 - 3.0 * sin(u * PI))
-            # Tapering comet rather than a UI arrow: bright pointed head,
-            # two swept, uneven tails and a separate trajectory, so its
-            # stored shape is the same physical visual as the world echo.
-            var shape := PackedVector2Array([
-                head + Vector2(7, 0), head + Vector2(0, -3),
-                head + Vector2(-5, -2), head + Vector2(-13, -4),
-                head + Vector2(-9, -1), head + Vector2(-14, 1),
-                head + Vector2(-5, 2), head + Vector2(0, 3)])
-            for y in range(floori(head.y - 5), ceili(head.y + 5) + 1):
-                for x in range(floori(head.x - 15), ceili(head.x + 8) + 1):
-                    var pixel := Vector2(float(x) + 0.5, float(y) + 0.5)
-                    if Geometry2D.is_point_in_polygon(pixel, hex) and Geometry2D.is_point_in_polygon(pixel, shape):
-                        fb.add_px(x, y, color.x, color.y, color.z, intensity)
+            # Miniature of the same spherical ember event in the world.
+            # Dots are clipped to this physical crystal, not a UI pointer.
+            _mini_disc(fb, head, 2.6, hex, color, intensity)
+            _mini_disc(fb, head + Vector2(-0.8, -0.8), 1.15, hex, Vector3(2.0, 1.7, 0.8), intensity)
+            for mote in range(3):
+                var tail := head + Vector2(-4.0 - float(mote) * 3.0, sin(float(mote) * 2.1 + tau * 4.0) * (1.0 + float(mote)))
+                _mini_disc(fb, tail, 0.55, hex, color, intensity * (0.75 - float(mote) * 0.15))
         else:
             var impact := center + Vector2(9, -2)
             for q in range(8):
@@ -479,11 +473,11 @@ class ChronoshardR:
                 var trail := a.lerp(b, u) + Vector2(0, -sin(u * PI) * 24.0)
                 ADraw.disc(fb, trail.x, trail.y, 3.0 - float(m) * 0.25, tint, k * (1.0 - float(m) / 10.0) * 0.7)
             var head := a.lerp(b, tau) + Vector2(0, -sin(tau * PI) * 24.0)
-            var heading := (b - a).normalized()
-            var side := Vector2(-heading.y, heading.x)
-            var arrow := [head + heading * 8.0, head - heading * 3.0 + side * 5.0,
-                head - heading * 2.0, head - heading * 3.0 - side * 5.0]
-            ADraw.poly_fill_solid(fb, arrow, Vector3(2.0, 1.4, 0.55), false, k)
+            # The visual event is a round, luminous ember, with an offset
+            # hot core and a broken material wake. It is not an arrow icon.
+            ADraw.disc(fb, head.x, head.y, 6.0, Vector3(0.95, 0.31, 0.12), k * 0.7)
+            ADraw.disc(fb, head.x, head.y, 3.8, Vector3(1.7, 0.8, 0.25), k)
+            ADraw.disc(fb, head.x - 1.1, head.y - 1.3, 1.7, Vector3(2.0, 1.7, 0.9), k)
         else:
             var e := tau - 1.0
             var radius := AMath.ease_out(e / 1.2) * 34.0
@@ -501,11 +495,7 @@ class ChronoshardR:
         if t < 2.0:
             var gk := AMath.seg(t, 0.9, 1.05) * (1.0 - AMath.seg(t, 1.4, 2.0)) * 0.7
             var u := AMath.seg(t, 0.9, 1.45)
-            var from_point := CASTER + Vector2(6, -14)
-            var ghost := from_point.lerp(C, u) + Vector2(0, -sin(u * PI) * 24.0)
-            var tail := from_point.lerp(C, maxf(0.0, u - 0.18)) + Vector2(0, -sin(maxf(0.0, u - 0.18) * PI) * 24.0)
-            ADraw.streak(fb, tail.x, tail.y, ghost.x, ghost.y, 1.1, 2.0, Vector3(0.55, 0.9, 1.8), gk)
-            ADraw.disc(fb, ghost.x, ghost.y, 2.0, Vector3(1.4, 1.3, 2.0), gk)
+            _world_attack(fb, u, Vector3(0.55, 0.9, 1.8), gk)
             ADraw.ring_shape(fb, C.x, C.y, 30.0, 1.4, AMath.R("frost", 0.7), gk * 0.5)
         if t >= 2.6 and t < 6.7:
             _world_attack(fb, _central_tau(t), Vector3(1.4, 0.8, 1.8), 0.85)
@@ -581,11 +571,8 @@ class ChronoshardR:
                 var tail := previous_crystal.lerp(C, AMath.ease_out(prev_rel, 2.0))
                 var k := captured * resolve * (1.0 - AMath.seg(rel, 0.84, 1.0))
                 ADraw.streak(fb, tail.x, tail.y, head.x, head.y, 1.4, 0.7, Vector3(1.8, 1.3, 0.5), k * 0.8)
-                var forward := (C - head).normalized()
-                var side := Vector2(-forward.y, forward.x)
-                var arrow := [head + forward * 7.0, head - forward * 3.0 + side * 4.0,
-                    head - forward * 2.0, head - forward * 3.0 - side * 4.0]
-                ADraw.poly_fill_solid(fb, arrow, Vector3(2.0, 1.4, 0.55), false, k)
+                ADraw.disc(fb, head.x, head.y, 3.6, Vector3(1.4, 0.55, 0.18), k)
+                ADraw.disc(fb, head.x - 0.7, head.y - 0.7, 1.5, Vector3(2.0, 1.7, 0.8), k)
         var it := t - 6.2
         if it >= 0.0 and it < 0.7:
             ADraw.disc(fb, C.x, C.y, 5.0 * (1.0 - it / 0.7), AMath.R("frost", 1.0), 1.0 - it / 0.7)

@@ -902,6 +902,7 @@ func _run() -> void:
         engine.fx.rgba8_fragment_transfer = true
         engine.fx.rgba8_scene_blend = true
     d_layers.fx.track_world_fields = true
+    d_layers.fx.collect_world_layers = true
     d_plain.update(8.15, STEP)
     d_layers.update(8.15, STEP)
     check(d_plain.fx.buf == d_layers.fx.buf, "D collecting independent layers preserves source RGBA8 bytes")
