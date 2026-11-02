@@ -330,6 +330,7 @@ func _build_home(hero: CharacterBody2D, nav: OverworldTraversability, build: Sur
 	var spawn_free := nav.nearest_free_position(spawn_point, 16)
 	var anchors: Array[Vector2i] = [nav.cell_of(spawn_free), nav.cell_of(hero.global_position)]
 	var center := Vector2i(-1, -1)
+	var start := nav.cell_of(hero.global_position)
 	for anchor: Vector2i in anchors:
 		if center.x >= 0:
 			break
@@ -338,7 +339,7 @@ func _build_home(hero: CharacterBody2D, nav: OverworldTraversability, build: Sur
 			var to_anchor := _route(here, anchor, nav, hero)
 			if not to_anchor.is_empty():
 				await _walk_path(hero, to_anchor)
-		var start := nav.cell_of(hero.global_position)
+		start = nav.cell_of(hero.global_position)
 		var distances := nav.reachable_from(start)
 		for radius in range(0, 31):
 			if center.x >= 0:
@@ -430,7 +431,7 @@ func _counterfactual_a(source: Node, encounter: Node, enemy: CharacterBody2D,
 	print("C08_A ", JSON.stringify({"follower": snapshot, "observe": stats, "hero_hp": [hp_before, int(hero.get(&"health"))]}))
 	_expect(int(snapshot.get("sensed", -1)) == 0, "A: the creature never observes a mark that does not exist")
 	_expect(int(snapshot.get("hops", -1)) == 0, "A: the creature takes no step toward the home")
-	_expect(String(snapshot.get("lost_reason", "")) != "direct_sight", "A: the home is out of the creature's direct sight")
+	_expect(int(stats.get("direct_ticks", -1)) == 0, "A: the hidden home is never in the creature's direct sight")
 	_expect(float(stats.get("min_home_distance", 0.0)) >= 240.0,
 		"A: the creature never approaches the home (%0.0f px)" % float(stats.get("min_home_distance", 7.0)))
 	_expect(int(stats.get("investigate_ticks", -1)) == 0, "A: the creature never enters the evidence state")
@@ -521,8 +522,12 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 		return {"ok": false}
 	# Give the creature time to walk its own way home, so this run starts from the
 	# habitat and not from the previous counterfactual's doorstep.
+	var habitat := _encounter()
+	if habitat == null or not is_instance_valid(enemy):
+		_expect(false, "C: the creature and its habitat still exist")
+		return {"ok": false}
 	var returned := await _wait_until(func() -> bool:
-		return enemy.global_position.distance_to(_mount().get("encounter").global_position) <= 120.0, 60.0)
+		return is_instance_valid(enemy) and enemy.global_position.distance_to(habitat.global_position) <= 120.0, 60.0)
 	_expect(returned, "C: the creature returns to its habitat before the trail test")
 	follower.begin_window("C_broken_chain")
 	var route := _route_plan(hero, nav, home)
@@ -740,7 +745,7 @@ func _capture(name: String) -> void:
 	if _shots.is_empty():
 		return
 	await process_frame
-	await process_frame
+	await RenderingServer.frame_post_draw
 	var texture := root.get_texture()
 	if texture == null:
 		_expect(false, "a native viewport texture is available for %s" % name)
@@ -752,8 +757,23 @@ func _capture(name: String) -> void:
 	var path := _shots.path_join("%s.png" % name)
 	_expect(image.save_png(path) == OK, "the %s frame is saved to %s" % [name, path])
 	if image.get_width() > 0:
-		var sample := image.get_pixel(image.get_width() / 2, image.get_height() / 3)
-		print("C08_FRAME %s %dx%d center=%s" % [name, image.get_width(), image.get_height(), str(sample)])
+		var seen := {}
+		var total := 0.0
+		var total_sq := 0.0
+		var count := 0
+		for y in range(0, image.get_height(), 12):
+			for x in range(0, image.get_width(), 12):
+				var pixel := image.get_pixel(x, y)
+				seen[pixel.to_rgba32()] = true
+				var luma := pixel.get_luminance()
+				total += luma
+				total_sq += luma * luma
+				count += 1
+		var mean := total / maxf(1.0, float(count))
+		var sd := sqrt(maxf(0.0, total_sq / maxf(1.0, float(count)) - mean * mean))
+		print("C08_FRAME %s %dx%d distinct=%d luma_sd=%.2f" % [name, image.get_width(), image.get_height(), seen.size(), sd])
+		_expect(seen.size() >= 24, "the %s frame is not a flat colour (%d distinct)" % [name, seen.size()])
+		_expect(sd >= 2.0, "the %s frame has real contrast (sd %.2f)" % [name, sd])
 
 
 # ---------------------------------------------------------------------------
