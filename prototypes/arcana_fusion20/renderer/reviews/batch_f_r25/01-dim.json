@@ -1,0 +1,138 @@
+{
+  "avfx_sha": "64d0fedfec78d5fd35ef45108a240eeb5ec471c4",
+  "skill": 1,
+  "source_role": "A Cinder Crown plus C outer flame",
+  "lighting": "dimmed",
+  "scope": "actual game route, visual-only; automatic real player input and unmodified Skeleton AI; not combat receipts or device FPS",
+  "resolution": "1280x720 each, 1x pixels before JPEG encoding",
+  "source_tick_note": "frame_post_draw before PNG encoding; last-observed source tick can lag displayed state",
+  "cast_duration_s": 24.426098,
+  "last_tick": 479,
+  "entries": [
+    {
+      "camera": [
+        904.0,
+        3488.0
+      ],
+      "enemy": [
+        1004.0,
+        3496.0
+      ],
+      "file": "00_start_tick0.jpg",
+      "player": [
+        904.0,
+        3496.0
+      ],
+      "source_tick_last_observed": 0,
+      "wall_s": 0.283853,
+      "source_png": "frame_00000.png",
+      "label": "start",
+      "index": 0
+    },
+    {
+      "camera": [
+        883.79931640625,
+        3487.97802734375
+      ],
+      "enemy": [
+        923.826049804688,
+        3512.27270507812
+      ],
+      "file": "01_early_tick79.jpg",
+      "player": [
+        883.374938964844,
+        3496.37451171875
+      ],
+      "source_tick_last_observed": 79,
+      "wall_s": 3.637291,
+      "source_png": "frame_00011.png",
+      "label": "early",
+      "index": 11
+    },
+    {
+      "camera": [
+        880.963562011719,
+        3484.05029296875
+      ],
+      "enemy": [
+        884.30859375,
+        3515.85400390625
+      ],
+      "file": "02_middle_tick239.jpg",
+      "player": [
+        881.646850585938,
+        3492.55639648438
+      ],
+      "source_tick_last_observed": 239,
+      "wall_s": 11.814777,
+      "source_png": "frame_00031.png",
+      "label": "middle",
+      "index": 31
+    },
+    {
+      "camera": [
+        852.666687011719,
+        3437.34423828125
+      ],
+      "enemy": [
+        868.319458007812,
+        3478.35302734375
+      ],
+      "file": "03_late_tick335.jpg",
+      "player": [
+        853.553283691406,
+        3445.36596679688
+      ],
+      "source_tick_last_observed": 335,
+      "wall_s": 20.078694,
+      "source_png": "frame_00043.png",
+      "label": "late",
+      "index": 43
+    },
+    {
+      "camera": [
+        829.163452148438,
+        3439.02124023438
+      ],
+      "enemy": [
+        856.013916015625,
+        3453.44921875
+      ],
+      "file": "04_aftermath_tick423.jpg",
+      "player": [
+        829.220031738281,
+        3446.94873046875
+      ],
+      "source_tick_last_observed": 423,
+      "wall_s": 22.78412,
+      "source_png": "frame_00054.png",
+      "label": "aftermath",
+      "index": 54
+    },
+    {
+      "camera": [
+        816.605285644531,
+        3394.5224609375
+      ],
+      "enemy": [
+        826.763427734375,
+        3431.19262695312
+      ],
+      "file": "05_OUT_tick479.jpg",
+      "player": [
+        816.490234375,
+        3402.52294921875
+      ],
+      "source_tick_last_observed": 479,
+      "wall_s": 24.589565,
+      "source_png": "frame_00062.png",
+      "label": "OUT",
+      "index": 62
+    }
+  ],
+  "cast_target_world": [
+    1004.0,
+    3496.0
+  ],
+  "note": "OUT is captured after finish; no assumption of hit, actor depth or production HDR."
+}
