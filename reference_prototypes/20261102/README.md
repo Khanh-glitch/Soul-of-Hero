@@ -11,6 +11,8 @@ Uploaded directly from creator-provided ZIPs to a **separate reference branch**,
 | `soul-of-hero-rpg-prototype (3).zip` | 723234 | `12438a536de6d068abda4e639710dec4d8c9409435f11d12d74540cdd3bfdf55` | `f377af9611086b0e196b2e9d0e2e9aed60243ace` | cross-run escrow, physical item custody, randomized transfer-property QA |
 | `develop-soul-of-hero-rpg (4).zip` | 466053 | `f601ca176b6efd2d3b2d2abfe4ce375b423706663f708f71dc348514878f01ba` | `d79450e402f37f58f7d73abb5f3ccd6f5ba7ba9b` | action dispatcher, negative oracle: faraway harvest / remotely injected footprint; procedural pixel reference only |
 
+| `soul-of-hero-game-development.zip` | 727262 | `fa95538271fd46a70f5737b58b8671124e091e8f6196479950a25dca741a2403` | `5a667c979a597d5d26e80453f7f16756db98f150` | coreless exploration, source→home→offline production→physical research, environment/cart tradeoffs; source audit in `SOH_GAME_DEVELOPMENT_GAMEPLAY_DEPTH_REUSE.md` |
+
 ## To fetch in a NEW Arena session
 
 ```bash
@@ -21,13 +23,16 @@ for path in \
   "reference_prototypes/20261102/soul-of-hero-rpg-development.zip" \
   "reference_prototypes/20261102/soul-of-hero-prototype.zip" \
   "reference_prototypes/20261102/soul-of-hero-rpg-prototype (3).zip" \
-  "reference_prototypes/20261102/develop-soul-of-hero-rpg (4).zip"; do
+  "reference_prototypes/20261102/develop-soul-of-hero-rpg (4).zip" \
+  "reference_prototypes/20261102/soul-of-hero-game-development.zip"; do
     git show "origin/references/gameplay-prototypes-20261102:$path" > "/tmp/soh-gameplay-source/${path##*/}"
 done
 cd /tmp/soh-gameplay-source
 sha256sum *.zip
 unzip -t "soul-of-hero-rpg-development.zip"
 ```
+
+**New donor (5th ZIP):** `soul-of-hero-game-development.zip` adds specific source-backed causal gameplay loops; see [SOH_GAME_DEVELOPMENT_GAMEPLAY_DEPTH_REUSE.md](SOH_GAME_DEVELOPMENT_GAMEPLAY_DEPTH_REUSE.md). It is NOT a replacement Godot engine. The older 829-line Bible inside its ZIP is NOT canon.
 
 **Important**: `git show` requires correct source branch and source path; a new Arena agent must prove retrieval by byte hashes, not just assume these links work. Do not cherry-pick reference archives into the shipping code branch or modify them. If a ZIP contains licensed third-party art, it is never a warrant to import that art into SOH production. These are non-runnable research references until separately built and tested.
 
