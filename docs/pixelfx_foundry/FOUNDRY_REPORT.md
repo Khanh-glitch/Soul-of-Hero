@@ -135,6 +135,39 @@ preset; scene warp remains the first thing a quality preset would cut.
 sha256 + every frame's sha256, and the clean-rebuild proof above shows a fresh Agent gets byte-identical
 assets with one command (see README). Upstream `LICENSE`/`NOTICE.md` travel with the output.
 
+## Final presentation round (2026-11-02, round 3)
+
+**1. Evidence harness now captures authored timestamps.** `verify.mjs` no longer screenshots frame 0: it
+scrubs to deliberate fractions (start / anticipation / release-impact / midpoint / decay / end) via a
+deterministic `captureFrame()` hook and assembles 6-frame strips per effect — real animated sequences in
+`docs/pixelfx_foundry/qa/gallery/` (Ice Lance, Arcane Orb, Black Hole, Meteor, Frozen, Fireflies, Ice Lance
+Throw act, Big Explosion; day and night where relevant).
+
+**2. Real SOH test environment.** "SOH scene" now uses actual game assets — `ocean_tileset_stone_ground` tiled
+as the ground plane, `ocean_tileset_grass` horizon strip, and the knight `_Idle` sprite as standing depth
+references — an isolated test scene, production scenes untouched. Effects auto-scale to a readable size
+(~42% of view height, slider override). Day/night: the world is pre-rendered to cached day/night scene
+canvases; per frame the app does ONE scene blit + the FX sprites — no per-frame world repaint.
+
+**3. Black Hole placement.** The manifest now records, per effect, source-derived placement data: source
+`pivot`, `visualBounds` (all alpha>0 pixels incl. debris), `coreBounds` (solid alpha≥128 artwork), and
+`focalPoint` (alpha-weighted centroid). `ground` anchor places the **bottom of the solid core** on the ground
+line, sunk by 8% of core height so it reads as resting, not hovering (black hole: pivot y=124, core bottom
+122, focal y=45.9 → disk seats on the battlefield; verified numerically: core bottom lands exactly
+`sink` px below the ground line, and visually in the gallery strips). No cropping, no redrawn art, no range
+circles. The localized warp samples the **cached scene canvas (pre-FX)** and is composited **under** the
+effect, so the accretion disk, particles and glow stay intact while structured terrain and the knights are
+visibly distorted around it.
+
+**4. Real-Chromium verification + performance.** HeadlessChrome 153 via CDP: behavior suite 9/9 (motion on
+60 Hz, loop wrap, pause/resume, scrub, restart, one-shot end, rapid switching, 3-FX combat demo animating).
+Live playback perf after closing stale pages and caching the scene — **rAF p50/p95 = 16.7/16.7 ms (locked 60
+FPS) at canvas sizes 1275×941, 1915×1413 and 2555×1885, for 1 and 3 simultaneous FX, day and night**
+(`qa/gallery/perf-chromium-final.json`). Caveat, honestly: this sandbox renders via software GL; the numbers
+prove the per-frame workload is small and vsync-bound here, and real GPU hardware will be at least as fast.
+Earlier slow numbers were an artifact of leftover harness pages contending for the software rasterizer plus
+per-frame scene repaint — both fixed. No source art, trails or glow are degraded in any mode.
+
 ## Known limitations / exceptions
 
 - Per-effect exception report: **0 export/parity exceptions** — all 244 passed byte-exact parity.

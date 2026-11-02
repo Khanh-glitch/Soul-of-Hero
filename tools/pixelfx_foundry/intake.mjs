@@ -144,6 +144,15 @@ async function run() {
       }
     }
     if (x1 >= 0) { e.export.visualBounds = [x0, y0, x1, y1]; e.export.visualCenter = [(x0 + x1) / 2, (y0 + y1) / 2]; }
+    let cx0 = w, cy0 = h, cx1 = -1, cy1 = -1, wsum = 0, sx = 0, sy = 0;
+    for (const p of e.export.pages.combined) {
+      const dec = decodePNG(readFileSync(join(out, p.path)));
+      for (let j = 0; j < p.count; j++) for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+        const a = dec.data[((Math.floor(j / p.columns) * h + y) * dec.w + (j % p.columns) * w + x) * 4 + 3];
+        if (a >= 128) { if (x < cx0) cx0 = x; if (x > cx1) cx1 = x; if (y < cy0) cy0 = y; if (y > cy1) cy1 = y; wsum += a; sx += x * a; sy += y * a; }
+      }
+    }
+    if (cx1 >= 0) { e.export.coreBounds = [cx0, cy0, cx1, cy1]; e.export.focalPoint = [+(sx / wsum).toFixed(1), +(sy / wsum).toFixed(1)]; }
   };
   for (const id of ids) {
     const prev = previous.get(id);
@@ -248,6 +257,19 @@ async function run() {
         }
       e.export.visualBounds = x1 >= 0 ? [x0, y0, x1, y1] : [0, 0, r.w - 1, r.h - 1];
       e.export.visualCenter = [(x0 + x1) / 2, (y0 + y1) / 2];
+      // "core" = solid artwork (alpha >= 128), excluding faint authored debris/glow; its bottom edge is the
+      // environmental contact point, its intensity-weighted centroid the visual focal point
+      let cx0 = r.w, cy0 = r.h, cx1 = -1, cy1 = -1, wsum = 0, sx = 0, sy = 0;
+      for (const f of r.frames) for (let i = 0; i < f.clear.length; i += 4) {
+        const a = f.clear[i + 3];
+        if (a >= 128) {
+          const x = (i / 4) % r.w, y = Math.floor(i / 4 / r.w);
+          if (x < cx0) cx0 = x; if (x > cx1) cx1 = x; if (y < cy0) cy0 = y; if (y > cy1) cy1 = y;
+          wsum += a; sx += x * a; sy += y * a;
+        }
+      }
+      e.export.coreBounds = cx1 >= 0 ? [cx0, cy0, cx1, cy1] : e.export.visualBounds;
+      e.export.focalPoint = wsum > 0 ? [+(sx / wsum).toFixed(1), +(sy / wsum).toFixed(1)] : e.export.visualCenter;
 
       // G1 — independent parity gate: decode every written page back and compare byte-exact to source frames
       const checkChannel = (ch, fn) => {

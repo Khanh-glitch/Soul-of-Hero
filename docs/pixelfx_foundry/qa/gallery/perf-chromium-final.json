@@ -1,0 +1,86 @@
+[
+ {
+  "res": "1275x941",
+  "night": false,
+  "fx": 1,
+  "rafP50ms": 16.7,
+  "rafP95ms": 16.7
+ },
+ {
+  "res": "1275x941",
+  "night": false,
+  "fx": 3,
+  "rafP50ms": 16.7,
+  "rafP95ms": 16.7
+ },
+ {
+  "res": "1275x941",
+  "night": true,
+  "fx": 1,
+  "rafP50ms": 16.7,
+  "rafP95ms": 16.8
+ },
+ {
+  "res": "1275x941",
+  "night": true,
+  "fx": 3,
+  "rafP50ms": 16.7,
+  "rafP95ms": 16.7
+ },
+ {
+  "res": "1915x1413",
+  "night": false,
+  "fx": 1,
+  "rafP50ms": 16.7,
+  "rafP95ms": 16.8
+ },
+ {
+  "res": "1915x1413",
+  "night": false,
+  "fx": 3,
+  "rafP50ms": 16.7,
+  "rafP95ms": 16.7
+ },
+ {
+  "res": "1915x1413",
+  "night": true,
+  "fx": 1,
+  "rafP50ms": 16.7,
+  "rafP95ms": 16.7
+ },
+ {
+  "res": "1915x1413",
+  "night": true,
+  "fx": 3,
+  "rafP50ms": 16.7,
+  "rafP95ms": 16.7
+ },
+ {
+  "res": "2555x1885",
+  "night": false,
+  "fx": 1,
+  "rafP50ms": 16.7,
+  "rafP95ms": 16.7
+ },
+ {
+  "res": "2555x1885",
+  "night": false,
+  "fx": 3,
+  "rafP50ms": 16.7,
+  "rafP95ms": 16.7
+ },
+ {
+  "res": "2555x1885",
+  "night": true,
+  "fx": 1,
+  "rafP50ms": 16.7,
+  "rafP95ms": 16.8
+ },
+ {
+  "res": "2555x1885",
+  "night": true,
+  "fx": 3,
+  "rafP50ms": 16.7,
+  "rafP95ms": 16.8
+ }
+]

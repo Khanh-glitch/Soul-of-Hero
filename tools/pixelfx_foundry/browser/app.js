@@ -1,19 +1,23 @@
 // SOH × PixelFX — FX Foundry Browser. Lazy-loads the registry and per-effect atlas pages produced by
 // tools/pixelfx_foundry/intake.mjs. Presentation rules: original source frames only, extraShapes=false,
-// effect composited AFTER the night overlay with bounded emission boost (light channel, never double-added
-// to the combined frame which already contains it). Ground anchoring uses the artwork's visual bounds
-// (bottom edge = contact point), distinct from the source pivot.
+// effect composited AFTER the night overlay with bounded emission boost. The "SOH scene" is an isolated
+// test environment built from real SOH game assets (stone-ground tileset, grass horizon, knight idle
+// sprite) — production scenes untouched. Anchoring distinguishes source pivot / visual focal point /
+// solid-core contact point (coreBounds bottom) / authored debris (visualBounds).
 const qs = new URLSearchParams(location.search);
 const ROOT = qs.get("root") || "../../../assets/pixelfx_foundry/";
+const SOH = qs.get("soh") || "../../../assets/";
 const $ = (id) => document.getElementById(id);
 const view = $("view"), ctx = view.getContext("2d");
 
 let index = null, current = null, pages = { combined: [], light: [], act: [] };
-let playing = true, animT = 0, lastT = 0, night = false, sceneMode = true, lightMode = false, actMode = false;
-let anchor = "source", scale = 1;
-let selGen = 0; // selection generation: async loads from a previous selection are discarded
+let playing = true, animT = 0, lastT = 0, night = false, sceneMode = true, lightMode = false, actMode = false, demoMode = false;
+let anchor = "source", scale = 1, userScale = false;
+let selGen = 0;
 let warpCache = null, warpAt = 0;
 let lastW = 0, lastH = 0, lastDpr = 0;
+let sceneDay = null, sceneNight = null; // cached SOH scene renders (perf: one blit per frame, not a repaint)
+let sohAssets = null;
 
 // ---------- registry ----------
 async function loadIndex() {
@@ -65,10 +69,11 @@ async function loadPages(e, channel) {
   return out;
 }
 async function select(e) {
-  const gen = ++selGen; // any in-flight selection before this one is now stale
+  const gen = ++selGen;
   current = e;
   animT = 0;
   pages = { combined: [], light: [], act: [] };
+  demoMode = false; $("mode-demo").checked = false;
   document.querySelectorAll(".fx").forEach((n) => n.classList.remove("active"));
   $("fx-title").textContent = `${e.id} — ${e.name}`;
   $("stage-hint").textContent = "loading atlas…";
@@ -79,7 +84,7 @@ async function select(e) {
   renderMeta(e);
   try {
     pages.combined = await loadPages(e, "combined");
-    if (gen !== selGen) return; // user switched away while loading
+    if (gen !== selGen) return;
     pages.light = await loadPages(e, "light");
     if (gen !== selGen) return;
     if (e.export.act) pages.act = await loadPages(e, "act");
@@ -99,15 +104,13 @@ function frameCount() { return actMode && pages.act.length ? current.export.act.
 function frameSize() { return actMode && pages.act.length ? current.export.act.frameSize : current.export.frameSize; }
 function fpsOf() { return actMode && pages.act.length ? current.export.act.fps : current.export.fps; }
 function isLoop() { return current.meta.loop; }
-// float animation time -> integer frame index (kept separate so 30 fps anims step correctly on 60 Hz displays)
 function frameIndex() {
   const n = frameCount(), fps = fpsOf();
   if (isLoop()) return Math.floor(animT * fps) % n;
-  return Math.min(n - 1, Math.floor(animT * fps)); // one-shot ends on the last frame
+  return Math.min(n - 1, Math.floor(animT * fps));
 }
 function frameImage(f) {
-  const ps = activePages();
-  for (const p of ps) if (f >= p.first && f < p.first + p.count) {
+  for (const p of activePages()) if (f >= p.first && f < p.first + p.count) {
     const [fw, fh] = frameSize();
     return { img: p.img, x: (f - p.first) % p.columns * fw, y: Math.floor((f - p.first) / p.columns) * fh, w: fw, h: fh };
   }
@@ -127,38 +130,75 @@ $("btn-restart").onclick = () => { animT = 0; };
 $("scrub").oninput = () => { animT = Number($("scrub").value) / fpsOf(); playing = false; $("btn-play").textContent = "▶"; };
 $("btn-night").onclick = () => { night = !night; $("btn-night").textContent = night ? "☾ night" : "☀ day"; $("btn-night").classList.toggle("on", !night); };
 $("sel-anchor").onchange = () => { anchor = $("sel-anchor").value; };
-$("rng-scale").oninput = () => { scale = Number($("rng-scale").value); $("scale-val").textContent = scale.toFixed(2) + "×"; };
+$("rng-scale").oninput = () => { scale = Number($("rng-scale").value); userScale = true; $("scale-val").textContent = scale.toFixed(2) + "×"; };
 $("mode-scene").onchange = () => { sceneMode = $("mode-scene").checked; };
 $("mode-light").onchange = () => { lightMode = $("mode-light").checked; };
 $("mode-act").onchange = () => { actMode = $("mode-act").checked; animT = 0; $("scrub").max = frameCount() - 1; buildThumbs(); };
+$("mode-demo").onchange = () => { demoMode = $("mode-demo").checked; if (demoMode) startDemo(); };
 
-// ---------- scene ----------
-function drawScene(W, H, groundY) {
-  const g = ctx.createLinearGradient(0, 0, 0, H);
-  if (night) { g.addColorStop(0, "#070a1c"); g.addColorStop(0.7, "#0d1230"); g.addColorStop(1, "#141031"); }
-  else { g.addColorStop(0, "#7fb2e0"); g.addColorStop(0.7, "#a8c8e8"); g.addColorStop(1, "#c8b89a"); }
-  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-  ctx.fillStyle = night ? "#191531" : "#6b5a48";
-  ctx.fillRect(0, groundY, W, H - groundY);
-  ctx.fillStyle = night ? "#242045" : "#7d6a54";
-  ctx.fillRect(0, groundY, W, 2);
-  ctx.strokeStyle = night ? "#100d24" : "#54463a"; ctx.lineWidth = 1;
-  for (let x = 0; x < W; x += 48) { ctx.beginPath(); ctx.moveTo(x, groundY + 2); ctx.lineTo(x, H); ctx.stroke(); }
-  for (let y = groundY + 26; y < H; y += 24) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
-  if (night) { ctx.fillStyle = "rgba(8,10,40,0.55)"; ctx.fillRect(0, 0, W, H); } // dims the WORLD only
+// ---------- SOH test scene (real game assets, cached per size/night) ----------
+async function loadSohAssets() {
+  if (sohAssets) return sohAssets;
+  const load = async (src) => { const img = new Image(); img.src = src; await img.decode(); return img; };
+  sohAssets = {
+    stone: await load(SOH + "environment/ocean_cainos/ocean_tileset_stone_ground.png"),
+    grass: await load(SOH + "environment/ocean_cainos/ocean_tileset_grass.png"),
+    knight: await load(SOH + "characters/knight/_Idle.png"),
+  };
+  return sohAssets;
 }
-// where the effect frame goes for the active anchor. Distinct notions: source pivot, visual center,
-// ground contact (bottom edge of the artwork's visual bounds).
+const TILE = 32; // stone tiles drawn at 2x native 16px for readability
+function renderScene(W, H, isNight) {
+  const c = document.createElement("canvas");
+  c.width = W; c.height = H;
+  const g = c.getContext("2d");
+  g.imageSmoothingEnabled = false;
+  const groundY = Math.floor(H * 0.66);
+  // sky
+  const sky = g.createLinearGradient(0, 0, 0, groundY);
+  sky.addColorStop(0, "#6ea3d8"); sky.addColorStop(1, "#cfe0ee");
+  g.fillStyle = sky; g.fillRect(0, 0, W, groundY);
+  // grass horizon strip (top row of the grass tileset), then stone ground tiled
+  for (let x = 0; x < W; x += TILE) g.drawImage(sohAssets.grass, 0, 0, 16, 16, x, groundY - TILE, TILE, TILE);
+  for (let y = groundY; y < H; y += TILE)
+    for (let x = 0; x < W; x += TILE)
+      g.drawImage(sohAssets.stone, 16, 16, 16, 16, x, y, TILE, TILE); // interior stone tile
+  // darker edge line at the ground contact
+  g.fillStyle = "rgba(20,16,28,0.55)"; g.fillRect(0, groundY, W, 2);
+  // two knight idle actors as depth references, feet on the ground line
+  const kf = 80, ks = 2;
+  const drawKnight = (fx) => g.drawImage(sohAssets.knight, 0, 0, kf, kf, fx, groundY - kf * ks + 14 * ks, kf * ks, kf * ks);
+  drawKnight(Math.floor(W * 0.14));
+  drawKnight(Math.floor(W * 0.80));
+  if (isNight) { // night overlay dims the WORLD only; FX is composited after it
+    g.fillStyle = "rgba(10,12,44,0.58)";
+    g.fillRect(0, 0, W, H);
+  }
+  return { canvas: c, groundY };
+}
+async function ensureScene(W, H) {
+  if (!sceneMode || !sohAssets) return null;
+  if (!sceneDay || sceneDay.canvas.width !== W || sceneDay.canvas.height !== H) {
+    sceneDay = renderScene(W, H, false);
+    sceneNight = renderScene(W, H, true);
+  }
+  return night ? sceneNight : sceneDay;
+}
+
+// ---------- placement: pivot vs focal point vs contact ----------
 function effectPlacement(cx, cy, groundY) {
   const [fw, fh] = frameSize();
   const pivot = actMode && pages.act.length ? current.export.act.pivot : current.export.pivot;
-  const vb = current.export.visualBounds || [0, 0, fw - 1, fh - 1];
-  if (anchor === "screen") return null; // handled by caller (fit whole frame)
+  if (anchor === "screen") return null;
   if (anchor === "ground") {
-    const cxv = (vb[0] + vb[2]) / 2, bottom = vb[3] + 1;
-    return { x: cx - cxv * scale, y: groundY - bottom * scale };
+    // contact point = bottom of the SOLID core (faint debris/glow excluded), sunk into the ground by a
+    // fraction of the core height so the artwork reads as resting on the battlefield, not hovering on the line
+    const core = current.export.coreBounds || current.export.visualBounds || [0, 0, fw - 1, fh - 1];
+    const focal = current.export.focalPoint || [(core[0] + core[2]) / 2, (core[1] + core[3]) / 2];
+    const sink = Math.max(3, Math.round(0.08 * (core[3] - core[1])));
+    return { x: cx - focal[0] * scale, y: groundY - (core[3] + 1 - sink) * scale };
   }
-  if (anchor === "air") return { x: cx - pivot[0] * scale, y: groundY - fh * 0.45 - pivot[1] * scale };
+  if (anchor === "air") return { x: cx - pivot[0] * scale, y: groundY - fh * 0.42 - pivot[1] * scale };
   return { x: cx - pivot[0] * scale, y: cy - pivot[1] * scale };
 }
 function drawEffect(f, cx, cy, groundY) {
@@ -175,33 +215,31 @@ function drawEffect(f, cx, cy, groundY) {
   ctx.drawImage(fi.img, fi.x, fi.y, fw, fh, pl.x, pl.y, fw * scale, fh * scale);
   if (!lightMode && night && sceneMode && current.export.lightEnergy > 0.5) {
     const li = lightFrameImage(f);
-    if (li) { // bounded night emission boost, additive, after the night overlay
+    if (li) {
       ctx.save();
       ctx.globalCompositeOperation = "lighter";
-      ctx.globalAlpha = Math.min(1, 0.52 * 0.55 + 0.25);
+      ctx.globalAlpha = Math.min(1, 0.52 * 0.58 + 0.25);
       ctx.drawImage(li.img, li.x, li.y, li.w, li.h, pl.x, pl.y, fw * scale, fh * scale);
       ctx.restore();
     }
   }
 }
-// localized cached scene warp (e.g. shadow/black-hole). captureWarp() samples the scene BEFORE FX artwork
-// is drawn (call it before drawEffect), so original effect pixels stay intact; applyWarp() displaces the
-// cached scene-only region. ~68px radius, refreshed at ~15 Hz, capped cells.
-const WARP_R = 68, WARP_CELLS = 8, WARP_S = 2;
+
+// ---------- localized warp (black hole): samples the SCENE canvas (pre-FX) ----------
+const WARP_R = 72, WARP_CELLS = 8, WARP_S = 2;
 function warpGeom(pl) {
-  const fxCx = pl.x + frameSize()[0] * scale / 2, fxCy = pl.y + frameSize()[1] * scale / 2;
-  return { fxCx, fxCy, size: WARP_R * 2 };
+  return { fxCx: pl.x + frameSize()[0] * scale / 2, fxCy: pl.y + frameSize()[1] * scale / 2, size: WARP_R * 2 };
 }
-function captureWarp(pl) {
-  if (!sceneMode || current.presentation.sceneInteraction !== "warp" || anchor === "screen" || !pl) return;
+function captureWarp(pl, scene) {
+  if (!sceneMode || current.presentation.sceneInteraction !== "warp" || anchor === "screen" || !pl || !scene) return;
   const now = performance.now();
-  if (now - warpAt <= 1000 / 15 && warpCache?.off) return; // reuse cached scene sample between refreshes
+  if (now - warpAt <= 1000 / 15 && warpCache?.off) return;
   warpAt = now;
   const { fxCx, fxCy, size } = warpGeom(pl);
   const off = warpCache?.off || (warpCache = { off: document.createElement("canvas") }).off;
   off.width = size / WARP_S; off.height = size / WARP_S;
   const octx = off.getContext("2d");
-  octx.drawImage(view, fxCx - WARP_R, fxCy - WARP_R, size, size, 0, 0, size / WARP_S, size / WARP_S); // scene only — FX not drawn yet
+  octx.drawImage(scene.canvas, fxCx - WARP_R, fxCy - WARP_R, size, size, 0, 0, size / WARP_S, size / WARP_S);
   warpCache.off = off;
 }
 function applyWarp(f, pl) {
@@ -214,7 +252,7 @@ function applyWarp(f, pl) {
   for (let gy = 0; gy < n; gy++) for (let gx = 0; gx < n; gx++) {
     const px = gx * cw + cw / 2, py = gy * chh + chh / 2;
     const d = Math.hypot(px - off.width / 2, py - off.height / 2) / (off.width / 2);
-    const pull = Math.sin(t * 6 + d * 9) * 0.06 * (1 - d);
+    const pull = Math.sin(t * 6 + d * 9) * 0.07 * (1 - d);
     const ox = (px - off.width / 2) * pull, oy = (py - off.height / 2) * pull;
     ctx.drawImage(off, gx * cw, gy * chh, cw, chh,
       fxCx - WARP_R + gx * cw * WARP_S + ox * WARP_S, fxCy - WARP_R + gy * chh * WARP_S + oy * WARP_S, cw * WARP_S, chh * WARP_S);
@@ -222,40 +260,96 @@ function applyWarp(f, pl) {
   ctx.restore();
 }
 
+// ---------- combat demo: 3 registered effects at once ----------
+const DEMO_IDS = ["ice/ice-lance", "arcane/arcane-orb", "shadow/black-hole"];
+let demo = null;
+async function startDemo() {
+  demo = null;
+  const entries = DEMO_IDS.map((id) => index.effects.find((e) => e.id === id));
+  const loaded = [];
+  for (const e of entries) loaded.push({ e, pages: await loadPages(e, "combined"), light: await loadPages(e, "light"), t: Math.random() });
+  demo = loaded;
+}
+function drawDemo(now) {
+  if (!demo) return;
+  const W = view.width, H = view.height, groundY = Math.floor(H * 0.66);
+  demo.forEach((d, i) => {
+    const n = d.e.export.frames, fps = d.e.export.fps;
+    const f = Math.floor((animT + i * 0.7) * fps) % n;
+    const [fw, fh] = d.e.export.frameSize;
+    let pl;
+    if (d.e.id === "shadow/black-hole") {
+      const core = d.e.export.coreBounds, focal = d.e.export.focalPoint;
+      pl = { x: W * (0.68) - focal[0] * scale, y: groundY - (core[3] + 3) * scale };
+    } else if (d.e.id === "arcane/arcane-orb") {
+      pl = { x: W * 0.38 - d.e.export.pivot[0] * scale, y: groundY - fh * 0.45 - d.e.export.pivot[1] * scale };
+    } else {
+      pl = { x: W * 0.12 - d.e.export.pivot[0] * scale, y: groundY - fh * 0.55 - d.e.export.pivot[1] * scale };
+    }
+    const p = d.pages.find((pg) => f >= pg.first && f < pg.first + pg.count);
+    if (!p) return;
+    const fi = { img: p.img, x: (f - p.first) % p.columns * fw, y: Math.floor((f - p.first) / p.columns) * fh, w: fw, h: fh };
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(fi.img, fi.x, fi.y, fw, fh, pl.x, pl.y, fw * scale, fh * scale);
+    if (night && d.e.export.lightEnergy > 0.5) {
+      const lp = d.light.find((pg) => f >= pg.first && f < pg.first + pg.count);
+      if (lp) { ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.5; ctx.drawImage(lp.img, fi.x, fi.y, fw, fh, pl.x, pl.y, fw * scale, fh * scale); ctx.restore(); }
+    }
+  });
+}
+
 // ---------- main loop ----------
-function tick(now) {
+async function tick(now) {
   const dt = Math.min(0.1, Math.max(0, (now - lastT) / 1000));
   lastT = now;
   if (current && playing) {
-    animT += dt; // float time accumulates; frame index is derived, never floored back into animT
+    animT += dt;
     const n = frameCount();
-    if (!isLoop() && animT * fpsOf() >= n) { animT = (n - 1) / fpsOf(); playing = false; $("btn-play").textContent = "▶"; } // one-shot ends on last frame
+    if (!demoMode && !isLoop() && animT * fpsOf() >= n) { animT = (n - 1) / fpsOf(); playing = false; $("btn-play").textContent = "▶"; }
   }
   if (current) {
     const frame = frameIndex();
     $("scrub").value = frame;
     $("frame-label").textContent = `${frame}/${frameCount() - 1} · ${fpsOf()}fps`;
-    // resize backing store only when the display size actually changes
     const cw = view.clientWidth, ch = view.clientHeight, dpr = devicePixelRatio;
     if (cw !== lastW || ch !== lastH || dpr !== lastDpr) {
       lastW = cw; lastH = ch; lastDpr = dpr;
       view.width = Math.max(1, Math.floor(cw * dpr));
       view.height = Math.max(1, Math.floor(ch * dpr));
+      sceneDay = sceneNight = null; // scene caches are per-size
     }
     const W = view.width, H = view.height;
     ctx.imageSmoothingEnabled = false;
-    const groundY = Math.floor(H * 0.72);
-    if (sceneMode) drawScene(W, H, groundY);
-    else { ctx.fillStyle = night ? "#0a0918" : "#0b0a12"; ctx.fillRect(0, 0, W, H); }
-    if (lightMode) {
-      ctx.fillStyle = "#000"; ctx.fillRect(0, 0, W, H);
-      const fi = lightFrameImage(frame);
-      if (fi) { const s = Math.min(W / fi.w, H / fi.h) * 0.9 * scale; ctx.drawImage(fi.img, fi.x, fi.y, fi.w, fi.h, (W - fi.w * s) / 2, (H - fi.h * s) / 2, fi.w * s, fi.h * s); }
+    const groundY = Math.floor(H * 0.66);
+    if (demoMode) {
+      await loadSohAssets();
+      const scene = await ensureScene(W, H);
+      if (scene) ctx.drawImage(scene.canvas, 0, 0); else { ctx.fillStyle = "#0b0a12"; ctx.fillRect(0, 0, W, H); }
+      if (!userScale && sceneMode) { scale = Math.max(0.5, Math.min(4, (H * 0.42) / frameSize()[1])); $("rng-scale").value = scale; $("scale-val").textContent = scale.toFixed(2) + "×"; }
+      drawDemo(now);
+    } else if (sceneMode) {
+      await loadSohAssets();
+      const scene = await ensureScene(W, H);
+      if (scene) {
+        ctx.drawImage(scene.canvas, 0, 0); // one cached blit instead of repainting the world every frame
+        if (!userScale) { scale = Math.max(0.5, Math.min(4, (H * 0.42) / frameSize()[1])); $("rng-scale").value = scale; $("scale-val").textContent = scale.toFixed(2) + "×"; }
+      } else { ctx.fillStyle = night ? "#0a0918" : "#0b0a12"; ctx.fillRect(0, 0, W, H); }
+      if (lightMode) {
+        ctx.fillStyle = "#000"; ctx.fillRect(0, 0, W, H);
+        const fi = lightFrameImage(frame);
+        if (fi) { const s = Math.min(W / fi.w, H / fi.h) * 0.9 * scale; ctx.drawImage(fi.img, fi.x, fi.y, fi.w, fi.h, (W - fi.w * s) / 2, (H - fi.h * s) / 2, fi.w * s, fi.h * s); }
+      } else {
+        const pl = anchor === "screen" ? null : effectPlacement(W / 2, H / 2, groundY);
+        captureWarp(pl, night ? sceneNight : sceneDay);
+        applyWarp(frame, pl);
+        drawEffect(frame, W / 2, H / 2, groundY);
+      }
     } else {
-      const pl = anchor === "screen" ? null : effectPlacement(W / 2, H / 2, groundY);
-      captureWarp(pl);   // sample scene region BEFORE any FX artwork is drawn
-      applyWarp(frame, pl); // distort the cached scene-only environment
-      drawEffect(frame, W / 2, H / 2, groundY); // original FX pixels composited on top, intact
+      ctx.fillStyle = night ? "#0a0918" : "#0b0a12"; ctx.fillRect(0, 0, W, H);
+      if (lightMode) {
+        const fi = lightFrameImage(frame);
+        if (fi) { const s = Math.min(W / fi.w, H / fi.h) * 0.9 * scale; ctx.drawImage(fi.img, fi.x, fi.y, fi.w, fi.h, (W - fi.w * s) / 2, (H - fi.h * s) / 2, fi.w * s, fi.h * s); }
+      } else drawEffect(frame, W / 2, H / 2, groundY);
     }
   }
   requestAnimationFrame(tick);
@@ -291,7 +385,8 @@ function renderMeta(e) {
     <div class="row"><div class="k">description</div><div class="v">${e.desc || "—"}</div></div>
     <div class="row"><div class="k">tags</div><div class="v">${e.tags.map((t) => `<span class="tag">${t}</span>`).join("") || "—"}</div></div>
     <div class="row"><div class="k">implementation</div><div class="v">${e.implementation}${e.hasAct ? " · act" : ""}${e.onBody ? " · on-body" : ""}${e.screen ? " · screen" : ""}</div></div>
-    <div class="row"><div class="k">animation</div><div class="v">${e.export.frames || "?"} frames @ ${m.fps}fps · ${m.duration}s · ${m.loop ? "loop" : "one-shot"} · ${m.size[0]}×${m.size[1]} · pivot ${m.origin} · visual bounds ${e.export.visualBounds || "?"}</div></div>
+    <div class="row"><div class="k">animation</div><div class="v">${e.export.frames || "?"} frames @ ${m.fps}fps · ${m.duration}s · ${m.loop ? "loop" : "one-shot"} · ${m.size[0]}×${m.size[1]}</div></div>
+    <div class="row"><div class="k">placement (source-derived)</div><div class="v">pivot ${m.origin} · focal ${e.export.focalPoint || "?"} · core ${e.export.coreBounds || "?"} · visual ${e.export.visualBounds || "?"}</div></div>
     <div class="row"><div class="k">proposed presentation (not accepted)</div><div class="v">role: ${p.roleCandidate} · anchor: ${p.anchor} · depth: ${p.depth} · night: ${p.emissiveNight} · interaction: ${p.sceneInteraction} · <b>extraShapes: ${p.extraShapes}</b></div></div>
     ${e.act ? `<div class="row"><div class="k">act timing</div><pre>${JSON.stringify({ windup: e.act.windup, recovery: e.act.recovery, onBody: e.act.onBody, targets: e.act.targets, hits: e.act.hits }, null, 1)}</pre></div>` : ""}
     <div class="row"><div class="k">provenance</div><div class="v">${e.provenance.repo}<br>commit <code>${e.provenance.commit.slice(0, 12)}</code><br>${e.provenance.license}</div></div>
@@ -306,14 +401,19 @@ loadIndex().then(() => {
   if (first) select(first);
 }).catch((e) => { $("status-line").textContent = "registry load failed: " + e.message; });
 
-// test hook (used by tools/pixelfx_foundry/browser verification harness; harmless in production)
+// test hook (used by tools/pixelfx_foundry/browser/verify.mjs; harmless in production)
 window.__foundry = {
   selectById: (id) => { const e = index?.effects.find((x) => x.id === id); if (e) return select(e); return Promise.resolve(false); },
-  state: () => ({ id: current?.id, frame: current ? frameIndex() : -1, playing, night, anchor, animT, hint: $("stage-hint").textContent, title: $("fx-title").textContent }),
+  state: () => ({ id: current?.id, frame: current ? frameIndex() : -1, playing, night, anchor, animT, hint: $("stage-hint").textContent, title: $("fx-title").textContent, demoMode, scale }),
   setNight: (v) => { if (night !== v) $("btn-night").click(); },
   setAnchor: (v) => { $("sel-anchor").value = v; anchor = v; },
   setAct: (v) => { if (actMode !== v) $("mode-act").click(); },
+  setDemo: (v) => { if (demoMode !== v) $("mode-demo").click(); },
+  setScene: (v) => { if (sceneMode !== v) $("mode-scene").click(); },
+  setScale: (v) => { userScale = true; scale = v; $("rng-scale").value = v; $("scale-val").textContent = v.toFixed(2) + "×"; },
   play: (v) => { if (playing !== v) $("btn-play").click(); },
   scrubTo: (f) => { $("scrub").value = f; $("scrub").dispatchEvent(new Event("input")); },
+  // deterministic frame capture for the evidence harness: set exact frame, render one tick, return canvas data
+  captureFrame: (f) => new Promise((res) => { animT = f / fpsOf(); playing = false; requestAnimationFrame(() => requestAnimationFrame(() => res(view.toDataURL("image/png")))); }),
   index: () => index,
 };
