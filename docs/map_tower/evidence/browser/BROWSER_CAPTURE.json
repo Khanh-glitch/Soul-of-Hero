@@ -6,8 +6,8 @@
   360
  ],
  "overlays": "hidden for evaluation captures, shown separately",
- "commit": "012c5d8a8fb3c27ce7208b74ce44988026b52289",
- "run": "41403826812",
+ "commit": "0a8b73ec5599e179dace94f6cad0a58157787ec9",
+ "run": "41408202099",
  "scenes": [
   {
    "file": "spawn_sp_west.png",
@@ -34,11 +34,11 @@
    "scene": "spawn_sp_lake",
    "note": "spawn",
    "pixels": {
-    "nonBlank": 229317,
-    "ratio": 0.9952994791666666,
-    "meanRed": 122.70825520833333
+    "nonBlank": 229267,
+    "ratio": 0.9950824652777778,
+    "meanRed": 124.2405078125
    },
-   "sha256": "4f66acd91d33b079b48a22ed4b597f7ff5aac2701e569df1907768c3fa7cc429",
+   "sha256": "e78a5297a1d1ee4435730059461d998ae465f436701ca3ce9751103086aa4f71",
    "pass": true
   },
   {
@@ -52,9 +52,9 @@
    "pixels": {
     "nonBlank": 230400,
     "ratio": 1,
-    "meanRed": 114.24677517361111
+    "meanRed": 114.25703559027778
    },
-   "sha256": "0bfea5b23102d8eccc2f233c9aff69e0e19eb1075961b92b9dece292f8678ed9",
+   "sha256": "bf582f892c0db937c57a38b9d723e39558447d7108394ad2ebcb542a4beb5d8e",
    "pass": true
   },
   {
@@ -82,11 +82,11 @@
    "scene": "greywater_upstream_0",
    "note": "rv_grey_up",
    "pixels": {
-    "nonBlank": 225097,
-    "ratio": 0.9769835069444445,
-    "meanRed": 107.64826388888889
+    "nonBlank": 224965,
+    "ratio": 0.9764105902777778,
+    "meanRed": 107.44937065972222
    },
-   "sha256": "e299f1a36df59649c0c7f6f03e804f13a0c9a8a26d59f439b57b7e4102f84c9e",
+   "sha256": "b7eaeaa5a88f73b125264508abb5ea8730b799fe26f081d5974be5aefbafdd9b",
    "pass": true
   },
   {
@@ -98,11 +98,11 @@
    "scene": "greywater_upstream_1",
    "note": "rv_grey_up",
    "pixels": {
-    "nonBlank": 226265,
-    "ratio": 0.9820529513888889,
-    "meanRed": 112.16790798611112
+    "nonBlank": 226133,
+    "ratio": 0.9814800347222222,
+    "meanRed": 111.96901475694445
    },
-   "sha256": "87c79a423d01fd1d717bfd4c7d0a82010b6fd64284d9a9026e5ab65ce30b0466",
+   "sha256": "2a31a378a6d1a64ee71b86ff148e97016f09b0acff5ef3cf84e5c73d75869bc3",
    "pass": true
   },
   {
@@ -114,11 +114,11 @@
    "scene": "greywater_lake",
    "note": "lk_grey",
    "pixels": {
-    "nonBlank": 230185,
-    "ratio": 0.9990668402777778,
-    "meanRed": 98.43684461805556
+    "nonBlank": 230109,
+    "ratio": 0.9987369791666667,
+    "meanRed": 99.72674479166666
    },
-   "sha256": "a388ae96149f3da82ce8dd0467b8ad6ef447c94baebeada16329a5af4e75b8e6",
+   "sha256": "09a2ce9118920d6dda88c6107f720463e4e7302b7eb8cd3cbd152b1099b5fa1e",
    "pass": true
   },
   {
@@ -130,11 +130,11 @@
    "scene": "greywater_downstream_0",
    "note": "rv_grey_low",
    "pixels": {
-    "nonBlank": 228625,
-    "ratio": 0.9922960069444444,
-    "meanRed": 118.8249392361111
+    "nonBlank": 228546,
+    "ratio": 0.991953125,
+    "meanRed": 120.60413194444445
    },
-   "sha256": "b25d6f0b31dcd51663cb1655ae328680c499fc8a8333b7a0b5ae252f0c95485b",
+   "sha256": "6a9011e4e95a1bdb01d152b95996fba0ac8ef03a57f4005fcd65da9f9e055ceb",
    "pass": true
   },
   {
@@ -178,11 +178,11 @@
    "scene": "river_junction",
    "note": "rv_grey_up",
    "pixels": {
-    "nonBlank": 224928,
-    "ratio": 0.97625,
-    "meanRed": 108.25583333333333
+    "nonBlank": 224796,
+    "ratio": 0.9756770833333334,
+    "meanRed": 108.05694010416667
    },
-   "sha256": "58d3fc8c1287ff62fa5728c8ad6df2a283db22c239034268aa50a19f47c107da",
+   "sha256": "2a17b76b08dba85d00397f21b83d125b31d87be8d79c6d801194455ef1e349d9",
    "pass": true
   },
   {
@@ -212,9 +212,9 @@
    "pixels": {
     "nonBlank": 230400,
     "ratio": 1,
-    "meanRed": 122.550546875
+    "meanRed": 122.58511284722222
    },
-   "sha256": "ddc81ca854d99697ad7b9e6e4063cf77e255475b57c1946f5023f391d04dc778",
+   "sha256": "c9a47c2ba2cf2389105aee7c2d4c379e99c8a7ebb5c6e60c56625f020998b508",
    "pass": true
   },
   {
@@ -244,9 +244,9 @@
    "pixels": {
     "nonBlank": 229484,
     "ratio": 0.9960243055555555,
-    "meanRed": 117.8297092013889
+    "meanRed": 117.89072916666667
    },
-   "sha256": "f7ac3acea56c9631bfb49d291f5ea20fc74a2ac83f77616003214760af080122",
+   "sha256": "bc67e71260290d3abfcd29ff385b41d62184b90bcc1843fb6c87d5b49cfbc45f",
    "pass": true
   },
   {
@@ -324,9 +324,9 @@
    "pixels": {
     "nonBlank": 228763,
     "ratio": 0.9928949652777778,
-    "meanRed": 119.00276909722223
+    "meanRed": 119.02731336805556
    },
-   "sha256": "fc1b61b8efdca00279657a1f3715f0c47091993774b66162fcfd58683b9abe79",
+   "sha256": "3ae1745158a7aa1fdf911da8138fa3313e9dd2d3c77270bada5046f6448a92fd",
    "pass": true
   },
   {
@@ -356,9 +356,9 @@
    "pixels": {
     "nonBlank": 230300,
     "ratio": 0.9995659722222222,
-    "meanRed": 116.15423611111112
+    "meanRed": 116.19681423611111
    },
-   "sha256": "98138c20afaae5fd6961e6a41a6cc4b82a16707114a8f784733352e69f8fd8ee",
+   "sha256": "23e522280c78829445c3a8e40c0b9d43fe92450a62b0c4c177f2bf21f4f6bc6c",
    "pass": true
   },
   {
@@ -372,9 +372,9 @@
    "pixels": {
     "nonBlank": 230400,
     "ratio": 1,
-    "meanRed": 122.40131944444444
+    "meanRed": 122.46227430555555
    },
-   "sha256": "eb5a24cdb170c7290708d683f1d01e07e9949a1f7f8a3ad0f81cb4c9d3f0f90e",
+   "sha256": "1b95ea4d43277c88ca0981ab725cdc04e6e01352e77c9f26dd19ed73e023ac2c",
    "pass": true
   },
   {
@@ -466,11 +466,11 @@
    "scene": "ford_rd_x",
    "note": "authored ford",
    "pixels": {
-    "nonBlank": 228536,
-    "ratio": 0.9919097222222222,
-    "meanRed": 87.40357204861111
+    "nonBlank": 228424,
+    "ratio": 0.9914236111111111,
+    "meanRed": 88.44927083333333
    },
-   "sha256": "7d10d49403b779aafa34024b794f4a7a792376e038bb68681dbd0d38c4f34f5f",
+   "sha256": "6137743da9e74fae211c8aabff92ee11043c3a09971f7589c8599e17cbdf3089",
    "pass": true
   },
   {
@@ -484,9 +484,9 @@
    "pixels": {
     "nonBlank": 228218,
     "ratio": 0.9905295138888889,
-    "meanRed": 170.41139756944443
+    "meanRed": 171.0826128472222
    },
-   "sha256": "0a0d0af04e0e8d0454f8a68044a1adf8547c888e39da02d74228a4b1da7e2095",
+   "sha256": "ab4e79ece289a4234d04ab08cd95da99b0cbd0dc6fc516cce91b0f158abaebdf",
    "pass": true
   },
   {
@@ -500,9 +500,9 @@
    "pixels": {
     "nonBlank": 228454,
     "ratio": 0.9915538194444444,
-    "meanRed": 169.35885850694444
+    "meanRed": 170.20264756944445
    },
-   "sha256": "a7e9ad8db6420b438e9caf22fcb1c357900e4ec6ec7dfa0f4e5e93be4651fdfb",
+   "sha256": "a8929e6986b339860d98879cb541f004f1f1baea971c9b4131cd786f2a6bf229",
    "pass": true
   },
   {
@@ -532,9 +532,9 @@
    "pixels": {
     "nonBlank": 230400,
     "ratio": 1,
-    "meanRed": 122.550546875
+    "meanRed": 122.58511284722222
    },
-   "sha256": "ddc81ca854d99697ad7b9e6e4063cf77e255475b57c1946f5023f391d04dc778",
+   "sha256": "c9a47c2ba2cf2389105aee7c2d4c379e99c8a7ebb5c6e60c56625f020998b508",
    "pass": true
   },
   {
@@ -562,11 +562,11 @@
    "scene": "repaired_rd_w",
    "note": "previously failing traversal",
    "pixels": {
-    "nonBlank": 226397,
-    "ratio": 0.9826258680555555,
-    "meanRed": 80.85592013888889
+    "nonBlank": 226316,
+    "ratio": 0.9822743055555555,
+    "meanRed": 80.2268967013889
    },
-   "sha256": "92c27b7368a177c36f44ed844fd2463b6095d798e55c415a4b69a861191a7325",
+   "sha256": "b88b818e7a293d93d428c95b5d6a511eddbd07365ee1581f6522efc83ac35926",
    "pass": true
   },
   {
@@ -578,11 +578,11 @@
    "scene": "repaired_rd_x",
    "note": "previously failing traversal",
    "pixels": {
-    "nonBlank": 228787,
-    "ratio": 0.9929991319444444,
-    "meanRed": 74.45271267361112
+    "nonBlank": 228706,
+    "ratio": 0.9926475694444444,
+    "meanRed": 74.11301215277778
    },
-   "sha256": "385f5acddd5089c995f8d9ff54aae2e711773e67f562ce5871e6b6068caaf527",
+   "sha256": "998f89612aacdb9c07a2538408bf31260826f307d7535f85ba5ff1c568a20f96",
    "pass": true
   },
   {
@@ -596,9 +596,9 @@
    "pixels": {
     "nonBlank": 227950,
     "ratio": 0.9893663194444444,
-    "meanRed": 157.14495225694444
+    "meanRed": 158.43977864583334
    },
-   "sha256": "8472458ab17ce4d2d275c8f0cec2085381cf5691ba0625fa5afc44e772b291cf",
+   "sha256": "dceeb44a578f6e2d27a44abd81206b60e3ffea6d81a45546f814eb33fbda5729",
    "pass": true
   },
   {
@@ -676,9 +676,9 @@
    "pixels": {
     "nonBlank": 228868,
     "ratio": 0.9933506944444445,
-    "meanRed": 106.0758029513889
+    "meanRed": 106.03926649305555
    },
-   "sha256": "ffd9f93d70fd7886b35d275ec898e296f5647158976b60f4df02db2abe849e66",
+   "sha256": "7e10fd030cd1ae58ad71dbb21151ec918213832b042c61723552dec292565d13",
    "pass": true
   },
   {
@@ -726,7 +726,7 @@
     "ratio": 1,
     "meanRed": 102.16897569444444
    },
-   "sha256": "bb9cc834b912a7b8d55da2e1113bb5855822801238ae3ecbb67cf8d9959a4f10",
+   "sha256": "d624e94b1a8a93b827f06245612816f31fb8999bc89cc725bf1d0949d7810ade",
    "pass": true
   },
   {
@@ -737,7 +737,7 @@
     5600
    ],
    "note": "whole compiled world image, decoded in Chromium",
-   "sha256": "6df8d953ae767bb2b5215974908461359fa22092e2fd850df9a13b3d6df99ec8",
+   "sha256": "3bbaac5ca1a11b14a8c6f417577b0cf2f5985faa087682e148f6756c32702d16",
    "pass": true
   }
  ],
@@ -769,10 +769,10 @@
       "y": 2424
      },
      "after": {
-      "x": 1556.7935999999993,
+      "x": 1555.1999999999994,
       "y": 2424
      },
-     "dist": 68.8,
+     "dist": 67.2,
      "input": "d",
      "blocked": false
     }
@@ -783,7 +783,7 @@
    "pass": true,
    "detail": {
     "direction": "d",
-    "ratio": 1.856,
+    "ratio": 1.945,
     "walk": {
      "dir": "d",
      "run": false,
@@ -793,10 +793,10 @@
       "y": 2424
      },
      "after": {
-      "x": 1556.7935999999993,
+      "x": 1555.1999999999994,
       "y": 2424
      },
-     "dist": 68.8,
+     "dist": 67.2,
      "input": "d",
      "blocked": false
     },
@@ -809,10 +809,10 @@
       "y": 2424
      },
      "after": {
-      "x": 1615.6617600000009,
+      "x": 1618.7260800000008,
       "y": 2424
      },
-     "dist": 127.7,
+     "dist": 130.7,
      "input": "Shift+d",
      "blocked": false
     }
@@ -831,7 +831,7 @@
       "y": 2424
      },
      "after": {
-      "x": 1679.999999999998,
+      "x": 1679.9903999999979,
       "y": 2424
      },
      "dist": 192,
@@ -847,10 +847,10 @@
       "y": 2424
      },
      "after": {
-      "x": 1556.7935999999993,
+      "x": 1555.1999999999994,
       "y": 2424
      },
-     "dist": 68.8,
+     "dist": 67.2,
      "input": "d",
      "blocked": false
     }
@@ -866,8 +866,8 @@
  "console_log": [
   "warning: Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently"
  ],
- "world_sha256": "13c01da3b6b3cdd7a2057d5c4e75bbab622d3332c4c634de83ee873ab5fbe193",
- "world_meta_sha256": "debd3b0a4eede67c592e6f4834717ad779035773eda578c6cf055e4235ebf2f4",
+ "world_sha256": "0be85f76c6a9ed64b52b82981d0699b24bc8e2d2840d149d132da9880423cc56",
+ "world_meta_sha256": "24da2459b36e7be22cc089a1f56dcdb6af68e48ec685b57b5f8e5bd8769f816b",
  "summary": {
   "scenes": 46,
   "blank_scenes": 0,
