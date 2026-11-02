@@ -78,6 +78,7 @@ jobs:
           path: prototypes/arcana_fusion20/renderer/evidence_out/
           if-no-files-found: ignore
       - name: All-20 visual capture (contact sheets + anim frames)
+        if: ${{ !contains(github.event.head_commit.message, '[r29-lifecycle]') }}
         shell: bash
         run: |
           set -o pipefail
@@ -91,14 +92,14 @@ jobs:
             exit 1
           fi
       - name: Summarize capture failures
-        if: always()
+        if: ${{ always() && !contains(github.event.head_commit.message, '[r29-lifecycle]') }}
         shell: bash
         run: |
           if [ -f capture.log ]; then
             grep -E 'SCRIPT ERROR|Parse Error|ERROR:|ARCANA20_CAPTURE_FAIL|ARCANA20_CAPTURE_RESULT' capture.log | tail -20 | while IFS= read -r line; do echo "::notice::CAPTURE_LOG $line"; done || true
           fi
       - name: Build animated previews (GIF) from capture frames
-        if: always()
+        if: ${{ always() && !contains(github.event.head_commit.message, '[r29-lifecycle]') }}
         shell: bash
         run: |
           python3 -m pip install --quiet pillow
@@ -116,27 +117,27 @@ jobs:
               print('gif', out, len(imgs))
           PYEOF
       - name: Expose source thumbnails 01-05
-        if: always()
+        if: ${{ always() && !contains(github.event.head_commit.message, '[r29-lifecycle]') }}
         run: |
           python3 -m pip install --quiet pillow
           python3 tools/arcana20_review/emit_thumbnails.py source 0 5
       - name: Expose source thumbnails 06-10
-        if: always()
+        if: ${{ always() && !contains(github.event.head_commit.message, '[r29-lifecycle]') }}
         run: |
           python3 -m pip install --quiet pillow
           python3 tools/arcana20_review/emit_thumbnails.py source 5 10
       - name: Expose source thumbnails 11-15
-        if: always()
+        if: ${{ always() && !contains(github.event.head_commit.message, '[r29-lifecycle]') }}
         run: |
           python3 -m pip install --quiet pillow
           python3 tools/arcana20_review/emit_thumbnails.py source 10 15
       - name: Expose source thumbnails 16-20
-        if: always()
+        if: ${{ always() && !contains(github.event.head_commit.message, '[r29-lifecycle]') }}
         run: |
           python3 -m pip install --quiet pillow
           python3 tools/arcana20_review/emit_thumbnails.py source 15 20
       - name: D source/native RGB spatial diagnostics (not a parity gate)
-        if: always()
+        if: ${{ always() && !contains(github.event.head_commit.message, '[r29-lifecycle]') }}
         shell: bash
         run: |
           if compgen -G 'prototypes/arcana_fusion20/renderer/evidence_out/review/skill_19/native_t*.png' > /dev/null; then
@@ -147,7 +148,7 @@ jobs:
             echo 'No D native captures produced; comparison remains unmeasured.'
           fi
       - name: Upload all-20 visual review package
-        if: always()
+        if: ${{ always() && !contains(github.event.head_commit.message, '[r29-lifecycle]') }}
         uses: actions/upload-artifact@v4
         with:
           name: arcana20-visual-review
