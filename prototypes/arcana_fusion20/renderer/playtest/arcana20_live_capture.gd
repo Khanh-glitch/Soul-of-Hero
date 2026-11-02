@@ -11,7 +11,7 @@ var unbound_contacts: Array = []
 var samples: Array = []
 var capture_start_usec := 0
 var crown_probe_next := 0
-const CROWN_PROBE_TARGETS := [120, 246]
+const CROWN_PROBE_TARGETS := [120, 233]
 
 func _fail(message: String) -> void:
     for action in [&"move_right", &"move_down", &"move_left", &"move_up"]:
