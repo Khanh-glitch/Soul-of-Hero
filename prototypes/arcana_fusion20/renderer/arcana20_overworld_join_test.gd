@@ -1616,7 +1616,7 @@ func _phase_sweep(app: Node, world: Node, player: Node2D, enemy: Node2D, camera:
                     check(not images_equal(captures[0], captures[2]), "D19 bounded presentation differs at tick %d" % requested)
                     print("D19_ISOLATION ", JSON.stringify({"tick":requested,"lighting":lighting,"warp_alpha_min":alpha_min,"warp_alpha_max":alpha_max,"active_warp_pixels":active_count,"source_light_max":light_max,"independent_star_peak":star_peak,"independent_body_peak":body_peak,"rgba8_all_channel_saturated_pixels":source_clipped,"warp_fade":d_frame.d_warp_fade,"source_to_world":str(d_frame.source_to_world),"world":"real frozen overworld; unchanged actors and camera", "formula":"0 legacy / 1 off / 2 amplitude/(1+abs(amplitude)) / 0 restore", "source_fields_unchanged":true}))
                     d_viewer._material.set_shader_parameter("shimmer_presentation", 2)
-                    d_viewer._material.set_shader_parameter("light_presentation", 1)
+                    d_viewer._material.set_shader_parameter("light_presentation", 0)
             var tick_value := int(source.get("source_tick")) if source is BSourcePlayer else int(source.get("_tick"))
             var families: Dictionary = mount._passes.get(id, {})
             samples.append({"label": labels[sample_index], "requested_tick": requested, "native_tick": tick_value,

@@ -23,7 +23,7 @@ uniform float warp_fade = 1.0;
 uniform int shimmer_presentation = 2;
 // 0: R28 LDR composition; 1: R29 layer-preserving local reconstruction.
 // Other values are diagnostics only. This is not original HDR/bloom parity.
-uniform int light_presentation = 1;
+uniform int light_presentation = 0;
 const ivec2 SIZE = ivec2(480,270);
 float bayer(ivec2 p) {
     int m[16] = int[16](0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5);
