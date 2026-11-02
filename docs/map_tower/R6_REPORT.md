@@ -1,4 +1,16 @@
-# R6 — road and river network reconstruction (final for this round)
+# Map Tower — Veyra network + world art status (R6 → R8)
+
+**Latest tested code SHA: `5dce3b4` (branch `arena/103e4440-soul-of-hero`).**
+CI #41398920626: spatial PASS (33/33), browser capture PASS, godot-native-attempt PASS,
+godot-native-gate PASS. Evidence commit `6a637f2` (46 Chromium scenes at 640×360, 0 blank).
+
+R8 fixed: the browser crash (`window.__veyra.s` → `window.__veyra.meta.spawns`), the fake sprint
+oracle (now probe-selects a free direction, resets to the same spawn for every trial, walks with D
+and runs with Shift+D over the same 700 ms window, and records positions, displacement, input state
+and blocking: **walk 67.2 px, run 127.7 px, ratio 1.90, direction `a`**), and the per-cell 32 px rock
+repetition (rock modules are now placed as clustered masses on a 3-cell lattice with jitter, 1.6×
+scale, rubble aprons: 104 masses instead of 331 per-cell stamps).
+
 
 Base: `6c3b6ce4` → this commit. Branch `arena/103e4440-soul-of-hero`. GOLD untouched
 (`88780f78…a3a256`). Verdict for this round: **NETWORK_GATES_PASSED — VISUAL_REVIEW_PENDING**.
