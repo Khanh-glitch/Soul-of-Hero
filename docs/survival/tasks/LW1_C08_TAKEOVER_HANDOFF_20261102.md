@@ -1,5 +1,46 @@
 # LW1 C08 takeover — live handoff (read this first)
 
+## 2026-11-02 P0 round — independent episodes (Control Tower order `d635fb7b`)
+
+**Branch** `arena/136e69c5-soul-of-hero` · **Draft PR #34** · **HEAD `bbd8de5e`** (refresh before acting).
+**CI** `.github/workflows/c08-trace-causality.yml` — now `Phase 1a/B`, `1b/C`, `1c/A+K8`, then relaunch, new run.
+
+### Cause table — what actually produced the red oracle at `45fe0777` (not an AI defect)
+
+| # | Observation | Source | Verdict |
+|---|---|---|---|
+| 1 | `expires = stamp + lifetime` is written at record creation; `configure_policy()` only affects future marks | `game/survival/c08_trace_store.gd:109` | B's 300 s marks are still valid during C. Correct behaviour, contaminated fixture. |
+| 2 | `begin_window()` resets counters, not the store/world | `game/survival/c08_trace_follower.gd:99-117` | Correct. Prior evidence persists on purpose. |
+| 3 | C walks the Hero near home and creates fresh lawful marks | `tests/survival_c08_trace_causality_test.gd` (`_counterfactual_c`) | A creature sensing them is legitimate evidence, not home GPS. Not a defect. |
+| 4 | `C: the same walkable ground is used again` at `45fe0777` | route plan/door/actor collision | Stopped **before** any expiry was tested. No lost-trace conclusion may be drawn from it. |
+| 5 | `goal_timeout` / `link_blocked` / `chain_end` / `expired` collapse into `lost_reason` | `c08_trace_follower.gd` | Reported per cause; P0 still wants per-state evidence lines (open item). |
+
+### Fixture fix (P0)
+
+Each case is its own OS process and its own `--user-data-dir`, rebuilt from the same
+legitimate checkpoint (production world mount, paid home by real input, creature by
+`_mount_optional_threat`). Cases share the scenario, never the trace state, the
+chase, or the Hero's health. Episode A also owns the K8 ledger commit that the
+relaunch and new-run phases read. No mark is deleted, no AI is disabled, no target is
+injected, nothing teleports.
+
+### Source library (fetched from `references/gameplay-prototypes-20261102`, SHA-256 verified)
+
+| archive | SHA-256 | read | verdict |
+|---|---|---|---|
+| `soul-of-hero-rpg-development.zip` | `2b86f656…b75` | `src/engine/simulation.ts:805-855` | **ADAPT (idea only)**: `trackingTraceId` → explicit `nextTraceId` → `RETURN` when the tracked footprint is gone. LW1 already has strict `successor()` + `_stop("expired"/"chain_end")`; the phôi's 4-neighbour sensing radius is *not* copied. |
+| `soul-of-hero-prototype.zip` | `01348a02…5b7` | `src/sim/simulationTick.ts:632-670` | **NEGATIVE ORACLE**: `f.prevId === cur.id \|\| (newer && within 1.6 tiles)` can join an unrelated chain. LW1 store's `successor()` is id-exact; the adversarial two-trail test is a P0 open item. |
+| `develop-soul-of-hero-rpg (4).zip` | `f601ca17…1ba` | `src/game/state.ts:1033-1076`, `1237-1242` | **NEGATIVE ORACLE**: `harvest` never checks player↔source distance; `trail` accepts caller `x,y`. SOH source writes only the real actor position; the distant-harvest/remote-mark tests are open items. |
+| `soul-of-hero-rpg-prototype (3).zip` | `12438a53…f55` | `src/tests/contracts_c01_c24.test.ts:591-774,819 goodness-905` | **REJECT for now (P1)**: escrow/Ragnarok/inventory-custody hypotheses. No SOH action to bind them to in P0. |
+
+### Next commands
+
+```
+gh run list --branch arena/136e69c5-soul-of-hero --workflow "C08 trace causality (native)" --limit 1
+gh api repos/Khanh-glitch/Soul-of-Hero/commits/<sha>/check-runs | grep -o '"id":[0-9]*'
+gh api repos/Khanh-glitch/Soul-of-Hero/check-runs/<id>/annotations
+```
+
 **Branch (only branch this session may use):** `arena/136e69c5-soul-of-hero`
 **Base ancestry preserved:** `1f110589c60589be674586aff326a687448eb33c` (PR #33 WIP) on top of
 `fe9a9287bee31b4f94aa42adc8e9c13aa9c869a1` (PR #31 code composition).
