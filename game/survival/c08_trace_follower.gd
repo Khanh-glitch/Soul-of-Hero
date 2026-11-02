@@ -241,19 +241,25 @@ func _clear_to(at: Vector2) -> bool:
 	return _ray(skeleton.global_position + Vector2(0.0, -7.0), at + Vector2(0.0, -6.0))
 
 
-## A causal link must be walkable for this body: clear ray plus a free cell at
-## both ends according to the world's own traversability, when available.
+## A causal link must be physically walkable: the creature's own ray must be clear
+## and both ends must be real, streamed-in cells.
+##
+## What is deliberately NOT checked here is the traversability grid's opinion of
+## those cells. Two consecutive marks of one chain came from one body's continuous
+## walk, so walkability is inherited from the walk itself; and this world marks
+## physically walkable ground as unfree for pathfinding reasons, which is the very
+## grid that was refusing the player's own footsteps. Letting that opinion veto a
+## real pair of footprints stopped a correct pursuit dead - 'link_blocked' after
+## eight honest hops - so the physical ray decides, not the pathfinder.
 func _link_clear(from: Vector2, to: Vector2) -> bool:
 	if not _ray(from + Vector2(0.0, -7.0), to + Vector2(0.0, -6.0)):
 		return false
 	var nav: Variant = source.call(&"navigation")
-	if nav == null or not nav.has_method(&"cell_of"):
+	if nav == null or not nav.has_method(&"in_bounds"):
 		return true
 	var a := Vector2i(nav.call(&"cell_of", from))
 	var b := Vector2i(nav.call(&"cell_of", to))
 	if not bool(nav.call(&"in_bounds", a)) or not bool(nav.call(&"in_bounds", b)):
-		return false
-	if not bool(nav.call(&"is_free", a)) or not bool(nav.call(&"is_free", b)):
 		return false
 	return true
 
