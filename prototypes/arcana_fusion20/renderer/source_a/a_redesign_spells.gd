@@ -163,12 +163,17 @@ class AshenGuillotineR:
                 var seam := 0.65 * open
                 ADraw.poly_fill(fb, [a - n * seam, b - n * seam, b + n * seam, a + n * seam],
                     func(_x: int, _y: int) -> Variant: return Vector3(0.018, 0.014, 0.014), true, open * 0.96)
+                # Exposed inner faces are broken bedrock, not one black
+                # slab. Only the irregular narrow fault itself is dark.
                 ADraw.poly_fill(fb, [upper_a, upper_m, upper_b, lower_b, lower_m, lower_a],
                     func(x: int, y: int) -> Variant:
                         var across := absf((Vector2(float(x) + 0.5, float(y) + 0.5) - a).dot(n)) / maxf(gap, 0.01)
-                        var grain := AMath.hash2(floor(float(x) * 0.5), floor(float(y) * 0.5))
-                        var rock := 0.045 + AMath.cl01(across) * 0.30 + grain * 0.04
-                        return Vector3(rock, rock * 0.78, rock * 0.70), true, open * 0.96)
+                        var grain := AMath.hash2(floor(float(x) * 0.36), floor(float(y) * 0.36))
+                        var rock := 0.18 + AMath.cl01(across) * 0.19 + grain * 0.07
+                        return Vector3(rock, rock * 0.80, rock * 0.72), true, open * 0.96)
+                var fault_mid := a.lerp(b, 0.42 + 0.14 * AMath.hash2(float(section), 52.0)) + n * gap * (0.14 if section % 2 == 0 else -0.14)
+                ADraw.streak(fb, a.x, a.y, fault_mid.x, fault_mid.y, 0.65, 0.9, Vector3(0.04, 0.026, 0.023), open * 0.92)
+                ADraw.streak(fb, fault_mid.x, fault_mid.y, b.x, b.y, 0.9, 0.65, Vector3(0.04, 0.026, 0.023), open * 0.92)
                 ADraw.streak(fb, upper_a.x, upper_a.y, upper_m.x, upper_m.y, 1.2, 0.8, AMath.R("fire", 0.72), open * 0.60)
                 ADraw.streak(fb, upper_m.x, upper_m.y, upper_b.x, upper_b.y, 0.8, 1.0, AMath.R("fire", 0.72), open * 0.60)
                 ADraw.streak(fb, lower_a.x, lower_a.y, lower_m.x, lower_m.y, 0.9, 0.7, AMath.R("ash", 0.55), open * 0.45)
