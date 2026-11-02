@@ -850,11 +850,12 @@ func _observe_walk(hero: CharacterBody2D, enemy: CharacterBody2D, home: Vector2,
 	var walked := true
 	for cell: Vector2i in path:
 		var point := Vector2(cell.x * 16 + 8, cell.y * 16 + 15)
-		var deadline := Time.get_ticks_msec() + 3500
+		var deadline := Time.get_ticks_msec() + 6000
 		var stalled := 0
 		var escapes := 0
 		var escape_frames := 0
 		var escape_direction := Vector2.ZERO
+		var closest := hero.global_position.distance_to(point)
 		while hero.global_position.distance_to(point) > 4.5 and Time.get_ticks_msec() < deadline:
 			if is_instance_valid(enemy) and not enemy.is_queued_for_deletion():
 				stats.samples = int(stats.samples) + 1
@@ -870,7 +871,12 @@ func _observe_walk(hero: CharacterBody2D, enemy: CharacterBody2D, home: Vector2,
 			var before := hero.global_position
 			_set_direction(point - before)
 			await physics_frame
-			stalled = stalled + 1 if hero.global_position.distance_to(before) < 0.25 else 0
+			# Progress, not motion. A body pressed against a creature slides a few
+			# tenths of a pixel per frame and never arrives: measuring movement alone
+			# reported no stall at all while the walker burned its whole deadline.
+			var now := hero.global_position.distance_to(point)
+			stalled = stalled + 1 if now >= closest - 0.05 else 0
+			closest = minf(closest, now)
 			if stalled >= 5:
 				escapes += 1
 				if escapes > 10:
