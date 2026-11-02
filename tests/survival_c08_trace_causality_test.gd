@@ -1298,15 +1298,13 @@ func _open_door(hero: CharacterBody2D) -> bool:
 	var cell := _door_cell()
 	if cell.x < 0:
 		return false
+	# Click from where the defender stands first. A player outside his own door opens it
+	# from outside; walking to the inside cell through a shut door is impossible, and
+	# that walk is what made C's return fail.
+	if await _set_door(true):
+		return true
 	await _walk_to_cell(hero, cell + Vector2i(0, 1))
-	var build := _builder()
-	var structure := build.structure_node(build.entity_at_layer(cell, "object")) as SurvivalStructure
-	if structure == null:
-		return false
-	await _click_structure(structure.global_position + Vector2(8, 8))
-	await physics_frame
-	await physics_frame
-	return _door_open()
+	return await _set_door(true)
 
 
 ## The same ordinary click, the other way. A home with a creature outside it is shut:
