@@ -44,3 +44,26 @@ jobs:
             import.log
             source.log
           if-no-files-found: warn
+  # One-shot cross-run download check: preserves the already-tested e80529c
+  # build/captures, rather than generating a duplicate F capture matrix.
+  verify-f-upload:
+    if: ${{ contains(github.event.head_commit.message, '[verify-f-41396229547]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: ARCANA_FIVE_FUSIONS_CREATOR_REVIEW
+          run-id: 41396229547
+          github-token: ${{ github.token }}
+          path: downloaded-f
+      - name: Verify downloaded bytes, provenance, files and checksums
+        run: |
+          set -euo pipefail
+          result=$(python3 tools/arcana20_join/verify_f_download.py downloaded-f e80529cda05fc3b11697e508784306b8cb07f130)
+          echo "$result"
+          echo "::notice title=F_UPLOADED_ARTIFACT_VERIFIED::$result"
