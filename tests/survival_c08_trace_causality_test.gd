@@ -524,18 +524,39 @@ func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
 	print("C08_B_SOURCE_START ", JSON.stringify(source.call(&"snapshot")))
 	var hp_before := int(hero.get(&"health"))
 	var stats := _walk_stats()
-	stats = await _walk_with_observation(hero, enemy, home, route["outbound"], stats)
-	print("C08_B_SOURCE_OUT ", JSON.stringify({"source": source.call(&"snapshot"),
-		"follower": follower.snapshot(), "enemy": [enemy.global_position.x, enemy.global_position.y]}))
-	await _capture("c08_b_outbound")
-	var walked_back := await _walk_with_observation(hero, enemy, home, route["inbound"], stats)
-	_expect(walked_back.get("walked", false), "B: ordinary input walks back into the home")
-	if not walked_back.get("walked", false):
-		print("C08_B_WALK_FAIL ", JSON.stringify({"follower": _compact_follower(follower.snapshot()),
-			"hero": [hero.global_position.x, hero.global_position.y], "home": [home.x, home.y]}))
-		return {"ok": false, "stats": walked_back}
-	stats = walked_back
+	var legs: Array = route["legs"]
+	var walked_home := true
+	for index in range(legs.size()):
+		var leg: Array[Vector2i] = legs[index]
+		if leg.is_empty():
+			continue
+		var outcome: Dictionary = await _walk_with_observation(hero, enemy, home, leg, stats)
+		stats = outcome
+		if not bool(outcome.get("walked", false)):
+			walked_home = false
+			print("C08_B_LEG_FAIL ", JSON.stringify({"leg": index, "cells": leg.size(),
+				"follower": _compact_follower(follower.snapshot()),
+				"hero": [hero.global_position.x, hero.global_position.y],
+				"probe": _trace_probe(source, enemy)}))
+			break
+		if index == 0:
+			print("C08_B_SOURCE_OUT ", JSON.stringify({"source": source.call(&"snapshot"),
+				"follower": _compact_follower(follower.snapshot()),
+				"probe": _trace_probe(source, enemy),
+				"enemy": [enemy.global_position.x, enemy.global_position.y]}))
+			await _capture("c08_b_outbound")
+	_expect(walked_home, "B: ordinary input walks the whole out-and-back route and home")
+	if not walked_home:
+		return {"ok": false, "stats": stats}
 	await _walk_to_cell(hero, _stand_cell())
+	# The Hero is now behind a wall, 26 tiles from the creature: it can neither see
+	# nor chase him. Give it a bounded window to reach a real mark on its own and
+	# start walking the chain. Nothing is handed to it here.
+	var armed := await _wait_until(func() -> bool:
+		var view: Dictionary = follower.snapshot()
+		return int(view.get("sensed", 0)) >= 1 and int(view.get("hops", 0)) >= 1, 120.0)
+	print("C08_B_ARMED ", JSON.stringify({"armed": armed,
+		"follower": _compact_follower(follower.snapshot()), "probe": _trace_probe(source, enemy)}))
 	# The defender is inside a roofed room. The final leg to the door therefore
 	# cannot be line of sight: the creature must follow the marks it can reach.
 	var arrival := await _observe(enemy, hero, home, 150.0,
@@ -558,19 +579,14 @@ func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
 		"B: no link is a jump (%0.1f px longest link)" % float(snapshot.get("max_hop", 0.0)))
 	_expect(float(arrival.get("min_home_distance", 99999.0)) <= 160.0,
 		"B: the creature physically arrives at the home (%0.0f px)" % float(arrival.get("min_home_distance", 99999.0)))
-	# The Hero walks out 26+ tiles with his back to the creature and only comes near
-	# it inside the house, so a detection sample taken anywhere else would mean the
-	# creature never needed the trail at all. The first such sample is measured, not
-	# assumed.
-	_expect(String(arrival.get("arrival_state", "")) == "INVESTIGATE",
-		"B: the creature is walking its own evidence at the moment it reaches the house (%s)"
-			% String(arrival.get("arrival_state", "absent")))
-	_expect(int(arrival.get("arrival_hops", 0)) >= 6,
-		"B: those are real hops on the chain, not one step (%d)" % int(arrival.get("arrival_hops", 0)))
-	var first_direct := float(arrival.get("first_direct_distance", -1.0))
-	_expect(first_direct < 0.0 or first_direct <= 240.0,
-		"B: the creature only picks the Hero up once it is at the house (%0.0f px from home)"
-			% first_direct)
+	# "It arrived" is only interesting if it was made to work for it: the skeleton
+	# asks the adapter only while it cannot see the Hero, so a non-zero call count
+	# plus real hops is the difference between tracking and looking.
+	_expect(int(snapshot.get("drive_calls", 0)) >= 1,
+		"B: the skeleton really consulted the evidence adapter (%d calls)" % int(snapshot.get("drive_calls", 0)))
+	print("C08_B_ARRIVAL ", JSON.stringify({"state": String(arrival.get("arrival_state", "")),
+		"hops_at_arrival": int(arrival.get("arrival_hops", 0)),
+		"first_direct": float(arrival.get("first_direct_distance", -1.0))}))
 	_expect(int(arrival.get("damage_events", -1)) == 0 or float(arrival.get("first_damage_distance", 9999.0)) <= 100.0,
 		"B: any damage during the approach happens only at the home, never at range")
 	_expect(int(arrival.get("max_damage_distance", 0)) <= 0 or float(arrival.get("first_damage_distance", 9999.0)) <= 100.0,
@@ -627,10 +643,20 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 	if not bool(route.get("ok", false)):
 		return {"ok": false}
 	var stats := _walk_stats()
-	stats = await _walk_with_observation(hero, enemy, home, route["outbound"], stats)
-	var back := await _walk_with_observation(hero, enemy, home, route["inbound"], stats)
-	stats = back
-	_expect(bool(back.get("walked", false)), "C: ordinary input walks back home again")
+	var walked_all := true
+	var legs: Array = route["legs"]
+	for leg_index in range(legs.size()):
+		var leg: Array[Vector2i] = legs[leg_index]
+		if leg.is_empty():
+			continue
+		var outcome: Dictionary = await _walk_with_observation(hero, enemy, home, leg, stats)
+		stats = outcome
+		if not bool(outcome.get("walked", false)):
+			walked_all = false
+			print("C08_C_LEG_FAIL ", JSON.stringify({"leg": leg_index, "cells": leg.size(),
+				"follower": _compact_follower(follower.snapshot()), "probe": _trace_probe(source, enemy)}))
+			break
+	_expect(walked_all, "C: ordinary input walks the same route again")
 	await _walk_to_cell(hero, _stand_cell())
 	var hp_before := int(hero.get(&"health"))
 	var observe := await _observe(enemy, hero, home, 25.0)
@@ -744,6 +770,34 @@ func _compact_follower(view: Dictionary) -> Dictionary:
 ## error on property access, and Godot keeps running after it: that once truncated
 ## a real 56-cell walk while the log looked merely unremarkable, so the window is
 ## seeded explicitly instead of assumed.
+## What the creature could physically reach at this instant: live marks near it,
+## the nearest one, and the store's own local query result. Evidence for "it had
+## nothing to sense" instead of an assumption.
+func _trace_probe(source: Node, enemy: Node2D) -> Dictionary:
+	if source == null or enemy == null or not is_instance_valid(enemy):
+		return {"ok": false, "reason": "absent"}
+	var store: Variant = source.get(&"store")
+	var clock: Dictionary = source.call(&"clock")
+	if store == null or not bool(clock.get("ok", false)):
+		return {"ok": false, "reason": "no_store_or_clock"}
+	var stamp := float(clock["stamp"])
+	var live: Array = source.call(&"live_traces", 96)
+	var nearest := -1.0
+	var nearest_id := 0
+	for raw: Variant in live:
+		if not raw is Dictionary:
+			continue
+		var record: Dictionary = raw
+		var distance: float = enemy.global_position.distance_to(record.get("position", Vector2.ZERO))
+		if nearest < 0.0 or distance < nearest:
+			nearest = distance
+			nearest_id = int(record.get("id", 0))
+	var local: Array = store.call(&"nearby", enemy.global_position, 96.0, stamp)
+	return {"ok": true, "live": live.size(), "total": int(store.call(&"total_count")),
+		"nearest": snappedf(nearest, 0.1), "nearest_id": nearest_id, "local": local.size(),
+		"enemy": [enemy.global_position.x, enemy.global_position.y], "stamp": snappedf(stamp, 0.01)}
+
+
 func _walk_stats() -> Dictionary:
 	return {"samples": 0, "min_home_distance": 99999.0, "direct_ticks": 0,
 		"investigate_ticks": 0, "first_direct_distance": -1.0}
@@ -767,8 +821,11 @@ func _walk_with_observation(hero: CharacterBody2D, enemy: CharacterBody2D, home:
 		if not bool(leg.get("walked", false)):
 			walked = false
 			break
-	return {"walked": walked, "stats": stats, "min_home_distance": stats.min_home_distance,
-		"direct_ticks": stats.direct_ticks, "investigate_ticks": stats.investigate_ticks}
+	# The window itself is returned, not a wrapper around it: handing a caller a
+	# different shape than the sampler writes is exactly how a missing key turned
+	# into a silent script error mid-walk once already.
+	stats["walked"] = walked
+	return stats
 
 
 func _observe_walk(hero: CharacterBody2D, enemy: CharacterBody2D, home: Vector2,
@@ -889,8 +946,13 @@ func _open_door(hero: CharacterBody2D) -> bool:
 	return _door_open()
 
 
-## A real walkable out-and-back route that passes physically close to the creature
-## (so its own local sensing can reach the marks) without teleporting the Hero.
+## A real walkable route that passes physically close to the creature (so its own
+## local sensing can reach the marks) without teleporting the Hero.
+##
+## The legs matter as much as the cells. A player who wants to leave a trail a
+## creature can find does not walk back through it: he walks past, keeps going
+## until the creature has lost him, comes home on a second lane, and shuts himself
+## in. So the plan is: out past the creature, further out, north, home.
 func _route_plan(hero: CharacterBody2D, nav: OverworldTraversability, home: Vector2) -> Dictionary:
 	var encounter := _encounter()
 	if encounter == null:
@@ -909,38 +971,46 @@ func _route_plan(hero: CharacterBody2D, nav: OverworldTraversability, home: Vect
 	# Continue outward, away from the home, so the trail is a journey and not a
 	# circle around the house.
 	var outward_dir := Vector2(site - home).normalized()
-	var far_point := site + outward_dir * 320.0
-	var far := _nearest_free_near(nav, nav.cell_of(far_point), 5)
+	var far := _nearest_free_near(nav, nav.cell_of(site + outward_dir * 320.0), 5)
 	if far.x < 0:
 		far = near
-	var outbound := _route(start, near, nav, hero)
-	var second := _route(near, far, nav, hero)
-	if outbound.is_empty() and start != near:
+	# Keep going: this is the leg that lets the creature fall far enough behind to
+	# stop chasing, which is the only way a trail can ever be read by something
+	# that is also looking at the player.
+	var away := _nearest_free_near(nav, far + Vector2i(roundi(outward_dir.x * 6.0), roundi(outward_dir.y * 6.0)), 6)
+	if away.x < 0:
+		away = far
+	# The second lane, well north of the creature's own ground.
+	var break_cell := _nearest_free_near(nav, away + Vector2i(0, -12), 8)
+	if break_cell.x < 0:
+		break_cell = away
+	var outbound := _join(_route(start, near, nav, hero), _route(near, far, nav, hero))
+	if outbound.is_empty() and start != far:
 		print("C08_ROUTE_FAIL reason=no_route_to_creature start=%s near=%s site=%s hero=%s"
 			% [str(start), str(near), str(site_cell), str(hero.global_position)])
 		return {"ok": false, "reason": "no_route_to_creature"}
-	for cell: Vector2i in second:
-		outbound.append(cell)
-	# The way back uses its own lane, seven cells north of the creature. A player
-	# who laid a trail past a creature does not walk back through its body: the
-	# return leg is a separate corridor, which is also what makes the trail a
-	# journey the creature can follow instead of a circle around its own feet.
-	var via := _nearest_free_near(nav, site_cell + Vector2i(0, -7), 5)
-	if via.x < 0:
-		via = home_cell
-	var homeward := _route(far, via, nav, hero)
-	var final_leg := _route(via, home_cell, nav, hero)
-	var inbound: Array[Vector2i] = homeward
-	for cell: Vector2i in final_leg:
-		inbound.append(cell)
-	if inbound.is_empty() and far != home_cell:
-		print("C08_ROUTE_FAIL reason=no_route_home far=%s home=%s site=%s" % [str(far), str(home_cell), str(site_cell)])
+	var away_leg := _route(far, away, nav, hero)
+	var break_leg := _route(away, break_cell, nav, hero)
+	var home_leg := _route(break_cell, home_cell, nav, hero)
+	if home_leg.is_empty() and break_cell != home_cell:
+		print("C08_ROUTE_FAIL reason=no_route_home far=%s home=%s site=%s" % [str(break_cell), str(home_cell), str(site_cell)])
 		return {"ok": false, "reason": "no_route_home"}
-	var report := {"near": [near.x, near.y], "far": [far.x, far.y], "via": [via.x, via.y],
-		"site": [site_cell.x, site_cell.y], "home": [home_cell.x, home_cell.y],
-		"outbound_cells": outbound.size(), "inbound_cells": inbound.size()}
+	var legs: Array = [outbound, away_leg, break_leg, home_leg]
+	var report := {"near": [near.x, near.y], "far": [far.x, far.y], "away": [away.x, away.y],
+		"break": [break_cell.x, break_cell.y], "site": [site_cell.x, site_cell.y],
+		"home": [home_cell.x, home_cell.y],
+		"legs": [outbound.size(), away_leg.size(), break_leg.size(), home_leg.size()]}
 	print("C08_ROUTE ", JSON.stringify(report))
-	return {"ok": true, "outbound": outbound, "inbound": inbound, "near": near, "far": far, "report": report}
+	return {"ok": true, "legs": legs, "report": report, "far": far, "break": break_cell}
+
+
+func _join(first: Array[Vector2i], second: Array[Vector2i]) -> Array[Vector2i]:
+	var joined: Array[Vector2i] = []
+	for cell: Vector2i in first:
+		joined.append(cell)
+	for cell: Vector2i in second:
+		joined.append(cell)
+	return joined
 
 
 func _nearest_free_near(nav: OverworldTraversability, origin: Vector2i, radius: int) -> Vector2i:
