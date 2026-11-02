@@ -20,7 +20,15 @@ const ENEMY_SCENE := "res://game/characters/enemies/skeleton_enemy.tscn"
 ## invitation to investigate, never a subscription to the player's position.
 const C08_FOLLOWER := preload("res://game/survival/c08_trace_follower.gd")
 const C08_SETTING := "survival/c08_trace_follow"
-const C08_LEASH := 1800.0
+## The encounter's own release distance, measured from its site. It must not be
+## tighter than the evidence law it now shares a creature with: the follower stops
+## pursuing beyond 1400 px from the habitat, but a real trail loops - out past the
+## creature, further out, and home on another lane - so the body can be much
+## further from the site than the straight line home suggests. At 1800 px a
+## legitimate pursuit was released mid-chain and respawned at its site, which reads
+## as a trail that ate its own hunter. 2800 px keeps the bound while covering the
+## longest real approach the slice produces.
+const C08_LEASH := 2800.0
 ## A hit can award the Hero's existing combat score even when score_reward is
 ## zero. Reserve the existing one-use receipt durably BEFORE exposing an enemy.
 ## This prevents hit/score effects on failed saves; it is deliberately

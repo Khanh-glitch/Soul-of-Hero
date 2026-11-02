@@ -547,7 +547,16 @@ func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
 		var leg: Array[Vector2i] = legs[index]
 		if leg.is_empty():
 			continue
-		var outcome: Dictionary = await _walk_with_observation(hero, enemy, home, leg, stats)
+		# The encounter owns the body and may release it (its own leash rule), in which
+		# case a typed parameter cannot be handed a freed instance. Re-resolve per leg
+		# and say so plainly instead of raising inside the walker.
+		var live_enemy := _alive_enemy(enemy)
+		if live_enemy == null:
+			print("C08_ENEMY_LOST ", JSON.stringify({"leg": index,
+				"encounter": encounter.call(&"c08_snapshot")}))
+			walked_home = false
+			break
+		var outcome: Dictionary = await _walk_with_observation(hero, live_enemy, home, leg, stats)
 		stats = outcome
 		if not bool(outcome.get("walked", false)):
 			walked_home = false
