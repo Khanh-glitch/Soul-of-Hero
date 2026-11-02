@@ -664,25 +664,52 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 	# Give the creature time to walk its own way home, so this run starts from the
 	# habitat and not from the previous counterfactual's doorstep.
 	var habitat := _encounter()
-	if habitat == null or not is_instance_valid(enemy):
-		_expect(false, "C: the creature and its habitat still exist")
+	if habitat == null:
+		_expect(false, "C: the encounter still owns a habitat")
 		return {"ok": false}
-	# Ordinary retreat. The creature is standing on the doorstep: the defender walks
-	# out and away until it loses him, which is the only way this run can start from
-	# a creature that is back on its own ground instead of at the house.
+	if _alive_enemy(enemy) == null:
+		# B's defence phase can end with the encounter released; the seam re-arms on
+		# its own cooldown. Wait for the body rather than failing on the reference.
+		await _wait_until(func() -> bool: return _alive_enemy(_enemy()) != null, 90.0)
+		enemy = _alive_enemy(_enemy())
+	if enemy == null:
+		print("C08_C_NO_ENEMY ", JSON.stringify(habitat.call(&"c08_snapshot")))
+		_expect(false, "C: a creature is present for the cold-trail run")
+		return {"ok": false}
+	# Ordinary retreat. The creature is standing on the doorstep from case B, and it
+	# hits what it can see, so standing still to wait for it to go home would kill
+	# the defender: 14 damage a hit and 1100 health is under two minutes of standing.
+	# The retreat is walked in steps until the creature is genuinely off him, and the
+	# waiting happens from that distance.
 	var outside_c := _nearest_free_near(nav, _door_cell() + Vector2i(0, -2), 2)
 	if await _open_door(hero) and outside_c.x >= 0:
 		var path_c: Array[Vector2i] = [outside_c]
 		await _walk_path(hero, path_c)
-	var retreat := _nearest_free_near(nav, nav.cell_of(hero.global_position) + Vector2i(0, -14), 6)
-	if retreat.x >= 0:
-		await _walk_to_cell(hero, retreat)
+	for step in range(5):
+		var live := _alive_enemy(_enemy())
+		if live == null or live.global_position.distance_to(hero.global_position) > 320.0:
+			break
+		var step_cell := _nearest_free_near(nav, nav.cell_of(hero.global_position) + Vector2i(0, -10), 6)
+		if step_cell.x < 0:
+			break
+		await _walk_to_cell(hero, step_cell)
+	print("C08_C_RETREAT ", JSON.stringify({"hero": [hero.global_position.x, hero.global_position.y],
+		"enemy": [(_alive_enemy(_enemy()).global_position.x) if _alive_enemy(_enemy()) != null else -1.0,
+			(_alive_enemy(_enemy()).global_position.y) if _alive_enemy(_enemy()) != null else -1.0],
+		"hp": int(hero.get(&"health"))}))
 	var returned := await _wait_until(func() -> bool:
-		return is_instance_valid(enemy) and enemy.global_position.distance_to(habitat.global_position) <= 200.0,
+		var live := _alive_enemy(_enemy())
+		return live != null and live.global_position.distance_to(habitat.global_position) <= 200.0,
 		150.0)
+	var back_live := _alive_enemy(_enemy())
 	_expect(returned, "C: the creature returns to its habitat before the trail test (%0.0f px)"
-		% (enemy.global_position.distance_to(habitat.global_position) if is_instance_valid(enemy) else -1.0))
-	if retreat.x >= 0:
+		% (back_live.global_position.distance_to(habitat.global_position) if back_live != null else -1.0))
+	if not returned:
+		print("C08_C_HABITAT_FAIL ", JSON.stringify({"encounter": habitat.call(&"c08_snapshot"),
+			"hero_hp": int(hero.get(&"health"))}))
+		return {"ok": false}
+	enemy = back_live
+	if outside_c.x >= 0:
 		await _walk_to_cell(hero, outside_c)
 	var _window_failures_before := failures.size()
 	follower.begin_window("C_broken_chain")
