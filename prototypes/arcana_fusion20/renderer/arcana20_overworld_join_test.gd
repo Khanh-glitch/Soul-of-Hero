@@ -1585,6 +1585,9 @@ func _phase_sweep(app: Node, world: Node, player: Node2D, enemy: Node2D, camera:
                     var alpha_max := -INF
                     var light_max := 0.0
                     var active_count := 0
+                    var star_peak := 0.0
+                    var body_peak := 0.0
+                    var source_clipped := 0
                     for n in range(DFx.N):
                         if d_frame.d_warp_influence[n] != 0:
                             var av: float = d_frame.d_world_warp[n * 4 + 3]
@@ -1592,19 +1595,28 @@ func _phase_sweep(app: Node, world: Node, player: Node2D, enemy: Node2D, camera:
                             alpha_max = maxf(alpha_max, av)
                             active_count += 1
                         light_max = maxf(light_max, maxf(d_frame.d_rgb[n * 3], maxf(d_frame.d_rgb[n * 3 + 1], d_frame.d_rgb[n * 3 + 2])))
-                    var states := [0, 1, 2, 0]
-                    var names := ["source_formula", "shimmer_off", "bounded", "source_restored"]
+                        star_peak = maxf(star_peak, maxf(d_frame.d_star_rgb[n * 3], maxf(d_frame.d_star_rgb[n * 3 + 1], d_frame.d_star_rgb[n * 3 + 2])))
+                        body_peak = maxf(body_peak, maxf(d_frame.d_body_rgb[n * 3], maxf(d_frame.d_body_rgb[n * 3 + 1], d_frame.d_body_rgb[n * 3 + 2])))
+                        if d_frame.d_rgb[n * 3] >= 0.999 and d_frame.d_rgb[n * 3 + 1] >= 0.999 and d_frame.d_rgb[n * 3 + 2] >= 0.999:
+                            source_clipped += 1
+                    check(star_peak > 0.0 and body_peak > 0.0, "D19 independently accumulated star and body layers")
+                    # Same source frame, world and camera for all comparisons.
+                    # [shimmer mode, light mode]; do not change source fields.
+                    var states := [[0,0],[1,0],[2,0],[2,1],[2,2],[2,3],[2,4],[2,5],[0,0]]
+                    var names := ["source_formula", "shimmer_off", "bounded", "layered", "warp_only", "source_light", "star_only", "body_only", "source_restored"]
                     var captures: Array[Image] = []
                     for index in range(states.size()):
-                        d_viewer._material.set_shader_parameter("shimmer_presentation", states[index])
+                        d_viewer._material.set_shader_parameter("shimmer_presentation", states[index][0])
+                        d_viewer._material.set_shader_parameter("light_presentation", states[index][1])
                         await process_frame
                         await process_frame
                         captures.append(await save_frame("d19_%d_%s" % [requested, names[index]]))
-                    check(images_equal(captures[0], captures[3]), "D19 identical source formula restored at tick %d" % requested)
+                    check(images_equal(captures[0], captures[8]), "D19 identical source formula restored at tick %d" % requested)
                     check(not images_equal(captures[0], captures[1]), "D19 heat shimmer has a visible world effect at tick %d" % requested)
                     check(not images_equal(captures[0], captures[2]), "D19 bounded presentation differs at tick %d" % requested)
-                    print("D19_ISOLATION ", JSON.stringify({"tick":requested,"lighting":lighting,"warp_alpha_min":alpha_min,"warp_alpha_max":alpha_max,"active_warp_pixels":active_count,"source_light_max":light_max,"warp_fade":d_frame.d_warp_fade,"source_to_world":str(d_frame.source_to_world),"world":"real frozen overworld; unchanged actors and camera", "formula":"0 legacy / 1 off / 2 amplitude/(1+abs(amplitude)) / 0 restore", "source_fields_unchanged":true}))
+                    print("D19_ISOLATION ", JSON.stringify({"tick":requested,"lighting":lighting,"warp_alpha_min":alpha_min,"warp_alpha_max":alpha_max,"active_warp_pixels":active_count,"source_light_max":light_max,"independent_star_peak":star_peak,"independent_body_peak":body_peak,"rgba8_all_channel_saturated_pixels":source_clipped,"warp_fade":d_frame.d_warp_fade,"source_to_world":str(d_frame.source_to_world),"world":"real frozen overworld; unchanged actors and camera", "formula":"0 legacy / 1 off / 2 amplitude/(1+abs(amplitude)) / 0 restore", "source_fields_unchanged":true}))
                     d_viewer._material.set_shader_parameter("shimmer_presentation", 2)
+                    d_viewer._material.set_shader_parameter("light_presentation", 1)
             var tick_value := int(source.get("source_tick")) if source is BSourcePlayer else int(source.get("_tick"))
             var families: Dictionary = mount._passes.get(id, {})
             samples.append({"label": labels[sample_index], "requested_tick": requested, "native_tick": tick_value,

@@ -27,15 +27,24 @@ func consume(frame: Arcana20SourcePassFrame) -> void:
     if frame.family != &"D" or frame.source_size != Vector2i(DFx.W, DFx.H): return
     var light := PackedFloat32Array()
     var influence := PackedFloat32Array()
+    var star := PackedFloat32Array()
+    var body := PackedFloat32Array()
+    star.resize(DFx.N * 4)
+    body.resize(DFx.N * 4)
     light.resize(DFx.N * 4)
     influence.resize(DFx.N * 4)
     for p in range(DFx.N):
         light[p * 4] = frame.d_rgb[p * 3]
         light[p * 4 + 1] = frame.d_rgb[p * 3 + 1]
         light[p * 4 + 2] = frame.d_rgb[p * 3 + 2]
+        for channel in range(3):
+            star[p * 4 + channel] = frame.d_star_rgb[p * 3 + channel]
+            body[p * 4 + channel] = frame.d_body_rgb[p * 3 + channel]
         influence[p * 4 + 3] = float(frame.d_influence[p] | frame.d_warp_influence[p])
     _sprite.texture = _set_texture("light", light)
     _material.set_shader_parameter("light_tex", _sprite.texture)
+    _material.set_shader_parameter("star_tex", _set_texture("star", star))
+    _material.set_shader_parameter("body_tex", _set_texture("body", body))
     _material.set_shader_parameter("warp_tex", _set_texture("warp", frame.d_world_warp))
     _material.set_shader_parameter("influence_tex", _set_texture("influence", influence))
     _material.set_shader_parameter("source_time", frame.d_renderer_time)

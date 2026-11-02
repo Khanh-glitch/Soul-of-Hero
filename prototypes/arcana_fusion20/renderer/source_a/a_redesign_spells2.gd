@@ -15,20 +15,24 @@ class RootwakeR:
     var _tips: Array = []
     func _root_curve(origin: Vector2, target: Vector2, index: int, u: float) -> Vector2:
         # A stable bowed path, with a staggered side-to-side exploratory bend.
-        var side := float(index - 1)
         var delta := target - origin
         var normal := Vector2(-delta.y, delta.x).normalized()
-        return origin.lerp(target, u) + normal * (sin(PI * u) * (side * 18.0 + sin(u * TAU + float(index)) * 4.0))
+        # Distinct asymmetrical exploratory trajectories rather than three
+        # concentric arcs. Endpoints stay exact for the real source cue.
+        var bend: float = [-23.0, 8.0, 34.0][index]
+        var phase: float = [0.1, 1.7, 3.0][index]
+        var skew := pow(u, [0.65, 1.25, 0.85][index])
+        return origin.lerp(target, u) + normal * sin(PI * u) * (bend + 10.0 * sin(skew * TAU + phase))
     func setup() -> void:
         _roots.clear()
         _tips.clear()
         for i in range(3):
-            var origin := CASTER + Vector2(10.0, -4.0)
+            var origin: Vector2 = CASTER + [Vector2(4, -12), Vector2(10, -4), Vector2(14, 6)][i]
             var destination := C + Vector2(float(i - 1) * 12.0, 7.0 + float(i % 2) * 3.0)
             var points: Array = []
             for n in range(25):
                 points.append(_root_curve(origin, destination, i, float(n) / 24.0))
-            var bs: Array = [{"pts": points, "w": 3.2, "depth": 0, "grow": 0.0, "seed": 13131 + i, "attach": 0.0}]
+            var bs: Array = [{"pts": points, "w": [2.3, 5.2, 3.0][i], "depth": 0, "grow": 0.0, "seed": 13131 + i, "attach": 0.0}]
             # Each trunk has its own irregular branch population and origin
             # beats; do not reconstruct the rejected uniform cage.
             for j in range([2, 4, 3][i]):
@@ -75,7 +79,8 @@ class RootwakeR:
             var u := float(n) / float(pts.size() - 1)
             var along := u if int(branch.depth) == 0 else lerpf(attach, 1.0, u)
             var point: Vector2 = pts[n]
-            result.append(point - Vector2(0, lift * sin(PI * along)))
+            # All child junctions inherit exactly the parent's loaded bend.
+            result.append(point - Vector2(lift * 0.38, lift) * sin(PI * along))
         return result
     func render(fb: AFramebuffer, t: float) -> void:
         var retract := 1.0 - AMath.seg(t, 7.2, 8.4)
@@ -105,7 +110,9 @@ class RootwakeR:
                     func(u: float, br: Dictionary) -> float:
                         return maxf(0.5, float(br.w) * 0.35 * (1.0 - u * 0.6)))
         if tension > 0.0:
-            for i in range(_tips.size()):
+            # One principal target-driven thorn, supported by the other two
+            # unequal living trunks; three equal arches made a static cage.
+            for i in [1]:
                 var main: Dictionary = _roots[i][0]
                 var visible_main := _visible_growth(float(main.grow), t)
                 var attached := AMath.cl01((visible_main - 0.75) / 0.25)
@@ -131,8 +138,8 @@ class RootwakeR:
                 var direction: Vector2 = (_tips[i] as Vector2 - tp).normalized()
                 var thorn_side := Vector2(-direction.y, direction.x)
                 var thorn_base: Vector2 = points[8]
-                var point: Vector2 = thorn_base.lerp(_tips[i] + direction * 7.0, attack)
-                var thorn_foot := thorn_side * (4.5 * attack)
+                var point: Vector2 = thorn_base.lerp(_tips[i] + direction * 15.0, attack)
+                var thorn_foot := thorn_side * (6.5 * attack)
                 if attack > 0.0:
                     ADraw.poly_fill(fb, [thorn_base - thorn_foot, point, thorn_base + thorn_foot],
                         func(_x: int, _y: int) -> Variant: return Vector3(0.33, 0.42, 0.12), true, attack)

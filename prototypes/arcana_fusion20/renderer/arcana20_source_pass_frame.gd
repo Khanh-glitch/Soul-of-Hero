@@ -86,6 +86,9 @@ var a_impact_tint: Vector3
 # D: the currently ported additive layer and recorded authored bend calls;
 # bloom, decal and full WebGL post remain unresolved, not source parity.
 var d_rgb: PackedFloat32Array
+# Non-authoritative decomposed floating contributions for D LDR presentation.
+var d_star_rgb: PackedFloat32Array
+var d_body_rgb: PackedFloat32Array
 var d_influence: PackedByteArray
 var d_world_warp: PackedFloat32Array
 var d_warp_influence: PackedByteArray

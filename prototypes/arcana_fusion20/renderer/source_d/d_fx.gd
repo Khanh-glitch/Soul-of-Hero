@@ -29,6 +29,11 @@ const FLARE := 13
 const FLAKE := 18
 
 var buf := PackedFloat32Array()
+# R29 presentation-only decomposition, populated by the SAME raster calls.
+# It never replaces or feeds back into the source-normalized D buffer.
+var world_star := PackedFloat32Array()
+var world_body := PackedFloat32Array()
+var world_layer_star := false
 var track_world_fields := false
 # Experimental intermediate-fixed-step elision: simulation, warp and events
 # still run; only an additive buffer cleared on the next step may be skipped.
@@ -65,6 +70,8 @@ static func source_rng(seed: int) -> BMath.BRng:
 
 func _init() -> void:
     buf.resize(N * 3)
+    world_star.resize(N * 3)
+    world_body.resize(N * 3)
     world_influence.resize(N)
     world_warp.resize(N * 4)
     world_warp_influence.resize(N)
@@ -73,6 +80,9 @@ func _init() -> void:
 func clear() -> void:
     buf.fill(0.0)
     if track_world_fields:
+        world_star.fill(0.0)
+        world_body.fill(0.0)
+        world_layer_star = false
         world_influence.fill(0)
         world_bends.clear()
         # Original D renderer ping-pongs warp with exp(-3.4*dt) decay.
@@ -223,6 +233,17 @@ func _add_px(x: int, y: int, r: float, g: float, b: float) -> void:
     var i := (y * W + x) * 3
     if track_world_fields:
         world_influence[y * W + x] = 1
+        # Accumulate independent unquantized inputs from the authored D
+        # operations. This avoids mistaking saturated RGBA8 source light for
+        # missing source geometry; source `buf` below remains unchanged.
+        if world_layer_star:
+            world_star[i] += r
+            world_star[i + 1] += g
+            world_star[i + 2] += b
+        else:
+            world_body[i] += r
+            world_body[i + 1] += g
+            world_body[i + 2] += b
     if rgba8_scene_blend:
         buf[i] = roundf(clampf(buf[i] + r, 0.0, 1.0) * 255.0) / 255.0
         buf[i + 1] = roundf(clampf(buf[i + 1] + g, 0.0, 1.0) * 255.0) / 255.0

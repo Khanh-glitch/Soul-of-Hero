@@ -171,7 +171,12 @@ func update(t: float, dt: float) -> void:
             fx.line([CENTER.x, CENTER.y, CENTER.x + cos(a) * rr * 1.2, CENTER.y + sin(a) * rr * 0.9], 0.6, lc, {"hard": 1.0, "glow": 1.0})
         var sc1 := DFx.ramp(P, 1.0, 1.0)
         sc1.a = 0.95 * su
+        # Tag only the original central STAR operation for the optional LDR
+        # presentation reconstruction; original call and source `buf` remain
+        # exactly the same, including seed, timing, size and rotation.
+        fx.world_layer_star = true
         fx.sp(CENTER.x, CENTER.y, 8.0 + 20.0 * su, sc1, DFx.STAR, {"rot": t * 1.2, "hard": 1.2, "glow": 1.4})
+        fx.world_layer_star = false
         var sc2 := DFx.ramp(P, 0.8, 0.5)
         sc2.a = 0.45 * su
         fx.sp(CENTER.x, CENTER.y, 30.0 + 50.0 * su, sc2, DFx.SOFT, {"hard": 1.0})

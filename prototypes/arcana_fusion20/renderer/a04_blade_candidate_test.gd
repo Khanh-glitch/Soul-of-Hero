@@ -54,9 +54,10 @@ func _initialize() -> void:
         push_error("A04_BLADE_FAIL cocked tip leaves source framebuffer")
         quit(1)
         return
-    for bs in spell._cracks:
+    for section in range(spell._cracks.size()):
+        var bs: Array = spell._cracks[section]
         var root: Vector2 = bs[0].pts[0]
-        if absf((root - ARedesignSpells.C).dot(normal)) > 0.001:
+        if root.distance_to(spell._fault_point((float(section) + 0.5) / 5.0)) > 0.001:
             push_error("A04_BLADE_FAIL branch root is disconnected from cut")
             quit(1)
             return
@@ -64,7 +65,7 @@ func _initialize() -> void:
     var impacts := 0
     for event in events:
         if event.kind == "rupture_impact":
-            if absf((event.pos_local - ARedesignSpells.C).dot(normal)) > 0.001 or absf(float(event.t) - (4.6 + impacts * 0.08)) > 0.001:
+            if (event.pos_local as Vector2).distance_to(spell._fault_point((float(impacts) + 0.5) / 5.0)) > 0.001 or absf(float(event.t) - (4.6 + impacts * 0.08)) > 0.001:
                 push_error("A04_BLADE_FAIL rupture cue outside the opening sequence")
                 quit(1)
                 return

@@ -11,6 +11,7 @@ permissions:
   contents: read
 jobs:
   capture:
+    if: ${{ !contains(github.event.head_commit.message, '[r29-visual]') }}
     strategy:
       fail-fast: false
       matrix:

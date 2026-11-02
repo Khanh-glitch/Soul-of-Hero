@@ -893,6 +893,27 @@ func _run() -> void:
     check(d.world_bends.is_empty() and d.world_influence[4 * DFx.W + 4] == 0, "D per-frame world light fields clear")
     check(is_equal_approx(float(d.world_warp[warp_index + 3]), warp_before * exp(-3.4 / 60.0)) and d.world_warp_influence[11 * DFx.W + 10] == 1, "D persistent warp decays by original 60Hz ping-pong factor")
 
+    # Layer collection must not change the original renderer or simulation.
+    var d_plain := DConstellationEngine.new()
+    var d_layers := DConstellationEngine.new()
+    d_plain.setup()
+    d_layers.setup()
+    for engine in [d_plain, d_layers]:
+        engine.fx.rgba8_fragment_transfer = true
+        engine.fx.rgba8_scene_blend = true
+    d_layers.fx.track_world_fields = true
+    d_plain.update(8.15, STEP)
+    d_layers.update(8.15, STEP)
+    check(d_plain.fx.buf == d_layers.fx.buf, "D collecting independent layers preserves source RGBA8 bytes")
+    check(d_plain._nodes == d_layers._nodes and d_plain._edges == d_layers._edges and d_plain._pulses == d_layers._pulses, "D layer collection preserves authored simulation state")
+    var star_max := 0.0
+    var body_max := 0.0
+    for v in d_layers.fx.world_star: star_max = maxf(star_max, v)
+    for v in d_layers.fx.world_body: body_max = maxf(body_max, v)
+    check(star_max > 0.0 and body_max > 0.0, "D independent raster layers carry actual light")
+    d_layers.fx.clear()
+    check(d_layers.fx.world_star.count(0.0) == d_layers.fx.world_star.size() and d_layers.fx.world_body.count(0.0) == d_layers.fx.world_body.size(), "D presentation layers clear for cancel and recast")
+
     var host := Arcana20Renderer.new()
     host.world_pass_mode = true
     root.add_child(host)

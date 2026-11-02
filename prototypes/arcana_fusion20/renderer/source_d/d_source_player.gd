@@ -169,6 +169,8 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     result.caster_world = _origin
     result.target_world = _target
     result.d_rgb = _eng.fx.buf
+    result.d_star_rgb = _eng.fx.world_star
+    result.d_body_rgb = _eng.fx.world_body
     result.d_influence = _eng.fx.world_influence
     result.d_world_warp = _eng.fx.world_warp
     result.d_warp_influence = _eng.fx.world_warp_influence

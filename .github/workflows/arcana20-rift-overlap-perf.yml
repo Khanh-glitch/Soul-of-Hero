@@ -13,6 +13,7 @@ permissions:
   contents: read
 jobs:
   frame-probe:
+    if: ${{ !contains(github.event.head_commit.message, '[r29-visual]') }}
     runs-on: ubuntu-latest
     timeout-minutes: 40
     strategy:

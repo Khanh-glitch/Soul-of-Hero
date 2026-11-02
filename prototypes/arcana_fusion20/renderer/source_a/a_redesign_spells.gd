@@ -20,7 +20,7 @@ class AshenGuillotineR:
         # branches visibly grow from the wound rather than an unrelated axis.
         var normal := Vector2(-_dir.y, _dir.x)
         for i in range(5):
-            var root := C + _dir * (float(i - 2) * 32.0)
+            var root := _fault_point((float(i) + 0.5) / 5.0)
             var angle := normal.angle() + (PI if i % 2 == 0 else 0.0)
             _cracks.append(ACommon.grow_branches(rng, root.x, root.y,
                 angle, 2.2, {"steps": 9, "step": 5.0, "wander": 0.24, "branch_chance": 0.4, "max_depth": 2, "width_falloff": 0.55, "speed": 2.6}))
@@ -33,7 +33,7 @@ class AshenGuillotineR:
         # Visual contact cues only; the owner decides any gameplay hit. Each
         # cue coincides with its section's first visible opening.
         for section in range(5):
-            var center := C + _dir * (-92.0 + (float(section) + 0.5) * 184.0 / 5.0)
+            var center := _fault_point((float(section) + 0.5) / 5.0)
             events.append({"t": 4.6 + float(section) * 0.08, "kind": "rupture_impact", "pos_local": center, "emitted": false})
         events.append({"t": 6.6, "kind": "wound_close", "pos_local": C, "emitted": false})
         return events
@@ -57,6 +57,12 @@ class AshenGuillotineR:
         # This is the same single blade, not an additional glowing sweep.
         var swing := AMath.ease_in(AMath.seg(t, 3.04, 3.4), 2.0)
         return _dir.rotated(-0.16 * (1.0 - swing))
+    func _fault_point(u: float) -> Vector2:
+        # A cut is a connected broken ground trace, not a straight plank.
+        # Shared endpoints ensure all banks and branches stay on the wound.
+        var n := Vector2(-_dir.y, _dir.x)
+        var bend := sin(u * PI) * (4.8 * sin(u * PI * 3.0 + 0.4) + 2.2 * sin(u * PI * 7.0))
+        return C + _dir * lerpf(-92.0, 92.0, u) + n * bend
     func render(fb: AFramebuffer, t: float) -> void:
         var slit := AMath.seg(t, 1.2, 2.4)
         var blade := AMath.seg(t, 2.6, 3.35)
@@ -115,10 +121,14 @@ class AshenGuillotineR:
             # The blade's whole edge lands as ONE diagonal cut. A shallow
             # charcoal groove remains physically present through the delay;
             # the subsequent fissure grows out of this same ground line.
-            var groove := 1.15 * cut
+            var groove := 0.8 * cut
             if t < 4.95:
-                ADraw.poly_fill(fb, [p0 - n * groove, p1 - n * groove, p1 + n * groove, p0 + n * groove],
-                    func(_x: int, _y: int) -> Variant: return Vector3(0.025, 0.018, 0.017), true, (1.0 - AMath.seg(t, 4.6, 4.95)) * close_k)
+                for segment in range(12):
+                    var start := _fault_point(float(segment) / 12.0)
+                    var finish := _fault_point(float(segment + 1) / 12.0)
+                    var side := Vector2(-(finish - start).y, (finish - start).x).normalized() * groove
+                    ADraw.poly_fill(fb, [start - side, finish - side, finish + side, start + side],
+                        func(_x: int, _y: int) -> Variant: return Vector3(0.09, 0.055, 0.04), true, (1.0 - AMath.seg(t, 4.6, 4.95)) * close_k)
             ADraw.streak(fb, p0.x, p0.y, p1.x, p1.y, 2.0, 2.0, AMath.R("fire", 0.9), (1.0 - AMath.seg(t, 3.5, 4.4)) * close_k)
         # The delayed wound opens segment by segment along the contact line.
         # Opaque charcoal fissures are actual geometry, not dark-keyed light.
@@ -127,14 +137,15 @@ class AshenGuillotineR:
             for section in range(5):
                 var u0 := float(section) / 5.0
                 var u1 := float(section + 1) / 5.0
-                var a: Vector2 = p0.lerp(p1, u0)
-                var b: Vector2 = p0.lerp(p1, u1)
+                var a: Vector2 = _fault_point(u0)
+                var b: Vector2 = _fault_point(u1)
+                var n := Vector2(-(b - a).y, (b - a).x).normalized()
                 var open := AMath.ease_out(AMath.seg(t, 4.6 + float(section) * 0.08, 5.0 + float(section) * 0.08), 2.0) * _section_visibility(section, t)
                 # Irregular opposing fracture banks, with nonzero widths at
                 # section boundaries. The old repeated diamonds looked like
                 # detached plates; the continuous undercut and staggered rock
                 # edges instead describe one wound opening along the cut.
-                var gap := 8.5 * open
+                var gap := (4.0 + 7.5 * AMath.hash2(float(section), 73.0)) * open
                 var mid_u := 0.36 + 0.19 * AMath.hash2(float(section), 14.0)
                 var upper_a: Vector2 = a + n * gap * 0.34
                 var upper_m: Vector2 = a.lerp(b, mid_u) + n * gap * (0.68 + 0.30 * AMath.hash2(float(section), 12.0))
@@ -186,7 +197,7 @@ class AshenGuillotineR:
                 var age := t - (4.6 + float(k) * 0.055)
                 if age <= 0.0 or age >= 1.5: continue
                 var seed := float(k)
-                var origin: Vector2 = p0.lerp(p1, (float(k) + 0.5) / 10.0)
+                var origin: Vector2 = _fault_point((float(k) + 0.5) / 10.0)
                 var side := -1.0 if k % 2 == 0 else 1.0
                 var travel := (14.0 + 14.0 * AMath.hash2(seed, 3.0)) * age * side
                 var lift := -42.0 * age + 30.0 * age * age
