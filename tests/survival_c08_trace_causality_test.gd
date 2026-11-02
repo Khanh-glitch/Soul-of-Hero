@@ -881,7 +881,8 @@ func _compact_follower(view: Dictionary) -> Dictionary:
 				"hop": snappedf(float(event.get("hop", 0.0)), 0.1)})
 	return {"window": String(view.get("window", "")), "sensed": int(view.get("sensed", 0)),
 		"hops": int(view.get("hops", 0)), "max_hop": snappedf(float(view.get("max_hop", 0.0)), 0.1),
-		"refused": int(view.get("refused_links", 0)), "pursuing": bool(view.get("pursuing", false)),
+		"refused": int(view.get("refused_links", 0)), "gave_up": int(view.get("gave_up", 0)),
+		"pursuing": bool(view.get("pursuing", false)),
 		"reached_end": bool(view.get("reached_end", false)),
 		"lost": String(view.get("lost_reason", "")), "goal_trace": int(view.get("goal_trace", 0)),
 		"drive_calls": int(view.get("drive_calls", 0)),

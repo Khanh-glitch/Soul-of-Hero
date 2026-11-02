@@ -57,6 +57,9 @@ var habitat := Vector2.ZERO
 var sensed_count := 0
 var hops := 0
 var refused_links := 0
+## Marks that were real but unreachable for this body. Counted so "the creature
+## walked the trail" never quietly includes a creature that stood still.
+var gave_up := 0
 var max_hop := 0.0
 var goal := Vector2.ZERO
 var goal_trace := 0
@@ -100,6 +103,7 @@ func begin_window(label: String) -> void:
 	sensed_count = 0
 	hops = 0
 	refused_links = 0
+	gave_up = 0
 	max_hop = 0.0
 	reached_end = false
 	lost_reason = ""
@@ -155,8 +159,18 @@ func drive(target: Node2D, delta: float) -> Dictionary:
 	else:
 		_goal_elapsed += delta
 	if _goal_elapsed > GOAL_TIMEOUT:
-		_stop("goal_timeout")
-		return {"active": false}
+		# The mark is real but this body cannot get to it - a wall between them, a
+		# doorway narrower than the creature. Giving up on the whole trail because of
+		# one unreachable mark is not perception, it is a bug: the creature retires
+		# that one mark and looks for another it can actually reach.
+		gave_up += 1
+		_cold_trace = goal_trace
+		_log("gave_up", goal_trace, goal, goal.distance_to(skeleton.global_position))
+		goal = Vector2.ZERO
+		goal_trace = 0
+		_goal_elapsed = 0.0
+		pursuing = false
+		return _sense(store, stamp)
 	return {"active": true, "goal": goal, "trace_id": goal_trace}
 
 
@@ -297,6 +311,7 @@ func snapshot() -> Dictionary:
 		"hops": hops,
 		"max_hop": max_hop,
 		"refused_links": refused_links,
+		"gave_up": gave_up,
 		"drive_calls": drive_calls,
 		"block_reason": block_reason,
 		"pursuing": pursuing,
