@@ -351,11 +351,11 @@ class RiptideCalligraphyR:
             # signed elliptical distance, not from the color of the world.
             var lobes: Array = []
             for lobe in range(5):
-                var v := float(lobe) / 4.0 * 2.0 - 1.0
                 var seed := float(lobe)
-                var center := front + Vector2(-thickness * (0.36 + 0.08 * sin(t * 3.0 + seed * 2.1)), v * halfspan * 0.72)
-                var rx := thickness * (0.35 + 0.09 * AMath.hash2(seed, 78.0))
-                var ry := halfspan * (0.28 + 0.05 * AMath.hash2(seed, 79.0))
+                var v := float(lobe) / 4.0 * 2.0 - 1.0 + (AMath.hash2(seed, 76.0) - 0.5) * 0.18
+                var center := front + Vector2(-thickness * (0.30 + 0.13 * AMath.hash2(seed, 77.0) + 0.08 * sin(t * 3.0 + seed * 2.1)), v * halfspan * 0.72)
+                var rx := thickness * (0.32 + 0.16 * AMath.hash2(seed, 78.0))
+                var ry := halfspan * (0.30 + 0.10 * AMath.hash2(seed, 79.0))
                 lobes.append({"center": center, "radii": Vector2(rx, ry), "seed": seed})
             var bounds := [front + Vector2(-thickness * 1.1, -halfspan * 1.1), front + Vector2(10, -halfspan * 1.1),
                 front + Vector2(10, halfspan * 1.1), front + Vector2(-thickness * 1.1, halfspan * 1.1)]
@@ -363,20 +363,18 @@ class RiptideCalligraphyR:
                 func(x: int, y: int) -> Variant:
                     var p := Vector2(float(x) + 0.5, float(y) + 0.5)
                     var nearest := 10.0
-                    var angle := 0.0
-                    var chosen := 0.0
                     for item in lobes:
                         var q: Vector2 = (p - (item.center as Vector2)) / (item.radii as Vector2)
                         var d := q.length()
-                        if d < nearest:
-                            nearest = d
-                            angle = q.angle()
-                            chosen = float(item.seed)
-                    var jitter := (AMath.fbm(float(x) * 0.15 - t, float(y) * 0.14 + t * 0.5, 2) - 0.5) * 0.17
+                        # Smooth union removes the hard Voronoi seams that
+                        # made the previous circles look like stacked coins.
+                        var h := maxf(0.55 - absf(nearest - d), 0.0) / 0.55
+                        nearest = minf(nearest, d) - h * h * 0.1375
+                    var jitter := (AMath.fbm(float(x) * 0.15 - t, float(y) * 0.14 + t * 0.5, 2) - 0.5) * 0.25
                     if nearest > 1.0 + jitter: return null
-                    var swirl := sin(angle * 2.0 + nearest * 13.0 - t * 7.0 + chosen * 1.4)
-                    var crest := AMath.cl01((nearest - 0.60) * 2.4) * AMath.cl01(0.5 + cos(angle) * 1.2)
-                    var foam := AMath.cl01((swirl - 0.72) * 3.4) * AMath.cl01((nearest - 0.25) * 3.0) + crest * 0.55
+                    var flow := AMath.fbm((float(x) - front.x) * 0.105 - t * 1.4, float(y) * 0.085 + t * 0.55, 3)
+                    var crest := AMath.cl01((nearest - 0.68) * 2.2) * AMath.cl01((p.x - front.x + thickness * 0.58) / (thickness * 0.52))
+                    var foam := AMath.cl01((flow - 0.60) * 4.0) * AMath.cl01((nearest - 0.15) * 2.5) + crest * 0.70
                     var grain := AMath.hash2(float(x), float(y) + floor(t * 6.0))
                     var c := Vector3(0.05, 0.25, 0.32) + Vector3(0.15, 0.20, 0.24) * (1.0 - nearest) + Vector3(0.42, 0.49, 0.47) * minf(1.0, foam) + Vector3.ONE * grain * 0.035
                     return c, true, fade * 0.72)
