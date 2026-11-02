@@ -96,9 +96,13 @@ jobs:
           test -s "$RUNNER_TEMP/release/windows/SOH_AVFX_Playtest.exe"
       - name: Launch exported Linux application and exercise real route
         run: |
+          set +e
           set -o pipefail
           timeout 480s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 "$RUNNER_TEMP/release/linux/SOH_AVFX_Playtest.x86_64" --audio-driver Dummy --rendering-method gl_compatibility --resolution 1280x720 --user-data-dir "$RUNNER_TEMP/playtest-user" -- --avfx-playtest-smoke 2>&1 | tee "$RUNNER_TEMP/playtest.log"
-          grep -Fq 'AVFX_PLAYTEST_SMOKE PASS' "$RUNNER_TEMP/playtest.log"
+          result=${PIPESTATUS[0]}
+          grep -E 'AVFX_PLAYTEST_|SCRIPT ERROR:|Parse Error:|Shader compilation failed|ERROR:' "$RUNNER_TEMP/playtest.log" | head -35 | while IFS= read -r line; do echo "::notice title=PLAYTEST_DIAGNOSTIC::$line"; done || true
+          [ "$result" -eq 0 ] || exit "$result"
+          grep -Fq 'AVFX_PLAYTEST_SMOKE PASS' "$RUNNER_TEMP/playtest.log" || exit 1
           ! grep -Eq 'AVFX_PLAYTEST_FAIL|SCRIPT ERROR:|Parse Error:|Shader compilation failed' "$RUNNER_TEMP/playtest.log"
       - name: Package experimental builds and manifest
         run: |

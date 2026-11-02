@@ -18,6 +18,10 @@ Với kỹ năng 05 Abyssal Bloom, chọn ngay trên bảng:
 Đổi A/B không cần khởi động lại; lần thi triển #05 đang chạy sẽ được hủy.
 Mục chọn A/B không thay đổi 19 kỹ năng còn lại. B là phương án trình bày để
 người tạo đánh giá, không tự động được duyệt Gold.
+Với kỹ năng #19: A là D nguồn với biến dạng LDR giới hạn; B là dàn dựng
+chất liệu SOH mới từ cùng điểm, đường, sao và chuyển động D. Chuyển A/B ngay
+trong lần thi triển, không khởi động lại; chọn lại A để trở về chính cách A.
+Cả hai thiếu HDR/post gốc; OUT là phần bổ sung, B không phải nguồn gốc hay Gold.
 F4 ẩn/hiện bảng; F6 thi triển, F7 thêm bộ xương thật, F8 bật/tắt AI của bộ xương thử,
 F9 đổi sáng/tối (chỉ là điều kiện thử), F10 hủy tất cả hiệu ứng. Trong bảng,
 có thể chọn thêm quái theo hàng hoặc vòng quanh người chơi; đây là bộ xương

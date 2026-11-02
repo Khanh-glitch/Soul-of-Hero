@@ -81,8 +81,8 @@ func _make_ui() -> void:
     abyssal_selector.item_selected.connect(_select_abyssal_variant)
     box.add_child(abyssal_selector)
     d19_selector = OptionButton.new()
-    d19_selector.add_item("#19 A • D nguồn (LDR)", 0)
-    d19_selector.add_item("#19 B • Dàn dựng SOH mới (LDR)", 1)
+    d19_selector.add_item("#19 A • D_SOURCE_FAITHFUL (LDR)", 0)
+    d19_selector.add_item("#19 B • D_ART_DIRECTED_LDR (SOH mới)", 1)
     d19_selector.tooltip_text = "Chuyển ngay trong lần thi triển; B là cách trình bày mới, không phải HDR hoặc nguyên bản."
     d19_selector.item_selected.connect(_select_d19_variant)
     box.add_child(d19_selector)
@@ -331,6 +331,19 @@ func _run_smoke() -> void:
         if not renderer.is_active(Arcana20SourceCatalog.canonical_id(id)):
             _smoke_fail("skill %d refused" % id); return
         renderer.cancel_skill(Arcana20SourceCatalog.canonical_id(id))
+    selector.select(18)
+    _cast_selected()
+    var constellation_id := Arcana20SourceCatalog.canonical_id(19)
+    var original_d := renderer._casts.get(constellation_id) as DSourcePlayer
+    d19_selector.select(1)
+    _select_d19_variant(1)
+    if original_d == null or renderer._casts.get(constellation_id) != original_d or not mount.d19_art_directed:
+        _smoke_fail("#19 B switched or restarted source"); return
+    d19_selector.select(0)
+    _select_d19_variant(0)
+    if renderer._casts.get(constellation_id) != original_d or mount.d19_art_directed:
+        _smoke_fail("#19 A not restored on same source"); return
+    renderer.cancel_skill(constellation_id)
     selector.select(4)
     abyssal_selector.select(1)
     _select_abyssal_variant(1)

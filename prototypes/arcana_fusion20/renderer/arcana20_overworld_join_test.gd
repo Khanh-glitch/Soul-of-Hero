@@ -1611,7 +1611,14 @@ func _phase_sweep(app: Node, world: Node, player: Node2D, enemy: Node2D, camera:
                     var captures: Array[Image] = []
                     for index in range(states.size()):
                         d_viewer._material.set_shader_parameter("shimmer_presentation", states[index][0])
-                        d_viewer._material.set_shader_parameter("light_presentation", states[index][1])
+                        if index == 13:
+                            mount.set_d19_art_directed(true)
+                            check(mount.d19_art_directed and d_source._tick == requested, "D19 UI B changes material without restarting source")
+                        elif index == 15:
+                            mount.set_d19_art_directed(false)
+                            check(not mount.d19_art_directed and d_source._tick == requested, "D19 UI A restores material without restarting source")
+                        else:
+                            d_viewer._material.set_shader_parameter("light_presentation", states[index][1])
                         await process_frame
                         await process_frame
                         captures.append(await save_frame("d19_%d_%s" % [requested, names[index]]))
