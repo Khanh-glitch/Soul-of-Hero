@@ -49,7 +49,7 @@ jobs:
         run: |
           set -o pipefail
           timeout 300s godot --headless --editor --path "$RUNNER_TEMP/avfx-playtest" --import --quit 2>&1 | tee "$RUNNER_TEMP/import.log"
-          grep -E 'SCRIPT ERROR:|Parse Error:|ERROR:' "$RUNNER_TEMP/import.log" | head -20 | while IFS= read -r line; do echo "::notice title=IMPORT_DIAGNOSTIC::$line"; done || true
+          grep -E -A 2 'SCRIPT ERROR:|Parse Error:|ERROR:' "$RUNNER_TEMP/import.log" | head -60 | while IFS= read -r line; do echo "::notice title=IMPORT_DIAGNOSTIC::$line"; done || true
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:' "$RUNNER_TEMP/import.log"
       # R17 refresh includes moving #09 caster tracking, density-adapted C
       # #11 channels, tapered #04 blade, #13 bark/#14 growth, #18 visual

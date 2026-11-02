@@ -139,7 +139,7 @@ class AshenGuillotineR:
                 var u1 := float(section + 1) / 5.0
                 var a: Vector2 = _fault_point(u0)
                 var b: Vector2 = _fault_point(u1)
-                var n := Vector2(-(b - a).y, (b - a).x).normalized()
+                var section_normal := Vector2(-(b - a).y, (b - a).x).normalized()
                 var open := AMath.ease_out(AMath.seg(t, 4.6 + float(section) * 0.08, 5.0 + float(section) * 0.08), 2.0) * _section_visibility(section, t)
                 # Irregular opposing fracture banks, with nonzero widths at
                 # section boundaries. The old repeated diamonds looked like
@@ -147,23 +147,23 @@ class AshenGuillotineR:
                 # edges instead describe one wound opening along the cut.
                 var gap := (4.0 + 7.5 * AMath.hash2(float(section), 73.0)) * open
                 var mid_u := 0.36 + 0.19 * AMath.hash2(float(section), 14.0)
-                var upper_a: Vector2 = a + n * gap * 0.34
-                var upper_m: Vector2 = a.lerp(b, mid_u) + n * gap * (0.68 + 0.30 * AMath.hash2(float(section), 12.0))
-                var upper_b: Vector2 = b + n * gap * 0.34
-                var lower_a: Vector2 = a - n * gap * 0.34
-                var lower_m: Vector2 = a.lerp(b, 0.67 - mid_u * 0.20) - n * gap * (0.45 + 0.34 * AMath.hash2(float(section), 15.0))
-                var lower_b: Vector2 = b - n * gap * 0.34
+                var upper_a: Vector2 = a + section_normal * gap * 0.34
+                var upper_m: Vector2 = a.lerp(b, mid_u) + section_normal * gap * (0.68 + 0.30 * AMath.hash2(float(section), 12.0))
+                var upper_b: Vector2 = b + section_normal * gap * 0.34
+                var lower_a: Vector2 = a - section_normal * gap * 0.34
+                var lower_m: Vector2 = a.lerp(b, 0.67 - mid_u * 0.20) - section_normal * gap * (0.45 + 0.34 * AMath.hash2(float(section), 15.0))
+                var lower_b: Vector2 = b - section_normal * gap * 0.34
                 # Uneven heaved bedrock shoulders attach to the same wound.
                 # Covered facets are material geometry, not a keyed glow; the
                 # adjoining banks remain connected while the dark split stays
                 # narrow. Differing plate widths break the old straight bar.
                 for side in [-1.0, 1.0]:
                     var jitter := AMath.hash2(float(section), 24.0 + side)
-                    var inner0: Vector2 = a + n * side * gap * 0.32
-                    var inner1: Vector2 = b + n * side * gap * 0.32
-                    var outer0: Vector2 = a + n * side * (gap + 3.0 + 4.0 * jitter) * open
-                    var outer1: Vector2 = b + n * side * (gap + 4.0 + 3.0 * (1.0 - jitter)) * open
-                    var corner: Vector2 = a.lerp(b, 0.3 + jitter * 0.35) + n * side * (gap + 7.0 + jitter * 4.0) * open
+                    var inner0: Vector2 = a + section_normal * side * gap * 0.32
+                    var inner1: Vector2 = b + section_normal * side * gap * 0.32
+                    var outer0: Vector2 = a + section_normal * side * (gap + 3.0 + 4.0 * jitter) * open
+                    var outer1: Vector2 = b + section_normal * side * (gap + 4.0 + 3.0 * (1.0 - jitter)) * open
+                    var corner: Vector2 = a.lerp(b, 0.3 + jitter * 0.35) + section_normal * side * (gap + 7.0 + jitter * 4.0) * open
                     ADraw.poly_fill(fb, [inner0, outer0, corner, outer1, inner1],
                         func(x: int, y: int) -> Variant:
                             var grain := AMath.hash2(floor(float(x) * 0.27), floor(float(y) * 0.28))
@@ -172,17 +172,17 @@ class AshenGuillotineR:
                     ADraw.streak(fb, outer0.x, outer0.y, corner.x, corner.y, 0.8, 0.6, AMath.R("ash", 0.8), open * 0.65)
                     ADraw.streak(fb, corner.x, corner.y, outer1.x, outer1.y, 0.6, 0.8, AMath.R("ash", 0.8), open * 0.65)
                 var seam := 0.65 * open
-                ADraw.poly_fill(fb, [a - n * seam, b - n * seam, b + n * seam, a + n * seam],
+                ADraw.poly_fill(fb, [a - section_normal * seam, b - section_normal * seam, b + section_normal * seam, a + section_normal * seam],
                     func(_x: int, _y: int) -> Variant: return Vector3(0.018, 0.014, 0.014), true, open * 0.96)
                 # Exposed inner faces are broken bedrock, not one black
                 # slab. Only the irregular narrow fault itself is dark.
                 ADraw.poly_fill(fb, [upper_a, upper_m, upper_b, lower_b, lower_m, lower_a],
                     func(x: int, y: int) -> Variant:
-                        var across := absf((Vector2(float(x) + 0.5, float(y) + 0.5) - a).dot(n)) / maxf(gap, 0.01)
+                        var across := absf((Vector2(float(x) + 0.5, float(y) + 0.5) - a).dot(section_normal)) / maxf(gap, 0.01)
                         var grain := AMath.hash2(floor(float(x) * 0.36), floor(float(y) * 0.36))
                         var rock := 0.18 + AMath.cl01(across) * 0.19 + grain * 0.07
                         return Vector3(rock, rock * 0.80, rock * 0.72), true, open * 0.96)
-                var fault_mid := a.lerp(b, 0.42 + 0.14 * AMath.hash2(float(section), 52.0)) + n * gap * (0.14 if section % 2 == 0 else -0.14)
+                var fault_mid := a.lerp(b, 0.42 + 0.14 * AMath.hash2(float(section), 52.0)) + section_normal * gap * (0.14 if section % 2 == 0 else -0.14)
                 ADraw.streak(fb, a.x, a.y, fault_mid.x, fault_mid.y, 0.65, 0.9, Vector3(0.04, 0.026, 0.023), open * 0.92)
                 ADraw.streak(fb, fault_mid.x, fault_mid.y, b.x, b.y, 0.9, 0.65, Vector3(0.04, 0.026, 0.023), open * 0.92)
                 ADraw.streak(fb, upper_a.x, upper_a.y, upper_m.x, upper_m.y, 1.2, 0.8, AMath.R("fire", 0.72), open * 0.60)
