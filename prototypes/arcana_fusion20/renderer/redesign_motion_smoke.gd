@@ -40,6 +40,7 @@ func _initialize() -> void:
             var clip := PackedVector2Array([Vector2(194, 94), Vector2(204, 94), Vector2(204, 106), Vector2(194, 106)])
             var clip_frame := AFramebuffer.new()
             clip_frame.track_audit_writes = true
+            clip_frame.track_world_fields = true
             clip_frame.clear()
             spell._mini_star(clip_frame, Vector2(203, 100), 0.35, 0.42, clip, 1.0)
             var clipped_pixels := 0
@@ -58,16 +59,19 @@ func _initialize() -> void:
             clip_frame.clear()
             spell._mini_attack(clip_frame, clip, Vector2(200, 100), 0.45, Vector3(1.0, 0.7, 0.4), 1.0)
             var stored_pixels := 0
+            var covered_pixels := 0
             for y in range(AFramebuffer.H):
                 for x in range(AFramebuffer.W):
-                    if clip_frame.audit_writes[y * AFramebuffer.W + x] == 0: continue
+                    var p := y * AFramebuffer.W + x
+                    if clip_frame.world_coverage[p] > 0.0: covered_pixels += 1
+                    if clip_frame.audit_writes[p] == 0 and clip_frame.world_coverage[p] <= 0.0: continue
                     stored_pixels += 1
                     if not Geometry2D.is_point_in_polygon(Vector2(float(x) + 0.5, float(y) + 0.5), clip):
                         push_error("REDESIGN_SMOKE_FAIL #18 stored event escaped crystal")
                         quit(1)
                         return
-            if stored_pixels == 0:
-                push_error("REDESIGN_SMOKE_FAIL #18 stored event invisible")
+            if stored_pixels == 0 or covered_pixels == 0:
+                push_error("REDESIGN_SMOKE_FAIL #18 stored event or material invisible")
                 quit(1)
                 return
             # Verify capture order represents progressively later moments and

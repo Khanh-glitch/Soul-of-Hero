@@ -434,6 +434,16 @@ class ChronoshardR:
                 if sample.distance_squared_to(p) <= rr * rr and Geometry2D.is_point_in_polygon(sample, hex):
                     fb.add_px(xx, yy, color.x, color.y, color.z, intensity)
 
+    func _mini_ember_body(fb: AFramebuffer, p: Vector2, radius: float, hex: PackedVector2Array, intensity: float) -> void:
+        # Covered red-orange material makes the miniature fireball distinct
+        # from white glass glints; unlike brightness-keying, coverage follows
+        # the clipped physical disc even for dark pixels.
+        for yy in range(floori(p.y - radius), ceili(p.y + radius) + 1):
+            for xx in range(floori(p.x - radius), ceili(p.x + radius) + 1):
+                var sample := Vector2(float(xx) + 0.5, float(yy) + 0.5)
+                if sample.distance_squared_to(p) <= radius * radius and Geometry2D.is_point_in_polygon(sample, hex):
+                    fb.blend(xx, yy, 0.72, 0.12, 0.035, clampf(intensity * 0.92, 0.0, 1.0))
+
     func _mini_star(fb: AFramebuffer, center: Vector2, tau: float, scale: float, hex: PackedVector2Array, intensity: float) -> void:
         # Original B's alternating 6/3-radius four-vertex projectile head,
         # clipped to the crystal; this is still an adapted A raster, not B
@@ -473,9 +483,9 @@ class ChronoshardR:
             for mote in range(5):
                 var tail := head + Vector2(-4.5 - float(mote) * 2.0, sin(float(mote) * 2.1 + tau * 4.0) * (0.8 + float(mote) * 0.35))
                 _mini_disc(fb, tail, maxf(1.0, 2.6 - float(mote) * 0.35), hex, Vector3(1.4, 0.31, 0.08), intensity * (0.85 - float(mote) * 0.12))
-            _mini_disc(fb, head, 5.2, hex, Vector3(1.2, 0.32, 0.10), intensity)
-            _mini_disc(fb, head + Vector2(-0.6, -0.8), 3.2, hex, color, intensity)
-            _mini_disc(fb, head + Vector2(-1.2, -1.4), 1.5, hex, Vector3(2.0, 1.7, 0.8), intensity)
+            _mini_ember_body(fb, head, 6.2, hex, intensity)
+            _mini_disc(fb, head + Vector2(-0.6, -0.8), 3.4, hex, Vector3(1.0, 0.38, 0.08), intensity)
+            _mini_disc(fb, head + Vector2(-1.2, -1.4), 1.5, hex, Vector3(1.3, 0.9, 0.35), intensity)
         else:
             var impact := center + Vector2(12, -2)
             for q in range(8):
