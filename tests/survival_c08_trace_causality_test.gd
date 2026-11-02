@@ -485,7 +485,8 @@ func _counterfactual_a(source: Node, encounter: Node, enemy: CharacterBody2D,
 	var stats := await _observe(enemy, hero, home, 12.0)
 	await _capture("c08_a_no_trace")
 	var snapshot: Dictionary = follower.snapshot()
-	print("C08_A ", JSON.stringify({"follower": snapshot, "observe": stats, "hero_hp": [hp_before, int(hero.get(&"health"))]}))
+	print("C08_A ", JSON.stringify({"follower": _compact_follower(snapshot), "observe": stats,
+		"hero_hp": [hp_before, int(hero.get(&"health"))]}))
 	_expect(int(snapshot.get("sensed", -1)) == 0, "A: the creature never observes a mark that does not exist")
 	_expect(int(snapshot.get("hops", -1)) == 0, "A: the creature takes no step toward the home")
 	_expect(int(stats.get("direct_ticks", -1)) == 0, "A: the hidden home is never in the creature's direct sight")
@@ -530,8 +531,8 @@ func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
 	var walked_back := await _walk_with_observation(hero, enemy, home, route["inbound"], stats)
 	_expect(walked_back.get("walked", false), "B: ordinary input walks back into the home")
 	if not walked_back.get("walked", false):
-		print("C08_B_WALK_FAIL follower=%s hero=%s home=%s" % [JSON.stringify(follower.snapshot()),
-			str(hero.global_position), str(home)])
+		print("C08_B_WALK_FAIL ", JSON.stringify({"follower": _compact_follower(follower.snapshot()),
+			"hero": [hero.global_position.x, hero.global_position.y], "home": [home.x, home.y]}))
 		return {"ok": false, "stats": walked_back}
 	stats = walked_back
 	await _walk_to_cell(hero, _stand_cell())
@@ -546,7 +547,8 @@ func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
 	)
 	var snapshot: Dictionary = follower.snapshot()
 	var hp_after := int(hero.get(&"health"))
-	print("C08_B ", JSON.stringify({"follower": snapshot, "arrival": arrival, "hero_hp": [hp_before, hp_after],
+	print("C08_B ", JSON.stringify({"follower": _compact_follower(snapshot), "arrival": arrival,
+		"hero_hp": [hp_before, hp_after], "walk": stats,
 		"enemy": [enemy.global_position.x, enemy.global_position.y], "home": [home.x, home.y]}))
 	_expect(int(snapshot.get("sensed", 0)) >= 1, "B: the creature observes real, physically local evidence")
 	_expect(int(snapshot.get("hops", 0)) >= 6,
@@ -627,7 +629,8 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 	var hp_before := int(hero.get(&"health"))
 	var observe := await _observe(enemy, hero, home, 25.0)
 	var snapshot: Dictionary = follower.snapshot()
-	print("C08_C ", JSON.stringify({"follower": snapshot, "observe": observe, "hero_hp": [hp_before, int(hero.get(&"health"))]}))
+	print("C08_C ", JSON.stringify({"follower": _compact_follower(snapshot), "observe": observe,
+		"walk": stats, "hero_hp": [hp_before, int(hero.get(&"health"))]}))
 	_expect(int(snapshot.get("sensed", 0)) >= 1, "C: the creature really observes evidence before losing it")
 	_expect(String(snapshot.get("lost_reason", "")) == "expired",
 		"C: the trail goes cold and the creature loses it (%s)" % String(snapshot.get("lost_reason", "")))
@@ -695,6 +698,28 @@ func _observe(enemy: CharacterBody2D, hero: CharacterBody2D, home: Vector2, seco
 	stats.hp_end = last_hp
 	stats.direct_ticks_at_end = 1 if (is_instance_valid(enemy) and bool(enemy.call(&"_can_detect_target", float(enemy.get(&"disengage_range"))))) else 0
 	return stats
+
+
+## The follower snapshot without the step history. A window line has to fit in a
+## CI annotation (GitHub truncates and drops long messages), so the history is
+## summarised as a count plus the last few events instead of being dumped.
+func _compact_follower(view: Dictionary) -> Dictionary:
+	var events: Array = []
+	var history: Array = view.get("history", []) if view.get("history", []) is Array else []
+	var start := maxi(0, history.size() - 6)
+	for index in range(start, history.size()):
+		var raw: Variant = history[index]
+		if raw is Dictionary:
+			var event: Dictionary = raw
+			events.append({"e": String(event.get("event", "")), "t": int(event.get("trace", 0)),
+				"hop": snappedf(float(event.get("hop", 0.0)), 0.1)})
+	return {"window": String(view.get("window", "")), "sensed": int(view.get("sensed", 0)),
+		"hops": int(view.get("hops", 0)), "max_hop": snappedf(float(view.get("max_hop", 0.0)), 0.1),
+		"refused": int(view.get("refused_links", 0)), "pursuing": bool(view.get("pursuing", false)),
+		"reached_end": bool(view.get("reached_end", false)),
+		"lost": String(view.get("lost_reason", "")), "goal_trace": int(view.get("goal_trace", 0)),
+		"drive_calls": int(view.get("drive_calls", 0)),
+		"block": String(view.get("block_reason", "")), "history": history.size(), "last": events}
 
 
 ## Every key the walk sampler writes, in one place. A missing key raises a script
@@ -765,11 +790,16 @@ func _observe_walk(hero: CharacterBody2D, enemy: CharacterBody2D, home: Vector2,
 		if hero.global_position.distance_to(point) > 4.5:
 			_set_direction(Vector2.ZERO)
 			walked = false
-			print("C08_WALK_FAIL planned=%s hero=%s cell=%s door=%s open=%s enemy=%s state=%s escapes=%d"
-				% [str(point), str(hero.global_position), str(_nav().cell_of(hero.global_position)),
-					str(_door_cell()), str(_door_open()),
-					str(enemy.global_position) if is_instance_valid(enemy) else "none",
-					String(enemy.call(&"state_label")) if is_instance_valid(enemy) else "-", escapes])
+			# One compact fact line: GitHub truncates annotations at 4 KB, so the
+			# diagnosis must not depend on a long line surviving the tail.
+			print("C08_WEDGE ", JSON.stringify({
+				"planned": [point.x, point.y],
+				"hero": [hero.global_position.x, hero.global_position.y],
+				"cell": [_nav().cell_of(hero.global_position).x, _nav().cell_of(hero.global_position).y],
+				"door_cell": [_door_cell().x, _door_cell().y], "door_open": _door_open(),
+				"enemy": [enemy.global_position.x, enemy.global_position.y] if is_instance_valid(enemy) else [],
+				"state": String(enemy.call(&"state_label")) if is_instance_valid(enemy) else "-",
+				"escapes": escapes, "dead": bool(hero.get(&"dead"))}))
 			break
 	_set_direction(Vector2.ZERO)
 	return {"walked": walked}

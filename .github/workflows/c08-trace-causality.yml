@@ -97,7 +97,17 @@ jobs:
             -- --phase=play --keep "--shots=$PWD/artifacts/shots" > "$ARTIFACT_DIR/c08-play.log" 2>&1
           rc=$?
           cat "$ARTIFACT_DIR/c08-play.log"
-          echo "::notice::c08 play exit=$rc $(grep -E 'C08_(SOURCE|ROUTE|A|B|C|FRAME)|  FAIL  |SCRIPT ERROR|Parse Error' "$ARTIFACT_DIR/c08-play.log" | tail -16 | tr '\n' '~')"
+          # GitHub truncates an annotation at 4 KB and drops everything after the
+          # tenth per step, so the diagnostic lines are emitted individually and
+          # short instead of as one long tail. This is the only readable channel
+          # when artifact and log downloads are unavailable.
+          emit_lines() {
+            local level=$1 pattern=$2 limit=$3
+            grep -E "$pattern" "$ARTIFACT_DIR/c08-play.log" | tail -n "$limit" | cut -c1-900 \
+              | while IFS= read -r line; do printf '::%s::%s\n' "$level" "$line"; done
+          }
+          emit_lines error 'C08_WEDGE|C08_ROUTE_FAIL|C08_DOOR_FAIL|C08_B_WALK_FAIL|SCRIPT ERROR|Parse Error' 5
+          emit_lines notice 'C08_(A|B|C) |C08_ROUTE |C08_FRAME |^  FAIL  ' 4
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/c08-play.log" "C08 play" "C08 TRACE CAUSALITY PLAY PASSED"
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
