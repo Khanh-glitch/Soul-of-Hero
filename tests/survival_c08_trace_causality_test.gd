@@ -766,14 +766,15 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 		return {"ok": false}
 	var plan_report: Dictionary = plan["report"]
 	var near := Vector2i(int(plan_report["near"][0]), int(plan_report["near"][1]))
-	var away := Vector2i(int(plan_report["away"][0]), int(plan_report["away"][1]))
 	var start_c := nav.cell_of(hero.global_position)
-	# Out only. A return leg lays fresh marks right next to the creature and turns a
-	# decay test into a second chase, which is exactly what an earlier run measured.
-	var legs: Array = [_route(start_c, near, nav, hero), _route(near, away, nav, hero)]
+	# One short out leg to the creature's own ground, then straight home. This case is
+	# about a bounded physical trail that is genuinely sensed and then dies; a long
+	# expedition turns it into a second endurance test, and the last run ended with a
+	# dead defender and no creature left to observe him.
+	var legs: Array = [_route(start_c, near, nav, hero)]
 	print("C08_C_ROUTE ", JSON.stringify({"near": [near.x, near.y], "away": [away.x, away.y],
-		"home": [outside_c.x, outside_c.y], "legs": [(legs[0] as Array).size(), (legs[1] as Array).size()]}))
-	if (legs[0] as Array).is_empty() or (legs[1] as Array).is_empty():
+		"home": [outside_c.x, outside_c.y], "legs": [(legs[0] as Array).size()]}))
+	if (legs[0] as Array).is_empty():
 		_expect(false, "C: the cold-trail route is walkable")
 		return {"ok": false}
 	var stats := _walk_stats()
@@ -796,18 +797,12 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 			print("C08_C_LEG_FAIL ", JSON.stringify({"leg": leg_index, "cells": leg.size(),
 				"follower": _compact_follower(follower.snapshot()), "probe": _trace_probe(source, enemy)}))
 			break
-	_expect(walked_all, "C: ordinary input walks the same route again")
+	_expect(walked_all, "C: ordinary input walks the bounded trail")
 	if not walked_all:
 		return {"ok": false, "stats": stats}
-	# The marks are four run-seconds old. Stand still at the end of the route and
-	# let the creature's attempt actually fail before walking back in: this run is
-	# about a lost trail, not about a defender who outran it.
-	var went_cold := await _wait_until(func() -> bool:
-		var view: Dictionary = follower.snapshot()
-		return String(view.get("lost_reason", "")) != "" and not bool(view.get("pursuing", false)), 90.0)
-	print("C08_C_COLD ", JSON.stringify({"cold": went_cold,
-		"follower": _compact_follower(follower.snapshot()), "probe": _trace_probe(source, enemy)}))
-	var cold_view: Dictionary = follower.snapshot()
+	# Home first, with the door shut behind him, and only then does the trail go cold.
+	# The defender standing in the open to watch his own marks expire is a defender
+	# the creature can simply keep hitting - which is what killed the last run.
 	await _walk_to_cell(hero, outside_c)
 	_expect(await _open_door(hero), "C: the defender reopens his own door")
 	var path_back: Array[Vector2i] = [_stand_cell()]
@@ -816,6 +811,12 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 	await _walk_to_cell(hero, _nearest_free_near(nav, _door_cell() + Vector2i(0, 1), 1))
 	_expect(await _set_door(false), "C: the home is shut again while the trail is dead")
 	await _walk_to_cell(hero, _stand_cell())
+	var went_cold := await _wait_until(func() -> bool:
+		var view: Dictionary = follower.snapshot()
+		return String(view.get("lost_reason", "")) != "" and not bool(view.get("pursuing", false)), 90.0)
+	print("C08_C_COLD ", JSON.stringify({"cold": went_cold,
+		"follower": _compact_follower(follower.snapshot()), "probe": _trace_probe(source, enemy)}))
+	var cold_view: Dictionary = follower.snapshot()
 	var hp_before := int(hero.get(&"health"))
 	var observe_enemy := _alive_enemy(_enemy())
 	if observe_enemy == null:
