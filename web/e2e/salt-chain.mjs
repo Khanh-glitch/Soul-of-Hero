@@ -98,7 +98,12 @@ try {
     const inv=await page.evaluate(()=>window.__soh.run.custody.inv.slots.map((z,i)=>z?{i,key:z.key}:null).filter(Boolean));
     const item=inv.find(z=>z.key===key);assert(item,`Missing ${key} to equip`);
     let hot=item.i;
-    if(hot>7){await openInventory();const panel=page.locator('.panel').filter({hasText:'Inventory'}).last(), cells=panel.locator('.slot');const empty=await page.evaluate(()=>window.__soh.run.custody.inv.slots.findIndex((z,i)=>i<8&&!z));assert(empty>=0,'No empty quickbar slot for tool');await cells.nth(3+item.i).click();await cells.nth(3+empty).click();await closeInventory();hot=empty;}
+    if(hot>7){
+      // The eight hotbar slots are full (including incidental tree seeds), so swap the pickaxe with carried berries through the inventory UI.
+      const replace=inv.find(z=>z.i<8&&z.key==='berries')||inv.find(z=>z.i<8&&z.key==='water_flask');assert(replace,'No ordinary consumable in hotbar to swap with the tool');
+      await openInventory();const panel=page.locator('.panel').filter({hasText:'Inventory'}).last(), cells=panel.locator('.slot');await cells.nth(3+item.i).click();await cells.nth(3+replace.i).click();await closeInventory();hot=replace.i;
+      log.push(`Moved Stone Pickaxe into hotbar slot ${hot+1} by swapping with ${replace.key} through Inventory.`);
+    }
     await page.keyboard.press(String(hot+1));await sleep(200);
     s=await state();log.push(`selected ${key} in hotbar ${hot+1}; active=${s.player.active}`);
   }
