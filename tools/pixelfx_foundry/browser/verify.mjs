@@ -97,7 +97,7 @@ if (mode === "--all" || mode === "--behavior") {
   const fin = await state();
   say("rapid switch -> last, no error", fin.id === "ui/achievement" && !/failed/i.test(fin.hint), `id=${fin.id}`);
   // combat demo: 3 effects playing simultaneously
-  await page.evaluate(() => window.__foundry.setDemo(true));
+  await page.evaluate(() => { window.__foundry.play(true); window.__foundry.setDemo(true); });
   await sleep(1200);
   const d1 = await state();
   await sleep(500);
