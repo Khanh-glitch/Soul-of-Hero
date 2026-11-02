@@ -1,3 +1,4 @@
+import {startAbyssalDiagnostic,drawAbyssalDiagnostic,postAbyssalDiagnostic} from '../arcana_c/abyssalDevLayer';
 import { startDDiagnostic, drawDDiagnostic } from '../arcana_d/devLayer';
 import { startADiagnostic, drawADiagnostic } from '../arcana_a/devLayer';
 import { startCDiagnostic, prepareCDiagnostic, shadeCDiagnostic, drawCDiagnostic, blackoutCDiagnostic, postCDiagnostic } from '../arcana_c/devLayer';
@@ -105,7 +106,7 @@ export function consumeFX(onFx: (e: any) => void) {
   while (FX.length) {
     const e = FX.shift(); onFx(e);
     switch (e.type) {
-      case 'arcana20_cast': startADiagnostic(e); startBDiagnostic(e); startCDiagnostic(e); startDDiagnostic(e); break;
+      case 'arcana20_cast': startAbyssalDiagnostic(e); startADiagnostic(e); startBDiagnostic(e); startCDiagnostic(e); startDDiagnostic(e); break;
       case 'slash': ARCS.push({ x: e.x, y: e.y, a: e.a, reach: e.reach, arc: e.arc, life: 0, max: 150, key: e.key } as Part); break;
       case 'chip': burst(e.x, e.y - 6, e.depleted ? 14 : 7, MATC[e.mat] || MATC.wood, 55, 160, 500); shakeT.set(Math.floor(e.x / 16) + Math.floor(e.y / 16) * WW, 160); break;
       case 'fell': burst(e.x, e.y - 14, 16, ['#6aa84a', '#3f7a32', '#c9935a'], 70, 60, 900); break;
@@ -206,6 +207,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   drawBDiagnostic(g, r.id, r.clock.simMs, cx, cy);
   drawCDiagnostic(g, cx, cy);
   drawDDiagnostic(g, r.id, r.clock.simMs, cx, cy);
+  drawAbyssalDiagnostic(g, r.id, r.clock.simMs, cx, cy);
   // hazard telegraphs (ground)
   for (const h of HAZ) if (h.arcanaId === undefined) drawHaz(g, h, time);
   // y-sorted drawables
@@ -241,6 +243,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   drawLight(g, r, now, time, cx, cy, ents);
   blackoutCDiagnostic(g, cx, cy);
   postCDiagnostic(g);
+  postAbyssalDiagnostic(g);
   if (flash > 0) { g.fillStyle = `rgba(255,255,255,${flash})`; g.fillRect(0, 0, VIEW_W, VIEW_H); flash = Math.max(0, flash - dtMs / 400); }
   if (p.hp < 30 && !p.dead) { const a = (1 - p.hp / 30) * (0.25 + Math.sin(time / 200) * 0.08); g.fillStyle = `rgba(160,0,0,${a})`; g.fillRect(0, 0, VIEW_W, 6); g.fillRect(0, VIEW_H - 6, VIEW_W, 6); g.fillRect(0, 0, 6, VIEW_H); g.fillRect(VIEW_W - 6, 0, 6, VIEW_H); }
 }

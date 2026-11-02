@@ -57,7 +57,10 @@ export function planArcana(id:number,x:number,y:number,angle:number,aimX:number,
       line(p0.x,p0.y,Math.atan2(p1.y-p0.y,p1.x-p0.x),Math.hypot(p1.x-p0.x,p1.y-p0.y),18*scale,44,3400);
       for(let i=0;i<5;i++){const u=(i+.5)/5,q=transformPoint(m,{x:CUT_P0.x+(CUT_P1.x-CUT_P0.x)*u,y:CUT_P0.y+(CUT_P1.y-CUT_P0.y)*u});circle(q.x,q.y,11*scale,10,4600+i*80);}break;
     }
-    case 5: circle(tx,ty,32,30); ring(tx,ty,54,15,peak+250); break;
+    case 5: {
+      // Proposed damage at the shared A/C release; source contact is visual only.
+      circle(tx,ty,32,30,5000);ring(tx,ty,96,15,5000);break;
+    }
     case 6: { // Provisional collision follows four sampled P0 wavefront slices.
       const m=aTransform({x,y},{x:tx,y:ty}),scale=Math.hypot(m.a,m.b);
       for(const t of [4.75,5.1,5.45,5.8]){const f=riptideFront(t),from=transformPoint(m,{x:f.x,y:f.y-f.height}),to=transformPoint(m,{x:f.x,y:f.y+f.height});line(from.x,from.y,Math.atan2(to.y-from.y,to.x-from.x),Math.hypot(to.x-from.x,to.y-from.y),Math.max(4,8*scale),16,t*1000);}
