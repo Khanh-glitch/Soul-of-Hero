@@ -298,6 +298,16 @@ class SkybreakerScriptR:
     func _stroke_remaining(index: int, t: float) -> float:
         var begin := 7.8 + float(_glyph.size() - 1 - index) * 0.15
         return 1.0 - AMath.seg(t, begin, begin + 0.25)
+    func _frame_point(index: int) -> Vector2:
+        var angle := -PI * 0.5 + float(index) * TAU / 8.0
+        return Vector2(232.0 + cos(angle) * 82.0, 101.0 + sin(angle) * 69.0)
+    func _frame_written(index: int, t: float) -> float:
+        var begin := 1.05 + float(index) * 0.22
+        return AMath.seg(t, begin, begin + 0.42)
+    func _frame_remaining(index: int, t: float) -> float:
+        # Outer circuit disassembles in reverse write order, ahead of cleanup.
+        var begin := 7.65 + float(7 - index) * 0.095
+        return 1.0 - AMath.seg(t, begin, begin + 0.27)
     func update(dt: float, t: float) -> void:
         pass
     func _c_bolt(fb: AFramebuffer, a: Vector2, b: Vector2, seed: float, strength: float, width: float) -> void:
@@ -309,6 +319,38 @@ class SkybreakerScriptR:
             ADraw.bolt_draw(fb, branch.pts, width * float(branch.w), AMath.R("volt", 0.6), AMath.R("volt", 1.0), strength * float(branch.w))
     func render(fb: AFramebuffer, t: float) -> void:
         var dis := 1.0 - AMath.seg(t, 8.45, 8.6)
+        # A new authored frame, not source-A parity: an eight-part circuit
+        # progressively writes around the retained internal rune. Failure
+        # separates its joints before the original C-tree climax; reverse
+        # order and visibility are explicit rather than a screen-wide glow.
+        for i in range(8):
+            var written := _frame_written(i, t)
+            var left := _frame_remaining(i, t)
+            if written <= 0.0 or left <= 0.0:
+                continue
+            var p0 := _frame_point(i)
+            var p1 := _frame_point((i + 1) % 8)
+            var failure := AMath.seg(t, 6.05, 6.8)
+            var edge := p1 - p0
+            var trim := failure * 0.08
+            var start_pt := p0 + edge * trim
+            var end_pt := p0 + edge * minf(written, 1.0 - trim)
+            var intensity := left * dis * (0.45 + 0.30 * AMath.seg(t, 3.4, 4.3))
+            ADraw.streak(fb, start_pt.x, start_pt.y, end_pt.x, end_pt.y, 1.5, 1.1, AMath.R("volt", 0.72), intensity)
+            if written > 0.92:
+                var midpoint := p0.lerp(p1, 0.5)
+                var radial := (midpoint - Vector2(232, 101)).normalized()
+                var tang := Vector2(-radial.y, radial.x)
+                var tick0 := midpoint - tang * 4.0
+                var tick1 := midpoint + radial * 7.0
+                var tick2 := midpoint + tang * 4.0
+                ADraw.streak(fb, tick0.x, tick0.y, tick1.x, tick1.y, 0.8, 0.8, AMath.R("volt", 0.82), intensity)
+                ADraw.streak(fb, tick1.x, tick1.y, tick2.x, tick2.y, 0.8, 0.8, AMath.R("volt", 0.82), intensity)
+                # An actual moving charge follows each authored circuit edge.
+                if t >= 3.6 and t < 6.8:
+                    var travel := fmod((t - 3.6) * 0.65 + float(i) * 0.125, 1.0)
+                    var charge := p0.lerp(p1, travel)
+                    ADraw.disc(fb, charge.x, charge.y, 1.5, AMath.R("volt", 1.0), intensity * 0.85)
         for i in range(_glyph.size()):
             var u := AMath.cl01(AMath.seg(t, 0.8 + float(i) * 0.55, 1.35 + float(i) * 0.55)) * _stroke_remaining(i, t)
             if u <= 0.0:
