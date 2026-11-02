@@ -209,6 +209,79 @@ class Kit:
                 out.alpha_composite(base, (x, y))
         return out
 
+    # ---------------- road material (574220-road tilesheets) ----------------
+    def road_tile(self, which="dirt"):
+        """32x32 tileable interior sampled from the committed road tilesheets.
+
+        `dirt`  <- Road2_grass.png (packed sand/earth brick roadway, freight character)
+        `cobble` <- Road1_grass.png (cobblestone, maintained track character)
+        The interior of the largest opaque piece is used so the tile has no grass fringe and
+        tiles seamlessly; edges are drawn by the compiler from the corridor boundary.
+        """
+        key = ("road", which)
+        if key in self.cache:
+            return self.cache[key]
+        name = "Road2_grass.png" if which == "dirt" else "Road1_grass.png"
+        sheet = Image.open(os.path.join(EXTRACT, "574220-roads-reference-only",
+                                        "PNG_Tiled", name)).convert("RGBA")
+        a = np.array(sheet)[:, :, 3] > 250
+        H, W = a.shape
+        best = (-1, 0, 0, 0, 0)
+        lab = np.zeros((H, W), np.int32)
+        n = 0
+        for y in range(H):
+            for x in range(W):
+                if a[y, x] and not lab[y, x]:
+                    n += 1
+                    q = [(x, y)]
+                    lab[y, x] = n
+                    x0 = x1 = x
+                    y0 = y1 = y
+                    cnt = 0
+                    while q:
+                        cx, cy = q.pop()
+                        cnt += 1
+                        x0, x1 = min(x0, cx), max(x1, cx)
+                        y0, y1 = min(y0, cy), max(y1, cy)
+                        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                            nx, ny = cx + dx, cy + dy
+                            if 0 <= nx < W and 0 <= ny < H and a[ny, nx] and not lab[ny, nx]:
+                                lab[ny, nx] = n
+                                q.append((nx, ny))
+                    if cnt > best[0]:
+                        best = (cnt, x0, y0, x1, y1)
+        _, x0, y0, x1, y1 = best
+        # centred interior crop, guaranteed inside the piece
+        size = min(32, max(16, min(x1 - x0, y1 - y0) - 12))
+        cx = (x0 + x1) // 2
+        cy = (y0 + y1) // 2
+        tile = sheet.crop((cx - size // 2, cy - size // 2, cx + size // 2, cy + size // 2))
+        tile = tile.resize((32, 32), Image.NEAREST)
+        self.cache[key] = tile
+        return tile
+
+    def soil_tiles(self, n=4):
+        """Opaque soil tiles from 665131-fields (chosen by measured zero-grass fraction)."""
+        key = ("soil", n)
+        if key in self.cache:
+            return self.cache[key]
+        sheet = Image.open(os.path.join(EXTRACT, "665131-fields", "1 Tiles",
+                                        "FieldsTileset.png")).convert("RGBA")
+        cands = []
+        for ty in range(sheet.height // 32):
+            for tx in range(sheet.width // 32):
+                t = sheet.crop((tx * 32, ty * 32, tx * 32 + 32, ty * 32 + 32))
+                a = np.array(t).astype(int)
+                if (a[:, :, 3] > 240).mean() < 0.999:
+                    continue
+                r, g, b = a[:, :, 0], a[:, :, 1], a[:, :, 2]
+                grass = ((g > r + 6) & (g > b + 6)).mean()
+                cands.append((grass, tx, ty, t))
+        cands.sort(key=lambda c: (c[0], c[1], c[2]))
+        tiles = [c[3] for c in cands[:n]]
+        self.cache[key] = tiles
+        return tiles
+
     # ---------------- crops (fields pack) ----------------
     def crop_rows(self):
         sheet = Image.open(os.path.join(EXTRACT, "665131-fields", "1 Tiles",

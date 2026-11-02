@@ -541,6 +541,127 @@ def main():
     check("A8", "spawn_starting_routes", all(r["pois_reached"] >= 5 for r in route_report),
           route_report)
 
+    # ================= R6 NETWORK GATES =================
+    net = meta.get("network") or {}
+    cls_rows = meta["class_map"]["rows"]
+    cls = np.zeros((len(cls_rows), 2000), np.uint8)
+    for y, runs in enumerate(cls_rows):
+        for s0, ln, val in runs:
+            cls[y, s0:s0 + ln] = val
+    UU = 2  # class map is one cell per GOLD unit
+    roads_net = net.get("roads", {}).get("coverage", [])
+    water_net = net.get("water", {}).get("coverage", [])
+    road_ids = {r["source_id"] for r in meta["roads"]}
+    river_ids = {r["source_id"] for r in meta["rivers"]}
+
+    # N1 source network integrity
+    missing_roads = sorted(road_ids - {c["source_id"] for c in roads_net})
+    missing_rivers = sorted(river_ids - {c["source_id"] for c in water_net})
+    check("N1", "all_land_roads_present", not missing_roads,
+          f"{len(road_ids)} authored land roads compiled, {len(missing_roads)} missing",
+          offenders=missing_roads)
+    check("N1", "all_rivers_present", not missing_rivers,
+          f"{len(river_ids)} rivers compiled, {len(missing_rivers)} missing",
+          offenders=missing_rivers)
+    nm = net.get("roads", {}).get("near_miss", [])
+    joins = [x for x in nm if x["distance"] <= 1.2]
+    ambiguous = [x for x in nm if 1.2 < x["distance"] <= 3.0]
+    joins = [x for x in nm if x["distance"] <= 1.2]
+    ambiguous = [x for x in nm if 1.2 < x["distance"] <= 3.0]
+    check("N1", "road_endpoint_joins", not ambiguous,
+          f"{len(joins)} endpoints land on another road (T junctions); "
+          f"{len(ambiguous)} sit in the ambiguous 1.2-3.0 u band; "
+          f"{len(nm) - len(joins) - len(ambiguous)} are deliberate separate approaches",
+          offenders=[f"{x['road']}@{x['at']} d={x['distance']}" for x in ambiguous])
+
+    # N2 physical continuity with the real feet box
+    phys_fail = []
+    for r in meta["roads"]:
+        pts = r["points"]
+        bad = 0
+        for i in range(len(pts) - 1):
+            (x0, y0), (x1, y1) = pts[i], pts[i + 1]
+            L = math.hypot(x1 - x0, y1 - y0)
+            n = max(1, int(L / 2))
+            for k in range(n + 1):
+                sx = (x0 + (x1 - x0) * k / n) * U
+                sy = (y0 + (y1 - y0) * k / n) * U
+                if not W.footprint_ok(sx, sy):
+                    bad += 1
+                    break
+        if bad:
+            phys_fail.append(r["source_id"])
+    check("N2", "road_walkable_with_feet_box", not phys_fail,
+          f"{len(meta['roads']) - len(phys_fail)}/{len(meta['roads'])} authored roads are "
+          f"walkable end to end with the 12x8 px box", offenders=phys_fail)
+
+    # N3 rendered material coverage (measured from the class map, not from the mask)
+    def rendered_road_at(x, y):
+        xi, yi = int(x), int(y)
+        return 0 <= xi < cls.shape[1] and 0 <= yi < cls.shape[0] and int(cls[yi, xi]) in (1, 2, 4, 5, 6)
+
+    gap_roads = []
+    for r in roads_net:
+        if r["coverage"] < 0.995:
+            gap_roads.append(f"{r['source_id']}:{r['coverage']:.3f}@{r['worst_gap_at']}")
+    check("N3", "road_rendered_coverage", not gap_roads,
+          f"{len(roads_net) - len(gap_roads)}/{len(roads_net)} roads >=99.5% rendered material",
+          offenders=gap_roads)
+    widths = {}
+    for r in roads_net:
+        widths.setdefault(r["kind"], set()).add(r["rendered_px"])
+    check("N3", "road_width_contract_honoured",
+          all(min(v) >= 12 for k, v in widths.items() if k in ("foot", "trail", "cart", "riverside")),
+          {k: sorted(v) for k, v in widths.items()})
+
+    # N4 water continuity + authored relations
+    gap_water = [f"{r['source_id']}:{r['coverage']:.3f}" for r in water_net if r["coverage"] < 0.98]
+    check("N4", "river_rendered_coverage", not gap_water,
+          f"{len(water_net) - len(gap_water)}/{len(water_net)} rivers >=98% water pixels",
+          offenders=gap_water)
+    rel = net.get("water", {}).get("relations", [])
+    bad_rel = [f"{r['river']}:{r['end']}->{r['kind']}:{r.get('ref')}"
+               for r in rel if r.get("connected") is False]
+    check("N4", "river_source_mouth_relations", not bad_rel,
+          f"{len(rel) - len(bad_rel)}/{len(rel)} authored source/mouth relations resolve within "
+          f"{net.get('water', {}).get('tolerance', 4)} u", offenders=bad_rel)
+
+    # N5 crossing legitimacy: every documented brook pass must be justified by the data
+    brooks = net.get("brook_passes", [])
+    unjust = []
+    for bp in brooks:
+        bb = min(math.hypot(bp["at"][0] - b["gold_at"][0], bp["at"][1] - b["gold_at"][1])
+                 for b in meta["bridges"])
+        if bp["river_width_units"] > 2.5 or bb <= 14:
+            unjust.append(f"{bp['road']}@{bp['at']}")
+    check("N5", "brook_passes_documented", not unjust,
+          f"{len(brooks)} brook passes, each a <=2.5 u stream with no bridge within 14 u",
+          offenders=unjust)
+    check("N5", "no_undocumented_water_crossing",
+          not net.get("water_conflict_roads"),
+          "no road corridor lies on open water", offenders=net.get("water_conflict_roads"))
+
+    # N6 functional journeys from each spawn
+    hubs = {}
+    for p in meta["pois"]:
+        for key in ("village", "quarry", "port", "elder_site"):
+            if p["arche"] == key and key not in hubs:
+                hubs[key] = p
+    journeys = []
+    for s in meta["spawns"]:
+        seen = W.flood([W.cell_of(*s["world_px"])])
+        rec = {"spawn": s.get("id") or s.get("source_id"), "reached": {}}
+        for key, p in hubs.items():
+            cx, cy = W.cell_of(*p["world_px"])
+            ok = bool(seen[cy, cx]) or any(
+                seen[min(W.CH - 1, cy + dy), min(W.CW - 1, cx + dx)]
+                for dy in (-1, 0, 1) for dx in (-1, 0, 1)
+                if 0 <= cy + dy < W.CH and 0 <= cx + dx < W.CW)
+            rec["reached"][key] = {"poi": p["source_id"], "reachable": ok}
+        journeys.append(rec)
+    check("N6", "spawn_to_hubs", all(all(v["reachable"] for v in j["reached"].values()) for j in journeys),
+          journeys)
+
     # ---------- summary ----------
     mandatory = [r for r in results if r["mandatory"]]
     failed = [r for r in mandatory if not r["passed"]]
@@ -553,7 +674,7 @@ def main():
            "world_png_sha256": (hashlib.sha256(open(os.path.join(REPO, "out", "world.png"), "rb").read()).hexdigest()
                                 if os.path.exists(os.path.join(REPO, "out", "world.png")) else None),
            "poi_access": access, "poi_entrance_anchor_px": entrances,
-           "spawn_routes": route_report,
+           "spawn_routes": route_report, "network_journeys": journeys,
            "environment": "sandbox CPU (numpy/Pillow); geometry and movement only"}
     os.makedirs(os.path.dirname(args.json), exist_ok=True)
     json.dump(out, open(args.json, "w"), indent=1)

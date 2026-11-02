@@ -32,6 +32,7 @@ from PIL import Image, ImageDraw
 
 import art_registry as ART
 import kit as KIT
+import network as NET
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, "..", ".."))
@@ -46,7 +47,7 @@ COLL = 16
 GW, GH = PW // ART_TILE, PH // ART_TILE
 CW, CH = PW // COLL, PH // COLL
 
-ROAD_HALF = {"cart": 1.4, "trail": 0.9, "foot": 0.7, "riverside": 0.8, "ferry": 0.0}
+ROAD_HALF = {k: v["render"] for k, v in NET.ROAD_WIDTH.items()}   # measured contract, see network.py
 WATER_OCCLUSION = 0.12      # a collision cell is water if >= 30% of it is wet
 
 
@@ -103,6 +104,38 @@ def stroke_polyline(mask, pts, half, value=1):
         _disc(mask, p[0], p[1], half, value)
 
 
+def fill_poly_px(rings):
+    """Fill polygon rings at world-pixel resolution (PIL, so no unit-grid clamp)."""
+    im = Image.new("1", (PW, PH), 0)
+    d = ImageDraw.Draw(im)
+    for ring in rings:
+        if ring and len(ring) >= 3:
+            d.polygon([(float(q[0]) * U, float(q[1]) * U) for q in ring], fill=1)
+    return np.array(im, bool)
+
+
+def stroke_px(mask, pts, half_px):
+    """Stamp a polyline at pixel resolution with round caps (smooth rivers, no 16 px steps)."""
+    r = max(1.0, float(half_px))
+    H, W = mask.shape
+    for i in range(len(pts) - 1):
+        x0, y0 = pts[i]
+        x1, y1 = pts[i + 1]
+        L = math.hypot(x1 - x0, y1 - y0)
+        steps = max(1, int(L / max(1.0, r * 0.5)))
+        for k in range(steps + 1):
+            t = k / steps
+            cx, cy = x0 + (x1 - x0) * t, y0 + (y1 - y0) * t
+            xa, xb = int(cx - r - 1), int(cx + r + 2)
+            ya, yb = int(cy - r - 1), int(cy + r + 2)
+            if xb <= 0 or yb <= 0 or xa >= W or ya >= H:
+                continue
+            xa, ya = max(0, xa), max(0, ya)
+            xb, yb = min(W, xb), min(H, yb)
+            yy, xx = np.ogrid[ya:yb, xa:xb]
+            mask[ya:yb, xa:xb] |= ((xx - cx) ** 2 + (yy - cy) ** 2) <= r * r
+
+
 def rect_rot(mask, cx, cy, ang, half_len, half_wid, value=1):
     ca, sa = math.cos(ang), math.sin(ang)
     r = math.hypot(half_len, half_wid) + 2
@@ -148,6 +181,22 @@ def down(mask_px, cell, thresh):
 
 
 # ---------------------------------------------------------------- main
+def _rle_v(grid):
+    rows = []
+    for y in range(grid.shape[0]):
+        row, x, runs = grid[y], 0, []
+        while x < grid.shape[1]:
+            if not row[x]:
+                x += 1
+                continue
+            s0, val = x, int(row[x])
+            while x < grid.shape[1] and row[x] == val:
+                x += 1
+            runs.append([int(s0), int(x - s0), val])
+        rows.append(runs)
+    return rows
+
+
 def _rle(grid):
     rows = []
     for y in range(grid.shape[0]):
@@ -215,7 +264,7 @@ def main(out_dir):
                               "implementation_status": "FUNCTIONAL_BLOCKED",
                               "note": "maritime route; boat movement unimplemented"})
             continue
-        half = ROAD_HALF.get(kind, 0.8)
+        half = ROAD_HALF.get(kind, NET.ROAD_WIDTH["trail"]["render"])
         stroke_polyline(roads, rd["points"], half, 1)
         road_out.append({"source_id": rd["id"], "name": rd.get("name"), "kind": kind,
                          "mode": "land", "points": rd["points"], "half_width_units": half,
@@ -252,6 +301,38 @@ def main(out_dir):
                     ford[y, x] = 1
                 ford_pts.append((sum(c[0] for c in comp) / len(comp),
                                  sum(c[1] for c in comp) / len(comp)))
+    # ---- documented brook passes -------------------------------------------------
+    # An authored trail may cross a brook (<= 2.5 GOLD units wide) with no bridge within 14 units.
+    # These are recorded individually with their evidence and painted as a stepped stone passage;
+    # they are never generated silently and never applied to navigable or wide water.
+    brook_passes = []
+    _bridge_at = [(float(b["at"][0]), float(b["at"][1])) for b in proj["bridges"]]
+    for rd in proj["roads"]:
+        if rd.get("kind") not in ("trail", "foot", "riverside"):
+            continue
+        P = [(float(q[0]), float(q[1])) for q in rd["points"]]
+        for rv in proj["rivers"]:
+            w = rv.get("width") or 3
+            if w > 2.5:
+                continue
+            Q = [(float(q[0]), float(q[1])) for q in rv["points"]]
+            for i in range(len(P) - 1):
+                for j in range(len(Q) - 1):
+                    hit = NET._seg_intersect(P[i], P[i + 1], Q[j], Q[j + 1])
+                    if not hit:
+                        continue
+                    db = min(math.hypot(hit[0] - bx, hit[1] - by) for bx, by in _bridge_at)
+                    if db <= 14:
+                        continue
+                    _disc(ford, hit[0], hit[1], 1.6, 1)
+                    brook_passes.append({"road": rd["id"], "river": rv["id"],
+                                         "river_width_units": w,
+                                         "nearest_bridge_units": round(db, 1),
+                                         "at": [round(hit[0], 2), round(hit[1], 2)],
+                                         "evidence": "trail/foot crossing of a <=2.5-unit brook, "
+                                                     "no authored bridge within 14 units",
+                                         "render": "stepped stone passage"})
+    print("documented brook passes", len(brook_passes))
     roads = (roads & ~ford).astype(np.uint8)
 
     # ---------------- bridges ----------------
@@ -423,10 +504,14 @@ def main(out_dir):
     kit = KIT.load_kit()
     fams["sand"] = [kit.sand_tile(v) for v in range(3)]
     fams["beach"] = [kit.sand_tile(v) for v in range(3)]
-    fams["gravel"] = [im.convert("RGBA") for im in fams.get("path", fams["stone"])]
+    fams["gravel"] = [im.convert("RGBA") for im in kit.soil_tiles(4)]   # riverbanks are earth, not paving
 
     # ---------------- ground grid ----------------
-    canvas = Image.new("RGBA", (PW, PH), (30, 70, 96, 255))
+    canvas = Image.new("RGBA", (PW, PH))
+    _mt = [im.convert("RGBA") for im in fams["meadow"]]
+    for ty in range(PH // ART_TILE + 1):
+        for tx in range(PW // ART_TILE + 1):
+            canvas.paste(_mt[(tx * 5 + ty * 9) % len(_mt)], (tx * ART_TILE, ty * ART_TILE))
     land_elev = elev[elev > 0] if (elev > 0).any() else elev
     q_stone, q_rock = np.percentile(land_elev, [78, 93]) if land_elev.size else (95, 150)
 
@@ -454,7 +539,7 @@ def main(out_dir):
                 box = np.s_[max(0, uy - 20):uy + 20, max(0, ux - 20):ux + 20]
                 near_coast = (sea | lakes)[box].mean() > 0.04
                 near_river = (rivers & land)[box].mean() > 0.04
-                ground[gy, gx] = "beach" if near_coast else ("gravel" if near_river else "meadow")
+                ground[gy, gx] = "beach" if near_coast else "meadow"
 
     cliff_cells = np.zeros((GH, GW), bool)
     for gy in range(GH):
@@ -480,74 +565,136 @@ def main(out_dir):
     water_px = up(water)
     shore_outer = water_px & ~erode(water_px, 4)
     shelf = water_px & ~erode(water_px, 14)
-    # ---------------- water + shoreline (crafted bands, real beach art) ----------------
-    kit = KIT.load_kit()
-    deep = erode(water_px, 22)
-    shallow = water_px & ~erode(water_px, 9)
-    mid = water_px & ~deep & ~shallow
-    bayer = ((np.array([[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]]) / 16.0))
-    yy = np.arange(PH)[:, None]
-    xx = np.arange(PW)[None, :]
-    thr = bayer[yy % 4, xx % 4]
+    # ---------------- width-aware water (pixel-resolution geometry) ----------------
+    all_land = []
+    for L in proj["land"]:
+        all_land += [r for r in (L.get("rings") or [L.get("ring")]) if r]
+    land_px = fill_poly_px(all_land)
+    sea_px = ~land_px
+    lake_rings = []
+    for lk in proj["lakes"]:
+        lake_rings += [r for r in (lk.get("rings") or [lk.get("ring")]) if r]
+    lakes_px = fill_poly_px(lake_rings)
+    river_px_mask = np.zeros((PH, PW), np.uint8)
+    for r in proj["rivers"]:
+        stroke_px(river_px_mask, [(q[0] * U, q[1] * U) for q in r["points"]],
+                  max(1.0, (r.get("width") or 3) / 2.0 * U))
+    river_px = river_px_mask.astype(bool) & land_px
+    water_px = sea_px | lakes_px | river_px
+    # depth measured in GOLD units from the bank (4 erosions cover every authored channel)
+    depth_px = np.zeros((PH, PW), np.uint8)
+    m = water_px.copy()
+    for level in range(1, 9):
+        m = erode(m, 1)
+        depth_px[m] = level * 4
+    is_river = river_px
+    is_big = water_px & ~is_river          # sea + lakes
     def C(r, g, b):
         return np.array([r, g, b, 255], np.uint8)
     c_deep, c_mid, c_shal = C(22, 64, 104), C(30, 86, 126), C(46, 112, 152)
+    c_bank = C(74, 104, 112)               # wet gravel, rivers only
     out[water_px] = c_deep
-    out[mid] = c_mid
-    out[shallow & (thr > 0.35)] = c_mid
-    out[shallow] = c_shal
-    # sub-tile dither across the deep/mid boundary so the bands never read as flat rings
-    edge_dm = deep & (thr > 0.62)
-    out[edge_dm] = c_mid
-    # wave crests: short light dashes in the shallow band, hashed so they are stable
-    crest = shallow & (((xx * 7 + yy * 13) % 61) < 3) & (thr > 0.45)
+    out[water_px & (depth_px >= 2)] = c_mid
+    out[water_px & (depth_px >= 3)] = c_mid
+    out[water_px & (depth_px <= 1)] = c_shal
+    # rivers: a one-unit wet bank line, no foam, no crests - the channel stays readable
+    river_ring = is_river & (depth_px <= 1)
+    out[river_ring] = c_bank
+    # open water: foam only where the coast is genuinely wide
+    coast_ring = is_big & (depth_px <= 1)
+    out[coast_ring] = C(214, 236, 242)
+    wide = is_big & (depth_px >= 3)
+    yy = np.arange(PH)[:, None]
+    xx = np.arange(PW)[None, :]
+    crest = wide & (((xx * 7 + yy * 13) % 61) < 3)
     out[crest] = C(122, 178, 202)
-    # foam: 2 px ring hugging the land, dithered into the water
-    ring = water_px & ~erode(water_px, 2)
-    out[ring & (thr > 0.30)] = C(214, 236, 242)
-    out[water_px & ~ring & (thr > 0.86)] = C(96, 150, 176)
     world_water = Image.fromarray(out, "RGBA")
+    bank_shadow = water_px & ~erode(water_px, 3)
+    out[bank_shadow & is_river] = C(58, 92, 104)
 
-    # real beach bands from the island tileset (32x16 crops, rotated to face the water)
+    # beach bands only along sea and lake shores; river banks keep gravel ground
     sh = 0
     for gy in range(GH):
         for gx in range(GW):
             if ground[gy, gx] == "water":
                 continue
-            def isw(dx, dy):
+            def side(dx, dy):
                 ry, rx = gy + dy, gx + dx
-                return 0 <= ry < GH and 0 <= rx < GW and ground[ry, rx] == "water"
+                if not (0 <= ry < GH and 0 <= rx < GW) or ground[ry, rx] != "water":
+                    return False
+                return bool(is_big[min(PH - 1, ry * ART_TILE + 16), min(PW - 1, rx * ART_TILE + 16)])
             var = (gx * 3 + gy * 5) % 3
             px, py = gx * ART_TILE, gy * ART_TILE
-            if isw(0, -1):
-                world_water.alpha_composite(kit.shore("n", var), (px, py))
-                sh += 1
-            elif isw(0, 1):
-                world_water.alpha_composite(kit.shore("s", var), (px, py + 16))
-                sh += 1
-            elif isw(-1, 0):
-                world_water.alpha_composite(kit.shore("w", var), (px, py))
-                sh += 1
-            elif isw(1, 0):
-                world_water.alpha_composite(kit.shore("e", var), (px + 16, py))
-                sh += 1
-    print("beach bands", sh)
+            if side(0, -1):
+                world_water.alpha_composite(kit.shore("n", var), (px, py)); sh += 1
+            elif side(0, 1):
+                world_water.alpha_composite(kit.shore("s", var), (px, py + 16)); sh += 1
+            elif side(-1, 0):
+                world_water.alpha_composite(kit.shore("w", var), (px, py)); sh += 1
+            elif side(1, 0):
+                world_water.alpha_composite(kit.shore("e", var), (px + 16, py)); sh += 1
+    print("coast bands", sh)
     out = np.array(world_water)
 
-    road_mask = up(roads) | up(ford)
-    digs = [im.convert("RGBA").resize((32, 32), Image.NEAREST)
-            for im in fams.get("path", fams["stone"])]
-    road_tex = Image.new("RGBA", (PW, PH))
-    for ty in range(PH // 32 + 1):
-        for tx in range(PW // 32 + 1):
-            road_tex.paste(digs[(tx * 7 + ty * 13) % len(digs)], (tx * 32, ty * 32))
-    road_arr = np.array(road_tex)
-    # the outer ring of the road blends into the ground with a hashed dither
-    road_core = road_mask & erode(road_mask, 3)
-    road_edge = road_mask & ~road_core
-    out[road_core] = road_arr[road_core]
-    keep = (thr < 0.55)
-    out[road_edge & keep] = road_arr[road_edge & keep]
+    # ---------------- continuous road material (per class) ----------------
+    # Roads are painted as one uninterrupted strip per material class:
+    #   earth  = freight (cart) and footpaths, from the committed fields soil tiles
+    #   stone  = maintained trails and riverside routes, from the cainos paving tiles
+    # Nothing is eroded or dithered away: the corridor never becomes intermittent.
+    raw_roads = roads.copy()
+    roads[water > 0] = 0
+    earth = np.zeros((UH, UW), np.uint8)
+    stone_r = np.zeros((UH, UW), np.uint8)
+    for rd in proj["roads"]:
+        k = rd.get("kind", "trail")
+        if k == "ferry":
+            continue
+        tgt = earth if k in ("cart", "foot") else stone_r
+        stroke_polyline(tgt, rd["points"], ROAD_HALF.get(k, 1.8), 1)
+    earth[water > 0] = 0
+    stone_r[water > 0] = 0
+
+    def tile_sheet(tiles):
+        tex = Image.new("RGBA", (PW, PH))
+        for ty in range(PH // 32 + 1):
+            for tx in range(PW // 32 + 1):
+                tex.paste(tiles[(tx * 7 + ty * 13) % len(tiles)], (tx * 32, ty * 32))
+        return np.array(tex)
+
+    soil = KIT.load_kit().soil_tiles(4)
+    pav = [im.convert("RGBA").resize((32, 32), Image.NEAREST) for im in fams.get("path", fams["stone"])]
+    for mask, tiles in ((earth, soil), (stone_r, pav)):
+        if not mask.any():
+            continue
+        base = tile_sheet(tiles)
+        core = tile_sheet(tiles[::-1])
+        m = up(mask)
+        mc = up(erode(mask, 1))
+        verge = (base.astype(np.float32) * 0.78).astype(np.uint8)
+        verge[:, :, 3] = 255
+        out[m] = verge[m]
+        out[mc] = core[mc]
+    for br in bridges:
+        for lp in (br.get("landing_a_px"), br.get("landing_b_px")):
+            if lp:
+                _disc(earth, lp[0] / U, lp[1] / U, ROAD_HALF.get(br["load"], 1.8) + 0.6, 1)
+    earth[water > 0] = 0
+    road_mask = up(earth | stone_r)
+    road_core = up(erode(earth | stone_r, 1))
+
+    # junctions: one disc of the dominant local material so joins read as a surface
+    RG = NET.build_road_graph(proj)
+    junction_pts = [n["at"] for n in RG["nodes"] if n["degree"] >= 3]
+    junction_pts += [c["at"] for c in RG["crossings"]]
+    jmask = np.zeros((UH, UW), np.uint8)
+    for jx, jy in junction_pts:
+        _disc(jmask, jx, jy, 3.0, 1)
+    jmask[water > 0] = 0
+    jm = up(jmask) & ~road_mask
+    jfill = tile_sheet(soil + pav)
+    out[jm] = jfill[jm]
+    print("road junctions", len(junction_pts), "painted", int(jm.sum()))
+
     deck_mask, rail_mask, pier_mask = up(deck), up(rail), up(piers)
     world = Image.fromarray(out, "RGBA")
     # ---- real bridge / pier sprites (committed 668008-bridges pack) ----
@@ -583,8 +730,16 @@ def main(out_dir):
     DOCK_KEEPOUT = [(d["land_anchor_px"][0], d["land_anchor_px"][1]) for d in docks
                     if d.get("anchor_valid")]
     deck_keepout = down(deck_mask, COLL, 0.10)
+    # route corridors: trunks may not stand on a road or in the water margin, but canopies above
+    # them are allowed because only the trunk point is tested here.
+    road_corridor = grow((roads > 0).astype(np.uint8), 3)
+    bank_corridor = grow(water, 1)
 
     def place(fam, wx, wy, key, collider=True, tag=None):
+        ux, uy = int(wx // U), int(wy // U)
+        if 0 <= ux < UW and 0 <= uy < UH:
+            if road_corridor[uy, ux] or bank_corridor[uy, ux]:
+                return None                  # protects the authored route corridor
         dcx, dcy = int(wx // COLL), int(wy // COLL)
         if 0 <= dcx < CW and 0 <= dcy < CH and deck_keepout[dcy, dcx]:
             return None                      # never stack props on a bridge deck
@@ -975,6 +1130,12 @@ def main(out_dir):
     flank[:, 1:] |= deck_cells[:, :-1]
     flank[:, :-1] |= deck_cells[:, 1:]
     solid |= flank & trace & ~deck_cells
+    # authored roads are guaranteed walkable: clear their cells unless the cell is mostly water
+    # collision corridor is slightly wider than the painted road: the 12 px feet box must fit
+    # even where a narrow path runs diagonally across 16 px cells (standard forgiving movement).
+    road_clear_cells = down(up(grow((earth | stone_r).astype(np.uint8), 2) > 0), COLL, 0.05)
+    deep_water_cells = down(water_px, COLL, 0.25)
+    solid &= ~(road_clear_cells & ~deep_water_cells)
     solid &= ~deck_core                       # a real deck cell is always walkable
     solid &= ~(deck_cells & ~trace)           # centreline dilation only over dry ground
     rows = []
@@ -990,7 +1151,103 @@ def main(out_dir):
             runs.append([s, x - s, 1])
         rows.append(runs)
 
+    # ---------------- semantic class map + network report ----------------
+    cls = np.zeros((UH, UW), np.uint8)
+    cls[roads > 0] = 1
+    cls[erode(roads, 1) > 0] = 2
+    cls[water > 0] = 3
+    cls[deck > 0] = 4
+    cls[piers > 0] = 5
+    cls[ford > 0] = 6
+
+    def material_at(x, y):
+        xi, yi = int(x), int(y)
+        if not (0 <= xi < UW and 0 <= yi < UH):
+            return False
+        return cls[yi, xi] in (1, 2, 4, 5, 6)   # pier decks carry dock access roads
+
+    def water_at(x, y):
+        xi, yi = int(x), int(y)
+        if not (0 <= xi < UW and 0 <= yi < UH):
+            return False
+        return cls[yi, xi] in (3, 4, 5, 6)
+
+    cov = NET.coverage(RG["roads"], material_at)
+    water_conflicts = []
+    for r in RG["roads"]:
+        pts = r["points"]
+        for i in range(len(pts) - 1):
+            (x0, y0), (x1, y1) = pts[i], pts[i + 1]
+            L = math.hypot(x1 - x0, y1 - y0)
+            n = max(1, int(L))
+            for k in range(n + 1):
+                t = k / n
+                x, y = x0 + (x1 - x0) * t, y0 + (y1 - y0) * t
+                xi, yi = int(x), int(y)
+                if 0 <= xi < UW and 0 <= yi < UH and cls[yi, xi] == 3:
+                    water_conflicts.append({"road": r["id"], "at": [round(x, 1), round(y, 1)]})
+    hydro = NET.hydro_relation_report(proj, water_at)
+    water_cov = NET.coverage([dict(points=[(float(q[0]), float(q[1])) for q in r["points"]],
+                                   id=r["id"], kind=r.get("kind"), half=0.5, px=1)
+                              for r in proj["rivers"]], water_at)
+    bad_road = [c for c in cov if c["coverage"] < 0.995]
+    bad_water = [c for c in water_cov if c["coverage"] < 0.98]
+    print("road coverage: %d/%d segments >=99.5%%, worst %.3f"
+          % (len(cov) - len(bad_road), len(cov), min(c["coverage"] for c in cov)))
+    print("water coverage: %d/%d rivers >=98%%, worst %.3f"
+          % (len(water_cov) - len(bad_water), len(water_cov), min(c["coverage"] for c in water_cov)))
+
+    # diagnostic overlays (explicitly diagnostics, never a substitute for gameplay captures)
+    ov = world_rgb.copy()
+    drw = ImageDraw.Draw(ov)
+    for r in RG["roads"]:
+        drw.line([tuple(p * U for p in q) for q in r["points"]], fill=(210, 60, 60), width=2)
+    for r in proj["rivers"]:
+        drw.line([tuple(p * U for p in q) for q in r["points"]], fill=(60, 190, 230), width=2)
+    for n in RG["nodes"]:
+        x, y = n["at"][0] * U, n["at"][1] * U
+        col = (255, 210, 60) if n["degree"] >= 3 else (250, 250, 250)
+        drw.ellipse([x - 5, y - 5, x + 5, y + 5], outline=col, width=2)
+    ov.resize((1600, 1120), Image.LANCZOS).save(os.path.join(out_dir, "network_overlay.png"))
+    dia = Image.new("RGB", (2000, 1400), (250, 249, 246))
+    dd = ImageDraw.Draw(dia)
+    for r in RG["roads"]:
+        col = {"cart": (170, 90, 40), "trail": (120, 130, 60), "foot": (80, 90, 110),
+               "riverside": (20, 120, 120)}.get(r["kind"], (100, 100, 100))
+        dd.line([(q[0], q[1]) for q in r["points"]], fill=col, width=2)
+    for r in proj["rivers"]:
+        dd.line([(q[0], q[1]) for q in r["points"]],
+                fill=(40, 120, 200), width=max(1, int((r.get("width") or 3) / 2)))
+    for n in RG["nodes"]:
+        dd.ellipse([n["at"][0] - 3, n["at"][1] - 3, n["at"][0] + 3, n["at"][1] + 3],
+                   fill=(200, 40, 40) if n["degree"] >= 3 else (60, 60, 60))
+    dia.save(os.path.join(out_dir, "network_diagram.png"))
+    network = {
+        "schema": "soh.veyra.network.v1",
+        "road_contract": NET.ROAD_WIDTH, "vehicle": NET.VEHICLE_PROVISIONAL,
+        "brook_passes": brook_passes,
+        "water_conflicts": water_conflicts[:200],
+        "water_conflict_roads": sorted({c["road"] for c in water_conflicts}),
+        "roads": {"count": len(RG["roads"]), "nodes": len(RG["nodes"]),
+                  "junctions": sum(1 for n in RG["nodes"] if n["degree"] >= 3),
+                  "crossings": len(RG["crossings"]), "near_miss": RG["near_miss"],
+                  "coverage": cov,
+                  "segments_below_99_5": [c["source_id"] for c in bad_road]},
+        "water": {"rivers": len(proj["rivers"]), "lakes": len(proj["lakes"]),
+                  "coverage": water_cov,
+                  "segments_below_98": [c["source_id"] for c in bad_water],
+                  "relations": hydro},
+        "class_map": {"encoding": "rle-[start,len,value]-per-row", "cell_px": U,
+                      "legend": {"1": "road base", "2": "road centre", "3": "water",
+                                 "4": "bridge deck", "5": "pier", "6": "ford"},
+                      "rows": _rle_v(cls)},
+    }
+    with open(os.path.join(out_dir, "network.json"), "w") as fh:
+        json.dump(network, fh, indent=1)
+
     meta = {
+        "network": {k: v for k, v in network.items() if k != "class_map"},
+        "class_map": network["class_map"],
         "schema": "soh.veyra.world.v3",
         "source": {"gold": "map_tower/veyra_gold/VEYRA_GOLD_MAP.sohmap.json",
                    "gold_sha256": hashlib.sha256(open(GOLD, "rb").read()).hexdigest(),

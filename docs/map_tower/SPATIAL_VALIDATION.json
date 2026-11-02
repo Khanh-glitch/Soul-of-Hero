@@ -1,7 +1,7 @@
 {
  "schema": "soh.veyra.spatial_validation.v2",
  "gold_sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
- "world_meta_sha256": "5145db6048f6b5cacd84f0c2dccb8a7c78e3366cbce5fab9558d74c8bbf9933c",
+ "world_meta_sha256": "fb8e44004872aa99ce8f497e130f9daab9ee112dd5df48f9ee6d4f8feb6d0207",
  "checks": [
   {
    "gate": "A1",
@@ -156,30 +156,238 @@
    "detail": [
     {
      "spawn": "sp_west",
-     "pois_reached": 52,
-     "cells": 47911
+     "pois_reached": 57,
+     "cells": 48093
     },
     {
      "spawn": "sp_lake",
-     "pois_reached": 52,
-     "cells": 47911
+     "pois_reached": 57,
+     "cells": 48093
     },
     {
      "spawn": "sp_hook",
-     "pois_reached": 52,
-     "cells": 47911
+     "pois_reached": 57,
+     "cells": 48093
     },
     {
      "spawn": "sp_gulf",
-     "pois_reached": 52,
-     "cells": 47911
+     "pois_reached": 57,
+     "cells": 48093
+    }
+   ]
+  },
+  {
+   "gate": "N1",
+   "name": "all_land_roads_present",
+   "passed": true,
+   "mandatory": true,
+   "detail": "84 authored land roads compiled, 0 missing"
+  },
+  {
+   "gate": "N1",
+   "name": "all_rivers_present",
+   "passed": true,
+   "mandatory": true,
+   "detail": "17 rivers compiled, 0 missing"
+  },
+  {
+   "gate": "N1",
+   "name": "road_endpoint_joins",
+   "passed": false,
+   "mandatory": true,
+   "detail": "105 endpoints land on another road (T junctions); 17 sit in the ambiguous 1.2-3.0 u band; 2 are deliberate separate approaches",
+   "offenders": [
+    "rd_1@[1049.139401857247, 783.245292985405] d=1.94",
+    "rd_2@[1088.687943026613, 752.7262811966848] d=1.59",
+    "rd_7@[1145.1315191707715, 886.9902075206263] d=2.07",
+    "rd_a@[1024.685629988274, 449.8533872981049] d=1.26",
+    "rd_d@[758.0740740740741, 599.425925925926] d=2.43",
+    "rd_h@[1007.8165462564732, 467.1727262863064] d=1.85",
+    "rd_p@[849.4305035025975, 974.9561872951851] d=2.73",
+    "rd_p@[844.1844855451229, 975.2536429467287] d=2.88",
+    "rd_r@[424.0, 742.0] d=1.4",
+    "rd_1c@[939.9592703111858, 203.96011202691338] d=1.21",
+    "rd_1e@[895.797671320994, 325.72033667538744] d=2.07",
+    "rd_1w@[788.8451669200736, 707.186160377063] d=1.43",
+    "rd_1x@[811.8134351620947, 772.2062032418953] d=1.46",
+    "rd_1y@[746.0952294128471, 460.8807875339175] d=1.49",
+    "rd_1y@[765.0128764359297, 320.81947769686093] d=2.19",
+    "rd_21@[1295.5361353867675, 538.2583014896784] d=1.37",
+    "rd_2a@[1012.725981000618, 296.73545798414904] d=1.47"
+   ]
+  },
+  {
+   "gate": "N2",
+   "name": "road_walkable_with_feet_box",
+   "passed": false,
+   "mandatory": true,
+   "detail": "72/84 authored roads are walkable end to end with the 12x8 px box",
+   "offenders": [
+    "rd_0",
+    "rd_i",
+    "rd_w",
+    "rd_x",
+    "rd_1f",
+    "rd_1g",
+    "rd_1n",
+    "rd_24",
+    "rd_27",
+    "rd_29",
+    "rd_2a",
+    "rd_2b"
+   ]
+  },
+  {
+   "gate": "N3",
+   "name": "road_rendered_coverage",
+   "passed": true,
+   "mandatory": true,
+   "detail": "84/84 roads >=99.5% rendered material"
+  },
+  {
+   "gate": "N3",
+   "name": "road_width_contract_honoured",
+   "passed": true,
+   "mandatory": true,
+   "detail": {
+    "cart": [
+     21
+    ],
+    "foot": [
+     12
+    ],
+    "trail": [
+     14
+    ],
+    "riverside": [
+     14
+    ]
+   }
+  },
+  {
+   "gate": "N4",
+   "name": "river_rendered_coverage",
+   "passed": true,
+   "mandatory": true,
+   "detail": "17/17 rivers >=98% water pixels"
+  },
+  {
+   "gate": "N4",
+   "name": "river_source_mouth_relations",
+   "passed": true,
+   "mandatory": true,
+   "detail": "34/34 authored source/mouth relations resolve within 4 u"
+  },
+  {
+   "gate": "N5",
+   "name": "brook_passes_documented",
+   "passed": true,
+   "mandatory": true,
+   "detail": "4 brook passes, each a <=2.5 u stream with no bridge within 14 u"
+  },
+  {
+   "gate": "N5",
+   "name": "no_undocumented_water_crossing",
+   "passed": true,
+   "mandatory": true,
+   "detail": "no road corridor lies on open water"
+  },
+  {
+   "gate": "N6",
+   "name": "spawn_to_hubs",
+   "passed": true,
+   "mandatory": true,
+   "detail": [
+    {
+     "spawn": "sp_west",
+     "reached": {
+      "elder_site": {
+       "poi": "po_hall_eyes",
+       "reachable": true
+      },
+      "quarry": {
+       "poi": "po_fracquarry",
+       "reachable": true
+      },
+      "village": {
+       "poi": "po_greywater",
+       "reachable": true
+      },
+      "port": {
+       "poi": "po_strait",
+       "reachable": true
+      }
+     }
+    },
+    {
+     "spawn": "sp_lake",
+     "reached": {
+      "elder_site": {
+       "poi": "po_hall_eyes",
+       "reachable": true
+      },
+      "quarry": {
+       "poi": "po_fracquarry",
+       "reachable": true
+      },
+      "village": {
+       "poi": "po_greywater",
+       "reachable": true
+      },
+      "port": {
+       "poi": "po_strait",
+       "reachable": true
+      }
+     }
+    },
+    {
+     "spawn": "sp_hook",
+     "reached": {
+      "elder_site": {
+       "poi": "po_hall_eyes",
+       "reachable": true
+      },
+      "quarry": {
+       "poi": "po_fracquarry",
+       "reachable": true
+      },
+      "village": {
+       "poi": "po_greywater",
+       "reachable": true
+      },
+      "port": {
+       "poi": "po_strait",
+       "reachable": true
+      }
+     }
+    },
+    {
+     "spawn": "sp_gulf",
+     "reached": {
+      "elder_site": {
+       "poi": "po_hall_eyes",
+       "reachable": true
+      },
+      "quarry": {
+       "poi": "po_fracquarry",
+       "reachable": true
+      },
+      "village": {
+       "poi": "po_greywater",
+       "reachable": true
+      },
+      "port": {
+       "poi": "po_strait",
+       "reachable": true
+      }
+     }
     }
    ]
   }
  ],
- "passed": 17,
- "failed": 0,
- "all_passed": true,
+ "passed": 26,
+ "failed": 2,
+ "all_passed": false,
  "bridge_proof": [
   {
    "bridge": "br_0",
@@ -267,8 +475,8 @@
   "br_9": "unclassified route present",
   "br_a": "unclassified route present"
  },
- "code_sha": "2c0161a38709337e3fe2bcc1489cc064b8f2a14a",
- "world_png_sha256": "26164bf035a6612693603b9a3a76698a0325029d58aa9d3279f2c225f8fbfb7f",
+ "code_sha": "042b281ed35ef67fda05d23d962f3c8f190bf075",
+ "world_png_sha256": "264d790d707cd42ddb925b89195632184993eac6a5f0c6593545498e4f23511c",
  "poi_access": {
   "po_academy": {
    "mode": "land",
@@ -780,7 +988,7 @@
   ],
   "po_lanternstn": [
    4296,
-   1256
+   1240
   ],
   "po_kestrel": [
    2808,
@@ -807,8 +1015,8 @@
    1752
   ],
   "po_greywater": [
-   3272,
-   2392
+   3256,
+   2376
   ],
   "po_pumphouse": [
    3400,
@@ -843,8 +1051,8 @@
    2568
   ],
   "po_elderwood": [
-   3464,
-   2840
+   3480,
+   2856
   ],
   "po_siloc": [
    4360,
@@ -875,7 +1083,7 @@
    1848
   ],
   "po_hook": [
-   5224,
+   5208,
    1336
   ],
   "po_mere": [
@@ -927,8 +1135,8 @@
    3384
   ],
   "po_necropolis": [
-   2408,
-   4152
+   2424,
+   4168
   ],
   "po_tombs": [
    2088,
@@ -939,8 +1147,8 @@
    3960
   ],
   "po_oasis": [
-   2648,
-   3912
+   2680,
+   3944
   ],
   "po_bonestop": [
    3016,
@@ -994,23 +1202,109 @@
  "spawn_routes": [
   {
    "spawn": "sp_west",
-   "pois_reached": 52,
-   "cells": 47911
+   "pois_reached": 57,
+   "cells": 48093
   },
   {
    "spawn": "sp_lake",
-   "pois_reached": 52,
-   "cells": 47911
+   "pois_reached": 57,
+   "cells": 48093
   },
   {
    "spawn": "sp_hook",
-   "pois_reached": 52,
-   "cells": 47911
+   "pois_reached": 57,
+   "cells": 48093
   },
   {
    "spawn": "sp_gulf",
-   "pois_reached": 52,
-   "cells": 47911
+   "pois_reached": 57,
+   "cells": 48093
+  }
+ ],
+ "network_journeys": [
+  {
+   "spawn": "sp_west",
+   "reached": {
+    "elder_site": {
+     "poi": "po_hall_eyes",
+     "reachable": true
+    },
+    "quarry": {
+     "poi": "po_fracquarry",
+     "reachable": true
+    },
+    "village": {
+     "poi": "po_greywater",
+     "reachable": true
+    },
+    "port": {
+     "poi": "po_strait",
+     "reachable": true
+    }
+   }
+  },
+  {
+   "spawn": "sp_lake",
+   "reached": {
+    "elder_site": {
+     "poi": "po_hall_eyes",
+     "reachable": true
+    },
+    "quarry": {
+     "poi": "po_fracquarry",
+     "reachable": true
+    },
+    "village": {
+     "poi": "po_greywater",
+     "reachable": true
+    },
+    "port": {
+     "poi": "po_strait",
+     "reachable": true
+    }
+   }
+  },
+  {
+   "spawn": "sp_hook",
+   "reached": {
+    "elder_site": {
+     "poi": "po_hall_eyes",
+     "reachable": true
+    },
+    "quarry": {
+     "poi": "po_fracquarry",
+     "reachable": true
+    },
+    "village": {
+     "poi": "po_greywater",
+     "reachable": true
+    },
+    "port": {
+     "poi": "po_strait",
+     "reachable": true
+    }
+   }
+  },
+  {
+   "spawn": "sp_gulf",
+   "reached": {
+    "elder_site": {
+     "poi": "po_hall_eyes",
+     "reachable": true
+    },
+    "quarry": {
+     "poi": "po_fracquarry",
+     "reachable": true
+    },
+    "village": {
+     "poi": "po_greywater",
+     "reachable": true
+    },
+    "port": {
+     "poi": "po_strait",
+     "reachable": true
+    }
+   }
   }
  ],
  "environment": "sandbox CPU (numpy/Pillow); geometry and movement only"
