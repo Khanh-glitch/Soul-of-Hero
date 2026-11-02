@@ -182,7 +182,11 @@ try {
   await fs.writeFile(path.join(out,'run-log.txt'),log.join('\n')+'\n');
   console.log(log.join('\n'));
 } catch(e) {
-  await fs.writeFile(path.join(out,'run-log.txt'),[...log,`FAIL: ${e.stack||e}`].join('\n')+'\n').catch(()=>{});
+  const failure=`FAIL: ${e.stack||e}`;
+  await fs.writeFile(path.join(out,'run-log.txt'),[...log,failure].join('\n')+'\n').catch(()=>{});
   await page.screenshot({path:path.join(out,'failure.png'),animations:'disabled'}).catch(()=>{});
+  // GitHub check annotations are readable through the API even when Actions log/artifact hosts are not reachable.
+  const diagnostic=[...log.slice(-10),failure].join(' | ').replaceAll('%','%25').replaceAll('\r','%0D').replaceAll('\n','%0A');
+  console.log(`::error title=Salt chain E2E diagnostic::${diagnostic}`);
   console.error(log.join('\n'));throw e;
 } finally {await browser.close();await vite.close();}
