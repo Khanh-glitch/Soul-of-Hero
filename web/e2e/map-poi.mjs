@@ -17,7 +17,7 @@ const state = () => page.evaluate(() => {
   const counts = {};
   for (const s of r.custody.inv.slots) if (s) counts[s.key] = (counts[s.key] || 0) + s.qty;
   return { id: r.id, seed: r.seed, layoutId: r.layoutId || 'shipping', player: { x:r.player.x,y:r.player.y,hp:r.player.hp,dead:r.player.dead,hunger:r.player.hunger,thirst:r.player.thirst }, counts,
-    creatures:r.creatures.filter(m=>m.hp>0).map(m=>({x:m.x,y:m.y,hp:m.hp,state:m.state,type:m.type})),
+    creatures:r.creatures.filter(m=>m.hp>0).map(m=>({id:m.id,x:m.x,y:m.y,hp:m.hp,state:m.state,type:m.type})),
     entities: Object.values(r.entities).map(e => ({ id:e.id,kind:e.kind,poi:e.poi,x:e.x,y:e.y,tx:e.tx,ty:e.ty,locked:e.locked,open:e.open,power:e.power,label:e.label,c:e.c })),
     sources:r.sources,containers: Object.fromEntries(Object.entries(r.custody).map(([id,c])=>[id,c.slots.map(s=>s&&({key:s.key,qty:s.qty}))])) };
 });
@@ -66,7 +66,7 @@ try {
       exitTarget={x:entry.x,y:entry.y+40};
     }
     const vault=vaults[0]; assert(outer&&vault);
-    let entityBlocked = new Set(); let initialApproachTiles = 0;
+    let entityBlocked = new Set(); let initialApproachTiles = 0; let defending = false;
     const pass = (x,y,current) => {
       if(x<1||y<1||x>=W-1||y>=H-1)return false;
       const i=y*W+x; if(blocks.has(world.tiles[i])||entityBlocked.has(i))return false;
@@ -89,7 +89,7 @@ try {
           const keys=[];if(Math.abs(dx)>2)keys.push(dx>0?'d':'a');if(Math.abs(dy)>2)keys.push(dy>0?'s':'w');
           for(const k of keys)await page.keyboard.down(k);await pause(115);for(const k of keys)await page.keyboard.up(k);
         }
-        if(step%8===7)await ensureVitals();
+        if(step%4===3){await ensureVitals();if(!defending)await defendNearby();}
       }
       cur=await state();assert(Math.hypot(cur.player.x-wx,cur.player.y-wy)<=radius+22,`walk ended ${Math.hypot(cur.player.x-wx,cur.player.y-wy).toFixed(1)}px from target (${wx},${wy}); player=(${cur.player.x.toFixed(1)},${cur.player.y.toFixed(1)}) hp=${cur.player.hp} dead=${cur.player.dead}, routeTiles=${route.length-1}`);return cur;
     }
@@ -103,7 +103,19 @@ try {
       await page.keyboard.press('i');await pause(120);const inv=page.locator('.panel').filter({hasText:'Inventory'}).last();
       await inv.locator(`.slot[title^="${itemNames[key]}"]`).first().click({button:'right'});await pause(180);await page.keyboard.press('Escape');await pause(100);return true;
     }
-    async function ensureVitals(){const cur=await state();if(cur.player.dead)throw new Error('player died during ordinary-input travel');if(cur.player.hp<78&&cur.counts.bandage)await useInventoryItem('bandage');if(cur.player.thirst<58&&cur.counts.water_flask)await useInventoryItem('water_flask');if(cur.player.hunger<58&&cur.counts.berries)await useInventoryItem('berries');}
+    async function ensureVitals(){const cur=await state();if(cur.player.dead)throw new Error(`player died during ordinary-input travel at (${cur.player.x.toFixed(0)},${cur.player.y.toFixed(0)}), hp=${cur.player.hp}, hunger=${cur.player.hunger.toFixed(1)}, thirst=${cur.player.thirst.toFixed(1)}, nearby=${JSON.stringify(cur.creatures.filter(m=>Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<120))}`);if(cur.player.hp<92&&cur.counts.bandage)await useInventoryItem('bandage');if(cur.player.thirst<68&&cur.counts.water_flask)await useInventoryItem('water_flask');if(cur.player.hunger<68&&cur.counts.berries)await useInventoryItem('berries');}
+    async function defendNearby(){
+      if(defending)return;defending=true;
+      try{for(let round=0;round<2;round++){
+        let cur=await state();const threat=cur.creatures.filter(m=>['chase','tell','attack'].includes(m.state)&&Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<96).sort((a,b)=>Math.hypot(a.x-cur.player.x,a.y-cur.player.y)-Math.hypot(b.x-cur.player.x,b.y-cur.player.y))[0];
+        if(!threat)return;
+        await walkNear(threat.x,threat.y,22);await aim(threat.x,threat.y);
+        for(let hit=0;hit<7;hit++){
+          cur=await state();const target=cur.creatures.find(m=>m.id===threat.id);if(!target||target.hp<=0||Math.hypot(target.x-cur.player.x,target.y-cur.player.y)>36)break;
+          await page.mouse.down();await pause(80);await page.mouse.up();await pause(340);
+        }
+      }}finally{defending=false;}
+    }
 
     const startCrate=s.entities.find(e=>e.kind==='loot'&&e.poi===(landing==="Fisher's Point"?'s1':'s3'));assert(startCrate,'selected start crate missing');
     await useEntity(startCrate.id);await page.getByRole('button',{name:'Take all',exact:true}).waitFor({timeout:5000});await takeAll();
