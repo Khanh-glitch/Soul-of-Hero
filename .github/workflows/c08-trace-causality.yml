@@ -1,0 +1,268 @@
+name: C08 trace causality (native)
+# LW1 takeover gate for the canonical C08 causal slice.
+#
+# P0 order: the three counterfactuals are independent native episodes, each in its
+# own OS process and its own save profile, so no case inherits another case's still
+# live marks, chase or damage. Episode A also owns the K8 ledger commit, and the
+# relaunch/new-run phases read that same profile.
+#
+# Gate record:
+#   1444f5ff  run 41428636248  ALL GREEN (unit, A, B, C, K8 ledger, 2nd PID, new run)
+#   d3db46b7  run 41426710070  C/A/K8/relaunch/new run green, B red in its defence window
+#   45fe0777  one process for all three cases: contaminated trace state (see handoff)
+#
+# Two independently reported jobs:
+#   unit     : the bounded evidence index contract, headless, real Godot parser.
+#   native   : the three C08 counterfactuals on the production overworld, with a
+#              real Hero body, real key/pointer input, the real K8 run clock and
+#              the real SkeletonEnemy. Three OS processes: play, relaunch (same
+#              save) and new run (fresh profile). Native PNG frames are uploaded,
+#              and tools/ci/gate_log.sh refuses a run that printed a script error
+#              or never reached its PASS summary.
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/136e69c5-soul-of-hero]
+    paths:
+      - 'game/survival/c08_*.gd'
+      - 'game/survival/a0_threat_mount.gd'
+      - 'game/survival/optional_skeleton_encounter.gd'
+      - 'game/characters/enemies/skeleton_enemy.gd'
+      - 'game/overworld/chapter1_overworld.gd'
+      - 'tests/c08_*.gd'
+      - 'tests/survival_c08_*.gd'
+      - '.github/workflows/c08-trace-causality.yml'
+permissions:
+  contents: read
+
+env:
+  ARTIFACT_DIR: artifacts
+
+jobs:
+  unit:
+    name: C08 EVIDENCE INDEX UNIT
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import project (real engine parser)
+        run: |
+          mkdir -p "$ARTIFACT_DIR" artifacts/ud_import
+          timeout --signal=TERM --kill-after=10s 300s godot --headless --path . \
+            --user-data-dir artifacts/ud_import --import > "$ARTIFACT_DIR/c08-import.log" 2>&1
+          rc=$?
+          tail -30 "$ARTIFACT_DIR/c08-import.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/c08-import.log" "C08 import"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+      - name: C08 evidence index unit contract
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=10s 180s godot --headless --path . \
+            --user-data-dir artifacts/ud_unit \
+            --script res://tests/c08_trace_store_unit_test.gd > "$ARTIFACT_DIR/c08-unit.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/c08-unit.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/c08-unit.log" "C08 unit" "C08 TRACE STORE UNIT PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: c08-unit-logs
+          path: artifacts/*.log
+
+  native:
+    name: C08 NATIVE CAUSAL SLICE (A / B / C + K8 relaunch)
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import project assets
+        run: |
+          mkdir -p "$ARTIFACT_DIR" artifacts/shots artifacts/ud_import artifacts/ud_c08 artifacts/ud_case_b artifacts/ud_case_c
+          timeout --signal=TERM --kill-after=10s 300s godot --headless --path . \
+            --user-data-dir artifacts/ud_import --import > "$ARTIFACT_DIR/c08-import.log" 2>&1
+          rc=$?
+          tail -30 "$ARTIFACT_DIR/c08-import.log"
+          exit $rc
+      - name: Phase 1a - standalone episode B (valid chain)
+        shell: bash
+        run: |
+          set +e
+          rm -rf artifacts/ud_case_b
+          timeout --signal=TERM --kill-after=20s 1800s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 C08_CASE=b \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+            --audio-driver Dummy --user-data-dir artifacts/ud_case_b --resolution 1280x720 --windowed \
+            --script res://tests/survival_c08_trace_causality_test.gd \
+            -- --phase=play --case=b --keep "--shots=$PWD/artifacts/shots" > "$ARTIFACT_DIR/c08-case-b.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/c08-case-b.log"
+          emit_lines() {
+            local level=$1 pattern=$2 limit=$3
+            grep -E "$pattern" "$ARTIFACT_DIR/c08-case-b.log" | tail -n "$limit" | cut -c1-900 \
+              | while IFS= read -r line; do printf '::%s::%s\n' "$level" "$line"; done
+          }
+          emit_lines error '^  FAIL  |C08_WEDGE|C08_ROUTE_FAIL|C08_DOOR_FAIL|C08_B_LEG_FAIL|C08_C_LEG_FAIL|C08_LEG_STALLED|C08_DOORWAY_FAIL|C08_REENTRY_FAIL|C08_ENEMY_LOST|C08_C_NO_ENEMY|C08_C_HABITAT_FAIL|C08_ENCOUNTER_RELEASE|SCRIPT ERROR|Parse Error' 4
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/c08-case-b.log" "C08 b" "C08 TRACE CAUSALITY PLAY PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+
+      - name: Phase 1b - standalone episode C (cold trail)
+        # Every episode reports its own verdict even when an earlier one is red:
+        # a ten-minute run should never answer a single question.
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          rm -rf artifacts/ud_case_c
+          timeout --signal=TERM --kill-after=20s 1800s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 C08_CASE=c \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+            --audio-driver Dummy --user-data-dir artifacts/ud_case_c --resolution 1280x720 --windowed \
+            --script res://tests/survival_c08_trace_causality_test.gd \
+            -- --phase=play --case=c --keep "--shots=$PWD/artifacts/shots" > "$ARTIFACT_DIR/c08-case-c.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/c08-case-c.log"
+          emit_lines() {
+            local level=$1 pattern=$2 limit=$3
+            grep -E "$pattern" "$ARTIFACT_DIR/c08-case-c.log" | tail -n "$limit" | cut -c1-900 \
+              | while IFS= read -r line; do printf '::%s::%s\n' "$level" "$line"; done
+          }
+          emit_lines error '^  FAIL  |C08_WEDGE|C08_ROUTE_FAIL|C08_DOOR_FAIL|C08_B_LEG_FAIL|C08_C_LEG_FAIL|C08_LEG_STALLED|C08_DOORWAY_FAIL|C08_REENTRY_FAIL|C08_ENEMY_LOST|C08_C_NO_ENEMY|C08_C_HABITAT_FAIL|C08_SKIP |SCRIPT ERROR|Parse Error' 4
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/c08-case-c.log" "C08 c" "C08 TRACE CAUSALITY PLAY PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+
+      - name: Phase 1c - standalone episode A (no trace) + K8 ledger
+        # Every episode reports its own verdict even when an earlier one is red:
+        # a ten-minute run should never answer a single question.
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          rm -rf artifacts/ud_c08
+          timeout --signal=TERM --kill-after=20s 1800s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 C08_CASE=a \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+            --audio-driver Dummy --user-data-dir artifacts/ud_c08 --resolution 1280x720 --windowed \
+            --script res://tests/survival_c08_trace_causality_test.gd \
+            -- --phase=play --case=a --keep "--shots=$PWD/artifacts/shots" > "$ARTIFACT_DIR/c08-play.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/c08-play.log"
+          emit_lines() {
+            local level=$1 pattern=$2 limit=$3
+            grep -E "$pattern" "$ARTIFACT_DIR/c08-play.log" | tail -n "$limit" | cut -c1-900 \
+              | while IFS= read -r line; do printf '::%s::%s\n' "$level" "$line"; done
+          }
+          emit_lines error '^  FAIL  |C08_WEDGE|C08_ROUTE_FAIL|C08_DOOR_FAIL|C08_B_LEG_FAIL|C08_C_LEG_FAIL|C08_LEG_STALLED|C08_DOORWAY_FAIL|C08_REENTRY_FAIL|C08_ENEMY_LOST|C08_C_NO_ENEMY|C08_C_HABITAT_FAIL|C08_SKIP |SCRIPT ERROR|Parse Error' 4
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/c08-play.log" "C08 a" "C08 TRACE CAUSALITY PLAY PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+      - name: Phase 1 evidence - failures and window summaries
+        if: always()
+        shell: bash
+        run: |
+          # A second step, so the annotation budget is not shared with the gate.
+          # The failing assertion comes first: an annotation message is truncated
+          # at 4 KB and only ten survive per step, so priority is explicit.
+          [ -f "$ARTIFACT_DIR/c08-play.log" ] || exit 0
+          emit() { printf '::%s::%s\n' "$1" "$(printf '%s' "$2" | cut -c1-900)"; }
+          # Ten annotations survive per step, so the failing assertions get the first
+          # slots and the window tags take the rest. Diagnostics that are not a
+          # failure (skips, wedges) are left to the log tail.
+          n=0
+          while IFS= read -r line; do
+            n=$((n + 1))
+            [ "$n" -gt 4 ] && break
+            emit error "$line"
+          done < <(cat "$ARTIFACT_DIR"/c08-case-*.log "$ARTIFACT_DIR/c08-play.log" 2>/dev/null | grep -E '^  FAIL  ' || true)
+          for tag in C08_C C08_C_COLD C08_B C08_A; do
+            line=$(cat "$ARTIFACT_DIR"/c08-case-*.log "$ARTIFACT_DIR/c08-play.log" 2>/dev/null | grep -E "^${tag} " | tail -n 1 || true)
+            [ -n "$line" ] && emit notice "$line"
+          done
+          exit 0
+
+      - name: Phase 2 - second OS process, same save (K8 relaunch)
+        # Every episode reports its own verdict even when an earlier one is red:
+        # a ten-minute run should never answer a single question.
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=20s 900s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+            --audio-driver Dummy --user-data-dir artifacts/ud_c08 --resolution 1280x720 --windowed \
+            --script res://tests/survival_c08_trace_causality_test.gd \
+            -- --phase=relaunch --keep > "$ARTIFACT_DIR/c08-relaunch.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/c08-relaunch.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/c08-relaunch.log" "C08 relaunch" "C08 TRACE CAUSALITY RELAUNCH PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+      - name: Phase 3 - fresh profile, new run (no inherited evidence)
+        # Every episode reports its own verdict even when an earlier one is red:
+        # a ten-minute run should never answer a single question.
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=20s 900s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+            --audio-driver Dummy --user-data-dir artifacts/ud_c08 --resolution 1280x720 --windowed \
+            --script res://tests/survival_c08_trace_causality_test.gd \
+            -- --phase=newrun --keep "--shots=$PWD/artifacts/shots" > "$ARTIFACT_DIR/c08-newrun.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/c08-newrun.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/c08-newrun.log" "C08 new run" "C08 TRACE CAUSALITY NEWRUN PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+      - name: Copy audits and frames into the artifact directory
+        if: always()
+        run: |
+          mkdir -p "$ARTIFACT_DIR/evidence"
+          find artifacts/ud_c08 -name '*.json' -path '*tests*' -exec cp -v {} "$ARTIFACT_DIR/evidence/" \; 2>/dev/null || true
+          ls -l "$ARTIFACT_DIR/shots" 2>/dev/null || true
+          python3 - <<'PY'
+          import glob, os, struct, zlib
+          for path in sorted(glob.glob("artifacts/shots/*.png")):
+              with open(path, "rb") as handle:
+                  head = handle.read(33)
+              if head[:8] != b"\x89PNG\r\n\x1a\n" or head[12:16] != b"IHDR":
+                  print("::error::not a decoded PNG: %s" % path)
+                  continue
+              width, height = struct.unpack(">II", head[16:24])
+              print("%s %dx%d %d bytes" % (os.path.basename(path), width, height, os.path.getsize(path)))
+              if width < 640 or height < 360:
+                  print("::error::frame below the required resolution:", path)
+          PY
+
+      - name: Publish log tail (annotation channel)
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import glob, os
+          chunks = []
+          for path in sorted(glob.glob("artifacts/c08-*.log")):
+              text = open(path, errors="replace").read()
+              chunks.append("%s TAIL %s" % (os.path.basename(path), text[-1500:]))
+          joined = " || ".join(chunks)[-3200:]
+          safe = joined.replace("%", "%25").replace("\r", "").replace("\n", "~")
+          print("::error::C08 LOG TAILS %s" % safe)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: c08-native-evidence
+          path: |
+            artifacts/*.log
+            artifacts/shots
+            artifacts/evidence

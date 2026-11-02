@@ -2948,6 +2948,9 @@ func _sanitize_and_validate(document: Dictionary) -> String:
 	var authored_error := _sanitize_authored_world(document)
 	if not authored_error.is_empty():
 		return authored_error
+	var c08_error := _sanitize_c08_traces(document)
+	if not c08_error.is_empty():
+		return c08_error
 	return ""
 
 
@@ -4677,6 +4680,7 @@ func _default_data() -> Dictionary:
 		# rebuilds the document from a fixed key list and would drop a section it
 		# does not know. A0 owns this section and sanitizes it here.
 		"authored_world": {},
+		"c08_traces": {},
 		"legacy_audit": _default_legacy_audit(),
 	}
 
@@ -5431,3 +5435,59 @@ func _ensure_starter_hero_weapon_in_candidate(
 func _push_failure(message: String) -> void:
 	push_error("SaveService: %s" % message)
 	save_failed.emit(message)
+
+## C08 footprint evidence, stored in the ONE save document so that a still-valid
+## physical mark survives the process that laid it: quitting the game is not a
+## free way to erase a live trail. This section is evidence only. It cannot grant
+## an item, change a clock or move a creature; a reader must still be a local,
+## lawful observer. A foreign schema, a foreign run or a malformed mark is
+## dropped rather than repaired.
+func _sanitize_c08_traces(document: Dictionary) -> String:
+	if not document.has("c08_traces"):
+		document["c08_traces"] = {}
+		return ""
+	var raw: Variant = document["c08_traces"]
+	if not raw is Dictionary:
+		return "C08 evidence section must be a Dictionary."
+	var source: Dictionary = raw
+	var clean := {}
+	var schema := String(source.get("schema", ""))
+	var run_id := String(source.get("run_id", ""))
+	if schema == "soh.c08.trace_ledger.v1" and run_id.length() <= 96 and not run_id.is_empty():
+		var marks: Array = []
+		var raw_marks: Variant = source.get("marks", [])
+		if raw_marks is Array:
+			for entry: Variant in raw_marks:
+				if marks.size() >= 512:
+					break
+				if not entry is Array or (entry as Array).size() != 7:
+					continue
+				var row: Array = entry
+				var id := int(row[0])
+				var x := float(row[1])
+				var y := float(row[2])
+				var surface := String(row[3])
+				var created := float(row[4])
+				var expires := float(row[5])
+				var previous := int(row[6])
+				if id <= 0 or id > 8192:
+					continue
+				if not is_finite(x) or not is_finite(y) or absf(x) > 200000.0 or absf(y) > 200000.0:
+					continue
+				if surface.is_empty() or surface.length() > 32:
+					continue
+				if not is_finite(created) or not is_finite(expires) or expires <= created:
+					continue
+				if previous < 0 or previous > 8192:
+					continue
+				marks.append([id, x, y, surface, created, expires, previous])
+		clean = {
+			"schema": schema,
+			"version": 1,
+			"run_id": run_id,
+			"revision": maxi(0, int(source.get("revision", 0))),
+			"exported": float(source.get("exported", 0.0)),
+			"marks": marks,
+		}
+	document["c08_traces"] = clean
+	return ""

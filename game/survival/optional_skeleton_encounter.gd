@@ -14,6 +14,21 @@ const MAX_LEASH := 160.0
 const REARM_SECONDS := 60.0
 const SAFE_SPAWN_DISTANCE := 320.0
 const ENEMY_SCENE := "res://game/characters/enemies/skeleton_enemy.tscn"
+## C08 adapter. Default OFF, like the threat itself; when ON, the creature may
+## walk to a physically sensed footprint and therefore must be allowed to leave
+## the 160 px engagement leash. The bound below is still a bound: a trail is an
+## invitation to investigate, never a subscription to the player's position.
+const C08_FOLLOWER := preload("res://game/survival/c08_trace_follower.gd")
+const C08_SETTING := "survival/c08_trace_follow"
+## The encounter's own release distance, measured from its site. It must not be
+## tighter than the evidence law it now shares a creature with: the follower stops
+## pursuing beyond 1400 px from the habitat, but a real trail loops - out past the
+## creature, further out, and home on another lane - so the body can be much
+## further from the site than the straight line home suggests. At 1800 px a
+## legitimate pursuit was released mid-chain and respawned at its site, which reads
+## as a trail that ate its own hunter. 2800 px keeps the bound while covering the
+## longest real approach the slice produces.
+const C08_LEASH := 2800.0
 ## A hit can award the Hero's existing combat score even when score_reward is
 ## zero. Reserve the existing one-use receipt durably BEFORE exposing an enemy.
 ## This prevents hit/score effects on failed saves; it is deliberately
@@ -34,6 +49,12 @@ var _spent := false
 var _reservation_active := false
 var _cooldown := 0.0
 var _configured := false
+## C08: the footprint source this creature may sense, and the adapter that turns
+## one sensed mark at a time into movement. Both are null unless the flag is on.
+var trace_source: Node = null
+var follower: Variant = null
+var _c08 := false
+var _leash := MAX_LEASH
 
 ## A0 Round 12: the site rules are now a pure, reusable oracle. The production
 ## mount searches for a site with this function and `configure` calls it again,
@@ -90,7 +111,8 @@ static func validate_site(hero: CharacterBody2D, build: SurvivalBuildSystem, nav
 	return {"ok": true, "reason": "", "center": center, "area": area, "enemy_mask": 0}
 
 
-func configure(hero: CharacterBody2D, build: SurvivalBuildSystem, nav: OverworldTraversability, site: Vector2i) -> bool:
+func configure(hero: CharacterBody2D, build: SurvivalBuildSystem, nav: OverworldTraversability, site: Vector2i,
+		next_trace_source: Node = null) -> bool:
 	if _configured or not is_inside_tree() or hero == null or build == null or nav == null or build.world == null:
 		return false
 	if get_parent().get_node_or_null("OptionalSkeletonEncounter") != self:
@@ -112,6 +134,14 @@ func configure(hero: CharacterBody2D, build: SurvivalBuildSystem, nav: Overworld
 	_site = site
 	_reservation = area
 	_build.encounter_exclusions.append(area)
+	# C08 is opt-in and only ever reads another owner's evidence. A creature with
+	# no source behaves exactly like the bounded Round-12 encounter.
+	if next_trace_source != null and is_instance_valid(next_trace_source) \
+			and bool(next_trace_source.call(&"is_active")) \
+			and bool(ProjectSettings.get_setting(C08_SETTING, false)):
+		trace_source = next_trace_source
+		_c08 = true
+		_leash = C08_LEASH
 	_configured = true
 	# The overworld pauses immediately on death, before this node gets another
 	# physics tick. Observe the real death signal to clean up synchronously.
@@ -171,6 +201,10 @@ func _spawn() -> void:
 	_enemy.set("global_position", global_position)
 	_enemy.connect("health_changed", _on_enemy_health_changed)
 	_enemy.connect("died", _on_enemy_died)
+	if _c08 and is_instance_valid(trace_source):
+		var adapter: Variant = C08_FOLLOWER.new()
+		if adapter.attach(_enemy, global_position, trace_source) and bool(_enemy.call(&"set_evidence_follower", adapter)):
+			follower = adapter
 
 func _on_enemy_health_changed(current: int, maximum: int) -> void:
 	if _spent or current >= maximum or not _configured:
@@ -183,14 +217,18 @@ func _on_enemy_health_changed(current: int, maximum: int) -> void:
 		warning.text = "Encounter engaged — no respawn"
 
 func _on_enemy_died(_which: Node) -> void:
+	print("C08_ENCOUNTER_RELEASE ", JSON.stringify({"reason": "died",
+		"at": [global_position.x, global_position.y]}))
+	follower = null
 	_cooldown = REARM_SECONDS
 
 func _on_player_died() -> void:
 	if not _configured or not is_instance_valid(_hero) or not bool(_hero.get("dead")):
 		return
 	if is_instance_valid(_enemy):
-		_enemy.queue_free()
-		_enemy = null
+		print("C08_ENCOUNTER_RELEASE ", JSON.stringify({"reason": "player_died",
+			"hero_hp": _hero.get(&"health")}))
+		_release_enemy()
 	_cooldown = REARM_SECONDS
 
 func _physics_process(delta: float) -> void:
@@ -199,13 +237,38 @@ func _physics_process(delta: float) -> void:
 	if _cooldown > 0.0:
 		_cooldown = maxf(0.0, _cooldown - delta)
 	if is_instance_valid(_enemy) and not _enemy.is_queued_for_deletion():
-		if bool(_hero.get("dead")) or _enemy.global_position.distance_to(global_position) > MAX_LEASH:
-			_enemy.queue_free()
-			_enemy = null
+		if bool(_hero.get("dead")) or _enemy.global_position.distance_to(global_position) > _leash:
+			_release_enemy()
 			_cooldown = REARM_SECONDS
 	elif _cooldown <= 0.0:
 		_enemy = null
 		_spawn()
+
+## One release path so the adapter can never outlive the body it moves.
+func _release_enemy() -> void:
+	if is_instance_valid(_enemy) and _enemy.has_method(&"clear_evidence_follower"):
+		_enemy.call(&"clear_evidence_follower")
+	follower = null
+	if is_instance_valid(_enemy):
+		_enemy.queue_free()
+	_enemy = null
+
+
+## The one enemy this seam exposed, or null. Evidence only: no test may move it.
+func bounded_enemy() -> CharacterBody2D:
+	return _enemy if is_instance_valid(_enemy) and not _enemy.is_queued_for_deletion() else null
+
+
+func c08_snapshot() -> Dictionary:
+	return {
+		"schema": "soh.c08.encounter_adapter.v1",
+		"enabled": _c08,
+		"setting": C08_SETTING,
+		"leash": _leash,
+		"trace_source": is_instance_valid(trace_source),
+		"follower": follower.snapshot() if follower != null else {},
+	}
+
 
 func _exit_tree() -> void:
 	var events := get_node_or_null("/root/GameEvents")

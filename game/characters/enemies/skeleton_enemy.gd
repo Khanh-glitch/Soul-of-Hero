@@ -15,6 +15,9 @@ enum State {
 	ATTACK,
 	HURT,
 	DEAD,
+	## C08: walking to one physically sensed footprint. Never a chase: the
+	## creature has evidence, not a target, and direct sight still wins.
+	INVESTIGATE,
 }
 
 const FRAME_SIZE := Vector2i(32, 32)
@@ -64,6 +67,10 @@ var _attack_cooldown_left := 0.0
 var _hurt_lock_left := 0.0
 var _obstacle_repath_left := 0.0
 var _melee_threat_serial := 0
+## Optional C08 evidence adapter (`game/survival/c08_trace_follower.gd`). It is a
+## RefCounted on purpose: evidence is not a scene node and must not become one.
+## Null on every ordinary enemy; with no adapter, nothing about this AI changes.
+var evidence_follower: Object = null
 
 
 func configure_from_definition(snapshot: EnemyRuntimeSnapshot) -> bool:
@@ -111,7 +118,16 @@ func _physics_process(delta: float) -> void:
 	_target = _find_player()
 	match _state:
 		State.PATROL:
-			_update_patrol()
+			if not _evidence_pursuit(delta):
+				_update_patrol()
+		State.INVESTIGATE:
+			if _can_detect_target(detection_range):
+				# Direct observation is independent and outranks evidence.
+				_enter_state(State.CHASE)
+			elif not _evidence_pursuit(delta):
+				# The trail is cold: go back to the habitat, do not search the map.
+				_choose_patrol_target()
+				_enter_state(State.PATROL)
 		State.CHASE:
 			_update_chase()
 		State.ATTACK:
@@ -168,6 +184,56 @@ func set_priority_target(target: Node2D) -> void:
 	if is_instance_valid(_priority_target):
 		_target = _priority_target
 		_enter_state(State.CHASE)
+
+
+## C08 evidence hook. The adapter can only name a physical mark to walk to; it
+## never supplies a target, damage or a velocity. With no adapter this returns
+## false immediately and the shipped behaviour is unchanged.
+func _evidence_pursuit(delta: float) -> bool:
+	if evidence_follower == null or not is_instance_valid(evidence_follower):
+		return false
+	if not evidence_follower.has_method(&"drive"):
+		return false
+	if _can_detect_target(detection_range):
+		return false
+	var directive: Dictionary = evidence_follower.call(&"drive", self, delta)
+	if not bool(directive.get("active", false)):
+		return false
+	var mark: Vector2 = directive.get("goal", global_position)
+	var offset := mark - global_position
+	if offset.length() > 1.0:
+		velocity = _steer_velocity(offset.normalized() * chase_speed, chase_speed)
+		_set_facing(velocity)
+	if _state != State.INVESTIGATE:
+		_enter_state(State.INVESTIGATE)
+	if animated_sprite.animation != &"move":
+		animated_sprite.play(&"move")
+	return true
+
+
+## Attach the C08 evidence adapter. Ownership stays with the caller; the enemy
+## only reads it. Returns false for anything that is not a live adapter.
+func set_evidence_follower(follower: Object) -> bool:
+	if follower == null or not is_instance_valid(follower) or not follower.has_method(&"drive"):
+		return false
+	if _state == State.DEAD:
+		return false
+	evidence_follower = follower
+	return true
+
+
+func clear_evidence_follower() -> void:
+	evidence_follower = null
+	if _state == State.INVESTIGATE:
+		_choose_patrol_target()
+		_enter_state(State.PATROL)
+
+
+## Human-readable state for native evidence. Purely diagnostic.
+func state_label() -> String:
+	var names := ["PATROL", "CHASE", "ATTACK", "HURT", "DEAD", "INVESTIGATE"]
+	var index := int(_state)
+	return names[index] if index >= 0 and index < names.size() else "UNKNOWN"
 
 
 func _update_patrol() -> void:
@@ -315,6 +381,8 @@ func _enter_state(next_state: State) -> void:
 			_emit_enemy_cue(&"sword_swing_2", {"enemy_id": &"skeleton_swordsman", "phase": &"attack"})
 			attack_collision.set_deferred(&"disabled", false)
 			animated_sprite.play(&"attack")
+		State.INVESTIGATE:
+			animated_sprite.play(&"move")
 		State.HURT:
 			attack_collision.set_deferred(&"disabled", true)
 			animated_sprite.play(&"hurt")
