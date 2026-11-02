@@ -92,6 +92,7 @@ s = s.replace(needle, '''    if OS.get_environment("AVFX_R17_WORLD_DECOMPOSE") =
             await RenderingServer.frame_post_draw
             get_viewport().get_texture().get_image().save_png(path + "/r23_world_no_fx.png")
             var stable := before_player == player.global_position and before_enemy == enemy.global_position and before_camera == camera.get_screen_center_position() and diagnostic_tick == diagnostic_source._tick
+            print("R23_WORLD_STABILITY tick=", diagnostic_tick, "/", diagnostic_source._tick, " player=", before_player, "/", player.global_position, " enemy=", before_enemy, "/", enemy.global_position, " camera=", before_camera, "/", camera.get_screen_center_position())
             var info := FileAccess.open(path + "/r23_world_probe.json", FileAccess.WRITE)
             info.store_string(JSON.stringify({"tick":diagnostic_tick, "camera":[before_camera.x,before_camera.y], "player":[before_player.x,before_player.y], "enemy":[before_enemy.x,before_enemy.y], "stable":stable, "bloom_amount":original_bloom, "note":"diagnostic-only paused same-scene rerenders; not a motion or production HDR capture"}, "  "))
             info.close()
