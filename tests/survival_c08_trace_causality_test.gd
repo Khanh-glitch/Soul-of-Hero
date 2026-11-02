@@ -1328,7 +1328,18 @@ func _route_plan(hero: CharacterBody2D, nav: OverworldTraversability, home: Vect
 		return {"ok": false, "reason": "no_route_to_creature"}
 	var away_leg := _route(far, away, nav, hero)
 	var break_leg := _route(away, break_cell, nav, hero)
-	var home_leg := _route(break_cell, home_cell, nav, hero)
+	# Home the way he came. A fresh A* line home can pick a corridor this body cannot
+	# physically pass - three runs died on a pinch the grid calls free and a 20 px body
+	# does not - while the outbound cells have already been walked by this same body.
+	# Reversing real walked ground is both honest and provably passable.
+	var walked_out: Array[Vector2i] = _join(outbound, _join(away_leg, break_leg))
+	var home_leg: Array[Vector2i] = []
+	for index in range(walked_out.size() - 1, -1, -1):
+		home_leg.append(walked_out[index])
+	var return_mode := "reverse_of_walked"
+	if home_leg.is_empty():
+		home_leg = _route(break_cell, home_cell, nav, hero)
+		return_mode = "fresh_route"
 	if home_leg.is_empty() and break_cell != home_cell:
 		print("C08_ROUTE_FAIL reason=no_route_home far=%s home=%s site=%s" % [str(break_cell), str(home_cell), str(site_cell)])
 		return {"ok": false, "reason": "no_route_home"}
@@ -1337,6 +1348,7 @@ func _route_plan(hero: CharacterBody2D, nav: OverworldTraversability, home: Vect
 		"break": [break_cell.x, break_cell.y], "site": [site_cell.x, site_cell.y],
 		"home": [home_cell.x, home_cell.y],
 		"legs": [outbound.size(), away_leg.size(), break_leg.size(), home_leg.size()]}
+	report["return"] = return_mode
 	print("C08_ROUTE ", JSON.stringify(report))
 	return {"ok": true, "legs": legs, "report": report, "far": far, "break": break_cell}
 
