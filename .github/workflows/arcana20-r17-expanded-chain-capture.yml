@@ -1,4 +1,4 @@
-# R24 #09 real enemy ring; source-authored memory vs prior C ghost.
+# R24 #09 real enemy ring; source-authored memory and violet legibility vs prior C ghost.
 name: ARCANA20 R24 matched chain memory comparison
 on:
   workflow_dispatch:
@@ -32,7 +32,11 @@ jobs:
           p=pathlib.Path(sys.argv[1]); s=p.read_text()
           old='    return ADraw.bolt_path(a.x, a.y, b.x, b.y, a.distance_to(b) * 0.3, seed, 4)'
           assert s.count(old)==1
-          p.write_text(s.replace(old, '    if OS.get_environment("AVFX_R24_LEGACY_GHOST") == "1":\n        return CKit.bolt_pts(float(seed), a.x, a.y, b.x, b.y, 0.3, 4.0)\n'+old))
+          s=s.replace(old, '    if OS.get_environment("AVFX_R24_LEGACY_GHOST") == "1":\n        return CKit.bolt_pts(float(seed), a.x, a.y, b.x, b.y, 0.3, 4.0)\n'+old)
+          gain='ghost * GHOST_WORLD_GAIN * (0.7 + 0.3 * sin(t * 9 + j))'
+          assert s.count(gain)==1
+          s=s.replace(gain, 'ghost * (1.0 if OS.get_environment("AVFX_R24_LEGACY_GHOST") == "1" else GHOST_WORLD_GAIN) * (0.7 + 0.3 * sin(t * 9 + j))')
+          p.write_text(s)
           PY
           python3 - "$RUNNER_TEMP/r17" <<'PY'
           import pathlib,sys

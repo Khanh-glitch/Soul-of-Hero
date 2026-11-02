@@ -13,6 +13,11 @@ const FINAL := 5.0
 const B_CORE := Vector3(2.6, 2.8, 3.4)
 const B_MID := Vector3(0.7, 1.1, 3.0)
 const B_VIOLET := Vector3(0.5, 0.2, 1.3)
+# Preview adaptation: thin, already-authored remembered edges disappear against
+# SOH terrain once the live channel subsides. Increase only their B-violet
+# radiance; preserve paths, envelope, actor depth, other ink and live C bolts.
+# This is not original-A intensity parity or an on-body/hit cue.
+const GHOST_WORLD_GAIN := 2.4
 const ORDER := [0, 1, 2, 7, 3, 4, 5, 6, 7, 2]
 var rng: AMath.ARng
 var nodes: Array = [] # nullable Vector2 source-local; node 0 is caster hand
@@ -239,7 +244,7 @@ func render(fb: AFramebuffer, t: float) -> void:
                 for j in range(path.size() - 1):
                     var p: Vector2 = path[j]
                     var q: Vector2 = path[j + 1]
-                    ADraw.line(fb, p.x, p.y, q.x, q.y, B_VIOLET, ghost * (0.7 + 0.3 * sin(t * 9 + j)))
+                    ADraw.line(fb, p.x, p.y, q.x, q.y, B_VIOLET, ghost * GHOST_WORLD_GAIN * (0.7 + 0.3 * sin(t * 9 + j)))
         if fail and age >= 0 and age <= 0.16:
             var u := 1.0 - age / 0.16
             _bolt(fb, a, a.lerp(b, 0.45 * u), t, seed, 0.9, u * 0.55, 0.45, 3)
