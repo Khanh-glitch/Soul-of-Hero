@@ -143,7 +143,13 @@ func drive(target: Node2D, delta: float) -> Dictionary:
 		return {"active": false}
 	if skeleton.global_position.distance_to(goal) <= ARRIVE_RADIUS:
 		return _arrive(store, stamp, delta)
-	_goal_elapsed += delta
+	# A live target outranks a cold trail. While the creature can see the Hero it is
+	# busy on purpose, so that time must not run out the clock on the mark it is
+	# walking: an earlier run lost a 100-mark chain this way in nine seconds.
+	if _distracted():
+		_goal_elapsed = 0.0
+	else:
+		_goal_elapsed += delta
 	if _goal_elapsed > GOAL_TIMEOUT:
 		_stop("goal_timeout")
 		return {"active": false}
@@ -218,6 +224,14 @@ func _arrive(store: Variant, stamp: float, delta: float) -> Dictionary:
 	_goal_elapsed = 0.0
 	_log("hop", goal_trace, goal, hop)
 	return {"active": true, "goal": goal, "trace_id": goal_trace}
+
+
+## Whether the body is currently busy with a target it can see. Nothing here moves
+## anyone: this only decides what the goal clock is allowed to measure.
+func _distracted() -> bool:
+	if not is_instance_valid(skeleton) or not skeleton.has_method(&"_can_detect_target"):
+		return false
+	return bool(skeleton.call(&"_can_detect_target", float(skeleton.get(&"disengage_range"))))
 
 
 func _stop(reason: String) -> void:
