@@ -100,11 +100,12 @@ class RootwakeR:
                     func(u: float, edge: float, br: Dictionary) -> Variant:
                         if edge > 0.95:
                             return Vector3(0.14, 0.10, 0.045)
-                        var grain := 0.68 + 0.32 * AMath.hash2(floor(u * 50.0), float(br.seed))
+                        var grain := 0.58 + 0.42 * AMath.hash2(floor(u * 48.0), float(br.seed) + floor(edge * 7.0) * 13.0)
                         var bark := 0.79 + 0.21 * (1.0 - edge)
                         return Vector3(0.39, 0.23, 0.11) * bark * grain,
                     func(u: float, br: Dictionary) -> float:
-                        return maxf(0.8, float(br.w) * (0.65 + thickening * 1.45) * (1.0 - u * 0.65)), true)
+                        var ridges := 0.72 + 0.28 * AMath.hash2(floor(u * 22.0), float(br.seed) + 31.0)
+                        return maxf(0.8, float(br.w) * (0.65 + thickening * 1.45) * (1.0 - u * 0.65) * ridges), true)
                 ACommon.draw_branch(fb, bb,
                     func(u: float, edge: float, br: Dictionary) -> Variant:
                         # Interrupted fissures, not a continuous tubular gloss.
@@ -146,7 +147,7 @@ class RootwakeR:
                 if attack > 0.0:
                     ADraw.poly_fill(fb, [thorn_base - thorn_foot, point, thorn_base + thorn_foot],
                         func(_x: int, _y: int) -> Variant: return Vector3(0.44, 0.39, 0.17), true, attack)
-                    ADraw.streak(fb, thorn_base.x, thorn_base.y, point.x, point.y, 0.9, 0.35, AMath.R("verdant", 0.9), attack * 0.6)
+                    ADraw.streak(fb, thorn_base.x, thorn_base.y, point.x, point.y, 0.9, 0.35, Vector3(0.85, 0.64, 0.25), attack * 0.6)
                 # Two actual barbs have their bases on the same arch.
                 for barb_value in [0.36, 0.68]:
                     var barb: float = barb_value
