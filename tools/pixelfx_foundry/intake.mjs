@@ -131,13 +131,30 @@ async function run() {
   };
 
   // ---- discovery pass (metadata only) ----
+  // exact visual-bounds backfill for verified exports produced before this field existed
+  const backfillBounds = (e) => {
+    const [w, h] = e.export.frameSize;
+    let x0 = w, y0 = h, x1 = -1, y1 = -1;
+    for (const p of e.export.pages.combined) {
+      const dec = decodePNG(readFileSync(join(out, p.path)));
+      for (let j = 0; j < p.count; j++) for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+        if (dec.data[((Math.floor(j / p.columns) * h + y) * dec.w + (j % p.columns) * w + x) * 4 + 3] > 0) {
+          if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; // frame-space bounds
+        }
+      }
+    }
+    if (x1 >= 0) { e.export.visualBounds = [x0, y0, x1, y1]; e.export.visualCenter = [(x0 + x1) / 2, (y0 + y1) / 2]; }
+  };
   for (const id of ids) {
     const prev = previous.get(id);
-    if (prev && old.upstream_sha === sha) { index.effects.push(prev); continue; } // keep prior per-effect state on resume
+    if (prev && old.upstream_sha === sha) { // keep prior per-effect state on resume
+      if (prev.export?.state === "PARITY_PASS" && !prev.export.visualBounds && prev.export.pages?.combined) backfillBounds(prev);
+      index.effects.push(prev); continue;
+    }
     const fx = await fxlib.loadEffect(id), m = fx.meta;
     const isScreen = m.size[0] >= 320 && Math.abs(m.size[0] / m.size[1] - 16 / 9) < 0.05;
     const e = {
-      id, category: cat, name: m.name, desc: m.desc || "", tags: m.tags || [],
+      id, category: id.split("/")[0], name: m.name, desc: m.desc || "", tags: m.tags || [],
       implementation: fx.mod.create ? "simulated" : "pure",
       hasAct: !!fx.mod.act, onBody: !!fx.mod.act?.onBody, screen: isScreen,
       actor: m.actor || 0,
@@ -221,6 +238,16 @@ async function run() {
       let lum = 0;
       for (const f of r.frames) for (let i = 0; i < f.light.length; i++) { const l = f.light[i] & 0xffffff; if (l) lum += Math.max(l & 255, (l >>> 8) & 255, (l >>> 16) & 255); }
       e.export.lightEnergy = +(lum / Math.max(1, r.frames.length * r.w * r.h)).toFixed(4);
+      // visual bounds of the actual artwork (union of non-transparent pixels over all frames), so anchoring
+      // can distinguish source pivot vs visual center vs ground contact point without per-effect constants
+      let x0 = r.w, y0 = r.h, x1 = -1, y1 = -1;
+      for (const f of r.frames) for (let i = 0; i < f.clear.length; i += 4)
+        if (f.clear[i + 3] > 0) {
+          const x = (i / 4) % r.w, y = Math.floor(i / 4 / r.w);
+          if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+        }
+      e.export.visualBounds = x1 >= 0 ? [x0, y0, x1, y1] : [0, 0, r.w - 1, r.h - 1];
+      e.export.visualCenter = [(x0 + x1) / 2, (y0 + y1) / 2];
 
       // G1 — independent parity gate: decode every written page back and compare byte-exact to source frames
       const checkChannel = (ch, fn) => {

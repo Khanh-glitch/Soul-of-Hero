@@ -33,6 +33,22 @@ node tools/pixelfx_foundry/perf.mjs --assets assets/pixelfx_foundry
 # 6. FX Foundry Browser
 node tools/pixelfx_foundry/browser/serve.mjs 8734
 # open http://localhost:8734/tools/pixelfx_foundry/browser/
+
+# 7. verify the browser in a real Chromium via CDP (behavior tests, screenshots, perf)
+#    start any Chromium with --remote-debugging-port=9222, then:
+node tools/pixelfx_foundry/browser/verify.mjs            # behavior + screenshots + perf
+node tools/pixelfx_foundry/browser/verify.mjs --behavior-only
+node tools/pixelfx_foundry/browser/verify.mjs --perf-only
+```
+
+## Clean-rebuild proof (reproducibility gate)
+
+```bash
+git clone https://github.com/patch-gg/pixelfx.git /tmp/pixelfx-clean
+git -C /tmp/pixelfx-clean checkout a84159688af3ca37a4be05a0d422b94451b2e24e
+node tools/pixelfx_foundry/intake.mjs --upstream /tmp/pixelfx-clean --out /tmp/foundry-clean-out
+# expect: G0 PASS 244/21, FINISHED 244/244 PARITY_PASS, 0 failed;
+# every file/frame hash identical to assets/pixelfx_foundry/index.json (verified 244/244, 1204/1204 files)
 ```
 
 ## Output layout (`assets/pixelfx_foundry/`, atlas PNGs are gitignored — rebuild with step 2)

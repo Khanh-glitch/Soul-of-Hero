@@ -1,0 +1,164 @@
+[
+ {
+  "res": "1280x720",
+  "instances": 1,
+  "night": false,
+  "rafP50": 33.3,
+  "rafP95": 50.1,
+  "drawP50ms": 0,
+  "drawP95ms": 0.1
+ },
+ {
+  "res": "1280x720",
+  "instances": 1,
+  "night": true,
+  "rafP50": 33.3,
+  "rafP95": 50,
+  "drawP50ms": 0,
+  "drawP95ms": 0.1
+ },
+ {
+  "res": "1280x720",
+  "instances": 3,
+  "night": false,
+  "rafP50": 33.3,
+  "rafP95": 83.3,
+  "drawP50ms": 0,
+  "drawP95ms": 0.1
+ },
+ {
+  "res": "1280x720",
+  "instances": 3,
+  "night": true,
+  "rafP50": 33.3,
+  "rafP95": 66.7,
+  "drawP50ms": 9.3,
+  "drawP95ms": 21.4
+ },
+ {
+  "res": "1280x720",
+  "instances": 10,
+  "night": false,
+  "rafP50": 33.4,
+  "rafP95": 133.3,
+  "drawP50ms": 16.3,
+  "drawP95ms": 76.9
+ },
+ {
+  "res": "1280x720",
+  "instances": 10,
+  "night": true,
+  "rafP50": 50,
+  "rafP95": 99.9,
+  "drawP50ms": 22.3,
+  "drawP95ms": 62.9
+ },
+ {
+  "res": "1920x1080",
+  "instances": 1,
+  "night": false,
+  "rafP50": 50.1,
+  "rafP95": 100.1,
+  "drawP50ms": 0,
+  "drawP95ms": 0.1
+ },
+ {
+  "res": "1920x1080",
+  "instances": 1,
+  "night": true,
+  "rafP50": 66.6,
+  "rafP95": 100,
+  "drawP50ms": 0,
+  "drawP95ms": 0.1
+ },
+ {
+  "res": "1920x1080",
+  "instances": 3,
+  "night": false,
+  "rafP50": 66.6,
+  "rafP95": 100.1,
+  "drawP50ms": 0,
+  "drawP95ms": 0.1
+ },
+ {
+  "res": "1920x1080",
+  "instances": 3,
+  "night": true,
+  "rafP50": 66.7,
+  "rafP95": 116.6,
+  "drawP50ms": 40.8,
+  "drawP95ms": 72.5
+ },
+ {
+  "res": "1920x1080",
+  "instances": 10,
+  "night": false,
+  "rafP50": 66.6,
+  "rafP95": 100,
+  "drawP50ms": 41.4,
+  "drawP95ms": 59.5
+ },
+ {
+  "res": "1920x1080",
+  "instances": 10,
+  "night": true,
+  "rafP50": 83.2,
+  "rafP95": 116.7,
+  "drawP50ms": 51.7,
+  "drawP95ms": 104
+ },
+ {
+  "res": "2560x1440",
+  "instances": 1,
+  "night": false,
+  "rafP50": 100.1,
+  "rafP95": 133.4,
+  "drawP50ms": 0,
+  "drawP95ms": 0.1
+ },
+ {
+  "res": "2560x1440",
+  "instances": 1,
+  "night": true,
+  "rafP50": 116.7,
+  "rafP95": 150,
+  "drawP50ms": 0,
+  "drawP95ms": 0.1
+ },
+ {
+  "res": "2560x1440",
+  "instances": 3,
+  "night": false,
+  "rafP50": 100,
+  "rafP95": 166.6,
+  "drawP50ms": 0,
+  "drawP95ms": 0.1
+ },
+ {
+  "res": "2560x1440",
+  "instances": 3,
+  "night": true,
+  "rafP50": 116.6,
+  "rafP95": 133.4,
+  "drawP50ms": 83.2,
+  "drawP95ms": 106.2
+ },
+ {
+  "res": "2560x1440",
+  "instances": 10,
+  "night": false,
+  "rafP50": 100,
+  "rafP95": 133.3,
+  "drawP50ms": 80.7,
+  "drawP95ms": 99.7
+ },
+ {
+  "res": "2560x1440",
+  "instances": 10,
+  "night": true,
+  "rafP50": 116.7,
+  "rafP95": 150,
+  "drawP50ms": 94,
+  "drawP95ms": 117.4
+ }
+]

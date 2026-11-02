@@ -90,6 +90,51 @@ These are CPU per-pixel numbers, i.e. a worst case: in a real browser the same p
 plus the additive light pass — both single-pass GPU ops in the browser. No FPS promises are made; the source
 artwork is never degraded to buy performance (scene warp is the first thing a quality preset would cut).
 
+## Corrective round (2026-11-02, post-review)
+
+**Defects fixed and verified**
+
+1. `intake.mjs` latent `category: cat` ReferenceError (undefined in the fresh-discovery path; masked earlier
+   because resume kept prior entries). Fixed to `id.split("/")[0]`; proven by a **clean rebuild from a fresh
+   clone of the pinned SHA into an empty output dir: 244/244 PARITY_PASS, 0 failed**, and all 244 effects'
+   file-hash sets + per-frame hashes are **byte-identical to the committed manifest** (1204/1204 on-disk
+   files match their manifest sha256). Reproducibility is deterministic, not approximate.
+2. `browser/app.js` playback froze 30 fps animations on 60 Hz displays (accumulated frame position was
+   floored each tick, discarding the sub-frame remainder). Now float `animT` drives an integer derived
+   frame index. Verified in real Chromium: 20 distinct frames across 40 rAF samples; loop wraps; pause
+   freezes; resume advances; scrub sets the exact frame; restart returns to 0; one-shot (fire/meteor)
+   ends on the last frame and stops. 8/8 behavior tests pass.
+3. Canvas backing store is now resized only when the display size/DPR changes (was reset every frame).
+   Also fixed a layout feedback bug (`#view` sized by its own attributes) — canvas now fills the stage.
+4. Async selection race: a generation counter discards stale atlas loads after rapid switching; loading and
+   error states are shown. Verified: rapid 5-effect switching lands on the last selection with no error.
+5. Black Hole placement: anchoring now distinguishes **source pivot** (`meta.origin` 92,124) from the
+   **visual bounds** (`[9,1,177,130]`, computed data-driven from actual alpha pixels of all frames for every
+   effect — no per-effect constants). `ground` anchor puts the bottom edge of the artwork's visual bounds on
+   the ground line, so the disk itself sits on the battlefield (screenshot-verified day+night).
+6. Scene warp now **samples the environment before FX artwork is drawn** and composites the displaced scene
+   *under* the effect, so Black Hole pixels/disk/particles/glow remain intact (earlier version painted the
+   warp over the FX and visibly erased the disk). No artificial range circle anywhere; `extraShapes=false`.
+
+**Real Chromium verification** — HeadlessChrome 153.0.8010.0 driven via CDP (puppeteer-core) against the live
+browser server; harness committed at `tools/pixelfx_foundry/browser/verify.mjs`. 8/8 behavior tests pass;
+screenshots in `docs/pixelfx_foundry/qa/browser/` cover Pure (ice-lance), Simulated (meteor), Acting
+(ice-lance-throw act), Status (frozen), Environment (fireflies), UI (achievement), Screen (crt-off),
+plus day/night for the marquee effects. Day/night keeps effect art luminous (post-night composite +
+bounded emission boost).
+
+**Performance — real Chromium (HeadlessChrome 153, software GL in this sandbox), 60-sample p50/p95**
+(`docs/pixelfx_foundry/qa/browser/perf-chromium.json`): rAF deltas are vsync-quantized under software
+rasterization — 720p: 33 ms p50 (1–10 instances, day/night); 1080p: 50–83 ms; 1440p: 83–117 ms, dominated by
+full-screen scene fill in software, not by sprites. Actual recorded draw-call cost p50: 0–0.1 ms at 1–3
+instances; 16–94 ms p50 at 10 instances night (full-screen 'lighter' emission pass). Pure-JS CPU worst case
+from round 1 (perf.mjs): 720p 10 instances 6.3 ms day / 14.4 ms night p50. No source art is degraded in any
+preset; scene warp remains the first thing a quality preset would cut.
+
+**Durable artifact** — atlas PNGs stay gitignored (414 MB), but the committed `index.json` pins every file's
+sha256 + every frame's sha256, and the clean-rebuild proof above shows a fresh Agent gets byte-identical
+assets with one command (see README). Upstream `LICENSE`/`NOTICE.md` travel with the output.
+
 ## Known limitations / exceptions
 
 - Per-effect exception report: **0 export/parity exceptions** — all 244 passed byte-exact parity.

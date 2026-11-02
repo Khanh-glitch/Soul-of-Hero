@@ -364,7 +364,17 @@
       }
      ]
     },
-    "lightEnergy": 26.1558
+    "lightEnergy": 26.1558,
+    "visualBounds": [
+     11,
+     10,
+     245,
+     98
+    ],
+    "visualCenter": [
+     128,
+     54
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -846,7 +856,17 @@
       }
      ]
     },
-    "lightEnergy": 9.7009
+    "lightEnergy": 9.7009,
+    "visualBounds": [
+     17,
+     2,
+     238,
+     114
+    ],
+    "visualCenter": [
+     127.5,
+     58
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -1045,7 +1065,17 @@
       }
      ]
     },
-    "lightEnergy": 15.5758
+    "lightEnergy": 15.5758,
+    "visualBounds": [
+     15,
+     2,
+     120,
+     110
+    ],
+    "visualCenter": [
+     67.5,
+     56
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -1330,7 +1360,17 @@
       }
      ]
     },
-    "lightEnergy": 5.6916
+    "lightEnergy": 5.6916,
+    "visualBounds": [
+     18,
+     7,
+     117,
+     94
+    ],
+    "visualCenter": [
+     67.5,
+     50.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -1618,7 +1658,17 @@
       }
      ]
     },
-    "lightEnergy": 7.1386
+    "lightEnergy": 7.1386,
+    "visualBounds": [
+     14,
+     4,
+     127,
+     94
+    ],
+    "visualCenter": [
+     70.5,
+     49
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -1914,7 +1964,17 @@
       }
      ]
     },
-    "lightEnergy": 10.321
+    "lightEnergy": 10.321,
+    "visualBounds": [
+     4,
+     0,
+     195,
+     219
+    ],
+    "visualCenter": [
+     99.5,
+     109.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -2098,7 +2158,17 @@
       }
      ]
     },
-    "lightEnergy": 7.5242
+    "lightEnergy": 7.5242,
+    "visualBounds": [
+     14,
+     2,
+     191,
+     148
+    ],
+    "visualCenter": [
+     102.5,
+     75
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -2298,7 +2368,17 @@
       }
      ]
     },
-    "lightEnergy": 23.4248
+    "lightEnergy": 23.4248,
+    "visualBounds": [
+     1,
+     1,
+     150,
+     114
+    ],
+    "visualCenter": [
+     75.5,
+     57.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -2546,7 +2626,17 @@
       }
      ]
     },
-    "lightEnergy": 15.6389
+    "lightEnergy": 15.6389,
+    "visualBounds": [
+     9,
+     4,
+     126,
+     99
+    ],
+    "visualCenter": [
+     67.5,
+     51.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -2864,7 +2954,17 @@
       }
      ]
     },
-    "lightEnergy": 11.6851
+    "lightEnergy": 11.6851,
+    "visualBounds": [
+     0,
+     3,
+     103,
+     84
+    ],
+    "visualCenter": [
+     51.5,
+     43.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -3069,7 +3169,17 @@
       }
      ]
     },
-    "lightEnergy": 4.8366
+    "lightEnergy": 4.8366,
+    "visualBounds": [
+     25,
+     14,
+     201,
+     170
+    ],
+    "visualCenter": [
+     113,
+     92
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -3307,7 +3417,17 @@
       }
      ]
     },
-    "lightEnergy": 6.548
+    "lightEnergy": 6.548,
+    "visualBounds": [
+     8,
+     1,
+     187,
+     134
+    ],
+    "visualCenter": [
+     97.5,
+     67.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -3506,7 +3626,17 @@
       }
      ]
     },
-    "lightEnergy": 2.3228
+    "lightEnergy": 2.3228,
+    "visualBounds": [
+     2,
+     13,
+     100,
+     73
+    ],
+    "visualCenter": [
+     51,
+     43
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -3704,7 +3834,17 @@
       }
      ]
     },
-    "lightEnergy": 0.3932
+    "lightEnergy": 0.3932,
+    "visualBounds": [
+     22,
+     19,
+     70,
+     59
+    ],
+    "visualCenter": [
+     46,
+     39
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -3928,7 +4068,17 @@
       }
      ]
     },
-    "lightEnergy": 5.2338
+    "lightEnergy": 5.2338,
+    "visualBounds": [
+     4,
+     2,
+     123,
+     84
+    ],
+    "visualCenter": [
+     63.5,
+     43
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -4152,7 +4302,17 @@
       }
      ]
     },
-    "lightEnergy": 7.632
+    "lightEnergy": 7.632,
+    "visualBounds": [
+     5,
+     8,
+     90,
+     106
+    ],
+    "visualCenter": [
+     47.5,
+     57
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -4424,7 +4584,17 @@
       }
      ]
     },
-    "lightEnergy": 9.1928
+    "lightEnergy": 9.1928,
+    "visualBounds": [
+     3,
+     1,
+     130,
+     78
+    ],
+    "visualCenter": [
+     66.5,
+     39.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -4624,7 +4794,17 @@
       }
      ]
     },
-    "lightEnergy": 20.5472
+    "lightEnergy": 20.5472,
+    "visualBounds": [
+     1,
+     0,
+     94,
+     130
+    ],
+    "visualCenter": [
+     47.5,
+     65
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -4829,7 +5009,17 @@
       }
      ]
     },
-    "lightEnergy": 0.0115
+    "lightEnergy": 0.0115,
+    "visualBounds": [
+     9,
+     33,
+     83,
+     83
+    ],
+    "visualCenter": [
+     46,
+     58
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -5029,7 +5219,17 @@
       }
      ]
     },
-    "lightEnergy": 10.9054
+    "lightEnergy": 10.9054,
+    "visualBounds": [
+     2,
+     10,
+     93,
+     98
+    ],
+    "visualCenter": [
+     47.5,
+     54
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -5253,7 +5453,17 @@
       }
      ]
     },
-    "lightEnergy": 7.8515
+    "lightEnergy": 7.8515,
+    "visualBounds": [
+     4,
+     1,
+     91,
+     104
+    ],
+    "visualCenter": [
+     47.5,
+     52.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -5434,7 +5644,17 @@
       }
      ]
     },
-    "lightEnergy": 13.6451
+    "lightEnergy": 13.6451,
+    "visualBounds": [
+     4,
+     4,
+     107,
+     87
+    ],
+    "visualCenter": [
+     55.5,
+     45.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -5632,7 +5852,17 @@
       }
      ]
     },
-    "lightEnergy": 0.09
+    "lightEnergy": 0.09,
+    "visualBounds": [
+     24,
+     33,
+     113,
+     49
+    ],
+    "visualCenter": [
+     68.5,
+     41
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -5856,7 +6086,17 @@
       }
      ]
     },
-    "lightEnergy": 6.9994
+    "lightEnergy": 6.9994,
+    "visualBounds": [
+     1,
+     8,
+     126,
+     102
+    ],
+    "visualCenter": [
+     63.5,
+     55
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -6285,7 +6525,17 @@
       }
      ]
     },
-    "lightEnergy": 1.617
+    "lightEnergy": 1.617,
+    "visualBounds": [
+     22,
+     28,
+     285,
+     238
+    ],
+    "visualCenter": [
+     153.5,
+     133
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -6967,7 +7217,17 @@
       }
      ]
     },
-    "lightEnergy": 2.2173
+    "lightEnergy": 2.2173,
+    "visualBounds": [
+     23,
+     21,
+     328,
+     294
+    ],
+    "visualCenter": [
+     175.5,
+     157.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -7128,7 +7388,17 @@
       }
      ]
     },
-    "lightEnergy": 4.5945
+    "lightEnergy": 4.5945,
+    "visualBounds": [
+     23,
+     4,
+     160,
+     136
+    ],
+    "visualCenter": [
+     91.5,
+     70
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -7413,7 +7683,17 @@
       }
      ]
     },
-    "lightEnergy": 0.1345
+    "lightEnergy": 0.1345,
+    "visualBounds": [
+     3,
+     7,
+     255,
+     238
+    ],
+    "visualCenter": [
+     129,
+     122.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -7697,7 +7977,17 @@
       }
      ]
     },
-    "lightEnergy": 3.5764
+    "lightEnergy": 3.5764,
+    "visualBounds": [
+     20,
+     3,
+     219,
+     238
+    ],
+    "visualCenter": [
+     119.5,
+     120.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -8083,7 +8373,17 @@
       }
      ]
     },
-    "lightEnergy": 1.4748
+    "lightEnergy": 1.4748,
+    "visualBounds": [
+     22,
+     2,
+     287,
+     297
+    ],
+    "visualCenter": [
+     154.5,
+     149.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -8434,7 +8734,17 @@
       }
      ]
     },
-    "lightEnergy": 0.5014
+    "lightEnergy": 0.5014,
+    "visualBounds": [
+     14,
+     50,
+     295,
+     198
+    ],
+    "visualCenter": [
+     154.5,
+     124
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -8612,7 +8922,17 @@
       }
      ]
     },
-    "lightEnergy": 3.9125
+    "lightEnergy": 3.9125,
+    "visualBounds": [
+     18,
+     6,
+     186,
+     173
+    ],
+    "visualCenter": [
+     102,
+     89.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -9443,7 +9763,17 @@
       }
      ]
     },
-    "lightEnergy": 3.814
+    "lightEnergy": 3.814,
+    "visualBounds": [
+     3,
+     3,
+     396,
+     318
+    ],
+    "visualCenter": [
+     199.5,
+     160.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -9623,7 +9953,17 @@
       }
      ]
     },
-    "lightEnergy": 5.4083
+    "lightEnergy": 5.4083,
+    "visualBounds": [
+     2,
+     5,
+     209,
+     194
+    ],
+    "visualCenter": [
+     105.5,
+     99.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -10057,7 +10397,17 @@
       }
      ]
     },
-    "lightEnergy": 0.4079
+    "lightEnergy": 0.4079,
+    "visualBounds": [
+     46,
+     15,
+     260,
+     238
+    ],
+    "visualCenter": [
+     153,
+     126.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -10384,7 +10734,17 @@
       }
      ]
     },
-    "lightEnergy": 0.1092
+    "lightEnergy": 0.1092,
+    "visualBounds": [
+     9,
+     50,
+     198,
+     174
+    ],
+    "visualCenter": [
+     103.5,
+     112
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -10602,7 +10962,17 @@
       }
      ]
     },
-    "lightEnergy": 23.5306
+    "lightEnergy": 23.5306,
+    "visualBounds": [
+     1,
+     11,
+     110,
+     146
+    ],
+    "visualCenter": [
+     55.5,
+     78.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -10820,7 +11190,17 @@
       }
      ]
     },
-    "lightEnergy": 17.7464
+    "lightEnergy": 17.7464,
+    "visualBounds": [
+     4,
+     27,
+     123,
+     126
+    ],
+    "visualCenter": [
+     63.5,
+     76.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -11068,7 +11448,17 @@
       }
      ]
     },
-    "lightEnergy": 15.219
+    "lightEnergy": 15.219,
+    "visualBounds": [
+     1,
+     7,
+     54,
+     71
+    ],
+    "visualCenter": [
+     27.5,
+     39
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -11241,7 +11631,17 @@
       }
      ]
     },
-    "lightEnergy": 19.8755
+    "lightEnergy": 19.8755,
+    "visualBounds": [
+     0,
+     2,
+     155,
+     114
+    ],
+    "visualCenter": [
+     77.5,
+     58
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -11679,7 +12079,17 @@
       }
      ]
     },
-    "lightEnergy": 5.1917
+    "lightEnergy": 5.1917,
+    "visualBounds": [
+     6,
+     5,
+     217,
+     126
+    ],
+    "visualCenter": [
+     111.5,
+     65.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -11866,7 +12276,17 @@
       }
      ]
     },
-    "lightEnergy": 22.3128
+    "lightEnergy": 22.3128,
+    "visualBounds": [
+     2,
+     5,
+     117,
+     150
+    ],
+    "visualCenter": [
+     59.5,
+     77.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -12029,7 +12449,17 @@
       }
      ]
     },
-    "lightEnergy": 14.3318
+    "lightEnergy": 14.3318,
+    "visualBounds": [
+     18,
+     1,
+     134,
+     54
+    ],
+    "visualCenter": [
+     76,
+     27.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -12355,7 +12785,17 @@
       }
      ]
     },
-    "lightEnergy": 8.7094
+    "lightEnergy": 8.7094,
+    "visualBounds": [
+     8,
+     17,
+     176,
+     255
+    ],
+    "visualCenter": [
+     92,
+     136
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -12530,7 +12970,17 @@
       }
      ]
     },
-    "lightEnergy": 25.8634
+    "lightEnergy": 25.8634,
+    "visualBounds": [
+     1,
+     2,
+     181,
+     100
+    ],
+    "visualCenter": [
+     91,
+     51
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -12905,7 +13355,17 @@
       }
      ]
     },
-    "lightEnergy": 2.0107
+    "lightEnergy": 2.0107,
+    "visualBounds": [
+     2,
+     7,
+     259,
+     231
+    ],
+    "visualCenter": [
+     130.5,
+     119
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -13123,7 +13583,17 @@
       }
      ]
     },
-    "lightEnergy": 14.4381
+    "lightEnergy": 14.4381,
+    "visualBounds": [
+     1,
+     23,
+     78,
+     121
+    ],
+    "visualCenter": [
+     39.5,
+     72
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -13311,7 +13781,17 @@
       }
      ]
     },
-    "lightEnergy": 24.1593
+    "lightEnergy": 24.1593,
+    "visualBounds": [
+     1,
+     8,
+     70,
+     118
+    ],
+    "visualCenter": [
+     35.5,
+     63
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -13638,7 +14118,17 @@
       }
      ]
     },
-    "lightEnergy": 10.7316
+    "lightEnergy": 10.7316,
+    "visualBounds": [
+     14,
+     0,
+     65,
+     125
+    ],
+    "visualCenter": [
+     39.5,
+     62.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -13951,7 +14441,17 @@
       }
      ]
     },
-    "lightEnergy": 16.2688
+    "lightEnergy": 16.2688,
+    "visualBounds": [
+     8,
+     6,
+     79,
+     81
+    ],
+    "visualCenter": [
+     43.5,
+     43.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -14170,7 +14670,17 @@
       }
      ]
     },
-    "lightEnergy": 2.3655
+    "lightEnergy": 2.3655,
+    "visualBounds": [
+     12,
+     10,
+     152,
+     146
+    ],
+    "visualCenter": [
+     82,
+     78
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -14474,7 +14984,17 @@
       }
      ]
     },
-    "lightEnergy": 7.9647
+    "lightEnergy": 7.9647,
+    "visualBounds": [
+     10,
+     5,
+     48,
+     44
+    ],
+    "visualCenter": [
+     29,
+     24.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -14690,7 +15210,17 @@
       }
      ]
     },
-    "lightEnergy": 4.3597
+    "lightEnergy": 4.3597,
+    "visualBounds": [
+     11,
+     18,
+     244,
+     134
+    ],
+    "visualCenter": [
+     127.5,
+     76
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -15006,7 +15536,17 @@
       }
      ]
     },
-    "lightEnergy": 6.399
+    "lightEnergy": 6.399,
+    "visualBounds": [
+     13,
+     19,
+     66,
+     102
+    ],
+    "visualCenter": [
+     39.5,
+     60.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -15289,7 +15829,17 @@
       }
      ]
     },
-    "lightEnergy": 8.7928
+    "lightEnergy": 8.7928,
+    "visualBounds": [
+     0,
+     0,
+     191,
+     229
+    ],
+    "visualCenter": [
+     95.5,
+     114.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -15854,7 +16404,17 @@
       }
      ]
     },
-    "lightEnergy": 10.1989
+    "lightEnergy": 10.1989,
+    "visualBounds": [
+     16,
+     0,
+     174,
+     158
+    ],
+    "visualCenter": [
+     95,
+     79
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -16067,7 +16627,17 @@
       }
      ]
     },
-    "lightEnergy": 3.6056
+    "lightEnergy": 3.6056,
+    "visualBounds": [
+     22,
+     1,
+     201,
+     175
+    ],
+    "visualCenter": [
+     111.5,
+     88
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -16315,7 +16885,17 @@
       }
      ]
     },
-    "lightEnergy": 13.52
+    "lightEnergy": 13.52,
+    "visualBounds": [
+     9,
+     9,
+     118,
+     118
+    ],
+    "visualCenter": [
+     63.5,
+     63.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -16503,7 +17083,17 @@
       }
      ]
     },
-    "lightEnergy": 9.2921
+    "lightEnergy": 9.2921,
+    "visualBounds": [
+     14,
+     2,
+     107,
+     114
+    ],
+    "visualCenter": [
+     60.5,
+     58
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -16976,7 +17566,17 @@
       }
      ]
     },
-    "lightEnergy": 4.4438
+    "lightEnergy": 4.4438,
+    "visualBounds": [
+     17,
+     18,
+     152,
+     126
+    ],
+    "visualCenter": [
+     84.5,
+     72
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -17140,7 +17740,17 @@
       }
      ]
     },
-    "lightEnergy": 14.2808
+    "lightEnergy": 14.2808,
+    "visualBounds": [
+     1,
+     17,
+     172,
+     90
+    ],
+    "visualCenter": [
+     86.5,
+     53.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -17627,7 +18237,17 @@
       }
      ]
     },
-    "lightEnergy": 2.042
+    "lightEnergy": 2.042,
+    "visualBounds": [
+     18,
+     49,
+     272,
+     190
+    ],
+    "visualCenter": [
+     145,
+     119.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -17845,7 +18465,17 @@
       }
      ]
     },
-    "lightEnergy": 5.6533
+    "lightEnergy": 5.6533,
+    "visualBounds": [
+     19,
+     26,
+     76,
+     98
+    ],
+    "visualCenter": [
+     47.5,
+     62
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -17997,7 +18627,17 @@
       }
      ]
     },
-    "lightEnergy": 8.3178
+    "lightEnergy": 8.3178,
+    "visualBounds": [
+     17,
+     7,
+     158,
+     56
+    ],
+    "visualCenter": [
+     87.5,
+     31.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -18210,7 +18850,17 @@
       }
      ]
     },
-    "lightEnergy": 2.5436
+    "lightEnergy": 2.5436,
+    "visualBounds": [
+     8,
+     2,
+     196,
+     111
+    ],
+    "visualCenter": [
+     102,
+     56.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -18429,7 +19079,17 @@
       }
      ]
     },
-    "lightEnergy": 7.5494
+    "lightEnergy": 7.5494,
+    "visualBounds": [
+     3,
+     3,
+     260,
+     110
+    ],
+    "visualCenter": [
+     131.5,
+     56.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -18635,7 +19295,17 @@
       }
      ]
     },
-    "lightEnergy": 1.8326
+    "lightEnergy": 1.8326,
+    "visualBounds": [
+     11,
+     1,
+     141,
+     118
+    ],
+    "visualCenter": [
+     76,
+     59.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -18859,7 +19529,17 @@
       }
      ]
     },
-    "lightEnergy": 4.8734
+    "lightEnergy": 4.8734,
+    "visualBounds": [
+     5,
+     2,
+     134,
+     117
+    ],
+    "visualCenter": [
+     69.5,
+     59.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -19017,7 +19697,17 @@
       }
      ]
     },
-    "lightEnergy": 2.9159
+    "lightEnergy": 2.9159,
+    "visualBounds": [
+     17,
+     6,
+     107,
+     86
+    ],
+    "visualCenter": [
+     62,
+     46
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -19189,7 +19879,17 @@
       }
      ]
     },
-    "lightEnergy": 0.7417
+    "lightEnergy": 0.7417,
+    "visualBounds": [
+     32,
+     23,
+     147,
+     95
+    ],
+    "visualCenter": [
+     89.5,
+     59
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -19345,7 +20045,17 @@
       }
      ]
     },
-    "lightEnergy": 4.9534
+    "lightEnergy": 4.9534,
+    "visualBounds": [
+     7,
+     4,
+     180,
+     134
+    ],
+    "visualCenter": [
+     93.5,
+     69
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -19619,7 +20329,17 @@
       }
      ]
     },
-    "lightEnergy": 1.3092
+    "lightEnergy": 1.3092,
+    "visualBounds": [
+     22,
+     34,
+     265,
+     206
+    ],
+    "visualCenter": [
+     143.5,
+     120
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -19954,7 +20674,17 @@
       }
      ]
     },
-    "lightEnergy": 0.0866
+    "lightEnergy": 0.0866,
+    "visualBounds": [
+     19,
+     32,
+     154,
+     73
+    ],
+    "visualCenter": [
+     86.5,
+     52.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -20225,7 +20955,17 @@
       }
      ]
     },
-    "lightEnergy": 4.6088
+    "lightEnergy": 4.6088,
+    "visualBounds": [
+     13,
+     0,
+     78,
+     54
+    ],
+    "visualCenter": [
+     45.5,
+     27
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -20368,7 +21108,17 @@
       }
      ]
     },
-    "lightEnergy": 1.5651
+    "lightEnergy": 1.5651,
+    "visualBounds": [
+     10,
+     8,
+     131,
+     78
+    ],
+    "visualCenter": [
+     70.5,
+     43
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -20507,7 +21257,17 @@
       }
      ]
     },
-    "lightEnergy": 0
+    "lightEnergy": 0,
+    "visualBounds": [
+     0,
+     0,
+     319,
+     179
+    ],
+    "visualCenter": [
+     159.5,
+     89.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -20667,7 +21427,17 @@
       }
      ]
     },
-    "lightEnergy": 2.2085
+    "lightEnergy": 2.2085,
+    "visualBounds": [
+     16,
+     11,
+     188,
+     110
+    ],
+    "visualCenter": [
+     102,
+     60.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -20830,7 +21600,17 @@
       }
      ]
     },
-    "lightEnergy": 0.7874
+    "lightEnergy": 0.7874,
+    "visualBounds": [
+     9,
+     19,
+     210,
+     82
+    ],
+    "visualCenter": [
+     109.5,
+     50.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -21125,7 +21905,17 @@
       }
      ]
     },
-    "lightEnergy": 2.7988
+    "lightEnergy": 2.7988,
+    "visualBounds": [
+     21,
+     24,
+     131,
+     101
+    ],
+    "visualCenter": [
+     76,
+     62.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -21373,7 +22163,17 @@
       }
      ]
     },
-    "lightEnergy": 5.6344
+    "lightEnergy": 5.6344,
+    "visualBounds": [
+     1,
+     6,
+     127,
+     103
+    ],
+    "visualCenter": [
+     64,
+     54.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -21739,7 +22539,17 @@
       }
      ]
     },
-    "lightEnergy": 6.5515
+    "lightEnergy": 6.5515,
+    "visualBounds": [
+     18,
+     4,
+     239,
+     102
+    ],
+    "visualCenter": [
+     128.5,
+     53
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -22177,7 +22987,17 @@
       }
      ]
     },
-    "lightEnergy": 3.1636
+    "lightEnergy": 3.1636,
+    "visualBounds": [
+     3,
+     27,
+     237,
+     182
+    ],
+    "visualCenter": [
+     120,
+     104.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -22591,7 +23411,17 @@
       }
      ]
     },
-    "lightEnergy": 6.0935
+    "lightEnergy": 6.0935,
+    "visualBounds": [
+     27,
+     22,
+     80,
+     89
+    ],
+    "visualCenter": [
+     53.5,
+     55.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -22859,7 +23689,17 @@
       }
      ]
     },
-    "lightEnergy": 4.5087
+    "lightEnergy": 4.5087,
+    "visualBounds": [
+     1,
+     1,
+     237,
+     262
+    ],
+    "visualCenter": [
+     119,
+     131.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -23076,7 +23916,17 @@
       }
      ]
     },
-    "lightEnergy": 14.7669
+    "lightEnergy": 14.7669,
+    "visualBounds": [
+     11,
+     7,
+     100,
+     102
+    ],
+    "visualCenter": [
+     55.5,
+     54.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -23264,7 +24114,17 @@
       }
      ]
     },
-    "lightEnergy": 9.0625
+    "lightEnergy": 9.0625,
+    "visualBounds": [
+     17,
+     4,
+     115,
+     118
+    ],
+    "visualCenter": [
+     66,
+     61
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -23482,7 +24342,17 @@
       }
      ]
     },
-    "lightEnergy": 2.9258
+    "lightEnergy": 2.9258,
+    "visualBounds": [
+     2,
+     1,
+     163,
+     175
+    ],
+    "visualCenter": [
+     82.5,
+     88
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -23681,7 +24551,17 @@
       }
      ]
     },
-    "lightEnergy": 7.246
+    "lightEnergy": 7.246,
+    "visualBounds": [
+     7,
+     1,
+     216,
+     134
+    ],
+    "visualCenter": [
+     111.5,
+     67.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -24051,7 +24931,17 @@
       }
      ]
     },
-    "lightEnergy": 3.1236
+    "lightEnergy": 3.1236,
+    "visualBounds": [
+     15,
+     4,
+     269,
+     154
+    ],
+    "visualCenter": [
+     142,
+     79
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -24207,7 +25097,17 @@
       }
      ]
     },
-    "lightEnergy": 4.5244
+    "lightEnergy": 4.5244,
+    "visualBounds": [
+     1,
+     4,
+     129,
+     107
+    ],
+    "visualCenter": [
+     65,
+     55.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -24581,7 +25481,17 @@
       }
      ]
     },
-    "lightEnergy": 2.3737
+    "lightEnergy": 2.3737,
+    "visualBounds": [
+     30,
+     35,
+     105,
+     94
+    ],
+    "visualCenter": [
+     67.5,
+     64.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -25100,7 +26010,17 @@
       }
      ]
     },
-    "lightEnergy": 3.8882
+    "lightEnergy": 3.8882,
+    "visualBounds": [
+     27,
+     15,
+     135,
+     102
+    ],
+    "visualCenter": [
+     81,
+     58.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -25488,7 +26408,17 @@
       }
      ]
     },
-    "lightEnergy": 3.5936
+    "lightEnergy": 3.5936,
+    "visualBounds": [
+     29,
+     9,
+     154,
+     106
+    ],
+    "visualCenter": [
+     91.5,
+     57.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -25916,7 +26846,17 @@
       }
      ]
     },
-    "lightEnergy": 1.3381
+    "lightEnergy": 1.3381,
+    "visualBounds": [
+     15,
+     11,
+     180,
+     110
+    ],
+    "visualCenter": [
+     97.5,
+     60.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -26336,7 +27276,17 @@
       }
      ]
     },
-    "lightEnergy": 2.6768
+    "lightEnergy": 2.6768,
+    "visualBounds": [
+     18,
+     9,
+     171,
+     115
+    ],
+    "visualCenter": [
+     94.5,
+     62
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -26744,7 +27694,17 @@
       }
      ]
     },
-    "lightEnergy": 1.3357
+    "lightEnergy": 1.3357,
+    "visualBounds": [
+     25,
+     36,
+     153,
+     106
+    ],
+    "visualCenter": [
+     89,
+     71
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -27146,7 +28106,17 @@
       }
      ]
     },
-    "lightEnergy": 1.3024
+    "lightEnergy": 1.3024,
+    "visualBounds": [
+     25,
+     10,
+     206,
+     82
+    ],
+    "visualCenter": [
+     115.5,
+     46
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -27514,7 +28484,17 @@
       }
      ]
     },
-    "lightEnergy": 3.9485
+    "lightEnergy": 3.9485,
+    "visualBounds": [
+     25,
+     2,
+     207,
+     102
+    ],
+    "visualCenter": [
+     116,
+     52
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -27851,7 +28831,17 @@
       }
      ]
     },
-    "lightEnergy": 2.385
+    "lightEnergy": 2.385,
+    "visualBounds": [
+     0,
+     1,
+     129,
+     102
+    ],
+    "visualCenter": [
+     64.5,
+     51.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -28176,7 +29166,17 @@
       }
      ]
     },
-    "lightEnergy": 1.9361
+    "lightEnergy": 1.9361,
+    "visualBounds": [
+     26,
+     4,
+     172,
+     74
+    ],
+    "visualCenter": [
+     99,
+     39
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -28527,7 +29527,17 @@
       }
      ]
     },
-    "lightEnergy": 3.2321
+    "lightEnergy": 3.2321,
+    "visualBounds": [
+     5,
+     7,
+     113,
+     111
+    ],
+    "visualCenter": [
+     59,
+     59
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -28889,7 +29899,17 @@
       }
      ]
     },
-    "lightEnergy": 1.3048
+    "lightEnergy": 1.3048,
+    "visualBounds": [
+     33,
+     6,
+     184,
+     78
+    ],
+    "visualCenter": [
+     108.5,
+     42
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -29256,7 +30276,17 @@
       }
      ]
     },
-    "lightEnergy": 0.1281
+    "lightEnergy": 0.1281,
+    "visualBounds": [
+     3,
+     5,
+     288,
+     72
+    ],
+    "visualCenter": [
+     145.5,
+     38.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -29830,7 +30860,17 @@
       }
      ]
     },
-    "lightEnergy": 1.0968
+    "lightEnergy": 1.0968,
+    "visualBounds": [
+     118,
+     32,
+     334,
+     154
+    ],
+    "visualCenter": [
+     226,
+     93
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -30277,7 +31317,17 @@
       }
      ]
     },
-    "lightEnergy": 0.7738
+    "lightEnergy": 0.7738,
+    "visualBounds": [
+     4,
+     4,
+     277,
+     141
+    ],
+    "visualCenter": [
+     140.5,
+     72.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -31151,7 +32201,17 @@
       }
      ]
     },
-    "lightEnergy": 0.5361
+    "lightEnergy": 0.5361,
+    "visualBounds": [
+     9,
+     10,
+     347,
+     241
+    ],
+    "visualCenter": [
+     178,
+     125.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -31721,7 +32781,17 @@
       }
      ]
     },
-    "lightEnergy": 1.0167
+    "lightEnergy": 1.0167,
+    "visualBounds": [
+     16,
+     25,
+     273,
+     203
+    ],
+    "visualCenter": [
+     144.5,
+     114
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -32103,7 +33173,17 @@
       }
      ]
     },
-    "lightEnergy": 3.1564
+    "lightEnergy": 3.1564,
+    "visualBounds": [
+     70,
+     4,
+     249,
+     180
+    ],
+    "visualCenter": [
+     159.5,
+     92
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -32616,7 +33696,17 @@
       }
      ]
     },
-    "lightEnergy": 1.9815
+    "lightEnergy": 1.9815,
+    "visualBounds": [
+     4,
+     2,
+     308,
+     135
+    ],
+    "visualCenter": [
+     156,
+     68.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -33082,7 +34172,17 @@
       }
      ]
     },
-    "lightEnergy": 3.5151
+    "lightEnergy": 3.5151,
+    "visualBounds": [
+     29,
+     1,
+     288,
+     264
+    ],
+    "visualCenter": [
+     158.5,
+     132.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -33902,7 +35002,17 @@
       }
      ]
     },
-    "lightEnergy": 4.1393
+    "lightEnergy": 4.1393,
+    "visualBounds": [
+     2,
+     20,
+     371,
+     239
+    ],
+    "visualCenter": [
+     186.5,
+     129.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -34391,7 +35501,17 @@
       }
      ]
     },
-    "lightEnergy": 0.7642
+    "lightEnergy": 0.7642,
+    "visualBounds": [
+     13,
+     3,
+     373,
+     74
+    ],
+    "visualCenter": [
+     193,
+     38.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -35334,7 +36454,17 @@
       }
      ]
     },
-    "lightEnergy": 0.3661
+    "lightEnergy": 0.3661,
+    "visualBounds": [
+     7,
+     9,
+     471,
+     241
+    ],
+    "visualCenter": [
+     239,
+     125
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -36034,7 +37164,17 @@
       }
      ]
     },
-    "lightEnergy": 1.737
+    "lightEnergy": 1.737,
+    "visualBounds": [
+     37,
+     38,
+     211,
+     149
+    ],
+    "visualCenter": [
+     124,
+     93.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -36247,7 +37387,17 @@
       }
      ]
     },
-    "lightEnergy": 3.1476
+    "lightEnergy": 3.1476,
+    "visualBounds": [
+     36,
+     20,
+     148,
+     114
+    ],
+    "visualCenter": [
+     92,
+     67
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -36445,7 +37595,17 @@
       }
      ]
     },
-    "lightEnergy": 0.3923
+    "lightEnergy": 0.3923,
+    "visualBounds": [
+     21,
+     7,
+     244,
+     119
+    ],
+    "visualCenter": [
+     132.5,
+     63
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -36724,7 +37884,17 @@
       }
      ]
     },
-    "lightEnergy": 0.7983
+    "lightEnergy": 0.7983,
+    "visualBounds": [
+     22,
+     7,
+     265,
+     148
+    ],
+    "visualCenter": [
+     143.5,
+     77.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -36952,7 +38122,17 @@
       }
      ]
     },
-    "lightEnergy": 4.8367
+    "lightEnergy": 4.8367,
+    "visualBounds": [
+     3,
+     2,
+     121,
+     118
+    ],
+    "visualCenter": [
+     62,
+     60
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -37262,7 +38442,17 @@
       }
      ]
     },
-    "lightEnergy": 3.225
+    "lightEnergy": 3.225,
+    "visualBounds": [
+     8,
+     8,
+     106,
+     101
+    ],
+    "visualCenter": [
+     57,
+     54.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -37512,7 +38702,17 @@
       }
      ]
     },
-    "lightEnergy": 4.2527
+    "lightEnergy": 4.2527,
+    "visualBounds": [
+     15,
+     15,
+     233,
+     98
+    ],
+    "visualCenter": [
+     124,
+     56.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -37734,7 +38934,17 @@
       }
      ]
     },
-    "lightEnergy": 1.3743
+    "lightEnergy": 1.3743,
+    "visualBounds": [
+     14,
+     23,
+     265,
+     103
+    ],
+    "visualCenter": [
+     139.5,
+     63
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -38158,7 +39368,17 @@
       }
      ]
     },
-    "lightEnergy": 1.7914
+    "lightEnergy": 1.7914,
+    "visualBounds": [
+     8,
+     33,
+     118,
+     94
+    ],
+    "visualCenter": [
+     63,
+     63.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -38383,7 +39603,17 @@
       }
      ]
     },
-    "lightEnergy": 3.0593
+    "lightEnergy": 3.0593,
+    "visualBounds": [
+     44,
+     21,
+     167,
+     130
+    ],
+    "visualCenter": [
+     105.5,
+     75.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -38584,7 +39814,17 @@
       }
      ]
     },
-    "lightEnergy": 2.3592
+    "lightEnergy": 2.3592,
+    "visualBounds": [
+     28,
+     13,
+     220,
+     90
+    ],
+    "visualCenter": [
+     124,
+     51.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -38772,7 +40012,17 @@
       }
      ]
     },
-    "lightEnergy": 1.3455
+    "lightEnergy": 1.3455,
+    "visualBounds": [
+     22,
+     1,
+     170,
+     165
+    ],
+    "visualCenter": [
+     96,
+     83
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -39022,7 +40272,17 @@
       }
      ]
     },
-    "lightEnergy": 3.9724
+    "lightEnergy": 3.9724,
+    "visualBounds": [
+     35,
+     39,
+     140,
+     98
+    ],
+    "visualCenter": [
+     87.5,
+     68.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -39193,7 +40453,17 @@
       }
      ]
     },
-    "lightEnergy": 0.4933
+    "lightEnergy": 0.4933,
+    "visualBounds": [
+     0,
+     34,
+     173,
+     126
+    ],
+    "visualCenter": [
+     86.5,
+     80
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -39460,7 +40730,17 @@
       }
      ]
     },
-    "lightEnergy": 3.7816
+    "lightEnergy": 3.7816,
+    "visualBounds": [
+     1,
+     22,
+     171,
+     110
+    ],
+    "visualCenter": [
+     86,
+     66
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -39634,7 +40914,17 @@
       }
      ]
     },
-    "lightEnergy": 7.5556
+    "lightEnergy": 7.5556,
+    "visualBounds": [
+     10,
+     11,
+     47,
+     50
+    ],
+    "visualCenter": [
+     28.5,
+     30.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -39803,7 +41093,17 @@
       }
      ]
     },
-    "lightEnergy": 2.304
+    "lightEnergy": 2.304,
+    "visualBounds": [
+     20,
+     13,
+     97,
+     100
+    ],
+    "visualCenter": [
+     58.5,
+     56.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -40026,7 +41326,17 @@
       }
      ]
     },
-    "lightEnergy": 9.0076
+    "lightEnergy": 9.0076,
+    "visualBounds": [
+     8,
+     10,
+     55,
+     71
+    ],
+    "visualCenter": [
+     31.5,
+     40.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -40225,7 +41535,17 @@
       }
      ]
     },
-    "lightEnergy": 9.5632
+    "lightEnergy": 9.5632,
+    "visualBounds": [
+     11,
+     14,
+     52,
+     60
+    ],
+    "visualCenter": [
+     31.5,
+     37
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -40387,7 +41707,17 @@
       }
      ]
     },
-    "lightEnergy": 6.4997
+    "lightEnergy": 6.4997,
+    "visualBounds": [
+     4,
+     9,
+     51,
+     56
+    ],
+    "visualCenter": [
+     27.5,
+     32.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -40573,7 +41903,17 @@
       }
      ]
     },
-    "lightEnergy": 5.3922
+    "lightEnergy": 5.3922,
+    "visualBounds": [
+     15,
+     13,
+     63,
+     55
+    ],
+    "visualCenter": [
+     39,
+     34
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -40773,7 +42113,17 @@
       }
      ]
     },
-    "lightEnergy": 24.1119
+    "lightEnergy": 24.1119,
+    "visualBounds": [
+     16,
+     1,
+     80,
+     171
+    ],
+    "visualCenter": [
+     48,
+     86
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -40972,7 +42322,17 @@
       }
      ]
     },
-    "lightEnergy": 6.6936
+    "lightEnergy": 6.6936,
+    "visualBounds": [
+     6,
+     6,
+     49,
+     69
+    ],
+    "visualCenter": [
+     27.5,
+     37.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -41147,7 +42507,17 @@
       }
      ]
     },
-    "lightEnergy": 14.1338
+    "lightEnergy": 14.1338,
+    "visualBounds": [
+     5,
+     12,
+     82,
+     83
+    ],
+    "visualCenter": [
+     43.5,
+     47.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -41328,7 +42698,17 @@
       }
      ]
     },
-    "lightEnergy": 6.078
+    "lightEnergy": 6.078,
+    "visualBounds": [
+     4,
+     6,
+     65,
+     50
+    ],
+    "visualCenter": [
+     34.5,
+     28
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -41473,7 +42853,17 @@
       }
      ]
     },
-    "lightEnergy": 0.198
+    "lightEnergy": 0.198,
+    "visualBounds": [
+     4,
+     6,
+     97,
+     23
+    ],
+    "visualCenter": [
+     50.5,
+     14.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -41618,7 +43008,17 @@
       }
      ]
     },
-    "lightEnergy": 7.7357
+    "lightEnergy": 7.7357,
+    "visualBounds": [
+     41,
+     1,
+     198,
+     37
+    ],
+    "visualCenter": [
+     119.5,
+     19
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -41861,7 +43261,17 @@
       }
      ]
     },
-    "lightEnergy": 0.3918
+    "lightEnergy": 0.3918,
+    "visualBounds": [
+     19,
+     9,
+     201,
+     114
+    ],
+    "visualCenter": [
+     110,
+     61.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -42004,7 +43414,17 @@
       }
      ]
     },
-    "lightEnergy": 10.4431
+    "lightEnergy": 10.4431,
+    "visualBounds": [
+     20,
+     2,
+     116,
+     49
+    ],
+    "visualCenter": [
+     68,
+     25.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -42331,7 +43751,17 @@
       }
      ]
     },
-    "lightEnergy": 5.3277
+    "lightEnergy": 5.3277,
+    "visualBounds": [
+     11,
+     13,
+     143,
+     231
+    ],
+    "visualCenter": [
+     77,
+     122
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -42622,7 +44052,17 @@
       }
      ]
     },
-    "lightEnergy": 0.9829
+    "lightEnergy": 0.9829,
+    "visualBounds": [
+     3,
+     14,
+     230,
+     138
+    ],
+    "visualCenter": [
+     116.5,
+     76
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -42764,7 +44204,17 @@
       }
      ]
     },
-    "lightEnergy": 13.0052
+    "lightEnergy": 13.0052,
+    "visualBounds": [
+     11,
+     1,
+     123,
+     30
+    ],
+    "visualCenter": [
+     67,
+     15.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -42950,7 +44400,17 @@
       }
      ]
     },
-    "lightEnergy": 2.0208
+    "lightEnergy": 2.0208,
+    "visualBounds": [
+     6,
+     30,
+     183,
+     110
+    ],
+    "visualCenter": [
+     94.5,
+     70
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -43135,7 +44595,17 @@
       }
      ]
     },
-    "lightEnergy": 0.4317
+    "lightEnergy": 0.4317,
+    "visualBounds": [
+     9,
+     10,
+     84,
+     70
+    ],
+    "visualCenter": [
+     46.5,
+     40
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -43362,7 +44832,17 @@
       }
      ]
     },
-    "lightEnergy": 0.4214
+    "lightEnergy": 0.4214,
+    "visualBounds": [
+     8,
+     13,
+     158,
+     87
+    ],
+    "visualCenter": [
+     83,
+     50
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -43522,7 +45002,17 @@
       }
      ]
     },
-    "lightEnergy": 3.4794
+    "lightEnergy": 3.4794,
+    "visualBounds": [
+     18,
+     16,
+     103,
+     70
+    ],
+    "visualCenter": [
+     60.5,
+     43
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -43673,7 +45163,17 @@
       }
      ]
     },
-    "lightEnergy": 10.3647
+    "lightEnergy": 10.3647,
+    "visualBounds": [
+     9,
+     2,
+     136,
+     57
+    ],
+    "visualCenter": [
+     72.5,
+     29.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -43837,7 +45337,17 @@
       }
      ]
     },
-    "lightEnergy": 7.4156
+    "lightEnergy": 7.4156,
+    "visualBounds": [
+     32,
+     1,
+     280,
+     74
+    ],
+    "visualCenter": [
+     156,
+     37.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -44063,7 +45573,17 @@
       }
      ]
     },
-    "lightEnergy": 4.334
+    "lightEnergy": 4.334,
+    "visualBounds": [
+     0,
+     1,
+     151,
+     114
+    ],
+    "visualCenter": [
+     75.5,
+     57.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -44265,7 +45785,17 @@
       }
      ]
     },
-    "lightEnergy": 11.2678
+    "lightEnergy": 11.2678,
+    "visualBounds": [
+     7,
+     3,
+     104,
+     98
+    ],
+    "visualCenter": [
+     55.5,
+     50.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -44657,7 +46187,17 @@
       }
      ]
     },
-    "lightEnergy": 7.4645
+    "lightEnergy": 7.4645,
+    "visualBounds": [
+     15,
+     11,
+     183,
+     102
+    ],
+    "visualCenter": [
+     99,
+     56.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -45032,7 +46572,17 @@
       }
      ]
     },
-    "lightEnergy": 1.3028
+    "lightEnergy": 1.3028,
+    "visualBounds": [
+     13,
+     11,
+     74,
+     58
+    ],
+    "visualCenter": [
+     43.5,
+     34.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -45281,7 +46831,17 @@
       }
      ]
     },
-    "lightEnergy": 7.8434
+    "lightEnergy": 7.8434,
+    "visualBounds": [
+     22,
+     9,
+     89,
+     102
+    ],
+    "visualCenter": [
+     55.5,
+     55.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -45470,7 +47030,17 @@
       }
      ]
     },
-    "lightEnergy": 9.0443
+    "lightEnergy": 9.0443,
+    "visualBounds": [
+     17,
+     6,
+     78,
+     113
+    ],
+    "visualCenter": [
+     47.5,
+     59.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -45689,7 +47259,17 @@
       }
      ]
     },
-    "lightEnergy": 21.2481
+    "lightEnergy": 21.2481,
+    "visualBounds": [
+     8,
+     11,
+     119,
+     82
+    ],
+    "visualCenter": [
+     63.5,
+     46.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -46021,7 +47601,17 @@
       }
      ]
     },
-    "lightEnergy": 1.85
+    "lightEnergy": 1.85,
+    "visualBounds": [
+     7,
+     1,
+     104,
+     76
+    ],
+    "visualCenter": [
+     55.5,
+     38.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -46222,7 +47812,17 @@
       }
      ]
     },
-    "lightEnergy": 13.1735
+    "lightEnergy": 13.1735,
+    "visualBounds": [
+     12,
+     10,
+     83,
+     102
+    ],
+    "visualCenter": [
+     47.5,
+     56
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -46441,7 +48041,17 @@
       }
      ]
     },
-    "lightEnergy": 17.9065
+    "lightEnergy": 17.9065,
+    "visualBounds": [
+     21,
+     4,
+     98,
+     130
+    ],
+    "visualCenter": [
+     59.5,
+     67
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -46765,7 +48375,17 @@
       }
      ]
     },
-    "lightEnergy": 14.6993
+    "lightEnergy": 14.6993,
+    "visualBounds": [
+     1,
+     0,
+     190,
+     166
+    ],
+    "visualCenter": [
+     95.5,
+     83
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -47065,7 +48685,17 @@
       }
      ]
     },
-    "lightEnergy": 7.9431
+    "lightEnergy": 7.9431,
+    "visualBounds": [
+     1,
+     0,
+     126,
+     166
+    ],
+    "visualCenter": [
+     63.5,
+     83
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -47314,7 +48944,17 @@
       }
      ]
     },
-    "lightEnergy": 12.7785
+    "lightEnergy": 12.7785,
+    "visualBounds": [
+     9,
+     1,
+     177,
+     130
+    ],
+    "visualCenter": [
+     93,
+     65.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -47727,7 +49367,17 @@
       }
      ]
     },
-    "lightEnergy": 3.2567
+    "lightEnergy": 3.2567,
+    "visualBounds": [
+     2,
+     1,
+     109,
+     116
+    ],
+    "visualCenter": [
+     55.5,
+     58.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -48066,7 +49716,17 @@
       }
      ]
     },
-    "lightEnergy": 4.5642
+    "lightEnergy": 4.5642,
+    "visualBounds": [
+     16,
+     7,
+     262,
+     246
+    ],
+    "visualCenter": [
+     139,
+     126.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -48315,7 +49975,17 @@
       }
      ]
     },
-    "lightEnergy": 15.0551
+    "lightEnergy": 15.0551,
+    "visualBounds": [
+     3,
+     4,
+     151,
+     140
+    ],
+    "visualCenter": [
+     77,
+     72
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -48538,7 +50208,17 @@
       }
      ]
     },
-    "lightEnergy": 10.9427
+    "lightEnergy": 10.9427,
+    "visualBounds": [
+     28,
+     17,
+     171,
+     115
+    ],
+    "visualCenter": [
+     99.5,
+     66
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -48794,7 +50474,17 @@
       }
      ]
     },
-    "lightEnergy": 4.9664
+    "lightEnergy": 4.9664,
+    "visualBounds": [
+     2,
+     1,
+     165,
+     126
+    ],
+    "visualCenter": [
+     83.5,
+     63.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -49175,7 +50865,17 @@
       }
      ]
     },
-    "lightEnergy": 4.2828
+    "lightEnergy": 4.2828,
+    "visualBounds": [
+     10,
+     20,
+     182,
+     98
+    ],
+    "visualCenter": [
+     96,
+     59
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -49394,7 +51094,17 @@
       }
      ]
     },
-    "lightEnergy": 7.9979
+    "lightEnergy": 7.9979,
+    "visualBounds": [
+     18,
+     18,
+     117,
+     114
+    ],
+    "visualCenter": [
+     67.5,
+     66
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -49594,7 +51304,17 @@
       }
      ]
     },
-    "lightEnergy": 13.8871
+    "lightEnergy": 13.8871,
+    "visualBounds": [
+     5,
+     12,
+     98,
+     111
+    ],
+    "visualCenter": [
+     51.5,
+     61.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -49819,7 +51539,17 @@
       }
      ]
     },
-    "lightEnergy": 12.085
+    "lightEnergy": 12.085,
+    "visualBounds": [
+     31,
+     17,
+     177,
+     128
+    ],
+    "visualCenter": [
+     104,
+     72.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -50044,7 +51774,17 @@
       }
      ]
     },
-    "lightEnergy": 5.4093
+    "lightEnergy": 5.4093,
+    "visualBounds": [
+     2,
+     15,
+     196,
+     100
+    ],
+    "visualCenter": [
+     99,
+     57.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -50268,7 +52008,17 @@
       }
      ]
     },
-    "lightEnergy": 10.6172
+    "lightEnergy": 10.6172,
+    "visualBounds": [
+     19,
+     19,
+     148,
+     158
+    ],
+    "visualCenter": [
+     83.5,
+     88.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -50489,7 +52239,17 @@
       }
      ]
     },
-    "lightEnergy": 2.1389
+    "lightEnergy": 2.1389,
+    "visualBounds": [
+     13,
+     16,
+     146,
+     86
+    ],
+    "visualCenter": [
+     79.5,
+     51
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -50816,7 +52576,17 @@
       }
      ]
     },
-    "lightEnergy": 2.7404
+    "lightEnergy": 2.7404,
+    "visualBounds": [
+     1,
+     7,
+     134,
+     99
+    ],
+    "visualCenter": [
+     67.5,
+     53
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -51193,7 +52963,17 @@
       }
      ]
     },
-    "lightEnergy": 7.8621
+    "lightEnergy": 7.8621,
+    "visualBounds": [
+     2,
+     6,
+     93,
+     111
+    ],
+    "visualCenter": [
+     47.5,
+     58.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -51417,7 +53197,17 @@
       }
      ]
     },
-    "lightEnergy": 2.4741
+    "lightEnergy": 2.4741,
+    "visualBounds": [
+     24,
+     27,
+     97,
+     94
+    ],
+    "visualCenter": [
+     60.5,
+     60.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -51594,7 +53384,17 @@
       }
      ]
     },
-    "lightEnergy": 2.7957
+    "lightEnergy": 2.7957,
+    "visualBounds": [
+     13,
+     15,
+     103,
+     90
+    ],
+    "visualCenter": [
+     58,
+     52.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -51905,7 +53705,17 @@
       }
      ]
     },
-    "lightEnergy": 7.4701
+    "lightEnergy": 7.4701,
+    "visualBounds": [
+     1,
+     0,
+     126,
+     149
+    ],
+    "visualCenter": [
+     63.5,
+     74.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -52259,7 +54069,17 @@
       }
      ]
     },
-    "lightEnergy": 3.3358
+    "lightEnergy": 3.3358,
+    "visualBounds": [
+     22,
+     3,
+     154,
+     95
+    ],
+    "visualCenter": [
+     88,
+     49
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -52612,7 +54432,17 @@
       }
      ]
     },
-    "lightEnergy": 4.8085
+    "lightEnergy": 4.8085,
+    "visualBounds": [
+     4,
+     11,
+     91,
+     138
+    ],
+    "visualCenter": [
+     47.5,
+     74.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -52856,7 +54686,17 @@
       }
      ]
     },
-    "lightEnergy": 7.4032
+    "lightEnergy": 7.4032,
+    "visualBounds": [
+     3,
+     16,
+     203,
+     148
+    ],
+    "visualCenter": [
+     103,
+     82
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -53125,7 +54965,17 @@
       }
      ]
     },
-    "lightEnergy": 8.8798
+    "lightEnergy": 8.8798,
+    "visualBounds": [
+     2,
+     2,
+     161,
+     115
+    ],
+    "visualCenter": [
+     81.5,
+     58.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -53471,7 +55321,17 @@
       }
      ]
     },
-    "lightEnergy": 0.1337
+    "lightEnergy": 0.1337,
+    "visualBounds": [
+     16,
+     8,
+     39,
+     50
+    ],
+    "visualCenter": [
+     27.5,
+     29
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -53816,7 +55676,17 @@
       }
      ]
     },
-    "lightEnergy": 4.5245
+    "lightEnergy": 4.5245,
+    "visualBounds": [
+     13,
+     6,
+     58,
+     73
+    ],
+    "visualCenter": [
+     35.5,
+     39.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -54130,7 +56000,17 @@
       }
      ]
     },
-    "lightEnergy": 7.5145
+    "lightEnergy": 7.5145,
+    "visualBounds": [
+     2,
+     1,
+     57,
+     60
+    ],
+    "visualCenter": [
+     29.5,
+     30.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -54446,7 +56326,17 @@
       }
      ]
     },
-    "lightEnergy": 6.5838
+    "lightEnergy": 6.5838,
+    "visualBounds": [
+     4,
+     1,
+     55,
+     41
+    ],
+    "visualCenter": [
+     29.5,
+     21
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -54764,7 +56654,17 @@
       }
      ]
     },
-    "lightEnergy": 5.8464
+    "lightEnergy": 5.8464,
+    "visualBounds": [
+     9,
+     2,
+     54,
+     82
+    ],
+    "visualCenter": [
+     31.5,
+     42
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -55075,7 +56975,17 @@
       }
      ]
     },
-    "lightEnergy": 7.1256
+    "lightEnergy": 7.1256,
+    "visualBounds": [
+     6,
+     0,
+     68,
+     59
+    ],
+    "visualCenter": [
+     37,
+     29.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -55505,7 +57415,17 @@
       }
      ]
     },
-    "lightEnergy": 6.1421
+    "lightEnergy": 6.1421,
+    "visualBounds": [
+     5,
+     4,
+     88,
+     51
+    ],
+    "visualCenter": [
+     46.5,
+     27.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -55865,7 +57785,17 @@
       }
      ]
     },
-    "lightEnergy": 0.821
+    "lightEnergy": 0.821,
+    "visualBounds": [
+     14,
+     4,
+     104,
+     72
+    ],
+    "visualCenter": [
+     59,
+     38
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -56198,7 +58128,17 @@
       }
      ]
     },
-    "lightEnergy": 3.5639
+    "lightEnergy": 3.5639,
+    "visualBounds": [
+     10,
+     10,
+     60,
+     58
+    ],
+    "visualCenter": [
+     35,
+     34
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -56483,7 +58423,17 @@
       }
      ]
     },
-    "lightEnergy": 6.1906
+    "lightEnergy": 6.1906,
+    "visualBounds": [
+     11,
+     15,
+     68,
+     77
+    ],
+    "visualCenter": [
+     39.5,
+     46
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -56768,7 +58718,17 @@
       }
      ]
     },
-    "lightEnergy": 4.9715
+    "lightEnergy": 4.9715,
+    "visualBounds": [
+     5,
+     2,
+     57,
+     66
+    ],
+    "visualCenter": [
+     31,
+     34
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -57059,7 +59019,17 @@
       }
      ]
     },
-    "lightEnergy": 6.4716
+    "lightEnergy": 6.4716,
+    "visualBounds": [
+     2,
+     3,
+     61,
+     72
+    ],
+    "visualCenter": [
+     31.5,
+     37.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -57368,7 +59338,17 @@
       }
      ]
     },
-    "lightEnergy": 8.7308
+    "lightEnergy": 8.7308,
+    "visualBounds": [
+     5,
+     1,
+     55,
+     39
+    ],
+    "visualCenter": [
+     30,
+     20
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -57557,7 +59537,17 @@
       }
      ]
     },
-    "lightEnergy": 3.6879
+    "lightEnergy": 3.6879,
+    "visualBounds": [
+     0,
+     0,
+     319,
+     179
+    ],
+    "visualCenter": [
+     159.5,
+     89.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -57825,7 +59815,17 @@
       }
      ]
     },
-    "lightEnergy": 6.3918
+    "lightEnergy": 6.3918,
+    "visualBounds": [
+     0,
+     0,
+     319,
+     179
+    ],
+    "visualCenter": [
+     159.5,
+     89.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -58015,7 +60015,17 @@
       }
      ]
     },
-    "lightEnergy": 8.4036
+    "lightEnergy": 8.4036,
+    "visualBounds": [
+     0,
+     0,
+     319,
+     179
+    ],
+    "visualCenter": [
+     159.5,
+     89.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -58204,7 +60214,17 @@
       }
      ]
     },
-    "lightEnergy": 8.216
+    "lightEnergy": 8.216,
+    "visualBounds": [
+     0,
+     0,
+     319,
+     179
+    ],
+    "visualCenter": [
+     159.5,
+     89.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -58388,7 +60408,17 @@
       }
      ]
     },
-    "lightEnergy": 1.3058
+    "lightEnergy": 1.3058,
+    "visualBounds": [
+     0,
+     0,
+     319,
+     179
+    ],
+    "visualCenter": [
+     159.5,
+     89.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -58631,7 +60661,17 @@
       }
      ]
     },
-    "lightEnergy": 3.369
+    "lightEnergy": 3.369,
+    "visualBounds": [
+     0,
+     0,
+     319,
+     179
+    ],
+    "visualCenter": [
+     159.5,
+     89.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -58874,7 +60914,17 @@
       }
      ]
     },
-    "lightEnergy": 11.0003
+    "lightEnergy": 11.0003,
+    "visualBounds": [
+     0,
+     0,
+     319,
+     179
+    ],
+    "visualCenter": [
+     159.5,
+     89.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -59136,7 +61186,17 @@
       }
      ]
     },
-    "lightEnergy": 4.7907
+    "lightEnergy": 4.7907,
+    "visualBounds": [
+     0,
+     0,
+     319,
+     179
+    ],
+    "visualCenter": [
+     159.5,
+     89.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -59317,7 +61377,17 @@
       }
      ]
     },
-    "lightEnergy": 2.4546
+    "lightEnergy": 2.4546,
+    "visualBounds": [
+     0,
+     0,
+     319,
+     179
+    ],
+    "visualCenter": [
+     159.5,
+     89.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -59560,7 +61630,17 @@
       }
      ]
     },
-    "lightEnergy": 2.2882
+    "lightEnergy": 2.2882,
+    "visualBounds": [
+     0,
+     0,
+     319,
+     179
+    ],
+    "visualCenter": [
+     159.5,
+     89.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -59761,7 +61841,17 @@
       }
      ]
     },
-    "lightEnergy": 1.1902
+    "lightEnergy": 1.1902,
+    "visualBounds": [
+     29,
+     5,
+     216,
+     68
+    ],
+    "visualCenter": [
+     122.5,
+     36.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -59964,7 +62054,17 @@
       }
      ]
     },
-    "lightEnergy": 2.9697
+    "lightEnergy": 2.9697,
+    "visualBounds": [
+     16,
+     3,
+     172,
+     114
+    ],
+    "visualCenter": [
+     94,
+     58.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -60136,7 +62236,17 @@
       }
      ]
     },
-    "lightEnergy": 5.5985
+    "lightEnergy": 5.5985,
+    "visualBounds": [
+     4,
+     1,
+     204,
+     98
+    ],
+    "visualCenter": [
+     104,
+     49.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -60366,7 +62476,17 @@
       }
      ]
     },
-    "lightEnergy": 0.6559
+    "lightEnergy": 0.6559,
+    "visualBounds": [
+     1,
+     45,
+     198,
+     138
+    ],
+    "visualCenter": [
+     99.5,
+     91.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -60587,7 +62707,17 @@
       }
      ]
     },
-    "lightEnergy": 7.3651
+    "lightEnergy": 7.3651,
+    "visualBounds": [
+     6,
+     1,
+     145,
+     134
+    ],
+    "visualCenter": [
+     75.5,
+     67.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -60761,7 +62891,17 @@
       }
      ]
     },
-    "lightEnergy": 5.3456
+    "lightEnergy": 5.3456,
+    "visualBounds": [
+     5,
+     3,
+     144,
+     118
+    ],
+    "visualCenter": [
+     74.5,
+     60.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -60922,7 +63062,17 @@
       }
      ]
     },
-    "lightEnergy": 3.1569
+    "lightEnergy": 3.1569,
+    "visualBounds": [
+     4,
+     5,
+     59,
+     66
+    ],
+    "visualCenter": [
+     31.5,
+     35.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -61216,7 +63366,17 @@
       }
      ]
     },
-    "lightEnergy": 2.3971
+    "lightEnergy": 2.3971,
+    "visualBounds": [
+     17,
+     8,
+     66,
+     69
+    ],
+    "visualCenter": [
+     41.5,
+     38.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -61404,7 +63564,17 @@
       }
      ]
     },
-    "lightEnergy": 2.9134
+    "lightEnergy": 2.9134,
+    "visualBounds": [
+     9,
+     1,
+     144,
+     62
+    ],
+    "visualCenter": [
+     76.5,
+     31.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -61577,7 +63747,17 @@
       }
      ]
     },
-    "lightEnergy": 3.2689
+    "lightEnergy": 3.2689,
+    "visualBounds": [
+     4,
+     1,
+     91,
+     78
+    ],
+    "visualCenter": [
+     47.5,
+     39.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -62026,7 +64206,17 @@
       }
      ]
     },
-    "lightEnergy": 6.1778
+    "lightEnergy": 6.1778,
+    "visualBounds": [
+     7,
+     1,
+     168,
+     137
+    ],
+    "visualCenter": [
+     87.5,
+     69
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -62232,7 +64422,17 @@
       }
      ]
     },
-    "lightEnergy": 6.0903
+    "lightEnergy": 6.0903,
+    "visualBounds": [
+     15,
+     1,
+     200,
+     90
+    ],
+    "visualCenter": [
+     107.5,
+     45.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -62479,7 +64679,17 @@
       }
      ]
     },
-    "lightEnergy": 4.2865
+    "lightEnergy": 4.2865,
+    "visualBounds": [
+     4,
+     4,
+     100,
+     107
+    ],
+    "visualCenter": [
+     52,
+     55.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -62655,7 +64865,17 @@
       }
      ]
     },
-    "lightEnergy": 1.7672
+    "lightEnergy": 1.7672,
+    "visualBounds": [
+     12,
+     2,
+     56,
+     86
+    ],
+    "visualCenter": [
+     34,
+     44
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -62843,7 +65063,17 @@
       }
      ]
     },
-    "lightEnergy": 10.3777
+    "lightEnergy": 10.3777,
+    "visualBounds": [
+     20,
+     10,
+     99,
+     102
+    ],
+    "visualCenter": [
+     59.5,
+     56
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -63170,7 +65400,17 @@
       }
      ]
     },
-    "lightEnergy": 5.0364
+    "lightEnergy": 5.0364,
+    "visualBounds": [
+     7,
+     13,
+     164,
+     166
+    ],
+    "visualCenter": [
+     85.5,
+     89.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -63370,7 +65610,17 @@
       }
      ]
     },
-    "lightEnergy": 2.4941
+    "lightEnergy": 2.4941,
+    "visualBounds": [
+     0,
+     3,
+     175,
+     77
+    ],
+    "visualCenter": [
+     87.5,
+     40
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -63558,7 +65808,17 @@
       }
      ]
     },
-    "lightEnergy": 5.23
+    "lightEnergy": 5.23,
+    "visualBounds": [
+     5,
+     2,
+     130,
+     50
+    ],
+    "visualCenter": [
+     67.5,
+     26
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -63761,7 +66021,17 @@
       }
      ]
     },
-    "lightEnergy": 3.3258
+    "lightEnergy": 3.3258,
+    "visualBounds": [
+     21,
+     0,
+     147,
+     99
+    ],
+    "visualCenter": [
+     84,
+     49.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -63919,7 +66189,17 @@
       }
      ]
     },
-    "lightEnergy": 10.5495
+    "lightEnergy": 10.5495,
+    "visualBounds": [
+     1,
+     10,
+     181,
+     71
+    ],
+    "visualCenter": [
+     91,
+     40.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -64137,7 +66417,17 @@
       }
      ]
     },
-    "lightEnergy": 15.2524
+    "lightEnergy": 15.2524,
+    "visualBounds": [
+     2,
+     2,
+     97,
+     106
+    ],
+    "visualCenter": [
+     49.5,
+     54
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -64325,7 +66615,17 @@
       }
      ]
     },
-    "lightEnergy": 9.1652
+    "lightEnergy": 9.1652,
+    "visualBounds": [
+     8,
+     2,
+     127,
+     134
+    ],
+    "visualCenter": [
+     67.5,
+     68
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -64550,7 +66850,17 @@
       }
      ]
     },
-    "lightEnergy": 1.8728
+    "lightEnergy": 1.8728,
+    "visualBounds": [
+     4,
+     16,
+     218,
+     102
+    ],
+    "visualCenter": [
+     111,
+     59
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -64768,7 +67078,17 @@
       }
      ]
     },
-    "lightEnergy": 9.5995
+    "lightEnergy": 9.5995,
+    "visualBounds": [
+     5,
+     2,
+     122,
+     81
+    ],
+    "visualCenter": [
+     63.5,
+     41.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -65496,7 +67816,17 @@
       }
      ]
     },
-    "lightEnergy": 17.894
+    "lightEnergy": 17.894,
+    "visualBounds": [
+     0,
+     0,
+     319,
+     176
+    ],
+    "visualCenter": [
+     159.5,
+     88
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -66009,7 +68339,17 @@
       }
      ]
     },
-    "lightEnergy": 0.6445
+    "lightEnergy": 0.6445,
+    "visualBounds": [
+     0,
+     0,
+     319,
+     179
+    ],
+    "visualCenter": [
+     159.5,
+     89.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -66630,7 +68970,17 @@
       }
      ]
     },
-    "lightEnergy": 0.3174
+    "lightEnergy": 0.3174,
+    "visualBounds": [
+     0,
+     0,
+     319,
+     179
+    ],
+    "visualCenter": [
+     159.5,
+     89.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -67358,7 +69708,17 @@
       }
      ]
     },
-    "lightEnergy": 2.4272
+    "lightEnergy": 2.4272,
+    "visualBounds": [
+     0,
+     0,
+     319,
+     149
+    ],
+    "visualCenter": [
+     159.5,
+     74.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -67979,7 +70339,17 @@
       }
      ]
     },
-    "lightEnergy": 0.1351
+    "lightEnergy": 0.1351,
+    "visualBounds": [
+     0,
+     0,
+     319,
+     179
+    ],
+    "visualCenter": [
+     159.5,
+     89.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -68708,7 +71078,17 @@
       }
      ]
     },
-    "lightEnergy": 1.7143
+    "lightEnergy": 1.7143,
+    "visualBounds": [
+     0,
+     0,
+     319,
+     179
+    ],
+    "visualCenter": [
+     159.5,
+     89.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -69436,7 +71816,17 @@
       }
      ]
     },
-    "lightEnergy": 2.8512
+    "lightEnergy": 2.8512,
+    "visualBounds": [
+     0,
+     93,
+     319,
+     179
+    ],
+    "visualCenter": [
+     159.5,
+     136
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -70056,7 +72446,17 @@
       }
      ]
     },
-    "lightEnergy": 9.4277
+    "lightEnergy": 9.4277,
+    "visualBounds": [
+     0,
+     0,
+     319,
+     179
+    ],
+    "visualCenter": [
+     159.5,
+     89.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -70567,7 +72967,17 @@
       }
      ]
     },
-    "lightEnergy": 0.7156
+    "lightEnergy": 0.7156,
+    "visualBounds": [
+     0,
+     0,
+     319,
+     179
+    ],
+    "visualCenter": [
+     159.5,
+     89.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -71188,7 +73598,17 @@
       }
      ]
     },
-    "lightEnergy": 2.1415
+    "lightEnergy": 2.1415,
+    "visualBounds": [
+     0,
+     0,
+     319,
+     179
+    ],
+    "visualCenter": [
+     159.5,
+     89.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -71915,7 +74335,17 @@
       }
      ]
     },
-    "lightEnergy": 1.0748
+    "lightEnergy": 1.0748,
+    "visualBounds": [
+     0,
+     0,
+     319,
+     179
+    ],
+    "visualCenter": [
+     159.5,
+     89.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -72535,7 +74965,17 @@
       }
      ]
     },
-    "lightEnergy": 1.8571
+    "lightEnergy": 1.8571,
+    "visualBounds": [
+     0,
+     0,
+     319,
+     179
+    ],
+    "visualCenter": [
+     159.5,
+     89.5
+    ]
    },
    "qa": {
     "parity": "PARITY_PASS",
@@ -72545,6 +74985,6 @@
    }
   }
  ],
- "updated": "2026-11-02T13:09:45.117Z",
+ "updated": "2026-11-02T13:59:16.858Z",
  "notes": "DISCOVERED/EXPORTED/PARITY_PASS are machine-verified. VISUAL_REVIEWED and SOH_READY are human/gated and never inferred. extraShapes=false everywhere."
 }
