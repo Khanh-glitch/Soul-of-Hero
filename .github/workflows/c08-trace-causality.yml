@@ -108,7 +108,7 @@ jobs:
             grep -E "$pattern" "$ARTIFACT_DIR/c08-case-b.log" | tail -n "$limit" | cut -c1-900 \
               | while IFS= read -r line; do printf '::%s::%s\n' "$level" "$line"; done
           }
-          emit_lines error 'C08_WEDGE|C08_ROUTE_FAIL|C08_DOOR_FAIL|C08_B_LEG_FAIL|C08_C_LEG_FAIL|C08_LEG_STALLED|C08_DOORWAY_FAIL|C08_REENTRY_FAIL|C08_ENEMY_LOST|C08_C_NO_ENEMY|C08_C_HABITAT_FAIL|C08_ENCOUNTER_RELEASE|SCRIPT ERROR|Parse Error' 4
+          emit_lines error '^  FAIL  |C08_WEDGE|C08_ROUTE_FAIL|C08_DOOR_FAIL|C08_B_LEG_FAIL|C08_C_LEG_FAIL|C08_LEG_STALLED|C08_DOORWAY_FAIL|C08_REENTRY_FAIL|C08_ENEMY_LOST|C08_C_NO_ENEMY|C08_C_HABITAT_FAIL|C08_ENCOUNTER_RELEASE|SCRIPT ERROR|Parse Error' 4
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/c08-case-b.log" "C08 b" "C08 TRACE CAUSALITY PLAY PASSED"
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
@@ -130,7 +130,7 @@ jobs:
             grep -E "$pattern" "$ARTIFACT_DIR/c08-case-c.log" | tail -n "$limit" | cut -c1-900 \
               | while IFS= read -r line; do printf '::%s::%s\n' "$level" "$line"; done
           }
-          emit_lines error 'C08_WEDGE|C08_ROUTE_FAIL|C08_DOOR_FAIL|C08_B_LEG_FAIL|C08_C_LEG_FAIL|C08_LEG_STALLED|C08_DOORWAY_FAIL|C08_REENTRY_FAIL|C08_ENEMY_LOST|C08_C_NO_ENEMY|C08_C_HABITAT_FAIL|C08_SKIP |SCRIPT ERROR|Parse Error' 4
+          emit_lines error '^  FAIL  |C08_WEDGE|C08_ROUTE_FAIL|C08_DOOR_FAIL|C08_B_LEG_FAIL|C08_C_LEG_FAIL|C08_LEG_STALLED|C08_DOORWAY_FAIL|C08_REENTRY_FAIL|C08_ENEMY_LOST|C08_C_NO_ENEMY|C08_C_HABITAT_FAIL|C08_SKIP |SCRIPT ERROR|Parse Error' 4
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/c08-case-c.log" "C08 c" "C08 TRACE CAUSALITY PLAY PASSED"
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
@@ -152,7 +152,7 @@ jobs:
             grep -E "$pattern" "$ARTIFACT_DIR/c08-play.log" | tail -n "$limit" | cut -c1-900 \
               | while IFS= read -r line; do printf '::%s::%s\n' "$level" "$line"; done
           }
-          emit_lines error 'C08_WEDGE|C08_ROUTE_FAIL|C08_DOOR_FAIL|C08_B_LEG_FAIL|C08_C_LEG_FAIL|C08_LEG_STALLED|C08_DOORWAY_FAIL|C08_REENTRY_FAIL|C08_ENEMY_LOST|C08_C_NO_ENEMY|C08_C_HABITAT_FAIL|C08_SKIP |SCRIPT ERROR|Parse Error' 4
+          emit_lines error '^  FAIL  |C08_WEDGE|C08_ROUTE_FAIL|C08_DOOR_FAIL|C08_B_LEG_FAIL|C08_C_LEG_FAIL|C08_LEG_STALLED|C08_DOORWAY_FAIL|C08_REENTRY_FAIL|C08_ENEMY_LOST|C08_C_NO_ENEMY|C08_C_HABITAT_FAIL|C08_SKIP |SCRIPT ERROR|Parse Error' 4
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/c08-play.log" "C08 a" "C08 TRACE CAUSALITY PLAY PASSED"
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
@@ -233,11 +233,13 @@ jobs:
         run: |
           python3 - <<'PY'
           import glob, os
+          chunks = []
           for path in sorted(glob.glob("artifacts/c08-*.log")):
               text = open(path, errors="replace").read()
-              tail = text[-7000:]
-              safe = tail.replace("%", "%25").replace("\r", "").replace("\n", "~")
-              print("::error::%s TAIL %s" % (os.path.basename(path), safe))
+              chunks.append("%s TAIL %s" % (os.path.basename(path), text[-1500:]))
+          joined = " || ".join(chunks)[-3200:]
+          safe = joined.replace("%", "%25").replace("\r", "").replace("\n", "~")
+          print("::error::C08 LOG TAILS %s" % safe)
           PY
       - uses: actions/upload-artifact@v4
         if: always()
