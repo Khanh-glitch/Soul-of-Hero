@@ -26,7 +26,7 @@ const sleepUntil = async (fn, message, timeout = 8000) => page.waitForFunction(f
 const inputCount = async key => (await state())?.counts[key] || 0;
 
 try {
-  const [{ getWorld, setActiveLayout, SRC_KEYS }, { WW, WH, T }, { MAP_CONTENT_PACKS, validateContentPack }, { SOURCES }] = await Promise.all([
+  const [{ getWorld, setActiveLayout, SRC_KEYS }, { WW, WH, T }, { MAP_CONTENT_PACKS, validateContentPack }, { SOURCES, CREATURES }] = await Promise.all([
     vite.ssrLoadModule('/src/game/world.ts'), vite.ssrLoadModule('/src/game/core.ts'), vite.ssrLoadModule('/src/game/content.ts'), vite.ssrLoadModule('/src/game/catalog.ts'), vite.ssrLoadModule('/src/game/engine.ts'),
   ]);
   const invalid = structuredClone(MAP_CONTENT_PACKS.dev_delta); invalid.pois[0].width = 0; invalid.pois[0].loot.outer[0].item = 'not_a_real_item';
@@ -89,7 +89,7 @@ try {
         const {raw,grid}=await actualGrid();
         const sx=Math.max(1,Math.min(W-2,Math.floor(cur.player.x/16))),sy=Math.max(1,Math.min(H-2,Math.floor(cur.player.y/16)));
         const q=new Int32Array(W*H),from=new Int32Array(W*H).fill(-2);let h=0,t=0,start=sy*W+sx,goal=-1;q[t++]=start;from[start]=-1;
-        const danger=new Set();for(const m of cur.creatures){if(m.hp<=0||m.type.startsWith('elder_')||m.state==='sleep')continue;const mx=Math.floor(m.x/16),my=Math.floor(m.y/16),r=8;for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++)if(Math.hypot(dx,dy)<=r)danger.add((my+dy)*W+mx+dx);}
+        const danger=new Set();for(const m of cur.creatures){if(m.hp<=0||m.type.startsWith('elder_')||!['chase','track','tell','attack','recover'].includes(m.state))continue;const mx=Math.floor(m.x/16),my=Math.floor(m.y/16),r=8;for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++)if(Math.hypot(dx,dy)<=r)danger.add((my+dy)*W+mx+dx);}
         const pass=(x,y)=>{if(x<1||y<1||x>=W-1||y>=H-1)return false;const i=y*W+x;return !transientBlocked.has(i)&&!danger.has(i)&&![1,2,3,5].includes(grid[i]);};
         while(h<t){const i=q[h++],x=i%W,y=(i/W)|0;if(goalTile(x,y)){goal=i;break;}
           for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy,j=ny*W+nx;if(from[j]!==-2||j!==start&&!pass(nx,ny))continue;from[j]=i;q[t++]=j;}}
@@ -138,7 +138,7 @@ try {
     async function defendNearby(){
       if(defending)return;defending=true;
       try{
-        const cur=await state();const threat=cur.creatures.filter(m=>!m.type.startsWith('elder_')&&m.state!=='sleep'&&(()=>{const d=Math.hypot(m.x-cur.player.x,m.y-cur.player.y);return d<90||(['attack','tell'].includes(m.state)&&d<130);})()).sort((a,b)=>Math.hypot(a.x-cur.player.x,a.y-cur.player.y)-Math.hypot(b.x-cur.player.x,b.y-cur.player.y))[0];
+        const cur=await state();const threat=cur.creatures.filter(m=>!m.type.startsWith('elder_')&&['chase','track','tell','attack','recover'].includes(m.state)&&(()=>{const d=Math.hypot(m.x-cur.player.x,m.y-cur.player.y);return d<90||(['attack','tell'].includes(m.state)&&d<130);})()).sort((a,b)=>Math.hypot(a.x-cur.player.x,a.y-cur.player.y)-Math.hypot(b.x-cur.player.x,b.y-cur.player.y))[0];
         if(!threat||Date.now()-lastDodgeAt<900)return;lastDodgeAt=Date.now();
         await ensureVitals();const live=await state(),angle=Math.atan2(live.player.y-threat.y,live.player.x-threat.x),keys=[];
         if(Math.abs(Math.cos(angle))>0.25)keys.push(Math.cos(angle)>0?'d':'a');if(Math.abs(Math.sin(angle))>0.25)keys.push(Math.sin(angle)>0?'s':'w');
