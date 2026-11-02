@@ -6,6 +6,11 @@ name: C08 trace causality (native)
 # live marks, chase or damage. Episode A also owns the K8 ledger commit, and the
 # relaunch/new-run phases read that same profile.
 #
+# Gate record:
+#   1444f5ff  run 41428636248  ALL GREEN (unit, A, B, C, K8 ledger, 2nd PID, new run)
+#   d3db46b7  run 41426710070  C/A/K8/relaunch/new run green, B red in its defence window
+#   45fe0777  one process for all three cases: contaminated trace state (see handoff)
+#
 # Two independently reported jobs:
 #   unit     : the bounded evidence index contract, headless, real Godot parser.
 #   native   : the three C08 counterfactuals on the production overworld, with a
