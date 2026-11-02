@@ -250,7 +250,16 @@ func start(wrapper: Node) -> void:
         capture_start_usec = Time.get_ticks_usec()
         if capture and not await _frame(folder, player, enemy, camera):
             _fail("fixed camera initial frame"); return
-    var deadline := Time.get_ticks_msec() + 180000
+    # Slow single-source-tick replay only for the separate F16 diagnostic. The
+    # ordinary gameplay-cadence and fixed-world videos are retained unchanged.
+    # No production timing, source fields or actor simulation are modified.
+    var trace_tips := OS.get_environment("AVFX_F16_STEP") == "1"
+    if trace_tips and (skill != 16 or not fixed_camera):
+        _fail("tip stepping requires F16 fixed-camera diagnostic"); return
+    var tip_trace: Array = []
+    var tip_stepping := false
+    var tip_complete := false
+    var deadline := Time.get_ticks_msec() + (360000 if trace_tips else 180000)
     var current_action := &""
     var max_player := 0.0
     var max_enemy := 0.0
@@ -270,6 +279,27 @@ func start(wrapper: Node) -> void:
             selected.select(skill - 1)
             if not overlap_started:
                 _fail("overlap cast refused"); return
+        if trace_tips and not tip_complete and renderer.is_active(cast_id):
+            var seed_cast := renderer._casts.get(cast_id) as FusionPlayer
+            if is_instance_valid(seed_cast) and seed_cast._tick >= 385:
+                if not tip_stepping:
+                    seed_cast.set_process(false)
+                    # Catch-up debt is wall-time diagnostic overhead, not a
+                    # source state; clear it so one advance is one source tick.
+                    seed_cast._acc = 0.0
+                    tip_stepping = true
+                seed_cast.advance(FusionPlayer.STEP)
+                var source := (seed_cast._back as ASourcePlayer)._spell as AWorldseedGrowth
+                var pieces: Array = []
+                for li in range(source.layers.size()):
+                    for petal in range(int(source.layers[li].count)):
+                        var pose := source.fragment_pose(li, petal, seed_cast.source_time())
+                        var center: Vector2 = pose.points[2]
+                        pieces.append([li, petal, float(pose.age), center.x, center.y])
+                tip_trace.append({"tick": seed_cast._tick, "pieces": pieces})
+                if seed_cast._tick >= 545:
+                    seed_cast.set_process(true)
+                    tip_complete = true
         # Real input is consumed by the player controller; collisions and
         # camera following are not overridden. Four directions reduce the risk
         # of a single wall preventing any movement.
@@ -299,6 +329,17 @@ func start(wrapper: Node) -> void:
             if not await _frame(folder, player, enemy, camera):
                 _fail("native capture frame"); return
     if current_action != &"": Input.action_release(current_action)
+    if trace_tips:
+        if not tip_complete or tip_trace.size() < 145:
+            _fail("F16 single-tick fragment trace incomplete"); return
+        for i in range(1, tip_trace.size()):
+            if int(tip_trace[i].tick) != int(tip_trace[i - 1].tick) + 1:
+                _fail("F16 trace skipped source tick"); return
+        var tf := FileAccess.open(folder.path_join("f16_tip_trace.json"), FileAccess.WRITE)
+        if tf == null:
+            _fail("F16 trace file"); return
+        tf.store_string(JSON.stringify({"scope": "non-shipping single-source-tick diagnostic; real moving actors, world-fixed camera; not gameplay cadence or device FPS", "pieces_per_tick": 41, "ticks": tip_trace}))
+        tf.close()
     var cast_duration_s := float(Time.get_ticks_usec() - start_usec) / 1000000.0
     if no_fx and cast_duration_s < wait_s:
         _fail("no-FX baseline did not finish its matched duration"); return
@@ -337,6 +378,7 @@ func start(wrapper: Node) -> void:
         "cast_target_world": cast_target_world,
         "no_fx": no_fx, "overlap_skill": overlap_skill, "cast_duration_s": cast_duration_s,
         "camera_mode": "diagnostic_world_fixed" if fixed_camera else "gameplay_follow",
+        "single_tick_fragment_diagnostic": trace_tips,
         "fixed_camera_anchor": [fixed_anchor.x, fixed_anchor.y] if fixed_camera else null,
         "last_tick": ticks_seen[-1] if not ticks_seen.is_empty() else 0, "events": contacts, "unbound_events": unbound_contacts,
         "enemy_count": enemy_count, "spawn_formation": "ring" if formation != null and formation.selected == 1 else "line",
