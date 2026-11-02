@@ -37,7 +37,7 @@ class RootwakeR:
             var bs: Array = [{"pts": points, "w": [2.0, 5.4, 2.6][i], "depth": 0, "grow": 0.0, "seed": 13131 + i, "attach": 0.0}]
             # Each trunk has its own irregular branch population and origin
             # beats; do not reconstruct the rejected uniform cage.
-            for j in range([2, 4, 3][i]):
+            for j in range([2, 3, 2][i]):
                 var attach: float = [0.16, 0.37, 0.58, 0.79][j] + float(i) * 0.035
                 # Parent node and child start are literally the same point.
                 var parent_index := roundi(float(attach) * 24.0)
@@ -99,16 +99,16 @@ class RootwakeR:
                 ACommon.draw_branch(fb, bb,
                     func(u: float, edge: float, br: Dictionary) -> Variant:
                         if edge > 0.95:
-                            return Vector3(0.09, 0.13, 0.06)
+                            return Vector3(0.14, 0.10, 0.045)
                         var grain := 0.84 + 0.16 * AMath.hash2(floor(u * 35.0), float(br.seed))
                         var bark := 0.62 + 0.38 * (1.0 - edge)
-                        return Vector3(0.32, 0.30, 0.13) * bark * grain,
+                        return Vector3(0.42, 0.28, 0.12) * bark * grain,
                     func(u: float, br: Dictionary) -> float:
                         return maxf(0.8, float(br.w) * (0.65 + thickening * 1.45) * (1.0 - u * 0.65)), true)
                 ACommon.draw_branch(fb, bb,
                     func(u: float, edge: float, _br: Dictionary) -> Variant:
                         if edge > 0.8: return null
-                        return Vector3(0.37, 0.48, 0.18) * (1.0 - edge * 0.4),
+                        return Vector3(0.53, 0.38, 0.17) * (1.0 - edge * 0.4),
                     func(u: float, br: Dictionary) -> float:
                         return maxf(0.5, float(br.w) * 0.35 * (1.0 - u * 0.6)))
         if tension > 0.0:
@@ -439,13 +439,13 @@ class ChronoshardR:
             return
         if tau <= 1.0:
             var u := AMath.cl01(tau)
-            var head := center + Vector2(lerpf(-11.0, 10.0, u), -2.0 - 3.0 * sin(u * PI))
+            var head := center + Vector2(lerpf(-4.0, 4.0, u), -1.0 - 1.5 * sin(u * PI))
             # Miniature of the same spherical ember event in the world.
             # Dots are clipped to this physical crystal, not a UI pointer.
-            _mini_disc(fb, head, 2.6, hex, color, intensity)
-            _mini_disc(fb, head + Vector2(-0.8, -0.8), 1.15, hex, Vector3(2.0, 1.7, 0.8), intensity)
+            _mini_disc(fb, head, 4.0, hex, color, intensity)
+            _mini_disc(fb, head + Vector2(-1.0, -1.0), 2.0, hex, Vector3(2.0, 1.7, 0.8), intensity)
             for mote in range(3):
-                var tail := head + Vector2(-4.0 - float(mote) * 3.0, sin(float(mote) * 2.1 + tau * 4.0) * (1.0 + float(mote)))
+                var tail := head + Vector2(-5.0 - float(mote) * 2.5, sin(float(mote) * 2.1 + tau * 4.0) * (1.0 + float(mote)))
                 _mini_disc(fb, tail, 0.55, hex, color, intensity * (0.75 - float(mote) * 0.15))
         else:
             var impact := center + Vector2(9, -2)

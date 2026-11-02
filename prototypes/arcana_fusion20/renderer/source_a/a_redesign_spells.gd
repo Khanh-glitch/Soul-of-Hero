@@ -61,7 +61,7 @@ class AshenGuillotineR:
         # A cut is a connected broken ground trace, not a straight plank.
         # Shared endpoints ensure all banks and branches stay on the wound.
         var n := Vector2(-_dir.y, _dir.x)
-        var bend := sin(u * PI) * (4.8 * sin(u * PI * 3.0 + 0.4) + 2.2 * sin(u * PI * 7.0))
+        var bend := sin(u * PI) * (11.5 * sin(u * PI * 3.0 + 0.4) + 3.5 * sin(u * PI * 7.0))
         return C + _dir * lerpf(-92.0, 92.0, u) + n * bend
     func render(fb: AFramebuffer, t: float) -> void:
         var slit := AMath.seg(t, 1.2, 2.4)
@@ -128,7 +128,7 @@ class AshenGuillotineR:
                     var finish := _fault_point(float(segment + 1) / 12.0)
                     var side := Vector2(-(finish - start).y, (finish - start).x).normalized() * groove
                     ADraw.poly_fill(fb, [start - side, finish - side, finish + side, start + side],
-                        func(_x: int, _y: int) -> Variant: return Vector3(0.09, 0.055, 0.04), true, (1.0 - AMath.seg(t, 4.6, 4.95)) * close_k)
+                        func(_x: int, _y: int) -> Variant: return Vector3(0.20, 0.14, 0.10), true, 0.65 * (1.0 - AMath.seg(t, 4.6, 4.95)) * close_k)
             ADraw.streak(fb, p0.x, p0.y, p1.x, p1.y, 2.0, 2.0, AMath.R("fire", 0.9), (1.0 - AMath.seg(t, 3.5, 4.4)) * close_k)
         # The delayed wound opens segment by segment along the contact line.
         # Opaque charcoal fissures are actual geometry, not dark-keyed light.
@@ -150,15 +150,15 @@ class AshenGuillotineR:
                     var q0: Vector2 = segment[0]
                     var q1: Vector2 = segment[1]
                     var side := Vector2(-(q1 - q0).y, (q1 - q0).x).normalized() * (0.75 * open)
-                    ADraw.poly_fill_solid(fb, [q0 - side, q1 - side, q1 + side, q0 + side], Vector3(0.075, 0.052, 0.045), true, open * 0.8)
+                    ADraw.poly_fill_solid(fb, [q0 - side, q1 - side, q1 + side, q0 + side], Vector3(0.18, 0.13, 0.10), true, open * 0.65)
                 for side in [-1.0, 1.0]:
                     for chip in range(2):
                         var seed: float = float(section * 7 + chip * 2) + float(side)
                         var r := AMath.hash2(seed, 24.0)
                         var center: Vector2 = a.lerp(b, 0.19 + float(chip) * 0.46 + r * 0.08) + section_normal * side * gap * (1.3 + r)
                         var axis: Vector2 = (b - a).normalized()
-                        var along := (4.0 + r * 5.0) * open
-                        var across := (2.5 + AMath.hash2(seed, 42.0) * 4.0) * open
+                        var along := (6.0 + r * 6.0) * open
+                        var across := (4.0 + AMath.hash2(seed, 42.0) * 5.0) * open
                         var stone: Array = [center - axis * along * 0.8 - section_normal * across * 0.35,
                             center - axis * along * 0.35 + section_normal * across,
                             center + axis * along * 0.6 + section_normal * across * 0.75,
@@ -167,7 +167,7 @@ class AshenGuillotineR:
                         ADraw.poly_fill(fb, stone,
                             func(x: int, y: int) -> Variant:
                                 var grain := AMath.hash2(floor(float(x) * 0.37), floor(float(y) * 0.33))
-                                var value := 0.21 + 0.10 * grain + 0.07 * r
+                                var value := 0.34 + 0.10 * grain + 0.07 * r
                                 return Vector3(value, value * 0.94, value * 0.83), true, open * 0.85)
                         ADraw.streak(fb, (stone[1] as Vector2).x, (stone[1] as Vector2).y, (stone[2] as Vector2).x, (stone[2] as Vector2).y,
                             0.55, 0.4, AMath.R("ash", 0.55), open * 0.45)
