@@ -91,6 +91,23 @@ func _initialize() -> void:
         push_error("A04_BLADE_FAIL delayed rupture has no physical contact groove")
         quit(1)
         return
+    # Two connected banks must actually move away from the authored fault,
+    # and their irregular outer boundaries must not all have one width.
+    var widths: Array[float] = []
+    for u in [0.20, 0.32, 0.48, 0.61, 0.77]:
+        var center: Vector2 = spell._fault_point(u)
+        var left: Vector2 = spell._bank_sample(u, -1.0, 5.4, false)
+        var right: Vector2 = spell._bank_sample(u, 1.0, 5.4, false)
+        if left.distance_to(center) < 1.0 or right.distance_to(center) < 1.0 or left.distance_to(right) < 3.0:
+            push_error("A04_BLADE_FAIL bank did not separate")
+            quit(1)
+            return
+        widths.append(spell._bank_sample(u, 1.0, 5.4, true).distance_to(right))
+    widths.sort()
+    if widths[-1] - widths[0] < 2.0:
+        push_error("A04_BLADE_FAIL bank widths are too uniform")
+        quit(1)
+        return
     frame.clear()
     spell.render(frame, 5.4)
     for i in range(1, 5):

@@ -283,32 +283,28 @@ func _init() -> void:
     if rootwake._visible_growth(1.0, 7.8) >= rootwake._visible_growth(1.0, 7.2):
         _fail("root geometry does not retract during OUT")
     var root_events: Array = rootwake.authored_events()
-    for i in range(3):
-        var root_pts: Array = rootwake._roots[i][0].pts
-        var tip: Vector2 = root_pts[root_pts.size() - 1]
-        var cue: Dictionary = root_events[i + 1]
-        # The support roots deliberately end to either side of the target;
-        # only the principal thorn approaches it. Check exact cue attachment
-        # and a bounded fan, not the obsolete convergent-cage radius.
-        var target_distance := tip.distance_to(ARedesignSpells2.C)
-        if tip.distance_to(cue.pos_local) > 0.001 or target_distance > 50.0 or (i == 1 and target_distance > 20.0) or String(cue.kind) != "root_tip_grown":
-            _fail("root tip opening %d is disconnected or outside the bounded fan" % i)
-        var root_branch: Dictionary = rootwake._roots[i][1]
-        var parent_index := roundi(float(root_branch.attach) * float(root_pts.size() - 1))
-        var raised_main: Array = rootwake._lifted_points(rootwake._roots[i][0], 15.0)
-        var raised_child: Array = rootwake._lifted_points(root_branch, 15.0)
-        if (root_pts[parent_index] as Vector2).distance_to(root_branch.pts[0]) > 0.001 or (raised_main[parent_index] as Vector2).distance_to(raised_child[0]) > 0.001:
-            _fail("root child %d detaches from curved parent" % i)
-        rootwake.update(0.0, 0.8 + float(i) * 0.4)
-        if float(root_branch.grow) > 0.001:
-            _fail("root child appears before parent reaches junction")
-        var contact_time: float = cue.t
-        rootwake.update(0.0, contact_time - 1.0 / 60.0)
-        var before: float = rootwake._roots[i][0].grow
-        rootwake.update(0.0, contact_time)
-        var at: float = rootwake._roots[i][0].grow
-        if before >= 1.0 or at < 0.99999:
-            _fail("root tip %d arrival does not coincide with authored contact" % i)
+    if rootwake._roots.size() != 1 or rootwake._roots[0].size() < 6:
+        _fail("rootwake must have one origin and multiple branching generations")
+    var branches: Array = rootwake._roots[0]
+    var main: Dictionary = branches[0]
+    var tip: Vector2 = main.pts[-1]
+    if tip.distance_to(root_events[1].pos_local) > 0.001:
+        _fail("root tip cue detached")
+    for i in range(1, branches.size()):
+        var child: Dictionary = branches[i]
+        var parent: Dictionary = branches[int(child.parent)]
+        var p_index := roundi(float(child.attach) * float(parent.pts.size() - 1))
+        var raised_parent: Array = rootwake._lifted_points(parent, 15.0)
+        var raised_child: Array = rootwake._lifted_points(child, 15.0)
+        if (parent.pts[p_index] as Vector2).distance_to(child.pts[0]) > 0.001 or (raised_parent[p_index] as Vector2).distance_to(raised_child[0]) > 0.001:
+            _fail("root child %d detached from its parent" % i)
+    rootwake.update(0.0, 0.8)
+    for i in range(1, branches.size()):
+        if float(branches[i].grow) > 0.001: _fail("root child grew before parent")
+    rootwake.update(0.0, 3.5 - 1.0 / 60.0)
+    var before: float = main.grow
+    rootwake.update(0.0, 3.5)
+    if before >= 1.0 or float(main.grow) < 0.99999: _fail("root arrival cue timing")
     var spores := ARedesignSpells2.SporeNebulaR.new()
     spores.setup()
     var first_arrival := [0.8, INF, INF, INF, INF, INF]

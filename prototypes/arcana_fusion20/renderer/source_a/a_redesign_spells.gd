@@ -63,6 +63,20 @@ class AshenGuillotineR:
         var n := Vector2(-_dir.y, _dir.x)
         var bend := sin(u * PI) * (11.5 * sin(u * PI * 3.0 + 0.4) + 3.5 * sin(u * PI * 7.0))
         return C + _dir * lerpf(-92.0, 92.0, u) + n * bend
+    func _bank_sample(u: float, side: float, t: float, outer: bool) -> Vector2:
+        # Each bank is one connected displaced surface, not placed chips.
+        var section := mini(4, floori(u * 5.0))
+        var opening := AMath.ease_out(AMath.seg(t, 4.6 + float(section) * 0.08, 5.0 + float(section) * 0.08), 2.0) * _section_visibility(section, t)
+        var tangent := (_fault_point(minf(1.0, u + 0.003)) - _fault_point(maxf(0.0, u - 0.003))).normalized()
+        var normal := Vector2(-tangent.y, tangent.x) * side
+        var taper := pow(maxf(0.0, sin(PI * u)), 0.38)
+        var rough := AMath.hash2(floor(u * 17.0), 61.0 + side * 7.0)
+        var width := (3.5 + 6.0 * rough) * opening * taper
+        if outer:
+            width += (8.0 + 14.0 * AMath.hash2(floor(u * 11.0), 43.0 + side * 4.0)) * opening * taper
+        var shear := tangent * (side * opening * (1.0 + 2.5 * rough) * taper)
+        return _fault_point(u) + normal * width + shear
+
     func render(fb: AFramebuffer, t: float) -> void:
         var slit := AMath.seg(t, 1.2, 2.4)
         var blade := AMath.seg(t, 2.6, 3.35)
@@ -130,92 +144,55 @@ class AshenGuillotineR:
                     ADraw.poly_fill(fb, [start - side, finish - side, finish + side, start + side],
                         func(_x: int, _y: int) -> Variant: return Vector3(0.20, 0.14, 0.10), true, 0.65 * (1.0 - AMath.seg(t, 4.6, 4.95)) * close_k)
             ADraw.streak(fb, p0.x, p0.y, p1.x, p1.y, 2.0, 2.0, AMath.R("fire", 0.9), (1.0 - AMath.seg(t, 3.5, 4.4)) * close_k)
-        # The delayed wound opens segment by segment along the contact line.
-        # Opaque charcoal fissures are actual geometry, not dark-keyed light.
+        # A single continuous cavity opens as two unequal connected rock
+        # banks physically displace. Shared jagged inner/outer boundaries
+        # replace the old repeated rows of pale polygon chips.
         var rup := AMath.seg(t, 4.6, 5.4)
         if rup > 0.0:
+            var left: Array = []
+            var right: Array = []
+            for i in range(25):
+                var u := float(i) / 24.0
+                left.append(_bank_sample(u, -1.0, t, false))
+                right.append(_bank_sample(u, 1.0, t, false))
+            var cavity: Array = left.duplicate()
+            var reversed := right.duplicate()
+            reversed.reverse()
+            cavity.append_array(reversed)
+            ADraw.poly_fill(fb, cavity,
+                func(x: int, y: int) -> Variant:
+                    var grit := AMath.hash2(floor(float(x) * 0.43), floor(float(y) * 0.43))
+                    return Vector3(0.075 + grit * 0.035, 0.067 + grit * 0.030, 0.055 + grit * 0.025), true, minf(1.0, rup * 1.6) * close_k)
+            for side_value in [-1.0, 1.0]:
+                var side: float = side_value
+                var inner: Array = []
+                var outer: Array = []
+                for i in range(25):
+                    var u := float(i) / 24.0
+                    inner.append(_bank_sample(u, side, t, false))
+                    outer.append(_bank_sample(u, side, t, true))
+                var bank: Array = inner.duplicate()
+                var reverse_outer := outer.duplicate()
+                reverse_outer.reverse()
+                bank.append_array(reverse_outer)
+                ADraw.poly_fill(fb, bank,
+                    func(x: int, y: int) -> Variant:
+                        var stone := AMath.hash2(floor(float(x) * 0.22), floor(float(y) * 0.25) + side * 7.0)
+                        var grain := AMath.hash2(float(x), float(y))
+                        var value := 0.18 + 0.09 * stone + 0.05 * grain
+                        return Vector3(value * 1.03, value * 0.94, value * 0.80), true, minf(1.0, rup * 1.6) * close_k)
+                # Lithic fractures connect the cavity lip to the outer bank;
+                # irregular joint spacing cuts the connected surface into
+                # uneven blocks without floating separate stone decorations.
+                for joint in [3, 7, 12, 16, 21]:
+                    var start: Vector2 = inner[joint]
+                    var finish: Vector2 = outer[joint]
+                    var midway: Vector2 = start.lerp(finish, 0.48) + _dir * (float((joint * 7) % 5) - 2.0) * rup
+                    ADraw.streak(fb, start.x, start.y, midway.x, midway.y, 1.1, 0.7, Vector3(0.06, 0.05, 0.04), rup * close_k)
+                    ADraw.streak(fb, midway.x, midway.y, finish.x, finish.y, 0.7, 0.4, Vector3(0.08, 0.07, 0.06), rup * close_k)
             for section in range(5):
-                var u0 := float(section) / 5.0
-                var u1 := float(section + 1) / 5.0
-                var a: Vector2 = _fault_point(u0)
-                var b: Vector2 = _fault_point(u1)
-                var section_normal := Vector2(-(b - a).y, (b - a).x).normalized()
-                var open := AMath.ease_out(AMath.seg(t, 4.6 + float(section) * 0.08, 5.0 + float(section) * 0.08), 2.0) * _section_visibility(section, t)
-                # Staggered broken stone chips open away from a narrow,
-                # connected fault. Each chip leaves actual terrain between
-                # neighbours; a continuous filled strip reads as a plank.
-                var gap := (5.0 + 4.5 * AMath.hash2(float(section), 73.0)) * open
-                var fault_mid: Vector2 = _fault_point((u0 + u1) * 0.5)
-                for segment in [[a, fault_mid], [fault_mid, b]]:
-                    var q0: Vector2 = segment[0]
-                    var q1: Vector2 = segment[1]
-                    # The opening is an uneven broken incision between the
-                    # displaced banks, not a perfectly thin seam or flat slab.
-                    var axis_normal := Vector2(-(q1 - q0).y, (q1 - q0).x).normalized()
-                    var segment_seed := float(section) * 11.0 + q0.x * 0.03
-                    var start_width := (1.5 + 1.5 * AMath.hash2(segment_seed, 83.0)) * open
-                    var end_width := (1.6 + 2.3 * AMath.hash2(segment_seed, 84.0)) * open
-                    var midway := q0.lerp(q1, 0.47) + axis_normal * (AMath.hash2(segment_seed, 85.0) - 0.5) * 3.5 * open
-                    var mid_width := (2.0 + 2.0 * AMath.hash2(segment_seed, 86.0)) * open
-                    ADraw.poly_fill(fb, [q0 - axis_normal * start_width, midway - axis_normal * mid_width,
-                        q1 - axis_normal * end_width, q1 + axis_normal * end_width,
-                        midway + axis_normal * mid_width, q0 + axis_normal * start_width],
-                        func(x: int, y: int) -> Variant:
-                            var grit := AMath.hash2(floor(float(x) * 0.4), floor(float(y) * 0.4)) * 0.06
-                            return Vector3(0.14 + grit, 0.13 + grit, 0.11 + grit), true, open * 0.80)
-                # Broken exposed bedrock shelves alongside the cut. Each
-                # jagged half-bank has different width and inset, with visible
-                # breaks at section joints; displaced chips sit on top. This
-                # avoids a uniformly filled rectangular dark scar.
-                for bank_side in [-1.0, 1.0]:
-                    var axis: Vector2 = (b - a).normalized()
-                    var inward := section_normal * float(bank_side)
-                    var r0 := AMath.hash2(float(section), 58.0 + float(bank_side))
-                    var r1 := AMath.hash2(float(section), 69.0 + float(bank_side))
-                    var begin: Vector2 = a.lerp(b, 0.04 + r0 * 0.08)
-                    var end: Vector2 = a.lerp(b, 0.88 + r1 * 0.08)
-                    var mid: Vector2 = begin.lerp(end, 0.48 + 0.12 * (r0 - 0.5))
-                    var edge: Array = [begin + inward * 1.4 * open,
-                        mid + inward * (2.0 + 2.0 * r1) * open,
-                        end + inward * 1.4 * open,
-                        end + inward * (5.0 + 5.0 * r0) * open - axis * 2.0 * open,
-                        mid + inward * (9.0 + 7.0 * r1) * open,
-                        begin + inward * (5.0 + 4.0 * r1) * open + axis * 1.7 * open]
-                    var bank_value := 0.30 + r0 * 0.10
-                    ADraw.poly_fill(fb, edge,
-                        func(x: int, y: int) -> Variant:
-                            var grain := AMath.hash2(floor(float(x) * 0.33), floor(float(y) * 0.37) + float(section))
-                            var shade := bank_value + grain * 0.08
-                            return Vector3(shade, shade * 0.96, shade * 0.88), true, open * 0.80)
-                for side in [-1.0, 1.0]:
-                    for chip in range(1 + (section + (0 if side < 0.0 else 1)) % 3):
-                        var seed: float = float(section * 7 + chip * 2) + float(side)
-                        var r := AMath.hash2(seed, 24.0)
-                        var where := 0.08 + 0.84 * AMath.hash2(seed, 29.0)
-                        var center: Vector2 = a.lerp(b, where) + section_normal * side * gap * (0.8 + 1.5 * AMath.hash2(seed, 31.0))
-                        var axis: Vector2 = (b - a).normalized()
-                        var along := (5.0 + r * 9.0) * open
-                        var across := (3.5 + AMath.hash2(seed, 42.0) * 7.0) * open
-                        var stone: Array = [center - axis * along * 0.8 - section_normal * across * 0.35,
-                            center - axis * along * 0.35 + section_normal * across,
-                            center + axis * along * 0.6 + section_normal * across * 0.75,
-                            center + axis * along - section_normal * across * 0.1,
-                            center + axis * along * 0.2 - section_normal * across]
-                        ADraw.poly_fill(fb, stone,
-                            func(x: int, y: int) -> Variant:
-                                var grain := AMath.hash2(floor(float(x) * 0.37), floor(float(y) * 0.33))
-                                # Pale chipped top with granular mineral texture,
-                                # separate from the dark incision underneath.
-                                var value := 0.29 + 0.10 * grain + 0.10 * r
-                                return Vector3(value * 0.96, value * 0.94, value * 0.87), true, open * 0.94)
-                        ADraw.streak(fb, (stone[1] as Vector2).x, (stone[1] as Vector2).y, (stone[2] as Vector2).x, (stone[2] as Vector2).y,
-                            1.05, 0.6, AMath.R("ash", 0.9), open * 0.65)
-                var bs: Array = _cracks[section]
-                # Branching secondary cracks are covered cuts through the
-                # surface, not bright orange emissive lightning. Build each
-                # tapered path from the existing grown branch coordinates;
-                # narrow pale lips distinguish broken rock from a black line.
-                for branch in bs:
+                var open := AMath.seg(t, 4.6 + float(section) * 0.08, 5.0 + float(section) * 0.08) * _section_visibility(section, t)
+                for branch in _cracks[section]:
                     var authored: Array = branch.pts
                     var limit := float(branch.grow) * float(authored.size() - 1)
                     if limit <= 0.0: continue
@@ -225,10 +202,10 @@ class AshenGuillotineR:
                         var vb: Vector2 = authored[k + 1]
                         visible.append(va.lerp(vb, AMath.cl01(limit - float(k))))
                     ADraw.ribbon(fb, visible,
-                        func(u: float, _i: int) -> float: return maxf(0.45, float(branch.w) * (1.0 - 0.75 * u)) * open,
+                        func(u: float, _i: int) -> float: return maxf(0.5, float(branch.w) * (1.0 - 0.75 * u)) * open,
                         func(_u: float, _i: int, edge: float) -> Variant:
-                            return Vector3(0.39, 0.37, 0.32) if edge > 0.65 else Vector3(0.11, 0.10, 0.09),
-                        true, open * 0.75)
+                            return Vector3(0.31, 0.28, 0.23) if edge > 0.68 else Vector3(0.08, 0.07, 0.06),
+                        true, open * 0.8)
             # Fragment trajectories begin on the actual cut and separate
             # under gravity as individual fractured plates, not a second hit.
             for k in range(10):

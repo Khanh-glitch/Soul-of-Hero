@@ -13,162 +13,115 @@ class RootwakeR:
     const DUR := 8.4
     var _roots: Array = []
     var _tips: Array = []
-    func _root_curve(origin: Vector2, target: Vector2, index: int, u: float) -> Vector2:
-        # A stable bowed path, with a staggered side-to-side exploratory bend.
-        var delta := target - origin
-        var normal := Vector2(-delta.y, delta.x).normalized()
-        # Distinct asymmetrical exploratory trajectories rather than three
-        # concentric arcs. Endpoints stay exact for the real source cue.
-        var bend: float = [-4.0, 8.0, 7.0][index]
-        var phase: float = [0.1, 1.7, 3.0][index]
-        var skew := pow(u, [0.65, 1.25, 0.85][index])
-        return origin.lerp(target, u) + normal * sin(PI * u) * (bend + 10.0 * sin(skew * TAU + phase))
+
     func setup() -> void:
         _roots.clear()
         _tips.clear()
-        for i in range(3):
-            var origin: Vector2 = CASTER + [Vector2(4, -12), Vector2(10, -4), Vector2(14, 6)][i]
-            # Unequal destinations form a spreading root system, not the
-            # closed lens made by three trunks reconverging at one point.
-            var destination: Vector2 = C + [Vector2(-10, -28), Vector2(0, 10), Vector2(-5, 28)][i]
-            var points: Array = []
-            for n in range(25):
-                points.append(_root_curve(origin, destination, i, float(n) / 24.0))
-            var bs: Array = [{"pts": points, "w": [3.4, 5.4, 2.6][i], "depth": 0, "grow": 0.0, "seed": 13131 + i, "attach": 0.0}]
-            # Each trunk has its own irregular branch population and origin
-            # beats; do not reconstruct the rejected uniform cage.
-            for j in range([2, 3, 2][i]):
-                var attach: float = [0.16, 0.37, 0.58, 0.79][j] + float(i) * 0.035
-                # Parent node and child start are literally the same point.
-                var parent_index := roundi(float(attach) * 24.0)
-                attach = float(parent_index) / 24.0
-                var base: Vector2 = points[parent_index]
-                var tangent: Vector2 = (points[mini(parent_index + 1, 24)] - points[maxi(parent_index - 1, 0)]).normalized()
-                var normal := Vector2(-tangent.y, tangent.x) * (-1.0 if (i + j) % 2 == 0 else 1.0)
-                var child: Array = []
-                for n in range(13):
-                    var u := float(n) / 12.0
-                    var seed := float(i * 4 + j)
-                    var reach := 12.0 + 16.0 * AMath.hash2(seed, 13.0)
-                    var spread := 9.0 + 17.0 * AMath.hash2(seed, 17.0)
-                    # Continuous irregular bends grow from the exact parent
-                    # junction. Unequal turning produces living branches,
-                    # not a set of smooth arcs/straight cage ribs.
-                    var wander := (AMath.vnoise(u * 3.7 + seed * 4.0, seed + 7.0) - 0.5) * 12.0 * sin(u * PI)
-                    var forward := reach * u + sin(u * PI) * (AMath.hash2(seed, 21.0) - 0.5) * 10.0
-                    var sideways := spread * sin(u * PI * 0.5) + (2.0 + 7.0 * AMath.hash2(seed, 23.0)) * u * u + wander
-                    child.append(base + tangent * forward + normal * sideways)
-                bs.append({"pts": child, "w": 2.4 - float(j) * 0.18, "depth": 1, "grow": 0.0, "seed": 13300 + i * 4 + j, "attach": attach})
-            _roots.append(bs)
-            _tips.append(destination)
+        var origin := CASTER + Vector2(5, 0)
+        var destination := C + Vector2(-32, 6)
+        var trunk: Array = []
+        for n in range(33):
+            var u := float(n) / 32.0
+            var bend := sin(u * PI) * (10.0 * sin(u * 5.0 + 0.5) + 5.0 * sin(u * 12.0))
+            trunk.append(origin.lerp(destination, u) + Vector2(0, bend))
+        var branches: Array = [{"pts": trunk, "w": 9.0, "depth": 0, "grow": 0.0, "seed": 13131, "attach": 0.0, "parent": -1, "along0": 0.0}]
+        # Asymmetrical primary roots emerge from exact trunk joints. Each
+        # may carry a smaller branch from its own already-formed joint.
+        for j in range(5):
+            var parent_index: int = [5, 11, 17, 22, 27][j]
+            var attach := float(parent_index) / 32.0
+            var base: Vector2 = trunk[parent_index]
+            var tangent: Vector2 = (trunk[parent_index + 1] - trunk[parent_index - 1]).normalized()
+            var side := -1.0 if j % 2 == 0 else 1.0
+            var normal := Vector2(-tangent.y, tangent.x) * side
+            var child: Array = []
+            var reach: float = [25.0, 34.0, 22.0, 30.0, 20.0][j]
+            var spread: float = [27.0, 37.0, 29.0, 35.0, 24.0][j]
+            for n in range(17):
+                var u := float(n) / 16.0
+                var jag := sin(u * PI) * (4.0 * sin(u * 10.0 + float(j) * 1.8))
+                child.append(base + tangent * (reach * u + jag) + normal * (spread * u + sin(u * PI) * 5.0))
+            var child_index := branches.size()
+            branches.append({"pts": child, "w": 4.8 - float(j) * 0.25, "depth": 1, "grow": 0.0, "seed": 13200 + j, "attach": attach, "parent": 0, "along0": attach})
+            var joint := 8 + j % 4
+            var child_attach := float(joint) / 16.0
+            var leaf_base: Vector2 = child[joint]
+            var leaf_tangent: Vector2 = (child[joint + 1] - child[joint - 1]).normalized()
+            var leaf_normal := Vector2(-leaf_tangent.y, leaf_tangent.x) * (-side)
+            var twig: Array = []
+            for n in range(9):
+                var u := float(n) / 8.0
+                twig.append(leaf_base + leaf_tangent * (14.0 * u) + leaf_normal * ((12.0 + float(j) * 1.7) * u + 3.0 * sin(u * PI)))
+            branches.append({"pts": twig, "w": 2.4, "depth": 2, "grow": 0.0, "seed": 13300 + j, "attach": child_attach, "parent": child_index, "along0": lerpf(attach, 1.0, child_attach)})
+        _roots.append(branches)
+        _tips.append(destination)
+
     func authored_events() -> Array:
-        var ev: Array = [{"t": 0.8, "kind": "roots_germinate", "pos_local": CASTER, "emitted": false}]
-        for i in range(_tips.size()):
-            ev.append({"t": 3.0 + float(i) * 0.4, "kind": "root_tip_grown", "pos_local": _tips[i], "emitted": false})
-        ev.append({"t": 5.4, "kind": "thorn_snap_visual", "pos_local": C, "emitted": false})
-        ev.append({"t": 7.2, "kind": "roots_retract", "pos_local": CASTER, "emitted": false})
-        return ev
+        return [
+            {"t": 0.8, "kind": "roots_germinate", "pos_local": CASTER, "emitted": false},
+            {"t": 3.5, "kind": "root_tip_grown", "pos_local": _tips[0], "emitted": false},
+            {"t": 5.4, "kind": "thorn_snap_visual", "pos_local": C, "emitted": false},
+            {"t": 7.2, "kind": "roots_retract", "pos_local": CASTER, "emitted": false}]
+
     func _visible_growth(growth: float, t: float) -> float:
         return growth * (1.0 - AMath.seg(t, 7.2, 8.4))
-    func update(dt: float, t: float) -> void:
-        for i in range(_roots.size()):
-            var main_growth := AMath.cl01((t - 0.8 - float(i) * 0.4) / 2.2)
-            _roots[i][0].grow = main_growth
-            for j in range(1, _roots[i].size()):
-                var branch: Dictionary = _roots[i][j]
-                var attach := float(branch.attach)
-                # A branch cannot emerge before its parent reaches its base.
-                branch.grow = AMath.cl01((main_growth - attach) / 0.22)
+
+    func update(_dt: float, t: float) -> void:
+        var branches: Array = _roots[0]
+        branches[0].grow = AMath.cl01((t - 0.8) / 2.7)
+        for i in range(1, branches.size()):
+            var branch: Dictionary = branches[i]
+            var parent: Dictionary = branches[int(branch.parent)]
+            branch.grow = AMath.cl01((float(parent.grow) - float(branch.attach)) / 0.30)
+
     func _lifted_points(branch: Dictionary, lift: float) -> Array:
         var result: Array = []
         var pts: Array = branch.pts
-        var attach := float(branch.attach)
+        var along0 := float(branch.along0)
         for n in range(pts.size()):
             var u := float(n) / float(pts.size() - 1)
-            var along := u if int(branch.depth) == 0 else lerpf(attach, 1.0, u)
-            var point: Vector2 = pts[n]
-            # All child junctions inherit exactly the parent's loaded bend.
-            result.append(point - Vector2(lift * 0.38, lift) * sin(PI * along))
+            var along := lerpf(along0, 1.0, u)
+            result.append((pts[n] as Vector2) + Vector2(-lift * 0.3, -lift) * sin(PI * along * 0.65))
         return result
+
     func render(fb: AFramebuffer, t: float) -> void:
-        var retract := 1.0 - AMath.seg(t, 7.2, 8.4)
-        var tension := AMath.seg(t, 4.0, 5.4) * retract
-        var thickening := AMath.seg(t, 1.6, 3.6)
-        for bs in _roots:
-            var main: Dictionary = bs[0]
-            var visible_main := _visible_growth(float(main.grow), t)
-            for b in bs:
-                var bb: Dictionary = (b as Dictionary).duplicate()
-                var attach := float(bb.attach)
-                bb.grow = visible_main if int(bb.depth) == 0 else float(bb.grow) * AMath.cl01((visible_main - attach) / (1.0 - attach))
-                bb.pts = _lifted_points(bb, tension * 15.0)
-                ACommon.draw_branch(fb, bb,
-                    func(u: float, edge: float, br: Dictionary) -> Variant:
-                        if edge > 0.95:
-                            return Vector3(0.14, 0.10, 0.045)
-                        var grain := 0.58 + 0.42 * AMath.hash2(floor(u * 48.0), float(br.seed) + floor(edge * 7.0) * 13.0)
-                        var bark := 0.79 + 0.21 * (1.0 - edge)
-                        return Vector3(0.39, 0.23, 0.11) * bark * grain,
-                    func(u: float, br: Dictionary) -> float:
-                        var ridges := 0.72 + 0.28 * AMath.hash2(floor(u * 22.0), float(br.seed) + 31.0)
-                        return maxf(0.8, float(br.w) * (0.65 + thickening * 1.45) * (1.0 - u * 0.65) * ridges), true)
-                ACommon.draw_branch(fb, bb,
-                    func(u: float, edge: float, br: Dictionary) -> Variant:
-                        # Interrupted fissures, not a continuous tubular gloss.
-                        if edge > 0.72 or AMath.hash2(floor(u * 23.0), float(br.seed) + 19.0) < 0.43: return null
-                        return Vector3(0.43, 0.29, 0.14) * (1.0 - edge * 0.24),
-                    func(u: float, br: Dictionary) -> float:
-                        return maxf(0.5, float(br.w) * 0.35 * (1.0 - u * 0.6)))
-        if tension > 0.0:
-            # One principal target-driven thorn, supported by the other two
-            # unequal living trunks; three equal arches made a static cage.
-            for i in [1]:
-                var main: Dictionary = _roots[i][0]
-                var visible_main := _visible_growth(float(main.grow), t)
-                var attached := AMath.cl01((visible_main - 0.75) / 0.25)
-                if attached <= 0.001:
-                    continue
-                var raised: Array = _lifted_points(main, tension * 15.0)
-                # Begin exactly on an existing main-root node, not in midair.
-                var tp: Vector2 = raised[18]
-                var endpoint: Vector2 = tp.lerp(_tips[i], AMath.ease_in(tension, 2.0) * attached)
-                var control := tp.lerp(endpoint, 0.5) + Vector2(float(i - 1) * 7.0, -14.0 * tension * attached)
-                var points: Array = []
-                for step in range(13):
-                    var u := float(step) / 12.0
-                    points.append(tp * (1.0 - u) * (1.0 - u) + control * 2.0 * (1.0 - u) * u + endpoint * u * u)
-                ADraw.ribbon(fb, points,
-                    func(u: float, _j: int) -> float: return (5.6 - u * 3.7) * tension * attached,
-                    func(_u: float, _j: int, edge: float) -> Variant:
-                        return Vector3(0.14, 0.12, 0.045) if edge > 0.65 else Vector3(0.30, 0.25, 0.10), true, retract)
-                # A single prominent wedge is grown out of the same arch
-                # and aims toward the target with the visible tension. This
-                # remains visual-only: no asserted contact or on-body effect.
-                var attack := AMath.ease_in(AMath.seg(t, 4.65, 5.4), 2.0) * attached * retract
-                var direction: Vector2 = (_tips[i] as Vector2 - tp).normalized()
-                var thorn_side := Vector2(-direction.y, direction.x)
-                var thorn_base: Vector2 = points[8]
-                var point: Vector2 = thorn_base.lerp(_tips[i] + direction * 30.0, attack)
-                var thorn_foot := thorn_side * (8.0 * attack)
-                if attack > 0.0:
-                    var shoulder := thorn_base.lerp(point, 0.46) - thorn_side * (3.0 * attack)
-                    var back := thorn_base.lerp(point, 0.65) + thorn_side * (2.0 * attack)
-                    ADraw.poly_fill(fb, [thorn_base - thorn_foot, shoulder - thorn_foot * 0.60, point, back + thorn_foot * 0.32, thorn_base + thorn_foot],
-                        func(x: int, y: int) -> Variant:
-                            var bark := 0.30 + AMath.hash2(floor(float(x) * 0.35), floor(float(y) * 0.35)) * 0.12
-                            return Vector3(bark, bark * 0.57, bark * 0.24), true, attack)
-                    ADraw.streak(fb, shoulder.x, shoulder.y, point.x, point.y, 0.8, 0.35, Vector3(0.68, 0.48, 0.24), attack * 0.6)
-                # Two actual barbs have their bases on the same arch.
-                for barb_value in [0.36, 0.68]:
-                    var barb: float = barb_value
-                    var base: Vector2 = tp * (1.0 - barb) * (1.0 - barb) + control * 2.0 * (1.0 - barb) * barb + endpoint * barb * barb
-                    var tangent: Vector2 = ((control - tp) * (1.0 - barb) + (endpoint - control) * barb).normalized()
-                    var side: Vector2 = Vector2(-tangent.y, tangent.x) * (-1.0 if i % 2 == 0 else 1.0)
-                    var tip_point: Vector2 = base + (tangent * 8.0 + side * 9.0) * tension * attached
-                    var foot: Vector2 = tangent * 2.8 * tension * attached
-                    ADraw.poly_fill(fb, [base - foot, tip_point, base + foot],
-                        func(_x: int, _y: int) -> Variant: return Vector3(0.19, 0.31, 0.08), true, tension * retract * attached)
-                    ADraw.streak(fb, base.x, base.y, tip_point.x, tip_point.y, 0.8, 0.4, AMath.R("verdant", 0.7), tension * retract * attached * 0.5)
+        var tension := AMath.seg(t, 4.05, 5.1) * (1.0 - AMath.seg(t, 5.4, 6.1))
+        var branches: Array = _roots[0]
+        var visible: Array[float] = []
+        for i in range(branches.size()):
+            var original: Dictionary = branches[i]
+            var b: Dictionary = original.duplicate()
+            var remain := 1.0 - AMath.seg(t, 7.2, 8.4)
+            var g := minf(float(original.grow), remain)
+            if int(b.parent) >= 0:
+                var parent_visible := visible[int(b.parent)]
+                g = minf(g, AMath.cl01((parent_visible - float(b.attach)) / 0.30))
+            visible.append(g)
+            b.grow = g
+            b.pts = _lifted_points(original, tension * 13.0)
+            ACommon.draw_branch(fb, b,
+                func(u: float, edge: float, br: Dictionary) -> Variant:
+                    var grain := AMath.hash2(floor(u * 45.0), float(br.seed) + floor(edge * 8.0) * 11.0)
+                    if edge > 0.82: return Vector3(0.10, 0.075, 0.035)
+                    var bark := 0.27 + grain * 0.13 + (1.0 - edge) * 0.07
+                    return Vector3(bark, bark * 0.58, bark * 0.27),
+                func(u: float, br: Dictionary) -> float:
+                    var rough := 0.78 + 0.22 * AMath.hash2(floor(u * 15.0), float(br.seed))
+                    return maxf(0.6, float(br.w) * (1.0 - 0.86 * u) * rough), true)
+        # A separate narrow thorn extrudes only after the trunk tensions.
+        # Its base is literally the deformed parent tip; it never represents
+        # a hit or adds an actor-relative combat event.
+        var launch := AMath.ease_in(AMath.seg(t, 5.08, 5.4), 2.0) * (1.0 - AMath.seg(t, 6.4, 7.2))
+        if launch > 0.0 and visible[0] > 0.99:
+            var raised := _lifted_points(branches[0], tension * 13.0)
+            var base: Vector2 = raised[-1]
+            var dir: Vector2 = (C + Vector2(18, 0) - base).normalized()
+            var side := Vector2(-dir.y, dir.x)
+            var tip: Vector2 = base + dir * (52.0 * launch)
+            var shoulder: Vector2 = base + dir * (8.0 * launch)
+            ADraw.poly_fill_solid(fb, [base - side * 3.5, shoulder - side * 3.0, tip, shoulder + side * 3.0, base + side * 3.5], Vector3(0.25, 0.34, 0.10), true, launch)
+            ADraw.streak(fb, shoulder.x, shoulder.y, tip.x, tip.y, 0.8, 0.2, Vector3(0.65, 0.69, 0.28), launch)
+
 
 # ------------------------------------------- #14 spore nebula
 class SporeNebulaR:
@@ -427,7 +380,7 @@ class ChronoshardR:
         # Visual-only markers preserve both out-of-order echo beats without
         # representing them as confirmed contacts or gameplay damage.
         ev.append({"t": 4.3, "kind": "reverse_echo_visual", "pos_local": C, "emitted": false})
-        ev.append({"t": 4.3375, "kind": "forward_echo_visual", "pos_local": C, "emitted": false})
+        ev.append({"t": 5.20, "kind": "forward_echo_visual", "pos_local": C, "emitted": false})
         ev.append({"t": 6.2, "kind": "synchronized_impact", "pos_local": C, "emitted": false})
         ev.append({"t": 7.4, "kind": "fragments_resolve", "pos_local": C, "emitted": false})
         return ev
