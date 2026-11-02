@@ -22,6 +22,9 @@ jobs:
           run-id: 41399798425
           github-token: ${{ github.token }}
           path: capture
+      - name: Install video tools when absent
+        run: |
+          if ! command -v ffmpeg || ! command -v ffprobe; then sudo apt-get update -qq && sudo apt-get install -y ffmpeg; fi
       - name: Check exact frozen source and surface native-sized review clip
         env:
           GH_TOKEN: ${{ github.token }}
