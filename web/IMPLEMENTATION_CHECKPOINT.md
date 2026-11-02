@@ -4,7 +4,7 @@
 
 Control Tower accepted only the focused Salt Shale → Salted Roast checkpoint and ordered this prototype-first follow-on; PR #38 remains draft/unmerged. The current changes add a typed `schemaVersion: 1` content-pack model in `src/game/content.ts`, a selectable development layout, and a data-authored multi-stage POI, reusing existing door, keycard, generator, fuel, container, inventory, save and rendering systems. There are no POI-ID-specific controller branches.
 
-- `shipping` has no extra terrain/POI overlays; its canonical seeded island and existing placements/routes remain. The only existing-map tile correction is setting the Factory vault's authored door threshold to floor so an opened door is actually traversable.
+- `shipping` has an empty additive content pack: no terrain, POI, road, or fixed placement overlays are added to the canonical seeded island. Its existing geography and coordinates remain unchanged.
 - `dev_delta` adds a ridge layout with two passable gaps and the Delta Relay: exterior keycard/fuel cache → lawful keycard gate → fuel-powered generator → power gate → finite, useful vault loot.
 - Layout selection is available on the ordinary New Run screen. New runs persist `layoutId`; a legacy in-progress save without the additive field resolves to `shipping` without bumping the save format.
 - Content-pack tests cover supported versions, invalid dimensions/terrain/loot/geometry, old geography/POI stability, layout selection and run association. Local result: `npm test` 20/20, `npx tsc --noEmit`, `npm run build`, `node --check e2e/map-poi.mjs`, and `git diff --check` all pass.

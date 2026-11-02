@@ -53,10 +53,10 @@ try {
     const doorOf = label => { const e=s.entities.find(e=>e.kind==='door'&&e.label===label); assert(e,`missing ${label}`); return e; };
     let keydoor,entry=null,powerdoor=null,gen=null,outer,vaults=[],exitTarget;
     if(layoutId==='shipping'){
-      keydoor=doorOf('Vault Door'); outer=s.entities.find(e=>e.kind==='loot'&&e.poi==='watch');
-      vaults=s.entities.filter(e=>e.kind==='loot'&&e.poi==='factory_vault');
-      const factory=world.places.find(p=>p.id==='factory');assert(factory&&outer&&vaults.length===2,'shipping Factory/Watchtower POI content missing');
-      exitTarget={x:factory.tx*16+8,y:(factory.ty+7)*16+8};
+      keydoor=doorOf('Lighthouse Door'); outer=s.entities.find(e=>e.kind==='loot'&&e.poi==='light');
+      vaults=s.entities.filter(e=>e.kind==='loot'&&e.poi==='light_top');gen=s.entities.find(e=>e.kind==='gen'&&e.poi==='light');
+      assert(outer&&vaults.length===1&&gen,'shipping Lighthouse POI content missing');
+      exitTarget={x:keydoor.x,y:keydoor.y+40};
     }else{
       entry=doorOf('Delta Relay Station Entry');keydoor=doorOf('Keycard Reader');powerdoor=doorOf('Power Gate');
       outer=s.entities.find(e=>e.kind==='loot'&&e.poi==='delta_relay'&&e.label==='Maintenance Cache');
@@ -91,17 +91,18 @@ try {
     async function useEntity(id){let cur=await state();let e=cur.entities.find(e=>e.id===id);assert(e,`entity ${id} missing`);await walkNear(e.x,e.y,20);await aim(e.x,e.y);await page.keyboard.press('e');await pause(220);return state();}
     async function takeAll(){await page.getByRole('button',{name:'Take all',exact:true}).click();await pause(350);await page.keyboard.press('Escape');await pause(120);}
 
-    // Two end-to-end scenarios use the shipping island's existing Factory vault and the new development Relay.
+    // Two end-to-end scenarios use existing production Lighthouse content and the authored development Relay.
     if(layoutId==='shipping'){
-      await useEntity(keydoor.id);s=await state();keydoor=s.entities.find(e=>e.id===keydoor.id);assert.equal(keydoor.locked,'keycard');assert.equal(keydoor.open,false);
-      log.push('shipping: unauthorized Factory Vault attempt rejected before obtaining a keycard');
+      await useEntity(keydoor.id);s=await state();keydoor=s.entities.find(e=>e.id===keydoor.id);assert.equal(keydoor.locked,'power');assert.equal(keydoor.open,false);
+      log.push('shipping: unauthorized Lighthouse Door attempt rejected while its generator was dry');
       await useEntity(outer.id);await page.getByRole('button',{name:'Take all',exact:true}).waitFor({timeout:5000});
-      await snap(`${suffix}-watchtower-dual-panels-1280x720.png`,1280,720);await snap(`${suffix}-watchtower-dual-panels-640x360.png`,640,360);await takeAll();
-      assert.equal(await inputCount('keycard'),1);log.push('shipping: Watchtower keycard acquired from its real finite crate through UI');
-      await useEntity(keydoor.id);s=await state();keydoor=s.entities.find(e=>e.id===keydoor.id);assert.equal(keydoor.locked,undefined);assert.equal(keydoor.open,true);assert.equal(await inputCount('keycard'),0);
-      for(const e of vaults){await useEntity(e.id);await page.getByRole('button',{name:'Take all',exact:true}).waitFor({timeout:5000});if(e.id===vault.id){await snap(`${suffix}-factory-vault-dual-panels-1280x720.png`,1280,720);await snap(`${suffix}-factory-vault-dual-panels-640x360.png`,640,360);}await takeAll();}
-      assert.equal(await inputCount('iron_ingot'),4);assert.equal(await inputCount('spares'),6);assert((await inputCount('core_fire'))>=1);
-      log.push('shipping: Factory vault opened lawfully; iron ingot x4, spares x6, and core loot transferred via container UI');
+      await snap(`${suffix}-lighthouse-cache-dual-panels-1280x720.png`,1280,720);await snap(`${suffix}-lighthouse-cache-dual-panels-640x360.png`,640,360);await takeAll();
+      assert.equal(await inputCount('fuel_can'),1);log.push('shipping: Lighthouse-side fuel can acquired from its real finite crate through UI');
+      await useEntity(gen.id);s=await state();gen=s.entities.find(e=>e.id===gen.id);keydoor=s.entities.find(e=>e.id===keydoor.id);assert.equal(gen.power,1);assert.equal(keydoor.locked,undefined);assert.equal(await inputCount('fuel_can'),0);
+      await useEntity(keydoor.id);s=await state();keydoor=s.entities.find(e=>e.id===keydoor.id);assert.equal(keydoor.open,true);
+      for(const e of vaults){await useEntity(e.id);await page.getByRole('button',{name:'Take all',exact:true}).waitFor({timeout:5000});if(e.id===vault.id){await snap(`${suffix}-lighthouse-loot-dual-panels-1280x720.png`,1280,720);await snap(`${suffix}-lighthouse-loot-dual-panels-640x360.png`,640,360);}await takeAll();}
+      assert.equal(await inputCount('core_storm'),1);assert((await inputCount('blueprint'))>=1);
+      log.push('shipping: Lighthouse power gate opened lawfully; core_storm and blueprint loot transferred through container UI');
     }else{
       await useEntity(entry.id);s=await state();entry=s.entities.find(e=>e.id===entry.id);assert.equal(entry.open,true,'entry door did not open from normal E input');
       await useEntity(outer.id);await page.getByRole('button',{name:'Take all',exact:true}).waitFor({timeout:5000});
@@ -130,8 +131,9 @@ try {
     await pause(1000);await page.reload({waitUntil:'networkidle'});await page.getByRole('button',{name:/Continue/i}).waitFor({timeout:15000});await page.getByRole('button',{name:/Continue/i}).click();await sleepUntil(()=>Boolean(window.__soh?.run),'Continue did not restore run');await pause(400);
     s=await state();assert.equal(s.id,runId);assert.equal(s.seed,seed);assert.equal(s.layoutId,layoutId);
     assert.equal(s.entities.find(e=>e.id===keydoor.id).open,true);
-    if(layoutId==='dev_delta'){assert.equal(s.entities.find(e=>e.id===gen.id).power,1);assert.equal(s.entities.find(e=>e.id===powerdoor.id).open,true);assert.equal(s.counts.medkit,1);}
-    assert.equal(s.counts.iron_ingot,4);assert.equal(s.counts.spares,6);
+    assert.equal(s.entities.find(e=>e.id===gen.id).power,1);
+    if(layoutId==='dev_delta'){assert.equal(s.entities.find(e=>e.id===powerdoor.id).open,true);assert.equal(s.counts.medkit,1);assert.equal(s.counts.iron_ingot,4);assert.equal(s.counts.spares,6);}
+    else {assert.equal(s.counts.core_storm,1);assert((s.counts.blueprint||0)>=1);}
     for(const cache of vaults)assert(!s.containers[cache.c].some(Boolean),'vault loot respawned across reload');
     await snap(`${suffix}-reloaded-1280x720.png`,1280,720);await snap(`${suffix}-reloaded-640x360.png`,640,360);
     log.push(`${layoutId}: page-reload + Continue persisted same run/seed, lawful gate state, empty vault cache(s), and useful inventory`);
@@ -139,9 +141,9 @@ try {
     await ctx.close();
   }
 
-  await runLayout('shipping','Pinewatch','Shipping Island','shipping');
+  await runLayout('shipping',"Fisher's Point",'Shipping Island','shipping');
   await runLayout('dev_delta','Eastcove','Delta Ridge','dev-delta');
-  log.push('route_choice=PASS: production used Pinewatch → existing Factory Vault; development used Eastcove → authored Delta Relay across the two-pass ridge; all traversal used actual WASD input (test-side BFS selected waypoints, not blind-discovery proof)');
+  log.push('route_choice=PASS: production used Fisher’s Point → existing Lighthouse; development used Eastcove → authored Delta Relay across the two-pass ridge; all traversal used actual WASD input (test-side BFS selected waypoints, not blind-discovery proof)');
   await fs.writeFile(path.join(out,'run-log.txt'),log.join('\n')+'\n');
   console.log(log.join('\n'));
 } catch (error) {

@@ -47,7 +47,6 @@ describe('typed versioned map content packs', () => {
     const shipping = getWorld('shipping'), dev = getWorld('dev_delta');
     expect(shipping.places.some(p => p.id === 'delta_relay')).toBe(false);
     expect(dev.places.some(p => p.id === 'delta_relay')).toBe(true);
-    expect(shipping.tiles[shipping.statics.find(e => e.poi === 'factory' && e.kind === 'door')!.ty * WW + shipping.statics.find(e => e.poi === 'factory' && e.kind === 'door')!.tx]).toBe(T.FLOOR);
     expect(shipping.starts.map(p => [p.id, p.tx, p.ty])).toEqual(dev.starts.map(p => [p.id, p.tx, p.ty]));
     expect(shipping.places.find(p => p.id === 'factory')).toEqual(dev.places.find(p => p.id === 'factory'));
     expect(shipping.statics.filter(e => ['factory', 'light'].includes(e.poi || '')).map(e => [e.poi,e.kind,e.tx,e.ty,e.locked]))
