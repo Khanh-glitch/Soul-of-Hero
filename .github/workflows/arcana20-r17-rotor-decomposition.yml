@@ -1,4 +1,4 @@
-# Diagnostic-only same-state #11 source-field decomposition; preserve the trace.
+# Diagnostic-only same-state #11 decomposition; preserve trace and settle shader changes.
 name: ARCANA20 R17 rotor field and world decomposition
 on:
   workflow_dispatch:

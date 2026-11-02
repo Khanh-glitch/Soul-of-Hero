@@ -99,28 +99,40 @@ s = s.replace(needle, '''    if OS.get_environment("AVFX_R17_WORLD_DECOMPOSE") =
             # Rerender the full source at this exact state to remove ambiguity
             # about the preceding frame_post_draw vs last observed tick.
             diagnostic_source._render_frame()
-            await RenderingServer.frame_post_draw
+            for settle in range(4):
+                await tree.process_frame
+                await RenderingServer.frame_post_draw
             var full := get_viewport().get_texture().get_image()
             full.save_png(path + "/r23_world_full.png")
             # Toggle only presentation on the exact same uploaded full/rotor
             # source fields; scene, actors, source tick and camera stay frozen.
             diagnostic_viewer._material.set_shader_parameter("carousel_presentation", false)
-            await RenderingServer.frame_post_draw
+            for settle in range(4):
+                await tree.process_frame
+                await RenderingServer.frame_post_draw
             get_viewport().get_texture().get_image().save_png(path + "/r24_world_baseline.png")
             diagnostic_viewer._material.set_shader_parameter("carousel_presentation", true)
-            await RenderingServer.frame_post_draw
+            for settle in range(4):
+                await tree.process_frame
+                await RenderingServer.frame_post_draw
             get_viewport().get_texture().get_image().save_png(path + "/r24_world_corrected.png")
             var original_bloom: Variant = diagnostic_viewer._material.get_shader_parameter("bloom_amount")
             diagnostic_viewer._material.set_shader_parameter("carousel_presentation", false)
             diagnostic_viewer._material.set_shader_parameter("bloom_amount", 0.0)
-            await RenderingServer.frame_post_draw
+            for settle in range(4):
+                await tree.process_frame
+                await RenderingServer.frame_post_draw
             get_viewport().get_texture().get_image().save_png(path + "/r23_world_no_bloom.png")
             diagnostic_source._spell.set("include_bolts", false)
             diagnostic_source._render_frame()
-            await RenderingServer.frame_post_draw
+            for settle in range(4):
+                await tree.process_frame
+                await RenderingServer.frame_post_draw
             get_viewport().get_texture().get_image().save_png(path + "/r23_world_rotor_only.png")
             diagnostic_viewer._sprite.visible = false
-            await RenderingServer.frame_post_draw
+            for settle in range(4):
+                await tree.process_frame
+                await RenderingServer.frame_post_draw
             get_viewport().get_texture().get_image().save_png(path + "/r23_world_no_fx.png")
             var stable := before_player == player.global_position and before_enemy == enemy.global_position and before_camera == camera.get_screen_center_position() and diagnostic_tick == diagnostic_source._tick
             print("R23_WORLD_STABILITY tick=", diagnostic_tick, "/", diagnostic_source._tick, " player=", before_player, "/", player.global_position, " enemy=", before_enemy, "/", enemy.global_position, " camera=", before_camera, "/", camera.get_screen_center_position())
@@ -128,6 +140,9 @@ s = s.replace(needle, '''    if OS.get_environment("AVFX_R17_WORLD_DECOMPOSE") =
             info.store_string(JSON.stringify({"tick":diagnostic_tick, "camera":[before_camera.x,before_camera.y], "player":[before_player.x,before_player.y], "enemy":[before_enemy.x,before_enemy.y], "stable":stable, "bloom_amount":original_bloom, "note":"diagnostic-only paused same-scene rerenders; not a motion or production HDR capture"}, "  "))
             info.close()
             diagnostic_source._spell.set("include_bolts", true)
+            diagnostic_viewer._material.set_shader_parameter("bloom_amount", original_bloom)
+            diagnostic_viewer._material.set_shader_parameter("carousel_presentation", true)
+            diagnostic_viewer._sprite.visible = true
             diagnostic_source._render_frame()
             tree.paused = old_pause
             for i in range(suspended.size()):
