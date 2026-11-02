@@ -168,17 +168,30 @@ func _render_fusion_fragments(fb: AFramebuffer, t: float) -> void:
             var age: float = pose.age
             var alpha := AMath.smoothstep(0.0, 0.16, age) * (1.0 - AMath.smoothstep(1.0, 2.0, age))
             if alpha <= 0.001: continue
-            var fragment_length: float = pose.length
-            var fragment_width: float = pose.width
-            var fixed_li := li
-            var fixed_petal := petal
-            ADraw.ribbon(fb, pose.points,
-                func(s: float, _i: int) -> float:
-                    var source_u := lerpf(0.50, 0.98, s)
-                    return fragment_length * fragment_width * sin(pow(source_u, 0.6) * PI) * (0.60 + 0.40 * sin(PI * s)),
-                func(s: float, _i: int, edge: float) -> Variant:
-                    return _c_surface(fixed_li, fixed_petal, lerpf(0.50, 0.98, s), edge, C.x, C.y, t),
-                true, alpha)
+            _draw_fragment_ribbon(fb, pose.points, float(pose.length), float(pose.width), li, petal, t, alpha)
+
+# Rasterize the A-derived piece with C's per-pixel material lookup. Using a
+# constant coordinate here would collapse Bayer variation to a single cell and
+# misrepresent the elected C material. As in the source sheet, evaluate the
+# palette at the actual pixel and signed transverse coordinate.
+func _draw_fragment_ribbon(fb: AFramebuffer, points: Array, length: float, width: float, li: int, petal: int, t: float, alpha: float) -> void:
+    for i in range(points.size() - 1):
+        var p0: Vector2 = points[i]
+        var p1: Vector2 = points[i + 1]
+        var normal := Vector2(-(p1.y - p0.y), p1.x - p0.x).normalized()
+        var steps := maxi(1, ceili(p0.distance_to(p1)))
+        for k in range(steps):
+            var fraction := float(k) / float(steps)
+            var s := (float(i) + fraction) / float(points.size() - 1)
+            var source_u := lerpf(0.50, 0.98, s)
+            var w := length * width * sin(pow(source_u, 0.6) * PI) * (0.60 + 0.40 * sin(PI * s))
+            var centre := p0.lerp(p1, fraction)
+            for j in range(-ceili(w), ceili(w) + 1):
+                var v := float(j) / maxf(w, 0.001)
+                if absf(v) > 1.0: continue
+                var point := centre + normal * float(j)
+                var color := _c_surface(li, petal, source_u, v, point.x, point.y, t)
+                fb.blend(roundi(point.x), roundi(point.y), color.x, color.y, color.z, alpha)
 
 func render(fb: AFramebuffer, t: float) -> void:
     var crack := AMath.seg(t, CRACK, CRACK + 0.5)
