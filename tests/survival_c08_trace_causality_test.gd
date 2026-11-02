@@ -502,6 +502,8 @@ func _counterfactual_b(source: Node, encounter: Node, enemy: CharacterBody2D,
 	var walked_back := await _walk_with_observation(hero, enemy, home, route["inbound"], stats)
 	_expect(walked_back.get("walked", false), "B: ordinary input walks back into the home")
 	if not walked_back.get("walked", false):
+		print("C08_B_WALK_FAIL follower=%s hero=%s home=%s" % [JSON.stringify(follower.snapshot()),
+			str(hero.global_position), str(home)])
 		return {"ok": false, "stats": walked_back}
 	stats = walked_back
 	await _walk_to_cell(hero, _stand_cell())
@@ -722,6 +724,11 @@ func _observe_walk(hero: CharacterBody2D, enemy: CharacterBody2D, home: Vector2,
 		if hero.global_position.distance_to(point) > 4.5:
 			_set_direction(Vector2.ZERO)
 			walked = false
+			print("C08_WALK_FAIL planned=%s hero=%s cell=%s door=%s open=%s enemy=%s state=%s escapes=%d"
+				% [str(point), str(hero.global_position), str(_nav().cell_of(hero.global_position)),
+					str(_door_cell()), str(_door_open()),
+					str(enemy.global_position) if is_instance_valid(enemy) else "none",
+					String(enemy.call(&"state_label")) if is_instance_valid(enemy) else "-", escapes])
 			break
 	_set_direction(Vector2.ZERO)
 	return {"walked": walked}
