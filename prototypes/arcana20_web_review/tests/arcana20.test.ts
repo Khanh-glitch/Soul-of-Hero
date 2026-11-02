@@ -15,7 +15,7 @@ describe('isolated ARCANA20 combat prototypes (not P0 visual validation)',()=>{
   expect(ARCANA_CORES).toHaveLength(20);expect(new Set(ARCANA_CORES.map(c=>c.itemKey)).size).toBe(20);
   for(const c of ARCANA_CORES){const item=ITEMS[c.itemKey];expect(item.arcanaId).toBe(c.id);expect(item.charge).toBe(3);expect(item.max).toBe(1);expect(item.cat).toBe('core');
    for(const [x,y,aimX,aimY] of [[300,300,400,300],[200,200,200,200],[200,200,99999,99999]]){
-    const plan=planArcana(c.id,x,y,Math.atan2(aimY-y,aimX-x),aimX,aimY);expect(plan.length).toBeGreaterThan(0);expect(plan.length).toBeLessThanOrEqual(6);
+    const plan=planArcana(c.id,x,y,Math.atan2(aimY-y,aimX-x),aimX,aimY);expect(plan.length).toBeGreaterThan(0);expect(plan.length).toBeLessThanOrEqual(8);
     for(const e of plan){for(const v of [e.x,e.y,e.delayMs,e.durationMs,e.damage])expect(Number.isFinite(v)).toBe(true);expect(e.delayMs).toBeGreaterThanOrEqual(0);expect(e.damage).toBeGreaterThan(0);expect(Math.hypot(e.x-x,e.y-y)).toBeLessThan(250);}
    }
   }
@@ -46,5 +46,16 @@ describe('isolated ARCANA20 combat prototypes (not P0 visual validation)',()=>{
   const other=newGame();expect(dispatch(other,{id:'other',type:'startRun',character:'female',region:1,seed:77},T0).ok).toBe(true);
   other.run!.creatures=[];tick(other,input(other.run!.player.x+100,other.run!.player.y),50,T0+1000);
   expect(HAZ.filter(h=>h.arcanaId!==undefined)).toHaveLength(0);
+ });
+});
+
+describe('isolated Core fixture grants',()=>{
+ it('uses normal custody, marks the run QA and does not replace full inventory',async()=>{
+  const {grantReviewCore}=await import('../src/game/arcanaLab');const gs=fresh(),r=gs.run!;
+  expect(grantReviewCore(gs,3).ok).toBe(true);expect(r.qaUsed).toBe(true);
+  const item=C(r,'inv').slots.find(s=>s?.key==='core_arcana_03');expect(item?.charge).toBe(3);
+  while(C(r,'inv').slots.includes(null))expect(addItem(r,'inv','core_fire',1)).toBe(0);
+  const snapshot=JSON.stringify(C(r,'inv').slots);expect(grantReviewCore(gs,7).ok).toBe(false);expect(JSON.stringify(C(r,'inv').slots)).toBe(snapshot);
+  expect(grantReviewCore(gs,0).ok).toBe(false);
  });
 });

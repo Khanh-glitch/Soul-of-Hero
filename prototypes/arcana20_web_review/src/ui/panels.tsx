@@ -1,3 +1,7 @@
+import { arcanaLabEnabled } from '../game/previewFlags';
+import { ARCANA_CORES } from '../game/arcana20';
+import { grantReviewCore } from '../game/arcanaLab';
+import { save } from '../game/persist';
 import { useEffect, useRef, useState } from 'react';
 import { ITEMS, RECIPES, STRUCTS, BUILD_ORDER, VENDOR_SECURED, ACHIEVEMENTS, ELDERS, CORE_STUDY } from '../game/catalog';
 import { BAL, TILE, WW, type Stack } from '../game/core';
@@ -41,6 +45,13 @@ export function InventoryPanel({ api, quickTo, x = 404 }: { api: Api; quickTo?: 
       <div style={{ fontSize: 10, lineHeight: 1.1, marginLeft: 4 }}><div>Armor {Math.round(armor * 100)}% · Warmth +{warm}</div><div style={{ color: w > BAL.player.carryLimit ? '#ff8a7a' : '#cfc2dc' }}>Load {w.toFixed(1)} / {BAL.player.carryLimit} kg{w > BAL.player.carryLimit ? ' (slowed)' : ''}</div><div style={{ color: '#ffe27a' }}>Carried cash {countItem(r, 'inv', 'rcash')} · Secured {api.gs.profile.securedCash}</div></div>
     </div>
     <Grid api={api} cid="inv" quickTo={quickTo} hotRow />
+    {arcanaLabEnabled && <div style={{borderTop:'1px solid #3a2e46', marginTop:5, paddingTop:4}}>
+      <div style={{color:'#ffad7d',fontSize:10}}>Internal Core fixtures — visuals incomplete, NOT playtest-ready</div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:2,marginTop:3}}>{ARCANA_CORES.map(core =>
+        <button key={core.id} className="btn" title={core.name} aria-label={`Add ${core.name} Core`} onClick={() => {
+          const result=grantReviewCore(api.gs,core.id);if(result.ok){save(api.gs);api.rerender();api.toast(`${core.name} Core added (QA only).`);}else api.toast(result.reason || 'Could not add Core.','bad');
+        }} style={{padding:'1px',display:'flex',alignItems:'center',justifyContent:'center'}}><Icon k={core.itemKey} size={12}/>{String(core.id).padStart(2,'0')}</button>)}</div>
+    </div>}
     <div style={{ borderTop: '1px solid #3a2e46', marginTop: 4, paddingTop: 3 }}><ItemInfo s={sel} /></div>
     <div className="flex gap-1" style={{ marginTop: 3 }}>
       <button className="btn" disabled={!sel} onClick={() => { if (api.sel) { api.act('useItem', { c: api.sel.c, slot: api.sel.slot }); api.setSel(null); } }}>Use</button>

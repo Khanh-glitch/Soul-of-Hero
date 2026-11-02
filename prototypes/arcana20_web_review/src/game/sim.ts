@@ -121,7 +121,7 @@ function commitCore(gs: GameState, now: number, slot: number, a: number, aimX: n
         style:'arcana_pending_visual', effect:impact.slow ? 'slowm' : undefined,
         owner:'player', arcanaId:item.arcanaId, runId:r.id });
     }
-    fx('arcana20_cast', { id:item.arcanaId, x:p.x, y:p.y, a, aimX, aimY });
+    fx('arcana20_cast', { id:item.arcanaId, x:p.x, y:p.y, a, aimX, aimY, runId:r.id, simMs:r.clock.simMs });
     return;
   }
   fx('cast', { x: hx, y: hy, core, a });

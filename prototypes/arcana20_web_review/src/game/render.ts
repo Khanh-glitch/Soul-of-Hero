@@ -1,3 +1,5 @@
+import { startCDiagnostic, prepareCDiagnostic, shadeCDiagnostic, drawCDiagnostic, blackoutCDiagnostic } from '../arcana_c/devLayer';
+import { startBDiagnostic, drawBDiagnostic } from '../arcana_b/devLayer';
 // Canvas 2D renderer — draws authoritative state + observed effects. Never mutates game state.
 import { TILE, WW, WH, VIEW_W, VIEW_H, T, hash2, clamp, type GameState, type RunState, type Creature, type Entity } from './core';
 import { STRUCTS, ELDERS, CREATURES, ITEMS } from './catalog';
@@ -101,6 +103,7 @@ export function consumeFX(onFx: (e: any) => void) {
   while (FX.length) {
     const e = FX.shift(); onFx(e);
     switch (e.type) {
+      case 'arcana20_cast': startBDiagnostic(e); startCDiagnostic(e); break;
       case 'slash': ARCS.push({ x: e.x, y: e.y, a: e.a, reach: e.reach, arc: e.arc, life: 0, max: 150, key: e.key } as Part); break;
       case 'chip': burst(e.x, e.y - 6, e.depleted ? 14 : 7, MATC[e.mat] || MATC.wood, 55, 160, 500); shakeT.set(Math.floor(e.x / 16) + Math.floor(e.y / 16) * WW, 160); break;
       case 'fell': burst(e.x, e.y - 14, 16, ['#6aa84a', '#3f7a32', '#c9935a'], 70, 60, 900); break;
@@ -193,6 +196,12 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
     if (e.type === 'spikes') g.drawImage(A.st.spikes, e.x - 8, e.y - 8);
     if (e.type === 'claim') { const R = 6 * 16; g.fillStyle = 'rgba(255,208,64,0.5)'; for (let k = 0; k < 64; k++) { const a = k / 64 * Math.PI * 2 + time / 4000; g.fillRect(Math.round(e.x + Math.cos(a) * R), Math.round(e.y + Math.sin(a) * R), 2, 1); } }
   }
+  // Source-B diagnostic: live terrain field beneath sorted actors. Dev-only;
+  // still needs parity, HDR/depth, performance and choreography review.
+  prepareCDiagnostic(r.id, r.clock.simMs);
+  shadeCDiagnostic(g, cx, cy);
+  drawBDiagnostic(g, r.id, r.clock.simMs, cx, cy);
+  drawCDiagnostic(g, cx, cy);
   // hazard telegraphs (ground)
   for (const h of HAZ) if (h.arcanaId === undefined) drawHaz(g, h, time);
   // y-sorted drawables
@@ -226,6 +235,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   // weather & light (screen space)
   drawWeather(g, r, now, time, cx, cy);
   drawLight(g, r, now, time, cx, cy, ents);
+  blackoutCDiagnostic(g, cx, cy);
   if (flash > 0) { g.fillStyle = `rgba(255,255,255,${flash})`; g.fillRect(0, 0, VIEW_W, VIEW_H); flash = Math.max(0, flash - dtMs / 400); }
   if (p.hp < 30 && !p.dead) { const a = (1 - p.hp / 30) * (0.25 + Math.sin(time / 200) * 0.08); g.fillStyle = `rgba(160,0,0,${a})`; g.fillRect(0, 0, VIEW_W, 6); g.fillRect(0, VIEW_H - 6, VIEW_W, 6); g.fillRect(0, 0, 6, VIEW_H); g.fillRect(VIEW_W - 6, 0, 6, VIEW_H); }
 }

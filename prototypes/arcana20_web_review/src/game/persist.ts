@@ -1,9 +1,11 @@
+import { arcanaLabEnabled } from './previewFlags';
 // Versioned durable persistence. One record = one consistent snapshot (profile + run + receipts),
 // written in a single IndexedDB transaction so a debit and its credit can never be split. localStorage fallback.
 import { SAVE_VERSION, type GameState } from './core';
 import { newGame } from './engine';
 
-const DB = 'soul-of-hero', STORE = 'kv', KEY = 'state', LS = 'soh.state.v' + SAVE_VERSION;
+// QA inventory must never leak into the ordinary derivative's saved run.
+const DB = arcanaLabEnabled ? 'soul-of-hero-arcana-lab' : 'soul-of-hero', STORE = 'kv', KEY = 'state', LS = (arcanaLabEnabled ? 'soh.arcana-lab.v' : 'soh.state.v') + SAVE_VERSION;
 let dbp: Promise<IDBDatabase | null> | null = null;
 function db(): Promise<IDBDatabase | null> {
   if (dbp) return dbp;
