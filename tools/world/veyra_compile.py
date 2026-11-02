@@ -608,6 +608,14 @@ def main(out_dir):
     fams["sand"] = [kit.sand_tile(v) for v in range(3)]
     fams["beach"] = [kit.sand_tile(v) for v in range(3)]
     fams["gravel"] = [im.convert("RGBA") for im in kit.soil_tiles(4)]   # riverbanks are earth, not paving
+    # rock ground comes from the rock modules themselves; the flat cainos platform plates and
+    # any wall-sheet fragment are removed from every ground pool (they are structure art).
+    fams_raw_stone = list(fams["stone"])[:2]
+    _gt = kit.geology_tiles()
+    fams["stone"] = [im.convert("RGBA") for im in _gt["grey"]]
+    fams["rubble"] = [im.convert("RGBA") for im in _gt["grey"][2:]] +                      [im.convert("RGBA") for im in _gt["brown"][:2]]
+    fams["sand"] = [kit.sand_tile(v) for v in range(3)]
+    fams["beach"] = fams["sand"]
 
     # ---------------- ground grid ----------------
     canvas = Image.new("RGBA", (PW, PH))
@@ -653,15 +661,71 @@ def main(out_dir):
             if elev[gy, gx] - nb.min() >= 45:
                 cliff_cells[gy, gx] = True
 
+    # --- biome transitions: a cell that touches a different family takes its material from a
+    # blended pool, so meadow/stone/sand/ash meet through a dithered seam instead of a hard line.
+    def _pool_for(fam):
+        return fams.get(fam) or fams["meadow"]
+
+    edge_cells = 0
     for gy in range(GH):
         for gx in range(GW):
             fam = ground[gy, gx]
             if fam == "water":
                 continue
-            pool = fams.get(fam) or fams["meadow"]
+            neigh = set()
+            for dy, dx in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+                ry, rx = gy + dy, gx + dx
+                if 0 <= ry < GH and 0 <= rx < GW:
+                    neigh.add(ground[ry, rx])
+            neigh.discard("water")
+            pool = _pool_for(fam)
+            if len(neigh) > 1:
+                edge_cells += 1
+                other = sorted(n for n in neigh if n != fam)
+                blend = _pool_for(other[0])
+                # 2x2 ordered dither: the seam is a woven band, never a straight cut
+                blend_here = ((gx % 2) * 2 + (gy % 2)) < (1 + (h32("e", gx, gy) % 2))
+                pool = blend + pool if blend_here else pool + blend
             canvas.paste(pool[h32("t", gx, gy) % len(pool)], (gx * ART_TILE, gy * ART_TILE))
+    print("biome edge cells dithered", edge_cells)
     print("ground:", {k: int(sum(1 for g in ground.flat if g == k))
                       for k in ("meadow", "stone", "rubble", "sand", "ash", "water")})
+
+    # ---------------- geology: layered rock, not wall tiles ----------------
+    # A cliff cell gets a real outcrop sprite whose base sits on the cell and whose lit top face
+    # rises above it; the cell behind stays walkable stone.  Rubble collects at the foot of every
+    # face, and a cave mouth appears where a high slope meets a dead-end corner.
+    geo = Image.new("RGBA", (PW, PH))
+    rock_grey = KIT.load_kit().geology("rock_grey")
+    rock_brown = KIT.load_kit().geology("rock_brown")
+    cave_grey = KIT.load_kit().geology("cave_grey")
+    cave_brown = KIT.load_kit().geology("cave_brown")
+    rock_out = []
+    for gy in range(GH):
+        for gx in range(GW):
+            stone_here = ground[gy, gx] in ("stone", "rubble")
+            if ground[gy, gx] == "water":
+                continue
+            if not cliff_cells[gy, gx] and not (stone_here and h32("msf", gx, gy) % 19 == 0):
+                continue
+            hh = h32("geo", gx, gy)
+            brown = bool(ash_region[min(UH - 1, gy * 8 + 4), min(UW - 1, gx * 8 + 4)]) or (hh % 7 == 0)
+            base_y = gy * ART_TILE + ART_TILE
+            if hh % 23 == 5:                      # occasional cave mouth instead of a face
+                img = cave_brown if brown else cave_grey
+                geo.alpha_composite(img, (gx * ART_TILE, base_y - img.height))
+                rock_out.append({"type": "cave", "at": [gx * ART_TILE, base_y - img.height]})
+            else:
+                img = rock_brown if brown else rock_grey
+                geo.alpha_composite(img, (gx * ART_TILE, base_y - img.height))
+                rock_out.append({"type": "outcrop", "at": [gx * ART_TILE, base_y - img.height]})
+            # rubble apron in front of the face
+            for k in range(2):
+                ry = base_y + k * 6
+                if ry < PH:
+                    geo.alpha_composite(fams["rubble"][(gx + k) % len(fams["rubble"])].crop((0, 0, 32, 8)),
+                                        (gx * ART_TILE, ry))
+    print("geology outcrops", len(rock_out))
 
     # ---------------- sub-tile overlays ----------------
     out = np.array(canvas)
@@ -738,6 +802,7 @@ def main(out_dir):
         _big16 = _big16 | np.roll(_big16, 1, 0) | np.roll(_big16, -1, 0) | \
                  np.roll(_big16, 1, 1) | np.roll(_big16, -1, 1)
     is_big_shore = _big16 & ~water_px
+    is_river_shore = water_px & is_river          # bank band used for river sediment
     def C(r, g, b):
         return np.array([r, g, b, 255], np.uint8)
     c_deep, c_mid, c_shal = C(22, 64, 104), C(30, 86, 126), C(46, 112, 152)
@@ -822,6 +887,90 @@ def main(out_dir):
         verge[:, :, 3] = 255
         out[m] = verge[m]
         out[mc] = core[mc]
+    # ---- road hierarchy: the same corridor, four different surfaces ----
+    # cart   : compacted soil, two wheel ruts, gravel shoulders
+    # trail  : packed earth with grass intruding at both edges
+    # foot   : narrow trodden line, vegetation closing in
+    # riverside: gravel and pebbles from the bank it follows
+    _rng = np.random.RandomState(20261102)
+    _img = Image.fromarray(out, "RGBA")
+    _dr = ImageDraw.Draw(_img)
+    for rd in proj["roads"]:
+        kind = rd.get("kind", "trail")
+        if kind == "ferry":
+            continue
+        pts = [(float(q[0]) * U, float(q[1]) * U) for q in rd["points"]]
+        if len(pts) < 2:
+            continue
+        half = NET.ROAD_WIDTH.get(kind, NET.ROAD_WIDTH["trail"])["render"] * U
+        if kind == "cart":
+            for off in (-half * 0.42, half * 0.42):
+                _dr.line([(x, y + off) for x, y in pts], fill=(118, 96, 74, 255), width=2)
+            for i in range(len(pts) - 1):
+                (x0, y0), (x1, y1) = pts[i], pts[i + 1]
+                L = math.hypot(x1 - x0, y1 - y0)
+                steps = max(1, int(L / 6))
+                for k in range(steps):
+                    tt = k / steps
+                    x, y = x0 + (x1 - x0) * tt, y0 + (y1 - y0) * tt
+                    if h32("sh", int(x), int(y)) % 3 == 0:
+                        _dr.point((x + half * (1 if h32("sx", int(x), 0) % 2 else -1), y),
+                                  fill=(150, 138, 116, 255))
+        elif kind in ("trail", "foot"):
+            # vegetation creeps back over the outer 3 px of the corridor
+            band = 3 if kind == "trail" else 5
+            for i in range(len(pts) - 1):
+                (x0, y0), (x1, y1) = pts[i], pts[i + 1]
+                L = math.hypot(x1 - x0, y1 - y0)
+                steps = max(1, int(L / 4))
+                for k in range(steps):
+                    tt = k / steps
+                    x, y = x0 + (x1 - x0) * tt, y0 + (y1 - y0) * tt
+                    if h32("veg", int(x), int(y)) % 4 == 0:
+                        col = (86, 118, 62, 255) if h32("vg", int(x), int(y)) % 2 else (74, 102, 54, 255)
+                        side = 1 if h32("vs", int(x), int(y)) % 2 else -1
+                        _dr.line([(x, y + side * (half - band)), (x, y + side * half)], fill=col, width=1)
+        else:   # riverside
+            for i in range(0, len(pts) - 1):
+                (x0, y0), (x1, y1) = pts[i], pts[i + 1]
+                L = math.hypot(x1 - x0, y1 - y0)
+                for k in range(max(1, int(L / 5))):
+                    tt = k / max(1, int(L / 5))
+                    x, y = x0 + (x1 - x0) * tt, y0 + (y1 - y0) * tt
+                    if h32("peb", int(x), int(y)) % 3 == 0:
+                        _dr.point((x + _rng.randint(-2, 3), y + _rng.randint(-2, 3)),
+                                  fill=(176, 168, 146, 255))
+    out = np.array(_img)
+    print("road surfaces differentiated", sum(1 for r in proj["roads"] if r.get("kind") != "ferry"))
+
+    # ---- river banks: sediment line and reeds, width-aware ----
+    sed = erode(~water_px, 1) & ~erode(~water_px, 4) & is_river_shore
+    out[sed] = C(126, 118, 96)
+    reed_img = Image.fromarray(out, "RGBA")
+    _rng2 = np.random.RandomState(77)
+    for rv in proj["rivers"]:
+        w = (rv.get("width") or 3) * U
+        pts = [(float(q[0]) * U, float(q[1]) * U) for q in rv["points"]]
+        for i in range(len(pts) - 1):
+            (x0, y0), (x1, y1) = pts[i], pts[i + 1]
+            L = math.hypot(x1 - x0, y1 - y0)
+            if L < 1:
+                continue
+            ux, uy = (x1 - x0) / L, (y1 - y0) / L
+            steps = max(1, int(L / 18))
+            for k in range(steps):
+                if h32("reed", int(x0), int(y0) * 7 + k) % 3:
+                    continue
+                tt = k / steps
+                x, y = x0 + (x1 - x0) * tt, y0 + (y1 - y0) * tt
+                side = 1 if h32("rs", k, int(x)) % 2 else -1
+                rx = x - uy * side * (w / 2 + 4)
+                ry = y + ux * side * (w / 2 + 4)
+                if 0 <= rx < PW - 8 and 0 <= ry < PH - 8 and not water_px[int(min(PH - 1, ry)), int(min(PW - 1, rx))]:
+                    tuft = fams.get("tuft") or fams["bush"]
+                    reed_img.alpha_composite(tuft[h32("rt", int(rx), int(ry)) % len(tuft)], (int(rx), int(ry)))
+    out = np.array(reed_img)
+
     for br in bridges:
         for lp in (br.get("landing_a_px"), br.get("landing_b_px")):
             if lp:
@@ -859,6 +1008,7 @@ def main(out_dir):
                                           compress_level=1)
     deck_mask, rail_mask, pier_mask = up(deck), up(rail), up(piers)
     world = Image.fromarray(out, "RGBA")
+    world.alpha_composite(geo)
     # ---- real bridge / pier sprites (committed 668008-bridges pack) ----
     for br in bridges:
         kind = "arch" if (br["load"] == "cart" and br["span_units"] > 16) else (

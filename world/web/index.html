@@ -19,6 +19,10 @@
   b { color: #ffd479; font-weight: 600; }
   .k { border: 1px solid #333c4a; border-radius: 4px; padding: 0 5px; color: #9fb0c6; }
   #loading { position: absolute; inset: 0; display: grid; place-items: center; background: #0b0d10; }
+  /* evaluation mode: no reserved header/footer rows, the world fills 640x360 exactly */
+  body.eval #wrap { grid-template-rows: 0 1fr 0; }
+  body.eval #here, body.eval #pos { display: none !important; }
+  body.eval #stage { padding: 0; }
 </style>
 </head>
 <body>

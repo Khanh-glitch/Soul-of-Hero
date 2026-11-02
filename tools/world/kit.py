@@ -64,6 +64,16 @@ SHORE_MODULES = {
     "w_dune": (272, 176, 32, 16),
 }
 SAND_RECT = (288, 54, 24, 10)        # bone-dry sand band from the same strip
+# geology modules from the same island sheet (alpha-component bboxes, verified against the sheet):
+#   grey outcrop 64x112 with a lit top face and a fractured face, brown soil outcrop 64x95,
+#   and two cave mouths cut into each.  These replace wall sheets used as terrain.
+ISLAND_GEOLOGY = {
+    "rock_grey": (432, 16, 64, 112),
+    "rock_brown": (512, 16, 64, 95),
+    "cave_grey": (432, 144, 64, 48),
+    "cave_brown": (512, 128, 64, 48),
+    "grass_patch": (272, 352, 144, 80),
+}
 
 
 def _sha(path):
@@ -110,6 +120,7 @@ def ensure_extracted(force=False):
     inv["modules"]["bridges_vertical"] = {k: list(v) for k, v in VERT_MODULES.items()}
     inv["modules"]["shore"] = {k: list(v) for k, v in SHORE_MODULES.items()}
     inv["modules"]["sand"] = list(SAND_RECT)
+    inv["modules"]["island_geology"] = {k: list(v) for k, v in ISLAND_GEOLOGY.items()}
     with open(INVENTORY, "w") as fh:
         json.dump(inv, fh, indent=1)
     return inv
@@ -122,6 +133,35 @@ class Kit:
         self.island_sheet = Image.open(os.path.join(
             EXTRACT, "351300-island", "Tileset", "Tiled.png")).convert("RGBA")
         self.cache = {}
+
+    # ---------------- geology ----------------
+    def geology(self, name):
+        """A committed island-sheet module: rock outcrops, cave mouths, grass patches."""
+        key = ("geology", name)
+        if key not in self.cache:
+            x, y, w, h = ISLAND_GEOLOGY[name]
+            self.cache[key] = self.island_sheet.crop((x, y, x + w, y + h))
+        return self.cache[key]
+
+    def geology_tiles(self):
+        """32 px ground materials cut from the committed rock outcrops.
+
+        The cainos `stone_ground` sheet is a flat platform kit (uniform grey plates), which is
+        why the map read as concrete planes.  Rock ground is therefore cut from the island rock
+        modules themselves: fractured grey faces for massif ground, warm soil-rock for the dry
+        south, so ground and outcrops share one material.
+        """
+        key = ("geology_tiles",)
+        if key not in self.cache:
+            grey = self.geology("rock_grey")
+            brown = self.geology("rock_brown")
+            g, b = [], []
+            for (ox, oy) in ((0, 24), (16, 40), (32, 56), (8, 72)):
+                g.append(grey.crop((ox, oy, ox + 32, oy + 32)))
+            for (ox, oy) in ((0, 16), (16, 32), (32, 48), (8, 56)):
+                b.append(brown.crop((ox, oy, ox + 32, oy + 32)))
+            self.cache[key] = {"grey": g, "brown": b}
+        return self.cache[key]
 
     # ---------------- bridges ----------------
     def bridge_strip(self, kind, length_px, width_px):

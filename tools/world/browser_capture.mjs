@@ -57,10 +57,43 @@ const after = await page.evaluate(() => ({ x: window.__veyra.p.x, y: window.__ve
 report.checks.push({ name: 'keyboard_moves_avatar', pass: Math.abs(after.x - before.x) > 10,
                      detail: { before, after } });
 
-// sprint
-await page.keyboard.down('Shift'); await page.keyboard.down('s');
-await page.waitForTimeout(400); await page.keyboard.up('s'); await page.keyboard.up('Shift');
-report.checks.push({ name: 'sprint_input', pass: true, detail: 'shift+s accepted' });
+// real speed measurement: walk then run the same corridor, compare measured displacement
+async function measure(key, ms) {
+  const a = await page.evaluate(() => ({ x: window.__veyra.p.x, y: window.__veyra.p.y }));
+  await page.keyboard.down(key);
+  await page.waitForTimeout(ms);
+  await page.keyboard.up(key);
+  const b = await page.evaluate(() => ({ x: window.__veyra.p.x, y: window.__veyra.p.y }));
+  return Math.hypot(b.x - a.x, b.y - a.y);
+}
+await page.evaluate(() => window.veyraGoto(window.__veyra.s.spawns ? 0 : 0, 0));
+const walkDist = await measure('d', 600);
+const runDist = await measure('d', 600);
+report.checks.push({ name: 'walk_vs_run_speed', pass: runDist > walkDist * 1.25 && walkDist > 5,
+                     detail: { walk_px: +walkDist.toFixed(1), run_px: +runDist.toFixed(1) } });
+await page.keyboard.down('Shift'); await page.keyboard.down('d'); await page.waitForTimeout(400);
+await page.keyboard.up('d'); await page.keyboard.up('Shift');
+
+async function setEvalMode(on) {
+  await page.evaluate((evalOn) => document.body.classList.toggle('eval', evalOn), on);
+}
+
+async function blackBars() {
+  return page.evaluate(() => {
+    const c = document.getElementById('view');
+    const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
+    let darkRows = 0;
+    for (let y = 0; y < c.height; y++) {
+      let dark = 0;
+      for (let x = 0; x < c.width; x++) {
+        const i = (y * c.width + x) * 4;
+        if (d[i] + d[i + 1] + d[i + 2] < 30) dark++;
+      }
+      if (dark > c.width * 0.9) darkRows++;
+    }
+    return { darkRows, height: c.height, ratio: darkRows / c.height };
+  });
+}
 
 async function setOverlays(on) {
   await page.evaluate((visible) => {
@@ -81,10 +114,11 @@ async function shot(name, x, y, note) {
   const file = path.join(OUT, name + '.png');
   await page.locator('#view').screenshot({ path: file });
   const px = await pixels();
-  const ok = px.ratio > 0.30;
+  const bars = await blackBars();
+  const ok = px.ratio > 0.30 && bars.ratio < 0.08;
   report.scenes.push({ file: path.basename(file), camera: [Math.round(x), Math.round(y)],
                        scene: name, note, pixels: px, sha256: sha256(file), pass: ok });
-  if (!ok) report.errors.push('blank or empty frame: ' + name);
+  if (!ok) report.errors.push(`bad frame ${name}: fill=${px.ratio.toFixed(2)} darkRows=${bars.darkRows}`);
 }
 
 const roads = meta.roads || [];
@@ -100,6 +134,7 @@ const midOf = (r, t = 0.5) => {
   return [((a[0] + (b[0] - a[0]) * k) * ux), ((a[1] + (b[1] - a[1]) * k) * ux)];
 };
 
+await setEvalMode(true);
 await setOverlays(false);      // evaluation captures: no minimap, no debug labels, no footer
 
 // 1. spawns (four authored start points)
