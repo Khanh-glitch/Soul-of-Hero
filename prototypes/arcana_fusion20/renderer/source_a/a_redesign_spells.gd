@@ -345,40 +345,46 @@ class RiptideCalligraphyR:
             var fade := 1.0 - AMath.seg(t, 6.45, 6.85)
             var halfspan := (18.0 + 34.0 * formation) * (1.0 - 0.18 * age)
             var thickness := (20.0 + 31.0 * formation) * (1.0 - 0.28 * age)
+            # A traveling continuum of five overlapping, irregular rotating
+            # eddies replaces the flat filled slab. Each lobe is part of the
+            # same front: its material coverage and foam come from its own
+            # signed elliptical distance, not from the color of the world.
+            var lobes: Array = []
+            for lobe in range(5):
+                var v := float(lobe) / 4.0 * 2.0 - 1.0
+                var seed := float(lobe)
+                var center := front + Vector2(-thickness * (0.36 + 0.08 * sin(t * 3.0 + seed * 2.1)), v * halfspan * 0.72)
+                var rx := thickness * (0.35 + 0.09 * AMath.hash2(seed, 78.0))
+                var ry := halfspan * (0.28 + 0.05 * AMath.hash2(seed, 79.0))
+                lobes.append({"center": center, "radii": Vector2(rx, ry), "seed": seed})
+            var bounds := [front + Vector2(-thickness * 1.1, -halfspan * 1.1), front + Vector2(10, -halfspan * 1.1),
+                front + Vector2(10, halfspan * 1.1), front + Vector2(-thickness * 1.1, halfspan * 1.1)]
+            ADraw.poly_fill(fb, bounds,
+                func(x: int, y: int) -> Variant:
+                    var p := Vector2(float(x) + 0.5, float(y) + 0.5)
+                    var nearest := 10.0
+                    var angle := 0.0
+                    var chosen := 0.0
+                    for item in lobes:
+                        var q: Vector2 = (p - (item.center as Vector2)) / (item.radii as Vector2)
+                        var d := q.length()
+                        if d < nearest:
+                            nearest = d
+                            angle = q.angle()
+                            chosen = float(item.seed)
+                    var jitter := (AMath.fbm(float(x) * 0.15 - t, float(y) * 0.14 + t * 0.5, 2) - 0.5) * 0.17
+                    if nearest > 1.0 + jitter: return null
+                    var swirl := sin(angle * 2.0 + nearest * 13.0 - t * 7.0 + chosen * 1.4)
+                    var crest := AMath.cl01((nearest - 0.60) * 2.4) * AMath.cl01(0.5 + cos(angle) * 1.2)
+                    var foam := AMath.cl01((swirl - 0.72) * 3.4) * AMath.cl01((nearest - 0.25) * 3.0) + crest * 0.55
+                    var grain := AMath.hash2(float(x), float(y) + floor(t * 6.0))
+                    var c := Vector3(0.05, 0.25, 0.32) + Vector3(0.15, 0.20, 0.24) * (1.0 - nearest) + Vector3(0.42, 0.49, 0.47) * minf(1.0, foam) + Vector3.ONE * grain * 0.035
+                    return c, true, fade * 0.72)
             var leading: Array = []
-            var trailing: Array = []
             for k in range(33):
                 var v := float(k) / 32.0
                 var side := v * 2.0 - 1.0
-                var shoulder := pow(absf(side), 1.5)
-                var lobes := sin(v * 19.0 - t * 5.4) * 3.0 + sin(v * 37.0 + t * 2.1) * 1.6
-                var nose := -14.0 * shoulder + lobes * formation
-                var back := thickness * (0.48 + 0.52 * sqrt(maxf(0.0, 1.0 - side * side)))
-                back += (sin(v * 25.0 + t * 3.7) * 4.0 + sin(v * 48.0 - t * 2.4) * 2.0) * formation
-                leading.append(front + Vector2(nose, side * halfspan))
-                trailing.append(front + Vector2(nose - back, side * halfspan))
-            var volume: Array = leading.duplicate()
-            trailing.reverse()
-            volume.append_array(trailing)
-            ADraw.poly_fill(fb, volume,
-                func(x: int, y: int) -> Variant:
-                    var relative := Vector2(float(x), float(y)) - front
-                    var depth := clampf(-relative.x / maxf(1.0, thickness), 0.0, 1.0)
-                    var eddy := AMath.fbm(float(x) * 0.08 - t * 2.2, float(y) * 0.10 + t * 0.8, 3)
-                    var crest := (1.0 - depth) * (0.5 + 0.5 * eddy)
-                    return Vector3(0.04 + crest * 0.12, 0.21 + eddy * 0.13 + crest * 0.15, 0.29 + eddy * 0.18 + crest * 0.18), true, fade * 0.82)
-            # Foam pockets cling to different portions of the *actual* front.
-            # Interrupted, asymmetric curls distinguish breaking water from a
-            # parallel ruled stripe or a disconnected second wave.
-            for lobe in range(13):
-                var seed := float(lobe)
-                var index := mini(31, 1 + lobe * 2 + int(AMath.hash2(seed, 71.0) * 2.0))
-                var p: Vector2 = leading[index]
-                var q: Vector2 = leading[mini(32, index + 1)]
-                var strength := fade * formation * (0.4 + 0.55 * AMath.hash2(seed, 72.0))
-                var r := 2.2 + 3.8 * AMath.hash2(seed, 73.0)
-                ADraw.disc_blend(fb, p.x - r * 0.2, p.y, r, Vector3(0.24, 0.56, 0.65), strength * 0.65)
-                ADraw.streak(fb, p.x - r * 0.8, p.y - r * 0.15, q.x, q.y, 0.6, 1.1, Vector3(0.65, 1.0, 1.1), strength)
+                leading.append(front + Vector2(-6.0 * side * side + 3.0 * sin(v * 19.0 - t * 5.4), side * halfspan))
             for drop in range(18):
                 var seed := float(drop)
                 var birth := 0.12 + AMath.hash2(seed, 91.0) * 0.58
