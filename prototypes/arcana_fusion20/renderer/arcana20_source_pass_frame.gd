@@ -92,6 +92,7 @@ var d_star_rgb: PackedFloat32Array
 var d_star_pretransfer_rgb: PackedFloat32Array
 var d_center_rgb: PackedFloat32Array
 var d_halo_rgb: PackedFloat32Array
+var d_central_filaments_rgb: PackedFloat32Array
 var d_body_rgb: PackedFloat32Array
 var d_influence: PackedByteArray
 var d_world_warp: PackedFloat32Array

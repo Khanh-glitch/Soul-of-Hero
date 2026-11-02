@@ -10,6 +10,7 @@ uniform sampler2D star_pretransfer_tex : repeat_disable, filter_nearest;
 uniform sampler2D center_tex : repeat_disable, filter_nearest;
 uniform sampler2D body_tex : repeat_disable, filter_nearest;
 uniform sampler2D halo_tex : repeat_disable, filter_nearest;
+uniform sampler2D filaments_tex : repeat_disable, filter_nearest;
 uniform sampler2D warp_tex : repeat_disable, filter_nearest;
 uniform sampler2D influence_tex : repeat_disable, filter_nearest;
 uniform vec2 screen_dx = vec2(1.0, 0.0);
@@ -140,12 +141,13 @@ void fragment() {
         ivec2 mx = clamp(p - ivec2(1, 0), ivec2(0), SIZE - ivec2(1));
         ivec2 my = clamp(p - ivec2(0, 1), ivec2(0), SIZE - ivec2(1));
         vec3 body = texelFetch(body_tex, p, 0).rgb;
-        vec3 center = texelFetch(center_tex, p, 0).rgb;
+        vec3 filament = texelFetch(filaments_tex, p, 0).rgb;
+        vec3 center = max(texelFetch(center_tex, p, 0).rgb - filament, vec3(0.0));
         vec3 halo = texelFetch(halo_tex, p, 0).rgb;
         vec3 star = texelFetch(star_tex, p, 0).rgb;
         float c = max(max(center.r, center.g), center.b);
-        vec3 cn1 = texelFetch(center_tex, px, 0).rgb;
-        vec3 cn2 = texelFetch(center_tex, py, 0).rgb;
+        vec3 cn1 = max(texelFetch(center_tex, px, 0).rgb - texelFetch(filaments_tex, px, 0).rgb, vec3(0.0));
+        vec3 cn2 = max(texelFetch(center_tex, py, 0).rgb - texelFetch(filaments_tex, py, 0).rgb, vec3(0.0));
         float c1 = max(max(cn1.r, cn1.g), cn1.b);
         float c2 = max(max(cn2.r, cn2.g), cn2.b);
         float etched = clamp((abs(c - c1) + abs(c - c2)) * 0.5, 0.0, 1.0);
@@ -163,11 +165,18 @@ void fragment() {
         vec3 graph = (vec3(1.0) - exp(-body * 0.8)) * vec3(0.70, 0.54, 0.83);
         vec3 ambient = (vec3(1.0) - exp(-halo * 0.35)) * vec3(0.16, 0.09, 0.23);
         float fade = clamp(warp_fade, 0.0, 1.0);
-        vec3 result = original + fade * (warped - original);
-        result += fade * (graph + ambient + (1.0 - exp(-0.7 * c)) * vec3(0.24, 0.10, 0.29) + etched * vec3(0.34, 0.18, 0.37));
-        vec3 star_material = mix(vec3(0.16, 0.07, 0.24), vec3(0.52, 0.26, 0.52), clamp(sv * 0.8, 0.0, 1.0));
-        star_material += edge * vec3(0.48, 0.45, 0.37);
-        result = mix(result, star_material, clamp(sm * 0.88 * fade, 0.0, 1.0));
+        // Keep A's bounded, baseline-corrected shimmer response instead of
+        // making bands stronger. Make the source STAR a translucent local
+        // material, then bring the *actual* authored quads and central
+        // filaments back over it as distinct glass facets and fine lines.
+        // No new shape is introduced; draw ordering is B presentation only.
+        vec3 result = original + fade * (tone(warped, p) - tone(original, p));
+        result += fade * (graph + ambient);
+        vec3 star_material = mix(vec3(0.13, 0.08, 0.21), vec3(0.36, 0.22, 0.42), clamp(sv * 0.8, 0.0, 1.0));
+        star_material += edge * vec3(0.32, 0.25, 0.35);
+        result = mix(result, star_material, clamp(sm * 0.58 * fade, 0.0, 1.0));
+        result += fade * ((1.0 - exp(-0.7 * c)) * vec3(0.28, 0.18, 0.34) + etched * vec3(0.28, 0.25, 0.38));
+        result += fade * (vec3(1.0) - exp(-filament * 0.6)) * vec3(0.48, 0.43, 0.58);
         COLOR = vec4(clamp(result, 0.0, 1.0), 1.0);
     } else {
         vec3 delta = base - reference;

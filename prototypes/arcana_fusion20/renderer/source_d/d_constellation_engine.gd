@@ -171,7 +171,9 @@ func update(t: float, dt: float) -> void:
             fx.poly(DFx.quad_c(CENTER.x, CENTER.y, rr, rr * 0.4, a), pc, {"glow": 1.0, "edge": 0.6})
             var lc := DFx.ramp(P, 1.0, 1.0)
             lc.a = 0.7 * su
+            fx.world_layer_filament = true
             fx.line([CENTER.x, CENTER.y, CENTER.x + cos(a) * rr * 1.2, CENTER.y + sin(a) * rr * 0.9], 0.6, lc, {"hard": 1.0, "glow": 1.0})
+            fx.world_layer_filament = false
         fx.world_layer_center = false
         var sc1 := DFx.ramp(P, 1.0, 1.0)
         sc1.a = 0.95 * su

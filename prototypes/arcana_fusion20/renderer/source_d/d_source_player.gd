@@ -177,6 +177,7 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     result.d_star_pretransfer_rgb = _eng.fx.world_star_pretransfer
     result.d_center_rgb = _eng.fx.world_center
     result.d_halo_rgb = _eng.fx.world_halo
+    result.d_central_filaments_rgb = _eng.fx.world_central_filaments
     result.d_body_rgb = _eng.fx.world_body
     result.d_influence = _eng.fx.world_influence
     result.d_world_warp = _eng.fx.world_warp

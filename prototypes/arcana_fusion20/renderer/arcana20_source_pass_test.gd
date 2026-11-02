@@ -916,10 +916,14 @@ func _run() -> void:
     for v in d_layers.fx.world_center: center_max = maxf(center_max, v)
     for v in d_layers.fx.world_body: body_max = maxf(body_max, v)
     check(star_max > 0.0 and star_raw_max >= star_max and center_max > 0.0 and body_max > 0.0, "D independent raster layers carry actual light")
+    var filament_peak := 0.0
+    for v in d_layers.fx.world_central_filaments: filament_peak = maxf(filament_peak, v)
+    check(filament_peak > 0.0, "D original central filaments isolated without changing simulation")
     var halo_peak := 0.0
     for v in d_layers.fx.world_halo: halo_peak = maxf(halo_peak, v)
     check(halo_peak > 0.0, "D original soft halo isolated without changing simulation")
     d_layers.fx.clear()
+    check(d_layers.fx.world_central_filaments.count(0.0) == d_layers.fx.world_central_filaments.size(), "D central filament layer clears on cancel and recast")
     check(d_layers.fx.world_halo.count(0.0) == d_layers.fx.world_halo.size(), "D halo layer clears on cancel and recast")
     check(d_layers.fx.world_star.count(0.0) == d_layers.fx.world_star.size() and d_layers.fx.world_star_pretransfer.count(0.0) == d_layers.fx.world_star_pretransfer.size() and d_layers.fx.world_center.count(0.0) == d_layers.fx.world_center.size() and d_layers.fx.world_body.count(0.0) == d_layers.fx.world_body.size(), "D presentation layers clear for cancel and recast")
 

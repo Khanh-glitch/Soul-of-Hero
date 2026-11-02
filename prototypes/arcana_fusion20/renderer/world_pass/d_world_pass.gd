@@ -34,12 +34,14 @@ func consume(frame: Arcana20SourcePassFrame) -> void:
     var center := PackedFloat32Array()
     var body := PackedFloat32Array()
     var halo := PackedFloat32Array()
+    var filaments := PackedFloat32Array()
     if frame.d_has_light_layers:
         star.resize(DFx.N * 4)
         star_raw.resize(DFx.N * 4)
         center.resize(DFx.N * 4)
         body.resize(DFx.N * 4)
         halo.resize(DFx.N * 4)
+        filaments.resize(DFx.N * 4)
     light.resize(DFx.N * 4)
     influence.resize(DFx.N * 4)
     for p in range(DFx.N):
@@ -53,6 +55,7 @@ func consume(frame: Arcana20SourcePassFrame) -> void:
                 center[p * 4 + channel] = frame.d_center_rgb[p * 3 + channel]
                 body[p * 4 + channel] = frame.d_body_rgb[p * 3 + channel]
                 halo[p * 4 + channel] = frame.d_halo_rgb[p * 3 + channel]
+                filaments[p * 4 + channel] = frame.d_central_filaments_rgb[p * 3 + channel]
         influence[p * 4 + 3] = float(frame.d_influence[p] | frame.d_warp_influence[p])
     _sprite.texture = _set_texture("light", light)
     _material.set_shader_parameter("light_tex", _sprite.texture)
@@ -62,6 +65,7 @@ func consume(frame: Arcana20SourcePassFrame) -> void:
         _material.set_shader_parameter("center_tex", _set_texture("center", center))
         _material.set_shader_parameter("body_tex", _set_texture("body", body))
         _material.set_shader_parameter("halo_tex", _set_texture("halo", halo))
+        _material.set_shader_parameter("filaments_tex", _set_texture("filaments", filaments))
     _material.set_shader_parameter("warp_tex", _set_texture("warp", frame.d_world_warp))
     _material.set_shader_parameter("influence_tex", _set_texture("influence", influence))
     _material.set_shader_parameter("source_time", frame.d_renderer_time)

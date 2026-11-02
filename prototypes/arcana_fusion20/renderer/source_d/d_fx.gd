@@ -37,10 +37,12 @@ var world_star := PackedFloat32Array()
 var world_star_pretransfer := PackedFloat32Array()
 var world_center := PackedFloat32Array()
 var world_halo := PackedFloat32Array()
+var world_central_filaments := PackedFloat32Array()
 var world_body := PackedFloat32Array()
 var world_layer_star := false
 var world_layer_center := false
 var world_layer_halo := false
+var world_layer_filament := false
 # The additional accumulation is opt-in; the rejected experiment must not
 # tax ordinary D rendering or be mistaken for production HDR.
 var collect_world_layers := false
@@ -84,6 +86,7 @@ func _init() -> void:
     world_star_pretransfer.resize(N * 3)
     world_center.resize(N * 3)
     world_halo.resize(N * 3)
+    world_central_filaments.resize(N * 3)
     world_body.resize(N * 3)
     world_influence.resize(N)
     world_warp.resize(N * 4)
@@ -98,10 +101,12 @@ func clear() -> void:
             world_star_pretransfer.fill(0.0)
             world_center.fill(0.0)
             world_halo.fill(0.0)
+            world_central_filaments.fill(0.0)
             world_body.fill(0.0)
         world_layer_star = false
         world_layer_center = false
         world_layer_halo = false
+        world_layer_filament = false
         world_influence.fill(0)
         world_bends.clear()
         # Original D renderer ping-pongs warp with exp(-3.4*dt) decay.
@@ -263,6 +268,12 @@ func _add_px(x: int, y: int, r: float, g: float, b: float) -> void:
             world_center[i] += r
             world_center[i + 1] += g
             world_center[i + 2] += b
+            # Duplicate the existing center-line contribution only for B's
+            # role-specific material; the original center sum remains intact.
+            if world_layer_filament:
+                world_central_filaments[i] += r
+                world_central_filaments[i + 1] += g
+                world_central_filaments[i + 2] += b
         elif collect_world_layers and world_layer_halo:
             world_halo[i] += r
             world_halo[i + 1] += g
