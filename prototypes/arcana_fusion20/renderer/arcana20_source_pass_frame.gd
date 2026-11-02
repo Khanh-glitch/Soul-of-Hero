@@ -66,6 +66,8 @@ var b_tint: Vector3
 # A: additive HDR and blend coverage produced by the existing A framebuffer;
 # these omit unported original terrain/refraction and bloom world passes.
 var a_rgb: PackedFloat32Array
+# F01 only: explicit authored A crown area/heat/rim; not source color keying.
+var a_crown_surface: PackedFloat32Array
 var a_coverage: PackedFloat32Array
 var a_multiplier: PackedFloat32Array
 var a_world_warp: PackedFloat32Array

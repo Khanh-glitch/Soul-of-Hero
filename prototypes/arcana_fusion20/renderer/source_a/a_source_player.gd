@@ -82,6 +82,8 @@ func begin(caster_world: Vector2, target_world: Vector2) -> void:
         _spell.set("raster_size", raster_size)
     _fb = AFramebuffer.new(raster_size.x, raster_size.y)
     _fb.track_world_fields = world_pass_mode
+    if world_pass_mode and source_variant == &"crown":
+        _fb.crown_surface.resize(raster_size.x * raster_size.y * 4)
     _carousel_rotor_fb = AFramebuffer.new(raster_size.x, raster_size.y) if world_pass_mode and source_variant == &"carousel_a_rotor_c_bolts" else null
     if Vector2i(_tex.get_width(), _tex.get_height()) != raster_size:
         _tex = ImageTexture.create_from_image(Image.create(raster_size.x, raster_size.y, false, Image.FORMAT_RGBA8))
@@ -215,6 +217,7 @@ func source_pass_frame() -> Arcana20SourcePassFrame:
     result.caster_world = _origin
     result.target_world = _target
     result.a_rgb = _fb.buf
+    result.a_crown_surface = _fb.crown_surface
     result.a_coverage = _fb.world_coverage
     result.a_multiplier = _fb.world_multiplier
     result.a_world_warp = _fb.world_warp

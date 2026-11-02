@@ -147,6 +147,31 @@ func _run() -> void:
     check(crown_source._ash.count() == 0, "F01 original ash expires before fusion OUT")
     check(not crown_host.is_active(crown_id), "F01 shared clock naturally retires both layers")
     crown_host.free()
+    # F01 surface is a parallel semantic record, never a modification of the
+    # original additive source or its RNG/timing. Verify only the authored
+    # field interior carries coverage, with no ambient/background keying.
+    var raw_crown := ACinderCrown.new()
+    raw_crown.setup()
+    for i in range(126): raw_crown.update(STEP, float(i + 1) * STEP)
+    var raw_fb := AFramebuffer.new()
+    var semantic_fb := AFramebuffer.new()
+    raw_fb.track_world_fields = true
+    semantic_fb.track_world_fields = true
+    semantic_fb.crown_surface.resize(semantic_fb.width * semantic_fb.height * 4)
+    raw_fb.clear()
+    semantic_fb.clear()
+    raw_crown.render(raw_fb, 2.1)
+    raw_crown.render(semantic_fb, 2.1)
+    check(raw_fb.buf == semantic_fb.buf and raw_fb.world_coverage == semantic_fb.world_coverage and raw_fb.world_multiplier == semantic_fb.world_multiplier and raw_fb.world_influence == semantic_fb.world_influence, "F01 authored surface record does not modify original A fields")
+    var surface_count := 0
+    for p in range(semantic_fb.width * semantic_fb.height):
+        if semantic_fb.crown_surface[p * 4] > 0.0: surface_count += 1
+    check(surface_count > 0 and surface_count < 12000 and semantic_fb.crown_surface[0] == 0.0, "F01 semantic coverage is bounded to authored procedural crown")
+    semantic_fb.clear()
+    raw_crown.render(semantic_fb, 6.6)
+    var late_surface := 0.0
+    for p in range(semantic_fb.width * semantic_fb.height): late_surface += semantic_fb.crown_surface[p * 4]
+    check(late_surface == 0.0, "F01 authored material clears after the crown stage")
     # B03 meteors use a fixed source sigil centre and screen-up ballistic z,
     # not the B02 caster-target axis. Test the actual mount at four bearings.
     var meteor_mount := BSourcePlayer.new()

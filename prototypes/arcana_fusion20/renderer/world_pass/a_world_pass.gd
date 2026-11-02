@@ -105,6 +105,10 @@ func consume(frame: Arcana20SourcePassFrame) -> void:
     # #01's additive A crown fades into bright SOH terrain. Preview-only
     # exposure of its light field; no source geometry/timing or C layer edit.
     _material.set_shader_parameter("crown_presentation", frame.variant == &"crown")
+    var has_crown_surface := frame.a_crown_surface.size() == count * 4
+    _material.set_shader_parameter("crown_material_enabled", has_crown_surface)
+    if has_crown_surface:
+        _material.set_shader_parameter("crown_surface_tex", _set_texture("crown_surface", Vector2i(width, height), frame.a_crown_surface))
     if carousel:
         var rotor := PackedFloat32Array()
         var rotor_bloom := PackedFloat32Array()

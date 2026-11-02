@@ -10,6 +10,8 @@ var contacts: Array = []
 var unbound_contacts: Array = []
 var samples: Array = []
 var capture_start_usec := 0
+var crown_probe_next := 0
+const CROWN_PROBE_TARGETS := [120, 246]
 
 func _fail(message: String) -> void:
     for action in [&"move_right", &"move_down", &"move_left", &"move_up"]:
@@ -55,7 +57,67 @@ func _frame(path: String, player: Node2D, enemy: Node2D, camera: Camera2D) -> bo
     samples.append({"file": name, "wall_s": float(presented_usec - capture_start_usec) / 1000000.0, "source_tick_last_observed": ticks_seen[-1] if not ticks_seen.is_empty() else 0,
         "player": [player.global_position.x, player.global_position.y], "enemy": [enemy_pos.x, enemy_pos.y],
         "camera": [camera.get_screen_center_position().x, camera.get_screen_center_position().y]})
+    if OS.get_environment("AVFX_CROWN_MATCHED") == "1" and not await _crown_matched_probe(path, player, camera): return false
     return true
+
+# Strictly diagnostic matched captures. Existing real-world actor/camera and
+# BOTH authentic fusion child ticks are frozen, then only the presentation
+# uniform is switched old/new/old with four completed draws per state.
+func _crown_matched_probe(path: String, player: Node2D, camera: Camera2D) -> bool:
+    if crown_probe_next >= CROWN_PROBE_TARGETS.size(): return true
+    var renderer := host.get("renderer") as Arcana20Renderer
+    if not is_instance_valid(renderer) or not renderer.is_active(cast_id): return true
+    var fusion := renderer._casts.get(cast_id) as FusionPlayer
+    if not is_instance_valid(fusion) or fusion._tick < CROWN_PROBE_TARGETS[crown_probe_next]: return true
+    var mount := host.get("mount") as Arcana20WorldPassMount
+    var viewer := (mount._passes.get(cast_id, {}) as Dictionary).get(&"A") as Arcana20AWorldPass
+    if not is_instance_valid(viewer) or viewer._material == null: return false
+    var tree := get_tree()
+    var actors: Array = host.get("spawned")
+    var suspended: Array = [host.get("world"), player, camera, fusion]
+    for actor in actors:
+        if is_instance_valid(actor): suspended.append(actor)
+    var modes: Array = []
+    for node in suspended:
+        modes.append(node.process_mode)
+        node.process_mode = Node.PROCESS_MODE_DISABLED
+    var old_pause := tree.paused
+    tree.paused = true
+    var caster_pos := player.global_position
+    var camera_pos := camera.get_screen_center_position()
+    var tick := fusion._tick
+    var child_ticks: Array = []
+    for part in fusion._pending: child_ticks.append(int(part.node.get("_tick")))
+    var actor_positions: Array = []
+    for actor in actors: actor_positions.append(actor.global_position)
+    var names: Array[String] = []
+    for enabled in [false, true, false]:
+        viewer._material.set_shader_parameter("crown_material_enabled", enabled)
+        for settle in range(4):
+            await tree.process_frame
+            await RenderingServer.frame_post_draw
+        var image := get_viewport().get_texture().get_image()
+        var name := "crown_pair_%d_%d.png" % [crown_probe_next, names.size()]
+        if image == null or image.is_empty() or image.save_png(path.path_join(name)) != OK:
+            push_error("F01_MATCH_FAIL image")
+            return false
+        names.append(name)
+    var stable := tick == fusion._tick and caster_pos == player.global_position and camera_pos == camera.get_screen_center_position()
+    for i in range(actors.size()): stable = stable and actor_positions[i] == actors[i].global_position
+    for i in range(fusion._pending.size()): stable = stable and child_ticks[i] == int(fusion._pending[i].node.get("_tick"))
+    var report := {"tick": tick, "child_ticks": child_ticks, "player": [caster_pos.x, caster_pos.y],
+        "camera": [camera_pos.x, camera_pos.y], "stable": stable, "files": names,
+        "scope": "same-state original R25 additive preview versus F01 source-surface material; actor, camera and C unchanged"}
+    var file := FileAccess.open(path.path_join("crown_pair_%d.json" % crown_probe_next), FileAccess.WRITE)
+    if file == null: return false
+    file.store_string(JSON.stringify(report, "  "))
+    file.close()
+    viewer._material.set_shader_parameter("crown_material_enabled", true)
+    tree.paused = old_pause
+    for i in range(suspended.size()): suspended[i].process_mode = modes[i]
+    crown_probe_next += 1
+    print("F01_MATCH ", JSON.stringify(report))
+    return stable
 
 func start(wrapper: Node) -> void:
     host = wrapper
@@ -145,6 +207,49 @@ func start(wrapper: Node) -> void:
         host.call(&"_cast_selected")
         if not renderer.is_active(cast_id):
             _fail("real-scene cast refused"); return
+    # Non-shipping, opt-in evidence camera. This does not change player input,
+    # source transform, duration, cast anchor or the production follow camera.
+    # Keep a separate normal gameplay recording; center once on the actual
+    # world-space source center, at the real camera zoom and rotation.
+    var fixed_camera := OS.get_environment("AVFX_FIXED_WORLD_CAMERA") == "1"
+    var fixed_anchor := Vector2.ZERO
+    if fixed_camera:
+        if skill == 20:
+            var rift_source := renderer._casts.get(cast_id) as CSourcePlayer
+            if not is_instance_valid(rift_source):
+                _fail("fixed camera expected #20 C source"); return
+            fixed_anchor = rift_source.local_to_world(CRealityRipperFusion.CENTER)
+        elif skill == 16:
+            var seed_source := renderer._casts.get(cast_id) as FusionPlayer
+            if not is_instance_valid(seed_source) or not (seed_source._back is ASourcePlayer):
+                _fail("fixed camera expected #16 A source"); return
+            fixed_anchor = (seed_source._back as ASourcePlayer).local_to_world(AWorldseedGrowth.C)
+        else:
+            _fail("fixed camera is diagnostic-only for #16/#20"); return
+        var view := Camera2D.new()
+        view.name = "AVFXDiagnosticWorldFixedCamera"
+        view.process_mode = Node.PROCESS_MODE_ALWAYS
+        world.add_child(view)
+        view.top_level = true
+        view.zoom = camera.zoom
+        view.global_rotation = camera.global_rotation
+        view.position_smoothing_enabled = false
+        view.global_position = fixed_anchor
+        view.make_current()
+        view.force_update_scroll()
+        camera = view
+        await get_tree().process_frame
+        await RenderingServer.frame_post_draw
+        camera_start = camera.get_screen_center_position()
+        print("AVFX_FIXED_CAMERA ", JSON.stringify({"anchor": [fixed_anchor.x, fixed_anchor.y], "center": [camera_start.x, camera_start.y], "zoom": [camera.zoom.x, camera.zoom.y], "scope": "diagnostic only; world-fixed after cast; actor input and source anchors unchanged"}))
+        if camera_start.distance_to(fixed_anchor) > 1.0:
+            _fail("diagnostic camera not calibrated to source center"); return
+        # Drop the earlier gameplay-follow baseline; all fixed-camera footage
+        # shares a single calibrated world-fixed viewport from this point.
+        samples.clear()
+        capture_start_usec = Time.get_ticks_usec()
+        if capture and not await _frame(folder, player, enemy, camera):
+            _fail("fixed camera initial frame"); return
     var deadline := Time.get_ticks_msec() + 180000
     var current_action := &""
     var max_player := 0.0
@@ -231,6 +336,8 @@ func start(wrapper: Node) -> void:
         "skill": skill, "lighting": OS.get_environment("AVFX_LIVE_LIGHT"), "captured": capture, "frames": samples,
         "cast_target_world": cast_target_world,
         "no_fx": no_fx, "overlap_skill": overlap_skill, "cast_duration_s": cast_duration_s,
+        "camera_mode": "diagnostic_world_fixed" if fixed_camera else "gameplay_follow",
+        "fixed_camera_anchor": [fixed_anchor.x, fixed_anchor.y] if fixed_camera else null,
         "last_tick": ticks_seen[-1] if not ticks_seen.is_empty() else 0, "events": contacts, "unbound_events": unbound_contacts,
         "enemy_count": enemy_count, "spawn_formation": "ring" if formation != null and formation.selected == 1 else "line",
         "enemy_max_displacements": enemy_moves,
@@ -250,8 +357,12 @@ func start(wrapper: Node) -> void:
     print("AVFX_LIVE_RESULT ", JSON.stringify({"id": skill, "frames": samples.size(), "last_tick": record.last_tick,
         "player_move": max_player, "enemy_move": max_enemy, "enemies": enemy_count, "moving_enemies": moving_enemies,
         "unbound_events": unbound_contacts.size(), "camera_move": max_camera, "p50_ms": p50, "p95_ms": p95, "p99_ms": p99}))
-    if max_player < 1.0 or moving_enemies < 2 or max_camera < 1.0:
-        _fail("real player, multiple enemies and camera movement not observed"); return
+    if OS.get_environment("AVFX_CROWN_MATCHED") == "1" and crown_probe_next != CROWN_PROBE_TARGETS.size():
+        _fail("matched crown pairs missing"); return
+    if max_player < 1.0 or moving_enemies < 2 or (not fixed_camera and max_camera < 1.0):
+        _fail("real player, multiple enemies and gameplay camera movement not observed"); return
+    if fixed_camera and max_camera > 1.0:
+        _fail("diagnostic camera drifted from world anchor"); return
     if no_fx:
         print("AVFX_LIVE_PASS no-FX wrapper baseline, real input/AI; no combat receipt")
     else:

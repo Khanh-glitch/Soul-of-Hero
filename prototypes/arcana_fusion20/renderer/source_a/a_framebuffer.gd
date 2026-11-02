@@ -29,6 +29,9 @@ var world_coverage := PackedFloat32Array()
 var world_multiplier := PackedFloat32Array()
 var world_warp := PackedFloat32Array()
 var world_influence := PackedByteArray()
+# Optional F01 authored crown-surface semantics, RGBA=(coverage, heat, rim, 0).
+# Separate from original A light/coverage; allocated only by the fusion host.
+var crown_surface := PackedFloat32Array()
 var bw: int
 var bh: int
 var exposure := 1.0
@@ -66,6 +69,7 @@ func clear() -> void:
         world_multiplier.fill(1.0)
         world_warp.fill(0.0)
         world_influence.fill(0)
+        if not crown_surface.is_empty(): crown_surface.fill(0.0)
     exposure = 1.0
     flash = Vector3.ZERO
     bloom_amt = 0.75

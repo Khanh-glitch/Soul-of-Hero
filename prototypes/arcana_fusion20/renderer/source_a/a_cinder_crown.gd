@@ -129,6 +129,15 @@ func render(fb: AFramebuffer, t: float) -> void:
             var heat := lerpf(h * 0.85, 0.08, inhale * 0.85) * bright
             heat += rim * (0.55 + inhale * 0.9)
             var c := ACommon.fire_col(AMath.cl01(heat))
+            # Record the EXACT authored field membership and source heat/rim,
+            # separately from source RGB. This lets the diagnostic world
+            # compositor add locally pigmented material without a brightness
+            # key, geometry/timing/RNG mutation, or a made-up ground shape.
+            if not fb.crown_surface.is_empty():
+                var si := (y * fb.width + x) * 4
+                fb.crown_surface[si] = build * bright * (1.0 - burst)
+                fb.crown_surface[si + 1] = AMath.cl01(heat)
+                fb.crown_surface[si + 2] = rim
             out[0] = c.x
             out[1] = c.y
             out[2] = c.z)

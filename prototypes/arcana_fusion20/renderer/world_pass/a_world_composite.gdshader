@@ -13,6 +13,10 @@ uniform bool carousel_presentation = false;
 // #01-only visibility adaptation of A additive light in the LDR world
 // preview. Raw source fields, bloom, masks, C tongues and world stay intact.
 uniform bool crown_presentation = false;
+// F01 fusion-only material separation. Surface membership/heat/rim are
+// recorded directly from A's original procedural field; never luminance-keyed.
+uniform bool crown_material_enabled = false;
+uniform sampler2D crown_surface_tex : repeat_disable, filter_nearest;
 uniform sampler2D carousel_rotor_tex : repeat_disable, filter_nearest;
 uniform sampler2D carousel_rotor_bloom_tex : repeat_disable, filter_linear;
 uniform float bloom_amount = 0.75;
@@ -55,7 +59,19 @@ void fragment() {
         // in the sharp channel and cannot accumulate into a full white cloud.
         effect = rotor + controlled + rotor_bloom * bloom_amount;
     }
-    vec3 src = (warped * mask.r * (1.0 - ink.a) + effect) * exposure;
+    vec3 world_base = warped * mask.r;
+    if (crown_material_enabled) {
+        vec3 surface = texelFetch(crown_surface_tex, p, 0).rgb;
+        // Localized molten/crust pigment, quantized in source-pixel space.
+        // It changes presentation only where A explicitly authored the crown;
+        // additive A light, C outer tongues and actual world remain separate.
+        float pixel = float(((p.x & 1) + (p.y & 1) * 2)) / 3.0;
+        float heat = clamp(surface.g + (pixel - 0.5) * 0.08, 0.0, 1.0);
+        vec3 crust = mix(vec3(0.12, 0.014, 0.009), vec3(0.75, 0.13, 0.018), heat);
+        crust = mix(crust, vec3(1.0, 0.42, 0.055), surface.b * 0.55);
+        world_base = mix(world_base, crust, clamp(surface.r * 0.78, 0.0, 0.78));
+    }
+    vec3 src = (world_base * (1.0 - ink.a) + effect) * exposure;
     vec3 neutral = original * exposure;
     vec3 mapped = vec3(tone(src.r), tone(src.g), tone(src.b));
     vec3 base = vec3(tone(neutral.r), tone(neutral.g), tone(neutral.b));
