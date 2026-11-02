@@ -105,6 +105,7 @@ try {
           for(const k of keys)await page.keyboard.down(k);await pause(115);for(const k of keys)await page.keyboard.up(k);
           cur=await state();const moved=Math.hypot(cur.player.x-beforeAttempt.x,cur.player.y-beforeAttempt.y),left=Math.hypot(wp.x-cur.player.x,wp.y-cur.player.y);
           wpDiag.attempts.push({try:tries+1,from:beforeAttempt,to:{x:cur.player.x,y:cur.player.y,hp:cur.player.hp},moved:+moved.toFixed(2),remaining:+left.toFixed(2),action:cur.player.action||null,creatures:cur.creatures.filter(m=>Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<100).map(m=>({id:m.id,type:m.type,state:m.state,x:m.x,y:m.y,hp:m.hp}))});
+          if(cur.player.dead){diag.failed={reason:'player died during bounded waypoint input',player:cur.player,firstFailingWaypoint:{tile:[nx,ny],center:wp},attempt:wpDiag.attempts.at(-1),previousWaypoint:diag.waypoints.at(-1)||null,nearby:cur.creatures.filter(m=>Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<150)};wpDiag.end={reason:'player-dead',actual:{x:cur.player.x,y:cur.player.y,hp:cur.player.hp}};diag.waypoints.push(wpDiag);routeDiagnostics.push(diag);await page.screenshot({path:path.join(out,`route-death-${layoutId}-${Date.now()}.png`),animations:'disabled'}).catch(()=>{});await fs.writeFile(path.join(out,`route-death-${layoutId}.json`),JSON.stringify(diag,null,2)).catch(()=>{});throw new Error(`route death at first failing waypoint ${JSON.stringify(diag.failed)}`);}
           if(left<3){reached=true;break;}
           if(moved<0.8)stagnant++;else stagnant=0;
           if(left<best-1){best=left;stagnant=0;}
@@ -134,16 +135,16 @@ try {
     async function ensureVitals(){const cur=await state();if(cur.player.dead)throw new Error(`player died during ordinary-input travel at (${cur.player.x.toFixed(0)},${cur.player.y.toFixed(0)}), hp=${cur.player.hp}, hunger=${cur.player.hunger.toFixed(1)}, thirst=${cur.player.thirst.toFixed(1)}, nearby=${JSON.stringify(cur.creatures.filter(m=>Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<120))}`);if(cur.player.hp<92&&cur.counts.bandage)await useInventoryItem('bandage');if(cur.player.thirst<68&&cur.counts.water_flask)await useInventoryItem('water_flask');if(cur.player.hunger<68&&cur.counts.berries)await useInventoryItem('berries');}
     async function defendNearby(){
       if(defending)return;defending=true;
-      try{for(let round=0;round<5;round++){
-        let cur=await state();const threat=cur.creatures.filter(m=>!m.type.startsWith('elder_')&&m.state!=='sleep'&&Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<180).sort((a,b)=>Math.hypot(a.x-cur.player.x,a.y-cur.player.y)-Math.hypot(b.x-cur.player.x,b.y-cur.player.y))[0];
+      try{
+        const cur=await state();const threat=cur.creatures.filter(m=>!m.type.startsWith('elder_')&&m.state!=='sleep'&&Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<180).sort((a,b)=>Math.hypot(a.x-cur.player.x,a.y-cur.player.y)-Math.hypot(b.x-cur.player.x,b.y-cur.player.y))[0];
         if(!threat)return;
-        if(Math.hypot(threat.x-cur.player.x,threat.y-cur.player.y)>26){try{await walkNear(threat.x,threat.y,22);}catch{return;}}
-        await aim(threat.x,threat.y);
-        for(let hit=0;hit<7;hit++){
-          cur=await state();const target=cur.creatures.find(m=>m.id===threat.id);if(!target||target.hp<=0||Math.hypot(target.x-cur.player.x,target.y-cur.player.y)>36)break;
-          await aim(target.x,target.y);await page.mouse.down();await pause(80);await page.mouse.up();await pause(340);
-        }
-      }}finally{defending=false;}
+        await ensureVitals();
+        const live=await state(),a=Math.atan2(live.player.y-threat.y,live.player.x-threat.x),radius=190;
+        const candidates=[a,a-0.65,a+0.65,a-1.25,a+1.25].map(angle=>({x:Math.max(24,Math.min(W*16-24,live.player.x+Math.cos(angle)*radius)),y:Math.max(24,Math.min(H*16-24,live.player.y+Math.sin(angle)*radius)),angle})).sort((u,v)=>Math.hypot(v.x-threat.x,v.y-threat.y)-Math.hypot(u.x-threat.x,u.y-threat.y));
+        let escaped=false;for(const dest of candidates){try{await walkNear(dest.x,dest.y,20);escaped=true;break;}catch{const latest=await state();if(latest.player.dead)throw new Error(`died evading ${threat.type} ${threat.id}; player=${JSON.stringify(latest.player)} threat=${JSON.stringify(threat)}`);}}
+        if(!escaped)throw new Error(`no runtime-grid escape route from ${threat.type} ${threat.id}; player=(${live.player.x},${live.player.y}) threat=(${threat.x},${threat.y})`);
+        const after=await state();routeDiagnostics.push({kind:'wildlife-evasion',threat:{id:threat.id,type:threat.type,from:{x:threat.x,y:threat.y}},before:{x:live.player.x,y:live.player.y,hp:live.player.hp},after:{x:after.player.x,y:after.player.y,hp:after.player.hp},method:'ordinary WASD movement to a runtime-blockGrid reachable point away from hostile'});
+      }finally{defending=false;}
     }
 
     const startCrate=s.entities.find(e=>e.kind==='loot'&&e.poi===(landing==="Fisher's Point"?'s1':'s3'));assert(startCrate,'selected start crate missing');
