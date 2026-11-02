@@ -63,7 +63,24 @@ def verify(folder, sha):
             with z.open(members[path]) as f:
                 require(digest_stream(f) == expected_file, f'checksum mismatch {path}')
             seen.add(path)
-        require(seen == set(members) - {'SHA256SUMS.txt'}, 'missing or extra checksum entries')
+        # The packager deliberately excludes every file named SHA256SUMS.txt
+        # from the top-level list. Verify the nested build list separately.
+        checksum_paths = {n for n in members if pathlib.PurePosixPath(n).name == 'SHA256SUMS.txt'}
+        require(seen == set(members) - checksum_paths, 'missing or extra checksum entries')
+        nested = checksum_paths - {'SHA256SUMS.txt'}
+        require(len(nested) == 1, f'expected one build checksum list: {nested}')
+        build_checksums = nested.pop()
+        build_dir = pathlib.PurePosixPath(build_checksums).parent
+        build_seen = set()
+        for line in z.read(members[build_checksums]).decode().splitlines():
+            file_hash, name = line.split(maxsplit=1)
+            name = name.lstrip('*')
+            path = str(build_dir / name)
+            require(path in members and path not in build_seen, f'bad build checksum entry {path}')
+            with z.open(members[path]) as f:
+                require(digest_stream(f) == file_hash, f'build checksum mismatch {path}')
+            build_seen.add(path)
+        require(len(build_seen) == 2, 'expected checksums for both OS exports')
         listing = (folder / 'f-final-contents.txt').read_text()
         for name in ('CODE_SHA.txt', 'BATCH_F_REVIEW.txt', 'SOH_AVFX_EXPERIMENTAL_linux.zip', 'SOH_AVFX_EXPERIMENTAL_windows.zip'):
             require(name in listing, f'uploaded listing missing {name}')

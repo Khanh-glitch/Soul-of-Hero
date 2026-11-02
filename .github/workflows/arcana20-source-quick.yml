@@ -44,7 +44,7 @@ jobs:
             import.log
             source.log
           if-no-files-found: warn
-  # One-shot cross-run download check: preserves the already-tested e80529c
+  # One-shot cross-run uploaded-byte check: preserves the already-tested e80529c
   # build/captures, rather than generating a duplicate F capture matrix.
   verify-f-upload:
     if: ${{ contains(github.event.head_commit.message, '[verify-f-41396229547]') }}
