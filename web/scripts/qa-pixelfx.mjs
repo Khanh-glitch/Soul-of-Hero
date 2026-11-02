@@ -46,7 +46,7 @@ const SNAP = `(() => { const r = window.__soh.run;
   return JSON.stringify({ inv: JSON.stringify(r.custody.inv.slots), eq: JSON.stringify(r.custody.eq.slots),
     hp: r.player.hp, stam: Math.round(r.player.stamina), active: r.player.active, pos: [Math.round(r.player.x), Math.round(r.player.y)],
     terrCount: Object.keys(r.terrain||{}).length, entCount: Object.keys(r.entities).length,
-    logLen: r.log.length, cash: window.__soh.profile.securedCash, savedLen: (localStorage.getItem('soh.state.v3')||'').length }); })()`;
+    logLen: r.log.length, cash: window.__soh.profile.securedCash }); })()`  // note: save-file length/clock excluded — ordinary sim time advances and autosaves;
 
 // ============ V5 VISUAL GATE: 3 effects x day/QA-night x 3 phases, lab hidden ============
 await page.keyboard.press('F9'); await wait(500);
