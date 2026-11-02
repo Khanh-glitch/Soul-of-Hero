@@ -33,7 +33,34 @@ injected, nothing teleports.
 | `develop-soul-of-hero-rpg (4).zip` | `f601ca17…1ba` | `src/game/state.ts:1033-1076`, `1237-1242` | **NEGATIVE ORACLE**: `harvest` never checks player↔source distance; `trail` accepts caller `x,y`. SOH source writes only the real actor position; the distant-harvest/remote-mark tests are open items. |
 | `soul-of-hero-rpg-prototype (3).zip` | `12438a53…f55` | `src/tests/contracts_c01_c24.test.ts:591-774, 819-905` | **REJECT for now (P1)**: escrow/Ragnarok/inventory-custody hypotheses. No SOH action to bind them to in P0. |
 
-### Episode results — best run so far: `d3db46b7` (run 41426710070)
+### FIRST ALL-GREEN NATIVE GATE — `1444f5ff` (run 41428636248)
+
+`C08 trace causality (native)`: **success**. Unit job: success. Steps: episode B,
+episode C, episode A + K8 ledger, relaunch (second OS PID), new run — all success.
+
+| case | exact evidence at `1444f5ff` |
+|---|---|
+| A (no trace) | `C08_A`: 721 PATROL samples, `sensed 0`, `direct_ticks 0`, `damage_events 0`, `min_home_distance 358.1` |
+| B (valid chain) | `C08_B`: arrival while `INVESTIGATE` (817 investigate vs 2 chase samples), 45 evidence hops at arrival, `min_home_distance 138.96`, `first_direct 142.59`, `damage_events 0` on the approach |
+| C (cold trail) | `C08_C_COLD`: `sensed 4`, **35 contiguous hops** of 18.5-26.1 px, `max_hop 26.1`, `lost "expired"`, `reached_end false`, `refused 0`; final window: no damage, creature never inside the room |
+| K8 ledger | committed in episode A, ledger bound to the run |
+| 2nd PID relaunch | a still-valid trail survives quitting the game |
+| new run | fresh profile inherits no evidence |
+| regression | "Godot 4.7 Runtime Validation": Import/headless **success**, Xvfb captures **success**, only "Original main baseline comparison" fails (it is red on original main too) |
+
+**Honest limits of this green:**
+- Frames could not be inspected by eye: the artifact is hosted on
+  `productionresultssa*.blob.core.windows.net`, which this sandbox cannot reach (only
+  `github.com`, `codeload`, `api.github.com`, npm and PyPI). The in-run capture code
+  does assert real size and non-flatness, and the log prints
+  `C08_FRAME <name> 1280x720 distinct=… luma_sd=…`, but **the by-eye visual gate is
+  NOT_ACCEPTED** and must be done by a session that can download the artifact.
+- The B hop count still swings with the creature's patrol phase (1, 33, 45, 120, 178
+  across runs) even though `sensed >= 1`, contiguity, `max_hop <= 27.5` and a
+  0-damage evidence arrival hold in every one of them. A second run of the identical
+  test code is queued at `37d65d94` to measure this.
+
+### Episode results — earlier: `d3db46b7` (run 41426710070)
 
 | episode | verdict | evidence |
 |---|---|---|
