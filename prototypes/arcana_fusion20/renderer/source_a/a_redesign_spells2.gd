@@ -129,12 +129,12 @@ class RootwakeR:
                 # remains visual-only: no asserted contact or on-body effect.
                 var attack := AMath.ease_in(AMath.seg(t, 4.65, 5.4), 2.0) * attached * retract
                 var direction := (_tips[i] - tp).normalized()
-                var side := Vector2(-direction.y, direction.x)
+                var thorn_side := Vector2(-direction.y, direction.x)
                 var thorn_base: Vector2 = points[8]
                 var point: Vector2 = thorn_base.lerp(_tips[i] + direction * 7.0, attack)
-                var foot := side * (4.5 * attack)
+                var thorn_foot := thorn_side * (4.5 * attack)
                 if attack > 0.0:
-                    ADraw.poly_fill(fb, [thorn_base - foot, point, thorn_base + foot],
+                    ADraw.poly_fill(fb, [thorn_base - thorn_foot, point, thorn_base + thorn_foot],
                         func(_x: int, _y: int) -> Variant: return Vector3(0.33, 0.42, 0.12), true, attack)
                     ADraw.streak(fb, thorn_base.x, thorn_base.y, point.x, point.y, 0.9, 0.35, AMath.R("verdant", 0.9), attack * 0.6)
                 # Two actual barbs have their bases on the same arch.
@@ -248,8 +248,8 @@ class SporeNebulaR:
             # existing link, bloom, colony births and event schedule remain.
             var axis := (b - a).normalized()
             var normal := Vector2(-axis.y, axis.x)
-            for junction in range(1, 6):
-                var s := float(junction) / 6.0
+            for junction in range(1, 4 + (i % 3)):
+                var s := AMath.cl01(float(junction) / 7.0 + AMath.hash2(float(i * 23 + junction), 31.0) * 0.08)
                 var grow := AMath.cl01((u - s) * 6.0)
                 if grow <= 0.0: continue
                 var point := _hypha_point(a, b, i, s)
@@ -298,9 +298,21 @@ class SporeNebulaR:
                 var middle := AMath.ease_out(AMath.seg(t, float(_births[i]), float(_births[i]) + 0.72), 2.0)
                 var left := AMath.ease_out(AMath.seg(t, float(_births[i]) + 0.12, float(_births[i]) + 0.86), 2.0)
                 var right := AMath.ease_out(AMath.seg(t, float(_births[i]) + 0.27, float(_births[i]) + 1.0), 2.0)
-                _draw_cap(fb, c + Vector2(-12, 2) * left, 8.0 * left * pul, 13.0 * left, fade * left)
-                _draw_cap(fb, c + Vector2(0, -3) * middle, 12.0 * middle * pul, 20.0 * middle, fade * middle)
-                _draw_cap(fb, c + Vector2(12, 3) * right, 7.5 * right * pul, 11.0 * right, fade * right)
+                if i % 3 == 0:
+                    # A broad low shelf with young buds on its lee side.
+                    _draw_cap(fb, c + Vector2(-6, -2) * middle, 15.0 * middle * pul, 13.0 * middle, fade * middle)
+                    _draw_cap(fb, c + Vector2(11, 4) * right, 6.0 * right * pul, 8.0 * right, fade * right)
+                elif i % 3 == 1:
+                    # Tall central fruit and a pair of small staggered caps.
+                    _draw_cap(fb, c + Vector2(-12, 2) * left, 6.0 * left * pul, 10.0 * left, fade * left)
+                    _draw_cap(fb, c + Vector2(0, -3) * middle, 10.0 * middle * pul, 25.0 * middle, fade * middle)
+                    _draw_cap(fb, c + Vector2(11, 3) * right, 7.0 * right * pul, 12.0 * right, fade * right)
+                else:
+                    # A close ring of four small emerging fruiting bodies.
+                    for bud in range(4):
+                        var growth: float = [left, middle, right, middle][bud]
+                        var size := 5.0 + float(bud % 3) * 1.5
+                        _draw_cap(fb, c + Vector2(float(bud - 2) * 7.0, float(bud % 2) * 4.0) * growth, size * growth * pul, (8.0 + size * 0.7) * growth, fade * growth)
             else:
                 # Alternate: one upright, hollow-looking fruiting body with
                 # a scalloped mouth; not simply a palette variation.
@@ -311,13 +323,14 @@ class SporeNebulaR:
             # random battlefield locations. Their two-part flight and fade
             # remain visible through the biological OUT.
             var release := t - 5.4 - float(i) * 0.055
-            if release >= 0.0 and release < 1.5:
-                var bloom := AMath.ease_out(AMath.cl01(release / 0.85), 2.0)
-                var alive := (1.0 - AMath.seg(release, 0.85, 1.5)) * fade
-                for spore in range(11):
-                    var angle := -PI * 0.92 + float(spore) * PI * 0.084
-                    var distance := (18.0 + float(spore % 4) * 8.0) * bloom
-                    var tip := c + Vector2(cos(angle) * distance, sin(angle) * distance - 12.0 * spread)
+            if release >= 0.0 and release < 2.3:
+                var bloom := AMath.ease_out(AMath.cl01(release / 1.25), 2.0)
+                var alive := (1.0 - AMath.seg(release, 1.5, 2.3)) * fade
+                for spore in range(15):
+                    var phase := AMath.hash2(float(spore), float(i) + 40.0)
+                    var angle := -PI * (0.92 - 0.84 * phase)
+                    var distance := (20.0 + phase * 42.0) * bloom
+                    var tip := c + Vector2(cos(angle) * distance + release * release * 6.0, sin(angle) * distance - 12.0 * spread)
                     ADraw.streak(fb, tip.x, tip.y + 4.0, tip.x, tip.y - 2.0,
                         1.1, 0.6, Vector3(0.55, 1.05, 0.65), alive * 0.9)
                     ADraw.disc(fb, tip.x, tip.y, 2.2, Vector3(0.70, 1.3, 0.8), alive)
