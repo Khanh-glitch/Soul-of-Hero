@@ -1,8 +1,9 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { TILE, WW, WH, T, HOUR, type GameState } from '../src/game/core';
+import { TILE, WW, WH, T, HOUR, SAVE_VERSION, type GameState } from '../src/game/core';
 import { getWorld, SRC_KEYS } from '../src/game/world';
 import { newGame, dispatch, harvestHit, addItem, countItem, C, blockedAt, effTile, killPlayer, markDirty, endRun, sourceAt, claimAt, mkContainer, stepStations } from '../src/game/engine';
-import { ITEMS, SOURCES, RECIPES, validateGameplayCatalog } from '../src/game/catalog';
+import { ITEMS, SOURCES, RECIPES, STRUCTS, validateGameplayCatalog } from '../src/game/catalog';
+import { migrate } from '../src/game/persist';
 import { tick, settle, decayTraces, nextContiguousTrace, HAZ, PROJ, type Input } from '../src/game/sim';
 
 const T0 = Date.UTC(2026, 10, 1, 12);
@@ -31,6 +32,39 @@ describe('C24 world', () => {
     for (const p of w.places.filter(p => p.kind !== 'elder')) { let near = false; for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) if (seen[(p.ty + dy) * WW + p.tx + dx]) near = true; expect(near, p.name).toBe(true); }
     // every start has wood, stone and food within 12 tiles
     for (const st of w.starts) { const kinds = new Set<string>(); for (let y = st.ty - 12; y <= st.ty + 12; y++) for (let x = st.tx - 12; x <= st.tx + 12; x++) { const k = w.src[y * WW + x]; if (k >= 0) kinds.add(SRC_KEYS[k]); } expect(kinds.has('rock')).toBe(true); expect(kinds.has('bush') || kinds.has('herb')).toBe(true); expect([...kinds].some(k => ['oak', 'pine', 'palm', 'snowpine'].includes(k))).toBe(true); }
+  });
+});
+
+describe('catalog validation rejects broken content before play', () => {
+  const cloneCatalog = () => structuredClone({ items: ITEMS, sources: SOURCES, recipes: RECIPES, structures: STRUCTS });
+  it('rejects zero/negative inputs, missing item references, invalid station/terrain/chance, and placement conflicts', () => {
+    const zero = cloneCatalog(); zero.recipes.salted_meat.ins[0][1] = 0;
+    expect(() => validateGameplayCatalog(zero)).toThrow(/invalid input meat x0/);
+    const negative = cloneCatalog(); negative.recipes.salted_meat.ins[0][1] = -1;
+    expect(() => validateGameplayCatalog(negative)).toThrow(/invalid input meat x-1/);
+    const missingItem = cloneCatalog(); missingItem.recipes.salted_meat.ins[1][0] = 'unknown_material';
+    expect(() => validateGameplayCatalog(missingItem)).toThrow(/invalid input unknown_material/);
+    const missingOutput = cloneCatalog(); missingOutput.recipes.salted_meat.out = 'missing_recipe_output' as any;
+    expect(() => validateGameplayCatalog(missingOutput)).toThrow(/recipe salted_meat: invalid output\/time/);
+    const missingYield = cloneCatalog(); missingYield.sources.oak.yields[0][0] = 'missing_recipe_reference' as any;
+    expect(() => validateGameplayCatalog(missingYield)).toThrow(/invalid yield missing_recipe_reference/);
+    const missingStation = cloneCatalog(); missingStation.recipes.salted_meat.station = 'unknown_station' as any;
+    expect(() => validateGameplayCatalog(missingStation)).toThrow(/missing station unknown_station/);
+    const invalidTerrain = cloneCatalog(); invalidTerrain.sources.salt_shale.placement![0].terrain = 'moon' as any;
+    expect(() => validateGameplayCatalog(invalidTerrain)).toThrow(/invalid placement rule/);
+    const invalidChance = cloneCatalog(); invalidChance.sources.salt_shale.placement![0].chance = 0;
+    expect(() => validateGameplayCatalog(invalidChance)).toThrow(/invalid placement rule/);
+    const placementConflict = cloneCatalog(); placementConflict.sources.second_salt_shale = { ...placementConflict.sources.salt_shale, name: 'Duplicate salt shale' };
+    expect(() => validateGameplayCatalog(placementConflict)).toThrow(/placement conflicts with salt_shale on sand/);
+  });
+  it('accepts a positive recipe-input mutation and preserves honest migration effects', () => {
+    const positive = cloneCatalog(); positive.recipes.salted_meat.ins[0][1] = 2;
+    expect(validateGameplayCatalog(positive)).toBe(true);
+    const older = migrate({ version: SAVE_VERSION - 1, profile: { securedCash: 23, history: [] }, run: { inProgress: true } });
+    expect(older.gs.version).toBe(SAVE_VERSION);
+    expect(older.gs.profile.securedCash).toBe(23);
+    expect(older.gs.run).toBeNull();
+    expect(older.note).toContain('old in-progress run could not be migrated');
   });
 });
 
@@ -69,6 +103,10 @@ describe('new salt-shale → salted roast content chain', () => {
     expect(slot).toBeGreaterThanOrEqual(0); // physically waiting in station output
     expect(dispatch(gs, { id: id(), type: 'move', from: fire.station!.outC, fs: slot, to: 'inv' }, T0 + 11_005).ok).toBe(true);
     expect(countItem(r, 'inv', 'salted_meat')).toBe(1);
+    const restored = JSON.parse(JSON.stringify(gs)) as GameState;
+    expect(restored.version).toBe(SAVE_VERSION); // additive content needs no destructive save migration
+    expect(totalItems(restored, 'salted_meat')).toBe(1);
+    expect(restored.run!.sources[ty * WW + tx].stock).toBe(sourceAt(r, tx, ty)?.stock);
     r.player.hunger = 40; const mealSlot = C(r, 'inv').slots.findIndex(s => s?.key === 'salted_meat');
     expect(dispatch(gs, { id: id(), type: 'useItem', slot: mealSlot }, T0 + 11_006).ok).toBe(true);
     expect(r.player.hunger).toBe(82); expect(countItem(r, 'inv', 'salted_meat')).toBe(0);

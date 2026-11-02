@@ -1,0 +1,64 @@
+name: Salt-chain real-player playtest
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/4795760e-soul-of-hero]
+    paths:
+      - 'web/**'
+      - '.github/workflows/salt-chain-playtest.yml'
+
+permissions:
+  contents: read
+
+env:
+  CI: true
+  EVIDENCE_DIR: web/evidence/salt-chain
+
+jobs:
+  browser-journey:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install dependencies
+        working-directory: web
+        run: npm ci
+      - name: Verify unit tests, production build, and types
+        working-directory: web
+        run: |
+          npm test
+          npm run build
+          npx tsc --noEmit
+      - name: Install real Chromium browser
+        working-directory: web
+        run: npx playwright install --with-deps chromium
+      - name: Start the production build
+        working-directory: web
+        run: |
+          npm run preview -- --host 0.0.0.0 --port 4173 > /tmp/soh-preview.log 2>&1 &
+          echo $! > /tmp/soh-preview.pid
+          for attempt in $(seq 1 60); do
+            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/soh-preview.log
+          exit 1
+      - name: Play the no-cheat Salt Shale to Salted Roast journey
+        working-directory: web
+        env:
+          GAME_URL: http://127.0.0.1:4173
+        run: node e2e/salt-chain.mjs
+      - name: Upload current-build screenshots and journey log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: salt-chain-browser-evidence-${{ github.sha }}
+          path: web/evidence/salt-chain/
+          if-no-files-found: warn
+          retention-days: 30

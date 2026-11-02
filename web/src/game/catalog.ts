@@ -169,7 +169,7 @@ export const RECIPES: Record<string, Recipe> = {
   gas_mask: { out: 'gas_mask', qty: 1, ins: [['glass', 1], ['cloth', 2], ['spares', 3]], station: 'workbench', secs: 16, tier: 2 },
   scrap_helm: { out: 'scrap_helm', qty: 1, ins: [['scrap', 6], ['leather', 1]], station: 'workbench', secs: 12, tier: 1 },
   medkit: { out: 'medkit', qty: 1, ins: [['bandage', 2], ['herb', 2]], station: 'workbench', secs: 8, tier: 1 },
-  antirad: { out: 'antirad', qty: 1, ins: [['gland', 1], ['herb', 2], ['water_flask', 0]], station: 'workbench', secs: 10, tier: 2 },
+  antirad: { out: 'antirad', qty: 1, ins: [['gland', 1], ['herb', 2]], station: 'workbench', secs: 10, tier: 2 },
   cart_kit: { out: 'cart_kit', qty: 1, ins: [['wood', 24], ['iron_ingot', 3], ['rope', 4]], station: 'workbench', secs: 25, tier: 1 },
   core_fire: { out: 'core_fire', qty: 1, ins: [['sulfur', 3], ['spares', 8], ['crystal', 1]], station: 'workbench', secs: 40, tier: 3 },
   core_earth: { out: 'core_earth', qty: 1, ins: [['iron_ingot', 3], ['spares', 8], ['crystal', 1]], station: 'workbench', secs: 40, tier: 3 },
@@ -222,18 +222,32 @@ export const ACHIEVEMENTS: Record<string, { name: string; score: number }> = {
   recover_bag: { name: 'Nothing Left Behind', score: 20 }, ragnarok: { name: 'Witness the End', score: 40 },
 };
 
-/** Validate all cross-catalog references once at boot so content additions fail loudly. */
-export function validateGameplayCatalog() {
-  const errors: string[] = [];
-  for (const [id, source] of Object.entries(SOURCES)) {
+/** Inputs are separate data so authored catalog changes can be validated without runtime branches. */
+export interface GameplayCatalogData {
+  items: Record<string, ItemDef>;
+  sources: Record<string, SourceDef>;
+  recipes: Record<string, Recipe>;
+  structures: Record<string, StructDef>;
+}
+/** Validate cross-catalog references once at boot and in content negative tests. */
+export function validateGameplayCatalog(catalog: GameplayCatalogData = { items: ITEMS, sources: SOURCES, recipes: RECIPES, structures: STRUCTS }) {
+  const { items, sources, recipes, structures } = catalog;
+  const errors: string[] = []; const placementOwners = new Map<string, string>();
+  const validTerrains = new Set(['sand', 'marsh', 'ash', 'snow', 'hill']);
+  for (const [id, source] of Object.entries(sources)) {
     if (!source.name || !source.mat || source.hp <= 0 || source.stock <= 0 || !source.yields.length) errors.push(`source ${id}: invalid physical source definition`);
-    for (const [item, qty] of [...source.yields, ...(source.bonus || [])]) if (!ITEMS[item] || qty <= 0) errors.push(`source ${id}: invalid yield ${item} x${qty}`);
-    for (const rule of source.placement || []) if (!Number.isFinite(rule.chance) || rule.chance <= 0 || rule.chance > 1) errors.push(`source ${id}: invalid placement chance`);
+    for (const [item, qty] of [...source.yields, ...(source.bonus || [])]) if (!items[item] || !Number.isFinite(qty) || qty <= 0) errors.push(`source ${id}: invalid yield ${item} x${qty}`);
+    for (const rule of source.placement || []) {
+      if (!validTerrains.has(rule.terrain) || !Number.isFinite(rule.chance) || rule.chance <= 0 || rule.chance > 1) errors.push(`source ${id}: invalid placement rule ${rule.terrain}/${rule.chance}`);
+      const previous = placementOwners.get(rule.terrain);
+      if (previous) errors.push(`source ${id}: placement conflicts with ${previous} on ${rule.terrain}`);
+      else placementOwners.set(rule.terrain, id);
+    }
   }
-  for (const [id, recipe] of Object.entries(RECIPES)) {
-    if (!ITEMS[recipe.out] || !Number.isInteger(recipe.qty) || recipe.qty <= 0 || !Number.isFinite(recipe.secs) || recipe.secs <= 0) errors.push(`recipe ${id}: invalid output/time`);
-    for (const [item, qty] of recipe.ins) if (!ITEMS[item] || !Number.isInteger(qty) || qty < 0) errors.push(`recipe ${id}: invalid input ${item} x${qty}`);
-    if (recipe.station && (!STRUCTS[recipe.station] || STRUCTS[recipe.station].station !== recipe.station)) errors.push(`recipe ${id}: missing station ${recipe.station}`);
+  for (const [id, recipe] of Object.entries(recipes)) {
+    if (!items[recipe.out] || !Number.isInteger(recipe.qty) || recipe.qty <= 0 || !Number.isFinite(recipe.secs) || recipe.secs <= 0) errors.push(`recipe ${id}: invalid output/time`);
+    for (const [item, qty] of recipe.ins) if (!items[item] || !Number.isInteger(qty) || qty <= 0) errors.push(`recipe ${id}: invalid input ${item} x${qty}`);
+    if (recipe.station && (!structures[recipe.station] || structures[recipe.station].station !== recipe.station)) errors.push(`recipe ${id}: missing station ${recipe.station}`);
   }
   if (errors.length) throw new Error(`Invalid gameplay catalog:\n${errors.join('\n')}`);
   return true;
