@@ -214,9 +214,12 @@ class SporeNebulaR:
         # Decouple cap depth from stipe height. Long stipes previously made
         # narrow pointed cones; a broad asymmetric dome and shallow gills read
         # as fungal fruiting bodies at actual overworld scale.
-        var depth := minf(height * 0.50, width * 0.85)
+        # Seeded cap profiles vary between convex and low, uneven forms;
+        # their stipes remain attached to their actual local colony bed.
+        var shape := AMath.hash2(floor(origin.x), floor(origin.y))
+        var depth := minf(height * 0.70, width * (0.95 + shape * 0.40))
         var cap := neck + Vector2(0, -depth * 0.12)
-        var skew := (AMath.hash2(floor(origin.x), floor(origin.y)) - 0.5) * width * 0.35
+        var skew := (shape - 0.5) * width * 0.45
         ADraw.poly_fill_solid(fb, [cap + Vector2(-width, 0), cap + Vector2(-width * 0.90, -depth * 0.40),
             cap + Vector2(-width * 0.55 + skew, -depth * 0.86), cap + Vector2(-width * 0.12 + skew, -depth),
             cap + Vector2(width * 0.35 + skew, -depth * 0.84), cap + Vector2(width * 0.78, -depth * 0.52),
@@ -224,7 +227,10 @@ class SporeNebulaR:
         var gill := minf(height * 0.18, width * 0.24)
         ADraw.poly_fill_solid(fb, [cap + Vector2(-width, 0), cap + Vector2(-width * 0.72, gill * 0.7),
             cap + Vector2(0, gill), cap + Vector2(width * 0.72, gill * 0.7), cap + Vector2(width, 0)], Vector3(0.82, 0.67, 0.40), true, opacity * 0.94)
-        ADraw.line(fb, cap.x - width, cap.y, cap.x + width, cap.y, Vector3(1.1, 0.72, 0.64), opacity)
+        # Broken, curved lip instead of a single bright horizontal slat.
+        ADraw.line(fb, cap.x - width, cap.y, cap.x - width * 0.34, cap.y + gill * 0.43, Vector3(0.72, 0.48, 0.43), opacity * 0.8)
+        ADraw.line(fb, cap.x - width * 0.18, cap.y + gill * 0.65, cap.x + width * 0.42, cap.y + gill * 0.45, Vector3(0.82, 0.58, 0.48), opacity * 0.8)
+        ADraw.line(fb, cap.x + width * 0.48, cap.y + gill * 0.42, cap.x + width, cap.y, Vector3(0.72, 0.48, 0.43), opacity * 0.8)
         for side in [-0.7, -0.35, 0.0, 0.35, 0.7]:
             var offset := float(side)
             ADraw.line(fb, cap.x + offset * width * 0.12, cap.y + gill * 0.1,
@@ -494,19 +500,41 @@ class ChronoshardR:
             # ember, hot core and ragged attached wake are all clipped to the
             # glass, so its position changes are visible even at native size.
             var head := center + Vector2(lerpf(-13.0, 8.0, u), -2.0 - 2.5 * sin(u * PI))
-            for mote in range(5):
-                var tail := head + Vector2(-6.5 - float(mote) * 2.6, sin(float(mote) * 2.1 + tau * 4.0) * (0.8 + float(mote) * 0.35))
-                _mini_disc(fb, tail, maxf(1.3, 3.4 - float(mote) * 0.38), hex, Vector3(1.4, 0.31, 0.08), intensity * (0.85 - float(mote) * 0.12))
+            # A continuous covered plume grows as the event accelerates.
+            # It joins the round head, with an uneven tongue rather than a
+            # disconnected row of dots or a triangular pointer icon. Each
+            # pixel is clipped to the actual crystal face, including dark red.
+            var wake_length := 4.0 + 18.0 * u
+            var wake := PackedVector2Array([
+                head + Vector2(-2.0, -5.2),
+                head + Vector2(-wake_length * 0.55, -3.6 - u * 1.8),
+                head + Vector2(-wake_length, -2.0),
+                head + Vector2(-wake_length * 0.70, 0.4),
+                head + Vector2(-wake_length * 0.85, 3.0),
+                head + Vector2(-wake_length * 0.42, 2.3 + u * 2.0),
+                head + Vector2(-2.0, 4.8)])
+            for yy in range(floori(head.y - 7.0), ceili(head.y + 7.0) + 1):
+                for xx in range(floori(head.x - wake_length), ceili(head.x) + 1):
+                    var sample := Vector2(float(xx) + 0.5, float(yy) + 0.5)
+                    if Geometry2D.is_point_in_polygon(sample, hex) and Geometry2D.is_point_in_polygon(sample, wake):
+                        fb.blend(xx, yy, 0.75, 0.17, 0.045, clampf(intensity * 0.88, 0.0, 1.0))
+            for mote in range(4):
+                var tail := head + Vector2(-5.0 - float(mote) * wake_length / 5.0, sin(float(mote) * 2.1 + tau * 4.0) * 1.4)
+                _mini_disc(fb, tail, maxf(1.2, 2.4 - float(mote) * 0.3), hex, Vector3(1.4, 0.31, 0.08), intensity * 0.65)
             _mini_ember_body(fb, head, 7.8, hex, intensity)
             _mini_disc(fb, head + Vector2(-0.6, -0.8), 4.4, hex, Vector3(1.0, 0.38, 0.08), intensity)
             _mini_disc(fb, head + Vector2(-1.2, -1.4), 2.0, hex, Vector3(1.3, 0.9, 0.35), intensity)
         else:
             var impact := center + Vector2(8, -2)
-            for q in range(8):
-                var angle := float(q) * TAU / 8.0
-                for step in range(3, 11):
-                    _mini_disc(fb, impact + Vector2(cos(angle), sin(angle)) * float(step), 0.8, hex, color, intensity)
-            _mini_disc(fb, impact, 3.0, hex, Vector3(2.0, 1.6, 0.8), intensity)
+            # Last held moment is a materially different expanding burst,
+            # not another identical orange projectile dot.
+            for q in range(7):
+                var angle := float(q) * TAU / 7.0
+                var direction := Vector2(cos(angle), sin(angle))
+                _mini_ember_body(fb, impact + direction * 8.0, 3.4, hex, intensity * 0.8)
+                _mini_disc(fb, impact + direction * 7.0, 1.7, hex, color, intensity * 0.8)
+            _mini_ember_body(fb, impact, 6.0, hex, intensity)
+            _mini_disc(fb, impact, 4.0, hex, Vector3(2.0, 1.6, 0.8), intensity)
 
     func _central_tau(t: float) -> float:
         # B's physical attack advances, freezes, then resumes into the shared

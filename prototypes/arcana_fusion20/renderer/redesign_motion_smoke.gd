@@ -74,6 +74,24 @@ func _initialize() -> void:
                 push_error("REDESIGN_SMOKE_FAIL #18 stored event or material invisible")
                 quit(1)
                 return
+            # Distinct early projectile and later burst must write different
+            # covered material; this checks the implementation, not legibility.
+            clip_frame.clear()
+            var wide_clip := PackedVector2Array([Vector2(170, 70), Vector2(230, 70), Vector2(230, 130), Vector2(170, 130)])
+            spell._mini_attack(clip_frame, wide_clip, Vector2(200, 100), 0.15, Vector3(1.0, 0.7, 0.4), 1.0)
+            var early_coverage := clip_frame.world_coverage.duplicate()
+            clip_frame.clear()
+            spell._mini_attack(clip_frame, wide_clip, Vector2(200, 100), 1.15, Vector3(1.0, 0.7, 0.4), 1.0)
+            var material_difference := 0
+            for y in range(70, 130):
+                for x in range(170, 230):
+                    var p := y * AFramebuffer.W + x
+                    if absf(early_coverage[p] - clip_frame.world_coverage[p]) > 0.01:
+                        material_difference += 1
+            if material_difference < 20:
+                push_error("REDESIGN_SMOKE_FAIL #18 projectile and burst material indistinguishable")
+                quit(1)
+                return
             # Verify capture order represents progressively later moments and
             # reverse release actually converges together; not art approval.
             var previous_tau := -1.0
