@@ -58,8 +58,8 @@ class RootwakeR:
     func authored_events() -> Array:
         var ev: Array = [{"t": 0.8, "kind": "roots_germinate", "pos_local": CASTER, "emitted": false}]
         for i in range(_tips.size()):
-            ev.append({"t": 3.0 + float(i) * 0.4, "kind": "root_tip_impact", "pos_local": _tips[i], "emitted": false})
-        ev.append({"t": 5.4, "kind": "thorn_snap_impact", "pos_local": C, "emitted": false})
+            ev.append({"t": 3.0 + float(i) * 0.4, "kind": "root_tip_grown", "pos_local": _tips[i], "emitted": false})
+        ev.append({"t": 5.4, "kind": "thorn_snap_visual", "pos_local": C, "emitted": false})
         ev.append({"t": 7.2, "kind": "roots_retract", "pos_local": CASTER, "emitted": false})
         return ev
     func _visible_growth(growth: float, t: float) -> float:

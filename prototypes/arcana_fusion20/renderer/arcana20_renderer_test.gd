@@ -67,7 +67,7 @@ func _init() -> void:
                 node._process(1.0 / 60.0)
             if not renderer.is_active(cid):
                 break
-        var want_contacts: int = int({1: 2, 4: 1, 6: 4, 9: 11, 11: 7, 12: 4, 13: 4, 14: 6}.get(_skill_num(cid), 1))
+        var want_contacts: int = int({1: 2, 4: 1, 6: 4, 9: 11, 11: 7, 12: 4, 13: 0, 14: 6}.get(_skill_num(cid), 1))
         if id == 3:
             want_contacts = 8 # authored per-meteor impacts (fusion decisions #03)
         if int(_contacts[cid]) != want_contacts:
@@ -287,8 +287,12 @@ func _init() -> void:
         var root_pts: Array = rootwake._roots[i][0].pts
         var tip: Vector2 = root_pts[root_pts.size() - 1]
         var cue: Dictionary = root_events[i + 1]
-        if tip.distance_to(cue.pos_local) > 0.001 or tip.distance_to(ARedesignSpells2.C) > 20.0:
-            _fail("root tip contact %d is not on its target-side branch" % i)
+        # The support roots deliberately end to either side of the target;
+        # only the principal thorn approaches it. Check exact cue attachment
+        # and a bounded fan, not the obsolete convergent-cage radius.
+        var target_distance := tip.distance_to(ARedesignSpells2.C)
+        if tip.distance_to(cue.pos_local) > 0.001 or target_distance > 50.0 or (i == 1 and target_distance > 20.0) or String(cue.kind) != "root_tip_grown":
+            _fail("root tip opening %d is disconnected or outside the bounded fan" % i)
         var root_branch: Dictionary = rootwake._roots[i][1]
         var parent_index := roundi(float(root_branch.attach) * float(root_pts.size() - 1))
         var raised_main: Array = rootwake._lifted_points(rootwake._roots[i][0], 15.0)
