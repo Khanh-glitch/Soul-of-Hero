@@ -100,15 +100,16 @@ class RootwakeR:
                     func(u: float, edge: float, br: Dictionary) -> Variant:
                         if edge > 0.95:
                             return Vector3(0.14, 0.10, 0.045)
-                        var grain := 0.84 + 0.16 * AMath.hash2(floor(u * 35.0), float(br.seed))
-                        var bark := 0.62 + 0.38 * (1.0 - edge)
-                        return Vector3(0.42, 0.28, 0.12) * bark * grain,
+                        var grain := 0.68 + 0.32 * AMath.hash2(floor(u * 50.0), float(br.seed))
+                        var bark := 0.79 + 0.21 * (1.0 - edge)
+                        return Vector3(0.39, 0.23, 0.11) * bark * grain,
                     func(u: float, br: Dictionary) -> float:
                         return maxf(0.8, float(br.w) * (0.65 + thickening * 1.45) * (1.0 - u * 0.65)), true)
                 ACommon.draw_branch(fb, bb,
-                    func(u: float, edge: float, _br: Dictionary) -> Variant:
-                        if edge > 0.8: return null
-                        return Vector3(0.53, 0.38, 0.17) * (1.0 - edge * 0.4),
+                    func(u: float, edge: float, br: Dictionary) -> Variant:
+                        # Interrupted fissures, not a continuous tubular gloss.
+                        if edge > 0.72 or AMath.hash2(floor(u * 23.0), float(br.seed) + 19.0) < 0.43: return null
+                        return Vector3(0.43, 0.29, 0.14) * (1.0 - edge * 0.24),
                     func(u: float, br: Dictionary) -> float:
                         return maxf(0.5, float(br.w) * 0.35 * (1.0 - u * 0.6)))
         if tension > 0.0:
@@ -132,7 +133,7 @@ class RootwakeR:
                 ADraw.ribbon(fb, points,
                     func(u: float, _j: int) -> float: return (5.6 - u * 3.7) * tension * attached,
                     func(_u: float, _j: int, edge: float) -> Variant:
-                        return Vector3(0.16, 0.24, 0.07) if edge > 0.65 else Vector3(0.35, 0.42, 0.13), true, retract)
+                        return Vector3(0.14, 0.12, 0.045) if edge > 0.65 else Vector3(0.30, 0.25, 0.10), true, retract)
                 # A single prominent wedge is grown out of the same arch
                 # and aims toward the target with the visible tension. This
                 # remains visual-only: no asserted contact or on-body effect.
@@ -140,11 +141,11 @@ class RootwakeR:
                 var direction: Vector2 = (_tips[i] as Vector2 - tp).normalized()
                 var thorn_side := Vector2(-direction.y, direction.x)
                 var thorn_base: Vector2 = points[8]
-                var point: Vector2 = thorn_base.lerp(_tips[i] + direction * 15.0, attack)
-                var thorn_foot := thorn_side * (6.5 * attack)
+                var point: Vector2 = thorn_base.lerp(_tips[i] + direction * 30.0, attack)
+                var thorn_foot := thorn_side * (8.0 * attack)
                 if attack > 0.0:
                     ADraw.poly_fill(fb, [thorn_base - thorn_foot, point, thorn_base + thorn_foot],
-                        func(_x: int, _y: int) -> Variant: return Vector3(0.33, 0.42, 0.12), true, attack)
+                        func(_x: int, _y: int) -> Variant: return Vector3(0.44, 0.39, 0.17), true, attack)
                     ADraw.streak(fb, thorn_base.x, thorn_base.y, point.x, point.y, 0.9, 0.35, AMath.R("verdant", 0.9), attack * 0.6)
                 # Two actual barbs have their bases on the same arch.
                 for barb_value in [0.36, 0.68]:

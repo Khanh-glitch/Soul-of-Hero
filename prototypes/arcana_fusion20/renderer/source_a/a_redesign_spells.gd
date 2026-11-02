@@ -144,7 +144,7 @@ class AshenGuillotineR:
                 # Staggered broken stone chips open away from a narrow,
                 # connected fault. Each chip leaves actual terrain between
                 # neighbours; a continuous filled strip reads as a plank.
-                var gap := (3.2 + 3.5 * AMath.hash2(float(section), 73.0)) * open
+                var gap := (5.0 + 4.5 * AMath.hash2(float(section), 73.0)) * open
                 var fault_mid: Vector2 = _fault_point((u0 + u1) * 0.5)
                 for segment in [[a, fault_mid], [fault_mid, b]]:
                     var q0: Vector2 = segment[0]
@@ -157,8 +157,8 @@ class AshenGuillotineR:
                         var r := AMath.hash2(seed, 24.0)
                         var center: Vector2 = a.lerp(b, 0.19 + float(chip) * 0.46 + r * 0.08) + section_normal * side * gap * (1.3 + r)
                         var axis: Vector2 = (b - a).normalized()
-                        var along := (6.0 + r * 6.0) * open
-                        var across := (4.0 + AMath.hash2(seed, 42.0) * 5.0) * open
+                        var along := (8.0 + r * 6.5) * open
+                        var across := (5.5 + AMath.hash2(seed, 42.0) * 6.0) * open
                         var stone: Array = [center - axis * along * 0.8 - section_normal * across * 0.35,
                             center - axis * along * 0.35 + section_normal * across,
                             center + axis * along * 0.6 + section_normal * across * 0.75,
@@ -167,10 +167,12 @@ class AshenGuillotineR:
                         ADraw.poly_fill(fb, stone,
                             func(x: int, y: int) -> Variant:
                                 var grain := AMath.hash2(floor(float(x) * 0.37), floor(float(y) * 0.33))
-                                var value := 0.34 + 0.10 * grain + 0.07 * r
-                                return Vector3(value, value * 0.94, value * 0.83), true, open * 0.85)
+                                # Pale chipped top with granular mineral texture,
+                                # separate from the dark incision underneath.
+                                var value := 0.46 + 0.16 * grain + 0.08 * r
+                                return Vector3(value * 0.96, value * 0.94, value * 0.87), true, open * 0.94)
                         ADraw.streak(fb, (stone[1] as Vector2).x, (stone[1] as Vector2).y, (stone[2] as Vector2).x, (stone[2] as Vector2).y,
-                            0.55, 0.4, AMath.R("ash", 0.55), open * 0.45)
+                            1.05, 0.6, AMath.R("ash", 0.9), open * 0.65)
                 var bs: Array = _cracks[section]
                 ACommon.scar_decal(fb, bs, open * 0.9, t)
             # Fragment trajectories begin on the actual cut and separate
