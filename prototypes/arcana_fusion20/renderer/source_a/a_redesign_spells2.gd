@@ -390,7 +390,7 @@ class ChronoshardR:
             var p := a.lerp(b, u) + Vector2(0, -sin(u * PI) * 24.0)
             var guide := center + (p - middle) * scale
             if q % 2 == 0:
-                _mini_disc(fb, guide, 0.8, hex, color, intensity * 0.68)
+                _mini_disc(fb, guide, 0.8, hex, color, intensity * 0.35)
         if tau <= 1.0:
             # Original B arc and nine trailing discs at the stored instant.
             for m in range(9, -1, -1):
@@ -401,8 +401,8 @@ class ChronoshardR:
                     color, intensity * (1.0 - float(m) / 10.0) * 0.7)
             var head := a.lerp(b, tau) + Vector2(0, -sin(tau * PI) * 24.0)
             var stored_head := center + (head - middle) * scale
-            _mini_disc(fb, stored_head, 2.0, hex, Vector3(2.0, 1.6, 0.8), intensity)
-            _mini_star(fb, stored_head, tau, scale, hex, intensity)
+            _mini_disc(fb, stored_head, 3.0, hex, Vector3(2.0, 1.6, 0.8), intensity)
+            _mini_star(fb, stored_head, tau, 0.68, hex, intensity)
         else:
             var e := tau - 1.0
             var target := center + (b - middle) * scale
@@ -500,15 +500,27 @@ class ChronoshardR:
             # covered face, violet faceted frame. This is not the complete B
             # clipped attack contents or a claim of B raster/source parity.
             var impact_fold := 1.0 - 0.8 * AMath.seg(t, 6.2, 6.8)
-            var sz: float = 28.0 * form * (1.0 - rel * 0.5) * resolve * impact_fold
+            var sz: float = (26.0 + float(c.size) * 0.45) * form * (1.0 - rel * 0.5) * resolve * impact_fold
             if sz <= 0.5:
                 continue
-            var rotation := t * (0.4 + float(i) * 0.15) * (-1.0 if i % 2 == 0 else 1.0)
+            # B's six-sided glass frame is reinterpreted as an elongated,
+            # beveled crystal rather than a revolving flat hexagonal tile.
+            # Keep the silhouette nearly stationary while time is held.
+            var tilt := -0.3 + float(i) * 0.12 + 0.08 * sin(t * 0.8 + float(i))
+            var outline := [Vector2(-0.10, -1.25), Vector2(0.68, -0.65), Vector2(0.80, 0.48), Vector2(0.08, 1.16), Vector2(-0.72, 0.62), Vector2(-0.82, -0.50)]
             var hex: Array = []
+            for point in outline:
+                hex.append(cur + (point as Vector2).rotated(tilt) * sz)
+            ADraw.poly_fill_solid(fb, hex, Vector3(0.045, 0.055, 0.14), true, 0.70 * resolve)
+            # Shallow edge facets imply thickness but leave the retained
+            # event unobstructed in the transparent middle of the crystal.
             for q in range(6):
-                var angle := rotation + float(q) / 6.0 * TAU
-                hex.append(cur + Vector2(cos(angle) * sz, sin(angle) * sz * 0.85))
-            ADraw.poly_fill_solid(fb, hex, Vector3(0.03, 0.02, 0.08), true, 0.75 * resolve)
+                var a: Vector2 = hex[q]
+                var b: Vector2 = hex[(q + 1) % 6]
+                var inner_a := a.lerp(cur, 0.20)
+                var inner_b := b.lerp(cur, 0.20)
+                var facet := Vector3(0.28, 0.35, 0.65) if q % 2 == 0 else Vector3(0.12, 0.18, 0.39)
+                ADraw.poly_fill_solid(fb, [a, b, inner_b, inner_a], facet, true, 0.65 * resolve)
             for q in range(6):
                 var a: Vector2 = hex[q]
                 var b: Vector2 = hex[(q + 1) % 6]
