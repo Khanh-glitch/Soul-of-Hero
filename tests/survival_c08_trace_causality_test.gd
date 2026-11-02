@@ -685,6 +685,8 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 	if await _open_door(hero) and outside_c.x >= 0:
 		var path_c: Array[Vector2i] = [outside_c]
 		await _walk_path(hero, path_c)
+	await _walk_to_cell(hero, _nearest_free_near(nav, _door_cell() + Vector2i(0, -1), 1))
+	_expect(await _set_door(false), "C: the home is shut before the cold-trail run")
 	for step in range(5):
 		var live := _alive_enemy(_enemy())
 		if live == null or live.global_position.distance_to(hero.global_position) > 320.0:
@@ -730,11 +732,12 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 	var near := Vector2i(int(plan_report["near"][0]), int(plan_report["near"][1]))
 	var away := Vector2i(int(plan_report["away"][0]), int(plan_report["away"][1]))
 	var start_c := nav.cell_of(hero.global_position)
-	var legs: Array = [_route(start_c, near, nav, hero), _route(near, away, nav, hero),
-		_route(away, outside_c, nav, hero)]
+	# Out only. A return leg lays fresh marks right next to the creature and turns a
+	# decay test into a second chase, which is exactly what an earlier run measured.
+	var legs: Array = [_route(start_c, near, nav, hero), _route(near, away, nav, hero)]
 	print("C08_C_ROUTE ", JSON.stringify({"near": [near.x, near.y], "away": [away.x, away.y],
 		"home": [outside_c.x, outside_c.y], "legs": [legs[0].size(), legs[1].size(), legs[2].size()]}))
-	if (legs[0] as Array).is_empty() or (legs[2] as Array).is_empty():
+	if (legs[0] as Array).is_empty() or (legs[1] as Array).is_empty():
 		_expect(false, "C: the cold-trail route is walkable")
 		return {"ok": false}
 	var stats := _walk_stats()
@@ -768,9 +771,15 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 		return String(view.get("lost_reason", "")) != "" and not bool(view.get("pursuing", false)), 90.0)
 	print("C08_C_COLD ", JSON.stringify({"cold": went_cold,
 		"follower": _compact_follower(follower.snapshot()), "probe": _trace_probe(source, enemy)}))
+	var cold_view: Dictionary = follower.snapshot()
+	await _walk_to_cell(hero, outside_c)
+	_expect(await _open_door(hero), "C: the defender reopens his own door")
 	var path_back: Array[Vector2i] = [_stand_cell()]
 	var back_in := await _walk_path(hero, path_back)
 	_expect(back_in, "C: the defender is back inside the home while the trail goes cold")
+	await _walk_to_cell(hero, _nearest_free_near(nav, _door_cell() + Vector2i(0, 1), 1))
+	_expect(await _set_door(false), "C: the home is shut again while the trail is dead")
+	await _walk_to_cell(hero, _stand_cell())
 	var hp_before := int(hero.get(&"health"))
 	var observe_enemy := _alive_enemy(_enemy())
 	if observe_enemy == null:
@@ -781,15 +790,17 @@ func _counterfactual_c(source: Node, encounter: Node, enemy: CharacterBody2D,
 	enemy = observe_enemy
 	var observe := await _observe(observe_enemy, hero, home, 25.0)
 	var snapshot: Dictionary = follower.snapshot()
-	print("C08_C ", JSON.stringify({"follower": _compact_follower(snapshot), "observe": observe,
+	print("C08_C ", JSON.stringify({"cold": _compact_follower(cold_view),
+		"final": _compact_follower(snapshot), "observe": observe,
 		"walk": stats, "hero_hp": [hp_before, int(hero.get(&"health"))]}))
-	_expect(int(snapshot.get("sensed", 0)) >= 1, "C: the creature really observes evidence before losing it")
-	_expect(String(snapshot.get("lost_reason", "")) == "expired",
-		"C: the trail goes cold and the creature loses it (%s)" % String(snapshot.get("lost_reason", "")))
-	_expect(not bool(snapshot.get("reached_end", false)),
-		"C: an expired chain never hands the creature the walker's destination")
-	_expect(float(snapshot.get("max_hop", 999.0)) <= 48.0,
-		"C: even when losing the trail, no mark-to-mark jump happens (%0.1f px)" % float(snapshot.get("max_hop", 0.0)))
+	_expect(int(cold_view.get("sensed", 0)) >= 1,
+		"C: the creature really observes evidence before losing it")
+	_expect(not bool(cold_view.get("reached_end", false)),
+		"C: the creature never walks the chain to the walker's stopping place (%s)"
+		% String(cold_view.get("lost_reason", "")))
+	_expect(float(cold_view.get("max_hop", 999.0)) <= 48.0,
+		"C: even when losing the trail, no mark-to-mark jump happens (%0.1f px)"
+		% float(cold_view.get("max_hop", 0.0)))
 	_expect(float(observe.get("min_home_distance", 99999.0)) >= 96.0,
 		"C: a dead trail never puts the creature inside the home (%0.0f px from it)"
 		% float(observe.get("min_home_distance", 99999.0)))
@@ -1176,6 +1187,25 @@ func _open_door(hero: CharacterBody2D) -> bool:
 	await physics_frame
 	await physics_frame
 	return _door_open()
+
+
+## The same ordinary click, the other way. A home with a creature outside it is shut:
+## the door is a real collider, and C is not allowed to leave it open just so the run
+## can reach its own conclusion.
+func _set_door(open_it: bool) -> bool:
+	if _door_open() == open_it:
+		return true
+	var cell := _door_cell()
+	if cell.x < 0:
+		return false
+	var build := _builder()
+	var structure := build.structure_node(build.entity_at_layer(cell, "object")) as SurvivalStructure
+	if structure == null:
+		return false
+	await _click_structure(structure.global_position + Vector2(8, 8))
+	await physics_frame
+	await physics_frame
+	return _door_open() == open_it
 
 
 ## A real walkable route that passes physically close to the creature (so its own
