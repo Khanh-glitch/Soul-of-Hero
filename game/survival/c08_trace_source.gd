@@ -169,11 +169,17 @@ func _physics_process(delta: float) -> void:
 		surface = surface_at(_player.global_position)
 		if surface.is_empty():
 			reason = "surface_unavailable"
-		# A streamed-out or non-walkable cell is not trustworthy movement.
-		elif _navigation != null and _navigation.has_method(&"is_free"):
+		# A streamed-out cell is not trustworthy movement. A cell the traversability
+		# grid merely dislikes is not the same thing: the player's own body is the
+		# authority on where the player has walked, and this world marks cells that
+		# are physically walkable as unfree for pathfinding reasons. Refusing those
+		# chopped a genuine trail into unconnected fragments - 87 refused samples
+		# across the final 72 cells of one walk - and a fragment is exactly what the
+		# follower must never bridge.
+		elif _navigation != null and _navigation.has_method(&"in_bounds"):
 			var cell: Vector2i = _navigation.call(&"cell_of", _player.global_position)
-			if not bool(_navigation.call(&"in_bounds", cell)) or not bool(_navigation.call(&"is_free", cell)):
-				reason = "cell_not_walkable"
+			if not bool(_navigation.call(&"in_bounds", cell)):
+				reason = "cell_out_of_bounds"
 	eligible = reason.is_empty()
 	last_reason = reason
 	_last_surface = surface
