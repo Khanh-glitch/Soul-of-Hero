@@ -1,7 +1,7 @@
 {
  "schema": "soh.veyra.spatial_validation.v2",
  "provenance": {
-  "tested_sha": "6c3b6ce47a03d7a5ff6f8694efceac335823082f",
+  "tested_sha": "e49bb39ce26eb214cba0f89a83492d6dd46b9251",
   "gold_sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
   "compiler_sha256": "82607fdf919c243934e19a0590108fc6c879f1204261252fa7c0e1fcab4468d3",
   "compiler_files": [
@@ -449,7 +449,7 @@
   }
  ],
  "bridge_bypass_class": {},
- "code_sha": "6c3b6ce47a03d7a5ff6f8694efceac335823082f",
+ "code_sha": "e49bb39ce26eb214cba0f89a83492d6dd46b9251",
  "world_png_sha256": "77959cadf89b3b44d7e270d4d627a83cd5f2572b9087be9d7c5d83b19fa6bab0",
  "poi_access": {
   "po_academy": {
