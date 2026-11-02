@@ -1,0 +1,106 @@
+[
+  {
+    "active_warp_pixels": 15380,
+    "formula": "0 legacy / 1 off / 2 amplitude/(1+abs(amplitude)) / 0 restore",
+    "lighting": "dimmed",
+    "source_fields_unchanged": true,
+    "source_light_max": 1.0,
+    "source_to_world": "[X: (0.798817, 0.33284), Y: (-0.33284, 0.798817), O: (843.0237, 3309.343)]",
+    "tick": 489,
+    "warp_alpha_max": 21.0130786895752,
+    "warp_alpha_min": 4.82986024508136e-07,
+    "warp_fade": 1.0,
+    "world": "real frozen overworld; unchanged actors and camera",
+    "crop": [
+      500,
+      155,
+      640,
+      440
+    ],
+    "changed_pixels_on_vs_off": 30993,
+    "world_base_mean_luma_in_changed_pixels": 61.05659591520666,
+    "states": {
+      "source_formula": {
+        "luma_min": 8.7606,
+        "luma_max": 207.3662,
+        "luma_mean": 114.15745376697964,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 7982548
+      },
+      "shimmer_off": {
+        "luma_min": 35.061,
+        "luma_max": 204.22539999999998,
+        "luma_mean": 117.71504742361178,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 8152098
+      },
+      "bounded": {
+        "luma_min": 32.1408,
+        "luma_max": 204.79539999999997,
+        "luma_mean": 116.76347879198528,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 8072380
+      },
+      "source_restored": {
+        "luma_min": 8.7606,
+        "luma_max": 207.3662,
+        "luma_mean": 114.15745376697964,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 7982548
+      }
+    },
+    "scope": "native 1x crop of matched, frozen real overworld; no GPU, HDR or art approval"
+  },
+  {
+    "active_warp_pixels": 15380,
+    "formula": "0 legacy / 1 off / 2 amplitude/(1+abs(amplitude)) / 0 restore",
+    "lighting": "dimmed",
+    "source_fields_unchanged": true,
+    "source_light_max": 1.0,
+    "source_to_world": "[X: (0.798817, 0.33284), Y: (-0.33284, 0.798817), O: (843.0237, 3309.343)]",
+    "tick": 516,
+    "warp_alpha_max": 24.45578956604,
+    "warp_alpha_min": 1.97034819393593e-06,
+    "warp_fade": 1.0,
+    "world": "real frozen overworld; unchanged actors and camera",
+    "crop": [
+      499,
+      155,
+      640,
+      440
+    ],
+    "changed_pixels_on_vs_off": 31913,
+    "world_base_mean_luma_in_changed_pixels": 61.21876458496538,
+    "states": {
+      "source_formula": {
+        "luma_min": 0.0,
+        "luma_max": 211.7348,
+        "luma_mean": 114.48076026697585,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 8762560
+      },
+      "shimmer_off": {
+        "luma_min": 30.299599999999998,
+        "luma_max": 204.921,
+        "luma_mean": 119.62020297057624,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 8854125
+      },
+      "bounded": {
+        "luma_min": 31.212999999999997,
+        "luma_max": 206.5972,
+        "luma_mean": 118.46075173753643,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 8758975
+      },
+      "source_restored": {
+        "luma_min": 0.0,
+        "luma_max": 211.7348,
+        "luma_mean": 114.48076026697585,
+        "clipped_white_pixels": 0,
+        "diff_from_world_sum_abs_rgb": 8762560
+      }
+    },
+    "scope": "native 1x crop of matched, frozen real overworld; no GPU, HDR or art approval"
+  }
+]
