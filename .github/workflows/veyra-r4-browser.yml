@@ -1,22 +1,58 @@
 name: veyra-r4-browser
 on:
   push:
-    paths: ['world/**', 'tools/world/**', '.github/workflows/veyra-r3-browser.yml']
+    paths: ['world/**', 'tools/world/**', 'docs/map_tower/**', '.github/workflows/veyra-r4-browser.yml']
   workflow_dispatch:
+
+permissions:
+  contents: write          # evidence is committed back to the tested branch
+
+env:
+  PIP_DISABLE_PIP_VERSION_CHECK: '1'
+
 jobs:
   spatial:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
       - uses: actions/setup-python@v5
         with: { python-version: '3.11' }
-      - run: pip install pillow numpy
+      - run: pip install pillow numpy scipy
       - name: Rebuild world from GOLD
         run: |
+          set -euo pipefail
           python tools/world/art_registry.py
           python tools/world/veyra_compile.py
       - name: Spatial + behavioural gates (fails the job when a mandatory gate is red)
-        run: python tools/world/validate.py
+        env:
+          VEYRA_REQUIRE_SHA: '1'
+        run: |
+          set -euo pipefail
+          python tools/world/validate.py
+      - name: Evidence provenance (tested SHA, GOLD SHA, compiler + world hashes)
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib, json, os, pathlib, subprocess, sys
+          v = json.load(open('docs/map_tower/SPATIAL_VALIDATION.json'))
+          p = v.get('provenance', {})
+          head = subprocess.run(['git', 'rev-parse', 'HEAD'], capture_output=True, text=True).stdout.strip()
+          want = os.environ.get('GITHUB_SHA', '')
+          print(json.dumps(p, indent=1))
+          print('validation_sha', p.get('tested_sha'), 'checkout', head, 'event', want)
+          if want and not head.startswith(want[:12]) and not want.startswith(head[:12]):
+              sys.exit('evidence is not from the tested commit')
+          ok = v.get('all_passed') is True
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as fh:
+              fh.write('### Veyra spatial gates\n')
+              fh.write('- tested SHA: `%s`\n- GOLD sha256: `%s`\n- compiler sha256: `%s`\n'
+                       '- world.png sha256: `%s`\n- collision sha256: `%s`\n- %d/%d mandatory checks passed\n'
+                       % (p.get('tested_sha'), p.get('gold_sha256'), p.get('compiler_sha256'),
+                          p.get('world_png_sha256'), p.get('collision_sha256'),
+                          v.get('passed', 0), (v.get('passed', 0) + v.get('failed', 0))))
+          sys.exit(0 if ok else 1)
+          PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -24,6 +60,8 @@ jobs:
           path: |
             docs/map_tower/SPATIAL_VALIDATION.json
             out/world_meta.json
+            out/network.json
+            out/world.png
 
   browser-capture:
     needs: spatial
@@ -35,32 +73,67 @@ jobs:
         with: { node-version: '20' }
       - uses: actions/setup-python@v5
         with: { python-version: '3.11' }
-      - run: pip install pillow numpy
+      - run: pip install pillow numpy scipy
       - name: Rebuild world from GOLD (capture only; the spatial job owns the gate)
         run: |
+          set -euo pipefail
           python tools/world/art_registry.py
           python tools/world/veyra_compile.py
       - name: Publish runtime assets
         run: |
+          set -euo pipefail
           cp out/world.png out/world_meta.json out/minimap.png world/assets/
-      - run: npm init -y >/dev/null 2>&1; npm i -D playwright@1.47.2
-      - run: npx playwright install --with-deps chromium
-      - name: Serve
+      - run: |
+          set -euo pipefail
+          npm init -y >/dev/null 2>&1
+          npm i -D playwright@1.47.2
+          npx playwright install --with-deps chromium
+      - name: Serve the game
         run: |
+          set -euo pipefail
           python -m http.server 8011 --bind 127.0.0.1 --directory world &
-          sleep 2
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8011/web/ >/dev/null && break; sleep 1; done
       - name: Capture (real Chromium, real input, canvas pixel checks)
+        env:
+          VEYRA_OUT: docs/map_tower/evidence/browser
         run: |
+          set -euo pipefail
           mkdir -p docs/map_tower/evidence/browser
           node tools/world/browser_capture.mjs 2>&1 | tee docs/map_tower/evidence/browser/capture.log
-          echo "commit ${GITHUB_SHA} run ${GITHUB_RUN_ID}" >> docs/map_tower/evidence/browser/capture.log
+      - name: Assert the captures belong to this SHA
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os, sys
+          r = json.load(open('docs/map_tower/evidence/browser/BROWSER_CAPTURE.json'))
+          sha = os.environ.get('GITHUB_SHA', '')
+          print('capture commit', r.get('commit'), 'tested', sha, 'scenes', r['summary']['scenes'])
+          if sha and (r.get('commit') or '')[:12] != sha[:12]:
+              sys.exit('browser evidence was captured at a different commit')
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as fh:
+              fh.write('### Chromium evidence\n- commit: `%s`\n- world sha256: `%s`\n'
+                       '- scenes: %d, blank: %d, checks %d/%d\n'
+                       % (r.get('commit'), r.get('world_sha256'), r['summary']['scenes'],
+                          r['summary']['blank_scenes'], r['summary']['checks_passed'],
+                          r['summary']['checks_total']))
+          sys.exit(0 if r['summary']['blank_scenes'] == 0 and not r['summary']['errors'] else 1)
+          PY
+      - name: Commit evidence back to the tested branch
+        if: github.event_name == 'push'
+        run: |
+          set -euo pipefail
+          git config user.name "veyra-evidence"
+          git config user.email "actions@users.noreply.github.com"
+          git add -f docs/map_tower/evidence/browser
+          if git diff --cached --quiet; then echo "no evidence changes"; exit 0; fi
+          git commit -m "R6 evidence: real Chromium captures at ${GITHUB_SHA}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: veyra-browser-evidence
           path: |
             docs/map_tower/evidence/browser/**
-            docs/map_tower/SPATIAL_VALIDATION.json
             docs/map_tower/SPATIAL_VALIDATION.json
             out/world_meta.json
 
@@ -71,16 +144,18 @@ jobs:
       - uses: actions/checkout@v4
       - name: Download Godot 4.7 (recorded attempt, no binaries are vendored)
         run: |
-          set -x
-          curl -fsSL -o godot.zip \
-            https://github.com/godotengine/godot/releases/download/4.7-stable/Godot_v4.7-stable_linux.x86_64.zip \
-            | tee godot_download.log || echo "GODOT_DOWNLOAD_FAILED" >> "$GITHUB_STEP_SUMMARY"
-          unzip -o godot.zip || echo "GODOT_UNZIP_FAILED" >> "$GITHUB_STEP_SUMMARY"
-          chmod +x Godot_v4.7-stable_linux.x86_64 2>/dev/null || true
-      - name: Version
-        run: ./Godot_v4.7-stable_linux.x86_64 --version 2>&1 | tee godot_version.log || true
+          set -euo pipefail
+          mkdir -p .tools/godot
+          curl -fsSL -o /tmp/godot.zip \
+            https://github.com/godotengine/godot/releases/download/4.7-stable/Godot_v4.7-stable_linux.x86_64.zip
+          unzip -o /tmp/godot.zip -d .tools/godot >/dev/null
+          chmod +x .tools/godot/Godot_v4.7-stable_linux.x86_64
+          .tools/godot/Godot_v4.7-stable_linux.x86_64 --version | tee godot_version.log
       - name: Headless import of the project (native, no proxy)
-        run: timeout 420 ./Godot_v4.7-stable_linux.x86_64 --headless --path . --quit 2>&1 | tee godot_import.log || true
+        run: |
+          set -o pipefail
+          timeout 420 .tools/godot/Godot_v4.7-stable_linux.x86_64 --headless --path . --quit 2>&1 \
+            | tee godot_import.log || echo "import exit=$?" >> godot_import.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -88,43 +163,56 @@ jobs:
           path: |
             godot_version.log
             godot_import.log
-            godot_download.log
 
   godot-native-gate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
-      - name: Download Godot 4.7
+      - name: Download Godot 4.7 once, to a path both runs use
         run: |
-          set -euo pipefail
-          curl -fsSL -o godot.zip https://github.com/godotengine/godot/releases/download/4.7-stable/Godot_v4.7-stable_linux.x86_64.zip
-          unzip -o godot.zip >/dev/null
-          chmod +x Godot_v4.7-stable_linux.x86_64
-          ./Godot_v4.7-stable_linux.x86_64 --version | tee godot_version.log
-      - name: Baseline import (R3 commit 63f6001b) — pre-existing errors
+            set -euo pipefail
+            mkdir -p "$GITHUB_WORKSPACE/.tools/godot"
+            curl -fsSL -o /tmp/godot.zip https://github.com/godotengine/godot/releases/download/4.7-stable/Godot_v4.7-stable_linux.x86_64.zip
+            unzip -o /tmp/godot.zip -d "$GITHUB_WORKSPACE/.tools/godot" >/dev/null
+            GODOT_BIN="$GITHUB_WORKSPACE/.tools/godot/Godot_v4.7-stable_linux.x86_64"
+            chmod +x "$GODOT_BIN"
+            test -x "$GODOT_BIN"
+            echo "GODOT_BIN=$GODOT_BIN" >> "$GITHUB_ENV"
+            "$GODOT_BIN" --version | tee godot_version.log
+      - name: Baseline import (R3 commit 63f6001b) with the same binary and flags
         run: |
-          set -o pipefail
-          git worktree add /tmp/baseline 63f6001b
-          cd /tmp/baseline
-          timeout 600 /home/user/Soul-of-Hero/Godot_v4.7-stable_linux.x86_64 --headless --path . --quit 2>&1 \
-            | tee /tmp/baseline_import.log || echo "baseline exit=$?" >> /tmp/baseline_import.log
-          grep -E "ERROR|SCRIPT ERROR|Failed" /tmp/baseline_import.log | sort | uniq -c | sort -rn > /tmp/baseline_errors.txt || true
+            set -uo pipefail
+            git worktree add /tmp/baseline 63f6001b
+            cd /tmp/baseline
+            timeout 600 "$GODOT_BIN" --headless --path . --quit > /tmp/baseline_import.log 2>&1
+            echo "baseline_exit=$?" >> /tmp/baseline_import.log
+            grep -E "ERROR|SCRIPT ERROR|Failed" /tmp/baseline_import.log | LC_ALL=C sort > /tmp/baseline_errors.txt || true
+            echo "baseline error lines: $(wc -l < /tmp/baseline_errors.txt)"
       - name: Candidate import (this HEAD) — authoritative native gate
         run: |
-          set -euo pipefail
-          timeout 600 ./Godot_v4.7-stable_linux.x86_64 --headless --path . --quit > /tmp/candidate_import.log 2>&1 || {
-            echo "GODOT_IMPORT_FAILED"; tail -60 /tmp/candidate_import.log; exit 1; }
-          grep -E "ERROR|SCRIPT ERROR|Failed" /tmp/candidate_import.log | sort | uniq -c | sort -rn > /tmp/candidate_errors.txt || true
-          echo "no ERROR lines: $( [ -s /tmp/candidate_errors.txt ] && echo NO || echo YES )"
-      - name: Baseline vs candidate error diff
+            set -euo pipefail
+            set +e
+            timeout 600 "$GODOT_BIN" --headless --path . --quit > /tmp/candidate_import.log 2>&1
+            CAND_EXIT=$?
+            set -e
+            echo "candidate_exit=$CAND_EXIT" >> /tmp/candidate_import.log
+            grep -E "ERROR|SCRIPT ERROR|Failed" /tmp/candidate_import.log | LC_ALL=C sort > /tmp/candidate_errors.txt || true
+            echo "candidate exit=$CAND_EXIT error lines=$(wc -l < /tmp/candidate_errors.txt)"
+            # a launch is not gameplay acceptance; a crash is still a hard failure
+            if [ "$CAND_EXIT" -ne 0 ]; then echo "NATIVE_IMPORT_EXIT_$CAND_EXIT"; tail -80 /tmp/candidate_import.log; exit 1; fi
+      - name: Baseline vs candidate error diff (lexical, identical normalisation)
         run: |
-          set -o pipefail
-          echo "=== baseline (R3) ==="; cat /tmp/baseline_errors.txt || true
-          echo "=== candidate (HEAD) ==="; cat /tmp/candidate_errors.txt || true
-          comm -13 /tmp/baseline_errors.txt /tmp/candidate_errors.txt > /tmp/new_errors.txt || true
-          echo "=== introduced by R5 ==="; cat /tmp/new_errors.txt
-          if [ -s /tmp/new_errors.txt ]; then echo "REGRESSION: new native errors"; exit 1; fi
+            set -euo pipefail
+            echo "=== baseline (63f6001b) ==="; cat /tmp/baseline_errors.txt || true
+            echo "=== candidate (HEAD) ==="; cat /tmp/candidate_errors.txt || true
+            comm -13 /tmp/baseline_errors.txt /tmp/candidate_errors.txt > /tmp/new_errors.txt || true
+            comm -23 /tmp/baseline_errors.txt /tmp/candidate_errors.txt > /tmp/fixed_errors.txt || true
+            echo "=== introduced by this branch ==="; cat /tmp/new_errors.txt
+            echo "=== absent compared with baseline (fixed or moved) ==="; cat /tmp/fixed_errors.txt
+            if [ ! -s /tmp/baseline_errors.txt ] && ! grep -q "baseline_exit=0" /tmp/baseline_import.log; then
+              echo "BASELINE_RUN_INVALID: baseline produced no error lines and did not exit 0"; exit 1; fi
+            if [ -s /tmp/new_errors.txt ]; then echo "REGRESSION: new native errors"; exit 1; fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -135,4 +223,5 @@ jobs:
             /tmp/baseline_errors.txt
             /tmp/candidate_errors.txt
             /tmp/new_errors.txt
+            /tmp/fixed_errors.txt
             godot_version.log

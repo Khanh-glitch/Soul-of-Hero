@@ -1,0 +1,10 @@
+import { chromium as pw } from './node_modules/playwright/index.mjs';
+import sparticuz from './node_modules/@sparticuz/chromium/build/index.js';
+const exe = await sparticuz.executablePath();
+const b = await pw.launch({ executablePath: exe, args: [...sparticuz.args, '--no-sandbox'], headless: true });
+const p = await b.newPage({ viewport: { width: 640, height: 360 } });
+await p.goto('http://127.0.0.1:8011/web/', { waitUntil: 'load', timeout: 30000 });
+console.log('title', await p.title());
+await p.screenshot({ path: '/tmp/ptest.png' });
+await b.close();
+console.log('ok');

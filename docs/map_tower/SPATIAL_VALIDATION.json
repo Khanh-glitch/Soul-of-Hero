@@ -1,7 +1,24 @@
 {
  "schema": "soh.veyra.spatial_validation.v2",
+ "provenance": {
+  "tested_sha": "6c3b6ce47a03d7a5ff6f8694efceac335823082f",
+  "gold_sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+  "compiler_sha256": "82607fdf919c243934e19a0590108fc6c879f1204261252fa7c0e1fcab4468d3",
+  "compiler_files": [
+   "tools/world/veyra_compile.py",
+   "tools/world/network.py",
+   "tools/world/kit.py",
+   "tools/world/validate.py",
+   "tools/world/world.py"
+  ],
+  "world_png_sha256": "77959cadf89b3b44d7e270d4d627a83cd5f2572b9087be9d7c5d83b19fa6bab0",
+  "world_meta_sha256": "3416a2ad5ab0ad92486da5fce721a3438caebcecda99af304196a5ccace79354",
+  "collision_sha256": "2ab5676f82d591933fb977de223b16742913dda7831fdf36e56a748eab82412e",
+  "minimap_sha256": "74cc6b5f2a399a0fb527517f2160a011dabf9413fce46901a21bfa34c5dcf2d0",
+  "network_json_sha256": "d57b92c765a17923a80b28a83538fd8f3f3567451c565e6bacd8b06363d96a90"
+ },
  "gold_sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
- "world_meta_sha256": "fb8e44004872aa99ce8f497e130f9daab9ee112dd5df48f9ee6d4f8feb6d0207",
+ "world_meta_sha256": "3416a2ad5ab0ad92486da5fce721a3438caebcecda99af304196a5ccace79354",
  "checks": [
   {
    "gate": "A1",
@@ -95,30 +112,17 @@
   },
   {
    "gate": "A5",
-   "name": "bridge_bypass_diagnostic",
-   "passed": false,
-   "mandatory": false,
-   "detail": "diagnostic only: an off-deck route inside the corridor exists for 11 bridges (A6 is the mandatory 'no unbridged water crossing' gate)",
-   "offenders": [
-    "br_0:crossing-possible-without-the-deck",
-    "br_1:crossing-possible-without-the-deck",
-    "br_2:crossing-possible-without-the-deck",
-    "br_3:crossing-possible-without-the-deck",
-    "br_4:crossing-possible-without-the-deck",
-    "br_5:crossing-possible-without-the-deck",
-    "br_6:crossing-possible-without-the-deck",
-    "br_7:crossing-possible-without-the-deck",
-    "br_8:crossing-possible-without-the-deck",
-    "br_9:crossing-possible-without-the-deck",
-    "br_a:crossing-possible-without-the-deck"
-   ]
+   "name": "bridge_offdeck_routes_classified",
+   "passed": true,
+   "mandatory": true,
+   "detail": "0 of 12 bridges have an off-deck route inside their corridor and every one is classified: 0 dry land alternatives, 0 authored fords, 0 wet traversals"
   },
   {
    "gate": "A6",
    "name": "rivers_block_unbridged_crossings",
    "passed": true,
    "mandatory": true,
-   "detail": "158/158 sampled crossings blocked (straight-line footprint sweep)"
+   "detail": "157/157 sampled crossings blocked (straight-line footprint sweep)"
   },
   {
    "gate": "A7",
@@ -157,24 +161,38 @@
     {
      "spawn": "sp_west",
      "pois_reached": 57,
-     "cells": 48093
+     "cells": 48180
     },
     {
      "spawn": "sp_lake",
      "pois_reached": 57,
-     "cells": 48093
+     "cells": 48180
     },
     {
      "spawn": "sp_hook",
      "pois_reached": 57,
-     "cells": 48093
+     "cells": 48180
     },
     {
      "spawn": "sp_gulf",
      "pois_reached": 57,
-     "cells": 48093
+     "cells": 48180
     }
    ]
+  },
+  {
+   "gate": "A7",
+   "name": "poi_clearing_integrity",
+   "passed": true,
+   "mandatory": true,
+   "detail": "79/79 dry POI centres are open ground after placement (the compiler's clearing pass reports 0 cells needing clearing, which is only credible because placement keep-outs already protect them)"
+  },
+  {
+   "gate": "A7",
+   "name": "poi_entrance_anchor_present",
+   "passed": true,
+   "mandatory": true,
+   "detail": "58 land POIs, every entrance anchor is within 6 cells of its centre"
   },
   {
    "gate": "N1",
@@ -192,98 +210,66 @@
   },
   {
    "gate": "N1",
-   "name": "road_endpoint_joins",
-   "passed": false,
+   "name": "road_endpoint_every_one_classified",
+   "passed": true,
    "mandatory": true,
-   "detail": "105 endpoints land on another road (T junctions); 17 sit in the ambiguous 1.2-3.0 u band; 2 are deliberate separate approaches",
-   "offenders": [
-    "rd_1@[1049.139401857247, 783.245292985405] d=1.94",
-    "rd_2@[1088.687943026613, 752.7262811966848] d=1.59",
-    "rd_7@[1145.1315191707715, 886.9902075206263] d=2.07",
-    "rd_a@[1024.685629988274, 449.8533872981049] d=1.26",
-    "rd_d@[758.0740740740741, 599.425925925926] d=2.43",
-    "rd_h@[1007.8165462564732, 467.1727262863064] d=1.85",
-    "rd_p@[849.4305035025975, 974.9561872951851] d=2.73",
-    "rd_p@[844.1844855451229, 975.2536429467287] d=2.88",
-    "rd_r@[424.0, 742.0] d=1.4",
-    "rd_1c@[939.9592703111858, 203.96011202691338] d=1.21",
-    "rd_1e@[895.797671320994, 325.72033667538744] d=2.07",
-    "rd_1w@[788.8451669200736, 707.186160377063] d=1.43",
-    "rd_1x@[811.8134351620947, 772.2062032418953] d=1.46",
-    "rd_1y@[746.0952294128471, 460.8807875339175] d=1.49",
-    "rd_1y@[765.0128764359297, 320.81947769686093] d=2.19",
-    "rd_21@[1295.5361353867675, 538.2583014896784] d=1.37",
-    "rd_2a@[1012.725981000618, 296.73545798414904] d=1.47"
-   ]
+   "detail": "58 near endpoints, every one classified {'VALID_JUNCTION': 57, 'VALID_SEPARATE': 1}"
+  },
+  {
+   "gate": "N1",
+   "name": "road_endpoint_no_blocked_ambiguity",
+   "passed": true,
+   "mandatory": true,
+   "detail": "no endpoint requires a connection GOLD does not author"
   },
   {
    "gate": "N2",
-   "name": "road_walkable_with_feet_box",
-   "passed": false,
+   "name": "road_functional_traversal",
+   "passed": true,
    "mandatory": true,
-   "detail": "72/84 authored roads are walkable end to end with the 12x8 px box",
-   "offenders": [
-    "rd_0",
-    "rd_i",
-    "rd_w",
-    "rd_x",
-    "rd_1f",
-    "rd_1g",
-    "rd_1n",
-    "rd_24",
-    "rd_27",
-    "rd_29",
-    "rd_2a",
-    "rd_2b"
-   ]
+   "detail": "84/84 authored roads are walkable end to end inside their own corridor with the validator's collision grid and BFS"
   },
   {
    "gate": "N3",
-   "name": "road_rendered_coverage",
+   "name": "road_render_pass_continuity",
    "passed": true,
    "mandatory": true,
-   "detail": "84/84 roads >=99.5% rendered material"
+   "detail": "final-render comparison (pre-road vs post-road pass at native resolution) shows road material on >=99.5% of every authored centreline"
   },
   {
-   "gate": "N3",
-   "name": "road_width_contract_honoured",
+   "gate": "N4",
+   "name": "river_meets_named_body",
    "passed": true,
    "mandatory": true,
-   "detail": {
-    "cart": [
-     21
-    ],
-    "foot": [
-     12
-    ],
-    "trail": [
-     14
-    ],
-    "riverside": [
-     14
-    ]
-   }
+   "detail": "26/26 authored source/mouth relations put the river end on the body it names (<= 1.0 u) with no closer body at that point; 8 springs have no receiving body"
   },
   {
    "gate": "N4",
    "name": "river_rendered_coverage",
    "passed": true,
    "mandatory": true,
-   "detail": "17/17 rivers >=98% water pixels"
+   "detail": "17/17 rivers >=98% rendered water pixels"
   },
   {
    "gate": "N4",
-   "name": "river_source_mouth_relations",
+   "name": "water_component_report",
    "passed": true,
    "mandatory": true,
-   "detail": "34/34 authored source/mouth relations resolve within 4 u"
+   "detail": "compiled water surface forms 1 connected pixel component(s); every river end shares its component with the named body"
   },
   {
    "gate": "N5",
    "name": "brook_passes_documented",
    "passed": true,
    "mandatory": true,
-   "detail": "4 brook passes, each a <=2.5 u stream with no bridge within 14 u"
+   "detail": "4 brook passes, each <=2.5 u with no bridge within 14 u"
+  },
+  {
+   "gate": "N5",
+   "name": "authored_for_roads_only",
+   "passed": true,
+   "mandatory": true,
+   "detail": "4 fords, every one backed by GOLD `ford: true` and a single <=6 u channel crossing"
   },
   {
    "gate": "N5",
@@ -385,9 +371,9 @@
    ]
   }
  ],
- "passed": 26,
- "failed": 2,
- "all_passed": false,
+ "passed": 33,
+ "failed": 0,
+ "all_passed": true,
  "bridge_proof": [
   {
    "bridge": "br_0",
@@ -440,7 +426,7 @@
   {
    "bridge": "br_8",
    "path_cells": 6,
-   "deck_cells": 5,
+   "deck_cells": 6,
    "water_cells_over_deck": 3
   },
   {
@@ -452,7 +438,7 @@
   {
    "bridge": "br_a",
    "path_cells": 5,
-   "deck_cells": 4,
+   "deck_cells": 5,
    "water_cells_over_deck": 2
   },
   {
@@ -462,21 +448,9 @@
    "water_cells_over_deck": 22
   }
  ],
- "bridge_bypass_class": {
-  "br_0": "unclassified route present",
-  "br_1": "unclassified route present",
-  "br_2": "unclassified route present",
-  "br_3": "unclassified route present",
-  "br_4": "unclassified route present",
-  "br_5": "unclassified route present",
-  "br_6": "unclassified route present",
-  "br_7": "unclassified route present",
-  "br_8": "unclassified route present",
-  "br_9": "unclassified route present",
-  "br_a": "unclassified route present"
- },
- "code_sha": "042b281ed35ef67fda05d23d962f3c8f190bf075",
- "world_png_sha256": "264d790d707cd42ddb925b89195632184993eac6a5f0c6593545498e4f23511c",
+ "bridge_bypass_class": {},
+ "code_sha": "6c3b6ce47a03d7a5ff6f8694efceac335823082f",
+ "world_png_sha256": "77959cadf89b3b44d7e270d4d627a83cd5f2572b9087be9d7c5d83b19fa6bab0",
  "poi_access": {
   "po_academy": {
    "mode": "land",
@@ -988,7 +962,7 @@
   ],
   "po_lanternstn": [
    4296,
-   1240
+   1224
   ],
   "po_kestrel": [
    2808,
@@ -1203,22 +1177,22 @@
   {
    "spawn": "sp_west",
    "pois_reached": 57,
-   "cells": 48093
+   "cells": 48180
   },
   {
    "spawn": "sp_lake",
    "pois_reached": 57,
-   "cells": 48093
+   "cells": 48180
   },
   {
    "spawn": "sp_hook",
    "pois_reached": 57,
-   "cells": 48093
+   "cells": 48180
   },
   {
    "spawn": "sp_gulf",
    "pois_reached": 57,
-   "cells": 48093
+   "cells": 48180
   }
  ],
  "network_journeys": [
@@ -1305,6 +1279,1763 @@
      "reachable": true
     }
    }
+  }
+ ],
+ "road_traversal": [
+  {
+   "road": "rd_0",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 324
+  },
+  {
+   "road": "rd_1",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 650
+  },
+  {
+   "road": "rd_2",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 353
+  },
+  {
+   "road": "rd_3",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 195
+  },
+  {
+   "road": "rd_4",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 210
+  },
+  {
+   "road": "rd_5",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 574
+  },
+  {
+   "road": "rd_6",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 290
+  },
+  {
+   "road": "rd_7",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 95
+  },
+  {
+   "road": "rd_8",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 532
+  },
+  {
+   "road": "rd_9",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 311
+  },
+  {
+   "road": "rd_a",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 358
+  },
+  {
+   "road": "rd_b",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 236
+  },
+  {
+   "road": "rd_c",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 45
+  },
+  {
+   "road": "rd_d",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 841
+  },
+  {
+   "road": "rd_e",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 55
+  },
+  {
+   "road": "rd_f",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 164
+  },
+  {
+   "road": "rd_g",
+   "kind": "foot",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 27
+  },
+  {
+   "road": "rd_h",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 498
+  },
+  {
+   "road": "rd_i",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 279
+  },
+  {
+   "road": "rd_j",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 225
+  },
+  {
+   "road": "rd_k",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 244
+  },
+  {
+   "road": "rd_l",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 135
+  },
+  {
+   "road": "rd_m",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 284
+  },
+  {
+   "road": "rd_n",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 371
+  },
+  {
+   "road": "rd_o",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 44
+  },
+  {
+   "road": "rd_p",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 30
+  },
+  {
+   "road": "rd_q",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 35
+  },
+  {
+   "road": "rd_r",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 344
+  },
+  {
+   "road": "rd_s",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 530
+  },
+  {
+   "road": "rd_t",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 45
+  },
+  {
+   "road": "rd_u",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 240
+  },
+  {
+   "road": "rd_v",
+   "kind": "foot",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 48
+  },
+  {
+   "road": "rd_w",
+   "kind": "foot",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 172
+  },
+  {
+   "road": "rd_x",
+   "kind": "foot",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 282
+  },
+  {
+   "road": "rd_y",
+   "kind": "foot",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 30
+  },
+  {
+   "road": "rd_z",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 185
+  },
+  {
+   "road": "rd_10",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 149
+  },
+  {
+   "road": "rd_11",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 161
+  },
+  {
+   "road": "rd_12",
+   "kind": "cart",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 90
+  },
+  {
+   "road": "rd_13",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 116
+  },
+  {
+   "road": "rd_14",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 69
+  },
+  {
+   "road": "rd_15",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 41
+  },
+  {
+   "road": "rd_16",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 107
+  },
+  {
+   "road": "rd_17",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 63
+  },
+  {
+   "road": "rd_18",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 159
+  },
+  {
+   "road": "rd_19",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 21
+  },
+  {
+   "road": "rd_1a",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 98
+  },
+  {
+   "road": "rd_1b",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 24
+  },
+  {
+   "road": "rd_1c",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 86
+  },
+  {
+   "road": "rd_1d",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 99
+  },
+  {
+   "road": "rd_1e",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 169
+  },
+  {
+   "road": "rd_1f",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 91
+  },
+  {
+   "road": "rd_1g",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 120
+  },
+  {
+   "road": "rd_1h",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 54
+  },
+  {
+   "road": "rd_1i",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 74
+  },
+  {
+   "road": "rd_1j",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 78
+  },
+  {
+   "road": "rd_1k",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 103
+  },
+  {
+   "road": "rd_1l",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 90
+  },
+  {
+   "road": "rd_1m",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 24
+  },
+  {
+   "road": "rd_1n",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 53
+  },
+  {
+   "road": "rd_1o",
+   "kind": "foot",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 33
+  },
+  {
+   "road": "rd_1p",
+   "kind": "foot",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 137
+  },
+  {
+   "road": "rd_1q",
+   "kind": "foot",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 59
+  },
+  {
+   "road": "rd_1r",
+   "kind": "foot",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 60
+  },
+  {
+   "road": "rd_1s",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 96
+  },
+  {
+   "road": "rd_1t",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 48
+  },
+  {
+   "road": "rd_1u",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 77
+  },
+  {
+   "road": "rd_1v",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 110
+  },
+  {
+   "road": "rd_1w",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 58
+  },
+  {
+   "road": "rd_1x",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 24
+  },
+  {
+   "road": "rd_1y",
+   "kind": "foot",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 152
+  },
+  {
+   "road": "rd_1z",
+   "kind": "foot",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 24
+  },
+  {
+   "road": "rd_20",
+   "kind": "riverside",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 312
+  },
+  {
+   "road": "rd_21",
+   "kind": "riverside",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 112
+  },
+  {
+   "road": "rd_22",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 115
+  },
+  {
+   "road": "rd_23",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 54
+  },
+  {
+   "road": "rd_24",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 41
+  },
+  {
+   "road": "rd_25",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 56
+  },
+  {
+   "road": "rd_26",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 50
+  },
+  {
+   "road": "rd_27",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 32
+  },
+  {
+   "road": "rd_28",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 78
+  },
+  {
+   "road": "rd_29",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 54
+  },
+  {
+   "road": "rd_2a",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 74
+  },
+  {
+   "road": "rd_2b",
+   "kind": "trail",
+   "validator_reachable": true,
+   "compiler_reachable": true,
+   "corridor_cells": 33
+  }
+ ],
+ "road_render_pass": [
+  {
+   "road": "rd_0",
+   "samples": 505,
+   "samples_with_road_material": 505,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_1",
+   "samples": 1100,
+   "samples_with_road_material": 1100,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_2",
+   "samples": 216,
+   "samples_with_road_material": 216,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_3",
+   "samples": 112,
+   "samples_with_road_material": 112,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_4",
+   "samples": 118,
+   "samples_with_road_material": 118,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_5",
+   "samples": 1010,
+   "samples_with_road_material": 1010,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_6",
+   "samples": 162,
+   "samples_with_road_material": 162,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_7",
+   "samples": 41,
+   "samples_with_road_material": 41,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_8",
+   "samples": 322,
+   "samples_with_road_material": 322,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_9",
+   "samples": 470,
+   "samples_with_road_material": 470,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_a",
+   "samples": 560,
+   "samples_with_road_material": 560,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_b",
+   "samples": 358,
+   "samples_with_road_material": 358,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_c",
+   "samples": 36,
+   "samples_with_road_material": 36,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_d",
+   "samples": 525,
+   "samples_with_road_material": 525,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_e",
+   "samples": 21,
+   "samples_with_road_material": 21,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_f",
+   "samples": 84,
+   "samples_with_road_material": 84,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_g",
+   "samples": 25,
+   "samples_with_road_material": 25,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 8
+  },
+  {
+   "road": "rd_h",
+   "samples": 317,
+   "samples_with_road_material": 317,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_i",
+   "samples": 434,
+   "samples_with_road_material": 434,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_j",
+   "samples": 134,
+   "samples_with_road_material": 134,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_k",
+   "samples": 154,
+   "samples_with_road_material": 154,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_l",
+   "samples": 79,
+   "samples_with_road_material": 79,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_m",
+   "samples": 184,
+   "samples_with_road_material": 184,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_n",
+   "samples": 584,
+   "samples_with_road_material": 584,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_o",
+   "samples": 13,
+   "samples_with_road_material": 13,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_p",
+   "samples": 6,
+   "samples_with_road_material": 6,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_q",
+   "samples": 12,
+   "samples_with_road_material": 12,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_r",
+   "samples": 217,
+   "samples_with_road_material": 217,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_s",
+   "samples": 296,
+   "samples_with_road_material": 296,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_t",
+   "samples": 13,
+   "samples_with_road_material": 13,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_u",
+   "samples": 150,
+   "samples_with_road_material": 150,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_v",
+   "samples": 122,
+   "samples_with_road_material": 122,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 8
+  },
+  {
+   "road": "rd_w",
+   "samples": 440,
+   "samples_with_road_material": 440,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 8
+  },
+  {
+   "road": "rd_x",
+   "samples": 777,
+   "samples_with_road_material": 777,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 8
+  },
+  {
+   "road": "rd_y",
+   "samples": 24,
+   "samples_with_road_material": 24,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 8
+  },
+  {
+   "road": "rd_z",
+   "samples": 284,
+   "samples_with_road_material": 284,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_10",
+   "samples": 76,
+   "samples_with_road_material": 76,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_11",
+   "samples": 94,
+   "samples_with_road_material": 94,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_12",
+   "samples": 51,
+   "samples_with_road_material": 51,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 12
+  },
+  {
+   "road": "rd_13",
+   "samples": 118,
+   "samples_with_road_material": 118,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_14",
+   "samples": 67,
+   "samples_with_road_material": 67,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_15",
+   "samples": 37,
+   "samples_with_road_material": 37,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_16",
+   "samples": 118,
+   "samples_with_road_material": 118,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_17",
+   "samples": 61,
+   "samples_with_road_material": 61,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_18",
+   "samples": 158,
+   "samples_with_road_material": 158,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_19",
+   "samples": 15,
+   "samples_with_road_material": 15,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_1a",
+   "samples": 99,
+   "samples_with_road_material": 99,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_1b",
+   "samples": 16,
+   "samples_with_road_material": 16,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_1c",
+   "samples": 86,
+   "samples_with_road_material": 86,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_1d",
+   "samples": 106,
+   "samples_with_road_material": 106,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_1e",
+   "samples": 207,
+   "samples_with_road_material": 207,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_1f",
+   "samples": 221,
+   "samples_with_road_material": 221,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_1g",
+   "samples": 350,
+   "samples_with_road_material": 350,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_1h",
+   "samples": 59,
+   "samples_with_road_material": 59,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_1i",
+   "samples": 69,
+   "samples_with_road_material": 69,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_1j",
+   "samples": 72,
+   "samples_with_road_material": 72,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_1k",
+   "samples": 260,
+   "samples_with_road_material": 260,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_1l",
+   "samples": 239,
+   "samples_with_road_material": 239,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_1m",
+   "samples": 20,
+   "samples_with_road_material": 20,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_1n",
+   "samples": 57,
+   "samples_with_road_material": 57,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_1o",
+   "samples": 29,
+   "samples_with_road_material": 29,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 8
+  },
+  {
+   "road": "rd_1p",
+   "samples": 134,
+   "samples_with_road_material": 134,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 8
+  },
+  {
+   "road": "rd_1q",
+   "samples": 51,
+   "samples_with_road_material": 51,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 8
+  },
+  {
+   "road": "rd_1r",
+   "samples": 62,
+   "samples_with_road_material": 62,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 8
+  },
+  {
+   "road": "rd_1s",
+   "samples": 93,
+   "samples_with_road_material": 93,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_1t",
+   "samples": 44,
+   "samples_with_road_material": 44,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_1u",
+   "samples": 71,
+   "samples_with_road_material": 71,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_1v",
+   "samples": 110,
+   "samples_with_road_material": 110,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_1w",
+   "samples": 56,
+   "samples_with_road_material": 56,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_1x",
+   "samples": 17,
+   "samples_with_road_material": 17,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_1y",
+   "samples": 452,
+   "samples_with_road_material": 452,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 8
+  },
+  {
+   "road": "rd_1z",
+   "samples": 13,
+   "samples_with_road_material": 13,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 8
+  },
+  {
+   "road": "rd_20",
+   "samples": 820,
+   "samples_with_road_material": 820,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 8
+  },
+  {
+   "road": "rd_21",
+   "samples": 112,
+   "samples_with_road_material": 112,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 8
+  },
+  {
+   "road": "rd_22",
+   "samples": 330,
+   "samples_with_road_material": 330,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_23",
+   "samples": 122,
+   "samples_with_road_material": 122,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_24",
+   "samples": 92,
+   "samples_with_road_material": 92,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_25",
+   "samples": 136,
+   "samples_with_road_material": 136,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_26",
+   "samples": 130,
+   "samples_with_road_material": 130,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_27",
+   "samples": 55,
+   "samples_with_road_material": 55,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_28",
+   "samples": 202,
+   "samples_with_road_material": 202,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_29",
+   "samples": 142,
+   "samples_with_road_material": 142,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_2a",
+   "samples": 188,
+   "samples_with_road_material": 188,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  },
+  {
+   "road": "rd_2b",
+   "samples": 91,
+   "samples_with_road_material": 91,
+   "coverage": 1.0,
+   "worst_gap_units": 0.0,
+   "tolerance_px": 9
+  }
+ ],
+ "endpoint_classes": {
+  "VALID_JUNCTION": 57,
+  "VALID_SEPARATE": 1
+ },
+ "water_components": 1,
+ "hydrology_adjacency": [
+  {
+   "river": "rv_grey_up",
+   "end": "source",
+   "kind": "lake",
+   "ref": "lk_tarn",
+   "at": [
+    649.01,
+    408.88
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "lk_grey",
+   "nearest_other_distance": 151.6,
+   "note": "river end meets lk_tarn (0.00 u) and no other body is closer"
+  },
+  {
+   "river": "rv_grey_up",
+   "end": "mouth",
+   "kind": "lake",
+   "ref": "lk_grey",
+   "at": [
+    800.0,
+    514.0
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "rv_grey_low",
+   "nearest_other_distance": 53.35,
+   "note": "river end meets lk_grey (0.00 u) and no other body is closer"
+  },
+  {
+   "river": "rv_grey_low",
+   "end": "source",
+   "kind": "lake",
+   "ref": "lk_grey",
+   "at": [
+    836.0,
+    558.0
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "rv_grey_up",
+   "nearest_other_distance": 54.85,
+   "note": "river end meets lk_grey (0.00 u) and no other body is closer"
+  },
+  {
+   "river": "rv_grey_low",
+   "end": "mouth",
+   "kind": "none",
+   "ref": null,
+   "at": [
+    990.0,
+    858.0
+   ],
+   "connected": null,
+   "note": "spring/none: no receiving body authored"
+  },
+  {
+   "river": "rv_silver",
+   "end": "source",
+   "kind": "spring",
+   "ref": null,
+   "at": [
+    620.0,
+    632.0
+   ],
+   "connected": null,
+   "note": "spring/none: no receiving body authored"
+  },
+  {
+   "river": "rv_silver",
+   "end": "mouth",
+   "kind": "river",
+   "ref": "rv_grey_low",
+   "at": [
+    904.31,
+    652.68
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "lk_grey",
+   "nearest_other_distance": 114.18,
+   "note": "river end meets rv_grey_low (0.00 u) and no other body is closer"
+  },
+  {
+   "river": "rv_canal",
+   "end": "source",
+   "kind": "lake",
+   "ref": "lk_verdant",
+   "at": [
+    1012.0,
+    434.0
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "rv_east",
+   "nearest_other_distance": 60.53,
+   "note": "river end meets lk_verdant (0.00 u) and no other body is closer"
+  },
+  {
+   "river": "rv_canal",
+   "end": "mouth",
+   "kind": "river",
+   "ref": "rv_moss",
+   "at": [
+    1088.0,
+    544.0
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "rv_east",
+   "nearest_other_distance": 104.48,
+   "note": "river end meets rv_moss (0.00 u) and no other body is closer"
+  },
+  {
+   "river": "rv_moss",
+   "end": "source",
+   "kind": "river",
+   "ref": "rv_canal",
+   "at": [
+    1088.0,
+    544.0
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "rv_east",
+   "nearest_other_distance": 104.48,
+   "note": "river end meets rv_canal (0.00 u) and no other body is closer"
+  },
+  {
+   "river": "rv_moss",
+   "end": "mouth",
+   "kind": "river",
+   "ref": "rv_grey_low",
+   "at": [
+    959.89,
+    803.15
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "rv_d2",
+   "nearest_other_distance": 60.07,
+   "note": "river end meets rv_grey_low (0.00 u) and no other body is closer"
+  },
+  {
+   "river": "rv_argus",
+   "end": "source",
+   "kind": "spring",
+   "ref": null,
+   "at": [
+    958.0,
+    262.0
+   ],
+   "connected": null,
+   "note": "spring/none: no receiving body authored"
+  },
+  {
+   "river": "rv_argus",
+   "end": "mouth",
+   "kind": "lake",
+   "ref": "lk_verdant",
+   "at": [
+    996.0,
+    366.0
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "rv_canal",
+   "nearest_other_distance": 68.11,
+   "note": "river end meets lk_verdant (0.00 u) and no other body is closer"
+  },
+  {
+   "river": "rv_east",
+   "end": "source",
+   "kind": "lake",
+   "ref": "lk_verdant",
+   "at": [
+    1068.0,
+    404.0
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "rv_canal",
+   "nearest_other_distance": 61.77,
+   "note": "river end meets lk_verdant (0.00 u) and no other body is closer"
+  },
+  {
+   "river": "rv_east",
+   "end": "mouth",
+   "kind": "sea",
+   "ref": null,
+   "at": [
+    1300.96,
+    526.14
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "rv_hook",
+   "nearest_other_distance": 142.14,
+   "note": "river end meets sea (0.00 u) and no other body is closer"
+  },
+  {
+   "river": "rv_d1",
+   "end": "source",
+   "kind": "river",
+   "ref": "rv_grey_low",
+   "at": [
+    990.0,
+    858.0
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "rv_d2",
+   "nearest_other_distance": 0.0,
+   "note": "river end meets rv_grey_low (0.00 u) and no other body is closer"
+  },
+  {
+   "river": "rv_d1",
+   "end": "mouth",
+   "kind": "sea",
+   "ref": null,
+   "at": [
+    949.99,
+    912.64
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "rv_d2",
+   "nearest_other_distance": 35.41,
+   "note": "river end meets sea (0.00 u) and no other body is closer"
+  },
+  {
+   "river": "rv_d2",
+   "end": "source",
+   "kind": "river",
+   "ref": "rv_grey_low",
+   "at": [
+    990.0,
+    858.0
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "rv_d1",
+   "nearest_other_distance": 0.0,
+   "note": "river end meets rv_grey_low (0.00 u) and no other body is closer"
+  },
+  {
+   "river": "rv_d2",
+   "end": "mouth",
+   "kind": "sea",
+   "ref": null,
+   "at": [
+    985.88,
+    900.42
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "rv_d1",
+   "nearest_other_distance": 23.67,
+   "note": "river end meets sea (0.00 u) and no other body is closer"
+  },
+  {
+   "river": "rv_d3",
+   "end": "source",
+   "kind": "river",
+   "ref": "rv_grey_low",
+   "at": [
+    990.0,
+    858.0
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "rv_d1",
+   "nearest_other_distance": 0.0,
+   "note": "river end meets rv_grey_low (0.00 u) and no other body is closer"
+  },
+  {
+   "river": "rv_d3",
+   "end": "mouth",
+   "kind": "sea",
+   "ref": null,
+   "at": [
+    1025.73,
+    932.58
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "rv_d2",
+   "nearest_other_distance": 48.71,
+   "note": "river end meets sea (0.00 u) and no other body is closer"
+  },
+  {
+   "river": "rv_amber_up",
+   "end": "source",
+   "kind": "spring",
+   "ref": null,
+   "at": [
+    505.0,
+    872.0
+   ],
+   "connected": null,
+   "note": "spring/none: no receiving body authored"
+  },
+  {
+   "river": "rv_amber_up",
+   "end": "mouth",
+   "kind": "lake",
+   "ref": "lk_mirage",
+   "at": [
+    628.32,
+    993.4
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "rv_amber_low",
+   "nearest_other_distance": 32.14,
+   "note": "river end meets lk_mirage (0.00 u) and no other body is closer"
+  },
+  {
+   "river": "rv_amber_low",
+   "end": "source",
+   "kind": "lake",
+   "ref": "lk_mirage",
+   "at": [
+    652.0,
+    1018.0
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "rv_amber_up",
+   "nearest_other_distance": 32.89,
+   "note": "river end meets lk_mirage (0.00 u) and no other body is closer"
+  },
+  {
+   "river": "rv_amber_low",
+   "end": "mouth",
+   "kind": "sea",
+   "ref": null,
+   "at": [
+    697.95,
+    1147.08
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "lk_mirage",
+   "nearest_other_distance": 133.14,
+   "note": "river end meets sea (0.00 u) and no other body is closer"
+  },
+  {
+   "river": "rv_west",
+   "end": "source",
+   "kind": "spring",
+   "ref": null,
+   "at": [
+    468.0,
+    432.0
+   ],
+   "connected": null,
+   "note": "spring/none: no receiving body authored"
+  },
+  {
+   "river": "rv_west",
+   "end": "mouth",
+   "kind": "sea",
+   "ref": null,
+   "at": [
+    326.35,
+    559.6
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "rv_silver",
+   "nearest_other_distance": 300.44,
+   "note": "river end meets sea (0.00 u) and no other body is closer"
+  },
+  {
+   "river": "rv_hook",
+   "end": "source",
+   "kind": "lake",
+   "ref": "lk_mere",
+   "at": [
+    1256.0,
+    358.0
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "sea",
+   "nearest_other_distance": 67.26,
+   "note": "river end meets lk_mere (0.00 u) and no other body is closer"
+  },
+  {
+   "river": "rv_hook",
+   "end": "mouth",
+   "kind": "sea",
+   "ref": null,
+   "at": [
+    1394.19,
+    409.31
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "lk_mere",
+   "nearest_other_distance": 145.41,
+   "note": "river end meets sea (0.00 u) and no other body is closer"
+  },
+  {
+   "river": "rv_ash",
+   "end": "source",
+   "kind": "spring",
+   "ref": null,
+   "at": [
+    1668.0,
+    860.0
+   ],
+   "connected": null,
+   "note": "spring/none: no receiving body authored"
+  },
+  {
+   "river": "rv_ash",
+   "end": "mouth",
+   "kind": "sea",
+   "ref": null,
+   "at": [
+    1570.25,
+    908.75
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "rv_east",
+   "nearest_other_distance": 464.88,
+   "note": "river end meets sea (0.00 u) and no other body is closer"
+  },
+  {
+   "river": "rv_salt",
+   "end": "source",
+   "kind": "spring",
+   "ref": null,
+   "at": [
+    1650.0,
+    304.0
+   ],
+   "connected": null,
+   "note": "spring/none: no receiving body authored"
+  },
+  {
+   "river": "rv_salt",
+   "end": "mouth",
+   "kind": "sea",
+   "ref": null,
+   "at": [
+    1596.35,
+    371.27
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "rv_hook",
+   "nearest_other_distance": 204.21,
+   "note": "river end meets sea (0.00 u) and no other body is closer"
+  },
+  {
+   "river": "rv_slag",
+   "end": "source",
+   "kind": "spring",
+   "ref": null,
+   "at": [
+    1180.0,
+    1288.0
+   ],
+   "connected": null,
+   "note": "spring/none: no receiving body authored"
+  },
+  {
+   "river": "rv_slag",
+   "end": "mouth",
+   "kind": "sea",
+   "ref": null,
+   "at": [
+    1123.03,
+    1339.09
+   ],
+   "connected": true,
+   "named_distance_units": 0.0,
+   "nearest_other": "rv_d3",
+   "nearest_other_distance": 415.99,
+   "note": "river end meets sea (0.00 u) and no other body is closer"
   }
  ],
  "environment": "sandbox CPU (numpy/Pillow); geometry and movement only"

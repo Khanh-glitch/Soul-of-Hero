@@ -47,3 +47,9 @@ vuvvu_lyric_video/
 # Veyra overworld compiler build output (regenerate with tools/world/veyra_compile.py)
 /out/
 /tools/out/
+__pycache__/
+*.pyc
+node_modules/
+package.json
+package-lock.json
+.tools/godot/

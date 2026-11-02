@@ -252,6 +252,77 @@ def main(out_dir):
     sea = (land == 0).astype(np.uint8)
     water = ((sea | lakes | (rivers & land)) > 0).astype(np.uint8)
 
+    # ---- bank realignment -------------------------------------------------------
+    # A GOLD road that runs inside a channel it is not meant to wade is a drafting overlap,
+    # not a crossing.  The polyline is densified to 0.75 u and every wet point is moved to the
+    # nearest dry bank within 2 u, except the authored crossing itself (a `ford: true` road keeps
+    # its single channel crossing, and a bridge landing keeps its approach).  Every delta is
+    # recorded per road so nothing is silently changed and GOLD itself is untouched.
+    def _densify(pts, step=0.75):
+        out = [pts[0]]
+        for a, b in zip(pts, pts[1:]):
+            L = math.hypot(b[0] - a[0], b[1] - a[1])
+            n = max(1, int(L / step))
+            for k in range(1, n + 1):
+                t = k / n
+                out.append((a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t))
+        return out
+
+    _river_lines = [[(float(q[0]), float(q[1])) for q in r["points"]] for r in proj["rivers"]]
+    _bridge_u = [(float(b["at"][0]), float(b["at"][1])) for b in proj["bridges"]]
+    road_offsets = []
+    for rd in proj["roads"]:
+        if rd.get("kind") == "ferry":
+            continue
+        pts = [(float(q[0]), float(q[1])) for q in rd["points"]]
+        dense = _densify(pts)
+        water_margin = water.copy()
+        for _ in range(1):                     # 1 u dry margin around every channel
+            water_margin = np.maximum(water_margin, np.roll(water_margin, 1, 0))
+            water_margin = np.maximum(water_margin, np.roll(water_margin, -1, 0))
+            water_margin = np.maximum(water_margin, np.roll(water_margin, 1, 1))
+            water_margin = np.maximum(water_margin, np.roll(water_margin, -1, 1))
+        wet_idx = []
+        for i, (x, y) in enumerate(dense):
+            xi, yi = int(x), int(y)
+            if 0 <= xi < UW and 0 <= yi < UH and water_margin[yi, xi]:
+                wet_idx.append(i)
+        if not wet_idx:
+            continue
+        # authored crossings this road may legitimately keep wet
+        keep = []
+        if rd.get("ford"):
+            for P, Q in zip(pts, pts[1:]):
+                for RL in _river_lines:
+                    for a, b in zip(RL, RL[1:]):
+                        hit = NET._seg_intersect(P, Q, a, b)
+                        if hit:
+                            keep.append(hit)
+        for i in wet_idx:
+            x, y = dense[i]
+            if any(math.hypot(x - kx, y - ky) <= 1.2 for kx, ky in keep):
+                continue
+            if min(math.hypot(x - bx, y - by) for bx, by in _bridge_u) <= 8:
+                continue
+            best = None
+            xi, yi = int(x), int(y)
+            for dy in range(-8, 9):
+                for dx in range(-8, 9):
+                    ax, ay = xi + dx, yi + dy
+                    if not (0 <= ax < UW and 0 <= ay < UH) or water_margin[ay, ax]:
+                        continue
+                    d = math.hypot(dx, dy)
+                    if d <= 2.0 and (best is None or d < best[0]):
+                        best = (d, ax + 0.5, ay + 0.5)
+            if best:
+                dense[i] = (best[1], best[2])
+                road_offsets.append({"source_id": rd["id"], "kind": rd.get("kind"),
+                                     "from": [round(x, 2), round(y, 2)],
+                                     "to": [round(best[1], 2), round(best[2], 2)],
+                                     "delta_units": round(best[0], 2)})
+        rd["points"] = [[round(q[0], 3), round(q[1], 3)] for q in dense]
+    print("bank realignments", len(road_offsets))
+
     # ---------------- roads (ferry routes are NOT roads) ----------------
     roads = np.zeros((UH, UW), np.uint8)
     road_out, ferry_out = [], []
@@ -332,6 +403,38 @@ def main(out_dir):
                                          "evidence": "trail/foot crossing of a <=2.5-unit brook, "
                                                      "no authored bridge within 14 units",
                                          "render": "stepped stone passage"})
+    # authored fords: GOLD marks `ford: true` on roads that are meant to wade a channel.
+    authored_fords = []
+    for rd in proj["roads"]:
+        if not rd.get("ford") or rd.get("kind") == "ferry":
+            continue
+        rm = np.zeros((UH, UW), np.uint8)
+        stroke_polyline(rm, rd["points"], 1.6, 1)
+        wet = (rm > 0) & (water > 0)
+        n = int(wet.sum())
+        if not n:
+            authored_fords.append({"road": rd["id"], "wet_cells": 0,
+                                   "decision": "no water crossed at unit resolution"})
+            continue
+        ys, xs = np.nonzero(wet)
+        extent = max(xs.max() - xs.min(), ys.max() - ys.min())
+        if extent > 6:
+            authored_fords.append({"road": rd["id"], "wet_cells": n, "extent_units": int(extent),
+                                   "decision": "SOURCE_AMBIGUITY_BLOCKED: road runs inside the "
+                                               "channel for more than 6 u, not a single crossing"})
+            continue
+        ford[wet] = 1
+        # widen the wade to the full road corridor so both banks and the whole strip are one
+        # continuous passage (the crossing itself is authored, the width is the road width)
+        ford = np.maximum(ford, grow(wet.astype(np.uint8),
+                                     int(math.ceil((NET.ROAD_WIDTH.get(rd.get("kind"), {}).get("render", 1.8)) + 1.0))))
+        ford_pts.append((float(xs.mean()), float(ys.mean())))
+        authored_fords.append({"road": rd["id"], "wet_cells": n, "extent_units": int(extent),
+                               "at": [round(float(xs.mean()), 2), round(float(ys.mean()), 2)],
+                               "evidence": "GOLD road carries `ford: true`; single channel "
+                                           "crossing of <= 6 u with no bridge",
+                               "decision": "AUTHORED_FORD"})
+    print("authored fords", [f.get("decision") for f in authored_fords])
     print("documented brook passes", len(brook_passes))
     roads = (roads & ~ford).astype(np.uint8)
 
@@ -581,6 +684,47 @@ def main(out_dir):
                   max(1.0, (r.get("width") or 3) / 2.0 * U))
     river_px = river_px_mask.astype(bool) & land_px
     water_px = sea_px | lakes_px | river_px
+    # ---- mouth closure: a river end that stops short of the water it names is extended along its
+    # own last bearing until it meets that water (<= 8 GOLD units), so no distributary dangles in
+    # the sand.  Every extension is recorded; no new connection is invented.
+    river_extensions = []
+    for r in proj["rivers"]:
+        pts = r["points"]
+        for which, end_i, ref_i in (("source", 0, 1), ("mouth", -1, -2)):
+            ex_, ey_ = float(pts[end_i][0]), float(pts[end_i][1])
+            xi_, yi_ = int(ex_ * U), int(ey_ * U)
+            _big = sea_px | lakes_px
+            if 0 <= xi_ < PW and 0 <= yi_ < PH and _big[yi_, xi_]:
+                continue
+            ox, oy = float(pts[ref_i][0]), float(pts[ref_i][1])
+            dx, dy = ex_ - ox, ey_ - oy
+            L = math.hypot(dx, dy) or 1.0
+            ux_, uy_ = dx / L, dy / L
+            for k in range(1, 17):
+                nx, ny = ex_ + ux_ * 0.5 * k, ey_ + uy_ * 0.5 * k
+                xn, yn = int(nx * U), int(ny * U)
+                if not (0 <= xn < PW and 0 <= yn < PH):
+                    break
+                if _big[yn, xn]:
+                    if which == "source":
+                        pts.insert(0, [nx, ny])
+                    else:
+                        pts.append([nx, ny])
+                    river_extensions.append({"river": r["id"], "end": which,
+                                             "from": [round(ex_, 2), round(ey_, 2)],
+                                             "to": [round(nx, 2), round(ny, 2)],
+                                             "length_units": round(0.5 * k, 2),
+                                             "reason": "authored end stopped short of the named "
+                                                       "water; closed along its own bearing"})
+                    break
+    if river_extensions:
+        river_px_mask = np.zeros((PH, PW), np.uint8)
+        for r in proj["rivers"]:
+            stroke_px(river_px_mask, [(q[0] * U, q[1] * U) for q in r["points"]],
+                      max(1.0, (r.get("width") or 3) / 2.0 * U))
+        river_px = river_px_mask.astype(bool) & land_px
+        water_px = sea_px | lakes_px | river_px
+    print("river mouth closures", len(river_extensions))
     # depth measured in GOLD units from the bank (4 erosions cover every authored channel)
     depth_px = np.zeros((PH, PW), np.uint8)
     m = water_px.copy()
@@ -589,6 +733,11 @@ def main(out_dir):
         depth_px[m] = level * 4
     is_river = river_px
     is_big = water_px & ~is_river          # sea + lakes
+    _big16 = is_big.copy()
+    for _ in range(16):
+        _big16 = _big16 | np.roll(_big16, 1, 0) | np.roll(_big16, -1, 0) | \
+                 np.roll(_big16, 1, 1) | np.roll(_big16, -1, 1)
+    is_big_shore = _big16 & ~water_px
     def C(r, g, b):
         return np.array([r, g, b, 255], np.uint8)
     c_deep, c_mid, c_shal = C(22, 64, 104), C(30, 86, 126), C(46, 112, 152)
@@ -612,29 +761,25 @@ def main(out_dir):
     bank_shadow = water_px & ~erode(water_px, 3)
     out[bank_shadow & is_river] = C(58, 92, 104)
 
-    # beach bands only along sea and lake shores; river banks keep gravel ground
-    sh = 0
-    for gy in range(GH):
-        for gx in range(GW):
-            if ground[gy, gx] == "water":
-                continue
-            def side(dx, dy):
-                ry, rx = gy + dy, gx + dx
-                if not (0 <= ry < GH and 0 <= rx < GW) or ground[ry, rx] != "water":
-                    return False
-                return bool(is_big[min(PH - 1, ry * ART_TILE + 16), min(PW - 1, rx * ART_TILE + 16)])
-            var = (gx * 3 + gy * 5) % 3
-            px, py = gx * ART_TILE, gy * ART_TILE
-            if side(0, -1):
-                world_water.alpha_composite(kit.shore("n", var), (px, py)); sh += 1
-            elif side(0, 1):
-                world_water.alpha_composite(kit.shore("s", var), (px, py + 16)); sh += 1
-            elif side(-1, 0):
-                world_water.alpha_composite(kit.shore("w", var), (px, py)); sh += 1
-            elif side(1, 0):
-                world_water.alpha_composite(kit.shore("e", var), (px + 16, py)); sh += 1
-    print("coast bands", sh)
+    # beach: a pixel-resolution sand margin on sea and lake shores only.  The old 16 px shore
+    # tiles stepped across the coastline in visible slabs, so the band is now built from the
+    # distance to the water surface: 5 px of dry sand and a 2 px wet line, with sparse speckles.
     out = np.array(world_water)
+    sand_dry = np.array([224, 208, 162, 255], np.uint8)
+    sand_wet = np.array([196, 176, 132, 255], np.uint8)
+    sand_deep = np.array([176, 158, 118, 255], np.uint8)
+    band = erode(~water_px, 5) & ~erode(~water_px, 11)
+    band &= is_big_shore
+    wetline = erode(~water_px, 2) & ~erode(~water_px, 5) & is_big_shore
+    deepband = erode(~water_px, 11) & ~erode(~water_px, 15) & is_big_shore
+    out[band] = sand_dry
+    out[wetline] = sand_wet
+    out[deepband] = sand_deep
+    speck_y = np.arange(PH)[:, None]
+    speck_x = np.arange(PW)[None, :]
+    speck = band & (((speck_x * 5 + speck_y * 11) % 37) < 2)
+    out[speck] = C(210, 192, 146)
+    print("beach band px", int(band.sum()), "wet line px", int(wetline.sum()))
 
     # ---------------- continuous road material (per class) ----------------
     # Roads are painted as one uninterrupted strip per material class:
@@ -661,6 +806,9 @@ def main(out_dir):
                 tex.paste(tiles[(tx * 7 + ty * 13) % len(tiles)], (tx * 32, ty * 32))
         return np.array(tex)
 
+    if os.environ.get("VEYRA_RENDER_PASSES", "1") == "1":
+        Image.fromarray(out, "RGBA").save(os.path.join(out_dir, "render_pass_pre_roads.png"),
+                                          compress_level=1)
     soil = KIT.load_kit().soil_tiles(4)
     pav = [im.convert("RGBA").resize((32, 32), Image.NEAREST) for im in fams.get("path", fams["stone"])]
     for mask, tiles in ((earth, soil), (stone_r, pav)):
@@ -683,7 +831,18 @@ def main(out_dir):
     road_core = up(erode(earth | stone_r, 1))
 
     # junctions: one disc of the dominant local material so joins read as a surface
-    RG = NET.build_road_graph(proj)
+    _landmarks = ([{"kind": "bridge", "id": b["id"], "at": [float(b["at"][0]), float(b["at"][1])]}
+                   for b in proj["bridges"]] +
+                  [{"kind": "dock", "id": d["id"], "at": [float(d["at"][0]), float(d["at"][1])]}
+                   for d in proj["docks"]] +
+                  [{"kind": "poi", "id": p["id"], "at": [float(p["at"][0]), float(p["at"][1])]}
+                   for p in proj["pois"]])
+    RG = NET.build_road_graph(proj, landmarks=_landmarks)
+    _nm_classes = {}
+    for _n in RG["near_miss"]:
+        _nm_classes.setdefault(_n["class"], 0)
+        _nm_classes[_n["class"]] += 1
+    print("endpoint classes", _nm_classes)
     junction_pts = [n["at"] for n in RG["nodes"] if n["degree"] >= 3]
     junction_pts += [c["at"] for c in RG["crossings"]]
     jmask = np.zeros((UH, UW), np.uint8)
@@ -695,6 +854,9 @@ def main(out_dir):
     out[jm] = jfill[jm]
     print("road junctions", len(junction_pts), "painted", int(jm.sum()))
 
+    if os.environ.get("VEYRA_RENDER_PASSES", "1") == "1":
+        Image.fromarray(out, "RGBA").save(os.path.join(out_dir, "render_pass_post_roads.png"),
+                                          compress_level=1)
     deck_mask, rail_mask, pier_mask = up(deck), up(rail), up(piers)
     world = Image.fromarray(out, "RGBA")
     # ---- real bridge / pier sprites (committed 668008-bridges pack) ----
@@ -733,16 +895,25 @@ def main(out_dir):
     # route corridors: trunks may not stand on a road or in the water margin, but canopies above
     # them are allowed because only the trunk point is tested here.
     road_corridor = grow((roads > 0).astype(np.uint8), 3)
-    bank_corridor = grow(water, 1)
+    bank_corridor = np.maximum(grow(water, 1), down(water_px, U, 0.10))
 
-    def place(fam, wx, wy, key, collider=True, tag=None):
+    def place(fam, wx, wy, key, collider=True, tag=None, span_cells=2):
         ux, uy = int(wx // U), int(wy // U)
-        if 0 <= ux < UW and 0 <= uy < UH:
-            if road_corridor[uy, ux] or bank_corridor[uy, ux]:
-                return None                  # protects the authored route corridor
+        if not (0 <= ux < UW and 0 <= uy < UH):
+            return None
+        # a sprite has extent: test its whole footprint, not just the anchor cell, so a
+        # multi-tile building can never be dropped across a road, a channel or a bridge deck
+        for oy in range(uy - span_cells, uy + span_cells + 1):
+            for ox in range(ux - span_cells, ux + span_cells + 1):
+                if not (0 <= ox < UW and 0 <= oy < UH):
+                    continue
+                if road_corridor[oy, ox] or bank_corridor[oy, ox]:
+                    return None                  # protects the authored route corridor
         dcx, dcy = int(wx // COLL), int(wy // COLL)
-        if 0 <= dcx < CW and 0 <= dcy < CH and deck_keepout[dcy, dcx]:
-            return None                      # never stack props on a bridge deck
+        for cy_ in range(dcy - span_cells, dcy + span_cells + 1):
+            for cx_ in range(dcx - span_cells, dcx + span_cells + 1):
+                if 0 <= cx_ < CW and 0 <= cy_ < CH and deck_keepout[cy_, cx_]:
+                    return None                  # never stack props on a bridge deck
         if True:
             for dx, dy in DOCK_KEEPOUT:
                 if abs(wx - dx) < 24 and abs(wy - dy) < 24:
@@ -1072,23 +1243,8 @@ def main(out_dir):
     rail_cells &= ~deck_cells                  # a railing may not block its own deck
     rail_cells &= ~down(water_px, COLL, 0.10)  # over water the water is the barrier
     solid |= rail_cells
-    # every POI gets a maintained clearing (2 cells) unless it sits in open water
-    water_cells_full = down(water_px, COLL, 0.10)
-    cleared = 0
-    for p in poi_out:
-        px, py = p["world_px"]
-        cx0, cy0 = int(px // COLL), int(py // COLL)
-        for ay in range(cy0 - 2, cy0 + 3):
-            for ax in range(cx0 - 2, cx0 + 3):
-                if not (0 <= ax < CW and 0 <= ay < CH):
-                    continue
-                if water_cells_full[ay, ax]:
-                    continue
-                if (ax - cx0) ** 2 + (ay - cy0) ** 2 <= 5:
-                    if solid[ay, ax]:
-                        cleared += 1
-                    solid[ay, ax] = False
-    print("poi clearings", cleared, "cells")
+    # POI clearings are applied at the very end of the collision pass (see below) so a later
+    # placement, cliff or channel closure cannot re-seal an authored site entrance.
     for gy in range(GH):
         if cliff_cells[gy].any():
             solid[gy * 2:gy * 2 + 2, :] |= np.repeat(cliff_cells[gy], 2)[:CW]
@@ -1133,11 +1289,85 @@ def main(out_dir):
     # authored roads are guaranteed walkable: clear their cells unless the cell is mostly water
     # collision corridor is slightly wider than the painted road: the 12 px feet box must fit
     # even where a narrow path runs diagonally across 16 px cells (standard forgiving movement).
-    road_clear_cells = down(up(grow((earth | stone_r).astype(np.uint8), 2) > 0), COLL, 0.05)
-    deep_water_cells = down(water_px, COLL, 0.25)
+    # clear exactly the painted corridor (>=30% of the cell carries road material), never a
+    # dilated halo: a halo would punch walkable cells through the water beside a bridge mouth.
+    road_clear_cells = down(up(earth | stone_r), COLL, 0.30)
+    deep_water_cells = down(water_px, COLL, 0.5)
+    _mid = COLL // 2                          # never clear a cell whose centre is open water
+    deep_water_cells |= water_px[_mid::COLL, _mid::COLL][:CH, :CW]
     solid &= ~(road_clear_cells & ~deep_water_cells)
     solid &= ~deck_core                       # a real deck cell is always walkable
     solid &= ~(deck_cells & ~trace)           # centreline dilation only over dry ground
+    # ---- functional road traversal: constrained pathfinding inside each authored corridor ----
+    passable = ~solid
+    extra = set()
+    for y in range(CH):
+        for x in np.nonzero(deck_cells[y])[0]:
+            extra.add((int(x), int(y)))
+    for y in range(CH):
+        for x in np.nonzero(down(pier_mask, COLL, 0.10)[y])[0]:
+            extra.add((int(x), int(y)))
+    for p in poi_out:
+        cx0, cy0 = int(p["world_px"][0] // COLL), int(p["world_px"][1] // COLL)
+        for ay in range(cy0 - 2, cy0 + 3):
+            for ax in range(cx0 - 2, cx0 + 3):
+                extra.add((ax, ay))
+    road_reach = []
+    wf = down(water_px, COLL, 0.25)
+    for rr in RG["roads"]:
+        res = NET.corridor_reach(rr, passable, COLL, extra)
+        for bx, by in res["blocked_samples"]:
+            cx, cy = int(bx * U // COLL), int(by * U // COLL)
+            if 0 <= cx < CW and 0 <= cy < CH:
+                res.setdefault("causes_px", []).append(
+                    "water" if wf[cy, cx] else ("prop_or_cliff" if solid[cy, cx] else "open"))
+        road_reach.append({"source_id": rr["id"], "kind": rr["kind"], **res})
+    print("functional roads reachable %d / %d" %
+          (sum(1 for r in road_reach if r["reachable"]), len(road_reach)))
+    for r in road_reach:
+        if not r["reachable"]:
+            print("  unreachable", r["source_id"], r["kind"], r["blocked_count"],
+                  r.get("causes_px", [])[:3], r["blocked_samples"][:2])
+    # ---- final POI clearings: an authored site must keep a 2-cell maintained clearing ----
+    water_major = down(water_px, COLL, 0.5)
+    cleared = 0
+    for p in poi_out:
+        px, py = p["world_px"]
+        cx0, cy0 = int(px // COLL), int(py // COLL)
+        for ay in range(cy0 - 2, cy0 + 3):
+            for ax in range(cx0 - 2, cx0 + 3):
+                if not (0 <= ax < CW and 0 <= ay < CH):
+                    continue
+                if (ax - cx0) ** 2 + (ay - cy0) ** 2 > 5:
+                    continue
+                if water_major[ay, ax] or deck_core[ay, ax]:
+                    continue
+                if solid[ay, ax]:
+                    cleared += 1
+                solid[ay, ax] = False
+    print("poi clearings", cleared, "cells")
+
+    # exported walkable structures so the validator measures the same geometry the compiler built
+    def _rle_arr(arr):
+        rows_x = []
+        for y in range(arr.shape[0]):
+            row, x, runs = arr[y], 0, []
+            while x < arr.shape[1]:
+                if not row[x]:
+                    x += 1
+                    continue
+                s = x
+                while x < arr.shape[1] and row[x]:
+                    x += 1
+                runs.append([s, x - s, 1])
+            rows_x.append(runs)
+        return {"encoding": "rle-[start,len,value]-per-row", "cell_px": COLL, "rows": rows_x}
+
+    walk_deck = _rle_arr(deck_cells | deck_core)
+    walk_pier = _rle_arr(down(pier_mask, COLL, 0.05))
+    walk_ford = _rle_arr(down(up(ford), COLL, 0.10))
+    walk_poi = _rle_arr(np.zeros((CH, CW), bool))
+
     rows = []
     for y in range(CH):
         row, x, runs = solid[y], 0, []
@@ -1187,6 +1417,38 @@ def main(out_dir):
                 if 0 <= xi < UW and 0 <= yi < UH and cls[yi, xi] == 3:
                     water_conflicts.append({"road": r["id"], "at": [round(x, 1), round(y, 1)]})
     hydro = NET.hydro_relation_report(proj, water_at)
+    # exact pixel-component proof of every authored source/mouth relation
+    _sy, _sx = np.nonzero(sea > 0)
+    _body_points = [{"key": "sea", "at": (float(_sx[0]), float(_sy[0]))}]
+    for lk in proj["lakes"]:
+        ring = (lk.get("rings") or [lk.get("ring")])[0]
+        if not ring:
+            continue
+        cx = sum(q[0] for q in ring) / len(ring)
+        cy = sum(q[1] for q in ring) / len(ring)
+        _body_points.append({"key": lk["id"], "at": (cx, cy)})
+    for rv in proj["rivers"]:
+        pts = [(float(q[0]), float(q[1])) for q in rv["points"]]
+        mid = pts[len(pts) // 2]
+        _body_points.append({"key": rv["id"], "at": mid})
+    water_pixels = NET.hydro_pixel_components(proj, water_px, _body_points)
+    water_pixels["adjacency"] = NET.hydro_body_adjacency(proj)
+    _adj_bad = [a for a in water_pixels["adjacency"] if a.get("connected") is False]
+    print("hydrology body adjacency: %d/%d relations meet their named body exactly"
+          % (sum(1 for a in water_pixels["adjacency"] if a.get("connected")),
+             sum(1 for a in water_pixels["adjacency"] if a.get("connected") is not None)))
+    for a in _adj_bad:
+        print("  adjacency mismatch", a["river"], a["end"], a["kind"], a["ref"],
+              a.get("named_distance_units"), a.get("nearest_other"),
+              a.get("nearest_other_distance"))
+    _bad = [w for w in water_pixels["relations"] if w.get("connected") is False]
+    print("hydrology pixel components: %d components, %d/%d relations share water"
+          % (water_pixels["components"],
+             sum(1 for w in water_pixels["relations"] if w.get("connected") is True),
+             sum(1 for w in water_pixels["relations"] if w.get("connected") is not None)))
+    for w in _bad:
+        print("  hydro mismatch", w["river"], w["end"], w["kind"], w["ref"], w["end_components"],
+              w["body_components"])
     water_cov = NET.coverage([dict(points=[(float(q[0]), float(q[1])) for q in r["points"]],
                                    id=r["id"], kind=r.get("kind"), half=0.5, px=1)
                               for r in proj["rivers"]], water_at)
@@ -1226,6 +1488,15 @@ def main(out_dir):
         "schema": "soh.veyra.network.v1",
         "road_contract": NET.ROAD_WIDTH, "vehicle": NET.VEHICLE_PROVISIONAL,
         "brook_passes": brook_passes,
+        "water_verification": water_pixels,
+        "river_extensions": river_extensions,
+        "water_open": _rle_v(down(water_px, COLL, 0.5).astype(np.uint8)),
+        "walk_deck": walk_deck,
+        "walk_pier": walk_pier,
+        "walk_ford": walk_ford,
+        "authored_fords": authored_fords,
+        "road_offsets": road_offsets,
+        "road_traversal": road_reach,
         "water_conflicts": water_conflicts[:200],
         "water_conflict_roads": sorted({c["road"] for c in water_conflicts}),
         "roads": {"count": len(RG["roads"]), "nodes": len(RG["nodes"]),
@@ -1279,6 +1550,12 @@ def main(out_dir):
                    for l in proj["labels"]],
         "lands": [{"source_id": l["id"], "name": l.get("name"), "kind": l.get("kind"),
                    "rings": l.get("rings") or [l.get("ring")]} for l in proj["land"]],
+        "water_verification": water_pixels,
+        "river_extensions": river_extensions,
+        "water_open": _rle_v(down(water_px, COLL, 0.5).astype(np.uint8)),
+        "walk_deck": walk_deck,
+        "walk_pier": walk_pier,
+        "walk_ford": walk_ford,
         "fords": [[float(f[0]), float(f[1])] for f in ford_pts],
         "collision": {"encoding": "rle-[start,len,value]-per-row", "cell_px": COLL,
                       "rows": rows},

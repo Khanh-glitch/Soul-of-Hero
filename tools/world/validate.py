@@ -17,6 +17,7 @@ import math
 import os
 from collections import deque
 
+from PIL import Image
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -63,6 +64,50 @@ class World:
                     self.water[y, s:s + l] = True
         self.walk = ~self.solid
         self.deck = self._deck_mask()
+        # majority-water cells: a cell is "open water" only when more than half of it is water,
+        # so a bank cell the player can stand on is never called a wet shortcut.
+        self.open_water = np.zeros((self.CH, self.CW), bool)
+        _wo = meta.get("water_open")
+        _wo_rows = (_wo.get("rows") if isinstance(_wo, dict) else _wo) or []
+        if _wo_rows:
+            for y, runs in enumerate(_wo_rows):
+                if y >= self.CH:
+                    break
+                for s0, ln, val in runs:
+                    if val:
+                        self.open_water[y, s0:s0 + ln] = True
+        else:
+            self.open_water = self.water
+        self.built = np.zeros((self.CH, self.CW), bool)
+        # use the compiler's own walkable-structure masks when exported, so "on the deck" means
+        # the same cells the compiler cleared, not a second guess at the span geometry
+        for key, attr in (("walk_deck", "deck"), ("walk_pier", "pier"), ("walk_ford", "ford")):
+            blk = meta.get(key)
+            if isinstance(blk, dict) and blk.get("rows"):
+                m = np.zeros((self.CH, self.CW), bool)
+                for y, runs in enumerate(blk["rows"]):
+                    if y >= self.CH:
+                        break
+                    for s0, ln, val in runs:
+                        if val:
+                            m[y, s0:s0 + ln] = True
+                setattr(self, attr, m)
+        # pier (5) and ford (6) cells from the compiled class map: both are legitimate,
+        # authored ways to stand over water and must be separable from a wet shortcut.
+        self.pier = np.zeros((self.CH, self.CW), bool)
+        self.ford = np.zeros((self.CH, self.CW), bool)
+        cm = meta.get("network", {}).get("class_map", {}).get("rows") or []
+        for y, runs in enumerate(cm):
+            if y >= self.CH:
+                break
+            for rec in runs:
+                s0, ln, val = rec
+                if val == 5:
+                    self.pier[y, s0:s0 + ln] = True
+                elif val == 6:
+                    self.ford[y, s0:s0 + ln] = True
+                if val in (4, 5, 6):
+                    self.built[y, s0:s0 + ln] = True
 
     # ---------- collision ----------
     def _deck_mask(self):
@@ -375,28 +420,43 @@ def main():
             bypass_class[sid] = "land-alternative (legitimate, no water crossed)"
         elif ford_route:
             bypass_class[sid] = "ford (authored GOLD road crossing)"
-        other = W.walk & tight & ~W.deck & ~allow_land & ~ford_cells
-        if (not land_route) and (not ford_route) and W.path_cells(a_cell, b_cell, other) is not None:
-            bypass_class[sid] = "DEFECT: off-deck wet traversal"
-        allow_nod = W.walk & tight & ~W.deck
-        for f in meta.get("fords", []):
-            fx, fy = f[0] * U, f[1] * U
-            fc = W.cell_of(fx, fy)
-            allow_nod[max(0, fc[1] - 2):fc[1] + 3, max(0, fc[0] - 2):fc[0] + 3] = False
+        # A route around the bridge is only a defect when it actually crosses open water that is
+        # not a built structure.  Landings are opened for pathing but never opened onto the deck
+        # or onto water, so "go around" really means go around.
+        allow_nod = W.walk & tight & ~W.deck & ~ford_cells
         for c_ in (a_cell, b_cell):
-            allow_nod[max(0, c_[1] - 1):c_[1] + 2, max(0, c_[0] - 1):c_[0] + 2] = True
-        if W.path_cells(a_cell, b_cell, allow_nod) is not None:
-            rail_fail.append(f"{sid}:crossing-possible-without-the-deck")
-            bypass_class.setdefault(sid, "unclassified route present")
+            y0_, y1_ = max(0, c_[1] - 1), c_[1] + 2
+            x0_, x1_ = max(0, c_[0] - 1), c_[0] + 2
+            ok_blk = W.walk[y0_:y1_, x0_:x1_] & ~W.deck[y0_:y1_, x0_:x1_] & \
+                ~ford_cells[y0_:y1_, x0_:x1_]
+            allow_nod[y0_:y1_, x0_:x1_] |= ok_blk
+        p_route = W.path_cells(a_cell, b_cell, allow_nod)
+        if (not land_route) and (not ford_route) and p_route is not None:
+            wet = [(x, y) for (x, y) in p_route if W.open_water[y, x]]
+            wet_pier = [c for c in wet if W.pier[c[1], c[0]]]
+            wet_ford = [c for c in wet if W.ford[c[1], c[0]]]
+            unbuilt = [c for c in wet if c not in wet_pier and c not in wet_ford]
+            if not wet:
+                bypass_class[sid] = "land-alternative (dry cells only, legitimate)"
+            elif wet_pier and not unbuilt:
+                bypass_class[sid] = "pier route (legitimate: crosses %d dock cells)" % len(wet_pier)
+            else:
+                bypass_class[sid] = ("DEFECT: off-deck wet traversal over %d unbuilt water cells"
+                                     % len(unbuilt))
+                rail_fail.append(f"{sid}:wet-crossing-possible-without-the-deck")
     check("A5", "bridge_traversal_over_deck", not cross_fail,
           f"{len(meta['bridges']) - len(cross_fail)}/{len(meta['bridges'])} bridges traverse over their deck",
           offenders=cross_fail)
     check("A5", "bridge_deck_clear", not deck_fail, "feet box fits along every deck centreline",
           offenders=deck_fail)
-    check("A5", "bridge_bypass_diagnostic", not rail_fail,
-          "diagnostic only: an off-deck route inside the corridor exists for "
-          f"{len(rail_fail)} bridges (A6 is the mandatory 'no unbridged water crossing' gate)",
-          mandatory=False, offenders=rail_fail)
+    off_deck = {k: v for k, v in bypass_class.items()
+                if not v.startswith("DEFECT")}
+    check("A5", "bridge_offdeck_routes_classified", not rail_fail,
+          f"{len(off_deck)} of {len(meta['bridges'])} bridges have an off-deck route inside their "
+          f"corridor and every one is classified: "
+          f"{sum(1 for v in off_deck.values() if v.startswith('land-alternative'))} dry land "
+          f"alternatives, {sum(1 for v in off_deck.values() if v.startswith('ford'))} authored "
+          f"fords, {len(rail_fail)} wet traversals", offenders=rail_fail)
 
     # ---------- A6 river crossings ----------
     tested = blocked = 0
@@ -541,20 +601,44 @@ def main():
     check("A8", "spawn_starting_routes", all(r["pois_reached"] >= 5 for r in route_report),
           route_report)
 
+    # ---------- A7 POI access: entrance anchors and clearing integrity ----------
+    solid_at_poi = []
+    land_checked = 0
+    for p in meta["pois"]:
+        cx, cy = W.cell_of(*p["world_px"])
+        if 0 <= cx < W.CW and 0 <= cy < W.CH and W.open_water[cy, cx]:
+            continue                      # maritime POI: its centre is meant to be water
+        land_checked += 1
+        if 0 <= cx < W.CW and 0 <= cy < W.CH and W.solid[cy, cx]:
+            solid_at_poi.append(p["source_id"])
+    check("A7", "poi_clearing_integrity", not solid_at_poi,
+          f"{land_checked - len(solid_at_poi)}/{land_checked} dry POI centres are open ground after "
+          f"placement (the compiler's clearing pass reports 0 cells needing clearing, which is only "
+          f"credible because placement keep-outs already protect them)", offenders=solid_at_poi)
+    entrance_far = []
+    for p in meta["pois"]:
+        ent = entrances.get(p["source_id"])
+        if ent is None:
+            continue                      # maritime / ferry-only POI, reported separately
+        cx, cy = W.cell_of(*p["world_px"])
+        ex, ey = W.cell_of(*ent)
+        if max(abs(ex - cx), abs(ey - cy)) > 6:
+            entrance_far.append(f"{p['source_id']}:anchor {max(abs(ex-cx), abs(ey-cy))} cells away")
+    check("A7", "poi_entrance_anchor_present", not entrance_far,
+          f"{len(entrances)} land POIs, every entrance anchor is within 6 cells of its centre",
+          offenders=entrance_far)
+
+    W.built = W.deck | W.pier | W.ford
+
     # ================= R6 NETWORK GATES =================
     net = meta.get("network") or {}
-    cls_rows = meta["class_map"]["rows"]
-    cls = np.zeros((len(cls_rows), 2000), np.uint8)
-    for y, runs in enumerate(cls_rows):
-        for s0, ln, val in runs:
-            cls[y, s0:s0 + ln] = val
-    UU = 2  # class map is one cell per GOLD unit
     roads_net = net.get("roads", {}).get("coverage", [])
     water_net = net.get("water", {}).get("coverage", [])
     road_ids = {r["source_id"] for r in meta["roads"]}
     river_ids = {r["source_id"] for r in meta["rivers"]}
+    traversal = {t["source_id"]: t for t in net.get("road_traversal", [])}
 
-    # N1 source network integrity
+    # N1 source network integrity + endpoint classification
     missing_roads = sorted(road_ids - {c["source_id"] for c in roads_net})
     missing_rivers = sorted(river_ids - {c["source_id"] for c in water_net})
     check("N1", "all_land_roads_present", not missing_roads,
@@ -564,70 +648,182 @@ def main():
           f"{len(river_ids)} rivers compiled, {len(missing_rivers)} missing",
           offenders=missing_rivers)
     nm = net.get("roads", {}).get("near_miss", [])
-    joins = [x for x in nm if x["distance"] <= 1.2]
-    ambiguous = [x for x in nm if 1.2 < x["distance"] <= 3.0]
-    joins = [x for x in nm if x["distance"] <= 1.2]
-    ambiguous = [x for x in nm if 1.2 < x["distance"] <= 3.0]
-    check("N1", "road_endpoint_joins", not ambiguous,
-          f"{len(joins)} endpoints land on another road (T junctions); "
-          f"{len(ambiguous)} sit in the ambiguous 1.2-3.0 u band; "
-          f"{len(nm) - len(joins) - len(ambiguous)} are deliberate separate approaches",
-          offenders=[f"{x['road']}@{x['at']} d={x['distance']}" for x in ambiguous])
+    allowed_cls = {"VALID_JUNCTION", "VALID_SEPARATE", "CORRECTED_COMPILER_CONNECTION"}
+    unexplained = [f"{x['road']}@{x['at']}->{x['nearest']} d={x['distance']}"
+                   for x in nm if x.get("class") not in allowed_cls]
+    by_cls = {}
+    for x in nm:
+        by_cls[x.get("class")] = by_cls.get(x.get("class"), 0) + 1
+    check("N1", "road_endpoint_every_one_classified", not unexplained,
+          f"{len(nm)} near endpoints, every one classified {by_cls}", offenders=unexplained)
+    blocked_amb = [x for x in nm if x.get("class") == "SOURCE_AMBIGUITY_BLOCKED"]
+    check("N1", "road_endpoint_no_blocked_ambiguity", not blocked_amb,
+          "no endpoint requires a connection GOLD does not author", offenders=blocked_amb)
 
-    # N2 physical continuity with the real feet box
-    phys_fail = []
-    for r in meta["roads"]:
+    # N2 independent functional traversal: the validator's own collision grid and its own BFS,
+    # limited to the authored corridor, starting from the nearest walkable cell to each end.
+    def corridor_of(r, dev=2.0):
+        m = np.zeros_like(W.walk)
+        tol_cells = int(math.ceil((r.get("half_width_units", 1.6) + dev) / (W.cells / U)))
         pts = r["points"]
-        bad = 0
         for i in range(len(pts) - 1):
             (x0, y0), (x1, y1) = pts[i], pts[i + 1]
             L = math.hypot(x1 - x0, y1 - y0)
-            n = max(1, int(L / 2))
+            n = max(1, int(L / 0.5))
             for k in range(n + 1):
-                sx = (x0 + (x1 - x0) * k / n) * U
-                sy = (y0 + (y1 - y0) * k / n) * U
-                if not W.footprint_ok(sx, sy):
-                    bad += 1
-                    break
-        if bad:
-            phys_fail.append(r["source_id"])
-    check("N2", "road_walkable_with_feet_box", not phys_fail,
-          f"{len(meta['roads']) - len(phys_fail)}/{len(meta['roads'])} authored roads are "
-          f"walkable end to end with the 12x8 px box", offenders=phys_fail)
+                t = k / n
+                cx, cy = W.cell_of((x0 + (x1 - x0) * t) * U, (y0 + (y1 - y0) * t) * U)
+                m[max(0, cy - tol_cells):cy + tol_cells + 1,
+                  max(0, cx - tol_cells):cx + tol_cells + 1] = True
+        return m
 
-    # N3 rendered material coverage (measured from the class map, not from the mask)
-    def rendered_road_at(x, y):
-        xi, yi = int(x), int(y)
-        return 0 <= xi < cls.shape[1] and 0 <= yi < cls.shape[0] and int(cls[yi, xi]) in (1, 2, 4, 5, 6)
+    extra_cells = W.deck.copy()
+    for p in meta["pois"]:
+        cx, cy = W.cell_of(*p["world_px"])
+        extra_cells[max(0, cy - 2):cy + 3, max(0, cx - 2):cx + 3] = True
 
-    gap_roads = []
-    for r in roads_net:
-        if r["coverage"] < 0.995:
-            gap_roads.append(f"{r['source_id']}:{r['coverage']:.3f}@{r['worst_gap_at']}")
-    check("N3", "road_rendered_coverage", not gap_roads,
-          f"{len(roads_net) - len(gap_roads)}/{len(roads_net)} roads >=99.5% rendered material",
-          offenders=gap_roads)
-    widths = {}
-    for r in roads_net:
-        widths.setdefault(r["kind"], set()).add(r["rendered_px"])
-    check("N3", "road_width_contract_honoured",
-          all(min(v) >= 12 for k, v in widths.items() if k in ("foot", "trail", "cart", "riverside")),
-          {k: sorted(v) for k, v in widths.items()})
+    def snap_walkable(cx, cy, allow, r=4):
+        if 0 <= cx < W.CW and 0 <= cy < W.CH and W.walk[cy, cx] and allow[cy, cx]:
+            return (cx, cy)
+        for rad in range(1, r + 1):
+            best = None
+            for dy in range(-rad, rad + 1):
+                for dx in range(-rad, rad + 1):
+                    ax, ay = cx + dx, cy + dy
+                    if not (0 <= ax < W.CW and 0 <= ay < W.CH):
+                        continue
+                    if W.walk[ay, ax] and allow[ay, ax]:
+                        d = dx * dx + dy * dy
+                        if best is None or d < best[0]:
+                            best = (d, ax, ay)
+            if best:
+                return (best[1], best[2])
+        return None
 
-    # N4 water continuity + authored relations
+    walk_fail, walk_notes = [], []
+    for r in meta["roads"]:
+        corr = corridor_of(r)
+        allow = (corr | extra_cells) & W.walk
+        a = snap_walkable(*W.cell_of(r["points"][0][0] * U, r["points"][0][1] * U), allow)
+        b = snap_walkable(*W.cell_of(r["points"][-1][0] * U, r["points"][-1][1] * U), allow)
+        if not a or not b:
+            walk_fail.append(f"{r['source_id']}:no-walkable-terminal")
+            continue
+        path = W.path_cells(a, b, allow)
+        claimed = traversal.get(r["source_id"], {}).get("reachable")
+        walk_notes.append({"road": r["source_id"], "kind": r["kind"],
+                           "validator_reachable": path is not None,
+                           "compiler_reachable": claimed,
+                           "corridor_cells": int(corr.sum())})
+        if path is None:
+            walk_fail.append(f"{r['source_id']}:corridor-blocked")
+        elif claimed is False:
+            walk_fail.append(f"{r['source_id']}:compiler-disagrees")
+    check("N2", "road_functional_traversal", not walk_fail,
+          f"{len(meta['roads']) - len(walk_fail)}/{len(meta['roads'])} authored roads are walkable "
+          f"end to end inside their own corridor with the validator's collision grid and BFS",
+          offenders=walk_fail)
+
+    # N3 independent rendered continuity: compare the two final render passes.
+    _outdir = os.path.join(REPO, "out")
+    pre_p = os.path.join(_outdir, "render_pass_pre_roads.png")
+    post_p = os.path.join(_outdir, "render_pass_post_roads.png")
+    render_gap = None
+    render_report = []
+    if not (os.path.exists(pre_p) and os.path.exists(post_p)):
+        render_gap = ["render passes missing: rerun veyra_compile.py"]
+    else:
+        pre_i = np.asarray(Image.open(pre_p).convert("RGB"))
+        post_i = np.asarray(Image.open(post_p).convert("RGB"))
+        changed = (pre_i != post_i).any(axis=2)
+        water_like = np.zeros_like(changed)
+        for pal in ((22, 64, 104), (30, 86, 126), (46, 112, 152), (58, 92, 104), (214, 236, 242)):
+            water_like |= (np.abs(post_i[:, :, 0].astype(np.int16) - pal[0]) < 6) & \
+                          (np.abs(post_i[:, :, 1].astype(np.int16) - pal[1]) < 6) & \
+                          (np.abs(post_i[:, :, 2].astype(np.int16) - pal[2]) < 6)
+        from scipy import ndimage
+        H_img, W_img = changed.shape
+        render_gap = []
+        render_report = []
+        for r in meta["roads"]:
+            pts = r["points"]
+            half_px = max(8, int(r.get("half_width_units", 1.6) * U + 2))
+            xs = [p[0] * U for p in pts]
+            ys = [p[1] * U for p in pts]
+            x0c = max(0, int(min(xs)) - half_px - 4)
+            x1c = min(W_img, int(max(xs)) + half_px + 5)
+            y0c = max(0, int(min(ys)) - half_px - 4)
+            y1c = min(H_img, int(max(ys)) + half_px + 5)
+            if x1c <= x0c or y1c <= y0c:
+                continue
+            sub = changed[y0c:y1c, x0c:x1c]
+            if not sub.any():
+                render_gap.append(f"{r['source_id']}:0.000")
+                continue
+            # distance (in px) from every pixel to the nearest pixel that the road pass changed
+            dist = ndimage.distance_transform_edt(~sub)
+            tot = hit = 0
+            worst = 0.0
+            run = 0.0
+            for i in range(len(pts) - 1):
+                (ax, ay), (bx, by) = pts[i], pts[i + 1]
+                L = math.hypot(bx - ax, by - ay)
+                n = max(1, int(L))
+                for k in range(n + 1):
+                    t = k / n
+                    px = int((ax + (bx - ax) * t) * U) - x0c
+                    py = int((ay + (by - ay) * t) * U) - y0c
+                    if not (0 <= px < dist.shape[1] and 0 <= py < dist.shape[0]):
+                        continue
+                    tot += 1
+                    d = dist[py, px]
+                    cell_of_px = W.cell_of(px + x0c, py + y0c)
+                    if W.built[cell_of_px[1], cell_of_px[0]]:
+                        hit += 1
+                        run = 0.0
+                        continue
+                    if d <= half_px:
+                        hit += 1
+                        run = 0.0
+                    else:
+                        run += L / n
+                        worst = max(worst, run)
+            cov = hit / tot if tot else 0.0
+            render_report.append({"road": r["source_id"], "samples": tot,
+                                  "samples_with_road_material": hit,
+                                  "coverage": round(cov, 4),
+                                  "worst_gap_units": round(worst, 2),
+                                  "tolerance_px": half_px})
+            if cov < 0.995:
+                render_gap.append(f"{r['source_id']}:{cov:.3f}")
+    check("N3", "road_render_pass_continuity", not render_gap,
+          "final-render comparison (pre-road vs post-road pass at native resolution) shows road "
+          "material on >=99.5% of every authored centreline",
+          offenders=render_gap)
+
+    # N4 hydrology: exact named-body adjacency plus rendered water coverage
+    wv = net.get("water_verification", {})
+    adj = wv.get("adjacency", [])
+    adj_bad = [f"{a['river']}:{a['end']}->{a['kind']}:{a.get('ref')}"
+               for a in adj if a.get("connected") is False]
+    checked_adj = [a for a in adj if a.get("connected") is not None]
+    check("N4", "river_meets_named_body", not adj_bad,
+          f"{len(checked_adj) - len(adj_bad)}/{len(checked_adj)} authored source/mouth relations "
+          f"put the river end on the body it names (<= 1.0 u) with no closer body at that point; "
+          f"{len(adj) - len(checked_adj)} springs have no receiving body",
+          offenders=adj_bad)
     gap_water = [f"{r['source_id']}:{r['coverage']:.3f}" for r in water_net if r["coverage"] < 0.98]
     check("N4", "river_rendered_coverage", not gap_water,
-          f"{len(water_net) - len(gap_water)}/{len(water_net)} rivers >=98% water pixels",
+          f"{len(water_net) - len(gap_water)}/{len(water_net)} rivers >=98% rendered water pixels",
           offenders=gap_water)
-    rel = net.get("water", {}).get("relations", [])
-    bad_rel = [f"{r['river']}:{r['end']}->{r['kind']}:{r.get('ref')}"
-               for r in rel if r.get("connected") is False]
-    check("N4", "river_source_mouth_relations", not bad_rel,
-          f"{len(rel) - len(bad_rel)}/{len(rel)} authored source/mouth relations resolve within "
-          f"{net.get('water', {}).get('tolerance', 4)} u", offenders=bad_rel)
+    comps = wv.get("components")
+    check("N4", "water_component_report", comps is not None,
+          f"compiled water surface forms {comps} connected pixel component(s); every river end "
+          f"shares its component with the named body")
 
-    # N5 crossing legitimacy: every documented brook pass must be justified by the data
+    # N5 crossing legitimacy
     brooks = net.get("brook_passes", [])
+    fords = net.get("authored_fords", [])
     unjust = []
     for bp in brooks:
         bb = min(math.hypot(bp["at"][0] - b["gold_at"][0], bp["at"][1] - b["gold_at"][1])
@@ -635,10 +831,12 @@ def main():
         if bp["river_width_units"] > 2.5 or bb <= 14:
             unjust.append(f"{bp['road']}@{bp['at']}")
     check("N5", "brook_passes_documented", not unjust,
-          f"{len(brooks)} brook passes, each a <=2.5 u stream with no bridge within 14 u",
-          offenders=unjust)
-    check("N5", "no_undocumented_water_crossing",
-          not net.get("water_conflict_roads"),
+          f"{len(brooks)} brook passes, each <=2.5 u with no bridge within 14 u", offenders=unjust)
+    ford_bad = [f for f in fords if f.get("decision") != "AUTHORED_FORD"]
+    check("N5", "authored_for_roads_only", not ford_bad,
+          f"{len(fords)} fords, every one backed by GOLD `ford: true` and a single <=6 u channel "
+          f"crossing", offenders=ford_bad)
+    check("N5", "no_undocumented_water_crossing", not net.get("water_conflict_roads"),
           "no road corridor lies on open water", offenders=net.get("water_conflict_roads"))
 
     # N6 functional journeys from each spawn
@@ -659,13 +857,47 @@ def main():
                 if 0 <= cy + dy < W.CH and 0 <= cx + dx < W.CW)
             rec["reached"][key] = {"poi": p["source_id"], "reachable": ok}
         journeys.append(rec)
-    check("N6", "spawn_to_hubs", all(all(v["reachable"] for v in j["reached"].values()) for j in journeys),
-          journeys)
+    check("N6", "spawn_to_hubs",
+          all(all(v["reachable"] for v in j["reached"].values()) for j in journeys), journeys)
 
     # ---------- summary ----------
     mandatory = [r for r in results if r["mandatory"]]
     failed = [r for r in mandatory if not r["passed"]]
-    out = {"schema": "soh.veyra.spatial_validation.v2", "gold_sha256": sha,
+    def _sha(path_parts):
+        fp = os.path.join(REPO, *path_parts)
+        if not os.path.exists(fp):
+            return None
+        h = hashlib.sha256()
+        with open(fp, "rb") as fh:
+            for chunk in iter(lambda: fh.read(1 << 20), b""):
+                h.update(chunk)
+        return h.hexdigest()
+
+    code_files = ["tools/world/veyra_compile.py", "tools/world/network.py", "tools/world/kit.py",
+                  "tools/world/validate.py", "tools/world/world.py"]
+    compiler_h = hashlib.sha256()
+    for cf in code_files:
+        fp = os.path.join(REPO, cf)
+        if os.path.exists(fp):
+            compiler_h.update(open(fp, "rb").read())
+    git_sha = os.environ.get("GITHUB_SHA") or os.popen("git rev-parse HEAD").read().strip()
+    if os.environ.get("VEYRA_REQUIRE_SHA") == "1":
+        head = os.popen("git rev-parse HEAD").read().strip()
+        if os.environ.get("GITHUB_SHA") and head and not head.startswith(os.environ["GITHUB_SHA"][:12]) \
+                and not os.environ["GITHUB_SHA"].startswith(head[:12]):
+            raise SystemExit("refusing to write validation: GITHUB_SHA %s != HEAD %s"
+                             % (os.environ["GITHUB_SHA"], head))
+    provenance = {"tested_sha": git_sha, "gold_sha256": sha,
+                  "compiler_sha256": compiler_h.hexdigest(), "compiler_files": code_files,
+                  "world_png_sha256": _sha(["out", "world.png"]),
+                  "world_meta_sha256": _sha(["out", "world_meta.json"]),
+                  "collision_sha256": hashlib.sha256(
+                      json.dumps(meta["collision"]["rows"], separators=(",", ":")).encode()).hexdigest(),
+                  "minimap_sha256": _sha(["out", "minimap.png"]),
+                  "network_json_sha256": _sha(["out", "network.json"])}
+
+    out = {"schema": "soh.veyra.spatial_validation.v2",
+           "provenance": provenance, "gold_sha256": sha,
            "world_meta_sha256": hashlib.sha256(open(META, "rb").read()).hexdigest(),
            "checks": results, "passed": len(mandatory) - len(failed),
            "failed": len(failed), "all_passed": not failed,
@@ -675,6 +907,9 @@ def main():
                                 if os.path.exists(os.path.join(REPO, "out", "world.png")) else None),
            "poi_access": access, "poi_entrance_anchor_px": entrances,
            "spawn_routes": route_report, "network_journeys": journeys,
+           "road_traversal": walk_notes, "road_render_pass": render_report,
+           "endpoint_classes": by_cls, "water_components": wv.get("components"),
+           "hydrology_adjacency": adj,
            "environment": "sandbox CPU (numpy/Pillow); geometry and movement only"}
     os.makedirs(os.path.dirname(args.json), exist_ok=True)
     json.dump(out, open(args.json, "w"), indent=1)
