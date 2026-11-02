@@ -390,13 +390,16 @@ class ChronoshardR:
         if tau <= 1.0:
             var u := AMath.cl01(tau)
             var head := center + Vector2(lerpf(-11.0, 10.0, u), -2.0 - 3.0 * sin(u * PI))
+            # Tapering comet rather than a UI arrow: bright pointed head,
+            # two swept, uneven tails and a separate trajectory, so its
+            # stored shape is the same physical visual as the world echo.
             var shape := PackedVector2Array([
-                head + Vector2(7, 0), head + Vector2(-2, -5),
-                head + Vector2(-2, -2), head + Vector2(-11, -2),
-                head + Vector2(-11, 2), head + Vector2(-2, 2),
-                head + Vector2(-2, 5)])
-            for y in range(floori(head.y - 6), ceili(head.y + 6) + 1):
-                for x in range(floori(head.x - 12), ceili(head.x + 8) + 1):
+                head + Vector2(7, 0), head + Vector2(0, -3),
+                head + Vector2(-5, -2), head + Vector2(-13, -4),
+                head + Vector2(-9, -1), head + Vector2(-14, 1),
+                head + Vector2(-5, 2), head + Vector2(0, 3)])
+            for y in range(floori(head.y - 5), ceili(head.y + 5) + 1):
+                for x in range(floori(head.x - 15), ceili(head.x + 8) + 1):
                     var pixel := Vector2(float(x) + 0.5, float(y) + 0.5)
                     if Geometry2D.is_point_in_polygon(pixel, hex) and Geometry2D.is_point_in_polygon(pixel, shape):
                         fb.add_px(x, y, color.x, color.y, color.z, intensity)
