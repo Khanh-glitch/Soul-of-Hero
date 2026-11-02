@@ -10,7 +10,6 @@ Uploaded directly from creator-provided ZIPs to a **separate reference branch**,
 | `soul-of-hero-prototype.zip` | 802437 | `01348a02076fda189048e5dccdf155df8b603524c0d0b8cb7e28fc907e0a05b7` | `9580f666af0a70557f7abc9e034541009baf6863` | falsifying “newer-nearby is successor” and state/receipt invariants |
 | `soul-of-hero-rpg-prototype (3).zip` | 723234 | `12438a536de6d068abda4e639710dec4d8c9409435f11d12d74540cdd3bfdf55` | `f377af9611086b0e196b2e9d0e2e9aed60243ace` | cross-run escrow, physical item custody, randomized transfer-property QA |
 | `develop-soul-of-hero-rpg (4).zip` | 466053 | `f601ca176b6efd2d3b2d2abfe4ce375b423706663f708f71dc348514878f01ba` | `d79450e402f37f58f7d73abb5f3ccd6f5ba7ba9b` | action dispatcher, negative oracle: faraway harvest / remotely injected footprint; procedural pixel reference only |
-
 | `soul-of-hero-game-development.zip` | 727262 | `fa95538271fd46a70f5737b58b8671124e091e8f6196479950a25dca741a2403` | `5a667c979a597d5d26e80453f7f16756db98f150` | coreless exploration, source→home→offline production→physical research, environment/cart tradeoffs; source audit in `SOH_GAME_DEVELOPMENT_GAMEPLAY_DEPTH_REUSE.md` |
 
 ## To fetch in a NEW Arena session
