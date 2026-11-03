@@ -191,11 +191,31 @@ try {
     async function ensureVitals(){const cur=await state();if(cur.player.dead)throw new Error(`player died during ordinary-input travel at (${cur.player.x.toFixed(0)},${cur.player.y.toFixed(0)}), hp=${cur.player.hp}, hunger=${cur.player.hunger.toFixed(1)}, thirst=${cur.player.thirst.toFixed(1)}, nearby=${JSON.stringify(cur.creatures.filter(m=>Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<120))}`);if(cur.player.hp<92&&cur.counts.bandage)await useInventoryItem('bandage');if(cur.player.thirst<68&&cur.counts.water_flask)await useInventoryItem('water_flask');if(cur.player.hunger<68&&cur.counts.berries)await useInventoryItem('berries');}
     async function defendNearby(){
       {
-        const cur=await state();const threat=cur.creatures.filter(m=>!m.type.startsWith('elder_')&&['chase','track','tell','attack','recover'].includes(m.state)&&(()=>{const d=Math.hypot(m.x-cur.player.x,m.y-cur.player.y);return d<55||(['attack','tell','recover'].includes(m.state)&&d<130);})()).sort((a,b)=>Math.hypot(a.x-cur.player.x,a.y-cur.player.y)-Math.hypot(b.x-cur.player.x,b.y-cur.player.y))[0];
-        if(!threat)return false;const td=Math.hypot(threat.x-cur.player.x,threat.y-cur.player.y),imminent=td<55||(['attack','tell','recover'].includes(threat.state)&&td<130);
+        const cur=await state();const threat=cur.creatures.filter(m=>!m.type.startsWith('elder_')&&['chase','track','tell','attack','recover'].includes(m.state)&&(()=>{const d=Math.hypot(m.x-cur.player.x,m.y-cur.player.y);return d<55||(['attack','tell'].includes(m.state)&&d<100);})()).sort((a,b)=>Math.hypot(a.x-cur.player.x,a.y-cur.player.y)-Math.hypot(b.x-cur.player.x,b.y-cur.player.y))[0];
+        if(!threat)return false;const td=Math.hypot(threat.x-cur.player.x,threat.y-cur.player.y),imminent=td<55||(['attack','tell'].includes(threat.state)&&td<100);
+        // During recovery, fight a close pursuer with the ordinary starter knife instead
+        // of endlessly dodging away from the same target. The attack itself is bounded.
+        if(threat.state==='recover' && td<48 && cur.containers.inv[0]?.key==='knife') {
+          await page.keyboard.press('1');
+          await aim(threat.x,threat.y);
+          if(td>24) {
+            const a=Math.atan2(threat.y-cur.player.y,threat.x-cur.player.x), keys=[];
+            if(Math.abs(Math.cos(a))>0.25)keys.push(Math.cos(a)>0?'d':'a');
+            if(Math.abs(Math.sin(a))>0.25)keys.push(Math.sin(a)>0?'s':'w');
+            try {for(const k of keys)await page.keyboard.down(k);await pause(120);} finally {for(const k of keys)await page.keyboard.up(k);}
+          }
+          const before=await state(), liveThreat=before.creatures.find(m=>m.id===threat.id);
+          if(liveThreat && Math.hypot(liveThreat.x-before.player.x,liveThreat.y-before.player.y)<35) {
+            await aim(liveThreat.x,liveThreat.y);
+            try {await page.mouse.down();await pause(600);} finally {await page.mouse.up();}
+            const after=await state();
+            routeDiagnostics.push({kind:'wildlife-defense',threat:threat.id,before:before.player,after:after.player,remainingHp:after.creatures.find(m=>m.id===threat.id)?.hp ?? 0,method:'ordinary knife input'});
+            return true;
+          }
+        }
         await ensureVitals();const live=await state(),angle=Math.atan2(live.player.y-threat.y,live.player.x-threat.x),keys=[];
         if(Math.abs(Math.cos(angle))>0.25)keys.push(Math.cos(angle)>0?'d':'a');if(Math.abs(Math.sin(angle))>0.25)keys.push(Math.sin(angle)>0?'s':'w');
-        const emergency=['attack','tell','recover'].includes(threat.state)&&td<130;const canRoll=imminent&&live.player.stamina>=22&&(emergency||Date.now()-lastDodgeAt>=900);if(canRoll)lastDodgeAt=Date.now();for(const k of keys)await page.keyboard.down(k);if(canRoll)await page.keyboard.press('Space');await pause(canRoll?280:220);for(const k of keys)await page.keyboard.up(k);
+        const emergency=['attack','tell'].includes(threat.state)&&td<100;const canRoll=imminent&&live.player.stamina>=22&&(emergency||Date.now()-lastDodgeAt>=900);if(canRoll)lastDodgeAt=Date.now();for(const k of keys)await page.keyboard.down(k);if(canRoll)await page.keyboard.press('Space');await pause(canRoll?280:220);for(const k of keys)await page.keyboard.up(k);
         let after=await state(),method=canRoll?'ordinary directional WASD + Space dodge-roll':'ordinary WASD retreat';
         if(Math.hypot(after.player.x-live.player.x,after.player.y-live.player.y)<8){
           for(const offset of [-0.8,0.8,-1.5,1.5]){const a=angle+offset,keys=[];if(Math.abs(Math.cos(a))>0.25)keys.push(Math.cos(a)>0?'d':'a');if(Math.abs(Math.sin(a))>0.25)keys.push(Math.sin(a)>0?'s':'w');for(const k of keys)await page.keyboard.down(k);await pause(220);for(const k of keys)await page.keyboard.up(k);const candidate=await state();if(candidate.player.dead)throw new Error(`player died while taking an ordinary alternate retreat from ${threat.type} ${threat.id}; state=${JSON.stringify(candidate.player)}`);if(Math.hypot(candidate.player.x-after.player.x,candidate.player.y-after.player.y)>=8){after=candidate;method+='; alternate ordinary WASD escape around physical obstruction';break;}after=candidate;}
