@@ -2,7 +2,7 @@
 import { BAL, TILE, WW, WH, T, rngNext, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity } from './core';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
 import { getWorld } from './world';
-import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, bagContainers, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones } from './engine';
+import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
@@ -264,7 +264,7 @@ function bashAhead(gs: GameState, m: Creature, a: number, now: number) {
   const r = gs.run!; if (m.cd > 0) return; const tx = tileOf(m.x + Math.cos(a) * 10), ty = tileOf(m.y + Math.sin(a) * 10);
   const e = entsAt(r, tx, ty).find(e => e.kind === 'struct' && (STRUCTS[e.type!].block)); if (!e) return;
   const dmg = m.elder ? ELDERS[m.elder.key].dmg * 2 : CREATURES[m.type].dmg; e.hp! -= dmg; m.cd = 900; fx('structhit', { x: e.x, y: e.y });
-  if (e.hp! <= 0) { const cids = [e.c, e.station?.fuelC, e.station?.outC].filter(Boolean) as string[]; bagContainers(r, cids, e.x, e.y, now, 'Wreckage'); delete r.entities[e.id]; for (const c of cids) delete r.custody[c]; markDirty(); receipt(r, now, 'struct.destroyed', `${e.type} by ${m.type}`); pushLog(r, now, `${STRUCTS[e.type!].name} was smashed by a ${CREATURES[m.type]?.name || 'beast'}!`, 'red'); fx('structbreak', { x: e.x, y: e.y }); }
+  if (e.hp! <= 0) { destroyStructure(r, e, now); receipt(r, now, 'struct.destroyed', `${e.type} by ${m.type}`); pushLog(r, now, `${STRUCTS[e.type!].name} was smashed by a ${CREATURES[m.type]?.name || 'beast'}!`, 'red'); fx('structbreak', { x: e.x, y: e.y }); }
 }
 
 function tickCreatures(gs: GameState, dtMs: number, now: number) {
@@ -570,7 +570,8 @@ export function settle(gs: GameState, now: number): string[] {
     if (p.dead) continue;
     const min = dtMs / 60000 * B.offlineDrainFactor;
     p.hunger = Math.max(0, p.hunger - B.hungerDrainPerMin * min); p.thirst = Math.max(0, p.thirst - B.thirstDrainPerMin * min);
-    if (p.hunger <= 0 || p.thirst <= 0) { const dmg = B.starveDamagePerMin * min; p.hp = sheltered ? Math.max(1, p.hp - dmg) : p.hp - dmg; } // LOCKED_CANON: sheltered → hunger alone cannot kill
+    if (p.thirst <= 0) p.hp -= B.starveDamagePerMin * min; // thirst remains lethal even alongside hunger
+    else if (p.hunger <= 0) { const dmg = B.starveDamagePerMin * min; p.hp = sheltered ? Math.max(1, p.hp - dmg) : p.hp - dmg; }
     if ((zone === 5) && !sheltered) p.hp -= B.coldDamagePerMin * min; // cold is NOT covered by shelter immunity unless enclosed
     if (zone === 7) { p.rad = Math.min(100, p.rad + 6 * min); if (p.rad > 50) p.hp -= B.radDamagePerMinOver50 * min; }
     if (p.hp <= 0) { killPlayer(gs, t, 'exposure while offline'); report.push('You did not survive the time away. Your bag lies where you rested.'); }

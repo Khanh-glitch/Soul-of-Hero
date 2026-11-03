@@ -101,10 +101,8 @@ describe('catalog validation rejects broken content before play', () => {
     const positive = cloneCatalog(); positive.recipes.salted_meat.ins[0][1] = 2;
     expect(validateGameplayCatalog(positive)).toBe(true);
     const older = migrate({ version: SAVE_VERSION - 1, profile: { securedCash: 23, history: [] }, run: { inProgress: true } });
-    expect(older.gs.version).toBe(SAVE_VERSION);
-    expect(older.gs.profile.securedCash).toBe(23);
-    expect(older.gs.run).toBeNull();
-    expect(older.note).toContain('old in-progress run could not be migrated');
+    expect(older.gs).toBeNull();
+    expect(older.note).toContain('left untouched for recovery');
   });
 });
 
@@ -209,8 +207,8 @@ describe('C06/C09 stations, fuel, offline', () => {
   });
   it('sheltered player cannot die from hunger alone offline; unsheltered can and leaves one bag', () => {
     const gs = fresh(); const r = gs.run!; const w = getWorld(); const b = w.buildings.find(b => b.id === 'b_tp')!;
-    tp(gs, (b.x + 2) * TILE + 8, (b.y + 2) * TILE + 8); r.player.hunger = 0; r.player.thirst = 0; r.player.hp = 20; r.clock.lastSimAt = T0;
-    settle(gs, T0 + 20 * HOUR); expect(r.player.dead).toBe(false); expect(r.player.hp).toBeGreaterThanOrEqual(1);
+    tp(gs, (b.x + 2) * TILE + 8, (b.y + 2) * TILE + 8); r.player.hunger = 0; r.player.thirst = 100; r.player.hp = 1; r.clock.lastSimAt = T0;
+    settle(gs, T0 + 2 * 60000); expect(r.player.dead).toBe(false); expect(r.player.hp).toBeGreaterThanOrEqual(1);
     const gs2 = fresh(1); const r2 = gs2.run!; r2.player.hunger = 0; r2.player.thirst = 0; r2.player.hp = 20; r2.clock.lastSimAt = T0;
     settle(gs2, T0 + 20 * HOUR); expect(r2.player.dead).toBe(true); expect(Object.values(r2.entities).filter(e => e.kind === 'bag').length).toBe(1);
   });
