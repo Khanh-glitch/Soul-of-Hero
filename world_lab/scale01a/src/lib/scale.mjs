@@ -103,7 +103,10 @@ export function buildCandidates(C, F, M, bends, network) {
           playerDiameterTiles: r4(playerDiameterTiles), cartDiameterTiles: r4(cartDiameterTiles),
           smallestRuntimeBuildingTiles: [C.minBuilding.w, C.minBuilding.h], smallestRoomTiles: minRoomTiles, smallestRoomSideTiles: minRoomSide,
           claimRadiusTiles: bal.economy.claimRadius, claimMinDistFromPoiTiles: C.physicalLimits.claimMinDistFromPoiTiles,
-          tenderLinkTiles: C.physicalLimits.tenderLinkTiles, nearInteractionTiles: 3,
+          tenderLinkTiles: C.physicalLimits.tenderLinkTiles,
+          nearInteractionTiles: C.physicalLimits.nearInteractionWorkbenchTiles,
+          buildRangeTiles: C.physicalLimits.buildRangeTiles,
+          nearInteractionDefaultTiles: C.physicalLimits.nearInteractionDefaultTiles,
         },
         featureTiles: {
           minPOIAreaAu2: F.poiFoot.minAreaAu2, minPOIAreaTiles: r4(F.poiFoot.minAreaAu2 / (u * u)),
@@ -139,7 +142,7 @@ export function buildCandidates(C, F, M, bends, network) {
       bridgeOpenTiles: [Math.floor(bridgeAu.w / u), Math.floor(bridgeAu.h / u)],
     };
     s.spatial.quantizedOpenTiles = q;
-    const minWorkspaceTiles = 9; // 3x3 interaction envelope from PR44 near(r,e,3); derived minimum, NOT an approved dimension
+    const minWorkspaceTiles = C.physicalLimits.nearInteractionWorkbenchTiles ** 2; // 3x3 envelope from engine.ts near(r,e,3); derived minimum, NOT an approved dimension
     const tests = [
       { id: 'ENTRY_CART', gating: true, ok: q.entranceOpenTiles >= 1 && 1 >= cartDiameterTiles, measured: `${q.entranceOpenTiles} open tile(s); cart diameter ${cartDiameterTiles} tile`, basis: 'GEO-02 PROPOSED 3.696 au west opening; PR44 moveBody cart radius 5 px; one open floor tile is the atomic unit' },
       { id: 'ENTRY_ONE_FLOOR_TILE', gating: true, ok: q.entranceOpenTiles >= 1, measured: `${q.entranceOpenTiles} open tile(s)`, basis: 'PR44 structures occupy one tile centre; a sub-tile opening quantizes to ZERO open tiles' },
@@ -154,6 +157,8 @@ export function buildCandidates(C, F, M, bends, network) {
       { id: 'ECONOMY_CELL_LIMIT', gating: true, ok: cells <= C.economyLimit.maxCells, measured: `${cells} cells vs ${C.economyLimit.maxCells}`, basis: 'validateEconomyMap() rejects >1,000,000' },
       { id: 'EXACT_PACKAGE_VALIDATOR', gating: false, ok: s.engineLimits.exactPackageValidator.fits, measured: `${W}x${H} vs ${WW}x${WH}`, basis: 'validateRuntimeMapPackage() — applies to ALL candidates; requires the same runtime change, not a differentiator' },
       { id: 'SEA_DIST_SEMANTIC_COVERAGE', gating: false, ok: true, measuredOnly: true, measured: `${(sea.fraction * 100).toFixed(2)}% land cells with meaningful seaDist`, basis: `world.ts seaDist BFS stops at ${C.seaDistBfsStopTiles} hops — measured semantic loss, not a hard gate` },
+      { id: 'SHORELINE_DETAIL', gating: false, ok: true, measuredOnly: true, measured: `${F.coastCells} authored coast cells; ${r4(F.sourceGrid.cell / u)} tile(s) per 8 au source cell`, basis: 'Veyra raster is 8 au/cell. U<8 repeats the same 8-au coastline staircase; NO new shoreline indentation, bay or isthmus detail is authored.' },
+      { id: 'CARGO_CORRIDOR_AUTHORING', gating: false, ok: false, measured: `${network.componentCount} disconnected cart-road components; RT-1 has 226.4759 au of kind=trail segments`, basis: 'MAP-LOG-03 needs a distinct, physically verified cart road. This blocker is SCALE-INDEPENDENT: no U fixes an incomplete authored trail, and no trail may be labelled cart-passable.' },
     ];
     s.feasibility = {
       tests, passed: tests.filter(t => t.ok).length,

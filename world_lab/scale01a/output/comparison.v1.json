@@ -85,11 +85,11 @@
         },
         "sp_lake.starterBuildZone": {
           "label": "Spawn→build zone (MAP-SPAWN-04)",
-          "straightAu": 10.4314,
-          "routeAu": 13.7367,
-          "straightSeconds": 2.3181,
-          "routeSeconds": 3.342,
-          "loadedCartMaxSeconds": 10.5694
+          "straightAu": 10.7652,
+          "routeAu": 14.2943,
+          "straightSeconds": 2.3923,
+          "routeSeconds": 3.4659,
+          "loadedCartMaxSeconds": 10.8723
         },
         "sp_lake.nearPOI": {
           "label": "Spawn→nearest POI",
@@ -133,11 +133,11 @@
         },
         "u4.cacheToHome": {
           "label": "Cash cache→home (MAP-U4)",
-          "straightAu": 351.6697,
-          "routeAu": 690.2607,
-          "straightSeconds": 78.1488,
-          "routeSeconds": 128.8989,
-          "loadedCartMaxSeconds": 326.9989
+          "straightAu": 351.2031,
+          "routeAu": 690.8183,
+          "straightSeconds": 78.0451,
+          "routeSeconds": 129.0228,
+          "loadedCartMaxSeconds": 327.3019
         }
       },
       "spatial": {
@@ -157,7 +157,8 @@
         "failedTests": [
           "CHUNK_KEY_COLLISION_FREE",
           "ECONOMY_CELL_LIMIT",
-          "EXACT_PACKAGE_VALIDATOR"
+          "EXACT_PACKAGE_VALIDATOR",
+          "CARGO_CORRIDOR_AUTHORING"
         ],
         "hardRejections": [
           "CHUNK_KEY_COLLISION_FREE",
@@ -233,11 +234,11 @@
         },
         "sp_lake.starterBuildZone": {
           "label": "Spawn→build zone (MAP-SPAWN-04)",
-          "straightAu": 10.4314,
-          "routeAu": 13.7367,
-          "straightSeconds": 1.159,
-          "routeSeconds": 1.671,
-          "loadedCartMaxSeconds": 5.2847
+          "straightAu": 10.7652,
+          "routeAu": 14.2943,
+          "straightSeconds": 1.1961,
+          "routeSeconds": 1.733,
+          "loadedCartMaxSeconds": 5.4362
         },
         "sp_lake.nearPOI": {
           "label": "Spawn→nearest POI",
@@ -281,11 +282,11 @@
         },
         "u4.cacheToHome": {
           "label": "Cash cache→home (MAP-U4)",
-          "straightAu": 351.6697,
-          "routeAu": 690.2607,
-          "straightSeconds": 39.0744,
-          "routeSeconds": 64.4494,
-          "loadedCartMaxSeconds": 163.4995
+          "straightAu": 351.2031,
+          "routeAu": 690.8183,
+          "straightSeconds": 39.0226,
+          "routeSeconds": 64.5114,
+          "loadedCartMaxSeconds": 163.651
         }
       },
       "spatial": {
@@ -303,7 +304,8 @@
         "poiFeetUnableToHost5x5Square": 0,
         "roadBendsUnderOneTile": 0,
         "failedTests": [
-          "EXACT_PACKAGE_VALIDATOR"
+          "EXACT_PACKAGE_VALIDATOR",
+          "CARGO_CORRIDOR_AUTHORING"
         ],
         "hardRejections": []
       },
@@ -376,11 +378,11 @@
         },
         "sp_lake.starterBuildZone": {
           "label": "Spawn→build zone (MAP-SPAWN-04)",
-          "straightAu": 10.4314,
-          "routeAu": 13.7367,
-          "straightSeconds": 0.5795,
-          "routeSeconds": 0.8355,
-          "loadedCartMaxSeconds": 2.6423
+          "straightAu": 10.7652,
+          "routeAu": 14.2943,
+          "straightSeconds": 0.5981,
+          "routeSeconds": 0.8665,
+          "loadedCartMaxSeconds": 2.7181
         },
         "sp_lake.nearPOI": {
           "label": "Spawn→nearest POI",
@@ -424,11 +426,11 @@
         },
         "u4.cacheToHome": {
           "label": "Cash cache→home (MAP-U4)",
-          "straightAu": 351.6697,
-          "routeAu": 690.2607,
-          "straightSeconds": 19.5372,
-          "routeSeconds": 32.2247,
-          "loadedCartMaxSeconds": 81.7497
+          "straightAu": 351.2031,
+          "routeAu": 690.8183,
+          "straightSeconds": 19.5113,
+          "routeSeconds": 32.2557,
+          "loadedCartMaxSeconds": 81.8255
         }
       },
       "spatial": {
@@ -451,7 +453,8 @@
           "MIN_POI_ROOM",
           "MEDIAN_POI_ROOM",
           "PROPOSED_WORKSPACE",
-          "EXACT_PACKAGE_VALIDATOR"
+          "EXACT_PACKAGE_VALIDATOR",
+          "CARGO_CORRIDOR_AUTHORING"
         ],
         "hardRejections": [
           "ENTRY_CART",
@@ -530,11 +533,11 @@
         },
         "sp_lake.starterBuildZone": {
           "label": "Spawn→build zone (MAP-SPAWN-04)",
-          "straightAu": 10.4314,
-          "routeAu": 13.7367,
-          "straightSeconds": 0.2898,
-          "routeSeconds": 0.4178,
-          "loadedCartMaxSeconds": 1.3212
+          "straightAu": 10.7652,
+          "routeAu": 14.2943,
+          "straightSeconds": 0.299,
+          "routeSeconds": 0.4332,
+          "loadedCartMaxSeconds": 1.359
         },
         "sp_lake.nearPOI": {
           "label": "Spawn→nearest POI",
@@ -578,11 +581,11 @@
         },
         "u4.cacheToHome": {
           "label": "Cash cache→home (MAP-U4)",
-          "straightAu": 351.6697,
-          "routeAu": 690.2607,
-          "straightSeconds": 9.7686,
-          "routeSeconds": 16.1124,
-          "loadedCartMaxSeconds": 40.8749
+          "straightAu": 351.2031,
+          "routeAu": 690.8183,
+          "straightSeconds": 9.7556,
+          "routeSeconds": 16.1279,
+          "loadedCartMaxSeconds": 40.9127
         }
       },
       "spatial": {
@@ -607,7 +610,8 @@
           "PROPOSED_WORKSPACE",
           "ROAD_TWO_TILES_CART_CLEARANCE",
           "BRIDGE_GLYPH_BOTH_AXES",
-          "EXACT_PACKAGE_VALIDATOR"
+          "EXACT_PACKAGE_VALIDATOR",
+          "CARGO_CORRIDOR_AUTHORING"
         ],
         "hardRejections": [
           "ENTRY_CART",

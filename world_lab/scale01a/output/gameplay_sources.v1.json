@@ -449,18 +449,16 @@
       "if(!Array.isArray(h.buildSites)||!h.buildSites.length||h.buildSites.some(s=>!s||!s.id||!s.cells?.length||!s.cells.every(c=>valid(c)&&!!h.economy!.buildable[c])||!s.loadingCells?.length||!s.loadingCells.every(c=>valid(c)&&!!h.economy!.cargoPassable[c])))errors.push('buildable footprint and loading candidates required');"
     ],
     "physicalLimits": {
-      "buildRangeTiles": 3,
+      "buildRangeTiles": 4.6,
       "buildRangeLine": [
-        "r.player = { x: sp.tx * TILE + 8, y: sp.ty * TILE + 8, vx: 0, vy: 0, dir: 0, aim: Math.PI / 2, hp: BAL.player.maxHp, stamina: BAL.player.maxStamina, hunger: 85, thirst: 85, warmth: 100, rad: 0, active: 0, action: null, invuln: 0, dead: false, deadT: 0, pulling: null, skills: { gather: 0, combat: 0, craft: 0, survival: 0 }, stepAcc: 0, lastTraceX: 0, lastTraceY: 0, regionName: sp.name, sheltered: false };",
-        "const e: Entity = { id: uid(r, 'e'), kind: s.kind as any, x: s.tx * TILE + 8, y: s.ty * TILE + 8, tx: s.tx, ty: s.ty, poi: s.poi, label: s.label };",
-        "for (let k = 0; k < 900 && r.creatures.length < 150; k++) trySpawnCreature(r, now, sp.tx * TILE, sp.ty * TILE, 16);",
-        "r.creatures.push(mkCreature(r, 'elder_' + p.id, p.tx * TILE + 8, p.ty * TILE + 8, d.hpLatent, { key: p.id, awake: false, phase: 0, pattern: 0, special: 0 }));"
+        "if (dist(p.x, p.y, tx * TILE + 8, ty * TILE + 8) > 4.6 * TILE) return 'Too far away.';"
       ],
-      "nearInteractionTiles": [
-        "if (type === 'farm_controller' && !Object.values(r.entities).some(e=>e.kind==='struct' && e.type==='workbench' && e.station && owned(e) && (e.station.level ?? 1)>=2 && near(r,e,3) && dist(e.x,e.y,tx*TILE+8,ty*TILE+8)<=3*TILE)) return 'Build near your level 2 workbench.';",
-        "if (!near(r, e, 2.5)) return fail('Too far.');",
-        "if (!e || e.kind !== 'struct' || !owned(e) || !near(r, e, 3)) return fail('Use your structure within reach.');",
-        "if (!e || e.kind !== 'struct' || e.type !== 'workbench' || !e.station || !owned(e) || !near(r, e, 3)) return fail('Use your workbench within reach.');"
+      "nearInteractionDefaultTiles": 2.2,
+      "nearInteractionWorkbenchTiles": 3,
+      "nearInteractionLines": [
+        "function near(r: RunState, e: { x: number; y: number }, tiles = 2.2) { return dist(r.player.x, r.player.y, e.x, e.y) <= tiles * TILE; }",
+        "if (!bench || bench.kind !== 'struct' || bench.type !== 'workbench' || !bench.station || !owned(bench) || !near(r, bench, 3) || dist(bench.x, bench.y, e.x, e.y) > 3 * TILE || (bench.station.level ?? 1) < FURNACE_LINING.benchLevel) return fail('A level 2 workbench must be within reach of you and the furnace.');",
+        "if (!bench || bench.kind !== 'struct' || bench.type !== 'workbench' || !bench.station || !owned(bench) || !near(r, bench, 3) || dist(bench.x, bench.y, e.x, e.y) > 3 * TILE || (bench.station.level ?? 1) < CART_FREIGHT_UPGRADE.benchLevel) return fail('Bring the cart to your level 2 workbench.');"
       ],
       "blockGrid": [
         "export function blockGrid(r: RunState) {",

@@ -51,7 +51,7 @@ add('BEN-02-CELLS', JSON.stringify(D.candidates.map(c => c.cells)) === '[2800000
 add('BEN-03-DIMS', D.candidates.every(c => c.worldTiles[0] * c.u === 2000 && c.worldTiles[1] * c.u === 1400));
 add('BEN-04-NO-APPROVED-SCALE', D.candidates.every(c => c.status.startsWith('DIAGNOSTIC')) && D.recommendation.status.includes('NO_APPROVED'));
 add('BEN-05-GEOMETRY-UNCHANGED', D.frame.authoringSpaceAu[0] === 2000 && D.frame.authoringSpaceAu[1] === 1400 && D.candidates.every(c => c.veyraPreservation === undefined) && CC.rows.every(r => r.veyraPreservation.noCropNoWarpNoRescale));
-add('BEN-06-NO-TRAIL-CART-CLAIM', D.journeys.every(j => j.cartPassable === false) && D.authoredCorridors.length > 0);
+add('BEN-06-NO-TRAIL-CART-CLAIM', D.journeys.every(j => j.cartPassable === false && j.cartRoadRouteVerified === false) && D.authoredCorridors.length > 0 && D.authoredCorridors[0].segmentKinds.some(k => k.kind === 'trail') && CC.authoredCorridorTimesByScale[2].every(c => c.cartPassable === false));
 add('BEN-07-TRAIL-FLAGGED', D.journeys.filter(j => (j.composition?.trailOnlyCells || 0) > 0).every(j => j.physicalClearance.includes('AUTHORED_TRAIL_SEGMENTS__NOT_CART_PASSABLE')));
 add('BEN-08-CLEARANCE-UNVERIFIED', D.journeys.filter(j => j.routeStatus?.startsWith('GEOGRAPHIC')).every(j => j.physicalClearance.length > 0));
 add('BEN-09-NO-TIME-FOR-UNRESOLVED', Object.values(M.byScale).every(arr => arr.every(t => {

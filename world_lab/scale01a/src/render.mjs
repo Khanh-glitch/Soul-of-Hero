@@ -95,10 +95,10 @@ function mapPanel(x, y, u, cand) {
 
 function heatmap(x, y) {
   const o = [rect(x, y, 910, 560, '#0d1e2a', 'rx="6" stroke="#2b4557"')];
-  o.push(txt(x + 14, y + 24, 'SPATIAL / ENGINE FEASIBILITY — gating tests', '#f3f8fb', 14, 'start', 700));
+  o.push(txt(x + 14, y + 24, 'SPATIAL / ENGINE FEASIBILITY — gating tests + measured blockers', '#f3f8fb', 14, 'start', 700));
   const tests = D.candidates[0].feasibility.tests.map(t => t.id);
   const us = D.candidates.map(c => c.u);
-  const colW = 150, rowH = 27, gx = x + 330;
+  const colW = 150, rowH = 24, gx = x + 330;
   us.forEach((u, ci) => o.push(txt(gx + ci * colW + colW / 2, y + 48, `U=${u}`, '#9fc4dd', 11.5, 'middle', 700)));
   tests.forEach((id, ri) => {
     const yy = y + 62 + ri * rowH;
@@ -109,7 +109,8 @@ function heatmap(x, y) {
       const gating = t.gating;
       const c = (t.ok && !t.measuredOnly) ? '#57c98a' : (!t.ok ? (gating ? '#e5645c' : '#d9a441') : '#d9a441');
       o.push(rect(gx + ci * colW + 8, yy - 13, colW - 20, 19, c, 'rx="3" opacity="0.9"'));
-      o.push(txt(gx + ci * colW + colW / 2, yy + 1, t.measuredOnly ? 'measured' : (t.ok ? 'PASS' : (gating ? 'REJECT' : 'global')), '#071722', 10, 'middle', 700));
+      const label = t.measuredOnly ? 'measured' : (t.ok ? 'PASS' : (gating ? 'REJECT' : (t.id === 'CARGO_CORRIDOR_AUTHORING' ? 'blocked' : 'global')));
+      o.push(txt(gx + ci * colW + colW / 2, yy + 1, label, '#071722', 10, 'middle', 700));
     });
   });
   const by = y + 62 + tests.length * rowH + 10;

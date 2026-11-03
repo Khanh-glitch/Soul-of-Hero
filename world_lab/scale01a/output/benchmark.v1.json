@@ -585,7 +585,7 @@
         },
         {
           "id": "home.bz_ironholm",
-          "straightAu": 745.4107,
+          "straightAu": 745.5038,
           "status": "NO_GEOGRAPHIC_ROUTE__SEPARATE_LAND_COMPONENT__FERRY_OR_BRIDGE_RULE_REQUIRED",
           "fromFootComponent": 0,
           "toFootComponent": 8
@@ -988,7 +988,7 @@
         "waterAu": 64.4846,
         "foodAu": 29.4581,
         "toolAu": 41.6173,
-        "buildZoneAu": 16.7905,
+        "buildZoneAu": 16.4754,
         "nearPOIAu": 39.6989,
         "farPOIAu": 1522.431,
         "elderApproachAu": 169.4462,
@@ -1000,7 +1000,7 @@
         "waterAu": 28.628,
         "foodAu": 46.6931,
         "toolAu": 31.6228,
-        "buildZoneAu": 10.4314,
+        "buildZoneAu": 10.7652,
         "nearPOIAu": 37.2022,
         "farPOIAu": 1110.0414,
         "elderApproachAu": 62.2896,
@@ -1012,7 +1012,7 @@
         "waterAu": 42.8048,
         "foodAu": 36.4005,
         "toolAu": 37.7359,
-        "buildZoneAu": 0.3548,
+        "buildZoneAu": 0.7839,
         "nearPOIAu": 40,
         "farPOIAu": 1229.6748,
         "elderApproachAu": 369.616,
@@ -1024,7 +1024,7 @@
         "waterAu": 92.0385,
         "foodAu": 13.9985,
         "toolAu": 26,
-        "buildZoneAu": 12.8853,
+        "buildZoneAu": 12.9926,
         "nearPOIAu": 46,
         "farPOIAu": 1123.5889,
         "elderApproachAu": 128.1601,
@@ -1070,15 +1070,17 @@
       "effectiveFootAu": 66.5156,
       "effectiveCartAu": 89.5846,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 24.0832,
         "toSnapAu": 22.8302,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -1141,15 +1143,17 @@
       "effectiveFootAu": 35.863,
       "effectiveCartAu": 49.8097,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 24.0832,
         "toSnapAu": 43.2205,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -1212,15 +1216,17 @@
       "effectiveFootAu": 53.4663,
       "effectiveCartAu": 70.3014,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 24.0832,
         "toSnapAu": 8.9443,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -1262,8 +1268,8 @@
       "to": {
         "id": "bz_westmouth",
         "at": [
-          386.3848,
-          597.3398
+          386.645,
+          598.4527
         ],
         "sourceRef": "zones[bz_westmouth].ring centroid",
         "areaAu2": 3323.49
@@ -1273,25 +1279,27 @@
         "spawns[sp_west].at",
         "zones[bz_westmouth].ring centroid"
       ],
-      "straightAu": 16.7905,
+      "straightAu": 16.4754,
       "fromSnapAu": 2,
-      "toSnapAu": 2.0986,
+      "toSnapAu": 2.8021,
       "fromCell": 18796,
       "toCell": 18548,
       "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
-      "routeAu": 23.4123,
-      "effectiveFootAu": 23.4123,
-      "effectiveCartAu": 32.5171,
+      "routeAu": 24.1158,
+      "effectiveFootAu": 24.1158,
+      "effectiveCartAu": 33.4942,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 24.0832,
-        "toSnapAu": 9.4784,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "toSnapAu": 9.6712,
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -1315,7 +1323,7 @@
         "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
       ],
       "sameWalkableLandComponent": true,
-      "detourRatio": 1.3944
+      "detourRatio": 1.4637
     },
     {
       "id": "sp_west.nearPOI",
@@ -1354,15 +1362,17 @@
       "effectiveFootAu": 47.032,
       "effectiveCartAu": 63.8071,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 24.0832,
         "toSnapAu": 21.2603,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -1425,13 +1435,15 @@
       "effectiveFootAu": null,
       "effectiveCartAu": null,
       "cartScenarioApplicable": false,
-      "cartRoadContinuous": false,
+      "cartRoadEndpointsInSameComponent": false,
       "cartRoadContinuity": {
-        "continuous": false,
+        "endpointsInSameComponent": false,
         "fromCell": 18298,
         "toCell": -1,
         "reason": "ENDPOINT_NOT_ON_CART_ROAD"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 2,
       "cartPassable": false,
@@ -1477,13 +1489,15 @@
       "effectiveFootAu": null,
       "effectiveCartAu": null,
       "cartScenarioApplicable": false,
-      "cartRoadContinuous": false,
+      "cartRoadEndpointsInSameComponent": false,
       "cartRoadContinuity": {
-        "continuous": false,
+        "endpointsInSameComponent": false,
         "fromCell": 18298,
         "toCell": -1,
         "reason": "ENDPOINT_NOT_ON_CART_ROAD"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 3,
       "cartPassable": false,
@@ -1530,15 +1544,17 @@
       "effectiveFootAu": 27.9568,
       "effectiveCartAu": 34.8717,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 24.0832,
         "toSnapAu": 1.118,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -1601,15 +1617,17 @@
       "effectiveFootAu": 142.4301,
       "effectiveCartAu": 233.6018,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": false,
+      "cartRoadEndpointsInSameComponent": false,
       "cartRoadContinuity": {
-        "continuous": false,
+        "endpointsInSameComponent": false,
         "fromComponent": 0,
         "toComponent": 2,
         "fromSnapAu": 26.0768,
         "toSnapAu": 37.458,
         "reason": "CART_ROAD_NETWORK_IS_FRAGMENTED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -1673,15 +1691,17 @@
       "effectiveFootAu": 50.67,
       "effectiveCartAu": 78.6732,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 26.0768,
         "toSnapAu": 16.7659,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -1744,15 +1764,17 @@
       "effectiveFootAu": 38.5885,
       "effectiveCartAu": 74.5165,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 26.0768,
         "toSnapAu": 8.9443,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -1794,8 +1816,8 @@
       "to": {
         "id": "bz_greywater",
         "at": [
-          790.8815,
-          611.6059
+          791.3998,
+          611.3262
         ],
         "sourceRef": "zones[bz_greywater].ring centroid",
         "areaAu2": 5707.4164
@@ -1805,25 +1827,27 @@
         "spawns[sp_lake].at",
         "zones[bz_greywater].ring centroid"
       ],
-      "straightAu": 10.4314,
+      "straightAu": 10.7652,
       "fromSnapAu": 2.8284,
-      "toSnapAu": 2.9083,
+      "toSnapAu": 3.4659,
       "fromCell": 19348,
       "toCell": 19098,
       "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
-      "routeAu": 13.7367,
-      "effectiveFootAu": 15.039,
-      "effectiveCartAu": 27.0153,
+      "routeAu": 14.2943,
+      "effectiveFootAu": 15.5966,
+      "effectiveCartAu": 27.7897,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 26.0768,
-        "toSnapAu": 15.8697,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "toSnapAu": 15.6988,
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -1847,7 +1871,7 @@
         "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
       ],
       "sameWalkableLandComponent": true,
-      "detourRatio": 1.3169
+      "detourRatio": 1.3278
     },
     {
       "id": "sp_lake.nearPOI",
@@ -1886,15 +1910,17 @@
       "effectiveFootAu": 41.9782,
       "effectiveCartAu": 71.6776,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 26.0768,
         "toSnapAu": 4,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -1957,13 +1983,15 @@
       "effectiveFootAu": null,
       "effectiveCartAu": null,
       "cartScenarioApplicable": false,
-      "cartRoadContinuous": false,
+      "cartRoadEndpointsInSameComponent": false,
       "cartRoadContinuity": {
-        "continuous": false,
+        "endpointsInSameComponent": false,
         "fromCell": 18598,
         "toCell": -1,
         "reason": "ENDPOINT_NOT_ON_CART_ROAD"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 2,
       "cartPassable": false,
@@ -2009,15 +2037,17 @@
       "effectiveFootAu": 97.8042,
       "effectiveCartAu": 134.4873,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": false,
+      "cartRoadEndpointsInSameComponent": false,
       "cartRoadContinuity": {
-        "continuous": false,
+        "endpointsInSameComponent": false,
         "fromComponent": 0,
         "toComponent": 2,
         "fromSnapAu": 26.0768,
         "toSnapAu": 0,
         "reason": "CART_ROAD_NETWORK_IS_FRAGMENTED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -2081,15 +2111,17 @@
       "effectiveFootAu": 39.0962,
       "effectiveCartAu": 67.6748,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 26.0768,
         "toSnapAu": 1.118,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -2152,15 +2184,17 @@
       "effectiveFootAu": 268.9244,
       "effectiveCartAu": 333.3106,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 52.345,
         "toSnapAu": 35.7052,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -2224,15 +2258,17 @@
       "effectiveFootAu": 265.9252,
       "effectiveCartAu": 329.145,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 52.345,
         "toSnapAu": 34.7131,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -2296,15 +2332,17 @@
       "effectiveFootAu": 54.0294,
       "effectiveCartAu": 89.8345,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 52.345,
         "toSnapAu": 15.6205,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -2346,8 +2384,8 @@
       "to": {
         "id": "bz_hook",
         "at": [
-          1281.6562,
-          391.9122
+          1281.2303,
+          391.8515
         ],
         "sourceRef": "zones[bz_hook].ring centroid",
         "areaAu2": 4079.5653
@@ -2357,25 +2395,27 @@
         "spawns[sp_hook].at",
         "zones[bz_hook].ring centroid"
       ],
-      "straightAu": 0.3548,
+      "straightAu": 0.7839,
       "fromSnapAu": 4.4721,
-      "toSnapAu": 4.5606,
+      "toSnapAu": 4.744,
       "fromCell": 12410,
       "toCell": 12160,
       "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
-      "routeAu": 17.0327,
-      "effectiveFootAu": 17.0327,
-      "effectiveCartAu": 23.6565,
+      "routeAu": 17.2161,
+      "effectiveFootAu": 17.2161,
+      "effectiveCartAu": 23.9113,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 52.345,
-        "toSnapAu": 52.1567,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "toSnapAu": 51.8923,
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -2399,7 +2439,7 @@
         "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
       ],
       "sameWalkableLandComponent": true,
-      "detourRatio": 48.0065
+      "detourRatio": 21.9621
     },
     {
       "id": "sp_hook.nearPOI",
@@ -2438,15 +2478,17 @@
       "effectiveFootAu": 51.3467,
       "effectiveCartAu": 77.1828,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 52.345,
         "toSnapAu": 46.8615,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -2510,13 +2552,15 @@
       "effectiveFootAu": null,
       "effectiveCartAu": null,
       "cartScenarioApplicable": false,
-      "cartRoadContinuous": false,
+      "cartRoadEndpointsInSameComponent": false,
       "cartRoadContinuity": {
-        "continuous": false,
+        "endpointsInSameComponent": false,
         "fromCell": 13405,
         "toCell": -1,
         "reason": "ENDPOINT_NOT_ON_CART_ROAD"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 6,
       "cartPassable": false,
@@ -2562,15 +2606,17 @@
       "effectiveFootAu": 355.1257,
       "effectiveCartAu": 400.1001,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 52.345,
         "toSnapAu": 4.4721,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -2634,15 +2680,17 @@
       "effectiveFootAu": 65.6481,
       "effectiveCartAu": 105.6039,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 52.345,
         "toSnapAu": 1.8028,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -2705,15 +2753,17 @@
       "effectiveFootAu": null,
       "effectiveCartAu": null,
       "cartScenarioApplicable": false,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 38.2099,
         "toSnapAu": 47.6315,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 7,
       "cartPassable": false,
@@ -2760,15 +2810,17 @@
       "effectiveFootAu": 25.6548,
       "effectiveCartAu": 35.6317,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 38.2099,
         "toSnapAu": 41.5083,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -2831,15 +2883,17 @@
       "effectiveFootAu": 34.129,
       "effectiveCartAu": 47.4014,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 38.2099,
         "toSnapAu": 36.2215,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -2881,8 +2935,8 @@
       "to": {
         "id": "bz_gulfwest",
         "at": [
-          879.8571,
-          919.7874
+          879.806,
+          919.6138
         ],
         "sourceRef": "zones[bz_gulfwest].ring centroid",
         "areaAu2": 4647.5514
@@ -2892,25 +2946,27 @@
         "spawns[sp_gulf].at",
         "zones[bz_gulfwest].ring centroid"
       ],
-      "straightAu": 12.8853,
+      "straightAu": 12.9926,
       "fromSnapAu": 4.4721,
-      "toSnapAu": 5.4057,
+      "toSnapAu": 5.2484,
       "fromCell": 29109,
       "toCell": 28609,
       "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
-      "routeAu": 25.8778,
-      "effectiveFootAu": 25.8778,
-      "effectiveCartAu": 35.9414,
+      "routeAu": 25.7205,
+      "effectiveFootAu": 25.7205,
+      "effectiveCartAu": 35.7229,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 38.2099,
-        "toSnapAu": 28.3966,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "toSnapAu": 28.4247,
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -2934,7 +2990,7 @@
         "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
       ],
       "sameWalkableLandComponent": true,
-      "detourRatio": 2.0083
+      "detourRatio": 1.9796
     },
     {
       "id": "sp_gulf.nearPOI",
@@ -2973,15 +3029,17 @@
       "effectiveFootAu": 45.5505,
       "effectiveCartAu": 60.4664,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 38.2099,
         "toSnapAu": 2.8284,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -3044,13 +3102,15 @@
       "effectiveFootAu": null,
       "effectiveCartAu": null,
       "cartScenarioApplicable": false,
-      "cartRoadContinuous": false,
+      "cartRoadEndpointsInSameComponent": false,
       "cartRoadContinuity": {
-        "continuous": false,
+        "endpointsInSameComponent": false,
         "fromCell": 29862,
         "toCell": -1,
         "reason": "ENDPOINT_NOT_ON_CART_ROAD"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 2,
       "cartPassable": false,
@@ -3096,15 +3156,17 @@
       "effectiveFootAu": 126.0658,
       "effectiveCartAu": 143.1521,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 38.2099,
         "toSnapAu": 5,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -3167,15 +3229,17 @@
       "effectiveFootAu": 43.6246,
       "effectiveCartAu": 56.6325,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 38.2099,
         "toSnapAu": 3,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -3216,8 +3280,8 @@
       "to": {
         "id": "bz_silver",
         "at": [
-          698.6765,
-          668.7569
+          697.6213,
+          669.4572
         ],
         "sourceRef": "zones[bz_silver].ring centroid",
         "areaAu2": 3285.1819
@@ -3227,25 +3291,27 @@
         "spawns[sp_lake].at / corridor.v1.json spawnSelection.chosen",
         "zones[bz_silver].ring centroid"
       ],
-      "straightAu": 102.5972,
+      "straightAu": 103.8557,
       "fromSnapAu": 2.8284,
-      "toSnapAu": 1.5246,
+      "toSnapAu": 2.7896,
       "fromCell": 19348,
       "toCell": 20837,
       "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
-      "routeAu": 126.2941,
-      "effectiveFootAu": 125.3024,
-      "effectiveCartAu": 206.4838,
+      "routeAu": 127.5591,
+      "effectiveFootAu": 126.5674,
+      "effectiveCartAu": 208.2407,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": false,
+      "cartRoadEndpointsInSameComponent": false,
       "cartRoadContinuity": {
-        "continuous": false,
+        "endpointsInSameComponent": false,
         "fromComponent": 0,
         "toComponent": 2,
         "fromSnapAu": 26.0768,
-        "toSnapAu": 34.4549,
+        "toSnapAu": 35.6558,
         "reason": "CART_ROAD_NETWORK_IS_FRAGMENTED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -3270,7 +3336,7 @@
         "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
       ],
       "sameWalkableLandComponent": true,
-      "detourRatio": 1.231
+      "detourRatio": 1.2282
     },
     {
       "id": "home.bz_hook",
@@ -3287,8 +3353,8 @@
       "to": {
         "id": "bz_hook",
         "at": [
-          1281.6562,
-          391.9122
+          1281.2303,
+          391.8515
         ],
         "sourceRef": "zones[bz_hook].ring centroid",
         "areaAu2": 4079.5653
@@ -3298,25 +3364,27 @@
         "spawns[sp_lake].at / corridor.v1.json spawnSelection.chosen",
         "zones[bz_hook].ring centroid"
       ],
-      "straightAu": 542.8317,
+      "straightAu": 542.4717,
       "fromSnapAu": 2.8284,
-      "toSnapAu": 4.5606,
+      "toSnapAu": 4.744,
       "fromCell": 19348,
       "toCell": 12160,
       "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
-      "routeAu": 814.114,
-      "effectiveFootAu": 705.9313,
+      "routeAu": 814.2974,
+      "effectiveFootAu": 706.1147,
       "effectiveCartAu": null,
       "cartScenarioApplicable": false,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 26.0768,
-        "toSnapAu": 52.1567,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "toSnapAu": 51.8923,
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -3342,7 +3410,7 @@
         "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
       ],
       "sameWalkableLandComponent": true,
-      "detourRatio": 1.4998
+      "detourRatio": 1.5011
     },
     {
       "id": "home.bz_ironholm",
@@ -3359,8 +3427,8 @@
       "to": {
         "id": "bz_ironholm",
         "at": [
-          1140.3874,
-          1279.9254
+          1140.7001,
+          1279.8642
         ],
         "sourceRef": "zones[bz_ironholm].ring centroid",
         "areaAu2": 2034.7836
@@ -3370,9 +3438,9 @@
         "spawns[sp_lake].at / corridor.v1.json spawnSelection.chosen",
         "zones[bz_ironholm].ring centroid"
       ],
-      "straightAu": 745.4107,
+      "straightAu": 745.5038,
       "fromSnapAu": 2.8284,
-      "toSnapAu": 3.9445,
+      "toSnapAu": 3.9271,
       "fromCell": 19348,
       "toCell": 39892,
       "routeStatus": "NO_GEOGRAPHIC_ROUTE__SEPARATE_LAND_COMPONENT__FERRY_OR_BRIDGE_RULE_REQUIRED",
@@ -3380,15 +3448,17 @@
       "effectiveFootAu": null,
       "effectiveCartAu": null,
       "cartScenarioApplicable": false,
-      "cartRoadContinuous": false,
+      "cartRoadEndpointsInSameComponent": false,
       "cartRoadContinuity": {
-        "continuous": false,
+        "endpointsInSameComponent": false,
         "fromComponent": 0,
         "toComponent": 5,
         "fromSnapAu": 26.0768,
-        "toSnapAu": 3.9445,
+        "toSnapAu": 3.9271,
         "reason": "CART_ROAD_NETWORK_IS_FRAGMENTED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 8,
       "cartPassable": false,
@@ -3434,15 +3504,17 @@
       "effectiveFootAu": null,
       "effectiveCartAu": null,
       "cartScenarioApplicable": false,
-      "cartRoadContinuous": false,
+      "cartRoadEndpointsInSameComponent": false,
       "cartRoadContinuity": {
-        "continuous": false,
+        "endpointsInSameComponent": false,
         "fromComponent": 0,
         "toComponent": 5,
         "fromSnapAu": 55.4437,
         "toSnapAu": 2,
         "reason": "CART_ROAD_NETWORK_IS_FRAGMENTED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 8,
       "cartPassable": false,
@@ -3487,15 +3559,17 @@
       "effectiveFootAu": 287.2375,
       "effectiveCartAu": 469.952,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 55.4437,
         "toSnapAu": 26.0768,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -3559,15 +3633,17 @@
       "effectiveFootAu": 98.916,
       "effectiveCartAu": 172.0009,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": false,
+      "cartRoadEndpointsInSameComponent": false,
       "cartRoadContinuity": {
-        "continuous": false,
+        "endpointsInSameComponent": false,
         "fromComponent": 0,
         "toComponent": 2,
         "fromSnapAu": 55.4437,
         "toSnapAu": 105.6788,
         "reason": "CART_ROAD_NETWORK_IS_FRAGMENTED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -3630,15 +3706,17 @@
       "effectiveFootAu": 127.4098,
       "effectiveCartAu": 154.741,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 55.4437,
         "toSnapAu": 2.8284,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -3708,13 +3786,15 @@
       "effectiveFootAu": null,
       "effectiveCartAu": null,
       "cartScenarioApplicable": false,
-      "cartRoadContinuous": false,
+      "cartRoadEndpointsInSameComponent": false,
       "cartRoadContinuity": {
-        "continuous": false,
+        "endpointsInSameComponent": false,
         "fromCell": 18598,
         "toCell": -1,
         "reason": "ENDPOINT_NOT_ON_CART_ROAD"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 5,
       "cartPassable": false,
@@ -3767,15 +3847,17 @@
       "effectiveFootAu": 148.0749,
       "effectiveCartAu": 188.3265,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 26.0768,
         "toSnapAu": 24.0832,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -3846,15 +3928,17 @@
       "effectiveFootAu": 97.8042,
       "effectiveCartAu": 134.4873,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": false,
+      "cartRoadEndpointsInSameComponent": false,
       "cartRoadContinuity": {
-        "continuous": false,
+        "endpointsInSameComponent": false,
         "fromComponent": 0,
         "toComponent": 2,
         "fromSnapAu": 26.0768,
         "toSnapAu": 0,
         "reason": "CART_ROAD_NETWORK_IS_FRAGMENTED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -3923,13 +4007,15 @@
       "effectiveFootAu": null,
       "effectiveCartAu": null,
       "cartScenarioApplicable": false,
-      "cartRoadContinuous": false,
+      "cartRoadEndpointsInSameComponent": false,
       "cartRoadContinuity": {
-        "continuous": false,
+        "endpointsInSameComponent": false,
         "fromCell": 18598,
         "toCell": -1,
         "reason": "ENDPOINT_NOT_ON_CART_ROAD"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 3,
       "cartPassable": false,
@@ -3982,15 +4068,17 @@
       "effectiveFootAu": 447.7089,
       "effectiveCartAu": null,
       "cartScenarioApplicable": false,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 26.0768,
         "toSnapAu": 4.4721,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -4061,15 +4149,17 @@
       "effectiveFootAu": 421.7218,
       "effectiveCartAu": 637.3633,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 26.0768,
         "toSnapAu": 5,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -4132,15 +4222,17 @@
       "effectiveFootAu": 224.0721,
       "effectiveCartAu": 224.0294,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 20.5913,
         "toSnapAu": 6,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -4182,8 +4274,8 @@
       "to": {
         "id": "bz_greywater",
         "at": [
-          790.8815,
-          611.6059
+          791.3998,
+          611.3262
         ],
         "sourceRef": "zones[bz_greywater].ring centroid"
       },
@@ -4192,25 +4284,27 @@
         "pois[po_rc_meridian].at",
         "zones[bz_greywater].ring centroid"
       ],
-      "straightAu": 351.6697,
+      "straightAu": 351.2031,
       "fromSnapAu": 2,
-      "toSnapAu": 2.9083,
+      "toSnapAu": 3.4659,
       "fromCell": 20892,
       "toCell": 19098,
       "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
-      "routeAu": 690.2607,
-      "effectiveFootAu": 580.045,
-      "effectiveCartAu": 835.8092,
+      "routeAu": 690.8183,
+      "effectiveFootAu": 580.6026,
+      "effectiveCartAu": 836.5837,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 6,
-        "toSnapAu": 15.8697,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "toSnapAu": 15.6988,
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -4236,7 +4330,7 @@
         "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
       ],
       "sameWalkableLandComponent": true,
-      "detourRatio": 1.9628
+      "detourRatio": 1.967
     },
     {
       "id": "u4.homeToEvac",
@@ -4245,8 +4339,8 @@
       "from": {
         "id": "bz_greywater",
         "at": [
-          790.8815,
-          611.6059
+          791.3998,
+          611.3262
         ],
         "sourceRef": "zones[bz_greywater].ring centroid"
       },
@@ -4263,25 +4357,27 @@
         "zones[bz_greywater].ring centroid",
         "pois[po_evac_west].at"
       ],
-      "straightAu": 449.9928,
-      "fromSnapAu": 2.9083,
+      "straightAu": 450.4903,
+      "fromSnapAu": 3.4659,
       "toSnapAu": 2,
       "fromCell": 19098,
       "toCell": 18042,
       "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
-      "routeAu": 466.1631,
-      "effectiveFootAu": 466.8889,
-      "effectiveCartAu": 718.9353,
+      "routeAu": 466.7207,
+      "effectiveFootAu": 467.4465,
+      "effectiveCartAu": 719.7097,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
-        "fromSnapAu": 15.8697,
+        "fromSnapAu": 15.6988,
         "toSnapAu": 21.2603,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -4305,7 +4401,7 @@
         "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
       ],
       "sameWalkableLandComponent": true,
-      "detourRatio": 1.0359
+      "detourRatio": 1.036
     },
     {
       "id": "corridor.RT-1",
@@ -4342,15 +4438,17 @@
       "effectiveFootAu": 284.1852,
       "effectiveCartAu": 464.1813,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 26.0768,
         "toSnapAu": 55.4437,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -4413,15 +4511,17 @@
       "effectiveFootAu": 284.1852,
       "effectiveCartAu": 464.1813,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 26.0768,
         "toSnapAu": 55.4437,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -4484,15 +4584,17 @@
       "effectiveFootAu": 284.1852,
       "effectiveCartAu": 464.1813,
       "cartScenarioApplicable": true,
-      "cartRoadContinuous": true,
+      "cartRoadEndpointsInSameComponent": true,
       "cartRoadContinuity": {
-        "continuous": true,
+        "endpointsInSameComponent": true,
         "fromComponent": 0,
         "toComponent": 0,
         "fromSnapAu": 26.0768,
         "toSnapAu": 55.4437,
-        "reason": "SAME_CART_ROAD_COMPONENT"
+        "reason": "ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED"
       },
+      "cartRoadRouteVerified": false,
+      "cartRoadRouteStatus": "NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS",
       "fromFootComponent": 0,
       "toFootComponent": 0,
       "cartPassable": false,
@@ -4734,7 +4836,9 @@
           "claimRadiusTiles": 6,
           "claimMinDistFromPoiTiles": 10,
           "tenderLinkTiles": 3,
-          "nearInteractionTiles": 3
+          "nearInteractionTiles": 3,
+          "buildRangeTiles": 4.6,
+          "nearInteractionDefaultTiles": 2.2
         },
         "featureTiles": {
           "minPOIAreaAu2": 176,
@@ -4863,13 +4967,29 @@
             "measuredOnly": true,
             "measured": "0.00% land cells with meaningful seaDist",
             "basis": "world.ts seaDist BFS stops at 6 hops — measured semantic loss, not a hard gate"
+          },
+          {
+            "id": "SHORELINE_DETAIL",
+            "gating": false,
+            "ok": true,
+            "measuredOnly": true,
+            "measured": "812 authored coast cells; 8 tile(s) per 8 au source cell",
+            "basis": "Veyra raster is 8 au/cell. U<8 repeats the same 8-au coastline staircase; NO new shoreline indentation, bay or isthmus detail is authored."
+          },
+          {
+            "id": "CARGO_CORRIDOR_AUTHORING",
+            "gating": false,
+            "ok": false,
+            "measured": "6 disconnected cart-road components; RT-1 has 226.4759 au of kind=trail segments",
+            "basis": "MAP-LOG-03 needs a distinct, physically verified cart road. This blocker is SCALE-INDEPENDENT: no U fixes an incomplete authored trail, and no trail may be labelled cart-passable."
           }
         ],
-        "passed": 10,
+        "passed": 11,
         "failed": [
           "CHUNK_KEY_COLLISION_FREE",
           "ECONOMY_CELL_LIMIT",
-          "EXACT_PACKAGE_VALIDATOR"
+          "EXACT_PACKAGE_VALIDATOR",
+          "CARGO_CORRIDOR_AUTHORING"
         ],
         "gatingFailures": [
           "CHUNK_KEY_COLLISION_FREE",
@@ -5009,7 +5129,9 @@
           "claimRadiusTiles": 6,
           "claimMinDistFromPoiTiles": 10,
           "tenderLinkTiles": 3,
-          "nearInteractionTiles": 3
+          "nearInteractionTiles": 3,
+          "buildRangeTiles": 4.6,
+          "nearInteractionDefaultTiles": 2.2
         },
         "featureTiles": {
           "minPOIAreaAu2": 176,
@@ -5138,11 +5260,27 @@
             "measuredOnly": true,
             "measured": "5.39% land cells with meaningful seaDist",
             "basis": "world.ts seaDist BFS stops at 6 hops — measured semantic loss, not a hard gate"
+          },
+          {
+            "id": "SHORELINE_DETAIL",
+            "gating": false,
+            "ok": true,
+            "measuredOnly": true,
+            "measured": "812 authored coast cells; 4 tile(s) per 8 au source cell",
+            "basis": "Veyra raster is 8 au/cell. U<8 repeats the same 8-au coastline staircase; NO new shoreline indentation, bay or isthmus detail is authored."
+          },
+          {
+            "id": "CARGO_CORRIDOR_AUTHORING",
+            "gating": false,
+            "ok": false,
+            "measured": "6 disconnected cart-road components; RT-1 has 226.4759 au of kind=trail segments",
+            "basis": "MAP-LOG-03 needs a distinct, physically verified cart road. This blocker is SCALE-INDEPENDENT: no U fixes an incomplete authored trail, and no trail may be labelled cart-passable."
           }
         ],
-        "passed": 12,
+        "passed": 13,
         "failed": [
-          "EXACT_PACKAGE_VALIDATOR"
+          "EXACT_PACKAGE_VALIDATOR",
+          "CARGO_CORRIDOR_AUTHORING"
         ],
         "gatingFailures": [],
         "hardRejections": [],
@@ -5276,7 +5414,9 @@
           "claimRadiusTiles": 6,
           "claimMinDistFromPoiTiles": 10,
           "tenderLinkTiles": 3,
-          "nearInteractionTiles": 3
+          "nearInteractionTiles": 3,
+          "buildRangeTiles": 4.6,
+          "nearInteractionDefaultTiles": 2.2
         },
         "featureTiles": {
           "minPOIAreaAu2": 176,
@@ -5405,16 +5545,32 @@
             "measuredOnly": true,
             "measured": "15.29% land cells with meaningful seaDist",
             "basis": "world.ts seaDist BFS stops at 6 hops — measured semantic loss, not a hard gate"
+          },
+          {
+            "id": "SHORELINE_DETAIL",
+            "gating": false,
+            "ok": true,
+            "measuredOnly": true,
+            "measured": "812 authored coast cells; 2 tile(s) per 8 au source cell",
+            "basis": "Veyra raster is 8 au/cell. U<8 repeats the same 8-au coastline staircase; NO new shoreline indentation, bay or isthmus detail is authored."
+          },
+          {
+            "id": "CARGO_CORRIDOR_AUTHORING",
+            "gating": false,
+            "ok": false,
+            "measured": "6 disconnected cart-road components; RT-1 has 226.4759 au of kind=trail segments",
+            "basis": "MAP-LOG-03 needs a distinct, physically verified cart road. This blocker is SCALE-INDEPENDENT: no U fixes an incomplete authored trail, and no trail may be labelled cart-passable."
           }
         ],
-        "passed": 7,
+        "passed": 8,
         "failed": [
           "ENTRY_CART",
           "ENTRY_ONE_FLOOR_TILE",
           "MIN_POI_ROOM",
           "MEDIAN_POI_ROOM",
           "PROPOSED_WORKSPACE",
-          "EXACT_PACKAGE_VALIDATOR"
+          "EXACT_PACKAGE_VALIDATOR",
+          "CARGO_CORRIDOR_AUTHORING"
         ],
         "gatingFailures": [
           "ENTRY_CART",
@@ -5560,7 +5716,9 @@
           "claimRadiusTiles": 6,
           "claimMinDistFromPoiTiles": 10,
           "tenderLinkTiles": 3,
-          "nearInteractionTiles": 3
+          "nearInteractionTiles": 3,
+          "buildRangeTiles": 4.6,
+          "nearInteractionDefaultTiles": 2.2
         },
         "featureTiles": {
           "minPOIAreaAu2": 176,
@@ -5689,9 +5847,24 @@
             "measuredOnly": true,
             "measured": "31.91% land cells with meaningful seaDist",
             "basis": "world.ts seaDist BFS stops at 6 hops — measured semantic loss, not a hard gate"
+          },
+          {
+            "id": "SHORELINE_DETAIL",
+            "gating": false,
+            "ok": true,
+            "measuredOnly": true,
+            "measured": "812 authored coast cells; 1 tile(s) per 8 au source cell",
+            "basis": "Veyra raster is 8 au/cell. U<8 repeats the same 8-au coastline staircase; NO new shoreline indentation, bay or isthmus detail is authored."
+          },
+          {
+            "id": "CARGO_CORRIDOR_AUTHORING",
+            "gating": false,
+            "ok": false,
+            "measured": "6 disconnected cart-road components; RT-1 has 226.4759 au of kind=trail segments",
+            "basis": "MAP-LOG-03 needs a distinct, physically verified cart road. This blocker is SCALE-INDEPENDENT: no U fixes an incomplete authored trail, and no trail may be labelled cart-passable."
           }
         ],
-        "passed": 5,
+        "passed": 6,
         "failed": [
           "ENTRY_CART",
           "ENTRY_ONE_FLOOR_TILE",
@@ -5700,7 +5873,8 @@
           "PROPOSED_WORKSPACE",
           "ROAD_TWO_TILES_CART_CLEARANCE",
           "BRIDGE_GLYPH_BOTH_AXES",
-          "EXACT_PACKAGE_VALIDATOR"
+          "EXACT_PACKAGE_VALIDATOR",
+          "CARGO_CORRIDOR_AUTHORING"
         ],
         "gatingFailures": [
           "ENTRY_CART",
@@ -5775,7 +5949,7 @@
           "waterAu": 64.4846,
           "foodAu": 29.4581,
           "toolAu": 41.6173,
-          "buildZoneAu": 16.7905,
+          "buildZoneAu": 16.4754,
           "nearPOIAu": 39.6989,
           "farPOIAu": 1522.431,
           "elderApproachAu": 169.4462,
@@ -5787,7 +5961,7 @@
           "waterAu": 28.628,
           "foodAu": 46.6931,
           "toolAu": 31.6228,
-          "buildZoneAu": 10.4314,
+          "buildZoneAu": 10.7652,
           "nearPOIAu": 37.2022,
           "farPOIAu": 1110.0414,
           "elderApproachAu": 62.2896,
@@ -5799,7 +5973,7 @@
           "waterAu": 42.8048,
           "foodAu": 36.4005,
           "toolAu": 37.7359,
-          "buildZoneAu": 0.3548,
+          "buildZoneAu": 0.7839,
           "nearPOIAu": 40,
           "farPOIAu": 1229.6748,
           "elderApproachAu": 369.616,
@@ -5811,7 +5985,7 @@
           "waterAu": 92.0385,
           "foodAu": 13.9985,
           "toolAu": 26,
-          "buildZoneAu": 12.8853,
+          "buildZoneAu": 12.9926,
           "nearPOIAu": 46,
           "farPOIAu": 1123.5889,
           "elderApproachAu": 128.1601,
@@ -5827,17 +6001,17 @@
       "measured": [
         {
           "id": "home.bz_silver",
-          "straightAu": 102.5972,
-          "routeAu": 126.2941
+          "straightAu": 103.8557,
+          "routeAu": 127.5591
         },
         {
           "id": "home.bz_hook",
-          "straightAu": 542.8317,
-          "routeAu": 814.114
+          "straightAu": 542.4717,
+          "routeAu": 814.2974
         },
         {
           "id": "home.bz_ironholm",
-          "straightAu": 745.4107,
+          "straightAu": 745.5038,
           "routeAu": null
         }
       ],
@@ -5875,13 +6049,13 @@
         },
         {
           "id": "u4.cacheToHome",
-          "straightAu": 351.6697,
-          "routeAu": 690.2607
+          "straightAu": 351.2031,
+          "routeAu": 690.8183
         },
         {
           "id": "u4.homeToEvac",
-          "straightAu": 449.9928,
-          "routeAu": 466.1631
+          "straightAu": 450.4903,
+          "routeAu": 466.7207
         }
       ],
       "bibleRequirement": "Không boss: kiếm tiền cuối72 → đến người bán rương mua bằng tiền vật lý → về căn cứ của mình → đặt rương → ký gửi số tiền dương → tùy chọn rời đảo",
@@ -6037,7 +6211,8 @@
         "reasons": [
           "CHUNK_KEY_COLLISION_FREE",
           "ECONOMY_CELL_LIMIT",
-          "EXACT_PACKAGE_VALIDATOR"
+          "EXACT_PACKAGE_VALIDATOR",
+          "CARGO_CORRIDOR_AUTHORING"
         ]
       },
       {
@@ -6048,7 +6223,8 @@
           "MIN_POI_ROOM",
           "MEDIAN_POI_ROOM",
           "PROPOSED_WORKSPACE",
-          "EXACT_PACKAGE_VALIDATOR"
+          "EXACT_PACKAGE_VALIDATOR",
+          "CARGO_CORRIDOR_AUTHORING"
         ]
       },
       {
@@ -6061,7 +6237,8 @@
           "PROPOSED_WORKSPACE",
           "BRIDGE_GLYPH_BOTH_AXES",
           "ROAD_TWO_TILES_CART_CLEARANCE",
-          "EXACT_PACKAGE_VALIDATOR"
+          "EXACT_PACKAGE_VALIDATOR",
+          "CARGO_CORRIDOR_AUTHORING"
         ]
       }
     ],

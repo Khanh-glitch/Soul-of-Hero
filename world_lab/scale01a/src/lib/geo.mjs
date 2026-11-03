@@ -331,10 +331,15 @@ export function buildJourneys(I) {
     from, to, note: note || null, sourceRefs: [from.sourceRef, to.sourceRef].filter(Boolean),
   });
   const pt = (id, at, sourceRef, extra = {}) => ({ id, at, sourceRef, ...extra });
+  // Area-weighted polygon centroid of the authored ring (not a vertex mean).
   const zoneCentroid = z => {
-    const r = z.ring || []; let x = 0, y = 0;
-    for (const p of r) { x += p[0]; y += p[1]; }
-    return [+(x / r.length).toFixed(4), +(y / r.length).toFixed(4)];
+    const r = z.ring || []; let a2 = 0, cx = 0, cy = 0;
+    for (let i = 0; i < r.length; i++) {
+      const p = r[i], q = r[(i + 1) % r.length], cross = p[0] * q[1] - q[0] * p[1];
+      a2 += cross; cx += (p[0] + q[0]) * cross; cy += (p[1] + q[1]) * cross;
+    }
+    if (Math.abs(a2) < 1e-9) return [+r[0][0].toFixed(4), +r[0][1].toFixed(4)];
+    return [+(cx / (3 * a2)).toFixed(4), +(cy / (3 * a2)).toFixed(4)];
   };
   const zones = O.zones.map(z => ({ ...z, at: zoneCentroid(z), areaAu2: Math.abs(z.ring.reduce((s, p, i) => { const q = z.ring[(i + 1) % z.ring.length]; return s + p[0] * q[1] - q[0] * p[1]; }, 0)) / 2 }));
   const spawns = O.spawns;
@@ -428,12 +433,12 @@ export function measureJourneys(I, M, journeys, network, footNet) {
   const cartCont = j => {
     const a = nearestPassable(M, j.from.at, M.cartRoadPassable);
     const b = nearestPassable(M, j.to.at, M.cartRoadPassable);
-    if (a.cell < 0 || b.cell < 0) return { continuous: false, fromCell: a.cell, toCell: b.cell, reason: 'ENDPOINT_NOT_ON_CART_ROAD' };
+    if (a.cell < 0 || b.cell < 0) return { endpointsInSameComponent: false, fromCell: a.cell, toCell: b.cell, reason: 'ENDPOINT_NOT_ON_CART_ROAD' };
     return {
-      continuous: network.comp[a.cell] >= 0 && network.comp[a.cell] === network.comp[b.cell],
+      endpointsInSameComponent: network.comp[a.cell] >= 0 && network.comp[a.cell] === network.comp[b.cell],
       fromComponent: network.comp[a.cell], toComponent: network.comp[b.cell],
       fromSnapAu: a.snapAu, toSnapAu: b.snapAu,
-      reason: network.comp[a.cell] === network.comp[b.cell] ? 'SAME_CART_ROAD_COMPONENT' : 'CART_ROAD_NETWORK_IS_FRAGMENTED',
+      reason: network.comp[a.cell] === network.comp[b.cell] ? 'ENDPOINTS_IN_SAME_CART_ROAD_COMPONENT__ROUTE_STILL_UNVERIFIED' : 'CART_ROAD_NETWORK_IS_FRAGMENTED',
     };
   };
   const getDij = (cell, mode) => {
@@ -451,7 +456,11 @@ export function measureJourneys(I, M, journeys, network, footNet) {
       ...j, straightAu, fromSnapAu: s.snapAu, toSnapAu: t.snapAu,
       fromCell: s.cell, toCell: t.cell,
       routeStatus: null, routeAu: null, effectiveFootAu: null, effectiveCartAu: null,
-      cartScenarioApplicable: false, cartRoadContinuous: cont.continuous, cartRoadContinuity: cont,
+      cartScenarioApplicable: false,
+      cartRoadEndpointsInSameComponent: cont.endpointsInSameComponent,
+      cartRoadContinuity: cont,
+      cartRoadRouteVerified: false,
+      cartRoadRouteStatus: 'NOT_VERIFIED__SWEPT_CLEARANCE_UNDEFINED_AND_TRAIL_SEGMENTS_EXCLUDED_FROM_CART_ROADS',
       fromFootComponent: footNet.comp[s.cell], toFootComponent: footNet.comp[t.cell],
       cartPassable: false, // no Veyra authored route is proven cart-passable by this benchmark
       composition: null, physicalClearance: [], evidence: [],
