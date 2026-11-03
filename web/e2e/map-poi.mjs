@@ -193,16 +193,16 @@ try {
       {
         const cur=await state();const threat=cur.creatures.filter(m=>!m.type.startsWith('elder_')&&['chase','track','tell','attack','recover'].includes(m.state)&&(()=>{const d=Math.hypot(m.x-cur.player.x,m.y-cur.player.y);return d<55||(['attack','tell'].includes(m.state)&&d<100);})()).sort((a,b)=>Math.hypot(a.x-cur.player.x,a.y-cur.player.y)-Math.hypot(b.x-cur.player.x,b.y-cur.player.y))[0];
         if(!threat)return false;const td=Math.hypot(threat.x-cur.player.x,threat.y-cur.player.y),imminent=td<55||(['attack','tell'].includes(threat.state)&&td<100);
-        // During recovery, fight a close pursuer with the ordinary starter knife instead
+        // Fight a close, non-attacking pursuer with the ordinary starter knife instead
         // of endlessly dodging away from the same target. The attack itself is bounded.
-        if(threat.state==='recover' && td<48 && cur.containers.inv[0]?.key==='knife') {
+        if(['recover','chase','track'].includes(threat.state) && td<55 && cur.containers.inv[0]?.key==='knife') {
           await page.keyboard.press('1');
           await aim(threat.x,threat.y);
           if(td>24) {
             const a=Math.atan2(threat.y-cur.player.y,threat.x-cur.player.x), keys=[];
             if(Math.abs(Math.cos(a))>0.25)keys.push(Math.cos(a)>0?'d':'a');
             if(Math.abs(Math.sin(a))>0.25)keys.push(Math.sin(a)>0?'s':'w');
-            try {for(const k of keys)await page.keyboard.down(k);await pause(120);} finally {for(const k of keys)await page.keyboard.up(k);}
+            try {for(const k of keys)await page.keyboard.down(k);await pause(200);} finally {for(const k of keys)await page.keyboard.up(k);}
           }
           const before=await state(), liveThreat=before.creatures.find(m=>m.id===threat.id);
           if(liveThreat && Math.hypot(liveThreat.x-before.player.x,liveThreat.y-before.player.y)<35) {
