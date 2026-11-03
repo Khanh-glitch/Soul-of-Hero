@@ -10,9 +10,11 @@
 // Zero VFX submissions => passthrough post => byte-identical frame.
 // ============================================================================
 
+export interface RiftParams { wt: Float32Array; pull: number; span: number; flash: number }
 export interface PresentedLayer {
   clientId: string;
-  kind: 'd19';
+  kind: 'd19' | 'rift';
+  rift?: RiftParams;
   lightTex: WebGLTexture;          // 480x270 RGBA8 additive source field
   warp: Float32Array;              // 480*270*4 RGBA32F CPU warp field
   influence: Uint8Array;           // 480*270 coverage mask
@@ -62,6 +64,57 @@ void main(){
   color = vec4(clamp(w, 0.0, 1.0), 1.0);
 }`;
 
+// ARCANA #20 rift: bounded A-style world pull toward a C contour tear, chromatic
+// split, void interior with mirrored "other space" sample, astral rim, collision
+// flash, and per-segment restitch (width profile closes over time -> terrain restores).
+const RIFT_FS = `#version 300 es
+precision highp float; precision highp int;
+uniform sampler2D scene; uniform sampler2D field; // RGBA32F: s, d(signed), nx, ny
+uniform vec2 size; uniform vec4 region; uniform float t, pull, span, flash;
+uniform float wt[257];
+out vec4 color;
+float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+float vnoise(vec2 p){ vec2 i = floor(p), f = fract(p); vec2 u = f*f*(3.-2.*f);
+  return mix(mix(hash(i), hash(i+vec2(1,0)), u.x), mix(hash(i+vec2(0,1)), hash(i+vec2(1,1)), u.x), u.y); }
+void main(){
+  vec2 pixel = vec2(gl_FragCoord.x, size.y - gl_FragCoord.y);
+  vec3 base = texture(scene, vec2(pixel.x/size.x, 1.0 - pixel.y/size.y)).rgb;
+  vec2 sp = (pixel - region.xy) / region.zw * vec2(480.0, 270.0);
+  if (sp.x < 0.0 || sp.y < 0.0 || sp.x >= 480.0 || sp.y >= 270.0) { color = vec4(base, 1.0); return; }
+  vec4 f = texelFetch(field, ivec2(sp), 0);
+  float s = f.x;
+  if (s < 0.0) { color = vec4(base, 1.0); return; }
+  float d = f.y, ad = abs(d);
+  vec2 n = vec2(f.z, f.w) * (d >= 0.0 ? 1.0 : -1.0);
+  float w = wt[int(clamp(s, 0.0, 1.0) * 256.0)];
+  float dist = ad - w;
+  vec2 off = vec2(0.0);
+  float bright = 1.0;
+  if (w > 0.0 && ad < 44.0) {
+    float pullAmt = pull * 46.0 * exp(-max(dist, 0.0) / 34.0);
+    off = -n * pullAmt * (region.zw / vec2(480.0, 270.0));
+    bright = 1.0 + 1.6 * exp(-max(dist, 0.0) / 3.0);
+  }
+  vec2 suv = (pixel + off) / size;
+  suv = vec2(clamp(suv.x, 0.0, 1.0), clamp(1.0 - suv.y, 0.0, 1.0));
+  vec3 col = vec3(texture(scene, suv + vec2(0.0025, 0.0)).r,
+                  texture(scene, suv).g,
+                  texture(scene, suv - vec2(0.0025, 0.0)).b) * bright;
+  if (w > 0.0 && ad < w) {
+    float nz = vnoise(sp * 0.05 + vec2(t * 0.25, 0.0));
+    vec3 voidCol = mix(vec3(0.02, 0.01, 0.05), vec3(0.10, 0.03, 0.20), clamp(0.12 + (sp.y / 270.0) * 0.2, 0.0, 1.0));
+    vec3 other = texture(scene, vec2(clamp(1.0 - suv.x, 0.0, 1.0), clamp(suv.y + d * 0.002, 0.0, 1.0))).rgb;
+    col = mix(voidCol, other * 0.35, nz > 0.62 ? 0.5 : 0.0);
+    col += vec3(1.0, 0.96, 1.0) * step(0.985, hash(vec2(floor(s * 120.0) + t * 10.0, sp.y))) * 0.7;
+    col += vec3(0.45, 0.95, 1.0) * 0.35 * step(0.965, hash(vec2(floor((sp.x + t * 26.0) / 2.0), floor((sp.y + t * 6.0) / 2.0))));
+  } else if (w > 0.5 && ad < w + 1.6) {
+    col = mix(col, vec3(1.0, 0.35, 0.85), 0.9) + vec3(0.45, 0.95, 1.0) * 0.6;
+  }
+  if (t < 3.0 && ad < 1.2 && abs(s - 0.5) <= span * 0.5) col += vec3(1.6, 1.6, 1.8) * 0.8;
+  col += vec3(1.0, 0.5, 1.0) * flash;
+  color = vec4(clamp(col, 0.0, 1.0), 1.0);
+}`;
+
 const VS = `#version 300 es
 in vec2 pos; void main(){ gl_Position = vec4(pos, 0.0, 1.0); }`;
 
@@ -78,7 +131,7 @@ export class Presenter {
   private worldCtx: CanvasRenderingContext2D;
   private worldTex!: WebGLTexture;
   private lightFbo!: WebGLFramebuffer; private lightTex!: WebGLTexture;
-  private progPass!: WebGLProgram; private progComp!: WebGLProgram;
+  private progPass!: WebGLProgram; private progComp!: WebGLProgram; private progRift!: WebGLProgram;
   private buf!: WebGLBuffer;
   private warpTex!: WebGLTexture; private inflTex!: WebGLTexture;
   private accumA!: WebGLFramebuffer; private accumATex!: WebGLTexture;
@@ -118,6 +171,7 @@ export class Presenter {
 
     this.progPass = this.compile(PASSTHROUGH_FS);
     this.progComp = this.compile(COMPOSITE_FS);
+    this.progRift = this.compile(RIFT_FS);
     this.buf = gl.createBuffer()!;
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buf);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
@@ -163,6 +217,7 @@ export class Presenter {
     const w = this.canvas.width, h = this.canvas.height;
     this.progPass = this.compile(PASSTHROUGH_FS);
     this.progComp = this.compile(COMPOSITE_FS);
+    this.progRift = this.compile(RIFT_FS);
     this.buf = gl.createBuffer()!;
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buf);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
@@ -252,26 +307,41 @@ export class Presenter {
     gl.viewport(0, 0, this.canvas.width, this.canvas.height);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); // world -> accum
 
-    gl.useProgram(this.progComp); setupPos(this.progComp);
-    gl.uniform1i(gl.getUniformLocation(this.progComp, 'scene'), 0);
-    gl.uniform1i(gl.getUniformLocation(this.progComp, 'light'), 1);
-    gl.uniform1i(gl.getUniformLocation(this.progComp, 'warp'), 2);
-    gl.uniform1i(gl.getUniformLocation(this.progComp, 'influence'), 3);
-    gl.uniform2f(gl.getUniformLocation(this.progComp, 'size'), this.canvas.width, this.canvas.height);
     for (const L of layers) {
+      const prog = L.kind === 'rift' ? this.progRift : this.progComp;
+      gl.useProgram(prog); setupPos(prog);
+      gl.uniform1i(gl.getUniformLocation(prog, 'scene'), 0);
+      if (L.kind === 'rift') gl.uniform1i(gl.getUniformLocation(prog, 'field'), 2);
+      else {
+        gl.uniform1i(gl.getUniformLocation(prog, 'light'), 1);
+        gl.uniform1i(gl.getUniformLocation(prog, 'warp'), 2);
+        gl.uniform1i(gl.getUniformLocation(prog, 'influence'), 3);
+      }
+      gl.uniform2f(gl.getUniformLocation(prog, 'size'), this.canvas.width, this.canvas.height);
       gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, curTex);   // scene so far
       gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, L.lightTex);
       gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, this.warpTex);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, 480, 270, 0, gl.RGBA, gl.FLOAT, L.warp);
-      gl.activeTexture(gl.TEXTURE3); gl.bindTexture(gl.TEXTURE_2D, this.inflTex);
-      gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.R8UI, 480, 270, 0, gl.RED_INTEGER, gl.UNSIGNED_BYTE, L.influence);
-      gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
-      this.layerUploads += 2; // per-layer CPU->GPU warp+influence uploads (distinct from world upload)
-      gl.uniform4f(gl.getUniformLocation(this.progComp, 'region'), L.region.x, L.region.y, L.region.w, L.region.h);
-      gl.uniform1f(gl.getUniformLocation(this.progComp, 'fade'), L.fade);
-      gl.uniform1f(gl.getUniformLocation(this.progComp, 'bloomGain'), L.bloomGain);
-      gl.uniform1f(gl.getUniformLocation(this.progComp, 'time'), L.time);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, 480, 270, 0, gl.RGBA, gl.FLOAT, L.warp); // warp or rift field
+      if (L.kind === 'rift') {
+        this.layerUploads += 1;
+        const R = L.rift!;
+        gl.uniform4f(gl.getUniformLocation(prog, 'region'), L.region.x, L.region.y, L.region.w, L.region.h);
+        gl.uniform1f(gl.getUniformLocation(prog, 't'), L.time);
+        gl.uniform1f(gl.getUniformLocation(prog, 'pull'), R.pull);
+        gl.uniform1f(gl.getUniformLocation(prog, 'span'), R.span);
+        gl.uniform1f(gl.getUniformLocation(prog, 'flash'), R.flash);
+        gl.uniform1fv(gl.getUniformLocation(prog, 'wt'), R.wt);
+      } else {
+        gl.activeTexture(gl.TEXTURE3); gl.bindTexture(gl.TEXTURE_2D, this.inflTex);
+        gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.R8UI, 480, 270, 0, gl.RED_INTEGER, gl.UNSIGNED_BYTE, L.influence);
+        gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
+        this.layerUploads += 2;
+        gl.uniform4f(gl.getUniformLocation(prog, 'region'), L.region.x, L.region.y, L.region.w, L.region.h);
+        gl.uniform1f(gl.getUniformLocation(prog, 'fade'), L.fade);
+        gl.uniform1f(gl.getUniformLocation(prog, 'bloomGain'), L.bloomGain);
+        gl.uniform1f(gl.getUniformLocation(prog, 'time'), L.time);
+      }
       const wFbo = curFbo === this.accumA ? otherFbo : this.accumA; // write into the other buffer
       gl.bindFramebuffer(gl.FRAMEBUFFER, wFbo);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); // one bounded region pass per layer

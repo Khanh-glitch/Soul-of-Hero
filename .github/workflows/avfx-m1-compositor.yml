@@ -71,6 +71,39 @@ jobs:
           name: avfx-m1-gpu-evidence
           path: web/evidence/avfx-m1/
 
+  reality-ripper-20:
+    # #20 GPU visual evidence on the real primary map (software WebGL2, labelled).
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: unit-and-build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install dependencies
+        working-directory: web
+        run: npm ci
+      - name: Install Playwright Chromium (system deps)
+        working-directory: web
+        run: |
+          npm i -D playwright
+          npx playwright install --with-deps chromium
+      - name: Build
+        working-directory: web
+        run: npm run build
+      - name: #20 visual QA (BEFORE/OPENING/CLIMAX/RESTITCH/AFTER, day+night scenes; GPU gate)
+        working-directory: web
+        run: node scripts/qa-avfx-20.mjs
+      - name: Upload #20 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: avfx-20-evidence
+          path: web/evidence/avfx-20/
+
   fallback-smoke:
     # Separate job: game must stay playable where WebGL2 is unavailable.
     runs-on: ubuntu-latest

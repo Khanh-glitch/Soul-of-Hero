@@ -106,6 +106,11 @@ export default function FxLab({ gs, hidden, onHide, onClose, nightOverride, setN
         </select>
       </div>
       <div style={{ marginTop: 2 }}>
+        <button className="btn gold" style={{ fontSize: 9, padding: '0 4px', marginRight: 2 }} onClick={() => (window as any).__d20qa.play()}>▶ #20 Reality Ripper (QA)</button>
+        <button className="btn" style={{ fontSize: 9, padding: '0 4px', marginRight: 2 }} onClick={() => (window as any).__d20qa.seek(6.3)}>#20 @climax 6.3s</button>
+        <button className="btn" style={{ fontSize: 9, padding: '0 4px', marginRight: 2 }} onClick={() => (window as any).__d20qa.seek(8.2)}>#20 @restitch 8.2s</button>
+      </div>
+      <div style={{ marginTop: 2 }}>
         <button className="btn" style={{ fontSize: 9, padding: '0 4px', marginRight: 2, borderColor: nightOverride ? '#8ab0ff' : undefined }} onClick={() => setNightOverride(!nightOverride)}>{nightOverride ? '☾ QA night' : '☼ day'}</button>
         <span style={{ color: '#8a7a9a' }}>lab casts are visual-only — no charges/damage/save changes</span>
       </div>

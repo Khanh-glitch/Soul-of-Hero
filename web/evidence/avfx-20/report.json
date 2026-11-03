@@ -1,0 +1,37 @@
+{
+  "errors": [],
+  "softwareGL": true,
+  "webgl2Probe": {
+    "webgl2": false,
+    "presenterMode": "2d-fallback"
+  },
+  "playback": {
+    "frames": [
+      [
+        "rift@t0.5"
+      ],
+      [
+        "rift@t1.0"
+      ],
+      [
+        "rift@t1.5"
+      ],
+      [
+        "rift@t2.0"
+      ],
+      [
+        "rift@t2.5"
+      ]
+    ],
+    "mode": "2d-fallback"
+  },
+  "metrics": {
+    "mode": "2d-fallback",
+    "worldUploads": 0,
+    "layerUploads": 0,
+    "gpuPasses": 0,
+    "postCalls": 664,
+    "glError": 0,
+    "fbo": ""
+  }
+}

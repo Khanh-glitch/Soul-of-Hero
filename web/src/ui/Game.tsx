@@ -8,6 +8,7 @@ import * as pfx from '../game/pixelfx';
 import * as comp from '../game/compositor';
 import { initPresenter } from '../game/gpu/presenter';
 import { d19 } from '../game/arcanaD19';
+import { d20 } from '../game/arcana20';
 import { pfxFromSimEvent } from '../game/pixelfxMap';
 import FxLab from './FxLab';
 import { getWorld, ZONES } from '../game/world';
@@ -106,6 +107,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
     // ONE post per frame. Zero-cast frames are an identity passthrough.
     const presenter = initPresenter(cv, VIEW_W, VIEW_H);
     try { comp.registerVfxClient(d19); } catch { /* already registered */ }
+    try { comp.registerVfxClient(d20); } catch { /* already registered */ }
     const g = presenter.worldContext();
     (window as any).__presenter = presenter; (window as any).__comp = comp; // QA-only hooks
     let last = performance.now(); let raf = 0; let uiAcc = 0, saveAcc = 0, ambAcc = 0; let ended = false;
@@ -152,6 +154,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
   (window as any).__pfx = pfx; // QA-only hook for FX stats/instances
   (window as any).__cam = cam; // QA-only camera hook
   (window as any).__qaNight = (v: boolean) => setNightOverride(v); // QA-only darkness override; never touches game clock/save
+  (window as any).__d20qa = { play: () => { const r = (window as any).__soh?.run; d20.qaPlay(r?.player.x ?? 0, r?.player.y ?? 0); }, seek: (t: number) => { const r = (window as any).__soh?.run; d20.qaSeek(t, r?.player.x ?? 0, r?.player.y ?? 0); }, client: d20 }; // QA-only #20 visual bridge — NOT a gameplay cast event
   (window as any).__d19qa = { seek: (seconds: number, wx?: number, wy?: number) => { const r = (window as any).__soh?.run; d19.qaSeek(seconds, wx ?? r?.player.x ?? 0, wy ?? r?.player.y ?? 0); }, client: d19 }; // QA-only D19 visual bridge — NOT a gameplay cast event
   const r = gs.run; if (!r) return <div className="stage" />;
   const p = r.player; const now = Date.now(); const ph = phaseOf(r, now); const hrs = runHours(r, now); const day = Math.floor(hrs / 24) + 1;
