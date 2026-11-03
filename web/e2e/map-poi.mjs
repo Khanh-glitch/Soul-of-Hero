@@ -171,12 +171,12 @@ try {
       log.push('shipping: Lighthouse power gate opened lawfully; core_storm and blueprint loot transferred through container UI');
     }else{
       await useEntity(entry.id);s=await state();entry=s.entities.find(e=>e.id===entry.id);assert.equal(entry.open,true,'entry door did not open from normal E input');
+      await useEntity(keydoor.id);s=await state();keydoor=s.entities.find(e=>e.id===keydoor.id);assert.equal(keydoor.locked,'keycard');assert.equal(keydoor.open,false);assert.equal(await inputCount('keycard'),0);
+      log.push('dev_delta: unauthorized keycard gate attempt rejected before keycard acquisition');
       await useEntity(outer.id);await page.getByRole('button',{name:'Take all',exact:true}).waitFor({timeout:5000});
       await snap(`${suffix}-outer-cache-dual-panels-1280x720.png`,1280,720);await snap(`${suffix}-outer-cache-dual-panels-640x360.png`,640,360);await takeAll();
       assert.equal(await inputCount('keycard'),1);assert.equal(await inputCount('fuel_can'),1);
       log.push('dev_delta: ordinary walk/E + outer cache UI acquired keycard x1, fuel_can x1, bandage x1');
-      await useEntity(keydoor.id);s=await state();keydoor=s.entities.find(e=>e.id===keydoor.id);assert.equal(keydoor.locked,'keycard');assert.equal(keydoor.open,false);
-      log.push('dev_delta: unauthorized keycard attempt rejected without unlocking or consuming anything');
       await useEntity(keydoor.id);s=await state();keydoor=s.entities.find(e=>e.id===keydoor.id);assert.equal(keydoor.locked,undefined);assert.equal(keydoor.open,true);assert.equal(await inputCount('keycard'),0);
       await useEntity(powerdoor.id);s=await state();powerdoor=s.entities.find(e=>e.id===powerdoor.id);assert.equal(powerdoor.locked,'power');assert.equal(powerdoor.open,false);
       await useEntity(gen.id);s=await state();gen=s.entities.find(e=>e.id===gen.id);powerdoor=s.entities.find(e=>e.id===powerdoor.id);assert.equal(gen.power,1);assert.equal(powerdoor.locked,undefined);assert.equal(await inputCount('fuel_can'),0);
