@@ -147,10 +147,11 @@ function pixLine(g: CanvasRenderingContext2D, x0: number, y0: number, x1: number
 
 // ---------- camera ----------
 export const cam = { x: 0, y: 0, init: false };
-let mapCanvas: HTMLCanvasElement | null = null;
-export function getMapCanvas() {
-  if (mapCanvas) return mapCanvas; const w = getWorld(); mapCanvas = document.createElement('canvas'); mapCanvas.width = WW; mapCanvas.height = WH; const g = mapCanvas.getContext('2d')!; const img = g.createImageData(WW, WH);
-  for (let i = 0; i < WW * WH; i++) { const t = w.tiles[i]; let c = (PAL[t] || PAL[T.GRASS])[0]; if (w.src[i] >= 0 && ['oak', 'pine', 'snowpine', 'palm', 'willow'].includes(SRC_KEYS[w.src[i]])) c = [c[0] * 0.75, c[1] * 0.8, c[2] * 0.75]; img.data.set([c[0], c[1], c[2], 255], i * 4); }
+let mapCanvas: HTMLCanvasElement | null = null; let mapSourceVersion = 0;
+export function getMapCanvas(run?: RunState) {
+  const version = run?.sourceLayoutVersion ?? 1;
+  if (mapCanvas && mapSourceVersion === version) return mapCanvas; mapSourceVersion = version; const w = getWorld(); mapCanvas = document.createElement('canvas'); mapCanvas.width = WW; mapCanvas.height = WH; const g = mapCanvas.getContext('2d')!; const img = g.createImageData(WW, WH);
+  for (let i = 0; i < WW * WH; i++) { const t = w.tiles[i]; let c = (PAL[t] || PAL[T.GRASS])[0]; const source = version === 3 ? w.sourceV3[i] : w.src[i] >= 0 ? SRC_KEYS[w.src[i]] : version === 2 && w.sourceOverlayV2[i] >= 0 ? SRC_KEYS[w.sourceOverlayV2[i]] : null; if (source && ['oak', 'pine', 'snowpine', 'palm', 'willow'].includes(source)) c = [c[0] * 0.75, c[1] * 0.8, c[2] * 0.75]; img.data.set([c[0], c[1], c[2], 255], i * 4); }
   g.putImageData(img, 0, 0); return mapCanvas;
 }
 

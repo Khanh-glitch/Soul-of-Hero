@@ -2,14 +2,18 @@
 import { T, WW, WH, WORLD_SEED, hash2, TILE, TERRAIN_NAME } from './core';
 import { SOURCES } from './catalog';
 import { MAP_CONTENT_PACKS, validateContentPack, type LayoutId } from './content';
+import { compileEconomy, type EconomyMap } from './world-economy';
+import { adaptCurrentGeometry } from './economy-adapter';
 
-export const SRC_KEYS = Object.keys(SOURCES);
+// Frozen legacy encoding: never derive persisted tile values from object insertion order.
+export const SRC_KEYS = ['oak','pine','snowpine','palm','willow','deadtree','rock','iron','coalv','crystal','salt_shale','sulfur','bush','grass','reed','herb','mushroom','scrap','wreck'];
 export interface Building { id: string; x: number; y: number; w: number; h: number; roof: string; name: string }
 export interface StaticEnt { kind: string; tx: number; ty: number; type?: string; poi?: string; locked?: string; loot?: [string, number][]; cash?: number; label?: string }
 export interface Place { id: string; name: string; tx: number; ty: number; kind: 'start' | 'poi' | 'elder' | 'evac' }
 export interface World {
   tiles: Uint8Array; fresh: Uint8Array; src: Int8Array; sourceOverlayV2: Int8Array; zone: Uint8Array; seaDist: Uint8Array;
   buildings: Building[]; statics: StaticEnt[]; places: Place[]; starts: Place[]; elders: Place[];
+  economyMap: EconomyMap; sourceV3: (string | null)[];
 }
 
 function vnoise(x: number, y: number, s: number) {
@@ -303,7 +307,10 @@ function genWorld(layoutId: LayoutId): World {
     if (src[i] >= 0 || tiles[i] !== T.SAND || ty / WH <= 0.45 || isPOI(tx, ty) || elders.some(e => Math.hypot(e.tx - tx, e.ty - ty) < 5.5) || starts.some(s => Math.hypot(s.tx - tx, s.ty - ty) < 9)) continue;
     if (hash2(tx, ty, S + 303) < 0.05) sourceOverlayV2[i] = SK('palm');
   }
-  return { tiles, fresh, src, sourceOverlayV2, zone, seaDist, buildings, statics, places: [...all, ...elders], starts, elders };
+  const economyMap = adaptCurrentGeometry(pack, tiles, fresh, seaDist, elev, buildings, statics, starts, elders);
+  const result = compileEconomy(economyMap);
+  if (result.errors.length) throw new Error(`Invalid economy map ${layoutId}: ${result.errors.join('; ')}`);
+  return { tiles, fresh, src, sourceOverlayV2, sourceV3: result.sources, economyMap, zone, seaDist, buildings, statics, places: [...all, ...elders], starts, elders };
 }
 
 export function tileAt(w: World, tx: number, ty: number) { if (tx < 0 || ty < 0 || tx >= WW || ty >= WH) return T.DEEP; return w.tiles[ty * WW + tx]; }

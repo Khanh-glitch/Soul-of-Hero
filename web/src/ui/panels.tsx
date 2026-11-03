@@ -195,7 +195,7 @@ export function CraftPanel({ api }: { api: Api }) {
 export function BuildPanel({ api }: { api: Api }) {
   const r = api.gs.run!; const owned = Object.values(r.entities).some(e => e.type === 'claim');
   return <Panel title="Build — pay real materials; place on claimed land" style={{ left: 8, top: 34, width: 400 }} onClose={() => api.open(null)}>
-    {!owned && <div style={{ fontSize: 10, color: '#ffd98a', marginBottom: 3 }}>Start with a Claim Totem in open wilderness (away from landmarks). Campfires can go anywhere.</div>}
+    {!owned && <div style={{ fontSize: 10, color: '#ffd98a', marginBottom: 3 }}>Claim a clear site; leave roads, entrances and loading areas open. Campfires need clear ground.</div>}
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 3 }}>
       {BUILD_ORDER.map(k => { const d = STRUCTS[k]; const ok = d.cost.every(([i, q]) => countItem(r, 'inv', i) >= q);
         return <button key={k} className={`btn ${api.buildType === k ? 'gold' : 'ghost'}`} style={{ textAlign: 'left', padding: 3, opacity: ok ? 1 : 0.65 }} title={d.desc} onClick={() => { api.setBuild(k); api.setReclaim(false); api.setRepairMode(false); api.open(null); }}>
@@ -210,7 +210,7 @@ const iconUrlSt = (k: string) => iconUrl('st:' + (k === 'escrow' ? 'escrow' : k)
 
 export function MapPanel({ api }: { api: Api }) {
   const ref = useRef<HTMLCanvasElement>(null); const r = api.gs.run!; const w = getWorld();
-  useEffect(() => { const c = ref.current!; const g = c.getContext('2d')!; g.imageSmoothingEnabled = false; g.drawImage(getMapCanvas(), 0, 0);
+  useEffect(() => { const c = ref.current!; const g = c.getContext('2d')!; g.imageSmoothingEnabled = false; g.drawImage(getMapCanvas(r), 0, 0);
     const disc = r.discovered; g.fillStyle = 'rgba(12,10,20,0.86)'; for (let y = 0; y < 50; y++) for (let x = 0; x < 50; x++) if (!disc[y * 50 + x]) g.fillRect(x * 4, y * 4, 4, 4);
     const dot = (x: number, y: number, col: string, s = 3) => { g.fillStyle = '#000'; g.fillRect(x - 1 - (s >> 1), y - 1 - (s >> 1), s + 2, s + 2); g.fillStyle = col; g.fillRect(x - (s >> 1), y - (s >> 1), s, s); };
     for (const p of w.places) if (r.poiSeen.includes(p.id)) dot(p.tx, p.ty, p.kind === 'elder' ? '#ff4a3a' : p.kind === 'evac' ? '#5af0ff' : p.kind === 'start' ? '#a0e070' : '#ffd040');

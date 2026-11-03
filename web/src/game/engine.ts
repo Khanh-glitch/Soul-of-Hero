@@ -1,9 +1,10 @@
 // Authoritative game engine: GameState + dispatch(intent) → committed state + receipt | rejection.
 // Rule: validate EVERYTHING first, then commit. Failed preconditions never partially debit.
-import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, T, uid, rngNext, dist, clamp,
+import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
 import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS, FURNACE_LINING } from './catalog';
 import { getWorld, getActiveLayout, SRC_KEYS, tileAt } from './world';
+import { sourceDigest } from './world-economy';
 
 export type Intent = { id: string; type: string; [k: string]: any };
 export type Result = { ok: true; receipt: string; msg?: string } | { ok: false; reason: string; dup?: boolean };
@@ -49,7 +50,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   const w = getWorld();
   const seed = seedOverride ?? ((now ^ 0x9e3779b9) >>> 0);
   const r: RunState = {
-    id: 'run_' + seed.toString(36), seed, character, startedAt: now, qaOffset: 0, qaUsed: false, layoutId: getActiveLayout(), sourceLayoutVersion: 2, spawnRegion: 0, ended: null,
+    id: 'run_' + seed.toString(36), seed, character, startedAt: now, qaOffset: 0, qaUsed: false, layoutId: getActiveLayout(), sourceLayoutVersion: 3, sourceMap: { id: getActiveLayout(), revision: 1, seed: WORLD_SEED, rules: 3, digest: sourceDigest(w.sourceV3) }, spawnRegion: 0, ended: null,
     player: null as any, creatures: [], sources: {}, terrain: {}, entities: {}, custody: {}, knowledge: { recipes: Object.keys(RECIPES).filter(k => RECIPES[k].base), studied: [] },
     traces: [], discovered: [], poiSeen: [], elderStones: [], achievements: [], score: 0, deposited: 0,
     clock: { lastSimAt: now, simMs: 0, respawnAcc: 0, weatherSlot: -1 }, rng: seed, nextId: 1, receipts: [], seenIntents: [], seq: 0,
@@ -77,7 +78,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
     const d = ELDERS[p.id];
     r.creatures.push(mkCreature(r, 'elder_' + p.id, p.tx * TILE + 8, p.ty * TILE + 8, d.hpLatent, { key: p.id, awake: false, phase: 0, pattern: 0, special: 0 }));
   }
-  gs.run = r; gs.revision++;
+  gs.run = r; markDirty(); gs.revision++;
   pushLog(r, now, `You wash up near ${sp.name}. No one is coming to tell you what to do.`, 'gold');
   return { ok: true, receipt: receipt(r, now, 'run.start', `${character}@${sp.name}`) };
 }
@@ -111,8 +112,10 @@ export function effTile(r: RunState, tx: number, ty: number) {
 }
 export function sourceAt(r: RunState, tx: number, ty: number, now?: number) {
   if (tx < 0 || ty < 0 || tx >= WW || ty >= WH) return null;
-  const i = ty * WW + tx; const w = getWorld(); const k = w.src[i] >= 0 ? w.src[i] : r.sourceLayoutVersion === 2 ? w.sourceOverlayV2[i] : -1; if (k < 0) return null;
-  let key = SRC_KEYS[k]; const st = r.sources[i];
+  const i = ty * WW + tx; const w = getWorld();
+  const k = w.src[i] >= 0 ? w.src[i] : r.sourceLayoutVersion === 2 ? w.sourceOverlayV2[i] : -1;
+  let key = r.sourceLayoutVersion === 3 ? w.sourceV3[i] : k >= 0 ? SRC_KEYS[k] : null; if (!key) return null;
+  const st = r.sources[i];
   if (st?.burnt) key = 'deadtree';
   const def = SOURCES[key];
   let stock = st ? st.stock : def.stock, hp = st ? st.hp : def.hp;
@@ -134,7 +137,8 @@ export function blockGrid(r: RunState) {
   const layout = getActiveLayout();
   if (blockCache && blockCache.run === r.id && blockCache.layout === layout && blockCache.sourceVersion === (r.sourceLayoutVersion ?? 1) && !blockDirty) return blockCache.arr;
   if (!baseGrid || baseGridLayout !== layout) { baseGrid = new Uint8Array(WW * WH); for (let i = 0; i < WW * WH; i++) baseGrid[i] = cellClass(null, i % WW, (i / WW) | 0); baseGridLayout = layout; }
-  const arr = baseGrid.slice();
+  const arr = r.sourceLayoutVersion === 3 ? new Uint8Array(WW * WH) : baseGrid.slice();
+  if (r.sourceLayoutVersion === 3) { for (let i = 0; i < arr.length; i++) arr[i] = cellClass(r, i % WW, (i / WW) | 0); }
   if (r.sourceLayoutVersion === 2) { const overlay = getWorld().sourceOverlayV2; for (let i = 0; i < overlay.length; i++) if (overlay[i] >= 0) arr[i] = cellClass(r, i % WW, (i / WW) | 0); }
   for (const k in r.terrain) { const i = +k; arr[i] = cellClass(r, i % WW, (i / WW) | 0); }
   for (const k in r.sources) { const i = +k; arr[i] = cellClass(r, i % WW, (i / WW) | 0); }
@@ -347,6 +351,7 @@ export function buildReason(gs: GameState, type: string, tx: number, ty: number)
   const t = effTile(r, tx, ty);
   if ([T.DEEP, T.SHALLOW, T.RIVER, T.CLIFF, T.PWALL, T.LAVA, T.FLOOR, T.ICE].includes(t)) return 'Ground is not buildable here.';
   if (t === T.ROAD || t === T.BRIDGE) return 'Keep roads clear — build beside them.';
+  if (w.economyMap.protected[ty * WW + tx]) return 'Keep entrances, loading areas and routes clear.';
   const s = sourceAt(r, tx, ty); if (s && s.stock > 0) return `Clear the ${s.def.name} first.`;
   const here = entsAt(r, tx, ty);
   if (here.some(e => e.kind !== 'struct')) return 'Something is already here.';
@@ -362,7 +367,6 @@ export function buildReason(gs: GameState, type: string, tx: number, ty: number)
     const claims = Object.values(r.entities).filter(e => e.kind === 'struct' && e.type === 'claim');
     if (claims.length >= BAL.economy.maxClaims) return `Claim limit reached (${BAL.economy.maxClaims}).`;
     if (claims.some(c => Math.hypot(c.tx! - tx, c.ty! - ty) < BAL.economy.claimRadius * 2 + 1)) return 'Too close to your other claim.';
-    if (w.places.some(pl => Math.hypot(pl.tx - tx, pl.ty - ty) < BAL.economy.claimMinDistFromPoi)) return 'Too close to a landmark — find unclaimed wilderness.';
   }
   const cost = d.cost; if (!hasAll(r, 'inv', cost)) return 'Missing materials: ' + cost.filter(([k, q]) => countItem(r, 'inv', k) < q).map(([k, q]) => `${ITEMS[k].name} ${countItem(r, 'inv', k)}/${q}`).join(', ');
   return null;

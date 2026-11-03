@@ -1,0 +1,17 @@
+// Short natural interaction smoke: no state injection or movement teleport.
+import {chromium} from 'playwright';import {createServer} from 'vite';import assert from 'node:assert/strict';
+const vite=await createServer({configFile:'vite.config.ts',optimizeDeps:{noDiscovery:true,include:[]},server:{middlewareMode:true,hmr:false},appType:'custom'});
+const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||undefined,args:['--no-sandbox']});
+try {
+ const {getWorld}=await vite.ssrLoadModule('/src/game/world.ts');const {SOURCES}=await vite.ssrLoadModule('/src/game/catalog.ts');const w=getWorld('shipping'),m=w.economyMap;
+ const c=await browser.newContext({viewport:{width:1280,height:720}}),p=await c.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));
+ await p.goto(process.env.GAME_URL||'http://127.0.0.1:4180',{waitUntil:'networkidle'});await p.getByRole('button',{name:/New run/i}).click();await p.getByText('Pinewatch',{exact:true}).click();await p.getByRole('button',{name:/Begin the 14 days/}).click();await p.waitForFunction(()=>window.__soh?.run);await p.waitForTimeout(600);
+ const start=await p.evaluate(()=>({x:window.__soh.run.player.x,y:window.__soh.run.player.y}));const sx=Math.floor(start.x/16),sy=Math.floor(start.y/16),root=sy*m.width+sx;
+ const queue=[root],from=new Int32Array(m.width*m.height).fill(-2);from[root]=-1;let target=null,end=-1;
+ for(let head=0;head<queue.length&&head<150&&!target;head++){const i=queue[head],x=i%m.width,y=Math.floor(i/m.width);for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const j=(y+dy)*m.width+x+dx,k=w.sourceV3[j];if(['bush','grass','herb','scrap'].includes(k)){target={i:j,key:k};end=i;break;}if(from[j]===-2&&m.walkable[j]&&!(k&&SOURCES[k].block)){from[j]=i;queue.push(j);}}}
+ assert(target,'no nearby knife-usable source');const path=[];for(let i=end;i!==-1;i=from[i])path.push(i);path.reverse();assert(path.length<=8,'smoke target unexpectedly far');
+ for(const i of path.slice(1)){const tx=(i%m.width)*16+8,ty=Math.floor(i/m.width)*16+8;for(let tries=0;tries<12;tries++){const q=await p.evaluate(()=>({x:window.__soh.run.player.x,y:window.__soh.run.player.y})),dx=tx-q.x,dy=ty-q.y;if(Math.hypot(dx,dy)<4)break;const key=Math.abs(dx)>Math.abs(dy)?(dx>0?'d':'a'):(dy>0?'s':'w');await p.keyboard.down(key);await p.waitForTimeout(Math.max(35,Math.min(120,Math.max(Math.abs(dx),Math.abs(dy))/72*1000)));await p.keyboard.up(key);}}
+ await p.waitForTimeout(400);const pos=await p.evaluate(()=>({x:window.__soh.run.player.x,y:window.__soh.run.player.y}));const tx=(target.i%m.width)*16+8,ty=Math.floor(target.i/m.width)*16+8;assert(Math.hypot(tx-pos.x,ty-pos.y)<30,'could not walk into harvesting range');
+ const cx=Math.max(0,Math.min(m.width*16-640,pos.x-320)),cy=Math.max(0,Math.min(m.height*16-360,pos.y-186));await p.mouse.move((tx-cx)*2,(ty-cy)*2);await p.waitForTimeout(150);await p.mouse.down();await p.waitForTimeout(1600);await p.mouse.up();
+ await p.waitForFunction(()=>window.__soh.run.receipts.some(r=>r.kind==='harvest'));const data=await p.evaluate(()=>({receipts:window.__soh.run.receipts.filter(r=>r.kind==='harvest'),sources:window.__soh.run.sources}));assert(data.receipts.length>0);assert(Object.keys(data.sources).length>0);assert.deepEqual(errors,[]);console.log('PASS: natural WASD movement and knife harvest on v3 source:',target.key,data.receipts.at(-1).detail);await c.close();
+} finally {await browser.close();await vite.close();}

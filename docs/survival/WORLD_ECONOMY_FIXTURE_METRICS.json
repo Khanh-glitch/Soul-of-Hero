@@ -1,0 +1,95 @@
+{
+  "map": "isthmus-fixture",
+  "revision": 1,
+  "digest": "23b2b790",
+  "biome": {
+    "forest": {
+      "eligibleCells": 987,
+      "before": null,
+      "after": {
+        "oak": 138,
+        "pine": 0,
+        "bush": 28,
+        "grass": 25,
+        "herb": 9,
+        "rock": 5
+      }
+    },
+    "hill": {
+      "eligibleCells": 0,
+      "before": null,
+      "after": {
+        "rock": 0,
+        "iron": 0,
+        "coalv": 0,
+        "crystal": 0
+      }
+    },
+    "sand": {
+      "eligibleCells": 0,
+      "before": null,
+      "after": {
+        "palm": 0,
+        "salt_shale": 0,
+        "rock": 0
+      }
+    },
+    "ash": {
+      "eligibleCells": 0,
+      "before": null,
+      "after": {
+        "sulfur": 0,
+        "rock": 0,
+        "coalv": 0
+      }
+    },
+    "marsh": {
+      "eligibleCells": 418,
+      "before": null,
+      "after": {
+        "willow": 19,
+        "reed": 61,
+        "mushroom": 11,
+        "herb": 4
+      }
+    }
+  },
+  "roads": {
+    "cargoPassableRoadCells": 70,
+    "orthogonalRoadEdges": 69,
+    "edgeLengthPixels": 1104,
+    "before": null,
+    "after": {
+      "scrap": 12,
+      "wreck": 2
+    }
+  },
+  "starts": {
+    "west": {
+      "before": null,
+      "after": {
+        "reachableCells": 1200,
+        "wood": 53,
+        "stone": 18,
+        "food": 46,
+        "salvage": 11,
+        "water": true,
+        "buildableCells": 975
+      }
+    },
+    "east": {
+      "before": null,
+      "after": {
+        "reachableCells": 1165,
+        "wood": 138,
+        "stone": 18,
+        "food": 41,
+        "salvage": 5,
+        "water": true,
+        "buildableCells": 1022
+      }
+    }
+  },
+  "startDiagnostics": [],
+  "notes": "Synthetic descriptor has no legacy baseline and is not a playable map. 30-tile shortest-path region over semantic foot mask with solid nodes blocked, neighboring sources counted once. Approximate: static locked doors excluded, unlocked doors treated open; creature/weather and circle collision not simulated. Road-edge length is a tile-graph proxy; junctions/multi-lane grids are not a surveyed centerline."
+}

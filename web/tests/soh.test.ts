@@ -17,7 +17,7 @@ function buildSpot(gs: GameState) {
   const w = getWorld(); const r = gs.run!;
   for (let ty = 20; ty < WH - 20; ty++) for (let tx = 20; tx < WW - 20; tx++) {
     if (w.places.some(p => Math.hypot(p.tx - tx, p.ty - ty) < 14)) continue; let ok = true;
-    for (let y = ty - 2; y <= ty + 2 && ok; y++) for (let x = tx - 2; x <= tx + 2 && ok; x++) { const t = effTile(r, x, y); if (![T.GRASS, T.MEADOW].includes(t) || w.src[y * WW + x] >= 0) ok = false; }
+    for (let y = ty - 2; y <= ty + 2 && ok; y++) for (let x = tx - 2; x <= tx + 2 && ok; x++) { const t = effTile(r, x, y); if (![T.GRASS, T.MEADOW].includes(t) || sourceAt(r, x, y)) ok = false; }
     if (ok) return { tx, ty };
   }
   throw new Error('no spot');
@@ -32,7 +32,7 @@ describe('C24 world', () => {
     for (const st of w.starts) expect(seen[st.ty * WW + st.tx]).toBe(1);
     for (const p of w.places.filter(p => p.kind !== 'elder')) { let near = false; for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) if (seen[(p.ty + dy) * WW + p.tx + dx]) near = true; expect(near, p.name).toBe(true); }
     // every start has wood, stone and food within 12 tiles
-    for (const st of w.starts) { const kinds = new Set<string>(); for (let y = st.ty - 12; y <= st.ty + 12; y++) for (let x = st.tx - 12; x <= st.tx + 12; x++) { const k = w.src[y * WW + x]; if (k >= 0) kinds.add(SRC_KEYS[k]); } expect(kinds.has('rock')).toBe(true); expect(kinds.has('bush') || kinds.has('herb')).toBe(true); expect([...kinds].some(k => ['oak', 'pine', 'palm', 'snowpine'].includes(k))).toBe(true); }
+    for (const st of w.starts) { const kinds = new Set<string>(); for (let y = st.ty - 12; y <= st.ty + 12; y++) for (let x = st.tx - 12; x <= st.tx + 12; x++) { const k = sourceAt(r,x,y)?.key; if (k) kinds.add(k); } expect(kinds.has('rock')).toBe(true); expect(kinds.has('bush') || kinds.has('herb')).toBe(true); expect([...kinds].some(k => ['oak', 'pine', 'palm', 'snowpine'].includes(k))).toBe(true); }
   });
 });
 
@@ -112,7 +112,7 @@ describe('new salt-shale → salted roast content chain', () => {
     expect(ITEMS.raw_salt.name).toBe('Raw Salt'); expect(SOURCES.salt_shale.yields).toEqual([['raw_salt', 1]]);
     expect(RECIPES.salted_meat).toMatchObject({ out: 'salted_meat', station: 'campfire', base: true });
     const gs = fresh(); const r = gs.run!; const w = getWorld();
-    const sourceIndex = w.src.findIndex(k => k >= 0 && SRC_KEYS[k] === 'salt_shale');
+    const sourceIndex = w.sourceV3.findIndex(k => k === 'salt_shale');
     expect(sourceIndex).toBeGreaterThanOrEqual(0); // naturally placed in the generated world
     const tx = sourceIndex % WW, ty = Math.floor(sourceIndex / WW);
     const approach = [[-1, 0], [1, 0], [0, -1], [0, 1]].find(([dx, dy]) => !blockedAt(r, tx + dx, ty + dy));
@@ -154,7 +154,7 @@ describe('new salt-shale → salted roast content chain', () => {
 describe('C01/C05 harvesting & shared hit rules', () => {
   it('a source depletes once and yields exactly its stock; further hits yield nothing', () => {
     const gs = fresh(); const r = gs.run!; const w = getWorld();
-    let tgt = -1; for (let i = 0; i < WW * WH; i++) if (w.src[i] >= 0 && SRC_KEYS[w.src[i]] === 'rock') { tgt = i; break; }
+    let tgt = -1; for (let i = 0; i < WW * WH; i++) if (w.sourceV3[i] === 'rock') { tgt = i; break; }
     const tx = tgt % WW, ty = (tgt / WW) | 0; const before = Object.keys(r.entities).length;
     expect(harvestHit(gs, tx, ty, { wood: 5 }, T0, 0, 0).result).toBe('nopower'); // knife/axe on stone
     let guard = 0; while (harvestHit(gs, tx, ty, { stone: 3 }, T0, 0, 0).result === 'yield' && guard++ < 50) {/* */}

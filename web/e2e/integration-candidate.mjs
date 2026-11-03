@@ -1,5 +1,5 @@
 // Short production smoke; isolated contexts never touch the user's storage.
-// Compatibility server initially serves a #38 build, then index is replaced.
+// Compatibility server initially serves a baseline build, then index is replaced.
 import { chromium } from 'playwright';
 import assert from 'node:assert/strict';
 import { copyFile, mkdir } from 'node:fs/promises';
@@ -7,7 +7,7 @@ const base = process.env.GAME_URL || 'http://127.0.0.1:4173';
 const compat = process.env.COMPAT_URL || 'http://127.0.0.1:4175';
 const candidateFile = process.env.CANDIDATE_INDEX || 'dist/index.html';
 const compatFile = process.env.COMPAT_INDEX || '/tmp/soh-compat-serve/index.html';
-const out = 'evidence/integration-candidate'; await mkdir(out, { recursive: true });
+const out = process.env.EVIDENCE_DIR || 'evidence/integration-candidate'; await mkdir(out, { recursive: true });
 const browser = await chromium.launch({ headless: true, executablePath: process.env.CHROMIUM_PATH || undefined, args: ['--no-sandbox'] });
 const errors = [];
 const setup = async () => { const c = await browser.newContext({ viewport: { width: 1280, height: 720 }, deviceScaleFactor: 1 }); const p = await c.newPage(); p.on('pageerror', e => errors.push(e.message)); return { c, p }; };
@@ -27,9 +27,9 @@ try {
   for(const [w,h] of [[640,360],[1280,720]]) { await p.setViewportSize({width:w,height:h}); await p.waitForTimeout(300); await p.screenshot({path:`${out}/natural-crafting-${w}x${h}.png`,animations:'disabled'}); }
   const saved=await saveQuit(p); await resume(p); physicalEqual(fromSaved(saved),await run(p));
   await c.close(); console.log('PASS candidate: fresh New Run, movement, berry use, inventory/crafting, save/reload/Continue, physical snapshot.');
-  const old=await setup(); await start(old.p,compat); await move(old.p); await eatBerry(old.p); const saved38=await saveQuit(old.p); assert.equal(saved38.run.sourceLayoutVersion,undefined,'expected a legacy #38 source layout');
+  const old=await setup(); await start(old.p,compat); await move(old.p); await eatBerry(old.p); const saved38=await saveQuit(old.p); assert.equal(saved38.run.sourceLayoutVersion,process.env.EXPECT_SOURCE_VERSION ? Number(process.env.EXPECT_SOURCE_VERSION) : undefined,'unexpected baseline source layout');
   await copyFile(candidateFile,compatFile); await resume(old.p); physicalEqual(fromSaved(saved38),await run(old.p));
   await old.p.keyboard.press('Escape'); await old.p.getByRole('button',{name:'Save & quit to title'}).click(); await old.p.getByRole('button',{name:/Continue —/}).waitFor(); await resume(old.p); assert.equal((await run(old.p)).id,saved38.run.id);
-  await old.c.close(); console.log('PASS compatibility: actual PR #38 production New Run + save, candidate at same origin Continue + save + reload; run identity, position, inventory UIDs/quantities, entities, source deltas and knowledge preserved.');
+  await old.c.close(); console.log('PASS compatibility: baseline production New Run + save, candidate at same origin Continue + save + reload; run identity, position, inventory UIDs/quantities, entities, source deltas and knowledge preserved.');
   assert.deepEqual(errors,[],'browser page errors');
 } finally { await browser.close(); }

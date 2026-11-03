@@ -110,7 +110,9 @@ export interface RunState {
   /** Added additively; absent legacy saves are interpreted as the canonical shipping layout. */
   layoutId?: 'shipping' | 'dev_delta';
   /** Run-pinned additive source overlay; absent legacy runs keep v1 placements. */
-  sourceLayoutVersion?: 2;
+  sourceLayoutVersion?: 2 | 3;
+  /** Source map identity is mandatory for v3; older runs retain their own layout. */
+  sourceMap?: { id: 'shipping' | 'dev_delta'; revision: 1; seed: number; rules: 3; digest: string };
   spawnRegion: number; ended: null | string;
   player: Player; creatures: Creature[];
   sources: Record<number, { stock: number; hp: number; regrowAt?: number; burnt?: boolean }>; // K3 deltas over base world

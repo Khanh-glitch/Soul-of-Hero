@@ -267,7 +267,7 @@ function resolveSwing(gs: GameState, now: number, slot: number, a: number) {
     const x = best.tx * TILE + 8, y = best.ty * TILE + 8;
     if (res.result === 'yield') { fx('chip', { x, y, mat: res.mat, key: res.key, depleted: res.depleted }); hitAny = true; if (res.depleted) fx('fell', { x, y, key: res.key }); }
     else if (res.result === 'nopower') { fx('clank', { x, y, mat: res.mat }); fx('toast', { text: res.mat === 'wood' ? 'Too slow with this — an axe would fell it.' : res.mat === 'stone' || res.mat === 'ore' ? 'You need a pickaxe for this.' : 'Wrong tool for this.', key: 'tool' + res.mat }); }
-    else if (res.result === 'empty') fx('clank', { x, y, mat: res.mat, soft: true });
+    else if (res.result === 'empty') { fx('clank', { x, y, mat: res.mat, soft: true }); fx('toast', { text: SOURCES[res.key!]?.regrow ? 'Exhausted — this plant can regrow.' : 'Exhausted — no stock remains.', key: 'source-empty' }); }
     if (s?.key === 'torch') ignite(gs, best.tx, best.ty, now);
   }
   if (hitAny && slot >= 0) wearTool(gs, slot, now);

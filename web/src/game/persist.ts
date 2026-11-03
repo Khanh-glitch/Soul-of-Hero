@@ -1,8 +1,10 @@
 // Local-first snapshots: one serialized profile + run + receipts per write.
 // Checksums detect accidental damage, not malicious edits or rollback of all copies.
-import { BAL, SAVE_VERSION, type GameState, type Stack } from './core';
+import { BAL, SAVE_VERSION, WORLD_SEED, type GameState, type Stack } from './core';
 import { ITEMS, RECIPES, STRUCTS } from './catalog';
 import { newGame } from './engine';
+import { getWorld } from './world';
+import { sourceDigest } from './world-economy';
 
 const DB = 'soul-of-hero', STORE = 'kv', KEY = 'state', LS = 'soh.state.v' + SAVE_VERSION;
 const FORMAT = 'soh-snapshot-v1';
@@ -30,7 +32,9 @@ export function validate(raw: any): GameState | null {
   if (raw.run === null) return raw as GameState;
   const r = raw.run;
   if (!obj(r) || typeof r.id !== 'string' || !r.id || !integer(r.nextId) || r.nextId < 1 || !finite(r.startedAt) || !finite(r.qaOffset) || !integer(r.seed) || !integer(r.rng) || !integer(r.seq) || !obj(r.player) || !obj(r.custody) || !obj(r.entities) || !obj(r.clock)) return null;
-  if (r.sourceLayoutVersion !== undefined && r.sourceLayoutVersion !== 2) return null;
+  if (r.sourceLayoutVersion !== undefined && r.sourceLayoutVersion !== 2 && r.sourceLayoutVersion !== 3) return null;
+  if (r.sourceLayoutVersion === 3 && (!obj(r.sourceMap) || r.sourceMap.id !== (r.layoutId || 'shipping') || r.sourceMap.revision !== 1 || r.sourceMap.rules !== 3 || r.sourceMap.seed !== WORLD_SEED || !['shipping','dev_delta'].includes(r.sourceMap.id) || r.sourceMap.digest !== sourceDigest(getWorld(r.sourceMap.id).sourceV3))) return null;
+  if (r.sourceLayoutVersion !== 3 && r.sourceMap !== undefined) return null;
   if (!['x','y','hp','stamina','hunger','thirst','warmth','rad','active'].every(k => finite(r.player[k])) || !obj(r.player.skills) || typeof r.player.dead !== 'boolean' || !finite(r.clock.lastSimAt) || !finite(r.clock.simMs) || !finite(r.clock.respawnAcc) || !finite(r.clock.weatherSlot)) return null;
   if (!Array.isArray(r.creatures) || !obj(r.sources) || !obj(r.terrain) || !obj(r.knowledge) || !stringArray(r.knowledge.recipes) || !stringArray(r.knowledge.studied) || !r.knowledge.recipes.every((k: string) => has(RECIPES, k)) || !Array.isArray(r.traces) || !Array.isArray(r.discovered) || !stringArray(r.poiSeen) || !stringArray(r.elderStones) || !stringArray(r.achievements) || !Array.isArray(r.receipts) || !stringArray(r.seenIntents) || !obj(r.vendorStock) || !Object.values(r.vendorStock).every(integer) || !integer(r.score) || !integer(r.deposited) || !Array.isArray(r.log)) return null;
   if (!r.custody.inv || !r.custody.eq || r.custody.inv.kind !== 'inv' || r.custody.eq.kind !== 'eq' || r.custody.inv.slots?.length !== 24 || r.custody.eq.slots?.length !== 3) return null;

@@ -19,7 +19,7 @@ describe('connected economy',()=>{
   expect(RECIPES.industrial_pick.stationLevel).toBe(2);expect(ITEMS.industrial_pick.power!.ore!).toBeGreaterThan(ITEMS.iron_pick.power!.ore!);expect(ITEMS.industrial_axe.power!.wood!).toBeGreaterThan(ITEMS.iron_axe.power!.wood!);
  });
  it('wrecks produce rare physical parts only while finite source stock is harvested',()=>{
-  const g=fresh(),r=g.run!,w=getWorld('shipping'),i=[...w.src].findIndex(k=>k>=0&&SRC_KEYS[k]==='wreck');expect(i).toBeGreaterThanOrEqual(0);
+  const g=fresh(),r=g.run!,w=getWorld('shipping'),i=w.sourceV3.findIndex(k=>k==='wreck');expect(i).toBeGreaterThanOrEqual(0);
   r.rng=4;const tx=i%200,ty=Math.floor(i/200),x=tx*16+8,y=ty*16+8;r.player.x=x-15;r.player.y=y;
   const result=harvestHit(g,tx,ty,{scrap:100},T+10,r.player.x,r.player.y);expect(result.depleted).toBe(true);
   const pieces=Object.values(r.entities).filter(e=>e.kind==='drop').flatMap(e=>C(r,e.c!).slots.filter(s=>s?.key==='mechanical_parts'));expect(pieces.length).toBeGreaterThan(0);expect(pieces.length).toBeLessThanOrEqual(SOURCES.wreck.stock);
