@@ -20,6 +20,16 @@ This deliverable lives on the working branch `arena/2e3cfbd2-soul-of-hero` under
 The runtime repo has **no tracked `web/`** on that branch, so the reproducible artefact is a scoped
 patch plus source copies, exactly as the real runtime consumes them.
 
+### Documentation index
+
+| Doc | Read it for |
+|---|---|
+| `README.md` (this file) | overview, hierarchy, decisions, reproduce commands |
+| `KEEP_REPLACE_REJECT.md` | per-material A / A1 / decision table with the visual finding behind each call |
+| `REVIEW.md` | reproduction, exact verification outputs, known limitations, reviewer's shortest path |
+| `ASSET_LEDGER.md` | every shipped file, source SHA-256, all 181 frames split into 81 emitted / 100 candidates |
+| `VEYRA_CROSSWALK.md` | Veyra PAPER → A1 → Web crosswalk, 8 `BLOCKED-V01..V08` items, MAP-R02 scope |
+
 ## What was built (6 files, +4165/−1 in the runtime)
 
 ```
@@ -50,6 +60,10 @@ falls back to the untouched Web terrain.
   - `coast_dune_tidal_1..15` = edge mask `1=N 2=E 4=S 8=W`;
   - `road_dirt_0..15` = road-neighbour edge mask. A walkable tile is never repainted as open sea
     (mask 15 is suppressed).
+  - The sheet contains all 16/15 frames of each family, but the **emitted** selectors use only the
+    `1..14` non-trivial masks (`0` = base material, `15` suppressed). That is why the 181 admitted
+    frames reduce to 81 emitted terrain names. The full split is in `ASSET_LEDGER.md`; do **not**
+    assume `0..15` exists for `mix_grass_silt` or `coast_dune_tidal` (`_0` does not exist).
 - **Y-sorted props**: `worldAssetSource()` is called inside the renderer's existing y-sorted list,
   with a feet anchor, pixel shadow and nearest-neighbour blit. It is pinned to **real `w.src`
   resource cells only** — no invented landmarks, no collision change.
@@ -91,9 +105,11 @@ See `evidence/ABC-*.png` and `evidence/{A,B,C}/manifest.json`.
 | B MapLab `mapArt.ts` (procedural grass, dashed sea, invented beacon/cairn/post/dory/stones/mast) | — | — | **REJECT** — reference only |
 
 The visual-only gate is explicit and data-driven in `ASSET_DECISIONS` in `worldAssets.ts`.
-`C1` (road+props ON) and `C2` (KEEP) were both captured and inspected; the shipped C is the KEEP
-variant. C is calmer and more authored than A and avoids B's noisy grass, orange road stripes,
-patterned sea and extra invented lights. This is a **visual judgement**, not a claim of creator approval.
+`C1` (A1 road + all A1 props ON), `C2` (KEEP) and `C3` (A1 reeds only) were all built, captured and
+inspected; the shipped C is the KEEP variant (`road:false, props:false`). C is calmer and more
+authored than A and avoids B's noisy grass, orange road stripes, patterned sea and extra invented
+lights. This is a **visual judgement**, not a claim of creator approval. See
+`KEEP_REPLACE_REJECT.md` for the per-material reasoning.
 
 ## Verification (all executed on the built single-file Web app in real Chromium)
 
