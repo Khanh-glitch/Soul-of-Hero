@@ -93,7 +93,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
 
   // main loop
   useEffect(() => {
-    const cv = cvRef.current!; const g = cv.getContext('2d')!; g.imageSmoothingEnabled = false;
+    const cv = cvRef.current; const g = cv?.getContext('2d'); if (!cv || !g) return; g.imageSmoothingEnabled = false;
     let last = performance.now(); let raf = 0; let uiAcc = 0, saveAcc = 0, ambAcc = 0; let ended = false;
     const loop = (t: number) => {
       // Cap animation/input physics only; tick catches up autonomous wall time from lastSimAt.

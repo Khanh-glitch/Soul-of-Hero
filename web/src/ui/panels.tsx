@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ITEMS, RECIPES, STRUCTS, BUILD_ORDER, VENDOR_SECURED, ACHIEVEMENTS, ELDERS, CORE_STUDY } from '../game/catalog';
+import { ITEMS, RECIPES, STRUCTS, BUILD_ORDER, VENDOR_SECURED, ACHIEVEMENTS, ELDERS, CORE_STUDY, WORKBENCH_UPGRADE } from '../game/catalog';
 import { BAL, TILE, WW, type Stack } from '../game/core';
 import { C, countItem, invWeight, isRagnarok, runHours, cartWeight, phaseOf } from '../game/engine';
 import { getWorld, ZONES } from '../game/world';
@@ -59,7 +59,7 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
   const quickTo = st ? (kind === 'research' ? undefined : st.fuelC) : e.c;
   return <>
     <Panel title={title} style={{ left: 168, top: 54, width: 230, maxHeight: 286 }} onClose={() => api.open(null)} className="scroll">
-      <div className="scroll" style={{ maxHeight: 270, overflowY: 'auto', overflowX: 'hidden' }}>
+      <div className="scroll" style={{ maxHeight: 250, overflowY: 'auto', overflowX: 'hidden' }}>
         {e.c && <><Grid api={api} cid={e.c} cols={8} /><div className="flex gap-1" style={{ marginTop: 4 }}><button className="btn" onClick={() => takeAll(e.c!)}>Take all</button>{e.kind === 'cart' && <span style={{ fontSize: 10, color: '#cfc2dc' }}>Load {cartWeight(r, e.c).toFixed(0)}/{BAL.cart.maxWeight} kg · [F] pull</span>}{e.kind === 'cart' && <button className="btn ghost" onClick={() => api.act('reclaim', { eid })}>Pack up</button>}</div></>}
         {e.legacyJobs && <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>Legacy jobs were recovered without inventing missing inputs. Resume at a matching nearby station.
           <button className="btn" onClick={() => { const station = Object.values(r.entities).find(o => o.kind === 'struct' && o.type === e.legacyJobs!.stationType && o.station && Math.hypot(o.x - r.player.x, o.y - r.player.y) <= 3 * TILE); if (station) api.act('recoverLegacyJobs', { eid, stationId: station.id }); else api.toast('Stand near a matching station.'); }}>Resume jobs</button></div>}
@@ -75,29 +75,43 @@ function StationBody({ api, eid }: { api: Api; eid: string }) {
   const r = api.gs.run!; const e = r.entities[eid]; const st = e.station!; const kind = STRUCTS[e.type!].station!;
   const recipes = Object.entries(RECIPES).filter(([, rc]) => rc.station === kind); const known = recipes.filter(([k]) => r.knowledge.recipes.includes(k));
   const fuelled = kind === 'campfire' || kind === 'furnace';
+  const level = st.level ?? 1;
+  const maintenance = C(r, 'inv').slots.map((s, i) => [s, i] as const).filter(([s]) => s && (ITEMS[s.key].repair || ITEMS[s.key].salvage));
   return <div>
+    {kind === 'workbench' && <details style={{ fontSize: 10, marginBottom: 5, borderBottom: '1px solid #514155', paddingBottom: 4 }}>
+      <summary style={{ color: '#ffd98a', cursor: 'pointer' }}>Equipment maintenance &amp; upgrades</summary>
+      <div style={{ color: '#ffd98a' }}>Workbench level {level} / 2</div>
+      {level < 2 ? <><div>Upgrade unlocks reinforced spear production.</div><div>Cost: <Cost ins={WORKBENCH_UPGRADE.cost} have={have(api)} /></div><button className="btn gold" onClick={() => api.act('upgradeStation', { eid })}>Upgrade workbench</button></> : <div>Improved production unlocked.</div>}
+      <div style={{ color: '#ffd98a', marginTop: 3 }}>Equipment maintenance · carried items</div>
+      {maintenance.length === 0 && <div>Carry repairable equipment to use this bench.</div>}
+      {maintenance.map(([s, i]) => { const d = ITEMS[s!.key]; return <div key={s!.uid} style={{ borderTop: '1px solid #3a2e46', paddingTop: 2, marginTop: 2 }}>
+        <div><Icon k={s!.key} size={11} /> {d.name} {s!.dur !== undefined && d.dur ? `${s!.dur}/${d.dur}` : ''}</div>
+        {d.repair && <div>Repair: <Cost ins={d.repair.cost} have={have(api)} /> <button className="btn" disabled={s!.dur === undefined || s!.dur >= (d.dur || 0)} onClick={() => api.act('maintainItem', { eid, slot: i, uid: s!.uid, mode: 'repair' })}>Repair</button></div>}
+        {d.salvage && <div>Dismantle for {d.salvage.yields.map(([key, n]) => `${n} ${ITEMS[key].name}`).join(', ')} <button className="btn danger" onClick={() => { if (window.confirm(`Destroy ${d.name} for materials?`)) api.act('maintainItem', { eid, slot: i, uid: s!.uid, mode: 'salvage' }); }}>Dismantle</button></div>}
+      </div>; })}
+    </details>}
     {fuelled && <div style={{ marginBottom: 4 }}><div style={{ fontSize: 10, color: '#ffd98a' }}>Fuel {st.burn > 0 ? <span style={{ color: '#ffb040' }}>· burning {Math.ceil(st.burn / 1000)}s</span> : <span style={{ color: '#8a7a9a' }}>· cold</span>}{kind === 'campfire' ? ' (burns continuously; warmth + light)' : ' (burns only while working)'}</div><Grid api={api} cid={st.fuelC} cols={3} /></div>}
     <div style={{ fontSize: 10, color: '#ffd98a' }}>Queue</div>
     {st.queue.length === 0 && <div style={{ fontSize: 10, color: '#8a7a9a' }}>Idle.</div>}
     {st.queue.map((j, i) => { const out = j.recipe.startsWith('R:') ? 'blueprint' : RECIPES[j.recipe].out; return <div key={j.id} className="flex items-center gap-1" style={{ fontSize: 10 }}><Icon k={out} size={12} /><span style={{ width: 90 }}>{ITEMS[out].name}</span><div className="bar" style={{ width: 60 }}><i style={{ width: `${(1 - j.left / j.total) * 100}%`, background: i === 0 && (!fuelled || st.burn > 0) ? '#7aff6a' : '#a07a3a' }} /></div><span>{Math.ceil(j.left / 1000)}s</span><button className="btn ghost" style={{ padding: '0 3px' }} onClick={() => api.act('cancelJob', { eid, jobId: j.id })}>✕</button></div>; })}
     <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>Output</div><Grid api={api} cid={st.outC} cols={6} />
     <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>Recipes</div>
-    {known.map(([k, rc]) => <div key={k} className="flex items-center gap-1" style={{ fontSize: 10, marginBottom: 1 }}><Icon k={rc.out} size={12} /><span style={{ width: 82 }}>{ITEMS[rc.out].name}{rc.qty > 1 ? ` ×${rc.qty}` : ''}</span><Cost ins={rc.ins} have={have(api)} /><span style={{ color: '#8a7a9a' }}>{rc.secs}s</span><button className="btn" style={{ marginLeft: 'auto', padding: '1px 5px' }} onClick={() => api.act('craft', { recipe: k, eid })}>Queue</button></div>)}
+    {known.map(([k, rc]) => <div key={k} className="flex items-center gap-1" style={{ fontSize: 10, marginBottom: 1 }}><Icon k={rc.out} size={12} /><span style={{ width: 82 }}>{ITEMS[rc.out].name}{rc.qty > 1 ? ` ×${rc.qty}` : ''}</span><Cost ins={rc.ins} have={have(api)} /><span style={{ color: '#8a7a9a' }}>{rc.secs}s{(rc.stationLevel ?? 1) > level ? ` · bench ${rc.stationLevel} required` : ''}</span><button className="btn" disabled={(rc.stationLevel ?? 1) > level} style={{ marginLeft: 'auto', padding: '1px 5px' }} onClick={() => api.act('craft', { recipe: k, eid })}>Queue</button></div>)}
     {recipes.length > known.length && <div style={{ fontSize: 10, color: '#8a7a9a' }}>{recipes.length - known.length} more recipes undiscovered here (blueprints, research, specimens).</div>}
   </div>;
 }
 function ResearchBody({ api, eid }: { api: Api; eid: string }) {
   const r = api.gs.run!; const e = r.entities[eid]; const st = e.station!; const B = BAL.research;
   const unknown = Object.keys(RECIPES).filter(k => !r.knowledge.recipes.includes(k));
-  const specimens = C(r, 'inv').slots.map((s, i) => [s, i] as const).filter(([s]) => s && (ITEMS[s.key].specimen || CORE_STUDY[s.key]));
+  const specimens = C(r, 'inv').slots.map((s, i) => [s, i] as const).filter(([s]) => s && (ITEMS[s.key].specimen || CORE_STUDY[s.key] || ITEMS[s.key].studyRecipe));
   return <div>
     <div style={{ fontSize: 10, color: '#cfc2dc' }}>Spares in pack: <b style={{ color: '#ffe27a' }}>{countItem(r, 'inv', 'spares')}</b> · Known recipes {r.knowledge.recipes.length}/{Object.keys(RECIPES).length}</div>
     <div className="flex gap-1 items-center" style={{ margin: '3px 0' }}><button className="btn gold" onClick={() => api.act('research', { mode: 'random', eid })}>Tinker ({B.randomSparesCost} Spares, {B.randomSeconds}s)</button><span style={{ fontSize: 9, color: '#8a7a9a' }}>random unknown recipe</span></div>
     <div style={{ fontSize: 10, color: '#ffd98a' }}>Directed study ({B.directedSparesCost} Spares, {B.directedSeconds}s)</div>
     <div className="flex flex-wrap gap-1" style={{ marginBottom: 3 }}>{unknown.filter(k => RECIPES[k].tier < 3).slice(0, 14).map(k => <button key={k} className="btn ghost" style={{ padding: '1px 3px', fontSize: 10 }} onClick={() => api.act('research', { mode: 'directed', recipe: k, eid })}><Icon k={RECIPES[k].out} size={10} /> {ITEMS[RECIPES[k].out].name}</button>)}</div>
-    <div style={{ fontSize: 10, color: '#ffd98a' }}>Specimen / Core study ({B.specimenSeconds}s, consumes 1)</div>
-    {specimens.length === 0 && <div style={{ fontSize: 10, color: '#8a7a9a' }}>Carry a creature specimen or a Core to study it.</div>}
-    {specimens.map(([s, i]) => <div key={i} className="flex items-center gap-1" style={{ fontSize: 10 }}><Icon k={s!.key} size={12} />{ITEMS[s!.key].name}<button className="btn" style={{ marginLeft: 'auto', padding: '1px 5px' }} onClick={() => api.act('research', { mode: 'specimen', slot: i, eid })}>Study</button></div>)}
+    <div style={{ fontSize: 10, color: '#ffd98a' }}>Specimen / Core / equipment study ({B.specimenSeconds}s, consumes 1)</div>
+    {specimens.length === 0 && <div style={{ fontSize: 10, color: '#8a7a9a' }}>Carry a creature specimen, Core or studyable equipment.</div>}
+    {specimens.map(([s, i]) => <div key={i} className="flex items-center gap-1" style={{ fontSize: 10 }}><Icon k={s!.key} size={12} />{ITEMS[s!.key].name} → {ITEMS[RECIPES[ITEMS[s!.key].specimen || CORE_STUDY[s!.key] || ITEMS[s!.key].studyRecipe!].out].name}<button className="btn" style={{ marginLeft: 'auto', padding: '1px 5px' }} onClick={() => { if (window.confirm(`Study consumes ${ITEMS[s!.key].name} when complete. Proceed?`)) api.act('research', { mode: 'specimen', slot: i, uid: s!.uid, eid }); }}>Study</button></div>)}
     <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>In progress</div>
     {st.queue.map(j => <div key={j.id} className="flex items-center gap-1" style={{ fontSize: 10 }}><Icon k="blueprint" size={12} />{ITEMS[RECIPES[j.recipe.slice(2)].out].name}<div className="bar" style={{ width: 60 }}><i style={{ width: `${(1 - j.left / j.total) * 100}%`, background: '#9ad0ff' }} /></div>{Math.ceil(j.left / 1000)}s <button className="btn ghost" onClick={() => api.act('cancelJob', { eid, jobId: j.id })}>✕</button></div>)}
     <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>Blueprints ready (take, then use to learn)</div><Grid api={api} cid={st.outC} cols={4} />
@@ -110,8 +124,8 @@ export function CraftPanel({ api }: { api: Api }) {
   return <><Panel title={`Crafting — ${r.knowledge.recipes.length}/${Object.keys(RECIPES).length} recipes known`} style={{ left: 8, top: 34, width: 390, maxHeight: 316 }} onClose={() => api.open(null)}>
     <div className="scroll" style={{ maxHeight: 286, overflowY: 'auto' }}>
       {groups.map(([label, st]) => { const list = Object.entries(RECIPES).filter(([k, rc]) => rc.station === st && r.knowledge.recipes.includes(k)); const ns = st ? nearSt(st) : null; const hidden = Object.entries(RECIPES).filter(([k, rc]) => rc.station === st && !r.knowledge.recipes.includes(k)).length;
-        return <div key={label} style={{ marginBottom: 4 }}><div style={{ fontSize: 11, color: '#ffd98a' }}>{label} {st && <span style={{ color: ns ? '#7aff6a' : '#8a7a9a', fontSize: 10 }}>{ns ? '· station in reach' : `· build or stand at a ${STRUCTS[st].name}`}</span>}</div>
-          {list.map(([k, rc]) => { const ok = rc.ins.every(([i, q]) => countItem(r, 'inv', i) >= q); return <div key={k} className="flex items-center gap-1" style={{ fontSize: 10, padding: '1px 0', borderBottom: '1px solid #2a2034' }}><Icon k={rc.out} size={14} /><span style={{ width: 110, color: ok ? '#fff' : '#bba' }}>{ITEMS[rc.out].name}{rc.qty > 1 ? ` ×${rc.qty}` : ''}</span><Cost ins={rc.ins} have={have(api)} /><button className="btn" style={{ marginLeft: 'auto', padding: '1px 6px' }} disabled={!!st && !ns} onClick={() => api.act('craft', { recipe: k, eid: ns?.id })}>{st ? 'Queue' : 'Craft'}</button></div>; })}
+        return <div key={label} style={{ marginBottom: 4 }}><div style={{ fontSize: 11, color: '#ffd98a' }}>{label} {st && <span style={{ color: ns ? '#7aff6a' : '#8a7a9a', fontSize: 10 }}>{ns ? `· station in reach${st === 'workbench' ? ` · level ${ns.station?.level ?? 1}` : ''}` : `· build or stand at a ${STRUCTS[st].name}`}</span>}</div>
+          {list.map(([k, rc]) => { const ok = rc.ins.every(([i, q]) => countItem(r, 'inv', i) >= q); return <div key={k} className="flex items-center gap-1" style={{ fontSize: 10, padding: '1px 0', borderBottom: '1px solid #2a2034' }}><Icon k={rc.out} size={14} /><span style={{ width: 110, color: ok ? '#fff' : '#bba' }}>{ITEMS[rc.out].name}{rc.qty > 1 ? ` ×${rc.qty}` : ''}</span><Cost ins={rc.ins} have={have(api)} />{rc.stationLevel && <span style={{ color: '#cfc2dc' }}>bench {rc.stationLevel}</span>}<button className="btn" style={{ marginLeft: 'auto', padding: '1px 6px' }} disabled={!!st && (!ns || (ns.station?.level ?? 1) < (rc.stationLevel ?? 1))} onClick={() => api.act('craft', { recipe: k, eid: ns?.id })}>{st ? 'Queue' : 'Craft'}</button></div>; })}
           {hidden > 0 && <div style={{ fontSize: 9, color: '#7a6a8a' }}>+{hidden} undiscovered — blueprints in ruins, research table, specimens, Cores.</div>}</div>; })}
     </div></Panel><InventoryPanel api={api} /></>;
 }

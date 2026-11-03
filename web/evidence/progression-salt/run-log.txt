@@ -1,0 +1,24 @@
+new run seed=1042858196; player={"x":1352,"y":2744,"hp":100,"hunger":84.97172399999994,"thirst":84.95758599999999,"active":0}
+Fisher starter crate acquired ordinary loot: {"meat":2,"rope":2}
+harvest oak -> wood: 0 -> 6 near source (77,168)
+harvest oak -> wood: 6 -> 9 near source (77,170)
+Walked from Fisher's Point to Pinewatch (114 map tiles) and searched its ordinary Ranger Cabin supply crate; stone=4.
+Returned on foot to Fisher's Point (111 map tiles) at {"x":1369.4833854216554,"y":2727.910877721953,"hp":93.27590399999616,"hunger":81.4446939999879,"thirst":79.66704099999976,"active":0}
+Stone Pickaxe exact recipe cost: wood 3, stone 4, rope 1; pre-craft held wood=9, stone=4, rope=2.
+After honest hand craft: wood=6, stone=0, rope=1, pickaxes=1.
+Moved Stone Pickaxe into hotbar slot 3 by swapping with berries through Inventory.
+selected stone_pick in hotbar 3; active=2
+At Salt Shale (88,179) from 13 tiles; player={"x":1415.9171934216545,"y":2856.908813721972,"hp":94.13451999999477,"hunger":81.01418199998646,"thirst":79.02127299999972,"active":2}, distance=15.1px, active=stone_pick, source=null.
+Salt Shale result: raw_salt 0->2; source={"stock":2,"hp":6}, drops=[].
+Mined Salt Shale at (88,179); Raw Salt=2.
+harvest rock -> stone: 0 -> 4 near source (82,176)
+Campfire exact build cost: wood 5, stone 3; pre-build wood=6, stone=4. One additional wood must remain for fuel.
+Paid and placed campfire at (81,176); remaining wood=1, stone=1.
+Station UI panels after E: ["Campfire","Inventory"].
+Fueling cost: transferred wood x1 from player inventory; station state={"qty":0,"burn":19598}.
+Queue click result: station=[{"recipe":"salted_meat","left":9465,"total":10000}], inv meat=1, raw_salt=1, recent=["You wash up near Fisher's Point. No one is coming to tell you what to do.","Discovered: Fisher's Point","Discovered: Pinewatch","Discovered: Crossroads Trading Post"].
+Queued Salted Roast through campfire UI; input cost meat 1 + Raw Salt 1 (before=2/2, after=1/1), actual wall-clock start=2026-11-03T06:38:30.179Z, fuel={"qty":0,"burn":19598}, queue=[{"recipe":"salted_meat","left":9465,"total":10000}].
+Salted Roast appeared after 10.1 seconds of live browser time.
+Collected cooked Salted Roast; inventory=1; player state={"x":1304.2570014216603,"y":2806.7482159644383,"hp":78.09662175999195,"hunger":80.0297991199835,"thirst":77.54469867999968,"active":2}.
+Save/relaunch preserved Salted Roast; item=1, seed=1042858196, simulated clock=133660ms.
+Ate Salted Roast through inventory use action; hunger=99.98723399999999, hp=86.7459337599914.

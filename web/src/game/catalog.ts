@@ -1,17 +1,19 @@
 // Runtime catalogs. Numbers = TUNABLE_BALANCE; mechanisms flagged where PROPOSED_MECHANISM.
 export type Mat = 'wood' | 'stone' | 'ore' | 'plant' | 'scrap';
 export interface SourcePlacementRule { terrain: 'sand' | 'marsh' | 'ash' | 'snow' | 'hill'; chance: number }
-export interface RecipeDef { out: string; qty: number; ins: [string, number][]; station: null | 'campfire' | 'furnace' | 'workbench'; secs: number; base?: boolean; tier: number }
+export interface RecipeDef { out: string; qty: number; ins: [string, number][]; station: null | 'campfire' | 'furnace' | 'workbench'; secs: number; base?: boolean; tier: number; stationLevel?: 1 | 2 }
 
 export interface ItemDef {
   name: string; cat: string; icon: string; c1: string; c2: string; w: number; max: number; desc: string;
   power?: Partial<Record<Mat, number>>; dmg?: number; reach?: number; arc?: number; swing?: number; dur?: number;
   food?: { hunger?: number; thirst?: number; hp?: number; warmth?: number; rad?: number; stamina?: number };
   slot?: 'head' | 'body' | 'back'; armor?: number; cold?: number; mask?: boolean; fuel?: number; charge?: number;
-  core?: string; specimen?: string; place?: string; light?: number; ranged?: string;
+  core?: string; specimen?: string; studyRecipe?: string; repair?: { station: 'workbench'; cost: [string, number][] }; salvage?: { station: 'workbench'; yields: [string, number][] }; place?: string; light?: number; ranged?: string;
 }
 const I = (d: ItemDef) => d;
 export const ITEMS: Record<string, ItemDef> = {
+  // All lifecycle and upgrade costs are provisional TUNABLE values.
+  mechanical_parts: I({ name: 'Mechanical Parts', cat: 'res', icon: 'ore', c1: '#707984', c2: '#c9d2d8', w: 0.5, max: 30, desc: 'Workbench parts: improve a bench or maintain iron equipment.' }),
   // resources
   wood: I({ name: 'Wood', cat: 'res', icon: 'log', c1: '#8a5a32', c2: '#c9935a', w: 1, max: 60, desc: 'Split timber. Fuel, tools, walls.', fuel: 20 }),
   stone: I({ name: 'Stone', cat: 'res', icon: 'stone', c1: '#7d8088', c2: '#b9bcc4', w: 1.2, max: 60, desc: 'Rough stone. Foundations, furnaces, tools.' }),
@@ -21,6 +23,7 @@ export const ITEMS: Record<string, ItemDef> = {
   charcoal: I({ name: 'Charcoal', cat: 'res', icon: 'ore', c1: '#2b2420', c2: '#6e5a4c', w: 0.5, max: 60, desc: 'Fuel made from burnt wood.', fuel: 55 }),
   crystal: I({ name: 'Frost Crystal', cat: 'res', icon: 'gem', c1: '#4fa6d8', c2: '#c8f0ff', w: 0.5, max: 30, desc: 'Cold-grown crystal from the north. Core synthesis.' }),
   raw_salt: I({ name: 'Raw Salt', cat: 'res', icon: 'gem', c1: '#9bb8b2', c2: '#f2fff0', w: 0.25, max: 40, desc: 'Mineral crust chipped from coastal salt shale. A small addition preserves cooked provisions.' }),
+  herb_roast: I({ name: 'Herb Roast', cat: 'food', icon: 'meat', c1: '#8b6e37', c2: '#d8c080', w: 0.4, max: 20, desc: 'A restorative cooked meal; Bitterleaf could instead become medicine.', food: { hunger: 30, hp: 15, warmth: 8 } }),
   salted_meat: I({ name: 'Salted Roast', cat: 'food', icon: 'meat', c1: '#9a5638', c2: '#f0bb76', w: 0.45, max: 20, desc: 'Roast meat seasoned with gathered salt; a hearty field meal.', food: { hunger: 42, hp: 8, warmth: 8 } }),
   sulfur: I({ name: 'Sulfur', cat: 'res', icon: 'ore', c1: '#b59a1e', c2: '#f2e05a', w: 0.5, max: 40, desc: 'Volcanic sulfur. Volatile.' }),
   scrap: I({ name: 'Scrap Metal', cat: 'res', icon: 'scrap', c1: '#6f7378', c2: '#c0a07a', w: 1, max: 60, desc: 'Salvage from wrecks. Melts into iron.' }),
@@ -50,14 +53,15 @@ export const ITEMS: Record<string, ItemDef> = {
   medkit: I({ name: 'Field Medkit', cat: 'food', icon: 'kit', c1: '#a03030', c2: '#f0e0e0', w: 0.4, max: 10, desc: 'Herbal dressing.', food: { hp: 45 } }),
   antirad: I({ name: 'Purge Tonic', cat: 'food', icon: 'flask', c1: '#4a7a1e', c2: '#c8f070', w: 0.3, max: 10, desc: 'Flushes radiation.', food: { rad: -45, thirst: 5 } }),
   // tools & weapons
-  knife: I({ name: 'Survival Knife', cat: 'tool', icon: 'knife', c1: '#9aa4b0', c2: '#5a3a22', w: 0.5, max: 1, desc: 'Humble but honest. Cuts fiber and flesh; slow on wood.', power: { wood: 1, plant: 3, scrap: 1 }, dmg: 9, reach: 20, arc: 1.3, swing: 300, dur: 300 }),
-  stone_axe: I({ name: 'Stone Axe', cat: 'tool', icon: 'axe', c1: '#8a8a90', c2: '#7a5a32', w: 1.4, max: 1, desc: 'Fells trees. Clumsy weapon.', power: { wood: 3, plant: 1, scrap: 1 }, dmg: 11, reach: 22, arc: 1.5, swing: 420, dur: 180 }),
-  stone_pick: I({ name: 'Stone Pickaxe', cat: 'tool', icon: 'pick', c1: '#8a8a90', c2: '#7a5a32', w: 1.5, max: 1, desc: 'Breaks stone and ore. Pries scrap.', power: { stone: 3, ore: 2, scrap: 2 }, dmg: 10, reach: 22, arc: 1.2, swing: 450, dur: 180 }),
-  iron_axe: I({ name: 'Iron Axe', cat: 'tool', icon: 'axe', c1: '#c8d0dc', c2: '#5a3a22', w: 1.6, max: 1, desc: 'Bites deep into timber.', power: { wood: 6, plant: 2, scrap: 2 }, dmg: 17, reach: 23, arc: 1.5, swing: 400, dur: 400 }),
-  iron_pick: I({ name: 'Iron Pickaxe', cat: 'tool', icon: 'pick', c1: '#c8d0dc', c2: '#5a3a22', w: 1.7, max: 1, desc: 'Shatters rock and veins.', power: { stone: 6, ore: 5, scrap: 4 }, dmg: 15, reach: 23, arc: 1.2, swing: 430, dur: 400 }),
+  knife: I({ name: 'Survival Knife', cat: 'tool', icon: 'knife', c1: '#9aa4b0', c2: '#5a3a22', w: 0.5, max: 1, desc: 'Humble but honest. Cuts fiber and flesh; slow on wood.', repair: { station: 'workbench', cost: [['scrap', 1], ['fiber', 1]] }, power: { wood: 1, plant: 3, scrap: 1 }, dmg: 9, reach: 20, arc: 1.3, swing: 300, dur: 300 }),
+  stone_axe: I({ name: 'Stone Axe', cat: 'tool', icon: 'axe', c1: '#8a8a90', c2: '#7a5a32', w: 1.4, max: 1, desc: 'Fells trees. Clumsy weapon.', repair: { station: 'workbench', cost: [['stone', 1], ['wood', 1]] }, power: { wood: 3, plant: 1, scrap: 1 }, dmg: 11, reach: 22, arc: 1.5, swing: 420, dur: 180 }),
+  stone_pick: I({ name: 'Stone Pickaxe', cat: 'tool', icon: 'pick', c1: '#8a8a90', c2: '#7a5a32', w: 1.5, max: 1, desc: 'Breaks stone and ore. Pries scrap.', repair: { station: 'workbench', cost: [['stone', 1], ['wood', 1]] }, power: { stone: 3, ore: 2, scrap: 2 }, dmg: 10, reach: 22, arc: 1.2, swing: 450, dur: 180 }),
+  iron_axe: I({ name: 'Iron Axe', cat: 'tool', icon: 'axe', c1: '#c8d0dc', c2: '#5a3a22', w: 1.6, max: 1, desc: 'Bites deep into timber.', repair: { station: 'workbench', cost: [['iron_ingot', 1], ['mechanical_parts', 1]] }, power: { wood: 6, plant: 2, scrap: 2 }, dmg: 17, reach: 23, arc: 1.5, swing: 400, dur: 400 }),
+  iron_pick: I({ name: 'Iron Pickaxe', cat: 'tool', icon: 'pick', c1: '#c8d0dc', c2: '#5a3a22', w: 1.7, max: 1, desc: 'Shatters rock and veins.', repair: { station: 'workbench', cost: [['iron_ingot', 1], ['mechanical_parts', 1]] }, power: { stone: 6, ore: 5, scrap: 4 }, dmg: 15, reach: 23, arc: 1.2, swing: 430, dur: 400 }),
   wood_spear: I({ name: 'Fire-hardened Spear', cat: 'weapon', icon: 'spear', c1: '#c9935a', c2: '#e0e0e0', w: 1, max: 1, desc: 'Long reach, narrow thrust.', power: { plant: 1 }, dmg: 15, reach: 34, arc: 0.45, swing: 380, dur: 150 }),
-  iron_sword: I({ name: 'Iron Sword', cat: 'weapon', icon: 'sword', c1: '#dfe6ee', c2: '#7a4a2a', w: 1.4, max: 1, desc: 'Fast, wide cuts.', power: { plant: 2 }, dmg: 24, reach: 26, arc: 1.7, swing: 330, dur: 350 }),
-  bow: I({ name: 'Hunting Bow', cat: 'weapon', icon: 'bow', c1: '#8a5a32', c2: '#e0d8c0', w: 0.8, max: 1, desc: 'Fires arrows toward the cursor.', dmg: 16, reach: 220, swing: 520, dur: 200, ranged: 'arrow' }),
+  iron_sword: I({ name: 'Iron Sword', cat: 'weapon', icon: 'sword', c1: '#dfe6ee', c2: '#7a4a2a', w: 1.4, max: 1, desc: 'Fast, wide cuts.', studyRecipe: 'iron_sword', repair: { station: 'workbench', cost: [['iron_ingot', 1], ['mechanical_parts', 1]] }, salvage: { station: 'workbench', yields: [['iron_ingot', 1]] }, power: { plant: 2 }, dmg: 24, reach: 26, arc: 1.7, swing: 330, dur: 350 }),
+  bow: I({ name: 'Hunting Bow', cat: 'weapon', icon: 'bow', c1: '#8a5a32', c2: '#e0d8c0', w: 0.8, max: 1, desc: 'Fires arrows toward the cursor.', studyRecipe: 'bow', repair: { station: 'workbench', cost: [['wood', 1], ['fiber', 2]] }, dmg: 16, reach: 220, swing: 520, dur: 200, ranged: 'arrow' }),
+  reinforced_spear: I({ name: 'Reinforced Spear', cat: 'weapon', icon: 'spear', c1: '#bbc8d0', c2: '#a77745', w: 1.8, max: 1, desc: 'A durable long-reach spear made at an improved workbench.', power: { plant: 2 }, dmg: 23, reach: 36, arc: 0.5, swing: 390, dur: 320, repair: { station: 'workbench', cost: [['iron_ingot', 1], ['mechanical_parts', 1]] } }),
   arrow: I({ name: 'Arrow', cat: 'res', icon: 'arrow', c1: '#8a5a32', c2: '#c0c0c8', w: 0.05, max: 60, desc: 'Ammunition for bows.' }),
   torch: I({ name: 'Torch', cat: 'tool', icon: 'torch', c1: '#7a5a32', c2: '#ffb040', w: 0.4, max: 10, desc: 'Light in the dark. Weak weapon; can ignite.', dmg: 6, reach: 18, arc: 1.2, swing: 320, dur: 120, light: 72 }),
   // armor
@@ -141,6 +145,8 @@ export const ELDERS: Record<string, ElderDef> = {
 // ---------- Recipes (K4: one run-local authority) ----------
 export type Recipe = RecipeDef;
 export const RECIPES: Record<string, Recipe> = {
+  mechanical_parts: { out: 'mechanical_parts', qty: 2, ins: [['scrap', 2], ['iron_ingot', 1]], station: 'workbench', secs: 12, base: true, tier: 1 },
+  reinforced_spear: { out: 'reinforced_spear', qty: 1, ins: [['iron_ingot', 2], ['mechanical_parts', 1], ['wood', 2]], station: 'workbench', stationLevel: 2, secs: 20, tier: 2 },
   rope: { out: 'rope', qty: 1, ins: [['fiber', 3]], station: null, secs: 1, base: true, tier: 0 },
   torch: { out: 'torch', qty: 1, ins: [['wood', 1], ['fiber', 2]], station: null, secs: 1, base: true, tier: 0 },
   stone_axe: { out: 'stone_axe', qty: 1, ins: [['wood', 3], ['stone', 3], ['rope', 1]], station: null, secs: 2, base: true, tier: 0 },
@@ -148,6 +154,7 @@ export const RECIPES: Record<string, Recipe> = {
   wood_spear: { out: 'wood_spear', qty: 1, ins: [['wood', 4], ['rope', 1]], station: null, secs: 2, base: true, tier: 0 },
   bandage: { out: 'bandage', qty: 1, ins: [['fiber', 4]], station: null, secs: 1, base: true, tier: 0 },
   water_flask: { out: 'water_flask', qty: 1, ins: [['hide', 2], ['rope', 1]], station: null, secs: 2, base: true, tier: 0 },
+  herb_roast: { out: 'herb_roast', qty: 1, ins: [['meat', 1], ['herb', 1]], station: 'campfire', secs: 10, base: true, tier: 0 },
   cooked_meat: { out: 'cooked_meat', qty: 1, ins: [['meat', 1]], station: 'campfire', secs: 8, base: true, tier: 0 },
   salted_meat: { out: 'salted_meat', qty: 1, ins: [['meat', 1], ['raw_salt', 1]], station: 'campfire', secs: 10, base: true, tier: 0 },
   charcoal: { out: 'charcoal', qty: 1, ins: [['wood', 2]], station: 'campfire', secs: 12, base: true, tier: 0 },
@@ -177,6 +184,8 @@ export const RECIPES: Record<string, Recipe> = {
   core_frost: { out: 'core_frost', qty: 1, ins: [['crystal', 3], ['spares', 8]], station: 'workbench', secs: 40, tier: 3 },
 };
 // Core study → recipe (specimen-study path)
+/** Paid upgrade; old workbenches without a level remain level 1. */
+export const WORKBENCH_UPGRADE: { toLevel: 2; cost: [string, number][] } = { toLevel: 2, cost: [['mechanical_parts', 2], ['iron_ingot', 1]] };
 export const CORE_STUDY: Record<string, string> = { core_fire: 'core_fire', core_earth: 'core_earth', core_storm: 'core_storm', core_frost: 'core_frost' };
 
 // ---------- Structures (K6) ----------
@@ -244,9 +253,21 @@ export function validateGameplayCatalog(catalog: GameplayCatalogData = { items: 
       else placementOwners.set(rule.terrain, id);
     }
   }
+  for (const [id, item] of Object.entries(items)) {
+    if (item.studyRecipe && (!recipes[item.studyRecipe] || recipes[item.studyRecipe].out !== id)) errors.push(`item ${id}: invalid equipment study recipe`);
+    for (const [label, operation] of [['repair', item.repair], ['salvage', item.salvage]] as const) {
+      if (!operation) continue;
+      if (!structures[operation.station] || structures[operation.station].station !== operation.station) errors.push(`item ${id}: invalid ${label} station`);
+      const entries = 'cost' in operation ? operation.cost : operation.yields;
+      if (!entries.length || entries.some(([key, qty]) => !items[key] || !Number.isSafeInteger(qty) || qty <= 0 || key === id)) errors.push(`item ${id}: invalid ${label} inputs/outputs`);
+      if (label === 'repair' && (!item.dur || item.max !== 1)) errors.push(`item ${id}: invalid repair durability`);
+      if (item.core) errors.push(`item ${id}: Core lifecycle needs a separate contract`);
+    }
+  }
   for (const [id, recipe] of Object.entries(recipes)) {
     if (!items[recipe.out] || !Number.isInteger(recipe.qty) || recipe.qty <= 0 || !Number.isFinite(recipe.secs) || recipe.secs <= 0) errors.push(`recipe ${id}: invalid output/time`);
     for (const [item, qty] of recipe.ins) if (!items[item] || !Number.isInteger(qty) || qty <= 0) errors.push(`recipe ${id}: invalid input ${item} x${qty}`);
+    if (recipe.stationLevel !== undefined && (recipe.station !== 'workbench' || ![1, 2].includes(recipe.stationLevel))) errors.push(`recipe ${id}: invalid station level`);
     if (recipe.station && (!structures[recipe.station] || structures[recipe.station].station !== recipe.station)) errors.push(`recipe ${id}: missing station ${recipe.station}`);
   }
   if (errors.length) throw new Error(`Invalid gameplay catalog:\n${errors.join('\n')}`);

@@ -2,7 +2,7 @@
 // Rule: validate EVERYTHING first, then commit. Failed preconditions never partially debit.
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
-import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, ACHIEVEMENTS, CORE_STUDY } from './catalog';
+import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE } from './catalog';
 import { getWorld, getActiveLayout, SRC_KEYS, tileAt } from './world';
 
 export type Intent = { id: string; type: string; [k: string]: any };
@@ -462,6 +462,40 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       rest.sort((a, b) => order.indexOf(ITEMS[a.key].cat) - order.indexOf(ITEMS[b.key].cat) || a.key.localeCompare(b.key));
       const out = it.c === 'inv' ? [...keep.map(s => (s && s.qty > 0 ? s : null))] : []; while (out.length < c.slots.length) out.push(rest.shift() || null); c.slots = out; return ok('sort', c.id); }
     case 'drop': { const c = C(r, it.c); const s = c && validSlot(c, it.slot) ? c.slots[it.slot] : null; if (!s || !canAccess(r, it.c)) return fail('Nothing to drop.'); c.slots[it.slot] = null; if (p.pulling && s.key === 'x') p.pulling = null; dropStackEntity(r, s, p.x + Math.cos(p.aim) * 12, p.y + Math.sin(p.aim) * 12, now); return ok('drop', `${s.key}x${s.qty}`); }
+    case 'upgradeStation': {
+      const e = r.entities[it.eid];
+      if (!e || e.kind !== 'struct' || e.type !== 'workbench' || !e.station || !owned(e) || !near(r, e, 3)) return fail('Use your workbench within reach.');
+      if ((e.station.level ?? 1) >= WORKBENCH_UPGRADE.toLevel) return fail('Workbench already upgraded.');
+      if (!hasAll(r, 'inv', WORKBENCH_UPGRADE.cost)) return fail('Missing upgrade materials.');
+      for (const [key, qty] of WORKBENCH_UPGRADE.cost) removeItem(r, 'inv', key, qty);
+      e.station.level = WORKBENCH_UPGRADE.toLevel;
+      return ok('station.upgrade', `${e.id}:2`, 'Workbench improved. Its new capabilities are available.');
+    }
+    case 'maintainItem': {
+      const e = r.entities[it.eid], inv = C(r, 'inv');
+      if (!e || e.kind !== 'struct' || !e.station || !owned(e) || !near(r, e, 3)) return fail('Use your station within reach.');
+      if (!validSlot(inv, it.slot)) return fail('Invalid inventory slot.');
+      const item = inv.slots[it.slot];
+      if (!item || item.uid !== it.uid || item.qty !== 1) return fail('That item is no longer in this slot.');
+      if (p.action && p.action.slot === it.slot) return fail('Finish your current action first.');
+      const def = ITEMS[item.key];
+      if (it.mode === 'repair') {
+        const rule = def.repair;
+        if (!rule || e.type !== rule.station || item.dur === undefined || !def.dur || item.dur <= 0 || item.dur >= def.dur) return fail('This item cannot be repaired here.');
+        if (!hasAll(r, 'inv', rule.cost)) return fail('Missing repair materials.');
+        for (const [key, qty] of rule.cost) removeItem(r, 'inv', key, qty);
+        const old = item.dur; item.dur = def.dur;
+        return ok('item.repair', `${item.uid}:${old}->${item.dur}`, `${def.name} repaired to ${item.dur}/${def.dur}.`);
+      }
+      if (it.mode === 'salvage') {
+        const rule = def.salvage;
+        if (!rule || e.type !== rule.station) return fail('This item cannot be dismantled here.');
+        inv.slots[it.slot] = null;
+        for (const [key, qty] of rule.yields) giveOrDrop(r, key, qty, now);
+        return ok('item.salvage', `${item.uid}:${item.key}`, `${def.name} dismantled. Materials are in your pack or on the ground.`);
+      }
+      return fail('Unknown maintenance action.');
+    }
     case 'useItem': return useItem(gs, r, it, now, ok);
     case 'craft': return craft(gs, r, it, now, ok);
     case 'cancelJob': { const e = r.entities[it.eid]; if (!e?.station || e.kind !== 'struct' || !owned(e) || !near(r, e, 3)) return fail('Not here.'); const j = e.station.queue.findIndex(q => q.id === it.jobId); if (j < 0) return fail('No such job.');
@@ -643,6 +677,7 @@ function craft(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: stri
     return ok('craft.hand', it.recipe, `Crafted ${ITEMS[rc.out].name}`);
   }
   const st = stationNear(r, rc.station, it.eid); if (!st) return fail(`Requires a ${STRUCTS[rc.station].name} within reach.`);
+  if ((st.station!.level ?? 1) < (rc.stationLevel ?? 1)) return fail(`Requires workbench level ${rc.stationLevel}.`);
   if (st.station!.queue.length >= 6) return fail('Station queue is full.');
   const reserved = reserveInputs(r, ins);
   st.station!.queue.push({ id: uid(r, 'j'), recipe: it.recipe, left: rc.secs * 1000, total: rc.secs * 1000, reserved });
@@ -671,7 +706,9 @@ function research(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: s
   }
   if (it.mode === 'specimen') {
     const inv = C(r, 'inv'); if (!validSlot(inv, it.slot)) return fail('Pick a specimen.'); const s = inv.slots[it.slot]; if (!s) return fail('Pick a specimen.');
-    const target = ITEMS[s.key].specimen || CORE_STUDY[s.key]; if (!target) return fail('Nothing to learn from that.');
+    if ((ITEMS[s.key].studyRecipe && it.uid !== s.uid) || (it.uid !== undefined && it.uid !== s.uid)) return fail('That item is no longer in this slot.');
+    if (r.player.action && r.player.action.slot === it.slot) return fail('Finish your current action first.');
+    const target = ITEMS[s.key].specimen || CORE_STUDY[s.key] || ITEMS[s.key].studyRecipe; if (!target) return fail('Nothing to learn from that.');
     if (known.has(target) || pending.has(target)) return fail('You already know what it can teach.');
     const reserved = s.qty > 1 ? [portion(r, s, 1)] : [s];
     if (s.qty > 1) s.qty--; else inv.slots[it.slot] = null;
