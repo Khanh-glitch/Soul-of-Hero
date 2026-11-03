@@ -194,7 +194,7 @@ function genWorld(layoutId: LayoutId): World {
   crate(fa.tx + 4, fa.ty - 4, 'factory_vault', [['core_fire', 1], ['blueprint:core_earth', 1], ['spares', 6]]);
   crate(fa.tx + 6, fa.ty - 4, 'factory_vault', [['blueprint:gas_mask', 1], ['iron_ingot', 4]]);
   statics.push({ kind: 'cash', tx: fa.tx + 5, ty: fa.ty - 3, poi: 'factory_vault', cash: 80 });
-  crate(fa.tx - 6, fa.ty + 3, 'factory', [['scrap', 6], ['spares', 3], ['iron_sword', 1]]); crate(fa.tx - 2, fa.ty - 4, 'factory', [['iron_ore', 4], ['coal', 3]]);
+  crate(fa.tx - 6, fa.ty + 3, 'factory', [['scrap', 6], ['spares', 3], ['iron_sword', 1], ['mechanical_parts', 2]]); crate(fa.tx - 2, fa.ty - 4, 'factory', [['iron_ore', 4], ['coal', 3]]);
   // lighthouse (power gated)
   const li = byId('light'); stamp('b_li', 'Lighthouse', li.tx, li.ty, 5, 5, 'light', [[2, 4]]);
   statics.push({ kind: 'door', tx: li.tx, ty: li.ty + 2, poi: 'light', locked: 'power', label: 'Lighthouse Door' });

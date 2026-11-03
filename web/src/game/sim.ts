@@ -168,7 +168,8 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   } else if (inp.cancel && act?.kind === 'cast') { dispatch(gs, { id: 'cc' + now, type: 'castCancel' }, now); p.action = null; fx('fizzle', { x: p.x, y: p.y }); }
   else if ((inp.attackPressed || inp.attack) && !p.action) {
     const s = activeStack(r); const d = s ? ITEMS[s.key] : null;
-    if (d?.core) { if ((s!.charge ?? 0) > 0) { p.action = { kind: 'cast', t: 0, dur: 520, contact: 460, angle: p.aim, slot: p.active }; fx('windup', { x: p.x, y: p.y, core: d.core }); } else if (inp.attackPressed) fx('toast', { text: 'This Core is spent. Study it at a Research Table.' }); }
+    if (d?.repair && s?.dur !== undefined && s.dur <= 0) { if (inp.attackPressed) fx('toast', { text: `${d.name} is broken. Repair it at a workbench.` }); }
+    else if (d?.core) { if ((s!.charge ?? 0) > 0) { p.action = { kind: 'cast', t: 0, dur: 520, contact: 460, angle: p.aim, slot: p.active }; fx('windup', { x: p.x, y: p.y, core: d.core }); } else if (inp.attackPressed) fx('toast', { text: 'This Core is spent. Study it at a Research Table.' }); }
     else if (d && d.food && inp.attackPressed) { const res = dispatch(gs, { id: 'use' + now, type: 'useItem', slot: p.active }, now); fx(res.ok ? 'eat' : 'toast', { x: p.x, y: p.y, text: res.ok ? '' : (res as any).reason }); }
     else if (d && d.cat === 'bp' && inp.attackPressed) { const res = dispatch(gs, { id: 'use' + now, type: 'useItem', slot: p.active }, now); fx('toast', { text: res.ok ? res.msg : (res as any).reason }); }
     else if (s?.key === 'cart_kit' && inp.attackPressed) { const res = dispatch(gs, { id: 'cart' + now, type: 'placeCart', x: inp.mx, y: inp.my }, now); fx('toast', { text: res.ok ? 'Cart unpacked. Press F next to it to pull.' : (res as any).reason }); }
@@ -243,6 +244,7 @@ function cartWeightOf(r: RunState, e: Entity) { return C(r, e.c!).slots.reduce((
 
 function resolveSwing(gs: GameState, now: number, slot: number, a: number) {
   const r = gs.run!; const p = r.player; const s = slot >= 0 ? C(r, 'inv').slots[slot] : null; const d = s ? ITEMS[s.key] : FISTS;
+  if (s?.dur !== undefined && s.dur <= 0 && d.repair) return; // stale action cannot use a broken physical item
   if (d.ranged) { // bow: arrow consumed at release
     if (countItem(r, 'inv', 'arrow') < 1) return; removeItem(r, 'inv', 'arrow', 1);
     PROJ.push({ x: p.x + Math.cos(a) * 8, y: p.y + Math.sin(a) * 8, vx: Math.cos(a) * 260, vy: Math.sin(a) * 260, life: 0.85, dmg: d.dmg, from: 'player', kind: 'arrow', r: 3 }); fx('bowshot', { x: p.x, y: p.y, a });
@@ -274,7 +276,7 @@ function resolveSwing(gs: GameState, now: number, slot: number, a: number) {
 }
 function wearTool(gs: GameState, slot: number, now: number) {
   const r = gs.run!; const s = C(r, 'inv').slots[slot]; if (!s || s.dur === undefined) return;
-  s.dur--; if (s.dur <= 0) { C(r, 'inv').slots[slot] = null; fx('break', { x: r.player.x, y: r.player.y }); pushLog(r, now, `${ITEMS[s.key].name} broke.`, 'red'); receipt(r, now, 'tool.break', s.key); }
+  s.dur = Math.max(0, s.dur - 1); if (s.dur === 0) { const repairable = !!ITEMS[s.key].repair; if (!repairable) C(r, 'inv').slots[slot] = null; fx('break', { x: r.player.x, y: r.player.y }); pushLog(r, now, `${ITEMS[s.key].name} broke.${repairable ? ' Repair it at a workbench.' : ''}`, 'red'); receipt(r, now, 'tool.break', `${s.key}:${s.uid}`); }
 }
 
 // ---------- creatures ----------

@@ -462,6 +462,17 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       rest.sort((a, b) => order.indexOf(ITEMS[a.key].cat) - order.indexOf(ITEMS[b.key].cat) || a.key.localeCompare(b.key));
       const out = it.c === 'inv' ? [...keep.map(s => (s && s.qty > 0 ? s : null))] : []; while (out.length < c.slots.length) out.push(rest.shift() || null); c.slots = out; return ok('sort', c.id); }
     case 'drop': { const c = C(r, it.c); const s = c && validSlot(c, it.slot) ? c.slots[it.slot] : null; if (!s || !canAccess(r, it.c)) return fail('Nothing to drop.'); c.slots[it.slot] = null; if (p.pulling && s.key === 'x') p.pulling = null; dropStackEntity(r, s, p.x + Math.cos(p.aim) * 12, p.y + Math.sin(p.aim) * 12, now); return ok('drop', `${s.key}x${s.qty}`); }
+    case 'repairStructure': {
+      const e = r.entities[it.eid];
+      if (!e || e.kind !== 'struct' || !owned(e) || !near(r, e, 3)) return fail('Use your structure within reach.');
+      const def = STRUCTS[e.type!];
+      if (!def || def.item || !Number.isFinite(e.hp) || !Number.isFinite(e.maxHp) || e.hp! <= 0 || e.hp! >= e.maxHp!) return fail('This structure cannot be repaired.');
+      const cost: [string, number][] = def.cost.map(([key, qty]) => [key, Math.max(1, Math.ceil(qty / 4))]);
+      if (!hasAll(r, 'inv', cost)) return fail('Missing repair materials: ' + cost.filter(([key, qty]) => countItem(r, 'inv', key) < qty).map(([key, qty]) => `${ITEMS[key].name} ${countItem(r, 'inv', key)}/${qty}`).join(', '));
+      for (const [key, qty] of cost) removeItem(r, 'inv', key, qty);
+      const before = e.hp!; e.hp = Math.min(e.maxHp!, e.hp! + Math.ceil(e.maxHp! / 4));
+      return ok('structure.repair', `${e.id}:${before}->${e.hp}`, `${def.name} repaired to ${Math.round(e.hp)}/${e.maxHp} HP.`);
+    }
     case 'upgradeStation': {
       const e = r.entities[it.eid];
       if (!e || e.kind !== 'struct' || e.type !== 'workbench' || !e.station || !owned(e) || !near(r, e, 3)) return fail('Use your workbench within reach.');
@@ -481,7 +492,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const def = ITEMS[item.key];
       if (it.mode === 'repair') {
         const rule = def.repair;
-        if (!rule || e.type !== rule.station || item.dur === undefined || !def.dur || item.dur <= 0 || item.dur >= def.dur) return fail('This item cannot be repaired here.');
+        if (!rule || e.type !== rule.station || item.dur === undefined || !def.dur || item.dur < 0 || item.dur >= def.dur) return fail('This item cannot be repaired here.');
         if (!hasAll(r, 'inv', rule.cost)) return fail('Missing repair materials.');
         for (const [key, qty] of rule.cost) removeItem(r, 'inv', key, qty);
         const old = item.dur; item.dur = def.dur;
@@ -669,6 +680,8 @@ function craft(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: stri
   if (typeof it.recipe !== 'string' || !Object.prototype.hasOwnProperty.call(RECIPES, it.recipe)) return fail('Unknown recipe.'); const rc = RECIPES[it.recipe];
   if (!r.knowledge.recipes.includes(it.recipe)) return fail('You have not learned this recipe.');
   const ins = rc.ins.filter(([, q]) => q > 0);
+  const activeAction = r.player.action; const activeInput = activeAction?.slot !== undefined && activeAction.slot >= 0 ? C(r, 'inv').slots[activeAction.slot] : null;
+  if (activeInput && ins.some(([key]) => key === activeInput.key)) return fail('Finish using that item before crafting.');
   if (!hasAll(r, 'inv', ins)) return fail('Missing: ' + ins.filter(([k, q]) => countItem(r, 'inv', k) < q).map(([k, q]) => `${ITEMS[k].name} ${countItem(r, 'inv', k)}/${q}`).join(', '));
   if (!rc.station) {
     if (spaceFor(r, 'inv', rc.out) < rc.qty && !ins.some(([k, q]) => countItem(r, 'inv', k) === q)) return fail('Inventory full.');
