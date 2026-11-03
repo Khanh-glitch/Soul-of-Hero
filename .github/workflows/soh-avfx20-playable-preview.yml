@@ -1,0 +1,81 @@
+name: SOH AVFX20 playable offline preview
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - arena/3337c864-soul-of-hero
+    paths:
+      - .github/workflows/soh-avfx20-playable-preview.yml
+
+permissions:
+  contents: read
+
+jobs:
+  build-playable-html:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install project dependencies
+        working-directory: web
+        run: npm ci
+      - name: Build offline single-file game
+        working-directory: web
+        run: npm run build
+      - name: Install Playwright Chromium for offline file smoke test
+        working-directory: web
+        run: npx playwright install --with-deps chromium
+      - name: Validate game and AVFX20 buttons from file URL
+        working-directory: web
+        run: |
+          node --input-type=module <<'NODE'
+          import { chromium } from 'playwright';
+          import { resolve } from 'node:path';
+          import { pathToFileURL } from 'node:url';
+          const browser = await chromium.launch({
+            args: ['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist'],
+          });
+          const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+          const errors = [];
+          page.on('pageerror', e => errors.push(e.message));
+          try {
+            await page.goto(pathToFileURL(resolve('dist/index.html')).href);
+            await page.getByText('New run').click();
+            await page.getByText('Meadow Bay').click();
+            await page.getByText('Begin the 14 days').click();
+            await page.keyboard.press('F9');
+            const play = page.getByRole('button', { name: /#20 Reality Ripper \(QA\)/ });
+            await play.waitFor({state:'visible'});
+            await play.click();
+            await page.waitForTimeout(3800);
+            const status = await page.evaluate(() => ({
+              presenterMode: window.__presenter?.mode,
+              d20Registered: window.__comp?.hasVfxClient?.('arcana-20') ?? !!window.__d20qa?.client,
+              qaCastActive: !!window.__d20qa?.client,
+            }));
+            await page.screenshot({path:'avfx20-file-screenshot.png'});
+            console.log('OFFLINE PREVIEW SMOKE:',JSON.stringify(status),'pageErrors:',JSON.stringify(errors));
+            if (status.presenterMode !== 'webgl2' || !status.qaCastActive || errors.length) throw new Error('offline game smoke failed');
+          } finally { await browser.close(); }
+          NODE
+      - name: Package one-click offline test
+        working-directory: web
+        if: success()
+        run: |
+          mkdir -p offline-package
+          cp dist/index.html offline-package/SOH-AVFX20-PLAY.html
+          cp avfx20-file-screenshot.png offline-package/preview-screenshot.png
+          printf '%s\n' 'SOUL OF HERO — AVFX #20 REALITY RIPPER (QA PREVIEW)' '' '1. Extract this ZIP.' '2. Double-click SOH-AVFX20-PLAY.html (Chrome or Edge on a computer).' '3. New run → Meadow Bay → Begin the 14 days.' '4. Press F9 to open FX Lab.' '5. Click ▶ #20 Reality Ripper (QA) to see the complete effect.' '6. Click #20 @climax 6.3s or #20 @restitch 8.2s to freeze those stages.' '7. Switch day/night using the FX Lab button. H hides the FX Lab.' '' 'This QA cast is visual-only. It does not spend Core charges or change saved terrain.' 'Use a desktop browser with WebGL2 enabled; if WebGL is disabled, only the fallback world is rendered.' 'Built from GitHub PR #39 branch arena/3337c864-soul-of-hero. Not production.' > offline-package/README-START-HERE.txt
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: SOH-AVFX20-PLAYABLE-OFFLINE
+          path: web/offline-package/
+          if-no-files-found: error
+          retention-days: 14
