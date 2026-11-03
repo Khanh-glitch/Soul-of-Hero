@@ -1,3 +1,4 @@
+import { BAL } from './core';
 // Runtime catalogs. Numbers = TUNABLE_BALANCE; mechanisms flagged where PROPOSED_MECHANISM.
 export type Mat = 'wood' | 'stone' | 'ore' | 'plant' | 'scrap';
 export interface SourcePlacementRule { terrain: 'sand' | 'marsh' | 'ash' | 'snow' | 'hill'; chance: number }
@@ -7,8 +8,8 @@ export interface RecipeDef { out: string; qty: number; ins: [string, number][]; 
 export const CART_FREIGHT_UPGRADE: { cost: [string, number][]; benchLevel: number } = { cost: [['mechanical_parts', 4], ['iron_ingot', 2], ['spares', 3]], benchLevel: 2 };
 // Seed and plant input are consumed; produce remains physical in the inventory or a drop.
 export const GARDEN_CROPS: Record<'crop' | 'herb', { name: string; inputs: [string, number][]; output: [string, number][]; seconds: number }> = {
-  crop: { name: 'Sunroot', inputs: [['seed', 1]], output: [['crop', 3], ['seed', 2]], seconds: 300 },
-  herb: { name: 'Bitterleaf', inputs: [['seed', 1], ['herb', 1]], output: [['herb', 3], ['seed', 1]], seconds: 600 },
+  crop: { name: 'Sunroot', inputs: [['seed', 1]], output: [['crop', 3], ['seed', 2]], seconds: BAL.garden.growSeconds },
+  herb: { name: 'Bitterleaf', inputs: [['seed', 1], ['herb', 1]], output: [['herb', 3], ['seed', 1]], seconds: BAL.garden.herbGrowSeconds },
 };
 
 export interface ItemDef {

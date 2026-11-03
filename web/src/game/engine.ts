@@ -658,7 +658,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const fi = C(r, 'inv').slots.findIndex(s => s?.key === 'water_flask' && (s.charge ?? 0) > 0); if (fi < 0) return fail('Needs water (flask) — or wait for rain.');
       C(r, 'inv').slots[fi]!.charge! -= 1; g.water = Math.min(3, g.water + 1); return ok('garden.water', e.id);
     }
-    case 'grabCart': { const e = r.entities[it.eid]; if (!e || e.kind !== 'cart' || !near(r, e, 2)) return fail('Out of reach.'); p.pulling = p.pulling === e.id ? null : e.id; return ok('cart.grab', `${e.id}:${!!p.pulling}`); }
+    case 'grabCart': { const e = r.entities[it.eid]; if (!e || e.kind !== 'cart' || !owned(e) || !near(r, e, 2)) return fail('Out of reach.'); p.pulling = p.pulling === e.id ? null : e.id; return ok('cart.grab', `${e.id}:${!!p.pulling}`); }
     case 'evacuate': {
       const e = r.entities[it.eid]; if (!e || e.kind !== 'evac' || !near(r, e, 2.5)) return fail('You must be at the evacuation beacon.');
       return endRun(gs, 'evacuated', now);
@@ -808,7 +808,7 @@ export function stepGardensBarrels(gs: GameState, dtMs: number, wet: boolean) {
     if (!e.garden && e.type !== 'barrel') continue;
     const rain = wet && !isRoofed(r, e);
     if (e.garden) {
-      const g = e.garden; const growSeconds = g.crop === 'herb' ? GARDEN_CROPS.herb.seconds : G.growSeconds; const incoming = rain ? 1 / 60000 : 0; const use = 1 / (G.waterSecondsPerUnit * 1000);
+      const g = e.garden; const growSeconds = g.crop === 'herb' ? GARDEN_CROPS.herb.seconds : GARDEN_CROPS.crop.seconds; const incoming = rain ? 1 / 60000 : 0; const use = 1 / (G.waterSecondsPerUnit * 1000);
       let growing = g.crop && g.growth < 1 ? Math.min(dtMs, (1 - g.growth) * growSeconds * 1000) : 0;
       if (use > incoming) growing = Math.min(growing, g.water / (use - incoming));
       if (growing > 0) { g.growth = Math.min(1, g.growth + growing / (growSeconds * 1000)); if (g.growth >= 1 - 1e-12) g.growth = 1; g.water = Math.min(3, Math.max(0, g.water + (incoming - use) * growing)); }

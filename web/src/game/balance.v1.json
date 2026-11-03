@@ -71,6 +71,7 @@
   "garden": {
     "_status": "TUNABLE_BALANCE",
     "growSeconds": 300,
+    "herbGrowSeconds": 600,
     "waterSecondsPerUnit": 240
   },
   "economy": {
