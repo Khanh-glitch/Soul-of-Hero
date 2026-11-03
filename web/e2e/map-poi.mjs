@@ -4,10 +4,10 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 
-const out = path.resolve('evidence/map-poi');
+const out = path.resolve(process.env.MAP_EVIDENCE_DIR || 'evidence/map-poi');
 await fs.mkdir(out, { recursive: true });
 const vite = await createServer({ configFile: 'vite.config.ts', server: { middlewareMode: true }, appType: 'custom' });
-const browser = await chromium.launch({ headless: true });
+const browser = await chromium.launch({ headless: true, ...(process.env.CHROMIUM_PATH ? {executablePath:process.env.CHROMIUM_PATH} : {}) });
 const routeDiagnostics = [];
 let routeGridSerial=0;
 const log = [`build_sha=${process.env.BUILD_SHA || 'local-uncommitted'}`, `workflow_run=${process.env.GITHUB_RUN_ID || 'local'}`, `run_attempt=${process.env.GITHUB_RUN_ATTEMPT || '1'}`, `browser=Chromium ${browser.version()}`, 'persistence_scope=same-browser-profile page reload + Continue; not OS-process-exit proof'];
@@ -39,6 +39,7 @@ try {
   async function runLayout(layoutId, landing, layoutLabel, suffix) {
     setActiveLayout(layoutId); const world = getWorld(layoutId); const W = WW, H = WH;
     const ctx = await browser.newContext({ viewport: { width:1280, height:720 }, deviceScaleFactor:1 }); page = await ctx.newPage();
+    page.setDefaultTimeout(10000);
     const errors = []; page.on('pageerror', e => errors.push(e.message));
     await page.goto(process.env.GAME_URL || 'http://127.0.0.1:4173', { waitUntil:'networkidle' });
     await page.getByRole('button',{name:/New run/i}).waitFor({ timeout:30000 });
@@ -69,7 +70,7 @@ try {
       exitTarget={x:entry.x,y:entry.y+40};
     }
     const vault=vaults[0]; assert(outer&&vault);
-    let initialApproachTiles = 0; let defending = false; let evading=false; let lastDodgeAt=0;
+    let initialApproachTiles = 0; let lastDodgeAt=0;
     const actualGrid = async () => {
       const raw = await page.evaluate(() => structuredClone(window.__soh.run));
       // The SSR engine has its own blockGrid cache. Distinct snapshot ids force a fresh rebuild from live doors, entities and sources.
@@ -77,57 +78,105 @@ try {
       return { raw, grid: blockGrid(raw) };
     };
     const gridClass = b => b===0?'free':b===1?'terrain-wall':b===2?'blocking-source':b===3?'physical-entity':b===4?'wadeable':b===5?'lava':`unknown-${b}`;
-    async function walkNear(wx,wy,radius=22){
-      const goalTile = (x,y) => Math.hypot(x*16+8-wx,y*16+8-wy)<=radius;
-      const diag = {target:{x:wx,y:wy,radius}, replans:0, waypoints:[], threats:[], startedAt:Date.now()};
-      let cur=await state(), transientBlocked=new Set(), stuckWaypoints=[], replanReason='initial';
-      const targetEntity=cur.entities.find(e=>Math.hypot(e.x-wx,e.y-wy)<1);
-      const describeCell=(grid,x,y)=>({tx:x,ty:y,cls:gridClass(grid[y*W+x]),entities:cur.entities.filter(e=>e.tx===x&&e.ty===y).map(e=>({id:e.id,kind:e.kind,label:e.label,open:e.open,locked:e.locked}))});
-      for(let cycle=0;cycle<300;cycle++){
-        cur=await state(); const distance=Math.hypot(cur.player.x-wx,cur.player.y-wy);
-        if(distance<=radius){
-          diag.completed={distance,player:{x:cur.player.x,y:cur.player.y,hp:cur.player.hp},at:Date.now()};
-          routeDiagnostics.push(diag);return cur;
+    // One navigation owner: a threat response only performs bounded physical inputs,
+    // then returns control here. It never invokes navigation itself.
+    async function walkNear(wx, wy, radius=22) {
+      const budgetMs = 180_000, maxReplans = 45, maxAttempts = 2400;
+      const startedAt = Date.now(), deadline = startedAt + budgetMs;
+      const cur0 = await state();
+      const targetEntity = cur0.entities.find(e => Math.hypot(e.x-wx,e.y-wy)<1);
+      const diag = {layout:layoutId, target:{x:wx,y:wy,radius,entity:targetEntity?.label || targetEntity?.id}, startedAt, replans:0, attempts:0, waypoints:[], threats:[]};
+      routeDiagnostics.push(diag);
+      let cur=cur0, grid, plan=[], blocked=new Set(), nextHeartbeat=0, nextScreenshot=0, reason='initial', waypoint=null;
+      const elapsed = () => Date.now()-startedAt;
+      const heartbeat = async (event, force=false) => {
+        if (!force && Date.now()<nextHeartbeat) return;
+        nextHeartbeat=Date.now()+5000;
+        const near=cur.creatures.filter(m=>Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<160);
+        const info={event,layout:layoutId,target:diag.target,elapsedMs:elapsed(),replans:diag.replans,attempts:diag.attempts,player:cur.player,lastWaypoint:diag.lastWaypoint,waypoint,nearbyThreats:near};
+        console.log('ROUTE_HEARTBEAT '+JSON.stringify(info));
+        await fs.writeFile(path.join(out,`heartbeat-${layoutId}.json`),JSON.stringify(info,null,2));
+        if(Date.now()>=nextScreenshot) { nextScreenshot=Date.now()+30000; await page.screenshot({path:path.join(out,`heartbeat-${layoutId}.png`),animations:'disabled'}).catch(()=>{}); }
+        await fs.writeFile(path.join(out,'route-diagnostics.json'),JSON.stringify(routeDiagnostics,null,2));
+      };
+      const checkBudget = () => {
+        if (Date.now()>=deadline) throw new Error(`route time budget ${budgetMs}ms exhausted`);
+        if (diag.attempts>=maxAttempts) throw new Error(`route movement budget ${maxAttempts} exhausted`);
+        if (cur.player.dead) throw new Error('player died during route');
+      };
+      const findPath = (avoidThreats) => {
+        const sx=Math.max(1,Math.min(W-2,Math.floor(cur.player.x/16))), sy=Math.max(1,Math.min(H-2,Math.floor(cur.player.y/16)));
+        const start=sy*W+sx, q=new Int32Array(W*H), from=new Int32Array(W*H).fill(-2), danger=new Set();
+        if (avoidThreats) for(const m of cur.creatures) {
+          if(m.type.startsWith('elder_')||!['chase','track','tell','attack','recover'].includes(m.state)) continue;
+          const mx=Math.floor(m.x/16),my=Math.floor(m.y/16),r=8;
+          for(let dy=-r;dy<=r;dy++) for(let dx=-r;dx<=r;dx++) if(Math.hypot(dx,dy)<=r && mx+dx>=0 && mx+dx<W && my+dy>=0 && my+dy<H) danger.add((my+dy)*W+mx+dx);
         }
-        const {raw,grid}=await actualGrid();
-        const sx=Math.max(1,Math.min(W-2,Math.floor(cur.player.x/16))),sy=Math.max(1,Math.min(H-2,Math.floor(cur.player.y/16)));
-        const q=new Int32Array(W*H),from=new Int32Array(W*H).fill(-2);let h=0,t=0,start=sy*W+sx,goal=-1;q[t++]=start;from[start]=-1;
-        const danger=new Set();for(const m of cur.creatures){if(m.hp<=0||m.type.startsWith('elder_')||!['chase','track','tell','attack','recover'].includes(m.state))continue;const mx=Math.floor(m.x/16),my=Math.floor(m.y/16),r=8;for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++)if(Math.hypot(dx,dy)<=r)danger.add((my+dy)*W+mx+dx);}
-        const pass=(x,y)=>{if(x<1||y<1||x>=W-1||y>=H-1)return false;const i=y*W+x;return !transientBlocked.has(i)&&!danger.has(i)&&![1,2,3,5].includes(grid[i]);};
-        while(h<t){const i=q[h++],x=i%W,y=(i/W)|0;if(goalTile(x,y)){goal=i;break;}
-          for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy,j=ny*W+nx;if(from[j]!==-2||j!==start&&!pass(nx,ny))continue;from[j]=i;q[t++]=j;}}
-        let threatAvoidance=true;if(goal===-1){threatAvoidance=false;from.fill(-2);h=0;t=0;goal=-1;q[t++]=start;from[start]=-1;const physicalPass=(x,y)=>{if(x<1||y<1||x>=W-1||y>=H-1)return false;const i=y*W+x;return !transientBlocked.has(i)&&![1,2,3,5].includes(grid[i]);};while(h<t){const i=q[h++],x=i%W,y=(i/W)|0;if(goalTile(x,y)){goal=i;break;}for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy,j=ny*W+nx;if(from[j]!==-2||j!==start&&!physicalPass(nx,ny))continue;from[j]=i;q[t++]=j;}}}
-        if(goal===-1){const tq=new Int32Array(W*H),tf=new Int32Array(W*H).fill(-2);let th=0,tt=0,tgoal=-1;tq[tt++]=start;tf[start]=-1;while(th<tt){const i=tq[th++],x=i%W,y=(i/W)|0;if(goalTile(x,y)){tgoal=i;break;}for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy,j=ny*W+nx;if(tf[j]!==-2||nx<1||ny<1||nx>=W-1||ny>=H-1)continue;const si=world.src[j],node=cur.sources?.[j],key=si>=0?SRC_KEYS[si]:null,sourceBlocked=si>=0&&SOURCES[key]?.block&&(!node||node.stock>0);const entity=cur.entities.some(e=>e.tx===nx&&e.ty===ny&&((e.kind==='door'&&!e.open)||['loot','cash','vendor','gen','evac'].includes(e.kind)));if(blocks.has(world.tiles[j])||sourceBlocked||entity)continue;tf[j]=i;tq[tt++]=j;}}const testPath=[];if(tgoal>=0){for(let i=tgoal;i!==-1;i=tf[i])testPath.push([i%W,(i/W)|0]);testPath.reverse();}const transientPathBlocks=testPath.filter(([x,y])=>transientBlocked.has(y*W+x)).map(([x,y])=>({x,y}));const rawQ=new Int32Array(W*H),rawFrom=new Int32Array(W*H).fill(-2);let rawH=0,rawT=0,rawGoal=-1;rawQ[rawT++]=start;rawFrom[start]=-1;while(rawH<rawT){const i=rawQ[rawH++],x=i%W,y=(i/W)|0;if(goalTile(x,y)){rawGoal=i;break;}for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy,j=ny*W+nx;if(rawFrom[j]!==-2||nx<1||ny<1||nx>=W-1||ny>=H-1||[1,2,3,5].includes(grid[j]))continue;rawFrom[j]=i;rawQ[rawT++]=j;}}const rawPath=[];if(rawGoal>=0){for(let i=rawGoal;i!==-1;i=rawFrom[i])rawPath.push([i%W,(i/W)|0]);rawPath.reverse();}const diffs=testPath.filter(([x,y])=>[1,2,3,5].includes(grid[y*W+x])).slice(0,30).map(([x,y])=>({x,y,testSide:'walkable',runtime:gridClass(grid[y*W+x]),entities:cur.entities.filter(e=>e.tx===x&&e.ty===y).map(e=>({id:e.id,kind:e.kind,label:e.label,open:e.open}))}));diag.failed={reason:'runtime blockGrid BFS found no adjacent interaction tile',player:cur.player,distance:Math.hypot(cur.player.x-wx,cur.player.y-wy),target:{x:wx,y:wy,radius},runtimeReachable:t,staticTestReachable:tt,testPathTiles:testPath.length-1,testPathFirst:testPath.slice(0,12),testRuntimeDifferences:diffs,stuckWaypoints:stuckWaypoints.slice(-8).map(w=>({tile:w.tile,start:w.start,end:w.end,attempts:w.attempts.slice(-8)})),transientPathBlocks,runtimeRawReachable:rawGoal>=0,runtimeRawPathTiles:rawPath.length-1,runtimeRawPathFirst:rawPath.slice(0,12),transientBlocked:[...transientBlocked].slice(-60).map(i=>[i%W,(i/W)|0]),recentWaypoints:diag.waypoints.slice(-12).map(w=>({tile:w.tile,start:w.start,end:w.end,attempts:w.attempts.slice(-4)})),nearbyGrid:Array.from({length:5},(_,j)=>Array.from({length:5},(_,i)=>gridClass(grid[(sy+j-2)*W+sx+i-2]))),nearbyEntities:cur.entities.filter(e=>Math.hypot(e.x-cur.player.x,e.y-cur.player.y)<100).map(e=>({id:e.id,kind:e.kind,label:e.label,tx:e.tx,ty:e.ty,open:e.open,locked:e.locked})),nearby:cur.creatures.filter(m=>Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<140)};routeDiagnostics.push(diag);await page.screenshot({path:path.join(out,`route-failure-${layoutId}-${Date.now()}.png`),animations:'disabled'}).catch(()=>{});await fs.writeFile(path.join(out,`route-failure-${layoutId}.json`),JSON.stringify(diag,null,2)).catch(()=>{});const brief=JSON.stringify({player:diag.failed.player,target:diag.failed.target,runtimeReachable:diag.failed.runtimeReachable,staticTestReachable:diag.failed.staticTestReachable,testPathTiles:diag.failed.testPathTiles,testRuntimeDifferences:diffs,stuckWaypoints:stuckWaypoints.slice(-8).map(w=>({tile:w.tile,start:w.start,end:w.end,attempts:w.attempts.slice(-8)})),transientPathBlocks,runtimeRawReachable:rawGoal>=0,runtimeRawPathTiles:rawPath.length-1,runtimeRawPathFirst:rawPath.slice(0,12),transientBlocked:[...transientBlocked].slice(-60).map(i=>[i%W,(i/W)|0]),recentWaypoints:diag.waypoints.slice(-12).map(w=>({tile:w.tile,start:w.start,end:w.end,attempts:w.attempts.slice(-4)})),nearbyGrid:diag.failed.nearbyGrid,nearbyEntities:diag.failed.nearbyEntities,nearby:diag.failed.nearby});console.error(`ROUTE_DIVERGENCE ${brief}`);throw new Error(`NO_PATH runtime blockGrid to (${wx},${wy}); diagnostics=${brief}`);}
-        const bfsPath=[];for(let i=goal;i!==-1;i=from[i])bfsPath.push(i);bfsPath.reverse();if(!initialApproachTiles)initialApproachTiles=bfsPath.length-1;
-        const next=bfsPath.length>1?bfsPath[1]:goal, nx=next%W,ny=(next/W)|0,wp={x:nx*16+8,y:ny*16+8};
-        diag.replans++;diag.lastPlan={reason:replanReason,threatAvoidance,from:{x:cur.player.x,y:cur.player.y},startTile:[sx,sy],nextTile:[nx,ny],goalTile:[goal%W,(goal/W)|0],pathTiles:bfsPath.length-1,liveHp:cur.player.hp,gridHere:describeCell(grid,sx,sy),gridNext:describeCell(grid,nx,ny),target:targetEntity&&{id:targetEntity.id,tx:targetEntity.tx,ty:targetEntity.ty}};
-        const before={x:cur.player.x,y:cur.player.y}, wpDiag={tile:[nx,ny],center:wp,attempts:[],start:before};let best=Infinity, stagnant=0, reached=false, evaded=false;
-        for(let tries=0;tries<24;tries++){
-          cur=await state();const dx=wp.x-cur.player.x,dy=wp.y-cur.player.y,remaining=Math.hypot(dx,dy);
-          if(remaining<3){reached=true;break;}
-          const keys=[];if(Math.abs(dx)>2)keys.push(dx>0?'d':'a');if(Math.abs(dy)>2)keys.push(dy>0?'s':'w');
-          const beforeAttempt={x:cur.player.x,y:cur.player.y,hp:cur.player.hp,keys:[...keys]};
-          for(const k of keys)await page.keyboard.down(k);await pause(remaining<=12?24:115);for(const k of keys)await page.keyboard.up(k);
-          cur=await state();if(!cur.player.dead&&(!defending||evading)){const beforeDodge={x:cur.player.x,y:cur.player.y},handled=await defendNearby();cur=await state();if(handled||Math.hypot(cur.player.x-beforeDodge.x,cur.player.y-beforeDodge.y)>10)evaded=true;}const moved=Math.hypot(cur.player.x-beforeAttempt.x,cur.player.y-beforeAttempt.y),left=Math.hypot(wp.x-cur.player.x,wp.y-cur.player.y);
-          wpDiag.attempts.push({try:tries+1,from:beforeAttempt,to:{x:cur.player.x,y:cur.player.y,hp:cur.player.hp},moved:+moved.toFixed(2),remaining:+left.toFixed(2),action:cur.player.action||null,creatures:cur.creatures.filter(m=>Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<100).map(m=>({id:m.id,type:m.type,state:m.state,x:m.x,y:m.y,hp:m.hp}))});
-          if(cur.player.dead){diag.failed={reason:'player died during bounded waypoint input',player:cur.player,firstFailingWaypoint:{tile:[nx,ny],center:wp},attempt:wpDiag.attempts.at(-1),previousWaypoint:diag.waypoints.at(-1)||null,counts:cur.counts,nearby:cur.creatures.filter(m=>Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<260)};wpDiag.end={reason:'player-dead',actual:{x:cur.player.x,y:cur.player.y,hp:cur.player.hp}};diag.waypoints.push(wpDiag);routeDiagnostics.push(diag);await page.screenshot({path:path.join(out,`route-death-${layoutId}-${Date.now()}.png`),animations:'disabled'}).catch(()=>{});await fs.writeFile(path.join(out,`route-death-${layoutId}.json`),JSON.stringify(diag,null,2)).catch(()=>{});throw new Error(`route death at first failing waypoint ${JSON.stringify({...diag.failed,evasionHistory:routeDiagnostics.filter(x=>x.kind==='wildlife-evasion').slice(-8)})}`);}
-          if(evaded)break;
-          if(left<3){reached=true;break;}
-          if(moved<0.8)stagnant++;else stagnant=0;
-          if(left<best-1){best=left;stagnant=0;}
-          if(stagnant>=6)break;
+        let h=0,t=0,goal=-1; q[t++]=start;from[start]=-1;
+        while(h<t) {
+          const i=q[h++],x=i%W,y=(i/W)|0;
+          if(Math.hypot(x*16+8-wx,y*16+8-wy)<=radius){goal=i;break;}
+          for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
+            const nx=x+dx,ny=y+dy;if(nx<1||ny<1||nx>=W-1||ny>=H-1)continue;
+            const j=ny*W+nx;if(from[j]!==-2||blocked.has(j)||danger.has(j)||[1,2,3,5].includes(grid[j]))continue;
+            from[j]=i;q[t++]=j;
+          }
         }
-        wpDiag.end={x:cur.player.x,y:cur.player.y,hp:cur.player.hp,reached,reason:reached?'reached':stagnant>=6?'no-progress':'bounded-attempts',actualCell:describeCell(grid,Math.floor(cur.player.x/16),Math.floor(cur.player.y/16)),waypointCell:describeCell(grid,nx,ny),nearby:cur.creatures.filter(m=>Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<140).map(m=>({id:m.id,type:m.type,state:m.state,x:m.x,y:m.y,hp:m.hp}))};
-        diag.waypoints.push(wpDiag);
-        if(evaded&&!reached){wpDiag.end={x:cur.player.x,y:cur.player.y,hp:cur.player.hp,reached:false,reason:'evaded-hostile-replan-from-live-position'};diag.waypoints.push(wpDiag);replanReason='hostile dodge-roll changed live position';continue;}
-        if(!reached){stuckWaypoints.push(wpDiag);transientBlocked.add(next);replanReason=`${wpDiag.end.reason} at ${nx},${ny}; actual ${cur.player.x.toFixed(1)},${cur.player.y.toFixed(1)}`;continue;}
-        replanReason='waypoint-reached';
-        if(!defending){const beforeCombat=await state();await ensureVitals();await defendNearby();const afterCombat=await state();if(Math.hypot(afterCombat.player.x-beforeCombat.player.x,afterCombat.player.y-beforeCombat.player.y)>5||Math.abs(afterCombat.player.hp-beforeCombat.player.hp)>0){diag.threats.push({before:{x:beforeCombat.player.x,y:beforeCombat.player.y,hp:beforeCombat.player.hp},after:{x:afterCombat.player.x,y:afterCombat.player.y,hp:afterCombat.player.hp},nearby:afterCombat.creatures.filter(m=>Math.hypot(m.x-afterCombat.player.x,m.y-afterCombat.player.y)<140).map(m=>({id:m.id,type:m.type,state:m.state,x:m.x,y:m.y,hp:m.hp}))});replanReason='combat-or-knockback-live-position-replan';}}
+        if(goal<0)return null;
+        const result=[];for(let i=goal;i!==start;i=from[i])result.push(i);return result.reverse();
+      };
+      try {
+        await heartbeat('start',true);
+        while(true) {
+          checkBudget();cur=await state();checkBudget();
+          if(Math.hypot(cur.player.x-wx,cur.player.y-wy)<=radius){diag.completed={elapsedMs:elapsed(),player:cur.player};await heartbeat('complete',true);return cur;}
+          if(!plan.length) {
+            if(diag.replans>=maxReplans) throw new Error(`route replan budget ${maxReplans} exhausted`);
+            const snapshot=await actualGrid();grid=snapshot.grid;diag.replans++;
+            plan=findPath(true) || findPath(false);
+            if(!plan || !plan.length) throw new Error('runtime collision grid has no reachable interaction tile');
+            if(!initialApproachTiles)initialApproachTiles=plan.length;
+            diag.lastPlan={reason,pathTiles:plan.length,player:{x:cur.player.x,y:cur.player.y}};
+            await heartbeat('replan',true);
+          }
+          const next=plan[0], nx=next%W,ny=(next/W)|0, wp={x:nx*16+8,y:ny*16+8};
+          waypoint={tile:[nx,ny],center:wp,grid:gridClass(grid[next])};
+          const wpDiag={...waypoint,start:{x:cur.player.x,y:cur.player.y},attempts:[]};
+          let reached=false,stagnant=0,best=Infinity,evaded=false;
+          for(let tries=0;tries<18;tries++) {
+            checkBudget();cur=await state();checkBudget();await heartbeat('moving');
+            const dx=wp.x-cur.player.x,dy=wp.y-cur.player.y,remaining=Math.hypot(dx,dy);
+            if(remaining<3){reached=true;break;}
+            const keys=[];if(Math.abs(dx)>2)keys.push(dx>0?'d':'a');if(Math.abs(dy)>2)keys.push(dy>0?'s':'w');
+            const before={x:cur.player.x,y:cur.player.y,hp:cur.player.hp};
+            try {for(const k of keys)await page.keyboard.down(k);await pause(remaining<=12?24:115);}
+            finally {for(const k of keys)await page.keyboard.up(k);}
+            cur=await state();checkBudget();
+            const moved=Math.hypot(cur.player.x-before.x,cur.player.y-before.y),left=Math.hypot(wp.x-cur.player.x,wp.y-cur.player.y);
+            diag.attempts++;wpDiag.attempts.push({from:before,to:{x:cur.player.x,y:cur.player.y,hp:cur.player.hp},moved,left});
+            await ensureVitals();
+            if(await defendNearby(async () => {cur=await state();checkBudget();await heartbeat('defending');})) {cur=await state();evaded=true;break;}
+            // A hit/knockback or unusual displacement invalidates the remaining segment.
+            if(moved>32 || Math.hypot(cur.player.x-before.x,cur.player.y-before.y)>32){evaded=true;reason='knockback';break;}
+            if(left<3){reached=true;break;}
+            if(moved<0.8)stagnant++;else stagnant=0;
+            if(left<best-1){best=left;stagnant=0;}
+            if(stagnant>=6)break;
+          }
+          wpDiag.end={x:cur.player.x,y:cur.player.y,hp:cur.player.hp,reached,evaded};diag.waypoints.push(wpDiag);
+          if(evaded){plan=[];reason=reason==='knockback'?reason:'threat response';await heartbeat('threat-replan',true);continue;}
+          if(!reached){blocked.add(next);plan=[];reason=`obstruction at ${nx},${ny}`;await heartbeat('obstruction',true);continue;}
+          diag.lastWaypoint={tile:[nx,ny],x:cur.player.x,y:cur.player.y};plan.shift();
+        }
+      } catch(error) {
+        cur=await state().catch(()=>cur);
+        const sx=Math.floor(cur.player.x/16),sy=Math.floor(cur.player.y/16);
+        diag.failed={reason:String(error),elapsedMs:elapsed(),player:cur.player,waypoint,blocked:[...blocked].map(i=>[i%W,(i/W)|0]),nearbyGrid:grid&&Array.from({length:5},(_,j)=>Array.from({length:5},(_,i)=>({tile:[sx+i-2,sy+j-2],class:gridClass(grid[(sy+j-2)*W+sx+i-2])}))),nearbyEntities:cur.entities.filter(e=>Math.hypot(e.x-cur.player.x,e.y-cur.player.y)<100),nearbyThreats:cur.creatures.filter(m=>Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<260)};
+        await heartbeat('failure',true).catch(()=>{});
+        await page.screenshot({path:path.join(out,`route-failure-${layoutId}.png`),animations:'disabled'}).catch(()=>{});
+        await fs.writeFile(path.join(out,`route-failure-${layoutId}.json`),JSON.stringify(diag,null,2)).catch(()=>{});
+        throw new Error(`${error.message}; route failure ${JSON.stringify(diag.failed)}`,{cause:error});
       }
-      cur=await state();diag.failed={player:cur.player,distance:Math.hypot(cur.player.x-wx,cur.player.y-wy),target:{x:wx,y:wy},replans:diag.replans,lastPlan:diag.lastPlan,transientBlocked:[...transientBlocked].slice(-50).map(i=>[i%W,(i/W)|0]),recentWaypoints:diag.waypoints.slice(-10).map(w=>({tile:w.tile,start:w.start,end:w.end,attempts:w.attempts.slice(-5)})),stuckWaypoints:stuckWaypoints.slice(-8).map(w=>({tile:w.tile,start:w.start,end:w.end,attempts:w.attempts.slice(-8)})),recentEvades:routeDiagnostics.filter(x=>x.kind==='wildlife-evasion').slice(-8)};routeDiagnostics.push(diag);
-      await page.screenshot({path:path.join(out,`route-failure-${layoutId}-${Date.now()}.png`),animations:'disabled'}).catch(()=>{});
-      await fs.writeFile(path.join(out,`route-failure-${layoutId}.json`),JSON.stringify(diag,null,2)).catch(()=>{});
-      throw new Error(`bounded replan exhaustion near (${wx},${wy}); last=${JSON.stringify(diag.failed)}`);
     }
     const camera=p=>({x:Math.max(0,Math.min(W*16-640,p.x-320)),y:Math.max(0,Math.min(H*16-360,p.y-180))});
     async function aim(wx,wy){await pause(100);const cur=await state(),c=camera(cur.player);const x=Math.max(2,Math.min(638,wx-c.x)),y=Math.max(2,Math.min(358,wy-c.y));await page.mouse.move(Math.round(x*2),Math.round(y*2));await pause(120);}
@@ -140,23 +189,86 @@ try {
       await inv.locator(`.slot[title^="${itemNames[key]}"]`).first().click({button:'right'});await pause(180);await page.keyboard.press('Escape');await pause(100);return true;
     }
     async function ensureVitals(){const cur=await state();if(cur.player.dead)throw new Error(`player died during ordinary-input travel at (${cur.player.x.toFixed(0)},${cur.player.y.toFixed(0)}), hp=${cur.player.hp}, hunger=${cur.player.hunger.toFixed(1)}, thirst=${cur.player.thirst.toFixed(1)}, nearby=${JSON.stringify(cur.creatures.filter(m=>Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<120))}`);if(cur.player.hp<92&&cur.counts.bandage)await useInventoryItem('bandage');if(cur.player.thirst<68&&cur.counts.water_flask)await useInventoryItem('water_flask');if(cur.player.hunger<68&&cur.counts.berries)await useInventoryItem('berries');}
-    async function defendNearby(){
-      if(defending&&!evading)return false;const wasDefending=defending;defending=true;
-      try{
-        const cur=await state();const threat=cur.creatures.filter(m=>!m.type.startsWith('elder_')&&['chase','track','tell','attack','recover'].includes(m.state)&&(()=>{const d=Math.hypot(m.x-cur.player.x,m.y-cur.player.y);return d<55||(['attack','tell','recover'].includes(m.state)&&d<130);})()).sort((a,b)=>Math.hypot(a.x-cur.player.x,a.y-cur.player.y)-Math.hypot(b.x-cur.player.x,b.y-cur.player.y))[0];
-        if(!threat)return false;const td=Math.hypot(threat.x-cur.player.x,threat.y-cur.player.y),imminent=td<55||(['attack','tell','recover'].includes(threat.state)&&td<130);
-        await ensureVitals();const live=await state(),angle=Math.atan2(live.player.y-threat.y,live.player.x-threat.x),keys=[];
-        if(Math.abs(Math.cos(angle))>0.25)keys.push(Math.cos(angle)>0?'d':'a');if(Math.abs(Math.sin(angle))>0.25)keys.push(Math.sin(angle)>0?'s':'w');
-        const emergency=['attack','tell','recover'].includes(threat.state)&&td<130;const canRoll=imminent&&live.player.stamina>=22&&(emergency||Date.now()-lastDodgeAt>=900);if(canRoll)lastDodgeAt=Date.now();for(const k of keys)await page.keyboard.down(k);if(canRoll)await page.keyboard.press('Space');await pause(canRoll?280:220);for(const k of keys)await page.keyboard.up(k);
-        let after=await state(),method=canRoll?'ordinary directional WASD + Space dodge-roll':'ordinary WASD retreat';
-        if(Math.hypot(after.player.x-live.player.x,after.player.y-live.player.y)<8){
-          for(const offset of [-0.8,0.8,-1.5,1.5]){const a=angle+offset,keys=[];if(Math.abs(Math.cos(a))>0.25)keys.push(Math.cos(a)>0?'d':'a');if(Math.abs(Math.sin(a))>0.25)keys.push(Math.sin(a)>0?'s':'w');for(const k of keys)await page.keyboard.down(k);await pause(220);for(const k of keys)await page.keyboard.up(k);const candidate=await state();if(candidate.player.dead)throw new Error(`player died while taking an ordinary alternate retreat from ${threat.type} ${threat.id}; state=${JSON.stringify(candidate.player)}`);if(Math.hypot(candidate.player.x-after.player.x,candidate.player.y-after.player.y)>=8){after=candidate;method+='; alternate ordinary WASD escape around physical obstruction';break;}after=candidate;}
+    async function defendNearby(routeCheckpoint) {
+      const initial=await state();
+      const active = m => !m.type.startsWith('elder_') && ['chase','track','tell','attack','recover'].includes(m.state);
+      const threat=initial.creatures.filter(m=>active(m) && Math.hypot(m.x-initial.player.x,m.y-initial.player.y)<70)
+        .sort((a,b)=>Math.hypot(a.x-initial.player.x,a.y-initial.player.y)-Math.hypot(b.x-initial.player.x,b.y-initial.player.y))[0];
+      if(!threat)return false;
+      // A melee creature across solid collision cannot be reached by a direct
+      // attack. Do not spend repeated 12-second combat phases against a wall;
+      // leave it to the danger-aware route planner until line of approach opens.
+      if(threat.type==='wolf' && Math.hypot(threat.x-initial.player.x,threat.y-initial.player.y)>26) {
+        const {grid}=await actualGrid(), d=Math.hypot(threat.x-initial.player.x,threat.y-initial.player.y), n=Math.ceil(d/4);
+        let obstructed=false;
+        for(let i=1;i<n;i++) {
+          const x=Math.floor((initial.player.x+(threat.x-initial.player.x)*i/n)/16), y=Math.floor((initial.player.y+(threat.y-initial.player.y)*i/n)/16);
+          if([1,2,3,5].includes(grid[y*W+x])) {obstructed=true;break;}
         }
-        if(Math.hypot(after.player.x-live.player.x,after.player.y-live.player.y)<8&&!evading){
-          evading=true;try{const away=Math.atan2(live.player.y-threat.y,live.player.x-threat.x);for(const offset of [0,-0.8,0.8]){const a=away+offset,dest={x:Math.max(24,Math.min(W*16-24,live.player.x+Math.cos(a)*170)),y:Math.max(24,Math.min(H*16-24,live.player.y+Math.sin(a)*170))};try{await walkNear(dest.x,dest.y,20);after=await state();method+='; runtime collision-grid route around obstruction';break;}catch{after=await state();if(after.player.dead)throw new Error(`player died during bounded route escape from ${threat.type} ${threat.id}; state=${JSON.stringify(after.player)}`);}}}finally{evading=false;}
+        if(obstructed)return false;
+      }
+      await ensureVitals();
+      const before=await state();
+      if(threat.type!=='wolf') {
+        // Ranged crawlers and charging boars should not be chased into a crowd.
+        // A single bounded physical escape returns control to the route planner.
+        const angle=Math.atan2(before.player.y-threat.y,before.player.x-threat.x);
+        let after=before;
+        for(const offset of [0,-0.8,0.8,-1.5,1.5]) {
+          await routeCheckpoint();
+          const a=angle+offset,keys=[];
+          if(Math.abs(Math.cos(a))>0.25)keys.push(Math.cos(a)>0?'d':'a');
+          if(Math.abs(Math.sin(a))>0.25)keys.push(Math.sin(a)>0?'s':'w');
+          try {
+            for(const k of keys)await page.keyboard.down(k);
+            if(before.player.stamina>=22 && Date.now()-lastDodgeAt>=900){await page.keyboard.press('Space');lastDodgeAt=Date.now();}
+            await pause(240);
+          } finally {for(const k of keys)await page.keyboard.up(k);}
+          after=await state();
+          if(after.player.dead || Math.hypot(after.player.x-before.player.x,after.player.y-before.player.y)>=8)break;
         }
-        routeDiagnostics.push({kind:'wildlife-evasion',threat:{id:threat.id,type:threat.type,state:threat.state,from:{x:threat.x,y:threat.y}},before:{x:live.player.x,y:live.player.y,hp:live.player.hp},after:{x:after.player.x,y:after.player.y,hp:after.player.hp},method:method+'; next route replanned from live position'});return true;
-      }finally{defending=wasDefending;}
+        routeDiagnostics.push({kind:'wildlife-evasion',threat:{id:threat.id,type:threat.type},before:before.player,after:after.player,method:'ordinary directional retreat and dodge'});
+        return true;
+      }
+      const started=Date.now(), maxPhaseMs=12000, maxActions=60;
+      let actions=0, attacks=0, dodges=0, last=before, outcome='phase-budget';
+      // The starting knife is an ordinary item, not an injected weapon. If it is
+      // unavailable, use the current hotbar selection and still respect real AI.
+      if(before.containers.inv[0]?.key==='knife')await page.keyboard.press('1');
+      try {
+        while(Date.now()-started<maxPhaseMs && actions<maxActions) {
+          await routeCheckpoint();
+          last=await state();
+          if(last.player.dead)throw new Error(`player died defending against ${threat.id}`);
+          const m=last.creatures.find(x=>x.id===threat.id);
+          if(!m || m.hp<=0){outcome='defeated';break;}
+          const dx=m.x-last.player.x,dy=m.y-last.player.y,d=Math.hypot(dx,dy);
+          if(d>120 || (!active(m) && d>60)){outcome='disengaged';break;}
+          // Aim and act using the same mouse and keyboard input as a player. Keep
+          // each action short so moving targets, collisions and vitals are observed.
+          const c=camera(last.player),mx=Math.max(2,Math.min(638,m.x-c.x)),my=Math.max(2,Math.min(358,m.y-c.y));
+          await page.mouse.move(Math.round(mx*2),Math.round(my*2));
+          const keys=[];
+          if((m.state==='tell'||m.state==='attack') && d<85 && last.player.stamina>=22 && Date.now()-lastDodgeAt>=700) {
+            // Sidestep the committed lunge rather than repeatedly fleeing the goal.
+            if(Math.abs(dy/d)>0.25)keys.push(dy>0?'a':'d');
+            if(Math.abs(dx/d)>0.25)keys.push(dx>0?'s':'w');
+            try {for(const k of keys)await page.keyboard.down(k);await page.keyboard.press('Space');lastDodgeAt=Date.now();dodges++;await pause(240);}
+            finally {for(const k of keys)await page.keyboard.up(k);}
+          } else {
+            if(d>20){if(Math.abs(dx/d)>0.25)keys.push(dx>0?'d':'a');if(Math.abs(dy/d)>0.25)keys.push(dy>0?'s':'w');}
+            try {for(const k of keys)await page.keyboard.down(k);await page.mouse.down();attacks++;await pause(170);}
+            finally {await page.mouse.up();for(const k of keys)await page.keyboard.up(k);}
+          }
+          actions++;
+        }
+      } finally {
+        await page.mouse.up().catch(()=>{});
+        for(const k of ['w','a','s','d'])await page.keyboard.up(k).catch(()=>{});
+        last=await state();
+        routeDiagnostics.push({kind:'wildlife-defense',threat:{id:threat.id,type:threat.type},before:before.player,after:last.player,remainingHp:last.creatures.find(m=>m.id===threat.id)?.hp ?? 0,elapsedMs:Date.now()-started,actions,attacks,dodges,outcome});
+      }
+      return true;
     }
 
     const startCrate=s.entities.find(e=>e.kind==='loot'&&e.poi===(landing==="Fisher's Point"?'s1':'s3'));assert(startCrate,'selected start crate missing');
@@ -215,9 +327,11 @@ try {
     await ctx.close();
   }
 
-  await runLayout('shipping',"Fisher's Point",'Shipping Island','shipping');
-  await runLayout('dev_delta','Eastcove','Delta Ridge','dev-delta');
-  log.push('route_choice=PASS: production used Fisher’s Point → existing Lighthouse; development used Eastcove → authored Delta Relay across the two-pass ridge; all traversal used actual WASD input (test-side BFS selected waypoints, not blind-discovery proof)');
+  const selected = process.env.MAP_LAYOUT || 'both';
+  assert(['shipping','dev_delta','both'].includes(selected), `invalid MAP_LAYOUT: ${selected}`);
+  if(selected==='shipping'||selected==='both') await runLayout('shipping',"Fisher's Point",'Shipping Island','shipping');
+  if(selected==='dev_delta'||selected==='both') await runLayout('dev_delta','Eastcove','Delta Ridge','dev-delta');
+  log.push(`route_choice=PASS: ${selected}; traversal used actual WASD input (test-side BFS selected waypoints, not blind-discovery proof)`);
   await fs.writeFile(path.join(out,'run-log.txt'),log.join('\n')+'\n');
   await fs.writeFile(path.join(out,'route-diagnostics.json'),JSON.stringify(routeDiagnostics,null,2));
   console.log(log.join('\n'));

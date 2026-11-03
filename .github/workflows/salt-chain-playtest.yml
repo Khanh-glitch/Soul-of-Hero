@@ -3,7 +3,7 @@ name: Salt-chain real-player playtest
 on:
   workflow_dispatch:
   push:
-    branches: [arena/4795760e-soul-of-hero]
+    branches: [arena/4795760e-soul-of-hero, arena/97526c8a-soul-of-hero]
     paths:
       - 'web/src/**'
       - 'web/tests/**'
@@ -14,14 +14,13 @@ on:
       - '.github/workflows/salt-chain-playtest.yml'
 
 permissions:
-  contents: write
+  contents: read
 
 env:
   CI: true
-  EVIDENCE_DIR: web/evidence/salt-chain
 
 jobs:
-  browser-journey:
+  salt-journey:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -43,52 +42,71 @@ jobs:
       - name: Install real Chromium browser
         working-directory: web
         run: npx playwright install --with-deps chromium
-      - name: Start the production build
+      - name: Start production preview
         working-directory: web
         run: |
           npm run preview -- --host 0.0.0.0 --port 4173 > /tmp/soh-preview.log 2>&1 &
-          echo $! > /tmp/soh-preview.pid
           for attempt in $(seq 1 60); do
             if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then exit 0; fi
             sleep 1
           done
           cat /tmp/soh-preview.log
           exit 1
-      - name: Play the no-cheat Salt Shale to Salted Roast journey
+      - name: Play the no-cheat Salt Shale journey
         working-directory: web
         env:
           GAME_URL: http://127.0.0.1:4173
         run: node e2e/salt-chain.mjs
-      - name: Play both authored map layouts and the multi-stage POI
+      - name: Upload Salt Shale evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: salt-chain-browser-evidence-${{ github.sha }}-${{ github.run_attempt }}
+          path: web/evidence/salt-chain/
+          if-no-files-found: warn
+          retention-days: 30
+  map-poi:
+    strategy:
+      fail-fast: false
+      matrix:
+        layout: [shipping, dev_delta]
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install dependencies and build
+        working-directory: web
+        run: npm ci && npm run build
+      - name: Install real Chromium browser
+        working-directory: web
+        run: npx playwright install --with-deps chromium
+      - name: Start production preview
+        working-directory: web
+        run: |
+          npm run preview -- --host 0.0.0.0 --port 4173 > /tmp/soh-preview.log 2>&1 &
+          for attempt in $(seq 1 60); do
+            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/soh-preview.log
+          exit 1
+      - name: Play layout with a bounded total time
         working-directory: web
         env:
           GAME_URL: http://127.0.0.1:4173
           BUILD_SHA: ${{ github.sha }}
-        run: node e2e/map-poi.mjs
-      - name: Upload current-build screenshots and journey logs
+          MAP_LAYOUT: ${{ matrix.layout }}
+        run: timeout --signal=TERM --kill-after=15s 8m node e2e/map-poi.mjs
+      - name: Upload current-build diagnostics and screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: map-poi-browser-evidence-${{ github.sha }}-${{ github.run_attempt }}
+          name: map-poi-${{ matrix.layout }}-${{ github.sha }}-${{ github.run_attempt }}
           path: web/evidence/map-poi/
           if-no-files-found: warn
           retention-days: 30
-      - name: Upload retained Salt Shale browser evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: salt-chain-browser-evidence-${{ github.sha }}
-          path: web/evidence/salt-chain/
-          if-no-files-found: warn
-          retention-days: 30
-      - name: Publish inspected-browser evidence on this branch
-        if: success()
-        continue-on-error: true
-        working-directory: .
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add web/evidence/salt-chain/*.png web/evidence/salt-chain/run-log.txt web/evidence/map-poi/*.png web/evidence/map-poi/run-log.txt
-          if git diff --cached --quiet; then exit 0; fi
-          git commit -m "test: capture salt-chain player evidence [skip ci]"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
