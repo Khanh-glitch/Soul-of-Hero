@@ -1,0 +1,17 @@
+# A6 source-review completion and remaining integration gaps
+
+This review supersedes the earlier *takeover read unproven* caveats in the historical continuation and evidence notes, not their gameplay or safety limitations. The pinned 1,355-line original Atlas was reviewed in successive nontruncated ranges across the earlier and current continuations: 1–163, 164–289, 290–457, 458–499, 500–639, 640–653, 654–869, 870–915, 916–969, 970–1011, 1012–1059, 1060–1153, and 1154–1355. Source hash `b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157`.
+
+`SOURCE_COVERAGE_TRACE.json` was reviewed field-wise without relying on a truncated full dump: the 108 entry IDs, owner, decision, disposition, status, line ranges and refs were inspected; all 43 nonempty acceptance seeds, aggregate types/categories/gates/evidence requirements, 40 unknowns and 28 historical citations were reviewed. The six nonempty semantic text fields (facts, action, relationship, risk, SOH translation, acceptance seed) are byte-for-byte present in each referenced Atlas section; `python3 tests/survival/ui/source_trace_audit.py` independently checks those matches, unique IDs, counts, valid refs, original hash/lines, unknown questions and source citations. This is an integrity check and review method, **not** independent verification of external claims or a test of game implementation. The trace itself describes its initial implementation status as `NOT_STARTED`; it must not be misread as current live status.
+
+## Useful UX implications and gaps
+
+- SYS-45 / DEP-23: explored-only schematic markers and recipe searches are fixture-tested, but private metadata must be withheld by the producer before the snapshot reaches the client; actual A1 map/POI features and access graphs are absent.
+- SYS-11–19 / DEP-02 / JOURNEY-02: physical specimen, learned formula and temporary possession are distinct; the fake host demonstrates a confirm-and-consume transaction, but actual A3 recipe authority, station/tier, queue and atomic save rules are not verified.
+- DEP-04: missing power/credential detail and no-key-consumption require a real A3/A5 door/access producer; the planner accepts host-provided preparation text but cannot check a lock.
+- DEP-07 / DEP-20 / JOURNEY-08: name/ingredient recipe search and source-container storage name filtering exist; capacity and quota reasons need real A0/A3 data and authoritative decisions. The placement adapter falls back to a visible unrecognized reason instead of claiming the site is valid.
+- SYS-32–34 / DEP-18: bed/death/condition views are illustrative; real death-bag single-copy persistence, repair, recovery and valid respawn rules require owner tests.
+- DEP-26/27: live structure fire resistance and top-down roof/occlusion need real building/world tests, not a static UI panel. Gold/skill VFX remains A4-owned and has not been mocked or changed.
+- SYS-25 / DEP-19: the fixture can show a queue but does not simulate actual workstation fuel, timing, offline completion or crash-safe production. Screen readers, complete controller navigation, localization and real-world contrast remain open.
+
+No copyrighted game assets were imported. New source-derived ideas remain behavioral interpretations, not verified universal 2019 or 2026 data; the 40 explicitly unknown source facts stay unverified. No F0–F5 gate or independent human review has been approved by this audit.
