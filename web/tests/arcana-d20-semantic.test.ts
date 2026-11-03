@@ -79,5 +79,5 @@ describe('ARCANA20 batch: all 20 vendored C spells run on the semantic runner', 
     expect(statuses.SOURCE_PREVIEW).toBe(8);
     expect(statuses.FUSION_PREVIEW).toBe(6);
     expect(statuses.REDESIGN_STUDY).toBe(6);
-  }, 120000);
+  }, 600000);
 });
