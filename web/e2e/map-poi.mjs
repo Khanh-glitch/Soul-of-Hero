@@ -9,6 +9,7 @@ await fs.mkdir(out, { recursive: true });
 const vite = await createServer({ configFile: 'vite.config.ts', server: { middlewareMode: true }, appType: 'custom' });
 const browser = await chromium.launch({ headless: true });
 const routeDiagnostics = [];
+let routeGridSerial=0;
 const log = [`build_sha=${process.env.BUILD_SHA || 'local-uncommitted'}`, `workflow_run=${process.env.GITHUB_RUN_ID || 'local'}`, `run_attempt=${process.env.GITHUB_RUN_ATTEMPT || '1'}`, `browser=Chromium ${browser.version()}`, 'persistence_scope=same-browser-profile page reload + Continue; not OS-process-exit proof'];
 let page;
 const pause = ms => page.waitForTimeout(ms);
@@ -71,6 +72,8 @@ try {
     let initialApproachTiles = 0; let defending = false; let lastDodgeAt=0;
     const actualGrid = async () => {
       const raw = await page.evaluate(() => structuredClone(window.__soh.run));
+      // The SSR engine has its own blockGrid cache. Distinct snapshot ids force a fresh rebuild from live doors, entities and sources.
+      raw.id=`${raw.id}:e2e-grid-${++routeGridSerial}`;
       return { raw, grid: blockGrid(raw) };
     };
     const gridClass = b => b===0?'free':b===1?'terrain-wall':b===2?'blocking-source':b===3?'physical-entity':b===4?'wadeable':b===5?'lava':`unknown-${b}`;
