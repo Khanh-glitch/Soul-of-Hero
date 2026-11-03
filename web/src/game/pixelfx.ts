@@ -358,7 +358,7 @@ export function drawPostNight(g: CanvasRenderingContext2D, cam: { x: number; y: 
     // colored radiance (soft falloff illumination of the nearby scene) — drawn UNDER the art
     if (layers.radiance && quality.radiance) {
       const energy = Math.min(1.6, le / 8);
-      const a = (dark > 0.02 ? Math.min(0.28, 0.08 + dark * 0.3) : 0.05) * energy;
+      const a = (dark > 0.02 ? Math.min(0.22, 0.06 + dark * 0.24) : 0.05) * energy;
       if (a > 0.01) {
         const rad = Math.max(r.dw, r.dh) * 0.5 + 10;
         const spr = radianceSprite(tintOf(inst.entry));
@@ -371,7 +371,7 @@ export function drawPostNight(g: CanvasRenderingContext2D, cam: { x: number; y: 
     // bounded night-safe emission (light channel only, kept subtle so it reads as
     // glow behind the core instead of a fog layer over it)
     if (layers.emission && dark > 0.02 && le >= 0.5) {
-      const alpha = Math.min(quality.emissionCap, 0.12 + dark * 0.34) * Math.min(1, le / 6);
+      const alpha = Math.min(quality.emissionCap, 0.08 + dark * 0.22) * Math.min(1, le / 6);
       drawFrame(g, inst, 'light', alpha, 'lighter', sOff, sOffY);
     }
     // re-draw the crisp art core ON TOP of its glow so the shape stays sharp
