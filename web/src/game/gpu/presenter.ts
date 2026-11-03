@@ -103,21 +103,28 @@ void main(){
                   texture(scene, suv).g,
                   texture(scene, suv - vec2(0.0025, 0.0)).b) * bright;
   if (w > 0.0 && ad < w) {
+    // the other space (source C semantics): opaque astral ink whose structure is
+    // DERIVED FROM THE LIVE WORLD — mirrored sample across the tear center,
+    // re-inked into the void/magenta palette so it stays luminous on any terrain
     float nz = vnoise(sp * 0.05 + vec2(t * 0.25, 0.0));
-    vec3 voidCol = mix(vec3(0.02, 0.01, 0.05), vec3(0.10, 0.03, 0.20), clamp(0.12 + (sp.y / 270.0) * 0.2, 0.0, 1.0));
-    // the other space (source C): INVERTED mirrored sample of the real world
-    // across the tear center, noise-masked — an alternate, negative space
+    float gy = sp.y / 270.0;
+    vec3 voidCol = mix(vec3(0.02, 0.01, 0.05), vec3(0.10, 0.03, 0.20), clamp(0.12 + gy * 0.2, 0.0, 1.0));
+    voidCol += (hash(sp * 7.0) - 0.5) * 0.03; // bayer-like dither, source rampD
     vec2 mp = vec2(480.0 - sp.x + sin(t * 0.7) * 10.0, 270.0 - sp.y);
     vec2 muv = vec2((region.x + mp.x) / size.x, 1.0 - (region.y + mp.y) / size.y);
     vec3 bc = texture(scene, clamp(muv, vec2(0.0), vec2(1.0))).rgb;
-    vec3 inv = vec3(clamp(1.0 - bc.r * 3.0, 0.0, 1.0) * 0.45 + 0.20,
-                    clamp(1.0 - bc.g * 3.0, 0.0, 1.0) * 0.20,
-                    clamp(1.0 - bc.b * 3.0, 0.0, 1.0) * 0.50 + 0.15);
-    col = mix(voidCol, inv, nz > 0.62 ? 0.9 : 0.0);
+    float lum = dot(bc, vec3(0.35, 0.50, 0.15));
+    // world-derived luminous purple matter where the noise opens the other space
+    vec3 matter = vec3(0.62, 0.22, 0.78) * (0.30 + lum * 2.2) + vec3(0.95, 0.35, 0.95) * nz * 0.35;
+    col = nz > 0.62 ? matter : voidCol;
     col += vec3(1.0, 0.96, 1.0) * step(0.985, hash(vec2(floor(s * 120.0) + t * 10.0, sp.y))) * 0.7;
     col += vec3(0.45, 0.95, 1.0) * 0.35 * step(0.965, hash(vec2(floor((sp.x + t * 26.0) / 2.0), floor((sp.y + t * 6.0) / 2.0))));
+    col += vec3(1.0, 0.9, 0.6) * 0.25 * step(0.992, hash(sp * 13.0 + t)); // rare gold motes
   } else if (w > 0.5 && ad < w + 1.6) {
-    col = mix(col, vec3(1.0, 0.35, 0.85), 0.9) + vec3(0.45, 0.95, 1.0) * 0.6;
+    // rim: opaque magenta edge with dense white specular sparkle (source rim)
+    col = mix(col, vec3(1.0, 0.35, 0.85), 0.85);
+    col += vec3(1.0, 0.96, 1.0) * step(0.72, hash(floor(sp / 2.0) + floor(t * 20.0))) * 0.9;
+    col += vec3(0.45, 0.95, 1.0) * 0.4 * step(0.9, hash(floor(sp / 3.0) - floor(t * 12.0)));
   }
   if (t < 3.0 && ad < 1.2 && abs(s - 0.5) <= span * 0.5) col += vec3(1.6, 1.6, 1.8) * 0.8;
   col += vec3(1.0, 0.5, 1.0) * flash;
