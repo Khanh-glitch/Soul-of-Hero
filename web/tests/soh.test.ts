@@ -222,13 +222,13 @@ describe('C08/C14 traces & AI knowledge', () => {
   });
   it('rejects an unrelated newer nearby trail when following a sensed predecessor', () => {
     const chain = [
-      { x: 100, y: 100, t: T0 + 100, life: 10000, a: 0, s: T.GRASS },
-      { x: 300, y: 100, t: T0 + 200, life: 10000, a: 0, s: T.GRASS },
-      { x: 112, y: 104, t: T0 + 300, life: 10000, a: 0, s: T.GRASS },
+      { id: 'a1', chainId: 'a1', x: 100, y: 100, t: T0 + 100, life: 10000, a: 0, s: T.GRASS },
+      { id: 'b1', chainId: 'b1', x: 103, y: 100, t: T0 + 200, life: 10000, a: 0, s: T.GRASS },
+      { id: 'a2', chainId: 'a1', prevId: 'a1', x: 112, y: 104, t: T0 + 300, life: 10000, a: 0, s: T.GRASS },
     ];
-    expect(nextContiguousTrace(chain, { x: 100, y: 100, at: T0 })).toBe(chain[0]);
-    expect(nextContiguousTrace(chain.slice(1), { x: 100, y: 100, at: T0 + 100 })).toBe(chain[2]);
-    expect(nextContiguousTrace([chain[1]], { x: 100, y: 100, at: T0 + 100 })).toBeUndefined();
+    expect(nextContiguousTrace(chain, { traceId: 'a1', chainId: 'a1' })).toBe(chain[2]);
+    expect(nextContiguousTrace(chain.slice(1), { traceId: 'a1', chainId: 'a1' })).toBeUndefined();
+    expect(nextContiguousTrace([chain[0], chain[1]], { traceId: 'a1', chainId: 'a1' })).toBeUndefined();
   });
   it('a creature with no sensed trail never learns where the player/home is; a real trail is followed', () => {
     const gs = fresh(); const r = gs.run!; const p = r.player; r.creatures = r.creatures.filter(c => c.elder);
@@ -237,7 +237,7 @@ describe('C08/C14 traces & AI knowledge', () => {
     for (let k = 0; k < 120; k++) tick(gs, idle(p.x, p.y), 16, T0 + k * 16);
     expect(m.knows === null || m.knows.kind !== 'trace').toBe(true);
     // lay a physical trail from the wolf toward the player
-    r.traces = []; for (let k = 0; k <= 20; k++) r.traces.push({ x: m.x - k * 9, y: m.y, t: T0 + k * 1000, life: 999999, a: Math.PI, s: T.GRASS });
+    r.traces = []; for (let k = 0; k <= 20; k++) r.traces.push({ id: `trail${k}`, chainId: 'trail0', prevId: k ? `trail${k - 1}` : undefined, x: m.x - k * 9, y: m.y, t: T0 + k * 1000, life: 999999, a: Math.PI, s: T.GRASS });
     let tracked = false; for (let k = 0; k < 200; k++) { tick(gs, idle(p.x, p.y), 16, T0 + 5000 + k * 16); if (m.knows?.kind === 'trace') tracked = true; }
     expect(tracked).toBe(true);
   });
