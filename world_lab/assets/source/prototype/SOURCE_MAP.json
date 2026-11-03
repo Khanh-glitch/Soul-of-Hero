@@ -1,0 +1,236 @@
+{
+  "source_branch": "references/gameplay-prototypes-20261102",
+  "source_commit": "7a1c53acfc5b7cda6cb34ea3f348b4e100744354",
+  "license": "original prototype-branch generated art, tools and docs; copied byte-for-byte with git show",
+  "note": "Staging is a provenance-safe subset. Exact git blob SHA1 and local SHA256 are recorded; no source bytes were edited. Four native prototype reference captures are included for comparison only; they are not scene backgrounds or donor crops.",
+  "files": [
+    {
+      "flat": "assets_environment_overworld_overworld_tiles.png",
+      "origin": "assets/environment/overworld/overworld_tiles.png",
+      "git_blob_sha1": "6d9c1def36257c328f31354d6b5bdbc092c68e53",
+      "bytes": 25085,
+      "sha256": "cef87705e73693feb2af3a60430e4ce94ef6223f51d43d6418ace018c861ed61"
+    },
+    {
+      "flat": "assets_environment_overworld_overworld_props.png",
+      "origin": "assets/environment/overworld/overworld_props.png",
+      "git_blob_sha1": "2ebfdb9bbf1c388ef1eb44fe720f9c2b85609075",
+      "bytes": 61685,
+      "sha256": "6cb975589f869670432608d827ff6c58ccf81ab78e320ead1028a17565687e68"
+    },
+    {
+      "flat": "assets_environment_overworld_light_radial.png",
+      "origin": "assets/environment/overworld/light_radial.png",
+      "git_blob_sha1": "1a40a3cd901edf2b5d3d84d94333cd06e5782c2e",
+      "bytes": 12241,
+      "sha256": "8a294ed2bc843bec8372d2eff832bc6ed98d1ac2a8c7b3b0747ed34f731de2ef"
+    },
+    {
+      "flat": "data_overworld_art_manifest.json",
+      "origin": "data/overworld/art_manifest.json",
+      "git_blob_sha1": "2bcb94cc7cbda9a60814bf8c98c779a49b7002a3",
+      "bytes": 58318,
+      "sha256": "84c064d678598f5cfc711d47de3c698408d6c7e3a84dedbf57057c5d2f4f4709"
+    },
+    {
+      "flat": "docs_overworld_SOURCE_AUDIT.md",
+      "origin": "docs/overworld/SOURCE_AUDIT.md",
+      "git_blob_sha1": "4d1a10e98b95636950fa7d97bbcebf4a8ed998c2",
+      "bytes": 3928,
+      "sha256": "9b904664cb3f7ae8f515b0f2187d490afeaf0e8a11e1acab6c2e1056ea84d39b"
+    },
+    {
+      "flat": "assets_environment_chapter1_gatehouse_gatehouse_tiles.png",
+      "origin": "assets/environment/chapter1/gatehouse/gatehouse_tiles.png",
+      "git_blob_sha1": "b9af833d09bc6aeb924ffbb0e7592324f34c6414",
+      "bytes": 37766,
+      "sha256": "4320dcf0a3cbb57b824f07f9b06c0e91498ee4c8419e4493fd4cdf1d633ac783"
+    },
+    {
+      "flat": "assets_environment_chapter1_gatehouse_gatehouse_props.png",
+      "origin": "assets/environment/chapter1/gatehouse/gatehouse_props.png",
+      "git_blob_sha1": "eaed3499053cfea202793e731250e3c59938b98e",
+      "bytes": 25839,
+      "sha256": "265d7e662dbc54f310ce9b5a0e61b06ec2cae1a415699e552289c1ff0b668fc0"
+    },
+    {
+      "flat": "assets_environment_chapter1_gatehouse_gatehouse_tiles.json",
+      "origin": "assets/environment/chapter1/gatehouse/gatehouse_tiles.json",
+      "git_blob_sha1": "b0cc712b9e0273091af31a6726102e6e10fb3325",
+      "bytes": 46496,
+      "sha256": "977a2e5e8af083373a641d919fc4b9366413197d5306c5474b2a4faccc8a3dd7"
+    },
+    {
+      "flat": "assets_environment_chapter1_gatehouse_gatehouse_props.json",
+      "origin": "assets/environment/chapter1/gatehouse/gatehouse_props.json",
+      "git_blob_sha1": "9b910590d04194a439d7972c0114797dd18a0b4a",
+      "bytes": 1665,
+      "sha256": "08474d0f4ea72c064aa026002d0ab81290823880c2e009d2c684e31fdd3acba2"
+    },
+    {
+      "flat": "assets_environment_chapter1_relay_relay_tiles.png",
+      "origin": "assets/environment/chapter1/relay/relay_tiles.png",
+      "git_blob_sha1": "62d46a76d4ae550ba67ae1b5850196dc86ff7175",
+      "bytes": 18410,
+      "sha256": "6358d28f1da32a60943f5a29ee4a528b4334ee9c382f4973e0d0741607184d69"
+    },
+    {
+      "flat": "assets_environment_chapter1_relay_relay_props.png",
+      "origin": "assets/environment/chapter1/relay/relay_props.png",
+      "git_blob_sha1": "6bab696eeeceb968f7871eb91145e0fd734f5443",
+      "bytes": 24046,
+      "sha256": "ffcf953907c38e7bbcba9ef2775bc6e902a2a062e7ff008d6b0653ca3c96f44f"
+    },
+    {
+      "flat": "assets_environment_chapter1_relay_relay_tiles.json",
+      "origin": "assets/environment/chapter1/relay/relay_tiles.json",
+      "git_blob_sha1": "ff67c9912232788886f1edd6d91e6bc803114e8a",
+      "bytes": 10089,
+      "sha256": "7a64f543294ce86d6725c44185f859945fad8ae041ca21c69ea91ddd996db51f"
+    },
+    {
+      "flat": "assets_environment_chapter1_relay_relay_props.json",
+      "origin": "assets/environment/chapter1/relay/relay_props.json",
+      "git_blob_sha1": "8e0bb22b9bac508b875ac202d3d2bc871699c0d4",
+      "bytes": 2014,
+      "sha256": "2aea9be6ac1bff6f63842f0df1c826e4c59b10009039bed0e9abb8b04474f8df"
+    },
+    {
+      "flat": "assets_environment_chapter1_vigil_vigil_tiles.png",
+      "origin": "assets/environment/chapter1/vigil/vigil_tiles.png",
+      "git_blob_sha1": "a864ab02d3d09625c8552f6d46f70147ae3af926",
+      "bytes": 47190,
+      "sha256": "b16b0d6d97413c04477b73acb3eaadbb3e35ecf9616cccebb058e4e9b7428ac0"
+    },
+    {
+      "flat": "assets_environment_chapter1_vigil_vigil_props.png",
+      "origin": "assets/environment/chapter1/vigil/vigil_props.png",
+      "git_blob_sha1": "23e2a4cfbca84b4d0bc61aaef4a0d0286a074673",
+      "bytes": 10030,
+      "sha256": "3694916d3c840de0edaec7d19be40ad40f633aee7f492dcad425630031febfef"
+    },
+    {
+      "flat": "assets_environment_chapter1_vigil_vigil_tiles.json",
+      "origin": "assets/environment/chapter1/vigil/vigil_tiles.json",
+      "git_blob_sha1": "2a41dc48082f926e671c3dc487bc850ec01640a1",
+      "bytes": 16704,
+      "sha256": "b22fb11a10669c1570c12d6a72c4f46d2979edb5bb067c1530fd796546bf0792"
+    },
+    {
+      "flat": "assets_environment_chapter1_vigil_vigil_props.json",
+      "origin": "assets/environment/chapter1/vigil/vigil_props.json",
+      "git_blob_sha1": "19ddf3f0b65d8396edb1ab6d9e486e1c1f5fb382",
+      "bytes": 1462,
+      "sha256": "50609400842b3d3ae27f67094e4ab592651ab465b52516c5b3a9f2023b1c1573"
+    },
+    {
+      "flat": "assets_environment_chapter1_crucible_crucible_tiles.png",
+      "origin": "assets/environment/chapter1/crucible/crucible_tiles.png",
+      "git_blob_sha1": "81bd291fbeb0550b61556939a9f795637ee0ef72",
+      "bytes": 3598,
+      "sha256": "5b292e87508141286ba6e38a8f9a5432c9c491239446a79bbc28ec7f2c3e339f"
+    },
+    {
+      "flat": "assets_environment_chapter1_crucible_crucible_props.png",
+      "origin": "assets/environment/chapter1/crucible/crucible_props.png",
+      "git_blob_sha1": "47197ad4d3710d28b7e8cbc99bc33128568d9df9",
+      "bytes": 102616,
+      "sha256": "cf9adb30ba0f78c14a0a2b8435510fae8e9deb5c84d93e0a691d9596b5691419"
+    },
+    {
+      "flat": "tools_overworld_art.py",
+      "origin": "tools/overworld/art.py",
+      "git_blob_sha1": "7693916b589250cb4e7ed3e40859c6a997e774d2",
+      "bytes": 75137,
+      "sha256": "b6c3a1b2f814217ce5638c1970be00f0c2cbd67417313daef22f584538f21014"
+    },
+    {
+      "flat": "tools_overworld_art_props.py",
+      "origin": "tools/overworld/art_props.py",
+      "git_blob_sha1": "45b787b3241cbfe438ac1b2f6e452df84139c47a",
+      "bytes": 57891,
+      "sha256": "b9836091243e7f0005425329e13ca1510673ef5522e4fe469199c36752a92d62"
+    },
+    {
+      "flat": "tools_overworld_manual_landmarks.py",
+      "origin": "tools/overworld/manual_landmarks.py",
+      "git_blob_sha1": "5e37624fa7110e56687c929882b307bc9d9b2ef6",
+      "bytes": 68808,
+      "sha256": "1e89c19db12e802be00d1aec4aea6ffd9884b6b37fb462d1a1e1a0174a29436d"
+    },
+    {
+      "flat": "tools_chapter1_env_kitlib.py",
+      "origin": "tools/chapter1_env/kitlib.py",
+      "git_blob_sha1": "5f6dd7a8857ce155b973a418fa54c568bd7cda40",
+      "bytes": 32824,
+      "sha256": "9062df6ab5ff7296a6668874409ee34e1e6e75c70a3dbfe480cef8d865840742"
+    },
+    {
+      "flat": "tools_level6_art_relay.py",
+      "origin": "tools/level6/art_relay.py",
+      "git_blob_sha1": "fbee3abdeb016de25e7fcf0dd6c746417529767e",
+      "bytes": 39359,
+      "sha256": "74a664402c423eedfa4123cd88b1a4bde6a4a8e99f4e69a8d8588493cb1986fd"
+    },
+    {
+      "flat": "tools_level7_art_vigil.py",
+      "origin": "tools/level7/art_vigil.py",
+      "git_blob_sha1": "da06776bf936623a61327b0010c6d42509dfa2d2",
+      "bytes": 36087,
+      "sha256": "ea0696c10f3487bd0bb28ad623d8669a8e408227e449700f7591144e69345c04"
+    },
+    {
+      "flat": "tools_level9_art_gatehouse.py",
+      "origin": "tools/level9/art_gatehouse.py",
+      "git_blob_sha1": "b0c58b8f27750c95351b73e9a32bf1cd61586fac",
+      "bytes": 53067,
+      "sha256": "33469dc01e7027266b91b816778beffd4992d7a34efa7291c23439d4b2c794b3"
+    },
+    {
+      "flat": "docs_chapter1-visual-overhaul_architecture-breakthrough_DESIGN_REVIEW.md",
+      "origin": "docs/chapter1-visual-overhaul/architecture-breakthrough/DESIGN_REVIEW.md",
+      "git_blob_sha1": "79c598a0dad5dfe7de348737651de7767272e16a",
+      "bytes": 12517,
+      "sha256": "0552f1760a70d77d8f00f15772b1ce197095e99733d87992cd86ef53317a6709"
+    },
+    {
+      "flat": "docs_chapter1-visual-overhaul_production-pass_INDEX.md",
+      "origin": "docs/chapter1-visual-overhaul/production-pass/INDEX.md",
+      "git_blob_sha1": "7522ea07f15b8f8459f765062936a83062669e29",
+      "bytes": 2725,
+      "sha256": "4a4ce534d964cb198ffd369dc7ec511bb4fb8105c7ba5f6216a940ffa346ace9"
+    },
+    {
+      "flat": "references/docs_chapter1-visual-overhaul_L06_images_after_landmark.png",
+      "origin": "docs/chapter1-visual-overhaul/L06/images/after_landmark.png",
+      "git_blob_sha1": "cfbc362fe95cbe656da56863ad3ce9e12cb9c3dc",
+      "bytes": 514650,
+      "sha256": "f58e5579816e73c46dd42a6319c8754f52e4471ebe7522e06271c1ba09c6741f",
+      "kind": "prototype_native_reference_capture_not_final_scene"
+    },
+    {
+      "flat": "references/docs_chapter1-visual-overhaul_L09_images_after_entry.png",
+      "origin": "docs/chapter1-visual-overhaul/L09/images/after_entry.png",
+      "git_blob_sha1": "b5eb6174ba8acc04ad48e6c81594cb85ec2a9ff7",
+      "bytes": 430190,
+      "sha256": "28f8d506fd0c5242c312fc74c56c652e151f85ed2fefdf7f0c0c47069d6ac9ce",
+      "kind": "prototype_native_reference_capture_not_final_scene"
+    },
+    {
+      "flat": "references/docs_chapter1-audit_L09_mosaic.png",
+      "origin": "docs/chapter1-audit/L09_mosaic.png",
+      "git_blob_sha1": "6db48503424f332a24e85646e06f9950c760804c",
+      "bytes": 1480684,
+      "sha256": "394237807a7950c015525b4a06ca69345c693de7dbc726ef464952e34766129f",
+      "kind": "prototype_native_reference_capture_not_final_scene"
+    },
+    {
+      "flat": "references/docs_chapter1-audit_detail_line_L09_iron-run.png",
+      "origin": "docs/chapter1-audit/detail/line_L09_iron-run.png",
+      "git_blob_sha1": "7b26ffa49d7f8e176623a0c235c756bfc0c036b6",
+      "bytes": 109027,
+      "sha256": "cd8337fb3cfa8203737d7b7fa83abed054a3020baee9756137958ea0df59620e",
+      "kind": "prototype_native_reference_capture_not_final_scene"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 .godot/
 .tools/
 .inspect_assets/
+image-search/
 .inspect_*.gd
 .artifacts/
 .backups/

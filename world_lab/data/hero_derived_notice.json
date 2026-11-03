@@ -1,0 +1,65 @@
+{
+  "provenance_class": "AI_DERIVED_HERO_PROP_NOT_REAL_ASSET",
+  "notice": "The image tool always emits AI-generated imagery, even with real donor images attached. This prop is art-directed from donor sheets, NOT a donor crop and NOT real-asset proof. Real-crop evidence is in the separate asset ledger.",
+  "source": "assets/source/derived/great_lens_ai_hero_v3.png",
+  "source_sha256": "27fdaa713f3388c00c725bae9d37f4746cf43bde9e137a7e7fc2adc275f2eea9",
+  "output": "assets/source/derived/great_lens_hero_v4_clean.png",
+  "output_sha256": "c22fef7f2035bcb0c492ae1d7336c23d08ee90fe472aa1950f8cf93178ab7f65",
+  "output_dimensions": [
+    1216,
+    1216
+  ],
+  "prompt": "Pure magenta #FF00FF studio background; one single crisp pixel-art brass octagonal ring or lens housing with four cyan crystalline prongs pointing inward, a luminous cyan circular core, rivets and stone feet; centered with clean >=12% magenta margins on every side; no letters, numbers, words, glyphs, labels, cardinal marks, border, frame, text of any kind; no blue square corner brackets or UI; no debris, no speckles, no sparkles, no stars, no isolated objects; one complete prop with nothing cropped; flat pure magenta in all empty space, including gaps; top-down game sprite, consistent pixel density, clear silhouette, no background scene or collage.",
+  "prompt_sha256": "4f80c3ef1ffeb8cb8ba0f80a7551b916b34a2edc7b20eb5e02b135aff26e3f06",
+  "donor_sources": [
+    {
+      "file": "assets/source/prototype/assets_environment_chapter1_gatehouse_gatehouse_tiles.png",
+      "exists": true,
+      "sha256": "4320dcf0a3cbb57b824f07f9b06c0e91498ee4c8419e4493fd4cdf1d633ac783"
+    },
+    {
+      "file": "assets/source/prototype/assets_environment_chapter1_gatehouse_gatehouse_props.png",
+      "exists": true,
+      "sha256": "265d7e662dbc54f310ce9b5a0e61b06ec2cae1a415699e552289c1ff0b668fc0"
+    },
+    {
+      "file": "assets/source/prototype/assets_environment_chapter1_relay_relay_props.png",
+      "exists": true,
+      "sha256": "ffcf953907c38e7bbcba9ef2775bc6e902a2a062e7ff008d6b0653ca3c96f44f"
+    },
+    {
+      "file": "assets/source/prototype/assets_environment_chapter1_vigil_vigil_props.png",
+      "exists": true,
+      "sha256": "3694916d3c840de0edaec7d19be40ad40f633aee7f492dcad425630031febfef"
+    },
+    {
+      "file": "_scratch/proto_art/ward_medallions.png",
+      "exists": true,
+      "sha256": "4f89302923e6d899835058791448e58dcfbd04011882822eb9f82eea495ae050"
+    }
+  ],
+  "cleanup": {
+    "method": "magenta flood-fill exterior; connected-component debris removal; centered deterministic pad; no AI regeneration",
+    "non_magenta_bounds": [
+      70,
+      70,
+      884,
+      873
+    ],
+    "padding_px": 337,
+    "margin_fraction": 0.1365,
+    "kept_components": [
+      {
+        "area": 676316,
+        "bounds": [
+          70,
+          70,
+          884,
+          873
+        ]
+      }
+    ],
+    "rejected_components": 0
+  },
+  "intended_use": "One derived hero prop within ONE Argus L2 visual candidate; never cited as real-asset provenance."
+}
