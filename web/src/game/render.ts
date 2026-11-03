@@ -184,8 +184,8 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   }
   // footprints
   for (const tr of r.traces) { if (tr.x < cx - 4 || tr.x > cx + VIEW_W + 4 || tr.y < cy - 4 || tr.y > cy + VIEW_H + 4) continue; const a = clamp(tr.life / 60000, 0.12, 0.6);
-    const col = tr.s === T.SNOW ? `rgba(120,140,180,${a + 0.2})` : tr.s === T.SAND ? `rgba(150,120,80,${a})` : tr.s === T.MARSH ? `rgba(30,30,20,${a + 0.1})` : tr.s === T.ASH ? `rgba(20,16,18,${a})` : tr.s === T.ROAD ? `rgba(90,60,40,${a * 0.7})` : `rgba(30,60,25,${a * 0.8})`;
-    g.fillStyle = col; const px = Math.round(tr.x + Math.cos(tr.a + Math.PI / 2) * 1.5 * ((tr.t / 100) % 2 > 1 ? 1 : -1)), py = Math.round(tr.y); g.fillRect(px, py, 2, 1); g.fillRect(px, py - 1, 1, 1); }
+    const col = tr.s === T.SNOW ? `rgba(65,85,120,${a + 0.25})` : tr.s === T.SAND ? `rgba(150,120,80,${a})` : tr.s === T.MARSH ? `rgba(30,30,20,${a + 0.1})` : tr.s === T.ASH ? `rgba(20,16,18,${a})` : tr.s === T.ROAD ? `rgba(90,60,40,${a * 0.7})` : `rgba(30,60,25,${a * 0.8})`;
+    g.fillStyle = col; const px = Math.round(tr.x + Math.cos(tr.a + Math.PI / 2) * 1.5 * ((tr.t / 100) % 2 > 1 ? 1 : -1)), py = Math.round(tr.y); g.fillRect(px, py, 3, 2); g.fillRect(px + 1, py - 1, 1, 1); }
   // ground layer structures
   const ents = Object.values(r.entities);
   for (const e of ents) { if (e.kind !== 'struct') continue; if (e.x < cx - 32 || e.x > cx + VIEW_W + 32 || e.y < cy - 32 || e.y > cy + VIEW_H + 48) continue; const d = STRUCTS[e.type!];

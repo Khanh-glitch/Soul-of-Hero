@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ITEMS, RECIPES, STRUCTS, BUILD_ORDER, VENDOR_SECURED, ACHIEVEMENTS, ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING } from '../game/catalog';
 import { BAL, TILE, WW, type Stack } from '../game/core';
-import { C, countItem, invWeight, isRagnarok, runHours, cartWeight, cartLimit, carryLimit, spaceFor, phaseOf, tenderStatus, gardenEnvironment, weatherAt, isWet } from '../game/engine';
+import { C, countItem, invWeight, isRagnarok, runHours, cartWeight, cartLimit, carryLimit, spaceFor, phaseOf, tenderStatus, gardenEnvironment, weatherAt, isWet, isSheltered, wetOutlook } from '../game/engine';
 import { getWorld, ZONES } from '../game/world';
 import { getMapCanvas } from '../game/render';
 import { setVolume } from '../game/audio';
@@ -260,9 +260,14 @@ export function SkillsPanel({ api }: { api: Api }) {
 }
 
 export function MenuPanel({ api, onQuit, onSave }: { api: Api; onQuit: () => void; onSave: () => Promise<boolean> }) {
-  const [confirm, setConfirm] = useState(false); const pf = api.gs.profile; const r = api.gs.run!;
-  return <Panel title="Paused menu — the island keeps living in real time" style={{ left: 150, top: 40, width: 340 }} onClose={() => api.open(null)}>
+  const [confirm, setConfirm] = useState(false); const pf = api.gs.profile; const r = api.gs.run!; const outlook = wetOutlook(r, api.now());
+  return <Panel title="Menu — world time continues" style={{ left: 150, top: 40, width: 340 }} onClose={() => api.open(null)}>
     <div className="flex flex-wrap gap-1"><button className="btn gold" onClick={() => api.open(null)}>Resume</button><button className="btn" onClick={async () => { const ok = await onSave(); api.toast(ok ? 'Saved locally.' : 'Save failed. Your changes are not confirmed on disk.'); }}>Save now</button><button className="btn" onClick={onQuit}>Save & quit to title</button></div>
+    <div style={{ fontSize: 10, marginTop: 5, color: '#e6d9bc', lineHeight: 1.2 }}>
+      <b>Before you leave</b> · {isSheltered(r, r.player.x, r.player.y) ? 'Sheltered here' : 'Not sheltered here'} · Weather: {weatherAt(r, api.now())}.<br />
+      Next {Math.round(outlook.hours)}h outlook: ~{Math.round(outlook.wetHours)}h wet (global schedule estimate). Footprints fade; rain washes them faster. Change route, clear nearby creatures, wait, or use doors and terrain. No home is required.<br />
+      While away: weather, fire, gardens, stations and exposure advance. Creatures do not move or attack; unresolved encounters resume on return.
+    </div>
     <div style={{ fontSize: 10, marginTop: 6 }} className="flex items-center gap-2">Volume <input type="range" min={0} max={1} step={0.05} value={pf.settings.volume} onChange={e => { pf.settings.volume = +e.target.value; setVolume(pf.settings.volume, pf.settings.muted); api.rerender(); }} /><label><input type="checkbox" checked={pf.settings.muted} onChange={e => { pf.settings.muted = e.target.checked; setVolume(pf.settings.volume, pf.settings.muted); api.rerender(); }} /> mute</label></div>
     <div style={{ fontSize: 10, marginTop: 6, color: '#cfc2dc', lineHeight: 1.15 }}>WASD move · mouse aim · LMB attack/use · Space dodge-roll · E interact · V repair structure · F pull cart · 1–8 / wheel quickbar · I inventory · C craft · B build (X reclaim) · R research · M map · Tab skills · RMB cancel cast/build · Esc menu</div>
     <div className="panel" style={{ padding: 4, marginTop: 6, background: '#1a0e10' }}><div style={{ fontSize: 10, color: '#ff9a7a' }}>QA time acceleration — marks this run QA · LOCAL/UNVERIFIED (not real elapsed time)</div>
@@ -304,8 +309,8 @@ export function EvacPanel({ api, eid }: { api: Api; eid: string }) {
 }
 export function ReportPanel({ api, lines }: { api: Api; lines: string[] }) {
   return <Panel title="While you were away" style={{ left: 170, top: 80, width: 300 }} onClose={() => api.open(null)}>
-    {lines.map((l, i) => <div key={i} style={{ fontSize: 11, color: i ? '#cfc2dc' : '#ffd98a' }}>• {l}</div>)}
-    <div style={{ fontSize: 9, color: '#8a7a9a', marginTop: 3 }}>Settled chronologically from real elapsed time: only your known stations, gardens, weather and body changed. No invented raids or gifts.</div>
+    <div className="scroll" style={{ maxHeight: 150, overflowY: 'auto' }}>{lines.map((l, i) => <div key={i} style={{ fontSize: 11, color: i ? '#cfc2dc' : '#ffd98a' }}>• {l}</div>)}</div>
+    <div style={{ fontSize: 10, color: '#b2a5bd', marginTop: 3 }}>Elapsed time advances weather, fire, traces, production and exposure. No invented raids. The world is live behind this report; creatures resume on return.</div>
     <button className="btn gold" style={{ marginTop: 4 }} onClick={() => api.open(null)}>Continue</button>
   </Panel>;
 }

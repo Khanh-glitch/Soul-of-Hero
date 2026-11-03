@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { TILE, WW, T, uid, type GameState, type Trace } from '../src/game/core';
-import { blockedAt, dispatch, markDirty, mkCreature, newGame } from '../src/game/engine';
+import { blockedAt, dispatch, markDirty, mkCreature, newGame, addItem, C, sourceAt, weatherAt, isWet, clearPhysicalLine, wetOutlook } from '../src/game/engine';
 import { getWorld } from '../src/game/world';
-import { decayTraces, HAZ, nextContiguousTrace, PROJ, tick, type Input } from '../src/game/sim';
+import { decayTraces, HAZ, nextContiguousTrace, PROJ, tick, settle, bindCombat, type Input } from '../src/game/sim';
 import { selectSnapshots, serializeSnapshot, validate } from '../src/game/persist';
 import legacy from './fixtures/3b37ae9-legacy-pair.json';
 
@@ -82,7 +82,7 @@ describe('B2-A existing movement and causal trace authority', () => {
   it('a creature senses a real nearby mark and continues its own chain, not a newer crossing', () => {
     const gs = fresh(), r = gs.run!, spot = clearing(gs), x = spot.x * TILE + 8, y = spot.y * TILE + 8;
     r.player.x = x + 140; r.player.y = y; const m = creature(gs, 'wolf', x, y);
-    const a = mark('a', 'A', undefined, x + 3, y, T0), b = mark('b', 'A', 'a', x + 30, y, T0 + 10);
+    const a = mark('a', 'A', undefined, x + 3, y, T0), b = mark('b', 'A', 'a', x + 15, y, T0 + 10);
     r.traces = [a, b]; step(gs, idle(), 1); expect(m.knows?.traceId).toBe('b');
     r.traces.push(mark('cross', 'B', undefined, m.x + 2, m.y, T0 + 30));
     step(gs, idle(), 2); expect(m.knows?.traceId).toBe('b');
@@ -156,5 +156,124 @@ describe('B2-A last-known sight and committed attacks', () => {
     step(gs, idle(), 1); expect(m.state).toBe('sleep'); expect(m.knows).toBeNull();
     m.state = 'chase'; m.knows = { kind: 'sight', x: x - 30, y, at: T0 }; step(gs, idle(), 2);
     expect(m.state).not.toBe('tell'); expect(HAZ).toHaveLength(0); expect(PROJ).toHaveLength(0);
+  });
+});
+
+describe('trace-grounded home safety', () => {
+  it('never follows a forged long jump or a successor through a closed barrier', () => {
+    const gs = fresh(), r = gs.run!, spot = clearing(gs), x = spot.x * TILE + 8, y = spot.y * TILE + 8;
+    const a = mark('a', 'A', undefined, x + 6, y, T0), distant = mark('d', 'A', 'a', x + 70, y, T0 + 1);
+    expect(nextContiguousTrace([a, distant], { traceId: 'a', chainId: 'A' })).toBeUndefined();
+    wall(gs, spot.x + 1, spot.y); r.player.x = x + 150; r.player.y = y;
+    const m = creature(gs, 'wolf', x + 6, y), b = mark('b', 'A', 'a', x + 22, y, T0 + 1);
+    r.traces = [a, b]; step(gs, idle(), 1);
+    expect(m.knows?.traceId).not.toBe('b'); expect(m.traceIgnore).toBe('A');
+  });
+  it('physically walks a sensed connected trail and loses it when the next evidence expires', () => {
+    const gs = fresh(), r = gs.run!, spot = clearing(gs), x = spot.x * TILE + 8, y = spot.y * TILE + 8;
+    r.player.x = x + 150; r.player.y = y; const m = creature(gs, 'wolf', x, y);
+    r.traces = [mark('a', 'A', undefined, x + 3, y, T0), mark('b', 'A', 'a', x + 15, y, T0 + 1), mark('c', 'A', 'b', x + 30, y, T0 + 2)];
+    step(gs, idle(), 1); expect(m.knows?.traceId).toBe('b');
+    for (let i = 2; i <= 5; i++) step(gs, idle(), i);
+    expect(m.x).toBeGreaterThan(x); expect(m.x).toBeLessThan(x + 30); expect(m.knows?.traceId).toBe('c');
+    r.traces = r.traces.filter(tr => tr.id !== 'c'); step(gs, idle(), 6);
+    expect(m.knows).toBeNull(); expect(m.traceIgnore).toBe('A');
+  });
+  it('blocks even a corner-grazing physical interaction', () => {
+    const gs = fresh(), spot = clearing(gs), r = gs.run!, x = spot.x * TILE, y = spot.y * TILE;
+    wall(gs, spot.x + 1, spot.y);
+    expect(clearPhysicalLine(r, { x: x + 8, y: y + 8 }, { x: x + 24, y: y + 24 }, true, true)).toBe(false);
+    expect(clearPhysicalLine(r, { x: x + 8, y: y + 8 }, { x: x + 8, y: y + 24 }, true, true)).toBe(true);
+  });
+  it('does not damage an undiscovered house when a wolf or boar wanders into it', () => {
+    for (const type of ['wolf', 'boar']) {
+      const gs = fresh(), r = gs.run!, spot = clearing(gs), x = spot.x * TILE + 8, y = spot.y * TILE + 8;
+      wall(gs, spot.x + 1, spot.y); const house = Object.values(r.entities).find(e => e.type === 'wall_wood')!;
+      r.player.x = x + 160; r.player.y = y; const m = creature(gs, type, x + 3, y);
+      m.state = 'wander'; m.tx = x + 16; m.ty = y; m.t = 0;
+      for (let i = 1; i <= 30; i++) step(gs, idle(), i);
+      expect(house.hp).toBe(160); expect(m.knows).toBeNull();
+    }
+  });
+  it('lets a committed boar charge physically impact a closed door, without reaching through it', () => {
+    const gs = fresh(), r = gs.run!, spot = clearing(gs), x = spot.x * TILE + 8, y = spot.y * TILE + 8;
+    const id = uid(r, 'door'); r.entities[id] = { id, kind: 'struct', type: 'door_wood', x: x + 16, y, tx: spot.x + 1, ty: spot.y, hp: 140, maxHp: 140, open: false }; markDirty();
+    r.player.x = x + 24; r.player.y = y; const m = creature(gs, 'boar', x + 3, y);
+    m.state = 'attack'; m.angle = 0; m.t = 0; m.atk = { hit: false }; const hp = r.player.hp;
+    step(gs, idle(), 1); expect(r.entities[id].hp).toBeLessThan(140); expect(r.player.hp).toBe(hp); expect(m.x).toBeLessThan(x + 8);
+  });
+  it('lets a charge-capable tracker hit a door that closed after it sensed a mark', () => {
+    const gs = fresh(), r = gs.run!, spot = clearing(gs), x = spot.x * TILE + 8, y = spot.y * TILE + 8;
+    const id = uid(r, 'door'); r.entities[id] = { id, kind: 'struct', type: 'door_wood', x: x + 16, y, tx: spot.x + 1, ty: spot.y, hp: 140, maxHp: 140, open: true }; markDirty();
+    r.player.x = x + 150; r.player.y = y;
+    const m = creature(gs, 'boar', x + 2, y); (m as any).prov = true; m.tx = x + 40; m.ty = y;
+    const tr = mark('visible', 'A', undefined, x + 19, y, T0); r.traces = [tr];
+    step(gs, idle(), 1); expect(m.knows?.traceId).toBe('visible'); expect(r.entities[id].hp).toBe(140);
+    r.entities[id].open = false; markDirty();
+    for (let i = 2; i <= 6; i++) step(gs, idle(), i);
+    expect(r.entities[id].hp).toBeLessThan(140); expect(m.x).toBeLessThan(x + 8); expect(m.knows?.traceId).toBe('visible');
+  });
+  it('committed tongue and pinch cannot hit through a wall', () => {
+    for (const type of ['toad', 'crab']) {
+      const gs = fresh(), r = gs.run!, spot = clearing(gs), x = spot.x * TILE + 8, y = spot.y * TILE + 8;
+      wall(gs, spot.x + 1, spot.y); r.player.x = x + 25; r.player.y = y;
+      const m = creature(gs, type, x + 4, y); m.state = 'attack'; m.angle = 0; m.t = 80; m.atk = { hit: false };
+      const hp = r.player.hp; step(gs, idle(), 1); expect(r.player.hp).toBe(hp);
+    }
+  });
+  it('sweeps fast projectiles against the intervening wall', () => {
+    const gs = fresh(), r = gs.run!, spot = clearing(gs), x = spot.x * TILE + 8, y = spot.y * TILE + 8;
+    wall(gs, spot.x + 1, spot.y); r.player.x = x + 45; r.player.y = y;
+    bindCombat(r); PROJ.push({ x: x + 3, y, vx: 900, vy: 0, life: 1, dmg: 20, from: 'enemy', kind: 'bolt', r: 3 });
+    const hp = r.player.hp; step(gs, idle(), 1); expect(PROJ).toHaveLength(0); expect(r.player.hp).toBe(hp);
+  });
+  it('offline expires evidence and sight but does not move actors or resolve committed attacks', () => {
+    const gs = fresh(), r = gs.run!, spot = clearing(gs), x = spot.x * TILE + 8, y = spot.y * TILE + 8;
+    r.player.x = x + 80; r.player.y = y; const m = creature(gs, 'wolf', x, y), tr = mark('a', 'A', undefined, x + 3, y, T0);
+    tr.life = 1000; r.traces = [tr]; m.knows = { kind: 'trace', x: tr.x, y: tr.y, at: tr.t, traceId: tr.id, chainId: tr.chainId }; m.state = 'attack'; m.atk = { hit: false }; m.t = 40;
+    const sight = creature(gs, 'toad', x - 30, y); sight.state = 'chase'; sight.knows = { kind: 'sight', x: r.player.x, y, at: T0 };
+    const hp = r.player.hp, pos = { x: m.x, y: m.y }, lines = settle(gs, T0 + 10000);
+    expect(r.traces).toHaveLength(0); expect(m.knows).toBeNull(); expect(m.state).toBe('attack'); expect(m.t).toBe(40); expect({ x: m.x, y: m.y }).toEqual(pos); expect(r.player.hp).toBe(hp);
+    expect(sight.knows).toBeNull(); expect(sight.state).toBe('wander'); expect(lines.join(' ')).toContain('did not move or attack');
+    expect(validate(selectSnapshots([serializeSnapshot(gs), null]).gs)).toBeTruthy();
+  });
+  it('bounds the weather outlook to the remaining run and its existing global schedule', () => {
+    const gs = fresh(), r = gs.run!, full = wetOutlook(r, T0);
+    expect(full.hours).toBe(24); expect(full.wetHours).toBeGreaterThanOrEqual(0); expect(full.wetHours).toBeLessThanOrEqual(24);
+    const nearEnd = T0 + (336 - 2) * 3600000, last = wetOutlook(r, nearEnd);
+    expect(last.hours).toBe(2); expect(last.wetHours).toBeLessThanOrEqual(2);
+    expect(wetOutlook(r, T0 + 336 * 3600000)).toEqual({ hours: 0, wetHours: 0 });
+  });
+  it('persists committed projectiles and hazards without advancing or leaking them between runs', () => {
+    const gs = fresh(), r = gs.run!, spot = clearing(gs), x = spot.x * TILE + 8, y = spot.y * TILE + 8;
+    r.player.x = x + 100; r.player.y = y; bindCombat(r);
+    PROJ.push({ x, y, vx: 30, vy: 0, life: 1, dmg: 10, from: 'enemy', kind: 'bolt', r: 3 });
+    HAZ.push({ kind: 'circle', x, y, r: 10, t: 40, tell: 800, dur: 120, dmg: 8, style: 'erupt', owner: 'enemy' });
+    const loaded = selectSnapshots([serializeSnapshot(gs), null]).gs!;
+    const hp = loaded.run!.player.hp; settle(loaded, T0 + 10000, true);
+    expect(loaded.run!.combat!.projectiles[0].x).toBe(x); expect(loaded.run!.combat!.hazards[0].t).toBe(40); expect(loaded.run!.player.hp).toBe(hp);
+    const other = fresh(); bindCombat(other.run!); expect(PROJ).toHaveLength(0); expect(HAZ).toHaveLength(0);
+    bindCombat(loaded.run!); expect(PROJ).toHaveLength(1); expect(HAZ).toHaveLength(1);
+    tick(loaded, idle(), 50, T0 + 10050); expect(PROJ[0].x).toBeGreaterThan(x); expect(HAZ[0].t).toBe(90);
+    const bad = structuredClone(loaded); bad.run!.combat!.projectiles[0].vx = NaN; expect(validate(bad)).toBeNull();
+  });
+  it('prevents torch and axe source hits through a wall but permits them when unobstructed', () => {
+    for (const tool of ['torch', 'stone_axe']) {
+      const gs = fresh(), r = gs.run!; let pos: { x: number; y: number } | undefined;
+      outer: for (let y = 20; y < 180; y++) for (let x = 20; x < 180; x++) {
+        const src = sourceAt(r, x, y); if (!src || src.def.mat !== 'wood' || !src.def.tall || blockedAt(r, x - 1, y) || blockedAt(r, x - 2, y)) continue;
+        pos = { x, y }; break outer;
+      }
+      expect(pos).toBeDefined(); const { x, y } = pos!, initial = sourceAt(r, x, y, T0)!;
+      for (let seed = 1; seed < 10000; seed++) { r.seed = seed; if (!isWet(weatherAt(r, T0))) break; }
+      r.player.x = x * TILE - 20; r.player.y = y * TILE + 8; wall(gs, x - 1, y);
+      addItem(r, 'inv', tool, 1); const slot = C(r, 'inv').slots.findIndex(s => s?.key === tool), dur = C(r, 'inv').slots[slot]!.dur;
+      r.player.action = { kind: 'swing', t: 0, dur: 300, contact: 1, angle: 0, slot }; step(gs, idle(), 1);
+      expect(r.sources[y * WW + x]?.fire || 0).toBe(0); expect(sourceAt(r, x, y, T0 + 50)!.hp).toBe(initial.hp); expect(C(r, 'inv').slots[slot]!.dur).toBe(dur);
+      const wallId = Object.values(r.entities).find(e => e.type === 'wall_wood')!.id; delete r.entities[wallId]; markDirty();
+      r.player.action = { kind: 'swing', t: 0, dur: 300, contact: 1, angle: 0, slot }; step(gs, idle(), 2);
+      if (tool === 'torch') expect(r.sources[y * WW + x]?.fire).toBeGreaterThan(r.clock.simMs);
+      else expect(sourceAt(r, x, y, T0 + 100)!.hp).toBeLessThan(initial.hp);
+    }
   });
 });

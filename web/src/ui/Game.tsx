@@ -140,7 +140,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
   const w = weatherAt(r, now); const slot = Math.floor((now - r.startedAt + r.qaOffset) / (BAL.weather.slotMinutes * 60000)); const next = weatherSlot(r.seed, slot + 1);
   const WICON: Record<string, string> = { clear: '☀', cloudy: '☁', rain: '☂', storm: '⚡', fog: '≋' };
   const engaged = r.creatures.find(m => m.elder && m.state !== 'sleep' && m.state !== 'dead' && Math.hypot(m.x - p.x, m.y - p.y) < 240);
-  const cart = p.pulling ? r.entities[p.pulling] : null; const tracked = r.creatures.some(m => m.knows?.kind === 'trace' && m.state !== 'dead' && Math.abs(m.x - p.x) < 320 && Math.abs(m.y - p.y) < 180);
+  const cart = p.pulling ? r.entities[p.pulling] : null;
   const tgt = target.current; const ts = tgt ? { x: tgt.x - Math.round(cam.x), y: tgt.y - Math.round(cam.y) } : null;
   const zone = ZONES[getWorld().zone[Math.floor(p.y / 16) * WW + Math.floor(p.x / 16)]];
   const heldCash = countItem(r, 'inv', 'rcash'); const surf = SPEED_KEY[effTile(r, Math.floor(p.x / 16), Math.floor(p.y / 16))] || '';
@@ -162,7 +162,6 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
         <div style={{ color: '#9ae0ff' }}>secured {gs.profile.securedCash}{heldCash ? <span style={{ color: '#ffe27a' }}> · carried {heldCash}</span> : null}</div>
         {ph === 'calm' && hrs > 230 && <div style={{ color: '#ff9a5a' }}>Ragnarok in {(264 - hrs).toFixed(1)}h</div>}
       </div>
-      {tracked && <div className="absolute pulse" style={{ left: 4, top: 88, fontSize: 10, color: '#ffe070' }}>⚠ Something is following your tracks</div>}
       {engaged && (() => { const d = ELDERS[engaged.elder!.key]; return <div className="absolute" style={{ left: 170, top: 6, width: 300, textAlign: 'center' }}><div className="title-font" style={{ fontSize: 10, color: d.color, textShadow: '1px 1px 0 #000' }}>{d.name} <span style={{ color: '#cfc2dc', fontSize: 9 }}>— {engaged.elder!.awake ? 'awakened' : 'latent'}</span></div><div className="bar" style={{ width: 300, height: 6 }}><i style={{ width: `${(engaged.hp / engaged.maxHp) * 100}%`, background: `linear-gradient(${d.color}, #8a2a1a)` }} /></div></div>; })()}
       {banner && <div key={banner.id} className="absolute banner" style={{ left: 0, right: 0, top: 70, textAlign: 'center', pointerEvents: 'none' }} onAnimationEnd={() => setBanner(null)}><div className="title-font" style={{ fontSize: 22, color: '#ffe8b0', textShadow: '2px 2px 0 #2a1006, 0 0 8px #ff9a3a' }}>{banner.text}</div>{banner.sub && <div style={{ fontSize: 12, color: '#e0d0f0', textShadow: '1px 1px 0 #000' }}>{banner.sub}</div>}</div>}
       {/* interaction prompt */}

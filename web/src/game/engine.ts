@@ -35,6 +35,17 @@ export function weatherSlot(seed: number, slot: number): Weather {
   for (const k of keys) { x -= w[k]; if (x < 0) return k; } return 'clear';
 }
 export const isWet = (w: Weather) => w === 'rain' || w === 'storm';
+/** Coarse outlook from the current global weather schedule, not a geographic climate model. */
+export function wetOutlook(r: RunState, now: number) {
+  const end = Math.min(now + 24 * HOUR, r.startedAt - r.qaOffset + BAL.run.maxRunHours * HOUR);
+  const slotMs = BAL.weather.slotMinutes * 60000; let t = now, wet = 0;
+  while (t < end) {
+    const boundary = r.startedAt - r.qaOffset + (Math.floor(runElapsedMs(r, t) / slotMs) + 1) * slotMs;
+    const next = Math.min(end, boundary); if (next <= t) break;
+    if (isWet(weatherAt(r, t))) wet += next - t; t = next;
+  }
+  return { hours: Math.max(0, end - now) / HOUR, wetHours: wet / HOUR };
+}
 
 // ---------------- creation ----------------
 export function newProfile(): Profile { return { securedCash: 0, achievements: {}, history: [], settings: { volume: 0.6, muted: false }, profileReceipts: [] }; }
@@ -401,13 +412,32 @@ export function dispatch(gs: GameState, it: Intent, now: number): Result {
 }
 const fail = (reason: string): Result => ({ ok: false, reason });
 function near(r: RunState, e: { x: number; y: number }, tiles = 2.2) { return dist(r.player.x, r.player.y, e.x, e.y) <= tiles * TILE; }
-/** A finite POI interaction cannot reach through intervening terrain, sources
- * or closed doors. The target's own blocking tile is intentionally excluded. */
-function clearSegment(r:RunState,p:{x:number;y:number},e:{x:number;y:number}):boolean {
-  const grid=blockGrid(r), startX=Math.floor(p.x/TILE),startY=Math.floor(p.y/TILE), endX=Math.floor(e.x/TILE),endY=Math.floor(e.y/TILE);
-  const steps=Math.max(1,Math.ceil(dist(p.x,p.y,e.x,e.y)/4));
-  for(let k=1;k<steps;k++){const x=Math.floor((p.x+(e.x-p.x)*k/steps)/TILE),y=Math.floor((p.y+(e.y-p.y)*k/steps)/TILE);if((x===startX&&y===startY)||(x===endX&&y===endY))continue;if(x<0||y<0||x>=WW||y>=WH||[1,2,3,5].includes(grid[y*WW+x]))return false;}
+/** Grid traversal visits every crossed cell, including both sides of a corner.
+ * Interaction targets may themselves occupy a blocking cell; intervening cells never may. */
+export function clearPhysicalLine(r: RunState, p: { x: number; y: number }, e: { x: number; y: number }, blockTrees = true, excludeEnd = false): boolean {
+  const grid = blockGrid(r), sx = Math.floor(p.x / TILE), sy = Math.floor(p.y / TILE);
+  const ex = Math.floor(e.x / TILE), ey = Math.floor(e.y / TILE);
+  let x = sx, y = sy; const dx = e.x - p.x, dy = e.y - p.y, stepx = Math.sign(dx), stepy = Math.sign(dy);
+  const txStep = dx ? TILE / Math.abs(dx) : Infinity, tyStep = dy ? TILE / Math.abs(dy) : Infinity;
+  let tx = dx ? ((stepx > 0 ? (x + 1) * TILE : x * TILE) - p.x) / dx : Infinity;
+  let ty = dy ? ((stepy > 0 ? (y + 1) * TILE : y * TILE) - p.y) / dy : Infinity;
+  const clear = (cx: number, cy: number) => {
+    if (cx === sx && cy === sy || excludeEnd && cx === ex && cy === ey) return true;
+    if (cx < 0 || cy < 0 || cx >= WW || cy >= WH) return false;
+    const b = grid[cy * WW + cx]; return b !== 1 && b !== 3 && b !== 5 && (!blockTrees || b !== 2);
+  };
+  while (x !== ex || y !== ey) {
+    if (Math.abs(tx - ty) < 1e-10) {
+      if (!clear(x + stepx, y) || !clear(x, y + stepy)) return false;
+      x += stepx; y += stepy; tx += txStep; ty += tyStep;
+    } else if (tx < ty) { x += stepx; tx += txStep; }
+    else { y += stepy; ty += tyStep; }
+    if (!clear(x, y)) return false;
+  }
   return true;
+}
+function clearSegment(r: RunState, p: { x: number; y: number }, e: { x: number; y: number }) {
+  return clearPhysicalLine(r, p, e, true, true);
 }
 export function clearInteraction(r:RunState,e:{x:number;y:number}) { return clearSegment(r,r.player,e); }
 

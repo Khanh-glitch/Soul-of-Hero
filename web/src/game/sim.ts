@@ -1,16 +1,25 @@
 // Deterministic-ish real-time simulation layered on the engine authority. All state mutation goes through engine helpers.
-import { BAL, TILE, WW, WH, HOUR, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity } from './core';
+import { BAL, TILE, WW, WH, HOUR, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity, type Proj, type Haz } from './core';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
 import { getWorld } from './world';
-import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction } from './engine';
+import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
 const fx = (type: string, d: any = {}) => { if (FX.length < 400) FX.push({ type, ...d }); };
-export interface Proj { x: number; y: number; vx: number; vy: number; life: number; dmg: number; from: 'player' | 'enemy'; kind: string; r: number; delay?: number; homing?: number; owner?: string }
-export interface Haz { kind: 'circle' | 'line' | 'ring' | 'wave' | 'sweep' | 'pool'; x: number; y: number; r?: number; angle?: number; len?: number; w?: number; t: number; tell: number; dur: number; dmg: number; style: string; effect?: string; hit?: boolean; tickAcc?: number; a0?: number; a1?: number; done?: boolean; owner?: string; elder?: string }
+export type { Proj, Haz } from './core';
 export const PROJ: Proj[] = [];
 export const HAZ: Haz[] = [];
+let boundCombat: RunState | null = null;
+/** Bind the renderer's arrays to this run, detaching the previous run first. */
+export function bindCombat(r: RunState) {
+  if (boundCombat === r) return;
+  if (boundCombat) boundCombat.combat = { projectiles: [...PROJ], hazards: [...HAZ] };
+  const saved = r.combat;
+  PROJ.splice(0, PROJ.length, ...(saved?.projectiles || []));
+  HAZ.splice(0, HAZ.length, ...(saved?.hazards || []));
+  r.combat = { projectiles: PROJ, hazards: HAZ }; boundCombat = r;
+}
 let slowTimer = 0, rootTimer = 0, shelterAcc = 0, fireAcc = 0, lightningAcc = 0, discoverAcc = 0;
 let ragAnnounced = '';
 
@@ -37,9 +46,7 @@ function moveBody(r: RunState, o: { x: number; y: number }, dx: number, dy: numb
   return hit;
 }
 function los(r: RunState, ax: number, ay: number, bx: number, by: number, blockTrees = false) {
-  const d = dist(ax, ay, bx, by); const n = Math.ceil(d / 8); const g = blockGrid(r);
-  for (let i = 1; i < n; i++) { const x = ax + (bx - ax) * i / n, y = ay + (by - ay) * i / n; const b = g[tileOf(y) * WW + tileOf(x)]; if (b === 1 || b === 3 || (blockTrees && b === 2)) return false; }
-  return true;
+  return clearPhysicalLine(r, { x: ax, y: ay }, { x: bx, y: by }, blockTrees);
 }
 /** Shared sight authority: only an actual observation updates remembered position. */
 function observePlayer(r: RunState, m: Creature, now: number, range: number, eligible: boolean) {
@@ -143,7 +150,7 @@ export function nextContiguousTrace(traces: RunState['traces'], known: { traceId
   if (!known.traceId || !known.chainId) return undefined;
   const previous = traces.find(t => t.id === known.traceId && t.chainId === known.chainId && t.life > 0);
   if (!previous) return undefined;
-  return traces.find(t => t.life > 0 && t.id && t.chainId === known.chainId && t.prevId === previous.id);
+  return traces.find(t => t.life > 0 && t.id && t.chainId === known.chainId && t.prevId === previous.id && t.t >= previous.t && dist(previous.x, previous.y, t.x, t.y) <= 24);
 }
 
 // ---------- core effects (C03: charge debited at commit, not windup) ----------
@@ -280,7 +287,10 @@ function resolveSwing(gs: GameState, now: number, slot: number, a: number) {
   let best: { tx: number; ty: number; d: number } | null = null;
   for (let rr = 6; rr <= R + 4; rr += 5) for (let k = -2; k <= 2; k++) {
     const ang = a + (A / 2) * (k / 2); const x = p.x + Math.cos(ang) * rr, y = p.y + Math.sin(ang) * rr; const tx = tileOf(x), ty = tileOf(y);
-    const src = sourceAt(r, tx, ty, now); if (!src) continue; const dd = dist(p.x, p.y, tx * TILE + 8, ty * TILE + 8); if (!best || dd < best.d) best = { tx, ty, d: dd };
+    const src = sourceAt(r, tx, ty, now); if (!src) continue;
+    const targetBlock = blockGrid(r)[ty * WW + tx];
+    if (targetBlock === 1 || targetBlock === 3 || targetBlock === 5 || !clearInteraction(r, { x: tx * TILE + 8, y: ty * TILE + 8 })) continue;
+    const dd = dist(p.x, p.y, tx * TILE + 8, ty * TILE + 8); if (!best || dd < best.d) best = { tx, ty, d: dd };
   }
   if (best) {
     const res = harvestHit(gs, best.tx, best.ty, d.power || {}, now, p.x, p.y);
@@ -320,10 +330,13 @@ function steer(gs: GameState, m: Creature, tx: number, ty: number, sp: number, d
   }
   const a = Math.atan2(ay - m.y, ax - m.x); m.angle = a; m.dir = dirFromAngle(a);
   const hit = moveBody(r, m, Math.cos(a) * sp * dt, Math.sin(a) * sp * dt, 4, 'creature');
-  if (hit && (!m.path || m.path.length < 2)) bashAhead(gs, m, a, now);
+  if (hit) bashAhead(gs, m, a, now);
 }
 function bashAhead(gs: GameState, m: Creature, a: number, now: number) {
-  const r = gs.run!; if (m.cd > 0) return; const tx = tileOf(m.x + Math.cos(a) * 10), ty = tileOf(m.y + Math.sin(a) * 10);
+  // Physical impact only: charge-capable trackers may batter a remembered obstruction,
+  // and committed charges may hit it. Wandering and ordinary melee cannot.
+  const canBash = m.elder ? !!m.knows : CREATURES[m.type]?.style === 'charge' && (m.state === 'attack' || m.knows?.kind === 'trace');
+  const r = gs.run!; if (!canBash || (m.cd > 0 && m.state !== 'attack')) return; const tx = tileOf(m.x + Math.cos(a) * 10), ty = tileOf(m.y + Math.sin(a) * 10);
   const e = entsAt(r, tx, ty).find(e => e.kind === 'struct' && (STRUCTS[e.type!].block)); if (!e) return;
   const dmg = m.elder ? ELDERS[m.elder.key].dmg * 2 : CREATURES[m.type].dmg; e.hp! -= dmg; m.cd = 900; fx('structhit', { x: e.x, y: e.y });
   if (e.hp! <= 0) { destroyStructure(r, e, now); receipt(r, now, 'struct.destroyed', `${e.type} by ${m.type}`); pushLog(r, now, `${STRUCTS[e.type!].name} was smashed by a ${CREATURES[m.type]?.name || 'beast'}!`, 'red'); fx('structbreak', { x: e.x, y: e.y }); }
@@ -372,7 +385,7 @@ function tickCreatures(gs: GameState, dtMs: number, now: number) {
             if (dist(m.x, m.y, m.knows.x, m.knows.y) < 7) {
               // Advance only along the same physically contiguous footprint chain.
               const nxt = nextContiguousTrace(r.traces, m.knows);
-              if (nxt) m.knows = { kind: 'trace', x: nxt.x, y: nxt.y, at: nxt.t, traceId: nxt.id, chainId: nxt.chainId }; else { m.traceIgnore = m.knows.chainId; m.knows = null; m.state = 'wander'; fx('lost', { x: m.x, y: m.y - 10 }); }
+              if (nxt && dist(m.x, m.y, nxt.x, nxt.y) <= BAL.ai.traceSenseRadius && los(r, m.x, m.y, nxt.x, nxt.y, true)) m.knows = { kind: 'trace', x: nxt.x, y: nxt.y, at: nxt.t, traceId: nxt.id, chainId: nxt.chainId }; else if (nxt && dist(m.x, m.y, m.knows.x, m.knows.y) >= 2) { steer(gs, m, m.knows.x, m.knows.y, spd * 0.8, dt, now); } else { m.traceIgnore = m.knows.chainId; m.knows = null; m.state = 'wander'; fx('lost', { x: m.x, y: m.y - 10 }); }
             } else steer(gs, m, m.knows.x, m.knows.y, spd * 0.8, dt, now);
           }
         } else {
@@ -398,20 +411,20 @@ function tickCreatures(gs: GameState, dtMs: number, now: number) {
         if (st === 'charge' || st === 'lunge') {
           const dur = st === 'charge' ? 560 : 230, s2 = st === 'charge' ? 215 : 250;
           const blocked = moveBody(r, m, Math.cos(m.angle) * s2 * dt, Math.sin(m.angle) * s2 * dt, 4, 'creature');
-          if (!m.atk.hit && dist(m.x, m.y, p.x, p.y) < d.r + 7) { m.atk.hit = true; hurtPlayer(gs, d.dmg, m.x, m.y, d.name, now, 200); }
+          if (!m.atk.hit && dist(m.x, m.y, p.x, p.y) < d.r + 7 && los(r, m.x, m.y, p.x, p.y)) { m.atk.hit = true; hurtPlayer(gs, d.dmg, m.x, m.y, d.name, now, 200); }
           if (blocked && st === 'charge') { const tx = tileOf(m.x + Math.cos(m.angle) * 9), ty = tileOf(m.y + Math.sin(m.angle) * 9); const src = sourceAt(r, tx, ty, now);
-            if (src && src.def.mat === 'wood' && src.stock > 0) { harvestHit(gs, tx, ty, { wood: 4 }, now, m.x, m.y); fx('chip', { x: tx * TILE + 8, y: ty * TILE + 8, mat: 'wood' }); }
-            m.state = 'recover'; m.t = -900; fx('stun', { x: m.x, y: m.y - 10 }); fx('shake', { m: 2 }); bashAhead(gs, m, m.angle, now); break; }
+            if (src && blockGrid(r)[ty * WW + tx] === 2 && src.def.mat === 'wood' && src.stock > 0) { harvestHit(gs, tx, ty, { wood: 4 }, now, m.x, m.y); fx('chip', { x: tx * TILE + 8, y: ty * TILE + 8, mat: 'wood' }); }
+            bashAhead(gs, m, m.angle, now); m.state = 'recover'; m.t = -900; fx('stun', { x: m.x, y: m.y - 10 }); fx('shake', { m: 2 }); break; }
           if (m.t >= dur) { m.state = 'recover'; m.t = 0; }
         } else if (st === 'tongue') {
           if (!m.atk.hit && m.t > 60) { const len = 84; const px = p.x - m.x, py = p.y - m.y; const along = px * Math.cos(m.angle) + py * Math.sin(m.angle); const perp = Math.abs(-px * Math.sin(m.angle) + py * Math.cos(m.angle));
-            if (along > 0 && along < len && perp < 8) { m.atk.hit = true; if (hurtPlayer(gs, d.dmg, m.x, m.y, d.name, now, 0)) { const a = Math.atan2(m.y - p.y, m.x - p.x); moveBody(r, p, Math.cos(a) * 26, Math.sin(a) * 26, 4, 'player'); } } }
+            if (along > 0 && along < len && perp < 8 && los(r, m.x, m.y, p.x, p.y)) { m.atk.hit = true; if (hurtPlayer(gs, d.dmg, m.x, m.y, d.name, now, 0)) { const a = Math.atan2(m.y - p.y, m.x - p.x); moveBody(r, p, Math.cos(a) * 26, Math.sin(a) * 26, 4, 'player'); } } }
           if (m.t >= 260) { m.state = 'recover'; m.t = 0; }
         } else if (st === 'burrow') {
           if (m.t < 900) steer(gs, m, m.atk.target.x, m.atk.target.y, 90, dt, now);
           if (m.t >= 950) { m.atk.burrow = false; m.state = 'recover'; m.t = 0; fx('emerge', { x: m.x, y: m.y }); }
         } else if (st === 'pinch') {
-          if (!m.atk.hit && m.t > 40) { m.atk.hit = true; if (dist(m.x, m.y, p.x, p.y) < 22 && Math.abs(angDiff(Math.atan2(p.y - m.y, p.x - m.x), m.angle)) < 1.1) hurtPlayer(gs, d.dmg, m.x, m.y, d.name, now); fx('snip', { x: m.x + Math.cos(m.angle) * 10, y: m.y + Math.sin(m.angle) * 10 }); }
+          if (!m.atk.hit && m.t > 40) { m.atk.hit = true; if (dist(m.x, m.y, p.x, p.y) < 22 && Math.abs(angDiff(Math.atan2(p.y - m.y, p.x - m.x), m.angle)) < 1.1 && los(r, m.x, m.y, p.x, p.y)) hurtPlayer(gs, d.dmg, m.x, m.y, d.name, now); fx('snip', { x: m.x + Math.cos(m.angle) * 10, y: m.y + Math.sin(m.angle) * 10 }); }
           if (m.t > 200) { m.state = 'recover'; m.t = 0; }
         } else { if (m.t > 300) { m.state = 'recover'; m.t = 0; } }
         break;
@@ -491,10 +504,18 @@ function tickProj(gs: GameState, dtMs: number, now: number) {
   for (let i = PROJ.length - 1; i >= 0; i--) {
     const pr = PROJ[i];
     if (pr.delay && pr.delay > 0) { pr.delay -= dtMs; continue; }
-    if (pr.homing) { const a = Math.atan2(p.y - pr.y, p.x - pr.x); const sp = Math.hypot(pr.vx, pr.vy); pr.vx += (Math.cos(a) * sp - pr.vx) * dt * 1.5; pr.vy += (Math.sin(a) * sp - pr.vy) * dt * 1.5; }
-    pr.x += pr.vx * dt; pr.y += pr.vy * dt; pr.life -= dt;
-    const b = g[tileOf(pr.y) * WW + tileOf(pr.x)]; let dead = pr.life <= 0;
-    if (b === 1 || b === 2 || b === 3) { dead = true; if (pr.kind === 'fireball') explode(gs, pr, now); else fx('ping', { x: pr.x, y: pr.y, kind: pr.kind }); if (pr.kind === 'arrow' && b === 2) { /* arrow sticks */ } }
+    if (pr.homing && !p.dead && los(r, pr.x, pr.y, p.x, p.y, true)) { const a = Math.atan2(p.y - pr.y, p.x - pr.x); const sp = Math.hypot(pr.vx, pr.vy); pr.vx += (Math.cos(a) * sp - pr.vx) * dt * 1.5; pr.vy += (Math.sin(a) * sp - pr.vy) * dt * 1.5; }
+    // Sweep the projectile: a fast shot cannot skip a one-cell wall in one frame.
+    const ox = pr.x, oy = pr.y, nx = ox + pr.vx * dt, ny = oy + pr.vy * dt;
+    const steps = Math.max(1, Math.ceil(dist(ox, oy, nx, ny) / 2)); let blocked = false, b = 0;
+    for (let j = 1; j <= steps; j++) {
+      const x = ox + (nx - ox) * j / steps, y = oy + (ny - oy) * j / steps;
+      b = g[tileOf(y) * WW + tileOf(x)];
+      if (b === 1 || b === 2 || b === 3 || b === 5 || !clearPhysicalLine(r, pr, { x, y }, true)) { blocked = true; break; }
+      pr.x = x; pr.y = y;
+    }
+    pr.life -= dt; let dead = pr.life <= 0;
+    if (blocked) { dead = true; if (pr.kind === 'fireball') explode(gs, pr, now); else fx('ping', { x: pr.x, y: pr.y, kind: pr.kind }); }
     else if (pr.from === 'enemy' && dist(pr.x, pr.y, p.x, p.y) < pr.r + 4) { dead = true; if (pr.kind === 'mine') { fx('boom', { x: pr.x, y: pr.y, small: true }); } hurtPlayer(gs, pr.dmg, pr.x - pr.vx, pr.y - pr.vy, 'projectile', now, 100); }
     else if (pr.from === 'player') { for (const m of r.creatures) { if (m.state === 'dead') continue; const rr = m.elder ? ELDERS[m.elder.key].r : 6; if (dist(pr.x, pr.y, m.x, m.y) < rr + pr.r) { dead = true; if (pr.kind === 'fireball') explode(gs, pr, now); else damageCreature(gs, m, pr.dmg, Math.atan2(pr.vy, pr.vx), now, 80); break; } } }
     if (dead && pr.kind === 'fireball' && pr.life <= 0) explode(gs, pr, now);
@@ -600,6 +621,19 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     stepGardensBarrels(gs, dt, isWet(weather));
     decayTraces(r, dt, weather);
     r.clock.simMs += dt; t += dt;
+    // Offline time cannot confirm a fresh sighting or retain an expired mark.
+    // Keep committed tells/attacks intact; they resume, not resolve speculatively.
+    if (!visual) {
+      const live = new Set(r.traces.filter(tr => tr.id && tr.chainId).map(tr => `${tr.chainId}:${tr.id}`));
+      for (const m of r.creatures) {
+        const k = m.knows;
+        if (k && (k.kind === 'sight' ? t - k.at > 4000 : !k.traceId || !k.chainId || !live.has(`${k.chainId}:${k.traceId}`))) {
+          if (k.kind === 'trace') m.traceIgnore = k.chainId;
+          m.knows = null; m.path = null;
+          if (m.state === 'track' || m.state === 'chase') { m.state = 'wander'; m.t = 0; }
+        }
+      }
+    }
     let dirty = false; for (const k in r.terrain) { const m = r.terrain[k]; if (m.until && m.until <= r.clock.simMs) { delete r.terrain[k]; dirty = true; } } if (dirty) markDirty();
     resolveFires(gs, t, visual);
   }
@@ -622,6 +656,7 @@ export function syncWorld(gs: GameState, now: number): boolean {
 // ---------- main tick ----------
 export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   const r = gs.run; if (!r || r.ended) return;
+  bindCombat(r);
   dtMs = Math.max(0, Math.min(dtMs, 50));
   if (!syncWorld(gs, now)) { if (!gs.run) fx('banner', { text: 'The run has ended', sub: 'Ragnarok consumed the island.' }); return; }
   const ph = phaseOf(r, now);
@@ -722,7 +757,12 @@ export function settle(gs: GameState, now: number, silent = false): string[] {
   if (silent || gap < 4000) return [];
   const hrs = gap / 3600000;
   report.unshift(`Away for ${hrs >= 1 ? hrs.toFixed(1) + ' h' : Math.round(gap / 60000) + ' min'}.`);
-  if (wetMs) report.push(`Rain fell for ~${Math.round(wetMs / 60000)} min — footprints washed out, gardens and barrels drank.`);
+  report.push('Creatures did not move or attack while away; unresolved encounters resume on return.');
+  if (!p.dead) {
+    const nearby = r.traces.filter(tr => dist(p.x, p.y, tr.x, tr.y) <= 64 && los(r, p.x, p.y, tr.x, tr.y, true)).length;
+    report.push(`Here: ${sheltered ? 'sheltered' : 'not sheltered'}; ${weatherAt(r, end)}; ${nearby} visible nearby footprint${nearby === 1 ? '' : 's'}.`);
+  }
+  if (wetMs) report.push(`Rain fell for ~${Math.round(wetMs / 60000)} min, accelerating footprint decay; exposed gardens and barrels could collect water.`);
   if (Math.round(startHunger - p.hunger) > 0) report.push(`Hunger ${Math.round(startHunger)} → ${Math.round(p.hunger)}${sheltered ? ' (sheltered: hunger cannot kill you)' : ''}.`);
   if (!p.dead && startHp - p.hp >= 1) report.push(`HP ${Math.round(startHp)} → ${Math.round(p.hp)}.`);
   receipt(r, now, 'offline.settle', `${Math.round(gap / 1000)}s`);

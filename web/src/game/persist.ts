@@ -1,7 +1,7 @@
 // Local-first snapshots: one serialized profile + run + receipts per write.
 // Checksums detect accidental damage, not malicious edits or rollback of all copies.
 import { BAL, SAVE_VERSION, type GameState, type Stack } from './core';
-import { ITEMS, RECIPES, STRUCTS, SOURCES } from './catalog';
+import { ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS } from './catalog';
 import { newGame } from './engine';
 import { getWorld, hasLayout } from './world';
 import { mapDigest } from './map-package';
@@ -46,6 +46,14 @@ export function validate(raw: any): GameState | null {
   if (r.sourceLayoutVersion !== 3 && r.sourceMap !== undefined) return null;
   if (!['x','y','hp','stamina','hunger','thirst','warmth','rad','active'].every(k => finite(r.player[k])) || !obj(r.player.skills) || typeof r.player.dead !== 'boolean' || !finite(r.clock.lastSimAt) || !finite(r.clock.simMs) || !finite(r.clock.respawnAcc) || !finite(r.clock.weatherSlot)) return null;
   if (!Array.isArray(r.creatures) || !obj(r.sources) || !obj(r.terrain) || !obj(r.knowledge) || !stringArray(r.knowledge.recipes) || !stringArray(r.knowledge.studied) || !r.knowledge.recipes.every((k: string) => has(RECIPES, k)) || !Array.isArray(r.traces) || !Array.isArray(r.discovered) || !stringArray(r.poiSeen) || !stringArray(r.elderStones) || !stringArray(r.achievements) || !Array.isArray(r.receipts) || !stringArray(r.seenIntents) || !obj(r.vendorStock) || !Object.values(r.vendorStock).every(integer) || !integer(r.score) || !integer(r.deposited) || !Array.isArray(r.log)) return null;
+  // Old saves have no combat record. New records preserve committed effects,
+  // but malformed effects must not become executable hazards on load.
+  if (r.combat !== undefined) {
+    const c = r.combat;
+    if (!obj(c) || !Array.isArray(c.projectiles) || !Array.isArray(c.hazards) || c.projectiles.length > 5000 || c.hazards.length > 5000) return null;
+    if (c.projectiles.some((q: any) => !obj(q) || !['x','y','vx','vy','life','dmg','r'].every(k => finite(q[k])) || !['player','enemy'].includes(q.from) || typeof q.kind !== 'string' || (q.delay !== undefined && !finite(q.delay)) || (q.homing !== undefined && !finite(q.homing)))) return null;
+    if (c.hazards.some((h: any) => !obj(h) || !['circle','line','ring','wave','sweep','pool'].includes(h.kind) || !['x','y','t','tell','dur','dmg'].every(k => finite(h[k])) || typeof h.style !== 'string' || (h.elder !== undefined && !has(ELDERS, h.elder)) || ['r','angle','len','w','tickAcc','a0','a1'].some(k => h[k] !== undefined && !finite(h[k])))) return null;
+  }
   if (r.sourceLayoutVersion === 3) for (const [key, st] of Object.entries(r.sources) as [string, any][]) {
     const i=Number(key); if (!Number.isInteger(i) || String(i)!==key || i<0 || i>=world.sourceV3.length || !world.sourceV3[i] || !obj(st)) return null;
     const def=SOURCES[st.burnt ? 'deadtree' : world.sourceV3[i]!];

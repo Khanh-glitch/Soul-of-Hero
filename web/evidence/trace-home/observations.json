@@ -1,0 +1,100 @@
+{
+  "inputTravel": 140.3943839999955,
+  "generatedTraceCount": 13,
+  "results": [
+    {
+      "scenario": "valid-trail",
+      "width": 640,
+      "height": 360,
+      "initialWolfX": 842.2997439999998,
+      "x": 861.5432396431005,
+      "y": 364.06721870511365,
+      "state": "track",
+      "knows": {
+        "kind": "trace",
+        "x": 870.8823839999992,
+        "y": 365,
+        "at": 1793717157588,
+        "traceId": "tr7f",
+        "chainId": "tr7d"
+      },
+      "door": 140,
+      "playerX": 990.6885119999951,
+      "traces": 14
+    },
+    {
+      "scenario": "valid-trail",
+      "width": 1280,
+      "height": 720,
+      "initialWolfX": 842.2997439999998,
+      "x": 860.565240404695,
+      "y": 363.9701678841436,
+      "state": "track",
+      "knows": {
+        "kind": "trace",
+        "x": 870.8823839999992,
+        "y": 365,
+        "at": 1793717157588,
+        "traceId": "tr7f",
+        "chainId": "tr7d"
+      },
+      "door": 140,
+      "playerX": 992.5642559999951,
+      "traces": 14
+    },
+    {
+      "scenario": "broken-trail",
+      "width": 640,
+      "height": 360,
+      "initialWolfX": 842.2997439999998,
+      "x": 850.8470055142576,
+      "y": 361.3161658078565,
+      "state": "wander",
+      "knows": null,
+      "ignore": "tr7d",
+      "door": 140,
+      "playerX": 991.620767999995,
+      "traces": 13
+    },
+    {
+      "scenario": "broken-trail",
+      "width": 1280,
+      "height": 720,
+      "initialWolfX": 842.2997439999998,
+      "x": 850.8495932495917,
+      "y": 361.31605752193514,
+      "state": "wander",
+      "knows": null,
+      "ignore": "tr7d",
+      "door": 140,
+      "playerX": 991.626383999995,
+      "traces": 13
+    },
+    {
+      "scenario": "undiscovered-home",
+      "width": 640,
+      "height": 360,
+      "initialWolfX": 954,
+      "x": 955.72753,
+      "y": 360,
+      "state": "wander",
+      "knows": null,
+      "door": 140,
+      "playerX": 990.6941279999951,
+      "traces": 1
+    },
+    {
+      "scenario": "undiscovered-home",
+      "width": 1280,
+      "height": 720,
+      "initialWolfX": 954,
+      "x": 955.72494,
+      "y": 360,
+      "state": "wander",
+      "knows": null,
+      "door": 140,
+      "playerX": 990.6941279999952,
+      "traces": 1
+    }
+  ]
+}

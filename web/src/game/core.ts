@@ -11,6 +11,10 @@ export const WORLD_SEED = 0x50f1; // LOCKED_CANON: stable geography across runs
 export const SAVE_VERSION = 3;
 export const HOUR = 3600_000;
 
+// Committed physical combat effects are run-local and resume after an offline gap.
+export interface Proj { x: number; y: number; vx: number; vy: number; life: number; dmg: number; from: 'player' | 'enemy'; kind: string; r: number; delay?: number; homing?: number; owner?: string }
+export interface Haz { kind: 'circle' | 'line' | 'ring' | 'wave' | 'sweep' | 'pool'; x: number; y: number; r?: number; angle?: number; len?: number; w?: number; t: number; tell: number; dur: number; dmg: number; style: string; effect?: string; hit?: boolean; tickAcc?: number; a0?: number; a1?: number; done?: boolean; owner?: string; elder?: string }
+
 // ---------- Seeded RNG ----------
 export function mulberry(seed: number) {
   let a = seed >>> 0;
@@ -122,6 +126,8 @@ export interface RunState {
   custody: Record<string, Container>;
   knowledge: { recipes: string[]; studied: string[] };
   traces: Trace[];
+  /** Additive: absent in old saves; physical combat remains unresolved while away. */
+  combat?: { projectiles: Proj[]; hazards: Haz[] };
   traceWalk?: TraceWalk;
   discovered: number[]; // 4x4-tile cells
   poiSeen: string[];
