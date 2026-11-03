@@ -1,6 +1,6 @@
 # Implementation checkpoint — issue #37, Map/POI milestone and prior Salt chain
 
-## Current Map/POI milestone (implementation complete; CI/browser evidence pending)
+## Map/POI milestone — recorded technical evidence; product review pending
 
 Control Tower accepted only the focused Salt Shale → Salted Roast checkpoint and ordered this prototype-first follow-on; PR #38 remains draft/unmerged. The current changes add a typed `schemaVersion: 1` content-pack model in `src/game/content.ts`, a selectable development layout, and a data-authored multi-stage POI, reusing existing door, keycard, generator, fuel, container, inventory, save and rendering systems. There are no POI-ID-specific controller branches.
 
@@ -8,12 +8,13 @@ Control Tower accepted only the focused Salt Shale → Salted Roast checkpoint a
 - `dev_delta` adds a ridge layout with two passable gaps and the Delta Relay: exterior keycard/fuel cache → lawful keycard gate → fuel-powered generator → power gate → finite, useful vault loot.
 - Layout selection is available on the ordinary New Run screen. New runs persist `layoutId`; a legacy in-progress save without the additive field resolves to `shipping` without bumping the save format.
 - Content-pack tests cover supported versions, invalid dimensions/terrain/loot/geometry, old geography/POI stability, layout selection and run association. Local result: `npm test` 20/20, `npx tsc --noEmit`, `npm run build`, `node --check e2e/map-poi.mjs`, and `git diff --check` all pass.
-- `e2e/map-poi.mjs` and the workflow now run actual WASD/E/UI journeys for the shipping Factory Vault from Pinewatch and the dev Delta Relay from Eastcove, with unauthorized attempts, legal access, finite loot, exit/re-entry, page reload persistence and screenshots at 640×360 and 1280×720. **This browser journey has not yet run in CI; no screenshot has been visually accepted yet.** After the run, record its exact SHA/run ID/attempt/seed and inspect the captures, especially the title selector, HUD and simultaneous crate/inventory panels.
-- Browser persistence planned here means same-profile page reload + Continue, not OS-process exit/new-profile persistence. Waypoints are selected by test-side BFS; ordinary input performs all in-game movement and interactions. This is not blind-discoverability proof.
+- [Actions run 41567023346](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41567023346), attempt 1, at `a70c9141920b13b93d651754182c05bfdb1d3c9a`, passed all three jobs: Salt journey, shipping Lighthouse and dev Delta Relay. This was merged by PR #40 into the primary Web branch at `3b37ae90601dee098066cbc4cf465552f1eb6f04`; it does not establish a separate CI run at the merge SHA.
+- Independent **local precommit** production-preview runs passed lawful access, physical loot, exit/re-entry and same-profile page reload + Continue: shipping `run_abqeh`, seed `17343593`; dev_delta `run_eltb8`, seed `24532388`. Their loot-panel screenshots at both 640×360 and 1280×720 were opened and inspected: see [`evidence/map-poi-local/`](evidence/map-poi-local/README.md). These local logs say `local-uncommitted`; do not conflate their seeds or images with CI's. CI artifact downloads were unavailable, so CI screenshots have **not** been independently opened here.
+- Waypoints were selected by test-side BFS and movement/interactions used ordinary inputs. This is not blind discovery, separate browser-process persistence, universal seed robustness, or human/product acceptance. The broader HOME → OFFLINE → RETURN E2E campaign is on HOLD per [Control Tower](https://github.com/Khanh-glitch/Soul-of-Hero/issues/37#issuecomment-6594382124).
 
-Historical evidence below records the earlier accepted gameplay checkpoint only. A reviewer flagged a seed mismatch between its narrative and committed run log; do not use that old seed to identify the upcoming Map/POI captures. Pair new run IDs, seed, exact SHA and screenshots from the same CI attempt.
+Historical evidence below records the earlier Salt checkpoint. A reviewer flagged a seed mismatch between its narrative and committed run log; treat that seed as unresolved, not as Map/POI provenance.
 
-**Historical scope:** one normal-player resource-to-workstation chain in the existing browser game. This is an evidence handoff, not a new specification. Canonical product contract remains authoritative: [`CURRENT_PRODUCT_CONTRACT.md`](../docs/survival/CURRENT_PRODUCT_CONTRACT.md). Review request: [Issue #37, Control Tower comment 6580050099](https://github.com/Khanh-glitch/Soul-of-Hero/issues/37#issuecomment-6580050099).
+**Historical scope:** one normal-player resource-to-workstation chain in the existing browser game. This is an evidence handoff, not a new specification. Canonical product contract remains authoritative: [`web/ref/bible.md`](ref/bible.md) (byte-identical to the Issue #37 pinned canonical contract). Review request: [Issue #37, Control Tower comment 6580050099](https://github.com/Khanh-glitch/Soul-of-Hero/issues/37#issuecomment-6580050099).
 
 ## Gate result
 
@@ -67,4 +68,4 @@ npm run dev -- --host 0.0.0.0 --port 5173
 
 ## Next step
 
-Push the focused implementation to `arena/4795760e-soul-of-hero`, run the workflow's retained Salt Shale journey plus the new two-layout browser journey, and inspect the actual matched 640×360 / 1280×720 screenshots. Update the current milestone section with the exact successful Actions run ID, attempt, branch SHA, per-layout run IDs/seeds, outcomes, and any UI findings. Keep PR #38 draft and unmerged for product review. Do not expand beyond this acceptance chain. Original donor ZIP remains unchanged (SHA-256 `fa95538271fd46a70f5737b58b8671124e091e8f6196479950a25dca741a2403`).
+Keep PR #38 draft and unmerged. The next authorized action is the gameplay audit, not the held HOME → OFFLINE → RETURN campaign; its handoff is in [`docs/survival/WEB_GAMEPLAY_AUDIT_3b37ae9.md`](../docs/survival/WEB_GAMEPLAY_AUDIT_3b37ae9.md). Preserve the existing Salt and Map/POI tests and evidence. Original donor ZIP remains unchanged (SHA-256 `fa95538271fd46a70f5737b58b8671124e091e8f6196479950a25dca741a2403`).
