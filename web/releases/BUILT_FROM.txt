@@ -1,12 +1,12 @@
 soh-pixelfx-pilot-offline.html — provenance
 ============================================
 
-source-code commit : a5f666308522307358c270e541785539dd4c8784
+source-code commit : f797d5f654b5c1b042ac31a70a292b6160d2c39e
   (branch arena/3337c864-soul-of-hero; all game + pixelfx source, QA script, docs)
 artifact commit    : recorded in PR #39 body (this file ships in the same commit as the
   artifact, so its own SHA is listed there; it is retrievable via
   https://github.com/Khanh-glitch/Soul-of-Hero/tree/<artifact-sha>/web/releases )
-artifact sha256    : 53fe10ce5feaafaab11fe30a8fdf0f315bb27938bf87f331a1dbbb6772e2124e
+artifact sha256    : 2a7ccc456eed6b5a4366d3a81fb45636d32f9949c7997edd5e6448eb3a5fd6ca
   (sha256sum web/releases/soh-pixelfx-pilot-offline.html)
 
 build commands (run from web/ at the source-code commit above):
