@@ -2,7 +2,7 @@
 // Rule: validate EVERYTHING first, then commit. Failed preconditions never partially debit.
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
-import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING } from './catalog';
+import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES } from './catalog';
 import { getWorld, getActiveLayout, SRC_KEYS, tileAt } from './world';
 import { sourceDigest } from './world-economy';
 import { mapDigest } from './map-package';
@@ -535,6 +535,19 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       rest.sort((a, b) => order.indexOf(ITEMS[a.key].cat) - order.indexOf(ITEMS[b.key].cat) || a.key.localeCompare(b.key));
       const out = it.c === 'inv' ? [...keep.map(s => (s && s.qty > 0 ? s : null))] : []; while (out.length < c.slots.length) out.push(rest.shift() || null); c.slots = out; return ok('sort', c.id); }
     case 'drop': { const c = C(r, it.c); const s = c && validSlot(c, it.slot) ? c.slots[it.slot] : null; if (!s || !canAccess(r, it.c)) return fail('Nothing to drop.'); c.slots[it.slot] = null; if (p.pulling && s.key === 'x') p.pulling = null; dropStackEntity(r, s, p.x + Math.cos(p.aim) * 12, p.y + Math.sin(p.aim) * 12, now); return ok('drop', `${s.key}x${s.qty}`); }
+    case 'upgradeStructure': {
+      const e = r.entities[it.eid];
+      if (!e || e.kind !== 'struct' || !owned(e) || !near(r, e, 3)) return fail('Use your structure within reach.');
+      const target = STRUCTURE_UPGRADES[e.type!], next = target && STRUCTS[target];
+      if (!next || e.deployed || e.station || e.farm || e.garden || !Number.isFinite(e.hp) || !Number.isFinite(e.maxHp) || e.hp! <= 0 || e.maxHp! <= 0) return fail('No in-place upgrade for this structure.');
+      const chest = e.c ? C(r, e.c) : null;
+      if (next.slots && (!chest || chest.kind !== 'chest' || chest.slots.length > next.slots)) return fail('Storage is invalid; no materials spent.');
+      if (!hasAll(r, 'inv', next.cost)) return fail('Missing upgrade materials: ' + next.cost.filter(([k,q]) => countItem(r,'inv',k) < q).map(([k,q]) => `${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(', '));
+      for (const [k,q] of next.cost) removeItem(r, 'inv', k, q);
+      const old = e.type, fraction = Math.min(1, e.hp! / e.maxHp!); e.type = target; e.maxHp = next.hp; e.hp = Math.max(1, Math.floor(next.hp * fraction));
+      if (chest && next.slots) while (chest.slots.length < next.slots) chest.slots.push(null);
+      markDirty(); return ok('structure.upgrade', `${e.id}:${old}->${target}`, `${next.name}: ${Math.round(e.hp)}/${e.maxHp} HP (condition preserved).`);
+    }
     case 'repairStructure': {
       const e = r.entities[it.eid];
       if (!e || e.kind !== 'struct' || !owned(e) || !near(r, e, 3)) return fail('Use your structure within reach.');

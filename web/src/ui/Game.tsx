@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { BAL, TILE, WW, VIEW_W, VIEW_H, HOUR, type GameState } from '../game/core';
-import { ITEMS, STRUCTS, ELDERS, CREATURES } from '../game/catalog';
+import { ITEMS, STRUCTS, ELDERS, CREATURES, STRUCTURE_UPGRADES } from '../game/catalog';
 import { dispatch, phaseOf, runHours, dayTime, weatherAt, weatherSlot, countItem, C, entsAt, cartWeight, cartLimit, effTile, isRagnarok } from '../game/engine';
 import { tick, syncWorld, findInteract, activeStack, SPEED_KEY, type Input, type Interact } from '../game/sim';
 import { draw, consumeFX, cam } from '../game/render';
@@ -15,12 +15,12 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
   const [, setFrame] = useState(0); const rerender = useCallback(() => setFrame(f => f + 1), []);
   const [panel, setPanel] = useState<PanelState | null>(report && report.length ? { kind: 'report', lines: report } : null);
   const [sel, setSel] = useState<{ c: string; slot: number } | null>(null);
-  const [buildType, setBuildType] = useState<string | null>(null); const [reclaim, setReclaim] = useState(false); const [repairMode, setRepairMode] = useState(false);
+  const [buildType, setBuildType] = useState<string | null>(null); const [reclaim, setReclaim] = useState(false); const [repairMode, setRepairMode] = useState(false); const [upgradeMode, setUpgradeMode] = useState(false);
   const [toasts, setToasts] = useState<{ id: number; text: string; tone?: string; t: number }[]>([]);
   const [banner, setBanner] = useState<{ text: string; sub?: string; id: number } | null>(null);
   const inp = useRef<Input>({ up: false, down: false, left: false, right: false, mx: 0, my: 0, attack: false, attackPressed: false, roll: false, cancel: false });
   const mouse = useRef({ x: 320, y: 180 }); const target = useRef<Interact | null>(null); const hitstop = useRef(0);
-  const panelRef = useRef(panel); panelRef.current = panel; const buildRef = useRef(buildType); buildRef.current = buildType; const reclaimRef = useRef(reclaim); reclaimRef.current = reclaim; const repairRef = useRef(repairMode); repairRef.current = repairMode;
+  const panelRef = useRef(panel); panelRef.current = panel; const buildRef = useRef(buildType); buildRef.current = buildType; const reclaimRef = useRef(reclaim); reclaimRef.current = reclaim; const repairRef = useRef(repairMode); repairRef.current = repairMode; const upgradeRef = useRef(upgradeMode); upgradeRef.current = upgradeMode;
   const saveT = useRef<any>(null); const toastKeys = useRef<Record<string, number>>({});
   const scheduleSave = () => { clearTimeout(saveT.current); saveT.current = setTimeout(() => { void save(gs).then(ok => { if (!ok) toast('Save failed. Changes are not confirmed on disk.', 'bad'); }); }, 250); };
   const toast = useCallback((text: string, tone?: string) => { if (!text) return; const k = text; const n = Date.now(); if (toastKeys.current[k] && n - toastKeys.current[k] < 2500) return; toastKeys.current[k] = n; setToasts(t => [...t.slice(-3), { id: n + Math.random(), text, tone, t: n }]); }, []);
@@ -78,11 +78,12 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
         case 'KeyE': interact(); break;
         case 'KeyF': { const c = Object.values(r.entities).find(x => x.kind === 'cart' && Math.hypot(x.x - r.player.x, x.y - r.player.y) < 34); if (c) { act('grabCart', { eid: c.id }); } else if (r.player.pulling) act('grabCart', { eid: r.player.pulling }); else toast('No cart within reach.'); break; }
         case 'KeyI': toggle('inv'); break; case 'KeyC': toggle('craft'); break; case 'KeyM': toggle('map'); break;
-        case 'KeyB': setBuildType(null); setReclaim(false); setRepairMode(false); toggle('build'); break;
-        case 'KeyX': setReclaim(v => !v); setBuildType(null); setRepairMode(false); break;
-        case 'KeyV': setRepairMode(v => !v); setBuildType(null); setReclaim(false); break;
+        case 'KeyB': setUpgradeMode(false); setBuildType(null); setReclaim(false); setRepairMode(false); toggle('build'); break;
+        case 'KeyU': setUpgradeMode(v => !v); setBuildType(null); setReclaim(false); setRepairMode(false); break;
+        case 'KeyX': setUpgradeMode(false); setReclaim(v => !v); setBuildType(null); setRepairMode(false); break;
+        case 'KeyV': setUpgradeMode(false); setRepairMode(v => !v); setBuildType(null); setReclaim(false); break;
         case 'KeyR': { const t = Object.values(r.entities).find(x => x.type === 'research' && Math.hypot(x.x - r.player.x, x.y - r.player.y) < 3 * TILE); if (t) setPanel({ kind: 'container', eid: t.id }); else toast('Research needs a Research Table within reach (build one on your claim).'); break; }
-        case 'Escape': if (buildRef.current || reclaimRef.current || repairRef.current) { setBuildType(null); setReclaim(false); setRepairMode(false); } else if (panelRef.current) setPanel(null); else setPanel({ kind: 'menu' }); setSel(null); break;
+        case 'Escape': if (buildRef.current || reclaimRef.current || repairRef.current || upgradeRef.current) { setUpgradeMode(false); setBuildType(null); setReclaim(false); setRepairMode(false); } else if (panelRef.current) setPanel(null); else setPanel({ kind: 'menu' }); setSel(null); break;
         default: if (/^Digit[1-8]$/.test(e.code)) { r.player.active = +e.code.slice(5) - 1; rerender(); }
       }
     };
@@ -121,11 +122,12 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
   const onMouseMove = (e: React.MouseEvent) => { const s = scaleRef.current; mouse.current = { x: (e.clientX - offRef.current.x) / s, y: (e.clientY - offRef.current.y) / s }; };
   const onMouseDown = (e: React.MouseEvent) => {
     initAudio(); const r = gs.run; if (!r) return; onMouseMove(e);
-    if (e.button === 2) { inp.current.cancel = true; setBuildType(null); setReclaim(false); setRepairMode(false); return; }
+    if (e.button === 2) { inp.current.cancel = true; setBuildType(null); setReclaim(false); setRepairMode(false); setUpgradeMode(false); return; }
     if (e.button !== 0) return;
     if (panel && ['menu', 'report', 'evac'].includes(panel.kind)) return;
     const wx = mouse.current.x + Math.round(cam.x), wy = mouse.current.y + Math.round(cam.y); const tx = Math.floor(wx / 16), ty = Math.floor(wy / 16);
     if (buildType) { const res = act('build', { struct: buildType, tx, ty }); if (res.ok && buildType === 'escrow') setBuildType(null); return; }
+    if (upgradeMode) { const ents = entsAt(r, tx, ty).filter(x => x.kind === 'struct' && STRUCTURE_UPGRADES[x.type!]); const order = ['wall', 'obj', 'roof', 'floor']; ents.sort((a,b)=>order.indexOf(STRUCTS[a.type!].layer)-order.indexOf(STRUCTS[b.type!].layer)); if (ents[0]) act('upgradeStructure', { eid: ents[0].id }); else toast('No upgradeable structure there.'); return; }
     if (repairMode) { const ents = entsAt(r, tx, ty).filter(x => x.kind === 'struct'); const order = ['roof', 'obj', 'wall', 'floor']; ents.sort((a, b) => order.indexOf(STRUCTS[a.type!].layer) - order.indexOf(STRUCTS[b.type!].layer)); if (ents[0]) act('repairStructure', { eid: ents[0].id }); else toast('No structure there.'); return; }
     if (reclaim) { const ents = entsAt(r, tx, ty).filter(x => x.kind === 'struct'); const order = ['roof', 'obj', 'wall', 'floor']; ents.sort((a, b) => order.indexOf(STRUCTS[a.type!].layer) - order.indexOf(STRUCTS[b.type!].layer)); const cart = Object.values(r.entities).find(x => x.kind === 'cart' && Math.hypot(x.x - wx, x.y - wy) < 12); if (ents[0]) act('reclaim', { eid: ents[0].id }); else if (cart) act('reclaim', { eid: cart.id }); else toast('Nothing of yours to reclaim there.'); return; }
     const s = activeStack(r); if (s?.key === 'escrow_chest') { setBuildType('escrow'); toast('Place the Rương ký gửi on your claimed land.'); return; }
@@ -147,7 +149,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
   const zone = ZONES[getWorld().zone[Math.floor(p.y / 16) * WW + Math.floor(p.x / 16)]];
   const heldCash = countItem(r, 'inv', 'rcash'); const surf = SPEED_KEY[effTile(r, Math.floor(p.x / 16), Math.floor(p.y / 16))] || '';
 
-  return <div style={{ position: 'fixed', inset: 0, cursor: buildType || reclaim || repairMode ? 'cell' : 'crosshair' }} onMouseMove={onMouseMove} onMouseDown={onMouseDown} onMouseUp={onMouseUp} onContextMenu={e => e.preventDefault()}>
+  return <div style={{ position: 'fixed', inset: 0, cursor: buildType || reclaim || repairMode || upgradeMode ? 'cell' : 'crosshair' }} onMouseMove={onMouseMove} onMouseDown={onMouseDown} onMouseUp={onMouseUp} onContextMenu={e => e.preventDefault()}>
     <div ref={stageRef} className="stage" style={{ transform: `translate(${off.x}px, ${off.y}px) scale(${scale})` }}>
       <canvas ref={cvRef} width={VIEW_W} height={VIEW_H} style={{ width: VIEW_W, height: VIEW_H }} />
       {/* top-left vitals */}
@@ -169,7 +171,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       {/* interaction prompt */}
       {tgt && ts && !panel && <div className="absolute" style={{ left: Math.round(ts.x), top: Math.round(ts.y) - 34, transform: 'translateX(-50%)', fontSize: 10, background: '#120c18e0', border: '1px solid #5a4a6a', padding: '0 4px', whiteSpace: 'nowrap', pointerEvents: 'none' }}><span style={{ color: '#ffe27a' }}>[E]</span> {tgt.label}{targetHp && <span style={{ color: '#ffb66a' }}>{targetHp}</span>}</div>}
       {/* build helper */}
-      {(buildType || reclaim || repairMode) && <div className="panel absolute" style={{ left: 160, bottom: 34, width: 320, padding: '2px 6px', fontSize: 10, textAlign: 'center' }} onMouseDown={e => e.stopPropagation()}>{buildType ? <>Placing <b style={{ color: '#ffd98a' }}>{STRUCTS[buildType].name}</b> — {STRUCTS[buildType].cost.map(([k, q]) => `${ITEMS[k].name} ${countItem(r, 'inv', k)}/${q}`).join(', ')} · RMB/Esc stop</> : repairMode ? <>Repair mode — click your structure · V/Esc stop · pays ¼ build materials for ¼ HP</> : <>Reclaim mode — click your structure · X/Esc stop</>}</div>}
+      {(buildType || reclaim || repairMode || upgradeMode) && <div className="panel absolute" style={{ left: 160, bottom: 34, width: 320, padding: '2px 6px', fontSize: 10, textAlign: 'center' }} onMouseDown={e => e.stopPropagation()}>{buildType ? <>Placing <b style={{ color: '#ffd98a' }}>{STRUCTS[buildType].name}</b> — {STRUCTS[buildType].cost.map(([k, q]) => `${ITEMS[k].name} ${countItem(r, 'inv', k)}/${q}`).join(', ')} · RMB/Esc stop</> : upgradeMode ? <>Upgrade mode — click structure · U/Esc stop · pays full new tier; condition preserved</> : repairMode ? <>Repair mode — click your structure · V/Esc stop · pays ¼ build materials for ¼ HP</> : <>Reclaim mode — click your structure · X/Esc stop</>}</div>}
       {/* cargo */}
       {cart && <div className="panel absolute" style={{ left: 4, bottom: 30, padding: '2px 5px', fontSize: 10 }}>🛒 Cart {cartWeight(r, cart.c!).toFixed(0)}/{cartLimit(cart)} kg · {(() => { const t = effTile(r, Math.floor(cart.x / 16), Math.floor(cart.y / 16)); const k = SPEED_KEY[t]; return k === 'road' || k === 'bridge' || k === 'floor' ? <span style={{ color: '#9ae0a0' }}>on road ×{BAL.cart.speedOnRoad}</span> : ['forest', 'marsh', 'hill', 'snow'].includes(k) ? <span style={{ color: '#ff9a7a' }}>rough ×{BAL.cart.speedRough}</span> : <span style={{ color: '#ffd98a' }}>off-road ×{BAL.cart.speedOffRoad}</span>; })()} · [F] release</div>}
       {/* log */}

@@ -216,7 +216,7 @@ export function BuildPanel({ api }: { api: Api }) {
           <div className="flex items-center gap-1"><img className="px" src={iconUrlSt(k)} style={{ width: 16, height: 16, objectFit: 'contain' }} alt="" /><span style={{ fontSize: 10 }}>{d.name}</span></div>
           <div style={{ fontSize: 9 }}><Cost ins={d.cost} have={have(api)} /></div></button>; })}
     </div>
-    <div className="flex gap-2 items-center" style={{ marginTop: 4, fontSize: 10, color: '#cfc2dc' }}><button className={`btn ${api.reclaim ? 'gold' : ''}`} onClick={() => { api.setReclaim(!api.reclaim); api.setBuild(null); api.setRepairMode(false); api.open(null); }}>Reclaim mode [X]</button> <button className="btn" onClick={() => { api.setRepairMode(!api.repairMode); api.setBuild(null); api.setReclaim(false); api.open(null); }}>Repair mode [V]</button> Left-click to place · right-click/Esc to stop · reclaim refunds {Math.round(BAL.economy.reclaimRefund * 100)}% and bags any stored contents.</div>
+    <div className="flex gap-2 items-center" style={{ marginTop: 4, fontSize: 10, color: '#cfc2dc' }}><button className={`btn ${api.reclaim ? 'gold' : ''}`} onClick={() => { api.setReclaim(!api.reclaim); api.setBuild(null); api.setRepairMode(false); api.open(null); }}>Reclaim mode [X]</button> <button className="btn" onClick={() => { api.setRepairMode(!api.repairMode); api.setBuild(null); api.setReclaim(false); api.open(null); }}>Repair mode [V]</button> Upgrade [U] · Left-click to place · right-click/Esc to stop · reclaim refunds {Math.round(BAL.economy.reclaimRefund * 100)}% and bags any stored contents.</div>
   </Panel>;
 }
 import { iconUrl } from './common';

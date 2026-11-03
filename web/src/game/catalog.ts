@@ -248,6 +248,8 @@ export const STRUCTS: Record<string, StructDef> = {
   torch_post: { name: 'Torch Post', cost: [['wood', 2], ['torch', 1]], hp: 40, need: 'claim', block: true, layer: 'obj', light: 80, desc: 'Permanent light.' },
   escrow: { name: 'Rương ký gửi', cost: [['escrow_chest', 1]], hp: 400, need: 'claim', block: true, layer: 'obj', desc: 'Deposit physical Ragnarok cash into profile-secured cash.', item: 'escrow_chest' },
 };
+/** Full target materials are paid again; condition is preserved, never a free repair. */
+export const STRUCTURE_UPGRADES: Record<string, string> = { floor_wood: 'floor_stone', wall_wood: 'wall_stone', wall_stone: 'wall_brick', door_wood: 'door_iron', roof_thatch: 'roof_tile', chest_small: 'chest_large' };
 export const BUILD_ORDER = ['claim', 'floor_wood', 'floor_stone', 'wall_wood', 'wall_stone', 'wall_brick', 'door_wood', 'door_iron', 'roof_thatch', 'roof_tile', 'bed_straw', 'chest_small', 'chest_large', 'campfire', 'furnace', 'workbench', 'research', 'garden', 'barrel', 'farm_controller', 'spikes', 'barricade', 'torch_post', 'escrow'];
 
 // Run-2 vendor stock purchasable with SECURED profile cash (PROPOSED prices) → run-local items
