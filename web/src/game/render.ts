@@ -220,7 +220,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   drawFx(g, dtMs, time);
   // build ghost / target
   if (o.buildType || o.reclaim) { const tx = Math.floor(o.mouseX / 16), ty = Math.floor(o.mouseY / 16);
-    if (o.buildType) { const why = buildReason(gs, o.buildType, tx, ty); const spr = A.st[o.buildType]; g.globalAlpha = 0.65; if (spr) g.drawImage(spr, tx * 16 + 8 - spr.width / 2, ty * 16 + 16 - spr.height + (STRUCTS[o.buildType].layer === 'roof' ? -2 : 0)); g.globalAlpha = 1; g.strokeStyle = why ? '#ff4a3a' : '#7aff6a'; g.lineWidth = 1; g.strokeRect(tx * 16 + 0.5, ty * 16 + 0.5, 15, 15); }
+    if (o.buildType) { const why = buildReason(gs, o.buildType, tx, ty); const spr = o.buildType === 'farm_controller' ? A.st.gen : A.st[o.buildType]; g.globalAlpha = 0.65; if (spr) g.drawImage(spr, tx * 16 + 8 - spr.width / 2, ty * 16 + 16 - spr.height + (STRUCTS[o.buildType].layer === 'roof' ? -2 : 0)); g.globalAlpha = 1; g.strokeStyle = why ? '#ff4a3a' : '#7aff6a'; g.lineWidth = 1; g.strokeRect(tx * 16 + 0.5, ty * 16 + 0.5, 15, 15); }
     else { g.strokeStyle = '#ffb040'; g.setLineDash([2, 2]); g.strokeRect(tx * 16 + 0.5, ty * 16 + 0.5, 15, 15); g.setLineDash([]); } }
   if (o.target) { const bob = Math.round(Math.sin(time / 160) * 1.5); g.fillStyle = '#ffe27a'; const X = Math.round(o.target.x), Y = Math.round(o.target.y) - 20 + bob; g.fillRect(X - 2, Y, 5, 1); g.fillRect(X - 1, Y + 1, 3, 1); g.fillRect(X, Y + 2, 1, 1); }
   g.restore();
@@ -270,6 +270,7 @@ function drawEntity(g: CanvasRenderingContext2D, r: RunState, e: Entity, time: n
     case 'door': { g.drawImage(e.open ? A.st.poi_door_open : A.st.poi_door, X - 8, Y - 16); return; }
     case 'struct': {
       const d = STRUCTS[e.type!]; let spr = A.st[e.type!];
+      if (e.type === 'farm_controller') spr = A.st.gen;
       if (e.type!.startsWith('door') && e.open) spr = A.st[e.type + '_open'];
       if (e.type === 'furnace' && e.station && e.station.burn > 0 && e.station.queue.length) spr = A.st.furnace_lit;
       if (!spr) return; if (d.layer !== 'wall') shadow(g, X, Y + 5, 7);

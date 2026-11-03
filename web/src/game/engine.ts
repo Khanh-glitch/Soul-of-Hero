@@ -348,6 +348,7 @@ export function countStones(r: RunState) { const keys = Object.values(ELDERS).ma
 export function buildReason(gs: GameState, type: string, tx: number, ty: number): string | null {
   const r = gs.run!; if (typeof type !== 'string' || !Object.prototype.hasOwnProperty.call(STRUCTS, type)) return 'Unknown structure.'; const d = STRUCTS[type];
   const w = getWorld(); const p = r.player;
+  if (type === 'farm_controller' && !Object.values(r.entities).some(e=>e.kind==='struct' && e.type==='workbench' && e.station && owned(e) && (e.station.level ?? 1)>=2 && near(r,e,3) && dist(e.x,e.y,tx*TILE+8,ty*TILE+8)<=3*TILE)) return 'Build near your level 2 workbench.';
   if (!Number.isInteger(tx) || !Number.isInteger(ty) || tx < 1 || ty < 1 || tx >= WW - 1 || ty >= WH - 1) return 'Out of bounds.';
   if (dist(p.x, p.y, tx * TILE + 8, ty * TILE + 8) > 4.6 * TILE) return 'Too far away.';
   const t = effTile(r, tx, ty);
@@ -402,12 +403,13 @@ const fail = (reason: string): Result => ({ ok: false, reason });
 function near(r: RunState, e: { x: number; y: number }, tiles = 2.2) { return dist(r.player.x, r.player.y, e.x, e.y) <= tiles * TILE; }
 /** A finite POI interaction cannot reach through intervening terrain, sources
  * or closed doors. The target's own blocking tile is intentionally excluded. */
-function clearInteraction(r:RunState,e:{x:number;y:number}):boolean {
-  const p=r.player, grid=blockGrid(r), startX=Math.floor(p.x/TILE),startY=Math.floor(p.y/TILE), endX=Math.floor(e.x/TILE),endY=Math.floor(e.y/TILE);
+function clearSegment(r:RunState,p:{x:number;y:number},e:{x:number;y:number}):boolean {
+  const grid=blockGrid(r), startX=Math.floor(p.x/TILE),startY=Math.floor(p.y/TILE), endX=Math.floor(e.x/TILE),endY=Math.floor(e.y/TILE);
   const steps=Math.max(1,Math.ceil(dist(p.x,p.y,e.x,e.y)/4));
   for(let k=1;k<steps;k++){const x=Math.floor((p.x+(e.x-p.x)*k/steps)/TILE),y=Math.floor((p.y+(e.y-p.y)*k/steps)/TILE);if((x===startX&&y===startY)||(x===endX&&y===endY))continue;if(x<0||y<0||x>=WW||y>=WH||[1,2,3,5].includes(grid[y*WW+x]))return false;}
   return true;
 }
+function clearInteraction(r:RunState,e:{x:number;y:number}) { return clearSegment(r,r.player,e); }
 
 function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
   const p = r.player; const ok = (kind: string, detail: string, msg?: string): Result => ({ ok: true, receipt: receipt(r, now, kind, detail), msg });
@@ -570,6 +572,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (d.slots) e.c = mkContainer(r, 'chest', d.slots).id;
       if (d.station && d.station !== 'research') e.station = { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 3).id, outC: mkContainer(r, 'out', 6).id };
       if (d.station === 'research') e.station = { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 0).id, outC: mkContainer(r, 'out', 4).id };
+      if (it.struct === 'farm_controller') e.farm = { enabled:false, crop:'crop', energy:0 };
       if (it.struct === 'garden') e.garden = { crop: null, growth: 0, water: 0 };
       if (it.struct === 'barrel') e.water = 0;
       if (it.struct.startsWith('door')) e.open = false;
@@ -671,6 +674,28 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       p.thirst = Math.min(100, p.thirst + 25);
       const fi = C(r, 'inv').slots.findIndex(s => s && ITEMS[s.key].waterContainer && (s.charge ?? 0) < ITEMS[s.key].charge!); if (fi >= 0) { const flask = C(r, 'inv').slots[fi]!; flask.charge = ITEMS[flask.key].charge!; }
       return ok('drink', `${tx},${ty}`, fi >= 0 ? 'You drink and refill your flask.' : 'You drink deeply.');
+    }
+    case 'farmConfigure': {
+      const e=r.entities[it.eid], f=e?.farm;
+      if(!e || e.kind!=='struct' || e.type!=='farm_controller' || !f || !owned(e) || !near(r,e,3) || !clearInteraction(r,e)) return fail('Use your Garden Tender within reach.');
+      if(it.field==='enabled' && typeof it.value==='boolean') f.enabled=it.value;
+      else if(it.field==='crop' && (it.value==='crop'||it.value==='herb')) f.crop=it.value;
+      else if(['gardenId','barrelId','chestId'].includes(it.field)) {
+        const field=it.field as 'gardenId'|'barrelId'|'chestId';
+        if(it.value === '') delete f[field];
+        else {const target=r.entities[it.value]; const typeOK=field==='gardenId'? target?.type==='garden' : field==='barrelId'? target?.type==='barrel' : ['chest_small','chest_large'].includes(target?.type || '');
+          if(!target || target.kind!=='struct' || !owned(target) || !typeOK || dist(e.x,e.y,target.x,target.y)>BAL.garden.tenderLinkTiles*TILE || !clearSegment(r,e,target)) return fail('Choose an owned, unobstructed matching structure within three tiles.');
+          if(Object.values(r.entities).some(other=>other.id!==e.id && other.farm?.[field]===target.id))return fail('That structure is already linked to another tender.');
+          f[field]=target.id;
+        }
+      } else return fail('Invalid tender setting.');
+      return ok('farm.configure',`${e.id}:${it.field}`);
+    }
+    case 'fillBarrel': {
+      const e=r.entities[it.eid]; if(!e || e.kind!=='struct' || e.type!=='barrel' || !owned(e) || !near(r,e,2.2) || !clearInteraction(r,e))return fail('Stand near your barrel.');
+      if((e.water||0)>11)return fail('Barrel has less than one unit of space.');
+      const f=C(r,'inv').slots.find(s=>s && ITEMS[s.key].waterContainer && (s.charge||0)>0);if(!f)return fail('Carry a filled water flask or canteen.');
+      f.charge!--;e.water=(e.water||0)+1;return ok('barrel.pour',e.id,'Poured one water charge into the barrel.');
     }
     case 'barrel': { const e = r.entities[it.eid]; if (!e || e.type !== 'barrel' || !near(r, e)) return fail('Out of reach.'); if ((e.water || 0) < 1) return fail('The barrel is dry. Wait for rain.');
       const fi = C(r, 'inv').slots.findIndex(s => s && ITEMS[s.key].waterContainer && (s.charge ?? 0) < ITEMS[s.key].charge!);
@@ -857,3 +882,54 @@ export function stepGardensBarrels(gs: GameState, dtMs: number, wet: boolean) {
   }
 }
 function isRoofed(r: RunState, e: Entity) { return entsAt(r, e.tx!, e.ty!).some(o => o.kind === 'struct' && STRUCTS[o.type!].shelter); }
+
+// Optional, explicit one-plot production network. All resources remain in
+// physical linked structures; no global chest search or login-time grants.
+function tenderLinks(r:RunState,e:Entity) {
+  const f=e.farm; if(!f || !owned(e) || (e.hp??0)<=0 || !e.c) return null;
+  const garden=f.gardenId && r.entities[f.gardenId], barrel=f.barrelId && r.entities[f.barrelId], chest=f.chestId && r.entities[f.chestId];
+  if(!garden || garden.type!=='garden' || !garden.garden || !barrel || barrel.type!=='barrel' || !chest || !['chest_small','chest_large'].includes(chest.type||'') || !chest.c) return null;
+  if(Object.values(r.entities).some(o=>o.id!==e.id && o.farm && (o.farm.gardenId===garden.id || o.farm.barrelId===barrel.id || o.farm.chestId===chest.id)))return null;
+  if([garden,barrel,chest].some(o=>o.kind!=='struct'||!owned(o)||(o.hp??0)<=0||dist(e.x,e.y,o.x,o.y)>BAL.garden.tenderLinkTiles*TILE||!clearSegment(r,e,o)))return null;
+  return {garden,barrel,chest};
+}
+function tenderEnergyAvailable(r:RunState,e:Entity) { return e.farm!.energy + C(r,e.c!).slots.reduce((v,s)=>v+(s ? (ITEMS[s.key].fuel||0)*1000*s.qty:0),0); }
+function tenderSpend(r:RunState,e:Entity,cost:number) {
+  const f=e.farm!,c=C(r,e.c!); if(tenderEnergyAvailable(r,e)<cost)return false;
+  while(f.energy<cost){const i=c.slots.findIndex(s=>s && ITEMS[s.key].fuel);const s=c.slots[i]!;f.energy+=ITEMS[s.key].fuel!*1000;if(--s.qty===0)c.slots[i]=null;}
+  f.energy-=cost;return true;
+}
+function tenderFits(r:RunState,cid:string,output:[string,number][]) {
+  const slots=C(r,cid).slots.map(s=>s?{...s}:null);
+  for(const [key,amount] of output){let n=amount;const d=ITEMS[key];for(const s of slots)if(s&&s.key===key&&s.meta===undefined&&s.dur===undefined&&s.charge===undefined){const take=Math.min(n,d.max-s.qty);s.qty+=take;n-=take;}for(let i=0;i<slots.length&&n>0;i++)if(!slots[i]){const take=Math.min(n,d.max);slots[i]={uid:'preview',key,qty:take};n-=take;}if(n>0)return false;}
+  return true;
+}
+export function tenderStatus(r:RunState,e:Entity):string {
+  const f=e.farm;if(!f)return 'Not a tender';if(!f.enabled)return 'Stopped';const links=tenderLinks(r,e);if(!links)return 'Missing, blocked or out-of-range link';
+  const {garden,barrel,chest}=links, g=garden.garden!;
+  if(g.crop && !GARDEN_CROPS[g.crop as 'crop'|'herb'])return 'Unsupported crop';
+  if(g.crop&&g.growth>=1){if(!tenderFits(r,chest.c!,GARDEN_CROPS[g.crop as 'crop'|'herb'].output))return 'Storage full — ripe crop waiting';if(tenderEnergyAvailable(r,e)<BAL.garden.tenderHarvestEnergySeconds*1000)return 'Fuel needed to harvest';return 'Ready to harvest';}
+  if(!g.crop){if(!hasAll(r,chest.c!,GARDEN_CROPS[f.crop].inputs))return 'Planting material needed in linked chest';if(g.water<1 && (barrel.water||0)<1)return 'Barrel needs water';if(tenderEnergyAvailable(r,e)<BAL.garden.tenderPlantEnergySeconds*1000)return 'Fuel needed to plant';return 'Ready to plant';}
+  if(g.water<=1e-10 && (barrel.water||0)<1)return 'Waiting for water (rain may grow crop)';
+  if(g.water<=1e-10 && tenderEnergyAvailable(r,e)<BAL.garden.tenderPumpEnergySeconds*1000)return 'Fuel needed to pump (rain may grow crop)';
+  return 'Growing';
+}
+/** Instantaneous events at the current world timestamp; order is harvest,
+ * planting, then irrigation. Fuel is only consumed on an actual operation. */
+export function stepTenders(gs:GameState,now:number) {
+  const r=gs.run!;
+  for(const e of Object.values(r.entities)) {const f=e.farm;if(!f?.enabled)continue;const links=tenderLinks(r,e);if(!links)continue;const {garden,barrel,chest}=links,g=garden.garden!,cid=chest.c!;
+    if(g.crop && !GARDEN_CROPS[g.crop as 'crop'|'herb'])continue;
+    if(g.crop&&g.growth>=1){const rule=GARDEN_CROPS[g.crop as 'crop'|'herb'];if(!rule||!tenderFits(r,cid,rule.output)||!tenderSpend(r,e,BAL.garden.tenderHarvestEnergySeconds*1000))continue;const crop=g.crop;for(const [key,qty] of rule.output)addItem(r,cid,key,qty);g.crop=null;g.growth=0;receipt(r,now,'tender.harvest',`${e.id}:${crop}`);}
+    if(!g.crop){const rule=GARDEN_CROPS[f.crop];if(!hasAll(r,cid,rule.inputs)||(g.water<1&&(barrel.water||0)<1)||!tenderSpend(r,e,BAL.garden.tenderPlantEnergySeconds*1000))continue;for(const [key,qty] of rule.inputs)removeItem(r,cid,key,qty);if(g.water<1){barrel.water!-=1;g.water=Math.min(3,g.water+1);}g.crop=f.crop;g.growth=0;receipt(r,now,'tender.plant',`${e.id}:${f.crop}`);}
+    if(g.crop&&g.growth<1&&g.water<=1e-10&&(barrel.water||0)>=1&&tenderSpend(r,e,BAL.garden.tenderPumpEnergySeconds*1000)){barrel.water!-=1;g.water+=1;receipt(r,now,'tender.water',e.id);}
+  }
+}
+/** Earliest maturity, dry-out or rain-fed barrel refill for a linked plot. */
+export function tenderBoundary(r:RunState,wet:boolean,limit:number):number {
+  let dt=limit;for(const e of Object.values(r.entities)){if(!e.farm?.enabled)continue;const l=tenderLinks(r,e);if(!l)continue;const g=l.garden.garden!, incoming=wet&&!isRoofed(r,l.garden)?1/60000:0,use=1/(BAL.garden.waterSecondsPerUnit*1000);
+    if(g.crop && !GARDEN_CROPS[g.crop as 'crop'|'herb'])continue;
+    if(g.crop&&g.growth<1&&(g.water>1e-10||incoming>=use)){dt=Math.min(dt,(1-g.growth)*GARDEN_CROPS[g.crop as 'crop'|'herb'].seconds*1000);if(use>incoming&&g.water>1e-10)dt=Math.min(dt,g.water/(use-incoming));}
+    if(wet&&!isRoofed(r,l.barrel)&&(l.barrel.water||0)<1)dt=Math.min(dt,(1-(l.barrel.water||0))*20000);
+  }return dt;
+}

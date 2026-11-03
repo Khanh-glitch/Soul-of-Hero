@@ -240,13 +240,14 @@ export const STRUCTS: Record<string, StructDef> = {
   workbench: { name: 'Workbench', cost: [['wood', 14], ['stone', 4]], hp: 160, need: 'claim', block: true, layer: 'obj', station: 'workbench', desc: 'Timed crafting for tools, armor and parts.' },
   research: { name: 'Research Table', cost: [['wood', 10], ['spares', 6], ['iron_ingot', 1]], hp: 160, need: 'claim', block: true, layer: 'obj', station: 'research', desc: 'Spend Spares or study specimens to unlock recipes.' },
   garden: { name: 'Garden Plot', cost: [['wood', 4], ['fiber', 4]], hp: 60, need: 'claim', block: false, layer: 'obj', desc: 'Plant seeds; grows only while watered (rain counts).' },
+  farm_controller: { name: 'Garden Tender', cost: [['wood', 12], ['iron_ingot', 2], ['mechanical_parts', 3], ['fasteners', 3], ['spares', 2]], hp: 140, need: 'claim', block: true, layer: 'obj', slots: 3, desc: 'Optional fuelled garden machinery. Link one nearby plot, barrel and chest; needs an improved workbench to build.' },
   barrel: { name: 'Rain Barrel', cost: [['wood', 8], ['rope', 1]], hp: 80, need: 'claim', block: true, layer: 'obj', desc: 'Collects rainwater; refill flasks.' },
   spikes: { name: 'Spike Trap', cost: [['wood', 6]], hp: 90, need: 'claim', block: false, layer: 'obj', desc: 'Hurts creatures that walk over it.' },
   barricade: { name: 'Barricade', cost: [['wood', 8]], hp: 220, need: 'claim', block: true, layer: 'obj', desc: 'Cheap blocking defense.' },
   torch_post: { name: 'Torch Post', cost: [['wood', 2], ['torch', 1]], hp: 40, need: 'claim', block: true, layer: 'obj', light: 80, desc: 'Permanent light.' },
   escrow: { name: 'Rương ký gửi', cost: [['escrow_chest', 1]], hp: 400, need: 'claim', block: true, layer: 'obj', desc: 'Deposit physical Ragnarok cash into profile-secured cash.', item: 'escrow_chest' },
 };
-export const BUILD_ORDER = ['claim', 'floor_wood', 'floor_stone', 'wall_wood', 'wall_stone', 'wall_brick', 'door_wood', 'door_iron', 'roof_thatch', 'roof_tile', 'bed_straw', 'chest_small', 'chest_large', 'campfire', 'furnace', 'workbench', 'research', 'garden', 'barrel', 'spikes', 'barricade', 'torch_post', 'escrow'];
+export const BUILD_ORDER = ['claim', 'floor_wood', 'floor_stone', 'wall_wood', 'wall_stone', 'wall_brick', 'door_wood', 'door_iron', 'roof_thatch', 'roof_tile', 'bed_straw', 'chest_small', 'chest_large', 'campfire', 'furnace', 'workbench', 'research', 'garden', 'barrel', 'farm_controller', 'spikes', 'barricade', 'torch_post', 'escrow'];
 
 // Run-2 vendor stock purchasable with SECURED profile cash (PROPOSED prices) → run-local items
 export const VENDOR_SECURED: Record<string, { price: number; stock: number }> = {

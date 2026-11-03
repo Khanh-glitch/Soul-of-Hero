@@ -2,7 +2,7 @@
 import { BAL, TILE, WW, WH, HOUR, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity } from './core';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
 import { getWorld } from './world';
-import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight } from './engine';
+import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
@@ -560,6 +560,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
   while (t < end) {
     // Commit already-finished jobs first; their next jobs determine the next boundary.
     stepStations(gs, 0, t, report);
+    stepTenders(gs, t);
     const weather = weatherAt(r, t);
     const slot = Math.floor((t - r.startedAt + r.qaOffset) / slotMs);
     const nextWeather = r.startedAt - r.qaOffset + (slot + 1) * slotMs;
@@ -574,9 +575,11 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
       if (fuelled) dt = Math.min(dt, fuel);
       if (job && job.left > 0) dt = Math.min(dt, job.left);
     }
+    dt = tenderBoundary(r, isWet(weather), dt);
     for (const st of Object.values(r.sources)) { const fire = (st as any).fire as number | undefined; if (fire && fire > r.clock.simMs) dt = Math.min(dt, fire - r.clock.simMs); }
     for (const terrain of Object.values(r.terrain)) if (terrain.until && terrain.until > r.clock.simMs) dt = Math.min(dt, terrain.until - r.clock.simMs);
     if (!(dt > 0)) break;
+    dt = Math.min(end - t, Math.max(dt, 0.001)); // avoid sub-millisecond timestamp stalls
     stepStations(gs, dt, t + dt, report);
     stepGardensBarrels(gs, dt, isWet(weather));
     decayTraces(r, dt, weather);
@@ -584,6 +587,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     let dirty = false; for (const k in r.terrain) { const m = r.terrain[k]; if (m.until && m.until <= r.clock.simMs) { delete r.terrain[k]; dirty = true; } } if (dirty) markDirty();
     resolveFires(gs, t, visual);
   }
+  stepTenders(gs, end);
 }
 
 /** Bring the single run clock forward before a frame or an input transaction. */

@@ -74,7 +74,11 @@
     "_status": "TUNABLE_BALANCE",
     "growSeconds": 300,
     "herbGrowSeconds": 600,
-    "waterSecondsPerUnit": 240
+    "waterSecondsPerUnit": 240,
+    "tenderPlantEnergySeconds": 8,
+    "tenderPumpEnergySeconds": 4,
+    "tenderHarvestEnergySeconds": 8,
+    "tenderLinkTiles": 3
   },
   "economy": {
     "_status": "PROPOSED_MECHANISM vendor/price/ownership; LOCKED_CANON cash-only escrow purchase",
