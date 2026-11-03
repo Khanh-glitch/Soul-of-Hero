@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { BAL, TILE, WW, VIEW_W, VIEW_H, HOUR, type GameState } from '../game/core';
 import { ITEMS, STRUCTS, ELDERS, CREATURES } from '../game/catalog';
 import { dispatch, phaseOf, runHours, dayTime, weatherAt, weatherSlot, countItem, C, entsAt, cartWeight, effTile, isRagnarok } from '../game/engine';
-import { tick, findInteract, activeStack, SPEED_KEY, type Input, type Interact } from '../game/sim';
+import { tick, syncWorld, findInteract, activeStack, SPEED_KEY, type Input, type Interact } from '../game/sim';
 import { draw, consumeFX, cam } from '../game/render';
 import { getWorld, ZONES } from '../game/world';
 import { sfx, setAmbience, initAudio } from '../game/audio';
@@ -25,7 +25,10 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
   const scheduleSave = () => { clearTimeout(saveT.current); saveT.current = setTimeout(() => { void save(gs).then(ok => { if (!ok) toast('Save failed. Changes are not confirmed on disk.', 'bad'); }); }, 250); };
   const toast = useCallback((text: string, tone?: string) => { if (!text) return; const k = text; const n = Date.now(); if (toastKeys.current[k] && n - toastKeys.current[k] < 2500) return; toastKeys.current[k] = n; setToasts(t => [...t.slice(-3), { id: n + Math.random(), text, tone, t: n }]); }, []);
   const act = useCallback((type: string, payload: Record<string, any> = {}) => {
-    const res = dispatch(gs, mkIntent(type, payload), Date.now());
+    const now = Date.now();
+    // An input arriving before a frame must not precede elapsed world events.
+    const ready = syncWorld(gs, now);
+    const res = ready ? dispatch(gs, mkIntent(type, payload), now) : { ok: false as const, reason: gs.run ? 'The device clock moved backwards.' : 'No active run.' };
     if (res.ok) { scheduleSave(); if (res.msg) toast(res.msg, 'ok'); sfx({ type: type === 'build' ? 'build' : type === 'craft' ? 'craft' : type === 'deposit' || type === 'buy' ? 'coin' : 'ui' }); }
     else if (!(res as any).dup) { toast((res as any).reason, 'bad'); sfx({ type: 'deny' }); }
     rerender(); return res;
@@ -93,6 +96,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
     const cv = cvRef.current!; const g = cv.getContext('2d')!; g.imageSmoothingEnabled = false;
     let last = performance.now(); let raf = 0; let uiAcc = 0, saveAcc = 0, ambAcc = 0; let ended = false;
     const loop = (t: number) => {
+      // Cap animation/input physics only; tick catches up autonomous wall time from lastSimAt.
       raf = requestAnimationFrame(loop); const dt = Math.min(50, t - last); last = t; const now = Date.now();
       if (!gs.run) { if (!ended) { ended = true; save(gs); onRunEnd(); } return; }
       const i = inp.current; i.mx = mouse.current.x + Math.round(cam.x); i.my = mouse.current.y + Math.round(cam.y);
