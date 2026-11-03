@@ -233,11 +233,33 @@ export function destRect(inst: PfxInst, offX = 0, offY = 0) {
   return { dx, dy, dw: fw * s * inst.stretch, dh: fh * s, rotX, rotY };
 }
 
+// Tinted copies of light-channel pages: the light channel is white-with-alpha,
+// so additive ('lighter') drawing desaturates the effect toward white. Tinting
+// it with the effect's own color keeps the glow saturated (violet stays violet).
+const tintedLightCache = new Map<string, HTMLCanvasElement>();
+function tintedLightImg(path: string, tint: string, raw: HTMLImageElement): HTMLCanvasElement {
+  let cv = tintedLightCache.get(path + '|' + tint);
+  if (!cv) {
+    cv = document.createElement('canvas'); cv.width = raw.width; cv.height = raw.height;
+    const tg = cv.getContext('2d')!;
+    tg.drawImage(raw, 0, 0);
+    tg.globalCompositeOperation = 'source-in';
+    tg.fillStyle = tint; tg.fillRect(0, 0, cv.width, cv.height);
+    if (tintedLightCache.size > 24) tintedLightCache.clear();
+    tintedLightCache.set(path + '|' + tint, cv);
+  }
+  return cv;
+}
+
 function drawFrame(g: CanvasRenderingContext2D, inst: PfxInst, chan: 'combined' | 'light', alpha: number,
   comp: GlobalCompositeOperation, offX = 0, offY = 0) {
   if (inst.t < 0 || alpha <= 0.001) return;
   const cell = pageCell(inst.entry, chan, frameOf(inst.entry, inst.t));
   if (!cell || !cell.img) return;
+  if (chan === 'light') { // sample from the tinted page so additive glow keeps the effect hue
+    const p = inst.entry.export.pages.light.find(pp => frameOf(inst.entry, inst.t) >= pp.first && frameOf(inst.entry, inst.t) < pp.first + pp.count)!;
+    cell.img = tintedLightImg(p.path, tintOf(inst.entry), cell.img) as unknown as HTMLImageElement;
+  }
   const r = destRect(inst, offX, offY);
   g.save();
   g.globalAlpha = alpha; g.globalCompositeOperation = comp;
@@ -358,9 +380,9 @@ export function drawPostNight(g: CanvasRenderingContext2D, cam: { x: number; y: 
     // colored radiance (soft falloff illumination of the nearby scene) — drawn UNDER the art
     if (layers.radiance && quality.radiance) {
       const energy = Math.min(1.6, le / 8);
-      const a = (dark > 0.02 ? Math.min(0.22, 0.06 + dark * 0.24) : 0.05) * energy;
+      const a = (dark > 0.02 ? Math.min(0.18, 0.05 + dark * 0.2) : 0.04) * energy;
       if (a > 0.01) {
-        const rad = Math.max(r.dw, r.dh) * 0.5 + 10;
+        const rad = Math.max(r.dw, r.dh) * 0.38 + 8;
         const spr = radianceSprite(tintOf(inst.entry));
         g.save();
         g.globalCompositeOperation = 'lighter'; g.globalAlpha = Math.min(0.3, a);
