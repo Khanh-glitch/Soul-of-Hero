@@ -3,7 +3,7 @@ import {startChainDiagnostic,drawChainDiagnostic,postChainDiagnostic} from '../a
 import {startCinderDiagnostic,drawCinderDiagnostic,postCinderDiagnostic} from '../arcana_c/cinderDevLayer';
 import {startThornDiagnostic,drawThornDiagnostic,postThornDiagnostic} from '../arcana_c/thornDevLayer';
 import {startAbyssalDiagnostic,drawAbyssalDiagnostic,postAbyssalDiagnostic} from '../arcana_c/abyssalDevLayer';
-import { startDDiagnostic, drawDDiagnostic } from '../arcana_d/devLayer';
+import { startDDiagnostic, drawDDiagnostic, postDDiagnostic } from '../arcana_d/devLayer';
 import { startADiagnostic, drawADiagnostic } from '../arcana_a/devLayer';
 import { startCDiagnostic, prepareCDiagnostic, shadeCDiagnostic, drawCDiagnostic, blackoutCDiagnostic, postCDiagnostic } from '../arcana_c/devLayer';
 import { startBDiagnostic, drawBDiagnostic } from '../arcana_b/devLayer';
@@ -256,6 +256,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   postChainDiagnostic(g);
   postWorldseedDiagnostic(g);
   postThornDiagnostic(g);
+  postDDiagnostic(g);
   if (flash > 0) { g.fillStyle = `rgba(255,255,255,${flash})`; g.fillRect(0, 0, VIEW_W, VIEW_H); flash = Math.max(0, flash - dtMs / 400); }
   if (p.hp < 30 && !p.dead) { const a = (1 - p.hp / 30) * (0.25 + Math.sin(time / 200) * 0.08); g.fillStyle = `rgba(160,0,0,${a})`; g.fillRect(0, 0, VIEW_W, 6); g.fillRect(0, VIEW_H - 6, VIEW_W, 6); g.fillRect(0, 0, 6, VIEW_H); g.fillRect(VIEW_W - 6, 0, 6, VIEW_H); }
 }

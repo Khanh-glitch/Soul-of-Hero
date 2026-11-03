@@ -15,3 +15,14 @@ describe('experimental D live-field infrastructure',()=>{
  it('builds conservative influence from operation geometry, not bright colours',()=>{const w=new DWarp(),mask=dInfluence([{kind:'sprite',x:30,y:30,size:5,shape:1,color:[0,0,0,1],opt:{},role:'black'}],w);expect(mask[30*480+30]).toBe(1);expect(mask[0]).toBe(0);});
 });
 it('keeps D19 High unbatched, enables sampled sprite batching only for reduced profiles, and honors explicit restore',async()=>{const {dBatchForQuality}=await import('../src/arcana_d/devLayer');expect(dBatchForQuality('high',null)).toBe('none');expect(dBatchForQuality('balance',null)).toBe('sprites');expect(dBatchForQuality('performance',null)).toBe('sprites');expect(dBatchForQuality('balance','none')).toBe('none');expect(dBatchForQuality('high','sprites')).toBe('sprites');});
+
+describe('optional D19 flash event sampling (source commands remain unchanged)',()=>{
+ it('carries the authored flash over a short skipped render without changing source commands',()=>{
+  const caster={x:148,y:172},target={x:244,y:132},s=new DSource(caster,target),reference=new DSource(caster,target);
+  s.renderAtSeconds(8.15);const frame=s.renderAtSeconds(8.2)!;const same=reference.renderAtSeconds(8.2)!;
+  expect(frame.fields.flash).toBeNull();expect(frame.carriedFlash).toEqual({amount:.8,color:[.95,.9,1]});expect(frame.fields.commands).toEqual(same.fields.commands);expect(same.carriedFlash).toBeNull();expect(same.carriedCommands).toHaveLength(0);expect(frame.carriedCommands).toHaveLength(5);expect(frame.carriedCommands.every(c=>c.role==='burst-filament')).toBe(true);
+  const later=s.renderAtSeconds(8.3)!;expect(later.carriedFlash).toBeNull();expect(later.carriedCommands).toHaveLength(0);
+  s.renderAtSeconds(7);expect(s.renderAtSeconds(8.4)!.carriedFlash).toBeNull();
+  const exact=new DSource(caster,target).renderAtSeconds(8.15+1/60)!;expect(exact.fields.flash).toEqual({amount:.8,color:[.95,.9,1]});expect(exact.carriedFlash).toBeNull();expect(exact.fields.commands.filter(c=>c.role==='burst-filament')).toEqual(frame.carriedCommands);
+ });
+});

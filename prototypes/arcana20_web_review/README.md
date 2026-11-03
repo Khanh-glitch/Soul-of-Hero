@@ -54,3 +54,8 @@ The separate `build:review` mode enables the provisional ARCANA20 visuals and is
 | `src/ui/*` | Title, character select, history, HUD, panels |
 
 See `IMPLEMENTATION_EVIDENCE.md` for how each contract (K1–K8, C01–C24) maps to code and tests, and `THIRD_PARTY.md` for provenance.
+
+D19's default remains the existing experimental LDR diagnostic. A developer-only
+`?arcana19Post=ldr` flag tests the authored flash and short skipped-tick burst
+carry; this is an approximation, not D19 A/HDR/depth parity. See
+`integration/STATUS.md` for the failed bloom experiment and open blockers.
