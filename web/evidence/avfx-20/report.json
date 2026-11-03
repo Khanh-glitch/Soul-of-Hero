@@ -5,6 +5,114 @@
     "webgl2": false,
     "presenterMode": "2d-fallback"
   },
+  "semanticBridge": "source Frame + donor spell, CPU composite, real world base",
+  "gallery": [
+    {
+      "id": 1,
+      "name": "Cinder Crown",
+      "status": "FUSION_PREVIEW"
+    },
+    {
+      "id": 2,
+      "name": "Furnace Wyrm",
+      "status": "SOURCE_PREVIEW"
+    },
+    {
+      "id": 3,
+      "name": "Meteor Loom",
+      "status": "SOURCE_PREVIEW"
+    },
+    {
+      "id": 4,
+      "name": "Ashen Guillotine",
+      "status": "REDESIGN_STUDY"
+    },
+    {
+      "id": 5,
+      "name": "Abyssal Bloom",
+      "status": "FUSION_PREVIEW"
+    },
+    {
+      "id": 6,
+      "name": "Riptide Calligraphy",
+      "status": "REDESIGN_STUDY"
+    },
+    {
+      "id": 7,
+      "name": "Mirrorfrost Basilica",
+      "status": "SOURCE_PREVIEW"
+    },
+    {
+      "id": 8,
+      "name": "Undertow Maw",
+      "status": "SOURCE_PREVIEW"
+    },
+    {
+      "id": 9,
+      "name": "Chain Verdict",
+      "status": "FUSION_PREVIEW"
+    },
+    {
+      "id": 10,
+      "name": "Thunderloom",
+      "status": "SOURCE_PREVIEW"
+    },
+    {
+      "id": 11,
+      "name": "Volt Carousel",
+      "status": "FUSION_PREVIEW"
+    },
+    {
+      "id": 12,
+      "name": "Skybreaker Script",
+      "status": "REDESIGN_STUDY"
+    },
+    {
+      "id": 13,
+      "name": "Rootwake",
+      "status": "REDESIGN_STUDY"
+    },
+    {
+      "id": 14,
+      "name": "Spore Nebula",
+      "status": "REDESIGN_STUDY"
+    },
+    {
+      "id": 15,
+      "name": "Thorn Opera",
+      "status": "SOURCE_PREVIEW"
+    },
+    {
+      "id": 16,
+      "name": "Worldseed",
+      "status": "FUSION_PREVIEW"
+    },
+    {
+      "id": 17,
+      "name": "Event Horizon",
+      "status": "SOURCE_PREVIEW"
+    },
+    {
+      "id": 18,
+      "name": "Chronoshard",
+      "status": "REDESIGN_STUDY"
+    },
+    {
+      "id": 19,
+      "name": "Constellation Engine",
+      "status": "SOURCE_PREVIEW"
+    },
+    {
+      "id": 20,
+      "name": "Reality Ripper",
+      "status": "FUSION_PREVIEW"
+    }
+  ],
+  "galleryCount": 20,
+  "referenceMaster": "reference-arcana20-visual-master.html cast 20 (creator_approved)",
+  "replay": {
+    "done": true
+  },
   "playback": {
     "frames": [
       [
@@ -30,7 +138,7 @@
     "worldUploads": 0,
     "layerUploads": 0,
     "gpuPasses": 0,
-    "postCalls": 1541,
+    "postCalls": 4658,
     "glError": 0,
     "fbo": ""
   }

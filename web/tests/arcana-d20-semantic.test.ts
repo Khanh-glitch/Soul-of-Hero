@@ -61,13 +61,13 @@ describe('arcana-d20 semantic bridge (unmodified donor spell on C Frame)', () =>
 }, 60000);
 
 describe('ARCANA20 batch: all 20 vendored C spells run on the semantic runner', () => {
-  it.each(CATALOG.map(c => [c.index, c] as const))('spell #%i casts and renders non-empty frames', (_i, c: any) => {
+  it.each(CATALOG.map(c => [c.index, c] as const))('spell #%i casts and renders non-empty frames', async (_i, c: any) => {
     const r = new CRunner();
     const base = new Uint8ClampedArray(384 * 216 * 4);
     for (let i = 0; i < base.length; i += 4) { base[i] = 30; base[i + 1] = 60; base[i + 2] = 40; base[i + 3] = 255; }
     r.setWorld(base);
     r.cast(c.index);
-    r.seek(c.id >= 19 ? Math.min(c.climax + 0.3, c.dur * 0.6) : Math.min(1.6, c.dur * 0.3)); // #19/#20 are slow-burn openers
+    await r.seekAsync(c.id >= 19 ? Math.min(c.climax + 0.3, c.dur * 0.6) : Math.min(1.6, c.dur * 0.3)); // #19/#20 are slow-burn openers
     let changed = 0;
     for (let i = 0; i < r.out.length; i += 4) if (Math.abs(r.out[i] - 30) + Math.abs(r.out[i + 1] - 60) > 20) changed++;
     expect(changed, `spell #${c.id} ${c.name}`).toBeGreaterThan(30);
