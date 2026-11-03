@@ -1,0 +1,11 @@
+{
+  "implementationCommit": "b6222e4c36819da683813a02d21f728b77a15453",
+  "primary": "3b37ae90601dee098066cbc4cf465552f1eb6f04",
+  "localTypecheck": "pass", "localVitest": "22/22", "localBuild": "pass",
+  "syntheticRgba8": {"corrected": [167,167,167,255], "legacy": [59,59,59,255]},
+  "lifecycle": {"preCommitCancel": {"charge":3,"visuals":0}, "twoRealEmberCommits": {"charge":1,"visuals":2,"receipts":2}, "explicitVisualCancel": {"visuals":0}},
+  "contactAndNaturalCleanup": {"scope":"ordinary Ember Core, not ARCANA19 gameplay", "chargeBefore":3,"chargeAfter":2,"boarHPBefore":200,"boarHPAfter":155,"fireReceipts":1,"visualsAfter":0,"pageErrors":[]},
+  "startupFlake": "Earlier independent attempts hit primary React cvRef null/getContext; the successful retries do not prove the race fixed.",
+  "remoteCI": {"url":"https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41572328943","conclusion":"success","artifactId":13202096773},
+  "softwareOnlyNoCaptureMs": {"rafBaselineP50P95":[83.3,166.7],"rafCastP50P95":[283.3,316.7],"sourceP50P95":[0.1,0.5],"rasterP50P95":[0.3,1.0],"groundCompositeP50P95":[1.4,3.2],"postSubmitP50P95":[1.2,8.3]}
+}

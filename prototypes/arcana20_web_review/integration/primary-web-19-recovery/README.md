@@ -73,17 +73,16 @@ metric. The original source reference stays unchanged.
 ## Tests and constraints
 
 On the pinned primary + patch in a scratch tree: `npx tsc --noEmit`, all 22
-Vitest cases and production `npm run build` passed before the final QA-script-
-only 1x edit. RGBA8 ordering synthetic check passed [167,167,167,255] vs legacy
-[59,59,59,255]. A real-input lifecycle run passed before the final ground-shader
-adjustment: cancel before commit charge 3/visual 0; two Ember commits charge
-1/visual 2/two receipts; explicit visual cancel 0. The real-input contact and
-natural cleanup on prior adapter `dd5f82fc` were Ember charge 3→2, boar HP
-200→155, one receipt and cleanup 0; that is ordinary fire, not a #19 hit. A
-new contact/cleanup run and a lifecycle rerun hit a pre-existing intermittent
-primary React `cvRef.current` null/getContext startup failure; they did not
-complete and must not be presented as a pass on this version. The one-run
-matched 1x visual capture did complete with no page errors.
+Vitest cases and production `npm run build` passed on the final patch. RGBA8
+ordering synthetic check passed [167,167,167,255] vs legacy [59,59,59,255].
+A final real-input lifecycle rerun passed: cancel before commit charge 3/visual
+0; two Ember commits charge 1/visual 2/two receipts; explicit visual cancel 0.
+A separate final real-input contact/natural-cleanup run passed: the QA Ember
+charge 3→2, real boar HP 200→155, one fire receipt and visual cleanup 0, no
+page errors. This is ordinary fire, not a #19 hit. Earlier attempts to run
+lifecycle and contact hit an intermittent primary React `cvRef.current` null /
+`getContext` startup failure; successful retries do not erase that baseline
+flakiness. The matched 1x visual capture completed with no page errors.
 
 SwiftShader Chromium non-capture sample: baseline rAF p50/p95 83.3/166.7ms,
 cast 283.3/316.7ms; source CPU 0.1/0.5ms, raster 0.3/1ms, ground composite
@@ -92,10 +91,14 @@ captured by these CPU timings; this is software rendering and is far too slow,
 not device FPS. Warnings include Canvas2D readback and automatic SwiftShader
 fallback. `npm ci` reported six advisories (1 low, 1 moderate, 2 high, 2 critical).
 
-Focused CI workflow `.github/workflows/arcana19-primary-focused.yml` applies the
-pinned patch and runs install, typecheck, tests, build, RGBA8, lifecycle and
-matched capture. CI may expose the primary startup race; report its real run
-status rather than claiming it passed. Next: establish physically correct
+Focused remote CI [run 41572328943](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41572328943)
+**PASS** on implementation commit `b6222e4c36819da683813a02d21f728b77a15453`:
+the pinned patch applied, install, typecheck, tests, build, RGBA8, lifecycle and
+matched capture steps succeeded. The uploaded `arcana19-focused-frames`
+[artifact](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41572328943/artifacts/13202096773)
+expires 2026-11-10 UTC. CI carries Node 20 action-deprecation and Ubuntu-latest
+migration warnings; success is not visual approval or proof against the
+intermittent startup race. Next: establish physically correct
 source-space scene/warp/FBO post ordering and real color/coverage including
 HDR-capable intermediates without global recolor or bands, reconcile PixelFX
 layer ownership, obtain authenticated owner event, then measure a real GPU and
