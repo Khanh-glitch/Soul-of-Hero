@@ -55,7 +55,7 @@ try {
     await snap(`${suffix}-hud-640x360.png`,640,360);
 
     const doorOf = label => { const e=s.entities.find(e=>e.kind==='door'&&e.label===label); assert(e,`missing ${label}`); return e; };
-    let keydoor,entry=null,powerdoor=null,gen=null,outer,vaults=[],exitTarget;
+    let keydoor,entry=null,powerdoor=null,gen=null,outer,vaults=[],exitTarget,expectedSpareTotal=0;
     if(layoutId==='shipping'){
       keydoor=doorOf('Lighthouse Door'); outer=s.entities.find(e=>e.kind==='loot'&&e.poi==='light');
       vaults=s.entities.filter(e=>e.kind==='loot'&&e.poi==='light_top');gen=s.entities.find(e=>e.kind==='gen'&&e.poi==='light');
@@ -181,9 +181,10 @@ try {
       await useEntity(powerdoor.id);s=await state();powerdoor=s.entities.find(e=>e.id===powerdoor.id);assert.equal(powerdoor.locked,'power');assert.equal(powerdoor.open,false);
       await useEntity(gen.id);s=await state();gen=s.entities.find(e=>e.id===gen.id);powerdoor=s.entities.find(e=>e.id===powerdoor.id);assert.equal(gen.power,1);assert.equal(powerdoor.locked,undefined);assert.equal(await inputCount('fuel_can'),0);
       await useEntity(powerdoor.id);s=await state();powerdoor=s.entities.find(e=>e.id===powerdoor.id);assert.equal(powerdoor.open,true);
+      expectedSpareTotal=await inputCount('spares')+6;
       await useEntity(vault.id);await page.getByRole('button',{name:'Take all',exact:true}).waitFor({timeout:5000});
       await snap(`${suffix}-vault-loot-dual-panels-1280x720.png`,1280,720);await snap(`${suffix}-vault-loot-dual-panels-640x360.png`,640,360);await takeAll();
-      assert.equal(await inputCount('iron_ingot'),4);assert.equal(await inputCount('medkit'),1);assert.equal(await inputCount('spares'),6);
+      assert.equal(await inputCount('iron_ingot'),4);assert.equal(await inputCount('medkit'),1);assert.equal(await inputCount('spares'),expectedSpareTotal);
       log.push('dev_delta: generator consumed one fuel can; vault loot transferred (iron_ingot 4, medkit 1, spares 6)');
     }
 
@@ -198,7 +199,7 @@ try {
     s=await state();assert.equal(s.id,runId);assert.equal(s.seed,seed);assert.equal(s.layoutId,layoutId);
     assert.equal(s.entities.find(e=>e.id===keydoor.id).open,true);
     assert.equal(s.entities.find(e=>e.id===gen.id).power,1);
-    if(layoutId==='dev_delta'){assert.equal(s.entities.find(e=>e.id===powerdoor.id).open,true);assert.equal(s.counts.medkit,1);assert.equal(s.counts.iron_ingot,4);assert.equal(s.counts.spares,6);}
+    if(layoutId==='dev_delta'){assert.equal(s.entities.find(e=>e.id===powerdoor.id).open,true);assert.equal(s.counts.medkit,1);assert.equal(s.counts.iron_ingot,4);assert.equal(s.counts.spares,expectedSpareTotal);}
     else {assert.equal(s.counts.core_storm,1);assert((s.counts.blueprint||0)>=1);}
     for(const cache of vaults)assert(!s.containers[cache.c].some(Boolean),'vault loot respawned across reload');
     await snap(`${suffix}-reloaded-1280x720.png`,1280,720);await snap(`${suffix}-reloaded-640x360.png`,640,360);
