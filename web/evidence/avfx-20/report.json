@@ -151,7 +151,12 @@
   "phase3": {
     "11-lead": "A",
     "11-study": "C (study)",
-    "11-fusion": "A#11+C#9 (recipe)"
+    "11-fusion": "A#11+C#9 (recipe)",
+    "phases": [
+      "1.0 lead/fusion",
+      "3.0 lead/fusion",
+      "5.3 lead/fusion"
+    ]
   },
   "galleryCount": 20,
   "referenceMaster": "reference-arcana20-visual-master.html cast 20 (creator_approved)",
@@ -183,7 +188,7 @@
     "worldUploads": 0,
     "layerUploads": 0,
     "gpuPasses": 0,
-    "postCalls": 4637,
+    "postCalls": 4908,
     "glError": 0,
     "fbo": ""
   }

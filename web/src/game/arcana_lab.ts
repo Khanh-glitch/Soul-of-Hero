@@ -142,15 +142,12 @@ export class ArcanaLabClient implements comp.VfxClient {
     const anchor = sx * 4096 + sy;
     const needRender = tick !== this.lastTick || anchor !== this.lastAnchor;
     if (useFusion) {
-      // semantic recipe: ONE world base, lead structure, secondary components
-      // merged as signed deltas (never an RGB average of composited frames)
+      // semantic source-contribution contract: authored arc packets / light
+      // channels extracted per recipe, bound to the lead's moving anchors
       if (needRender) {
         const recipe = RECIPES[entry.id];
-        const cx = Math.round(this.cast.wx - frame.cam.x), cy = Math.round(this.cast.wy - frame.cam.y);
         composeFusion(recipe, { a: this.aR, b: this.bR, c: this.cR },
-          (w, h) => p.worldRegion(cx - Math.round(w / 2), cy - Math.round(h / 2), w, h) ?? region,
-          Math.min(t, entry.dur) / Math.max(entry.dur, 1e-6),
-          this.blend);
+          Math.min(t, entry.dur) / Math.max(entry.dur, 1e-6), this.blend);
       }
       out = this.blend;
     } else if (useB) {

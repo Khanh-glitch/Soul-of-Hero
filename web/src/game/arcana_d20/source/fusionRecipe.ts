@@ -14,7 +14,8 @@
 // ============================================================================
 import { ARunner, A_W, A_H } from './aRunner';
 import { BRunner, B_W, B_H } from './bRunner';
-import { CRunner, C_W, C_H } from './cRunner';
+import { CRunner, C_W, C_H, CATALOG } from './cRunner';
+import { applyContribution, type Contribution } from './sourceContract';
 
 export type SourceEngine = 'A' | 'B' | 'C';
 export type ComponentRole = 'structure' | 'light' | 'ink' | 'arc' | 'impact';
@@ -23,6 +24,7 @@ export interface FusionComponent {
   engine: SourceEngine;
   skillId: number;          // which ORIGINAL source spell provides the component
   role: ComponentRole;
+  extract?: 'arc' | 'light'; // which authored channel/primitive is extracted (lead: full structure)
   phase?: [number, number]; // fraction of the lead duration in which it acts
 }
 export interface FusionRecipe {
@@ -34,15 +36,15 @@ export interface FusionRecipe {
 /** Creator-approved fusion recipes (FUSION_DECISIONS.md). #11 uses C#09 arcs. */
 export const RECIPES: Record<number, FusionRecipe> = {
   1: { id: 1, lead: { engine: 'A', skillId: 1, role: 'structure' },
-       components: [{ engine: 'C', skillId: 1, role: 'light' }] },
+       components: [{ engine: 'C', skillId: 1, role: 'light', extract: 'light' }] },
   5: { id: 5, lead: { engine: 'A', skillId: 5, role: 'structure' },
-       components: [{ engine: 'C', skillId: 5, role: 'light' }] },
+       components: [{ engine: 'C', skillId: 5, role: 'light', extract: 'light' }] },
   9: { id: 9, lead: { engine: 'A', skillId: 9, role: 'structure' },
-       components: [{ engine: 'C', skillId: 9, role: 'arc' }, { engine: 'B', skillId: 9, role: 'impact' }] },
+       components: [{ engine: 'C', skillId: 9, role: 'arc', extract: 'arc' }, { engine: 'B', skillId: 9, role: 'impact', extract: 'light' }] },
   11: { id: 11, lead: { engine: 'A', skillId: 11, role: 'structure' },
-        components: [{ engine: 'C', skillId: 9, role: 'arc', phase: [0.25, 0.95] }] }, // C#09 bolt generator on A's connectors
+        components: [{ engine: 'C', skillId: 9, role: 'arc', extract: 'arc', phase: [0.25, 0.95] }] }, // C#09 bolt generator on A's connectors
   16: { id: 16, lead: { engine: 'A', skillId: 16, role: 'structure' },
-        components: [{ engine: 'C', skillId: 16, role: 'light' }] },
+        components: [{ engine: 'C', skillId: 16, role: 'light', extract: 'light' }] },
 };
 
 export function recipeLabel(r: FusionRecipe): string {
@@ -57,11 +59,9 @@ export interface RecipeRunner {
   readonly out: Uint8ClampedArray;
   readonly duration: number;
 }
+interface ArcCapable extends RecipeRunner { extractArcs(index: number, t: number): import('./cRunner').ArcPacket[]; extractLight(index: number, t: number): Float32Array }
+interface AnchorCapable extends RecipeRunner { anchorsFor(skillId: number, t: number): { x: number; y: number }[]; renderWithContributions(index: number, t: number, extra?: (fb: any) => void): void }
 export interface RecipeRunners { a: RecipeRunner; b: RecipeRunner; c: RecipeRunner }
-
-function engineSize(e: SourceEngine): [number, number] {
-  return e === 'A' ? [A_W, A_H] : e === 'B' ? [B_W, B_H] : [C_W, C_H];
-}
 
 /**
  * Compose one fusion frame. `worldFor(size)` must return the real SOH world
@@ -70,45 +70,30 @@ function engineSize(e: SourceEngine): [number, number] {
 export function composeFusion(
   recipe: FusionRecipe,
   runners: RecipeRunners,
-  worldFor: (w: number, h: number) => Uint8ClampedArray,
   tFrac: number,
   out: Uint8ClampedArray,
 ): void {
-  const [LW, LH] = engineSize(recipe.lead.engine);
-  // 1+2: lead structure on the one world base
-  const leadWorld = worldFor(LW, LH);
-  const lead: RecipeRunner = recipe.lead.engine === 'A' ? runners.a : recipe.lead.engine === 'B' ? runners.b : runners.c;
-  lead.setWorld(leadWorld);
-  lead.cast(recipe.lead.skillId - 1);
-  lead.seek(tFrac * (lead.duration || 1));
-  const leadOut = lead.out;
-  out.set(leadOut.length === out.length ? leadOut : leadOut.subarray(0, out.length));
-
-  // 3: secondary components as SIGNED DELTAS vs the same world
+  // 1: lead structure (A) rendered on the real world, unchanged
+  const leadT = Math.min(tFrac, 1) * (runners.a.duration || 1);
+  // 2: extract authored contributions from secondary sources (role+extract
+  //    control WHAT is taken: arc packets vs pure light channel — never full RGB)
+  let arcs: Contribution['arcs'], light: Float32Array | undefined, lightW = 0, lightH = 0;
   for (const comp of recipe.components) {
     if (comp.phase && (tFrac < comp.phase[0] || tFrac > comp.phase[1])) continue;
-    const [cw, ch] = engineSize(comp.engine);
-    const world = worldFor(cw, ch);
-    const r: RecipeRunner = comp.engine === 'A' ? runners.a : comp.engine === 'B' ? runners.b : runners.c;
-    r.setWorld(world);
-    r.cast(comp.skillId - 1);
-    const dur = r.duration || 1;
-    r.seek(Math.min(tFrac * dur, dur));
-    const cOut = r.out;
-    const ox = Math.round((LW - cw) / 2), oy = Math.round((LH - ch) / 2);
-    for (let y = 0; y < LH; y++) {
-      const cy = y - oy;
-      if (cy < 0 || cy >= ch) continue;
-      for (let x = 0; x < LW; x++) {
-        const cx = x - ox;
-        if (cx < 0 || cx >= cw) continue;
-        const ci = (cy * cw + cx) * 4, di = (y * LW + x) * 4;
-        for (let k = 0; k < 3; k++) {
-          const delta = cOut[ci + k] - world[ci + k]; // signed ink/light vs world
-          if (comp.role === 'ink') { if (delta < 0) out[di + k] = Math.max(0, out[di + k] + delta); }
-          else out[di + k] = Math.min(255, out[di + k] + Math.max(0, delta)); // light/arc/impact add light
-        }
-      }
+    const cIdx = comp.skillId - 1;
+    const cDur = CATALOG[cIdx]?.dur ?? 1;
+    const ct = Math.min(tFrac, 1) * cDur;
+    if (comp.extract === 'arc' && comp.engine === 'C') {
+      arcs = (runners.c as unknown as ArcCapable).extractArcs(cIdx, ct);
+    } else if (comp.extract === 'light') {
+      if (comp.engine === 'C') { light = (runners.c as unknown as ArcCapable).extractLight(cIdx, ct); lightW = C_W; lightH = C_H; }
+      else if (comp.engine === 'B') { const b = (runners.b as unknown as { extractLight(i: number, t: number): { data: Float32Array; w: number; h: number } }).extractLight(cIdx, ct); light = b.data; lightW = b.w; lightH = b.h; }
     }
   }
+  // 3: moving anchors come from the LEAD spell itself (A#11 ring connectors)
+  const anchors = (runners.a as unknown as AnchorCapable).anchorsFor(recipe.lead.skillId, leadT);
+  (runners.a as unknown as AnchorCapable).renderWithContributions(recipe.lead.skillId - 1, leadT, (fb) => {
+    applyContribution(fb, { arcs, light, lightW, lightH }, anchors);
+  });
+  out.set(runners.a.out as Uint8ClampedArray);
 }

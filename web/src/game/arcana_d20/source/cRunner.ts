@@ -33,6 +33,37 @@ export const CATALOG: CatalogEntry[] = SPELLS.map((s, i) => ({
   note: s.blurb,
 }));
 
+/** An authored C bolt draw event, captured from the source spell's own
+ * drawBolt ribbon callback: polyline + probed core/halo light values. */
+export interface ArcPacket { pts: { x: number; y: number }[]; width: number; core: [number, number, number]; halo: [number, number, number] }
+
+/** Recording proxy around the C Frame: captures ribbon() calls that write the
+ * LIGHT channel (i.e. drawBolt arcs) and probes their authored callback for
+ * core (e=0) and halo (e=1) light values — no full-frame imagery involved. */
+function recordingFrame(real: Frame, log: ArcPacket[]): Frame {
+  let lCount = 0, iCount = 0;
+  const probe = { l: 0 as number, i: 0 as number, lr: 0, lg: 0, lb: 0, ir: 0, ig: 0, ib: 0 };
+  return new Proxy(real, {
+    get(t, prop) {
+      if (prop === 'ribbon') return (pts: { x: number; y: number }[], widths: number[] | number, fn: (x: number, y: number, s: number, e: number) => void) => {
+        const l0 = probe.l, i0 = probe.i, lr0 = probe.lr, lg0 = probe.lg, lb0 = probe.lb, ir0 = probe.ir, ig0 = probe.ig, ib0 = probe.ib;
+        try { fn(0, 0, 0, 0); } catch { /* probe */ }
+        const core: [number, number, number] = [Math.abs(probe.lr - lr0), Math.abs(probe.lg - lg0), Math.abs(probe.lb - lb0)];
+        try { fn(0, 0, 0, 1); } catch { /* probe */ }
+        const halo: [number, number, number] = [Math.abs(probe.lr - lr0 - core[0]), Math.abs(probe.lg - lg0 - core[1]), Math.abs(probe.lb - lb0 - core[2])];
+        if (probe.l > l0) log.push({ pts: pts.map(p => ({ x: p.x, y: p.y })), width: Array.isArray(widths) ? widths[0] : widths, core, halo });
+        else if (probe.i > i0) { /* ink ribbon (chain bodies) — not an arc */ }
+      };
+      const v = Reflect.get(t, prop as any, t) as any;
+      if (prop === 'L') return (x: number, y: number, r: number, g: number, b: number) => { probe.l++; probe.lr += r; probe.lg += g; probe.lb += b; return v.call(t, x, y, r, g, b); };
+      if (prop === 'Lc') return (x: number, y: number, c: RGB, k = 1) => { probe.l++; probe.lr += c[0] * k; probe.lg += c[1] * k; probe.lb += c[2] * k; return v.call(t, x, y, c, k); };
+      if (prop === 'I') return (x: number, y: number, r: number, g: number, b: number, a?: number) => { probe.i++; probe.ir += r; probe.ig += g; probe.ib += b; return v.call(t, x, y, r, g, b, a); };
+      if (prop === 'Ic') return (x: number, y: number, c: RGB, a = 1) => { probe.i++; probe.ir += c[0] * a; probe.ig += c[1] * a; probe.ib += c[2] * a; return v.call(t, x, y, c, a); };
+      return typeof v === 'function' ? v.bind(t) : v;
+    },
+  }) as unknown as Frame;
+}
+
 export class CRunner {
   private frame = new Frame();
   private inst: Inst | null = null;
@@ -75,9 +106,32 @@ export class CRunner {
     while (this.t < target - 1e-6) this.step();
   }
   playTo(t: number) { this.seek(t); }
+
+  private arcLog: ArcPacket[] | null = null;
+  private _rec: Frame | null = null;
+  /** Extract authored arc packets (C#09 bolt geometry + light) at time t. */
+  extractArcs(index: number, t: number): ArcPacket[] {
+    this.cast(index);
+    this.seek(Math.max(0, t - DT)); // advance without logging
+    this.arcLog = [];                 // record ONLY the final frame's draw events
+    try {
+      this.seek(t);
+      return this.arcLog;
+    } finally {
+      this.arcLog = null;
+      this._rec = null;
+    }
+  }
+  /** Extract the pure LIGHT channel (HDR Float32) of a spell on a black world. */
+  extractLight(index: number, t: number): Float32Array {
+    this.cast(index);
+    this.world.fill(0);
+    this.seek(t);
+    return new Float32Array(this.frame.light);
+  }
   private step() {
     if (!this.inst) return;
-    const f = this.frame;
+    const f = this.arcLog ? (this._rec ?? (this._rec = recordingFrame(this.frame, this.arcLog))) : this.frame;
     f.clear(); f.t = this.t;
     this.fx.invert = 0; this.fx.desat = 0; this.fx.chroma = 0; this.fx.bloom = 1;
     // real world as the ground/base (replaces lab floor; spells' G decals add on top)

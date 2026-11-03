@@ -45,17 +45,45 @@ describe('ARCANA20 phase 3: semantic fusion recipes', () => {
     expect(recipeLabel(r)).toBe('A#11+C#9');
     for (const id of [1, 5, 9, 16]) expect(RECIPES[id].lead.engine).toBe('A');
   });
-  it.each([1, 5, 9, 11, 16])('composeFusion recipe #%i merges signed deltas and renders non-empty', async (id) => {
+  it.each([1, 5, 9, 11, 16])('composeFusion recipe #%i renders non-empty via contribution contract', async (id) => {
     const { RECIPES, composeFusion } = await import('../src/game/arcana_d20/source/fusionRecipe');
     const { ARunner, A_W, A_H } = await import('../src/game/arcana_d20/source/aRunner');
     const { BRunner } = await import('../src/game/arcana_d20/source/bRunner');
     const { CRunner } = await import('../src/game/arcana_d20/source/cRunner');
-    const worldFor = (w: number, h: number) => { const b = new Uint8ClampedArray(w * h * 4); for (let i = 0; i < b.length; i += 4) { b[i] = 30; b[i + 1] = 60; b[i + 2] = 40; b[i + 3] = 255; } return b; };
     const runners = { a: new ARunner(), b: new BRunner(), c: new CRunner() };
+    runners.a.setWorld(new Uint8ClampedArray(A_W * A_H * 4).fill(40));
     const out = new Uint8ClampedArray(A_W * A_H * 4);
-    composeFusion(RECIPES[id], runners, worldFor, 0.3, out);
+    composeFusion(RECIPES[id], runners, 0.3, out);
     let changed = 0;
-    for (let i = 0; i < out.length; i += 4) if (Math.abs(out[i] - 30) + Math.abs(out[i + 1] - 60) > 20) changed++;
+    for (let i = 0; i < out.length; i += 4) if (Math.abs(out[i] - 40) > 12) changed++;
     expect(changed, `recipe #${id}`).toBeGreaterThan(30);
   });
+  it('#11 proof: C#09 arc packets are extracted and bound to MOVING A#11 anchors across phases', async () => {
+    const { CRunner } = await import('../src/game/arcana_d20/source/cRunner');
+    const { ARunner } = await import('../src/game/arcana_d20/source/aRunner');
+    const { BRunner } = await import('../src/game/arcana_d20/source/bRunner');
+    const { RECIPES, composeFusion } = await import('../src/game/arcana_d20/source/fusionRecipe');
+    const c = new CRunner();
+    const a = new ARunner();
+    // C#09 authored bolt events exist at all three motion phases
+    const packets = [1.0, 3.0, 5.3].map(t => c.extractArcs(8, t)); // index 8 = skill id 9
+    for (const pk of packets) expect(pk.length).toBeGreaterThan(0);
+    // A#11 anchors actually move between phases
+    const an1 = a.anchorsFor(11, 1.0), an3 = a.anchorsFor(11, 3.0), an5 = a.anchorsFor(11, 5.3);
+    expect(an1.length).toBeGreaterThan(4);
+    const moved = (p: any, q: any) => Math.hypot(p.x - q.x, p.y - q.y);
+    expect(an1.some((p, i) => moved(p, an3[i]) > 2)).toBe(true);
+    expect(an3.some((p, i) => moved(p, an5[i]) > 2)).toBe(true);
+    // fusion differs from pure A lead at peak (arcs actually added)
+    const { A_W, A_H } = await import('../src/game/arcana_d20/source/aRunner');
+    const runners = { a: new ARunner(), b: new BRunner(), c: new CRunner() };
+    runners.a.setWorld(new Uint8ClampedArray(A_W * A_H * 4).fill(40));
+    const fused = new Uint8ClampedArray(A_W * A_H * 4);
+    composeFusion(RECIPES[11], runners, 5.3 / 7.0, fused);
+    runners.a.setWorld(new Uint8ClampedArray(A_W * A_H * 4).fill(40));
+    runners.a.cast(10); runners.a.seek(5.3);
+    let diff = 0;
+    for (let i = 0; i < fused.length; i += 4) if (Math.abs(fused[i] - runners.a.out[i]) > 10) diff++;
+    expect(diff).toBeGreaterThan(50); // C#09 arcs bound into the A#11 frame
+  }, 120000);
 });

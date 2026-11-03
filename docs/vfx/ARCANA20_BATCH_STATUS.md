@@ -62,3 +62,19 @@ Honest counts: 20/20 accessible; source-faithful leads implemented = 10 (B #02/#
 - QA: gallery 20 + phase-3 trio gallery-11-lead/study/fusion + gallery-02-lead.
 - Counts: 20/20 accessible; 10 source-faithful leads (B3 C4 D1 A#11 A+C#20);
   5 recipe candidates; 6 redesign studies (nonfinal).
+
+
+## Phase 4 (source-contribution contract, per CT 6607037204)
+- `sourceContract.ts` + `CRunner.extractArcs/extractLight` + `ARunner.anchorsFor/renderWithContributions`:
+  recipe components now declare `extract: 'arc' | 'light'` and roles actually control
+  extraction. 'arc' captures the source spell's AUTHORED bolt draw events (polyline +
+  probed core/halo light via a recording Frame proxy), remaps each arc's endpoints onto
+  the LEAD spell's MOVING anchors (similarity transform, shape preserved) and replays
+  them with the lead engine's own line primitive. 'light' uses the source's pure HDR
+  light channel on a black world. No complete source RGB imagery is ever composited.
+- #11: lead = pure A#11; study = C#11; fusion = A#11 + C#09 arc packets bound to A#11
+  ring connectors (segPos) at every phase. Proven at 3 phases (t=1.0/3.0/5.3): packets
+  extracted, anchors move, fused frame differs from pure A lead. Same machinery for
+  #01/#05/#09/#16. #20 keeps its A+C bridge. 14px edge feather kept for B window.
+- QA: gallery-11-{lead,study,fusion} + 6 phase captures gallery-11-{open,build,peak}-{lead,fusion}.
+- Tests 118/118. PR #39 unmerged; no gameplay changes.

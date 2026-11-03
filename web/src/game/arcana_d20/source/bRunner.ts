@@ -41,6 +41,14 @@ export class BRunner {
     }
   }
 
+  /** Pure HDR light channel of this effect on a black floor (semantic channel). */
+  extractLight(index: number, t: number): { data: Float32Array; w: number; h: number } {
+    this.cast(index);
+    this.setWorld(new Uint8ClampedArray(W * H * 4));
+    this.seek(t);
+    return { data: new Float32Array(this.r.lightBuf), w: W, h: H };
+  }
+
   seek(t: number) {
     if (!this.fx) return;
     this.t = Math.max(0, Math.min(t, this.fx.duration + 0.8));

@@ -19,7 +19,9 @@ if (typeof (globalThis as any).ImageData === 'undefined') {
 
 import { Lab } from './a/engine/lab';
 import { SPELLS } from './a/spells';
-import { VIEW_W, VIEW_H } from './a/engine/arena';
+import { VIEW_W, VIEW_H, ARENA_C } from './a/engine/arena';
+import { VoltCarousel } from './a/spells/tempest';
+import type { Framebuffer } from './a/engine/framebuffer';
 
 export const A_W = VIEW_W, A_H = VIEW_H;
 const STUB_CTX = { putImageData() { /* CPU-only: pixels stay in fb.out */ } } as unknown as CanvasRenderingContext2D;
@@ -51,6 +53,37 @@ export class ARunner {
     this.lab.seek(t);
     this.lab.render(STUB_CTX);
     this.out.set(this.lab.fb.out.data);
+  }
+
+  /** Moving spatial anchors authored by an A spell at time t.
+   *  #11 VoltCarousel: its own ring segment connectors (segPos). */
+  anchorsFor(skillId: number, t: number): { x: number; y: number }[] {
+    if (skillId === 11) {
+      const vc = new VoltCarousel();
+      const pts: { x: number; y: number }[] = [];
+      for (const ring of vc.rings) for (let k = 0; k < ring.segs; k++) {
+        const p = vc.segPos(ring, k, t, 1);
+        pts.push({ x: p.x, y: p.y });
+      }
+      return pts;
+    }
+    return [{ x: ARENA_C.x, y: ARENA_C.y }];
+  }
+
+  /** Render the A spell, then inject extracted source contributions (arcs bound
+   *  to this spell's moving anchors, or a light channel) before present. */
+  renderWithContributions(index: number, t: number, extra?: (fb: Framebuffer) => void) {
+    this.cast(index);
+    const fb = this.lab.fb;
+    const orig = fb.present.bind(fb);
+    if (extra) fb.present = (ctx: CanvasRenderingContext2D) => { extra(fb); orig(ctx); };
+    try {
+      this.lab.seek(t);
+      this.lab.render(STUB_CTX);
+    } finally {
+      fb.present = orig;
+    }
+    this.out.set(fb.out.data);
   }
 }
 

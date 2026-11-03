@@ -86,6 +86,15 @@ for (const [tag, mode] of [['11-lead', 'lead'], ['11-study', 'study'], ['11-fusi
   await page.screenshot({ path: `${OUT}/gallery-${tag}.png` });
   report.phase3[tag] = await page.evaluate(() => window.__arcanaLab.info().currentlyRenderedSource);
 }
+// phase 4: three motion phases of #11 (opening / buildup / peak) in all modes
+for (const [tag, t] of [['11-open', 1.0], ['11-build', 3.0], ['11-peak', 5.3]]) {
+  for (const mode of ['lead', 'fusion']) {
+    await page.evaluate(([tt, m]) => { const c = window.__arcanaLab.catalog.find(x => x.id === 11); window.__arcanaLab.cast(c.index, m); window.__arcanaLab.seek(tt, c.index, m); }, [t, mode]);
+    await page.waitForTimeout(650);
+    await page.screenshot({ path: `${OUT}/gallery-${tag}-${mode}.png` });
+  }
+}
+report.phase3.phases = ['1.0 lead/fusion', '3.0 lead/fusion', '5.3 lead/fusion'];
 { const c = await page.evaluate(() => window.__arcanaLab.catalog.find(x => x.id === 2));
   await page.evaluate(cc => { window.__arcanaLab.cast(cc.index, 'lead'); window.__arcanaLab.seek(1.6, cc.index, 'lead'); }, c);
   await page.waitForTimeout(650);
