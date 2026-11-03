@@ -1,0 +1,50 @@
+name: AVFX M1 unified compositor QA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/3337c864-soul-of-hero]
+    paths:
+      - 'web/src/**'
+      - 'web/tests/**'
+      - 'web/scripts/qa-avfx-m1.mjs'
+      - '.github/workflows/avfx-m1-compositor.yml'
+
+permissions:
+  contents: read
+
+env:
+  CI: true
+
+jobs:
+  compositor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install dependencies
+        working-directory: web
+        run: npm ci
+      - name: Unit tests (incl. compositor + D19 source determinism), types, build
+        working-directory: web
+        run: |
+          npm test
+          npx tsc --noEmit
+          npm run build
+      - name: Browser M1 QA (zero-cast identity, client order, post count, GL probe, evidence)
+        working-directory: web
+        run: |
+          npm i -D playwright
+          npx playwright install chromium
+          node scripts/qa-avfx-m1.mjs
+      - name: Upload M1 frame evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: avfx-m1-evidence
+          path: web/evidence/avfx-m1/

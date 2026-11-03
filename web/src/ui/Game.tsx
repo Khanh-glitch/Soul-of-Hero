@@ -5,6 +5,9 @@ import { dispatch, phaseOf, runHours, dayTime, weatherAt, weatherSlot, countItem
 import { tick, findInteract, activeStack, SPEED_KEY, type Input, type Interact } from '../game/sim';
 import { draw, consumeFX, cam } from '../game/render';
 import * as pfx from '../game/pixelfx';
+import * as comp from '../game/compositor';
+import { initPresenter } from '../game/gpu/presenter';
+import { d19 } from '../game/arcanaD19';
 import { pfxFromSimEvent } from '../game/pixelfxMap';
 import FxLab from './FxLab';
 import { getWorld, ZONES } from '../game/world';
@@ -97,7 +100,14 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
   // main loop
   useEffect(() => {
     pfx.initPfx(); // embedded pilot + full pack (lazy pages)
-    const cv = cvRef.current!; const g = cv.getContext('2d')!; g.imageSmoothingEnabled = false;
+    const cv = cvRef.current!;
+    // AVFX M1: visible canvas is the single WebGL2 presenter; the game keeps its
+    // Canvas2D world producer (offscreen) and the presenter does ONE upload +
+    // ONE post per frame. Zero-cast frames are an identity passthrough.
+    const presenter = initPresenter(cv, VIEW_W, VIEW_H);
+    try { comp.registerVfxClient(d19); } catch { /* already registered */ }
+    const g = presenter.worldContext();
+    (window as any).__presenter = presenter; (window as any).__comp = comp; // QA-only hooks
     let last = performance.now(); let raf = 0; let uiAcc = 0, saveAcc = 0, ambAcc = 0; let ended = false;
     const loop = (t: number) => {
       raf = requestAnimationFrame(loop); const dt = Math.min(50, t - last); last = t; const now = Date.now();
@@ -110,6 +120,10 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       target.current = findInteract(gs, now);
       consumeFX(e => { pfxFromSimEvent(e); sfx(e); if (e.type === 'toast') toast(e.text); else if (e.type === 'hitstop') hitstop.current = Math.max(hitstop.current, e.ms); else if (e.type === 'banner') setBanner({ text: e.text, sub: e.sub, id: now }); else if (e.type === 'discover') setBanner({ text: e.name, sub: 'Discovered', id: now }); else if (e.type === 'region') setBanner(b => (b && now - b.id < 2500 ? b : { text: e.name, id: now })); else if (e.type === 'pickup' || e.type === 'struct.destroyed') scheduleSave(); });
       draw(g, gs, now, dt, { buildType: buildRef.current, reclaim: reclaimRef.current, mouseX: i.mx, mouseY: i.my, target: target.current, time: t, nightOverride: nightRef.current });
+      // unified compositor: collect typed GPU passes (deterministic client order),
+      // then the presenter owns the single post and presents the final frame
+      const layers = comp.collectGpuPasses({ g, cam: { x: Math.round(cam.x), y: Math.round(cam.y) }, now, dark: 0 });
+      presenter.present(layers);
       // close container panels when walking away
       const P = panelRef.current; if (P?.eid && gs.run.entities[P.eid]) { const e = gs.run.entities[P.eid]; if (Math.hypot(e.x - gs.run.player.x, e.y - gs.run.player.y) > 3.4 * TILE) setPanel(null); } else if (P?.eid && !gs.run.entities[P.eid]) setPanel(null);
       uiAcc += dt; if (uiAcc > 100) { uiAcc = 0; rerender(); }
@@ -138,6 +152,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
   (window as any).__pfx = pfx; // QA-only hook for FX stats/instances
   (window as any).__cam = cam; // QA-only camera hook
   (window as any).__qaNight = (v: boolean) => setNightOverride(v); // QA-only darkness override; never touches game clock/save
+  (window as any).__d19qa = { seek: (seconds: number, wx?: number, wy?: number) => { const r = (window as any).__soh?.run; d19.qaSeek(seconds, wx ?? r?.player.x ?? 0, wy ?? r?.player.y ?? 0); }, client: d19 }; // QA-only D19 visual bridge — NOT a gameplay cast event
   const r = gs.run; if (!r) return <div className="stage" />;
   const p = r.player; const now = Date.now(); const ph = phaseOf(r, now); const hrs = runHours(r, now); const day = Math.floor(hrs / 24) + 1;
   const dtm = dayTime(r, now); const clock = `${String(Math.floor(dtm * 24)).padStart(2, '0')}:${String(Math.floor((dtm * 24 % 1) * 60)).padStart(2, '0')}`;

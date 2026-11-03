@@ -1,0 +1,43 @@
+{
+  "errors": [
+    "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "webgl2Probe": {
+    "webgl2": false,
+    "renderer": null,
+    "presenterMode": "2d-fallback"
+  },
+  "zeroCast": {
+    "ok": true,
+    "mode": "2d-fallback",
+    "diffBytes": 0,
+    "postCount": 123
+  },
+  "d19-t498-day": {
+    "mode": "2d-fallback",
+    "postCount": 176,
+    "uploads": 0,
+    "pendingAfterDrain": 0,
+    "glError": "no-gl"
+  },
+  "d19-t498-night": {
+    "mode": "2d-fallback",
+    "postCount": 228,
+    "uploads": 0,
+    "pendingAfterDrain": 0,
+    "glError": "no-gl"
+  },
+  "twoClient": {
+    "order": [
+      "zz-fake"
+    ],
+    "ids": [
+      "zz-fake"
+    ],
+    "duplicateRejected": "duplicate VfxClient id: zz-fake",
+    "postsThisFrame": 1
+  },
+  "out": {
+    "leftoverPasses": 0
+  }
+}
