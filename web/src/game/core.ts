@@ -72,6 +72,8 @@ export interface Creature {
   knows: null | { kind: 'sight' | 'trace'; x: number; y: number; at: number; traceId?: string; chainId?: string };
   /** Last completed/lost chain, preventing repeated reacquisition of the same marks. */
   traceIgnore?: string;
+  /** Last justified physical checkpoint after offline activity was deferred. */
+  offlineUnresolvedAt?: number;
   path: number[] | null; pathT: number; cd: number; kbx: number; kby: number; flash: number;
   elder?: { key: string; awake: boolean; phase: number; pattern: number; special: number; shield?: number; submerged?: boolean };
   patternKey?: string; atk?: any; slow?: number;

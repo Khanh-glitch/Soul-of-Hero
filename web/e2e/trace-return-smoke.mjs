@@ -8,7 +8,7 @@ const browser = await chromium.launch({ headless: true, executablePath: process.
 try { for (const [width, height] of [[640, 360], [1280, 720]]) {
   const context = await browser.newContext({ viewport: { width, height } }); await context.addInitScript(s => localStorage.setItem('soh.state.v3', s), serializeSnapshot(g)); const page = await context.newPage(), errors = []; page.on('pageerror', e => errors.push(e.message));
   await page.goto(process.env.GAME_URL || 'http://127.0.0.1:4191', { waitUntil: 'networkidle' }); await page.getByRole('button', { name: /Continue —/ }).click();
-  await page.getByText(/Creatures did not move or attack while away/).waitFor(); await page.waitForTimeout(400);
+  await page.getByText(/Nearby evidenced trails may be followed while away/).waitFor(); await page.waitForTimeout(400);
   await page.screenshot({ path: `evidence/trace-home/return-report-${width}x${height}.png` }); assert.equal(await page.evaluate(() => window.__soh.run.traces.some(t => t.id === 'return-mark')), false);
   await page.getByRole('button', { name: 'Continue', exact: true }).click(); await page.keyboard.down('d'); await page.waitForTimeout(180); await page.keyboard.up('d'); assert.deepEqual(errors, []); await context.close(); console.log('PASS', width, height, 'elapsed report, expired trace and real Continue input');
 } } finally { await browser.close(); await vite.close(); }

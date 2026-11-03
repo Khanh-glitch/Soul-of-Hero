@@ -1,0 +1,116 @@
+{
+  "site": {
+    "x": 48,
+    "y": 30
+  },
+  "generatedMarks": 10,
+  "paidBuildReceipts": [
+    "claim@49,32",
+    "floor_wood@49,30",
+    "roof_thatch@49,30",
+    "wall_wood@48,29",
+    "wall_wood@49,29",
+    "wall_wood@50,29",
+    "wall_wood@48,31",
+    "wall_wood@49,31",
+    "wall_wood@50,31",
+    "wall_wood@50,30",
+    "door_wood@48,30"
+  ],
+  "results": [
+    {
+      "scenario": "valid",
+      "width": 640,
+      "height": 360,
+      "startX": 682.2941279999998,
+      "hp": 127,
+      "creatureX": 758.3851869560419,
+      "knows": {
+        "kind": "trace",
+        "x": 762.3642559999968,
+        "y": 493,
+        "at": 1793719013653,
+        "traceId": "tr7z",
+        "chainId": "tr7s"
+      },
+      "receipts": [
+        "e7r:boar:13"
+      ]
+    },
+    {
+      "scenario": "valid",
+      "width": 1280,
+      "height": 720,
+      "startX": 682.2941279999998,
+      "hp": 127,
+      "creatureX": 758.5397390165953,
+      "knows": {
+        "kind": "trace",
+        "x": 762.3642559999968,
+        "y": 493,
+        "at": 1793719013653,
+        "traceId": "tr7z",
+        "chainId": "tr7s"
+      },
+      "receipts": [
+        "e7r:boar:13"
+      ]
+    },
+    {
+      "scenario": "broken",
+      "width": 640,
+      "height": 360,
+      "startX": 682.2941279999998,
+      "hp": 140,
+      "creatureX": 705.9795273442126,
+      "knows": null,
+      "ignore": "tr7s",
+      "receipts": []
+    },
+    {
+      "scenario": "broken",
+      "width": 1280,
+      "height": 720,
+      "startX": 682.2941279999998,
+      "hp": 140,
+      "creatureX": 706.3165000470558,
+      "knows": null,
+      "ignore": "tr7s",
+      "receipts": []
+    },
+    {
+      "scenario": "safe",
+      "width": 640,
+      "height": 360,
+      "startX": 752,
+      "hp": 140,
+      "creatureX": 763.8061299999993,
+      "knows": null,
+      "receipts": []
+    },
+    {
+      "scenario": "safe",
+      "width": 1280,
+      "height": 720,
+      "startX": 752,
+      "hp": 140,
+      "creatureX": 763.8061299999993,
+      "knows": null,
+      "receipts": []
+    },
+    {
+      "scenario": "offline",
+      "width": 640,
+      "height": 360,
+      "hp": 49,
+      "generatedMarks": 10
+    },
+    {
+      "scenario": "offline",
+      "width": 1280,
+      "height": 720,
+      "hp": 49,
+      "generatedMarks": 10
+    }
+  ]
+}

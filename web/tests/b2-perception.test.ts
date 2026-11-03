@@ -234,7 +234,7 @@ describe('trace-grounded home safety', () => {
     const sight = creature(gs, 'toad', x - 30, y); sight.state = 'chase'; sight.knows = { kind: 'sight', x: r.player.x, y, at: T0 };
     const hp = r.player.hp, pos = { x: m.x, y: m.y }, lines = settle(gs, T0 + 10000);
     expect(r.traces).toHaveLength(0); expect(m.knows).toBeNull(); expect(m.state).toBe('attack'); expect(m.t).toBe(40); expect({ x: m.x, y: m.y }).toEqual(pos); expect(r.player.hp).toBe(hp);
-    expect(sight.knows).toBeNull(); expect(sight.state).toBe('wander'); expect(lines.join(' ')).toContain('did not move or attack');
+    expect(sight.knows).toBeNull(); expect(sight.state).toBe('wander'); expect(lines.join(' ')).toContain('other encounters remain unresolved');
     expect(validate(selectSnapshots([serializeSnapshot(gs), null]).gs)).toBeTruthy();
   });
   it('bounds the weather outlook to the remaining run and its existing global schedule', () => {
@@ -275,5 +275,91 @@ describe('trace-grounded home safety', () => {
       if (tool === 'torch') expect(r.sources[y * WW + x]?.fire).toBeGreaterThan(r.clock.simMs);
       else expect(sourceAt(r, x, y, T0 + 100)!.hp).toBeLessThan(initial.hp);
     }
+  });
+});
+
+describe('bounded offline trace consequences', () => {
+  function setupTrail() {
+    const gs = fresh(), r = gs.run!, spot = clearing(gs), x = spot.x * TILE + 8, y = spot.y * TILE + 8;
+    r.player.x = x + 600; r.player.y = y;
+    const doorId = uid(r, 'e'); r.entities[doorId] = { id: doorId, kind: 'struct', type: 'door_wood', x: x + 64, y, tx: spot.x + 4, ty: spot.y, hp: 140, maxHp: 140, open: false, owner: 'player' }; markDirty();
+    const m = creature(gs, 'boar', x - 8, y); (m as any).prov = true; m.t = 0;
+    r.traces = [3, 15, 27, 39, 51].map((dx, i) => mark('a' + i, 'A', i ? 'a' + (i - 1) : undefined, x + dx, y, T0));
+    return { gs, r, m, doorId, x, y, spot };
+  }
+  it('walks from an actual encountered chain to physical door impact only after enough time, even off-camera', () => {
+    const { gs, r, m, doorId, x } = setupTrail();
+    settle(gs, T0 + 1000, true); expect(m.x).toBeGreaterThan(x - 8); expect(r.entities[doorId].hp).toBe(140);
+    const report = settle(gs, T0 + 4000); expect(m.x).toBeGreaterThan(x + 40); expect(m.x).toBeLessThan(x + 56);
+    expect(r.entities[doorId].hp).toBeLessThan(140); expect(report.join(' ')).toMatch(/Wood Door: 140 → \d+ HP/);
+    expect(r.receipts.some(q => q.kind === 'struct.hit' && q.detail.startsWith(doorId))).toBe(true);
+  });
+  it('produces the same physical impact timeline across settlement partitions', () => {
+    const a = setupTrail(), b = structuredClone(a.gs), bid = a.doorId, mid = a.m.id;
+    settle(a.gs, T0 + 4000, true); for (let t = 500; t <= 4000; t += 500) settle(b, T0 + t, true);
+    expect(b.run!.entities[bid].hp).toBe(a.r.entities[bid].hp);
+    expect(b.run!.creatures.find(m => m.id === mid)!.x).toBeCloseTo(a.m.x, 6);
+    expect(b.run!.receipts.filter(q => q.kind === 'struct.hit').map(q => q.at)).toEqual(a.r.receipts.filter(q => q.kind === 'struct.hit').map(q => q.at));
+  });
+  it('continues an evidenced remote tracker online without a player-proximity raid', () => {
+    const { gs, r, m, doorId, x } = setupTrail();
+    for (let i = 1; i <= 80; i++) step(gs, idle(), i);
+    expect(m.x).toBeGreaterThan(x + 40); expect(r.entities[doorId].hp).toBeLessThan(140);
+  });
+  it('a broken chain and an unrelated house do not create an impact', () => {
+    for (const variant of ['broken', 'unrelated']) {
+      const { gs, r, m, doorId } = setupTrail(); if (variant === 'broken') r.traces = r.traces.filter(t => t.id !== 'a1'); else r.traces = [];
+      settle(gs, T0 + 4000); expect(r.entities[doorId].hp).toBe(140); expect(m.knows).toBeNull(); expect(r.receipts.some(q => q.kind === 'struct.hit')).toBe(false);
+    }
+  });
+  it('a real impact can destroy a door and is reported as such', () => {
+    const { gs, r, doorId } = setupTrail(); r.entities[doorId].hp = 26;
+    const lines = settle(gs, T0 + 4000); expect(r.entities[doorId]).toBeUndefined();
+    expect(lines.join(' ')).toContain('Wood Door was destroyed while away');
+    expect(r.receipts.some(q => q.kind === 'struct.destroyed')).toBe(true);
+  });
+  it('retains physical impact in the report even when the run expires', () => {
+    const { gs, r } = setupTrail(); r.startedAt = T0 + 4000 - 336 * 3600000;
+    const report = settle(gs, T0 + 4000); expect(report.join(' ')).toMatch(/Wood Door: 140 → \d+ HP while away/);
+    expect(report.join(' ')).toContain('336-hour end'); expect(gs.run).toBeNull();
+  });
+  it('wet weather at its boundary can erase the route before a creature arrives', () => {
+    const wet = setupTrail(), dry = structuredClone(wet.gs), boundary = 500, slot = 9 * 60000;
+    wet.r.startedAt = T0 - slot + boundary; dry.run!.startedAt = wet.r.startedAt;
+    let wetSeed = 0, drySeed = 0;
+    for (let seed = 1; seed < 10000; seed++) {
+      wet.r.seed = seed; if (!isWet(weatherAt(wet.r, T0)) && weatherAt(wet.r, T0 + boundary) === 'storm') { wetSeed = seed; break; }
+    }
+    for (let seed = 1; seed < 10000; seed++) {
+      dry.run!.seed = seed; if (!isWet(weatherAt(dry.run!, T0)) && !isWet(weatherAt(dry.run!, T0 + boundary))) { drySeed = seed; break; }
+    }
+    expect(wetSeed && drySeed).toBeTruthy(); wet.r.seed = wetSeed; dry.run!.seed = drySeed;
+    for (const tr of wet.r.traces) tr.life = 2500; for (const tr of dry.run!.traces) tr.life = 2500;
+    // Same footprint lifetimes; only the weather schedule differs.
+    settle(wet.gs, T0 + 4000); settle(dry, T0 + 4000);
+    expect(wet.r.entities[wet.doorId].hp).toBe(140); expect(dry.run!.entities[wet.doorId].hp).toBeLessThan(140);
+  });
+  it('actual spikes can stop the tracker before it reaches the door', () => {
+    const { gs, r, m, doorId, x, y, spot } = setupTrail(); m.hp = 10;
+    const id = uid(r, 'trap'); r.entities[id] = { id, kind: 'struct', type: 'spikes', x: x + 32, y, tx: spot.x + 2, ty: spot.y, hp: 90, maxHp: 90, owner: 'player' }; markDirty();
+    settle(gs, T0 + 4000); expect(m.state).toBe('dead'); expect(r.entities[doorId].hp).toBe(140); expect(r.entities[id].hp).toBe(86);
+  });
+  it('persists over-cap and previously sighted actors at their unresolved checkpoints', () => {
+    const { gs, r, m, x, y } = setupTrail();
+    for (let i = 1; i < 25; i++) { const q = creature(gs, 'boar', x - 8, y); (q as any).prov = true; }
+    const sighted = creature(gs, 'wolf', x - 10, y); sighted.knows = { kind: 'sight', x, y, at: T0 }; sighted.state = 'chase';
+    settle(gs, T0 + 50, true);
+    expect(m.x).toBeGreaterThan(x - 8); expect(r.creatures[24].x).toBe(x - 8);
+    expect(r.creatures[24].offlineUnresolvedAt).toBe(T0); expect(sighted.offlineUnresolvedAt).toBe(T0);
+    const loaded = selectSnapshots([serializeSnapshot(gs), null]).gs!; expect(loaded).toBeTruthy();
+    expect(loaded.run!.creatures[24].offlineUnresolvedAt).toBe(T0); expect(loaded.run!.creatures[25].offlineUnresolvedAt).toBe(T0);
+    settle(loaded, T0 + 4000, true); expect(loaded.run!.creatures[24].x).toBe(x - 8); expect(loaded.run!.creatures[25].x).toBe(x - 10);
+    const invalid = structuredClone(loaded); invalid.run!.creatures[24].offlineUnresolvedAt = NaN; expect(validate(invalid)).toBeNull();
+  });
+  it('expired evidence cannot produce a later impact and a pending combat encounter stays unresolved', () => {
+    const a = setupTrail(); for (const tr of a.r.traces) tr.life = 250; settle(a.gs, T0 + 4000); expect(a.r.entities[a.doorId].hp).toBe(140);
+    const b = setupTrail(); b.r.combat = { projectiles: [{ x: b.x, y: b.y, vx: 0, vy: 0, life: 1, dmg: 5, from: 'enemy', kind: 'bolt', r: 3 }], hazards: [] };
+    const startX = b.m.x; settle(b.gs, T0 + 4000); expect(b.m.x).toBe(startX); expect(b.r.entities[b.doorId].hp).toBe(140); expect(b.r.combat.projectiles[0].life).toBe(1); expect(b.m.offlineUnresolvedAt).toBeDefined();
+    b.r.combat = { projectiles: [], hazards: [] }; settle(b.gs, T0 + 8000); expect(b.m.x).toBe(startX); expect(b.r.entities[b.doorId].hp).toBe(140);
   });
 });

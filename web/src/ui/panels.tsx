@@ -266,7 +266,7 @@ export function MenuPanel({ api, onQuit, onSave }: { api: Api; onQuit: () => voi
     <div style={{ fontSize: 10, marginTop: 5, color: '#e6d9bc', lineHeight: 1.2 }}>
       <b>Before you leave</b> · {isSheltered(r, r.player.x, r.player.y) ? 'Sheltered here' : 'Not sheltered here'} · Weather: {weatherAt(r, api.now())}.<br />
       Next {Math.round(outlook.hours)}h outlook: ~{Math.round(outlook.wetHours)}h wet (global schedule estimate). Footprints fade; rain washes them faster. Change route, clear nearby creatures, wait, or use doors and terrain. No home is required.<br />
-      While away: weather, fire, gardens, stations and exposure advance. Creatures do not move or attack; unresolved encounters resume on return.
+      While away: weather, fire, production and exposure advance. Limited trace playback can damage reachable structures; other encounters remain unresolved.
     </div>
     <div style={{ fontSize: 10, marginTop: 6 }} className="flex items-center gap-2">Volume <input type="range" min={0} max={1} step={0.05} value={pf.settings.volume} onChange={e => { pf.settings.volume = +e.target.value; setVolume(pf.settings.volume, pf.settings.muted); api.rerender(); }} /><label><input type="checkbox" checked={pf.settings.muted} onChange={e => { pf.settings.muted = e.target.checked; setVolume(pf.settings.volume, pf.settings.muted); api.rerender(); }} /> mute</label></div>
     <div style={{ fontSize: 10, marginTop: 6, color: '#cfc2dc', lineHeight: 1.15 }}>WASD move · mouse aim · LMB attack/use · Space dodge-roll · E interact · V repair structure · F pull cart · 1–8 / wheel quickbar · I inventory · C craft · B build (X reclaim) · R research · M map · Tab skills · RMB cancel cast/build · Esc menu</div>
@@ -310,7 +310,7 @@ export function EvacPanel({ api, eid }: { api: Api; eid: string }) {
 export function ReportPanel({ api, lines }: { api: Api; lines: string[] }) {
   return <Panel title="While you were away" style={{ left: 170, top: 80, width: 300 }} onClose={() => api.open(null)}>
     <div className="scroll" style={{ maxHeight: 150, overflowY: 'auto' }}>{lines.map((l, i) => <div key={i} style={{ fontSize: 11, color: i ? '#cfc2dc' : '#ffd98a' }}>• {l}</div>)}</div>
-    <div style={{ fontSize: 10, color: '#b2a5bd', marginTop: 3 }}>Elapsed time advances weather, fire, traces, production and exposure. No invented raids. The world is live behind this report; creatures resume on return.</div>
+    <div style={{ fontSize: 10, color: '#b2a5bd', marginTop: 3 }}>Only evidenced tracks and physical impacts are resolved; other encounters remain unresolved. The world is live behind this report.</div>
     <button className="btn gold" style={{ marginTop: 4 }} onClick={() => api.open(null)}>Continue</button>
   </Panel>;
 }

@@ -6,7 +6,8 @@ import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, mar
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
-const fx = (type: string, d: any = {}) => { if (FX.length < 400) FX.push({ type, ...d }); };
+let offlineQuiet = false;
+const fx = (type: string, d: any = {}) => { if (!offlineQuiet && FX.length < 400) FX.push({ type, ...d }); };
 export type { Proj, Haz } from './core';
 export const PROJ: Proj[] = [];
 export const HAZ: Haz[] = [];
@@ -332,14 +333,91 @@ function steer(gs: GameState, m: Creature, tx: number, ty: number, sp: number, d
   const hit = moveBody(r, m, Math.cos(a) * sp * dt, Math.sin(a) * sp * dt, 4, 'creature');
   if (hit) bashAhead(gs, m, a, now);
 }
+let offlineImpacts: Map<string, { name: string; before: number; after: number; destroyed: boolean }> | null = null;
+let offlineStructureChange = 0;
 function bashAhead(gs: GameState, m: Creature, a: number, now: number) {
   // Physical impact only: charge-capable trackers may batter a remembered obstruction,
   // and committed charges may hit it. Wandering and ordinary melee cannot.
   const canBash = m.elder ? !!m.knows : CREATURES[m.type]?.style === 'charge' && (m.state === 'attack' || m.knows?.kind === 'trace');
   const r = gs.run!; if (!canBash || (m.cd > 0 && m.state !== 'attack')) return; const tx = tileOf(m.x + Math.cos(a) * 10), ty = tileOf(m.y + Math.sin(a) * 10);
   const e = entsAt(r, tx, ty).find(e => e.kind === 'struct' && (STRUCTS[e.type!].block)); if (!e) return;
-  const dmg = m.elder ? ELDERS[m.elder.key].dmg * 2 : CREATURES[m.type].dmg; e.hp! -= dmg; m.cd = 900; fx('structhit', { x: e.x, y: e.y });
-  if (e.hp! <= 0) { destroyStructure(r, e, now); receipt(r, now, 'struct.destroyed', `${e.type} by ${m.type}`); pushLog(r, now, `${STRUCTS[e.type!].name} was smashed by a ${CREATURES[m.type]?.name || 'beast'}!`, 'red'); fx('structbreak', { x: e.x, y: e.y }); }
+  const dmg = m.elder ? ELDERS[m.elder.key].dmg * 2 : CREATURES[m.type].dmg; const before = e.hp!; e.hp! = Math.max(0, before - dmg); m.cd = 900;
+  if (offlineImpacts && (e.owner === undefined || e.owner === 'player')) { const prior = offlineImpacts.get(e.id); offlineImpacts.set(e.id, { name: STRUCTS[e.type!].name, before: prior?.before ?? before, after: e.hp!, destroyed: e.hp! <= 0 }); }
+  receipt(r, now, 'struct.hit', `${e.id}:${m.type}:${before - e.hp!}`); fx('structhit', { x: e.x, y: e.y, n: before - e.hp! });
+  if (e.hp! <= 0) { if (offlineImpacts) offlineStructureChange++; destroyStructure(r, e, now); receipt(r, now, 'struct.destroyed', `${e.type} by ${m.type}`); pushLog(r, now, `${STRUCTS[e.type!].name} was smashed by a ${CREATURES[m.type]?.name || 'beast'}!`, 'red'); fx('structbreak', { x: e.x, y: e.y }); }
+}
+
+/** Spikes and their own wear are committed only on actual tile contact. */
+function triggerSpikes(gs: GameState, m: Creature, now: number) {
+  const r = gs.run!, trap = entsAt(r, tileOf(m.x), tileOf(m.y)).find(e => e.type === 'spikes' && (e.hp ?? 0) > 0);
+  if (!trap || m.cd > 0) return;
+  damageCreature(gs, m, 12, 0, now, 0); m.cd = 700; const before = trap.hp!; trap.hp = Math.max(0, before - 4);
+  if (offlineImpacts && (trap.owner === undefined || trap.owner === 'player')) { const prior = offlineImpacts.get(trap.id); offlineImpacts.set(trap.id, { name: STRUCTS[trap.type!].name, before: prior?.before ?? before, after: trap.hp, destroyed: trap.hp <= 0 }); }
+  if (trap.hp <= 0) { if (offlineImpacts) offlineStructureChange++; destroyStructure(r, trap, now); receipt(r, now, 'struct.destroyed', `${trap.type} by contact`); }
+}
+
+/** A footprint's direction can lead to a physically adjacent blocking structure.
+ * This never inspects unseen successors or a home location. */
+function traceBarrier(r: RunState, m: Creature) {
+  const k = m.knows; if (!k || k.kind !== 'trace' || CREATURES[m.type]?.style !== 'charge') return null;
+  const tr = r.traces.find(t => t.id === k.traceId && t.chainId === k.chainId && t.life > 0);
+  if (!tr || !Number.isFinite(tr.a)) return null;
+  const dx = Math.cos(tr.a), dy = Math.sin(tr.a), grid = blockGrid(r);
+  for (let d = 2; d <= 18; d += 2) {
+    const x = tr.x + dx * d, y = tr.y + dy * d, tx = tileOf(x), ty = tileOf(y), b = grid[ty * WW + tx];
+    if (!b || b === 4) continue;
+    if (b !== 3) return null;
+    const e = entsAt(r, tx, ty).find(e => e.kind === 'struct' && STRUCTS[e.type!]?.block && !(e.type!.startsWith('door') && e.open));
+    if (!e || dist(m.x, m.y, x, y) > 26 || !clearPhysicalLine(r, m, { x, y }, true, true)) return null;
+    return { x, y };
+  }
+  return null;
+}
+function trackEvidence(gs: GameState, m: Creature, speed: number, dt: number, now: number) {
+  const r = gs.run!, k = m.knows; if (!k || k.kind !== 'trace') return;
+  if (!r.traces.some(tr => tr.id === k.traceId && tr.chainId === k.chainId && tr.life > 0)) {
+    m.traceIgnore = k.chainId; m.knows = null; m.state = 'wander'; m.path = null; return;
+  }
+  if (dist(m.x, m.y, k.x, k.y) >= 7) { steer(gs, m, k.x, k.y, speed * 0.8, dt, now); return; }
+  const nxt = nextContiguousTrace(r.traces, k);
+  if (nxt && nxt.t <= now && dist(m.x, m.y, nxt.x, nxt.y) <= BAL.ai.traceSenseRadius && los(r, m.x, m.y, nxt.x, nxt.y, true)) {
+    m.knows = { kind: 'trace', x: nxt.x, y: nxt.y, at: nxt.t, traceId: nxt.id, chainId: nxt.chainId }; return;
+  }
+  // Close on the already-sensed mark before deciding it is lost.
+  if (dist(m.x, m.y, k.x, k.y) >= 2) { steer(gs, m, k.x, k.y, speed * 0.8, dt, now); return; }
+  const barrier = traceBarrier(r, m);
+  if (barrier) {
+    const a = Math.atan2(barrier.y - m.y, barrier.x - m.x); m.angle = a; m.dir = dirFromAngle(a);
+    if (moveBody(r, m, Math.cos(a) * speed * 0.8 * dt, Math.sin(a) * speed * 0.8 * dt, 4, 'creature')) bashAhead(gs, m, a, now);
+    return;
+  }
+  m.traceIgnore = k.chainId; m.knows = null; m.path = null; m.state = 'wander'; fx('lost', { x: m.x, y: m.y - 10 });
+}
+function encounteredTrace(r: RunState, m: Creature, now: number) {
+  let best: RunState['traces'][number] | undefined;
+  for (const tr of r.traces) {
+    if (tr.life <= 0 || tr.t > now || !tr.id || !tr.chainId || tr.chainId === m.traceIgnore || dist(tr.x, tr.y, m.x, m.y) > BAL.ai.traceSenseRadius || !los(r, m.x, m.y, tr.x, tr.y, true)) continue;
+    if (!best || tr.t > best.t) best = tr;
+  }
+  return best;
+}
+/** Only established local evidence is simulated outside the active player area. */
+function traceOnly(gs: GameState, m: Creature, dtMs: number, now: number): 'advanced' | 'defer' | 'done' {
+  const r = gs.run!, p = r.player, d = CREATURES[m.type];
+  if (!d || m.elder || !['idle', 'wander', 'track', 'chase'].includes(m.state) || (m.knows && m.knows.kind !== 'trace') || Math.abs(m.kbx) + Math.abs(m.kby) > 1) return 'defer';
+  // Player combat and in-flight effects require the full actor simulation, not a guess.
+  const sight = (darkness(r, now) > 0.45 ? BAL.ai.sightNight : BAL.ai.sightDay) * (d.sight / 100) * (weatherAt(r, now) === 'fog' ? 0.6 : 1) * (p.sheltered ? 0.5 : 1);
+  if (!p.dead && dist(m.x, m.y, p.x, p.y) < sight && los(r, m.x, m.y, p.x, p.y)) return 'defer';
+  if (r.combat && (r.combat.projectiles.length || r.combat.hazards.length)) return 'defer';
+  for (const key in r.sources) { const st = r.sources[key]; if (st.fire && st.fire > r.clock.simMs && dist(m.x, m.y, (+key % WW) * TILE + 8, Math.floor(+key / WW) * TILE + 8) < 26) return 'defer'; }
+  const tr = m.knows?.kind === 'trace' ? null : encounteredTrace(r, m, now);
+  if (!m.knows && !tr) return 'done';
+  m.cd = Math.max(0, m.cd - dtMs); m.t += dtMs; if (m.slow) m.slow = Math.max(0, m.slow - dtMs);
+  triggerSpikes(gs, m, now); if (m.state === 'dead') return 'done';
+  const aggro = d.aggro || isRagnarok(r, now) || (m as any).prov || (darkness(r, now) > 0.45 && m.type === 'boar');
+  if (!m.knows && tr && aggro) { m.knows = { kind: 'trace', x: tr.x, y: tr.y, at: tr.t, traceId: tr.id, chainId: tr.chainId }; m.state = 'track'; }
+  if (m.knows?.kind === 'trace') trackEvidence(gs, m, d.speed * (isRagnarok(r, now) ? 1.2 : 1) * (m.slow ? 0.45 : 1), dtMs / 1000, now);
+  return 'advanced';
 }
 
 function tickCreatures(gs: GameState, dtMs: number, now: number) {
@@ -349,14 +427,15 @@ function tickCreatures(gs: GameState, dtMs: number, now: number) {
   for (let i = r.creatures.length - 1; i >= 0; i--) {
     const m = r.creatures[i];
     if (m.state === 'dead') { m.t += dtMs; if (!m.elder && m.t > 1600) r.creatures.splice(i, 1); continue; }
-    const dp = dist(m.x, m.y, p.x, p.y); if (dp > ACT) continue; // off-screen beings are frozen (no fabricated remote actions)
+    const dp = dist(m.x, m.y, p.x, p.y); if (dp > ACT) { if (m.offlineUnresolvedAt === undefined && (m.knows?.kind === 'trace' || (!m.knows && encounteredTrace(r, m, now)))) { if (traceOnly(gs, m, dtMs, now) === 'defer') m.offlineUnresolvedAt = now - dtMs; } continue; }
+    delete m.offlineUnresolvedAt; // resume from the last justified checkpoint in live play
     m.cd = Math.max(0, m.cd - dtMs); m.flash = Math.max(0, m.flash - dtMs); m.t += dtMs; if (m.slow) m.slow = Math.max(0, m.slow - dtMs);
     if (m.atk?.tuck) m.atk.tuck -= dtMs; if (m.atk?.vuln) m.atk.vuln -= dtMs;
     if (Math.abs(m.kbx) + Math.abs(m.kby) > 1) { moveBody(r, m, m.kbx * dt, m.kby * dt, 4, 'creature'); m.kbx *= 0.82; m.kby *= 0.82; }
     if (m.elder) { tickElder(gs, m, dtMs, now, dp); continue; }
     const d = CREATURES[m.type]; const spd = d.speed * (rag ? 1.2 : 1) * (m.slow ? 0.45 : 1);
     // spike traps
-    const here = entsAt(r, tileOf(m.x), tileOf(m.y)).find(e => e.type === 'spikes'); if (here && m.cd <= 0) { damageCreature(gs, m, 12, 0, now, 0); m.cd = 700; here.hp! -= 4; }
+    triggerSpikes(gs, m, now); if (m.hp <= 0) continue;
     // in water? creatures avoid deep water — stuck ones wade
     const aggro = d.aggro || rag || (m as any).prov || (night && m.type === 'boar');
     // sensing
@@ -365,7 +444,7 @@ function tickCreatures(gs: GameState, dtMs: number, now: number) {
     if (!seesPlayer && aggro && !m.knows && ['idle', 'wander', 'track', 'chase'].includes(m.state) && (m.t % 500) < dtMs) {
       // Independent encounter: live, identified mark in circular range and line of sight.
       const R = BAL.ai.traceSenseRadius; let best: RunState['traces'][number] | undefined;
-      for (const tr of r.traces) { if (tr.life <= 0 || !tr.id || !tr.chainId || tr.chainId === m.traceIgnore || dist(tr.x, tr.y, m.x, m.y) > R || !los(r, m.x, m.y, tr.x, tr.y, true)) continue; if (!best || tr.t > best.t) best = tr; }
+      for (const tr of r.traces) { if (tr.life <= 0 || tr.t > now || !tr.id || !tr.chainId || tr.chainId === m.traceIgnore || dist(tr.x, tr.y, m.x, m.y) > R || !los(r, m.x, m.y, tr.x, tr.y, true)) continue; if (!best || tr.t > best.t) best = tr; }
       if (best) { fx('sniff', { x: m.x, y: m.y - 10 }); m.knows = { kind: 'trace', x: best.x, y: best.y, at: best.t, traceId: best.id, chainId: best.chainId }; m.state = 'track'; }
     }
     if (m.knows?.kind === 'trace' && !r.traces.some(tr => tr.id && tr.id === m.knows!.traceId && tr.chainId === m.knows!.chainId && tr.life > 0)) { m.traceIgnore = m.knows.chainId; m.knows = null; if (m.state === 'track') m.state = 'wander'; }
@@ -381,12 +460,7 @@ function tickCreatures(gs: GameState, dtMs: number, now: number) {
             else if (d.style === 'lunge' && knownDist < 70) { const a = Math.atan2(m.y - target.y, m.x - target.x) + 0.9 * dt * 2; steer(gs, m, target.x + Math.cos(a) * 46, target.y + Math.sin(a) * 46, spd, dt, now); }
             else steer(gs, m, target.x, target.y, spd, dt, now);
           } else {
-            // follow footprints toward newer ones
-            if (dist(m.x, m.y, m.knows.x, m.knows.y) < 7) {
-              // Advance only along the same physically contiguous footprint chain.
-              const nxt = nextContiguousTrace(r.traces, m.knows);
-              if (nxt && dist(m.x, m.y, nxt.x, nxt.y) <= BAL.ai.traceSenseRadius && los(r, m.x, m.y, nxt.x, nxt.y, true)) m.knows = { kind: 'trace', x: nxt.x, y: nxt.y, at: nxt.t, traceId: nxt.id, chainId: nxt.chainId }; else if (nxt && dist(m.x, m.y, m.knows.x, m.knows.y) >= 2) { steer(gs, m, m.knows.x, m.knows.y, spd * 0.8, dt, now); } else { m.traceIgnore = m.knows.chainId; m.knows = null; m.state = 'wander'; fx('lost', { x: m.x, y: m.y - 10 }); }
-            } else steer(gs, m, m.knows.x, m.knows.y, spd * 0.8, dt, now);
+            trackEvidence(gs, m, spd, dt, now);
           }
         } else {
           m.state = 'wander';
@@ -711,7 +785,17 @@ export function settle(gs: GameState, now: number, silent = false): string[] {
   if (start > r.clock.lastSimAt && now >= start) r.clock.lastSimAt = start;
   const report: string[] = []; const B = BAL.player; const p = r.player;
   markDirty(); // Continue may replace the run object while retaining its ID.
-  const sheltered = isSheltered(r, p.x, p.y); p.sheltered = sheltered;
+  let sheltered = isSheltered(r, p.x, p.y); p.sheltered = sheltered;
+  // Bounded, deterministic playback starts only at saved positions with actual
+  // local evidence. Other roaming/combat remains unresolved, not fabricated.
+  const eligible = r.creatures.filter(m => m.offlineUnresolvedAt === undefined && !m.elder && ['idle', 'wander', 'track', 'chase'].includes(m.state) && (!m.knows || m.knows.kind === 'trace') && (m.knows?.kind === 'trace' || !!encounteredTrace(r, m, start)));
+  // Combat/last-sight checkpoints cannot be reconstructed by trace-only playback.
+  for (const m of r.creatures) if (m.state !== 'dead' && m.offlineUnresolvedAt === undefined && (m.knows?.kind === 'sight' || ['tell', 'attack', 'recover'].includes(m.state) || Math.abs(m.kbx) + Math.abs(m.kby) > 1)) m.offlineUnresolvedAt = start;
+  const pending = eligible.slice(0, 24);
+  for (const m of eligible.slice(24)) m.offlineUnresolvedAt = start;
+  const impacts = new Map<string, { name: string; before: number; after: number; destroyed: boolean }>();
+  let frames = 0, structureEpoch = offlineStructureChange;
+
   let t = start, wetMs = 0; const zone = getWorld().zone[tileOf(p.y) * WW + tileOf(p.x)];
   const startHp = p.hp, startHunger = p.hunger;
   // Minute-sized survival integration, not frame replay; world helper splits further at weather/fire boundaries.
@@ -719,6 +803,7 @@ export function settle(gs: GameState, now: number, silent = false): string[] {
     const slotMs = BAL.weather.slotMinutes * 60000;
     const nextWeather = r.startedAt - r.qaOffset + (Math.floor((t - r.startedAt + r.qaOffset) / slotMs) + 1) * slotMs;
     let dtMs = Math.min(60000, end - t, nextWeather - t);
+    if (pending.length && frames < 2400) dtMs = Math.min(dtMs, 50);
     // Integrate the existing offline drains at their actual depletion/death boundaries.
     // Rates and hunger-only shelter protection are unchanged.
     const unit = B.offlineDrainFactor / 60000;
@@ -745,7 +830,18 @@ export function settle(gs: GameState, now: number, silent = false): string[] {
     const until = Math.min(end, nextWeather, t + Math.max(dtMs, 0.001)); dtMs = until - t;
     if (isWet(weatherAt(r, t))) wetMs += dtMs;
     advanceWorld(gs, t, until, silent ? undefined : report, false);
+    if (pending.length && frames < 2400) {
+      frames++; offlineImpacts = impacts; offlineQuiet = true;
+      try {
+        for (let i = pending.length - 1; i >= 0; i--) {
+          const m = pending[i], outcome = traceOnly(gs, m, dtMs, until);
+          if (outcome !== 'advanced') { if (outcome === 'defer') m.offlineUnresolvedAt = t; pending.splice(i, 1); }
+        }
+      } finally { offlineQuiet = false; offlineImpacts = null; }
+      if (frames === 2400) for (const m of pending) m.offlineUnresolvedAt = until;
+    }
     t = until; r.clock.lastSimAt = t;
+    if (structureEpoch !== offlineStructureChange) { structureEpoch = offlineStructureChange; sheltered = isSheltered(r, p.x, p.y); p.sheltered = sheltered; }
     if (p.dead) continue;
     p.hunger = Math.max(0, p.hunger - hungerRate * dtMs); p.thirst = Math.max(0, p.thirst - thirstRate * dtMs);
     if (radRate) p.rad = Math.min(100, p.rad + radRate * dtMs);
@@ -753,16 +849,20 @@ export function settle(gs: GameState, now: number, silent = false): string[] {
     if (Math.abs(p.hp - 1) < 1e-8) p.hp = 1;
     if (p.hp <= 1e-8) { killPlayer(gs, t, 'exposure while offline'); if (!silent) report.push('You did not survive the time away. Your bag lies where you rested.'); }
   }
-  if (now >= expiry) { endRun(gs, 'expired', expiry); if (!silent) report.push('The run reached its 336-hour end while you were away.'); return report; }
-  if (silent || gap < 4000) return [];
+  if (now >= expiry) {
+    if (!silent) for (const impact of impacts.values()) report.push(impact.destroyed ? `${impact.name} was destroyed while away.` : `${impact.name}: ${Math.round(impact.before)} → ${Math.round(impact.after)} HP while away.`);
+    endRun(gs, 'expired', expiry); if (!silent) report.push('The run reached its 336-hour end while you were away.'); return report;
+  }
+  if (silent || (gap < 4000 && impacts.size === 0)) return [];
   const hrs = gap / 3600000;
-  report.unshift(`Away for ${hrs >= 1 ? hrs.toFixed(1) + ' h' : Math.round(gap / 60000) + ' min'}.`);
-  report.push('Creatures did not move or attack while away; unresolved encounters resume on return.');
+  report.unshift(`Away for ${hrs >= 1 ? hrs.toFixed(1) + ' h' : gap >= 60000 ? Math.round(gap / 60000) + ' min' : Math.round(gap / 1000) + ' sec'}.`);
+  report.push('Nearby evidenced trails may be followed while away; other encounters remain unresolved.');
+  for (const impact of impacts.values()) report.push(impact.destroyed ? `${impact.name} was destroyed while away.` : `${impact.name}: ${Math.round(impact.before)} → ${Math.round(impact.after)} HP while away.`);
   if (!p.dead) {
     const nearby = r.traces.filter(tr => dist(p.x, p.y, tr.x, tr.y) <= 64 && los(r, p.x, p.y, tr.x, tr.y, true)).length;
     report.push(`Here: ${sheltered ? 'sheltered' : 'not sheltered'}; ${weatherAt(r, end)}; ${nearby} visible nearby footprint${nearby === 1 ? '' : 's'}.`);
   }
-  if (wetMs) report.push(`Rain fell for ~${Math.round(wetMs / 60000)} min, accelerating footprint decay; exposed gardens and barrels could collect water.`);
+  if (wetMs) report.push(`Rain fell for ~${wetMs >= 60000 ? Math.round(wetMs / 60000) + ' min' : Math.round(wetMs / 1000) + ' sec'}, accelerating footprint decay; exposed gardens and barrels could collect water.`);
   if (Math.round(startHunger - p.hunger) > 0) report.push(`Hunger ${Math.round(startHunger)} → ${Math.round(p.hunger)}${sheltered ? ' (sheltered: hunger cannot kill you)' : ''}.`);
   if (!p.dead && startHp - p.hp >= 1) report.push(`HP ${Math.round(startHp)} → ${Math.round(p.hp)}.`);
   receipt(r, now, 'offline.settle', `${Math.round(gap / 1000)}s`);

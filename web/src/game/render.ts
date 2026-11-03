@@ -120,7 +120,7 @@ export function consumeFX(onFx: (e: any) => void) {
       case 'cast': burst(e.x, e.y, 16, e.core === 'fire' ? ['#ffb040', '#fff0a0'] : e.core === 'frost' ? ['#c8f0ff', '#ffffff'] : e.core === 'storm' ? ['#c0e0ff', '#ffffff'] : ['#e0c080', '#7a5a32'], 70, 0, 400); break;
       case 'fizzle': burst(e.x, e.y - 8, 8, ['#8a8a9a', '#c0c0d0'], 30, -20, 500); break;
       case 'dodge': burst(e.x, e.y - 6, 5, ['#ffffff', '#c0e0ff'], 40, 0, 250); break;
-      case 'structhit': burst(e.x, e.y - 6, 6, ['#c9935a', '#8a8a90'], 50, 150, 400); break;
+      case 'structhit': burst(e.x, e.y - 6, 10, ['#ffe3a0', '#c9935a', '#8a8a90'], 60, 150, 500); TEXTS.push({ x: e.x, y: e.y - 20, vx: 0, vy: -20, life: 0, max: 1100, col: '#ffbd77', text: '-' + e.n } as Part); break;
       case 'structbreak': burst(e.x, e.y - 6, 20, ['#c9935a', '#8a8a90', '#5a3a22'], 80, 150, 700); break;
       case 'drain': ARCS.push({ x: e.x0, y: e.y0 - 10, x1: e.x1, y1: e.y1 - 10, life: 0, max: 600, kind: 'drain' } as Part); break;
       case 'emerge': burst(e.x, e.y, e.big ? 26 : 12, ['#7a6a50', '#a09070', '#5a4a3a'], e.big ? 90 : 50, 150, 600); break;
@@ -185,7 +185,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   // footprints
   for (const tr of r.traces) { if (tr.x < cx - 4 || tr.x > cx + VIEW_W + 4 || tr.y < cy - 4 || tr.y > cy + VIEW_H + 4) continue; const a = clamp(tr.life / 60000, 0.12, 0.6);
     const col = tr.s === T.SNOW ? `rgba(65,85,120,${a + 0.25})` : tr.s === T.SAND ? `rgba(150,120,80,${a})` : tr.s === T.MARSH ? `rgba(30,30,20,${a + 0.1})` : tr.s === T.ASH ? `rgba(20,16,18,${a})` : tr.s === T.ROAD ? `rgba(90,60,40,${a * 0.7})` : `rgba(30,60,25,${a * 0.8})`;
-    g.fillStyle = col; const px = Math.round(tr.x + Math.cos(tr.a + Math.PI / 2) * 1.5 * ((tr.t / 100) % 2 > 1 ? 1 : -1)), py = Math.round(tr.y); g.fillRect(px, py, 3, 2); g.fillRect(px + 1, py - 1, 1, 1); }
+    g.fillStyle = col; const px = Math.round(tr.x + Math.cos(tr.a + Math.PI / 2) * 1.5 * ((tr.t / 100) % 2 > 1 ? 1 : -1)), py = Math.round(tr.y); g.fillRect(px, py, 4, 2); g.fillRect(px + 1, py - 2, 2, 2); }
   // ground layer structures
   const ents = Object.values(r.entities);
   for (const e of ents) { if (e.kind !== 'struct') continue; if (e.x < cx - 32 || e.x > cx + VIEW_W + 32 || e.y < cy - 32 || e.y > cy + VIEW_H + 48) continue; const d = STRUCTS[e.type!];
@@ -281,7 +281,7 @@ function drawEntity(g: CanvasRenderingContext2D, r: RunState, e: Entity, time: n
       if (e.type === 'escrow' && Math.random() < 0.06) add({ x: X - 6 + Math.random() * 12, y: Y - 6, vx: 0, vy: -10, col: '#c8a0ff', max: 900, s: 1, g: -2 });
       if (e.station && e.station.queue.length) { const j = e.station.queue[0]; const f = 1 - j.left / j.total; g.fillStyle = '#140c14'; g.fillRect(X - 7, Y - 16, 14, 3); g.fillStyle = (e.station.burn > 0 || d.station === 'workbench' || d.station === 'research') ? '#7aff6a' : '#ff7a3a'; g.fillRect(X - 6, Y - 15, Math.round(12 * f), 1); }
       if (e.station && C(r, e.station.outC)?.slots.some(Boolean) && Math.floor(time / 400) % 2) { g.fillStyle = '#ffe27a'; g.fillRect(X + 5, Y - 14, 2, 2); }
-      if (e.hp! < e.maxHp!) { g.fillStyle = '#140c14'; g.fillRect(X - 7, Y + 7, 14, 2); g.fillStyle = '#e0a040'; g.fillRect(X - 6, Y + 7, Math.round(12 * e.hp! / e.maxHp!), 1); }
+      if (e.hp! < e.maxHp!) { g.fillStyle = '#140c14'; g.fillRect(X - 8, Y + 6, 16, 4); g.fillStyle = '#ffb04a'; g.fillRect(X - 7, Y + 7, Math.round(14 * e.hp! / e.maxHp!), 2); }
       return;
     }
   }

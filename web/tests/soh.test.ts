@@ -237,8 +237,8 @@ describe('C08/C14 traces & AI knowledge', () => {
     for (let k = 0; k < 120; k++) tick(gs, idle(p.x, p.y), 16, T0 + k * 16);
     expect(m.knows === null || m.knows.kind !== 'trace').toBe(true);
     // lay a physical trail from the wolf toward the player
-    r.traces = []; for (let k = 0; k <= 20; k++) r.traces.push({ id: `trail${k}`, chainId: 'trail0', prevId: k ? `trail${k - 1}` : undefined, x: m.x - k * 9, y: m.y, t: T0 + k * 1000, life: 999999, a: Math.PI, s: T.GRASS });
-    let tracked = false; for (let k = 0; k < 200; k++) { tick(gs, idle(p.x, p.y), 16, T0 + 5000 + k * 16); if (m.knows?.kind === 'trace') tracked = true; }
+    r.traces = []; for (let k = 0; k <= 20; k++) r.traces.push({ id: `trail${k}`, chainId: 'trail0', prevId: k ? `trail${k - 1}` : undefined, x: m.x - k * 9, y: m.y, t: T0 + 1900, life: 999999, a: Math.PI, s: T.GRASS });
+    let tracked = false; for (let k = 0; k < 200; k++) { tick(gs, idle(p.x, p.y), 16, T0 + 1920 + k * 16); if (m.knows?.kind === 'trace') tracked = true; }
     expect(tracked).toBe(true);
   });
 });

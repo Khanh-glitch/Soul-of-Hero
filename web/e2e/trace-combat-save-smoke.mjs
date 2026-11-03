@@ -13,7 +13,7 @@ try {
  // Capture the exact saved committed effect, then reload in the same browser 2 minutes later.
  const saved = await page.evaluate(() => JSON.parse(JSON.parse(localStorage.getItem('soh.state.v3')).payload).run.combat);
  await context.addInitScript(() => { const old = Date.now; Date.now = () => old() + 120000; });
- await page.reload({ waitUntil: 'networkidle' }); await page.getByRole('button', { name: /Continue —/ }).click(); await page.getByText(/Creatures did not move or attack while away/).waitFor();
+ await page.reload({ waitUntil: 'networkidle' }); await page.getByRole('button', { name: /Continue —/ }).click(); await page.getByText(/Nearby evidenced trails may be followed while away/).waitFor();
  const returned = await page.evaluate(() => window.__soh.run.combat);
  assert.equal(returned.projectiles.length, 1); assert.equal(returned.hazards.length, 1); assert.equal(returned.projectiles[0].x, saved.projectiles[0].x);
  assert(returned.hazards[0].t - saved.hazards[0].t < 1500, 'only live frames may advance the hazard, not two minutes away');
