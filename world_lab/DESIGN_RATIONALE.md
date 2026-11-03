@@ -1,6 +1,8 @@
-# Design rationale — paired Greywater → Argus candidate
+# Design rationale — legacy paired candidate + ONE rebuilt hero scene
 
-The creator selected `paired`: the first creator-visible visual candidate must connect a **Greywater open mill/harbor** to an **Argus deep-vault traverse**. `screenshots/PAIRED_VISUAL_REVIEW.png` shows that packet at four unscaled 640×360 1× views (day and night).
+The creator selected `paired` for the **legacy** spatial thesis: a **Greywater open mill/harbor** connected to an **Argus deep-vault traverse**. `screenshots/PAIRED_VISUAL_REVIEW.png` shows the historical four-quadrant packet, but the creator **rejected all 10 legacy screenshots**; `paired` now survives only as a traversal-route thesis, not a visual candidate.
+
+The current work is a different, stronger pipeline: **one** rebuilt Argus / Great Lens hero scene at native `640×360` 1×, documented in `HERO_SCENE_REVIEW.md`. The rest of this file records the legacy GOLD compiler/renderer rationale, which still underpins the review tool but is not the hero-scene pipeline.
 
 ## Authority and scale
 
@@ -25,6 +27,12 @@ Variant A uses seed `20261102`, variant B `20261103`; both preserve GOLD resourc
 ## Navigation and negative testing
 
 `movement.mjs` is a review-tool circle-vs-tile/AABB mover with axis sliding, corner assist, 4px substeps and BFS. QA proves eight tree approaches, one-tile passage, corner assist, open doors, solid walls, soft traversable decoration, four-spawn early-resource reachability, bridge usage on the academy route, two+ interior retreat paths, landmark reachability, and rejection of wrong GOLD IDs / water goals / removed-edge softlocks. These are **spatial candidates**, not canonical player laws.
+
+## ONE rebuilt hero scene — art pipeline
+
+`src/hero/` is separate from the legacy compiler. `kit.mjs` resolves `155` real prototype-generated crops from 8 exact staged sheets using the prototype's own frame manifests; `scene.mjs` serializes an explicit `40×23` 16px tile map, two exact-frame mosaics (81 + 25 crops), 21 y-sorted whole sprites, 7 light emitters, functional spaces and focal hierarchy to `data/hero_scene.json`; `render.mjs` verifies every SHA/rect/frame, then writes `screenshots/ARGUS_GREAT_LENS_HERO.png`. `palette.mjs` supplies one 36-colour hue-shifted value ladder (dark→blue/violet, highlights→brass/ivory); `light.mjs` applies one cool ambient step plus small warm/cool pools from the real `light_radial.png` alpha crop quantized into four hard bands. Exactly one hero landmark is labelled `AI_DERIVED_HERO_PROP_NOT_REAL_ASSET` and is never real-asset proof. `qa/HERO_TEST_REPORT.md` proves 12 strict checks; `HERO_SCENE_REVIEW.md` compares honestly against the staged L06/L09 native references.
+
+This pipeline deliberately follows the applied research recorded in `ART_PIPELINE_REVIEW.md`: tileable/trim majority on a uniform 16px grid, one hero asset, conservative ≤1-tile contact shadows, cool ambient + warm local light, foreground/center/background hierarchy, leading lines, hard edges, y-depth sorting and a single destination. It does **not** claim parity with the L06/L09 native frames.
 
 ## Explicit non-claims
 

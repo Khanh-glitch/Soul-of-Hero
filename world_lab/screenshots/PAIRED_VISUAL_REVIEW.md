@@ -1,6 +1,10 @@
-# Paired visual-review candidate
+# Paired visual-review candidate — REJECTED BY CREATOR (audit only)
 
-Creator-selected `paired` flagship: connected Greywater open mill/harbor → Argus deep-vault traverse.
+**Status: REJECTED.** The creator rejected all 10 legacy screenshots, including every quadrant below. This packet is retained strictly for regression/audit; it is not a visual candidate and must not be sent for approval. `paired` Greywater→Argus survives only as a traversal-route thesis.
+
+The current single visual candidate is `screenshots/ARGUS_GREAT_LENS_HERO.png`, documented in `HERO_SCENE_REVIEW.md` with exact real-crop SHA/rect/frame provenance in `data/hero_provenance.json` and a tracked scene graph in `data/hero_scene.json`.
+
+Creator-selected `paired` flagship (historical): connected Greywater open mill/harbor → Argus deep-vault traverse.
 
 | Quadrant | Capture | Why it is in this packet |
 |---|---|---|
@@ -11,4 +15,4 @@ Creator-selected `paired` flagship: connected Greywater open mill/harbor → Arg
 
 All four quadrants are unscaled 640×360 1× renders from `src/render/scene.mjs`. The contact sheet is only a review presentation; the individual PNGs are the evidence.
 
-Verdict: **READY_FOR_CREATOR_VISUAL_REVIEW**, not creator-accepted, not Godot-native, not playability-proven.
+Historical verdict (now obsolete): ~~READY_FOR_CREATOR_VISUAL_REVIEW~~. Current verdict: **REJECTED_BY_CREATOR / PLAYABILITY_UNPROVEN / GAMEPLAY_INTEGRATION_BLOCKED**. No creator approval was requested for this or any weak iteration.

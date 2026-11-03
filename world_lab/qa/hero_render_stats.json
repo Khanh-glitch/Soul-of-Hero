@@ -1,0 +1,61 @@
+{
+  "schema": "soh.hero_render/1",
+  "scene_id": "argus_great_lens_hero_v1",
+  "output": "screenshots/ARGUS_GREAT_LENS_HERO.png",
+  "output_sha256": "6b91db3a318650b2a5a1063e4d2063c2c6dd88c9d1b84ca8bd3cb2714f92b40c",
+  "output_bytes": 122422,
+  "dimensions": [
+    640,
+    360
+  ],
+  "scale": 1,
+  "grid_px": 16,
+  "head": "DYNAMIC_SEE_GIT_REV_PARSE_HEAD",
+  "head_command": "git rev-parse HEAD",
+  "verification": {
+    "sources": 8,
+    "frames": 154,
+    "crops": 156,
+    "normalized": 155
+  },
+  "ledger_sha256": "1a18eacbfa0f801c121e07271dfdd7a710a3b69a91bd1b37e4d96eddad00e114",
+  "scene_graph_sha256": "f7ce95af90597f9cb5e2138c7e841864dc2fe71929e7e81806a2320a4e4777a3",
+  "palette_size": 36,
+  "off_palette_pixels": 0,
+  "transparent_pixels": 0,
+  "tile_placements": 920,
+  "mosaic_placements": 106,
+  "prop_placements": 21,
+  "real_crop_placements": 1046,
+  "derived_hero_placements": 1,
+  "contact_shadows": 16,
+  "max_contact_shadow_px": 12,
+  "y_sorted_objects": 21,
+  "lights": 7,
+  "lighting": {
+    "warm_pixels": 13633,
+    "cool_pixels": 25216,
+    "ambient_pixels": 230400,
+    "family_counts": {
+      "water": 183856,
+      "void": 15056,
+      "ember": 4570,
+      "brass": 20472,
+      "cyan": 6446
+    },
+    "max_levels": {
+      "warm": 3,
+      "cool": 3
+    }
+  },
+  "distinct_kit_ids_used": 149,
+  "real_kit_ids_used": 148,
+  "tileable_or_trim_kit_ids_used": 134,
+  "hero_label": "AI_DERIVED_HERO_PROP_NOT_REAL_ASSET",
+  "verdict": {
+    "render": "SINGLE_NATIVE_640X360_1X_PROVENANCE_BACKED_HERO_SCENE",
+    "playability": "PLAYABILITY_UNPROVEN",
+    "gameplay_integration": "GAMEPLAY_INTEGRATION_BLOCKED",
+    "creator_visual_review": "NOT_REQUESTED_NO_WEAK_ITERATION_APPROVAL"
+  }
+}

@@ -1,13 +1,14 @@
 {
-  "generated": "2026-11-03T03:03:47.358Z",
+  "generated": "2026-11-03T09:09:14.108Z",
   "branch": "arena/2e3cfbd2-soul-of-hero",
   "head": "5214788933b1a827f3a177d11ff486433dfe5e8a",
   "verdicts": {
-    "compiler_and_data": "TECHNICAL_PROVEN",
-    "visual": "VISUAL_REVIEW_REQUIRED",
+    "compiler_and_data": "TECHNICAL_PROVEN_LEGACY_COMPILER_AND_DATA_ONLY",
+    "visual": "LEGACY_TEN_SHOTS_REJECTED_BY_CREATOR",
+    "hero_scene": "SINGLE_PROVENANCE_BACKED_VISUAL_CANDIDATE_BUILT_SEE_QA_HERO_RESULTS_JSON",
     "playability": "PLAYABILITY_UNPROVEN",
     "gameplay_integration": "GAMEPLAY_INTEGRATION_BLOCKED",
-    "creator_visual_review": "READY_FOR_CREATOR_VISUAL_REVIEW",
+    "creator_visual_review": "NOT_READY_NO_APPROVAL_REQUESTED_FOR_WEAK_OR_REJECTED_ITERATIONS",
     "native_godot": "NOT_CLAIMED_NO_GODOT_4_7_RUNTIME_OR_OWNER_COORDINATION"
   },
   "summary": {
@@ -163,20 +164,22 @@
       "id": "PERFORMANCE_STREAMING_AND_BROWSER_EVIDENCE",
       "status": "PASS",
       "node_capture_frames": 10,
-      "average_ms": 26,
-      "max_ms": 35.8,
+      "average_ms": 24.7,
+      "max_ms": 54.9,
       "visible_tiles_average": 1144,
       "drawables_average": 65,
       "full_grid_cells": 175000,
       "streaming": "visible-tile iteration only",
-      "browser_checks": 8,
+      "browser_checks": 10,
       "browser_status": "PASS"
     }
   ],
   "limitations": [
+    "All 10 legacy screenshots were REJECTED by the creator; no visual acceptance is claimed for them.",
     "No Godot 4.7 runtime, no owner A0/A1/A3/A8 integration, no native player-input journey.",
     "Screenshots are real 640x360 1x node-rendered captures from shared scene code; they are not native Godot captures.",
     "Human visual acceptance, playability and gameplay economy/HP/yield/respawn remain creator/owner authority.",
-    "Private APEX-CHAOS blobs unavailable (403); only selected public-branch donors staged."
+    "Private APEX-CHAOS blobs unavailable (403); only selected public-branch donors staged.",
+    "The rebuilt single hero scene has its own exact-SHA ledger and QA: data/hero_provenance.json, data/hero_scene.json, qa/hero_results.json."
   ]
 }

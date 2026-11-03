@@ -7,6 +7,8 @@
     "build": "node src/compiler/build.mjs",
     "capture": "node src/render/capture.mjs",
     "test": "node src/tools/qa.mjs",
+    "hero:build": "node src/hero/build.mjs",
+    "hero:test": "node src/hero/test.mjs",
     "test:browser": "node src/tools/browser_test.mjs",
     "bench": "node src/tools/bench.mjs",
     "serve": "node src/app/server.mjs"

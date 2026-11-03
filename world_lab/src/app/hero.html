@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SOH Veyra World Lab — Argus Great Lens hero scene</title><link rel="icon" href="data:,"><link rel="stylesheet" href="/src/app/style.css">
+<style>
+body{max-width:1000px;margin:0 auto;padding:16px}
+header{display:block;margin-bottom:12px}
+h1 span{display:block;margin:4px 0 0}
+.hero-shot{display:block;width:640px;height:360px;image-rendering:pixelated;image-rendering:crisp-edges;border:1px solid #3b4658;background:#05060b}
+.meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+.meta .panel{overflow-wrap:anywhere}
+.badge{display:inline-block;padding:2px 6px;border:1px solid var(--gold);color:var(--gold);font-size:10px}
+table{border-collapse:collapse;width:100%;font-size:11px}td,th{border-bottom:1px solid var(--line);padding:3px 5px;text-align:left}th{color:var(--cyan)}
+a{color:var(--gold)}
+#ledgerCount,#sceneCount,#qaCount{color:var(--text)}
+</style></head>
+<body>
+<header><h1>SOH VEYRA WORLD LAB <span>ONE rebuilt Argus / Great Lens hero scene · native 640×360 1× · not native gameplay</span></h1>
+<div id="status">Loading exact provenance…</div></header>
+
+<div class="viewport-wrap"><img class="hero-shot" id="heroImage" src="/screenshots/ARGUS_GREAT_LENS_HERO.png" width="640" height="360" alt="Argus Great Lens hero scene, native 640 by 360 at 1x"></div>
+<div class="caption">NATIVE 640×360 · 1× · NEAREST-NEIGHBOR · ONE SCENE · <span id="imageSha">SHA loading…</span></div>
+
+<p><span class="badge" id="heroLabel">AI_DERIVED_HERO_PROP_NOT_REAL_ASSET</span>
+The single hero landmark is AI-derived and is explicitly labelled. It is <strong>never</strong> real-asset proof; all surrounding kit is exact prototype-generated real crops.</p>
+
+<div class="meta">
+  <div class="panel"><h2>Exact provenance</h2>
+    <table><tbody>
+      <tr><th>Ledger</th><td><a href="/data/hero_provenance.json">data/hero_provenance.json</a> — <span id="ledgerCount">…</span></td></tr>
+      <tr><th>Scene graph</th><td><a href="/data/hero_scene.json">data/hero_scene.json</a> — <span id="sceneCount">…</span></td></tr>
+      <tr><th>Render stats</th><td><a href="/qa/hero_render_stats.json">qa/hero_render_stats.json</a></td></tr>
+      <tr><th>QA</th><td><a href="/qa/hero_results.json">qa/hero_results.json</a> — <span id="qaCount">…</span></td></tr>
+      <tr><th>Review</th><td><a href="/HERO_SCENE_REVIEW.md">HERO_SCENE_REVIEW.md</a></td></tr>
+      <tr><th>Licenses</th><td><a href="/ASSET_LICENSES.md">ASSET_LICENSES.md</a> · <a href="/THIRD_PARTY.md">THIRD_PARTY.md</a></td></tr>
+      <tr><th>Derived notice</th><td><a href="/data/hero_derived_notice.json">data/hero_derived_notice.json</a></td></tr>
+    </tbody></table>
+  </div>
+  <div class="panel"><h2>Honest verdict</h2>
+    <p id="verdict">Loading…</p>
+    <p class="hint">This is a Node/PNG presentation render from exact donor crops, not a Godot 4.7 capture. The 10 old screenshots were rejected by the creator; `paired` Greywater→Argus remains only a traversal-route thesis. No owner A0/A1/A3/A8/Gameplay commitments, C01–C24 same-SHA proof, 336h E2, independent playability or creator acceptance exists.</p>
+    <p><a href="/">← legacy GOLD review/authoring tool</a></p>
+  </div>
+</div>
+
+<script type="module">
+const $=id=>document.getElementById(id);
+const get=async p=>{const r=await fetch(p);if(!r.ok)throw new Error(p+' '+r.status);return r.json();};
+try{
+  const [ledger,scene,qa,stats]=await Promise.all([
+    get('/data/hero_provenance.json'),get('/data/hero_scene.json'),
+    get('/qa/hero_results.json'),get('/qa/hero_render_stats.json')]);
+  $('ledgerCount').textContent=ledger.summary.kit_entries+' entries / '+ledger.summary.real_crop_entries+' real crops / '+ledger.summary.tileable_or_trim_entries+' tileable-or-trim';
+  $('sceneCount').textContent=scene.tile_map.rows.length+'×40 explicit 16px cells / '+scene.objects.length+' y-sorted objects';
+  $('qaCount').textContent=qa.summary.pass+'/'+qa.summary.total+' PASS';
+  $('imageSha').textContent='SHA '+stats.output_sha256.slice(0,16)+'…';
+  $('verdict').textContent=JSON.stringify({...qa.verdicts,playability:'PLAYABILITY_UNPROVEN'},null,2);
+  $('status').textContent='EXACT SHA / RECT / FRAME LEDGER VERIFIED · '+stats.real_crop_placements+' real-crop placements · '+stats.palette_size+'-colour strict palette';
+  window.__SOH_HERO_READY__=true;window.SOH_HERO={ledger,scene,qa,stats};
+}catch(e){$('status').textContent='PROVENANCE LOAD ERROR: '+e.message;window.__SOH_HERO_ERROR__=String(e.message);}
+</script>
+</body></html>

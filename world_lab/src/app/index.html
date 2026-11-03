@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SOH Veyra World Lab — GOLD Review</title><link rel="icon" href="data:,"><link rel="stylesheet" href="/src/app/style.css"></head>
 <body>
-<header><h1>SOH VEYRA WORLD LAB <span>GOLD-derived review / authoring — not native gameplay</span></h1><div id="status">Loading…</div></header>
+<header><h1>SOH VEYRA WORLD LAB <span>GOLD-derived review / authoring — not native gameplay</span></h1><div><a href="/src/app/hero.html">ONE rebuilt hero scene →</a> <span id="status">Loading…</span></div></header>
 <div class="layout">
   <aside class="panel controls">
     <h2>View</h2>
@@ -22,6 +22,11 @@
     <div id="qa"></div>
   </aside>
   <main>
+    <section class="panel hero" id="heroPanel">
+      <h2>Rebuilt single Argus / Great Lens hero scene — exact crop provenance</h2>
+      <a href="/src/app/hero.html"><img class="hero-shot" id="heroSceneImage" src="/screenshots/ARGUS_GREAT_LENS_HERO.png" width="640" height="360" alt="Provenance-backed Argus Great Lens hero scene at native 640 by 360 1x"></a>
+      <p class="hint">ONE native 640×360 1× nearest-neighbour scene built from 155 exact prototype real crops (SHA / rect / frame ledger in <a href="/data/hero_provenance.json">data/hero_provenance.json</a>, tracked graph in <a href="/data/hero_scene.json">data/hero_scene.json</a>). The one hero landmark is labelled <code>AI_DERIVED_HERO_PROP_NOT_REAL_ASSET</code> and is not real-asset proof. <a href="/src/app/hero.html">Open full provenance view →</a> Verdict: <strong>PLAYABILITY_UNPROVEN / GAMEPLAY_INTEGRATION_BLOCKED</strong>; no creator approval requested.</p>
+    </section>
     <div class="viewport-wrap"><canvas id="viewport" width="640" height="360" tabindex="0" aria-label="640 by 360 native 1x world viewport"></canvas><div class="caption">NATIVE 640×360 · 1× · NEAREST-NEIGHBOR · <span id="viewLabel">EXTERIOR</span></div></div>
     <div class="panel inspector"><h2>GOLD tile inspector</h2><div id="inspector">Click the viewport or overview to inspect a tile.</div></div>
     <div class="panel edits">
@@ -37,7 +42,7 @@
       <p class="hint">Edits preserve GOLD IDs and base materials; locked edits/regions survive variant B regeneration. Rebuild reruns the deterministic compiler, QA and captures.</p>
       <div id="editStatus"></div>
     </div>
-    <div class="panel shots"><h2>Real captures from shared renderer</h2><div id="gallery"></div></div>
+    <div class="panel shots"><h2>REJECTED legacy 10-shot set (audit only — not for approval)</h2><p class="hint">The creator rejected all 10 old screenshots. They are retained only for regression/audit. The single rebuilt hero scene above is the current visual candidate; no weak iteration is sent for approval.</p><div id="gallery"></div></div>
   </main>
   <aside class="panel overview">
     <h2>Authoring overview</h2><p class="hint">2× minimap of the 500×350 tile GOLD grid. Not a gameplay camera; click to move the viewport.</p>

@@ -1,6 +1,6 @@
 # Veyra World Lab — independent QA
 
-Verdicts: {"compiler_and_data":"TECHNICAL_PROVEN","visual":"VISUAL_REVIEW_REQUIRED","playability":"PLAYABILITY_UNPROVEN","gameplay_integration":"GAMEPLAY_INTEGRATION_BLOCKED","creator_visual_review":"READY_FOR_CREATOR_VISUAL_REVIEW","native_godot":"NOT_CLAIMED_NO_GODOT_4_7_RUNTIME_OR_OWNER_COORDINATION"}
+Verdicts: {"compiler_and_data":"TECHNICAL_PROVEN_LEGACY_COMPILER_AND_DATA_ONLY","visual":"LEGACY_TEN_SHOTS_REJECTED_BY_CREATOR","hero_scene":"SINGLE_PROVENANCE_BACKED_VISUAL_CANDIDATE_BUILT_SEE_QA_HERO_RESULTS_JSON","playability":"PLAYABILITY_UNPROVEN","gameplay_integration":"GAMEPLAY_INTEGRATION_BLOCKED","creator_visual_review":"NOT_READY_NO_APPROVAL_REQUESTED_FOR_WEAK_OR_REJECTED_ITERATIONS","native_godot":"NOT_CLAIMED_NO_GODOT_4_7_RUNTIME_OR_OWNER_COORDINATION"}
 
 Summary: 10 pass / 0 fail / 10 tests
 
@@ -13,7 +13,7 @@ Summary: 10 pass / 0 fail / 10 tests
 - **PASS** NAVIGATION_BRIDGES_RESOURCES_AND_NEGATIVE_PATHS: {"routes":{"po_greywater":13,"po_pumphouse":32,"po_sawaion":22,"po_academy":126,"po_archive":156,"po_observatory":155},"bridge_cells_on_academy_route":3,"paired_segments":4,"negative_water_goal":"REJECTED","early_survival_gaps":[]}
 - **PASS** POI_EXTERIOR_INTERIOR_VERTICAL_RETREAT: {"levels":3,"nodes":17,"edges":19,"exterior_to_lens_paths":4,"retreat_paths":4,"alternate_return_after_shaft_removal":4}
 - **PASS** RESOURCE_DISTRIBUTION_AND_GOLD_FIDELITY: {"proposals":280,"profiles":{"CRAFTPIX-3Q":1124,"SOH-PROTO-16":8177},"clustered_props":5251,"inaccessible":{"deep_water":112311,"cliff":2224,"lava":518},"shore_access_candidates":[{"source_id":"rs_b","gold_kind":"ore","tile":[122,74],"note":"GOLD coordinate preserved; shore-interaction candidate only"},{"source_id":"rs_y","gold_kind":"herbs","tile":[103,122],"note":"GOLD coordinate preserved; shore-interaction candidate only"},{"source_id":"rs_3r","gold_kind":"food","tile":[400,236],"note":"GOLD coordinate preserved; shore-interaction candidate only"}],"patch_base_materials_preserved":4}
-- **PASS** PERFORMANCE_STREAMING_AND_BROWSER_EVIDENCE: {"node_capture_frames":10,"average_ms":26,"max_ms":35.8,"visible_tiles_average":1144,"drawables_average":65,"full_grid_cells":175000,"streaming":"visible-tile iteration only","browser_checks":8,"browser_status":"PASS"}
+- **PASS** PERFORMANCE_STREAMING_AND_BROWSER_EVIDENCE: {"node_capture_frames":10,"average_ms":24.7,"max_ms":54.9,"visible_tiles_average":1144,"drawables_average":65,"full_grid_cells":175000,"streaming":"visible-tile iteration only","browser_checks":10,"browser_status":"PASS"}
 
 ## Explicit boundaries
 

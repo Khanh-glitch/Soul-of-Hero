@@ -1,7 +1,9 @@
 # Source manifest / exact fingerprints
 
-Active work branch: `arena/2e3cfbd2-soul-of-hero`, local HEAD `5214788933b1a827f3a177d11ff486433dfe5e8a`.
-Machine-readable manifest: `data/source_manifest.json`; exact GOLD/prototype file trees: `data/source_tree_gold.txt`, `data/source_tree_prototype.txt`.
+Active work branch: `arena/2e3cfbd2-soul-of-hero`. Local HEAD is dynamic — use `git rev-parse HEAD`; the freeze `5214788933b1a827f3a177d11ff486433dfe5e8a` in the legacy `data/source_manifest.json` is the ORIGINAL branch point, not the current commit.
+Machine-readable legacy manifest: `data/source_manifest.json` (generated earlier, stale `generated`/`local_head`); exact current hero-scene ledger: `data/hero_provenance.json`; exact GOLD/prototype file trees: `data/source_tree_gold.txt`, `data/source_tree_prototype.txt`.
+
+**New exact crop ledger.** `data/hero_provenance.json` pins 8 byte-for-byte prototype sheets, their 6 frame manifests, `155` real crops (each with source SHA-256, manifest SHA-256, exact frame name and `[x,y,w,h]` rect, raw-crop SHA and normalized-crop SHA), plus the one labelled `AI_DERIVED_HERO_PROP_NOT_REAL_ASSET` prop. `data/hero_scene.json` is the tracked scene graph. `src/hero/render.mjs` refuses any SHA/rect/frame mismatch before writing `screenshots/ARGUS_GREAT_LENS_HERO.png`. See `HERO_SCENE_REVIEW.md`, `qa/HERO_TEST_REPORT.md`.
 
 | Source | Exact ref / SHA-256 | Local authoritative copy |
 |---|---|---|

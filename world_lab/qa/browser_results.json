@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-03T03:03:20.027Z",
+  "generated": "2026-11-03T09:08:53.865Z",
   "status": "PASS",
   "runtime": "headless Chromium via @sparticuz/chromium + puppeteer-core",
   "browser_version": "HeadlessChrome/153.0.8010.0",
@@ -63,7 +63,7 @@
         "y": 536
       },
       "p1": {
-        "x": 3784.2695999999983,
+        "x": 3784.2607999999987,
         "y": 536
       },
       "overviewPick": true
@@ -73,6 +73,30 @@
       "status": "Save: {\"saved\":true,\"path\":\"data/creator_edits.json\",\"edits\":0,\"lockedRegions\":0}",
       "savedEdits": 0,
       "lockedRegions": 0
+    },
+    {
+      "id": "HERO_SCENE_NATIVE_1X_AND_LABEL",
+      "status": "PASS",
+      "naturalWidth": 640,
+      "naturalHeight": 360,
+      "cssWidth": "640px",
+      "cssHeight": "360px",
+      "rendering": "crisp-edges",
+      "panel": "\n      Rebuilt single Argus / Great Lens hero scene — exact crop provenance\n      \n      ONE native 640×360 1× nearest-neighbour scene built from 155 exact prototype real crops (SHA / rect / frame ledger in data/hero_provenance.json, tracked graph in data/hero_scene.json). The one hero landmark is labelled AI_DERIVED_HERO_PROP_NOT_REAL_ASSET and is not real-asset proof. Open full provenance view → Verdict: PLAYABILITY_UNPROVEN / GAMEPLAY_INTEGRATION_BLOCKED; no creator approval requested.\n    ",
+      "link": "/src/app/hero.html"
+    },
+    {
+      "id": "HERO_PROVENANCE_VIEW_PAGE",
+      "status": "PASS",
+      "hero_page": true,
+      "ledger": "156 entries / 155 real crops / 139 tileable-or-trim",
+      "scene": "23×40 explicit 16px cells / 21 y-sorted objects",
+      "qa": "12/12 PASS",
+      "sha": "SHA 6b91db3a318650b2…",
+      "image": [
+        640,
+        360
+      ]
     },
     {
       "id": "NO_RUNTIME_OR_CONSOLE_ERRORS",

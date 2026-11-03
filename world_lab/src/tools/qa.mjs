@@ -190,20 +190,24 @@ export function runQA({gold,world,poi,ecologyA,ecologyB,edits,fingerprint,shots}
     return {node_capture_frames:10,average_ms:+avg.toFixed(1),max_ms:+Math.max(...times).toFixed(1),visible_tiles_average:Math.round(tiles/10),drawables_average:Math.round(drawables/10),full_grid_cells:W*H,streaming:'visible-tile iteration only',browser_checks:browser.checks?.length||0,browser_status:browser.status};
   });
   const pass=tests.filter(t=>t.status==='PASS').length,fail=tests.length-pass;
+  // Honest verdicts: the 10-shot visual set was REJECTED by the creator. The
+  // passing compiler/data/browser tests below are legacy evidence only and
+  // must never be reused as visual or creator approval.
   const verdicts={
-    compiler_and_data:fail===0?'TECHNICAL_PROVEN':'BLOCKED',
-    visual:'VISUAL_REVIEW_REQUIRED',
+    compiler_and_data:fail===0?'TECHNICAL_PROVEN_LEGACY_COMPILER_AND_DATA_ONLY':'BLOCKED',
+    visual:'LEGACY_TEN_SHOTS_REJECTED_BY_CREATOR',
+    hero_scene:'SINGLE_PROVENANCE_BACKED_VISUAL_CANDIDATE_BUILT_SEE_QA_HERO_RESULTS_JSON',
     playability:'PLAYABILITY_UNPROVEN',
     gameplay_integration:'GAMEPLAY_INTEGRATION_BLOCKED',
-    creator_visual_review:fail===0?'READY_FOR_CREATOR_VISUAL_REVIEW':'NOT_READY',
+    creator_visual_review:'NOT_READY_NO_APPROVAL_REQUESTED_FOR_WEAK_OR_REJECTED_ITERATIONS',
     native_godot:'NOT_CLAIMED_NO_GODOT_4_7_RUNTIME_OR_OWNER_COORDINATION',
   };
   const result={generated:new Date().toISOString(),branch:sourceManifest.branch,head:sourceManifest.local_head,verdicts,summary:{pass,fail,total:tests.length},tests,
-    limitations:['No Godot 4.7 runtime, no owner A0/A1/A3/A8 integration, no native player-input journey.','Screenshots are real 640x360 1x node-rendered captures from shared scene code; they are not native Godot captures.','Human visual acceptance, playability and gameplay economy/HP/yield/respawn remain creator/owner authority.','Private APEX-CHAOS blobs unavailable (403); only selected public-branch donors staged.']};
+    limitations:['All 10 legacy screenshots were REJECTED by the creator; no visual acceptance is claimed for them.','No Godot 4.7 runtime, no owner A0/A1/A3/A8 integration, no native player-input journey.','Screenshots are real 640x360 1x node-rendered captures from shared scene code; they are not native Godot captures.','Human visual acceptance, playability and gameplay economy/HP/yield/respawn remain creator/owner authority.','Private APEX-CHAOS blobs unavailable (403); only selected public-branch donors staged.','The rebuilt single hero scene has its own exact-SHA ledger and QA: data/hero_provenance.json, data/hero_scene.json, qa/hero_results.json.']};
   fs.writeFileSync(path.join(QA,'results.json'),JSON.stringify(result,null,2));
   const lines=['# Veyra World Lab — independent QA','','Verdicts: '+JSON.stringify(verdicts),'','Summary: '+pass+' pass / '+fail+' fail / '+tests.length+' tests','',...tests.map(t=>`- **${t.status}** ${t.id}: ${t.status==='PASS'?JSON.stringify(Object.fromEntries(Object.entries(t).filter(([k])=>!['id','status','stack'].includes(k)))):t.error}`),'','## Explicit boundaries','','- Browser authoring tool is a review/authoring surface, not a second gameplay engine.','- No canonical HP, yields, recipe costs, regeneration, loot, gates or unlocks are defined.','- Tests passing does not imply visual acceptance or native playability.','- Godot 4.7 integration is blocked and unclaimed.',''];
   fs.writeFileSync(path.join(QA,'TEST_REPORT.md'),lines.join('\n'));
-  return {verdict:fail===0?'TECHNICAL_PROVEN_WITH_VISUAL_REVIEW_REQUIRED':'BLOCKED',summary:{pass,fail,total:tests.length},verdicts,tests};
+  return {verdict:fail===0?'LEGACY_COMPILER_AND_DATA_ONLY_PLAYABILITY_UNPROVEN':'BLOCKED',summary:{pass,fail,total:tests.length},verdicts,tests};
 }
 if(process.argv[1]&&process.argv[1].endsWith('qa.mjs')){
   // standalone rerun from persisted data (no build side effects)
