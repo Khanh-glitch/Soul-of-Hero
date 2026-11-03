@@ -95,6 +95,12 @@ n=930 day / 2908 night (maxL 214/218) with art centroid aligned to the world anc
 (|cx−sx| < 26 px) and the disk grounded (cy ≤ anchor+10 — it touches the ground/roof
 line instead of floating), real night (dayTime 0.001) black hole + orb n=7526.
 Night light mask uses one smooth radial gradient per light (no concentric bands).
+Crisp-core compositing: the combined art frame is always re-drawn `source-over` on
+top of radiance/emission in the post-night pass (and rendered with
+`imageSmoothingEnabled=false`, matching the rest of the game), so effect cores stay
+sharp day and night while the soft glow sits behind them; radiance radius/alpha were
+reduced (0.85→0.7, cap 0.6→0.45; day 0.10→0.07). Warp instances keep their single
+displaced draw from the warp pass.
 Gallery: ice-lance / arcane-orb / black-hole × day / QA-night × 3 deliberate frames +
 real DAY/NIGHT pair, lab hidden for unobstructed shots. Lab non-mutation (state+save
 byte-identical),

@@ -241,6 +241,7 @@ function drawFrame(g: CanvasRenderingContext2D, inst: PfxInst, chan: 'combined' 
   const r = destRect(inst, offX, offY);
   g.save();
   g.globalAlpha = alpha; g.globalCompositeOperation = comp;
+  if (chan === 'combined') g.imageSmoothingEnabled = false; // crisp pixel art, matches the rest of the game
   if (inst.angle) { g.translate(r.rotX, r.rotY); g.rotate(inst.angle); g.translate(-r.rotX, -r.rotY); }
   g.drawImage(cell.img, cell.sx, cell.sy, cell.sw, cell.sh, Math.round(r.dx), Math.round(r.dy), Math.round(r.dw), Math.round(r.dh));
   g.restore();
