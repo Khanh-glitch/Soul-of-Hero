@@ -91,7 +91,10 @@ roof occlusion remain real alpha, not a brightness key. Source-vs-world
 morphology is best inspected in the clearing; roof depth is a separate test.
 Observed clearing day star has conspicuous yellow striping, night is luminous
 but still striped; roof scene deliberately occludes source geometry. Therefore
-neither passes fidelity. User HUD is in the 1× final screenshots.
+neither passes fidelity. User HUD is in the 1× final screenshots; exact no-cast
+world/HUD pixel identity is not separately proven this round.
+
+Focused remote [CI run 41575638691](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41575638691) **PASS** on exact implementation commit `112c873e9c590063936c5cb6b85596817f70bd10`: clean primary patch application, typecheck, 23 tests, build, RGBA8 regression, real-input lifecycle, both game scenes and source-boundary/measurement scripts. The [frame artifact](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41575638691/artifacts/13203672223) expires 2026-11-10 UTC. CI includes Node 20 action deprecation and Ubuntu-latest migration warnings; a green run does not prove visual fidelity, target GPU performance, or absence of the intermittent startup race.
 
 Local final-patch typecheck, build and **23/23** Vitest cases pass; RGBA8 ordering
 synthetic regression 167 vs legacy 59 passes. Final-patch real-input lifecycle
