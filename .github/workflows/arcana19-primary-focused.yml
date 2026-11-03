@@ -1,0 +1,55 @@
+name: ARCANA19 primary patch focused QA
+on:
+  push:
+    branches: ['arena/c7b0c4e8-soul-of-hero']
+    paths:
+      - '.github/workflows/arcana19-primary-focused.yml'
+      - 'prototypes/arcana20_web_review/integration/primary-web-19-recovery/primary-19-recovery.patch'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  primary-patch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: 3b37ae90601dee098066cbc4cf465552f1eb6f04
+          path: primary
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Apply exact primary patch
+        run: |
+          cd primary
+          git apply --check ../prototypes/arcana20_web_review/integration/primary-web-19-recovery/primary-19-recovery.patch
+          git apply ../prototypes/arcana20_web_review/integration/primary-web-19-recovery/primary-19-recovery.patch
+      - name: Install and verify
+        working-directory: primary/web
+        run: |
+          npm ci
+          npx tsc --noEmit
+          npm test
+          npm run build
+          npx playwright install --with-deps chromium
+      - name: Focused browser QA (software renderer, Ember bridge only)
+        working-directory: primary/web
+        run: |
+          set -euo pipefail
+          npm run dev -- --host 127.0.0.1 --port 4193 > /tmp/arcana19-vite.log 2>&1 &
+          server=$!
+          trap 'kill "$server" 2>/dev/null || true' EXIT
+          node -e 'let n=0;let t=setInterval(async()=>{try{let r=await fetch("http://127.0.0.1:4193/");if(r.ok){clearInterval(t);process.exit(0)}}catch{}if(++n>60){clearInterval(t);process.exit(1)}},500)'
+          export SOH_URL=http://127.0.0.1:4193/
+          node scripts/qa-arcana19-rgba8.mjs
+          node scripts/qa-arcana19-lifecycle.mjs
+          ARCANA_OUT="$RUNNER_TEMP/arcana19-frames" node scripts/qa-arcana19-matched.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcana19-focused-frames
+          path: ${{ runner.temp }}/arcana19-frames/
+          if-no-files-found: ignore
+          retention-days: 7

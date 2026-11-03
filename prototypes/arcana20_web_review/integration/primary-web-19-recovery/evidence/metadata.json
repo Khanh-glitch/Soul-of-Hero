@@ -1,0 +1,10 @@
+{
+  "primary": "3b37ae90601dee098066cbc4cf465552f1eb6f04",
+  "runSeed": 21441822,
+  "sourceSeed": 97,
+  "ticks": [60, 240, 498, 552],
+  "fps": 60,
+  "viewport": [640, 360],
+  "camera": {"dayOpening": [265,1567], "otherFixed": [264,1566], "movingOut": [274,1566]},
+  "scope": "Same real QA run and Ember commit; visual source time frozen to exact ticks. Original lab floor is reference only; no ARCANA gameplay or acceptance."
+}

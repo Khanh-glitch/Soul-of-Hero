@@ -1,0 +1,1524 @@
+diff --git a/web/scripts/capture-original-d19.mjs b/web/scripts/capture-original-d19.mjs
+new file mode 100644
+index 0000000..e15a1fe
+--- /dev/null
++++ b/web/scripts/capture-original-d19.mjs
+@@ -0,0 +1,7 @@
++// Original SOURCE REFERENCE capture, not gameplay. This runs the unmodified
++// standalone D engine at 60 fixed steps and includes its own synthetic floor,
++// markers and post. Supply SOURCE_HTML (absolute path) from the frozen package.
++import {chromium} from 'playwright';import {writeFile} from 'node:fs/promises';import {pathToFileURL} from 'node:url';
++if(!process.env.SOURCE_HTML)throw Error('Set SOURCE_HTML to Elemental_VFX_Lab_FIXED_Standalone.html');
++const b=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||undefined,args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader']});
++try{const p=await b.newPage({viewport:{width:1024,height:768}});await p.goto(pathToFileURL(process.env.SOURCE_HTML).href);await p.waitForFunction(()=>window.__vfxDebug);await p.evaluate(t=>window.__captureTick=t,Number(process.env.ARCANA_TICK||498));const data=await p.evaluate(()=>{const {state,ALL}=window.__vfxDebug;state.playing=false;const sp=ALL.find(s=>s.name==='Constellation Engine');if(!sp)throw Error('Missing original D19');const r=state.renderer;r.canvas.style.width='480px';r.canvas.style.height='270px';sp.init();r.time=0;for(let n=1;n<=Number(window.__captureTick);n++){const t=n/60,dt=n===1?.0001:1/60;r.frame(fx=>sp.update(fx,t,dt),dt,n===1);}return r.capture()});await writeFile(process.env.ARCANA_REFERENCE_OUT||'d19-original-reference-8.3.png',Buffer.from(data.split(',')[1],'base64'));}finally{await b.close();}
+diff --git a/web/scripts/qa-arcana19-lifecycle.mjs b/web/scripts/qa-arcana19-lifecycle.mjs
+new file mode 100644
+index 0000000..d4774a8
+--- /dev/null
++++ b/web/scripts/qa-arcana19-lifecycle.mjs
+@@ -0,0 +1,10 @@
++// Real inputs exercise Ember-Core bridge only; fixtures are explicitly inserted
++// by normal engine APIs. This does not validate ARCANA19 gameplay.
++import {chromium} from 'playwright';import assert from 'node:assert/strict';
++const b=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||undefined,args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader']});
++try{const p=await b.newPage({viewport:{width:1280,height:720}}),errors=[];p.on('pageerror',e=>errors.push(e.message));await p.goto((process.env.SOH_URL||'http://127.0.0.1:4191/')+'?arcana19Bridge=1');await p.getByRole('button',{name:'New run',exact:true}).waitFor();await p.waitForTimeout(2000);await p.getByRole('button',{name:'New run',exact:true}).click();await p.getByRole('button',{name:'Meadow Bay',exact:true}).click();await p.getByRole('button',{name:'Begin the 14 days',exact:true}).click();await p.waitForFunction(()=>window.__soh?.run,null,{timeout:45000});
++ const slot=await p.evaluate(async()=>{const e=await import('/src/game/engine.ts'),r=window.__soh.run;e.addItem(r,'inv','core_fire',1);const n=r.custody.inv.slots.findIndex(s=>s?.key==='core_fire');r.player.active=n;r.qaUsed=true;return n});assert(slot>=0&&slot<8);await p.mouse.move(850,360);
++ await p.mouse.down({button:'left'});await p.waitForTimeout(80);await p.mouse.up({button:'left'});await p.mouse.click(850,360,{button:'right'});await p.waitForTimeout(250);let first=await p.evaluate(i=>({charge:window.__soh.run.custody.inv.slots[i].charge,size:window.__arcana19Bridge.size}),slot);assert.deepEqual(first,{charge:3,size:0});
++ const cast=async()=>{await p.mouse.down();await p.waitForTimeout(80);await p.mouse.up()};await cast();await p.waitForFunction(()=>window.__arcana19Bridge.size===1,null,{timeout:45000});await p.waitForFunction(()=>!window.__soh.run.player.action,null,{timeout:45000});await cast();await p.waitForFunction(()=>window.__arcana19Bridge.size===2,null,{timeout:45000});const overlap=await p.evaluate(i=>({charge:window.__soh.run.custody.inv.slots[i].charge,size:window.__arcana19Bridge.size,receipts:window.__soh.run.receipts.filter(r=>r.kind==='core.commit').length}),slot);assert.deepEqual(overlap,{charge:1,size:2,receipts:2});
++ await p.keyboard.down('d');await p.waitForTimeout(600);await p.keyboard.up('d');await p.evaluate(()=>window.__arcana19Bridge.cancelAll());let end=await p.evaluate(()=>({size:window.__arcana19Bridge.size,failed:window.__arcana19Bridge.failed}));assert.deepEqual(end,{size:0,failed:false});assert.deepEqual(errors,[]);console.log(JSON.stringify({scope:'existing Ember gameplay event + D19 dev visual bridge only',cancelBeforeCommit:first,overlap,end,errors}));
++}finally{await b.close()}
+diff --git a/web/scripts/qa-arcana19-matched.mjs b/web/scripts/qa-arcana19-matched.mjs
+new file mode 100644
+index 0000000..d493990
+--- /dev/null
++++ b/web/scripts/qa-arcana19-matched.mjs
+@@ -0,0 +1,10 @@
++// Explicit QA fixture and debug-only frozen visual time; gameplay clock is not modified.
++// Source seed 97 and exact 60 Hz ticks; screenshots capture actual primary scene.
++import {chromium} from 'playwright';import assert from 'node:assert/strict';import {mkdir,writeFile} from 'node:fs/promises';import path from 'node:path';
++const out=process.env.ARCANA_OUT||'/home/user/arcana-recovery-evidence';await mkdir(out,{recursive:true});const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||undefined,args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader']});
++try{const page=await browser.newPage({viewport:{width:640,height:360}});const errors=[],warnings=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(['warning','error'].includes(m.type()))warnings.push(m.text())});await page.goto((process.env.SOH_URL||'http://127.0.0.1:4193/')+'?arcana19Bridge=1');await page.getByRole('button',{name:'New run',exact:true}).waitFor();await page.waitForTimeout(2000);await page.getByRole('button',{name:'New run',exact:true}).click();await page.getByRole('button',{name:'Meadow Bay',exact:true}).click();await page.getByRole('button',{name:'Begin the 14 days',exact:true}).click();try{await page.waitForFunction(()=>window.__soh?.run,null,{timeout:60000});}catch(e){console.error(JSON.stringify({phase:'startup',errors,warnings,text:await page.locator('body').innerText()}));throw e;}
++const fixture=await page.evaluate(async()=>{const en=await import('/src/game/engine.ts'),r=window.__soh.run;en.addItem(r,'inv','core_fire',1);const slot=r.custody.inv.slots.findIndex(s=>s?.key==='core_fire');r.player.active=slot;const p=r.player,m=en.mkCreature(r,'boar',p.x+55,p.y,200);m.state='sleep';r.creatures=[m];r.qaOffset+=((.5-en.dayTime(r,Date.now())+1)%1)*24*60000;r.qaUsed=true;return {slot,creature:m.id,charge:r.custody.inv.slots[slot].charge,seed:r.seed,dayTime:en.dayTime(r,Date.now())}});assert(fixture.slot>=0&&fixture.slot<8);await page.mouse.move(425,180);await page.mouse.down();await page.waitForTimeout(80);await page.mouse.up();await page.waitForFunction(()=>window.__arcana19Bridge?.size>0,null,{timeout:60000});
++for(const light of (process.env.ARCANA_LIGHT||'day,night').split(',')){await page.evaluate(async light=>{const en=await import('/src/game/engine.ts'),r=window.__soh.run;r.qaOffset+=(((light==='day'?.5:0)-en.dayTime(r,Date.now())+1)%1)*24*60000;},light);
++for(const [label,tick] of [['opening',60],['build',240],['climax',498],['out',552]]){await page.evaluate(t=>window.__arcana19Bridge.freezeTick(t),tick);await page.waitForFunction(t=>window.__arcana19Bridge.latest?.time===t/60,tick,{timeout:120000});await page.evaluate(()=>window.__arcana19Bridge.capture());await page.waitForFunction(()=>Boolean(window.__arcana19Bridge.evidence.preHud),null,{timeout:60000});const data=await page.evaluate(()=>({latest:window.__arcana19Bridge.latest,camera:window.__arcana19Bridge.camera,images:{...window.__arcana19Bridge.evidence},failed:window.__arcana19Bridge.failed}));assert.equal(data.latest.time,tick/60);assert.equal(data.failed,false);for(const [key,url] of Object.entries(data.images))await writeFile(path.join(out,`${light}-${label}-${key}.png`),Buffer.from(url.split(',')[1],'base64'));await page.screenshot({path:path.join(out,`${light}-${label}-final-1x.png`)});console.log(JSON.stringify({light,label,tick,sourceTime:data.latest.time,camera:data.camera,stages:Object.keys(data.images)}));}
++}
++await page.keyboard.down('d');await page.waitForTimeout(900);await page.keyboard.up('d');await page.evaluate(()=>window.__arcana19Bridge.capture());await page.waitForFunction(()=>Boolean(window.__arcana19Bridge.evidence.preHud),null,{timeout:60000});const moved=await page.evaluate(()=>({camera:window.__arcana19Bridge.camera,sourceTime:window.__arcana19Bridge.latest.time,images:{...window.__arcana19Bridge.evidence}}));for(const [k,u] of Object.entries(moved.images))await writeFile(path.join(out,`moving-${k}.png`),Buffer.from(u.split(',')[1],'base64'));await page.screenshot({path:path.join(out,`moving-final-1x.png`)});console.log(JSON.stringify({fixture,moving:{camera:moved.camera,time:moved.sourceTime},failed:await page.evaluate(()=>window.__arcana19Bridge.failed),errors,warnings}));assert.deepEqual(errors,[]);await page.close();}finally{await browser.close();}
+diff --git a/web/scripts/qa-arcana19-perf.mjs b/web/scripts/qa-arcana19-perf.mjs
+new file mode 100644
+index 0000000..ce33fda
+--- /dev/null
++++ b/web/scripts/qa-arcana19-perf.mjs
+@@ -0,0 +1,7 @@
++// Headless software-only timing, real game + real Ember input, without captures.
++// Browser/GPU scheduling can defer work. Not target-device FPS evidence.
++import {chromium} from 'playwright';import assert from 'node:assert/strict';
++const b=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||undefined,args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader']});
++try{const p=await b.newPage({viewport:{width:1280,height:720}}),errors=[];p.on('pageerror',e=>errors.push(e.message));await p.goto((process.env.SOH_URL||'http://127.0.0.1:4191/')+'?arcana19Bridge=1');await p.getByRole('button',{name:'New run',exact:true}).waitFor();await p.waitForTimeout(2000);await p.getByRole('button',{name:'New run',exact:true}).click();await p.getByRole('button',{name:'Meadow Bay',exact:true}).click();await p.getByRole('button',{name:'Begin the 14 days',exact:true}).click();await p.waitForFunction(()=>window.__soh?.run,null,{timeout:45000});await p.evaluate(async()=>{const e=await import('/src/game/engine.ts'),r=window.__soh.run;e.addItem(r,'inv','core_fire',1);r.player.active=r.custody.inv.slots.findIndex(s=>s?.key==='core_fire');r.qaUsed=true;window.__perf={frames:[],running:true};let last=0;function step(t){if(!window.__perf.running)return;if(last)window.__perf.frames.push(t-last);last=t;requestAnimationFrame(step)}requestAnimationFrame(step)});await p.waitForTimeout(3000);const start=await p.evaluate(()=>window.__perf.frames.length);await p.mouse.move(850,360);await p.mouse.down();await p.waitForTimeout(80);await p.mouse.up();await p.waitForFunction(()=>window.__arcana19Bridge.size>0,null,{timeout:45000});await p.waitForFunction(()=>window.__arcana19Bridge.latest?.time>=2,null,{timeout:180000});const data=await p.evaluate(i=>{window.__perf.running=false;return {baseline:window.__perf.frames.slice(0,i),cast:window.__perf.frames.slice(i),metrics:window.__arcana19Bridge.metrics,sourceTime:window.__arcana19Bridge.latest.time}},start);
++const stat=a=>{const s=[...a].sort((x,y)=>x-y);return {n:s.length,p50:s[Math.floor(s.length*.5)],p95:s[Math.floor(s.length*.95)],max:s.at(-1)}};assert.deepEqual(errors,[]);console.log(JSON.stringify({scope:'headless Chromium SwiftShader; real Ember input triggers experimental D19 presentation; no captures or target GPU claim',sourceTime:data.sourceTime,baseline:stat(data.baseline),cast:stat(data.cast),source:stat(data.metrics.map(x=>x.sourceMs)),raster:stat(data.metrics.map(x=>x.rasterMs)),composite:stat(data.metrics.map(x=>x.compositeMs)),post:stat(data.metrics.filter(x=>x.postMs!==undefined).map(x=>x.postMs)),errors}));
++}finally{await b.close()}
+diff --git a/web/scripts/qa-arcana19-primary.mjs b/web/scripts/qa-arcana19-primary.mjs
+new file mode 100644
+index 0000000..2948bf9
+--- /dev/null
++++ b/web/scripts/qa-arcana19-primary.mjs
+@@ -0,0 +1,20 @@
++// Primary-web smoke, explicitly NOT an ARCANA19 gameplay skill: a real Ember
++// Core commit triggers the opt-in D-source presentation bridge. The QA fixture
++// grants the existing Core and adds one real creature via engine APIs; no HP or
++// hit receipts are fabricated. No source-fidelity or target-GPU assertion.
++import {chromium} from 'playwright';import assert from 'node:assert/strict';import {mkdir,writeFile} from 'node:fs/promises';import path from 'node:path';
++const out=process.env.ARCANA_OUT||'/home/user/arcana-primary-evidence';await mkdir(out,{recursive:true});
++const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||undefined,args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader']});
++try{for(const light of (process.env.ARCANA_LIGHT||'day').split(',')){
++ const page=await browser.newPage({viewport:{width:1280,height:720}}),errors=[],warnings=[];await page.addInitScript(()=>{window.__frames=[];let last=0;function sample(t){if(last)window.__frames.push(t-last);last=t;requestAnimationFrame(sample)}requestAnimationFrame(sample)});page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='warning'||m.type()==='error')warnings.push(m.text());});
++ await page.goto((process.env.SOH_URL||'http://127.0.0.1:4191/')+'?arcana19Bridge=1');await page.getByRole('button',{name:'New run',exact:true}).waitFor();await page.waitForTimeout(2000);await page.getByRole('button',{name:'New run',exact:true}).click();await page.getByRole('button',{name:'Meadow Bay',exact:true}).click();await page.getByRole('button',{name:'Begin the 14 days',exact:true}).click();try{await page.waitForFunction(()=>window.__soh?.run,null,{timeout:60000});}catch(e){await page.screenshot({path:path.join(out,`${light}-startup-failure.png`)});console.error(JSON.stringify({phase:'run-start',errors,warnings,url:page.url(),text:await page.locator('body').innerText()}));throw e;}
++ const fixture=await page.evaluate(async(light)=>{const en=await import('/src/game/engine.ts'),r=window.__soh.run;en.addItem(r,'inv','core_fire',1);const slot=r.custody.inv.slots.findIndex(s=>s?.key==='core_fire');r.player.active=slot;const p=r.player,m=en.mkCreature(r,'boar',p.x+55,p.y,200);m.state='sleep';r.creatures=[m];const len=24*60000;const wanted=light==='day'?.5:0;r.qaOffset+=((wanted-en.dayTime(r,Date.now())+1)%1)*len;r.qaUsed=true;return {slot,creature:m.id,hp:m.hp,charge:r.custody.inv.slots[slot].charge,dayTime:en.dayTime(r,Date.now())}},light);
++ assert(fixture.slot>=0&&fixture.slot<8);await page.mouse.move(850,360);await page.mouse.down();await page.waitForTimeout(80);await page.mouse.up();await page.waitForFunction(()=>window.__arcana19Bridge?.size>0,null,{timeout:45000});
++ const cast=await page.evaluate(id=>{const r=window.__soh.run;return {charge:r.custody.inv.slots.find(s=>s?.key==='core_fire').charge,hp:r.creatures.find(m=>m.id===id)?.hp,latest:window.__arcana19Bridge.latest}},fixture.creature);assert.equal(cast.charge,2);
++ for(const [label,time] of [['open',1],['build',4],['climax',8.3],['out',9.2]]){
++  await page.waitForFunction(t=>window.__arcana19Bridge?.latest?.time>=t,time,{timeout:180000});await page.evaluate(()=>window.__arcana19Bridge.capture());await page.waitForFunction(()=>Boolean(window.__arcana19Bridge.evidence.preHud),null,{timeout:60000});
++  const data=await page.evaluate(()=>({time:window.__arcana19Bridge.latest.time,images:{...window.__arcana19Bridge.evidence}}));for(const [key,url] of Object.entries(data.images))await writeFile(path.join(out,`${light}-${label}-${key}-640.png`),Buffer.from(url.split(',')[1],'base64'));await page.screenshot({path:path.join(out,`${light}-${label}-full-1280.png`)});console.log(JSON.stringify({light,label,time:data.time,stages:Object.keys(data.images)}));
++ }
++ await page.waitForFunction(()=>window.__arcana19Bridge.size===0,null,{timeout:90000});const end=await page.evaluate(id=>{const r=window.__soh.run,m=r.creatures.find(x=>x.id===id);return {charge:r.custody.inv.slots.find(s=>s?.key==='core_fire')?.charge,hp:m?.hp,bridge:window.__arcana19Bridge.size,metrics:window.__arcana19Bridge.metrics,raf:window.__frames,failed:window.__arcana19Bridge.failed,receipts:r.receipts.filter(x=>x.kind==='core.commit').slice(-4)}},fixture.creature);
++ assert.equal(end.bridge,0);assert.equal(end.charge,2);assert.equal(end.hp,155);assert.equal(end.receipts.length,1);assert.equal(end.failed,false);assert.deepEqual(errors,[]);const stats=a=>{const s=[...a].sort((x,y)=>x-y);return {n:s.length,p50:s[Math.floor(s.length*.5)],p95:s[Math.floor(s.length*.95)],max:s.at(-1)}};end.metrics={source:stats(end.metrics.map(x=>x.sourceMs)),raster:stats(end.metrics.map(x=>x.rasterMs)),composite:stats(end.metrics.map(x=>x.compositeMs))};end.raf=stats(end.raf);console.log(JSON.stringify({light,fixture,cast,end,errors,warnings}));await page.close();
++}}finally{await browser.close();}
+diff --git a/web/scripts/qa-arcana19-rgba8.mjs b/web/scripts/qa-arcana19-rgba8.mjs
+new file mode 100644
+index 0000000..4290b5e
+--- /dev/null
++++ b/web/scripts/qa-arcana19-rgba8.mjs
+@@ -0,0 +1,12 @@
++// Regression for a single known source/world boundary: D's source FLOOR_FS is
++// written to RGBA8 before the additive g layer. Negative floor channels must
++// not subtract that layer. Synthetic constant inputs isolate the boundary; this
++// is not a scene/art, bloom/post, or performance approval.
++import {chromium} from 'playwright';import assert from 'node:assert/strict';
++const b=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||undefined,args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader']});
++try{const p=await b.newPage();await p.goto(process.env.SOH_URL||'http://127.0.0.1:4191/');const result=await p.evaluate(async()=>{
++ const {DWorldGpu}=await import('/src/game/arcana20/d/worldGpu.ts'),{DWarp}=await import('/src/game/arcana20/d/warp.ts');const scene=document.createElement('canvas'),light=document.createElement('canvas');for(const c of [scene,light]){c.width=480;c.height=270;}let g=scene.getContext('2d');g.fillStyle='#808080';g.fillRect(0,0,480,270);g=light.getContext('2d');g.fillStyle='#000';g.fillRect(0,0,480,270);g.fillStyle='#fff';g.fillRect(244,132,1,1);
++ const w=new DWarp(),idx=(132*480+244);w.data[idx*4+3]=25;w.influence[idx]=1;const time=(Math.PI*1.5-(1-132.5/270)*180)/8,m={a:1,b:0,c:0,d:1,x:0,y:0},gpu=new DWorldGpu(480,270);
++ const sample=legacy=>{gpu.render(scene,light,[],w,m,0,0,time,1,undefined,false,legacy);const c=document.createElement('canvas');c.width=480;c.height=270;const ctx=c.getContext('2d');ctx.drawImage(gpu.canvas,0,0);return Array.from(ctx.getImageData(244,132,1,1).data)};
++ return {corrected:sample(false),legacy:sample(true)};
++ });assert(result.corrected[0]>result.legacy[0]+25,JSON.stringify(result));console.log(JSON.stringify({scope:'synthetic RGBA8 floor-before-light ordering, not visual parity',...result}));}finally{await b.close();}
+diff --git a/web/src/game/arcana20/adapter.ts b/web/src/game/arcana20/adapter.ts
+new file mode 100644
+index 0000000..7d8115a
+--- /dev/null
++++ b/web/src/game/arcana20/adapter.ts
+@@ -0,0 +1,30 @@
++/** Presentation-only ARCANA cast seam. No combat, inventory, save or HP writes.
++ * Source output is consumed synchronously; this is an experimental architecture,
++ * not a fidelity/production claim. A game integration must supply its own actual
++ * cast identity, anchors and authoritative simulation timestamp. */
++export type Point={x:number;y:number};
++export interface CastRequest {
++ readonly skillId:string;readonly sourceId:string;readonly castId:string;readonly runId:string;
++ readonly casterId:string;readonly targetId:string|null;readonly caster:Point;readonly target:Point;
++ readonly seed:number;readonly startedAtSimMs:number;
++}
++export interface VisualFrame {readonly sourceTime:number}
++export interface SourcePlayer {readonly durationSeconds:number;sample(seconds:number):VisualFrame|null;dispose():void}
++export type SourceFactory=(request:CastRequest)=>SourcePlayer;
++export class VisualAdapter {
++ private readonly factories=new Map<string,SourceFactory>();
++ private readonly active=new Map<string,{request:CastRequest;player:SourcePlayer;frame:VisualFrame|null}>();
++ register(sourceId:string,factory:SourceFactory){if(this.factories.has(sourceId))throw new Error('duplicate ARCANA source');this.factories.set(sourceId,factory);}
++ start(request:CastRequest){if(this.active.has(request.castId))return false;const factory=this.factories.get(request.sourceId);if(!factory)return false;this.active.set(request.castId,{request,player:factory(request),frame:null});return true;}
++ cancel(castId:string){const item=this.active.get(castId);if(!item)return false;item.player.dispose();this.active.delete(castId);return true;}
++ clear(){for(const id of this.active.keys())this.cancel(id);}
++ sample(runId:string,simMs:number){
++  for(const [id,cast] of this.active){if(cast.request.runId!==runId){this.cancel(id);continue;}
++   const seconds=(simMs-cast.request.startedAtSimMs)/1000;
++   if(seconds>=cast.player.durationSeconds){this.cancel(id);continue;}
++   cast.frame=seconds>=0?cast.player.sample(seconds):null;
++  }
++ }
++ frames(){return [...this.active.values()].filter(x=>x.frame!==null);}
++ get size(){return this.active.size;}
++}
+diff --git a/web/src/game/arcana20/anchors.ts b/web/src/game/arcana20/anchors.ts
+new file mode 100644
+index 0000000..8ee0757
+--- /dev/null
++++ b/web/src/game/arcana20/anchors.ts
+@@ -0,0 +1,13 @@
++/** P0 source-B authored coordinates and similarity mount; no rendering or combat. */
++export type BId = 2 | 3 | 8;
++export type BTransform = { a:number;b:number;c:number;d:number; x:number;y:number };
++export const B_CASTER={x:104,y:132}, B_TARGET={x:262,y:104};
++export function bTransform(id:BId,caster:{x:number;y:number},target:{x:number;y:number}):BTransform {
++  const dx=target.x-caster.x,dy=target.y-caster.y;
++  const scale=Math.max(0.6,Math.min(3.5,Math.hypot(dx,dy)/Math.hypot(158,-28)));
++  const theta=id===2 ? Math.atan2(dy,dx)-Math.atan2(-28,158) : 0;
++  const a=scale*Math.cos(theta),b=scale*Math.sin(theta),c=-b,d=a;
++  const pin=id===2 ? B_TARGET : {x:192+(id===3?16:26),y:112};
++  return {a,b,c,d,x:target.x-a*pin.x-c*pin.y,y:target.y-b*pin.x-d*pin.y};
++}
++export function transformPoint(m:BTransform,p:{x:number;y:number}) {return {x:m.x+m.a*p.x+m.c*p.y,y:m.y+m.b*p.x+m.d*p.y};}
+diff --git a/web/src/game/arcana20/d/commands.ts b/web/src/game/arcana20/d/commands.ts
+new file mode 100644
+index 0000000..34c832f
+--- /dev/null
++++ b/web/src/game/arcana20/d/commands.ts
+@@ -0,0 +1,29 @@
++/** P0 D19 source-authored draw requests. Not a rasterizer, world pass or an
++ * assertion of D19 A parity. Command order is retained for RGBA8 blending. */
++import {lerp,clamp,TAU} from '../math/sourceMath';
++import {ConstellationState,CENTER,astralRamp,phase,cubic} from './constellationState';
++type Col=[number,number,number,number];type Opt={rot?:number;hard?:number;glow?:number;flow?:number;flags?:number;edge?:number;seed?:number};
++export type DCommand=
++ |{kind:'sprite';x:number;y:number;size:number;shape:number;color:Col;opt:Opt;role:string}
++ |{kind:'line';points:number[];width:number|number[];color:Col;opt:Opt;role:string}
++ |{kind:'poly';points:number[];color:Col;opt:Opt;role:string}
++ |{kind:'bend';x:number;y:number;size:number;ox:number;oy:number;absorb:number;chroma:number;role:string};
++const col=(t:number,a:number):Col=>[...astralRamp(t),a];
++const quad=(cx:number,cy:number,hw:number,hh:number,rot:number)=>{const c=Math.cos(rot),s=Math.sin(rot),out:number[]=[];for(const [x,y] of [[-1,-1],[1,-1],[-1,1],[1,1]])out.push(cx+x*hw*c-y*hh*s,cy+x*hw*s+y*hh*c);return out;};
++export function constellationCommands(state:ConstellationState){
++ const t=state.tick/60,finale=t>7.4,fade=1-phase(t,8.6,9.8),cmd:DCommand[]=[];
++ if(state.tick===0)return {time:0,rendererTime:.0001,warpFade:1,bloomGain:1,flash:null,commands:cmd};
++ const sprite=(x:number,y:number,size:number,shape:number,color:Col,opt:Opt,role:string)=>cmd.push({kind:'sprite',x,y,size,shape,color,opt,role});
++ const line=(points:number[],width:number|number[],color:Col,opt:Opt,role:string)=>cmd.push({kind:'line',points,width,color,opt,role});
++ for(const n of state.nodes){const beat=.55+.45*Math.sin(t*(1.4+n.sp)+n.ph);sprite(n.x,n.y,2.2+beat*1.4,4,col(.8+beat*.2,.95*fade),{rot:t*.6+n.ph,hard:1.1,glow:1},'node-star');sprite(n.x,n.y,7+beat*4,1,col(.7,.4*fade),{hard:1},'node-soft');sprite(n.x,n.y,5+beat*3,13,col(.8+beat*.2,.5*fade),{rot:n.ph+t*.3,hard:1.2},'node-flare');}
++ if(!finale){for(const e of state.renderEdges){const A=state.nodes[e.a],B=state.nodes[e.b],grow=cubic(phase(t,e.born,e.born+.3)),die=1-phase(t,e.die-.25,e.die),flick=.5+.5*Math.sin(t*17+e.a*3),pts=[A.x,A.y,lerp(A.x,B.x,.5)+Math.sin(t*3+e.a)*3,lerp(A.y,B.y,.5),B.x,B.y];line(pts,.4*grow,col(.5,.35*grow*die),{hard:1.4,flags:4},'edge-base');line(pts,.22*grow,col(.9,(.35+.4*flick)*grow*die),{hard:1,glow:.8},'edge-glint');}}
++ else{const k=cubic(phase(t,7.4,8.1))*fade;for(let i=0;i<state.nodes.length;i++){const A=state.nodes[i],B=state.nodes[(i+1)%state.nodes.length],C=state.nodes[(i+5)%state.nodes.length];line([A.x,A.y,B.x,B.y],.9*k,col(.9,.8*k),{hard:1,glow:1,flow:2.6},'finale-edge');if(i%2===0)line([A.x,A.y,C.x,C.y],.5*k,col(.7,.5*k),{hard:1.2,glow:.6},'finale-cross');}
++  for(let i=0;i<state.nodes.length;i+=2){const A=state.nodes[i];line([A.x,A.y,lerp(A.x,CENTER.x,.5),lerp(A.y,CENTER.y,.5),CENTER.x,CENTER.y],[.7,1.4,.3],col(.95,.7*k),{hard:1,glow:1,flow:3.2},'center-filament');}
++  const q=phase(t,7.55,8.1),su=(q>=1?1:1-2**(-10*q))*fade;for(let i=0;i<8;i++){const a=i/8*TAU+t*.4,rr=22*su*(i%2?.45:1);cmd.push({kind:'poly',points:quad(CENTER.x,CENTER.y,rr,rr*.4,a),color:col(.9,.7*su),opt:{glow:1,edge:.6},role:'star-prism'});line([CENTER.x,CENTER.y,CENTER.x+Math.cos(a)*rr*1.2,CENTER.y+Math.sin(a)*rr*.9],.6,col(1,.7*su),{hard:1,glow:1},'star-ray');}
++  sprite(CENTER.x,CENTER.y,8+20*su,4,col(1,.95*su),{rot:t*1.2,hard:1.2,glow:1.4},'central-star');sprite(CENTER.x,CENTER.y,30+50*su,1,col(.8,.45*su),{hard:1},'central-soft');cmd.push({kind:'bend',x:CENTER.x,y:CENTER.y,size:70*su,ox:0,oy:0,absorb:0,chroma:1.4*su,role:'star-warp'});
++  if(state.burst)for(let s=0;s<5;s++){const a=s/5*TAU,pts:number[]=[];for(let i=0;i<13;i++){const u=i/12,aa=a+u*1.2*(s%2?1:-1);pts.push(CENTER.x+Math.cos(aa)*u*130,CENTER.y+Math.sin(aa)*u*110);}line(pts,[3.4,1.2,.2],col(.95,.95),{hard:1,glow:1.2,flow:3},'burst-filament');}
++ }
++ for(const p of state.renderPulses){const A=state.nodes[p.a],B=state.nodes[p.b],x=lerp(A.x,B.x,p.u),y=lerp(A.y,B.y,p.u);sprite(x,y,2.2,4,col(1,.95*fade),{rot:p.u*9,hard:1.2,glow:1.3},'pulse-star');line([lerp(A.x,B.x,Math.max(0,p.u-.14)),lerp(A.y,B.y,Math.max(0,p.u-.14)),x,y],1.1,col(.95,.8*fade),{hard:1,glow:1},'pulse-trail');}
++ for(const p of state.motes){const u=clamp(p.life/p.max),e=Math.min(1,u*5)*(1-u**3);if(e<=.01)continue;sprite(p.x,p.y,lerp(p.s0,p.s1,u),p.shape,[...p.color,p.alpha*e],{rot:p.rot,seed:p.seed,hard:1,glow:.3,edge:0,flags:0},'mote');}
++ return {time:t,rendererTime:Math.max(.0001,t-1/60+.0001),warpFade:fade,bloomGain:1+(finale?.5:.1)+(state.star?.6*Math.exp(-(t-8.15)*2):0),flash:state.burst?{amount:.8,color:[.95,.9,1] as [number,number,number]}:null,commands:cmd};
++}
+diff --git a/web/src/game/arcana20/d/constellationState.ts b/web/src/game/arcana20/d/constellationState.ts
+new file mode 100644
+index 0000000..9bab7d6
+--- /dev/null
++++ b/web/src/game/arcana20/d/constellationState.ts
+@@ -0,0 +1,26 @@
++/** P0 D19 fixed-step choreography. This is not a finished rasterizer or an
++ * approved replacement for D19 A; its draw command path remains internal. */
++import {Rng,lerp,TAU,clamp} from '../math/sourceMath';
++export type DNode={x:number;y:number;tx:number;ty:number;ph:number;sp:number;home:{x:number;y:number}};
++export type DEdge={a:number;b:number;born:number;die:number};export type DPulse={a:number;b:number;u:number;sp:number;life:number};
++export type DMote={x:number;y:number;vx:number;vy:number;life:number;max:number;s0:number;s1:number;color:[number,number,number];alpha:number;outAlpha?:number;shape:number;rot:number;spin:number;seed:number};
++export const CENTER={x:244,y:132},phase=(t:number,a:number,b:number)=>clamp((t-a)/(b-a)),cubic=(t:number)=>1-(1-t)**3;
++const PALETTE=[[.02,.01,.05],[.1,.03,.2],[.3,.08,.44],[.62,.22,.78],[.95,.62,.98],[1,.96,1]];
++export function astralRamp(t:number):[number,number,number]{const x=clamp(t)*(PALETTE.length-1),i=Math.min(PALETTE.length-2,Math.floor(x)),f=x-i;return [lerp(PALETTE[i][0],PALETTE[i+1][0],f),lerp(PALETTE[i][1],PALETTE[i+1][1],f),lerp(PALETTE[i][2],PALETTE[i+1][2],f)];}
++function rawRng(seed:number){const r=new Rng(1);r.s=seed>>>0;return r;}
++export class ConstellationState{
++ nodes:DNode[]=[];edges:DEdge[]=[];pulses:DPulse[]=[];motes:DMote[]=[];star=false;burst=false;tick=0;
++ // P0 draws these before trimming old edges / appending a pulse's successors.
++ renderEdges:DEdge[]=[];renderPulses:DPulse[]=[];
++ constructor(){const rng=rawRng(97);for(let i=0;i<14;i++){const a=rng.r(0,TAU),rr=rng.r(20,105),home={x:CENTER.x+Math.cos(a)*rr,y:CENTER.y+Math.sin(a)*rr*.86};this.nodes.push({x:home.x,y:home.y,tx:home.x,ty:home.y,ph:rng.r(0,6),sp:rng.r(.6,1.6),home});}}
++ advanceTo(seconds:number){const target=Math.floor(seconds*60+1e-8);if(target<this.tick)throw new Error('Reset constellation before seeking backwards');while(this.tick<target){this.tick++;this.update(this.tick/60,this.tick===1?.0001:1/60);}}
++ private update(t:number,dt:number){const rendererTime=Math.max(.0001,t-1/60+.0001),fxRng=rawRng(Math.trunc(rendererTime*977)),rng=rawRng(600+Math.floor(t*30)),finale=t>7.4,out=cubic(phase(t,8.6,9.8)),fade=1-phase(t,8.6,9.8);this.burst=false;this.renderEdges=[];this.renderPulses=[];
++  for(let i=0;i<this.nodes.length;i++){const n=this.nodes[i];if(t>3.2&&!finale){const c=this.nodes[(i*5+3)%this.nodes.length],a=t*n.sp*(i%2?1:-1)+n.ph,rr=22+(i%4)*12;n.tx=lerp(n.tx,(n.x+c.x)/2+Math.cos(a)*rr,dt*2);n.ty=lerp(n.ty,(n.y+c.y)/2+Math.sin(a)*rr*.86,dt*2);}else if(finale){const k=cubic(phase(t,7.4,8.2)),a=i/this.nodes.length*TAU*2+.4;let rr=lerp(Math.hypot(n.home.x-CENTER.x,n.home.y-CENTER.y),i%2?96:54,k);rr=lerp(rr,6,out);n.tx=lerp(n.tx,CENTER.x+Math.cos(a)*rr,dt*6);n.ty=lerp(n.ty,CENTER.y+Math.sin(a)*rr*.86,dt*6);}n.x=lerp(n.x,n.tx,dt*3.2);n.y=lerp(n.y,n.ty,dt*3.2);}
++  if(!finale){if(fxRng.r(0,1)<.24){const i=Math.floor(rng.r(0,this.nodes.length)),dist=this.nodes.map((n,j)=>({j,d:Math.hypot(n.x-this.nodes[i].x,n.y-this.nodes[i].y)})).filter(o=>o.j!==i).sort((a,b)=>a.d-b.d);for(let k=0;k<Math.min(2,dist.length);k++)this.edges.push({a:i,b:dist[k].j,born:t,die:t+rng.r(.4,1.5)});}this.edges=this.edges.filter(e=>t<=e.die);this.renderEdges=this.edges.slice().reverse();if(this.edges.length>40)this.edges=this.edges.slice(12);}
++  else if(t>8.15&&!this.star){this.star=true;this.burst=true;for(let i=0;i<130;i++){const a=rng.r(0,TAU),vx=Math.cos(a)*rng.r(30,230),vy=Math.sin(a)*rng.r(24,190),life=rng.r(.6,2.4),s0=rng.r(1,3),color=astralRamp(rng.r(.7,1)),shape=rng.r(0,1)<.4?18:0,rot=rng.r(0,TAU),spin=rng.r(-6,6);this.motes.push({x:CENTER.x,y:CENTER.y,vx,vy,life:0,max:life,s0,s1:.3,color,alpha:.95,shape,rot,spin,seed:1.7});}}
++  if(t>5.2&&fxRng.r(0,1)<.3&&this.edges.length){const e=this.edges[Math.floor(rng.r(0,this.edges.length))];this.pulses.push({a:e.a,b:e.b,u:0,sp:rng.r(.8,2),life:0});}
++  for(let i=this.pulses.length-1;i>=0;i--){const p=this.pulses[i];p.u+=dt*p.sp;if(p.u>=1){const nb=this.edges.filter(e=>e.a===p.b);if(nb.length&&rng.r(0,1)<.5)this.pulses.push({a:nb[0].a,b:nb[0].b,u:0,sp:p.sp*.9,life:0});this.pulses.splice(i,1);}else this.renderPulses.push({...p});}
++  for(let i=this.motes.length-1;i>=0;i--){const p=this.motes[i];p.life+=dt;if(p.life>=p.max){this.motes.splice(i,1);continue;}const dr=Math.exp(-1.2*dt);p.vx*=dr;p.vy=p.vy*dr-6*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.rot+=p.spin*dt;}
++  if(out>0){const retain=Math.exp(-12*out*dt);for(const p of this.motes){if(p.outAlpha===undefined)p.outAlpha=p.alpha;p.x=lerp(CENTER.x,p.x,retain);p.y=lerp(CENTER.y,p.y,retain);p.vx*=retain;p.vy*=retain;p.alpha=p.outAlpha*fade;}}
++ }
++}
+diff --git a/web/src/game/arcana20/d/influence.ts b/web/src/game/arcana20/d/influence.ts
+new file mode 100644
+index 0000000..ada18fa
+--- /dev/null
++++ b/web/src/game/arcana20/d/influence.ts
+@@ -0,0 +1,8 @@
++/** Conservative *operation geometry* bounds; never derives presence from RGB.
++ * Source-D shader coverage and warp support are enclosed by these rectangles. */
++import type {DCommand} from './commands';import type {DWarp} from './warp';
++export function dInfluence(commands:DCommand[],warp:DWarp){const W=480,H=270,out=warp.influence.slice();
++ const box=(x0:number,y0:number,x1:number,y1:number)=>{x0=Math.max(0,Math.floor(x0)-2);y0=Math.max(0,Math.floor(y0)-2);x1=Math.min(W-1,Math.ceil(x1)+2);y1=Math.min(H-1,Math.ceil(y1)+2);for(let y=y0;y<=y1;y++)out.fill(1,y*W+x0,y*W+x1+1);};
++ for(const c of commands){if(c.kind==='bend')continue;if(c.kind==='sprite'){const r=Math.SQRT2*Math.round(c.size)+1;box(c.x-r,c.y-r,c.x+r,c.y+r);}else{let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;for(let i=0;i<c.points.length;i+=2){minX=Math.min(minX,c.points[i]);maxX=Math.max(maxX,c.points[i]);minY=Math.min(minY,c.points[i+1]);maxY=Math.max(maxY,c.points[i+1]);}const r=c.kind==='line'?Math.max(.02,...(Array.isArray(c.width)?c.width:[c.width])):0;box(minX-r,minY-r,maxX+r,maxY+r);}}
++ return out;
++}
+diff --git a/web/src/game/arcana20/d/player.ts b/web/src/game/arcana20/d/player.ts
+new file mode 100644
+index 0000000..b4859c7
+--- /dev/null
++++ b/web/src/game/arcana20/d/player.ts
+@@ -0,0 +1,20 @@
++/** Fixed-step source-D player. Experimental and not P0 acceptance. */
++import {sourceTransform} from '../transform';import {ConstellationState} from './constellationState';import {constellationCommands} from './commands';import type {DCommand} from './commands';import {DWarp} from './warp';
++export class DSource {
++ private state=new ConstellationState();private warp=new DWarp();readonly duration=9.8;readonly transform;
++ constructor(caster:{x:number;y:number},target:{x:number;y:number}){this.transform=sourceTransform(caster,target,{x:148,y:172},{x:244,y:132});}
++ renderAtSeconds(seconds:number){
++  if(!Number.isFinite(seconds)||seconds<0||seconds>=this.duration)return null;
++  const want=Math.floor(seconds*60+1e-8),rewind=want<this.state.tick;if(rewind){this.state=new ConstellationState();this.warp=new DWarp();}
++  const carryEligible=!rewind&&want-this.state.tick<=4;
++  let burstTick=-1,burstCommands:DCommand[]=[],burstFlash:ReturnType<typeof constellationCommands>['flash']=null;
++  while(this.state.tick<want){this.state.advanceTo((this.state.tick+1)/60);this.warp.step(this.state.tick/60);if(carryEligible&&this.state.burst){burstTick=this.state.tick;const burst=constellationCommands(this.state);burstCommands=burst.commands.filter(c=>c.role==='burst-filament');burstFlash=burst.flash;}}
++  const fields=constellationCommands(this.state);
++  // The source commands are never modified. An optional presentation path
++  // may carry a one-tick authored flash across up to three skipped fixed
++  // steps, rather than silently losing it at a low display refresh rate.
++  const carriedFlash=!fields.flash&&burstTick>=0&&want-burstTick<=3?burstFlash:null;
++  const carriedCommands=carriedFlash?burstCommands:[];
++  return {fields,warp:this.warp,transform:this.transform,carriedFlash,carriedCommands};
++ }
++}
+diff --git a/web/src/game/arcana20/d/raster.ts b/web/src/game/arcana20/d/raster.ts
+new file mode 100644
+index 0000000..c48d900
+--- /dev/null
++++ b/web/src/game/arcana20/d/raster.ts
+@@ -0,0 +1,25 @@
++/** Experimental internal D source-primitive raster, NOT a complete D19 A
++ * renderer. No world pass, live-world warp, bloom or actor depth yet. */
++import {batches as B,glSource as G} from './vendor.js';import type {DCommand} from './commands';
++export class DRaster {
++ readonly canvas:HTMLCanvasElement;private gl:WebGL2RenderingContext;private sprites:any;private ribbons:any;private polys:any;private needsRestore=false;
++ constructor(){this.canvas=document.createElement('canvas');this.canvas.width=480;this.canvas.height=270;const gl=this.canvas.getContext('webgl2',{alpha:false,antialias:false,premultipliedAlpha:false,preserveDrawingBuffer:true});if(!gl)throw new Error('WebGL2 unavailable');this.gl=gl;this.initialize();this.canvas.addEventListener('webglcontextlost',e=>e.preventDefault());this.canvas.addEventListener('webglcontextrestored',()=>{this.needsRestore=true;});}
++ private initialize(){const gl=this.gl,sprite=new G.Program(gl,B.SPRITE_VS,B.SPRITE_FS),ribbon=new G.Program(gl,B.RIBBON_VS,B.RIBBON_FS),poly=new G.Program(gl,B.POLY_VS,B.POLY_FS);this.sprites=new B.SpriteBatch(gl,sprite);this.ribbons=new B.RibbonBatch(gl,ribbon);this.polys=new B.PolyBatch(gl,poly);}
++ /** Adjacent-only batches retain command ordering. Select batch=none to compare
++  * the prior one-draw-per-command raster on identical fields. */
++ render(commands:DCommand[],rendererTime:number,batch:'none'|'sprites'|'all'='none'){const gl=this.gl;if(gl.isContextLost())throw new Error('WebGL context lost');if(this.needsRestore){this.initialize();this.needsRestore=false;}gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(0,0,480,270);gl.clearColor(0,0,0,1);gl.clear(gl.COLOR_BUFFER_BIT);gl.enable(gl.BLEND);B.setBlend(gl,'add');
++  let current:'sprite'|'line'|'poly'|null=null,draws=0;
++  const selected=()=>current==='sprite'?this.sprites:current==='line'?this.ribbons:this.polys;
++  const flush=()=>{if(current){const x=selected();x.draw([480,270],[0,0],rendererTime);x.reset();draws++;current=null;}};
++  for(const c of commands){if(c.kind==='bend')continue;
++   if(current!==c.kind)flush();
++   if(current){const x=selected(),need=c.kind==='sprite'?1:c.kind==='line'?c.points.length+3:4,limit=c.kind==='sprite'?x.cap:c.kind==='line'?x.data.length/x.stride:x.cap*4;if(x.count+need>limit)flush();}
++   if(!current)current=c.kind;
++   if(c.kind==='sprite'){const o=c.opt;this.sprites.push(Math.round(c.x),Math.round(c.y),Math.round(c.size),Math.round(c.size),o.rot??0,o.seed??(c.x*.173+c.y*.31),c.shape,o.hard??.9,c.color[0],c.color[1],c.color[2],c.color[3],o.glow??.3,o.edge??0,0,o.flags??0);}
++   else if(c.kind==='line')this.ribbons.push(c.points,c.width,c.color,c.opt);
++   else this.polys.pushQuad(c.points,c.color,c.opt);
++   if(batch==='none'||(batch==='sprites'&&c.kind!=='sprite'))flush();
++  }
++  flush();return {draws};
++ }
++}
+diff --git a/web/src/game/arcana20/d/vendor.d.ts b/web/src/game/arcana20/d/vendor.d.ts
+new file mode 100644
+index 0000000..8d71564
+--- /dev/null
++++ b/web/src/game/arcana20/d/vendor.d.ts
+@@ -0,0 +1,3 @@
++/** Exact copied D authoring engine modules, dynamically shaped JS exports. */
++export const batches:Record<string,any>;
++export const glSource:Record<string,any>;
+diff --git a/web/src/game/arcana20/d/vendor.js b/web/src/game/arcana20/d/vendor.js
+new file mode 100644
+index 0000000..dfd25e7
+--- /dev/null
++++ b/web/src/game/arcana20/d/vendor.js
+@@ -0,0 +1,849 @@
++// Copied without algorithm changes from the creator's standalone D source
++// Elemental_VFX_Lab_FIXED_Standalone.html. Internal unvalidated renderer.
++const factories = {
++'src/engine/batches.ts': function(module,exports,require){
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.Blitter = exports.WarpBatch = exports.PolyBatch = exports.RibbonBatch = exports.SpriteBatch = exports.BLIT_FS = exports.POLY_FS = exports.POLY_VS = exports.RIBBON_FS = exports.RIBBON_VS = exports.SPRITE_FS = exports.SPRITE_VS = exports.SHAPES = void 0;
++exports.setBlend = setBlend;
++const gl_1 = require("./gl");
++exports.SHAPES = {
++    DISC: 0,
++    SOFT: 1,
++    RING: 2,
++    SPARK: 3,
++    STAR: 4,
++    SPOKE: 5,
++    SHARD: 6,
++    PETAL: 7,
++    HEX: 8,
++    TRI: 9,
++    BOX: 10,
++    DROP: 11,
++    CRES: 12,
++    FLARE: 13,
++    ARC: 14,
++    LEAF: 15,
++    BLOB: 16,
++    THORN: 17,
++    FLAKE: 18,
++    PLUS: 19,
++    FRAME: 20,
++    SMOK: 21,
++    NEEDLE: 22,
++    DAGGER: 23,
++    MOTH: 24,
++};
++exports.SPRITE_VS = `#version 300 es
++precision highp float;
++layout(location=0) in vec2 aCorner;
++layout(location=1) in vec4 aA; // cx,cy,sx,sy
++layout(location=2) in vec4 aB; // rot, seed, shape, hard
++layout(location=3) in vec4 aC; // rgba
++layout(location=4) in vec4 aD; // glow, edge, wobble, flags
++uniform vec2 uRes; uniform vec2 uCam; uniform float uTime;
++out vec2 vP; out vec2 vSz; out vec4 vCol; out vec4 vB; out vec4 vD;
++void main(){
++  float c = cos(aB.x), s = sin(aB.x);
++  vec2 q = aCorner * aA.zw;
++  vec2 pos = aA.xy + vec2(q.x*c - q.y*s, q.x*s + q.y*c);
++  vec2 clip = (pos - uCam) / uRes * 2.0 - 1.0;
++  gl_Position = vec4(clip.x, -clip.y, 0.0, 1.0);
++  vP = aCorner * aA.zw; vSz = max(aA.zw, vec2(0.75)); vCol = aC; vB = aB; vD = aD;
++}`;
++exports.SPRITE_FS = `#version 300 es
++precision highp float;
++in vec2 vP; in vec2 vSz; in vec4 vCol; in vec4 vB; in vec4 vD;
++uniform float uTime; uniform vec2 uRes;
++out vec4 frag;
++#define PI 3.14159265
++float h11(float n){ return fract(sin(n*127.1)*43758.5453); }
++float h21(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453); }
++float vnoise(vec2 p){
++  vec2 i = floor(p), f = fract(p);
++  f = f*f*(3.0-2.0*f);
++  return mix(mix(h21(i), h21(i+vec2(1,0)), f.x), mix(h21(i+vec2(0,1)), h21(i+vec2(1,1)), f.x), f.y);
++}
++float fbm(vec2 p){ float s=0.0,a=0.5; for(int i=0;i<4;i++){ s+=a*vnoise(p); p*=2.03; a*=0.5;} return s; }
++// polygon radius for a regular n-gon
++float ngonR(float th, float n, float r){ return r*cos(PI/n)/cos(mod(th, 2.0*PI/n) - PI/n); }
++// radial profile: base radius modulated by two harmonics + a sharp spike term
++float radial(float th, float seed, float a1, float h1, float a2, float h2, float spike, float sharp){
++  float p1 = h11(seed)*6.283, p2 = h11(seed+3.7)*6.283;
++  float r = 1.0 + a1*cos(h1*th + p1) + a2*cos(h2*th + p2);
++  r += spike*pow(max(0.0, cos(sharp*th + p1*2.0)), 6.0);
++  return r;
++}
++float aa(float d, float hard){ return 1.0 - smoothstep(-hard*0.5, hard*0.9, d); }
++
++float shapeAlpha(int id, vec2 p, float seed, float hard, out float rim){
++  rim = 0.0;
++  float r = length(p);
++  float th = atan(p.y, p.x);
++  float d = 0.0, a = 0.0;
++  if(id == 0){ d = r - 1.0; a = aa(d, hard); }
++  else if(id == 1){ a = exp(-r*r*3.2); }
++  else if(id == 2){
++    float w = 0.14 + 0.3*h11(seed);
++    d = max(abs(r - (1.0 - w*0.5)) - w*0.5, 0.0);
++    a = aa(d, hard);
++  }
++  else if(id == 3){ d = length(p*vec2(0.30, 1.15)) - 1.0; a = aa(d, hard*1.4); }
++  else if(id == 4){
++    float pr = radial(th, seed, 0.10, 2.0, 0.05, 4.0, 1.5, 4.0);
++    d = r - pr; a = aa(d, hard);
++  }
++  else if(id == 5){
++    float pr = radial(th, seed, 0.16, 3.0, 0.06, 6.0, 0.9, 6.0);
++    d = r - pr; a = aa(d, hard);
++  }
++  else if(id == 6){
++    float pr = ngonR(th, 5.0 + floor(h11(seed)*3.0), 0.72 + 0.2*h11(seed+9.0));
++    float pr2 = radial(th, seed+11.0, 0.22, 2.0, 0.1, 5.0, 0.0, 3.0);
++    d = r - min(pr, pr2); a = aa(d, hard*1.2);
++  }
++  else if(id == 7){
++    float pr = (0.35 + 0.65*pow(max(0.0,cos(th*0.5)), 1.4)) * radial(th, seed, 0.14, 2.0, 0.0, 3.0, 0.0, 0.0);
++    d = r - pr; a = aa(d, hard);
++  }
++  else if(id == 8){ d = r - ngonR(th, 6.0, 0.92); a = aa(d, hard*1.3); }
++  else if(id == 9){ d = r - ngonR(th, 3.0, 1.0); a = aa(d, hard*1.3); }
++  else if(id == 10){ d = max(abs(p.x), abs(p.y)) - 1.0; a = aa(d, hard*1.3); }
++  else if(id == 11){
++    vec2 q = p; q.y += 0.35;
++    float body = length(q*vec2(1.0, 0.85)) - 0.72;
++    float tip = length(p - vec2(0.0, -1.05)) - 0.5;
++    d = min(body, tip); a = aa(d, hard);
++  }
++  else if(id == 12){
++    float d1 = r - 1.0;
++    float d2 = length(p - vec2(0.55, 0.0)) - 0.95;
++    d = max(d1, -d2); a = aa(d, hard);
++  }
++  else if(id == 13){
++    float a4 = abs(mod(th + PI, PI*0.5) - PI*0.25);
++    float pr = 1.0 / (1.0 + 12.0*a4*a4);
++    d = r - mix(pr, 1.0, 0.12); a = aa(d, hard*0.9);
++  }
++  else if(id == 14){
++    float w = 0.5 + 0.5*h11(seed);
++    float ang = mod(th, 2.0*PI);
++    float win = smoothstep(0.0, 0.25, ang) * (1.0 - smoothstep(w*2.0*PI - 0.25, w*2.0*PI, ang));
++    d = abs(r - 0.85) - 0.2; a = aa(d, hard) * step(0.15, win);
++  }
++  else if(id == 15){
++    float pr = radial(th, seed, 0.2, 2.0, 0.0, 3.0, 0.0, 0.0) * (0.3 + 0.7*pow(max(0.0,cos(th)), 0.6));
++    pr *= 1.0 - 0.35*abs(sin(th));
++    d = r - pr; a = aa(d, hard);
++  }
++  else if(id == 16){
++    float b = 0.0;
++    for(int i=0;i<3;i++){
++      float fi = float(i);
++      vec2 o = vec2(cos(h11(seed+fi)*6.28), sin(h11(seed+fi*2.3)*6.28)) * (0.35+0.3*fi*0.4);
++      b += 0.42/ (0.08 + dot(p-o,p-o)*2.2);
++    }
++    a = clamp(b*b*0.02, 0.0, 1.0); a = smoothstep(0.25, 0.75, a);
++  }
++  else if(id == 17){
++    // long thorn: sharp tip at -y, widening base at +y
++    float k = clamp((p.y + 1.0) * 0.5, 0.0, 1.0);
++    d = max(abs(p.x) - (1.0 - k) * 0.55, p.y - 1.0);
++    d = max(d, -1.0 - p.y);
++    a = aa(d, hard);
++  }
++  else if(id == 18){
++    float arms = 0.0;
++    for(int i=0;i<3;i++){
++      float an = PI*float(i)/3.0;
++      vec2 q = mat2(cos(an), -sin(an), sin(an), cos(an)) * p;
++      arms = max(arms, 1.0 - (length(vec2(q.x*6.0, q.y*0.9)) - 0.85));
++    }
++    a = clamp(arms, 0.0, 1.0); a = smoothstep(0.1, 0.7, a);
++  }
++  else if(id == 19){
++    float c = 1.0 - (length(vec2(p.x*7.0, p.y*1.05)) - 0.85);
++    float c2 = 1.0 - (length(vec2(p.y*7.0, p.x*1.05)) - 0.85);
++    a = smoothstep(0.1, 0.6, max(c, c2));
++  }
++  else if(id == 20){
++    float e = max(abs(p.x), abs(p.y));
++    d = max(e - 1.0, 0.72 - e); a = aa(d, hard*1.2);
++  }
++  else if(id == 21){
++    float n = fbm(p*2.2 + vec2(seed*3.1, -uTime*0.7));
++    d = r - (0.72 + 0.55*(n - 0.5));
++    a = aa(d, hard*2.5) * 0.85;
++  }
++  else if(id == 22){ d = length(p*vec2(0.12, 1.0)) - 1.0; a = aa(d, hard*1.6); }
++  else if(id == 23){
++    float bl = length(p*vec2(0.34, 1.0)) - 1.0;
++    float tip = length(p - vec2(0.0, -1.25)) - 0.42;
++    d = min(bl, tip); a = aa(d, hard);
++  }
++  else if(id == 24){
++    float pr = ngonR(th, 4.0, 1.0);
++    float notch = smoothstep(0.0, 0.5, abs(mod(th+PI, PI*0.5)-PI*0.25));
++    d = r - mix(pr*0.85, pr, notch); a = aa(d, hard);
++  }
++  else { d = r - 1.0; a = aa(d, hard); }
++  rim = exp(-abs(d)*3.4) * step(0.0, d);
++  return a;
++}
++
++void main(){
++  vec2 q = vP;                    // pixel space
++  float flags = vD.w;
++  int id = int(vB.z + 0.5);
++  // organic wobble / chunky pixel quantisation, authored in pixels
++  if(flags >= 4.0){
++    float s = vB.y;
++    q += vSz*0.14*vec2(sin(q.y*0.9 + uTime*2.0 + s*9.0), cos(q.x*0.8 - uTime*1.7 + s*5.0));
++    flags -= 4.0;
++  }
++  if(flags >= 2.0){ q = floor(q*0.5)/0.5; flags -= 2.0; }
++  vec2 p = q / vSz;               // unit SDF domain
++  float px = 1.0 / ((vSz.x + vSz.y) * 0.5);
++  float rim;
++  float a = shapeAlpha(id, p, vB.y, vB.w * px, rim);
++  if(a <= 0.002) discard;
++  float d = length(p);
++  vec3 col = vCol.rgb;
++  col *= mix(1.0, 1.0 + vD.x*2.2*exp(-d*d*2.5), clamp(vD.x,0.0,1.0));
++  col += col * vD.y * rim * 1.6;
++  frag = vec4(col, vCol.a * a);
++}`;
++exports.RIBBON_VS = `#version 300 es
++precision highp float;
++layout(location=0) in vec2 aPos;
++layout(location=1) in vec4 aC;  // rgba
++layout(location=2) in vec4 aM;  // across, along, hard, glow
++layout(location=3) in vec4 aS;  // flow, flags, seed, width
++uniform vec2 uRes; uniform vec2 uCam; uniform float uTime;
++out vec4 vCol; out vec4 vM; out vec4 vS;
++void main(){
++  vec2 clip = (aPos - uCam)/uRes*2.0 - 1.0;
++  gl_Position = vec4(clip.x, -clip.y, 0.0, 1.0);
++  vCol = aC; vM = aM; vS = aS;
++}`;
++exports.RIBBON_FS = `#version 300 es
++precision highp float;
++in vec4 vCol; in vec4 vM; in vec4 vS;
++uniform float uTime;
++out vec4 frag;
++float h11(float n){ return fract(sin(n*127.1)*43758.5453); }
++float vnoise(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);
++  return mix(mix(h11(i.x+i.y*57.0), h11(i.x+1.0+i.y*57.0), f.x),
++             mix(h11(i.x+(i.y+1.0)*57.0), h11(i.x+1.0+(i.y+1.0)*57.0), f.x), f.y); }
++float fbm(vec2 p){ float s=0.0,a=0.5; for(int i=0;i<3;i++){ s+=a*vnoise(p); p*=2.1; a*=0.5;} return s; }
++void main(){
++  float d = abs(vM.x);
++  float hard = vM.z;
++  // edge width in real pixels so wide ribbons stay crisp
++  float fw = max(fwidth(d), 1e-4);
++  float distPx = (1.0 - d) / fw;
++  float a = clamp(distPx / max(0.8, hard), 0.0, 1.0);
++  float flags = vS.y;
++  float along = vM.y;
++  if(flags >= 4.0){ flags -= 4.0; a *= 0.55 + 0.75*fbm(vec2(along*26.0, uTime*2.4 - along*9.0 + vS.z*5.0)); }
++  if(flags >= 2.0){ flags -= 2.0; d += (h11(floor(along*46.0) + floor(uTime*22.0)*0.37) - 0.5)*0.8;
++                     a = max(a * 0.35, clamp(((1.0 - d) / fw) / 1.6, 0.0, 1.0)); }
++  if(flags >= 1.0){ flags -= 1.0; }
++  if(a <= 0.003) discard;
++  float core = 1.0 - d*d;
++  vec3 col = vCol.rgb * (0.55 + 0.75*core);
++  col += vCol.rgb * vM.w * exp(-d*d*7.0) * 2.4;
++  if(vS.x > 0.0){
++    float ph = fract(along*vS.z*0.06 - uTime*vS.x);
++    float bump = pow(ph, 6.0);
++    col += vec3(1.0, 0.97, 0.9) * bump * (1.2 - d) * 1.5;
++    a = max(a, bump*(1.0-d*0.6));
++  }
++  frag = vec4(col, vCol.a * a);
++}`;
++exports.POLY_VS = `#version 300 es
++precision highp float;
++layout(location=0) in vec2 aPos;
++layout(location=1) in vec4 aC;
++layout(location=2) in vec4 aE; // local.x, local.y, glow, edge
++uniform vec2 uRes; uniform vec2 uCam;
++out vec4 vCol; out vec4 vE;
++void main(){
++  vec2 clip = (aPos - uCam)/uRes*2.0 - 1.0;
++  gl_Position = vec4(clip.x, -clip.y, 0.0, 1.0);
++  vCol = aC; vE = aE;
++}`;
++exports.POLY_FS = `#version 300 es
++precision highp float;
++in vec4 vCol; in vec4 vE;
++uniform float uTime;
++out vec4 frag;
++float h21(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453); }
++float vnoise(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);
++  return mix(mix(h21(i), h21(i+vec2(1,0)), f.x), mix(h21(i+vec2(0,1)), h21(i+vec2(1,1)), f.x), f.y); }
++float fbm(vec2 p){ float s=0.0,a=0.5; for(int i=0;i<4;i++){ s+=a*vnoise(p); p*=2.03; a*=0.5;} return s; }
++float h11(float n){ return fract(sin(n*127.1)*43758.5453); }
++float ngon(vec2 p, float n, float r){
++  float an = 3.14159265/n;
++  float th = atan(p.y, p.x);
++  return length(p) - r*cos(an)/cos(mod(th, 2.0*an) - an);
++}
++// ---- "unreality" interior: generated inside the polygon's own space -------
++vec4 voidSpace(vec2 l, float seed, float t){
++  float r = length(l) + 0.0001;
++  float th = atan(l.y, l.x);
++  vec3 col = vec3(0.008, 0.006, 0.03);
++  // three independent parallax strata of drifting geometry
++  for(int k=0;k<3;k++){
++    float fk = float(k);
++    float depth = 1.0 / (1.0 + fk*1.1);
++    vec2 q = l * (1.6 + fk*1.9) + vec2(t*(0.06+fk*0.09)*(fk-1.0), -t*(0.05+fk*0.05));
++    float ang = t*(0.15 - fk*0.11)*(fk-1.0);
++    q = mat2(cos(ang), -sin(ang), sin(ang), cos(ang))*q;
++    float n = ngon(q, 3.0 + floor(h11(seed+fk*7.0)*4.0), 0.55 + 0.3*h11(seed+fk*3.0));
++    float shell = smoothstep(0.05, 0.0, abs(n - 0.02));
++    float fill = smoothstep(0.0, -0.06, n) * 0.35;
++    vec3 tint = mix(vec3(0.45,0.16,0.7), vec3(0.7,0.85,1.0), fk*0.5);
++    col += tint * (shell*0.9 + fill) * depth;
++  }
++  // impossible shadows: dark bars running the wrong way
++  float bars = smoothstep(0.4, 0.5, abs(fract(l.x*2.0 - t*0.25 + seed*0.31) - 0.5));
++  col *= 1.0 - 0.35*bars;
++  // luminous debris + faint starfield with reversed depth cue
++  float st = pow(h21(floor(l*22.0 + vec2(seed*5.0, -t*0.4))), 22.0);
++  col += vec3(0.8,0.7,1.0)*st*2.2;
++  col += vec3(0.5,0.2,0.8)*fbm(l*2.0 + vec2(seed, t*0.1))*0.22;
++  float a = vE.w < 3.0 ? smoothstep(1.0, 0.68, abs(l.y)) : smoothstep(1.0, 0.72, max(abs(l.x), abs(l.y)));
++  float rim = smoothstep(0.62, 1.0, max(abs(l.x), abs(l.y)));
++  col += vec3(0.85,0.55,1.0)*rim*0.7;
++  return vec4(col, a);
++}
++void main(){
++  vec2 l = vE.xy;
++  float r = max(abs(l.x), abs(l.y));
++  if(vE.w > 1.5){
++    vec4 v = voidSpace(l, vE.z, uTime);
++    frag = vec4(v.rgb * vCol.rgb, v.a * vCol.a);
++    return;
++  }
++  // resolution independent edge width: vE.w is authored in pixels
++  float fw = max(fwidth(r), 1e-4);
++  float distPx = (1.0 - r) / fw;
++  float edge = clamp(distPx / max(0.6, vE.w), 0.0, 1.0);
++  if(edge <= 0.004) discard;
++  vec3 col = vCol.rgb * (1.0 + vE.z * (1.0 - r*r) * 2.0);
++  col += vCol.rgb * exp(-max(0.0, -distPx) / 2.6) * clamp(vE.w, 0.0, 1.0) * 1.3;
++  frag = vec4(col, vCol.a * edge);
++}`;
++const WARP_VS = `#version 300 es
++precision highp float;
++layout(location=0) in vec2 aCorner;
++layout(location=1) in vec4 aA; // cx,cy,sx,sy
++layout(location=2) in vec4 aB; // ox,oy,absorb,chroma
++uniform vec2 uRes; uniform vec2 uCam;
++out vec2 vP; out vec4 vB;
++void main(){
++  vec2 pos = aA.xy + aCorner*aA.zw;
++  vec2 clip = (pos - uCam)/uRes*2.0 - 1.0;
++  gl_Position = vec4(clip.x, -clip.y, 0.0, 1.0);
++  vP = aCorner; vB = aB;
++}`;
++const WARP_FS = `#version 300 es
++precision highp float;
++in vec2 vP; in vec4 vB;
++out vec4 frag;
++void main(){
++  float f = 1.0 - dot(vP, vP);
++  if(f <= 0.0) discard;
++  f = f*f;
++  frag = vec4(vB.xy * f, vB.z * f, vB.w * f);
++}`;
++exports.BLIT_FS = `#version 300 es
++precision highp float;
++in vec2 vUV; uniform sampler2D uTex; uniform float uDecay; uniform vec4 uGain;
++out vec4 frag;
++void main(){ frag = texture(uTex, vUV) * uDecay * uGain; }`;
++function setBlend(gl, mode) {
++    switch (mode) {
++        case "add":
++            gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
++            break;
++        case "alpha":
++            gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
++            break;
++        case "mult":
++            gl.blendFunc(gl.ZERO, gl.ONE_MINUS_SRC_ALPHA);
++            break;
++    }
++}
++class Batch {
++    constructor(gl, prog, stride, cap) {
++        this.gl = gl;
++        this.prog = prog;
++        this.n = 0;
++        this.stride = stride;
++        this.cap = cap;
++        this.data = new Float32Array(cap * stride * 4);
++        this.vao = gl.createVertexArray();
++        this.vbo = gl.createBuffer();
++        gl.bindVertexArray(this.vao);
++        gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
++        gl.bufferData(gl.ARRAY_BUFFER, this.data.byteLength, gl.DYNAMIC_DRAW);
++        gl.bindVertexArray(null);
++    }
++    upload() {
++        const gl = this.gl;
++        if (this.n === 0)
++            return;
++        gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
++        gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.data, 0, this.n * this.stride);
++    }
++    reset() {
++        this.n = 0;
++    }
++    get count() {
++        return this.n;
++    }
++}
++class SpriteBatch extends Batch {
++    constructor(gl, prog, cap = 9000) {
++        super(gl, prog, 16, cap);
++        const q = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
++        this.quads = gl.createBuffer();
++        gl.bindVertexArray(this.vao);
++        gl.bindBuffer(gl.ARRAY_BUFFER, this.quads);
++        gl.bufferData(gl.ARRAY_BUFFER, q, gl.STATIC_DRAW);
++        gl.enableVertexAttribArray(0);
++        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
++        gl.vertexAttribDivisor(0, 0);
++        for (let i = 0; i < 4; i++) {
++            gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
++            gl.enableVertexAttribArray(i + 1);
++            gl.vertexAttribPointer(i + 1, 4, gl.FLOAT, false, 64, i * 16);
++            gl.vertexAttribDivisor(i + 1, 1);
++        }
++        gl.bindVertexArray(null);
++    }
++    push(x, y, sx, sy, rot, seed, shape, hard, r, g, b, a, glow, edge, wobble, flags) {
++        if (this.n >= this.cap || !Number.isFinite(x + y + sx + sy) || sx <= 0 || sy <= 0)
++            return;
++        if (!Number.isFinite(rot))
++            rot = 0;
++        if (!Number.isFinite(seed))
++            seed = 0;
++        const d = this.data;
++        let o = this.n * 16;
++        {
++            d[o] = x;
++            d[o + 1] = y;
++            d[o + 2] = sx;
++            d[o + 3] = sy;
++            d[o + 4] = rot;
++            d[o + 5] = seed;
++            d[o + 6] = shape;
++            d[o + 7] = hard;
++            d[o + 8] = r;
++            d[o + 9] = g;
++            d[o + 10] = b;
++            d[o + 11] = a;
++            d[o + 12] = glow;
++            d[o + 13] = edge;
++            d[o + 14] = wobble;
++            d[o + 15] = flags;
++            o += 16;
++        }
++        this.n++;
++    }
++    draw(res, cam, time) {
++        if (!this.n)
++            return;
++        const gl = this.gl;
++        this.upload();
++        this.prog.use();
++        gl.bindVertexArray(this.vao);
++        this.prog.v2("uRes", res[0], res[1]);
++        this.prog.v2("uCam", cam[0], cam[1]);
++        this.prog.f("uTime", time);
++        gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, this.n);
++        gl.bindVertexArray(null);
++    }
++}
++exports.SpriteBatch = SpriteBatch;
++class RibbonBatch extends Batch {
++    constructor(gl, prog, cap = 20000) {
++        super(gl, prog, 16, cap);
++        gl.bindVertexArray(this.vao);
++        gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
++        const S = 64;
++        gl.enableVertexAttribArray(0);
++        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, S, 0);
++        gl.enableVertexAttribArray(1);
++        gl.vertexAttribPointer(1, 4, gl.FLOAT, false, S, 8);
++        gl.enableVertexAttribArray(2);
++        gl.vertexAttribPointer(2, 4, gl.FLOAT, false, S, 24);
++        gl.enableVertexAttribArray(3);
++        gl.vertexAttribPointer(3, 4, gl.FLOAT, false, S, 40);
++        for (let i = 0; i < 4; i++)
++            gl.vertexAttribDivisor(i, 0);
++        gl.bindVertexArray(null);
++    }
++    push(pts, width, col, o = {}) {
++        const n = pts.length / 2;
++        if (n < 2 || pts.some(v => !Number.isFinite(v)))
++            return;
++        const hard = o.hard ?? 0.8;
++        const glow = o.glow ?? 0;
++        const flow = o.flow ?? 0;
++        const flags = o.flags ?? 0;
++        const seed = o.seed ?? 1;
++        const alpha = o.alpha ?? 1;
++        const along = new Array(n);
++        let total = 0;
++        along[0] = 0;
++        for (let i = 1; i < n; i++) {
++            total += Math.hypot(pts[i * 2] - pts[(i - 1) * 2], pts[i * 2 + 1] - pts[(i - 1) * 2 + 1]);
++            along[i] = total;
++        }
++        let o2 = this.n * 16;
++        const d = this.data;
++        const bridge = this.n > 0 ? 3 : 0;
++        if (o2 + (n * 2 + bridge) * 16 > d.length)
++            return;
++        const vert = (i, side) => {
++            const rawW = Array.isArray(width) ? width[Math.min(width.length - 1, i)] : width;
++            const w = Number.isFinite(rawW) ? Math.max(0.02, rawW) : 0.75;
++            const c = Array.isArray(col[0]) ? col[Math.min(col.length - 1, i)] : col;
++            const nx = i === 0 ? pts[2] - pts[0] : i === n - 1 ? pts[i * 2] - pts[(i - 1) * 2] : pts[(i + 1) * 2] - pts[(i - 1) * 2];
++            const ny = i === 0
++                ? pts[3] - pts[1]
++                : i === n - 1
++                    ? pts[i * 2 + 1] - pts[(i - 1) * 2 + 1]
++                    : pts[(i + 1) * 2 + 1] - pts[(i - 1) * 2 + 1];
++            const l = Math.hypot(nx, ny) || 1;
++            const px = -ny / l, py = nx / l;
++            d[o2] = pts[i * 2] + px * w * side;
++            d[o2 + 1] = pts[i * 2 + 1] + py * w * side;
++            d[o2 + 2] = c[0];
++            d[o2 + 3] = c[1];
++            d[o2 + 4] = c[2];
++            d[o2 + 5] = c[3] * alpha;
++            d[o2 + 6] = side;
++            d[o2 + 7] = along[i];
++            d[o2 + 8] = hard;
++            d[o2 + 9] = glow;
++            d[o2 + 10] = flow;
++            d[o2 + 11] = flags;
++            d[o2 + 12] = seed;
++            d[o2 + 13] = w;
++            o2 += 16;
++        };
++        if (bridge) {
++            const src = o2 - 16;
++            for (let k = 0; k < 16; k++)
++                d[o2 + k] = d[src + k];
++            o2 += 16;
++            for (let k = 0; k < 16; k++)
++                d[o2 + k] = d[src + k];
++            o2 += 16;
++            vert(0, -1);
++            this.n += 3;
++        }
++        for (let i = 0; i < n; i++) {
++            vert(i, -1);
++            vert(i, 1);
++        }
++        this.n += n * 2;
++    }
++    draw(res, cam, time) {
++        if (this.n < 4)
++            return;
++        const gl = this.gl;
++        this.upload();
++        this.prog.use();
++        gl.bindVertexArray(this.vao);
++        this.prog.v2("uRes", res[0], res[1]);
++        this.prog.v2("uCam", cam[0], cam[1]);
++        this.prog.f("uTime", time);
++        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.n);
++        gl.bindVertexArray(null);
++    }
++}
++exports.RibbonBatch = RibbonBatch;
++class PolyBatch extends Batch {
++    constructor(gl, prog, cap = 16000) {
++        super(gl, prog, 12, cap);
++        this.idx = new Uint16Array(cap * 6);
++        for (let q = 0; q < cap; q++) {
++            const b = q * 4, i = q * 6;
++            this.idx[i] = b;
++            this.idx[i + 1] = b + 1;
++            this.idx[i + 2] = b + 2;
++            this.idx[i + 3] = b + 1;
++            this.idx[i + 4] = b + 3;
++            this.idx[i + 5] = b + 2;
++        }
++        this.ibo = gl.createBuffer();
++        gl.bindVertexArray(this.vao);
++        gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
++        const S = 48;
++        gl.enableVertexAttribArray(0);
++        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, S, 0);
++        gl.enableVertexAttribArray(1);
++        gl.vertexAttribPointer(1, 4, gl.FLOAT, false, S, 8);
++        gl.enableVertexAttribArray(2);
++        gl.vertexAttribPointer(2, 4, gl.FLOAT, false, S, 24);
++        for (let i = 0; i < 3; i++)
++            gl.vertexAttribDivisor(i, 0);
++        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.ibo);
++        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.idx, gl.STATIC_DRAW);
++        gl.bindVertexArray(null);
++    }
++    pushQuad(p, col, o = {}) {
++        if (p.length < 8 || p.some(v => !Number.isFinite(v)))
++            return;
++        const glow = o.glow ?? 0, edge = o.edge ?? 0.05, alpha = o.alpha ?? 1;
++        const d = this.data;
++        let o2 = this.n * 12;
++        if (o2 + 48 > d.length)
++            return;
++        const loc = o.local ?? [-1, -1, 1, -1, -1, 1, 1, 1];
++        for (let v = 0; v < 4; v++) {
++            const c = Array.isArray(col[0]) ? col[v] : col;
++            d[o2] = p[v * 2];
++            d[o2 + 1] = p[v * 2 + 1];
++            d[o2 + 2] = c[0];
++            d[o2 + 3] = c[1];
++            d[o2 + 4] = c[2];
++            d[o2 + 5] = c[3] * alpha;
++            d[o2 + 6] = loc[v * 2];
++            d[o2 + 7] = loc[v * 2 + 1];
++            d[o2 + 8] = glow;
++            d[o2 + 9] = edge;
++            o2 += 12;
++        }
++        this.n += 4;
++    }
++    draw(res, cam, time = 0) {
++        if (this.n < 4)
++            return;
++        const gl = this.gl;
++        this.upload();
++        this.prog.use();
++        gl.bindVertexArray(this.vao);
++        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.ibo);
++        this.prog.v2("uRes", res[0], res[1]);
++        this.prog.v2("uCam", cam[0], cam[1]);
++        this.prog.f("uTime", time);
++        gl.drawElements(gl.TRIANGLES, (this.n / 4) * 6, gl.UNSIGNED_SHORT, 0);
++        gl.bindVertexArray(null);
++    }
++}
++exports.PolyBatch = PolyBatch;
++class WarpBatch extends Batch {
++    constructor(gl, cap = 3000) {
++        const wp = new gl_1.Program(gl, WARP_VS, WARP_FS);
++        super(gl, wp, 8, cap);
++        this.wprog = wp;
++        this.corners = gl.createBuffer();
++        gl.bindVertexArray(this.vao);
++        gl.bindBuffer(gl.ARRAY_BUFFER, this.corners);
++        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
++        gl.enableVertexAttribArray(0);
++        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
++        gl.vertexAttribDivisor(0, 0);
++        gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
++        gl.enableVertexAttribArray(1);
++        gl.vertexAttribPointer(1, 4, gl.FLOAT, false, 32, 0);
++        gl.enableVertexAttribArray(2);
++        gl.vertexAttribPointer(2, 4, gl.FLOAT, false, 32, 16);
++        gl.vertexAttribDivisor(1, 1);
++        gl.vertexAttribDivisor(2, 1);
++        gl.bindVertexArray(null);
++    }
++    add(x, y, sx, sy, ox, oy, absorb, chroma) {
++        if (this.n >= this.cap || ![x, y, sx, sy, ox, oy, absorb, chroma].every(Number.isFinite))
++            return;
++        const d = this.data;
++        let o = this.n * 8;
++        {
++            d[o] = x;
++            d[o + 1] = y;
++            d[o + 2] = sx;
++            d[o + 3] = sy;
++            d[o + 4] = ox;
++            d[o + 5] = oy;
++            d[o + 6] = absorb;
++            d[o + 7] = chroma;
++            o += 8;
++        }
++        this.n++;
++    }
++    drawWarp(res, cam) {
++        if (!this.n)
++            return;
++        const gl = this.gl;
++        this.upload();
++        this.wprog.use();
++        gl.bindVertexArray(this.vao);
++        this.wprog.v2("uRes", res[0], res[1]);
++        this.wprog.v2("uCam", cam[0], cam[1]);
++        gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, this.n);
++        gl.bindVertexArray(null);
++    }
++}
++exports.WarpBatch = WarpBatch;
++class Blitter {
++    constructor(gl) {
++        this.gl = gl;
++        this.prog = new gl_1.Program(gl, gl_1.FS_VERT, exports.BLIT_FS);
++    }
++    blit(dst, src, w, h, decay = 1, gain) {
++        const gl = this.gl;
++        gl.bindFramebuffer(gl.FRAMEBUFFER, dst);
++        gl.viewport(0, 0, w, h);
++        gl.disable(gl.BLEND);
++        this.prog.use();
++        this.prog.tex("uTex", 0, src);
++        this.prog.f("uDecay", decay);
++        const g = gain ?? [1, 1, 1, 1];
++        this.prog.v4("uGain", g[0], g[1], g[2], g[3]);
++        gl.drawArrays(gl.TRIANGLES, 0, 3);
++    }
++}
++exports.Blitter = Blitter;
++
++},
++'src/engine/gl.ts': function(module,exports,require){
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.FS_VERT = exports.FBO = exports.Program = void 0;
++exports.getGL = getGL;
++exports.setTexParams = setTexParams;
++function getGL(canvas) {
++    const gl = canvas.getContext("webgl2", {
++        alpha: false,
++        antialias: false,
++        depth: false,
++        stencil: false,
++        premultipliedAlpha: false,
++        preserveDrawingBuffer: true,
++        powerPreference: "high-performance",
++    });
++    if (!gl)
++        throw new Error("WebGL2 unavailable");
++    return gl;
++}
++function compile(gl, type, src) {
++    const sh = gl.createShader(type);
++    gl.shaderSource(sh, src);
++    gl.compileShader(sh);
++    if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
++        const log = gl.getShaderInfoLog(sh) ?? "";
++        const numbered = src
++            .split("\n")
++            .map((l, i) => `${(i + 1).toString().padStart(3, " ")}| ${l}`)
++            .join("\n");
++        throw new Error("shader compile failed:\n" + log + "\n" + numbered);
++    }
++    return sh;
++}
++class Program {
++    constructor(gl, vs, fs) {
++        this.gl = gl;
++        this.locs = new Map();
++        const p = gl.createProgram();
++        const v = compile(gl, gl.VERTEX_SHADER, vs);
++        const f = compile(gl, gl.FRAGMENT_SHADER, fs);
++        gl.attachShader(p, v);
++        gl.attachShader(p, f);
++        gl.linkProgram(p);
++        if (!gl.getProgramParameter(p, gl.LINK_STATUS)) {
++            throw new Error("link failed: " + gl.getProgramInfoLog(p));
++        }
++        gl.deleteShader(v);
++        gl.deleteShader(f);
++        this.prog = p;
++    }
++    use() {
++        this.gl.useProgram(this.prog);
++        return this;
++    }
++    u(name) {
++        if (!this.locs.has(name)) {
++            this.locs.set(name, this.gl.getUniformLocation(this.prog, name));
++        }
++        return this.locs.get(name);
++    }
++    f(name, v) {
++        this.gl.uniform1f(this.u(name), v);
++    }
++    i(name, v) {
++        this.gl.uniform1i(this.u(name), v);
++    }
++    v2(name, x, y) {
++        this.gl.uniform2f(this.u(name), x, y);
++    }
++    v4(name, x, y, z, w) {
++        this.gl.uniform4f(this.u(name), x, y, z, w);
++    }
++    tex(name, unit, texture) {
++        const gl = this.gl;
++        gl.activeTexture(gl.TEXTURE0 + unit);
++        gl.bindTexture(gl.TEXTURE_2D, texture);
++        gl.uniform1i(this.u(name), unit);
++    }
++}
++exports.Program = Program;
++class FBO {
++    constructor(gl, w, h, opts = {}) {
++        this.gl = gl;
++        this.w = w;
++        this.h = h;
++        const filter = opts.filter ?? gl.LINEAR;
++        const internal = opts.float ? gl.RGBA16F : gl.RGBA8;
++        const type = opts.float ? gl.HALF_FLOAT : gl.UNSIGNED_BYTE;
++        this.tex = gl.createTexture();
++        gl.bindTexture(gl.TEXTURE_2D, this.tex);
++        gl.texImage2D(gl.TEXTURE_2D, 0, internal, w, h, 0, gl.RGBA, type, null);
++        setTexParams(gl, filter, opts.wrap ?? gl.CLAMP_TO_EDGE);
++        this.fbo = gl.createFramebuffer();
++        gl.bindFramebuffer(gl.FRAMEBUFFER, this.fbo);
++        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.tex, 0);
++        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
++    }
++    bind(clear = true) {
++        const gl = this.gl;
++        gl.bindFramebuffer(gl.FRAMEBUFFER, this.fbo);
++        gl.viewport(0, 0, this.w, this.h);
++        if (clear) {
++            gl.clearColor(0, 0, 0, 1);
++            gl.clear(gl.COLOR_BUFFER_BIT);
++        }
++    }
++    dispose() {
++        this.gl.deleteTexture(this.tex);
++        this.gl.deleteFramebuffer(this.fbo);
++    }
++}
++exports.FBO = FBO;
++function setTexParams(gl, filter, wrap) {
++    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter);
++    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter);
++    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrap);
++    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrap);
++}
++exports.FS_VERT = `#version 300 es
++precision highp float;
++out vec2 vUV;
++void main(){
++  vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);
++  vUV = p;
++  gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);
++}`;
++
++},
++};
++const cache={};
++function load(key){if(cache[key])return cache[key].exports;const mod={exports:{}};cache[key]=mod;const require=(name)=>load('src/engine/'+name.replace(/^\.\//,'')+'.ts');factories[key](mod,mod.exports,require);return mod.exports;}
++export const batches=load('src/engine/batches.ts');
++export const glSource=load('src/engine/gl.ts');
+diff --git a/web/src/game/arcana20/d/warp.ts b/web/src/game/arcana20/d/warp.ts
+new file mode 100644
+index 0000000..4891c58
+--- /dev/null
++++ b/web/src/game/arcana20/d/warp.ts
+@@ -0,0 +1,10 @@
++/** P0 D world-bend history, independent of any floor colour or fake scene. */
++import {phase} from './constellationState';
++export class DWarp {
++ readonly data=new Float32Array(480*270*4);readonly influence=new Uint8Array(480*270);private history=false;
++ step(t:number){if(this.history){const d=Math.exp(-3.4/60);for(let i=0;i<this.data.length;i++)this.data[i]*=d;}if(t<=7.4)return;
++  const q=phase(t,7.55,8.1),fade=1-phase(t,8.6,9.8),su=(q>=1?1:1-2**(-10*q))*fade,size=70*su,chroma=1.4*su;if(size<=0)return;this.history=true;
++  const cx=244,cy=132,x0=Math.max(0,Math.floor(cx-size)),x1=Math.min(479,Math.ceil(cx+size)),y0=Math.max(0,Math.floor(cy-size)),y1=Math.min(269,Math.ceil(cy+size));
++  for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){const dx=(x+.5-cx)/size,dy=(y+.5-cy)/size;let f=1-dx*dx-dy*dy;if(f<=0)continue;f*=f;const p=y*480+x;this.data[p*4+3]+=chroma*f;this.influence[p]=1;}
++ }
++}
+diff --git a/web/src/game/arcana20/d/worldGpu.ts b/web/src/game/arcana20/d/worldGpu.ts
+new file mode 100644
+index 0000000..1c5e626
+--- /dev/null
++++ b/web/src/game/arcana20/d/worldGpu.ts
+@@ -0,0 +1,18 @@
++/** Experimental D light/warp field over the live terrain. LDR only, no HDR,
++ * bloom pyramid, viewport post or actor depth; not P0 parity. */
++import type {BTransform} from '../anchors';import type {DWarp} from './warp';import type {DCommand} from './commands';import {dInfluence} from './influence';
++const VS=`#version 300 es
++in vec2 pos;void main(){gl_Position=vec4(pos,0.,1.);}`;
++const FS=`#version 300 es
++precision highp float;precision highp int;uniform sampler2D scene;uniform sampler2D light;uniform sampler2D warp;uniform highp usampler2D influence;uniform vec2 size;uniform vec2 camera;uniform vec4 basis;uniform vec2 origin;uniform float time;uniform float fade;uniform float diagnosticShimmer;uniform bool diagnosticLegacy;uniform bool groundOnly;out vec4 color;
++float bayer(ivec2 p){int a[16]=int[16](0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5);return(float(a[(p.y&3)*4+(p.x&3)])+.5)/16.;}
++vec3 tone(vec3 c,ivec2 p){c=clamp((c*(2.51*c+.03))/(c*(2.43*c+.59)+.14),0.,1.);float l=dot(c,vec3(.2126,.7152,.0722));c=clamp(mix(vec3(l),c,1.1),0.,1.);return floor(c*26.+vec3(bayer(p)))/26.;}
++vec3 sceneAt(vec2 xy){return texture(scene,vec2(clamp(xy.x/size.x,0.,1.),clamp(1.-xy.y/size.y,0.,1.))).rgb;}
++vec3 sampleWorld(vec2 pixel,vec2 d){return sceneAt(pixel+vec2(basis.x*d.x+basis.z*d.y,basis.y*d.x+basis.w*d.y));}
++void main(){vec2 pixel=vec2(gl_FragCoord.x,size.y-gl_FragCoord.y),w=pixel+camera-origin;vec3 original=sceneAt(pixel);float det=basis.x*basis.w-basis.y*basis.z;ivec2 p=ivec2(floor(vec2(basis.w*w.x-basis.z*w.y,-basis.y*w.x+basis.x*w.y)/det));if(p.x<0||p.y<0||p.x>=480||p.y>=270||texelFetch(influence,p,0).r==0u){color=vec4(original,1.);return;}
++ vec4 v=texelFetch(warp,p,0)*clamp(fade,0.,1.);vec2 off=-v.xy;vec3 warped=vec3(sampleWorld(pixel,off*1.35).r,sampleWorld(pixel,off).g,sampleWorld(pixel,off*.65).b);warped*=1.-clamp(v.z,0.,.985);float uy=1.-(float(p.y)+.5)/270.;warped*=1.+v.w*.10*sin(uy*180.+time*8.)*diagnosticShimmer;vec3 l=groundOnly?vec3(0.):texelFetch(light,p,0).rgb;vec3 field=diagnosticLegacy?warped+l:clamp(clamp(warped,0.,1.)+l,0.,1.);if(groundOnly){color=vec4(mix(original,clamp(warped,0.,1.),clamp(fade,0.,1.)),1.);return;}vec3 delta=tone(field,p)-tone(original,p);color=vec4(clamp(original+delta*clamp(fade,0.,1.),0.,1.),1.);}`;
++export class DWorldGpu{
++ readonly canvas:HTMLCanvasElement;private gl:WebGL2RenderingContext;private p:WebGLProgram;private textures:WebGLTexture[]=[];
++ constructor(w:number,h:number){this.canvas=document.createElement('canvas');this.canvas.width=w;this.canvas.height=h;const gl=this.canvas.getContext('webgl2',{alpha:false,antialias:false,premultipliedAlpha:false,preserveDrawingBuffer:true});if(!gl)throw new Error('WebGL2 unavailable');this.gl=gl;const compile=(kind:number,src:string)=>{const sh=gl.createShader(kind)!;gl.shaderSource(sh,src);gl.compileShader(sh);if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(sh)||'shader');return sh;};const p=gl.createProgram()!;gl.attachShader(p,compile(gl.VERTEX_SHADER,VS));gl.attachShader(p,compile(gl.FRAGMENT_SHADER,FS));gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(p)||'link');this.p=p;gl.useProgram(p);const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);const pos=gl.getAttribLocation(p,'pos');gl.enableVertexAttribArray(pos);gl.vertexAttribPointer(pos,2,gl.FLOAT,false,0,0);for(let i=0;i<4;i++){const tex=gl.createTexture()!;this.textures.push(tex);gl.activeTexture(gl.TEXTURE0+i);gl.bindTexture(gl.TEXTURE_2D,tex);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.uniform1i(gl.getUniformLocation(p,['scene','light','warp','influence'][i]),i);}gl.disable(gl.BLEND);gl.disable(gl.DITHER);gl.viewport(0,0,w,h);}
++ render(scene:HTMLCanvasElement,light:HTMLCanvasElement,commands:DCommand[],warp:DWarp,m:BTransform,cx:number,cy:number,time:number,fade:number,clip?:{x:number;y:number;w:number;h:number},diagnosticSkipShimmer=false,diagnosticLegacy=false,groundOnly=false){const gl=this.gl,p=this.p;if(gl.isContextLost())throw new Error('WebGL context lost');gl.useProgram(p);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,1);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.textures[0]);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,scene);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,0);gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,this.textures[1]);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,light);gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,this.textures[2]);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA32F,480,270,0,gl.RGBA,gl.FLOAT,warp.data);const influence=dInfluence(commands,warp);gl.activeTexture(gl.TEXTURE3);gl.bindTexture(gl.TEXTURE_2D,this.textures[3]);gl.pixelStorei(gl.UNPACK_ALIGNMENT,1);gl.texImage2D(gl.TEXTURE_2D,0,gl.R8UI,480,270,0,gl.RED_INTEGER,gl.UNSIGNED_BYTE,influence);gl.pixelStorei(gl.UNPACK_ALIGNMENT,4);gl.uniform2f(gl.getUniformLocation(p,'size'),this.canvas.width,this.canvas.height);gl.uniform2f(gl.getUniformLocation(p,'camera'),cx,cy);gl.uniform4f(gl.getUniformLocation(p,'basis'),m.a,m.b,m.c,m.d);gl.uniform2f(gl.getUniformLocation(p,'origin'),m.x,m.y);gl.uniform1f(gl.getUniformLocation(p,'time'),time);gl.uniform1f(gl.getUniformLocation(p,'fade'),fade);gl.uniform1f(gl.getUniformLocation(p,'diagnosticShimmer'),diagnosticSkipShimmer?0:1);gl.uniform1i(gl.getUniformLocation(p,'diagnosticLegacy'),diagnosticLegacy?1:0);gl.uniform1i(gl.getUniformLocation(p,'groundOnly'),groundOnly?1:0);if(clip){gl.enable(gl.SCISSOR_TEST);gl.scissor(clip.x,this.canvas.height-clip.y-clip.h,clip.w,clip.h);}else gl.disable(gl.SCISSOR_TEST);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);}
++}
+diff --git a/web/src/game/arcana20/math/sourceMath.ts b/web/src/game/arcana20/math/sourceMath.ts
+new file mode 100644
+index 0000000..99f2e6b
+--- /dev/null
++++ b/web/src/game/arcana20/math/sourceMath.ts
+@@ -0,0 +1,100 @@
++// Core math: deterministic RNG, hashing, value noise, easing.
++
++export type V2 = { x: number; y: number };
++export const v2 = (x: number, y: number): V2 => ({ x, y });
++
++export const TAU = Math.PI * 2;
++export const clamp = (v: number, a = 0, b = 1) => (v < a ? a : v > b ? b : v);
++export const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
++export const inv = (a: number, b: number, v: number) => clamp((v - a) / (b - a));
++export const smooth = (t: number) => { t = clamp(t); return t * t * (3 - 2 * t); };
++export const easeOut = (t: number, p = 3) => 1 - Math.pow(1 - clamp(t), p);
++export const easeIn = (t: number, p = 3) => Math.pow(clamp(t), p);
++export const easeInOut = (t: number) => { t = clamp(t); return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
++export const backOut = (t: number, s = 1.7) => { t = clamp(t) - 1; return t * t * ((s + 1) * t + s) + 1; };
++export const elastic = (t: number) => { t = clamp(t); return t === 0 || t === 1 ? t : Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * (TAU / 3)) + 1; };
++/** window: 0 outside [a,b], rises/falls with soft edges */
++export const win = (t: number, a: number, b: number, fade = 0.15) => {
++  if (t < a || t > b) return 0;
++  const f = Math.min(fade, (b - a) / 2);
++  return smooth(Math.min((t - a) / f, (b - t) / f, 1));
++};
++export const angDiff = (a: number, b: number) => { let d = (b - a) % TAU; if (d > Math.PI) d -= TAU; if (d < -Math.PI) d += TAU; return d; };
++export const dist = (ax: number, ay: number, bx: number, by: number) => Math.hypot(bx - ax, by - ay);
++
++export class Rng {
++  s: number;
++  constructor(seed: number) { this.s = seed >>> 0 || 1; }
++  next() {
++    let t = (this.s += 0x6d2b79f5);
++    t = Math.imul(t ^ (t >>> 15), t | 1);
++    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
++    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
++  }
++  r(a = 0, b = 1) { return a + (b - a) * this.next(); }
++  i(a: number, b: number) { return Math.floor(this.r(a, b + 1)); }
++  pick<T>(arr: T[]): T { return arr[Math.floor(this.next() * arr.length)]; }
++  sign() { return this.next() < 0.5 ? -1 : 1; }
++  gauss() { return (this.next() + this.next() + this.next() - 1.5) / 1.5; }
++  chance(p: number) { return this.next() < p; }
++}
++
++/** integer hash -> [0,1) */
++export function hash(n: number): number {
++  n = (n | 0) ^ 0x27d4eb2d;
++  n = Math.imul(n ^ (n >>> 15), 0x85ebca6b);
++  n = Math.imul(n ^ (n >>> 13), 0xc2b2ae35);
++  n ^= n >>> 16;
++  return (n >>> 0) / 4294967296;
++}
++export const hash2 = (x: number, y: number) => hash(Math.imul(x | 0, 374761393) + Math.imul(y | 0, 668265263));
++export const hash3 = (x: number, y: number, z: number) => hash(Math.imul(x | 0, 374761393) + Math.imul(y | 0, 668265263) + Math.imul(z | 0, 2147483647));
++
++export function noise2(x: number, y: number): number {
++  const xi = Math.floor(x), yi = Math.floor(y);
++  const xf = x - xi, yf = y - yi;
++  const u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
++  const a = hash2(xi, yi), b = hash2(xi + 1, yi), c = hash2(xi, yi + 1), d = hash2(xi + 1, yi + 1);
++  return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
++}
++export function noise3(x: number, y: number, z: number): number {
++  const zi = Math.floor(z), zf = z - zi;
++  const w = zf * zf * (3 - 2 * zf);
++  const a = noise2(x + zi * 17.13, y + zi * 31.7);
++  const b = noise2(x + (zi + 1) * 17.13, y + (zi + 1) * 31.7);
++  return a + (b - a) * w;
++}
++export function fbm(x: number, y: number, z = 0, oct = 3): number {
++  let s = 0, a = 0.5, f = 1, n = 0;
++  for (let i = 0; i < oct; i++) { s += a * noise3(x * f, y * f, z * f); n += a; a *= 0.5; f *= 2.03; }
++  return s / n;
++}
++/** curl of a noise potential, used for organic drift fields */
++export function curl(x: number, y: number, z: number): V2 {
++  const e = 0.35;
++  const n1 = noise3(x, y + e, z), n2 = noise3(x, y - e, z);
++  const n3 = noise3(x + e, y, z), n4 = noise3(x - e, y, z);
++  return { x: (n1 - n2) / (2 * e), y: -(n3 - n4) / (2 * e) };
++}
++
++/** step time for "animated on twos" stylization */
++export const stepT = (t: number, fps = 12) => Math.floor(t * fps) / fps;
++
++export const BAYER4 = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map((v) => (v + 0.5) / 16);
++export const bayer = (x: number, y: number) => BAYER4[(y & 3) * 4 + (x & 3)];
++
++export function catmull(pts: V2[], samplesPer: number): V2[] {
++  const out: V2[] = [];
++  for (let i = 0; i < pts.length - 1; i++) {
++    const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
++    for (let s = 0; s < samplesPer; s++) {
++      const t = s / samplesPer, t2 = t * t, t3 = t2 * t;
++      out.push({
++        x: 0.5 * (2 * p1.x + (-p0.x + p2.x) * t + (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 + (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3),
++        y: 0.5 * (2 * p1.y + (-p0.y + p2.y) * t + (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 + (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3),
++      });
++    }
++  }
++  out.push({ ...pts[pts.length - 1] });
++  return out;
++}
+diff --git a/web/src/game/arcana20/primaryBridge.ts b/web/src/game/arcana20/primaryBridge.ts
+new file mode 100644
+index 0000000..b3e1c15
+--- /dev/null
++++ b/web/src/game/arcana20/primaryBridge.ts
+@@ -0,0 +1,65 @@
++/// <reference types="vite/client" />
++/** DEV-ONLY #19 transfer investigation on the primary game's real canvas.
++ * An actual existing fire-Core commit triggers this visual source as a test
++ * signal. It is NOT an ARCANA19 gameplay cast, hit, receipt, or approved art.
++ * No simulation, item, damage, save, actor, or player state is modified. */
++import {VisualAdapter,type CastRequest,type SourcePlayer,type VisualFrame} from './adapter';
++import {ScenePost,ScenePostDelta} from './scenePost';
++import {DSource} from './d/player';import {DRaster} from './d/raster';import {DWorldGpu} from './d/worldGpu';
++type DFrame=VisualFrame&{source:NonNullable<ReturnType<DSource['renderAtSeconds']>>};
++const enabled=import.meta.env.DEV&&new URLSearchParams(location.search).get('arcana19Bridge')==='1';
++const adapter=new VisualAdapter();let serial=0,raster:DRaster|null=null,gpu:DWorldGpu|null=null,failed=false;
++let capture=false;let post:ScenePost|null=null;let delta:ScenePostDelta|null=null;const lit=document.createElement('canvas'),basePost=document.createElement('canvas');let debugTick:number|null=null;let lastStart=0;
++const emission=document.createElement('canvas'),mask=document.createElement('canvas');
++let currentCx=0,currentCy=0;let layerIndex=0;const layerPool:HTMLCanvasElement[]=[];const emitters=new Map<string,HTMLCanvasElement>();let gains:number[]=[];let flashes:{amount:number;color:[number,number,number]}[]=[];
++function ctx(c:HTMLCanvasElement,w:number,h:number){if(c.width!==w||c.height!==h){c.width=w;c.height=h}return c.getContext('2d')!;}
++/** Real actor/roof alpha, never colour-keyed. Only enabled during a QA cast. */
++export function arcanaLayer(g:CanvasRenderingContext2D,cx:number,cy:number){if(!enabled||!adapter.size||failed)return null;const c=layerPool[layerIndex]??(layerPool[layerIndex]=document.createElement('canvas'));layerIndex++;const a=ctx(c,g.canvas.width,g.canvas.height);a.setTransform(1,0,0,1,0,0);a.globalAlpha=1;a.globalCompositeOperation='source-over';a.clearRect(0,0,c.width,c.height);a.imageSmoothingEnabled=false;a.translate(-cx,-cy);return a;}
++export function arcanaMergeLayer(g:CanvasRenderingContext2D,layer:CanvasRenderingContext2D){g.save();g.setTransform(1,0,0,1,0,0);g.drawImage(layer.canvas,0,0);g.restore();ctx(mask,g.canvas.width,g.canvas.height).drawImage(layer.canvas,0,0);}
++const evidence:Record<string,string>={},metrics:{sourceMs:number;rasterMs:number;compositeMs:number;postMs?:number}[]=[];let latest:{time:number;castId:string}|null=null;
++adapter.register('D:19',request=>{
++ if(request.seed!==97)throw new Error('D19 source seed is fixed to 97');
++ const source=new DSource(request.caster,request.target);let tick=-1,frame:DFrame|null=null;
++ return {durationSeconds:source.duration,sample(seconds:number){const t=Math.floor(seconds*60+1e-8);if(t!==tick){const f=source.renderAtSeconds(t/60);frame=f?{sourceTime:f.fields.time,source:f}:null;tick=t;}return frame;},dispose(){frame=null;}} satisfies SourcePlayer;
++});
++function snapshot(name:string,g:CanvasRenderingContext2D){if(capture)evidence[name]=g.canvas.toDataURL('image/png');}
++/** Temporary fire-Core signal: coordinates and sim time come from the real run.
++ * It must be replaced by the gameplay owner's authenticated ARCANA cast event. */
++export function observeCommittedFire(e:{type:string;core?:string;a?:number},run:{id:string;clock:{simMs:number};player:{x:number;y:number}},aim:{x:number;y:number}){
++ if(!enabled||e.type!=='cast'||e.core!=='fire'||!Number.isFinite(e.a))return;
++ const p=run.player,angle=e.a!,reach=Math.max(35,Math.min(130,Math.hypot(aim.x-p.x,aim.y-p.y)));
++ const req:CastRequest={skillId:'arcana_fusion20_19',sourceId:'D:19',castId:`${run.id}:presentation:${++serial}`,runId:run.id,casterId:'player',targetId:null,caster:{x:p.x,y:p.y},target:{x:p.x+Math.cos(angle)*reach,y:p.y+Math.sin(angle)*reach},seed:97,startedAtSimMs:run.clock.simMs};
++ lastStart=req.startedAtSimMs;adapter.start(req);
++}
++export function drawArcanaGround(g:CanvasRenderingContext2D,runId:string,simMs:number,cx:number,cy:number){
++ if(!enabled)return;const t0=performance.now();adapter.sample(runId,debugTick===null?simMs:lastStart+debugTick*1000/60);currentCx=cx;currentCy=cy;layerIndex=0;gains=[];flashes=[];const mc=ctx(mask,g.canvas.width,g.canvas.height);mc.clearRect(0,0,mask.width,mask.height);const ec=ctx(emission,g.canvas.width,g.canvas.height);ec.clearRect(0,0,emission.width,emission.height);const sourceMs=performance.now()-t0;snapshot('terrain',g);
++ for(const item of adapter.frames()){
++  const f=item.frame as DFrame;latest={time:f.sourceTime,castId:item.request.castId};
++  if(failed)continue;
++  try{
++   if(!raster)raster=new DRaster();if(!gpu)gpu=new DWorldGpu(g.canvas.width,g.canvas.height);
++   const t1=performance.now();raster.render(f.source.fields.commands,f.source.fields.rendererTime,'none');const rasterMs=performance.now()-t1;
++   if(capture)evidence.source=raster.canvas.toDataURL('image/png');
++   let copy=emitters.get(item.request.castId);if(!copy){copy=document.createElement('canvas');emitters.set(item.request.castId,copy)}const cc=ctx(copy,480,270);cc.clearRect(0,0,480,270);cc.drawImage(raster.canvas,0,0);const m=f.source.transform;ec.save();ec.setTransform(m.a,m.b,m.c,m.d,m.x-cx,m.y-cy);ec.imageSmoothingEnabled=false;ec.globalCompositeOperation='lighter';ec.drawImage(copy,0,0);ec.restore();gains.push(f.source.fields.bloomGain);if(f.source.fields.flash)flashes.push(f.source.fields.flash);
++   if(capture){
++    // Matched-input ablation ONLY: diagnostic render is saved separately and
++    // never displayed. It isolates source shimmer from post/occlusion.
++    gpu.render(g.canvas,raster.canvas,f.source.fields.commands,f.source.warp,f.source.transform,cx,cy,f.source.fields.rendererTime,f.source.fields.warpFade,undefined,true);
++    evidence.worldNoShimmer=gpu.canvas.toDataURL('image/png');
++    gpu.render(g.canvas,raster.canvas,f.source.fields.commands,f.source.warp,f.source.transform,cx,cy,f.source.fields.rendererTime,f.source.fields.warpFade,undefined,false,true);
++    evidence.worldLegacy=gpu.canvas.toDataURL('image/png');
++   }
++   const t2=performance.now();gpu.render(g.canvas,raster.canvas,f.source.fields.commands,f.source.warp,f.source.transform,cx,cy,f.source.fields.rendererTime,f.source.fields.warpFade,undefined,false,false,true);
++   g.save();try{g.setTransform(1,0,0,1,0,0);g.drawImage(gpu.canvas,0,0);}finally{g.restore();}if(!capture&&metrics.length<600)metrics.push({sourceMs,rasterMs,compositeMs:performance.now()-t2});
++  }catch(err){failed=true;console.warn('ARCANA19 source/world transfer unavailable',err);}
++ }
++ snapshot('worldAfterD',g);const ids=new Set(adapter.frames().map(i=>i.request.castId));for(const id of emitters.keys())if(!ids.has(id))emitters.delete(id);
++}
++export function resetArcanaPresentation(){if(enabled){adapter.clear();emitters.clear();debugTick=null;}}
++/** Semantic emission survives night lighting; actual actor/roof alpha cuts it.
++ * Source post sees the live lit scene + emission, not the laboratory floor. */
++export function drawArcanaPost(g:CanvasRenderingContext2D){if(!enabled||!gains.length||failed)return;try{const postStart=performance.now();snapshot('afterLighting',g);const lc=ctx(lit,g.canvas.width,g.canvas.height);lc.clearRect(0,0,lit.width,lit.height);lc.drawImage(g.canvas,0,0);const ec=ctx(emission,g.canvas.width,g.canvas.height);if(capture){evidence.occluder=mask.toDataURL('image/png');evidence.emissionUnmasked=emission.toDataURL('image/png')}ec.save();ec.globalCompositeOperation='destination-out';ec.drawImage(mask,0,0);ec.restore();if(capture)evidence.emissionMasked=emission.toDataURL('image/png');g.save();g.setTransform(1,0,0,1,0,0);g.globalCompositeOperation='lighter';g.drawImage(emission,0,0);g.restore();snapshot('sceneEmission',g);if(!post)post=new ScenePost(g.canvas.width,g.canvas.height);const gain=Math.max(...gains);post.render(lit,gain,null);const bc=ctx(basePost,g.canvas.width,g.canvas.height);bc.clearRect(0,0,basePost.width,basePost.height);bc.drawImage(post.canvas,0,0);post.render(g.canvas,gain,flashes.sort((a,b)=>b.amount-a.amount)[0]??null);if(!delta)delta=new ScenePostDelta(g.canvas.width,g.canvas.height);delta.render(lit,basePost,post.canvas);g.save();g.setTransform(1,0,0,1,0,0);g.drawImage(delta.canvas,0,0);g.restore();snapshot('sourcePost',g);if(!capture&&metrics.length)metrics[metrics.length-1].postMs=performance.now()-postStart;}catch(err){failed=true;console.warn('ARCANA shared scene post unavailable',err)}}
++export function arcanaCapture(g:CanvasRenderingContext2D,name:'actors'|'roof'|'preHud'){
++ if(!enabled)return;snapshot(name,g);if(name==='preHud')capture=false;
++}
++if(enabled)(window as any).__arcana19Bridge={get size(){return adapter.size;},get latest(){return latest;},get evidence(){return evidence;},get metrics(){return metrics;},capture(){for(const k in evidence)delete evidence[k];capture=true;},cancelAll(){adapter.clear();emitters.clear();debugTick=null;},freezeTick(t:number|null){if(t!==null&&(!Number.isInteger(t)||t<0||t>=588))throw Error('invalid source tick');debugTick=t;},get camera(){return {cx:currentCx,cy:currentCy}},get failed(){return failed;}};
+diff --git a/web/src/game/arcana20/scenePost.ts b/web/src/game/arcana20/scenePost.ts
+new file mode 100644
+index 0000000..80c13f3
+--- /dev/null
++++ b/web/src/game/arcana20/scenePost.ts
+@@ -0,0 +1,38 @@
++/** Shared pre-HUD WebGL scene post. D supplies its source parameters; the
++ * world and actor pixels come solely from the live game. Source's BRIGHT_FS,
++ * BLUR_FS and COMP_FS math/order are retained; 640x360 and LDR canvas input
++ * are explicit browser adaptations, not HDR/P0 parity. */
++const VS=`#version 300 es
++in vec2 p;out vec2 uv;void main(){uv=p*.5+.5;gl_Position=vec4(p,0.,1.);}`;
++const BRIGHT=`#version 300 es
++precision highp float;in vec2 uv;out vec4 outC;uniform sampler2D src;uniform float threshold,knee;void main(){vec3 c=texture(src,uv).rgb;float l=dot(c,vec3(.2126,.7152,.0722));outC=vec4(c*smoothstep(threshold,threshold+knee,l),1.);}`;
++const BLUR=`#version 300 es
++precision highp float;in vec2 uv;out vec4 outC;uniform sampler2D src;uniform vec2 dir;void main(){vec2 a=dir*1.3846153846,b=dir*3.2307692308;vec3 s=texture(src,uv).rgb*.2270270270+(texture(src,uv+a).rgb+texture(src,uv-a).rgb)*.3162162162+(texture(src,uv+b).rgb+texture(src,uv-b).rgb)*.0702702703;outC=vec4(s,1.);}`;
++const COMP=`#version 300 es
++precision highp float;in vec2 uv;out vec4 outC;uniform sampler2D scene,small,wide;uniform float amount,flash;uniform vec3 flashCol;
++vec3 aces(vec3 x){return clamp((x*(2.51*x+.03))/(x*(2.43*x+.59)+.14),0.,1.);}
++float bayer(vec2 p){int x=int(mod(p.x,4.)),y=int(mod(p.y,4.));int m[16]=int[16](0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5);return(float(m[y*4+x])+.5)/16.;}
++void main(){vec2 d=uv-.5;float r2=dot(d,d),ca=.16*(.0016+r2*.006);vec3 c;c.r=texture(scene,uv-d*ca).r+texture(small,uv-d*ca*1.6).r*amount+texture(wide,uv-d*ca*2.4).r*amount*.7;c.g=texture(scene,uv).g+texture(small,uv).g*amount+texture(wide,uv).g*amount*.7;c.b=texture(scene,uv+d*ca).b+texture(small,uv+d*ca*1.6).b*amount+texture(wide,uv+d*ca*2.4).b*amount*.7;c=aces(c);float l=dot(c,vec3(.2126,.7152,.0722));c=mix(vec3(l),c,1.1);vec2 px=uv*vec2(480.,270.);float bt=bayer(floor(px))-.5;c=floor(clamp(c,0.,1.)*26.+.5+bt)/26.;c+=flashCol*flash;c*=1.-.55*r2*.85;c*=.965+.035*step(.5,fract(px.y*.5));outC=vec4(c,1.);}`;
++type T={tex:WebGLTexture;fbo:WebGLFramebuffer;w:number;h:number};
++export class ScenePost{
++ readonly canvas:HTMLCanvasElement;private gl:WebGL2RenderingContext;private bright:WebGLProgram;private blur:WebGLProgram;private comp:WebGLProgram;private input:WebGLTexture;private targets:T[];
++ constructor(w:number,h:number){this.canvas=document.createElement('canvas');this.canvas.width=w;this.canvas.height=h;const gl=this.canvas.getContext('webgl2',{alpha:false,antialias:false,preserveDrawingBuffer:true});if(!gl)throw Error('WebGL2 post unavailable');this.gl=gl;
++ const prog=(frag:string)=>{const shader=(type:number,src:string)=>{const s=gl.createShader(type)!;gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s)||'shader');return s};const p=gl.createProgram()!;gl.attachShader(p,shader(gl.VERTEX_SHADER,VS));gl.attachShader(p,shader(gl.FRAGMENT_SHADER,frag));gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(p)||'link');return p};
++ this.bright=prog(BRIGHT);this.blur=prog(BLUR);this.comp=prog(COMP);const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);for(const p of [this.bright,this.blur,this.comp]){const loc=gl.getAttribLocation(p,'p');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0)}
++ const tex=(linear:boolean)=>{const t=gl.createTexture()!;gl.bindTexture(gl.TEXTURE_2D,t);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,linear?gl.LINEAR:gl.NEAREST);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,linear?gl.LINEAR:gl.NEAREST);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);return t};this.input=tex(false);this.targets=[];for(const [tw,th] of [[w>>1,h>>1],[w>>1,h>>1],[w>>1,h>>1],[w>>2,h>>2],[w>>2,h>>2]]){const texture=tex(true);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA8,tw,th,0,gl.RGBA,gl.UNSIGNED_BYTE,null);const fbo=gl.createFramebuffer()!;gl.bindFramebuffer(gl.FRAMEBUFFER,fbo);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,texture,0);if(gl.checkFramebufferStatus(gl.FRAMEBUFFER)!==gl.FRAMEBUFFER_COMPLETE)throw Error('post framebuffer');this.targets.push({tex:texture,fbo,w:tw,h:th})}gl.disable(gl.BLEND);gl.disable(gl.DITHER);gl.bindFramebuffer(gl.FRAMEBUFFER,null);
++ }
++ render(scene:HTMLCanvasElement,gain:number,flash:{amount:number;color:[number,number,number]}|null){const gl=this.gl;if(gl.isContextLost())throw Error('post context lost');if(scene.width!==this.canvas.width||scene.height!==this.canvas.height)throw Error('scene size changed');gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.input);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,1);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,scene);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,0);
++ const pass=(program:WebGLProgram,src:WebGLTexture,dst:T,dx=0,dy=0,threshold=0,knee=0)=>{gl.useProgram(program);gl.bindFramebuffer(gl.FRAMEBUFFER,dst.fbo);gl.viewport(0,0,dst.w,dst.h);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,src);gl.uniform1i(gl.getUniformLocation(program,'src'),0);if(program===this.blur)gl.uniform2f(gl.getUniformLocation(program,'dir'),dx,dy);else{gl.uniform1f(gl.getUniformLocation(program,'threshold'),threshold);gl.uniform1f(gl.getUniformLocation(program,'knee'),knee)}gl.drawArrays(gl.TRIANGLE_STRIP,0,4)};
++ const [a,b,small,q,wide]=this.targets,hw=a.w,hh=a.h,qw=q.w,qh=q.h;
++ pass(this.bright,this.input,a,0,0,.42,.5);pass(this.blur,a.tex,b,1.6/hw,0);pass(this.blur,b.tex,a,0,1.6/hh);pass(this.blur,a.tex,b,3.1/hw,0);pass(this.blur,b.tex,small,0,3.1/hh);pass(this.bright,small.tex,q,0,0,.18,.6);pass(this.blur,q.tex,a,2.4/qw,0);pass(this.blur,a.tex,wide,0,2.4/hh);pass(this.blur,wide.tex,a,4.6/qw,0);pass(this.blur,a.tex,wide,0,4.6/hh);
++ gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(0,0,this.canvas.width,this.canvas.height);gl.useProgram(this.comp);for(const [i,n,t] of [[0,'scene',this.input],[1,'small',small.tex],[2,'wide',wide.tex]] as [number,string,WebGLTexture][]){gl.activeTexture(gl.TEXTURE0+i);gl.bindTexture(gl.TEXTURE_2D,t);gl.uniform1i(gl.getUniformLocation(this.comp,n),i)}gl.uniform1f(gl.getUniformLocation(this.comp,'amount'),.68*gain);gl.uniform1f(gl.getUniformLocation(this.comp,'flash'),flash?.amount??0);gl.uniform3f(gl.getUniformLocation(this.comp,'flashCol'),...(flash?.color??[0,0,0]));gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
++ }
++}
++/** Difference of the complete source post on live lit scenes with/without the
++ * effect; prevents an active cast from globally recolouring unrelated map/HUD.
++ * This is not brightness-keying: every pixel uses identical linear arithmetic. */
++export class ScenePostDelta{
++ readonly canvas:HTMLCanvasElement;private gl:WebGL2RenderingContext;private program:WebGLProgram;private textures:WebGLTexture[]=[];
++ constructor(w:number,h:number){this.canvas=document.createElement('canvas');this.canvas.width=w;this.canvas.height=h;const gl=this.canvas.getContext('webgl2',{alpha:false,antialias:false,preserveDrawingBuffer:true});if(!gl)throw Error('delta WebGL2 unavailable');this.gl=gl;const fs=`#version 300 es\nprecision highp float;in vec2 uv;out vec4 color;uniform sampler2D original,base,effect;void main(){color=vec4(clamp(texture(original,uv).rgb+texture(effect,uv).rgb-texture(base,uv).rgb,0.,1.),1.);}`;const compile=(kind:number,src:string)=>{const s=gl.createShader(kind)!;gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s)||'delta shader');return s};const p=gl.createProgram()!;gl.attachShader(p,compile(gl.VERTEX_SHADER,VS));gl.attachShader(p,compile(gl.FRAGMENT_SHADER,fs));gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(p)||'delta link');this.program=p;const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);const loc=gl.getAttribLocation(p,'p');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);for(let i=0;i<3;i++){const t=gl.createTexture()!;this.textures.push(t);gl.activeTexture(gl.TEXTURE0+i);gl.bindTexture(gl.TEXTURE_2D,t);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);}gl.disable(gl.BLEND);gl.disable(gl.DITHER);gl.viewport(0,0,w,h);}
++ render(original:HTMLCanvasElement,base:HTMLCanvasElement,effect:HTMLCanvasElement){const gl=this.gl,p=this.program;gl.useProgram(p);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,1);for(const [i,c] of [original,base,effect].entries()){gl.activeTexture(gl.TEXTURE0+i);gl.bindTexture(gl.TEXTURE_2D,this.textures[i]);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,c);gl.uniform1i(gl.getUniformLocation(p,['original','base','effect'][i]),i)}gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,0);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);}
++}
+diff --git a/web/src/game/arcana20/transform.ts b/web/src/game/arcana20/transform.ts
+new file mode 100644
+index 0000000..565bff1
+--- /dev/null
++++ b/web/src/game/arcana20/transform.ts
+@@ -0,0 +1,3 @@
++import type {BTransform} from './anchors';
++/** P0 source-player similarity transform with clamped source-to-world scale. */
++export function sourceTransform(caster:{x:number;y:number},target:{x:number;y:number},sourceCaster:{x:number;y:number},sourceTarget:{x:number;y:number}):BTransform{const dx=target.x-caster.x,dy=target.y-caster.y,sx=sourceTarget.x-sourceCaster.x,sy=sourceTarget.y-sourceCaster.y,len=Math.hypot(dx,dy),scale=len>1?Math.max(.6,Math.min(3.5,len/Math.hypot(sx,sy))):1,rot=len>1?Math.atan2(dy,dx)-Math.atan2(sy,sx):0,a=scale*Math.cos(rot),b=scale*Math.sin(rot),c=-b,d=a;return {a,b,c,d,x:caster.x-a*sourceCaster.x-c*sourceCaster.y,y:caster.y-b*sourceCaster.x-d*sourceCaster.y};}
+diff --git a/web/src/game/render.ts b/web/src/game/render.ts
+index 3670e95..7ca4d2e 100644
+--- a/web/src/game/render.ts
++++ b/web/src/game/render.ts
+@@ -1,3 +1,4 @@
++import { drawArcanaGround,arcanaCapture,arcanaLayer,arcanaMergeLayer,drawArcanaPost } from './arcana20/primaryBridge';
+ // Canvas 2D renderer — draws authoritative state + observed effects. Never mutates game state.
+ import { TILE, WW, WH, VIEW_W, VIEW_H, T, hash2, clamp, type GameState, type RunState, type Creature, type Entity } from './core';
+ import { STRUCTS, ELDERS, CREATURES, ITEMS } from './catalog';
+@@ -193,6 +194,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
+     if (e.type === 'spikes') g.drawImage(A.st.spikes, e.x - 8, e.y - 8);
+     if (e.type === 'claim') { const R = 6 * 16; g.fillStyle = 'rgba(255,208,64,0.5)'; for (let k = 0; k < 64; k++) { const a = k / 64 * Math.PI * 2 + time / 4000; g.fillRect(Math.round(e.x + Math.cos(a) * R), Math.round(e.y + Math.sin(a) * R), 2, 1); } }
+   }
++  drawArcanaGround(g, r.id, r.clock.simMs, cx, cy);
+   // hazard telegraphs (ground)
+   for (const h of HAZ) drawHaz(g, h, time);
+   // y-sorted drawables
+@@ -204,17 +206,23 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
+   for (const m of r.creatures) { if (m.x < cx - 40 || m.x > cx + VIEW_W + 40 || m.y < cy - 40 || m.y > cy + VIEW_H + 60) continue; list.push({ y: m.y + 4, f: () => drawCreature(g, m, time) }); }
+   list.push({ y: p.y + 4, f: () => drawPlayer(g, gs, time) });
+   // POI terrain walls need y-sorting vs player? They are flat tiles; fine.
++  const realG = g; const actorLayer = arcanaLayer(g, cx, cy); if (actorLayer) g = actorLayer;
+   list.sort((a, b) => a.y - b.y); for (const d of list) d.f();
++  if (actorLayer) { g = realG; arcanaMergeLayer(g, actorLayer); }
++  arcanaCapture(g, 'actors');
+   // temporary terrain sprites (ice pillars, root cages)
+   for (const k in r.terrain) { const m: any = r.terrain[+k]; if (!m.until || m.t !== T.PWALL) continue; const i = +k; const X = (i % WW) * 16, Y = ((i / WW) | 0) * 16; if (X < cx - 20 || X > cx + VIEW_W || Y < cy - 30 || Y > cy + VIEW_H) continue; g.drawImage(m.by === 'grove' ? A.st.rootwall : A.st.icepillar, X, Y - 8); }
+   // projectiles
+   for (const pr of PROJ) { if (pr.delay && pr.delay > 0) continue; drawProj(g, pr, time); }
+   // roofs
++  const roofLayer = arcanaLayer(g, cx, cy); if (roofLayer) g = roofLayer;
+   const inside = isUnderRoof(r, p.x, p.y);
+   for (const b of w.buildings) { if ((b.x + b.w) * 16 < cx || b.x * 16 > cx + VIEW_W || (b.y + b.h) * 16 < cy - 16 || b.y * 16 > cy + VIEW_H) continue; const pin = p.x > b.x * 16 && p.x < (b.x + b.w) * 16 && p.y > b.y * 16 && p.y < (b.y + b.h) * 16 + 4;
+     g.globalAlpha = pin ? 0.12 : 1; const spr = A.st['roof_' + b.roof] || A.st.roof_wood; for (let y = 0; y < b.h; y++) for (let x = 0; x < b.w; x++) g.drawImage(spr, (b.x + x) * 16, (b.y + y) * 16 - 10);
+     g.fillStyle = 'rgba(0,0,0,0.25)'; g.fillRect(b.x * 16, (b.y + b.h) * 16 - 10, b.w * 16, 2); g.fillStyle = 'rgba(255,255,255,0.18)'; g.fillRect(b.x * 16, b.y * 16 - 10 + Math.floor(b.h * 8), b.w * 16, 1); g.globalAlpha = 1; }
+   for (const e of ents) { if (e.kind !== 'struct' || STRUCTS[e.type!].layer !== 'roof') continue; if (e.x < cx - 20 || e.x > cx + VIEW_W + 20 || e.y < cy - 20 || e.y > cy + VIEW_H + 30) continue; g.globalAlpha = inside && Math.hypot(e.x - p.x, e.y - p.y) < 120 ? 0.15 : 1; g.drawImage(A.st[e.type!], e.x - 8, e.y - 18); if (!entsAt(r, e.tx!, e.ty! + 1).some(o => o.kind === 'struct' && STRUCTS[o.type!].layer === 'roof')) { g.fillStyle = 'rgba(0,0,0,0.3)'; g.fillRect(e.x - 8, e.y - 3, 16, 2); } g.globalAlpha = 1; }
++  if (roofLayer) { g = realG; arcanaMergeLayer(g, roofLayer); }
++  arcanaCapture(g, 'roof');
+   // particles & arcs
+   drawFx(g, dtMs, time);
+   // build ghost / target
+@@ -226,6 +234,8 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
+   // weather & light (screen space)
+   drawWeather(g, r, now, time, cx, cy);
+   drawLight(g, r, now, time, cx, cy, ents);
++  drawArcanaPost(g);
++  arcanaCapture(g, 'preHud');
+   if (flash > 0) { g.fillStyle = `rgba(255,255,255,${flash})`; g.fillRect(0, 0, VIEW_W, VIEW_H); flash = Math.max(0, flash - dtMs / 400); }
+   if (p.hp < 30 && !p.dead) { const a = (1 - p.hp / 30) * (0.25 + Math.sin(time / 200) * 0.08); g.fillStyle = `rgba(160,0,0,${a})`; g.fillRect(0, 0, VIEW_W, 6); g.fillRect(0, VIEW_H - 6, VIEW_W, 6); g.fillRect(0, 0, 6, VIEW_H); g.fillRect(VIEW_W - 6, 0, 6, VIEW_H); }
+ }
+diff --git a/web/src/ui/Game.tsx b/web/src/ui/Game.tsx
+index a4e2505..ebc9c19 100644
+--- a/web/src/ui/Game.tsx
++++ b/web/src/ui/Game.tsx
+@@ -1,3 +1,4 @@
++import { observeCommittedFire,resetArcanaPresentation } from '../game/arcana20/primaryBridge';
+ import { useEffect, useRef, useState, useCallback } from 'react';
+ import { BAL, TILE, WW, VIEW_W, VIEW_H, HOUR, type GameState } from '../game/core';
+ import { ITEMS, STRUCTS, ELDERS, CREATURES } from '../game/catalog';
+@@ -100,7 +101,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState;
+       tick(gs, i, simDt, now); i.attackPressed = false; i.roll = false; i.cancel = false;
+       if (!gs.run) return;
+       target.current = findInteract(gs, now);
+-      consumeFX(e => { sfx(e); if (e.type === 'toast') toast(e.text); else if (e.type === 'hitstop') hitstop.current = Math.max(hitstop.current, e.ms); else if (e.type === 'banner') setBanner({ text: e.text, sub: e.sub, id: now }); else if (e.type === 'discover') setBanner({ text: e.name, sub: 'Discovered', id: now }); else if (e.type === 'region') setBanner(b => (b && now - b.id < 2500 ? b : { text: e.name, id: now })); else if (e.type === 'pickup' || e.type === 'struct.destroyed') scheduleSave(); });
++      consumeFX(e => { observeCommittedFire(e, gs.run!, {x:i.mx,y:i.my}); sfx(e); if (e.type === 'toast') toast(e.text); else if (e.type === 'hitstop') hitstop.current = Math.max(hitstop.current, e.ms); else if (e.type === 'banner') setBanner({ text: e.text, sub: e.sub, id: now }); else if (e.type === 'discover') setBanner({ text: e.name, sub: 'Discovered', id: now }); else if (e.type === 'region') setBanner(b => (b && now - b.id < 2500 ? b : { text: e.name, id: now })); else if (e.type === 'pickup' || e.type === 'struct.destroyed') scheduleSave(); });
+       draw(g, gs, now, dt, { buildType: buildRef.current, reclaim: reclaimRef.current, mouseX: i.mx, mouseY: i.my, target: target.current, time: t });
+       // close container panels when walking away
+       const P = panelRef.current; if (P?.eid && gs.run.entities[P.eid]) { const e = gs.run.entities[P.eid]; if (Math.hypot(e.x - gs.run.player.x, e.y - gs.run.player.y) > 3.4 * TILE) setPanel(null); } else if (P?.eid && !gs.run.entities[P.eid]) setPanel(null);
+@@ -108,7 +109,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState;
+       saveAcc += dt; if (saveAcc > 5000) { saveAcc = 0; save(gs); }
+       ambAcc += dt; if (ambAcc > 1000) { ambAcc = 0; const w = weatherAt(gs.run, now); const z = getWorld().zone[Math.floor(gs.run.player.y / 16) * WW + Math.floor(gs.run.player.x / 16)]; setAmbience(w === 'storm' ? 1 : w === 'rain' ? 0.6 : 0, (z === 5 ? 0.9 : 0.25) + (w === 'storm' ? 0.6 : 0)); }
+     };
+-    raf = requestAnimationFrame(loop); return () => cancelAnimationFrame(raf);
++    raf = requestAnimationFrame(loop); return () => {cancelAnimationFrame(raf);resetArcanaPresentation();};
+   }, [gs]);
+ 
+   const onMouseMove = (e: React.MouseEvent) => { const s = scaleRef.current; mouse.current = { x: (e.clientX - offRef.current.x) / s, y: (e.clientY - offRef.current.y) / s }; };
+diff --git a/web/tests/arcana20_adapter.test.ts b/web/tests/arcana20_adapter.test.ts
+new file mode 100644
+index 0000000..0080b56
+--- /dev/null
++++ b/web/tests/arcana20_adapter.test.ts
+@@ -0,0 +1,12 @@
++import {describe,it,expect} from 'vitest';import {VisualAdapter,type CastRequest} from '../src/game/arcana20/adapter';
++const req=(id:string,runId='r'):CastRequest=>({skillId:'arcana_fusion20_19',sourceId:'D:19',castId:id,runId,casterId:'player',targetId:null,caster:{x:3,y:4},target:{x:80,y:4},seed:97,startedAtSimMs:100});
++describe('presentation-only cast lifecycle',()=>{
++ it('routes independent casts, rejects duplicate IDs, handles negative time, cancel and run changes',()=>{
++  const v=new VisualAdapter(),disposed:string[]=[],samples:{id:string;time:number}[]=[];
++  v.register('D:19',r=>({durationSeconds:2,sample(t){samples.push({id:r.castId,time:t});return {sourceTime:t}},dispose(){disposed.push(r.castId)}}));
++  expect(v.start(req('a'))).toBe(true);expect(v.start(req('a'))).toBe(false);expect(v.start(req('b'))).toBe(true);expect(v.start({...req('x'),sourceId:'missing'})).toBe(false);expect(v.size).toBe(2);
++  v.sample('r',90);expect(v.frames()).toHaveLength(0);v.sample('r',600);expect(samples).toEqual([{id:'a',time:.5},{id:'b',time:.5}]);expect(v.frames()).toHaveLength(2);
++  expect(v.cancel('a')).toBe(true);expect(v.cancel('a')).toBe(false);expect(disposed).toEqual(['a']);v.sample('other',700);expect(v.size).toBe(0);expect(disposed).toEqual(['a','b']);
++ });
++ it('naturally retires each cast without clearing overlapping casts',()=>{const v=new VisualAdapter(),disposed:string[]=[];v.register('D:19',r=>({durationSeconds:1,sample(t){return {sourceTime:t}},dispose(){disposed.push(r.castId)}}));v.start(req('a'));v.start({...req('b'),startedAtSimMs:600});v.sample('r',1100);expect(disposed).toEqual(['a']);expect(v.size).toBe(1);expect(v.frames()[0].frame?.sourceTime).toBe(.5);v.clear();expect(disposed).toEqual(['a','b']);expect(v.size).toBe(0);});
++});
