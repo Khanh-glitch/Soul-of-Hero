@@ -2,7 +2,7 @@
 import { BAL, TILE, WW, WH, HOUR, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity } from './core';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
 import { getWorld } from './world';
-import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit } from './engine';
+import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
@@ -189,7 +189,7 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   // terrain & load
   const t = effTile(r, tileOf(p.x), tileOf(p.y));
   let sp = B.speed * (BAL.terrainSpeed[SPEED_KEY[t]] ?? 1) * speedMul;
-  const w = invWeightCached(r); if (w > B.carryLimit) sp *= Math.max(0.35, 1 - (w - B.carryLimit) / B.carryLimit);
+  const w = invWeight(r), limit = carryLimit(r); if (w > limit) sp *= Math.max(0.35, 1 - (w - limit) / limit);
   if (slowTimer > 0) { sp *= 0.5; slowTimer -= dtMs; } if (rootTimer > 0) { sp *= 0.15; rootTimer -= dtMs; }
   let cart: Entity | null = p.pulling ? r.entities[p.pulling] : null; if (p.pulling && !cart) p.pulling = null;
   if (cart) { const ct = effTile(r, tileOf(cart.x), tileOf(cart.y)); const road = ct === T.ROAD || ct === T.BRIDGE || ct === T.FLOOR; const rough = ct === T.FOREST || ct === T.MARSH || ct === T.HILL || ct === T.SNOW;
@@ -238,8 +238,6 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   }
   walk.x = p.x; walk.y = p.y; walk.at = now; r.traceWalk = walk;
 }
-let wCache = { rev: -1, w: 0 }; let wTick = 0;
-function invWeightCached(r: RunState) { if (++wTick % 15 === 0 || wCache.rev < 0) { let w = 0; for (const cid of ['inv', 'eq']) for (const s of C(r, cid).slots) if (s) w += ITEMS[s.key].w * s.qty; wCache = { rev: 1, w }; } return wCache.w; }
 function cartWeightOf(r: RunState, e: Entity) { return C(r, e.c!).slots.reduce((a, s) => a + (s ? ITEMS[s.key].w * s.qty : 0), 0); }
 
 function resolveSwing(gs: GameState, now: number, slot: number, a: number) {

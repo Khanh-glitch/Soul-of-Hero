@@ -5,6 +5,7 @@ export interface SourcePlacementRule { terrain: 'sand' | 'marsh' | 'ash' | 'snow
 export interface RecipeDef { out: string; qty: number; ins: [string, number][]; station: null | 'campfire' | 'furnace' | 'workbench'; secs: number; base?: boolean; tier: number; stationLevel?: 1 | 2 }
 
 // TUNABLE: a capability upgrade, not a learned recipe. The cart itself remains physical.
+export const FURNACE_LINING: { cost: [string, number][]; benchLevel: number } = { cost: [['brick', 2], ['fasteners', 3], ['mechanical_parts', 1]], benchLevel: 2 };
 export const CART_FREIGHT_UPGRADE: { cost: [string, number][]; benchLevel: number } = { cost: [['mechanical_parts', 4], ['iron_ingot', 2], ['spares', 3]], benchLevel: 2 };
 // Seed and plant input are consumed; produce remains physical in the inventory or a drop.
 export const GARDEN_CROPS: Record<'crop' | 'herb', { name: string; inputs: [string, number][]; output: [string, number][]; seconds: number }> = {
@@ -16,13 +17,20 @@ export interface ItemDef {
   name: string; cat: string; icon: string; c1: string; c2: string; w: number; max: number; desc: string;
   power?: Partial<Record<Mat, number>>; dmg?: number; reach?: number; arc?: number; swing?: number; dur?: number;
   food?: { hunger?: number; thirst?: number; hp?: number; warmth?: number; rad?: number; stamina?: number };
-  slot?: 'head' | 'body' | 'back'; armor?: number; cold?: number; mask?: boolean; fuel?: number; charge?: number;
+  slot?: 'head' | 'body' | 'back'; armor?: number; cold?: number; mask?: boolean; fuel?: number; charge?: number; initialCharge?: number; waterContainer?: boolean; carryBonus?: number;
   core?: string; specimen?: string; studyRecipe?: string; repair?: { station: 'workbench'; cost: [string, number][] }; salvage?: { station: 'workbench'; yields: [string, number][] }; place?: string; light?: number; ranged?: string;
 }
 const I = (d: ItemDef) => d;
 export const ITEMS: Record<string, ItemDef> = {
   // All lifecycle and upgrade costs are provisional TUNABLE values.
   mechanical_parts: I({ name: 'Mechanical Parts', cat: 'res', icon: 'parts', c1: '#707984', c2: '#c9d2d8', w: 0.5, max: 30, desc: 'Found in industrial wrecks or made at a bench. Improve tools or maintain equipment.' }),
+  // Provisional, run-local cross-system materials and equipment.
+  fasteners: I({ name: 'Forged Fasteners', cat: 'res', icon: 'fasteners', c1: '#85939b', c2: '#e4cd88', w: 0.2, max: 30, desc: 'Found on wrecks or made from iron and scrap. Used for field repairs, packs and canteens.', studyRecipe: 'fasteners' }),
+  treated_canvas: I({ name: 'Treated Canvas', cat: 'res', icon: 'canvas', c1: '#71896b', c2: '#c4c6a1', w: 0.3, max: 30, desc: 'Cloth treated with salt and Bitterleaf at a fire. Competes with food and medicine.' }),
+  field_repair_kit: I({ name: 'Field Repair Kit', cat: 'kit', icon: 'repairkit', c1: '#9a7745', c2: '#d7d7be', w: 0.5, max: 10, desc: 'Consume one from the pack to restore up to 100 durability to a repairable carried tool, away from a bench.' }),
+  trail_pack: I({ name: 'Trail Pack', cat: 'armor', icon: 'pack', c1: '#7c7352', c2: '#c8bd87', w: 2, max: 1, desc: 'Increases walking carry threshold by 20 kg. Occupies the back slot instead of a warm cloak.', slot: 'back', carryBonus: 20 }),
+  trail_canteen: I({ name: 'Trail Canteen', cat: 'food', icon: 'canteen', c1: '#617e72', c2: '#b4d6c5', w: 1.1, max: 1, desc: 'Holds 8 drinks or garden water. Crafted empty; refill at fresh water or a rain barrel.', food: { thirst: 30 }, charge: 8, initialCharge: 0, waterContainer: true }),
+  fuel_briquette: I({ name: 'Packed Fuel Briquette', cat: 'res', icon: 'briquette', c1: '#363038', c2: '#a18f72', w: 0.35, max: 30, desc: 'Compact portable fuel: 90 seconds of burn. Packing sacrifices some charcoal energy.', fuel: 90 }),
   // resources
   wood: I({ name: 'Wood', cat: 'res', icon: 'log', c1: '#8a5a32', c2: '#c9935a', w: 1, max: 60, desc: 'Split timber. Fuel, tools, walls.', fuel: 20 }),
   stone: I({ name: 'Stone', cat: 'res', icon: 'stone', c1: '#7d8088', c2: '#b9bcc4', w: 1.2, max: 60, desc: 'Rough stone. Foundations, furnaces, tools.' }),
@@ -58,7 +66,7 @@ export const ITEMS: Record<string, ItemDef> = {
   herb: I({ name: 'Bitterleaf', cat: 'food', icon: 'herb', c1: '#2e6a3a', c2: '#7ad08a', w: 0.1, max: 30, desc: 'Medicinal herb.', food: { hp: 6, rad: -6 } }),
   crop: I({ name: 'Sunroot', cat: 'food', icon: 'crop', c1: '#b0601e', c2: '#f0b050', w: 0.3, max: 30, desc: 'Garden-grown tuber.', food: { hunger: 22, thirst: 6 } }),
   stew: I({ name: 'Root Stew', cat: 'food', icon: 'bowl', c1: '#6a3a1e', c2: '#e0a050', w: 0.5, max: 10, desc: 'Hot stew. Warms and feeds.', food: { hunger: 45, thirst: 20, hp: 10, warmth: 25 } }),
-  water_flask: I({ name: 'Water Flask', cat: 'food', icon: 'flask', c1: '#3a6aa0', c2: '#9ad0ff', w: 0.6, max: 1, desc: 'Holds 4 drinks. Refill at fresh water or a rain barrel.', food: { thirst: 30 }, charge: 4 }),
+  water_flask: I({ name: 'Water Flask', cat: 'food', icon: 'flask', c1: '#3a6aa0', c2: '#9ad0ff', w: 0.6, max: 1, desc: 'Holds 4 drinks. Refill at fresh water or a rain barrel.', food: { thirst: 30 }, charge: 4, waterContainer: true }),
   bandage: I({ name: 'Bandage', cat: 'food', icon: 'cloth', c1: '#c0b8a8', c2: '#fff8e8', w: 0.1, max: 20, desc: 'Stops bleeding.', food: { hp: 18 } }),
   medkit: I({ name: 'Field Medkit', cat: 'food', icon: 'kit', c1: '#a03030', c2: '#f0e0e0', w: 0.4, max: 10, desc: 'Herbal dressing.', food: { hp: 45 } }),
   antirad: I({ name: 'Purge Tonic', cat: 'food', icon: 'flask', c1: '#4a7a1e', c2: '#c8f070', w: 0.3, max: 10, desc: 'Flushes radiation.', food: { rad: -45, thirst: 5 } }),
@@ -129,7 +137,7 @@ export const SOURCES: Record<string, SourceDef> = {
   herb: { name: 'Bitterleaf', mat: 'plant', hp: 3, stock: 2, yields: [['herb', 1]], block: false, regrow: 600, art: 'herb' },
   mushroom: { name: 'Marsh Caps', mat: 'plant', hp: 3, stock: 2, yields: [['mushroom', 1]], block: false, regrow: 600, art: 'mush' },
   scrap: { name: 'Roadside Scrap', mat: 'scrap', hp: 8, stock: 4, yields: [['scrap', 1]], bonus: [['spares', 0.55]], block: false, art: 'scrap' },
-  wreck: { name: 'Car Wreck', mat: 'scrap', hp: 30, stock: 8, yields: [['scrap', 1]], bonus: [['spares', 0.7], ['fuel_can', 0.06], ['mechanical_parts', 0.08]], block: true, art: 'wreck' },
+  wreck: { name: 'Car Wreck', mat: 'scrap', hp: 30, stock: 8, yields: [['scrap', 1]], bonus: [['spares', 0.7], ['fuel_can', 0.06], ['mechanical_parts', 0.08], ['fasteners', 0.12]], block: true, art: 'wreck' },
 };
 
 // ---------- Creatures (K5) ----------
@@ -157,6 +165,13 @@ export const ELDERS: Record<string, ElderDef> = {
 // ---------- Recipes (K4: one run-local authority) ----------
 export type Recipe = RecipeDef;
 export const RECIPES: Record<string, Recipe> = {
+  fasteners: { out: 'fasteners', qty: 3, ins: [['iron_ingot', 1], ['scrap', 1]], station: 'workbench', secs: 10, tier: 1 },
+  treated_canvas: { out: 'treated_canvas', qty: 2, ins: [['cloth', 1], ['raw_salt', 1], ['herb', 1]], station: 'campfire', secs: 12, tier: 1 },
+  field_repair_kit: { out: 'field_repair_kit', qty: 1, ins: [['fasteners', 2], ['cloth', 1]], station: 'workbench', secs: 12, tier: 1 },
+  trail_pack: { out: 'trail_pack', qty: 1, ins: [['treated_canvas', 1], ['leather', 2], ['fasteners', 2], ['rope', 2]], station: 'workbench', stationLevel: 2, secs: 22, tier: 2 },
+  trail_canteen: { out: 'trail_canteen', qty: 1, ins: [['treated_canvas', 2], ['leather', 1], ['glass', 1], ['fasteners', 1]], station: 'workbench', stationLevel: 2, secs: 20, tier: 2 },
+  fuel_briquette: { out: 'fuel_briquette', qty: 1, ins: [['charcoal', 2], ['fiber', 1]], station: 'workbench', stationLevel: 2, secs: 10, tier: 2 },
+  fuel_can: { out: 'fuel_can', qty: 1, ins: [['charcoal', 1], ['sulfur', 1], ['glass', 1]], station: 'workbench', stationLevel: 2, secs: 20, tier: 2 },
   mechanical_parts: { out: 'mechanical_parts', qty: 2, ins: [['scrap', 2], ['iron_ingot', 1]], station: 'workbench', secs: 12, base: true, tier: 1 },
   industrial_pick: { out: 'industrial_pick', qty: 1, ins: [['iron_pick', 1], ['mechanical_parts', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 25, tier: 2 },
   industrial_axe: { out: 'industrial_axe', qty: 1, ins: [['iron_axe', 1], ['mechanical_parts', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 25, tier: 2 },

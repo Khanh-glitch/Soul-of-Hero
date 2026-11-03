@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { ITEMS, RECIPES, STRUCTS, BUILD_ORDER, VENDOR_SECURED, ACHIEVEMENTS, ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS } from '../game/catalog';
+import { ITEMS, RECIPES, STRUCTS, BUILD_ORDER, VENDOR_SECURED, ACHIEVEMENTS, ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS, FURNACE_LINING } from '../game/catalog';
 import { BAL, TILE, WW, type Stack } from '../game/core';
-import { C, countItem, invWeight, isRagnarok, runHours, cartWeight, cartLimit, spaceFor, phaseOf } from '../game/engine';
+import { C, countItem, invWeight, isRagnarok, runHours, cartWeight, cartLimit, carryLimit, spaceFor, phaseOf } from '../game/engine';
 import { getWorld, ZONES } from '../game/world';
 import { getMapCanvas } from '../game/render';
 import { setVolume } from '../game/audio';
@@ -28,7 +28,7 @@ function Grid({ api, cid, cols = 8, quickTo, hotRow = false }: { api: Api; cid: 
 function ItemInfo({ s, known }: { s: Stack | null; known: string[] }) {
   if (!s) return <div style={{ fontSize: 10, color: '#8a7a9a', minHeight: 34 }}>Click to pick up · click again to place/swap · right-click to use/equip · Shift-click to quick-transfer.</div>;
   const d = ITEMS[s.key];
-  const stats: string[] = []; if (d.dmg) stats.push(`DMG ${d.dmg}`); if (d.reach) stats.push(`Reach ${d.reach}`); if (d.power) stats.push('Work: ' + Object.entries(d.power).map(([m, p]) => `${m} ${p}`).join(' ')); if (d.armor) stats.push(`Armor ${Math.round(d.armor * 100)}%`); if (d.cold) stats.push(`Warmth +${d.cold}`); if (d.fuel) stats.push(`Fuel ${d.fuel}s`); if (d.food) stats.push(Object.entries(d.food).map(([k, v]) => `${k} ${v! > 0 ? '+' : ''}${v}`).join(' ')); stats.push(`${d.w}kg`);
+  const stats: string[] = []; if (d.dmg) stats.push(`DMG ${d.dmg}`); if (d.reach) stats.push(`Reach ${d.reach}`); if (d.power) stats.push('Work: ' + Object.entries(d.power).map(([m, p]) => `${m} ${p}`).join(' ')); if (d.armor) stats.push(`Armor ${Math.round(d.armor * 100)}%`); if (d.cold) stats.push(`Warmth +${d.cold}`); if (d.carryBonus) stats.push(`Carry +${d.carryBonus}kg`); if (d.fuel) stats.push(`Fuel ${d.fuel}s`); if (d.food) stats.push(Object.entries(d.food).map(([k, v]) => `${k} ${v! > 0 ? '+' : ''}${v}`).join(' ')); stats.push(`${d.w}kg`);
   return <div style={{ fontSize: 10, minHeight: 34 }}><div style={{ color: '#ffe0a0', fontSize: 12 }}>{d.name}{s.upgrade === 'freight' ? ' — reinforced freight' : ''}{s.meta ? `: ${ITEMS[RECIPES[s.meta]?.out]?.name || s.meta}` : ''}{s.charge !== undefined && d.charge ? ` — ${s.charge}/${d.charge} charges` : ''}{s.dur !== undefined && d.dur ? ` — ${s.dur}/${d.dur}${s.dur <= 0 && d.repair ? ' BROKEN' : ''}` : ''}</div><div style={{ color: '#cfc2dc' }}>{d.desc}</div><div style={{ color: '#9ad0a0' }}>{stats.join(' · ')}</div><KnownUses item={s.key} known={known} /></div>;
 }
 
@@ -40,15 +40,16 @@ function KnownUses({ item, known }: { item: string; known: string[] }) {
 }
 
 export function InventoryPanel({ api, quickTo, x = 404, top = 54, onClose }: { api: Api; quickTo?: string; x?: number; top?: number; onClose?: () => void }) {
-  const r = api.gs.run!; const sel = api.sel ? C(r, api.sel.c)?.slots[api.sel.slot] ?? null : null; const w = invWeight(r);
+  const r = api.gs.run!; const sel = api.sel ? C(r, api.sel.c)?.slots[api.sel.slot] ?? null : null; const w = invWeight(r); const limit = carryLimit(r);
   let armor = 0, warm = 0; for (const s of C(r, 'eq').slots) if (s) { armor += ITEMS[s.key].armor || 0; warm += ITEMS[s.key].cold || 0; }
   return <Panel title="Inventory" style={{ left: x, top, width: 196 }} onClose={onClose ?? (() => api.open(null))}>
     <div className="flex gap-2 items-center" style={{ marginBottom: 4 }}>
       {['head', 'body', 'back'].map((sl, i) => <div key={sl} className="flex flex-col items-center" style={{ fontSize: 8, color: '#8a7a9a' }}><Slot s={C(r, 'eq').slots[i]} sel={api.sel?.c === 'eq' && api.sel.slot === i} onClick={e => slotClick(api, 'eq', i, e)} onContext={() => slotContext(api, 'eq', i)} />{sl}</div>)}
-      <div style={{ fontSize: 10, lineHeight: 1.1, marginLeft: 4 }}><div>Armor {Math.round(armor * 100)}% · Warmth +{warm}</div><div style={{ color: w > BAL.player.carryLimit ? '#ff8a7a' : '#cfc2dc' }}>Load {w.toFixed(1)} / {BAL.player.carryLimit} kg{w > BAL.player.carryLimit ? ' (slowed)' : ''}</div><div style={{ color: '#ffe27a' }}>Carried cash {countItem(r, 'inv', 'rcash')} · Secured {api.gs.profile.securedCash}</div></div>
+      <div style={{ fontSize: 10, lineHeight: 1.1, marginLeft: 4 }}><div>Armor {Math.round(armor * 100)}% · Warmth +{warm}</div><div style={{ color: w > limit ? '#ff8a7a' : '#cfc2dc' }}>Load {w.toFixed(1)} / {limit} kg{w > limit ? ' (slowed)' : ''}</div><div style={{ color: '#ffe27a' }}>Carried cash {countItem(r, 'inv', 'rcash')} · Secured {api.gs.profile.securedCash}</div></div>
     </div>
     <Grid api={api} cid="inv" quickTo={quickTo} hotRow />
     <div style={{ borderTop: '1px solid #3a2e46', marginTop: 4, paddingTop: 3 }}><ItemInfo s={sel} known={r.knowledge.recipes} /></div>
+    {sel && api.sel?.c === 'inv' && ITEMS[sel.key].repair && sel.dur !== undefined && sel.dur < ITEMS[sel.key].dur! && <div style={{ fontSize: 10, marginTop: 3 }}>Field repair (+{BAL.player.fieldRepairDurability} durability): <button className="btn" disabled={!C(r, 'inv').slots.some(s => s?.key === 'field_repair_kit')} onClick={() => { const kitSlot = C(r, 'inv').slots.findIndex(s => s?.key === 'field_repair_kit'); const kit = C(r, 'inv').slots[kitSlot]; if (kit && api.sel) api.act('fieldRepair', { slot: api.sel.slot, uid: sel.uid, kitSlot, kitUid: kit.uid }); }}>Use one kit</button></div>}
     <div className="flex gap-1" style={{ marginTop: 3 }}>
       <button className="btn" disabled={!sel} onClick={() => { if (api.sel) { api.act('useItem', { c: api.sel.c, slot: api.sel.slot }); api.setSel(null); } }}>Use</button>
       <button className="btn" disabled={!sel || sel.qty < 2} onClick={() => api.sel && api.act('split', { c: api.sel.c, slot: api.sel.slot })}>Split</button>
@@ -114,6 +115,7 @@ function StationBody({ api, eid }: { api: Api; eid: string }) {
         {d.salvage && <div>Dismantle for {d.salvage.yields.map(([key, n]) => `${n} ${ITEMS[key].name}`).join(', ')} {confirmSalvage === s!.uid ? <><span>Destroy this item?</span> <button className="btn danger" onClick={() => { api.act('maintainItem', { eid, slot: i, uid: s!.uid, mode: 'salvage' }); setConfirmSalvage(null); }}>Confirm</button> <button className="btn ghost" onClick={() => setConfirmSalvage(null)}>Cancel</button></> : <button className="btn danger" onClick={() => setConfirmSalvage(s!.uid)}>Dismantle</button>}</div>}
       </div>; })}
     </details>}
+    {kind === 'furnace' && <details style={{ fontSize: 10, marginBottom: 4 }}><summary style={{ color: '#ffd98a', cursor: 'pointer' }}>Furnace lining {st.upgrade === 'kiln_lining' ? '· installed' : '· improve fuel efficiency'}</summary>{st.upgrade === 'kiln_lining' ? <div>Future work uses {Math.round((1-BAL.fuel.linedFurnaceFuelMultiplier)*100)}% less fuel; work time is unchanged.</div> : <><div>{Math.round((1-BAL.fuel.linedFurnaceFuelMultiplier)*100)}% less fuel for future work. Requires a level 2 workbench close to you and this furnace.</div><div>{FURNACE_LINING.cost.map(([k,q]) => `${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(' · ')}</div><button className="btn" onClick={() => { const bench = Object.values(r.entities).find(b => b.kind === 'struct' && b.type === 'workbench' && b.station && (b.owner === undefined || b.owner === 'player') && (b.station.level ?? 1) >= 2 && Math.hypot(b.x-r.player.x,b.y-r.player.y) <= 3*TILE && Math.hypot(b.x-e.x,b.y-e.y) <= 3*TILE); api.act('upgradeFurnace', { eid, benchId: bench?.id }); }}>Pay &amp; line furnace</button></>}</details>}
     {fuelled && <div style={{ marginBottom: 4 }}><div style={{ fontSize: 10, color: '#ffd98a' }}>Fuel {st.burn > 0 ? <span style={{ color: '#ffb040' }}>· burning {Math.ceil(st.burn / 1000)}s</span> : <span style={{ color: '#8a7a9a' }}>· cold</span>}{kind === 'campfire' ? ' (burns continuously; warmth + light)' : ' (burns only while working)'}</div><Grid api={api} cid={st.fuelC} cols={3} /></div>}
     <div style={{ fontSize: 10, color: '#ffd98a' }}>Queue</div>
     {st.queue.length === 0 && <div style={{ fontSize: 10, color: '#8a7a9a' }}>Idle.</div>}

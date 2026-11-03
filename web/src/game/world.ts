@@ -194,7 +194,7 @@ function genWorld(layoutId: LayoutId): World {
   crate(fa.tx + 4, fa.ty - 4, 'factory_vault', [['core_fire', 1], ['blueprint:core_earth', 1], ['spares', 6]]);
   crate(fa.tx + 6, fa.ty - 4, 'factory_vault', [['blueprint:gas_mask', 1], ['iron_ingot', 4]]);
   statics.push({ kind: 'cash', tx: fa.tx + 5, ty: fa.ty - 3, poi: 'factory_vault', cash: 80 });
-  crate(fa.tx - 6, fa.ty + 3, 'factory', [['scrap', 6], ['spares', 3], ['iron_sword', 1], ['mechanical_parts', 2]]); crate(fa.tx - 2, fa.ty - 4, 'factory', [['iron_ore', 4], ['coal', 3]]);
+  crate(fa.tx - 6, fa.ty + 3, 'factory', [['scrap', 6], ['spares', 3], ['iron_sword', 1], ['mechanical_parts', 2], ['fasteners', 3]]); crate(fa.tx - 2, fa.ty - 4, 'factory', [['iron_ore', 4], ['coal', 3]]);
   // lighthouse (power gated)
   const li = byId('light'); stamp('b_li', 'Lighthouse', li.tx, li.ty, 5, 5, 'light', [[2, 4]]);
   statics.push({ kind: 'door', tx: li.tx, ty: li.ty + 2, poi: 'light', locked: 'power', label: 'Lighthouse Door' });
@@ -204,7 +204,7 @@ function genWorld(layoutId: LayoutId): World {
   crate(li.tx + 3, li.ty - 2, 'light', [['fuel_can', 1], ['rope', 2]]);
   // wreck
   const wr = byId('wreck'); stamp('b_wr', 'Halcyon Hull', wr.tx, wr.ty, 9, 5, 'hull', [[0, 2], [8, 2]]);
-  crate(wr.tx - 2, wr.ty, 'wreck', [['core_frost', 1], ['spares', 4]]); crate(wr.tx + 2, wr.ty - 1, 'wreck', [['cloth', 3], ['fuel_can', 1], ['blueprint:arrow', 1]]);
+  crate(wr.tx - 2, wr.ty, 'wreck', [['core_frost', 1], ['spares', 4]]); crate(wr.tx + 2, wr.ty - 1, 'wreck', [['cloth', 3], ['fuel_can', 1], ['blueprint:arrow', 1], ['treated_canvas', 2]]);
   statics.push({ kind: 'cash', tx: wr.tx, ty: wr.ty + 1, poi: 'wreck', cash: 45 });
   // watchtower
   const wa = byId('watch'); stamp('b_wa', 'Watchtower', wa.tx, wa.ty, 5, 5, 'wood', [[2, 4]]);

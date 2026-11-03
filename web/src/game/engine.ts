@@ -2,7 +2,7 @@
 // Rule: validate EVERYTHING first, then commit. Failed preconditions never partially debit.
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
-import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS } from './catalog';
+import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS, FURNACE_LINING } from './catalog';
 import { getWorld, getActiveLayout, SRC_KEYS, tileAt } from './world';
 
 export type Intent = { id: string; type: string; [k: string]: any };
@@ -40,7 +40,7 @@ export function newGame(): GameState { return { version: SAVE_VERSION, revision:
 
 export function mkStack(r: RunState, key: string, qty: number, meta?: string): Stack {
   const d = ITEMS[key]; const s: Stack = { uid: uid(r, 's'), key, qty };
-  if (d?.dur) s.dur = d.dur; if (d?.charge) s.charge = d.charge; if (meta) s.meta = meta; return s;
+  if (d?.dur) s.dur = d.dur; if (d?.charge) s.charge = d.initialCharge ?? d.charge; if (meta) s.meta = meta; return s;
 }
 export function mkContainer(r: RunState, kind: string, n: number): Container { const c = { id: uid(r, 'c'), kind, slots: Array(n).fill(null) }; r.custody[c.id] = c; return c; }
 
@@ -227,6 +227,7 @@ export function removeItem(r: RunState, cid: string, key: string, qty: number) {
   if (qty > 0) throw new Error('removeItem underflow — validation bug');
 }
 export function invWeight(r: RunState) { let w = 0; for (const cid of ['inv', 'eq']) for (const s of C(r, cid).slots) if (s) w += ITEMS[s.key].w * s.qty; return w; }
+export function carryLimit(r: RunState) { return BAL.player.carryLimit + C(r, 'eq').slots.reduce((sum, s) => sum + (s ? ITEMS[s.key].carryBonus ?? 0 : 0), 0); }
 export function cartLimit(e: Entity | undefined) { return e?.deployed?.upgrade === 'freight' ? BAL.cart.freightMaxWeight : BAL.cart.maxWeight; }
 export function cartWeight(r: RunState, cid: string) { return C(r, cid).slots.reduce((a, s) => a + (s ? ITEMS[s.key].w * s.qty : 0), 0); }
 export function hasAll(r: RunState, cid: string, ins: [string, number][]) { return ins.every(([k, q]) => countItem(r, cid, k) >= q); }
@@ -484,6 +485,28 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       e.station.level = WORKBENCH_UPGRADE.toLevel;
       return ok('station.upgrade', `${e.id}:2`, 'Workbench improved. Its new capabilities are available.');
     }
+    case 'upgradeFurnace': {
+      const e = r.entities[it.eid], bench = r.entities[it.benchId];
+      if (!e || e.kind !== 'struct' || e.type !== 'furnace' || !e.station || !owned(e) || !near(r, e, 3)) return fail('Use your furnace within reach.');
+      if (e.station.upgrade) return fail('Furnace already lined.');
+      if (!bench || bench.kind !== 'struct' || bench.type !== 'workbench' || !bench.station || !owned(bench) || !near(r, bench, 3) || dist(bench.x, bench.y, e.x, e.y) > 3 * TILE || (bench.station.level ?? 1) < FURNACE_LINING.benchLevel) return fail('A level 2 workbench must be within reach of you and the furnace.');
+      if (!hasAll(r, 'inv', FURNACE_LINING.cost)) return fail('Missing lining materials.');
+      for (const [key, qty] of FURNACE_LINING.cost) removeItem(r, 'inv', key, qty);
+      e.station.upgrade = 'kiln_lining';
+      return ok('furnace.upgrade', e.id, 'Furnace lined: future jobs use less fuel for the same work.');
+    }
+    case 'fieldRepair': {
+      const inv = C(r, 'inv');
+      if (!validSlot(inv, it.slot) || !validSlot(inv, it.kitSlot)) return fail('Invalid inventory slot.');
+      const item = inv.slots[it.slot], kit = inv.slots[it.kitSlot];
+      if (!item || item.uid !== it.uid || !kit || kit.uid !== it.kitUid || kit.key !== 'field_repair_kit') return fail('The selected item or kit has changed.');
+      const def = ITEMS[item.key];
+      if (!def.repair || !def.dur || item.dur === undefined || item.dur < 0 || item.dur >= def.dur) return fail('This item cannot be field repaired.');
+      if (p.action) return fail('Finish your current action first.');
+      const before = item.dur; item.dur = Math.min(def.dur, item.dur + BAL.player.fieldRepairDurability);
+      if (--kit.qty === 0) inv.slots[it.kitSlot] = null;
+      return ok('item.fieldRepair', `${item.uid}:${before}->${item.dur}`, `${def.name} field repaired to ${item.dur}/${def.dur}.`);
+    }
     case 'maintainItem': {
       const e = r.entities[it.eid], inv = C(r, 'inv');
       if (!e || e.kind !== 'struct' || !e.station || !owned(e) || !near(r, e, 3)) return fail('Use your station within reach.');
@@ -631,12 +654,12 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const tx = Math.floor(it.x / TILE), ty = Math.floor(it.y / TILE); if (dist(p.x, p.y, it.x, it.y) > 2 * TILE) return fail('Too far.');
       if (!getWorld().fresh[ty * WW + tx] || effTile(r, tx, ty) === T.ICE) return fail('Not fresh water (sea water would make you sick).');
       p.thirst = Math.min(100, p.thirst + 25);
-      const fi = C(r, 'inv').slots.findIndex(s => s?.key === 'water_flask' && (s.charge ?? 0) < 4); if (fi >= 0) C(r, 'inv').slots[fi]!.charge = 4;
+      const fi = C(r, 'inv').slots.findIndex(s => s && ITEMS[s.key].waterContainer && (s.charge ?? 0) < ITEMS[s.key].charge!); if (fi >= 0) { const flask = C(r, 'inv').slots[fi]!; flask.charge = ITEMS[flask.key].charge!; }
       return ok('drink', `${tx},${ty}`, fi >= 0 ? 'You drink and refill your flask.' : 'You drink deeply.');
     }
     case 'barrel': { const e = r.entities[it.eid]; if (!e || e.type !== 'barrel' || !near(r, e)) return fail('Out of reach.'); if ((e.water || 0) < 1) return fail('The barrel is dry. Wait for rain.');
-      const fi = C(r, 'inv').slots.findIndex(s => s?.key === 'water_flask' && (s.charge ?? 0) < 4);
-      if (fi >= 0) { const s = C(r, 'inv').slots[fi]!; const m = Math.min(4 - (s.charge || 0), Math.floor(e.water!)); s.charge = (s.charge || 0) + m; e.water! -= m; return ok('barrel.fill', `${m}`); }
+      const fi = C(r, 'inv').slots.findIndex(s => s && ITEMS[s.key].waterContainer && (s.charge ?? 0) < ITEMS[s.key].charge!);
+      if (fi >= 0) { const s = C(r, 'inv').slots[fi]!; const m = Math.min(ITEMS[s.key].charge! - (s.charge || 0), Math.floor(e.water!)); s.charge = (s.charge || 0) + m; e.water! -= m; return ok('barrel.fill', `${m}`); }
       p.thirst = Math.min(100, p.thirst + 25); e.water! -= 1; return ok('barrel.drink', '1'); }
     case 'garden': {
       const e = r.entities[it.eid]; if (!e || e.kind !== 'struct' || e.type !== 'garden' || !e.garden || !owned(e) || !near(r, e)) return fail('Use your garden within reach.'); const g = e.garden;
@@ -655,7 +678,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
         return ok('garden.harvest', `${e.id}:${crop}`, `${rule.name} harvested into your pack or on the ground.`);
       }
       if (g.water >= 3) return fail('The plot is already fully watered.');
-      const fi = C(r, 'inv').slots.findIndex(s => s?.key === 'water_flask' && (s.charge ?? 0) > 0); if (fi < 0) return fail('Needs water (flask) — or wait for rain.');
+      const fi = C(r, 'inv').slots.findIndex(s => s && ITEMS[s.key].waterContainer && (s.charge ?? 0) > 0); if (fi < 0) return fail('Needs water (flask) — or wait for rain.');
       C(r, 'inv').slots[fi]!.charge! -= 1; g.water = Math.min(3, g.water + 1); return ok('garden.water', e.id);
     }
     case 'grabCart': { const e = r.entities[it.eid]; if (!e || e.kind !== 'cart' || !owned(e) || !near(r, e, 2)) return fail('Out of reach.'); p.pulling = p.pulling === e.id ? null : e.id; return ok('cart.grab', `${e.id}:${!!p.pulling}`); }
@@ -694,7 +717,7 @@ function useItem(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: st
   if (d.cat === 'bp') { const rec = s.meta!; if (!RECIPES[rec]) return fail('Invalid blueprint.'); if (r.knowledge.recipes.includes(rec)) return fail('You already know this recipe.'); r.knowledge.recipes.push(rec); c.slots[it.slot] = null; return ok('learn.blueprint', rec, `Learned: ${ITEMS[RECIPES[rec].out].name}`); }
   if (d.slot) { const idx = ['head', 'body', 'back'].indexOf(d.slot); const eq = C(r, 'eq'); if (c === eq) return fail('Already equipped.'); const prev = eq.slots[idx]; if (prev && !accepts(c, it.slot, prev)) return fail('Move the old equipment to inventory first.'); eq.slots[idx] = s; c.slots[it.slot] = prev; return ok('equip', s.key); }
   if (d.food) {
-    if (s.key === 'water_flask') { if ((s.charge ?? 0) <= 0) return fail('Flask is empty.'); s.charge!--; p.thirst = Math.min(100, p.thirst + 30); return ok('drink.flask', `${s.charge}`); }
+    if (d.waterContainer) { if ((s.charge ?? 0) <= 0) return fail('Flask is empty.'); s.charge!--; p.thirst = Math.min(100, p.thirst + (d.food.thirst ?? 0)); return ok('drink.flask', `${s.uid}:${s.charge}`); }
     const f = d.food; p.hunger = clamp(p.hunger + (f.hunger || 0), 0, 100); p.thirst = clamp(p.thirst + (f.thirst || 0), 0, 100); p.hp = clamp(p.hp + (f.hp || 0), 1, BAL.player.maxHp); p.warmth = clamp(p.warmth + (f.warmth || 0), 0, 100); p.rad = clamp(p.rad + (f.rad || 0), 0, 100);
     s.qty--; if (s.qty <= 0) c.slots[it.slot] = null; return ok('consume', s.key);
   }
@@ -795,8 +818,9 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
           const s = fc.slots[fi]!; st.burn += ITEMS[s.key].fuel! * 1000; s.qty--; if (s.qty <= 0) fc.slots[fi] = null;
         }
       }
-      let step = needsFuel ? Math.min(t, st.burn) : t; if (job) step = Math.min(step, job.left);
-      if (needsFuel) st.burn -= step;
+      const fuelRate = kind === 'furnace' && st.upgrade === 'kiln_lining' ? BAL.fuel.linedFurnaceFuelMultiplier : 1;
+      let step = needsFuel ? Math.min(t, st.burn / fuelRate) : t; if (job) step = Math.min(step, job.left);
+      if (needsFuel) st.burn = Math.max(0, st.burn - step * fuelRate);
       t -= step;
       if (job) job.left -= step;
     }

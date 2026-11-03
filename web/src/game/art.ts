@@ -287,6 +287,12 @@ function icon(g: G, kind: string, c1: string, c2: string) {
     case 'gem': for (let y = 0; y < 8; y++) R(g, 8 - (y < 4 ? y : 8 - y), 4 + y, (y < 4 ? y : 8 - y) * 2 + 1, 1, y < 3 ? c2 : c1); break;
     case 'scrap': R(g, 3, 6, 9, 6, c1); R(g, 6, 4, 6, 3, c2); P(g, 4, 7, '#d0d0d8'); break;
     case 'gear': ell(g, 8, 8, 5, 5, c1); for (let k = 0; k < 8; k++) { const a = k / 8 * Math.PI * 2; P(g, 8 + Math.cos(a) * 6, 8 + Math.sin(a) * 6, c1); } ell(g, 8, 8, 2, 2, c2); break;
+    case 'fasteners': R(g, 3, 5, 9, 2, c1); R(g, 4, 4, 2, 4, c2); R(g, 5, 10, 8, 2, c1); R(g, 11, 9, 2, 4, c2); break;
+    case 'canvas': icon(g, 'cloth', c1, c2); R(g, 5, 6, 6, 1, '#4d5b42'); break;
+    case 'repairkit': R(g, 3, 5, 10, 8, c1); R(g, 6, 3, 4, 2, c2); R(g, 6, 8, 5, 1, c2); P(g, 10, 7, c2); break;
+    case 'pack': R(g, 3, 4, 10, 10, c1); R(g, 5, 3, 6, 2, c2); R(g, 5, 8, 6, 4, c2); P(g, 8, 9, c1); break;
+    case 'canteen': icon(g, 'flask', c1, c2); R(g, 4, 8, 8, 2, '#c5ae75'); break;
+    case 'briquette': R(g, 3, 5, 10, 7, c1); R(g, 3, 7, 10, 1, c2); R(g, 3, 10, 10, 1, c2); break;
     case 'parts': icon(g, 'gear', c1, c2); R(g, 11, 11, 3, 2, '#d5bb80'); P(g, 12, 10, '#d5bb80'); break;
     case 'ingot': for (let y = 0; y < 5; y++) R(g, 3 + (4 - y) * 0.5, 6 + y, 10 - (4 - y), 1, y === 0 ? c2 : c1); break;
     case 'rope': for (let k = 0; k < 4; k++) ell(g, 8, 5 + k * 2.4, 4, 1.4, k % 2 ? c1 : c2); break;

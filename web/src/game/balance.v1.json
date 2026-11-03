@@ -26,6 +26,7 @@
     "rollMs": 260,
     "staminaRegen": 26,
     "carryLimit": 60,
+    "fieldRepairDurability": 100,
     "hungerDrainPerMin": 2.4,
     "thirstDrainPerMin": 3.6,
     "offlineDrainFactor": 0.35,
@@ -66,7 +67,8 @@
   },
   "fuel": {
     "_status": "TUNABLE_BALANCE fuel seconds per item",
-    "wood": 20, "charcoal": 55, "coal": 80, "fiber": 4
+    "wood": 20, "charcoal": 55, "coal": 80, "fiber": 4,
+    "linedFurnaceFuelMultiplier": 0.8
   },
   "garden": {
     "_status": "TUNABLE_BALANCE",
