@@ -148,7 +148,12 @@ try {
         await ensureVitals();const live=await state(),angle=Math.atan2(live.player.y-threat.y,live.player.x-threat.x),keys=[];
         if(Math.abs(Math.cos(angle))>0.25)keys.push(Math.cos(angle)>0?'d':'a');if(Math.abs(Math.sin(angle))>0.25)keys.push(Math.sin(angle)>0?'s':'w');
         const canRoll=imminent&&live.player.stamina>=22&&Date.now()-lastDodgeAt>=900;if(canRoll)lastDodgeAt=Date.now();for(const k of keys)await page.keyboard.down(k);if(canRoll)await page.keyboard.press('Space');await pause(canRoll?280:220);for(const k of keys)await page.keyboard.up(k);
-        const after=await state();routeDiagnostics.push({kind:'wildlife-evasion',threat:{id:threat.id,type:threat.type,state:threat.state,from:{x:threat.x,y:threat.y}},before:{x:live.player.x,y:live.player.y,hp:live.player.hp},after:{x:after.player.x,y:after.player.y,hp:after.player.hp},method:canRoll?'ordinary directional WASD + Space dodge-roll; next route replanned from live position':'ordinary WASD retreat; next route replanned from live position'});return true;
+        let after=await state(),method=canRoll?'ordinary directional WASD + Space dodge-roll':'ordinary WASD retreat';
+        if(Math.hypot(after.player.x-live.player.x,after.player.y-live.player.y)<8){
+          const candidates=[angle,angle-0.8,angle+0.8,angle-1.5,angle+1.5].map(a=>({x:Math.max(24,Math.min(W*16-24,live.player.x+Math.cos(a)*170)),y:Math.max(24,Math.min(H*16-24,live.player.y+Math.sin(a)*170))}));
+          for(const dest of candidates){try{await walkNear(dest.x,dest.y,20);after=await state();method+='; runtime-grid WASD escape around physical obstruction';break;}catch{after=await state();if(after.player.dead)throw new Error(`player died while escaping ${threat.type} ${threat.id}; state=${JSON.stringify(after.player)}`);}}
+        }
+        routeDiagnostics.push({kind:'wildlife-evasion',threat:{id:threat.id,type:threat.type,state:threat.state,from:{x:threat.x,y:threat.y}},before:{x:live.player.x,y:live.player.y,hp:live.player.hp},after:{x:after.player.x,y:after.player.y,hp:after.player.hp},method:method+'; next route replanned from live position'});return true;
       }finally{defending=false;}
     }
 
