@@ -665,7 +665,9 @@ export function settle(gs: GameState, now: number, silent = false): string[] {
     // Rates and hunger-only shelter protection are unchanged.
     const unit = B.offlineDrainFactor / 60000;
     const hungerRate = B.hungerDrainPerMin * unit, thirstRate = B.thirstDrainPerMin * unit;
-    const radRate = zone === 7 ? 6 * unit : 0;
+    // The same equipped protection used online also applies during chronological offline exposure.
+    const protectedByMask = C(r, 'eq').slots.some(s => s && ITEMS[s.key].mask);
+    const radRate = zone === 7 ? 6 * (protectedByMask ? 0.8 / 7 : 1) * unit : 0;
     let damageRate = 0;
     if (!p.dead) {
       if (p.hunger < 1e-9) p.hunger = 0; if (p.thirst < 1e-9) p.thirst = 0;

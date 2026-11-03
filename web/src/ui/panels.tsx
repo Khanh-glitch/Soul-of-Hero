@@ -25,11 +25,18 @@ function Grid({ api, cid, cols = 8, quickTo, hotRow = false }: { api: Api; cid: 
     {c.slots.map((s, i) => <Slot key={i} s={s} sel={api.sel?.c === cid && api.sel.slot === i} active={hotRow && i === api.gs.run!.player.active} hotkey={hotRow && i < 8 ? String(i + 1) : undefined} onClick={e => slotClick(api, cid, i, e, quickTo)} onContext={() => slotContext(api, cid, i, quickTo)} />)}
   </div>;
 }
-function ItemInfo({ s }: { s: Stack | null }) {
+function ItemInfo({ s, known }: { s: Stack | null; known: string[] }) {
   if (!s) return <div style={{ fontSize: 10, color: '#8a7a9a', minHeight: 34 }}>Click to pick up · click again to place/swap · right-click to use/equip · Shift-click to quick-transfer.</div>;
   const d = ITEMS[s.key];
   const stats: string[] = []; if (d.dmg) stats.push(`DMG ${d.dmg}`); if (d.reach) stats.push(`Reach ${d.reach}`); if (d.power) stats.push('Work: ' + Object.entries(d.power).map(([m, p]) => `${m} ${p}`).join(' ')); if (d.armor) stats.push(`Armor ${Math.round(d.armor * 100)}%`); if (d.cold) stats.push(`Warmth +${d.cold}`); if (d.fuel) stats.push(`Fuel ${d.fuel}s`); if (d.food) stats.push(Object.entries(d.food).map(([k, v]) => `${k} ${v! > 0 ? '+' : ''}${v}`).join(' ')); stats.push(`${d.w}kg`);
-  return <div style={{ fontSize: 10, minHeight: 34 }}><div style={{ color: '#ffe0a0', fontSize: 12 }}>{d.name}{s.meta ? `: ${ITEMS[RECIPES[s.meta]?.out]?.name || s.meta}` : ''}{s.charge !== undefined && d.charge ? ` — ${s.charge}/${d.charge} charges` : ''}{s.dur !== undefined && d.dur ? ` — ${s.dur}/${d.dur}${s.dur <= 0 && d.repair ? ' BROKEN' : ''}` : ''}</div><div style={{ color: '#cfc2dc' }}>{d.desc}</div><div style={{ color: '#9ad0a0' }}>{stats.join(' · ')}</div></div>;
+  return <div style={{ fontSize: 10, minHeight: 34 }}><div style={{ color: '#ffe0a0', fontSize: 12 }}>{d.name}{s.meta ? `: ${ITEMS[RECIPES[s.meta]?.out]?.name || s.meta}` : ''}{s.charge !== undefined && d.charge ? ` — ${s.charge}/${d.charge} charges` : ''}{s.dur !== undefined && d.dur ? ` — ${s.dur}/${d.dur}${s.dur <= 0 && d.repair ? ' BROKEN' : ''}` : ''}</div><div style={{ color: '#cfc2dc' }}>{d.desc}</div><div style={{ color: '#9ad0a0' }}>{stats.join(' · ')}</div><KnownUses item={s.key} known={known} /></div>;
+}
+
+function KnownUses({ item, known }: { item: string; known: string[] }) {
+  // The active run's known recipes only: no undiscovered POI or recipe spoilers.
+  const uses = known.filter(k => RECIPES[k]?.ins.some(([key]) => key === item)).map(k => ITEMS[RECIPES[k].out].name);
+  if (!uses.length) return null;
+  return <details><summary style={{ cursor: 'pointer', color: '#ffd98a' }}>Known uses ({uses.length})</summary><div style={{ maxHeight: 36, overflowY: 'auto', color: '#cfc2dc' }}>{uses.join(' · ')}</div></details>;
 }
 
 export function InventoryPanel({ api, quickTo, x = 404, top = 54 }: { api: Api; quickTo?: string; x?: number; top?: number }) {
@@ -41,7 +48,7 @@ export function InventoryPanel({ api, quickTo, x = 404, top = 54 }: { api: Api; 
       <div style={{ fontSize: 10, lineHeight: 1.1, marginLeft: 4 }}><div>Armor {Math.round(armor * 100)}% · Warmth +{warm}</div><div style={{ color: w > BAL.player.carryLimit ? '#ff8a7a' : '#cfc2dc' }}>Load {w.toFixed(1)} / {BAL.player.carryLimit} kg{w > BAL.player.carryLimit ? ' (slowed)' : ''}</div><div style={{ color: '#ffe27a' }}>Carried cash {countItem(r, 'inv', 'rcash')} · Secured {api.gs.profile.securedCash}</div></div>
     </div>
     <Grid api={api} cid="inv" quickTo={quickTo} hotRow />
-    <div style={{ borderTop: '1px solid #3a2e46', marginTop: 4, paddingTop: 3 }}><ItemInfo s={sel} /></div>
+    <div style={{ borderTop: '1px solid #3a2e46', marginTop: 4, paddingTop: 3 }}><ItemInfo s={sel} known={r.knowledge.recipes} /></div>
     <div className="flex gap-1" style={{ marginTop: 3 }}>
       <button className="btn" disabled={!sel} onClick={() => { if (api.sel) { api.act('useItem', { c: api.sel.c, slot: api.sel.slot }); api.setSel(null); } }}>Use</button>
       <button className="btn" disabled={!sel || sel.qty < 2} onClick={() => api.sel && api.act('split', { c: api.sel.c, slot: api.sel.slot })}>Split</button>
@@ -111,7 +118,7 @@ function ResearchBody({ api, eid }: { api: Api; eid: string }) {
     <div className="flex gap-1 items-center" style={{ margin: '3px 0' }}><button className="btn gold" onClick={() => api.act('research', { mode: 'random', eid })}>Tinker ({B.randomSparesCost} Spares, {B.randomSeconds}s)</button><span style={{ fontSize: 9, color: '#8a7a9a' }}>random unknown recipe</span></div>
     <details style={{ marginBottom: 3 }}><summary style={{ fontSize: 10, color: '#ffd98a', cursor: 'pointer' }}>Directed study ({B.directedSparesCost} Spares, {B.directedSeconds}s)</summary>
     <label style={{ fontSize: 10 }}>Find <input aria-label="Find research recipe" value={search} onChange={e => setSearch(e.target.value)} style={{ width: 120, color: '#fff', background: '#21182a', border: '1px solid #6c5770' }} /></label>
-    <div className="scroll flex flex-wrap gap-1" style={{ maxHeight: 75, overflowY: 'auto' }}>{unknown.filter(k => RECIPES[k].tier < 3 && ITEMS[RECIPES[k].out].name.toLowerCase().includes(search.toLowerCase())).map(k => <button key={k} className="btn ghost" style={{ padding: '1px 3px', fontSize: 10 }} title={`${ITEMS[RECIPES[k].out].name} (${k})`} onClick={() => api.act('research', { mode: 'directed', recipe: k, eid })}><Icon k={RECIPES[k].out} size={10} /> {ITEMS[RECIPES[k].out].name}</button>)}</div></details>
+    <div className="scroll flex flex-wrap gap-1" style={{ maxHeight: 75, overflowY: 'auto' }}>{unknown.filter(k => RECIPES[k].tier < 3 && ITEMS[RECIPES[k].out].name.toLowerCase().includes(search.toLowerCase())).map(k => <button key={k} className="btn ghost" style={{ padding: '1px 3px', fontSize: 10 }} title={`${ITEMS[RECIPES[k].out].name} (${k})`} onClick={() => api.act('research', { mode: 'directed', recipe: k, eid })}><Icon k={RECIPES[k].out} size={10} /> {ITEMS[RECIPES[k].out].name}{Object.values(RECIPES).filter(rc => rc.out === RECIPES[k].out).length > 1 ? ` (${RECIPES[k].ins.map(([key, qty]) => `${qty} ${ITEMS[key].name}`).join(', ')})` : ''}</button>)}</div></details>
     <div style={{ fontSize: 10, color: '#ffd98a' }}>Specimen / Core / equipment study ({B.specimenSeconds}s, consumes 1)</div>
     {specimens.length === 0 && <div style={{ fontSize: 10, color: '#8a7a9a' }}>Carry a creature specimen, Core or studyable equipment.</div>}
     {specimens.map(([s, i]) => <div key={i} className="flex items-center gap-1" style={{ fontSize: 10 }}><Icon k={s!.key} size={12} />{ITEMS[s!.key].name} → {ITEMS[RECIPES[ITEMS[s!.key].specimen || CORE_STUDY[s!.key] || ITEMS[s!.key].studyRecipe!].out].name}{confirmStudy === s!.uid ? <><span>Consumes item</span><button className="btn danger" onClick={() => { api.act('research', { mode: 'specimen', slot: i, uid: s!.uid, eid }); setConfirmStudy(null); }}>Confirm</button><button className="btn ghost" onClick={() => setConfirmStudy(null)}>Cancel</button></> : <button className="btn" style={{ marginLeft: 'auto', padding: '1px 5px' }} onClick={() => setConfirmStudy(s!.uid)}>Study</button>}</div>)}
@@ -121,16 +128,26 @@ function ResearchBody({ api, eid }: { api: Api; eid: string }) {
   </div>;
 }
 
+function RecipeTree({ recipe, known, ancestors = [] }: { recipe: string; known: string[]; ancestors?: string[] }) {
+  if (ancestors.includes(recipe)) return <span>Cycle</span>;
+  const rc = RECIPES[recipe], seen = [...ancestors, recipe];
+  return <div style={{ paddingLeft: 8 }}>{rc.ins.map(([key, qty]) => {
+    const producers = known.filter(k => RECIPES[k]?.out === key && !seen.includes(k));
+    return <div key={key}>{qty} × {ITEMS[key].name}{producers.length > 0 && <details><summary style={{ cursor: 'pointer', color: '#a9dca8' }}>Known ways to craft</summary>{producers.map(k => <div key={k}>{ITEMS[RECIPES[k].out].name} ×{RECIPES[k].qty} · {RECIPES[k].station ? STRUCTS[RECIPES[k].station!].name : 'hand'}{RECIPES[k].stationLevel ? ` level ${RECIPES[k].stationLevel}` : ''}<RecipeTree recipe={k} known={known} ancestors={seen} /></div>)}</details>}</div>;
+  })}</div>;
+}
+
 export function CraftPanel({ api }: { api: Api }) {
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(''); const [selectedRecipe, setSelectedRecipe] = useState<string | null>(null);
   const r = api.gs.run!; const groups: [string, string | null][] = [['By hand', null], ['Campfire', 'campfire'], ['Furnace', 'furnace'], ['Workbench', 'workbench']];
   const nearSt = (k: string) => Object.values(r.entities).find(e => e.kind === 'struct' && STRUCTS[e.type!].station === k && Math.hypot(e.x - r.player.x, e.y - r.player.y) < 3 * TILE);
   return <><Panel title={`Crafting — ${r.knowledge.recipes.length}/${Object.keys(RECIPES).length} recipes known`} style={{ left: 8, top: 34, width: 390, maxHeight: 316 }} onClose={() => api.open(null)}>
     <label style={{ fontSize: 10 }}>Find known recipe <input aria-label="Find known recipe" value={search} onChange={e => setSearch(e.target.value)} style={{ width: 140, color: '#fff', background: '#21182a', border: '1px solid #6c5770' }} /></label>
-    <div className="scroll" style={{ maxHeight: 266, overflowY: 'auto' }}>
+    {selectedRecipe && <div style={{ fontSize: 10, borderBottom: '1px solid #514155' }}><div className="flex items-center justify-between"><b style={{ color: '#ffd98a' }}>{ITEMS[RECIPES[selectedRecipe].out].name}</b><button className="btn ghost" onClick={() => setSelectedRecipe(null)}>Close details</button></div><div className="scroll" style={{ maxHeight: 62, overflowY: 'auto' }}>{ITEMS[RECIPES[selectedRecipe].out].desc}<details><summary style={{ cursor: 'pointer' }}>Ingredients & known sub-recipes (per batch; scroll)</summary><RecipeTree recipe={selectedRecipe} known={r.knowledge.recipes} /></details></div></div>}
+    <div className="scroll" style={{ maxHeight: selectedRecipe ? 185 : 266, overflowY: 'auto' }}>
       {groups.map(([label, st]) => { const list = Object.entries(RECIPES).filter(([k, rc]) => rc.station === st && r.knowledge.recipes.includes(k) && ITEMS[rc.out].name.toLowerCase().includes(search.toLowerCase())); const ns = st ? nearSt(st) : null; const hidden = Object.entries(RECIPES).filter(([k, rc]) => rc.station === st && !r.knowledge.recipes.includes(k)).length;
         return <div key={label} style={{ marginBottom: 4 }}><div style={{ fontSize: 11, color: '#ffd98a' }}>{label} {st && <span style={{ color: ns ? '#7aff6a' : '#8a7a9a', fontSize: 10 }}>{ns ? `· station in reach${st === 'workbench' ? ` · level ${ns.station?.level ?? 1}` : ''}` : `· build or stand at a ${STRUCTS[st].name}`}</span>}</div>
-          {list.map(([k, rc]) => { const ok = rc.ins.every(([i, q]) => countItem(r, 'inv', i) >= q); return <div key={k} className="flex items-center gap-1" style={{ fontSize: 10, padding: '1px 0', borderBottom: '1px solid #2a2034' }}><Icon k={rc.out} size={14} /><span style={{ width: 110, color: ok ? '#fff' : '#bba' }}>{ITEMS[rc.out].name}{rc.qty > 1 ? ` ×${rc.qty}` : ''}</span><Cost ins={rc.ins} have={have(api)} />{rc.stationLevel && <span style={{ color: '#cfc2dc' }}>bench {rc.stationLevel}</span>}<button className="btn" style={{ marginLeft: 'auto', padding: '1px 6px' }} disabled={!!st && (!ns || (ns.station?.level ?? 1) < (rc.stationLevel ?? 1))} onClick={() => api.act('craft', { recipe: k, eid: ns?.id })}>{st ? 'Queue' : 'Craft'}</button></div>; })}
+          {list.map(([k, rc]) => { const ok = rc.ins.every(([i, q]) => countItem(r, 'inv', i) >= q); return <div key={k} className="flex items-center gap-1" style={{ fontSize: 10, padding: '1px 0', borderBottom: '1px solid #2a2034' }}><Icon k={rc.out} size={14} /><button className="ghost" style={{ width: 110, textAlign: 'left', color: ok ? '#fff' : '#bba', cursor: 'pointer' }} onClick={() => setSelectedRecipe(k)} title="Show recipe details">{ITEMS[rc.out].name}{rc.qty > 1 ? ` ×${rc.qty}` : ''}</button><Cost ins={rc.ins} have={have(api)} />{rc.stationLevel && <span style={{ color: '#cfc2dc' }}>bench {rc.stationLevel}</span>}<button className="btn" style={{ marginLeft: 'auto', padding: '1px 6px' }} disabled={!!st && (!ns || (ns.station?.level ?? 1) < (rc.stationLevel ?? 1))} onClick={() => api.act('craft', { recipe: k, eid: ns?.id })}>{st ? 'Queue' : 'Craft'}</button></div>; })}
           {hidden > 0 && <div style={{ fontSize: 9, color: '#7a6a8a' }}>+{hidden} undiscovered — blueprints in ruins, research table, specimens, Cores.</div>}</div>; })}
     </div></Panel><InventoryPanel api={api} /></>;
 }

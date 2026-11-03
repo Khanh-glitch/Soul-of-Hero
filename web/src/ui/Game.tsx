@@ -67,7 +67,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
     const keyMap: Record<string, keyof Input> = { KeyW: 'up', ArrowUp: 'up', KeyS: 'down', ArrowDown: 'down', KeyA: 'left', ArrowLeft: 'left', KeyD: 'right', ArrowRight: 'right' };
     const toggle = (k: PanelState['kind']) => { setPanel(p => (p?.kind === k ? null : { kind: k })); setSel(null); sfx({ type: 'ui' }); };
     const down = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLElement && (e.target.matches('input, textarea, select') || e.target.isContentEditable)) return;
+      if (e.target instanceof HTMLElement && (e.target.matches('input, textarea, select') || e.target.isContentEditable)) { if (e.code === 'Escape') e.target.blur(); return; }
       initAudio(); const r = gs.run; if (!r) return;
       if (keyMap[e.code]) { (inp.current as any)[keyMap[e.code]] = true; e.preventDefault(); return; }
       if (e.code === 'Tab') { e.preventDefault(); toggle('skills'); return; }

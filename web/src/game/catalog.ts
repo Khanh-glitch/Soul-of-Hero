@@ -13,7 +13,7 @@ export interface ItemDef {
 const I = (d: ItemDef) => d;
 export const ITEMS: Record<string, ItemDef> = {
   // All lifecycle and upgrade costs are provisional TUNABLE values.
-  mechanical_parts: I({ name: 'Mechanical Parts', cat: 'res', icon: 'ore', c1: '#707984', c2: '#c9d2d8', w: 0.5, max: 30, desc: 'Workbench parts: improve a bench or maintain iron equipment.' }),
+  mechanical_parts: I({ name: 'Mechanical Parts', cat: 'res', icon: 'parts', c1: '#707984', c2: '#c9d2d8', w: 0.5, max: 30, desc: 'Found in industrial wrecks or made at a bench. Improve tools or maintain equipment.' }),
   // resources
   wood: I({ name: 'Wood', cat: 'res', icon: 'log', c1: '#8a5a32', c2: '#c9935a', w: 1, max: 60, desc: 'Split timber. Fuel, tools, walls.', fuel: 20 }),
   stone: I({ name: 'Stone', cat: 'res', icon: 'stone', c1: '#7d8088', c2: '#b9bcc4', w: 1.2, max: 60, desc: 'Rough stone. Foundations, furnaces, tools.' }),
@@ -59,8 +59,8 @@ export const ITEMS: Record<string, ItemDef> = {
   stone_pick: I({ name: 'Stone Pickaxe', cat: 'tool', icon: 'pick', c1: '#8a8a90', c2: '#7a5a32', w: 1.5, max: 1, desc: 'Breaks stone and ore. Pries scrap.', repair: { station: 'workbench', cost: [['stone', 1], ['wood', 1]] }, power: { stone: 3, ore: 2, scrap: 2 }, dmg: 10, reach: 22, arc: 1.2, swing: 450, dur: 180 }),
   iron_axe: I({ name: 'Iron Axe', cat: 'tool', icon: 'axe', c1: '#c8d0dc', c2: '#5a3a22', w: 1.6, max: 1, desc: 'Bites deep into timber.', repair: { station: 'workbench', cost: [['iron_ingot', 1], ['mechanical_parts', 1]] }, power: { wood: 6, plant: 2, scrap: 2 }, dmg: 17, reach: 23, arc: 1.5, swing: 400, dur: 400 }),
   iron_pick: I({ name: 'Iron Pickaxe', cat: 'tool', icon: 'pick', c1: '#c8d0dc', c2: '#5a3a22', w: 1.7, max: 1, desc: 'Shatters rock and veins.', repair: { station: 'workbench', cost: [['iron_ingot', 1], ['mechanical_parts', 1]] }, power: { stone: 6, ore: 5, scrap: 4 }, dmg: 15, reach: 23, arc: 1.2, swing: 430, dur: 400 }),
-  industrial_pick: I({ name: 'Salvager Pick', cat: 'tool', icon: 'pick', c1: '#71c3c6', c2: '#a37945', w: 1.9, max: 1, desc: 'An improved pick: faster work on rock, ore and wrecks. Requires an improved bench.', power: { stone: 9, ore: 8, scrap: 7 }, dmg: 17, reach: 23, arc: 1.2, swing: 410, dur: 500, repair: { station: 'workbench', cost: [['iron_ingot', 1], ['mechanical_parts', 1], ['spares', 1]] } }),
-  industrial_axe: I({ name: 'Salvager Axe', cat: 'tool', icon: 'axe', c1: '#71c3c6', c2: '#a37945', w: 1.8, max: 1, desc: 'An improved axe: more work per strike on timber. Requires an improved bench.', power: { wood: 9, plant: 3, scrap: 3 }, dmg: 19, reach: 23, arc: 1.5, swing: 390, dur: 500, repair: { station: 'workbench', cost: [['iron_ingot', 1], ['mechanical_parts', 1], ['spares', 1]] } }),
+  industrial_pick: I({ name: 'Salvager Pick', cat: 'tool', icon: 'salvage_pick', c1: '#71c3c6', c2: '#a37945', w: 1.9, max: 1, desc: 'An improved pick: faster work on rock, ore and wrecks. Requires an improved bench.', power: { stone: 9, ore: 8, scrap: 7 }, dmg: 17, reach: 23, arc: 1.2, swing: 410, dur: 500, repair: { station: 'workbench', cost: [['iron_ingot', 1], ['mechanical_parts', 1], ['spares', 1]] } }),
+  industrial_axe: I({ name: 'Salvager Axe', cat: 'tool', icon: 'salvage_axe', c1: '#71c3c6', c2: '#a37945', w: 1.8, max: 1, desc: 'An improved axe: more work per strike on timber. Requires an improved bench.', power: { wood: 9, plant: 3, scrap: 3 }, dmg: 19, reach: 23, arc: 1.5, swing: 390, dur: 500, repair: { station: 'workbench', cost: [['iron_ingot', 1], ['mechanical_parts', 1], ['spares', 1]] } }),
   wood_spear: I({ name: 'Fire-hardened Spear', cat: 'weapon', icon: 'spear', c1: '#c9935a', c2: '#e0e0e0', w: 1, max: 1, desc: 'Long reach, narrow thrust.', power: { plant: 1 }, dmg: 15, reach: 34, arc: 0.45, swing: 380, dur: 150 }),
   iron_sword: I({ name: 'Iron Sword', cat: 'weapon', icon: 'sword', c1: '#dfe6ee', c2: '#7a4a2a', w: 1.4, max: 1, desc: 'Fast, wide cuts.', studyRecipe: 'iron_sword', repair: { station: 'workbench', cost: [['iron_ingot', 1], ['mechanical_parts', 1]] }, salvage: { station: 'workbench', yields: [['iron_ingot', 1]] }, power: { plant: 2 }, dmg: 24, reach: 26, arc: 1.7, swing: 330, dur: 350 }),
   bow: I({ name: 'Hunting Bow', cat: 'weapon', icon: 'bow', c1: '#8a5a32', c2: '#e0d8c0', w: 0.8, max: 1, desc: 'Fires arrows toward the cursor.', studyRecipe: 'bow', repair: { station: 'workbench', cost: [['wood', 1], ['fiber', 2]] }, dmg: 16, reach: 220, swing: 520, dur: 200, ranged: 'arrow' }),
@@ -120,7 +120,7 @@ export const SOURCES: Record<string, SourceDef> = {
   herb: { name: 'Bitterleaf', mat: 'plant', hp: 3, stock: 2, yields: [['herb', 1]], block: false, regrow: 600, art: 'herb' },
   mushroom: { name: 'Marsh Caps', mat: 'plant', hp: 3, stock: 2, yields: [['mushroom', 1]], block: false, regrow: 600, art: 'mush' },
   scrap: { name: 'Roadside Scrap', mat: 'scrap', hp: 8, stock: 4, yields: [['scrap', 1]], bonus: [['spares', 0.55]], block: false, art: 'scrap' },
-  wreck: { name: 'Car Wreck', mat: 'scrap', hp: 30, stock: 8, yields: [['scrap', 1]], bonus: [['spares', 0.7], ['fuel_can', 0.06]], block: true, art: 'wreck' },
+  wreck: { name: 'Car Wreck', mat: 'scrap', hp: 30, stock: 8, yields: [['scrap', 1]], bonus: [['spares', 0.7], ['fuel_can', 0.06], ['mechanical_parts', 0.08]], block: true, art: 'wreck' },
 };
 
 // ---------- Creatures (K5) ----------

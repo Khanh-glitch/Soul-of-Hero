@@ -1,6 +1,6 @@
 {
   "revision": "catalog snapshot (see git commit)",
-  "method": "Source definitions and statics only: edges are candidates, not proof of geometry, unlock reachability, renewable stock or player experience.",
+  "method": "Catalog, source placements, statics and selected action annotations: candidate edges, not proof of geometry, unlock reachability, completeness, renewable stock or player experience.",
   "counts": {
     "items": 76,
     "sources": 19,
@@ -14,18 +14,34 @@
       "definition": {
         "name": "Mechanical Parts",
         "cat": "res",
-        "icon": "ore",
+        "icon": "parts",
         "c1": "#707984",
         "c2": "#c9d2d8",
         "w": 0.5,
         "max": 30,
-        "desc": "Workbench parts: improve a bench or maintain iron equipment."
+        "desc": "Found in industrial wrecks or made at a bench. Improve tools or maintain equipment."
       },
       "obtained": {
-        "sources": [],
+        "sources": [
+          "wreck"
+        ],
         "poi": [
-          "shipping:factory@150,103",
-          "dev_delta:factory@150,103"
+          {
+            "layout": "shipping",
+            "poi": "factory",
+            "tx": 150,
+            "ty": 103,
+            "key": "mechanical_parts",
+            "qty": 2
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "factory",
+            "tx": 150,
+            "ty": 103,
+            "key": "mechanical_parts",
+            "qty": 2
+          }
         ],
         "cashChests": [],
         "drops": [],
@@ -33,7 +49,7 @@
           "mechanical_parts"
         ],
         "special": [
-          "crafted workbench batch or finite factory crate (new runs only)"
+          "crafted workbench batch, finite wreck yield, or finite factory crate (new runs only)"
         ],
         "elder": [],
         "vendor": false,
@@ -91,8 +107,22 @@
           "willow"
         ],
         "poi": [
-          "shipping:tp@107,121",
-          "dev_delta:tp@107,121"
+          {
+            "layout": "shipping",
+            "poi": "tp",
+            "tx": 107,
+            "ty": 121,
+            "key": "wood",
+            "qty": 8
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "tp",
+            "tx": 107,
+            "ty": 121,
+            "key": "wood",
+            "qty": 8
+          }
         ],
         "cashChests": [],
         "drops": [],
@@ -188,8 +218,22 @@
           "iron"
         ],
         "poi": [
-          "shipping:s2@80,77",
-          "dev_delta:s2@80,77"
+          {
+            "layout": "shipping",
+            "poi": "s2",
+            "tx": 80,
+            "ty": 77,
+            "key": "stone",
+            "qty": 4
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "s2",
+            "tx": 80,
+            "ty": 77,
+            "key": "stone",
+            "qty": 4
+          }
         ],
         "cashChests": [],
         "drops": [],
@@ -258,8 +302,22 @@
           "reed"
         ],
         "poi": [
-          "shipping:s0@38,105",
-          "dev_delta:s0@38,105"
+          {
+            "layout": "shipping",
+            "poi": "s0",
+            "tx": 38,
+            "ty": 105,
+            "key": "fiber",
+            "qty": 6
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "s0",
+            "tx": 38,
+            "ty": 105,
+            "key": "fiber",
+            "qty": 6
+          }
         ],
         "cashChests": [],
         "drops": [],
@@ -317,8 +375,22 @@
           "iron"
         ],
         "poi": [
-          "shipping:factory@154,96",
-          "dev_delta:factory@154,96"
+          {
+            "layout": "shipping",
+            "poi": "factory",
+            "tx": 154,
+            "ty": 96,
+            "key": "iron_ore",
+            "qty": 4
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "factory",
+            "tx": 154,
+            "ty": 96,
+            "key": "iron_ore",
+            "qty": 4
+          }
         ],
         "cashChests": [],
         "drops": [],
@@ -362,8 +434,22 @@
           "coalv"
         ],
         "poi": [
-          "shipping:factory@154,96",
-          "dev_delta:factory@154,96"
+          {
+            "layout": "shipping",
+            "poi": "factory",
+            "tx": 154,
+            "ty": 96,
+            "key": "coal",
+            "qty": 3
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "factory",
+            "tx": 154,
+            "ty": 96,
+            "key": "coal",
+            "qty": 3
+          }
         ],
         "cashChests": [],
         "drops": [],
@@ -715,10 +801,38 @@
           "wreck"
         ],
         "poi": [
-          "shipping:s3@164,75",
-          "shipping:factory@150,103",
-          "dev_delta:s3@164,75",
-          "dev_delta:factory@150,103"
+          {
+            "layout": "shipping",
+            "poi": "s3",
+            "tx": 164,
+            "ty": 75,
+            "key": "scrap",
+            "qty": 4
+          },
+          {
+            "layout": "shipping",
+            "poi": "factory",
+            "tx": 150,
+            "ty": 103,
+            "key": "scrap",
+            "qty": 6
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "s3",
+            "tx": 164,
+            "ty": 75,
+            "key": "scrap",
+            "qty": 4
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "factory",
+            "tx": 150,
+            "ty": 103,
+            "key": "scrap",
+            "qty": 6
+          }
         ],
         "cashChests": [],
         "drops": [
@@ -768,15 +882,78 @@
           "wreck"
         ],
         "poi": [
-          "shipping:s3@164,75",
-          "shipping:factory_vault@160,96",
-          "shipping:factory@150,103",
-          "shipping:wreck@129,181",
-          "dev_delta:s3@164,75",
-          "dev_delta:factory_vault@160,96",
-          "dev_delta:factory@150,103",
-          "dev_delta:wreck@129,181",
-          "dev_delta:delta_relay@150,81"
+          {
+            "layout": "shipping",
+            "poi": "s3",
+            "tx": 164,
+            "ty": 75,
+            "key": "spares",
+            "qty": 2
+          },
+          {
+            "layout": "shipping",
+            "poi": "factory_vault",
+            "tx": 160,
+            "ty": 96,
+            "key": "spares",
+            "qty": 6
+          },
+          {
+            "layout": "shipping",
+            "poi": "factory",
+            "tx": 150,
+            "ty": 103,
+            "key": "spares",
+            "qty": 3
+          },
+          {
+            "layout": "shipping",
+            "poi": "wreck",
+            "tx": 129,
+            "ty": 181,
+            "key": "spares",
+            "qty": 4
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "s3",
+            "tx": 164,
+            "ty": 75,
+            "key": "spares",
+            "qty": 2
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "factory_vault",
+            "tx": 160,
+            "ty": 96,
+            "key": "spares",
+            "qty": 6
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "factory",
+            "tx": 150,
+            "ty": 103,
+            "key": "spares",
+            "qty": 3
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "wreck",
+            "tx": 129,
+            "ty": 181,
+            "key": "spares",
+            "qty": 4
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "delta_relay",
+            "tx": 150,
+            "ty": 81,
+            "key": "spares",
+            "qty": 6
+          }
         ],
         "cashChests": [],
         "drops": [
@@ -832,11 +1009,46 @@
       "obtained": {
         "sources": [],
         "poi": [
-          "shipping:tp@107,121",
-          "shipping:factory_vault@162,96",
-          "dev_delta:tp@107,121",
-          "dev_delta:factory_vault@162,96",
-          "dev_delta:delta_relay@150,81"
+          {
+            "layout": "shipping",
+            "poi": "tp",
+            "tx": 107,
+            "ty": 121,
+            "key": "iron_ingot",
+            "qty": 1
+          },
+          {
+            "layout": "shipping",
+            "poi": "factory_vault",
+            "tx": 162,
+            "ty": 96,
+            "key": "iron_ingot",
+            "qty": 4
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "tp",
+            "tx": 107,
+            "ty": 121,
+            "key": "iron_ingot",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "factory_vault",
+            "tx": 162,
+            "ty": 96,
+            "key": "iron_ingot",
+            "qty": 4
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "delta_relay",
+            "tx": 150,
+            "ty": 81,
+            "key": "iron_ingot",
+            "qty": 4
+          }
         ],
         "cashChests": [],
         "drops": [],
@@ -908,14 +1120,70 @@
       "obtained": {
         "sources": [],
         "poi": [
-          "shipping:s0@38,105",
-          "shipping:s1@81,168",
-          "shipping:tp@96,114",
-          "shipping:light@31,175",
-          "dev_delta:s0@38,105",
-          "dev_delta:s1@81,168",
-          "dev_delta:tp@96,114",
-          "dev_delta:light@31,175"
+          {
+            "layout": "shipping",
+            "poi": "s0",
+            "tx": 38,
+            "ty": 105,
+            "key": "rope",
+            "qty": 1
+          },
+          {
+            "layout": "shipping",
+            "poi": "s1",
+            "tx": 81,
+            "ty": 168,
+            "key": "rope",
+            "qty": 2
+          },
+          {
+            "layout": "shipping",
+            "poi": "tp",
+            "tx": 96,
+            "ty": 114,
+            "key": "rope",
+            "qty": 3
+          },
+          {
+            "layout": "shipping",
+            "poi": "light",
+            "tx": 31,
+            "ty": 175,
+            "key": "rope",
+            "qty": 2
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "s0",
+            "tx": 38,
+            "ty": 105,
+            "key": "rope",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "s1",
+            "tx": 81,
+            "ty": 168,
+            "key": "rope",
+            "qty": 2
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "tp",
+            "tx": 96,
+            "ty": 114,
+            "key": "rope",
+            "qty": 3
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "light",
+            "tx": 31,
+            "ty": 175,
+            "key": "rope",
+            "qty": 2
+          }
         ],
         "cashChests": [],
         "drops": [],
@@ -1013,8 +1281,22 @@
       "obtained": {
         "sources": [],
         "poi": [
-          "shipping:mill@126,98",
-          "dev_delta:mill@126,98"
+          {
+            "layout": "shipping",
+            "poi": "mill",
+            "tx": 126,
+            "ty": 98,
+            "key": "leather",
+            "qty": 2
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "mill",
+            "tx": 126,
+            "ty": 98,
+            "key": "leather",
+            "qty": 2
+          }
         ],
         "cashChests": [],
         "drops": [],
@@ -1271,10 +1553,38 @@
       "obtained": {
         "sources": [],
         "poi": [
-          "shipping:tp@96,114",
-          "shipping:wreck@133,180",
-          "dev_delta:tp@96,114",
-          "dev_delta:wreck@133,180"
+          {
+            "layout": "shipping",
+            "poi": "tp",
+            "tx": 96,
+            "ty": 114,
+            "key": "cloth",
+            "qty": 2
+          },
+          {
+            "layout": "shipping",
+            "poi": "wreck",
+            "tx": 133,
+            "ty": 180,
+            "key": "cloth",
+            "qty": 3
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "tp",
+            "tx": 96,
+            "ty": 114,
+            "key": "cloth",
+            "qty": 2
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "wreck",
+            "tx": 133,
+            "ty": 180,
+            "key": "cloth",
+            "qty": 3
+          }
         ],
         "cashChests": [],
         "drops": [],
@@ -1363,13 +1673,29 @@
           "bush"
         ],
         "poi": [
-          "shipping:mill@120,88",
-          "dev_delta:mill@120,88"
+          {
+            "layout": "shipping",
+            "poi": "mill",
+            "tx": 120,
+            "ty": 88,
+            "key": "seed",
+            "qty": 6
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "mill",
+            "tx": 120,
+            "ty": 88,
+            "key": "seed",
+            "qty": 6
+          }
         ],
         "cashChests": [],
         "drops": [],
         "recipes": [],
-        "special": [],
+        "special": [
+          "bush or oak bonus; harvested garden returns two"
+        ],
         "elder": [],
         "vendor": false,
         "starter": false
@@ -1411,8 +1737,22 @@
           "bush"
         ],
         "poi": [
-          "shipping:s0@38,105",
-          "dev_delta:s0@38,105"
+          {
+            "layout": "shipping",
+            "poi": "s0",
+            "tx": 38,
+            "ty": 105,
+            "key": "berries",
+            "qty": 3
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "s0",
+            "tx": 38,
+            "ty": 105,
+            "key": "berries",
+            "qty": 3
+          }
         ],
         "cashChests": [],
         "drops": [],
@@ -1457,8 +1797,22 @@
       "obtained": {
         "sources": [],
         "poi": [
-          "shipping:s1@81,168",
-          "dev_delta:s1@81,168"
+          {
+            "layout": "shipping",
+            "poi": "s1",
+            "tx": 81,
+            "ty": 168,
+            "key": "meat",
+            "qty": 2
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "s1",
+            "tx": 81,
+            "ty": 168,
+            "key": "meat",
+            "qty": 2
+          }
         ],
         "cashChests": [],
         "drops": [
@@ -1655,8 +2009,22 @@
       "obtained": {
         "sources": [],
         "poi": [
-          "shipping:mill@120,88",
-          "dev_delta:mill@120,88"
+          {
+            "layout": "shipping",
+            "poi": "mill",
+            "tx": 120,
+            "ty": 88,
+            "key": "crop",
+            "qty": 2
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "mill",
+            "tx": 120,
+            "ty": 88,
+            "key": "crop",
+            "qty": 2
+          }
         ],
         "cashChests": [],
         "drops": [],
@@ -1756,10 +2124,38 @@
       "obtained": {
         "sources": [],
         "poi": [
-          "shipping:s3@164,75",
-          "shipping:evac@172,24",
-          "dev_delta:s3@164,75",
-          "dev_delta:evac@172,24"
+          {
+            "layout": "shipping",
+            "poi": "s3",
+            "tx": 164,
+            "ty": 75,
+            "key": "water_flask",
+            "qty": 1
+          },
+          {
+            "layout": "shipping",
+            "poi": "evac",
+            "tx": 172,
+            "ty": 24,
+            "key": "water_flask",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "s3",
+            "tx": 164,
+            "ty": 75,
+            "key": "water_flask",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "evac",
+            "tx": 172,
+            "ty": 24,
+            "key": "water_flask",
+            "qty": 1
+          }
         ],
         "cashChests": [],
         "drops": [],
@@ -1806,11 +2202,46 @@
       "obtained": {
         "sources": [],
         "poi": [
-          "shipping:s1@81,168",
-          "shipping:s2@80,77",
-          "dev_delta:s1@81,168",
-          "dev_delta:s2@80,77",
-          "dev_delta:delta_relay@140,87"
+          {
+            "layout": "shipping",
+            "poi": "s1",
+            "tx": 81,
+            "ty": 168,
+            "key": "bandage",
+            "qty": 1
+          },
+          {
+            "layout": "shipping",
+            "poi": "s2",
+            "tx": 80,
+            "ty": 77,
+            "key": "bandage",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "s1",
+            "tx": 81,
+            "ty": 168,
+            "key": "bandage",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "s2",
+            "tx": 80,
+            "ty": 77,
+            "key": "bandage",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "delta_relay",
+            "tx": 140,
+            "ty": 87,
+            "key": "bandage",
+            "qty": 1
+          }
         ],
         "cashChests": [],
         "drops": [],
@@ -1858,9 +2289,30 @@
       "obtained": {
         "sources": [],
         "poi": [
-          "shipping:evac@172,24",
-          "dev_delta:evac@172,24",
-          "dev_delta:delta_relay@150,81"
+          {
+            "layout": "shipping",
+            "poi": "evac",
+            "tx": 172,
+            "ty": 24,
+            "key": "medkit",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "evac",
+            "tx": 172,
+            "ty": 24,
+            "key": "medkit",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "delta_relay",
+            "tx": 150,
+            "ty": 81,
+            "key": "medkit",
+            "qty": 1
+          }
         ],
         "cashChests": [],
         "drops": [],
@@ -2325,7 +2777,7 @@
       "definition": {
         "name": "Salvager Pick",
         "cat": "tool",
-        "icon": "pick",
+        "icon": "salvage_pick",
         "c1": "#71c3c6",
         "c2": "#a37945",
         "w": 1.9,
@@ -2410,7 +2862,7 @@
       "definition": {
         "name": "Salvager Axe",
         "cat": "tool",
-        "icon": "axe",
+        "icon": "salvage_axe",
         "c1": "#71c3c6",
         "c2": "#a37945",
         "w": 1.8,
@@ -2586,8 +3038,22 @@
       "obtained": {
         "sources": [],
         "poi": [
-          "shipping:factory@150,103",
-          "dev_delta:factory@150,103"
+          {
+            "layout": "shipping",
+            "poi": "factory",
+            "tx": 150,
+            "ty": 103,
+            "key": "iron_sword",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "factory",
+            "tx": 150,
+            "ty": 103,
+            "key": "iron_sword",
+            "qty": 1
+          }
         ],
         "cashChests": [],
         "drops": [],
@@ -2845,10 +3311,38 @@
       "obtained": {
         "sources": [],
         "poi": [
-          "shipping:s2@80,77",
-          "shipping:watch@86,57",
-          "dev_delta:s2@80,77",
-          "dev_delta:watch@86,57"
+          {
+            "layout": "shipping",
+            "poi": "s2",
+            "tx": 80,
+            "ty": 77,
+            "key": "torch",
+            "qty": 2
+          },
+          {
+            "layout": "shipping",
+            "poi": "watch",
+            "tx": 86,
+            "ty": 57,
+            "key": "torch",
+            "qty": 2
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "s2",
+            "tx": 80,
+            "ty": 77,
+            "key": "torch",
+            "qty": 2
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "watch",
+            "tx": 86,
+            "ty": 57,
+            "key": "torch",
+            "qty": 2
+          }
         ],
         "cashChests": [],
         "drops": [],
@@ -3113,8 +3607,22 @@
       "obtained": {
         "sources": [],
         "poi": [
-          "shipping:factory_vault@160,96",
-          "dev_delta:factory_vault@160,96"
+          {
+            "layout": "shipping",
+            "poi": "factory_vault",
+            "tx": 160,
+            "ty": 96,
+            "key": "core_fire",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "factory_vault",
+            "tx": 160,
+            "ty": 96,
+            "key": "core_fire",
+            "qty": 1
+          }
         ],
         "cashChests": [],
         "drops": [],
@@ -3204,8 +3712,22 @@
       "obtained": {
         "sources": [],
         "poi": [
-          "shipping:light_top@27,176",
-          "dev_delta:light_top@27,176"
+          {
+            "layout": "shipping",
+            "poi": "light_top",
+            "tx": 27,
+            "ty": 176,
+            "key": "core_storm",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "light_top",
+            "tx": 27,
+            "ty": 176,
+            "key": "core_storm",
+            "qty": 1
+          }
         ],
         "cashChests": [],
         "drops": [],
@@ -3251,8 +3773,22 @@
       "obtained": {
         "sources": [],
         "poi": [
-          "shipping:wreck@129,181",
-          "dev_delta:wreck@129,181"
+          {
+            "layout": "shipping",
+            "poi": "wreck",
+            "tx": 129,
+            "ty": 181,
+            "key": "core_frost",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "wreck",
+            "tx": 129,
+            "ty": 181,
+            "key": "core_frost",
+            "qty": 1
+          }
         ],
         "cashChests": [],
         "drops": [],
@@ -3296,22 +3832,134 @@
       "obtained": {
         "sources": [],
         "poi": [
-          "shipping:tp@96,114",
-          "shipping:mill@120,88",
-          "shipping:mill@126,98",
-          "shipping:factory_vault@160,96",
-          "shipping:factory_vault@162,96",
-          "shipping:light_top@27,176",
-          "shipping:wreck@133,180",
-          "shipping:watch@86,57",
-          "dev_delta:tp@96,114",
-          "dev_delta:mill@120,88",
-          "dev_delta:mill@126,98",
-          "dev_delta:factory_vault@160,96",
-          "dev_delta:factory_vault@162,96",
-          "dev_delta:light_top@27,176",
-          "dev_delta:wreck@133,180",
-          "dev_delta:watch@86,57"
+          {
+            "layout": "shipping",
+            "poi": "tp",
+            "tx": 96,
+            "ty": 114,
+            "key": "blueprint:bow",
+            "qty": 1
+          },
+          {
+            "layout": "shipping",
+            "poi": "mill",
+            "tx": 120,
+            "ty": 88,
+            "key": "blueprint:stew",
+            "qty": 1
+          },
+          {
+            "layout": "shipping",
+            "poi": "mill",
+            "tx": 126,
+            "ty": 98,
+            "key": "blueprint:brick",
+            "qty": 1
+          },
+          {
+            "layout": "shipping",
+            "poi": "factory_vault",
+            "tx": 160,
+            "ty": 96,
+            "key": "blueprint:core_earth",
+            "qty": 1
+          },
+          {
+            "layout": "shipping",
+            "poi": "factory_vault",
+            "tx": 162,
+            "ty": 96,
+            "key": "blueprint:gas_mask",
+            "qty": 1
+          },
+          {
+            "layout": "shipping",
+            "poi": "light_top",
+            "tx": 27,
+            "ty": 176,
+            "key": "blueprint:leather_armor",
+            "qty": 1
+          },
+          {
+            "layout": "shipping",
+            "poi": "wreck",
+            "tx": 133,
+            "ty": 180,
+            "key": "blueprint:arrow",
+            "qty": 1
+          },
+          {
+            "layout": "shipping",
+            "poi": "watch",
+            "tx": 86,
+            "ty": 57,
+            "key": "blueprint:fur_cloak",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "tp",
+            "tx": 96,
+            "ty": 114,
+            "key": "blueprint:bow",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "mill",
+            "tx": 120,
+            "ty": 88,
+            "key": "blueprint:stew",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "mill",
+            "tx": 126,
+            "ty": 98,
+            "key": "blueprint:brick",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "factory_vault",
+            "tx": 160,
+            "ty": 96,
+            "key": "blueprint:core_earth",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "factory_vault",
+            "tx": 162,
+            "ty": 96,
+            "key": "blueprint:gas_mask",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "light_top",
+            "tx": 27,
+            "ty": 176,
+            "key": "blueprint:leather_armor",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "wreck",
+            "tx": 133,
+            "ty": 180,
+            "key": "blueprint:arrow",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "watch",
+            "tx": 86,
+            "ty": 57,
+            "key": "blueprint:fur_cloak",
+            "qty": 1
+          }
         ],
         "cashChests": [],
         "drops": [],
@@ -3512,9 +4160,30 @@
       "obtained": {
         "sources": [],
         "poi": [
-          "shipping:watch@86,57",
-          "dev_delta:watch@86,57",
-          "dev_delta:delta_relay@140,87"
+          {
+            "layout": "shipping",
+            "poi": "watch",
+            "tx": 86,
+            "ty": 57,
+            "key": "keycard",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "watch",
+            "tx": 86,
+            "ty": 57,
+            "key": "keycard",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "delta_relay",
+            "tx": 140,
+            "ty": 87,
+            "key": "keycard",
+            "qty": 1
+          }
         ],
         "cashChests": [],
         "drops": [],
@@ -3558,11 +4227,46 @@
           "wreck"
         ],
         "poi": [
-          "shipping:light@31,175",
-          "shipping:wreck@133,180",
-          "dev_delta:light@31,175",
-          "dev_delta:wreck@133,180",
-          "dev_delta:delta_relay@140,87"
+          {
+            "layout": "shipping",
+            "poi": "light",
+            "tx": 31,
+            "ty": 175,
+            "key": "fuel_can",
+            "qty": 1
+          },
+          {
+            "layout": "shipping",
+            "poi": "wreck",
+            "tx": 133,
+            "ty": 180,
+            "key": "fuel_can",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "light",
+            "tx": 31,
+            "ty": 175,
+            "key": "fuel_can",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "wreck",
+            "tx": 133,
+            "ty": 180,
+            "key": "fuel_can",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "delta_relay",
+            "tx": 140,
+            "ty": 87,
+            "key": "fuel_can",
+            "qty": 1
+          }
         ],
         "cashChests": [],
         "drops": [],
@@ -5569,6 +6273,10 @@
           [
             "fuel_can",
             0.06
+          ],
+          [
+            "mechanical_parts",
+            0.08
           ]
         ],
         "block": true,

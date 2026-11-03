@@ -287,6 +287,7 @@ function icon(g: G, kind: string, c1: string, c2: string) {
     case 'gem': for (let y = 0; y < 8; y++) R(g, 8 - (y < 4 ? y : 8 - y), 4 + y, (y < 4 ? y : 8 - y) * 2 + 1, 1, y < 3 ? c2 : c1); break;
     case 'scrap': R(g, 3, 6, 9, 6, c1); R(g, 6, 4, 6, 3, c2); P(g, 4, 7, '#d0d0d8'); break;
     case 'gear': ell(g, 8, 8, 5, 5, c1); for (let k = 0; k < 8; k++) { const a = k / 8 * Math.PI * 2; P(g, 8 + Math.cos(a) * 6, 8 + Math.sin(a) * 6, c1); } ell(g, 8, 8, 2, 2, c2); break;
+    case 'parts': icon(g, 'gear', c1, c2); R(g, 11, 11, 3, 2, '#d5bb80'); P(g, 12, 10, '#d5bb80'); break;
     case 'ingot': for (let y = 0; y < 5; y++) R(g, 3 + (4 - y) * 0.5, 6 + y, 10 - (4 - y), 1, y === 0 ? c2 : c1); break;
     case 'rope': for (let k = 0; k < 4; k++) ell(g, 8, 5 + k * 2.4, 4, 1.4, k % 2 ? c1 : c2); break;
     case 'hide': ell(g, 8, 8, 6, 5, c1); P(g, 2, 4, c1); P(g, 13, 4, c1); P(g, 2, 12, c1); P(g, 13, 12, c1); ell(g, 7, 7, 2, 1.5, c2); break;
@@ -304,6 +305,8 @@ function icon(g: G, kind: string, c1: string, c2: string) {
     case 'knife': for (let k = 0; k < 7; k++) R(g, 5 + k, 10 - k, 2, 1, c1); P(g, 11, 4, '#ffffff'); R(g, 3, 11, 3, 2, c2); break;
     case 'axe': for (let k = 0; k < 10; k++) P(g, 4 + k * 0.8, 13 - k, c2); R(g, 9, 2, 4, 5, c1); P(g, 12, 2, '#ffffff'); break;
     case 'pick': for (let k = 0; k < 10; k++) P(g, 5 + k * 0.6, 13 - k, c2); for (let k = 0; k < 11; k++) P(g, 3 + k, 4 + Math.abs(k - 5) * 0.4, c1); break;
+    case 'salvage_pick': icon(g, 'pick', c1, c2); R(g, 5, 7, 3, 2, '#deb967'); P(g, 6, 7, '#60472a'); break;
+    case 'salvage_axe': icon(g, 'axe', c1, c2); R(g, 6, 8, 3, 2, '#deb967'); P(g, 7, 8, '#60472a'); break;
     case 'spear': for (let k = 0; k < 12; k++) P(g, 2 + k, 14 - k, c1); R(g, 12, 2, 2, 2, c2); P(g, 14, 1, '#ffffff'); break;
     case 'sword': for (let k = 0; k < 9; k++) R(g, 6 + k, 10 - k, 1, 2, c1); P(g, 14, 2, '#ffffff'); R(g, 4, 9, 4, 1, '#a0a0a8'); R(g, 3, 11, 3, 3, c2); break;
     case 'bow': for (let k = 0; k < 12; k++) P(g, 4 + Math.sin(k / 11 * Math.PI) * 5, 2 + k, c1); R(g, 4, 2, 1, 12, c2); break;
