@@ -47,3 +47,18 @@ Reusable native-semantic adapters — no per-spell shader rewrites:
 Manifest now separates `approvedVisualLead` / `currentlyRenderedSource` / `fusionStatus` / `artAcceptance`; FX Lab (F9) has per-skill lead / C-study / fusion? modes.
 
 Honest counts: 20/20 accessible; source-faithful leads implemented = 10 (B #02/#03/#08, C #07/#10/#15/#17, D #19, A #11, A+C #20); fusion candidates assembled = 5 (#01/#05/#09/#11/#16, CANDIDATE_ONLY_NOT_APPROVED); redesign study = 6 (#04/#06/#12/#13/#14/#18, nonfinal). F9 (not F4) opens the lab.
+
+
+## Phase 3 (semantic fusion recipes, per CT 6606101609)
+- `source/fusionRecipe.ts` — ONE data-driven recipe engine: each recipe declares
+  lead component + secondary components with engine/skillId/role/phase. Compose =
+  one world base, lead structure render, secondary components merged as SIGNED
+  DELTAS vs the same world (never RGB-averaging composited frames; center-aligned,
+  no top-left crop). Recipes: #01 A#01+C#01, #05 A#05+C#05, #09 A#09+C#09+B#09,
+  #11 **A#11 + C#09 arcs** (phase 0.25-0.95), #16 A#16+C#16. #20 keeps its A+C bridge.
+- Routing fixed: #11 lead = pure A#11, study = C#11, fusion = A#11+C#09 recipe.
+- Source-window boundary feathered into the real world (14px smoothstep ramp on the
+  frame region edges) — B #02/#03/#08 no longer show a hard dark rectangle.
+- QA: gallery 20 + phase-3 trio gallery-11-lead/study/fusion + gallery-02-lead.
+- Counts: 20/20 accessible; 10 source-faithful leads (B3 C4 D1 A#11 A+C#20);
+  5 recipe candidates; 6 redesign studies (nonfinal).

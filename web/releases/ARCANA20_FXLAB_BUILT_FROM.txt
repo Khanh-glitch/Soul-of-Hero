@@ -1,5 +1,5 @@
-SOH ARCANA20 FX LAB — standalone, 20 skills, source-vote-faithful leads (A/B/C/D adapters + A+C bridge for #20)
+SOH ARCANA20 FX LAB — standalone, 20 skills, semantic fusion recipes (A/B/C/D adapters, #11 = A#11 + C#09 arcs)
 (F9 in game → FX Lab → "ARCANA20 lab" dropdown; per-skill lead / C-study / fusion? mode buttons)
 built from branch arena/3337c864-soul-of-hero
-artifact sha256    : 2dfeb89092e57e32e7c9950b0caf00c28e0d76a32d0d1fdbf7e1348d4ac2d69b
+artifact sha256    : e4dbe45ac74d6fd8bfba2a53fb8418afce6513378900f7e692a3bf0cb07bdc2b
 boot: open this file directly (file://)

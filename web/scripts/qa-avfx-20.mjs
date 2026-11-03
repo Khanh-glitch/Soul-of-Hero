@@ -78,6 +78,19 @@ for (const c of cat) {
   await page.screenshot({ path: `${OUT}/gallery-${String(c.id).padStart(2, '0')}.png` });
   report.gallery.push({ id: c.id, name: c.name, status: c.status, lead: c.lead, rendered: c.src });
 }
+// phase-3 decisive trio: #11 lead (pure A) / study (C) / fusion (A#11 + C#09 recipe) + B#02 boundary check
+report.phase3 = {};
+for (const [tag, mode] of [['11-lead', 'lead'], ['11-study', 'study'], ['11-fusion', 'fusion']]) {
+  await page.evaluate(m => { const c = window.__arcanaLab.catalog.find(x => x.id === 11); window.__arcanaLab.cast(c.index, m); window.__arcanaLab.seek(Math.min(c.climax + 0.4, c.dur * 0.62), c.index, m); }, mode);
+  await page.waitForTimeout(650);
+  await page.screenshot({ path: `${OUT}/gallery-${tag}.png` });
+  report.phase3[tag] = await page.evaluate(() => window.__arcanaLab.info().currentlyRenderedSource);
+}
+{ const c = await page.evaluate(() => window.__arcanaLab.catalog.find(x => x.id === 2));
+  await page.evaluate(cc => { window.__arcanaLab.cast(cc.index, 'lead'); window.__arcanaLab.seek(1.6, cc.index, 'lead'); }, c);
+  await page.waitForTimeout(650);
+  await page.screenshot({ path: `${OUT}/gallery-02-lead.png` });
+}
 await page.evaluate(() => window.__arcanaLab.stop?.());
 report.galleryCount = report.gallery.length;
 

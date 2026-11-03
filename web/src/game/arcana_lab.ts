@@ -12,6 +12,7 @@ import { BRunner, B_W, B_H, B_EFFECTS } from './arcana_d20/source/bRunner';
 import { ARunner, A_W, A_H, A_SPELLS } from './arcana_d20/source/aRunner';
 import { d19 } from './arcanaD19';
 import { d20 } from './arcana20';
+import { RECIPES, recipeLabel, composeFusion } from './arcana_d20/source/fusionRecipe';
 import * as comp from './compositor';
 import { getPresenter } from './gpu/presenter';
 
@@ -43,7 +44,7 @@ const STATUS: Record<number, LabEntry['previewStatus']> = {
 const FUSION_IDS = new Set([1, 5, 9, 11, 16, 20]);
 const B_IDS = new Set([2, 3, 8]);
 const C_IDS = new Set([7, 10, 15, 17]);
-const A_IDS = new Set([11]);
+
 
 export const LAB_CATALOG: LabEntry[] = CATALOG.map((c) => {
   const lead = LEAD[c.id] ?? 'C';
@@ -61,9 +62,9 @@ export function sourceLabel(id: number, mode: RenderMode): string {
   if (mode === 'study') return 'C (study)';
   if (id === 19) return 'D (D19 bridge)';
   if (id === 20) return 'A+C (semantic bridge)';
-  if ((mode === 'fusion' || mode === 'lead') && FUSION_IDS.has(id) && id !== 20) return id === 9 ? 'A+B+C (candidate)' : 'A+C (candidate)';
+  if (mode === 'fusion' && RECIPES[id]) return recipeLabel(RECIPES[id]) + ' (recipe)';
+  if (FUSION_IDS.has(id) && id !== 20) return 'A'; // lead mode = pure A structure
   if (B_IDS.has(id)) return 'B';
-  if (A_IDS.has(id)) return 'A';
   return 'C';
 }
 
@@ -125,13 +126,13 @@ export class ArcanaLabClient implements comp.VfxClient {
     }
 
 
-    const useFusion = (this.cast.mode === 'fusion' || this.cast.mode === 'lead') && FUSION_IDS.has(entry.id) && entry.id !== 20;
-    const useB = this.cast.mode !== 'study' && this.cast.mode !== 'fusion' && B_IDS.has(entry.id);
-    const useA = this.cast.mode !== 'study' && this.cast.mode !== 'fusion' && A_IDS.has(entry.id);
+    const useFusion = this.cast.mode === 'fusion' && !!RECIPES[entry.id];
+    const useB = this.cast.mode === 'lead' && B_IDS.has(entry.id);
+    const useA = this.cast.mode === 'lead' && (FUSION_IDS.has(entry.id) && entry.id !== 20);
 
     let W = C_W, H = C_H, out: Uint8ClampedArray = this.cR.out;
     if (useB) { W = B_W; H = B_H; }
-    else if (useA) { W = A_W; H = A_H; }
+    else if (useA || useFusion) { W = A_W; H = A_H; }
 
     const sx = Math.round(this.cast.wx - frame.cam.x - W / 2);
     const sy = Math.round(this.cast.wy - frame.cam.y - H / 2);
@@ -141,35 +142,15 @@ export class ArcanaLabClient implements comp.VfxClient {
     const anchor = sx * 4096 + sy;
     const needRender = tick !== this.lastTick || anchor !== this.lastAnchor;
     if (useFusion) {
-      // recipe composition: render each elected source component and blend
-      const parts: Uint8ClampedArray[] = [];
+      // semantic recipe: ONE world base, lead structure, secondary components
+      // merged as signed deltas (never an RGB average of composited frames)
       if (needRender) {
-        const aRegion = p.worldRegion(Math.round(this.cast.wx - frame.cam.x - A_W / 2), Math.round(this.cast.wy - frame.cam.y - A_H / 2), A_W, A_H);
-        this.aR.setWorld(aRegion && aRegion.length >= A_W * A_H * 4 ? aRegion : region);
-        this.aR.cast(entry.index); this.aR.seek(Math.min(t, this.aR.duration));
-        parts.push(this.aR.out);
-        const cRegion = p.worldRegion(Math.round(this.cast.wx - frame.cam.x - C_W / 2), Math.round(this.cast.wy - frame.cam.y - C_H / 2), C_W, C_H) ?? region;
-        this.cR.setWorld(cRegion); this.cR.cast(entry.index); this.cR.seek(Math.min(t, entry.dur));
-        parts.push(this.cR.out);
-        if (entry.id === 9) {
-          const bRegion = p.worldRegion(Math.round(this.cast.wx - frame.cam.x - B_W / 2), Math.round(this.cast.wy - frame.cam.y - B_H / 2), B_W, B_H) ?? region;
-          this.bR.setWorld(bRegion); this.bR.cast(entry.index); this.bR.seek(Math.min(t, this.bR.duration));
-          parts.push(this.bR.out);
-        }
-      } else {
-        parts.push(this.aR.out, this.cR.out);
-        if (entry.id === 9) parts.push(this.bR.out);
-      }
-      const n = parts.length, bw = C_W, bh = C_H;
-      for (let i = 0; i < bw * bh * 4; i++) this.blend[i] = 0;
-      for (const part of parts) {
-        const pw = part === this.aR.out ? A_W : part === this.bR.out ? B_W : C_W;
-        const ph = part === this.aR.out ? A_H : part === this.bR.out ? B_H : C_H;
-        for (let y = 0; y < bh; y++) for (let x = 0; x < bw; x++) {
-          const si = ((Math.min(y, ph - 1)) * pw + Math.min(x, pw - 1)) * 4, di = (y * bw + x) * 4;
-          this.blend[di] += part[si] / n; this.blend[di + 1] += part[si + 1] / n;
-          this.blend[di + 2] += part[si + 2] / n; this.blend[di + 3] = 255;
-        }
+        const recipe = RECIPES[entry.id];
+        const cx = Math.round(this.cast.wx - frame.cam.x), cy = Math.round(this.cast.wy - frame.cam.y);
+        composeFusion(recipe, { a: this.aR, b: this.bR, c: this.cR },
+          (w, h) => p.worldRegion(cx - Math.round(w / 2), cy - Math.round(h / 2), w, h) ?? region,
+          Math.min(t, entry.dur) / Math.max(entry.dur, 1e-6),
+          this.blend);
       }
       out = this.blend;
     } else if (useB) {
@@ -181,6 +162,21 @@ export class ArcanaLabClient implements comp.VfxClient {
     } else {
       if (needRender) { this.cR.setWorld(region); this.cR.cast(entry.index); this.cR.seek(t); }
       out = this.cR.out;
+    }
+
+    // feather the source window into the real world so no hard rectangle edge
+    // survives (interior source art/lighting untouched; C is already world-based)
+    const F = 14;
+    for (let y = 0; y < H; y++) {
+      const dy = Math.min(y, H - 1 - y);
+      for (let x = 0; x < W; x++) {
+        const dx = Math.min(x, W - 1 - x);
+        const d = Math.min(dx, dy);
+        if (d >= F) continue;
+        const ramp = d / F, k = ramp * ramp * (3 - 2 * ramp);
+        const di = (y * W + x) * 4;
+        for (let c = 0; c < 3; c++) out[di + c] = Math.round(region[di + c] * (1 - k) + out[di + c] * k);
+      }
     }
 
     p.uploadFrame(out, W, H);
