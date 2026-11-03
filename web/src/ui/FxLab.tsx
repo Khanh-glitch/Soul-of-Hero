@@ -111,6 +111,12 @@ export default function FxLab({ gs, hidden, onHide, onClose, nightOverride, setN
         <button className="btn" style={{ fontSize: 9, padding: '0 4px', marginRight: 2 }} title="replay A→B→A: collision must regenerate identically" onClick={() => { const q = (window as any).__d20qa; q.seek(6.6); setTimeout(() => q.seek(0.5), 120); setTimeout(() => q.seek(6.6), 240); }}>#20 ↺A→B→A</button>
         <button className="btn" style={{ fontSize: 9, padding: '0 4px', marginRight: 2 }} onClick={() => (window as any).__d20qa.seek(6.3)}>#20 @climax 6.3s</button>
         <button className="btn" style={{ fontSize: 9, padding: '0 4px', marginRight: 2 }} onClick={() => (window as any).__d20qa.seek(8.2)}>#20 @restitch 8.2s</button>
+        <select style={{ fontSize: 9, maxWidth: 150, background: '#101c29', color: '#cfe6f5', border: '1px solid #33506b' }}
+          defaultValue="" onChange={(e) => { const i = parseInt(e.target.value); if (!isNaN(i)) { const L = (window as any).__arcanaLab; if (L.catalog[i].id === 20) { (window as any).__d20qa.play(); } else { L.cast(i); } } e.target.value = ''; }}>
+          <option value="">ARCANA20 lab: chọn chiêu…</option>
+          {(window as any).__arcanaLab?.catalog.map((c: any) => <option key={c.index} value={c.index}>#{String(c.id).padStart(2,'0')} {c.name} [{c.status}]</option>) ?? null}
+        </select>
+        <button className="btn" style={{ fontSize: 9, padding: '0 4px' }} onClick={() => { const L = (window as any).__arcanaLab; const info = L.info(); if (info) L.seek(Math.min(info.climax, info.dur * 0.6)); }}>@climax</button>
       </div>
       <div style={{ marginTop: 2 }}>
         <button className="btn" style={{ fontSize: 9, padding: '0 4px', marginRight: 2, borderColor: nightOverride ? '#8ab0ff' : undefined }} onClick={() => setNightOverride(!nightOverride)}>{nightOverride ? '☾ QA night' : '☼ day'}</button>

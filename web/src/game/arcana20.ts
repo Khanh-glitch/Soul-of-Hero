@@ -31,6 +31,7 @@ export class D20Client implements comp.VfxClient {
   private ensureField() { if (!this.field) this.field = buildContourField(this.contour); return this.field; }
 
   /** QA-only: play #20 from t=0 at a world position (visual only). */
+  qaStop() { this.cast = null; this.qaT = -1; }
   qaPlay(wx: number, wy: number) { this.qaT = -1; this.cast = { wx, wy, startMs: Date.now() }; this.content.reset(); this.sem.reset(); }
   /** QA-only: freeze/seek to source time t (seconds). */
   qaSeek(t: number, wx = 0, wy = 0) { if (this.qaT >= 0 && t < this.qaT) { this.content.reset(); this.sem.reset(); } this.qaT = t; this.cast = { wx, wy, startMs: 0 }; }

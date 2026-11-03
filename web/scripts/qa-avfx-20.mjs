@@ -53,6 +53,7 @@ for (const [name, t] of [['sem-1.3', 1.3], ['sem-4.5', 4.5], ['sem-6.6', 6.6], [
   const el = page.locator('#d20sem');
   if (await el.count()) await el.screenshot({ path: `${OUT}/SEM-${name}.png` });
 }
+await page.evaluate(() => { const el = document.getElementById('d20sem'); if (el) el.remove(); }); // no overlay in gameplay captures
 report.semanticBridge = 'source Frame + donor spell, CPU composite, real world base';
 
 // REFERENCE ground truth: creator-approved Visual Master, cast #20, matched timestamps
@@ -68,6 +69,17 @@ for (const [name, t] of PHASES) {
   if (await frame.count()) await frame.screenshot({ path: `${OUT}/REF-${name}.png` });
   else await refPage.screenshot({ path: `${OUT}/REF-${name}.png` });
 }
+// ARCANA20 gallery: one capture per registered skill at its climax-ish time
+report.gallery = [];
+const cat = await page.evaluate(() => (window.__arcanaLab?.catalog ?? []).map(c => ({ index: c.index, id: c.id, name: c.name, status: c.status, dur: c.dur, climax: c.climax })));
+for (const c of cat) {
+  await page.evaluate(cc => { window.__arcanaLab.cast(cc.index); window.__arcanaLab.seek(Math.min(cc.climax + 0.4, cc.dur * 0.62)); }, c);
+  await page.waitForTimeout(650);
+  await page.screenshot({ path: `${OUT}/gallery-${String(c.id).padStart(2, '0')}.png` });
+  report.gallery.push({ id: c.id, name: c.name, status: c.status });
+}
+report.galleryCount = report.gallery.length;
+
 report.referenceMaster = 'reference-arcana20-visual-master.html cast 20 (creator_approved)';
 await refPage.close();
 

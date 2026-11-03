@@ -4,6 +4,7 @@
 // geometry, collision flash, world-sampled fragments, restitch OUT.
 import { describe, it, expect } from 'vitest';
 import { SemanticRipper, SF_W, SF_H } from '../src/game/arcana_d20/source/semantic';
+import { CRunner, CATALOG } from '../src/game/arcana_d20/source/cRunner';
 
 function refBackground(): Uint8ClampedArray {
   const px = new Uint8ClampedArray(SF_W * SF_H * 4);
@@ -58,3 +59,25 @@ describe('arcana-d20 semantic bridge (unmodified donor spell on C Frame)', () =>
     expect(Buffer.from(a.out).equals(Buffer.from(b.out))).toBe(true);
   }, 60000);
 }, 60000);
+
+describe('ARCANA20 batch: all 20 vendored C spells run on the semantic runner', () => {
+  it('every catalog entry casts and renders non-empty frames at its climax', () => {
+    const base = new Uint8ClampedArray(384 * 216 * 4);
+    for (let i = 0; i < base.length; i += 4) { base[i] = 30; base[i + 1] = 60; base[i + 2] = 40; base[i + 3] = 255; }
+    expect(CATALOG.length).toBe(20);
+    const statuses = { SOURCE_PREVIEW: 0, FUSION_PREVIEW: 0, REDESIGN_STUDY: 0 };
+    for (const c of CATALOG) {
+      statuses[c.status]++;
+      const r = new CRunner();
+      r.setWorld(base);
+      r.cast(c.index);
+      r.seek(Math.min(c.climax + 0.3, c.dur * 0.6));
+      let changed = 0;
+      for (let i = 0; i < r.out.length; i += 4) if (Math.abs(r.out[i] - 30) + Math.abs(r.out[i + 1] - 60) > 20) changed++;
+      expect(changed, `spell #${c.id} ${c.name}`).toBeGreaterThan(30);
+    }
+    expect(statuses.SOURCE_PREVIEW).toBe(8);
+    expect(statuses.FUSION_PREVIEW).toBe(6);
+    expect(statuses.REDESIGN_STUDY).toBe(6);
+  }, 120000);
+});

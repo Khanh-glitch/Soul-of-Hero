@@ -1,0 +1,5 @@
+SOH ARCANA20 FX LAB — standalone playable build with all 20 registered ARCANA previews
+(F4 in game → FX Lab → "ARCANA20 lab" dropdown; #20 keeps A/B Current vs Restored toggle)
+built from branch arena/3337c864-soul-of-hero
+artifact sha256    : 6d905c478d19f9110b9124d719b79cd1ee244bcd33c8d33dcedd151eb3bd682f
+boot: open this file directly (file://)
