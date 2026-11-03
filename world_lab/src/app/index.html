@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SOH Veyra World Lab — GOLD Review</title><link rel="icon" href="data:,"><link rel="stylesheet" href="/src/app/style.css"></head>
+<body>
+<header><h1>SOH VEYRA WORLD LAB <span>GOLD-derived review / authoring — not native gameplay</span></h1><div id="status">Loading…</div></header>
+<div class="layout">
+  <aside class="panel controls">
+    <h2>View</h2>
+    <label>Time <select id="mode"><option value="day">Daylight</option><option value="night">Night</option><option value="dusk">Dusk</option></select></label>
+    <label>Ecology variant <select id="variant"><option value="A">A — authored seed 20261102</option><option value="B">B — alternate seed 20261103</option></select></label>
+    <label>Level <select id="level"><option value="exterior">Exterior / GOLD world</option></select></label>
+    <label>Camera preset <select id="preset"></select></label>
+    <h2>Debug overlays</h2>
+    <label><input type="checkbox" id="showCollision"> Collision / walkable</label>
+    <label><input type="checkbox" id="showGrid"> 16px tile grid</label>
+    <label><input type="checkbox" id="showIds"> Source IDs / zone names</label>
+    <label><input type="checkbox" id="showResources"> GOLD resource nodes</label>
+    <label><input type="checkbox" id="showPoiIds"> POI connectivity nodes</label>
+    <label><input type="checkbox" id="showRoute"> Paired Greywater→Argus route</label>
+    <h2>Navigation</h2>
+    <p class="hint">WASD / arrows move the review avatar. Camera follows at native 640×360 1×. Interior stairs are authoring transitions, not gameplay teleports.</p>
+    <div id="qa"></div>
+  </aside>
+  <main>
+    <div class="viewport-wrap"><canvas id="viewport" width="640" height="360" tabindex="0" aria-label="640 by 360 native 1x world viewport"></canvas><div class="caption">NATIVE 640×360 · 1× · NEAREST-NEIGHBOR · <span id="viewLabel">EXTERIOR</span></div></div>
+    <div class="panel inspector"><h2>GOLD tile inspector</h2><div id="inspector">Click the viewport or overview to inspect a tile.</div></div>
+    <div class="panel edits">
+      <h2>Deterministic creator edits</h2>
+      <div class="edit-grid">
+        <label>Tile material <select id="editMaterial"></select></label>
+        <label>Prop sprite <select id="editProp"></select></label>
+        <button id="paintTile">Paint tile</button><button id="addProp">Place prop</button>
+        <button id="lockRegion">Lock visible 12×12-tile region</button><button id="lockLast">Lock last edit</button>
+        <button id="saveEdits">Save to data/creator_edits.json</button><button id="exportEdits">Export JSON</button>
+        <input type="file" id="importEdits" accept="application/json"><button id="rebuild">Rebuild with edits</button>
+      </div>
+      <p class="hint">Edits preserve GOLD IDs and base materials; locked edits/regions survive variant B regeneration. Rebuild reruns the deterministic compiler, QA and captures.</p>
+      <div id="editStatus"></div>
+    </div>
+    <div class="panel shots"><h2>Real captures from shared renderer</h2><div id="gallery"></div></div>
+  </main>
+  <aside class="panel overview">
+    <h2>Authoring overview</h2><p class="hint">2× minimap of the 500×350 tile GOLD grid. Not a gameplay camera; click to move the viewport.</p>
+    <canvas id="overview" width="500" height="350" aria-label="GOLD world overview"></canvas>
+    <div id="overviewKey"></div>
+  </aside>
+</div>
+<script type="module" src="/src/app/app.js"></script>
+</body></html>

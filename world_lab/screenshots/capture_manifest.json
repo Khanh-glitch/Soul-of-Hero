@@ -1,0 +1,351 @@
+{
+  "viewport": [
+    640,
+    360
+  ],
+  "pixelScale": "1x",
+  "renderer": "NodeTarget + shared scene.mjs",
+  "shots": [
+    {
+      "id": "01_greywater_harbor_day",
+      "label": "GREYWATER TIDEWORKS / HARBOR",
+      "camera": {
+        "x": 2928,
+        "y": 2188,
+        "level": "exterior"
+      },
+      "player": {
+        "x": 3160,
+        "y": 2488,
+        "level": "exterior"
+      },
+      "mode": "day",
+      "source_ids": [
+        "po_greywater",
+        "dk_grey_s",
+        "br_3",
+        "sp_lake"
+      ],
+      "camera_px": [
+        2928,
+        2188
+      ],
+      "file": "screenshots/01_greywater_harbor_day.png",
+      "sha256": "afbc5f9f38770c4cb8f496be83a185f4a2b1e413846d28f922e3c880464cb228",
+      "bytes": 216692,
+      "render": {
+        "stats": {
+          "missingSprites": []
+        },
+        "tiles": 1161,
+        "drawables": 155
+      }
+    },
+    {
+      "id": "02_greywater_market_night",
+      "label": "GREYWATER / MARKET + BRIDGE",
+      "camera": {
+        "x": 3080,
+        "y": 2164,
+        "level": "exterior"
+      },
+      "player": {
+        "x": 3248,
+        "y": 2368,
+        "level": "exterior"
+      },
+      "mode": "night",
+      "source_ids": [
+        "po_greywater",
+        "br_3",
+        "rd_9",
+        "po_pumphouse"
+      ],
+      "camera_px": [
+        3080,
+        2164
+      ],
+      "file": "screenshots/02_greywater_market_night.png",
+      "sha256": "907a1d536c48f0d2896128f45e9be2d0a9e44c763c323bd62736893214f984d8",
+      "bytes": 197147,
+      "render": {
+        "stats": {
+          "missingSprites": []
+        },
+        "tiles": 1144,
+        "drawables": 142
+      }
+    },
+    {
+      "id": "03_greywater_sawmill_day",
+      "label": "AION EDGE SAWMILL / TIMBER YARD",
+      "camera": {
+        "x": 2672,
+        "y": 2492,
+        "level": "exterior"
+      },
+      "player": {
+        "x": 3128,
+        "y": 2820,
+        "level": "exterior"
+      },
+      "mode": "day",
+      "source_ids": [
+        "po_sawaion",
+        "po_glade",
+        "rs_1w",
+        "rd_13"
+      ],
+      "camera_px": [
+        2672,
+        2492
+      ],
+      "file": "screenshots/03_greywater_sawmill_day.png",
+      "sha256": "4f598b0a3ab6c5194a6493cf898957cd48b05f89677d131dd5b61a983236a178",
+      "bytes": 194957,
+      "render": {
+        "stats": {
+          "missingSprites": []
+        },
+        "tiles": 1161,
+        "drawables": 205
+      }
+    },
+    {
+      "id": "04_greywater_bridge_collision",
+      "label": "GREYWATER BRIDGE / COLLISION QA",
+      "camera": {
+        "x": 3100,
+        "y": 2124,
+        "level": "exterior"
+      },
+      "player": {
+        "x": 3400,
+        "y": 2320,
+        "level": "exterior"
+      },
+      "mode": "day",
+      "source_ids": [
+        "br_3",
+        "rd_9"
+      ],
+      "showCollision": true,
+      "showIds": true,
+      "camera_px": [
+        3100,
+        2124
+      ],
+      "file": "screenshots/04_greywater_bridge_collision.png",
+      "sha256": "d796b01bf38891a90e3a7dde29dc0be4daea06032ec57810b19cd42748e1ba50",
+      "bytes": 207359,
+      "render": {
+        "stats": {
+          "missingSprites": []
+        },
+        "tiles": 1188,
+        "drawables": 137
+      }
+    },
+    {
+      "id": "05_argus_courtyard_day",
+      "label": "ARGUS ACADEMY / COURTYARD",
+      "camera": {
+        "x": 3424,
+        "y": 868,
+        "level": "exterior"
+      },
+      "player": {
+        "x": 3744,
+        "y": 1048,
+        "level": "exterior"
+      },
+      "mode": "day",
+      "source_ids": [
+        "po_academy",
+        "po_archive",
+        "po_hall_eyes",
+        "po_observatory"
+      ],
+      "camera_px": [
+        3424,
+        868
+      ],
+      "file": "screenshots/05_argus_courtyard_day.png",
+      "sha256": "a4ba50fd881629e7facaff85cc19d1fdea5a72573c261025797c99f90d3604c3",
+      "bytes": 164675,
+      "render": {
+        "stats": {
+          "missingSprites": []
+        },
+        "tiles": 1118,
+        "drawables": 147
+      }
+    },
+    {
+      "id": "06_argus_courtyard_night",
+      "label": "ARGUS ACADEMY / ROOF OCCLUSION",
+      "camera": {
+        "x": 3424,
+        "y": 932,
+        "level": "exterior"
+      },
+      "player": {
+        "x": 3744,
+        "y": 976,
+        "level": "exterior"
+      },
+      "mode": "night",
+      "source_ids": [
+        "po_academy"
+      ],
+      "camera_px": [
+        3424,
+        932
+      ],
+      "file": "screenshots/06_argus_courtyard_night.png",
+      "sha256": "7d524fb5d2802dfe590c4c4aeb165db4236782ddc8e0eb2cef702459196fc0e7",
+      "bytes": 163696,
+      "render": {
+        "stats": {
+          "missingSprites": []
+        },
+        "tiles": 1118,
+        "drawables": 154
+      }
+    },
+    {
+      "id": "07_argus_l0_service_day",
+      "label": "ARGUS L0 / RECEPTION + GENERATOR",
+      "camera": {
+        "x": 64,
+        "y": 76,
+        "level": "argus_l0"
+      },
+      "player": {
+        "x": 328,
+        "y": 440,
+        "level": "argus_l0"
+      },
+      "mode": "day",
+      "source_ids": [
+        "po_academy"
+      ],
+      "showIds": true,
+      "camera_px": [
+        64,
+        76
+      ],
+      "file": "screenshots/07_argus_l0_service_day.png",
+      "sha256": "80199ea319b60938acd99746409bd0eb8ab647076d7b4dda5b111c12ca5f1cff",
+      "bytes": 109303,
+      "render": {
+        "stats": {
+          "missingSprites": []
+        },
+        "tiles": 1161,
+        "drawables": 16
+      }
+    },
+    {
+      "id": "08_argus_l1_archive_day",
+      "label": "ARGUS L-1 / ARCHIVE + CISTERN",
+      "camera": {
+        "x": 64,
+        "y": 76,
+        "level": "argus_l1"
+      },
+      "player": {
+        "x": 168,
+        "y": 136,
+        "level": "argus_l1"
+      },
+      "mode": "day",
+      "source_ids": [
+        "po_archive"
+      ],
+      "showIds": true,
+      "camera_px": [
+        64,
+        76
+      ],
+      "file": "screenshots/08_argus_l1_archive_day.png",
+      "sha256": "8b42e8b0ae3f2a28020a4194b403489f8bb85b91e37aeb50f1922d336576ebc9",
+      "bytes": 113378,
+      "render": {
+        "stats": {
+          "missingSprites": []
+        },
+        "tiles": 1161,
+        "drawables": 18
+      }
+    },
+    {
+      "id": "09_argus_l2_lens_night",
+      "label": "ARGUS L-2 / GREAT LENS VAULT",
+      "camera": {
+        "x": 64,
+        "y": 76,
+        "level": "argus_l2"
+      },
+      "player": {
+        "x": 392,
+        "y": 296,
+        "level": "argus_l2"
+      },
+      "mode": "night",
+      "source_ids": [
+        "po_academy",
+        "po_lantern"
+      ],
+      "showIds": true,
+      "camera_px": [
+        64,
+        76
+      ],
+      "file": "screenshots/09_argus_l2_lens_night.png",
+      "sha256": "efa56da558a16df61afd23dab3d3c145bcc7cfd6474ccfd900b8d591a82728ec",
+      "bytes": 119909,
+      "render": {
+        "stats": {
+          "missingSprites": []
+        },
+        "tiles": 1161,
+        "drawables": 13
+      }
+    },
+    {
+      "id": "10_argus_l2_collision_day",
+      "label": "ARGUS L-2 / COLLISION + RETREAT",
+      "camera": {
+        "x": 64,
+        "y": 76,
+        "level": "argus_l2"
+      },
+      "player": {
+        "x": 568,
+        "y": 456,
+        "level": "argus_l2"
+      },
+      "mode": "day",
+      "source_ids": [
+        "po_academy"
+      ],
+      "showCollision": true,
+      "showIds": true,
+      "camera_px": [
+        64,
+        76
+      ],
+      "file": "screenshots/10_argus_l2_collision_day.png",
+      "sha256": "56290d4a42bb415e100d097617189a8bf9aaa9fd2c4c564d2677b2b4e34ca434",
+      "bytes": 125156,
+      "render": {
+        "stats": {
+          "missingSprites": []
+        },
+        "tiles": 1161,
+        "drawables": 13
+      }
+    }
+  ]
+}

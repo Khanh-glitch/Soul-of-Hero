@@ -1,0 +1,974 @@
+[
+  {
+    "id": "po_academy",
+    "name": "Argus Academy",
+    "gold_at": [
+      936,
+      262
+    ],
+    "arche": "research",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_observatory",
+    "name": "Argus Observatory",
+    "gold_at": [
+      958,
+      170
+    ],
+    "arche": "observatory",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_archive",
+    "name": "Argus Archive Vaults",
+    "gold_at": [
+      1018,
+      226
+    ],
+    "arche": "facility",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_hall_eyes",
+    "name": "Hall of Eyes",
+    "gold_at": [
+      992,
+      212
+    ],
+    "arche": "elder_site",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_lantern",
+    "name": "Lantern Light",
+    "gold_at": [
+      1050,
+      152
+    ],
+    "arche": "observatory",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_lanternstn",
+    "name": "Lantern Cove Station",
+    "gold_at": [
+      1077.2153168454608,
+      311.9998727562178
+    ],
+    "arche": "roadstop",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_kestrel",
+    "name": "Kestrel Radio Tower",
+    "gold_at": [
+      700,
+      300
+    ],
+    "arche": "facility",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_typhon",
+    "name": "Typhon's Fracture",
+    "gold_at": [
+      556,
+      352
+    ],
+    "arche": "elder_site",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_viaduct",
+    "name": "Crushed Viaduct",
+    "gold_at": [
+      655,
+      448
+    ],
+    "arche": "ruins",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_freightyard",
+    "name": "Shattered Freight Yard",
+    "gold_at": [
+      690,
+      500
+    ],
+    "arche": "ruins",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_fracquarry",
+    "name": "Fracture Quarry",
+    "gold_at": [
+      600,
+      525
+    ],
+    "arche": "quarry",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_falls",
+    "name": "Falls Powerhouse",
+    "gold_at": [
+      722,
+      438
+    ],
+    "arche": "powerplant",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_greywater",
+    "name": "Greywater Hamlet",
+    "gold_at": [
+      812,
+      592
+    ],
+    "arche": "village",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_pumphouse",
+    "name": "Greywater Pumphouse",
+    "gold_at": [
+      850,
+      556
+    ],
+    "arche": "filter",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_confluence",
+    "name": "Confluence Waystation",
+    "gold_at": [
+      918,
+      668
+    ],
+    "arche": "roadstop",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_sawaion",
+    "name": "Aion Edge Sawmill",
+    "gold_at": [
+      748,
+      668
+    ],
+    "arche": "sawmill",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_mill",
+    "name": "Mossbrook Mill",
+    "gold_at": [
+      1002,
+      730
+    ],
+    "arche": "mill",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_kilns",
+    "name": "Charcoal Kilns",
+    "gold_at": [
+      905,
+      785
+    ],
+    "arche": "smelter",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_ranger",
+    "name": "Ranger Hut",
+    "gold_at": [
+      800,
+      760
+    ],
+    "arche": "hamlet",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_glade",
+    "name": "Mosslight Glade",
+    "gold_at": [
+      782,
+      705
+    ],
+    "arche": "grove",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_sapgrove",
+    "name": "Sap Grove",
+    "gold_at": [
+      960,
+      640
+    ],
+    "arche": "grove",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_elderwood",
+    "name": "Heart of the Elderwood",
+    "gold_at": [
+      868,
+      712
+    ],
+    "arche": "elder_site",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_siloc",
+    "name": "Grain Silo Complex",
+    "gold_at": [
+      1090,
+      760
+    ],
+    "arche": "warehouse",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_meridian",
+    "name": "Meridian Research Station",
+    "gold_at": [
+      1120,
+      690
+    ],
+    "arche": "research",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_oldpump",
+    "name": "Old Pumping Plant",
+    "gold_at": [
+      850,
+      985
+    ],
+    "arche": "facility",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_strait",
+    "name": "Strait Landing",
+    "gold_at": [
+      1268,
+      490
+    ],
+    "arche": "port",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_ironvein",
+    "name": "Ironvein Mine",
+    "gold_at": [
+      1205,
+      655
+    ],
+    "arche": "mine",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_ridgestop",
+    "name": "Ridge Pass Station",
+    "gold_at": [
+      1178,
+      578
+    ],
+    "arche": "roadstop",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_rapids",
+    "name": "Rapids Portage Hut",
+    "gold_at": [
+      1150,
+      462
+    ],
+    "arche": "roadstop",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_hook",
+    "name": "Hook Village",
+    "gold_at": [
+      1300,
+      335
+    ],
+    "arche": "village",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_mere",
+    "name": "Hook Mere Pier",
+    "gold_at": [
+      1250,
+      368
+    ],
+    "arche": "pier",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_timberyard",
+    "name": "Verdant Timberyard",
+    "gold_at": [
+      1022,
+      454
+    ],
+    "arche": "sawmill",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_ember",
+    "name": "Emberport",
+    "gold_at": [
+      1244,
+      838
+    ],
+    "arche": "port",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_slag",
+    "name": "Slagworks Foundry",
+    "gold_at": [
+      1190,
+      936
+    ],
+    "arche": "smelter",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_southfoot",
+    "name": "Southfoot Landing",
+    "gold_at": [
+      1196,
+      1070
+    ],
+    "arche": "port",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_gulfhead",
+    "name": "Gulfhead",
+    "gold_at": [
+      1052,
+      878
+    ],
+    "arche": "port",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_filter",
+    "name": "Delta Sluice & Filter Station",
+    "gold_at": [
+      934,
+      868
+    ],
+    "arche": "filter",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_westbank",
+    "name": "Westbank Landing",
+    "gold_at": [
+      918,
+      930
+    ],
+    "arche": "pier",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_westmouth",
+    "name": "Westmouth",
+    "gold_at": [
+      352,
+      556
+    ],
+    "arche": "port",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_greyquarry",
+    "name": "Greyback Quarry",
+    "gold_at": [
+      506,
+      652
+    ],
+    "arche": "quarry",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_westwood",
+    "name": "Westwood Hamlet",
+    "gold_at": [
+      424,
+      742
+    ],
+    "arche": "hamlet",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_fishcamp",
+    "name": "Fish Camp",
+    "gold_at": [
+      352,
+      846
+    ],
+    "arche": "hamlet",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_necropolis",
+    "name": "Necropolis of the Hollow Sun",
+    "gold_at": [
+      604,
+      1042
+    ],
+    "arche": "elder_site",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_tombs",
+    "name": "Dune Tombs",
+    "gold_at": [
+      520,
+      1086
+    ],
+    "arche": "tomb",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_cairns",
+    "name": "Sunken Cairns",
+    "gold_at": [
+      470,
+      990
+    ],
+    "arche": "ruins",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_oasis",
+    "name": "Mirage Camp",
+    "gold_at": [
+      668,
+      984
+    ],
+    "arche": "village",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_bonestop",
+    "name": "Bone Road Waystation",
+    "gold_at": [
+      752,
+      975
+    ],
+    "arche": "roadstop",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_sandgate",
+    "name": "Sandgate",
+    "gold_at": [
+      704,
+      1124
+    ],
+    "arche": "port",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_gate",
+    "name": "Threshold Gate",
+    "gold_at": [
+      168,
+      512
+    ],
+    "arche": "gate",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_dpier",
+    "name": "Drowned Pier",
+    "gold_at": [
+      226,
+      520
+    ],
+    "arche": "pier",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_beacon",
+    "name": "Beacon Rock Light",
+    "gold_at": [
+      268,
+      656
+    ],
+    "arche": "observatory",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_wreck",
+    "name": "Wreck Isle Salvage",
+    "gold_at": [
+      184,
+      872
+    ],
+    "arche": "ruins",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_tidecamp",
+    "name": "Tidepool Fishing Camp",
+    "gold_at": [
+      170,
+      548
+    ],
+    "arche": "hamlet",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_gullnest",
+    "name": "Seabird Nesting Cliffs",
+    "gold_at": [
+      1872,
+      428
+    ],
+    "arche": "grove",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_gullpier",
+    "name": "Tern Hut Pier",
+    "gold_at": [
+      1862,
+      470
+    ],
+    "arche": "pier",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_netcamp",
+    "name": "Gull Net Camp",
+    "gold_at": [
+      140,
+      848
+    ],
+    "arche": "hamlet",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_cindercamp",
+    "name": "Cinder Camp",
+    "gold_at": [
+      1596,
+      884
+    ],
+    "arche": "village",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_obsq",
+    "name": "Obsidian Quarry",
+    "gold_at": [
+      1650,
+      776
+    ],
+    "arche": "quarry",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_sulfur",
+    "name": "Sulfur Works",
+    "gold_at": [
+      1768,
+      882
+    ],
+    "arche": "mine",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_geo",
+    "name": "Geothermal Station",
+    "gold_at": [
+      1736,
+      916
+    ],
+    "arche": "powerplant",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_emberwatch",
+    "name": "Ember Watch",
+    "gold_at": [
+      1620,
+      746
+    ],
+    "arche": "observatory",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_surtur",
+    "name": "Foundry of the First Fire",
+    "gold_at": [
+      1694,
+      826
+    ],
+    "arche": "elder_site",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_saltharbor",
+    "name": "Saltwick Harbor",
+    "gold_at": [
+      1546,
+      334
+    ],
+    "arche": "port",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_saltpans",
+    "name": "Salt Pans",
+    "gold_at": [
+      1640,
+      322
+    ],
+    "arche": "quarry",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_saltlight",
+    "name": "Saltwick Light",
+    "gold_at": [
+      1732,
+      262
+    ],
+    "arche": "observatory",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_racks",
+    "name": "Kelp Racks",
+    "gold_at": [
+      1690,
+      354
+    ],
+    "arche": "hamlet",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_gullwreck",
+    "name": "Gull Isle Wreck",
+    "gold_at": [
+      1886,
+      446
+    ],
+    "arche": "ruins",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_ironharbor",
+    "name": "Ironholm Harbor",
+    "gold_at": [
+      1108,
+      1264
+    ],
+    "arche": "port",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_ironmine",
+    "name": "Ironholm Mine",
+    "gold_at": [
+      1186,
+      1290
+    ],
+    "arche": "mine",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_ironwh",
+    "name": "Ironholm Depot",
+    "gold_at": [
+      1236,
+      1290
+    ],
+    "arche": "warehouse",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_rc_meridian",
+    "name": "Meridian Archive Cache",
+    "gold_at": [
+      1138,
+      668
+    ],
+    "arche": "ragnarok_cache",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_rc_ironvein",
+    "name": "Foreman's Strongbox",
+    "gold_at": [
+      1222,
+      676
+    ],
+    "arche": "ragnarok_cache",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_rc_kestrel",
+    "name": "Kestrel Tower Safe",
+    "gold_at": [
+      708,
+      318
+    ],
+    "arche": "ragnarok_cache",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_rc_dam",
+    "name": "Falls Dam Vault",
+    "gold_at": [
+      754,
+      454
+    ],
+    "arche": "ragnarok_cache",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_rc_sandgate",
+    "name": "Sandgate Customs Strongbox",
+    "gold_at": [
+      718,
+      1106
+    ],
+    "arche": "ragnarok_cache",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_rc_salt",
+    "name": "Saltwick Harbor Safe",
+    "gold_at": [
+      1560,
+      322
+    ],
+    "arche": "ragnarok_cache",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_vend_gulf",
+    "name": "Gulfhead Trading House [ĐỀ XUẤT]",
+    "gold_at": [
+      1066,
+      894
+    ],
+    "arche": "chest_vendor",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_vend_strait",
+    "name": "Strait Landing Counter [ĐỀ XUẤT]",
+    "gold_at": [
+      1286,
+      500
+    ],
+    "arche": "chest_vendor",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_evac_west",
+    "name": "Westmouth Evac Pier",
+    "gold_at": [
+      342,
+      580
+    ],
+    "arche": "evac",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_evac_south",
+    "name": "Southfoot Evac Beach",
+    "gold_at": [
+      1178,
+      1090
+    ],
+    "arche": "evac",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  },
+  {
+    "id": "po_evac_hook",
+    "name": "Hook Evac Point",
+    "gold_at": [
+      1392,
+      374
+    ],
+    "arche": "evac",
+    "flagship": null,
+    "overlay": null,
+    "status": "GOLD_ANCHOR_PRESERVED"
+  }
+]

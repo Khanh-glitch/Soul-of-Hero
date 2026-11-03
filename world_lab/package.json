@@ -1,0 +1,22 @@
+{
+  "name": "soh-veyra-world-lab",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node src/compiler/build.mjs",
+    "capture": "node src/render/capture.mjs",
+    "test": "node src/tools/qa.mjs",
+    "test:browser": "node src/tools/browser_test.mjs",
+    "bench": "node src/tools/bench.mjs",
+    "serve": "node src/app/server.mjs"
+  },
+  "dependencies": {
+    "pngjs": "7.0.0"
+  },
+  "devDependencies": {
+    "@sparticuz/chromium": "^153.0.0",
+    "jsdom": "^26.1.0",
+    "puppeteer-core": "^25.16.0"
+  }
+}

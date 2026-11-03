@@ -1,0 +1,91 @@
+{
+  "generated": "2026-11-03T03:03:20.027Z",
+  "status": "PASS",
+  "runtime": "headless Chromium via @sparticuz/chromium + puppeteer-core",
+  "browser_version": "HeadlessChrome/153.0.8010.0",
+  "url": "http://127.0.0.1:3000",
+  "checks": [
+    {
+      "id": "BROWSER_LAUNCH",
+      "status": "PASS",
+      "version": "HeadlessChrome/153.0.8010.0",
+      "executable": "@sparticuz/chromium 153.0.0"
+    },
+    {
+      "id": "NATIVE_CANVAS_AND_DATA",
+      "status": "GOLD 88780f78b9e8… · 500×350 tiles · 47 blob cases · 9301/9208 ecology props",
+      "width": 640,
+      "height": 360,
+      "cssWidth": "640px",
+      "cssHeight": "360px",
+      "smoothing": false,
+      "grid": [
+        500,
+        350
+      ],
+      "pois": 81,
+      "resources": 280,
+      "props": 9301,
+      "blob": 47
+    },
+    {
+      "id": "SHARED_RENDERER_NO_MISSING_SPRITES",
+      "status": "PASS",
+      "stats": {
+        "missingSprites": []
+      },
+      "tiles": 1144,
+      "drawables": 166
+    },
+    {
+      "id": "TIME_VARIANT_LEVEL_PRESETS",
+      "status": "PASS",
+      "mode": "night",
+      "variant": "B",
+      "level": "exterior",
+      "camera": "exterior",
+      "ecology": 9208
+    },
+    {
+      "id": "DEBUG_OVERLAYS_AND_INSPECTOR",
+      "status": "PASS",
+      "inspectorLength": 468
+    },
+    {
+      "id": "OVERVIEW_PICK_AND_KEYBOARD_MOVE",
+      "status": "PASS",
+      "before": {
+        "x": 4008,
+        "y": 2792
+      },
+      "p0": {
+        "x": 3752,
+        "y": 536
+      },
+      "p1": {
+        "x": 3784.2695999999983,
+        "y": 536
+      },
+      "overviewPick": true
+    },
+    {
+      "id": "CREATOR_EDIT_EXPORT_IMPORT_SAVE",
+      "status": "Save: {\"saved\":true,\"path\":\"data/creator_edits.json\",\"edits\":0,\"lockedRegions\":0}",
+      "savedEdits": 0,
+      "lockedRegions": 0
+    },
+    {
+      "id": "NO_RUNTIME_OR_CONSOLE_ERRORS",
+      "status": "PASS",
+      "pageErrors": 0,
+      "consoleErrors": 0
+    }
+  ],
+  "errors": [],
+  "consoleErrors": [],
+  "screenshot": "qa/browser_app.png",
+  "limitations": [
+    "Browser is the review/authoring surface, not Godot 4.7 or native gameplay.",
+    "Canvas uses the same shared scene renderer as Node captures; 640x360 1x is preserved."
+  ]
+}

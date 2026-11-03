@@ -1,0 +1,6342 @@
+{
+  "meta": {
+    "authority": "A3/Gameplay",
+    "status": "PROPOSED_PLACEMENT_ONLY",
+    "no_yields": true
+  },
+  "proposals": [
+    {
+      "source_id": "rs_0",
+      "gold_name": "Cá / hải sản",
+      "gold_kind": "fish",
+      "gold_at": [
+        876.446003748104,
+        140.44064422138035
+      ],
+      "tile": [
+        219,
+        35
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        712.7218248695135,
+        213.84751230850816
+      ],
+      "tile": [
+        178,
+        53
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_1_0",
+        "ec_rs_1_2",
+        "ec_rs_1_3",
+        "ec_rs_1_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        808.2146406807005,
+        207.99681499041617
+      ],
+      "tile": [
+        202,
+        52
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_2_0",
+        "ec_rs_2_1",
+        "ec_rs_2_2",
+        "ec_rs_2_3",
+        "ec_rs_2_4",
+        "ec_rs_2_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1016.7704008743167,
+        204.13170009292662
+      ],
+      "tile": [
+        254,
+        51
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_3_0",
+        "ec_rs_3_1",
+        "ec_rs_3_3",
+        "ec_rs_3_4",
+        "ec_rs_3_5",
+        "ec_rs_3_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        586.0414932686836,
+        257.8984351530671
+      ],
+      "tile": [
+        147,
+        64
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_4_0",
+        "ec_rs_4_1"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        868.629587545991,
+        248.51458842679858
+      ],
+      "tile": [
+        217,
+        62
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_5_0",
+        "ec_rs_5_1",
+        "ec_rs_5_2",
+        "ec_rs_5_3",
+        "ec_rs_5_4",
+        "ec_rs_5_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        915.5034306235611,
+        240.912772256881
+      ],
+      "tile": [
+        229,
+        60
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_6_0",
+        "ec_rs_6_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_7",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        983.2676705811173,
+        250.4284834098071
+      ],
+      "tile": [
+        246,
+        63
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_7_0",
+        "ec_rs_7_1",
+        "ec_rs_7_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_8",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1603.1637535560876,
+        242.94200142659247
+      ],
+      "tile": [
+        401,
+        61
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_8_0",
+        "ec_rs_8_1",
+        "ec_rs_8_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_9",
+      "gold_name": "Thảo dược",
+      "gold_kind": "herbs",
+      "gold_at": [
+        1634.6503958925605,
+        251.85472271218896
+      ],
+      "tile": [
+        409,
+        63
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_9_0",
+        "ec_rs_9_2",
+        "ec_rs_9_3",
+        "ec_rs_9_4",
+        "ec_rs_9_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_a",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1712.6175648644567,
+        261.5867025759071
+      ],
+      "tile": [
+        428,
+        65
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_a_0",
+        "ec_rs_a_1",
+        "ec_rs_a_2",
+        "ec_rs_a_3",
+        "ec_rs_a_4",
+        "ec_rs_a_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_b",
+      "gold_name": "Quặng",
+      "gold_kind": "ore",
+      "gold_at": [
+        488.66168964095414,
+        297.9866753257811
+      ],
+      "tile": [
+        122,
+        74
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_c",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        761.5440567154437,
+        317.2475111037493
+      ],
+      "tile": [
+        190,
+        79
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_c_0",
+        "ec_rs_c_1",
+        "ec_rs_c_2",
+        "ec_rs_c_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_d",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        869.582192061469,
+        307.6582313068211
+      ],
+      "tile": [
+        217,
+        77
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_d_0",
+        "ec_rs_d_1",
+        "ec_rs_d_2",
+        "ec_rs_d_3",
+        "ec_rs_d_4",
+        "ec_rs_d_5",
+        "ec_rs_d_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_e",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        1030.079122543335,
+        296.3004270866513
+      ],
+      "tile": [
+        258,
+        74
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_e_0",
+        "ec_rs_e_1",
+        "ec_rs_e_2",
+        "ec_rs_e_3",
+        "ec_rs_e_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_f",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1249.092239299789,
+        310.1587408706546
+      ],
+      "tile": [
+        312,
+        78
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_f_1",
+        "ec_rs_f_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_g",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1326.1501346565783,
+        324.36555570177734
+      ],
+      "tile": [
+        332,
+        81
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_g_0",
+        "ec_rs_g_1",
+        "ec_rs_g_2",
+        "ec_rs_g_3",
+        "ec_rs_g_4",
+        "ec_rs_g_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_h",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        1580.5088766049594,
+        320.4066040944308
+      ],
+      "tile": [
+        395,
+        80
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_h_0",
+        "ec_rs_h_1",
+        "ec_rs_h_2",
+        "ec_rs_h_3",
+        "ec_rs_h_4",
+        "ec_rs_h_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_i",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1651.294770238921,
+        290.19946544617414
+      ],
+      "tile": [
+        413,
+        73
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_i_0",
+        "ec_rs_i_1",
+        "ec_rs_i_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_j",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1718.4034737497568,
+        323.9164946246892
+      ],
+      "tile": [
+        430,
+        81
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_j_0",
+        "ec_rs_j_1",
+        "ec_rs_j_2",
+        "ec_rs_j_3",
+        "ec_rs_j_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_k",
+      "gold_name": "Đá",
+      "gold_kind": "stone",
+      "gold_at": [
+        483.18190997838974,
+        366.56491435691714
+      ],
+      "tile": [
+        121,
+        92
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_l",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        855.3583616316319,
+        362.5038682259619
+      ],
+      "tile": [
+        214,
+        91
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_l_0",
+        "ec_rs_l_1",
+        "ec_rs_l_2",
+        "ec_rs_l_3",
+        "ec_rs_l_4",
+        "ec_rs_l_5",
+        "ec_rs_l_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_m",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1025.5807824842632,
+        349.87274993769825
+      ],
+      "tile": [
+        256,
+        87
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_m_0",
+        "ec_rs_m_1",
+        "ec_rs_m_2",
+        "ec_rs_m_3",
+        "ec_rs_m_4",
+        "ec_rs_m_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_n",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        1100.8321028277278,
+        358.3875686451793
+      ],
+      "tile": [
+        275,
+        90
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_n_0",
+        "ec_rs_n_3",
+        "ec_rs_n_4",
+        "ec_rs_n_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_o",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1162.7599144093692,
+        356.2581114433706
+      ],
+      "tile": [
+        291,
+        89
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_o_1",
+        "ec_rs_o_2",
+        "ec_rs_o_3",
+        "ec_rs_o_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_p",
+      "gold_name": "Thảo dược",
+      "gold_kind": "herbs",
+      "gold_at": [
+        1207.6934759095311,
+        381.6128545310348
+      ],
+      "tile": [
+        302,
+        95
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_p_0",
+        "ec_rs_p_2",
+        "ec_rs_p_3",
+        "ec_rs_p_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_q",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1655.4972149319947,
+        369.65541985444725
+      ],
+      "tile": [
+        414,
+        92
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_q_0",
+        "ec_rs_q_1",
+        "ec_rs_q_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_r",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        466.3495884500444,
+        410.7689839601517
+      ],
+      "tile": [
+        117,
+        103
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_r_0",
+        "ec_rs_r_1",
+        "ec_rs_r_2",
+        "ec_rs_r_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_s",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        887.9023547023535,
+        407.73574537597597
+      ],
+      "tile": [
+        222,
+        102
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_s_0",
+        "ec_rs_s_1",
+        "ec_rs_s_2",
+        "ec_rs_s_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_t",
+      "gold_name": "Đá",
+      "gold_kind": "stone",
+      "gold_at": [
+        906.8827622998506,
+        413.68884291499853
+      ],
+      "tile": [
+        227,
+        103
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_u",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1108.2782567739487,
+        429.2680101003498
+      ],
+      "tile": [
+        277,
+        107
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_u_1",
+        "ec_rs_u_2",
+        "ec_rs_u_4",
+        "ec_rs_u_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_v",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        1192.2837118115276,
+        414.9693738576025
+      ],
+      "tile": [
+        298,
+        104
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_v_0",
+        "ec_rs_v_1",
+        "ec_rs_v_2",
+        "ec_rs_v_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_w",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        123.99809085763991,
+        491.5639955587685
+      ],
+      "tile": [
+        31,
+        123
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_w_0",
+        "ec_rs_w_1",
+        "ec_rs_w_2",
+        "ec_rs_w_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_x",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        378.1550131328404,
+        460.96938285417855
+      ],
+      "tile": [
+        95,
+        115
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_x_0",
+        "ec_rs_x_1",
+        "ec_rs_x_2",
+        "ec_rs_x_3",
+        "ec_rs_x_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_y",
+      "gold_name": "Thảo dược",
+      "gold_kind": "herbs",
+      "gold_at": [
+        412.2448688466102,
+        487.5818062610924
+      ],
+      "tile": [
+        103,
+        122
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_y_1",
+        "ec_rs_y_2",
+        "ec_rs_y_3",
+        "ec_rs_y_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_z",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        492.54811969026923,
+        470.1564010642469
+      ],
+      "tile": [
+        123,
+        118
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_z_0",
+        "ec_rs_z_1",
+        "ec_rs_z_2",
+        "ec_rs_z_3",
+        "ec_rs_z_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_10",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        531.1464698687196,
+        479.64703639410436
+      ],
+      "tile": [
+        133,
+        120
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_10_0",
+        "ec_rs_10_1",
+        "ec_rs_10_2",
+        "ec_rs_10_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_11",
+      "gold_name": "Đá",
+      "gold_kind": "stone",
+      "gold_at": [
+        650.290188645944,
+        485.17325811460614
+      ],
+      "tile": [
+        163,
+        121
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_12",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        760.8863728903234,
+        473.01441979035735
+      ],
+      "tile": [
+        190,
+        118
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_12_0",
+        "ec_rs_12_1",
+        "ec_rs_12_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_13",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        802.075472490862,
+        466.85293183103204
+      ],
+      "tile": [
+        201,
+        117
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_13_0",
+        "ec_rs_13_1",
+        "ec_rs_13_2",
+        "ec_rs_13_3",
+        "ec_rs_13_4",
+        "ec_rs_13_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_14",
+      "gold_name": "Thảo dược",
+      "gold_kind": "herbs",
+      "gold_at": [
+        870.0034898631275,
+        457.3238973915577
+      ],
+      "tile": [
+        218,
+        114
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_14_0",
+        "ec_rs_14_1",
+        "ec_rs_14_2",
+        "ec_rs_14_3",
+        "ec_rs_14_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_15",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        964.6209717728198,
+        456.1302969548851
+      ],
+      "tile": [
+        241,
+        114
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_15_1",
+        "ec_rs_15_2",
+        "ec_rs_15_3",
+        "ec_rs_15_4",
+        "ec_rs_15_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_16",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        1081.0526221413165,
+        481.49297381192446
+      ],
+      "tile": [
+        270,
+        120
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_16_0",
+        "ec_rs_16_1",
+        "ec_rs_16_2",
+        "ec_rs_16_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_17",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        1197.5022631846368,
+        458.81896609812975
+      ],
+      "tile": [
+        299,
+        115
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_17_0",
+        "ec_rs_17_1",
+        "ec_rs_17_2",
+        "ec_rs_17_3",
+        "ec_rs_17_4",
+        "ec_rs_17_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_18",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        1254.3891216535121,
+        467.180473016575
+      ],
+      "tile": [
+        314,
+        117
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_18_0",
+        "ec_rs_18_1",
+        "ec_rs_18_2",
+        "ec_rs_18_3",
+        "ec_rs_18_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_19",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1882.6887483000755,
+        466.11108436621726
+      ],
+      "tile": [
+        471,
+        117
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_19_1",
+        "ec_rs_19_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1a",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        156.41972860321403,
+        537.5012003239244
+      ],
+      "tile": [
+        39,
+        134
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_1a_0",
+        "ec_rs_1a_1",
+        "ec_rs_1a_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1b",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        636.4805877637118,
+        548.8981998879462
+      ],
+      "tile": [
+        159,
+        137
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_1b_0",
+        "ec_rs_1b_1",
+        "ec_rs_1b_2",
+        "ec_rs_1b_3",
+        "ec_rs_1b_4",
+        "ec_rs_1b_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1c",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        713.5219474416226,
+        532.434089479968
+      ],
+      "tile": [
+        178,
+        133
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_1c_0",
+        "ec_rs_1c_1",
+        "ec_rs_1c_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1d",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        886.6400861479342,
+        548.9912334065884
+      ],
+      "tile": [
+        222,
+        137
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_1d_0",
+        "ec_rs_1d_1",
+        "ec_rs_1d_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1e",
+      "gold_name": "Thảo dược",
+      "gold_kind": "herbs",
+      "gold_at": [
+        912.7517673987895,
+        517.6936983577907
+      ],
+      "tile": [
+        228,
+        129
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_1e_0",
+        "ec_rs_1e_1",
+        "ec_rs_1e_2",
+        "ec_rs_1e_3",
+        "ec_rs_1e_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1f",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1049.8956726156175,
+        528.8100820481777
+      ],
+      "tile": [
+        262,
+        132
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_1f_0",
+        "ec_rs_1f_1",
+        "ec_rs_1f_3",
+        "ec_rs_1f_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1g",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1129.5780125185847,
+        523.2517094798386
+      ],
+      "tile": [
+        282,
+        131
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_1g_0",
+        "ec_rs_1g_1",
+        "ec_rs_1g_2",
+        "ec_rs_1g_3",
+        "ec_rs_1g_4",
+        "ec_rs_1g_5",
+        "ec_rs_1g_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1h",
+      "gold_name": "Đất sét",
+      "gold_kind": "clay",
+      "gold_at": [
+        1256.6167370043695,
+        539.6644173450768
+      ],
+      "tile": [
+        314,
+        135
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_1h_0",
+        "ec_rs_1h_1",
+        "ec_rs_1h_2",
+        "ec_rs_1h_3",
+        "ec_rs_1h_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1i",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        485.0401780232787,
+        575.7782870922238
+      ],
+      "tile": [
+        121,
+        144
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_1i_1",
+        "ec_rs_1i_2",
+        "ec_rs_1i_3",
+        "ec_rs_1i_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1j",
+      "gold_name": "Đá",
+      "gold_kind": "stone",
+      "gold_at": [
+        577.299520291388,
+        578.5735347233713
+      ],
+      "tile": [
+        144,
+        145
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_1j_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1k",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        655.7039889842272,
+        579.6652368567884
+      ],
+      "tile": [
+        164,
+        145
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_1k_0",
+        "ec_rs_1k_1",
+        "ec_rs_1k_2",
+        "ec_rs_1k_3",
+        "ec_rs_1k_5",
+        "ec_rs_1k_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1l",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        771.21433792077,
+        579.2525677774101
+      ],
+      "tile": [
+        193,
+        145
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_1l_1",
+        "ec_rs_1l_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1m",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        794.3001085128635,
+        570.4623001087457
+      ],
+      "tile": [
+        199,
+        143
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1n",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        858.370893869549,
+        594.1858164332807
+      ],
+      "tile": [
+        215,
+        149
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_1n_0",
+        "ec_rs_1n_2",
+        "ec_rs_1n_4",
+        "ec_rs_1n_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1o",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1016.4894576594234,
+        586.1805980484933
+      ],
+      "tile": [
+        254,
+        147
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_1o_0",
+        "ec_rs_1o_1",
+        "ec_rs_1o_2",
+        "ec_rs_1o_3",
+        "ec_rs_1o_4",
+        "ec_rs_1o_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1p",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1138.4506194964051,
+        596.1132262479514
+      ],
+      "tile": [
+        285,
+        149
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_1p_0",
+        "ec_rs_1p_1",
+        "ec_rs_1p_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1q",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        1222.134284419939,
+        595.5931099895388
+      ],
+      "tile": [
+        306,
+        149
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_1q_0",
+        "ec_rs_1q_1",
+        "ec_rs_1q_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1r",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1296.3395424503833,
+        589.8598749767989
+      ],
+      "tile": [
+        324,
+        147
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_1r_0",
+        "ec_rs_1r_1",
+        "ec_rs_1r_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1s",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        352.78072139807045,
+        628.3249042518437
+      ],
+      "tile": [
+        88,
+        157
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_1s_0",
+        "ec_rs_1s_1",
+        "ec_rs_1s_2",
+        "ec_rs_1s_3",
+        "ec_rs_1s_4",
+        "ec_rs_1s_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1t",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        644.6115415133536,
+        628.8508334998041
+      ],
+      "tile": [
+        161,
+        157
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_1t_1",
+        "ec_rs_1t_2",
+        "ec_rs_1t_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1u",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        684.5933404099196,
+        639.6059397663921
+      ],
+      "tile": [
+        171,
+        160
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_1u_0",
+        "ec_rs_1u_1",
+        "ec_rs_1u_3",
+        "ec_rs_1u_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1v",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        740.9946051370353,
+        628.9715182930231
+      ],
+      "tile": [
+        185,
+        157
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_1v_0",
+        "ec_rs_1v_1",
+        "ec_rs_1v_2",
+        "ec_rs_1v_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1w",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        816.2951250635087,
+        661.5050676055253
+      ],
+      "tile": [
+        204,
+        165
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_1w_0",
+        "ec_rs_1w_1",
+        "ec_rs_1w_2",
+        "ec_rs_1w_3",
+        "ec_rs_1w_4",
+        "ec_rs_1w_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1x",
+      "gold_name": "Thảo dược",
+      "gold_kind": "herbs",
+      "gold_at": [
+        863.4753841087222,
+        625.0433574859053
+      ],
+      "tile": [
+        216,
+        156
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_1x_0",
+        "ec_rs_1x_1",
+        "ec_rs_1x_2",
+        "ec_rs_1x_3",
+        "ec_rs_1x_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1y",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        971.5989025682211,
+        648.4009061995894
+      ],
+      "tile": [
+        243,
+        162
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_1y_0",
+        "ec_rs_1y_1",
+        "ec_rs_1y_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_1z",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1094.5781362876296,
+        638.2569716274738
+      ],
+      "tile": [
+        274,
+        160
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_1z_0",
+        "ec_rs_1z_1",
+        "ec_rs_1z_2",
+        "ec_rs_1z_3",
+        "ec_rs_1z_4",
+        "ec_rs_1z_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_20",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1188.7462376300246,
+        663.228689558804
+      ],
+      "tile": [
+        297,
+        166
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_20_0",
+        "ec_rs_20_1",
+        "ec_rs_20_2",
+        "ec_rs_20_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_21",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1275.5982071440667,
+        634.7262778561562
+      ],
+      "tile": [
+        319,
+        159
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_21_0",
+        "ec_rs_21_1",
+        "ec_rs_21_3",
+        "ec_rs_21_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_22",
+      "gold_name": "Cá / hải sản",
+      "gold_kind": "fish",
+      "gold_at": [
+        1360.1911891326308,
+        657.1208883598447
+      ],
+      "tile": [
+        340,
+        164
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_22_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_23",
+      "gold_name": "Cá / hải sản",
+      "gold_kind": "fish",
+      "gold_at": [
+        324.31649219430983,
+        697.857309654355
+      ],
+      "tile": [
+        81,
+        174
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_23_0",
+        "ec_rs_23_1",
+        "ec_rs_23_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_24",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        365.62003916688263,
+        699.0420722588897
+      ],
+      "tile": [
+        91,
+        175
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_24_0",
+        "ec_rs_24_1",
+        "ec_rs_24_2",
+        "ec_rs_24_3",
+        "ec_rs_24_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_25",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        427.52710120752454,
+        709.9884915445
+      ],
+      "tile": [
+        107,
+        177
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_25_0",
+        "ec_rs_25_1",
+        "ec_rs_25_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_26",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        464.13066576607525,
+        684.4508600700647
+      ],
+      "tile": [
+        116,
+        171
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_26_0",
+        "ec_rs_26_1",
+        "ec_rs_26_2",
+        "ec_rs_26_3",
+        "ec_rs_26_4",
+        "ec_rs_26_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_27",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        548.0852957610041,
+        683.5392732545733
+      ],
+      "tile": [
+        137,
+        171
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_27_1",
+        "ec_rs_27_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_28",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        686.9539997261018,
+        695.8954847604036
+      ],
+      "tile": [
+        172,
+        174
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_28_0",
+        "ec_rs_28_1"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_29",
+      "gold_name": "Thảo dược",
+      "gold_kind": "herbs",
+      "gold_at": [
+        744.4760999493301,
+        703.0120855104178
+      ],
+      "tile": [
+        186,
+        176
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_29_0",
+        "ec_rs_29_1",
+        "ec_rs_29_2",
+        "ec_rs_29_3",
+        "ec_rs_29_4",
+        "ec_rs_29_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2a",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        829.0823128148913,
+        697.5862521212548
+      ],
+      "tile": [
+        207,
+        174
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_2a_0",
+        "ec_rs_2a_1",
+        "ec_rs_2a_2",
+        "ec_rs_2a_3",
+        "ec_rs_2a_4",
+        "ec_rs_2a_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2b",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        887.0790109429508,
+        682.853698655963
+      ],
+      "tile": [
+        222,
+        171
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_2b_1"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2c",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        994.6411380451173,
+        701.0314759518951
+      ],
+      "tile": [
+        249,
+        175
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_2c_0",
+        "ec_rs_2c_1",
+        "ec_rs_2c_2",
+        "ec_rs_2c_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2d",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        1048.6990943029523,
+        715.0754487048835
+      ],
+      "tile": [
+        262,
+        179
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_2d_0",
+        "ec_rs_2d_1",
+        "ec_rs_2d_2",
+        "ec_rs_2d_3",
+        "ec_rs_2d_4",
+        "ec_rs_2d_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2e",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        1073.9319517631084,
+        719.6244477201253
+      ],
+      "tile": [
+        268,
+        180
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_2e_0",
+        "ec_rs_2e_1",
+        "ec_rs_2e_2",
+        "ec_rs_2e_3",
+        "ec_rs_2e_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2f",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1143.5568903591484,
+        695.1491496991366
+      ],
+      "tile": [
+        286,
+        174
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_2f_0",
+        "ec_rs_2f_1",
+        "ec_rs_2f_2",
+        "ec_rs_2f_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2g",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1358.9617269467562,
+        689.0895893797278
+      ],
+      "tile": [
+        340,
+        172
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_2g_0",
+        "ec_rs_2g_1",
+        "ec_rs_2g_2",
+        "ec_rs_2g_3",
+        "ec_rs_2g_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2h",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        376.5748419575393,
+        773.66924562864
+      ],
+      "tile": [
+        94,
+        193
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_2h_0",
+        "ec_rs_2h_1",
+        "ec_rs_2h_2",
+        "ec_rs_2h_3",
+        "ec_rs_2h_4",
+        "ec_rs_2h_5",
+        "ec_rs_2h_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2i",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        438.84799929335713,
+        772.1221769172698
+      ],
+      "tile": [
+        110,
+        193
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_2i_0",
+        "ec_rs_2i_1",
+        "ec_rs_2i_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2j",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        468.824815409258,
+        772.5244921669364
+      ],
+      "tile": [
+        117,
+        193
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_2j_0",
+        "ec_rs_2j_1",
+        "ec_rs_2j_2",
+        "ec_rs_2j_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2k",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        585.0443913247436,
+        759.3514783810824
+      ],
+      "tile": [
+        146,
+        190
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_2k_0",
+        "ec_rs_2k_1",
+        "ec_rs_2k_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2l",
+      "gold_name": "Đá",
+      "gold_kind": "stone",
+      "gold_at": [
+        641.6704181637615,
+        775.5981923490763
+      ],
+      "tile": [
+        160,
+        194
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_2l_0",
+        "ec_rs_2l_1",
+        "ec_rs_2l_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2m",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        714.1206318885088,
+        750.081411883235
+      ],
+      "tile": [
+        179,
+        188
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_2m_0",
+        "ec_rs_2m_1",
+        "ec_rs_2m_2",
+        "ec_rs_2m_3",
+        "ec_rs_2m_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2n",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        753.093458622694,
+        749.948818789795
+      ],
+      "tile": [
+        188,
+        187
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_2n_0",
+        "ec_rs_2n_1",
+        "ec_rs_2n_2",
+        "ec_rs_2n_3",
+        "ec_rs_2n_4",
+        "ec_rs_2n_5",
+        "ec_rs_2n_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2o",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        822.2711741253734,
+        758.7911003027111
+      ],
+      "tile": [
+        206,
+        190
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_2o_0",
+        "ec_rs_2o_1",
+        "ec_rs_2o_2",
+        "ec_rs_2o_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2p",
+      "gold_name": "Thảo dược",
+      "gold_kind": "herbs",
+      "gold_at": [
+        871.9513675030321,
+        754.8292798213661
+      ],
+      "tile": [
+        218,
+        189
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_2p_0",
+        "ec_rs_2p_1",
+        "ec_rs_2p_2",
+        "ec_rs_2p_3",
+        "ec_rs_2p_4",
+        "ec_rs_2p_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2q",
+      "gold_name": "Thảo dược",
+      "gold_kind": "herbs",
+      "gold_at": [
+        914.294723501429,
+        768.1591030899435
+      ],
+      "tile": [
+        229,
+        192
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_2q_0",
+        "ec_rs_2q_1",
+        "ec_rs_2q_2",
+        "ec_rs_2q_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2r",
+      "gold_name": "Thảo dược",
+      "gold_kind": "herbs",
+      "gold_at": [
+        1024.8245543465018,
+        752.6811795998365
+      ],
+      "tile": [
+        256,
+        188
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_2r_0",
+        "ec_rs_2r_1",
+        "ec_rs_2r_2",
+        "ec_rs_2r_5",
+        "ec_rs_2r_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2s",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1142.2009231541306,
+        770.5863396674395
+      ],
+      "tile": [
+        286,
+        193
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_2s_0",
+        "ec_rs_2s_1",
+        "ec_rs_2s_2",
+        "ec_rs_2s_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2t",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        1211.6810269616544,
+        748.0005965325981
+      ],
+      "tile": [
+        303,
+        187
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_2t_0",
+        "ec_rs_2t_1",
+        "ec_rs_2t_2",
+        "ec_rs_2t_3",
+        "ec_rs_2t_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2u",
+      "gold_name": "Lưu huỳnh",
+      "gold_kind": "sulfur",
+      "gold_at": [
+        1608.572170579806,
+        772.8817854393274
+      ],
+      "tile": [
+        402,
+        193
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_2u_0",
+        "ec_rs_2u_1",
+        "ec_rs_2u_2",
+        "ec_rs_2u_3",
+        "ec_rs_2u_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2v",
+      "gold_name": "Đá",
+      "gold_kind": "stone",
+      "gold_at": [
+        1662.8536564931273,
+        752.7442296631634
+      ],
+      "tile": [
+        416,
+        188
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_2v_0",
+        "ec_rs_2v_1",
+        "ec_rs_2v_2",
+        "ec_rs_2v_3",
+        "ec_rs_2v_4",
+        "ec_rs_2v_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2w",
+      "gold_name": "Obsidian",
+      "gold_kind": "obsidian",
+      "gold_at": [
+        1722.8862430080771,
+        744.3251558430493
+      ],
+      "tile": [
+        431,
+        186
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_2w_0",
+        "ec_rs_2w_1",
+        "ec_rs_2w_2",
+        "ec_rs_2w_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2x",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        362.320921882987,
+        831.6643233206123
+      ],
+      "tile": [
+        91,
+        208
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_2x_0",
+        "ec_rs_2x_1",
+        "ec_rs_2x_2",
+        "ec_rs_2x_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2y",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        425.73755129240453,
+        828.3781612180173
+      ],
+      "tile": [
+        106,
+        207
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_2y_0",
+        "ec_rs_2y_1"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_2z",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        470.0921560395509,
+        820.3080480527133
+      ],
+      "tile": [
+        118,
+        205
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_2z_0",
+        "ec_rs_2z_1",
+        "ec_rs_2z_2",
+        "ec_rs_2z_3",
+        "ec_rs_2z_4",
+        "ec_rs_2z_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_30",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        533.7653706297278,
+        828.3234424032271
+      ],
+      "tile": [
+        133,
+        207
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_30_0",
+        "ec_rs_30_1",
+        "ec_rs_30_2",
+        "ec_rs_30_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_31",
+      "gold_name": "Thảo dược",
+      "gold_kind": "herbs",
+      "gold_at": [
+        569.1179439071566,
+        796.2489020340145
+      ],
+      "tile": [
+        142,
+        199
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_31_0",
+        "ec_rs_31_1",
+        "ec_rs_31_2",
+        "ec_rs_31_3",
+        "ec_rs_31_4",
+        "ec_rs_31_5",
+        "ec_rs_31_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_32",
+      "gold_name": "Thảo dược",
+      "gold_kind": "herbs",
+      "gold_at": [
+        662.0720852687955,
+        822.5564228259027
+      ],
+      "tile": [
+        166,
+        206
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_32_0",
+        "ec_rs_32_1",
+        "ec_rs_32_2",
+        "ec_rs_32_3",
+        "ec_rs_32_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_33",
+      "gold_name": "Thảo dược",
+      "gold_kind": "herbs",
+      "gold_at": [
+        745.445028193295,
+        817.1935861445963
+      ],
+      "tile": [
+        186,
+        204
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_33_0",
+        "ec_rs_33_1",
+        "ec_rs_33_2",
+        "ec_rs_33_3",
+        "ec_rs_33_4",
+        "ec_rs_33_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_34",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        821.8195936903358,
+        811.5089835859835
+      ],
+      "tile": [
+        205,
+        203
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_34_0",
+        "ec_rs_34_1",
+        "ec_rs_34_2",
+        "ec_rs_34_3",
+        "ec_rs_34_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_35",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        887.6217762585729,
+        795.3578453864902
+      ],
+      "tile": [
+        222,
+        199
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_35_0",
+        "ec_rs_35_1",
+        "ec_rs_35_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_36",
+      "gold_name": "Thảo dược",
+      "gold_kind": "herbs",
+      "gold_at": [
+        938.0402507223189,
+        814.7751116268337
+      ],
+      "tile": [
+        235,
+        204
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_36_0",
+        "ec_rs_36_1",
+        "ec_rs_36_2",
+        "ec_rs_36_3",
+        "ec_rs_36_4",
+        "ec_rs_36_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_37",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        998.0712911859155,
+        801.8466559965163
+      ],
+      "tile": [
+        250,
+        200
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_37_0",
+        "ec_rs_37_1",
+        "ec_rs_37_2",
+        "ec_rs_37_3",
+        "ec_rs_37_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_38",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        1028.1086544170976,
+        807.2365780621767
+      ],
+      "tile": [
+        257,
+        202
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_38_0",
+        "ec_rs_38_1",
+        "ec_rs_38_2",
+        "ec_rs_38_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_39",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1137.0449850913137,
+        827.9994828980416
+      ],
+      "tile": [
+        284,
+        207
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_39_0",
+        "ec_rs_39_2",
+        "ec_rs_39_3",
+        "ec_rs_39_4",
+        "ec_rs_39_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3a",
+      "gold_name": "Obsidian",
+      "gold_kind": "obsidian",
+      "gold_at": [
+        1643.989680128172,
+        805.8832125533372
+      ],
+      "tile": [
+        411,
+        201
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_3a_0",
+        "ec_rs_3a_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3b",
+      "gold_name": "Obsidian",
+      "gold_kind": "obsidian",
+      "gold_at": [
+        1723.1056201756,
+        801.5174750778824
+      ],
+      "tile": [
+        431,
+        200
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3c",
+      "gold_name": "Đá",
+      "gold_kind": "stone",
+      "gold_at": [
+        1749.0931252818555,
+        827.2336293831468
+      ],
+      "tile": [
+        437,
+        207
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_3c_0",
+        "ec_rs_3c_2",
+        "ec_rs_3c_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3d",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        373.9979418516159,
+        855.0719904731959
+      ],
+      "tile": [
+        93,
+        214
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_3d_0",
+        "ec_rs_3d_1",
+        "ec_rs_3d_2",
+        "ec_rs_3d_3",
+        "ec_rs_3d_4",
+        "ec_rs_3d_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3e",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        411.9636102952063,
+        849.3993398658931
+      ],
+      "tile": [
+        103,
+        212
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_3e_0",
+        "ec_rs_3e_1",
+        "ec_rs_3e_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3f",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        460.6637880709022,
+        850.3997978772968
+      ],
+      "tile": [
+        115,
+        213
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_3f_0",
+        "ec_rs_3f_1"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3g",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        525.43361643143,
+        872.8772249277681
+      ],
+      "tile": [
+        131,
+        218
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_3g_0",
+        "ec_rs_3g_1",
+        "ec_rs_3g_2",
+        "ec_rs_3g_3",
+        "ec_rs_3g_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3h",
+      "gold_name": "Đá",
+      "gold_kind": "stone",
+      "gold_at": [
+        633.0151606779546,
+        886.8189184293151
+      ],
+      "tile": [
+        158,
+        222
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_3h_0",
+        "ec_rs_3h_1",
+        "ec_rs_3h_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3i",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1073.7875352222472,
+        882.5785402227193
+      ],
+      "tile": [
+        268,
+        221
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_3i_0",
+        "ec_rs_3i_1",
+        "ec_rs_3i_2",
+        "ec_rs_3i_3",
+        "ec_rs_3i_4",
+        "ec_rs_3i_5",
+        "ec_rs_3i_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3j",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1199.8135547023267,
+        861.2844238169491
+      ],
+      "tile": [
+        300,
+        215
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_3j_2",
+        "ec_rs_3j_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3k",
+      "gold_name": "Đá",
+      "gold_kind": "stone",
+      "gold_at": [
+        1605.0147772897035,
+        856.6575213912874
+      ],
+      "tile": [
+        401,
+        214
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_3k_0",
+        "ec_rs_3k_1",
+        "ec_rs_3k_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3l",
+      "gold_name": "Lưu huỳnh",
+      "gold_kind": "sulfur",
+      "gold_at": [
+        1779.8113488275558,
+        887.5875689852983
+      ],
+      "tile": [
+        445,
+        222
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_3l_0",
+        "ec_rs_3l_1",
+        "ec_rs_3l_3",
+        "ec_rs_3l_4",
+        "ec_rs_3l_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3m",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        718.4134886413813,
+        915.5236639697105
+      ],
+      "tile": [
+        180,
+        229
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_3m_0",
+        "ec_rs_3m_1",
+        "ec_rs_3m_2",
+        "ec_rs_3m_3",
+        "ec_rs_3m_4",
+        "ec_rs_3m_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3n",
+      "gold_name": "Đá",
+      "gold_kind": "stone",
+      "gold_at": [
+        825.8837482593954,
+        917.1528838444501
+      ],
+      "tile": [
+        206,
+        229
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_3n_0",
+        "ec_rs_3n_1",
+        "ec_rs_3n_2",
+        "ec_rs_3n_3",
+        "ec_rs_3n_4",
+        "ec_rs_3n_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3o",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        866.5069692973047,
+        917.1243010237813
+      ],
+      "tile": [
+        217,
+        229
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_3o_0",
+        "ec_rs_3o_1",
+        "ec_rs_3o_2",
+        "ec_rs_3o_3",
+        "ec_rs_3o_4",
+        "ec_rs_3o_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3p",
+      "gold_name": "Thảo dược",
+      "gold_kind": "herbs",
+      "gold_at": [
+        938.3621463701129,
+        919.0362176820636
+      ],
+      "tile": [
+        235,
+        230
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_3p_0"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3q",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1129.9450370781124,
+        913.3301477935165
+      ],
+      "tile": [
+        282,
+        228
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_3q_0",
+        "ec_rs_3q_1",
+        "ec_rs_3q_2",
+        "ec_rs_3q_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3r",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1599.6815730296075,
+        943.9324411526322
+      ],
+      "tile": [
+        400,
+        236
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_3r_0",
+        "ec_rs_3r_1",
+        "ec_rs_3r_3",
+        "ec_rs_3r_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3s",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1659.6812608446926,
+        941.6141170784831
+      ],
+      "tile": [
+        415,
+        235
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_3s_0",
+        "ec_rs_3s_1",
+        "ec_rs_3s_2",
+        "ec_rs_3s_3",
+        "ec_rs_3s_4",
+        "ec_rs_3s_5",
+        "ec_rs_3s_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3t",
+      "gold_name": "Cá / hải sản",
+      "gold_kind": "fish",
+      "gold_at": [
+        1756.5499810371548,
+        932.261204380542
+      ],
+      "tile": [
+        439,
+        233
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_3t_1",
+        "ec_rs_3t_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3u",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        882.5173232723027,
+        995.6824441906065
+      ],
+      "tile": [
+        221,
+        249
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_3u_0",
+        "ec_rs_3u_1",
+        "ec_rs_3u_2",
+        "ec_rs_3u_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3v",
+      "gold_name": "Lưu huỳnh",
+      "gold_kind": "sulfur",
+      "gold_at": [
+        1153.2716336771846,
+        998.1035010516644
+      ],
+      "tile": [
+        288,
+        250
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_3v_0",
+        "ec_rs_3v_1",
+        "ec_rs_3v_2",
+        "ec_rs_3v_3",
+        "ec_rs_3v_4",
+        "ec_rs_3v_5",
+        "ec_rs_3v_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3w",
+      "gold_name": "Đá",
+      "gold_kind": "stone",
+      "gold_at": [
+        637.0232523661107,
+        1038.6783484127373
+      ],
+      "tile": [
+        159,
+        260
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_3w_0",
+        "ec_rs_3w_1",
+        "ec_rs_3w_2",
+        "ec_rs_3w_3",
+        "ec_rs_3w_4",
+        "ec_rs_3w_5",
+        "ec_rs_3w_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3x",
+      "gold_name": "Thảo dược",
+      "gold_kind": "herbs",
+      "gold_at": [
+        1221.3127193469554,
+        1047.4104809891433
+      ],
+      "tile": [
+        305,
+        262
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_3x_0",
+        "ec_rs_3x_1",
+        "ec_rs_3x_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3y",
+      "gold_name": "Thảo dược",
+      "gold_kind": "herbs",
+      "gold_at": [
+        855.8157436847687,
+        1084.8441211860627
+      ],
+      "tile": [
+        214,
+        271
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_3y_0",
+        "ec_rs_3y_1",
+        "ec_rs_3y_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_3z",
+      "gold_name": "Thức ăn (hái/săn/trồng)",
+      "gold_kind": "food",
+      "gold_at": [
+        1148.54279579781,
+        1072.460861241445
+      ],
+      "tile": [
+        287,
+        268
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_3z_0",
+        "ec_rs_3z_1",
+        "ec_rs_3z_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_40",
+      "gold_name": "Thảo dược",
+      "gold_kind": "herbs",
+      "gold_at": [
+        804.64159347862,
+        1142.1305965650827
+      ],
+      "tile": [
+        201,
+        286
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_40_0",
+        "ec_rs_40_1",
+        "ec_rs_40_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_41",
+      "gold_name": "Cá / hải sản",
+      "gold_kind": "fish",
+      "gold_at": [
+        1198.2362064216286,
+        1219.9843019023538
+      ],
+      "tile": [
+        300,
+        305
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_41_0",
+        "ec_rs_41_2",
+        "ec_rs_41_3",
+        "ec_rs_41_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_42",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        1101.1131762322038,
+        1268.7258612457663
+      ],
+      "tile": [
+        275,
+        317
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_42_0",
+        "ec_rs_42_1",
+        "ec_rs_42_2",
+        "ec_rs_42_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_43",
+      "gold_name": "Cá / hải sản",
+      "gold_kind": "fish",
+      "gold_at": [
+        1091.562278939411,
+        1317.673269579187
+      ],
+      "tile": [
+        273,
+        329
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_43_3",
+        "ec_rs_43_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_44",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        1130.2284186258912,
+        1300.3880841415375
+      ],
+      "tile": [
+        283,
+        325
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_44_0",
+        "ec_rs_44_1",
+        "ec_rs_44_2",
+        "ec_rs_44_3",
+        "ec_rs_44_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_45",
+      "gold_name": "Gỗ",
+      "gold_kind": "wood",
+      "gold_at": [
+        1197.5951003432274,
+        1314.4177673980594
+      ],
+      "tile": [
+        299,
+        329
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_45_0",
+        "ec_rs_45_1",
+        "ec_rs_45_2",
+        "ec_rs_45_3",
+        "ec_rs_45_5",
+        "ec_rs_45_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_46",
+      "gold_name": "Nước ngọt — Greywater River (thượng lưu)",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        637,
+        403.8
+      ],
+      "tile": [
+        159,
+        101
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_46_2",
+        "ec_rs_46_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_47",
+      "gold_name": "Cá — Greywater River (thượng lưu)",
+      "gold_kind": "fish",
+      "gold_at": [
+        663,
+        409
+      ],
+      "tile": [
+        166,
+        102
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_47_0",
+        "ec_rs_47_1",
+        "ec_rs_47_2",
+        "ec_rs_47_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_48",
+      "gold_name": "Nước ngọt — Greywater River (thượng lưu)",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        794.8835306922342,
+        469.5923079457912
+      ],
+      "tile": [
+        199,
+        117
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_48_0",
+        "ec_rs_48_1",
+        "ec_rs_48_2",
+        "ec_rs_48_3",
+        "ec_rs_48_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_49",
+      "gold_name": "Nước ngọt — Greywater River (thượng lưu)",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        787,
+        508.8
+      ],
+      "tile": [
+        197,
+        127
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_49_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4a",
+      "gold_name": "Cá — Greywater River (thượng lưu)",
+      "gold_kind": "fish",
+      "gold_at": [
+        813,
+        514
+      ],
+      "tile": [
+        203,
+        129
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4b",
+      "gold_name": "Nước ngọt — Greywater River",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        823,
+        552.8
+      ],
+      "tile": [
+        206,
+        138
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4c",
+      "gold_name": "Cá — Greywater River",
+      "gold_kind": "fish",
+      "gold_at": [
+        849,
+        558
+      ],
+      "tile": [
+        212,
+        140
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_4c_0",
+        "ec_rs_4c_1"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4d",
+      "gold_name": "Nước ngọt — Greywater River",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        928.46116164247,
+        687.8821717930014
+      ],
+      "tile": [
+        232,
+        172
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_4d_0",
+        "ec_rs_4d_1",
+        "ec_rs_4d_2",
+        "ec_rs_4d_4",
+        "ec_rs_4d_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4e",
+      "gold_name": "Nước ngọt — Greywater River",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        958.2621252824516,
+        815.940954598713
+      ],
+      "tile": [
+        240,
+        204
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_4e_0",
+        "ec_rs_4e_1",
+        "ec_rs_4e_3",
+        "ec_rs_4e_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4f",
+      "gold_name": "Cá — Greywater River",
+      "gold_kind": "fish",
+      "gold_at": [
+        984.2621252824516,
+        821.140954598713
+      ],
+      "tile": [
+        246,
+        205
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_4f_0",
+        "ec_rs_4f_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4g",
+      "gold_name": "Nước ngọt — Greywater River",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        1003,
+        863.2
+      ],
+      "tile": [
+        251,
+        216
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_4g_1",
+        "ec_rs_4g_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4h",
+      "gold_name": "Nước ngọt — Silverrun",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        607,
+        626.8
+      ],
+      "tile": [
+        152,
+        157
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_4h_0",
+        "ec_rs_4h_1",
+        "ec_rs_4h_2",
+        "ec_rs_4h_3",
+        "ec_rs_4h_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4i",
+      "gold_name": "Cá — Silverrun",
+      "gold_kind": "fish",
+      "gold_at": [
+        633,
+        632
+      ],
+      "tile": [
+        158,
+        158
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_4i_0",
+        "ec_rs_4i_2",
+        "ec_rs_4i_3",
+        "ec_rs_4i_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4j",
+      "gold_name": "Nước ngọt — Silverrun",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        780.2274708290307,
+        648.9083340606626
+      ],
+      "tile": [
+        195,
+        162
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_4j_0",
+        "ec_rs_4j_2",
+        "ec_rs_4j_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4k",
+      "gold_name": "Nước ngọt — Silverrun",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        891.3115122375588,
+        647.482217277754
+      ],
+      "tile": [
+        223,
+        162
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_4k_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4l",
+      "gold_name": "Cá — Silverrun",
+      "gold_kind": "fish",
+      "gold_at": [
+        917.3115122375588,
+        652.682217277754
+      ],
+      "tile": [
+        229,
+        163
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_4l_2",
+        "ec_rs_4l_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4m",
+      "gold_name": "Nước ngọt — Timber Cut Canal",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        999,
+        428.8
+      ],
+      "tile": [
+        250,
+        107
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4n",
+      "gold_name": "Cá — Timber Cut Canal",
+      "gold_kind": "fish",
+      "gold_at": [
+        1025,
+        434
+      ],
+      "tile": [
+        256,
+        109
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_4n_1"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4o",
+      "gold_name": "Nước ngọt — Timber Cut Canal",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        1101,
+        549.2
+      ],
+      "tile": [
+        275,
+        137
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_4o_0",
+        "ec_rs_4o_2",
+        "ec_rs_4o_4",
+        "ec_rs_4o_5",
+        "ec_rs_4o_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4p",
+      "gold_name": "Nước ngọt — Mossbrook",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        1075,
+        538.8
+      ],
+      "tile": [
+        269,
+        135
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_4p_1",
+        "ec_rs_4p_2",
+        "ec_rs_4p_3",
+        "ec_rs_4p_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4q",
+      "gold_name": "Cá — Mossbrook",
+      "gold_kind": "fish",
+      "gold_at": [
+        1101,
+        544
+      ],
+      "tile": [
+        275,
+        136
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_4q_3",
+        "ec_rs_4q_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4r",
+      "gold_name": "Nước ngọt — Mossbrook",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        1056.280380328679,
+        686.1799877302559
+      ],
+      "tile": [
+        264,
+        172
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_4r_0",
+        "ec_rs_4r_1",
+        "ec_rs_4r_2",
+        "ec_rs_4r_3",
+        "ec_rs_4r_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4s",
+      "gold_name": "Nước ngọt — Mossbrook",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        946.8881003707129,
+        797.9486476991351
+      ],
+      "tile": [
+        237,
+        199
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_4s_0",
+        "ec_rs_4s_1",
+        "ec_rs_4s_3",
+        "ec_rs_4s_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4t",
+      "gold_name": "Cá — Mossbrook",
+      "gold_kind": "fish",
+      "gold_at": [
+        972.8881003707129,
+        803.1486476991352
+      ],
+      "tile": [
+        243,
+        201
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_4t_1"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4u",
+      "gold_name": "Nước ngọt — Argus Brook",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        945,
+        256.8
+      ],
+      "tile": [
+        236,
+        64
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_4u_0",
+        "ec_rs_4u_1",
+        "ec_rs_4u_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4v",
+      "gold_name": "Nước ngọt — Argus Brook",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        1009,
+        371.2
+      ],
+      "tile": [
+        252,
+        93
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4w",
+      "gold_name": "Nước ngọt — Eastwater River",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        1055,
+        398.8
+      ],
+      "tile": [
+        264,
+        100
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_4w_1",
+        "ec_rs_4w_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4x",
+      "gold_name": "Cá — Eastwater River",
+      "gold_kind": "fish",
+      "gold_at": [
+        1081,
+        404
+      ],
+      "tile": [
+        270,
+        101
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_4x_1",
+        "ec_rs_4x_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4y",
+      "gold_name": "Nước ngọt — Eastwater River",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        1205.3420790349396,
+        489.9515051378323
+      ],
+      "tile": [
+        301,
+        122
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_4y_0",
+        "ec_rs_4y_1",
+        "ec_rs_4y_2",
+        "ec_rs_4y_4",
+        "ec_rs_4y_5",
+        "ec_rs_4y_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_4z",
+      "gold_name": "Nước ngọt — Eastwater River",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        1287.501464865208,
+        520.7314201400798
+      ],
+      "tile": [
+        322,
+        130
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_4z_1"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_50",
+      "gold_name": "Cá — Eastwater River",
+      "gold_kind": "fish",
+      "gold_at": [
+        1313.501464865208,
+        525.9314201400798
+      ],
+      "tile": [
+        328,
+        131
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_51",
+      "gold_name": "Nước ngọt — Delta West Channel",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        977,
+        852.8
+      ],
+      "tile": [
+        244,
+        213
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_51_1",
+        "ec_rs_51_2",
+        "ec_rs_51_3",
+        "ec_rs_51_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_52",
+      "gold_name": "Cá — Delta West Channel",
+      "gold_kind": "fish",
+      "gold_at": [
+        1003,
+        858
+      ],
+      "tile": [
+        251,
+        215
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_52_0",
+        "ec_rs_52_1",
+        "ec_rs_52_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_53",
+      "gold_name": "Nước ngọt — Delta West Channel",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        963.1682948234286,
+        917.3733125364203
+      ],
+      "tile": [
+        241,
+        229
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_53_1"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_54",
+      "gold_name": "Nước ngọt — Delta Centre Channel",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        977,
+        852.8
+      ],
+      "tile": [
+        244,
+        213
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_54_2",
+        "ec_rs_54_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_55",
+      "gold_name": "Cá — Delta Centre Channel",
+      "gold_kind": "fish",
+      "gold_at": [
+        1003,
+        858
+      ],
+      "tile": [
+        251,
+        215
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_55_0",
+        "ec_rs_55_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_56",
+      "gold_name": "Nước ngọt — Delta Centre Channel",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        998.9679384010227,
+        905.129446321378
+      ],
+      "tile": [
+        250,
+        226
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_56_0",
+        "ec_rs_56_1"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_57",
+      "gold_name": "Nước ngọt — Delta East Channel",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        977,
+        852.8
+      ],
+      "tile": [
+        244,
+        213
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_57_2",
+        "ec_rs_57_3",
+        "ec_rs_57_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_58",
+      "gold_name": "Cá — Delta East Channel",
+      "gold_kind": "fish",
+      "gold_at": [
+        1003,
+        858
+      ],
+      "tile": [
+        251,
+        215
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_58_0",
+        "ec_rs_58_1",
+        "ec_rs_58_2",
+        "ec_rs_58_3",
+        "ec_rs_58_4",
+        "ec_rs_58_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_59",
+      "gold_name": "Nước ngọt — Delta East Channel",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        1038.8017324798818,
+        937.2815583659361
+      ],
+      "tile": [
+        260,
+        234
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_59_0",
+        "ec_rs_59_1",
+        "ec_rs_59_2",
+        "ec_rs_59_3",
+        "ec_rs_59_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5a",
+      "gold_name": "Nước ngọt — Amber Wadi (thượng lưu)",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        492,
+        866.8
+      ],
+      "tile": [
+        123,
+        217
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_5a_0",
+        "ec_rs_5a_1",
+        "ec_rs_5a_3",
+        "ec_rs_5a_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5b",
+      "gold_name": "Nước ngọt — Amber Wadi (thượng lưu)",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        623.5016409173581,
+        983.4908895068639
+      ],
+      "tile": [
+        156,
+        246
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_5b_3",
+        "ec_rs_5b_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5c",
+      "gold_name": "Nước ngọt — Amber Wadi (thượng lưu)",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        615.3247012508718,
+        988.2047801689507
+      ],
+      "tile": [
+        154,
+        247
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_5c_1",
+        "ec_rs_5c_2",
+        "ec_rs_5c_3",
+        "ec_rs_5c_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5d",
+      "gold_name": "Nước ngọt — Amber River",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        639,
+        1012.8
+      ],
+      "tile": [
+        160,
+        253
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_5d_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5e",
+      "gold_name": "Cá — Amber River",
+      "gold_kind": "fish",
+      "gold_at": [
+        665,
+        1018
+      ],
+      "tile": [
+        166,
+        255
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_5e_0",
+        "ec_rs_5e_2",
+        "ec_rs_5e_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5f",
+      "gold_name": "Nước ngọt — Amber River",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        710.951332062101,
+        1152.2765396457082
+      ],
+      "tile": [
+        178,
+        288
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_5f_0",
+        "ec_rs_5f_1",
+        "ec_rs_5f_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5g",
+      "gold_name": "Nước ngọt — Westbrook",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        455,
+        426.8
+      ],
+      "tile": [
+        114,
+        107
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_5g_0",
+        "ec_rs_5g_1",
+        "ec_rs_5g_2",
+        "ec_rs_5g_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5h",
+      "gold_name": "Cá — Westbrook",
+      "gold_kind": "fish",
+      "gold_at": [
+        481,
+        432
+      ],
+      "tile": [
+        120,
+        108
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_5h_0",
+        "ec_rs_5h_1",
+        "ec_rs_5h_2",
+        "ec_rs_5h_3",
+        "ec_rs_5h_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5i",
+      "gold_name": "Nước ngọt — Westbrook",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        373.66456556853143,
+        541.5368819360065
+      ],
+      "tile": [
+        93,
+        135
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_5i_0",
+        "ec_rs_5i_1",
+        "ec_rs_5i_2",
+        "ec_rs_5i_3",
+        "ec_rs_5i_4",
+        "ec_rs_5i_5",
+        "ec_rs_5i_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5j",
+      "gold_name": "Nước ngọt — Westbrook",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        313.76595154028394,
+        554.1145885433771
+      ],
+      "tile": [
+        78,
+        139
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_5j_1",
+        "ec_rs_5j_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5k",
+      "gold_name": "Cá — Westbrook",
+      "gold_kind": "fish",
+      "gold_at": [
+        339.76595154028394,
+        559.3145885433771
+      ],
+      "tile": [
+        85,
+        140
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_5k_0",
+        "ec_rs_5k_2",
+        "ec_rs_5k_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5l",
+      "gold_name": "Nước ngọt — Hook Creek",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        1243,
+        352.8
+      ],
+      "tile": [
+        311,
+        88
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5m",
+      "gold_name": "Cá — Hook Creek",
+      "gold_kind": "fish",
+      "gold_at": [
+        1269,
+        358
+      ],
+      "tile": [
+        317,
+        90
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_5m_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5n",
+      "gold_name": "Nước ngọt — Hook Creek",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        1406.7243146273765,
+        414.3184726511782
+      ],
+      "tile": [
+        352,
+        104
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5o",
+      "gold_name": "Nước ngọt — Ash Spring Brook",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        1655,
+        854.8
+      ],
+      "tile": [
+        414,
+        214
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5p",
+      "gold_name": "Nước ngọt — Ash Spring Brook",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        1583.740720017735,
+        913.8348487432402
+      ],
+      "tile": [
+        396,
+        228
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_5p_0",
+        "ec_rs_5p_1",
+        "ec_rs_5p_2",
+        "ec_rs_5p_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5q",
+      "gold_name": "Nước ngọt — Salt Brook",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        1637,
+        298.8
+      ],
+      "tile": [
+        409,
+        75
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_5q_0",
+        "ec_rs_5q_1"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5r",
+      "gold_name": "Nước ngọt — Salt Brook",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        1609.3454492986477,
+        376.4700005766552
+      ],
+      "tile": [
+        402,
+        94
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_5r_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5s",
+      "gold_name": "Nước ngọt — Slag Run",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        1167,
+        1282.8
+      ],
+      "tile": [
+        292,
+        321
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_5s_0"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5t",
+      "gold_name": "Nước ngọt — Slag Run",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        1136.0260536514959,
+        1344.287232573394
+      ],
+      "tile": [
+        284,
+        336
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_5t_1"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5u",
+      "gold_name": "Nước ngọt — Mirror Tarn",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        656.4088592969431,
+        421.6823613273424
+      ],
+      "tile": [
+        164,
+        105
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_5u_0",
+        "ec_rs_5u_1",
+        "ec_rs_5u_2",
+        "ec_rs_5u_3",
+        "ec_rs_5u_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5v",
+      "gold_name": "Cá — Mirror Tarn",
+      "gold_kind": "fish",
+      "gold_at": [
+        650.1348681057551,
+        419.328513800563
+      ],
+      "tile": [
+        163,
+        105
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_5v_0",
+        "ec_rs_5v_1",
+        "ec_rs_5v_4",
+        "ec_rs_5v_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5w",
+      "gold_name": "Nước ngọt — Mirror Tarn",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        616.5158353469724,
+        429.64293569298053
+      ],
+      "tile": [
+        154,
+        107
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_5w_0",
+        "ec_rs_5w_1"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5x",
+      "gold_name": "Nước ngọt — Mirror Tarn",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        595.3554756754171,
+        398.9513333123386
+      ],
+      "tile": [
+        149,
+        100
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_5x_0",
+        "ec_rs_5x_1",
+        "ec_rs_5x_2",
+        "ec_rs_5x_3",
+        "ec_rs_5x_4",
+        "ec_rs_5x_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5y",
+      "gold_name": "Cá — Mirror Tarn",
+      "gold_kind": "fish",
+      "gold_at": [
+        601.2921612085344,
+        401.14369138855994
+      ],
+      "tile": [
+        150,
+        100
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_5y_2",
+        "ec_rs_5y_3",
+        "ec_rs_5y_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_5z",
+      "gold_name": "Nước ngọt — Mirror Tarn",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        633.6757366029804,
+        390.8035893314686
+      ],
+      "tile": [
+        158,
+        98
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_5z_0",
+        "ec_rs_5z_2",
+        "ec_rs_5z_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_60",
+      "gold_name": "Nước ngọt — Greywater Lake",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        874.7854811826986,
+        519.636794372138
+      ],
+      "tile": [
+        219,
+        130
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_60_0",
+        "ec_rs_60_1",
+        "ec_rs_60_2",
+        "ec_rs_60_3",
+        "ec_rs_60_4",
+        "ec_rs_60_5",
+        "ec_rs_60_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_61",
+      "gold_name": "Cá — Greywater Lake",
+      "gold_kind": "fish",
+      "gold_at": [
+        859.8940949376355,
+        522.7458142314363
+      ],
+      "tile": [
+        215,
+        131
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_61_1",
+        "ec_rs_61_2",
+        "ec_rs_61_4",
+        "ec_rs_61_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_62",
+      "gold_name": "Nước ngọt — Greywater Lake",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        805.3606489102854,
+        578.0944406960601
+      ],
+      "tile": [
+        201,
+        145
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_63",
+      "gold_name": "Nước ngọt — Greywater Lake",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        728.7547069974257,
+        549.8187785624473
+      ],
+      "tile": [
+        182,
+        137
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_63_0",
+        "ec_rs_63_1",
+        "ec_rs_63_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_64",
+      "gold_name": "Cá — Greywater Lake",
+      "gold_kind": "fish",
+      "gold_at": [
+        743.0694755894172,
+        546.8914015836838
+      ],
+      "tile": [
+        186,
+        137
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_64_0",
+        "ec_rs_64_1",
+        "ec_rs_64_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_65",
+      "gold_name": "Nước ngọt — Greywater Lake",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        794.9020693006629,
+        492.27896893330063
+      ],
+      "tile": [
+        199,
+        123
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_65_0",
+        "ec_rs_65_2",
+        "ec_rs_65_3",
+        "ec_rs_65_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_66",
+      "gold_name": "Nước ngọt — Lake Verdant",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        1087.5345740871865,
+        410.63989706586244
+      ],
+      "tile": [
+        272,
+        103
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_66_0",
+        "ec_rs_66_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_67",
+      "gold_name": "Cá — Lake Verdant",
+      "gold_kind": "fish",
+      "gold_at": [
+        1069.8145825579518,
+        408.09654609720457
+      ],
+      "tile": [
+        267,
+        102
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_67_0"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_68",
+      "gold_name": "Nước ngọt — Lake Verdant",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        988.9969181129268,
+        445.79551638834
+      ],
+      "tile": [
+        247,
+        111
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_68_0",
+        "ec_rs_68_1",
+        "ec_rs_68_2",
+        "ec_rs_68_3",
+        "ec_rs_68_5",
+        "ec_rs_68_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_69",
+      "gold_name": "Nước ngọt — Lake Verdant",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        915.6996873406621,
+        385.6187373072598
+      ],
+      "tile": [
+        229,
+        96
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_69_1",
+        "ec_rs_69_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6a",
+      "gold_name": "Cá — Lake Verdant",
+      "gold_kind": "fish",
+      "gold_at": [
+        932.3466731607323,
+        388.07961829032246
+      ],
+      "tile": [
+        233,
+        97
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_6a_1",
+        "ec_rs_6a_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6b",
+      "gold_name": "Nước ngọt — Lake Verdant",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        1011.8775491882991,
+        350.95204692047287
+      ],
+      "tile": [
+        253,
+        88
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_6b_0",
+        "ec_rs_6b_1",
+        "ec_rs_6b_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6c",
+      "gold_name": "Nước ngọt — Mirage Pool",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        684.5807823091209,
+        1010.8703582571152
+      ],
+      "tile": [
+        171,
+        253
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_6c_1",
+        "ec_rs_6c_2",
+        "ec_rs_6c_3",
+        "ec_rs_6c_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6d",
+      "gold_name": "Cá — Mirage Pool",
+      "gold_kind": "fish",
+      "gold_at": [
+        677.6739650751307,
+        1009.1204657047297
+      ],
+      "tile": [
+        169,
+        252
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_6d_1"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6e",
+      "gold_name": "Nước ngọt — Mirage Pool",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        642.7805332682268,
+        1024.0580491139424
+      ],
+      "tile": [
+        161,
+        256
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_6e_0",
+        "ec_rs_6e_1",
+        "ec_rs_6e_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6f",
+      "gold_name": "Nước ngọt — Mirage Pool",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        614.2871618951735,
+        993.031680009047
+      ],
+      "tile": [
+        154,
+        248
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_6f_1",
+        "ec_rs_6f_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6g",
+      "gold_name": "Cá — Mirage Pool",
+      "gold_kind": "fish",
+      "gold_at": [
+        621.4390687439728,
+        994.8495231062752
+      ],
+      "tile": [
+        155,
+        249
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_6g_0",
+        "ec_rs_6g_1",
+        "ec_rs_6g_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6h",
+      "gold_name": "Nước ngọt — Mirage Pool",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        657.3799584716569,
+        980.2872282120285
+      ],
+      "tile": [
+        164,
+        245
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_6h_0",
+        "ec_rs_6h_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6i",
+      "gold_name": "Nước ngọt — Hook Mere",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        1263.4398481852288,
+        353.42838117009876
+      ],
+      "tile": [
+        316,
+        88
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_6i_0",
+        "ec_rs_6i_1",
+        "ec_rs_6i_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6j",
+      "gold_name": "Cá — Hook Mere",
+      "gold_kind": "fish",
+      "gold_at": [
+        1257.939392685404,
+        353.1600768751673
+      ],
+      "tile": [
+        314,
+        88
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_6j_1",
+        "ec_rs_6j_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6k",
+      "gold_name": "Nước ngọt — Hook Mere",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        1233.7527068187774,
+        369.7869348127361
+      ],
+      "tile": [
+        308,
+        92
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_6k_1",
+        "ec_rs_6k_2",
+        "ec_rs_6k_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6l",
+      "gold_name": "Nước ngọt — Hook Mere",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        1205.3158007571878,
+        350.42517974318497
+      ],
+      "tile": [
+        301,
+        88
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_6l_0",
+        "ec_rs_6l_2",
+        "ec_rs_6l_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6m",
+      "gold_name": "Cá — Hook Mere",
+      "gold_kind": "fish",
+      "gold_at": [
+        1211.4401547429713,
+        350.7575157336363
+      ],
+      "tile": [
+        303,
+        88
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_6m_1",
+        "ec_rs_6m_2",
+        "ec_rs_6m_4",
+        "ec_rs_6m_5",
+        "ec_rs_6m_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6n",
+      "gold_name": "Nước ngọt — Hook Mere",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        1238.4553798599707,
+        334.01053784769795
+      ],
+      "tile": [
+        310,
+        84
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_6n_1",
+        "ec_rs_6n_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6o",
+      "gold_name": "Ironvein ore",
+      "gold_kind": "ore",
+      "gold_at": [
+        1215,
+        665
+      ],
+      "tile": [
+        304,
+        166
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_6o_0",
+        "ec_rs_6o_1",
+        "ec_rs_6o_2",
+        "ec_rs_6o_3",
+        "ec_rs_6o_4",
+        "ec_rs_6o_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6p",
+      "gold_name": "Ironholm ore",
+      "gold_kind": "ore",
+      "gold_at": [
+        1196,
+        1300
+      ],
+      "tile": [
+        299,
+        325
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_6p_0",
+        "ec_rs_6p_1",
+        "ec_rs_6p_3",
+        "ec_rs_6p_4",
+        "ec_rs_6p_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6q",
+      "gold_name": "Salt pans",
+      "gold_kind": "salt",
+      "gold_at": [
+        1650,
+        332
+      ],
+      "tile": [
+        413,
+        83
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_6q_0",
+        "ec_rs_6q_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6r",
+      "gold_name": "Sulfur vents",
+      "gold_kind": "sulfur",
+      "gold_at": [
+        1778,
+        892
+      ],
+      "tile": [
+        445,
+        223
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_6r_0",
+        "ec_rs_6r_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6s",
+      "gold_name": "Obsidian seam",
+      "gold_kind": "obsidian",
+      "gold_at": [
+        1660,
+        786
+      ],
+      "tile": [
+        415,
+        197
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_6s_0"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6t",
+      "gold_name": "Delta clay",
+      "gold_kind": "clay",
+      "gold_at": [
+        990,
+        850
+      ],
+      "tile": [
+        248,
+        213
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_6t_0",
+        "ec_rs_6t_4",
+        "ec_rs_6t_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6u",
+      "gold_name": "Greyback stone",
+      "gold_kind": "stone",
+      "gold_at": [
+        516,
+        662
+      ],
+      "tile": [
+        129,
+        166
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_6u_0"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6v",
+      "gold_name": "Fracture stone",
+      "gold_kind": "stone",
+      "gold_at": [
+        610,
+        535
+      ],
+      "tile": [
+        153,
+        134
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6w",
+      "gold_name": "Elderwood herbs",
+      "gold_kind": "herbs",
+      "gold_at": [
+        878,
+        750
+      ],
+      "tile": [
+        220,
+        188
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_6w_0",
+        "ec_rs_6w_1",
+        "ec_rs_6w_2",
+        "ec_rs_6w_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6x",
+      "gold_name": "Hook cliffs",
+      "gold_kind": "stone",
+      "gold_at": [
+        1330,
+        312
+      ],
+      "tile": [
+        333,
+        78
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_6x_0",
+        "ec_rs_6x_1",
+        "ec_rs_6x_2",
+        "ec_rs_6x_3",
+        "ec_rs_6x_4",
+        "ec_rs_6x_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6y",
+      "gold_name": "Hook boulders",
+      "gold_kind": "stone",
+      "gold_at": [
+        1262,
+        424
+      ],
+      "tile": [
+        316,
+        106
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_6y_0",
+        "ec_rs_6y_1",
+        "ec_rs_6y_2",
+        "ec_rs_6y_3",
+        "ec_rs_6y_4",
+        "ec_rs_6y_5",
+        "ec_rs_6y_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_6z",
+      "gold_name": "Hook shore rock",
+      "gold_kind": "stone",
+      "gold_at": [
+        1352,
+        372
+      ],
+      "tile": [
+        338,
+        93
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_6z_0",
+        "ec_rs_6z_1",
+        "ec_rs_6z_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_70",
+      "gold_name": "Silverrun cobbles",
+      "gold_kind": "stone",
+      "gold_at": [
+        760,
+        612
+      ],
+      "tile": [
+        190,
+        153
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_70_0",
+        "ec_rs_70_1",
+        "ec_rs_70_2",
+        "ec_rs_70_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_71",
+      "gold_name": "Greywater shingle",
+      "gold_kind": "stone",
+      "gold_at": [
+        866,
+        620
+      ],
+      "tile": [
+        217,
+        155
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_71_0",
+        "ec_rs_71_1",
+        "ec_rs_71_2",
+        "ec_rs_71_3",
+        "ec_rs_71_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_72",
+      "gold_name": "West terrace rock",
+      "gold_kind": "stone",
+      "gold_at": [
+        396,
+        640
+      ],
+      "tile": [
+        99,
+        160
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_72_0",
+        "ec_rs_72_1",
+        "ec_rs_72_2",
+        "ec_rs_72_3",
+        "ec_rs_72_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_73",
+      "gold_name": "Westmouth boulders",
+      "gold_kind": "stone",
+      "gold_at": [
+        412,
+        566
+      ],
+      "tile": [
+        103,
+        142
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_73_0",
+        "ec_rs_73_1",
+        "ec_rs_73_2",
+        "ec_rs_73_3",
+        "ec_rs_73_4",
+        "ec_rs_73_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_74",
+      "gold_name": "Gulf west outcrop",
+      "gold_kind": "stone",
+      "gold_at": [
+        872,
+        904
+      ],
+      "tile": [
+        218,
+        226
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_74_0",
+        "ec_rs_74_1",
+        "ec_rs_74_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_75",
+      "gold_name": "Gulf bank rock",
+      "gold_kind": "stone",
+      "gold_at": [
+        806,
+        930
+      ],
+      "tile": [
+        202,
+        233
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_75_0",
+        "ec_rs_75_1",
+        "ec_rs_75_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_76",
+      "gold_name": "Mossbrook erratics",
+      "gold_kind": "stone",
+      "gold_at": [
+        1040,
+        560
+      ],
+      "tile": [
+        260,
+        140
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_76_0",
+        "ec_rs_76_1",
+        "ec_rs_76_2",
+        "ec_rs_76_3",
+        "ec_rs_76_4",
+        "ec_rs_76_5",
+        "ec_rs_76_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_77",
+      "gold_name": "Argus Brook rocks",
+      "gold_kind": "stone",
+      "gold_at": [
+        1010,
+        330
+      ],
+      "tile": [
+        253,
+        83
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_77_0",
+        "ec_rs_77_1",
+        "ec_rs_77_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_78",
+      "gold_name": "Eastern Hills scree",
+      "gold_kind": "stone",
+      "gold_at": [
+        1246,
+        716
+      ],
+      "tile": [
+        312,
+        179
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_78_0",
+        "ec_rs_78_1",
+        "ec_rs_78_2",
+        "ec_rs_78_3",
+        "ec_rs_78_4",
+        "ec_rs_78_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_79",
+      "gold_name": "Cinder Isle",
+      "gold_kind": "wood",
+      "gold_at": [
+        1692.3796168288347,
+        845.8475258291746
+      ],
+      "tile": [
+        423,
+        211
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_7a",
+      "gold_name": "Saltwick Isle",
+      "gold_kind": "fish",
+      "gold_at": [
+        1665.6176108730751,
+        301.705101063758
+      ],
+      "tile": [
+        416,
+        75
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 3,
+      "proposed_cluster_refs": [
+        "ec_rs_7a_0",
+        "ec_rs_7a_1",
+        "ec_rs_7a_2"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_7b",
+      "gold_name": "Saltwick Isle",
+      "gold_kind": "stone",
+      "gold_at": [
+        1649.813787952938,
+        315.58840841009254
+      ],
+      "tile": [
+        412,
+        79
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_7b_1",
+        "ec_rs_7b_2",
+        "ec_rs_7b_3",
+        "ec_rs_7b_4",
+        "ec_rs_7b_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_7c",
+      "gold_name": "Giếng/hứng nước mưa — Gull Isle",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        1893.985426712582,
+        442.49533858634186
+      ],
+      "tile": [
+        473,
+        111
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_7c_0",
+        "ec_rs_7c_1",
+        "ec_rs_7c_2",
+        "ec_rs_7c_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_7d",
+      "gold_name": "Gull Isle",
+      "gold_kind": "fish",
+      "gold_at": [
+        1878.1816037924448,
+        456.3786459326764
+      ],
+      "tile": [
+        470,
+        114
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_7d_0",
+        "ec_rs_7d_1",
+        "ec_rs_7d_2",
+        "ec_rs_7d_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_7e",
+      "gold_name": "Gull Isle",
+      "gold_kind": "stone",
+      "gold_at": [
+        1866.4502520164694,
+        438.91776315796625
+      ],
+      "tile": [
+        467,
+        110
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 7,
+      "proposed_cluster_refs": [
+        "ec_rs_7e_0",
+        "ec_rs_7e_1",
+        "ec_rs_7e_2",
+        "ec_rs_7e_3",
+        "ec_rs_7e_4",
+        "ec_rs_7e_5",
+        "ec_rs_7e_6"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_7f",
+      "gold_name": "Gull Isle",
+      "gold_kind": "wood",
+      "gold_at": [
+        1885.2771151105637,
+        429.5339330337536
+      ],
+      "tile": [
+        471,
+        107
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_7f_0",
+        "ec_rs_7f_1",
+        "ec_rs_7f_2",
+        "ec_rs_7f_3",
+        "ec_rs_7f_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_7g",
+      "gold_name": "Ironholm",
+      "gold_kind": "food",
+      "gold_at": [
+        1197.8128593953722,
+        1282.9166532439442
+      ],
+      "tile": [
+        299,
+        321
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_7g_0",
+        "ec_rs_7g_1",
+        "ec_rs_7g_2",
+        "ec_rs_7g_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_7h",
+      "gold_name": "Ironholm",
+      "gold_kind": "fish",
+      "gold_at": [
+        1182.009036475235,
+        1296.7999605902787
+      ],
+      "tile": [
+        296,
+        324
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_7h_0",
+        "ec_rs_7h_2",
+        "ec_rs_7h_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_7i",
+      "gold_name": "Ironholm",
+      "gold_kind": "stone",
+      "gold_at": [
+        1170.2776846992597,
+        1279.3390778155685
+      ],
+      "tile": [
+        293,
+        320
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_7i_0",
+        "ec_rs_7i_1",
+        "ec_rs_7i_3",
+        "ec_rs_7i_4",
+        "ec_rs_7i_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_7j",
+      "gold_name": "Giếng/hứng nước mưa — Threshold Isle",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        185.4565005246121,
+        510.63029680211434
+      ],
+      "tile": [
+        46,
+        128
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_7j_1",
+        "ec_rs_7j_2",
+        "ec_rs_7j_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_7k",
+      "gold_name": "Threshold Isle",
+      "gold_kind": "fish",
+      "gold_at": [
+        169.65267760447475,
+        524.5136041484488
+      ],
+      "tile": [
+        42,
+        131
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_7k_0",
+        "ec_rs_7k_1",
+        "ec_rs_7k_2",
+        "ec_rs_7k_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_7l",
+      "gold_name": "Threshold Isle",
+      "gold_kind": "stone",
+      "gold_at": [
+        157.92132582849965,
+        507.05272137373873
+      ],
+      "tile": [
+        39,
+        127
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 4,
+      "proposed_cluster_refs": [
+        "ec_rs_7l_0",
+        "ec_rs_7l_1",
+        "ec_rs_7l_2",
+        "ec_rs_7l_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_7m",
+      "gold_name": "Threshold Isle",
+      "gold_kind": "wood",
+      "gold_at": [
+        176.7481889225938,
+        497.6688912495261
+      ],
+      "tile": [
+        44,
+        124
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_7m_0",
+        "ec_rs_7m_1",
+        "ec_rs_7m_2",
+        "ec_rs_7m_3"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_7n",
+      "gold_name": "Giếng/hứng nước mưa — Wreck Isle",
+      "gold_kind": "fresh_water",
+      "gold_at": [
+        188.5566289322243,
+        865.7468670275632
+      ],
+      "tile": [
+        47,
+        216
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_7n_0",
+        "ec_rs_7n_1",
+        "ec_rs_7n_2",
+        "ec_rs_7n_3",
+        "ec_rs_7n_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_7o",
+      "gold_name": "Wreck Isle",
+      "gold_kind": "food",
+      "gold_at": [
+        172.75280601208695,
+        879.6301743738977
+      ],
+      "tile": [
+        43,
+        220
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_7o_0",
+        "ec_rs_7o_1",
+        "ec_rs_7o_2",
+        "ec_rs_7o_3",
+        "ec_rs_7o_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_7p",
+      "gold_name": "Wreck Isle",
+      "gold_kind": "fish",
+      "gold_at": [
+        161.02145423611185,
+        862.1692915991875
+      ],
+      "tile": [
+        40,
+        216
+      ],
+      "proposed_class": "WATER",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_7p_0",
+        "ec_rs_7p_1",
+        "ec_rs_7p_2",
+        "ec_rs_7p_3",
+        "ec_rs_7p_4",
+        "ec_rs_7p_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_7q",
+      "gold_name": "Wreck Isle",
+      "gold_kind": "stone",
+      "gold_at": [
+        179.84831733020602,
+        852.7854614749749
+      ],
+      "tile": [
+        45,
+        213
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 5,
+      "proposed_cluster_refs": [
+        "ec_rs_7q_0",
+        "ec_rs_7q_1",
+        "ec_rs_7q_2",
+        "ec_rs_7q_3",
+        "ec_rs_7q_4"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    },
+    {
+      "source_id": "rs_7r",
+      "gold_name": "Wreck Isle",
+      "gold_kind": "wood",
+      "gold_at": [
+        186.72819379712186,
+        872.6644539435038
+      ],
+      "tile": [
+        47,
+        218
+      ],
+      "proposed_class": "NATURAL",
+      "proposed_density": 6,
+      "proposed_cluster_refs": [
+        "ec_rs_7r_0",
+        "ec_rs_7r_1",
+        "ec_rs_7r_2",
+        "ec_rs_7r_3",
+        "ec_rs_7r_4",
+        "ec_rs_7r_5"
+      ],
+      "capability_ref": "C01",
+      "authority": "A3/Gameplay owns stock, yield, tool affinity and respawn; values NOT set here."
+    }
+  ]
+}

@@ -1,0 +1,240 @@
+{
+  "meta": {
+    "authority": "A1 geometry; A3/Gameplay owns yields and stock",
+    "no_invented_yields": true
+  },
+  "routes": [
+    {
+      "spawn_id": "sp_west",
+      "spawn_at": [
+        372,
+        606
+      ],
+      "found": {
+        "wood": {
+          "source_id": "rs_25",
+          "gold_kind": "wood",
+          "distance_au": 117.9,
+          "walkable": true,
+          "travel_time_proposal_seconds": 7.09,
+          "approach_au": [
+            428,
+            708
+          ],
+          "note": "GOLD source is in water; route targets adjacent walkable shore"
+        },
+        "stone": {
+          "source_id": "rs_72",
+          "gold_kind": "stone",
+          "distance_au": 41.6,
+          "walkable": true,
+          "travel_time_proposal_seconds": 2.55,
+          "approach_au": [
+            396,
+            640
+          ],
+          "note": "GOLD source is in water; route targets adjacent walkable shore"
+        },
+        "food": {
+          "source_id": "rs_1s",
+          "gold_kind": "food",
+          "distance_au": 29.5,
+          "walkable": true,
+          "travel_time_proposal_seconds": 1.82,
+          "approach_au": [
+            352,
+            628
+          ],
+          "note": "GOLD source is in water; route targets adjacent walkable shore"
+        },
+        "fresh_water": {
+          "source_id": "rs_5i",
+          "gold_kind": "fresh_water",
+          "distance_au": 64.5,
+          "walkable": true,
+          "travel_time_proposal_seconds": 3.09,
+          "approach_au": [
+            372,
+            540
+          ],
+          "note": "GOLD source is in water; route targets adjacent walkable shore"
+        }
+      },
+      "verdict": "GOLD_SOURCE_REACHABILITY_CANDIDATE"
+    },
+    {
+      "spawn_id": "sp_lake",
+      "spawn_at": [
+        790,
+        622
+      ],
+      "found": {
+        "wood": {
+          "source_id": "rs_1w",
+          "gold_kind": "wood",
+          "distance_au": 47.5,
+          "walkable": true,
+          "travel_time_proposal_seconds": 5.27,
+          "approach_au": [
+            816,
+            660
+          ],
+          "note": "GOLD source is in water; route targets adjacent walkable shore"
+        },
+        "stone": {
+          "source_id": "rs_70",
+          "gold_kind": "stone",
+          "distance_au": 31.6,
+          "walkable": true,
+          "travel_time_proposal_seconds": 2,
+          "approach_au": [
+            760,
+            612
+          ],
+          "note": "GOLD source is in water; route targets adjacent walkable shore"
+        },
+        "food": {
+          "source_id": "rs_1l",
+          "gold_kind": "food",
+          "distance_au": 46.7,
+          "walkable": true,
+          "travel_time_proposal_seconds": 2.91,
+          "approach_au": [
+            772,
+            580
+          ],
+          "note": "GOLD source is in water; route targets adjacent walkable shore"
+        },
+        "fresh_water": {
+          "source_id": "rs_4j",
+          "gold_kind": "fresh_water",
+          "distance_au": 28.6,
+          "walkable": true,
+          "travel_time_proposal_seconds": 3.09,
+          "approach_au": [
+            780,
+            648
+          ],
+          "note": "GOLD source is in water; route targets adjacent walkable shore"
+        }
+      },
+      "verdict": "GOLD_SOURCE_REACHABILITY_CANDIDATE"
+    },
+    {
+      "spawn_id": "sp_hook",
+      "spawn_at": [
+        1282,
+        392
+      ],
+      "found": {
+        "wood": {
+          "source_id": "rs_18",
+          "gold_kind": "wood",
+          "distance_au": 80.1,
+          "walkable": true,
+          "travel_time_proposal_seconds": 4.73,
+          "approach_au": [
+            1256,
+            468
+          ],
+          "note": "GOLD source is in water; route targets adjacent walkable shore"
+        },
+        "stone": {
+          "source_id": "rs_6y",
+          "gold_kind": "stone",
+          "distance_au": 37.7,
+          "walkable": true,
+          "travel_time_proposal_seconds": 2.36,
+          "approach_au": [
+            1264,
+            424
+          ],
+          "note": "GOLD source is in water; route targets adjacent walkable shore"
+        },
+        "food": {
+          "source_id": "rs_g",
+          "gold_kind": "food",
+          "distance_au": 80.8,
+          "walkable": true,
+          "travel_time_proposal_seconds": 12,
+          "approach_au": [
+            1328,
+            324
+          ],
+          "note": "GOLD source is in water; route targets adjacent walkable shore"
+        },
+        "fresh_water": {
+          "source_id": "rs_6i",
+          "gold_kind": "fresh_water",
+          "distance_au": 42.8,
+          "walkable": true,
+          "travel_time_proposal_seconds": 9.64,
+          "approach_au": [
+            1264,
+            352
+          ],
+          "note": "GOLD source is in water; route targets adjacent walkable shore"
+        }
+      },
+      "verdict": "GOLD_SOURCE_REACHABILITY_CANDIDATE"
+    },
+    {
+      "spawn_id": "sp_gulf",
+      "spawn_at": [
+        872,
+        930
+      ],
+      "found": {
+        "wood": {
+          "source_id": "rs_34",
+          "gold_kind": "wood",
+          "distance_au": 128.7,
+          "walkable": true,
+          "travel_time_proposal_seconds": 7.82,
+          "approach_au": [
+            820,
+            812
+          ],
+          "note": "GOLD source is in water; route targets adjacent walkable shore"
+        },
+        "stone": {
+          "source_id": "rs_74",
+          "gold_kind": "stone",
+          "distance_au": 26,
+          "walkable": true,
+          "travel_time_proposal_seconds": 1.27,
+          "approach_au": [
+            872,
+            904
+          ],
+          "note": "GOLD source is in water; route targets adjacent walkable shore"
+        },
+        "food": {
+          "source_id": "rs_3o",
+          "gold_kind": "food",
+          "distance_au": 14,
+          "walkable": true,
+          "travel_time_proposal_seconds": 0.91,
+          "approach_au": [
+            868,
+            916
+          ],
+          "note": "GOLD source is in water; route targets adjacent walkable shore"
+        },
+        "fresh_water": {
+          "source_id": "rs_53",
+          "gold_kind": "fresh_water",
+          "distance_au": 92,
+          "walkable": true,
+          "travel_time_proposal_seconds": 6.91,
+          "approach_au": [
+            956,
+            904
+          ],
+          "note": "GOLD source is in water; route targets adjacent walkable shore"
+        }
+      },
+      "verdict": "GOLD_SOURCE_REACHABILITY_CANDIDATE"
+    }
+  ]
+}

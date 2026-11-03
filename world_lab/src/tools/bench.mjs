@@ -1,0 +1,11 @@
+// Render/streaming benchmark for the shared Node renderer; not a Godot runtime benchmark.
+import fs from 'node:fs';import path from 'node:path';import {performance} from 'node:perf_hooks';import {PNG} from 'pngjs';
+import {fromPNG} from '../lib/pixels.mjs';import {NodeTarget} from '../render/targets.mjs';import {renderScene} from '../render/scene.mjs';
+const ROOT=process.cwd(),read=p=>JSON.parse(fs.readFileSync(p,'utf8')),data={world:read('data/world_base.json'),poi:read('data/poi_overlays.json'),ecology:read('data/ecology_A.json'),manifest:read('assets/generated/asset_manifest.json')};
+const terrain=fromPNG(PNG.sync.read(fs.readFileSync('assets/generated/terrain_atlas.png'))),props=fromPNG(PNG.sync.read(fs.readFileSync('assets/generated/props_atlas.png')));
+const cams=[{x:2900,y:2150,level:'exterior'},{x:3400,y:850,level:'exterior'},{x:60,y:70,level:'argus_l0'},{x:60,y:70,level:'argus_l1'},{x:60,y:70,level:'argus_l2'},{x:2670,y:2490,level:'exterior'}];
+const samples=[];for(let i=0;i<60;i++){const cam=cams[i%cams.length],t=new NodeTarget(640,360,terrain,props,data.manifest),t0=performance.now();const r=renderScene(t,data,cam,{mode:i%2?'night':'day',showHud:false,time:i*.4});samples.push({ms:performance.now()-t0,tiles:r.tiles,drawables:r.drawables});}
+const ms=samples.map(s=>s.ms).sort((a,b)=>a-b),sum=ms.reduce((a,b)=>a+b,0);
+const result={frames:60,viewport:'640x360 1x',average_ms:+(sum/60).toFixed(2),median_ms:+ms[30].toFixed(2),p95_ms:+ms[57].toFixed(2),min_ms:+ms[0].toFixed(2),max_ms:+ms[59].toFixed(2),average_visible_tiles:Math.round(samples.reduce((a,b)=>a+b.tiles,0)/60),average_drawables:Math.round(samples.reduce((a,b)=>a+b.drawables,0)/60),full_grid_cells:500*350,streaming:'visible-tile iteration only; full grid is never blitted',note:'Node/PNG capture renderer benchmark, NOT Godot 4.7 or browser runtime performance.'};
+fs.mkdirSync('qa',{recursive:true});fs.writeFileSync('qa/benchmark.json',JSON.stringify(result,null,2));fs.writeFileSync('qa/BENCHMARK.md',`# Render / streaming benchmark\n\n${JSON.stringify(result,null,2)}\n\nThis measures the deterministic Node capture renderer. It does not prove Godot 4.7 native performance, browser frame rate, or production streaming.\n`);
+console.log('bench',JSON.stringify(result));

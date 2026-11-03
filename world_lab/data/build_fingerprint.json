@@ -1,0 +1,14 @@
+{
+  "world_base": "52f547c48e9bbe2e45943d9d9ab4db24a9fe1156ea234dd405f8a84f68e619c4",
+  "poi_overlays": "84d2fd9f74155764e321409133ed3ecd74e765a11337fa93041fe63e1075acc9",
+  "ecology_A": "6ff5a6e5687d5f95ae5373f008ead37c5a5774d1fe0c20ebe7ab1b7ae75868eb",
+  "ecology_B": "7307f1b7bdca7e8f6dc96d45eb4181878db73380664c4ab1b88fa9e64f0c8a48",
+  "terrain_atlas": "c5ffa22fb222f23e11fe255203875e8cc66069670b5b033f136e011002a0c489",
+  "props_atlas": "932700d7f2cde154f2d4a6c47b2122a01c9ee78ba44217849012dfff80cd5945",
+  "asset_manifest": "12f8e5f94c34698f3793031f833345ae8fef8961a6d6c85c2f5b2110efd86dd4",
+  "gold": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+  "branch": "arena/2e3cfbd2-soul-of-hero",
+  "head": "5214788933b1a827f3a177d11ff486433dfe5e8a",
+  "compiler_base_hash": "31a96586c8f213f4779cafa256b4e2db653faaa4f0a3a641f58c2bb5badd67b2",
+  "compiler_base_hash_B": "7947642275a7aa73e0a913eedc7e8612a9bc06d2270d28e6b78704b01e5c3abc"
+}

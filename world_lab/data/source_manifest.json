@@ -1,0 +1,164 @@
+{
+  "generated": "2026-11-03T03:03:40.425Z",
+  "branch": "arena/2e3cfbd2-soul-of-hero",
+  "local_head": "5214788933b1a827f3a177d11ff486433dfe5e8a",
+  "source_branches": {
+    "gold": {
+      "name": "map/veyra-gold-asset-canon-20261102",
+      "head": "19d8c6ec820f324a6ac12733165e43b5e2c6eab2"
+    },
+    "prototypes": {
+      "name": "references/gameplay-prototypes-20261102",
+      "head": "7a1c53acfc5b7cda6cb34ea3f348b4e100744354"
+    },
+    "bible_commit": "a8c718b55130cff29b3adc5e7c531f9211ca22df"
+  },
+  "gold_sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+  "gold_bytes": 332249,
+  "raw_pack_sha256": {
+    "200380-farm-plants.zip": "ed98e53cea1bb597cde92e68e3d8a4fe0cc41115d400bf642e0299a9e53284c4",
+    "351300-island.zip": "0b436bf4193dd116bb1b16c084f4df5bcaa4d284d33655e49b98e8fffeb3d59b",
+    "574220-roads-reference-only.zip": "302e8fa1da79163d2cd9da5ddfd7610bb0186b16de7f959b7d9a09ee4763e43c",
+    "665131-fields.zip": "697a7addd4503a3d3d2feb5c23bba5b3d4b9dac66db3e709cb4217595d3c7242",
+    "668008-bridges.zip": "ad6d46007fea5972794a26d190879d9049405fa3baf1c17874991a634d875e86"
+  },
+  "private_APEX_CHAOS": "inaccessible with current auth (403); 42/43 inventory recorded in EXISTING_ASSET_GIT_SOURCES.json but blobs not available",
+  "sourceTrees": {
+    "gold": "data/source_tree_gold.txt",
+    "prototypes": "data/source_tree_prototype.txt"
+  },
+  "files": [
+    {
+      "path": "src/gold/ASSET_STAGING_STATUS.md",
+      "bytes": 2152,
+      "sha256": "4ad5b4dca3bf3df18f695b41bdd21d3df49ea57eb312c2465d063d20ed5ff4f5"
+    },
+    {
+      "path": "src/gold/CURRENT_PRODUCT_CONTRACT.md",
+      "bytes": 229339,
+      "sha256": "ab02f994af371e7386e9403dff5cdb3673412cd99b0e250f13b2201077d1e8ac"
+    },
+    {
+      "path": "src/gold/EXISTING_ASSET_GIT_SOURCES.json",
+      "bytes": 17782,
+      "sha256": "020112bea49d4541cc687aa138d2b0f4500167aaf3bbdb044fdff82483453094"
+    },
+    {
+      "path": "src/gold/MAP_TOWER_README.md",
+      "bytes": 1265,
+      "sha256": "730d2a5245eb1d619cda456fda33b7bc5935417ae5a7cb978a10eaf7c8d93faf"
+    },
+    {
+      "path": "src/gold/PROTOTYPE_REUSE_ANALYSIS.md",
+      "bytes": 9817,
+      "sha256": "2793366a10316cbfd49f014cbd2e3db60a7c17ed4cec647c547542538a868c0b"
+    },
+    {
+      "path": "src/gold/REAL_MAP_CONVERSION_CONTRACT.md",
+      "bytes": 5220,
+      "sha256": "a16deb29f27ad33a7e1788d52aa5bd7e27d36c0c4ecdcee9a4b76ee990e688d1"
+    },
+    {
+      "path": "src/gold/VEYRA_GOLD_MAP.sohmap.json",
+      "bytes": 332249,
+      "sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256"
+    },
+    {
+      "path": "src/gold/soul-of-hero-game-development.zip",
+      "bytes": 727262,
+      "sha256": "fa95538271fd46a70f5737b58b8671124e091e8f6196479950a25dca741a2403"
+    },
+    {
+      "path": "assets/source/cainos_THIRD_PARTY.md",
+      "bytes": 916,
+      "sha256": "87f5118095d985d3f5b346e015d52fe30dce6b84a3a8d74e54353e3cb01cdc36"
+    },
+    {
+      "path": "assets/source/cainos_plant.png",
+      "bytes": 65183,
+      "sha256": "77b5289f0e85f8e0f059c672ab620208db861e82ecedec615551562032e3752c"
+    },
+    {
+      "path": "assets/source/cainos_struct.png",
+      "bytes": 40561,
+      "sha256": "ef29e2c13d1dc77e2431ee38a9c9a118b420352d3b27c7ac28adbc3224cdb5a8"
+    },
+    {
+      "path": "assets/source/cainos_tileset_grass.png",
+      "bytes": 11016,
+      "sha256": "3afee45fa3ab4f2908114d5caa84fad20df568e276782550d3e9548e4e40a555"
+    },
+    {
+      "path": "assets/source/craftpix_200380_license.txt",
+      "bytes": 35,
+      "sha256": "0c0f673571adbb935c734ac17fbc6e51fb4368a225b915aa25031712b03960d4"
+    },
+    {
+      "path": "assets/source/craftpix_200380_plants.png",
+      "bytes": 64381,
+      "sha256": "642b1d1446b379c154cc48aec79b4ea581d702dae802be5aed5ad10e489eb828"
+    },
+    {
+      "path": "assets/source/craftpix_574220_license.txt",
+      "bytes": 35,
+      "sha256": "0c0f673571adbb935c734ac17fbc6e51fb4368a225b915aa25031712b03960d4"
+    },
+    {
+      "path": "assets/source/craftpix_574220_roads_reference.png",
+      "bytes": 22724,
+      "sha256": "a6138307457524b3496acb86096ca51b1f8747baa4da8dfc7ccda51b7ff2045e"
+    },
+    {
+      "path": "assets/source/craftpix_665131_License.txt",
+      "bytes": 35,
+      "sha256": "0c0f673571adbb935c734ac17fbc6e51fb4368a225b915aa25031712b03960d4"
+    },
+    {
+      "path": "assets/source/craftpix_665131_fields.png",
+      "bytes": 6813,
+      "sha256": "5a818cecd61294c7a64c09e43bf24fdf03545e7a2ae70198bec9d057d367ba09"
+    },
+    {
+      "path": "assets/source/craftpix_668008_License.txt",
+      "bytes": 35,
+      "sha256": "0c0f673571adbb935c734ac17fbc6e51fb4368a225b915aa25031712b03960d4"
+    },
+    {
+      "path": "assets/source/craftpix_668008_bridges.png",
+      "bytes": 96457,
+      "sha256": "4a75c1bd4731fdd90be26c86a5f144b1d0c6e484787f5ee19261e30ae336947a"
+    },
+    {
+      "path": "assets/source/craftpix_668008_water.png",
+      "bytes": 13683,
+      "sha256": "1d64e74ec39f03de919d795b065c36de595706cd404d72429bb9a07eabe1ffd3"
+    },
+    {
+      "path": "assets/generated/asset_manifest.json",
+      "bytes": 400251,
+      "sha256": "12f8e5f94c34698f3793031f833345ae8fef8961a6d6c85c2f5b2110efd86dd4"
+    },
+    {
+      "path": "assets/generated/props_atlas.png",
+      "bytes": 54601,
+      "sha256": "932700d7f2cde154f2d4a6c47b2122a01c9ee78ba44217849012dfff80cd5945"
+    },
+    {
+      "path": "assets/generated/terrain_atlas.png",
+      "bytes": 514642,
+      "sha256": "c5ffa22fb222f23e11fe255203875e8cc66069670b5b033f136e011002a0c489"
+    }
+  ],
+  "generated_outputs": [
+    "data/world_base.json",
+    "data/poi_overlays.json",
+    "data/poi_catalog.json",
+    "data/ecology_A.json",
+    "data/ecology_B.json",
+    "data/resource_proposals.json",
+    "assets/generated/terrain_atlas.png",
+    "assets/generated/props_atlas.png",
+    "assets/generated/asset_manifest.json"
+  ],
+  "notes": "P0-P5 ZIPs are experimental donors, not production authority. Creator confirmed relevant asset rights; selected public-branch donors and licenses are staged under assets/source."
+}
