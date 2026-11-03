@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VEYRA GOLD — Browser Review Tool (SOH World Conversion)</title>
+<style>
+  :root { --bg:#140b1f; --panel:#1e122e; --muted:#8a7ca0; --text:#e8e6f0; --accent:#9d7be8; --accent2:#6ee7b7; --danger:#ef4444; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif; overflow:hidden; }
+  #view { position:relative; width:100vw; height:100vh; overflow:hidden; background:#0b0610; }
+  canvas { display:block; cursor:crosshair; image-rendering: pixelated; }
+  .hud { position:absolute; top:10px; left:10px; z-index:40; pointer-events:none; }
+  .hud h1 { margin:0 0 6px 0; font-size:15px; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); text-shadow:0 0 10px rgba(157,123,232,0.35); }
+  .hud .sub { font-size:11px; color:var(--muted); margin-bottom:8px; line-height:1.45; pointer-events:auto; }
+  .panel { position:absolute; top:10px; left:10px; z-index:50; background:var(--panel); border:1px solid #3b2e5c; border-radius:8px; padding:10px 12px; pointer-events:auto; min-width:260px; max-height:88vh; overflow-y:auto; box-shadow:0 10px 30px rgba(0,0,0,0.45); backdrop-filter: blur(6px); }
+  .panel h2 { margin:0 0 8px 0; font-size:12px; text-transform:uppercase; letter-spacing:0.14em; color:var(--accent2); border-bottom:1px solid #3b2e5c; padding-bottom:4px; }
+  .row { display:flex; align-items:center; gap:8px; margin:4px 0; font-size:12.5px; cursor:pointer; }
+  .row input { width:0; height:0; opacity:0; }
+  .row .mark { width:16px; height:16px; border:1.5px solid #5b4a8a; border-radius:3px; flex:0 0 16px; position:relative; }
+  .row input:checked + .mark { background:var(--accent); border-color:var(--accent); box-shadow:0 0 8px rgba(157,123,232,0.5); }
+  .row .mark::after { content:""; position:absolute; inset:3px; background:currentColor; opacity:0; }
+  .row input:checked + .mark::after { opacity:1; }
+  .row .label { flex:1; min-width:0; }
+  .row .count { font-size:10.5px; color:var(--muted); white-space:nowrap; }
+  .row.warn .label { color:var(--danger); }
+  .search { width:100%; margin:8px 0 4px 0; padding:6px 8px; background:#0f081a; border:1px solid #3b2e5c; border-radius:4px; color:var(--text); font-size:12px; outline:none; }
+  .search:focus { border-color:var(--accent); }
+  .hint { font-size:10.5px; color:var(--muted); margin-top:8px; line-height:1.5; }
+  .inspector { position:absolute; bottom:12px; left:12px; z-index:50; background:var(--panel); border:1px solid #3b2e5c; border-radius:8px; padding:10px 12px; pointer-events:auto; min-width:300px; display:none; box-shadow:0 10px 30px rgba(0,0,0,0.45); }
+  .inspector.open { display:block; }
+  .inspector h3 { margin:0 0 8px 0; font-size:13px; color:var(--accent2); }
+  .kv { font-size:12px; line-height:1.6; }
+  .kv b { color:var(--accent); display:inline-block; min-width:110px; }
+  .kv .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size:11px; color:#c7c3d8; word-break:break-all; }
+  .actions { position:absolute; top:10px; right:12px; z-index:50; display:flex; gap:6px; pointer-events:auto; }
+  button { background:#241836; border:1px solid #3b2e5c; color:var(--text); padding:6px 10px; border-radius:4px; font-size:12px; cursor:pointer; }
+  button:hover { border-color:var(--accent); background:#2c1f4a; }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#0a0410; }
+  button.primary:hover { background:#b08ff5; }
+  .coord { position:absolute; bottom:10px; right:12px; z-index:45; font-family: ui-monospace, monospace; font-size:11px; color:var(--muted); pointer-events:none; }
+  .toast { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:60; background:rgba(20,11,31,0.9); border:1px solid var(--accent2); color:var(--accent2); padding:8px 14px; border-radius:6px; font-size:12px; pointer-events:none; display:none; }
+  .km { position:absolute; top:12px; right:12px; z-index:45; font-size:11px; color:var(--muted); font-family: ui-monospace, monospace; pointer-events:none; }
+</style>
+</head>
+<body>
+
+<div id="view">
+  <canvas id="canvas"></canvas>
+  <div class="hud"><h1>veyra gold</h1><div class="sub">Creator-approved GOLD map canon &rarr; SOH world conversion review</div></div>
+  <div class="panel" id="panel">
+    <h2>Layers</h2>
+    <div id="layers"></div>
+    <input class="search" id="search" placeholder="Search ID / name / kind">
+    <div class="hint">Left-drag pan &bull; wheel to zoom &bull; hover/click an object to inspect &bull; toggles preserve original GOLD IDs</div>
+  </div>
+  <div class="inspector" id="inspector">
+    <h3 id="insp-kind">—</h3>
+    <div class="kv" id="insp-body"></div>
+  </div>
+  <div class="actions">
+    <button id="btnReset">Reset view</button>
+    <button class="primary" id="btnExport">Export screenshot (PNG)</button>
+  </div>
+  <div class="coord" id="coord">x: —  y: —  zoom: 1x</div>
+  <div class="km" id="scalebar">—</div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+const JSON_PATH = "../../../data/content/levels/veyra_gold/veyra_gold_world.json";
+
+// ---- contract class order & colors (REAL_MAP_CONVERSION_CONTRACT pixel-art profile) ----
+const CLASSES = [
+  { key: "terrain",    label: "Terrain (250×175 cell=8)",  count: 1, color: "#8aa4b2" },
+  { key: "land",       label: "land[8] (rings)",           count: 8, color: "#b89d6b" },
+  { key: "lakes",      label: "lakes[5]",                  count: 5, color: "#5fa8d3" },
+  { key: "rivers",     label: "rivers[17]",                count: 17, color: "#63b3ed" },
+  { key: "roads",      label: "roads[92]",                 count: 92, color: "#c7a880" },
+  { key: "bridges",    label: "bridges[12]",               count: 12, color: "#c9c3b8" },
+  { key: "docks",      label: "docks[27]",                 count: 27, color: "#4cc3d9" },
+  { key: "pois",       label: "pois[81]",                  count: 81, color: "#b388ff" },
+  { key: "zones",      label: "zones[23]",                 count: 23, color: "#6fcf8c" },
+  { key: "resources",  label: "resources[280]",            count: 280, color: "#ffb74d" },
+  { key: "spawns",     label: "spawns[4]",                 count: 4, color: "#a5d6a7" },
+  { key: "elders",     label: "elders[6]",                 count: 6, color: "#e1bee7" },
+  { key: "labels",     label: "labels[24]",                count: 24, color: "#ffffff" },
+];
+
+let world, ctx, W, H;
+let state = { cx: W/2, cy: H/2, zoom: 0.22, dragging: false, last: {x:0,y:0}, visible: {}, hover: null, select: null, search: "" };
+const MINZ = 0.04, MAXZ = 4;
+
+async function main(){
+  const res = await fetch(JSON_PATH, { cache: "no-cache" });
+  if (!res.ok) throw new Error("Cannot load " + JSON_PATH + " — run tools/generators/veyra_gold_converter.py first");
+  world = await res.json();
+  initUI();
+  initCanvas();
+  loop();
+}
+
+function initUI(){
+  const layers = document.getElementById("layers");
+  CLASSES.forEach(c => {
+    const div = document.createElement("div");
+    div.className = "row";
+    const id = "lyr_" + c.key;
+    const checked = c.key === "terrain" || c.key === "land" || c.key === "lakes";
+    div.innerHTML = `<input type="checkbox" id="${id}" ${checked?"checked":""}><div class="mark" style="--col:${c.color}"></div><div class="label" title="${c.label}">${c.label}</div><div class="count">${c.count}</div>`;
+    div.querySelector("input").onchange = (e)=>{ state.visible[c.key] = e.target.checked; };
+    state.visible[c.key] = checked;
+    layers.appendChild(div);
+  });
+  const search = document.getElementById("search");
+  search.oninput = (e)=>{ state.search = e.target.value.toLowerCase(); };
+  document.getElementById("btnReset").onclick = ()=>{ state.cx = W/2; state.cy = H/2; state.zoom = 0.22; state.select = null; };
+  document.getElementById("btnExport").onclick = exportPNG;
+  const cv = document.getElementById("canvas");
+  cv.addEventListener("mousedown", onDown);
+  cv.addEventListener("mousemove", onMove);
+  cv.addEventListener("mouseup", onUp);
+  cv.addEventListener("wheel", onWheel, { passive: false });
+  window.addEventListener("resize", initCanvas);
+}
+
+function initCanvas(){
+  const cv = document.getElementById("canvas");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const box = cv.getBoundingClientRect();
+  W = Math.max(400, Math.floor(box.width));
+  H = Math.max(300, Math.floor(box.height));
+  cv.width = Math.floor(W * dpr); cv.height = Math.floor(H * dpr);
+  cv.style.width = W + "px"; cv.style.height = H + "px";
+  ctx = cv.getContext("2d", { alpha: false });
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  // center world in view on first load
+  if (!state._inited){ state.cx = W/2; state.cy = H/2; state.zoom = Math.min(W/2200, H/1550, 0.3); state._inited = true; }
+}
+
+function worldToScreen(wx, wy){
+  return { x: (wx - state.cx) * state.zoom + W/2, y: (wy - state.cy) * state.zoom + H/2 };
+}
+function screenToWorld(sx, sy){
+  return { x: state.cx + (sx - W/2) / state.zoom, y: state.cy + (sy - H/2) / state.zoom };
+}
+
+function onDown(e){ state.dragging = true; state.last = { x: e.clientX, y: e.clientY }; }
+function onUp(e){ state.dragging = false; }
+function onWheel(e){
+  e.preventDefault();
+  const pt = screenToWorld(e.clientX, e.clientY);
+  const dir = e.deltaY > 0 ? 0.9 : 1.1111;
+  let nz = Math.min(MAXZ, Math.max(MINZ, state.zoom * dir));
+  state.zoom = nz;
+  state.cx = pt.x - (e.clientX - W/2) / state.zoom;
+  state.cy = pt.y - (e.clientY - H/2) / state.zoom;
+}
+function onMove(e){
+  const over = document.getElementById("canvas");
+  if (state.dragging){
+    state.cx += (state.last.x - e.clientX) / state.zoom;
+    state.cy += (state.last.y - e.clientY) / state.zoom;
+    state.last = { x: e.clientX, y: e.clientY };
+  }
+  document.getElementById("coord").textContent = `x: ${Math.round(screenToWorld(e.clientX,e.clientY).x)}  y: ${Math.round(screenToWorld(e.clientX,e.clientY).y)}  zoom: ${(state.zoom*100).toFixed(0)}%`;
+  state.hover = pickObject(e.clientX, e.clientY);
+  if (!state.dragging && state.hover) over.style.cursor = "pointer"; else if (!state.dragging) over.style.cursor = "crosshair";
+}
+
+function pickObject(sx, sy){
+  const wx = screenToWorld(sx, sy).x, wy = screenToWorld(sx, sy).y;
+  const tolWorld = 8 / state.zoom; // 8 px screen tolerance
+  // check drawn-able object classes (not terrain)
+  const order = ["pois","elders","spawns","docks","bridges","land","lakes","rivers","roads","zones","resources","labels"];
+  for (const key of order){
+    const arr = world[key] || [];
+    for (const o of arr){
+      if (pointIn(objShape(key, o), wx, wy, tolWorld)) return { key, obj: o };
+    }
+  }
+  return null;
+}
+function objShape(key, o){
+  if (key === "land"){ return { kind: "rings", rings: o.rings || [] }; }
+  if (key === "lakes"){ return { kind: "ring", ring: o.ring }; }
+  if (key === "rivers"){ return { kind: "line", pts: o.points, width: o.width || 4 }; }
+  if (key === "roads"){ return { kind: "line", pts: o.points, width: 5 }; }
+  if (key === "bridges"){ return { kind: "point", at: o.at, r: 24 }; }
+  if (key === "docks"){ return { kind: "point", at: o.at, r: 14 }; }
+  if (key === "pois"){ return { kind: "foot", foot: o.foot || [], at: o.at }; }
+  if (key === "zones"){ return { kind: "ring", ring: o.ring }; }
+  if (key === "resources"){ return { kind: "circle", at: o.at, r: Math.min(o.r || 6, 14) }; }
+  if (key === "spawns"){ return { kind: "point", at: o.at, r: 12 }; }
+  if (key === "elders"){ return { kind: "ring", ring: o.outer }; }
+  if (key === "labels"){ return { kind: "point", at: o.at, r: 40 }; }
+  return null;
+}
+function pointIn(shape, wx, wy, tol){
+  if (shape.kind === "point"){ return Math.hypot(wx - shape.at[0], wy - shape.at[1]) <= shape.r; }
+  if (shape.kind === "circle"){ return Math.hypot(wx - shape.at[0], wy - shape.at[1]) <= shape.r + tol; }
+  if (shape.kind === "line"){
+    const pts = shape.pts;
+    for (let i = 0; i + 3 < pts.length; i += 2){
+      if (distToSeg(wx, wy, pts[i], pts[i+1], pts[i+2], pts[i+3]) <= (shape.width || 4)/2 + tol) return true;
+    }
+    return false;
+  }
+  if (shape.kind === "ring" || shape.kind === "rings"){
+    const rings = shape.kind === "rings" ? shape.rings : [shape.ring];
+    return rings.some(ring => pointInRing(wx, wy, ring, tol));
+  }
+  if (shape.kind === "foot"){
+    return pointInRing(wx, wy, shape.foot, tol) ||
+           (shape.at && Math.hypot(wx - shape.at[0], wy - shape.at[1]) <= 14 + tol);
+  }
+  return false;
+}
+function pointInRing(wx, wy, ring, tol){
+  if (!ring || ring.length < 3) return false;
+  // ray casting + edge proximity
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++){
+    const xi = ring[i][0], yi = ring[i][1];
+    const xj = ring[j][0], yj = ring[j][1];
+    if (((yi > wy) !== (yj > wy)) && (wx < (xj - xi) * (wy - yi) / (yj - yi) + xi)) inside = !inside;
+    if (distToSeg(wx, wy, xi, yi, xj, yj) <= 3 + tol) return true;
+  }
+  return inside;
+}
+function distToSeg(px, py, x1, y1, x2, y2){
+  const dx = x2 - x1, dy = y2 - y1;
+  let t = ((px - x1) * dx + (py - y1) * dy) / (dx * dx + dy * dy);
+  t = Math.max(0, Math.min(1, t));
+  return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy));
+}
+
+function draw(){
+  ctx.clearRect(0, 0, W, H);
+  ctx.save();
+  ctx.translate(W/2, H/2);
+  ctx.scale(state.zoom, state.zoom);
+  ctx.translate(-state.cx, -state.cy);
+
+  // Terrain first (optional)
+  if (state.visible["terrain"]){
+    const t = world.terrain;
+    const cell = t.cell, gw = t.gw, gh = t.gh;
+    const elev = t.elev, biome = t.biome;
+    const imgData = ctx.createImageData(gw, gh);
+    // biome->color ramp (review palette only, not final art)
+    const ramp = [
+      [14,24,36],   // 0 deep ocean
+      [28,42,56],   // 1 shore
+      [74,110,60],  // 2 grassland
+      [90,128,70],  // 3
+      [106,144,80], // 4
+      [130,168,100],// 5 forest
+      [150,184,115],// 6
+      [160,190,120],// 7
+      [190,170,100],// 8 sand
+      [210,210,210],// 9 snow
+      [110,140,130],// 10 marsh
+      [140,130,130],// 11 rock
+    ];
+    for (let gy = 0; gy < t.gh; gy++){
+      const rowOff = gy * gw;
+      for (let gx = 0; gx < gw; gx++){
+        const i = rowOff + gx;
+        const b = biome[i], e = elev[i];
+        let c = ramp[b % ramp.length];
+        if (e > 150) c = ramp[11];        // mountain
+        else if (e > 96) c = [c[0]*0.85, c[1]*0.85, c[2]*0.85]; // hill shade
+        const p = (gy * gw + gx) * 4;
+        imgData.data[p] = c[0]; imgData.data[p+1] = c[1]; imgData.data[p+2] = c[2]; imgData.data[p+3] = 255;
+      }
+    }
+    ctx.putImageData(imgData, 0, 0);
+    // scale terrain up to cell size
+    // (putImageData draws 1px per cell; we draw scaled via a second pass below)
+  }
+
+  // draw land rings
+  if (state.visible["land"]){
+    ctx.lineWidth = 1.4 / state.zoom; ctx.strokeStyle = "#b89d6b"; ctx.globalAlpha = 0.75;
+    ctx.beginPath();
+    for (const l of world.land){
+      for (const ring of (l.rings || [])){
+        ctx.moveTo(ring[0][0], ring[0][1]);
+        for (let i = 1; i < ring.length; i++) ctx.lineTo(ring[i][0], ring[i][1]);
+        ctx.lineTo(ring[0][0], ring[0][1]);
+      }
+    }
+    ctx.stroke();
+  }
+
+  // lakes
+  if (state.visible["lakes"]){
+    ctx.fillStyle = "#2d5a8a"; ctx.globalAlpha = 0.22;
+    ctx.beginPath();
+    for (const l of world.lakes){
+      ctx.moveTo(l.ring[0][0], l.ring[0][1]);
+      for (let i = 1; i < l.ring.length; i++) ctx.lineTo(l.ring[i][0], l.ring[i][1]);
+      ctx.closePath();
+    }
+    ctx.fill();
+    ctx.strokeStyle = "#5fa8d3"; ctx.globalAlpha = 0.8; ctx.lineWidth = 1.2 / state.zoom;
+    ctx.beginPath();
+    for (const l of world.lakes){
+      ctx.moveTo(l.ring[0][0], l.ring[0][1]);
+      for (let i = 1; i < l.ring.length; i++) ctx.lineTo(l.ring[i][0], l.ring[i][1]);
+      ctx.closePath();
+    }
+    ctx.stroke();
+  }
+
+  // rivers
+  if (state.visible["rivers"]){
+    ctx.lineCap = "round"; ctx.lineJoin = "round";
+    for (const r of world.rivers){
+      ctx.strokeStyle = "#63b3ed"; ctx.globalAlpha = 0.85; ctx.lineWidth = (r.width || 4) / state.zoom;
+      ctx.beginPath();
+      ctx.moveTo(r.points[0][0], r.points[0][1]);
+      for (let i = 1; i < r.points.length; i++) ctx.lineTo(r.points[i][0], r.points[i][1]);
+      ctx.stroke();
+    }
+  }
+
+  // roads
+  if (state.visible["roads"]){
+    ctx.strokeStyle = "#c7a880"; ctx.globalAlpha = 0.82; ctx.lineWidth = 5 / state.zoom;
+    ctx.beginPath();
+    for (const r of world.roads){
+      ctx.moveTo(r.points[0][0], r.points[0][1]);
+      for (let i = 1; i < r.points.length; i++) ctx.lineTo(r.points[i][0], r.points[i][1]);
+    }
+    ctx.stroke();
+  }
+
+  // bridges
+  if (state.visible["bridges"]){
+    ctx.strokeStyle = "#c9c3b8"; ctx.globalAlpha = 0.9; ctx.lineWidth = 3 / state.zoom;
+    for (const b of world.bridges){
+      const ang = b.ang || 0, L = (b.load === "cart" ? 48 : 30);
+      const dx = Math.cos(ang) * L / 2, dy = Math.sin(ang) * L / 2;
+      ctx.beginPath(); ctx.moveTo(b.at[0]-dx, b.at[1]-dy); ctx.lineTo(b.at[0]+dx, b.at[1]+dy); ctx.stroke();
+    }
+  }
+
+  // docks
+  if (state.visible["docks"]){
+    ctx.strokeStyle = "#4cc3d9"; ctx.globalAlpha = 0.9; ctx.lineWidth = 2 / state.zoom;
+    for (const d of world.docks){
+      ctx.beginPath();
+      ctx.moveTo(d.at[0], d.at[1]-14); ctx.lineTo(d.at[0], d.at[1]+14);
+      ctx.moveTo(d.at[0]-10, d.at[1]); ctx.lineTo(d.at[0]+10, d.at[1]);
+      ctx.stroke();
+    }
+  }
+
+  // pois (footprint + mark)
+  if (state.visible["pois"]){
+    ctx.lineWidth = 1.4 / state.zoom;
+    for (const p of world.pois){
+      const foot = p.foot || [];
+      if (foot.length >= 3){
+        ctx.strokeStyle = "#b388ff"; ctx.globalAlpha = 0.7;
+        ctx.beginPath(); ctx.moveTo(foot[0][0], foot[0][1]);
+        for (let i = 1; i < foot.length; i++) ctx.lineTo(foot[i][0], foot[i][1]);
+        ctx.closePath(); ctx.stroke();
+      }
+      ctx.fillStyle = "#b388ff"; ctx.globalAlpha = 0.9;
+      ctx.beginPath(); ctx.arc(p.at[0], p.at[1], 2.5 / state.zoom, 0, Math.PI*2); ctx.fill();
+    }
+  }
+
+  // zones
+  if (state.visible["zones"]){
+    ctx.strokeStyle = "#6fcf8c"; ctx.globalAlpha = 0.65; ctx.lineWidth = 1.2 / state.zoom;
+    for (const z of world.zones){
+      ctx.beginPath(); ctx.moveTo(z.ring[0][0], z.ring[0][1]);
+      for (let i = 1; i < z.ring.length; i++) ctx.lineTo(z.ring[i][0], z.ring[i][1]);
+      ctx.closePath(); ctx.stroke();
+    }
+  }
+
+  // resources (dots sized by r)
+  if (state.visible["resources"]){
+    for (const r of world.resources){
+      const kind = r.kind || "?";
+      const col = kind === "fish" ? "#4cc3d9" : kind === "ore" ? "#c7c7d0" : kind === "wood" ? "#c7a880" : kind === "herb" ? "#6fcf8c" : "#ffb74d";
+      ctx.strokeStyle = col; ctx.globalAlpha = 0.8; ctx.lineWidth = 1.2 / state.zoom;
+      const rad = Math.min(r.r || 6, 14);
+      ctx.beginPath(); ctx.arc(r.at[0], r.at[1], rad / state.zoom, 0, Math.PI*2); ctx.stroke();
+    }
+  }
+
+  // spawns
+  if (state.visible["spawns"]){
+    ctx.strokeStyle = "#a5d6a7"; ctx.globalAlpha = 0.95; ctx.lineWidth = 2 / state.zoom;
+    for (const s of world.spawns){
+      ctx.beginPath(); ctx.moveTo(s.at[0]-10, s.at[1]); ctx.lineTo(s.at[0]+10, s.at[1]);
+      ctx.moveTo(s.at[0], s.at[1]-10); ctx.lineTo(s.at[0], s.at[1]+10); ctx.stroke();
+    }
+  }
+
+  // elders
+  if (state.visible["elders"]){
+    ctx.strokeStyle = "#e1bee7"; ctx.globalAlpha = 0.8; ctx.lineWidth = 1.6 / state.zoom;
+    for (const e of world.elders){
+      const ring = e.outer || [];
+      ctx.beginPath(); ctx.moveTo(ring[0][0], ring[0][1]);
+      for (let i = 1; i < ring.length; i++) ctx.lineTo(ring[i][0], ring[i][1]);
+      ctx.closePath(); ctx.stroke();
+    }
+  }
+
+  // labels
+  if (state.visible["labels"]){
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    for (const l of world.labels){
+      ctx.fillStyle = "#ffffff"; ctx.globalAlpha = 0.9;
+      ctx.font = (10 / state.zoom) + "px ui-monospace, monospace";
+      ctx.fillText(l.text || l.name, l.at[0], l.at[1]);
+    }
+  }
+
+  ctx.restore();
+
+  // selection / hover highlight (screen space)
+  const target = state.select || state.hover;
+  if (target){
+    const wx = target.obj.at ? target.obj.at[0] : null;
+    const wy = target.obj.at ? target.obj.at[1] : null;
+    const cx = wx !== null ? worldToScreen(wx, wy).x : null;
+    const cy = wy !== null ? worldToScreen(wx, wy).y : null;
+    if (cx !== null){
+      ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 2; ctx.globalAlpha = 1;
+      ctx.beginPath(); ctx.arc(cx, cy, 9, 0, Math.PI*2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx, cy, 13, 0, Math.PI*2); ctx.stroke();
+    }
+  }
+  drawInspector();
+  drawScaleBar();
+}
+
+function drawInspector(){
+  const insp = document.getElementById("inspector");
+  const tgt = state.select || state.hover;
+  if (!tgt){ insp.classList.remove("open"); return; }
+  const o = tgt.obj;
+  insp.classList.add("open");
+  document.getElementById("insp-kind").textContent = (tgt.key.toUpperCase()) + "  ·  " + esc(o.id);
+  const rows = [];
+  const push = (k, v, cls="") => rows.push(`<div class="kv"><b>${esc(k)}</b><span class="${cls}">${esc(String(v))}</span></div>`);
+  push("ID", o.id);
+  if (o.name) push("Name", o.name);
+  if (o.kind) push("Kind", o.kind);
+  if (o.arche) push("Archetype", o.arche);
+  if (o.water) push("Water", o.water);
+  if (o.load) push("Load", o.load);
+  if (o.r !== undefined) push("Radius r", o.r);
+  if (o.dens !== undefined) push("Density", o.dens);
+  if (o.gate) push("Gate", o.gate);
+  if (o.at) push("At", `[${o.at.map(v=>Number(v).toFixed(1)).join(", ")}]`, "mono");
+  if (o.ring) push("Ring", o.ring.length + " points", "mono");
+  if (o.rings) push("Rings", o.rings.length + (o.rings[0] ? (" · " + o.rings[0].length + " pts (ring 0)") : ""), "mono");
+  if (o.points) push("Points", o.points.length, "mono");
+  if (o.outer) push("Outer", o.outer.length + " points", "mono");
+  if (o.width !== undefined) push("Width", o.width);
+  if (o.ang !== undefined) push("Angle", Number(o.ang).toFixed(3) + " rad");
+  if (o.rot !== undefined) push("Rotation", Number(o.rot).toFixed(4) + " rad");
+  if (o.scale !== undefined) push("Scale", o.scale);
+  if (o.conf) push("Conf", o.conf);
+  if (o.notes) push("Notes", esc(o.notes));
+  if (o.mouth) push("Mouth", JSON.stringify(o.mouth));
+  if (o.source) push("Source", JSON.stringify(o.source));
+  if (o.role) push("Role", esc(o.role));
+  if (o.opp) push("Opp.", esc(o.opp));
+  if (o.depth) push("Depth", esc(o.depth));
+  if (o.region) push("Region", esc(o.region));
+  if (o.elder) push("Elder", esc(o.elder));
+  if (o.style) push("Style", esc(o.style));
+  if (o.size !== undefined) push("Size", o.size);
+  if (o.foot) push("Foot", o.foot.length + " pts", "mono");
+  document.getElementById("insp-body").innerHTML = rows.join("");
+}
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+function drawScaleBar(){
+  const el = document.getElementById("scalebar");
+  // world units per screen px at center; bar = round number of world units
+  const worldPerScreenPx = 1 / state.zoom;
+  let nice = 100;
+  while (nice * worldPerScreenPx > 180) nice /= 2;
+  while (nice * worldPerScreenPx < 60) nice *= 2;
+  const barScreen = nice * state.zoom;
+  const x = W - 150, y = H - 30;
+  ctx.fillStyle = "rgba(20,11,31,0.75)"; ctx.fillRect(x-6, y-16, 160, 26);
+  ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + barScreen, y); ctx.stroke();
+  ctx.fillStyle = "#c7c3d8"; ctx.font = "11px ui-monospace, monospace"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.fillText(nice + " world units", x + barScreen/2, y - 8);
+}
+
+let raf;
+function loop(){ draw(); raf = requestAnimationFrame(loop); }
+
+function exportPNG(){
+  const tmp = document.createElement("canvas");
+  tmp.width = WORLD_W; tmp.height = WORLD_H;
+  const t2 = tmp.getContext("2d");
+  // redraw at full res using same logic scaled (simplified: upscale current view is not full; instead render layers at native res)
+  t2.fillStyle = "#0b0610"; t2.fillRect(0,0,WORLD_W,WORLD_H);
+  const z = 1; const cx = WORLD_W/2, cy = WORLD_H/2;
+  t2.save(); t2.translate(cy===0?0:0,0);
+  function line(points, col, w, alpha){
+    t2.strokeStyle = col; t2.globalAlpha = alpha; t2.lineWidth = w; t2.lineCap="round"; t2.lineJoin="round";
+    t2.beginPath(); t2.moveTo(points[0][0], points[0][1]);
+    for (let i = 1; i < points.length; i++) t2.lineTo(points[i][0], points[i][1]);
+    t2.stroke();
+  }
+  for (const l of world.land) for (const ring of l.rings) line(ring, "#b89d6b", 2, 0.8);
+  for (const l of world.lakes){ t2.fillStyle="#2d5a8a"; t2.globalAlpha=0.25; t2.beginPath(); t2.moveTo(l.ring[0][0],l.ring[0][1]); for(let i=1;i<l.ring.length;i++)t2.lineTo(l.ring[i][0],l.ring[i][1]); t2.closePath(); t2.fill(); line(l.ring, "#5fa8d3", 2, 0.9); }
+  for (const r of world.rivers) line(r.points, "#63b3ed", r.width||4, 0.9);
+  for (const r of world.roads) line(r.points, "#c7a880", 5, 0.85);
+  for (const b of world.bridges){ const ang=b.ang||0, L=b.load==="cart"?48:30, dx=Math.cos(ang)*L/2, dy=Math.sin(ang)*L/2; line([[b.at[0]-dx,b.at[1]-dy],[b.at[0]+dx,b.at[1]+dy]], "#c9c3b8", 3, 0.95); }
+  for (const d of world.docks){ line([[d.at[0],d.at[1]-14],[d.at[0],d.at[1]+14]], "#4cc3d9", 2, 0.95); line([[d.at[0]-10,d.at[1]],[d.at[0]+10,d.at[1]]], "#4cc3d9", 2, 0.95); }
+  for (const p of world.pois){ const f=p.foot||[]; if(f.length>=3){ t2.strokeStyle="#b388ff"; t2.globalAlpha=0.75; t2.lineWidth=1.5; t2.beginPath(); t2.moveTo(f[0][0],f[0][1]); for(let i=1;i<f.length;i++)t2.lineTo(f[i][0],f[i][1]); t2.closePath(); t2.stroke(); } t2.fillStyle="#b388ff"; t2.globalAlpha=0.95; t2.beginPath(); t2.arc(p.at[0],p.at[1],2.5,0,Math.PI*2); t2.fill(); }
+  for (const z of world.zones){ line(z.ring, "#6fcf8c", 1.5, 0.7); }
+  for (const r of world.resources){ const col = r.kind==="fish"?"#4cc3d9":r.kind==="ore"?"#c7c7d0":r.kind==="wood"?"#c7a880":r.kind==="herb"?"#6fcf8c":"#ffb74d"; t2.strokeStyle=col; t2.globalAlpha=0.85; t2.lineWidth=1.5; const rad=Math.min(r.r||6,14); t2.beginPath(); t2.arc(r.at[0],r.at[1],rad,0,Math.PI*2); t2.stroke(); }
+  for (const s of world.spawns){ t2.strokeStyle="#a5d6a7"; t2.globalAlpha=1; t2.lineWidth=2; t2.beginPath(); t2.moveTo(s.at[0]-10,s.at[1]); t2.lineTo(s.at[0]+10,s.at[1]); t2.moveTo(s.at[0],s.at[1]-10); t2.lineTo(s.at[0],s.at[1]+10); t2.stroke(); }
+  for (const e of world.elders){ line(e.outer, "#e1bee7", 2, 0.85); }
+  t2.textAlign="center"; t2.textBaseline="middle"; t2.fillStyle="#ffffff"; t2.globalAlpha=0.95;
+  for (const l of world.labels){ t2.font = Math.max(10, l.size||24) + "px ui-monospace, monospace"; t2.fillText(l.text||l.name, l.at[0], l.at[1]); }
+  t2.restore();
+  const link = document.createElement("a");
+  link.download = "veyra_gold_review.png";
+  link.href = tmp.toDataURL("image/png");
+  link.click();
+  toast("Exported veyra_gold_review.png (native 2000×1400 resolution)");
+}
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.style.display = "block";
+  setTimeout(()=>{ t.style.display = "none"; }, 2200);
+}
+
+// click to select
+document.getElementById("canvas").addEventListener("click", (e)=>{
+  if (state.dragging) return;
+  const h = pickObject(e.clientX, e.clientY);
+  state.select = h ? h : null;
+});
+
+main();
+</script>
+</body>
+</html>
