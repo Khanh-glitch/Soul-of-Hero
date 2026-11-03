@@ -1,0 +1,126 @@
+[
+  {
+    "phase": "opening",
+    "sourceFloor": {
+      "pixels": 15380,
+      "meanOff": 36.64352680103926,
+      "meanAbsDelta": 0,
+      "maxDelta": 0,
+      "over10": 0
+    },
+    "worldFloor": {
+      "pixels": 15380,
+      "meanOff": 106.17999427825967,
+      "meanAbsDelta": 0,
+      "maxDelta": 0,
+      "over10": 0
+    },
+    "sourceEmission": {
+      "pixels": 15380,
+      "meanOff": 44.949311456437,
+      "meanAbsDelta": 0,
+      "maxDelta": 0,
+      "over10": 0
+    },
+    "worldEmission": {
+      "pixels": 15380,
+      "meanOff": 113.2276219895785,
+      "meanAbsDelta": 0,
+      "maxDelta": 0,
+      "over10": 0
+    }
+  },
+  {
+    "phase": "build",
+    "sourceFloor": {
+      "pixels": 15380,
+      "meanOff": 36.64352680103926,
+      "meanAbsDelta": 0,
+      "maxDelta": 0,
+      "over10": 0
+    },
+    "worldFloor": {
+      "pixels": 15380,
+      "meanOff": 106.17999427825967,
+      "meanAbsDelta": 0,
+      "maxDelta": 0,
+      "over10": 0
+    },
+    "sourceEmission": {
+      "pixels": 15380,
+      "meanOff": 45.8262472821844,
+      "meanAbsDelta": 0,
+      "maxDelta": 0,
+      "over10": 0
+    },
+    "worldEmission": {
+      "pixels": 15380,
+      "meanOff": 113.96434344601353,
+      "meanAbsDelta": 0,
+      "maxDelta": 0,
+      "over10": 0
+    }
+  },
+  {
+    "phase": "climax",
+    "sourceFloor": {
+      "pixels": 15380,
+      "meanOff": 36.64352680103926,
+      "meanAbsDelta": 16.255493550064585,
+      "maxDelta": 140.3798,
+      "over10": 7446
+    },
+    "worldFloor": {
+      "pixels": 15380,
+      "meanOff": 106.17999427825967,
+      "meanAbsDelta": 42.482736020805454,
+      "maxDelta": 169.0788,
+      "over10": 10362
+    },
+    "sourceEmission": {
+      "pixels": 15380,
+      "meanOff": 116.61700271781615,
+      "meanAbsDelta": 8.29685326397897,
+      "maxDelta": 76.01080000000002,
+      "over10": 4470
+    },
+    "worldEmission": {
+      "pixels": 15380,
+      "meanOff": 170.42269820546034,
+      "meanAbsDelta": 21.339717126138236,
+      "maxDelta": 168.0788,
+      "over10": 6688
+    }
+  },
+  {
+    "phase": "out",
+    "sourceFloor": {
+      "pixels": 15380,
+      "meanOff": 36.64352680103926,
+      "meanAbsDelta": 18.187321781533793,
+      "maxDelta": 145.4468,
+      "over10": 8003
+    },
+    "worldFloor": {
+      "pixels": 15380,
+      "meanOff": 106.17999427825967,
+      "meanAbsDelta": 46.75321348504445,
+      "maxDelta": 172.23319999999998,
+      "over10": 10738
+    },
+    "sourceEmission": {
+      "pixels": 15380,
+      "meanOff": 116.40971321196369,
+      "meanAbsDelta": 9.424433849154473,
+      "maxDelta": 91.08699999999999,
+      "over10": 4883
+    },
+    "worldEmission": {
+      "pixels": 15380,
+      "meanOff": 170.79756310793292,
+      "meanAbsDelta": 24.020164408323037,
+      "maxDelta": 171.9344,
+      "over10": 7082
+    }
+  }
+]

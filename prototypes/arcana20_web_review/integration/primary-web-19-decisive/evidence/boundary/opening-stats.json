@@ -1,0 +1,34 @@
+{
+  "time": 0.9834333333333348,
+  "floatOK": true,
+  "frameError": 1282,
+  "uploadError": 0,
+  "readError": 0,
+  "errors": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "counts": {
+    "sp": 42,
+    "ap": 0,
+    "sh": 0,
+    "line": 483,
+    "aline": 0,
+    "poly": 0,
+    "apoly": 0
+  },
+  "warpCenterAlpha": 0,
+  "warpMaxAlpha": 0,
+  "warpP99Alpha": 0,
+  "decalMaxAlpha": 0,
+  "cam": [
+    0,
+    0
+  ]
+}
