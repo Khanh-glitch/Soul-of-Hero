@@ -9,6 +9,9 @@ tmp/
 *.write.lock/
 user_data/
 tools/mcp/node_modules/
+web/node_modules/
+web/dist/
+
 
 # Local downloaded asset libraries remain ignored by default.  The selected
 # production subsets below are explicitly tracked because runtime scenes and
