@@ -394,10 +394,10 @@ export function drawPostNight(g: CanvasRenderingContext2D, cam: { x: number; y: 
     }
     // bounded night-safe emission (light channel only, kept subtle so it reads as
     // glow behind the core instead of a fog layer over it)
-    if (layers.emission && dark > 0.02 && le >= 0.5) {
-      const alpha = Math.min(quality.emissionCap, 0.03 + dark * 0.08) * Math.min(1, le / 6);
-      drawFrame(g, inst, 'light', alpha, 'lighter', sOff, sOffY);
-    }
+    // Night emission OFF: the light channel's own silhouette is a big soft disc
+    // and reads as a visible pale shape over the dark world. The crisp art
+    // re-draw below already keeps the effect vivid at night. (Day keeps radiance.)
+    void le;
     // re-draw the crisp art core ON TOP of its glow so the shape stays sharp
     // (day: undoes the radiance wash; night: keeps the core vivid and crisp over
     // the additive emission instead of reading as haze). For warp instances this
