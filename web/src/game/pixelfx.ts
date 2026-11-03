@@ -340,24 +340,31 @@ export function drawPostNight(g: CanvasRenderingContext2D, cam: { x: number; y: 
     if (inst.t < 0) continue;
     const r = destRect(inst, -cam.x, -cam.y);
     const le = inst.entry.export.lightEnergy;
-    // colored radiance (soft falloff illumination of the nearby scene)
+    // colored radiance (soft falloff illumination of the nearby scene) — drawn UNDER the art
     if (layers.radiance && quality.radiance) {
       const energy = Math.min(1.6, le / 8);
-      const a = (dark > 0.02 ? Math.min(0.5, 0.12 + dark * 0.55) : 0.10) * energy;
+      const a = (dark > 0.02 ? Math.min(0.28, 0.08 + dark * 0.3) : 0.05) * energy;
       if (a > 0.01) {
-        const rad = Math.max(r.dw, r.dh) * 0.85 + 18;
+        const rad = Math.max(r.dw, r.dh) * 0.5 + 10;
         const spr = radianceSprite(tintOf(inst.entry));
         g.save();
-        g.globalCompositeOperation = 'lighter'; g.globalAlpha = Math.min(0.6, a);
+        g.globalCompositeOperation = 'lighter'; g.globalAlpha = Math.min(0.3, a);
         g.drawImage(spr, Math.round(r.rotX - rad), Math.round(r.rotY - rad), Math.round(rad * 2), Math.round(rad * 2));
         g.restore();
       }
     }
-    // bounded night-safe emission (light channel only)
+    // bounded night-safe emission (light channel only, kept subtle so it reads as
+    // glow behind the core instead of a fog layer over it)
     if (layers.emission && dark > 0.02 && le >= 0.5) {
-      const alpha = Math.min(quality.emissionCap, 0.2 + dark * 0.55) * Math.min(1, le / 6);
+      const alpha = Math.min(quality.emissionCap, 0.1 + dark * 0.28) * Math.min(1, le / 6);
       drawFrame(g, inst, 'light', alpha, 'lighter', -cam.x, -cam.y);
     }
+    // re-draw the crisp art core ON TOP of its glow so the shape stays sharp
+    // (day: undoes the radiance wash; night: keeps the core vivid and crisp over
+    // the additive emission instead of reading as haze). For warp instances this
+    // paints the same destRect as drawWarpPass, so the night-dimmed copy underneath
+    // is fully covered — no ghosting, single crisp shape.
+    if (layers.art) drawFrame(g, inst, 'combined', 1, 'source-over', -cam.x, -cam.y);
   }
 }
 
