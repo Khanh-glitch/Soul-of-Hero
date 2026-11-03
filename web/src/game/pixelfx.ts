@@ -266,14 +266,27 @@ function radianceSprite(tint: string): HTMLCanvasElement {
 export const layers = { art: true, emission: true, radiance: true, warp: true };
 
 // ---- passes called by render.ts ----------------------------------------------------
-// Depth items for the y-sorted world draw list (non-warp, non-screen, visible).
+// Depth items for the y-sorted world draw list (ground/proj FX — these keep
+// correct occlusion by walls/roofs/trees). Hover/body auras (windup, orb) are
+// drawn separately ABOVE the world (drawAuras) so they are never cropped.
 export function depthItems(g: CanvasRenderingContext2D): { y: number; f: () => void }[] {
   const out: { y: number; f: () => void }[] = [];
   for (const inst of instances) {
     if (inst.warp || inst.family === 'screen' || inst.t < 0) continue;
+    if (inst.family === 'hover' || inst.family === 'body') continue; // drawn in drawAuras
     out.push({ y: inst.family === 'ground' ? inst.y : inst.y - 6, f: () => { if (layers.art) drawFrame(g, inst, 'combined', 1, 'source-over'); } });
   }
   return out;
+}
+
+// Aura FX (hover/body) drawn after the whole world incl. roofs — always fully
+// visible, never cropped by the player sprite or structures. Presentation-only.
+export function drawAuras(g: CanvasRenderingContext2D, cam: { x: number; y: number }) {
+  for (const inst of instances) {
+    if (inst.family !== 'hover' && inst.family !== 'body') continue;
+    if (inst.t < 0) continue;
+    if (layers.art) drawFrame(g, inst, 'combined', 1, 'source-over', -cam.x, -cam.y);
+  }
 }
 
 // Warp pass (screen space, after g.restore()): each warp instance has its OWN

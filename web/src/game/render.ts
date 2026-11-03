@@ -226,6 +226,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
     else { g.strokeStyle = '#ffb040'; g.setLineDash([2, 2]); g.strokeRect(tx * 16 + 0.5, ty * 16 + 0.5, 15, 15); g.setLineDash([]); } }
   if (o.target) { const bob = Math.round(Math.sin(time / 160) * 1.5); g.fillStyle = '#ffe27a'; const X = Math.round(o.target.x), Y = Math.round(o.target.y) - 20 + bob; g.fillRect(X - 2, Y, 5, 1); g.fillRect(X - 1, Y + 1, 3, 1); g.fillRect(X, Y + 2, 1, 1); }
   g.restore();
+  pfx.drawAuras(g, { x: cx, y: cy }); // hover/body auras above everything — never cropped
   pfx.drawWarpPass(g, { x: cx, y: cy }, now);
   pfx.drawScreen(g);
   // weather & light (screen space)
