@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { BAL, TILE, WW, type Entity, type GameState } from '../src/game/core';
+import { BAL, TILE, WW, T, type Entity, type GameState } from '../src/game/core';
 import { addItem, C, countItem, destroyStructure, dispatch, markDirty, mkContainer, newGame, stepStations } from '../src/game/engine';
 import { getWorld } from '../src/game/world';
 import { settle } from '../src/game/sim';
@@ -180,7 +180,7 @@ describe('B1 snapshots and recovery', () => {
 });
 
 describe('B1 offline shelter causes', () => {
-  function shelter() { const gs = fresh(), r = gs.run!, b = getWorld().buildings.find(b => b.id === 'b_tp')!; r.player.x = (b.x + 2) * TILE + 8; r.player.y = (b.y + 2) * TILE + 8; r.player.hp = 1; r.clock.lastSimAt = T0; return gs; }
+  function shelter() { const gs = fresh(), r = gs.run!, b = getWorld().buildings.find(b => b.id === 'b_tp')!; r.player.x = (b.x + 2) * TILE + 8; r.player.y = (b.y + 2) * TILE + 8; r.player.hp = 1; r.clock.lastSimAt = T0; for (let y=b.y;y<b.y+b.h;y++) for(let x=b.x;x<b.x+b.w;x++) if(x===b.x||y===b.y||x===b.x+b.w-1||y===b.y+b.h-1) r.terrain[y*WW+x]={t:T.PWALL}; markDirty(); return gs; }
   it('only hunger is floored; thirst alone and hunger with thirst are lethal with one bag', () => {
     const h = shelter(); h.run!.player.hunger = 0; h.run!.player.thirst = 100; settle(h, T0 + 60000); expect(h.run!.player.dead).toBe(false); expect(h.run!.player.hp).toBe(1);
     for (const hunger of [0, 100]) { const g = shelter(); g.run!.player.hunger = hunger; g.run!.player.thirst = 0; settle(g, T0 + 60000); settle(g, T0 + 2 * 60000); expect(g.run!.player.dead).toBe(true); expect(Object.values(g.run!.entities).filter(e => e.kind === 'bag')).toHaveLength(1); }

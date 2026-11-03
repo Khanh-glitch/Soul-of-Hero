@@ -136,7 +136,7 @@ export function sourceAt(r: RunState, tx: number, ty: number, now?: number) {
 }
 // collision cache — rebuilt when structures/sources/terrain change
 let blockCache: { run: string; layout: string; sourceVersion: number; arr: Uint8Array } | null = null; let blockDirty = true;
-export function markDirty() { blockDirty = true; tileIndex = null; }
+export function markDirty() { blockDirty = true; tileIndex = null; roomCache = null; }
 /** 0 free, 1 terrain wall, 2 source, 3 structure, 4 shallow/river (wade), 5 lava */
 let baseGrid: Uint8Array | null = null; let baseGridLayout = '';
 function tileClass(t: number) { return (t === T.DEEP || t === T.CLIFF || t === T.PWALL) ? 1 : t === T.LAVA ? 5 : (t === T.SHALLOW || t === T.RIVER) ? 4 : 0; }
@@ -173,20 +173,40 @@ export function claimAt(r: RunState, tx: number, ty: number) {
   const R = BAL.economy.claimRadius;
   for (const e of Object.values(r.entities)) if (e.kind === 'struct' && e.type === 'claim' && Math.hypot(e.tx! - tx, e.ty! - ty) <= R + 0.01) return e; return null;
 }
-/** Shelter = roofed tile inside an enclosure (walls/closed doors) — LOCKED_CANON uses "valid shelter"; enclosure rule is PROPOSED_MECHANISM. */
-export function isSheltered(r: RunState, px: number, py: number) {
-  const w = getWorld(); const sx = Math.floor(px / TILE), sy = Math.floor(py / TILE);
-  const roofAt = (x: number, y: number) => entsAt(r, x, y).some(e => e.kind === 'struct' && STRUCTS[e.type!].shelter) || w.buildings.some(b => x > b.x && x < b.x + b.w - 1 && y > b.y && y < b.y + b.h - 1);
-  if (!roofAt(sx, sy)) return false;
-  if (w.buildings.some(b => sx > b.x && sx < b.x + b.w - 1 && sy > b.y && sy < b.y + b.h - 1)) return true; // roofed POI interior
-  const seen = new Set<number>([sy * WW + sx]); const q = [[sx, sy]]; let n = 0;
-  while (q.length) { const [x, y] = q.pop()!; if (++n > 90) return false; if (!roofAt(x, y)) return false;
-    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const nx = x + dx, ny = y + dy, j = ny * WW + nx; if (seen.has(j)) continue; seen.add(j);
-      const t = effTile(r, nx, ny); if (t === T.PWALL || t === T.CLIFF) continue;
-      if (entsAt(r, nx, ny).some(e => (e.kind === 'struct' && STRUCTS[e.type!].layer === 'wall' && !(e.type!.startsWith('door') && e.open)) || (e.kind === 'door' && !e.open))) continue;
-      q.push([nx, ny]); } }
-  return true;
+/** Both adapters supply roof coverage to the same room traversal. */
+export function roofAt(r: RunState, x: number, y: number) {
+  if (x < 0 || y < 0 || x >= WW || y >= WH) return false;
+  return entsAt(r, x, y).some(e => e.kind === 'struct' && !!STRUCTS[e.type!]?.shelter) ||
+    getWorld().buildings.some(b => x >= b.x && x < b.x + b.w && y >= b.y && y < b.y + b.h);
 }
+function roomWall(r: RunState, x: number, y: number) {
+  if (x < 0 || y < 0 || x >= WW || y >= WH) return false;
+  const t = effTile(r, x, y); if (t === T.PWALL || t === T.CLIFF) return true;
+  return entsAt(r, x, y).some(e => e.kind === 'struct' && STRUCTS[e.type!]?.layer === 'wall' && !(e.type!.startsWith('door') && e.open) || e.kind === 'door' && !e.open);
+}
+let roomCache: { run: RunState; start: number; cells: Set<number>; enclosed: boolean } | null = null;
+/** Roofed connected room, bounded by world cells rather than an arbitrary size limit.
+ * Closed physical walls/doors split rooms; open doors connect or expose them. */
+export function roofRoom(r: RunState, px: number, py: number) {
+  const sx = Math.floor(px / TILE), sy = Math.floor(py / TILE), start = sy * WW + sx;
+  if (roomCache?.run === r && roomCache.start === start) return roomCache;
+  const cells = new Set<number>(); let enclosed = roofAt(r, sx, sy) && !roomWall(r, sx, sy);
+  if (enclosed) {
+    const queue = [start]; cells.add(start);
+    for (let n = 0; n < queue.length; n++) {
+      const i = queue[n], x = i % WW, y = Math.floor(i / WW);
+      for (const [dx, dy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
+        const nx = x + dx, ny = y + dy;
+        if (nx < 0 || ny < 0 || nx >= WW || ny >= WH) { enclosed = false; continue; }
+        if (roomWall(r, nx, ny)) continue;
+        if (!roofAt(r, nx, ny)) { enclosed = false; continue; }
+        const j = ny * WW + nx; if (!cells.has(j)) { cells.add(j); queue.push(j); }
+      }
+    }
+  }
+  return roomCache = { run: r, start, cells, enclosed };
+}
+export function isSheltered(r: RunState, px: number, py: number) { return roofRoom(r, px, py).enclosed; }
 
 // ---------------- custody (K1) ----------------
 export const C = (r: RunState, id: string): Container => typeof id === 'string' && Object.prototype.hasOwnProperty.call(r.custody, id) ? r.custody[id] : undefined as unknown as Container;
@@ -277,6 +297,7 @@ function removeEntity(r: RunState, e: Entity) { delete r.entities[e.id]; for (co
 /** Destruction and reclaim share the same custody transition. */
 export function destroyStructure(r: RunState, e: Entity, now: number) {
   if (r.entities[e.id] !== e || e.kind !== 'struct') return null;
+  if (STRUCTS[e.type!]?.layer === 'floor') for (const roof of [...entsAt(r, e.tx!, e.ty!)]) if (roof.kind === 'struct' && STRUCTS[roof.type!]?.layer === 'roof') { destroyStructure(r, roof, now); receipt(r, now, 'struct.destroyed', `${roof.type}:lost support`); }
   const bag = bagStation(r, e, now, 'Wreckage'); removeEntity(r, e); return bag;
 }
 
@@ -411,10 +432,10 @@ export function dispatch(gs: GameState, it: Intent, now: number): Result {
   return res;
 }
 const fail = (reason: string): Result => ({ ok: false, reason });
-function near(r: RunState, e: { x: number; y: number }, tiles = 2.2) { return dist(r.player.x, r.player.y, e.x, e.y) <= tiles * TILE; }
+function near(r: RunState, e: { x: number; y: number }, tiles = 2.2) { return dist(r.player.x, r.player.y, e.x, e.y) <= tiles * TILE && clearWallLine(r, r.player, e); }
 /** Grid traversal visits every crossed cell, including both sides of a corner.
  * Interaction targets may themselves occupy a blocking cell; intervening cells never may. */
-export function clearPhysicalLine(r: RunState, p: { x: number; y: number }, e: { x: number; y: number }, blockTrees = true, excludeEnd = false): boolean {
+export function clearPhysicalLine(r: RunState, p: { x: number; y: number }, e: { x: number; y: number }, blockTrees = true, excludeEnd = false, wallsOnly = false): boolean {
   const grid = blockGrid(r), sx = Math.floor(p.x / TILE), sy = Math.floor(p.y / TILE);
   const ex = Math.floor(e.x / TILE), ey = Math.floor(e.y / TILE);
   let x = sx, y = sy; const dx = e.x - p.x, dy = e.y - p.y, stepx = Math.sign(dx), stepy = Math.sign(dy);
@@ -424,6 +445,7 @@ export function clearPhysicalLine(r: RunState, p: { x: number; y: number }, e: {
   const clear = (cx: number, cy: number) => {
     if (cx === sx && cy === sy || excludeEnd && cx === ex && cy === ey) return true;
     if (cx < 0 || cy < 0 || cx >= WW || cy >= WH) return false;
+    if (wallsOnly) return !roomWall(r, cx, cy) && effTile(r, cx, cy) !== T.LAVA;
     const b = grid[cy * WW + cx]; return b !== 1 && b !== 3 && b !== 5 && (!blockTrees || b !== 2);
   };
   while (x !== ex || y !== ey) {
@@ -439,6 +461,7 @@ export function clearPhysicalLine(r: RunState, p: { x: number; y: number }, e: {
 function clearSegment(r: RunState, p: { x: number; y: number }, e: { x: number; y: number }) {
   return clearPhysicalLine(r, p, e, true, true);
 }
+function clearWallLine(r: RunState, p: {x:number;y:number}, e: {x:number;y:number}) { return clearPhysicalLine(r, p, e, false, true, true); }
 export function clearInteraction(r:RunState,e:{x:number;y:number}) { return clearSegment(r,r.player,e); }
 
 function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
@@ -792,7 +815,7 @@ function accepts(c: Container, slot: number, s: Stack) {
 }
 function canAccess(r: RunState, cid: string) {
   if (cid === 'inv' || cid === 'eq') return true;
-  for (const e of Object.values(r.entities)) if ((e.c === cid || e.station?.fuelC === cid || e.station?.outC === cid) && owned(e)) return dist(r.player.x, r.player.y, e.x, e.y) <= 2.8 * TILE && (!['loot','cash'].includes(e.kind) || clearInteraction(r,e));
+  for (const e of Object.values(r.entities)) if ((e.c === cid || e.station?.fuelC === cid || e.station?.outC === cid) && owned(e)) return dist(r.player.x, r.player.y, e.x, e.y) <= 2.8 * TILE && clearWallLine(r,r.player,e);
   return false;
 }
 export function homeComplete(r: RunState) {

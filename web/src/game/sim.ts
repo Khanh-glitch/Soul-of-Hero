@@ -875,7 +875,7 @@ export function findInteract(gs: GameState, now: number): Interact | null {
   const r = gs.run!; const p = r.player; if (p.dead) return null; let best: Interact | null = null; let bd = 30;
   const fx0 = p.x + Math.cos(p.aim) * 6, fy0 = p.y + Math.sin(p.aim) * 6;
   for (const e of Object.values(r.entities)) {
-    if (e.kind === 'drop') continue; const d = dist(fx0, fy0, e.x, e.y); if (d > bd) continue;
+    if (e.kind === 'drop') continue; const d = dist(fx0, fy0, e.x, e.y); if (d > bd || !clearInteraction(r, e)) continue;
     let label = ''; let kind = e.kind as string;
     if (e.kind === 'bag') label = `Open ${e.label || 'bag'}`;
     else if (e.kind === 'loot') label = C(r, e.c!).slots.some(Boolean) ? 'Search crate' : 'Empty crate';

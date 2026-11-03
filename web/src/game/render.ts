@@ -2,7 +2,7 @@
 import { TILE, WW, WH, VIEW_W, VIEW_H, T, hash2, clamp, type GameState, type RunState, type Creature, type Entity } from './core';
 import { STRUCTS, ELDERS, CREATURES, ITEMS } from './catalog';
 import { getWorld, SRC_KEYS, fbm } from './world';
-import { effTile, sourceAt, darkness, weatherAt, isRagnarok, entsAt, buildReason, C } from './engine';
+import { effTile, sourceAt, darkness, weatherAt, isRagnarok, entsAt, buildReason, C, roofRoom } from './engine';
 import { FX, PROJ, HAZ, activeStack } from './sim';
 import { getArt, pixelText, mk, type Sprite } from './art';
 
@@ -212,11 +212,13 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   // projectiles
   for (const pr of PROJ) { if (pr.delay && pr.delay > 0) continue; drawProj(g, pr, time); }
   // roofs
-  const inside = isUnderRoof(r, p.x, p.y);
-  for (const b of w.buildings) { if ((b.x + b.w) * 16 < cx || b.x * 16 > cx + VIEW_W || (b.y + b.h) * 16 < cy - 16 || b.y * 16 > cy + VIEW_H) continue; const pin = p.x > b.x * 16 && p.x < (b.x + b.w) * 16 && p.y > b.y * 16 && p.y < (b.y + b.h) * 16 + 4;
-    g.globalAlpha = pin ? 0.12 : 1; const spr = A.st['roof_' + b.roof] || A.st.roof_wood; for (let y = 0; y < b.h; y++) for (let x = 0; x < b.w; x++) g.drawImage(spr, (b.x + x) * 16, (b.y + y) * 16 - 10);
-    g.fillStyle = 'rgba(0,0,0,0.25)'; g.fillRect(b.x * 16, (b.y + b.h) * 16 - 10, b.w * 16, 2); g.fillStyle = 'rgba(255,255,255,0.18)'; g.fillRect(b.x * 16, b.y * 16 - 10 + Math.floor(b.h * 8), b.w * 16, 1); g.globalAlpha = 1; }
-  for (const e of ents) { if (e.kind !== 'struct' || STRUCTS[e.type!].layer !== 'roof') continue; if (e.x < cx - 20 || e.x > cx + VIEW_W + 20 || e.y < cy - 20 || e.y > cy + VIEW_H + 30) continue; g.globalAlpha = inside && Math.hypot(e.x - p.x, e.y - p.y) < 120 ? 0.15 : 1; g.drawImage(A.st[e.type!], e.x - 8, e.y - 18); if (!entsAt(r, e.tx!, e.ty! + 1).some(o => o.kind === 'struct' && STRUCTS[o.type!].layer === 'roof')) { g.fillStyle = 'rgba(0,0,0,0.3)'; g.fillRect(e.x - 8, e.y - 3, 16, 2); } g.globalAlpha = 1; }
+  const room = roofRoom(r, p.x, p.y);
+  for (const b of w.buildings) { if ((b.x + b.w) * 16 < cx || b.x * 16 > cx + VIEW_W || (b.y + b.h) * 16 < cy - 16 || b.y * 16 > cy + VIEW_H) continue;
+    const spr = A.st['roof_' + b.roof] || A.st.roof_wood;
+    for (let y = 0; y < b.h; y++) for (let x = 0; x < b.w; x++) { g.globalAlpha = room.cells.has((b.y + y) * WW + b.x + x) ? 0.12 : 1; g.drawImage(spr, (b.x + x) * 16, (b.y + y) * 16 - 10); }
+    g.globalAlpha = 1;
+  }
+  for (const e of ents) { if (e.kind !== 'struct' || STRUCTS[e.type!].layer !== 'roof') continue; if (e.x < cx - 20 || e.x > cx + VIEW_W + 20 || e.y < cy - 20 || e.y > cy + VIEW_H + 30) continue; g.globalAlpha = room.cells.has(e.ty! * WW + e.tx!) ? 0.15 : 1; g.drawImage(A.st[e.type!], e.x - 8, e.y - 18); if (!entsAt(r, e.tx!, e.ty! + 1).some(o => o.kind === 'struct' && STRUCTS[o.type!].layer === 'roof')) { g.fillStyle = 'rgba(0,0,0,0.3)'; g.fillRect(e.x - 8, e.y - 3, 16, 2); } g.globalAlpha = 1; }
   // particles & arcs
   drawFx(g, dtMs, time);
   // build ghost / target
@@ -231,7 +233,6 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   if (flash > 0) { g.fillStyle = `rgba(255,255,255,${flash})`; g.fillRect(0, 0, VIEW_W, VIEW_H); flash = Math.max(0, flash - dtMs / 400); }
   if (p.hp < 30 && !p.dead) { const a = (1 - p.hp / 30) * (0.25 + Math.sin(time / 200) * 0.08); g.fillStyle = `rgba(160,0,0,${a})`; g.fillRect(0, 0, VIEW_W, 6); g.fillRect(0, VIEW_H - 6, VIEW_W, 6); g.fillRect(0, 0, 6, VIEW_H); g.fillRect(VIEW_W - 6, 0, 6, VIEW_H); }
 }
-function isUnderRoof(r: RunState, x: number, y: number) { return entsAt(r, Math.floor(x / 16), Math.floor(y / 16)).some(e => e.kind === 'struct' && STRUCTS[e.type!].layer === 'roof'); }
 
 function drawSource(g: CanvasRenderingContext2D, r: RunState, s: NonNullable<ReturnType<typeof sourceAt>>, tx: number, ty: number, time: number, p: any) {
   const A = getArt(); const X = tx * 16, Y = ty * 16; const v = (hash2(tx, ty, 5) * 10) | 0; const key = s.key;

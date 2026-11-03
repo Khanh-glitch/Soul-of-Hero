@@ -207,6 +207,7 @@ describe('C06/C09 stations, fuel, offline', () => {
   });
   it('sheltered player cannot die from hunger alone offline; unsheltered can and leaves one bag', () => {
     const gs = fresh(); const r = gs.run!; const w = getWorld(); const b = w.buildings.find(b => b.id === 'b_tp')!;
+    for (let y=b.y;y<b.y+b.h;y++) for(let x=b.x;x<b.x+b.w;x++) if(x===b.x||y===b.y||x===b.x+b.w-1||y===b.y+b.h-1) r.terrain[y*WW+x]={t:T.PWALL}; markDirty();
     tp(gs, (b.x + 2) * TILE + 8, (b.y + 2) * TILE + 8); r.player.hunger = 0; r.player.thirst = 100; r.player.hp = 1; r.clock.lastSimAt = T0;
     settle(gs, T0 + 2 * 60000); expect(r.player.dead).toBe(false); expect(r.player.hp).toBeGreaterThanOrEqual(1);
     const gs2 = fresh(1); const r2 = gs2.run!; r2.player.hunger = 0; r2.player.thirst = 0; r2.player.hp = 20; r2.clock.lastSimAt = T0;
@@ -245,7 +246,7 @@ describe('C08/C14 traces & AI knowledge', () => {
 
 describe('transaction replay integrity', () => {
   it('rejects an irreversible transfer replay after more than 400 later commits and after save serialization', () => {
-    const gs = fresh(); const r = gs.run!; addItem(r, 'inv', 'wood', 1); const woodBefore = totalItems(gs, 'wood'); const chest = mkContainer(r, 'chest', 8); r.entities.testchest = { id: 'testchest', kind: 'struct', x: r.player.x, y: r.player.y, tx: Math.floor(r.player.x / TILE), ty: Math.floor(r.player.y / TILE), type: 'chest', c: chest.id, hp: 10, maxHp: 10 };
+    const gs = fresh(); const r = gs.run!; addItem(r, 'inv', 'wood', 1); const woodBefore = totalItems(gs, 'wood'); const chest = mkContainer(r, 'chest', 8); r.entities.testchest = { id: 'testchest', kind: 'struct', x: r.player.x, y: r.player.y, tx: Math.floor(r.player.x / TILE), ty: Math.floor(r.player.y / TILE), type: 'chest_small', c: chest.id, hp: 10, maxHp: 10 };
     const original = 'durable-transfer-1';
     expect(dispatch(gs, { id: original, type: 'move', from: 'inv', fs: C(r, 'inv').slots.findIndex(s => s?.key === 'wood'), to: chest.id }, T0).ok).toBe(true);
     for (let k = 0; k < 205; k++) {
