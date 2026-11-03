@@ -1,0 +1,737 @@
+{
+  "schema": "soh.map.contract_boundary.v1",
+  "generatedBy": "world_lab/geo01/src/contract.mjs",
+  "canonicalSourceSha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+  "geographyExportSha256": "13ae97272edc47b063bb4a2ffde5dcf9f92f0f34dc3fd35b6ab3bee7f26c29dd",
+  "corridorProofSha256": "e9212633b277ec0cd7ee932a0d9b1266532e805a2816e23e092edce3582db63e",
+  "gameplayReference": {
+    "commit": "a956c9e85624c1ca7a2b5585eb423f8fa1cf296c",
+    "ref": "refs/pull/44/head / arena/d4bfcfff-soul-of-hero",
+    "files": {
+      "web/src/game/world-economy.ts": "bcc87d4aef1c226229ccdfff77a896e95bd929f3ac4000c639bd62f5cd5c6fa7",
+      "web/src/game/geography-contract.ts": "2dad5ff6d1ff7616ede7913b62b00b41566a4c5d2769c9180d89f432ecef34e3",
+      "web/src/game/map-package.ts": "54b5821c0626f60011be3f68e65c57214a0d827b9f46dcd6950a763fb323603d",
+      "web/src/game/core.ts": "a9dcd43d4d0d58e4f85c465f3ba5a0fa02eca3e651140570002a2d7a1476975f"
+    },
+    "fileVerification": {
+      "web/src/game/world-economy.ts": {
+        "expectedSha256": "bcc87d4aef1c226229ccdfff77a896e95bd929f3ac4000c639bd62f5cd5c6fa7",
+        "gitBlobSha256": "bcc87d4aef1c226229ccdfff77a896e95bd929f3ac4000c639bd62f5cd5c6fa7",
+        "verified": "MATCH"
+      },
+      "web/src/game/geography-contract.ts": {
+        "expectedSha256": "2dad5ff6d1ff7616ede7913b62b00b41566a4c5d2769c9180d89f432ecef34e3",
+        "gitBlobSha256": "2dad5ff6d1ff7616ede7913b62b00b41566a4c5d2769c9180d89f432ecef34e3",
+        "verified": "MATCH"
+      },
+      "web/src/game/map-package.ts": {
+        "expectedSha256": "54b5821c0626f60011be3f68e65c57214a0d827b9f46dcd6950a763fb323603d",
+        "gitBlobSha256": "54b5821c0626f60011be3f68e65c57214a0d827b9f46dcd6950a763fb323603d",
+        "verified": "MATCH"
+      },
+      "web/src/game/core.ts": {
+        "expectedSha256": "a9dcd43d4d0d58e4f85c465f3ba5a0fa02eca3e651140570002a2d7a1476975f",
+        "gitBlobSha256": "a9dcd43d4d0d58e4f85c465f3ba5a0fa02eca3e651140570002a2d7a1476975f",
+        "verified": "MATCH"
+      }
+    }
+  },
+  "classificationLegend": {
+    "DIRECT": "DIRECTLY_SUPPLIED_BY_MAP",
+    "TRANSFORM": "DERIVABLE_FROM_MAP_WITH_VERIFIED_TRANSFORM",
+    "GAMEPLAY": "SUPPLIED_BY_GAMEPLAY",
+    "JOINT": "JOINTLY_VALIDATED",
+    "UNDEFINED": "NOT_YET_DEFINED"
+  },
+  "classificationCounts": {
+    "DIRECTLY_SUPPLIED_BY_MAP": 3,
+    "NOT_YET_DEFINED": 12,
+    "SUPPLIED_BY_GAMEPLAY": 11,
+    "DERIVABLE_FROM_MAP_WITH_VERIFIED_TRANSFORM": 19,
+    "JOINTLY_VALIDATED": 6
+  },
+  "fields": [
+    {
+      "field": "Frame/transform.authoringCanvas",
+      "scope": "Frame/transform",
+      "classification": "DIRECTLY_SUPPLIED_BY_MAP",
+      "mapSupply": "frame.authoring 2000x1400 authoring units",
+      "veyraSource": "project.world",
+      "transformRequired": null,
+      "owner": null,
+      "status": "SUPPLIED",
+      "note": null
+    },
+    {
+      "field": "Frame/transform.sourceGrid",
+      "scope": "Frame/transform",
+      "classification": "DIRECTLY_SUPPLIED_BY_MAP",
+      "mapSupply": "frame.grid 250x175 cell=8 = 43,750 cells",
+      "veyraSource": "project.terrain gw/gh/cell",
+      "transformRequired": null,
+      "owner": null,
+      "status": "SUPPLIED",
+      "note": null
+    },
+    {
+      "field": "Frame/transform.authoringUnitToRuntimeTile",
+      "scope": "Frame/transform",
+      "classification": "NOT_YET_DEFINED",
+      "mapSupply": "frame.transform.status = UNDECIDED",
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Map + Gameplay joint decision",
+      "status": "OPEN",
+      "note": "PR44 core.ts pins WW=WH=200, TILE=16 => exactly 40,000 runtime cells. Veyra is 43,750 source cells. No scale/crop/pad was applied."
+    },
+    {
+      "field": "Frame/transform.journeyTimes",
+      "scope": "Frame/transform",
+      "classification": "NOT_YET_DEFINED",
+      "mapSupply": null,
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Gameplay + Map measurement",
+      "status": "OPEN",
+      "note": "t_foot / t_cart_loaded / exposure_time require a real measured journey at an approved world scale."
+    },
+    {
+      "field": "EconomyMap(world-economy.ts).id/revision/seed",
+      "scope": "EconomyMap(world-economy.ts)",
+      "classification": "SUPPLIED_BY_GAMEPLAY",
+      "mapSupply": null,
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Gameplay package identity",
+      "status": "NOT_SUPPLIED",
+      "note": "project.terrain.seed=2026 is a TERRAIN AUTHORING seed, NOT the runtime world seed. Do not reuse it as EconomyMap.seed."
+    },
+    {
+      "field": "EconomyMap(world-economy.ts).width/height/tileSize",
+      "scope": "EconomyMap(world-economy.ts)",
+      "classification": "DERIVABLE_FROM_MAP_WITH_VERIFIED_TRANSFORM",
+      "mapSupply": "250x175 @ 8 authoring units",
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Gameplay runtime constraint (WW=200, WH=200, TILE=16)",
+      "status": "BLOCKED_BY_TRANSFORM",
+      "note": "validateRuntimeMapPackage rejects any extent other than 200x200 @ 16."
+    },
+    {
+      "field": "EconomyMap(world-economy.ts).biome",
+      "scope": "EconomyMap(world-economy.ts)",
+      "classification": "DERIVABLE_FROM_MAP_WITH_VERIFIED_TRANSFORM",
+      "mapSupply": "rasters/biomeCode.u8 (12 raw codes)",
+      "veyraSource": "project.terrain.biome",
+      "transformRequired": "approved raw-code -> one of 14 Biome strings",
+      "owner": "Map + Gameplay",
+      "status": "BLOCKED_BY_LEGEND",
+      "note": "No biome legend is committed in Veyra. validateEconomyMap rejects any value outside the 14-string enum; there is no UNKNOWN member."
+    },
+    {
+      "field": "EconomyMap(world-economy.ts).elevation",
+      "scope": "EconomyMap(world-economy.ts)",
+      "classification": "DERIVABLE_FROM_MAP_WITH_VERIFIED_TRANSFORM",
+      "mapSupply": "rasters/elevation.u8 (0..243 raw bytes)",
+      "veyraSource": "project.terrain.elev",
+      "transformRequired": "approved physical unit/scale + grid transform",
+      "owner": null,
+      "status": "BLOCKED_BY_UNITS",
+      "note": "Raw bytes are supplied verbatim; physical elevation is UNDEFINED."
+    },
+    {
+      "field": "EconomyMap(world-economy.ts).slope",
+      "scope": "EconomyMap(world-economy.ts)",
+      "classification": "DERIVABLE_FROM_MAP_WITH_VERIFIED_TRANSFORM",
+      "mapSupply": "rasters/slope.u8 (0..150 raw byte gradient)",
+      "veyraSource": null,
+      "transformRequired": "approved normalization to Gameplay scale",
+      "owner": "Map + Gameplay",
+      "status": "BLOCKED_BY_NORMALIZATION",
+      "note": "compileEconomy hardcodes slope > 0.6 as impassable; that threshold is a Gameplay rule with no source unit."
+    },
+    {
+      "field": "EconomyMap(world-economy.ts).moisture",
+      "scope": "EconomyMap(world-economy.ts)",
+      "classification": "NOT_YET_DEFINED",
+      "mapSupply": null,
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Gameplay / climate authority",
+      "status": "UNKNOWN_IN_SOURCE",
+      "note": "validateEconomyMap requires finite 0..1; Veyra has no moisture array. Map exposes freshwaterProximityCells as geometric POTENTIAL only."
+    },
+    {
+      "field": "EconomyMap(world-economy.ts).temperature",
+      "scope": "EconomyMap(world-economy.ts)",
+      "classification": "NOT_YET_DEFINED",
+      "mapSupply": null,
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Gameplay / climate authority",
+      "status": "UNKNOWN_IN_SOURCE",
+      "note": "Veyra has no temperature array; no season/weather model."
+    },
+    {
+      "field": "EconomyMap(world-economy.ts).freshwater",
+      "scope": "EconomyMap(world-economy.ts)",
+      "classification": "DERIVABLE_FROM_MAP_WITH_VERIFIED_TRANSFORM",
+      "mapSupply": "rasters/freshwater.u8 + lakes[]/rivers[] geometry",
+      "veyraSource": "lakes[5], rivers[17]",
+      "transformRequired": "grid transform",
+      "owner": null,
+      "status": "SUPPLIED_AT_SOURCE_RESOLUTION",
+      "note": null
+    },
+    {
+      "field": "EconomyMap(world-economy.ts).coast",
+      "scope": "EconomyMap(world-economy.ts)",
+      "classification": "DERIVABLE_FROM_MAP_WITH_VERIFIED_TRANSFORM",
+      "mapSupply": "rasters/coast.u8 (812 cells)",
+      "veyraSource": "land[8].rings",
+      "transformRequired": "grid transform",
+      "owner": null,
+      "status": "SUPPLIED_AT_SOURCE_RESOLUTION",
+      "note": null
+    },
+    {
+      "field": "EconomyMap(world-economy.ts).walkable",
+      "scope": "EconomyMap(world-economy.ts)",
+      "classification": "JOINTLY_VALIDATED",
+      "mapSupply": "rasters/walkableCandidate.u8",
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Map geometry + Gameplay slope/collision/hazard rules",
+      "status": "DERIVED_CANDIDATE",
+      "note": "No slope threshold, collision or dynamic occupancy applied by Map."
+    },
+    {
+      "field": "EconomyMap(world-economy.ts).buildable",
+      "scope": "EconomyMap(world-economy.ts)",
+      "classification": "JOINTLY_VALIDATED",
+      "mapSupply": "rasters/buildableCandidate.u8 + zones[23]",
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Map geometry + A0 protection/occupancy/collision",
+      "status": "DERIVED_CANDIDATE",
+      "note": null
+    },
+    {
+      "field": "EconomyMap(world-economy.ts).cargoPassable",
+      "scope": "EconomyMap(world-economy.ts)",
+      "classification": "NOT_YET_DEFINED",
+      "mapSupply": "rasters/cargoCandidate.u8 (spatial candidate only)",
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Gameplay loaded-cart slope/width/bridge rules",
+      "status": "UNDEFINED",
+      "note": "Physical capability is not established anywhere in the source."
+    },
+    {
+      "field": "EconomyMap(world-economy.ts).road",
+      "scope": "EconomyMap(world-economy.ts)",
+      "classification": "DERIVABLE_FROM_MAP_WITH_VERIFIED_TRANSFORM",
+      "mapSupply": "rasters/roadClass.u8 + roads[92] polylines",
+      "veyraSource": "roads[92]",
+      "transformRequired": "grid transform",
+      "owner": null,
+      "status": "SUPPLIED_AT_SOURCE_RESOLUTION",
+      "note": "road width is NOT authored."
+    },
+    {
+      "field": "EconomyMap(world-economy.ts).protected",
+      "scope": "EconomyMap(world-economy.ts)",
+      "classification": "NOT_YET_DEFINED",
+      "mapSupply": "rasters/protectedGeometryCandidate.u8 (geometry overlap only)",
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "A0 / Gameplay protection policy",
+      "status": "NOT_DEFINED",
+      "note": null
+    },
+    {
+      "field": "EconomyMap(world-economy.ts).industrial",
+      "scope": "EconomyMap(world-economy.ts)",
+      "classification": "NOT_YET_DEFINED",
+      "mapSupply": "pois[81].arche (24 archetypes, provisional prose)",
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Gameplay archetype mapping",
+      "status": "NOT_DEFINED",
+      "note": "No approved archetype -> industrial mask mapping."
+    },
+    {
+      "field": "EconomyMap(world-economy.ts).starts",
+      "scope": "EconomyMap(world-economy.ts)",
+      "classification": "DERIVABLE_FROM_MAP_WITH_VERIFIED_TRANSFORM",
+      "mapSupply": "spawns[4] with verbatim ids/coords",
+      "veyraSource": "spawns[4]",
+      "transformRequired": "grid transform + integer tile bounds",
+      "owner": null,
+      "status": "SUPPLIED_AT_SOURCE_RESOLUTION",
+      "note": null
+    },
+    {
+      "field": "GeographicHandoff(geography-contract.ts).economy",
+      "scope": "GeographicHandoff(geography-contract.ts)",
+      "classification": "DERIVABLE_FROM_MAP_WITH_VERIFIED_TRANSFORM",
+      "mapSupply": "output/geography.v1.json (partial EconomyMap inputs)",
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": null,
+      "status": "BLOCKED",
+      "note": "See the EconomyMap rows; validateEconomyMap cannot pass without climate, legend and transform."
+    },
+    {
+      "field": "GeographicHandoff(geography-contract.ts).roads[].id",
+      "scope": "GeographicHandoff(geography-contract.ts)",
+      "classification": "DIRECTLY_SUPPLIED_BY_MAP",
+      "mapSupply": "roads[92].id",
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": null,
+      "status": "SUPPLIED",
+      "note": null
+    },
+    {
+      "field": "GeographicHandoff(geography-contract.ts).roads[].cells",
+      "scope": "GeographicHandoff(geography-contract.ts)",
+      "classification": "DERIVABLE_FROM_MAP_WITH_VERIFIED_TRANSFORM",
+      "mapSupply": "roadClass raster + polylines",
+      "veyraSource": null,
+      "transformRequired": "grid transform",
+      "owner": null,
+      "status": "BLOCKED_BY_TRANSFORM",
+      "note": null
+    },
+    {
+      "field": "GeographicHandoff(geography-contract.ts).roads[].surface",
+      "scope": "GeographicHandoff(geography-contract.ts)",
+      "classification": "DERIVABLE_FROM_MAP_WITH_VERIFIED_TRANSFORM",
+      "mapSupply": "roads[].kind (cart/trail/foot/riverside/ferry)",
+      "veyraSource": null,
+      "transformRequired": "approved kind -> surface string",
+      "owner": null,
+      "status": "BLOCKED_BY_MAPPING",
+      "note": null
+    },
+    {
+      "field": "GeographicHandoff(geography-contract.ts).roads[].widthTiles",
+      "scope": "GeographicHandoff(geography-contract.ts)",
+      "classification": "NOT_YET_DEFINED",
+      "mapSupply": null,
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Map + Gameplay",
+      "status": "NOT_IN_SOURCE",
+      "note": "Veyra roads have NO width field. validateGeographicHandoff requires an integer 1..32 width and checks its cross-section against walkable/cargoPassable."
+    },
+    {
+      "field": "GeographicHandoff(geography-contract.ts).roads[].bridgeCells",
+      "scope": "GeographicHandoff(geography-contract.ts)",
+      "classification": "DERIVABLE_FROM_MAP_WITH_VERIFIED_TRANSFORM",
+      "mapSupply": "bridges[12].at + crossingCandidate raster",
+      "veyraSource": null,
+      "transformRequired": "grid transform",
+      "owner": null,
+      "status": "SUPPLIED_AT_SOURCE_RESOLUTION",
+      "note": "Bridge channel span fit is UNVERIFIED."
+    },
+    {
+      "field": "GeographicHandoff(geography-contract.ts).roads[].cargoPassable",
+      "scope": "GeographicHandoff(geography-contract.ts)",
+      "classification": "NOT_YET_DEFINED",
+      "mapSupply": null,
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Gameplay",
+      "status": "UNDEFINED",
+      "note": null
+    },
+    {
+      "field": "GeographicHandoff(geography-contract.ts).pois[].id/kind",
+      "scope": "GeographicHandoff(geography-contract.ts)",
+      "classification": "DERIVABLE_FROM_MAP_WITH_VERIFIED_TRANSFORM",
+      "mapSupply": "pois[81].id + arche (24 values)",
+      "veyraSource": null,
+      "transformRequired": "approved arche -> 5-kind enum",
+      "owner": null,
+      "status": "BLOCKED_BY_MAPPING",
+      "note": null
+    },
+    {
+      "field": "GeographicHandoff(geography-contract.ts).pois[].footprint",
+      "scope": "GeographicHandoff(geography-contract.ts)",
+      "classification": "DERIVABLE_FROM_MAP_WITH_VERIFIED_TRANSFORM",
+      "mapSupply": "pois[].foot / deep polygons",
+      "veyraSource": null,
+      "transformRequired": "grid transform",
+      "owner": null,
+      "status": "SUPPLIED_AT_SOURCE_RESOLUTION",
+      "note": null
+    },
+    {
+      "field": "GeographicHandoff(geography-contract.ts).pois[].entrances",
+      "scope": "GeographicHandoff(geography-contract.ts)",
+      "classification": "NOT_YET_DEFINED",
+      "mapSupply": null,
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Gameplay / level design",
+      "status": "NOT_IN_SOURCE",
+      "note": "No door openings authored. Validator requires >=1 entrance inside the footprint."
+    },
+    {
+      "field": "GeographicHandoff(geography-contract.ts).pois[].rooms",
+      "scope": "GeographicHandoff(geography-contract.ts)",
+      "classification": "NOT_YET_DEFINED",
+      "mapSupply": null,
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Gameplay / level design",
+      "status": "NOT_IN_SOURCE",
+      "note": null
+    },
+    {
+      "field": "GeographicHandoff(geography-contract.ts).pois[].doors/powerNodes/hazardCells",
+      "scope": "GeographicHandoff(geography-contract.ts)",
+      "classification": "SUPPLIED_BY_GAMEPLAY",
+      "mapSupply": null,
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Gameplay",
+      "status": "NOT_SUPPLIED",
+      "note": "gate/access/role text in Veyra are provisional design notes (conf:proposal/assumption), not locked-door or power laws."
+    },
+    {
+      "field": "GeographicHandoff(geography-contract.ts).pois[].exteriorLootSites/interiorLootSites",
+      "scope": "GeographicHandoff(geography-contract.ts)",
+      "classification": "SUPPLIED_BY_GAMEPLAY",
+      "mapSupply": null,
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Gameplay",
+      "status": "NOT_SUPPLIED",
+      "note": "No dummy loot was constructed."
+    },
+    {
+      "field": "GeographicHandoff(geography-contract.ts).pois[].retreatPaths",
+      "scope": "GeographicHandoff(geography-contract.ts)",
+      "classification": "JOINTLY_VALIDATED",
+      "mapSupply": "18 pois with retreat points (points only, no paths)",
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Gameplay path authoring",
+      "status": "PARTIAL",
+      "note": null
+    },
+    {
+      "field": "GeographicHandoff(geography-contract.ts).criticalPaths",
+      "scope": "GeographicHandoff(geography-contract.ts)",
+      "classification": "SUPPLIED_BY_GAMEPLAY",
+      "mapSupply": null,
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Gameplay",
+      "status": "NOT_SUPPLIED",
+      "note": "Requires protected+walkable contiguous authored paths."
+    },
+    {
+      "field": "GeographicHandoff(geography-contract.ts).buildSites[].cells",
+      "scope": "GeographicHandoff(geography-contract.ts)",
+      "classification": "JOINTLY_VALIDATED",
+      "mapSupply": "zones[23] + buildableCandidate raster",
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Map + A0",
+      "status": "DERIVED_CANDIDATE",
+      "note": null
+    },
+    {
+      "field": "GeographicHandoff(geography-contract.ts).buildSites[].loadingCells",
+      "scope": "GeographicHandoff(geography-contract.ts)",
+      "classification": "SUPPLIED_BY_GAMEPLAY",
+      "mapSupply": null,
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Gameplay / cargo rules",
+      "status": "NOT_SUPPLIED",
+      "note": "Requires cargoPassable, which is UNDEFINED."
+    },
+    {
+      "field": "GeographicHandoff(geography-contract.ts).nonbossCashSites",
+      "scope": "GeographicHandoff(geography-contract.ts)",
+      "classification": "SUPPLIED_BY_GAMEPLAY",
+      "mapSupply": null,
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Gameplay",
+      "status": "NOT_SUPPLIED",
+      "note": "Validator requires a cash static above the escrow price. No cash/economy values were invented."
+    },
+    {
+      "field": "GeographicHandoff(geography-contract.ts).vendorSites",
+      "scope": "GeographicHandoff(geography-contract.ts)",
+      "classification": "JOINTLY_VALIDATED",
+      "mapSupply": "2 pois with arche:chest_vendor (shells only)",
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Gameplay vendor entity",
+      "status": "CANDIDATE_SHELL_ONLY",
+      "note": null
+    },
+    {
+      "field": "GeographicHandoff(geography-contract.ts).evacuationSites",
+      "scope": "GeographicHandoff(geography-contract.ts)",
+      "classification": "JOINTLY_VALIDATED",
+      "mapSupply": "3 pois with arche:evac (shells only)",
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Gameplay evac entity",
+      "status": "CANDIDATE_SHELL_ONLY",
+      "note": null
+    },
+    {
+      "field": "GeographicHandoff(geography-contract.ts).compileEconomy + diagnoseStarts",
+      "scope": "GeographicHandoff(geography-contract.ts)",
+      "classification": "SUPPLIED_BY_GAMEPLAY",
+      "mapSupply": null,
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Gameplay population algorithm",
+      "status": "NOT_RUN",
+      "note": "validateGeographicHandoff runs these internally; Map must not run Gameplay population to make a validator pass."
+    },
+    {
+      "field": "RuntimeMapPackage(map-package.ts).schemaVersion/id/revision/seed/title/description",
+      "scope": "RuntimeMapPackage(map-package.ts)",
+      "classification": "SUPPLIED_BY_GAMEPLAY",
+      "mapSupply": null,
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Gameplay package registry",
+      "status": "NOT_SUPPLIED",
+      "note": null
+    },
+    {
+      "field": "RuntimeMapPackage(map-package.ts).geometry",
+      "scope": "RuntimeMapPackage(map-package.ts)",
+      "classification": "DERIVABLE_FROM_MAP_WITH_VERIFIED_TRANSFORM",
+      "mapSupply": "geography.v1.json (partial)",
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": null,
+      "status": "BLOCKED",
+      "note": "See GeographicHandoff rows."
+    },
+    {
+      "field": "RuntimeMapPackage(map-package.ts).tiles",
+      "scope": "RuntimeMapPackage(map-package.ts)",
+      "classification": "DERIVABLE_FROM_MAP_WITH_VERIFIED_TRANSFORM",
+      "mapSupply": "elevation/biome/land/water/road layers",
+      "veyraSource": null,
+      "transformRequired": "approved transform + raw-code -> runtime tile enum mapping",
+      "owner": null,
+      "status": "NOT_SUPPLIED",
+      "note": "Exactly 40,000 cells required; 20 runtime tile classes in world.ts."
+    },
+    {
+      "field": "RuntimeMapPackage(map-package.ts).fresh",
+      "scope": "RuntimeMapPackage(map-package.ts)",
+      "classification": "DERIVABLE_FROM_MAP_WITH_VERIFIED_TRANSFORM",
+      "mapSupply": "freshwater raster",
+      "veyraSource": null,
+      "transformRequired": "grid transform",
+      "owner": null,
+      "status": "NOT_SUPPLIED",
+      "note": "Validator requires fresh[i] === economy.freshwater[i]."
+    },
+    {
+      "field": "RuntimeMapPackage(map-package.ts).zone",
+      "scope": "RuntimeMapPackage(map-package.ts)",
+      "classification": "DERIVABLE_FROM_MAP_WITH_VERIFIED_TRANSFORM",
+      "mapSupply": "zones[23]",
+      "veyraSource": null,
+      "transformRequired": "grid transform + zone id remap",
+      "owner": null,
+      "status": "BLOCKED_BY_RANGE",
+      "note": "Runtime allows zone values 0..15; Veyra has 23 authored zone ids. No remap was invented."
+    },
+    {
+      "field": "RuntimeMapPackage(map-package.ts).seaDist",
+      "scope": "RuntimeMapPackage(map-package.ts)",
+      "classification": "DERIVABLE_FROM_MAP_WITH_VERIFIED_TRANSFORM",
+      "mapSupply": "seaDistanceCells raster (grid cells, x8 = au)",
+      "veyraSource": null,
+      "transformRequired": "unit + grid transform",
+      "owner": null,
+      "status": "NOT_SUPPLIED",
+      "note": "Runtime cap 255 matches the derived raster cap, but the unit is different."
+    },
+    {
+      "field": "RuntimeMapPackage(map-package.ts).buildings",
+      "scope": "RuntimeMapPackage(map-package.ts)",
+      "classification": "SUPPLIED_BY_GAMEPLAY",
+      "mapSupply": null,
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Gameplay",
+      "status": "NOT_SUPPLIED",
+      "note": "POI foot/deep polygons are spatial shells, not Building records with roof/w/h."
+    },
+    {
+      "field": "RuntimeMapPackage(map-package.ts).statics",
+      "scope": "RuntimeMapPackage(map-package.ts)",
+      "classification": "SUPPLIED_BY_GAMEPLAY",
+      "mapSupply": null,
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Gameplay",
+      "status": "NOT_SUPPLIED",
+      "note": "No dummy loot, cash, powered doors, generators or source nodes were constructed."
+    },
+    {
+      "field": "RuntimeMapPackage(map-package.ts).places",
+      "scope": "RuntimeMapPackage(map-package.ts)",
+      "classification": "SUPPLIED_BY_GAMEPLAY",
+      "mapSupply": null,
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Gameplay",
+      "status": "NOT_SUPPLIED",
+      "note": "Validator requires all six runtime catalog ELDERS ids. Veyra has six DIFFERENT Elder identities (surtur/typhon/aion/atlas/argus/anubis); no fake six-way mapping was created."
+    },
+    {
+      "field": "RuntimeMapPackage(map-package.ts).validateRuntimeMapPackage dims",
+      "scope": "RuntimeMapPackage(map-package.ts)",
+      "classification": "NOT_YET_DEFINED",
+      "mapSupply": null,
+      "veyraSource": null,
+      "transformRequired": null,
+      "owner": "Map + Gameplay",
+      "status": "HARD_BLOCKER",
+      "note": "e.width!==WW || e.height!==WH || e.tileSize!==TILE is rejected unconditionally."
+    }
+  ],
+  "contractDeltas": [
+    {
+      "id": "CD-01",
+      "severity": "HARD_BLOCKER",
+      "target": "core.ts / validateRuntimeMapPackage",
+      "problem": "Runtime pins WW=WH=200, TILE=16 (40,000 cells); Veyra is 250x175 source cells of 8 authoring units (43,750 cells) on a 2000x1400 canvas.",
+      "requiredDelta": "Approve and document an explicit authoring-unit -> runtime-tile transform (or relax the fixed extent). Supply measured journey times with the scale decision. Map will not silently rescale."
+    },
+    {
+      "id": "CD-02",
+      "severity": "HARD_BLOCKER",
+      "target": "validateEconomyMap",
+      "problem": "moisture and temperature must be finite 0..1 per cell with no UNKNOWN representation; Veyra defines no climate.",
+      "requiredDelta": "Add a climate sub-contract with an explicit unknown/undefined state (e.g. climateStatus + separate optional arrays), or let Gameplay supply climate. Map will not fabricate plausible numbers."
+    },
+    {
+      "id": "CD-03",
+      "severity": "HARD_BLOCKER",
+      "target": "validateEconomyMap / Biome",
+      "problem": "biome must be one of 14 Gameplay strings; Veyra has 12 raw codes with NO committed legend.",
+      "requiredDelta": "Commit an approved code -> Biome legend (and an UNKNOWN member if partial coverage is allowed), then a verified transform. Map currently ships raw codes only."
+    },
+    {
+      "id": "CD-04",
+      "severity": "HARD_BLOCKER",
+      "target": "validateGeographicHandoff",
+      "problem": "Requires entrances, rooms, doors, powerNodes, hazardCells, loot sites, retreatPaths, widthTiles, cargoPassable and criticalPaths — none authored in Veyra.",
+      "requiredDelta": "Split the handoff into a Map-owned geometry layer (shells, rooms=NOT_IN_SOURCE, sockets=UNDEFINED) and a Gameplay-owned population layer. Do not require Map fabricate Gameplay fields."
+    },
+    {
+      "id": "CD-05",
+      "severity": "HARD_BLOCKER",
+      "target": "validateGeographicHandoff",
+      "problem": "A single validator calls compileEconomy + diagnoseStarts, i.e. Gameplay population, inside Map geometry validation.",
+      "requiredDelta": "Two-stage validation: (1) Map geometry integrity; (2) Gameplay population/placement diagnostics after Gameplay has run. Map must not run Gameplay population to pass a validator."
+    },
+    {
+      "id": "CD-06",
+      "severity": "CONTRACT_MISMATCH",
+      "target": "validateRuntimeMapPackage zone",
+      "problem": "zone array allows 0..15; Veyra authors 23 buildable zone ids.",
+      "requiredDelta": "Widen the zone id space or approve an explicit zone remap. No remap was invented here."
+    },
+    {
+      "id": "CD-07",
+      "severity": "CONTRACT_MISMATCH",
+      "target": "RoadGeometry.widthTiles",
+      "problem": "Veyra roads have no width field; validator requires an integer 1..32 and tests its cross-section.",
+      "requiredDelta": "Either approve an authored width per road class (a joint decision) or allow widthStatus=UNKNOWN with a relaxed width check. Map keeps width NOT_IN_SOURCE."
+    },
+    {
+      "id": "CD-08",
+      "severity": "CONTRACT_MISMATCH",
+      "target": "compileEconomy slope",
+      "problem": "Hardcoded slope > 0.6 impassable threshold; Map slope is a raw byte gradient with no physical unit.",
+      "requiredDelta": "Define a normalization + jointly approved threshold; expose it as a Gameplay rule, not a Map constant."
+    },
+    {
+      "id": "CD-09",
+      "severity": "CONTRACT_MISMATCH",
+      "target": "places / ELDERS",
+      "problem": "Runtime requires six catalog Elder ids; Veyra has six distinct named Elder territories with different identities.",
+      "requiredDelta": "Approve an explicit identity mapping (or a new runtime Elder catalog). No six fake Elder mappings were created."
+    },
+    {
+      "id": "CD-10",
+      "severity": "CONTRACT_MISMATCH",
+      "target": "EconomyMap.seed",
+      "problem": "Veyra project.terrain.seed=2026 is a terrain authoring seed, not a world/runtime seed.",
+      "requiredDelta": "Keep package seed Gameplay-owned; do not reuse the terrain seed as world seed."
+    },
+    {
+      "id": "CD-11",
+      "severity": "CONTRACT_MISMATCH",
+      "target": "road raster / ferry",
+      "problem": "8 Veyra ferry paths are water routes with UNDEFINED boarding rules; runtime road raster is land-only.",
+      "requiredDelta": "Add an explicit waterRoute / ferry concept with Gameplay boat rules; never flatten ferry into a land road."
+    },
+    {
+      "id": "CD-12",
+      "severity": "CONTRACT_MISMATCH",
+      "target": "statics / cash / escrow",
+      "problem": "Validator requires a nonboss cash static above escrowChestPrice and matching door/gen/loot statics.",
+      "requiredDelta": "Gameplay supplies all economy entities. Map supplies only POI shells and candidate site ids."
+    }
+  ],
+  "twoStageIntegrationSeam": {
+    "stage1": "Map: source-verified geography export (this milestone) — deterministic, id-preserving, all unknowns explicit.",
+    "stage2": "Gameplay: population, POI interiors, loot/cash/doors, Elder identity mapping, climate and economy rules, then compileEconomy / diagnoseStarts / validateRuntimeMapPackage.",
+    "joint": "Approved transform + measured journey times + biome legend + slope normalization + road width policy, then a versioned RuntimeMapPackage.",
+    "note": "Do not build a RuntimeMapPackage from dummy data to make the validator pass."
+  },
+  "explicitlyNotSupplied": [
+    "dummy loot tables",
+    "cash / escrow chests",
+    "powered doors / generators",
+    "final harvestable source nodes",
+    "six fake Elder -> runtime ELDERS mappings",
+    "POI rooms / entrances / interior circulation",
+    "moisture / temperature / climate values",
+    "cargo capability verdicts",
+    "road widths",
+    "a rescaled 200x200 tile array",
+    "survivability or travel-time claims"
+  ],
+  "verdict": "DIRECT_RUNTIME_INTAKE_BLOCKED__INDEPENDENT_GEOGRAPHY_EXPORT_PROVIDED",
+  "statement": "The geography export is independently usable by a future Gameplay compiler (21 rasters + verbatim objects + derived topology). It is not a RuntimeMapPackage and does not attempt to satisfy validateRuntimeMapPackage.",
+  "corridorEvidence": {
+    "spawn": "sp_lake",
+    "poi": "po_kilns",
+    "connected": true,
+    "primaryDistanceAu": 400.1147,
+    "gridSteps": 50,
+    "crossings": [
+      {
+        "bridgeId": "br_4",
+        "riverId": "rv_silver"
+      }
+    ],
+    "survivability": "NOT_CLAIMED"
+  }
+}

@@ -148,6 +148,82 @@ t('confidence flags are preserved on every source object', () => {
   return c.totals;
 });
 
+// ------- milestone B: corridor + contract boundary -------
+const corridorPath = path.join(out, 'corridor.v1.json');
+const contractPath = path.join(out, 'contract_boundary.v1.json');
+if (fs.existsSync(corridorPath) && fs.existsSync(contractPath)) {
+  const corridor = JSON.parse(fs.readFileSync(corridorPath, 'utf8'));
+  const contract = JSON.parse(fs.readFileSync(contractPath, 'utf8'));
+
+  t('corridor uses real Veyra geometry, is physically connected and has alternatives', () => {
+    assert(corridor.spawnSelection.chosen === 'sp_lake', 'spawn not grounded winner');
+    assert(P.spawns.some(s => s.id === corridor.spawnSelection.chosen), 'spawn id not in source');
+    assert(P.pois.some(p => p.id === corridor.targetSelection.chosen), 'poi id not in source');
+    assert(corridor.physicalConnectivity.connected === true, 'not physically connected');
+    assert(corridor.physicalConnectivity.gridStepDistanceAu === corridor.physicalConnectivity.gridSteps * 8, 'grid distance');
+    assert(corridor.physicalConnectivity.crossingCells.some(c => c.bridgeId === 'br_4' && c.riverId === 'rv_silver'), 'authored crossing missing');
+    assert(corridor.routes.alternatives.length >= 2, 'no alternative routes');
+    assert(corridor.routes.primary.sourceIds.every(id => P.roads.some(r => r.id === id)), 'invented road id');
+    assert(corridor.buildSites.count > 1, 'fewer than 2 build sites');
+    assert(corridor.resourceGeography.finalHarvestableInstances === 'NOT_SUPPLIED', 'harvestables invented');
+    assert(corridor.survivability.status === 'NOT_CLAIMED', 'survivability claimed');
+    assert(corridor.dependencies.ferryPathsUsedByAnyRoute === 0, 'ferry used as land road');
+    return { spawn: corridor.spawnSelection.chosen, poi: corridor.targetSelection.chosen, au: corridor.routes.primary.totalDistanceAu, steps: corridor.physicalConnectivity.gridSteps, buildSites: corridor.buildSites.count };
+  });
+
+  t('corridor route geometry is verbatim authored road vertices', () => {
+    for (const route of [corridor.routes.primary, ...corridor.routes.alternatives]) {
+      for (const seg of route.segments) {
+        const src = P.roads.find(r => r.id === seg.roadId);
+        assert(src, `unknown road ${seg.roadId}`);
+        for (const p of seg.points) {
+          const ok = src.points.some(q => Math.abs(q[0] - p[0]) < 1e-3 && Math.abs(q[1] - p[1]) < 1e-3) ||
+            // exact segment-intersection points are allowed derivations
+            src.points.slice(0, -1).some((a, i) => {
+              const b = src.points[i + 1];
+              const t2 = Math.max(0, Math.min(1, ((p[0] - a[0]) * (b[0] - a[0]) + (p[1] - a[1]) * (b[1] - a[1])) / ((b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2 || 1)));
+              return Math.hypot(p[0] - a[0] - t2 * (b[0] - a[0]), p[1] - a[1] - t2 * (b[1] - a[1])) < 0.05;
+            });
+          assert(ok, `invented route point in ${seg.roadId}: ${JSON.stringify(p)}`);
+        }
+      }
+    }
+    return { routes: 1 + corridor.routes.alternatives.length };
+  });
+
+  t('contract boundary is honest: no dummy package, exact PR44 fingerprints', () => {
+    assert(contract.verdict === 'DIRECT_RUNTIME_INTAKE_BLOCKED__INDEPENDENT_GEOGRAPHY_EXPORT_PROVIDED', 'verdict');
+    assert(contract.classificationCounts.DERIVABLE_FROM_MAP_WITH_VERIFIED_TRANSFORM > 0, 'classification missing');
+    assert(contract.contractDeltas.length >= 10, 'deltas missing');
+    for (const [f, v] of Object.entries(contract.gameplayReference.fileVerification)) {
+      assert(v.verified === 'MATCH', `PR44 fingerprint mismatch: ${f}`);
+    }
+    assert(contract.geographyExportSha256 === sha(fs.readFileSync(path.join(out, 'geography.v1.json'))), 'geography sha');
+    assert(contract.corridorProofSha256 === sha(fs.readFileSync(corridorPath)), 'corridor sha');
+    assert(!fs.readFileSync(path.join(out, 'geography.v1.json'), 'utf8').includes('"statics"'), 'statics invented');
+    return { fields: contract.fields.length, deltas: contract.contractDeltas.length, counts: contract.classificationCounts };
+  });
+
+  t('milestone B outputs are deterministic and the visual evidence exists', () => {
+    const a = path.join(os.tmpdir(), `geo01-b1-${process.pid}`), b = path.join(os.tmpdir(), `geo01-b2-${process.pid}`);
+    for (const d of [a, b]) {
+      fs.mkdirSync(d, { recursive: true });
+      fs.copyFileSync(path.join(out, 'geography.v1.json'), path.join(d, 'geography.v1.json'));
+      execFileSync(process.execPath, [path.join(ROOT, 'src', 'corridor.mjs'), `--out=${d}`], { cwd: ROOT, stdio: 'pipe' });
+      execFileSync(process.execPath, [path.join(ROOT, 'src', 'contract.mjs'), `--out=${d}`], { cwd: ROOT, stdio: 'pipe' });
+    }
+    for (const f of ['corridor.v1.json', 'contract_boundary.v1.json']) {
+      assert(sha(fs.readFileSync(path.join(a, f))) === sha(fs.readFileSync(path.join(b, f))), `non-deterministic ${f}`);
+      assert(sha(fs.readFileSync(path.join(a, f))) === sha(fs.readFileSync(path.join(out, f))), `committed ${f} differs`);
+    }
+    fs.rmSync(a, { recursive: true, force: true }); fs.rmSync(b, { recursive: true, force: true });
+    const png = fs.readFileSync(path.join(out, 'corridor.png'));
+    assert(png.length > 10000 && png.subarray(1, 4).toString() === 'PNG', 'corridor.png missing');
+    assert(fs.readFileSync(path.join(out, 'corridor.svg'), 'utf8').includes('<svg'), 'corridor.svg missing');
+    return { corridorSha: sha(fs.readFileSync(corridorPath)), pngBytes: png.length };
+  });
+}
+
 const failed = results.filter(r => r.status === 'FAIL');
 for (const r of results) console.log(`${r.status} ${r.name}${r.error ? ' :: ' + r.error : ''}`);
 console.log(`\nGEO_TESTS ${results.length - failed.length}/${results.length} passed`);

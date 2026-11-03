@@ -1,0 +1,2502 @@
+{
+  "schema": "soh.map.corridor.v1",
+  "generatedBy": "world_lab/geo01/src/corridor.mjs",
+  "canonicalSourceSha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+  "status": "GEOGRAPHIC_CORRIDOR_PROOF_NOT_GAMEPLAY_VALIDATION",
+  "config": {
+    "spawnGrounding": {
+      "roadRadiusAu": 250,
+      "poiRadiusAu": 200,
+      "zoneRadiusAu": 300,
+      "bridgeRadiusAu": 250,
+      "dockRadiusAu": 250,
+      "riverRadiusAu": 250
+    },
+    "connectorMaxAu": 50,
+    "altConnectorMaxAu": 90,
+    "initialRadiusCells": 8,
+    "resourceRadiusAu": 200,
+    "buildSiteRadiusAu": 300,
+    "joinToleranceAu": 8,
+    "ferryReportRadiusAu": 400
+  },
+  "authority": "Map supplies physical geography; Gameplay populates and simulates it.",
+  "spawnSelection": {
+    "rule": "Deterministic sum of nearby authored roads/POIs/zones/bridges/docks/rivers within fixed radii; tie-break by nearest road. No preference or invented weight.",
+    "radii": {
+      "roadRadiusAu": 250,
+      "poiRadiusAu": 200,
+      "zoneRadiusAu": 300,
+      "bridgeRadiusAu": 250,
+      "dockRadiusAu": 250,
+      "riverRadiusAu": 250
+    },
+    "candidates": [
+      {
+        "id": "sp_lake",
+        "name": "Spawn: Greywater South Shore",
+        "at": [
+          790,
+          622
+        ],
+        "region": "Thung lũng hồ",
+        "conf": "proposal",
+        "counts": {
+          "roads250": 23,
+          "pois200": 12,
+          "zones300": 10,
+          "bridges250": 6,
+          "docks250": 4,
+          "rivers250": 4
+        },
+        "score": 59,
+        "nearestRoadAu": 27.7666
+      },
+      {
+        "id": "sp_gulf",
+        "name": "Spawn: Gulf West Bank",
+        "at": [
+          872,
+          930
+        ],
+        "region": "Vịnh phía tây",
+        "conf": "proposal",
+        "counts": {
+          "roads250": 24,
+          "pois200": 8,
+          "zones300": 6,
+          "bridges250": 4,
+          "docks250": 5,
+          "rivers250": 6
+        },
+        "score": 53,
+        "nearestRoadAu": 31.9445
+      },
+      {
+        "id": "sp_hook",
+        "name": "Spawn: Hook Meadow",
+        "at": [
+          1282,
+          392
+        ],
+        "region": "Bán đảo Hook",
+        "conf": "proposal",
+        "counts": {
+          "roads250": 12,
+          "pois200": 6,
+          "zones300": 6,
+          "bridges250": 2,
+          "docks250": 3,
+          "rivers250": 4
+        },
+        "score": 33,
+        "nearestRoadAu": 30.6195
+      },
+      {
+        "id": "sp_west",
+        "name": "Spawn: Westmouth Shore",
+        "at": [
+          372,
+          606
+        ],
+        "region": "Bờ tây",
+        "conf": "proposal",
+        "counts": {
+          "roads250": 10,
+          "pois200": 6,
+          "zones300": 4,
+          "bridges250": 0,
+          "docks250": 4,
+          "rivers250": 2
+        },
+        "score": 26,
+        "nearestRoadAu": 22.6677
+      }
+    ],
+    "chosen": "sp_lake",
+    "chosenScore": 59,
+    "why": "sp_lake has the most authored geographic support: 23 roads, 12 POIs, 10 buildable zones, 6 bridges, 4 docks and 4 rivers in range."
+  },
+  "targetSelection": {
+    "rule": "Existing POI shell with >=2 authored road-graph edges and straight-line distance <=300 au; ranked by edge count then authored route length.",
+    "candidates": [
+      {
+        "id": "po_kilns",
+        "at": [
+          905,
+          785
+        ],
+        "arche": "smelter",
+        "straightAu": 199.4843,
+        "edges": 4,
+        "totalAu": 400.1147,
+        "roads": [
+          "rd_b",
+          "rd_13",
+          "rd_1w",
+          "rd_16"
+        ]
+      },
+      {
+        "id": "po_ranger",
+        "at": [
+          800,
+          760
+        ],
+        "arche": "hamlet",
+        "straightAu": 138.3618,
+        "edges": 3,
+        "totalAu": 285.3786,
+        "roads": [
+          "rd_b",
+          "rd_13",
+          "rd_1w"
+        ]
+      },
+      {
+        "id": "po_mill",
+        "at": [
+          1002,
+          730
+        ],
+        "arche": "mill",
+        "straightAu": 237.9244,
+        "edges": 3,
+        "totalAu": 464.7227,
+        "roads": [
+          "rd_9",
+          "rd_20",
+          "rd_n"
+        ]
+      },
+      {
+        "id": "po_freightyard",
+        "at": [
+          690,
+          500
+        ],
+        "arche": "ruins",
+        "straightAu": 157.7466,
+        "edges": 2,
+        "totalAu": 178.5643,
+        "roads": [
+          "rd_d",
+          "rd_g"
+        ]
+      },
+      {
+        "id": "po_confluence",
+        "at": [
+          918,
+          668
+        ],
+        "arche": "roadstop",
+        "straightAu": 136.0147,
+        "edges": 2,
+        "totalAu": 215.3249,
+        "roads": [
+          "rd_9"
+        ]
+      },
+      {
+        "id": "po_falls",
+        "at": [
+          722,
+          438
+        ],
+        "arche": "powerplant",
+        "straightAu": 196.1632,
+        "edges": 2,
+        "totalAu": 238.2412,
+        "roads": [
+          "rd_d",
+          "rd_f"
+        ]
+      },
+      {
+        "id": "po_glade",
+        "at": [
+          782,
+          705
+        ],
+        "arche": "grove",
+        "straightAu": 83.3847,
+        "edges": 2,
+        "totalAu": 239.5525,
+        "roads": [
+          "rd_b",
+          "rd_13"
+        ]
+      },
+      {
+        "id": "po_rc_dam",
+        "at": [
+          754,
+          454
+        ],
+        "arche": "ragnarok_cache",
+        "straightAu": 171.8139,
+        "edges": 2,
+        "totalAu": 274.0183,
+        "roads": [
+          "rd_d",
+          "rd_f"
+        ]
+      },
+      {
+        "id": "po_filter",
+        "at": [
+          934,
+          868
+        ],
+        "arche": "filter",
+        "straightAu": 285.0474,
+        "edges": 2,
+        "totalAu": 386.0585,
+        "roads": [
+          "rd_9",
+          "rd_20"
+        ]
+      },
+      {
+        "id": "po_greyquarry",
+        "at": [
+          506,
+          652
+        ],
+        "arche": "quarry",
+        "straightAu": 285.5801,
+        "edges": 2,
+        "totalAu": 555.404,
+        "roads": [
+          "rd_d"
+        ]
+      }
+    ],
+    "chosen": "po_kilns",
+    "chosenEdgeCount": 4,
+    "poiShell": {
+      "id": "po_kilns",
+      "name": "Charcoal Kilns",
+      "arche": "smelter",
+      "at": [
+        905,
+        785
+      ],
+      "foot": [
+        [
+          892.1916387148686,
+          774.9026200829348
+        ],
+        [
+          919.0143408602113,
+          776.6567721921422
+        ],
+        [
+          917.8083612851314,
+          795.0973799170652
+        ],
+        [
+          890.9856591397887,
+          793.3432278078578
+        ]
+      ],
+      "deep": null,
+      "depth": "surface",
+      "gate": "none",
+      "retreat": [],
+      "links": [],
+      "conf": "proposal",
+      "footAreaAu2": 496.7424,
+      "rooms": "NOT_IN_SOURCE",
+      "entrances": "NOT_IN_SOURCE"
+    }
+  },
+  "initialTerrain": {
+    "radiusCells": 8,
+    "radiusAu": 64,
+    "centreCell": 19348,
+    "walkableCandidateCells": 175,
+    "slopeQuartileCutoffRawDelta": 1,
+    "lowestSlopeQuartileCandidates": [
+      {
+        "cell": 18841,
+        "centreAu": [
+          732,
+          604
+        ],
+        "offsetCells": [
+          -7,
+          -2
+        ],
+        "distanceAu": 58.24,
+        "elevationRawByte": 60,
+        "biomeRawCode": 0,
+        "slopeRawByteDelta": 1,
+        "clearanceCells": 6,
+        "freshwaterProximityCells": 6
+      },
+      {
+        "cell": 18591,
+        "centreAu": [
+          732,
+          596
+        ],
+        "offsetCells": [
+          -7,
+          -3
+        ],
+        "distanceAu": 60.93,
+        "elevationRawByte": 60,
+        "biomeRawCode": 0,
+        "slopeRawByteDelta": 1,
+        "clearanceCells": 6,
+        "freshwaterProximityCells": 6
+      },
+      {
+        "cell": 18848,
+        "centreAu": [
+          788,
+          604
+        ],
+        "offsetCells": [
+          0,
+          -2
+        ],
+        "distanceAu": 16,
+        "elevationRawByte": 61,
+        "biomeRawCode": 2,
+        "slopeRawByteDelta": 1,
+        "clearanceCells": 5,
+        "freshwaterProximityCells": 5
+      },
+      {
+        "cell": 18847,
+        "centreAu": [
+          780,
+          604
+        ],
+        "offsetCells": [
+          -1,
+          -2
+        ],
+        "distanceAu": 17.89,
+        "elevationRawByte": 61,
+        "biomeRawCode": 2,
+        "slopeRawByteDelta": 1,
+        "clearanceCells": 5,
+        "freshwaterProximityCells": 5
+      },
+      {
+        "cell": 18846,
+        "centreAu": [
+          772,
+          604
+        ],
+        "offsetCells": [
+          -2,
+          -2
+        ],
+        "distanceAu": 22.63,
+        "elevationRawByte": 60,
+        "biomeRawCode": 2,
+        "slopeRawByteDelta": 1,
+        "clearanceCells": 5,
+        "freshwaterProximityCells": 5
+      },
+      {
+        "cell": 18845,
+        "centreAu": [
+          764,
+          604
+        ],
+        "offsetCells": [
+          -3,
+          -2
+        ],
+        "distanceAu": 28.84,
+        "elevationRawByte": 59,
+        "biomeRawCode": 2,
+        "slopeRawByteDelta": 1,
+        "clearanceCells": 5,
+        "freshwaterProximityCells": 5
+      },
+      {
+        "cell": 18844,
+        "centreAu": [
+          756,
+          604
+        ],
+        "offsetCells": [
+          -4,
+          -2
+        ],
+        "distanceAu": 35.78,
+        "elevationRawByte": 58,
+        "biomeRawCode": 0,
+        "slopeRawByteDelta": 1,
+        "clearanceCells": 5,
+        "freshwaterProximityCells": 5
+      },
+      {
+        "cell": 18843,
+        "centreAu": [
+          748,
+          604
+        ],
+        "offsetCells": [
+          -5,
+          -2
+        ],
+        "distanceAu": 43.08,
+        "elevationRawByte": 57,
+        "biomeRawCode": 0,
+        "slopeRawByteDelta": 1,
+        "clearanceCells": 5,
+        "freshwaterProximityCells": 5
+      },
+      {
+        "cell": 19092,
+        "centreAu": [
+          740,
+          612
+        ],
+        "offsetCells": [
+          -6,
+          -1
+        ],
+        "distanceAu": 48.66,
+        "elevationRawByte": 57,
+        "biomeRawCode": 0,
+        "slopeRawByteDelta": 1,
+        "clearanceCells": 5,
+        "freshwaterProximityCells": 5
+      },
+      {
+        "cell": 18854,
+        "centreAu": [
+          836,
+          604
+        ],
+        "offsetCells": [
+          6,
+          -2
+        ],
+        "distanceAu": 50.6,
+        "elevationRawByte": 69,
+        "biomeRawCode": 2,
+        "slopeRawByteDelta": 1,
+        "clearanceCells": 5,
+        "freshwaterProximityCells": 5
+      },
+      {
+        "cell": 21348,
+        "centreAu": [
+          788,
+          684
+        ],
+        "offsetCells": [
+          0,
+          8
+        ],
+        "distanceAu": 64,
+        "elevationRawByte": 71,
+        "biomeRawCode": 2,
+        "slopeRawByteDelta": 1,
+        "clearanceCells": 5,
+        "freshwaterProximityCells": 5
+      },
+      {
+        "cell": 19097,
+        "centreAu": [
+          780,
+          612
+        ],
+        "offsetCells": [
+          -1,
+          -1
+        ],
+        "distanceAu": 11.31,
+        "elevationRawByte": 62,
+        "biomeRawCode": 2,
+        "slopeRawByteDelta": 1,
+        "clearanceCells": 4,
+        "freshwaterProximityCells": 4
+      }
+    ],
+    "clearanceStatsCells": {
+      "count": 175,
+      "min": 1,
+      "max": 6,
+      "mean": 2.8
+    },
+    "slopeStatsRaw": {
+      "count": 175,
+      "min": 1,
+      "max": 6,
+      "mean": 1.9829
+    },
+    "note": "RELATIVE candidate selection only (lowest raw-slope quartile of nearby walkable cells). No absolute safe-slope/safety threshold is authored in Veyra; Gameplay owns that rule. These are NOT spawn points."
+  },
+  "resourceGeography": {
+    "radiusAu": 200,
+    "candidateLandCells": 1771,
+    "candidateLandAreaAu2": 113344,
+    "sourceAnnotationCount": 50,
+    "byKind": {
+      "stone": 4,
+      "wood": 17,
+      "herbs": 7,
+      "food": 5,
+      "fresh_water": 11,
+      "fish": 6
+    },
+    "sourceAnnotationIds": [
+      "rs_11",
+      "rs_12",
+      "rs_13",
+      "rs_14",
+      "rs_1b",
+      "rs_1c",
+      "rs_1d",
+      "rs_1e",
+      "rs_1k",
+      "rs_1l",
+      "rs_1m",
+      "rs_1n",
+      "rs_1t",
+      "rs_1u",
+      "rs_1v",
+      "rs_1w",
+      "rs_1x",
+      "rs_1y",
+      "rs_28",
+      "rs_29",
+      "rs_2a",
+      "rs_2b",
+      "rs_2m",
+      "rs_2n",
+      "rs_2o",
+      "rs_2p",
+      "rs_2q",
+      "rs_34",
+      "rs_35",
+      "rs_48",
+      "rs_49",
+      "rs_4a",
+      "rs_4b",
+      "rs_4c",
+      "rs_4d",
+      "rs_4h",
+      "rs_4i",
+      "rs_4j",
+      "rs_4k",
+      "rs_4l",
+      "rs_60",
+      "rs_61",
+      "rs_62",
+      "rs_63",
+      "rs_64",
+      "rs_65",
+      "rs_6v",
+      "rs_6w",
+      "rs_70",
+      "rs_71"
+    ],
+    "annotationGeometry": [
+      {
+        "id": "rs_11",
+        "kind": "stone",
+        "at": [
+          650.290188645944,
+          485.17325811460614
+        ],
+        "radiusAu": 40,
+        "dens": 3,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_11]"
+      },
+      {
+        "id": "rs_12",
+        "kind": "wood",
+        "at": [
+          760.8863728903234,
+          473.01441979035735
+        ],
+        "radiusAu": 34,
+        "dens": 2,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_12]"
+      },
+      {
+        "id": "rs_13",
+        "kind": "wood",
+        "at": [
+          802.075472490862,
+          466.85293183103204
+        ],
+        "radiusAu": 34,
+        "dens": 2,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_13]"
+      },
+      {
+        "id": "rs_14",
+        "kind": "herbs",
+        "at": [
+          870.0034898631275,
+          457.3238973915577
+        ],
+        "radiusAu": 28,
+        "dens": 1,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_14]"
+      },
+      {
+        "id": "rs_1b",
+        "kind": "wood",
+        "at": [
+          636.4805877637118,
+          548.8981998879462
+        ],
+        "radiusAu": 34,
+        "dens": 2,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_1b]"
+      },
+      {
+        "id": "rs_1c",
+        "kind": "food",
+        "at": [
+          713.5219474416226,
+          532.434089479968
+        ],
+        "radiusAu": 28,
+        "dens": 1,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_1c]"
+      },
+      {
+        "id": "rs_1d",
+        "kind": "wood",
+        "at": [
+          886.6400861479342,
+          548.9912334065884
+        ],
+        "radiusAu": 34,
+        "dens": 2,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_1d]"
+      },
+      {
+        "id": "rs_1e",
+        "kind": "herbs",
+        "at": [
+          912.7517673987895,
+          517.6936983577907
+        ],
+        "radiusAu": 28,
+        "dens": 1,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_1e]"
+      },
+      {
+        "id": "rs_1k",
+        "kind": "wood",
+        "at": [
+          655.7039889842272,
+          579.6652368567884
+        ],
+        "radiusAu": 34,
+        "dens": 2,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_1k]"
+      },
+      {
+        "id": "rs_1l",
+        "kind": "food",
+        "at": [
+          771.21433792077,
+          579.2525677774101
+        ],
+        "radiusAu": 40,
+        "dens": 3,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_1l]"
+      },
+      {
+        "id": "rs_1m",
+        "kind": "food",
+        "at": [
+          794.3001085128635,
+          570.4623001087457
+        ],
+        "radiusAu": 40,
+        "dens": 3,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_1m]"
+      },
+      {
+        "id": "rs_1n",
+        "kind": "wood",
+        "at": [
+          858.370893869549,
+          594.1858164332807
+        ],
+        "radiusAu": 40,
+        "dens": 3,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_1n]"
+      },
+      {
+        "id": "rs_1t",
+        "kind": "wood",
+        "at": [
+          644.6115415133536,
+          628.8508334998041
+        ],
+        "radiusAu": 34,
+        "dens": 2,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_1t]"
+      },
+      {
+        "id": "rs_1u",
+        "kind": "food",
+        "at": [
+          684.5933404099196,
+          639.6059397663921
+        ],
+        "radiusAu": 28,
+        "dens": 1,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_1u]"
+      },
+      {
+        "id": "rs_1v",
+        "kind": "food",
+        "at": [
+          740.9946051370353,
+          628.9715182930231
+        ],
+        "radiusAu": 40,
+        "dens": 3,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_1v]"
+      },
+      {
+        "id": "rs_1w",
+        "kind": "wood",
+        "at": [
+          816.2951250635087,
+          661.5050676055253
+        ],
+        "radiusAu": 40,
+        "dens": 3,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_1w]"
+      },
+      {
+        "id": "rs_1x",
+        "kind": "herbs",
+        "at": [
+          863.4753841087222,
+          625.0433574859053
+        ],
+        "radiusAu": 34,
+        "dens": 2,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_1x]"
+      },
+      {
+        "id": "rs_1y",
+        "kind": "wood",
+        "at": [
+          971.5989025682211,
+          648.4009061995894
+        ],
+        "radiusAu": 40,
+        "dens": 3,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_1y]"
+      },
+      {
+        "id": "rs_28",
+        "kind": "wood",
+        "at": [
+          686.9539997261018,
+          695.8954847604036
+        ],
+        "radiusAu": 34,
+        "dens": 2,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_28]"
+      },
+      {
+        "id": "rs_29",
+        "kind": "herbs",
+        "at": [
+          744.4760999493301,
+          703.0120855104178
+        ],
+        "radiusAu": 34,
+        "dens": 2,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_29]"
+      },
+      {
+        "id": "rs_2a",
+        "kind": "wood",
+        "at": [
+          829.0823128148913,
+          697.5862521212548
+        ],
+        "radiusAu": 40,
+        "dens": 3,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_2a]"
+      },
+      {
+        "id": "rs_2b",
+        "kind": "wood",
+        "at": [
+          887.0790109429508,
+          682.853698655963
+        ],
+        "radiusAu": 40,
+        "dens": 3,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_2b]"
+      },
+      {
+        "id": "rs_2m",
+        "kind": "wood",
+        "at": [
+          714.1206318885088,
+          750.081411883235
+        ],
+        "radiusAu": 40,
+        "dens": 3,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_2m]"
+      },
+      {
+        "id": "rs_2n",
+        "kind": "wood",
+        "at": [
+          753.093458622694,
+          749.948818789795
+        ],
+        "radiusAu": 40,
+        "dens": 3,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_2n]"
+      },
+      {
+        "id": "rs_2o",
+        "kind": "wood",
+        "at": [
+          822.2711741253734,
+          758.7911003027111
+        ],
+        "radiusAu": 40,
+        "dens": 3,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_2o]"
+      },
+      {
+        "id": "rs_2p",
+        "kind": "herbs",
+        "at": [
+          871.9513675030321,
+          754.8292798213661
+        ],
+        "radiusAu": 34,
+        "dens": 2,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_2p]"
+      },
+      {
+        "id": "rs_2q",
+        "kind": "herbs",
+        "at": [
+          914.294723501429,
+          768.1591030899435
+        ],
+        "radiusAu": 34,
+        "dens": 2,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_2q]"
+      },
+      {
+        "id": "rs_34",
+        "kind": "wood",
+        "at": [
+          821.8195936903358,
+          811.5089835859835
+        ],
+        "radiusAu": 40,
+        "dens": 3,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_34]"
+      },
+      {
+        "id": "rs_35",
+        "kind": "wood",
+        "at": [
+          887.6217762585729,
+          795.3578453864902
+        ],
+        "radiusAu": 40,
+        "dens": 3,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_35]"
+      },
+      {
+        "id": "rs_48",
+        "kind": "fresh_water",
+        "at": [
+          794.8835306922342,
+          469.5923079457912
+        ],
+        "radiusAu": 14,
+        "dens": 2,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_48]"
+      },
+      {
+        "id": "rs_49",
+        "kind": "fresh_water",
+        "at": [
+          787,
+          508.8
+        ],
+        "radiusAu": 14,
+        "dens": 2,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_49]"
+      },
+      {
+        "id": "rs_4a",
+        "kind": "fish",
+        "at": [
+          813,
+          514
+        ],
+        "radiusAu": 16,
+        "dens": 2,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_4a]"
+      },
+      {
+        "id": "rs_4b",
+        "kind": "fresh_water",
+        "at": [
+          823,
+          552.8
+        ],
+        "radiusAu": 14,
+        "dens": 3,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_4b]"
+      },
+      {
+        "id": "rs_4c",
+        "kind": "fish",
+        "at": [
+          849,
+          558
+        ],
+        "radiusAu": 16,
+        "dens": 2,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_4c]"
+      },
+      {
+        "id": "rs_4d",
+        "kind": "fresh_water",
+        "at": [
+          928.46116164247,
+          687.8821717930014
+        ],
+        "radiusAu": 14,
+        "dens": 3,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_4d]"
+      },
+      {
+        "id": "rs_4h",
+        "kind": "fresh_water",
+        "at": [
+          607,
+          626.8
+        ],
+        "radiusAu": 14,
+        "dens": 2,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_4h]"
+      },
+      {
+        "id": "rs_4i",
+        "kind": "fish",
+        "at": [
+          633,
+          632
+        ],
+        "radiusAu": 16,
+        "dens": 2,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_4i]"
+      },
+      {
+        "id": "rs_4j",
+        "kind": "fresh_water",
+        "at": [
+          780.2274708290307,
+          648.9083340606626
+        ],
+        "radiusAu": 14,
+        "dens": 2,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_4j]"
+      },
+      {
+        "id": "rs_4k",
+        "kind": "fresh_water",
+        "at": [
+          891.3115122375588,
+          647.482217277754
+        ],
+        "radiusAu": 14,
+        "dens": 2,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_4k]"
+      },
+      {
+        "id": "rs_4l",
+        "kind": "fish",
+        "at": [
+          917.3115122375588,
+          652.682217277754
+        ],
+        "radiusAu": 16,
+        "dens": 2,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_4l]"
+      },
+      {
+        "id": "rs_60",
+        "kind": "fresh_water",
+        "at": [
+          874.7854811826986,
+          519.636794372138
+        ],
+        "radiusAu": 16,
+        "dens": 3,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_60]"
+      },
+      {
+        "id": "rs_61",
+        "kind": "fish",
+        "at": [
+          859.8940949376355,
+          522.7458142314363
+        ],
+        "radiusAu": 16,
+        "dens": 2,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_61]"
+      },
+      {
+        "id": "rs_62",
+        "kind": "fresh_water",
+        "at": [
+          805.3606489102854,
+          578.0944406960601
+        ],
+        "radiusAu": 16,
+        "dens": 3,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_62]"
+      },
+      {
+        "id": "rs_63",
+        "kind": "fresh_water",
+        "at": [
+          728.7547069974257,
+          549.8187785624473
+        ],
+        "radiusAu": 16,
+        "dens": 3,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_63]"
+      },
+      {
+        "id": "rs_64",
+        "kind": "fish",
+        "at": [
+          743.0694755894172,
+          546.8914015836838
+        ],
+        "radiusAu": 16,
+        "dens": 2,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_64]"
+      },
+      {
+        "id": "rs_65",
+        "kind": "fresh_water",
+        "at": [
+          794.9020693006629,
+          492.27896893330063
+        ],
+        "radiusAu": 16,
+        "dens": 3,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_65]"
+      },
+      {
+        "id": "rs_6v",
+        "kind": "stone",
+        "at": [
+          610,
+          535
+        ],
+        "radiusAu": 36,
+        "dens": 3,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_6v]"
+      },
+      {
+        "id": "rs_6w",
+        "kind": "herbs",
+        "at": [
+          878,
+          750
+        ],
+        "radiusAu": 36,
+        "dens": 3,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_6w]"
+      },
+      {
+        "id": "rs_70",
+        "kind": "stone",
+        "at": [
+          760,
+          612
+        ],
+        "radiusAu": 24,
+        "dens": 1,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_70]"
+      },
+      {
+        "id": "rs_71",
+        "kind": "stone",
+        "at": [
+          866,
+          620
+        ],
+        "radiusAu": 24,
+        "dens": 2,
+        "conf": "proposal",
+        "sourceRef": "resources[rs_71]"
+      }
+    ],
+    "finalHarvestableInstances": "NOT_SUPPLIED",
+    "note": "These are the EXISTING Veyra geographic annotations with source ids preserved. No new resource position, stock, yield, respawn or loot was placed. Gameplay generates harvestables from suitability areas."
+  },
+  "buildSites": {
+    "count": 10,
+    "sites": [
+      {
+        "id": "bz_greywater",
+        "name": "Greywater Lakeshore Terrace",
+        "conf": "proposal",
+        "distanceToSpawnAu": 10.3372,
+        "centroidAu": [
+          791.3998,
+          611.3262
+        ],
+        "areaAu2": 5707.4164,
+        "bboxAu": [
+          705.377,
+          590.5798,
+          868.1276,
+          633.3361
+        ],
+        "soil": "đất bồi pha cát",
+        "water": "hồ sát bờ",
+        "slopeLabel": "thoải",
+        "tags": [
+          "bờ hồ",
+          "bình nguyên"
+        ],
+        "buildableCandidateCellsAtCentroid": 1,
+        "clearanceCellsAtCentroid": 4,
+        "freshwaterProximityCellsAtCentroid": 4,
+        "rawSlopeAtCentroid": 2,
+        "status": "CANDIDATE_BUILDABLE_REGION",
+        "a0Legality": "NOT_ASSERTED"
+      },
+      {
+        "id": "bz_silver",
+        "name": "Silverrun Meadow Bank",
+        "conf": "proposal",
+        "distanceToSpawnAu": 52.7519,
+        "centroidAu": [
+          697.6213,
+          669.4572
+        ],
+        "areaAu2": 3285.1819,
+        "bboxAu": [
+          634.4594,
+          652.8304,
+          760.539,
+          686.3801
+        ],
+        "soil": "đất phù sa",
+        "water": "sông nhỏ",
+        "slopeLabel": "phẳng",
+        "tags": [
+          "ven sông",
+          "bình nguyên"
+        ],
+        "buildableCandidateCellsAtCentroid": 1,
+        "clearanceCellsAtCentroid": 2,
+        "freshwaterProximityCellsAtCentroid": 2,
+        "rawSlopeAtCentroid": 2,
+        "status": "CANDIDATE_BUILDABLE_REGION",
+        "a0Legality": "NOT_ASSERTED"
+      },
+      {
+        "id": "bz_elder_clear",
+        "name": "Hollow Oaks Clearing",
+        "conf": "proposal",
+        "distanceToSpawnAu": 139.8702,
+        "centroidAu": [
+          798.9783,
+          791.269
+        ],
+        "areaAu2": 2721.074,
+        "bboxAu": [
+          768.4277,
+          761.8308,
+          833.0773,
+          819.1336
+        ],
+        "soil": "đất mùn rừng",
+        "water": "giếng/suối xa",
+        "slopeLabel": "thoải",
+        "tags": [
+          "trong rừng"
+        ],
+        "buildableCandidateCellsAtCentroid": 1,
+        "clearanceCellsAtCentroid": 18,
+        "freshwaterProximityCellsAtCentroid": 18,
+        "rawSlopeAtCentroid": 1,
+        "status": "CANDIDATE_BUILDABLE_REGION",
+        "a0Legality": "NOT_ASSERTED"
+      },
+      {
+        "id": "bz_typhon_t",
+        "name": "Typhon Terrace",
+        "conf": "proposal",
+        "distanceToSpawnAu": 143.988,
+        "centroidAu": [
+          700.3325,
+          478.6247
+        ],
+        "areaAu2": 1920.3132,
+        "bboxAu": [
+          667.6213,
+          459.6779,
+          732.0639,
+          496.1399
+        ],
+        "soil": "đá vụn",
+        "water": "thác gần",
+        "slopeLabel": "dốc nhẹ",
+        "tags": [
+          "nền đá cao",
+          "gần trung tâm khai thác"
+        ],
+        "buildableCandidateCellsAtCentroid": 1,
+        "clearanceCellsAtCentroid": 7,
+        "freshwaterProximityCellsAtCentroid": 7,
+        "rawSlopeAtCentroid": 9,
+        "status": "CANDIDATE_BUILDABLE_REGION",
+        "a0Legality": "NOT_ASSERTED"
+      },
+      {
+        "id": "bz_verdant",
+        "name": "Lake Verdant South Meadow",
+        "conf": "proposal",
+        "distanceToSpawnAu": 200.5534,
+        "centroidAu": [
+          1010.6553,
+          484.266
+        ],
+        "areaAu2": 4001.5029,
+        "bboxAu": [
+          944.1496,
+          465.4979,
+          1076.5127,
+          502.435
+        ],
+        "soil": "đất mùn",
+        "water": "hồ + kênh",
+        "slopeLabel": "thoải",
+        "tags": [
+          "bờ hồ",
+          "bình nguyên",
+          "gần đường vận tải"
+        ],
+        "buildableCandidateCellsAtCentroid": 1,
+        "clearanceCellsAtCentroid": 4,
+        "freshwaterProximityCellsAtCentroid": 4,
+        "rawSlopeAtCentroid": 1,
+        "status": "CANDIDATE_BUILDABLE_REGION",
+        "a0Legality": "NOT_ASSERTED"
+      },
+      {
+        "id": "bz_moss",
+        "name": "Mossbrook Valley Floor",
+        "conf": "proposal",
+        "distanceToSpawnAu": 220.7878,
+        "centroidAu": [
+          1042.6112,
+          648.2397
+        ],
+        "areaAu2": 7667.2685,
+        "bboxAu": [
+          1005.4853,
+          568.3925,
+          1078.0772,
+          720.0068
+        ],
+        "soil": "đất phù sa",
+        "water": "suối + kênh",
+        "slopeLabel": "phẳng",
+        "tags": [
+          "ven sông",
+          "gần đường vận tải"
+        ],
+        "buildableCandidateCellsAtCentroid": 1,
+        "clearanceCellsAtCentroid": 2,
+        "freshwaterProximityCellsAtCentroid": 2,
+        "rawSlopeAtCentroid": 16,
+        "status": "CANDIDATE_BUILDABLE_REGION",
+        "a0Legality": "NOT_ASSERTED"
+      },
+      {
+        "id": "bz_forest_n",
+        "name": "North Woods Hollow",
+        "conf": "proposal",
+        "distanceToSpawnAu": 229.2072,
+        "centroidAu": [
+          878.0991,
+          391.2175
+        ],
+        "areaAu2": 1272.2819,
+        "bboxAu": [
+          854.2429,
+          374.6701,
+          902.6691,
+          408.0874
+        ],
+        "soil": "đất mùn",
+        "water": "suối Argus",
+        "slopeLabel": "thoải",
+        "tags": [
+          "trong rừng",
+          "ven sông"
+        ],
+        "buildableCandidateCellsAtCentroid": 1,
+        "clearanceCellsAtCentroid": 8,
+        "freshwaterProximityCellsAtCentroid": 8,
+        "rawSlopeAtCentroid": 4,
+        "status": "CANDIDATE_BUILDABLE_REGION",
+        "a0Legality": "NOT_ASSERTED"
+      },
+      {
+        "id": "bz_greyback",
+        "name": "Greyback Foothill Shelf",
+        "conf": "proposal",
+        "distanceToSpawnAu": 237.1386,
+        "centroidAu": [
+          553.18,
+          748.2885
+        ],
+        "areaAu2": 3086.3132,
+        "bboxAu": [
+          526.9347,
+          708.5332,
+          579.1326,
+          789.3882
+        ],
+        "soil": "nền đá",
+        "water": "xa nước",
+        "slopeLabel": "dốc nhẹ",
+        "tags": [
+          "nền đá cao"
+        ],
+        "buildableCandidateCellsAtCentroid": 1,
+        "clearanceCellsAtCentroid": 22,
+        "freshwaterProximityCellsAtCentroid": 22,
+        "rawSlopeAtCentroid": 8,
+        "status": "CANDIDATE_BUILDABLE_REGION",
+        "a0Legality": "NOT_ASSERTED"
+      },
+      {
+        "id": "bz_kestrel",
+        "name": "Kestrel Ridge Shelf",
+        "conf": "proposal",
+        "distanceToSpawnAu": 266.3783,
+        "centroidAu": [
+          724.3219,
+          345.4339
+        ],
+        "areaAu2": 1570.2595,
+        "bboxAu": [
+          696.7493,
+          326.3226,
+          753.1064,
+          362.5548
+        ],
+        "soil": "đá",
+        "water": "xa nước",
+        "slopeLabel": "dốc nhẹ",
+        "tags": [
+          "nền đá cao"
+        ],
+        "buildableCandidateCellsAtCentroid": 1,
+        "clearanceCellsAtCentroid": 9,
+        "freshwaterProximityCellsAtCentroid": 9,
+        "rawSlopeAtCentroid": 9,
+        "status": "CANDIDATE_BUILDABLE_REGION",
+        "a0Legality": "NOT_ASSERTED"
+      },
+      {
+        "id": "bz_gulfwest",
+        "name": "Gulf West Bank Flats",
+        "conf": "proposal",
+        "distanceToSpawnAu": 278.0294,
+        "centroidAu": [
+          879.806,
+          919.6138
+        ],
+        "areaAu2": 4647.5514,
+        "bboxAu": [
+          827.6134,
+          888.1009,
+          929.9952,
+          951.0931
+        ],
+        "soil": "cát pha",
+        "water": "vịnh + kênh châu thổ",
+        "slopeLabel": "phẳng",
+        "tags": [
+          "ven biển",
+          "gần đường vận tải"
+        ],
+        "buildableCandidateCellsAtCentroid": 1,
+        "clearanceCellsAtCentroid": 9,
+        "freshwaterProximityCellsAtCentroid": 9,
+        "rawSlopeAtCentroid": 3,
+        "status": "CANDIDATE_BUILDABLE_REGION",
+        "a0Legality": "NOT_ASSERTED"
+      }
+    ],
+    "note": "Multiple candidate buildable regions with measured clearance. A0 protection, collision, occupancy and route legality remain Gameplay/A0-owned."
+  },
+  "routes": {
+    "primary": {
+      "id": "RT-1",
+      "label": "Authored cart corridor via the br_4 river crossing",
+      "status": "AUTHORED_ROAD_GEOMETRY_PLUS_DERIVED_CONNECTORS",
+      "totalDistanceAu": 400.1147,
+      "authoredRoadLengthAu": 362.9125,
+      "derivedConnectorLengthAu": 37.2022,
+      "connectors": [
+        {
+          "from": "spawn:790,622",
+          "to": "graphNode:48@812,592",
+          "distanceAu": 37.20215,
+          "derived": true
+        }
+      ],
+      "segments": [
+        {
+          "roadId": "rd_b",
+          "roadName": "West Forest Freight (1)",
+          "kind": "cart",
+          "conf": "proposal",
+          "lengthAu": 136.436594,
+          "points": [
+            [
+              812,
+              592
+            ],
+            [
+              765,
+              596.5
+            ],
+            [
+              751,
+              609
+            ],
+            [
+              732,
+              639
+            ],
+            [
+              733.5,
+              653
+            ],
+            [
+              748,
+              668
+            ]
+          ],
+          "width": "NOT_IN_SOURCE",
+          "ford": false,
+          "alt": false,
+          "ferry": false,
+          "sourceRef": "roads[rd_b].points"
+        },
+        {
+          "roadId": "rd_13",
+          "roadName": "Elderwood Trail (1)",
+          "kind": "trail",
+          "conf": "proposal",
+          "lengthAu": 57.949736,
+          "points": [
+            [
+              748,
+              668
+            ],
+            [
+              788.7891,
+              709.1633
+            ]
+          ],
+          "width": "NOT_IN_SOURCE",
+          "ford": false,
+          "alt": false,
+          "ferry": false,
+          "sourceRef": "roads[rd_13].points"
+        },
+        {
+          "roadId": "rd_1w",
+          "roadName": "Greywater–Mill Forest Detour (1)",
+          "kind": "trail",
+          "conf": "proposal",
+          "lengthAu": 53.790096,
+          "points": [
+            [
+              788.7891,
+              709.1633
+            ],
+            [
+              788,
+              737
+            ],
+            [
+              800,
+              760
+            ]
+          ],
+          "width": "NOT_IN_SOURCE",
+          "ford": false,
+          "alt": true,
+          "ferry": false,
+          "sourceRef": "roads[rd_1w].points"
+        },
+        {
+          "roadId": "rd_16",
+          "roadName": "Kilns Trail (1)",
+          "kind": "trail",
+          "conf": "proposal",
+          "lengthAu": 114.736113,
+          "points": [
+            [
+              800,
+              760
+            ],
+            [
+              823,
+              780
+            ],
+            [
+              857,
+              780
+            ],
+            [
+              871,
+              788
+            ],
+            [
+              905,
+              785
+            ]
+          ],
+          "width": "NOT_IN_SOURCE",
+          "ford": false,
+          "alt": false,
+          "ferry": false,
+          "sourceRef": "roads[rd_16].points"
+        }
+      ],
+      "geometryAu": [
+        [
+          790,
+          622
+        ],
+        [
+          812,
+          592
+        ],
+        [
+          765,
+          596.5
+        ],
+        [
+          751,
+          609
+        ],
+        [
+          732,
+          639
+        ],
+        [
+          733.5,
+          653
+        ],
+        [
+          748,
+          668
+        ],
+        [
+          748,
+          668
+        ],
+        [
+          788.7891,
+          709.1633
+        ],
+        [
+          788.7891,
+          709.1633
+        ],
+        [
+          788,
+          737
+        ],
+        [
+          800,
+          760
+        ],
+        [
+          800,
+          760
+        ],
+        [
+          823,
+          780
+        ],
+        [
+          857,
+          780
+        ],
+        [
+          871,
+          788
+        ],
+        [
+          905,
+          785
+        ],
+        [
+          905,
+          785
+        ]
+      ],
+      "sourceIds": [
+        "rd_b",
+        "rd_13",
+        "rd_1w",
+        "rd_16"
+      ],
+      "confidence": [
+        "proposal"
+      ],
+      "bannedRoadIds": [],
+      "connectorMaxAu": 50,
+      "note": "All segment points are verbatim authored road vertices or exact segment intersections. Straight connectors are DERIVED and must be checked against the physical land mask."
+    },
+    "return": {
+      "id": "RT-1-RETURN",
+      "status": "REVERSE_OF_PRIMARY",
+      "totalDistanceAu": 400.1147,
+      "geometryAu": [
+        [
+          905,
+          785
+        ],
+        [
+          905,
+          785
+        ],
+        [
+          871,
+          788
+        ],
+        [
+          857,
+          780
+        ],
+        [
+          823,
+          780
+        ],
+        [
+          800,
+          760
+        ],
+        [
+          800,
+          760
+        ],
+        [
+          788,
+          737
+        ],
+        [
+          788.7891,
+          709.1633
+        ],
+        [
+          788.7891,
+          709.1633
+        ],
+        [
+          748,
+          668
+        ],
+        [
+          748,
+          668
+        ],
+        [
+          733.5,
+          653
+        ],
+        [
+          732,
+          639
+        ],
+        [
+          751,
+          609
+        ],
+        [
+          765,
+          596.5
+        ],
+        [
+          812,
+          592
+        ],
+        [
+          790,
+          622
+        ]
+      ],
+      "sourceIds": [
+        "rd_b",
+        "rd_13",
+        "rd_1w",
+        "rd_16"
+      ],
+      "note": "Same authored geometry reversed. A physically distinct return is RT-2 / RT-3."
+    },
+    "alternatives": [
+      {
+        "id": "RT-2",
+        "label": "Same corridor without the alt detour rd_1w (full rd_13)",
+        "status": "AUTHORED_ROAD_GEOMETRY_PLUS_DERIVED_CONNECTORS",
+        "totalDistanceAu": 403.9036,
+        "authoredRoadLengthAu": 366.7014,
+        "derivedConnectorLengthAu": 37.2022,
+        "connectors": [
+          {
+            "from": "spawn:790,622",
+            "to": "graphNode:48@812,592",
+            "distanceAu": 37.20215,
+            "derived": true
+          }
+        ],
+        "segments": [
+          {
+            "roadId": "rd_b",
+            "roadName": "West Forest Freight (1)",
+            "kind": "cart",
+            "conf": "proposal",
+            "lengthAu": 136.436594,
+            "points": [
+              [
+                812,
+                592
+              ],
+              [
+                765,
+                596.5
+              ],
+              [
+                751,
+                609
+              ],
+              [
+                732,
+                639
+              ],
+              [
+                733.5,
+                653
+              ],
+              [
+                748,
+                668
+              ]
+            ],
+            "width": "NOT_IN_SOURCE",
+            "ford": false,
+            "alt": false,
+            "ferry": false,
+            "sourceRef": "roads[rd_b].points"
+          },
+          {
+            "roadId": "rd_13",
+            "roadName": "Elderwood Trail (1)",
+            "kind": "trail",
+            "conf": "proposal",
+            "lengthAu": 57.949736,
+            "points": [
+              [
+                748,
+                668
+              ],
+              [
+                788.7891,
+                709.1633
+              ]
+            ],
+            "width": "NOT_IN_SOURCE",
+            "ford": false,
+            "alt": false,
+            "ferry": false,
+            "sourceRef": "roads[rd_13].points"
+          },
+          {
+            "roadId": "rd_13",
+            "roadName": "Elderwood Trail (1)",
+            "kind": "trail",
+            "conf": "proposal",
+            "lengthAu": 57.578998,
+            "points": [
+              [
+                788.7891,
+                709.1633
+              ],
+              [
+                802.5,
+                723
+              ],
+              [
+                804,
+                753
+              ],
+              [
+                800,
+                760
+              ]
+            ],
+            "width": "NOT_IN_SOURCE",
+            "ford": false,
+            "alt": false,
+            "ferry": false,
+            "sourceRef": "roads[rd_13].points"
+          },
+          {
+            "roadId": "rd_16",
+            "roadName": "Kilns Trail (1)",
+            "kind": "trail",
+            "conf": "proposal",
+            "lengthAu": 114.736113,
+            "points": [
+              [
+                800,
+                760
+              ],
+              [
+                823,
+                780
+              ],
+              [
+                857,
+                780
+              ],
+              [
+                871,
+                788
+              ],
+              [
+                905,
+                785
+              ]
+            ],
+            "width": "NOT_IN_SOURCE",
+            "ford": false,
+            "alt": false,
+            "ferry": false,
+            "sourceRef": "roads[rd_16].points"
+          }
+        ],
+        "geometryAu": [
+          [
+            790,
+            622
+          ],
+          [
+            812,
+            592
+          ],
+          [
+            765,
+            596.5
+          ],
+          [
+            751,
+            609
+          ],
+          [
+            732,
+            639
+          ],
+          [
+            733.5,
+            653
+          ],
+          [
+            748,
+            668
+          ],
+          [
+            748,
+            668
+          ],
+          [
+            788.7891,
+            709.1633
+          ],
+          [
+            788.7891,
+            709.1633
+          ],
+          [
+            802.5,
+            723
+          ],
+          [
+            804,
+            753
+          ],
+          [
+            800,
+            760
+          ],
+          [
+            800,
+            760
+          ],
+          [
+            823,
+            780
+          ],
+          [
+            857,
+            780
+          ],
+          [
+            871,
+            788
+          ],
+          [
+            905,
+            785
+          ],
+          [
+            905,
+            785
+          ]
+        ],
+        "sourceIds": [
+          "rd_b",
+          "rd_13",
+          "rd_16"
+        ],
+        "confidence": [
+          "proposal"
+        ],
+        "bannedRoadIds": [
+          "rd_1w"
+        ],
+        "connectorMaxAu": 50,
+        "note": "All segment points are verbatim authored road vertices or exact segment intersections. Straight connectors are DERIVED and must be checked against the physical land mask."
+      },
+      {
+        "id": "RT-3",
+        "label": "Riverside path rd_20 (Greywater West Bank Path)",
+        "status": "AUTHORED_ROAD_GEOMETRY_PLUS_DERIVED_CONNECTORS",
+        "totalDistanceAu": 398.0289,
+        "authoredRoadLengthAu": 280.3206,
+        "derivedConnectorLengthAu": 117.7083,
+        "connectors": [
+          {
+            "from": "spawn:790,622",
+            "to": "graphNode:49@825.6209,579.9157",
+            "distanceAu": 55.135595,
+            "derived": true
+          },
+          {
+            "from": "graphNode:67@954.1168,823.7669",
+            "to": "poi:905,785",
+            "distanceAu": 62.57266,
+            "derived": true
+          }
+        ],
+        "segments": [
+          {
+            "roadId": "rd_20",
+            "roadName": "Greywater West Bank Path",
+            "kind": "riverside",
+            "conf": "proposal",
+            "lengthAu": 280.320599,
+            "points": [
+              [
+                826.3391,
+                580.4047
+              ],
+              [
+                852.8751,
+                598.4703
+              ],
+              [
+                880.9669,
+                641.9674
+              ],
+              [
+                926.9056,
+                772.7915
+              ],
+              [
+                954.1168,
+                823.7669
+              ]
+            ],
+            "width": "NOT_IN_SOURCE",
+            "ford": false,
+            "alt": false,
+            "ferry": false,
+            "sourceRef": "roads[rd_20].points"
+          }
+        ],
+        "geometryAu": [
+          [
+            790,
+            622
+          ],
+          [
+            826.3391,
+            580.4047
+          ],
+          [
+            852.8751,
+            598.4703
+          ],
+          [
+            880.9669,
+            641.9674
+          ],
+          [
+            926.9056,
+            772.7915
+          ],
+          [
+            954.1168,
+            823.7669
+          ],
+          [
+            905,
+            785
+          ]
+        ],
+        "sourceIds": [
+          "rd_20"
+        ],
+        "confidence": [
+          "proposal"
+        ],
+        "bannedRoadIds": [
+          "rd_16"
+        ],
+        "connectorMaxAu": 90,
+        "note": "All segment points are verbatim authored road vertices or exact segment intersections. Straight connectors are DERIVED and must be checked against the physical land mask."
+      }
+    ],
+    "alternativeCount": 3,
+    "note": "RT-1/RT-2 differ by the authored alt detour rd_1w; RT-3 uses the authored riverside path rd_20 with explicitly reported derived connectors. No new geometry was invented."
+  },
+  "physicalConnectivity": {
+    "grid": {
+      "gw": 250,
+      "gh": 175,
+      "cell": 8,
+      "cells": 43750,
+      "order": "row_major: i = gy*gw + gx; cell centre = [(gx+0.5)*cell, (gy+0.5)*cell]"
+    },
+    "passableRule": "walkableCandidate=1 OR (river centreline cell AND authored crossingCandidate>0)",
+    "startCell": 19348,
+    "goalCell": 24613,
+    "connected": true,
+    "gridSteps": 50,
+    "gridStepDistanceAu": 400,
+    "pathCells": 51,
+    "pathCellList": [
+      19348,
+      19347,
+      19346,
+      19345,
+      19344,
+      19343,
+      19342,
+      19341,
+      19591,
+      19841,
+      20091,
+      20341,
+      20591,
+      20592,
+      20593,
+      20594,
+      20595,
+      20596,
+      20597,
+      20598,
+      20599,
+      20600,
+      20601,
+      20602,
+      20603,
+      20604,
+      20605,
+      20606,
+      20607,
+      20608,
+      20609,
+      20610,
+      20611,
+      20612,
+      20862,
+      21112,
+      21362,
+      21363,
+      21613,
+      21863,
+      22113,
+      22363,
+      22613,
+      22863,
+      23113,
+      23363,
+      23613,
+      23863,
+      24113,
+      24363,
+      24613
+    ],
+    "crossingCells": [
+      {
+        "cell": 20341,
+        "authoringAu": [
+          732,
+          652
+        ],
+        "crossingValue": 2,
+        "bridgeId": "br_4",
+        "bridgeLoad": "cart",
+        "riverId": "rv_silver",
+        "waterClass": 3
+      }
+    ],
+    "clearanceAlongGridPathCells": {
+      "count": 51,
+      "min": 0,
+      "max": 5,
+      "mean": 2.2941
+    },
+    "clearanceAlongGridPathAu": {
+      "min": 0,
+      "max": 40,
+      "mean": 18.3528
+    },
+    "slopeAlongGridPathRaw": {
+      "count": 51,
+      "min": 1,
+      "max": 12,
+      "mean": 3.9216
+    },
+    "clearanceAlongAuthoredPrimaryRouteCells": {
+      "count": 62,
+      "min": 0,
+      "max": 16,
+      "mean": 7.2742
+    },
+    "clearanceAlongAuthoredPrimaryRouteAu": {
+      "min": 0,
+      "max": 128,
+      "mean": 58.1936
+    },
+    "slopeAlongAuthoredPrimaryRouteRaw": {
+      "count": 62,
+      "min": 1,
+      "max": 4,
+      "mean": 2.0323
+    },
+    "note": "Grid-step distance is a 4-neighbour raster lower bound in authoring units (cells x 8), NOT the authored polyline length and NOT a travel-time measurement. Clearance is derived BFS distance to the nearest blocked cell."
+  },
+  "dependencies": {
+    "riversNearPrimaryRoute": [
+      {
+        "id": "rv_silver",
+        "kind": "river",
+        "width": 4,
+        "widthUnit": "UNKNOWN",
+        "distanceAu": 18,
+        "minDistanceToPrimaryAu": 3.5346,
+        "conf": "proposal"
+      },
+      {
+        "id": "rv_grey_low",
+        "kind": "river",
+        "width": 7,
+        "widthUnit": "UNKNOWN",
+        "distanceAu": 77.7817,
+        "minDistanceToPrimaryAu": 41.0122,
+        "conf": "proposal"
+      },
+      {
+        "id": "rv_moss",
+        "kind": "river",
+        "width": 4,
+        "widthUnit": "UNKNOWN",
+        "distanceAu": 242.3639,
+        "minDistanceToPrimaryAu": 57.8107,
+        "conf": "proposal"
+      }
+    ],
+    "bridgesNearPrimaryRoute": [
+      {
+        "id": "br_4",
+        "load": "cart",
+        "conf": "proposal",
+        "at": [
+          732.00696765689,
+          649.8170519278754
+        ],
+        "minDistanceToPrimaryAu": 3.5157,
+        "nearestRiver": {
+          "id": "rv_silver",
+          "distanceAu": 0.1495
+        },
+        "channelSpanFitVerified": false
+      },
+      {
+        "id": "br_3",
+        "load": "cart",
+        "conf": "proposal",
+        "at": [
+          855.2774622523895,
+          576.127164427206
+        ],
+        "minDistanceToPrimaryAu": 46.0965,
+        "nearestRiver": {
+          "id": "rv_grey_low",
+          "distanceAu": 0.8134
+        },
+        "channelSpanFitVerified": false
+      },
+      {
+        "id": "br_5",
+        "load": "cart",
+        "conf": "proposal",
+        "at": [
+          968.0099487963698,
+          816.1834048937901
+        ],
+        "minDistanceToPrimaryAu": 70.304,
+        "nearestRiver": {
+          "id": "rv_grey_low",
+          "distanceAu": 0.2768
+        },
+        "channelSpanFitVerified": false
+      }
+    ],
+    "bridgesByRoute": [
+      {
+        "routeId": "RT-1",
+        "bridgesWithin8Au": [
+          {
+            "id": "br_4",
+            "load": "cart",
+            "conf": "proposal",
+            "distanceAu": 3.5157,
+            "channelSpanFitVerified": false
+          }
+        ],
+        "ferriesWithin8Au": []
+      },
+      {
+        "routeId": "RT-2",
+        "bridgesWithin8Au": [
+          {
+            "id": "br_4",
+            "load": "cart",
+            "conf": "proposal",
+            "distanceAu": 3.5157,
+            "channelSpanFitVerified": false
+          }
+        ],
+        "ferriesWithin8Au": []
+      },
+      {
+        "routeId": "RT-3",
+        "bridgesWithin8Au": [
+          {
+            "id": "br_a",
+            "load": "foot",
+            "conf": "proposal",
+            "distanceAu": 5.3283,
+            "channelSpanFitVerified": false
+          }
+        ],
+        "ferriesWithin8Au": []
+      }
+    ],
+    "ferryPaths": [
+      {
+        "id": "rd_2j",
+        "name": "Gulf ferry (Gulfhead ↔ Ironholm)",
+        "conf": "assumption",
+        "minDistanceToPrimaryAu": 187.1106,
+        "minDistanceToAnyRouteAu": 126.5815,
+        "usedByAnyRoute": false,
+        "boatRule": "UNDEFINED"
+      },
+      {
+        "id": "rd_2f",
+        "name": "Emberport ↔ Cinder ferry",
+        "conf": "assumption",
+        "minDistanceToPrimaryAu": 364.734,
+        "minDistanceToAnyRouteAu": 311.0054,
+        "usedByAnyRoute": false,
+        "boatRule": "UNDEFINED"
+      },
+      {
+        "id": "rd_2c",
+        "name": "Westmouth ↔ Threshold ferry",
+        "conf": "assumption",
+        "minDistanceToPrimaryAu": 413.8034,
+        "minDistanceToAnyRouteAu": 413.8034,
+        "usedByAnyRoute": false,
+        "boatRule": "UNDEFINED"
+      },
+      {
+        "id": "rd_2i",
+        "name": "Southfoot ↔ Ironholm ferry",
+        "conf": "assumption",
+        "minDistanceToPrimaryAu": 419.8183,
+        "minDistanceToAnyRouteAu": 358.2011,
+        "usedByAnyRoute": false,
+        "boatRule": "UNDEFINED"
+      },
+      {
+        "id": "rd_2d",
+        "name": "Fish Camp ↔ Wreck Isle ferry",
+        "conf": "assumption",
+        "minDistanceToPrimaryAu": 443.0196,
+        "minDistanceToAnyRouteAu": 443.0196,
+        "usedByAnyRoute": false,
+        "boatRule": "UNDEFINED"
+      },
+      {
+        "id": "rd_2e",
+        "name": "Drowned Pier ↔ Beacon Rock ferry",
+        "conf": "assumption",
+        "minDistanceToPrimaryAu": 472.3659,
+        "minDistanceToAnyRouteAu": 472.3659,
+        "usedByAnyRoute": false,
+        "boatRule": "UNDEFINED"
+      },
+      {
+        "id": "rd_2g",
+        "name": "Hook ↔ Saltwick ferry",
+        "conf": "assumption",
+        "minDistanceToPrimaryAu": 639.1716,
+        "minDistanceToAnyRouteAu": 595.9449,
+        "usedByAnyRoute": false,
+        "boatRule": "UNDEFINED"
+      },
+      {
+        "id": "rd_2h",
+        "name": "Saltwick ↔ Gull Isle ferry",
+        "conf": "assumption",
+        "minDistanceToPrimaryAu": 980.0024,
+        "minDistanceToAnyRouteAu": 944.4349,
+        "usedByAnyRoute": false,
+        "boatRule": "UNDEFINED"
+      }
+    ],
+    "ferryPathsOnCorridorWithinReportRadius": 2,
+    "ferryPathsUsedByAnyRoute": 0,
+    "ferryNote": "Ferry paths exist elsewhere in Veyra but NONE lies on RT-1/RT-2/RT-3. Boarding/boat rules are UNDEFINED and no ferry was substituted with a land road.",
+    "slopeRawRange": {
+      "count": 62,
+      "min": 1,
+      "max": 4,
+      "mean": 2.0323
+    },
+    "unresolved": [
+      "rv_silver / rv_grey_low width field has no established physical unit; only centreline cells are treated as channel.",
+      "br_4 (load:cart) and br_a (load:foot) channel span fit is UNVERIFIED; loaded-cart grade limits are Gameplay rules.",
+      "Slope is a raw byte gradient (1..4, mean 2.0323); no passable threshold is authored.",
+      "Ferry boarding / boat / portage rules are UNDEFINED and 8 ferry paths exist elsewhere in Veyra.",
+      "Travel time t_foot / t_cart_loaded / exposure_time requires an approved world-scale transform and measured journeys.",
+      "POI interior (rooms, doors, sockets, power, loot) is NOT_IN_SOURCE / Gameplay-owned.",
+      "Climate, hazard intensity and dynamic occupancy are UNDEFINED."
+    ]
+  },
+  "survivability": {
+    "status": "NOT_CLAIMED",
+    "statement": "This is a physical geography proof only. The corridor is NOT claimed to be naturally survivable: Gameplay has not run its actual population algorithm, source placement, survival rules, day/night, weather, hunger/thirst, creature threat, inventory carrying cost or 14-day clock. A static corridor diagram is not gameplay validation."
+  },
+  "visualInspection": {
+    "svg": "corridor.svg",
+    "png": "corridor.png",
+    "kind": "GEOGRAPHIC_DIAGRAM",
+    "note": "Vector/PNG inspection of ACTUAL Veyra polygons, polylines and the routed corridor. Not a game screenshot, not an art proposal, not gameplay validation."
+  }
+}
