@@ -20,7 +20,10 @@ export class BRunner {
   cast(index: number) {
     this.idx = index;
     this.fx = EFFECTS[index];
-    this.r.target = { x: 262, y: 104 }; // same anchor the B lab uses
+    this.r.target = { x: 262, y: 104 }; // same anchor/anchors the B lab uses
+    this.r.anchors = [
+      { x: 262, y: 104 }, { x: 318, y: 62 }, { x: 330, y: 160 }, { x: 196, y: 52 }, { x: 214, y: 176 }, { x: 150, y: 84 },
+    ];
     this.state = this.fx!.setup(this.r);
     this.t = 0;
   }
