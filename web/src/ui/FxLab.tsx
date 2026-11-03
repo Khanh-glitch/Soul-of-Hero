@@ -107,6 +107,7 @@ export default function FxLab({ gs, hidden, onHide, onClose, nightOverride, setN
       </div>
       <div style={{ marginTop: 2 }}>
         <button className="btn gold" style={{ fontSize: 9, padding: '0 4px', marginRight: 2 }} onClick={() => (window as any).__d20qa.play()}>▶ #20 Reality Ripper (QA)</button>
+        <button className="btn" style={{ fontSize: 9, padding: '0 4px', marginRight: 2 }} onClick={() => { const c = (window as any).__d20qa.client; c.mode = c.mode === 'restored' ? 'current' : 'restored'; }}>#20: {((window as any).__d20qa.client.mode === 'restored') ? 'Restored A+C' : 'Current Web'}</button>
         <button className="btn" style={{ fontSize: 9, padding: '0 4px', marginRight: 2 }} onClick={() => (window as any).__d20qa.seek(6.3)}>#20 @climax 6.3s</button>
         <button className="btn" style={{ fontSize: 9, padding: '0 4px', marginRight: 2 }} onClick={() => (window as any).__d20qa.seek(8.2)}>#20 @restitch 8.2s</button>
       </div>

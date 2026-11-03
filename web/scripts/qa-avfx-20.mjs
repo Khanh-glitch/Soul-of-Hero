@@ -42,22 +42,29 @@ if (!ALLOW_FALLBACK && report.webgl2Probe.presenterMode !== 'webgl2') {
   await b.close(); srv.close(); process.exit(2);
 }
 
-const PHASES = [['before', -1], ['opening', 1.8], ['climax', 6.3], ['restitch', 8.2], ['after', 10.8]];
+const PHASES = [['t0.6', 0.6], ['t1.3', 1.3], ['t2.7', 2.7], ['t4.5', 4.5], ['t6.6', 6.6], ['t7.8', 7.8], ['t9.5', 9.5], ['t9.85', 9.85], ['after', 10.8]];
+const MODES = ['current', 'restored'];
 
-// Scene A: bright open clearing, DAY
+// Scene A: bright open clearing, DAY — both modes
 await page.evaluate(() => window.__qaNight(false));
-for (const [name, t] of PHASES) {
-  await page.evaluate(tt => { if (tt >= 0) window.__d20qa.seek(tt); else window.__d20qa.client.cast = null; }, t);
-  await page.waitForTimeout(450);
-  await page.screenshot({ path: `${OUT}/A-day-${name}.png` });
+for (const mode of MODES) {
+  await page.evaluate(m => { window.__d20qa.client.mode = m; }, mode);
+  for (const [name, t] of PHASES) {
+    await page.evaluate(tt => { if (tt >= 0) window.__d20qa.seek(tt); else window.__d20qa.client.cast = null; }, t);
+    await page.waitForTimeout(450);
+    await page.screenshot({ path: `${OUT}/A-day-${mode}-${name}.png` });
+  }
 }
-// Scene B: night, near structure/trees (walk a bit toward the buildings)
+// Scene B: night, near structure/trees
 await page.evaluate(() => window.__qaNight(true));
 await page.keyboard.down('KeyW'); await page.waitForTimeout(900); await page.keyboard.up('KeyW');
-for (const [name, t] of PHASES) {
-  await page.evaluate(tt => { if (tt >= 0) window.__d20qa.seek(tt); else window.__d20qa.client.cast = null; }, t);
-  await page.waitForTimeout(450);
-  await page.screenshot({ path: `${OUT}/B-night-${name}.png` });
+for (const mode of MODES) {
+  await page.evaluate(m => { window.__d20qa.client.mode = m; }, mode);
+  for (const [name, t] of PHASES) {
+    await page.evaluate(tt => { if (tt >= 0) window.__d20qa.seek(tt); else window.__d20qa.client.cast = null; }, t);
+    await page.waitForTimeout(450);
+    await page.screenshot({ path: `${OUT}/B-night-${mode}-${name}.png` });
+  }
 }
 // normal playback smoke: play from 0 for 2.5s, confirm passes flowing then OUT
 report.playback = await page.evaluate(async () => {

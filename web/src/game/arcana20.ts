@@ -7,6 +7,8 @@
 // ============================================================================
 
 import { RipperContour, buildContourField, smoothstep, seg, F20_W, F20_H } from './arcana_d20/contour';
+import { RipperContent } from './arcana_d20/content';
+import { DRaster } from './arcana_d19/raster';
 import * as comp from './compositor';
 import { getPresenter } from './gpu/presenter';
 
@@ -16,6 +18,9 @@ interface Cast { wx: number; wy: number; startMs: number }
 
 export class D20Client implements comp.VfxClient {
   readonly id = 'arcana-20';
+  mode: 'current' | 'restored' = 'restored';
+  private content = new RipperContent();
+  private raster: DRaster | null = null;
   private contour = new RipperContour();
   private field: Float32Array | null = null;
   private cast: Cast | null = null;
@@ -39,10 +44,24 @@ export class D20Client implements comp.VfxClient {
     const span = Math.min(1, Math.max(0, (t - 1.6) / (3.0 - 1.6)));
     const wt = new Float32Array(257);
     for (let i = 0; i <= 256; i++) wt[i] = this.contour.width(i / 256, t);
-    const flash = (t >= 6.6 && t < 6.7) ? 0.35 : 0; // source collision beat at TCOL=6.6
+    let flash = (t >= 6.6 && t < 6.7) ? 0.35 : 0; // source collision beat at TCOL=6.6
     // source window (480x270) anchored at cast point, screen space
     const sx = Math.round(this.cast.wx - frame.cam.x - F20_W / 2);
     const sy = Math.round(this.cast.wy - frame.cam.y - F20_H / 2);
+    if (this.mode === 'restored' && p.gl) {
+      if (!this.raster) this.raster = new DRaster(p.gl);
+      if (this.raster.needsRestore) this.raster.restore();
+      const { cmds, flash: cflash } = this.content.commands(t);
+      if (cflash) flash = Math.max(flash, cflash);
+      const r = this.raster.render(cmds, t, p.lightTarget(), 'none');
+      p.sourceDraws += r.draws;
+      comp.submitGpuPass({
+        clientId: this.id, kind: 'glow',
+        lightTex: p.lightTexture()!, warp: field, influence: new Uint8Array(4),
+        region: { x: sx, y: sy, w: F20_W, h: F20_H },
+        fade: 1, bloomGain: 1, time: t, tick: Math.floor(t * 60), seed: 151461,
+      } as any);
+    }
     comp.submitGpuPass({
       clientId: this.id, kind: 'rift',
       lightTex: (p.lightTexture() ?? null) as any,

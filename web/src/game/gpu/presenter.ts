@@ -13,7 +13,7 @@
 export interface RiftParams { wt: Float32Array; pull: number; span: number; flash: number }
 export interface PresentedLayer {
   clientId: string;
-  kind: 'd19' | 'rift';
+  kind: 'd19' | 'rift' | 'glow';
   rift?: RiftParams;
   lightTex: WebGLTexture;          // 480x270 RGBA8 additive source field
   warp: Float32Array;              // 480*270*4 RGBA32F CPU warp field
@@ -115,6 +115,22 @@ void main(){
   color = vec4(clamp(col, 0.0, 1.0), 1.0);
 }`;
 
+// additive emission layer (source VFX companion content: geometry, debris, particles)
+const ADD_FS = `#version 300 es
+precision highp float;
+uniform sampler2D scene; uniform sampler2D light;
+uniform vec2 size; uniform vec4 region; uniform float gain;
+out vec4 color;
+void main(){
+  vec2 pixel = vec2(gl_FragCoord.x, size.y - gl_FragCoord.y);
+  vec3 base = texture(scene, vec2(pixel.x/size.x, 1.0 - pixel.y/size.y)).rgb;
+  vec2 sp = (pixel - region.xy) / region.zw;
+  vec3 l = vec3(0.0);
+  if (sp.x >= 0.0 && sp.y >= 0.0 && sp.x <= 1.0 && sp.y <= 1.0)
+    l = texture(light, vec2(sp.x, 1.0 - sp.y)).rgb * gain;
+  color = vec4(clamp(base + l, 0.0, 1.0), 1.0);
+}`;
+
 const VS = `#version 300 es
 in vec2 pos; void main(){ gl_Position = vec4(pos, 0.0, 1.0); }`;
 
@@ -131,7 +147,7 @@ export class Presenter {
   private worldCtx: CanvasRenderingContext2D;
   private worldTex!: WebGLTexture;
   private lightFbo!: WebGLFramebuffer; private lightTex!: WebGLTexture;
-  private progPass!: WebGLProgram; private progComp!: WebGLProgram; private progRift!: WebGLProgram;
+  private progPass!: WebGLProgram; private progComp!: WebGLProgram; private progRift!: WebGLProgram; private progAdd!: WebGLProgram;
   private buf!: WebGLBuffer;
   private warpTex!: WebGLTexture; private inflTex!: WebGLTexture;
   private accumA!: WebGLFramebuffer; private accumATex!: WebGLTexture;
@@ -172,6 +188,7 @@ export class Presenter {
     this.progPass = this.compile(PASSTHROUGH_FS);
     this.progComp = this.compile(COMPOSITE_FS);
     this.progRift = this.compile(RIFT_FS);
+    this.progAdd = this.compile(ADD_FS);
     this.buf = gl.createBuffer()!;
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buf);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
@@ -218,6 +235,7 @@ export class Presenter {
     this.progPass = this.compile(PASSTHROUGH_FS);
     this.progComp = this.compile(COMPOSITE_FS);
     this.progRift = this.compile(RIFT_FS);
+    this.progAdd = this.compile(ADD_FS);
     this.buf = gl.createBuffer()!;
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buf);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
@@ -308,10 +326,11 @@ export class Presenter {
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); // world -> accum
 
     for (const L of layers) {
-      const prog = L.kind === 'rift' ? this.progRift : this.progComp;
+      const prog = L.kind === 'rift' ? this.progRift : L.kind === 'glow' ? this.progAdd : this.progComp;
       gl.useProgram(prog); setupPos(prog);
       gl.uniform1i(gl.getUniformLocation(prog, 'scene'), 0);
       if (L.kind === 'rift') gl.uniform1i(gl.getUniformLocation(prog, 'field'), 2);
+      if (L.kind === 'glow') gl.uniform1i(gl.getUniformLocation(prog, 'light'), 1);
       else {
         gl.uniform1i(gl.getUniformLocation(prog, 'light'), 1);
         gl.uniform1i(gl.getUniformLocation(prog, 'warp'), 2);
@@ -322,7 +341,10 @@ export class Presenter {
       gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, L.lightTex);
       gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, this.warpTex);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, 480, 270, 0, gl.RGBA, gl.FLOAT, L.warp); // warp or rift field
-      if (L.kind === 'rift') {
+      if (L.kind === 'glow') {
+        gl.uniform4f(gl.getUniformLocation(prog, 'region'), L.region.x, L.region.y, L.region.w, L.region.h);
+        gl.uniform1f(gl.getUniformLocation(prog, 'gain'), L.bloomGain);
+      } else if (L.kind === 'rift') {
         this.layerUploads += 1;
         const R = L.rift!;
         gl.uniform4f(gl.getUniformLocation(prog, 'region'), L.region.x, L.region.y, L.region.w, L.region.h);

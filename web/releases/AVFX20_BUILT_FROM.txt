@@ -1,0 +1,4 @@
+AVFX #20 Reality Ripper standalone playable build (includes #20 mode toggle Current Web / Restored A+C in FX Lab F9)
+built from branch arena/3337c864-soul-of-hero working tree at commit time
+artifact sha256    : cc9ff66b74fee95fdf91318d8d4cd3459124a11654b61e4af3ce0d848e3572a5
+boot: open this file directly (file://)
