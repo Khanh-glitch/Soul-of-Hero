@@ -2,7 +2,7 @@
 // Rule: validate EVERYTHING first, then commit. Failed preconditions never partially debit.
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
-import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS, FURNACE_LINING } from './catalog';
+import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING } from './catalog';
 import { getWorld, getActiveLayout, SRC_KEYS, tileAt } from './world';
 import { sourceDigest } from './world-economy';
 import { mapDigest } from './map-package';
@@ -701,6 +701,12 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const fi = C(r, 'inv').slots.findIndex(s => s && ITEMS[s.key].waterContainer && (s.charge ?? 0) < ITEMS[s.key].charge!);
       if (fi >= 0) { const s = C(r, 'inv').slots[fi]!; const m = Math.min(ITEMS[s.key].charge! - (s.charge || 0), Math.floor(e.water!)); s.charge = (s.charge || 0) + m; e.water! -= m; return ok('barrel.fill', `${m}`); }
       p.thirst = Math.min(100, p.thirst + 25); e.water! -= 1; return ok('barrel.drink', '1'); }
+    case 'gardenFrame': {
+      const e=r.entities[it.eid];if(!e || e.kind!=='struct' || e.type!=='garden' || !e.garden || !owned(e) || !near(r,e,2.2) || !clearInteraction(r,e)) return fail('Use your garden within reach.');
+      if(it.remove===true){if(!e.garden.coldFrame)return fail('No frame installed.');delete e.garden.coldFrame;giveOrDrop(r,'wood',2,now);giveOrDrop(r,'fiber',2,now);return ok('garden.frame.remove',e.id,'Frame dismantled; some wood and fiber recovered.');}
+      if(e.garden.coldFrame)return fail('Frame already installed.');if(!hasAll(r,'inv',GARDEN_FRAME_COST))return fail('Needs wood, fiber, glass and Bitterleaf.');
+      for(const [k,q] of GARDEN_FRAME_COST)removeItem(r,'inv',k,q);e.garden.coldFrame=true;return ok('garden.frame.install',e.id,'Cold frame and raised soil installed; rain will no longer water this plot.');
+    }
     case 'garden': {
       const e = r.entities[it.eid]; if (!e || e.kind !== 'struct' || e.type !== 'garden' || !e.garden || !owned(e) || !near(r, e)) return fail('Use your garden within reach.'); const g = e.garden;
       if (!g.crop) {
@@ -870,16 +876,29 @@ export function stepGardensBarrels(gs: GameState, dtMs: number, wet: boolean) {
   const r = gs.run!; const G = BAL.garden;
   for (const e of Object.values(r.entities)) {
     if (!e.garden && e.type !== 'barrel') continue;
-    const rain = wet && !isRoofed(r, e);
+    const rain = wet && !isRoofed(r, e) && !e.garden?.coldFrame;
     if (e.garden) {
-      const g = e.garden; const growSeconds = g.crop === 'herb' ? GARDEN_CROPS.herb.seconds : GARDEN_CROPS.crop.seconds; const incoming = rain ? 1 / 60000 : 0; const use = 1 / (G.waterSecondsPerUnit * 1000);
-      let growing = g.crop && g.growth < 1 ? Math.min(dtMs, (1 - g.growth) * growSeconds * 1000) : 0;
+      const g = e.garden; const growSeconds = g.crop === 'herb' ? GARDEN_CROPS.herb.seconds : GARDEN_CROPS.crop.seconds; const rate = g.crop === 'crop' || g.crop === 'herb' ? gardenEnvironment(r,e,wet,g.crop).rate : 1;
+      const incoming = rain ? 1 / 60000 : 0; const use = 1 / (G.waterSecondsPerUnit * 1000);
+      let growing = g.crop && g.growth < 1 && rate>0 ? Math.min(dtMs, (1 - g.growth) * growSeconds * 1000 / rate) : 0;
       if (use > incoming) growing = Math.min(growing, g.water / (use - incoming));
-      if (growing > 0) { g.growth = Math.min(1, g.growth + growing / (growSeconds * 1000)); if (g.growth >= 1 - 1e-12) g.growth = 1; g.water = Math.min(3, Math.max(0, g.water + (incoming - use) * growing)); }
+      if (growing > 0) { g.growth = Math.min(1, g.growth + growing * rate / (growSeconds * 1000)); if (g.growth >= 1 - 1e-12) g.growth = 1; g.water = Math.min(3, Math.max(0, g.water + (incoming - use) * growing)); }
       g.water = Math.min(3, g.water + incoming * (dtMs - growing));
     }
     if (e.type === 'barrel' && rain) e.water = Math.min(12, (e.water || 0) + dtMs / 20000);
   }
+}
+/** Local normalized climate/soil inputs are Map-owned; no terrain mutation or
+ * invented season clock. Wet weather cools uncovered plots at slot boundaries. */
+export function gardenEnvironment(r:RunState,e:Entity,wet:boolean,crop:'crop'|'herb' = e.garden?.crop==='herb'?'herb':'crop') {
+  const m=getWorld().economyMap, x=e.tx??Math.floor(e.x/TILE), y=e.ty??Math.floor(e.y/TILE), i=y*WW+x;
+  const biome=m.biome[i], moisture=m.moisture[i], slope=m.slope[i], frame=!!e.garden?.coldFrame;
+  const temperature=Math.min(1,Math.max(0,m.temperature[i]+(frame&&m.temperature[i]<0.4?BAL.garden.coldFrameWarming:0)-(wet&&!frame&&!isRoofed(r,e)?BAL.garden.wetCooling:0)));
+  const low=crop==='herb'?0.34:0.22,high=crop==='herb'?0.78:0.82;
+  const climate=Math.max(0.15,Math.min(1,temperature<low?1-(low-temperature)*4:temperature>high?1-(temperature-high)*3:1));
+  const ground:Record<string,number>={snow:0.65,sand:0.8,ash:0.55,toxic:0.4,hill:0.8,marsh:0.8};
+  const fertility=Math.min(1,Math.max(0.3,(ground[biome]??1)+(frame?BAL.garden.coldFrameSoilBonus:0)-(moisture<0.3||moisture>0.75?0.1:0)-Math.min(0.2,slope*0.3)));
+  return {rate:climate*fertility,temperature,moisture,biome,frame,covered:frame||isRoofed(r,e),climate:temperature<low?'cold':temperature>high?'hot':'suitable'};
 }
 function isRoofed(r: RunState, e: Entity) { return entsAt(r, e.tx!, e.ty!).some(o => o.kind === 'struct' && STRUCTS[o.type!].shelter); }
 
@@ -912,6 +931,7 @@ export function tenderStatus(r:RunState,e:Entity):string {
   if(!g.crop){if(!hasAll(r,chest.c!,GARDEN_CROPS[f.crop].inputs))return 'Planting material needed in linked chest';if(g.water<1 && (barrel.water||0)<1)return 'Barrel needs water';if(tenderEnergyAvailable(r,e)<BAL.garden.tenderPlantEnergySeconds*1000)return 'Fuel needed to plant';return 'Ready to plant';}
   if(g.water<=1e-10 && (barrel.water||0)<1)return 'Waiting for water (rain may grow crop)';
   if(g.water<=1e-10 && tenderEnergyAvailable(r,e)<BAL.garden.tenderPumpEnergySeconds*1000)return 'Fuel needed to pump (rain may grow crop)';
+  if(g.crop&&gardenEnvironment(r,garden,isWet(weatherAt(r,r.clock.lastSimAt)),g.crop as 'crop'|'herb').rate<0.7)return 'Slow growth — inspect climate and soil';
   return 'Growing';
 }
 /** Instantaneous events at the current world timestamp; order is harvest,
@@ -927,9 +947,9 @@ export function stepTenders(gs:GameState,now:number) {
 }
 /** Earliest maturity, dry-out or rain-fed barrel refill for a linked plot. */
 export function tenderBoundary(r:RunState,wet:boolean,limit:number):number {
-  let dt=limit;for(const e of Object.values(r.entities)){if(!e.farm?.enabled)continue;const l=tenderLinks(r,e);if(!l)continue;const g=l.garden.garden!, incoming=wet&&!isRoofed(r,l.garden)?1/60000:0,use=1/(BAL.garden.waterSecondsPerUnit*1000);
+  let dt=limit;for(const e of Object.values(r.entities)){if(!e.farm?.enabled)continue;const l=tenderLinks(r,e);if(!l)continue;const g=l.garden.garden!, incoming=wet&&!isRoofed(r,l.garden)&&!g.coldFrame?1/60000:0,use=1/(BAL.garden.waterSecondsPerUnit*1000);
     if(g.crop && !GARDEN_CROPS[g.crop as 'crop'|'herb'])continue;
-    if(g.crop&&g.growth<1&&(g.water>1e-10||incoming>=use)){dt=Math.min(dt,(1-g.growth)*GARDEN_CROPS[g.crop as 'crop'|'herb'].seconds*1000);if(use>incoming&&g.water>1e-10)dt=Math.min(dt,g.water/(use-incoming));}
+    if(g.crop&&g.growth<1&&(g.water>1e-10||incoming>=use)){dt=Math.min(dt,(1-g.growth)*GARDEN_CROPS[g.crop as 'crop'|'herb'].seconds*1000/gardenEnvironment(r,l.garden,wet,g.crop as 'crop'|'herb').rate);if(use>incoming&&g.water>1e-10)dt=Math.min(dt,g.water/(use-incoming));}
     if(wet&&!isRoofed(r,l.barrel)&&(l.barrel.water||0)<1)dt=Math.min(dt,(1-(l.barrel.water||0))*20000);
   }return dt;
 }

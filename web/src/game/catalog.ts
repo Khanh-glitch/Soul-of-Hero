@@ -8,6 +8,7 @@ export interface RecipeDef { out: string; qty: number; ins: [string, number][]; 
 export const FURNACE_LINING: { cost: [string, number][]; benchLevel: number } = { cost: [['brick', 2], ['fasteners', 3], ['mechanical_parts', 1]], benchLevel: 2 };
 export const CART_FREIGHT_UPGRADE: { cost: [string, number][]; benchLevel: number } = { cost: [['mechanical_parts', 4], ['iron_ingot', 2], ['spares', 3]], benchLevel: 2 };
 // Seed and plant input are consumed; produce remains physical in the inventory or a drop.
+export const GARDEN_FRAME_COST: [string,number][] = [['wood',4], ['fiber',4], ['glass',1], ['herb',1]];
 export const GARDEN_CROPS: Record<'crop' | 'herb', { name: string; inputs: [string, number][]; output: [string, number][]; seconds: number }> = {
   crop: { name: 'Sunroot', inputs: [['seed', 1]], output: [['crop', 3], ['seed', 2]], seconds: BAL.garden.growSeconds },
   herb: { name: 'Bitterleaf', inputs: [['seed', 1], ['herb', 1]], output: [['herb', 3], ['seed', 1]], seconds: BAL.garden.herbGrowSeconds },

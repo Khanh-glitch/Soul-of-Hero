@@ -80,7 +80,7 @@ export interface Entity {
   c?: string; // container id
   open?: boolean; locked?: string; poi?: string; label?: string; stock?: Record<string, number>;
   station?: { queue: Job[]; burn: number; fuelC: string; outC: string; level?: 1 | 2; upgrade?: 'kiln_lining' };
-  garden?: { crop: string | null; growth: number; water: number };
+  garden?: { crop: string | null; growth: number; water: number; coldFrame?: boolean };
   farm?: { enabled: boolean; crop: 'crop' | 'herb'; energy: number; gardenId?: string; barrelId?: string; chestId?: string };
   water?: number; minted?: boolean; claim?: string; vx?: number; vy?: number; born?: number; owner?: string;
   power?: number; fire?: number;

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { ITEMS, RECIPES, STRUCTS, BUILD_ORDER, VENDOR_SECURED, ACHIEVEMENTS, ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS, FURNACE_LINING } from '../game/catalog';
+import { ITEMS, RECIPES, STRUCTS, BUILD_ORDER, VENDOR_SECURED, ACHIEVEMENTS, ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING } from '../game/catalog';
 import { BAL, TILE, WW, type Stack } from '../game/core';
-import { C, countItem, invWeight, isRagnarok, runHours, cartWeight, cartLimit, carryLimit, spaceFor, phaseOf, tenderStatus } from '../game/engine';
+import { C, countItem, invWeight, isRagnarok, runHours, cartWeight, cartLimit, carryLimit, spaceFor, phaseOf, tenderStatus, gardenEnvironment, weatherAt, isWet } from '../game/engine';
 import { getWorld, ZONES } from '../game/world';
 import { getMapCanvas } from '../game/render';
 import { setVolume } from '../game/audio';
@@ -39,10 +39,10 @@ function KnownUses({ item, known }: { item: string; known: string[] }) {
   return <details><summary style={{ cursor: 'pointer', color: '#ffd98a' }}>Known uses ({uses.length})</summary><div style={{ maxHeight: 36, overflowY: 'auto', color: '#cfc2dc' }}>{uses.join(' · ')}</div></details>;
 }
 
-export function InventoryPanel({ api, quickTo, x = 404, top = 54, onClose }: { api: Api; quickTo?: string; x?: number; top?: number; onClose?: () => void }) {
+export function InventoryPanel({ api, quickTo, x = 404, top = 54, onClose, backToContainer = false }: { api: Api; quickTo?: string; x?: number; top?: number; onClose?: () => void; backToContainer?: boolean }) {
   const r = api.gs.run!; const sel = api.sel ? C(r, api.sel.c)?.slots[api.sel.slot] ?? null : null; const w = invWeight(r); const limit = carryLimit(r);
   let armor = 0, warm = 0; for (const s of C(r, 'eq').slots) if (s) { armor += ITEMS[s.key].armor || 0; warm += ITEMS[s.key].cold || 0; }
-  return <Panel title="Inventory" style={{ left: x, top, width: 196 }} onClose={onClose ?? (() => api.open(null))}>
+  return <Panel title={backToContainer ? "Inventory · X returns" : "Inventory"} style={{ left: x, top, width: 196 }} onClose={onClose ?? (() => api.open(null))}>
     <div className="flex gap-2 items-center" style={{ marginBottom: 4 }}>
       {['head', 'body', 'back'].map((sl, i) => <div key={sl} className="flex flex-col items-center" style={{ fontSize: 8, color: '#8a7a9a' }}><Slot s={C(r, 'eq').slots[i]} sel={api.sel?.c === 'eq' && api.sel.slot === i} onClick={e => slotClick(api, 'eq', i, e)} onContext={() => slotContext(api, 'eq', i)} />{sl}</div>)}
       <div style={{ fontSize: 10, lineHeight: 1.1, marginLeft: 4 }}><div>Armor {Math.round(armor * 100)}% · Warmth +{warm}</div><div style={{ color: w > limit ? '#ff8a7a' : '#cfc2dc' }}>Load {w.toFixed(1)} / {limit} kg{w > limit ? ' (slowed)' : ''}</div><div style={{ color: '#ffe27a' }}>Carried cash {countItem(r, 'inv', 'rcash')} · Secured {api.gs.profile.securedCash}</div></div>
@@ -60,14 +60,18 @@ export function InventoryPanel({ api, quickTo, x = 404, top = 54, onClose }: { a
 }
 
 export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
+  const [inventoryOnly, setInventoryOnly] = useState(false); useEffect(()=>setInventoryOnly(false),[eid]);
   const r = api.gs.run!; const e = r.entities[eid]; if (!e) return null;
   const st = e.station; const kind = e.type ? STRUCTS[e.type]?.station : null;
   const title = e.kind === 'bag' ? (e.label || 'Bag') : e.kind === 'loot' ? 'Crate' : e.kind === 'cash' ? 'Ragnarok Chest' : e.kind === 'cart' ? 'Cart Cargo' : STRUCTS[e.type!]?.name || 'Storage';
   const takeAll = (cid: string) => { const c = C(r, cid); for (let i = 0; i < c.slots.length; i++) if (c.slots[i]) { const res = api.act('move', { from: cid, fs: i, to: 'inv' }); if (!res.ok) break; } };
   const quickTo = st ? (kind === 'research' ? undefined : st.fuelC) : e.c;
+  const compact = !!e.farm || !!e.garden;
+  if (compact && inventoryOnly) return <InventoryPanel api={api} quickTo={quickTo} x={168} top={54} backToContainer onClose={()=>{api.setSel(null);setInventoryOnly(false);}} />;
   return <>
     <Panel title={title} style={{ left: 168, top: 54, width: 230, maxHeight: 286 }} onClose={() => api.open(null)} className="scroll">
       <div className="scroll" style={{ maxHeight: 250, overflowY: 'auto', overflowX: 'hidden' }}>
+        {compact && <button className="btn" onClick={()=>{api.setSel(null);setInventoryOnly(true);}}>{e.farm ? 'Inventory / fill fuel' : 'Inventory'}</button>}
         {e.c && <><Grid api={api} cid={e.c} cols={8} /><div className="flex gap-1" style={{ marginTop: 4 }}><button className="btn" onClick={() => takeAll(e.c!)}>Take all</button>{e.kind === 'cart' && <span style={{ fontSize: 10, color: '#cfc2dc' }}>Load {cartWeight(r, e.c).toFixed(0)}/{cartLimit(e)} kg · [F] pull</span>}{e.kind === 'cart' && <button className="btn ghost" onClick={() => api.act('reclaim', { eid })}>Pack up</button>}</div></>}
         {e.kind === 'cart' && <div style={{ fontSize: 10, marginTop: 6, borderTop: '1px solid #514155' }}>
           <b>{e.deployed?.upgrade === 'freight' ? 'Reinforced freight cart' : 'Hand cart'}</b> · {C(r, e.c!).slots.length} slots<br />
@@ -79,14 +83,17 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
           </details>}
         </div>}
         {e.farm && <div style={{fontSize:10,marginTop:5}}>
-          <b style={{color:'#ffd98a'}}>Garden Tender · {tenderStatus(r,e)}</b>{e.farm.gardenId && r.entities[e.farm.gardenId]?.garden && <div>Plot {Math.floor(r.entities[e.farm.gardenId].garden!.growth*100)}% · soil {r.entities[e.farm.gardenId].garden!.water.toFixed(1)}/3 · barrel {(r.entities[e.farm.barrelId||'']?.water||0).toFixed(1)}/12</div>}<div>Fuel: {(e.farm.energy/1000).toFixed(0)} s stored · links ≤3 tiles; walls block.</div>
+          <b style={{color:'#ffd98a'}}>Garden Tender · {tenderStatus(r,e)}</b>{e.farm.gardenId && r.entities[e.farm.gardenId]?.garden && (()=>{const g=r.entities[e.farm!.gardenId!], climate=gardenEnvironment(r,g,isWet(weatherAt(r,api.now())),(g.garden!.crop==='herb'?'herb':e.farm!.crop));return <div>Climate {climate.climate} · {climate.biome} soil · {Math.round(climate.rate*100)}% growth{climate.frame?' · framed':''}</div>;})()}{e.farm.gardenId && r.entities[e.farm.gardenId]?.garden && <div>Plot {Math.floor(r.entities[e.farm.gardenId].garden!.growth*100)}% · soil {r.entities[e.farm.gardenId].garden!.water.toFixed(1)}/3 · barrel {(r.entities[e.farm.barrelId||'']?.water||0).toFixed(1)}/12</div>}<div>Fuel: {(e.farm.energy/1000).toFixed(0)} s stored · links ≤3 tiles; walls block.</div>
           {(['gardenId','barrelId','chestId'] as const).map(field => <label key={field} style={{display:'block',marginTop:3}}>{field==='gardenId'?'Plot':field==='barrelId'?'Water barrel':'Input / output chest'}: <select aria-label={field} value={e.farm![field]||''} onChange={ev=>api.act('farmConfigure',{eid,field,value:ev.target.value})} style={{background:'#2b1e30',color:'#fff',maxWidth:130}}><option value="">Not linked</option>{Object.values(r.entities).filter(o=>o.kind==='struct'&&(o.owner===undefined||o.owner==='player')&&Math.hypot(o.x-e.x,o.y-e.y)<=BAL.garden.tenderLinkTiles*TILE&&(field==='gardenId'?o.type==='garden':field==='barrelId'?o.type==='barrel':['chest_small','chest_large'].includes(o.type||''))).map(o=><option value={o.id} key={o.id}>{STRUCTS[o.type!].name} {o.tx},{o.ty}</option>)}</select></label>)}
           {e.farm.barrelId && <button className="btn" onClick={()=>api.act('fillBarrel',{eid:e.farm!.barrelId})}>Pour 1 flask charge into barrel</button>}<div>Replant: <button className="btn" onClick={()=>api.act('farmConfigure',{eid,field:'crop',value:e.farm!.crop==='crop'?'herb':'crop'})}>{GARDEN_CROPS[e.farm.crop].name}</button> <button className="btn gold" onClick={()=>api.act('farmConfigure',{eid,field:'enabled',value:!e.farm!.enabled})}>{e.farm.enabled?'Stop':'Start'}</button></div>
           <div style={{color:'#b7a8bf'}}>Chest: seeds + produce (Bitterleaf also needs herb). Barrel: water. Plant / pump / harvest: 8 / 4 / 8 fuel-seconds.</div>
         </div>}
         {e.garden && <div style={{ fontSize: 10 }}>
+          {(()=>{const climate=gardenEnvironment(r,e,isWet(weatherAt(r,api.now())));return <div style={{color:'#ffd98a'}}>Climate {climate.climate} · {climate.biome} soil · {Math.round(climate.rate*100)}% growth {climate.frame?'· framed':''}</div>;})()}
+          <div style={{color:'#b7a8bf'}}>Local temperature and soil change growth; water is consumed in real time. {e.garden.coldFrame?'Frame blocks rain.':'Rain waters uncovered soil.'}</div>
+          {e.garden.coldFrame ? <button className="btn" onClick={()=>api.act('gardenFrame',{eid,remove:true})}>Remove frame (recover 2 wood + 2 fiber)</button> : <div>Cold frame + raised soil: {GARDEN_FRAME_COST.map(([k,q])=>`${q} ${ITEMS[k].name}`).join(', ')}. Warms cold plots; blocks rain. <button className="btn" onClick={()=>api.act('gardenFrame',{eid})}>Install frame</button></div>}
           <div>Water {e.garden.water.toFixed(1)}/3 · {e.garden.crop ? `${e.garden.crop === 'herb' ? 'Bitterleaf' : 'Sunroot'} ${Math.floor(e.garden.growth * 100)}%` : 'Empty plot'}</div>
-          {!e.garden.crop ? (['crop','herb'] as const).map(k => <div key={k} style={{ marginTop: 5 }}><b>{GARDEN_CROPS[k].name}</b> · {GARDEN_CROPS[k].seconds / 60} wet min<br />
+          {!e.garden.crop ? (['crop','herb'] as const).map(k => <div key={k} style={{ marginTop: 5 }}><b>{GARDEN_CROPS[k].name}</b> · {GARDEN_CROPS[k].seconds / 60} wet min at 100%<br />
             Plant: {GARDEN_CROPS[k].inputs.map(([id,q]) => `${q} ${ITEMS[id].name}`).join(' + ')}<br />Harvest: {GARDEN_CROPS[k].output.map(([id,q]) => `${q} ${ITEMS[id].name}`).join(' + ')}<br />
             <button className="btn" onClick={() => api.act('garden', { eid, crop: k })}>Plant {GARDEN_CROPS[k].name}</button></div>) : <button className="btn" onClick={() => api.act('garden', { eid })}>{e.garden.growth >= 1 ? 'Harvest' : 'Water with flask'}</button>}
           <div style={{ color: '#b7a8bf', marginTop: 4 }}>Rain waters uncovered plots. Growth needs funded water; both choices compete for the plot.</div>
@@ -98,7 +105,7 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
         {e.kind === 'struct' && <div style={{ marginTop: 6, fontSize: 10, color: '#8a7a9a' }}>HP {Math.round(e.hp!)}/{e.maxHp} <button className="btn ghost" style={{ marginLeft: 6 }} onClick={() => { api.act('reclaim', { eid }); api.open(null); }}>Reclaim</button></div>}
       </div>
     </Panel>
-    <InventoryPanel api={api} quickTo={quickTo} top={54} />
+    {!compact && <InventoryPanel api={api} quickTo={quickTo} top={54} />}
   </>;
 }
 function StationBody({ api, eid }: { api: Api; eid: string }) {

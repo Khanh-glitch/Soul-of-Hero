@@ -83,6 +83,7 @@ export function validate(raw: any): GameState | null {
     if (e.kind === 'struct' && e.c && r.custody[e.c]?.kind !== 'chest') return null;
     const refs = [e.c, e.station?.fuelC, e.station?.outC].filter((v: any) => v !== undefined);
     for (const cid of refs) { if (typeof cid !== 'string' || !r.custody[cid] || ownedContainers.has(cid)) return null; ownedContainers.add(cid); }
+    if(e.garden?.coldFrame !== undefined && (e.type !== 'garden' || e.garden.coldFrame !== true)) return null;
     if(e.farm !== undefined && (!obj(e.farm) || e.kind!=='struct' || e.type!=='farm_controller' || !e.c || r.custody[e.c]?.slots.length!==3 || typeof e.farm.enabled!=='boolean' || !['crop','herb'].includes(e.farm.crop) || !finite(e.farm.energy) || e.farm.energy<0 || e.farm.energy>90000 || ['gardenId','barrelId','chestId'].some(k=>e.farm[k]!==undefined && (typeof e.farm[k]!=='string'||!e.farm[k]))))return null;
     if(e.type==='farm_controller' && !e.farm)return null;
     if (e.station?.upgrade !== undefined && (e.type !== 'furnace' || e.station.upgrade !== 'kiln_lining')) return null;
