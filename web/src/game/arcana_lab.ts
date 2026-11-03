@@ -78,12 +78,17 @@ export class ArcanaLabClient implements comp.VfxClient {
   private blend = new Uint8ClampedArray(Math.max(C_W, A_W) * Math.max(C_H, A_H) * 4);
   private cast: Cast | null = null;
   private qaT = -1;
+  private lastTick = -1;
+  private lastAnchor = -1;
 
   qaCast(index: number, wx = 0, wy = 0, mode: RenderMode = 'lead') {
     this.stopBridges();
     this.cast = { index, mode, wx, wy, startMs: Date.now() };
     this.qaT = -1;
+    this.lastTick = -1;
+    this.lastAnchor = -1;
   }
+  qaStop() { this.cast = null; this.qaT = -1; this.lastTick = -1; this.lastAnchor = -1; this.stopBridges(); }
   qaSeek(t: number, index?: number, wx = 0, wy = 0, mode?: RenderMode) {
     if (index !== undefined) {
       const m = mode ?? this.cast?.mode ?? 'lead';
@@ -107,13 +112,18 @@ export class ArcanaLabClient implements comp.VfxClient {
     const t = this.qaT >= 0 ? this.qaT : (frame.now - this.cast.startMs) / 1000;
     const dur = entry.dur + 1.0;
     if (t < 0 || t > dur) { if (t > dur) { this.cast = null; this.qaT = -1; this.stopBridges(); } return; }
+    const tick = Math.floor(t * 60);
 
     // D (#19) and A+C #20 route to their dedicated bridges — no frame pass here.
     if (this.cast.mode !== 'study' && (entry.id === 19 || entry.id === 20)) {
-      if (entry.id === 19) d19.qaSeek(Math.min(t, 10.2), this.cast.wx, this.cast.wy);
-      else d20.qaSeek(Math.min(t, 10.4), this.cast.wx, this.cast.wy);
+      if (tick !== this.lastTick) {
+        this.lastTick = tick;
+        if (entry.id === 19) d19.qaSeek(Math.min(t, 10.2), this.cast.wx, this.cast.wy);
+        else d20.qaSeek(Math.min(t, 10.4), this.cast.wx, this.cast.wy);
+      }
       return;
     }
+
 
     const useFusion = (this.cast.mode === 'fusion' || this.cast.mode === 'lead') && FUSION_IDS.has(entry.id) && entry.id !== 20;
     const useB = this.cast.mode !== 'study' && this.cast.mode !== 'fusion' && B_IDS.has(entry.id);
@@ -128,20 +138,27 @@ export class ArcanaLabClient implements comp.VfxClient {
     const region = p.worldRegion(sx, sy, W, H);
     if (!region) return;
 
+    const anchor = sx * 4096 + sy;
+    const needRender = tick !== this.lastTick || anchor !== this.lastAnchor;
     if (useFusion) {
       // recipe composition: render each elected source component and blend
       const parts: Uint8ClampedArray[] = [];
-      const aRegion = p.worldRegion(Math.round(this.cast.wx - frame.cam.x - A_W / 2), Math.round(this.cast.wy - frame.cam.y - A_H / 2), A_W, A_H);
-      this.aR.setWorld(aRegion && aRegion.length >= A_W * A_H * 4 ? aRegion : region);
-      this.aR.cast(entry.index); this.aR.seek(Math.min(t, this.aR.duration));
-      parts.push(this.aR.out);
-      const cRegion = p.worldRegion(Math.round(this.cast.wx - frame.cam.x - C_W / 2), Math.round(this.cast.wy - frame.cam.y - C_H / 2), C_W, C_H) ?? region;
-      this.cR.setWorld(cRegion); this.cR.cast(entry.index); this.cR.seek(Math.min(t, entry.dur));
-      parts.push(this.cR.out);
-      if (entry.id === 9) {
-        const bRegion = p.worldRegion(Math.round(this.cast.wx - frame.cam.x - B_W / 2), Math.round(this.cast.wy - frame.cam.y - B_H / 2), B_W, B_H) ?? region;
-        this.bR.setWorld(bRegion); this.bR.cast(entry.index); this.bR.seek(Math.min(t, this.bR.duration));
-        parts.push(this.bR.out);
+      if (needRender) {
+        const aRegion = p.worldRegion(Math.round(this.cast.wx - frame.cam.x - A_W / 2), Math.round(this.cast.wy - frame.cam.y - A_H / 2), A_W, A_H);
+        this.aR.setWorld(aRegion && aRegion.length >= A_W * A_H * 4 ? aRegion : region);
+        this.aR.cast(entry.index); this.aR.seek(Math.min(t, this.aR.duration));
+        parts.push(this.aR.out);
+        const cRegion = p.worldRegion(Math.round(this.cast.wx - frame.cam.x - C_W / 2), Math.round(this.cast.wy - frame.cam.y - C_H / 2), C_W, C_H) ?? region;
+        this.cR.setWorld(cRegion); this.cR.cast(entry.index); this.cR.seek(Math.min(t, entry.dur));
+        parts.push(this.cR.out);
+        if (entry.id === 9) {
+          const bRegion = p.worldRegion(Math.round(this.cast.wx - frame.cam.x - B_W / 2), Math.round(this.cast.wy - frame.cam.y - B_H / 2), B_W, B_H) ?? region;
+          this.bR.setWorld(bRegion); this.bR.cast(entry.index); this.bR.seek(Math.min(t, this.bR.duration));
+          parts.push(this.bR.out);
+        }
+      } else {
+        parts.push(this.aR.out, this.cR.out);
+        if (entry.id === 9) parts.push(this.bR.out);
       }
       const n = parts.length, bw = C_W, bh = C_H;
       for (let i = 0; i < bw * bh * 4; i++) this.blend[i] = 0;
@@ -156,17 +173,19 @@ export class ArcanaLabClient implements comp.VfxClient {
       }
       out = this.blend;
     } else if (useB) {
-      this.bR.setWorld(region); this.bR.cast(entry.index); this.bR.seek(t);
+      if (needRender) { this.bR.setWorld(region); this.bR.cast(entry.index); this.bR.seek(t); }
       out = this.bR.out;
     } else if (useA) {
-      this.aR.setWorld(region); this.aR.cast(entry.index); this.aR.seek(Math.min(t, this.aR.duration));
+      if (needRender) { this.aR.setWorld(region); this.aR.cast(entry.index); this.aR.seek(Math.min(t, this.aR.duration)); }
       out = this.aR.out;
     } else {
-      this.cR.setWorld(region); this.cR.cast(entry.index); this.cR.seek(t);
+      if (needRender) { this.cR.setWorld(region); this.cR.cast(entry.index); this.cR.seek(t); }
       out = this.cR.out;
     }
 
-    p.uploadFrame(out);
+    p.uploadFrame(out, W, H);
+    this.lastTick = tick;
+    this.lastAnchor = anchor;
     comp.submitGpuPass({
       clientId: this.id, kind: 'frame',
       lightTex: p.lightTexture()!, frameTex: p.frameTexture()!, warp: new Float32Array(4), influence: new Uint8Array(4),

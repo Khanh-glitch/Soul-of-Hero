@@ -356,12 +356,12 @@ export class Presenter {
   lightTexture(): WebGLTexture | null { return (this as any).lightTex ?? null; }
 
   /** Upload the semantic-bridge output (384x216 RGBA8) as the frame layer texture. */
-  uploadFrame(data: Uint8ClampedArray) {
+  uploadFrame(data: Uint8ClampedArray, w = 384, h = 216) {
     if (!this.gl) return;
     const gl = this.gl;
     gl.activeTexture(gl.TEXTURE1);
     gl.bindTexture(gl.TEXTURE_2D, this.frameTex);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, 384, 216, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, data.subarray(0, w * h * 4));
   }
   frameTexture(): WebGLTexture | null { return (this as any).frameTex ?? null; }
   /** Read back the real SOH world region as RGBA8 — the semantic bridge's base

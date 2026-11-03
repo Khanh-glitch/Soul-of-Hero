@@ -78,6 +78,7 @@ for (const c of cat) {
   await page.screenshot({ path: `${OUT}/gallery-${String(c.id).padStart(2, '0')}.png` });
   report.gallery.push({ id: c.id, name: c.name, status: c.status, lead: c.lead, rendered: c.src });
 }
+await page.evaluate(() => window.__arcanaLab.stop?.());
 report.galleryCount = report.gallery.length;
 
 report.referenceMaster = 'reference-arcana20-visual-master.html cast 20 (creator_approved)';

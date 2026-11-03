@@ -12,7 +12,7 @@
       "name": "Cinder Crown",
       "status": "FUSION_PREVIEW",
       "lead": "A+C",
-      "rendered": "C"
+      "rendered": "A+C (candidate)"
     },
     {
       "id": 2,
@@ -40,7 +40,7 @@
       "name": "Abyssal Bloom",
       "status": "FUSION_PREVIEW",
       "lead": "A+C",
-      "rendered": "C"
+      "rendered": "A+C (candidate)"
     },
     {
       "id": 6,
@@ -68,7 +68,7 @@
       "name": "Chain Verdict",
       "status": "FUSION_PREVIEW",
       "lead": "A+B+C",
-      "rendered": "C"
+      "rendered": "A+B+C (candidate)"
     },
     {
       "id": 10,
@@ -82,7 +82,7 @@
       "name": "Volt Carousel",
       "status": "FUSION_PREVIEW",
       "lead": "A(+C#9)",
-      "rendered": "A"
+      "rendered": "A+C (candidate)"
     },
     {
       "id": 12,
@@ -117,7 +117,7 @@
       "name": "Worldseed",
       "status": "FUSION_PREVIEW",
       "lead": "A+C",
-      "rendered": "C"
+      "rendered": "A+C (candidate)"
     },
     {
       "id": 17,
@@ -178,7 +178,7 @@
     "worldUploads": 0,
     "layerUploads": 0,
     "gpuPasses": 0,
-    "postCalls": 4649,
+    "postCalls": 4446,
     "glError": 0,
     "fbo": ""
   }
