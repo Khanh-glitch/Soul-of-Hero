@@ -338,7 +338,9 @@ export function drawScreen(g: CanvasRenderingContext2D) {
 export function drawPostNight(g: CanvasRenderingContext2D, cam: { x: number; y: number }, dark: number) {
   for (const inst of instances) {
     if (inst.t < 0) continue;
-    const r = destRect(inst, -cam.x, -cam.y);
+    const sOff = inst.family === 'screen' ? 0 : -cam.x; // screen-space instances: no camera offset
+    const sOffY = inst.family === 'screen' ? 0 : -cam.y;
+    const r = destRect(inst, sOff, sOffY);
     const le = inst.entry.export.lightEnergy;
     // colored radiance (soft falloff illumination of the nearby scene) — drawn UNDER the art
     if (layers.radiance && quality.radiance) {
@@ -357,14 +359,18 @@ export function drawPostNight(g: CanvasRenderingContext2D, cam: { x: number; y: 
     // glow behind the core instead of a fog layer over it)
     if (layers.emission && dark > 0.02 && le >= 0.5) {
       const alpha = Math.min(quality.emissionCap, 0.1 + dark * 0.28) * Math.min(1, le / 6);
-      drawFrame(g, inst, 'light', alpha, 'lighter', -cam.x, -cam.y);
+      drawFrame(g, inst, 'light', alpha, 'lighter', sOff, sOffY);
     }
     // re-draw the crisp art core ON TOP of its glow so the shape stays sharp
     // (day: undoes the radiance wash; night: keeps the core vivid and crisp over
     // the additive emission instead of reading as haze). For warp instances this
     // paints the same destRect as drawWarpPass, so the night-dimmed copy underneath
-    // is fully covered — no ghosting, single crisp shape.
-    if (layers.art) drawFrame(g, inst, 'combined', 1, 'source-over', -cam.x, -cam.y);
+    // is fully covered — no ghosting, single crisp shape. Screen-space instances
+    // must NOT get the camera offset here (drawScreen draws them without it).
+    if (layers.art) {
+      if (inst.family === 'screen') drawFrame(g, inst, 'combined', 1, 'source-over');
+      else drawFrame(g, inst, 'combined', 1, 'source-over', sOff, sOffY);
+    }
   }
 }
 
