@@ -1,0 +1,812 @@
+{
+  "schema": "soh.map.scale01a.comparison.v1",
+  "status": "COMPACT_COMPARISON__DIAGNOSTIC_ONLY",
+  "representativeJourneys": [
+    {
+      "id": "sp_lake.starterWater",
+      "label": "Spawn→water (MAP-SPAWN-04)"
+    },
+    {
+      "id": "sp_lake.starterToolMaterial",
+      "label": "Spawn→tool material (MAP-SPAWN-04)"
+    },
+    {
+      "id": "sp_lake.starterBuildZone",
+      "label": "Spawn→build zone (MAP-SPAWN-04)"
+    },
+    {
+      "id": "sp_lake.nearPOI",
+      "label": "Spawn→nearest POI"
+    },
+    {
+      "id": "sp_lake.farPOI",
+      "label": "Spawn→farthest POI"
+    },
+    {
+      "id": "sp_lake.elderApproach",
+      "label": "Spawn→Elder approach (MAP-U5)"
+    },
+    {
+      "id": "log.kilnsToFarWarehouse",
+      "label": "Kilns→far warehouse (MAP-LOG-03)"
+    },
+    {
+      "id": "corridor.RT-1",
+      "label": "RT-1 authored corridor (MAP-LOG-03)"
+    },
+    {
+      "id": "u4.cacheToHome",
+      "label": "Cash cache→home (MAP-U4)"
+    }
+  ],
+  "rows": [
+    {
+      "u": 1,
+      "status": "DIAGNOSTIC_CANDIDATE__NOT_APPROVED",
+      "worldTiles": [
+        2000,
+        1400
+      ],
+      "cells": 2800000,
+      "engine": {
+        "economyCellLimitFits": false,
+        "exactPackageValidatorFits": false,
+        "coreFixedGridFits": false,
+        "renderChunkKeyCollisionFree": false,
+        "seaDistSemanticCoveragePercent": 0
+      },
+      "memoryMBLowerBound": 403.2135,
+      "renderChunkCacheUpperBoundMB": 2750,
+      "screensAcross": [
+        50,
+        62.2222
+      ],
+      "crossWorldWidthSeconds": 444.4444,
+      "crossWorldWidthGameHours": 0.1235,
+      "crossWorldWidthFractionOfFictionalDay": 0.3086,
+      "crossWorldWidthFractionOf336hRun": 0.0004,
+      "crossWorldHungerDrain": 17.7778,
+      "journeyTimes": {
+        "sp_lake.starterWater": {
+          "label": "Spawn→water (MAP-SPAWN-04)",
+          "straightAu": 28.628,
+          "routeAu": 143.8695,
+          "straightSeconds": 6.3618,
+          "routeSeconds": 31.6511,
+          "loadedCartMaxSeconds": 91.3935
+        },
+        "sp_lake.starterToolMaterial": {
+          "label": "Spawn→tool material (MAP-SPAWN-04)",
+          "straightAu": 31.6228,
+          "routeAu": 34.1421,
+          "straightSeconds": 7.0273,
+          "routeSeconds": 8.5752,
+          "loadedCartMaxSeconds": 29.1536
+        },
+        "sp_lake.starterBuildZone": {
+          "label": "Spawn→build zone (MAP-SPAWN-04)",
+          "straightAu": 10.4314,
+          "routeAu": 13.7367,
+          "straightSeconds": 2.3181,
+          "routeSeconds": 3.342,
+          "loadedCartMaxSeconds": 10.5694
+        },
+        "sp_lake.nearPOI": {
+          "label": "Spawn→nearest POI",
+          "straightAu": 37.2022,
+          "routeAu": 40.7695,
+          "straightSeconds": 8.2672,
+          "routeSeconds": 9.3285,
+          "loadedCartMaxSeconds": 28.0429
+        },
+        "sp_lake.farPOI": {
+          "label": "Spawn→farthest POI",
+          "straightAu": 1110.0414,
+          "routeAu": null,
+          "straightSeconds": 246.6759,
+          "routeSeconds": null,
+          "loadedCartMaxSeconds": null
+        },
+        "sp_lake.elderApproach": {
+          "label": "Spawn→Elder approach (MAP-U5)",
+          "straightAu": 62.2896,
+          "routeAu": 108.7695,
+          "straightSeconds": 13.8421,
+          "routeSeconds": 21.7343,
+          "loadedCartMaxSeconds": 52.6163
+        },
+        "log.kilnsToFarWarehouse": {
+          "label": "Kilns→far warehouse (MAP-LOG-03)",
+          "straightAu": 603.8096,
+          "routeAu": null,
+          "straightSeconds": 134.1799,
+          "routeSeconds": null,
+          "loadedCartMaxSeconds": null
+        },
+        "corridor.RT-1": {
+          "label": "RT-1 authored corridor (MAP-LOG-03)",
+          "straightAu": 199.4843,
+          "routeAu": 346.1492,
+          "straightSeconds": 44.3298,
+          "routeSeconds": 63.1523,
+          "loadedCartMaxSeconds": 181.6046
+        },
+        "u4.cacheToHome": {
+          "label": "Cash cache→home (MAP-U4)",
+          "straightAu": 351.6697,
+          "routeAu": 690.2607,
+          "straightSeconds": 78.1488,
+          "routeSeconds": 128.8989,
+          "loadedCartMaxSeconds": 326.9989
+        }
+      },
+      "spatial": {
+        "entranceTiles": 3.696,
+        "minPOIAreaTiles": 176,
+        "medianPOIAreaTiles": 851.84,
+        "proposedWorkspaceTiles": 57.4232,
+        "roadStrokeTiles": 9,
+        "riverMaskTiles": 9,
+        "bridgeGlyphTiles": [
+          13,
+          7.2
+        ],
+        "poiFeetUnableToHostSmallestRoom": 0,
+        "poiFeetUnableToHost5x5Square": 0,
+        "roadBendsUnderOneTile": 0,
+        "failedTests": [
+          "CHUNK_KEY_COLLISION_FREE",
+          "ECONOMY_CELL_LIMIT",
+          "EXACT_PACKAGE_VALIDATOR"
+        ],
+        "hardRejections": [
+          "CHUNK_KEY_COLLISION_FREE",
+          "ECONOMY_CELL_LIMIT"
+        ]
+      },
+      "veyraPreservation": {
+        "fullAuthoringGeometryUnchanged": true,
+        "authoringSpace": [
+          2000,
+          1400
+        ],
+        "canonicalObjects": {
+          "land": 8,
+          "lakes": 5,
+          "rivers": 17,
+          "roads": 92,
+          "bridges": 12,
+          "docks": 27,
+          "zones": 23,
+          "pois": 81,
+          "resources": 280,
+          "spawns": 4,
+          "elders": 6
+        },
+        "noCropNoWarpNoRescale": true,
+        "detail": "NONE — Veyra raster is 8 au/cell; U<8 only duplicates/interpolates cells, U=8 is 1:1.",
+        "coast": "coast stays an 8-au staircase repeated 8x per axis; NO new shoreline detail."
+      }
+    },
+    {
+      "u": 2,
+      "status": "DIAGNOSTIC_CANDIDATE__NOT_APPROVED",
+      "worldTiles": [
+        1000,
+        700
+      ],
+      "cells": 700000,
+      "engine": {
+        "economyCellLimitFits": true,
+        "exactPackageValidatorFits": false,
+        "coreFixedGridFits": false,
+        "renderChunkKeyCollisionFree": true,
+        "seaDistSemanticCoveragePercent": 5.3857
+      },
+      "memoryMBLowerBound": 100.8034,
+      "renderChunkCacheUpperBoundMB": 693,
+      "screensAcross": [
+        25,
+        31.1111
+      ],
+      "crossWorldWidthSeconds": 222.2222,
+      "crossWorldWidthGameHours": 0.0617,
+      "crossWorldWidthFractionOfFictionalDay": 0.1543,
+      "crossWorldWidthFractionOf336hRun": 0.0002,
+      "crossWorldHungerDrain": 8.8889,
+      "journeyTimes": {
+        "sp_lake.starterWater": {
+          "label": "Spawn→water (MAP-SPAWN-04)",
+          "straightAu": 28.628,
+          "routeAu": 143.8695,
+          "straightSeconds": 3.1809,
+          "routeSeconds": 15.8256,
+          "loadedCartMaxSeconds": 45.6968
+        },
+        "sp_lake.starterToolMaterial": {
+          "label": "Spawn→tool material (MAP-SPAWN-04)",
+          "straightAu": 31.6228,
+          "routeAu": 34.1421,
+          "straightSeconds": 3.5136,
+          "routeSeconds": 4.2876,
+          "loadedCartMaxSeconds": 14.5768
+        },
+        "sp_lake.starterBuildZone": {
+          "label": "Spawn→build zone (MAP-SPAWN-04)",
+          "straightAu": 10.4314,
+          "routeAu": 13.7367,
+          "straightSeconds": 1.159,
+          "routeSeconds": 1.671,
+          "loadedCartMaxSeconds": 5.2847
+        },
+        "sp_lake.nearPOI": {
+          "label": "Spawn→nearest POI",
+          "straightAu": 37.2022,
+          "routeAu": 40.7695,
+          "straightSeconds": 4.1336,
+          "routeSeconds": 4.6642,
+          "loadedCartMaxSeconds": 14.0214
+        },
+        "sp_lake.farPOI": {
+          "label": "Spawn→farthest POI",
+          "straightAu": 1110.0414,
+          "routeAu": null,
+          "straightSeconds": 123.3379,
+          "routeSeconds": null,
+          "loadedCartMaxSeconds": null
+        },
+        "sp_lake.elderApproach": {
+          "label": "Spawn→Elder approach (MAP-U5)",
+          "straightAu": 62.2896,
+          "routeAu": 108.7695,
+          "straightSeconds": 6.9211,
+          "routeSeconds": 10.8671,
+          "loadedCartMaxSeconds": 26.3082
+        },
+        "log.kilnsToFarWarehouse": {
+          "label": "Kilns→far warehouse (MAP-LOG-03)",
+          "straightAu": 603.8096,
+          "routeAu": null,
+          "straightSeconds": 67.09,
+          "routeSeconds": null,
+          "loadedCartMaxSeconds": null
+        },
+        "corridor.RT-1": {
+          "label": "RT-1 authored corridor (MAP-LOG-03)",
+          "straightAu": 199.4843,
+          "routeAu": 346.1492,
+          "straightSeconds": 22.1649,
+          "routeSeconds": 31.5761,
+          "loadedCartMaxSeconds": 90.8023
+        },
+        "u4.cacheToHome": {
+          "label": "Cash cache→home (MAP-U4)",
+          "straightAu": 351.6697,
+          "routeAu": 690.2607,
+          "straightSeconds": 39.0744,
+          "routeSeconds": 64.4494,
+          "loadedCartMaxSeconds": 163.4995
+        }
+      },
+      "spatial": {
+        "entranceTiles": 1.848,
+        "minPOIAreaTiles": 44,
+        "medianPOIAreaTiles": 212.96,
+        "proposedWorkspaceTiles": 14.3558,
+        "roadStrokeTiles": 4.5,
+        "riverMaskTiles": 4.5,
+        "bridgeGlyphTiles": [
+          6.5,
+          3.6
+        ],
+        "poiFeetUnableToHostSmallestRoom": 0,
+        "poiFeetUnableToHost5x5Square": 0,
+        "roadBendsUnderOneTile": 0,
+        "failedTests": [
+          "EXACT_PACKAGE_VALIDATOR"
+        ],
+        "hardRejections": []
+      },
+      "veyraPreservation": {
+        "fullAuthoringGeometryUnchanged": true,
+        "authoringSpace": [
+          2000,
+          1400
+        ],
+        "canonicalObjects": {
+          "land": 8,
+          "lakes": 5,
+          "rivers": 17,
+          "roads": 92,
+          "bridges": 12,
+          "docks": 27,
+          "zones": 23,
+          "pois": 81,
+          "resources": 280,
+          "spawns": 4,
+          "elders": 6
+        },
+        "noCropNoWarpNoRescale": true,
+        "detail": "NONE — Veyra raster is 8 au/cell; U<8 only duplicates/interpolates cells, U=8 is 1:1.",
+        "coast": "coast stays an 8-au staircase repeated 4x per axis; NO new shoreline detail."
+      }
+    },
+    {
+      "u": 4,
+      "status": "DIAGNOSTIC_CANDIDATE__NOT_APPROVED",
+      "worldTiles": [
+        500,
+        350
+      ],
+      "cells": 175000,
+      "engine": {
+        "economyCellLimitFits": true,
+        "exactPackageValidatorFits": false,
+        "coreFixedGridFits": false,
+        "renderChunkKeyCollisionFree": true,
+        "seaDistSemanticCoveragePercent": 15.2948
+      },
+      "memoryMBLowerBound": 25.2008,
+      "renderChunkCacheUpperBoundMB": 176,
+      "screensAcross": [
+        12.5,
+        15.5556
+      ],
+      "crossWorldWidthSeconds": 111.1111,
+      "crossWorldWidthGameHours": 0.0309,
+      "crossWorldWidthFractionOfFictionalDay": 0.0772,
+      "crossWorldWidthFractionOf336hRun": 0.0001,
+      "crossWorldHungerDrain": 4.4444,
+      "journeyTimes": {
+        "sp_lake.starterWater": {
+          "label": "Spawn→water (MAP-SPAWN-04)",
+          "straightAu": 28.628,
+          "routeAu": 143.8695,
+          "straightSeconds": 1.5904,
+          "routeSeconds": 7.9128,
+          "loadedCartMaxSeconds": 22.8484
+        },
+        "sp_lake.starterToolMaterial": {
+          "label": "Spawn→tool material (MAP-SPAWN-04)",
+          "straightAu": 31.6228,
+          "routeAu": 34.1421,
+          "straightSeconds": 1.7568,
+          "routeSeconds": 2.1438,
+          "loadedCartMaxSeconds": 7.2884
+        },
+        "sp_lake.starterBuildZone": {
+          "label": "Spawn→build zone (MAP-SPAWN-04)",
+          "straightAu": 10.4314,
+          "routeAu": 13.7367,
+          "straightSeconds": 0.5795,
+          "routeSeconds": 0.8355,
+          "loadedCartMaxSeconds": 2.6423
+        },
+        "sp_lake.nearPOI": {
+          "label": "Spawn→nearest POI",
+          "straightAu": 37.2022,
+          "routeAu": 40.7695,
+          "straightSeconds": 2.0668,
+          "routeSeconds": 2.3321,
+          "loadedCartMaxSeconds": 7.0107
+        },
+        "sp_lake.farPOI": {
+          "label": "Spawn→farthest POI",
+          "straightAu": 1110.0414,
+          "routeAu": null,
+          "straightSeconds": 61.669,
+          "routeSeconds": null,
+          "loadedCartMaxSeconds": null
+        },
+        "sp_lake.elderApproach": {
+          "label": "Spawn→Elder approach (MAP-U5)",
+          "straightAu": 62.2896,
+          "routeAu": 108.7695,
+          "straightSeconds": 3.4605,
+          "routeSeconds": 5.4336,
+          "loadedCartMaxSeconds": 13.1541
+        },
+        "log.kilnsToFarWarehouse": {
+          "label": "Kilns→far warehouse (MAP-LOG-03)",
+          "straightAu": 603.8096,
+          "routeAu": null,
+          "straightSeconds": 33.545,
+          "routeSeconds": null,
+          "loadedCartMaxSeconds": null
+        },
+        "corridor.RT-1": {
+          "label": "RT-1 authored corridor (MAP-LOG-03)",
+          "straightAu": 199.4843,
+          "routeAu": 346.1492,
+          "straightSeconds": 11.0825,
+          "routeSeconds": 15.7881,
+          "loadedCartMaxSeconds": 45.4011
+        },
+        "u4.cacheToHome": {
+          "label": "Cash cache→home (MAP-U4)",
+          "straightAu": 351.6697,
+          "routeAu": 690.2607,
+          "straightSeconds": 19.5372,
+          "routeSeconds": 32.2247,
+          "loadedCartMaxSeconds": 81.7497
+        }
+      },
+      "spatial": {
+        "entranceTiles": 0.924,
+        "minPOIAreaTiles": 11,
+        "medianPOIAreaTiles": 53.24,
+        "proposedWorkspaceTiles": 3.589,
+        "roadStrokeTiles": 2.25,
+        "riverMaskTiles": 2.25,
+        "bridgeGlyphTiles": [
+          3.25,
+          1.8
+        ],
+        "poiFeetUnableToHostSmallestRoom": 81,
+        "poiFeetUnableToHost5x5Square": 81,
+        "roadBendsUnderOneTile": 0,
+        "failedTests": [
+          "ENTRY_CART",
+          "ENTRY_ONE_FLOOR_TILE",
+          "MIN_POI_ROOM",
+          "MEDIAN_POI_ROOM",
+          "PROPOSED_WORKSPACE",
+          "EXACT_PACKAGE_VALIDATOR"
+        ],
+        "hardRejections": [
+          "ENTRY_CART",
+          "ENTRY_ONE_FLOOR_TILE",
+          "MIN_POI_ROOM",
+          "MEDIAN_POI_ROOM",
+          "PROPOSED_WORKSPACE"
+        ]
+      },
+      "veyraPreservation": {
+        "fullAuthoringGeometryUnchanged": true,
+        "authoringSpace": [
+          2000,
+          1400
+        ],
+        "canonicalObjects": {
+          "land": 8,
+          "lakes": 5,
+          "rivers": 17,
+          "roads": 92,
+          "bridges": 12,
+          "docks": 27,
+          "zones": 23,
+          "pois": 81,
+          "resources": 280,
+          "spawns": 4,
+          "elders": 6
+        },
+        "noCropNoWarpNoRescale": true,
+        "detail": "NONE — Veyra raster is 8 au/cell; U<8 only duplicates/interpolates cells, U=8 is 1:1.",
+        "coast": "coast stays an 8-au staircase repeated 2x per axis; NO new shoreline detail."
+      }
+    },
+    {
+      "u": 8,
+      "status": "DIAGNOSTIC_CANDIDATE__NOT_APPROVED",
+      "worldTiles": [
+        250,
+        175
+      ],
+      "cells": 43750,
+      "engine": {
+        "economyCellLimitFits": true,
+        "exactPackageValidatorFits": false,
+        "coreFixedGridFits": false,
+        "renderChunkKeyCollisionFree": true,
+        "seaDistSemanticCoveragePercent": 31.9095
+      },
+      "memoryMBLowerBound": 6.3002,
+      "renderChunkCacheUpperBoundMB": 44,
+      "screensAcross": [
+        6.25,
+        7.7778
+      ],
+      "crossWorldWidthSeconds": 55.5556,
+      "crossWorldWidthGameHours": 0.0154,
+      "crossWorldWidthFractionOfFictionalDay": 0.0386,
+      "crossWorldWidthFractionOf336hRun": 0,
+      "crossWorldHungerDrain": 2.2222,
+      "journeyTimes": {
+        "sp_lake.starterWater": {
+          "label": "Spawn→water (MAP-SPAWN-04)",
+          "straightAu": 28.628,
+          "routeAu": 143.8695,
+          "straightSeconds": 0.7952,
+          "routeSeconds": 3.9564,
+          "loadedCartMaxSeconds": 11.4242
+        },
+        "sp_lake.starterToolMaterial": {
+          "label": "Spawn→tool material (MAP-SPAWN-04)",
+          "straightAu": 31.6228,
+          "routeAu": 34.1421,
+          "straightSeconds": 0.8784,
+          "routeSeconds": 1.0719,
+          "loadedCartMaxSeconds": 3.6442
+        },
+        "sp_lake.starterBuildZone": {
+          "label": "Spawn→build zone (MAP-SPAWN-04)",
+          "straightAu": 10.4314,
+          "routeAu": 13.7367,
+          "straightSeconds": 0.2898,
+          "routeSeconds": 0.4178,
+          "loadedCartMaxSeconds": 1.3212
+        },
+        "sp_lake.nearPOI": {
+          "label": "Spawn→nearest POI",
+          "straightAu": 37.2022,
+          "routeAu": 40.7695,
+          "straightSeconds": 1.0334,
+          "routeSeconds": 1.1661,
+          "loadedCartMaxSeconds": 3.5054
+        },
+        "sp_lake.farPOI": {
+          "label": "Spawn→farthest POI",
+          "straightAu": 1110.0414,
+          "routeAu": null,
+          "straightSeconds": 30.8345,
+          "routeSeconds": null,
+          "loadedCartMaxSeconds": null
+        },
+        "sp_lake.elderApproach": {
+          "label": "Spawn→Elder approach (MAP-U5)",
+          "straightAu": 62.2896,
+          "routeAu": 108.7695,
+          "straightSeconds": 1.7303,
+          "routeSeconds": 2.7168,
+          "loadedCartMaxSeconds": 6.577
+        },
+        "log.kilnsToFarWarehouse": {
+          "label": "Kilns→far warehouse (MAP-LOG-03)",
+          "straightAu": 603.8096,
+          "routeAu": null,
+          "straightSeconds": 16.7725,
+          "routeSeconds": null,
+          "loadedCartMaxSeconds": null
+        },
+        "corridor.RT-1": {
+          "label": "RT-1 authored corridor (MAP-LOG-03)",
+          "straightAu": 199.4843,
+          "routeAu": 346.1492,
+          "straightSeconds": 5.5412,
+          "routeSeconds": 7.894,
+          "loadedCartMaxSeconds": 22.7006
+        },
+        "u4.cacheToHome": {
+          "label": "Cash cache→home (MAP-U4)",
+          "straightAu": 351.6697,
+          "routeAu": 690.2607,
+          "straightSeconds": 9.7686,
+          "routeSeconds": 16.1124,
+          "loadedCartMaxSeconds": 40.8749
+        }
+      },
+      "spatial": {
+        "entranceTiles": 0.462,
+        "minPOIAreaTiles": 2.75,
+        "medianPOIAreaTiles": 13.31,
+        "proposedWorkspaceTiles": 0.8972,
+        "roadStrokeTiles": 1.125,
+        "riverMaskTiles": 1.125,
+        "bridgeGlyphTiles": [
+          1.625,
+          0.9
+        ],
+        "poiFeetUnableToHostSmallestRoom": 81,
+        "poiFeetUnableToHost5x5Square": 81,
+        "roadBendsUnderOneTile": 6,
+        "failedTests": [
+          "ENTRY_CART",
+          "ENTRY_ONE_FLOOR_TILE",
+          "MIN_POI_ROOM",
+          "MEDIAN_POI_ROOM",
+          "PROPOSED_WORKSPACE",
+          "ROAD_TWO_TILES_CART_CLEARANCE",
+          "BRIDGE_GLYPH_BOTH_AXES",
+          "EXACT_PACKAGE_VALIDATOR"
+        ],
+        "hardRejections": [
+          "ENTRY_CART",
+          "ENTRY_ONE_FLOOR_TILE",
+          "MIN_POI_ROOM",
+          "MEDIAN_POI_ROOM",
+          "PROPOSED_WORKSPACE",
+          "BRIDGE_GLYPH_BOTH_AXES"
+        ]
+      },
+      "veyraPreservation": {
+        "fullAuthoringGeometryUnchanged": true,
+        "authoringSpace": [
+          2000,
+          1400
+        ],
+        "canonicalObjects": {
+          "land": 8,
+          "lakes": 5,
+          "rivers": 17,
+          "roads": 92,
+          "bridges": 12,
+          "docks": 27,
+          "zones": 23,
+          "pois": 81,
+          "resources": 280,
+          "spawns": 4,
+          "elders": 6
+        },
+        "noCropNoWarpNoRescale": true,
+        "detail": "NONE — Veyra raster is 8 au/cell; U<8 only duplicates/interpolates cells, U=8 is 1:1.",
+        "coast": "1 authored raster cell = 1 tile; coastline is representable at native resolution."
+      }
+    }
+  ],
+  "authoredCorridorTimesByScale": {
+    "1": [
+      {
+        "routeId": "RT-1",
+        "authoredTotalAu": 400.1147,
+        "authoredRoadLengthAu": 362.9125,
+        "derivedConnectorLengthAu": 37.2022,
+        "cartRoadAu": 136.4366,
+        "trailOrOtherAu": 226.4759,
+        "footSeconds": 71.2728,
+        "cartScenarioSeconds": 103.6757,
+        "loadedMaxCartScenarioSeconds": 182.5276,
+        "cartPassable": false,
+        "note": "Authored corridor includes trail segments (rd_13/rd_1w/rd_16 are kind=trail). NEVER labelled cart-passable. GEO-02 found one zero-clearance cell and a foot-only bridge on this corridor."
+      },
+      {
+        "routeId": "RT-2",
+        "authoredTotalAu": 403.9036,
+        "authoredRoadLengthAu": 366.7014,
+        "derivedConnectorLengthAu": 37.2022,
+        "cartRoadAu": 136.4366,
+        "trailOrOtherAu": 230.2648,
+        "footSeconds": 71.9306,
+        "cartScenarioSeconds": 104.8451,
+        "loadedMaxCartScenarioSeconds": 184.5864,
+        "cartPassable": false,
+        "note": "Authored corridor includes trail segments (rd_13/rd_1w/rd_16 are kind=trail). NEVER labelled cart-passable. GEO-02 found one zero-clearance cell and a foot-only bridge on this corridor."
+      },
+      {
+        "routeId": "RT-3",
+        "authoredTotalAu": 398.0289,
+        "authoredRoadLengthAu": 280.3206,
+        "derivedConnectorLengthAu": 117.7083,
+        "cartRoadAu": 0,
+        "trailOrOtherAu": 280.3206,
+        "footSeconds": 74.8242,
+        "cartScenarioSeconds": 122.8484,
+        "loadedMaxCartScenarioSeconds": 216.2824,
+        "cartPassable": false,
+        "note": "Authored corridor includes trail segments (rd_13/rd_1w/rd_16 are kind=trail). NEVER labelled cart-passable. GEO-02 found one zero-clearance cell and a foot-only bridge on this corridor."
+      }
+    ],
+    "2": [
+      {
+        "routeId": "RT-1",
+        "authoredTotalAu": 400.1147,
+        "authoredRoadLengthAu": 362.9125,
+        "derivedConnectorLengthAu": 37.2022,
+        "cartRoadAu": 136.4366,
+        "trailOrOtherAu": 226.4759,
+        "footSeconds": 35.6364,
+        "cartScenarioSeconds": 51.8378,
+        "loadedMaxCartScenarioSeconds": 91.2638,
+        "cartPassable": false,
+        "note": "Authored corridor includes trail segments (rd_13/rd_1w/rd_16 are kind=trail). NEVER labelled cart-passable. GEO-02 found one zero-clearance cell and a foot-only bridge on this corridor."
+      },
+      {
+        "routeId": "RT-2",
+        "authoredTotalAu": 403.9036,
+        "authoredRoadLengthAu": 366.7014,
+        "derivedConnectorLengthAu": 37.2022,
+        "cartRoadAu": 136.4366,
+        "trailOrOtherAu": 230.2648,
+        "footSeconds": 35.9653,
+        "cartScenarioSeconds": 52.4226,
+        "loadedMaxCartScenarioSeconds": 92.2932,
+        "cartPassable": false,
+        "note": "Authored corridor includes trail segments (rd_13/rd_1w/rd_16 are kind=trail). NEVER labelled cart-passable. GEO-02 found one zero-clearance cell and a foot-only bridge on this corridor."
+      },
+      {
+        "routeId": "RT-3",
+        "authoredTotalAu": 398.0289,
+        "authoredRoadLengthAu": 280.3206,
+        "derivedConnectorLengthAu": 117.7083,
+        "cartRoadAu": 0,
+        "trailOrOtherAu": 280.3206,
+        "footSeconds": 37.4121,
+        "cartScenarioSeconds": 61.4242,
+        "loadedMaxCartScenarioSeconds": 108.1412,
+        "cartPassable": false,
+        "note": "Authored corridor includes trail segments (rd_13/rd_1w/rd_16 are kind=trail). NEVER labelled cart-passable. GEO-02 found one zero-clearance cell and a foot-only bridge on this corridor."
+      }
+    ],
+    "4": [
+      {
+        "routeId": "RT-1",
+        "authoredTotalAu": 400.1147,
+        "authoredRoadLengthAu": 362.9125,
+        "derivedConnectorLengthAu": 37.2022,
+        "cartRoadAu": 136.4366,
+        "trailOrOtherAu": 226.4759,
+        "footSeconds": 17.8182,
+        "cartScenarioSeconds": 25.9189,
+        "loadedMaxCartScenarioSeconds": 45.6319,
+        "cartPassable": false,
+        "note": "Authored corridor includes trail segments (rd_13/rd_1w/rd_16 are kind=trail). NEVER labelled cart-passable. GEO-02 found one zero-clearance cell and a foot-only bridge on this corridor."
+      },
+      {
+        "routeId": "RT-2",
+        "authoredTotalAu": 403.9036,
+        "authoredRoadLengthAu": 366.7014,
+        "derivedConnectorLengthAu": 37.2022,
+        "cartRoadAu": 136.4366,
+        "trailOrOtherAu": 230.2648,
+        "footSeconds": 17.9826,
+        "cartScenarioSeconds": 26.2113,
+        "loadedMaxCartScenarioSeconds": 46.1466,
+        "cartPassable": false,
+        "note": "Authored corridor includes trail segments (rd_13/rd_1w/rd_16 are kind=trail). NEVER labelled cart-passable. GEO-02 found one zero-clearance cell and a foot-only bridge on this corridor."
+      },
+      {
+        "routeId": "RT-3",
+        "authoredTotalAu": 398.0289,
+        "authoredRoadLengthAu": 280.3206,
+        "derivedConnectorLengthAu": 117.7083,
+        "cartRoadAu": 0,
+        "trailOrOtherAu": 280.3206,
+        "footSeconds": 18.706,
+        "cartScenarioSeconds": 30.7121,
+        "loadedMaxCartScenarioSeconds": 54.0706,
+        "cartPassable": false,
+        "note": "Authored corridor includes trail segments (rd_13/rd_1w/rd_16 are kind=trail). NEVER labelled cart-passable. GEO-02 found one zero-clearance cell and a foot-only bridge on this corridor."
+      }
+    ],
+    "8": [
+      {
+        "routeId": "RT-1",
+        "authoredTotalAu": 400.1147,
+        "authoredRoadLengthAu": 362.9125,
+        "derivedConnectorLengthAu": 37.2022,
+        "cartRoadAu": 136.4366,
+        "trailOrOtherAu": 226.4759,
+        "footSeconds": 8.9091,
+        "cartScenarioSeconds": 12.9595,
+        "loadedMaxCartScenarioSeconds": 22.816,
+        "cartPassable": false,
+        "note": "Authored corridor includes trail segments (rd_13/rd_1w/rd_16 are kind=trail). NEVER labelled cart-passable. GEO-02 found one zero-clearance cell and a foot-only bridge on this corridor."
+      },
+      {
+        "routeId": "RT-2",
+        "authoredTotalAu": 403.9036,
+        "authoredRoadLengthAu": 366.7014,
+        "derivedConnectorLengthAu": 37.2022,
+        "cartRoadAu": 136.4366,
+        "trailOrOtherAu": 230.2648,
+        "footSeconds": 8.9913,
+        "cartScenarioSeconds": 13.1056,
+        "loadedMaxCartScenarioSeconds": 23.0733,
+        "cartPassable": false,
+        "note": "Authored corridor includes trail segments (rd_13/rd_1w/rd_16 are kind=trail). NEVER labelled cart-passable. GEO-02 found one zero-clearance cell and a foot-only bridge on this corridor."
+      },
+      {
+        "routeId": "RT-3",
+        "authoredTotalAu": 398.0289,
+        "authoredRoadLengthAu": 280.3206,
+        "derivedConnectorLengthAu": 117.7083,
+        "cartRoadAu": 0,
+        "trailOrOtherAu": 280.3206,
+        "footSeconds": 9.353,
+        "cartScenarioSeconds": 15.3561,
+        "loadedMaxCartScenarioSeconds": 27.0353,
+        "cartPassable": false,
+        "note": "Authored corridor includes trail segments (rd_13/rd_1w/rd_16 are kind=trail). NEVER labelled cart-passable. GEO-02 found one zero-clearance cell and a foot-only bridge on this corridor."
+      }
+    ]
+  }
+}

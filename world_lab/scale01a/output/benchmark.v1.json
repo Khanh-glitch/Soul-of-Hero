@@ -1,0 +1,6114 @@
+{
+  "schema": "soh.map.scale01a.benchmark.v1",
+  "generatedBy": "world_lab/scale01a/src/benchmark.mjs",
+  "status": "DECISION_SUPPORT_BENCHMARK__NOT_A_PLAYABLE_FULL_WORLD_INTEGRATION",
+  "authority": "MAP DESIGNS THE PHYSICAL WORLD. GAMEPLAY POPULATES AND SIMULATES IT.",
+  "noClaims": [
+    "NO approved world scale",
+    "NO canonical Veyra edit",
+    "NO runtime merge or Gameplay population",
+    "NO new POIs",
+    "NO environment-art experiment",
+    "NO fabricated travel time",
+    "NO invented collision/passability rule",
+    "NO incomplete trail labelled cart-passable",
+    "NO survivability or human acceptance claim"
+  ],
+  "sourceEvidence": {
+    "gameplayHead": {
+      "pr": 44,
+      "headRef": "arena/d4bfcfff-soul-of-hero",
+      "headCommit": "d80ad1b5d46f17b729e90898cfa2ad31b677fae3",
+      "pinnedOlderCommit": "a956c9e85624c1ca7a2b5585eb423f8fa1cf296c",
+      "headFetchRefspec": "refs/pull/44/head:refs/remotes/origin/pr44-head",
+      "whyLatestHead": "PR44 HEAD d80ad1b5 supersedes pinned a956c9e; balance.v1.json, core.ts and sim.ts all differ. All constants below come from HEAD.",
+      "files": {
+        "web/src/game/balance.v1.json": {
+          "bytes": 3486,
+          "sha256": "cd12286c267f39abef6b44727f22f38f0374cfcdcf66f2c7f3d1de03d3fd0b62"
+        },
+        "web/src/game/core.ts": {
+          "bytes": 7973,
+          "sha256": "abcb1f1c8c7a788fb56cfb7d065c02183c6b0c6f03c5c0c94412b04260862dab"
+        },
+        "web/src/game/sim.ts": {
+          "bytes": 69030,
+          "sha256": "ba580a0fe3614e8bcbbe3790d83ad18d7407fae648657aab8c01a6747a0d74b8"
+        },
+        "web/src/game/engine.ts": {
+          "bytes": 83271,
+          "sha256": "4217d25de9a2183163c99f227f1b37e9b3b8142e86da957287714795540db56f"
+        },
+        "web/src/game/world.ts": {
+          "bytes": 28887,
+          "sha256": "4d348ffc0572cd74466f0b1441ed7ce505b4b81e300914a2b81418bd3a8c5467"
+        },
+        "web/src/game/world-economy.ts": {
+          "bytes": 9924,
+          "sha256": "bcc87d4aef1c226229ccdfff77a896e95bd929f3ac4000c639bd62f5cd5c6fa7"
+        },
+        "web/src/game/geography-contract.ts": {
+          "bytes": 5226,
+          "sha256": "2dad5ff6d1ff7616ede7913b62b00b41566a4c5d2769c9180d89f432ecef34e3"
+        },
+        "web/src/game/map-package.ts": {
+          "bytes": 7977,
+          "sha256": "54b5821c0626f60011be3f68e65c57214a0d827b9f46dcd6950a763fb323603d"
+        },
+        "web/src/game/catalog.ts": {
+          "bytes": 42383,
+          "sha256": "0bfbd9c6aac0dc68d97cd455e63fc7e715e07fc077481a2f6b0d60079ba0b2a4"
+        },
+        "web/src/game/render.ts": {
+          "bytes": 55870,
+          "sha256": "665775065eb90df050f3b04b7a1fb42012327d25efa9493be0cc6576fb537135"
+        },
+        "web/ref/bible.md": {
+          "bytes": 232605,
+          "sha256": "8aa2ac6eee210a823c197e66ec8e12f93f149a9e7671e22889ffa3a5b08b4340"
+        },
+        "web/IMPLEMENTATION_EVIDENCE.md": {
+          "bytes": 7411,
+          "sha256": "0a0905ba0e34b73e673c2c058154330590abbc2e70c7d4025a4f5837357f6bb7"
+        }
+      },
+      "olderFiles": {
+        "web/src/game/balance.v1.json": {
+          "bytes": 3133,
+          "sha256": "56535e52dea7931cda42a59aa17bd8fbc728e7c2b1b8a0df909465e3f5cf7377"
+        },
+        "web/src/game/core.ts": {
+          "bytes": 7768,
+          "sha256": "a9dcd43d4d0d58e4f85c465f3ba5a0fa02eca3e651140570002a2d7a1476975f"
+        },
+        "web/src/game/sim.ts": {
+          "bytes": 66724,
+          "sha256": "bc8157facedec032b70984931a7240beb6b05e344d787ac11be56bf317246b6a"
+        }
+      },
+      "headDiffersFromPinned": {
+        "web/src/game/balance.v1.json": true,
+        "web/src/game/core.ts": true,
+        "web/src/game/sim.ts": true
+      }
+    },
+    "veyraGold": {
+      "commit": "19d8c6ec820f324a6ac12733165e43b5e2c6eab2",
+      "path": "map_tower/veyra_gold/VEYRA_GOLD_MAP.sohmap.json",
+      "bytes": 332249,
+      "sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+      "verified": true
+    },
+    "geo01": {
+      "bytes": 1427751,
+      "sha256": "13ae97272edc47b063bb4a2ffde5dcf9f92f0f34dc3fd35b6ab3bee7f26c29dd"
+    },
+    "geo01Corridor": {
+      "bytes": 56653,
+      "sha256": "e9212633b277ec0cd7ee932a0d9b1266532e805a2816e23e092edce3582db63e"
+    },
+    "geo02Encoding": {
+      "bytes": 21420,
+      "sha256": "14560c6c523ca01bb831898f914e0f298b8aa76fe0625cbd2fb565db902ea4db"
+    },
+    "geo02Audit": {
+      "bytes": 68739,
+      "sha256": "7377b97ad2cfe33d92b5857f06307c028b3b7b1b00b7c510c21014638e73a70d"
+    },
+    "geo02Proposed": {
+      "bytes": 20323,
+      "sha256": "14f968fe7bc94db7aba5020fcdfda80f5bb8f24b5e3c4ab9c16c8e564c4072c5"
+    },
+    "geo01RasterManifest": {
+      "bytes": 13188,
+      "sha256": "ff5442c8b6fed09b35e049ca81fb0fa749eabdcd828f0dff2d7e5ad555567683"
+    },
+    "geo02RasterManifest": {
+      "bytes": 1388,
+      "sha256": "f258d0f2816b9556311d816b6bc90f69cbd20d47f5ccbb6732a65da771002171"
+    }
+  },
+  "frame": {
+    "authoringSpaceAu": [
+      2000,
+      1400
+    ],
+    "sourceGrid": {
+      "gw": 250,
+      "gh": 175,
+      "cell": 8,
+      "cells": 43750,
+      "order": "row_major: i = gy*gw + gx; cell centre = [(gx+0.5)*cell, (gy+0.5)*cell]",
+      "toCell": "gx=floor(x/cell), gy=floor(y/cell); i=gy*gw+gx",
+      "cellCentre": "[(gx+0.5)*cell,(gy+0.5)*cell]"
+    },
+    "transform": {
+      "status": "UNDECIDED",
+      "mode": "NONE_APPLIED",
+      "configurable": true,
+      "config": {
+        "scaleX": 1,
+        "scaleY": 1,
+        "offsetX": 0,
+        "offsetY": 0,
+        "authoringUnitsPerCell": 8
+      },
+      "runtimeReference": {
+        "source": "PR #44 a956c9e web/src/game/core.ts",
+        "WW": 200,
+        "WH": 200,
+        "TILE": 16,
+        "requiredCells": 40000
+      },
+      "sourceGridCells": 43750,
+      "rule": "Every coordinate in this export remains in Veyra authoring units. No rescale, crop, pad or warp to the 200x200 runtime island was performed. toCell() is the ONLY coordinate conversion used and it is a deterministic index lookup, not a world-scale decision.",
+      "requiredDecision": "An explicit, approved authoring-unit -> runtime-tile transform with measured journey times (t_foot, t_cart_loaded, exposure_time)."
+    },
+    "rule": "Full 2000x1400 authoring geometry is UNCHANGED for every candidate. No rescale, crop, pad or warp of the canonical source."
+  },
+  "measured": {
+    "sourceCounts": {
+      "land": 8,
+      "lakes": 5,
+      "rivers": 17,
+      "roads": 92,
+      "bridges": 12,
+      "docks": 27,
+      "zones": 23,
+      "pois": 81,
+      "resources": 280,
+      "spawns": 4,
+      "elders": 6
+    },
+    "featureSizes": {
+      "authoringSpace": [
+        2000,
+        1400
+      ],
+      "sourceGrid": {
+        "gw": 250,
+        "gh": 175,
+        "cell": 8,
+        "cells": 43750,
+        "order": "row_major: i = gy*gw + gx; cell centre = [(gx+0.5)*cell, (gy+0.5)*cell]",
+        "toCell": "gx=floor(x/cell), gy=floor(y/cell); i=gy*gw+gx",
+        "cellCentre": "[(gx+0.5)*cell,(gy+0.5)*cell]"
+      },
+      "transform": {
+        "status": "UNDECIDED",
+        "mode": "NONE_APPLIED",
+        "configurable": true,
+        "config": {
+          "scaleX": 1,
+          "scaleY": 1,
+          "offsetX": 0,
+          "offsetY": 0,
+          "authoringUnitsPerCell": 8
+        },
+        "runtimeReference": {
+          "source": "PR #44 a956c9e web/src/game/core.ts",
+          "WW": 200,
+          "WH": 200,
+          "TILE": 16,
+          "requiredCells": 40000
+        },
+        "sourceGridCells": 43750,
+        "rule": "Every coordinate in this export remains in Veyra authoring units. No rescale, crop, pad or warp to the 200x200 runtime island was performed. toCell() is the ONLY coordinate conversion used and it is a deterministic index lookup, not a world-scale decision.",
+        "requiredDecision": "An explicit, approved authoring-unit -> runtime-tile transform with measured journey times (t_foot, t_cart_loaded, exposure_time)."
+      },
+      "counts": {
+        "land": 8,
+        "lakes": 5,
+        "rivers": 17,
+        "roads": 92,
+        "bridges": 12,
+        "docks": 27,
+        "zones": 23,
+        "pois": 81,
+        "resources": 280,
+        "spawns": 4,
+        "elders": 6
+      },
+      "poiFoot": {
+        "count": 81,
+        "minAreaAu2": 176,
+        "medianAreaAu2": 851.84,
+        "maxAreaAu2": 2034.56,
+        "minEdgeAu": 11,
+        "maxEdgeAu": 54.4,
+        "footAreasAu2": [
+          176,
+          176,
+          176,
+          176,
+          253.44,
+          253.44,
+          253.44,
+          253.44,
+          253.44,
+          344.96,
+          344.96,
+          344.96,
+          344.96,
+          344.96,
+          344.96,
+          344.96,
+          344.96,
+          344.96,
+          344.96,
+          344.96,
+          344.96,
+          344.96,
+          344.96,
+          344.96,
+          344.96,
+          344.96,
+          344.96,
+          344.96,
+          450.56,
+          450.56,
+          450.56,
+          450.56,
+          450.56,
+          450.56,
+          450.56,
+          450.56,
+          450.56,
+          496.7424,
+          704,
+          704,
+          851.84,
+          851.84,
+          851.84,
+          851.84,
+          851.84,
+          851.84,
+          1013.76,
+          1013.76,
+          1013.76,
+          1013.76,
+          1013.76,
+          1013.76,
+          1013.76,
+          1013.76,
+          1013.76,
+          1013.76,
+          1013.76,
+          1013.76,
+          1013.76,
+          1013.76,
+          1013.76,
+          1189.76,
+          1189.76,
+          1189.76,
+          1189.76,
+          1189.76,
+          1189.76,
+          1189.76,
+          1379.84,
+          1379.84,
+          1379.84,
+          1379.84,
+          1459.8144,
+          1584,
+          1584,
+          1584,
+          2034.56,
+          2034.56,
+          2034.56,
+          2034.56,
+          2034.56
+        ],
+        "authoredDoorCount": 0,
+        "authoredRetreatGeometryCount": 18,
+        "note": "Veyra canonical POIs have a foot/deep polygon and textual access label; NO authored door openings, rooms, corridors or workspaces exist."
+      },
+      "road": {
+        "analysisStrokeAu": 9,
+        "authoredWidthField": "NOT_IN_SOURCE (types.ts Road has no width field)",
+        "physicalRoadWidth": "UNDEFINED__NOT_AUTHORED",
+        "sweptClearance": "UNVALIDATED__NO_CART_OR_FOOT_FOOTPRINT_DIMENSION_EXISTS_IN_SOURCE",
+        "displayStrokesAu": {
+          "cart": 3.4,
+          "other": 1.6
+        }
+      },
+      "river": {
+        "maskStrokeAu": 9,
+        "minAuthoredWidthAu": 2.5,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED"
+      },
+      "bridge": {
+        "displayGlyphAu": {
+          "w": 13,
+          "h": 7.2
+        },
+        "note": "exporter.ts renderSVG(): 13 x 7.2u rectangle is a DISPLAY GLYPH. It is not a physical deck span, load rating or swept-clearance dimension."
+      },
+      "proposedEntrances": [
+        {
+          "id": "PROPOSED_EN_A",
+          "label": "primary west opening",
+          "face": "west",
+          "openingWidthAu": 3.696,
+          "openingAu": [
+            [
+              891.5737,
+              784.3516
+            ],
+            [
+              891.3325,
+              788.0397
+            ]
+          ],
+          "midpointAu": [
+            891.4531,
+            786.1956
+          ],
+          "widthStatus": "PROPOSED_GEOMETRIC_OPENING__NO_VALIDATED_DOOR_DIMENSION",
+          "status": "PROPOSED",
+          "canonical": false
+        },
+        {
+          "id": "PROPOSED_EN_B",
+          "label": "secondary north opening",
+          "face": "north",
+          "openingWidthAu": 5.3761,
+          "openingAu": [
+            [
+              908.8217,
+              775.9902
+            ],
+            [
+              914.1863,
+              776.341
+            ]
+          ],
+          "midpointAu": [
+            911.504,
+            776.1656
+          ],
+          "widthStatus": "PROPOSED_GEOMETRIC_OPENING__NO_VALIDATED_DOOR_DIMENSION",
+          "status": "PROPOSED",
+          "canonical": false
+        },
+        {
+          "id": "PROPOSED_EN_C",
+          "label": "retreat / service south opening",
+          "face": "south",
+          "openingWidthAu": 5.9136,
+          "openingAu": [
+            [
+              900.6418,
+              793.9747
+            ],
+            [
+              906.5428,
+              794.3606
+            ]
+          ],
+          "midpointAu": [
+            903.5923,
+            794.1677
+          ],
+          "widthStatus": "PROPOSED_GEOMETRIC_OPENING__NO_VALIDATED_DOOR_DIMENSION",
+          "status": "PROPOSED",
+          "canonical": false
+        }
+      ],
+      "proposedWorkingSpaces": [
+        {
+          "id": "PROPOSED_WS_1",
+          "label": "covered enclosure (spatial allocation only)",
+          "areaAu2": 57.4232,
+          "status": "PROPOSED",
+          "canonical": false
+        },
+        {
+          "id": "PROPOSED_WS_2",
+          "label": "open yard (spatial allocation only)",
+          "areaAu2": 57.4233,
+          "status": "PROPOSED",
+          "canonical": false
+        },
+        {
+          "id": "PROPOSED_WS_3",
+          "label": "staging enclosure (spatial allocation only)",
+          "areaAu2": 57.4233,
+          "status": "PROPOSED",
+          "canonical": false
+        },
+        {
+          "id": "PROPOSED_WS_4",
+          "label": "transfer / circulation enclosure (spatial allocation only)",
+          "areaAu2": 57.4232,
+          "status": "PROPOSED",
+          "canonical": false
+        }
+      ],
+      "proposedEntranceWestAu": 3.696,
+      "proposedEntranceWestSource": "world_lab/geo02/output/poi_po_kilns.proposed.v1.json :: proposed.entranceOptions[face=west].openingWidthAu (NON-CANONICAL, worked scale test only)",
+      "coastCells": 812
+    },
+    "biomeAssumption": {
+      "biomeCodeToTerrainSpeedKey": {
+        "0": "meadow",
+        "1": "forest",
+        "2": "forest",
+        "3": "forest",
+        "4": "marsh",
+        "5": "sand",
+        "6": "grass",
+        "7": "hill",
+        "8": "snow",
+        "9": "ash",
+        "10": "toxic",
+        "11": "sand"
+      },
+      "status": "DOCUMENTED_ASSUMPTION__NOT_APPROVED_GAMEPLAY_MAPPING"
+    },
+    "cartNetwork": {
+      "componentCount": 6,
+      "largest": {
+        "id": 0,
+        "cells": 643
+      },
+      "top": [
+        {
+          "id": 0,
+          "cells": 643
+        },
+        {
+          "id": 1,
+          "cells": 22
+        },
+        {
+          "id": 5,
+          "cells": 21
+        },
+        {
+          "id": 4,
+          "cells": 5
+        },
+        {
+          "id": 2,
+          "cells": 3
+        },
+        {
+          "id": 3,
+          "cells": 2
+        }
+      ]
+    },
+    "footConnectivity": {
+      "passableCellComponents": 9,
+      "largest": {
+        "id": 0,
+        "cells": 12429
+      },
+      "top": [
+        {
+          "id": 0,
+          "cells": 12429
+        },
+        {
+          "id": 5,
+          "cells": 715
+        },
+        {
+          "id": 1,
+          "cells": 479
+        },
+        {
+          "id": 8,
+          "cells": 343
+        },
+        {
+          "id": 3,
+          "cells": 197
+        },
+        {
+          "id": 6,
+          "cells": 141
+        },
+        {
+          "id": 2,
+          "cells": 77
+        },
+        {
+          "id": 4,
+          "cells": 16
+        }
+      ],
+      "journeysWithoutGeographicRoute": [
+        {
+          "id": "sp_west.farPOI",
+          "straightAu": 1522.431,
+          "status": "NO_GEOGRAPHIC_ROUTE__SEPARATE_LAND_COMPONENT__FERRY_OR_BRIDGE_RULE_REQUIRED",
+          "fromFootComponent": 0,
+          "toFootComponent": 2
+        },
+        {
+          "id": "sp_west.elderApproach",
+          "straightAu": 169.4462,
+          "status": "NO_GEOGRAPHIC_ROUTE__SEPARATE_LAND_COMPONENT__FERRY_OR_BRIDGE_RULE_REQUIRED",
+          "fromFootComponent": 0,
+          "toFootComponent": 3
+        },
+        {
+          "id": "sp_lake.farPOI",
+          "straightAu": 1110.0414,
+          "status": "NO_GEOGRAPHIC_ROUTE__SEPARATE_LAND_COMPONENT__FERRY_OR_BRIDGE_RULE_REQUIRED",
+          "fromFootComponent": 0,
+          "toFootComponent": 2
+        },
+        {
+          "id": "sp_hook.farPOI",
+          "straightAu": 1229.6748,
+          "status": "NO_GEOGRAPHIC_ROUTE__SEPARATE_LAND_COMPONENT__FERRY_OR_BRIDGE_RULE_REQUIRED",
+          "fromFootComponent": 0,
+          "toFootComponent": 6
+        },
+        {
+          "id": "sp_gulf.starterWater",
+          "straightAu": 92.0385,
+          "status": "NO_GEOGRAPHIC_ROUTE__SEPARATE_LAND_COMPONENT__FERRY_OR_BRIDGE_RULE_REQUIRED",
+          "fromFootComponent": 0,
+          "toFootComponent": 7
+        },
+        {
+          "id": "sp_gulf.farPOI",
+          "straightAu": 1123.5889,
+          "status": "NO_GEOGRAPHIC_ROUTE__SEPARATE_LAND_COMPONENT__FERRY_OR_BRIDGE_RULE_REQUIRED",
+          "fromFootComponent": 0,
+          "toFootComponent": 2
+        },
+        {
+          "id": "home.bz_ironholm",
+          "straightAu": 745.4107,
+          "status": "NO_GEOGRAPHIC_ROUTE__SEPARATE_LAND_COMPONENT__FERRY_OR_BRIDGE_RULE_REQUIRED",
+          "fromFootComponent": 0,
+          "toFootComponent": 8
+        },
+        {
+          "id": "log.kilnsToFarWarehouse",
+          "straightAu": 603.8096,
+          "status": "NO_GEOGRAPHIC_ROUTE__SEPARATE_LAND_COMPONENT__FERRY_OR_BRIDGE_RULE_REQUIRED",
+          "fromFootComponent": 0,
+          "toFootComponent": 8
+        },
+        {
+          "id": "u5.el_surtur",
+          "straightAu": 847.514,
+          "status": "NO_GEOGRAPHIC_ROUTE__SEPARATE_LAND_COMPONENT__FERRY_OR_BRIDGE_RULE_REQUIRED",
+          "fromFootComponent": 0,
+          "toFootComponent": 5
+        },
+        {
+          "id": "u5.el_atlas",
+          "straightAu": 573.1492,
+          "status": "NO_GEOGRAPHIC_ROUTE__SEPARATE_LAND_COMPONENT__FERRY_OR_BRIDGE_RULE_REQUIRED",
+          "fromFootComponent": 0,
+          "toFootComponent": 3
+        }
+      ],
+      "note": "GEO-01 records 8 landmasses, 12 bridges and kind=ferry roads. Where the accepted land/water/bridge masks do not connect two endpoints, this benchmark reports UNRESOLVED and supplies NO travel time. No Gameplay ferry/boat/cargo rule is approved in PR44 HEAD."
+    },
+    "roadBends": {
+      "measured": 1080,
+      "minRadiusAu": 5.7827,
+      "source": "GEO-02 verbatim catmull()+resample() at 8 au"
+    },
+    "resourceSuitability": [
+      {
+        "spawnId": "sp_west",
+        "region": "Bờ tây",
+        "at": [
+          372,
+          606
+        ],
+        "byKind": {
+          "fresh_water": {
+            "total": 65,
+            "withinRadius": {
+              "100": 2,
+              "200": 3,
+              "300": 6
+            },
+            "nearestAu": 64.4846
+          },
+          "food": {
+            "total": 59,
+            "withinRadius": {
+              "100": 2,
+              "200": 4,
+              "300": 11
+            },
+            "nearestAu": 29.4581
+          },
+          "fish": {
+            "total": 39,
+            "withinRadius": {
+              "100": 1,
+              "200": 2,
+              "300": 5
+            },
+            "nearestAu": 56.7324
+          },
+          "herbs": {
+            "total": 19,
+            "withinRadius": {
+              "100": 0,
+              "200": 1,
+              "300": 2
+            },
+            "nearestAu": 125.0701
+          },
+          "wood": {
+            "total": 54,
+            "withinRadius": {
+              "100": 0,
+              "200": 7,
+              "300": 16
+            },
+            "nearestAu": 117.885
+          },
+          "stone": {
+            "total": 30,
+            "withinRadius": {
+              "100": 2,
+              "200": 3,
+              "300": 7
+            },
+            "nearestAu": 41.6173
+          },
+          "ore": {
+            "total": 3,
+            "withinRadius": {
+              "100": 0,
+              "200": 0,
+              "300": 0
+            },
+            "nearestAu": 329.3663
+          },
+          "clay": {
+            "total": 2,
+            "withinRadius": {
+              "100": 0,
+              "200": 0,
+              "300": 0
+            },
+            "nearestAu": 664.4246
+          }
+        },
+        "radiiAu": [
+          100,
+          200,
+          300
+        ],
+        "landCellsWithin300": 2661,
+        "buildableCandidateCellsWithin300": 163,
+        "note": "SOURCE_ANNOTATION_GEOMETRY_ONLY: conf=proposal; Gameplay source IDs, stock, respawn, slope/collision legality are NOT asserted."
+      },
+      {
+        "spawnId": "sp_lake",
+        "region": "Thung lũng hồ",
+        "at": [
+          790,
+          622
+        ],
+        "byKind": {
+          "fresh_water": {
+            "total": 65,
+            "withinRadius": {
+              "100": 4,
+              "200": 11,
+              "300": 26
+            },
+            "nearestAu": 28.628
+          },
+          "food": {
+            "total": 59,
+            "withinRadius": {
+              "100": 3,
+              "200": 5,
+              "300": 11
+            },
+            "nearestAu": 46.6931
+          },
+          "fish": {
+            "total": 39,
+            "withinRadius": {
+              "100": 2,
+              "200": 6,
+              "300": 12
+            },
+            "nearestAu": 87.046
+          },
+          "herbs": {
+            "total": 19,
+            "withinRadius": {
+              "100": 2,
+              "200": 7,
+              "300": 12
+            },
+            "nearestAu": 73.5384
+          },
+          "wood": {
+            "total": 54,
+            "withinRadius": {
+              "100": 3,
+              "200": 17,
+              "300": 22
+            },
+            "nearestAu": 47.4561
+          },
+          "stone": {
+            "total": 30,
+            "withinRadius": {
+              "100": 2,
+              "200": 4,
+              "300": 11
+            },
+            "nearestAu": 31.6228
+          },
+          "ore": {
+            "total": 3,
+            "withinRadius": {
+              "100": 0,
+              "200": 0,
+              "300": 0
+            },
+            "nearestAu": 427.1698
+          },
+          "clay": {
+            "total": 2,
+            "withinRadius": {
+              "100": 0,
+              "200": 0,
+              "300": 0
+            },
+            "nearestAu": 303.2886
+          }
+        },
+        "radiiAu": [
+          100,
+          200,
+          300
+        ],
+        "landCellsWithin300": 4423,
+        "buildableCandidateCellsWithin300": 472,
+        "note": "SOURCE_ANNOTATION_GEOMETRY_ONLY: conf=proposal; Gameplay source IDs, stock, respawn, slope/collision legality are NOT asserted."
+      },
+      {
+        "spawnId": "sp_hook",
+        "region": "Bán đảo Hook",
+        "at": [
+          1282,
+          392
+        ],
+        "byKind": {
+          "fresh_water": {
+            "total": 65,
+            "withinRadius": {
+              "100": 5,
+              "200": 9,
+              "300": 16
+            },
+            "nearestAu": 42.8048
+          },
+          "food": {
+            "total": 59,
+            "withinRadius": {
+              "100": 2,
+              "200": 5,
+              "300": 11
+            },
+            "nearestAu": 80.7691
+          },
+          "fish": {
+            "total": 39,
+            "withinRadius": {
+              "100": 3,
+              "200": 4,
+              "300": 9
+            },
+            "nearestAu": 36.4005
+          },
+          "herbs": {
+            "total": 19,
+            "withinRadius": {
+              "100": 1,
+              "200": 1,
+              "300": 1
+            },
+            "nearestAu": 75.029
+          },
+          "wood": {
+            "total": 54,
+            "withinRadius": {
+              "100": 2,
+              "200": 4,
+              "300": 7
+            },
+            "nearestAu": 80.0903
+          },
+          "stone": {
+            "total": 30,
+            "withinRadius": {
+              "100": 3,
+              "200": 3,
+              "300": 5
+            },
+            "nearestAu": 37.7359
+          },
+          "ore": {
+            "total": 3,
+            "withinRadius": {
+              "100": 0,
+              "200": 0,
+              "300": 1
+            },
+            "nearestAu": 281.1014
+          },
+          "clay": {
+            "total": 2,
+            "withinRadius": {
+              "100": 0,
+              "200": 1,
+              "300": 1
+            },
+            "nearestAu": 149.8302
+          }
+        },
+        "radiiAu": [
+          100,
+          200,
+          300
+        ],
+        "landCellsWithin300": 2197,
+        "buildableCandidateCellsWithin300": 171,
+        "note": "SOURCE_ANNOTATION_GEOMETRY_ONLY: conf=proposal; Gameplay source IDs, stock, respawn, slope/collision legality are NOT asserted."
+      },
+      {
+        "spawnId": "sp_gulf",
+        "region": "Vịnh phía tây",
+        "at": [
+          872,
+          930
+        ],
+        "byKind": {
+          "fresh_water": {
+            "total": 65,
+            "withinRadius": {
+              "100": 1,
+              "200": 9,
+              "300": 20
+            },
+            "nearestAu": 92.0385
+          },
+          "food": {
+            "total": 59,
+            "withinRadius": {
+              "100": 2,
+              "200": 4,
+              "300": 7
+            },
+            "nearestAu": 13.9985
+          },
+          "fish": {
+            "total": 39,
+            "withinRadius": {
+              "100": 0,
+              "200": 5,
+              "300": 9
+            },
+            "nearestAu": 149.4824
+          },
+          "herbs": {
+            "total": 19,
+            "withinRadius": {
+              "100": 1,
+              "200": 7,
+              "300": 11
+            },
+            "nearestAu": 67.2617
+          },
+          "wood": {
+            "total": 54,
+            "withinRadius": {
+              "100": 0,
+              "200": 4,
+              "300": 14
+            },
+            "nearestAu": 128.6786
+          },
+          "stone": {
+            "total": 30,
+            "withinRadius": {
+              "100": 3,
+              "200": 3,
+              "300": 6
+            },
+            "nearestAu": 26
+          },
+          "ore": {
+            "total": 3,
+            "withinRadius": {
+              "100": 0,
+              "200": 0,
+              "300": 0
+            },
+            "nearestAu": 433.4443
+          },
+          "clay": {
+            "total": 2,
+            "withinRadius": {
+              "100": 0,
+              "200": 1,
+              "300": 1
+            },
+            "nearestAu": 142.5623
+          }
+        },
+        "radiiAu": [
+          100,
+          200,
+          300
+        ],
+        "landCellsWithin300": 3519,
+        "buildableCandidateCellsWithin300": 226,
+        "note": "SOURCE_ANNOTATION_GEOMETRY_ONLY: conf=proposal; Gameplay source IDs, stock, respawn, slope/collision legality are NOT asserted."
+      }
+    ],
+    "spawnCoverage": {
+      "sp_west": {
+        "journeys": 8,
+        "withGeographicRoute": 6,
+        "waterAu": 64.4846,
+        "foodAu": 29.4581,
+        "toolAu": 41.6173,
+        "buildZoneAu": 16.7905,
+        "nearPOIAu": 39.6989,
+        "farPOIAu": 1522.431,
+        "elderApproachAu": 169.4462,
+        "cartCorridorAu": 25.1645
+      },
+      "sp_lake": {
+        "journeys": 8,
+        "withGeographicRoute": 7,
+        "waterAu": 28.628,
+        "foodAu": 46.6931,
+        "toolAu": 31.6228,
+        "buildZoneAu": 10.4314,
+        "nearPOIAu": 37.2022,
+        "farPOIAu": 1110.0414,
+        "elderApproachAu": 62.2896,
+        "cartCorridorAu": 35.7106
+      },
+      "sp_hook": {
+        "journeys": 8,
+        "withGeographicRoute": 7,
+        "waterAu": 42.8048,
+        "foodAu": 36.4005,
+        "toolAu": 37.7359,
+        "buildZoneAu": 0.3548,
+        "nearPOIAu": 40,
+        "farPOIAu": 1229.6748,
+        "elderApproachAu": 369.616,
+        "cartCorridorAu": 56.1538
+      },
+      "sp_gulf": {
+        "journeys": 8,
+        "withGeographicRoute": 6,
+        "waterAu": 92.0385,
+        "foodAu": 13.9985,
+        "toolAu": 26,
+        "buildZoneAu": 12.8853,
+        "nearPOIAu": 46,
+        "farPOIAu": 1123.5889,
+        "elderApproachAu": 128.1601,
+        "cartCorridorAu": 39.8121
+      }
+    }
+  },
+  "journeys": [
+    {
+      "id": "sp_west.starterWater",
+      "category": "STARTER_WATER",
+      "mapTest": "MAP-SPAWN-04",
+      "from": {
+        "id": "sp_west",
+        "at": [
+          372,
+          606
+        ],
+        "sourceRef": "spawns[sp_west].at",
+        "region": "Bờ tây"
+      },
+      "to": {
+        "id": "rs_5i",
+        "at": [
+          373.66456556853143,
+          541.5368819360065
+        ],
+        "sourceRef": "resources[rs_5i].at",
+        "kind": "fresh_water"
+      },
+      "note": "nearest authored fresh_water source",
+      "sourceRefs": [
+        "spawns[sp_west].at",
+        "resources[rs_5i].at"
+      ],
+      "straightAu": 64.4846,
+      "fromSnapAu": 2,
+      "toSnapAu": 2.2656,
+      "fromCell": 18796,
+      "toCell": 16796,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 68.2656,
+      "effectiveFootAu": 66.5156,
+      "effectiveCartAu": 89.5846,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 24.0832,
+        "toSnapAu": 22.8302,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 0,
+        "cartRoadCells": 1,
+        "trailOnlyCells": 0,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 8,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 9
+      },
+      "physicalClearance": [
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.0586
+    },
+    {
+      "id": "sp_west.starterFood",
+      "category": "STARTER_FOOD",
+      "mapTest": "MAP-SPAWN-04",
+      "from": {
+        "id": "sp_west",
+        "at": [
+          372,
+          606
+        ],
+        "sourceRef": "spawns[sp_west].at",
+        "region": "Bờ tây"
+      },
+      "to": {
+        "id": "rs_1s",
+        "at": [
+          352.78072139807045,
+          628.3249042518437
+        ],
+        "sourceRef": "resources[rs_1s].at",
+        "kind": "food"
+      },
+      "note": "nearest authored food/fish/herbs source",
+      "sourceRefs": [
+        "spawns[sp_west].at",
+        "resources[rs_1s].at"
+      ],
+      "straightAu": 29.4581,
+      "fromSnapAu": 2,
+      "toSnapAu": 3.2356,
+      "fromCell": 18796,
+      "toCell": 19544,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 35.863,
+      "effectiveFootAu": 35.863,
+      "effectiveCartAu": 49.8097,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 24.0832,
+        "toSnapAu": 43.2205,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 0,
+        "cartRoadCells": 0,
+        "trailOnlyCells": 0,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 4,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 4
+      },
+      "physicalClearance": [
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.2174
+    },
+    {
+      "id": "sp_west.starterToolMaterial",
+      "category": "STARTER_TOOL",
+      "mapTest": "MAP-SPAWN-04",
+      "from": {
+        "id": "sp_west",
+        "at": [
+          372,
+          606
+        ],
+        "sourceRef": "spawns[sp_west].at",
+        "region": "Bờ tây"
+      },
+      "to": {
+        "id": "rs_72",
+        "at": [
+          396,
+          640
+        ],
+        "sourceRef": "resources[rs_72].at",
+        "kind": "stone"
+      },
+      "note": "nearest authored wood/stone/ore source",
+      "sourceRefs": [
+        "spawns[sp_west].at",
+        "resources[rs_72].at"
+      ],
+      "straightAu": 41.6173,
+      "fromSnapAu": 2,
+      "toSnapAu": 4,
+      "fromCell": 18796,
+      "toCell": 20049,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 55.9411,
+      "effectiveFootAu": 53.4663,
+      "effectiveCartAu": 70.3014,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 24.0832,
+        "toSnapAu": 8.9443,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 0,
+        "cartRoadCells": 1,
+        "trailOnlyCells": 0,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 5,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 6
+      },
+      "physicalClearance": [
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.3442
+    },
+    {
+      "id": "sp_west.starterBuildZone",
+      "category": "STARTER_BUILD",
+      "mapTest": "MAP-SPAWN-04",
+      "from": {
+        "id": "sp_west",
+        "at": [
+          372,
+          606
+        ],
+        "sourceRef": "spawns[sp_west].at",
+        "region": "Bờ tây"
+      },
+      "to": {
+        "id": "bz_westmouth",
+        "at": [
+          386.3848,
+          597.3398
+        ],
+        "sourceRef": "zones[bz_westmouth].ring centroid",
+        "areaAu2": 3323.49
+      },
+      "note": "nearest authored build-zone centroid",
+      "sourceRefs": [
+        "spawns[sp_west].at",
+        "zones[bz_westmouth].ring centroid"
+      ],
+      "straightAu": 16.7905,
+      "fromSnapAu": 2,
+      "toSnapAu": 2.0986,
+      "fromCell": 18796,
+      "toCell": 18548,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 23.4123,
+      "effectiveFootAu": 23.4123,
+      "effectiveCartAu": 32.5171,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 24.0832,
+        "toSnapAu": 9.4784,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 0,
+        "cartRoadCells": 0,
+        "trailOnlyCells": 0,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 3,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 3
+      },
+      "physicalClearance": [
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.3944
+    },
+    {
+      "id": "sp_west.nearPOI",
+      "category": "NEAR_POI",
+      "mapTest": "MAP-SPAWN-04 / MAP-POI-02",
+      "from": {
+        "id": "sp_west",
+        "at": [
+          372,
+          606
+        ],
+        "sourceRef": "spawns[sp_west].at",
+        "region": "Bờ tây"
+      },
+      "to": {
+        "id": "po_evac_west",
+        "at": [
+          342,
+          580
+        ],
+        "sourceRef": "pois[po_evac_west].at",
+        "arche": "evac"
+      },
+      "note": "nearest authored POI",
+      "sourceRefs": [
+        "spawns[sp_west].at",
+        "pois[po_evac_west].at"
+      ],
+      "straightAu": 39.6989,
+      "fromSnapAu": 2,
+      "toSnapAu": 2,
+      "fromCell": 18796,
+      "toCell": 18042,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 45.9411,
+      "effectiveFootAu": 47.032,
+      "effectiveCartAu": 63.8071,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 24.0832,
+        "toSnapAu": 21.2603,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 0,
+        "cartRoadCells": 0,
+        "trailOnlyCells": 0,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 5,
+        "waterCells": 0,
+        "coastCells": 1,
+        "totalCells": 5
+      },
+      "physicalClearance": [
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.1572
+    },
+    {
+      "id": "sp_west.farPOI",
+      "category": "FAR_POI",
+      "mapTest": "MAP-SPAWN-04 / MAP-LOG-03",
+      "from": {
+        "id": "sp_west",
+        "at": [
+          372,
+          606
+        ],
+        "sourceRef": "spawns[sp_west].at",
+        "region": "Bờ tây"
+      },
+      "to": {
+        "id": "po_gullwreck",
+        "at": [
+          1886,
+          446
+        ],
+        "sourceRef": "pois[po_gullwreck].at",
+        "arche": "ruins"
+      },
+      "note": "most distant authored POI by straight-line distance",
+      "sourceRefs": [
+        "spawns[sp_west].at",
+        "pois[po_gullwreck].at"
+      ],
+      "straightAu": 1522.431,
+      "fromSnapAu": 2,
+      "toSnapAu": 2.8284,
+      "fromCell": 18796,
+      "toCell": 13985,
+      "routeStatus": "NO_GEOGRAPHIC_ROUTE__SEPARATE_LAND_COMPONENT__FERRY_OR_BRIDGE_RULE_REQUIRED",
+      "routeAu": null,
+      "effectiveFootAu": null,
+      "effectiveCartAu": null,
+      "cartScenarioApplicable": false,
+      "cartRoadContinuous": false,
+      "cartRoadContinuity": {
+        "continuous": false,
+        "fromCell": 18298,
+        "toCell": -1,
+        "reason": "ENDPOINT_NOT_ON_CART_ROAD"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 2,
+      "cartPassable": false,
+      "composition": null,
+      "physicalClearance": [],
+      "evidence": [],
+      "sameWalkableLandComponent": false,
+      "routeNote": "GEO-01 records 8 landmasses, 12 bridges and roads of kind=ferry. No Gameplay ferry/boat/cargo rule is approved in PR44 HEAD, so this OD is UNRESOLVED and must not be given a fabricated travel time."
+    },
+    {
+      "id": "sp_west.elderApproach",
+      "category": "ELDER_APPROACH",
+      "mapTest": "MAP-U5",
+      "from": {
+        "id": "sp_west",
+        "at": [
+          372,
+          606
+        ],
+        "sourceRef": "spawns[sp_west].at",
+        "region": "Bờ tây"
+      },
+      "to": {
+        "id": "el_atlas",
+        "at": [
+          226,
+          520
+        ],
+        "sourceRef": "elders[el_atlas].approach[]"
+      },
+      "note": "nearest authored Elder approach point",
+      "sourceRefs": [
+        "spawns[sp_west].at",
+        "elders[el_atlas].approach[]"
+      ],
+      "straightAu": 169.4462,
+      "fromSnapAu": 2,
+      "toSnapAu": 4.4721,
+      "fromCell": 18796,
+      "toCell": 16278,
+      "routeStatus": "NO_GEOGRAPHIC_ROUTE__SEPARATE_LAND_COMPONENT__FERRY_OR_BRIDGE_RULE_REQUIRED",
+      "routeAu": null,
+      "effectiveFootAu": null,
+      "effectiveCartAu": null,
+      "cartScenarioApplicable": false,
+      "cartRoadContinuous": false,
+      "cartRoadContinuity": {
+        "continuous": false,
+        "fromCell": 18298,
+        "toCell": -1,
+        "reason": "ENDPOINT_NOT_ON_CART_ROAD"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 3,
+      "cartPassable": false,
+      "composition": null,
+      "physicalClearance": [],
+      "evidence": [],
+      "sameWalkableLandComponent": false,
+      "routeNote": "GEO-01 records 8 landmasses, 12 bridges and roads of kind=ferry. No Gameplay ferry/boat/cargo rule is approved in PR44 HEAD, so this OD is UNRESOLVED and must not be given a fabricated travel time."
+    },
+    {
+      "id": "sp_west.cartCorridor",
+      "category": "CART_CORRIDOR",
+      "mapTest": "MAP-LOG-03",
+      "from": {
+        "id": "sp_west",
+        "at": [
+          372,
+          606
+        ],
+        "sourceRef": "spawns[sp_west].at",
+        "region": "Bờ tây"
+      },
+      "to": {
+        "id": "rd_r",
+        "at": [
+          395.5,
+          597
+        ],
+        "sourceRef": "roads[rd_r].points[]",
+        "kind": "cart"
+      },
+      "note": "nearest authored cart-road vertex (trails are excluded)",
+      "sourceRefs": [
+        "spawns[sp_west].at",
+        "roads[rd_r].points[]"
+      ],
+      "straightAu": 25.1645,
+      "fromSnapAu": 2,
+      "toSnapAu": 1.118,
+      "fromCell": 18796,
+      "toCell": 18549,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 30.4317,
+      "effectiveFootAu": 27.9568,
+      "effectiveCartAu": 34.8717,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 24.0832,
+        "toSnapAu": 1.118,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 0,
+        "cartRoadCells": 1,
+        "trailOnlyCells": 0,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 3,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 4
+      },
+      "physicalClearance": [
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.2093
+    },
+    {
+      "id": "sp_lake.starterWater",
+      "category": "STARTER_WATER",
+      "mapTest": "MAP-SPAWN-04",
+      "from": {
+        "id": "sp_lake",
+        "at": [
+          790,
+          622
+        ],
+        "sourceRef": "spawns[sp_lake].at",
+        "region": "Thung lũng hồ"
+      },
+      "to": {
+        "id": "rs_4j",
+        "at": [
+          780.2274708290307,
+          648.9083340606626
+        ],
+        "sourceRef": "resources[rs_4j].at",
+        "kind": "fresh_water"
+      },
+      "note": "nearest authored fresh_water source",
+      "sourceRefs": [
+        "spawns[sp_lake].at",
+        "resources[rs_4j].at"
+      ],
+      "straightAu": 28.628,
+      "fromSnapAu": 2.8284,
+      "toSnapAu": 3.1,
+      "fromCell": 19348,
+      "toCell": 20347,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 143.8695,
+      "effectiveFootAu": 142.4301,
+      "effectiveCartAu": 233.6018,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": false,
+      "cartRoadContinuity": {
+        "continuous": false,
+        "fromComponent": 0,
+        "toComponent": 2,
+        "fromSnapAu": 26.0768,
+        "toSnapAu": 37.458,
+        "reason": "CART_ROAD_NETWORK_IS_FRAGMENTED"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 0,
+        "cartRoadCells": 6,
+        "trailOnlyCells": 0,
+        "bridgeCells": 1,
+        "fordCells": 0,
+        "offRoadCells": 10,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 17
+      },
+      "physicalClearance": [
+        "BRIDGE_SWEPT_CLEARANCE_UNVALIDATED",
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 5.0255
+    },
+    {
+      "id": "sp_lake.starterFood",
+      "category": "STARTER_FOOD",
+      "mapTest": "MAP-SPAWN-04",
+      "from": {
+        "id": "sp_lake",
+        "at": [
+          790,
+          622
+        ],
+        "sourceRef": "spawns[sp_lake].at",
+        "region": "Thung lũng hồ"
+      },
+      "to": {
+        "id": "rs_1l",
+        "at": [
+          771.21433792077,
+          579.2525677774101
+        ],
+        "sourceRef": "resources[rs_1l].at",
+        "kind": "food"
+      },
+      "note": "nearest authored food/fish/herbs source",
+      "sourceRefs": [
+        "spawns[sp_lake].at",
+        "resources[rs_1l].at"
+      ],
+      "straightAu": 46.6931,
+      "fromSnapAu": 2.8284,
+      "toSnapAu": 1.0844,
+      "fromCell": 19348,
+      "toCell": 18096,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 50.5402,
+      "effectiveFootAu": 50.67,
+      "effectiveCartAu": 78.6732,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 26.0768,
+        "toSnapAu": 16.7659,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 0,
+        "cartRoadCells": 1,
+        "trailOnlyCells": 0,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 5,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 6
+      },
+      "physicalClearance": [
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.0824
+    },
+    {
+      "id": "sp_lake.starterToolMaterial",
+      "category": "STARTER_TOOL",
+      "mapTest": "MAP-SPAWN-04",
+      "from": {
+        "id": "sp_lake",
+        "at": [
+          790,
+          622
+        ],
+        "sourceRef": "spawns[sp_lake].at",
+        "region": "Thung lũng hồ"
+      },
+      "to": {
+        "id": "rs_70",
+        "at": [
+          760,
+          612
+        ],
+        "sourceRef": "resources[rs_70].at",
+        "kind": "stone"
+      },
+      "note": "nearest authored wood/stone/ore source",
+      "sourceRefs": [
+        "spawns[sp_lake].at",
+        "resources[rs_70].at"
+      ],
+      "straightAu": 31.6228,
+      "fromSnapAu": 2.8284,
+      "toSnapAu": 4,
+      "fromCell": 19348,
+      "toCell": 19095,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 34.1421,
+      "effectiveFootAu": 38.5885,
+      "effectiveCartAu": 74.5165,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 26.0768,
+        "toSnapAu": 8.9443,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 0,
+        "cartRoadCells": 0,
+        "trailOnlyCells": 0,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 4,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 4
+      },
+      "physicalClearance": [
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.0797
+    },
+    {
+      "id": "sp_lake.starterBuildZone",
+      "category": "STARTER_BUILD",
+      "mapTest": "MAP-SPAWN-04",
+      "from": {
+        "id": "sp_lake",
+        "at": [
+          790,
+          622
+        ],
+        "sourceRef": "spawns[sp_lake].at",
+        "region": "Thung lũng hồ"
+      },
+      "to": {
+        "id": "bz_greywater",
+        "at": [
+          790.8815,
+          611.6059
+        ],
+        "sourceRef": "zones[bz_greywater].ring centroid",
+        "areaAu2": 5707.4164
+      },
+      "note": "nearest authored build-zone centroid",
+      "sourceRefs": [
+        "spawns[sp_lake].at",
+        "zones[bz_greywater].ring centroid"
+      ],
+      "straightAu": 10.4314,
+      "fromSnapAu": 2.8284,
+      "toSnapAu": 2.9083,
+      "fromCell": 19348,
+      "toCell": 19098,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 13.7367,
+      "effectiveFootAu": 15.039,
+      "effectiveCartAu": 27.0153,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 26.0768,
+        "toSnapAu": 15.8697,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 0,
+        "cartRoadCells": 0,
+        "trailOnlyCells": 0,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 2,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 2
+      },
+      "physicalClearance": [
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.3169
+    },
+    {
+      "id": "sp_lake.nearPOI",
+      "category": "NEAR_POI",
+      "mapTest": "MAP-SPAWN-04 / MAP-POI-02",
+      "from": {
+        "id": "sp_lake",
+        "at": [
+          790,
+          622
+        ],
+        "sourceRef": "spawns[sp_lake].at",
+        "region": "Thung lũng hồ"
+      },
+      "to": {
+        "id": "po_greywater",
+        "at": [
+          812,
+          592
+        ],
+        "sourceRef": "pois[po_greywater].at",
+        "arche": "village"
+      },
+      "note": "nearest authored POI",
+      "sourceRefs": [
+        "spawns[sp_lake].at",
+        "pois[po_greywater].at"
+      ],
+      "straightAu": 37.2022,
+      "fromSnapAu": 2.8284,
+      "toSnapAu": 4,
+      "fromCell": 19348,
+      "toCell": 18601,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 40.7695,
+      "effectiveFootAu": 41.9782,
+      "effectiveCartAu": 71.6776,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 26.0768,
+        "toSnapAu": 4,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 0,
+        "cartRoadCells": 1,
+        "trailOnlyCells": 0,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 3,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 4
+      },
+      "physicalClearance": [
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.0959
+    },
+    {
+      "id": "sp_lake.farPOI",
+      "category": "FAR_POI",
+      "mapTest": "MAP-SPAWN-04 / MAP-LOG-03",
+      "from": {
+        "id": "sp_lake",
+        "at": [
+          790,
+          622
+        ],
+        "sourceRef": "spawns[sp_lake].at",
+        "region": "Thung lũng hồ"
+      },
+      "to": {
+        "id": "po_gullwreck",
+        "at": [
+          1886,
+          446
+        ],
+        "sourceRef": "pois[po_gullwreck].at",
+        "arche": "ruins"
+      },
+      "note": "most distant authored POI by straight-line distance",
+      "sourceRefs": [
+        "spawns[sp_lake].at",
+        "pois[po_gullwreck].at"
+      ],
+      "straightAu": 1110.0414,
+      "fromSnapAu": 2.8284,
+      "toSnapAu": 2.8284,
+      "fromCell": 19348,
+      "toCell": 13985,
+      "routeStatus": "NO_GEOGRAPHIC_ROUTE__SEPARATE_LAND_COMPONENT__FERRY_OR_BRIDGE_RULE_REQUIRED",
+      "routeAu": null,
+      "effectiveFootAu": null,
+      "effectiveCartAu": null,
+      "cartScenarioApplicable": false,
+      "cartRoadContinuous": false,
+      "cartRoadContinuity": {
+        "continuous": false,
+        "fromCell": 18598,
+        "toCell": -1,
+        "reason": "ENDPOINT_NOT_ON_CART_ROAD"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 2,
+      "cartPassable": false,
+      "composition": null,
+      "physicalClearance": [],
+      "evidence": [],
+      "sameWalkableLandComponent": false,
+      "routeNote": "GEO-01 records 8 landmasses, 12 bridges and roads of kind=ferry. No Gameplay ferry/boat/cargo rule is approved in PR44 HEAD, so this OD is UNRESOLVED and must not be given a fabricated travel time."
+    },
+    {
+      "id": "sp_lake.elderApproach",
+      "category": "ELDER_APPROACH",
+      "mapTest": "MAP-U5",
+      "from": {
+        "id": "sp_lake",
+        "at": [
+          790,
+          622
+        ],
+        "sourceRef": "spawns[sp_lake].at",
+        "region": "Thung lũng hồ"
+      },
+      "to": {
+        "id": "el_aion",
+        "at": [
+          748,
+          668
+        ],
+        "sourceRef": "elders[el_aion].approach[]"
+      },
+      "note": "nearest authored Elder approach point",
+      "sourceRefs": [
+        "spawns[sp_lake].at",
+        "elders[el_aion].approach[]"
+      ],
+      "straightAu": 62.2896,
+      "fromSnapAu": 2.8284,
+      "toSnapAu": 0,
+      "fromCell": 19348,
+      "toCell": 20843,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 108.7695,
+      "effectiveFootAu": 97.8042,
+      "effectiveCartAu": 134.4873,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": false,
+      "cartRoadContinuity": {
+        "continuous": false,
+        "fromComponent": 0,
+        "toComponent": 2,
+        "fromSnapAu": 26.0768,
+        "toSnapAu": 0,
+        "reason": "CART_ROAD_NETWORK_IS_FRAGMENTED"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 0,
+        "cartRoadCells": 7,
+        "trailOnlyCells": 0,
+        "bridgeCells": 1,
+        "fordCells": 0,
+        "offRoadCells": 5,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 13
+      },
+      "physicalClearance": [
+        "BRIDGE_SWEPT_CLEARANCE_UNVALIDATED",
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.7462
+    },
+    {
+      "id": "sp_lake.cartCorridor",
+      "category": "CART_CORRIDOR",
+      "mapTest": "MAP-LOG-03",
+      "from": {
+        "id": "sp_lake",
+        "at": [
+          790,
+          622
+        ],
+        "sourceRef": "spawns[sp_lake].at",
+        "region": "Thung lũng hồ"
+      },
+      "to": {
+        "id": "rd_b",
+        "at": [
+          765,
+          596.5
+        ],
+        "sourceRef": "roads[rd_b].points[]",
+        "kind": "cart"
+      },
+      "note": "nearest authored cart-road vertex (trails are excluded)",
+      "sourceRefs": [
+        "spawns[sp_lake].at",
+        "roads[rd_b].points[]"
+      ],
+      "straightAu": 35.7106,
+      "fromSnapAu": 2.8284,
+      "toSnapAu": 1.118,
+      "fromCell": 19348,
+      "toCell": 18595,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 37.8875,
+      "effectiveFootAu": 39.0962,
+      "effectiveCartAu": 67.6748,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 26.0768,
+        "toSnapAu": 1.118,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 0,
+        "cartRoadCells": 1,
+        "trailOnlyCells": 0,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 3,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 4
+      },
+      "physicalClearance": [
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.061
+    },
+    {
+      "id": "sp_hook.starterWater",
+      "category": "STARTER_WATER",
+      "mapTest": "MAP-SPAWN-04",
+      "from": {
+        "id": "sp_hook",
+        "at": [
+          1282,
+          392
+        ],
+        "sourceRef": "spawns[sp_hook].at",
+        "region": "Bán đảo Hook"
+      },
+      "to": {
+        "id": "rs_6i",
+        "at": [
+          1263.4398481852288,
+          353.42838117009876
+        ],
+        "sourceRef": "resources[rs_6i].at",
+        "kind": "fresh_water"
+      },
+      "note": "nearest authored fresh_water source",
+      "sourceRefs": [
+        "spawns[sp_hook].at",
+        "resources[rs_6i].at"
+      ],
+      "straightAu": 42.8048,
+      "fromSnapAu": 4.4721,
+      "toSnapAu": 5.2353,
+      "fromCell": 12410,
+      "toCell": 11158,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 290.8445,
+      "effectiveFootAu": 268.9244,
+      "effectiveCartAu": 333.3106,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 52.345,
+        "toSnapAu": 35.7052,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 1,
+        "cartRoadCells": 18,
+        "trailOnlyCells": 1,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 13,
+        "waterCells": 0,
+        "coastCells": 2,
+        "totalCells": 32
+      },
+      "physicalClearance": [
+        "AUTHORED_TRAIL_SEGMENTS__NOT_CART_PASSABLE",
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 6.7947
+    },
+    {
+      "id": "sp_hook.starterFood",
+      "category": "STARTER_FOOD",
+      "mapTest": "MAP-SPAWN-04",
+      "from": {
+        "id": "sp_hook",
+        "at": [
+          1282,
+          392
+        ],
+        "sourceRef": "spawns[sp_hook].at",
+        "region": "Bán đảo Hook"
+      },
+      "to": {
+        "id": "rs_5m",
+        "at": [
+          1269,
+          358
+        ],
+        "sourceRef": "resources[rs_5m].at",
+        "kind": "fish"
+      },
+      "note": "nearest authored food/fish/herbs source",
+      "sourceRefs": [
+        "spawns[sp_hook].at",
+        "resources[rs_5m].at"
+      ],
+      "straightAu": 36.4005,
+      "fromSnapAu": 4.4721,
+      "toSnapAu": 2.2361,
+      "fromCell": 12410,
+      "toCell": 11158,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 287.8453,
+      "effectiveFootAu": 265.9252,
+      "effectiveCartAu": 329.145,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 52.345,
+        "toSnapAu": 34.7131,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 1,
+        "cartRoadCells": 18,
+        "trailOnlyCells": 1,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 13,
+        "waterCells": 0,
+        "coastCells": 2,
+        "totalCells": 32
+      },
+      "physicalClearance": [
+        "AUTHORED_TRAIL_SEGMENTS__NOT_CART_PASSABLE",
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 7.9077
+    },
+    {
+      "id": "sp_hook.starterToolMaterial",
+      "category": "STARTER_TOOL",
+      "mapTest": "MAP-SPAWN-04",
+      "from": {
+        "id": "sp_hook",
+        "at": [
+          1282,
+          392
+        ],
+        "sourceRef": "spawns[sp_hook].at",
+        "region": "Bán đảo Hook"
+      },
+      "to": {
+        "id": "rs_6y",
+        "at": [
+          1262,
+          424
+        ],
+        "sourceRef": "resources[rs_6y].at",
+        "kind": "stone"
+      },
+      "note": "nearest authored wood/stone/ore source",
+      "sourceRefs": [
+        "spawns[sp_hook].at",
+        "resources[rs_6y].at"
+      ],
+      "straightAu": 37.7359,
+      "fromSnapAu": 4.4721,
+      "toSnapAu": 4.4721,
+      "fromCell": 12410,
+      "toCell": 13407,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 50.8853,
+      "effectiveFootAu": 54.0294,
+      "effectiveCartAu": 89.8345,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 52.345,
+        "toSnapAu": 15.6205,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 0,
+        "cartRoadCells": 0,
+        "trailOnlyCells": 0,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 5,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 5
+      },
+      "physicalClearance": [
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.3485
+    },
+    {
+      "id": "sp_hook.starterBuildZone",
+      "category": "STARTER_BUILD",
+      "mapTest": "MAP-SPAWN-04",
+      "from": {
+        "id": "sp_hook",
+        "at": [
+          1282,
+          392
+        ],
+        "sourceRef": "spawns[sp_hook].at",
+        "region": "Bán đảo Hook"
+      },
+      "to": {
+        "id": "bz_hook",
+        "at": [
+          1281.6562,
+          391.9122
+        ],
+        "sourceRef": "zones[bz_hook].ring centroid",
+        "areaAu2": 4079.5653
+      },
+      "note": "nearest authored build-zone centroid",
+      "sourceRefs": [
+        "spawns[sp_hook].at",
+        "zones[bz_hook].ring centroid"
+      ],
+      "straightAu": 0.3548,
+      "fromSnapAu": 4.4721,
+      "toSnapAu": 4.5606,
+      "fromCell": 12410,
+      "toCell": 12160,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 17.0327,
+      "effectiveFootAu": 17.0327,
+      "effectiveCartAu": 23.6565,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 52.345,
+        "toSnapAu": 52.1567,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 0,
+        "cartRoadCells": 0,
+        "trailOnlyCells": 0,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 2,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 2
+      },
+      "physicalClearance": [
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 48.0065
+    },
+    {
+      "id": "sp_hook.nearPOI",
+      "category": "NEAR_POI",
+      "mapTest": "MAP-SPAWN-04 / MAP-POI-02",
+      "from": {
+        "id": "sp_hook",
+        "at": [
+          1282,
+          392
+        ],
+        "sourceRef": "spawns[sp_hook].at",
+        "region": "Bán đảo Hook"
+      },
+      "to": {
+        "id": "po_mere",
+        "at": [
+          1250,
+          368
+        ],
+        "sourceRef": "pois[po_mere].at",
+        "arche": "pier"
+      },
+      "note": "nearest authored POI",
+      "sourceRefs": [
+        "spawns[sp_hook].at",
+        "pois[po_mere].at"
+      ],
+      "straightAu": 40,
+      "fromSnapAu": 4.4721,
+      "toSnapAu": 4.4721,
+      "fromCell": 12410,
+      "toCell": 11656,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 55.5716,
+      "effectiveFootAu": 51.3467,
+      "effectiveCartAu": 77.1828,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 52.345,
+        "toSnapAu": 46.8615,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 2,
+        "cartRoadCells": 0,
+        "trailOnlyCells": 2,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 4,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 6
+      },
+      "physicalClearance": [
+        "AUTHORED_TRAIL_SEGMENTS__NOT_CART_PASSABLE",
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.3893
+    },
+    {
+      "id": "sp_hook.farPOI",
+      "category": "FAR_POI",
+      "mapTest": "MAP-SPAWN-04 / MAP-LOG-03",
+      "from": {
+        "id": "sp_hook",
+        "at": [
+          1282,
+          392
+        ],
+        "sourceRef": "spawns[sp_hook].at",
+        "region": "Bán đảo Hook"
+      },
+      "to": {
+        "id": "po_netcamp",
+        "at": [
+          140,
+          848
+        ],
+        "sourceRef": "pois[po_netcamp].at",
+        "arche": "hamlet"
+      },
+      "note": "most distant authored POI by straight-line distance",
+      "sourceRefs": [
+        "spawns[sp_hook].at",
+        "pois[po_netcamp].at"
+      ],
+      "straightAu": 1229.6748,
+      "fromSnapAu": 4.4721,
+      "toSnapAu": 4,
+      "fromCell": 12410,
+      "toCell": 26517,
+      "routeStatus": "NO_GEOGRAPHIC_ROUTE__SEPARATE_LAND_COMPONENT__FERRY_OR_BRIDGE_RULE_REQUIRED",
+      "routeAu": null,
+      "effectiveFootAu": null,
+      "effectiveCartAu": null,
+      "cartScenarioApplicable": false,
+      "cartRoadContinuous": false,
+      "cartRoadContinuity": {
+        "continuous": false,
+        "fromCell": 13405,
+        "toCell": -1,
+        "reason": "ENDPOINT_NOT_ON_CART_ROAD"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 6,
+      "cartPassable": false,
+      "composition": null,
+      "physicalClearance": [],
+      "evidence": [],
+      "sameWalkableLandComponent": false,
+      "routeNote": "GEO-01 records 8 landmasses, 12 bridges and roads of kind=ferry. No Gameplay ferry/boat/cargo rule is approved in PR44 HEAD, so this OD is UNRESOLVED and must not be given a fabricated travel time."
+    },
+    {
+      "id": "sp_hook.elderApproach",
+      "category": "ELDER_APPROACH",
+      "mapTest": "MAP-U5",
+      "from": {
+        "id": "sp_hook",
+        "at": [
+          1282,
+          392
+        ],
+        "sourceRef": "spawns[sp_hook].at",
+        "region": "Bán đảo Hook"
+      },
+      "to": {
+        "id": "el_argus",
+        "at": [
+          936,
+          262
+        ],
+        "sourceRef": "elders[el_argus].approach[]"
+      },
+      "note": "nearest authored Elder approach point",
+      "sourceRefs": [
+        "spawns[sp_hook].at",
+        "elders[el_argus].approach[]"
+      ],
+      "straightAu": 369.616,
+      "fromSnapAu": 4.4721,
+      "toSnapAu": 4.4721,
+      "fromCell": 12410,
+      "toCell": 8117,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 425.2772,
+      "effectiveFootAu": 355.1257,
+      "effectiveCartAu": 400.1001,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 52.345,
+        "toSnapAu": 4.4721,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 1,
+        "cartRoadCells": 35,
+        "trailOnlyCells": 1,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 10,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 46
+      },
+      "physicalClearance": [
+        "AUTHORED_TRAIL_SEGMENTS__NOT_CART_PASSABLE",
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.1506
+    },
+    {
+      "id": "sp_hook.cartCorridor",
+      "category": "CART_CORRIDOR",
+      "mapTest": "MAP-LOG-03",
+      "from": {
+        "id": "sp_hook",
+        "at": [
+          1282,
+          392
+        ],
+        "sourceRef": "spawns[sp_hook].at",
+        "region": "Bán đảo Hook"
+      },
+      "to": {
+        "id": "rd_8",
+        "at": [
+          1258.5,
+          443
+        ],
+        "sourceRef": "roads[rd_8].points[]",
+        "kind": "cart"
+      },
+      "note": "nearest authored cart-road vertex (trails are excluded)",
+      "sourceRefs": [
+        "spawns[sp_hook].at",
+        "roads[rd_8].points[]"
+      ],
+      "straightAu": 56.1538,
+      "fromSnapAu": 4.4721,
+      "toSnapAu": 1.8028,
+      "fromCell": 12410,
+      "toCell": 13907,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 64.216,
+      "effectiveFootAu": 65.6481,
+      "effectiveCartAu": 105.6039,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 52.345,
+        "toSnapAu": 1.8028,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 0,
+        "cartRoadCells": 1,
+        "trailOnlyCells": 0,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 6,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 7
+      },
+      "physicalClearance": [
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.1436
+    },
+    {
+      "id": "sp_gulf.starterWater",
+      "category": "STARTER_WATER",
+      "mapTest": "MAP-SPAWN-04",
+      "from": {
+        "id": "sp_gulf",
+        "at": [
+          872,
+          930
+        ],
+        "sourceRef": "spawns[sp_gulf].at",
+        "region": "Vịnh phía tây"
+      },
+      "to": {
+        "id": "rs_53",
+        "at": [
+          963.1682948234286,
+          917.3733125364203
+        ],
+        "sourceRef": "resources[rs_53].at",
+        "kind": "fresh_water"
+      },
+      "note": "nearest authored fresh_water source",
+      "sourceRefs": [
+        "spawns[sp_gulf].at",
+        "resources[rs_53].at"
+      ],
+      "straightAu": 92.0385,
+      "fromSnapAu": 4.4721,
+      "toSnapAu": 17.3932,
+      "fromCell": 29109,
+      "toCell": 28120,
+      "routeStatus": "NO_GEOGRAPHIC_ROUTE__SEPARATE_LAND_COMPONENT__FERRY_OR_BRIDGE_RULE_REQUIRED",
+      "routeAu": null,
+      "effectiveFootAu": null,
+      "effectiveCartAu": null,
+      "cartScenarioApplicable": false,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 38.2099,
+        "toSnapAu": 47.6315,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 7,
+      "cartPassable": false,
+      "composition": null,
+      "physicalClearance": [],
+      "evidence": [],
+      "sameWalkableLandComponent": false,
+      "routeNote": "GEO-01 records 8 landmasses, 12 bridges and roads of kind=ferry. No Gameplay ferry/boat/cargo rule is approved in PR44 HEAD, so this OD is UNRESOLVED and must not be given a fabricated travel time."
+    },
+    {
+      "id": "sp_gulf.starterFood",
+      "category": "STARTER_FOOD",
+      "mapTest": "MAP-SPAWN-04",
+      "from": {
+        "id": "sp_gulf",
+        "at": [
+          872,
+          930
+        ],
+        "sourceRef": "spawns[sp_gulf].at",
+        "region": "Vịnh phía tây"
+      },
+      "to": {
+        "id": "rs_3o",
+        "at": [
+          866.5069692973047,
+          917.1243010237813
+        ],
+        "sourceRef": "resources[rs_3o].at",
+        "kind": "food"
+      },
+      "note": "nearest authored food/fish/herbs source",
+      "sourceRefs": [
+        "spawns[sp_gulf].at",
+        "resources[rs_3o].at"
+      ],
+      "straightAu": 13.9985,
+      "fromSnapAu": 4.4721,
+      "toSnapAu": 1.869,
+      "fromCell": 29109,
+      "toCell": 28608,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 25.6548,
+      "effectiveFootAu": 25.6548,
+      "effectiveCartAu": 35.6317,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 38.2099,
+        "toSnapAu": 41.5083,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 0,
+        "cartRoadCells": 0,
+        "trailOnlyCells": 0,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 3,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 3
+      },
+      "physicalClearance": [
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.8327
+    },
+    {
+      "id": "sp_gulf.starterToolMaterial",
+      "category": "STARTER_TOOL",
+      "mapTest": "MAP-SPAWN-04",
+      "from": {
+        "id": "sp_gulf",
+        "at": [
+          872,
+          930
+        ],
+        "sourceRef": "spawns[sp_gulf].at",
+        "region": "Vịnh phía tây"
+      },
+      "to": {
+        "id": "rs_74",
+        "at": [
+          872,
+          904
+        ],
+        "sourceRef": "resources[rs_74].at",
+        "kind": "stone"
+      },
+      "note": "nearest authored wood/stone/ore source",
+      "sourceRefs": [
+        "spawns[sp_gulf].at",
+        "resources[rs_74].at"
+      ],
+      "straightAu": 26,
+      "fromSnapAu": 4.4721,
+      "toSnapAu": 5.6569,
+      "fromCell": 29109,
+      "toCell": 28359,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 34.129,
+      "effectiveFootAu": 34.129,
+      "effectiveCartAu": 47.4014,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 38.2099,
+        "toSnapAu": 36.2215,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 0,
+        "cartRoadCells": 0,
+        "trailOnlyCells": 0,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 4,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 4
+      },
+      "physicalClearance": [
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.3127
+    },
+    {
+      "id": "sp_gulf.starterBuildZone",
+      "category": "STARTER_BUILD",
+      "mapTest": "MAP-SPAWN-04",
+      "from": {
+        "id": "sp_gulf",
+        "at": [
+          872,
+          930
+        ],
+        "sourceRef": "spawns[sp_gulf].at",
+        "region": "Vịnh phía tây"
+      },
+      "to": {
+        "id": "bz_gulfwest",
+        "at": [
+          879.8571,
+          919.7874
+        ],
+        "sourceRef": "zones[bz_gulfwest].ring centroid",
+        "areaAu2": 4647.5514
+      },
+      "note": "nearest authored build-zone centroid",
+      "sourceRefs": [
+        "spawns[sp_gulf].at",
+        "zones[bz_gulfwest].ring centroid"
+      ],
+      "straightAu": 12.8853,
+      "fromSnapAu": 4.4721,
+      "toSnapAu": 5.4057,
+      "fromCell": 29109,
+      "toCell": 28609,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 25.8778,
+      "effectiveFootAu": 25.8778,
+      "effectiveCartAu": 35.9414,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 38.2099,
+        "toSnapAu": 28.3966,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 0,
+        "cartRoadCells": 0,
+        "trailOnlyCells": 0,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 3,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 3
+      },
+      "physicalClearance": [
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 2.0083
+    },
+    {
+      "id": "sp_gulf.nearPOI",
+      "category": "NEAR_POI",
+      "mapTest": "MAP-SPAWN-04 / MAP-POI-02",
+      "from": {
+        "id": "sp_gulf",
+        "at": [
+          872,
+          930
+        ],
+        "sourceRef": "spawns[sp_gulf].at",
+        "region": "Vịnh phía tây"
+      },
+      "to": {
+        "id": "po_westbank",
+        "at": [
+          918,
+          930
+        ],
+        "sourceRef": "pois[po_westbank].at",
+        "arche": "pier"
+      },
+      "note": "nearest authored POI",
+      "sourceRefs": [
+        "spawns[sp_gulf].at",
+        "pois[po_westbank].at"
+      ],
+      "straightAu": 46,
+      "fromSnapAu": 4.4721,
+      "toSnapAu": 2.8284,
+      "fromCell": 29109,
+      "toCell": 29114,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 47.3005,
+      "effectiveFootAu": 45.5505,
+      "effectiveCartAu": 60.4664,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 38.2099,
+        "toSnapAu": 2.8284,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 0,
+        "cartRoadCells": 1,
+        "trailOnlyCells": 0,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 5,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 6
+      },
+      "physicalClearance": [
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.0283
+    },
+    {
+      "id": "sp_gulf.farPOI",
+      "category": "FAR_POI",
+      "mapTest": "MAP-SPAWN-04 / MAP-LOG-03",
+      "from": {
+        "id": "sp_gulf",
+        "at": [
+          872,
+          930
+        ],
+        "sourceRef": "spawns[sp_gulf].at",
+        "region": "Vịnh phía tây"
+      },
+      "to": {
+        "id": "po_gullwreck",
+        "at": [
+          1886,
+          446
+        ],
+        "sourceRef": "pois[po_gullwreck].at",
+        "arche": "ruins"
+      },
+      "note": "most distant authored POI by straight-line distance",
+      "sourceRefs": [
+        "spawns[sp_gulf].at",
+        "pois[po_gullwreck].at"
+      ],
+      "straightAu": 1123.5889,
+      "fromSnapAu": 4.4721,
+      "toSnapAu": 2.8284,
+      "fromCell": 29109,
+      "toCell": 13985,
+      "routeStatus": "NO_GEOGRAPHIC_ROUTE__SEPARATE_LAND_COMPONENT__FERRY_OR_BRIDGE_RULE_REQUIRED",
+      "routeAu": null,
+      "effectiveFootAu": null,
+      "effectiveCartAu": null,
+      "cartScenarioApplicable": false,
+      "cartRoadContinuous": false,
+      "cartRoadContinuity": {
+        "continuous": false,
+        "fromCell": 29862,
+        "toCell": -1,
+        "reason": "ENDPOINT_NOT_ON_CART_ROAD"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 2,
+      "cartPassable": false,
+      "composition": null,
+      "physicalClearance": [],
+      "evidence": [],
+      "sameWalkableLandComponent": false,
+      "routeNote": "GEO-01 records 8 landmasses, 12 bridges and roads of kind=ferry. No Gameplay ferry/boat/cargo rule is approved in PR44 HEAD, so this OD is UNRESOLVED and must not be given a fabricated travel time."
+    },
+    {
+      "id": "sp_gulf.elderApproach",
+      "category": "ELDER_APPROACH",
+      "mapTest": "MAP-U5",
+      "from": {
+        "id": "sp_gulf",
+        "at": [
+          872,
+          930
+        ],
+        "sourceRef": "spawns[sp_gulf].at",
+        "region": "Vịnh phía tây"
+      },
+      "to": {
+        "id": "el_anubis",
+        "at": [
+          752,
+          975
+        ],
+        "sourceRef": "elders[el_anubis].approach[]"
+      },
+      "note": "nearest authored Elder approach point",
+      "sourceRefs": [
+        "spawns[sp_gulf].at",
+        "elders[el_anubis].approach[]"
+      ],
+      "straightAu": 128.1601,
+      "fromSnapAu": 4.4721,
+      "toSnapAu": 5,
+      "fromCell": 29109,
+      "toCell": 30344,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 146.0406,
+      "effectiveFootAu": 126.0658,
+      "effectiveCartAu": 143.1521,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 38.2099,
+        "toSnapAu": 5,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 0,
+        "cartRoadCells": 11,
+        "trailOnlyCells": 0,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 5,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 16
+      },
+      "physicalClearance": [
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.1395
+    },
+    {
+      "id": "sp_gulf.cartCorridor",
+      "category": "CART_CORRIDOR",
+      "mapTest": "MAP-LOG-03",
+      "from": {
+        "id": "sp_gulf",
+        "at": [
+          872,
+          930
+        ],
+        "sourceRef": "spawns[sp_gulf].at",
+        "region": "Vịnh phía tây"
+      },
+      "to": {
+        "id": "rd_n",
+        "at": [
+          908,
+          913
+        ],
+        "sourceRef": "roads[rd_n].points[]",
+        "kind": "cart"
+      },
+      "note": "nearest authored cart-road vertex (trails are excluded)",
+      "sourceRefs": [
+        "spawns[sp_gulf].at",
+        "roads[rd_n].points[]"
+      ],
+      "straightAu": 39.8121,
+      "fromSnapAu": 4.4721,
+      "toSnapAu": 3,
+      "fromCell": 29109,
+      "toCell": 28613,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 46.0995,
+      "effectiveFootAu": 43.6246,
+      "effectiveCartAu": 56.6325,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 38.2099,
+        "toSnapAu": 3,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 0,
+        "cartRoadCells": 1,
+        "trailOnlyCells": 0,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 4,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 5
+      },
+      "physicalClearance": [
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.1579
+    },
+    {
+      "id": "home.bz_silver",
+      "category": "HOME_ALTERNATIVE",
+      "mapTest": "MAP-HOME-03",
+      "from": {
+        "id": "sp_lake",
+        "at": [
+          790,
+          622
+        ],
+        "sourceRef": "spawns[sp_lake].at / corridor.v1.json spawnSelection.chosen"
+      },
+      "to": {
+        "id": "bz_silver",
+        "at": [
+          698.6765,
+          668.7569
+        ],
+        "sourceRef": "zones[bz_silver].ring centroid",
+        "areaAu2": 3285.1819
+      },
+      "note": "one of three alternative player-chosen home zones; legality NOT asserted",
+      "sourceRefs": [
+        "spawns[sp_lake].at / corridor.v1.json spawnSelection.chosen",
+        "zones[bz_silver].ring centroid"
+      ],
+      "straightAu": 102.5972,
+      "fromSnapAu": 2.8284,
+      "toSnapAu": 1.5246,
+      "fromCell": 19348,
+      "toCell": 20837,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 126.2941,
+      "effectiveFootAu": 125.3024,
+      "effectiveCartAu": 206.4838,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": false,
+      "cartRoadContinuity": {
+        "continuous": false,
+        "fromComponent": 0,
+        "toComponent": 2,
+        "fromSnapAu": 26.0768,
+        "toSnapAu": 34.4549,
+        "reason": "CART_ROAD_NETWORK_IS_FRAGMENTED"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 0,
+        "cartRoadCells": 5,
+        "trailOnlyCells": 0,
+        "bridgeCells": 1,
+        "fordCells": 0,
+        "offRoadCells": 9,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 15
+      },
+      "physicalClearance": [
+        "BRIDGE_SWEPT_CLEARANCE_UNVALIDATED",
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.231
+    },
+    {
+      "id": "home.bz_hook",
+      "category": "HOME_ALTERNATIVE",
+      "mapTest": "MAP-HOME-03",
+      "from": {
+        "id": "sp_lake",
+        "at": [
+          790,
+          622
+        ],
+        "sourceRef": "spawns[sp_lake].at / corridor.v1.json spawnSelection.chosen"
+      },
+      "to": {
+        "id": "bz_hook",
+        "at": [
+          1281.6562,
+          391.9122
+        ],
+        "sourceRef": "zones[bz_hook].ring centroid",
+        "areaAu2": 4079.5653
+      },
+      "note": "one of three alternative player-chosen home zones; legality NOT asserted",
+      "sourceRefs": [
+        "spawns[sp_lake].at / corridor.v1.json spawnSelection.chosen",
+        "zones[bz_hook].ring centroid"
+      ],
+      "straightAu": 542.8317,
+      "fromSnapAu": 2.8284,
+      "toSnapAu": 4.5606,
+      "fromCell": 19348,
+      "toCell": 12160,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 814.114,
+      "effectiveFootAu": 705.9313,
+      "effectiveCartAu": null,
+      "cartScenarioApplicable": false,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 26.0768,
+        "toSnapAu": 52.1567,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 22,
+        "cartRoadCells": 37,
+        "trailOnlyCells": 22,
+        "bridgeCells": 3,
+        "fordCells": 0,
+        "offRoadCells": 27,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 89
+      },
+      "physicalClearance": [
+        "AUTHORED_TRAIL_SEGMENTS__NOT_CART_PASSABLE",
+        "BRIDGE_SWEPT_CLEARANCE_UNVALIDATED",
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.4998
+    },
+    {
+      "id": "home.bz_ironholm",
+      "category": "HOME_ALTERNATIVE",
+      "mapTest": "MAP-HOME-03",
+      "from": {
+        "id": "sp_lake",
+        "at": [
+          790,
+          622
+        ],
+        "sourceRef": "spawns[sp_lake].at / corridor.v1.json spawnSelection.chosen"
+      },
+      "to": {
+        "id": "bz_ironholm",
+        "at": [
+          1140.3874,
+          1279.9254
+        ],
+        "sourceRef": "zones[bz_ironholm].ring centroid",
+        "areaAu2": 2034.7836
+      },
+      "note": "one of three alternative player-chosen home zones; legality NOT asserted",
+      "sourceRefs": [
+        "spawns[sp_lake].at / corridor.v1.json spawnSelection.chosen",
+        "zones[bz_ironholm].ring centroid"
+      ],
+      "straightAu": 745.4107,
+      "fromSnapAu": 2.8284,
+      "toSnapAu": 3.9445,
+      "fromCell": 19348,
+      "toCell": 39892,
+      "routeStatus": "NO_GEOGRAPHIC_ROUTE__SEPARATE_LAND_COMPONENT__FERRY_OR_BRIDGE_RULE_REQUIRED",
+      "routeAu": null,
+      "effectiveFootAu": null,
+      "effectiveCartAu": null,
+      "cartScenarioApplicable": false,
+      "cartRoadContinuous": false,
+      "cartRoadContinuity": {
+        "continuous": false,
+        "fromComponent": 0,
+        "toComponent": 5,
+        "fromSnapAu": 26.0768,
+        "toSnapAu": 3.9445,
+        "reason": "CART_ROAD_NETWORK_IS_FRAGMENTED"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 8,
+      "cartPassable": false,
+      "composition": null,
+      "physicalClearance": [],
+      "evidence": [],
+      "sameWalkableLandComponent": false,
+      "routeNote": "GEO-01 records 8 landmasses, 12 bridges and roads of kind=ferry. No Gameplay ferry/boat/cargo rule is approved in PR44 HEAD, so this OD is UNRESOLVED and must not be given a fabricated travel time."
+    },
+    {
+      "id": "log.kilnsToFarWarehouse",
+      "category": "LOG_FOOT_VS_CART",
+      "mapTest": "MAP-LOG-03",
+      "from": {
+        "id": "po_kilns",
+        "at": [
+          905,
+          785
+        ],
+        "sourceRef": "pois[po_kilns].at"
+      },
+      "to": {
+        "id": "po_ironwh",
+        "at": [
+          1236,
+          1290
+        ],
+        "sourceRef": "pois[po_ironwh].at",
+        "arche": "warehouse"
+      },
+      "note": "far warehouse whose value should increase after a cart is obtained (Bible MAP-LOG-03)",
+      "sourceRefs": [
+        "pois[po_kilns].at",
+        "pois[po_ironwh].at"
+      ],
+      "straightAu": 603.8096,
+      "fromSnapAu": 4.2426,
+      "toSnapAu": 2,
+      "fromCell": 24613,
+      "toCell": 40404,
+      "routeStatus": "NO_GEOGRAPHIC_ROUTE__SEPARATE_LAND_COMPONENT__FERRY_OR_BRIDGE_RULE_REQUIRED",
+      "routeAu": null,
+      "effectiveFootAu": null,
+      "effectiveCartAu": null,
+      "cartScenarioApplicable": false,
+      "cartRoadContinuous": false,
+      "cartRoadContinuity": {
+        "continuous": false,
+        "fromComponent": 0,
+        "toComponent": 5,
+        "fromSnapAu": 55.4437,
+        "toSnapAu": 2,
+        "reason": "CART_ROAD_NETWORK_IS_FRAGMENTED"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 8,
+      "cartPassable": false,
+      "composition": null,
+      "physicalClearance": [],
+      "evidence": [],
+      "sameWalkableLandComponent": false,
+      "routeNote": "GEO-01 records 8 landmasses, 12 bridges and roads of kind=ferry. No Gameplay ferry/boat/cargo rule is approved in PR44 HEAD, so this OD is UNRESOLVED and must not be given a fabricated travel time."
+    },
+    {
+      "id": "log.kilnsToSpawnLake",
+      "category": "LOG_FOOT_VS_CART",
+      "mapTest": "MAP-LOG-03",
+      "from": {
+        "id": "po_kilns",
+        "at": [
+          905,
+          785
+        ],
+        "sourceRef": "pois[po_kilns].at"
+      },
+      "to": {
+        "id": "sp_lake",
+        "at": [
+          790,
+          622
+        ],
+        "sourceRef": "spawns[sp_lake].at / corridor.v1.json spawnSelection.chosen"
+      },
+      "note": "RT-1 reverse: source POI -> chosen spawn",
+      "sourceRefs": [
+        "pois[po_kilns].at",
+        "spawns[sp_lake].at / corridor.v1.json spawnSelection.chosen"
+      ],
+      "straightAu": 199.4843,
+      "fromSnapAu": 4.2426,
+      "toSnapAu": 2.8284,
+      "fromCell": 24613,
+      "toCell": 19348,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 346.1492,
+      "effectiveFootAu": 287.2375,
+      "effectiveCartAu": 469.952,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 55.4437,
+        "toSnapAu": 26.0768,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 25,
+        "cartRoadCells": 7,
+        "trailOnlyCells": 25,
+        "bridgeCells": 1,
+        "fordCells": 0,
+        "offRoadCells": 5,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 38
+      },
+      "physicalClearance": [
+        "AUTHORED_TRAIL_SEGMENTS__NOT_CART_PASSABLE",
+        "BRIDGE_SWEPT_CLEARANCE_UNVALIDATED",
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.7352
+    },
+    {
+      "id": "log.kilnsToFootTrail",
+      "category": "LOG_FOOT_VS_CART",
+      "mapTest": "MAP-LOG-03",
+      "from": {
+        "id": "po_kilns",
+        "at": [
+          905,
+          785
+        ],
+        "sourceRef": "pois[po_kilns].at"
+      },
+      "to": {
+        "id": "rd_16",
+        "at": [
+          800,
+          760
+        ],
+        "sourceRef": "roads[rd_16].points[0]",
+        "kind": "trail"
+      },
+      "note": "authored foot/trail access (kind=trail — NEVER cart-passable)",
+      "sourceRefs": [
+        "pois[po_kilns].at",
+        "roads[rd_16].points[0]"
+      ],
+      "straightAu": 107.9352,
+      "fromSnapAu": 4.2426,
+      "toSnapAu": 5.6569,
+      "fromCell": 24613,
+      "toCell": 23850,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 123.8406,
+      "effectiveFootAu": 98.916,
+      "effectiveCartAu": 172.0009,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": false,
+      "cartRoadContinuity": {
+        "continuous": false,
+        "fromComponent": 0,
+        "toComponent": 2,
+        "fromSnapAu": 55.4437,
+        "toSnapAu": 105.6788,
+        "reason": "CART_ROAD_NETWORK_IS_FRAGMENTED"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 14,
+        "cartRoadCells": 0,
+        "trailOnlyCells": 14,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 0,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 14
+      },
+      "physicalClearance": [
+        "AUTHORED_TRAIL_SEGMENTS__NOT_CART_PASSABLE",
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.1474
+    },
+    {
+      "id": "log.kilnsToCartRoad",
+      "category": "LOG_FOOT_VS_CART",
+      "mapTest": "MAP-LOG-03",
+      "from": {
+        "id": "po_kilns",
+        "at": [
+          905,
+          785
+        ],
+        "sourceRef": "pois[po_kilns].at"
+      },
+      "to": {
+        "id": "rd_n",
+        "at": [
+          918,
+          930
+        ],
+        "sourceRef": "roads[rd_n].points[0]",
+        "kind": "cart"
+      },
+      "note": "nearest cart road from GEO-02 audit (56.8792 au, > ACCESS_R=48)",
+      "sourceRefs": [
+        "pois[po_kilns].at",
+        "roads[rd_n].points[0]"
+      ],
+      "straightAu": 145.5816,
+      "fromSnapAu": 4.2426,
+      "toSnapAu": 2.8284,
+      "fromCell": 24613,
+      "toCell": 29114,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 154.3847,
+      "effectiveFootAu": 127.4098,
+      "effectiveCartAu": 154.741,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 55.4437,
+        "toSnapAu": 2.8284,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 5,
+        "cartRoadCells": 11,
+        "trailOnlyCells": 5,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 3,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 19
+      },
+      "physicalClearance": [
+        "AUTHORED_TRAIL_SEGMENTS__NOT_CART_PASSABLE",
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.0605
+    },
+    {
+      "id": "u5.el_surtur",
+      "category": "ELDER_SITE",
+      "mapTest": "MAP-U5",
+      "from": {
+        "id": "sp_lake",
+        "at": [
+          790,
+          622
+        ],
+        "sourceRef": "spawns[sp_lake].at / corridor.v1.json spawnSelection.chosen"
+      },
+      "to": {
+        "id": "el_surtur",
+        "at": [
+          1596,
+          884
+        ],
+        "sourceRef": "elders[el_surtur].approach[0]",
+        "elder": "surtur",
+        "pois": [
+          "po_surtur",
+          "po_emberwatch",
+          "po_obsq",
+          "po_geo",
+          "po_cindercamp"
+        ]
+      },
+      "note": "distinct Elder region + no-boss approach; six sites required by geography-contract.ts",
+      "sourceRefs": [
+        "spawns[sp_lake].at / corridor.v1.json spawnSelection.chosen",
+        "elders[el_surtur].approach[0]"
+      ],
+      "straightAu": 847.514,
+      "fromSnapAu": 2.8284,
+      "toSnapAu": 0,
+      "fromCell": 19348,
+      "toCell": 27699,
+      "routeStatus": "NO_GEOGRAPHIC_ROUTE__SEPARATE_LAND_COMPONENT__FERRY_OR_BRIDGE_RULE_REQUIRED",
+      "routeAu": null,
+      "effectiveFootAu": null,
+      "effectiveCartAu": null,
+      "cartScenarioApplicable": false,
+      "cartRoadContinuous": false,
+      "cartRoadContinuity": {
+        "continuous": false,
+        "fromCell": 18598,
+        "toCell": -1,
+        "reason": "ENDPOINT_NOT_ON_CART_ROAD"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 5,
+      "cartPassable": false,
+      "composition": null,
+      "physicalClearance": [],
+      "evidence": [],
+      "sameWalkableLandComponent": false,
+      "routeNote": "GEO-01 records 8 landmasses, 12 bridges and roads of kind=ferry. No Gameplay ferry/boat/cargo rule is approved in PR44 HEAD, so this OD is UNRESOLVED and must not be given a fabricated travel time."
+    },
+    {
+      "id": "u5.el_typhon",
+      "category": "ELDER_SITE",
+      "mapTest": "MAP-U5",
+      "from": {
+        "id": "sp_lake",
+        "at": [
+          790,
+          622
+        ],
+        "sourceRef": "spawns[sp_lake].at / corridor.v1.json spawnSelection.chosen"
+      },
+      "to": {
+        "id": "el_typhon",
+        "at": [
+          690,
+          500
+        ],
+        "sourceRef": "elders[el_typhon].approach[0]",
+        "elder": "typhon",
+        "pois": [
+          "po_typhon",
+          "po_viaduct",
+          "po_freightyard",
+          "po_fracquarry",
+          "po_falls"
+        ]
+      },
+      "note": "distinct Elder region + no-boss approach; six sites required by geography-contract.ts",
+      "sourceRefs": [
+        "spawns[sp_lake].at / corridor.v1.json spawnSelection.chosen",
+        "elders[el_typhon].approach[0]"
+      ],
+      "straightAu": 157.7466,
+      "fromSnapAu": 2.8284,
+      "toSnapAu": 2,
+      "fromCell": 19348,
+      "toCell": 15586,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 173.9655,
+      "effectiveFootAu": 148.0749,
+      "effectiveCartAu": 188.3265,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 26.0768,
+        "toSnapAu": 24.0832,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 2,
+        "cartRoadCells": 12,
+        "trailOnlyCells": 2,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 4,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 18
+      },
+      "physicalClearance": [
+        "AUTHORED_TRAIL_SEGMENTS__NOT_CART_PASSABLE",
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.1028
+    },
+    {
+      "id": "u5.el_aion",
+      "category": "ELDER_SITE",
+      "mapTest": "MAP-U5",
+      "from": {
+        "id": "sp_lake",
+        "at": [
+          790,
+          622
+        ],
+        "sourceRef": "spawns[sp_lake].at / corridor.v1.json spawnSelection.chosen"
+      },
+      "to": {
+        "id": "el_aion",
+        "at": [
+          748,
+          668
+        ],
+        "sourceRef": "elders[el_aion].approach[0]",
+        "elder": "aion",
+        "pois": [
+          "po_elderwood",
+          "po_glade",
+          "po_sapgrove",
+          "po_sawaion",
+          "po_kilns",
+          "po_ranger"
+        ]
+      },
+      "note": "distinct Elder region + no-boss approach; six sites required by geography-contract.ts",
+      "sourceRefs": [
+        "spawns[sp_lake].at / corridor.v1.json spawnSelection.chosen",
+        "elders[el_aion].approach[0]"
+      ],
+      "straightAu": 62.2896,
+      "fromSnapAu": 2.8284,
+      "toSnapAu": 0,
+      "fromCell": 19348,
+      "toCell": 20843,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 108.7695,
+      "effectiveFootAu": 97.8042,
+      "effectiveCartAu": 134.4873,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": false,
+      "cartRoadContinuity": {
+        "continuous": false,
+        "fromComponent": 0,
+        "toComponent": 2,
+        "fromSnapAu": 26.0768,
+        "toSnapAu": 0,
+        "reason": "CART_ROAD_NETWORK_IS_FRAGMENTED"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 0,
+        "cartRoadCells": 7,
+        "trailOnlyCells": 0,
+        "bridgeCells": 1,
+        "fordCells": 0,
+        "offRoadCells": 5,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 13
+      },
+      "physicalClearance": [
+        "BRIDGE_SWEPT_CLEARANCE_UNVALIDATED",
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.7462
+    },
+    {
+      "id": "u5.el_atlas",
+      "category": "ELDER_SITE",
+      "mapTest": "MAP-U5",
+      "from": {
+        "id": "sp_lake",
+        "at": [
+          790,
+          622
+        ],
+        "sourceRef": "spawns[sp_lake].at / corridor.v1.json spawnSelection.chosen"
+      },
+      "to": {
+        "id": "el_atlas",
+        "at": [
+          226,
+          520
+        ],
+        "sourceRef": "elders[el_atlas].approach[0]",
+        "elder": "atlas",
+        "pois": [
+          "po_gate",
+          "po_dpier",
+          "po_beacon",
+          "po_westmouth"
+        ]
+      },
+      "note": "distinct Elder region + no-boss approach; six sites required by geography-contract.ts",
+      "sourceRefs": [
+        "spawns[sp_lake].at / corridor.v1.json spawnSelection.chosen",
+        "elders[el_atlas].approach[0]"
+      ],
+      "straightAu": 573.1492,
+      "fromSnapAu": 2.8284,
+      "toSnapAu": 4.4721,
+      "fromCell": 19348,
+      "toCell": 16278,
+      "routeStatus": "NO_GEOGRAPHIC_ROUTE__SEPARATE_LAND_COMPONENT__FERRY_OR_BRIDGE_RULE_REQUIRED",
+      "routeAu": null,
+      "effectiveFootAu": null,
+      "effectiveCartAu": null,
+      "cartScenarioApplicable": false,
+      "cartRoadContinuous": false,
+      "cartRoadContinuity": {
+        "continuous": false,
+        "fromCell": 18598,
+        "toCell": -1,
+        "reason": "ENDPOINT_NOT_ON_CART_ROAD"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 3,
+      "cartPassable": false,
+      "composition": null,
+      "physicalClearance": [],
+      "evidence": [],
+      "sameWalkableLandComponent": false,
+      "routeNote": "GEO-01 records 8 landmasses, 12 bridges and roads of kind=ferry. No Gameplay ferry/boat/cargo rule is approved in PR44 HEAD, so this OD is UNRESOLVED and must not be given a fabricated travel time."
+    },
+    {
+      "id": "u5.el_argus",
+      "category": "ELDER_SITE",
+      "mapTest": "MAP-U5",
+      "from": {
+        "id": "sp_lake",
+        "at": [
+          790,
+          622
+        ],
+        "sourceRef": "spawns[sp_lake].at / corridor.v1.json spawnSelection.chosen"
+      },
+      "to": {
+        "id": "el_argus",
+        "at": [
+          936,
+          262
+        ],
+        "sourceRef": "elders[el_argus].approach[0]",
+        "elder": "argus",
+        "pois": [
+          "po_academy",
+          "po_observatory",
+          "po_archive",
+          "po_hall_eyes",
+          "po_lantern"
+        ]
+      },
+      "note": "distinct Elder region + no-boss approach; six sites required by geography-contract.ts",
+      "sourceRefs": [
+        "spawns[sp_lake].at / corridor.v1.json spawnSelection.chosen",
+        "elders[el_argus].approach[0]"
+      ],
+      "straightAu": 388.4791,
+      "fromSnapAu": 2.8284,
+      "toSnapAu": 4.4721,
+      "fromCell": 19348,
+      "toCell": 8117,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 513.3392,
+      "effectiveFootAu": 447.7089,
+      "effectiveCartAu": null,
+      "cartScenarioApplicable": false,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 26.0768,
+        "toSnapAu": 4.4721,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 4,
+        "cartRoadCells": 32,
+        "trailOnlyCells": 4,
+        "bridgeCells": 1,
+        "fordCells": 0,
+        "offRoadCells": 14,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 51
+      },
+      "physicalClearance": [
+        "AUTHORED_TRAIL_SEGMENTS__NOT_CART_PASSABLE",
+        "BRIDGE_SWEPT_CLEARANCE_UNVALIDATED",
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.3214
+    },
+    {
+      "id": "u5.el_anubis",
+      "category": "ELDER_SITE",
+      "mapTest": "MAP-U5",
+      "from": {
+        "id": "sp_lake",
+        "at": [
+          790,
+          622
+        ],
+        "sourceRef": "spawns[sp_lake].at / corridor.v1.json spawnSelection.chosen"
+      },
+      "to": {
+        "id": "el_anubis",
+        "at": [
+          752,
+          975
+        ],
+        "sourceRef": "elders[el_anubis].approach[0]",
+        "elder": "anubis",
+        "pois": [
+          "po_necropolis",
+          "po_tombs",
+          "po_cairns",
+          "po_oasis",
+          "po_bonestop"
+        ]
+      },
+      "note": "distinct Elder region + no-boss approach; six sites required by geography-contract.ts",
+      "sourceRefs": [
+        "spawns[sp_lake].at / corridor.v1.json spawnSelection.chosen",
+        "elders[el_anubis].approach[0]"
+      ],
+      "straightAu": 355.0394,
+      "fromSnapAu": 2.8284,
+      "toSnapAu": 5,
+      "fromCell": 19348,
+      "toCell": 30344,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 447.5929,
+      "effectiveFootAu": 421.7218,
+      "effectiveCartAu": 637.3633,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 26.0768,
+        "toSnapAu": 5,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 10,
+        "cartRoadCells": 8,
+        "trailOnlyCells": 10,
+        "bridgeCells": 1,
+        "fordCells": 0,
+        "offRoadCells": 32,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 51
+      },
+      "physicalClearance": [
+        "AUTHORED_TRAIL_SEGMENTS__NOT_CART_PASSABLE",
+        "BRIDGE_SWEPT_CLEARANCE_UNVALIDATED",
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.2607
+    },
+    {
+      "id": "u4.vendorToCache",
+      "category": "CASH_ROUTE",
+      "mapTest": "MAP-U4",
+      "from": {
+        "id": "po_vend_gulf",
+        "at": [
+          1066,
+          894
+        ],
+        "sourceRef": "pois[po_vend_gulf].at"
+      },
+      "to": {
+        "id": "po_rc_meridian",
+        "at": [
+          1138,
+          668
+        ],
+        "sourceRef": "pois[po_rc_meridian].at"
+      },
+      "note": "PROPOSED seller route; price/stock/distance NOT approved",
+      "sourceRefs": [
+        "pois[po_vend_gulf].at",
+        "pois[po_rc_meridian].at"
+      ],
+      "straightAu": 237.1919,
+      "fromSnapAu": 2.8284,
+      "toSnapAu": 2,
+      "fromCell": 27883,
+      "toCell": 20892,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 283.2203,
+      "effectiveFootAu": 224.0721,
+      "effectiveCartAu": 224.0294,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 20.5913,
+        "toSnapAu": 6,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 1,
+        "cartRoadCells": 27,
+        "trailOnlyCells": 1,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 2,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 30
+      },
+      "physicalClearance": [
+        "AUTHORED_TRAIL_SEGMENTS__NOT_CART_PASSABLE",
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.1941
+    },
+    {
+      "id": "u4.cacheToHome",
+      "category": "CASH_ROUTE",
+      "mapTest": "MAP-U4",
+      "from": {
+        "id": "po_rc_meridian",
+        "at": [
+          1138,
+          668
+        ],
+        "sourceRef": "pois[po_rc_meridian].at"
+      },
+      "to": {
+        "id": "bz_greywater",
+        "at": [
+          790.8815,
+          611.6059
+        ],
+        "sourceRef": "zones[bz_greywater].ring centroid"
+      },
+      "note": "physical cash carried back to claim; NO teleport",
+      "sourceRefs": [
+        "pois[po_rc_meridian].at",
+        "zones[bz_greywater].ring centroid"
+      ],
+      "straightAu": 351.6697,
+      "fromSnapAu": 2,
+      "toSnapAu": 2.9083,
+      "fromCell": 20892,
+      "toCell": 19098,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 690.2607,
+      "effectiveFootAu": 580.045,
+      "effectiveCartAu": 835.8092,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 6,
+        "toSnapAu": 15.8697,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 27,
+        "cartRoadCells": 32,
+        "trailOnlyCells": 27,
+        "bridgeCells": 2,
+        "fordCells": 0,
+        "offRoadCells": 12,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 73
+      },
+      "physicalClearance": [
+        "AUTHORED_TRAIL_SEGMENTS__NOT_CART_PASSABLE",
+        "BRIDGE_SWEPT_CLEARANCE_UNVALIDATED",
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.9628
+    },
+    {
+      "id": "u4.homeToEvac",
+      "category": "CASH_ROUTE",
+      "mapTest": "MAP-U4",
+      "from": {
+        "id": "bz_greywater",
+        "at": [
+          790.8815,
+          611.6059
+        ],
+        "sourceRef": "zones[bz_greywater].ring centroid"
+      },
+      "to": {
+        "id": "po_evac_west",
+        "at": [
+          342,
+          580
+        ],
+        "sourceRef": "pois[po_evac_west].at"
+      },
+      "note": "optional no-boss evacuation",
+      "sourceRefs": [
+        "zones[bz_greywater].ring centroid",
+        "pois[po_evac_west].at"
+      ],
+      "straightAu": 449.9928,
+      "fromSnapAu": 2.9083,
+      "toSnapAu": 2,
+      "fromCell": 19098,
+      "toCell": 18042,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 466.1631,
+      "effectiveFootAu": 466.8889,
+      "effectiveCartAu": 718.9353,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 15.8697,
+        "toSnapAu": 21.2603,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 0,
+        "cartRoadCells": 10,
+        "trailOnlyCells": 0,
+        "bridgeCells": 0,
+        "fordCells": 0,
+        "offRoadCells": 47,
+        "waterCells": 0,
+        "coastCells": 1,
+        "totalCells": 57
+      },
+      "physicalClearance": [
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.0359
+    },
+    {
+      "id": "corridor.RT-1",
+      "category": "CORRIDOR",
+      "mapTest": "MAP-LOG-03",
+      "from": {
+        "id": "RT-1",
+        "at": [
+          790,
+          622
+        ],
+        "sourceRef": "corridor.v1.json routes.RT-1.geometryAu[0]"
+      },
+      "to": {
+        "id": "RT-1",
+        "at": [
+          905,
+          785
+        ],
+        "sourceRef": "corridor.v1.json routes.RT-1.geometryAu[last]"
+      },
+      "note": "authored corridor length 400.1147 au; roadIds rd_b,rd_13,rd_1w,rd_16",
+      "sourceRefs": [
+        "corridor.v1.json routes.RT-1.geometryAu[0]",
+        "corridor.v1.json routes.RT-1.geometryAu[last]"
+      ],
+      "straightAu": 199.4843,
+      "fromSnapAu": 2.8284,
+      "toSnapAu": 4.2426,
+      "fromCell": 19348,
+      "toCell": 24613,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 346.1492,
+      "effectiveFootAu": 284.1852,
+      "effectiveCartAu": 464.1813,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 26.0768,
+        "toSnapAu": 55.4437,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 25,
+        "cartRoadCells": 7,
+        "trailOnlyCells": 25,
+        "bridgeCells": 1,
+        "fordCells": 0,
+        "offRoadCells": 5,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 38
+      },
+      "physicalClearance": [
+        "AUTHORED_TRAIL_SEGMENTS__NOT_CART_PASSABLE",
+        "BRIDGE_SWEPT_CLEARANCE_UNVALIDATED",
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.7352
+    },
+    {
+      "id": "corridor.RT-2",
+      "category": "CORRIDOR",
+      "mapTest": "MAP-LOG-03",
+      "from": {
+        "id": "RT-2",
+        "at": [
+          790,
+          622
+        ],
+        "sourceRef": "corridor.v1.json routes.RT-2.geometryAu[0]"
+      },
+      "to": {
+        "id": "RT-2",
+        "at": [
+          905,
+          785
+        ],
+        "sourceRef": "corridor.v1.json routes.RT-2.geometryAu[last]"
+      },
+      "note": "authored corridor length 403.9036 au; roadIds rd_b,rd_13,rd_16",
+      "sourceRefs": [
+        "corridor.v1.json routes.RT-2.geometryAu[0]",
+        "corridor.v1.json routes.RT-2.geometryAu[last]"
+      ],
+      "straightAu": 199.4843,
+      "fromSnapAu": 2.8284,
+      "toSnapAu": 4.2426,
+      "fromCell": 19348,
+      "toCell": 24613,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 346.1492,
+      "effectiveFootAu": 284.1852,
+      "effectiveCartAu": 464.1813,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 26.0768,
+        "toSnapAu": 55.4437,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 25,
+        "cartRoadCells": 7,
+        "trailOnlyCells": 25,
+        "bridgeCells": 1,
+        "fordCells": 0,
+        "offRoadCells": 5,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 38
+      },
+      "physicalClearance": [
+        "AUTHORED_TRAIL_SEGMENTS__NOT_CART_PASSABLE",
+        "BRIDGE_SWEPT_CLEARANCE_UNVALIDATED",
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.7352
+    },
+    {
+      "id": "corridor.RT-3",
+      "category": "CORRIDOR",
+      "mapTest": "MAP-LOG-03",
+      "from": {
+        "id": "RT-3",
+        "at": [
+          790,
+          622
+        ],
+        "sourceRef": "corridor.v1.json routes.RT-3.geometryAu[0]"
+      },
+      "to": {
+        "id": "RT-3",
+        "at": [
+          905,
+          785
+        ],
+        "sourceRef": "corridor.v1.json routes.RT-3.geometryAu[last]"
+      },
+      "note": "authored corridor length 398.0289 au; roadIds rd_20",
+      "sourceRefs": [
+        "corridor.v1.json routes.RT-3.geometryAu[0]",
+        "corridor.v1.json routes.RT-3.geometryAu[last]"
+      ],
+      "straightAu": 199.4843,
+      "fromSnapAu": 2.8284,
+      "toSnapAu": 4.2426,
+      "fromCell": 19348,
+      "toCell": 24613,
+      "routeStatus": "GEOGRAPHIC_ROUTE_ESTIMATE__ACCEPTED_RASTER_DIJKSTRA",
+      "routeAu": 346.1492,
+      "effectiveFootAu": 284.1852,
+      "effectiveCartAu": 464.1813,
+      "cartScenarioApplicable": true,
+      "cartRoadContinuous": true,
+      "cartRoadContinuity": {
+        "continuous": true,
+        "fromComponent": 0,
+        "toComponent": 0,
+        "fromSnapAu": 26.0768,
+        "toSnapAu": 55.4437,
+        "reason": "SAME_CART_ROAD_COMPONENT"
+      },
+      "fromFootComponent": 0,
+      "toFootComponent": 0,
+      "cartPassable": false,
+      "composition": {
+        "footRoadCells": 25,
+        "cartRoadCells": 7,
+        "trailOnlyCells": 25,
+        "bridgeCells": 1,
+        "fordCells": 0,
+        "offRoadCells": 5,
+        "waterCells": 0,
+        "coastCells": 0,
+        "totalCells": 38
+      },
+      "physicalClearance": [
+        "AUTHORED_TRAIL_SEGMENTS__NOT_CART_PASSABLE",
+        "BRIDGE_SWEPT_CLEARANCE_UNVALIDATED",
+        "NO_SWEPT_CLEARANCE_DIMENSION_EXISTS_IN_VEYRA_SOURCE"
+      ],
+      "evidence": [
+        "world_lab/geo01/output/rasters/{walkableCandidate,crossingCandidate,biomeCode,coast}.u8",
+        "world_lab/geo02/output/rasters/{landMaplab,lakeMaplab,riverMaplab,roadFootMaplab,roadCartMaplab}.u8",
+        "world_lab/geo02/output/maplab_encoding.v1.json :: widthSemantics.roads.sweptClearance = UNVALIDATED"
+      ],
+      "sameWalkableLandComponent": true,
+      "detourRatio": 1.7352
+    }
+  ],
+  "authoredCorridors": [
+    {
+      "id": "RT-1",
+      "totalDistanceAu": 400.1147,
+      "authoredRoadLengthAu": 362.9125,
+      "derivedConnectorLengthAu": 37.2022,
+      "sourceIds": [
+        "rd_b",
+        "rd_13",
+        "rd_1w",
+        "rd_16"
+      ],
+      "segmentKinds": [
+        {
+          "roadId": "rd_b",
+          "kind": "cart",
+          "lengthAu": 136.436594
+        },
+        {
+          "roadId": "rd_13",
+          "kind": "trail",
+          "lengthAu": 57.949736
+        },
+        {
+          "roadId": "rd_1w",
+          "kind": "trail",
+          "lengthAu": 53.790096
+        },
+        {
+          "roadId": "rd_16",
+          "kind": "trail",
+          "lengthAu": 114.736113
+        }
+      ]
+    },
+    {
+      "id": "RT-2",
+      "totalDistanceAu": 403.9036,
+      "authoredRoadLengthAu": 366.7014,
+      "derivedConnectorLengthAu": 37.2022,
+      "sourceIds": [
+        "rd_b",
+        "rd_13",
+        "rd_16"
+      ],
+      "segmentKinds": [
+        {
+          "roadId": "rd_b",
+          "kind": "cart",
+          "lengthAu": 136.436594
+        },
+        {
+          "roadId": "rd_13",
+          "kind": "trail",
+          "lengthAu": 57.949736
+        },
+        {
+          "roadId": "rd_13",
+          "kind": "trail",
+          "lengthAu": 57.578998
+        },
+        {
+          "roadId": "rd_16",
+          "kind": "trail",
+          "lengthAu": 114.736113
+        }
+      ]
+    },
+    {
+      "id": "RT-3",
+      "totalDistanceAu": 398.0289,
+      "authoredRoadLengthAu": 280.3206,
+      "derivedConnectorLengthAu": 117.7083,
+      "sourceIds": [
+        "rd_20"
+      ],
+      "segmentKinds": [
+        {
+          "roadId": "rd_20",
+          "kind": "riverside",
+          "lengthAu": 280.320599
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "u": 1,
+      "unit": "authoring_units_per_runtime_tile",
+      "status": "DIAGNOSTIC_CANDIDATE__NOT_APPROVED",
+      "worldTiles": [
+        2000,
+        1400
+      ],
+      "cells": 2800000,
+      "worldPx": [
+        32000,
+        22400
+      ],
+      "tilePx": 16,
+      "pxPerAu": 16,
+      "auPerPx": 0.0625,
+      "integerDimensionsConvenienceOnly": true,
+      "authoredRaster": {
+        "sourceCellAu": 8,
+        "sourceCells": 43750,
+        "tilesPerSourceCell": 8,
+        "upsampleFactor": 64,
+        "newAuthoredDetail": "NONE — Veyra raster is 8 au/cell; U<8 only duplicates/interpolates cells, U=8 is 1:1."
+      },
+      "traversal": {
+        "baseTilesPerSec": 4.5,
+        "baseSpeedPxPerSec": 72,
+        "baseSpeedAuPerSec": 4.5,
+        "runClock": {
+          "maxRunHours": 336,
+          "runSeconds": 1209600,
+          "ragnarokFinalHours": 72,
+          "HOUR_MS": 3600000
+        },
+        "fictionalDaySeconds": 1440,
+        "crossWorldWidthSeconds": 444.4444,
+        "crossWorldWidthGameHours": 0.1235,
+        "crossWorldWidthFractionOfFictionalDay": 0.3086
+      },
+      "camera": {
+        "viewportPx": [
+          640,
+          360
+        ],
+        "viewportTiles": [
+          40,
+          22.5
+        ],
+        "screensAcross": [
+          50,
+          62.2222
+        ],
+        "fractionOfWorldWidthVisible": 0.02,
+        "sightDayAu": 6.875,
+        "sightNightAu": 4.375,
+        "activeRadiusAu": 30
+      },
+      "engineLimits": {
+        "exactPackageValidator": {
+          "required": {
+            "width": 200,
+            "height": 200,
+            "tileSize": 16,
+            "arrays": 40000
+          },
+          "fits": false,
+          "note": "validateRuntimeMapPackage() rejects ANY resize: e.width===WW, e.height===WH, e.tileSize===TILE; arrays must be exactly 40000."
+        },
+        "economyValidator": {
+          "maxCells": 1000000,
+          "fits": false,
+          "arrayCount": 13,
+          "note": "validateEconomyMap() rejects >1,000,000 cells; all 13 equal-length cell arrays still required."
+        },
+        "coreFixedGrid": {
+          "WW": 200,
+          "WH": 200,
+          "runtimeCells": 40000,
+          "fits": false,
+          "note": "core.ts WW/WH and Uint8Array(WW*WH) blockGrid are compile-time constants."
+        },
+        "renderChunkCache": {
+          "CH": 16,
+          "keyStride": 100,
+          "chunkCols": 125,
+          "chunkRows": 88,
+          "keyCollisionFree": false,
+          "collisionFreeMaxWorldTilesW": 1600,
+          "note": "k=cy*100+cx COLLIDES: 125 chunk columns > stride 100."
+        },
+        "seaDistSemantic": {
+          "bfsStopTiles": 7,
+          "tilesPerSourceCell": 8,
+          "stopTiles": 7,
+          "landCellsWithMeaningfulSeaDist": 0,
+          "landCells": 15077,
+          "fraction": 0
+        },
+        "streaming": "NO world streaming / LOD loader found in PR44 HEAD web/src/game. render.ts has a 16-tile terrain CHUNK CACHE only; core.ts/camera clamps still use fixed WW/WH."
+      },
+      "memory": {
+        "model": "LOWER-BOUND MODEL, NOT MEASURED RUNTIME MEMORY. Assumes 1-byte typed arrays for World/BlockGrid, 8-byte JS number slots for EconomyMap/package arrays and sourceV3; strings are counted as one reference each. No streaming/LOD implementation exists in PR44 HEAD.",
+        "worldTypedArrays": 16800000,
+        "blockGrid": 2800000,
+        "economyNumericArrays": 291200000,
+        "sourceV3": 22400000,
+        "packageArrays": 89600000,
+        "renderChunkCacheUpperBoundBytes": 2883584000,
+        "compileEconomyNeighbourhoodChecksWorstCase": 137200000,
+        "mapDigestArrayValuesAtLeast": 64400000,
+        "totalBytesLowerBound": 422800000,
+        "totalMBLowerBound": 403.2135,
+        "renderChunkCacheUpperBoundMB": 2750
+      },
+      "spatial": {
+        "thresholds": {
+          "playerDiameterTiles": 0.5,
+          "cartDiameterTiles": 0.625,
+          "smallestRuntimeBuildingTiles": [
+            5,
+            4
+          ],
+          "smallestRoomTiles": 20,
+          "smallestRoomSideTiles": 4,
+          "claimRadiusTiles": 6,
+          "claimMinDistFromPoiTiles": 10,
+          "tenderLinkTiles": 3,
+          "nearInteractionTiles": 3
+        },
+        "featureTiles": {
+          "minPOIAreaAu2": 176,
+          "minPOIAreaTiles": 176,
+          "medianPOIAreaTiles": 851.84,
+          "minPOIEdgeTiles": 11,
+          "proposedEntranceWestTiles": 3.696,
+          "proposedWorkspaceAreaTiles": 57.4232,
+          "roadAnalysisStrokeTiles": 9,
+          "riverMaskTiles": 9,
+          "bridgeGlyphTiles": [
+            13,
+            7.2
+          ],
+          "claimRadiusAu": 6,
+          "claimMinDistFromPoiAu": 10,
+          "tenderLinkAu": 3
+        },
+        "poiFeetUnableToHostSmallestRoom": 0,
+        "poiFeetUnableToHost5x5Square": 0,
+        "coastCellsSource": 812,
+        "coastDetailNote": "coast stays an 8-au staircase repeated 8x per axis; NO new shoreline detail.",
+        "roadBendsRadiusUnderOneTile": 0,
+        "roadBendsRadiusUnderTwoTiles": 0,
+        "roadBendsMeasured": 1080,
+        "quantizedOpenTiles": {
+          "entranceOpenTiles": 3,
+          "roadOpenTiles": 9,
+          "riverOpenTiles": 9,
+          "bridgeOpenTiles": [
+            13,
+            7
+          ]
+        }
+      },
+      "feasibility": {
+        "tests": [
+          {
+            "id": "ENTRY_CART",
+            "gating": true,
+            "ok": true,
+            "measured": "3 open tile(s); cart diameter 0.625 tile",
+            "basis": "GEO-02 PROPOSED 3.696 au west opening; PR44 moveBody cart radius 5 px; one open floor tile is the atomic unit"
+          },
+          {
+            "id": "ENTRY_ONE_FLOOR_TILE",
+            "gating": true,
+            "ok": true,
+            "measured": "3 open tile(s)",
+            "basis": "PR44 structures occupy one tile centre; a sub-tile opening quantizes to ZERO open tiles"
+          },
+          {
+            "id": "MIN_POI_ROOM",
+            "gating": true,
+            "ok": true,
+            "measured": "176 tiles², 11 tile edge vs 20 tiles²/4 side",
+            "basis": "smallest authored PR44 building (world.ts stamp); canonical Veyra smallest POI foot"
+          },
+          {
+            "id": "MEDIAN_POI_ROOM",
+            "gating": true,
+            "ok": true,
+            "measured": "851.84 tiles²",
+            "basis": "canonical Veyra median foot; a multi-room POI needs >=5x5 tiles"
+          },
+          {
+            "id": "PROPOSED_WORKSPACE",
+            "gating": true,
+            "ok": true,
+            "measured": "57.4232 tiles² vs derived 9 tiles²",
+            "basis": "GEO-02 PROPOSED working space 57.4232 au²; PR44 near(r,e,3) interaction envelope + 640x360 camera"
+          },
+          {
+            "id": "ROAD_ONE_TILE",
+            "gating": true,
+            "ok": true,
+            "measured": "9 open tile(s)",
+            "basis": "MapLab 9 au analysis stroke (NOT an authored physical width)"
+          },
+          {
+            "id": "ROAD_TWO_TILES_CART_CLEARANCE",
+            "gating": false,
+            "ok": true,
+            "measured": "9 open tile(s)",
+            "basis": "cargoPassable cross-section + cart swept clearance (UNVALIDATED in source); reported, not gating"
+          },
+          {
+            "id": "RIVER_BARRIER_ONE_TILE",
+            "gating": true,
+            "ok": true,
+            "measured": "9 open tile(s)",
+            "basis": "9 au river mask; a sub-tile channel cannot be a distinct water tile"
+          },
+          {
+            "id": "BRIDGE_GLYPH_BOTH_AXES",
+            "gating": true,
+            "ok": true,
+            "measured": "13x7 tiles",
+            "basis": "13x7.2 au DISPLAY glyph; a zero-height deck loses the crossing"
+          },
+          {
+            "id": "CHUNK_KEY_COLLISION_FREE",
+            "gating": true,
+            "ok": false,
+            "measured": "125 chunk columns vs stride 100",
+            "basis": "render.ts getChunk k=cy*100+cx"
+          },
+          {
+            "id": "ECONOMY_CELL_LIMIT",
+            "gating": true,
+            "ok": false,
+            "measured": "2800000 cells vs 1000000",
+            "basis": "validateEconomyMap() rejects >1,000,000"
+          },
+          {
+            "id": "EXACT_PACKAGE_VALIDATOR",
+            "gating": false,
+            "ok": false,
+            "measured": "2000x1400 vs 200x200",
+            "basis": "validateRuntimeMapPackage() — applies to ALL candidates; requires the same runtime change, not a differentiator"
+          },
+          {
+            "id": "SEA_DIST_SEMANTIC_COVERAGE",
+            "gating": false,
+            "ok": true,
+            "measuredOnly": true,
+            "measured": "0.00% land cells with meaningful seaDist",
+            "basis": "world.ts seaDist BFS stops at 6 hops — measured semantic loss, not a hard gate"
+          }
+        ],
+        "passed": 10,
+        "failed": [
+          "CHUNK_KEY_COLLISION_FREE",
+          "ECONOMY_CELL_LIMIT",
+          "EXACT_PACKAGE_VALIDATOR"
+        ],
+        "gatingFailures": [
+          "CHUNK_KEY_COLLISION_FREE",
+          "ECONOMY_CELL_LIMIT"
+        ],
+        "hardRejections": [
+          "CHUNK_KEY_COLLISION_FREE",
+          "ECONOMY_CELL_LIMIT"
+        ],
+        "note": "A scale is NOT approved merely because travel times are attractive or because dimensions are round integers. Gating spatial/engine failures are hard rejections; non-gating rows are global runtime changes or measured semantic losses."
+      }
+    },
+    {
+      "u": 2,
+      "unit": "authoring_units_per_runtime_tile",
+      "status": "DIAGNOSTIC_CANDIDATE__NOT_APPROVED",
+      "worldTiles": [
+        1000,
+        700
+      ],
+      "cells": 700000,
+      "worldPx": [
+        16000,
+        11200
+      ],
+      "tilePx": 16,
+      "pxPerAu": 8,
+      "auPerPx": 0.125,
+      "integerDimensionsConvenienceOnly": true,
+      "authoredRaster": {
+        "sourceCellAu": 8,
+        "sourceCells": 43750,
+        "tilesPerSourceCell": 4,
+        "upsampleFactor": 16,
+        "newAuthoredDetail": "NONE — Veyra raster is 8 au/cell; U<8 only duplicates/interpolates cells, U=8 is 1:1."
+      },
+      "traversal": {
+        "baseTilesPerSec": 4.5,
+        "baseSpeedPxPerSec": 72,
+        "baseSpeedAuPerSec": 9,
+        "runClock": {
+          "maxRunHours": 336,
+          "runSeconds": 1209600,
+          "ragnarokFinalHours": 72,
+          "HOUR_MS": 3600000
+        },
+        "fictionalDaySeconds": 1440,
+        "crossWorldWidthSeconds": 222.2222,
+        "crossWorldWidthGameHours": 0.0617,
+        "crossWorldWidthFractionOfFictionalDay": 0.1543
+      },
+      "camera": {
+        "viewportPx": [
+          640,
+          360
+        ],
+        "viewportTiles": [
+          40,
+          22.5
+        ],
+        "screensAcross": [
+          25,
+          31.1111
+        ],
+        "fractionOfWorldWidthVisible": 0.04,
+        "sightDayAu": 13.75,
+        "sightNightAu": 8.75,
+        "activeRadiusAu": 60
+      },
+      "engineLimits": {
+        "exactPackageValidator": {
+          "required": {
+            "width": 200,
+            "height": 200,
+            "tileSize": 16,
+            "arrays": 40000
+          },
+          "fits": false,
+          "note": "validateRuntimeMapPackage() rejects ANY resize: e.width===WW, e.height===WH, e.tileSize===TILE; arrays must be exactly 40000."
+        },
+        "economyValidator": {
+          "maxCells": 1000000,
+          "fits": true,
+          "arrayCount": 13,
+          "note": "validateEconomyMap() rejects >1,000,000 cells; all 13 equal-length cell arrays still required."
+        },
+        "coreFixedGrid": {
+          "WW": 200,
+          "WH": 200,
+          "runtimeCells": 40000,
+          "fits": false,
+          "note": "core.ts WW/WH and Uint8Array(WW*WH) blockGrid are compile-time constants."
+        },
+        "renderChunkCache": {
+          "CH": 16,
+          "keyStride": 100,
+          "chunkCols": 63,
+          "chunkRows": 44,
+          "keyCollisionFree": true,
+          "collisionFreeMaxWorldTilesW": 1600,
+          "note": "k=cy*100+cx is collision-free."
+        },
+        "seaDistSemantic": {
+          "bfsStopTiles": 7,
+          "tilesPerSourceCell": 4,
+          "stopTiles": 7,
+          "landCellsWithMeaningfulSeaDist": 812,
+          "landCells": 15077,
+          "fraction": 0.053857
+        },
+        "streaming": "NO world streaming / LOD loader found in PR44 HEAD web/src/game. render.ts has a 16-tile terrain CHUNK CACHE only; core.ts/camera clamps still use fixed WW/WH."
+      },
+      "memory": {
+        "model": "LOWER-BOUND MODEL, NOT MEASURED RUNTIME MEMORY. Assumes 1-byte typed arrays for World/BlockGrid, 8-byte JS number slots for EconomyMap/package arrays and sourceV3; strings are counted as one reference each. No streaming/LOD implementation exists in PR44 HEAD.",
+        "worldTypedArrays": 4200000,
+        "blockGrid": 700000,
+        "economyNumericArrays": 72800000,
+        "sourceV3": 5600000,
+        "packageArrays": 22400000,
+        "renderChunkCacheUpperBoundBytes": 726663168,
+        "compileEconomyNeighbourhoodChecksWorstCase": 34300000,
+        "mapDigestArrayValuesAtLeast": 16100000,
+        "totalBytesLowerBound": 105700000,
+        "totalMBLowerBound": 100.8034,
+        "renderChunkCacheUpperBoundMB": 693
+      },
+      "spatial": {
+        "thresholds": {
+          "playerDiameterTiles": 0.5,
+          "cartDiameterTiles": 0.625,
+          "smallestRuntimeBuildingTiles": [
+            5,
+            4
+          ],
+          "smallestRoomTiles": 20,
+          "smallestRoomSideTiles": 4,
+          "claimRadiusTiles": 6,
+          "claimMinDistFromPoiTiles": 10,
+          "tenderLinkTiles": 3,
+          "nearInteractionTiles": 3
+        },
+        "featureTiles": {
+          "minPOIAreaAu2": 176,
+          "minPOIAreaTiles": 44,
+          "medianPOIAreaTiles": 212.96,
+          "minPOIEdgeTiles": 5.5,
+          "proposedEntranceWestTiles": 1.848,
+          "proposedWorkspaceAreaTiles": 14.3558,
+          "roadAnalysisStrokeTiles": 4.5,
+          "riverMaskTiles": 4.5,
+          "bridgeGlyphTiles": [
+            6.5,
+            3.6
+          ],
+          "claimRadiusAu": 12,
+          "claimMinDistFromPoiAu": 20,
+          "tenderLinkAu": 6
+        },
+        "poiFeetUnableToHostSmallestRoom": 0,
+        "poiFeetUnableToHost5x5Square": 0,
+        "coastCellsSource": 812,
+        "coastDetailNote": "coast stays an 8-au staircase repeated 4x per axis; NO new shoreline detail.",
+        "roadBendsRadiusUnderOneTile": 0,
+        "roadBendsRadiusUnderTwoTiles": 0,
+        "roadBendsMeasured": 1080,
+        "quantizedOpenTiles": {
+          "entranceOpenTiles": 1,
+          "roadOpenTiles": 4,
+          "riverOpenTiles": 4,
+          "bridgeOpenTiles": [
+            6,
+            3
+          ]
+        }
+      },
+      "feasibility": {
+        "tests": [
+          {
+            "id": "ENTRY_CART",
+            "gating": true,
+            "ok": true,
+            "measured": "1 open tile(s); cart diameter 0.625 tile",
+            "basis": "GEO-02 PROPOSED 3.696 au west opening; PR44 moveBody cart radius 5 px; one open floor tile is the atomic unit"
+          },
+          {
+            "id": "ENTRY_ONE_FLOOR_TILE",
+            "gating": true,
+            "ok": true,
+            "measured": "1 open tile(s)",
+            "basis": "PR44 structures occupy one tile centre; a sub-tile opening quantizes to ZERO open tiles"
+          },
+          {
+            "id": "MIN_POI_ROOM",
+            "gating": true,
+            "ok": true,
+            "measured": "44 tiles², 5.5 tile edge vs 20 tiles²/4 side",
+            "basis": "smallest authored PR44 building (world.ts stamp); canonical Veyra smallest POI foot"
+          },
+          {
+            "id": "MEDIAN_POI_ROOM",
+            "gating": true,
+            "ok": true,
+            "measured": "212.96 tiles²",
+            "basis": "canonical Veyra median foot; a multi-room POI needs >=5x5 tiles"
+          },
+          {
+            "id": "PROPOSED_WORKSPACE",
+            "gating": true,
+            "ok": true,
+            "measured": "14.3558 tiles² vs derived 9 tiles²",
+            "basis": "GEO-02 PROPOSED working space 57.4232 au²; PR44 near(r,e,3) interaction envelope + 640x360 camera"
+          },
+          {
+            "id": "ROAD_ONE_TILE",
+            "gating": true,
+            "ok": true,
+            "measured": "4 open tile(s)",
+            "basis": "MapLab 9 au analysis stroke (NOT an authored physical width)"
+          },
+          {
+            "id": "ROAD_TWO_TILES_CART_CLEARANCE",
+            "gating": false,
+            "ok": true,
+            "measured": "4 open tile(s)",
+            "basis": "cargoPassable cross-section + cart swept clearance (UNVALIDATED in source); reported, not gating"
+          },
+          {
+            "id": "RIVER_BARRIER_ONE_TILE",
+            "gating": true,
+            "ok": true,
+            "measured": "4 open tile(s)",
+            "basis": "9 au river mask; a sub-tile channel cannot be a distinct water tile"
+          },
+          {
+            "id": "BRIDGE_GLYPH_BOTH_AXES",
+            "gating": true,
+            "ok": true,
+            "measured": "6x3 tiles",
+            "basis": "13x7.2 au DISPLAY glyph; a zero-height deck loses the crossing"
+          },
+          {
+            "id": "CHUNK_KEY_COLLISION_FREE",
+            "gating": true,
+            "ok": true,
+            "measured": "63 chunk columns vs stride 100",
+            "basis": "render.ts getChunk k=cy*100+cx"
+          },
+          {
+            "id": "ECONOMY_CELL_LIMIT",
+            "gating": true,
+            "ok": true,
+            "measured": "700000 cells vs 1000000",
+            "basis": "validateEconomyMap() rejects >1,000,000"
+          },
+          {
+            "id": "EXACT_PACKAGE_VALIDATOR",
+            "gating": false,
+            "ok": false,
+            "measured": "1000x700 vs 200x200",
+            "basis": "validateRuntimeMapPackage() — applies to ALL candidates; requires the same runtime change, not a differentiator"
+          },
+          {
+            "id": "SEA_DIST_SEMANTIC_COVERAGE",
+            "gating": false,
+            "ok": true,
+            "measuredOnly": true,
+            "measured": "5.39% land cells with meaningful seaDist",
+            "basis": "world.ts seaDist BFS stops at 6 hops — measured semantic loss, not a hard gate"
+          }
+        ],
+        "passed": 12,
+        "failed": [
+          "EXACT_PACKAGE_VALIDATOR"
+        ],
+        "gatingFailures": [],
+        "hardRejections": [],
+        "note": "A scale is NOT approved merely because travel times are attractive or because dimensions are round integers. Gating spatial/engine failures are hard rejections; non-gating rows are global runtime changes or measured semantic losses."
+      }
+    },
+    {
+      "u": 4,
+      "unit": "authoring_units_per_runtime_tile",
+      "status": "DIAGNOSTIC_CANDIDATE__NOT_APPROVED",
+      "worldTiles": [
+        500,
+        350
+      ],
+      "cells": 175000,
+      "worldPx": [
+        8000,
+        5600
+      ],
+      "tilePx": 16,
+      "pxPerAu": 4,
+      "auPerPx": 0.25,
+      "integerDimensionsConvenienceOnly": true,
+      "authoredRaster": {
+        "sourceCellAu": 8,
+        "sourceCells": 43750,
+        "tilesPerSourceCell": 2,
+        "upsampleFactor": 4,
+        "newAuthoredDetail": "NONE — Veyra raster is 8 au/cell; U<8 only duplicates/interpolates cells, U=8 is 1:1."
+      },
+      "traversal": {
+        "baseTilesPerSec": 4.5,
+        "baseSpeedPxPerSec": 72,
+        "baseSpeedAuPerSec": 18,
+        "runClock": {
+          "maxRunHours": 336,
+          "runSeconds": 1209600,
+          "ragnarokFinalHours": 72,
+          "HOUR_MS": 3600000
+        },
+        "fictionalDaySeconds": 1440,
+        "crossWorldWidthSeconds": 111.1111,
+        "crossWorldWidthGameHours": 0.0309,
+        "crossWorldWidthFractionOfFictionalDay": 0.0772
+      },
+      "camera": {
+        "viewportPx": [
+          640,
+          360
+        ],
+        "viewportTiles": [
+          40,
+          22.5
+        ],
+        "screensAcross": [
+          12.5,
+          15.5556
+        ],
+        "fractionOfWorldWidthVisible": 0.08,
+        "sightDayAu": 27.5,
+        "sightNightAu": 17.5,
+        "activeRadiusAu": 120
+      },
+      "engineLimits": {
+        "exactPackageValidator": {
+          "required": {
+            "width": 200,
+            "height": 200,
+            "tileSize": 16,
+            "arrays": 40000
+          },
+          "fits": false,
+          "note": "validateRuntimeMapPackage() rejects ANY resize: e.width===WW, e.height===WH, e.tileSize===TILE; arrays must be exactly 40000."
+        },
+        "economyValidator": {
+          "maxCells": 1000000,
+          "fits": true,
+          "arrayCount": 13,
+          "note": "validateEconomyMap() rejects >1,000,000 cells; all 13 equal-length cell arrays still required."
+        },
+        "coreFixedGrid": {
+          "WW": 200,
+          "WH": 200,
+          "runtimeCells": 40000,
+          "fits": false,
+          "note": "core.ts WW/WH and Uint8Array(WW*WH) blockGrid are compile-time constants."
+        },
+        "renderChunkCache": {
+          "CH": 16,
+          "keyStride": 100,
+          "chunkCols": 32,
+          "chunkRows": 22,
+          "keyCollisionFree": true,
+          "collisionFreeMaxWorldTilesW": 1600,
+          "note": "k=cy*100+cx is collision-free."
+        },
+        "seaDistSemantic": {
+          "bfsStopTiles": 7,
+          "tilesPerSourceCell": 2,
+          "stopTiles": 7,
+          "landCellsWithMeaningfulSeaDist": 2306,
+          "landCells": 15077,
+          "fraction": 0.152948
+        },
+        "streaming": "NO world streaming / LOD loader found in PR44 HEAD web/src/game. render.ts has a 16-tile terrain CHUNK CACHE only; core.ts/camera clamps still use fixed WW/WH."
+      },
+      "memory": {
+        "model": "LOWER-BOUND MODEL, NOT MEASURED RUNTIME MEMORY. Assumes 1-byte typed arrays for World/BlockGrid, 8-byte JS number slots for EconomyMap/package arrays and sourceV3; strings are counted as one reference each. No streaming/LOD implementation exists in PR44 HEAD.",
+        "worldTypedArrays": 1050000,
+        "blockGrid": 175000,
+        "economyNumericArrays": 18200000,
+        "sourceV3": 1400000,
+        "packageArrays": 5600000,
+        "renderChunkCacheUpperBoundBytes": 184549376,
+        "compileEconomyNeighbourhoodChecksWorstCase": 8575000,
+        "mapDigestArrayValuesAtLeast": 4025000,
+        "totalBytesLowerBound": 26425000,
+        "totalMBLowerBound": 25.2008,
+        "renderChunkCacheUpperBoundMB": 176
+      },
+      "spatial": {
+        "thresholds": {
+          "playerDiameterTiles": 0.5,
+          "cartDiameterTiles": 0.625,
+          "smallestRuntimeBuildingTiles": [
+            5,
+            4
+          ],
+          "smallestRoomTiles": 20,
+          "smallestRoomSideTiles": 4,
+          "claimRadiusTiles": 6,
+          "claimMinDistFromPoiTiles": 10,
+          "tenderLinkTiles": 3,
+          "nearInteractionTiles": 3
+        },
+        "featureTiles": {
+          "minPOIAreaAu2": 176,
+          "minPOIAreaTiles": 11,
+          "medianPOIAreaTiles": 53.24,
+          "minPOIEdgeTiles": 2.75,
+          "proposedEntranceWestTiles": 0.924,
+          "proposedWorkspaceAreaTiles": 3.589,
+          "roadAnalysisStrokeTiles": 2.25,
+          "riverMaskTiles": 2.25,
+          "bridgeGlyphTiles": [
+            3.25,
+            1.8
+          ],
+          "claimRadiusAu": 24,
+          "claimMinDistFromPoiAu": 40,
+          "tenderLinkAu": 12
+        },
+        "poiFeetUnableToHostSmallestRoom": 81,
+        "poiFeetUnableToHost5x5Square": 81,
+        "coastCellsSource": 812,
+        "coastDetailNote": "coast stays an 8-au staircase repeated 2x per axis; NO new shoreline detail.",
+        "roadBendsRadiusUnderOneTile": 0,
+        "roadBendsRadiusUnderTwoTiles": 6,
+        "roadBendsMeasured": 1080,
+        "quantizedOpenTiles": {
+          "entranceOpenTiles": 0,
+          "roadOpenTiles": 2,
+          "riverOpenTiles": 2,
+          "bridgeOpenTiles": [
+            3,
+            1
+          ]
+        }
+      },
+      "feasibility": {
+        "tests": [
+          {
+            "id": "ENTRY_CART",
+            "gating": true,
+            "ok": false,
+            "measured": "0 open tile(s); cart diameter 0.625 tile",
+            "basis": "GEO-02 PROPOSED 3.696 au west opening; PR44 moveBody cart radius 5 px; one open floor tile is the atomic unit"
+          },
+          {
+            "id": "ENTRY_ONE_FLOOR_TILE",
+            "gating": true,
+            "ok": false,
+            "measured": "0 open tile(s)",
+            "basis": "PR44 structures occupy one tile centre; a sub-tile opening quantizes to ZERO open tiles"
+          },
+          {
+            "id": "MIN_POI_ROOM",
+            "gating": true,
+            "ok": false,
+            "measured": "11 tiles², 2.75 tile edge vs 20 tiles²/4 side",
+            "basis": "smallest authored PR44 building (world.ts stamp); canonical Veyra smallest POI foot"
+          },
+          {
+            "id": "MEDIAN_POI_ROOM",
+            "gating": true,
+            "ok": false,
+            "measured": "53.24 tiles²",
+            "basis": "canonical Veyra median foot; a multi-room POI needs >=5x5 tiles"
+          },
+          {
+            "id": "PROPOSED_WORKSPACE",
+            "gating": true,
+            "ok": false,
+            "measured": "3.589 tiles² vs derived 9 tiles²",
+            "basis": "GEO-02 PROPOSED working space 57.4232 au²; PR44 near(r,e,3) interaction envelope + 640x360 camera"
+          },
+          {
+            "id": "ROAD_ONE_TILE",
+            "gating": true,
+            "ok": true,
+            "measured": "2 open tile(s)",
+            "basis": "MapLab 9 au analysis stroke (NOT an authored physical width)"
+          },
+          {
+            "id": "ROAD_TWO_TILES_CART_CLEARANCE",
+            "gating": false,
+            "ok": true,
+            "measured": "2 open tile(s)",
+            "basis": "cargoPassable cross-section + cart swept clearance (UNVALIDATED in source); reported, not gating"
+          },
+          {
+            "id": "RIVER_BARRIER_ONE_TILE",
+            "gating": true,
+            "ok": true,
+            "measured": "2 open tile(s)",
+            "basis": "9 au river mask; a sub-tile channel cannot be a distinct water tile"
+          },
+          {
+            "id": "BRIDGE_GLYPH_BOTH_AXES",
+            "gating": true,
+            "ok": true,
+            "measured": "3x1 tiles",
+            "basis": "13x7.2 au DISPLAY glyph; a zero-height deck loses the crossing"
+          },
+          {
+            "id": "CHUNK_KEY_COLLISION_FREE",
+            "gating": true,
+            "ok": true,
+            "measured": "32 chunk columns vs stride 100",
+            "basis": "render.ts getChunk k=cy*100+cx"
+          },
+          {
+            "id": "ECONOMY_CELL_LIMIT",
+            "gating": true,
+            "ok": true,
+            "measured": "175000 cells vs 1000000",
+            "basis": "validateEconomyMap() rejects >1,000,000"
+          },
+          {
+            "id": "EXACT_PACKAGE_VALIDATOR",
+            "gating": false,
+            "ok": false,
+            "measured": "500x350 vs 200x200",
+            "basis": "validateRuntimeMapPackage() — applies to ALL candidates; requires the same runtime change, not a differentiator"
+          },
+          {
+            "id": "SEA_DIST_SEMANTIC_COVERAGE",
+            "gating": false,
+            "ok": true,
+            "measuredOnly": true,
+            "measured": "15.29% land cells with meaningful seaDist",
+            "basis": "world.ts seaDist BFS stops at 6 hops — measured semantic loss, not a hard gate"
+          }
+        ],
+        "passed": 7,
+        "failed": [
+          "ENTRY_CART",
+          "ENTRY_ONE_FLOOR_TILE",
+          "MIN_POI_ROOM",
+          "MEDIAN_POI_ROOM",
+          "PROPOSED_WORKSPACE",
+          "EXACT_PACKAGE_VALIDATOR"
+        ],
+        "gatingFailures": [
+          "ENTRY_CART",
+          "ENTRY_ONE_FLOOR_TILE",
+          "MIN_POI_ROOM",
+          "MEDIAN_POI_ROOM",
+          "PROPOSED_WORKSPACE"
+        ],
+        "hardRejections": [
+          "ENTRY_CART",
+          "ENTRY_ONE_FLOOR_TILE",
+          "MIN_POI_ROOM",
+          "MEDIAN_POI_ROOM",
+          "PROPOSED_WORKSPACE"
+        ],
+        "note": "A scale is NOT approved merely because travel times are attractive or because dimensions are round integers. Gating spatial/engine failures are hard rejections; non-gating rows are global runtime changes or measured semantic losses."
+      }
+    },
+    {
+      "u": 8,
+      "unit": "authoring_units_per_runtime_tile",
+      "status": "DIAGNOSTIC_CANDIDATE__NOT_APPROVED",
+      "worldTiles": [
+        250,
+        175
+      ],
+      "cells": 43750,
+      "worldPx": [
+        4000,
+        2800
+      ],
+      "tilePx": 16,
+      "pxPerAu": 2,
+      "auPerPx": 0.5,
+      "integerDimensionsConvenienceOnly": true,
+      "authoredRaster": {
+        "sourceCellAu": 8,
+        "sourceCells": 43750,
+        "tilesPerSourceCell": 1,
+        "upsampleFactor": 1,
+        "newAuthoredDetail": "NONE — Veyra raster is 8 au/cell; U<8 only duplicates/interpolates cells, U=8 is 1:1."
+      },
+      "traversal": {
+        "baseTilesPerSec": 4.5,
+        "baseSpeedPxPerSec": 72,
+        "baseSpeedAuPerSec": 36,
+        "runClock": {
+          "maxRunHours": 336,
+          "runSeconds": 1209600,
+          "ragnarokFinalHours": 72,
+          "HOUR_MS": 3600000
+        },
+        "fictionalDaySeconds": 1440,
+        "crossWorldWidthSeconds": 55.5556,
+        "crossWorldWidthGameHours": 0.0154,
+        "crossWorldWidthFractionOfFictionalDay": 0.0386
+      },
+      "camera": {
+        "viewportPx": [
+          640,
+          360
+        ],
+        "viewportTiles": [
+          40,
+          22.5
+        ],
+        "screensAcross": [
+          6.25,
+          7.7778
+        ],
+        "fractionOfWorldWidthVisible": 0.16,
+        "sightDayAu": 55,
+        "sightNightAu": 35,
+        "activeRadiusAu": 240
+      },
+      "engineLimits": {
+        "exactPackageValidator": {
+          "required": {
+            "width": 200,
+            "height": 200,
+            "tileSize": 16,
+            "arrays": 40000
+          },
+          "fits": false,
+          "note": "validateRuntimeMapPackage() rejects ANY resize: e.width===WW, e.height===WH, e.tileSize===TILE; arrays must be exactly 40000."
+        },
+        "economyValidator": {
+          "maxCells": 1000000,
+          "fits": true,
+          "arrayCount": 13,
+          "note": "validateEconomyMap() rejects >1,000,000 cells; all 13 equal-length cell arrays still required."
+        },
+        "coreFixedGrid": {
+          "WW": 200,
+          "WH": 200,
+          "runtimeCells": 40000,
+          "fits": false,
+          "note": "core.ts WW/WH and Uint8Array(WW*WH) blockGrid are compile-time constants."
+        },
+        "renderChunkCache": {
+          "CH": 16,
+          "keyStride": 100,
+          "chunkCols": 16,
+          "chunkRows": 11,
+          "keyCollisionFree": true,
+          "collisionFreeMaxWorldTilesW": 1600,
+          "note": "k=cy*100+cx is collision-free."
+        },
+        "seaDistSemantic": {
+          "bfsStopTiles": 7,
+          "tilesPerSourceCell": 1,
+          "stopTiles": 7,
+          "landCellsWithMeaningfulSeaDist": 4811,
+          "landCells": 15077,
+          "fraction": 0.319095
+        },
+        "streaming": "NO world streaming / LOD loader found in PR44 HEAD web/src/game. render.ts has a 16-tile terrain CHUNK CACHE only; core.ts/camera clamps still use fixed WW/WH."
+      },
+      "memory": {
+        "model": "LOWER-BOUND MODEL, NOT MEASURED RUNTIME MEMORY. Assumes 1-byte typed arrays for World/BlockGrid, 8-byte JS number slots for EconomyMap/package arrays and sourceV3; strings are counted as one reference each. No streaming/LOD implementation exists in PR44 HEAD.",
+        "worldTypedArrays": 262500,
+        "blockGrid": 43750,
+        "economyNumericArrays": 4550000,
+        "sourceV3": 350000,
+        "packageArrays": 1400000,
+        "renderChunkCacheUpperBoundBytes": 46137344,
+        "compileEconomyNeighbourhoodChecksWorstCase": 2143750,
+        "mapDigestArrayValuesAtLeast": 1006250,
+        "totalBytesLowerBound": 6606250,
+        "totalMBLowerBound": 6.3002,
+        "renderChunkCacheUpperBoundMB": 44
+      },
+      "spatial": {
+        "thresholds": {
+          "playerDiameterTiles": 0.5,
+          "cartDiameterTiles": 0.625,
+          "smallestRuntimeBuildingTiles": [
+            5,
+            4
+          ],
+          "smallestRoomTiles": 20,
+          "smallestRoomSideTiles": 4,
+          "claimRadiusTiles": 6,
+          "claimMinDistFromPoiTiles": 10,
+          "tenderLinkTiles": 3,
+          "nearInteractionTiles": 3
+        },
+        "featureTiles": {
+          "minPOIAreaAu2": 176,
+          "minPOIAreaTiles": 2.75,
+          "medianPOIAreaTiles": 13.31,
+          "minPOIEdgeTiles": 1.375,
+          "proposedEntranceWestTiles": 0.462,
+          "proposedWorkspaceAreaTiles": 0.8972,
+          "roadAnalysisStrokeTiles": 1.125,
+          "riverMaskTiles": 1.125,
+          "bridgeGlyphTiles": [
+            1.625,
+            0.9
+          ],
+          "claimRadiusAu": 48,
+          "claimMinDistFromPoiAu": 80,
+          "tenderLinkAu": 24
+        },
+        "poiFeetUnableToHostSmallestRoom": 81,
+        "poiFeetUnableToHost5x5Square": 81,
+        "coastCellsSource": 812,
+        "coastDetailNote": "1 authored raster cell = 1 tile; coastline is representable at native resolution.",
+        "roadBendsRadiusUnderOneTile": 6,
+        "roadBendsRadiusUnderTwoTiles": 60,
+        "roadBendsMeasured": 1080,
+        "quantizedOpenTiles": {
+          "entranceOpenTiles": 0,
+          "roadOpenTiles": 1,
+          "riverOpenTiles": 1,
+          "bridgeOpenTiles": [
+            1,
+            0
+          ]
+        }
+      },
+      "feasibility": {
+        "tests": [
+          {
+            "id": "ENTRY_CART",
+            "gating": true,
+            "ok": false,
+            "measured": "0 open tile(s); cart diameter 0.625 tile",
+            "basis": "GEO-02 PROPOSED 3.696 au west opening; PR44 moveBody cart radius 5 px; one open floor tile is the atomic unit"
+          },
+          {
+            "id": "ENTRY_ONE_FLOOR_TILE",
+            "gating": true,
+            "ok": false,
+            "measured": "0 open tile(s)",
+            "basis": "PR44 structures occupy one tile centre; a sub-tile opening quantizes to ZERO open tiles"
+          },
+          {
+            "id": "MIN_POI_ROOM",
+            "gating": true,
+            "ok": false,
+            "measured": "2.75 tiles², 1.375 tile edge vs 20 tiles²/4 side",
+            "basis": "smallest authored PR44 building (world.ts stamp); canonical Veyra smallest POI foot"
+          },
+          {
+            "id": "MEDIAN_POI_ROOM",
+            "gating": true,
+            "ok": false,
+            "measured": "13.31 tiles²",
+            "basis": "canonical Veyra median foot; a multi-room POI needs >=5x5 tiles"
+          },
+          {
+            "id": "PROPOSED_WORKSPACE",
+            "gating": true,
+            "ok": false,
+            "measured": "0.8972 tiles² vs derived 9 tiles²",
+            "basis": "GEO-02 PROPOSED working space 57.4232 au²; PR44 near(r,e,3) interaction envelope + 640x360 camera"
+          },
+          {
+            "id": "ROAD_ONE_TILE",
+            "gating": true,
+            "ok": true,
+            "measured": "1 open tile(s)",
+            "basis": "MapLab 9 au analysis stroke (NOT an authored physical width)"
+          },
+          {
+            "id": "ROAD_TWO_TILES_CART_CLEARANCE",
+            "gating": false,
+            "ok": false,
+            "measured": "1 open tile(s)",
+            "basis": "cargoPassable cross-section + cart swept clearance (UNVALIDATED in source); reported, not gating"
+          },
+          {
+            "id": "RIVER_BARRIER_ONE_TILE",
+            "gating": true,
+            "ok": true,
+            "measured": "1 open tile(s)",
+            "basis": "9 au river mask; a sub-tile channel cannot be a distinct water tile"
+          },
+          {
+            "id": "BRIDGE_GLYPH_BOTH_AXES",
+            "gating": true,
+            "ok": false,
+            "measured": "1x0 tiles",
+            "basis": "13x7.2 au DISPLAY glyph; a zero-height deck loses the crossing"
+          },
+          {
+            "id": "CHUNK_KEY_COLLISION_FREE",
+            "gating": true,
+            "ok": true,
+            "measured": "16 chunk columns vs stride 100",
+            "basis": "render.ts getChunk k=cy*100+cx"
+          },
+          {
+            "id": "ECONOMY_CELL_LIMIT",
+            "gating": true,
+            "ok": true,
+            "measured": "43750 cells vs 1000000",
+            "basis": "validateEconomyMap() rejects >1,000,000"
+          },
+          {
+            "id": "EXACT_PACKAGE_VALIDATOR",
+            "gating": false,
+            "ok": false,
+            "measured": "250x175 vs 200x200",
+            "basis": "validateRuntimeMapPackage() — applies to ALL candidates; requires the same runtime change, not a differentiator"
+          },
+          {
+            "id": "SEA_DIST_SEMANTIC_COVERAGE",
+            "gating": false,
+            "ok": true,
+            "measuredOnly": true,
+            "measured": "31.91% land cells with meaningful seaDist",
+            "basis": "world.ts seaDist BFS stops at 6 hops — measured semantic loss, not a hard gate"
+          }
+        ],
+        "passed": 5,
+        "failed": [
+          "ENTRY_CART",
+          "ENTRY_ONE_FLOOR_TILE",
+          "MIN_POI_ROOM",
+          "MEDIAN_POI_ROOM",
+          "PROPOSED_WORKSPACE",
+          "ROAD_TWO_TILES_CART_CLEARANCE",
+          "BRIDGE_GLYPH_BOTH_AXES",
+          "EXACT_PACKAGE_VALIDATOR"
+        ],
+        "gatingFailures": [
+          "ENTRY_CART",
+          "ENTRY_ONE_FLOOR_TILE",
+          "MIN_POI_ROOM",
+          "MEDIAN_POI_ROOM",
+          "PROPOSED_WORKSPACE",
+          "BRIDGE_GLYPH_BOTH_AXES"
+        ],
+        "hardRejections": [
+          "ENTRY_CART",
+          "ENTRY_ONE_FLOOR_TILE",
+          "MIN_POI_ROOM",
+          "MEDIAN_POI_ROOM",
+          "PROPOSED_WORKSPACE",
+          "BRIDGE_GLYPH_BOTH_AXES"
+        ],
+        "note": "A scale is NOT approved merely because travel times are attractive or because dimensions are round integers. Gating spatial/engine failures are hard rejections; non-gating rows are global runtime changes or measured semantic losses."
+      }
+    }
+  ],
+  "acceptance": {
+    "K2": {
+      "status": "MEASURED_GEOMETRY__GAMEPLAY_RULE_PARTIAL",
+      "measured": "Veyra 8 landmasses, 5 lakes, 17 rivers, 12 bridges, 27 docks, 23 zones, 92 roads, 81 POIs, 280 resource annotations, 4 spawns, 6 Elders; 12-code biome raster + 9 au road/river strokes.",
+      "gameplayRule": "PR44 terrainSpeed multipliers are pinned and used; the 12-code -> 14-string biome mapping is UNAPPROVED (GEO-02 blocker). Weather/trace/footprint state requires Gameplay simulation.",
+      "missing": "approved biome mapping; slope threshold; cart swept-clearance dimension; actual weather/hazard/trace exposure.",
+      "sourceIds": [
+        "world_lab/geo01/output/geography.v1.json",
+        "world_lab/geo02/output/maplab_encoding.v1.json",
+        "web/src/game/balance.v1.json",
+        "web/src/game/sim.ts"
+      ]
+    },
+    "K3": {
+      "status": "SOURCE_ANNOTATIONS_MEASURED__STOCK_NOT_GAMEPLAY_APPROVED",
+      "measured": "280 authored resource annotations; per-spawn nearest and within-100/200/300 au counts in output/benchmark.v1.json resourceSuitability.",
+      "gameplayRule": "PR44 SOURCES/catalog.ts define finite stock, HP, regrow and loot; all 280 Veyra annotations remain conf=proposal and have no Gameplay source ID, stock, respawn or legality.",
+      "missing": "Gameplay source-ID mapping, stock/respawn policy, harvest legality for each annotated area."
+    },
+    "K6": {
+      "status": "SPATIAL_FEASIBILITY_MEASURED__NO_HOME_APPROVAL",
+      "measured": "per-scale POI foot tiles, entrance tiles, workspace tiles, room capacity, claim radius/min-distance in au; 3 alternative home zones measured from chosen spawn.",
+      "gameplayRule": "PR44 buildings 5x4..17x12 tiles, claimRadius=6 tiles, claimMinDistFromPoi=10 tiles, tenderLinkTiles=3, build range 4.6*TILE, near interaction 3 tiles; POI doors/power/loot/retreat are Gameplay-owned states.",
+      "missing": "canonical Veyra POIs have NO authored doors/rooms/corridors/workspaces; GEO-02 PROPOSED shell is not canonical and has no validated door/swept clearance. Human 640x360 room test."
+    },
+    "K7": {
+      "status": "DISTANCES_AND_MODELLED_TIMES_MEASURED__PASSABILITY_NOT_PROVEN",
+      "measured": "51 source-linked journeys; 41 have straight-line + terrain-weighted raster route + loaded-cart scenario times for U=1/2/4/8, 10 are explicitly UNRESOLVED with no fabricated time; authored RT-1/RT-2/RT-3 corridor times with trail/cart split.",
+      "gameplayRule": "PR44 cart speedOnRoad=1.36 / speedOffRoad=0.72 / speedRough=0.42, weight penalty 0.18 per 100, maxWeight=240 / freight=360, carts cannot ford water, moveBody radii 4/5 px.",
+      "blockers": [
+        "authored cart-road raster has 6 disconnected 8-connected components; largest=643 cells",
+        "RT-1 contains rd_13 / rd_1w / rd_16 which are kind=trail — NEVER cart-passable",
+        "GEO-02 measured po_kilns nearest cart road rd_n at 56.8792 au > ACCESS_R=48, foot trail rd_16 at 0 au; br_a foot-only crossing 0.0342 au; one zero-clearance cell [732,652]",
+        "no swept-clearance dimension exists in Veyra source; bridge-to-channel fit UNVERIFIED",
+        "10 of 51 measured ODs have NO connected foot route on the accepted masks: separate landmasses / unbridged channels; Veyra has kind=ferry roads but PR44 HEAD has NO approved ferry or boat rule"
+      ],
+      "missing": "Gameplay cart footprint/swept-clearance rule, slope/bridge/water thresholds, continuous cargo road authoring, approved ferry/boat/cargo rule for the 8 landmasses, exposure_time from creature simulation, freight repair/fuel cost."
+    },
+    "K8": {
+      "status": "RUNTIME_CLOCK_USED__NO_STREAMING_IMPLEMENTATION",
+      "measured": "run clock = 336 h = 1209600 s (real elapsed ms, HOUR=3600000); Ragnarok final 72 h; fictional day 24 min. All modelled times are real seconds and converted to game hours.",
+      "gameplayRule": "phaseOf/dayTime/endRun/weatherAt use runElapsedMs; offline causality is event-driven.",
+      "missing": "world-size streaming/LOD and offline simulation for a >40,000-cell world; save size and mapDigest budget; no full-world integration claim."
+    },
+    "MAP-SPAWN-04": {
+      "status": "GEOMETRY_MEASURED__NO_HUMAN_SURVIVAL_PASS",
+      "measured": {
+        "sp_west": {
+          "journeys": 8,
+          "withGeographicRoute": 6,
+          "waterAu": 64.4846,
+          "foodAu": 29.4581,
+          "toolAu": 41.6173,
+          "buildZoneAu": 16.7905,
+          "nearPOIAu": 39.6989,
+          "farPOIAu": 1522.431,
+          "elderApproachAu": 169.4462,
+          "cartCorridorAu": 25.1645
+        },
+        "sp_lake": {
+          "journeys": 8,
+          "withGeographicRoute": 7,
+          "waterAu": 28.628,
+          "foodAu": 46.6931,
+          "toolAu": 31.6228,
+          "buildZoneAu": 10.4314,
+          "nearPOIAu": 37.2022,
+          "farPOIAu": 1110.0414,
+          "elderApproachAu": 62.2896,
+          "cartCorridorAu": 35.7106
+        },
+        "sp_hook": {
+          "journeys": 8,
+          "withGeographicRoute": 7,
+          "waterAu": 42.8048,
+          "foodAu": 36.4005,
+          "toolAu": 37.7359,
+          "buildZoneAu": 0.3548,
+          "nearPOIAu": 40,
+          "farPOIAu": 1229.6748,
+          "elderApproachAu": 369.616,
+          "cartCorridorAu": 56.1538
+        },
+        "sp_gulf": {
+          "journeys": 8,
+          "withGeographicRoute": 6,
+          "waterAu": 92.0385,
+          "foodAu": 13.9985,
+          "toolAu": 26,
+          "buildZoneAu": 12.8853,
+          "nearPOIAu": 46,
+          "farPOIAu": 1123.5889,
+          "elderApproachAu": 128.1601,
+          "cartCorridorAu": 39.8121
+        }
+      },
+      "bibleRequirement": "Bốn điểm spawn ở các miền khác nhau, thử không Core vẫn có nước, thức ăn, nguồn làm công cụ, road/offroad, đường tới vùng có thể dựng nhà",
+      "insufficientEvidence": "Chỉ điểm spawn “an toàn” trên sơ đồ",
+      "missing": "30–60 min blind-novice play without Core, real water/food/tool source IDs, collision and road/offroad choice; \"safe dot on a map\" is explicitly insufficient."
+    },
+    "MAP-HOME-03": {
+      "status": "3_ALTERNATIVE_ZONES_MEASURED__NO_BUILT_HOUSES",
+      "measured": [
+        {
+          "id": "home.bz_silver",
+          "straightAu": 102.5972,
+          "routeAu": 126.2941
+        },
+        {
+          "id": "home.bz_hook",
+          "straightAu": 542.8317,
+          "routeAu": 814.114
+        },
+        {
+          "id": "home.bz_ironholm",
+          "straightAu": 745.4107,
+          "routeAu": null
+        }
+      ],
+      "bibleRequirement": "Ba nhà do người thử tự chọn từ đất hợp lệ; đúng collision, mái, vườn/lò, freight và các lần giao tuyến quái khác nhau",
+      "missing": "three houses actually built by testers, collision/roof/garden/furnace, freight and differing monster-route encounters; buildable % is explicitly insufficient."
+    },
+    "MAP-LOG-03": {
+      "status": "FOOT_VS_CART_GEOMETRY_MEASURED__CART_ROUTE_INCOMPLETE",
+      "measured": {
+        "kilnsToFootTrail": {
+          "straightAu": 107.9352,
+          "routeAu": 123.8406
+        },
+        "kilnsToCartRoad": {
+          "straightAu": 145.5816,
+          "routeAu": 154.3847
+        },
+        "farWarehouse": {
+          "straightAu": 603.8096,
+          "routeAu": null
+        },
+        "geo02KilnsCartGapAu": 56.8792,
+        "geo02FootGapAu": 0
+      },
+      "bibleRequirement": "Một POI nguồn có đường người và đường xe khác biệt, một kho xa có giá trị tăng sau khi được xe, một tuyến bị thời tiết/địch làm thay đổi quyết định",
+      "missing": "real item/collision/cart instance, a continuous physically verified cargo route, weather/enemy-driven route change; no incomplete trail may be labelled cart-passable."
+    },
+    "MAP-U4": {
+      "status": "CASH_ROUTE_DISTANCES_MEASURED__SELLER_ROUTE_PROPOSED_ONLY",
+      "measured": [
+        {
+          "id": "u4.vendorToCache",
+          "straightAu": 237.1919,
+          "routeAu": 283.2203
+        },
+        {
+          "id": "u4.cacheToHome",
+          "straightAu": 351.6697,
+          "routeAu": 690.2607
+        },
+        {
+          "id": "u4.homeToEvac",
+          "straightAu": 449.9928,
+          "routeAu": 466.1631
+        }
+      ],
+      "bibleRequirement": "Không boss: kiếm tiền cuối72 → đến người bán rương mua bằng tiền vật lý → về căn cứ của mình → đặt rương → ký gửi số tiền dương → tùy chọn rời đảo",
+      "missing": "Bible §5.4 explicitly leaves price, stock, seller, distance, land rights, number of trips and route optimality unfixed; physical cash→purchase→claim→deposit run with real items."
+    },
+    "MAP-U5": {
+      "status": "6_DISTINCT_ELDER_APPROACHES_MEASURED",
+      "measured": [
+        {
+          "id": "el_surtur",
+          "elder": "surtur",
+          "approachPoints": 2,
+          "pois": [
+            "po_surtur",
+            "po_emberwatch",
+            "po_obsq",
+            "po_geo",
+            "po_cindercamp"
+          ],
+          "fromChosenSpawnAu": 847.514
+        },
+        {
+          "id": "el_typhon",
+          "elder": "typhon",
+          "approachPoints": 2,
+          "pois": [
+            "po_typhon",
+            "po_viaduct",
+            "po_freightyard",
+            "po_fracquarry",
+            "po_falls"
+          ],
+          "fromChosenSpawnAu": 157.7466
+        },
+        {
+          "id": "el_aion",
+          "elder": "aion",
+          "approachPoints": 3,
+          "pois": [
+            "po_elderwood",
+            "po_glade",
+            "po_sapgrove",
+            "po_sawaion",
+            "po_kilns",
+            "po_ranger"
+          ],
+          "fromChosenSpawnAu": 62.2896
+        },
+        {
+          "id": "el_atlas",
+          "elder": "atlas",
+          "approachPoints": 1,
+          "pois": [
+            "po_gate",
+            "po_dpier",
+            "po_beacon",
+            "po_westmouth"
+          ],
+          "fromChosenSpawnAu": 573.1492
+        },
+        {
+          "id": "el_argus",
+          "elder": "argus",
+          "approachPoints": 1,
+          "pois": [
+            "po_academy",
+            "po_observatory",
+            "po_archive",
+            "po_hall_eyes",
+            "po_lantern"
+          ],
+          "fromChosenSpawnAu": 388.4791
+        },
+        {
+          "id": "el_anubis",
+          "elder": "anubis",
+          "approachPoints": 2,
+          "pois": [
+            "po_necropolis",
+            "po_tombs",
+            "po_cairns",
+            "po_oasis",
+            "po_bonestop"
+          ],
+          "fromChosenSpawnAu": 355.0394
+        }
+      ],
+      "bibleRequirement": "Sáu Elder có vùng thật trước/sau thức tỉnh; các nguồn điểm khác nhau không phải một arena chung; ít nhất một lối sơ tán no-boss",
+      "missing": "pre/post-awakening physical regions with distinct sources, one verified no-boss retreat, six Elder sprites/AI beyond the Web prototype; symmetric coloured zones are explicitly insufficient."
+    }
+  },
+  "assumptions": [
+    "U is defined as authoring units per ONE runtime tile of TILE=16 px; 1 au = 16/U px and base speed = 72*U/16 au/s.",
+    "PR44 run clock is real elapsed milliseconds (HOUR=3600_000); modelled seconds are real seconds and 1 game hour = 3600 s. The 24-minute day/night clock is separate and fictional.",
+    "12 MapLab biome codes are mapped to PR44 terrainSpeed keys by documented assumption; GEO-02 explicitly says this mapping is NOT approved.",
+    "Raster Dijkstra uses the accepted GEO-01/02 8-au land/water/road/bridge masks. It is a geographic route estimate, NOT a Gameplay collision or swept-clearance verdict.",
+    "Road/bridge/river widths used as scale probes are EDITOR analysis strokes / display glyphs, NOT authored physical dimensions.",
+    "Memory figures are lower-bound byte models from PR44 array declarations; no streaming/LOD loader exists in PR44 HEAD.",
+    "The 3.696 au west entrance and 57.4232 au² workspace come from the GEO-02 PROPOSED po_kilns shell and are NOT canonical Veyra geometry.",
+    "Loaded-cart cases are modelled on the SAME geographic foot route with the PR44 cart speed/weight profile; they are not cart-passability claims."
+  ],
+  "missingRules": [
+    {
+      "id": "GAMEPLAY_BIOME_MAPPING",
+      "what": "approved 12 Veyra/MapLab biome codes -> 14-string PR44 Biome enum mapping (GEO-02 remaining blocker) + verified grid transform.",
+      "why": "terrain-weighted times and compileEconomy() legality depend on it."
+    },
+    {
+      "id": "SWEPT_CLEARANCE",
+      "what": "Gameplay player/cart collision envelope and swept-clearance test for every authored road, door opening, bridge deck, shoreline and road bend.",
+      "why": "GEO-02 found a zero-clearance cell, a foot-only bridge and no swept-clearance dimension in source."
+    },
+    {
+      "id": "CART_PASSABILITY_RULES",
+      "what": "slope threshold, bridge load/width rule, water/ford/ice rule, repair/fuel/opportunity cost and continuous cargo-road graph.",
+      "why": "RT-1 has trail segments; cart-road raster is fragmented; no trail may be labelled cart-passable."
+    },
+    {
+      "id": "EXPOSURE_SIMULATION",
+      "what": "creature spawn/habitat/trace/hazard simulation to measure exposure_time, footprint_monster_intersections and retreat_success.",
+      "why": "Bible §C13/K7 require route risk, not only route distance."
+    },
+    {
+      "id": "FERRY_RULE",
+      "what": "Gameplay-approved ferry/boat/cargo traversal rule for the 8 Veyra landmasses and the authored kind=ferry roads.",
+      "why": "several far POI / Elder / build-zone journeys have no connected foot route on the accepted land/water/bridge masks; no fabricated crossing time may be supplied."
+    },
+    {
+      "id": "RUNTIME_WORLD_SIZE",
+      "what": "engine change for WW/WH, exact validator, render chunk key, seaDist BFS, streaming/LOD, save/mapDigest memory budget for the chosen U.",
+      "why": "all four candidates fail validateRuntimeMapPackage() and core.ts fixed 40,000-cell grid."
+    },
+    {
+      "id": "ECONOMY_ROUTE_APPROVAL",
+      "what": "MAP-U4 seller, chest price/stock, land-rights and number of trips; MAP-LOG-03 far-warehouse value increase; MAP-HOME-03 three built houses.",
+      "why": "Bible explicitly leaves these unfixed; \"map dots\" are insufficient evidence."
+    },
+    {
+      "id": "HUMAN_640x360",
+      "what": "pixel inspection at 640x360 1x of road, wall, footprint, door, hazard, character and workspace at the chosen U.",
+      "why": "MAP-CAMERA and MAP-HOME-03 are human acceptance tests."
+    }
+  ],
+  "recommendation": {
+    "status": "BOUNDED_SHORTLIST__NO_APPROVED_FINAL_SCALE",
+    "creatorRule": "MAP DESIGNS THE PHYSICAL WORLD. GAMEPLAY POPULATES AND SIMULATES IT.",
+    "shortlist": [
+      2
+    ],
+    "rejected": [
+      {
+        "u": 1,
+        "reasons": [
+          "CHUNK_KEY_COLLISION_FREE",
+          "ECONOMY_CELL_LIMIT",
+          "EXACT_PACKAGE_VALIDATOR"
+        ]
+      },
+      {
+        "u": 4,
+        "reasons": [
+          "ENTRY_CART",
+          "ENTRY_ONE_FLOOR_TILE",
+          "MIN_POI_ROOM",
+          "MEDIAN_POI_ROOM",
+          "PROPOSED_WORKSPACE",
+          "EXACT_PACKAGE_VALIDATOR"
+        ]
+      },
+      {
+        "u": 8,
+        "reasons": [
+          "ENTRY_CART",
+          "ENTRY_ONE_FLOOR_TILE",
+          "MIN_POI_ROOM",
+          "MEDIAN_POI_ROOM",
+          "PROPOSED_WORKSPACE",
+          "BRIDGE_GLYPH_BOTH_AXES",
+          "ROAD_TWO_TILES_CART_CLEARANCE",
+          "EXACT_PACKAGE_VALIDATOR"
+        ]
+      }
+    ],
+    "allCandidatesFailExactRuntimeValidator": true,
+    "decision": "U=2 authoring units per runtime tile is the only diagnostic candidate that keeps entrances, rooms, workspaces, roads, rivers and bridges physically representable while staying inside the 1,000,000-cell economy validator. It is NOT approved: PR44 core.ts (WW=WH=200), validateRuntimeMapPackage() (exact 200x200 @16), render.ts chunk key stride, seaDist BFS stop and the absent streaming implementation must all be changed and re-tested before any full-world intake.",
+    "notChosenBecause": "No scale was chosen for convenient integer dimensions, for matching the 40,000-cell runtime, or for attractive traversal times alone. U=8 exactly reproduces the 250x175 source raster / ~43,750 cells but destroys entrances, interiors and bridge detail.",
+    "missingForApprovedFinalScale": [
+      {
+        "id": "GAMEPLAY_BIOME_MAPPING",
+        "what": "approved 12 Veyra/MapLab biome codes -> 14-string PR44 Biome enum mapping (GEO-02 remaining blocker) + verified grid transform.",
+        "why": "terrain-weighted times and compileEconomy() legality depend on it."
+      },
+      {
+        "id": "SWEPT_CLEARANCE",
+        "what": "Gameplay player/cart collision envelope and swept-clearance test for every authored road, door opening, bridge deck, shoreline and road bend.",
+        "why": "GEO-02 found a zero-clearance cell, a foot-only bridge and no swept-clearance dimension in source."
+      },
+      {
+        "id": "CART_PASSABILITY_RULES",
+        "what": "slope threshold, bridge load/width rule, water/ford/ice rule, repair/fuel/opportunity cost and continuous cargo-road graph.",
+        "why": "RT-1 has trail segments; cart-road raster is fragmented; no trail may be labelled cart-passable."
+      },
+      {
+        "id": "EXPOSURE_SIMULATION",
+        "what": "creature spawn/habitat/trace/hazard simulation to measure exposure_time, footprint_monster_intersections and retreat_success.",
+        "why": "Bible §C13/K7 require route risk, not only route distance."
+      },
+      {
+        "id": "FERRY_RULE",
+        "what": "Gameplay-approved ferry/boat/cargo traversal rule for the 8 Veyra landmasses and the authored kind=ferry roads.",
+        "why": "several far POI / Elder / build-zone journeys have no connected foot route on the accepted land/water/bridge masks; no fabricated crossing time may be supplied."
+      },
+      {
+        "id": "RUNTIME_WORLD_SIZE",
+        "what": "engine change for WW/WH, exact validator, render chunk key, seaDist BFS, streaming/LOD, save/mapDigest memory budget for the chosen U.",
+        "why": "all four candidates fail validateRuntimeMapPackage() and core.ts fixed 40,000-cell grid."
+      },
+      {
+        "id": "ECONOMY_ROUTE_APPROVAL",
+        "what": "MAP-U4 seller, chest price/stock, land-rights and number of trips; MAP-LOG-03 far-warehouse value increase; MAP-HOME-03 three built houses.",
+        "why": "Bible explicitly leaves these unfixed; \"map dots\" are insufficient evidence."
+      },
+      {
+        "id": "HUMAN_640x360",
+        "what": "pixel inspection at 640x360 1x of road, wall, footprint, door, hazard, character and workspace at the chosen U.",
+        "why": "MAP-CAMERA and MAP-HOME-03 are human acceptance tests."
+      }
+    ]
+  }
+}

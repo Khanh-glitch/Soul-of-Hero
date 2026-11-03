@@ -1,0 +1,545 @@
+{
+  "authority": "MAP DESIGNS THE PHYSICAL WORLD. GAMEPLAY POPULATES AND SIMULATES IT.",
+  "status": "DECISION_SUPPORT_BENCHMARK__NO_APPROVED_SCALE__NO_RUNTIME_MERGE",
+  "baseCommit": "c6a900ae39fb05a83058606a80035a34021cd69d (MAP-GEO-02 accepted)",
+  "task": "MAP-SCALE-01A — Veyra scale & gameplay-fit benchmark",
+  "gameplay": {
+    "pr": 44,
+    "headRef": "arena/d4bfcfff-soul-of-hero",
+    "headCommit": "d80ad1b5d46f17b729e90898cfa2ad31b677fae3",
+    "pinnedOlderCommit": "a956c9e85624c1ca7a2b5585eb423f8fa1cf296c",
+    "headFetchRefspec": "refs/pull/44/head:refs/remotes/origin/pr44-head",
+    "whyLatestHead": "PR44 HEAD d80ad1b5 supersedes pinned a956c9e; balance.v1.json, core.ts and sim.ts all differ. All constants below come from HEAD.",
+    "files": {
+      "web/src/game/balance.v1.json": {
+        "bytes": 3486,
+        "sha256": "cd12286c267f39abef6b44727f22f38f0374cfcdcf66f2c7f3d1de03d3fd0b62"
+      },
+      "web/src/game/core.ts": {
+        "bytes": 7973,
+        "sha256": "abcb1f1c8c7a788fb56cfb7d065c02183c6b0c6f03c5c0c94412b04260862dab"
+      },
+      "web/src/game/sim.ts": {
+        "bytes": 69030,
+        "sha256": "ba580a0fe3614e8bcbbe3790d83ad18d7407fae648657aab8c01a6747a0d74b8"
+      },
+      "web/src/game/engine.ts": {
+        "bytes": 83271,
+        "sha256": "4217d25de9a2183163c99f227f1b37e9b3b8142e86da957287714795540db56f"
+      },
+      "web/src/game/world.ts": {
+        "bytes": 28887,
+        "sha256": "4d348ffc0572cd74466f0b1441ed7ce505b4b81e300914a2b81418bd3a8c5467"
+      },
+      "web/src/game/world-economy.ts": {
+        "bytes": 9924,
+        "sha256": "bcc87d4aef1c226229ccdfff77a896e95bd929f3ac4000c639bd62f5cd5c6fa7"
+      },
+      "web/src/game/geography-contract.ts": {
+        "bytes": 5226,
+        "sha256": "2dad5ff6d1ff7616ede7913b62b00b41566a4c5d2769c9180d89f432ecef34e3"
+      },
+      "web/src/game/map-package.ts": {
+        "bytes": 7977,
+        "sha256": "54b5821c0626f60011be3f68e65c57214a0d827b9f46dcd6950a763fb323603d"
+      },
+      "web/src/game/catalog.ts": {
+        "bytes": 42383,
+        "sha256": "0bfbd9c6aac0dc68d97cd455e63fc7e715e07fc077481a2f6b0d60079ba0b2a4"
+      },
+      "web/src/game/render.ts": {
+        "bytes": 55870,
+        "sha256": "665775065eb90df050f3b04b7a1fb42012327d25efa9493be0cc6576fb537135"
+      },
+      "web/ref/bible.md": {
+        "bytes": 232605,
+        "sha256": "8aa2ac6eee210a823c197e66ec8e12f93f149a9e7671e22889ffa3a5b08b4340"
+      },
+      "web/IMPLEMENTATION_EVIDENCE.md": {
+        "bytes": 7411,
+        "sha256": "0a0905ba0e34b73e673c2c058154330590abbc2e70c7d4025a4f5837357f6bb7"
+      }
+    },
+    "olderFiles": {
+      "web/src/game/balance.v1.json": {
+        "bytes": 3133,
+        "sha256": "56535e52dea7931cda42a59aa17bd8fbc728e7c2b1b8a0df909465e3f5cf7377"
+      },
+      "web/src/game/core.ts": {
+        "bytes": 7768,
+        "sha256": "a9dcd43d4d0d58e4f85c465f3ba5a0fa02eca3e651140570002a2d7a1476975f"
+      },
+      "web/src/game/sim.ts": {
+        "bytes": 66724,
+        "sha256": "bc8157facedec032b70984931a7240beb6b05e344d787ac11be56bf317246b6a"
+      }
+    },
+    "headDiffersFromPinned": {
+      "web/src/game/balance.v1.json": true,
+      "web/src/game/core.ts": true,
+      "web/src/game/sim.ts": true
+    }
+  },
+  "references": {
+    "commit": "7a1c53acfc5b7cda6cb34ea3f348b4e100744354",
+    "ref": "origin/references/gameplay-prototypes-20261102",
+    "files": {
+      "docs/survival/CURRENT_PRODUCT_CONTRACT.md": {
+        "bytes": 229339,
+        "sha256": "ab02f994af371e7386e9403dff5cdb3673412cd99b0e250f13b2201077d1e8ac"
+      },
+      "docs/survival/reviews/GAMEPLAY_MAP_CONVERGENCE_BRIEF_20261101.md": {
+        "bytes": 48184,
+        "sha256": "06010bb3ba15e0ae15abdc26a7f93c68768591be80b2c69f74977fadcd336283"
+      },
+      "docs/survival/tasks/C08_PROTOTYPE_REUSE_AND_CAUSAL_GATE_TRIAGE_20261102.md": {
+        "bytes": 10052,
+        "sha256": "4e43cd52aaf60d5a63ed4ce0f4bfa7a9e1c0dcab4af16bb289b3fd2cf0914473"
+      },
+      "reference_prototypes/20261102/SOH_GAME_DEVELOPMENT_GAMEPLAY_DEPTH_REUSE.md": {
+        "bytes": 9817,
+        "sha256": "2793366a10316cbfd49f014cbd2e3db60a7c17ed4cec647c547542538a868c0b"
+      }
+    }
+  },
+  "veyraGold": {
+    "commit": "19d8c6ec820f324a6ac12733165e43b5e2c6eab2",
+    "path": "map_tower/veyra_gold/VEYRA_GOLD_MAP.sohmap.json",
+    "bytes": 332249,
+    "sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+    "verified": true
+  },
+  "constants": {
+    "runtime": {
+      "TILE": 16,
+      "WW": 200,
+      "WH": 200,
+      "VIEW_W": 640,
+      "VIEW_H": 360,
+      "SAVE_VERSION": 3,
+      "HOUR_MS": 3600000,
+      "runtimeCells": 40000,
+      "runtimePx": [
+        3200,
+        3200
+      ]
+    },
+    "balance": {
+      "player": {
+        "_status": "TUNABLE_BALANCE",
+        "maxHp": 100,
+        "maxStamina": 100,
+        "speed": 72,
+        "rollCost": 22,
+        "rollSpeed": 190,
+        "rollMs": 260,
+        "staminaRegen": 26,
+        "carryLimit": 60,
+        "fieldRepairDurability": 100,
+        "hungerDrainPerMin": 2.4,
+        "thirstDrainPerMin": 3.6,
+        "offlineDrainFactor": 0.35,
+        "starveDamagePerMin": 4,
+        "coldDamagePerMin": 6,
+        "radDamagePerMinOver50": 5
+      },
+      "terrainSpeed": {
+        "road": 1.28,
+        "bridge": 1.28,
+        "floor": 1.1,
+        "grass": 1,
+        "meadow": 1,
+        "forest": 0.86,
+        "sand": 0.88,
+        "marsh": 0.62,
+        "shallow": 0.5,
+        "snow": 0.78,
+        "hill": 0.9,
+        "ash": 0.92,
+        "toxic": 0.95,
+        "burnt": 1,
+        "ice": 1.05
+      },
+      "cart": {
+        "_status": "PROPOSED_MECHANISM (cart custody/weight) + TUNABLE_BALANCE numbers",
+        "slots": 24,
+        "maxWeight": 240,
+        "freightSlots": 32,
+        "freightMaxWeight": 360,
+        "speedOnRoad": 1.36,
+        "speedOffRoad": 0.72,
+        "speedRough": 0.42,
+        "weightPenaltyPer100": 0.18
+      },
+      "economy": {
+        "_status": "PROPOSED_MECHANISM vendor/price/ownership; LOCKED_CANON cash-only escrow purchase",
+        "escrowChestPrice": 30,
+        "claimRadius": 6,
+        "maxClaims": 2,
+        "claimMinDistFromPoi": 10,
+        "reclaimRefund": 0.5
+      },
+      "garden": {
+        "_status": "TUNABLE_BALANCE",
+        "growSeconds": 300,
+        "herbGrowSeconds": 600,
+        "waterSecondsPerUnit": 240,
+        "coldFrameWarming": 0.24,
+        "coldFrameSoilBonus": 0.2,
+        "wetCooling": 0.04,
+        "scorchedSoilMultiplier": 0.55,
+        "tenderPlantEnergySeconds": 8,
+        "tenderPumpEnergySeconds": 4,
+        "tenderHarvestEnergySeconds": 8,
+        "tenderLinkTiles": 3
+      },
+      "ai": {
+        "_status": "TUNABLE_BALANCE",
+        "activeRadiusTiles": 30,
+        "sightDay": 110,
+        "sightNight": 70,
+        "traceSenseRadius": 20,
+        "respawnIntervalSec": 150,
+        "ragnarokCapMult": 1.6
+      },
+      "run": {
+        "_status": "LOCKED_CANON",
+        "maxRunHours": 336,
+        "ragnarokFinalHours": 72,
+        "dangerStartsDay": 12,
+        "eldersAwakenDay": 14
+      },
+      "dayNight": {
+        "_status": "TUNABLE_BALANCE (fictional clock, separate from run clock)",
+        "dayLengthMinutes": 24,
+        "nightFraction": 0.38
+      },
+      "weather": {
+        "_status": "PROPOSED_MECHANISM seeded schedule; TUNABLE weights",
+        "slotMinutes": 9,
+        "weights": {
+          "clear": 5,
+          "cloudy": 3,
+          "rain": 3,
+          "storm": 1,
+          "fog": 2
+        },
+        "forecastSlots": 1
+      }
+    },
+    "movementEvidence": {
+      "playerSpeedLine": "let sp = B.speed * (BAL.terrainSpeed[SPEED_KEY[t]] ?? 1) * speedMul;",
+      "cartSpeedLine": "const base = road ? BAL.cart.speedOnRoad : rough ? BAL.cart.speedRough : BAL.cart.speedOffRoad; const cw = cartWeightOf(r, cart);",
+      "cartRoadKey": "if (cart) { const ct = effTile(r, tileOf(cart.x), tileOf(cart.y)); const road = ct === T.ROAD || ct === T.BRIDGE || ct === T.FLOOR; const rough = ct === T.FOREST || ct === T.MARSH || ct === T.HILL || ct === T.SNOW;",
+      "cartRoughKey": "if (cart) { const ct = effTile(r, tileOf(cart.x), tileOf(cart.y)); const road = ct === T.ROAD || ct === T.BRIDGE || ct === T.FLOOR; const rough = ct === T.FOREST || ct === T.MARSH || ct === T.HILL || ct === T.SNOW;",
+      "lineRefs": [
+        "moveBody(r, p, Math.cos(a) * kb * 0.06, Math.sin(a) * kb * 0.06, 4, 'player');",
+        "let sp = B.speed * (BAL.terrainSpeed[SPEED_KEY[t]] ?? 1) * speedMul;",
+        "const base = road ? BAL.cart.speedOnRoad : rough ? BAL.cart.speedRough : BAL.cart.speedOffRoad; const cw = cartWeightOf(r, cart);",
+        "sp = B.speed * speedMul * base * Math.max(0.25, 1 - cw / 100 * BAL.cart.weightPenaltyPer100) * (cw > cartLimit(cart) ? 0.4 : 1) * personalLoad * condition; }",
+        "if (p.action?.kind === 'roll') { const ra = p.action.angle; moveBody(r, p, Math.cos(ra) * B.rollSpeed * dt, Math.sin(ra) * B.rollSpeed * dt, 4, 'player'); }",
+        "else if (ml) { moveBody(r, p, mx * sp * dt, my * sp * dt, 4, 'player'); p.stepAcc += sp * dt; if (p.stepAcc > 13) { p.stepAcc = 0; fx('step', { x: p.x, y: p.y + 6, t }); } }",
+        "function cartWeightOf(r: RunState, e: Entity) { return C(r, e.c!).slots.reduce((a, s) => a + (s ? ITEMS[s.key].w * s.qty : 0), 0); }",
+        "if (along > 0 && along < len && perp < 8) { m.atk.hit = true; if (hurtPlayer(gs, d.dmg, m.x, m.y, d.name, now, 0)) { const a = Math.atan2(m.y - p.y, m.x - p.x); moveBody(r, p, Math.cos(a) * 26, Math.sin(a) * 26, 4, 'player'); } } }",
+        "else if (!h.hit && inHaz(h, p.x, p.y)) { if (hurtPlayer(gs, h.dmg, h.x, h.y, h.elder ? ELDERS[h.elder].name : 'hazard', now, h.effect === 'knock' ? 320 : 140)) { h.hit = true; if (h.effect === 'slow') slowTimer = 2200; if (h.effect === 'root') rootTimer = 900; if (h.effect === 'pull') { const a = Math.atan2(h.y - p.y, h.x - p.x); moveBody(r, p, Math.cos(a) * 14, Math.sin(a) * 14, 4, 'player'); } } }"
+      ],
+      "collisionRadiiPx": {
+        "player": 4,
+        "cart": 5
+      }
+    },
+    "buildings": [
+      {
+        "id": "b_s0",
+        "name": "Farmstead",
+        "w": 6,
+        "h": 5,
+        "source": "world.ts stamp()"
+      },
+      {
+        "id": "b_s1",
+        "name": "Net Shed",
+        "w": 5,
+        "h": 5,
+        "source": "world.ts stamp()"
+      },
+      {
+        "id": "b_s2",
+        "name": "Ranger Cabin",
+        "w": 6,
+        "h": 5,
+        "source": "world.ts stamp()"
+      },
+      {
+        "id": "b_s3",
+        "name": "Salvager Shack",
+        "w": 5,
+        "h": 5,
+        "source": "world.ts stamp()"
+      },
+      {
+        "id": "b_tp",
+        "name": "Trading Post",
+        "w": 11,
+        "h": 7,
+        "source": "world.ts stamp()"
+      },
+      {
+        "id": "b_m1",
+        "name": "Mill House",
+        "w": 6,
+        "h": 5,
+        "source": "world.ts stamp()"
+      },
+      {
+        "id": "b_m2",
+        "name": "Chapel",
+        "w": 7,
+        "h": 6,
+        "source": "world.ts stamp()"
+      },
+      {
+        "id": "b_m3",
+        "name": "Cottage",
+        "w": 5,
+        "h": 5,
+        "source": "world.ts stamp()"
+      },
+      {
+        "id": "b_fa",
+        "name": "Foundry Hall",
+        "w": 17,
+        "h": 12,
+        "source": "world.ts stamp()"
+      },
+      {
+        "id": "b_li",
+        "name": "Lighthouse",
+        "w": 5,
+        "h": 5,
+        "source": "world.ts stamp()"
+      },
+      {
+        "id": "b_wr",
+        "name": "Halcyon Hull",
+        "w": 9,
+        "h": 5,
+        "source": "world.ts stamp()"
+      },
+      {
+        "id": "b_wa",
+        "name": "Watchtower",
+        "w": 5,
+        "h": 5,
+        "source": "world.ts stamp()"
+      },
+      {
+        "id": "b_ev",
+        "name": "Harbor Office",
+        "w": 5,
+        "h": 4,
+        "source": "world.ts stamp()"
+      },
+      {
+        "id": "b_vault",
+        "name": "Sealed Vault",
+        "w": 5,
+        "h": 4,
+        "source": "world.ts buildings.push()"
+      }
+    ],
+    "minBuilding": {
+      "id": "b_ev",
+      "name": "Harbor Office",
+      "w": 5,
+      "h": 4,
+      "source": "world.ts stamp()"
+    },
+    "maxBuilding": {
+      "id": "b_fa",
+      "name": "Foundry Hall",
+      "w": 17,
+      "h": 12,
+      "source": "world.ts stamp()"
+    },
+    "chunk": {
+      "source": "web/src/game/render.ts :: CH / getChunk() / syncTerrain()",
+      "CH": 16,
+      "keyStride": 100,
+      "keyLine": "function getChunk(r: RunState, cx: number, cy: number) { const k = cy * 100 + cx; let c = chunkCache.get(k); if (!c) { c = renderChunk(r, cx, cy); chunkCache.set(k, c); } return c; }",
+      "canvasPxPerChunk": [
+        256,
+        256
+      ],
+      "collisionFreeMaxWorldTilesW": 1600
+    },
+    "seaDistBfsStopTiles": 6,
+    "exactValidator": {
+      "source": "web/src/game/map-package.ts :: validateRuntimeMapPackage()",
+      "rules": [
+        "if(e.width!==WW||e.height!==WH||e.tileSize!==TILE)errors.push(`runtime requires exactly ${WW}x${WH} tiles of ${TILE} pixels; resize is not supported`);",
+        "for(const [key,max] of [['tiles',19],['fresh',1],['zone',15],['seaDist',255]] as const){const a=p[key];if(!Array.isArray(a)||a.length!==n||a.some(x=>!Number.isInteger(x)||x<0||x>max))errors.push(`${key} must be ${n} bounded integer cells`);}",
+        "else {const ids=p.places.map(a=>a.id);if(new Set(ids).size!==ids.length)errors.push('duplicate place ids');const starts=p.places.filter(a=>a.kind==='start');if(!starts.length||starts.some(s=>!e.starts.some(a=>a.id===s.id&&a.x===s.tx&&a.y===s.ty))||starts.length!==e.starts.length)errors.push('starts disagree with geography');const elders=p.places.filter(a=>a.kind==='elder').map(a=>a.id);if(elders.length!==Object.keys(ELDERS).length||Object.keys(ELDERS).some(id=>!elders.includes(id)))errors.push('runtime requires all six uniquely identified Elder sites');}"
+      ],
+      "required": {
+        "width": 200,
+        "height": 200,
+        "tileSize": 16,
+        "arrays": 40000
+      },
+      "arrayBounds": {
+        "tiles": 19,
+        "fresh": 1,
+        "zone": 15,
+        "seaDist": 255
+      }
+    },
+    "economyLimit": {
+      "source": "web/src/game/world-economy.ts :: validateEconomyMap()",
+      "maxCells": 1000000,
+      "arrayCount": 13,
+      "arrayKeys": [
+        "biome",
+        "elevation",
+        "slope",
+        "moisture",
+        "temperature",
+        "freshwater",
+        "coast",
+        "walkable",
+        "buildable",
+        "cargoPassable",
+        "road",
+        "protected",
+        "industrial"
+      ],
+      "biomeEnum": [
+        "water",
+        "sand",
+        "grass",
+        "meadow",
+        "forest",
+        "marsh",
+        "hill",
+        "snow",
+        "ash",
+        "toxic",
+        "road",
+        "floor",
+        "wall",
+        "lava"
+      ],
+      "rules": [
+        "const n=m.width*m.height; if (!Number.isSafeInteger(n) || n>1_000_000) return [...e,'map exceeds supported cell count'];",
+        "for(const k of ['biome','elevation','slope','moisture','temperature','freshwater','coast','walkable','buildable','cargoPassable','road','protected','industrial'] as const) if(!m[k]||m[k].length!==n) e.push(`${k} must have ${n} cells`);",
+        "const reached=new Uint8Array(n); for(const s of m.starts){const d=reachable(m,s.x,s.y);if(d[s.y*m.width+s.x]<0) errors.push(`start ${s.id} is not walkable`);for(let i=0;i<n;i++)if(d[i]>=0)reached[i]=1;}"
+      ]
+    },
+    "physicalContract": [
+      "export interface RoadGeometry { id:string; cells:number[]; surface:string; widthTiles:number; bridgeCells:number[]; cargoPassable:boolean }",
+      "export interface PoiGeometry { id:string; kind:'residential'|'industrial'|'mining'|'agricultural'|'other'; footprint:number[]; entrances:number[]; rooms:number[][]; doors:number[]; powerNodes:number[]; hazardCells:number[]; exteriorLootSites:number[]; interiorLootSites:number[]; retreatPaths:number[][] }",
+      "if(!Array.isArray(h.roads)||!h.roads.length)errors.push('authored road geometry, width and cargo access required');",
+      "else for(const r of h.roads)if(!r||!r.id||!r.surface||!Number.isFinite(r.widthTiles)||r.widthTiles<=0||typeof r.cargoPassable!=='boolean'||!path(r.cells)||!Array.isArray(r.bridgeCells)||!r.bridgeCells.every(c=>valid(c)&&r.cells.includes(c))||!r.cells.every(c=>!!h.economy!.road[c])||(r.cargoPassable&&!r.cells.every(c=>!!h.economy!.cargoPassable[c])))errors.push(`invalid road geometry ${r?.id||'(unnamed)'}`);",
+      "if (Array.isArray(h.roads)) for (const r of h.roads) if (r && path(r.cells) && r.cells.length >= 2 && Number.isInteger(r.widthTiles) && r.widthTiles >= 1 && r.widthTiles <= 32) {",
+      "let validWidth=true;const before=-Math.floor((r.widthTiles-1)/2),after=before+r.widthTiles-1;",
+      "for(let k=before;k<=after;k++){const nx:number=x+(horizontal?0:k),ny:number=y+(horizontal?k:0),j:number=ny*h.economy!.width+nx;if(nx<0||ny<0||nx>=h.economy!.width||ny>=h.economy!.height||!h.economy!.walkable[j]||(r.cargoPassable&&!h.economy!.cargoPassable[j])){validWidth=false;break;}}",
+      "if(!Array.isArray(h.pois)||!h.pois.length)errors.push('authored POI footprints, access, rooms, hazards and loot sites required');",
+      "else for(const p of h.pois){if(!p||!p.id||!['residential','industrial','mining','agricultural','other'].includes(p.kind)||!p.footprint?.length||!p.footprint.every(valid)||!p.entrances?.length||!p.entrances.every(c=>valid(c)&&p.footprint.includes(c))||!Array.isArray(p.rooms)||!p.rooms.every(room=>Array.isArray(room)&&room.every(c=>valid(c)&&p.footprint.includes(c)))||!Array.isArray(p.doors)||!Array.isArray(p.powerNodes)||!Array.isArray(p.hazardCells)||!Array.isArray(p.exteriorLootSites)||!Array.isArray(p.interiorLootSites)||![...p.doors,...p.powerNodes,...p.hazardCells,...p.exteriorLootSites,...p.interiorLootSites].every(valid)||!Array.isArray(p.retreatPaths)||!p.retreatPaths.length||!p.retreatPaths.every(path))errors.push(`invalid or incomplete POI geometry ${p?.id||'(unnamed)'}`);}",
+      "if(!Array.isArray(h.criticalPaths)||!h.criticalPaths.length||!h.criticalPaths.every(p=>path(p)&&p.every(i=>!!h.economy!.protected[i]&&!!h.economy!.walkable[i])))errors.push('authored contiguous critical paths required');",
+      "if(!Array.isArray(h.buildSites)||!h.buildSites.length||h.buildSites.some(s=>!s||!s.id||!s.cells?.length||!s.cells.every(c=>valid(c)&&!!h.economy!.buildable[c])||!s.loadingCells?.length||!s.loadingCells.every(c=>valid(c)&&!!h.economy!.cargoPassable[c])))errors.push('buildable footprint and loading candidates required');"
+    ],
+    "physicalLimits": {
+      "buildRangeTiles": 3,
+      "buildRangeLine": [
+        "r.player = { x: sp.tx * TILE + 8, y: sp.ty * TILE + 8, vx: 0, vy: 0, dir: 0, aim: Math.PI / 2, hp: BAL.player.maxHp, stamina: BAL.player.maxStamina, hunger: 85, thirst: 85, warmth: 100, rad: 0, active: 0, action: null, invuln: 0, dead: false, deadT: 0, pulling: null, skills: { gather: 0, combat: 0, craft: 0, survival: 0 }, stepAcc: 0, lastTraceX: 0, lastTraceY: 0, regionName: sp.name, sheltered: false };",
+        "const e: Entity = { id: uid(r, 'e'), kind: s.kind as any, x: s.tx * TILE + 8, y: s.ty * TILE + 8, tx: s.tx, ty: s.ty, poi: s.poi, label: s.label };",
+        "for (let k = 0; k < 900 && r.creatures.length < 150; k++) trySpawnCreature(r, now, sp.tx * TILE, sp.ty * TILE, 16);",
+        "r.creatures.push(mkCreature(r, 'elder_' + p.id, p.tx * TILE + 8, p.ty * TILE + 8, d.hpLatent, { key: p.id, awake: false, phase: 0, pattern: 0, special: 0 }));"
+      ],
+      "nearInteractionTiles": [
+        "if (type === 'farm_controller' && !Object.values(r.entities).some(e=>e.kind==='struct' && e.type==='workbench' && e.station && owned(e) && (e.station.level ?? 1)>=2 && near(r,e,3) && dist(e.x,e.y,tx*TILE+8,ty*TILE+8)<=3*TILE)) return 'Build near your level 2 workbench.';",
+        "if (!near(r, e, 2.5)) return fail('Too far.');",
+        "if (!e || e.kind !== 'struct' || !owned(e) || !near(r, e, 3)) return fail('Use your structure within reach.');",
+        "if (!e || e.kind !== 'struct' || e.type !== 'workbench' || !e.station || !owned(e) || !near(r, e, 3)) return fail('Use your workbench within reach.');"
+      ],
+      "blockGrid": [
+        "export function blockGrid(r: RunState) {",
+        "if (!baseGrid || baseGridLayout !== layout) { baseGrid = new Uint8Array(WW * WH); for (let i = 0; i < WW * WH; i++) baseGrid[i] = cellClass(null, i % WW, (i / WW) | 0); baseGridLayout = layout; }",
+        "const arr = r.sourceLayoutVersion === 3 ? new Uint8Array(WW * WH) : baseGrid.slice();",
+        "export function blockedAt(r: RunState, tx: number, ty: number) { if (tx < 0 || ty < 0 || tx >= WW || ty >= WH) return true; const b = blockGrid(r)[ty * WW + tx]; return b === 1 || b === 2 || b === 3 || b === 5; }"
+      ],
+      "claimMinDistFromPoiTiles": 10,
+      "claimRadiusTiles": 6,
+      "tenderLinkTiles": 3,
+      "activeRadiusTiles": 30,
+      "sightDayPx": 110,
+      "sightNightPx": 70
+    },
+    "implementationEvidenceC24": [
+      "## Contracts C01–C24",
+      "| C24 island and starts | PASS T | 200×200 tiles. All 4 starts are mutually reachable on foot and each has wood, stone and food within 12 tiles. |"
+    ]
+  },
+  "bible": {
+    "ids": {
+      "MAP-SPAWN-04": {
+        "line": "| **MAP-SPAWN-04** | Bốn điểm spawn ở các miền khác nhau, thử không Core vẫn có nước, thức ăn, nguồn làm công cụ, road/offroad, đường tới vùng có thể dựng nhà | Chỉ điểm spawn “an toàn” trên sơ đồ |",
+        "requirement": "Bốn điểm spawn ở các miền khác nhau, thử không Core vẫn có nước, thức ăn, nguồn làm công cụ, road/offroad, đường tới vùng có thể dựng nhà",
+        "insufficientEvidence": "Chỉ điểm spawn “an toàn” trên sơ đồ"
+      },
+      "MAP-HOME-03": {
+        "line": "| **MAP-HOME-03** | Ba nhà do người thử tự chọn từ đất hợp lệ; đúng collision, mái, vườn/lò, freight và các lần giao tuyến quái khác nhau | Chỉ tỉ lệ % diện tích buildable hoặc đặt ba HousePin |",
+        "requirement": "Ba nhà do người thử tự chọn từ đất hợp lệ; đúng collision, mái, vườn/lò, freight và các lần giao tuyến quái khác nhau",
+        "insufficientEvidence": "Chỉ tỉ lệ % diện tích buildable hoặc đặt ba HousePin"
+      },
+      "MAP-LOG-03": {
+        "line": "| **MAP-LOG-03** | Một POI nguồn có đường người và đường xe khác biệt, một kho xa có giá trị tăng sau khi được xe, một tuyến bị thời tiết/địch làm thay đổi quyết định | Không có item/collision/xe thật |",
+        "requirement": "Một POI nguồn có đường người và đường xe khác biệt, một kho xa có giá trị tăng sau khi được xe, một tuyến bị thời tiết/địch làm thay đổi quyết định",
+        "insufficientEvidence": "Không có item/collision/xe thật"
+      },
+      "MAP-U4": {
+        "line": "| **MAP-U4** | Không boss: kiếm tiền cuối72 → đến người bán rương mua bằng tiền vật lý → về căn cứ của mình → đặt rương → ký gửi số tiền dương → tùy chọn rời đảo | “Có chest icon và bank icon trong map” |",
+        "requirement": "Không boss: kiếm tiền cuối72 → đến người bán rương mua bằng tiền vật lý → về căn cứ của mình → đặt rương → ký gửi số tiền dương → tùy chọn rời đảo",
+        "insufficientEvidence": "“Có chest icon và bank icon trong map”"
+      },
+      "MAP-U5": {
+        "line": "| **MAP-U5** | Sáu Elder có vùng thật trước/sau thức tỉnh; các nguồn điểm khác nhau không phải một arena chung; ít nhất một lối sơ tán no-boss | Sáu vùng màu đối xứng hoặc boss phòng trống |",
+        "requirement": "Sáu Elder có vùng thật trước/sau thức tỉnh; các nguồn điểm khác nhau không phải một arena chung; ít nhất một lối sơ tán no-boss",
+        "insufficientEvidence": "Sáu vùng màu đối xứng hoặc boss phòng trống"
+      },
+      "MAP-POI-02": {
+        "line": "| **MAP-POI-02** | Hai POI nhiều tầng có ít nhất một lớp ngoại vi hữu ích, một điều kiện sâu thật và lối về; khóa/điện/hazard không softlock | POI là dấu chấm với nút “unlock” |",
+        "requirement": "Hai POI nhiều tầng có ít nhất một lớp ngoại vi hữu ích, một điều kiện sâu thật và lối về; khóa/điện/hazard không softlock",
+        "insufficientEvidence": "POI là dấu chấm với nút “unlock”"
+      },
+      "MAP-CAMERA": {
+        "line": "| **MAP-CAMERA** | 640×360 1× đọc rõ đường, vách, dấu chân, vật liệu, cửa, nguy hiểm, nhân vật, khả năng đứng thao tác và điểm rút | Chỉ ảnh đẹp zoom 2K, nền tối che combat |",
+        "requirement": "640×360 1× đọc rõ đường, vách, dấu chân, vật liệu, cửa, nguy hiểm, nhân vật, khả năng đứng thao tác và điểm rút",
+        "insufficientEvidence": "Chỉ ảnh đẹp zoom 2K, nền tối che combat"
+      }
+    },
+    "kernels": {
+      "K2": {
+        "section": "### K2. Thế giới tự nhiên, môi trường, thời tiết và trạng thái địa hình",
+        "ownershipRow": "| **K2 Environment** | Surface/topology, mưa/gió/nhiệt/ẩm, water/terrain/fire/trace medium; thời tiết tự tiến, world effects chỉ khi có nguồn/target đúng; bounded spread | `weather_tick/terrain_changed/decayed`; K8 lưu trạng thái, ảnh hưởng K3/K5/K7; C01,C05–C06,C08–C09,C13–C14,C24; U1/U2/U3 | Bùn khác nước, đường khó đi, dấu phai, lửa tác động đúng vật liệu; không shader giả luật |"
+      },
+      "K3": {
+        "section": "### K3. Nguồn vật phẩm và sinh thái kinh tế thế giới",
+        "ownershipRow": "| **K3 Sources** | Source ID, stock, class, loot provenance, finite/respawn rule; khai thác khi action hợp lệ, debit nguồn, yield thật | `source_depleted/grant_once/recovered`; lưu run, K1/K4/K8 dùng chung; C01,C02,C04,C11,C14–C16,C24; U3/U4/U5 | Loot thật có thể mang, tiền Ragnarok cuối72 hữu hạn, reload không làm đầy lại |"
+      },
+      "K6": {
+        "section": "### K6. Lãnh địa, xây dựng, nơi ở, phòng thủ và POI nhiều tầng",
+        "ownershipRow": "| **K6 Building/POI** | Build ownership, structure HP/roof/door/bed/box/turret, POI gate/power/access; BUILD/OPEN/REPAIR/DEPLOY tiêu K1, quyền và collision thật | `entity_placed/structure_changed/gate_opened`, K8 run-local; C06–C11,C16–C19,C22,C24; U1/U2/U4 | Nhà vào được, mái ẩn đúng, cửa bị phá hợp lệ, POI có lớp ngoài và đường rút |"
+      },
+      "K7": {
+        "section": "### K7. Di chuyển, hàng hóa và kinh tế tuyến đường",
+        "ownershipRow": "| **K7 Travel/freight** | Walk/cart/vehicle path, load, slope/bridge/water, fuel/repair/opportunity cost; MOVE/HAUL/TRANSFER vật lý, không teleport hàng | `route_traversed/cargo_moved/cost_paid`; K1 item+K2 world+K8 travel; C07,C13,C16,C18,C22,C24; U1/U4 | Vị trí nhà, xe và đường thực sự thay đổi kinh tế; có tuyến thay thế |"
+      },
+      "K8": {
+        "section": "### K8. Đồng hồ, sự kiện, run, Ragnarok, profile và bảng xếp hạng",
+        "ownershipRow": "| **K8 Time/ledger** | UTC 336h, Ragnarok cuối72h, run_id, deterministic event order, save, profile secured cash/achievements/history, score validation; ADVANCE/SETTLE/DEPOSIT/FINALIZE, atomic/unique | `event_committed/deposit_once/finalized_once`; lưu/catch-up online/offline; C06,C09,C14–C23; U1–U6 | Tắt app thế giới vẫn sống; full wipe đồ/recipe/Core/nhà, chỉ tiền đã gửi + achievement/history qua run; rank verified cần backend |"
+      }
+    },
+    "costQuote": "**World-position costs to measure, not fix by fiat:** `t_foot`, `t_cart_loaded`, `t_cart_unloaded`, `distance_to_road`, `storage_delta`, `exposure_time`, `footprint_monster_intersections`, `repair_spend`, `usable_loot_net`, `retreat_success`, `deposit_completed`, `player_wants_to_revisit`. A candidate site can excel but must not dominate every dimension due a wrongly biased generator. **No invented km/minutes, number of chests, bank purchase cost or exact drop percentages.**"
+  }
+}
