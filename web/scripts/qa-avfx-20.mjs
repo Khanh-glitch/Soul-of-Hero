@@ -4,6 +4,7 @@
 // (QA_ALLOW_FALLBACK=1 only for logic smoke).
 import { chromium } from 'playwright';
 import { createServer } from 'http';
+import { existsSync } from 'fs';
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { extname, join } from 'path';
 
@@ -14,7 +15,7 @@ const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css
 const srv = createServer((q, s) => {
   let p = decodeURIComponent(q.url.split('?')[0]);
   if (p === '/favicon.ico') { s.writeHead(204); s.end(); return; }
-  let f = join('dist', p === '/' ? 'index.html' : p);
+  let f = p === '/' ? join('dist', 'index.html') : (existsSync(join('dist', p)) ? join('dist', p) : join('.', p));
   try { const d = readFileSync(f); s.writeHead(200, { 'content-type': MIME[extname(f)] || 'application/octet-stream' }); s.end(d); }
   catch { s.writeHead(404); s.end(); }
 }).listen(4331);
@@ -44,6 +45,22 @@ if (!ALLOW_FALLBACK && report.webgl2Probe.presenterMode !== 'webgl2') {
 
 const PHASES = [['t0.6', 0.6], ['t1.3', 1.3], ['t2.7', 2.7], ['t4.5', 4.5], ['t6.6', 6.6], ['t7.8', 7.8], ['t9.5', 9.5], ['t9.85', 9.85], ['after', 10.8]];
 const MODES = ['current', 'restored'];
+
+// REFERENCE ground truth: creator-approved Visual Master, cast #20, matched timestamps
+const refPage = await b.newPage({ viewport: { width: 1280, height: 720 } });
+await refPage.goto('http://localhost:4331/releases/reference-arcana20-visual-master.html');
+await refPage.waitForTimeout(4000);
+await refPage.evaluate(() => { if (typeof select === 'function') select(19); });
+await refPage.waitForTimeout(1200);
+for (const [name, t] of PHASES) {
+  await refPage.evaluate(tt => { if (typeof setPhase === 'function') setPhase(Math.min(1, tt / 10.4)); }, t);
+  await refPage.waitForTimeout(1800); // iframe message round-trip + render
+  const frame = refPage.locator('.render iframe').first();
+  if (await frame.count()) await frame.screenshot({ path: `${OUT}/REF-${name}.png` });
+  else await refPage.screenshot({ path: `${OUT}/REF-${name}.png` });
+}
+report.referenceMaster = 'reference-arcana20-visual-master.html cast 20 (creator_approved)';
+await refPage.close();
 
 // Replay consistency (A→B→A): collision impact must regenerate identically after seek-back
 const replay = {};

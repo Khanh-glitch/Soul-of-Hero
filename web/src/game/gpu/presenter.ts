@@ -105,8 +105,15 @@ void main(){
   if (w > 0.0 && ad < w) {
     float nz = vnoise(sp * 0.05 + vec2(t * 0.25, 0.0));
     vec3 voidCol = mix(vec3(0.02, 0.01, 0.05), vec3(0.10, 0.03, 0.20), clamp(0.12 + (sp.y / 270.0) * 0.2, 0.0, 1.0));
-    vec3 other = texture(scene, vec2(clamp(1.0 - suv.x, 0.0, 1.0), clamp(suv.y + d * 0.002, 0.0, 1.0))).rgb;
-    col = mix(voidCol, other * 0.35, nz > 0.62 ? 0.5 : 0.0);
+    // the other space (source C): INVERTED mirrored sample of the real world
+    // across the tear center, noise-masked — an alternate, negative space
+    vec2 mp = vec2(480.0 - sp.x + sin(t * 0.7) * 10.0, 270.0 - sp.y);
+    vec2 muv = vec2((region.x + mp.x) / size.x, 1.0 - (region.y + mp.y) / size.y);
+    vec3 bc = texture(scene, clamp(muv, vec2(0.0), vec2(1.0))).rgb;
+    vec3 inv = vec3(clamp(1.0 - bc.r * 3.0, 0.0, 1.0) * 0.45 + 0.20,
+                    clamp(1.0 - bc.g * 3.0, 0.0, 1.0) * 0.20,
+                    clamp(1.0 - bc.b * 3.0, 0.0, 1.0) * 0.50 + 0.15);
+    col = mix(voidCol, inv, nz > 0.62 ? 0.9 : 0.0);
     col += vec3(1.0, 0.96, 1.0) * step(0.985, hash(vec2(floor(s * 120.0) + t * 10.0, sp.y))) * 0.7;
     col += vec3(0.45, 0.95, 1.0) * 0.35 * step(0.965, hash(vec2(floor((sp.x + t * 26.0) / 2.0), floor((sp.y + t * 6.0) / 2.0))));
   } else if (w > 0.5 && ad < w + 1.6) {
