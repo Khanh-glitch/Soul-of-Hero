@@ -270,6 +270,9 @@ export class Presenter {
     this.lightTex = mkTex(gl.NEAREST);
     this.warpTex = mkTex(gl.NEAREST);
     this.inflTex = mkTex(gl.NEAREST);
+    this.frameTex = mkTex(gl.NEAREST); // semantic-bridge output — must exist from construction, not only rebuild()
+    gl.bindTexture(gl.TEXTURE_2D, this.frameTex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, 384, 216, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
     this.lightFbo = gl.createFramebuffer()!;
     gl.bindTexture(gl.TEXTURE_2D, this.lightTex);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, 480, 270, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
