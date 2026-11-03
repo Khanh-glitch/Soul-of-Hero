@@ -1,0 +1,590 @@
+{
+  "schema": "soh.map.geo02.geometry_package.v1",
+  "generatedBy": "world_lab/geo02/src/package.mjs",
+  "status": "MAP_GEOMETRY_HANDOFF_CANDIDATE__NOT_A_RUNTIME_MAP_PACKAGE",
+  "scope": {
+    "corridor": "sp_lake -> po_kilns",
+    "poi": "po_kilns",
+    "poiCount": 1,
+    "corridorCount": 1
+  },
+  "authority": "MAP DESIGNS THE PHYSICAL WORLD. GAMEPLAY POPULATES AND SIMULATES IT.",
+  "howToRead": {
+    "coordinates": "ALL coordinates are 2000x1400 Veyra AUTHORING units; no rescale, no authoring-unit -> runtime-tile transform. Do NOT interpret as PR44 200x200 @ TILE=16 tiles.",
+    "notRuntime": "This is NOT a RuntimeMapPackage. Do not run compileEconomy / diagnoseStarts / validateRuntimeMapPackage against it.",
+    "notGameplay": "No loot, cash, doors state, power, spawns, harvestables, climate or population is supplied."
+  },
+  "sourceFingerprints": {
+    "veyraGold": {
+      "branch": "map/veyra-gold-asset-canon-20261102",
+      "commit": "19d8c6ec820f324a6ac12733165e43b5e2c6eab2",
+      "sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256"
+    },
+    "maplabSource": {
+      "branch": "input/greywater-poi-pilot-20261102",
+      "commit": "0602b59af626d96fc2f76351cdf95ad66863f66e",
+      "innerZipSha256": "887a389cc4da3d50377ebc3ff5c6327651794d84acbcb8b14de0215329ab464e",
+      "htmlSha256": "8f69d9fae7163dc9fb7c8c8eb62ac0eaf9e773012ad69650676e3deabcc9b990",
+      "zipChain": "VERIFIED"
+    },
+    "geo01": {
+      "geography": {
+        "file": "/home/user/Soul-of-Hero/world_lab/geo01/output/geography.v1.json",
+        "bytes": 1427751,
+        "sha256": "13ae97272edc47b063bb4a2ffde5dcf9f92f0f34dc3fd35b6ab3bee7f26c29dd"
+      },
+      "corridor": {
+        "file": "/home/user/Soul-of-Hero/world_lab/geo01/output/corridor.v1.json",
+        "bytes": 56653,
+        "sha256": "e9212633b277ec0cd7ee932a0d9b1266532e805a2816e23e092edce3582db63e"
+      },
+      "contract": {
+        "file": "/home/user/Soul-of-Hero/world_lab/geo01/output/contract_boundary.v1.json",
+        "bytes": 38175,
+        "sha256": "2907cf0b0bdc1b2fd292e06283bed0ab28c0481417a3d7656f7c88fa30cad15b"
+      }
+    },
+    "geo02": {
+      "encoding": {
+        "file": "/home/user/Soul-of-Hero/world_lab/geo02/output/maplab_encoding.v1.json",
+        "bytes": 21420,
+        "sha256": "14560c6c523ca01bb831898f914e0f298b8aa76fe0625cbd2fb565db902ea4db"
+      },
+      "audit": {
+        "file": "/home/user/Soul-of-Hero/world_lab/geo02/output/corridor_audit.v1.json",
+        "bytes": 68739,
+        "sha256": "7377b97ad2cfe33d92b5857f06307c028b3b7b1b00b7c510c21014638e73a70d"
+      },
+      "poiDesign": {
+        "file": "/home/user/Soul-of-Hero/world_lab/geo02/output/poi_po_kilns.proposed.v1.json",
+        "bytes": 20323,
+        "sha256": "14f968fe7bc94db7aba5020fcdfda80f5bb8f24b5e3c4ab9c16c8e564c4072c5"
+      },
+      "ownership": {
+        "file": "/home/user/Soul-of-Hero/world_lab/geo02/output/ownership_correction.v1.json",
+        "bytes": 46642,
+        "sha256": "934bc91550341b2adfd6ebca91a6bb7534850ef0c3a59c7e430714a457f06972"
+      },
+      "visual": {
+        "file": "/home/user/Soul-of-Hero/world_lab/geo02/output/audit_before_after.svg",
+        "bytes": 257342,
+        "sha256": "1767f2b0a4533ace1e79263aef83737dccaeeb9eac66e51c94e0e5b8d42b7248"
+      }
+    }
+  },
+  "exactSourceIds": {
+    "spawn": {
+      "id": "sp_lake",
+      "at": [
+        790,
+        622
+      ]
+    },
+    "poi": {
+      "id": "po_kilns",
+      "at": [
+        905,
+        785
+      ],
+      "arche": "smelter",
+      "depth": "surface",
+      "gate": "none",
+      "conf": "proposal",
+      "footAreaAu2": 496.7424
+    },
+    "roads": {
+      "rd_b": {
+        "kind": "cart",
+        "conf": "proposal",
+        "points": [
+          [
+            812,
+            592
+          ],
+          [
+            765,
+            596.5
+          ],
+          [
+            751,
+            609
+          ],
+          [
+            732,
+            639
+          ],
+          [
+            733.5,
+            653
+          ],
+          [
+            748,
+            668
+          ]
+        ]
+      },
+      "rd_13": {
+        "kind": "trail",
+        "conf": "proposal",
+        "points": [
+          [
+            748,
+            668
+          ],
+          [
+            802.5,
+            723
+          ],
+          [
+            804,
+            753
+          ],
+          [
+            800,
+            760
+          ]
+        ]
+      },
+      "rd_16": {
+        "kind": "trail",
+        "conf": "proposal",
+        "points": [
+          [
+            800,
+            760
+          ],
+          [
+            823,
+            780
+          ],
+          [
+            857,
+            780
+          ],
+          [
+            871,
+            788
+          ],
+          [
+            905,
+            785
+          ]
+        ]
+      },
+      "rd_1w": {
+        "kind": "trail",
+        "conf": "proposal",
+        "points": [
+          [
+            788.8451669200736,
+            707.186160377063
+          ],
+          [
+            788,
+            737
+          ],
+          [
+            800,
+            760
+          ]
+        ]
+      },
+      "rd_20": {
+        "kind": "riverside",
+        "conf": "proposal",
+        "points": [
+          [
+            825.6208779578553,
+            579.9157169719529
+          ],
+          [
+            852.8751154721637,
+            598.4703024308465
+          ],
+          [
+            880.9668663798982,
+            641.9673896217456
+          ],
+          [
+            926.9055652944968,
+            772.7915222238166
+          ],
+          [
+            967.19311471634,
+            848.2629239255666
+          ]
+        ]
+      }
+    },
+    "bridges": [
+      {
+        "id": "br_4",
+        "at": [
+          732.00696765689,
+          649.8170519278754
+        ],
+        "load": "cart",
+        "conf": "proposal",
+        "coveredIntersections": [
+          {
+            "roadId": "rd_b",
+            "riverId": "rv_silver",
+            "distanceAu": 0.1433
+          }
+        ]
+      },
+      {
+        "id": "br_a",
+        "at": [
+          882.9743849116596,
+          646.9030885831578
+        ],
+        "load": "foot",
+        "conf": "proposal",
+        "coveredIntersections": [
+          {
+            "roadId": "rd_20",
+            "riverId": "rv_silver",
+            "distanceAu": 0.0342
+          }
+        ]
+      }
+    ],
+    "rivers": [
+      {
+        "id": "rv_silver",
+        "widthAu": 4,
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20
+      }
+    ],
+    "ferryNearest": {
+      "roadId": "rd_2j",
+      "distanceAu": 187.1,
+      "usedByAnyRoute": 0
+    },
+    "elder": "aion",
+    "resourceAnnotationCount": 280,
+    "note": "280 resource objects are candidate geographic annotations, NOT authoritative Gameplay nodes."
+  },
+  "connectivityLayers": {
+    "SOURCE_AUTHORED": {
+      "status": "EXPLICIT_REFS_ONLY",
+      "detail": "river mouth/source refs, bridge at/load, POI links, 43 exact coincident road endpoint pairs. Veyra has NO road-to-road junction table.",
+      "riverRefs": 17,
+      "bridges": 12
+    },
+    "DERIVED_ROAD_GRAPH": {
+      "status": "TWO_INCOMPATIBLE_DERIVATIONS",
+      "geo01": "131 nodes / 105 edges @ joinToleranceAu=8 (endpoint + exact intersections)",
+      "maplab": "1444 nodes @ SNAP_TOL=7 on Catmull-Rom curves resampled at 8u",
+      "verdict": "GEO-01_TOLERANCE_NOT_THE_EDITOR_TOLERANCE__DERIVED_GRAPH_MUST_BE_REDERIVED_AT_7"
+    },
+    "RASTER_CANDIDATE": {
+      "status": "CONNECTED_BUT_NOT_A_ROUTE",
+      "geo01Bfs": "50 steps, connected=true",
+      "maplabDijkstra": {
+        "foot": true,
+        "cart": true
+      },
+      "caveat": "The Dijkstra raster candidates are NOT the authored corridor: they take 0 river cells (no bridge at all), and roughly half their cells are outside even the 9u cart-road analysis raster. stepMult does not require a bridge or a road. The only authored cart bridge in this corridor is br_4 on rd_b, and no cart road reaches po_kilns within ACCESS_R=48. A connected raster candidate therefore proves NOTHING about a physically traversable cart route."
+    },
+    "PHYSICAL_CLEARANCE": {
+      "status": "UNPROVEN",
+      "zeroClearanceCells": 1,
+      "minClearanceAuOnGeo01Path": 0,
+      "channelSpanFitVerified": false,
+      "sweptClearanceValidated": false
+    },
+    "neverConflated": true
+  },
+  "verifiedGeometry": {
+    "foot": {
+      "polygonAu": [
+        [
+          892.1916,
+          774.9026
+        ],
+        [
+          919.0143,
+          776.6568
+        ],
+        [
+          917.8084,
+          795.0974
+        ],
+        [
+          890.9857,
+          793.3432
+        ]
+      ],
+      "areaAu2": 496.7424,
+      "source": "pois[po_kilns].foot (verbatim)"
+    },
+    "authoredRoadPenetratesFoot": {
+      "roadId": "rd_16",
+      "controlPointInsideFoot": [
+        905,
+        785
+      ],
+      "exactWestEdgeCrossingAu": [
+        891.4531,
+        786.1953
+      ]
+    },
+    "routeLengthsAu": {
+      "RT1": 400.1147,
+      "RT2": 403.9036,
+      "RT3": 398.0289
+    },
+    "roadKindsOnRT1": [
+      "rd_b:cart",
+      "rd_13:trail",
+      "rd_1w:trail",
+      "rd_16:trail"
+    ],
+    "bridgeCoverage": [
+      {
+        "id": "br_4",
+        "load": "cart",
+        "distanceAu": 0.1433,
+        "bridgeValidWithin14u": true
+      },
+      {
+        "id": "br_a",
+        "load": "foot",
+        "distanceAu": 0.0342,
+        "bridgeValidWithin14u": true
+      }
+    ],
+    "junctionTolerance": {
+      "geo01": 8,
+      "maplab": 7,
+      "geo01OnlyPairs": 4,
+      "selfMergesAt8": 773
+    },
+    "surface": [
+      {
+        "routeId": "RT-1",
+        "offLandSamples": 0,
+        "inLakeSamples": 0,
+        "inRiverSamples": 2,
+        "outside9uRoadStroke": 0,
+        "minClearanceAu": 0
+      },
+      {
+        "routeId": "RT-2",
+        "offLandSamples": 0,
+        "inLakeSamples": 0,
+        "inRiverSamples": 2,
+        "outside9uRoadStroke": 0,
+        "minClearanceAu": 0
+      },
+      {
+        "routeId": "RT-3",
+        "offLandSamples": 0,
+        "inLakeSamples": 0,
+        "inRiverSamples": 1,
+        "outside9uRoadStroke": 1,
+        "minClearanceAu": 0
+      }
+    ],
+    "derivedConnectors": [
+      {
+        "routeId": "RT-1",
+        "distanceAu": 37.20215,
+        "exceedsEditorAccessR48": false,
+        "status": "DERIVED_STRAIGHT_LINE__NOT_AUTHORED_ROAD"
+      },
+      {
+        "routeId": "RT-2",
+        "distanceAu": 37.20215,
+        "exceedsEditorAccessR48": false,
+        "status": "DERIVED_STRAIGHT_LINE__NOT_AUTHORED_ROAD"
+      },
+      {
+        "routeId": "RT-3",
+        "distanceAu": 55.135595,
+        "exceedsEditorAccessR48": true,
+        "status": "DERIVED_STRAIGHT_LINE__NOT_AUTHORED_ROAD"
+      },
+      {
+        "routeId": "RT-3",
+        "distanceAu": 62.57266,
+        "exceedsEditorAccessR48": true,
+        "status": "DERIVED_STRAIGHT_LINE__NOT_AUTHORED_ROAD"
+      }
+    ],
+    "poiRoadAccess": {
+      "nearestCartRoad": {
+        "d": 56.8792,
+        "roadId": "rd_n"
+      },
+      "nearestFootRoad": {
+        "d": 0,
+        "roadId": "rd_16"
+      },
+      "cartAccessWithinAccessR": false
+    }
+  },
+  "existingAuthoredVsProposed": {
+    "existingAuthored": {
+      "source": "Veyra GOLD (read-only)",
+      "ids": [
+        "po_kilns.foot",
+        "rd_b",
+        "rd_13",
+        "rd_1w",
+        "rd_16",
+        "rd_20",
+        "rd_n",
+        "br_4",
+        "br_a",
+        "rv_silver"
+      ],
+      "neverModified": true
+    },
+    "proposed": {
+      "file": "output/poi_po_kilns.proposed.v1.json",
+      "status": "PROPOSED",
+      "canonical": false,
+      "owner": "MAP",
+      "scope": "po_kilns ONLY",
+      "items": {
+        "footprint": 1,
+        "approach": 1,
+        "entranceOptions": 3,
+        "interiorWorkingSpaces": 4,
+        "circulationPaths": 5,
+        "retreatPaths": 1
+      }
+    },
+    "explicitDistinction": true,
+    "noRuntimeMerge": true
+  },
+  "ownershipCorrection": {
+    "rule": "MAP DESIGNS THE PHYSICAL WORLD. GAMEPLAY POPULATES AND SIMULATES IT.",
+    "mapOwns": [
+      "pois[].rooms",
+      "pois[].entrances",
+      "pois[].passages",
+      "pois[].doorOpenings",
+      "pois[].interiorCirculation",
+      "pois[].spatialSockets",
+      "pois[].retreatPaths",
+      "pois[].footprint",
+      "criticalPaths.geometry"
+    ],
+    "gameplayOwns": [
+      "pois[].doors.lockedState",
+      "pois[].doors.keyCondition",
+      "pois[].doors.powerCondition",
+      "pois[].powerNodes",
+      "pois[].hazardIntensity",
+      "pois[].hazardCells",
+      "pois[].exteriorLootSites",
+      "pois[].interiorLootSites",
+      "pois[].interactions",
+      "pois[].interactiveMachinery",
+      "pois[].furnaceRecipes",
+      "criticalPaths.protectionPolicy",
+      "cargoPassable",
+      "passabilityRules",
+      "survivabilityRules"
+    ],
+    "correctedClassification": "MAP_RESPONSIBILITY_NOT_IN_SOURCE",
+    "staleGeo01OwnerStrings": 243,
+    "geographyExportRewritten": false
+  },
+  "resolvedFromSource": {
+    "biomeLegend": "12 named codes in MapLab v3 types.ts; code 0 = meadow on land, NO-BIOME sentinel on 28,624 sea cells. NOT approved for the 14-string Gameplay Biome enum.",
+    "elevationUnit": "byte/255 = abstract normalized height (0=sea, 1..255 land); NO real-world unit (Bible §11.5).",
+    "slopeUnit": "hypot(d(elev/255)/dx, d(elev/255)/dy) x 100 in authoring units; Map Lab heuristic, not Bible.",
+    "roadWidth": "NOT_IN_SOURCE. 9u editor analysis stroke and 3.4u/1.6u display strokes are NOT physical widths.",
+    "riverWidth": "editor stroke width; riverMask uses max(width,9)u; carve radius max(20,width*4)u. rv_silver width=4 -> 9u mask, 20u carve.",
+    "graphConstants": {
+      "SNAP_TOL": 7,
+      "ACCESS_R": 48,
+      "DOCK_R": 40,
+      "BRIDGE_R": 22,
+      "resampleStepAu": 8,
+      "roadResampleStepAu": 8,
+      "bridgeValidRadiusAu": 14,
+      "roadWaterSampleStepAu": 12,
+      "cartSlopeSampleStepAu": 12
+    }
+  },
+  "unresolvedConstraints": [
+    "Authoring-unit -> runtime-tile transform and world scale: UNDECIDED (PR44 pins 200x200 @ TILE=16; Veyra is 250x175 @ 8u on 2000x1400).",
+    "Physical road width, river channel width, bridge deck span, cart/foot footprint: UNDEFINED. Swept clearance NOT validated.",
+    "Biome 12-code -> 14-string Gameplay mapping and land/sea guard: NOT APPROVED. Climate (moisture/temperature): UNDEFINED.",
+    "Slope normalization and all passability / loaded-cart / ford / ferry rules: GAMEPLAY_OWNED, not supplied.",
+    "po_kilns rooms/entrances/passages/door openings/circulation/retreat: NOT_IN_SOURCE in canon; MAP_OWNS the design (PROPOSED candidate only).",
+    "No cart road reaches po_kilns within MapLab ACCESS_R=48; RT-1 has only ONE cart segment. NO physically traversable cart route is claimed.",
+    "bridge channelSpanFitVerified=false for both br_4 (cart) and br_a (foot); the 13x7.2u exporter rectangle is a display glyph.",
+    "All Veyra POI/road objects carry conf:proposal or conf:assumption; nothing here converts them into final laws.",
+    "Survivability, travel time, hazard intensity and Gameplay population: NOT CLAIMED."
+  ],
+  "auditFindings": [
+    {
+      "id": "F-01",
+      "severity": "FAIL",
+      "subject": "RT-1 / RT-2 label \"Authored cart corridor\""
+    },
+    {
+      "id": "F-02",
+      "severity": "FAIL",
+      "subject": "po_kilns cart access"
+    },
+    {
+      "id": "F-03",
+      "severity": "NEEDS_AUTHORING",
+      "subject": "GEO-01 derived connectors"
+    },
+    {
+      "id": "F-04",
+      "severity": "UNPROVEN",
+      "subject": "Swept clearance at br_4"
+    },
+    {
+      "id": "F-05",
+      "severity": "NEEDS_REDERIVATION",
+      "subject": "Road junction tolerance"
+    },
+    {
+      "id": "F-06",
+      "severity": "NEEDS_AUTHORING",
+      "subject": "po_kilns physical shell"
+    },
+    {
+      "id": "F-07",
+      "severity": "UNPROVEN",
+      "subject": "Bridge span fit for both crossings"
+    },
+    {
+      "id": "F-08",
+      "severity": "FAIL_FOR_CART",
+      "subject": "br_a / rd_20 crossing (RT-3)"
+    }
+  ],
+  "derivedOutputs": [
+    "output/maplab_encoding.v1.json + rasters/*.u8 (source-derived legend/units/width semantics + 5 source-semantic masks)",
+    "output/corridor_audit.v1.json (4-layer connectivity audit, 8 findings)",
+    "output/poi_po_kilns.proposed.v1.json (PROPOSED spatial design, po_kilns only)",
+    "output/ownership_correction.v1.json (overlay correcting stale GEO-01 owner strings)",
+    "output/audit_before_after.svg / .png / .html (visually inspectable before/after geometry audit)",
+    "../geo01/output/* (accepted source-verified geography export, read-only)"
+  ],
+  "nextExecutableSeam": "Gameplay can inspect this package in authoring units. To consume it: (1) approve the world-scale/grid transform; (2) approve the biome mapping + climate contract; (3) approve physical road/river/bridge dimensions and validate swept clearance; (4) let Gameplay supply locked states/loot/power/interactions and its own passability rules; (5) only then consider a versioned RuntimeMapPackage. Map must author canonical POI shell geometry (the PROPOSED candidate is NOT canonical) and re-derive the road graph at SNAP_TOL=7.",
+  "gates": {
+    "deterministicReproducibleSourceLinkedData": true,
+    "visuallyInspectableBeforeAfterAudit": true,
+    "explicitAuthoredVsProposed": true,
+    "noRuntimeMerge": true,
+    "noNewGameplayPopulation": true,
+    "noPhysicalCartRouteClaim": true,
+    "noInventedPassabilityRules": true,
+    "authoredCoordinateSpacePreserved": "2000x1400",
+    "currentWebTerrainSeaArtUntouched": true
+  }
+}
