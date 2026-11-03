@@ -70,6 +70,11 @@
     "wood": 20, "charcoal": 55, "coal": 80, "fiber": 4,
     "linedFurnaceFuelMultiplier": 0.8
   },
+  "fire": {
+    "spreadDelayMs": 3000,
+    "maxSpreadDepth": 2,
+    "spreadChancePercent": 55
+  },
   "garden": {
     "_status": "TUNABLE_BALANCE",
     "growSeconds": 300,
@@ -78,6 +83,7 @@
     "coldFrameWarming": 0.24,
     "coldFrameSoilBonus": 0.20,
     "wetCooling": 0.04,
+    "scorchedSoilMultiplier": 0.55,
     "tenderPlantEnergySeconds": 8,
     "tenderPumpEnergySeconds": 4,
     "tenderHarvestEnergySeconds": 8,

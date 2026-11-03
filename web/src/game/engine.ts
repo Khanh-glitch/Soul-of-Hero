@@ -293,7 +293,7 @@ export function harvestHit(gs: GameState, tx: number, ty: number, power: Partial
   }
   r.player.skills.gather += units;
   const depleted = st.stock <= 0;
-  if (depleted) { if (s.def.regrow) st.regrowAt = now + s.def.regrow * 1000; markDirty(); }
+  if (depleted) { if (st.fire) { st.fire = 0; delete st.fireSpreadAt; delete st.fireDepth; } if (s.def.regrow) st.regrowAt = now + s.def.regrow * 1000; markDirty(); }
   if (units) receipt(r, now, 'harvest', `${s.key}@${tx},${ty} -${units}`);
   return { result: 'yield', key: s.key, got, mat: s.def.mat, depleted };
 }
@@ -409,7 +409,7 @@ function clearSegment(r:RunState,p:{x:number;y:number},e:{x:number;y:number}):bo
   for(let k=1;k<steps;k++){const x=Math.floor((p.x+(e.x-p.x)*k/steps)/TILE),y=Math.floor((p.y+(e.y-p.y)*k/steps)/TILE);if((x===startX&&y===startY)||(x===endX&&y===endY))continue;if(x<0||y<0||x>=WW||y>=WH||[1,2,3,5].includes(grid[y*WW+x]))return false;}
   return true;
 }
-function clearInteraction(r:RunState,e:{x:number;y:number}) { return clearSegment(r,r.player,e); }
+export function clearInteraction(r:RunState,e:{x:number;y:number}) { return clearSegment(r,r.player,e); }
 
 function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
   const p = r.player; const ok = (kind: string, detail: string, msg?: string): Result => ({ ok: true, receipt: receipt(r, now, kind, detail), msg });
@@ -701,6 +701,19 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const fi = C(r, 'inv').slots.findIndex(s => s && ITEMS[s.key].waterContainer && (s.charge ?? 0) < ITEMS[s.key].charge!);
       if (fi >= 0) { const s = C(r, 'inv').slots[fi]!; const m = Math.min(ITEMS[s.key].charge! - (s.charge || 0), Math.floor(e.water!)); s.charge = (s.charge || 0) + m; e.water! -= m; return ok('barrel.fill', `${m}`); }
       p.thirst = Math.min(100, p.thirst + 25); e.water! -= 1; return ok('barrel.drink', '1'); }
+    case 'douseTree': {
+      const tx=it.tx,ty=it.ty;if(!Number.isInteger(tx)||!Number.isInteger(ty)||tx<0||ty<0||tx>=WW||ty>=WH)return fail('Invalid target.');
+      const target={x:tx*TILE+8,y:ty*TILE+8},source=sourceAt(r,tx,ty),st=source?.st;
+      if(!source||!st?.fire||st.fire<=r.clock.simMs||!near(r,target,2.2)||!clearInteraction(r,target))return fail('No reachable burning tree.');
+      const flask=C(r,'inv').slots.find(s=>s&&ITEMS[s.key].waterContainer&&(s.charge??0)>0);if(!flask)return fail('Needs one flask charge of water.');
+      flask.charge!--;st.fire=0;delete st.fireSpreadAt;delete st.fireDepth;return ok('fire.douse',`${tx},${ty}:${flask.uid}`,'Fire doused with one flask charge.');
+    }
+    case 'restoreGardenSoil': {
+      const e=r.entities[it.eid];if(!e||e.kind!=='struct'||e.type!=='garden'||!e.garden||!owned(e)||!near(r,e,2.2)||!clearInteraction(r,e))return fail('Use your garden within reach.');
+      const i=e.ty!*WW+e.tx!,ground=r.terrain[i];if(!ground||ground.t!==T.BURNT||ground.until)return fail('This soil is not scorched.');
+      if(!hasAll(r,'inv',[['fiber',2],['herb',1]]))return fail('Needs 2 fiber and 1 Bitterleaf.');
+      removeItem(r,'inv','fiber',2);removeItem(r,'inv','herb',1);delete r.terrain[i];markDirty();return ok('garden.restore',e.id,'Scorched soil restored with fiber and Bitterleaf.');
+    }
     case 'gardenFrame': {
       const e=r.entities[it.eid];if(!e || e.kind!=='struct' || e.type!=='garden' || !e.garden || !owned(e) || !near(r,e,2.2) || !clearInteraction(r,e)) return fail('Use your garden within reach.');
       if(it.remove===true){if(!e.garden.coldFrame)return fail('No frame installed.');delete e.garden.coldFrame;giveOrDrop(r,'wood',2,now);giveOrDrop(r,'fiber',2,now);return ok('garden.frame.remove',e.id,'Frame dismantled; some wood and fiber recovered.');}
@@ -898,7 +911,8 @@ export function gardenEnvironment(r:RunState,e:Entity,wet:boolean,crop:'crop'|'h
   const climate=Math.max(0.15,Math.min(1,temperature<low?1-(low-temperature)*4:temperature>high?1-(temperature-high)*3:1));
   const ground:Record<string,number>={snow:0.65,sand:0.8,ash:0.55,toxic:0.4,hill:0.8,marsh:0.8};
   const fertility=Math.min(1,Math.max(0.3,(ground[biome]??1)+(frame?BAL.garden.coldFrameSoilBonus:0)-(moisture<0.3||moisture>0.75?0.1:0)-Math.min(0.2,slope*0.3)));
-  return {rate:climate*fertility,temperature,moisture,biome,frame,covered:frame||isRoofed(r,e),climate:temperature<low?'cold':temperature>high?'hot':'suitable'};
+  const scorched=effTile(r,x,y)===T.BURNT;
+  return {rate:climate*fertility*(scorched?BAL.garden.scorchedSoilMultiplier:1),temperature,moisture,biome,frame,scorched,covered:frame||isRoofed(r,e),climate:temperature<low?'cold':temperature>high?'hot':'suitable'};
 }
 function isRoofed(r: RunState, e: Entity) { return entsAt(r, e.tx!, e.ty!).some(o => o.kind === 'struct' && STRUCTS[o.type!].shelter); }
 

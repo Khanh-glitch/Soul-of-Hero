@@ -2,7 +2,7 @@
 import { BAL, TILE, WW, WH, HOUR, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity } from './core';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
 import { getWorld } from './world';
-import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight } from './engine';
+import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
@@ -85,33 +85,48 @@ function wakeElder(gs: GameState, m: Creature, now: number) {
 }
 
 // ---------- fire (K2 terrain mutation with committed causes) ----------
-export function ignite(gs: GameState, tx: number, ty: number, now: number) {
-  const r = gs.run!; if (isWet(weatherAt(r, now))) return false;
+export function ignite(gs: GameState, tx: number, ty: number, now: number, depth = 0, visual = true) {
+  const r = gs.run!; if (tx<0||ty<0||tx>=WW||ty>=WH||isWet(weatherAt(r, now))) return false;
   const s = sourceAt(r, tx, ty, now); const i = ty * WW + tx;
-  if (s && s.def.mat === 'wood' && s.def.tall && s.stock > 0 && !s.st?.burnt && !(s.fire && s.fire > r.clock.simMs)) {
-    const st = r.sources[i] || (r.sources[i] = { stock: s.stock, hp: s.hp }); (st as any).fire = r.clock.simMs + 5000 + rngNext(r) * 3000; fx('ignite', { x: tx * TILE + 8, y: ty * TILE + 8 }); return true;
+  if (s && s.def.mat === 'wood' && s.def.tall) {
+    if (s.stock <= 0 || s.st?.burnt || (s.fire && s.fire > r.clock.simMs)) return false;
+    const st = r.sources[i] || (r.sources[i] = { stock: s.stock, hp: s.hp });
+    st.fire = r.clock.simMs + 5000 + rngNext(r) * 3000; st.fireDepth = depth;
+    if (depth < BAL.fire.maxSpreadDepth) st.fireSpreadAt = r.clock.simMs + BAL.fire.spreadDelayMs;
+    if(visual) fx('ignite', { x: tx * TILE + 8, y: ty * TILE + 8 }); return true;
   }
-  const t = effTile(r, tx, ty); if (t === T.GRASS || t === T.MEADOW || t === T.FOREST) { r.terrain[i] = { t: T.BURNT }; fx('scorch', { x: tx * TILE + 8, y: ty * TILE + 8 }); markDirty(); return true; }
+  const t = effTile(r, tx, ty); if ((t === T.GRASS || t === T.MEADOW || t === T.FOREST) && !entsAt(r,tx,ty).some(e=>e.kind==='struct'&&(STRUCTS[e.type!].block||['floor','roof','wall'].includes(STRUCTS[e.type!].layer)))) { r.terrain[i] = { t: T.BURNT }; if(visual) fx('scorch', { x: tx * TILE + 8, y: ty * TILE + 8 }); markDirty(); receipt(r,now,'fire.scorch',`${tx},${ty}`); return true; }
   return false;
 }
-/** Shared online/offline transition: wet wins at the same instant as burnout. */
+/** Burn and one bounded cardinal spread event are chronological world events.
+ * Rain wins at equal timestamps. A cut tree cannot later create charcoal. */
 function resolveFires(gs: GameState, now: number, visual = true) {
   const r = gs.run!, wet = isWet(weatherAt(r, now));
+  // Source keys are canonical non-negative integer indices; JS enumerates them numerically.
   for (const k in r.sources) {
-    const st: any = r.sources[k]; if (!st.fire) continue; const i = +k, tx = i % WW, ty = (i / WW) | 0;
-    if (wet) { st.fire = 0; if (visual) fx('steam', { x: tx * TILE + 8, y: ty * TILE + 8 }); continue; }
-    if (st.fire <= r.clock.simMs) { st.fire = 0; st.burnt = true; st.stock = SOURCES.deadtree.stock; st.hp = SOURCES.deadtree.hp; const t = effTile(r, tx, ty); if (t !== T.SAND && t !== T.SNOW) r.terrain[i] = { t: T.BURNT }; markDirty(); receipt(r, now, 'fire.burnout', `${tx},${ty}`); }
+    const key=+k, st = r.sources[key]; if (!st.fire) continue; const tx = key % WW, ty = (key / WW) | 0;
+    if (wet || st.stock<=0) { st.fire = 0; delete st.fireSpreadAt; delete st.fireDepth; if (wet && visual) fx('steam', { x: tx*TILE+8, y: ty*TILE+8 }); continue; }
+    if (st.fireSpreadAt!==undefined && st.fireSpreadAt<=r.clock.simMs) {
+      delete st.fireSpreadAt;
+      const depth=st.fireDepth??0;
+      if(depth<BAL.fire.maxSpreadDepth) for(const [dx,dy] of [[2,0],[-2,0],[0,2],[0,-2],[1,0],[-1,0],[0,1],[0,-1]]) {
+        if(Math.abs(dx)+Math.abs(dy)===2){const mx=tx+dx/2,my=ty+dy/2,mid=sourceAt(r,mx,my,now),mt=effTile(r,mx,my);if(![T.GRASS,T.MEADOW,T.FOREST].includes(mt)||(mid&&(mid.stock<=0||mid.def.mat!=='wood'))||entsAt(r,mx,my).some(e=>e.kind==='struct'&&(STRUCTS[e.type!].block||['floor','roof','wall'].includes(STRUCTS[e.type!].layer))))continue;}
+        const x=tx+dx,y=ty+dy;if(x<0||y<0||x>=WW||y>=WH)continue;const s=sourceAt(r,x,y,now);
+        if(s && (s.def.mat!=='wood'||!s.def.tall||s.stock<=0||s.st?.burnt||s.fire))continue;
+        // Stable per-cell choice: no frame-rate or offline-partition dependent RNG draw.
+        const hash=(Math.imul(key+1,73856093)^Math.imul(y*WW+x+1,19349663)^r.seed)>>>0;
+        if(hash%100 < BAL.fire.spreadChancePercent) ignite(gs,x,y,now,depth+1,visual);
+      }
+    }
+    if (st.fire <= r.clock.simMs) { st.fire = 0; delete st.fireSpreadAt; delete st.fireDepth; st.burnt = true; st.stock = Math.min(st.stock,SOURCES.deadtree.stock); st.hp = SOURCES.deadtree.hp * st.stock / SOURCES.deadtree.stock; const t = effTile(r,tx,ty); if (t !== T.SAND && t !== T.SNOW) r.terrain[key] = { t: T.BURNT }; markDirty(); receipt(r,now,'fire.burnout',`${tx},${ty}`); }
   }
 }
 function stepFires(gs: GameState, now: number, dtMs: number) {
-  const r = gs.run!; resolveFires(gs, now);
-  fireAcc += dtMs; const doSpread = fireAcc > 900; if (doSpread) fireAcc = 0;
-  if (!doSpread) return;
+  const r = gs.run!; fireAcc += dtMs; if (fireAcc<=900) return; fireAcc=0;
   for (const k in r.sources) {
-    const st: any = r.sources[k]; if (!st.fire) continue; const i = +k, tx = i % WW, ty = (i / WW) | 0;
-    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, -1]]) if (rngNext(r) < 0.16) ignite(gs, tx + dx, ty + dy, now);
-    const p = r.player; if (dist(p.x, p.y, tx * TILE + 8, ty * TILE + 8) < 18) hurtPlayer(gs, 6, tx * TILE + 8, ty * TILE + 8, 'fire', now, 60);
-    for (const m of r.creatures) if (m.state !== 'dead' && dist(m.x, m.y, tx * TILE + 8, ty * TILE + 8) < 18) damageCreature(gs, m, 8, 0, now, 0);
+    const st=r.sources[k]; if (!st.fire || st.fire<=r.clock.simMs) continue; const i=+k,tx=i%WW,ty=(i/WW)|0;
+    const p=r.player; if (dist(p.x,p.y,tx*TILE+8,ty*TILE+8)<18) hurtPlayer(gs,6,tx*TILE+8,ty*TILE+8,'fire',now,60);
+    for (const m of r.creatures) if (m.state!=='dead' && dist(m.x,m.y,tx*TILE+8,ty*TILE+8)<18) damageCreature(gs,m,8,0,now,0);
   }
 }
 
@@ -270,10 +285,11 @@ function resolveSwing(gs: GameState, now: number, slot: number, a: number) {
   if (best) {
     const res = harvestHit(gs, best.tx, best.ty, d.power || {}, now, p.x, p.y);
     const x = best.tx * TILE + 8, y = best.ty * TILE + 8;
+    const ignited = s?.key === 'torch' && ignite(gs, best.tx, best.ty, now);
     if (res.result === 'yield') { fx('chip', { x, y, mat: res.mat, key: res.key, depleted: res.depleted }); hitAny = true; if (res.depleted) fx('fell', { x, y, key: res.key }); }
-    else if (res.result === 'nopower') { fx('clank', { x, y, mat: res.mat }); fx('toast', { text: res.mat === 'wood' ? 'Too slow with this — an axe would fell it.' : res.mat === 'stone' || res.mat === 'ore' ? 'You need a pickaxe for this.' : 'Wrong tool for this.', key: 'tool' + res.mat }); }
+    else if (res.result === 'nopower' && !ignited) { fx('clank', { x, y, mat: res.mat }); fx('toast', { text: res.mat === 'wood' ? 'Too slow with this — an axe would fell it.' : res.mat === 'stone' || res.mat === 'ore' ? 'You need a pickaxe for this.' : 'Wrong tool for this.', key: 'tool' + res.mat }); }
     else if (res.result === 'empty') { fx('clank', { x, y, mat: res.mat, soft: true }); fx('toast', { text: SOURCES[res.key!]?.regrow ? 'Exhausted — this plant can regrow.' : 'Exhausted — no stock remains.', key: 'source-empty' }); }
-    if (s?.key === 'torch') ignite(gs, best.tx, best.ty, now);
+    if (ignited) { hitAny = true; fx('toast', { text: 'Tree burning — E uses flask water to douse.', key: 'fire-danger' }); }
   }
   if (hitAny && slot >= 0) wearTool(gs, slot, now);
 }
@@ -576,7 +592,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
       if (job && job.left > 0) dt = Math.min(dt, job.left);
     }
     dt = tenderBoundary(r, isWet(weather), dt);
-    for (const st of Object.values(r.sources)) { const fire = (st as any).fire as number | undefined; if (fire && fire > r.clock.simMs) dt = Math.min(dt, fire - r.clock.simMs); }
+    for (const st of Object.values(r.sources)) { if (st.fire && st.fire > r.clock.simMs) dt = Math.min(dt, st.fire - r.clock.simMs); if(st.fireSpreadAt && st.fireSpreadAt > r.clock.simMs) dt = Math.min(dt, st.fireSpreadAt - r.clock.simMs); }
     for (const terrain of Object.values(r.terrain)) if (terrain.until && terrain.until > r.clock.simMs) dt = Math.min(dt, terrain.until - r.clock.simMs);
     if (!(dt > 0)) break;
     dt = Math.min(end - t, Math.max(dt, 0.001)); // avoid sub-millisecond timestamp stalls
@@ -733,6 +749,7 @@ export function findInteract(gs: GameState, now: number): Interact | null {
     else continue;
     bd = d; best = { kind, label, eid: e.id, x: e.x, y: e.y };
   }
+  for (const key in r.sources) { const st=r.sources[key]; if(!st.fire || st.fire<=r.clock.simMs)continue; const i=+key,x=(i%WW)*TILE+8,y=Math.floor(i/WW)*TILE+8,d=dist(fx0,fy0,x,y); if(d<bd && dist(p.x,p.y,x,y)<=2.2*TILE && clearInteraction(r,{x,y})){bd=d;best={kind:'fire',label:'Douse burning tree (1 flask water)',x,y};} }
   if (!best) { const w = getWorld(); for (const [dx, dy] of [[0, 0], [Math.cos(p.aim) * 14, Math.sin(p.aim) * 14], [0, 12], [0, -12], [12, 0], [-12, 0]]) { const tx = tileOf(p.x + dx), ty = tileOf(p.y + dy); if (w.fresh[ty * WW + tx] && effTile(r, tx, ty) !== T.ICE && [T.SHALLOW, T.RIVER].includes(effTile(r, tx, ty))) return { kind: 'water', label: 'Drink fresh water', x: tx * TILE + 8, y: ty * TILE + 8 }; } }
   return best;
 }

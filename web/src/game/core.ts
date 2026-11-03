@@ -116,7 +116,7 @@ export interface RunState {
   sourceMap?: { id: string; revision: number; seed: number; rules: 3; digest: string; mapDigest?: string };
   spawnRegion: number; ended: null | string;
   player: Player; creatures: Creature[];
-  sources: Record<number, { stock: number; hp: number; regrowAt?: number; burnt?: boolean }>; // K3 deltas over base world
+  sources: Record<number, { stock: number; hp: number; regrowAt?: number; burnt?: boolean; fire?: number; fireSpreadAt?: number; fireDepth?: number }>; // K3 deltas over base world
   terrain: Record<number, { t: number; until?: number }>; // K2 terrain mutations (burns, ice)
   entities: Record<string, Entity>;
   custody: Record<string, Container>;
