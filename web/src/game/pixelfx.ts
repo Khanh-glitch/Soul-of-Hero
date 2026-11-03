@@ -377,10 +377,12 @@ export function drawPostNight(g: CanvasRenderingContext2D, cam: { x: number; y: 
     const sOffY = inst.family === 'screen' ? 0 : -cam.y;
     const r = destRect(inst, sOff, sOffY);
     const le = inst.entry.export.lightEnergy;
-    // colored radiance (soft falloff illumination of the nearby scene) — drawn UNDER the art
-    if (layers.radiance && quality.radiance) {
+    // colored radiance (soft falloff illumination of the nearby scene) — drawn UNDER the art.
+    // Day only: at night the big tinted disc reads as a flat "shape" over the dark
+    // world, so night relies on the bounded tinted emission + crisp art re-draw.
+    if (layers.radiance && quality.radiance && dark <= 0.02) {
       const energy = Math.min(1.6, le / 8);
-      const a = (dark > 0.02 ? Math.min(0.18, 0.05 + dark * 0.2) : 0.04) * energy;
+      const a = 0.04 * energy;
       if (a > 0.01) {
         const rad = Math.max(r.dw, r.dh) * 0.38 + 8;
         const spr = radianceSprite(tintOf(inst.entry));
@@ -393,7 +395,7 @@ export function drawPostNight(g: CanvasRenderingContext2D, cam: { x: number; y: 
     // bounded night-safe emission (light channel only, kept subtle so it reads as
     // glow behind the core instead of a fog layer over it)
     if (layers.emission && dark > 0.02 && le >= 0.5) {
-      const alpha = Math.min(quality.emissionCap, 0.08 + dark * 0.22) * Math.min(1, le / 6);
+      const alpha = Math.min(quality.emissionCap, 0.03 + dark * 0.08) * Math.min(1, le / 6);
       drawFrame(g, inst, 'light', alpha, 'lighter', sOff, sOffY);
     }
     // re-draw the crisp art core ON TOP of its glow so the shape stays sharp
