@@ -48,9 +48,9 @@ export interface PfxInst {
 // from core bounds so the system works for any registered id.
 const SCALE: Record<string, number> = {
   'fire/fireball': 0.72, 'nature/quake': 0.5, 'lightning/chain-lightning': 0.55,
-  'ice/frost-nova': 0.5, 'shadow/black-hole': 0.62, 'arcane/arcane-orb': 0.55,
+  'ice/frost-nova': 0.5, 'shadow/black-hole': 0.62, 'arcane/arcane-orb': 0.8,
   'ice/ice-lance': 0.85, 'moves/ice-lance-throw': 0.7, 'impacts/impact-frame': 0.4,
-  'arcane/spell-charge': 0.65, 'explosions/small-explosion': 0.5,
+  'arcane/spell-charge': 1.0, 'explosions/small-explosion': 0.5,
 };
 // Radiance tint per category (soft illumination color); override per id here.
 const TINT_CAT: Record<string, string> = {
@@ -371,7 +371,7 @@ export function drawPostNight(g: CanvasRenderingContext2D, cam: { x: number; y: 
     // bounded night-safe emission (light channel only, kept subtle so it reads as
     // glow behind the core instead of a fog layer over it)
     if (layers.emission && dark > 0.02 && le >= 0.5) {
-      const alpha = Math.min(quality.emissionCap, 0.1 + dark * 0.28) * Math.min(1, le / 6);
+      const alpha = Math.min(quality.emissionCap, 0.12 + dark * 0.34) * Math.min(1, le / 6);
       drawFrame(g, inst, 'light', alpha, 'lighter', sOff, sOffY);
     }
     // re-draw the crisp art core ON TOP of its glow so the shape stays sharp
