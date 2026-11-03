@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://prototypes/arcana_fusion20/r4/r4_visual_scene.gd" id="1_script"]
+
+[node name="ArcanaR4NativeStage" type="Node2D"]
+script = ExtResource("1_script")
