@@ -74,4 +74,13 @@ async function boot(){try{const zipped=GZIP_IDS.map(async k=>[k,await unzip($("b
  $('runtimeStatus').textContent='Nguồn A/B/C đã nạp · Final canvas bắt đầu vẽ';
  requestAnimationFrame(loop);}catch(e){reportError('Khởi tạo thất bại: '+e);}}
 boot();
-</script></body></html>
+</script><script>
+window.addEventListener('message', function(e){
+  var d = (e && e.data) || {};
+  try {
+    if (d.cmd === 'select' && typeof select === 'function') { select(d.i|0); if (e.source) e.source.postMessage({cmd:'cast', name: (META[current]||{}).name, index:(META[current]||{}).index}, '*'); }
+    if (d.cmd === 'phase' && typeof setPhase === 'function') setPhase(d.p);
+  } catch (err) {}
+});
+</script>
+</body></html>
