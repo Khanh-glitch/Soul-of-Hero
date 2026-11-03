@@ -143,11 +143,25 @@ export class ArcanaLabClient implements comp.VfxClient {
     const needRender = tick !== this.lastTick || anchor !== this.lastAnchor;
     if (useFusion) {
       // semantic source-contribution contract: authored arc packets / light
-      // channels extracted per recipe, bound to the lead's moving anchors
+      // channels extracted per recipe, bound to the lead's moving anchors.
+      // FAIL CLOSED: the CURRENT world snapshot is mandatory; invalid recipe or
+      // missing world aborts the pass (no stale frame is ever presented).
       if (needRender) {
         const recipe = RECIPES[entry.id];
-        composeFusion(recipe, { a: this.aR, b: this.bR, c: this.cR },
-          Math.min(t, entry.dur) / Math.max(entry.dur, 1e-6), this.blend);
+        const cx = Math.round(this.cast.wx - frame.cam.x), cy = Math.round(this.cast.wy - frame.cam.y);
+        const worldFor = (w: number, h: number): Uint8ClampedArray => {
+          const r = p.worldRegion(cx - Math.round(w / 2), cy - Math.round(h / 2), w, h);
+          if (!r || r.length !== w * h * 4) throw new Error(`arcana-lab: current world snapshot missing/wrong size for ${w}x${h}`);
+          return r;
+        };
+        try {
+          composeFusion(recipe, { a: this.aR, b: this.bR, c: this.cR }, worldFor,
+            Math.min(t, entry.dur) / Math.max(entry.dur, 1e-6), this.blend);
+        } catch (err: any) {
+          (window as any).__arcanaLabError = `recipe #${entry.id}: ${err.message}`;
+          this.lastTick = tick; this.lastAnchor = anchor;
+          return; // fail closed: skip this frame's pass entirely
+        }
       }
       out = this.blend;
     } else if (useB) {

@@ -99,6 +99,26 @@ report.phase3.phases = ['1.0 lead/fusion', '3.0 lead/fusion', '5.3 lead/fusion']
   await page.evaluate(cc => { window.__arcanaLab.cast(cc.index, 'lead'); window.__arcanaLab.seek(1.6, cc.index, 'lead'); }, c);
   await page.waitForTimeout(650);
   await page.screenshot({ path: `${OUT}/gallery-02-lead.png` });
+  await page.evaluate(() => window.__qaNight(true)); // day->night with same cast: no stale world
+  await page.waitForTimeout(650);
+  await page.screenshot({ path: `${OUT}/gallery-02-lead-night.png` });
+  await page.evaluate(() => window.__qaNight(false));
+  // lifecycle: recast + OUT on #09 fusion
+  const c9 = await page.evaluate(() => window.__arcanaLab.catalog.find(x => x.id === 9));
+  await page.evaluate(cc => { window.__arcanaLab.cast(cc.index, 'fusion'); window.__arcanaLab.seek(2.0, cc.index, 'fusion'); }, c9);
+  await page.waitForTimeout(650);
+  await page.screenshot({ path: `${OUT}/gallery-09-fusion.png` });
+  await page.evaluate(cc => { window.__arcanaLab.cast(cc.index, 'fusion'); window.__arcanaLab.seek(cc.dur + 1.5, cc.index, 'fusion'); }, c9); // OUT
+  await page.waitForTimeout(650);
+  await page.screenshot({ path: `${OUT}/gallery-09-out.png` });
+  await page.evaluate(cc => { window.__arcanaLab.cast(cc.index, 'fusion'); window.__arcanaLab.seek(2.0, cc.index, 'fusion'); }, c9); // recast
+  await page.waitForTimeout(650);
+  await page.screenshot({ path: `${OUT}/gallery-09-recast.png` });
+}
+for (const fid of [1, 5, 16]) {
+  await page.evaluate(f => { const c = window.__arcanaLab.catalog.find(x => x.id === f); window.__arcanaLab.cast(c.index, 'fusion'); window.__arcanaLab.seek(Math.min(c.climax + 0.4, c.dur * 0.62), c.index, 'fusion'); }, fid);
+  await page.waitForTimeout(650);
+  await page.screenshot({ path: `${OUT}/gallery-${String(fid).padStart(2, "0")}-fusion.png` });
 }
 await page.evaluate(() => window.__arcanaLab.stop?.());
 report.galleryCount = report.gallery.length;

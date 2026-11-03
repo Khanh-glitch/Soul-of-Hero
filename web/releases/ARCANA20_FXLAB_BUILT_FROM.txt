@@ -1,5 +1,5 @@
-SOH ARCANA20 FX LAB — standalone, 20 skills, source-contribution contract (authored arc packets bound to moving A#11 anchors)
+SOH ARCANA20 FX LAB — standalone, 20 skills, fail-closed source-contribution contract
 (F9 in game → FX Lab → "ARCANA20 lab" dropdown; per-skill lead / C-study / fusion? modes)
 built from branch arena/3337c864-soul-of-hero
-artifact sha256    : b3df96b1b8475ba4160ed21c298f4a0a9cc6bdca36e0c9fc66ca3cfd84127ab2
+artifact sha256    : 719a20d5c996036ef8c058c45304f49022b783b5442cce38dbf98472a4e5420e
 boot: open this file directly (file://)

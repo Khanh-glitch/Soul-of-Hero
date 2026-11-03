@@ -33,6 +33,7 @@ export class BRunner {
 
   /** inject the real world region as linear-HDR floor albedo */
   setWorld(rgba: Uint8ClampedArray) {
+    if (!rgba || rgba.length < W * H * 4) throw new Error(`BRunner.setWorld: world snapshot missing/wrong size (${rgba?.length} < ${W * H * 4})`);
     const f = this.r.floor;
     for (let i = 0, j = 0; i < W * H; i++, j += 4) {
       f[i * 3] = Math.pow(rgba[j] / 255, 2.2);

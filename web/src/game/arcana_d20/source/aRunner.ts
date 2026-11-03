@@ -19,7 +19,7 @@ if (typeof (globalThis as any).ImageData === 'undefined') {
 
 import { Lab } from './a/engine/lab';
 import { SPELLS } from './a/spells';
-import { VIEW_W, VIEW_H, ARENA_C } from './a/engine/arena';
+import { VIEW_W, VIEW_H, ARENA_C, ANCHORS } from './a/engine/arena';
 import { VoltCarousel } from './a/spells/tempest';
 import type { Framebuffer } from './a/engine/framebuffer';
 
@@ -40,6 +40,7 @@ export class ARunner {
 
   /** inject the real world region as the linear-HDR arena background */
   setWorld(rgba: Uint8ClampedArray) {
+    if (!rgba || rgba.length < VIEW_W * VIEW_H * 4) throw new Error(`ARunner.setWorld: world snapshot missing/wrong size (${rgba?.length} < ${VIEW_W * VIEW_H * 4})`);
     const bg = this.lab.fb.bg;
     for (let i = 0, j = 0; i < VIEW_W * VIEW_H; i++, j += 4) {
       bg[i * 3] = Math.pow(rgba[j] / 255, 2.2);
@@ -67,6 +68,7 @@ export class ARunner {
       }
       return pts;
     }
+    if (skillId === 9) return ANCHORS.map(a => ({ x: a.x, y: a.y })); // distinct static pair set
     return [{ x: ARENA_C.x, y: ARENA_C.y }];
   }
 

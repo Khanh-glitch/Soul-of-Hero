@@ -22,11 +22,22 @@ export interface Contribution {
   anchorSkillId?: number; // lead skill whose moving anchors bind the arcs
 }
 
+/** Capability declaration: which source semantics the contract preserves.
+ *  ink / displacement / masks / fragments are NOT supported by the current
+ *  adapters and must never be silently approximated as RGB imagery. */
+export const CAPABILITIES = {
+  signedHdrLight: true,   // light channel added signed (incl. negative-only)
+  arcPackets: true,       // authored bolt draw events, remapped to anchors
+  ink: false, displacement: false, mask: false, fragments: false, fullScene: false,
+} as const;
+
 /** similarity-transform an arc's authored polyline so its endpoints land on
- *  moving anchors a→b (translate + rotate + uniform scale, shape preserved). */
+ *  moving anchors a→b (translate + rotate + uniform scale, shape preserved).
+ *  FAIL CLOSED on a degenerate pair — never map both endpoints to one point. */
 export function remapArc(p: ArcPacket, a: { x: number; y: number }, b: { x: number; y: number }) {
   const pts = p.pts;
-  if (pts.length < 2) return pts;
+  if (pts.length < 2) throw new Error('remapArc: arc packet has fewer than 2 points');
+  if (Math.hypot(b.x - a.x, b.y - a.y) < 1e-3) throw new Error('remapArc: degenerate anchor pair (both endpoints identical)');
   const p0 = pts[0], p1 = pts[pts.length - 1];
   const dx = p1.x - p0.x, dy = p1.y - p0.y;
   const len = Math.hypot(dx, dy) || 1;
@@ -61,7 +72,8 @@ export function drawArc(fb: Framebuffer, p: ArcPacket, a: { x: number; y: number
 
 /** Apply a whole contribution set to the lead framebuffer. */
 export function applyContribution(fb: Framebuffer, c: Contribution, anchors: { x: number; y: number }[]) {
-  if (c.arcs && c.arcs.length && anchors.length) {
+  if (c.arcs && c.arcs.length) {
+    if (anchors.length < 2) throw new Error('applyContribution: arc contribution requires >= 2 distinct anchors');
     const n = anchors.length;
     c.arcs.forEach((p, i) => {
       drawArc(fb, p, anchors[(2 * i) % n], anchors[(2 * i + 1) % n]);
@@ -75,8 +87,9 @@ export function applyContribution(fb: Framebuffer, c: Contribution, anchors: { x
       for (let x = 0; x < c.lightW; x++) {
         const tx = x + ox; if (tx < 0 || tx >= W) continue;
         const si = (y * c.lightW + x) * 3, di = (ty * W + tx) * 3;
+        // signed HDR light preserved — negative-only samples darken, not skipped
         const r = c.light[si], g = c.light[si + 1], b = c.light[si + 2];
-        if (r > 0 || g > 0 || b > 0) { fb.buf[di] += r; fb.buf[di + 1] += g; fb.buf[di + 2] += b; }
+        fb.buf[di] += r; fb.buf[di + 1] += g; fb.buf[di + 2] += b;
       }
     }
   }

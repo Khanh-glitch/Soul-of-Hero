@@ -95,7 +95,10 @@ export class CRunner {
   }
   reset() { if (this.idx >= 0) this.cast(this.idx); else { this.t = 0; this.steps = 0; } }
   get duration() { return this.idx >= 0 ? (SPELLS[this.idx]?.dur ?? 0) : 0; }
-  setWorld(rgba: Uint8ClampedArray) { this.world.set(rgba.subarray(0, W * H * 4)); }
+  setWorld(rgba: Uint8ClampedArray) {
+    if (!rgba || rgba.length < W * H * 4) throw new Error(`CRunner.setWorld: world snapshot missing/wrong size (${rgba?.length} < ${W * H * 4})`);
+    this.world.set(rgba.subarray(0, W * H * 4));
+  }
   async seekAsync(t: number) { // yields to the event loop between chunks so test runners stay responsive
     while (this.t < t - 1e-9) { this.seek(Math.min(t, this.t + 0.5)); await new Promise(r => setTimeout(r, 0)); }
   }

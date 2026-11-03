@@ -34,9 +34,7 @@ no HP/charge/save changes.
 Counts: 8 SOURCE_PREVIEW, 6 FUSION_PREVIEW, 6 REDESIGN_STUDY = 20 registered.
 All 20 verified runnable (tests/arcana-d20-semantic.test.ts batch test) and
 captured in `web/evidence/avfx-20/gallery-*.png` (CI WebGL2 run for GPU frames).
-Blockers: none for previews. A/B/D native engines are NOT vendored — fusions
-show the C-side source preview with honest FUSION_PREVIEW label until the
-A/B/D adapters land; that is a declared adaptation, not a fake fusion.
+Blockers: none. A/B/D native adapters ARE vendored and routed (phases 2-4); fusions use the semantic contribution contract.
 
 
 ## Phase 2 (source-correct import, per CT 6604192200)
@@ -78,3 +76,17 @@ Honest counts: 20/20 accessible; source-faithful leads implemented = 10 (B #02/#
   #01/#05/#09/#16. #20 keeps its A+C bridge. 14px edge feather kept for B window.
 - QA: gallery-11-{lead,study,fusion} + 6 phase captures gallery-11-{open,build,peak}-{lead,fusion}.
 - Tests 118/118. PR #39 unmerged; no gameplay changes.
+
+
+## Root-cause closure (CT 6608364694)
+Fail-closed contract enforced at the boundary: world snapshot (exact size, current
+camera/cast context) is mandatory for every fusion render — missing/wrong input
+throws, no stale/lab fallback. Arc mapping requires >=2 DISTINCT anchors and
+rejects degenerate pairs; #09 uses A arena anchors, #11 uses A#11 moving segPos.
+Signed HDR light preserved (incl. negative-only); ink/displacement/mask/fragments
+declared UNSUPPORTED (CAPABILITIES), never approximated as RGB. validateRecipe
+rejects bad engine/skillId/role/extract/phase before rendering; cold-start uses
+real source duration (no `|| 1`). Lifecycle: cast/seek-back/OUT/recast reset state.
+Evidence classes: 141/141 tests (parameterized 5-recipe matrix + negative tests),
+QA gallery incl. #09 fusion/OUT/recast, B#02 day/night, #11 3-phase lead/fusion,
+#01/#05/#16 fusions on real WebGL2 CI artifact.
