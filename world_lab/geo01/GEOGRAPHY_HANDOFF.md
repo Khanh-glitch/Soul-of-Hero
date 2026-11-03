@@ -103,17 +103,27 @@ bbox, centroid, footprint cells, nearest road/water and clearance.
 
 `spatial` is explicit:
 
-| Field | Status |
-|---|---|
-| `footprint`, `outerDeepRegions` | SUPPLIED / NOT_IN_SOURCE (18 have `deep`) |
-| `retreatCandidates` | SUPPLIED for 18, else NOT_IN_SOURCE |
-| `passages` | PARTIAL (5 POIs have authored `links`) |
-| `rooms`, `entrances`, `entranceExitSockets`, `circulation` | **NOT_IN_SOURCE / UNDEFINED** |
-| `doors`, `powerNodes`, `hazardCells`, `lootSites` | **GAMEPLAY_OWNED** |
+| Field | Status | Owner (MAP-GEO-02 correction) |
+|---|---|---|
+| `footprint`, `outerDeepRegions` | SUPPLIED / NOT_IN_SOURCE (18 have `deep`) | **Map** (site boundary, not an interior layout) |
+| `retreatCandidates` | SUPPLIED for 18, else NOT_IN_SOURCE | **Map** (physical retreat geometry) |
+| `passages` | PARTIAL (5 POIs have authored `links`) | **Map** |
+| `rooms`, `entrances`, `entranceExitSockets`, `circulation`, `doorOpenings` | **NOT_IN_SOURCE** | **Map** — `MAP_RESPONSIBILITY_NOT_IN_SOURCE`; status ≠ owner |
+| `doors.lockedState`, `powerNodes`, `hazardIntensity`, `lootSites`, interactions | **GAMEPLAY_OWNED** | **Gameplay** |
+
+> **Correction.** MAP-GEO-01 said these physical POI fields were Gameplay-owned. That was wrong.
+> The creator's rule is `MAP DESIGNS THE PHYSICAL WORLD. GAMEPLAY POPULATES AND SIMULATES IT.`
+> Rooms, entrances, passages, door **openings**, circulation, spatial sockets and retreat paths are
+> Map geometry even though Veyra has not authored them. Locked/**key**/**power** states, loot,
+> power requirements, hazard intensity and interactions remain Gameplay-owned. The old `spatial`
+> owner strings inside the accepted `geography.v1.json` are stale; the authoritative correction is
+> `output/contract_boundary.v1.json → ownershipCorrection` and
+> `../geo02/output/ownership_correction.v1.json`. No canonical rewrite was performed.
 
 `gate:"key"/"power"/"hazard"` and `access`/`role` text are preserved **as provisional source
-notes**, not as locked-door or power-plant law. No interior room, door opening, socket, loot site or
-NPC was invented.
+notes**, not as locked-door or power-plant law. No canonical interior room, door opening, socket,
+loot site or NPC was invented. A separate `PROPOSED` Map-owned candidate for `po_kilns` lives in
+`../geo02/output/poi_po_kilns.proposed.v1.json` and is explicitly **not** canonical.
 
 ## 7. Elder outer / core / arena / approach geography
 

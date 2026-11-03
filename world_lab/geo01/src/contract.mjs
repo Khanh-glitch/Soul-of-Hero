@@ -37,6 +37,9 @@ const CLS = {
   GAMEPLAY: 'SUPPLIED_BY_GAMEPLAY',
   JOINT: 'JOINTLY_VALIDATED',
   UNDEFINED: 'NOT_YET_DEFINED',
+  // MAP-GEO-02 correction: physical geometry that Veyra has NOT authored is
+  // still MAP-OWNED design work. "NOT_IN_SOURCE" is a status, never an owner.
+  MAP_REQUIRED: 'MAP_RESPONSIBILITY_NOT_IN_SOURCE',
 };
 
 function field(scope, name, cls, o = {}) {
@@ -73,8 +76,8 @@ function main() {
   // --- EconomyMap
   F.push(field(E, 'id/revision/seed', CLS.GAMEPLAY, { owner: 'Gameplay package identity', status: 'NOT_SUPPLIED', note: 'project.terrain.seed=2026 is a TERRAIN AUTHORING seed, NOT the runtime world seed. Do not reuse it as EconomyMap.seed.' }));
   F.push(field(E, 'width/height/tileSize', CLS.TRANSFORM, { map: '250x175 @ 8 authoring units', owner: 'Gameplay runtime constraint (WW=200, WH=200, TILE=16)', status: 'BLOCKED_BY_TRANSFORM', note: 'validateRuntimeMapPackage rejects any extent other than 200x200 @ 16.' }));
-  F.push(field(E, 'biome', CLS.TRANSFORM, { map: 'rasters/biomeCode.u8 (12 raw codes)', veyra: 'project.terrain.biome', transform: 'approved raw-code -> one of 14 Biome strings', owner: 'Map + Gameplay', status: 'BLOCKED_BY_LEGEND', note: 'No biome legend is committed in Veyra. validateEconomyMap rejects any value outside the 14-string enum; there is no UNKNOWN member.' }));
-  F.push(field(E, 'elevation', CLS.TRANSFORM, { map: 'rasters/elevation.u8 (0..243 raw bytes)', veyra: 'project.terrain.elev', transform: 'approved physical unit/scale + grid transform', status: 'BLOCKED_BY_UNITS', note: 'Raw bytes are supplied verbatim; physical elevation is UNDEFINED.' }));
+  F.push(field(E, 'biome', CLS.TRANSFORM, { map: 'rasters/biomeCode.u8 (12 raw codes)', veyra: 'project.terrain.biome', transform: 'approved raw-code -> one of 14 Biome strings', owner: 'Map + Gameplay', status: 'BLOCKED_BY_APPROVED_MAPPING', note: 'MAP-GEO-02: the 12-code legend WAS FOUND in the pinned Map Lab Studio v3 reference source (types.ts BIOMES), not in the canonical JSON and not from appearance. Caveat: code 0 is "meadow" on land but a no-biome SENTINEL on sea (28,624 cells). An approved 12->14 mapping + land/sea guard + UNKNOWN member is still required.' }));
+  F.push(field(E, 'elevation', CLS.TRANSFORM, { map: 'rasters/elevation.u8 (0..243 raw bytes)', veyra: 'project.terrain.elev', transform: 'approved world-scale transform + grid transform', status: 'BLOCKED_BY_WORLD_SCALE', note: 'MAP-GEO-02: the unit IS resolved from source — byte/255 = abstract normalized height (0 = sea, 1..255 land), with NO approved real-world unit (Bible §11.5). Physical elevation and world scale remain UNDEFINED.' }));
   F.push(field(E, 'slope', CLS.TRANSFORM, { map: 'rasters/slope.u8 (0..150 raw byte gradient)', transform: 'approved normalization to Gameplay scale', owner: 'Map + Gameplay', status: 'BLOCKED_BY_NORMALIZATION', note: 'compileEconomy hardcodes slope > 0.6 as impassable; that threshold is a Gameplay rule with no source unit.' }));
   F.push(field(E, 'moisture', CLS.UNDEFINED, { owner: 'Gameplay / climate authority', status: 'UNKNOWN_IN_SOURCE', note: 'validateEconomyMap requires finite 0..1; Veyra has no moisture array. Map exposes freshwaterProximityCells as geometric POTENTIAL only.' }));
   F.push(field(E, 'temperature', CLS.UNDEFINED, { owner: 'Gameplay / climate authority', status: 'UNKNOWN_IN_SOURCE', note: 'Veyra has no temperature array; no season/weather model.' }));
@@ -93,17 +96,27 @@ function main() {
   F.push(field(G, 'roads[].id', CLS.DIRECT, { map: 'roads[92].id', status: 'SUPPLIED' }));
   F.push(field(G, 'roads[].cells', CLS.TRANSFORM, { map: 'roadClass raster + polylines', transform: 'grid transform', status: 'BLOCKED_BY_TRANSFORM' }));
   F.push(field(G, 'roads[].surface', CLS.TRANSFORM, { map: 'roads[].kind (cart/trail/foot/riverside/ferry)', transform: 'approved kind -> surface string', status: 'BLOCKED_BY_MAPPING' }));
-  F.push(field(G, 'roads[].widthTiles', CLS.UNDEFINED, { owner: 'Map + Gameplay', status: 'NOT_IN_SOURCE', note: 'Veyra roads have NO width field. validateGeographicHandoff requires an integer 1..32 width and checks its cross-section against walkable/cargoPassable.' }));
+  F.push(field(G, 'roads[].widthTiles', CLS.UNDEFINED, { owner: 'Map + Gameplay', status: 'NOT_IN_SOURCE', note: 'Veyra roads have NO width field. MAP-GEO-02: Map Lab v3 rasterises ALL non-ferry roads with a 9u EDITOR ANALYSIS stroke (analysis.ts rasterRoads) and draws 3.4u/1.6u DISPLAY strokes (exporter.ts). Neither is an authored physical width or swept-clearance envelope. validateGeographicHandoff requires an integer 1..32 width and checks its cross-section.' }));
   F.push(field(G, 'roads[].bridgeCells', CLS.TRANSFORM, { map: 'bridges[12].at + crossingCandidate raster', transform: 'grid transform', status: 'SUPPLIED_AT_SOURCE_RESOLUTION', note: 'Bridge channel span fit is UNVERIFIED.' }));
   F.push(field(G, 'roads[].cargoPassable', CLS.UNDEFINED, { owner: 'Gameplay', status: 'UNDEFINED' }));
   F.push(field(G, 'pois[].id/kind', CLS.TRANSFORM, { map: 'pois[81].id + arche (24 values)', transform: 'approved arche -> 5-kind enum', status: 'BLOCKED_BY_MAPPING' }));
-  F.push(field(G, 'pois[].footprint', CLS.TRANSFORM, { map: 'pois[].foot / deep polygons', transform: 'grid transform', status: 'SUPPLIED_AT_SOURCE_RESOLUTION' }));
-  F.push(field(G, 'pois[].entrances', CLS.UNDEFINED, { owner: 'Gameplay / level design', status: 'NOT_IN_SOURCE', note: 'No door openings authored. Validator requires >=1 entrance inside the footprint.' }));
-  F.push(field(G, 'pois[].rooms', CLS.UNDEFINED, { owner: 'Gameplay / level design', status: 'NOT_IN_SOURCE' }));
-  F.push(field(G, 'pois[].doors/powerNodes/hazardCells', CLS.GAMEPLAY, { owner: 'Gameplay', status: 'NOT_SUPPLIED', note: 'gate/access/role text in Veyra are provisional design notes (conf:proposal/assumption), not locked-door or power laws.' }));
+  // --- MAP-GEO-02 ownership correction -------------------------------------
+  // MAP DESIGNS THE PHYSICAL WORLD. Physical POI rooms, entrances, passages,
+  // door openings, interior circulation and retreat geometry are Map-owned
+  // even when Veyra has NOT_IN_SOURCE. Locked states, loot, power, hazard
+  // intensity and interactions stay Gameplay-owned.
+  const MAP_STATUS = 'NOT_IN_SOURCE__MAP_DESIGN_REQUIRED';
+  F.push(field(G, 'pois[].footprint', CLS.TRANSFORM, { map: 'pois[].foot / deep polygons', transform: 'grid transform', owner: 'Map (physical site boundary)', status: 'SUPPLIED_AT_SOURCE_RESOLUTION', note: 'foot is a SITE BOUNDARY, not a finished interior layout (AGENT_HANDOFF.md, Greywater input package).' }));
+  F.push(field(G, 'pois[].entrances', CLS.MAP_REQUIRED, { owner: 'Map (physical openings)', status: MAP_STATUS, note: 'CORRECTED: entrances are physical geometry and Map-owned. Validator requires >=1 entrance inside the footprint; Map must author it. GEO-02 supplies a PROPOSED, non-canonical candidate for po_kilns only.' }));
+  F.push(field(G, 'pois[].rooms', CLS.MAP_REQUIRED, { owner: 'Map (physical rooms / working-space allocation)', status: MAP_STATUS, note: 'CORRECTED: rooms are Map-owned physical space, not Gameplay population.' }));
+  F.push(field(G, 'pois[].passages', CLS.MAP_REQUIRED, { owner: 'Map (physical passages)', status: MAP_STATUS, note: 'CORRECTED: 5 POIs author links; passages remain physical Map geometry.' }));
+  F.push(field(G, 'pois[].doorOpenings', CLS.MAP_REQUIRED, { owner: 'Map (physical door openings)', status: MAP_STATUS, note: 'CORRECTED: the OPENING is physical geometry. A door LOCK/key/power condition is Gameplay-owned (see the next row).' }));
+  F.push(field(G, 'pois[].interiorCirculation', CLS.MAP_REQUIRED, { owner: 'Map (physical circulation)', status: MAP_STATUS, note: 'CORRECTED: circulation / approach / retreat geometry is Map-owned.' }));
+  F.push(field(G, 'pois[].spatialSockets', CLS.MAP_REQUIRED, { owner: 'Map (physical placement geometry)', status: MAP_STATUS, note: 'CORRECTED: physical sockets are Map geometry. What Gameplay attaches to them is Gameplay-owned; no functional assignment was invented here.' }));
+  F.push(field(G, 'pois[].doors.lockedState/powerNodes/hazardIntensity/interactions', CLS.GAMEPLAY, { owner: 'Gameplay', status: 'NOT_SUPPLIED', note: 'Locked states, loot, power, hazard intensity and interactions remain Gameplay-owned. gate/access/role text in Veyra are provisional design notes (conf:proposal/assumption), not laws.' }));
   F.push(field(G, 'pois[].exteriorLootSites/interiorLootSites', CLS.GAMEPLAY, { owner: 'Gameplay', status: 'NOT_SUPPLIED', note: 'No dummy loot was constructed.' }));
-  F.push(field(G, 'pois[].retreatPaths', CLS.JOINT, { map: '18 pois with retreat points (points only, no paths)', owner: 'Gameplay path authoring', status: 'PARTIAL' }));
-  F.push(field(G, 'criticalPaths', CLS.GAMEPLAY, { owner: 'Gameplay', status: 'NOT_SUPPLIED', note: 'Requires protected+walkable contiguous authored paths.' }));
+  F.push(field(G, 'pois[].retreatPaths', CLS.MAP_REQUIRED, { map: '18 pois with retreat points (points only, no paths)', owner: 'Map (physical retreat geometry)', status: MAP_STATUS, note: 'CORRECTED: a retreat PATH is physical circulation, Map-owned. Retreat decisions/AI are Gameplay-owned.' }));
+  F.push(field(G, 'criticalPaths', CLS.JOINT, { owner: 'Map physical path geometry + Gameplay protection policy', status: 'NOT_SUPPLIED', note: 'CORRECTED: contiguous path geometry is Map-owned; the protected/walkable policy is Gameplay-owned. Requires protected+walkable contiguous authored paths.' }));
   F.push(field(G, 'buildSites[].cells', CLS.JOINT, { map: 'zones[23] + buildableCandidate raster', owner: 'Map + A0', status: 'DERIVED_CANDIDATE' }));
   F.push(field(G, 'buildSites[].loadingCells', CLS.GAMEPLAY, { owner: 'Gameplay / cargo rules', status: 'NOT_SUPPLIED', note: 'Requires cargoPassable, which is UNDEFINED.' }));
   F.push(field(G, 'nonbossCashSites', CLS.GAMEPLAY, { owner: 'Gameplay', status: 'NOT_SUPPLIED', note: 'Validator requires a cash static above the escrow price. No cash/economy values were invented.' }));
@@ -129,12 +142,12 @@ function main() {
   const deltas = [
     { id: 'CD-01', severity: 'HARD_BLOCKER', target: 'core.ts / validateRuntimeMapPackage', problem: 'Runtime pins WW=WH=200, TILE=16 (40,000 cells); Veyra is 250x175 source cells of 8 authoring units (43,750 cells) on a 2000x1400 canvas.', requiredDelta: 'Approve and document an explicit authoring-unit -> runtime-tile transform (or relax the fixed extent). Supply measured journey times with the scale decision. Map will not silently rescale.' },
     { id: 'CD-02', severity: 'HARD_BLOCKER', target: 'validateEconomyMap', problem: 'moisture and temperature must be finite 0..1 per cell with no UNKNOWN representation; Veyra defines no climate.', requiredDelta: 'Add a climate sub-contract with an explicit unknown/undefined state (e.g. climateStatus + separate optional arrays), or let Gameplay supply climate. Map will not fabricate plausible numbers.' },
-    { id: 'CD-03', severity: 'HARD_BLOCKER', target: 'validateEconomyMap / Biome', problem: 'biome must be one of 14 Gameplay strings; Veyra has 12 raw codes with NO committed legend.', requiredDelta: 'Commit an approved code -> Biome legend (and an UNKNOWN member if partial coverage is allowed), then a verified transform. Map currently ships raw codes only.' },
-    { id: 'CD-04', severity: 'HARD_BLOCKER', target: 'validateGeographicHandoff', problem: 'Requires entrances, rooms, doors, powerNodes, hazardCells, loot sites, retreatPaths, widthTiles, cargoPassable and criticalPaths — none authored in Veyra.', requiredDelta: 'Split the handoff into a Map-owned geometry layer (shells, rooms=NOT_IN_SOURCE, sockets=UNDEFINED) and a Gameplay-owned population layer. Do not require Map fabricate Gameplay fields.' },
+    { id: 'CD-03', severity: 'HARD_BLOCKER', target: 'validateEconomyMap / Biome', problem: 'biome must be one of 14 Gameplay strings; Veyra has 12 raw codes with NO legend embedded in the canonical JSON. MAP-GEO-02 found the 12-name legend in the pinned Map Lab v3 reference source, but it is on a different branch, not approved, and code 0 doubles as a sea sentinel.', requiredDelta: 'Approve + embed the source-derived 12-code legend with a land/sea guard, approve a 12->14 Biome mapping (and an UNKNOWN member if partial coverage is allowed), then a verified transform. Never infer the legend from colour/appearance.' },
+    { id: 'CD-04', severity: 'HARD_BLOCKER', target: 'validateGeographicHandoff', problem: 'Requires entrances, rooms, doors, powerNodes, hazardCells, loot sites, retreatPaths, widthTiles, cargoPassable and criticalPaths — none authored in Veyra. MAP-GEO-01 wrongly classified POI rooms/entrances as Gameplay-owned.', requiredDelta: 'SPLIT BY CREATOR ARCHITECTURE: physical POI rooms, entrances, passages, door openings, interior circulation, spatial sockets and retreat paths are MAP responsibilities even when NOT_IN_SOURCE (GEO-02 supplies a PROPOSED, non-canonical candidate for po_kilns). Locked states, loot, power, hazard intensity and interactions remain GAMEPLAY responsibilities. Do not require Map to fabricate Gameplay fields, and do not require Gameplay to author physical geometry.' },
     { id: 'CD-05', severity: 'HARD_BLOCKER', target: 'validateGeographicHandoff', problem: 'A single validator calls compileEconomy + diagnoseStarts, i.e. Gameplay population, inside Map geometry validation.', requiredDelta: 'Two-stage validation: (1) Map geometry integrity; (2) Gameplay population/placement diagnostics after Gameplay has run. Map must not run Gameplay population to pass a validator.' },
     { id: 'CD-06', severity: 'CONTRACT_MISMATCH', target: 'validateRuntimeMapPackage zone', problem: 'zone array allows 0..15; Veyra authors 23 buildable zone ids.', requiredDelta: 'Widen the zone id space or approve an explicit zone remap. No remap was invented here.' },
     { id: 'CD-07', severity: 'CONTRACT_MISMATCH', target: 'RoadGeometry.widthTiles', problem: 'Veyra roads have no width field; validator requires an integer 1..32 and tests its cross-section.', requiredDelta: 'Either approve an authored width per road class (a joint decision) or allow widthStatus=UNKNOWN with a relaxed width check. Map keeps width NOT_IN_SOURCE.' },
-    { id: 'CD-08', severity: 'CONTRACT_MISMATCH', target: 'compileEconomy slope', problem: 'Hardcoded slope > 0.6 impassable threshold; Map slope is a raw byte gradient with no physical unit.', requiredDelta: 'Define a normalization + jointly approved threshold; expose it as a Gameplay rule, not a Map constant.' },
+    { id: 'CD-08', severity: 'CONTRACT_MISMATCH', target: 'compileEconomy slope', problem: 'Hardcoded slope > 0.6 impassable threshold; Map slope was a raw byte gradient with no unit. MAP-GEO-02 resolved the source unit: hypot(d(elev/255)/dx, d(elev/255)/dy) x 100 in abstract authoring units (a Map Lab heuristic, NOT a Bible value).', requiredDelta: 'Define a jointly approved normalization + threshold; expose it as a Gameplay rule, not a Map constant. Map Lab thresholds (buildSlopeMax 0.5 / cartSlopeMax 0.7 / footSlopeMax 1.5) are editor heuristics only.' },
     { id: 'CD-09', severity: 'CONTRACT_MISMATCH', target: 'places / ELDERS', problem: 'Runtime requires six catalog Elder ids; Veyra has six distinct named Elder territories with different identities.', requiredDelta: 'Approve an explicit identity mapping (or a new runtime Elder catalog). No six fake Elder mappings were created.' },
     { id: 'CD-10', severity: 'CONTRACT_MISMATCH', target: 'EconomyMap.seed', problem: 'Veyra project.terrain.seed=2026 is a terrain authoring seed, not a world/runtime seed.', requiredDelta: 'Keep package seed Gameplay-owned; do not reuse the terrain seed as world seed.' },
     { id: 'CD-11', severity: 'CONTRACT_MISMATCH', target: 'road raster / ferry', problem: '8 Veyra ferry paths are water routes with UNDEFINED boarding rules; runtime road raster is land-only.', requiredDelta: 'Add an explicit waterRoute / ferry concept with Gameplay boat rules; never flatten ferry into a land road.' },
@@ -152,15 +165,27 @@ function main() {
     classificationCounts: counts,
     fields: F,
     contractDeltas: deltas,
+    ownershipCorrection: {
+      schema: 'soh.map.ownership_correction.v1',
+      appliedIn: 'MAP-GEO-02',
+      supersedes: 'MAP-GEO-01 contract_boundary.v1.json / CONTRACT_DELTA.md (CD-04) and GEOGRAPHY_HANDOFF.md section 6',
+      rule: 'MAP DESIGNS THE PHYSICAL WORLD. GAMEPLAY POPULATES AND SIMULATES IT.',
+      mapOwns: ['POI rooms', 'POI entrances', 'POI passages', 'physical door openings', 'interior circulation', 'physical spatial sockets', 'approach / retreat geometry', 'physical footprint / site boundary', 'corridor and road/river/bridge geometry'],
+      gameplayOwns: ['locked / key / power states', 'loot', 'power requirements', 'hazard intensity', 'interactions and machinery', 'population, spawns, economy', 'climate', 'passability / survivability rules'],
+      statusIsNotOwner: 'NOT_IN_SOURCE describes the CURRENT STATE of Veyra data; it never transfers ownership to Gameplay.',
+      geo02Deliverable: 'world_lab/geo02/output/poi_po_kilns.proposed.v1.json — a separate, explicitly PROPOSED, non-canonical Map-owned spatial design candidate for po_kilns only. No runtime merge, no Gameplay population.',
+    },
     twoStageIntegrationSeam: {
-      stage1: 'Map: source-verified geography export (this milestone) — deterministic, id-preserving, all unknowns explicit.',
-      stage2: 'Gameplay: population, POI interiors, loot/cash/doors, Elder identity mapping, climate and economy rules, then compileEconomy / diagnoseStarts / validateRuntimeMapPackage.',
-      joint: 'Approved transform + measured journey times + biome legend + slope normalization + road width policy, then a versioned RuntimeMapPackage.',
+      stage1: 'Map: source-verified geography export (MAP-GEO-01) — deterministic, id-preserving, all unknowns explicit.',
+      stage1b: 'Map: physical POI shell design (rooms, entrances, passages, door openings, circulation, retreat) — MAP RESPONSIBILITY. GEO-02 supplies a PROPOSED, non-canonical candidate for po_kilns only; canonical authoring still pending.',
+      stage2: 'Gameplay: locked states, loot/cash, power, hazard intensity, interactions, Elder identity mapping, climate and economy rules, then compileEconomy / diagnoseStarts / validateRuntimeMapPackage.',
+      joint: 'Approved transform + measured journey times + approved biome mapping + slope normalization + road width policy, then a versioned RuntimeMapPackage.',
       note: 'Do not build a RuntimeMapPackage from dummy data to make the validator pass.',
     },
     explicitlyNotSupplied: [
       'dummy loot tables', 'cash / escrow chests', 'powered doors / generators', 'final harvestable source nodes',
-      'six fake Elder -> runtime ELDERS mappings', 'POI rooms / entrances / interior circulation',
+      'six fake Elder -> runtime ELDERS mappings',
+      'CANONICAL POI rooms / entrances / interior circulation (NOT_IN_SOURCE in Veyra; now correctly classified MAP_OWNED, not fabricated here — see GEO-02 PROPOSED candidate)',
       'moisture / temperature / climate values', 'cargo capability verdicts', 'road widths',
       'a rescaled 200x200 tile array', 'survivability or travel-time claims',
     ],
@@ -173,6 +198,11 @@ function main() {
       gridSteps: corridor.physicalConnectivity.gridSteps,
       crossings: corridor.physicalConnectivity.crossingCells.map(c => ({ bridgeId: c.bridgeId, riverId: c.riverId })),
       survivability: corridor.survivability.status,
+    },
+    geo02Corrections: {
+      routeLabel: 'The MAP-GEO-01 label "Authored cart corridor via the br_4 river crossing" is misleading: only rd_b on RT-1 is kind:cart; rd_13 / rd_1w / rd_16 are kind:trail. GEO-02 audits this and does NOT claim a physically traversable cart route to po_kilns.',
+      joinTolerance: 'GEO-01 used joinToleranceAu=8; the Map Lab v3 editor uses SNAP_TOL=7 (graph.ts). GEO-02 audits both.',
+      encoding: 'See world_lab/geo02/output/maplab_encoding.v1.json for the source-derived biome legend, normalized elevation unit, road/river width semantics and graph constants.',
     },
   };
   writeJson(path.join(out, 'contract_boundary.v1.json'), doc);

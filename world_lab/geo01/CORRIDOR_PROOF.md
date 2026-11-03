@@ -34,7 +34,14 @@ verbatim in `corridor.v1.json → targetSelection.poiShell.foot` and
 `geography.v1.json → objects.pois`). Selection rule: existing POI shell with **≥2 authored
 road-graph edges** and straight-line distance ≤300 au, ranked by edge count then authored route
 length. `po_kilns` has 4 edges; 10 candidates qualified. `deep`, `rooms` and `entrances` are
-`NOT_IN_SOURCE` / absent for this surface POI.
+`NOT_IN_SOURCE` / absent for this surface POI — and are nevertheless **Map-owned** physical
+geometry (MAP-GEO-02 correction). A `PROPOSED`, non-canonical spatial candidate for this single POI
+is in `../geo02/output/poi_po_kilns.proposed.v1.json`.
+
+**Label correction (MAP-GEO-02):** RT-1's label "Authored cart corridor" is misleading. Only
+`rd_b` is `kind:cart`; `rd_13`, `rd_1w` and `rd_16` are `kind:trail`. `br_4` is a cart bridge but
+does not make the whole route a cart route. No physically traversable cart route to `po_kilns` is
+claimed until road width, bridge span fit and swept clearance are validated.
 
 ## Safe initial terrain candidates
 
@@ -127,7 +134,8 @@ Veyra and `rd_20` is the authored "Greywater West Bank Path". RT-3's two derived
 - **Ferry:** **0 ferry paths used** by any route. Nearest is `rd_2j` (Gulf ferry,
   `conf:assumption`) at 187.1 au from RT-1 / 126.6 au from any route. 8 ferry paths exist
   elsewhere; boat/boarding/portage rules are UNDEFINED and no ferry was flattened into a land road.
-- **POI / climate / world scale:** rooms and entrances NOT_IN_SOURCE; climate and hazard intensity
+- **POI / climate / world scale:** rooms and entrances `NOT_IN_SOURCE` but **MAP_OWNED** (GEO-02
+  supplies a `PROPOSED` candidate, not canonical data); climate and hazard intensity
   UNDEFINED; `frame.transform.status = UNDECIDED`; travel times `t_foot`, `t_cart_loaded`,
   `exposure_time` not measured.
 

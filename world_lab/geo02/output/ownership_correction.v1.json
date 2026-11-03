@@ -1,0 +1,1345 @@
+{
+  "schema": "soh.map.geo02.ownership_correction.v1",
+  "generatedBy": "world_lab/geo02/src/ownership.mjs",
+  "rule": "MAP DESIGNS THE PHYSICAL WORLD. GAMEPLAY POPULATES AND SIMULATES IT.",
+  "supersedes": "MAP-GEO-01 contract_boundary.v1.json / CONTRACT_DELTA.md (CD-04) / GEOGRAPHY_HANDOFF.md section 6",
+  "statusIsNotOwner": "NOT_IN_SOURCE / UNDEFINED describes the current state of Veyra data; it NEVER transfers ownership to Gameplay.",
+  "correctedClassification": "MAP_RESPONSIBILITY_NOT_IN_SOURCE",
+  "sourceInputs": {
+    "geographyExport": {
+      "file": "../geo01/output/geography.v1.json",
+      "bytes": 1427751,
+      "sha256": "13ae97272edc47b063bb4a2ffde5dcf9f92f0f34dc3fd35b6ab3bee7f26c29dd",
+      "note": "READ ONLY — not rewritten, not rescaled, not merged"
+    },
+    "contractBoundary": {
+      "file": "../geo01/output/contract_boundary.v1.json",
+      "bytes": 38175,
+      "sha256": "2907cf0b0bdc1b2fd292e06283bed0ab28c0481417a3d7656f7c88fa30cad15b",
+      "ownershipCorrection": {
+        "schema": "soh.map.ownership_correction.v1",
+        "appliedIn": "MAP-GEO-02",
+        "supersedes": "MAP-GEO-01 contract_boundary.v1.json / CONTRACT_DELTA.md (CD-04) and GEOGRAPHY_HANDOFF.md section 6",
+        "rule": "MAP DESIGNS THE PHYSICAL WORLD. GAMEPLAY POPULATES AND SIMULATES IT.",
+        "mapOwns": [
+          "POI rooms",
+          "POI entrances",
+          "POI passages",
+          "physical door openings",
+          "interior circulation",
+          "physical spatial sockets",
+          "approach / retreat geometry",
+          "physical footprint / site boundary",
+          "corridor and road/river/bridge geometry"
+        ],
+        "gameplayOwns": [
+          "locked / key / power states",
+          "loot",
+          "power requirements",
+          "hazard intensity",
+          "interactions and machinery",
+          "population, spawns, economy",
+          "climate",
+          "passability / survivability rules"
+        ],
+        "statusIsNotOwner": "NOT_IN_SOURCE describes the CURRENT STATE of Veyra data; it never transfers ownership to Gameplay.",
+        "geo02Deliverable": "world_lab/geo02/output/poi_po_kilns.proposed.v1.json — a separate, explicitly PROPOSED, non-canonical Map-owned spatial design candidate for po_kilns only. No runtime merge, no Gameplay population."
+      }
+    }
+  },
+  "mapOwns": [
+    {
+      "field": "pois[].rooms",
+      "note": "Physical rooms / working-space allocation."
+    },
+    {
+      "field": "pois[].entrances",
+      "note": "Physical entrance openings in the shell."
+    },
+    {
+      "field": "pois[].passages",
+      "note": "Physical passages between spaces."
+    },
+    {
+      "field": "pois[].doorOpenings",
+      "note": "The OPENING is geometry; the lock/key/power state is Gameplay."
+    },
+    {
+      "field": "pois[].interiorCirculation",
+      "note": "Physical circulation / approach / interior paths."
+    },
+    {
+      "field": "pois[].spatialSockets",
+      "note": "Physical placement geometry only; functional assignment is Gameplay."
+    },
+    {
+      "field": "pois[].retreatPaths",
+      "note": "Physical retreat geometry; retreat decisions are Gameplay."
+    },
+    {
+      "field": "pois[].footprint",
+      "note": "Site boundary (foot / deep), not an interior layout."
+    },
+    {
+      "field": "criticalPaths.geometry",
+      "note": "Contiguous path geometry; protection policy is Gameplay."
+    }
+  ],
+  "gameplayOwns": [
+    "pois[].doors.lockedState",
+    "pois[].doors.keyCondition",
+    "pois[].doors.powerCondition",
+    "pois[].powerNodes",
+    "pois[].hazardIntensity",
+    "pois[].hazardCells",
+    "pois[].exteriorLootSites",
+    "pois[].interiorLootSites",
+    "pois[].interactions",
+    "pois[].interactiveMachinery",
+    "pois[].furnaceRecipes",
+    "criticalPaths.protectionPolicy",
+    "cargoPassable",
+    "passabilityRules",
+    "survivabilityRules"
+  ],
+  "staleOwnerOccurrences": {
+    "count": 243,
+    "poiCount": 81,
+    "items": [
+      {
+        "poiId": "po_academy",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_academy",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_academy",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_observatory",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_observatory",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_observatory",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_archive",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_archive",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_archive",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_hall_eyes",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_hall_eyes",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_hall_eyes",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_lantern",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_lantern",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_lantern",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_lanternstn",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_lanternstn",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_lanternstn",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_kestrel",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_kestrel",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_kestrel",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_typhon",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_typhon",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_typhon",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_viaduct",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_viaduct",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_viaduct",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_freightyard",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_freightyard",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_freightyard",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_fracquarry",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_fracquarry",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_fracquarry",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_falls",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_falls",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_falls",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_greywater",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_greywater",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_greywater",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_pumphouse",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_pumphouse",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_pumphouse",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_confluence",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_confluence",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_confluence",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_sawaion",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_sawaion",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_sawaion",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_mill",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_mill",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_mill",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_kilns",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_kilns",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_kilns",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_ranger",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_ranger",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_ranger",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_glade",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_glade",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_glade",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_sapgrove",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_sapgrove",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_sapgrove",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_elderwood",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_elderwood",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_elderwood",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_siloc",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_siloc",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_siloc",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_meridian",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_meridian",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_meridian",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_oldpump",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_oldpump",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_oldpump",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_strait",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_strait",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_strait",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_ironvein",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_ironvein",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_ironvein",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_ridgestop",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_ridgestop",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_ridgestop",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_rapids",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_rapids",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_rapids",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_hook",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_hook",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_hook",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_mere",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_mere",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_mere",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_timberyard",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_timberyard",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_timberyard",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_ember",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_ember",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_ember",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_slag",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_slag",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_slag",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_southfoot",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_southfoot",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_southfoot",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_gulfhead",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_gulfhead",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_gulfhead",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_filter",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_filter",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_filter",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_westbank",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_westbank",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_westbank",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_westmouth",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_westmouth",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_westmouth",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_greyquarry",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_greyquarry",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_greyquarry",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_westwood",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_westwood",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_westwood",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_fishcamp",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_fishcamp",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_fishcamp",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_necropolis",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_necropolis",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_necropolis",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_tombs",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_tombs",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_tombs",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_cairns",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_cairns",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_cairns",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_oasis",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_oasis",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_oasis",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_bonestop",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_bonestop",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_bonestop",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_sandgate",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_sandgate",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_sandgate",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_gate",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_gate",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_gate",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_dpier",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_dpier",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_dpier",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_beacon",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_beacon",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_beacon",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_wreck",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_wreck",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_wreck",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_tidecamp",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_tidecamp",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_tidecamp",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_gullnest",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_gullnest",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_gullnest",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_gullpier",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_gullpier",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_gullpier",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_netcamp",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_netcamp",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_netcamp",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_cindercamp",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_cindercamp",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_cindercamp",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_obsq",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_obsq",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_obsq",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_sulfur",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_sulfur",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_sulfur",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_geo",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_geo",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_geo",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_emberwatch",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_emberwatch",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_emberwatch",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_surtur",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_surtur",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_surtur",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_saltharbor",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_saltharbor",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_saltharbor",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_saltpans",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_saltpans",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_saltpans",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_saltlight",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_saltlight",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_saltlight",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_racks",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_racks",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_racks",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_gullwreck",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_gullwreck",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_gullwreck",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_ironharbor",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_ironharbor",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_ironharbor",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_ironmine",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_ironmine",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_ironmine",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_ironwh",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_ironwh",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_ironwh",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_rc_meridian",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_rc_meridian",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_rc_meridian",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_rc_ironvein",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_rc_ironvein",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_rc_ironvein",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_rc_kestrel",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_rc_kestrel",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_rc_kestrel",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_rc_dam",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_rc_dam",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_rc_dam",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_rc_sandgate",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_rc_sandgate",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_rc_sandgate",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_rc_salt",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_rc_salt",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_rc_salt",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_vend_gulf",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_vend_gulf",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_vend_gulf",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_vend_strait",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_vend_strait",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_vend_strait",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_evac_west",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_evac_west",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_evac_west",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_evac_south",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_evac_south",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_evac_south",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_evac_hook",
+        "path": "topology.pois.pois[].spatial.rooms.owner",
+        "staleOwner": "Gameplay / level design"
+      },
+      {
+        "poiId": "po_evac_hook",
+        "path": "topology.pois.pois[].spatial.entrances",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      },
+      {
+        "poiId": "po_evac_hook",
+        "path": "topology.pois.pois[].spatial.circulation",
+        "staleOwner": "UNSPECIFIED (MAP-GEO-01 docs said Gameplay-owned)"
+      }
+    ]
+  },
+  "geo02Deliverable": {
+    "file": "output/poi_po_kilns.proposed.v1.json",
+    "status": "PROPOSED",
+    "canonical": false,
+    "scope": "po_kilns ONLY",
+    "content": "physical footprint, approach, entrance options, interior working-space allocation, circulation, retreat",
+    "excluded": [
+      "furnace recipes",
+      "loot",
+      "locks",
+      "power",
+      "interactive machinery",
+      "runtime merge",
+      "Gameplay population"
+    ]
+  },
+  "noRuntimeMerge": true,
+  "noGameplayPopulation": true,
+  "noCanonicalRewrite": true
+}

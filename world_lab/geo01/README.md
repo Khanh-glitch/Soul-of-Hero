@@ -66,7 +66,7 @@ contract in temp dirs and compares SHA-256 against the committed artifacts.
 | Water | **5 lakes**, **17 rivers** (13 river / 1 canal / 3 distributary), 1 connected component reaching sea; mouths 10 sea / 3 lake / 3 river / 1 `none`; waterfall/lock/weir/rapids; all refs resolve; per-river elevation + slope profiles at 8 au |
 | Roads | **92** (34 cart / 37 trail / 11 foot / 2 riverside / 8 ferry), 10,853.76 au; **12 bridges** (7 cart / 5 foot); **27 docks** (17 coastal / 10 inland); route graph 131 nodes / 105 edges |
 | Buildable | **23** authored zone polygons; walkable / buildable / clearance candidate rasters |
-| POIs | **81** ids, **24** archetypes, 18 `multi`, 18 `deep`, 18 `retreat`, 5 `links`; foot 176 → 2,034.56 au². Rooms/entrances/doors/loot = NOT_IN_SOURCE / GAMEPLAY_OWNED |
+| POIs | **81** ids, **24** archetypes, 18 `multi`, 18 `deep`, 18 `retreat`, 5 `links`; foot 176 → 2,034.56 au². Rooms/entrances/passages/door openings/circulation = `NOT_IN_SOURCE` but **MAP_OWNED** (MAP-GEO-02 correction); locked states/loot/power/interactions = GAMEPLAY_OWNED |
 | Spawns / Elders | **4** spawns; **6 distinct** Elder territories with outer/core/arena/approach + resolving POI refs |
 | Resources | **280** preserved as **candidate geographic annotations only** (11 kinds, `dens` 1..3, `gate:none`) |
 | Confidence / IDs | 544 `proposal`, 11 `assumption`, 24 labels without `conf`; **579** unique ids; **3,504** coordinate occurrences inside 0..1919.3 × 0..1370 |
@@ -84,9 +84,15 @@ Detail: `output/source_verification.v1.json`, `SOURCE_VERIFICATION.md`.
 - **Derived topology**: land/coast metrics, directed water connectivity graph, river mouths and
   profiles, road/bridge/dock/ferry topology, zone access, POI spatial shells, Elder territories,
   resource suitability annotations with terrain context, spawn regions.
-- **Explicit `UNKNOWN` / `NOT_IN_SOURCE` / `UNDEFINED`** for climate, biome legend, physical units,
-  road width, loaded-cart capability, bridge span fit, boat rules, POI rooms/entrances, A0
-  protection, hazard intensity and the world-scale transform.
+- **Explicit `UNKNOWN` / `NOT_IN_SOURCE` / `UNDEFINED`** for climate, an *approved* biome mapping,
+  physical elevation/world scale, road width, loaded-cart capability, bridge span fit, boat rules,
+  A0 protection, hazard intensity and the world-scale transform.
+- **MAP-GEO-02 ownership correction:** physical POI rooms, entrances, passages, door openings,
+  interior circulation, spatial sockets and retreat paths are **Map responsibilities** even while
+  `NOT_IN_SOURCE` (`contract_boundary.v1.json` now uses
+  `MAP_RESPONSIBILITY_NOT_IN_SOURCE`). Locked states, loot, power and interactions stay with
+  Gameplay. The 12-code biome legend and the normalized elevation unit were recovered from the
+  pinned Map Lab v3 reference source — see `../geo02/MAPLAB_ENCODING.md`.
 - `frame.transform.status = "UNDECIDED"`, `mode = "NONE_APPLIED"`, `configurable: true`. All
   coordinates stay in 2000×1400 authoring units; `toCell()` is an index lookup, not a scale decision.
 
