@@ -1,0 +1,221 @@
+{
+  "build": "C (MAP-R01 asset-backed)",
+  "urls": {
+    "A": "http://127.0.0.1:4199/a/",
+    "C": "http://127.0.0.1:4199/c/"
+  },
+  "clock": "frozen epoch 1770000000000 (identical to A/B/C capture)",
+  "checks": {
+    "hud": {
+      "hasClock": true,
+      "hasRegion": true,
+      "hasHotbarTool": true,
+      "canvases": 1
+    },
+    "panels": {
+      "inventory": {
+        "key": "KeyI",
+        "opened": true,
+        "matched": "Inventory"
+      },
+      "craft": {
+        "key": "KeyC",
+        "opened": true,
+        "matched": "Crafting —"
+      },
+      "map": {
+        "key": "KeyM",
+        "opened": true,
+        "matched": "Map of the island"
+      },
+      "build": {
+        "key": "KeyB",
+        "opened": true,
+        "matched": "Build — pay real materials"
+      }
+    },
+    "route": [
+      {
+        "key": "KeyS",
+        "ms": 2200,
+        "x": 1352,
+        "y": 2874.02,
+        "hp": 100,
+        "dead": false,
+        "gather": 0,
+        "inv": 3,
+        "poiSeen": 1,
+        "loot": 18,
+        "doors": 2,
+        "regionName": "Fisher's Point"
+      },
+      {
+        "key": "KeyA",
+        "ms": 1900,
+        "x": 1262.56,
+        "y": 2874.02,
+        "hp": 100,
+        "dead": false,
+        "gather": 0,
+        "inv": 3,
+        "poiSeen": 1,
+        "loot": 18,
+        "doors": 2,
+        "regionName": "Fisher's Point"
+      },
+      {
+        "key": "KeyS",
+        "ms": 1400,
+        "x": 1262.56,
+        "y": 2938.74,
+        "hp": 100,
+        "dead": false,
+        "gather": 0,
+        "inv": 3,
+        "poiSeen": 1,
+        "loot": 18,
+        "doors": 2,
+        "regionName": "The Sea"
+      },
+      {
+        "key": "KeyA",
+        "ms": 1300,
+        "x": 1215.76,
+        "y": 2938.74,
+        "hp": 100,
+        "dead": false,
+        "gather": 0,
+        "inv": 3,
+        "poiSeen": 1,
+        "loot": 18,
+        "doors": 2,
+        "regionName": "The Sea"
+      },
+      {
+        "key": "KeyD",
+        "ms": 900,
+        "x": 1248.16,
+        "y": 2938.74,
+        "hp": 100,
+        "dead": false,
+        "gather": 0,
+        "inv": 3,
+        "poiSeen": 1,
+        "loot": 18,
+        "doors": 2,
+        "regionName": "The Sea"
+      }
+    ],
+    "walkedPathPx": 363.38,
+    "movementPass": true,
+    "hpUnchanged": true,
+    "worldStateAfterRoute": {
+      "x": 1248.16,
+      "y": 2938.74,
+      "hp": 100,
+      "dead": false,
+      "gather": 0,
+      "inv": 3,
+      "poiSeen": 1,
+      "loot": 18,
+      "doors": 2,
+      "regionName": "The Sea"
+    },
+    "harvest": {
+      "targetTile": [
+        83,
+        176
+      ],
+      "target": {
+        "sx": 304,
+        "sy": 208,
+        "dist": 27.4
+      },
+      "beforeGather": 0,
+      "afterGather": 2,
+      "pass": true,
+      "finalHp": 100
+    },
+    "poi": {
+      "nearestLoot": {
+        "x": 1304,
+        "y": 2696,
+        "d": 67.9
+      },
+      "lootCrates": 18,
+      "doors": 2,
+      "finalDistance": 29,
+      "prompt": "[E] Search crate ",
+      "panelOpened": true,
+      "invBefore": 3,
+      "invAfter": 6,
+      "pass": true
+    },
+    "authority": {
+      "A": {
+        "seed": 2182077881,
+        "startedAt": 1770000000000,
+        "spawn": [
+          1352,
+          2744
+        ],
+        "hp": 100,
+        "inv": "knife:1,water_flask:1,berries:3",
+        "byKind": {
+          "loot": 18,
+          "vendor": 1,
+          "cash": 7,
+          "door": 2,
+          "gen": 1,
+          "evac": 1
+        },
+        "entityCount": 30,
+        "poiSeen": [
+          "s1"
+        ],
+        "terrainMutations": 0,
+        "sourceMutations": 0,
+        "worldPlacesSeen": 1
+      },
+      "C": {
+        "seed": 2182077881,
+        "startedAt": 1770000000000,
+        "spawn": [
+          1352,
+          2744
+        ],
+        "hp": 100,
+        "inv": "knife:1,water_flask:1,berries:3",
+        "byKind": {
+          "loot": 18,
+          "vendor": 1,
+          "cash": 7,
+          "door": 2,
+          "gen": 1,
+          "evac": 1
+        },
+        "entityCount": 30,
+        "poiSeen": [
+          "s1"
+        ],
+        "terrainMutations": 0,
+        "sourceMutations": 0,
+        "worldPlacesSeen": 1
+      },
+      "identical": true
+    }
+  },
+  "errors": [],
+  "spawn": {
+    "x": 1352,
+    "y": 2744,
+    "hp": 100,
+    "dead": false,
+    "gather": 0,
+    "inv": 3,
+    "poiSeen": 1,
+    "loot": 18,
+    "doors": 2,
+    "regionName": "Fisher's Point"
+  }
+}

@@ -1,0 +1,3897 @@
+{
+  "schema": "soh.web.world_asset_slice.v1",
+  "purpose": "Fisher's Point first-hour Web slice — only admitted A1 frames, not entire packs",
+  "source_branch": "arena/e385312a-soul-of-hero",
+  "source_commit": "ce9d4ba2d3db153011874aa41b789fa8092be042",
+  "source_files": {
+    "assets/environment/survival_world/terrain.png": {
+      "file_sha256": "4d663a3dd1a865b8dcb2cfe9024c197e10ba3b0c8e8101c3ffe825d9e5ad5782",
+      "bytes": 54828,
+      "size": [
+        512,
+        896
+      ]
+    },
+    "assets/environment/survival_world/props.png": {
+      "file_sha256": "5de614ec25db2d0b1a62393e5ebe18c9ae0dfc26d9aef0b247376cdeb7c43f32",
+      "bytes": 119345,
+      "size": [
+        1024,
+        794
+      ]
+    },
+    "data/survival/world/art/atlas.v1.json": {
+      "file_sha256": "a9f9137f7c57945f67d9657fda7bdf26794d049b21eff854dce4752e95f0d8c5",
+      "bytes": 170126
+    },
+    "data/survival/world/art/world_art_grammar.v1.json": {
+      "schema": "SOH_WORLD_ART_GRAMMAR_V1"
+    }
+  },
+  "slice_sheet": {
+    "file": "soh_slice_atlas.png",
+    "width": 256,
+    "height": 274,
+    "sha256": "4844c6d485cae2c82e826d1e37c4cc85e6a0fe11fb08600bd37300d2e31885d1",
+    "bytes": 23547
+  },
+  "grid": {
+    "tile_px": 16,
+    "scale": 1,
+    "filter": "nearest",
+    "feet_anchor": "bottom-center"
+  },
+  "excluded": "All cainos_* / ocean_* pack crops are excluded: A1 docs/survival/world/RESEARCH_AND_LICENSES.md records Cainos demo art as REJECTED (standalone license unproven) and CraftPix freebie terms forbid raw-art redistribution. Original baked SOH terrain families + the nine inherited_original props only.",
+  "frame_count": 181,
+  "frames": {
+    "grass_0": {
+      "sheet": "terrain",
+      "rect": [
+        0,
+        0,
+        16,
+        16
+      ],
+      "origin_rect": [
+        192,
+        0,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "29d64df5836253d14bb2ca18bc0d2579813039801d4cb52c5b1f0ba2712acb27",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "29d64df5836253d14bb2ca18bc0d2579813039801d4cb52c5b1f0ba2712acb27",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "grass_1": {
+      "sheet": "terrain",
+      "rect": [
+        16,
+        0,
+        16,
+        16
+      ],
+      "origin_rect": [
+        208,
+        0,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "8886bdf95cb138a0ac7a2b17f883efe3e17295b90c90d584fe16b25e330c8c78",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "8886bdf95cb138a0ac7a2b17f883efe3e17295b90c90d584fe16b25e330c8c78",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "grass_2": {
+      "sheet": "terrain",
+      "rect": [
+        32,
+        0,
+        16,
+        16
+      ],
+      "origin_rect": [
+        224,
+        0,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "e25621eb076092d492fc5b0f5654fde6f65360eda9e43a8ce74f5a53a0953dc6",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "e25621eb076092d492fc5b0f5654fde6f65360eda9e43a8ce74f5a53a0953dc6",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "grass_3": {
+      "sheet": "terrain",
+      "rect": [
+        48,
+        0,
+        16,
+        16
+      ],
+      "origin_rect": [
+        240,
+        0,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "bb0f82a2b1a2f73644a588507a1853442f5e6fb828381bbf86cd624e2b569089",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "bb0f82a2b1a2f73644a588507a1853442f5e6fb828381bbf86cd624e2b569089",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "forest_0": {
+      "sheet": "terrain",
+      "rect": [
+        64,
+        0,
+        16,
+        16
+      ],
+      "origin_rect": [
+        256,
+        0,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "a078df01ef865b04ea7ccb0e4f97b3cf201e2cbaea6436ef1f865ed2915022ec",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "a078df01ef865b04ea7ccb0e4f97b3cf201e2cbaea6436ef1f865ed2915022ec",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "forest_1": {
+      "sheet": "terrain",
+      "rect": [
+        80,
+        0,
+        16,
+        16
+      ],
+      "origin_rect": [
+        272,
+        0,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "41e978901ef47900cd22ce9ec4de469b010506c95a6722b8d7808fc1b4548f66",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "41e978901ef47900cd22ce9ec4de469b010506c95a6722b8d7808fc1b4548f66",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "forest_2": {
+      "sheet": "terrain",
+      "rect": [
+        96,
+        0,
+        16,
+        16
+      ],
+      "origin_rect": [
+        288,
+        0,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "5f575611347757b959eccb68d47fd03283f5c5e4d39d00d15eda1823338140c2",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "5f575611347757b959eccb68d47fd03283f5c5e4d39d00d15eda1823338140c2",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "forest_3": {
+      "sheet": "terrain",
+      "rect": [
+        112,
+        0,
+        16,
+        16
+      ],
+      "origin_rect": [
+        304,
+        0,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "1e340b55e3726f9051b6f43bfed59ce05a461a3f27ffe2c4a8b29e84d7b94d95",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "1e340b55e3726f9051b6f43bfed59ce05a461a3f27ffe2c4a8b29e84d7b94d95",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "dune_0": {
+      "sheet": "terrain",
+      "rect": [
+        128,
+        0,
+        16,
+        16
+      ],
+      "origin_rect": [
+        416,
+        160,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "0883762573efb9b84378e735175611e98330c6c4c720d538ba3499402fc2a33b",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "dune_1": {
+      "sheet": "terrain",
+      "rect": [
+        144,
+        0,
+        16,
+        16
+      ],
+      "origin_rect": [
+        432,
+        160,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "05c8c2722c8b304b3d0646bff3d72e3b08ebbc08ad59a5c9fc0fc040b0728bb8",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "dune_2": {
+      "sheet": "terrain",
+      "rect": [
+        160,
+        0,
+        16,
+        16
+      ],
+      "origin_rect": [
+        448,
+        160,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "1a5af037f8507ef566a562b98fe1c3f36ec33b71d25d8c4a32306c17ee6701c3",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "dune_3": {
+      "sheet": "terrain",
+      "rect": [
+        176,
+        0,
+        16,
+        16
+      ],
+      "origin_rect": [
+        464,
+        160,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "38655f179d5f389e63dcb6f37b0b0b6fd9538c4e53bc0cde00dab16ef947d438",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "shell_0": {
+      "sheet": "terrain",
+      "rect": [
+        192,
+        0,
+        16,
+        16
+      ],
+      "origin_rect": [
+        352,
+        160,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "24f8854ed4c2ae76ca5265a1604fd679e50a3b9d471c7d617b18803c4f082d1c",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "shell_1": {
+      "sheet": "terrain",
+      "rect": [
+        208,
+        0,
+        16,
+        16
+      ],
+      "origin_rect": [
+        368,
+        160,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "2b4608d006e938a7286d70e6eba278a5b45ba611223e7c4cb64abc29a42d59f6",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "shell_2": {
+      "sheet": "terrain",
+      "rect": [
+        224,
+        0,
+        16,
+        16
+      ],
+      "origin_rect": [
+        384,
+        160,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "bdd688985fdc2c5085396bfe3a83f9b95411c0beba59882f94c4c2d6755a3165",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "shell_3": {
+      "sheet": "terrain",
+      "rect": [
+        240,
+        0,
+        16,
+        16
+      ],
+      "origin_rect": [
+        400,
+        160,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "4ef5965ea9bbadca46f8c13146a466c57d76adc5577b03a432918e0722573ccc",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "tidal_0": {
+      "sheet": "terrain",
+      "rect": [
+        0,
+        16,
+        16,
+        16
+      ],
+      "origin_rect": [
+        224,
+        160,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "a72605034cb90cf59b28b0f6327e065c470f0eb0108428859f355ab10b0a3f03",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "tidal_1": {
+      "sheet": "terrain",
+      "rect": [
+        16,
+        16,
+        16,
+        16
+      ],
+      "origin_rect": [
+        240,
+        160,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "42793471263f06c2137a6c505bf6455f578c312f27df7d8c57324b883e3036e1",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "tidal_2": {
+      "sheet": "terrain",
+      "rect": [
+        32,
+        16,
+        16,
+        16
+      ],
+      "origin_rect": [
+        256,
+        160,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "e98db4498a1a9740490338217e7a308ff24120e875312015bdecef28a20f2708",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "tidal_3": {
+      "sheet": "terrain",
+      "rect": [
+        48,
+        16,
+        16,
+        16
+      ],
+      "origin_rect": [
+        272,
+        160,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "fd9912547851390d7cc652361a9c8f408eae6b2f13e524914967b3575d484df8",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "lake_0": {
+      "sheet": "terrain",
+      "rect": [
+        64,
+        16,
+        16,
+        16
+      ],
+      "origin_rect": [
+        96,
+        160,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "68a50ffe39f6b4cc03c2519daf4249caf2bd6d219f1d8767dfff831c41ec9f06",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "lake_1": {
+      "sheet": "terrain",
+      "rect": [
+        80,
+        16,
+        16,
+        16
+      ],
+      "origin_rect": [
+        112,
+        160,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "5f8d3c44d1db46ca4d755c4d12cac6d808e4d6511d721c8ed932501e64dfa584",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "lake_2": {
+      "sheet": "terrain",
+      "rect": [
+        96,
+        16,
+        16,
+        16
+      ],
+      "origin_rect": [
+        128,
+        160,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "2ac09093cf7b5b85548913bf6e09114af70c99841fb6a247f2f05504c76fd4ed",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "lake_3": {
+      "sheet": "terrain",
+      "rect": [
+        112,
+        16,
+        16,
+        16
+      ],
+      "origin_rect": [
+        144,
+        160,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "78813c7b31c8ed7eed6532bc00ddd753bb162a9b2bd85faa9b75004e489d2729",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "water_0": {
+      "sheet": "terrain",
+      "rect": [
+        128,
+        16,
+        16,
+        16
+      ],
+      "origin_rect": [
+        64,
+        16,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "d7f4b2b30be640f76a49839f6329b71189e8fc9f0059ba85b11f8804b2587087",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "water_1": {
+      "sheet": "terrain",
+      "rect": [
+        144,
+        16,
+        16,
+        16
+      ],
+      "origin_rect": [
+        80,
+        16,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "dffc6ad51e1619522542d0eb7f08277c35aab6b063b12dba0a2bf1f31daac992",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "water_2": {
+      "sheet": "terrain",
+      "rect": [
+        160,
+        16,
+        16,
+        16
+      ],
+      "origin_rect": [
+        96,
+        16,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "e6130feddd57279a69ade593a280ee0b610bd2349d47cb875a3a7d4ef040d629",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "river_0": {
+      "sheet": "terrain",
+      "rect": [
+        176,
+        16,
+        16,
+        16
+      ],
+      "origin_rect": [
+        160,
+        160,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "3d1742cd9bdc9111ea3af2f2a9b9f71768e426eb34bb307108564eba87c56ba2",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "river_1": {
+      "sheet": "terrain",
+      "rect": [
+        192,
+        16,
+        16,
+        16
+      ],
+      "origin_rect": [
+        176,
+        160,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "5914976e6ef8dd3c736dbacac59d1d38e0a2f0efa0ae963cdfc60d277769fd4c",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "river_2": {
+      "sheet": "terrain",
+      "rect": [
+        208,
+        16,
+        16,
+        16
+      ],
+      "origin_rect": [
+        192,
+        160,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "f7043668ea12631132215b773393f16e8bd7c6d8e56af6416b85d45d7e178635",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "river_3": {
+      "sheet": "terrain",
+      "rect": [
+        224,
+        16,
+        16,
+        16
+      ],
+      "origin_rect": [
+        208,
+        160,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "d9b3f7b037a8587d5faa3568a89ab4b06c64c5ba6130dd939b6be81f8451bf3f",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "mix_grass_silt_1": {
+      "sheet": "terrain",
+      "rect": [
+        240,
+        16,
+        16,
+        16
+      ],
+      "origin_rect": [
+        160,
+        432,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "f2607cd2794c3b6b8c300cb541833f8df0d10b4a642a0e7986ebea03aaff0bf2",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "mix_grass_silt_2": {
+      "sheet": "terrain",
+      "rect": [
+        0,
+        32,
+        16,
+        16
+      ],
+      "origin_rect": [
+        192,
+        432,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "68543065705f26386ca06a0d716dbf1a4bfc5a729599ae2e23181101ff0eb2e9",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "mix_grass_silt_3": {
+      "sheet": "terrain",
+      "rect": [
+        16,
+        32,
+        16,
+        16
+      ],
+      "origin_rect": [
+        224,
+        432,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "290e32383217a9c2ccea4da90e75a2e540de6cdd7d706ef0f0cccc78713c0897",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "mix_grass_silt_4": {
+      "sheet": "terrain",
+      "rect": [
+        32,
+        32,
+        16,
+        16
+      ],
+      "origin_rect": [
+        256,
+        432,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "15983a3bdc1642b03a67b6fb6d1da37e70f20a7fa3fd51c8398295b54b8e550c",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "mix_grass_silt_5": {
+      "sheet": "terrain",
+      "rect": [
+        48,
+        32,
+        16,
+        16
+      ],
+      "origin_rect": [
+        288,
+        432,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "18557e37eb2c3f3cd14138e2ffcee1acb94ff3bca1a2f410f1446656db1e6c8a",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "mix_grass_silt_6": {
+      "sheet": "terrain",
+      "rect": [
+        64,
+        32,
+        16,
+        16
+      ],
+      "origin_rect": [
+        320,
+        432,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "7bec8f7b1941275ffdb2817927e71823ce3ef36f76d5f0aa5beb09081dfc56a1",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "mix_grass_silt_7": {
+      "sheet": "terrain",
+      "rect": [
+        80,
+        32,
+        16,
+        16
+      ],
+      "origin_rect": [
+        352,
+        432,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "13c070e6b4af31ca037e25afc9cd7e6fd26a20b2d7ea079aa762ddb53a296305",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "mix_grass_silt_8": {
+      "sheet": "terrain",
+      "rect": [
+        96,
+        32,
+        16,
+        16
+      ],
+      "origin_rect": [
+        384,
+        432,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "ef1cb43bcf1564a2d797e8e878a810212a3b24bf13636bb7ba0e5f392e0ace04",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "mix_grass_silt_9": {
+      "sheet": "terrain",
+      "rect": [
+        112,
+        32,
+        16,
+        16
+      ],
+      "origin_rect": [
+        416,
+        432,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "c573c4cff6244ad6efc12a6e9a8ab2afa71496b331ed021a0cef9440631b4b14",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "mix_grass_silt_10": {
+      "sheet": "terrain",
+      "rect": [
+        128,
+        32,
+        16,
+        16
+      ],
+      "origin_rect": [
+        448,
+        432,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "b3a80a70b87e2aa466efe6304c4339ae8c25cd6f1ef297a959b5bcbd726e5ee3",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "mix_grass_silt_11": {
+      "sheet": "terrain",
+      "rect": [
+        144,
+        32,
+        16,
+        16
+      ],
+      "origin_rect": [
+        480,
+        432,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "d6734b8b3cea6caf48f2e213a5a6d4649c32d0270addf5263069b4c11052358e",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "mix_grass_silt_12": {
+      "sheet": "terrain",
+      "rect": [
+        160,
+        32,
+        16,
+        16
+      ],
+      "origin_rect": [
+        0,
+        448,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "63ee8bee68869c6ae6997e9dbe8bf7f362724fecd511acbea53813dd171da9f4",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "mix_grass_silt_13": {
+      "sheet": "terrain",
+      "rect": [
+        176,
+        32,
+        16,
+        16
+      ],
+      "origin_rect": [
+        32,
+        448,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "48ce00370c0eef5d75fcf8be1cb10fdd199b7903240971b83320ff3776d459ea",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "mix_grass_silt_14": {
+      "sheet": "terrain",
+      "rect": [
+        192,
+        32,
+        16,
+        16
+      ],
+      "origin_rect": [
+        64,
+        448,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "bde880b5859a20f8814ab1f96792458b67789c91b0793b5230b1c9e86227b677",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "mix_grass_silt_15": {
+      "sheet": "terrain",
+      "rect": [
+        208,
+        32,
+        16,
+        16
+      ],
+      "origin_rect": [
+        96,
+        448,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "73197387d73d140d23deb9c1f0f2dae6228ac3819007f428682b7a040922aa09",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_water_0": {
+      "sheet": "terrain",
+      "rect": [
+        224,
+        32,
+        16,
+        16
+      ],
+      "origin_rect": [
+        416,
+        32,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "29d64df5836253d14bb2ca18bc0d2579813039801d4cb52c5b1f0ba2712acb27",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_water_1": {
+      "sheet": "terrain",
+      "rect": [
+        240,
+        32,
+        16,
+        16
+      ],
+      "origin_rect": [
+        432,
+        32,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "507992bc5c9177528de2b2f868df70324698a7fb5ea51ec8eeb417f0c1e049f8",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_water_2": {
+      "sheet": "terrain",
+      "rect": [
+        0,
+        48,
+        16,
+        16
+      ],
+      "origin_rect": [
+        448,
+        32,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "6d8949ac21f5bebb20d3a15783ee7b2468479b7e7a8265007c0bc8409f57f907",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_water_3": {
+      "sheet": "terrain",
+      "rect": [
+        16,
+        48,
+        16,
+        16
+      ],
+      "origin_rect": [
+        464,
+        32,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "02208bca223fe3309de3c3350205fc9d4b03a11e776b79dd03854822f896bc6b",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_water_4": {
+      "sheet": "terrain",
+      "rect": [
+        32,
+        48,
+        16,
+        16
+      ],
+      "origin_rect": [
+        480,
+        32,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "5a0bd4321b1a17ee562fbbc2d830aba8ba31911ce9738a4d0877d9fa4ca92bfc",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_water_5": {
+      "sheet": "terrain",
+      "rect": [
+        48,
+        48,
+        16,
+        16
+      ],
+      "origin_rect": [
+        496,
+        32,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "4c0bc92f150d7d8de560b2b8c5c8ccc0b1c1a73de80e83154a9308315b8eeec6",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_water_6": {
+      "sheet": "terrain",
+      "rect": [
+        64,
+        48,
+        16,
+        16
+      ],
+      "origin_rect": [
+        0,
+        48,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "894eadc340e15c2af5960862d49c88a4768dac74c8dcdd6e8f76653c8cc3c6a7",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_water_7": {
+      "sheet": "terrain",
+      "rect": [
+        80,
+        48,
+        16,
+        16
+      ],
+      "origin_rect": [
+        16,
+        48,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "77d778336bd594e2c758bfb1ba0b5aa34ced22503c9669fd1262daeb22560137",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_water_8": {
+      "sheet": "terrain",
+      "rect": [
+        96,
+        48,
+        16,
+        16
+      ],
+      "origin_rect": [
+        32,
+        48,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "21465d80f8d2d412d0196d141ea27d48e6622b6ec66e0f7ccd21b61d6f6c1872",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_water_9": {
+      "sheet": "terrain",
+      "rect": [
+        112,
+        48,
+        16,
+        16
+      ],
+      "origin_rect": [
+        48,
+        48,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "5d870c9a72e624f0465b3115fe46e61dfe14cf811c103e1e185776c0ef13f5dd",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_water_10": {
+      "sheet": "terrain",
+      "rect": [
+        128,
+        48,
+        16,
+        16
+      ],
+      "origin_rect": [
+        64,
+        48,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "e8e47f7fa5e4bdbd944bd3de70d6d84cd552d44773c385b7e0f944d1dd4bf01d",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_water_11": {
+      "sheet": "terrain",
+      "rect": [
+        144,
+        48,
+        16,
+        16
+      ],
+      "origin_rect": [
+        80,
+        48,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "451a94d23ec142fce40b9ad96e63ae7250652ec38994a708dba649ec81998f33",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_water_12": {
+      "sheet": "terrain",
+      "rect": [
+        160,
+        48,
+        16,
+        16
+      ],
+      "origin_rect": [
+        96,
+        48,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "31b02d8554211c6fc7ae783141a0e565d0cd4a45bdbda06d69e5284b28c7eeb8",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_water_13": {
+      "sheet": "terrain",
+      "rect": [
+        176,
+        48,
+        16,
+        16
+      ],
+      "origin_rect": [
+        112,
+        48,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "9e8a673ea101d9caccea680ddfe6d57a16d1fb900b0ad8ca9ce11bfb5f137ee8",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_water_14": {
+      "sheet": "terrain",
+      "rect": [
+        192,
+        48,
+        16,
+        16
+      ],
+      "origin_rect": [
+        128,
+        48,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "0e8b0e5be7139ec5f0f115abc5ea4e52c9b47ee2a2544e8fa98a08e9d510f1b2",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_water_15": {
+      "sheet": "terrain",
+      "rect": [
+        208,
+        48,
+        16,
+        16
+      ],
+      "origin_rect": [
+        144,
+        48,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "d7f4b2b30be640f76a49839f6329b71189e8fc9f0059ba85b11f8804b2587087",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_forest_0": {
+      "sheet": "terrain",
+      "rect": [
+        224,
+        48,
+        16,
+        16
+      ],
+      "origin_rect": [
+        416,
+        48,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "29d64df5836253d14bb2ca18bc0d2579813039801d4cb52c5b1f0ba2712acb27",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_forest_1": {
+      "sheet": "terrain",
+      "rect": [
+        240,
+        48,
+        16,
+        16
+      ],
+      "origin_rect": [
+        432,
+        48,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "a7dbfa9b159bcdd92e25b27f6d56fdbbe99296ad73c458fd20fe68d2a3668c94",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "a7dbfa9b159bcdd92e25b27f6d56fdbbe99296ad73c458fd20fe68d2a3668c94",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "blend_grass_forest_2": {
+      "sheet": "terrain",
+      "rect": [
+        0,
+        64,
+        16,
+        16
+      ],
+      "origin_rect": [
+        448,
+        48,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "4f2d4bf4786f898162e0ef0820905ea586f49cabf7dbda48ade4f978c3370837",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "4f2d4bf4786f898162e0ef0820905ea586f49cabf7dbda48ade4f978c3370837",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "blend_grass_forest_3": {
+      "sheet": "terrain",
+      "rect": [
+        16,
+        64,
+        16,
+        16
+      ],
+      "origin_rect": [
+        464,
+        48,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "f086ae8edae910669cf183cdfafc9b380481fbe537e36ab80d81c54c7b4ae642",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "f086ae8edae910669cf183cdfafc9b380481fbe537e36ab80d81c54c7b4ae642",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "blend_grass_forest_4": {
+      "sheet": "terrain",
+      "rect": [
+        32,
+        64,
+        16,
+        16
+      ],
+      "origin_rect": [
+        480,
+        48,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "b938df1f74d6dacd4164be7b2109c60fd01b79625cfc06e4c37a46af083a782b",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "b938df1f74d6dacd4164be7b2109c60fd01b79625cfc06e4c37a46af083a782b",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "blend_grass_forest_5": {
+      "sheet": "terrain",
+      "rect": [
+        48,
+        64,
+        16,
+        16
+      ],
+      "origin_rect": [
+        496,
+        48,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "ecc6624019b8f8832a0831845fefd619f69a930a5ae83f8fa69695e8d319119d",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_forest_6": {
+      "sheet": "terrain",
+      "rect": [
+        64,
+        64,
+        16,
+        16
+      ],
+      "origin_rect": [
+        0,
+        64,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "e73bd981121132e3f9aa003476b4d7f419ec0fa9e538e1646ae7dd3381763358",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "e73bd981121132e3f9aa003476b4d7f419ec0fa9e538e1646ae7dd3381763358",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "blend_grass_forest_7": {
+      "sheet": "terrain",
+      "rect": [
+        80,
+        64,
+        16,
+        16
+      ],
+      "origin_rect": [
+        16,
+        64,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "6fbd244233eef67edf11f091c9c105f7be6a27393701aca84d386c42049dd9a9",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_forest_8": {
+      "sheet": "terrain",
+      "rect": [
+        96,
+        64,
+        16,
+        16
+      ],
+      "origin_rect": [
+        32,
+        64,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "990772385426ea94c390052ac20e2d2973933e2840a18be051d78705ea03e4ed",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "990772385426ea94c390052ac20e2d2973933e2840a18be051d78705ea03e4ed",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "blend_grass_forest_9": {
+      "sheet": "terrain",
+      "rect": [
+        112,
+        64,
+        16,
+        16
+      ],
+      "origin_rect": [
+        48,
+        64,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "6072daa5fb260721257e2c13cfdd81d36a3b61a35d064225cf8143f981401bfb",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "6072daa5fb260721257e2c13cfdd81d36a3b61a35d064225cf8143f981401bfb",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "blend_grass_forest_10": {
+      "sheet": "terrain",
+      "rect": [
+        128,
+        64,
+        16,
+        16
+      ],
+      "origin_rect": [
+        64,
+        64,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "098c49cffc37d1adc11a7eb756273af237ae01af7d5d3389d77ff490c922fda9",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_forest_11": {
+      "sheet": "terrain",
+      "rect": [
+        144,
+        64,
+        16,
+        16
+      ],
+      "origin_rect": [
+        80,
+        64,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "6110d72ebf5a962b6d8a09f19677c8e9ce5e1fcee0a3f529a6d8c31ae95bdfe3",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_forest_12": {
+      "sheet": "terrain",
+      "rect": [
+        160,
+        64,
+        16,
+        16
+      ],
+      "origin_rect": [
+        96,
+        64,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "da4d2e8fe16407f16fcbb2539fce118698985acd6ac31109f1e67853eb9efdeb",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "da4d2e8fe16407f16fcbb2539fce118698985acd6ac31109f1e67853eb9efdeb",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "blend_grass_forest_13": {
+      "sheet": "terrain",
+      "rect": [
+        176,
+        64,
+        16,
+        16
+      ],
+      "origin_rect": [
+        112,
+        64,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "210eb2b22236b726c1c6f75aa8d4a6adc6b0ac362a6024541adc3b156f2c3817",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_forest_14": {
+      "sheet": "terrain",
+      "rect": [
+        192,
+        64,
+        16,
+        16
+      ],
+      "origin_rect": [
+        128,
+        64,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "00214f2577403d75a67fc33f922ed1b5033210972dd2ab282a5d3477dcddff0a",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_forest_15": {
+      "sheet": "terrain",
+      "rect": [
+        208,
+        64,
+        16,
+        16
+      ],
+      "origin_rect": [
+        144,
+        64,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "275650637ea1fc633f843875c6ec3e27d802223ff928e2dc409ee1274c809688",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_dune_tidal_1": {
+      "sheet": "terrain",
+      "rect": [
+        224,
+        64,
+        16,
+        16
+      ],
+      "origin_rect": [
+        480,
+        752,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "3d3701e104910dfd225030cb1e961c063fa5bdac75da9c45de6250e3644c8486",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_dune_tidal_2": {
+      "sheet": "terrain",
+      "rect": [
+        240,
+        64,
+        16,
+        16
+      ],
+      "origin_rect": [
+        496,
+        752,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "1be899937901e61c55acbff21fcdfd0f3611fcaa308f3ba20db9638cc1fcc058",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_dune_tidal_3": {
+      "sheet": "terrain",
+      "rect": [
+        0,
+        80,
+        16,
+        16
+      ],
+      "origin_rect": [
+        0,
+        768,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "2a44e9462253d234757f2358a9acf766d7f37a293aeabae149fd0455f75b7e3d",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_dune_tidal_4": {
+      "sheet": "terrain",
+      "rect": [
+        16,
+        80,
+        16,
+        16
+      ],
+      "origin_rect": [
+        16,
+        768,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "fe4c8f4ed415807513c2ba31653e799eba243ccc79b1fde8c32337c74dbe3c78",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_dune_tidal_5": {
+      "sheet": "terrain",
+      "rect": [
+        32,
+        80,
+        16,
+        16
+      ],
+      "origin_rect": [
+        32,
+        768,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "301d5084c370378445615ef0799c465be30562361632186b4f7899d71ab5b0e4",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_dune_tidal_6": {
+      "sheet": "terrain",
+      "rect": [
+        48,
+        80,
+        16,
+        16
+      ],
+      "origin_rect": [
+        48,
+        768,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "9dfede589dacb6d057918db1b0f15e3f8904906636b69d96d8ddcbdfca230461",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_dune_tidal_7": {
+      "sheet": "terrain",
+      "rect": [
+        64,
+        80,
+        16,
+        16
+      ],
+      "origin_rect": [
+        64,
+        768,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "81614e264da0eff04a3253a39586443b062a9ad29f21c2a12bf681c94645061c",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_dune_tidal_8": {
+      "sheet": "terrain",
+      "rect": [
+        80,
+        80,
+        16,
+        16
+      ],
+      "origin_rect": [
+        80,
+        768,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "5c664f713e4ec239741796b3224f29f2146c1539f7d5f8340eed0fb98b924908",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_dune_tidal_9": {
+      "sheet": "terrain",
+      "rect": [
+        96,
+        80,
+        16,
+        16
+      ],
+      "origin_rect": [
+        96,
+        768,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "a1429082eb446e194d05cf6012e26198697f6bf199ce3dceaa939183084f866e",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_dune_tidal_10": {
+      "sheet": "terrain",
+      "rect": [
+        112,
+        80,
+        16,
+        16
+      ],
+      "origin_rect": [
+        112,
+        768,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "0ed392acaa7da6a7ec8e5e7bd5bfbc21c04b2e30f595993cb9da29fa66d990a7",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_dune_tidal_11": {
+      "sheet": "terrain",
+      "rect": [
+        128,
+        80,
+        16,
+        16
+      ],
+      "origin_rect": [
+        128,
+        768,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "4d897eeb9ee5710424fa6ea595d595dbd8c3681510f1fc1f6b3a5b925b079df6",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_dune_tidal_12": {
+      "sheet": "terrain",
+      "rect": [
+        144,
+        80,
+        16,
+        16
+      ],
+      "origin_rect": [
+        144,
+        768,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "88a5b609eca5658b5107496e9e938deda13e2334a159eccc0b9bb655689007b4",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_dune_tidal_13": {
+      "sheet": "terrain",
+      "rect": [
+        160,
+        80,
+        16,
+        16
+      ],
+      "origin_rect": [
+        160,
+        768,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "76c7df46b9939d3e6b407c630797ad1c3edf74fdc91fa8b0793a329355124332",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_dune_tidal_14": {
+      "sheet": "terrain",
+      "rect": [
+        176,
+        80,
+        16,
+        16
+      ],
+      "origin_rect": [
+        176,
+        768,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "99090444fe65e629a5b178c7492fae15a26a7f1fffd225934c2805ef75b17657",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_dune_tidal_15": {
+      "sheet": "terrain",
+      "rect": [
+        192,
+        80,
+        16,
+        16
+      ],
+      "origin_rect": [
+        192,
+        768,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "dc0ee647cf657d83cc7b2aa8eca819962d763396de7aa0758e61305c5556d4fc",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_shell_tidal_1": {
+      "sheet": "terrain",
+      "rect": [
+        208,
+        80,
+        16,
+        16
+      ],
+      "origin_rect": [
+        112,
+        576,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "49acdc9d9f47ec836f5e1f699dd24d980fad7b97d307c23e64a03aacc01dc365",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_shell_tidal_2": {
+      "sheet": "terrain",
+      "rect": [
+        224,
+        80,
+        16,
+        16
+      ],
+      "origin_rect": [
+        128,
+        576,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "7b765ff0df75557bd84fbb5e3b383401c46f9b64823617d5d87e6c71c21d2c86",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_shell_tidal_3": {
+      "sheet": "terrain",
+      "rect": [
+        240,
+        80,
+        16,
+        16
+      ],
+      "origin_rect": [
+        144,
+        576,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "9d96b766baa4133bb9d529d336cd2eff67581ea01f9b30a79d27c5c75a4d4424",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_shell_tidal_4": {
+      "sheet": "terrain",
+      "rect": [
+        0,
+        96,
+        16,
+        16
+      ],
+      "origin_rect": [
+        160,
+        576,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "4a43c0be07ba6f9dce1de8bb67059fc74ce725cb3a1406bba30e697e71536526",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_shell_tidal_5": {
+      "sheet": "terrain",
+      "rect": [
+        16,
+        96,
+        16,
+        16
+      ],
+      "origin_rect": [
+        176,
+        576,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "b9960d2fc6ed23cffa2d1c78b569c670270b07798ccaa235b87425770c0e53ec",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_shell_tidal_6": {
+      "sheet": "terrain",
+      "rect": [
+        32,
+        96,
+        16,
+        16
+      ],
+      "origin_rect": [
+        192,
+        576,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "3e2166bad537465e8d054d5bf5730671da34da454f9889cc0102bbff6ebab9aa",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_shell_tidal_7": {
+      "sheet": "terrain",
+      "rect": [
+        48,
+        96,
+        16,
+        16
+      ],
+      "origin_rect": [
+        208,
+        576,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "646d47a2ed2197809c11bd7c6404ca1a66da936a02e3e00d3ec698a15658abf5",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_shell_tidal_8": {
+      "sheet": "terrain",
+      "rect": [
+        64,
+        96,
+        16,
+        16
+      ],
+      "origin_rect": [
+        224,
+        576,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "7dbdabc3f3001c3f23397ae217b3913bd6f1f68b94b304bc259bd021d4b3122c",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_shell_tidal_9": {
+      "sheet": "terrain",
+      "rect": [
+        80,
+        96,
+        16,
+        16
+      ],
+      "origin_rect": [
+        240,
+        576,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "15f473d3229a7a8de98f3d34b9ad16b7fd8f7ff51abc069ba1603f780ba670f3",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_shell_tidal_10": {
+      "sheet": "terrain",
+      "rect": [
+        96,
+        96,
+        16,
+        16
+      ],
+      "origin_rect": [
+        256,
+        576,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "c4504b9dd5a267425bc33708bd203f7d49c1b33ebe45292846330823fc5461be",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_shell_tidal_11": {
+      "sheet": "terrain",
+      "rect": [
+        112,
+        96,
+        16,
+        16
+      ],
+      "origin_rect": [
+        272,
+        576,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "588282efe2de463a0cc3aec4e8e89c6b99f20847717839177a7e6164c68a775d",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_shell_tidal_12": {
+      "sheet": "terrain",
+      "rect": [
+        128,
+        96,
+        16,
+        16
+      ],
+      "origin_rect": [
+        288,
+        576,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "c142aca6bea45db41895b1f8fdadcda2115d1b88b1c97f7fdaeec36d77356f97",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_shell_tidal_13": {
+      "sheet": "terrain",
+      "rect": [
+        144,
+        96,
+        16,
+        16
+      ],
+      "origin_rect": [
+        304,
+        576,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "9925da952f8e6cfce633ecc5cde6f3ec3b711621f9c698641cadb68c35ede113",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_shell_tidal_14": {
+      "sheet": "terrain",
+      "rect": [
+        160,
+        96,
+        16,
+        16
+      ],
+      "origin_rect": [
+        320,
+        576,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "8c785d092db9e4a2c55ef550efe82e126084c95e6ef5aad1981a693eb5eb32a7",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "coast_shell_tidal_15": {
+      "sheet": "terrain",
+      "rect": [
+        176,
+        96,
+        16,
+        16
+      ],
+      "origin_rect": [
+        336,
+        576,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "ae4322b04e63da6225b46976d60f2ac1dc7ba6b487f9c8ae8fb290e721ba4144",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "road_dirt_0": {
+      "sheet": "terrain",
+      "rect": [
+        192,
+        96,
+        16,
+        16
+      ],
+      "origin_rect": [
+        160,
+        128,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "3422b510eb2de970e919d10c02cd17caba7b925ac68a996640d90815336f9bd2",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "road_dirt_1": {
+      "sheet": "terrain",
+      "rect": [
+        208,
+        96,
+        16,
+        16
+      ],
+      "origin_rect": [
+        208,
+        128,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "e03a2e67a9edebb66d097766c403f3d67dce896220ae7a5f96b5416562d4d92b",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "e03a2e67a9edebb66d097766c403f3d67dce896220ae7a5f96b5416562d4d92b",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "road_dirt_2": {
+      "sheet": "terrain",
+      "rect": [
+        224,
+        96,
+        16,
+        16
+      ],
+      "origin_rect": [
+        256,
+        128,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "a506bcd3f883e7fcad711eb4b08cc8afa7d99fce9f5245069bd1021df7ee407f",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "a506bcd3f883e7fcad711eb4b08cc8afa7d99fce9f5245069bd1021df7ee407f",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "road_dirt_3": {
+      "sheet": "terrain",
+      "rect": [
+        240,
+        96,
+        16,
+        16
+      ],
+      "origin_rect": [
+        304,
+        128,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "ef82e4b99f0db71074b1b3e2d6f66d4704ac1d9462413d4e1eb263c630bfb8d3",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "ef82e4b99f0db71074b1b3e2d6f66d4704ac1d9462413d4e1eb263c630bfb8d3",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "road_dirt_4": {
+      "sheet": "terrain",
+      "rect": [
+        0,
+        112,
+        16,
+        16
+      ],
+      "origin_rect": [
+        352,
+        128,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "34b272750aed015356535fe7b7e667017994cbbbdb0de2ee8d05503ce9647c89",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "34b272750aed015356535fe7b7e667017994cbbbdb0de2ee8d05503ce9647c89",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "road_dirt_5": {
+      "sheet": "terrain",
+      "rect": [
+        16,
+        112,
+        16,
+        16
+      ],
+      "origin_rect": [
+        400,
+        128,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "76c3004b2f81549db6e8d30d584f2d34651499d1932b3fd71adfb91f4f2edbdd",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "76c3004b2f81549db6e8d30d584f2d34651499d1932b3fd71adfb91f4f2edbdd",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "road_dirt_6": {
+      "sheet": "terrain",
+      "rect": [
+        32,
+        112,
+        16,
+        16
+      ],
+      "origin_rect": [
+        448,
+        128,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "08709a487fde8b9ae0bfb7cd327115662dfa2cf9a2b094edff3925ba97f7f029",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "08709a487fde8b9ae0bfb7cd327115662dfa2cf9a2b094edff3925ba97f7f029",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "road_dirt_7": {
+      "sheet": "terrain",
+      "rect": [
+        48,
+        112,
+        16,
+        16
+      ],
+      "origin_rect": [
+        496,
+        128,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "452bd42215e7dddf145fc96c5bc0d92e135f5b15979043435623b7bf091542b1",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "452bd42215e7dddf145fc96c5bc0d92e135f5b15979043435623b7bf091542b1",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "road_dirt_8": {
+      "sheet": "terrain",
+      "rect": [
+        64,
+        112,
+        16,
+        16
+      ],
+      "origin_rect": [
+        32,
+        144,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "f30ee176ac1952a0bd60275c23c4d1774abafb489693b028de81fa76a730121a",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "f30ee176ac1952a0bd60275c23c4d1774abafb489693b028de81fa76a730121a",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "road_dirt_9": {
+      "sheet": "terrain",
+      "rect": [
+        80,
+        112,
+        16,
+        16
+      ],
+      "origin_rect": [
+        80,
+        144,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "33fadcabe72d10cb34737a80830e51bbcbf8e7767abda038309bbc43105684d8",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "33fadcabe72d10cb34737a80830e51bbcbf8e7767abda038309bbc43105684d8",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "road_dirt_10": {
+      "sheet": "terrain",
+      "rect": [
+        96,
+        112,
+        16,
+        16
+      ],
+      "origin_rect": [
+        128,
+        144,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "14592e77b9a95183c408419357f9c8fd77359284dc736c24121735fdcb282089",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "14592e77b9a95183c408419357f9c8fd77359284dc736c24121735fdcb282089",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "road_dirt_11": {
+      "sheet": "terrain",
+      "rect": [
+        112,
+        112,
+        16,
+        16
+      ],
+      "origin_rect": [
+        176,
+        144,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "087e178959eb656cbd187a75993639b48325077259a43ef01c32c4fa5c2e69e8",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "087e178959eb656cbd187a75993639b48325077259a43ef01c32c4fa5c2e69e8",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "road_dirt_12": {
+      "sheet": "terrain",
+      "rect": [
+        128,
+        112,
+        16,
+        16
+      ],
+      "origin_rect": [
+        224,
+        144,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "2dbf6c6c8306cf9827b33bea939a98ca08997dd4800b4f80d71c6f4fb7c2a055",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "2dbf6c6c8306cf9827b33bea939a98ca08997dd4800b4f80d71c6f4fb7c2a055",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "road_dirt_13": {
+      "sheet": "terrain",
+      "rect": [
+        144,
+        112,
+        16,
+        16
+      ],
+      "origin_rect": [
+        272,
+        144,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "a1ba831b2a49997a82e3475bed40ff5e87aec88d1a7f6892c887fc34286355b0",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "a1ba831b2a49997a82e3475bed40ff5e87aec88d1a7f6892c887fc34286355b0",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "road_dirt_14": {
+      "sheet": "terrain",
+      "rect": [
+        160,
+        112,
+        16,
+        16
+      ],
+      "origin_rect": [
+        320,
+        144,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "06c427d305525515151ddb469f2fd5d9e24d4c2a69ab0311916008795f49e71e",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "06c427d305525515151ddb469f2fd5d9e24d4c2a69ab0311916008795f49e71e",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "road_dirt_15": {
+      "sheet": "terrain",
+      "rect": [
+        176,
+        112,
+        16,
+        16
+      ],
+      "origin_rect": [
+        368,
+        144,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "ad92240bc34fa80577d6d4eb967530a44cac277cc8b59fd0d2217af2965a7d40",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "ad92240bc34fa80577d6d4eb967530a44cac277cc8b59fd0d2217af2965a7d40",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "blend_grass_soil_0": {
+      "sheet": "terrain",
+      "rect": [
+        192,
+        112,
+        16,
+        16
+      ],
+      "origin_rect": [
+        160,
+        16,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "29d64df5836253d14bb2ca18bc0d2579813039801d4cb52c5b1f0ba2712acb27",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_soil_1": {
+      "sheet": "terrain",
+      "rect": [
+        208,
+        112,
+        16,
+        16
+      ],
+      "origin_rect": [
+        176,
+        16,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "9247dce6381f350d8fa300396fcf14075d5230da88c16a87a74f4160e301e934",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "9247dce6381f350d8fa300396fcf14075d5230da88c16a87a74f4160e301e934",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "blend_grass_soil_2": {
+      "sheet": "terrain",
+      "rect": [
+        224,
+        112,
+        16,
+        16
+      ],
+      "origin_rect": [
+        192,
+        16,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "629d38dd6753ce0b93ca1eed245c73ac11f8d5aac642250f1f220001ab769257",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "629d38dd6753ce0b93ca1eed245c73ac11f8d5aac642250f1f220001ab769257",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "blend_grass_soil_3": {
+      "sheet": "terrain",
+      "rect": [
+        240,
+        112,
+        16,
+        16
+      ],
+      "origin_rect": [
+        208,
+        16,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "724b649612a3461c7cfd463127f36916c613c88c7f968f5509c2ecebc475456c",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_soil_4": {
+      "sheet": "terrain",
+      "rect": [
+        0,
+        128,
+        16,
+        16
+      ],
+      "origin_rect": [
+        224,
+        16,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "65f6012cd50a3d78182d7e62e8d6afb969bcb96756d36ff6736680ad1105a372",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_soil_5": {
+      "sheet": "terrain",
+      "rect": [
+        16,
+        128,
+        16,
+        16
+      ],
+      "origin_rect": [
+        240,
+        16,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "d4221d77b7fd7079aa0a3821ed23710ef4a3da9f2225dc1475c488b9efb01444",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_soil_6": {
+      "sheet": "terrain",
+      "rect": [
+        32,
+        128,
+        16,
+        16
+      ],
+      "origin_rect": [
+        256,
+        16,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "cbdc290c9913b17e5a4090cf83423531cb4334c86ce40a2b9e29e7e2ef40e557",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_soil_7": {
+      "sheet": "terrain",
+      "rect": [
+        48,
+        128,
+        16,
+        16
+      ],
+      "origin_rect": [
+        272,
+        16,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "321618d975dfebee16be59d70eac1a0fa3c266a8b846c2bd40fa37f61cb8d423",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_soil_8": {
+      "sheet": "terrain",
+      "rect": [
+        64,
+        128,
+        16,
+        16
+      ],
+      "origin_rect": [
+        288,
+        16,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "bbb018ea07dbf18ca7d2765ecce43996833f7184c8258c777fdbff8065d57723",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "bbb018ea07dbf18ca7d2765ecce43996833f7184c8258c777fdbff8065d57723",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "blend_grass_soil_9": {
+      "sheet": "terrain",
+      "rect": [
+        80,
+        128,
+        16,
+        16
+      ],
+      "origin_rect": [
+        304,
+        16,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "a7e042b4c6fa9d29eed99a66e1b771f0646fffdadbd6423fa218cfc5caa8b571",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "a7e042b4c6fa9d29eed99a66e1b771f0646fffdadbd6423fa218cfc5caa8b571",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "blend_grass_soil_10": {
+      "sheet": "terrain",
+      "rect": [
+        96,
+        128,
+        16,
+        16
+      ],
+      "origin_rect": [
+        320,
+        16,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "944d727188f26e389c97177beab0697d27bdc751a39f8e6b0951c0a2949596b9",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_soil_11": {
+      "sheet": "terrain",
+      "rect": [
+        112,
+        128,
+        16,
+        16
+      ],
+      "origin_rect": [
+        336,
+        16,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "9d102718b4384664e5de0b2ec357497c9fb9349a4111ee584ea0ec92c5b0ddd7",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_soil_12": {
+      "sheet": "terrain",
+      "rect": [
+        128,
+        128,
+        16,
+        16
+      ],
+      "origin_rect": [
+        352,
+        16,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "e745b3a96710891a14b95be662d766152357d12c6bfec3fb0d2721d63eac9b97",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_soil_13": {
+      "sheet": "terrain",
+      "rect": [
+        144,
+        128,
+        16,
+        16
+      ],
+      "origin_rect": [
+        368,
+        16,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "09c62efbe9dadb32d367f946a0d82d2b9f75cfdfee646770485baf55d5a3da55",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_soil_14": {
+      "sheet": "terrain",
+      "rect": [
+        160,
+        128,
+        16,
+        16
+      ],
+      "origin_rect": [
+        384,
+        16,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "447db30ffb64de5352a21b466693eb81b50a97c0251417c76c0ee2efe2682c35",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "blend_grass_soil_15": {
+      "sheet": "terrain",
+      "rect": [
+        176,
+        128,
+        16,
+        16
+      ],
+      "origin_rect": [
+        400,
+        16,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "7d0f9f14c8190979824a0779622fe38b7dc64d50f6114febae85bc74d1af1647",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "track_dirt_0": {
+      "sheet": "terrain",
+      "rect": [
+        192,
+        128,
+        16,
+        16
+      ],
+      "origin_rect": [
+        432,
+        816,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "track_dirt_1": {
+      "sheet": "terrain",
+      "rect": [
+        208,
+        128,
+        16,
+        16
+      ],
+      "origin_rect": [
+        464,
+        816,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "b3bd6e4c1e11d7458157e67b64008d959e080d59f32b10a4f78c0053d9ba8215",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "track_dirt_2": {
+      "sheet": "terrain",
+      "rect": [
+        224,
+        128,
+        16,
+        16
+      ],
+      "origin_rect": [
+        496,
+        816,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "6cef657c102d6f98303777bd1cc5e72e267d2b9e8e3832165bc8501beb49f41c",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "track_dirt_3": {
+      "sheet": "terrain",
+      "rect": [
+        240,
+        128,
+        16,
+        16
+      ],
+      "origin_rect": [
+        16,
+        832,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "b29c4d8b3cc7c582a6e8ed7ebd988fca54d1b20b3001aa1a4410fbb7927bb9f2",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "track_dirt_4": {
+      "sheet": "terrain",
+      "rect": [
+        0,
+        144,
+        16,
+        16
+      ],
+      "origin_rect": [
+        48,
+        832,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "eda6f29b6b68349e7d7708f672d9c0677cdcfcf8422f9dfd9cbdac0228dbea6a",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "track_dirt_5": {
+      "sheet": "terrain",
+      "rect": [
+        16,
+        144,
+        16,
+        16
+      ],
+      "origin_rect": [
+        80,
+        832,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "f7a2c81513a996b0b48c90212aa24673035ad81567ff9f2b8b060e823a6d242e",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "track_dirt_6": {
+      "sheet": "terrain",
+      "rect": [
+        32,
+        144,
+        16,
+        16
+      ],
+      "origin_rect": [
+        112,
+        832,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "c9edcdf6b412216d5e9f460b190673117b6d4efe5e9b42ed4ba59e2fea368492",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "track_dirt_7": {
+      "sheet": "terrain",
+      "rect": [
+        48,
+        144,
+        16,
+        16
+      ],
+      "origin_rect": [
+        144,
+        832,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "60f18013e56a5ea7ce70486ef271adff4f3bb740ba4be38e19335ad8767055f8",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "track_dirt_8": {
+      "sheet": "terrain",
+      "rect": [
+        64,
+        144,
+        16,
+        16
+      ],
+      "origin_rect": [
+        176,
+        832,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "e47e7c254ab0ffdbf5a1d0f58ca20b0e47adbc6af94840bc9a5b52c82fad1879",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "track_dirt_9": {
+      "sheet": "terrain",
+      "rect": [
+        80,
+        144,
+        16,
+        16
+      ],
+      "origin_rect": [
+        208,
+        832,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "afb3488c521bc4f9e14d7cf5f1c6e9a302f2ecc157431ba56c1630c3a834bb67",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "track_dirt_10": {
+      "sheet": "terrain",
+      "rect": [
+        96,
+        144,
+        16,
+        16
+      ],
+      "origin_rect": [
+        240,
+        832,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "465a9652bc70e99151cf307b47755481793793ca0d4617af95b82ef59387a717",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "track_dirt_11": {
+      "sheet": "terrain",
+      "rect": [
+        112,
+        144,
+        16,
+        16
+      ],
+      "origin_rect": [
+        272,
+        832,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "9b3f3ac482fc7ff5406a7fda5960d8277034cd146ed24da11cf4f52bb6547bf4",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "track_dirt_12": {
+      "sheet": "terrain",
+      "rect": [
+        128,
+        144,
+        16,
+        16
+      ],
+      "origin_rect": [
+        304,
+        832,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "cecf07fef17e33d5d85fe50450567b28905a0d16e0480427d983e7789e5cf849",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "track_dirt_13": {
+      "sheet": "terrain",
+      "rect": [
+        144,
+        144,
+        16,
+        16
+      ],
+      "origin_rect": [
+        336,
+        832,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "217f51eea2e9604022bf55723e5fdec0ca8f7a57356780738983604bbc4bff0e",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "track_dirt_14": {
+      "sheet": "terrain",
+      "rect": [
+        160,
+        144,
+        16,
+        16
+      ],
+      "origin_rect": [
+        368,
+        832,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "d3ef9f435e9bff71fe07da709d5c18c775fda6219e46a24be19acab44202433b",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "track_dirt_15": {
+      "sheet": "terrain",
+      "rect": [
+        176,
+        144,
+        16,
+        16
+      ],
+      "origin_rect": [
+        400,
+        832,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "3e6eec425763d6e19bfb8683a0fdbf5a62767bfa8aa970665d1fe3f91721215e",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "detail_dune_ripple_0": {
+      "sheet": "terrain",
+      "rect": [
+        192,
+        144,
+        16,
+        16
+      ],
+      "origin_rect": [
+        352,
+        864,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "64e854d89e814912015a59988ecb959bb1d1983b367abc4d42683c3a0bfbeadf",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "detail_dune_ripple_1": {
+      "sheet": "terrain",
+      "rect": [
+        208,
+        144,
+        16,
+        16
+      ],
+      "origin_rect": [
+        368,
+        864,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "fd7e4164c8e26b6eea48bd7356a981c798db56280aba21d9bcf2b1fc95d68aac",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "detail_dune_ripple_2": {
+      "sheet": "terrain",
+      "rect": [
+        224,
+        144,
+        16,
+        16
+      ],
+      "origin_rect": [
+        384,
+        864,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "cefc776a488ea290a651bf1cd2dadd74b6b4308e1f3065834d84a0c5290b27a1",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "detail_water_ripple_0": {
+      "sheet": "terrain",
+      "rect": [
+        240,
+        144,
+        16,
+        16
+      ],
+      "origin_rect": [
+        208,
+        864,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "9c8420a4c8e0aabc263e225e2b653cfdef7ccd0544af5428be82088425024e7f",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "detail_water_ripple_1": {
+      "sheet": "terrain",
+      "rect": [
+        0,
+        160,
+        16,
+        16
+      ],
+      "origin_rect": [
+        224,
+        864,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "b728563c14e33e8766a8f79f72ad6a381bb7e23e106d3fb4c75ccaf3c4078bd4",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "detail_water_ripple_2": {
+      "sheet": "terrain",
+      "rect": [
+        16,
+        160,
+        16,
+        16
+      ],
+      "origin_rect": [
+        240,
+        864,
+        16,
+        16
+      ],
+      "raw_rgba_sha256": "5b668a653fcc1b560f1b9e00ee62b2e68c18caabd9e8866fb182e1d6b48ea85e",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "bush": {
+      "sheet": "props",
+      "rect": [
+        32,
+        160,
+        26,
+        22
+      ],
+      "origin_rect": [
+        524,
+        512,
+        26,
+        22
+      ],
+      "raw_rgba_sha256": "5c902190550823ad99ab068af9f20a532909373d89bf319f5a9d252eaf780f52",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "5c902190550823ad99ab068af9f20a532909373d89bf319f5a9d252eaf780f52",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "rock_a": {
+      "sheet": "props",
+      "rect": [
+        58,
+        160,
+        26,
+        20
+      ],
+      "origin_rect": [
+        552,
+        512,
+        26,
+        20
+      ],
+      "raw_rgba_sha256": "4180405a332fad9ac5e799d00692146114389c98501f1aca95ea564747d33ad1",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "4180405a332fad9ac5e799d00692146114389c98501f1aca95ea564747d33ad1",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "rock_c": {
+      "sheet": "props",
+      "rect": [
+        84,
+        160,
+        20,
+        15
+      ],
+      "origin_rect": [
+        580,
+        512,
+        20,
+        15
+      ],
+      "raw_rgba_sha256": "44b051357439df2b470ddf94c167af5874c493f49e8abec524bc27aee8288da3",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "44b051357439df2b470ddf94c167af5874c493f49e8abec524bc27aee8288da3",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "rock_e": {
+      "sheet": "props",
+      "rect": [
+        104,
+        160,
+        40,
+        30
+      ],
+      "origin_rect": [
+        602,
+        512,
+        40,
+        30
+      ],
+      "raw_rgba_sha256": "e6118e2e7d2629766ef8cbaed6f147fc72b7074e3f7b0e42eb6ae13b4d5a1478",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "e6118e2e7d2629766ef8cbaed6f147fc72b7074e3f7b0e42eb6ae13b4d5a1478",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "tree_dead": {
+      "sheet": "props",
+      "rect": [
+        144,
+        160,
+        40,
+        58
+      ],
+      "origin_rect": [
+        446,
+        512,
+        40,
+        58
+      ],
+      "raw_rgba_sha256": "4b9a5c5348dbc0d8c5e1212b190939b53feccfc329c7acaa6b9ac1fdfca1e579",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "4b9a5c5348dbc0d8c5e1212b190939b53feccfc329c7acaa6b9ac1fdfca1e579",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "tree_pine": {
+      "sheet": "props",
+      "rect": [
+        184,
+        160,
+        34,
+        58
+      ],
+      "origin_rect": [
+        488,
+        512,
+        34,
+        58
+      ],
+      "raw_rgba_sha256": "40c20f76d7340b3667986e68925e9827f324b1c048b6d9b02759b84104485886",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "signpost": {
+      "sheet": "props",
+      "rect": [
+        218,
+        160,
+        26,
+        26
+      ],
+      "origin_rect": [
+        644,
+        512,
+        26,
+        26
+      ],
+      "raw_rgba_sha256": "143d0007d9b7be54b7c40ef9a09e71d1dce480484ad81673b10557bad3f202c5",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "143d0007d9b7be54b7c40ef9a09e71d1dce480484ad81673b10557bad3f202c5",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "reeds": {
+      "sheet": "props",
+      "rect": [
+        0,
+        218,
+        22,
+        24
+      ],
+      "origin_rect": [
+        196,
+        2,
+        22,
+        24
+      ],
+      "raw_rgba_sha256": "6c76b3b8127d1451768dc032499a8faac29cad8a1b6a9d01e648deac49d48a5c",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "6c76b3b8127d1451768dc032499a8faac29cad8a1b6a9d01e648deac49d48a5c",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "stump": {
+      "sheet": "props",
+      "rect": [
+        22,
+        218,
+        20,
+        18
+      ],
+      "origin_rect": [
+        396,
+        2,
+        20,
+        18
+      ],
+      "raw_rgba_sha256": "e145fb39416b0c80aa42820dc7e0c89e72267d69f50ab3bd4272010bdfd2d748",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "e145fb39416b0c80aa42820dc7e0c89e72267d69f50ab3bd4272010bdfd2d748",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "deadfall": {
+      "sheet": "props",
+      "rect": [
+        42,
+        218,
+        34,
+        22
+      ],
+      "origin_rect": [
+        360,
+        2,
+        34,
+        22
+      ],
+      "raw_rgba_sha256": "5c28984551ca604bf2c2970abae2515f26b2eeeb049c9ef045b46b06ed5966cc",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "5c28984551ca604bf2c2970abae2515f26b2eeeb049c9ef045b46b06ed5966cc",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "driftwood": {
+      "sheet": "props",
+      "rect": [
+        76,
+        218,
+        30,
+        12
+      ],
+      "origin_rect": [
+        836,
+        108,
+        30,
+        12
+      ],
+      "raw_rgba_sha256": "65d5cf226e1e5311ccc8e7a4e8cd907d7ed3ac3a8dcd6f0935190fa7b3277c88",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "cairn": {
+      "sheet": "props",
+      "rect": [
+        106,
+        218,
+        24,
+        30
+      ],
+      "origin_rect": [
+        790,
+        2,
+        24,
+        30
+      ],
+      "raw_rgba_sha256": "7e03f384e1e1f139d2cd61c9885f07d43f93ba77eb36b04dbc5e7390fed5a418",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "7e03f384e1e1f139d2cd61c9885f07d43f93ba77eb36b04dbc5e7390fed5a418",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "fence_h": {
+      "sheet": "props",
+      "rect": [
+        130,
+        218,
+        34,
+        20
+      ],
+      "origin_rect": [
+        732,
+        2,
+        34,
+        20
+      ],
+      "raw_rgba_sha256": "5e662892c79ed41c77163119d41b13303d8ddbbdb2c1c2bbd06ffaaf8b63c777",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "5e662892c79ed41c77163119d41b13303d8ddbbdb2c1c2bbd06ffaaf8b63c777",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "fence_v": {
+      "sheet": "props",
+      "rect": [
+        164,
+        218,
+        20,
+        34
+      ],
+      "origin_rect": [
+        768,
+        2,
+        20,
+        34
+      ],
+      "raw_rgba_sha256": "4ba39c60410a9ca99dfb234f4e9dcd29d54378f9ae95698ebe456368ab658e68",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "boardwalk_post": {
+      "sheet": "props",
+      "rect": [
+        184,
+        218,
+        24,
+        24
+      ],
+      "origin_rect": [
+        832,
+        336,
+        24,
+        24
+      ],
+      "raw_rgba_sha256": "676dd976d60e0248eaa2fab08942ede343d62e6f0bc7bbde34b512ac82eb78e5",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "pier_rail": {
+      "sheet": "props",
+      "rect": [
+        208,
+        218,
+        24,
+        16
+      ],
+      "origin_rect": [
+        304,
+        512,
+        24,
+        16
+      ],
+      "raw_rgba_sha256": "502f0f46fbfd87accb755fc27f0710554f23401f80d3b31e42fd6494376aa2bd",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "lantern_post": {
+      "sheet": "props",
+      "rect": [
+        232,
+        218,
+        16,
+        32
+      ],
+      "origin_rect": [
+        286,
+        512,
+        16,
+        32
+      ],
+      "raw_rgba_sha256": "4d7146ceb9d0f42a4485de34e8576a6e9f407360c06de6e947ad9c0949681442",
+      "provenance": {
+        "source": "computed_from_atlas_v1",
+        "note": "frame outside A1 first-hour crop profile; RGBA SHA computed from A1 atlas rect"
+      },
+      "rights": "a1_original_baked_frame"
+    },
+    "column_broken": {
+      "sheet": "props",
+      "rect": [
+        0,
+        252,
+        20,
+        22
+      ],
+      "origin_rect": [
+        710,
+        512,
+        20,
+        22
+      ],
+      "raw_rgba_sha256": "e5e2009f5947c1fda5669e79568d3500048868ce095322a6380909a84cb47b37",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "e5e2009f5947c1fda5669e79568d3500048868ce095322a6380909a84cb47b37",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    },
+    "wall_stub": {
+      "sheet": "props",
+      "rect": [
+        20,
+        252,
+        36,
+        22
+      ],
+      "origin_rect": [
+        672,
+        512,
+        36,
+        22
+      ],
+      "raw_rgba_sha256": "bef1e1ccdc5d8218b97749585bad56fb285f02e6f6b133b87ff5c428cca12cd4",
+      "provenance": {
+        "source": "first_hour_asset_provenance.v1.json:a1_current",
+        "raw_rgba_sha256": "bef1e1ccdc5d8218b97749585bad56fb285f02e6f6b133b87ff5c428cca12cd4",
+        "matches_first_hour_lock": true
+      },
+      "rights": "a1_profile_frame"
+    }
+  }
+}

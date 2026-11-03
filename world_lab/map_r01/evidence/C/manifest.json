@@ -1,0 +1,116 @@
+{
+  "tag": "C",
+  "gameUrl": "http://127.0.0.1:4199/c/",
+  "viewport": {
+    "w": 640,
+    "h": 360
+  },
+  "clock": "frozen epoch 1770000000000; day/night via real +1h QA button",
+  "shots": {
+    "forest-day": {
+      "x": 1352,
+      "y": 2744,
+      "hp": 100,
+      "seed": 2182077881,
+      "qaOffset": 0,
+      "dayTime": 0.3,
+      "dark": 0.237,
+      "weatherSlot": 0,
+      "regionName": "Fisher's Point",
+      "invItems": 3
+    },
+    "forest-night": {
+      "x": 1352,
+      "y": 2744,
+      "hp": 100,
+      "seed": 2182077881,
+      "qaOffset": 3600000,
+      "dayTime": 0.8,
+      "dark": 0.763,
+      "weatherSlot": 6,
+      "regionName": "Fisher's Point",
+      "invItems": 3
+    },
+    "coast-night": {
+      "x": 1204.09,
+      "y": 2895.63,
+      "hp": 100,
+      "seed": 2182077881,
+      "qaOffset": 3600000,
+      "dayTime": 0.8,
+      "dark": 0.763,
+      "weatherSlot": 6,
+      "regionName": "Fisher's Point",
+      "invItems": 3
+    },
+    "coast-day": {
+      "x": 1204.09,
+      "y": 2895.63,
+      "hp": 100,
+      "seed": 2182077881,
+      "qaOffset": 7200000,
+      "dayTime": 0.3,
+      "dark": 0.237,
+      "weatherSlot": 13,
+      "regionName": "Fisher's Point",
+      "invItems": 3
+    }
+  },
+  "route": [
+    {
+      "key": "KeyS",
+      "ms": 2800,
+      "x": 1352,
+      "y": 2895.63,
+      "hp": 100,
+      "seed": 2182077881,
+      "qaOffset": 3600000,
+      "dayTime": 0.8,
+      "dark": 0.763,
+      "weatherSlot": 6,
+      "regionName": "The Sea",
+      "invItems": 3
+    },
+    {
+      "key": "KeyA",
+      "ms": 2200,
+      "x": 1255.47,
+      "y": 2895.63,
+      "hp": 100,
+      "seed": 2182077881,
+      "qaOffset": 3600000,
+      "dayTime": 0.8,
+      "dark": 0.763,
+      "weatherSlot": 6,
+      "regionName": "Fisher's Point",
+      "invItems": 3
+    },
+    {
+      "key": "KeyA",
+      "ms": 1200,
+      "x": 1204.09,
+      "y": 2895.63,
+      "hp": 100,
+      "seed": 2182077881,
+      "qaOffset": 3600000,
+      "dayTime": 0.8,
+      "dark": 0.763,
+      "weatherSlot": 6,
+      "regionName": "Fisher's Point",
+      "invItems": 3
+    }
+  ],
+  "errors": [],
+  "spawn": {
+    "x": 1352,
+    "y": 2744,
+    "hp": 100,
+    "seed": 2182077881,
+    "qaOffset": 0,
+    "dayTime": 0.3,
+    "dark": 0.237,
+    "weatherSlot": 0,
+    "regionName": "Fisher's Point",
+    "invItems": 3
+  }
+}
