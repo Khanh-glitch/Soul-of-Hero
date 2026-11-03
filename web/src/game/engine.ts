@@ -171,22 +171,55 @@ export function isSheltered(r: RunState, px: number, py: number) {
 }
 
 // ---------------- custody (K1) ----------------
-export const C = (r: RunState, id: string) => r.custody[id];
+export const C = (r: RunState, id: string): Container => typeof id === 'string' && Object.prototype.hasOwnProperty.call(r.custody, id) ? r.custody[id] : undefined as unknown as Container;
 export function countItem(r: RunState, cid: string, key: string) { return C(r, cid).slots.reduce((a, s) => a + (s && s.key === key ? s.qty : 0), 0); }
 export function spaceFor(r: RunState, cid: string, key: string) {
-  const d = ITEMS[key]; let n = 0; for (const s of C(r, cid).slots) { if (!s) n += d.max; else if (s.key === key && d.max > 1) n += d.max - s.qty; } return n;
+  const d = ITEMS[key]; let n = 0; for (const s of C(r, cid).slots) { if (!s) n += d.max; else if (s.key === key && d.max > 1 && s.meta === undefined && s.dur === undefined && s.charge === undefined && !d.dur && !d.charge) n += d.max - s.qty; } return n;
 }
 /** Adds qty; returns leftover that did not fit (caller decides what to do — never silently deleted). */
 export function addItem(r: RunState, cid: string, key: string, qty: number, tmpl?: Partial<Stack>): number {
   const d = ITEMS[key]; const c = C(r, cid);
-  if (d.max > 1 && !tmpl?.meta) for (const s of c.slots) if (s && s.key === key && s.qty < d.max && qty > 0) { const m = Math.min(qty, d.max - s.qty); s.qty += m; qty -= m; }
+  if (d.max > 1 && !d.dur && !d.charge && tmpl?.meta === undefined && tmpl?.dur === undefined && tmpl?.charge === undefined) for (const s of c.slots) if (s && s.key === key && s.meta === undefined && s.dur === undefined && s.charge === undefined && s.qty < d.max && qty > 0) { const m = Math.min(qty, d.max - s.qty); s.qty += m; qty -= m; }
   for (let i = 0; i < c.slots.length && qty > 0; i++) if (!c.slots[i]) { const m = Math.min(qty, d.max); const s = mkStack(r, key, m, tmpl?.meta); if (tmpl?.charge !== undefined) s.charge = tmpl.charge; if (tmpl?.dur !== undefined) s.dur = tmpl.dur; c.slots[i] = s; qty -= m; }
   return qty;
 }
 export function addStack(r: RunState, cid: string, s: Stack): boolean {
   const c = C(r, cid); const d = ITEMS[s.key];
-  if (d.max > 1 && !s.meta) { const room = spaceFor(r, cid, s.key); if (room >= s.qty) { addItem(r, cid, s.key, s.qty); return true; } }
+  if (d.max > 1 && s.meta === undefined && s.dur === undefined && s.charge === undefined) { const room = spaceFor(r, cid, s.key); if (room >= s.qty) { addItem(r, cid, s.key, s.qty); return true; } }
   const i = c.slots.indexOf(null); if (i < 0) return false; c.slots[i] = s; return true;
+}
+// Unique or stateful stacks must never be merged into a different instance.
+function mergeable(a: Stack, b: Stack) {
+  return a.key === b.key && ITEMS[a.key].max > 1 && a.meta === undefined && b.meta === undefined &&
+    a.dur === undefined && b.dur === undefined && a.charge === undefined && b.charge === undefined;
+}
+function portion(r: RunState, s: Stack, qty: number): Stack {
+  return { ...s, uid: uid(r, 's'), qty };
+}
+/** Reserve exactly the paid physical stacks; split only when part of a stack is paid. */
+function reserveInputs(r: RunState, ins: [string, number][]): Stack[] {
+  const c = C(r, 'inv'); const reserved: Stack[] = [];
+  for (const [key, amount] of ins) {
+    let left = amount;
+    for (let i = c.slots.length - 1; i >= 0 && left > 0; i--) {
+      const s = c.slots[i]; if (!s || s.key !== key) continue;
+      const n = Math.min(left, s.qty);
+      if (n === s.qty) { reserved.push(s); c.slots[i] = null; }
+      else { reserved.push(portion(r, s, n)); s.qty -= n; }
+      left -= n;
+    }
+    if (left) throw new Error('reservation underflow');
+  }
+  return reserved;
+}
+/** Return original instances without merging. Full inventories produce physical drops. */
+function returnReservations(r: RunState, stacks: Stack[], x: number, y: number, now: number) {
+  const inv = C(r, 'inv');
+  for (const stack of stacks) {
+    const slot = inv.slots.indexOf(null);
+    if (slot >= 0) inv.slots[slot] = stack;
+    else dropStackEntity(r, stack, x, y, now);
+  }
 }
 export function removeItem(r: RunState, cid: string, key: string, qty: number) {
   const c = C(r, cid); for (let i = c.slots.length - 1; i >= 0 && qty > 0; i--) { const s = c.slots[i]; if (s && s.key === key) { const m = Math.min(qty, s.qty); s.qty -= m; qty -= m; if (s.qty <= 0) c.slots[i] = null; } }
@@ -195,7 +228,8 @@ export function removeItem(r: RunState, cid: string, key: string, qty: number) {
 export function invWeight(r: RunState) { let w = 0; for (const cid of ['inv', 'eq']) for (const s of C(r, cid).slots) if (s) w += ITEMS[s.key].w * s.qty; return w; }
 export function cartWeight(r: RunState, cid: string) { return C(r, cid).slots.reduce((a, s) => a + (s ? ITEMS[s.key].w * s.qty : 0), 0); }
 export function hasAll(r: RunState, cid: string, ins: [string, number][]) { return ins.every(([k, q]) => countItem(r, cid, k) >= q); }
-export function spawnDrop(r: RunState, key: string, qty: number, x: number, y: number, now: number, tmpl?: Partial<Stack>, burst = true) {
+export function spawnDrop(r: RunState, key: string, qty: number, x: number, y: number, now: number, tmpl?: Partial<Stack>, burst = true): Entity {
+  if (qty > ITEMS[key].max) { const first = spawnDrop(r, key, ITEMS[key].max, x, y, now, tmpl, burst); spawnDrop(r, key, qty - ITEMS[key].max, x, y, now, tmpl, burst); return first; }
   const c = mkContainer(r, 'drop', 1); const s = mkStack(r, key, qty, tmpl?.meta); if (tmpl?.charge !== undefined) s.charge = tmpl.charge; if (tmpl?.dur !== undefined) s.dur = tmpl.dur; c.slots[0] = s;
   const a = rngNext(r) * Math.PI * 2, sp = burst ? 30 + rngNext(r) * 40 : 0;
   const e: Entity = { id: uid(r, 'd'), kind: 'drop', x, y, c: c.id, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, born: now }; r.entities[e.id] = e; return e;
@@ -203,13 +237,28 @@ export function spawnDrop(r: RunState, key: string, qty: number, x: number, y: n
 function dropStackEntity(r: RunState, s: Stack, x: number, y: number, now: number) { const c = mkContainer(r, 'drop', 1); c.slots[0] = s; const e: Entity = { id: uid(r, 'd'), kind: 'drop', x, y, c: c.id, vx: 0, vy: 0, born: now }; r.entities[e.id] = e; return e; }
 function giveOrDrop(r: RunState, key: string, qty: number, now: number, tmpl?: Partial<Stack>) { const left = addItem(r, 'inv', key, qty, tmpl); if (left > 0) spawnDrop(r, key, left, r.player.x, r.player.y, now, tmpl); }
 /** Move an entire container's contents into a physical bag at (x,y) — used for death/reclaim/destroyed chests. No deletion, no duplication. */
-export function bagContainers(r: RunState, cids: string[], x: number, y: number, now: number, label: string) {
-  const stacks: Stack[] = []; for (const cid of cids) { const c = C(r, cid); if (!c) continue; for (let i = 0; i < c.slots.length; i++) if (c.slots[i]) { stacks.push(c.slots[i]!); c.slots[i] = null; } }
-  if (!stacks.length) return null;
+export function bagContainers(r: RunState, cids: string[], x: number, y: number, now: number, label: string, extra: Stack[] = [], legacyJobs?: Entity['legacyJobs'], force = false) {
+  const stacks: Stack[] = [...extra]; for (const cid of cids) { const c = C(r, cid); if (!c) continue; for (let i = 0; i < c.slots.length; i++) if (c.slots[i]) { stacks.push(c.slots[i]!); c.slots[i] = null; } }
+  if (!stacks.length && !legacyJobs?.queue.length && !force) return null;
   const bag = mkContainer(r, 'bag', Math.max(8, stacks.length)); stacks.forEach((s, i) => (bag.slots[i] = s));
-  const e: Entity = { id: uid(r, 'b'), kind: 'bag', x, y, c: bag.id, label, born: now }; r.entities[e.id] = e; return e;
+  const e: Entity = { id: uid(r, 'b'), kind: 'bag', x, y, c: bag.id, label, born: now, legacyJobs }; r.entities[e.id] = e; return e;
+}
+/** Station-owned reservations and contents leave together on reclaim or destruction. */
+export function bagStation(r: RunState, e: Entity, now: number, label: string) {
+  const queue = e.station?.queue || [];
+  const reserved = queue.flatMap(j => j.reserved || []);
+  const legacy = queue.filter(j => j.reserved === undefined);
+  const bag = bagContainers(r, [e.c, e.station?.fuelC, e.station?.outC].filter(Boolean) as string[], e.x, e.y + 4, now, label, reserved,
+    legacy.length ? { stationType: e.type!, queue: legacy } : undefined);
+  if (e.station) e.station.queue = [];
+  return bag;
 }
 function removeEntity(r: RunState, e: Entity) { delete r.entities[e.id]; for (const cid of [e.c, e.station?.fuelC, e.station?.outC]) if (cid) delete r.custody[cid]; markDirty(); }
+/** Destruction and reclaim share the same custody transition. */
+export function destroyStructure(r: RunState, e: Entity, now: number) {
+  if (r.entities[e.id] !== e || e.kind !== 'struct') return null;
+  const bag = bagStation(r, e, now, 'Wreckage'); removeEntity(r, e); return bag;
+}
 
 // ---------------- achievements & score (C20/C21) ----------------
 export function award(gs: GameState, key: string, now: number) {
@@ -257,7 +306,7 @@ export function killCreature(gs: GameState, m: Creature, now: number) {
 export function killPlayer(gs: GameState, now: number, cause: string) {
   const r = gs.run!; const p = r.player; if (p.dead) return;
   p.dead = true; p.deadT = 0; p.hp = 0; p.action = null; p.pulling = null;
-  const bag = bagContainers(r, ['inv', 'eq'], p.x, p.y, now, 'Your bag');
+  const bag = bagContainers(r, ['inv', 'eq'], p.x, p.y, now, 'Your bag', [], undefined, true);
   receipt(r, now, 'death', `${cause}; bag=${bag?.id ?? 'none'}`);
   pushLog(r, now, `You died (${cause}). Your belongings lie in a bag where you fell.`, 'red');
 }
@@ -288,9 +337,9 @@ export function countStones(r: RunState) { const keys = Object.values(ELDERS).ma
 
 // ---------------- build validation (C07) ----------------
 export function buildReason(gs: GameState, type: string, tx: number, ty: number): string | null {
-  const r = gs.run!; const d = STRUCTS[type]; if (!d) return 'Unknown structure.';
+  const r = gs.run!; if (typeof type !== 'string' || !Object.prototype.hasOwnProperty.call(STRUCTS, type)) return 'Unknown structure.'; const d = STRUCTS[type];
   const w = getWorld(); const p = r.player;
-  if (tx < 1 || ty < 1 || tx >= WW - 1 || ty >= WH - 1) return 'Out of bounds.';
+  if (!Number.isInteger(tx) || !Number.isInteger(ty) || tx < 1 || ty < 1 || tx >= WW - 1 || ty >= WH - 1) return 'Out of bounds.';
   if (dist(p.x, p.y, tx * TILE + 8, ty * TILE + 8) > 4.6 * TILE) return 'Too far away.';
   const t = effTile(r, tx, ty);
   if ([T.DEEP, T.SHALLOW, T.RIVER, T.CLIFF, T.PWALL, T.LAVA, T.FLOOR, T.ICE].includes(t)) return 'Ground is not buildable here.';
@@ -305,7 +354,7 @@ export function buildReason(gs: GameState, type: string, tx: number, ty: number)
   if ((d.layer === 'wall' || d.layer === 'obj') && (layers.includes('wall') || layers.includes('obj'))) return 'Tile occupied.';
   if (d.block && Math.hypot(p.x - (tx * TILE + 8), p.y - (ty * TILE + 8)) < 11) return 'You are standing there.';
   if (d.block && r.creatures.some(m => m.state !== 'dead' && Math.hypot(m.x - (tx * TILE + 8), m.y - (ty * TILE + 8)) < 12)) return 'A creature is in the way.';
-  if (d.need === 'claim' && !claimAt(r, tx, ty)) return 'Must be inside your claimed land (place a Claim Totem).';
+  if (d.need === 'claim' && (!claimAt(r, tx, ty) || !owned(claimAt(r, tx, ty)!))) return 'Must be inside your claimed land (place a Claim Totem).';
   if (d.need === 'free') {
     const claims = Object.values(r.entities).filter(e => e.kind === 'struct' && e.type === 'claim');
     if (claims.length >= BAL.economy.maxClaims) return `Claim limit reached (${BAL.economy.maxClaims}).`;
@@ -318,8 +367,13 @@ export function buildReason(gs: GameState, type: string, tx: number, ty: number)
 
 // ---------------- dispatcher ----------------
 export function dispatch(gs: GameState, it: Intent, now: number): Result {
+  if (!it || typeof it.id !== 'string' || !it.id.trim() || typeof it.type !== 'string' || !Number.isFinite(now)) return { ok: false, reason: 'Invalid request.' };
+  if (gs.profile.profileReceipts.includes(`intent:${it.id}`)) return { ok: false, reason: 'Duplicate request ignored.', dup: true };
   const r = gs.run;
-  if (it.type === 'startRun') return startRun(gs, it.character, now, it.region ?? null, it.seed);
+  if (it.type === 'startRun') {
+    if (!['male', 'female'].includes(it.character) || (it.region != null && (!Number.isInteger(it.region) || it.region < 0 || it.region >= getWorld().starts.length)) || (it.seed !== undefined && (!Number.isSafeInteger(it.seed) || it.seed < 0 || it.seed > 0xffffffff))) return { ok: false, reason: 'Invalid start.' };
+    const res = startRun(gs, it.character, now, it.region ?? null, it.seed); if (res.ok) gs.profile.profileReceipts.push(`intent:${it.id}`); return res;
+  }
   if (!r) return { ok: false, reason: 'No active run.' };
   if (r.seenIntents.includes(it.id)) return { ok: false, reason: 'Duplicate request ignored.', dup: true };
   const res = apply(gs, r, it, now);
@@ -327,6 +381,7 @@ export function dispatch(gs: GameState, it: Intent, now: number): Result {
     // The receipt ring is intentionally bounded for UI/history, but irreversible command
     // identity is durable run state and must never be evicted: an old replay is still a replay.
     r.seenIntents.push(it.id);
+    if (['deposit', 'buy', 'abandon', 'evacuate'].includes(it.type)) gs.profile.profileReceipts.push(`intent:${it.id}`);
     gs.revision++;
   }
   return res;
@@ -340,57 +395,91 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
   switch (it.type) {
     case 'respawn': return respawn(gs, now);
     case 'pickup': {
-      const e = r.entities[it.eid]; if (!e || (e.kind !== 'drop')) return fail('Nothing to pick up.');
+      const e = r.entities[it.eid]; if (!e || e.kind !== 'drop' || !owned(e)) return fail('Nothing to pick up.');
       if (!near(r, e, 2.5)) return fail('Too far.');
-      const s = C(r, e.c!).slots[0]; if (!s) { removeEntity(r, e); return fail('Empty.'); }
-      const room = ITEMS[s.key].max > 1 && !s.meta ? spaceFor(r, 'inv', s.key) : (C(r, 'inv').slots.includes(null) ? s.qty : 0);
+      const s = C(r, e.c!).slots[0]; if (!s) return fail('Empty.');
+      const room = ITEMS[s.key].max > 1 && s.meta === undefined && s.dur === undefined && s.charge === undefined ? spaceFor(r, 'inv', s.key) : (C(r, 'inv').slots.includes(null) ? s.qty : 0);
       if (room <= 0) return fail('Inventory full.');
       if (room >= s.qty) { if (!addStack(r, 'inv', s)) return fail('Inventory full.'); removeEntity(r, e); return ok('pickup', `${s.key}x${s.qty}`); }
       addItem(r, 'inv', s.key, room); s.qty -= room; return ok('pickup', `${s.key}x${room} (partial)`);
     }
-    case 'move': { // container ↔ container transfer (inv, eq, chest, cart, station, bag, loot)
-      const from = C(r, it.from), to = C(r, it.to); if (!from || !to) return fail('Invalid container.');
-      if (!canAccess(r, it.from) || !canAccess(r, it.to)) return fail('Out of reach.');
-      if (to.kind === 'loot' || to.kind === 'cash' || (to.kind === 'out')) return fail('Cannot store items there.');
+    case 'move': {
+      const from = C(r, it.from), to = C(r, it.to);
+      if (!from || !to || !canAccess(r, it.from) || !canAccess(r, it.to)) return fail('Invalid or out of reach container.');
+      if (!validSlot(from, it.fs) || (it.ts !== undefined && !validSlot(to, it.ts))) return fail('Invalid slot.');
       const s = from.slots[it.fs]; if (!s) return fail('Empty slot.');
-      const qty = Math.min(it.qty ?? s.qty, s.qty);
-      if (to.kind === 'fuel' && !ITEMS[s.key].fuel) return fail('Not a fuel.');
-      if (to.kind === 'eq') { const sl = ['head', 'body', 'back'][it.ts ?? 0]; if (ITEMS[s.key].slot !== sl) return fail('Wrong equipment slot.'); }
-      if (it.ts !== undefined && it.ts >= 0) {
+      if (it.qty !== undefined && (!Number.isSafeInteger(it.qty) || it.qty <= 0 || it.qty > s.qty)) return fail('Invalid quantity.');
+      const qty = it.qty ?? s.qty;
+      if (from === to && (it.ts === undefined || it.ts === it.fs)) return fail('Choose a different slot.');
+      if (it.ts !== undefined) {
         const tgt = to.slots[it.ts];
-        if (!tgt) { if (qty === s.qty) { to.slots[it.ts] = s; from.slots[it.fs] = null; } else { s.qty -= qty; to.slots[it.ts] = { ...mkStack(r, s.key, qty, s.meta) }; } return ok('move', `${s.key}x${qty} ${from.id}->${to.id}`); }
-        if (tgt.key === s.key && !s.meta && !tgt.meta && ITEMS[s.key].max > 1) { const m = Math.min(qty, ITEMS[s.key].max - tgt.qty); if (m <= 0) return fail('Stack full.'); tgt.qty += m; s.qty -= m; if (s.qty <= 0) from.slots[it.fs] = null; return ok('move', `${s.key}x${m} merge`); }
-        if (from.kind === 'eq' && ITEMS[tgt.key].slot !== ITEMS[s.key].slot) return fail('Cannot swap into equipment.');
-        if (to.kind === 'fuel' && !ITEMS[tgt.key]?.fuel) return fail('Not a fuel.');
-        if (from.kind === 'fuel' && !ITEMS[tgt.key].fuel) return fail('Not a fuel.');
-        to.slots[it.ts] = s; from.slots[it.fs] = tgt; return ok('move', 'swap');
+        if (!accepts(to, it.ts, s)) return fail('Cannot store item there.');
+        if (!tgt) {
+          if (qty === s.qty) { to.slots[it.ts] = s; from.slots[it.fs] = null; }
+          else { to.slots[it.ts] = portion(r, s, qty); s.qty -= qty; }
+        } else if (mergeable(tgt, s)) {
+          const n = Math.min(qty, ITEMS[s.key].max - tgt.qty); if (n <= 0) return fail('Stack full.');
+          tgt.qty += n; s.qty -= n; if (!s.qty) from.slots[it.fs] = null;
+        } else {
+          if (qty !== s.qty || !accepts(from, it.fs, tgt)) return fail('Cannot swap these items.');
+          to.slots[it.ts] = s; from.slots[it.fs] = tgt;
+        }
+      } else {
+        if (['loot', 'cash', 'out'].includes(to.kind)) return fail('Cannot store items there.');
+        let remaining = qty;
+        // Preflight capacity; never partially modify a failed request.
+        let room = 0;
+        for (let i = 0; i < to.slots.length; i++) {
+          if (!accepts(to, i, s)) continue;
+          const t = to.slots[i]; if (!t) room += ITEMS[s.key].max;
+          else if (mergeable(t, s)) room += ITEMS[s.key].max - t.qty;
+        }
+        if (!room) return fail('No room.');
+        remaining = Math.min(remaining, room); const moved = remaining;
+        for (const t of to.slots) if (t && mergeable(t, s) && remaining > 0) {
+          const n = Math.min(remaining, ITEMS[s.key].max - t.qty); t.qty += n; s.qty -= n; remaining -= n;
+        }
+        for (let i = 0; i < to.slots.length && remaining > 0; i++) if (!to.slots[i] && accepts(to, i, s)) {
+          const n = Math.min(remaining, ITEMS[s.key].max);
+          if (n === s.qty) { to.slots[i] = s; from.slots[it.fs] = null; }
+          else { to.slots[i] = portion(r, s, n); s.qty -= n; }
+          remaining -= n;
+        }
+        if (s.qty === 0) from.slots[it.fs] = null;
+        if (to.kind === 'cart' && cartWeight(r, to.id) > BAL.cart.maxWeight) pushLog(r, now, 'The cart is overloaded — it will crawl.', 'red');
+        return ok('move', `${s.key}x${moved} ${from.id}->${to.id}`);
       }
-      // auto-place
-      const d = ITEMS[s.key]; const room = d.max > 1 && !s.meta ? spaceFor(r, to.id, s.key) : (to.slots.includes(null) ? s.qty : 0);
-      if (room <= 0) return fail('No room.');
-      const m = Math.min(room, qty);
-      if (m === s.qty && (d.max === 1 || s.meta)) { to.slots[to.slots.indexOf(null)] = s; from.slots[it.fs] = null; }
-      else { addItem(r, to.id, s.key, m); s.qty -= m; if (s.qty <= 0) from.slots[it.fs] = null; }
-      if (to.kind === 'cart' && cartWeight(r, to.id) > BAL.cart.maxWeight) pushLog(r, now, 'The cart is overloaded — it will crawl.', 'red');
-      return ok('move', `${s.key}x${m} ${from.id}->${to.id}`);
+      return ok('move', `${s.key} ${from.id}->${to.id}`);
     }
-    case 'split': { const c = C(r, it.c); const s = c?.slots[it.slot]; if (!s || s.qty < 2) return fail('Cannot split.'); const i = c.slots.indexOf(null); if (i < 0) return fail('No free slot.'); const h = Math.floor(s.qty / 2); s.qty -= h; c.slots[i] = mkStack(r, s.key, h); return ok('split', `${s.key} ${h}`); }
-    case 'sort': { const c = C(r, it.c); if (!c || c.kind === 'eq') return fail('Cannot sort.'); const items = c.slots.filter(Boolean) as Stack[]; const merged: Stack[] = [];
-      for (const s of items) { const m = merged.find(x => x.key === s.key && !x.meta && !s.meta && ITEMS[s.key].max > 1 && x.qty < ITEMS[s.key].max); if (m) { const k = Math.min(s.qty, ITEMS[s.key].max - m.qty); m.qty += k; s.qty -= k; if (s.qty > 0) merged.push(s); } else merged.push(s); }
+    case 'split': { const c = C(r, it.c); if (!c || !canAccess(r, it.c) || !validSlot(c, it.slot)) return fail('Invalid or out of reach container.');
+      const s = c.slots[it.slot]; if (!s || s.qty < 2) return fail('Cannot split.'); const i = c.slots.findIndex((v, n) => !v && accepts(c, n, s)); if (i < 0) return fail('No free slot.'); const h = Math.floor(s.qty / 2); s.qty -= h; c.slots[i] = portion(r, s, h); return ok('split', `${s.key} ${h}`); }
+    case 'sort': { const c = C(r, it.c); if (!c || !canAccess(r, it.c) || c.kind === 'eq') return fail('Cannot sort.'); const items = c.slots.filter(Boolean) as Stack[]; const merged: Stack[] = [];
+      for (const s of items) { const m = merged.find(x => mergeable(x, s) && x.qty < ITEMS[s.key].max); if (m) { const k = Math.min(s.qty, ITEMS[s.key].max - m.qty); m.qty += k; s.qty -= k; if (s.qty > 0) merged.push(s); } else merged.push(s); }
       const keep = it.c === 'inv' ? c.slots.slice(0, 8) : []; const rest = merged.filter(s => !keep.includes(s));
       const order = ['tool', 'weapon', 'core', 'armor', 'food', 'res', 'kit', 'bp', 'misc', 'stone', 'cash'];
       rest.sort((a, b) => order.indexOf(ITEMS[a.key].cat) - order.indexOf(ITEMS[b.key].cat) || a.key.localeCompare(b.key));
       const out = it.c === 'inv' ? [...keep.map(s => (s && s.qty > 0 ? s : null))] : []; while (out.length < c.slots.length) out.push(rest.shift() || null); c.slots = out; return ok('sort', c.id); }
-    case 'drop': { const c = C(r, it.c); const s = c?.slots[it.slot]; if (!s || !canAccess(r, it.c)) return fail('Nothing to drop.'); c.slots[it.slot] = null; if (p.pulling && s.key === 'x') p.pulling = null; dropStackEntity(r, s, p.x + Math.cos(p.aim) * 12, p.y + Math.sin(p.aim) * 12, now); return ok('drop', `${s.key}x${s.qty}`); }
+    case 'drop': { const c = C(r, it.c); const s = c && validSlot(c, it.slot) ? c.slots[it.slot] : null; if (!s || !canAccess(r, it.c)) return fail('Nothing to drop.'); c.slots[it.slot] = null; if (p.pulling && s.key === 'x') p.pulling = null; dropStackEntity(r, s, p.x + Math.cos(p.aim) * 12, p.y + Math.sin(p.aim) * 12, now); return ok('drop', `${s.key}x${s.qty}`); }
     case 'useItem': return useItem(gs, r, it, now, ok);
     case 'craft': return craft(gs, r, it, now, ok);
-    case 'cancelJob': { const e = r.entities[it.eid]; if (!e?.station || !near(r, e, 3)) return fail('Not here.'); const j = e.station.queue.findIndex(q => q.id === it.jobId); if (j < 0) return fail('No such job.');
-      const job = e.station.queue[j]; const rc = RECIPES[job.recipe]; e.station.queue.splice(j, 1); for (const [k, q] of rc?.ins || []) if (q > 0) giveOrDrop(r, k, q, now); return ok('job.cancel', job.recipe, 'Inputs returned.'); }
+    case 'cancelJob': { const e = r.entities[it.eid]; if (!e?.station || e.kind !== 'struct' || !owned(e) || !near(r, e, 3)) return fail('Not here.'); const j = e.station.queue.findIndex(q => q.id === it.jobId); if (j < 0) return fail('No such job.');
+      const job = e.station.queue[j]; if (!job.reserved) return fail('Legacy job has no recoverable input record; let it finish.');
+      e.station.queue.splice(j, 1); returnReservations(r, job.reserved, p.x, p.y, now); return ok('job.cancel', job.recipe, 'Reserved inputs returned to inventory or dropped nearby.'); }
+    case 'recoverLegacyJobs': {
+      const bag = r.entities[it.eid], station = r.entities[it.stationId];
+      if (!bag || bag.kind !== 'bag' || !bag.legacyJobs || !near(r, bag, 2.8)) return fail('Recovery bag is out of reach.');
+      if (!station || station.kind !== 'struct' || !owned(station) || !station.station || station.type !== bag.legacyJobs.stationType || !near(r, station, 3)) return fail('Use a matching station within reach.');
+      const max = STRUCTS[station.type!].station === 'research' ? 3 : 6;
+      if (station.station.queue.length + bag.legacyJobs.queue.length > max) return fail('Not enough queue space.');
+      station.station.queue.push(...bag.legacyJobs.queue); delete bag.legacyJobs;
+      return ok('job.legacy.restore', bag.id, 'Legacy jobs resumed at the matching station.');
+    }
     case 'build': {
       const why = buildReason(gs, it.struct, it.tx, it.ty); if (why) return fail(why);
       const d = STRUCTS[it.struct];
-      for (const [k, q] of d.cost) removeItem(r, 'inv', k, q);
-      const e: Entity = { id: uid(r, 'e'), kind: 'struct', type: it.struct, tx: it.tx, ty: it.ty, x: it.tx * TILE + 8, y: it.ty * TILE + 8, hp: d.hp, maxHp: d.hp, born: now };
+      const deployed = d.item ? reserveInputs(r, d.cost)[0] : undefined;
+      if (!d.item) for (const [k, q] of d.cost) removeItem(r, 'inv', k, q);
+      const e: Entity = { id: uid(r, 'e'), kind: 'struct', type: it.struct, tx: it.tx, ty: it.ty, x: it.tx * TILE + 8, y: it.ty * TILE + 8, hp: d.hp, maxHp: d.hp, born: now, deployed };
       if (d.slots) e.c = mkContainer(r, 'chest', d.slots).id;
       if (d.station && d.station !== 'research') e.station = { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 3).id, outC: mkContainer(r, 'out', 6).id };
       if (d.station === 'research') e.station = { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 0).id, outC: mkContainer(r, 'out', 4).id };
@@ -403,24 +492,24 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       return ok('build', `${it.struct}@${it.tx},${it.ty}`);
     }
     case 'placeCart': {
-      const idx = C(r, 'inv').slots.findIndex(s => s?.key === 'cart_kit'); if (idx < 0) return fail('No packed cart.');
+      const slots = C(r, 'inv').slots; const idx = slots[p.active]?.key === 'cart_kit' ? p.active : slots.findIndex(s => s?.key === 'cart_kit'); if (idx < 0) return fail('No packed cart.');
+      if (!Number.isFinite(it.x) || !Number.isFinite(it.y)) return fail('Invalid location.');
       const tx = Math.floor(it.x / TILE), ty = Math.floor(it.y / TILE); if (blockedAt(r, tx, ty) || [T.SHALLOW, T.RIVER].includes(effTile(r, tx, ty))) return fail('Cart needs open dry ground.');
       if (dist(p.x, p.y, it.x, it.y) > 3 * TILE) return fail('Too far.');
-      C(r, 'inv').slots[idx] = null; const c = mkContainer(r, 'cart', BAL.cart.slots);
-      const e: Entity = { id: uid(r, 'cart'), kind: 'cart', x: it.x, y: it.y, c: c.id, hp: 200, maxHp: 200 }; r.entities[e.id] = e; award(gs, 'cart', now); return ok('cart.place', e.id);
+      const deployed = C(r, 'inv').slots[idx]!; C(r, 'inv').slots[idx] = null; const c = mkContainer(r, 'cart', BAL.cart.slots);
+      const e: Entity = { id: uid(r, 'cart'), kind: 'cart', x: it.x, y: it.y, c: c.id, hp: 200, maxHp: 200, deployed }; r.entities[e.id] = e; award(gs, 'cart', now); return ok('cart.place', e.id);
     }
     case 'reclaim': {
-      const e = r.entities[it.eid]; if (!e || !near(r, e, 3)) return fail('Out of reach.');
-      if (e.kind === 'cart') { if (C(r, e.c!).slots.some(Boolean)) return fail('Unload the cart first.'); if (C(r, 'inv').slots.indexOf(null) < 0) return fail('Inventory full.'); if (p.pulling === e.id) p.pulling = null; removeEntity(r, e); addItem(r, 'inv', 'cart_kit', 1); return ok('cart.pack', e.id); }
+      const e = r.entities[it.eid]; if (!e || !owned(e) || !near(r, e, 3)) return fail('Out of reach or not owned.');
+      if (e.kind === 'cart') { if (C(r, e.c!).slots.some(Boolean)) return fail('Unload the cart first.'); if (C(r, 'inv').slots.indexOf(null) < 0) return fail('Inventory full.'); if (p.pulling === e.id) p.pulling = null; removeEntity(r, e); if (e.deployed) returnReservations(r, [e.deployed], e.x, e.y, now); else addItem(r, 'inv', 'cart_kit', 1); return ok('cart.pack', e.id); }
       if (e.kind !== 'struct') return fail('Cannot reclaim that.');
       if (e.type === 'claim' && Object.values(r.entities).some(o => o.kind === 'struct' && o.claim === e.id)) return fail('Remove the structures on this claim first.');
       const d = STRUCTS[e.type!];
       if (entsAt(r, e.tx!, e.ty!).some(o => o.id !== e.id && STRUCTS[o.type!]?.layer === 'roof') && d.layer === 'floor') return fail('Remove the roof above first.');
-      const cids = [e.c, e.station?.fuelC, e.station?.outC].filter(Boolean) as string[];
-      for (const j of e.station?.queue || []) for (const [k, q] of RECIPES[j.recipe]?.ins || []) if (q > 0) addItem(r, e.station!.outC, k, q) > 0 && spawnDrop(r, k, q, e.x, e.y, now);
-      const bag = bagContainers(r, cids, e.x, e.y + 4, now, 'Reclaimed contents');
+      if (e.station?.queue.some(j => j.reserved === undefined)) return fail('Legacy job has no recoverable input record; let it finish before reclaiming.');
+      const bag = bagStation(r, e, now, 'Reclaimed contents');
       removeEntity(r, e);
-      if (d.item) giveOrDrop(r, d.item, 1, now);
+      if (d.item) { if (e.deployed) returnReservations(r, [e.deployed], e.x, e.y, now); else giveOrDrop(r, d.item, 1, now); }
       else for (const [k, q] of d.cost) { const back = Math.floor(q * BAL.economy.reclaimRefund); if (back > 0) giveOrDrop(r, k, back, now); }
       return ok('reclaim', `${e.type}${bag ? ' contents→' + bag.id : ''}`);
     }
@@ -450,9 +539,10 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       return ok('cash.mint', `${e.id}:${countItem(r, e.c!, 'rcash')}`);
     }
     case 'deposit': { // C17 atomic debit physical → credit profile
-      const e = r.entities[it.eid]; if (!e || e.type !== 'escrow' || !near(r, e, 2.7)) return fail('Stand next to your Rương ký gửi.');
-      if (!claimAt(r, e.tx!, e.ty!)) return fail('Escrow chest is not on owned land.');
+      const e = r.entities[it.eid]; if (!e || e.type !== 'escrow' || !owned(e) || !near(r, e, 2.7)) return fail('Stand next to your Rương ký gửi.');
+      const claim = claimAt(r, e.tx!, e.ty!); if (!claim || !owned(claim)) return fail('Escrow chest is not on owned land.');
       const n = countItem(r, 'inv', 'rcash'); if (n <= 0) return fail('You carry no physical Ragnarok cash.');
+      if (!Number.isSafeInteger(gs.profile.securedCash + n) || !Number.isSafeInteger(r.deposited + n)) return fail('Cash total exceeds the supported range.');
       removeItem(r, 'inv', 'rcash', n); gs.profile.securedCash += n; r.deposited += n;
       gs.profile.profileReceipts.push(`dep:${r.id}:${it.id}:${n}`);
       award(gs, 'first_deposit', now);
@@ -497,15 +587,23 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       return endRun(gs, 'evacuated', now);
     }
     case 'abandon': return endRun(gs, 'abandoned', now);
-    case 'qaAdvance': { r.qaOffset += it.hours * HOUR; r.qaUsed = true; return ok('qa.advance', `+${it.hours}h (LOCAL/UNVERIFIED)`); }
+    case 'qaAdvance': { if (!Number.isFinite(it.hours) || it.hours < 0 || !Number.isFinite(r.qaOffset + it.hours * HOUR)) return fail('Invalid time advance.'); r.qaOffset += it.hours * HOUR; r.qaUsed = true; return ok('qa.advance', `+${it.hours}h (LOCAL/UNVERIFIED)`); }
     case 'castCancel': return ok('cast.cancel', 'no charge used');
   }
   return fail('Unknown action.');
 }
 
+function owned(e: Entity) { return e.owner === undefined || e.owner === 'player'; }
+function validSlot(c: Container, slot: unknown): slot is number { return Number.isInteger(slot) && (slot as number) >= 0 && (slot as number) < c.slots.length; }
+function accepts(c: Container, slot: number, s: Stack) {
+  if (['loot', 'cash', 'out'].includes(c.kind)) return false;
+  if (c.kind === 'fuel') return !!ITEMS[s.key]?.fuel;
+  if (c.kind === 'eq') return ITEMS[s.key]?.slot === ['head', 'body', 'back'][slot];
+  return true;
+}
 function canAccess(r: RunState, cid: string) {
   if (cid === 'inv' || cid === 'eq') return true;
-  for (const e of Object.values(r.entities)) if (e.c === cid || e.station?.fuelC === cid || e.station?.outC === cid) return dist(r.player.x, r.player.y, e.x, e.y) <= 2.8 * TILE;
+  for (const e of Object.values(r.entities)) if ((e.c === cid || e.station?.fuelC === cid || e.station?.outC === cid) && owned(e)) return dist(r.player.x, r.player.y, e.x, e.y) <= 2.8 * TILE;
   return false;
 }
 export function homeComplete(r: RunState) {
@@ -513,10 +611,11 @@ export function homeComplete(r: RunState) {
 }
 
 function useItem(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: string, d: string, m?: string) => Result): Result {
-  const c = C(r, it.c || 'inv'); const s = c.slots[it.slot]; if (!s) return fail('Empty.');
+  const cid = it.c ?? 'inv'; const c = C(r, cid); if (!c || !canAccess(r, cid) || !validSlot(c, it.slot)) return fail('Invalid or out of reach container.');
+  const s = c.slots[it.slot]; if (!s) return fail('Empty.');
   const d = ITEMS[s.key]; const p = r.player;
-  if (d.cat === 'bp') { const rec = s.meta!; if (r.knowledge.recipes.includes(rec)) return fail('You already know this recipe.'); r.knowledge.recipes.push(rec); c.slots[it.slot] = null; return ok('learn.blueprint', rec, `Learned: ${ITEMS[RECIPES[rec].out].name}`); }
-  if (d.slot) { const idx = ['head', 'body', 'back'].indexOf(d.slot); const eq = C(r, 'eq'); const prev = eq.slots[idx]; eq.slots[idx] = s; c.slots[it.slot] = prev; return ok('equip', s.key); }
+  if (d.cat === 'bp') { const rec = s.meta!; if (!RECIPES[rec]) return fail('Invalid blueprint.'); if (r.knowledge.recipes.includes(rec)) return fail('You already know this recipe.'); r.knowledge.recipes.push(rec); c.slots[it.slot] = null; return ok('learn.blueprint', rec, `Learned: ${ITEMS[RECIPES[rec].out].name}`); }
+  if (d.slot) { const idx = ['head', 'body', 'back'].indexOf(d.slot); const eq = C(r, 'eq'); if (c === eq) return fail('Already equipped.'); const prev = eq.slots[idx]; if (prev && !accepts(c, it.slot, prev)) return fail('Move the old equipment to inventory first.'); eq.slots[idx] = s; c.slots[it.slot] = prev; return ok('equip', s.key); }
   if (d.food) {
     if (s.key === 'water_flask') { if ((s.charge ?? 0) <= 0) return fail('Flask is empty.'); s.charge!--; p.thirst = Math.min(100, p.thirst + 30); return ok('drink.flask', `${s.charge}`); }
     const f = d.food; p.hunger = clamp(p.hunger + (f.hunger || 0), 0, 100); p.thirst = clamp(p.thirst + (f.thirst || 0), 0, 100); p.hp = clamp(p.hp + (f.hp || 0), 1, BAL.player.maxHp); p.warmth = clamp(p.warmth + (f.warmth || 0), 0, 100); p.rad = clamp(p.rad + (f.rad || 0), 0, 100);
@@ -527,11 +626,11 @@ function useItem(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: st
 }
 
 function stationNear(r: RunState, kind: string, eid?: string) {
-  if (eid) { const e = r.entities[eid]; if (e?.station && STRUCTS[e.type!].station === kind && near(r, e, 3)) return e; return null; }
-  return Object.values(r.entities).find(e => e.kind === 'struct' && STRUCTS[e.type!].station === kind && near(r, e, 3)) || null;
+  if (eid) { const e = r.entities[eid]; if (e?.station && owned(e) && STRUCTS[e.type!].station === kind && near(r, e, 3)) return e; return null; }
+  return Object.values(r.entities).find(e => e.kind === 'struct' && owned(e) && STRUCTS[e.type!].station === kind && near(r, e, 3)) || null;
 }
 function craft(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: string, d: string, m?: string) => Result): Result {
-  const rc = RECIPES[it.recipe]; if (!rc) return fail('Unknown recipe.');
+  if (typeof it.recipe !== 'string' || !Object.prototype.hasOwnProperty.call(RECIPES, it.recipe)) return fail('Unknown recipe.'); const rc = RECIPES[it.recipe];
   if (!r.knowledge.recipes.includes(it.recipe)) return fail('You have not learned this recipe.');
   const ins = rc.ins.filter(([, q]) => q > 0);
   if (!hasAll(r, 'inv', ins)) return fail('Missing: ' + ins.filter(([k, q]) => countItem(r, 'inv', k) < q).map(([k, q]) => `${ITEMS[k].name} ${countItem(r, 'inv', k)}/${q}`).join(', '));
@@ -543,8 +642,8 @@ function craft(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: stri
   }
   const st = stationNear(r, rc.station, it.eid); if (!st) return fail(`Requires a ${STRUCTS[rc.station].name} within reach.`);
   if (st.station!.queue.length >= 6) return fail('Station queue is full.');
-  for (const [k, q] of ins) removeItem(r, 'inv', k, q); // inputs reserved inside the job
-  st.station!.queue.push({ id: uid(r, 'j'), recipe: it.recipe, left: rc.secs * 1000, total: rc.secs * 1000 });
+  const reserved = reserveInputs(r, ins);
+  st.station!.queue.push({ id: uid(r, 'j'), recipe: it.recipe, left: rc.secs * 1000, total: rc.secs * 1000, reserved });
   return ok('job.queue', `${it.recipe}@${st.id}`, `${ITEMS[rc.out].name} queued at ${STRUCTS[st.type!].name}.`);
 }
 
@@ -558,22 +657,23 @@ function research(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: s
     if (!unknown.length) return fail('Nothing left to discover.');
     if (countItem(r, 'inv', 'spares') < B.randomSparesCost) return fail(`Needs ${B.randomSparesCost} Spares.`);
     const pool = unknown.filter(k => !k.startsWith('core_')); const pick = (pool.length ? pool : unknown)[Math.floor(rngNext(r) * (pool.length || unknown.length))];
-    removeItem(r, 'inv', 'spares', B.randomSparesCost); st.station!.queue.push({ id: uid(r, 'j'), recipe: 'R:' + pick, left: B.randomSeconds * 1000, total: B.randomSeconds * 1000 });
+    const reserved = reserveInputs(r, [['spares', B.randomSparesCost]]); st.station!.queue.push({ id: uid(r, 'j'), recipe: 'R:' + pick, left: B.randomSeconds * 1000, total: B.randomSeconds * 1000, reserved });
     return ok('research.random', pick, 'Tinkering with Spares… a blueprint will appear in the table output.');
   }
   if (it.mode === 'directed') {
     const k = it.recipe; if (!unknown.includes(k)) return fail('Already known or in progress.');
     if (RECIPES[k].tier >= 3) return fail('Too advanced to reverse-engineer from Spares — study a Core or find a blueprint.');
     if (countItem(r, 'inv', 'spares') < B.directedSparesCost) return fail(`Needs ${B.directedSparesCost} Spares.`);
-    removeItem(r, 'inv', 'spares', B.directedSparesCost); st.station!.queue.push({ id: uid(r, 'j'), recipe: 'R:' + k, left: B.directedSeconds * 1000, total: B.directedSeconds * 1000 });
+    const reserved = reserveInputs(r, [['spares', B.directedSparesCost]]); st.station!.queue.push({ id: uid(r, 'j'), recipe: 'R:' + k, left: B.directedSeconds * 1000, total: B.directedSeconds * 1000, reserved });
     return ok('research.directed', k);
   }
   if (it.mode === 'specimen') {
-    const s = C(r, 'inv').slots[it.slot]; if (!s) return fail('Pick a specimen.');
+    const inv = C(r, 'inv'); if (!validSlot(inv, it.slot)) return fail('Pick a specimen.'); const s = inv.slots[it.slot]; if (!s) return fail('Pick a specimen.');
     const target = ITEMS[s.key].specimen || CORE_STUDY[s.key]; if (!target) return fail('Nothing to learn from that.');
     if (known.has(target) || pending.has(target)) return fail('You already know what it can teach.');
-    if (s.qty > 1) s.qty--; else C(r, 'inv').slots[it.slot] = null;
-    st.station!.queue.push({ id: uid(r, 'j'), recipe: 'R:' + target, left: B.specimenSeconds * 1000, total: B.specimenSeconds * 1000 });
+    const reserved = s.qty > 1 ? [portion(r, s, 1)] : [s];
+    if (s.qty > 1) s.qty--; else inv.slots[it.slot] = null;
+    st.station!.queue.push({ id: uid(r, 'j'), recipe: 'R:' + target, left: B.specimenSeconds * 1000, total: B.specimenSeconds * 1000, reserved });
     return ok('research.specimen', `${s.key}->${target}`, 'Specimen dissected. Notes forming…');
   }
   return fail('Unknown research mode.');

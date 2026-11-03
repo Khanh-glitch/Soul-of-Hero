@@ -81,8 +81,13 @@ export interface Entity {
   garden?: { crop: string | null; growth: number; water: number };
   water?: number; minted?: boolean; claim?: string; vx?: number; vy?: number; born?: number; owner?: string;
   power?: number; fire?: number;
+  /** The original deployable instance, retained until reclaim or destruction. */
+  deployed?: Stack;
+  /** Legacy jobs with unknowable paid inputs, preserved after station destruction. */
+  legacyJobs?: { stationType: string; queue: Job[] };
 }
-export interface Job { id: string; recipe: string; left: number; total: number }
+/** Undefined reserved means an older save whose paid inputs cannot be reconstructed safely. */
+export interface Job { id: string; recipe: string; left: number; total: number; reserved?: Stack[] }
 
 export interface Trace { x: number; y: number; t: number; life: number; a: number; s: number }
 

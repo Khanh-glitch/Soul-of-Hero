@@ -22,7 +22,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
   const mouse = useRef({ x: 320, y: 180 }); const target = useRef<Interact | null>(null); const hitstop = useRef(0);
   const panelRef = useRef(panel); panelRef.current = panel; const buildRef = useRef(buildType); buildRef.current = buildType; const reclaimRef = useRef(reclaim); reclaimRef.current = reclaim;
   const saveT = useRef<any>(null); const toastKeys = useRef<Record<string, number>>({});
-  const scheduleSave = () => { clearTimeout(saveT.current); saveT.current = setTimeout(() => save(gs), 250); };
+  const scheduleSave = () => { clearTimeout(saveT.current); saveT.current = setTimeout(() => { void save(gs).then(ok => { if (!ok) toast('Save failed. Changes are not confirmed on disk.', 'bad'); }); }, 250); };
   const toast = useCallback((text: string, tone?: string) => { if (!text) return; const k = text; const n = Date.now(); if (toastKeys.current[k] && n - toastKeys.current[k] < 2500) return; toastKeys.current[k] = n; setToasts(t => [...t.slice(-3), { id: n + Math.random(), text, tone, t: n }]); }, []);
   const act = useCallback((type: string, payload: Record<string, any> = {}) => {
     const res = dispatch(gs, mkIntent(type, payload), Date.now());
@@ -105,7 +105,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       // close container panels when walking away
       const P = panelRef.current; if (P?.eid && gs.run.entities[P.eid]) { const e = gs.run.entities[P.eid]; if (Math.hypot(e.x - gs.run.player.x, e.y - gs.run.player.y) > 3.4 * TILE) setPanel(null); } else if (P?.eid && !gs.run.entities[P.eid]) setPanel(null);
       uiAcc += dt; if (uiAcc > 100) { uiAcc = 0; rerender(); }
-      saveAcc += dt; if (saveAcc > 5000) { saveAcc = 0; save(gs); }
+      saveAcc += dt; if (saveAcc > 5000) { saveAcc = 0; void save(gs).then(ok => { if (!ok) toast('Save failed. Changes are not confirmed on disk.', 'bad'); }); }
       ambAcc += dt; if (ambAcc > 1000) { ambAcc = 0; const w = weatherAt(gs.run, now); const z = getWorld().zone[Math.floor(gs.run.player.y / 16) * WW + Math.floor(gs.run.player.x / 16)]; setAmbience(w === 'storm' ? 1 : w === 'rain' ? 0.6 : 0, (z === 5 ? 0.9 : 0.25) + (w === 'storm' ? 0.6 : 0)); }
     };
     raf = requestAnimationFrame(loop); return () => cancelAnimationFrame(raf);
@@ -179,7 +179,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       {panel?.kind === 'build' && <BuildPanel api={api} />}
       {panel?.kind === 'map' && <MapPanel api={api} />}
       {panel?.kind === 'skills' && <SkillsPanel api={api} />}
-      {panel?.kind === 'menu' && <MenuPanel api={api} onSave={() => save(gs)} onQuit={() => { save(gs); onExit(); }} />}
+      {panel?.kind === 'menu' && <MenuPanel api={api} onSave={() => save(gs)} onQuit={async () => { if (await save(gs)) onExit(); else toast('Save failed; staying in the run.', 'bad'); }} />}
       {panel?.kind === 'vendor' && panel.eid && <VendorPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'escrow' && panel.eid && <EscrowPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'evac' && panel.eid && <EvacPanel api={api} eid={panel.eid} />}
