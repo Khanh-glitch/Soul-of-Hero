@@ -8,6 +8,8 @@ const DB = 'soul-of-hero', STORE = 'kv', KEY = 'state', LS = 'soh.state.v' + SAV
 const FORMAT = 'soh-snapshot-v1';
 let dbp: Promise<IDBDatabase | null> | null = null;
 let dbFailed = false;
+// Never overwrite a store that could not be read on this page load.
+let idbReadable = true, localReadable = true;
 function db(): Promise<IDBDatabase | null> {
   if (dbp) return dbp;
   dbp = new Promise(res => { try { const rq = indexedDB.open(DB, 1); rq.onupgradeneeded = () => rq.result.createObjectStore(STORE); rq.onsuccess = () => res(rq.result); rq.onerror = () => { dbFailed = true; res(null); }; } catch { if (typeof indexedDB !== 'undefined') dbFailed = true; res(null); } });
@@ -83,8 +85,8 @@ export function serializeSnapshot(gs: GameState): string {
   const payload = JSON.stringify(gs);
   return JSON.stringify({ format: FORMAT, payload, checksum: checksum(payload) });
 }
-type Candidate = { gs: GameState; payload: string };
-function decode(text: string): Candidate | null {
+type Candidate = { gs: GameState; payload: string; legacy: boolean; index: number };
+function decode(text: string, index: number): Candidate | null {
   try {
     const raw = JSON.parse(text);
     let payload = text, state = raw;
@@ -93,52 +95,62 @@ function decode(text: string): Candidate | null {
       payload = raw.payload; state = JSON.parse(payload);
     }
     const v = validate(state); if (!v) return null;
-    return { gs: v, payload: JSON.stringify(v) };
+    return { gs: v, payload: JSON.stringify(v), legacy: raw?.format === undefined, index };
   } catch { return null; }
 }
-/** Equal-sequence divergent snapshots are ambiguous: never guess which copy is newer. */
-export function selectSnapshots(copies: (string | null)[]): { gs: GameState | null; bad: number[]; conflict: boolean; unsupported: boolean } {
+/** Legacy writes did not increment revision for simulation. Same-run old copies can
+ * therefore tie; use the later simulation timestamp and preserve the other bytes.
+ * New-format ties or ties without an ordering signal remain ambiguous. */
+export function selectSnapshots(copies: (string | null)[]): { gs: GameState | null; bad: number[]; conflict: boolean; unsupported: boolean; legacyAlternate: number | null } {
   const bad: number[] = []; const valid: Candidate[] = []; let unsupported = false;
-  copies.forEach((text, i) => { if (text === null) return; try { const outer = JSON.parse(text); const value = outer?.format === FORMAT && typeof outer.payload === 'string' ? JSON.parse(outer.payload) : outer; if (Number.isInteger(value?.version) && value.version > SAVE_VERSION) unsupported = true; } catch { /* reported as damaged */ } const v = decode(text); if (v) valid.push(v); else bad.push(i); });
+  copies.forEach((text, i) => { if (text === null) return; try { const outer = JSON.parse(text); const value = outer?.format === FORMAT && typeof outer.payload === 'string' ? JSON.parse(outer.payload) : outer; if (Number.isInteger(value?.version) && value.version > SAVE_VERSION) unsupported = true; } catch { /* reported as damaged */ } const v = decode(text, i); if (v) valid.push(v); else bad.push(i); });
   valid.sort((a, b) => b.gs.revision - a.gs.revision);
-  const top = valid[0];
-  const conflict = !!top && valid.some(v => v.gs.revision === top.gs.revision && v.payload !== top.payload);
-  return { gs: conflict || unsupported ? null : top?.gs ?? null, bad, conflict, unsupported };
+  let top = valid[0]; let conflict = false; let legacyAlternate: number | null = null;
+  if (top && valid[1] && top.gs.revision === valid[1].gs.revision && top.payload !== valid[1].payload) {
+    const other = valid[1], a = top.gs.run, b = other.gs.run;
+    if (top.legacy && other.legacy && a && b && a.id === b.id && a.startedAt === b.startedAt && a.clock.lastSimAt !== b.clock.lastSimAt) {
+      if (b.clock.lastSimAt > a.clock.lastSimAt) { legacyAlternate = top.index; top = other; }
+      else legacyAlternate = other.index;
+    } else conflict = true;
+  }
+  return { gs: conflict || unsupported ? null : top?.gs ?? null, bad, conflict, unsupported, legacyAlternate };
 }
 export async function load(): Promise<LoadResult> {
   let text: string | null = null; let readFailed = false;
   const d = await db();
   if (d) text = await new Promise(res => { try { const tx = d.transaction(STORE, 'readonly'); const rq = tx.objectStore(STORE).get(KEY); rq.onsuccess = () => res(rq.result ?? null); rq.onerror = () => { readFailed = true; res(null); }; } catch { readFailed = true; res(null); } });
-  if (dbFailed || readFailed) return { gs: null, note: 'IndexedDB could not be read. Save copies were left untouched; retry or back up browser storage.' };
-  let ls: string | null = null;
-  try { if (typeof localStorage !== 'undefined') ls = localStorage.getItem(LS); } catch { return { gs: null, note: 'Local storage could not be read. Save copies were left untouched for recovery.' }; }
+  idbReadable = !(dbFailed || readFailed);
+  let ls: string | null = null; localReadable = true;
+  try { if (typeof localStorage !== 'undefined') ls = localStorage.getItem(LS); } catch { localReadable = false; }
   const copies = [text, ls]; const selected = selectSnapshots(copies);
   if (selected.unsupported) return { gs: null, note: 'A save was created by a newer version. No copy was overwritten or downgraded.' };
-  if (selected.conflict) return { gs: null, note: 'Save copies have the same sequence but different contents. Recovery is required; neither copy was overwritten.' };
+  if (selected.conflict) return { gs: null, note: 'Save copies have the same sequence but different contents. Neither copy was overwritten.' };
   if (!selected.gs) {
+    if (!idbReadable || !localReadable) return { gs: null, note: 'Browser storage could not be read. Save copies were left untouched; retry.' };
     if (selected.bad.length) return { gs: null, note: 'No valid compatible save was found. Original copies were left untouched for recovery.' };
     return { gs: newGame() };
   }
-  if (selected.bad.length) {
-    // Preserve every rejected byte before allowing gameplay to overwrite a copy.
-    try { for (const i of selected.bad) { const prefix = `soh.quarantine.${Date.now()}.${i}`; let key = prefix, n = 0; while (localStorage.getItem(key) !== null) key = `${prefix}.${++n}`; localStorage.setItem(key, copies[i]!); } }
-    catch { return { gs: null, note: 'A damaged save could not be quarantined. Original copies were left untouched for recovery.' }; }
+  const preserve = [...selected.bad, ...(selected.legacyAlternate === null ? [] : [selected.legacyAlternate])];
+  if (preserve.length) {
+    // Do not overwrite the alternate old save or rejected bytes before preserving them.
+    try { for (const i of preserve) { const prefix = `soh.quarantine.${Date.now()}.${i}`; let key = prefix, n = 0; while (localStorage.getItem(key) !== null) key = `${prefix}.${++n}`; localStorage.setItem(key, copies[i]!); } }
+    catch { return { gs: null, note: 'A save copy could not be preserved. Original copies were left untouched; retry after freeing storage.' }; }
   }
   const m = migrate(selected.gs); const r = m.gs?.run;
   const legacy = r && Object.values(r.entities).some(e => e.station?.queue.some(j => j.reserved === undefined) || e.legacyJobs?.queue.length);
-  const notes = [selected.bad.length ? 'A damaged save copy was quarantined; a valid copy was recovered, but it may be older.' : '', m.note || '', legacy ? 'Older queued jobs have no recorded inputs: finish them before cancellation or reclaim; destroyed jobs can be resumed from their recovery bag.' : ''].filter(Boolean);
+  const notes = [selected.bad.length ? 'A damaged save copy was quarantined; a valid copy was recovered, but it may be older.' : '', selected.legacyAlternate !== null ? 'An older save copy was preserved; the later same-run snapshot was continued.' : '', !idbReadable || !localReadable ? 'A browser storage copy could not be read and will not be overwritten this session.' : '', m.note || '', legacy ? 'Older queued jobs have no recorded inputs: finish them before cancellation or reclaim; destroyed jobs can be resumed from their recovery bag.' : ''].filter(Boolean);
   return { gs: m.gs, note: notes.join(' ') || undefined };
 }
 let writeTail: Promise<unknown> = Promise.resolve();
 export async function save(gs: GameState): Promise<boolean> {
   let text: string; try { text = serializeSnapshot(gs); } catch { return false; }
-  let local = false; try { localStorage.setItem(LS, text); local = true; } catch { /* quota */ }
+  let local = false; try { if (localReadable) { localStorage.setItem(LS, text); local = true; } } catch { /* quota */ }
   const write = async () => {
-    const d = await db(); if (!d) return false;
+    if (!idbReadable) return false; const d = await db(); if (!d) return false;
     return await new Promise<boolean>(res => { try { const tx = d.transaction(STORE, 'readwrite'); tx.objectStore(STORE).put(text, KEY); tx.oncomplete = () => res(true); tx.onerror = () => res(false); tx.onabort = () => res(false); } catch { res(false); } });
   };
   const result = writeTail.then(write, write); writeTail = result;
   return local || await result;
 }
-export function saveSync(gs: GameState): boolean { try { localStorage.setItem(LS, serializeSnapshot(gs)); return true; } catch { return false; } }
+export function saveSync(gs: GameState): boolean { try { if (!localReadable) return false; localStorage.setItem(LS, serializeSnapshot(gs)); return true; } catch { return false; } }
 export async function wipeAll() { try { localStorage.removeItem(LS); } catch { /* */ } const d = await db(); if (d) await new Promise<void>(res => { const tx = d.transaction(STORE, 'readwrite'); tx.objectStore(STORE).delete(KEY); tx.oncomplete = () => res(); tx.onerror = () => res(); }); }
