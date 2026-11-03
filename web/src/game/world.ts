@@ -176,7 +176,7 @@ function genWorld(layoutId: LayoutId): World {
   stamp('b_s0', 'Farmstead', st[0].tx + 3, st[0].ty - 3, 6, 5, 'thatch', [[2, 4]]); crate(st[0].tx + 2, st[0].ty - 4, 's0', [['berries', 3], ['fiber', 6], ['rope', 1]]);
   stamp('b_s1', 'Net Shed', st[1].tx - 3, st[1].ty - 2, 5, 5, 'thatch', [[2, 4]]); crate(st[1].tx - 3, st[1].ty - 3, 's1', [['meat', 2], ['rope', 2], ['bandage', 1]]);
   stamp('b_s2', 'Ranger Cabin', st[2].tx + 6, st[2].ty + 3, 6, 5, 'wood', [[2, 0]]); crate(st[2].tx + 6, st[2].ty + 3, 's2', [['torch', 2], ['stone', 4], ['bandage', 1]]);
-  stamp('b_s3', 'Salvager Shack', st[3].tx - 3, st[3].ty + 3, 5, 5, 'tin', [[2, 0]]); crate(st[3].tx - 3, st[3].ty + 4, 's3', [['scrap', 4], ['spares', 2], ['water_flask', 1]]);
+  stamp('b_s3', 'Salvager Shack', st[3].tx - 3, st[3].ty + 3, 5, 5, 'tin', [[2, 0]]); crate(st[3].tx - 3, st[3].ty + 4, 's3', [['scrap', 4], ['spares', 2], ['water_flask', 1], ['field_repair_kit', 1]]);
   // trading post
   const tp = byId('tp'); stamp('b_tp', 'Trading Post', tp.tx, tp.ty - 4, 11, 7, 'tile', [[5, 6]]);
   statics.push({ kind: 'vendor', tx: tp.tx, ty: tp.ty - 5, poi: 'tp', label: 'Mirela the Trader' });

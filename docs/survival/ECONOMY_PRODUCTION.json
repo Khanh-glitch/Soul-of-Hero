@@ -181,7 +181,8 @@
         "c2": "#c4c6a1",
         "w": 0.3,
         "max": 30,
-        "desc": "Cloth treated with salt and Bitterleaf at a fire. Competes with food and medicine."
+        "desc": "Cloth treated with salt and Bitterleaf at a fire. Competes with food and medicine.",
+        "studyRecipe": "treated_canvas"
       },
       "obtained": {
         "sources": [],
@@ -220,7 +221,7 @@
         ],
         "structures": [],
         "fuel": false,
-        "study": null,
+        "study": "treated_canvas",
         "repair": null,
         "salvage": null,
         "repairCostFor": [],
@@ -244,11 +245,31 @@
         "c2": "#d7d7be",
         "w": 0.5,
         "max": 10,
-        "desc": "Consume one from the pack to restore up to 100 durability to a repairable carried tool, away from a bench."
+        "desc": "Consume one from the pack to restore up to 100 durability to a repairable carried tool, away from a bench.",
+        "studyRecipe": "field_repair_kit"
       },
       "obtained": {
-        "sources": [],
-        "poi": [],
+        "sources": [
+          "wreck"
+        ],
+        "poi": [
+          {
+            "layout": "shipping",
+            "poi": "s3",
+            "tx": 164,
+            "ty": 75,
+            "key": "field_repair_kit",
+            "qty": 1
+          },
+          {
+            "layout": "dev_delta",
+            "poi": "s3",
+            "tx": 164,
+            "ty": 75,
+            "key": "field_repair_kit",
+            "qty": 1
+          }
+        ],
         "cashChests": [],
         "drops": [],
         "recipes": [
@@ -263,7 +284,7 @@
         "ingredients": [],
         "structures": [],
         "fuel": false,
-        "study": null,
+        "study": "field_repair_kit",
         "repair": null,
         "salvage": null,
         "repairCostFor": [],
@@ -4863,8 +4884,9 @@
         "c2": "#f0c060",
         "w": 1.5,
         "max": 5,
-        "desc": "Powers generators.",
-        "fuel": 60
+        "desc": "Powers generators. Can be studied or burned instead.",
+        "fuel": 60,
+        "studyRecipe": "fuel_can"
       },
       "obtained": {
         "sources": [
@@ -4926,7 +4948,7 @@
         "ingredients": [],
         "structures": [],
         "fuel": true,
-        "study": null,
+        "study": "fuel_can",
         "repair": null,
         "salvage": null,
         "repairCostFor": [],
@@ -5427,7 +5449,9 @@
         "directedSpares": true,
         "randomSpares": true,
         "randomNotes": "when unknown and not already pending",
-        "studyInputs": []
+        "studyInputs": [
+          "treated_canvas"
+        ]
       }
     },
     "field_repair_kit": {
@@ -5453,7 +5477,9 @@
         "directedSpares": true,
         "randomSpares": true,
         "randomNotes": "when unknown and not already pending",
-        "studyInputs": []
+        "studyInputs": [
+          "field_repair_kit"
+        ]
       }
     },
     "trail_pack": {
@@ -5581,7 +5607,9 @@
         "directedSpares": true,
         "randomSpares": true,
         "randomNotes": "when unknown and not already pending",
-        "studyInputs": []
+        "studyInputs": [
+          "fuel_can"
+        ]
       }
     },
     "mechanical_parts": {
@@ -7251,6 +7279,10 @@
           [
             "fasteners",
             0.12
+          ],
+          [
+            "field_repair_kit",
+            0.04
           ]
         ],
         "block": true,
@@ -7741,6 +7773,10 @@
             [
               "water_flask",
               1
+            ],
+            [
+              "field_repair_kit",
+              1
             ]
           ]
         },
@@ -8171,6 +8207,10 @@
             ],
             [
               "water_flask",
+              1
+            ],
+            [
+              "field_repair_kit",
               1
             ]
           ]

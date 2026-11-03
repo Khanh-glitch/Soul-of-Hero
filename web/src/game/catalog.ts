@@ -26,8 +26,8 @@ export const ITEMS: Record<string, ItemDef> = {
   mechanical_parts: I({ name: 'Mechanical Parts', cat: 'res', icon: 'parts', c1: '#707984', c2: '#c9d2d8', w: 0.5, max: 30, desc: 'Found in industrial wrecks or made at a bench. Improve tools or maintain equipment.' }),
   // Provisional, run-local cross-system materials and equipment.
   fasteners: I({ name: 'Forged Fasteners', cat: 'res', icon: 'fasteners', c1: '#85939b', c2: '#e4cd88', w: 0.2, max: 30, desc: 'Found on wrecks or made from iron and scrap. Used for field repairs, packs and canteens.', studyRecipe: 'fasteners' }),
-  treated_canvas: I({ name: 'Treated Canvas', cat: 'res', icon: 'canvas', c1: '#71896b', c2: '#c4c6a1', w: 0.3, max: 30, desc: 'Cloth treated with salt and Bitterleaf at a fire. Competes with food and medicine.' }),
-  field_repair_kit: I({ name: 'Field Repair Kit', cat: 'kit', icon: 'repairkit', c1: '#9a7745', c2: '#d7d7be', w: 0.5, max: 10, desc: 'Consume one from the pack to restore up to 100 durability to a repairable carried tool, away from a bench.' }),
+  treated_canvas: I({ name: 'Treated Canvas', cat: 'res', icon: 'canvas', c1: '#71896b', c2: '#c4c6a1', w: 0.3, max: 30, desc: 'Cloth treated with salt and Bitterleaf at a fire. Competes with food and medicine.', studyRecipe: 'treated_canvas' }),
+  field_repair_kit: I({ name: 'Field Repair Kit', cat: 'kit', icon: 'repairkit', c1: '#9a7745', c2: '#d7d7be', w: 0.5, max: 10, desc: 'Consume one from the pack to restore up to 100 durability to a repairable carried tool, away from a bench.', studyRecipe: 'field_repair_kit' }),
   trail_pack: I({ name: 'Trail Pack', cat: 'armor', icon: 'pack', c1: '#7c7352', c2: '#c8bd87', w: 2, max: 1, desc: 'Increases walking carry threshold by 20 kg. Occupies the back slot instead of a warm cloak.', slot: 'back', carryBonus: 20 }),
   trail_canteen: I({ name: 'Trail Canteen', cat: 'food', icon: 'canteen', c1: '#617e72', c2: '#b4d6c5', w: 1.1, max: 1, desc: 'Holds 8 drinks or garden water. Crafted empty; refill at fresh water or a rain barrel.', food: { thirst: 30 }, charge: 8, initialCharge: 0, waterContainer: true }),
   fuel_briquette: I({ name: 'Packed Fuel Briquette', cat: 'res', icon: 'briquette', c1: '#363038', c2: '#a18f72', w: 0.35, max: 30, desc: 'Compact portable fuel: 90 seconds of burn. Packing sacrifices some charcoal energy.', fuel: 90 }),
@@ -102,7 +102,7 @@ export const ITEMS: Record<string, ItemDef> = {
   boar_tusk: I({ name: 'Boar Tusk (specimen)', cat: 'res', icon: 'fang', c1: '#c0a070', c2: '#fff0d0', w: 0.1, max: 10, desc: 'Study at a research table.', specimen: 'iron_sword' }),
   beetle_horn: I({ name: 'Beetle Horn (specimen)', cat: 'res', icon: 'fang', c1: '#5a2a1e', c2: '#e06a3a', w: 0.1, max: 10, desc: 'Study at a research table.', specimen: 'chitin_armor' }),
   keycard: I({ name: 'Vault Keycard', cat: 'misc', icon: 'card', c1: '#2a6a5a', c2: '#a0f0d0', w: 0.05, max: 5, desc: 'Opens a sealed industrial door. Consumed.' }),
-  fuel_can: I({ name: 'Fuel Canister', cat: 'misc', icon: 'can', c1: '#a03a1e', c2: '#f0c060', w: 1.5, max: 5, desc: 'Powers generators.', fuel: 60 }),
+  fuel_can: I({ name: 'Fuel Canister', cat: 'misc', icon: 'can', c1: '#a03a1e', c2: '#f0c060', w: 1.5, max: 5, desc: 'Powers generators. Can be studied or burned instead.', fuel: 60, studyRecipe: 'fuel_can' }),
   // Ragnarok & profile
   rcash: I({ name: 'Ragnarok Cash', cat: 'cash', icon: 'coin', c1: '#b07a1e', c2: '#ffe27a', w: 0.01, max: 999, desc: 'Physical, unsecured. Can be lost. Deposit in an owned Rương ký gửi.' }),
   escrow_chest: I({ name: 'Rương ký gửi', cat: 'kit', icon: 'chest', c1: '#5a3a7a', c2: '#ffd040', w: 4, max: 1, desc: 'Escrow chest. Place on owned land, then deposit physical Ragnarok cash into your profile.', place: 'escrow' }),
@@ -137,7 +137,7 @@ export const SOURCES: Record<string, SourceDef> = {
   herb: { name: 'Bitterleaf', mat: 'plant', hp: 3, stock: 2, yields: [['herb', 1]], block: false, regrow: 600, art: 'herb' },
   mushroom: { name: 'Marsh Caps', mat: 'plant', hp: 3, stock: 2, yields: [['mushroom', 1]], block: false, regrow: 600, art: 'mush' },
   scrap: { name: 'Roadside Scrap', mat: 'scrap', hp: 8, stock: 4, yields: [['scrap', 1]], bonus: [['spares', 0.55]], block: false, art: 'scrap' },
-  wreck: { name: 'Car Wreck', mat: 'scrap', hp: 30, stock: 8, yields: [['scrap', 1]], bonus: [['spares', 0.7], ['fuel_can', 0.06], ['mechanical_parts', 0.08], ['fasteners', 0.12]], block: true, art: 'wreck' },
+  wreck: { name: 'Car Wreck', mat: 'scrap', hp: 30, stock: 8, yields: [['scrap', 1]], bonus: [['spares', 0.7], ['fuel_can', 0.06], ['mechanical_parts', 0.08], ['fasteners', 0.12], ['field_repair_kit', 0.04]], block: true, art: 'wreck' },
 };
 
 // ---------- Creatures (K5) ----------
