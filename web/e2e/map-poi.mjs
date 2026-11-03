@@ -69,7 +69,7 @@ try {
       exitTarget={x:entry.x,y:entry.y+40};
     }
     const vault=vaults[0]; assert(outer&&vault);
-    let initialApproachTiles = 0; let defending = false; let lastDodgeAt=0;
+    let initialApproachTiles = 0; let defending = false; let evading=false; let lastDodgeAt=0;
     const actualGrid = async () => {
       const raw = await page.evaluate(() => structuredClone(window.__soh.run));
       // The SSR engine has its own blockGrid cache. Distinct snapshot ids force a fresh rebuild from live doors, entities and sources.
@@ -108,7 +108,7 @@ try {
           const keys=[];if(Math.abs(dx)>2)keys.push(dx>0?'d':'a');if(Math.abs(dy)>2)keys.push(dy>0?'s':'w');
           const beforeAttempt={x:cur.player.x,y:cur.player.y,hp:cur.player.hp,keys:[...keys]};
           for(const k of keys)await page.keyboard.down(k);await pause(remaining<=12?24:115);for(const k of keys)await page.keyboard.up(k);
-          cur=await state();if(!cur.player.dead&&!defending){const beforeDodge={x:cur.player.x,y:cur.player.y},handled=await defendNearby();cur=await state();if(handled||Math.hypot(cur.player.x-beforeDodge.x,cur.player.y-beforeDodge.y)>10)evaded=true;}const moved=Math.hypot(cur.player.x-beforeAttempt.x,cur.player.y-beforeAttempt.y),left=Math.hypot(wp.x-cur.player.x,wp.y-cur.player.y);
+          cur=await state();if(!cur.player.dead&&(!defending||evading)){const beforeDodge={x:cur.player.x,y:cur.player.y},handled=await defendNearby();cur=await state();if(handled||Math.hypot(cur.player.x-beforeDodge.x,cur.player.y-beforeDodge.y)>10)evaded=true;}const moved=Math.hypot(cur.player.x-beforeAttempt.x,cur.player.y-beforeAttempt.y),left=Math.hypot(wp.x-cur.player.x,wp.y-cur.player.y);
           wpDiag.attempts.push({try:tries+1,from:beforeAttempt,to:{x:cur.player.x,y:cur.player.y,hp:cur.player.hp},moved:+moved.toFixed(2),remaining:+left.toFixed(2),action:cur.player.action||null,creatures:cur.creatures.filter(m=>Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<100).map(m=>({id:m.id,type:m.type,state:m.state,x:m.x,y:m.y,hp:m.hp}))});
           if(cur.player.dead){diag.failed={reason:'player died during bounded waypoint input',player:cur.player,firstFailingWaypoint:{tile:[nx,ny],center:wp},attempt:wpDiag.attempts.at(-1),previousWaypoint:diag.waypoints.at(-1)||null,counts:cur.counts,nearby:cur.creatures.filter(m=>Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<260)};wpDiag.end={reason:'player-dead',actual:{x:cur.player.x,y:cur.player.y,hp:cur.player.hp}};diag.waypoints.push(wpDiag);routeDiagnostics.push(diag);await page.screenshot({path:path.join(out,`route-death-${layoutId}-${Date.now()}.png`),animations:'disabled'}).catch(()=>{});await fs.writeFile(path.join(out,`route-death-${layoutId}.json`),JSON.stringify(diag,null,2)).catch(()=>{});throw new Error(`route death at first failing waypoint ${JSON.stringify({...diag.failed,evasionHistory:routeDiagnostics.filter(x=>x.kind==='wildlife-evasion').slice(-8)})}`);}
           if(evaded)break;
@@ -141,7 +141,7 @@ try {
     }
     async function ensureVitals(){const cur=await state();if(cur.player.dead)throw new Error(`player died during ordinary-input travel at (${cur.player.x.toFixed(0)},${cur.player.y.toFixed(0)}), hp=${cur.player.hp}, hunger=${cur.player.hunger.toFixed(1)}, thirst=${cur.player.thirst.toFixed(1)}, nearby=${JSON.stringify(cur.creatures.filter(m=>Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<120))}`);if(cur.player.hp<92&&cur.counts.bandage)await useInventoryItem('bandage');if(cur.player.thirst<68&&cur.counts.water_flask)await useInventoryItem('water_flask');if(cur.player.hunger<68&&cur.counts.berries)await useInventoryItem('berries');}
     async function defendNearby(){
-      if(defending)return;defending=true;
+      if(defending&&!evading)return false;const wasDefending=defending;defending=true;
       try{
         const cur=await state();const threat=cur.creatures.filter(m=>!m.type.startsWith('elder_')&&['chase','track','tell','attack','recover'].includes(m.state)&&(()=>{const d=Math.hypot(m.x-cur.player.x,m.y-cur.player.y);return d<55||(['attack','tell','recover'].includes(m.state)&&d<130);})()).sort((a,b)=>Math.hypot(a.x-cur.player.x,a.y-cur.player.y)-Math.hypot(b.x-cur.player.x,b.y-cur.player.y))[0];
         if(!threat)return false;const td=Math.hypot(threat.x-cur.player.x,threat.y-cur.player.y),imminent=td<55||(['attack','tell','recover'].includes(threat.state)&&td<130);
@@ -152,8 +152,11 @@ try {
         if(Math.hypot(after.player.x-live.player.x,after.player.y-live.player.y)<8){
           for(const offset of [-0.8,0.8,-1.5,1.5]){const a=angle+offset,keys=[];if(Math.abs(Math.cos(a))>0.25)keys.push(Math.cos(a)>0?'d':'a');if(Math.abs(Math.sin(a))>0.25)keys.push(Math.sin(a)>0?'s':'w');for(const k of keys)await page.keyboard.down(k);await pause(220);for(const k of keys)await page.keyboard.up(k);const candidate=await state();if(candidate.player.dead)throw new Error(`player died while taking an ordinary alternate retreat from ${threat.type} ${threat.id}; state=${JSON.stringify(candidate.player)}`);if(Math.hypot(candidate.player.x-after.player.x,candidate.player.y-after.player.y)>=8){after=candidate;method+='; alternate ordinary WASD escape around physical obstruction';break;}after=candidate;}
         }
+        if(Math.hypot(after.player.x-live.player.x,after.player.y-live.player.y)<8&&!evading){
+          evading=true;try{const away=Math.atan2(live.player.y-threat.y,live.player.x-threat.x);for(const offset of [0,-0.8,0.8]){const a=away+offset,dest={x:Math.max(24,Math.min(W*16-24,live.player.x+Math.cos(a)*170)),y:Math.max(24,Math.min(H*16-24,live.player.y+Math.sin(a)*170))};try{await walkNear(dest.x,dest.y,20);after=await state();method+='; runtime collision-grid route around obstruction';break;}catch{after=await state();if(after.player.dead)throw new Error(`player died during bounded route escape from ${threat.type} ${threat.id}; state=${JSON.stringify(after.player)}`);}}}finally{evading=false;}
+        }
         routeDiagnostics.push({kind:'wildlife-evasion',threat:{id:threat.id,type:threat.type,state:threat.state,from:{x:threat.x,y:threat.y}},before:{x:live.player.x,y:live.player.y,hp:live.player.hp},after:{x:after.player.x,y:after.player.y,hp:after.player.hp},method:method+'; next route replanned from live position'});return true;
-      }finally{defending=false;}
+      }finally{defending=wasDefending;}
     }
 
     const startCrate=s.entities.find(e=>e.kind==='loot'&&e.poi===(landing==="Fisher's Point"?'s1':'s3'));assert(startCrate,'selected start crate missing');
