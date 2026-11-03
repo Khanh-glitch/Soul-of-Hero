@@ -1,19 +1,42 @@
 # Implementation checkpoint — issue #37, Map/POI milestone and prior Salt chain
 
-## Current Map/POI milestone (implementation complete; CI/browser evidence pending)
+## B1 — custody, save integrity and offline survival (implementation branch)
+
+Implementation follows the accepted [audit](../docs/survival/WEB_GAMEPLAY_AUDIT_3b37ae9.md) and does not merge PR #38. Newly queued crafting and research jobs own the actual paid stacks, including UID and state; cancellation, reclaim and station destruction transfer those stacks to inventory, drops or wreckage instead of recreating recipe quantities. New deployed cart/escrow instances retain their original identity on reclaim. Previously deployed legacy instances lack that record and still use their historical reclaim item; previously lost or duplicated items cannot be reconstructed.
+
+Older v3 jobs have no payment provenance. They may finish, but cancellation and reclaim are refused rather than minting guessed refunds. If a station is destroyed, its unknown jobs stay in a recovery bag and can be resumed at a nearby matching station when queue capacity allows. This is a conservative provisional recovery interaction, not a reconstruction of their missing inputs.
+
+Custody commands validate access/ownership, slots, quantities, destination compatibility and replay before mutation; stateful stacks do not merge. Save/Continue remains the existing local autosave and offline-catch-up flow. B1 retains per-serialization revision ordering, checksum for new snapshots, validation and non-destructive quarantine; it does not add a save manager. A failed read of one store no longer blocks a valid other copy, and the unreadable store is not written during that page session. For divergent raw legacy copies with equal revisions, the same run and different `lastSimAt`, the later simulation timestamp takes precedence and the other bytes are preserved first. This is a practical single-writer heuristic, not a trusted clock. If copies cannot be ordered, are incompatible, or cannot be preserved, the simple error screen offers Retry without overwriting them. Snapshot ordering does not coordinate multiple open tabs; legacy snapshots have no checksum. These client-side checks do not prevent deliberate edits, complete rollback, clock manipulation or establish a verified global ranking.
+
+Short source-level compatibility matrix (no browser journey):
+
+| Case | Result |
+| --- | --- |
+| No saved copies | Original new-player path. |
+| Original raw v3 run with old queued research job | Continue with profile, inventory and unknown job intact; normal autosave and offline catch-up. |
+| New snapshot with a later revision | Continue the later valid snapshot. |
+| Same-revision old same-run copies with different simulation times | Continue the later time and preserve the alternate raw copy before writes. |
+| One damaged or unreadable copy | Use a valid other copy; quarantine damaged bytes or avoid writing the unreadable store. |
+| Same-time divergent, unsupported, or no valid copy | Preserve originals, show a simple error and Retry; never silently create a new game. |
+
+Offline shelter now applies the HP floor only to hunger; thirst and radiation remain lethal. Death still commits once and creates one physical bag, including when empty. Local focused tests cover conservation/full containers, unique Core and kit metadata, legacy recovery, malformed/remote/replayed commands, snapshot selection and partial-write failure, and hunger/thirst/radiation. The retained original 20 tests remain; two assertions were corrected for the new incompatible-migration and hunger-only contracts. Local `npm test`: **46/46**; `npm run build`, `npx tsc --noEmit`, and E2E script syntax checks pass. No browser-bot journey was run for B1; the existing Salt and Map/POI journeys/workflow are retained. CI evidence below is for earlier commits, not the B1 implementation.
+
+
+## Map/POI milestone — recorded technical evidence; product review pending
 
 Control Tower accepted only the focused Salt Shale → Salted Roast checkpoint and ordered this prototype-first follow-on; PR #38 remains draft/unmerged. The current changes add a typed `schemaVersion: 1` content-pack model in `src/game/content.ts`, a selectable development layout, and a data-authored multi-stage POI, reusing existing door, keycard, generator, fuel, container, inventory, save and rendering systems. There are no POI-ID-specific controller branches.
 
-- `shipping` has no extra terrain/POI overlays; its canonical seeded island and existing placements/routes remain. The only existing-map tile correction is setting the Factory vault's authored door threshold to floor so an opened door is actually traversable.
+- `shipping` has an empty additive content pack: no terrain, POI, road, or fixed placement overlays are added to the canonical seeded island. Its existing geography and coordinates remain unchanged.
 - `dev_delta` adds a ridge layout with two passable gaps and the Delta Relay: exterior keycard/fuel cache → lawful keycard gate → fuel-powered generator → power gate → finite, useful vault loot.
 - Layout selection is available on the ordinary New Run screen. New runs persist `layoutId`; a legacy in-progress save without the additive field resolves to `shipping` without bumping the save format.
 - Content-pack tests cover supported versions, invalid dimensions/terrain/loot/geometry, old geography/POI stability, layout selection and run association. Local result: `npm test` 20/20, `npx tsc --noEmit`, `npm run build`, `node --check e2e/map-poi.mjs`, and `git diff --check` all pass.
-- `e2e/map-poi.mjs` and the workflow now run actual WASD/E/UI journeys for the shipping Factory Vault from Pinewatch and the dev Delta Relay from Eastcove, with unauthorized attempts, legal access, finite loot, exit/re-entry, page reload persistence and screenshots at 640×360 and 1280×720. **This browser journey has not yet run in CI; no screenshot has been visually accepted yet.** After the run, record its exact SHA/run ID/attempt/seed and inspect the captures, especially the title selector, HUD and simultaneous crate/inventory panels.
-- Browser persistence planned here means same-profile page reload + Continue, not OS-process exit/new-profile persistence. Waypoints are selected by test-side BFS; ordinary input performs all in-game movement and interactions. This is not blind-discoverability proof.
+- [Actions run 41567023346](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41567023346), attempt 1, at `a70c9141920b13b93d651754182c05bfdb1d3c9a`, passed all three jobs: Salt journey, shipping Lighthouse and dev Delta Relay. This was merged by PR #40 into the primary Web branch at `3b37ae90601dee098066cbc4cf465552f1eb6f04`. The separate [merge-SHA Actions run 41568509791](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41568509791) also passed all three jobs at that exact SHA. CI artifact screenshots were not independently opened.
+- Independent **local precommit** production-preview runs passed lawful access, physical loot, exit/re-entry and same-profile page reload + Continue: shipping `run_abqeh`, seed `17343593`; dev_delta `run_eltb8`, seed `24532388`. Their loot-panel screenshots at both 640×360 and 1280×720 were opened and inspected: see [`evidence/map-poi-local/`](evidence/map-poi-local/README.md). These local logs say `local-uncommitted`; do not conflate their seeds or images with CI's. CI artifact downloads were unavailable, so CI screenshots have **not** been independently opened here.
+- Waypoints were selected by test-side BFS and movement/interactions used ordinary inputs. This is not blind discovery, separate browser-process persistence, universal seed robustness, or human/product acceptance. The broader HOME → OFFLINE → RETURN E2E campaign is on HOLD per [Control Tower](https://github.com/Khanh-glitch/Soul-of-Hero/issues/37#issuecomment-6594382124).
 
-Historical evidence below records the earlier accepted gameplay checkpoint only. A reviewer flagged a seed mismatch between its narrative and committed run log; do not use that old seed to identify the upcoming Map/POI captures. Pair new run IDs, seed, exact SHA and screenshots from the same CI attempt.
+Historical evidence below records the earlier Salt checkpoint. A reviewer flagged a seed mismatch between its narrative and committed run log; treat that seed as unresolved, not as Map/POI provenance.
 
-**Historical scope:** one normal-player resource-to-workstation chain in the existing browser game. This is an evidence handoff, not a new specification. Canonical product contract remains authoritative: [`CURRENT_PRODUCT_CONTRACT.md`](../docs/survival/CURRENT_PRODUCT_CONTRACT.md). Review request: [Issue #37, Control Tower comment 6580050099](https://github.com/Khanh-glitch/Soul-of-Hero/issues/37#issuecomment-6580050099).
+**Historical scope:** one normal-player resource-to-workstation chain in the existing browser game. This is an evidence handoff, not a new specification. Canonical product contract remains authoritative: [`web/ref/bible.md`](ref/bible.md) (byte-identical to the Issue #37 pinned canonical contract). Review request: [Issue #37, Control Tower comment 6580050099](https://github.com/Khanh-glitch/Soul-of-Hero/issues/37#issuecomment-6580050099).
 
 ## Gate result
 
@@ -44,7 +67,7 @@ These are screenshots of the running production build—not mockups or source-re
 
 ## Validation and verification
 
-`validateGameplayCatalog` now rejects zero/negative recipe inputs and validates catalog references, station definitions, placement terrain/chance, and terrain placement collisions. The invalid `antirad` zero-cost `water_flask` input was removed; it was not consumed by gameplay. Coverage includes malformed input quantities, missing recipe/source item references, invalid station, terrain and chance, placement conflict, valid positive mutation, legacy migration effects (profile retained, incompatible old run closed with a note), and the cooking-save serialization round-trip.
+`validateGameplayCatalog` now rejects zero/negative recipe inputs and validates catalog references, station definitions, placement terrain/chance, and terrain placement collisions. The invalid `antirad` zero-cost `water_flask` input was removed; it was not consumed by gameplay. Coverage includes malformed input quantities, missing recipe/source item references, invalid station, terrain and chance, placement conflict, valid positive mutation, the then-current legacy migration behavior (incompatible old run closed with a note; superseded by the non-destructive B1 recovery above), and the cooking-save serialization round-trip.
 
 Latest successful workflow run executed the raw commands below from `web/`:
 
@@ -67,4 +90,4 @@ npm run dev -- --host 0.0.0.0 --port 5173
 
 ## Next step
 
-Push the focused implementation to `arena/4795760e-soul-of-hero`, run the workflow's retained Salt Shale journey plus the new two-layout browser journey, and inspect the actual matched 640×360 / 1280×720 screenshots. Update the current milestone section with the exact successful Actions run ID, attempt, branch SHA, per-layout run IDs/seeds, outcomes, and any UI findings. Keep PR #38 draft and unmerged for product review. Do not expand beyond this acceptance chain. Original donor ZIP remains unchanged (SHA-256 `fa95538271fd46a70f5737b58b8671124e091e8f6196479950a25dca741a2403`).
+Keep PR #38 draft and unmerged. The gameplay audit is accepted and B1 is implemented on its separate working branch; the HOME → OFFLINE → RETURN campaign remains on hold; its handoff is in [`docs/survival/WEB_GAMEPLAY_AUDIT_3b37ae9.md`](../docs/survival/WEB_GAMEPLAY_AUDIT_3b37ae9.md). Preserve the existing Salt and Map/POI tests and evidence. Original donor ZIP remains unchanged (SHA-256 `fa95538271fd46a70f5737b58b8671124e091e8f6196479950a25dca741a2403`).

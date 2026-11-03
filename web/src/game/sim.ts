@@ -1,8 +1,8 @@
 // Deterministic-ish real-time simulation layered on the engine authority. All state mutation goes through engine helpers.
-import { BAL, TILE, WW, WH, T, rngNext, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity } from './core';
+import { BAL, TILE, WW, WH, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity } from './core';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
 import { getWorld } from './world';
-import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, bagContainers, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones } from './engine';
+import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
@@ -11,7 +11,7 @@ export interface Proj { x: number; y: number; vx: number; vy: number; life: numb
 export interface Haz { kind: 'circle' | 'line' | 'ring' | 'wave' | 'sweep' | 'pool'; x: number; y: number; r?: number; angle?: number; len?: number; w?: number; t: number; tell: number; dur: number; dmg: number; style: string; effect?: string; hit?: boolean; tickAcc?: number; a0?: number; a1?: number; done?: boolean; owner?: string; elder?: string }
 export const PROJ: Proj[] = [];
 export const HAZ: Haz[] = [];
-let traceAcc = 0, slowTimer = 0, rootTimer = 0, shelterAcc = 0, fireAcc = 0, lightningAcc = 0, discoverAcc = 0;
+let slowTimer = 0, rootTimer = 0, shelterAcc = 0, fireAcc = 0, lightningAcc = 0, discoverAcc = 0;
 let ragAnnounced = '';
 
 const FISTS = { name: 'Fists', dmg: 4, reach: 16, arc: 1.2, swing: 280, power: { plant: 1 } } as any;
@@ -37,6 +37,13 @@ function los(r: RunState, ax: number, ay: number, bx: number, by: number, blockT
   for (let i = 1; i < n; i++) { const x = ax + (bx - ax) * i / n, y = ay + (by - ay) * i / n; const b = g[tileOf(y) * WW + tileOf(x)]; if (b === 1 || b === 3 || (blockTrees && b === 2)) return false; }
   return true;
 }
+/** Shared sight authority: only an actual observation updates remembered position. */
+function observePlayer(r: RunState, m: Creature, now: number, range: number, eligible: boolean) {
+  const p = r.player; const seen = !p.dead && dist(m.x, m.y, p.x, p.y) < range && los(r, m.x, m.y, p.x, p.y);
+  if (seen && eligible) { m.knows = { kind: 'sight', x: p.x, y: p.y, at: now }; delete m.traceIgnore; }
+  else if (m.knows?.kind === 'sight' && now - m.knows.at > 4000) m.knows = null;
+  return seen;
+}
 function rayLen(r: RunState, x: number, y: number, a: number, max: number) { const g = blockGrid(r); for (let d = 8; d < max; d += 4) { const b = g[tileOf(y + Math.sin(a) * d) * WW + tileOf(x + Math.cos(a) * d)]; if (b === 1 || b === 2 || b === 3) return d; } return max; }
 
 // ---------- player damage ----------
@@ -60,7 +67,7 @@ function damageCreature(gs: GameState, m: Creature, dmg: number, a: number, now:
   if (m.elder && m.atk?.vuln > 0) dmg *= 2;
   dmg = Math.round(dmg * (1 + r.player.skills.combat * 0.002));
   m.hp -= dmg; m.flash = 120; const kbm = m.elder ? 0.12 : 1; m.kbx += Math.cos(a) * kb * kbm; m.kby += Math.sin(a) * kb * kbm;
-  (m as any).prov = true; m.knows = { kind: 'sight', x: r.player.x, y: r.player.y, at: now };
+  (m as any).prov = true; // Damage alone does not reveal a remote player's location.
   if (m.type === 'crab') m.atk = { ...(m.atk || {}), tuck: 900 };
   if (m.elder && m.state === 'sleep') wakeElder(gs, m, now);
   fx('mhit', { x: m.x, y: m.y, n: dmg, a, big: !!m.elder }); fx('hitstop', { ms: m.elder ? 70 : 55 });
@@ -102,17 +109,15 @@ function surfaceLife(t: number) { const k = SURF[t]; return k ? (BAL.traces[k] ?
 function traceMult(w: string, surf: number) { let m = 1; if (w === 'rain') m = BAL.traces.rainDecayMult; if (w === 'storm') m = BAL.traces.stormDecayMult; if (surf === T.FLOOR || surf === T.BRIDGE) m = Math.min(m, 2); return m; }
 export function decayTraces(r: RunState, dtMs: number, weather: string) {
   for (const tr of r.traces) tr.life -= dtMs * traceMult(weather, tr.s);
-  if (r.traces.length && r.traces[0].life <= 0) r.traces = r.traces.filter(t => t.life > 0);
+  if (r.traces.some(t => t.life <= 0)) r.traces = r.traces.filter(t => t.life > 0);
 }
 
-/** Return the next newer footprint only when it physically continues the sensed trace. */
-export function nextContiguousTrace(traces: RunState['traces'], known: { x: number; y: number; at: number }) {
-  let next: RunState['traces'][number] | undefined;
-  for (const tr of traces) {
-    if (tr.life <= 0 || tr.t <= known.at || dist(tr.x, tr.y, known.x, known.y) > 26) continue;
-    if (!next || tr.t < next.t || (tr.t === next.t && dist(tr.x, tr.y, known.x, known.y) < dist(next.x, next.y, known.x, known.y))) next = tr;
-  }
-  return next;
+/** A successor is valid only while the sensed predecessor itself still exists. */
+export function nextContiguousTrace(traces: RunState['traces'], known: { traceId?: string; chainId?: string }) {
+  if (!known.traceId || !known.chainId) return undefined;
+  const previous = traces.find(t => t.id === known.traceId && t.chainId === known.chainId && t.life > 0);
+  if (!previous) return undefined;
+  return traces.find(t => t.life > 0 && t.id && t.chainId === known.chainId && t.prevId === previous.id);
 }
 
 // ---------- core effects (C03: charge debited at commit, not windup) ----------
@@ -144,7 +149,8 @@ function commitCore(gs: GameState, now: number, slot: number, a: number) {
 // ---------- player ----------
 function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   const r = gs.run!; const p = r.player; const dt = dtMs / 1000; const B = BAL.player;
-  if (p.dead) { p.deadT += dtMs; return; }
+  if (p.dead) { p.deadT += dtMs; delete r.traceWalk; return; }
+  const startX = p.x, startY = p.y;
   p.invuln = Math.max(0, p.invuln - dtMs);
   p.aim = Math.atan2(inp.my - p.y, inp.mx - p.x);
   let mx = (inp.right ? 1 : 0) - (inp.left ? 1 : 0), my = (inp.down ? 1 : 0) - (inp.up ? 1 : 0); const ml = Math.hypot(mx, my); if (ml) { mx /= ml; my /= ml; }
@@ -183,6 +189,7 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
     sp = B.speed * speedMul * base * Math.max(0.25, 1 - cw / 100 * BAL.cart.weightPenaltyPer100) * (cw > BAL.cart.maxWeight ? 0.4 : 1); }
   if (p.action?.kind === 'roll') { const ra = p.action.angle; moveBody(r, p, Math.cos(ra) * B.rollSpeed * dt, Math.sin(ra) * B.rollSpeed * dt, 4, 'player'); }
   else if (ml) { moveBody(r, p, mx * sp * dt, my * sp * dt, 4, 'player'); p.stepAcc += sp * dt; if (p.stepAcc > 13) { p.stepAcc = 0; fx('step', { x: p.x, y: p.y + 6, t }); } }
+  const movedX = p.x, movedY = p.y;
   p.vx = ml ? mx * sp : 0; p.vy = ml ? my * sp : 0;
   p.dir = dirFromAngle(p.aim);
   // cart rope
@@ -192,9 +199,36 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   }
   // stamina
   if (!p.action || p.action.kind === 'hurt') p.stamina = Math.min(B.maxStamina, p.stamina + B.staminaRegen * dt * (p.hunger > 10 ? 1 : 0.4));
-  // footprints (physical traces)
-  traceAcc += Math.hypot(p.vx, p.vy) * dt + (p.action?.kind === 'roll' ? B.rollSpeed * dt : 0);
-  if (traceAcc > 10) { traceAcc = 0; const life = surfaceLife(t); if (life > 0) { r.traces.push({ x: p.x, y: p.y + 5, t: now, life, a: Math.atan2(p.vy, p.vx), s: t }); if (r.traces.length > 2600) r.traces.splice(0, 200); } }
+  // One run-owned emission path: actual collision-resolved movement only.
+  let walk = r.traceWalk;
+  if (!walk || dist(startX, startY, walk.x, walk.y) > 0.01 || now < walk.at || now - walk.at > 1000) walk = { x: startX, y: startY, at: now, distance: 0 };
+  const reset = () => { walk!.distance = 0; delete walk!.lastId; delete walk!.chainId; };
+  // Cart snap is a discontinuity, not a traversed route.
+  if (dist(movedX, movedY, p.x, p.y) > 0.01) reset();
+  else {
+    const dx = p.x - startX, dy = p.y - startY, travelled = Math.hypot(dx, dy);
+    // Sample the actual axis-separated collision path, so a short unmarkable crossing breaks the chain.
+    const paths = [[startX, startY, movedX, startY], [movedX, startY, movedX, movedY]];
+    let markable = surfaceLife(effTile(r, tileOf(startX), tileOf(startY))) > 0;
+    for (const [x0, y0, x1, y1] of paths) {
+      const n = Math.max(1, Math.ceil(dist(x0, y0, x1, y1) / 2));
+      for (let i = 1; i <= n; i++) if (!surfaceLife(effTile(r, tileOf(x0 + (x1 - x0) * i / n), tileOf(y0 + (y1 - y0) * i / n)))) markable = false;
+    }
+    if (!markable) reset();
+    else if (travelled > 0) {
+      walk.distance += travelled;
+      if (walk.distance > 10) {
+        walk.distance = 0;
+        const previous = walk.lastId && r.traces.find(tr => tr.id === walk!.lastId && tr.chainId === walk!.chainId && tr.life > 0);
+        const id = uid(r, 'tr'), chainId = previous ? previous.chainId! : id;
+        const surf = effTile(r, tileOf(p.x), tileOf(p.y));
+        r.traces.push({ id, chainId, prevId: previous ? previous.id : undefined, x: p.x, y: p.y + 5, t: now, life: surfaceLife(surf), a: Math.atan2(dy, dx), s: surf });
+        walk.lastId = id; walk.chainId = chainId;
+        if (r.traces.length > 2600) r.traces.splice(0, 200);
+      }
+    }
+  }
+  walk.x = p.x; walk.y = p.y; walk.at = now; r.traceWalk = walk;
 }
 let wCache = { rev: -1, w: 0 }; let wTick = 0;
 function invWeightCached(r: RunState) { if (++wTick % 15 === 0 || wCache.rev < 0) { let w = 0; for (const cid of ['inv', 'eq']) for (const s of C(r, cid).slots) if (s) w += ITEMS[s.key].w * s.qty; wCache = { rev: 1, w }; } return wCache.w; }
@@ -253,7 +287,7 @@ function steer(gs: GameState, m: Creature, tx: number, ty: number, sp: number, d
   let ax = tx, ay = ty;
   if (!los(r, m.x, m.y, tx, ty, true)) {
     m.pathT -= dt * 1000;
-    if (!m.path || m.pathT <= 0) { m.path = astar(r, tileOf(m.x), tileOf(m.y), tileOf(tx), tileOf(ty)); m.pathT = 900; }
+    if (!m.path || m.pathT <= 0 || m.path[m.path.length - 1] !== tileOf(ty) * WW + tileOf(tx)) { m.path = astar(r, tileOf(m.x), tileOf(m.y), tileOf(tx), tileOf(ty)); m.pathT = 900; }
     if (m.path && m.path.length > 1) { const nxt = m.path[1]; ax = (nxt % WW) * TILE + 8; ay = ((nxt / WW) | 0) * TILE + 8; if (dist(m.x, m.y, ax, ay) < 4) m.path.shift(); }
   }
   const a = Math.atan2(ay - m.y, ax - m.x); m.angle = a; m.dir = dirFromAngle(a);
@@ -264,7 +298,7 @@ function bashAhead(gs: GameState, m: Creature, a: number, now: number) {
   const r = gs.run!; if (m.cd > 0) return; const tx = tileOf(m.x + Math.cos(a) * 10), ty = tileOf(m.y + Math.sin(a) * 10);
   const e = entsAt(r, tx, ty).find(e => e.kind === 'struct' && (STRUCTS[e.type!].block)); if (!e) return;
   const dmg = m.elder ? ELDERS[m.elder.key].dmg * 2 : CREATURES[m.type].dmg; e.hp! -= dmg; m.cd = 900; fx('structhit', { x: e.x, y: e.y });
-  if (e.hp! <= 0) { const cids = [e.c, e.station?.fuelC, e.station?.outC].filter(Boolean) as string[]; bagContainers(r, cids, e.x, e.y, now, 'Wreckage'); delete r.entities[e.id]; for (const c of cids) delete r.custody[c]; markDirty(); receipt(r, now, 'struct.destroyed', `${e.type} by ${m.type}`); pushLog(r, now, `${STRUCTS[e.type!].name} was smashed by a ${CREATURES[m.type]?.name || 'beast'}!`, 'red'); fx('structbreak', { x: e.x, y: e.y }); }
+  if (e.hp! <= 0) { destroyStructure(r, e, now); receipt(r, now, 'struct.destroyed', `${e.type} by ${m.type}`); pushLog(r, now, `${STRUCTS[e.type!].name} was smashed by a ${CREATURES[m.type]?.name || 'beast'}!`, 'red'); fx('structbreak', { x: e.x, y: e.y }); }
 }
 
 function tickCreatures(gs: GameState, dtMs: number, now: number) {
@@ -286,47 +320,48 @@ function tickCreatures(gs: GameState, dtMs: number, now: number) {
     const aggro = d.aggro || rag || (m as any).prov || (night && m.type === 'boar');
     // sensing
     const sight = (night ? BAL.ai.sightNight : BAL.ai.sightDay) * (d.sight / 100) * (w === 'fog' ? 0.6 : 1) * (p.sheltered ? 0.5 : 1);
-    if (!p.dead && dp < sight && los(r, m.x, m.y, p.x, p.y)) { if (aggro) m.knows = { kind: 'sight', x: p.x, y: p.y, at: now }; }
-    else if (aggro && (!m.knows || m.knows.kind === 'trace') && (m.t % 500) < dtMs) {
-      // trace sensing — only physical footprints within reach (C08). Never home coordinates.
-      const R = BAL.ai.traceSenseRadius; let best: any = null;
-      for (const tr of r.traces) { if (tr.life <= 0) continue; if (Math.abs(tr.x - m.x) > R || Math.abs(tr.y - m.y) > R) continue; if (m.knows && tr.t <= m.knows.at) continue; if (!best || tr.t > best.t) best = tr; }
-      if (best) { if (!m.knows) fx('sniff', { x: m.x, y: m.y - 10 }); m.knows = { kind: 'trace', x: best.x, y: best.y, at: best.t }; m.state = 'track'; }
+    const seesPlayer = observePlayer(r, m, now, sight, aggro);
+    if (!seesPlayer && aggro && !m.knows && ['idle', 'wander', 'track', 'chase'].includes(m.state) && (m.t % 500) < dtMs) {
+      // Independent encounter: live, identified mark in circular range and line of sight.
+      const R = BAL.ai.traceSenseRadius; let best: RunState['traces'][number] | undefined;
+      for (const tr of r.traces) { if (tr.life <= 0 || !tr.id || !tr.chainId || tr.chainId === m.traceIgnore || dist(tr.x, tr.y, m.x, m.y) > R || !los(r, m.x, m.y, tr.x, tr.y, true)) continue; if (!best || tr.t > best.t) best = tr; }
+      if (best) { fx('sniff', { x: m.x, y: m.y - 10 }); m.knows = { kind: 'trace', x: best.x, y: best.y, at: best.t, traceId: best.id, chainId: best.chainId }; m.state = 'track'; }
     }
-    if (m.knows?.kind === 'sight' && now - m.knows.at > 4000) { m.knows = { kind: 'trace', x: m.knows.x, y: m.knows.y, at: now - 4000 }; }
+    if (m.knows?.kind === 'trace' && !r.traces.some(tr => tr.id && tr.id === m.knows!.traceId && tr.chainId === m.knows!.chainId && tr.life > 0)) { m.traceIgnore = m.knows.chainId; m.knows = null; if (m.state === 'track') m.state = 'wander'; }
     // state machine
     switch (m.state) {
       case 'idle': case 'wander': case 'track': case 'chase': {
         if (m.knows) {
           if (m.knows.kind === 'sight') {
             m.state = 'chase'; const range = d.style === 'shoot' ? 110 : d.style === 'tongue' ? 74 : d.style === 'burrow' ? 100 : d.style === 'charge' ? 90 : d.style === 'lunge' ? 56 : 18;
-            if (dp < range && m.cd <= 0 && los(r, m.x, m.y, p.x, p.y, d.style !== 'burrow')) { m.state = 'tell'; m.t = 0; m.angle = Math.atan2(p.y - m.y, p.x - m.x); m.dir = dirFromAngle(m.angle); fx('tell', { x: m.x, y: m.y - 10, style: d.style }); }
-            else if (d.style === 'shoot' && dp < 70) steer(gs, m, m.x - (p.x - m.x), m.y - (p.y - m.y), spd, dt, now);
-            else if (d.style === 'lunge' && dp < 70) { const a = Math.atan2(m.y - p.y, m.x - p.x) + 0.9 * dt * 2; steer(gs, m, p.x + Math.cos(a) * 46, p.y + Math.sin(a) * 46, spd, dt, now); }
-            else steer(gs, m, p.x, p.y, spd, dt, now);
+            const target = m.knows; const knownDist = dist(m.x, m.y, target.x, target.y);
+            if (seesPlayer && dp < range && m.cd <= 0 && los(r, m.x, m.y, p.x, p.y, d.style !== 'burrow')) { m.state = 'tell'; m.t = 0; m.angle = Math.atan2(p.y - m.y, p.x - m.x); if (d.style === 'burrow') m.atk = { ...(m.atk || {}), target: { x: p.x, y: p.y } }; m.dir = dirFromAngle(m.angle); fx('tell', { x: m.x, y: m.y - 10, style: d.style }); }
+            else if (d.style === 'shoot' && knownDist < 70) steer(gs, m, m.x - (target.x - m.x), m.y - (target.y - m.y), spd, dt, now);
+            else if (d.style === 'lunge' && knownDist < 70) { const a = Math.atan2(m.y - target.y, m.x - target.x) + 0.9 * dt * 2; steer(gs, m, target.x + Math.cos(a) * 46, target.y + Math.sin(a) * 46, spd, dt, now); }
+            else steer(gs, m, target.x, target.y, spd, dt, now);
           } else {
             // follow footprints toward newer ones
             if (dist(m.x, m.y, m.knows.x, m.knows.y) < 7) {
               // Advance only along the same physically contiguous footprint chain.
               const nxt = nextContiguousTrace(r.traces, m.knows);
-              if (nxt) m.knows = { kind: 'trace', x: nxt.x, y: nxt.y, at: nxt.t }; else { m.knows = null; m.state = 'wander'; fx('lost', { x: m.x, y: m.y - 10 }); }
+              if (nxt) m.knows = { kind: 'trace', x: nxt.x, y: nxt.y, at: nxt.t, traceId: nxt.id, chainId: nxt.chainId }; else { m.traceIgnore = m.knows.chainId; m.knows = null; m.state = 'wander'; fx('lost', { x: m.x, y: m.y - 10 }); }
             } else steer(gs, m, m.knows.x, m.knows.y, spd * 0.8, dt, now);
           }
         } else {
           m.state = 'wander';
           if (dist(m.x, m.y, m.tx, m.ty) < 4 || m.t > 5000) { m.t = 0; const a = rngNext(r) * Math.PI * 2, rr = rngNext(r) * 70; m.tx = m.homeX + Math.cos(a) * rr; m.ty = m.homeY + Math.sin(a) * rr; const b = g[tileOf(m.ty) * WW + tileOf(m.tx)]; if (b) { m.tx = m.x; m.ty = m.y; } }
           steer(gs, m, m.tx, m.ty, spd * 0.35, dt, now);
-          if ((m.type === 'boar' || m.type === 'crab') && dp < 26 && !(m as any).prov && !night) { /* skittish */ steer(gs, m, m.x + (m.x - p.x), m.y + (m.y - p.y), spd * 0.6, dt, now); }
+          if (seesPlayer && (m.type === 'boar' || m.type === 'crab') && dp < 26 && !(m as any).prov && !night) { /* skittish */ steer(gs, m, m.x + (m.x - p.x), m.y + (m.y - p.y), spd * 0.6, dt, now); }
         }
         break;
       }
       case 'tell': {
-        if (d.style === 'shoot' || d.style === 'tongue') m.angle = Math.atan2(p.y - m.y, p.x - m.x) * 0.0 + m.angle; // locked: dodgeable
-        if (d.style === 'burrow' && !m.atk?.burrow) { m.atk = { burrow: true, bt: 0 }; }
+        // Telegraph angle remains locked at the observed target.
+        if (d.style === 'burrow' && !m.atk?.burrow) { m.atk = { ...(m.atk || {}), burrow: true, bt: 0, target: m.atk?.target || (m.knows?.kind === 'sight' ? { x: m.knows.x, y: m.knows.y } : { x: m.x, y: m.y }) }; }
         if (m.t >= d.tell) { m.state = 'attack'; m.t = 0; m.atk = { ...(m.atk || {}), hit: false };
           if (d.style === 'shoot') { PROJ.push({ x: m.x, y: m.y - 4, vx: Math.cos(m.angle) * 150, vy: Math.sin(m.angle) * 150, life: 1.6, dmg: d.dmg, from: 'enemy', kind: 'bolt', r: 3 }); fx('zap', { x: m.x, y: m.y }); }
           if (d.style === 'tongue') fx('tongue', { x: m.x, y: m.y, a: m.angle });
-          if (d.style === 'burrow') { HAZ.push({ kind: 'circle', x: p.x, y: p.y, r: 18, t: 0, tell: 800, dur: 120, dmg: d.dmg, style: 'erupt', owner: m.id }); m.atk.target = { x: p.x, y: p.y }; }
+          if (d.style === 'burrow') { HAZ.push({ kind: 'circle', x: m.atk.target.x, y: m.atk.target.y, r: 18, t: 0, tell: 800, dur: 120, dmg: d.dmg, style: 'erupt', owner: m.id }); }
         }
         break;
       }
@@ -364,19 +399,25 @@ function tickElder(gs: GameState, m: Creature, dtMs: number, now: number, dp: nu
   const r = gs.run!; const p = r.player; const e = m.elder!; const d = ELDERS[e.key]; const dt = dtMs / 1000;
   const awakePhase = phaseOf(r, now) === 'awakening';
   if (awakePhase && !e.awake) { e.awake = true; const f = m.hp / m.maxHp; m.maxHp = d.hpAwake; m.hp = Math.round(d.hpAwake * f); fx('banner', { text: `${d.name} AWAKENS`, sub: d.region }); pushLog(r, now, `Day 14: ${d.name} has awakened in ${d.region}.`, 'red'); }
-  if (m.state === 'sleep') { if (dp < (e.awake ? 120 : 56) && !p.dead) wakeElder(gs, m, now); return; }
+  // Elders use the same observed/last-known model; existing ranges and patterns remain.
+  const sightRange = m.state === 'sleep' ? (e.awake ? 120 : 56) : 230;
+  const seesPlayer = observePlayer(r, m, now, sightRange, true);
+  if (m.state === 'sleep') { if (seesPlayer) wakeElder(gs, m, now); return; }
   const leash = dist(m.x, m.y, m.homeX, m.homeY);
-  if (p.dead || dp > 230 || leash > 220) { // retreat: player can leave and come back later
-    steer(gs, m, m.homeX, m.homeY, d.speed, dt, now); if (leash < 10) { m.hp = Math.min(m.maxHp, m.hp + dtMs * 0.01); if (dp > 260) { m.state = 'sleep'; e.submerged = false; } } return;
-  }
-  if (e.submerged) { steer(gs, m, p.x, p.y, d.speed * 1.6, dt, now); if (m.t > (m.atk?.subT || 1300)) { e.submerged = false; m.t = 0; fx('emerge', { x: m.x, y: m.y, big: true }); } return; }
-  // movement between casts
-  m.angle = Math.atan2(p.y - m.y, p.x - m.x); m.dir = dirFromAngle(m.angle);
+  // Submerge/dive is already committed: follow the stored cast target, not live coordinates.
+  if (e.submerged) { const target = m.atk?.target || (m.knows?.kind === 'sight' ? m.knows : m); steer(gs, m, target.x, target.y, d.speed * 1.6, dt, now); if (m.t > (m.atk?.subT || 1300)) { e.submerged = false; m.t = 0; fx('emerge', { x: m.x, y: m.y, big: true }); } return; }
   if (m.state === 'tell') { if (m.t >= (m.atk?.tell || 700)) { m.state = 'recover'; m.t = 0; } return; }
-  if (dp > 60) steer(gs, m, p.x, p.y, d.speed * (e.awake ? 1.25 : 1), dt, now); else if (dp < 30) steer(gs, m, m.x - (p.x - m.x), m.y - (p.y - m.y), d.speed * 0.6, dt, now);
-  if (dp < d.r + 10 && m.cd <= 0) { hurtPlayer(gs, d.dmg * 0.6, m.x, m.y, d.name, now, 220); m.cd = 700; }
+  const target = m.knows?.kind === 'sight' ? m.knows : null;
+  if (p.dead || !target || leash > 220) {
+    steer(gs, m, m.homeX, m.homeY, d.speed, dt, now); if (leash < 10) { m.hp = Math.min(m.maxHp, m.hp + dtMs * 0.01); if (!target || p.dead) { m.state = 'sleep'; e.submerged = false; } } return;
+  }
+  const knownDist = dist(m.x, m.y, target.x, target.y);
+  m.angle = Math.atan2(target.y - m.y, target.x - m.x); m.dir = dirFromAngle(m.angle);
+  if (knownDist > 60) steer(gs, m, target.x, target.y, d.speed * (e.awake ? 1.25 : 1), dt, now); else if (knownDist < 30) steer(gs, m, m.x - (target.x - m.x), m.y - (target.y - m.y), d.speed * 0.6, dt, now);
+  if (seesPlayer && dp < d.r + 10 && m.cd <= 0) { hurtPlayer(gs, d.dmg * 0.6, m.x, m.y, d.name, now, 220); m.cd = 700; }
   if (m.state === 'recover' && m.t < (e.awake ? 900 : 1500)) return;
   m.state = 'chase';
+  if (!seesPlayer) return; // Never start a new aimed pattern through cover.
   const list = e.awake ? d.awakePatterns : d.patterns; const pat = list[e.pattern % list.length]; e.pattern += 1 + (rngNext(r) < 0.3 ? 1 : 0);
   castPattern(gs, m, pat, now);
 }
@@ -396,7 +437,7 @@ function castPattern(gs: GameState, m: Creature, pat: string, now: number) {
     case 'meteors': for (let k = 0; k < 7; k++) H({ x: p.x + (rngNext(r) - 0.5) * 140, y: p.y + (rngNext(r) - 0.5) * 140, r: 16, tell: 900 + k * 150, dur: 120, effect: 'ignite', style: 'meteor' }); H({ x: p.x, y: p.y, r: 16, tell: 1000, dur: 120, effect: 'ignite', style: 'meteor' }); m.atk.tell = 900; break;
     case 'spitPools': for (let k = 0; k < 3; k++) H({ x: p.x + (rngNext(r) - 0.5) * 70, y: p.y + (rngNext(r) - 0.5) * 70, r: 20, tell: 900, dur: 100, effect: 'pool' }); break;
     case 'brood': for (let k = 0; k < 3; k++) { const c = mkCreature(r, 'toad', m.x + (k - 1) * 18, m.y + 16, 14); (c as any).prov = true; r.creatures.push(c); } fx('brood', { x: m.x, y: m.y }); m.atk.tell = 600; break;
-    case 'submerge': case 'dive': e.submerged = true; m.state = 'chase'; m.t = 0; m.atk = { subT: 1300 }; fx('submerge', { x: m.x, y: m.y }); setTimeoutHaz(gs, m, dmg); break;
+    case 'submerge': case 'dive': e.submerged = true; m.state = 'chase'; m.t = 0; m.atk = { subT: 1300, target: { x: p.x, y: p.y } }; fx('submerge', { x: m.x, y: m.y }); setTimeoutHaz(gs, m, dmg); break;
     case 'tongueSweep': H({ kind: 'sweep', len: 120, w: 9, a0: a - 1.1, a1: a + 1.1, tell: 650, dur: 800 }); m.atk.tell = 1400; break;
     case 'rootLine': for (let k = 1; k <= 9; k++) H({ x: m.x + Math.cos(a) * k * 18, y: m.y + Math.sin(a) * k * 18, r: 10, tell: 500 + k * 70, dur: 260, effect: 'root', style: 'root' }); m.atk.tell = 1000; break;
     case 'seedBombs': for (let k = 0; k < 4; k++) H({ x: p.x + (rngNext(r) - 0.5) * 90, y: p.y + (rngNext(r) - 0.5) * 90, r: 20, tell: 1100, dur: 120, style: 'seed' }); break;
@@ -570,7 +611,8 @@ export function settle(gs: GameState, now: number): string[] {
     if (p.dead) continue;
     const min = dtMs / 60000 * B.offlineDrainFactor;
     p.hunger = Math.max(0, p.hunger - B.hungerDrainPerMin * min); p.thirst = Math.max(0, p.thirst - B.thirstDrainPerMin * min);
-    if (p.hunger <= 0 || p.thirst <= 0) { const dmg = B.starveDamagePerMin * min; p.hp = sheltered ? Math.max(1, p.hp - dmg) : p.hp - dmg; } // LOCKED_CANON: sheltered → hunger alone cannot kill
+    if (p.thirst <= 0) p.hp -= B.starveDamagePerMin * min; // thirst remains lethal even alongside hunger
+    else if (p.hunger <= 0) { const dmg = B.starveDamagePerMin * min; p.hp = sheltered ? Math.max(1, p.hp - dmg) : p.hp - dmg; }
     if ((zone === 5) && !sheltered) p.hp -= B.coldDamagePerMin * min; // cold is NOT covered by shelter immunity unless enclosed
     if (zone === 7) { p.rad = Math.min(100, p.rad + 6 * min); if (p.rad > 50) p.hp -= B.radDamagePerMinOver50 * min; }
     if (p.hp <= 0) { killPlayer(gs, t, 'exposure while offline'); report.push('You did not survive the time away. Your bag lies where you rested.'); }

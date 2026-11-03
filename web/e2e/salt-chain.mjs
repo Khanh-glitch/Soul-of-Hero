@@ -87,7 +87,7 @@ try {
       await page.mouse.up(); await sleep(500);
       // Harvest drops are collected by the game's ordinary near-player pickup simulation.
       const after=await count(itemKey);log.push(`harvest ${sourceKey} -> ${itemKey}: ${before} -> ${after} near source (${n.x},${n.y})`);
-      const now=await state();for(const d of now.drops.filter(d=>d.key===itemKey))await walkNear(d.x,d.y,6);
+      const now=await state();for(const d of now.drops.filter(d=>d.key===itemKey))await walkNear(d.x,d.y,18);
     }
     assert((await count(itemKey))>=needed,`Could not harvest ${needed} ${itemKey} from ${sourceKey}; have ${await count(itemKey)}`);
   }

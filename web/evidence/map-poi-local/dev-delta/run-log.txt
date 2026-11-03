@@ -1,0 +1,15 @@
+build_sha=local-uncommitted
+workflow_run=local
+run_attempt=1
+browser=Chromium 153.0.8010.0
+persistence_scope=same-browser-profile page reload + Continue; not OS-process-exit proof
+negative_validation=PASS (poi footprint must be at least 5 by 5 tiles | entry must be an integer point inside the POI footprint | keycardDoor must be an integer point inside the POI footprint | powerDoor must be an integer point inside the POI footprint | generator must be an integer point inside the POI footprint | outerCache must be an integer point inside the POI footprint | vaultCache must be an integer point inside the POI footprint | entry must sit on the outer south wall | keycard wall/door coordinates are invalid | power wall/door coordinates are invalid | unknown loot item: not_a_real_item | outer cache must supply both lawful access items)
+dev_delta: run=run_eltb8 seed=24532388 landing=Eastcove
+dev_delta: selected-start finite supply crate searched through normal input/UI
+dev_delta: unauthorized keycard gate attempt rejected before keycard acquisition
+dev_delta: ordinary walk/E + outer cache UI acquired keycard x1, fuel_can x1, bandage x1
+dev_delta: generator consumed one fuel can; vault loot transferred (iron_ingot 4, medkit 1, spares 6)
+dev_delta: test-side BFS selected an Eastcove approach of 41 map tiles; actual traversal remained ordinary WASD
+dev_delta: ordinary-input exit and re-entry completed; collected inventory retained
+dev_delta: page-reload + Continue persisted same run/seed, lawful gate state, empty vault cache(s), and useful inventory
+route_choice=PASS: dev_delta; traversal used actual WASD input (test-side BFS selected waypoints, not blind-discovery proof)

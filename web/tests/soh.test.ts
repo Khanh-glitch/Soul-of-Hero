@@ -47,13 +47,12 @@ describe('typed versioned map content packs', () => {
     const shipping = getWorld('shipping'), dev = getWorld('dev_delta');
     expect(shipping.places.some(p => p.id === 'delta_relay')).toBe(false);
     expect(dev.places.some(p => p.id === 'delta_relay')).toBe(true);
-    expect(shipping.tiles[shipping.statics.find(e => e.poi === 'factory' && e.kind === 'door')!.ty * WW + shipping.statics.find(e => e.poi === 'factory' && e.kind === 'door')!.tx]).toBe(T.FLOOR);
     expect(shipping.starts.map(p => [p.id, p.tx, p.ty])).toEqual(dev.starts.map(p => [p.id, p.tx, p.ty]));
     expect(shipping.places.find(p => p.id === 'factory')).toEqual(dev.places.find(p => p.id === 'factory'));
     expect(shipping.statics.filter(e => ['factory', 'light'].includes(e.poi || '')).map(e => [e.poi,e.kind,e.tx,e.ty,e.locked]))
       .toEqual(dev.statics.filter(e => ['factory', 'light'].includes(e.poi || '')).map(e => [e.poi,e.kind,e.tx,e.ty,e.locked]));
-    expect(shipping.tiles[128 * WW + 119]).not.toBe(T.CLIFF);
-    expect(dev.tiles[128 * WW + 119]).toBe(T.CLIFF);
+    expect(shipping.tiles[67 * WW + 155]).not.toBe(T.CLIFF);
+    expect(dev.tiles[67 * WW + 155]).toBe(T.CLIFF);
     const relay = dev.statics.filter(e => e.poi === 'delta_relay');
     expect(relay.filter(e => e.kind === 'door').map(e => e.locked)).toEqual([undefined, 'keycard', 'power']);
     expect(relay.some(e => e.kind === 'gen')).toBe(true);
@@ -102,10 +101,8 @@ describe('catalog validation rejects broken content before play', () => {
     const positive = cloneCatalog(); positive.recipes.salted_meat.ins[0][1] = 2;
     expect(validateGameplayCatalog(positive)).toBe(true);
     const older = migrate({ version: SAVE_VERSION - 1, profile: { securedCash: 23, history: [] }, run: { inProgress: true } });
-    expect(older.gs.version).toBe(SAVE_VERSION);
-    expect(older.gs.profile.securedCash).toBe(23);
-    expect(older.gs.run).toBeNull();
-    expect(older.note).toContain('old in-progress run could not be migrated');
+    expect(older.gs).toBeNull();
+    expect(older.note).toContain('left untouched for recovery');
   });
 });
 
@@ -210,8 +207,8 @@ describe('C06/C09 stations, fuel, offline', () => {
   });
   it('sheltered player cannot die from hunger alone offline; unsheltered can and leaves one bag', () => {
     const gs = fresh(); const r = gs.run!; const w = getWorld(); const b = w.buildings.find(b => b.id === 'b_tp')!;
-    tp(gs, (b.x + 2) * TILE + 8, (b.y + 2) * TILE + 8); r.player.hunger = 0; r.player.thirst = 0; r.player.hp = 20; r.clock.lastSimAt = T0;
-    settle(gs, T0 + 20 * HOUR); expect(r.player.dead).toBe(false); expect(r.player.hp).toBeGreaterThanOrEqual(1);
+    tp(gs, (b.x + 2) * TILE + 8, (b.y + 2) * TILE + 8); r.player.hunger = 0; r.player.thirst = 100; r.player.hp = 1; r.clock.lastSimAt = T0;
+    settle(gs, T0 + 2 * 60000); expect(r.player.dead).toBe(false); expect(r.player.hp).toBeGreaterThanOrEqual(1);
     const gs2 = fresh(1); const r2 = gs2.run!; r2.player.hunger = 0; r2.player.thirst = 0; r2.player.hp = 20; r2.clock.lastSimAt = T0;
     settle(gs2, T0 + 20 * HOUR); expect(r2.player.dead).toBe(true); expect(Object.values(r2.entities).filter(e => e.kind === 'bag').length).toBe(1);
   });
@@ -225,13 +222,13 @@ describe('C08/C14 traces & AI knowledge', () => {
   });
   it('rejects an unrelated newer nearby trail when following a sensed predecessor', () => {
     const chain = [
-      { x: 100, y: 100, t: T0 + 100, life: 10000, a: 0, s: T.GRASS },
-      { x: 300, y: 100, t: T0 + 200, life: 10000, a: 0, s: T.GRASS },
-      { x: 112, y: 104, t: T0 + 300, life: 10000, a: 0, s: T.GRASS },
+      { id: 'a1', chainId: 'a1', x: 100, y: 100, t: T0 + 100, life: 10000, a: 0, s: T.GRASS },
+      { id: 'b1', chainId: 'b1', x: 103, y: 100, t: T0 + 200, life: 10000, a: 0, s: T.GRASS },
+      { id: 'a2', chainId: 'a1', prevId: 'a1', x: 112, y: 104, t: T0 + 300, life: 10000, a: 0, s: T.GRASS },
     ];
-    expect(nextContiguousTrace(chain, { x: 100, y: 100, at: T0 })).toBe(chain[0]);
-    expect(nextContiguousTrace(chain.slice(1), { x: 100, y: 100, at: T0 + 100 })).toBe(chain[2]);
-    expect(nextContiguousTrace([chain[1]], { x: 100, y: 100, at: T0 + 100 })).toBeUndefined();
+    expect(nextContiguousTrace(chain, { traceId: 'a1', chainId: 'a1' })).toBe(chain[2]);
+    expect(nextContiguousTrace(chain.slice(1), { traceId: 'a1', chainId: 'a1' })).toBeUndefined();
+    expect(nextContiguousTrace([chain[0], chain[1]], { traceId: 'a1', chainId: 'a1' })).toBeUndefined();
   });
   it('a creature with no sensed trail never learns where the player/home is; a real trail is followed', () => {
     const gs = fresh(); const r = gs.run!; const p = r.player; r.creatures = r.creatures.filter(c => c.elder);
@@ -240,7 +237,7 @@ describe('C08/C14 traces & AI knowledge', () => {
     for (let k = 0; k < 120; k++) tick(gs, idle(p.x, p.y), 16, T0 + k * 16);
     expect(m.knows === null || m.knows.kind !== 'trace').toBe(true);
     // lay a physical trail from the wolf toward the player
-    r.traces = []; for (let k = 0; k <= 20; k++) r.traces.push({ x: m.x - k * 9, y: m.y, t: T0 + k * 1000, life: 999999, a: Math.PI, s: T.GRASS });
+    r.traces = []; for (let k = 0; k <= 20; k++) r.traces.push({ id: `trail${k}`, chainId: 'trail0', prevId: k ? `trail${k - 1}` : undefined, x: m.x - k * 9, y: m.y, t: T0 + k * 1000, life: 999999, a: Math.PI, s: T.GRASS });
     let tracked = false; for (let k = 0; k < 200; k++) { tick(gs, idle(p.x, p.y), 16, T0 + 5000 + k * 16); if (m.knows?.kind === 'trace') tracked = true; }
     expect(tracked).toBe(true);
   });

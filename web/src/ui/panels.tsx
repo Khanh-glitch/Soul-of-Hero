@@ -61,6 +61,8 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
     <Panel title={title} style={{ left: 168, top: 54, width: 230, maxHeight: 286 }} onClose={() => api.open(null)} className="scroll">
       <div className="scroll" style={{ maxHeight: 270, overflowY: 'auto', overflowX: 'hidden' }}>
         {e.c && <><Grid api={api} cid={e.c} cols={8} /><div className="flex gap-1" style={{ marginTop: 4 }}><button className="btn" onClick={() => takeAll(e.c!)}>Take all</button>{e.kind === 'cart' && <span style={{ fontSize: 10, color: '#cfc2dc' }}>Load {cartWeight(r, e.c).toFixed(0)}/{BAL.cart.maxWeight} kg · [F] pull</span>}{e.kind === 'cart' && <button className="btn ghost" onClick={() => api.act('reclaim', { eid })}>Pack up</button>}</div></>}
+        {e.legacyJobs && <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>Legacy jobs were recovered without inventing missing inputs. Resume at a matching nearby station.
+          <button className="btn" onClick={() => { const station = Object.values(r.entities).find(o => o.kind === 'struct' && o.type === e.legacyJobs!.stationType && o.station && Math.hypot(o.x - r.player.x, o.y - r.player.y) <= 3 * TILE); if (station) api.act('recoverLegacyJobs', { eid, stationId: station.id }); else api.toast('Stand near a matching station.'); }}>Resume jobs</button></div>}
         {st && kind !== 'research' && <StationBody api={api} eid={eid} />}
         {st && kind === 'research' && <ResearchBody api={api} eid={eid} />}
         {e.kind === 'struct' && <div style={{ marginTop: 6, fontSize: 10, color: '#8a7a9a' }}>HP {Math.round(e.hp!)}/{e.maxHp} <button className="btn ghost" style={{ marginLeft: 6 }} onClick={() => { api.act('reclaim', { eid }); api.open(null); }}>Reclaim</button></div>}
@@ -97,7 +99,7 @@ function ResearchBody({ api, eid }: { api: Api; eid: string }) {
     {specimens.length === 0 && <div style={{ fontSize: 10, color: '#8a7a9a' }}>Carry a creature specimen or a Core to study it.</div>}
     {specimens.map(([s, i]) => <div key={i} className="flex items-center gap-1" style={{ fontSize: 10 }}><Icon k={s!.key} size={12} />{ITEMS[s!.key].name}<button className="btn" style={{ marginLeft: 'auto', padding: '1px 5px' }} onClick={() => api.act('research', { mode: 'specimen', slot: i, eid })}>Study</button></div>)}
     <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>In progress</div>
-    {st.queue.map(j => <div key={j.id} className="flex items-center gap-1" style={{ fontSize: 10 }}><Icon k="blueprint" size={12} />{ITEMS[RECIPES[j.recipe.slice(2)].out].name}<div className="bar" style={{ width: 60 }}><i style={{ width: `${(1 - j.left / j.total) * 100}%`, background: '#9ad0ff' }} /></div>{Math.ceil(j.left / 1000)}s</div>)}
+    {st.queue.map(j => <div key={j.id} className="flex items-center gap-1" style={{ fontSize: 10 }}><Icon k="blueprint" size={12} />{ITEMS[RECIPES[j.recipe.slice(2)].out].name}<div className="bar" style={{ width: 60 }}><i style={{ width: `${(1 - j.left / j.total) * 100}%`, background: '#9ad0ff' }} /></div>{Math.ceil(j.left / 1000)}s <button className="btn ghost" onClick={() => api.act('cancelJob', { eid, jobId: j.id })}>✕</button></div>)}
     <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>Blueprints ready (take, then use to learn)</div><Grid api={api} cid={st.outC} cols={4} />
   </div>;
 }
@@ -167,10 +169,10 @@ export function SkillsPanel({ api }: { api: Api }) {
     </div></Panel>;
 }
 
-export function MenuPanel({ api, onQuit, onSave }: { api: Api; onQuit: () => void; onSave: () => void }) {
+export function MenuPanel({ api, onQuit, onSave }: { api: Api; onQuit: () => void; onSave: () => Promise<boolean> }) {
   const [confirm, setConfirm] = useState(false); const pf = api.gs.profile; const r = api.gs.run!;
   return <Panel title="Paused menu — the island keeps living in real time" style={{ left: 150, top: 40, width: 340 }} onClose={() => api.open(null)}>
-    <div className="flex flex-wrap gap-1"><button className="btn gold" onClick={() => api.open(null)}>Resume</button><button className="btn" onClick={() => { onSave(); api.toast('Saved.'); }}>Save now</button><button className="btn" onClick={onQuit}>Save & quit to title</button></div>
+    <div className="flex flex-wrap gap-1"><button className="btn gold" onClick={() => api.open(null)}>Resume</button><button className="btn" onClick={async () => { const ok = await onSave(); api.toast(ok ? 'Saved locally.' : 'Save failed. Your changes are not confirmed on disk.'); }}>Save now</button><button className="btn" onClick={onQuit}>Save & quit to title</button></div>
     <div style={{ fontSize: 10, marginTop: 6 }} className="flex items-center gap-2">Volume <input type="range" min={0} max={1} step={0.05} value={pf.settings.volume} onChange={e => { pf.settings.volume = +e.target.value; setVolume(pf.settings.volume, pf.settings.muted); api.rerender(); }} /><label><input type="checkbox" checked={pf.settings.muted} onChange={e => { pf.settings.muted = e.target.checked; setVolume(pf.settings.volume, pf.settings.muted); api.rerender(); }} /> mute</label></div>
     <div style={{ fontSize: 10, marginTop: 6, color: '#cfc2dc', lineHeight: 1.15 }}>WASD move · mouse aim · LMB attack/use · Space dodge-roll · E interact · F pull cart · 1–8 / wheel quickbar · I inventory · C craft · B build (X reclaim) · R research · M map · Tab skills · RMB cancel cast/build · Esc menu</div>
     <div className="panel" style={{ padding: 4, marginTop: 6, background: '#1a0e10' }}><div style={{ fontSize: 10, color: '#ff9a7a' }}>QA time acceleration — marks this run QA · LOCAL/UNVERIFIED (not real elapsed time)</div>

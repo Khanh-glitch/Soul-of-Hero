@@ -1,0 +1,17 @@
+build_sha=local-uncommitted
+workflow_run=local
+run_attempt=1
+browser=Chromium 153.0.8010.0
+persistence_scope=same-browser-profile page reload + Continue; not OS-process-exit proof
+negative_validation=PASS (poi footprint must be at least 5 by 5 tiles | entry must be an integer point inside the POI footprint | keycardDoor must be an integer point inside the POI footprint | powerDoor must be an integer point inside the POI footprint | generator must be an integer point inside the POI footprint | outerCache must be an integer point inside the POI footprint | vaultCache must be an integer point inside the POI footprint | entry must sit on the outer south wall | keycard wall/door coordinates are invalid | power wall/door coordinates are invalid | unknown loot item: not_a_real_item | outer cache must supply both lawful access items)
+shipping: run=run_abqeh seed=17343593 landing=Fisher's Point
+shipping: selected-start finite supply crate searched through normal input/UI
+shipping Lighthouse reachability: runtime blockGrid BFS + actual WASD reached door interaction radius at 17.8px (engine limit 32px)
+shipping: unauthorized Lighthouse Door attempt rejected while its generator was dry
+shipping: Lighthouse-side fuel can acquired from its real finite crate through UI
+shipping Lighthouse reachability: runtime blockGrid BFS + actual WASD reached door interaction radius at 16.9px (engine limit 32px)
+shipping: Lighthouse power gate opened lawfully; core_storm and blueprint loot transferred through container UI
+shipping: test-side BFS selected an Fisher's Point approach of 68 map tiles; actual traversal remained ordinary WASD
+shipping: ordinary-input exit and re-entry completed; collected inventory retained
+shipping: page-reload + Continue persisted same run/seed, lawful gate state, empty vault cache(s), and useful inventory
+route_choice=PASS: shipping; traversal used actual WASD input (test-side BFS selected waypoints, not blind-discovery proof)

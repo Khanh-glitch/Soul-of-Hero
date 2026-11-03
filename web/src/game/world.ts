@@ -189,8 +189,6 @@ function genWorld(layoutId: LayoutId): World {
   // factory with inner vault (keycard) — optional deeper access
   const fa = byId('factory'); stamp('b_fa', 'Foundry Hall', fa.tx, fa.ty, 17, 12, 'tin', [[8, 11], [0, 5]]);
   for (let y = fa.ty - 5; y <= fa.ty - 1; y++) tiles[y * WW + fa.tx + 2] = T.PWALL; for (let x = fa.tx + 2; x <= fa.tx + 7; x++) tiles[(fa.ty - 1) * WW + x] = T.PWALL;
-  // The interaction entity owns this threshold; the underlying wall tile must not keep blocking an opened door.
-  tiles[(fa.ty - 1) * WW + fa.tx + 4] = T.FLOOR;
   statics.push({ kind: 'door', tx: fa.tx + 4, ty: fa.ty - 1, poi: 'factory', locked: 'keycard', label: 'Vault Door' });
   buildings.push({ id: 'b_vault', name: 'Sealed Vault', x: fa.tx + 3, y: fa.ty - 5, w: 5, h: 4, roof: 'tin' });
   crate(fa.tx + 4, fa.ty - 4, 'factory_vault', [['core_fire', 1], ['blueprint:core_earth', 1], ['spares', 6]]);

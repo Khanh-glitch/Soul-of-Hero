@@ -14,10 +14,11 @@ import Game from './ui/Game';
 export default function App() {
   const gsRef = useRef<GameState | null>(null);
   const [screen, setScreen] = useState<'loading' | 'title' | 'game'>('loading');
-  const [note, setNote] = useState<string | undefined>(); const [report, setReport] = useState<string[] | null>(null);
+  const [note, setNote] = useState<string | undefined>(); const [loadError, setLoadError] = useState<string | null>(null); const [report, setReport] = useState<string[] | null>(null);
   const [summary, setSummary] = useState<GameState['profile']['history'][number] | null>(null);
-  useEffect(() => { (async () => { getArt(); const { gs, note } = await load(); setActiveLayout(gs.run?.layoutId || 'shipping'); getWorld(); gsRef.current = gs; setNote(note); setVolume(gs.profile.settings.volume, gs.profile.settings.muted); setScreen('title'); })(); }, []);
+  useEffect(() => { (async () => { getArt(); const { gs, note } = await load(); if (!gs) { setLoadError(note || 'Save recovery is required.'); return; } setActiveLayout(gs.run?.layoutId || 'shipping'); getWorld(); gsRef.current = gs; setNote(note); setVolume(gs.profile.settings.volume, gs.profile.settings.muted); setScreen('title'); })(); }, []);
   const gs = gsRef.current;
+  if (loadError) return <div style={{ padding: 24, color: '#ffd98a', background: '#120c18', minHeight: '100vh' }}><h1>Save recovery required</h1><p>{loadError}</p><p>No new game was started and the original save copies were not overwritten.</p><button onClick={() => window.location.reload()}>Retry</button></div>;
   if (screen === 'loading' || !gs) return <div style={{ position: 'fixed', inset: 0, display: 'grid', placeItems: 'center', color: '#ffd98a', fontSize: 22 }} className="title-font">Raising the island…</div>;
   const enter = () => { markDirty(); resetRenderCaches(); cam.init = false; setScreen('game'); };
   return screen === 'title'

@@ -65,7 +65,9 @@ export interface Creature {
   homeX: number; homeY: number; state: 'idle' | 'wander' | 'chase' | 'track' | 'tell' | 'attack' | 'recover' | 'flee' | 'sleep' | 'dead';
   t: number; tx: number; ty: number; angle: number; dir: Dir;
   /** knowledge is limited to what it physically sensed */
-  knows: null | { kind: 'sight' | 'trace'; x: number; y: number; at: number };
+  knows: null | { kind: 'sight' | 'trace'; x: number; y: number; at: number; traceId?: string; chainId?: string };
+  /** Last completed/lost chain, preventing repeated reacquisition of the same marks. */
+  traceIgnore?: string;
   path: number[] | null; pathT: number; cd: number; kbx: number; kby: number; flash: number;
   elder?: { key: string; awake: boolean; phase: number; pattern: number; special: number; shield?: number; submerged?: boolean };
   patternKey?: string; atk?: any; slow?: number;
@@ -81,10 +83,17 @@ export interface Entity {
   garden?: { crop: string | null; growth: number; water: number };
   water?: number; minted?: boolean; claim?: string; vx?: number; vy?: number; born?: number; owner?: string;
   power?: number; fire?: number;
+  /** The original deployable instance, retained until reclaim or destruction. */
+  deployed?: Stack;
+  /** Legacy jobs with unknowable paid inputs, preserved after station destruction. */
+  legacyJobs?: { stationType: string; queue: Job[] };
 }
-export interface Job { id: string; recipe: string; left: number; total: number }
+/** Undefined reserved means an older save whose paid inputs cannot be reconstructed safely. */
+export interface Job { id: string; recipe: string; left: number; total: number; reserved?: Stack[] }
 
-export interface Trace { x: number; y: number; t: number; life: number; a: number; s: number }
+export interface Trace { x: number; y: number; t: number; life: number; a: number; s: number; id?: string; chainId?: string; prevId?: string }
+/** Run-local movement continuity; absent in legacy saves. */
+export interface TraceWalk { x: number; y: number; at: number; distance: number; lastId?: string; chainId?: string }
 
 export interface Receipt { id: string; seq: number; at: number; kind: string; detail: string }
 
@@ -108,6 +117,7 @@ export interface RunState {
   custody: Record<string, Container>;
   knowledge: { recipes: string[]; studied: string[] };
   traces: Trace[];
+  traceWalk?: TraceWalk;
   discovered: number[]; // 4x4-tile cells
   poiSeen: string[];
   elderStones: string[];
