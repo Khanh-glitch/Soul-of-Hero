@@ -1,43 +1,48 @@
 {
-  "errors": [
-    "Failed to load resource: the server responded with a status of 404 (Not Found)"
-  ],
+  "errors": [],
+  "softwareGL": true,
   "webgl2Probe": {
     "webgl2": false,
     "renderer": null,
-    "presenterMode": "2d-fallback"
+    "presenterMode": "2d-fallback",
+    "fbo": ""
   },
-  "zeroCast": {
-    "ok": true,
-    "mode": "2d-fallback",
-    "diffBytes": 0,
-    "postCount": 123
+  "zeroCastGPU": {
+    "skipped": "fallback",
+    "mode": "2d-fallback"
   },
-  "d19-t498-day": {
+  "d19metrics": {
     "mode": "2d-fallback",
-    "postCount": 176,
-    "uploads": 0,
-    "pendingAfterDrain": 0,
-    "glError": "no-gl"
+    "worldUploads": 0,
+    "layerUploads": 0,
+    "gpuPasses": 0,
+    "postCalls": 320,
+    "sourceDraws": 0,
+    "glError": 0,
+    "fbo": ""
   },
-  "d19-t498-night": {
-    "mode": "2d-fallback",
-    "postCount": 228,
-    "uploads": 0,
-    "pendingAfterDrain": 0,
-    "glError": "no-gl"
+  "frozenTickPersists": {
+    "passesAtFrozenTick": 1,
+    "tick": 498,
+    "seed": 97
+  },
+  "overlap": {
+    "skipped": "fallback"
   },
   "twoClient": {
-    "order": [
-      "zz-fake"
-    ],
     "ids": [
+      "arcana-d19",
       "zz-fake"
     ],
     "duplicateRejected": "duplicate VfxClient id: zz-fake",
-    "postsThisFrame": 1
+    "postsPerCollect": 0
   },
   "out": {
     "leftoverPasses": 0
+  },
+  "pixelfx": {
+    "charge": 2,
+    "fx": 2,
+    "mode": "2d-fallback"
   }
 }

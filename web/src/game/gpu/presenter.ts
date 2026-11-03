@@ -81,7 +81,12 @@ export class Presenter {
   private progPass!: WebGLProgram; private progComp!: WebGLProgram;
   private buf!: WebGLBuffer;
   private warpTex!: WebGLTexture; private inflTex!: WebGLTexture;
-  postCount = 0; uploadsPerFrame = 0; private lost = false;
+  private accumA!: WebGLFramebuffer; private accumATex!: WebGLTexture;
+  private accumB!: WebGLFramebuffer; private accumBTex!: WebGLTexture;
+  // real per-frame metrics (distinguished by kind)
+  postCount = 0; worldUploads = 0; layerUploads = 0; gpuPasses = 0; postCalls = 0; sourceDraws = 0;
+  lastGlError = 0; fboStatus = '';
+  private lost = false;
 
   constructor(canvas: HTMLCanvasElement, w: number, h: number) {
     this.canvas = canvas;
@@ -111,17 +116,8 @@ export class Presenter {
     if (!wc) throw new Error('2D producer unavailable');
     this.worldCtx = wc; this.worldCtx.imageSmoothingEnabled = false;
 
-    const compile = (fs: string) => {
-      const sh = (t: number, src: string) => { const s = gl.createShader(t)!; gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s) || 'shader'); return s; };
-      const p = gl.createProgram()!;
-      gl.attachShader(p, sh(gl.VERTEX_SHADER, VS));
-      gl.attachShader(p, sh(gl.FRAGMENT_SHADER, fs));
-      gl.linkProgram(p);
-      if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p) || 'link');
-      return p;
-    };
-    this.progPass = compile(PASSTHROUGH_FS);
-    this.progComp = compile(COMPOSITE_FS);
+    this.progPass = this.compile(PASSTHROUGH_FS);
+    this.progComp = this.compile(COMPOSITE_FS);
     this.buf = gl.createBuffer()!;
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buf);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
@@ -136,40 +132,99 @@ export class Presenter {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, 480, 270, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.lightFbo);
     gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.lightTex, 0);
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    this.fboStatus = gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE ? 'light:COMPLETE' : 'light:INCOMPLETE';
+    // scene accumulator ping-pong (RGBA8, screen size) for genuine multi-layer compositing
+    const mkAccum = () => {
+      const tex = gl.createTexture()!; gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      const fbo = gl.createFramebuffer()!;
+      gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+      const ok = gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE;
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      return { fbo, tex, ok };
+    };
+    const A = mkAccum(), B = mkAccum();
+    this.accumA = A.fbo; this.accumATex = A.tex; this.accumB = B.fbo; this.accumBTex = B.tex;
+    this.fboStatus += (A.ok && B.ok ? ' accum:COMPLETE' : ' accum:INCOMPLETE');
     gl.disable(gl.BLEND); gl.disable(gl.DEPTH_TEST);
 
     canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); this.lost = true; });
     canvas.addEventListener('webglcontextrestored', () => { this.lost = false; this.rebuild(); });
   }
 
-  private rebuild() { /* programs/textures are re-created lazily by renderers on restore; stateless FS passes need no data */ }
+  /** Full GPU resource rebuild after context restoration (programs, textures, FBOs). */
+  private rebuild() {
+    const gl = this.gl; if (!gl) return;
+    const w = this.canvas.width, h = this.canvas.height;
+    this.progPass = this.compile(PASSTHROUGH_FS);
+    this.progComp = this.compile(COMPOSITE_FS);
+    this.buf = gl.createBuffer()!;
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+    const mkTex = (w2: number, h2: number, internal: number, format: number, type: number, data: any) => {
+      const t = gl.createTexture()!; gl.bindTexture(gl.TEXTURE_2D, t);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texImage2D(gl.TEXTURE_2D, 0, internal, w2, h2, 0, format, type, data);
+      return t;
+    };
+    this.worldTex = mkTex(w, h, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    this.lightTex = mkTex(480, 270, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    this.warpTex = mkTex(480, 270, gl.RGBA32F, gl.RGBA, gl.FLOAT, null);
+    this.inflTex = mkTex(480, 270, gl.R8UI, gl.RED_INTEGER, gl.UNSIGNED_BYTE, null);
+    const mkFbo = (tex: WebGLTexture) => { const f = gl.createFramebuffer()!; gl.bindFramebuffer(gl.FRAMEBUFFER, f); gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0); const ok = gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE; gl.bindFramebuffer(gl.FRAMEBUFFER, null); return { f, ok }; };
+    const L = mkFbo(this.lightTex); this.lightFbo = L.f;
+    this.accumATex = mkTex(w, h, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, null); const A = mkFbo(this.accumATex); this.accumA = A.f;
+    this.accumBTex = mkTex(w, h, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, null); const B = mkFbo(this.accumBTex); this.accumB = B.f;
+    this.fboStatus = `light:${L.ok ? 'COMPLETE' : 'INCOMPLETE'} accum:${A.ok && B.ok ? 'COMPLETE' : 'INCOMPLETE'}`;
+    this.needsRasterRestore = true;
+  }
+  needsRasterRestore = false;
+  private compile(fs: string): WebGLProgram {
+    const gl = this.gl!;
+    const sh = (t: number, src: string) => { const x = gl.createShader(t)!; gl.shaderSource(x, src); gl.compileShader(x); if (!gl.getShaderParameter(x, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(x) || 'shader'); return x; };
+    const p = gl.createProgram()!;
+    gl.attachShader(p, sh(gl.VERTEX_SHADER, VS));
+    gl.attachShader(p, sh(gl.FRAGMENT_SHADER, fs));
+    gl.linkProgram(p);
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p) || 'link');
+    return p;
+  }
 
   worldContext(): CanvasRenderingContext2D { return this.worldCtx; }
   /** The D19 source raster renders into the presenter-owned light FBO. */
   lightTarget(): { fbo: WebGLFramebuffer | null; w: number; h: number } { return { fbo: (this as any).lightFbo ?? null, w: 480, h: 270 }; }
   lightTexture(): WebGLTexture | null { return (this as any).lightTex ?? null; }
 
-  /** One world upload + frame graph + exactly ONE post, per frame. */
+  /** One world upload + frame graph + exactly ONE final post, per frame.
+   *  Layers composite into a ping-pong accumulator (layer N samples the result
+   *  of layers 0..N-1, never the raw world), then a single post draws to screen. */
   present(layers: PresentedLayer[]): void {
-    if (!this.gl) { // 2D fallback: exact blit, still one owner / one "post" (identity)
+    if (!this.gl) { // 2D fallback: exact blit, still one owner / one identity "post"
       const b = this.blit!;
       b.imageSmoothingEnabled = false;
       b.drawImage(this.worldCanvas, 0, 0);
-      this.postCount++;
+      this.postCount++; this.postCalls++;
       return;
     }
     const gl = this.gl;
     if (this.lost || gl.isContextLost()) return;
-    this.uploadsPerFrame = 0;
+    this.worldUploads = 0; this.layerUploads = 0; this.gpuPasses = 0; this.postCalls = 0;
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.viewport(0, 0, this.canvas.width, this.canvas.height);
-    // ---- single world upload ----
+    // ---- single WORLD upload ----
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, this.worldTex);
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, this.worldCanvas);
-    this.uploadsPerFrame++;
+    this.worldUploads++;
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
@@ -183,10 +238,20 @@ export class Presenter {
       gl.uniform1i(gl.getUniformLocation(this.progPass, 'world'), 0);
       gl.uniform2f(gl.getUniformLocation(this.progPass, 'size'), this.canvas.width, this.canvas.height);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      this.postCount++;
+      this.postCount++; this.postCalls++;
+      this.lastGlError = gl.getError();
       return;
     }
-    // ---- frame graph: world + each submitted layer, then ONE post ----
+    // ---- frame graph: seed accumulator with the world, composite each layer ----
+    gl.useProgram(this.progPass); setupPos(this.progPass);
+    gl.uniform1i(gl.getUniformLocation(this.progPass, 'world'), 0);
+    gl.uniform2f(gl.getUniformLocation(this.progPass, 'size'), this.canvas.width, this.canvas.height);
+    let curFbo = this.accumA, curTex = this.accumATex;      // curFbo/curTex hold the scene so far
+    const otherFbo = this.accumB, otherTex = this.accumBTex;
+    gl.bindFramebuffer(gl.FRAMEBUFFER, curFbo);
+    gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); // world -> accum
+
     gl.useProgram(this.progComp); setupPos(this.progComp);
     gl.uniform1i(gl.getUniformLocation(this.progComp, 'scene'), 0);
     gl.uniform1i(gl.getUniformLocation(this.progComp, 'light'), 1);
@@ -194,6 +259,7 @@ export class Presenter {
     gl.uniform1i(gl.getUniformLocation(this.progComp, 'influence'), 3);
     gl.uniform2f(gl.getUniformLocation(this.progComp, 'size'), this.canvas.width, this.canvas.height);
     for (const L of layers) {
+      gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, curTex);   // scene so far
       gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, L.lightTex);
       gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, this.warpTex);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, 480, 270, 0, gl.RGBA, gl.FLOAT, L.warp);
@@ -201,13 +267,29 @@ export class Presenter {
       gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.R8UI, 480, 270, 0, gl.RED_INTEGER, gl.UNSIGNED_BYTE, L.influence);
       gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
+      this.layerUploads += 2; // per-layer CPU->GPU warp+influence uploads (distinct from world upload)
       gl.uniform4f(gl.getUniformLocation(this.progComp, 'region'), L.region.x, L.region.y, L.region.w, L.region.h);
       gl.uniform1f(gl.getUniformLocation(this.progComp, 'fade'), L.fade);
       gl.uniform1f(gl.getUniformLocation(this.progComp, 'bloomGain'), L.bloomGain);
       gl.uniform1f(gl.getUniformLocation(this.progComp, 'time'), L.time);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); // each layer is a bounded region pass of the ONE post
+      const wFbo = curFbo === this.accumA ? otherFbo : this.accumA; // write into the other buffer
+      gl.bindFramebuffer(gl.FRAMEBUFFER, wFbo);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); // one bounded region pass per layer
+      this.gpuPasses++;
+      curFbo = wFbo;
+      curTex = wFbo === this.accumA ? this.accumATex : this.accumBTex;
     }
-    this.postCount++;
+    // ---- ONE final scene post: accumulated scene -> screen ----
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+    gl.useProgram(this.progPass); setupPos(this.progPass);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, curTex);
+    gl.uniform1i(gl.getUniformLocation(this.progPass, 'world'), 0);
+    gl.uniform2f(gl.getUniformLocation(this.progPass, 'size'), this.canvas.width, this.canvas.height);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    this.postCount++; this.postCalls++;
+    this.lastGlError = gl.getError();
   }
 }
 

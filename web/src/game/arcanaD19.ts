@@ -31,6 +31,7 @@ export class D19Client implements comp.VfxClient {
   private raster: DRaster | null = null;
   private cast: Cast | null = null;
   private lastTick = -1;
+  private frameData: ReturnType<typeof constellationCommands> | null = null;
   /** QA-only: force a deterministic cast+seek (NOT a gameplay event) */
   qaCast = false; qaTick = 0;
 
@@ -55,25 +56,33 @@ export class D19Client implements comp.VfxClient {
 
   submitGpu(frame: comp.FrameCtx): void {
     const p = getPresenter();
-    const raster = this.ensureRaster();
-    if (!p || !raster || !this.cast) return;
+    if (!p || !this.cast) return;
+    const raster = this.ensureRaster(); // null in 2d-fallback; pass still submitted (presenter ignores GPU layers there)
     const tick = this.qaCast ? this.qaTick : Math.floor((frame.now - this.cast.startMs) / (1000 / 60));
-    if (tick < 0 || tick === this.lastTick) { if (tick !== this.lastTick && tick >= 0) { /* re-render same tick for camera move */ } else return; }
-    if (tick < this.lastTick) return;
-    this.lastTick = tick;
+    if (tick < 0 || tick < this.lastTick) return;
     if (tick / 60 > 10.2) { this.cast = null; this.lastTick = -1; return; } // natural OUT, no leftover FX
-    this.state.advanceTo(tick / 60);
-    const t = tick / 60;
-    this.warp.step(t);
-    const frameData = constellationCommands(this.state);
-    raster.render(frameData.commands, frameData.rendererTime, p.lightTarget(), 'none');
+    if (tick !== this.lastTick) {
+      // (re)render the source raster ONLY when the source tick changes; the pass
+      // itself is re-submitted every frame below so a frozen/paused tick stays
+      // visually present on all subsequent frames, incl. while the camera moves.
+      this.lastTick = tick;
+      this.state.advanceTo(tick / 60);
+      this.warp.step(tick / 60);
+      this.frameData = constellationCommands(this.state);
+      if (raster && p.gl) {
+        const r = raster.render(this.frameData.commands, this.frameData.rendererTime, p.lightTarget(), 'none');
+        p.sourceDraws += r.draws;
+      }
+    }
+    const frameData = this.frameData!;
+    if (!frameData) return;
     // place the 480x270 source window centered on the cast world position, screen space
     const scale = this.cast.scale * (D19_SRC_W / 480);
     const sx = Math.round(this.cast.wx - frame.cam.x - (D19_SRC_W * scale) / 2);
     const sy = Math.round(this.cast.wy - frame.cam.y - (D19_SRC_H * scale) / 2);
     comp.submitGpuPass({
       clientId: this.id, kind: 'd19',
-      lightTex: p.lightTexture()!,
+      lightTex: (p.lightTexture() ?? null) as any,
       warp: this.warp.data,
       influence: dInfluence(frameData.commands, this.warp),
       region: { x: sx, y: sy, w: Math.round(D19_SRC_W * scale), h: Math.round(D19_SRC_H * scale) },
