@@ -5,7 +5,7 @@ Pipeline: `web/src/game/arcana_d20/source/c/` vendors the source-C package
 C Frame with the real SOH world region as ground/base and composites on CPU
 with the source `gl.ts` MAIN_FS equation; presented as one `frame` layer via the
 existing single WebGL2 presenter (`arcana_lab.ts`). #20 keeps its A+C semantic
-bridge (`arcana20.ts`). Catalog + selector in FX Lab (F4). All visual-only QA;
+bridge (`arcana20.ts`). Catalog + selector in FX Lab (F9). All visual-only QA;
 no HP/charge/save changes.
 
 | # | Skill | Status | Note |
