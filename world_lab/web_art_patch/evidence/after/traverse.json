@@ -1,0 +1,70 @@
+{
+  "url": "http://127.0.0.1:4181",
+  "start": {
+    "x": 1352,
+    "y": 2744,
+    "hp": 100,
+    "dead": false,
+    "region": "Fisher's Point",
+    "entities": 30,
+    "sources": 0
+  },
+  "end": {
+    "x": 1334.0940319999968,
+    "y": 2814.720992000006,
+    "hp": 100,
+    "dead": false,
+    "region": "Fisher's Point",
+    "entities": 30,
+    "sources": 0
+  },
+  "netDisplacementPx": 72.95,
+  "walkedPathPx": 510.43,
+  "waypoints": [
+    {
+      "key": "KeyS",
+      "ms": 2800,
+      "x": 1352,
+      "y": 2895.62
+    },
+    {
+      "key": "KeyA",
+      "ms": 2200,
+      "x": 1255.48,
+      "y": 2895.62
+    },
+    {
+      "key": "KeyA",
+      "ms": 1200,
+      "x": 1204.1,
+      "y": 2895.62
+    },
+    {
+      "key": "KeyD",
+      "ms": 1400,
+      "x": 1292.43,
+      "y": 2895.62
+    },
+    {
+      "key": "KeyW",
+      "ms": 1200,
+      "x": 1292.43,
+      "y": 2868.16
+    },
+    {
+      "key": "KeyD",
+      "ms": 900,
+      "x": 1334.09,
+      "y": 2868.16
+    },
+    {
+      "key": "KeyW",
+      "ms": 900,
+      "x": 1334.09,
+      "y": 2814.72
+    }
+  ],
+  "panels": "I/M/B/C opened and closed with Escape",
+  "errors": [],
+  "pass": true
+}
