@@ -24,6 +24,14 @@ No Veyra authoring coordinate was scaled, resampled or written into Web's 200×2
 | A1 / Godot native world truth | 384×256 tiles | 16px tile, camera 640×360 ≈ 40×22.5 tiles | `data/overworld/hollow_marches.json` + `_layers.json` + `_props.json` (13 299 props), spawn `[56,218]` | **NATIVE** (Godot, not Web) |
 | Web playable runtime | `WW=WH=200` tiles = 3200×3200 px | 16px tile, `VIEW 640×360`, `WORLD_SEED=0x50f1` | `web/src/game/world.ts` deterministic generator + authored `starts`/`places`/`buildings`/`statics` | **PLAYABLE** (this slice) |
 
+> **CORRECTION (MAP-GEO-01).** An earlier version of this crosswalk claimed the 250×175 terrain
+> raster was absent from the committed Veyra JSON. That was wrong. `project.terrain` **is**
+> embedded with `gw=250, gh=175, cell=8, seed=2026` and two canonical base64 uint8 arrays of
+> 43,750 cells each (`elev`, `biome`). See `world_lab/geo01/SOURCE_VERIFICATION.md` for the
+> measured decode. What is genuinely missing is the **semantic legend / physical units** (biome
+> codes 0..11, elevation byte scale, river/road width units) and any climate layer; those remain
+> explicit UNKNOWNs. `BLOCKED-V01` has been rewritten accordingly.
+
 The conversion contract explicitly forbids inferring that 2000×1400 authoring units equal
 2000×1400 native tiles. 2000/16 = 125 and 1400/16 = 87.5 do **not** fit Web's 200×200 either; any
 mapping is a **world-scale decision** that must be documented with measured journey times. MAP-R01
@@ -33,17 +41,20 @@ onto existing Web tile classes).
 Veyra parsed inventory (source IDs retained in the JSON): 8 `land` (1 main + 6 satellite + 1 islet),
 5 `lakes`, 17 `rivers` (13 river / 1 canal / 3 distributary), 92 `roads` (34 cart / 37 trail /
 11 foot / 2 riverside / **8 ferry**), 12 `bridges` (7 cart / 5 foot), 27 `docks` (17 coastal / 10
-inland), 81 `pois` (25 archetypes incl. 6 `ragnarok_cache`, 2 `chest_vendor`, 3 `evac`, 5
+inland), 81 `pois` (24 archetypes incl. 6 `ragnarok_cache`, 2 `chest_vendor`, 3 `evac`, 5
 `elder_site`), 23 `zones`, 280 `resources` (11 kinds, all `gate:"none"`), 4 `spawns`, 6 `elders`
 (Surtur/Typhon/Aion/Atlas/Argus/Anubis), 24 `labels`. Most objects carry `conf:"proposal"` or
 `"assumption"` — they are **candidates**, not approved gameplay law. The contract's `terrain`
-raster (250×175, cell 8) is **not present in this JSON**; it must be sourced before any geometry compile.
+raster (250×175, cell 8) **is present in this JSON** as two base64 `uint8` arrays of 43,750 cells
+each; `world_lab/geo01/` has now decoded them. The unresolved part is the **semantic encoding**:
+no biome legend, no elevation unit, no physical width/slope unit, and no climate layer are
+committed. Those must be settled before any geometry compile.
 
 ## Crosswalk
 
 | Dimension | Veyra source concept | A1 geography / art | Current Web representation | Compatible integration seam (what MAP-R01 proved) | Unresolved differences |
 |---|---|---|---|---|---|
-| **Geometry** | Authored polygon land rings + holes, 5 lakes, 17 rivers, elevation raster (missing), coast/inlet/isthmus geometry, 23 buildable polygons | 384×256 authored causal landforms (caldera ash fan, moraine terrace, glacial cirque…); immutable static world truth, dynamic mutations keyed by stable IDs | 200×200 **procedurally generated** island from `WORLD_SEED=0x50f1` with `tiles/zone/seaDist/fresh` arrays; coast, river `x110..112,y178..183`, beach `y178..181` are generator outputs, not authored rings | `worldAssetChunk(r,cx,cy,cv)` reads `effTile(r,x,y)` from the authoritative Web state and blits frames **on the engine's own chunk canvas**. It never writes a tile, so any future geometry authority (Veyra/A1/Web) can be swapped under the same seam without touching the renderer. | Three different extents and two different geometry paradigms (authored polygons vs seeded generator). No elevation/slope, hole, strait, distributary, portage, ferry or multi-level concept exists in Web. Veyra terrain raster absent. **No coordinate transform decided.** |
+| **Geometry** | Authored polygon land rings + holes, 5 lakes, 17 rivers, embedded 250×175 elevation/biome raster (semantic legend unresolved), coast/inlet/isthmus geometry, 23 buildable polygons | 384×256 authored causal landforms (caldera ash fan, moraine terrace, glacial cirque…); immutable static world truth, dynamic mutations keyed by stable IDs | 200×200 **procedurally generated** island from `WORLD_SEED=0x50f1` with `tiles/zone/seaDist/fresh` arrays; coast, river `x110..112,y178..183`, beach `y178..181` are generator outputs, not authored rings | `worldAssetChunk(r,cx,cy,cv)` reads `effTile(r,x,y)` from the authoritative Web state and blits frames **on the engine's own chunk canvas**. It never writes a tile, so any future geometry authority (Veyra/A1/Web) can be swapped under the same seam without touching the renderer. | Three different extents and two different geometry paradigms (authored polygons vs seeded generator). No elevation/slope, hole, strait, distributary, portage, ferry or multi-level concept exists in Web. Veyra raster is present but its biome legend / physical units are not committed. **No coordinate transform decided.** |
 | **Visual representation** | Atlas-level cartography and native 1× regional scenes are two views over the same world data; nearest filtering, 640×360, no opaque pasted background; autotile + seam tests for shore, bends, T/Y/X confluence, river mouths, inlets, delta, bridges | A1 `terrain.png` (1769 rects / 184 families) + `props.png` (164 rects), 16px grid, `filter:nearest`, `scale:1`, feet anchor, shared 72-key palette ramp, 11 biome/lighting profiles, 14 production rules | Web `render.ts` `PAL/PRIO/texel` hash/sine/fbm pixel painting, 16×16 chunk cache, animated water overlay, day/night `drawLight`, y-sorted entities | **This is the delivered bridge**: a 23 547-byte crop sheet of 181 admitted A1 frames + exact `frame_ledger.v1.json` rects/hashes; deterministic material→frame selector; decoded corner/edge transition masks; nearest-neighbour integer blits; 3 minimal `render.ts` seams. Proved on forest/ground/coast day+night at 640×360. | A1 covers grass/forest/sand/tidal/lake/river/dune/road/coast/ash/snow/… but **not** Web's lava, toxic, cliff face, PWALL, FLOOR, ice, burnt, marsh, hill materials — those remain procedural (KEEP). Veyra needs Surtur lava/obsidian, Anubis dune/oasis, Argus exterior, Atlas gateway, functional boats/piers — `ASSET_STAGING_STATUS.md` marks these **missing**. A1 `cainos_*`/`ocean_*` crops are excluded for licence/style. |
 | **Resource authority** | 280 `resources` = candidate geometry (`kind`, `dens`, `gate:"none"`); Bible §5.3 `WorldSourceCandidate` says **Map/A1 owns candidate geometry only**, A3/Gameplay decide item source IDs, stock, respawn; A0 commits | `data/overworld/hollow_marches_resources.json`, harvestable nodes pinned to canonical IDs; crown roadside treatment is visual-only, "no collision, stand, cache identity, reward or save change" | `SOURCES` (19 keys) in `catalog.ts`; `w.src` Int8Array (4 888 placed sources); `sourceAt()` → stock/hp/regrow; `harvestHit()` yields real items; `r.sources` dynamic state | `worldAssetSource()` is called only for **real `w.src` cells** inside the existing y-sorted list, with `stock<=0` falling back to Web's depleted sprite. MAP-R01 verified a real LMB harvest raised `skills.gather 0→2` and an A-vs-C authority fingerprint is identical. All A1 prop replacements were **REJECTED** for style; the seam stays available. | Veyra `resources` have no `SOURCES` key mapping, no stock/respawn/yield, and all `gate:none` — Web has gates via tool `power`, POI protection and creature threat. Veyra `fish`/`clay`/`obsidian`/`fresh_water`/`salt` have no Web equivalent. **Do not let a visual sprite become a new source or a new loot table.** |
 | **Road traversal** | 92 `roads` with `kind=cart/trail/foot/riverside/ferry`, 12 bridges with `load=cart/foot`, 8 ferry paths needing boats/boarding rules, slope/footprint/loaded-vs-unloaded costs, alternate routes | `crown_roadside.treatment.v1.json` is a visual overlay pinned by SHA; roads are transparent overlays on opaque ground; compiler rejects baking a road frame into the ground row; native cart/bridge collision owned by A0 | `T.ROAD` / `T.BRIDGE` tiles, `SPEED_KEY` (road/bridge/floor/rough), cart entity with `pulling`, `blockedAt` collision grid, `w.fresh` for water | MAP-R01 kept Web's `T.ROAD` fully authoritative and **KEEPed Web's road art** after the A1 plank `road_dirt_*` set read as boardwalk squares. The A1 road blob set remains in the ledger with its decoded `1=N 2=E 4=S 8=W` mask, ready behind `ASSET_DECISIONS.road`. | Web has **no ferry, no boat, no load class, no slope, no bridge span fit, no `WorldTraversal` edge graph**. 8 Veyra ferries cannot become land roads. Cart geometry/slope/bridge collision must be proven natively before any route claim. No travel-time measurement (`t_foot`, `t_cart_loaded`, `exposure_time`) exists in Web. |
@@ -58,8 +69,10 @@ raster (250×175, cell 8) is **not present in this JSON**; it must be sourced be
 2. **Geometry authority**: replace/augment `world.ts`'s seeded generator with authored land rings,
    lake volumes, river channels/banks/confluences, bridges, docks and buildable polygons — or
    declare Web a deliberately separate, smaller canon. Both cannot be "the same world" implicitly.
-3. **Missing source data**: obtain the `terrain` raster 250×175 @ cell 8 with its original encoding;
-   Veyra JSON alone has no elevation/biome raster.
+3. **Missing semantics, not missing raster**: the `terrain` raster 250×175 @ cell 8 is embedded and
+   now decoded (43,750 `uint8` cells each for `elev` and `biome`). Still needed: a committed biome
+   legend for codes 0..11, the elevation byte's physical unit/scale, river/road width units, and a
+   climate/moisture source. Veyra JSON alone has no climate layer.
 4. **ID / authority mapping**: `WorldSourceCandidate`, `WorldTraversal`, `BuildSiteSample`,
    `POIAccessGraphCandidate`, `WorldTimeHazardCandidate`, `RagnarokRouteCandidate` → existing
    Web/Godot APIs. Map owns candidate geometry only; A3 stock/yield, A8 POI, Gameplay law, A0
@@ -79,7 +92,9 @@ raster (250×175, cell 8) is **not present in this JSON**; it must be sourced be
 
 ## Remaining integration blockers (concise)
 
-- `BLOCKED-V01` Veyra terrain raster / elevation encoding absent from the committed JSON.
+- `BLOCKED-V01` Veyra terrain raster IS embedded and decoded, but its biome-code legend, elevation
+  unit/scale and width/slope units are not committed; climate (moisture/temperature) is absent.
+  Corrected by `world_lab/geo01/`.
 - `BLOCKED-V02` No agreed coordinate transform; three incompatible extents (2000×1400 / 384×256 / 200×200).
 - `BLOCKED-V03` No native Godot 4.7 import of Veyra in this workspace; no native walkable/collision/
   water/door proof, no boat/portage.

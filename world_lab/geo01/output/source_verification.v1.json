@@ -1,0 +1,992 @@
+{
+  "schema": "soh.map.source_verification.v1",
+  "generatedBy": "world_lab/geo01/src/verify.mjs",
+  "canonicalSource": {
+    "branch": "map/veyra-gold-asset-canon-20261102",
+    "commit": "19d8c6ec820f324a6ac12733165e43b5e2c6eab2",
+    "path": "map_tower/veyra_gold/VEYRA_GOLD_MAP.sohmap.json",
+    "bytes": 332249,
+    "sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+    "format": "soh-maplab",
+    "version": 1,
+    "name": "Soul of Hero - VEYRA GOLD MAP V1 (Creator 2026-11-02)",
+    "metaStatus": "GOLD MAP DESIGN - PAPER ONLY - NOT NATIVE PRODUCTION",
+    "created": "2026-11-01T18:03:35.376Z",
+    "modified": "2026-11-01T18:03:35.376Z",
+    "author": "Creator / Map Tower"
+  },
+  "verdict": "PASS",
+  "checks": [
+    {
+      "id": "SRC-01",
+      "requirement": "pinned canonical source fingerprint",
+      "status": "PASS",
+      "measured": {
+        "branch": "map/veyra-gold-asset-canon-20261102",
+        "commit": "19d8c6ec820f324a6ac12733165e43b5e2c6eab2",
+        "path": "map_tower/veyra_gold/VEYRA_GOLD_MAP.sohmap.json",
+        "bytes": 332249,
+        "sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+        "format": "soh-maplab",
+        "version": 1,
+        "name": "Soul of Hero - VEYRA GOLD MAP V1 (Creator 2026-11-02)",
+        "metaStatus": "GOLD MAP DESIGN - PAPER ONLY - NOT NATIVE PRODUCTION",
+        "created": "2026-11-01T18:03:35.376Z",
+        "modified": "2026-11-01T18:03:35.376Z",
+        "author": "Creator / Map Tower",
+        "note": "sha256/bytes/commit/branch/path all recorded"
+      }
+    },
+    {
+      "id": "SRC-02",
+      "requirement": "source remains PAPER-only design, not native production",
+      "status": "PASS",
+      "measured": {
+        "metaStatus": "GOLD MAP DESIGN - PAPER ONLY - NOT NATIVE PRODUCTION"
+      }
+    },
+    {
+      "id": "GEO-01",
+      "requirement": "8 landmasses with preserved ids and coastline topology",
+      "status": "PASS",
+      "measured": {
+        "count": 8,
+        "ids": [
+          "ld_veyra",
+          "ld_cinder",
+          "ld_saltwick",
+          "ld_gull",
+          "ld_ironholm",
+          "ld_threshold",
+          "ld_wreck",
+          "ld_beacon"
+        ],
+        "kinds": [
+          "main",
+          "satellite",
+          "satellite",
+          "satellite",
+          "satellite",
+          "satellite",
+          "satellite",
+          "islet"
+        ],
+        "rings": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "holeCount": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "outerVertexCount": [
+          372,
+          86,
+          74,
+          28,
+          64,
+          45,
+          38,
+          14
+        ],
+        "coastline": {
+          "totalCoastCells": 812,
+          "connectedComponents8": 8,
+          "componentSizes": [
+            471,
+            86,
+            74,
+            65,
+            43,
+            37,
+            26,
+            10
+          ],
+          "note": "Coast cells are land cells with a 4-neighbour sea cell; component count is a derived 8-connected topology metric, not a gameplay boundary."
+        },
+        "areasAu2": [
+          835818.727,
+          46386.8545,
+          31853.1629,
+          4791.1764,
+          22875.3139,
+          12573.4826,
+          8764.6646,
+          1061.7135
+        ],
+        "perimetersAu": [
+          4204.6626,
+          779.8256,
+          669.9447,
+          248.5012,
+          576.6555,
+          401.9562,
+          336.5796,
+          117.5483
+        ],
+        "derivedCoastCells": [
+          471,
+          86,
+          74,
+          26,
+          65,
+          43,
+          37,
+          10
+        ]
+      }
+    },
+    {
+      "id": "GEO-02",
+      "requirement": "coastline is a measurable closed boundary, not a pasted bitmap",
+      "status": "PASS",
+      "measured": {
+        "totalCoastCells": 812,
+        "connectedComponents8": 8,
+        "componentSizes": [
+          471,
+          86,
+          74,
+          65,
+          43,
+          37,
+          26,
+          10
+        ]
+      }
+    },
+    {
+      "id": "RAS-01",
+      "requirement": "embedded 250x175 terrain raster, base64 elevation+biome arrays of 43,750 cells each",
+      "status": "PASS",
+      "measured": {
+        "gw": 250,
+        "gh": 175,
+        "cell": 8,
+        "seed": 2026,
+        "cells": 43750,
+        "elevBase64Length": 58336,
+        "biomeBase64Length": 58336,
+        "elevDecodedBytes": 43750,
+        "biomeDecodedBytes": 43750,
+        "encoding": "base64 / uint8 / row-major / no compression",
+        "canonicalBase64Roundtrip": true
+      }
+    },
+    {
+      "id": "RAS-02",
+      "requirement": "decoded elevation/biome value domains are reported, not reinterpreted",
+      "status": "PASS",
+      "measured": {
+        "elevationDistinct": 238,
+        "elevationMin": 0,
+        "elevationMax": 243,
+        "elevationZeroCells": 28624,
+        "biomeDistinct": 12,
+        "biomeMin": 0,
+        "biomeMax": 11,
+        "legendStatus": "NOT_COMMITTED_IN_SOURCE",
+        "landmaskAgreementRatio": 0.998697,
+        "slopeStats": {
+          "min": 0,
+          "max": 150,
+          "mean": 2.4562,
+          "unit": "RAW_BYTE_DELTA_PER_GRID_CELL"
+        }
+      }
+    },
+    {
+      "id": "WAT-01",
+      "requirement": "17 rivers, 5 lakes, mouths, nav flags and slope profiles",
+      "status": "PASS",
+      "measured": {
+        "rivers": 17,
+        "lakes": 5,
+        "kinds": {
+          "river": 13,
+          "canal": 1,
+          "distributary": 3
+        },
+        "mouthSummary": {
+          "toSea": [
+            "rv_east",
+            "rv_d1",
+            "rv_d2",
+            "rv_d3",
+            "rv_amber_low",
+            "rv_west",
+            "rv_hook",
+            "rv_ash",
+            "rv_salt",
+            "rv_slag"
+          ],
+          "toLake": [
+            {
+              "id": "rv_grey_up",
+              "ref": "lk_grey"
+            },
+            {
+              "id": "rv_argus",
+              "ref": "lk_verdant"
+            },
+            {
+              "id": "rv_amber_up",
+              "ref": "lk_mirage"
+            }
+          ],
+          "toRiver": [
+            {
+              "id": "rv_silver",
+              "ref": "rv_grey_low"
+            },
+            {
+              "id": "rv_canal",
+              "ref": "rv_moss"
+            },
+            {
+              "id": "rv_moss",
+              "ref": "rv_grey_low"
+            }
+          ],
+          "none": [
+            "rv_grey_low"
+          ]
+        },
+        "unresolvedRefs": [],
+        "navNavigableSegments": 41,
+        "navNonNavigable": 26,
+        "features": [
+          "rv_grey_up:waterfall",
+          "rv_canal:lock",
+          "rv_moss:weir",
+          "rv_east:rapids"
+        ],
+        "components": [
+          {
+            "id": 0,
+            "members": 30,
+            "reachesSea": true
+          }
+        ],
+        "riverElevationProfiles": [
+          {
+            "id": "rv_grey_up",
+            "min": 56,
+            "max": 121,
+            "descends": true
+          },
+          {
+            "id": "rv_grey_low",
+            "min": 17,
+            "max": 61,
+            "descends": true
+          },
+          {
+            "id": "rv_silver",
+            "min": 56,
+            "max": 68,
+            "descends": true
+          },
+          {
+            "id": "rv_canal",
+            "min": 23,
+            "max": 26,
+            "descends": false
+          },
+          {
+            "id": "rv_moss",
+            "min": 21,
+            "max": 31,
+            "descends": true
+          },
+          {
+            "id": "rv_argus",
+            "min": 24,
+            "max": 46,
+            "descends": true
+          },
+          {
+            "id": "rv_east",
+            "min": 10,
+            "max": 29,
+            "descends": true
+          },
+          {
+            "id": "rv_d1",
+            "min": 0,
+            "max": 17,
+            "descends": true
+          },
+          {
+            "id": "rv_d2",
+            "min": 12,
+            "max": 17,
+            "descends": true
+          },
+          {
+            "id": "rv_d3",
+            "min": 10,
+            "max": 17,
+            "descends": true
+          },
+          {
+            "id": "rv_amber_up",
+            "min": 42,
+            "max": 149,
+            "descends": true
+          },
+          {
+            "id": "rv_amber_low",
+            "min": 11,
+            "max": 42,
+            "descends": true
+          },
+          {
+            "id": "rv_west",
+            "min": 0,
+            "max": 71,
+            "descends": true
+          },
+          {
+            "id": "rv_hook",
+            "min": 0,
+            "max": 28,
+            "descends": true
+          },
+          {
+            "id": "rv_ash",
+            "min": 9,
+            "max": 201,
+            "descends": true
+          },
+          {
+            "id": "rv_salt",
+            "min": 8,
+            "max": 57,
+            "descends": true
+          },
+          {
+            "id": "rv_slag",
+            "min": 0,
+            "max": 77,
+            "descends": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "WAT-02",
+      "requirement": "water connectivity reaches the sea through authored mouths",
+      "status": "PASS",
+      "measured": {
+        "seaConnectedLakes": [
+          "lk_grey",
+          "lk_mere",
+          "lk_mirage",
+          "lk_tarn",
+          "lk_verdant"
+        ],
+        "seaComponentMembers": [
+          [
+            "lk_grey",
+            "lk_mere",
+            "lk_mirage",
+            "lk_tarn",
+            "lk_verdant",
+            "rv_amber_low",
+            "rv_amber_up",
+            "rv_argus",
+            "rv_ash",
+            "rv_canal",
+            "rv_d1",
+            "rv_d2",
+            "rv_d3",
+            "rv_east",
+            "rv_grey_low",
+            "rv_grey_up",
+            "rv_hook",
+            "rv_moss",
+            "rv_salt",
+            "rv_silver",
+            "rv_slag",
+            "rv_west",
+            "sea",
+            "spring:rv_amber_up",
+            "spring:rv_argus",
+            "spring:rv_ash",
+            "spring:rv_salt",
+            "spring:rv_silver",
+            "spring:rv_slag",
+            "spring:rv_west"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "TRN-01",
+      "requirement": "roads, trails, bridges, docks and ferry topology with preserved ids",
+      "status": "PASS",
+      "measured": {
+        "roads": 92,
+        "roadKinds": {
+          "cart": {
+            "count": 34,
+            "lengthAu": 5363.5713
+          },
+          "foot": {
+            "count": 11,
+            "lengthAu": 1007.8349
+          },
+          "trail": {
+            "count": 37,
+            "lengthAu": 2691.001
+          },
+          "riverside": {
+            "count": 2,
+            "lengthAu": 420.3283
+          },
+          "ferry": {
+            "count": 8,
+            "lengthAu": 1371.0219
+          }
+        },
+        "totalRoadLengthAu": 10853.757399999999,
+        "bridges": 12,
+        "bridgeLoads": {
+          "cart": 7,
+          "foot": 5
+        },
+        "docks": 27,
+        "dockKinds": {
+          "coastal": 17,
+          "inland": 10
+        },
+        "dockWaterRefsResolved": true,
+        "ferryPaths": 8,
+        "routeGraph": {
+          "config": {
+            "joinToleranceAu": 8,
+            "intersectionJoins": 17,
+            "stopCount": 218,
+            "nodeCount": 131,
+            "edgeCount": 105
+          },
+          "nodeCount": 131,
+          "edgeCount": 105,
+          "landRoadNodes": 123,
+          "isolatedStopNodes": 1,
+          "note": "Edges are authored road sub-polylines. Endpoint joins within joinToleranceAu and exact segment intersections are DERIVED; ferry edges are present but NOT land roads."
+        },
+        "widthStatus": "NOT_IN_SOURCE",
+        "bridgeNearestRiver": [
+          {
+            "id": "br_0",
+            "load": "cart",
+            "river": "rv_moss",
+            "distanceAu": 0.1327
+          },
+          {
+            "id": "br_1",
+            "load": "cart",
+            "river": "rv_canal",
+            "distanceAu": 0.4292
+          },
+          {
+            "id": "br_2",
+            "load": "cart",
+            "river": "rv_east",
+            "distanceAu": 0.0763
+          },
+          {
+            "id": "br_3",
+            "load": "cart",
+            "river": "rv_grey_low",
+            "distanceAu": 0.8134
+          },
+          {
+            "id": "br_4",
+            "load": "cart",
+            "river": "rv_silver",
+            "distanceAu": 0.1495
+          },
+          {
+            "id": "br_5",
+            "load": "cart",
+            "river": "rv_grey_low",
+            "distanceAu": 0.2768
+          },
+          {
+            "id": "br_6",
+            "load": "foot",
+            "river": "rv_moss",
+            "distanceAu": 0.3394
+          },
+          {
+            "id": "br_7",
+            "load": "cart",
+            "river": "rv_salt",
+            "distanceAu": 0.3166
+          },
+          {
+            "id": "br_8",
+            "load": "foot",
+            "river": "rv_east",
+            "distanceAu": 0.2524
+          },
+          {
+            "id": "br_9",
+            "load": "foot",
+            "river": "rv_grey_up",
+            "distanceAu": 0.4105
+          },
+          {
+            "id": "br_a",
+            "load": "foot",
+            "river": "rv_silver",
+            "distanceAu": 0.7758
+          },
+          {
+            "id": "br_b",
+            "load": "foot",
+            "river": "rv_d3",
+            "distanceAu": 0.1114
+          }
+        ]
+      }
+    },
+    {
+      "id": "BLD-01",
+      "requirement": "candidate buildable regions and physical access are measurable",
+      "status": "PASS",
+      "measured": {
+        "zones": 23,
+        "zoneIds": [
+          "bz_greywater",
+          "bz_silver",
+          "bz_moss",
+          "bz_verdant",
+          "bz_elder_clear",
+          "bz_greyback",
+          "bz_typhon_t",
+          "bz_ridge",
+          "bz_eastflats",
+          "bz_hook",
+          "bz_westmouth",
+          "bz_westwood",
+          "bz_gulfwest",
+          "bz_delta",
+          "bz_oasis",
+          "bz_dune",
+          "bz_cinder",
+          "bz_salt",
+          "bz_ironholm",
+          "bz_argus",
+          "bz_kestrel",
+          "bz_slag",
+          "bz_forest_n"
+        ],
+        "slopeLabels": [
+          "thoải",
+          "phẳng",
+          "phẳng",
+          "thoải",
+          "thoải",
+          "dốc nhẹ",
+          "dốc nhẹ",
+          "dốc nhẹ",
+          "phẳng",
+          "phẳng",
+          "thoải",
+          "thoải",
+          "phẳng",
+          "phẳng",
+          "phẳng",
+          "dốc nhẹ",
+          "thoải",
+          "phẳng",
+          "thoải",
+          "thoải",
+          "dốc nhẹ",
+          "phẳng",
+          "thoải"
+        ],
+        "tags": [
+          [
+            "bờ hồ",
+            "bình nguyên"
+          ],
+          [
+            "ven sông",
+            "bình nguyên"
+          ],
+          [
+            "ven sông",
+            "gần đường vận tải"
+          ],
+          [
+            "bờ hồ",
+            "bình nguyên",
+            "gần đường vận tải"
+          ],
+          [
+            "trong rừng"
+          ],
+          [
+            "nền đá cao"
+          ],
+          [
+            "nền đá cao",
+            "gần trung tâm khai thác"
+          ],
+          [
+            "nền đá cao",
+            "gần trung tâm khai thác"
+          ],
+          [
+            "ven sông",
+            "ven biển",
+            "bình nguyên"
+          ],
+          [
+            "bình nguyên",
+            "bờ hồ"
+          ],
+          [
+            "ven biển",
+            "bình nguyên"
+          ],
+          [
+            "trong rừng",
+            "ven biển"
+          ],
+          [
+            "ven biển",
+            "gần đường vận tải"
+          ],
+          [
+            "ven sông",
+            "gần đường vận tải"
+          ],
+          [
+            "bờ hồ"
+          ],
+          [
+            "nền đá cao"
+          ],
+          [
+            "ven biển"
+          ],
+          [
+            "ven biển",
+            "bình nguyên"
+          ],
+          [
+            "ven biển",
+            "gần trung tâm khai thác"
+          ],
+          [
+            "ven sông",
+            "bình nguyên"
+          ],
+          [
+            "nền đá cao"
+          ],
+          [
+            "gần đường vận tải"
+          ],
+          [
+            "trong rừng",
+            "ven sông"
+          ]
+        ],
+        "derivedBuildableCells": 1021,
+        "derivedWalkableCells": 14392,
+        "note": "A0 protection / occupancy / collision legality NOT asserted"
+      }
+    },
+    {
+      "id": "POI-01",
+      "requirement": "81 POI footprints, outer/deep regions, retreat and links",
+      "status": "PASS",
+      "measured": {
+        "pois": 81,
+        "archetypeCount": 24,
+        "depth": {
+          "multi": 18,
+          "surface": 63
+        },
+        "withDeep": 18,
+        "withRetreat": 18,
+        "withLinks": 5,
+        "footAreaRangeAu2": [
+          176,
+          2034.56
+        ],
+        "rooms": "NOT_IN_SOURCE",
+        "entrances": "NOT_IN_SOURCE",
+        "doorsPowerLoot": "GAMEPLAY_OWNED"
+      }
+    },
+    {
+      "id": "SPW-01",
+      "requirement": "4 spawn regions preserved",
+      "status": "PASS",
+      "measured": {
+        "spawns": [
+          {
+            "id": "sp_west",
+            "at": [
+              372,
+              606
+            ],
+            "region": "Bờ tây",
+            "conf": "proposal"
+          },
+          {
+            "id": "sp_lake",
+            "at": [
+              790,
+              622
+            ],
+            "region": "Thung lũng hồ",
+            "conf": "proposal"
+          },
+          {
+            "id": "sp_hook",
+            "at": [
+              1282,
+              392
+            ],
+            "region": "Bán đảo Hook",
+            "conf": "proposal"
+          },
+          {
+            "id": "sp_gulf",
+            "at": [
+              872,
+              930
+            ],
+            "region": "Vịnh phía tây",
+            "conf": "proposal"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ELD-01",
+      "requirement": "6 distinct Elder territories with outer/core/arena/approach",
+      "status": "PASS",
+      "measured": {
+        "elders": [
+          {
+            "id": "el_surtur",
+            "elder": "surtur",
+            "outerPts": 44,
+            "corePts": 44,
+            "arenas": 1,
+            "approach": 2,
+            "pois": 5
+          },
+          {
+            "id": "el_typhon",
+            "elder": "typhon",
+            "outerPts": 44,
+            "corePts": 44,
+            "arenas": 1,
+            "approach": 2,
+            "pois": 5
+          },
+          {
+            "id": "el_aion",
+            "elder": "aion",
+            "outerPts": 44,
+            "corePts": 44,
+            "arenas": 1,
+            "approach": 3,
+            "pois": 6
+          },
+          {
+            "id": "el_atlas",
+            "elder": "atlas",
+            "outerPts": 44,
+            "corePts": 44,
+            "arenas": 1,
+            "approach": 1,
+            "pois": 4
+          },
+          {
+            "id": "el_argus",
+            "elder": "argus",
+            "outerPts": 44,
+            "corePts": 44,
+            "arenas": 1,
+            "approach": 1,
+            "pois": 5
+          },
+          {
+            "id": "el_anubis",
+            "elder": "anubis",
+            "outerPts": 44,
+            "corePts": 44,
+            "arenas": 1,
+            "approach": 2,
+            "pois": 5
+          }
+        ],
+        "elderPoiRefsResolve": true,
+        "mappingStatus": "NO_GAMEPLAY_ELDER_MAPPING_CREATED"
+      }
+    },
+    {
+      "id": "RES-01",
+      "requirement": "280 resource objects are candidate geographic annotations, NOT 280 fixed source nodes",
+      "status": "PASS",
+      "measured": {
+        "count": 280,
+        "kinds": {
+          "fish": 39,
+          "food": 59,
+          "wood": 54,
+          "herbs": 19,
+          "ore": 3,
+          "stone": 30,
+          "clay": 2,
+          "sulfur": 4,
+          "obsidian": 4,
+          "fresh_water": 65,
+          "salt": 1
+        },
+        "densityValues": [
+          1,
+          2,
+          3
+        ],
+        "stockSupplied": false,
+        "yieldSupplied": false,
+        "finalInstancesSupplied": false,
+        "owner": "Gameplay population algorithm"
+      }
+    },
+    {
+      "id": "CONF-01",
+      "requirement": "source confidence flags preserved (proposal / assumption)",
+      "status": "PASS",
+      "measured": {
+        "totals": {
+          "proposal": 544,
+          "assumption": 11,
+          "ABSENT": 24
+        },
+        "byArray": {
+          "land": {
+            "proposal": 8
+          },
+          "lakes": {
+            "proposal": 5
+          },
+          "rivers": {
+            "proposal": 16,
+            "assumption": 1
+          },
+          "roads": {
+            "proposal": 84,
+            "assumption": 8
+          },
+          "bridges": {
+            "proposal": 12
+          },
+          "docks": {
+            "proposal": 27
+          },
+          "pois": {
+            "proposal": 79,
+            "assumption": 2
+          },
+          "zones": {
+            "proposal": 23
+          },
+          "resources": {
+            "proposal": 280
+          },
+          "spawns": {
+            "proposal": 4
+          },
+          "elders": {
+            "proposal": 6
+          },
+          "labels": {
+            "ABSENT": 24
+          }
+        },
+        "rule": "proposal / assumption flags are preserved verbatim on every object. No provisional design note is promoted to a gameplay law."
+      }
+    },
+    {
+      "id": "ID-01",
+      "requirement": "every authored source id is unique and preserved",
+      "status": "PASS",
+      "measured": {
+        "totalIds": 579,
+        "uniqueIds": 579
+      }
+    },
+    {
+      "id": "COORD-01",
+      "requirement": "all authored coordinates remain inside the 2000x1400 authoring canvas",
+      "status": "PASS",
+      "measured": {
+        "world": {
+          "w": 2000,
+          "h": 1400
+        },
+        "coordinateOccurrences": 3504,
+        "minX": 0,
+        "maxX": 1919.3012863539216,
+        "minY": 0,
+        "maxY": 1370,
+        "note": "No coordinate was rescaled, rounded or translated by this tool."
+      }
+    },
+    {
+      "id": "SCALE-01",
+      "requirement": "no silent rescale to the runtime 200x200 island",
+      "status": "PASS",
+      "measured": {
+        "authoringCanvas": {
+          "w": 2000,
+          "h": 1400
+        },
+        "sourceGrid": {
+          "gw": 250,
+          "gh": 175,
+          "cell": 8
+        },
+        "runtimeReference": {
+          "WW": 200,
+          "WH": 200,
+          "TILE": 16
+        },
+        "transformStatus": "UNDECIDED",
+        "note": "The transform is exposed as configurable and remains an open decision."
+      }
+    }
+  ],
+  "summary": {
+    "pass": 18,
+    "fail": 0,
+    "total": 18
+  },
+  "statement": "Verification of the existing Veyra source. No gameplay population, no runtime intake, no coordinate transform, no invented climate/economy values."
+}
