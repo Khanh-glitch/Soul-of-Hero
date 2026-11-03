@@ -6,6 +6,7 @@ import { effTile, sourceAt, darkness, weatherAt, isRagnarok, entsAt, buildReason
 import { FX, PROJ, HAZ, activeStack } from './sim';
 import { getArt, pixelText, mk, type Sprite } from './art';
 import * as pfx from './pixelfx';
+import * as comp from './compositor';
 
 const CH = 16; const chunkCache = new Map<number, HTMLCanvasElement>();
 let terrSig = ''; let terrSigT = 0; let lastRunId = '';
@@ -98,6 +99,16 @@ const burst = (x: number, y: number, n: number, cols: string[], sp = 60, g = 120
 const MATC: Record<string, string[]> = { wood: ['#c9935a', '#8a5a32', '#e0b070', '#6aa84a'], stone: ['#b9bcc4', '#7d8088', '#ffffff'], ore: ['#d08a5a', '#7d8088', '#ffe0a0'], plant: ['#8ac25a', '#5a9a3c', '#e05a7a'], scrap: ['#c0a07a', '#ffd070', '#6f7378', '#ffffff'] };
 const SURFC: Record<number, string[]> = { [T.SNOW]: ['#ffffff', '#c8d8e8'], [T.SAND]: ['#e8d8a0', '#c4aa74'], [T.MARSH]: ['#4a3e2a', '#3a5a5a'], [T.SHALLOW]: ['#a0d0ff', '#ffffff'], [T.RIVER]: ['#a0d0ff', '#ffffff'], [T.ASH]: ['#6a5a5a', '#3a3236'], [T.ROAD]: ['#b89470', '#9a7a58'] };
 export let shake = 0; export let flash = 0; export const banners: { text: string; sub: string; t: number }[] = [];
+// PixelFX is the first registered VFX client of the unified compositor.
+comp.registerVfxClient({
+  id: 'pixelfx',
+  depthItems: (g) => pfx.depthItems(g),
+  drawAuras: (g, cam) => pfx.drawAuras(g, cam),
+  drawWarpPass: (g, cam, now) => pfx.drawWarpPass(g, cam, now),
+  drawScreen: (g) => pfx.drawScreen(g),
+  drawPostNight: (g, cam, dark) => pfx.drawPostNight(g, cam, dark),
+});
+
 export function consumeFX(onFx: (e: any) => void) {
   while (FX.length) {
     const e = FX.shift(); onFx(e);
@@ -205,7 +216,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   for (const e of ents) { if (e.x < cx - 40 || e.x > cx + VIEW_W + 40 || e.y < cy - 20 || e.y > cy + VIEW_H + 60) continue; if (e.kind === 'struct' && ['floor', 'roof'].includes(STRUCTS[e.type!].layer)) continue; if (e.type === 'garden' || e.type === 'spikes') continue; list.push({ y: e.y + (e.kind === 'drop' ? -2 : 6), f: () => drawEntity(g, r, e, time, now) }); }
   for (const m of r.creatures) { if (m.x < cx - 40 || m.x > cx + VIEW_W + 40 || m.y < cy - 40 || m.y > cy + VIEW_H + 60) continue; list.push({ y: m.y + 4, f: () => drawCreature(g, m, time) }); }
   list.push({ y: p.y + 4, f: () => drawPlayer(g, gs, time) });
-  for (const it of pfx.depthItems(g)) list.push(it); // PixelFX joins the y-sorted world list
+  for (const it of comp.depthItems(g)) list.push(it); // VFX clients join the y-sorted world list
   // POI terrain walls need y-sorting vs player? They are flat tiles; fine.
   list.sort((a, b) => a.y - b.y); for (const d of list) d.f();
   // temporary terrain sprites (ice pillars, root cages)
@@ -226,14 +237,14 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
     else { g.strokeStyle = '#ffb040'; g.setLineDash([2, 2]); g.strokeRect(tx * 16 + 0.5, ty * 16 + 0.5, 15, 15); g.setLineDash([]); } }
   if (o.target) { const bob = Math.round(Math.sin(time / 160) * 1.5); g.fillStyle = '#ffe27a'; const X = Math.round(o.target.x), Y = Math.round(o.target.y) - 20 + bob; g.fillRect(X - 2, Y, 5, 1); g.fillRect(X - 1, Y + 1, 3, 1); g.fillRect(X, Y + 2, 1, 1); }
   g.restore();
-  pfx.drawAuras(g, { x: cx, y: cy }); // hover/body auras above everything — never cropped
-  pfx.drawWarpPass(g, { x: cx, y: cy }, now);
-  pfx.drawScreen(g);
+  comp.drawAuras(g, { x: cx, y: cy }); // hover/body auras above everything — never cropped
+  comp.drawWarpPass(g, { x: cx, y: cy }, now);
+  comp.drawScreen(g);
   // weather & light (screen space)
   drawWeather(g, r, now, time, cx, cy);
   const dk0 = Math.min(0.85, darkness(r, now) + (weatherAt(r, now) === 'storm' ? 0.15 : 0));
   drawLight(g, r, now, time, cx, cy, ents, o.nightOverride ? 0.8 : undefined);
-  pfx.drawPostNight(g, { x: cx, y: cy }, o.nightOverride ? 0.8 : dk0); // radiance + night-safe emission
+  comp.drawPostNight(g, { x: cx, y: cy }, o.nightOverride ? 0.8 : dk0); // single post stage: radiance + emission + art re-draw
   if (flash > 0) { g.fillStyle = `rgba(255,255,255,${flash})`; g.fillRect(0, 0, VIEW_W, VIEW_H); flash = Math.max(0, flash - dtMs / 400); }
   if (p.hp < 30 && !p.dead) { const a = (1 - p.hp / 30) * (0.25 + Math.sin(time / 200) * 0.08); g.fillStyle = `rgba(160,0,0,${a})`; g.fillRect(0, 0, VIEW_W, 6); g.fillRect(0, VIEW_H - 6, VIEW_W, 6); g.fillRect(0, 0, 6, VIEW_H); g.fillRect(VIEW_W - 6, 0, 6, VIEW_H); }
 }
