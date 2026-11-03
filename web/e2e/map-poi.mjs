@@ -143,8 +143,8 @@ try {
     async function defendNearby(){
       if(defending)return;defending=true;
       try{
-        const cur=await state();const threat=cur.creatures.filter(m=>!m.type.startsWith('elder_')&&['chase','track','tell','attack','recover'].includes(m.state)&&(()=>{const d=Math.hypot(m.x-cur.player.x,m.y-cur.player.y);return d<90||(['attack','tell'].includes(m.state)&&d<130);})()).sort((a,b)=>Math.hypot(a.x-cur.player.x,a.y-cur.player.y)-Math.hypot(b.x-cur.player.x,b.y-cur.player.y))[0];
-        if(!threat)return;const td=Math.hypot(threat.x-cur.player.x,threat.y-cur.player.y),imminent=td<65||(['attack','tell','recover'].includes(threat.state)&&td<130);if(Date.now()-lastDodgeAt<900&&!imminent)return;lastDodgeAt=Date.now();
+        const cur=await state();const threat=cur.creatures.filter(m=>!m.type.startsWith('elder_')&&['chase','track','tell','attack','recover'].includes(m.state)&&(()=>{const d=Math.hypot(m.x-cur.player.x,m.y-cur.player.y);return d<55||(['attack','tell','recover'].includes(m.state)&&d<130);})()).sort((a,b)=>Math.hypot(a.x-cur.player.x,a.y-cur.player.y)-Math.hypot(b.x-cur.player.x,b.y-cur.player.y))[0];
+        if(!threat)return;const td=Math.hypot(threat.x-cur.player.x,threat.y-cur.player.y),imminent=td<55||(['attack','tell','recover'].includes(threat.state)&&td<130);if(Date.now()-lastDodgeAt<900&&!imminent)return;lastDodgeAt=Date.now();
         await ensureVitals();const live=await state(),angle=Math.atan2(live.player.y-threat.y,live.player.x-threat.x),keys=[];
         if(Math.abs(Math.cos(angle))>0.25)keys.push(Math.cos(angle)>0?'d':'a');if(Math.abs(Math.sin(angle))>0.25)keys.push(Math.sin(angle)>0?'s':'w');
         for(const k of keys)await page.keyboard.down(k);if(live.player.stamina>=22)await page.keyboard.press('Space');await pause(live.player.stamina>=22?280:220);for(const k of keys)await page.keyboard.up(k);
