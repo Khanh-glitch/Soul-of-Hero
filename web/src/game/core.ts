@@ -44,7 +44,7 @@ export const enum T {
 export const TERRAIN_NAME = ['deep', 'shallow', 'sand', 'grass', 'meadow', 'forest', 'marsh', 'hill', 'cliff', 'snow', 'ash', 'toxic', 'road', 'bridge', 'floor', 'wall', 'lava', 'burnt', 'ice', 'shallow'];
 
 // ---------- Items & custody ----------
-export interface Stack { uid: string; key: string; qty: number; dur?: number; charge?: number; meta?: string }
+export interface Stack { uid: string; key: string; qty: number; dur?: number; charge?: number; meta?: string; upgrade?: 'freight' }
 export interface Container { id: string; kind: string; slots: (Stack | null)[] }
 
 export type Dir = 0 | 1 | 2 | 3; // down, left, right, up
@@ -109,6 +109,8 @@ export interface RunState {
   id: string; seed: number; character: 'male' | 'female'; startedAt: number; qaOffset: number; qaUsed: boolean;
   /** Added additively; absent legacy saves are interpreted as the canonical shipping layout. */
   layoutId?: 'shipping' | 'dev_delta';
+  /** Run-pinned additive source overlay; absent legacy runs keep v1 placements. */
+  sourceLayoutVersion?: 2;
   spawnRegion: number; ended: null | string;
   player: Player; creatures: Creature[];
   sources: Record<number, { stock: number; hp: number; regrowAt?: number; burnt?: boolean }>; // K3 deltas over base world

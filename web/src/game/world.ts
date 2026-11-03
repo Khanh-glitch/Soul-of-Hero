@@ -8,7 +8,7 @@ export interface Building { id: string; x: number; y: number; w: number; h: numb
 export interface StaticEnt { kind: string; tx: number; ty: number; type?: string; poi?: string; locked?: string; loot?: [string, number][]; cash?: number; label?: string }
 export interface Place { id: string; name: string; tx: number; ty: number; kind: 'start' | 'poi' | 'elder' | 'evac' }
 export interface World {
-  tiles: Uint8Array; fresh: Uint8Array; src: Int8Array; zone: Uint8Array; seaDist: Uint8Array;
+  tiles: Uint8Array; fresh: Uint8Array; src: Int8Array; sourceOverlayV2: Int8Array; zone: Uint8Array; seaDist: Uint8Array;
   buildings: Building[]; statics: StaticEnt[]; places: Place[]; starts: Place[]; elders: Place[];
 }
 
@@ -295,7 +295,15 @@ function genWorld(layoutId: LayoutId): World {
     for (let y = s.ty - 2; y <= s.ty + 2; y++) for (let x = s.tx - 2; x <= s.tx + 2; x++) src[y * WW + x] = -1;
   }
   function isPOIb(x: number, y: number) { return buildings.some(b => x >= b.x - 1 && x <= b.x + b.w && y >= b.y - 1 && y <= b.y + b.h); }
-  return { tiles, fresh, src, zone, seaDist, buildings, statics, places: [...all, ...elders], starts, elders };
+  // V2 is an additive overlay, never a replacement: existing saved source coordinates
+  // and all map geometry remain v1. Only new runs opt in; exclude spawn and POI space.
+  const sourceOverlayV2 = new Int8Array(N).fill(-1);
+  for (let ty = 2; ty < WH - 2; ty++) for (let tx = 2; tx < WW - 2; tx++) {
+    const i = ty * WW + tx;
+    if (src[i] >= 0 || tiles[i] !== T.SAND || ty / WH <= 0.45 || isPOI(tx, ty) || elders.some(e => Math.hypot(e.tx - tx, e.ty - ty) < 5.5) || starts.some(s => Math.hypot(s.tx - tx, s.ty - ty) < 9)) continue;
+    if (hash2(tx, ty, S + 303) < 0.05) sourceOverlayV2[i] = SK('palm');
+  }
+  return { tiles, fresh, src, sourceOverlayV2, zone, seaDist, buildings, statics, places: [...all, ...elders], starts, elders };
 }
 
 export function tileAt(w: World, tx: number, ty: number) { if (tx < 0 || ty < 0 || tx >= WW || ty >= WH) return T.DEEP; return w.tiles[ty * WW + tx]; }

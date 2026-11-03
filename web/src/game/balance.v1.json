@@ -42,6 +42,8 @@
     "_status": "PROPOSED_MECHANISM (cart custody/weight) + TUNABLE_BALANCE numbers",
     "slots": 24,
     "maxWeight": 240,
+    "freightSlots": 32,
+    "freightMaxWeight": 360,
     "speedOnRoad": 1.05,
     "speedOffRoad": 0.55,
     "speedRough": 0.32,

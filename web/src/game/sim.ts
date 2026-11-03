@@ -2,7 +2,7 @@
 import { BAL, TILE, WW, WH, HOUR, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity } from './core';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
 import { getWorld } from './world';
-import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones } from './engine';
+import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
@@ -194,7 +194,7 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   let cart: Entity | null = p.pulling ? r.entities[p.pulling] : null; if (p.pulling && !cart) p.pulling = null;
   if (cart) { const ct = effTile(r, tileOf(cart.x), tileOf(cart.y)); const road = ct === T.ROAD || ct === T.BRIDGE || ct === T.FLOOR; const rough = ct === T.FOREST || ct === T.MARSH || ct === T.HILL || ct === T.SNOW;
     const base = road ? BAL.cart.speedOnRoad : rough ? BAL.cart.speedRough : BAL.cart.speedOffRoad; const cw = cartWeightOf(r, cart);
-    sp = B.speed * speedMul * base * Math.max(0.25, 1 - cw / 100 * BAL.cart.weightPenaltyPer100) * (cw > BAL.cart.maxWeight ? 0.4 : 1); }
+    sp = B.speed * speedMul * base * Math.max(0.25, 1 - cw / 100 * BAL.cart.weightPenaltyPer100) * (cw > cartLimit(cart) ? 0.4 : 1); }
   if (p.action?.kind === 'roll') { const ra = p.action.angle; moveBody(r, p, Math.cos(ra) * B.rollSpeed * dt, Math.sin(ra) * B.rollSpeed * dt, 4, 'player'); }
   else if (ml) { moveBody(r, p, mx * sp * dt, my * sp * dt, 4, 'player'); p.stepAcc += sp * dt; if (p.stepAcc > 13) { p.stepAcc = 0; fx('step', { x: p.x, y: p.y + 6, t }); } }
   const movedX = p.x, movedY = p.y;
@@ -722,7 +722,7 @@ export function findInteract(gs: GameState, now: number): Interact | null {
     else if (e.kind === 'gen') label = e.power ? 'Generator (running)' : 'Fuel generator';
     else if (e.kind === 'evac') label = 'Evacuation beacon';
     else if (e.kind === 'cart') label = 'Cart cargo  [F] pull';
-    else if (e.kind === 'struct') { const d2 = STRUCTS[e.type!]; kind = 'struct:' + e.type; if (e.type!.startsWith('door')) label = e.open ? 'Close door' : 'Open door'; else if (d2.station) label = `Use ${d2.name}`; else if (d2.slots) label = `Open ${d2.name}`; else if (e.type === 'escrow') label = 'Rương ký gửi'; else if (e.type === 'garden') label = !e.garden!.crop ? 'Plant seeds' : e.garden!.growth >= 1 ? 'Harvest' : 'Water garden'; else if (e.type === 'barrel') label = `Rain barrel (${Math.floor(e.water || 0)})`; else continue; }
+    else if (e.kind === 'struct') { const d2 = STRUCTS[e.type!]; kind = 'struct:' + e.type; if (e.type!.startsWith('door')) label = e.open ? 'Close door' : 'Open door'; else if (d2.station) label = `Use ${d2.name}`; else if (d2.slots) label = `Open ${d2.name}`; else if (e.type === 'escrow') label = 'Rương ký gửi'; else if (e.type === 'garden') label = 'Tend garden'; else if (e.type === 'barrel') label = `Rain barrel (${Math.floor(e.water || 0)})`; else continue; }
     else continue;
     bd = d; best = { kind, label, eid: e.id, x: e.x, y: e.y };
   }

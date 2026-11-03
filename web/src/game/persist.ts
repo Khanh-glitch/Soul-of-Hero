@@ -1,6 +1,6 @@
 // Local-first snapshots: one serialized profile + run + receipts per write.
 // Checksums detect accidental damage, not malicious edits or rollback of all copies.
-import { SAVE_VERSION, type GameState, type Stack } from './core';
+import { BAL, SAVE_VERSION, type GameState, type Stack } from './core';
 import { ITEMS, RECIPES, STRUCTS } from './catalog';
 import { newGame } from './engine';
 
@@ -30,6 +30,7 @@ export function validate(raw: any): GameState | null {
   if (raw.run === null) return raw as GameState;
   const r = raw.run;
   if (!obj(r) || typeof r.id !== 'string' || !r.id || !integer(r.nextId) || r.nextId < 1 || !finite(r.startedAt) || !finite(r.qaOffset) || !integer(r.seed) || !integer(r.rng) || !integer(r.seq) || !obj(r.player) || !obj(r.custody) || !obj(r.entities) || !obj(r.clock)) return null;
+  if (r.sourceLayoutVersion !== undefined && r.sourceLayoutVersion !== 2) return null;
   if (!['x','y','hp','stamina','hunger','thirst','warmth','rad','active'].every(k => finite(r.player[k])) || !obj(r.player.skills) || typeof r.player.dead !== 'boolean' || !finite(r.clock.lastSimAt) || !finite(r.clock.simMs) || !finite(r.clock.respawnAcc) || !finite(r.clock.weatherSlot)) return null;
   if (!Array.isArray(r.creatures) || !obj(r.sources) || !obj(r.terrain) || !obj(r.knowledge) || !stringArray(r.knowledge.recipes) || !stringArray(r.knowledge.studied) || !r.knowledge.recipes.every((k: string) => has(RECIPES, k)) || !Array.isArray(r.traces) || !Array.isArray(r.discovered) || !stringArray(r.poiSeen) || !stringArray(r.elderStones) || !stringArray(r.achievements) || !Array.isArray(r.receipts) || !stringArray(r.seenIntents) || !obj(r.vendorStock) || !Object.values(r.vendorStock).every(integer) || !integer(r.score) || !integer(r.deposited) || !Array.isArray(r.log)) return null;
   if (!r.custody.inv || !r.custody.eq || r.custody.inv.kind !== 'inv' || r.custody.eq.kind !== 'eq' || r.custody.inv.slots?.length !== 24 || r.custody.eq.slots?.length !== 3) return null;
@@ -39,6 +40,7 @@ export function validate(raw: any): GameState | null {
   const uids = new Set<string>(), ownedContainers = new Set<string>(['inv', 'eq']);
   const stack = (s: any): s is Stack => {
     if (!obj(s) || typeof s.uid !== 'string' || !s.uid || !beforeNext(s.uid, /^s([a-z0-9]+)$/) || uids.has(s.uid) || typeof s.key !== 'string' || !has(ITEMS, s.key) || !integer(s.qty) || s.qty < 1 || s.qty > ITEMS[s.key].max) return false;
+    if (s.upgrade !== undefined && (s.key !== 'cart_kit' || s.upgrade !== 'freight')) return false;
     if ((s.dur !== undefined && (!finite(s.dur) || s.dur < 0)) || (s.charge !== undefined && (!finite(s.charge) || s.charge < 0)) || (s.meta !== undefined && typeof s.meta !== 'string') || (s.key === 'blueprint' && (!s.meta || !has(RECIPES, s.meta)))) return false;
     uids.add(s.uid); return true;
   };
@@ -59,6 +61,7 @@ export function validate(raw: any): GameState | null {
     if (e.kind === 'struct' && !has(STRUCTS, e.type)) return null;
     if (e.deployed !== undefined && (!stack(e.deployed) || e.deployed.qty !== 1 || (e.kind === 'cart' ? e.deployed.key !== 'cart_kit' : e.kind !== 'struct' || STRUCTS[e.type]?.item !== e.deployed.key))) return null;
     if (['drop','bag','cart','loot','cash'].includes(e.kind) && (!e.c || r.custody[e.c]?.kind !== e.kind)) return null;
+    if (e.kind === 'cart' && e.deployed?.upgrade === 'freight' && r.custody[e.c].slots.length !== BAL.cart.freightSlots) return null;
     if (e.kind === 'struct' && e.c && r.custody[e.c]?.kind !== 'chest') return null;
     const refs = [e.c, e.station?.fuelC, e.station?.outC].filter((v: any) => v !== undefined);
     for (const cid of refs) { if (typeof cid !== 'string' || !r.custody[cid] || ownedContainers.has(cid)) return null; ownedContainers.add(cid); }

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { BAL, TILE, WW, VIEW_W, VIEW_H, HOUR, type GameState } from '../game/core';
 import { ITEMS, STRUCTS, ELDERS, CREATURES } from '../game/catalog';
-import { dispatch, phaseOf, runHours, dayTime, weatherAt, weatherSlot, countItem, C, entsAt, cartWeight, effTile, isRagnarok } from '../game/engine';
+import { dispatch, phaseOf, runHours, dayTime, weatherAt, weatherSlot, countItem, C, entsAt, cartWeight, cartLimit, effTile, isRagnarok } from '../game/engine';
 import { tick, syncWorld, findInteract, activeStack, SPEED_KEY, type Input, type Interact } from '../game/sim';
 import { draw, consumeFX, cam } from '../game/render';
 import { getWorld, ZONES } from '../game/world';
@@ -56,7 +56,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       const d = STRUCTS[e.type!];
       if (e.type!.startsWith('door')) act('door', { eid: e.id });
       else if (e.type === 'escrow') setPanel({ kind: 'escrow', eid: e.id });
-      else if (e.type === 'garden') act('garden', { eid: e.id });
+      else if (e.type === 'garden') setPanel({ kind: 'container', eid: e.id });
       else if (e.type === 'barrel') act('barrel', { eid: e.id });
       else if (d.station || d.slots) setPanel({ kind: 'container', eid: e.id });
     }
@@ -169,7 +169,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       {/* build helper */}
       {(buildType || reclaim || repairMode) && <div className="panel absolute" style={{ left: 160, bottom: 34, width: 320, padding: '2px 6px', fontSize: 10, textAlign: 'center' }} onMouseDown={e => e.stopPropagation()}>{buildType ? <>Placing <b style={{ color: '#ffd98a' }}>{STRUCTS[buildType].name}</b> — {STRUCTS[buildType].cost.map(([k, q]) => `${ITEMS[k].name} ${countItem(r, 'inv', k)}/${q}`).join(', ')} · RMB/Esc stop</> : repairMode ? <>Repair mode — click your structure · V/Esc stop · pays ¼ build materials for ¼ HP</> : <>Reclaim mode — click your structure · X/Esc stop</>}</div>}
       {/* cargo */}
-      {cart && <div className="panel absolute" style={{ left: 4, bottom: 30, padding: '2px 5px', fontSize: 10 }}>🛒 Cart {cartWeight(r, cart.c!).toFixed(0)}/{BAL.cart.maxWeight} kg · {(() => { const t = effTile(r, Math.floor(cart.x / 16), Math.floor(cart.y / 16)); const k = SPEED_KEY[t]; return k === 'road' || k === 'bridge' || k === 'floor' ? <span style={{ color: '#9ae0a0' }}>on road ×{BAL.cart.speedOnRoad}</span> : ['forest', 'marsh', 'hill', 'snow'].includes(k) ? <span style={{ color: '#ff9a7a' }}>rough ×{BAL.cart.speedRough}</span> : <span style={{ color: '#ffd98a' }}>off-road ×{BAL.cart.speedOffRoad}</span>; })()} · [F] release</div>}
+      {cart && <div className="panel absolute" style={{ left: 4, bottom: 30, padding: '2px 5px', fontSize: 10 }}>🛒 Cart {cartWeight(r, cart.c!).toFixed(0)}/{cartLimit(cart)} kg · {(() => { const t = effTile(r, Math.floor(cart.x / 16), Math.floor(cart.y / 16)); const k = SPEED_KEY[t]; return k === 'road' || k === 'bridge' || k === 'floor' ? <span style={{ color: '#9ae0a0' }}>on road ×{BAL.cart.speedOnRoad}</span> : ['forest', 'marsh', 'hill', 'snow'].includes(k) ? <span style={{ color: '#ff9a7a' }}>rough ×{BAL.cart.speedRough}</span> : <span style={{ color: '#ffd98a' }}>off-road ×{BAL.cart.speedOffRoad}</span>; })()} · [F] release</div>}
       {/* log */}
       <div className="absolute" style={{ left: 4, bottom: cart ? 46 : 30, width: 230, fontSize: 10, lineHeight: 1.05, pointerEvents: 'none' }}>{r.log.slice(-4).map((l, i) => { const age = now - l.t; if (age > 14000) return null; return <div key={i} style={{ opacity: Math.max(0, 1 - age / 14000), color: l.tone === 'gold' ? '#ffe27a' : l.tone === 'red' ? '#ff8a7a' : l.tone === 'blue' ? '#9ae0ff' : '#e0d4c4', textShadow: '1px 1px 0 #000' }}>{l.msg}</div>; })}</div>
       {/* toasts */}

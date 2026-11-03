@@ -3,6 +3,14 @@ export type Mat = 'wood' | 'stone' | 'ore' | 'plant' | 'scrap';
 export interface SourcePlacementRule { terrain: 'sand' | 'marsh' | 'ash' | 'snow' | 'hill'; chance: number }
 export interface RecipeDef { out: string; qty: number; ins: [string, number][]; station: null | 'campfire' | 'furnace' | 'workbench'; secs: number; base?: boolean; tier: number; stationLevel?: 1 | 2 }
 
+// TUNABLE: a capability upgrade, not a learned recipe. The cart itself remains physical.
+export const CART_FREIGHT_UPGRADE: { cost: [string, number][]; benchLevel: number } = { cost: [['mechanical_parts', 4], ['iron_ingot', 2], ['spares', 3]], benchLevel: 2 };
+// Seed and plant input are consumed; produce remains physical in the inventory or a drop.
+export const GARDEN_CROPS: Record<'crop' | 'herb', { name: string; inputs: [string, number][]; output: [string, number][]; seconds: number }> = {
+  crop: { name: 'Sunroot', inputs: [['seed', 1]], output: [['crop', 3], ['seed', 2]], seconds: 300 },
+  herb: { name: 'Bitterleaf', inputs: [['seed', 1], ['herb', 1]], output: [['herb', 3], ['seed', 1]], seconds: 600 },
+};
+
 export interface ItemDef {
   name: string; cat: string; icon: string; c1: string; c2: string; w: number; max: number; desc: string;
   power?: Partial<Record<Mat, number>>; dmg?: number; reach?: number; arc?: number; swing?: number; dur?: number;

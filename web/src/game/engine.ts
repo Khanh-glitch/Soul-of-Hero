@@ -2,7 +2,7 @@
 // Rule: validate EVERYTHING first, then commit. Failed preconditions never partially debit.
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
-import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE } from './catalog';
+import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS } from './catalog';
 import { getWorld, getActiveLayout, SRC_KEYS, tileAt } from './world';
 
 export type Intent = { id: string; type: string; [k: string]: any };
@@ -49,7 +49,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   const w = getWorld();
   const seed = seedOverride ?? ((now ^ 0x9e3779b9) >>> 0);
   const r: RunState = {
-    id: 'run_' + seed.toString(36), seed, character, startedAt: now, qaOffset: 0, qaUsed: false, layoutId: getActiveLayout(), spawnRegion: 0, ended: null,
+    id: 'run_' + seed.toString(36), seed, character, startedAt: now, qaOffset: 0, qaUsed: false, layoutId: getActiveLayout(), sourceLayoutVersion: 2, spawnRegion: 0, ended: null,
     player: null as any, creatures: [], sources: {}, terrain: {}, entities: {}, custody: {}, knowledge: { recipes: Object.keys(RECIPES).filter(k => RECIPES[k].base), studied: [] },
     traces: [], discovered: [], poiSeen: [], elderStones: [], achievements: [], score: 0, deposited: 0,
     clock: { lastSimAt: now, simMs: 0, respawnAcc: 0, weatherSlot: -1 }, rng: seed, nextId: 1, receipts: [], seenIntents: [], seq: 0,
@@ -111,7 +111,7 @@ export function effTile(r: RunState, tx: number, ty: number) {
 }
 export function sourceAt(r: RunState, tx: number, ty: number, now?: number) {
   if (tx < 0 || ty < 0 || tx >= WW || ty >= WH) return null;
-  const i = ty * WW + tx; const k = getWorld().src[i]; if (k < 0) return null;
+  const i = ty * WW + tx; const w = getWorld(); const k = w.src[i] >= 0 ? w.src[i] : r.sourceLayoutVersion === 2 ? w.sourceOverlayV2[i] : -1; if (k < 0) return null;
   let key = SRC_KEYS[k]; const st = r.sources[i];
   if (st?.burnt) key = 'deadtree';
   const def = SOURCES[key];
@@ -120,21 +120,22 @@ export function sourceAt(r: RunState, tx: number, ty: number, now?: number) {
   return { i, key, def, stock, hp, st, fire: (st as any)?.fire as number | undefined };
 }
 // collision cache — rebuilt when structures/sources/terrain change
-let blockCache: { run: string; layout: string; arr: Uint8Array } | null = null; let blockDirty = true;
+let blockCache: { run: string; layout: string; sourceVersion: number; arr: Uint8Array } | null = null; let blockDirty = true;
 export function markDirty() { blockDirty = true; tileIndex = null; }
 /** 0 free, 1 terrain wall, 2 source, 3 structure, 4 shallow/river (wade), 5 lava */
 let baseGrid: Uint8Array | null = null; let baseGridLayout = '';
 function tileClass(t: number) { return (t === T.DEEP || t === T.CLIFF || t === T.PWALL) ? 1 : t === T.LAVA ? 5 : (t === T.SHALLOW || t === T.RIVER) ? 4 : 0; }
 function cellClass(r: RunState | null, tx: number, ty: number) {
   const w = getWorld(); const i = ty * WW + tx; const t = r ? effTile(r, tx, ty) : w.tiles[i]; let c = tileClass(t);
-  if (c === 0 && w.src[i] >= 0) { if (r) { const s = sourceAt(r, tx, ty); if (s && s.def.block && (s.stock > 0 || s.key === 'wreck')) c = 2; } else if (SOURCES[SRC_KEYS[w.src[i]]].block) c = 2; }
+  if (c === 0) { if (r) { const s = sourceAt(r, tx, ty); if (s && s.def.block && (s.stock > 0 || s.key === 'wreck')) c = 2; } else if (w.src[i] >= 0 && SOURCES[SRC_KEYS[w.src[i]]].block) c = 2; }
   return c;
 }
 export function blockGrid(r: RunState) {
   const layout = getActiveLayout();
-  if (blockCache && blockCache.run === r.id && blockCache.layout === layout && !blockDirty) return blockCache.arr;
+  if (blockCache && blockCache.run === r.id && blockCache.layout === layout && blockCache.sourceVersion === (r.sourceLayoutVersion ?? 1) && !blockDirty) return blockCache.arr;
   if (!baseGrid || baseGridLayout !== layout) { baseGrid = new Uint8Array(WW * WH); for (let i = 0; i < WW * WH; i++) baseGrid[i] = cellClass(null, i % WW, (i / WW) | 0); baseGridLayout = layout; }
   const arr = baseGrid.slice();
+  if (r.sourceLayoutVersion === 2) { const overlay = getWorld().sourceOverlayV2; for (let i = 0; i < overlay.length; i++) if (overlay[i] >= 0) arr[i] = cellClass(r, i % WW, (i / WW) | 0); }
   for (const k in r.terrain) { const i = +k; arr[i] = cellClass(r, i % WW, (i / WW) | 0); }
   for (const k in r.sources) { const i = +k; arr[i] = cellClass(r, i % WW, (i / WW) | 0); }
   for (const e of Object.values(r.entities)) {
@@ -143,7 +144,7 @@ export function blockGrid(r: RunState) {
     else if (e.kind === 'door') { if (!e.open) arr[i] = 3; }
     else if (e.kind === 'loot' || e.kind === 'cash' || e.kind === 'vendor' || e.kind === 'gen' || e.kind === 'evac') arr[i] = 3;
   }
-  blockCache = { run: r.id, layout, arr }; blockDirty = false; return arr;
+  blockCache = { run: r.id, layout, sourceVersion: r.sourceLayoutVersion ?? 1, arr }; blockDirty = false; return arr;
 }
 export function blockedAt(r: RunState, tx: number, ty: number) { if (tx < 0 || ty < 0 || tx >= WW || ty >= WH) return true; const b = blockGrid(r)[ty * WW + tx]; return b === 1 || b === 2 || b === 3 || b === 5; }
 let tileIndex: Map<number, Entity[]> | null = null; let tileIndexRun = '';
@@ -226,6 +227,7 @@ export function removeItem(r: RunState, cid: string, key: string, qty: number) {
   if (qty > 0) throw new Error('removeItem underflow — validation bug');
 }
 export function invWeight(r: RunState) { let w = 0; for (const cid of ['inv', 'eq']) for (const s of C(r, cid).slots) if (s) w += ITEMS[s.key].w * s.qty; return w; }
+export function cartLimit(e: Entity | undefined) { return e?.deployed?.upgrade === 'freight' ? BAL.cart.freightMaxWeight : BAL.cart.maxWeight; }
 export function cartWeight(r: RunState, cid: string) { return C(r, cid).slots.reduce((a, s) => a + (s ? ITEMS[s.key].w * s.qty : 0), 0); }
 export function hasAll(r: RunState, cid: string, ins: [string, number][]) { return ins.every(([k, q]) => countItem(r, cid, k) >= q); }
 export function spawnDrop(r: RunState, key: string, qty: number, x: number, y: number, now: number, tmpl?: Partial<Stack>, burst = true): Entity {
@@ -448,7 +450,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
           remaining -= n;
         }
         if (s.qty === 0) from.slots[it.fs] = null;
-        if (to.kind === 'cart' && cartWeight(r, to.id) > BAL.cart.maxWeight) pushLog(r, now, 'The cart is overloaded — it will crawl.', 'red');
+        if (to.kind === 'cart' && cartWeight(r, to.id) > cartLimit(Object.values(r.entities).find(e => e.kind === 'cart' && e.c === to.id))) pushLog(r, now, 'The cart is overloaded — it will crawl.', 'red');
         return ok('move', `${s.key}x${moved} ${from.id}->${to.id}`);
       }
       return ok('move', `${s.key} ${from.id}->${to.id}`);
@@ -543,8 +545,23 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (!Number.isFinite(it.x) || !Number.isFinite(it.y)) return fail('Invalid location.');
       const tx = Math.floor(it.x / TILE), ty = Math.floor(it.y / TILE); if (blockedAt(r, tx, ty) || [T.SHALLOW, T.RIVER].includes(effTile(r, tx, ty))) return fail('Cart needs open dry ground.');
       if (dist(p.x, p.y, it.x, it.y) > 3 * TILE) return fail('Too far.');
-      const deployed = C(r, 'inv').slots[idx]!; C(r, 'inv').slots[idx] = null; const c = mkContainer(r, 'cart', BAL.cart.slots);
+      const deployed = C(r, 'inv').slots[idx]!; C(r, 'inv').slots[idx] = null; const c = mkContainer(r, 'cart', deployed.upgrade === 'freight' ? BAL.cart.freightSlots : BAL.cart.slots);
       const e: Entity = { id: uid(r, 'cart'), kind: 'cart', x: it.x, y: it.y, c: c.id, hp: 200, maxHp: 200, deployed }; r.entities[e.id] = e; award(gs, 'cart', now); return ok('cart.place', e.id);
+    }
+    case 'upgradeCart': {
+      const e = r.entities[it.eid];
+      if (!e || e.kind !== 'cart' || !owned(e) || !near(r, e, 3)) return fail('Use your cart within reach.');
+      if (!e.deployed || e.deployed.key !== 'cart_kit') return fail('Pack and redeploy this legacy cart before upgrading.');
+      if (it.uid !== e.deployed.uid) return fail('This cart has changed.');
+      if (e.deployed.upgrade === 'freight') return fail('This cart is already reinforced.');
+      const bench = r.entities[it.benchId];
+      if (!bench || bench.kind !== 'struct' || bench.type !== 'workbench' || !bench.station || !owned(bench) || !near(r, bench, 3) || dist(bench.x, bench.y, e.x, e.y) > 3 * TILE || (bench.station.level ?? 1) < CART_FREIGHT_UPGRADE.benchLevel) return fail('Bring the cart to your level 2 workbench.');
+      const cargo = e.c && C(r, e.c); if (!cargo || cargo.kind !== 'cart' || cargo.slots.length !== BAL.cart.slots) return fail('Invalid cart cargo.');
+      if (!hasAll(r, 'inv', CART_FREIGHT_UPGRADE.cost)) return fail('Missing reinforcement materials.');
+      for (const [key, qty] of CART_FREIGHT_UPGRADE.cost) removeItem(r, 'inv', key, qty);
+      e.deployed.upgrade = 'freight';
+      while (cargo.slots.length < BAL.cart.freightSlots) cargo.slots.push(null);
+      return ok('cart.upgrade', `${e.deployed.uid}:freight`, 'Cart reinforced: 32 slots and a higher overload threshold.');
     }
     case 'reclaim': {
       const e = r.entities[it.eid]; if (!e || !owned(e) || !near(r, e, 3)) return fail('Out of reach or not owned.');
@@ -622,9 +639,22 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (fi >= 0) { const s = C(r, 'inv').slots[fi]!; const m = Math.min(4 - (s.charge || 0), Math.floor(e.water!)); s.charge = (s.charge || 0) + m; e.water! -= m; return ok('barrel.fill', `${m}`); }
       p.thirst = Math.min(100, p.thirst + 25); e.water! -= 1; return ok('barrel.drink', '1'); }
     case 'garden': {
-      const e = r.entities[it.eid]; if (!e?.garden || !near(r, e)) return fail('Out of reach.'); const g = e.garden;
-      if (!g.crop) { if (countItem(r, 'inv', 'seed') < 1) return fail('Needs Wild Seeds.'); removeItem(r, 'inv', 'seed', 1); g.crop = 'crop'; g.growth = 0; return ok('garden.plant', e.id, 'Planted. Water keeps it growing.'); }
-      if (g.growth >= 1) { g.crop = null; g.growth = 0; giveOrDrop(r, 'crop', 3, now); giveOrDrop(r, 'seed', 2, now); return ok('garden.harvest', e.id); }
+      const e = r.entities[it.eid]; if (!e || e.kind !== 'struct' || e.type !== 'garden' || !e.garden || !owned(e) || !near(r, e)) return fail('Use your garden within reach.'); const g = e.garden;
+      if (!g.crop) {
+        const crop: unknown = it.crop ?? 'crop'; // Old commands still plant Sunroot.
+        if (crop !== 'crop' && crop !== 'herb') return fail('Unknown planting choice.');
+        const rule = GARDEN_CROPS[crop];
+        if (!hasAll(r, 'inv', rule.inputs)) return fail('Missing planting materials.');
+        for (const [key, qty] of rule.inputs) removeItem(r, 'inv', key, qty);
+        g.crop = crop; g.growth = 0; return ok('garden.plant', `${e.id}:${crop}`, `${rule.name} planted. Water keeps it growing.`);
+      }
+      if (g.growth >= 1) {
+        if (g.crop !== 'crop' && g.crop !== 'herb') return fail('Unknown crop.');
+        const crop = g.crop, rule = GARDEN_CROPS[crop]; g.crop = null; g.growth = 0;
+        for (const [key, qty] of rule.output) giveOrDrop(r, key, qty, now);
+        return ok('garden.harvest', `${e.id}:${crop}`, `${rule.name} harvested into your pack or on the ground.`);
+      }
+      if (g.water >= 3) return fail('The plot is already fully watered.');
       const fi = C(r, 'inv').slots.findIndex(s => s?.key === 'water_flask' && (s.charge ?? 0) > 0); if (fi < 0) return fail('Needs water (flask) — or wait for rain.');
       C(r, 'inv').slots[fi]!.charge! -= 1; g.water = Math.min(3, g.water + 1); return ok('garden.water', e.id);
     }
@@ -778,10 +808,10 @@ export function stepGardensBarrels(gs: GameState, dtMs: number, wet: boolean) {
     if (!e.garden && e.type !== 'barrel') continue;
     const rain = wet && !isRoofed(r, e);
     if (e.garden) {
-      const g = e.garden; const incoming = rain ? 1 / 60000 : 0; const use = 1 / (G.waterSecondsPerUnit * 1000);
-      let growing = g.crop && g.growth < 1 ? Math.min(dtMs, (1 - g.growth) * G.growSeconds * 1000) : 0;
+      const g = e.garden; const growSeconds = g.crop === 'herb' ? GARDEN_CROPS.herb.seconds : G.growSeconds; const incoming = rain ? 1 / 60000 : 0; const use = 1 / (G.waterSecondsPerUnit * 1000);
+      let growing = g.crop && g.growth < 1 ? Math.min(dtMs, (1 - g.growth) * growSeconds * 1000) : 0;
       if (use > incoming) growing = Math.min(growing, g.water / (use - incoming));
-      if (growing > 0) { g.growth = Math.min(1, g.growth + growing / (G.growSeconds * 1000)); g.water = Math.min(3, Math.max(0, g.water + (incoming - use) * growing)); }
+      if (growing > 0) { g.growth = Math.min(1, g.growth + growing / (growSeconds * 1000)); if (g.growth >= 1 - 1e-12) g.growth = 1; g.water = Math.min(3, Math.max(0, g.water + (incoming - use) * growing)); }
       g.water = Math.min(3, g.water + incoming * (dtMs - growing));
     }
     if (e.type === 'barrel' && rain) e.water = Math.min(12, (e.water || 0) + dtMs / 20000);

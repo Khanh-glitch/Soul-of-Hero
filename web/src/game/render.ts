@@ -189,7 +189,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   const ents = Object.values(r.entities);
   for (const e of ents) { if (e.kind !== 'struct') continue; if (e.x < cx - 32 || e.x > cx + VIEW_W + 32 || e.y < cy - 32 || e.y > cy + VIEW_H + 48) continue; const d = STRUCTS[e.type!];
     if (d.layer === 'floor') g.drawImage(A.st[e.type!], e.x - 8, e.y - 8);
-    if (e.type === 'garden') { g.drawImage(A.st.garden, e.x - 8, e.y - 8); const gd = e.garden!; if (gd.water > 0) { g.fillStyle = 'rgba(40,60,90,0.35)'; g.fillRect(e.x - 7, e.y - 5, 14, 11); } if (gd.crop) { const st = gd.growth; for (let k = 0; k < 3; k++) { const X = e.x - 5 + k * 5, Y = e.y + 3; const hgt = 1 + Math.round(st * 5); g.fillStyle = '#4a9a3a'; g.fillRect(X, Y - hgt, 1, hgt); if (st > 0.4) { g.fillStyle = '#6ac04a'; g.fillRect(X - 1, Y - hgt, 3, 1); } if (st >= 1) { g.fillStyle = '#f0b050'; g.fillRect(X - 1, Y - 1, 3, 2); } } } }
+    if (e.type === 'garden') { g.drawImage(A.st.garden, e.x - 8, e.y - 8); const gd = e.garden!; if (gd.water > 0) { g.fillStyle = 'rgba(40,60,90,0.35)'; g.fillRect(e.x - 7, e.y - 5, 14, 11); } if (gd.crop) { const st = gd.growth; for (let k = 0; k < 3; k++) { const X = e.x - 5 + k * 5, Y = e.y + 3; const hgt = 1 + Math.round(st * 5); g.fillStyle = '#4a9a3a'; g.fillRect(X, Y - hgt, 1, hgt); if (st > 0.4) { g.fillStyle = '#6ac04a'; g.fillRect(X - 1, Y - hgt, 3, 1); } if (st >= 1) { g.fillStyle = gd.crop === 'herb' ? '#7ad08a' : '#f0b050'; g.fillRect(X - 1, Y - 1, 3, 2); } } } }
     if (e.type === 'spikes') g.drawImage(A.st.spikes, e.x - 8, e.y - 8);
     if (e.type === 'claim') { const R = 6 * 16; g.fillStyle = 'rgba(255,208,64,0.5)'; for (let k = 0; k < 64; k++) { const a = k / 64 * Math.PI * 2 + time / 4000; g.fillRect(Math.round(e.x + Math.cos(a) * R), Math.round(e.y + Math.sin(a) * R), 2, 1); } }
   }
@@ -198,7 +198,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   // y-sorted drawables
   const list: { y: number; f: () => void }[] = [];
   for (let ty = vy0; ty <= vy1 + 1 && ty < WH; ty++) for (let tx = vx0; tx <= vx1; tx++) {
-    if (w.src[ty * WW + tx] < 0) continue; const s = sourceAt(r, tx, ty, now); if (!s) continue; if (s.stock <= 0 && entsAt(r, tx, ty).length) continue; list.push({ y: ty * 16 + 14, f: () => drawSource(g, r, s, tx, ty, time, p) });
+    const s = sourceAt(r, tx, ty, now); if (!s) continue; if (s.stock <= 0 && entsAt(r, tx, ty).length) continue; list.push({ y: ty * 16 + 14, f: () => drawSource(g, r, s, tx, ty, time, p) });
   }
   for (const e of ents) { if (e.x < cx - 40 || e.x > cx + VIEW_W + 40 || e.y < cy - 20 || e.y > cy + VIEW_H + 60) continue; if (e.kind === 'struct' && ['floor', 'roof'].includes(STRUCTS[e.type!].layer)) continue; if (e.type === 'garden' || e.type === 'spikes') continue; list.push({ y: e.y + (e.kind === 'drop' ? -2 : 6), f: () => drawEntity(g, r, e, time, now) }); }
   for (const m of r.creatures) { if (m.x < cx - 40 || m.x > cx + VIEW_W + 40 || m.y < cy - 40 || m.y > cy + VIEW_H + 60) continue; list.push({ y: m.y + 4, f: () => drawCreature(g, m, time) }); }
