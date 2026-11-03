@@ -208,6 +208,23 @@ export function roofRoom(r: RunState, px: number, py: number) {
 }
 export function isSheltered(r: RunState, px: number, py: number) { return roofRoom(r, px, py).enclosed; }
 
+/** One generator powers one locally wired turret; blocked/destroyed links fail closed. */
+export function turretStatus(r: RunState, e: Entity): string {
+  const t=e.turret; if (!t?.enabled) return 'Off'; const g=t.generatorId ? r.entities[t.generatorId] : undefined;
+  if (!g?.basePower || g.type!=='base_generator' || !owned(g)) return 'No generator';
+  if (dist(e.x,e.y,g.x,g.y)>3*TILE || !clearPhysicalLine(r,e,g,true,true)) return 'Connection blocked';
+  if (!g.basePower.enabled) return 'Generator off'; if (g.basePower.energy<=0) return 'No power';
+  if (!e.c || countItem(r,e.c,'arrow')<1) return 'No arrows'; return 'Ready';
+}
+/** Fuel is real, local and consumed while switched on, online or offline. */
+export function stepBasePower(r: RunState, dt: number, now: number) {
+  for (const e of Object.values(r.entities)) { const power=e.basePower; if (!power?.enabled || !e.c) continue; let left=dt;
+    while (left>1e-8) { if (power.energy<=1e-8) { const slot=C(r,e.c).slots.find(s=>s && ITEMS[s.key]?.fuel); if (!slot) {power.energy=0; break;} power.energy=ITEMS[slot.key].fuel!*1000; const key=slot.key; removeItem(r,e.c,key,1); receipt(r,now-left,'power.fuel',`${e.id}:${key}`); }
+      const used=Math.min(left,power.energy); power.energy-=used; left-=used;
+    }
+  }
+}
+
 // ---------------- custody (K1) ----------------
 export const C = (r: RunState, id: string): Container => typeof id === 'string' && Object.prototype.hasOwnProperty.call(r.custody, id) ? r.custody[id] : undefined as unknown as Container;
 export function countItem(r: RunState, cid: string, key: string) { return C(r, cid).slots.reduce((a, s) => a + (s && s.key === key ? s.qty : 0), 0); }
@@ -548,6 +565,21 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (chest && next.slots) while (chest.slots.length < next.slots) chest.slots.push(null);
       markDirty(); return ok('structure.upgrade', `${e.id}:${old}->${target}`, `${next.name}: ${Math.round(e.hp)}/${e.maxHp} HP (condition preserved).`);
     }
+    case 'basePower': {
+      const e = r.entities[it.eid]; if (!e?.basePower || e.type !== 'base_generator' || !owned(e) || !near(r,e,2.2)) return fail('Use your generator within reach.');
+      if (typeof it.enabled !== 'boolean') return fail('Invalid power setting.');
+      e.basePower.enabled = it.enabled; return ok('power.toggle', `${e.id}:${it.enabled}`, it.enabled ? 'Generator switched on.' : 'Generator switched off.');
+    }
+    case 'turretConfigure': {
+      const e = r.entities[it.eid]; if (!e?.turret || e.type !== 'arrow_turret' || !owned(e) || !near(r,e,2.2)) return fail('Use your turret within reach.');
+      if (it.field === 'enabled' && typeof it.value === 'boolean') e.turret.enabled = it.value;
+      else if (it.field === 'generatorId' && typeof it.value === 'string') {
+        if (it.value) { const gen = r.entities[it.value]; if (!gen?.basePower || gen.type !== 'base_generator' || !owned(gen) || dist(e.x,e.y,gen.x,gen.y) > 3*TILE || !clearPhysicalLine(r,e,gen,true,true)) return fail('Generator must be owned, within 3 tiles and unobstructed.');
+          if (Object.values(r.entities).some(o=>o.id!==e.id && o.turret?.generatorId===gen.id)) return fail('Generator already connected to another turret.'); }
+        e.turret.generatorId = it.value || undefined;
+      } else return fail('Invalid turret setting.');
+      return ok('turret.configure', `${e.id}:${it.field}`);
+    }
     case 'repairStructure': {
       const e = r.entities[it.eid];
       if (!e || e.kind !== 'struct' || !owned(e) || !near(r, e, 3)) return fail('Use your structure within reach.');
@@ -638,6 +670,8 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (d.slots) e.c = mkContainer(r, 'chest', d.slots).id;
       if (d.station && d.station !== 'research') e.station = { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 3).id, outC: mkContainer(r, 'out', 6).id };
       if (d.station === 'research') e.station = { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 0).id, outC: mkContainer(r, 'out', 4).id };
+      if (it.struct === 'base_generator') e.basePower = { enabled: false, energy: 0 };
+      if (it.struct === 'arrow_turret') e.turret = { enabled: false, cooldown: 0, angle: 0 };
       if (it.struct === 'farm_controller') e.farm = { enabled:false, crop:'crop', energy:0 };
       if (it.struct === 'garden') e.garden = { crop: null, growth: 0, water: 0 };
       if (it.struct === 'barrel') e.water = 0;

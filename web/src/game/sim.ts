@@ -2,7 +2,7 @@
 import { BAL, TILE, WW, WH, HOUR, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity, type Proj, type Haz } from './core';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
 import { getWorld } from './world';
-import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine } from './engine';
+import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, turretStatus } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
@@ -572,6 +572,21 @@ function castPattern(gs: GameState, m: Creature, pat: string, now: number) {
 }
 function setTimeoutHaz(gs: GameState, m: Creature, dmg: number) { const p = gs.run!.player; HAZ.push({ kind: 'circle', x: p.x, y: p.y, r: 30, t: 0, tell: 1300, dur: 140, dmg, style: m.elder!.key, owner: m.id, effect: 'emergeAt' }); }
 
+/** Live-only: no speculative targeting or ammunition expenditure during offline catch-up. */
+function tickTurrets(gs: GameState, dtMs: number, now: number) {
+  const r=gs.run!, active=BAL.ai.activeRadiusTiles*TILE;
+  for (const e of Object.values(r.entities)) { const t=e.turret; if (!t) continue; t.cooldown=Math.max(0,t.cooldown-dtMs); if (turretStatus(r,e)!=='Ready') continue;
+    const range = weatherAt(r,now)==='fog' ? 60 : weatherAt(r,now)==='storm' ? 72 : 96;
+    const targets=r.creatures.filter(m=>m.state!=='dead' && m.state!=='sleep' && m.offlineUnresolvedAt===undefined && dist(m.x,m.y,r.player.x,r.player.y)<=active && dist(e.x,e.y,m.x,m.y)<=range && (CREATURES[m.type]?.aggro || (m as any).prov || isRagnarok(r,now)) && clearPhysicalLine(r,e,m,true,true));
+    targets.sort((a,b)=>dist(e.x,e.y,a.x,a.y)-dist(e.x,e.y,b.x,b.y)); const m=targets[0]; if (!m) continue;
+    const a=Math.atan2(m.y-e.y,m.x-e.x); t.angle=a; if (t.cooldown>0) continue;
+    const sx=e.x+Math.cos(a)*12, sy=e.y+Math.sin(a)*12; if (blockedAtTurret(r,sx,sy)) continue;
+    removeItem(r,e.c!,'arrow',1); t.cooldown=1000; PROJ.push({x:sx,y:sy,vx:Math.cos(a)*260,vy:Math.sin(a)*260,life:.5,dmg:16,from:'player',kind:'arrow',r:3});
+    receipt(r,now,'turret.fire',`${e.id}:${m.id}`); fx('bowshot',{x:sx,y:sy,a});
+  }
+}
+function blockedAtTurret(r: RunState,x:number,y:number) { const b=blockGrid(r)[tileOf(y)*WW+tileOf(x)]; return b===1||b===2||b===3||b===5; }
+
 // ---------- projectiles & hazards ----------
 function tickProj(gs: GameState, dtMs: number, now: number) {
   const r = gs.run!; const p = r.player; const dt = dtMs / 1000; const g = blockGrid(r);
@@ -691,6 +706,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     for (const terrain of Object.values(r.terrain)) if (terrain.until && terrain.until > r.clock.simMs) dt = Math.min(dt, terrain.until - r.clock.simMs);
     if (!(dt > 0)) break;
     dt = Math.min(end - t, Math.max(dt, 0.001)); // avoid sub-millisecond timestamp stalls
+    stepBasePower(r, dt, t + dt);
     stepStations(gs, dt, t + dt, report);
     stepGardensBarrels(gs, dt, isWet(weather));
     decayTraces(r, dt, weather);
@@ -740,6 +756,7 @@ export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   if (slot !== r.clock.weatherSlot) { r.clock.weatherSlot = slot; fx('weather', { w: weather }); }
   tickPlayer(gs, inp, dtMs, now);
   tickCreatures(gs, dtMs, now);
+  tickTurrets(gs, dtMs, now);
   tickProj(gs, dtMs, now);
   tickHaz(gs, dtMs, now);
   tickSurvival(gs, dtMs, now);
