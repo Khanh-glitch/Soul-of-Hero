@@ -1,5 +1,5 @@
 // Deterministic-ish real-time simulation layered on the engine authority. All state mutation goes through engine helpers.
-import { BAL, TILE, WW, WH, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity } from './core';
+import { BAL, TILE, WW, WH, HOUR, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity } from './core';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
 import { getWorld } from './world';
 import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones } from './engine';
@@ -90,17 +90,24 @@ export function ignite(gs: GameState, tx: number, ty: number, now: number) {
   const t = effTile(r, tx, ty); if (t === T.GRASS || t === T.MEADOW || t === T.FOREST) { r.terrain[i] = { t: T.BURNT }; fx('scorch', { x: tx * TILE + 8, y: ty * TILE + 8 }); markDirty(); return true; }
   return false;
 }
-function stepFires(gs: GameState, now: number, dtMs: number) {
-  const r = gs.run!; const wet = isWet(weatherAt(r, now)); fireAcc += dtMs; const doSpread = fireAcc > 900; if (doSpread) fireAcc = 0;
+/** Shared online/offline transition: wet wins at the same instant as burnout. */
+function resolveFires(gs: GameState, now: number, visual = true) {
+  const r = gs.run!, wet = isWet(weatherAt(r, now));
   for (const k in r.sources) {
     const st: any = r.sources[k]; if (!st.fire) continue; const i = +k, tx = i % WW, ty = (i / WW) | 0;
-    if (wet) { st.fire = 0; fx('steam', { x: tx * TILE + 8, y: ty * TILE + 8 }); continue; }
-    if (st.fire <= r.clock.simMs) { st.fire = 0; st.burnt = true; st.stock = SOURCES.deadtree.stock; st.hp = SOURCES.deadtree.hp; const t = effTile(r, tx, ty); if (t !== T.SAND && t !== T.SNOW) r.terrain[i] = { t: T.BURNT }; markDirty(); receipt(r, now, 'fire.burnout', `${tx},${ty}`); continue; }
-    if (doSpread) {
-      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, -1]]) if (rngNext(r) < 0.16) ignite(gs, tx + dx, ty + dy, now);
-      const p = r.player; if (dist(p.x, p.y, tx * TILE + 8, ty * TILE + 8) < 18) hurtPlayer(gs, 6, tx * TILE + 8, ty * TILE + 8, 'fire', now, 60);
-      for (const m of r.creatures) if (m.state !== 'dead' && dist(m.x, m.y, tx * TILE + 8, ty * TILE + 8) < 18) damageCreature(gs, m, 8, 0, now, 0);
-    }
+    if (wet) { st.fire = 0; if (visual) fx('steam', { x: tx * TILE + 8, y: ty * TILE + 8 }); continue; }
+    if (st.fire <= r.clock.simMs) { st.fire = 0; st.burnt = true; st.stock = SOURCES.deadtree.stock; st.hp = SOURCES.deadtree.hp; const t = effTile(r, tx, ty); if (t !== T.SAND && t !== T.SNOW) r.terrain[i] = { t: T.BURNT }; markDirty(); receipt(r, now, 'fire.burnout', `${tx},${ty}`); }
+  }
+}
+function stepFires(gs: GameState, now: number, dtMs: number) {
+  const r = gs.run!; resolveFires(gs, now);
+  fireAcc += dtMs; const doSpread = fireAcc > 900; if (doSpread) fireAcc = 0;
+  if (!doSpread) return;
+  for (const k in r.sources) {
+    const st: any = r.sources[k]; if (!st.fire) continue; const i = +k, tx = i % WW, ty = (i / WW) | 0;
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, -1]]) if (rngNext(r) < 0.16) ignite(gs, tx + dx, ty + dy, now);
+    const p = r.player; if (dist(p.x, p.y, tx * TILE + 8, ty * TILE + 8) < 18) hurtPlayer(gs, 6, tx * TILE + 8, ty * TILE + 8, 'fire', now, 60);
+    for (const m of r.creatures) if (m.state !== 'dead' && dist(m.x, m.y, tx * TILE + 8, ty * TILE + 8) < 18) damageCreature(gs, m, 8, 0, now, 0);
   }
 }
 
@@ -540,28 +547,69 @@ function tickSurvival(gs: GameState, dtMs: number, now: number) {
   if (p.hunger > 60 && p.thirst > 60 && p.rad < 30 && p.warmth > 30) p.hp = Math.min(B.maxHp, p.hp + 1.2 * min * 10 / 10 * 4);
 }
 
+/** Advance existing autonomous helpers at weather and finite fire/terrain boundaries.
+ * Physical actors, spread, damage, lightning and player input are deliberately not replayed. */
+function advanceWorld(gs: GameState, start: number, end: number, report?: string[], visual = true) {
+  const r = gs.run!; let t = start; const slotMs = BAL.weather.slotMinutes * 60000;
+  resolveFires(gs, t, visual);
+  while (t < end) {
+    // Commit already-finished jobs first; their next jobs determine the next boundary.
+    stepStations(gs, 0, t, report);
+    const weather = weatherAt(r, t);
+    const slot = Math.floor((t - r.startedAt + r.qaOffset) / slotMs);
+    const nextWeather = r.startedAt - r.qaOffset + (slot + 1) * slotMs;
+    let dt = Math.min(end - t, nextWeather - t);
+    for (const e of Object.values(r.entities)) {
+      const st = e.station; if (!st) continue; const kind = STRUCTS[e.type!].station; const job = st.queue[0];
+      const fuelled = kind === 'campfire' || kind === 'furnace';
+      if (kind === 'furnace' && (!job || job.left <= 0)) continue;
+      if (!job && kind !== 'campfire') continue;
+      let fuel = st.burn;
+      if (fuelled && fuel <= 0) { const next = C(r, st.fuelC).slots.find(s => s && ITEMS[s.key].fuel); if (!next) continue; fuel = ITEMS[next.key].fuel! * 1000; }
+      if (fuelled) dt = Math.min(dt, fuel);
+      if (job && job.left > 0) dt = Math.min(dt, job.left);
+    }
+    for (const st of Object.values(r.sources)) { const fire = (st as any).fire as number | undefined; if (fire && fire > r.clock.simMs) dt = Math.min(dt, fire - r.clock.simMs); }
+    for (const terrain of Object.values(r.terrain)) if (terrain.until && terrain.until > r.clock.simMs) dt = Math.min(dt, terrain.until - r.clock.simMs);
+    if (!(dt > 0)) break;
+    stepStations(gs, dt, t + dt, report);
+    stepGardensBarrels(gs, dt, isWet(weather));
+    decayTraces(r, dt, weather);
+    r.clock.simMs += dt; t += dt;
+    let dirty = false; for (const k in r.terrain) { const m = r.terrain[k]; if (m.until && m.until <= r.clock.simMs) { delete r.terrain[k]; dirty = true; } } if (dirty) markDirty();
+    resolveFires(gs, t, visual);
+  }
+}
+
+/** Bring the single run clock forward before a frame or an input transaction. */
+export function syncWorld(gs: GameState, now: number): boolean {
+  const r = gs.run; if (!r || r.ended || now < r.clock.lastSimAt) return false;
+  const expiry = r.startedAt - r.qaOffset + BAL.run.maxRunHours * HOUR;
+  if (now >= expiry) { settle(gs, now, true); if (gs.run) endRun(gs, 'expired', expiry); return false; }
+  const activeStart = Math.max(r.clock.lastSimAt, now - 50);
+  if (activeStart > r.clock.lastSimAt) settle(gs, activeStart, true);
+  if (!gs.run || r.clock.lastSimAt < activeStart) return false;
+  advanceWorld(gs, r.clock.lastSimAt, now);
+  r.clock.lastSimAt = now;
+  return true;
+}
+
 // ---------- main tick ----------
 export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   const r = gs.run; if (!r || r.ended) return;
-  dtMs = Math.min(dtMs, 50);
-  r.clock.simMs += dtMs; r.clock.lastSimAt = now;
+  dtMs = Math.max(0, Math.min(dtMs, 50));
+  if (!syncWorld(gs, now)) { if (!gs.run) fx('banner', { text: 'The run has ended', sub: 'Ragnarok consumed the island.' }); return; }
   const ph = phaseOf(r, now);
-  if (ph === 'expired') { endRun(gs, 'expired', now); fx('banner', { text: 'The run has ended', sub: 'Ragnarok consumed the island.' }); return; }
   if (ph !== 'calm' && ragAnnounced !== r.id + ph) { ragAnnounced = r.id + ph; if (ph === 'danger') { award(gs, 'ragnarok', now); fx('banner', { text: 'RAGNAROK', sub: 'The final 72 hours. Sealed chests can now be opened.' }); } if (ph === 'awakening') fx('banner', { text: 'DAY 14', sub: 'The six Elders awaken.' }); }
   const weather = weatherAt(r, now);
   const slot = Math.floor((now - r.startedAt + r.qaOffset) / (BAL.weather.slotMinutes * 60000));
   if (slot !== r.clock.weatherSlot) { r.clock.weatherSlot = slot; fx('weather', { w: weather }); }
-  // expiring terrain mutations (ice melts, pillars crumble)
-  if ((r.clock.simMs % 1000) < dtMs) { let ch = false; for (const k in r.terrain) { const m = r.terrain[k]; if (m.until && m.until <= r.clock.simMs) { delete r.terrain[k]; ch = true; } } if (ch) markDirty(); }
   tickPlayer(gs, inp, dtMs, now);
   tickCreatures(gs, dtMs, now);
   tickProj(gs, dtMs, now);
   tickHaz(gs, dtMs, now);
   tickSurvival(gs, dtMs, now);
-  stepStations(gs, dtMs, now);
-  stepGardensBarrels(gs, dtMs, isWet(weather));
   stepFires(gs, now, dtMs);
-  decayTraces(r, dtMs, weather);
   // drops: physics + magnet + auto pickup through the dispatcher
   const p = r.player;
   for (const e of Object.values(r.entities)) {
@@ -593,37 +641,61 @@ function discover(gs: GameState, now: number) {
 }
 
 // ---------- offline settlement (C09) ----------
-export function settle(gs: GameState, now: number): string[] {
+export function settle(gs: GameState, now: number, silent = false): string[] {
   const r = gs.run; if (!r) return [];
-  const gap = now - r.clock.lastSimAt; if (gap < 4000) return [];
+  const expiry = r.startedAt - r.qaOffset + BAL.run.maxRunHours * HOUR;
+  if (now < r.clock.lastSimAt || (now === r.clock.lastSimAt && now < expiry)) return []; // never replay time
+  // A corrupt/legacy pre-run checkpoint cannot cause more than one run's duration of replay.
+  const start = Math.max(r.clock.lastSimAt, expiry - BAL.run.maxRunHours * HOUR);
+  const end = Math.min(now, expiry), gap = Math.max(0, end - start);
+  if (start > r.clock.lastSimAt && now >= start) r.clock.lastSimAt = start;
   const report: string[] = []; const B = BAL.player; const p = r.player;
+  markDirty(); // Continue may replace the run object while retaining its ID.
   const sheltered = isSheltered(r, p.x, p.y); p.sheltered = sheltered;
-  const step = 60000; let t = r.clock.lastSimAt; let wetSlots = 0; let steps = 0; const zone = getWorld().zone[tileOf(p.y) * WW + tileOf(p.x)];
+  let t = start, wetMs = 0; const zone = getWorld().zone[tileOf(p.y) * WW + tileOf(p.x)];
   const startHp = p.hp, startHunger = p.hunger;
-  while (t < now && steps < 20200) {
-    const dtMs = Math.min(step, now - t); t += dtMs; steps++;
-    const w = weatherAt(r, t); if (isWet(w)) wetSlots++;
-    stepStations(gs, dtMs, t, report);
-    stepGardensBarrels(gs, dtMs, isWet(w));
-    decayTraces(r, dtMs, w);
-    r.clock.simMs += dtMs;
-    if (phaseOf(r, t) === 'expired') { endRun(gs, 'expired', t); report.push('The run reached its 336-hour end while you were away.'); return report; }
+  // Minute-sized survival integration, not frame replay; world helper splits further at weather/fire boundaries.
+  while (t < end) {
+    const slotMs = BAL.weather.slotMinutes * 60000;
+    const nextWeather = r.startedAt - r.qaOffset + (Math.floor((t - r.startedAt + r.qaOffset) / slotMs) + 1) * slotMs;
+    let dtMs = Math.min(60000, end - t, nextWeather - t);
+    // Integrate the existing offline drains at their actual depletion/death boundaries.
+    // Rates and hunger-only shelter protection are unchanged.
+    const unit = B.offlineDrainFactor / 60000;
+    const hungerRate = B.hungerDrainPerMin * unit, thirstRate = B.thirstDrainPerMin * unit;
+    const radRate = zone === 7 ? 6 * unit : 0;
+    let damageRate = 0;
+    if (!p.dead) {
+      if (p.hunger < 1e-9) p.hunger = 0; if (p.thirst < 1e-9) p.thirst = 0;
+      if (p.hunger > 0) dtMs = Math.min(dtMs, p.hunger / hungerRate);
+      if (p.thirst > 0) dtMs = Math.min(dtMs, p.thirst / thirstRate);
+      if (radRate && p.rad < 50) dtMs = Math.min(dtMs, (50 - p.rad) / radRate);
+      const thirsty = p.thirst <= 0, hungry = p.hunger <= 0;
+      if (thirsty || (hungry && (!sheltered || p.hp > 1 + 1e-9))) damageRate += B.starveDamagePerMin * unit;
+      if (zone === 5 && !sheltered) damageRate += B.coldDamagePerMin * unit;
+      if (zone === 7 && p.rad >= 50 - 1e-9) damageRate += B.radDamagePerMinOver50 * unit;
+      if (damageRate > 0) {
+        if (sheltered && hungry && !thirsty && p.hp > 1 + 1e-9) dtMs = Math.min(dtMs, (p.hp - 1) / damageRate);
+        else dtMs = Math.min(dtMs, Math.max(0, p.hp) / damageRate);
+      }
+    }
+    // Date.now has finite precision; avoid a non-advancing sub-millisecond loop.
+    const until = Math.min(end, nextWeather, t + Math.max(dtMs, 0.001)); dtMs = until - t;
+    if (isWet(weatherAt(r, t))) wetMs += dtMs;
+    advanceWorld(gs, t, until, silent ? undefined : report, false);
+    t = until; r.clock.lastSimAt = t;
     if (p.dead) continue;
-    const min = dtMs / 60000 * B.offlineDrainFactor;
-    p.hunger = Math.max(0, p.hunger - B.hungerDrainPerMin * min); p.thirst = Math.max(0, p.thirst - B.thirstDrainPerMin * min);
-    if (p.thirst <= 0) p.hp -= B.starveDamagePerMin * min; // thirst remains lethal even alongside hunger
-    else if (p.hunger <= 0) { const dmg = B.starveDamagePerMin * min; p.hp = sheltered ? Math.max(1, p.hp - dmg) : p.hp - dmg; }
-    if ((zone === 5) && !sheltered) p.hp -= B.coldDamagePerMin * min; // cold is NOT covered by shelter immunity unless enclosed
-    if (zone === 7) { p.rad = Math.min(100, p.rad + 6 * min); if (p.rad > 50) p.hp -= B.radDamagePerMinOver50 * min; }
-    if (p.hp <= 0) { killPlayer(gs, t, 'exposure while offline'); report.push('You did not survive the time away. Your bag lies where you rested.'); }
+    p.hunger = Math.max(0, p.hunger - hungerRate * dtMs); p.thirst = Math.max(0, p.thirst - thirstRate * dtMs);
+    if (radRate) p.rad = Math.min(100, p.rad + radRate * dtMs);
+    p.hp -= damageRate * dtMs;
+    if (Math.abs(p.hp - 1) < 1e-8) p.hp = 1;
+    if (p.hp <= 1e-8) { killPlayer(gs, t, 'exposure while offline'); if (!silent) report.push('You did not survive the time away. Your bag lies where you rested.'); }
   }
-  for (const k in r.sources) { const st: any = r.sources[k]; if (st.fire) { st.fire = 0; st.burnt = true; st.stock = 3; st.hp = 8; } }
-  for (const k in r.terrain) { const m = r.terrain[k]; if (m.until && m.until <= r.clock.simMs) delete r.terrain[k]; }
-  markDirty();
-  r.clock.lastSimAt = now;
+  if (now >= expiry) { endRun(gs, 'expired', expiry); if (!silent) report.push('The run reached its 336-hour end while you were away.'); return report; }
+  if (silent || gap < 4000) return [];
   const hrs = gap / 3600000;
-  report.unshift(`Away for ${hrs >= 1 ? hrs.toFixed(1) + ' h' : Math.round(gap / 60000) + ' min'}${r.qaUsed ? '' : ''}.`);
-  if (wetSlots) report.push(`Rain fell for ~${wetSlots} min — footprints washed out, gardens and barrels drank.`);
+  report.unshift(`Away for ${hrs >= 1 ? hrs.toFixed(1) + ' h' : Math.round(gap / 60000) + ' min'}.`);
+  if (wetMs) report.push(`Rain fell for ~${Math.round(wetMs / 60000)} min — footprints washed out, gardens and barrels drank.`);
   if (Math.round(startHunger - p.hunger) > 0) report.push(`Hunger ${Math.round(startHunger)} → ${Math.round(p.hunger)}${sheltered ? ' (sheltered: hunger cannot kill you)' : ''}.`);
   if (!p.dead && startHp - p.hp >= 1) report.push(`HP ${Math.round(startHp)} → ${Math.round(p.hp)}.`);
   receipt(r, now, 'offline.settle', `${Math.round(gap / 1000)}s`);

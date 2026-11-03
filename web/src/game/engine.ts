@@ -375,6 +375,8 @@ export function dispatch(gs: GameState, it: Intent, now: number): Result {
     const res = startRun(gs, it.character, now, it.region ?? null, it.seed); if (res.ok) gs.profile.profileReceipts.push(`intent:${it.id}`); return res;
   }
   if (!r) return { ok: false, reason: 'No active run.' };
+  // No command can transact after the run boundary while the caller awaits settlement.
+  if (phaseOf(r, now) === 'expired') return { ok: false, reason: 'Run has expired.' };
   if (r.seenIntents.includes(it.id)) return { ok: false, reason: 'Duplicate request ignored.', dup: true };
   const res = apply(gs, r, it, now);
   if (res.ok) {
@@ -682,39 +684,57 @@ function research(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: s
 // ---------------- station work (C06) — shared by online tick and offline settle ----------------
 export function stepStations(gs: GameState, dtMs: number, now: number, report?: string[]) {
   const r = gs.run!;
+  const note = (message: string) => { if (report && !report.includes(message)) report.push(message); };
   for (const e of Object.values(r.entities)) {
     const st = e.station; if (!st) continue; const kind = STRUCTS[e.type!].station!;
     const needsFuel = kind === 'campfire' || kind === 'furnace';
-    let t = dtMs;
-    while (t > 0) {
-      const job = st.queue[0];
+    let t = dtMs, blocked = false;
+    while (t > 0 || (!blocked && !!st.queue[0] && st.queue[0].left <= 0)) {
+      const job = blocked ? undefined : st.queue[0];
+      // A finished job is committed at its event time without requiring extra work or fuel.
+      if (job && job.left <= 0) {
+        const at = now - t;
+        if (job.recipe.startsWith('R:')) {
+          const k = job.recipe.slice(2);
+          if (addItem(r, st.outC, 'blueprint', 1, { meta: k }) > 0) { blocked = true; note('Research table: output slots full.'); continue; }
+          note(`Research table: blueprint for ${ITEMS[RECIPES[k].out].name} is ready.`); award(gs, 'first_research', at);
+        } else {
+          const rc = RECIPES[job.recipe];
+          if (spaceFor(r, st.outC, rc.out) < rc.qty) { blocked = true; note(`${STRUCTS[e.type!].name}: output slots full.`); continue; }
+          addItem(r, st.outC, rc.out, rc.qty); if (rc.out === 'iron_ingot') award(gs, 'first_ingot', at); note(`${STRUCTS[e.type!].name} finished ${ITEMS[rc.out].name}.`);
+        }
+        receipt(r, at, 'job.done', job.recipe); st.queue.shift(); continue;
+      }
+      if (blocked && kind !== 'campfire') break;
       if (needsFuel) {
-        const burning = kind === 'campfire' ? true : !!job;
+        const burning = kind === 'campfire' || !!job;
         if (!burning) break;
-        if (st.burn <= 0) { // consume next physical fuel item
+        if (st.burn <= 0) {
           const fc = C(r, st.fuelC); const fi = fc.slots.findIndex(s => s && ITEMS[s.key].fuel);
-          if (fi < 0) { if (job && report) report.push(`${STRUCTS[e.type!].name}: fuel ran out — ${ITEMS[RECIPES[job.recipe].out].name} paused.`); break; }
+          if (fi < 0) { if (job) { const key = job.recipe.startsWith('R:') ? job.recipe.slice(2) : job.recipe; note(`${STRUCTS[e.type!].name}: fuel ran out — ${ITEMS[RECIPES[key].out].name} paused.`); } break; }
           const s = fc.slots[fi]!; st.burn += ITEMS[s.key].fuel! * 1000; s.qty--; if (s.qty <= 0) fc.slots[fi] = null;
         }
       }
-      let step = needsFuel ? Math.min(t, st.burn) : t; if (job) step = Math.min(step, Math.max(1, job.left));
+      let step = needsFuel ? Math.min(t, st.burn) : t; if (job) step = Math.min(step, job.left);
       if (needsFuel) st.burn -= step;
       t -= step;
-      if (!job) continue;
-      job.left -= step;
-      if (job.left <= 0) {
-        if (job.recipe.startsWith('R:')) { const k = job.recipe.slice(2); if (addItem(r, st.outC, 'blueprint', 1, { meta: k }) > 0) { job.left = 0; break; } if (report) report.push(`Research table: blueprint for ${ITEMS[RECIPES[k].out].name} is ready.`); award(gs, 'first_research', now); }
-        else { const rc = RECIPES[job.recipe]; if (spaceFor(r, st.outC, rc.out) < rc.qty) { job.left = 0; if (report) report.push(`${STRUCTS[e.type!].name}: output slots full.`); break; } addItem(r, st.outC, rc.out, rc.qty); if (rc.out === 'iron_ingot') award(gs, 'first_ingot', now); if (report) report.push(`${STRUCTS[e.type!].name} finished ${ITEMS[rc.out].name}.`); }
-        receipt(r, now, 'job.done', job.recipe); st.queue.shift();
-      }
+      if (job) job.left -= step;
     }
   }
 }
 export function stepGardensBarrels(gs: GameState, dtMs: number, wet: boolean) {
   const r = gs.run!; const G = BAL.garden;
   for (const e of Object.values(r.entities)) {
-    if (e.garden) { const g = e.garden; if (wet && !isRoofed(r, e)) g.water = Math.min(3, g.water + dtMs / 60000); if (g.crop && g.growth < 1 && g.water > 0) { g.growth = Math.min(1, g.growth + dtMs / (G.growSeconds * 1000)); g.water = Math.max(0, g.water - dtMs / (G.waterSecondsPerUnit * 1000)); } }
-    if (e.type === 'barrel' && wet && !isRoofed(r, e)) e.water = Math.min(12, (e.water || 0) + dtMs / 20000);
+    if (!e.garden && e.type !== 'barrel') continue;
+    const rain = wet && !isRoofed(r, e);
+    if (e.garden) {
+      const g = e.garden; const incoming = rain ? 1 / 60000 : 0; const use = 1 / (G.waterSecondsPerUnit * 1000);
+      let growing = g.crop && g.growth < 1 ? Math.min(dtMs, (1 - g.growth) * G.growSeconds * 1000) : 0;
+      if (use > incoming) growing = Math.min(growing, g.water / (use - incoming));
+      if (growing > 0) { g.growth = Math.min(1, g.growth + growing / (G.growSeconds * 1000)); g.water = Math.min(3, Math.max(0, g.water + (incoming - use) * growing)); }
+      g.water = Math.min(3, g.water + incoming * (dtMs - growing));
+    }
+    if (e.type === 'barrel' && rain) e.water = Math.min(12, (e.water || 0) + dtMs / 20000);
   }
 }
 function isRoofed(r: RunState, e: Entity) { return entsAt(r, e.tx!, e.ty!).some(o => o.kind === 'struct' && STRUCTS[o.type!].shelter); }
