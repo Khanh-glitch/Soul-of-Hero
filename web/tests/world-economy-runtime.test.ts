@@ -4,6 +4,7 @@ import { getWorld, setActiveLayout, SRC_KEYS } from '../src/game/world';
 import { SOURCES } from '../src/game/catalog';
 import { buildReason, blockGrid, harvestHit, markDirty, newGame, dispatch, sourceAt, addItem } from '../src/game/engine';
 import { validate, serializeSnapshot } from '../src/game/persist';
+import { mapDigest } from '../src/game/map-package';
 import { diagnoseStarts, compileEconomy, sourceDigest } from '../src/game/world-economy';
 const now=Date.UTC(2026,10,3); let n=0;
 const make=()=>{setActiveLayout('shipping');const g=newGame();expect(dispatch(g,{id:`start-${++n}`,type:'startRun',character:'female',region:0,seed:123},now).ok).toBe(true);g.run!.creatures=[];return g;};
@@ -12,7 +13,7 @@ const snapshot=(g:ReturnType<typeof make>)=>JSON.parse(JSON.parse(serializeSnaps
 describe('versioned economy in the real engine',()=>{
  it('compiles shipping deterministically, with accessible starts and no protected or inaccessible placement',()=>{
   const w=getWorld('shipping'),m=w.economyMap;expect(diagnoseStarts(m,w.sourceV3)).toEqual([]);expect(compileEconomy(m).sources).toEqual(w.sourceV3);
-  const g=make(),r=g.run!;expect(r.sourceMap).toEqual({id:'shipping',revision:1,rules:3,seed:WORLD_SEED,digest:sourceDigest(w.sourceV3)});
+  const g=make(),r=g.run!;expect(r.sourceMap).toEqual({id:'shipping',revision:1,rules:3,seed:WORLD_SEED,digest:sourceDigest(w.sourceV3),mapDigest:mapDigest(w)});
   for(let i=0;i<w.sourceV3.length;i++)if(w.sourceV3[i]){expect(m.protected[i]).toBe(0);expect(m.walkable[i]).toBe(1);expect(m.road[i]).toBe(0);expect(SOURCES[w.sourceV3[i]!]).toBeDefined();}
   expect(w.sourceV3.filter(x=>x==='scrap').length).toBeGreaterThan(0);expect(w.sourceV3.filter(x=>x==='iron').length).toBeGreaterThan(0);
  });

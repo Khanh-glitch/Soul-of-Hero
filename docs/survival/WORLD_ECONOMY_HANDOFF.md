@@ -1,5 +1,7 @@
 # World-economy candidate — PARTIAL IMPLEMENTATION / HOLD
 
+**Follow-up:** [WORLD_ECONOMY_CONTRACT_FOLLOWUP.md](WORLD_ECONOMY_CONTRACT_FOLLOWUP.md) updates map-package integration, cart diagnostics and controlled physical route evidence; the overall order remains on HOLD.
+
 **2026-11-03.** This is a playable engineering candidate, not acceptance of the complete portability/economics order. No enjoyment claim and no 336-hour bot campaign were made. The owning geography agent remains responsible for the map. Do not merge this work to main on the strength of these checks.
 
 ## Lineage and review

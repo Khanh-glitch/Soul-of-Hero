@@ -1,0 +1,55 @@
+{
+  "target": "Within four tiles of authored foundry hall, outside protected geometry",
+  "cargo": "100 stone = 120 kg, two stacks; empty personal inventory assumed",
+  "comparison": {
+    "s0": {
+      "foot": {
+        "tiles": 114,
+        "secondsEmpty": 25.8,
+        "seconds120kg": 73.8
+      },
+      "cart": {
+        "tiles": 130,
+        "secondsEmpty": 37.4,
+        "seconds120kg": 47.7
+      }
+    },
+    "s1": {
+      "foot": {
+        "tiles": 122,
+        "secondsEmpty": 31.8,
+        "seconds120kg": 90.8
+      },
+      "cart": {
+        "tiles": 122,
+        "secondsEmpty": 41.3,
+        "seconds120kg": 52.7
+      }
+    },
+    "s2": {
+      "foot": {
+        "tiles": 86,
+        "secondsEmpty": 21.7,
+        "seconds120kg": 62.1
+      },
+      "cart": {
+        "tiles": 127,
+        "secondsEmpty": 36.1,
+        "seconds120kg": 46.1
+      }
+    },
+    "s3": {
+      "foot": {
+        "tiles": 20,
+        "secondsEmpty": 5.1,
+        "seconds120kg": 14.6
+      },
+      "cart": {
+        "tiles": 40,
+        "secondsEmpty": 11,
+        "seconds120kg": 14.1
+      }
+    }
+  },
+  "notes": "Shortest tile-count path, not fastest path. Terrain and cargo multipliers mirror current sim, but cart rope/radius, turns, loading/unloading, tools, food, water, AI, weather and real time are not modeled. Start coordinates are landing areas, not proven home plots. Round trip roughly doubles constant-speed one-way values; no claim of usable route without native hauling."
+}

@@ -23,6 +23,10 @@ const tileOf = (v: number) => Math.floor(v / TILE);
 function solidFor(r: RunState, x: number, y: number, who: 'player' | 'creature' | 'cart') {
   const tx = tileOf(x), ty = tileOf(y); if (tx < 0 || ty < 0 || tx >= WW || ty >= WH) return true;
   const b = blockGrid(r)[ty * WW + tx];
+  // Authored cargo constraints are additional to live collision, not a
+  // substitute for opening a physical door or clearing a physical object.
+  const w = getWorld(); const i=ty*WW+tx;
+  if (who === 'cart' && w.packageContract && !w.economyMap.cargoPassable[i] && !w.statics.some(s=>s.kind==='door' && s.tx===tx && s.ty===ty)) return true;
   if (b === 4) return who === 'cart' || (who === 'creature' && false);
   return b === 1 || b === 2 || b === 3 || b === 5;
 }
@@ -189,12 +193,13 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   // terrain & load
   const t = effTile(r, tileOf(p.x), tileOf(p.y));
   let sp = B.speed * (BAL.terrainSpeed[SPEED_KEY[t]] ?? 1) * speedMul;
-  const w = invWeight(r), limit = carryLimit(r); if (w > limit) sp *= Math.max(0.35, 1 - (w - limit) / limit);
-  if (slowTimer > 0) { sp *= 0.5; slowTimer -= dtMs; } if (rootTimer > 0) { sp *= 0.15; rootTimer -= dtMs; }
+  const w = invWeight(r), limit = carryLimit(r), personalLoad = w > limit ? Math.max(0.35, 1 - (w - limit) / limit) : 1;
+  let condition = 1; if (slowTimer > 0) { condition *= 0.5; slowTimer -= dtMs; } if (rootTimer > 0) { condition *= 0.15; rootTimer -= dtMs; }
+  sp *= personalLoad * condition;
   let cart: Entity | null = p.pulling ? r.entities[p.pulling] : null; if (p.pulling && !cart) p.pulling = null;
   if (cart) { const ct = effTile(r, tileOf(cart.x), tileOf(cart.y)); const road = ct === T.ROAD || ct === T.BRIDGE || ct === T.FLOOR; const rough = ct === T.FOREST || ct === T.MARSH || ct === T.HILL || ct === T.SNOW;
     const base = road ? BAL.cart.speedOnRoad : rough ? BAL.cart.speedRough : BAL.cart.speedOffRoad; const cw = cartWeightOf(r, cart);
-    sp = B.speed * speedMul * base * Math.max(0.25, 1 - cw / 100 * BAL.cart.weightPenaltyPer100) * (cw > cartLimit(cart) ? 0.4 : 1); }
+    sp = B.speed * speedMul * base * Math.max(0.25, 1 - cw / 100 * BAL.cart.weightPenaltyPer100) * (cw > cartLimit(cart) ? 0.4 : 1) * personalLoad * condition; }
   if (p.action?.kind === 'roll') { const ra = p.action.angle; moveBody(r, p, Math.cos(ra) * B.rollSpeed * dt, Math.sin(ra) * B.rollSpeed * dt, 4, 'player'); }
   else if (ml) { moveBody(r, p, mx * sp * dt, my * sp * dt, 4, 'player'); p.stepAcc += sp * dt; if (p.stepAcc > 13) { p.stepAcc = 0; fx('step', { x: p.x, y: p.y + 6, t }); } }
   const movedX = p.x, movedY = p.y;

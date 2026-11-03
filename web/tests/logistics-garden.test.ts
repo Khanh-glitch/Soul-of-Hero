@@ -37,6 +37,10 @@ describe('integrated logistics and cultivation',()=>{
   const input:Input={up:false,down:false,left:true,right:false,mx:r.player.x-30,my:r.player.y,attack:false,attackPressed:false,roll:false,cancel:false};r.player.pulling=e.id;nr.player.pulling=e.id;
   tick(base,input,50,T+50);tick(normal,input,50,T+50);expect(Math.abs(r.player.vx)).toBeGreaterThan(Math.abs(nr.player.vx)*2);expect(Math.abs(r.player.vx)).toBeLessThan(BAL.player.speed);
  });
+ it('does not bypass personal overload while pulling a loaded cart',()=>{
+  const light=fresh(),r=light.run!,{e}=cart(light);addItem(r,e.c!,'stone',30);r.player.pulling=e.id;const heavy=structuredClone(light);addItem(heavy.run!,'inv','stone',100);
+  const inp:Input={up:false,down:false,left:true,right:false,mx:0,my:0,attack:false,attackPressed:false,roll:false,cancel:false};tick(light,inp,50,T+50);tick(heavy,inp,50,T+50);expect(Math.abs(heavy.run!.player.vx)).toBeLessThan(Math.abs(r.player.vx)*.6);
+ });
  it('funds Bitterleaf with seed, specimen and three flask charges, waits wet time, harvests once and enables medicine',()=>{
   const g=fresh(),r=g.run!,e=plot(g),b=bench(g);give(g,'seed');give(g,'herb');const f=C(r,'inv').slots.find(s=>s?.key==='water_flask')!; f.charge=4; // fixture: flask refilled at fresh water
   expect(act(g,'garden',{eid:e.id,crop:'herb'},'plant').ok).toBe(true);expect(countItem(r,'inv','herb')).toBe(0);expect(countItem(r,'inv','seed')).toBe(0);expect(act(g,'garden',{eid:e.id,crop:'crop'},'plant')).toMatchObject({ok:false,dup:true});

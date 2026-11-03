@@ -1,9 +1,13 @@
+/// <reference types="vite/client" />
 // K2 — stable geographic island (LOCKED_CANON: same geography across runs). Deterministic from WORLD_SEED.
 import { T, WW, WH, WORLD_SEED, hash2, TILE, TERRAIN_NAME } from './core';
 import { SOURCES } from './catalog';
 import { MAP_CONTENT_PACKS, validateContentPack, type LayoutId } from './content';
+import type { GeographicHandoff } from './geography-contract';
 import { compileEconomy, type EconomyMap } from './world-economy';
 import { adaptCurrentGeometry } from './economy-adapter';
+import { deriveAccessCorridors, type AccessCorridors } from './access-corridors';
+import { instantiateMapPackage, validateRuntimeMapPackage, type RuntimeMapPackage } from './map-package';
 
 // Frozen legacy encoding: never derive persisted tile values from object insertion order.
 export const SRC_KEYS = ['oak','pine','snowpine','palm','willow','deadtree','rock','iron','coalv','crystal','salt_shale','sulfur','bush','grass','reed','herb','mushroom','scrap','wreck'];
@@ -13,7 +17,7 @@ export interface Place { id: string; name: string; tx: number; ty: number; kind:
 export interface World {
   tiles: Uint8Array; fresh: Uint8Array; src: Int8Array; sourceOverlayV2: Int8Array; zone: Uint8Array; seaDist: Uint8Array;
   buildings: Building[]; statics: StaticEnt[]; places: Place[]; starts: Place[]; elders: Place[];
-  economyMap: EconomyMap; sourceV3: (string | null)[];
+  economyMap: EconomyMap; sourceV3: (string | null)[]; packageContract?: GeographicHandoff; accessCorridors?: AccessCorridors;
 }
 
 function vnoise(x: number, y: number, s: number) {
@@ -50,17 +54,33 @@ const RIVERS = [
   [[.66, .33], [.72, .4], [.8, .42], [.86, .46], [.98, .46]],
 ];
 
-let activeLayout: LayoutId = 'shipping';
-const cached = new Map<LayoutId, World>();
-export function getActiveLayout(): LayoutId { return activeLayout; }
-export function setActiveLayout(id: string): boolean {
-  if (id !== 'shipping' && id !== 'dev_delta') return false;
-  activeLayout = id;
-  return true;
+let activeLayout: string = 'shipping';
+const cached = new Map<string, World>();
+const external = new Map<string, RuntimeMapPackage>();
+const packageErrors: string[] = [];
+/** Package installation never overwrites built-in maps or an already installed ID. */
+export function installMapPackage(value: unknown): string[] {
+  const errors = validateRuntimeMapPackage(value);
+  const p = value as RuntimeMapPackage;
+  const key = p?.id && Number.isSafeInteger(p.revision) ? `${p.id}@${p.revision}` : '';
+  if (p?.id && (p.id === 'shipping' || p.id === 'dev_delta' || external.has(key))) errors.push(`map id and revision ${key || p.id} is already installed`);
+  if (errors.length) return errors;
+  external.set(key, JSON.parse(JSON.stringify(p))); return [];
 }
-export function getWorld(layout: LayoutId = activeLayout): World {
+for (const [path, value] of Object.entries(import.meta.glob('../map-packages/*.json', { eager: true, import: 'default' }))) {
+  const errors = installMapPackage(value); if (errors.length) packageErrors.push(`${path}: ${errors.join('; ')}`);
+}
+export function mapPackageErrors() { return [...packageErrors]; }
+export function listLayouts() { return [{id:'shipping', title:'Shipping Island', description: MAP_CONTENT_PACKS.shipping.description}, {id:'dev_delta',title:'Delta Ridge · Dev',description:MAP_CONTENT_PACKS.dev_delta.description}, ...[...external.entries()].map(([id,p])=>({id,title:`${p.title} · r${p.revision}`,description:p.description}))]; }
+export function getActiveLayout(): string { return activeLayout; }
+export function setActiveLayout(id: string): boolean {
+  if (id !== 'shipping' && id !== 'dev_delta' && !external.has(id)) return false;
+  activeLayout = id; return true;
+}
+export function hasLayout(id: string): boolean { return id === 'shipping' || id === 'dev_delta' || external.has(id); }
+export function getWorld(layout: string = activeLayout): World {
   let world = cached.get(layout);
-  if (!world) { world = genWorld(layout); cached.set(layout, world); }
+  if (!world) { const p=external.get(layout); if (p) world=instantiateMapPackage(p); else if (layout === 'shipping' || layout === 'dev_delta') world=genWorld(layout); else throw new Error(`Map package ${layout} is not installed`); if (!world.packageContract) world.accessCorridors=deriveAccessCorridors(world); cached.set(layout, world); }
   return world;
 }
 

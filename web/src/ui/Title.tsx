@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { VIEW_W, VIEW_H, type GameState } from '../game/core';
 import { getArt } from '../game/art';
 import { getMapCanvas, resetRenderCaches } from '../game/render';
-import { getWorld, getActiveLayout, setActiveLayout } from '../game/world';
+import { getWorld, getActiveLayout, setActiveLayout, listLayouts, mapPackageErrors } from '../game/world';
 import { ACHIEVEMENTS } from '../game/catalog';
 import { initAudio, sfx } from '../game/audio';
 
@@ -33,7 +33,7 @@ function HeroPreview({ female, active }: { female: boolean; active: boolean }) {
 
 export default function Title({ gs, onContinue, onStart, note, summary, clearSummary }: { gs: GameState; onContinue: () => void; onStart: (c: 'male' | 'female', region: number | null) => void; note?: string; summary: GameState['profile']['history'][number] | null; clearSummary: () => void }) {
   const s = useScale(); const [mode, setMode] = useState<'menu' | 'select' | 'history'>('menu'); const [hero, setHero] = useState<'male' | 'female'>('female'); const [region, setRegion] = useState<number | null>(null); const [layout, setLayout] = useState(getActiveLayout());
-  const chooseLayout = (id: 'shipping' | 'dev_delta') => { if (setActiveLayout(id)) { resetRenderCaches(); setLayout(id); } };
+  const chooseLayout = (id: string) => { if (setActiveLayout(id)) { resetRenderCaches(); setLayout(id); } };
   const starts = getWorld().starts; const pf = gs.profile; const run = gs.run;
   const REG = ['Meadow Bay — sheltered western inlet, farm fields, river; close to the Crossroads.', "Fisher's Point — warm south beaches, palms, crabs and wrecks; the lighthouse spit nearby.", 'Pinewatch — cool pine woods under the ridge; the pass watchtower and northern frost beyond.', 'Eastcove — salvage coast by the Dead Foundry; scrap-rich, wood-poor, harbor road north.'];
   const click = () => { initAudio(); sfx({ type: 'ui' }); };
@@ -65,13 +65,12 @@ export default function Title({ gs, onContinue, onStart, note, summary, clearSum
             <div className="flex items-center gap-2"><HeroPreview female={h === 'female'} active={hero === h} /><div style={{ fontSize: 11, lineHeight: 1.15 }}><div className="title-font" style={{ fontSize: 13 }}>{h === 'female' ? 'Adventurer ♀' : 'Adventurer ♂'}</div><div>Survival knife, a half-full flask, a few berries. No Core, no map, no orders.</div></div></div></button>)}</div>
           <div style={{ fontSize: 11, marginTop: 5, color: '#ffd98a' }}>Map layout</div>
           <div className="flex gap-1" style={{ marginTop: 2 }}>
-            <button data-testid="layout-shipping" className={`btn ${layout === 'shipping' ? 'gold' : 'ghost'}`} onClick={() => chooseLayout('shipping')}>Shipping Island</button>
-            <button data-testid="layout-dev-delta" className={`btn ${layout === 'dev_delta' ? 'gold' : 'ghost'}`} onClick={() => chooseLayout('dev_delta')}>Delta Ridge · Dev</button>
+            {listLayouts().map(m => <button key={m.id} data-testid={`layout-${m.id.replace('_','-')}`} className={`btn ${layout === m.id ? 'gold' : 'ghost'}`} onClick={() => { chooseLayout(m.id); setRegion(null); }}>{m.title}</button>)}
           </div>
-          <div style={{ fontSize: 9, color: '#cfc2dc', marginTop: 1 }}>{layout === 'shipping' ? 'Canonical island with the existing production POIs and routes.' : 'Development layout; a ridge leaves two passable route choices.'}</div>
+          <div style={{ fontSize: 9, color: '#cfc2dc', marginTop: 1 }}>{listLayouts().find(m => m.id === layout)?.description}{mapPackageErrors().length > 0 && ` · ${mapPackageErrors().length} invalid map package(s): ${mapPackageErrors().join('; ')}`}</div>
           <div style={{ fontSize: 11, marginTop: 4, color: '#ffd98a' }}>Landing</div>
-          <div className="flex flex-wrap gap-1" style={{ marginTop: 2 }}><button className={`btn ${region === null ? 'gold' : 'ghost'}`} onClick={() => setRegion(null)}>Random safe shore (canon)</button>{starts.map((st, i) => <button key={st.id} className={`btn ${region === i ? 'gold' : 'ghost'}`} title={REG[i]} onClick={() => setRegion(i)}>{st.name}</button>)}</div>
-          <div style={{ fontSize: 10, color: '#cfc2dc', minHeight: 24, marginTop: 2 }}>{region === null ? 'You wash up on one of four safe shores. Every one has wood, stone, food and several routes onward.' : REG[region] + ' (choosing a landing is a PROPOSED convenience)'}</div>
+          <div className="flex flex-wrap gap-1" style={{ marginTop: 2 }}><button className={`btn ${region === null ? 'gold' : 'ghost'}`} onClick={() => setRegion(null)}>Random safe shore (canon)</button>{starts.map((st, i) => <button key={st.id} className={`btn ${region === i ? 'gold' : 'ghost'}`} title={layout === 'shipping' || layout === 'dev_delta' ? REG[i] : st.name} onClick={() => setRegion(i)}>{st.name}</button>)}</div>
+          <div style={{ fontSize: 10, color: '#cfc2dc', minHeight: 24, marginTop: 2 }}>{region === null ? 'You wash up at a randomly selected authored landing.' : (layout === 'shipping' || layout === 'dev_delta' ? REG[region] : starts[region]?.name) + ' (choosing a landing is a PROPOSED convenience)'}</div>
           <div className="flex justify-between items-center" style={{ marginTop: 4 }}><button className="btn ghost" onClick={() => setMode('menu')}>Back</button><button className="btn gold" style={{ fontSize: 16, padding: '4px 16px' }} onClick={() => { click(); onStart(hero, region); }}>Begin the 14 days</button></div>
         </div>}
         {mode === 'history' && <div className="panel absolute fadein" style={{ left: 100, top: 96, width: 440, padding: 8 }}>

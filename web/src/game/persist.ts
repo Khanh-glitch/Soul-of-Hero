@@ -1,9 +1,10 @@
 // Local-first snapshots: one serialized profile + run + receipts per write.
 // Checksums detect accidental damage, not malicious edits or rollback of all copies.
-import { BAL, SAVE_VERSION, WORLD_SEED, type GameState, type Stack } from './core';
-import { ITEMS, RECIPES, STRUCTS } from './catalog';
+import { BAL, SAVE_VERSION, type GameState, type Stack } from './core';
+import { ITEMS, RECIPES, STRUCTS, SOURCES } from './catalog';
 import { newGame } from './engine';
-import { getWorld } from './world';
+import { getWorld, hasLayout } from './world';
+import { mapDigest } from './map-package';
 import { sourceDigest } from './world-economy';
 
 const DB = 'soul-of-hero', STORE = 'kv', KEY = 'state', LS = 'soh.state.v' + SAVE_VERSION;
@@ -33,10 +34,23 @@ export function validate(raw: any): GameState | null {
   const r = raw.run;
   if (!obj(r) || typeof r.id !== 'string' || !r.id || !integer(r.nextId) || r.nextId < 1 || !finite(r.startedAt) || !finite(r.qaOffset) || !integer(r.seed) || !integer(r.rng) || !integer(r.seq) || !obj(r.player) || !obj(r.custody) || !obj(r.entities) || !obj(r.clock)) return null;
   if (r.sourceLayoutVersion !== undefined && r.sourceLayoutVersion !== 2 && r.sourceLayoutVersion !== 3) return null;
-  if (r.sourceLayoutVersion === 3 && (!obj(r.sourceMap) || r.sourceMap.id !== (r.layoutId || 'shipping') || r.sourceMap.revision !== 1 || r.sourceMap.rules !== 3 || r.sourceMap.seed !== WORLD_SEED || !['shipping','dev_delta'].includes(r.sourceMap.id) || r.sourceMap.digest !== sourceDigest(getWorld(r.sourceMap.id).sourceV3))) return null;
+  const layout = r.layoutId || 'shipping'; if (typeof layout !== 'string' || !hasLayout(layout)) return null;
+  const world = getWorld(layout), fingerprint = mapDigest(world);
+  // Snapshots written before mapDigest existed are accepted only against the
+  // exact built-in geometry which shipped with PR #44, never an imported map.
+  const baseline: Record<string,string> = { shipping:'f773dae0', dev_delta:'74b3ed67' };
+  if (r.sourceLayoutVersion === 3) {
+    const m=r.sourceMap; if (!obj(m) || m.id !== world.economyMap.id || m.revision !== world.economyMap.revision || m.rules !== 3 || m.seed !== world.economyMap.seed || m.digest !== sourceDigest(world.sourceV3)) return null;
+    if (m.mapDigest === undefined ? baseline[layout] !== fingerprint : m.mapDigest !== fingerprint) return null;
+  } else if (baseline[layout] !== fingerprint) return null;
   if (r.sourceLayoutVersion !== 3 && r.sourceMap !== undefined) return null;
   if (!['x','y','hp','stamina','hunger','thirst','warmth','rad','active'].every(k => finite(r.player[k])) || !obj(r.player.skills) || typeof r.player.dead !== 'boolean' || !finite(r.clock.lastSimAt) || !finite(r.clock.simMs) || !finite(r.clock.respawnAcc) || !finite(r.clock.weatherSlot)) return null;
   if (!Array.isArray(r.creatures) || !obj(r.sources) || !obj(r.terrain) || !obj(r.knowledge) || !stringArray(r.knowledge.recipes) || !stringArray(r.knowledge.studied) || !r.knowledge.recipes.every((k: string) => has(RECIPES, k)) || !Array.isArray(r.traces) || !Array.isArray(r.discovered) || !stringArray(r.poiSeen) || !stringArray(r.elderStones) || !stringArray(r.achievements) || !Array.isArray(r.receipts) || !stringArray(r.seenIntents) || !obj(r.vendorStock) || !Object.values(r.vendorStock).every(integer) || !integer(r.score) || !integer(r.deposited) || !Array.isArray(r.log)) return null;
+  if (r.sourceLayoutVersion === 3) for (const [key, st] of Object.entries(r.sources) as [string, any][]) {
+    const i=Number(key); if (!Number.isInteger(i) || String(i)!==key || i<0 || i>=world.sourceV3.length || !world.sourceV3[i] || !obj(st)) return null;
+    const def=SOURCES[st.burnt ? 'deadtree' : world.sourceV3[i]!];
+    if (!def || !finite(st.stock) || !Number.isInteger(st.stock) || st.stock<0 || st.stock>def.stock || !finite(st.hp) || st.hp<0 || st.hp>def.hp || (st.burnt!==undefined && typeof st.burnt!=='boolean') || (st.regrowAt!==undefined && (!finite(st.regrowAt)||st.regrowAt<0)) || (st.fire!==undefined && (!finite(st.fire)||st.fire<0))) return null;
+  }
   if (!r.custody.inv || !r.custody.eq || r.custody.inv.kind !== 'inv' || r.custody.eq.kind !== 'eq' || r.custody.inv.slots?.length !== 24 || r.custody.eq.slots?.length !== 3) return null;
   if (!Number.isInteger(r.player.active) || r.player.active < 0 || r.player.active > 7 || !['vx','vy','dir','aim','invuln','deadT','stepAcc','lastTraceX','lastTraceY'].every(k => finite(r.player[k])) || !['gather','combat','craft','survival'].every(k => finite(r.player.skills[k]))) return null;
   const beforeNext = (id: string, re: RegExp) => { const m = re.exec(id); return !m || parseInt(m[1], 36) < r.nextId; };
@@ -73,6 +87,22 @@ export function validate(raw: any): GameState | null {
     if (e.station?.level !== undefined && (e.type !== 'workbench' || ![1, 2].includes(e.station.level))) return null;
     if (e.station && (!obj(e.station) || !STRUCTS[e.type]?.station || !finite(e.station.burn) || e.station.burn < 0 || r.custody[e.station.fuelC]?.kind !== 'fuel' || r.custody[e.station.outC]?.kind !== 'out' || !jobs(e.station.queue, STRUCTS[e.type].station!))) return null;
     if (e.legacyJobs && (e.kind !== 'bag' || !STRUCTS[e.legacyJobs.stationType]?.station || !jobs(e.legacyJobs.queue, STRUCTS[e.legacyJobs.stationType].station!) || e.legacyJobs.queue.some((j: any) => j.reserved !== undefined))) return null;
+  }
+  // New identity-pinned runs retain finite, map-authored cash and loot custody.
+  // Older runs are not rewritten or guessed: their legacy history is preserved.
+  if (r.sourceLayoutVersion === 3 && r.sourceMap?.mapDigest) {
+    for (const site of world.statics.filter(s => s.kind === 'cash' || s.kind === 'loot')) {
+      const matches=(Object.values(r.entities) as any[]).filter(e=>e.kind===site.kind && e.tx===site.tx && e.ty===site.ty);
+      if (matches.length!==1) return null;
+      const ent=matches[0], slots=r.custody[ent.c]?.slots; if (!Array.isArray(slots)) return null;
+      if (site.kind==='cash') {
+        if(typeof ent.minted!=='boolean' || !obj(ent.stock) || ent.stock.cash!==(ent.minted?0:site.cash) || slots.some((s:any)=>s && (s.key!=='rcash'||!ent.minted))) return null;
+        if(slots.reduce((n:number,s:any)=>n+(s?.qty||0),0)>(site.cash||0))return null;
+      } else {
+        const available = new Map<string,number>(); for(const [k,q] of site.loot || []) available.set(k,(available.get(k)||0)+q);
+        for(const stack of slots){if(!stack)continue;const key=stack.key==='blueprint'?`blueprint:${stack.meta}`:stack.key;const left=(available.get(key)||0)-stack.qty;if(left<0)return null;available.set(key,left);}
+      }
+    }
   }
   if (Object.keys(r.custody).some(id => !ownedContainers.has(id))) return null;
   return raw as GameState;

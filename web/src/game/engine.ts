@@ -5,6 +5,7 @@ import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dis
 import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS, FURNACE_LINING } from './catalog';
 import { getWorld, getActiveLayout, SRC_KEYS, tileAt } from './world';
 import { sourceDigest } from './world-economy';
+import { mapDigest } from './map-package';
 
 export type Intent = { id: string; type: string; [k: string]: any };
 export type Result = { ok: true; receipt: string; msg?: string } | { ok: false; reason: string; dup?: boolean };
@@ -50,7 +51,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   const w = getWorld();
   const seed = seedOverride ?? ((now ^ 0x9e3779b9) >>> 0);
   const r: RunState = {
-    id: 'run_' + seed.toString(36), seed, character, startedAt: now, qaOffset: 0, qaUsed: false, layoutId: getActiveLayout(), sourceLayoutVersion: 3, sourceMap: { id: getActiveLayout(), revision: 1, seed: WORLD_SEED, rules: 3, digest: sourceDigest(w.sourceV3) }, spawnRegion: 0, ended: null,
+    id: 'run_' + seed.toString(36), seed, character, startedAt: now, qaOffset: 0, qaUsed: false, layoutId: getActiveLayout(), sourceLayoutVersion: 3, sourceMap: { id: w.economyMap.id, revision: w.economyMap.revision, seed: w.economyMap.seed, rules: 3, digest: sourceDigest(w.sourceV3), mapDigest: mapDigest(w) }, spawnRegion: 0, ended: null,
     player: null as any, creatures: [], sources: {}, terrain: {}, entities: {}, custody: {}, knowledge: { recipes: Object.keys(RECIPES).filter(k => RECIPES[k].base), studied: [] },
     traces: [], discovered: [], poiSeen: [], elderStones: [], achievements: [], score: 0, deposited: 0,
     clock: { lastSimAt: now, simMs: 0, respawnAcc: 0, weatherSlot: -1 }, rng: seed, nextId: 1, receipts: [], seenIntents: [], seq: 0,
@@ -130,6 +131,7 @@ let baseGrid: Uint8Array | null = null; let baseGridLayout = '';
 function tileClass(t: number) { return (t === T.DEEP || t === T.CLIFF || t === T.PWALL) ? 1 : t === T.LAVA ? 5 : (t === T.SHALLOW || t === T.RIVER) ? 4 : 0; }
 function cellClass(r: RunState | null, tx: number, ty: number) {
   const w = getWorld(); const i = ty * WW + tx; const t = r ? effTile(r, tx, ty) : w.tiles[i]; let c = tileClass(t);
+  if (c === 0 && w.packageContract && !w.economyMap.walkable[i] && !w.statics.some(s => s.kind === 'door' && s.tx === tx && s.ty === ty)) c = 1;
   if (c === 0) { if (r) { const s = sourceAt(r, tx, ty); if (s && s.def.block && (s.stock > 0 || s.key === 'wreck')) c = 2; } else if (w.src[i] >= 0 && SOURCES[SRC_KEYS[w.src[i]]].block) c = 2; }
   return c;
 }
@@ -351,7 +353,8 @@ export function buildReason(gs: GameState, type: string, tx: number, ty: number)
   const t = effTile(r, tx, ty);
   if ([T.DEEP, T.SHALLOW, T.RIVER, T.CLIFF, T.PWALL, T.LAVA, T.FLOOR, T.ICE].includes(t)) return 'Ground is not buildable here.';
   if (t === T.ROAD || t === T.BRIDGE) return 'Keep roads clear — build beside them.';
-  if (w.economyMap.protected[ty * WW + tx]) return 'Keep entrances, loading areas and routes clear.';
+  if (w.economyMap.protected[ty * WW + tx] || w.accessCorridors?.mask[ty * WW + tx]) return 'Keep entrances, loading areas and routes clear.';
+  if (w.packageContract && !w.economyMap.buildable[ty * WW + tx]) return 'This map does not permit building here.';
   const s = sourceAt(r, tx, ty); if (s && s.stock > 0) return `Clear the ${s.def.name} first.`;
   const here = entsAt(r, tx, ty);
   if (here.some(e => e.kind !== 'struct')) return 'Something is already here.';
@@ -397,6 +400,14 @@ export function dispatch(gs: GameState, it: Intent, now: number): Result {
 }
 const fail = (reason: string): Result => ({ ok: false, reason });
 function near(r: RunState, e: { x: number; y: number }, tiles = 2.2) { return dist(r.player.x, r.player.y, e.x, e.y) <= tiles * TILE; }
+/** A finite POI interaction cannot reach through intervening terrain, sources
+ * or closed doors. The target's own blocking tile is intentionally excluded. */
+function clearInteraction(r:RunState,e:{x:number;y:number}):boolean {
+  const p=r.player, grid=blockGrid(r), startX=Math.floor(p.x/TILE),startY=Math.floor(p.y/TILE), endX=Math.floor(e.x/TILE),endY=Math.floor(e.y/TILE);
+  const steps=Math.max(1,Math.ceil(dist(p.x,p.y,e.x,e.y)/4));
+  for(let k=1;k<steps;k++){const x=Math.floor((p.x+(e.x-p.x)*k/steps)/TILE),y=Math.floor((p.y+(e.y-p.y)*k/steps)/TILE);if((x===startX&&y===startY)||(x===endX&&y===endY))continue;if(x<0||y<0||x>=WW||y>=WH||[1,2,3,5].includes(grid[y*WW+x]))return false;}
+  return true;
+}
 
 function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
   const p = r.player; const ok = (kind: string, detail: string, msg?: string): Result => ({ ok: true, receipt: receipt(r, now, kind, detail), msg });
@@ -605,7 +616,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       return ok('reclaim', `${e.type}${bag ? ' contents→' + bag.id : ''}`);
     }
     case 'door': {
-      const e = r.entities[it.eid]; if (!e || !near(r, e, 2)) return fail('Out of reach.');
+      const e = r.entities[it.eid]; if (!e || !near(r, e, 2) || !clearInteraction(r,e)) return fail('Door is out of reach or blocked.');
       if (e.kind === 'door' && e.locked && !e.open) {
         if (e.locked === 'keycard') { if (countItem(r, 'inv', 'keycard') < 1) return fail('Sealed. A keycard reader blinks red.'); removeItem(r, 'inv', 'keycard', 1); e.locked = undefined; award(gs, 'vault', now); }
         else if (e.locked === 'power') return fail('No power. The generator outside is dry.');
@@ -615,7 +626,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       e.open = !e.open; markDirty(); return ok('door', `${e.id}:${e.open ? 'open' : 'closed'}`);
     }
     case 'generator': {
-      const e = r.entities[it.eid]; if (!e || e.kind !== 'gen' || !near(r, e, 2.2)) return fail('Out of reach.');
+      const e = r.entities[it.eid]; if (!e || e.kind !== 'gen' || !near(r, e, 2.2) || !clearInteraction(r,e)) return fail('Out of reach.');
       if ((e.power || 0) > 0) return fail('Already running.');
       if (countItem(r, 'inv', 'fuel_can') < 1) return fail('Needs a Fuel Canister.');
       removeItem(r, 'inv', 'fuel_can', 1); e.power = 1;
@@ -623,7 +634,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       markDirty(); return ok('gen.power', e.poi!, 'The generator coughs alive. A lock clunks open.');
     }
     case 'openCash': { // C15: special finite POI chest mints physical cash ONCE, only during the final 72h
-      const e = r.entities[it.eid]; if (!e || e.kind !== 'cash' || !near(r, e, 2.2)) return fail('Out of reach.');
+      const e = r.entities[it.eid]; if (!e || e.kind !== 'cash' || !near(r, e, 2.2) || !clearInteraction(r,e)) return fail('Out of reach.');
       if (!isRagnarok(r, now)) return fail('Sealed with a Ragnarok glyph. It will open only in the final 72 hours.');
       if (e.minted) return ok('cash.view', e.id);
       addItem(r, e.c!, 'rcash', e.stock!.cash); e.minted = true; e.stock!.cash = 0;
@@ -640,7 +651,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       return ok('escrow.deposit', `${n}`, `Secured ${n} cash to your profile.`);
     }
     case 'buy': { // physical vendor
-      const e = r.entities[it.eid]; if (!e || e.kind !== 'vendor' || !near(r, e, 2.6)) return fail('Walk up to the trader.');
+      const e = r.entities[it.eid]; if (!e || e.kind !== 'vendor' || !near(r, e, 2.6) || !clearInteraction(r,e)) return fail('Walk up to the trader.');
       const item = it.item as string; if ((r.vendorStock[item] ?? 0) <= 0) return fail('Out of stock this run.');
       if (item === 'escrow_chest') {
         const price = BAL.economy.escrowChestPrice; if (countItem(r, 'inv', 'rcash') < price) return fail(`Needs ${price} physical Ragnarok cash.`);
@@ -707,7 +718,7 @@ function accepts(c: Container, slot: number, s: Stack) {
 }
 function canAccess(r: RunState, cid: string) {
   if (cid === 'inv' || cid === 'eq') return true;
-  for (const e of Object.values(r.entities)) if ((e.c === cid || e.station?.fuelC === cid || e.station?.outC === cid) && owned(e)) return dist(r.player.x, r.player.y, e.x, e.y) <= 2.8 * TILE;
+  for (const e of Object.values(r.entities)) if ((e.c === cid || e.station?.fuelC === cid || e.station?.outC === cid) && owned(e)) return dist(r.player.x, r.player.y, e.x, e.y) <= 2.8 * TILE && (!['loot','cash'].includes(e.kind) || clearInteraction(r,e));
   return false;
 }
 export function homeComplete(r: RunState) {

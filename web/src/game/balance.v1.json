@@ -45,9 +45,9 @@
     "maxWeight": 240,
     "freightSlots": 32,
     "freightMaxWeight": 360,
-    "speedOnRoad": 1.05,
-    "speedOffRoad": 0.55,
-    "speedRough": 0.32,
+    "speedOnRoad": 1.36,
+    "speedOffRoad": 0.72,
+    "speedRough": 0.42,
     "weightPenaltyPer100": 0.18
   },
   "traces": {
