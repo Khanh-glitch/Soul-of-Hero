@@ -29,9 +29,9 @@ export class D20Client implements comp.VfxClient {
   private ensureField() { if (!this.field) this.field = buildContourField(this.contour); return this.field; }
 
   /** QA-only: play #20 from t=0 at a world position (visual only). */
-  qaPlay(wx: number, wy: number) { this.qaT = -1; this.cast = { wx, wy, startMs: Date.now() }; }
+  qaPlay(wx: number, wy: number) { this.qaT = -1; this.cast = { wx, wy, startMs: Date.now() }; this.content.reset(); }
   /** QA-only: freeze/seek to source time t (seconds). */
-  qaSeek(t: number, wx = 0, wy = 0) { this.qaT = t; this.cast = { wx, wy, startMs: 0 }; }
+  qaSeek(t: number, wx = 0, wy = 0) { if (this.qaT >= 0 && t < this.qaT) this.content.reset(); this.qaT = t; this.cast = { wx, wy, startMs: 0 }; }
 
   submitGpu(frame: comp.FrameCtx): void {
     const p = getPresenter();
@@ -48,19 +48,18 @@ export class D20Client implements comp.VfxClient {
     // source window (480x270) anchored at cast point, screen space
     const sx = Math.round(this.cast.wx - frame.cam.x - F20_W / 2);
     const sy = Math.round(this.cast.wy - frame.cam.y - F20_H / 2);
+    // Source draw order = compositing order (single-framebuffer semantics):
+    // 1) rift pass: world warp + void tear + rim (overwrites interior)
+    // 2) glow pass: source in-tear geometry/sparkles ON TOP of the void
+    // 3) blit pass: world-sampled fragments (f.blitBase) on top of everything
+    let contentCmds: { cmds: import('./arcana_d19/commands').DCommand[]; flash: number } | null = null;
     if (this.mode === 'restored' && p.gl) {
       if (!this.raster) this.raster = new DRaster(p.gl);
       if (this.raster.needsRestore) this.raster.restore();
-      const { cmds, flash: cflash } = this.content.commands(t);
-      if (cflash) flash = Math.max(flash, cflash);
-      const r = this.raster.render(cmds, t, p.lightTarget(), 'none');
+      contentCmds = this.content.commands(t);
+      if (contentCmds.flash) flash = Math.max(flash, contentCmds.flash);
+      const r = this.raster.render(contentCmds.cmds, t, p.lightTarget(), 'none');
       p.sourceDraws += r.draws;
-      comp.submitGpuPass({
-        clientId: this.id, kind: 'glow',
-        lightTex: p.lightTexture()!, warp: field, influence: new Uint8Array(4),
-        region: { x: sx, y: sy, w: F20_W, h: F20_H },
-        fade: 1, bloomGain: 1, time: t, tick: Math.floor(t * 60), seed: 151461,
-      } as any);
     }
     comp.submitGpuPass({
       clientId: this.id, kind: 'rift',
@@ -71,6 +70,22 @@ export class D20Client implements comp.VfxClient {
       fade: 1, bloomGain: 1, time: t, tick: Math.floor(t * 60), seed: 151461,
       rift: { wt, pull, span, flash },
     } as any);
+    if (this.mode === 'restored' && p.gl && contentCmds) {
+      comp.submitGpuPass({
+        clientId: this.id, kind: 'glow',
+        lightTex: p.lightTexture()!, warp: field, influence: new Uint8Array(4),
+        region: { x: sx, y: sy, w: F20_W, h: F20_H },
+        fade: 1, bloomGain: 1, time: t, tick: Math.floor(t * 60), seed: 151461,
+      } as any);
+      const bd = this.content.blockData(t);
+      comp.submitGpuPass({
+        clientId: this.id, kind: 'blit',
+        lightTex: p.lightTexture()!, warp: field, influence: new Uint8Array(4),
+        region: { x: sx, y: sy, w: F20_W, h: F20_H },
+        fade: 1, bloomGain: 1, time: t, tick: Math.floor(t * 60), seed: 151461,
+        blocksDst: bd.dst, blocksHome: bd.home,
+      } as any);
+    }
   }
 }
 

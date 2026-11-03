@@ -13,12 +13,14 @@
 export interface RiftParams { wt: Float32Array; pull: number; span: number; flash: number }
 export interface PresentedLayer {
   clientId: string;
-  kind: 'd19' | 'rift' | 'glow';
+  kind: 'd19' | 'rift' | 'glow' | 'blit';
   rift?: RiftParams;
   lightTex: WebGLTexture;          // 480x270 RGBA8 additive source field
   warp: Float32Array;              // 480*270*4 RGBA32F CPU warp field
   influence: Uint8Array;           // 480*270 coverage mask
   region: { x: number; y: number; w: number; h: number }; // screen-space rect of source window
+  blocksDst?: Float32Array;  // blit layer: 56*4 (px,py,sz,active) in region-local px
+  blocksHome?: Float32Array; // blit layer: 56*2 (hx,hy) in region-local px
   fade: number; bloomGain: number; time: number; tick: number; seed: number;
 }
 
@@ -115,6 +117,39 @@ void main(){
   color = vec4(clamp(col, 0.0, 1.0), 1.0);
 }`;
 
+// world-sampled fragment layer: copies REAL world pixels (pre-warp world tex)
+// to displaced positions (source f.blitBase) and punches void holes at homes
+const BLIT_FS = `#version 300 es
+precision highp float;
+uniform sampler2D scene; uniform sampler2D world;
+uniform vec2 size; uniform vec4 region;
+uniform vec4 u_dst[56];  // px, py, sz, active
+uniform vec2 u_home[56]; // hx, hy
+uniform int u_nblocks;
+out vec4 color;
+void main(){
+  vec2 pixel = vec2(gl_FragCoord.x, size.y - gl_FragCoord.y);
+  vec3 col = texture(scene, vec2(pixel.x/size.x, 1.0 - pixel.y/size.y)).rgb;
+  vec2 sp = (pixel - region.xy) / region.zw * vec2(480.0, 270.0);
+  if (sp.x >= 0.0 && sp.y >= 0.0 && sp.x < 480.0 && sp.y < 270.0) {
+    for (int i = 0; i < 56; i++) {
+      if (i >= u_nblocks) break;
+      vec4 d = u_dst[i]; vec2 h = u_home[i];
+      if (d.w > 0.5 && sp.x >= h.x && sp.x < h.x + d.z && sp.y >= h.y && sp.y < h.y + d.z)
+        col = vec3(0.02, 0.01, 0.05); // the hole left in the world
+    }
+    for (int i = 0; i < 56; i++) {
+      if (i >= u_nblocks) break;
+      vec4 d = u_dst[i]; vec2 h = u_home[i];
+      if (d.w > 0.5 && sp.x >= d.x && sp.x < d.x + d.z && sp.y >= d.y && sp.y < d.y + d.z) {
+        vec2 src = vec2(region.x + h.x + (sp.x - d.x), region.y + h.y + (sp.y - d.y));
+        col = texture(world, vec2(src.x/size.x, 1.0 - src.y/size.y)).rgb; // torn-out piece of THIS world
+      }
+    }
+  }
+  color = vec4(col, 1.0);
+}`;
+
 // additive emission layer (source VFX companion content: geometry, debris, particles)
 const ADD_FS = `#version 300 es
 precision highp float;
@@ -147,7 +182,7 @@ export class Presenter {
   private worldCtx: CanvasRenderingContext2D;
   private worldTex!: WebGLTexture;
   private lightFbo!: WebGLFramebuffer; private lightTex!: WebGLTexture;
-  private progPass!: WebGLProgram; private progComp!: WebGLProgram; private progRift!: WebGLProgram; private progAdd!: WebGLProgram;
+  private progPass!: WebGLProgram; private progComp!: WebGLProgram; private progRift!: WebGLProgram; private progAdd!: WebGLProgram; private progBlit!: WebGLProgram;
   private buf!: WebGLBuffer;
   private warpTex!: WebGLTexture; private inflTex!: WebGLTexture;
   private accumA!: WebGLFramebuffer; private accumATex!: WebGLTexture;
@@ -189,6 +224,7 @@ export class Presenter {
     this.progComp = this.compile(COMPOSITE_FS);
     this.progRift = this.compile(RIFT_FS);
     this.progAdd = this.compile(ADD_FS);
+    this.progBlit = this.compile(BLIT_FS);
     this.buf = gl.createBuffer()!;
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buf);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
@@ -236,6 +272,7 @@ export class Presenter {
     this.progComp = this.compile(COMPOSITE_FS);
     this.progRift = this.compile(RIFT_FS);
     this.progAdd = this.compile(ADD_FS);
+    this.progBlit = this.compile(BLIT_FS);
     this.buf = gl.createBuffer()!;
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buf);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
@@ -326,12 +363,13 @@ export class Presenter {
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); // world -> accum
 
     for (const L of layers) {
-      const prog = L.kind === 'rift' ? this.progRift : L.kind === 'glow' ? this.progAdd : this.progComp;
+      const prog = L.kind === 'rift' ? this.progRift : L.kind === 'glow' ? this.progAdd : L.kind === 'blit' ? this.progBlit : this.progComp;
       gl.useProgram(prog); setupPos(prog);
       gl.uniform1i(gl.getUniformLocation(prog, 'scene'), 0);
       if (L.kind === 'rift') gl.uniform1i(gl.getUniformLocation(prog, 'field'), 2);
       if (L.kind === 'glow') gl.uniform1i(gl.getUniformLocation(prog, 'light'), 1);
-      else {
+      if (L.kind === 'blit') gl.uniform1i(gl.getUniformLocation(prog, 'world'), 1);
+      if (L.kind !== 'blit') {
         gl.uniform1i(gl.getUniformLocation(prog, 'light'), 1);
         gl.uniform1i(gl.getUniformLocation(prog, 'warp'), 2);
         gl.uniform1i(gl.getUniformLocation(prog, 'influence'), 3);
@@ -341,7 +379,14 @@ export class Presenter {
       gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, L.lightTex);
       gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, this.warpTex);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, 480, 270, 0, gl.RGBA, gl.FLOAT, L.warp); // warp or rift field
-      if (L.kind === 'glow') {
+      if (L.kind === 'blit') {
+        gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, this.worldTex); // pre-warp world
+        gl.uniform4f(gl.getUniformLocation(prog, 'region'), L.region.x, L.region.y, L.region.w, L.region.h);
+        const n = Math.min(56, (L.blocksDst?.length ?? 0) / 4);
+        gl.uniform4fv(gl.getUniformLocation(prog, 'u_dst'), L.blocksDst ?? new Float32Array(56 * 4));
+        gl.uniform2fv(gl.getUniformLocation(prog, 'u_home'), L.blocksHome ?? new Float32Array(56 * 2));
+        gl.uniform1i(gl.getUniformLocation(prog, 'u_nblocks'), n);
+      } else if (L.kind === 'glow') {
         gl.uniform4f(gl.getUniformLocation(prog, 'region'), L.region.x, L.region.y, L.region.w, L.region.h);
         gl.uniform1f(gl.getUniformLocation(prog, 'gain'), L.bloomGain);
       } else if (L.kind === 'rift') {

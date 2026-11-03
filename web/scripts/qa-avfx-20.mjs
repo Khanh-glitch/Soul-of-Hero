@@ -45,6 +45,20 @@ if (!ALLOW_FALLBACK && report.webgl2Probe.presenterMode !== 'webgl2') {
 const PHASES = [['t0.6', 0.6], ['t1.3', 1.3], ['t2.7', 2.7], ['t4.5', 4.5], ['t6.6', 6.6], ['t7.8', 7.8], ['t9.5', 9.5], ['t9.85', 9.85], ['after', 10.8]];
 const MODES = ['current', 'restored'];
 
+// Replay consistency (A→B→A): collision impact must regenerate identically after seek-back
+const replay = {};
+await page.evaluate(() => window.__qaNight(false));
+await page.evaluate(() => { window.__d20qa.client.mode = 'restored'; window.__d20qa.seek(6.65); });
+await page.waitForTimeout(450);
+await page.screenshot({ path: `${OUT}/replay-collide-1.png` });
+await page.evaluate(() => window.__d20qa.seek(0.5));
+await page.waitForTimeout(200);
+await page.evaluate(() => window.__d20qa.seek(6.65));
+await page.waitForTimeout(450);
+await page.screenshot({ path: `${OUT}/replay-collide-2.png` });
+replay.done = true;
+report.replay = replay;
+
 // Scene A: bright open clearing, DAY — both modes
 await page.evaluate(() => window.__qaNight(false));
 for (const mode of MODES) {

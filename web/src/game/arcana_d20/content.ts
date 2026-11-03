@@ -36,6 +36,8 @@ export class RipperContent {
   private prng = new RngX(0x7ea4);
   private tick = 0;
   private collided = false;
+  private lastT = 0;
+  private impact: Particle[] = [];
   constructor() {
     this.contour = new RipperContour();
     // P0 fixes cast seed 151461 for contour; blocks use the post-sort rng state
@@ -52,6 +54,14 @@ export class RipperContent {
     for (let i = 0; i < 64; i++) { this.prng.range(0, 1); this.prng.range(-1, 1); this.prng.int(0, 9999); }
   }
   get c() { return this.contour; }
+
+  /** Reset all cast-owned state (donor debris sim demands monotonic time and
+   *  must be reset on backwards seek / new cast — same rule ported here). */
+  reset() {
+    this.tick = 0; this.collided = false; this.lastT = 0;
+    this.particles = []; this.impact = [];
+    this.rng.s = 1512011289;
+  }
 
   private advanceDebris(sourceTime: number) {
     const target = Math.floor(sourceTime * 60 + 1e-6);
@@ -72,6 +82,7 @@ export class RipperContent {
 
   /** Build the source command stream for source time t (seconds). */
   commands(t: number): { cmds: DCommand[]; flash: number; shake: number } {
+    if (t < this.lastT - 1e-6) this.reset(); // backwards seek / new cast
     const cmds: DCommand[] = [];
     const sprite = (x: number, y: number, size: number, shape: number, color: Col, rot = 0, glow = .3) => cmds.push({ kind: 'sprite', x, y, size, shape, color, opt: { rot, hard: 1, glow }, role: 'f20' });
     const line = (pts: number[], w: number, color: Col, glow = 1) => cmds.push({ kind: 'line', points: pts, width: w, color, opt: { hard: 1, glow }, role: 'f20' });
@@ -123,16 +134,28 @@ export class RipperContent {
       });
     }
 
-    // --- debris particles (A sim, aTime clock) ---
-    this.advanceDebris(this.contour.aTime(Math.min(t, 10.4)));
-    if (t < 9.4) for (const p of this.particles) { const life = p.life / p.max; const gain = (2.2 + p.k * 3.4) * life; const c = astral(clamp(.55 + life * .4)); sprite(p.x, p.y, Math.max(1, p.size), p.k > .6 ? 4 : 1, [c[0] * .5 * life * .8 * gain / 2, c[1] * .5 * life * .8 * gain / 2, c[2] * .6 * life * .8 * gain / 2, clamp(gain, 0, 1)], 0, .8); }
-
-    // --- collision beat at TCOL=6.6: flash + shake + 100 impact stars + shockwave ---
-    if (!this.collided && t >= TCOL) {
-      this.collided = true; flash = 0.35; shake = 10;
-      const rng = this.rng;
-      for (let i = 0; i < 100; i++) { const s = rng.r(0.05, 0.95), p = at(s), sd = rng.sign(); cmds.push({ kind: 'sprite', x: p.x, y: p.y, size: rng.r(1, 3), shape: 4, color: rng.chance(0.3) ? MAG : astral(0.9), opt: { hard: 1, glow: 1.2 }, role: 'impact' }); void sd; }
+    // --- advance cast-owned sims monotonically from lastT to t (1/60 steps) ---
+    if (t > this.lastT) {
+      this.advanceDebris(this.contour.aTime(Math.min(t, 10.4)));
+      let tt = this.lastT;
+      while (tt < t - 1e-9) {
+        tt = Math.min(t, tt + 1 / 60);
+        const dt = 1 / 60;
+        if (!this.collided && tt >= TCOL) {
+          this.collided = true; flash = 0.35; shake = 10;
+          const rng = this.rng;
+          for (let i = 0; i < 100; i++) { const s = rng.r(0.05, 0.95), p = at(s), sd = rng.sign(); this.impact.push({ x: p.x, y: p.y, px: p.x, py: p.y, vx: p.nx * sd * rng.r(40, 200), vy: p.ny * sd * rng.r(40, 200), life: rng.r(0.6, 1.6), max: 0, size: rng.r(1, 3), seed: 0, k: rng.chance(0.3) ? 1 : 0 }); this.impact[this.impact.length - 1].max = this.impact[this.impact.length - 1].life; }
+        }
+        const drag = Math.exp(-1.4 * dt);
+        for (const q of this.impact) { q.px = q.x; q.py = q.y; q.vx *= drag; q.vy *= drag; q.x += q.vx * dt; q.y += q.vy * dt; q.life -= dt; }
+        this.impact = this.impact.filter(q => q.life > 0);
+      }
+      this.lastT = t;
     }
+    // --- debris particles (A sim, aTime clock) ---
+    if (t < 9.4) for (const p of this.particles) { const life = p.life / p.max; const gain = (2.2 + p.k * 3.4) * life; const c = astral(clamp(.55 + life * .4)); sprite(p.x, p.y, Math.max(1, p.size), p.k > .6 ? 4 : 1, [c[0] * .5 * life * .8 * gain / 2, c[1] * .5 * life * .8 * gain / 2, c[2] * .6 * life * .8 * gain / 2, clamp(gain, 0, 1)], 0, .8); }
+    // --- 100 impact stars flying outward after the collision beat (source ps sim) ---
+    for (const q of this.impact) { const life = clamp(q.life / (q.max || 1)); cmds.push({ kind: 'sprite', x: q.x, y: q.y, size: q.size * (0.6 + life * 0.8), shape: 4, color: q.k ? MAG : astral(0.9), opt: { hard: 1, glow: 1.2 }, role: 'impact' }); void life; }
     if (blocksOutNow(t)) {
       const a = t - TCOL;
       for (let k = 0; k < 5 && a < 0.7; k++) { const p = at(0.1 + k * 0.2); ring(p.x, p.y, a * 190 / 20, GOLDW, Math.max(1, 9 * (1 - a / 0.7)), 1); }
@@ -153,9 +176,9 @@ export class RipperContent {
           else if (b.mode === 2) { const ang = q * TAU * 2, r = 1 - q; p = { x: b.hx + ((out.x - b.hx) * Math.cos(ang) - (out.y - b.hy) * Math.sin(ang)) * r, y: b.hy + ((out.x - b.hx) * Math.sin(ang) + (out.y - b.hy) * Math.cos(ang)) * r }; }
           else continue;
         }
-        // void hole at home + shard at displaced position with colored corners
-        cmds.push({ kind: 'poly', points: [b.hx, b.hy, b.hx + b.sz, b.hy, b.hx + b.sz, b.hy + b.sz, b.hx, b.hy + b.sz], color: [.02, .01, .05, 1], opt: {}, role: 'block-hole' });
-        cmds.push({ kind: 'poly', points: [Math.round(p.x), Math.round(p.y), Math.round(p.x) + b.sz, Math.round(p.y), Math.round(p.x) + b.sz, Math.round(p.y) + b.sz, Math.round(p.x), Math.round(p.y) + b.sz], color: astral(h2(b.hx, b.hy) * 0.5 + 0.3), opt: { glow: 0.6 }, role: 'block' });
+        // world-sampled shard position is handed to the blit pass (real world
+        // pixels copied, source f.blitBase); here only the colored corner sparks
+        void p;
         sprite(Math.round(p.x), Math.round(p.y), 1, 4, b.mode % 2 ? MAG : CYAN, 0, .8);
         sprite(Math.round(p.x) + b.sz - 1, Math.round(p.y) + b.sz - 1, 1, 4, b.mode % 2 ? CYAN : MAG, 0, .8);
       }
@@ -165,6 +188,31 @@ export class RipperContent {
     if (t > 9.3 && t < 9.85) { const p = at(0.62), bx = Math.round(p.x + p.nx * 7), by = Math.round(p.y + p.ny * 7); for (let y = 0; y < 5; y++) for (let x = 0; x < 7; x++) if (h2(slot + x, y) > .2) sprite(bx + x, by + y, 1, 10, [1, 1, 1, .9], 0, .9); }
     if (t >= 9.85 && t < 9.9) { const p = at(0.62); sprite(p.x + p.nx * 7 + 3, p.y + p.ny * 7 + 2, 1, 4, [2, 2, 2, 1], 0, 1); }
     return { cmds, flash, shake };
+  }
+
+  /** World-sampled fragment blocks for the blit pass (source f.blitBase):
+   *  dst = 56*4 (px,py,sz,active), home = 56*2 (hx,hy), region-local px. */
+  blockData(t: number): { dst: Float32Array; home: Float32Array } {
+    const TCOL = 6.6;
+    const dst = new Float32Array(56 * 4), home = new Float32Array(56 * 2);
+    if (t < TCOL) return { dst, home };
+    const a = t - TCOL;
+    this.blocks.forEach((b, i) => {
+      home[i * 2] = b.hx; home[i * 2 + 1] = b.hy;
+      const oa = Math.min(a, 1.3);
+      const out = { x: b.hx + b.vx * oa * (1 - oa / 2.6), y: b.hy + b.vy * oa * (1 - oa / 2.6) };
+      let p = out, active = 1;
+      if (t >= b.ret) {
+        const q = clamp((t - b.ret) / 0.6);
+        if (q >= 1) active = 0;
+        else if (b.mode === 0) p = { x: lerp(out.x, b.hx, easeInOut(q)), y: lerp(out.y, b.hy, easeInOut(q)) };
+        else if (b.mode === 1) p = { x: lerp(b.hx - b.mx * 3, b.hx, q), y: b.hy };
+        else if (b.mode === 2) { const ang = q * TAU * 2, r = 1 - q; p = { x: b.hx + ((out.x - b.hx) * Math.cos(ang) - (out.y - b.hy) * Math.sin(ang)) * r, y: b.hy + ((out.x - b.hx) * Math.sin(ang) + (out.y - b.hy) * Math.cos(ang)) * r }; }
+        else active = 0;
+      }
+      dst[i * 4] = Math.round(p.x); dst[i * 4 + 1] = Math.round(p.y); dst[i * 4 + 2] = b.sz; dst[i * 4 + 3] = active;
+    });
+    return { dst, home };
   }
 }
 
