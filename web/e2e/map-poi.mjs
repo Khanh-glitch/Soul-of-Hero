@@ -4,7 +4,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 
-const out = path.resolve('evidence/map-poi');
+const out = path.resolve(process.env.MAP_EVIDENCE_DIR || 'evidence/map-poi');
 await fs.mkdir(out, { recursive: true });
 const vite = await createServer({ configFile: 'vite.config.ts', server: { middlewareMode: true }, appType: 'custom' });
 const browser = await chromium.launch({ headless: true, ...(process.env.CHROMIUM_PATH ? {executablePath:process.env.CHROMIUM_PATH} : {}) });
@@ -101,7 +101,6 @@ try {
       };
       const checkBudget = () => {
         if (Date.now()>=deadline) throw new Error(`route time budget ${budgetMs}ms exhausted`);
-        if (diag.replans>=maxReplans && !plan.length) throw new Error(`route replan budget ${maxReplans} exhausted`);
         if (diag.attempts>=maxAttempts) throw new Error(`route movement budget ${maxAttempts} exhausted`);
         if (cur.player.dead) throw new Error('player died during route');
       };
@@ -132,6 +131,7 @@ try {
           checkBudget();cur=await state();checkBudget();
           if(Math.hypot(cur.player.x-wx,cur.player.y-wy)<=radius){diag.completed={elapsedMs:elapsed(),player:cur.player};await heartbeat('complete',true);return cur;}
           if(!plan.length) {
+            if(diag.replans>=maxReplans) throw new Error(`route replan budget ${maxReplans} exhausted`);
             const snapshot=await actualGrid();grid=snapshot.grid;diag.replans++;
             plan=findPath(true) || findPath(false);
             if(!plan || !plan.length) throw new Error('runtime collision grid has no reachable interaction tile');
@@ -155,7 +155,7 @@ try {
             const moved=Math.hypot(cur.player.x-before.x,cur.player.y-before.y),left=Math.hypot(wp.x-cur.player.x,wp.y-cur.player.y);
             diag.attempts++;wpDiag.attempts.push({from:before,to:{x:cur.player.x,y:cur.player.y,hp:cur.player.hp},moved,left});
             await ensureVitals();
-            if(await defendNearby()) {cur=await state();evaded=true;break;}
+            if(await defendNearby(async () => {cur=await state();checkBudget();await heartbeat('defending');})) {cur=await state();evaded=true;break;}
             // A hit/knockback or unusual displacement invalidates the remaining segment.
             if(moved>32 || Math.hypot(cur.player.x-before.x,cur.player.y-before.y)>32){evaded=true;reason='knockback';break;}
             if(left<3){reached=true;break;}
@@ -189,39 +189,86 @@ try {
       await inv.locator(`.slot[title^="${itemNames[key]}"]`).first().click({button:'right'});await pause(180);await page.keyboard.press('Escape');await pause(100);return true;
     }
     async function ensureVitals(){const cur=await state();if(cur.player.dead)throw new Error(`player died during ordinary-input travel at (${cur.player.x.toFixed(0)},${cur.player.y.toFixed(0)}), hp=${cur.player.hp}, hunger=${cur.player.hunger.toFixed(1)}, thirst=${cur.player.thirst.toFixed(1)}, nearby=${JSON.stringify(cur.creatures.filter(m=>Math.hypot(m.x-cur.player.x,m.y-cur.player.y)<120))}`);if(cur.player.hp<92&&cur.counts.bandage)await useInventoryItem('bandage');if(cur.player.thirst<68&&cur.counts.water_flask)await useInventoryItem('water_flask');if(cur.player.hunger<68&&cur.counts.berries)await useInventoryItem('berries');}
-    async function defendNearby(){
-      {
-        const cur=await state();const threat=cur.creatures.filter(m=>!m.type.startsWith('elder_')&&['chase','track','tell','attack','recover'].includes(m.state)&&(()=>{const d=Math.hypot(m.x-cur.player.x,m.y-cur.player.y);return d<55||(['attack','tell'].includes(m.state)&&d<100);})()).sort((a,b)=>Math.hypot(a.x-cur.player.x,a.y-cur.player.y)-Math.hypot(b.x-cur.player.x,b.y-cur.player.y))[0];
-        if(!threat)return false;const td=Math.hypot(threat.x-cur.player.x,threat.y-cur.player.y),imminent=td<55||(['attack','tell'].includes(threat.state)&&td<100);
-        // Fight a close, non-attacking pursuer with the ordinary starter knife instead
-        // of endlessly dodging away from the same target. The attack itself is bounded.
-        if(['recover','chase','track'].includes(threat.state) && td<55 && cur.containers.inv[0]?.key==='knife') {
-          await page.keyboard.press('1');
-          await aim(threat.x,threat.y);
-          if(td>24) {
-            const a=Math.atan2(threat.y-cur.player.y,threat.x-cur.player.x), keys=[];
-            if(Math.abs(Math.cos(a))>0.25)keys.push(Math.cos(a)>0?'d':'a');
-            if(Math.abs(Math.sin(a))>0.25)keys.push(Math.sin(a)>0?'s':'w');
-            try {for(const k of keys)await page.keyboard.down(k);await pause(200);} finally {for(const k of keys)await page.keyboard.up(k);}
-          }
-          const before=await state(), liveThreat=before.creatures.find(m=>m.id===threat.id);
-          if(liveThreat && Math.hypot(liveThreat.x-before.player.x,liveThreat.y-before.player.y)<35) {
-            await aim(liveThreat.x,liveThreat.y);
-            try {await page.mouse.down();await pause(600);} finally {await page.mouse.up();}
-            const after=await state();
-            routeDiagnostics.push({kind:'wildlife-defense',threat:threat.id,before:before.player,after:after.player,remainingHp:after.creatures.find(m=>m.id===threat.id)?.hp ?? 0,method:'ordinary knife input'});
-            return true;
-          }
+    async function defendNearby(routeCheckpoint) {
+      const initial=await state();
+      const active = m => !m.type.startsWith('elder_') && ['chase','track','tell','attack','recover'].includes(m.state);
+      const threat=initial.creatures.filter(m=>active(m) && Math.hypot(m.x-initial.player.x,m.y-initial.player.y)<70)
+        .sort((a,b)=>Math.hypot(a.x-initial.player.x,a.y-initial.player.y)-Math.hypot(b.x-initial.player.x,b.y-initial.player.y))[0];
+      if(!threat)return false;
+      // A melee creature across solid collision cannot be reached by a direct
+      // attack. Do not spend repeated 12-second combat phases against a wall;
+      // leave it to the danger-aware route planner until line of approach opens.
+      if(threat.type==='wolf' && Math.hypot(threat.x-initial.player.x,threat.y-initial.player.y)>26) {
+        const {grid}=await actualGrid(), d=Math.hypot(threat.x-initial.player.x,threat.y-initial.player.y), n=Math.ceil(d/4);
+        let obstructed=false;
+        for(let i=1;i<n;i++) {
+          const x=Math.floor((initial.player.x+(threat.x-initial.player.x)*i/n)/16), y=Math.floor((initial.player.y+(threat.y-initial.player.y)*i/n)/16);
+          if([1,2,3,5].includes(grid[y*W+x])) {obstructed=true;break;}
         }
-        await ensureVitals();const live=await state(),angle=Math.atan2(live.player.y-threat.y,live.player.x-threat.x),keys=[];
-        if(Math.abs(Math.cos(angle))>0.25)keys.push(Math.cos(angle)>0?'d':'a');if(Math.abs(Math.sin(angle))>0.25)keys.push(Math.sin(angle)>0?'s':'w');
-        const emergency=['attack','tell'].includes(threat.state)&&td<100;const canRoll=imminent&&live.player.stamina>=22&&(emergency||Date.now()-lastDodgeAt>=900);if(canRoll)lastDodgeAt=Date.now();for(const k of keys)await page.keyboard.down(k);if(canRoll)await page.keyboard.press('Space');await pause(canRoll?280:220);for(const k of keys)await page.keyboard.up(k);
-        let after=await state(),method=canRoll?'ordinary directional WASD + Space dodge-roll':'ordinary WASD retreat';
-        if(Math.hypot(after.player.x-live.player.x,after.player.y-live.player.y)<8){
-          for(const offset of [-0.8,0.8,-1.5,1.5]){const a=angle+offset,keys=[];if(Math.abs(Math.cos(a))>0.25)keys.push(Math.cos(a)>0?'d':'a');if(Math.abs(Math.sin(a))>0.25)keys.push(Math.sin(a)>0?'s':'w');for(const k of keys)await page.keyboard.down(k);await pause(220);for(const k of keys)await page.keyboard.up(k);const candidate=await state();if(candidate.player.dead)throw new Error(`player died while taking an ordinary alternate retreat from ${threat.type} ${threat.id}; state=${JSON.stringify(candidate.player)}`);if(Math.hypot(candidate.player.x-after.player.x,candidate.player.y-after.player.y)>=8){after=candidate;method+='; alternate ordinary WASD escape around physical obstruction';break;}after=candidate;}
-        }
-        routeDiagnostics.push({kind:'wildlife-evasion',threat:{id:threat.id,type:threat.type,state:threat.state,from:{x:threat.x,y:threat.y}},before:{x:live.player.x,y:live.player.y,hp:live.player.hp},after:{x:after.player.x,y:after.player.y,hp:after.player.hp},method:method+'; next route replanned from live position'});return true;
+        if(obstructed)return false;
       }
+      await ensureVitals();
+      const before=await state();
+      if(threat.type!=='wolf') {
+        // Ranged crawlers and charging boars should not be chased into a crowd.
+        // A single bounded physical escape returns control to the route planner.
+        const angle=Math.atan2(before.player.y-threat.y,before.player.x-threat.x);
+        let after=before;
+        for(const offset of [0,-0.8,0.8,-1.5,1.5]) {
+          await routeCheckpoint();
+          const a=angle+offset,keys=[];
+          if(Math.abs(Math.cos(a))>0.25)keys.push(Math.cos(a)>0?'d':'a');
+          if(Math.abs(Math.sin(a))>0.25)keys.push(Math.sin(a)>0?'s':'w');
+          try {
+            for(const k of keys)await page.keyboard.down(k);
+            if(before.player.stamina>=22 && Date.now()-lastDodgeAt>=900){await page.keyboard.press('Space');lastDodgeAt=Date.now();}
+            await pause(240);
+          } finally {for(const k of keys)await page.keyboard.up(k);}
+          after=await state();
+          if(after.player.dead || Math.hypot(after.player.x-before.player.x,after.player.y-before.player.y)>=8)break;
+        }
+        routeDiagnostics.push({kind:'wildlife-evasion',threat:{id:threat.id,type:threat.type},before:before.player,after:after.player,method:'ordinary directional retreat and dodge'});
+        return true;
+      }
+      const started=Date.now(), maxPhaseMs=12000, maxActions=60;
+      let actions=0, attacks=0, dodges=0, last=before, outcome='phase-budget';
+      // The starting knife is an ordinary item, not an injected weapon. If it is
+      // unavailable, use the current hotbar selection and still respect real AI.
+      if(before.containers.inv[0]?.key==='knife')await page.keyboard.press('1');
+      try {
+        while(Date.now()-started<maxPhaseMs && actions<maxActions) {
+          await routeCheckpoint();
+          last=await state();
+          if(last.player.dead)throw new Error(`player died defending against ${threat.id}`);
+          const m=last.creatures.find(x=>x.id===threat.id);
+          if(!m || m.hp<=0){outcome='defeated';break;}
+          const dx=m.x-last.player.x,dy=m.y-last.player.y,d=Math.hypot(dx,dy);
+          if(d>120 || (!active(m) && d>60)){outcome='disengaged';break;}
+          // Aim and act using the same mouse and keyboard input as a player. Keep
+          // each action short so moving targets, collisions and vitals are observed.
+          const c=camera(last.player),mx=Math.max(2,Math.min(638,m.x-c.x)),my=Math.max(2,Math.min(358,m.y-c.y));
+          await page.mouse.move(Math.round(mx*2),Math.round(my*2));
+          const keys=[];
+          if((m.state==='tell'||m.state==='attack') && d<85 && last.player.stamina>=22 && Date.now()-lastDodgeAt>=700) {
+            // Sidestep the committed lunge rather than repeatedly fleeing the goal.
+            if(Math.abs(dy/d)>0.25)keys.push(dy>0?'a':'d');
+            if(Math.abs(dx/d)>0.25)keys.push(dx>0?'s':'w');
+            try {for(const k of keys)await page.keyboard.down(k);await page.keyboard.press('Space');lastDodgeAt=Date.now();dodges++;await pause(240);}
+            finally {for(const k of keys)await page.keyboard.up(k);}
+          } else {
+            if(d>20){if(Math.abs(dx/d)>0.25)keys.push(dx>0?'d':'a');if(Math.abs(dy/d)>0.25)keys.push(dy>0?'s':'w');}
+            try {for(const k of keys)await page.keyboard.down(k);await page.mouse.down();attacks++;await pause(170);}
+            finally {await page.mouse.up();for(const k of keys)await page.keyboard.up(k);}
+          }
+          actions++;
+        }
+      } finally {
+        await page.mouse.up().catch(()=>{});
+        for(const k of ['w','a','s','d'])await page.keyboard.up(k).catch(()=>{});
+        last=await state();
+        routeDiagnostics.push({kind:'wildlife-defense',threat:{id:threat.id,type:threat.type},before:before.player,after:last.player,remainingHp:last.creatures.find(m=>m.id===threat.id)?.hp ?? 0,elapsedMs:Date.now()-started,actions,attacks,dodges,outcome});
+      }
+      return true;
     }
 
     const startCrate=s.entities.find(e=>e.kind==='loot'&&e.poi===(landing==="Fisher's Point"?'s1':'s3'));assert(startCrate,'selected start crate missing');
