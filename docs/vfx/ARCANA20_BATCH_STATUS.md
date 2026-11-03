@@ -37,3 +37,13 @@ captured in `web/evidence/avfx-20/gallery-*.png` (CI WebGL2 run for GPU frames).
 Blockers: none for previews. A/B/D native engines are NOT vendored — fusions
 show the C-side source preview with honest FUSION_PREVIEW label until the
 A/B/D adapters land; that is a declared adaptation, not a fake fusion.
+
+
+## Phase 2 (source-correct import, per CT 6604192200)
+Reusable native-semantic adapters — no per-spell shader rewrites:
+- `source/a/` + `aRunner.ts` — vendored A Lab (416x234 HDR, fixed-step sim), world injected as arena background.
+- `source/b/` + `bRunner.ts` — vendored B CPU HDR renderer (384x216), world injected as floor albedo.
+- `source/c/` + `cRunner.ts` — unchanged. D: existing D19 bridge; #19 routes to it. #20 routes to the A+C semantic bridge.
+Manifest now separates `approvedVisualLead` / `currentlyRenderedSource` / `fusionStatus` / `artAcceptance`; FX Lab (F9) has per-skill lead / C-study / fusion? modes.
+
+Honest counts: 20/20 accessible; source-faithful leads implemented = 10 (B #02/#03/#08, C #07/#10/#15/#17, D #19, A #11, A+C #20); fusion candidates assembled = 5 (#01/#05/#09/#11/#16, CANDIDATE_ONLY_NOT_APPROVED); redesign study = 6 (#04/#06/#12/#13/#14/#18, nonfinal). F9 (not F4) opens the lab.

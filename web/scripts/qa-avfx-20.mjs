@@ -71,12 +71,12 @@ for (const [name, t] of PHASES) {
 }
 // ARCANA20 gallery: one capture per registered skill at its climax-ish time
 report.gallery = [];
-const cat = await page.evaluate(() => (window.__arcanaLab?.catalog ?? []).map(c => ({ index: c.index, id: c.id, name: c.name, status: c.status, dur: c.dur, climax: c.climax })));
+const cat = await page.evaluate(() => (window.__arcanaLab?.catalog ?? []).map(c => ({ index: c.index, id: c.id, name: c.name, status: c.previewStatus, lead: c.approvedVisualLead, src: c.currentlyRenderedSource, dur: c.dur, climax: c.climax })));
 for (const c of cat) {
-  await page.evaluate(cc => { window.__arcanaLab.cast(cc.index); window.__arcanaLab.seek(Math.min(cc.climax + 0.4, cc.dur * 0.62)); }, c);
+  await page.evaluate(cc => { window.__arcanaLab.cast(cc.index, 'lead'); window.__arcanaLab.seek(Math.min(cc.climax + 0.4, cc.dur * 0.62), cc.index, 'lead'); }, c);
   await page.waitForTimeout(650);
   await page.screenshot({ path: `${OUT}/gallery-${String(c.id).padStart(2, '0')}.png` });
-  report.gallery.push({ id: c.id, name: c.name, status: c.status });
+  report.gallery.push({ id: c.id, name: c.name, status: c.status, lead: c.lead, rendered: c.src });
 }
 report.galleryCount = report.gallery.length;
 

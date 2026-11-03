@@ -42,6 +42,8 @@ export class D19Client implements comp.VfxClient {
     return this.raster;
   }
 
+  qaStop() { this.qaCast = false; this.cast = null; this.lastTick = -1; }
+
   /** QA-only deterministic cast at world position, seeked to `seconds`. Labelled, not gameplay. */
   qaSeek(seconds: number, wx = 0, wy = 0) {
     this.qaCast = true;

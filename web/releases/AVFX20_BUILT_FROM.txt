@@ -1,4 +1,4 @@
-AVFX #20 Reality Ripper standalone playable build (FX Lab F4: #20 Current Web / Restored A+C semantic bridge)
+AVFX #20 Reality Ripper standalone playable build (FX Lab F9: #20 Current Web / Restored A+C semantic bridge)
 built from branch arena/3337c864-soul-of-hero
 artifact sha256    : eaa35a664d6e56ba0310608265d4f43696cc516be24a456fec00cd29b37447f0
 compare page       : soh-avfx20-compare.html
