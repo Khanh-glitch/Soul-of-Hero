@@ -203,7 +203,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
     if (e.type === 'spikes') g.drawImage(A.st.spikes, e.x - 8, e.y - 8);
     if (e.type === 'claim') { const R = 6 * 16; g.fillStyle = 'rgba(255,208,64,0.5)'; for (let k = 0; k < 64; k++) { const a = k / 64 * Math.PI * 2 + time / 4000; g.fillRect(Math.round(e.x + Math.cos(a) * R), Math.round(e.y + Math.sin(a) * R), 2, 1); } }
   }
-  // Source-B diagnostic: live terrain field beneath sorted actors. Dev-only;
+  // Source-B diagnostic: live terrain field beneath sorted actors. Isolated review only;
   // still needs parity, HDR/depth, performance and choreography review.
   prepareCDiagnostic(r.id, r.clock.simMs);
   shadeCDiagnostic(g, cx, cy);

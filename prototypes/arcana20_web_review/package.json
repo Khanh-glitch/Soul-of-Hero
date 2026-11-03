@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:review": "vite build --mode arcana-review",
     "preview": "vite preview",
     "test": "vitest run --testTimeout=120000"
   },

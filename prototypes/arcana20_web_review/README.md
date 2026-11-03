@@ -8,11 +8,16 @@ This is a standalone browser build that follows the Soul of Hero Gameplay Bible 
 ```
 npm install
 npm run dev        # dev server
-npm run build      # single-file production build → dist/index.html
+npm run build      # ordinary single-file browser build → dist/index.html
+npm run build:review # isolated ARCANA20 candidate → dist/index.html (NOT yet playtest-ready)
 npm test           # vitest: engine/simulation contract tests (13)
 node scripts/qa.mjs    # real-browser QA (Playwright Chromium) → qa-shots/
 node scripts/qa2.mjs   # combat / Elder / Ragnarok cash / vendor browser pass
 ```
+
+## ARCANA20 review candidate (work in progress)
+
+The separate `build:review` mode enables the provisional ARCANA20 visuals and isolated review saves. A new run starts with all 20 finite-charge Cores, extra inventory space, and #17–#20 in quickbar slots 4–7. Open inventory with I, swap any Core into a quickbar slot, select it with 1–8, aim and left-click. The inventory offers a review-only refill button. The three cadence choices, effects, balance and performance are **not yet approved**; D19 still requires WebGL2 for its source raster. See `integration/STATUS.md` for current blockers and testing limits. The ordinary `build` does not enable the review fixtures.
 
 ## Controls
 | Action | Input |

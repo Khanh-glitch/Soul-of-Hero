@@ -2,11 +2,12 @@
  * renderer. No world pass, live-world warp, bloom or actor depth yet. */
 import {batches as B,glSource as G} from './vendor.js';import type {DCommand} from './commands';
 export class DRaster {
- readonly canvas:HTMLCanvasElement;private gl:WebGL2RenderingContext;private sprites:any;private ribbons:any;private polys:any;
- constructor(){this.canvas=document.createElement('canvas');this.canvas.width=480;this.canvas.height=270;const gl=this.canvas.getContext('webgl2',{alpha:false,antialias:false,premultipliedAlpha:false,preserveDrawingBuffer:true});if(!gl)throw new Error('WebGL2 unavailable');this.gl=gl;const sprite=new G.Program(gl,B.SPRITE_VS,B.SPRITE_FS),ribbon=new G.Program(gl,B.RIBBON_VS,B.RIBBON_FS),poly=new G.Program(gl,B.POLY_VS,B.POLY_FS);this.sprites=new B.SpriteBatch(gl,sprite);this.ribbons=new B.RibbonBatch(gl,ribbon);this.polys=new B.PolyBatch(gl,poly);}
+ readonly canvas:HTMLCanvasElement;private gl:WebGL2RenderingContext;private sprites:any;private ribbons:any;private polys:any;private needsRestore=false;
+ constructor(){this.canvas=document.createElement('canvas');this.canvas.width=480;this.canvas.height=270;const gl=this.canvas.getContext('webgl2',{alpha:false,antialias:false,premultipliedAlpha:false,preserveDrawingBuffer:true});if(!gl)throw new Error('WebGL2 unavailable');this.gl=gl;this.initialize();this.canvas.addEventListener('webglcontextlost',e=>e.preventDefault());this.canvas.addEventListener('webglcontextrestored',()=>{this.needsRestore=true;});}
+ private initialize(){const gl=this.gl,sprite=new G.Program(gl,B.SPRITE_VS,B.SPRITE_FS),ribbon=new G.Program(gl,B.RIBBON_VS,B.RIBBON_FS),poly=new G.Program(gl,B.POLY_VS,B.POLY_FS);this.sprites=new B.SpriteBatch(gl,sprite);this.ribbons=new B.RibbonBatch(gl,ribbon);this.polys=new B.PolyBatch(gl,poly);}
  /** Adjacent-only batches retain command ordering. Select batch=none to compare
   * the prior one-draw-per-command raster on identical fields. */
- render(commands:DCommand[],rendererTime:number,batch:'none'|'sprites'|'all'='none'){const gl=this.gl;gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(0,0,480,270);gl.clearColor(0,0,0,1);gl.clear(gl.COLOR_BUFFER_BIT);gl.enable(gl.BLEND);B.setBlend(gl,'add');
+ render(commands:DCommand[],rendererTime:number,batch:'none'|'sprites'|'all'='none'){const gl=this.gl;if(gl.isContextLost())throw new Error('WebGL context lost');if(this.needsRestore){this.initialize();this.needsRestore=false;}gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(0,0,480,270);gl.clearColor(0,0,0,1);gl.clear(gl.COLOR_BUFFER_BIT);gl.enable(gl.BLEND);B.setBlend(gl,'add');
   let current:'sprite'|'line'|'poly'|null=null,draws=0;
   const selected=()=>current==='sprite'?this.sprites:current==='line'?this.ribbons:this.polys;
   const flush=()=>{if(current){const x=selected();x.draw([480,270],[0,0],rendererTime);x.reset();draws++;current=null;}};

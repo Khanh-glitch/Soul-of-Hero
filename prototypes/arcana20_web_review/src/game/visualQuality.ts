@@ -1,4 +1,5 @@
-/** Experimental dev-only temporal LOD. It never changes game simulation,
+import {arcanaLabEnabled} from './previewFlags';
+/** Experimental isolated-review temporal LOD. It never changes game simulation,
  * combat, charge, or lifetime. High is the unchanged 60 Hz diagnostic path;
  * its presence is NOT a claim of P0 fidelity or a shippable quality mode. */
 export type VisualQuality='high'|'balance'|'performance';
@@ -21,7 +22,20 @@ export function visualTick(id:number,seconds:number,q:VisualQuality=quality):num
  return base;
 }
 // The review lab has separate storage. No changes to original run/profile.
-if(import.meta.env.DEV&&typeof sessionStorage!=='undefined'){
+if(arcanaLabEnabled&&typeof sessionStorage!=='undefined'){
  try{const saved=sessionStorage.getItem(key);if(saved==='high'||saved==='balance'||saved==='performance')quality=saved;}catch{/* storage may be disabled */}
 }
-export function saveVisualQuality(q:VisualQuality){setVisualQuality(q);if(import.meta.env.DEV&&typeof sessionStorage!=='undefined')try{sessionStorage.setItem(key,quality);}catch{/* optional preference */}}
+export function saveVisualQuality(q:VisualQuality){setVisualQuality(q);if(arcanaLabEnabled&&typeof sessionStorage!=='undefined')try{sessionStorage.setItem(key,quality);}catch{/* optional preference */}}
+
+/** Per-cast sampling guard. A lower cadence can quantize the same forward
+ * instant below a previously displayed High tick when users change quality.
+ * Hold the last tick instead of rewinding the source; genuine clock rewinds
+ * still propagate to the source players, which implement their own replay. */
+export class VisualClock {
+ private lastSeconds=-Infinity;private lastTick=-1;
+ sample(id:number,seconds:number,q:VisualQuality=getVisualQuality()):number{
+  let tick=visualTick(id,seconds,q);
+  if(seconds>=this.lastSeconds)tick=Math.max(tick,this.lastTick);
+  this.lastSeconds=seconds;this.lastTick=tick;return tick;
+ }
+}

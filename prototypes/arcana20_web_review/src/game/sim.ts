@@ -114,7 +114,7 @@ function commitCore(gs: GameState, now: number, slot: number, a: number, aimX: n
   s.charge!--; receipt(r, now, 'core.commit', `${s.key} charge→${s.charge}`); award(gs, 'first_core', now);
   const item = ITEMS[s.key]; const core = item.core; const hx = p.x + Math.cos(a) * 10, hy = p.y + Math.sin(a) * 10;
   if (item.arcanaId !== undefined) {
-    // Actual player-owned hit geometry; visual paths are incomplete and dev-only.
+    // Actual player-owned hit geometry; visual paths are incomplete and isolated to the review lab/build.
     // The normal game's existing damageCreature path resolves real collisions.
     // The eight #20 contour segments are one event, not eight independent hits.
     const hitGroup=item.arcanaId===20?new Set<string>():undefined;

@@ -95,3 +95,20 @@ it('Core #09 without real targets consumes charge without fabricating contacts',
 it('Core #09 does not target a real creature outside its proposed range',()=>{const gs=fresh(),r=gs.run!,p=r.player,s=equip(gs,9);const target=mkCreature(r,'boar',p.x+600,p.y,500);target.state='sleep';r.creatures=[target];cast(gs,T0+1);expect(s.charge).toBe(2);expect(HAZ.filter(h=>h.arcanaId===9)).toHaveLength(0);expect(FX.find(e=>e.type==='arcana20_cast'&&e.id===9)?.chainTargetIds).toEqual([]);});
 it('Core #09 does not deliver a link from a missing intermediate actor',()=>{const gs=fresh(),r=gs.run!,p=r.player;equip(gs,9);const source=mkCreature(r,'boar',p.x+100,p.y,500),target=mkCreature(r,'boar',p.x+110,p.y,500);source.state=target.state='sleep';r.creatures=[source,target];cast(gs,T0+1);const h=HAZ.find(h=>h.arcanaId===9&&h.boundFromId===source.id&&h.boundTargetId===target.id)!;expect(h).toBeDefined();r.creatures=[target];const steps=Math.ceil((h.tell-h.t)/50)+1;for(let i=0;i<steps;i++)tick(gs,input(p.x+100,p.y),50,T0+600+i*50);expect(target.hp).toBe(500);});
 it('Core #09 concurrent casts retain their individual bound target IDs',()=>{const gs=fresh(),r=gs.run!,p=r.player,s=equip(gs,9);const first=mkCreature(r,'boar',p.x+100,p.y,500),second=mkCreature(r,'boar',p.x+110,p.y,500);first.state=second.state='sleep';r.creatures=[first];cast(gs,T0+1);r.creatures=[second];cast(gs,T0+1001);expect(s.charge).toBe(1);const events=FX.filter(e=>e.type==='arcana20_cast'&&e.id===9);expect(events.map(e=>e.chainTargetIds)).toEqual([[first.id],[second.id]]);expect(HAZ.some(h=>h.boundTargetId===first.id)).toBe(true);expect(HAZ.some(h=>h.boundTargetId===second.id)).toBe(true);});
+
+describe('isolated review inventory conveniences',()=>{
+ it('adds empty space without touching the starter items, and only refills carried ARCANA cores',async()=>{
+  const {expandReviewInventory,refillReviewCores,seedReviewInventory}=await import('../src/game/arcanaLab');const gs=fresh(),r=gs.run!;
+  const before=JSON.stringify(C(r,'inv').slots.slice(0,3));expandReviewInventory(gs);expect(C(r,'inv').slots).toHaveLength(40);expect(JSON.stringify(C(r,'inv').slots.slice(0,3))).toBe(before);
+  expandReviewInventory(gs);expect(C(r,'inv').slots).toHaveLength(40);expect(seedReviewInventory(gs).missing).toEqual([]);expect(C(r,'inv').slots.filter(s=>!s)).toHaveLength(17);
+  const core=C(r,'inv').slots.find(s=>s?.key==='core_arcana_17')!;core.charge=1;const water=C(r,'inv').slots[1]!;const waterCharge=water.charge;const rev=gs.revision;
+  expect(refillReviewCores(gs)).toBe(1);expect(core.charge).toBe(3);expect(water.charge).toBe(waterCharge);expect(gs.revision).toBe(rev+1);expect(refillReviewCores(gs)).toBe(0);
+ });
+});
+
+it('bags every item in an expanded review inventory on death without losing charges',async()=>{
+ const {expandReviewInventory,seedReviewInventory}=await import('../src/game/arcanaLab');const {killPlayer}=await import('../src/game/engine');const gs=fresh(),r=gs.run!;expandReviewInventory(gs);seedReviewInventory(gs);
+ while(C(r,'inv').slots.includes(null))expect(addItem(r,'inv','core_fire',1)).toBe(0);
+ const unique=(C(r,'inv').slots.filter(Boolean) as NonNullable<(typeof r.custody.inv.slots)[number]>[]).map(s=>({id:s.uid,key:s.key,charge:s.charge})).sort((a,b)=>a.id.localeCompare(b.id));expect(unique).toHaveLength(40);killPlayer(gs,T0+1000,'test');
+ const bag=Object.values(r.entities).find(e=>e.kind==='bag'&&e.label==='Your bag');expect(bag).toBeDefined();const moved=(C(r,bag!.c!).slots.filter(Boolean) as NonNullable<(typeof r.custody.inv.slots)[number]>[]).map(s=>({id:s.uid,key:s.key,charge:s.charge})).sort((a,b)=>a.id.localeCompare(b.id));expect(moved).toEqual(unique);expect(C(r,'inv').slots.every(s=>s===null)).toBe(true);
+});

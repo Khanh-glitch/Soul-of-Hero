@@ -1,7 +1,7 @@
 import {getVisualQuality,saveVisualQuality,type VisualQuality} from '../game/visualQuality';
-import { arcanaLabEnabled } from '../game/previewFlags';
+import { arcanaLabEnabled, arcanaReviewBuild } from '../game/previewFlags';
 import { ARCANA_CORES } from '../game/arcana20';
-import { grantReviewCore } from '../game/arcanaLab';
+import { grantReviewCore, refillReviewCores } from '../game/arcanaLab';
 import { save } from '../game/persist';
 import { useEffect, useRef, useState } from 'react';
 import { ITEMS, RECIPES, STRUCTS, BUILD_ORDER, VENDOR_SECURED, ACHIEVEMENTS, ELDERS, CORE_STUDY } from '../game/catalog';
@@ -40,19 +40,22 @@ function ItemInfo({ s }: { s: Stack | null }) {
 export function InventoryPanel({ api, quickTo, x = 404 }: { api: Api; quickTo?: string; x?: number }) {
   const r = api.gs.run!; const sel = api.sel ? C(r, api.sel.c)?.slots[api.sel.slot] ?? null : null; const w = invWeight(r);
   let armor = 0, warm = 0; for (const s of C(r, 'eq').slots) if (s) { armor += ITEMS[s.key].armor || 0; warm += ITEMS[s.key].cold || 0; }
-  return <Panel title="Inventory" style={{ left: x, top: 34, width: 196 }} onClose={() => api.open(null)}>
+  return <Panel title="Inventory" style={{ left: x, top: 34, width: 196, ...(arcanaReviewBuild ? {maxHeight: 320, overflowY: 'auto'} : {}) }} onClose={() => api.open(null)}>
     <div className="flex gap-2 items-center" style={{ marginBottom: 4 }}>
       {['head', 'body', 'back'].map((sl, i) => <div key={sl} className="flex flex-col items-center" style={{ fontSize: 8, color: '#8a7a9a' }}><Slot s={C(r, 'eq').slots[i]} sel={api.sel?.c === 'eq' && api.sel.slot === i} onClick={e => slotClick(api, 'eq', i, e)} onContext={() => slotContext(api, 'eq', i)} />{sl}</div>)}
       <div style={{ fontSize: 10, lineHeight: 1.1, marginLeft: 4 }}><div>Armor {Math.round(armor * 100)}% · Warmth +{warm}</div><div style={{ color: w > BAL.player.carryLimit ? '#ff8a7a' : '#cfc2dc' }}>Load {w.toFixed(1)} / {BAL.player.carryLimit} kg{w > BAL.player.carryLimit ? ' (slowed)' : ''}</div><div style={{ color: '#ffe27a' }}>Carried cash {countItem(r, 'inv', 'rcash')} · Secured {api.gs.profile.securedCash}</div></div>
     </div>
-    <Grid api={api} cid="inv" quickTo={quickTo} hotRow />
+    <div className={arcanaReviewBuild ? "scroll" : ""} style={arcanaReviewBuild ? {maxHeight: 90, overflowY: 'auto', overflowX: 'hidden'} : undefined}><Grid api={api} cid="inv" quickTo={quickTo} hotRow /></div>
     {arcanaLabEnabled && <div style={{borderTop:'1px solid #3a2e46', marginTop:5, paddingTop:4}}>
-      <div style={{color:'#ffad7d',fontSize:10}}>Internal Core fixtures — visuals incomplete, NOT playtest-ready</div>
+      <div style={{color:'#ffad7d',fontSize:10}}>{arcanaReviewBuild ? 'Review build · effects and balance provisional' : 'Internal Core fixtures — visuals incomplete, NOT playtest-ready'}</div>
       <label style={{fontSize:10}}>Experimental visual cadence <select aria-label="Experimental visual cadence" defaultValue={getVisualQuality()} onChange={e=>saveVisualQuality(e.target.value as VisualQuality)}><option value="high">High (unreduced)</option><option value="balance">Balance (up to 30 Hz outside impacts)</option><option value="performance">Performance (up to 20 Hz outside impacts)</option></select></label>
+      {arcanaReviewBuild && <button className="btn" onClick={() => {const n=refillReviewCores(api.gs);if(n){save(api.gs);api.rerender();}api.toast(n ? `Refilled ${n} carried Core${n===1?'':'s'}.` : 'Carried Cores are already full.');}}>Refill carried Cores</button>}
+      <details open={!arcanaReviewBuild}><summary style={{fontSize:10,cursor:'pointer'}}>Add a Core</summary>
       <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:2,marginTop:3}}>{ARCANA_CORES.map(core =>
         <button key={core.id} className="btn" title={core.name} aria-label={`Add ${core.name} Core`} onClick={() => {
           const result=grantReviewCore(api.gs,core.id);if(result.ok){save(api.gs);api.rerender();api.toast(`${core.name} Core added (QA only).`);}else api.toast(result.reason || 'Could not add Core.','bad');
         }} style={{padding:'1px',display:'flex',alignItems:'center',justifyContent:'center'}}><Icon k={core.itemKey} size={12}/>{String(core.id).padStart(2,'0')}</button>)}</div>
+      </details>
     </div>}
     <div style={{ borderTop: '1px solid #3a2e46', marginTop: 4, paddingTop: 3 }}><ItemInfo s={sel} /></div>
     <div className="flex gap-1" style={{ marginTop: 3 }}>

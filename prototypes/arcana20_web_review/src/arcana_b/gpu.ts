@@ -36,7 +36,7 @@ export class BGpuComposite {
   gl.disable(gl.BLEND);gl.disable(gl.DITHER);gl.viewport(0,0,width,height);
  }
  render(scene:HTMLCanvasElement,r:Renderer,m:BTransform,cx:number,cy:number){
-  const gl=this.gl;gl.useProgram(this.program);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,1);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.textures[0]);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,scene);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,0);
+  const gl=this.gl;if(gl.isContextLost())throw new Error('WebGL context lost');gl.useProgram(this.program);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,1);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.textures[0]);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,scene);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,0);
   const [ink,ground,light,warp]=this.packed;
   for(let p=0;p<W*H;p++){const i=p*4,j=p*3;ink[i]=r.main[j];ink[i+1]=r.main[j+1];ink[i+2]=r.main[j+2];ink[i+3]=r.inkCoverage[p];ground[i]=r.alb[j];ground[i+1]=r.alb[j+1];ground[i+2]=r.alb[j+2];ground[i+3]=r.decalCoverage[p];light[i]=r.lightBuf[j];light[i+1]=r.lightBuf[j+1];light[i+2]=r.lightBuf[j+2];light[i+3]=r.shade[p];warp[i]=r.worldWarp[p*2];warp[i+1]=r.worldWarp[p*2+1];warp[i+2]=0;warp[i+3]=r.worldInfluence[p];}
   for(let n=1;n<5;n++){gl.activeTexture(gl.TEXTURE0+n);gl.bindTexture(gl.TEXTURE_2D,this.textures[n]);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA32F,W,H,0,gl.RGBA,gl.FLOAT,this.packed[n-1]);}

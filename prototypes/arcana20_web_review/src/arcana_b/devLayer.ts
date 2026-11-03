@@ -1,15 +1,15 @@
-import {visualTick} from '../game/visualQuality';
+import {VisualClock} from '../game/visualQuality';
 /** Diagnostic preview of only three source-B effects. Deliberately disabled
- * unless explicitly enabled on a Vite dev server. NOT a delivery mode. */
+ * unless explicitly enabled in the dev lab or dedicated review build. NOT production approval. */
 import { BSource,type BId } from './player';
-import { arcanaLabEnabled } from '../game/previewFlags';
+import { arcanaLabEnabled, arcanaGpuEnabled } from '../game/previewFlags';
 import { compositeB } from './composite';
 import { worldRect } from './worldRect';
 import { BGpuComposite } from './gpu';
 export const bDiagnosticEnabled = arcanaLabEnabled;
-type Active={source:BSource;runId:string;startMs:number;tick:number;frame:ReturnType<BSource['renderAtSeconds']>};
+type Active={source:BSource;runId:string;startMs:number;tick:number;clock:VisualClock;frame:ReturnType<BSource['renderAtSeconds']>};
 const active:Active[]=[];
-const gpuRequested=bDiagnosticEnabled && new URLSearchParams(location.search).get('arcanaGpu')==='1';
+const gpuRequested=arcanaGpuEnabled;
 let gpu:BGpuComposite|null=null;let gpuFailed=false;
 export const bDiagnosticTimings:{id:BId;sourceMs:number;compositeMs:number}[]=[];
 if (bDiagnosticEnabled) (window as any).__arcanaBDiagnosticTimings=bDiagnosticTimings;
@@ -17,12 +17,12 @@ export function startBDiagnostic(e:any) {
   if(!bDiagnosticEnabled || ![2,3,8].includes(e.id))return;
   const dx=e.aimX-e.x,dy=e.aimY-e.y,reach=Math.max(35,Math.min(130,Math.hypot(dx,dy)));
   const caster={x:e.x,y:e.y},target={x:e.x+Math.cos(e.a)*reach,y:e.y+Math.sin(e.a)*reach};
-  active.push({source:new BSource(e.id as BId,caster,target),runId:e.runId,startMs:e.simMs,tick:-1,frame:null});
+  active.push({source:new BSource(e.id as BId,caster,target),runId:e.runId,startMs:e.simMs,tick:-1,clock:new VisualClock(),frame:null});
 }
 export function drawBDiagnostic(g:CanvasRenderingContext2D,runId:string,simMs:number,cx:number,cy:number) {
   if(!bDiagnosticEnabled || !active.length)return;
   for(let i=active.length-1;i>=0;i--){const a=active[i],seconds=(simMs-a.startMs)/1000;if(a.runId!==runId||seconds>=a.source.duration){active.splice(i,1);continue;}
-    const tick=visualTick(a.source.id,seconds);let sourceMs=0;
+    const tick=a.clock.sample(a.source.id,seconds);let sourceMs=0;
     if(tick!==a.tick){const start=performance.now();a.frame=a.source.renderAtSeconds(tick/60);sourceMs=performance.now()-start;a.tick=tick;}
     if(!a.frame)continue;
     const start=performance.now();

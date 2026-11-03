@@ -1,5 +1,6 @@
+import {arcanaGpuEnabled} from '../game/previewFlags';
 import {influenceBounds,influenceWorldRect,type InfluenceBounds} from './influenceBounds';
-import {visualTick} from '../game/visualQuality';
+import {VisualClock} from '../game/visualQuality';
 import {combineCStage,hasCStage,compositeCStage} from './stage';import {CStageGpu} from './stageGpu';
 /** Developer-only C7/C10/C17/C20 live-field diagnostic, not playtest/visual approval. */
 import { bDiagnosticEnabled } from '../arcana_b/devLayer';
@@ -9,21 +10,21 @@ import { worldRect } from '../arcana_b/worldRect';
 import { CGpuComposite,sharedCGpuComposite } from './gpu';
 import { bayer } from './engine/math';
 import {combineCPost,hasCPost,compositeCPost} from './post';import {CPostGpu,sharedCPostGpu} from './postGpu';
-type Active={source:CSource;runId:string;startMs:number;tick:number;frame:ReturnType<CSource['renderAtSeconds']>;sourceMs:number;localBounds:InfluenceBounds|null};
+type Active={source:CSource;runId:string;startMs:number;tick:number;clock:VisualClock;frame:ReturnType<CSource['renderAtSeconds']>;sourceMs:number;localBounds:InfluenceBounds|null};
 const active:Active[]=[];
-const gpuRequested=bDiagnosticEnabled && new URLSearchParams(location.search).get('arcanaGpu')==='1';const fullGpu=new URLSearchParams(location.search).get('arcanaCFull')==='1';let gpu:CGpuComposite|null=null;let gpuFailed=false;
+const gpuRequested=arcanaGpuEnabled;const fullGpu=new URLSearchParams(location.search).get('arcanaCFull')==='1';let gpu:CGpuComposite|null=null;let gpuFailed=false;
 export const cDiagnosticTimings:{id:CId;time:number;sourceMs:number;compositeMs:number;gpuProfile?:{sceneMs:number;packMs:number;fieldUploadMs:number;atlasPackMs:number;atlasUploadMs:number;submitMs:number;fieldsReused:boolean};liveOps:number;maxOverlap:number;gpuInitMs?:number;gpuCopyMs?:number}[]=[];
 if(bDiagnosticEnabled)(window as any).__arcanaCDiagnosticTimings=cDiagnosticTimings;
 export function startCDiagnostic(e:any){
  if(!bDiagnosticEnabled||![7,10,17,20].includes(e.id))return;
  const reach=Math.max(35,Math.min(130,Math.hypot(e.aimX-e.x,e.aimY-e.y)));
- active.push({source:new CSource(e.id as CId,{x:e.x,y:e.y},{x:e.x+Math.cos(e.a)*reach,y:e.y+Math.sin(e.a)*reach}),runId:e.runId,startMs:e.simMs,tick:-1,frame:null,sourceMs:0,localBounds:null});
+ active.push({source:new CSource(e.id as CId,{x:e.x,y:e.y},{x:e.x+Math.cos(e.a)*reach,y:e.y+Math.sin(e.a)*reach}),runId:e.runId,startMs:e.simMs,tick:-1,clock:new VisualClock(),frame:null,sourceMs:0,localBounds:null});
 }
 // Advance once per game frame, before the stage and local world passes.
 export function prepareCDiagnostic(runId:string,simMs:number){
  if(!bDiagnosticEnabled)return;
  for(let i=active.length-1;i>=0;i--){const a=active[i],seconds=(simMs-a.startMs)/1000;if(a.runId!==runId||seconds>=a.source.duration){active.splice(i,1);continue;}
-  const tick=visualTick(a.source.id,seconds);a.sourceMs=0;if(tick!==a.tick){const start=performance.now();a.frame=a.source.renderAtSeconds(tick/60);a.localBounds=a.frame?influenceBounds(a.frame.frame.worldInfluence):null;a.sourceMs=performance.now()-start;a.tick=tick;}
+  const tick=a.clock.sample(a.source.id,seconds);a.sourceMs=0;if(tick!==a.tick){const start=performance.now();a.frame=a.source.renderAtSeconds(tick/60);a.localBounds=a.frame?influenceBounds(a.frame.frame.worldInfluence):null;a.sourceMs=performance.now()-start;a.tick=tick;}
  }
 }
 let stageGpu:CStageGpu|null=null,stageGpuFailed=false;
