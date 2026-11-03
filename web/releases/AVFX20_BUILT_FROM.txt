@@ -1,5 +1,5 @@
-AVFX #20 Reality Ripper standalone playable build (FX Lab F4: #20 Current Web / Restored A+C + ↺A→B→A)
+AVFX #20 Reality Ripper standalone playable build (FX Lab F4: #20 Current Web / Restored A+C semantic bridge)
 built from branch arena/3337c864-soul-of-hero
-artifact sha256    : 2dc951f80167ea173d222c9a3977767eb35658d42db8d45b0946fafe3d4aa092
-compare page       : soh-avfx20-compare.html (C source master cast #20 vs A+C candidate, postMessage-synced, file:// OK)
+artifact sha256    : 7a2338fa24449bad1db1d346b6756dd54c861f09eab1fc49143ea3a086999869
+compare page       : soh-avfx20-compare.html
 boot: open this file directly (file://)

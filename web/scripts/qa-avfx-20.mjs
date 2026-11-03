@@ -46,6 +46,15 @@ if (!ALLOW_FALLBACK && report.webgl2Probe.presenterMode !== 'webgl2') {
 const PHASES = [['t0.6', 0.6], ['t1.3', 1.3], ['t2.7', 2.7], ['t4.5', 4.5], ['t6.6', 6.6], ['t7.8', 7.8], ['t9.5', 9.5], ['t9.85', 9.85], ['after', 10.8]];
 const MODES = ['current', 'restored'];
 
+// SEMANTIC bridge direct renders (CPU source frame, inspectable without WebGL)
+for (const [name, t] of [['sem-1.3', 1.3], ['sem-4.5', 4.5], ['sem-6.6', 6.6], ['sem-7.8', 7.8], ['sem-9.85', 9.85]]) {
+  await page.evaluate(tt => window.__d20qa.client.qaSemFrame(tt), t);
+  await page.waitForTimeout(700);
+  const el = page.locator('#d20sem');
+  if (await el.count()) await el.screenshot({ path: `${OUT}/SEM-${name}.png` });
+}
+report.semanticBridge = 'source Frame + donor spell, CPU composite, real world base';
+
 // REFERENCE ground truth: creator-approved Visual Master, cast #20, matched timestamps
 const refPage = await b.newPage({ viewport: { width: 1280, height: 720 } });
 await refPage.goto('http://localhost:4331/releases/reference-arcana20-visual-master.html');

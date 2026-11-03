@@ -13,12 +13,13 @@
 export interface RiftParams { wt: Float32Array; pull: number; span: number; flash: number }
 export interface PresentedLayer {
   clientId: string;
-  kind: 'd19' | 'rift' | 'glow' | 'blit';
+  kind: 'd19' | 'rift' | 'glow' | 'blit' | 'frame';
   rift?: RiftParams;
   lightTex: WebGLTexture;          // 480x270 RGBA8 additive source field
   warp: Float32Array;              // 480*270*4 RGBA32F CPU warp field
   influence: Uint8Array;           // 480*270 coverage mask
   region: { x: number; y: number; w: number; h: number }; // screen-space rect of source window
+  frameTex?: WebGLTexture;   // semantic-bridge 384x216 RGBA8 output
   blocksDst?: Float32Array;  // blit layer: 56*4 (px,py,sz,active) in region-local px
   blocksHome?: Float32Array; // blit layer: 56*2 (hx,hy) in region-local px
   fade: number; bloomGain: number; time: number; tick: number; seed: number;
@@ -134,6 +135,23 @@ void main(){
   color = vec4(clamp(col, 0.0, 1.0), 1.0);
 }`;
 
+// semantic-bridge output: the source Frame already composited the real world
+// (displacement, ink, fragments, light) — replace the region with it verbatim
+const FRAME_FS = `#version 300 es
+precision highp float;
+uniform sampler2D scene; uniform sampler2D ftex;
+uniform vec2 size; uniform vec4 region; uniform float flash; uniform vec3 flashCol;
+out vec4 color;
+void main(){
+  vec2 pixel = vec2(gl_FragCoord.x, size.y - gl_FragCoord.y);
+  vec3 base = texture(scene, vec2(pixel.x/size.x, 1.0 - pixel.y/size.y)).rgb;
+  vec2 sp = (pixel - region.xy) / region.zw;
+  if (sp.x < 0.0 || sp.y < 0.0 || sp.x > 1.0 || sp.y > 1.0) { color = vec4(base, 1.0); return; }
+  vec3 c = texture(ftex, vec2(sp.x, 1.0 - sp.y)).rgb;
+  c += flashCol * flash;
+  color = vec4(clamp(c, 0.0, 1.0), 1.0);
+}`;
+
 // world-sampled fragment layer: copies REAL world pixels (pre-warp world tex)
 // to displaced positions (source f.blitBase) and punches void holes at homes
 const BLIT_FS = `#version 300 es
@@ -199,7 +217,7 @@ export class Presenter {
   private worldCtx: CanvasRenderingContext2D;
   private worldTex!: WebGLTexture;
   private lightFbo!: WebGLFramebuffer; private lightTex!: WebGLTexture;
-  private progPass!: WebGLProgram; private progComp!: WebGLProgram; private progRift!: WebGLProgram; private progAdd!: WebGLProgram; private progBlit!: WebGLProgram;
+  private progPass!: WebGLProgram; private progComp!: WebGLProgram; private progRift!: WebGLProgram; private progAdd!: WebGLProgram; private progBlit!: WebGLProgram; private progFrame!: WebGLProgram;
   private buf!: WebGLBuffer;
   private warpTex!: WebGLTexture; private inflTex!: WebGLTexture;
   private accumA!: WebGLFramebuffer; private accumATex!: WebGLTexture;
@@ -242,6 +260,7 @@ export class Presenter {
     this.progRift = this.compile(RIFT_FS);
     this.progAdd = this.compile(ADD_FS);
     this.progBlit = this.compile(BLIT_FS);
+    this.progFrame = this.compile(FRAME_FS);
     this.buf = gl.createBuffer()!;
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buf);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
@@ -290,6 +309,7 @@ export class Presenter {
     this.progRift = this.compile(RIFT_FS);
     this.progAdd = this.compile(ADD_FS);
     this.progBlit = this.compile(BLIT_FS);
+    this.progFrame = this.compile(FRAME_FS);
     this.buf = gl.createBuffer()!;
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buf);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
@@ -304,6 +324,7 @@ export class Presenter {
     };
     this.worldTex = mkTex(w, h, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, null);
     this.lightTex = mkTex(480, 270, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    this.frameTex = mkTex(384, 216, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, null);
     this.warpTex = mkTex(480, 270, gl.RGBA32F, gl.RGBA, gl.FLOAT, null);
     this.inflTex = mkTex(480, 270, gl.R8UI, gl.RED_INTEGER, gl.UNSIGNED_BYTE, null);
     const mkFbo = (tex: WebGLTexture) => { const f = gl.createFramebuffer()!; gl.bindFramebuffer(gl.FRAMEBUFFER, f); gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0); const ok = gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE; gl.bindFramebuffer(gl.FRAMEBUFFER, null); return { f, ok }; };
@@ -314,6 +335,7 @@ export class Presenter {
     this.needsRasterRestore = true;
   }
   needsRasterRestore = false;
+  private frameTex!: WebGLTexture;
   private compile(fs: string): WebGLProgram {
     const gl = this.gl!;
     const sh = (t: number, src: string) => { const x = gl.createShader(t)!; gl.shaderSource(x, src); gl.compileShader(x); if (!gl.getShaderParameter(x, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(x) || 'shader'); return x; };
@@ -329,6 +351,29 @@ export class Presenter {
   /** The D19 source raster renders into the presenter-owned light FBO. */
   lightTarget(): { fbo: WebGLFramebuffer | null; w: number; h: number } { return { fbo: (this as any).lightFbo ?? null, w: 480, h: 270 }; }
   lightTexture(): WebGLTexture | null { return (this as any).lightTex ?? null; }
+
+  /** Upload the semantic-bridge output (384x216 RGBA8) as the frame layer texture. */
+  uploadFrame(data: Uint8ClampedArray) {
+    if (!this.gl) return;
+    const gl = this.gl;
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, this.frameTex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, 384, 216, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+  }
+  frameTexture(): WebGLTexture | null { return (this as any).frameTex ?? null; }
+  /** Read back the real SOH world region as RGBA8 — the semantic bridge's base
+   *  and sampling source (Phase 2: real world as Frame.base). */
+  worldRegion(sx: number, sy: number, w: number, h: number): Uint8ClampedArray | null {
+    const c = this.worldCanvas as HTMLCanvasElement | undefined;
+    if (!c) return null;
+    if (!this.regionCanvas) { this.regionCanvas = document.createElement('canvas'); this.regionCtx = this.regionCanvas.getContext('2d', { willReadFrequently: true })!; }
+    this.regionCanvas.width = w; this.regionCanvas.height = h;
+    const ctx = this.regionCtx!;
+    ctx.drawImage(c, sx, sy, w, h, 0, 0, w, h);
+    return ctx.getImageData(0, 0, w, h).data;
+  }
+  private regionCanvas: HTMLCanvasElement | null = null;
+  private regionCtx: CanvasRenderingContext2D | null = null;
 
   /** One world upload + frame graph + exactly ONE final post, per frame.
    *  Layers composite into a ping-pong accumulator (layer N samples the result
@@ -380,13 +425,14 @@ export class Presenter {
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); // world -> accum
 
     for (const L of layers) {
-      const prog = L.kind === 'rift' ? this.progRift : L.kind === 'glow' ? this.progAdd : L.kind === 'blit' ? this.progBlit : this.progComp;
+      const prog = L.kind === 'rift' ? this.progRift : L.kind === 'glow' ? this.progAdd : L.kind === 'blit' ? this.progBlit : L.kind === 'frame' ? this.progFrame : this.progComp;
       gl.useProgram(prog); setupPos(prog);
       gl.uniform1i(gl.getUniformLocation(prog, 'scene'), 0);
       if (L.kind === 'rift') gl.uniform1i(gl.getUniformLocation(prog, 'field'), 2);
       if (L.kind === 'glow') gl.uniform1i(gl.getUniformLocation(prog, 'light'), 1);
       if (L.kind === 'blit') gl.uniform1i(gl.getUniformLocation(prog, 'world'), 1);
-      if (L.kind !== 'blit') {
+      if (L.kind === 'frame') gl.uniform1i(gl.getUniformLocation(prog, 'ftex'), 1);
+      if (L.kind !== 'blit' && L.kind !== 'frame') {
         gl.uniform1i(gl.getUniformLocation(prog, 'light'), 1);
         gl.uniform1i(gl.getUniformLocation(prog, 'warp'), 2);
         gl.uniform1i(gl.getUniformLocation(prog, 'influence'), 3);
@@ -396,7 +442,12 @@ export class Presenter {
       gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, L.lightTex);
       gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, this.warpTex);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, 480, 270, 0, gl.RGBA, gl.FLOAT, L.warp); // warp or rift field
-      if (L.kind === 'blit') {
+      if (L.kind === 'frame') {
+        gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, L.frameTex ?? this.lightTex);
+        gl.uniform4f(gl.getUniformLocation(prog, 'region'), L.region.x, L.region.y, L.region.w, L.region.h);
+        gl.uniform1f(gl.getUniformLocation(prog, 'flash'), (L as any).frameFlash ?? 0);
+        gl.uniform3f(gl.getUniformLocation(prog, 'flashCol'), 1, 0.5, 1);
+      } else if (L.kind === 'blit') {
         gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, this.worldTex); // pre-warp world
         gl.uniform4f(gl.getUniformLocation(prog, 'region'), L.region.x, L.region.y, L.region.w, L.region.h);
         const n = Math.min(56, (L.blocksDst?.length ?? 0) / 4);
