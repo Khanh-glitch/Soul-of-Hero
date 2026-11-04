@@ -42,6 +42,8 @@ export function validate(raw: any): GameState | null {
   if (r.sourceLayoutVersion === 3) {
     const m=r.sourceMap; if (!obj(m) || m.id !== world.economyMap.id || m.revision !== world.economyMap.revision || m.rules !== 3 || m.seed !== world.economyMap.seed || m.digest !== sourceDigest(world.sourceV3)) return null;
     if (m.mapDigest === undefined ? baseline[layout] !== fingerprint : m.mapDigest !== fingerprint) return null;
+    if (world.veyra && (JSON.stringify(m.veyra)!==JSON.stringify(world.veyra) || !obj(r.spawnChoice) || r.spawnChoice.contract!=='seeded-geographic-v1' || !Number.isInteger(r.spawnChoice.x) || !Number.isInteger(r.spawnChoice.y) || r.spawnChoice.x<1 || r.spawnChoice.y<1 || r.spawnChoice.x>=199 || r.spawnChoice.y>=199)) return null;
+    if (!world.veyra && m.veyra!==undefined) return null;
   } else if (baseline[layout] !== fingerprint) return null;
   if (r.sourceLayoutVersion !== 3 && r.sourceMap !== undefined) return null;
   if (!['x','y','hp','stamina','hunger','thirst','warmth','rad','active'].every(k => finite(r.player[k])) || !obj(r.player.skills) || typeof r.player.dead !== 'boolean' || !finite(r.clock.lastSimAt) || !finite(r.clock.simMs) || !finite(r.clock.respawnAcc) || !finite(r.clock.weatherSlot)) return null;

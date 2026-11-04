@@ -24,6 +24,6 @@ export default function App() {
   return screen === 'title'
     ? <Title gs={gs} note={note} summary={summary} clearSummary={() => setSummary(null)}
         onContinue={() => { initAudio(); const rep = settle(gs, Date.now()); save(gs); if (!gs.run) { setSummary(gs.profile.history[0]); return; } setReport(rep.length ? rep : null); enter(); }}
-        onStart={(c, region) => { initAudio(); const res = dispatch(gs, mkIntent('startRun', { character: c, region }), Date.now()); if (res.ok) { save(gs); setReport(null); enter(); } }} />
+        onStart={(c, region) => { initAudio(); const res = dispatch(gs, mkIntent('startRun', { character: c, region }), Date.now()); if (res.ok) { save(gs); setReport(null); enter(); } else setNote(res.reason); }} />
     : <Game gs={gs} report={report} onExit={() => setScreen('title')} onRunEnd={() => { setSummary(gs.profile.history[0] || null); setScreen('title'); }} />;
 }

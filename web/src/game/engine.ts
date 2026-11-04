@@ -57,18 +57,35 @@ export function mkStack(r: RunState, key: string, qty: number, meta?: string): S
 }
 export function mkContainer(r: RunState, kind: string, n: number): Container { const c = { id: uid(r, 'c'), kind, slots: Array(n).fill(null) }; r.custody[c.id] = c; return c; }
 
+/** Random eligible cell, using real collision, current hazards and reachable local sources.
+ * Compiler reachability anchors and Map sp_* are never player spawn authorities. */
+export function chooseVeyraSpawn(r:RunState): {tx:number;ty:number;name:string}|null {
+  const w=getWorld(); if(!w.veyra)return null; markDirty();const grid=blockGrid(r), n=WW*WH;
+  const safe=(x:number,y:number)=>{const i=y*WW+x;return x>2&&y>2&&x<WW-3&&y<WH-3&&grid[i]===0&&w.economyMap.walkable[i]&&![T.TOXIC,T.ASH,T.SNOW].includes(effTile(r,x,y))&&!r.sources[i]?.fire&&!Object.values(r.entities).some(e=>e.type==='spikes'&&e.tx===x&&e.ty===y)&&!r.creatures.some(m=>m.state!=='dead'&&Math.hypot(m.x-(x*TILE+8),m.y-(y*TILE+8))<10*TILE);};
+  const eligible=(tx:number,ty:number)=>{if(!safe(tx,ty))return false;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)if(!safe(tx+dx,ty+dy))return false;
+    const seen=new Uint8Array(n),q=new Int32Array(n),depth=new Uint8Array(n);let head=0,tail=0;const start=ty*WW+tx;q[tail++]=start;seen[start]=1;let wood=false,stone=false,food=false,water=false,sites=0;
+    while(head<tail){const i=q[head++],x=i%WW,y=Math.floor(i/WW);if(w.economyMap.buildable[i]&&!w.sourceV3[i])sites++;for(const [dx,dy]of [[0,0],[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy;if(nx<1||ny<1||nx>=WW-1||ny>=WH-1)continue;const j=ny*WW+nx;if(w.fresh[j])water=true;const src=sourceAt(r,nx,ny);if(src&&src.stock>0&&!src.fire){if(['oak','pine','snowpine','palm','willow'].includes(src.key))wood=true;if(src.key==='rock')stone=true;if(['bush','mushroom'].includes(src.key))food=true;}
+      if((dx||dy)&&depth[i]<30&&!seen[j]&&grid[j]===0&&w.economyMap.walkable[j]){seen[j]=1;depth[j]=depth[i]+1;q[tail++]=j;}}
+      if(wood&&stone&&food&&water&&sites>=9)return true;
+    }return false;
+  };
+  // Seed determines a full, non-repeating traversal; no fixed fallback or spawn beacon.
+  const count=(WW-6)*(WH-6),start=Math.floor(rngNext(r)*count),step=1+2*Math.floor(rngNext(r)*(count/2));let stride=step;while((function gcd(a:number,b:number):number{return b?gcd(b,a%b):a})(stride,count)!==1)stride+=2;
+  for(let k=0;k<count;k++){const i=(start+k*stride)%count,tx=3+i%(WW-6),ty=3+Math.floor(i/(WW-6));if(eligible(tx,ty))return{tx,ty,name:'Veyra · Greywater region'};}return null;
+}
+
 export function startRun(gs: GameState, character: 'male' | 'female', now: number, region: number | null = null, seedOverride?: number): Result {
   if (gs.run && !gs.run.ended) return { ok: false, reason: 'A run is already active.' };
   const w = getWorld();
   const seed = seedOverride ?? ((now ^ 0x9e3779b9) >>> 0);
   const r: RunState = {
-    id: 'run_' + seed.toString(36), seed, character, startedAt: now, qaOffset: 0, qaUsed: false, layoutId: getActiveLayout(), sourceLayoutVersion: 3, sourceMap: { id: w.economyMap.id, revision: w.economyMap.revision, seed: w.economyMap.seed, rules: 3, digest: sourceDigest(w.sourceV3), mapDigest: mapDigest(w) }, spawnRegion: 0, ended: null,
+    id: 'run_' + seed.toString(36), seed, character, startedAt: now, qaOffset: 0, qaUsed: false, layoutId: getActiveLayout(), sourceLayoutVersion: 3, sourceMap: { id: w.economyMap.id, revision: w.economyMap.revision, seed: w.economyMap.seed, rules: 3, digest: sourceDigest(w.sourceV3), mapDigest: mapDigest(w), ...(w.veyra ? {veyra:w.veyra} : {}) }, spawnRegion: 0, ended: null,
     player: null as any, creatures: [], sources: {}, terrain: {}, entities: {}, custody: {}, knowledge: { recipes: Object.keys(RECIPES).filter(k => RECIPES[k].base), studied: [] },
     traces: [], discovered: [], poiSeen: [], elderStones: [], achievements: [], score: 0, deposited: 0,
     clock: { lastSimAt: now, simMs: 0, respawnAcc: 0, weatherSlot: -1 }, rng: seed, nextId: 1, receipts: [], seenIntents: [], seq: 0,
     vendorStock: { escrow_chest: 4, ...Object.fromEntries(Object.entries(VENDOR_SECURED).map(([k, v]) => [k, v.stock])) }, log: [],
   };
-  const reg = region ?? Math.floor(rngNext(r) * w.starts.length); r.spawnRegion = reg; const sp = w.starts[reg];
+  const reg = w.veyra ? 0 : (region ?? Math.floor(rngNext(r) * w.starts.length)); r.spawnRegion = reg; const sp = w.veyra ? chooseVeyraSpawn(r) : w.starts[reg]; if(!sp)return {ok:false,reason:'No safe, resource-accessible spawn in this region.'}; if(w.veyra)r.spawnChoice={x:sp.tx,y:sp.ty,contract:'seeded-geographic-v1'};
   r.custody.inv = { id: 'inv', kind: 'inv', slots: Array(24).fill(null) };
   r.custody.eq = { id: 'eq', kind: 'eq', slots: [null, null, null] };
   r.custody.inv.slots[0] = mkStack(r, 'knife', 1);
@@ -142,7 +159,7 @@ let baseGrid: Uint8Array | null = null; let baseGridLayout = '';
 function tileClass(t: number) { return (t === T.DEEP || t === T.CLIFF || t === T.PWALL) ? 1 : t === T.LAVA ? 5 : (t === T.SHALLOW || t === T.RIVER) ? 4 : 0; }
 function cellClass(r: RunState | null, tx: number, ty: number) {
   const w = getWorld(); const i = ty * WW + tx; const t = r ? effTile(r, tx, ty) : w.tiles[i]; let c = tileClass(t);
-  if (c === 0 && w.packageContract && !w.economyMap.walkable[i] && !w.statics.some(s => s.kind === 'door' && s.tx === tx && s.ty === ty)) c = 1;
+  if (c === 0 && (w.packageContract || w.enforceMasks) && !w.economyMap.walkable[i] && !w.statics.some(s => s.kind === 'door' && s.tx === tx && s.ty === ty)) c = 1;
   if (c === 0) { if (r) { const s = sourceAt(r, tx, ty); if (s && s.def.block && (s.stock > 0 || s.key === 'wreck')) c = 2; } else if (w.src[i] >= 0 && SOURCES[SRC_KEYS[w.src[i]]].block) c = 2; }
   return c;
 }
@@ -374,7 +391,7 @@ export function respawn(gs: GameState, now: number): Result {
   const beds = Object.values(r.entities).filter(e => e.kind === 'struct' && e.type === 'bed_straw');
   let x: number, y: number;
   if (beds.length) { x = beds[0].x; y = beds[0].y + 10; }
-  else { const s = w.starts[Math.floor(rngNext(r) * w.starts.length)]; x = s.tx * TILE + 8; y = s.ty * TILE + 8; }
+  else { const s = w.veyra ? chooseVeyraSpawn(r) : w.starts[Math.floor(rngNext(r) * w.starts.length)]; if(!s)return {ok:false,reason:'No safe spawn is currently available.'}; x = s.tx * TILE + 8; y = s.ty * TILE + 8; }
   Object.assign(p, { x, y, dead: false, hp: 60, stamina: 60, hunger: Math.max(p.hunger, 40), thirst: Math.max(p.thirst, 40), warmth: 80, rad: Math.min(p.rad, 20), invuln: 2000 });
   return { ok: true, receipt: receipt(r, now, 'respawn', `${Math.round(x)},${Math.round(y)}`) };
 }
@@ -404,7 +421,7 @@ export function buildReason(gs: GameState, type: string, tx: number, ty: number)
   if ([T.DEEP, T.SHALLOW, T.RIVER, T.CLIFF, T.PWALL, T.LAVA, T.FLOOR, T.ICE].includes(t)) return 'Ground is not buildable here.';
   if (t === T.ROAD || t === T.BRIDGE) return 'Keep roads clear — build beside them.';
   if (w.economyMap.protected[ty * WW + tx] || w.accessCorridors?.mask[ty * WW + tx]) return 'Keep entrances, loading areas and routes clear.';
-  if (w.packageContract && !w.economyMap.buildable[ty * WW + tx]) return 'This map does not permit building here.';
+  if ((w.packageContract || w.enforceMasks) && !w.economyMap.buildable[ty * WW + tx]) return 'This map does not permit building here.';
   const s = sourceAt(r, tx, ty); if (s && s.stock > 0) return `Clear the ${s.def.name} first.`;
   const here = entsAt(r, tx, ty);
   if (here.some(e => e.kind !== 'struct')) return 'Something is already here.';
@@ -431,7 +448,7 @@ export function dispatch(gs: GameState, it: Intent, now: number): Result {
   if (gs.profile.profileReceipts.includes(`intent:${it.id}`)) return { ok: false, reason: 'Duplicate request ignored.', dup: true };
   const r = gs.run;
   if (it.type === 'startRun') {
-    if (!['male', 'female'].includes(it.character) || (it.region != null && (!Number.isInteger(it.region) || it.region < 0 || it.region >= getWorld().starts.length)) || (it.seed !== undefined && (!Number.isSafeInteger(it.seed) || it.seed < 0 || it.seed > 0xffffffff))) return { ok: false, reason: 'Invalid start.' };
+    if (!['male', 'female'].includes(it.character) || (it.region != null && (!Number.isInteger(it.region) || it.region < 0 || it.region >= getWorld().starts.length) && !getWorld().veyra) || (it.seed !== undefined && (!Number.isSafeInteger(it.seed) || it.seed < 0 || it.seed > 0xffffffff))) return { ok: false, reason: 'Invalid start.' };
     const res = startRun(gs, it.character, now, it.region ?? null, it.seed); if (res.ok) gs.profile.profileReceipts.push(`intent:${it.id}`); return res;
   }
   if (!r) return { ok: false, reason: 'No active run.' };

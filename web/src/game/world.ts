@@ -7,6 +7,7 @@ import type { GeographicHandoff } from './geography-contract';
 import { compileEconomy, type EconomyMap } from './world-economy';
 import { adaptCurrentGeometry } from './economy-adapter';
 import { deriveAccessCorridors, type AccessCorridors } from './access-corridors';
+import { projectVeyra, VEYRA_LAYOUTS, type VeyraViewIdentity } from './veyra/projection';
 import { instantiateMapPackage, validateRuntimeMapPackage, type RuntimeMapPackage } from './map-package';
 
 // Frozen legacy encoding: never derive persisted tile values from object insertion order.
@@ -17,7 +18,7 @@ export interface Place { id: string; name: string; tx: number; ty: number; kind:
 export interface World {
   tiles: Uint8Array; fresh: Uint8Array; src: Int8Array; sourceOverlayV2: Int8Array; zone: Uint8Array; seaDist: Uint8Array;
   buildings: Building[]; statics: StaticEnt[]; places: Place[]; starts: Place[]; elders: Place[];
-  economyMap: EconomyMap; sourceV3: (string | null)[]; packageContract?: GeographicHandoff; accessCorridors?: AccessCorridors;
+  economyMap: EconomyMap; sourceV3: (string | null)[]; packageContract?: GeographicHandoff; accessCorridors?: AccessCorridors; veyra?: VeyraViewIdentity; enforceMasks?: boolean; zoneNames?: string[];
 }
 
 function vnoise(x: number, y: number, s: number) {
@@ -71,16 +72,16 @@ for (const [path, value] of Object.entries(import.meta.glob('../map-packages/*.j
   const errors = installMapPackage(value); if (errors.length) packageErrors.push(`${path}: ${errors.join('; ')}`);
 }
 export function mapPackageErrors() { return [...packageErrors]; }
-export function listLayouts() { return [{id:'shipping', title:'Shipping Island', description: MAP_CONTENT_PACKS.shipping.description}, {id:'dev_delta',title:'Delta Ridge · Dev',description:MAP_CONTENT_PACKS.dev_delta.description}, ...[...external.entries()].map(([id,p])=>({id,title:`${p.title} · r${p.revision}`,description:p.description}))]; }
+export function listLayouts() { return [{id:'veyra-greywater-u16',title:'Veyra · Greywater U=1.6',description:'Bounded diagnostic view; POI geometry and final scale are not approved.'},{id:'veyra-greywater-u20',title:'Veyra · Greywater U=2.0',description:'Same origin and source, diagnostic scale only.'},{id:'shipping', title:'Shipping Island', description: MAP_CONTENT_PACKS.shipping.description}, {id:'dev_delta',title:'Delta Ridge · Dev',description:MAP_CONTENT_PACKS.dev_delta.description}, ...[...external.entries()].map(([id,p])=>({id,title:`${p.title} · r${p.revision}`,description:p.description}))]; }
 export function getActiveLayout(): string { return activeLayout; }
 export function setActiveLayout(id: string): boolean {
-  if (id !== 'shipping' && id !== 'dev_delta' && !external.has(id)) return false;
+  if (id !== 'shipping' && id !== 'dev_delta' && !VEYRA_LAYOUTS.includes(id as any) && !external.has(id)) return false;
   activeLayout = id; return true;
 }
-export function hasLayout(id: string): boolean { return id === 'shipping' || id === 'dev_delta' || external.has(id); }
+export function hasLayout(id: string): boolean { return id === 'shipping' || id === 'dev_delta' || VEYRA_LAYOUTS.includes(id as any) || external.has(id); }
 export function getWorld(layout: string = activeLayout): World {
   let world = cached.get(layout);
-  if (!world) { const p=external.get(layout); if (p) world=instantiateMapPackage(p); else if (layout === 'shipping' || layout === 'dev_delta') world=genWorld(layout); else throw new Error(`Map package ${layout} is not installed`); if (!world.packageContract) world.accessCorridors=deriveAccessCorridors(world); cached.set(layout, world); }
+  if (!world) { const p=external.get(layout); if (p) world=instantiateMapPackage(p); else if (VEYRA_LAYOUTS.includes(layout as any)) world=projectVeyra(layout); else if (layout === 'shipping' || layout === 'dev_delta') world=genWorld(layout); else throw new Error(`Map package ${layout} is not installed`); if (!world.packageContract && !world.veyra) world.accessCorridors=deriveAccessCorridors(world); cached.set(layout, world); }
   return world;
 }
 

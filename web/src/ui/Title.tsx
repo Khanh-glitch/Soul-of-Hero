@@ -35,7 +35,7 @@ export default function Title({ gs, onContinue, onStart, note, summary, clearSum
   const s = useScale(); const [mode, setMode] = useState<'menu' | 'select' | 'history'>('menu'); const [hero, setHero] = useState<'male' | 'female'>('female'); const [region, setRegion] = useState<number | null>(null); const [layout, setLayout] = useState(getActiveLayout());
   const chooseLayout = (id: string) => { if (setActiveLayout(id)) { resetRenderCaches(); setLayout(id); } };
   const starts = getWorld().starts; const pf = gs.profile; const run = gs.run;
-  const REG = ['Meadow Bay — sheltered western inlet, farm fields, river; close to the Crossroads.', "Fisher's Point — warm south beaches, palms, crabs and wrecks; the lighthouse spit nearby.", 'Pinewatch — cool pine woods under the ridge; the pass watchtower and northern frost beyond.', 'Eastcove — salvage coast by the Dead Foundry; scrap-rich, wood-poor, harbor road north.'];
+  const isVeyra = !!getWorld().veyra; const REG = ['Meadow Bay — sheltered western inlet, farm fields, river; close to the Crossroads.', "Fisher's Point — warm south beaches, palms, crabs and wrecks; the lighthouse spit nearby.", 'Pinewatch — cool pine woods under the ridge; the pass watchtower and northern frost beyond.', 'Eastcove — salvage coast by the Dead Foundry; scrap-rich, wood-poor, harbor road north.'];
   const click = () => { initAudio(); sfx({ type: 'ui' }); };
   return <div style={{ position: 'fixed', inset: 0, background: '#05040a' }}>
     <div className="stage" style={{ transform: `translate(${s.x}px, ${s.y}px) scale(${s.k})` }}>
@@ -59,18 +59,18 @@ export default function Title({ gs, onContinue, onStart, note, summary, clearSum
           {note && <div style={{ fontSize: 10, color: '#ffb08a', maxWidth: 380, textAlign: 'center' }}>{note}</div>}
           <div style={{ fontSize: 9, color: '#7a6a8a', position: 'absolute', top: 186 }}>Offline · single-player · saves locally in this browser (LOCAL/UNVERIFIED)</div>
         </div>}
-        {mode === 'select' && <div className="panel absolute fadein" style={{ left: 90, top: 88, width: 460, padding: 8 }}>
+        {mode === 'select' && <div className="panel absolute fadein" style={{ left: 90, top: 48, width: 460, padding: 8 }}>
           <div className="panel-h" style={{ marginBottom: 4 }}>Choose your Adventurer</div>
           <div className="flex gap-2">{(['female', 'male'] as const).map(h => <button key={h} className={`btn ${hero === h ? 'gold' : 'ghost'}`} style={{ flex: 1, padding: 4, textAlign: 'left' }} onClick={() => { click(); setHero(h); }}>
             <div className="flex items-center gap-2"><HeroPreview female={h === 'female'} active={hero === h} /><div style={{ fontSize: 11, lineHeight: 1.15 }}><div className="title-font" style={{ fontSize: 13 }}>{h === 'female' ? 'Adventurer ♀' : 'Adventurer ♂'}</div><div>Survival knife, a half-full flask, a few berries. No Core, no map, no orders.</div></div></div></button>)}</div>
           <div style={{ fontSize: 11, marginTop: 5, color: '#ffd98a' }}>Map layout</div>
-          <div className="flex gap-1" style={{ marginTop: 2 }}>
+          <div className="flex flex-wrap gap-1" style={{ marginTop: 2 }}>
             {listLayouts().map(m => <button key={m.id} data-testid={`layout-${m.id.replace('_','-')}`} className={`btn ${layout === m.id ? 'gold' : 'ghost'}`} onClick={() => { chooseLayout(m.id); setRegion(null); }}>{m.title}</button>)}
           </div>
           <div style={{ fontSize: 9, color: '#cfc2dc', marginTop: 1 }}>{listLayouts().find(m => m.id === layout)?.description}{mapPackageErrors().length > 0 && ` · ${mapPackageErrors().length} invalid map package(s): ${mapPackageErrors().join('; ')}`}</div>
           <div style={{ fontSize: 11, marginTop: 4, color: '#ffd98a' }}>Landing</div>
-          <div className="flex flex-wrap gap-1" style={{ marginTop: 2 }}><button className={`btn ${region === null ? 'gold' : 'ghost'}`} onClick={() => setRegion(null)}>Random safe shore (canon)</button>{starts.map((st, i) => <button key={st.id} className={`btn ${region === i ? 'gold' : 'ghost'}`} title={layout === 'shipping' || layout === 'dev_delta' ? REG[i] : st.name} onClick={() => setRegion(i)}>{st.name}</button>)}</div>
-          <div style={{ fontSize: 10, color: '#cfc2dc', minHeight: 24, marginTop: 2 }}>{region === null ? 'You wash up at a randomly selected authored landing.' : (layout === 'shipping' || layout === 'dev_delta' ? REG[region] : starts[region]?.name) + ' (choosing a landing is a PROPOSED convenience)'}</div>
+          <div className="flex flex-wrap gap-1" style={{ marginTop: 2 }}><button className={`btn ${region === null ? 'gold' : 'ghost'}`} onClick={() => setRegion(null)}>Seeded safe region</button>{!isVeyra && starts.map((st, i) => <button key={st.id} className={`btn ${region === i ? 'gold' : 'ghost'}`} title={layout === 'shipping' || layout === 'dev_delta' ? REG[i] : st.name} onClick={() => setRegion(i)}>{st.name}</button>)}</div>
+          <div style={{ fontSize: 10, color: '#cfc2dc', minHeight: 24, marginTop: 2 }}>{region === null ? (isVeyra ? 'Seeded legal location in this bounded Veyra region. No starter shelter.' : 'You wash up at a randomly selected authored landing.') : (layout === 'shipping' || layout === 'dev_delta' ? REG[region] : starts[region]?.name) + ' (choosing a landing is a PROPOSED convenience)'}</div>
           <div className="flex justify-between items-center" style={{ marginTop: 4 }}><button className="btn ghost" onClick={() => setMode('menu')}>Back</button><button className="btn gold" style={{ fontSize: 16, padding: '4px 16px' }} onClick={() => { click(); onStart(hero, region); }}>Begin the 14 days</button></div>
         </div>}
         {mode === 'history' && <div className="panel absolute fadein" style={{ left: 100, top: 96, width: 440, padding: 8 }}>

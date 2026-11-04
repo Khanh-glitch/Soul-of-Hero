@@ -20,7 +20,7 @@ export function mapDigest(w:World):string {
   const cached=digestCache.get(w);if(cached)return cached;const e=w.economyMap;
   const result=hashText(JSON.stringify({id:e.id,revision:e.revision,seed:e.seed,width:e.width,height:e.height,tileSize:e.tileSize,
     tiles:Array.from(w.tiles),fresh:Array.from(w.fresh),zone:Array.from(w.zone),seaDist:Array.from(w.seaDist),legacySources:Array.from(w.src),legacyOverlay:Array.from(w.sourceOverlayV2),
-    buildings:w.buildings,statics:w.statics,places:w.places, starts:w.starts,elders:w.elders,
+    buildings:w.buildings,statics:w.statics,places:w.places, starts:w.starts,elders:w.elders, ...(w.veyra ? {veyra:w.veyra} : {}),
     biome:Array.from(e.biome),elevation:Array.from(e.elevation),slope:Array.from(e.slope),moisture:Array.from(e.moisture),temperature:Array.from(e.temperature),
     freshwater:Array.from(e.freshwater),coast:Array.from(e.coast),walkable:Array.from(e.walkable),buildable:Array.from(e.buildable),cargoPassable:Array.from(e.cargoPassable),road:Array.from(e.road),protected:Array.from(e.protected),industrial:Array.from(e.industrial),sourceV3:w.sourceV3,contract:w.packageContract}));digestCache.set(w,result);return result;
 }

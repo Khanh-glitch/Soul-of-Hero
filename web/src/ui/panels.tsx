@@ -243,7 +243,7 @@ export function MapPanel({ api }: { api: Api }) {
     const p = r.player; dot(p.x / 16, p.y / 16, Math.floor(Date.now() / 300) % 2 ? '#ffffff' : '#ff4a8a', 3);
   });
   const p = r.player; const h = runHours(r, api.now());
-  return <Panel title={`Map of the island — ${ZONES[w.zone[Math.floor(p.y / 16) * WW + Math.floor(p.x / 16)]]}`} style={{ left: 120, top: 26, width: 400 }} onClose={() => api.open(null)}>
+  return <Panel title={`${w.veyra ? 'Map · bounded view' : 'Map of the island'} — ${(w.zoneNames || ZONES)[w.zone[Math.floor(p.y / 16) * WW + Math.floor(p.x / 16)]]}`} style={{ left: 120, top: 26, width: 400 }} onClose={() => api.open(null)}>
     <div className="flex gap-2"><canvas ref={ref} width={200} height={200} style={{ width: 260, height: 260, border: '1px solid #3a2e46' }} />
       <div style={{ fontSize: 10, lineHeight: 1.15, width: 125 }}>
         <div style={{ color: '#ffd98a' }}>Discovered</div>{w.places.filter(pl => r.poiSeen.includes(pl.id)).map(pl => <div key={pl.id} style={{ color: pl.kind === 'elder' ? '#ff8a7a' : pl.kind === 'evac' ? '#5af0ff' : '#e0d0b0' }}>• {pl.name}</div>)}

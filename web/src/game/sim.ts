@@ -36,7 +36,7 @@ function solidFor(r: RunState, x: number, y: number, who: 'player' | 'creature' 
   // Authored cargo constraints are additional to live collision, not a
   // substitute for opening a physical door or clearing a physical object.
   const w = getWorld(); const i=ty*WW+tx;
-  if (who === 'cart' && w.packageContract && !w.economyMap.cargoPassable[i] && !w.statics.some(s=>s.kind==='door' && s.tx===tx && s.ty===ty)) return true;
+  if (who === 'cart' && (w.packageContract || w.enforceMasks) && !w.economyMap.cargoPassable[i] && !w.statics.some(s=>s.kind==='door' && s.tx===tx && s.ty===ty)) return true;
   if (b === 4) return who === 'cart' || (who === 'creature' && false);
   return b === 1 || b === 2 || b === 3 || b === 5;
 }
@@ -784,7 +784,7 @@ function discover(gs: GameState, now: number) {
   const r = gs.run!; const p = r.player; const w = getWorld(); if (!r.discovered.length) r.discovered = Array(2500).fill(0);
   const cx = tileOf(p.x) >> 2, cy = tileOf(p.y) >> 2; for (let y = cy - 4; y <= cy + 4; y++) for (let x = cx - 5; x <= cx + 5; x++) if (x >= 0 && y >= 0 && x < 50 && y < 50) r.discovered[y * 50 + x] = 1;
   const zi = w.zone[tileOf(p.y) * WW + tileOf(p.x)]; const ZN = ['Heartland', 'Meadow Bay', "Fisher's Point", 'Pinewatch', 'Eastcove', 'Frostcrown Peaks', 'Caldera Wastes', 'Dead Foundry', 'Drowned Fen', 'Oldgrowth', 'Lighthouse Spit', 'Harbor Reach', 'Serpent Strand', 'Wreck Coast', 'Old Mill', 'The Sea'];
-  if (ZN[zi] !== p.regionName) { p.regionName = ZN[zi]; fx('region', { name: ZN[zi] }); }
+  const regionName=(w.zoneNames || ZN)[zi]; if (regionName !== p.regionName) { p.regionName = regionName; fx('region', { name: regionName }); }
   for (const pl of w.places) if (!r.poiSeen.includes(pl.id) && Math.hypot(pl.tx * TILE - p.x, pl.ty * TILE - p.y) < 13 * TILE) { r.poiSeen.push(pl.id); pushLog(r, now, `Discovered: ${pl.name}`, 'gold'); fx('discover', { name: pl.name }); }
   // stones
   r.elderStones = []; for (const s of C(r, 'inv').slots) if (s && s.key.startsWith('stone_')) r.elderStones.push(s.key);

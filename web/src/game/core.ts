@@ -121,7 +121,8 @@ export interface RunState {
   /** Run-pinned additive source overlay; absent legacy runs keep v1 placements. */
   sourceLayoutVersion?: 2 | 3;
   /** Source map identity is mandatory for v3; older runs retain their own layout. */
-  sourceMap?: { id: string; revision: number; seed: number; rules: 3; digest: string; mapDigest?: string };
+  sourceMap?: { id: string; revision: number; seed: number; rules: 3; digest: string; mapDigest?: string; veyra?: {sourceCommit:string;sourceDigest:string;originAu:[number,number];unitsPerTile:1.6|2;frameAu:[number,number];projection:'cell-centre-v1'} };
+  spawnChoice?: { x:number; y:number; contract:'seeded-geographic-v1' };
   spawnRegion: number; ended: null | string;
   player: Player; creatures: Creature[];
   sources: Record<number, { stock: number; hp: number; regrowAt?: number; burnt?: boolean; fire?: number; fireSpreadAt?: number; fireDepth?: number }>; // K3 deltas over base world
