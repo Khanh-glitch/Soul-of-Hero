@@ -147,7 +147,16 @@ await page.mouse.move(632, 350); await page.mouse.down(); await page.waitForTime
 report.pixelfx = await page.evaluate(() => ({ charge: window.__soh.run.custody.inv.slots[0].charge, fx: window.__pfx.getStats().instances, mode: window.__presenter.mode }));
 await page.screenshot({ path: `${OUT}/pixelfx-cast.png` });
 
+report.glGate = await page.evaluate(() => {
+  const pr = window.__presenter;
+  return { glError: pr.lastGlError, firstGlError: pr.firstGlError ?? null, errHistory: (pr.glErrHistory ?? []).slice(0, 32) };
+});
 writeFileSync(`${OUT}/report.json`, JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report, null, 2));
 await b.close(); srv.close();
+// GL ERROR GATE (CT 6624135398): fail unless the real WebGL2 path records glError=0
+if (report.glGate.glError !== 0 || (report.glGate.firstGlError && report.glGate.firstGlError.code !== 0)) {
+  console.log('GL ERROR GATE FAILED:', JSON.stringify(report.glGate));
+  process.exit(3);
+}
 process.exit(errors.length ? 1 : 0);

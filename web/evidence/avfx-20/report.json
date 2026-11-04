@@ -188,8 +188,10 @@
     "worldUploads": 0,
     "layerUploads": 0,
     "gpuPasses": 0,
-    "postCalls": 5355,
+    "postCalls": 5600,
     "glError": 0,
+    "firstGlError": null,
+    "errHistory": [],
     "fbo": ""
   }
 }

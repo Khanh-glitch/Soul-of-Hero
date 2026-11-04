@@ -173,9 +173,15 @@ report.playback = await page.evaluate(async () => {
 });
 report.metrics = await page.evaluate(() => {
   const pr = window.__presenter;
-  return { mode: pr.mode, worldUploads: pr.worldUploads, layerUploads: pr.layerUploads, gpuPasses: pr.gpuPasses, postCalls: pr.postCalls, glError: pr.lastGlError, fbo: pr.fboStatus };
+  return { mode: pr.mode, worldUploads: pr.worldUploads, layerUploads: pr.layerUploads, gpuPasses: pr.gpuPasses, postCalls: pr.postCalls, glError: pr.lastGlError, firstGlError: pr.firstGlError ?? null, errHistory: (pr.glErrHistory ?? []).slice(0, 32), fbo: pr.fboStatus };
 });
 writeFileSync(`${OUT}/report.json`, JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report, null, 2));
 await b.close(); srv.close();
+// GL ERROR GATE (CT 6624135398): a real WebGL2 active-frame run must record zero
+// GL errors — green tests alone do not prove an error-free GPU frame graph.
+if (report.metrics.glError !== 0 || (report.metrics.firstGlError && report.metrics.firstGlError.code !== 0)) {
+  console.log('GL ERROR GATE FAILED:', JSON.stringify({ glError: report.metrics.glError, firstGlError: report.metrics.firstGlError, errHistory: report.metrics.errHistory }));
+  process.exit(3);
+}
 process.exit(errors.length ? 1 : 0);

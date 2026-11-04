@@ -168,3 +168,22 @@ QA gallery incl. #09 fusion/OUT/recast, B#02 day/night, #11 3-phase lead/fusion,
   reality-ripper-20 artifacts at the pushed SHA (see PR #39).
 - Art status unchanged: 6 redesigns + 5 fusions = **CANDIDATE_AWAITING_CREATOR_REVIEW**.
   PR #39 unmerged; PR #38 owns gameplay; technical pass only.
+
+## GL 1282 minimal root-cause fix (CT decision 6624135398, RCA comment 6624082177)
+- **Fix (one seam, both frame modes):** in `present()` the frame branch now binds the
+  integer sampler `infl` to a valid R8UI texture (`inflFrameTex`, unit 2) in BOTH the
+  signed-delta and the legacy path — previously the legacy path left `infl` at unit 0
+  (RGBA8 accumulator), a sampler-type mismatch that made the first legacy frame draw
+  raise GL_INVALID_OPERATION (1282). Inert when `signedDelta=0` (shader never samples).
+- **Instrumentation:** presenter records `firstGlError {code, stage}` + `glErrHistory`
+  via `checkGl(stage)` after world-upload, accum-seed, each layer draw
+  (`layer:<kind>:<i>:signed|legacy`), zero-cast post, final post, and frame uploads.
+  Errors are recorded, never silently consumed.
+- **CI gate:** `qa-avfx-20.mjs` exits 3 unless `glError===0` and `firstGlError` is null
+  (plus existing page-error exit 1); same gate added to `qa-avfx-m1.mjs`. Fallback mode
+  (no GL) records 0/null and still passes.
+- **Validation coverage in qa-avfx-20 (real WebGL2 on CI):** all 20 lead casts (B#02
+  day/night, C leads, A leads, redesigns), #11 lead/study/fusion + motion phases,
+  #09 fusion + OUT + recast, fusions #01/#05/#16, legacy<->signed switching across
+  the gallery loop, zero-cast frames, #20 replay scenes. Unit suite unchanged:
+  175/175, tsc clean, build clean.

@@ -243,6 +243,20 @@ export class Presenter {
   // real per-frame metrics (distinguished by kind)
   postCount = 0; worldUploads = 0; layerUploads = 0; gpuPasses = 0; postCalls = 0; sourceDraws = 0;
   lastGlError = 0; fboStatus = '';
+  /** GL error instrumentation: getError() consumes the error, so every code is
+   *  recorded (never concealed) — firstGlError keeps the FIRST error + stage. */
+  firstGlError: { code: number; stage: string } | null = null;
+  glErrHistory: { code: number; stage: string }[] = [];
+  private checkGl(stage: string): number {
+    const gl = this.gl; if (!gl) return 0;
+    const e = gl.getError();
+    if (e !== 0) {
+      const rec = { code: e, stage };
+      if (this.glErrHistory.length < 64) this.glErrHistory.push(rec);
+      if (!this.firstGlError) this.firstGlError = rec;
+    }
+    return e;
+  }
   private lost = false;
 
   constructor(canvas: HTMLCanvasElement, w: number, h: number) {
@@ -389,6 +403,7 @@ export class Presenter {
     gl.activeTexture(gl.TEXTURE1);
     gl.bindTexture(gl.TEXTURE_2D, this.frameTex);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, data.subarray(0, w * h * 4));
+    this.checkGl('upload-frame');
   }
   frameTexture(): WebGLTexture | null { return (this as any).frameTex ?? null; }
   /** Upload the signed-delta frame contract: RGBA32F delta (active - no-effect baseline
@@ -404,6 +419,7 @@ export class Presenter {
     gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.R8UI, w, h, 0, gl.RED_INTEGER, gl.UNSIGNED_BYTE, infl.subarray(0, w * h));
     gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
+    this.checkGl('upload-frame-delta');
   }
   /** Read back the real SOH world region as RGBA8 — the semantic bridge's base
    *  and sampling source (Phase 2: real world as Frame.base). */
@@ -443,6 +459,7 @@ export class Presenter {
     this.worldUploads++;
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    this.checkGl('world-upload');
 
     gl.disable(gl.BLEND);
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buf);
@@ -487,10 +504,14 @@ export class Presenter {
       gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, this.warpTex);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, 480, 270, 0, gl.RGBA, gl.FLOAT, L.warp); // warp or rift field
       if (L.kind === 'frame') {
+        // The integer sampler `infl` MUST reference a valid R8UI texture in BOTH
+        // frame modes: leaving it at unit 0 (RGBA8 accumulator) is a sampler-type
+        // mismatch and the draw raises GL_INVALID_OPERATION (1282). When
+        // signedDelta=0 the shader never samples `infl`, so this binding is inert.
+        gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, this.inflFrameTex);
+        gl.uniform1i(gl.getUniformLocation(prog, 'infl'), 2);
         if ((L as any).signedDelta) {
           gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, this.deltaTex);
-          gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, this.inflFrameTex);
-          gl.uniform1i(gl.getUniformLocation(prog, 'infl'), 2);
           gl.uniform1f(gl.getUniformLocation(prog, 'signedDelta'), 1);
         } else {
           gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, L.frameTex ?? this.lightTex);
@@ -547,7 +568,7 @@ export class Presenter {
     gl.uniform2f(gl.getUniformLocation(this.progPass, 'size'), this.canvas.width, this.canvas.height);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     this.postCount++; this.postCalls++;
-    this.lastGlError = gl.getError();
+    this.lastGlError = this.checkGl('final-post');
   }
 }
 
