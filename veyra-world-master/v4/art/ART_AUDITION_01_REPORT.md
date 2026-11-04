@@ -1,3 +1,17 @@
+# Independent five-scene visual inspection (04 Nov 2026)
+
+Viewed the actual CI browser screenshots at 1x. **All five LAB outputs REJECTED as game-art improvements over the frozen SOH Web**. They are useful source-compatibility probes, not choices to approve.
+
+- **Forest:** Cainos yellow/olive tree palette, patchy empty ground, weaker canopy masses, path texture and focal placement than Web. Preserve Web baseline.
+- **Snow:** white floor, un-snowed olive trees, no elevation/cliff, snow-on-roof/stone/vegetation or settlement identity. No qualified snow kit exists in inspected inventory.
+- **Arid:** huge uniform blocks, sparse tiny crops, no convincing dryness, route, POI landmarks or safe resource affordance. CraftPix Island whole-kit style clashes with Web.
+- **Deadly and geothermal seas:** flat tinted water lacks SOH Web wave movement and shoreline hierarchy; an arbitrary demonstrative sea bridge was found and removed (no authored bridge at that location).
+- **Argus architecture:** prototype building props show vocabulary, but random scattered structures are not modular authored architecture; Great Lens comparator is itself a non-native Lab with one AI-derived hero prop.
+
+**No winning tileset and no production art approval.** Source triage result: keep SOH forest/terrain/waves, selectively audition physically-scaled compatible props only, prioritize making a real custom 16px winter/transition kit and a quality-controlled arid family. Independent native same-camera Gameplay capture is next acceptance gate. The revision also changes forest sample to 1100×650 AU (no unintended snow) and removes decorative quality-percent metrics.
+
+---
+
 # WMP-04 ART AUDITION 01 — source triage and 640×360 comparative lab
 
 **Status:** `ART_R_AND_D__NOT_NATIVE__NOT_PRODUCTION_APPROVED`.
