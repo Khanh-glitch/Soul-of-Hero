@@ -80,7 +80,7 @@ export interface Creature {
 }
 
 export interface Entity {
-  id: string; kind: 'drop' | 'struct' | 'bag' | 'cart' | 'loot' | 'cash' | 'vendor' | 'evac' | 'door' | 'gen';
+  id: string; kind: 'drop' | 'struct' | 'bag' | 'cart' | 'loot' | 'cash' | 'vendor' | 'evac' | 'door' | 'gen' | 'recycler';
   x: number; y: number; // px for drops/carts, tile*16+8 for structures
   tx?: number; ty?: number; type?: string; hp?: number; maxHp?: number;
   c?: string; // container id

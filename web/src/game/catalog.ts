@@ -25,6 +25,7 @@ export interface ItemDef {
 const I = (d: ItemDef) => d;
 export const ITEMS: Record<string, ItemDef> = {
   // All lifecycle and upgrade costs are provisional TUNABLE values.
+  damaged_drive: I({ name: 'Damaged Drive', cat: 'res', icon: 'parts', c1: '#4b6570', c2: '#f0bd56', w: 3, max: 1, desc: 'Finite wreck salvage. At a workbench: 1 drive + 1 scrap → 1 Mechanical Parts. Or carry to the Foundry Recycler: 1 drive → 2 Spares. The same drive is spent either way.' }),
   mechanical_parts: I({ name: 'Mechanical Parts', cat: 'res', icon: 'parts', c1: '#707984', c2: '#c9d2d8', w: 0.5, max: 30, desc: 'Found in industrial wrecks or made at a bench. Improve tools or maintain equipment.' }),
   // Provisional, run-local cross-system materials and equipment.
   fasteners: I({ name: 'Forged Fasteners', cat: 'res', icon: 'fasteners', c1: '#85939b', c2: '#e4cd88', w: 0.2, max: 30, desc: 'Found on wrecks or made from iron and scrap. Used for field repairs, packs and canteens.', studyRecipe: 'fasteners' }),
@@ -139,7 +140,7 @@ export const SOURCES: Record<string, SourceDef> = {
   herb: { name: 'Bitterleaf', mat: 'plant', hp: 3, stock: 2, yields: [['herb', 1]], block: false, regrow: 600, art: 'herb' },
   mushroom: { name: 'Marsh Caps', mat: 'plant', hp: 3, stock: 2, yields: [['mushroom', 1]], block: false, regrow: 600, art: 'mush' },
   scrap: { name: 'Roadside Scrap', mat: 'scrap', hp: 8, stock: 4, yields: [['scrap', 1]], bonus: [['spares', 0.55]], block: false, art: 'scrap' },
-  wreck: { name: 'Car Wreck', mat: 'scrap', hp: 30, stock: 8, yields: [['scrap', 1]], bonus: [['spares', 0.7], ['fuel_can', 0.06], ['mechanical_parts', 0.08], ['fasteners', 0.12], ['field_repair_kit', 0.04]], block: true, art: 'wreck' },
+  wreck: { name: 'Car Wreck', mat: 'scrap', hp: 30, stock: 8, yields: [['scrap', 1]], bonus: [['spares', 0.3], ['damaged_drive', 0.2], ['fuel_can', 0.06], ['mechanical_parts', 0.08], ['fasteners', 0.12], ['field_repair_kit', 0.04]], block: true, art: 'wreck' },
 };
 
 // ---------- Creatures (K5) ----------
@@ -178,6 +179,7 @@ export const RECIPES: Record<string, Recipe> = {
   trail_canteen: { out: 'trail_canteen', qty: 1, ins: [['treated_canvas', 2], ['leather', 1], ['glass', 1], ['fasteners', 1]], station: 'workbench', stationLevel: 2, secs: 20, tier: 2 },
   fuel_briquette: { out: 'fuel_briquette', qty: 1, ins: [['charcoal', 2], ['fiber', 1]], station: 'workbench', stationLevel: 2, secs: 10, tier: 2 },
   fuel_can: { out: 'fuel_can', qty: 1, ins: [['charcoal', 1], ['sulfur', 1], ['glass', 1]], station: 'workbench', stationLevel: 2, secs: 20, tier: 2 },
+  recover_drive: { out: 'mechanical_parts', qty: 1, ins: [['damaged_drive', 1], ['scrap', 1]], station: 'workbench', secs: 12, base: true, tier: 1 },
   mechanical_parts: { out: 'mechanical_parts', qty: 2, ins: [['scrap', 2], ['iron_ingot', 1]], station: 'workbench', secs: 12, base: true, tier: 1 },
   industrial_pick: { out: 'industrial_pick', qty: 1, ins: [['iron_pick', 1], ['mechanical_parts', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 25, tier: 2 },
   industrial_axe: { out: 'industrial_axe', qty: 1, ins: [['iron_axe', 1], ['mechanical_parts', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 25, tier: 2 },

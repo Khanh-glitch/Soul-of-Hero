@@ -3,7 +3,7 @@
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
 import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel } from './catalog';
-import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt } from './world';
+import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, webRecyclerSite } from './world';
 import { sourceDigest } from './world-economy';
 import { mapDigest } from './map-package';
 
@@ -106,6 +106,10 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
     if (s.kind === 'gen') e.power = 0;
     r.entities[e.id] = e;
   }
+  // Provisional public machine in the existing Web Foundry. No Map/Veyra
+  // placement is inferred; old runs without this adapter remain unchanged.
+  const site=webRecyclerSite(w,getActiveLayout());
+  if(site){const e:Entity={id:uid(r,'e'),kind:'recycler',x:site.tx*TILE+8,y:site.ty*TILE+8,tx:site.tx,ty:site.ty,poi:'factory',label:'Foundry Recycler',station:{queue:[],burn:0,fuelC:mkContainer(r,'fuel',0).id,outC:mkContainer(r,'out',4).id}};r.entities[e.id]=e;}
   // creatures (deterministic per run seed) + elders
   for (let k = 0; k < 900 && r.creatures.length < 150; k++) trySpawnCreature(r, now, sp.tx * TILE, sp.ty * TILE, 16);
   for (const p of w.elders) {
@@ -181,7 +185,7 @@ export function blockGrid(r: RunState) {
     if (e.tx === undefined) continue; const i = e.ty! * WW + e.tx;
     if (e.kind === 'struct') { const d = STRUCTS[e.type!]; if (d.block && !(e.type!.startsWith('door') && e.open)) arr[i] = 3; }
     else if (e.kind === 'door') { if (!e.open) arr[i] = 3; }
-    else if (e.kind === 'loot' || e.kind === 'cash' || e.kind === 'vendor' || e.kind === 'gen' || e.kind === 'evac') arr[i] = 3;
+    else if (e.kind === 'loot' || e.kind === 'cash' || e.kind === 'vendor' || e.kind === 'gen' || e.kind === 'evac' || e.kind === 'recycler') arr[i] = 3;
   }
   blockCache = { run: r.id, layout, sourceVersion: r.sourceLayoutVersion ?? 1, arr }; blockDirty = false; return arr;
 }
@@ -360,7 +364,7 @@ export function harvestHit(gs: GameState, tx: number, ty: number, power: Partial
   const ox = (fromX - cx) * 0.3, oy = (fromY - cy) * 0.3;
   for (let u = 0; u < units; u++) {
     st.stock--; for (const [k, q] of s.def.yields) { spawnDrop(r, k, q, cx + ox, cy + oy, now); got += q; }
-    for (const [k, ch] of s.def.bonus || []) if (rngNext(r) < ch) spawnDrop(r, k, 1, cx + ox, cy + oy, now);
+    for (const [k, ch] of s.def.bonus || []) if (rngNext(r) < ch) { const drop=spawnDrop(r, k, 1, cx + ox, cy + oy, now); if(k==='damaged_drive')receipt(r,now,'harvest.component',`${s.key}@${tx},${ty}:${C(r,drop.c!).slots[0]!.uid}`); }
   }
   r.player.skills.gather += units;
   const depleted = st.stock <= 0;
@@ -679,7 +683,8 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
     }
     case 'useItem': return useItem(gs, r, it, now, ok);
     case 'craft': return craft(gs, r, it, now, ok);
-    case 'cancelJob': { const e = r.entities[it.eid]; if (!e?.station || e.kind !== 'struct' || !owned(e) || !near(r, e, 3)) return fail('Not here.'); const j = e.station.queue.findIndex(q => q.id === it.jobId); if (j < 0) return fail('No such job.');
+    case 'recycleDrive': { const e=r.entities[it.eid]; if(!e||e.kind!=='recycler'||!e.station||!near(r,e,2.8)||!clearInteraction(r,e))return fail('Stand at the Foundry Recycler with a clear path.'); const inv=C(r,'inv');if(!validSlot(inv,it.slot))return fail('Choose a carried Damaged Drive.');const s=inv.slots[it.slot];if(!s||s.key!=='damaged_drive'||s.uid!==it.uid||s.qty!==1)return fail('That Damaged Drive is no longer carried.');if(p.action?.slot===it.slot)return fail('Finish your current action.');if(e.station.queue.length>=1)return fail('Recycler is already processing a drive.');if(spaceFor(r,e.station.outC,'spares')<2)return fail('Recycler output full; collect it first.');inv.slots[it.slot]=null;e.station.queue.push({id:uid(r,'j'),recipe:'X:drive',left:12000,total:12000,reserved:[s]});return ok('recycle.start',`${s.uid}@${e.id}`,'Recycling Damaged Drive: 12 seconds; output will be 2 Spares.'); }
+    case 'cancelJob': { const e = r.entities[it.eid]; if (!e?.station || !((e.kind === 'struct' && owned(e)) || (e.kind === 'recycler' && clearInteraction(r,e))) || !near(r, e, e.kind==='recycler'?2.8:3)) return fail('Not here.'); const j = e.station.queue.findIndex(q => q.id === it.jobId); if (j < 0) return fail('No such job.');
       const job = e.station.queue[j]; if (!job.reserved) return fail('Legacy job has no recoverable input record; let it finish.');
       e.station.queue.splice(j, 1); returnReservations(r, job.reserved, p.x, p.y, now); return ok('job.cancel', job.recipe, 'Reserved inputs returned to inventory or dropped nearby.'); }
     case 'recoverLegacyJobs': {
@@ -892,7 +897,7 @@ function accepts(c: Container, slot: number, s: Stack) {
 }
 function canAccess(r: RunState, cid: string) {
   if (cid === 'inv' || cid === 'eq') return true;
-  for (const e of Object.values(r.entities)) if ((e.c === cid || e.station?.fuelC === cid || e.station?.outC === cid) && owned(e)) return dist(r.player.x, r.player.y, e.x, e.y) <= 2.8 * TILE && clearWallLine(r,r.player,e);
+  for (const e of Object.values(r.entities)) if ((e.c === cid || e.station?.fuelC === cid || e.station?.outC === cid) && (owned(e) || e.kind==='recycler')) return dist(r.player.x, r.player.y, e.x, e.y) <= 2.8 * TILE && (e.kind==='recycler'?clearInteraction(r,e):clearWallLine(r,r.player,e));
   return false;
 }
 export function homeComplete(r: RunState) {
@@ -920,7 +925,7 @@ function stationNear(r: RunState, kind: string, eid?: string) {
 }
 function craft(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: string, d: string, m?: string) => Result): Result {
   if (typeof it.recipe !== 'string' || !Object.prototype.hasOwnProperty.call(RECIPES, it.recipe)) return fail('Unknown recipe.'); const rc = RECIPES[it.recipe];
-  if (!r.knowledge.recipes.includes(it.recipe)) return fail('You have not learned this recipe.');
+  if (!r.knowledge.recipes.includes(it.recipe) && it.recipe !== 'recover_drive') return fail('You have not learned this recipe.');
   const ins = rc.ins.filter(([, q]) => q > 0);
   const activeAction = r.player.action; const activeInput = activeAction?.slot !== undefined && activeAction.slot >= 0 ? C(r, 'inv').slots[activeAction.slot] : null;
   if (activeInput && ins.some(([key]) => key === activeInput.key)) return fail('Finish using that item before crafting.');
@@ -978,7 +983,7 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
   const r = gs.run!;
   const note = (message: string) => { if (report && !report.includes(message)) report.push(message); };
   for (const e of Object.values(r.entities)) {
-    const st = e.station; if (!st) continue; const kind = STRUCTS[e.type!].station!;
+    const st = e.station; if (!st) continue; const kind = e.kind==='recycler'?'recycler':STRUCTS[e.type!].station!;
     const needsFuel = kind === 'campfire' || kind === 'furnace';
     let t = dtMs, blocked = false;
     while (t > 0 || (!blocked && !!st.queue[0] && st.queue[0].left <= 0)) {
@@ -986,7 +991,10 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
       // A finished job is committed at its event time without requiring extra work or fuel.
       if (job && job.left <= 0) {
         const at = now - t;
-        if (job.recipe.startsWith('R:')) {
+        if (job.recipe==='X:drive') {
+          if (e.kind!=='recycler' || spaceFor(r,st.outC,'spares')<2) { blocked=true; note('Recycler: output full.'); continue; }
+          addItem(r,st.outC,'spares',2); note('Recycler finished: 2 Spares in output.');
+        } else if (job.recipe.startsWith('R:')) {
           const k = job.recipe.slice(2);
           if (addItem(r, st.outC, 'blueprint', 1, { meta: k }) > 0) { blocked = true; note('Research table: output slots full.'); continue; }
           note(`Research table: blueprint for ${ITEMS[RECIPES[k].out].name} is ready.`); award(gs, 'first_research', at);

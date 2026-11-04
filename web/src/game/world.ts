@@ -85,6 +85,15 @@ export function getWorld(layout: string = activeLayout): World {
   return world;
 }
 
+/** Temporary Web adapter at the existing shipping Foundry; not a Veyra Map placement. */
+export function webRecyclerSite(w:World,layout:string):{tx:number;ty:number}|null {
+  if(layout!=='shipping_fresh' && layout!=='dev_delta_fresh')return null;
+  const foundry=w.places.find(p=>p.id==='factory');if(!foundry)return null;
+  const tx=foundry.tx-5,ty=foundry.ty+3,i=ty*WW+tx;
+  if(w.tiles[i]!==T.FLOOR||w.sourceV3[i]||w.statics.some(s=>s.tx===tx&&s.ty===ty))return null;
+  return {tx,ty};
+}
+
 function genWorld(layoutId: LayoutId, freshSpawn = false): World {
   const pack = MAP_CONTENT_PACKS[layoutId];
   const packErrors = validateContentPack(pack);

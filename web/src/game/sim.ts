@@ -692,7 +692,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     const nextWeather = r.startedAt - r.qaOffset + (slot + 1) * slotMs;
     let dt = Math.min(end - t, nextWeather - t);
     for (const e of Object.values(r.entities)) {
-      const st = e.station; if (!st) continue; const kind = STRUCTS[e.type!].station; const job = st.queue[0];
+      const st = e.station; if (!st) continue; const kind = e.kind==='recycler'?'recycler':STRUCTS[e.type!].station; const job = st.queue[0];
       const fuelled = kind === 'campfire' || kind === 'furnace';
       if (kind === 'furnace' && (!job || job.left <= 0)) continue;
       if (!job && kind !== 'campfire') continue;
@@ -900,6 +900,7 @@ export function findInteract(gs: GameState, now: number): Interact | null {
     else if (e.kind === 'cash') label = isRagnarok(r, now) ? (e.minted ? 'Ragnarok chest' : 'Break the Ragnarok seal') : 'Sealed Ragnarok chest';
     else if (e.kind === 'vendor') label = `Trade with ${e.label}`;
     else if (e.kind === 'door') label = e.locked ? `${e.label} (${e.locked === 'keycard' ? 'keycard' : 'no power'})` : e.open ? 'Close door' : 'Open door';
+    else if (e.kind === 'recycler') label = 'Use Foundry Recycler';
     else if (e.kind === 'gen') label = e.power ? 'Generator (running)' : 'Fuel generator';
     else if (e.kind === 'evac') label = 'Evacuation beacon';
     else if (e.kind === 'cart') label = 'Cart cargo  [F] pull';

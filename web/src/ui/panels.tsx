@@ -63,9 +63,9 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
   const [inventoryOnly, setInventoryOnly] = useState(false); useEffect(()=>setInventoryOnly(false),[eid]);
   const r = api.gs.run!; const e = r.entities[eid]; if (!e) return null;
   const st = e.station; const kind = e.type ? STRUCTS[e.type]?.station : null;
-  const title = e.kind === 'bag' ? (e.label || 'Bag') : e.kind === 'loot' ? 'Crate' : e.kind === 'cash' ? 'Ragnarok Chest' : e.kind === 'cart' ? 'Cart Cargo' : STRUCTS[e.type!]?.name || 'Storage';
+  const title = e.kind === 'recycler' ? 'Foundry Recycler' : e.kind === 'bag' ? (e.label || 'Bag') : e.kind === 'loot' ? 'Crate' : e.kind === 'cash' ? 'Ragnarok Chest' : e.kind === 'cart' ? 'Cart Cargo' : STRUCTS[e.type!]?.name || 'Storage';
   const takeAll = (cid: string) => { const c = C(r, cid); for (let i = 0; i < c.slots.length; i++) if (c.slots[i]) { const res = api.act('move', { from: cid, fs: i, to: 'inv' }); if (!res.ok) break; } };
-  const quickTo = st ? (kind === 'research' ? undefined : st.fuelC) : e.c;
+  const quickTo = st ? (kind === 'research' || e.kind === 'recycler' ? undefined : st.fuelC) : e.c;
   const compact = !!e.farm || !!e.garden || !!e.basePower || !!e.turret;
   if (compact && inventoryOnly) return <InventoryPanel api={api} quickTo={quickTo} x={168} top={54} backToContainer onClose={()=>{api.setSel(null);setInventoryOnly(false);}} />;
   return <>
@@ -103,7 +103,8 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
         </div>}
         {e.legacyJobs && <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>Legacy jobs were recovered without inventing missing inputs. Resume at a matching nearby station.
           <button className="btn" onClick={() => { const station = Object.values(r.entities).find(o => o.kind === 'struct' && o.type === e.legacyJobs!.stationType && o.station && Math.hypot(o.x - r.player.x, o.y - r.player.y) <= 3 * TILE); if (station) api.act('recoverLegacyJobs', { eid, stationId: station.id }); else api.toast('Stand near a matching station.'); }}>Resume jobs</button></div>}
-        {st && kind !== 'research' && <StationBody api={api} eid={eid} />}
+        {e.kind === 'recycler' && st && <RecyclerBody api={api} eid={eid} />}
+        {st && e.kind !== 'recycler' && kind !== 'research' && <StationBody api={api} eid={eid} />}
         {st && kind === 'research' && <ResearchBody api={api} eid={eid} />}
         {e.kind === 'struct' && <div style={{ marginTop: 6, fontSize: 10, color: '#8a7a9a' }}>HP {Math.round(e.hp!)}/{e.maxHp} <button className="btn ghost" style={{ marginLeft: 6 }} onClick={() => { api.act('reclaim', { eid }); api.open(null); }}>Reclaim</button></div>}
       </div>
@@ -111,9 +112,16 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
     {!compact && <InventoryPanel api={api} quickTo={quickTo} top={54} />}
   </>;
 }
+function RecyclerBody({api,eid}:{api:Api;eid:string}) {
+ const r=api.gs.run!,e=r.entities[eid],st=e.station!,drives=C(r,'inv').slots.map((s,i)=>({s,i})).filter(v=>v.s?.key==='damaged_drive');
+ return <div style={{fontSize:11}}><b style={{color:'#ffd98a'}}>1 Damaged Drive → 2 Spares</b><div>12 seconds · consumes the drive. Or take it to a workbench for Mechanical Parts. No base required here.</div>
+ {st.queue.map(j=><div key={j.id}>Processing · {Math.ceil(j.left/1000)}s <button className="btn ghost" onClick={()=>api.act('cancelJob',{eid,jobId:j.id})}>Cancel &amp; return drive</button></div>)}
+ {!st.queue.length && (drives.length ? drives.map(({s,i})=><button className="btn gold" key={s!.uid} onClick={()=>api.act('recycleDrive',{eid,slot:i,uid:s!.uid})}>Recycle carried drive</button>) : <div>Carry a Damaged Drive from a finite car wreck.</div>)}
+ <div style={{marginTop:5,color:'#ffd98a'}}>Output · collect before it fills</div><Grid api={api} cid={st.outC} cols={4}/><button className="btn" onClick={()=>{for(let i=0;i<C(r,st.outC).slots.length;i++)if(C(r,st.outC).slots[i])api.act('move',{from:st.outC,fs:i,to:'inv'});}}>Take output</button></div>;
+}
 function StationBody({ api, eid }: { api: Api; eid: string }) {
   const r = api.gs.run!; const e = r.entities[eid]; const st = e.station!; const kind = STRUCTS[e.type!].station!;
-  const recipes = Object.entries(RECIPES).filter(([, rc]) => rc.station === kind); const known = recipes.filter(([k]) => r.knowledge.recipes.includes(k));
+  const recipes = Object.entries(RECIPES).filter(([, rc]) => rc.station === kind); const known = recipes.filter(([k]) => r.knowledge.recipes.includes(k) || k === 'recover_drive');
   const fuelled = kind === 'campfire' || kind === 'furnace';
   const level = st.level ?? 1;
   const [confirmSalvage, setConfirmSalvage] = useState<string | null>(null);

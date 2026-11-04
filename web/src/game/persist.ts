@@ -3,7 +3,7 @@
 import { BAL, SAVE_VERSION, type GameState, type Stack } from './core';
 import { ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS } from './catalog';
 import { newGame } from './engine';
-import { getWorld, hasLayout } from './world';
+import { getWorld, hasLayout, webRecyclerSite } from './world';
 import { mapDigest } from './map-package';
 import { sourceDigest } from './world-economy';
 
@@ -80,14 +80,17 @@ export function validate(raw: any): GameState | null {
   const jobIds = new Set<string>();
   const jobs = (queue: any, station: string): boolean => Array.isArray(queue) && queue.every((j: any) => {
     if (!obj(j) || typeof j.id !== 'string' || !j.id || jobIds.has(j.id) || !beforeNext(j.id, /^j([a-z0-9]+)$/) || typeof j.recipe !== 'string') return false;
+    const recycler = j.recipe==='X:drive';
+    if(recycler){if(station!=='recycler'||!finite(j.left)||!finite(j.total)||j.total!==12000||j.left<0||j.left>j.total||!Array.isArray(j.reserved)||j.reserved.length!==1||j.reserved[0]?.key!=='damaged_drive'||j.reserved[0]?.qty!==1||!j.reserved.every(stack))return false;jobIds.add(j.id);return true;}
     const research = j.recipe.startsWith('R:'), recipe = research ? j.recipe.slice(2) : j.recipe;
     if (!has(RECIPES, recipe) || (station === 'research' ? !research : research || RECIPES[recipe].station !== station) || !finite(j.left) || !finite(j.total) || j.total <= 0 || j.left < 0 || j.left > j.total || (j.reserved !== undefined && (!Array.isArray(j.reserved) || !j.reserved.every(stack)))) return false;
     jobIds.add(j.id); return true;
   });
   for (const [id, e] of Object.entries(r.entities) as [string, any][]) {
     if (!obj(e) || e.id !== id || !beforeNext(id, /^(?:cart|[ebd])([a-z0-9]+)$/) || typeof e.kind !== 'string' || !finite(e.x) || !finite(e.y)) return null;
-    if (!['drop','struct','bag','cart','loot','cash','vendor','evac','door','gen'].includes(e.kind)) return null;
+    if (!['drop','struct','bag','cart','loot','cash','vendor','evac','door','gen','recycler'].includes(e.kind)) return null;
     if (e.kind === 'struct' && !has(STRUCTS, e.type)) return null;
+    if(e.kind==='recycler'){const site=webRecyclerSite(world,r.layoutId);if(!site||e.tx!==site.tx||e.ty!==site.ty||e.x!==site.tx*16+8||e.y!==site.ty*16+8||e.poi!=='factory'||e.type!==undefined||!e.station||e.station.queue?.length>1)return null;}
     if (e.deployed !== undefined && (!stack(e.deployed) || e.deployed.qty !== 1 || (e.kind === 'cart' ? e.deployed.key !== 'cart_kit' : e.kind !== 'struct' || STRUCTS[e.type]?.item !== e.deployed.key))) return null;
     if (['drop','bag','cart','loot','cash'].includes(e.kind) && (!e.c || r.custody[e.c]?.kind !== e.kind)) return null;
     if (e.kind === 'cart' && e.deployed?.upgrade === 'freight' && r.custody[e.c].slots.length !== BAL.cart.freightSlots) return null;
@@ -102,9 +105,10 @@ export function validate(raw: any): GameState | null {
     if(e.type==='farm_controller' && !e.farm)return null;
     if (e.station?.upgrade !== undefined && (e.type !== 'furnace' || e.station.upgrade !== 'kiln_lining')) return null;
     if (e.station?.level !== undefined && (e.type !== 'workbench' || ![1, 2].includes(e.station.level))) return null;
-    if (e.station && (!obj(e.station) || !STRUCTS[e.type]?.station || !finite(e.station.burn) || e.station.burn < 0 || r.custody[e.station.fuelC]?.kind !== 'fuel' || r.custody[e.station.outC]?.kind !== 'out' || !jobs(e.station.queue, STRUCTS[e.type].station!))) return null;
+    if (e.station && (!obj(e.station) || !(e.kind==='recycler' || STRUCTS[e.type]?.station) || !finite(e.station.burn) || e.station.burn < 0 || r.custody[e.station.fuelC]?.kind !== 'fuel' || r.custody[e.station.outC]?.kind !== 'out' || !jobs(e.station.queue, e.kind==='recycler'?'recycler':STRUCTS[e.type].station!))) return null;
     if (e.legacyJobs && (e.kind !== 'bag' || !STRUCTS[e.legacyJobs.stationType]?.station || !jobs(e.legacyJobs.queue, STRUCTS[e.legacyJobs.stationType].station!) || e.legacyJobs.queue.some((j: any) => j.reserved !== undefined))) return null;
   }
+  if((Object.values(r.entities) as any[]).filter(e=>e.kind==='recycler').length>1)return null;
   // New identity-pinned runs retain finite, map-authored cash and loot custody.
   // Older runs are not rewritten or guessed: their legacy history is preserved.
   if (r.sourceLayoutVersion === 3 && r.sourceMap?.mapDigest) {
