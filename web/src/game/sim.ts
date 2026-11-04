@@ -734,7 +734,7 @@ function tickSurvival(gs: GameState, dtMs: number, now: number) {
   shelterAcc += dtMs; if (shelterAcc > 400) { shelterAcc = 0; p.sheltered = isSheltered(r, p.x, p.y); }
   p.hunger = Math.max(0, p.hunger - B.hungerDrainPerMin * min);
   p.thirst = Math.max(0, p.thirst - B.thirstDrainPerMin * min * (zone === 6 ? 1.9 : 1));
-  if (p.hunger <= 0 || p.thirst <= 0) { p.hp -= B.starveDamagePerMin * min; if (p.hp <= 0) { killPlayer(gs, now, p.hunger <= 0 ? 'starvation' : 'thirst'); return; } }
+  if ((p.iceUntil||0)<=now && (p.hunger <= 0 || p.thirst <= 0)) { p.hp -= B.starveDamagePerMin * min; if (p.hp <= 0) { killPlayer(gs, now, p.hunger <= 0 ? 'starvation' : 'thirst'); return; } }
   // warmth
   let cold = 0; if (zone === 5 || t === T.SNOW) cold += 9; if (darkness(r, now) > 0.45) cold += 2.5; if (isWet(weather)) cold += 3; if (t === T.SHALLOW || t === T.RIVER) cold += 4;
   let insul = 0; for (const s of C(r, 'eq').slots) if (s) insul += ITEMS[s.key].cold || 0;
@@ -742,11 +742,11 @@ function tickSurvival(gs: GameState, dtMs: number, now: number) {
   const torch = activeStack(r)?.key === 'torch';
   let target = 100 - Math.max(0, cold - insul / 3) * 9; if (fireNear) target = 100; if (p.sheltered) target = Math.max(target, 80); if (torch) target = Math.max(target, Math.min(100, target + 20)); if (zone === 6) target = 100;
   p.warmth += (target - p.warmth) * Math.min(1, min * 1.6);
-  if (p.warmth < 8) { p.hp -= B.coldDamagePerMin * min; if (p.hp <= 0) { killPlayer(gs, now, 'cold'); return; } }
+  if ((p.iceUntil||0)<=now && p.warmth < 8) { p.hp -= B.coldDamagePerMin * min; if (p.hp <= 0) { killPlayer(gs, now, 'cold'); return; } }
   // radiation
   const mask = C(r, 'eq').slots.some(s => s && ITEMS[s.key].mask);
   if (t === T.TOXIC || (zone === 7 && t === T.FLOOR)) p.rad = Math.min(100, p.rad + (mask ? 0.8 : 7) * min); else p.rad = Math.max(0, p.rad - 1.5 * min);
-  if (p.rad > 50) { p.hp -= B.radDamagePerMinOver50 * min * (p.rad / 50); if (p.hp <= 0) { killPlayer(gs, now, 'radiation'); return; } }
+  if ((p.iceUntil||0)<=now && p.rad > 50) { p.hp -= B.radDamagePerMinOver50 * min * (p.rad / 50); if (p.hp <= 0) { killPlayer(gs, now, 'radiation'); return; } }
   // lava heat
   let lava = false; for (let y = ty - 1; y <= ty + 1; y++) for (let x = tx - 1; x <= tx + 1; x++) if (effTile(r, x, y) === T.LAVA) lava = true;
   if (lava && (r.clock.simMs % 700) < dtMs) hurtPlayer(gs, 5, p.x, p.y + 10, 'lava', now, 60);
