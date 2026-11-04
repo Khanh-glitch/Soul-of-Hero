@@ -25,6 +25,19 @@ The CT verdict does **not** start an agent (it says a separate one-shot Arena pr
 required). This corrective round is driven by the user's direct MAP-LR03R instruction,
 not by a PR comment. No other-owner branch was modified; no merge was performed.
 
+### 1b. Concurrent activity observed at final push (same date, later)
+
+| Item | Exact value |
+|---|---|
+| PR #44 head at WMP-02 push | `d73aa63f9f7f98aa1f6c6a42211693c7710cf3c4` (was `8206869f…` at preflight) |
+| New Gameplay commit | `d73aa63f` — "Document M-CORE-03T assisted recovery and partial E04" (45 files, evidence/docs only) |
+| New comment | `6625624576` @ `2026-11-04T07:52:25Z` — M-CORE-03T PARTIAL / DRAFT / HOLD / DO NOT MERGE |
+| Contract check | `git diff --name-only 8206869f..origin/gp44-live` contains **no** `world-economy.ts`, `geography-contract.ts` or `web/src/game` change, so the read-only contract inspection above remains valid |
+| Map relevance | "No Map request, Veyra changes or new Recycler development"; no independent human/statistical balance verdict, no visual acceptance, no merge |
+
+`8206869f…` remains the exact head inspected for the consumer contract; it is **not**
+reported as the current live head.
+
 ## 2. Independent reproduction of the reported evidence
 
 Command (isolated copy, no writes back into v1):

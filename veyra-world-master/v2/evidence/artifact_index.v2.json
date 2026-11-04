@@ -7,7 +7,7 @@
   "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d",
   "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
   "count": 102,
-  "totalBytes": 5825857,
+  "totalBytes": 5827481,
   "excluded": [
     "v2/evidence/artifact_index.v2.json",
     "*.log runtime transcripts"
@@ -67,8 +67,8 @@
     },
     {
       "file": "v2/docs/COMMIT_REFERENCE.md",
-      "bytes": 1568,
-      "sha256": "e0a914660f1bb921ef06ba0ee3f31c49c85835727b3861b43b9d52ec45fb5ec4"
+      "bytes": 1888,
+      "sha256": "299fad620a1be108ba9ad0c72a4feed4992bf523cff930000577660d4ce97137"
     },
     {
       "file": "v2/docs/GATES_V2.json",
@@ -87,13 +87,13 @@
     },
     {
       "file": "v2/docs/MAP_LR03R_DELTA_REPORT.md",
-      "bytes": 17967,
-      "sha256": "6161eaea83f2944be8a9589cbe5a36c583bfe181a1c72e9ae7b3ef09657044ed"
+      "bytes": 18320,
+      "sha256": "b5dde2aaba7893cfafd305750054c1f604048858fe9582ee40c3d229ef1f31e8"
     },
     {
       "file": "v2/docs/PREFLIGHT_AUDIT.md",
-      "bytes": 5409,
-      "sha256": "7de0cb14abb4da30983822ce33ade2a610e0580f55610195e84547f0314615a2"
+      "bytes": 6360,
+      "sha256": "df96cf5eb7853744c788b9f7540212665d2a77c9d4e46fbb9eacb071ae2b1b05"
     },
     {
       "file": "v2/evidence/build_determinism_v2.json",

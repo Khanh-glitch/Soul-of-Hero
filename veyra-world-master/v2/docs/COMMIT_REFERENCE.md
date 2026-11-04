@@ -4,7 +4,8 @@
 |---|---|
 | Parent WMP-01 commit | `d0221688076f823b5e15fe9c1050406928eafbca` |
 | WMP-02 package commit (all corrective work) | `caf6429506bc675d8347e731f3c04b2a71aaa8a8` |
-| WMP-02 metadata commit (this file + the exact-SHA delta report) | recorded in the single PR #44 corrective comment; it is the pushed HEAD of `arena/2e3cfbd2-soul-of-hero` |
+| WMP-02 metadata commit (this file + the exact-SHA delta report) | `9e3c34f3545ba3d0a5d86df4ba466b9dacef0062` |
+| WMP-02 concurrent-activity refresh commit | exact SHA in the single PR #44 corrective comment; it is the pushed HEAD of `arena/2e3cfbd2-soul-of-hero` |
 | Branch | `arena/2e3cfbd2-soul-of-hero` (only branch touched, only branch pushed) |
 | `manifest.v1.json` SHA-256 | `327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e` |
 | v1 `revisionDigest` | `8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f` |
@@ -16,4 +17,7 @@
 | `v2/evidence/views/index_v2.json` SHA | `ae17cc96cd6b5dcef447b24493fa93e8373b1a9866927e8c988bd9616e91b903` |
 | `v2/evidence/artifact_index.v2.json` SHA | recorded in the PR #44 corrective comment (self-excluding index) |
 
-PR #44 remains OPEN / DRAFT / HOLD / NO MERGE. Next-action owner: Gameplay / Creator.
+PR #44 remains OPEN / DRAFT / HOLD / NO MERGE. At WMP-02 push the PR #44 head was
+`d73aa63f9f7f98aa1f6c6a42211693c7710cf3c4` (Gameplay M-CORE-03T evidence-only commit);
+`8206869f627128e700c64a41f8c9ee29912aee84` was the head at contract inspection. No
+contract file changed. Next-action owner: Gameplay / Creator.

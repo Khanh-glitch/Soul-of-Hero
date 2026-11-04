@@ -254,8 +254,9 @@ resolvable physical tasks; **no further Map work is started without a new signal
 | `v2/evidence/views/index_v2.json` SHA | `ae17cc96cd6b5dcef447b24493fa93e8373b1a9866927e8c988bd9616e91b903` |
 | `v2/evidence/artifact_index.v2.json` | self-excluding index of 100 supplementary v2 files (incl. this report); its own final SHA is reported in the PR #44 corrective comment and `v2/docs/COMMIT_REFERENCE.md` |
 | Technical images | 8 PNGs with exact SHA-256 in `v2/evidence/views/index_v2.json` |
-| PR #44 | OPEN / DRAFT, base `arena/4795760e-soul-of-hero`, head branch `arena/d4bfcfff-soul-of-hero`, head `8206869f627128e700c64a41f8c9ee29912aee84` |
+| PR #44 | OPEN / DRAFT, base `arena/4795760e-soul-of-hero`, head branch `arena/d4bfcfff-soul-of-hero`; head `8206869f627128e700c64a41f8c9ee29912aee84` at contract inspection, **`d73aa63f9f7f98aa1f6c6a42211693c7710cf3c4` at WMP-02 push** |
 | WMP-01 PR comment (not duplicated) | `6624249473` |
-| Gameplay/CT comments since WMP-01 | `6624475878` (M-CORE-03S), `6624745510` (CT verdict, no Map task, no merge) |
+| Gameplay/CT comments since WMP-01 | `6624475878` (M-CORE-03S), `6624745510` (CT verdict, no Map task, no merge), `6625624576` (M-CORE-03T PARTIAL / HOLD, no Map request) |
+| Concurrent Gameplay commit at push | `d73aa63f` — evidence/docs only; **no** `world-economy.ts` / `geography-contract.ts` / `web/src/game` change, so the read-only intake contract inspection stays valid |
 | One WMP-02 corrective comment | posted once after push, with the exact final commit + manifest SHAs |
 | **Next-action owner** | **Gameplay / Creator** — decisions DR-V2-01..09, runtime ingestion, numeric laws, visual acceptance. Map is on HOLD. |
