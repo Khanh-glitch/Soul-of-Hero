@@ -1,5 +1,5 @@
-SOH ARCANA20 FX LAB — standalone, deterministic lifecycle contract (RED->GREEN), 20 skills
+SOH ARCANA20 FX LAB — standalone, deterministic lifecycle contract (RED->GREEN) + active-frame signed-delta compositing closure, 20 skills
 (F9 in game → FX Lab → "ARCANA20 lab" dropdown; lead / C-study / fusion? modes; scrub; open/peak/out jumps)
 built from branch arena/3337c864-soul-of-hero
-artifact sha256    : 9d1eedd3a2dd70fd670e58d2092bbbad65ef3bff1a35fda98e9682967cf00579
+artifact sha256    : ff09ede60556f79974c5c7551725ea0f4e1cc605e4233714353ef107d7732eb0
 boot: open this file directly (file://)

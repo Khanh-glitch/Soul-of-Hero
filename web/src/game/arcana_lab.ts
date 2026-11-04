@@ -82,6 +82,7 @@ export class ArcanaLabClient implements comp.VfxClient {
   private bR = new BRunner();
   private aR = new ARunner();
   private blend = new Uint8ClampedArray(Math.max(C_W, A_W) * Math.max(C_H, A_H) * 4);
+  private deltaBuf = new Float32Array(C_W * C_H * 4); // signed frame delta (C/redesign path)
   private cast: Cast | null = null;
   private qaT = -1;
   private lastTick = -1;
@@ -194,22 +195,45 @@ export class ArcanaLabClient implements comp.VfxClient {
       out = this.cR.out;
     }
 
-    // feather the source window into the real world so no hard rectangle edge
-    // survives (interior source art/lighting untouched; C is already world-based)
-    const F = 14;
-    for (let y = 0; y < H; y++) {
-      const dy = Math.min(y, H - 1 - y);
-      for (let x = 0; x < W; x++) {
-        const dx = Math.min(x, W - 1 - x);
-        const d = Math.min(dx, dy);
-        if (d >= F) continue;
-        const ramp = d / F, k = ramp * ramp * (3 - 2 * ramp);
-        const di = (y * W + x) * 4;
-        for (let c = 0; c < 3; c++) out[di + c] = Math.round(region[di + c] * (1 - k) + out[di + c] * k);
+    // AVFX active-frame closure: the C/redesign frame path submits a SIGNED,
+    // effect-local contribution instead of pasting the composited source window.
+    // delta = activeFrame - noEffectBaseline; the no-effect baseline through this
+    // same compositor is bit-exact equal to the raw world sample `region`
+    // (asserted in tests), so delta == out - region. The presenter renders
+    // scene + delta * influenceMask, where the mask comes from the live source
+    // Frame channels (light incl. negative, ink, displacement, ground decals) —
+    // full-frame screen ops (flash/shake/kick) are NOT in the mask, so they can
+    // no longer leak a straight-edged rectangle over the real terrain.
+    const signed = useR || (!useB && !useA && !useFusion);
+    if (signed) {
+      const runner = useR ? this.rR : this.cR;
+      const infl = runner.influenceMask(3);
+      const d = this.deltaBuf;
+      for (let i = 0; i < W * H; i++) {
+        const o = i * 4;
+        d[o] = out[o] - region[o];
+        d[o + 1] = out[o + 1] - region[o + 1];
+        d[o + 2] = out[o + 2] - region[o + 2];
+        d[o + 3] = 0;
       }
+      p.uploadFrameDelta(d, infl, W, H);
+    } else {
+      // legacy opaque window (B/A/fusion leads): feather the source window into the
+      // real world so no hard rectangle edge survives (unchanged control behavior)
+      const F = 14;
+      for (let y = 0; y < H; y++) {
+        const dy = Math.min(y, H - 1 - y);
+        for (let x = 0; x < W; x++) {
+          const dx = Math.min(x, W - 1 - x);
+          const dd = Math.min(dx, dy);
+          if (dd >= F) continue;
+          const ramp = dd / F, k = ramp * ramp * (3 - 2 * ramp);
+          const di = (y * W + x) * 4;
+          for (let c = 0; c < 3; c++) out[di + c] = Math.round(region[di + c] * (1 - k) + out[di + c] * k);
+        }
+      }
+      p.uploadFrame(out, W, H);
     }
-
-    p.uploadFrame(out, W, H);
     this.lastTick = tick;
     this.lastAnchor = anchor;
     this.lastWorld = wsum;
@@ -218,7 +242,7 @@ export class ArcanaLabClient implements comp.VfxClient {
       lightTex: p.lightTexture()!, frameTex: p.frameTexture()!, warp: new Float32Array(4), influence: new Uint8Array(4),
       region: { x: sx, y: sy, w: W, h: H },
       fade: 1, bloomGain: 1, time: t, tick: Math.floor(t * 60), seed: 1000 + entry.id * 7919,
-      frameFlash: 0,
+      frameFlash: 0, signedDelta: signed ? 1 : 0,
     } as any);
   }
 }

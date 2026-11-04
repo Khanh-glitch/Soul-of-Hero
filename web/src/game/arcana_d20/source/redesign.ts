@@ -271,4 +271,6 @@ export class RedesignRunner {
   seek(t: number) { this.core.seek(Math.min(t, this.duration + 1.0)); }
   async seekAsync(t: number) { await this.core.seekAsync(Math.min(t, this.duration + 1.0)); }
   get out() { return this.core.out; }
+  /** effect-local influence mask from the live source Frame channels (see CRunner) */
+  influenceMask(dilate = 3): Uint8Array { return this.core.influenceMask(dilate); }
 }

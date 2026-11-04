@@ -140,3 +140,31 @@ QA gallery incl. #09 fusion/OUT/recast, B#02 day/night, #11 3-phase lead/fusion,
   lifecycle-report.txt`: all six backward==mid and OUT==baseline:true.
 - Art status: 6 redesigns + 5 fusion candidates = **CANDIDATE_AWAITING_CREATOR_REVIEW**
   (technical PASS only, no art GOLD). PR #39 unmerged; PR #38 owns gameplay.
+
+## Active-frame source-window closure (CT decision 6622564987, frozen baseline 354054e)
+- **Root cause (demonstrated, not guessed)**: the C/redesign frame path pasted the
+  runner's fully composited 384x216 window opaquely into the region (presenter
+  `FRAME_FS` replace). The source compositor applies FULL-FRAME ops (fx.flash /
+  shake / kick) to the whole source window, so at peak/impact ~92-94% of ALL window
+  pixels changed vs the scene, including the 14px edge ring (edgeMean 10-24,
+  edgeMax up to 235) -> straight-edged "pasted window" rectangle. Measured on the
+  real captured SOH world region (fixtures in `evidence/avfx20-rect/fixtures/`).
+- **Fix (shared seam, no per-spell repaint)**: the lab now submits a SIGNED delta
+  `active - noEffectBaseline` (baseline is bit-exact == raw world sample, asserted)
+  plus an effect-local influence mask from the live source Frame channels
+  (HDR light incl. negative, ink, displacement, ground decals; full-frame ops are
+  NOT in the mask). `FRAME_FS` renders `scene + delta * influence` (texelFetch
+  orientation, consistent with COMPOSITE_FS). B/A/fusion lead paths keep the
+  legacy opaque+feather contract (controls unchanged). The 14px feather is no
+  longer used on the C/redesign path.
+- **Result (CPU emulation of the frame graph, real world, day+night, all six
+  redesigns x open/peak/impact/out)**: edge ring change collapses (e.g. #4 day peak
+  edgeMean 16.2 -> 3.1, fracChanged 0.93 -> 0.20; #14/#18 peak edgeMean -> 0.0);
+  OUT bit-identical to scene; backward-seek/replay delta bit-identical; negative
+  (darkening) delta preserved. Evidence: `evidence/avfx20-rect/` (before/after/raw
+  PNGs + rect-evidence.json), regression suite `tests/arcana-frame-delta.test.ts`.
+- **Tests**: 175/175 (161 previous + 14 new), tsc clean, vite build clean, QA
+  fallback smoke clean. Real WebGL2 (software) before/after gallery: CI
+  reality-ripper-20 artifacts at the pushed SHA (see PR #39).
+- Art status unchanged: 6 redesigns + 5 fusions = **CANDIDATE_AWAITING_CREATOR_REVIEW**.
+  PR #39 unmerged; PR #38 owns gameplay; technical pass only.

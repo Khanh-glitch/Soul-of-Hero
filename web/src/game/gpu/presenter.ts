@@ -20,6 +20,7 @@ export interface PresentedLayer {
   influence: Uint8Array;           // 480*270 coverage mask
   region: { x: number; y: number; w: number; h: number }; // screen-space rect of source window
   frameTex?: WebGLTexture;   // semantic-bridge 384x216 RGBA8 output
+  signedDelta?: number;      // 1: ftex is a signed RGBA32F delta gated by the influence mask
   blocksDst?: Float32Array;  // blit layer: 56*4 (px,py,sz,active) in region-local px
   blocksHome?: Float32Array; // blit layer: 56*2 (hx,hy) in region-local px
   fade: number; bloomGain: number; time: number; tick: number; seed: number;
@@ -135,21 +136,37 @@ void main(){
   color = vec4(clamp(col, 0.0, 1.0), 1.0);
 }`;
 
-// semantic-bridge output: the source Frame already composited the real world
-// (displacement, ink, fragments, light) — replace the region with it verbatim
+// semantic-bridge output. Two contracts:
+//  - legacy (signedDelta=0): the source Frame already composited the real world
+//    (displacement, ink, fragments, light) — replace the region with it verbatim.
+//  - signedDelta=1 (AVFX active-frame closure): ftex is a SIGNED per-pixel DELTA
+//    (activeFrame - noEffectBaseline through the same compositor, RGBA32F) and
+//    infl is an R8UI effect-local influence mask; the region renders as
+//    scene + delta*influence, so terrain outside legitimate effect influence is
+//    preserved EXACTLY (no rectangular source window), while local light, darkness
+//    (negative light), ink, displacement, telegraphs and decals survive as signed
+//    contributions. texelFetch orientation matches COMPOSITE_FS (sp.y=0 -> row 0).
 const FRAME_FS = `#version 300 es
-precision highp float;
-uniform sampler2D scene; uniform sampler2D ftex;
-uniform vec2 size; uniform vec4 region; uniform float flash; uniform vec3 flashCol;
+precision highp float; precision highp int;
+uniform sampler2D scene; uniform sampler2D ftex; uniform highp usampler2D infl;
+uniform vec2 size; uniform vec4 region; uniform float flash; uniform vec3 flashCol; uniform float signedDelta;
 out vec4 color;
 void main(){
   vec2 pixel = vec2(gl_FragCoord.x, size.y - gl_FragCoord.y);
   vec3 base = texture(scene, vec2(pixel.x/size.x, 1.0 - pixel.y/size.y)).rgb;
   vec2 sp = (pixel - region.xy) / region.zw;
   if (sp.x < 0.0 || sp.y < 0.0 || sp.x > 1.0 || sp.y > 1.0) { color = vec4(base, 1.0); return; }
-  vec3 c = texture(ftex, vec2(sp.x, 1.0 - sp.y)).rgb;
-  c += flashCol * flash;
-  color = vec4(clamp(c, 0.0, 1.0), 1.0);
+  if (signedDelta > 0.5) {
+    ivec2 tp = ivec2(clamp(sp, 0.0, 1.0) * (region.zw - 1.0));
+    float k = float(texelFetch(infl, tp, 0).r) / 255.0;
+    vec3 d = texelFetch(ftex, tp, 0).rgb;
+    vec3 c = base + d * k + flashCol * flash * k;
+    color = vec4(clamp(c, 0.0, 1.0), 1.0);
+  } else {
+    vec3 c = texture(ftex, vec2(sp.x, 1.0 - sp.y)).rgb;
+    c += flashCol * flash;
+    color = vec4(clamp(c, 0.0, 1.0), 1.0);
+  }
 }`;
 
 // world-sampled fragment layer: copies REAL world pixels (pre-warp world tex)
@@ -220,6 +237,7 @@ export class Presenter {
   private progPass!: WebGLProgram; private progComp!: WebGLProgram; private progRift!: WebGLProgram; private progAdd!: WebGLProgram; private progBlit!: WebGLProgram; private progFrame!: WebGLProgram;
   private buf!: WebGLBuffer;
   private warpTex!: WebGLTexture; private inflTex!: WebGLTexture;
+  private deltaTex!: WebGLTexture; private inflFrameTex!: WebGLTexture;
   private accumA!: WebGLFramebuffer; private accumATex!: WebGLTexture;
   private accumB!: WebGLFramebuffer; private accumBTex!: WebGLTexture;
   // real per-frame metrics (distinguished by kind)
@@ -273,6 +291,13 @@ export class Presenter {
     this.frameTex = mkTex(gl.NEAREST); // semantic-bridge output — must exist from construction, not only rebuild()
     gl.bindTexture(gl.TEXTURE_2D, this.frameTex);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, 384, 216, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    // signed-delta frame contract: RGBA32F delta + R8UI influence, frame-sized
+    this.deltaTex = mkTex(gl.NEAREST);
+    gl.bindTexture(gl.TEXTURE_2D, this.deltaTex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, 384, 216, 0, gl.RGBA, gl.FLOAT, null);
+    this.inflFrameTex = mkTex(gl.NEAREST);
+    gl.bindTexture(gl.TEXTURE_2D, this.inflFrameTex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.R8UI, 384, 216, 0, gl.RED_INTEGER, gl.UNSIGNED_BYTE, null);
     this.lightFbo = gl.createFramebuffer()!;
     gl.bindTexture(gl.TEXTURE_2D, this.lightTex);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, 480, 270, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
@@ -328,6 +353,8 @@ export class Presenter {
     this.worldTex = mkTex(w, h, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, null);
     this.lightTex = mkTex(480, 270, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, null);
     this.frameTex = mkTex(384, 216, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    this.deltaTex = mkTex(384, 216, gl.RGBA32F, gl.RGBA, gl.FLOAT, null);
+    this.inflFrameTex = mkTex(384, 216, gl.R8UI, gl.RED_INTEGER, gl.UNSIGNED_BYTE, null);
     this.warpTex = mkTex(480, 270, gl.RGBA32F, gl.RGBA, gl.FLOAT, null);
     this.inflTex = mkTex(480, 270, gl.R8UI, gl.RED_INTEGER, gl.UNSIGNED_BYTE, null);
     const mkFbo = (tex: WebGLTexture) => { const f = gl.createFramebuffer()!; gl.bindFramebuffer(gl.FRAMEBUFFER, f); gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0); const ok = gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE; gl.bindFramebuffer(gl.FRAMEBUFFER, null); return { f, ok }; };
@@ -364,6 +391,20 @@ export class Presenter {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, data.subarray(0, w * h * 4));
   }
   frameTexture(): WebGLTexture | null { return (this as any).frameTex ?? null; }
+  /** Upload the signed-delta frame contract: RGBA32F delta (active - no-effect baseline
+   *  through the same compositor) + R8UI effect-local influence mask, frame-sized. */
+  uploadFrameDelta(delta: Float32Array, infl: Uint8Array, w = 384, h = 216) {
+    if (!this.gl) return;
+    const gl = this.gl;
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, this.deltaTex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, w, h, 0, gl.RGBA, gl.FLOAT, delta.subarray(0, w * h * 4));
+    gl.activeTexture(gl.TEXTURE2);
+    gl.bindTexture(gl.TEXTURE_2D, this.inflFrameTex);
+    gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.R8UI, w, h, 0, gl.RED_INTEGER, gl.UNSIGNED_BYTE, infl.subarray(0, w * h));
+    gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
+  }
   /** Read back the real SOH world region as RGBA8 — the semantic bridge's base
    *  and sampling source (Phase 2: real world as Frame.base). */
   worldRegion(sx: number, sy: number, w: number, h: number): Uint8ClampedArray | null {
@@ -446,7 +487,16 @@ export class Presenter {
       gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, this.warpTex);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, 480, 270, 0, gl.RGBA, gl.FLOAT, L.warp); // warp or rift field
       if (L.kind === 'frame') {
-        gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, L.frameTex ?? this.lightTex);
+        if ((L as any).signedDelta) {
+          gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, this.deltaTex);
+          gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, this.inflFrameTex);
+          gl.uniform1i(gl.getUniformLocation(prog, 'infl'), 2);
+          gl.uniform1f(gl.getUniformLocation(prog, 'signedDelta'), 1);
+        } else {
+          gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, L.frameTex ?? this.lightTex);
+          gl.uniform1f(gl.getUniformLocation(prog, 'signedDelta'), 0);
+        }
+        gl.uniform1i(gl.getUniformLocation(prog, 'ftex'), 1);
         gl.uniform4f(gl.getUniformLocation(prog, 'region'), L.region.x, L.region.y, L.region.w, L.region.h);
         gl.uniform1f(gl.getUniformLocation(prog, 'flash'), (L as any).frameFlash ?? 0);
         gl.uniform3f(gl.getUniformLocation(prog, 'flashCol'), 1, 0.5, 1);

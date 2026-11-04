@@ -10,6 +10,7 @@ vi.mock('../src/game/gpu/presenter', () => ({
     gl: { fake: true },
     worldRegion: (x: number, y: number, w: number, h: number) => new Uint8ClampedArray(w * h * 4).fill(40),
     uploadFrame: (d: Uint8ClampedArray, w?: number, h?: number) => { uploads.push({ len: d.length, w, h }); },
+    uploadFrameDelta: (d: Float32Array, infl: Uint8Array, w?: number, h?: number) => { uploads.push({ delta: d.length, infl: infl.length, w, h }); },
     lightTexture: () => null, frameTexture: () => null,
   }),
 }));
@@ -239,7 +240,7 @@ describe('ARCANA20 final contract: fail-closed validation, per-engine clocks, B 
     (presenter.getPresenter as any) = () => ({
       gl: { fake: true },
       worldRegion: (x: number, y: number, w: number, h: number) => new Uint8ClampedArray(w * h * 4).fill(snap),
-      uploadFrame: () => {}, lightTexture: () => null, frameTexture: () => null,
+      uploadFrame: () => {}, uploadFrameDelta: () => {}, lightTexture: () => null, frameTexture: () => null,
     });
     const { arcanaLab } = await import('../src/game/arcana_lab');
     const frame: any = { now: 0, cam: { x: 0, y: 0 } };

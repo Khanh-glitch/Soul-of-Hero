@@ -116,6 +116,34 @@ export class CRunner {
   reset() { if (this.idx >= 0) this.cast(this.idx); else { this.t = 0; this.steps = 0; } }
   get duration() { return this.customDef ? this.customDef.dur : (this.idx >= 0 ? (SPELLS[this.idx]?.dur ?? 0) : 0); }
   get climax() { return this.customDef ? this.customDef.climax : (this.idx >= 0 ? (SPELLS[this.idx]?.climax ?? 0) : 0); }
+  /** Effect-local influence mask (W*H, 0/255) computed from the LIVE source Frame
+   *  channels: HDR light (incl. NEGATIVE light = darkness), ink alpha, displacement
+   *  (dx/dy/shade/chroma) and ground decals (ground != base). Full-frame screen ops
+   *  (fx.flash/shake/kick applied by the composite) are NOT in these channels, so the
+   *  mask marks only where the spell legitimately touches the world. Dilated by a few
+   *  px so glow halos are not hard-clipped. Used to gate the signed frame delta at the
+   *  presenter seam so no rectangular source window can leak into the real scene. */
+  influenceMask(dilate = 3): Uint8Array {
+    const f = this.frame, N = W * H, m = new Uint8Array(N);
+    for (let i = 0; i < N; i++) {
+      const li = i * 4;
+      const infl =
+        Math.abs(f.light[li]) > 1e-4 || Math.abs(f.light[li + 1]) > 1e-4 || Math.abs(f.light[li + 2]) > 1e-4 ||
+        f.ink[li + 3] > 1e-4 ||
+        f.disp[li] !== 0 || f.disp[li + 1] !== 0 || Math.abs(f.disp[li + 2] - 1) > 1e-4 || f.disp[li + 3] !== 0 ||
+        f.ground[li] !== f.base[li] || f.ground[li + 1] !== f.base[li + 1] || f.ground[li + 2] !== f.base[li + 2];
+      m[i] = infl ? 255 : 0;
+    }
+    for (let d = 0; d < dilate; d++) {
+      const s = new Uint8Array(m);
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+        const i = y * W + x;
+        if (s[i]) continue;
+        if ((x > 0 && s[i - 1]) || (x < W - 1 && s[i + 1]) || (y > 0 && s[i - W]) || (y < H - 1 && s[i + W])) m[i] = 255;
+      }
+    }
+    return m;
+  }
   /** no-effect baseline through the SAME compositor at the current world (OUT truth) */
   renderBaseline(t = 0) {
     const f = this.frame;
