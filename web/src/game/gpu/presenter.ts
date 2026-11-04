@@ -504,7 +504,10 @@ export class Presenter {
       gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, curTex);   // scene so far
       gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, L.lightTex);
       gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, this.warpTex);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, 480, 270, 0, gl.RGBA, gl.FLOAT, L.warp); // warp or rift field
+      // Upload the warp/rift field ONLY when the buffer is full-size: layers that
+      // don't use the warp channel submit a 4-element placeholder, and texImage2D
+      // with an undersized ArrayBufferView raises GL_INVALID_OPERATION (1282).
+      if (L.warp.length >= 480 * 270 * 4) gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, 480, 270, 0, gl.RGBA, gl.FLOAT, L.warp); // warp or rift field
       this.checkGl('layer-warp-upload:' + li);
       if (L.kind === 'frame') {
         // The integer sampler `infl` MUST reference a valid R8UI texture in BOTH
@@ -546,8 +549,11 @@ export class Presenter {
       } else {
         gl.activeTexture(gl.TEXTURE3); gl.bindTexture(gl.TEXTURE_2D, this.inflTex);
         gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.R8UI, 480, 270, 0, gl.RED_INTEGER, gl.UNSIGNED_BYTE, L.influence);
+        // full-size influence masks only — a placeholder (Uint8Array(4)) would make
+        // this R8UI texImage2D raise GL_INVALID_OPERATION (1282)
+        if (L.influence.length >= 480 * 270) gl.texImage2D(gl.TEXTURE_2D, 0, gl.R8UI, 480, 270, 0, gl.RED_INTEGER, gl.UNSIGNED_BYTE, L.influence);
         gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
+        this.checkGl('layer-infl-upload:' + li);
         this.layerUploads += 2;
         gl.uniform4f(gl.getUniformLocation(prog, 'region'), L.region.x, L.region.y, L.region.w, L.region.h);
         gl.uniform1f(gl.getUniformLocation(prog, 'fade'), L.fade);
