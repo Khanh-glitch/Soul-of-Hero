@@ -1,0 +1,3880 @@
+{
+  "schema": "soh.map.lr02.greywater_spatial_patch.v1",
+  "version": 1,
+  "revision": 1,
+  "generatedBy": "world_lab/lr02/src/m0_greywater.mjs",
+  "authority": "MAP_DESIGNS_THE_PHYSICAL_WORLD__GAMEPLAY_POPULATES_AND_SIMULATES_IT",
+  "status": "CONSUMER_READY_STATIC_GEOMETRY__NOT_PLAYABLE_ACCEPTANCE",
+  "parent": {
+    "schema": "soh.map.lr01.geography_package.v1",
+    "revision": 1,
+    "file": "world_lab/lr01/output/geography_package.v1.json",
+    "revisionDigest": "e3259eb30016f93ab0883c6dc3656f0ec1b9d47a85dc78fd90a56e0185765e63",
+    "mapBranchHeadAtParent": "74062a5baf2731451fad9638c4243c7459ce8e24"
+  },
+  "source": {
+    "parent": {
+      "schema": "soh.map.lr01.geography_package.v1",
+      "revision": 1,
+      "file": "world_lab/lr01/output/geography_package.v1.json",
+      "revisionDigest": "e3259eb30016f93ab0883c6dc3656f0ec1b9d47a85dc78fd90a56e0185765e63",
+      "mapBranchHeadAtParent": "74062a5baf2731451fad9638c4243c7459ce8e24"
+    },
+    "canon": {
+      "commit": "19d8c6ec820f324a6ac12733165e43b5e2c6eab2",
+      "file": "map_tower/veyra_gold/VEYRA_GOLD_MAP.sohmap.json",
+      "sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256"
+    },
+    "frame": {
+      "authoring": {
+        "w": 2000,
+        "h": 1400,
+        "unit": "authoring_unit"
+      },
+      "sourceGrid": {
+        "gw": 250,
+        "gh": 175,
+        "cell": 8,
+        "cells": 43750
+      },
+      "transform": {
+        "status": "UNDECIDED",
+        "mode": "NONE_APPLIED",
+        "fullFrameRetained": true,
+        "note": "No rescale/crop/warp; runtime U=1.6 and U=2 are DIAGNOSTIC PROJECTIONS only."
+      }
+    },
+    "gp44": {
+      "branch": "arena/d4bfcfff-soul-of-hero",
+      "head": "f8010ec973095c88f3c462a68116c169b61237a3",
+      "jointReview": 6619478477,
+      "mapAck": 6619637224,
+      "state": "OPEN / DRAFT / HOLD"
+    },
+    "jointReview": 6619478477,
+    "mapAck": 6619637224,
+    "lr01LayoutFile": "world_lab/lr01/output/poi_layouts.v1.json",
+    "lr01RegionFile": "world_lab/lr01/output/regions/zone_bz_greywater.v1.json",
+    "lr01GeographyFile": "world_lab/lr01/output/geography.v1.json",
+    "lr01TransportFile": "world_lab/lr01/output/transport.v1.json",
+    "canonSha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+    "geo01GeographySha256": "13ae97272edc47b063bb4a2ffde5dcf9f92f0f34dc3fd35b6ab3bee7f26c29dd",
+    "rasterLayerSha256s": {
+      "biomeCode": "232998e642e836f30129b3a689f7cd458f8c57526ecd2c1bad51449cbeff839d",
+      "buildableCandidate": "afc1067b5493e1cedbb8845718dd3a8263ae1c81b9e904ea912613276a1f641b",
+      "cargoCandidate": "28b8a3060344cf998673f2c7163bf664563be477124e0bab376bd56645229adb",
+      "clearanceCells": "e8e00caa9ff1018f9b29230784aaf263745d47df100cd25dd4bd26039e50087c",
+      "coast": "44c0f13ead072f501351f458c9180a31e30f08a321848e10e8faea567067f5d5",
+      "crossingCandidate": "f1c96bd9fdb04d66117811c941e4a02df7fb3111c1a8671060fccad42c29603b",
+      "elderGeometryId": "e924b646fc53b0886869b5332ef4413345d161d84c3abb76376b555af549eca8",
+      "elevation": "54d7641cea57ebd20be1eb17a0ce919f352f2868f4ed123e968a2e59666c6d24",
+      "freshwater": "9f9716b53e9bc553282860510b0ab1410574d8edf03eabb79fb3181f6d465aa4",
+      "freshwaterProximityCells": "27244a6693b885fe81de03c8e429bc225f5d848de60db76f22e19dffadc247ea",
+      "lakeId": "1fcffe83cdac6f1292b374f8cab556f9b4e5bf032769b0413fcab40c6c3738b1",
+      "landId": "3aaebb6a358ce04fc33eff56050321639ffc317fe1bb698114a621240c12e8a7",
+      "poiGeometryId": "94348636f05c83da80a5b9897bf30c4c0f6951f49a6c9875695454e7aa093881",
+      "protectedGeometryCandidate": "9d500a17898dd9bc5e3368be0bc14d86c91ac361a1449c484c1b5322894d0b71",
+      "riverId": "9dfe77adbf89d8c729f3487f585381d6014c27978839cd52bcce2169c6df3310",
+      "roadClass": "d84fca5f129c9aa866a4960eaf7902a0fe923668cfdb2e41a9d864979cfe1f8b",
+      "seaDistanceCells": "45ba677aa1dde0b2d662c83386667dee8427f846e75978fd18c0e08f57c70977",
+      "slope": "6648158ad69cd9c136e249394a9aa7b21e31d08ca7ac48d700fa9511a918130e",
+      "walkableCandidate": "fcf691e68785e204634ce5bd05d5f2c500c65e61deea4e3b0c468d282ef0a8d7",
+      "waterClass": "f4c49bfc6279324051b31afaf3165ebde1734ad26d1c7e1bc52fe368748ad254",
+      "zoneId": "e6ea74cd062935bad399002bf7d99e540b71f61ab5a83654db1cef1bdb2a374d"
+    },
+    "note": "All 579 canonical source IDs, 8 landmasses, coastlines and the full 2000x1400 authoring frame remain intact in the parent package. LR01 is NOT overwritten."
+  },
+  "coordinateAndTransform": {
+    "authoringFrame": {
+      "w": 2000,
+      "h": 1400,
+      "unit": "authoring_unit"
+    },
+    "unit": "authoring_unit",
+    "sourceGrid": {
+      "gw": 250,
+      "gh": 175,
+      "cell": 8,
+      "cells": 43750
+    },
+    "transformStatus": "UNDECIDED",
+    "mode": "NONE_APPLIED",
+    "canonicalFrameRetained": true,
+    "note": "Every coordinate below is in the ORIGINAL 2000x1400 authoring frame. No rescale, crop or warp was applied to canon.",
+    "diagnosticTransforms": [
+      {
+        "U": 1.6,
+        "formula": "x_tile = x_au / U; y_tile = y_au / U",
+        "originAu": [
+          0,
+          0
+        ],
+        "sameOriginProjectionOnly": true,
+        "frameTiles": [
+          1250,
+          875
+        ],
+        "canonicalFrameRetained": true,
+        "globalScaleDecision": "UNDECIDED",
+        "staticSolids": [
+          {
+            "id": "wall.po_greywater.1.span.1",
+            "parentWallId": "wall.po_greywater.1",
+            "aTiles": [
+              498.3534,
+              357.1462
+            ],
+            "bTiles": [
+              508.8037,
+              360.9615
+            ],
+            "lengthTiles": 11.125,
+            "thicknessTiles": 1.25,
+            "orientationRad": 0.35,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.1.span.2",
+            "parentWallId": "wall.po_greywater.1",
+            "aTiles": [
+              512.3264,
+              362.2476
+            ],
+            "bTiles": [
+              522.7767,
+              366.0628
+            ],
+            "lengthTiles": 11.125,
+            "thicknessTiles": 1.25,
+            "orientationRad": 0.35,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.2",
+            "parentWallId": "wall.po_greywater.2",
+            "aTiles": [
+              522.7767,
+              366.0628
+            ],
+            "bTiles": [
+              516.6466,
+              382.8537
+            ],
+            "lengthTiles": 17.8749,
+            "thicknessTiles": 1.25,
+            "orientationRad": 1.9208,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.3",
+            "parentWallId": "wall.po_greywater.3",
+            "aTiles": [
+              516.6466,
+              382.8537
+            ],
+            "bTiles": [
+              492.2233,
+              373.9372
+            ],
+            "lengthTiles": 26,
+            "thicknessTiles": 1.25,
+            "orientationRad": -2.7915,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.4",
+            "parentWallId": "wall.po_greywater.4",
+            "aTiles": [
+              492.2233,
+              373.9372
+            ],
+            "bTiles": [
+              498.3534,
+              357.1462
+            ],
+            "lengthTiles": 17.8749,
+            "thicknessTiles": 1.25,
+            "orientationRad": -1.2207,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.split.v.1.span.1",
+            "parentWallId": "wall.po_greywater.split.v.1",
+            "aTiles": [
+              506.494,
+              360.1172
+            ],
+            "bTiles": [
+              505.6044,
+              362.5543
+            ],
+            "lengthTiles": 2.5944,
+            "thicknessTiles": 1.25,
+            "orientationRad": 1.9208,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.split.v.1.span.2",
+            "parentWallId": "wall.po_greywater.split.v.1",
+            "aTiles": [
+              504.3186,
+              366.0769
+            ],
+            "bTiles": [
+              502.5394,
+              370.9511
+            ],
+            "lengthTiles": 5.1887,
+            "thicknessTiles": 1.25,
+            "orientationRad": 1.9208,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.split.v.1.span.3",
+            "parentWallId": "wall.po_greywater.split.v.1",
+            "aTiles": [
+              501.2536,
+              374.4737
+            ],
+            "bTiles": [
+              500.364,
+              376.9108
+            ],
+            "lengthTiles": 2.5944,
+            "thicknessTiles": 1.25,
+            "orientationRad": 1.9208,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.split.v.2.span.1",
+            "parentWallId": "wall.po_greywater.split.v.2",
+            "aTiles": [
+              514.636,
+              363.0892
+            ],
+            "bTiles": [
+              513.7464,
+              365.5262
+            ],
+            "lengthTiles": 2.5944,
+            "thicknessTiles": 1.25,
+            "orientationRad": 1.9208,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.split.v.2.span.2",
+            "parentWallId": "wall.po_greywater.split.v.2",
+            "aTiles": [
+              512.4606,
+              369.0489
+            ],
+            "bTiles": [
+              510.6814,
+              373.9231
+            ],
+            "lengthTiles": 5.1887,
+            "thicknessTiles": 1.25,
+            "orientationRad": 1.9208,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.split.v.2.span.3",
+            "parentWallId": "wall.po_greywater.split.v.2",
+            "aTiles": [
+              509.3956,
+              377.4457
+            ],
+            "bTiles": [
+              508.506,
+              379.8828
+            ],
+            "lengthTiles": 2.5944,
+            "thicknessTiles": 1.25,
+            "orientationRad": 1.9208,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.split.h.1.span.1",
+            "parentWallId": "wall.po_greywater.split.h.1",
+            "aTiles": [
+              495.287,
+              365.542
+            ],
+            "bTiles": [
+              497.5967,
+              366.3851
+            ],
+            "lengthTiles": 2.4587,
+            "thicknessTiles": 1.25,
+            "orientationRad": 0.35,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.split.h.1.span.2",
+            "parentWallId": "wall.po_greywater.split.h.1",
+            "aTiles": [
+              501.1193,
+              367.6709
+            ],
+            "bTiles": [
+              505.7387,
+              369.3571
+            ],
+            "lengthTiles": 4.9174,
+            "thicknessTiles": 1.25,
+            "orientationRad": 0.35,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.split.h.1.span.3",
+            "parentWallId": "wall.po_greywater.split.h.1",
+            "aTiles": [
+              509.2613,
+              370.6429
+            ],
+            "bTiles": [
+              513.8807,
+              372.3291
+            ],
+            "lengthTiles": 4.9174,
+            "thicknessTiles": 1.25,
+            "orientationRad": 0.35,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.split.h.1.span.4",
+            "parentWallId": "wall.po_greywater.split.h.1",
+            "aTiles": [
+              517.4033,
+              373.6149
+            ],
+            "bTiles": [
+              519.713,
+              374.458
+            ],
+            "lengthTiles": 2.4587,
+            "thicknessTiles": 1.25,
+            "orientationRad": 0.35,
+            "blocksMovement": true
+          }
+        ],
+        "staticOpenings": [
+          {
+            "id": "portal.po_greywater.entrance",
+            "wallId": "wall.po_greywater.1",
+            "aTiles": [
+              508.8037,
+              360.9615
+            ],
+            "bTiles": [
+              512.3264,
+              362.2476
+            ],
+            "centreTiles": [
+              510.5651,
+              361.6045
+            ],
+            "intervalTiles": [
+              11.125,
+              14.875
+            ],
+            "openingTiles": 3.75,
+            "effectiveClearWidthTiles": 2.5
+          },
+          {
+            "id": "portal.po_greywater.h.1.1",
+            "wallId": "wall.po_greywater.split.v.1",
+            "aTiles": [
+              505.6044,
+              362.5543
+            ],
+            "bTiles": [
+              504.3186,
+              366.0769
+            ],
+            "centreTiles": [
+              504.9615,
+              364.3156
+            ],
+            "intervalTiles": [
+              2.5944,
+              6.3444
+            ],
+            "openingTiles": 3.75,
+            "effectiveClearWidthTiles": 2.5
+          },
+          {
+            "id": "portal.po_greywater.h.2.1",
+            "wallId": "wall.po_greywater.split.v.1",
+            "aTiles": [
+              502.5394,
+              370.9511
+            ],
+            "bTiles": [
+              501.2536,
+              374.4737
+            ],
+            "centreTiles": [
+              501.8965,
+              372.7124
+            ],
+            "intervalTiles": [
+              11.5331,
+              15.2831
+            ],
+            "openingTiles": 3.75,
+            "effectiveClearWidthTiles": 2.5
+          },
+          {
+            "id": "portal.po_greywater.v.1.1",
+            "wallId": "wall.po_greywater.split.h.1",
+            "aTiles": [
+              497.5967,
+              366.3851
+            ],
+            "bTiles": [
+              501.1193,
+              367.6709
+            ],
+            "centreTiles": [
+              499.358,
+              367.028
+            ],
+            "intervalTiles": [
+              2.4587,
+              6.2087
+            ],
+            "openingTiles": 3.75,
+            "effectiveClearWidthTiles": 2.5
+          },
+          {
+            "id": "portal.po_greywater.v.1.2",
+            "wallId": "wall.po_greywater.split.h.1",
+            "aTiles": [
+              505.7387,
+              369.3571
+            ],
+            "bTiles": [
+              509.2613,
+              370.6429
+            ],
+            "centreTiles": [
+              507.5,
+              370
+            ],
+            "intervalTiles": [
+              11.1262,
+              14.8762
+            ],
+            "openingTiles": 3.75,
+            "effectiveClearWidthTiles": 2.5
+          },
+          {
+            "id": "portal.po_greywater.v.1.3",
+            "wallId": "wall.po_greywater.split.h.1",
+            "aTiles": [
+              513.8807,
+              372.3291
+            ],
+            "bTiles": [
+              517.4033,
+              373.6149
+            ],
+            "centreTiles": [
+              515.642,
+              372.972
+            ],
+            "intervalTiles": [
+              19.7937,
+              23.5437
+            ],
+            "openingTiles": 3.75,
+            "effectiveClearWidthTiles": 2.5
+          },
+          {
+            "id": "portal.po_greywater.h.1.2",
+            "wallId": "wall.po_greywater.split.v.2",
+            "aTiles": [
+              513.7464,
+              365.5262
+            ],
+            "bTiles": [
+              512.4606,
+              369.0489
+            ],
+            "centreTiles": [
+              513.1035,
+              367.2876
+            ],
+            "intervalTiles": [
+              2.5944,
+              6.3444
+            ],
+            "openingTiles": 3.75,
+            "effectiveClearWidthTiles": 2.5
+          },
+          {
+            "id": "portal.po_greywater.h.2.2",
+            "wallId": "wall.po_greywater.split.v.2",
+            "aTiles": [
+              510.6814,
+              373.9231
+            ],
+            "bTiles": [
+              509.3956,
+              377.4457
+            ],
+            "centreTiles": [
+              510.0385,
+              375.6844
+            ],
+            "intervalTiles": [
+              11.5331,
+              15.2831
+            ],
+            "openingTiles": 3.75,
+            "effectiveClearWidthTiles": 2.5
+          }
+        ],
+        "entranceTiles": [
+          510.5651,
+          361.6045
+        ],
+        "eligibleAreaTiles": {
+          "bboxTiles": [
+            425,
+            345,
+            565,
+            395
+          ],
+          "cellSizeTiles": 5
+        },
+        "status": "DIAGNOSTIC_ONLY__NOT_APPROVED_WORLD_SCALE",
+        "note": "Joint review 6619478477 request. Isolated projection of the SAME region at the SAME global origin. No canonical frame edit, no 200x200 reinterpretation."
+      },
+      {
+        "U": 2,
+        "formula": "x_tile = x_au / U; y_tile = y_au / U",
+        "originAu": [
+          0,
+          0
+        ],
+        "sameOriginProjectionOnly": true,
+        "frameTiles": [
+          1000,
+          700
+        ],
+        "canonicalFrameRetained": true,
+        "globalScaleDecision": "UNDECIDED",
+        "staticSolids": [
+          {
+            "id": "wall.po_greywater.1.span.1",
+            "parentWallId": "wall.po_greywater.1",
+            "aTiles": [
+              398.6827,
+              285.717
+            ],
+            "bTiles": [
+              407.043,
+              288.7692
+            ],
+            "lengthTiles": 8.9,
+            "thicknessTiles": 1,
+            "orientationRad": 0.35,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.1.span.2",
+            "parentWallId": "wall.po_greywater.1",
+            "aTiles": [
+              409.8611,
+              289.798
+            ],
+            "bTiles": [
+              418.2213,
+              292.8503
+            ],
+            "lengthTiles": 8.9,
+            "thicknessTiles": 1,
+            "orientationRad": 0.35,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.2",
+            "parentWallId": "wall.po_greywater.2",
+            "aTiles": [
+              418.2213,
+              292.8503
+            ],
+            "bTiles": [
+              413.3173,
+              306.283
+            ],
+            "lengthTiles": 14.3,
+            "thicknessTiles": 1,
+            "orientationRad": 1.9208,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.3",
+            "parentWallId": "wall.po_greywater.3",
+            "aTiles": [
+              413.3173,
+              306.283
+            ],
+            "bTiles": [
+              393.7787,
+              299.1497
+            ],
+            "lengthTiles": 20.8,
+            "thicknessTiles": 1,
+            "orientationRad": -2.7915,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.4",
+            "parentWallId": "wall.po_greywater.4",
+            "aTiles": [
+              393.7787,
+              299.1497
+            ],
+            "bTiles": [
+              398.6827,
+              285.717
+            ],
+            "lengthTiles": 14.3,
+            "thicknessTiles": 1,
+            "orientationRad": -1.2207,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.split.v.1.span.1",
+            "parentWallId": "wall.po_greywater.split.v.1",
+            "aTiles": [
+              405.1952,
+              288.0938
+            ],
+            "bTiles": [
+              404.4835,
+              290.0434
+            ],
+            "lengthTiles": 2.0755,
+            "thicknessTiles": 1,
+            "orientationRad": 1.9208,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.split.v.1.span.2",
+            "parentWallId": "wall.po_greywater.split.v.1",
+            "aTiles": [
+              403.4549,
+              292.8616
+            ],
+            "bTiles": [
+              402.0315,
+              296.7609
+            ],
+            "lengthTiles": 4.1509,
+            "thicknessTiles": 1,
+            "orientationRad": 1.9208,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.split.v.1.span.3",
+            "parentWallId": "wall.po_greywater.split.v.1",
+            "aTiles": [
+              401.0029,
+              299.579
+            ],
+            "bTiles": [
+              400.2912,
+              301.5287
+            ],
+            "lengthTiles": 2.0755,
+            "thicknessTiles": 1,
+            "orientationRad": 1.9208,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.split.v.2.span.1",
+            "parentWallId": "wall.po_greywater.split.v.2",
+            "aTiles": [
+              411.7088,
+              290.4713
+            ],
+            "bTiles": [
+              410.9971,
+              292.421
+            ],
+            "lengthTiles": 2.0755,
+            "thicknessTiles": 1,
+            "orientationRad": 1.9208,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.split.v.2.span.2",
+            "parentWallId": "wall.po_greywater.split.v.2",
+            "aTiles": [
+              409.9685,
+              295.2391
+            ],
+            "bTiles": [
+              408.5451,
+              299.1384
+            ],
+            "lengthTiles": 4.1509,
+            "thicknessTiles": 1,
+            "orientationRad": 1.9208,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.split.v.2.span.3",
+            "parentWallId": "wall.po_greywater.split.v.2",
+            "aTiles": [
+              407.5165,
+              301.9566
+            ],
+            "bTiles": [
+              406.8048,
+              303.9063
+            ],
+            "lengthTiles": 2.0755,
+            "thicknessTiles": 1,
+            "orientationRad": 1.9208,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.split.h.1.span.1",
+            "parentWallId": "wall.po_greywater.split.h.1",
+            "aTiles": [
+              396.2296,
+              292.4336
+            ],
+            "bTiles": [
+              398.0774,
+              293.108
+            ],
+            "lengthTiles": 1.967,
+            "thicknessTiles": 1,
+            "orientationRad": 0.35,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.split.h.1.span.2",
+            "parentWallId": "wall.po_greywater.split.h.1",
+            "aTiles": [
+              400.8954,
+              294.1368
+            ],
+            "bTiles": [
+              404.591,
+              295.4857
+            ],
+            "lengthTiles": 3.9339,
+            "thicknessTiles": 1,
+            "orientationRad": 0.35,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.split.h.1.span.3",
+            "parentWallId": "wall.po_greywater.split.h.1",
+            "aTiles": [
+              407.409,
+              296.5143
+            ],
+            "bTiles": [
+              411.1046,
+              297.8632
+            ],
+            "lengthTiles": 3.9339,
+            "thicknessTiles": 1,
+            "orientationRad": 0.35,
+            "blocksMovement": true
+          },
+          {
+            "id": "wall.po_greywater.split.h.1.span.4",
+            "parentWallId": "wall.po_greywater.split.h.1",
+            "aTiles": [
+              413.9226,
+              298.892
+            ],
+            "bTiles": [
+              415.7704,
+              299.5664
+            ],
+            "lengthTiles": 1.967,
+            "thicknessTiles": 1,
+            "orientationRad": 0.35,
+            "blocksMovement": true
+          }
+        ],
+        "staticOpenings": [
+          {
+            "id": "portal.po_greywater.entrance",
+            "wallId": "wall.po_greywater.1",
+            "aTiles": [
+              407.043,
+              288.7692
+            ],
+            "bTiles": [
+              409.8611,
+              289.798
+            ],
+            "centreTiles": [
+              408.452,
+              289.2836
+            ],
+            "intervalTiles": [
+              8.9,
+              11.9
+            ],
+            "openingTiles": 3,
+            "effectiveClearWidthTiles": 2
+          },
+          {
+            "id": "portal.po_greywater.h.1.1",
+            "wallId": "wall.po_greywater.split.v.1",
+            "aTiles": [
+              404.4835,
+              290.0434
+            ],
+            "bTiles": [
+              403.4549,
+              292.8616
+            ],
+            "centreTiles": [
+              403.9692,
+              291.4524
+            ],
+            "intervalTiles": [
+              2.0755,
+              5.0755
+            ],
+            "openingTiles": 3,
+            "effectiveClearWidthTiles": 2
+          },
+          {
+            "id": "portal.po_greywater.h.2.1",
+            "wallId": "wall.po_greywater.split.v.1",
+            "aTiles": [
+              402.0315,
+              296.7609
+            ],
+            "bTiles": [
+              401.0029,
+              299.579
+            ],
+            "centreTiles": [
+              401.5172,
+              298.1699
+            ],
+            "intervalTiles": [
+              9.2264,
+              12.2264
+            ],
+            "openingTiles": 3,
+            "effectiveClearWidthTiles": 2
+          },
+          {
+            "id": "portal.po_greywater.v.1.1",
+            "wallId": "wall.po_greywater.split.h.1",
+            "aTiles": [
+              398.0774,
+              293.108
+            ],
+            "bTiles": [
+              400.8954,
+              294.1368
+            ],
+            "centreTiles": [
+              399.4864,
+              293.6224
+            ],
+            "intervalTiles": [
+              1.967,
+              4.967
+            ],
+            "openingTiles": 3,
+            "effectiveClearWidthTiles": 2
+          },
+          {
+            "id": "portal.po_greywater.v.1.2",
+            "wallId": "wall.po_greywater.split.h.1",
+            "aTiles": [
+              404.591,
+              295.4857
+            ],
+            "bTiles": [
+              407.409,
+              296.5143
+            ],
+            "centreTiles": [
+              406,
+              296
+            ],
+            "intervalTiles": [
+              8.9009,
+              11.9009
+            ],
+            "openingTiles": 3,
+            "effectiveClearWidthTiles": 2
+          },
+          {
+            "id": "portal.po_greywater.v.1.3",
+            "wallId": "wall.po_greywater.split.h.1",
+            "aTiles": [
+              411.1046,
+              297.8632
+            ],
+            "bTiles": [
+              413.9226,
+              298.892
+            ],
+            "centreTiles": [
+              412.5136,
+              298.3776
+            ],
+            "intervalTiles": [
+              15.8349,
+              18.8349
+            ],
+            "openingTiles": 3,
+            "effectiveClearWidthTiles": 2
+          },
+          {
+            "id": "portal.po_greywater.h.1.2",
+            "wallId": "wall.po_greywater.split.v.2",
+            "aTiles": [
+              410.9971,
+              292.421
+            ],
+            "bTiles": [
+              409.9685,
+              295.2391
+            ],
+            "centreTiles": [
+              410.4828,
+              293.8301
+            ],
+            "intervalTiles": [
+              2.0755,
+              5.0755
+            ],
+            "openingTiles": 3,
+            "effectiveClearWidthTiles": 2
+          },
+          {
+            "id": "portal.po_greywater.h.2.2",
+            "wallId": "wall.po_greywater.split.v.2",
+            "aTiles": [
+              408.5451,
+              299.1384
+            ],
+            "bTiles": [
+              407.5165,
+              301.9566
+            ],
+            "centreTiles": [
+              408.0308,
+              300.5476
+            ],
+            "intervalTiles": [
+              9.2264,
+              12.2264
+            ],
+            "openingTiles": 3,
+            "effectiveClearWidthTiles": 2
+          }
+        ],
+        "entranceTiles": [
+          408.452,
+          289.2836
+        ],
+        "eligibleAreaTiles": {
+          "bboxTiles": [
+            340,
+            276,
+            452,
+            316
+          ],
+          "cellSizeTiles": 4
+        },
+        "status": "DIAGNOSTIC_ONLY__NOT_APPROVED_WORLD_SCALE",
+        "note": "Joint review 6619478477 request. Isolated projection of the SAME region at the SAME global origin. No canonical frame edit, no 200x200 reinterpretation."
+      }
+    ]
+  },
+  "boundedRegion": {
+    "id": "greywater_bounded.v1",
+    "windowAu": [
+      680,
+      550,
+      900,
+      660
+    ],
+    "poiId": "po_greywater",
+    "canonicalZoneIds": [
+      "bz_greywater"
+    ],
+    "sourceLandmarkIds": [
+      "sp_lake"
+    ],
+    "sourceLandmarkRole": "PROVENANCE_ONLY__NOT_A_RUNTIME_SPAWN_COORDINATE",
+    "footPolygonAu": [
+      [
+        797.3655,
+        571.434
+      ],
+      [
+        836.4427,
+        585.7005
+      ],
+      [
+        826.6345,
+        612.566
+      ],
+      [
+        787.5573,
+        598.2995
+      ]
+    ],
+    "localContext": {
+      "id": "zone_bz_greywater",
+      "label": "Greywater bounded physical region",
+      "windowAu": [
+        680,
+        550,
+        900,
+        660
+      ],
+      "unit": "authoring_unit",
+      "frame": {
+        "authoring": {
+          "w": 2000,
+          "h": 1400,
+          "unit": "authoring_unit"
+        },
+        "transformStatus": "UNDECIDED"
+      },
+      "sourceRaster": {
+        "grid": {
+          "gw": 250,
+          "gh": 175,
+          "cellAu": 8
+        },
+        "sha256s": {
+          "biomeCode": "232998e642e836f30129b3a689f7cd458f8c57526ecd2c1bad51449cbeff839d",
+          "buildableCandidate": "afc1067b5493e1cedbb8845718dd3a8263ae1c81b9e904ea912613276a1f641b",
+          "cargoCandidate": "28b8a3060344cf998673f2c7163bf664563be477124e0bab376bd56645229adb",
+          "clearanceCells": "e8e00caa9ff1018f9b29230784aaf263745d47df100cd25dd4bd26039e50087c",
+          "coast": "44c0f13ead072f501351f458c9180a31e30f08a321848e10e8faea567067f5d5",
+          "crossingCandidate": "f1c96bd9fdb04d66117811c941e4a02df7fb3111c1a8671060fccad42c29603b",
+          "elderGeometryId": "e924b646fc53b0886869b5332ef4413345d161d84c3abb76376b555af549eca8",
+          "elevation": "54d7641cea57ebd20be1eb17a0ce919f352f2868f4ed123e968a2e59666c6d24",
+          "freshwater": "9f9716b53e9bc553282860510b0ab1410574d8edf03eabb79fb3181f6d465aa4",
+          "freshwaterProximityCells": "27244a6693b885fe81de03c8e429bc225f5d848de60db76f22e19dffadc247ea",
+          "lakeId": "1fcffe83cdac6f1292b374f8cab556f9b4e5bf032769b0413fcab40c6c3738b1",
+          "landId": "3aaebb6a358ce04fc33eff56050321639ffc317fe1bb698114a621240c12e8a7",
+          "poiGeometryId": "94348636f05c83da80a5b9897bf30c4c0f6951f49a6c9875695454e7aa093881",
+          "protectedGeometryCandidate": "9d500a17898dd9bc5e3368be0bc14d86c91ac361a1449c484c1b5322894d0b71",
+          "riverId": "9dfe77adbf89d8c729f3487f585381d6014c27978839cd52bcce2169c6df3310",
+          "roadClass": "d84fca5f129c9aa866a4960eaf7902a0fe923668cfdb2e41a9d864979cfe1f8b",
+          "seaDistanceCells": "45ba677aa1dde0b2d662c83386667dee8427f846e75978fd18c0e08f57c70977",
+          "slope": "6648158ad69cd9c136e249394a9aa7b21e31d08ca7ac48d700fa9511a918130e",
+          "walkableCandidate": "fcf691e68785e204634ce5bd05d5f2c500c65e61deea4e3b0c468d282ef0a8d7",
+          "waterClass": "f4c49bfc6279324051b31afaf3165ebde1734ad26d1c7e1bc52fe368748ad254",
+          "zoneId": "e6ea74cd062935bad399002bf7d99e540b71f61ab5a83654db1cef1bdb2a374d"
+        },
+        "encoding": "world_lab/geo01/output/geography.v1.json :: layers.semantics",
+        "note": "uint8 source bytes; no approved physical scale"
+      },
+      "cellStats": {
+        "cells": 392,
+        "waterClass": {
+          "0": 323,
+          "2": 22,
+          "3": 47
+        },
+        "biomeCode": {
+          "0": 92,
+          "1": 97,
+          "2": 203
+        },
+        "elevationRawByte": {
+          "55": 1,
+          "56": 33,
+          "57": 13,
+          "58": 23,
+          "59": 38,
+          "60": 45,
+          "61": 38,
+          "62": 39,
+          "63": 37,
+          "64": 29,
+          "65": 23,
+          "66": 12,
+          "67": 12,
+          "68": 9,
+          "69": 10,
+          "70": 6,
+          "71": 9,
+          "72": 1,
+          "74": 2,
+          "75": 5,
+          "76": 4,
+          "77": 1,
+          "78": 2
+        },
+        "slopeRawDelta": {
+          "0": 17,
+          "1": 154,
+          "2": 124,
+          "3": 35,
+          "4": 22,
+          "5": 11,
+          "6": 9,
+          "7": 6,
+          "8": 7,
+          "9": 2,
+          "10": 2,
+          "11": 3
+        },
+        "roadClass": {
+          "0": 337,
+          "1": 40,
+          "4": 15
+        },
+        "zoneId": {
+          "0": 296,
+          "1": 87,
+          "2": 9
+        },
+        "poiGeometryId": {
+          "0": 364,
+          "13": 18,
+          "14": 5,
+          "16": 5
+        },
+        "clearanceCells": {
+          "0": 69,
+          "1": 87,
+          "2": 72,
+          "3": 49,
+          "4": 45,
+          "5": 31,
+          "6": 17,
+          "7": 13,
+          "8": 8,
+          "9": 1
+        },
+        "landId": {
+          "1": 392
+        },
+        "buildableCandidate": 96,
+        "walkableCandidate": 323,
+        "protectedGeometryCandidate": 202
+      },
+      "canonicalFeatures": {
+        "landmasses": [
+          {
+            "id": "ld_veyra",
+            "name": "Veyra (đảo chính)",
+            "kind": "main",
+            "atAu": null,
+            "bboxAu": [
+              310.2137,
+              131.7288,
+              1415.0085,
+              1169.2
+            ],
+            "sourceRef": "project.land[] where id=ld_veyra"
+          }
+        ],
+        "zones": [
+          {
+            "id": "bz_greywater",
+            "name": "Greywater Lakeshore Terrace",
+            "kind": "zones",
+            "atAu": null,
+            "bboxAu": [
+              705.377,
+              590.5798,
+              868.1276,
+              633.3361
+            ],
+            "sourceRef": "project.zones[] where id=bz_greywater"
+          },
+          {
+            "id": "bz_silver",
+            "name": "Silverrun Meadow Bank",
+            "kind": "zones",
+            "atAu": null,
+            "bboxAu": [
+              634.4594,
+              652.8304,
+              760.539,
+              686.3801
+            ],
+            "sourceRef": "project.zones[] where id=bz_silver"
+          }
+        ],
+        "pois": [
+          {
+            "id": "po_greywater",
+            "name": "Greywater Hamlet",
+            "kind": "pois",
+            "atAu": [
+              812,
+              592
+            ],
+            "bboxAu": [
+              787.5573,
+              571.434,
+              836.4427,
+              612.566
+            ],
+            "sourceRef": "project.pois[] where id=po_greywater"
+          },
+          {
+            "id": "po_pumphouse",
+            "name": "Greywater Pumphouse",
+            "kind": "pois",
+            "atAu": [
+              850,
+              556
+            ],
+            "bboxAu": [
+              836.0556,
+              545.4309,
+              863.9444,
+              566.5691
+            ],
+            "sourceRef": "project.pois[] where id=po_pumphouse"
+          },
+          {
+            "id": "po_sawaion",
+            "name": "Aion Edge Sawmill",
+            "kind": "pois",
+            "atAu": [
+              748,
+              668
+            ],
+            "bboxAu": [
+              729.1251,
+              653.9559,
+              766.8749,
+              682.0441
+            ],
+            "sourceRef": "project.pois[] where id=po_sawaion"
+          }
+        ],
+        "lakes": [
+          {
+            "id": "lk_grey",
+            "name": "Greywater Lake",
+            "kind": "lakes",
+            "atAu": null,
+            "bboxAu": [
+              741.8764,
+              499.0473,
+              862.237,
+              571.9575
+            ],
+            "sourceRef": "project.lakes[] where id=lk_grey"
+          }
+        ],
+        "rivers": [
+          {
+            "id": "rv_grey_low",
+            "name": "Greywater River",
+            "kind": "river",
+            "atAu": null,
+            "bboxAu": [
+              836,
+              558,
+              990,
+              858
+            ],
+            "sourceRef": "project.rivers[] where id=rv_grey_low"
+          },
+          {
+            "id": "rv_silver",
+            "name": "Silverrun",
+            "kind": "river",
+            "atAu": null,
+            "bboxAu": [
+              620,
+              632,
+              904.3115,
+              652.6822
+            ],
+            "sourceRef": "project.rivers[] where id=rv_silver"
+          }
+        ],
+        "roads": [
+          {
+            "id": "rd_9",
+            "name": "Greywater Cross Freight (1)",
+            "kind": "cart",
+            "atAu": null,
+            "bboxAu": [
+              812,
+              574,
+              924,
+              668
+            ],
+            "sourceRef": "project.roads[] where id=rd_9"
+          },
+          {
+            "id": "rd_b",
+            "name": "West Forest Freight (1)",
+            "kind": "cart",
+            "atAu": null,
+            "bboxAu": [
+              732,
+              592,
+              812,
+              668
+            ],
+            "sourceRef": "project.roads[] where id=rd_b"
+          },
+          {
+            "id": "rd_c",
+            "name": "West Forest Freight (1)",
+            "kind": "cart",
+            "atAu": null,
+            "bboxAu": [
+              732.845,
+              651.6036,
+              739.7596,
+              660.2516
+            ],
+            "sourceRef": "project.roads[] where id=rd_c"
+          },
+          {
+            "id": "rd_d",
+            "name": "West Forest Freight (2)",
+            "kind": "cart",
+            "atAu": null,
+            "bboxAu": [
+              506,
+              444,
+              758.0741,
+              667.5
+            ],
+            "sourceRef": "project.roads[] where id=rd_d"
+          },
+          {
+            "id": "rd_e",
+            "name": "Falls Road (1)",
+            "kind": "cart",
+            "atAu": null,
+            "bboxAu": [
+              850,
+              556,
+              859.8606,
+              574.0583
+            ],
+            "sourceRef": "project.roads[] where id=rd_e"
+          },
+          {
+            "id": "rd_20",
+            "name": "Greywater West Bank Path",
+            "kind": "riverside",
+            "atAu": null,
+            "bboxAu": [
+              825.6209,
+              579.9157,
+              967.1931,
+              848.2629
+            ],
+            "sourceRef": "project.roads[] where id=rd_20"
+          }
+        ],
+        "bridges": [
+          {
+            "id": "br_3",
+            "name": "Cầu Greywater River",
+            "kind": "bridges",
+            "atAu": [
+              855.2775,
+              576.1272
+            ],
+            "bboxAu": [
+              855.2775,
+              576.1272,
+              855.2775,
+              576.1272
+            ],
+            "sourceRef": "project.bridges[] where id=br_3"
+          },
+          {
+            "id": "br_4",
+            "name": "Cầu Silverrun",
+            "kind": "bridges",
+            "atAu": [
+              732.007,
+              649.8171
+            ],
+            "bboxAu": [
+              732.007,
+              649.8171,
+              732.007,
+              649.8171
+            ],
+            "sourceRef": "project.bridges[] where id=br_4"
+          },
+          {
+            "id": "br_a",
+            "name": "Cầu Silverrun",
+            "kind": "bridges",
+            "atAu": [
+              882.9744,
+              646.9031
+            ],
+            "bboxAu": [
+              882.9744,
+              646.9031,
+              882.9744,
+              646.9031
+            ],
+            "sourceRef": "project.bridges[] where id=br_a"
+          }
+        ],
+        "docks": [
+          {
+            "id": "dk_grey_s",
+            "name": "Greywater Hamlet Dock",
+            "kind": "inland",
+            "atAu": [
+              811.6181,
+              568.4318
+            ],
+            "bboxAu": [
+              811.6181,
+              568.4318,
+              811.6181,
+              568.4318
+            ],
+            "sourceRef": "project.docks[] where id=dk_grey_s"
+          }
+        ],
+        "spawns": [
+          {
+            "id": "sp_lake",
+            "name": "Spawn: Greywater South Shore",
+            "kind": "spawns",
+            "atAu": [
+              790,
+              622
+            ],
+            "bboxAu": [
+              790,
+              622,
+              790,
+              622
+            ],
+            "sourceRef": "project.spawns[] where id=sp_lake"
+          }
+        ],
+        "elders": [
+          {
+            "id": "el_aion",
+            "name": "Aion — Time",
+            "kind": "elders",
+            "atAu": null,
+            "bboxAu": [
+              717.6044,
+              573.6853,
+              1056.239,
+              856.2674
+            ],
+            "sourceRef": "project.elders[] where id=el_aion"
+          }
+        ]
+      },
+      "lr01Region": {
+        "id": "bz_greywater",
+        "name": "Greywater Lakeshore Terrace",
+        "sourceRef": "project.zones[] where id=bz_greywater",
+        "status": [
+          "SOURCE_AUTHORED",
+          "DERIVED",
+          "PROPOSED"
+        ],
+        "geometry": {
+          "ringAu": [
+            [
+              705.3769565929802,
+              608.2379445943548
+            ],
+            [
+              710.7625068351123,
+              600.7138337830645
+            ],
+            [
+              726.140544792265,
+              595.3416074166121
+            ],
+            [
+              751.5110704644383,
+              592.1212654949975
+            ],
+            [
+              777.0156785637323,
+              590.579789371794
+            ],
+            [
+              802.6543690901469,
+              590.7171790470018
+            ],
+            [
+              828.639878702264,
+              592.2490243742513
+            ],
+            [
+              854.9722074000836,
+              595.175325353543
+            ],
+            [
+              867.9678471396824,
+              600.4788568823917
+            ],
+            [
+              867.6267979210602,
+              608.1596189607973
+            ],
+            [
+              867.6800631680195,
+              615.850852659734
+            ],
+            [
+              868.1276428805604,
+              623.552557979202
+            ],
+            [
+              855.4201655127404,
+              629.0960667964754
+            ],
+            [
+              829.5576310645595,
+              632.4813791115541
+            ],
+            [
+              804.3193975430004,
+              633.3360740348371
+            ],
+            [
+              779.705464948063,
+              631.660151566324
+            ],
+            [
+              756.8075221531014,
+              629.3095928063116
+            ],
+            [
+              735.6255691581158,
+              626.2843977547998
+            ],
+            [
+              719.4469898634458,
+              621.5788501717828
+            ],
+            [
+              708.2717842690913,
+              615.192950057261
+            ]
+          ],
+          "ringCount": 1,
+          "areaAu2": 5707.4164,
+          "perimeterAu": 363.5017,
+          "bboxAu": [
+            705.377,
+            590.5798,
+            868.1276,
+            633.3361
+          ],
+          "centroidAu": [
+            791.3998,
+            611.3262
+          ],
+          "outerVertexCount": 20,
+          "holeCount": 0
+        },
+        "rasterCells": {
+          "cells": 87,
+          "areaAu2": 5568,
+          "elevationRawByte": {
+            "min": 57,
+            "max": 71,
+            "mean": 63.4828,
+            "p25": 60,
+            "p50": 63,
+            "p75": 67,
+            "p95": 70,
+            "unit": "UNKNOWN_SOURCE_BYTE__NO_APPROVED_PHYSICAL_SCALE"
+          },
+          "slopeRawDelta": {
+            "min": 1,
+            "max": 5,
+            "mean": 1.8276,
+            "p50": 2,
+            "p95": 4,
+            "unit": "RAW_BYTE_DELTA_PER_8au_CELL__NOT_A_GAMEPLAY_THRESHOLD"
+          },
+          "seaDistanceCellsMean": 53.1494,
+          "freshwaterProximityCellsMean": 3.7586,
+          "clearanceCellsMean": 3.7586,
+          "biomeHistogram": {
+            "0": 21,
+            "2": 66
+          },
+          "roadClassHistogram": {
+            "0": 70,
+            "1": 12,
+            "4": 5
+          },
+          "coastCells": 0,
+          "coastBandLengthAuApprox": 0,
+          "buildableCells": 87,
+          "walkableCells": 87,
+          "waterCells": 0,
+          "cargoCells": 12,
+          "crossingCells": 0
+        },
+        "buildSuitability": {
+          "buildableCells": 87,
+          "buildableFraction": 1,
+          "meanSlopeRaw": 1.8276,
+          "meanFreshwaterProximityCells": 3.7586,
+          "status": "DERIVED",
+          "note": "Geometric suitability only. A0 occupancy, claim legality and Gameplay building rules are NOT asserted."
+        },
+        "loadingSpace": {
+          "cells": 59,
+          "areaAu2": 3776,
+          "bboxAu": [
+            724,
+            596,
+            852,
+            628
+          ],
+          "status": "PROPOSED",
+          "note": "PROPOSED spatial candidate: buildable cells within 3 grid cells (24 au) of a cart-road/cart-bridge/dock cargo candidate. NOT a loading platform or a Gameplay placement grant."
+        },
+        "nearestRoads": [
+          {
+            "id": "rd_b",
+            "kind": "cart",
+            "d": 17.2748
+          },
+          {
+            "id": "rd_9",
+            "kind": "cart",
+            "d": 28.2466
+          },
+          {
+            "id": "rd_d",
+            "kind": "cart",
+            "d": 35.3867
+          }
+        ],
+        "walkableComponentIds": [
+          0
+        ]
+      },
+      "note": "Real source raster + canonical vectors + LR01 derived region. No flat-map artwork, no invented terrain, no runtime transform."
+    },
+    "note": "Real source raster, canonical vectors, LR01 region geometry, terrain, roads and water. No invented terrain."
+  },
+  "staticArchitecture": {
+    "poiId": "po_greywater",
+    "arche": "village",
+    "enclosurePolicy": {
+      "id": "PARTIAL_CLUSTER",
+      "continuousExteriorWalls": true,
+      "reason": "family=mixed: partly roofed cluster; exterior walls are solid but carry a real entrance opening and interior doorways"
+    },
+    "parentIds": {
+      "walls": [
+        "wall.po_greywater.1",
+        "wall.po_greywater.2",
+        "wall.po_greywater.3",
+        "wall.po_greywater.4",
+        "wall.po_greywater.split.v.1",
+        "wall.po_greywater.split.v.2",
+        "wall.po_greywater.split.h.1"
+      ],
+      "rooms": [
+        "room.po_greywater.1.1",
+        "room.po_greywater.1.2",
+        "room.po_greywater.1.3",
+        "room.po_greywater.2.1",
+        "room.po_greywater.2.2",
+        "room.po_greywater.2.3"
+      ],
+      "portals": [
+        "portal.po_greywater.entrance",
+        "portal.po_greywater.h.1.1",
+        "portal.po_greywater.v.1.1",
+        "portal.po_greywater.h.1.2",
+        "portal.po_greywater.v.1.2",
+        "portal.po_greywater.v.1.3",
+        "portal.po_greywater.h.2.1",
+        "portal.po_greywater.h.2.2"
+      ],
+      "entrances": [
+        "entrance.po_greywater.1"
+      ],
+      "sockets": [
+        "socket.po_greywater.1",
+        "socket.po_greywater.2",
+        "socket.po_greywater.3",
+        "socket.po_greywater.4",
+        "socket.po_greywater.5",
+        "socket.po_greywater.6",
+        "socket.po_greywater.7",
+        "socket.po_greywater.8",
+        "socket.po_greywater.9"
+      ],
+      "levels": [
+        "level.po_greywater.0"
+      ]
+    },
+    "idMapping": [
+      {
+        "oldId": "wall.po_greywater.1",
+        "newIds": [
+          "wall.po_greywater.1.span.1",
+          "wall.po_greywater.1.span.2"
+        ],
+        "kind": "SPLIT_BY_OPENINGS",
+        "openingCount": 1
+      },
+      {
+        "oldId": "wall.po_greywater.2",
+        "newIds": [
+          "wall.po_greywater.2"
+        ],
+        "kind": "UNCHANGED",
+        "openingCount": 0
+      },
+      {
+        "oldId": "wall.po_greywater.3",
+        "newIds": [
+          "wall.po_greywater.3"
+        ],
+        "kind": "UNCHANGED",
+        "openingCount": 0
+      },
+      {
+        "oldId": "wall.po_greywater.4",
+        "newIds": [
+          "wall.po_greywater.4"
+        ],
+        "kind": "UNCHANGED",
+        "openingCount": 0
+      },
+      {
+        "oldId": "wall.po_greywater.split.v.1",
+        "newIds": [
+          "wall.po_greywater.split.v.1.span.1",
+          "wall.po_greywater.split.v.1.span.2",
+          "wall.po_greywater.split.v.1.span.3"
+        ],
+        "kind": "SPLIT_BY_OPENINGS",
+        "openingCount": 2
+      },
+      {
+        "oldId": "wall.po_greywater.split.v.2",
+        "newIds": [
+          "wall.po_greywater.split.v.2.span.1",
+          "wall.po_greywater.split.v.2.span.2",
+          "wall.po_greywater.split.v.2.span.3"
+        ],
+        "kind": "SPLIT_BY_OPENINGS",
+        "openingCount": 2
+      },
+      {
+        "oldId": "wall.po_greywater.split.h.1",
+        "newIds": [
+          "wall.po_greywater.split.h.1.span.1",
+          "wall.po_greywater.split.h.1.span.2",
+          "wall.po_greywater.split.h.1.span.3",
+          "wall.po_greywater.split.h.1.span.4"
+        ],
+        "kind": "SPLIT_BY_OPENINGS",
+        "openingCount": 3
+      }
+    ],
+    "wallClipAudit": [
+      {
+        "wallId": "wall.po_greywater.1",
+        "lengthAu": 41.6,
+        "openingIntervalsAu": [
+          [
+            17.8,
+            23.8
+          ]
+        ],
+        "solidIntervalsAu": [
+          [
+            0,
+            17.8
+          ],
+          [
+            23.8,
+            41.6
+          ]
+        ],
+        "coveredAu": 41.6,
+        "overlap": false,
+        "status": "EXACT_COVERAGE"
+      },
+      {
+        "wallId": "wall.po_greywater.2",
+        "lengthAu": 28.5999,
+        "openingIntervalsAu": [],
+        "solidIntervalsAu": [
+          [
+            0,
+            28.5999
+          ]
+        ],
+        "coveredAu": 28.5999,
+        "overlap": false,
+        "status": "EXACT_COVERAGE"
+      },
+      {
+        "wallId": "wall.po_greywater.3",
+        "lengthAu": 41.6,
+        "openingIntervalsAu": [],
+        "solidIntervalsAu": [
+          [
+            0,
+            41.6
+          ]
+        ],
+        "coveredAu": 41.6,
+        "overlap": false,
+        "status": "EXACT_COVERAGE"
+      },
+      {
+        "wallId": "wall.po_greywater.4",
+        "lengthAu": 28.5999,
+        "openingIntervalsAu": [],
+        "solidIntervalsAu": [
+          [
+            0,
+            28.5999
+          ]
+        ],
+        "coveredAu": 28.5999,
+        "overlap": false,
+        "status": "EXACT_COVERAGE"
+      },
+      {
+        "wallId": "wall.po_greywater.split.v.1",
+        "lengthAu": 28.6039,
+        "openingIntervalsAu": [
+          [
+            4.151,
+            10.151
+          ],
+          [
+            18.4529,
+            24.4529
+          ]
+        ],
+        "solidIntervalsAu": [
+          [
+            0,
+            4.151
+          ],
+          [
+            10.151,
+            18.4529
+          ],
+          [
+            24.4529,
+            28.6039
+          ]
+        ],
+        "coveredAu": 28.6039,
+        "overlap": false,
+        "status": "EXACT_COVERAGE"
+      },
+      {
+        "wallId": "wall.po_greywater.split.v.2",
+        "lengthAu": 28.6039,
+        "openingIntervalsAu": [
+          [
+            4.151,
+            10.151
+          ],
+          [
+            18.4529,
+            24.4529
+          ]
+        ],
+        "solidIntervalsAu": [
+          [
+            0,
+            4.151
+          ],
+          [
+            10.151,
+            18.4529
+          ],
+          [
+            24.4529,
+            28.6039
+          ]
+        ],
+        "coveredAu": 28.6039,
+        "overlap": false,
+        "status": "EXACT_COVERAGE"
+      },
+      {
+        "wallId": "wall.po_greywater.split.h.1",
+        "lengthAu": 41.6038,
+        "openingIntervalsAu": [
+          [
+            3.934,
+            9.934
+          ],
+          [
+            17.8019,
+            23.8019
+          ],
+          [
+            31.6699,
+            37.6699
+          ]
+        ],
+        "solidIntervalsAu": [
+          [
+            0,
+            3.934
+          ],
+          [
+            9.934,
+            17.8019
+          ],
+          [
+            23.8019,
+            31.6699
+          ],
+          [
+            37.6699,
+            41.6038
+          ]
+        ],
+        "coveredAu": 41.6038,
+        "overlap": false,
+        "status": "EXACT_COVERAGE"
+      }
+    ],
+    "wallThicknessAu": 2,
+    "wallThicknessStatus": "PROPOSED",
+    "openingMarginAu": 2,
+    "staticSolids": [
+      {
+        "id": "wall.po_greywater.1.span.1",
+        "parentWallId": "wall.po_greywater.1",
+        "parentPoiId": "po_greywater",
+        "kind": "EXTERIOR",
+        "spanIndex": 1,
+        "aAu": [
+          797.3655,
+          571.434
+        ],
+        "bAu": [
+          814.086,
+          577.5384
+        ],
+        "lengthAu": 17.8,
+        "thicknessAu": 2,
+        "orientationRad": 0.35,
+        "unit": "authoring_unit",
+        "blocksMovement": true,
+        "blocksSight": true,
+        "status": "PROPOSED",
+        "sourceRef": "LR01 wall.po_greywater.1 clipped by opening intervals",
+        "openingIds": [
+          "portal.po_greywater.entrance"
+        ]
+      },
+      {
+        "id": "wall.po_greywater.1.span.2",
+        "parentWallId": "wall.po_greywater.1",
+        "parentPoiId": "po_greywater",
+        "kind": "EXTERIOR",
+        "spanIndex": 2,
+        "aAu": [
+          819.7222,
+          579.5961
+        ],
+        "bAu": [
+          836.4427,
+          585.7005
+        ],
+        "lengthAu": 17.8,
+        "thicknessAu": 2,
+        "orientationRad": 0.35,
+        "unit": "authoring_unit",
+        "blocksMovement": true,
+        "blocksSight": true,
+        "status": "PROPOSED",
+        "sourceRef": "LR01 wall.po_greywater.1 clipped by opening intervals",
+        "openingIds": [
+          "portal.po_greywater.entrance"
+        ]
+      },
+      {
+        "id": "wall.po_greywater.2",
+        "parentWallId": "wall.po_greywater.2",
+        "parentPoiId": "po_greywater",
+        "kind": "EXTERIOR",
+        "aAu": [
+          836.4427,
+          585.7005
+        ],
+        "bAu": [
+          826.6345,
+          612.566
+        ],
+        "lengthAu": 28.5999,
+        "thicknessAu": 2,
+        "orientationRad": 1.9208,
+        "unit": "authoring_unit",
+        "blocksMovement": true,
+        "blocksSight": true,
+        "status": "PROPOSED",
+        "sourceRef": "LR01 wall.po_greywater.2 (unchanged: no opening intersects this wall)"
+      },
+      {
+        "id": "wall.po_greywater.3",
+        "parentWallId": "wall.po_greywater.3",
+        "parentPoiId": "po_greywater",
+        "kind": "EXTERIOR",
+        "aAu": [
+          826.6345,
+          612.566
+        ],
+        "bAu": [
+          787.5573,
+          598.2995
+        ],
+        "lengthAu": 41.6,
+        "thicknessAu": 2,
+        "orientationRad": -2.7915,
+        "unit": "authoring_unit",
+        "blocksMovement": true,
+        "blocksSight": true,
+        "status": "PROPOSED",
+        "sourceRef": "LR01 wall.po_greywater.3 (unchanged: no opening intersects this wall)"
+      },
+      {
+        "id": "wall.po_greywater.4",
+        "parentWallId": "wall.po_greywater.4",
+        "parentPoiId": "po_greywater",
+        "kind": "EXTERIOR",
+        "aAu": [
+          787.5573,
+          598.2995
+        ],
+        "bAu": [
+          797.3655,
+          571.434
+        ],
+        "lengthAu": 28.5999,
+        "thicknessAu": 2,
+        "orientationRad": -1.2207,
+        "unit": "authoring_unit",
+        "blocksMovement": true,
+        "blocksSight": true,
+        "status": "PROPOSED",
+        "sourceRef": "LR01 wall.po_greywater.4 (unchanged: no opening intersects this wall)"
+      },
+      {
+        "id": "wall.po_greywater.split.v.1.span.1",
+        "parentWallId": "wall.po_greywater.split.v.1",
+        "parentPoiId": "po_greywater",
+        "kind": "INTERIOR_PARTITION",
+        "spanIndex": 1,
+        "aAu": [
+          810.3904,
+          576.1875
+        ],
+        "bAu": [
+          808.9671,
+          580.0868
+        ],
+        "lengthAu": 4.151,
+        "thicknessAu": 2,
+        "orientationRad": 1.9208,
+        "unit": "authoring_unit",
+        "blocksMovement": true,
+        "blocksSight": true,
+        "status": "PROPOSED",
+        "sourceRef": "LR01 wall.po_greywater.split.v.1 clipped by opening intervals",
+        "openingIds": [
+          "portal.po_greywater.h.1.1",
+          "portal.po_greywater.h.2.1"
+        ]
+      },
+      {
+        "id": "wall.po_greywater.split.v.1.span.2",
+        "parentWallId": "wall.po_greywater.split.v.1",
+        "parentPoiId": "po_greywater",
+        "kind": "INTERIOR_PARTITION",
+        "spanIndex": 2,
+        "aAu": [
+          806.9097,
+          585.7231
+        ],
+        "bAu": [
+          804.0631,
+          593.5217
+        ],
+        "lengthAu": 8.3019,
+        "thicknessAu": 2,
+        "orientationRad": 1.9208,
+        "unit": "authoring_unit",
+        "blocksMovement": true,
+        "blocksSight": true,
+        "status": "PROPOSED",
+        "sourceRef": "LR01 wall.po_greywater.split.v.1 clipped by opening intervals",
+        "openingIds": [
+          "portal.po_greywater.h.1.1",
+          "portal.po_greywater.h.2.1"
+        ]
+      },
+      {
+        "id": "wall.po_greywater.split.v.1.span.3",
+        "parentWallId": "wall.po_greywater.split.v.1",
+        "parentPoiId": "po_greywater",
+        "kind": "INTERIOR_PARTITION",
+        "spanIndex": 3,
+        "aAu": [
+          802.0057,
+          599.158
+        ],
+        "bAu": [
+          800.5824,
+          603.0573
+        ],
+        "lengthAu": 4.151,
+        "thicknessAu": 2,
+        "orientationRad": 1.9208,
+        "unit": "authoring_unit",
+        "blocksMovement": true,
+        "blocksSight": true,
+        "status": "PROPOSED",
+        "sourceRef": "LR01 wall.po_greywater.split.v.1 clipped by opening intervals",
+        "openingIds": [
+          "portal.po_greywater.h.1.1",
+          "portal.po_greywater.h.2.1"
+        ]
+      },
+      {
+        "id": "wall.po_greywater.split.v.2.span.1",
+        "parentWallId": "wall.po_greywater.split.v.2",
+        "parentPoiId": "po_greywater",
+        "kind": "INTERIOR_PARTITION",
+        "spanIndex": 1,
+        "aAu": [
+          823.4176,
+          580.9427
+        ],
+        "bAu": [
+          821.9943,
+          584.842
+        ],
+        "lengthAu": 4.151,
+        "thicknessAu": 2,
+        "orientationRad": 1.9208,
+        "unit": "authoring_unit",
+        "blocksMovement": true,
+        "blocksSight": true,
+        "status": "PROPOSED",
+        "sourceRef": "LR01 wall.po_greywater.split.v.2 clipped by opening intervals",
+        "openingIds": [
+          "portal.po_greywater.h.1.2",
+          "portal.po_greywater.h.2.2"
+        ]
+      },
+      {
+        "id": "wall.po_greywater.split.v.2.span.2",
+        "parentWallId": "wall.po_greywater.split.v.2",
+        "parentPoiId": "po_greywater",
+        "kind": "INTERIOR_PARTITION",
+        "spanIndex": 2,
+        "aAu": [
+          819.9369,
+          590.4783
+        ],
+        "bAu": [
+          817.0903,
+          598.2769
+        ],
+        "lengthAu": 8.3019,
+        "thicknessAu": 2,
+        "orientationRad": 1.9208,
+        "unit": "authoring_unit",
+        "blocksMovement": true,
+        "blocksSight": true,
+        "status": "PROPOSED",
+        "sourceRef": "LR01 wall.po_greywater.split.v.2 clipped by opening intervals",
+        "openingIds": [
+          "portal.po_greywater.h.1.2",
+          "portal.po_greywater.h.2.2"
+        ]
+      },
+      {
+        "id": "wall.po_greywater.split.v.2.span.3",
+        "parentWallId": "wall.po_greywater.split.v.2",
+        "parentPoiId": "po_greywater",
+        "kind": "INTERIOR_PARTITION",
+        "spanIndex": 3,
+        "aAu": [
+          815.0329,
+          603.9132
+        ],
+        "bAu": [
+          813.6096,
+          607.8125
+        ],
+        "lengthAu": 4.151,
+        "thicknessAu": 2,
+        "orientationRad": 1.9208,
+        "unit": "authoring_unit",
+        "blocksMovement": true,
+        "blocksSight": true,
+        "status": "PROPOSED",
+        "sourceRef": "LR01 wall.po_greywater.split.v.2 clipped by opening intervals",
+        "openingIds": [
+          "portal.po_greywater.h.1.2",
+          "portal.po_greywater.h.2.2"
+        ]
+      },
+      {
+        "id": "wall.po_greywater.split.h.1.span.1",
+        "parentWallId": "wall.po_greywater.split.h.1",
+        "parentPoiId": "po_greywater",
+        "kind": "INTERIOR_PARTITION",
+        "spanIndex": 1,
+        "aAu": [
+          792.4592,
+          584.8672
+        ],
+        "bAu": [
+          796.1547,
+          586.2161
+        ],
+        "lengthAu": 3.934,
+        "thicknessAu": 2,
+        "orientationRad": 0.35,
+        "unit": "authoring_unit",
+        "blocksMovement": true,
+        "blocksSight": true,
+        "status": "PROPOSED",
+        "sourceRef": "LR01 wall.po_greywater.split.h.1 clipped by opening intervals",
+        "openingIds": [
+          "portal.po_greywater.v.1.1",
+          "portal.po_greywater.v.1.2",
+          "portal.po_greywater.v.1.3"
+        ]
+      },
+      {
+        "id": "wall.po_greywater.split.h.1.span.2",
+        "parentWallId": "wall.po_greywater.split.h.1",
+        "parentPoiId": "po_greywater",
+        "kind": "INTERIOR_PARTITION",
+        "spanIndex": 2,
+        "aAu": [
+          801.7909,
+          588.2735
+        ],
+        "bAu": [
+          809.1819,
+          590.9713
+        ],
+        "lengthAu": 7.8679,
+        "thicknessAu": 2,
+        "orientationRad": 0.35,
+        "unit": "authoring_unit",
+        "blocksMovement": true,
+        "blocksSight": true,
+        "status": "PROPOSED",
+        "sourceRef": "LR01 wall.po_greywater.split.h.1 clipped by opening intervals",
+        "openingIds": [
+          "portal.po_greywater.v.1.1",
+          "portal.po_greywater.v.1.2",
+          "portal.po_greywater.v.1.3"
+        ]
+      },
+      {
+        "id": "wall.po_greywater.split.h.1.span.3",
+        "parentWallId": "wall.po_greywater.split.h.1",
+        "parentPoiId": "po_greywater",
+        "kind": "INTERIOR_PARTITION",
+        "spanIndex": 3,
+        "aAu": [
+          814.8181,
+          593.0287
+        ],
+        "bAu": [
+          822.2091,
+          595.7265
+        ],
+        "lengthAu": 7.8679,
+        "thicknessAu": 2,
+        "orientationRad": 0.35,
+        "unit": "authoring_unit",
+        "blocksMovement": true,
+        "blocksSight": true,
+        "status": "PROPOSED",
+        "sourceRef": "LR01 wall.po_greywater.split.h.1 clipped by opening intervals",
+        "openingIds": [
+          "portal.po_greywater.v.1.1",
+          "portal.po_greywater.v.1.2",
+          "portal.po_greywater.v.1.3"
+        ]
+      },
+      {
+        "id": "wall.po_greywater.split.h.1.span.4",
+        "parentWallId": "wall.po_greywater.split.h.1",
+        "parentPoiId": "po_greywater",
+        "kind": "INTERIOR_PARTITION",
+        "spanIndex": 4,
+        "aAu": [
+          827.8453,
+          597.7839
+        ],
+        "bAu": [
+          831.5408,
+          599.1328
+        ],
+        "lengthAu": 3.934,
+        "thicknessAu": 2,
+        "orientationRad": 0.35,
+        "unit": "authoring_unit",
+        "blocksMovement": true,
+        "blocksSight": true,
+        "status": "PROPOSED",
+        "sourceRef": "LR01 wall.po_greywater.split.h.1 clipped by opening intervals",
+        "openingIds": [
+          "portal.po_greywater.v.1.1",
+          "portal.po_greywater.v.1.2",
+          "portal.po_greywater.v.1.3"
+        ]
+      }
+    ],
+    "staticOpenings": [
+      {
+        "id": "portal.po_greywater.entrance",
+        "parentPoiId": "po_greywater",
+        "kind": "EXTERIOR_ENTRANCE",
+        "wallId": "wall.po_greywater.1",
+        "aAu": [
+          814.086,
+          577.5384
+        ],
+        "bAu": [
+          819.7222,
+          579.5961
+        ],
+        "centreAu": [
+          816.9041,
+          578.5672
+        ],
+        "intervalAu": [
+          17.8,
+          23.8
+        ],
+        "openingAu": 6,
+        "effectiveClearWidthAu": 4,
+        "thicknessAu": 2,
+        "unit": "authoring_unit",
+        "orientationRad": 0.35,
+        "normalAu": [
+          -0.3429,
+          0.9394
+        ],
+        "fromRoomId": null,
+        "toRoomId": "room.po_greywater.1.2",
+        "levelId": "level.po_greywater.0",
+        "boundarySegmentAu": null,
+        "staticHole": true,
+        "blocksMovement": false,
+        "blocksSight": false,
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "status": "PROPOSED",
+        "note": "STATIC geometric hole only. No lock, key, power, device, door state or destruction rule."
+      },
+      {
+        "id": "portal.po_greywater.h.1.1",
+        "parentPoiId": "po_greywater",
+        "kind": "INTERIOR_DOORWAY",
+        "wallId": "wall.po_greywater.split.v.1",
+        "aAu": [
+          808.9671,
+          580.0868
+        ],
+        "bAu": [
+          806.9097,
+          585.7231
+        ],
+        "centreAu": [
+          807.9384,
+          582.9049
+        ],
+        "intervalAu": [
+          4.151,
+          10.151
+        ],
+        "openingAu": 6,
+        "effectiveClearWidthAu": 4,
+        "thicknessAu": 2,
+        "unit": "authoring_unit",
+        "orientationRad": 1.9208,
+        "normalAu": [
+          -0.9394,
+          -0.3429
+        ],
+        "fromRoomId": "room.po_greywater.1.1",
+        "toRoomId": "room.po_greywater.1.2",
+        "levelId": null,
+        "boundarySegmentAu": [
+          [
+            810.3904,
+            576.1875
+          ],
+          [
+            805.4864,
+            589.6224
+          ]
+        ],
+        "staticHole": true,
+        "blocksMovement": false,
+        "blocksSight": false,
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "status": "PROPOSED",
+        "note": "STATIC geometric hole only. No lock, key, power, device, door state or destruction rule."
+      },
+      {
+        "id": "portal.po_greywater.h.2.1",
+        "parentPoiId": "po_greywater",
+        "kind": "INTERIOR_DOORWAY",
+        "wallId": "wall.po_greywater.split.v.1",
+        "aAu": [
+          804.0631,
+          593.5217
+        ],
+        "bAu": [
+          802.0057,
+          599.158
+        ],
+        "centreAu": [
+          803.0344,
+          596.3399
+        ],
+        "intervalAu": [
+          18.4529,
+          24.4529
+        ],
+        "openingAu": 6,
+        "effectiveClearWidthAu": 4,
+        "thicknessAu": 2,
+        "unit": "authoring_unit",
+        "orientationRad": 1.9208,
+        "normalAu": [
+          -0.9394,
+          -0.3429
+        ],
+        "fromRoomId": "room.po_greywater.2.1",
+        "toRoomId": "room.po_greywater.2.2",
+        "levelId": null,
+        "boundarySegmentAu": [
+          [
+            805.4864,
+            589.6224
+          ],
+          [
+            800.5824,
+            603.0573
+          ]
+        ],
+        "staticHole": true,
+        "blocksMovement": false,
+        "blocksSight": false,
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "status": "PROPOSED",
+        "note": "STATIC geometric hole only. No lock, key, power, device, door state or destruction rule."
+      },
+      {
+        "id": "portal.po_greywater.v.1.1",
+        "parentPoiId": "po_greywater",
+        "kind": "INTERIOR_DOORWAY",
+        "wallId": "wall.po_greywater.split.h.1",
+        "aAu": [
+          796.1547,
+          586.2161
+        ],
+        "bAu": [
+          801.7909,
+          588.2735
+        ],
+        "centreAu": [
+          798.9728,
+          587.2448
+        ],
+        "intervalAu": [
+          3.934,
+          9.934
+        ],
+        "openingAu": 6,
+        "effectiveClearWidthAu": 4,
+        "thicknessAu": 2,
+        "unit": "authoring_unit",
+        "orientationRad": 0.35,
+        "normalAu": [
+          -0.3429,
+          0.9394
+        ],
+        "fromRoomId": "room.po_greywater.1.1",
+        "toRoomId": "room.po_greywater.2.1",
+        "levelId": null,
+        "boundarySegmentAu": [
+          [
+            792.4592,
+            584.8672
+          ],
+          [
+            805.4864,
+            589.6224
+          ]
+        ],
+        "staticHole": true,
+        "blocksMovement": false,
+        "blocksSight": false,
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "status": "PROPOSED",
+        "note": "STATIC geometric hole only. No lock, key, power, device, door state or destruction rule."
+      },
+      {
+        "id": "portal.po_greywater.v.1.2",
+        "parentPoiId": "po_greywater",
+        "kind": "INTERIOR_DOORWAY",
+        "wallId": "wall.po_greywater.split.h.1",
+        "aAu": [
+          809.1819,
+          590.9713
+        ],
+        "bAu": [
+          814.8181,
+          593.0287
+        ],
+        "centreAu": [
+          812,
+          592
+        ],
+        "intervalAu": [
+          17.8019,
+          23.8019
+        ],
+        "openingAu": 6,
+        "effectiveClearWidthAu": 4,
+        "thicknessAu": 2,
+        "unit": "authoring_unit",
+        "orientationRad": 0.35,
+        "normalAu": [
+          -0.3429,
+          0.9394
+        ],
+        "fromRoomId": "room.po_greywater.1.2",
+        "toRoomId": "room.po_greywater.2.2",
+        "levelId": null,
+        "boundarySegmentAu": [
+          [
+            805.4864,
+            589.6224
+          ],
+          [
+            818.5136,
+            594.3776
+          ]
+        ],
+        "staticHole": true,
+        "blocksMovement": false,
+        "blocksSight": false,
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "status": "PROPOSED",
+        "note": "STATIC geometric hole only. No lock, key, power, device, door state or destruction rule."
+      },
+      {
+        "id": "portal.po_greywater.v.1.3",
+        "parentPoiId": "po_greywater",
+        "kind": "INTERIOR_DOORWAY",
+        "wallId": "wall.po_greywater.split.h.1",
+        "aAu": [
+          822.2091,
+          595.7265
+        ],
+        "bAu": [
+          827.8453,
+          597.7839
+        ],
+        "centreAu": [
+          825.0272,
+          596.7552
+        ],
+        "intervalAu": [
+          31.6699,
+          37.6699
+        ],
+        "openingAu": 6,
+        "effectiveClearWidthAu": 4,
+        "thicknessAu": 2,
+        "unit": "authoring_unit",
+        "orientationRad": 0.35,
+        "normalAu": [
+          -0.3429,
+          0.9394
+        ],
+        "fromRoomId": "room.po_greywater.1.3",
+        "toRoomId": "room.po_greywater.2.3",
+        "levelId": null,
+        "boundarySegmentAu": [
+          [
+            818.5136,
+            594.3776
+          ],
+          [
+            831.5408,
+            599.1328
+          ]
+        ],
+        "staticHole": true,
+        "blocksMovement": false,
+        "blocksSight": false,
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "status": "PROPOSED",
+        "note": "STATIC geometric hole only. No lock, key, power, device, door state or destruction rule."
+      },
+      {
+        "id": "portal.po_greywater.h.1.2",
+        "parentPoiId": "po_greywater",
+        "kind": "INTERIOR_DOORWAY",
+        "wallId": "wall.po_greywater.split.v.2",
+        "aAu": [
+          821.9943,
+          584.842
+        ],
+        "bAu": [
+          819.9369,
+          590.4783
+        ],
+        "centreAu": [
+          820.9656,
+          587.6601
+        ],
+        "intervalAu": [
+          4.151,
+          10.151
+        ],
+        "openingAu": 6,
+        "effectiveClearWidthAu": 4,
+        "thicknessAu": 2,
+        "unit": "authoring_unit",
+        "orientationRad": 1.9208,
+        "normalAu": [
+          -0.9394,
+          -0.3429
+        ],
+        "fromRoomId": "room.po_greywater.1.2",
+        "toRoomId": "room.po_greywater.1.3",
+        "levelId": null,
+        "boundarySegmentAu": [
+          [
+            823.4176,
+            580.9427
+          ],
+          [
+            818.5136,
+            594.3776
+          ]
+        ],
+        "staticHole": true,
+        "blocksMovement": false,
+        "blocksSight": false,
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "status": "PROPOSED",
+        "note": "STATIC geometric hole only. No lock, key, power, device, door state or destruction rule."
+      },
+      {
+        "id": "portal.po_greywater.h.2.2",
+        "parentPoiId": "po_greywater",
+        "kind": "INTERIOR_DOORWAY",
+        "wallId": "wall.po_greywater.split.v.2",
+        "aAu": [
+          817.0903,
+          598.2769
+        ],
+        "bAu": [
+          815.0329,
+          603.9132
+        ],
+        "centreAu": [
+          816.0616,
+          601.0951
+        ],
+        "intervalAu": [
+          18.4529,
+          24.4529
+        ],
+        "openingAu": 6,
+        "effectiveClearWidthAu": 4,
+        "thicknessAu": 2,
+        "unit": "authoring_unit",
+        "orientationRad": 1.9208,
+        "normalAu": [
+          -0.9394,
+          -0.3429
+        ],
+        "fromRoomId": "room.po_greywater.2.2",
+        "toRoomId": "room.po_greywater.2.3",
+        "levelId": null,
+        "boundarySegmentAu": [
+          [
+            818.5136,
+            594.3776
+          ],
+          [
+            813.6096,
+            607.8125
+          ]
+        ],
+        "staticHole": true,
+        "blocksMovement": false,
+        "blocksSight": false,
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "status": "PROPOSED",
+        "note": "STATIC geometric hole only. No lock, key, power, device, door state or destruction rule."
+      }
+    ],
+    "openBoundary": [],
+    "portalRecords": [
+      {
+        "id": "portal.po_greywater.entrance",
+        "parentPoiId": "po_greywater",
+        "kind": "EXTERIOR_ENTRANCE",
+        "wallId": "wall.po_greywater.1",
+        "fromRoomId": null,
+        "toRoomId": "room.po_greywater.1.2",
+        "physicalOpening": true,
+        "connectionValid": true,
+        "status": "PROPOSED",
+        "openingAu": 6,
+        "intervalAu": [
+          17.8,
+          23.8
+        ],
+        "centreAu": [
+          816.9041,
+          578.5672
+        ]
+      },
+      {
+        "id": "portal.po_greywater.h.1.1",
+        "parentPoiId": "po_greywater",
+        "kind": "INTERIOR_DOORWAY",
+        "wallId": "wall.po_greywater.split.v.1",
+        "fromRoomId": "room.po_greywater.1.1",
+        "toRoomId": "room.po_greywater.1.2",
+        "physicalOpening": true,
+        "connectionValid": true,
+        "status": "PROPOSED",
+        "openingAu": 6,
+        "intervalAu": [
+          4.151,
+          10.151
+        ],
+        "centreAu": [
+          807.9384,
+          582.9049
+        ]
+      },
+      {
+        "id": "portal.po_greywater.h.2.1",
+        "parentPoiId": "po_greywater",
+        "kind": "INTERIOR_DOORWAY",
+        "wallId": "wall.po_greywater.split.v.1",
+        "fromRoomId": "room.po_greywater.2.1",
+        "toRoomId": "room.po_greywater.2.2",
+        "physicalOpening": true,
+        "connectionValid": true,
+        "status": "PROPOSED",
+        "openingAu": 6,
+        "intervalAu": [
+          18.4529,
+          24.4529
+        ],
+        "centreAu": [
+          803.0344,
+          596.3399
+        ]
+      },
+      {
+        "id": "portal.po_greywater.v.1.1",
+        "parentPoiId": "po_greywater",
+        "kind": "INTERIOR_DOORWAY",
+        "wallId": "wall.po_greywater.split.h.1",
+        "fromRoomId": "room.po_greywater.1.1",
+        "toRoomId": "room.po_greywater.2.1",
+        "physicalOpening": true,
+        "connectionValid": true,
+        "status": "PROPOSED",
+        "openingAu": 6,
+        "intervalAu": [
+          3.934,
+          9.934
+        ],
+        "centreAu": [
+          798.9728,
+          587.2448
+        ]
+      },
+      {
+        "id": "portal.po_greywater.v.1.2",
+        "parentPoiId": "po_greywater",
+        "kind": "INTERIOR_DOORWAY",
+        "wallId": "wall.po_greywater.split.h.1",
+        "fromRoomId": "room.po_greywater.1.2",
+        "toRoomId": "room.po_greywater.2.2",
+        "physicalOpening": true,
+        "connectionValid": true,
+        "status": "PROPOSED",
+        "openingAu": 6,
+        "intervalAu": [
+          17.8019,
+          23.8019
+        ],
+        "centreAu": [
+          812,
+          592
+        ]
+      },
+      {
+        "id": "portal.po_greywater.v.1.3",
+        "parentPoiId": "po_greywater",
+        "kind": "INTERIOR_DOORWAY",
+        "wallId": "wall.po_greywater.split.h.1",
+        "fromRoomId": "room.po_greywater.1.3",
+        "toRoomId": "room.po_greywater.2.3",
+        "physicalOpening": true,
+        "connectionValid": true,
+        "status": "PROPOSED",
+        "openingAu": 6,
+        "intervalAu": [
+          31.6699,
+          37.6699
+        ],
+        "centreAu": [
+          825.0272,
+          596.7552
+        ]
+      },
+      {
+        "id": "portal.po_greywater.h.1.2",
+        "parentPoiId": "po_greywater",
+        "kind": "INTERIOR_DOORWAY",
+        "wallId": "wall.po_greywater.split.v.2",
+        "fromRoomId": "room.po_greywater.1.2",
+        "toRoomId": "room.po_greywater.1.3",
+        "physicalOpening": true,
+        "connectionValid": true,
+        "status": "PROPOSED",
+        "openingAu": 6,
+        "intervalAu": [
+          4.151,
+          10.151
+        ],
+        "centreAu": [
+          820.9656,
+          587.6601
+        ]
+      },
+      {
+        "id": "portal.po_greywater.h.2.2",
+        "parentPoiId": "po_greywater",
+        "kind": "INTERIOR_DOORWAY",
+        "wallId": "wall.po_greywater.split.v.2",
+        "fromRoomId": "room.po_greywater.2.2",
+        "toRoomId": "room.po_greywater.2.3",
+        "physicalOpening": true,
+        "connectionValid": true,
+        "status": "PROPOSED",
+        "openingAu": 6,
+        "intervalAu": [
+          18.4529,
+          24.4529
+        ],
+        "centreAu": [
+          816.0616,
+          601.0951
+        ]
+      }
+    ],
+    "collisionAdapter": {
+      "staticSolidIds": [
+        "wall.po_greywater.1.span.1",
+        "wall.po_greywater.1.span.2",
+        "wall.po_greywater.2",
+        "wall.po_greywater.3",
+        "wall.po_greywater.4",
+        "wall.po_greywater.split.v.1.span.1",
+        "wall.po_greywater.split.v.1.span.2",
+        "wall.po_greywater.split.v.1.span.3",
+        "wall.po_greywater.split.v.2.span.1",
+        "wall.po_greywater.split.v.2.span.2",
+        "wall.po_greywater.split.v.2.span.3",
+        "wall.po_greywater.split.h.1.span.1",
+        "wall.po_greywater.split.h.1.span.2",
+        "wall.po_greywater.split.h.1.span.3",
+        "wall.po_greywater.split.h.1.span.4"
+      ],
+      "staticOpeningIds": [
+        "portal.po_greywater.entrance",
+        "portal.po_greywater.h.1.1",
+        "portal.po_greywater.h.2.1",
+        "portal.po_greywater.v.1.1",
+        "portal.po_greywater.v.1.2",
+        "portal.po_greywater.v.1.3",
+        "portal.po_greywater.h.1.2",
+        "portal.po_greywater.h.2.2"
+      ],
+      "nonSolidBoundaryIds": [],
+      "dynamicCollisionOwner": "GAMEPLAY",
+      "status": "PROPOSED_STATIC_COLLISION_GEOMETRY__NO_RUNTIME_COLLISION_DATA"
+    },
+    "losAdapter": {
+      "opaqueSolidIds": [
+        "wall.po_greywater.1.span.1",
+        "wall.po_greywater.1.span.2",
+        "wall.po_greywater.2",
+        "wall.po_greywater.3",
+        "wall.po_greywater.4",
+        "wall.po_greywater.split.v.1.span.1",
+        "wall.po_greywater.split.v.1.span.2",
+        "wall.po_greywater.split.v.1.span.3",
+        "wall.po_greywater.split.v.2.span.1",
+        "wall.po_greywater.split.v.2.span.2",
+        "wall.po_greywater.split.v.2.span.3",
+        "wall.po_greywater.split.h.1.span.1",
+        "wall.po_greywater.split.h.1.span.2",
+        "wall.po_greywater.split.h.1.span.3",
+        "wall.po_greywater.split.h.1.span.4"
+      ],
+      "transparentOpeningIds": [
+        "portal.po_greywater.entrance",
+        "portal.po_greywater.h.1.1",
+        "portal.po_greywater.h.2.1",
+        "portal.po_greywater.v.1.1",
+        "portal.po_greywater.v.1.2",
+        "portal.po_greywater.v.1.3",
+        "portal.po_greywater.h.1.2",
+        "portal.po_greywater.h.2.2"
+      ],
+      "portalSightOwner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    "circulation": {
+      "lr01Graph": {
+        "entranceRoomId": "room.po_greywater.1.2",
+        "reachableRooms": 6,
+        "totalRooms": 6,
+        "maxDepth": 2,
+        "depthByRoomId": {
+          "room.po_greywater.1.2": 0,
+          "room.po_greywater.1.1": 1,
+          "room.po_greywater.1.3": 1,
+          "room.po_greywater.2.2": 1,
+          "room.po_greywater.2.1": 2,
+          "room.po_greywater.2.3": 2
+        },
+        "interiorDepthAu": 25.5438,
+        "status": "DERIVED"
+      },
+      "roomGraphStart": "room.po_greywater.1.2",
+      "physicalRoomReach": {
+        "room.po_greywater.1.1": true,
+        "room.po_greywater.1.2": true,
+        "room.po_greywater.1.3": true,
+        "room.po_greywater.2.1": true,
+        "room.po_greywater.2.2": true,
+        "room.po_greywater.2.3": true
+      },
+      "graphReachableRooms": [
+        "room.po_greywater.1.2",
+        "room.po_greywater.1.1",
+        "room.po_greywater.2.2",
+        "room.po_greywater.1.3",
+        "room.po_greywater.2.1",
+        "room.po_greywater.2.3"
+      ],
+      "graphOnlyRooms": [],
+      "physicalOnlyRooms": [],
+      "diagonalOnlyReachableRooms": [],
+      "physicallyReachableRoomCount": 6,
+      "groundRoomCount": 6,
+      "note": "Graph BFS is NOT substituted for physical clearance: both are computed and compared."
+    },
+    "roofCoverage": {
+      "coveredRoomCount": 6,
+      "totalRoomCount": 6,
+      "roofAreaAu2": 437.9927,
+      "footAreaAu2": 1189.76,
+      "roofAreaToFootAreaRatioAcrossLevels": 0.3681,
+      "fractionOfFoot": 0.3681,
+      "status": "DERIVED",
+      "note": "Measured over PROPOSED room/canopy polygons weighted by coverageFractionOfRoom. The across-levels ratio can exceed 1 when a DEEP level adds roofed area; it is NOT a single-plane coverage fraction."
+    },
+    "retreat": {
+      "lr01": {
+        "status": "UNRESOLVED",
+        "pathAu": null,
+        "lengthAu": null,
+        "exitAtAu": null,
+        "note": "No authored retreat polyline. An exit is NOT invented; Gameplay may route through static portals."
+      },
+      "consistency": "RETREAT_WAYPOINTS_RETAINED__NO_NEW_CORRIDOR_INVENTED",
+      "status": "UNRESOLVED"
+    },
+    "fitAtDiagnosticU": [
+      {
+        "U": 1.6,
+        "frameTiles": [
+          1250,
+          875
+        ],
+        "openingTiles": 3.75,
+        "effectiveClearTiles": 2.5,
+        "wallThicknessTiles": 1.25,
+        "minRoomDimensionTiles": 8.6673,
+        "playerProxyTiles": 0.625,
+        "verdict": "FIT",
+        "status": "DIAGNOSTIC_ONLY__NOT_APPROVED_SCALE"
+      },
+      {
+        "U": 2,
+        "frameTiles": [
+          1000,
+          700
+        ],
+        "openingTiles": 3,
+        "effectiveClearTiles": 2,
+        "wallThicknessTiles": 1,
+        "minRoomDimensionTiles": 6.9338,
+        "playerProxyTiles": 0.625,
+        "verdict": "FIT",
+        "status": "DIAGNOSTIC_ONLY__NOT_APPROVED_SCALE"
+      }
+    ],
+    "exactOldToNewSpanIds": [
+      {
+        "oldWallId": "wall.po_greywater.1",
+        "newSolidSpanIds": [
+          "wall.po_greywater.1.span.1",
+          "wall.po_greywater.1.span.2"
+        ],
+        "openingIds": [
+          "portal.po_greywater.entrance"
+        ]
+      },
+      {
+        "oldWallId": "wall.po_greywater.split.v.1",
+        "newSolidSpanIds": [
+          "wall.po_greywater.split.v.1.span.1",
+          "wall.po_greywater.split.v.1.span.2",
+          "wall.po_greywater.split.v.1.span.3"
+        ],
+        "openingIds": [
+          "portal.po_greywater.h.1.1",
+          "portal.po_greywater.h.2.1"
+        ]
+      },
+      {
+        "oldWallId": "wall.po_greywater.split.v.2",
+        "newSolidSpanIds": [
+          "wall.po_greywater.split.v.2.span.1",
+          "wall.po_greywater.split.v.2.span.2",
+          "wall.po_greywater.split.v.2.span.3"
+        ],
+        "openingIds": [
+          "portal.po_greywater.h.1.2",
+          "portal.po_greywater.h.2.2"
+        ]
+      },
+      {
+        "oldWallId": "wall.po_greywater.split.h.1",
+        "newSolidSpanIds": [
+          "wall.po_greywater.split.h.1.span.1",
+          "wall.po_greywater.split.h.1.span.2",
+          "wall.po_greywater.split.h.1.span.3",
+          "wall.po_greywater.split.h.1.span.4"
+        ],
+        "openingIds": [
+          "portal.po_greywater.v.1.1",
+          "portal.po_greywater.v.1.2",
+          "portal.po_greywater.v.1.3"
+        ]
+      }
+    ],
+    "ownership": "MAP owns static solids/openings; GAMEPLAY owns dynamic door state, locks, power, destruction, collision rules and runtime passability.",
+    "note": "Exterior/interior walls are clipped into true solid spans. Each portal is a real geometric opening interval grounded on the actual shared wall/room boundary. Static holes are separate from Gameplay-owned dynamic doors."
+  },
+  "spawnEligibility": {
+    "contract": {
+      "schema": "soh.map.lr02.spawn_eligibility_contract.v1",
+      "consumer": "GAMEPLAY",
+      "decision": "SEEDED_RANDOM_LEGAL_POSITION_SAMPLING",
+      "mapProvides": [
+        "staticEligibleCells",
+        "candidateRegionGeometry",
+        "parentGeographicIds",
+        "sourceResolutionAu",
+        "localClearanceAu",
+        "reliefAndSlopeDescriptors",
+        "rejectionEvidence"
+      ],
+      "gameplayMustProvide": [
+        "seed",
+        "runtime tile transform",
+        "runtime collision test",
+        "dynamic occupancy",
+        "claim legality",
+        "hazard/creature exposure",
+        "actor separation",
+        "final position persistence",
+        "starter resource policy"
+      ],
+      "algorithm": "Choose a candidate region by Gameplay-owned policy, then seed a uniform sample over its cellIndices; project with the Gameplay-approved transform; reject on runtime collision/occupancy/claim/hazard; resample. Map never pre-selects the final point.",
+      "unknowns": [
+        {
+          "id": "U01",
+          "name": "dynamic_occupancy",
+          "status": "UNKNOWN",
+          "owner": "GAMEPLAY"
+        },
+        {
+          "id": "U02",
+          "name": "claim_legality",
+          "status": "UNKNOWN",
+          "owner": "GAMEPLAY"
+        },
+        {
+          "id": "U03",
+          "name": "hazard_and_creature_exposure",
+          "status": "UNKNOWN",
+          "owner": "GAMEPLAY"
+        },
+        {
+          "id": "U04",
+          "name": "actor_separation_and_population",
+          "status": "UNKNOWN",
+          "owner": "GAMEPLAY"
+        },
+        {
+          "id": "U05",
+          "name": "runtime_collision_and_swept_clearance",
+          "status": "UNKNOWN",
+          "owner": "GAMEPLAY"
+        },
+        {
+          "id": "U06",
+          "name": "authoring_unit_to_runtime_tile_transform",
+          "status": "UNDECIDED",
+          "owner": "GAMEPLAY+MAP"
+        },
+        {
+          "id": "U07",
+          "name": "seeded_random_seed_and_final_position",
+          "status": "UNKNOWN",
+          "owner": "GAMEPLAY"
+        },
+        {
+          "id": "U08",
+          "name": "starter_resources_inventory_and_items",
+          "status": "GAMEPLAY_OWNED",
+          "owner": "GAMEPLAY"
+        }
+      ],
+      "forbidden": [
+        "No runtime spawn point",
+        "No spawn compound/hub",
+        "No pre-placed house",
+        "No cleared corridor",
+        "No beacon",
+        "No free shelter",
+        "No starter crate",
+        "No creature-free distance",
+        "No occupancy/claim verdict",
+        "No starter-resource stock"
+      ]
+    },
+    "criteria": {
+      "schema": "soh.map.lr02.spawn_eligibility_criteria.v1",
+      "authority": "MAP_DERIVED_STATIC_GEOGRAPHY__GAMEPLAY_OWNS_RUNTIME_LEGALITY",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "cells": 43750,
+        "order": "row_major i=gy*gw+gx",
+        "centre": "[(gx+0.5)*8,(gy+0.5)*8] au"
+      },
+      "include": [
+        {
+          "id": "C01",
+          "field": "landId",
+          "rule": ">0",
+          "meaning": "cell inside one of the 8 canonical land polygons (holes honoured)"
+        },
+        {
+          "id": "C02",
+          "field": "waterClass",
+          "rule": "===0",
+          "meaning": "not sea, not lake, not river centreline"
+        },
+        {
+          "id": "C03",
+          "field": "walkableCandidate",
+          "rule": "===1",
+          "meaning": "GEO-01 derived land minus lake/river geometry"
+        },
+        {
+          "id": "C04",
+          "field": "lakeId / riverId / freshwater",
+          "rule": "===0",
+          "meaning": "no freshwater geometry overlap"
+        },
+        {
+          "id": "C05",
+          "field": "protectedGeometryCandidate / poiGeometryId / elderGeometryId",
+          "rule": "===0",
+          "meaning": "outside POI foot/deep and Elder outer/core/arena geometry"
+        },
+        {
+          "id": "C06",
+          "field": "coast",
+          "rule": "===0",
+          "meaning": "not the shoreline rim cell (land cell with a sea neighbour)"
+        },
+        {
+          "id": "C07",
+          "field": "clearanceCells",
+          "rule": ">=3",
+          "meaning": ">=24 au static clearance from GEO-01 blocked geometry"
+        },
+        {
+          "id": "C08",
+          "field": "slope",
+          "rule": "<=4",
+          "meaning": "editor-derived raw-byte relief preference; NOT a Gameplay slope/passability threshold"
+        },
+        {
+          "id": "C09",
+          "field": "elevation",
+          "rule": "in [13,153]",
+          "meaning": "source land-height 5th..95th percentile band; excludes raw-byte extremes, no approved physical unit"
+        }
+      ],
+      "reliefBandRawByte": [
+        13,
+        153
+      ],
+      "biomePolicy": "Biome code is recorded as a DESCRIPTOR and suitability rank; no biome is canonically banned for spawning. Editor badBuildBiomeCodes [4,8,9,10] are used ONLY in build-site envelope assessment, never as a runtime law.",
+      "unknownConditions": [
+        {
+          "id": "U01",
+          "name": "dynamic_occupancy",
+          "status": "UNKNOWN",
+          "owner": "GAMEPLAY"
+        },
+        {
+          "id": "U02",
+          "name": "claim_legality",
+          "status": "UNKNOWN",
+          "owner": "GAMEPLAY"
+        },
+        {
+          "id": "U03",
+          "name": "hazard_and_creature_exposure",
+          "status": "UNKNOWN",
+          "owner": "GAMEPLAY"
+        },
+        {
+          "id": "U04",
+          "name": "actor_separation_and_population",
+          "status": "UNKNOWN",
+          "owner": "GAMEPLAY"
+        },
+        {
+          "id": "U05",
+          "name": "runtime_collision_and_swept_clearance",
+          "status": "UNKNOWN",
+          "owner": "GAMEPLAY"
+        },
+        {
+          "id": "U06",
+          "name": "authoring_unit_to_runtime_tile_transform",
+          "status": "UNDECIDED",
+          "owner": "GAMEPLAY+MAP"
+        },
+        {
+          "id": "U07",
+          "name": "seeded_random_seed_and_final_position",
+          "status": "UNKNOWN",
+          "owner": "GAMEPLAY"
+        },
+        {
+          "id": "U08",
+          "name": "starter_resources_inventory_and_items",
+          "status": "GAMEPLAY_OWNED",
+          "owner": "GAMEPLAY"
+        }
+      ],
+      "notAsserted": [
+        "No runtime spawn point",
+        "No spawn compound/hub",
+        "No pre-placed house",
+        "No cleared corridor",
+        "No beacon",
+        "No free shelter",
+        "No starter crate",
+        "No creature-free distance",
+        "No occupancy/claim verdict",
+        "No starter-resource stock"
+      ]
+    },
+    "greywaterEligibleArea": {
+      "id": "se.greywater_bounded.v1",
+      "derivedFromCandidateRegionIds": [
+        "se.1.000",
+        "se.1.026"
+      ],
+      "status": "DERIVED_STATIC_ELIGIBILITY__CLIPPED_TO_BOUNDED_WINDOW",
+      "windowAu": [
+        680,
+        550,
+        900,
+        660
+      ],
+      "unit": "authoring_unit",
+      "sourceResolutionAu": 8,
+      "cellCount": 107,
+      "cellIndices": [
+        17362,
+        17361,
+        17612,
+        17360,
+        17611,
+        17862,
+        17359,
+        17610,
+        17861,
+        18112,
+        17358,
+        17609,
+        17860,
+        18111,
+        17608,
+        17859,
+        17340,
+        17339,
+        17590,
+        17338,
+        17589,
+        17840,
+        17337,
+        17588,
+        17839,
+        17841,
+        18090,
+        17336,
+        17587,
+        17838,
+        18089,
+        18091,
+        18340,
+        17335,
+        17586,
+        17837,
+        18088,
+        18339,
+        18092,
+        18341,
+        18590,
+        17585,
+        17836,
+        18087,
+        18338,
+        18589,
+        18342,
+        18591,
+        18840,
+        17835,
+        18086,
+        18337,
+        18588,
+        18839,
+        18343,
+        18592,
+        18841,
+        19090,
+        18085,
+        18336,
+        18587,
+        18838,
+        19089,
+        18344,
+        18593,
+        18842,
+        19091,
+        19340,
+        18335,
+        18586,
+        18837,
+        19088,
+        19339,
+        18345,
+        18594,
+        18843,
+        19092,
+        19341,
+        19590,
+        18585,
+        18836,
+        19087,
+        19338,
+        19589,
+        18346,
+        18595,
+        18844,
+        19093,
+        19342,
+        19591,
+        18835,
+        19086,
+        19337,
+        19588,
+        18347,
+        18596,
+        18845,
+        19094,
+        19343,
+        19592,
+        19085,
+        19336,
+        18348,
+        18597,
+        18846,
+        19344,
+        19335
+      ],
+      "areaAu2": 6848,
+      "bboxAu": [
+        680,
+        552,
+        904,
+        632
+      ],
+      "support": {
+        "localClearanceAu": {
+          "min": 24,
+          "mean": 40.2243
+        },
+        "elevationRawByteMean": 60.9439,
+        "slopeRawDeltaMean": 1.1215,
+        "biomeHistogram": {
+          "0": 59,
+          "1": 36,
+          "2": 12
+        }
+      },
+      "note": "Authoritative membership is cellIndices. This is an AREA, not a single spawn point and not a renamed sp_lake landmark."
+    },
+    "wholeVeyraCoverage": {
+      "frame": {
+        "w": 2000,
+        "h": 1400,
+        "unit": "authoring_unit"
+      },
+      "totalLandCells": 15077,
+      "staticallyEligibleCells": 5151,
+      "eligibleFractionOfLand": 0.3416,
+      "candidateRegions": 16,
+      "distinctLandmasses": 3,
+      "distinctLandmassIds": [
+        "ld_veyra",
+        "ld_saltwick",
+        "ld_ironholm"
+      ],
+      "distinctSourceZones": 18,
+      "rejectedLandCells": 9926,
+      "rejectionHistogram": {
+        "SEA_OR_NO_LAND": 28673,
+        "SHORELINE_RIM": 625,
+        "POI_OR_ELDER_PROTECTED_GEOMETRY": 4919,
+        "INSUFFICIENT_STATIC_CLEARANCE": 1260,
+        "ELEVATION_RAW_EXTREME": 126,
+        "STEEP_RELIEF_EDITOR_HEURISTIC": 2222,
+        "RIVER_CENTRELINE": 387,
+        "LAKE": 298
+      },
+      "rejectedByLandmass": [
+        {
+          "landId": "ld_veyra",
+          "landCells": 13069,
+          "eligibleCells": 5090,
+          "rejectedCells": 7979,
+          "status": "DERIVED"
+        },
+        {
+          "landId": "ld_cinder",
+          "landCells": 729,
+          "eligibleCells": 5,
+          "rejectedCells": 724,
+          "status": "DERIVED"
+        },
+        {
+          "landId": "ld_saltwick",
+          "landCells": 492,
+          "eligibleCells": 114,
+          "rejectedCells": 378,
+          "status": "DERIVED"
+        },
+        {
+          "landId": "ld_gull",
+          "landCells": 77,
+          "eligibleCells": 11,
+          "rejectedCells": 66,
+          "status": "DERIVED"
+        },
+        {
+          "landId": "ld_ironholm",
+          "landCells": 356,
+          "eligibleCells": 17,
+          "rejectedCells": 339,
+          "status": "DERIVED"
+        },
+        {
+          "landId": "ld_threshold",
+          "landCells": 197,
+          "eligibleCells": 0,
+          "rejectedCells": 197,
+          "status": "DERIVED"
+        },
+        {
+          "landId": "ld_wreck",
+          "landCells": 141,
+          "eligibleCells": 3,
+          "rejectedCells": 138,
+          "status": "DERIVED"
+        },
+        {
+          "landId": "ld_beacon",
+          "landCells": 16,
+          "eligibleCells": 0,
+          "rejectedCells": 16,
+          "status": "DERIVED"
+        }
+      ],
+      "smallComponentsDiscarded": 40,
+      "status": "DERIVED_COVERAGE__NO_RUNTIME_SPAWN_AUTHORITY"
+    },
+    "wholeVeyraCandidateRegionCount": 16,
+    "spLandmarkPolicy": {
+      "ids": [
+        "sp_west",
+        "sp_lake",
+        "sp_hook",
+        "sp_gulf"
+      ],
+      "status": "SOURCE_AUTHORED_PROVENANCE_LANDMARK_ONLY",
+      "note": "sp_* anchors remain canonical provenance landmarks. They are NOT runtime spawn coordinates, NOT spawn compounds, NOT final seeded positions."
+    },
+    "unverified": [
+      {
+        "id": "U01",
+        "name": "dynamic_occupancy",
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      },
+      {
+        "id": "U02",
+        "name": "claim_legality",
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      },
+      {
+        "id": "U03",
+        "name": "hazard_and_creature_exposure",
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      },
+      {
+        "id": "U04",
+        "name": "actor_separation_and_population",
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      },
+      {
+        "id": "U05",
+        "name": "runtime_collision_and_swept_clearance",
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      },
+      {
+        "id": "U06",
+        "name": "authoring_unit_to_runtime_tile_transform",
+        "status": "UNDECIDED",
+        "owner": "GAMEPLAY+MAP"
+      },
+      {
+        "id": "U07",
+        "name": "seeded_random_seed_and_final_position",
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      },
+      {
+        "id": "U08",
+        "name": "starter_resources_inventory_and_items",
+        "status": "GAMEPLAY_OWNED",
+        "owner": "GAMEPLAY"
+      }
+    ]
+  },
+  "buildSiteEnvelope": {
+    "siteId": "site.bz_greywater",
+    "parentZoneId": "bz_greywater",
+    "sourceRef": "project.zones[] where id=bz_greywater",
+    "physicalEnvelopeAu": [
+      705.377,
+      590.5798,
+      868.1276,
+      633.3361
+    ],
+    "footprintAreaAu2": 5707.4164,
+    "derivedCellCount": 105,
+    "roadFrontage": {
+      "nearestCartRoadId": "rd_b",
+      "distanceAu": 17.2748,
+      "derivedCartRoadCellDistance": 0,
+      "status": "MEASURED_FROM_SOURCE_ROAD_GEOMETRY"
+    },
+    "slopeRawDeltaMean": 1.8476,
+    "elevationRawByteMean": 63.3048,
+    "minStaticClearanceAu": 0,
+    "biomeHistogram": {
+      "0": 31,
+      "2": 74
+    },
+    "editorBadBuildBiomeCells": 0,
+    "waterCells": 1,
+    "dryCellCount": 104,
+    "geometricEnvelopeStatus": "PARTIAL_WATER_OVERLAP__DRY_SUBSET_REQUIRED",
+    "occupancyStatus": "UNKNOWN",
+    "claimLegalityStatus": "GAMEPLAY_OWNED",
+    "sweptClearanceAu": null,
+    "sweptClearanceStatus": "UNKNOWN",
+    "note": "Physical envelope + terrain only. NOT a placement grant, house, claim radius or swept vehicle clearance."
+  },
+  "allPoiCompilerSummary": {
+    "note": "Reusable compiler already exercised on all 81 pinned LR01 layouts. Full per-POI output is a later checkpoint; this M0 patch stays focused on the bounded consumer-ready region.",
+    "counts": {
+      "pois": 81,
+      "verified": 63,
+      "verifiedWithExceptions": 18,
+      "failed": 0,
+      "openYard": 26,
+      "partialCluster": 26,
+      "fullEnclosure": 29,
+      "staticSolids": 463,
+      "staticOpenings": 169,
+      "invalidPortals": 0,
+      "unresolvedVerticalLinks": 18,
+      "exceptions": 18,
+      "testsPass": 923,
+      "testsApplicable": 923,
+      "testsNotApplicable": 130,
+      "testsTotal": 1053,
+      "fitFailPois": [],
+      "missingFit": 0
+    },
+    "greywaterVerdict": "VERIFIED"
+  },
+  "tests": {
+    "positiveAndNegativeGreywater": {
+      "validExteriorEntry": true,
+      "openDoorwayHasUnblockedStaticGeometry": true,
+      "losThroughRealGap": true,
+      "multiRoomMovementThroughLegitimatePortals": true,
+      "physicalConnectivityMatchesGraph": true,
+      "sourceStableIds": true,
+      "noCornerShortcut": true,
+      "noInvisibleSolidWallOverDoorway": true,
+      "noAccidentalGapInClosedWall": true,
+      "blockedMovementThroughIntactSolidSpan": true,
+      "losBlockedBySolidSpan": true,
+      "noNonphysicalCornerShortcutOrCrossRoomWall": true,
+      "fitAtDiagnosticU": true
+    },
+    "notApplicableTests": [],
+    "failedTests": [],
+    "injectedNegativeTests": {
+      "results": [
+        {
+          "id": "N-01_OVERSIZED_DOOR_REJECTED",
+          "verdict": "PASS",
+          "detail": {
+            "reason": "OPENING_OUTSIDE_WALL_SAFE_MARGIN (t0=-478.7, t1=520.3, L=41.6, margin=2)",
+            "cutOpenings": 7,
+            "exceptionCount": 1
+          }
+        },
+        {
+          "id": "N-02_OFF_WALL_ENTRANCE_REJECTED",
+          "verdict": "PASS",
+          "detail": {
+            "reason": "OPENING_OUTSIDE_WALL_SAFE_MARGIN (t0=38.6, t1=44.6, L=41.6, margin=2)",
+            "cutOpenings": 7
+          }
+        },
+        {
+          "id": "N-03_UNDERSIZED_CORRIDOR_REJECTED",
+          "verdict": "PASS",
+          "detail": {
+            "reason": "OPENING_NOT_WIDER_THAN_WALL_THICKNESS__NO_PHYSICAL_PLAYER_CLEARANCE (width=0.4, thickness=2)"
+          }
+        },
+        {
+          "id": "N-04_NON_ADJACENT_ROOM_DOOR_REJECTED",
+          "verdict": "PASS",
+          "detail": {
+            "portalId": "portal.po_greywater.h.1.1",
+            "status": "INVALID",
+            "reason": "NO_SHARED_WALL_BOUNDARY_FOUND"
+          }
+        },
+        {
+          "id": "N-05_OVERLAPPING_OPENINGS_REJECTED",
+          "verdict": "PASS",
+          "detail": {
+            "invalidCount": 7,
+            "reasons": [
+              "OPENING_OUTSIDE_WALL_SAFE_MARGIN (t0=0.651, t1=13.651, L=28.6039, margin=2)",
+              "OPENING_OUTSIDE_WALL_SAFE_MARGIN (t0=0.434, t1=13.434, L=41.6038, margin=2)",
+              "OPENING_OUTSIDE_WALL_SAFE_MARGIN (t0=0.651, t1=13.651, L=28.6039, margin=2)"
+            ]
+          }
+        },
+        {
+          "id": "N-06_OPEN_YARD_NOT_ENCLOSED",
+          "verdict": "PASS",
+          "detail": {
+            "poiId": "po_glade",
+            "policy": "OPEN_YARD",
+            "solids": 0,
+            "boundary": 4
+          }
+        },
+        {
+          "id": "N-07_SOURCE_STABLE_IDS_THROUGH_REGENERATION",
+          "verdict": "PASS",
+          "detail": {
+            "solidIds": 15,
+            "openingIds": 8
+          }
+        },
+        {
+          "id": "N-08_GRAPH_ONLY_CONNECTION_CANNOT_OPEN_SOLID_WALL",
+          "verdict": "PASS",
+          "detail": {
+            "physicallyReachableRooms": 0,
+            "graphOnlyRooms": 1,
+            "cutOpenings": 0,
+            "solids": 7,
+            "note": "Mismatch correctly reported as FAIL, not silently accepted."
+          }
+        }
+      ],
+      "pass": 8,
+      "total": 8,
+      "allPass": true
+    },
+    "digestRecomputation": "VERIFIED_BY_world_lab/lr02/src/test.mjs",
+    "reproducibleBy": "world_lab/lr02/reproduce.sh"
+  },
+  "ready": [
+    "Exact LR01 parent package/digest pinned and independently recomputable",
+    "Bounded Greywater static solids with real clipped door/entrance openings in authoring units",
+    "Exact old wall -> new span ID mapping; parent wall/room/portal/entrance IDs preserved",
+    "Positive: exterior entry, open static doorway, LOS through gap, multi-room physical movement, 6/6 rooms reachable",
+    "Negative: intact solid span blocks movement/LOS, no accidental gap, no corner shortcut, invalid doors/walls/corridors rejected",
+    "Physical grid BFS compared against graph BFS (not substituted)",
+    "Greywater eligible AREA geometry + machine-readable seeded-sampling Gameplay contract",
+    "U=1.6 / U=2.0 isolated same-origin diagnostic projections with transformed geometry"
+  ],
+  "unverified": [
+    "Gameplay intake / projection / integration into the existing SOH Web game",
+    "Runtime collision, dynamic door state, lock/power/destruction rules",
+    "Runtime tile transform (U UNDECIDED)",
+    "Seeded final position, occupancy, claim, hazard, actor separation",
+    "Player-scale clearance in the real Web runtime (diagnostic FIT only)",
+    "K6 roof reveal, resource compilation, build/pay/save-reload acceptance",
+    "Creator visual approval",
+    "Any playable Veyra claim"
+  ],
+  "noClaims": [
+    "NO playable Veyra",
+    "NO final world",
+    "NO approved scale",
+    "NO canonical rewrite",
+    "NO Gameplay implementation command implied by this handoff",
+    "NO dynamic door state, lock, key, power, device, loot, vendor, cash, quest, weather or AI",
+    "NO runtime spawn coordinate, spawn compound, house, shelter, crate, beacon or cleared corridor",
+    "NO occupancy/claim legality or creature-free distance",
+    "NO vehicle swept clearance claim",
+    "NO fabricated ferry/boat rule or forced land bridge"
+  ],
+  "revisionDigest": "0ea77cd3f270d7a052c4626668fc963e6a40b0697473007b3c8f2fe29dbcd407",
+  "digestMethod": "sha256 over JSON.stringify(body) in field insertion order; recompute by deleting revisionDigest and digestMethod"
+}
