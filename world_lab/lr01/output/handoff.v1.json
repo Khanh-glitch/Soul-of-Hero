@@ -1,0 +1,439 @@
+{
+  "schema": "soh.map.lr01.handoff.v1",
+  "version": 1,
+  "status": "STAGE_1_MAP_GEOGRAPHY_HANDOFF__STAGE_2_GAMEPLAY_POPULATION_NOT_PERFORMED__WEB_PLAYABILITY_GATE_OPEN",
+  "authority": "MAP DESIGNS THE PHYSICAL WORLD. GAMEPLAY POPULATES AND SIMULATES IT.",
+  "package": {
+    "schema": "soh.map.lr01.geography_package.v1",
+    "schemaVersion": 1,
+    "revision": 1,
+    "packageId": "veyra-geography-map-lr01",
+    "revisionDigest": "e3259eb30016f93ab0883c6dc3656f0ec1b9d47a85dc78fd90a56e0185765e63",
+    "file": "output/geography_package.v1.json"
+  },
+  "coordination": {
+    "checkedAtUtc": "2026-11-04T00:25:11Z",
+    "mapBranch": "arena/2e3cfbd2-soul-of-hero",
+    "gp44Head": "f8010ec973095c88f3c462a68116c169b61237a3",
+    "gp44State": "OPEN / DRAFT / HOLD",
+    "commentsRead": [
+      "6608030530",
+      "6606283007",
+      "6619055192"
+    ],
+    "acknowledgementOfMapLr01Handoff": "NONE__DO_NOT_ASSUME_RECEIPT",
+    "commentInterface": "see docs/COORDINATION.md"
+  },
+  "compatibility": {
+    "checkedAtGp44Head": "f8010ec973095c88f3c462a68116c169b61237a3",
+    "sourceFiles": [
+      "web/src/game/geography-contract.ts :: GeographicHandoff / validateGeographicHandoff",
+      "web/src/game/map-package.ts :: RuntimeMapPackage / validateRuntimeMapPackage"
+    ],
+    "finding": "NOT_A_LEGAL_GEOGRAPHY_ONLY_VALIDATOR",
+    "details": [
+      "GeographicHandoff requires economy:EconomyMap and calls validateEconomyMap, compileEconomy, diagnoseStarts — Gameplay economy population.",
+      "GeographicHandoff requires nonbossCashSites, vendorSites, evacuationSites, PoiGeometry.powerNodes, hazardCells, exteriorLootSites, interiorLootSites, doors and retreatPaths — Gameplay-owned dynamic/economic fields.",
+      "RoadGeometry requires widthTiles, surface and cargoPassable booleans; Map has NO approved physical width, swept clearance or cart-passability rule.",
+      "RuntimeMapPackage requires exactly 200x200 tiles of 16 pixels, plus populated buildings, statics (loot/cash/vendor/door/gen), places and elders — a populated runtime package, not Stage 1 geography.",
+      "PR44 K6 handoff (comment 6619055192) states verbatim: current mixed GeographicHandoff / populated RuntimeMapPackage are not the agreed geography-only contract."
+    ],
+    "mapDecision": "Do NOT fabricate Gameplay-owned fields to pass validateGeographicHandoff. This package remains Stage 1 geography-only.",
+    "correctNextStep": "Joint follow-up: Map exports pure stable-ID geography; Gameplay validates/populates it and compiles a RuntimeMapPackage after the creator approves the transform.",
+    "fieldOwnership": {
+      "MAP": [
+        "stable IDs and sourceRef for 579 canonical objects",
+        "2000x1400 authoring frame + explicit transform metadata",
+        "land / water / coastline / islands / beaches / wetlands / lakes / rivers / watershed",
+        "elevation raw bytes, slope raw deltas, 12-code biome legend, biome transitions",
+        "suitability / practical corridors / choke clusters / build-site + loading geometry",
+        "road/trail/bridge/dock/ferry centreline geometry and source-authored classification",
+        "route graph at SNAP_TOL=7, crossing audit, alternate centreline routes",
+        "POI shells, static walls, rooms, floors, levels, entrances, static portals, circulation, sockets, roof coverage",
+        "Elder outer/core/arenas/approach geometry and separation",
+        "explicit UNKNOWN / PROPOSED / BLOCKED / UNRESOLVED / DERIVED / SOURCE_AUTHORED status"
+      ],
+      "GAMEPLAY": [
+        "procedural resource population, source stock, respawn, loot tables, money, vendors, economy simulation",
+        "locks, keys, cards, power requirements, generators, machines, devices, recipes, quests",
+        "dynamic door states, destruction, player construction, building rules, placement",
+        "weather, environmental effects, exposure, AI, creature spawns, survival balance",
+        "vehicle speeds, weights, load penalties, cart passability, swept clearance rules, ferry/boat rule",
+        "persistence, save schema, runtime collision/reach/LOS rules, streaming and rendering",
+        "RuntimeMapPackage compilation and runtime cell/tile binding"
+      ],
+      "JOINT": [
+        "agree the au->tile transform and transform mode",
+        "agree the geography-only intake seam",
+        "agree room/roof/portal adapter schema",
+        "agree bridge/road clearance evidence standard"
+      ]
+    }
+  },
+  "fieldOwnership": {
+    "MAP": [
+      "stable IDs and sourceRef for 579 canonical objects",
+      "2000x1400 authoring frame + explicit transform metadata",
+      "land / water / coastline / islands / beaches / wetlands / lakes / rivers / watershed",
+      "elevation raw bytes, slope raw deltas, 12-code biome legend, biome transitions",
+      "suitability / practical corridors / choke clusters / build-site + loading geometry",
+      "road/trail/bridge/dock/ferry centreline geometry and source-authored classification",
+      "route graph at SNAP_TOL=7, crossing audit, alternate centreline routes",
+      "POI shells, static walls, rooms, floors, levels, entrances, static portals, circulation, sockets, roof coverage",
+      "Elder outer/core/arenas/approach geometry and separation",
+      "explicit UNKNOWN / PROPOSED / BLOCKED / UNRESOLVED / DERIVED / SOURCE_AUTHORED status"
+    ],
+    "GAMEPLAY": [
+      "procedural resource population, source stock, respawn, loot tables, money, vendors, economy simulation",
+      "locks, keys, cards, power requirements, generators, machines, devices, recipes, quests",
+      "dynamic door states, destruction, player construction, building rules, placement",
+      "weather, environmental effects, exposure, AI, creature spawns, survival balance",
+      "vehicle speeds, weights, load penalties, cart passability, swept clearance rules, ferry/boat rule",
+      "persistence, save schema, runtime collision/reach/LOS rules, streaming and rendering",
+      "RuntimeMapPackage compilation and runtime cell/tile binding"
+    ],
+    "JOINT": [
+      "agree the au->tile transform and transform mode",
+      "agree the geography-only intake seam",
+      "agree room/roof/portal adapter schema",
+      "agree bridge/road clearance evidence standard"
+    ]
+  },
+  "adapterSpec": {
+    "name": "SOH Map->Gameplay geography adapter (MINIMAL SPEC; NOT IMPLEMENTED)",
+    "input": "soh.map.lr01.geography_package.v1",
+    "inputVerification": [
+      "verify source canon SHA-256",
+      "verify revisionDigest over body",
+      "verify every payload SHA-256",
+      "verify schemaVersion/revision/payload count"
+    ],
+    "stageBoundary": "Adapter consumes STAGE 1 geography. It MUST NOT invent STAGE 2 population/simulation fields, and MUST NOT call validateGeographicHandoff() as a geography validator.",
+    "transformRules": [
+      "transform.status is UNDECIDED: do not assume U, do not reinterpret 8 authoring units as 16 runtime pixels, do not crop/warp/rescale the 2000x1400 frame.",
+      "If a runtime tile grid is later approved, choose an explicit documented mode (FLOOR_DROPS_PARTIAL_EDGE_STRIP / CEIL_PADS_BEYOND_FRAME / NONUNIFORM_RESAMPLE_REQUIRED) and record fractional raster coverage.",
+      "WW=WH=200, TILE=16, 1M-cell economy cap and cy*100+cx chunk stride are TEMPORARY engine constants, not Veyra design laws."
+    ],
+    "stableIds": [
+      "canonical feature IDs",
+      "room.<poi>.<r>.<c>",
+      "wall.<poi>.<n>",
+      "entrance.<poi>.1",
+      "portal.<poi>.<...>",
+      "socket.<poi>.<n>",
+      "level.<poi>.<0|-1>",
+      "floor.<poi>.<...>",
+      "site.<zoneId>",
+      "graph nodes from SNAP_TOL=7"
+    ],
+    "staticVsDynamic": {
+      "MAP_STATIC": [
+        "walls",
+        "rooms",
+        "floors",
+        "roof coverage",
+        "static portal openings",
+        "sockets (fit envelopes)",
+        "circulation geometry",
+        "terrain/raster",
+        "route topology",
+        "build/loading envelopes"
+      ],
+      "GAMEPLAY_DYNAMIC": [
+        "door open/closed/locked/destroyed",
+        "power/device state",
+        "loot/cash/vendor instances",
+        "resource stock",
+        "weather",
+        "AI",
+        "player construction",
+        "runtime collision/reach/LOS rules",
+        "persistence"
+      ]
+    },
+    "adapters": [
+      "collision",
+      "enclosure",
+      "reach",
+      "lineOfSight",
+      "roofCoverage",
+      "portalPassability"
+    ],
+    "requiredGameplayProviders": [
+      "approved transform + mode",
+      "biome 12-code -> runtime terrain mapping",
+      "physical width / swept clearance / cart footprint rules",
+      "ferry rule",
+      "dynamic door & device state",
+      "resource population and economy",
+      "RuntimeMapPackage compiler"
+    ],
+    "validationGates": [
+      "source integrity / 579 IDs",
+      "coast-water / raster transform / regional coverage",
+      "physical widths & crossings & build-site / room / portal / retreat",
+      "field ownership / stable identity / persistence prerequisites / placement",
+      "GEO-01/GEO-02/SCALE regressions",
+      "native 640x360 visual inspection"
+    ],
+    "forbidden": [
+      "fabricate loot/cash/vendor/generator/lock/weather",
+      "treat sockets as objects",
+      "treat bridge display glyph as collision",
+      "claim cart-passable without clearance",
+      "call static geography QA playable survival acceptance",
+      "mutate Gameplay production branches"
+    ]
+  },
+  "integrationGate": {
+    "status": "OPEN__WEB_PLAYABILITY_NOT_PROVEN",
+    "realIntegrationProof": "NOT_ATTEMPTED__NO_COMPATIBLE_GEOGRAPHY_ONLY_INTAKE_SEAM_AND_NO_CROSS_BRANCH_WRITE_AUTHORIZATION",
+    "reason": "PR44 HEAD has no pure geography-only intake; GeographicHandoff/RuntimeMapPackage are mixed/populated validators. Cross-branch push to Gameplay was intentionally NOT attempted (Gameplay ACK 6608030530: each agent pushes only its own branch).",
+    "deliveredInstead": [
+      "compiled geometry",
+      "verified explicit transform metadata (UNDECIDED, not applied)",
+      "minimal adapter spec",
+      "executable isolated tests",
+      "18 inspected static 640x360 views"
+    ],
+    "preciseNextStep": "Creator approves the au->tile transform; Gameplay implements a geography-only intake seam that verifies this package digest and stable IDs, then Gameplay populates/simulates and compiles RuntimeMapPackage. Only after that can an exact-SHA worktree integration proof be attempted.",
+    "noClaims": [
+      "NO playable full-world integration",
+      "NO runtime merge",
+      "NO parallel fake survival game",
+      "NO fabricated Gameplay fields",
+      "NO acknowledgement of any MAP-LR01 handoff yet"
+    ]
+  },
+  "blockers": [
+    {
+      "id": "BL-F-01",
+      "featureIds": [
+        "au_to_tile_transform"
+      ],
+      "unit": "authoring_unit / runtime_tile",
+      "coordinate": null,
+      "sourceFile": "world_lab/lr01/output/scale_corrected.v1.json",
+      "sha": "91e10cd6235aa92d",
+      "expected": "An approved transform and mode for the full 2000x1400 frame.",
+      "actual": "transformStatus UNDECIDED; bounded diagnostic band U∈[1,2.5] only.",
+      "owner": "CREATOR/GAMEPLAY_INTEGRATION"
+    },
+    {
+      "id": "BL-F-02",
+      "featureIds": [
+        "br_4",
+        "br_a",
+        "rd_b",
+        "rv_grey_low"
+      ],
+      "unit": "authoring_unit",
+      "coordinate": [
+        732,
+        652
+      ],
+      "sourceFile": "world_lab/lr01/output/transport_failures.v1.json",
+      "sha": null,
+      "expected": "Measured deck span, road width and swept clearance for a cart-passable route.",
+      "actual": "physicalDeckSpanAu=null, physicalWidthAu=null, sweptClearanceAu=null; zero clearance at [732,652].",
+      "owner": "MAP+GAMEPLAY"
+    },
+    {
+      "id": "BL-F-03",
+      "featureIds": [
+        "po_kilns",
+        "rd_n",
+        "rd_16"
+      ],
+      "unit": "authoring_unit",
+      "coordinate": [
+        905,
+        785
+      ],
+      "sourceFile": "world_lab/geo02/output/corridor_audit.v1.json",
+      "sha": "7377b97ad2cfe33d",
+      "expected": "Cart road within Editor ACCESS_R=48au.",
+      "actual": "nearest cart road rd_n at 56.8792au; nearest foot trail rd_16 at 0au.",
+      "owner": "MAP"
+    },
+    {
+      "id": "BL-F-04",
+      "featureIds": [
+        "ferry_roads"
+      ],
+      "unit": "authoring_unit",
+      "coordinate": null,
+      "sourceFile": "PR44 issue comment 6606283007",
+      "sha": null,
+      "expected": "Approved Gameplay boat/ferry traversal rule.",
+      "actual": "8 authored ferry centrelines; no boat rule in PR44 HEAD.",
+      "owner": "GAMEPLAY"
+    },
+    {
+      "id": "BL-F-05",
+      "featureIds": [
+        "GeographicHandoff",
+        "RuntimeMapPackage"
+      ],
+      "unit": "schema",
+      "coordinate": null,
+      "sourceFile": "PR44 f8010ec973095c88f3c462a68116c169b61237a3: web/src/game/geography-contract.ts; web/src/game/map-package.ts",
+      "sha": "f8010ec973095c88",
+      "expected": "A pure geography-only intake seam accepting stable-ID Stage 1 data.",
+      "actual": "Mixed validator requires economy/loot/cash/vendor/power/doors and a populated 200x200 runtime package.",
+      "owner": "GAMEPLAY+MAP"
+    },
+    {
+      "id": "BL-F-06",
+      "featureIds": [
+        "branch_permissions"
+      ],
+      "unit": "n/a",
+      "coordinate": null,
+      "sourceFile": "Gameplay ACK 6608030530",
+      "sha": null,
+      "expected": "Authorized exact-SHA worktree / handoff patch for a real Web integration proof.",
+      "actual": "No cross-branch write authorization; PR44 remains DRAFT/HOLD; cross-branch push intentionally NOT attempted.",
+      "owner": "CREATOR"
+    }
+  ],
+  "unknowns": [
+    {
+      "id": "UN-F-01",
+      "subject": "authoring-unit -> runtime-tile transform",
+      "unit": "authoring_unit / runtime_tile",
+      "owner": "CREATOR/GAMEPLAY_INTEGRATION",
+      "evidence": "Milestone A bounded diagnostic band U∈[1,2.5]; transformStatus UNDECIDED."
+    },
+    {
+      "id": "UN-F-02",
+      "subject": "physical road widths / swept clearance / cart footprint",
+      "unit": "authoring_unit",
+      "status": "UNRESOLVED",
+      "owner": "MAP+GAMEPLAY",
+      "evidence": "transport.roadPhysicalProposals[*].physicalWidthAu=null; sweptClearanceAu=null."
+    },
+    {
+      "id": "UN-F-03",
+      "subject": "bridge deck span / channel fit",
+      "unit": "authoring_unit",
+      "status": "UNRESOLVED",
+      "owner": "MAP",
+      "evidence": "transport.bridges[*].physicalDeckSpanAu=null; channelFitVerified=false."
+    },
+    {
+      "id": "UN-F-04",
+      "subject": "river channel width unit",
+      "unit": "UNKNOWN_UNIT",
+      "status": "UNRESOLVED",
+      "owner": "MAP",
+      "evidence": "project.rivers[].width has no unit."
+    },
+    {
+      "id": "UN-F-05",
+      "subject": "vertical floor separation / stair geometry",
+      "unit": "authoring_unit",
+      "status": "UNRESOLVED",
+      "owner": "MAP+GAMEPLAY",
+      "evidence": "poi_layouts vertical portals have verticalSeparationAu=null."
+    },
+    {
+      "id": "UN-F-06",
+      "subject": "dynamic door state, lock, power, destruction",
+      "unit": "n/a",
+      "owner": "GAMEPLAY",
+      "evidence": "All portals have doorStateOwner=GAMEPLAY, lockedState=UNKNOWN, powerRequirement=UNKNOWN."
+    },
+    {
+      "id": "UN-F-07",
+      "subject": "runtime resource instances, source stock, loot, cash, vendors, weather",
+      "unit": "n/a",
+      "status": "GAMEPLAY_OWNED__NOT_IN_THIS_PACKAGE",
+      "owner": "GAMEPLAY",
+      "evidence": "habitatMarkers record WHERE source-authored habitat markers are; no instance/stock/loot/weather is produced."
+    },
+    {
+      "id": "UN-F-08",
+      "subject": "ferry / boat traversal rule",
+      "unit": "n/a",
+      "status": "BLOCKED",
+      "owner": "GAMEPLAY",
+      "evidence": "8 authored ferry centrelines; PR44 HEAD has no boat rule; transport.ferries stay BLOCKED."
+    },
+    {
+      "id": "UN-F-09",
+      "subject": "12-code biome -> 14-string Gameplay Biome mapping",
+      "unit": "code/string",
+      "status": "UNRESOLVED",
+      "owner": "GAMEPLAY",
+      "evidence": "GEO-02 legend verified for Editor; Gameplay mapping not approved."
+    },
+    {
+      "id": "UN-F-10",
+      "subject": "creator visual approval / human 640x360 playtest",
+      "unit": "n/a",
+      "status": "NOT_PERFORMED",
+      "owner": "CREATOR",
+      "evidence": "views_index status STATIC_GEOGRAPHY_QA_VIEWS__NOT_PLAYABLE."
+    }
+  ],
+  "milestones": {
+    "A": {
+      "status": "COMPLETE",
+      "capability": "corrected per-POI geometry/scale tool, 13 fractional candidates, bounded diagnostic band [1,2.5], U=2 NOT canonized"
+    },
+    "B": {
+      "status": "COMPLETE",
+      "capability": "whole-Veyra deterministic geography compiler, 579 IDs, 41 region exports, all 8 landmasses/6 Elders/23 zones/4 spawns"
+    },
+    "C": {
+      "status": "COMPLETE",
+      "capability": "SNAP_TOL=7 transport audit, 18 crossings, 23 build sites, 7 source-linked failures, NO cart-passable claim"
+    },
+    "D": {
+      "status": "COMPLETE",
+      "capability": "81 POI static layouts / 24 archetypes / 1701 stable IDs / 6 geometry adapters / 8 examples"
+    },
+    "E": {
+      "status": "COMPLETE",
+      "capability": "11 individually assessed assets, 18 inspected native 640x360 before/after/UI views, no visual approval claim"
+    },
+    "F": {
+      "status": "COMPLETE_AS_GEOGRAPHY_ONLY_PACKAGE",
+      "capability": "versioned digest-verified Stage 1 package + adapter spec + compatibility report; Web integration proof BLOCKED"
+    }
+  },
+  "schemaCompatibility": {
+    "geographyOnly": true,
+    "satisfiesGeographicHandoff": false,
+    "satisfiesRuntimeMapPackage": false,
+    "reason": "Those are mixed/populated Gameplay validators; satisfying them would require fabricating Gameplay-owned fields.",
+    "requiredFromGameplay": [
+      "approved transform + mode",
+      "biome 12-code -> runtime terrain mapping",
+      "physical width / swept clearance / cart footprint rules",
+      "ferry rule",
+      "dynamic door & device state",
+      "resource population and economy",
+      "RuntimeMapPackage compiler"
+    ]
+  },
+  "outstandingCreatorDecisions": [
+    "Approve (or reject) an authoring-unit -> runtime-tile transform and fractional transform mode.",
+    "Approve a geography-only intake seam (not GeographicHandoff) and the minimal adapter spec.",
+    "Approve physical road/bridge width + swept clearance evidence standard.",
+    "Approve any art change; no creator visual approval has occurred.",
+    "Authorize any exact-SHA cross-branch integration worktree / PR comment acknowledgement."
+  ],
+  "preciseNextIntegrationStep": "Creator approves the au->tile transform; Gameplay implements a geography-only intake seam that verifies this package digest and stable IDs, then Gameplay populates/simulates and compiles RuntimeMapPackage. Only after that can an exact-SHA worktree integration proof be attempted.",
+  "noClaims": [
+    "NO playable full-world integration",
+    "NO runtime merge",
+    "NO parallel fake survival game",
+    "NO fabricated Gameplay fields",
+    "NO acknowledgement of any MAP-LR01 handoff yet",
+    "NO world finished",
+    "NO visually approved",
+    "NO playable survival acceptance"
+  ]
+}

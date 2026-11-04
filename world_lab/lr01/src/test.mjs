@@ -143,10 +143,24 @@ ok('E-10-TRANSFORM-METADATA', VI.views.every(v => v.transform.previewPxPerAu > 0
 ok('E-11-THREE-MODES-EVERY-REGION', AM.regions.every(r => ['before', 'after', 'after_ui'].every(m => VI.views.some(v => v.regionId === r.id && v.mode === m))));
 ok('E-12-NO-VISUAL-APPROVAL-CLAIM', AM.noClaims.includes('NO creator visual approval') && VI.status.includes('NOT_PLAYABLE') && AM.noClaims.includes('NO claim that PNG import proves improvement'));
 
-// ---- Milestone F gates (appended as modules land) ----
-for (const f of ['handoff.v1.json']) {
-  if (fs.existsSync(path.join(OUT, f))) ok(`GATE-FILE-${f}`, true);
-}
+// ---- Milestone F: versioned geography-only handoff ----
+const HF = readJson(path.join(OUT, 'handoff.v1.json'));
+const GP = readJson(path.join(OUT, 'geography_package.v1.json'));
+ok('F-01-HANDOFF-SCHEMA', HF.schema === 'soh.map.lr01.handoff.v1' && HF.status.includes('STAGE_1_MAP_GEOGRAPHY_HANDOFF') && HF.status.includes('STAGE_2_GAMEPLAY_POPULATION_NOT_PERFORMED'));
+ok('F-02-PACKAGE-DIGEST', sha256(Buffer.from(JSON.stringify(GP.body))) === GP.revisionDigest && HF.package.revisionDigest === GP.revisionDigest && GP.schema === 'soh.map.lr01.geography_package.v1' && GP.schemaVersion === 1 && GP.stage === 'STAGE_1_MAP_GEOGRAPHY');
+ok('F-03-GEOGRAPHY-ONLY', HF.schemaCompatibility.geographyOnly === true && HF.schemaCompatibility.satisfiesGeographicHandoff === false && HF.schemaCompatibility.satisfiesRuntimeMapPackage === false && GP.body.noClaims.some(s => s.includes('NO runtime resource instances')) && GP.body.habitatMarkers.packageNote.includes('NO runtime instance'));
+ok('F-04-PR44-COMPAT', HF.compatibility.finding === 'NOT_A_LEGAL_GEOGRAPHY_ONLY_VALIDATOR' && HF.compatibility.checkedAtGp44Head === 'f8010ec973095c88f3c462a68116c169b61237a3' && HF.compatibility.details.length >= 5);
+ok('F-05-COUNTS', GP.body.counts.totalCanonicalObjects === 579 && GP.body.featureIndex.length === 579 && GP.body.counts.poiStableIds === 1701 && GP.body.counts.regionExports === 41 && GP.body.counts.views === 18);
+ok('F-06-FRAME-UNDECIDED', GP.body.frame.authoring.w === 2000 && GP.body.frame.authoring.h === 1400 && GP.body.frame.transform.status === 'UNDECIDED' && GP.body.frame.transform.fullFrameRetained === true);
+ok('F-07-PAYLOAD-SHA', [...GP.payloads.primary, ...GP.payloads.regions, ...GP.payloads.poiExamples, ...GP.payloads.views].every(p => p.present && sha256(fs.readFileSync(path.join(OUT, '..', p.file))) === p.sha256));
+ok('F-08-BLOCKERS', HF.blockers.length === 6 && HF.blockers.every(b => b.id && b.featureIds && b.unit && b.sourceFile && b.expected && b.actual && b.owner));
+ok('F-09-ADAPTER-SPEC', HF.adapterSpec.adapters.length === 6 && HF.adapterSpec.input === GP.schema && HF.adapterSpec.forbidden.some(s => s.includes('fabricate loot')) && HF.adapterSpec.stageBoundary.includes('MUST NOT'));
+ok('F-10-GATE-OPEN', HF.integrationGate.status.startsWith('OPEN__') && HF.integrationGate.realIntegrationProof.startsWith('NOT_ATTEMPTED') && HF.noClaims.includes('NO playable full-world integration'));
+ok('F-11-NO-ACK', HF.coordination.acknowledgementOfMapLr01Handoff.includes('NONE') && HF.coordination.commentsRead.includes('6619055192'));
+ok('F-12-ISOLATED-TESTS', HF.package ? GP.isolatedTests.length >= 7 && GP.isolatedTests.every(t => t.command && t.expected && t.status.includes('EXECUTED')) : false);
+ok('F-13-STAGE-DISTINCT', GP.fieldOwnership.MAP.length >= 10 && GP.fieldOwnership.GAMEPLAY.length >= 7 && GP.fieldOwnership.JOINT.length >= 4 && GP.body.unknowns.length === 10);
+ok('F-14-HANDOFF-FILE', fs.existsSync(path.join(OUT, 'pr44_handoff.md')) && fs.readFileSync(path.join(OUT, 'pr44_handoff.md'), 'utf8').includes(GP.revisionDigest));
+ok('F-15-NO-GAMEPLAY-FIELDS-IN-BODY', !('economy' in GP.body) && !('statics' in GP.body) && !('lootTables' in GP.body) && !('powerNodes' in GP.body) && GP.body.poiLayouts.layoutsRef.includes('poi_layouts.v1.json'));
 
 console.log(`LR01_TESTS ${pass}/${pass + fail}`);
 process.exit(fail ? 1 : 0);
