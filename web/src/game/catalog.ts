@@ -2,6 +2,7 @@ import { BAL } from './core';
 // Runtime catalogs. Numbers = TUNABLE_BALANCE; mechanisms flagged where PROPOSED_MECHANISM.
 export type Mat = 'wood' | 'stone' | 'ore' | 'plant' | 'scrap';
 export interface SourcePlacementRule { terrain: 'sand' | 'marsh' | 'ash' | 'snow' | 'hill'; chance: number }
+/** `tier` governs discovery; `stationLevel` alone specifies physical workbench capability. */
 export interface RecipeDef { out: string; qty: number; ins: [string, number][]; station: null | 'campfire' | 'furnace' | 'workbench'; secs: number; base?: boolean; tier: number; stationLevel?: 1 | 2 }
 
 // TUNABLE: a capability upgrade, not a learned recipe. The cart itself remains physical.
@@ -162,6 +163,10 @@ export const ELDERS: Record<string, ElderDef> = {
   tide: { name: 'Tide Serpent', title: 'Elder of the Breaking Shore', hpLatent: 300, hpAwake: 580, stone: 'stone_tide', r: 13, size: 40, color: '#5ac8f0', region: 'Serpent Strand', dmg: 18, speed: 50, patterns: ['spit', 'wave'], awakePatterns: ['spit', 'wave', 'dive', 'whirl'] },
   rust: { name: 'Rust Colossus', title: 'Elder of the Dead Foundry', hpLatent: 400, hpAwake: 720, stone: 'stone_rust', r: 15, size: 44, color: '#f0a050', region: 'Dead Foundry', dmg: 20, speed: 22, patterns: ['beam', 'mines'], awakePatterns: ['beam', 'mines', 'beamSweep', 'overload'] },
 };
+
+// Knowledge and equipment are independent: tier never implies a station upgrade.
+export const permitsDirectedResearch = (recipe: RecipeDef) => recipe.tier < 3;
+export const requiredStationLevel = (recipe: RecipeDef): 1 | 2 => recipe.stationLevel ?? 1;
 
 // ---------- Recipes (K4: one run-local authority) ----------
 export type Recipe = RecipeDef;

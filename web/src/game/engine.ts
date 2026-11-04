@@ -2,7 +2,7 @@
 // Rule: validate EVERYTHING first, then commit. Failed preconditions never partially debit.
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
-import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES } from './catalog';
+import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel } from './catalog';
 import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt } from './world';
 import { sourceDigest } from './world-economy';
 import { mapDigest } from './map-package';
@@ -932,7 +932,7 @@ function craft(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: stri
     return ok('craft.hand', it.recipe, `Crafted ${ITEMS[rc.out].name}`);
   }
   const st = stationNear(r, rc.station, it.eid); if (!st) return fail(`Requires a ${STRUCTS[rc.station].name} within reach.`);
-  if ((st.station!.level ?? 1) < (rc.stationLevel ?? 1)) return fail(`Requires workbench level ${rc.stationLevel}.`);
+  if ((st.station!.level ?? 1) < requiredStationLevel(rc)) return fail(`Requires workbench level ${rc.stationLevel}.`);
   if (st.station!.queue.length >= 6) return fail('Station queue is full.');
   const reserved = reserveInputs(r, ins);
   st.station!.queue.push({ id: uid(r, 'j'), recipe: it.recipe, left: rc.secs * 1000, total: rc.secs * 1000, reserved });
@@ -954,7 +954,7 @@ function research(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: s
   }
   if (it.mode === 'directed') {
     const k = it.recipe; if (!unknown.includes(k)) return fail('Already known or in progress.');
-    if (RECIPES[k].tier >= 3) return fail('Too advanced to reverse-engineer from Spares — study a Core or find a blueprint.');
+    if (!permitsDirectedResearch(RECIPES[k])) return fail('Too advanced to reverse-engineer from Spares — study a Core or find a blueprint.');
     if (countItem(r, 'inv', 'spares') < B.directedSparesCost) return fail(`Needs ${B.directedSparesCost} Spares.`);
     const reserved = reserveInputs(r, [['spares', B.directedSparesCost]]); st.station!.queue.push({ id: uid(r, 'j'), recipe: 'R:' + k, left: B.directedSeconds * 1000, total: B.directedSeconds * 1000, reserved });
     return ok('research.directed', k);
