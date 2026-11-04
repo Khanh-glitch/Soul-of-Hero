@@ -34,11 +34,11 @@ describe('lifecycle contract: custom spell identity / determinism / clock / OUT'
   it('(b) same cast+time+world is bit-identical across direct/forward/backward/replay (RCA F3)', async () => {
     const r = new RedesignRunner();
     r.setWorld(world()); r.cast(4);
-    await r.seekAsync(3.0); const direct = hash(r.out);
-    await r.seekAsync(4.2); const fwd = hash(r.out);
-    await r.seekAsync(3.0); expect(hash(r.out)).toBe(direct);      // backward == direct
-    await r.seekAsync(4.2); expect(hash(r.out)).toBe(fwd);          // replay forward
-    r.cast(4); await r.seekAsync(3.0); expect(hash(r.out)).toBe(direct); // fresh cast, same seed
+    await r.seekAsync(1.5); const direct = hash(r.out);
+    await r.seekAsync(2.1); const fwd = hash(r.out);
+    await r.seekAsync(1.5); expect(hash(r.out)).toBe(direct);      // backward == direct
+    await r.seekAsync(2.1); expect(hash(r.out)).toBe(fwd);          // replay forward
+    r.cast(4); await r.seekAsync(1.5); expect(hash(r.out)).toBe(direct); // fresh cast, same seed
   });
 
   it('(c) registered duration/climax match the authored redesign, not the C catalog (RCA F5)', () => {
