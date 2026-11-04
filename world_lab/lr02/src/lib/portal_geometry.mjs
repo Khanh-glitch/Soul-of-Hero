@@ -378,6 +378,39 @@ export function compilePoi(layout, opts = {}) {
   }));
   tests.fitAtDiagnosticU = fitAtU.every(f => f.verdict === 'FIT');
 
+  // Entrance / circulation / roof / retreat / collision / sight adapters must
+  // agree with the corrected physical geometry; UNRESOLVED stays UNRESOLVED.
+  const roomIds = new Set(layout.rooms.map(r => r.id));
+  const wallIds = new Set(layout.walls.map(w => w.id));
+  const solidIds = new Set(staticSolids.map(s => s.id));
+  const adapterDefects = [];
+  if (!wallById.has(layout.entrance.onWallId)) adapterDefects.push('ENTRANCE_PARENT_WALL_MISSING');
+  if (entranceOpening && entranceOpening.id !== layout.entrance.id && !layout.portals.some(p => p.id === entranceOpening.id)) adapterDefects.push('ENTRANCE_OPENING_ID_NOT_IN_PARENT_PORTALS');
+  for (const id of Object.keys(layout.circulation.depthByRoomId || {})) if (!roomIds.has(id)) adapterDefects.push(`CIRCULATION_UNKNOWN_ROOM_${id}`);
+  if (layout.circulation.reachableRooms !== layout.circulation.totalRooms) adapterDefects.push('CIRCULATION_INCOMPLETE_IN_PARENT');
+  if (layout.roofCoverage.coveredRoomCount > layout.rooms.length) adapterDefects.push('ROOM_COVERED_ROOM_COUNT_EXCEEDS_ROOMS');
+  if (layout.retreat.pathAu === null && layout.retreat.status !== 'UNRESOLVED') adapterDefects.push('RETREAT_NULL_WITHOUT_UNRESOLVED_STATUS');
+  if (layout.retreat.pathAu && layout.retreat.pathAu.some(p => p[0] < 0 || p[0] > 2000 || p[1] < 0 || p[1] > 1400)) adapterDefects.push('RETREAT_WAYPOINT_OUTSIDE_FRAME');
+  if (solidIds.size !== staticSolids.length) adapterDefects.push('COLLISION_SOLID_ID_COLLISION');
+  if (staticSolids.some(s => !wallIds.has(s.parentWallId))) adapterDefects.push('COLLISION_SOLID_WITHOUT_PARENT_WALL');
+  if (staticOpenings.some(o => !wallIds.has(o.wallId))) adapterDefects.push('OPENING_WITHOUT_PARENT_WALL');
+  if (staticOpenings.some(o => solidIds.has(o.id))) adapterDefects.push('OPENING_ID_COLLIDES_WITH_SOLID');
+  if (layout.stableIds.sockets.some(id => !layout.sockets.some(s => s.id === id))) adapterDefects.push('SOCKET_PARENT_ID_LOST');
+  if (layout.stableIds.levels.some(id => !layout.levels.some(l => l.id === id))) adapterDefects.push('LEVEL_PARENT_ID_LOST');
+  const adapterConsistency = {
+    entranceParentWallId: layout.entrance.onWallId,
+    entranceOpeningId: entranceOpening ? entranceOpening.id : null,
+    circulationRoomIdsResolved: Object.keys(layout.circulation.depthByRoomId || {}).every(id => roomIds.has(id)),
+    roofCoveredRoomCount: layout.roofCoverage.coveredRoomCount,
+    retreatStatus: layout.retreat.status, retreatPathInvented: false,
+    collisionSolidIds: staticSolids.length, sightOpaqueIds: staticSolids.filter(s => s.blocksSight).length,
+    staticOpeningIds: staticOpenings.length,
+    parentSocketsRetained: layout.stableIds.sockets.length, parentLevelsRetained: layout.stableIds.levels.length,
+    defects: adapterDefects, status: adapterDefects.length ? 'INCONSISTENT' : 'CONSISTENT',
+    note: 'Retreat UNRESOLVED is preserved, not replaced by an invented corridor. No new socket/level or Gameplay object is authored.',
+  };
+  tests.adapterConsistency = adapterDefects.length === 0;
+
   const failedTests = Object.entries(tests).filter(([, v]) => v === false).map(([k]) => k);
   const verdict = failedTests.length ? 'FAIL' : (exceptions.length ? 'VERIFIED_WITH_EXCEPTIONS' : 'VERIFIED');
 
@@ -411,7 +444,7 @@ export function compilePoi(layout, opts = {}) {
       status: 'PROPOSED_STATIC_COLLISION_GEOMETRY__NO_RUNTIME_COLLISION_DATA',
     },
     losAdapter: { opaqueSolidIds: staticSolids.filter(s => s.blocksSight).map(s => s.id), transparentOpeningIds: staticOpenings.map(o => o.id), portalSightOwner: 'GAMEPLAY', status: STATUS.PROPOSED },
-    fitAtDiagnosticU: fitAtU,
+    fitAtDiagnosticU: fitAtU, adapterConsistency,
     tests, failedTests, notApplicableTests, exceptions, verdict,
     noClaims: [
       'NO dynamic door state, lock, key, power, device or destruction rule',

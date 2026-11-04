@@ -3,7 +3,7 @@
 // geometric openings, source/coordinate/transform metadata, geographic
 // eligibility for the bounded region, and reproducible positive/negative tests.
 import path from 'node:path';
-import { OUT, LR01, CONST, sourceHeader, digestBody, loadLr01, loadSources, writeJson, readJson, r4 } from './lib/lr02.mjs';
+import { OUT, LR01, CONST, sourceHeader, digestBody, loadLr01, loadSources, writeJson, readJson, readRevisionDigest, r4 } from './lib/lr02.mjs';
 import { compilePoi, compileAll } from './lib/portal_geometry.mjs';
 import { compileEligibility, compileLocalContext, CELL, GW } from './lib/spawn_eligibility.mjs';
 import { negativeTests } from './lib/negative_tests.mjs';
@@ -245,14 +245,41 @@ const body = {
   ],
 };
 
+const PUBLISHED = Object.freeze({
+  revision: 1,
+  digest: 'db5bcc3dcf28210fa63e9a68cdf2128a7f76213bead7d1e975bbb901b50cfe1a',
+  commit: '3c073d9da07b0ad936a57293a51dbba968a885dc',
+  pr44Comment: 6620427232,
+});
+const file = path.join(OUT, 'greywater_spatial_patch.v1.json');
+const mode = process.argv.includes('--verify') ? 'VERIFY'
+  : process.argv.includes('--bump-revision') ? 'BUMP' : 'GUARD';
+
+if (mode === 'VERIFY') {
+  // M0 revision 1 is a PUBLISHED, immutable consumer input. Verify its exact
+  // bytes/digest rather than silently overwriting the SHA handed to Gameplay.
+  const { doc, revisionDigest, recomputed } = readRevisionDigest(file);
+  if (recomputed !== revisionDigest || revisionDigest !== PUBLISHED.digest) throw new Error(`M0 published digest mismatch: file=${revisionDigest} recomputed=${recomputed} expected=${PUBLISHED.digest}`);
+  if (doc.parent?.revisionDigest !== CONST.lr01Digest) throw new Error('M0 parent digest drift');
+  if (doc.version !== 1 || doc.revision !== 1) throw new Error('M0 revision drift');
+  console.log(`M0_VERIFY_OK publishedRevision=1 digest=${revisionDigest} sourceCommit=${PUBLISHED.commit} pr44Comment=${PUBLISHED.pr44Comment}`);
+  console.log(`  parentDigest=${CONST.lr01Digest} solids=${doc.staticArchitecture.staticSolids.length} openings=${doc.staticArchitecture.staticOpenings.length} eligibleCells=${doc.spawnEligibility.greywaterEligibleArea.cellCount}`);
+  process.exit(0);
+}
+if (mode === 'GUARD') {
+  console.error('M0 revision 1 is published and immutable (see docs/GAMEPLAY_HANDOFF.md). Use --verify to check it, or --bump-revision to author a NEW revision 2 with a new digest and a new PR44 handoff. Never overwrite the published SHA.');
+  process.exit(2);
+}
+
+// --bump-revision: only for a deliberate NEW published revision; never used by
+// reproduce.sh. Kept so the generator is not a dead end.
+body.version = 2; body.revision = 2;
+body.supersedes = { ...PUBLISHED, note: 'This is a NEW revision; the revision-1 SHA remains published and must not be rewritten.' };
 const revisionDigest = digestBody(body);
 const out = { ...body, revisionDigest, digestMethod: 'sha256 over JSON.stringify(body) in field insertion order; recompute by deleting revisionDigest and digestMethod' };
-const file = path.join(OUT, 'greywater_spatial_patch.v1.json');
 const bytes = writeJson(file, out);
-console.log(`M0_GREYWATER_OK file=${path.relative(process.cwd(), file)} bytes=${bytes}`);
-console.log(`  parentDigest=${CONST.lr01Digest}`);
-console.log(`  revisionDigest=${revisionDigest}`);
+console.log(`M0_GREYWATER_BUMP_OK file=${path.relative(process.cwd(), file)} bytes=${bytes} revision=2`);
+console.log(`  parentDigest=${CONST.lr01Digest} newRevisionDigest=${revisionDigest} supersedes=${PUBLISHED.digest}`);
 console.log(`  solids=${gw.staticSolids.length} openings=${gw.staticOpenings.length} idMapping=${gw.idMapping.length} verdict=${gw.verdict}`);
 console.log(`  greywaterEligibleCells=${greywaterEligibleArea.cellCount} areaAu2=${greywaterEligibleArea.areaAu2} wholeVeyraRegions=${eligibility.candidateRegions.length}`);
 console.log(`  greywaterTests=${Object.values(gw.tests).filter(v => v === true).length}/${Object.values(gw.tests).filter(v => v === true || v === false).length} negativeTests=${negatives.pass}/${negatives.total} allPoi=${all.counts.verified}+${all.counts.verifiedWithExceptions} verified / ${all.counts.failed} failed`);
-console.log(`  diagnosticU=${CONST.diagnosticU.join(',')} frameRetained=true`);

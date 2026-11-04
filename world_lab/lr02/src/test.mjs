@@ -3,7 +3,7 @@
 // eligibility, diagnostic transforms and Gameplay-owned runtime acceptance.
 import fs from 'node:fs';
 import path from 'node:path';
-import { OUT, LR01, CONST, digestBody, loadLr01, loadSources, readJson, r4 } from './lib/lr02.mjs';
+import { OUT, LR01, CONST, digestBody, loadLr01, loadSources, readJson, readRevisionDigest, r4 } from './lib/lr02.mjs';
 import { compilePoi, compileAll } from './lib/portal_geometry.mjs';
 import { compileEligibility, CELL, GW } from './lib/spawn_eligibility.mjs';
 import { negativeTests } from './lib/negative_tests.mjs';
@@ -79,6 +79,16 @@ ok('LR02-25_SP_LANDMARKS_PROVENANCE_ONLY', elig.spLandmarkPolicy.status === 'SOU
 const s = patch ? JSON.stringify(patch) : '';
 ok('LR02-26_NO_GAMEPLAY_OWNED_FABRICATION', !['"lootTable"', '"vendor"', '"cash"', '"quest"', '"weather"', '"dynamicDoorState": "OPEN"', '"starterCrate"'].some(k => s.includes(k)));
 ok('LR02-27_NO_PLAYABLE_OR_FINAL_CLAIM', patch?.status === 'CONSUMER_READY_STATIC_GEOMETRY__NOT_PLAYABLE_ACCEPTANCE' && patch?.noClaims.some(x => x.includes('NO playable Veyra')));
+
+// --- M0 published immutability + M1/M2 packages ---
+ok('LR02-31_M0_PUBLISHED_REVISION_IMMUTABLE', !!patch && patch.version === 1 && patch.revision === 1 && patch.revisionDigest === 'db5bcc3dcf28210fa63e9a68cdf2128a7f76213bead7d1e975bbb901b50cfe1a');
+const pg = fs.existsSync(path.join(OUT, 'portal_geometry.v1.json')) ? readRevisionDigest(path.join(OUT, 'portal_geometry.v1.json')) : null;
+const se = fs.existsSync(path.join(OUT, 'spawn_eligibility.v1.json')) ? readRevisionDigest(path.join(OUT, 'spawn_eligibility.v1.json')) : null;
+ok('LR02-32_M1_PACKAGE_DIGEST_RECOMPUTED', !!pg && pg.recomputed === pg.revisionDigest && pg.doc.pois.length === 81 && pg.doc.counts.failed === 0 && pg.doc.compiler.negativeTests.allPass === true);
+ok('LR02-33_M1_PER_POI_ACCEPTANCE_AND_FAILURE_COUNTS', !!pg && pg.doc.acceptance.perPoi.length === 81 && pg.doc.acceptance.failureCounts.coverageDefects === 0 && pg.doc.acceptance.failureCounts.failedTests === 0 && pg.doc.acceptance.failureCounts.graphOnlyRooms === 0 && pg.doc.acceptance.acceptanceCounts.exceptions === 18);
+ok('LR02-34_M1_STATUS_VOCABULARY_DISTINCT', !!pg && ['SOURCE_AUTHORED', 'DERIVED', 'PROPOSED', 'VERIFIED', 'BLOCKED', 'UNKNOWN', 'UNRESOLVED', 'INVALID'].every(k => Object.keys(pg.doc.ownership.statusVocabulary).includes(k)) && Object.keys(pg.doc.acceptance.statusHistogram).some(k => k.startsWith('verdict:VERIFIED')) && Object.keys(pg.doc.acceptance.statusHistogram).some(k => k.includes('UNRESOLVED')));
+ok('LR02-35_M2_PACKAGE_DIGEST_RECOMPUTED', !!se && se.recomputed === se.revisionDigest && se.doc.schema === 'soh.map.lr02.spawn_eligibility.v1' && se.doc.inputDigests.lr01ParentDigest === CONST.lr01Digest);
+ok('LR02-36_M2_ELIGIBILITY_AREAS_AND_CONTRACT', !!se && se.doc.candidateRegions.length >= 8 && se.doc.coverage.distinctLandmasses >= 2 && se.doc.coverage.rejectedLandCells > 0 && se.doc.gameplayContract.decision === 'SEEDED_RANDOM_LEGAL_POSITION_SAMPLING' && se.doc.criteria.unknownConditions.length >= 8 && se.doc.buildSiteEnvelopes.length === 23 && se.doc.buildSiteEnvelopes.every(s => s.occupancyStatus === 'UNKNOWN' && s.sweptClearanceStatus === 'UNKNOWN'));
 
 // --- observed GAME-LR02 compatibility (read-only checkpoint) ---
 ok('LR02-28_CONSUMER_PROJECTION_MATCHES_OBSERVED_GAMEPLAY_ORIGIN', !!patch && patch.gameplayCompatibility.consumerProjections.length === 2 && patch.gameplayCompatibility.consumerProjections.every(t => {

@@ -16,6 +16,16 @@ export const r4 = rr;
 export const readJson = p => JSON.parse(fs.readFileSync(p, 'utf8'));
 export function writeJson(p, obj) { fs.mkdirSync(path.dirname(p), { recursive: true }); fs.writeFileSync(p, JSON.stringify(obj, null, 2) + '\n'); return fs.statSync(p).size; }
 export const digestBody = body => sha256(Buffer.from(JSON.stringify(body)));
+export function writeRevisionPackage(file, body) {
+  const revisionDigest = digestBody(body);
+  writeJson(file, { ...body, revisionDigest, digestMethod: 'sha256 over JSON.stringify(body) in field insertion order; recompute by deleting revisionDigest and digestMethod' });
+  return revisionDigest;
+}
+export function readRevisionDigest(file) {
+  const p = readJson(file);
+  const { revisionDigest, digestMethod, ...body } = p;
+  return { doc: p, revisionDigest, recomputed: digestBody(body) };
+}
 
 export const CONST = Object.freeze({
   mapBranch: 'arena/2e3cfbd2-soul-of-hero',
