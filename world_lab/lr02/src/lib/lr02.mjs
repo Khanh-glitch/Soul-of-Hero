@@ -24,6 +24,8 @@ export const CONST = Object.freeze({
   lr01Digest: 'e3259eb30016f93ab0883c6dc3656f0ec1b9d47a85dc78fd90a56e0185765e63',
   gp44Branch: 'arena/d4bfcfff-soul-of-hero',
   gp44Head: 'f8010ec973095c88f3c462a68116c169b61237a3',
+  gp44K6AcceptanceHead: 'f8010ec973095c88f3c462a68116c169b61237a3',
+  gameplayLr02HeadObserved: '7b9805b2ff276d07121063b6dfb2f68a902605db',
   jointReviewComment: 6619478477,
   mapAckComment: 6619637224,
   canonCommit: '19d8c6ec820f324a6ac12733165e43b5e2c6eab2',
@@ -61,7 +63,7 @@ export function sourceHeader(extra = {}) {
     },
     canon: { commit: CONST.canonCommit, file: 'map_tower/veyra_gold/VEYRA_GOLD_MAP.sohmap.json', sha256: '88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256' },
     frame: { authoring: CONST.frame, sourceGrid: CONST.sourceGrid, transform: { status: 'UNDECIDED', mode: 'NONE_APPLIED', fullFrameRetained: true, note: 'No rescale/crop/warp; runtime U=1.6 and U=2 are DIAGNOSTIC PROJECTIONS only.' } },
-    gp44: { branch: CONST.gp44Branch, head: CONST.gp44Head, jointReview: CONST.jointReviewComment, mapAck: CONST.mapAckComment, state: 'OPEN / DRAFT / HOLD' },
+    gp44: { branch: CONST.gp44Branch, k6AcceptanceHead: CONST.gp44K6AcceptanceHead, gameplayLr02HeadObserved: CONST.gameplayLr02HeadObserved, jointReview: CONST.jointReviewComment, mapAck: CONST.mapAckComment, state: 'OPEN / DRAFT / HOLD' },
     ...extra,
   };
 }

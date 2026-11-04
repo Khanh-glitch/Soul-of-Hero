@@ -80,6 +80,17 @@ const s = patch ? JSON.stringify(patch) : '';
 ok('LR02-26_NO_GAMEPLAY_OWNED_FABRICATION', !['"lootTable"', '"vendor"', '"cash"', '"quest"', '"weather"', '"dynamicDoorState": "OPEN"', '"starterCrate"'].some(k => s.includes(k)));
 ok('LR02-27_NO_PLAYABLE_OR_FINAL_CLAIM', patch?.status === 'CONSUMER_READY_STATIC_GEOMETRY__NOT_PLAYABLE_ACCEPTANCE' && patch?.noClaims.some(x => x.includes('NO playable Veyra')));
 
+// --- observed GAME-LR02 compatibility (read-only checkpoint) ---
+ok('LR02-28_CONSUMER_PROJECTION_MATCHES_OBSERVED_GAMEPLAY_ORIGIN', !!patch && patch.gameplayCompatibility.consumerProjections.length === 2 && patch.gameplayCompatibility.consumerProjections.every(t => {
+  const U = t.U;
+  return t.originAu[0] === 640 && t.originAu[1] === 440 && t.runtimeGridTiles[0] === 200 && t.insideObservedGameplayWindow === true && t.staticSolids.every(s => {
+    const o = gw.staticSolids.find(x => x.id === s.id);
+    return o && Math.abs(s.aTiles[0] - (o.aAu[0] - 640) / U) < 0.0001 && Math.abs(s.aTiles[1] - (o.aAu[1] - 440) / U) < 0.0001;
+  });
+}), patch?.gameplayCompatibility?.consumerProjections?.map(t => `${t.U}:${t.insideObservedGameplayWindow}`).join(','));
+ok('LR02-29_TRUE_INCOMPATIBILITIES_IDENTIFIED_WITH_OWNERS', !!patch && patch.gameplayCompatibility.trueIncompatibilities.length >= 6 && patch.gameplayCompatibility.trueIncompatibilities.every(x => x.detail && x.owner && x.status) && patch.gameplayCompatibility.observedIntake.pinnedBodySha === CONST.lr01Digest && patch.gameplayCompatibility.observedAt.readOnly === true);
+ok('LR02-30_STATUS_CROSSWALK_NO_PLAYABLE_CLAIM', !!patch && patch.gameplayCompatibility.statusCrosswalk.VERIFIED.includes('ONLY') && patch.gameplayCompatibility.statusCrosswalk.note.includes('never means playable'));
+
 const pass = results.filter(r => r.verdict === 'PASS').length;
 for (const r of results) if (r.verdict === 'FAIL') console.log(`FAIL ${r.id} ${r.detail}`);
 console.log(`LR02_TESTS ${pass}/${results.length}`);
