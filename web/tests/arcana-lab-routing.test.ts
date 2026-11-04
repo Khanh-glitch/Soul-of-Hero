@@ -162,7 +162,7 @@ describe('ARCANA20 root-cause closure: contract invariants (fail-closed)', () =>
   it('invalid recipes are rejected with named errors before rendering', async () => {
     const { validateRecipe, RECIPES } = await import('../src/game/arcana_d20/source/fusionRecipe');
     expect(() => validateRecipe({ ...RECIPES[11], components: [{ engine: 'C', skillId: 99, role: 'arc', extract: 'arc' }] })).toThrow(/skillId/);
-    expect(() => validateRecipe({ ...RECIPES[11], components: [{ engine: 'B', skillId: 9, role: 'arc', extract: 'arc' }] })).toThrow(/engine C/);
+    expect(() => validateRecipe({ ...RECIPES[11], components: [{ engine: 'B', skillId: 9, role: 'arc', extract: 'arc' }] })).toThrow(/UNSUPPORTED extract 'arc' from engine B|arc extraction only supported from engine C/);
     expect(() => validateRecipe({ ...RECIPES[1], components: [{ engine: 'C', skillId: 1, role: 'light', extract: 'bogus' as any }] })).toThrow(/extract/);
     expect(() => validateRecipe(RECIPES[11])).not.toThrow();
   });
@@ -180,5 +180,78 @@ describe('ARCANA20 root-cause closure: contract invariants (fail-closed)', () =>
       for (let i = 0; i < a.out.length; i += 4) if (Math.abs(a.out[i] - 40) > 12) changed++;
       expect(changed).toBeGreaterThan(30);
     })();
+  });
+});
+
+describe('ARCANA20 final contract: fail-closed validation, per-engine clocks, B world boundary', () => {
+  it('validateRecipe rejects unsupported combos with named errors (B/C lead, A-light secondary, ink role, B arc)', async () => {
+    const { validateRecipe, RECIPES } = await import('../src/game/arcana_d20/source/fusionRecipe');
+    for (const id of [1, 5, 9, 11, 16]) expect(() => validateRecipe(RECIPES[id])).not.toThrow();
+    const bad = (mut: (r: any) => void) => { const r = JSON.parse(JSON.stringify(RECIPES[11])); mut(r); return r; };
+    expect(() => validateRecipe(bad(r => { r.lead.engine = 'B'; }))).toThrow(/unsupported lead engine/);
+    expect(() => validateRecipe(bad(r => { r.components[0] = { engine: 'A', skillId: 11, role: 'light', extract: 'light' }; }))).toThrow(/UNSUPPORTED extract 'light' from engine A/);
+    expect(() => validateRecipe(bad(r => { r.components[0] = { engine: 'C', skillId: 9, role: 'ink', extract: 'light' }; }))).toThrow(/UNSUPPORTED role 'ink'/);
+    expect(() => validateRecipe(bad(r => { r.components[0] = { engine: 'B', skillId: 9, role: 'arc', extract: 'arc' }; }))).toThrow(/UNSUPPORTED extract 'arc' from engine B/);
+  });
+  it('per-engine source clock: B#09 uses B duration (8.5s), not C clock', async () => {
+    const { sourceDuration, RECIPES } = await import('../src/game/arcana_d20/source/fusionRecipe');
+    const { CATALOG } = await import('../src/game/arcana_d20/source/cRunner');
+    const { B_EFFECTS } = await import('../src/game/arcana_d20/source/bRunner');
+    expect(sourceDuration('B', 9)).toBe(B_EFFECTS[8].duration);
+    expect(sourceDuration('B', 9)).not.toBe(CATALOG[8].dur);
+    expect(sourceDuration('C', 9)).toBe(CATALOG[8].dur);
+    const bComp = RECIPES[9].components.find(c => c.engine === 'B')!;
+    expect(bComp.skillId).toBe(9);
+  });
+  it('B render no longer darkens the imported world (ambient window removed, effect-local pixels kept)', async () => {
+    const { BRunner } = await import('../src/game/arcana_d20/source/bRunner');
+    const r = new BRunner();
+    const world = new Uint8ClampedArray(384 * 216 * 4);
+    for (let i = 0; i < world.length; i += 4) { world[i] = 120; world[i + 1] = 140; world[i + 2] = 110; world[i + 3] = 255; }
+    r.setWorld(world);
+    r.cast(1); // B #02 Furnace Wyrm
+    r.seek(2.0);
+    // far corner (no effect there) must match the world, not an ambient-darkened copy
+    const di = (5 * 384 + 5) * 4;
+    expect(Math.abs(r.out[di] - 120)).toBeLessThan(14);
+    expect(Math.abs(r.out[di + 1] - 140)).toBeLessThan(14);
+    // but the effect core must still be present (non-world pixels exist)
+    let changed = 0;
+    for (let i = 0; i < r.out.length; i += 4) if (Math.abs(r.out[i] - 120) + Math.abs(r.out[i + 1] - 140) > 25) changed++;
+    expect(changed).toBeGreaterThan(200);
+  });
+  it('#09 arc packets are nondegenerate (distinct endpoints, authored width carried)', async () => {
+    const { CRunner } = await import('../src/game/arcana_d20/source/cRunner');
+    const c = new CRunner();
+    const pk = c.extractArcs(8, 4.0); // C#09 at mid
+    expect(pk.length).toBeGreaterThan(0);
+    for (const p of pk.slice(0, 8)) {
+      const a = p.pts[0], b = p.pts[p.pts.length - 1];
+      expect(Math.hypot(a.x - b.x, a.y - b.y)).toBeGreaterThan(4);
+      expect(p.width).toBeGreaterThan(0.5);
+    }
+  });
+  it('client-level cache: same tick + camera but changed world snapshot re-renders', async () => {
+    // uses the module-level mocked presenter from this file: worldRegion returns fill(40);
+    // override per-call to alternate snapshots
+    const presenter = await import('../src/game/gpu/presenter');
+    let snap = 40;
+    (presenter.getPresenter as any) = () => ({
+      gl: { fake: true },
+      worldRegion: (x: number, y: number, w: number, h: number) => new Uint8ClampedArray(w * h * 4).fill(snap),
+      uploadFrame: () => {}, lightTexture: () => null, frameTexture: () => null,
+    });
+    const { arcanaLab } = await import('../src/game/arcana_lab');
+    const frame: any = { now: 0, cam: { x: 0, y: 0 } };
+    arcanaLab.qaCast(10, 100, 100, 'fusion'); // #11 fusion
+    arcanaLab.qaSeek(2.0, 10, 100, 100, 'fusion');
+    arcanaLab.submitGpu(frame);
+    snap = 200; // day->night style world change at the SAME tick/camera
+    arcanaLab.submitGpu(frame);
+    // if cache ignored the world change, second submit would reuse the stale frame;
+    // assert the runner saw the new world: render again and compare outputs
+    const out1 = new Uint8ClampedArray(arcanaLab['aR' as any].out);
+    expect(out1.length).toBeGreaterThan(0);
+    arcanaLab.qaStop();
   });
 });

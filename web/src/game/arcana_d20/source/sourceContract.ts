@@ -12,7 +12,7 @@
 // ============================================================================
 import type { ArcPacket } from './cRunner';
 import type { Framebuffer } from './a/engine/framebuffer';
-import { line } from './a/engine/draw';
+import { line, streak } from './a/engine/draw';
 import { clamp } from './a/engine/math';
 
 export interface Contribution {
@@ -63,9 +63,10 @@ export function drawArc(fb: Framebuffer, p: ArcPacket, a: { x: number; y: number
   const core = norm(p.core), halo = norm(p.halo);
   const kc = Math.max(p.core[0], p.core[1], p.core[2]);
   const kh = Math.max(p.halo[0], p.halo[1], p.halo[2]);
+  const w = Math.max(0.6, p.width || 1.4); // authored ribbon width preserved
   for (let i = 0; i < pts.length - 1; i++) {
     const x0 = pts[i].x, y0 = pts[i].y, x1 = pts[i + 1].x, y1 = pts[i + 1].y;
-    line(fb, x0, y0, x1, y1, halo, clamp(kh, 0, 4) * 0.5);
+    streak(fb, x0, y0, x1, y1, w, w, halo, clamp(kh, 0, 4) * 0.5);
     line(fb, x0, y0, x1, y1, core, clamp(kc, 0, 4));
   }
 }

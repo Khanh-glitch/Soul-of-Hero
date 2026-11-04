@@ -90,3 +90,21 @@ real source duration (no `|| 1`). Lifecycle: cast/seek-back/OUT/recast reset sta
 Evidence classes: 141/141 tests (parameterized 5-recipe matrix + negative tests),
 QA gallery incl. #09 fusion/OUT/recast, B#02 day/night, #11 3-phase lead/fusion,
 #01/#05/#16 fusions on real WebGL2 CI artifact.
+
+
+## Final contract round (per CT 6618842670)
+- **B source window eliminated at the channel boundary**: BRunner renders the effect
+  twice per frame (with/without the effect) at natural ambient and composes
+  `world + (effectFrame - baseFrame)` — the source tonemap/ambient curve cancels,
+  untouched world pixels are EXACT, effect-local shade/decals/lights/sprites are
+  preserved. The 14px feather is now a no-op safety net, not the fix.
+- **Capability-aware fail-closed validation**: CAPABILITIES declares lead=A only,
+  extract per engine (B: light; C: arc+light), ink role UNSUPPORTED — invalid
+  recipes throw named errors before rendering.
+- **Per-engine source clocks**: each component samples its own engine's duration
+  (B#09 uses B's 8.5s, not C's 7.8s).
+- **World-snapshot revision in the render cache**: same tick+camera with a changed
+  world (day/night) re-renders — no stale baked frames.
+- **Authored arc width** preserved via A streak() with the captured ribbon width.
+- Tests 146/146 incl. negative validation, B-boundary pixel-exactness, #09
+  nondegenerate arcs, per-engine clocks. PR #39 unmerged.

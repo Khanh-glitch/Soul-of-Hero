@@ -81,6 +81,7 @@ export class ArcanaLabClient implements comp.VfxClient {
   private qaT = -1;
   private lastTick = -1;
   private lastAnchor = -1;
+  private lastWorld = -1;
 
   qaCast(index: number, wx = 0, wy = 0, mode: RenderMode = 'lead') {
     this.stopBridges();
@@ -88,8 +89,9 @@ export class ArcanaLabClient implements comp.VfxClient {
     this.qaT = -1;
     this.lastTick = -1;
     this.lastAnchor = -1;
+    this.lastWorld = -1;
   }
-  qaStop() { this.cast = null; this.qaT = -1; this.lastTick = -1; this.lastAnchor = -1; this.stopBridges(); }
+  qaStop() { this.cast = null; this.qaT = -1; this.lastTick = -1; this.lastAnchor = -1; this.lastWorld = -1; this.stopBridges(); }
   qaSeek(t: number, index?: number, wx = 0, wy = 0, mode?: RenderMode) {
     if (index !== undefined) {
       const m = mode ?? this.cast?.mode ?? 'lead';
@@ -140,7 +142,11 @@ export class ArcanaLabClient implements comp.VfxClient {
     if (!region) return;
 
     const anchor = sx * 4096 + sy;
-    const needRender = tick !== this.lastTick || anchor !== this.lastAnchor;
+    // world snapshot revision participates in cache validity: same tick+camera
+    // with a changed world (day/night, recast elsewhere) must re-render.
+    let wsum = 0;
+    for (let i = 0; i < region.length; i += 389) wsum = (wsum * 31 + region[i]) | 0;
+    const needRender = tick !== this.lastTick || anchor !== this.lastAnchor || wsum !== this.lastWorld;
     if (useFusion) {
       // semantic source-contribution contract: authored arc packets / light
       // channels extracted per recipe, bound to the lead's moving anchors.
@@ -193,6 +199,7 @@ export class ArcanaLabClient implements comp.VfxClient {
     p.uploadFrame(out, W, H);
     this.lastTick = tick;
     this.lastAnchor = anchor;
+    this.lastWorld = wsum;
     comp.submitGpuPass({
       clientId: this.id, kind: 'frame',
       lightTex: p.lightTexture()!, frameTex: p.frameTexture()!, warp: new Float32Array(4), influence: new Uint8Array(4),

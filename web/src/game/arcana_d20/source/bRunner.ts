@@ -34,6 +34,7 @@ export class BRunner {
   /** inject the real world region as linear-HDR floor albedo */
   setWorld(rgba: Uint8ClampedArray) {
     if (!rgba || rgba.length < W * H * 4) throw new Error(`BRunner.setWorld: world snapshot missing/wrong size (${rgba?.length} < ${W * H * 4})`);
+    this.worldLdr.set(rgba.subarray(0, W * H * 4));
     const f = this.r.floor;
     for (let i = 0, j = 0; i < W * H; i++, j += 4) {
       f[i * 3] = Math.pow(rgba[j] / 255, 2.2);
@@ -50,22 +51,43 @@ export class BRunner {
     return { data: new Float32Array(this.r.lightBuf), w: W, h: H };
   }
 
-  seek(t: number) {
-    if (!this.fx) return;
-    this.t = Math.max(0, Math.min(t, this.fx.duration + 0.8));
-    const r = this.r, fx = this.fx;
+  private worldLdr = new Uint8ClampedArray(W * H * 4);
+  private baseFrame = new Uint8ClampedArray(W * H * 4);
+
+  private renderOnce(withFx: boolean, outBuf: Uint8ClampedArray) {
+    const r = this.r, fx = this.fx!;
     r.begin();
-    r.time = this.t; // wall clock = local time: deterministic replay
-    fx.render(r, Math.min(this.t, fx.duration), this.state);
+    r.time = this.t;
+    if (withFx) fx.render(r, Math.min(this.t, fx.duration), this.state);
+    // source-to-world boundary: the source's global ambient/tint mood must NOT
+    // darken the imported SOH world (that produced the dark 384x216 window).
+    r.ambient = 1; r.tint = [1, 1, 1];
     r.lighting();
-    if (fx.post) {
+    if (withFx && fx.post) {
       r.setTarget(r.main);
       r.tx = r.ty = 0; r.ts = 1; r.clip = null;
       fx.post(r, Math.min(this.t, fx.duration), this.state);
     }
     r.setTarget(r.main);
-    r.finalize(this.out);
+    r.finalize(outBuf);
   }
+
+  seek(t: number) {
+    if (!this.fx) return;
+    this.t = Math.max(0, Math.min(t, this.fx.duration + 0.8));
+    // channel-level compose: world + (effectFrame - noEffectFrame) so the source
+    // tonemap/ambient curve cancels and untouched world pixels stay EXACT.
+    this.renderOnce(true, this.out);
+    this.renderOnce(false, this.baseFrame);
+    const w = this.worldLdr, o = this.out, b = this.baseFrame;
+    for (let i = 0; i < o.length; i += 4) {
+      o[i] = Math.max(0, Math.min(255, w[i] + o[i] - b[i]));
+      o[i + 1] = Math.max(0, Math.min(255, w[i + 1] + o[i + 1] - b[i + 1]));
+      o[i + 2] = Math.max(0, Math.min(255, w[i + 2] + o[i + 2] - b[i + 2]));
+      o[i + 3] = 255;
+    }
+  }
+
 }
 
 export const B_EFFECTS = EFFECTS;
