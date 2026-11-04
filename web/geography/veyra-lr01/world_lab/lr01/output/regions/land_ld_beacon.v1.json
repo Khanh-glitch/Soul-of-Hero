@@ -1,0 +1,176 @@
+{
+  "schema": "soh.map.lr01.region.v1",
+  "kind": "islet",
+  "id": "ld_beacon",
+  "name": "Beacon Rock",
+  "sourceRef": "project.land[] where id=ld_beacon",
+  "status": [
+    "SOURCE_AUTHORED",
+    "DERIVED"
+  ],
+  "conf": "proposal",
+  "geometry": {
+    "ringsAu": [
+      [
+        [
+          261.81897943043566,
+          636.4202030225824
+        ],
+        [
+          270.7315188765602,
+          634.0874820856258
+        ],
+        [
+          280.0207644006226,
+          635.4012186942193
+        ],
+        [
+          286.9595573269889,
+          641.672803036586
+        ],
+        [
+          290.61773858502494,
+          650.0866284107167
+        ],
+        [
+          290.72343522971545,
+          658.9092952719603
+        ],
+        [
+          285.94703020843747,
+          666.1774774937535
+        ],
+        [
+          278.6181468456687,
+          670.8851003295094
+        ],
+        [
+          270.45361435708963,
+          673.6857765572962
+        ],
+        [
+          263.2436881072125,
+          669.6093512495723
+        ],
+        [
+          258.7164623167749,
+          662.3503953052426
+        ],
+        [
+          255.57927947171137,
+          654.1041619077787
+        ],
+        [
+          255.3102611197984,
+          645.3181192473077
+        ],
+        [
+          259.96474844610043,
+          637.9788854595657
+        ]
+      ]
+    ],
+    "ringCount": 1,
+    "areaAu2": 1061.7135,
+    "perimeterAu": 117.5483,
+    "bboxAu": [
+      255.3103,
+      634.0875,
+      290.7234,
+      673.6858
+    ],
+    "centroidAu": [
+      272.8355,
+      653.0062
+    ],
+    "outerVertexCount": 14,
+    "holeCount": 0
+  },
+  "rasterCells": {
+    "cells": 16,
+    "areaAu2": 1024,
+    "elevationRawByte": {
+      "min": 13,
+      "max": 16,
+      "mean": 14.75,
+      "p25": 14,
+      "p50": 15,
+      "p75": 16,
+      "p95": 16,
+      "unit": "UNKNOWN_SOURCE_BYTE__NO_APPROVED_PHYSICAL_SCALE"
+    },
+    "slopeRawDelta": {
+      "min": 1,
+      "max": 11,
+      "mean": 6.25,
+      "p50": 8,
+      "p95": 11,
+      "unit": "RAW_BYTE_DELTA_PER_8au_CELL__NOT_A_GAMEPLAY_THRESHOLD"
+    },
+    "seaDistanceCellsMean": 1.375,
+    "freshwaterProximityCellsMean": 18.5,
+    "clearanceCellsMean": 1.375,
+    "biomeHistogram": {
+      "11": 16
+    },
+    "roadClassHistogram": {
+      "0": 12,
+      "2": 4
+    },
+    "coastCells": 10,
+    "coastBandLengthAuApprox": 80,
+    "buildableCells": 0,
+    "walkableCells": 16,
+    "waterCells": 0,
+    "cargoCells": 0,
+    "crossingCells": 0
+  },
+  "biomeNames": {
+    "11": {
+      "name": "Bãi cát ven biển",
+      "cells": 16
+    }
+  },
+  "roadNames": {
+    "0": {
+      "cls": "none",
+      "cells": 12
+    },
+    "2": {
+      "cls": "trail",
+      "cells": 4
+    }
+  },
+  "coastline": {
+    "coastCells": 10,
+    "approximateLengthAu": 80,
+    "beachBandCells": 16,
+    "beachBandAu2": 1024,
+    "status": "DERIVED",
+    "note": "beachBand = land cells within 2 grid cells (16 au) of sea; derived, not an authored beach polygon."
+  },
+  "wetlands": {
+    "cells": 0,
+    "areaAu2": 0,
+    "status": "DERIVED",
+    "note": "biomeCode 4 (marsh) OR within 1 cell (8 au) of authored freshwater geometry; approximation only."
+  },
+  "relief": {
+    "highlandCells": 0,
+    "steepCells": 0,
+    "status": "DERIVED",
+    "note": "highland = raw elevation byte >= 100, steep = raw slope delta >= 40. Raw byte thresholds are descriptive, NOT approved gameplay slope laws."
+  },
+  "contains": {
+    "rivers": [],
+    "lakes": [],
+    "zones": [],
+    "elders": [],
+    "pois": [
+      "po_beacon"
+    ]
+  },
+  "walkableComponents": [
+    5
+  ]
+}

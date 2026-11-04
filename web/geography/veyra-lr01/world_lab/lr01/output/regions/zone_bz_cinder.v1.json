@@ -1,0 +1,201 @@
+{
+  "schema": "soh.map.lr01.region.v1",
+  "kind": "construction_zone",
+  "id": "bz_cinder",
+  "name": "Cinder Landing Shelf",
+  "soil": "tro + đá",
+  "water": "suối ấm",
+  "slope": "thoải",
+  "tags": [
+    "ven biển"
+  ],
+  "notes": "",
+  "conf": "proposal",
+  "sourceRef": "project.zones[] where id=bz_cinder",
+  "status": [
+    "SOURCE_AUTHORED",
+    "DERIVED",
+    "PROPOSED"
+  ],
+  "geometry": {
+    "ringAu": [
+      [
+        1564.2539016370213,
+        875.0277876949231
+      ],
+      [
+        1564.888172688481,
+        870.7148433939414
+      ],
+      [
+        1564.7001124405137,
+        865.7031538288363
+      ],
+      [
+        1569.5438955507095,
+        861.0860141643835
+      ],
+      [
+        1578.4964690048398,
+        859.0480324698464
+      ],
+      [
+        1587.2761528675712,
+        856.7189322410803
+      ],
+      [
+        1594.7677727509513,
+        858.0756257600287
+      ],
+      [
+        1600.97132865498,
+        863.1181130266918
+      ],
+      [
+        1604.9297876092842,
+        868.525582456371
+      ],
+      [
+        1606.6431496138637,
+        874.2980340490661
+      ],
+      [
+        1607.4774898639198,
+        880.5034739806846
+      ],
+      [
+        1607.4328083594526,
+        887.1419022512262
+      ],
+      [
+        1603.0499012691978,
+        891.6162880806195
+      ],
+      [
+        1594.328768593155,
+        893.9266314688649
+      ],
+      [
+        1585.7337258584344,
+        895.4418731432576
+      ],
+      [
+        1577.2647730650351,
+        896.1620131037976
+      ],
+      [
+        1569.1502051389214,
+        894.842495700184
+      ],
+      [
+        1568.7472737167252,
+        886.3356589410957
+      ],
+      [
+        1565.682202881248,
+        883.2416072229111
+      ],
+      [
+        1564.5185783679435,
+        879.2033756379129
+      ]
+    ],
+    "ringCount": 1,
+    "areaAu2": 1376.1661,
+    "perimeterAu": 137.5536,
+    "bboxAu": [
+      1564.2539,
+      856.7189,
+      1607.4775,
+      896.162
+    ],
+    "centroidAu": [
+      1585.5504,
+      876.9248
+    ],
+    "outerVertexCount": 20,
+    "holeCount": 0
+  },
+  "rasterCells": {
+    "cells": 22,
+    "areaAu2": 1408,
+    "elevationRawByte": {
+      "min": 12,
+      "max": 70,
+      "mean": 31.7727,
+      "p25": 14,
+      "p50": 28,
+      "p75": 44,
+      "p95": 60,
+      "unit": "UNKNOWN_SOURCE_BYTE__NO_APPROVED_PHYSICAL_SCALE"
+    },
+    "slopeRawDelta": {
+      "min": 3,
+      "max": 21,
+      "mean": 13.0455,
+      "p50": 15,
+      "p95": 19,
+      "unit": "RAW_BYTE_DELTA_PER_8au_CELL__NOT_A_GAMEPLAY_THRESHOLD"
+    },
+    "seaDistanceCellsMean": 3.5,
+    "freshwaterProximityCellsMean": 3.5455,
+    "clearanceCellsMean": 2.7273,
+    "biomeHistogram": {
+      "1": 9,
+      "4": 5,
+      "9": 5,
+      "11": 3
+    },
+    "roadClassHistogram": {
+      "0": 14,
+      "3": 8
+    },
+    "coastCells": 2,
+    "coastBandLengthAuApprox": 16,
+    "buildableCells": 22,
+    "walkableCells": 22,
+    "waterCells": 0,
+    "cargoCells": 0,
+    "crossingCells": 2
+  },
+  "buildSuitability": {
+    "buildableCells": 22,
+    "buildableFraction": 1,
+    "meanSlopeRaw": 13.0455,
+    "meanFreshwaterProximityCells": 3.5455,
+    "status": "DERIVED",
+    "note": "Geometric suitability only. A0 occupancy, claim legality and Gameplay building rules are NOT asserted."
+  },
+  "loadingSpace": {
+    "cells": 0,
+    "areaAu2": 0,
+    "bboxAu": null,
+    "status": "PROPOSED",
+    "note": "PROPOSED spatial candidate: buildable cells within 3 grid cells (24 au) of a cart-road/cart-bridge/dock cargo candidate. NOT a loading platform or a Gameplay placement grant."
+  },
+  "naturalChokepoints": {
+    "clusterIds": [],
+    "status": "DERIVED",
+    "note": "clearanceCells <= 2 (<=16 au from blocked geometry); geometric narrowness, not a combat chokepoint claim."
+  },
+  "nearestRoads": [
+    {
+      "id": "rd_w",
+      "kind": "foot",
+      "d": 0.3983
+    },
+    {
+      "id": "rd_x",
+      "kind": "foot",
+      "d": 13.1599
+    },
+    {
+      "id": "rd_2f",
+      "kind": "ferry",
+      "d": 22.015
+    }
+  ],
+  "walkableComponentIds": [
+    6
+  ]
+}

@@ -1,0 +1,205 @@
+{
+  "schema": "soh.map.lr01.region.v1",
+  "kind": "construction_zone",
+  "id": "bz_ironholm",
+  "name": "Ironholm Terrace",
+  "soil": "đá",
+  "water": "suối Slag Run",
+  "slope": "thoải",
+  "tags": [
+    "ven biển",
+    "gần trung tâm khai thác"
+  ],
+  "notes": "",
+  "conf": "proposal",
+  "sourceRef": "project.zones[] where id=bz_ironholm",
+  "status": [
+    "SOURCE_AUTHORED",
+    "DERIVED",
+    "PROPOSED"
+  ],
+  "geometry": {
+    "ringAu": [
+      [
+        1106.5614654151452,
+        1282.9745479128392
+      ],
+      [
+        1107.0400436100285,
+        1277.224142036623
+      ],
+      [
+        1111.183691201932,
+        1271.6724261098689
+      ],
+      [
+        1117.2626443696668,
+        1266.9609465661874
+      ],
+      [
+        1125.2769031132327,
+        1263.089703405578
+      ],
+      [
+        1135.022865991336,
+        1260.4842903954986
+      ],
+      [
+        1146.5005330039764,
+        1259.1447075359495
+      ],
+      [
+        1155.858538235891,
+        1261.0832800818068
+      ],
+      [
+        1163.0968816870795,
+        1266.3000080330705
+      ],
+      [
+        1168.9170819627627,
+        1271.681279006527
+      ],
+      [
+        1173.3191390629406,
+        1277.2270930021757
+      ],
+      [
+        1174.1992624828576,
+        1283.1383053375175
+      ],
+      [
+        1171.5574522225138,
+        1289.414916012553
+      ],
+      [
+        1165.3725689693842,
+        1294.1548276740239
+      ],
+      [
+        1155.644612723469,
+        1297.3580403219303
+      ],
+      [
+        1145.4686009213196,
+        1298.8219710962958
+      ],
+      [
+        1134.8445335629362,
+        1298.5466199971197
+      ],
+      [
+        1124.9846754673958,
+        1296.781256248488
+      ],
+      [
+        1115.8890266346984,
+        1293.5258798504005
+      ],
+      [
+        1109.7479566172817,
+        1288.9236437385177
+      ]
+    ],
+    "ringCount": 1,
+    "areaAu2": 2034.7836,
+    "perimeterAu": 170.2482,
+    "bboxAu": [
+      1106.5615,
+      1259.1447,
+      1174.1993,
+      1298.822
+    ],
+    "centroidAu": [
+      1140.7001,
+      1279.8642
+    ],
+    "outerVertexCount": 20,
+    "holeCount": 0
+  },
+  "rasterCells": {
+    "cells": 34,
+    "areaAu2": 2176,
+    "elevationRawByte": {
+      "min": 30,
+      "max": 80,
+      "mean": 62.5882,
+      "p25": 51,
+      "p50": 66,
+      "p75": 75,
+      "p95": 79,
+      "unit": "UNKNOWN_SOURCE_BYTE__NO_APPROVED_PHYSICAL_SCALE"
+    },
+    "slopeRawDelta": {
+      "min": 1,
+      "max": 11,
+      "mean": 7.1765,
+      "p50": 8,
+      "p95": 11,
+      "unit": "RAW_BYTE_DELTA_PER_8au_CELL__NOT_A_GAMEPLAY_THRESHOLD"
+    },
+    "seaDistanceCellsMean": 6.7059,
+    "freshwaterProximityCellsMean": 4.7941,
+    "clearanceCellsMean": 4.1176,
+    "biomeHistogram": {
+      "0": 2,
+      "1": 32
+    },
+    "roadClassHistogram": {
+      "0": 25,
+      "1": 9
+    },
+    "coastCells": 0,
+    "coastBandLengthAuApprox": 0,
+    "buildableCells": 34,
+    "walkableCells": 34,
+    "waterCells": 0,
+    "cargoCells": 9,
+    "crossingCells": 0
+  },
+  "buildSuitability": {
+    "buildableCells": 34,
+    "buildableFraction": 1,
+    "meanSlopeRaw": 7.1765,
+    "meanFreshwaterProximityCells": 4.7941,
+    "status": "DERIVED",
+    "note": "Geometric suitability only. A0 occupancy, claim legality and Gameplay building rules are NOT asserted."
+  },
+  "loadingSpace": {
+    "cells": 34,
+    "areaAu2": 2176,
+    "bboxAu": [
+      1108,
+      1260,
+      1172,
+      1292
+    ],
+    "status": "PROPOSED",
+    "note": "PROPOSED spatial candidate: buildable cells within 3 grid cells (24 au) of a cart-road/cart-bridge/dock cargo candidate. NOT a loading platform or a Gameplay placement grant."
+  },
+  "naturalChokepoints": {
+    "clusterIds": [],
+    "status": "DERIVED",
+    "note": "clearanceCells <= 2 (<=16 au from blocked geometry); geometric narrowness, not a combat chokepoint claim."
+  },
+  "nearestRoads": [
+    {
+      "id": "rd_11",
+      "kind": "cart",
+      "d": 5.2445
+    },
+    {
+      "id": "rd_25",
+      "kind": "trail",
+      "d": 35.851
+    },
+    {
+      "id": "rd_12",
+      "kind": "cart",
+      "d": 46.42
+    }
+  ],
+  "walkableComponentIds": [
+    10
+  ]
+}

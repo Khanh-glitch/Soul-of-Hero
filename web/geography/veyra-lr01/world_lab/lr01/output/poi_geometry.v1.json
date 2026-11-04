@@ -1,0 +1,7392 @@
+{
+  "schema": "soh.map.lr01.poi_geometry.v1",
+  "status": "SOURCE_AUTHORED_GEOMETRY_PLUS_DERIVED_CLASSIFICATION",
+  "sourceSha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+  "classification": {
+    "openAirArches": [
+      "quarry",
+      "mine",
+      "grove",
+      "port",
+      "pier",
+      "elder_site",
+      "evac",
+      "ruins",
+      "roadstop",
+      "village",
+      "hamlet",
+      "filter"
+    ],
+    "enclosedArches": [
+      "research",
+      "observatory",
+      "facility",
+      "powerplant",
+      "warehouse",
+      "tomb",
+      "gate",
+      "ragnarok_cache",
+      "chest_vendor",
+      "mill",
+      "smelter",
+      "sawmill"
+    ]
+  },
+  "pois": [
+    {
+      "id": "po_academy",
+      "name": "Argus Academy",
+      "arche": "research",
+      "at": [
+        936,
+        262
+      ],
+      "rot": 0.08003576695919035,
+      "scale": 1,
+      "enclosure": "ENCLOSED_MULTI_LAYER",
+      "enclosureBasis": "depth=multi AND deep polygon present",
+      "enclosureSignals": {
+        "depth": "multi",
+        "deepPolygon": true,
+        "gate": "key",
+        "arche": "research",
+        "retreatCount": 1
+      },
+      "gated": true,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "multi",
+      "gate": "key",
+      "accessText": "Đường nhỏ + lối rút",
+      "retreatCount": 1,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          915.8061,
+          247.3072,
+          956.1939,
+          276.6928
+        ],
+        "areaAu2": 1013.76,
+        "centroidAu": [
+          936,
+          262
+        ],
+        "edgesAu": [
+          38.4,
+          26.4,
+          38.4,
+          26.4
+        ],
+        "minEdgeAu": 26.4,
+        "maxEdgeAu": 38.4,
+        "obb": {
+          "centre": [
+            936,
+            262
+          ],
+          "ux": [
+            0.9968,
+            0.08
+          ],
+          "uy": [
+            -0.08,
+            0.9968
+          ],
+          "wAu": 38.4,
+          "hAu": 26.4,
+          "angleRad": 0.08,
+          "edgeLengthsAu": [
+            38.4,
+            26.4,
+            38.4,
+            26.4
+          ],
+          "quadEdge2Au": 26.4
+        }
+      },
+      "deep": {
+        "vertexCount": 4,
+        "areaAu2": 311.04,
+        "centroidAu": [
+          939.6,
+          264.4
+        ],
+        "edgesAu": [
+          21.6,
+          14.4,
+          21.6,
+          14.4
+        ],
+        "minEdgeAu": 14.4,
+        "obb": {
+          "centre": [
+            939.6,
+            264.4
+          ],
+          "ux": [
+            0.9968,
+            0.08
+          ],
+          "uy": [
+            -0.08,
+            0.9968
+          ],
+          "wAu": 21.6,
+          "hAu": 14.4,
+          "angleRad": 0.08,
+          "edgeLengthsAu": [
+            21.6,
+            14.4,
+            21.6,
+            14.4
+          ],
+          "quadEdge2Au": 14.4
+        }
+      },
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 26.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_observatory",
+      "name": "Argus Observatory",
+      "arche": "observatory",
+      "at": [
+        958,
+        170
+      ],
+      "rot": 0.09730434268712995,
+      "scale": 1,
+      "enclosure": "ENCLOSED_SINGLE",
+      "enclosureBasis": "arche=observatory in explicit enclosed set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "observatory",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường dốc",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          946.1049,
+          161.2483,
+          969.8951,
+          178.7517
+        ],
+        "areaAu2": 344.96,
+        "centroidAu": [
+          958,
+          170
+        ],
+        "edgesAu": [
+          22.4,
+          15.4,
+          22.4,
+          15.4
+        ],
+        "minEdgeAu": 15.4,
+        "maxEdgeAu": 22.4,
+        "obb": {
+          "centre": [
+            958,
+            170
+          ],
+          "ux": [
+            0.9953,
+            0.0972
+          ],
+          "uy": [
+            -0.0972,
+            0.9953
+          ],
+          "wAu": 22.4,
+          "hAu": 15.4,
+          "angleRad": 0.0973,
+          "edgeLengthsAu": [
+            22.4,
+            15.4,
+            22.4,
+            15.4
+          ],
+          "quadEdge2Au": 15.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 15.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_archive",
+      "name": "Argus Archive Vaults",
+      "arche": "facility",
+      "at": [
+        1018,
+        226
+      ],
+      "rot": 0.21122281067073345,
+      "scale": 1,
+      "enclosure": "ENCLOSED_MULTI_LAYER",
+      "enclosureBasis": "depth=multi AND deep polygon present",
+      "enclosureSignals": {
+        "depth": "multi",
+        "deepPolygon": true,
+        "gate": "key",
+        "arche": "facility",
+        "retreatCount": 1
+      },
+      "gated": true,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "multi",
+      "gate": "key",
+      "accessText": "Ngoại vi tự do; lõi cần thẻ + điện + bảo hộ",
+      "retreatCount": 1,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          991.0741,
+          204.835,
+          1044.9259,
+          247.165
+        ],
+        "areaAu2": 1584,
+        "centroidAu": [
+          1018,
+          226
+        ],
+        "edgesAu": [
+          48,
+          33,
+          48,
+          33
+        ],
+        "minEdgeAu": 33,
+        "maxEdgeAu": 48,
+        "obb": {
+          "centre": [
+            1018,
+            226
+          ],
+          "ux": [
+            0.9778,
+            0.2097
+          ],
+          "uy": [
+            -0.2097,
+            0.9778
+          ],
+          "wAu": 48,
+          "hAu": 33,
+          "angleRad": 0.2112,
+          "edgeLengthsAu": [
+            48,
+            33,
+            48,
+            33
+          ],
+          "quadEdge2Au": 33
+        }
+      },
+      "deep": {
+        "vertexCount": 4,
+        "areaAu2": 486,
+        "centroidAu": [
+          1022.5,
+          229
+        ],
+        "edgesAu": [
+          27,
+          18,
+          27,
+          18
+        ],
+        "minEdgeAu": 18,
+        "obb": {
+          "centre": [
+            1022.5,
+            229
+          ],
+          "ux": [
+            0.9778,
+            0.2097
+          ],
+          "uy": [
+            -0.2097,
+            0.9778
+          ],
+          "wAu": 27,
+          "hAu": 18,
+          "angleRad": 0.2112,
+          "edgeLengthsAu": [
+            27,
+            18,
+            27,
+            18
+          ],
+          "quadEdge2Au": 18
+        }
+      },
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 33,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_hall_eyes",
+      "name": "Hall of Eyes",
+      "arche": "elder_site",
+      "at": [
+        992,
+        212
+      ],
+      "rot": -0.06089290920644996,
+      "scale": 1,
+      "enclosure": "ENCLOSED_MULTI_LAYER",
+      "enclosureBasis": "depth=multi AND deep polygon present",
+      "enclosureSignals": {
+        "depth": "multi",
+        "deepPolygon": true,
+        "gate": "elder",
+        "arche": "elder_site",
+        "retreatCount": 1
+      },
+      "gated": true,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "multi",
+      "gate": "elder",
+      "accessText": "Đường tiếp cận + đường rút",
+      "retreatCount": 1,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          963.7124,
+          191.6794,
+          1020.2876,
+          232.3206
+        ],
+        "areaAu2": 2034.56,
+        "centroidAu": [
+          992,
+          212
+        ],
+        "edgesAu": [
+          54.4,
+          37.4,
+          54.4,
+          37.4
+        ],
+        "minEdgeAu": 37.4,
+        "maxEdgeAu": 54.4,
+        "obb": {
+          "centre": [
+            992,
+            212
+          ],
+          "ux": [
+            0.9981,
+            -0.0609
+          ],
+          "uy": [
+            0.0609,
+            0.9981
+          ],
+          "wAu": 54.4,
+          "hAu": 37.4,
+          "angleRad": -0.0609,
+          "edgeLengthsAu": [
+            54.4,
+            37.4,
+            54.4,
+            37.4
+          ],
+          "quadEdge2Au": 37.4
+        }
+      },
+      "deep": {
+        "vertexCount": 4,
+        "areaAu2": 624.24,
+        "centroidAu": [
+          997.1,
+          215.4
+        ],
+        "edgesAu": [
+          30.6,
+          20.4,
+          30.6,
+          20.4
+        ],
+        "minEdgeAu": 20.4,
+        "obb": {
+          "centre": [
+            997.1,
+            215.4
+          ],
+          "ux": [
+            0.9981,
+            -0.0609
+          ],
+          "uy": [
+            0.0609,
+            0.9981
+          ],
+          "wAu": 30.6,
+          "hAu": 20.4,
+          "angleRad": -0.0609,
+          "edgeLengthsAu": [
+            30.6,
+            20.4,
+            30.6,
+            20.4
+          ],
+          "quadEdge2Au": 20.4
+        }
+      },
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 37.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_lantern",
+      "name": "Lantern Light",
+      "arche": "observatory",
+      "at": [
+        1050,
+        152
+      ],
+      "rot": -0.3486848004162312,
+      "scale": 1,
+      "enclosure": "ENCLOSED_SINGLE",
+      "enclosureBasis": "arche=observatory in explicit enclosed set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "observatory",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường dốc",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1036.8432,
+          140.9367,
+          1063.1568,
+          163.0633
+        ],
+        "areaAu2": 344.96,
+        "centroidAu": [
+          1050,
+          152
+        ],
+        "edgesAu": [
+          22.4,
+          15.4,
+          22.4,
+          15.4
+        ],
+        "minEdgeAu": 15.4,
+        "maxEdgeAu": 22.4,
+        "obb": {
+          "centre": [
+            1050,
+            152
+          ],
+          "ux": [
+            0.9398,
+            -0.3417
+          ],
+          "uy": [
+            0.3417,
+            0.9398
+          ],
+          "wAu": 22.4,
+          "hAu": 15.4,
+          "angleRad": -0.3487,
+          "edgeLengthsAu": [
+            22.4,
+            15.4,
+            22.4,
+            15.4
+          ],
+          "quadEdge2Au": 15.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 15.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_lanternstn",
+      "name": "Lantern Cove Station",
+      "arche": "roadstop",
+      "at": [
+        1077.2153168454608,
+        311.9998727562178
+      ],
+      "rot": -0.24127310998737814,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=roadstop in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "roadstop",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường xe/đường nhỏ",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1066.3164,
+          303.2972,
+          1088.1142,
+          320.7025
+        ],
+        "areaAu2": 253.44,
+        "centroidAu": [
+          1077.2153,
+          311.9999
+        ],
+        "edgesAu": [
+          19.2,
+          13.2,
+          19.2,
+          13.2
+        ],
+        "minEdgeAu": 13.2,
+        "maxEdgeAu": 19.2,
+        "obb": {
+          "centre": [
+            1077.2153,
+            311.9999
+          ],
+          "ux": [
+            0.971,
+            -0.2389
+          ],
+          "uy": [
+            0.2389,
+            0.971
+          ],
+          "wAu": 19.2,
+          "hAu": 13.2,
+          "angleRad": -0.2413,
+          "edgeLengthsAu": [
+            19.2,
+            13.2,
+            19.2,
+            13.2
+          ],
+          "quadEdge2Au": 13.2
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 13.2,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_kestrel",
+      "name": "Kestrel Radio Tower",
+      "arche": "facility",
+      "at": [
+        700,
+        300
+      ],
+      "rot": -0.32793299574404955,
+      "scale": 1,
+      "enclosure": "ENCLOSED_MULTI_LAYER",
+      "enclosureBasis": "depth=multi AND deep polygon present",
+      "enclosureSignals": {
+        "depth": "multi",
+        "deepPolygon": true,
+        "gate": "key",
+        "arche": "facility",
+        "retreatCount": 1
+      },
+      "gated": true,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "multi",
+      "gate": "key",
+      "accessText": "Ngoại vi tự do; lõi cần thẻ + điện + bảo hộ",
+      "retreatCount": 1,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          671.9645,
+          276.6492,
+          728.0355,
+          323.3508
+        ],
+        "areaAu2": 1584,
+        "centroidAu": [
+          700,
+          300
+        ],
+        "edgesAu": [
+          48,
+          33,
+          48,
+          33
+        ],
+        "minEdgeAu": 33,
+        "maxEdgeAu": 48,
+        "obb": {
+          "centre": [
+            700,
+            300
+          ],
+          "ux": [
+            0.9467,
+            -0.3221
+          ],
+          "uy": [
+            0.3221,
+            0.9467
+          ],
+          "wAu": 48,
+          "hAu": 33,
+          "angleRad": -0.3279,
+          "edgeLengthsAu": [
+            48,
+            33,
+            48,
+            33
+          ],
+          "quadEdge2Au": 33
+        }
+      },
+      "deep": {
+        "vertexCount": 4,
+        "areaAu2": 486,
+        "centroidAu": [
+          704.5,
+          303
+        ],
+        "edgesAu": [
+          27,
+          18,
+          27,
+          18
+        ],
+        "minEdgeAu": 18,
+        "obb": {
+          "centre": [
+            704.5,
+            303
+          ],
+          "ux": [
+            0.9467,
+            -0.3221
+          ],
+          "uy": [
+            0.3221,
+            0.9467
+          ],
+          "wAu": 27,
+          "hAu": 18,
+          "angleRad": -0.3279,
+          "edgeLengthsAu": [
+            27,
+            18,
+            27,
+            18
+          ],
+          "quadEdge2Au": 18
+        }
+      },
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 33,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_typhon",
+      "name": "Typhon's Fracture",
+      "arche": "elder_site",
+      "at": [
+        556,
+        352
+      ],
+      "rot": -0.16376804262399675,
+      "scale": 1,
+      "enclosure": "ENCLOSED_MULTI_LAYER",
+      "enclosureBasis": "depth=multi AND deep polygon present",
+      "enclosureSignals": {
+        "depth": "multi",
+        "deepPolygon": true,
+        "gate": "elder",
+        "arche": "elder_site",
+        "retreatCount": 1
+      },
+      "gated": true,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "multi",
+      "gate": "elder",
+      "accessText": "Đường tiếp cận + đường rút",
+      "retreatCount": 1,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          526.1151,
+          329.1156,
+          585.8849,
+          374.8844
+        ],
+        "areaAu2": 2034.56,
+        "centroidAu": [
+          556,
+          352
+        ],
+        "edgesAu": [
+          54.4,
+          37.4,
+          54.4,
+          37.4
+        ],
+        "minEdgeAu": 37.4,
+        "maxEdgeAu": 54.4,
+        "obb": {
+          "centre": [
+            556,
+            352
+          ],
+          "ux": [
+            0.9866,
+            -0.163
+          ],
+          "uy": [
+            0.163,
+            0.9866
+          ],
+          "wAu": 54.4,
+          "hAu": 37.4,
+          "angleRad": -0.1638,
+          "edgeLengthsAu": [
+            54.4,
+            37.4,
+            54.4,
+            37.4
+          ],
+          "quadEdge2Au": 37.4
+        }
+      },
+      "deep": {
+        "vertexCount": 4,
+        "areaAu2": 624.24,
+        "centroidAu": [
+          561.1,
+          355.4
+        ],
+        "edgesAu": [
+          30.6,
+          20.4,
+          30.6,
+          20.4
+        ],
+        "minEdgeAu": 20.4,
+        "obb": {
+          "centre": [
+            561.1,
+            355.4
+          ],
+          "ux": [
+            0.9866,
+            -0.163
+          ],
+          "uy": [
+            0.163,
+            0.9866
+          ],
+          "wAu": 30.6,
+          "hAu": 20.4,
+          "angleRad": -0.1638,
+          "edgeLengthsAu": [
+            30.6,
+            20.4,
+            30.6,
+            20.4
+          ],
+          "quadEdge2Au": 20.4
+        }
+      },
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 37.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_viaduct",
+      "name": "Crushed Viaduct",
+      "arche": "ruins",
+      "at": [
+        655,
+        448
+      ],
+      "rot": -0.3139851799234748,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=ruins in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "ruins",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường mòn",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          632.6618,
+          429.5154,
+          677.3382,
+          466.4846
+        ],
+        "areaAu2": 1013.76,
+        "centroidAu": [
+          655,
+          448
+        ],
+        "edgesAu": [
+          38.4,
+          26.4,
+          38.4,
+          26.4
+        ],
+        "minEdgeAu": 26.4,
+        "maxEdgeAu": 38.4,
+        "obb": {
+          "centre": [
+            655,
+            448
+          ],
+          "ux": [
+            0.9511,
+            -0.3089
+          ],
+          "uy": [
+            0.3089,
+            0.9511
+          ],
+          "wAu": 38.4,
+          "hAu": 26.4,
+          "angleRad": -0.314,
+          "edgeLengthsAu": [
+            38.4,
+            26.4,
+            38.4,
+            26.4
+          ],
+          "quadEdge2Au": 26.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 26.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_freightyard",
+      "name": "Shattered Freight Yard",
+      "arche": "ruins",
+      "at": [
+        690,
+        500
+      ],
+      "rot": -0.07472912259399889,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=ruins in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "ruins",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường mòn",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          669.8681,
+          485.4034,
+          710.1319,
+          514.5966
+        ],
+        "areaAu2": 1013.76,
+        "centroidAu": [
+          690,
+          500
+        ],
+        "edgesAu": [
+          38.4,
+          26.4,
+          38.4,
+          26.4
+        ],
+        "minEdgeAu": 26.4,
+        "maxEdgeAu": 38.4,
+        "obb": {
+          "centre": [
+            690,
+            500
+          ],
+          "ux": [
+            0.9972,
+            -0.0747
+          ],
+          "uy": [
+            0.0747,
+            0.9972
+          ],
+          "wAu": 38.4,
+          "hAu": 26.4,
+          "angleRad": -0.0747,
+          "edgeLengthsAu": [
+            38.4,
+            26.4,
+            38.4,
+            26.4
+          ],
+          "quadEdge2Au": 26.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 26.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_fracquarry",
+      "name": "Fracture Quarry",
+      "arche": "quarry",
+      "at": [
+        600,
+        525
+      ],
+      "rot": 0.34346690829843285,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=quarry in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "quarry",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường xe tải hàng",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          573.7223,
+          502.9562,
+          626.2777,
+          547.0438
+        ],
+        "areaAu2": 1379.84,
+        "centroidAu": [
+          600,
+          525
+        ],
+        "edgesAu": [
+          44.8,
+          30.8,
+          44.8,
+          30.8
+        ],
+        "minEdgeAu": 30.8,
+        "maxEdgeAu": 44.8,
+        "obb": {
+          "centre": [
+            600,
+            525
+          ],
+          "ux": [
+            0.9416,
+            0.3368
+          ],
+          "uy": [
+            -0.3368,
+            0.9416
+          ],
+          "wAu": 44.8,
+          "hAu": 30.8,
+          "angleRad": 0.3435,
+          "edgeLengthsAu": [
+            44.8,
+            30.8,
+            44.8,
+            30.8
+          ],
+          "quadEdge2Au": 30.8
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 30.8,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_falls",
+      "name": "Falls Powerhouse",
+      "arche": "powerplant",
+      "at": [
+        722,
+        438
+      ],
+      "rot": -0.005514490231871616,
+      "scale": 1,
+      "enclosure": "ENCLOSED_MULTI_LAYER",
+      "enclosureBasis": "depth=multi AND deep polygon present",
+      "enclosureSignals": {
+        "depth": "multi",
+        "deepPolygon": true,
+        "gate": "power",
+        "arche": "powerplant",
+        "retreatCount": 1
+      },
+      "gated": true,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "multi",
+      "gate": "power",
+      "accessText": "Đường xe, gần dòng chảy",
+      "retreatCount": 1,
+      "links": [
+        {
+          "to": "po_meridian",
+          "kind": "điện → cơ sở sâu"
+        },
+        {
+          "to": "po_kestrel",
+          "kind": "điện → cơ sở sâu"
+        }
+      ],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          704.3335,
+          425.8031,
+          739.6665,
+          450.1969
+        ],
+        "areaAu2": 851.84,
+        "centroidAu": [
+          722,
+          438
+        ],
+        "edgesAu": [
+          35.2,
+          24.2,
+          35.2,
+          24.2
+        ],
+        "minEdgeAu": 24.2,
+        "maxEdgeAu": 35.2,
+        "obb": {
+          "centre": [
+            722,
+            438
+          ],
+          "ux": [
+            1,
+            -0.0055
+          ],
+          "uy": [
+            0.0055,
+            1
+          ],
+          "wAu": 35.2,
+          "hAu": 24.2,
+          "angleRad": -0.0055,
+          "edgeLengthsAu": [
+            35.2,
+            24.2,
+            35.2,
+            24.2
+          ],
+          "quadEdge2Au": 24.2
+        }
+      },
+      "deep": {
+        "vertexCount": 4,
+        "areaAu2": 261.36,
+        "centroidAu": [
+          725.3,
+          440.2
+        ],
+        "edgesAu": [
+          19.8,
+          13.2,
+          19.8,
+          13.2
+        ],
+        "minEdgeAu": 13.2,
+        "obb": {
+          "centre": [
+            725.3,
+            440.2
+          ],
+          "ux": [
+            1,
+            -0.0055
+          ],
+          "uy": [
+            0.0055,
+            1
+          ],
+          "wAu": 19.8,
+          "hAu": 13.2,
+          "angleRad": -0.0055,
+          "edgeLengthsAu": [
+            19.8,
+            13.2,
+            19.8,
+            13.2
+          ],
+          "quadEdge2Au": 13.2
+        }
+      },
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 24.2,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_greywater",
+      "name": "Greywater Hamlet",
+      "arche": "village",
+      "at": [
+        812,
+        592
+      ],
+      "rot": 0.35005085077136755,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=village in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "village",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường nhỏ + đường xe/bến",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          787.5573,
+          571.434,
+          836.4427,
+          612.566
+        ],
+        "areaAu2": 1189.76,
+        "centroidAu": [
+          812,
+          592
+        ],
+        "edgesAu": [
+          41.6,
+          28.6,
+          41.6,
+          28.6
+        ],
+        "minEdgeAu": 28.6,
+        "maxEdgeAu": 41.6,
+        "obb": {
+          "centre": [
+            812,
+            592
+          ],
+          "ux": [
+            0.9394,
+            0.3429
+          ],
+          "uy": [
+            -0.3429,
+            0.9394
+          ],
+          "wAu": 41.6,
+          "hAu": 28.6,
+          "angleRad": 0.3501,
+          "edgeLengthsAu": [
+            41.6,
+            28.6,
+            41.6,
+            28.6
+          ],
+          "quadEdge2Au": 28.6
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 28.6,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_pumphouse",
+      "name": "Greywater Pumphouse",
+      "arche": "filter",
+      "at": [
+        850,
+        556
+      ],
+      "rot": -0.14605232905596494,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=filter in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "hazard",
+        "arche": "filter",
+        "retreatCount": 0
+      },
+      "gated": true,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "hazard",
+      "accessText": "Đường nhỏ",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          836.0556,
+          545.4309,
+          863.9444,
+          566.5691
+        ],
+        "areaAu2": 450.56,
+        "centroidAu": [
+          850,
+          556
+        ],
+        "edgesAu": [
+          25.6,
+          17.6,
+          25.6,
+          17.6
+        ],
+        "minEdgeAu": 17.6,
+        "maxEdgeAu": 25.6,
+        "obb": {
+          "centre": [
+            850,
+            556
+          ],
+          "ux": [
+            0.9894,
+            -0.1455
+          ],
+          "uy": [
+            0.1455,
+            0.9894
+          ],
+          "wAu": 25.6,
+          "hAu": 17.6,
+          "angleRad": -0.1461,
+          "edgeLengthsAu": [
+            25.6,
+            17.6,
+            25.6,
+            17.6
+          ],
+          "quadEdge2Au": 17.6
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 17.6,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_confluence",
+      "name": "Confluence Waystation",
+      "arche": "roadstop",
+      "at": [
+        918,
+        668
+      ],
+      "rot": -0.3331723494455219,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=roadstop in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "roadstop",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường xe/đường nhỏ",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          906.7694,
+          658.6233,
+          929.2306,
+          677.3767
+        ],
+        "areaAu2": 253.44,
+        "centroidAu": [
+          918,
+          668
+        ],
+        "edgesAu": [
+          19.2,
+          13.2,
+          19.2,
+          13.2
+        ],
+        "minEdgeAu": 13.2,
+        "maxEdgeAu": 19.2,
+        "obb": {
+          "centre": [
+            918,
+            668
+          ],
+          "ux": [
+            0.945,
+            -0.327
+          ],
+          "uy": [
+            0.327,
+            0.945
+          ],
+          "wAu": 19.2,
+          "hAu": 13.2,
+          "angleRad": -0.3332,
+          "edgeLengthsAu": [
+            19.2,
+            13.2,
+            19.2,
+            13.2
+          ],
+          "quadEdge2Au": 13.2
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 13.2,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_sawaion",
+      "name": "Aion Edge Sawmill",
+      "arche": "sawmill",
+      "at": [
+        748,
+        668
+      ],
+      "rot": -0.11527577042579651,
+      "scale": 1,
+      "enclosure": "ENCLOSED_SINGLE",
+      "enclosureBasis": "arche=sawmill in explicit enclosed set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "sawmill",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường xe + sông",
+      "retreatCount": 0,
+      "links": [
+        {
+          "to": "po_ironvein",
+          "kind": "gỗ chống hầm"
+        }
+      ],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          729.1251,
+          653.9559,
+          766.8749,
+          682.0441
+        ],
+        "areaAu2": 851.84,
+        "centroidAu": [
+          748,
+          668
+        ],
+        "edgesAu": [
+          35.2,
+          24.2,
+          35.2,
+          24.2
+        ],
+        "minEdgeAu": 24.2,
+        "maxEdgeAu": 35.2,
+        "obb": {
+          "centre": [
+            748,
+            668
+          ],
+          "ux": [
+            0.9934,
+            -0.115
+          ],
+          "uy": [
+            0.115,
+            0.9934
+          ],
+          "wAu": 35.2,
+          "hAu": 24.2,
+          "angleRad": -0.1153,
+          "edgeLengthsAu": [
+            35.2,
+            24.2,
+            35.2,
+            24.2
+          ],
+          "quadEdge2Au": 24.2
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 24.2,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_mill",
+      "name": "Mossbrook Mill",
+      "arche": "mill",
+      "at": [
+        1002,
+        730
+      ],
+      "rot": 0.05011776462197304,
+      "scale": 1,
+      "enclosure": "ENCLOSED_SINGLE",
+      "enclosureBasis": "arche=mill in explicit enclosed set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "mill",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường + sông",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          988.7752,
+          720.5698,
+          1015.2248,
+          739.4302
+        ],
+        "areaAu2": 450.56,
+        "centroidAu": [
+          1002,
+          730
+        ],
+        "edgesAu": [
+          25.6,
+          17.6,
+          25.6,
+          17.6
+        ],
+        "minEdgeAu": 17.6,
+        "maxEdgeAu": 25.6,
+        "obb": {
+          "centre": [
+            1002,
+            730
+          ],
+          "ux": [
+            0.9987,
+            0.0501
+          ],
+          "uy": [
+            -0.0501,
+            0.9987
+          ],
+          "wAu": 25.6,
+          "hAu": 17.6,
+          "angleRad": 0.0501,
+          "edgeLengthsAu": [
+            25.6,
+            17.6,
+            25.6,
+            17.6
+          ],
+          "quadEdge2Au": 17.6
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 17.6,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_kilns",
+      "name": "Charcoal Kilns",
+      "arche": "smelter",
+      "at": [
+        905,
+        785
+      ],
+      "rot": 0.06530504338443277,
+      "scale": 0.7,
+      "enclosure": "ENCLOSED_SINGLE",
+      "enclosureBasis": "arche=smelter in explicit enclosed set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "smelter",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường xe + bến",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          890.9857,
+          774.9026,
+          919.0143,
+          795.0974
+        ],
+        "areaAu2": 496.7424,
+        "centroidAu": [
+          905,
+          785
+        ],
+        "edgesAu": [
+          26.88,
+          18.48,
+          26.88,
+          18.48
+        ],
+        "minEdgeAu": 18.48,
+        "maxEdgeAu": 26.88,
+        "obb": {
+          "centre": [
+            905,
+            785
+          ],
+          "ux": [
+            0.9979,
+            0.0653
+          ],
+          "uy": [
+            -0.0653,
+            0.9979
+          ],
+          "wAu": 26.88,
+          "hAu": 18.48,
+          "angleRad": 0.0653,
+          "edgeLengthsAu": [
+            26.88,
+            18.48,
+            26.88,
+            18.48
+          ],
+          "quadEdge2Au": 18.48
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 18.48,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_ranger",
+      "name": "Ranger Hut",
+      "arche": "hamlet",
+      "at": [
+        800,
+        760
+      ],
+      "rot": -0.3123027252033353,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=hamlet in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "hamlet",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường mòn",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          786.9759,
+          749.2313,
+          813.0241,
+          770.7687
+        ],
+        "areaAu2": 344.96,
+        "centroidAu": [
+          800,
+          760
+        ],
+        "edgesAu": [
+          22.4,
+          15.4,
+          22.4,
+          15.4
+        ],
+        "minEdgeAu": 15.4,
+        "maxEdgeAu": 22.4,
+        "obb": {
+          "centre": [
+            800,
+            760
+          ],
+          "ux": [
+            0.9516,
+            -0.3073
+          ],
+          "uy": [
+            0.3073,
+            0.9516
+          ],
+          "wAu": 22.4,
+          "hAu": 15.4,
+          "angleRad": -0.3123,
+          "edgeLengthsAu": [
+            22.4,
+            15.4,
+            22.4,
+            15.4
+          ],
+          "quadEdge2Au": 15.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 15.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_glade",
+      "name": "Mosslight Glade",
+      "arche": "grove",
+      "at": [
+        782,
+        705
+      ],
+      "rot": -0.18295861594378948,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=grove in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "grove",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường rừng",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          767.8126,
+          694.018,
+          796.1874,
+          715.982
+        ],
+        "areaAu2": 450.56,
+        "centroidAu": [
+          782,
+          705
+        ],
+        "edgesAu": [
+          25.6,
+          17.6,
+          25.6,
+          17.6
+        ],
+        "minEdgeAu": 17.6,
+        "maxEdgeAu": 25.6,
+        "obb": {
+          "centre": [
+            782,
+            705
+          ],
+          "ux": [
+            0.9833,
+            -0.1819
+          ],
+          "uy": [
+            0.1819,
+            0.9833
+          ],
+          "wAu": 25.6,
+          "hAu": 17.6,
+          "angleRad": -0.183,
+          "edgeLengthsAu": [
+            25.6,
+            17.6,
+            25.6,
+            17.6
+          ],
+          "quadEdge2Au": 17.6
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 17.6,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_sapgrove",
+      "name": "Sap Grove",
+      "arche": "grove",
+      "at": [
+        960,
+        640
+      ],
+      "rot": 0.1628846311941743,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=grove in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "grove",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường rừng",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          945.9424,
+          629.2408,
+          974.0576,
+          650.7592
+        ],
+        "areaAu2": 450.56,
+        "centroidAu": [
+          960,
+          640
+        ],
+        "edgesAu": [
+          25.6,
+          17.6,
+          25.6,
+          17.6
+        ],
+        "minEdgeAu": 17.6,
+        "maxEdgeAu": 25.6,
+        "obb": {
+          "centre": [
+            960,
+            640
+          ],
+          "ux": [
+            0.9868,
+            0.1622
+          ],
+          "uy": [
+            -0.1622,
+            0.9868
+          ],
+          "wAu": 25.6,
+          "hAu": 17.6,
+          "angleRad": 0.1629,
+          "edgeLengthsAu": [
+            25.6,
+            17.6,
+            25.6,
+            17.6
+          ],
+          "quadEdge2Au": 17.6
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 17.6,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_elderwood",
+      "name": "Heart of the Elderwood",
+      "arche": "elder_site",
+      "at": [
+        868,
+        712
+      ],
+      "rot": -0.3380367958918214,
+      "scale": 1,
+      "enclosure": "ENCLOSED_MULTI_LAYER",
+      "enclosureBasis": "depth=multi AND deep polygon present",
+      "enclosureSignals": {
+        "depth": "multi",
+        "deepPolygon": true,
+        "gate": "elder",
+        "arche": "elder_site",
+        "retreatCount": 1
+      },
+      "gated": true,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "multi",
+      "gate": "elder",
+      "accessText": "Đường tiếp cận + đường rút",
+      "retreatCount": 1,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          836.1377,
+          685.3378,
+          899.8623,
+          738.6622
+        ],
+        "areaAu2": 2034.56,
+        "centroidAu": [
+          868,
+          712
+        ],
+        "edgesAu": [
+          54.4,
+          37.4,
+          54.4,
+          37.4
+        ],
+        "minEdgeAu": 37.4,
+        "maxEdgeAu": 54.4,
+        "obb": {
+          "centre": [
+            868,
+            712
+          ],
+          "ux": [
+            0.9434,
+            -0.3316
+          ],
+          "uy": [
+            0.3316,
+            0.9434
+          ],
+          "wAu": 54.4,
+          "hAu": 37.4,
+          "angleRad": -0.338,
+          "edgeLengthsAu": [
+            54.4,
+            37.4,
+            54.4,
+            37.4
+          ],
+          "quadEdge2Au": 37.4
+        }
+      },
+      "deep": {
+        "vertexCount": 4,
+        "areaAu2": 624.24,
+        "centroidAu": [
+          873.1,
+          715.4
+        ],
+        "edgesAu": [
+          30.6,
+          20.4,
+          30.6,
+          20.4
+        ],
+        "minEdgeAu": 20.4,
+        "obb": {
+          "centre": [
+            873.1,
+            715.4
+          ],
+          "ux": [
+            0.9434,
+            -0.3316
+          ],
+          "uy": [
+            0.3316,
+            0.9434
+          ],
+          "wAu": 30.6,
+          "hAu": 20.4,
+          "angleRad": -0.338,
+          "edgeLengthsAu": [
+            30.6,
+            20.4,
+            30.6,
+            20.4
+          ],
+          "quadEdge2Au": 20.4
+        }
+      },
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 37.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_siloc",
+      "name": "Grain Silo Complex",
+      "arche": "warehouse",
+      "at": [
+        1090,
+        760
+      ],
+      "rot": 0.03945979569107294,
+      "scale": 1,
+      "enclosure": "ENCLOSED_SINGLE",
+      "enclosureBasis": "arche=warehouse in explicit enclosed set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "warehouse",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường xe",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1073.5785,
+          748.3774,
+          1106.4215,
+          771.6226
+        ],
+        "areaAu2": 704,
+        "centroidAu": [
+          1090,
+          760
+        ],
+        "edgesAu": [
+          32,
+          22,
+          32,
+          22
+        ],
+        "minEdgeAu": 22,
+        "maxEdgeAu": 32,
+        "obb": {
+          "centre": [
+            1090,
+            760
+          ],
+          "ux": [
+            0.9992,
+            0.0394
+          ],
+          "uy": [
+            -0.0394,
+            0.9992
+          ],
+          "wAu": 32,
+          "hAu": 22,
+          "angleRad": 0.0395,
+          "edgeLengthsAu": [
+            32,
+            22,
+            32,
+            22
+          ],
+          "quadEdge2Au": 22
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 22,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_meridian",
+      "name": "Meridian Research Station",
+      "arche": "research",
+      "at": [
+        1120,
+        690
+      ],
+      "rot": -0.0875807197764516,
+      "scale": 1,
+      "enclosure": "ENCLOSED_MULTI_LAYER",
+      "enclosureBasis": "depth=multi AND deep polygon present",
+      "enclosureSignals": {
+        "depth": "multi",
+        "deepPolygon": true,
+        "gate": "key",
+        "arche": "research",
+        "retreatCount": 1
+      },
+      "gated": true,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "multi",
+      "gate": "key",
+      "accessText": "Đường nhỏ + lối rút",
+      "retreatCount": 1,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1099.719,
+          675.1712,
+          1140.281,
+          704.8288
+        ],
+        "areaAu2": 1013.76,
+        "centroidAu": [
+          1120,
+          690
+        ],
+        "edgesAu": [
+          38.4,
+          26.4,
+          38.4,
+          26.4
+        ],
+        "minEdgeAu": 26.4,
+        "maxEdgeAu": 38.4,
+        "obb": {
+          "centre": [
+            1120,
+            690
+          ],
+          "ux": [
+            0.9962,
+            -0.0875
+          ],
+          "uy": [
+            0.0875,
+            0.9962
+          ],
+          "wAu": 38.4,
+          "hAu": 26.4,
+          "angleRad": -0.0876,
+          "edgeLengthsAu": [
+            38.4,
+            26.4,
+            38.4,
+            26.4
+          ],
+          "quadEdge2Au": 26.4
+        }
+      },
+      "deep": {
+        "vertexCount": 4,
+        "areaAu2": 311.04,
+        "centroidAu": [
+          1123.6,
+          692.4
+        ],
+        "edgesAu": [
+          21.6,
+          14.4,
+          21.6,
+          14.4
+        ],
+        "minEdgeAu": 14.4,
+        "obb": {
+          "centre": [
+            1123.6,
+            692.4
+          ],
+          "ux": [
+            0.9962,
+            -0.0875
+          ],
+          "uy": [
+            0.0875,
+            0.9962
+          ],
+          "wAu": 21.6,
+          "hAu": 14.4,
+          "angleRad": -0.0876,
+          "edgeLengthsAu": [
+            21.6,
+            14.4,
+            21.6,
+            14.4
+          ],
+          "quadEdge2Au": 14.4
+        }
+      },
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 26.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_oldpump",
+      "name": "Old Pumping Plant",
+      "arche": "facility",
+      "at": [
+        850,
+        985
+      ],
+      "rot": -0.22262796871364118,
+      "scale": 1,
+      "enclosure": "ENCLOSED_MULTI_LAYER",
+      "enclosureBasis": "depth=multi AND deep polygon present",
+      "enclosureSignals": {
+        "depth": "multi",
+        "deepPolygon": true,
+        "gate": "power",
+        "arche": "facility",
+        "retreatCount": 1
+      },
+      "gated": true,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "multi",
+      "gate": "power",
+      "accessText": "Ngoại vi tự do; lõi cần thẻ + điện + bảo hộ",
+      "retreatCount": 1,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          822.9492,
+          963.6082,
+          877.0508,
+          1006.3918
+        ],
+        "areaAu2": 1584,
+        "centroidAu": [
+          850,
+          985
+        ],
+        "edgesAu": [
+          48,
+          33,
+          48,
+          33
+        ],
+        "minEdgeAu": 33,
+        "maxEdgeAu": 48,
+        "obb": {
+          "centre": [
+            850,
+            985
+          ],
+          "ux": [
+            0.9753,
+            -0.2208
+          ],
+          "uy": [
+            0.2208,
+            0.9753
+          ],
+          "wAu": 48,
+          "hAu": 33,
+          "angleRad": -0.2226,
+          "edgeLengthsAu": [
+            48,
+            33,
+            48,
+            33
+          ],
+          "quadEdge2Au": 33
+        }
+      },
+      "deep": {
+        "vertexCount": 4,
+        "areaAu2": 486,
+        "centroidAu": [
+          854.5,
+          988
+        ],
+        "edgesAu": [
+          27,
+          18,
+          27,
+          18
+        ],
+        "minEdgeAu": 18,
+        "obb": {
+          "centre": [
+            854.5,
+            988
+          ],
+          "ux": [
+            0.9753,
+            -0.2208
+          ],
+          "uy": [
+            0.2208,
+            0.9753
+          ],
+          "wAu": 27,
+          "hAu": 18,
+          "angleRad": -0.2226,
+          "edgeLengthsAu": [
+            27,
+            18,
+            27,
+            18
+          ],
+          "quadEdge2Au": 18
+        }
+      },
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 33,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_strait",
+      "name": "Strait Landing",
+      "arche": "port",
+      "at": [
+        1268,
+        490
+      ],
+      "rot": 0.18635912071913485,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=port in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "port",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường xe + tuyến phà",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1246.6867,
+          473.4711,
+          1289.3133,
+          506.5289
+        ],
+        "areaAu2": 1013.76,
+        "centroidAu": [
+          1268,
+          490
+        ],
+        "edgesAu": [
+          38.4,
+          26.4,
+          38.4,
+          26.4
+        ],
+        "minEdgeAu": 26.4,
+        "maxEdgeAu": 38.4,
+        "obb": {
+          "centre": [
+            1268,
+            490
+          ],
+          "ux": [
+            0.9827,
+            0.1853
+          ],
+          "uy": [
+            -0.1853,
+            0.9827
+          ],
+          "wAu": 38.4,
+          "hAu": 26.4,
+          "angleRad": 0.1864,
+          "edgeLengthsAu": [
+            38.4,
+            26.4,
+            38.4,
+            26.4
+          ],
+          "quadEdge2Au": 26.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 26.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_ironvein",
+      "name": "Ironvein Mine",
+      "arche": "mine",
+      "at": [
+        1205,
+        655
+      ],
+      "rot": 0.14324119500815868,
+      "scale": 1,
+      "enclosure": "ENCLOSED_MULTI_LAYER",
+      "enclosureBasis": "depth=multi AND deep polygon present",
+      "enclosureSignals": {
+        "depth": "multi",
+        "deepPolygon": true,
+        "gate": "none",
+        "arche": "mine",
+        "retreatCount": 1
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "multi",
+      "gate": "none",
+      "accessText": "Đường xe + đường hầm",
+      "retreatCount": 1,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1182.3717,
+          637.8772,
+          1227.6283,
+          672.1228
+        ],
+        "areaAu2": 1189.76,
+        "centroidAu": [
+          1205,
+          655
+        ],
+        "edgesAu": [
+          41.6,
+          28.6,
+          41.6,
+          28.6
+        ],
+        "minEdgeAu": 28.6,
+        "maxEdgeAu": 41.6,
+        "obb": {
+          "centre": [
+            1205,
+            655
+          ],
+          "ux": [
+            0.9898,
+            0.1428
+          ],
+          "uy": [
+            -0.1428,
+            0.9898
+          ],
+          "wAu": 41.6,
+          "hAu": 28.6,
+          "angleRad": 0.1432,
+          "edgeLengthsAu": [
+            41.6,
+            28.6,
+            41.6,
+            28.6
+          ],
+          "quadEdge2Au": 28.6
+        }
+      },
+      "deep": {
+        "vertexCount": 4,
+        "areaAu2": 365.04,
+        "centroidAu": [
+          1208.9,
+          657.6
+        ],
+        "edgesAu": [
+          23.4,
+          15.6,
+          23.4,
+          15.6
+        ],
+        "minEdgeAu": 15.6,
+        "obb": {
+          "centre": [
+            1208.9,
+            657.6
+          ],
+          "ux": [
+            0.9898,
+            0.1428
+          ],
+          "uy": [
+            -0.1428,
+            0.9898
+          ],
+          "wAu": 23.4,
+          "hAu": 15.6,
+          "angleRad": 0.1432,
+          "edgeLengthsAu": [
+            23.4,
+            15.6,
+            23.4,
+            15.6
+          ],
+          "quadEdge2Au": 15.6
+        }
+      },
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 28.6,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_ridgestop",
+      "name": "Ridge Pass Station",
+      "arche": "roadstop",
+      "at": [
+        1178,
+        578
+      ],
+      "rot": -0.3712305895984173,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=roadstop in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "roadstop",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường xe/đường nhỏ",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1166.6597,
+          568.3671,
+          1189.3403,
+          587.6329
+        ],
+        "areaAu2": 253.44,
+        "centroidAu": [
+          1178,
+          578
+        ],
+        "edgesAu": [
+          19.2,
+          13.2,
+          19.2,
+          13.2
+        ],
+        "minEdgeAu": 13.2,
+        "maxEdgeAu": 19.2,
+        "obb": {
+          "centre": [
+            1178,
+            578
+          ],
+          "ux": [
+            0.9319,
+            -0.3628
+          ],
+          "uy": [
+            0.3628,
+            0.9319
+          ],
+          "wAu": 19.2,
+          "hAu": 13.2,
+          "angleRad": -0.3712,
+          "edgeLengthsAu": [
+            19.2,
+            13.2,
+            19.2,
+            13.2
+          ],
+          "quadEdge2Au": 13.2
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 13.2,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_rapids",
+      "name": "Rapids Portage Hut",
+      "arche": "roadstop",
+      "at": [
+        1150,
+        462
+      ],
+      "rot": -0.08964746017009018,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=roadstop in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "roadstop",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường xe/đường nhỏ",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1139.8477,
+          454.567,
+          1160.1523,
+          469.433
+        ],
+        "areaAu2": 253.44,
+        "centroidAu": [
+          1150,
+          462
+        ],
+        "edgesAu": [
+          19.2,
+          13.2,
+          19.2,
+          13.2
+        ],
+        "minEdgeAu": 13.2,
+        "maxEdgeAu": 19.2,
+        "obb": {
+          "centre": [
+            1150,
+            462
+          ],
+          "ux": [
+            0.996,
+            -0.0895
+          ],
+          "uy": [
+            0.0895,
+            0.996
+          ],
+          "wAu": 19.2,
+          "hAu": 13.2,
+          "angleRad": -0.0896,
+          "edgeLengthsAu": [
+            19.2,
+            13.2,
+            19.2,
+            13.2
+          ],
+          "quadEdge2Au": 13.2
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 13.2,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_hook",
+      "name": "Hook Village",
+      "arche": "village",
+      "at": [
+        1300,
+        335
+      ],
+      "rot": -0.3080068847164512,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=village in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "village",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường nhỏ + đường xe/bến",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1275.8437,
+          315.0672,
+          1324.1563,
+          354.9328
+        ],
+        "areaAu2": 1189.76,
+        "centroidAu": [
+          1300,
+          335
+        ],
+        "edgesAu": [
+          41.6,
+          28.6,
+          41.6,
+          28.6
+        ],
+        "minEdgeAu": 28.6,
+        "maxEdgeAu": 41.6,
+        "obb": {
+          "centre": [
+            1300,
+            335
+          ],
+          "ux": [
+            0.9529,
+            -0.3032
+          ],
+          "uy": [
+            0.3032,
+            0.9529
+          ],
+          "wAu": 41.6,
+          "hAu": 28.6,
+          "angleRad": -0.308,
+          "edgeLengthsAu": [
+            41.6,
+            28.6,
+            41.6,
+            28.6
+          ],
+          "quadEdge2Au": 28.6
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 28.6,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_mere",
+      "name": "Hook Mere Pier",
+      "arche": "pier",
+      "at": [
+        1250,
+        368
+      ],
+      "rot": -0.1773014256730676,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=pier in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "pier",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường mòn + thủy lộ",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1241.1554,
+          361.1752,
+          1258.8446,
+          374.8248
+        ],
+        "areaAu2": 176,
+        "centroidAu": [
+          1250,
+          368
+        ],
+        "edgesAu": [
+          16,
+          11,
+          16,
+          11
+        ],
+        "minEdgeAu": 11,
+        "maxEdgeAu": 16,
+        "obb": {
+          "centre": [
+            1250,
+            368
+          ],
+          "ux": [
+            0.9843,
+            -0.1764
+          ],
+          "uy": [
+            0.1764,
+            0.9843
+          ],
+          "wAu": 16,
+          "hAu": 11,
+          "angleRad": -0.1773,
+          "edgeLengthsAu": [
+            16,
+            11,
+            16,
+            11
+          ],
+          "quadEdge2Au": 11
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 11,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_timberyard",
+      "name": "Verdant Timberyard",
+      "arche": "sawmill",
+      "at": [
+        1022,
+        454
+      ],
+      "rot": 0.3257059754803777,
+      "scale": 1,
+      "enclosure": "ENCLOSED_SINGLE",
+      "enclosureBasis": "arche=sawmill in explicit enclosed set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "sawmill",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường xe + sông",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1001.4536,
+          436.9045,
+          1042.5464,
+          471.0955
+        ],
+        "areaAu2": 851.84,
+        "centroidAu": [
+          1022,
+          454
+        ],
+        "edgesAu": [
+          35.2,
+          24.2,
+          35.2,
+          24.2
+        ],
+        "minEdgeAu": 24.2,
+        "maxEdgeAu": 35.2,
+        "obb": {
+          "centre": [
+            1022,
+            454
+          ],
+          "ux": [
+            0.9474,
+            0.32
+          ],
+          "uy": [
+            -0.32,
+            0.9474
+          ],
+          "wAu": 35.2,
+          "hAu": 24.2,
+          "angleRad": 0.3257,
+          "edgeLengthsAu": [
+            35.2,
+            24.2,
+            35.2,
+            24.2
+          ],
+          "quadEdge2Au": 24.2
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 24.2,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_ember",
+      "name": "Emberport",
+      "arche": "port",
+      "at": [
+        1244,
+        838
+      ],
+      "rot": -0.11301939114928244,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=port in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "port",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường xe + tuyến phà",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1223.4338,
+          822.7189,
+          1264.5662,
+          853.2811
+        ],
+        "areaAu2": 1013.76,
+        "centroidAu": [
+          1244,
+          838
+        ],
+        "edgesAu": [
+          38.4,
+          26.4,
+          38.4,
+          26.4
+        ],
+        "minEdgeAu": 26.4,
+        "maxEdgeAu": 38.4,
+        "obb": {
+          "centre": [
+            1244,
+            838
+          ],
+          "ux": [
+            0.9936,
+            -0.1128
+          ],
+          "uy": [
+            0.1128,
+            0.9936
+          ],
+          "wAu": 38.4,
+          "hAu": 26.4,
+          "angleRad": -0.113,
+          "edgeLengthsAu": [
+            38.4,
+            26.4,
+            38.4,
+            26.4
+          ],
+          "quadEdge2Au": 26.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 26.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_slag",
+      "name": "Slagworks Foundry",
+      "arche": "smelter",
+      "at": [
+        1190,
+        936
+      ],
+      "rot": 0.03272678852081301,
+      "scale": 1,
+      "enclosure": "ENCLOSED_SINGLE",
+      "enclosureBasis": "arche=smelter in explicit enclosed set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "hazard",
+        "arche": "smelter",
+        "retreatCount": 0
+      },
+      "gated": true,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "hazard",
+      "accessText": "Đường xe + bến",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1170.3784,
+          922.1788,
+          1209.6216,
+          949.8212
+        ],
+        "areaAu2": 1013.76,
+        "centroidAu": [
+          1190,
+          936
+        ],
+        "edgesAu": [
+          38.4,
+          26.4,
+          38.4,
+          26.4
+        ],
+        "minEdgeAu": 26.4,
+        "maxEdgeAu": 38.4,
+        "obb": {
+          "centre": [
+            1190,
+            936
+          ],
+          "ux": [
+            0.9995,
+            0.0327
+          ],
+          "uy": [
+            -0.0327,
+            0.9995
+          ],
+          "wAu": 38.4,
+          "hAu": 26.4,
+          "angleRad": 0.0327,
+          "edgeLengthsAu": [
+            38.4,
+            26.4,
+            38.4,
+            26.4
+          ],
+          "quadEdge2Au": 26.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 26.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_southfoot",
+      "name": "Southfoot Landing",
+      "arche": "port",
+      "at": [
+        1196,
+        1070
+      ],
+      "rot": -0.1291540004312992,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=port in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "port",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường xe + tuyến phà",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1175.2598,
+          1054.4371,
+          1216.7402,
+          1085.5629
+        ],
+        "areaAu2": 1013.76,
+        "centroidAu": [
+          1196,
+          1070
+        ],
+        "edgesAu": [
+          38.4,
+          26.4,
+          38.4,
+          26.4
+        ],
+        "minEdgeAu": 26.4,
+        "maxEdgeAu": 38.4,
+        "obb": {
+          "centre": [
+            1196,
+            1070
+          ],
+          "ux": [
+            0.9917,
+            -0.1288
+          ],
+          "uy": [
+            0.1288,
+            0.9917
+          ],
+          "wAu": 38.4,
+          "hAu": 26.4,
+          "angleRad": -0.1292,
+          "edgeLengthsAu": [
+            38.4,
+            26.4,
+            38.4,
+            26.4
+          ],
+          "quadEdge2Au": 26.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 26.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_gulfhead",
+      "name": "Gulfhead",
+      "arche": "port",
+      "at": [
+        1052,
+        878
+      ],
+      "rot": 0.022544555179774772,
+      "scale": 1.2,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=port in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "port",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường xe + tuyến phà",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1028.6088,
+          861.6446,
+          1075.3912,
+          894.3554
+        ],
+        "areaAu2": 1459.8144,
+        "centroidAu": [
+          1052,
+          878
+        ],
+        "edgesAu": [
+          46.08,
+          31.68,
+          46.08,
+          31.68
+        ],
+        "minEdgeAu": 31.68,
+        "maxEdgeAu": 46.08,
+        "obb": {
+          "centre": [
+            1052,
+            878
+          ],
+          "ux": [
+            0.9997,
+            0.0225
+          ],
+          "uy": [
+            -0.0225,
+            0.9997
+          ],
+          "wAu": 46.08,
+          "hAu": 31.68,
+          "angleRad": 0.0225,
+          "edgeLengthsAu": [
+            46.08,
+            31.68,
+            46.08,
+            31.68
+          ],
+          "quadEdge2Au": 31.68
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 31.68,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_filter",
+      "name": "Delta Sluice & Filter Station",
+      "arche": "filter",
+      "at": [
+        934,
+        868
+      ],
+      "rot": 0.17291904538869862,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=filter in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "hazard",
+        "arche": "filter",
+        "retreatCount": 0
+      },
+      "gated": true,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "hazard",
+      "accessText": "Đường nhỏ",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          919.8768,
+          857.1289,
+          948.1232,
+          878.8711
+        ],
+        "areaAu2": 450.56,
+        "centroidAu": [
+          934,
+          868
+        ],
+        "edgesAu": [
+          25.6,
+          17.6,
+          25.6,
+          17.6
+        ],
+        "minEdgeAu": 17.6,
+        "maxEdgeAu": 25.6,
+        "obb": {
+          "centre": [
+            934,
+            868
+          ],
+          "ux": [
+            0.9851,
+            0.1721
+          ],
+          "uy": [
+            -0.1721,
+            0.9851
+          ],
+          "wAu": 25.6,
+          "hAu": 17.6,
+          "angleRad": 0.1729,
+          "edgeLengthsAu": [
+            25.6,
+            17.6,
+            25.6,
+            17.6
+          ],
+          "quadEdge2Au": 17.6
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 17.6,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_westbank",
+      "name": "Westbank Landing",
+      "arche": "pier",
+      "at": [
+        918,
+        930
+      ],
+      "rot": 0.06528693716973066,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=pier in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "pier",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường mòn + thủy lộ",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          909.6582,
+          923.9898,
+          926.3418,
+          936.0102
+        ],
+        "areaAu2": 176,
+        "centroidAu": [
+          918,
+          930
+        ],
+        "edgesAu": [
+          16,
+          11,
+          16,
+          11
+        ],
+        "minEdgeAu": 11,
+        "maxEdgeAu": 16,
+        "obb": {
+          "centre": [
+            918,
+            930
+          ],
+          "ux": [
+            0.9979,
+            0.0652
+          ],
+          "uy": [
+            -0.0652,
+            0.9979
+          ],
+          "wAu": 16,
+          "hAu": 11,
+          "angleRad": 0.0653,
+          "edgeLengthsAu": [
+            16,
+            11,
+            16,
+            11
+          ],
+          "quadEdge2Au": 11
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 11,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_westmouth",
+      "name": "Westmouth",
+      "arche": "port",
+      "at": [
+        352,
+        556
+      ],
+      "rot": -0.22147864662110806,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=port in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "port",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường xe + tuyến phà",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          330.3693,
+          538.9047,
+          373.6307,
+          573.0953
+        ],
+        "areaAu2": 1013.76,
+        "centroidAu": [
+          352,
+          556
+        ],
+        "edgesAu": [
+          38.4,
+          26.4,
+          38.4,
+          26.4
+        ],
+        "minEdgeAu": 26.4,
+        "maxEdgeAu": 38.4,
+        "obb": {
+          "centre": [
+            352,
+            556
+          ],
+          "ux": [
+            0.9756,
+            -0.2197
+          ],
+          "uy": [
+            0.2197,
+            0.9756
+          ],
+          "wAu": 38.4,
+          "hAu": 26.4,
+          "angleRad": -0.2215,
+          "edgeLengthsAu": [
+            38.4,
+            26.4,
+            38.4,
+            26.4
+          ],
+          "quadEdge2Au": 26.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 26.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_greyquarry",
+      "name": "Greyback Quarry",
+      "arche": "quarry",
+      "at": [
+        506,
+        652
+      ],
+      "rot": 0.35681721363216645,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=quarry in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "quarry",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường xe tải hàng",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          479.6318,
+          629.7458,
+          532.3682,
+          674.2542
+        ],
+        "areaAu2": 1379.84,
+        "centroidAu": [
+          506,
+          652
+        ],
+        "edgesAu": [
+          44.8,
+          30.8,
+          44.8,
+          30.8
+        ],
+        "minEdgeAu": 30.8,
+        "maxEdgeAu": 44.8,
+        "obb": {
+          "centre": [
+            506,
+            652
+          ],
+          "ux": [
+            0.937,
+            0.3493
+          ],
+          "uy": [
+            -0.3493,
+            0.937
+          ],
+          "wAu": 44.8,
+          "hAu": 30.8,
+          "angleRad": 0.3568,
+          "edgeLengthsAu": [
+            44.8,
+            30.8,
+            44.8,
+            30.8
+          ],
+          "quadEdge2Au": 30.8
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 30.8,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_westwood",
+      "name": "Westwood Hamlet",
+      "arche": "hamlet",
+      "at": [
+        424,
+        742
+      ],
+      "rot": -0.31243332233279947,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=hamlet in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "hamlet",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường mòn",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          410.9754,
+          731.2302,
+          437.0246,
+          752.7698
+        ],
+        "areaAu2": 344.96,
+        "centroidAu": [
+          424,
+          742
+        ],
+        "edgesAu": [
+          22.4,
+          15.4,
+          22.4,
+          15.4
+        ],
+        "minEdgeAu": 15.4,
+        "maxEdgeAu": 22.4,
+        "obb": {
+          "centre": [
+            424,
+            742
+          ],
+          "ux": [
+            0.9516,
+            -0.3074
+          ],
+          "uy": [
+            0.3074,
+            0.9516
+          ],
+          "wAu": 22.4,
+          "hAu": 15.4,
+          "angleRad": -0.3124,
+          "edgeLengthsAu": [
+            22.4,
+            15.4,
+            22.4,
+            15.4
+          ],
+          "quadEdge2Au": 15.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 15.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_fishcamp",
+      "name": "Fish Camp",
+      "arche": "hamlet",
+      "at": [
+        352,
+        846
+      ],
+      "rot": -0.12647352926433086,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=hamlet in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "hamlet",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường mòn",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          339.9182,
+          836.9488,
+          364.0818,
+          855.0512
+        ],
+        "areaAu2": 344.96,
+        "centroidAu": [
+          352,
+          846
+        ],
+        "edgesAu": [
+          22.4,
+          15.4,
+          22.4,
+          15.4
+        ],
+        "minEdgeAu": 15.4,
+        "maxEdgeAu": 22.4,
+        "obb": {
+          "centre": [
+            352,
+            846
+          ],
+          "ux": [
+            0.992,
+            -0.1261
+          ],
+          "uy": [
+            0.1261,
+            0.992
+          ],
+          "wAu": 22.4,
+          "hAu": 15.4,
+          "angleRad": -0.1265,
+          "edgeLengthsAu": [
+            22.4,
+            15.4,
+            22.4,
+            15.4
+          ],
+          "quadEdge2Au": 15.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 15.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_necropolis",
+      "name": "Necropolis of the Hollow Sun",
+      "arche": "elder_site",
+      "at": [
+        604,
+        1042
+      ],
+      "rot": 0.08358435183763502,
+      "scale": 1,
+      "enclosure": "ENCLOSED_MULTI_LAYER",
+      "enclosureBasis": "depth=multi AND deep polygon present",
+      "enclosureSignals": {
+        "depth": "multi",
+        "deepPolygon": true,
+        "gate": "elder",
+        "arche": "elder_site",
+        "retreatCount": 1
+      },
+      "gated": true,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "multi",
+      "gate": "elder",
+      "accessText": "Đường tiếp cận + đường rút",
+      "retreatCount": 1,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          575.3338,
+          1021.0944,
+          632.6662,
+          1062.9056
+        ],
+        "areaAu2": 2034.56,
+        "centroidAu": [
+          604,
+          1042
+        ],
+        "edgesAu": [
+          54.4,
+          37.4,
+          54.4,
+          37.4
+        ],
+        "minEdgeAu": 37.4,
+        "maxEdgeAu": 54.4,
+        "obb": {
+          "centre": [
+            604,
+            1042
+          ],
+          "ux": [
+            0.9965,
+            0.0835
+          ],
+          "uy": [
+            -0.0835,
+            0.9965
+          ],
+          "wAu": 54.4,
+          "hAu": 37.4,
+          "angleRad": 0.0836,
+          "edgeLengthsAu": [
+            54.4,
+            37.4,
+            54.4,
+            37.4
+          ],
+          "quadEdge2Au": 37.4
+        }
+      },
+      "deep": {
+        "vertexCount": 4,
+        "areaAu2": 624.24,
+        "centroidAu": [
+          609.1,
+          1045.4
+        ],
+        "edgesAu": [
+          30.6,
+          20.4,
+          30.6,
+          20.4
+        ],
+        "minEdgeAu": 20.4,
+        "obb": {
+          "centre": [
+            609.1,
+            1045.4
+          ],
+          "ux": [
+            0.9965,
+            0.0835
+          ],
+          "uy": [
+            -0.0835,
+            0.9965
+          ],
+          "wAu": 30.6,
+          "hAu": 20.4,
+          "angleRad": 0.0836,
+          "edgeLengthsAu": [
+            30.6,
+            20.4,
+            30.6,
+            20.4
+          ],
+          "quadEdge2Au": 20.4
+        }
+      },
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 37.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_tombs",
+      "name": "Dune Tombs",
+      "arche": "tomb",
+      "at": [
+        520,
+        1086
+      ],
+      "rot": 0.06825387310236691,
+      "scale": 1,
+      "enclosure": "ENCLOSED_MULTI_LAYER",
+      "enclosureBasis": "depth=multi AND deep polygon present",
+      "enclosureSignals": {
+        "depth": "multi",
+        "deepPolygon": true,
+        "gate": "none",
+        "arche": "tomb",
+        "retreatCount": 1
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "multi",
+      "gate": "none",
+      "accessText": "Đường mòn sa mạc",
+      "retreatCount": 1,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          501.6157,
+          1072.7278,
+          538.3843,
+          1099.2722
+        ],
+        "areaAu2": 851.84,
+        "centroidAu": [
+          520,
+          1086
+        ],
+        "edgesAu": [
+          35.2,
+          24.2,
+          35.2,
+          24.2
+        ],
+        "minEdgeAu": 24.2,
+        "maxEdgeAu": 35.2,
+        "obb": {
+          "centre": [
+            520,
+            1086
+          ],
+          "ux": [
+            0.9977,
+            0.0682
+          ],
+          "uy": [
+            -0.0682,
+            0.9977
+          ],
+          "wAu": 35.2,
+          "hAu": 24.2,
+          "angleRad": 0.0683,
+          "edgeLengthsAu": [
+            35.2,
+            24.2,
+            35.2,
+            24.2
+          ],
+          "quadEdge2Au": 24.2
+        }
+      },
+      "deep": {
+        "vertexCount": 4,
+        "areaAu2": 261.36,
+        "centroidAu": [
+          523.3,
+          1088.2
+        ],
+        "edgesAu": [
+          19.8,
+          13.2,
+          19.8,
+          13.2
+        ],
+        "minEdgeAu": 13.2,
+        "obb": {
+          "centre": [
+            523.3,
+            1088.2
+          ],
+          "ux": [
+            0.9977,
+            0.0682
+          ],
+          "uy": [
+            -0.0682,
+            0.9977
+          ],
+          "wAu": 19.8,
+          "hAu": 13.2,
+          "angleRad": 0.0683,
+          "edgeLengthsAu": [
+            19.8,
+            13.2,
+            19.8,
+            13.2
+          ],
+          "quadEdge2Au": 13.2
+        }
+      },
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 24.2,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_cairns",
+      "name": "Sunken Cairns",
+      "arche": "ruins",
+      "at": [
+        470,
+        990
+      ],
+      "rot": 0.3079059341922402,
+      "scale": 1,
+      "enclosure": "ENCLOSED_MULTI_LAYER",
+      "enclosureBasis": "depth=multi AND deep polygon present",
+      "enclosureSignals": {
+        "depth": "multi",
+        "deepPolygon": true,
+        "gate": "none",
+        "arche": "ruins",
+        "retreatCount": 1
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "multi",
+      "gate": "none",
+      "accessText": "Đường mòn",
+      "retreatCount": 1,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          447.7025,
+          971.602,
+          492.2975,
+          1008.398
+        ],
+        "areaAu2": 1013.76,
+        "centroidAu": [
+          470,
+          990
+        ],
+        "edgesAu": [
+          38.4,
+          26.4,
+          38.4,
+          26.4
+        ],
+        "minEdgeAu": 26.4,
+        "maxEdgeAu": 38.4,
+        "obb": {
+          "centre": [
+            470,
+            990
+          ],
+          "ux": [
+            0.953,
+            0.3031
+          ],
+          "uy": [
+            -0.3031,
+            0.953
+          ],
+          "wAu": 38.4,
+          "hAu": 26.4,
+          "angleRad": 0.3079,
+          "edgeLengthsAu": [
+            38.4,
+            26.4,
+            38.4,
+            26.4
+          ],
+          "quadEdge2Au": 26.4
+        }
+      },
+      "deep": {
+        "vertexCount": 4,
+        "areaAu2": 311.04,
+        "centroidAu": [
+          473.6,
+          992.4
+        ],
+        "edgesAu": [
+          21.6,
+          14.4,
+          21.6,
+          14.4
+        ],
+        "minEdgeAu": 14.4,
+        "obb": {
+          "centre": [
+            473.6,
+            992.4
+          ],
+          "ux": [
+            0.953,
+            0.3031
+          ],
+          "uy": [
+            -0.3031,
+            0.953
+          ],
+          "wAu": 21.6,
+          "hAu": 14.4,
+          "angleRad": 0.3079,
+          "edgeLengthsAu": [
+            21.6,
+            14.4,
+            21.6,
+            14.4
+          ],
+          "quadEdge2Au": 14.4
+        }
+      },
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 26.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_oasis",
+      "name": "Mirage Camp",
+      "arche": "village",
+      "at": [
+        668,
+        984
+      ],
+      "rot": -0.0488277032971382,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=village in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "village",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường nhỏ + đường xe/bến",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          646.5268,
+          968.7018,
+          689.4732,
+          999.2982
+        ],
+        "areaAu2": 1189.76,
+        "centroidAu": [
+          668,
+          984
+        ],
+        "edgesAu": [
+          41.6,
+          28.6,
+          41.6,
+          28.6
+        ],
+        "minEdgeAu": 28.6,
+        "maxEdgeAu": 41.6,
+        "obb": {
+          "centre": [
+            668,
+            984
+          ],
+          "ux": [
+            0.9988,
+            -0.0488
+          ],
+          "uy": [
+            0.0488,
+            0.9988
+          ],
+          "wAu": 41.6,
+          "hAu": 28.6,
+          "angleRad": -0.0488,
+          "edgeLengthsAu": [
+            41.6,
+            28.6,
+            41.6,
+            28.6
+          ],
+          "quadEdge2Au": 28.6
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 28.6,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_bonestop",
+      "name": "Bone Road Waystation",
+      "arche": "roadstop",
+      "at": [
+        752,
+        975
+      ],
+      "rot": -0.04724097941070793,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=roadstop in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "roadstop",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường xe/đường nhỏ",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          742.099,
+          967.954,
+          761.901,
+          982.046
+        ],
+        "areaAu2": 253.44,
+        "centroidAu": [
+          752,
+          975
+        ],
+        "edgesAu": [
+          19.2,
+          13.2,
+          19.2,
+          13.2
+        ],
+        "minEdgeAu": 13.2,
+        "maxEdgeAu": 19.2,
+        "obb": {
+          "centre": [
+            752,
+            975
+          ],
+          "ux": [
+            0.9989,
+            -0.0472
+          ],
+          "uy": [
+            0.0472,
+            0.9989
+          ],
+          "wAu": 19.2,
+          "hAu": 13.2,
+          "angleRad": -0.0472,
+          "edgeLengthsAu": [
+            19.2,
+            13.2,
+            19.2,
+            13.2
+          ],
+          "quadEdge2Au": 13.2
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 13.2,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_sandgate",
+      "name": "Sandgate",
+      "arche": "port",
+      "at": [
+        704,
+        1124
+      ],
+      "rot": -0.364039658382535,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=port in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "port",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường xe + tuyến phà",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          681.3584,
+          1104.8288,
+          726.6416,
+          1143.1712
+        ],
+        "areaAu2": 1013.76,
+        "centroidAu": [
+          704,
+          1124
+        ],
+        "edgesAu": [
+          38.4,
+          26.4,
+          38.4,
+          26.4
+        ],
+        "minEdgeAu": 26.4,
+        "maxEdgeAu": 38.4,
+        "obb": {
+          "centre": [
+            704,
+            1124
+          ],
+          "ux": [
+            0.9345,
+            -0.3561
+          ],
+          "uy": [
+            0.3561,
+            0.9345
+          ],
+          "wAu": 38.4,
+          "hAu": 26.4,
+          "angleRad": -0.364,
+          "edgeLengthsAu": [
+            38.4,
+            26.4,
+            38.4,
+            26.4
+          ],
+          "quadEdge2Au": 26.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 26.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_gate",
+      "name": "Threshold Gate",
+      "arche": "gate",
+      "at": [
+        168,
+        512
+      ],
+      "rot": -0.22508981581777335,
+      "scale": 1,
+      "enclosure": "ENCLOSED_MULTI_LAYER",
+      "enclosureBasis": "depth=multi AND deep polygon present",
+      "enclosureSignals": {
+        "depth": "multi",
+        "deepPolygon": true,
+        "gate": "elder",
+        "arche": "gate",
+        "retreatCount": 1
+      },
+      "gated": true,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "multi",
+      "gate": "elder",
+      "accessText": "Phà + bến",
+      "retreatCount": 1,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          148.1433,
+          496.277,
+          187.8567,
+          527.723
+        ],
+        "areaAu2": 851.84,
+        "centroidAu": [
+          168,
+          512
+        ],
+        "edgesAu": [
+          35.2,
+          24.2,
+          35.2,
+          24.2
+        ],
+        "minEdgeAu": 24.2,
+        "maxEdgeAu": 35.2,
+        "obb": {
+          "centre": [
+            168,
+            512
+          ],
+          "ux": [
+            0.9748,
+            -0.2232
+          ],
+          "uy": [
+            0.2232,
+            0.9748
+          ],
+          "wAu": 35.2,
+          "hAu": 24.2,
+          "angleRad": -0.2251,
+          "edgeLengthsAu": [
+            35.2,
+            24.2,
+            35.2,
+            24.2
+          ],
+          "quadEdge2Au": 24.2
+        }
+      },
+      "deep": {
+        "vertexCount": 4,
+        "areaAu2": 261.36,
+        "centroidAu": [
+          171.3,
+          514.2
+        ],
+        "edgesAu": [
+          19.8,
+          13.2,
+          19.8,
+          13.2
+        ],
+        "minEdgeAu": 13.2,
+        "obb": {
+          "centre": [
+            171.3,
+            514.2
+          ],
+          "ux": [
+            0.9748,
+            -0.2232
+          ],
+          "uy": [
+            0.2232,
+            0.9748
+          ],
+          "wAu": 19.8,
+          "hAu": 13.2,
+          "angleRad": -0.2251,
+          "edgeLengthsAu": [
+            19.8,
+            13.2,
+            19.8,
+            13.2
+          ],
+          "quadEdge2Au": 13.2
+        }
+      },
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 24.2,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_dpier",
+      "name": "Drowned Pier",
+      "arche": "pier",
+      "at": [
+        226,
+        520
+      ],
+      "rot": 0.01046235263347628,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=pier in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "pier",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường mòn + thủy lộ",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          217.9429,
+          514.4166,
+          234.0571,
+          525.5834
+        ],
+        "areaAu2": 176,
+        "centroidAu": [
+          226,
+          520
+        ],
+        "edgesAu": [
+          16,
+          11,
+          16,
+          11
+        ],
+        "minEdgeAu": 11,
+        "maxEdgeAu": 16,
+        "obb": {
+          "centre": [
+            226,
+            520
+          ],
+          "ux": [
+            0.9999,
+            0.0105
+          ],
+          "uy": [
+            -0.0105,
+            0.9999
+          ],
+          "wAu": 16,
+          "hAu": 11,
+          "angleRad": 0.0105,
+          "edgeLengthsAu": [
+            16,
+            11,
+            16,
+            11
+          ],
+          "quadEdge2Au": 11
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 11,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_beacon",
+      "name": "Beacon Rock Light",
+      "arche": "observatory",
+      "at": [
+        268,
+        656
+      ],
+      "rot": 0.14255228154361244,
+      "scale": 1,
+      "enclosure": "ENCLOSED_SINGLE",
+      "enclosureBasis": "arche=observatory in explicit enclosed set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "observatory",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường dốc",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          255.8197,
+          646.7869,
+          280.1803,
+          665.2131
+        ],
+        "areaAu2": 344.96,
+        "centroidAu": [
+          268,
+          656
+        ],
+        "edgesAu": [
+          22.4,
+          15.4,
+          22.4,
+          15.4
+        ],
+        "minEdgeAu": 15.4,
+        "maxEdgeAu": 22.4,
+        "obb": {
+          "centre": [
+            268,
+            656
+          ],
+          "ux": [
+            0.9899,
+            0.1421
+          ],
+          "uy": [
+            -0.1421,
+            0.9899
+          ],
+          "wAu": 22.4,
+          "hAu": 15.4,
+          "angleRad": 0.1426,
+          "edgeLengthsAu": [
+            22.4,
+            15.4,
+            22.4,
+            15.4
+          ],
+          "quadEdge2Au": 15.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 15.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_wreck",
+      "name": "Wreck Isle Salvage",
+      "arche": "ruins",
+      "at": [
+        184,
+        872
+      ],
+      "rot": 0.1702301288023591,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=ruins in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "ruins",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường mòn",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          162.8413,
+          855.7381,
+          205.1587,
+          888.2619
+        ],
+        "areaAu2": 1013.76,
+        "centroidAu": [
+          184,
+          872
+        ],
+        "edgesAu": [
+          38.4,
+          26.4,
+          38.4,
+          26.4
+        ],
+        "minEdgeAu": 26.4,
+        "maxEdgeAu": 38.4,
+        "obb": {
+          "centre": [
+            184,
+            872
+          ],
+          "ux": [
+            0.9855,
+            0.1694
+          ],
+          "uy": [
+            -0.1694,
+            0.9855
+          ],
+          "wAu": 38.4,
+          "hAu": 26.4,
+          "angleRad": 0.1702,
+          "edgeLengthsAu": [
+            38.4,
+            26.4,
+            38.4,
+            26.4
+          ],
+          "quadEdge2Au": 26.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 26.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_tidecamp",
+      "name": "Tidepool Fishing Camp",
+      "arche": "hamlet",
+      "at": [
+        170,
+        548
+      ],
+      "rot": 0.015212344005703926,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=hamlet in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "hamlet",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường mòn",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          158.6842,
+          540.1305,
+          181.3158,
+          555.8695
+        ],
+        "areaAu2": 344.96,
+        "centroidAu": [
+          170,
+          548
+        ],
+        "edgesAu": [
+          22.4,
+          15.4,
+          22.4,
+          15.4
+        ],
+        "minEdgeAu": 15.4,
+        "maxEdgeAu": 22.4,
+        "obb": {
+          "centre": [
+            170,
+            548
+          ],
+          "ux": [
+            0.9999,
+            0.0152
+          ],
+          "uy": [
+            -0.0152,
+            0.9999
+          ],
+          "wAu": 22.4,
+          "hAu": 15.4,
+          "angleRad": 0.0152,
+          "edgeLengthsAu": [
+            22.4,
+            15.4,
+            22.4,
+            15.4
+          ],
+          "quadEdge2Au": 15.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 15.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_gullnest",
+      "name": "Seabird Nesting Cliffs",
+      "arche": "grove",
+      "at": [
+        1872,
+        428
+      ],
+      "rot": 0.30322063080966477,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=grove in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "grove",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường rừng",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1857.1563,
+          415.7794,
+          1886.8437,
+          440.2206
+        ],
+        "areaAu2": 450.56,
+        "centroidAu": [
+          1872,
+          428
+        ],
+        "edgesAu": [
+          25.6,
+          17.6,
+          25.6,
+          17.6
+        ],
+        "minEdgeAu": 17.6,
+        "maxEdgeAu": 25.6,
+        "obb": {
+          "centre": [
+            1872,
+            428
+          ],
+          "ux": [
+            0.9544,
+            0.2986
+          ],
+          "uy": [
+            -0.2986,
+            0.9544
+          ],
+          "wAu": 25.6,
+          "hAu": 17.6,
+          "angleRad": 0.3032,
+          "edgeLengthsAu": [
+            25.6,
+            17.6,
+            25.6,
+            17.6
+          ],
+          "quadEdge2Au": 17.6
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 17.6,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_gullpier",
+      "name": "Tern Hut Pier",
+      "arche": "pier",
+      "at": [
+        1862,
+        470
+      ],
+      "rot": -0.1635269518941641,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=pier in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "pier",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường mòn + thủy lộ",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1853.2113,
+          463.271,
+          1870.7887,
+          476.729
+        ],
+        "areaAu2": 176,
+        "centroidAu": [
+          1862,
+          470
+        ],
+        "edgesAu": [
+          16,
+          11,
+          16,
+          11
+        ],
+        "minEdgeAu": 11,
+        "maxEdgeAu": 16,
+        "obb": {
+          "centre": [
+            1862,
+            470
+          ],
+          "ux": [
+            0.9867,
+            -0.1628
+          ],
+          "uy": [
+            0.1628,
+            0.9867
+          ],
+          "wAu": 16,
+          "hAu": 11,
+          "angleRad": -0.1635,
+          "edgeLengthsAu": [
+            16,
+            11,
+            16,
+            11
+          ],
+          "quadEdge2Au": 11
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 11,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_netcamp",
+      "name": "Gull Net Camp",
+      "arche": "hamlet",
+      "at": [
+        140,
+        848
+      ],
+      "rot": -0.2655277520418167,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=hamlet in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "hamlet",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường mòn",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          127.1719,
+          837.6308,
+          152.8281,
+          858.3692
+        ],
+        "areaAu2": 344.96,
+        "centroidAu": [
+          140,
+          848
+        ],
+        "edgesAu": [
+          22.4,
+          15.4,
+          22.4,
+          15.4
+        ],
+        "minEdgeAu": 15.4,
+        "maxEdgeAu": 22.4,
+        "obb": {
+          "centre": [
+            140,
+            848
+          ],
+          "ux": [
+            0.965,
+            -0.2624
+          ],
+          "uy": [
+            0.2624,
+            0.965
+          ],
+          "wAu": 22.4,
+          "hAu": 15.4,
+          "angleRad": -0.2655,
+          "edgeLengthsAu": [
+            22.4,
+            15.4,
+            22.4,
+            15.4
+          ],
+          "quadEdge2Au": 15.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 15.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_cindercamp",
+      "name": "Cinder Camp",
+      "arche": "village",
+      "at": [
+        1596,
+        884
+      ],
+      "rot": -0.04668026659637692,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=village in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "village",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường nhỏ + đường xe/bến",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1574.5554,
+          868.745,
+          1617.4446,
+          899.255
+        ],
+        "areaAu2": 1189.76,
+        "centroidAu": [
+          1596,
+          884
+        ],
+        "edgesAu": [
+          41.6,
+          28.6,
+          41.6,
+          28.6
+        ],
+        "minEdgeAu": 28.6,
+        "maxEdgeAu": 41.6,
+        "obb": {
+          "centre": [
+            1596,
+            884
+          ],
+          "ux": [
+            0.9989,
+            -0.0467
+          ],
+          "uy": [
+            0.0467,
+            0.9989
+          ],
+          "wAu": 41.6,
+          "hAu": 28.6,
+          "angleRad": -0.0467,
+          "edgeLengthsAu": [
+            41.6,
+            28.6,
+            41.6,
+            28.6
+          ],
+          "quadEdge2Au": 28.6
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 28.6,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_obsq",
+      "name": "Obsidian Quarry",
+      "arche": "quarry",
+      "at": [
+        1650,
+        776
+      ],
+      "rot": 0.37274907790124423,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=quarry in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "quarry",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường xe tải hàng",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1623.5299,
+          753.5,
+          1676.4701,
+          798.5
+        ],
+        "areaAu2": 1379.84,
+        "centroidAu": [
+          1650,
+          776
+        ],
+        "edgesAu": [
+          44.8,
+          30.8,
+          44.8,
+          30.8
+        ],
+        "minEdgeAu": 30.8,
+        "maxEdgeAu": 44.8,
+        "obb": {
+          "centre": [
+            1650,
+            776
+          ],
+          "ux": [
+            0.9313,
+            0.3642
+          ],
+          "uy": [
+            -0.3642,
+            0.9313
+          ],
+          "wAu": 44.8,
+          "hAu": 30.8,
+          "angleRad": 0.3727,
+          "edgeLengthsAu": [
+            44.8,
+            30.8,
+            44.8,
+            30.8
+          ],
+          "quadEdge2Au": 30.8
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 30.8,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_sulfur",
+      "name": "Sulfur Works",
+      "arche": "mine",
+      "at": [
+        1768,
+        882
+      ],
+      "rot": 0.26845958456397057,
+      "scale": 1,
+      "enclosure": "ENCLOSED_MULTI_LAYER",
+      "enclosureBasis": "depth=multi AND deep polygon present",
+      "enclosureSignals": {
+        "depth": "multi",
+        "deepPolygon": true,
+        "gate": "hazard",
+        "arche": "mine",
+        "retreatCount": 1
+      },
+      "gated": true,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "multi",
+      "gate": "hazard",
+      "accessText": "Đường xe + đường hầm",
+      "retreatCount": 1,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1744.152,
+          862.6951,
+          1791.848,
+          901.3049
+        ],
+        "areaAu2": 1189.76,
+        "centroidAu": [
+          1768,
+          882
+        ],
+        "edgesAu": [
+          41.6,
+          28.6,
+          41.6,
+          28.6
+        ],
+        "minEdgeAu": 28.6,
+        "maxEdgeAu": 41.6,
+        "obb": {
+          "centre": [
+            1768,
+            882
+          ],
+          "ux": [
+            0.9642,
+            0.2652
+          ],
+          "uy": [
+            -0.2652,
+            0.9642
+          ],
+          "wAu": 41.6,
+          "hAu": 28.6,
+          "angleRad": 0.2685,
+          "edgeLengthsAu": [
+            41.6,
+            28.6,
+            41.6,
+            28.6
+          ],
+          "quadEdge2Au": 28.6
+        }
+      },
+      "deep": {
+        "vertexCount": 4,
+        "areaAu2": 365.04,
+        "centroidAu": [
+          1771.9,
+          884.6
+        ],
+        "edgesAu": [
+          23.4,
+          15.6,
+          23.4,
+          15.6
+        ],
+        "minEdgeAu": 15.6,
+        "obb": {
+          "centre": [
+            1771.9,
+            884.6
+          ],
+          "ux": [
+            0.9642,
+            0.2652
+          ],
+          "uy": [
+            -0.2652,
+            0.9642
+          ],
+          "wAu": 23.4,
+          "hAu": 15.6,
+          "angleRad": 0.2685,
+          "edgeLengthsAu": [
+            23.4,
+            15.6,
+            23.4,
+            15.6
+          ],
+          "quadEdge2Au": 15.6
+        }
+      },
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 28.6,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_geo",
+      "name": "Geothermal Station",
+      "arche": "powerplant",
+      "at": [
+        1736,
+        916
+      ],
+      "rot": -0.39060823805630207,
+      "scale": 1,
+      "enclosure": "ENCLOSED_MULTI_LAYER",
+      "enclosureBasis": "depth=multi AND deep polygon present",
+      "enclosureSignals": {
+        "depth": "multi",
+        "deepPolygon": true,
+        "gate": "power",
+        "arche": "powerplant",
+        "retreatCount": 1
+      },
+      "gated": true,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "multi",
+      "gate": "power",
+      "accessText": "Đường xe, gần dòng chảy",
+      "retreatCount": 1,
+      "links": [
+        {
+          "to": "po_surtur",
+          "kind": "điện địa nhiệt"
+        }
+      ],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1715.1186,
+          898.1102,
+          1756.8814,
+          933.8898
+        ],
+        "areaAu2": 851.84,
+        "centroidAu": [
+          1736,
+          916
+        ],
+        "edgesAu": [
+          35.2,
+          24.2,
+          35.2,
+          24.2
+        ],
+        "minEdgeAu": 24.2,
+        "maxEdgeAu": 35.2,
+        "obb": {
+          "centre": [
+            1736,
+            916
+          ],
+          "ux": [
+            0.9247,
+            -0.3808
+          ],
+          "uy": [
+            0.3808,
+            0.9247
+          ],
+          "wAu": 35.2,
+          "hAu": 24.2,
+          "angleRad": -0.3906,
+          "edgeLengthsAu": [
+            35.2,
+            24.2,
+            35.2,
+            24.2
+          ],
+          "quadEdge2Au": 24.2
+        }
+      },
+      "deep": {
+        "vertexCount": 4,
+        "areaAu2": 261.36,
+        "centroidAu": [
+          1739.3,
+          918.2
+        ],
+        "edgesAu": [
+          19.8,
+          13.2,
+          19.8,
+          13.2
+        ],
+        "minEdgeAu": 13.2,
+        "obb": {
+          "centre": [
+            1739.3,
+            918.2
+          ],
+          "ux": [
+            0.9247,
+            -0.3808
+          ],
+          "uy": [
+            0.3808,
+            0.9247
+          ],
+          "wAu": 19.8,
+          "hAu": 13.2,
+          "angleRad": -0.3906,
+          "edgeLengthsAu": [
+            19.8,
+            13.2,
+            19.8,
+            13.2
+          ],
+          "quadEdge2Au": 13.2
+        }
+      },
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 24.2,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_emberwatch",
+      "name": "Ember Watch",
+      "arche": "observatory",
+      "at": [
+        1620,
+        746
+      ],
+      "rot": 0.05744367726147176,
+      "scale": 1,
+      "enclosure": "ENCLOSED_SINGLE",
+      "enclosureBasis": "arche=observatory in explicit enclosed set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "observatory",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường dốc",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1608.3764,
+          737.6697,
+          1631.6236,
+          754.3303
+        ],
+        "areaAu2": 344.96,
+        "centroidAu": [
+          1620,
+          746
+        ],
+        "edgesAu": [
+          22.4,
+          15.4,
+          22.4,
+          15.4
+        ],
+        "minEdgeAu": 15.4,
+        "maxEdgeAu": 22.4,
+        "obb": {
+          "centre": [
+            1620,
+            746
+          ],
+          "ux": [
+            0.9984,
+            0.0574
+          ],
+          "uy": [
+            -0.0574,
+            0.9984
+          ],
+          "wAu": 22.4,
+          "hAu": 15.4,
+          "angleRad": 0.0574,
+          "edgeLengthsAu": [
+            22.4,
+            15.4,
+            22.4,
+            15.4
+          ],
+          "quadEdge2Au": 15.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 15.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_surtur",
+      "name": "Foundry of the First Fire",
+      "arche": "elder_site",
+      "at": [
+        1694,
+        826
+      ],
+      "rot": -0.3765615424141288,
+      "scale": 1,
+      "enclosure": "ENCLOSED_MULTI_LAYER",
+      "enclosureBasis": "depth=multi AND deep polygon present",
+      "enclosureSignals": {
+        "depth": "multi",
+        "deepPolygon": true,
+        "gate": "elder",
+        "arche": "elder_site",
+        "retreatCount": 1
+      },
+      "gated": true,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "multi",
+      "gate": "elder",
+      "accessText": "Đường tiếp cận + đường rút",
+      "retreatCount": 1,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1661.8293,
+          798.6081,
+          1726.1707,
+          853.3919
+        ],
+        "areaAu2": 2034.56,
+        "centroidAu": [
+          1694,
+          826
+        ],
+        "edgesAu": [
+          54.4,
+          37.4,
+          54.4,
+          37.4
+        ],
+        "minEdgeAu": 37.4,
+        "maxEdgeAu": 54.4,
+        "obb": {
+          "centre": [
+            1694,
+            826
+          ],
+          "ux": [
+            0.9299,
+            -0.3677
+          ],
+          "uy": [
+            0.3677,
+            0.9299
+          ],
+          "wAu": 54.4,
+          "hAu": 37.4,
+          "angleRad": -0.3766,
+          "edgeLengthsAu": [
+            54.4,
+            37.4,
+            54.4,
+            37.4
+          ],
+          "quadEdge2Au": 37.4
+        }
+      },
+      "deep": {
+        "vertexCount": 4,
+        "areaAu2": 624.24,
+        "centroidAu": [
+          1699.1,
+          829.4
+        ],
+        "edgesAu": [
+          30.6,
+          20.4,
+          30.6,
+          20.4
+        ],
+        "minEdgeAu": 20.4,
+        "obb": {
+          "centre": [
+            1699.1,
+            829.4
+          ],
+          "ux": [
+            0.9299,
+            -0.3677
+          ],
+          "uy": [
+            0.3677,
+            0.9299
+          ],
+          "wAu": 30.6,
+          "hAu": 20.4,
+          "angleRad": -0.3766,
+          "edgeLengthsAu": [
+            30.6,
+            20.4,
+            30.6,
+            20.4
+          ],
+          "quadEdge2Au": 20.4
+        }
+      },
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 37.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_saltharbor",
+      "name": "Saltwick Harbor",
+      "arche": "port",
+      "at": [
+        1546,
+        334
+      ],
+      "rot": 0.3429007094353438,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=port in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "port",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường xe + tuyến phà",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1523.4797,
+          315.113,
+          1568.5203,
+          352.887
+        ],
+        "areaAu2": 1013.76,
+        "centroidAu": [
+          1546,
+          334
+        ],
+        "edgesAu": [
+          38.4,
+          26.4,
+          38.4,
+          26.4
+        ],
+        "minEdgeAu": 26.4,
+        "maxEdgeAu": 38.4,
+        "obb": {
+          "centre": [
+            1546,
+            334
+          ],
+          "ux": [
+            0.9418,
+            0.3362
+          ],
+          "uy": [
+            -0.3362,
+            0.9418
+          ],
+          "wAu": 38.4,
+          "hAu": 26.4,
+          "angleRad": 0.3429,
+          "edgeLengthsAu": [
+            38.4,
+            26.4,
+            38.4,
+            26.4
+          ],
+          "quadEdge2Au": 26.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 26.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_saltpans",
+      "name": "Salt Pans",
+      "arche": "quarry",
+      "at": [
+        1640,
+        322
+      ],
+      "rot": -0.15595799293369056,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=quarry in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "quarry",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường xe tải hàng",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1615.4798,
+          303.3076,
+          1664.5202,
+          340.6924
+        ],
+        "areaAu2": 1379.84,
+        "centroidAu": [
+          1640,
+          322
+        ],
+        "edgesAu": [
+          44.8,
+          30.8,
+          44.8,
+          30.8
+        ],
+        "minEdgeAu": 30.8,
+        "maxEdgeAu": 44.8,
+        "obb": {
+          "centre": [
+            1640,
+            322
+          ],
+          "ux": [
+            0.9879,
+            -0.1553
+          ],
+          "uy": [
+            0.1553,
+            0.9879
+          ],
+          "wAu": 44.8,
+          "hAu": 30.8,
+          "angleRad": -0.156,
+          "edgeLengthsAu": [
+            44.8,
+            30.8,
+            44.8,
+            30.8
+          ],
+          "quadEdge2Au": 30.8
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 30.8,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_saltlight",
+      "name": "Saltwick Light",
+      "arche": "observatory",
+      "at": [
+        1732,
+        262
+      ],
+      "rot": -0.07232858408242465,
+      "scale": 1,
+      "enclosure": "ENCLOSED_SINGLE",
+      "enclosureBasis": "arche=observatory in explicit enclosed set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "observatory",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường dốc",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1720.2728,
+          253.5108,
+          1743.7272,
+          270.4892
+        ],
+        "areaAu2": 344.96,
+        "centroidAu": [
+          1732,
+          262
+        ],
+        "edgesAu": [
+          22.4,
+          15.4,
+          22.4,
+          15.4
+        ],
+        "minEdgeAu": 15.4,
+        "maxEdgeAu": 22.4,
+        "obb": {
+          "centre": [
+            1732,
+            262
+          ],
+          "ux": [
+            0.9974,
+            -0.0723
+          ],
+          "uy": [
+            0.0723,
+            0.9974
+          ],
+          "wAu": 22.4,
+          "hAu": 15.4,
+          "angleRad": -0.0723,
+          "edgeLengthsAu": [
+            22.4,
+            15.4,
+            22.4,
+            15.4
+          ],
+          "quadEdge2Au": 15.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 15.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_racks",
+      "name": "Kelp Racks",
+      "arche": "hamlet",
+      "at": [
+        1690,
+        354
+      ],
+      "rot": 0.17624949309974913,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=hamlet in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "hamlet",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường mòn",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1677.6234,
+          344.4555,
+          1702.3766,
+          363.5445
+        ],
+        "areaAu2": 344.96,
+        "centroidAu": [
+          1690,
+          354
+        ],
+        "edgesAu": [
+          22.4,
+          15.4,
+          22.4,
+          15.4
+        ],
+        "minEdgeAu": 15.4,
+        "maxEdgeAu": 22.4,
+        "obb": {
+          "centre": [
+            1690,
+            354
+          ],
+          "ux": [
+            0.9845,
+            0.1753
+          ],
+          "uy": [
+            -0.1753,
+            0.9845
+          ],
+          "wAu": 22.4,
+          "hAu": 15.4,
+          "angleRad": 0.1762,
+          "edgeLengthsAu": [
+            22.4,
+            15.4,
+            22.4,
+            15.4
+          ],
+          "quadEdge2Au": 15.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 15.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_gullwreck",
+      "name": "Gull Isle Wreck",
+      "arche": "ruins",
+      "at": [
+        1886,
+        446
+      ],
+      "rot": 0.2576677918434144,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=ruins in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "ruins",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường mòn",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1864.0701,
+          428.3431,
+          1907.9299,
+          463.6569
+        ],
+        "areaAu2": 1013.76,
+        "centroidAu": [
+          1886,
+          446
+        ],
+        "edgesAu": [
+          38.4,
+          26.4,
+          38.4,
+          26.4
+        ],
+        "minEdgeAu": 26.4,
+        "maxEdgeAu": 38.4,
+        "obb": {
+          "centre": [
+            1886,
+            446
+          ],
+          "ux": [
+            0.967,
+            0.2548
+          ],
+          "uy": [
+            -0.2548,
+            0.967
+          ],
+          "wAu": 38.4,
+          "hAu": 26.4,
+          "angleRad": 0.2577,
+          "edgeLengthsAu": [
+            38.4,
+            26.4,
+            38.4,
+            26.4
+          ],
+          "quadEdge2Au": 26.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 26.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_ironharbor",
+      "name": "Ironholm Harbor",
+      "arche": "port",
+      "at": [
+        1108,
+        1264
+      ],
+      "rot": 0.2434020396322012,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=port in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "port",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường xe + tuyến phà",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1086.1847,
+          1246.5618,
+          1129.8153,
+          1281.4382
+        ],
+        "areaAu2": 1013.76,
+        "centroidAu": [
+          1108,
+          1264
+        ],
+        "edgesAu": [
+          38.4,
+          26.4,
+          38.4,
+          26.4
+        ],
+        "minEdgeAu": 26.4,
+        "maxEdgeAu": 38.4,
+        "obb": {
+          "centre": [
+            1108,
+            1264
+          ],
+          "ux": [
+            0.9705,
+            0.241
+          ],
+          "uy": [
+            -0.241,
+            0.9705
+          ],
+          "wAu": 38.4,
+          "hAu": 26.4,
+          "angleRad": 0.2434,
+          "edgeLengthsAu": [
+            38.4,
+            26.4,
+            38.4,
+            26.4
+          ],
+          "quadEdge2Au": 26.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 26.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_ironmine",
+      "name": "Ironholm Mine",
+      "arche": "mine",
+      "at": [
+        1186,
+        1290
+      ],
+      "rot": 0.27261854130774743,
+      "scale": 1,
+      "enclosure": "ENCLOSED_MULTI_LAYER",
+      "enclosureBasis": "depth=multi AND deep polygon present",
+      "enclosureSignals": {
+        "depth": "multi",
+        "deepPolygon": true,
+        "gate": "none",
+        "arche": "mine",
+        "retreatCount": 1
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "multi",
+      "gate": "none",
+      "accessText": "Đường xe + đường hầm",
+      "retreatCount": 1,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1162.1178,
+          1270.6276,
+          1209.8822,
+          1309.3724
+        ],
+        "areaAu2": 1189.76,
+        "centroidAu": [
+          1186,
+          1290
+        ],
+        "edgesAu": [
+          41.6,
+          28.6,
+          41.6,
+          28.6
+        ],
+        "minEdgeAu": 28.6,
+        "maxEdgeAu": 41.6,
+        "obb": {
+          "centre": [
+            1186,
+            1290
+          ],
+          "ux": [
+            0.9631,
+            0.2693
+          ],
+          "uy": [
+            -0.2693,
+            0.9631
+          ],
+          "wAu": 41.6,
+          "hAu": 28.6,
+          "angleRad": 0.2726,
+          "edgeLengthsAu": [
+            41.6,
+            28.6,
+            41.6,
+            28.6
+          ],
+          "quadEdge2Au": 28.6
+        }
+      },
+      "deep": {
+        "vertexCount": 4,
+        "areaAu2": 365.04,
+        "centroidAu": [
+          1189.9,
+          1292.6
+        ],
+        "edgesAu": [
+          23.4,
+          15.6,
+          23.4,
+          15.6
+        ],
+        "minEdgeAu": 15.6,
+        "obb": {
+          "centre": [
+            1189.9,
+            1292.6
+          ],
+          "ux": [
+            0.9631,
+            0.2693
+          ],
+          "uy": [
+            -0.2693,
+            0.9631
+          ],
+          "wAu": 23.4,
+          "hAu": 15.6,
+          "angleRad": 0.2726,
+          "edgeLengthsAu": [
+            23.4,
+            15.6,
+            23.4,
+            15.6
+          ],
+          "quadEdge2Au": 15.6
+        }
+      },
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 28.6,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_ironwh",
+      "name": "Ironholm Depot",
+      "arche": "warehouse",
+      "at": [
+        1236,
+        1290
+      ],
+      "rot": -0.3895093355327845,
+      "scale": 1,
+      "enclosure": "ENCLOSED_SINGLE",
+      "enclosureBasis": "arche=warehouse in explicit enclosed set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "warehouse",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường xe",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1217.0214,
+          1273.7482,
+          1254.9786,
+          1306.2518
+        ],
+        "areaAu2": 704,
+        "centroidAu": [
+          1236,
+          1290
+        ],
+        "edgesAu": [
+          32,
+          22,
+          32,
+          22
+        ],
+        "minEdgeAu": 22,
+        "maxEdgeAu": 32,
+        "obb": {
+          "centre": [
+            1236,
+            1290
+          ],
+          "ux": [
+            0.9251,
+            -0.3797
+          ],
+          "uy": [
+            0.3797,
+            0.9251
+          ],
+          "wAu": 32,
+          "hAu": 22,
+          "angleRad": -0.3895,
+          "edgeLengthsAu": [
+            32,
+            22,
+            32,
+            22
+          ],
+          "quadEdge2Au": 22
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 22,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_rc_meridian",
+      "name": "Meridian Archive Cache",
+      "arche": "ragnarok_cache",
+      "at": [
+        1138,
+        668
+      ],
+      "rot": 0.2803774233907461,
+      "scale": 1,
+      "enclosure": "ENCLOSED_SINGLE",
+      "enclosureBasis": "arche=ragnarok_cache in explicit enclosed set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "ragnarok_cache",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường bộ; không qua Elder",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1125.1066,
+          657.5014,
+          1150.8934,
+          678.4986
+        ],
+        "areaAu2": 344.96,
+        "centroidAu": [
+          1138,
+          668
+        ],
+        "edgesAu": [
+          22.4,
+          15.4,
+          22.4,
+          15.4
+        ],
+        "minEdgeAu": 15.4,
+        "maxEdgeAu": 22.4,
+        "obb": {
+          "centre": [
+            1138,
+            668
+          ],
+          "ux": [
+            0.961,
+            0.2767
+          ],
+          "uy": [
+            -0.2767,
+            0.961
+          ],
+          "wAu": 22.4,
+          "hAu": 15.4,
+          "angleRad": 0.2804,
+          "edgeLengthsAu": [
+            22.4,
+            15.4,
+            22.4,
+            15.4
+          ],
+          "quadEdge2Au": 15.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 15.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_rc_ironvein",
+      "name": "Foreman's Strongbox",
+      "arche": "ragnarok_cache",
+      "at": [
+        1222,
+        676
+      ],
+      "rot": -0.008815657719969727,
+      "scale": 1,
+      "enclosure": "ENCLOSED_SINGLE",
+      "enclosureBasis": "arche=ragnarok_cache in explicit enclosed set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "ragnarok_cache",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường bộ; không qua Elder",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1210.7326,
+          668.2016,
+          1233.2674,
+          683.7984
+        ],
+        "areaAu2": 344.96,
+        "centroidAu": [
+          1222,
+          676
+        ],
+        "edgesAu": [
+          22.4,
+          15.4,
+          22.4,
+          15.4
+        ],
+        "minEdgeAu": 15.4,
+        "maxEdgeAu": 22.4,
+        "obb": {
+          "centre": [
+            1222,
+            676
+          ],
+          "ux": [
+            1,
+            -0.0088
+          ],
+          "uy": [
+            0.0088,
+            1
+          ],
+          "wAu": 22.4,
+          "hAu": 15.4,
+          "angleRad": -0.0088,
+          "edgeLengthsAu": [
+            22.4,
+            15.4,
+            22.4,
+            15.4
+          ],
+          "quadEdge2Au": 15.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 15.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_rc_kestrel",
+      "name": "Kestrel Tower Safe",
+      "arche": "ragnarok_cache",
+      "at": [
+        708,
+        318
+      ],
+      "rot": -0.38213722184300425,
+      "scale": 1,
+      "enclosure": "ENCLOSED_SINGLE",
+      "enclosureBasis": "arche=ragnarok_cache in explicit enclosed set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "ragnarok_cache",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường bộ; không qua Elder",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          694.7365,
+          306.6789,
+          721.2635,
+          329.3211
+        ],
+        "areaAu2": 344.96,
+        "centroidAu": [
+          708,
+          318
+        ],
+        "edgesAu": [
+          22.4,
+          15.4,
+          22.4,
+          15.4
+        ],
+        "minEdgeAu": 15.4,
+        "maxEdgeAu": 22.4,
+        "obb": {
+          "centre": [
+            708,
+            318
+          ],
+          "ux": [
+            0.9279,
+            -0.3729
+          ],
+          "uy": [
+            0.3729,
+            0.9279
+          ],
+          "wAu": 22.4,
+          "hAu": 15.4,
+          "angleRad": -0.3821,
+          "edgeLengthsAu": [
+            22.4,
+            15.4,
+            22.4,
+            15.4
+          ],
+          "quadEdge2Au": 15.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 15.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_rc_dam",
+      "name": "Falls Dam Vault",
+      "arche": "ragnarok_cache",
+      "at": [
+        754,
+        454
+      ],
+      "rot": -0.17915467731654644,
+      "scale": 1,
+      "enclosure": "ENCLOSED_SINGLE",
+      "enclosureBasis": "arche=ragnarok_cache in explicit enclosed set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "ragnarok_cache",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường bộ; không qua Elder",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          741.6071,
+          444.4274,
+          766.3929,
+          463.5726
+        ],
+        "areaAu2": 344.96,
+        "centroidAu": [
+          754,
+          454
+        ],
+        "edgesAu": [
+          22.4,
+          15.4,
+          22.4,
+          15.4
+        ],
+        "minEdgeAu": 15.4,
+        "maxEdgeAu": 22.4,
+        "obb": {
+          "centre": [
+            754,
+            454
+          ],
+          "ux": [
+            0.984,
+            -0.1782
+          ],
+          "uy": [
+            0.1782,
+            0.984
+          ],
+          "wAu": 22.4,
+          "hAu": 15.4,
+          "angleRad": -0.1792,
+          "edgeLengthsAu": [
+            22.4,
+            15.4,
+            22.4,
+            15.4
+          ],
+          "quadEdge2Au": 15.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 15.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_rc_sandgate",
+      "name": "Sandgate Customs Strongbox",
+      "arche": "ragnarok_cache",
+      "at": [
+        718,
+        1106
+      ],
+      "rot": -0.29212516639381647,
+      "scale": 1,
+      "enclosure": "ENCLOSED_SINGLE",
+      "enclosureBasis": "arche=ragnarok_cache in explicit enclosed set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "ragnarok_cache",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường bộ; không qua Elder",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          705.057,
+          1095.4008,
+          730.943,
+          1116.5992
+        ],
+        "areaAu2": 344.96,
+        "centroidAu": [
+          718,
+          1106
+        ],
+        "edgesAu": [
+          22.4,
+          15.4,
+          22.4,
+          15.4
+        ],
+        "minEdgeAu": 15.4,
+        "maxEdgeAu": 22.4,
+        "obb": {
+          "centre": [
+            718,
+            1106
+          ],
+          "ux": [
+            0.9576,
+            -0.288
+          ],
+          "uy": [
+            0.288,
+            0.9576
+          ],
+          "wAu": 22.4,
+          "hAu": 15.4,
+          "angleRad": -0.2921,
+          "edgeLengthsAu": [
+            22.4,
+            15.4,
+            22.4,
+            15.4
+          ],
+          "quadEdge2Au": 15.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 15.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_rc_salt",
+      "name": "Saltwick Harbor Safe",
+      "arche": "ragnarok_cache",
+      "at": [
+        1560,
+        322
+      ],
+      "rot": -0.09262827448546884,
+      "scale": 1,
+      "enclosure": "ENCLOSED_SINGLE",
+      "enclosureBasis": "arche=ragnarok_cache in explicit enclosed set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "ragnarok_cache",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường bộ; không qua Elder",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1548.1358,
+          313.2971,
+          1571.8642,
+          330.7029
+        ],
+        "areaAu2": 344.96,
+        "centroidAu": [
+          1560,
+          322
+        ],
+        "edgesAu": [
+          22.4,
+          15.4,
+          22.4,
+          15.4
+        ],
+        "minEdgeAu": 15.4,
+        "maxEdgeAu": 22.4,
+        "obb": {
+          "centre": [
+            1560,
+            322
+          ],
+          "ux": [
+            0.9957,
+            -0.0925
+          ],
+          "uy": [
+            0.0925,
+            0.9957
+          ],
+          "wAu": 22.4,
+          "hAu": 15.4,
+          "angleRad": -0.0926,
+          "edgeLengthsAu": [
+            22.4,
+            15.4,
+            22.4,
+            15.4
+          ],
+          "quadEdge2Au": 15.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 15.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_vend_gulf",
+      "name": "Gulfhead Trading House [ĐỀ XUẤT]",
+      "arche": "chest_vendor",
+      "at": [
+        1066,
+        894
+      ],
+      "rot": -0.037582766078412544,
+      "scale": 1,
+      "enclosure": "ENCLOSED_SINGLE",
+      "enclosureBasis": "arche=chest_vendor in explicit enclosed set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "chest_vendor",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường xe/đường nhỏ",
+      "retreatCount": 0,
+      "links": [
+        {
+          "to": "po_rc_meridian",
+          "kind": "tiền Ragnarok → bán rương"
+        }
+      ],
+      "conf": "assumption",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1054.5186,
+          885.8846,
+          1077.4814,
+          902.1154
+        ],
+        "areaAu2": 344.96,
+        "centroidAu": [
+          1066,
+          894
+        ],
+        "edgesAu": [
+          22.4,
+          15.4,
+          22.4,
+          15.4
+        ],
+        "minEdgeAu": 15.4,
+        "maxEdgeAu": 22.4,
+        "obb": {
+          "centre": [
+            1066,
+            894
+          ],
+          "ux": [
+            0.9993,
+            -0.0376
+          ],
+          "uy": [
+            0.0376,
+            0.9993
+          ],
+          "wAu": 22.4,
+          "hAu": 15.4,
+          "angleRad": -0.0376,
+          "edgeLengthsAu": [
+            22.4,
+            15.4,
+            22.4,
+            15.4
+          ],
+          "quadEdge2Au": 15.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 15.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_vend_strait",
+      "name": "Strait Landing Counter [ĐỀ XUẤT]",
+      "arche": "chest_vendor",
+      "at": [
+        1286,
+        500
+      ],
+      "rot": -0.29105224534869195,
+      "scale": 1,
+      "enclosure": "ENCLOSED_SINGLE",
+      "enclosureBasis": "arche=chest_vendor in explicit enclosed set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "chest_vendor",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường xe/đường nhỏ",
+      "retreatCount": 0,
+      "links": [
+        {
+          "to": "po_rc_ironvein",
+          "kind": "tiền Ragnarok → bán rương"
+        }
+      ],
+      "conf": "assumption",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1273.0614,
+          489.4099,
+          1298.9386,
+          510.5901
+        ],
+        "areaAu2": 344.96,
+        "centroidAu": [
+          1286,
+          500
+        ],
+        "edgesAu": [
+          22.4,
+          15.4,
+          22.4,
+          15.4
+        ],
+        "minEdgeAu": 15.4,
+        "maxEdgeAu": 22.4,
+        "obb": {
+          "centre": [
+            1286,
+            500
+          ],
+          "ux": [
+            0.9579,
+            -0.287
+          ],
+          "uy": [
+            0.287,
+            0.9579
+          ],
+          "wAu": 22.4,
+          "hAu": 15.4,
+          "angleRad": -0.2911,
+          "edgeLengthsAu": [
+            22.4,
+            15.4,
+            22.4,
+            15.4
+          ],
+          "quadEdge2Au": 15.4
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 15.4,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_evac_west",
+      "name": "Westmouth Evac Pier",
+      "arche": "evac",
+      "at": [
+        342,
+        580
+      ],
+      "rot": -0.07852957192808391,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=evac in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "evac",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường + bến",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          328.5491,
+          570.223,
+          355.4509,
+          589.777
+        ],
+        "areaAu2": 450.56,
+        "centroidAu": [
+          342,
+          580
+        ],
+        "edgesAu": [
+          25.6,
+          17.6,
+          25.6,
+          17.6
+        ],
+        "minEdgeAu": 17.6,
+        "maxEdgeAu": 25.6,
+        "obb": {
+          "centre": [
+            342,
+            580
+          ],
+          "ux": [
+            0.9969,
+            -0.0784
+          ],
+          "uy": [
+            0.0784,
+            0.9969
+          ],
+          "wAu": 25.6,
+          "hAu": 17.6,
+          "angleRad": -0.0785,
+          "edgeLengthsAu": [
+            25.6,
+            17.6,
+            25.6,
+            17.6
+          ],
+          "quadEdge2Au": 17.6
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 17.6,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_evac_south",
+      "name": "Southfoot Evac Beach",
+      "arche": "evac",
+      "at": [
+        1178,
+        1090
+      ],
+      "rot": -0.10548959467560054,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=evac in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "evac",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường + bến",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1164.3446,
+          1079.9012,
+          1191.6554,
+          1100.0988
+        ],
+        "areaAu2": 450.56,
+        "centroidAu": [
+          1178,
+          1090
+        ],
+        "edgesAu": [
+          25.6,
+          17.6,
+          25.6,
+          17.6
+        ],
+        "minEdgeAu": 17.6,
+        "maxEdgeAu": 25.6,
+        "obb": {
+          "centre": [
+            1178,
+            1090
+          ],
+          "ux": [
+            0.9944,
+            -0.1053
+          ],
+          "uy": [
+            0.1053,
+            0.9944
+          ],
+          "wAu": 25.6,
+          "hAu": 17.6,
+          "angleRad": -0.1055,
+          "edgeLengthsAu": [
+            25.6,
+            17.6,
+            25.6,
+            17.6
+          ],
+          "quadEdge2Au": 17.6
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 17.6,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    },
+    {
+      "id": "po_evac_hook",
+      "name": "Hook Evac Point",
+      "arche": "evac",
+      "at": [
+        1392,
+        374
+      ],
+      "rot": -0.10467143189162015,
+      "scale": 1,
+      "enclosure": "OPEN_AIR_YARD",
+      "enclosureBasis": "arche=evac in explicit open-air set; depth=surface",
+      "enclosureSignals": {
+        "depth": "surface",
+        "deepPolygon": false,
+        "gate": "none",
+        "arche": "evac",
+        "retreatCount": 0
+      },
+      "gated": false,
+      "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+      "depth": "surface",
+      "gate": "none",
+      "accessText": "Đường + bến",
+      "retreatCount": 0,
+      "links": [],
+      "conf": "proposal",
+      "foot": {
+        "vertexCount": 4,
+        "bboxAu": [
+          1378.3506,
+          363.9108,
+          1405.6494,
+          384.0892
+        ],
+        "areaAu2": 450.56,
+        "centroidAu": [
+          1392,
+          374
+        ],
+        "edgesAu": [
+          25.6,
+          17.6,
+          25.6,
+          17.6
+        ],
+        "minEdgeAu": 17.6,
+        "maxEdgeAu": 25.6,
+        "obb": {
+          "centre": [
+            1392,
+            374
+          ],
+          "ux": [
+            0.9945,
+            -0.1045
+          ],
+          "uy": [
+            0.1045,
+            0.9945
+          ],
+          "wAu": 25.6,
+          "hAu": 17.6,
+          "angleRad": -0.1047,
+          "edgeLengthsAu": [
+            25.6,
+            17.6,
+            25.6,
+            17.6
+          ],
+          "quadEdge2Au": 17.6
+        }
+      },
+      "deep": null,
+      "entrance": {
+        "authored": false,
+        "status": "NOT_IN_SOURCE",
+        "note": "Canonical Veyra POIs have NO authored door/entrance width. GEO-02 PROPOSED a 3.696 au west opening for po_kilns ONLY (non-canonical).",
+        "capacityUpperBoundAu": 17.6,
+        "capacityBasis": "Upper bound only: an opening cannot be wider than this POI's own shortest foot edge. NOT an authored opening."
+      }
+    }
+  ]
+}

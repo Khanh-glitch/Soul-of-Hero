@@ -12,6 +12,7 @@
   "dependencies": {
     "@fontsource/pixelify-sans": "^5.2.5",
     "@fontsource/vt323": "^5.2.5",
+    "@noble/hashes": "^1.8.0",
     "clsx": "2.1.1",
     "react": "19.2.6",
     "react-dom": "19.2.6",
