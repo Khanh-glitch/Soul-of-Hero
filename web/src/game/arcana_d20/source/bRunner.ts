@@ -28,6 +28,7 @@ export class BRunner {
     this.t = 0;
   }
   reset() { if (this.idx >= 0) this.cast(this.idx); else this.t = 0; }
+  get current() { return this.idx; }
   get duration() { return this.fx ? this.fx.duration : 0; }
   get climax() { return this.fx ? this.fx.climax : 0; }
 

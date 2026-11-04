@@ -188,7 +188,14 @@ export class ArcanaLabClient implements comp.VfxClient {
       }
       out = this.blend;
     } else if (useB) {
-      if (needRender) { this.bR.setWorld(region); this.bR.cast(entry.index); this.bR.seek(t); }
+      if (needRender) {
+        this.bR.setWorld(region);
+        // no per-frame re-cast (same guard as the C branch): recast only on spell
+        // change, seek() advances incrementally. Bit-identical while the world is
+        // static because recast is deterministic; this removes the O(n^2) re-sim.
+        if (this.bR.current !== entry.index) this.bR.cast(entry.index);
+        this.bR.seek(t);
+      }
       out = this.bR.out;
     } else if (useR) {
       if (needRender) {

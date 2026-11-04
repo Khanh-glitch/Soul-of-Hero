@@ -41,3 +41,9 @@ per frame (backward scrub still rebuilds deterministically). B/A/fusion branches
 60 fps while playing, 0 page errors.
   SOH-ARCANA20-FX-LAB.html       sha256 9d906a63e7a0e7dbd686a0d94c77e7ee951509a5d921370fe1ad9b08d2b4a270
   SOH-ARCANA20-VISUAL-TEST.html  sha256 200a9c98c37ba0121c06e003df03b28fa0f813c11320b13375403364e67c1e50
+
+2026-11-04 lag fix #2 (arcana_lab.ts B branch + bRunner.current getter): same per-frame re-cast
+removed from the B path (affects #18 cube routing); recast only on spell change. Tests 87/87.
+Headless: #7/#10/#17/#18 all ~60fps, max frame gap 32ms, 0 frames >50ms, 0 page errors.
+  SOH-ARCANA20-FX-LAB.html       sha256 a2fcdebf2edee6392040e851f1ac9a75e25da9bedf779ffeb6b7dd454dbf327f
+  SOH-ARCANA20-VISUAL-TEST.html  sha256 c17433cae3f8b5a6a5c6b0f55d8c522f9aa48dbf3a3f4858b440e57e4055f80f
