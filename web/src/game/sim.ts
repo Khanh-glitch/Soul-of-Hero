@@ -2,7 +2,7 @@
 import { BAL, TILE, WW, WH, HOUR, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity, type Proj, type Haz } from './core';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
 import { getWorld } from './world';
-import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, turretStatus } from './engine';
+import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, turretStatus, stepLootRespawn, migrateLootRespawn } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
@@ -683,6 +683,7 @@ function tickSurvival(gs: GameState, dtMs: number, now: number) {
 function advanceWorld(gs: GameState, start: number, end: number, report?: string[], visual = true) {
   const r = gs.run!; let t = start; const slotMs = BAL.weather.slotMinutes * 60000;
   resolveFires(gs, t, visual);
+  stepLootRespawn(r, t);
   while (t < end) {
     // Commit already-finished jobs first; their next jobs determine the next boundary.
     stepStations(gs, 0, t, report);
@@ -702,6 +703,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
       if (job && job.left > 0) dt = Math.min(dt, job.left);
     }
     dt = tenderBoundary(r, isWet(weather), dt);
+    for (const due of Object.values(r.lootRespawnAt || {})) if (due > t) dt = Math.min(dt, due - t);
     for (const st of Object.values(r.sources)) { if (st.fire && st.fire > r.clock.simMs) dt = Math.min(dt, st.fire - r.clock.simMs); if(st.fireSpreadAt && st.fireSpreadAt > r.clock.simMs) dt = Math.min(dt, st.fireSpreadAt - r.clock.simMs); }
     for (const terrain of Object.values(r.terrain)) if (terrain.until && terrain.until > r.clock.simMs) dt = Math.min(dt, terrain.until - r.clock.simMs);
     if (!(dt > 0)) break;
@@ -726,6 +728,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     }
     let dirty = false; for (const k in r.terrain) { const m = r.terrain[k]; if (m.until && m.until <= r.clock.simMs) { delete r.terrain[k]; dirty = true; } } if (dirty) markDirty();
     resolveFires(gs, t, visual);
+    stepLootRespawn(r, t);
   }
   stepTenders(gs, end);
 }
@@ -734,6 +737,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
 export function syncWorld(gs: GameState, now: number): boolean {
   const r = gs.run; if (!r || r.ended || now < r.clock.lastSimAt) return false;
   const expiry = r.startedAt - r.qaOffset + BAL.run.maxRunHours * HOUR;
+  migrateLootRespawn(r, Math.min(now, expiry));
   if (now >= expiry) { settle(gs, now, true); if (gs.run) endRun(gs, 'expired', expiry); return false; }
   const activeStart = Math.max(r.clock.lastSimAt, now - 50);
   if (activeStart > r.clock.lastSimAt) settle(gs, activeStart, true);
@@ -799,6 +803,7 @@ export function settle(gs: GameState, now: number, silent = false): string[] {
   // A corrupt/legacy pre-run checkpoint cannot cause more than one run's duration of replay.
   const start = Math.max(r.clock.lastSimAt, expiry - BAL.run.maxRunHours * HOUR);
   const end = Math.min(now, expiry), gap = Math.max(0, end - start);
+  migrateLootRespawn(r, end);
   if (start > r.clock.lastSimAt && now >= start) r.clock.lastSimAt = start;
   const report: string[] = []; const B = BAL.player; const p = r.player;
   markDirty(); // Continue may replace the run object while retaining its ID.

@@ -3,7 +3,7 @@
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
 import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
-import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, webRecyclerSite } from './world';
+import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, webRecyclerSite, type StaticEnt } from './world';
 import { sourceDigest } from './world-economy';
 import { wreckBonuses, wreckEconomy } from './wreck-economy';
 import { mapDigest } from './map-package';
@@ -340,18 +340,62 @@ export function bagStation(r: RunState, e: Entity, now: number, label: string) {
 }
 function removeEntity(r: RunState, e: Entity) { delete r.entities[e.id]; for (const cid of [e.c, e.station?.fuelC, e.station?.outC]) if (cid) delete r.custody[cid]; markDirty(); }
 
-/** Retire only an empty, map-authored public loot instance. No automatic refill:
- * these sites are one-shot until a separately authenticated respawn policy exists. */
+/** Versioned SOH-only renewable stock policy. Unique technology, credentials,
+ * equipment, and damaged drives remain finite; cash is never a loot site. */
+export function renewableLoot(site: StaticEnt): [string, number][] {
+  return (site.loot || []).filter(([k]) => k !== 'damaged_drive' && !!ITEMS[k] && ['res', 'food'].includes(ITEMS[k].cat));
+}
+export function lootCooldown(site: StaticEnt): number {
+  const stock = renewableLoot(site);
+  const industrial = stock.some(([k]) => ['spares', 'scrap', 'iron_ore', 'iron_ingot', 'coal', 'mechanical_parts', 'fasteners'].includes(k));
+  const food = stock.some(([k]) => ITEMS[k]?.cat === 'food');
+  return (industrial ? BAL.lootRespawn.industrialHours : food ? BAL.lootRespawn.supplyHours : BAL.lootRespawn.otherHours) * HOUR;
+}
+/** Retire an authored public loot instance only after an actual final withdrawal. */
 function retireEmptyLoot(r: RunState, cid: string, now: number) {
   const e = Object.values(r.entities).find(v => v.kind === 'loot' && v.c === cid);
   const c = r.custody[cid];
   if (!e || !c || c.slots.some(Boolean) || !Number.isInteger(e.tx) || !Number.isInteger(e.ty)) return;
   const site = getWorld(r.layoutId || 'shipping').statics.find(s => s.kind === 'loot' && s.tx === e.tx && s.ty === e.ty);
-  if (!site) return; // do not guess the provenance of non-authored entities
+  if (!site) return;
   const index = e.ty! * WW + e.tx!;
   (r.depletedLootSites ??= []).push(index);
+  if (renewableLoot(site).length) (r.lootRespawnAt ??= {})[index] = now + lootCooldown(site);
   removeEntity(r, e);
   receipt(r, now, 'loot.depleted', `${index}:${e.id}`);
+}
+/** W00 saves did not record depletion time: start a full cooldown at the
+ * first observed time, not the old checkpoint time. */
+export function migrateLootRespawn(r: RunState, now: number) {
+  if (!r.depletedLootSites?.length) return;
+  const world = getWorld(r.layoutId || 'shipping');
+  for (const index of r.depletedLootSites) {
+    const site = world.statics.find(s => s.kind === 'loot' && s.ty * WW + s.tx === index);
+    if (!site || !renewableLoot(site).length) continue;
+    const timers = r.lootRespawnAt ??= {};
+    if (timers[index] === undefined) timers[index] = now + lootCooldown(site);
+  }
+}
+/** Called by the same run-clock settlement path for online and offline time. */
+export function stepLootRespawn(r: RunState, now: number) {
+  if (!r.depletedLootSites?.length) return;
+  const world = getWorld(r.layoutId || 'shipping');
+  for (const index of [...r.depletedLootSites]) {
+    const site = world.statics.find(s => s.kind === 'loot' && s.ty * WW + s.tx === index);
+    if (!site) continue;
+    const stock = renewableLoot(site); if (!stock.length) continue;
+    const timers = r.lootRespawnAt ??= {};
+    if (timers[index] === undefined) continue;
+    if (timers[index] > now) continue;
+    // Never spawn on a newly built physical object; retry at later settlement.
+    if (Object.values(r.entities).some(e => e.tx === site.tx && e.ty === site.ty && ['loot','struct','door','gen','recycler'].includes(e.kind))) continue;
+    const e: Entity = { id: uid(r, 'e'), kind: 'loot', x: site.tx * TILE + 8, y: site.ty * TILE + 8, tx: site.tx, ty: site.ty, poi: site.poi, label: site.label };
+    const c = mkContainer(r, 'loot', 8); e.c = c.id;
+    stock.forEach(([key, qty], i) => { c.slots[i] = mkStack(r, key, qty); });
+    r.entities[e.id] = e; delete timers[index];
+    r.depletedLootSites = r.depletedLootSites.filter(i => i !== index);
+    markDirty(); receipt(r, now, 'loot.respawn', `${index}:${e.id}`);
+  }
 }
 /** Destruction and reclaim share the same custody transition. */
 export function destroyStructure(r: RunState, e: Entity, now: number) {

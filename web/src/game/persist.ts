@@ -117,6 +117,7 @@ export function validate(raw: any): GameState | null {
   const lootSites = new Set(world.statics.filter(s => s.kind === 'loot').map(s => s.ty * WW + s.tx));
   if (r.depletedLootSites !== undefined && (!Array.isArray(r.depletedLootSites) || r.depletedLootSites.some((i: any) => !integer(i) || !lootSites.has(i)) || new Set(r.depletedLootSites).size !== r.depletedLootSites.length)) return null;
   const depleted = new Set<number>(r.depletedLootSites || []);
+  if (r.lootRespawnAt !== undefined && (!obj(r.lootRespawnAt) || Object.entries(r.lootRespawnAt).some(([key, value]) => !/^(0|[1-9][0-9]*)$/.test(key) || !depleted.has(Number(key)) || !finite(value) || (value as number) < r.startedAt))) return null;
   if ((Object.values(r.entities) as any[]).some(e => e.kind === 'loot' && depleted.has(e.ty * WW + e.tx))) return null;
   // New identity-pinned runs retain finite, map-authored cash and loot custody.
   // Older runs are not rewritten or guessed: their legacy history is preserved.

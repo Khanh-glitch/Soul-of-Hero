@@ -36,8 +36,21 @@
   },
   "terrainSpeed": {
     "_status": "TUNABLE_BALANCE",
-    "road": 1.28, "bridge": 1.28, "floor": 1.1, "grass": 1.0, "meadow": 1.0, "forest": 0.86, "sand": 0.88,
-    "marsh": 0.62, "shallow": 0.5, "snow": 0.78, "hill": 0.9, "ash": 0.92, "toxic": 0.95, "burnt": 1.0, "ice": 1.05
+    "road": 1.28,
+    "bridge": 1.28,
+    "floor": 1.1,
+    "grass": 1.0,
+    "meadow": 1.0,
+    "forest": 0.86,
+    "sand": 0.88,
+    "marsh": 0.62,
+    "shallow": 0.5,
+    "snow": 0.78,
+    "hill": 0.9,
+    "ash": 0.92,
+    "toxic": 0.95,
+    "burnt": 1.0,
+    "ice": 1.05
   },
   "cart": {
     "_status": "PROPOSED_MECHANISM (cart custody/weight) + TUNABLE_BALANCE numbers",
@@ -52,9 +65,23 @@
   },
   "traces": {
     "_status": "TUNABLE_BALANCE seconds of footprint life by surface; rain multiplies decay",
-    "snow": 900, "marsh": 600, "sand": 260, "ash": 420, "grass": 180, "meadow": 180, "forest": 140, "hill": 120,
-    "road": 40, "bridge": 20, "floor": 60, "burnt": 300, "toxic": 200, "ice": 300,
-    "rainDecayMult": 4, "stormDecayMult": 9, "snowfallSnowMult": 6
+    "snow": 900,
+    "marsh": 600,
+    "sand": 260,
+    "ash": 420,
+    "grass": 180,
+    "meadow": 180,
+    "forest": 140,
+    "hill": 120,
+    "road": 40,
+    "bridge": 20,
+    "floor": 60,
+    "burnt": 300,
+    "toxic": 200,
+    "ice": 300,
+    "rainDecayMult": 4,
+    "stormDecayMult": 9,
+    "snowfallSnowMult": 6
   },
   "ai": {
     "_status": "TUNABLE_BALANCE",
@@ -67,7 +94,10 @@
   },
   "fuel": {
     "_status": "TUNABLE_BALANCE fuel seconds per item",
-    "wood": 20, "charcoal": 55, "coal": 80, "fiber": 4,
+    "wood": 20,
+    "charcoal": 55,
+    "coal": 80,
+    "fiber": 4,
     "linedFurnaceFuelMultiplier": 0.8
   },
   "fire": {
@@ -81,7 +111,7 @@
     "herbGrowSeconds": 600,
     "waterSecondsPerUnit": 240,
     "coldFrameWarming": 0.24,
-    "coldFrameSoilBonus": 0.20,
+    "coldFrameSoilBonus": 0.2,
     "wetCooling": 0.04,
     "scorchedSoilMultiplier": 0.55,
     "tenderPlantEnergySeconds": 8,
@@ -108,7 +138,19 @@
   "weather": {
     "_status": "PROPOSED_MECHANISM seeded schedule; TUNABLE weights",
     "slotMinutes": 9,
-    "weights": { "clear": 5, "cloudy": 3, "rain": 3, "storm": 1, "fog": 2 },
+    "weights": {
+      "clear": 5,
+      "cloudy": 3,
+      "rain": 3,
+      "storm": 1,
+      "fog": 2
+    },
     "forecastSlots": 1
+  },
+  "lootRespawn": {
+    "_status": "SOH_NEW_TUNED provisional v1: ordinary authored loot only; never cash, cores, credentials or blueprints",
+    "supplyHours": 12,
+    "industrialHours": 24,
+    "otherHours": 18
   }
 }
