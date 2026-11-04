@@ -16,5 +16,19 @@
   ],
   "authority": "World Master v4 active geography and semantic overlays; source GOLD archived; Gameplay runtime not adopted",
   "policy": "Do not import original GOLD at runtime. Do not treat marine open water as approved swimming/boat collision. Human POI and source IDs unchanged.",
-  "status": "MAP_STATIC_DESIGN_UPDATE__GAMEPLAY_INTAKE_PENDING"
+  "status": "MAP_STATIC_DESIGN_UPDATE__GAMEPLAY_INTAKE_PENDING",
+  "artDirection": {
+    "selection": "SOH_WEB_FOREST_TERRAIN_OCEAN_RETAIN_BASELINE",
+    "stage": "ART_AUDITION_01_SOURCE_TRIAGE_COMPLETE",
+    "visualVerdict": "NONE_OF_FIVE_LAB_CANDIDATES_PASSES_GAMEPLAY_ART_GATE",
+    "creatorVisualApproval": "NOT_REQUESTED",
+    "productionAtlas": "NOT_SELECTED",
+    "snowKit": "REQUIRED_NOT_IN_INSPECTED_REPO",
+    "aridKit": "PARTIAL_SOURCE_PROPS_ONLY",
+    "poiKit": "PARTIAL_PROTOTYPE_SOURCE_ONLY",
+    "activeSourceLedger": "v4/art/ART_AUDITION_01_REPORT.md",
+    "browserBoard": "v4/art/AUDITION_01_REAL_ASSETS.html",
+    "ciRun": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41833172794",
+    "notNativeProof": true
+  }
 }
