@@ -1,0 +1,893 @@
+{
+  "schema": "soh.wmp.v3.window_report",
+  "status": "WMP_V3_WINDOWS_OK",
+  "windows": 3,
+  "maskCount": 25,
+  "duplicates": 0,
+  "coverage": "43750/43750",
+  "outOfFrameTotal": 0,
+  "windowReports": [
+    {
+      "id": "wmp.v3.window.full.250x175",
+      "x0": 0,
+      "y0": 0,
+      "w": 250,
+      "h": 175,
+      "globalTileRange": {
+        "gx0": 0,
+        "gy0": 0,
+        "gx1": 250,
+        "gy1": 175
+      },
+      "cellCount": 43750,
+      "globalTileCount": 43750,
+      "outOfFrameTiles": 0,
+      "maskCount": 25,
+      "files": [
+        {
+          "name": "biomeEconomyCode",
+          "file": "v3/evidence/windows/wmp.v3.window.full.250x175/biomeEconomyCode.u8",
+          "bytes": 43750,
+          "sha256": "25da886c23e1576cedc0d7d2f7fc2f79b93db86843de285e2fde2c5684566446",
+          "layout": {
+            "widthTiles": 250,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "biomeSubtype",
+          "file": "v3/evidence/windows/wmp.v3.window.full.250x175/biomeSubtype.u8",
+          "bytes": 43750,
+          "sha256": "232998e642e836f30129b3a689f7cd458f8c57526ecd2c1bad51449cbeff839d",
+          "layout": {
+            "widthTiles": 250,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "elevation",
+          "file": "v3/evidence/windows/wmp.v3.window.full.250x175/elevation.u8",
+          "bytes": 43750,
+          "sha256": "54d7641cea57ebd20be1eb17a0ce919f352f2868f4ed123e968a2e59666c6d24",
+          "layout": {
+            "widthTiles": 250,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "slope",
+          "file": "v3/evidence/windows/wmp.v3.window.full.250x175/slope.u8",
+          "bytes": 43750,
+          "sha256": "6648158ad69cd9c136e249394a9aa7b21e31d08ca7ac48d700fa9511a918130e",
+          "layout": {
+            "widthTiles": 250,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "moisture",
+          "file": "v3/evidence/windows/wmp.v3.window.full.250x175/moisture.u8",
+          "bytes": 43750,
+          "sha256": "7e1362e63817804411efddf34abea1cf67f2f8904b8e4adfbe59412b7b7bed95",
+          "layout": {
+            "widthTiles": 250,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "temperature",
+          "file": "v3/evidence/windows/wmp.v3.window.full.250x175/temperature.u8",
+          "bytes": 43750,
+          "sha256": "52fc00725e20693db4b195038299cc60165bc3e0dad7037e48e728af8cb3696d",
+          "layout": {
+            "widthTiles": 250,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "freshwater",
+          "file": "v3/evidence/windows/wmp.v3.window.full.250x175/freshwater.u8",
+          "bytes": 43750,
+          "sha256": "9f9716b53e9bc553282860510b0ab1410574d8edf03eabb79fb3181f6d465aa4",
+          "layout": {
+            "widthTiles": 250,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "coast",
+          "file": "v3/evidence/windows/wmp.v3.window.full.250x175/coast.u8",
+          "bytes": 43750,
+          "sha256": "44c0f13ead072f501351f458c9180a31e30f08a321848e10e8faea567067f5d5",
+          "layout": {
+            "widthTiles": 250,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "walkable",
+          "file": "v3/evidence/windows/wmp.v3.window.full.250x175/walkable.u8",
+          "bytes": 43750,
+          "sha256": "fcf691e68785e204634ce5bd05d5f2c500c65e61deea4e3b0c468d282ef0a8d7",
+          "layout": {
+            "widthTiles": 250,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "buildable",
+          "file": "v3/evidence/windows/wmp.v3.window.full.250x175/buildable.u8",
+          "bytes": 43750,
+          "sha256": "70e4cd49d37ab11316ecfac3d47889abfdefa0a28270875a7cd3abca1fbabea2",
+          "layout": {
+            "widthTiles": 250,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "cargoPassable",
+          "file": "v3/evidence/windows/wmp.v3.window.full.250x175/cargoPassable.u8",
+          "bytes": 43750,
+          "sha256": "c394fedefb360cfb0de08d9ec60bf75cd3ea0c5b3f657fda23b7909fdb3c774d",
+          "layout": {
+            "widthTiles": 250,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "road",
+          "file": "v3/evidence/windows/wmp.v3.window.full.250x175/road.u8",
+          "bytes": 43750,
+          "sha256": "7bf5c8cd8241402aae65f28e88aadab36c13eac5549dbfc02918b973c7f0b52b",
+          "layout": {
+            "widthTiles": 250,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "protected",
+          "file": "v3/evidence/windows/wmp.v3.window.full.250x175/protected.u8",
+          "bytes": 43750,
+          "sha256": "9d500a17898dd9bc5e3368be0bc14d86c91ac361a1449c484c1b5322894d0b71",
+          "layout": {
+            "widthTiles": 250,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "industrial",
+          "file": "v3/evidence/windows/wmp.v3.window.full.250x175/industrial.u8",
+          "bytes": 43750,
+          "sha256": "6a312348e5e74f57c7d4ca37de9f3214a2e2e0ebb22d4305abb34930bf69bc50",
+          "layout": {
+            "widthTiles": 250,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "surface",
+          "file": "v3/evidence/windows/wmp.v3.window.full.250x175/surface.u8",
+          "bytes": 43750,
+          "sha256": "d570ee3a53b0ee832454e9dcce1c4a316c4fdeb64ebcb9b6174821d50f7a1edf",
+          "layout": {
+            "widthTiles": 250,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "zone",
+          "file": "v3/evidence/windows/wmp.v3.window.full.250x175/zone.u8",
+          "bytes": 43750,
+          "sha256": "e6ea74cd062935bad399002bf7d99e540b71f61ab5a83654db1cef1bdb2a374d",
+          "layout": {
+            "widthTiles": 250,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "seaDistance",
+          "file": "v3/evidence/windows/wmp.v3.window.full.250x175/seaDistance.u8",
+          "bytes": 43750,
+          "sha256": "45ba677aa1dde0b2d662c83386667dee8427f846e75978fd18c0e08f57c70977",
+          "layout": {
+            "widthTiles": 250,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "land",
+          "file": "v3/evidence/windows/wmp.v3.window.full.250x175/land.u8",
+          "bytes": 43750,
+          "sha256": "3aaebb6a358ce04fc33eff56050321639ffc317fe1bb698114a621240c12e8a7",
+          "layout": {
+            "widthTiles": 250,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "heightClass",
+          "file": "v3/evidence/windows/wmp.v3.window.full.250x175/heightClass.u8",
+          "bytes": 43750,
+          "sha256": "ec800274e8af35f2e31caa18352f2c6643a4fe5da1f1235426037040a4823814",
+          "layout": {
+            "widthTiles": 250,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "cliffCandidate",
+          "file": "v3/evidence/windows/wmp.v3.window.full.250x175/cliffCandidate.u8",
+          "bytes": 43750,
+          "sha256": "6b2897d74409b974d477e767291f1eac0b9614a1b794539aef827c1278682d2d",
+          "layout": {
+            "widthTiles": 250,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "slopeClass",
+          "file": "v3/evidence/windows/wmp.v3.window.full.250x175/slopeClass.u8",
+          "bytes": 43750,
+          "sha256": "8dedebfcd06da83353892ea14f3c2288a19ee410b3c3c42e4c109af157e3a7ea",
+          "layout": {
+            "widthTiles": 250,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "roadSurface",
+          "file": "v3/evidence/windows/wmp.v3.window.full.250x175/roadSurface.u8",
+          "bytes": 43750,
+          "sha256": "8479bf0d122b165433a73c1c809f694bd75b6a105403535fb08fd9c9de138592",
+          "layout": {
+            "widthTiles": 250,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "waterTraversalClass",
+          "file": "v3/evidence/windows/wmp.v3.window.full.250x175/waterTraversalClass.u8",
+          "bytes": 43750,
+          "sha256": "8479bf0d122b165433a73c1c809f694bd75b6a105403535fb08fd9c9de138592",
+          "layout": {
+            "widthTiles": 250,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "activeCollisionPermission",
+          "file": "v3/evidence/windows/wmp.v3.window.full.250x175/activeCollisionPermission.u8",
+          "bytes": 43750,
+          "sha256": "c394fedefb360cfb0de08d9ec60bf75cd3ea0c5b3f657fda23b7909fdb3c774d",
+          "layout": {
+            "widthTiles": 250,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "constructionSuitability",
+          "file": "v3/evidence/windows/wmp.v3.window.full.250x175/constructionSuitability.u8",
+          "bytes": 43750,
+          "sha256": "505acbcf578df18712a239ea9a88cba62fce560a23c8a33573cfd7819d792a20",
+          "layout": {
+            "widthTiles": 250,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        }
+      ]
+    },
+    {
+      "id": "wmp.v3.window.west.125x175",
+      "x0": 0,
+      "y0": 0,
+      "w": 125,
+      "h": 175,
+      "globalTileRange": {
+        "gx0": 0,
+        "gy0": 0,
+        "gx1": 125,
+        "gy1": 175
+      },
+      "cellCount": 21875,
+      "globalTileCount": 21875,
+      "outOfFrameTiles": 0,
+      "maskCount": 25,
+      "files": [
+        {
+          "name": "biomeEconomyCode",
+          "file": "v3/evidence/windows/wmp.v3.window.west.125x175/biomeEconomyCode.u8",
+          "bytes": 21875,
+          "sha256": "336b454db6fee6bd391440a13e1fc934951e4eb95947032cb9260b19cafc7ab1",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "biomeSubtype",
+          "file": "v3/evidence/windows/wmp.v3.window.west.125x175/biomeSubtype.u8",
+          "bytes": 21875,
+          "sha256": "a7b2545f100bebf62d4ce412d5416fabbe05cd35a15516f257f43fa846a2eb00",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "elevation",
+          "file": "v3/evidence/windows/wmp.v3.window.west.125x175/elevation.u8",
+          "bytes": 21875,
+          "sha256": "890131b1b60dfc44c598f14f5bcd5f58e53b32f019aeddc6d1847289f71f3957",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "slope",
+          "file": "v3/evidence/windows/wmp.v3.window.west.125x175/slope.u8",
+          "bytes": 21875,
+          "sha256": "efdfc13033df71722fcbbe9ee04626a66ccebc8a2d70d42565a2f8b63bdcc023",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "moisture",
+          "file": "v3/evidence/windows/wmp.v3.window.west.125x175/moisture.u8",
+          "bytes": 21875,
+          "sha256": "4a2caf862c5267f92931eff35d2962703b23565726a670895a9bdf47b79e24d6",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "temperature",
+          "file": "v3/evidence/windows/wmp.v3.window.west.125x175/temperature.u8",
+          "bytes": 21875,
+          "sha256": "3d2a6fc6e151cac0a84dcb309b4cdfe3e93391da75f4f2f1ac03b2332715a9a2",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "freshwater",
+          "file": "v3/evidence/windows/wmp.v3.window.west.125x175/freshwater.u8",
+          "bytes": 21875,
+          "sha256": "dc68e765c1a344fd3b076a92cd7e8a383b65120bc3b9ad160e05c01d8bea68d6",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "coast",
+          "file": "v3/evidence/windows/wmp.v3.window.west.125x175/coast.u8",
+          "bytes": 21875,
+          "sha256": "4488faa6c74e79852a1b67b0aaf1927ffdae70023998ce4a9c6b84383f979645",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "walkable",
+          "file": "v3/evidence/windows/wmp.v3.window.west.125x175/walkable.u8",
+          "bytes": 21875,
+          "sha256": "a2c359a377a738e5f62b31469d092950294621b2c7605e3a58946d3acdd3be0d",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "buildable",
+          "file": "v3/evidence/windows/wmp.v3.window.west.125x175/buildable.u8",
+          "bytes": 21875,
+          "sha256": "5129484d60464af77d81a85609c719a3ea85d06e34f4d7cc1cf3e9ef9db242d2",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "cargoPassable",
+          "file": "v3/evidence/windows/wmp.v3.window.west.125x175/cargoPassable.u8",
+          "bytes": 21875,
+          "sha256": "9abc57e66f0d6e5f43d733753f481eab9085f885feeed8d9e81944cddf32c17c",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "road",
+          "file": "v3/evidence/windows/wmp.v3.window.west.125x175/road.u8",
+          "bytes": 21875,
+          "sha256": "c9fd3b3abd190da4167d5b1ec10c63bfa1a5f2d08766954729d52f5da65a4068",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "protected",
+          "file": "v3/evidence/windows/wmp.v3.window.west.125x175/protected.u8",
+          "bytes": 21875,
+          "sha256": "426ae9858b1056957ac9b9b022c419f030c20baf55f89a8c2f8a291f23e7044d",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "industrial",
+          "file": "v3/evidence/windows/wmp.v3.window.west.125x175/industrial.u8",
+          "bytes": 21875,
+          "sha256": "367cc334f992a14be444ae76f706175d68dd944d78d23f9d9fb2a62c12b65a52",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "surface",
+          "file": "v3/evidence/windows/wmp.v3.window.west.125x175/surface.u8",
+          "bytes": 21875,
+          "sha256": "94eb881204c57f1b612c2c5f6f9b893ce2dc1e99048b78b16d741a588ed26a8b",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "zone",
+          "file": "v3/evidence/windows/wmp.v3.window.west.125x175/zone.u8",
+          "bytes": 21875,
+          "sha256": "ca89d97182d512612100fa1ea70621a635a26618aa8e034acc574603a6602046",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "seaDistance",
+          "file": "v3/evidence/windows/wmp.v3.window.west.125x175/seaDistance.u8",
+          "bytes": 21875,
+          "sha256": "244ac95ab052c1ea8bb8d01953401857e7bdb3a6016f7b5334cb98048658d98a",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "land",
+          "file": "v3/evidence/windows/wmp.v3.window.west.125x175/land.u8",
+          "bytes": 21875,
+          "sha256": "c5091d703b25bb5c0605e16a97dfee44f3b47dc1b4905abe2a7a19f68f05fd90",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "heightClass",
+          "file": "v3/evidence/windows/wmp.v3.window.west.125x175/heightClass.u8",
+          "bytes": 21875,
+          "sha256": "2a08b66d667f9645a778644be710703e1c2b2ea9beeaa9113d684f7d965df6ff",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "cliffCandidate",
+          "file": "v3/evidence/windows/wmp.v3.window.west.125x175/cliffCandidate.u8",
+          "bytes": 21875,
+          "sha256": "4e9449fe0b6958a0bf1701bc0fee32aa0129c70c5e963d5fa9379e57b5c46b5d",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "slopeClass",
+          "file": "v3/evidence/windows/wmp.v3.window.west.125x175/slopeClass.u8",
+          "bytes": 21875,
+          "sha256": "792a2c1c9a436db014c8fa5ce2a3f28d1490c9487da67b6644d5a828afa82021",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "roadSurface",
+          "file": "v3/evidence/windows/wmp.v3.window.west.125x175/roadSurface.u8",
+          "bytes": 21875,
+          "sha256": "01f026dafe97a60b0cdd2db0f73851fdfa1234e2e26f2608cd2dd8431ec7b2a1",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "waterTraversalClass",
+          "file": "v3/evidence/windows/wmp.v3.window.west.125x175/waterTraversalClass.u8",
+          "bytes": 21875,
+          "sha256": "01f026dafe97a60b0cdd2db0f73851fdfa1234e2e26f2608cd2dd8431ec7b2a1",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "activeCollisionPermission",
+          "file": "v3/evidence/windows/wmp.v3.window.west.125x175/activeCollisionPermission.u8",
+          "bytes": 21875,
+          "sha256": "9abc57e66f0d6e5f43d733753f481eab9085f885feeed8d9e81944cddf32c17c",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "constructionSuitability",
+          "file": "v3/evidence/windows/wmp.v3.window.west.125x175/constructionSuitability.u8",
+          "bytes": 21875,
+          "sha256": "ee755b547dc89d4ceb6f0a4d74c163418cf9eee67711600dccb5c91b8f5c69fc",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        }
+      ]
+    },
+    {
+      "id": "wmp.v3.window.east.125x175",
+      "x0": 125,
+      "y0": 0,
+      "w": 125,
+      "h": 175,
+      "globalTileRange": {
+        "gx0": 125,
+        "gy0": 0,
+        "gx1": 250,
+        "gy1": 175
+      },
+      "cellCount": 21875,
+      "globalTileCount": 21875,
+      "outOfFrameTiles": 0,
+      "maskCount": 25,
+      "files": [
+        {
+          "name": "biomeEconomyCode",
+          "file": "v3/evidence/windows/wmp.v3.window.east.125x175/biomeEconomyCode.u8",
+          "bytes": 21875,
+          "sha256": "b19296ff5ec074d5ecfa885b857297abd5b98afa5b456dadd19ce3c5a2a2e397",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "biomeSubtype",
+          "file": "v3/evidence/windows/wmp.v3.window.east.125x175/biomeSubtype.u8",
+          "bytes": 21875,
+          "sha256": "26a51593d59750586e2abbcdc9f35cb6301c1af091d6f82ded8cfdd79843834f",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "elevation",
+          "file": "v3/evidence/windows/wmp.v3.window.east.125x175/elevation.u8",
+          "bytes": 21875,
+          "sha256": "89f26ff100d423fbc4bb464f9909386086630974885312f4f6d6ac638376de5e",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "slope",
+          "file": "v3/evidence/windows/wmp.v3.window.east.125x175/slope.u8",
+          "bytes": 21875,
+          "sha256": "30e40fb0592a94ffb26f2cd0fd762e1a0175b8187f513d7fe67dad229230e724",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "moisture",
+          "file": "v3/evidence/windows/wmp.v3.window.east.125x175/moisture.u8",
+          "bytes": 21875,
+          "sha256": "7a1b58b99a072b9a46b360f7c319f145adfd4d4c527d25d4c0d97ce1404832e9",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "temperature",
+          "file": "v3/evidence/windows/wmp.v3.window.east.125x175/temperature.u8",
+          "bytes": 21875,
+          "sha256": "a1e624ac3fc310a70d9c0b8e654ed7ed81dde7aebe4e1bdbb00a4c529ce0eaa2",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "freshwater",
+          "file": "v3/evidence/windows/wmp.v3.window.east.125x175/freshwater.u8",
+          "bytes": 21875,
+          "sha256": "2a0143f4a1edaab5072393934b488ee0de91991b285f8e2a4d374d2717a4a97f",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "coast",
+          "file": "v3/evidence/windows/wmp.v3.window.east.125x175/coast.u8",
+          "bytes": 21875,
+          "sha256": "36db5e37919c79aade0216d16d72be79ab38c2ff2b6aa73b2f816fde91a7bd83",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "walkable",
+          "file": "v3/evidence/windows/wmp.v3.window.east.125x175/walkable.u8",
+          "bytes": 21875,
+          "sha256": "e952cb0bda29664ab62200c6123ea98c91b9de5499709a92ba1e610ca40d9dd8",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "buildable",
+          "file": "v3/evidence/windows/wmp.v3.window.east.125x175/buildable.u8",
+          "bytes": 21875,
+          "sha256": "5e9fb7ea2f3bd88269b71168a5a13d52d3351765c97c41198e66ce9f306659d6",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "cargoPassable",
+          "file": "v3/evidence/windows/wmp.v3.window.east.125x175/cargoPassable.u8",
+          "bytes": 21875,
+          "sha256": "9abc57e66f0d6e5f43d733753f481eab9085f885feeed8d9e81944cddf32c17c",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "road",
+          "file": "v3/evidence/windows/wmp.v3.window.east.125x175/road.u8",
+          "bytes": 21875,
+          "sha256": "e06725cf7d4db5494ee9b77f6a4bbd3f91dbf7b1bab67843f29e21e2f4c2ada1",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "protected",
+          "file": "v3/evidence/windows/wmp.v3.window.east.125x175/protected.u8",
+          "bytes": 21875,
+          "sha256": "a3d52916370ec45b5fa53f2524ef0774bb2ddd6688eb26363bb3c4e9ccb9b194",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "industrial",
+          "file": "v3/evidence/windows/wmp.v3.window.east.125x175/industrial.u8",
+          "bytes": 21875,
+          "sha256": "ffd7845f772021ce6f4e0fee6442c89a634d229a7a0e6ffe11978589658e328a",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "surface",
+          "file": "v3/evidence/windows/wmp.v3.window.east.125x175/surface.u8",
+          "bytes": 21875,
+          "sha256": "834005d522ecd4b69b60f43a1155d898e33f8f2b150dc20953d06c0e3333d41e",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "zone",
+          "file": "v3/evidence/windows/wmp.v3.window.east.125x175/zone.u8",
+          "bytes": 21875,
+          "sha256": "21bf06d678e0c188a534d523bc3133b8667228fe55dbef8250f50b8929dd6831",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "seaDistance",
+          "file": "v3/evidence/windows/wmp.v3.window.east.125x175/seaDistance.u8",
+          "bytes": 21875,
+          "sha256": "30e8a4fb1c46c282dd0bbb1e13aab57eacc55cd9d77e3493fc1bd9329ef3c3d7",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "land",
+          "file": "v3/evidence/windows/wmp.v3.window.east.125x175/land.u8",
+          "bytes": 21875,
+          "sha256": "4b1524e5454710059d8cd09c954f9f66b69144db3c2598581df9fd107f6d2484",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "heightClass",
+          "file": "v3/evidence/windows/wmp.v3.window.east.125x175/heightClass.u8",
+          "bytes": 21875,
+          "sha256": "9f3c61ed0ff6210f087186ad0533e688c0a53e25770e635b4f70a541b3cfd43b",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "cliffCandidate",
+          "file": "v3/evidence/windows/wmp.v3.window.east.125x175/cliffCandidate.u8",
+          "bytes": 21875,
+          "sha256": "53f058263e79595f8618c30f631fd77d4ca888b027943f87298789690b9fc062",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "slopeClass",
+          "file": "v3/evidence/windows/wmp.v3.window.east.125x175/slopeClass.u8",
+          "bytes": 21875,
+          "sha256": "b3be7b2329ec6324031c8d041de726a25318bf883bb6ad83a20f539d21a60fc9",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "roadSurface",
+          "file": "v3/evidence/windows/wmp.v3.window.east.125x175/roadSurface.u8",
+          "bytes": 21875,
+          "sha256": "b06c153f8e0bd8e4cf3c73c73c011fa9e4209376fa3f9b3ca7f0cc1153868720",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "waterTraversalClass",
+          "file": "v3/evidence/windows/wmp.v3.window.east.125x175/waterTraversalClass.u8",
+          "bytes": 21875,
+          "sha256": "b06c153f8e0bd8e4cf3c73c73c011fa9e4209376fa3f9b3ca7f0cc1153868720",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "activeCollisionPermission",
+          "file": "v3/evidence/windows/wmp.v3.window.east.125x175/activeCollisionPermission.u8",
+          "bytes": 21875,
+          "sha256": "9abc57e66f0d6e5f43d733753f481eab9085f885feeed8d9e81944cddf32c17c",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        },
+        {
+          "name": "constructionSuitability",
+          "file": "v3/evidence/windows/wmp.v3.window.east.125x175/constructionSuitability.u8",
+          "bytes": 21875,
+          "sha256": "1e15b534f7a5b4af221bb1f68d1e514711f9e6f2ca0527c7ab921f218c5be9f7",
+          "layout": {
+            "widthTiles": 125,
+            "heightTiles": 175,
+            "order": "row_major k=ty*widthTiles+tx"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,701 @@
+{
+  "schema": "soh.wmp.v3.artifact_index.v1",
+  "status": "SUPPLEMENTARY__AUTHORITATIVE_V3_MANIFEST_IS_v3/manifest.v3.json",
+  "policy": "v1 and v2 tracked bytes (including both artifact indices) are byte-for-byte unchanged; v3 is ADDITIVE ONLY.",
+  "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+  "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d",
+  "v3RevisionDigest": "1356735557a421f720e24c6e9dd54ae0812e5f75cc18a48c14ddfc69de9bd114",
+  "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+  "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+  "v3ManifestSha256": "9043386cb9ba9a470a9d2764a5b9a7ec20fc3ecb433b23aaace212d8330f8004",
+  "count": 120,
+  "totalBytes": 10297107,
+  "excluded": [
+    "v3/evidence/artifact_index.v3.json",
+    "*.log runtime transcripts"
+  ],
+  "keyArtifacts": {
+    "v1Manifest": {
+      "file": "manifest.v1.json",
+      "bytes": 19699,
+      "sha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e"
+    },
+    "v1ArtifactIndex": {
+      "file": "evidence/artifact_index.v1.json",
+      "bytes": 9101,
+      "sha256": "de45facb952af21ddaab0dc2b162d68a675fe0641d2a98f0ff9dc0b1d8e6e406"
+    },
+    "v2Manifest": {
+      "file": "v2/manifest.v2.json",
+      "bytes": 10255,
+      "sha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009"
+    },
+    "v2ArtifactIndex": {
+      "file": "v2/evidence/artifact_index.v2.json",
+      "bytes": 21049,
+      "sha256": "ba36d0717d924202783b8e9c4cc2f0bf6edd5dc8bc5c919959eb86b260c0672a"
+    },
+    "v2GeographicHandoff": {
+      "file": "v2/handoff/geographic_handoff.v2.json",
+      "bytes": 2602757,
+      "sha256": "82d8b061ab60b5feab29c6a1cfd579ad9e6428bc9c371983061681a381fe0f8c"
+    },
+    "v3Manifest": {
+      "file": "v3/manifest.v3.json",
+      "bytes": 10490,
+      "sha256": "9043386cb9ba9a470a9d2764a5b9a7ec20fc3ecb433b23aaace212d8330f8004"
+    },
+    "v3TypedHandoff": {
+      "file": "v3/handoff/map_to_gameplay_v3.json",
+      "bytes": 6644191,
+      "sha256": "53ee6727345288ce1b7898d1dcb97015e2153154c780f288e9a40b25272e65c8"
+    },
+    "v3Interface": {
+      "file": "v3/interfaces/map_physical_semantics.v3.json",
+      "bytes": 7187,
+      "sha256": "031f6100448799225611d8a29de5f9f18c4ba065cb2754196f4d4bbec75e583d"
+    },
+    "v3MeasuredDelta": {
+      "file": "v3/layers/measured_delta.v3.json",
+      "bytes": 2871,
+      "sha256": "9de6922d61987b7b8df15ec6de4612b62f98fe98406f50da97d958a84d398934"
+    },
+    "v3HandoffCheck": {
+      "file": "v3/evidence/handoff_check.v3.json",
+      "bytes": 2382,
+      "sha256": "ecdf14460be2cb4c94ed106e11ea9008432c2c59890910701864326f89cd6ad0"
+    },
+    "v3WindowReport": {
+      "file": "v3/evidence/windows/window_report.v3.json",
+      "bytes": 31253,
+      "sha256": "568934b7272978edecfe60eb5d94e720129b0e49fa54e71e9d13f306210f3c29"
+    },
+    "v3ViewsIndex": {
+      "file": "v3/evidence/views/views_index.v3.json",
+      "bytes": 3866,
+      "sha256": "6665712ad0b204a44ac54f718c6b4150c569697dad8a152928c6bdda6dcb32f2"
+    },
+    "v3TestResults": {
+      "file": "v3/evidence/tests/test_results.v3.json",
+      "bytes": 19042,
+      "sha256": "4856307d2dc42310d86fea51f4945434aca88ec0f3aad6dc7043b36b4d87daee"
+    },
+    "v3NegativeFixtures": {
+      "file": "v3/evidence/tests/negative_fixtures.v3.json",
+      "bytes": 7813,
+      "sha256": "31f634057a7fd626b3e9569141a1d42622d95960150bd066bbc7ac9dfe9e1275"
+    },
+    "v3CleanRoom": {
+      "file": "v3/evidence/clean_room_v3.json",
+      "bytes": 1003,
+      "sha256": "de9eb30ce53f29a7156dab98fbf6398c75cb825aecf4ce8afed25944c2b46ae2"
+    },
+    "v3Determinism": {
+      "file": "v3/evidence/build_determinism_v3.json",
+      "bytes": 272,
+      "sha256": "dbf7a7ed139469e4c95461d1d0dc437b109d0723165d212a24caeea8f00ac976"
+    }
+  },
+  "files": [
+    {
+      "file": "v3/README.md",
+      "bytes": 5729,
+      "sha256": "5f9a78be94ea4dc325eeec55aebd88b9920340f2c087d19b2de722e829902a7d"
+    },
+    {
+      "file": "v3/docs/COMMIT_REFERENCE.md",
+      "bytes": 1249,
+      "sha256": "6a91739842ae03b08c4ea7f5467135092e4dbd8508bf9336518482a8863cd5cb"
+    },
+    {
+      "file": "v3/docs/GATES_V3.md",
+      "bytes": 3399,
+      "sha256": "fba19c46ed25508a6fa2a5d789b08f34dbbf7262e35f08f1f1fe293695c8973e"
+    },
+    {
+      "file": "v3/docs/INTAKE_CONTRACT_V3.md",
+      "bytes": 5416,
+      "sha256": "6196eedc364d18865e63ca3370d8a8bd30c0e681b1e90f77787918b0443fa476"
+    },
+    {
+      "file": "v3/docs/MAP_WMP03_DELTA_REPORT.md",
+      "bytes": 18978,
+      "sha256": "87fa197d9d93751cc65b9d74ea1fe83ca79c24cc95ab1243561f2212cede78e8"
+    },
+    {
+      "file": "v3/docs/NEGATIVE_FIXTURES_V3.md",
+      "bytes": 4083,
+      "sha256": "bd395fcfcbd8c79474a2b70411170c7c2051e678576eb1367d8de9f4a1e638e6"
+    },
+    {
+      "file": "v3/docs/PREFLIGHT_AUDIT_V3.md",
+      "bytes": 5328,
+      "sha256": "a1fd7fd31db6dd9a7f20e33ce8fa16d222927da07449167bdc38865af83d14ce"
+    },
+    {
+      "file": "v3/evidence/build_determinism_v3.json",
+      "bytes": 272,
+      "sha256": "dbf7a7ed139469e4c95461d1d0dc437b109d0723165d212a24caeea8f00ac976"
+    },
+    {
+      "file": "v3/evidence/clean_room_v3.json",
+      "bytes": 1003,
+      "sha256": "de9eb30ce53f29a7156dab98fbf6398c75cb825aecf4ce8afed25944c2b46ae2"
+    },
+    {
+      "file": "v3/evidence/handoff_check.v3.json",
+      "bytes": 2382,
+      "sha256": "ecdf14460be2cb4c94ed106e11ea9008432c2c59890910701864326f89cd6ad0"
+    },
+    {
+      "file": "v3/evidence/tests/negative_fixtures.v3.json",
+      "bytes": 7813,
+      "sha256": "31f634057a7fd626b3e9569141a1d42622d95960150bd066bbc7ac9dfe9e1275"
+    },
+    {
+      "file": "v3/evidence/tests/test_results.v3.json",
+      "bytes": 19042,
+      "sha256": "4856307d2dc42310d86fea51f4945434aca88ec0f3aad6dc7043b36b4d87daee"
+    },
+    {
+      "file": "v3/evidence/views/v3_cliff_before_after.png",
+      "bytes": 10071,
+      "sha256": "afb2e402b2c30b75303bba54a83ea6cbc83e39aa5635bc0ea064854f542e989e"
+    },
+    {
+      "file": "v3/evidence/views/v3_construction_before_after.png",
+      "bytes": 10831,
+      "sha256": "4136d186500e386be97df841421c9a6265eba916c4f1248e813201125cf7be0a"
+    },
+    {
+      "file": "v3/evidence/views/v3_region_evidence.png",
+      "bytes": 10184,
+      "sha256": "5020efd51d3545fa56159850f604f4ce05c26fd8bbf86588dc10e06ac6c2195b"
+    },
+    {
+      "file": "v3/evidence/views/v3_road_drift_before_after.png",
+      "bytes": 13403,
+      "sha256": "29be2bc62d0c769e12c8a2d9f7747bbfe5dc17eb0f2cce5e2d3def4439d49a74"
+    },
+    {
+      "file": "v3/evidence/views/v3_structural_checks.png",
+      "bytes": 11423,
+      "sha256": "fd26a7a9b55722245f6cc69da623ca5b306ba017fd68dc6c6c45855b0e63027d"
+    },
+    {
+      "file": "v3/evidence/views/v3_terrain_height_class.png",
+      "bytes": 13911,
+      "sha256": "70d2da79f1a7da22e767ca08e55cef0d9a60ce7f3a1b4054cf3544273f25c7a3"
+    },
+    {
+      "file": "v3/evidence/views/v3_water_traversal.png",
+      "bytes": 10508,
+      "sha256": "9beb770fe856a17f00a2e3b395275d149a043abdb290ba0ef0b4dc3d5b4bcca3"
+    },
+    {
+      "file": "v3/evidence/views/views_index.v3.json",
+      "bytes": 3866,
+      "sha256": "6665712ad0b204a44ac54f718c6b4150c569697dad8a152928c6bdda6dcb32f2"
+    },
+    {
+      "file": "v3/evidence/windows/window_report.v3.json",
+      "bytes": 31253,
+      "sha256": "568934b7272978edecfe60eb5d94e720129b0e49fa54e71e9d13f306210f3c29"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.east.125x175/activeCollisionPermission.u8",
+      "bytes": 21875,
+      "sha256": "9abc57e66f0d6e5f43d733753f481eab9085f885feeed8d9e81944cddf32c17c"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.east.125x175/biomeEconomyCode.u8",
+      "bytes": 21875,
+      "sha256": "b19296ff5ec074d5ecfa885b857297abd5b98afa5b456dadd19ce3c5a2a2e397"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.east.125x175/biomeSubtype.u8",
+      "bytes": 21875,
+      "sha256": "26a51593d59750586e2abbcdc9f35cb6301c1af091d6f82ded8cfdd79843834f"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.east.125x175/buildable.u8",
+      "bytes": 21875,
+      "sha256": "5e9fb7ea2f3bd88269b71168a5a13d52d3351765c97c41198e66ce9f306659d6"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.east.125x175/cargoPassable.u8",
+      "bytes": 21875,
+      "sha256": "9abc57e66f0d6e5f43d733753f481eab9085f885feeed8d9e81944cddf32c17c"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.east.125x175/cliffCandidate.u8",
+      "bytes": 21875,
+      "sha256": "53f058263e79595f8618c30f631fd77d4ca888b027943f87298789690b9fc062"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.east.125x175/coast.u8",
+      "bytes": 21875,
+      "sha256": "36db5e37919c79aade0216d16d72be79ab38c2ff2b6aa73b2f816fde91a7bd83"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.east.125x175/constructionSuitability.u8",
+      "bytes": 21875,
+      "sha256": "1e15b534f7a5b4af221bb1f68d1e514711f9e6f2ca0527c7ab921f218c5be9f7"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.east.125x175/elevation.u8",
+      "bytes": 21875,
+      "sha256": "89f26ff100d423fbc4bb464f9909386086630974885312f4f6d6ac638376de5e"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.east.125x175/freshwater.u8",
+      "bytes": 21875,
+      "sha256": "2a0143f4a1edaab5072393934b488ee0de91991b285f8e2a4d374d2717a4a97f"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.east.125x175/heightClass.u8",
+      "bytes": 21875,
+      "sha256": "9f3c61ed0ff6210f087186ad0533e688c0a53e25770e635b4f70a541b3cfd43b"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.east.125x175/industrial.u8",
+      "bytes": 21875,
+      "sha256": "ffd7845f772021ce6f4e0fee6442c89a634d229a7a0e6ffe11978589658e328a"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.east.125x175/land.u8",
+      "bytes": 21875,
+      "sha256": "4b1524e5454710059d8cd09c954f9f66b69144db3c2598581df9fd107f6d2484"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.east.125x175/moisture.u8",
+      "bytes": 21875,
+      "sha256": "7a1b58b99a072b9a46b360f7c319f145adfd4d4c527d25d4c0d97ce1404832e9"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.east.125x175/protected.u8",
+      "bytes": 21875,
+      "sha256": "a3d52916370ec45b5fa53f2524ef0774bb2ddd6688eb26363bb3c4e9ccb9b194"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.east.125x175/road.u8",
+      "bytes": 21875,
+      "sha256": "e06725cf7d4db5494ee9b77f6a4bbd3f91dbf7b1bab67843f29e21e2f4c2ada1"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.east.125x175/roadSurface.u8",
+      "bytes": 21875,
+      "sha256": "b06c153f8e0bd8e4cf3c73c73c011fa9e4209376fa3f9b3ca7f0cc1153868720"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.east.125x175/seaDistance.u8",
+      "bytes": 21875,
+      "sha256": "30e8a4fb1c46c282dd0bbb1e13aab57eacc55cd9d77e3493fc1bd9329ef3c3d7"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.east.125x175/slope.u8",
+      "bytes": 21875,
+      "sha256": "30e40fb0592a94ffb26f2cd0fd762e1a0175b8187f513d7fe67dad229230e724"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.east.125x175/slopeClass.u8",
+      "bytes": 21875,
+      "sha256": "b3be7b2329ec6324031c8d041de726a25318bf883bb6ad83a20f539d21a60fc9"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.east.125x175/surface.u8",
+      "bytes": 21875,
+      "sha256": "834005d522ecd4b69b60f43a1155d898e33f8f2b150dc20953d06c0e3333d41e"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.east.125x175/temperature.u8",
+      "bytes": 21875,
+      "sha256": "a1e624ac3fc310a70d9c0b8e654ed7ed81dde7aebe4e1bdbb00a4c529ce0eaa2"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.east.125x175/walkable.u8",
+      "bytes": 21875,
+      "sha256": "e952cb0bda29664ab62200c6123ea98c91b9de5499709a92ba1e610ca40d9dd8"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.east.125x175/waterTraversalClass.u8",
+      "bytes": 21875,
+      "sha256": "b06c153f8e0bd8e4cf3c73c73c011fa9e4209376fa3f9b3ca7f0cc1153868720"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.east.125x175/zone.u8",
+      "bytes": 21875,
+      "sha256": "21bf06d678e0c188a534d523bc3133b8667228fe55dbef8250f50b8929dd6831"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.full.250x175/activeCollisionPermission.u8",
+      "bytes": 43750,
+      "sha256": "c394fedefb360cfb0de08d9ec60bf75cd3ea0c5b3f657fda23b7909fdb3c774d"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.full.250x175/biomeEconomyCode.u8",
+      "bytes": 43750,
+      "sha256": "25da886c23e1576cedc0d7d2f7fc2f79b93db86843de285e2fde2c5684566446"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.full.250x175/biomeSubtype.u8",
+      "bytes": 43750,
+      "sha256": "232998e642e836f30129b3a689f7cd458f8c57526ecd2c1bad51449cbeff839d"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.full.250x175/buildable.u8",
+      "bytes": 43750,
+      "sha256": "70e4cd49d37ab11316ecfac3d47889abfdefa0a28270875a7cd3abca1fbabea2"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.full.250x175/cargoPassable.u8",
+      "bytes": 43750,
+      "sha256": "c394fedefb360cfb0de08d9ec60bf75cd3ea0c5b3f657fda23b7909fdb3c774d"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.full.250x175/cliffCandidate.u8",
+      "bytes": 43750,
+      "sha256": "6b2897d74409b974d477e767291f1eac0b9614a1b794539aef827c1278682d2d"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.full.250x175/coast.u8",
+      "bytes": 43750,
+      "sha256": "44c0f13ead072f501351f458c9180a31e30f08a321848e10e8faea567067f5d5"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.full.250x175/constructionSuitability.u8",
+      "bytes": 43750,
+      "sha256": "505acbcf578df18712a239ea9a88cba62fce560a23c8a33573cfd7819d792a20"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.full.250x175/elevation.u8",
+      "bytes": 43750,
+      "sha256": "54d7641cea57ebd20be1eb17a0ce919f352f2868f4ed123e968a2e59666c6d24"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.full.250x175/freshwater.u8",
+      "bytes": 43750,
+      "sha256": "9f9716b53e9bc553282860510b0ab1410574d8edf03eabb79fb3181f6d465aa4"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.full.250x175/heightClass.u8",
+      "bytes": 43750,
+      "sha256": "ec800274e8af35f2e31caa18352f2c6643a4fe5da1f1235426037040a4823814"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.full.250x175/industrial.u8",
+      "bytes": 43750,
+      "sha256": "6a312348e5e74f57c7d4ca37de9f3214a2e2e0ebb22d4305abb34930bf69bc50"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.full.250x175/land.u8",
+      "bytes": 43750,
+      "sha256": "3aaebb6a358ce04fc33eff56050321639ffc317fe1bb698114a621240c12e8a7"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.full.250x175/moisture.u8",
+      "bytes": 43750,
+      "sha256": "7e1362e63817804411efddf34abea1cf67f2f8904b8e4adfbe59412b7b7bed95"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.full.250x175/protected.u8",
+      "bytes": 43750,
+      "sha256": "9d500a17898dd9bc5e3368be0bc14d86c91ac361a1449c484c1b5322894d0b71"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.full.250x175/road.u8",
+      "bytes": 43750,
+      "sha256": "7bf5c8cd8241402aae65f28e88aadab36c13eac5549dbfc02918b973c7f0b52b"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.full.250x175/roadSurface.u8",
+      "bytes": 43750,
+      "sha256": "8479bf0d122b165433a73c1c809f694bd75b6a105403535fb08fd9c9de138592"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.full.250x175/seaDistance.u8",
+      "bytes": 43750,
+      "sha256": "45ba677aa1dde0b2d662c83386667dee8427f846e75978fd18c0e08f57c70977"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.full.250x175/slope.u8",
+      "bytes": 43750,
+      "sha256": "6648158ad69cd9c136e249394a9aa7b21e31d08ca7ac48d700fa9511a918130e"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.full.250x175/slopeClass.u8",
+      "bytes": 43750,
+      "sha256": "8dedebfcd06da83353892ea14f3c2288a19ee410b3c3c42e4c109af157e3a7ea"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.full.250x175/surface.u8",
+      "bytes": 43750,
+      "sha256": "d570ee3a53b0ee832454e9dcce1c4a316c4fdeb64ebcb9b6174821d50f7a1edf"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.full.250x175/temperature.u8",
+      "bytes": 43750,
+      "sha256": "52fc00725e20693db4b195038299cc60165bc3e0dad7037e48e728af8cb3696d"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.full.250x175/walkable.u8",
+      "bytes": 43750,
+      "sha256": "fcf691e68785e204634ce5bd05d5f2c500c65e61deea4e3b0c468d282ef0a8d7"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.full.250x175/waterTraversalClass.u8",
+      "bytes": 43750,
+      "sha256": "8479bf0d122b165433a73c1c809f694bd75b6a105403535fb08fd9c9de138592"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.full.250x175/zone.u8",
+      "bytes": 43750,
+      "sha256": "e6ea74cd062935bad399002bf7d99e540b71f61ab5a83654db1cef1bdb2a374d"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.west.125x175/activeCollisionPermission.u8",
+      "bytes": 21875,
+      "sha256": "9abc57e66f0d6e5f43d733753f481eab9085f885feeed8d9e81944cddf32c17c"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.west.125x175/biomeEconomyCode.u8",
+      "bytes": 21875,
+      "sha256": "336b454db6fee6bd391440a13e1fc934951e4eb95947032cb9260b19cafc7ab1"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.west.125x175/biomeSubtype.u8",
+      "bytes": 21875,
+      "sha256": "a7b2545f100bebf62d4ce412d5416fabbe05cd35a15516f257f43fa846a2eb00"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.west.125x175/buildable.u8",
+      "bytes": 21875,
+      "sha256": "5129484d60464af77d81a85609c719a3ea85d06e34f4d7cc1cf3e9ef9db242d2"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.west.125x175/cargoPassable.u8",
+      "bytes": 21875,
+      "sha256": "9abc57e66f0d6e5f43d733753f481eab9085f885feeed8d9e81944cddf32c17c"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.west.125x175/cliffCandidate.u8",
+      "bytes": 21875,
+      "sha256": "4e9449fe0b6958a0bf1701bc0fee32aa0129c70c5e963d5fa9379e57b5c46b5d"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.west.125x175/coast.u8",
+      "bytes": 21875,
+      "sha256": "4488faa6c74e79852a1b67b0aaf1927ffdae70023998ce4a9c6b84383f979645"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.west.125x175/constructionSuitability.u8",
+      "bytes": 21875,
+      "sha256": "ee755b547dc89d4ceb6f0a4d74c163418cf9eee67711600dccb5c91b8f5c69fc"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.west.125x175/elevation.u8",
+      "bytes": 21875,
+      "sha256": "890131b1b60dfc44c598f14f5bcd5f58e53b32f019aeddc6d1847289f71f3957"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.west.125x175/freshwater.u8",
+      "bytes": 21875,
+      "sha256": "dc68e765c1a344fd3b076a92cd7e8a383b65120bc3b9ad160e05c01d8bea68d6"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.west.125x175/heightClass.u8",
+      "bytes": 21875,
+      "sha256": "2a08b66d667f9645a778644be710703e1c2b2ea9beeaa9113d684f7d965df6ff"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.west.125x175/industrial.u8",
+      "bytes": 21875,
+      "sha256": "367cc334f992a14be444ae76f706175d68dd944d78d23f9d9fb2a62c12b65a52"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.west.125x175/land.u8",
+      "bytes": 21875,
+      "sha256": "c5091d703b25bb5c0605e16a97dfee44f3b47dc1b4905abe2a7a19f68f05fd90"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.west.125x175/moisture.u8",
+      "bytes": 21875,
+      "sha256": "4a2caf862c5267f92931eff35d2962703b23565726a670895a9bdf47b79e24d6"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.west.125x175/protected.u8",
+      "bytes": 21875,
+      "sha256": "426ae9858b1056957ac9b9b022c419f030c20baf55f89a8c2f8a291f23e7044d"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.west.125x175/road.u8",
+      "bytes": 21875,
+      "sha256": "c9fd3b3abd190da4167d5b1ec10c63bfa1a5f2d08766954729d52f5da65a4068"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.west.125x175/roadSurface.u8",
+      "bytes": 21875,
+      "sha256": "01f026dafe97a60b0cdd2db0f73851fdfa1234e2e26f2608cd2dd8431ec7b2a1"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.west.125x175/seaDistance.u8",
+      "bytes": 21875,
+      "sha256": "244ac95ab052c1ea8bb8d01953401857e7bdb3a6016f7b5334cb98048658d98a"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.west.125x175/slope.u8",
+      "bytes": 21875,
+      "sha256": "efdfc13033df71722fcbbe9ee04626a66ccebc8a2d70d42565a2f8b63bdcc023"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.west.125x175/slopeClass.u8",
+      "bytes": 21875,
+      "sha256": "792a2c1c9a436db014c8fa5ce2a3f28d1490c9487da67b6644d5a828afa82021"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.west.125x175/surface.u8",
+      "bytes": 21875,
+      "sha256": "94eb881204c57f1b612c2c5f6f9b893ce2dc1e99048b78b16d741a588ed26a8b"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.west.125x175/temperature.u8",
+      "bytes": 21875,
+      "sha256": "3d2a6fc6e151cac0a84dcb309b4cdfe3e93391da75f4f2f1ac03b2332715a9a2"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.west.125x175/walkable.u8",
+      "bytes": 21875,
+      "sha256": "a2c359a377a738e5f62b31469d092950294621b2c7605e3a58946d3acdd3be0d"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.west.125x175/waterTraversalClass.u8",
+      "bytes": 21875,
+      "sha256": "01f026dafe97a60b0cdd2db0f73851fdfa1234e2e26f2608cd2dd8431ec7b2a1"
+    },
+    {
+      "file": "v3/evidence/windows/wmp.v3.window.west.125x175/zone.u8",
+      "bytes": 21875,
+      "sha256": "ca89d97182d512612100fa1ea70621a635a26618aa8e034acc574603a6602046"
+    },
+    {
+      "file": "v3/handoff/map_to_gameplay_v3.json",
+      "bytes": 6644191,
+      "sha256": "53ee6727345288ce1b7898d1dcb97015e2153154c780f288e9a40b25272e65c8"
+    },
+    {
+      "file": "v3/interfaces/map_physical_semantics.v3.json",
+      "bytes": 7187,
+      "sha256": "031f6100448799225611d8a29de5f9f18c4ba065cb2754196f4d4bbec75e583d"
+    },
+    {
+      "file": "v3/layers/construction_semantics.v3.json",
+      "bytes": 30927,
+      "sha256": "a98a265cc2898028ff573696fe00fb2fbde9bd8eed52de5ab8deaca9bebd4338"
+    },
+    {
+      "file": "v3/layers/measured_delta.v3.json",
+      "bytes": 2871,
+      "sha256": "9de6922d61987b7b8df15ec6de4612b62f98fe98406f50da97d958a84d398934"
+    },
+    {
+      "file": "v3/layers/road_rasterization_delta.v3.json",
+      "bytes": 62621,
+      "sha256": "b364bf388d10de68391b0359226bfccee438ca7717aade6b538f45a39113a215"
+    },
+    {
+      "file": "v3/layers/structural_checks.v3.json",
+      "bytes": 145103,
+      "sha256": "fee5d7714590e81880a1897f2197685c9a84a06f20a713d8e6844b9046ae9117"
+    },
+    {
+      "file": "v3/layers/terrain_height_class.v3.json",
+      "bytes": 8080,
+      "sha256": "520d1d374f87753858ab741aa3b9ac09832fccdc823e3b7b240673dcd9662e4f"
+    },
+    {
+      "file": "v3/layers/traversal_graph.v3.json",
+      "bytes": 411539,
+      "sha256": "c6ca8dfb71b53ff42abf7d2f0653b773d2fdb3d4ffac980d485d770c8bbf8ba4"
+    },
+    {
+      "file": "v3/layers/water_traversal.v3.json",
+      "bytes": 121893,
+      "sha256": "bfccaeed220ea167d1a743f85ecdb1df491f48c705fd79d496d0b7b209b1d004"
+    },
+    {
+      "file": "v3/manifest.v3.json",
+      "bytes": 10490,
+      "sha256": "9043386cb9ba9a470a9d2764a5b9a7ec20fc3ecb433b23aaace212d8330f8004"
+    },
+    {
+      "file": "v3/rasters/activeCollisionPermission.v3.u8",
+      "bytes": 43750,
+      "sha256": "c394fedefb360cfb0de08d9ec60bf75cd3ea0c5b3f657fda23b7909fdb3c774d"
+    },
+    {
+      "file": "v3/rasters/cliffCandidate.v3.u8",
+      "bytes": 43750,
+      "sha256": "6b2897d74409b974d477e767291f1eac0b9614a1b794539aef827c1278682d2d"
+    },
+    {
+      "file": "v3/rasters/constructionSuitability.v3.u8",
+      "bytes": 43750,
+      "sha256": "505acbcf578df18712a239ea9a88cba62fce560a23c8a33573cfd7819d792a20"
+    },
+    {
+      "file": "v3/rasters/heightClass.v3.u8",
+      "bytes": 43750,
+      "sha256": "ec800274e8af35f2e31caa18352f2c6643a4fe5da1f1235426037040a4823814"
+    },
+    {
+      "file": "v3/rasters/roadSurface.v3.u8",
+      "bytes": 43750,
+      "sha256": "8479bf0d122b165433a73c1c809f694bd75b6a105403535fb08fd9c9de138592"
+    },
+    {
+      "file": "v3/rasters/slopeClass.v3.u8",
+      "bytes": 43750,
+      "sha256": "8dedebfcd06da83353892ea14f3c2288a19ee410b3c3c42e4c109af157e3a7ea"
+    },
+    {
+      "file": "v3/rasters/terraceCandidate.v3.u8",
+      "bytes": 43750,
+      "sha256": "029e929ea10622a43d27ba8c894334c0aa9c0c3061f2f7f135122c55c971d28f"
+    },
+    {
+      "file": "v3/rasters/waterTraversalClass.v3.u8",
+      "bytes": 43750,
+      "sha256": "8479bf0d122b165433a73c1c809f694bd75b6a105403535fb08fd9c9de138592"
+    },
+    {
+      "file": "v3/src/artifact_index_v3.mjs",
+      "bytes": 3409,
+      "sha256": "57ce4fe86cdaa2008247602447a0b680f8ed1a2c055a92fb0d5bf762abc299fe"
+    },
+    {
+      "file": "v3/src/build_v3.mjs",
+      "bytes": 50480,
+      "sha256": "6af5ca7b6bf15b33419b7bd1fe36bc9bbc1dcdb711242f377ffdb4b5996537bf"
+    },
+    {
+      "file": "v3/src/intake_v3.mjs",
+      "bytes": 10968,
+      "sha256": "5294d8629c87a38ae27449d9a0a9bade67dad174416cd79e31b3911f55ccd8ee"
+    },
+    {
+      "file": "v3/src/lib_v3.mjs",
+      "bytes": 18667,
+      "sha256": "a537396f6ca821c463532d83415761b71cb341fb248e8b66197c3e61786650b5"
+    },
+    {
+      "file": "v3/src/run_v3.mjs",
+      "bytes": 31253,
+      "sha256": "d0ce788e91ed8b0da8aa3ca201470c353d2f6766692a1e43cbfca36808da9ad7"
+    },
+    {
+      "file": "v3/src/views_v3.mjs",
+      "bytes": 9784,
+      "sha256": "d282f13b7a3aed76582da9a656efa0348ccb259873360e0647d8805a4fb8b3ec"
+    }
+  ]
+}

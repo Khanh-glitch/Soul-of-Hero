@@ -1,0 +1,123 @@
+{
+  "schema": "soh.wmp.v3.handoff_check",
+  "status": "WMP_V3_HANDOFF_OK",
+  "errors": [],
+  "economyArrayLength": 43750,
+  "roads": 84,
+  "ferryRoutes": 8,
+  "landWalkableWaterCells": 0,
+  "activeCollisionPermissionCells": 0,
+  "gameplayValidatorBoundary": {
+    "note": "mapStructuralSelfCheckV3() is NOT validateGeographicHandoff(). Gameplay still requires walkable=1 on all roads[].cells; v3 intentionally leaves water-crossing road cells non-walkable.",
+    "roadsWithWaterCells": [
+      {
+        "id": "rd_0",
+        "waterCellCount": 3
+      },
+      {
+        "id": "rd_1",
+        "waterCellCount": 1
+      },
+      {
+        "id": "rd_5",
+        "waterCellCount": 2
+      },
+      {
+        "id": "rd_9",
+        "waterCellCount": 3
+      },
+      {
+        "id": "rd_a",
+        "waterCellCount": 1
+      },
+      {
+        "id": "rd_b",
+        "waterCellCount": 2
+      },
+      {
+        "id": "rd_c",
+        "waterCellCount": 1
+      },
+      {
+        "id": "rd_i",
+        "waterCellCount": 2
+      },
+      {
+        "id": "rd_k",
+        "waterCellCount": 1
+      },
+      {
+        "id": "rd_n",
+        "waterCellCount": 2
+      },
+      {
+        "id": "rd_v",
+        "waterCellCount": 2
+      },
+      {
+        "id": "rd_w",
+        "waterCellCount": 1
+      },
+      {
+        "id": "rd_x",
+        "waterCellCount": 1
+      },
+      {
+        "id": "rd_z",
+        "waterCellCount": 4
+      },
+      {
+        "id": "rd_1f",
+        "waterCellCount": 1
+      },
+      {
+        "id": "rd_1k",
+        "waterCellCount": 1
+      },
+      {
+        "id": "rd_1l",
+        "waterCellCount": 2
+      },
+      {
+        "id": "rd_1y",
+        "waterCellCount": 2
+      },
+      {
+        "id": "rd_20",
+        "waterCellCount": 3
+      },
+      {
+        "id": "rd_22",
+        "waterCellCount": 1
+      },
+      {
+        "id": "rd_25",
+        "waterCellCount": 2
+      },
+      {
+        "id": "rd_27",
+        "waterCellCount": 1
+      },
+      {
+        "id": "rd_28",
+        "waterCellCount": 1
+      },
+      {
+        "id": "rd_29",
+        "waterCellCount": 2
+      },
+      {
+        "id": "rd_2a",
+        "waterCellCount": 1
+      },
+      {
+        "id": "rd_2b",
+        "waterCellCount": 1
+      }
+    ],
+    "waterCellCountOnLandRoads": 44,
+    "owner": "GAMEPLAY",
+    "status": "UNRESOLVED"
+  },
+  "gameplayValidatorsExecuted": false
+}

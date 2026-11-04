@@ -1,0 +1,1218 @@
+{
+  "schema": "soh.wmp.v3.construction_semantics",
+  "status": "THREE_DISTINCT_CONCEPTS__NO_SANDBOX_RESTRICTION",
+  "previousDefect": {
+    "id": "P0-WMP03-T04",
+    "exactSource": "v2/src/intake_v2.mjs:173 + v2/handoff/geographic_handoff.v2.json economy.buildable",
+    "v2BuildableCellCount": 1242,
+    "v2SurveyedSiteCount": 23,
+    "verdict": "SURVEYED_ZONE_DRY_SUBSETS_WERE_EMITTED_AS_THE_ONLY_BUILDABLE_CELLS"
+  },
+  "concepts": {
+    "suggestedSites": {
+      "count": 23,
+      "status": "SURVEYED_SUGGESTION",
+      "owner": "MAP",
+      "note": "23 authored survey envelopes. A suggestion, never a permission and never a restriction."
+    },
+    "physicallyPossibleFootprints": {
+      "count": 21,
+      "cellCount": 7035,
+      "status": "VERIFIED_GEOMETRY",
+      "owner": "MAP",
+      "note": "Full-world connected dry-land components >=9 cells, screened by v3 terrain + protected geometry."
+    },
+    "legalPlacement": {
+      "status": "UNKNOWN",
+      "owner": "GAMEPLAY",
+      "note": "Claims, occupancy, cost, body clearance and build rules are Gameplay-owned. NONE asserted here."
+    }
+  },
+  "criterion": "dry land; not protectedGeometryCandidate; not cliffCandidate; not coast; heightClass<=3; suitability 3 when heightClass<=1 and slope<=p50 and clearanceCells>0, else 2 (>=p75 slope or p90 relief => 1, remaining excluded => 0). Connected components >=9 cells.",
+  "suitabilityHistogram": {
+    "0": 34978,
+    "1": 1658,
+    "2": 1402,
+    "3": 5712
+  },
+  "physicallyPossibleCellCount": 7035,
+  "outsideSurveyedZoneCells": 6481,
+  "sandboxRestrictionProven": {
+    "v2BuildableCellCount": 1242,
+    "v3PhysicallyPossibleCellCount": 7035,
+    "cellsInComponentsWithNoSurveyedZone": 6481,
+    "verdict": "SANDBOX_CONSTRUCTION_IS_NOT_RESTRICTED_TO_THE_23_SURVEYED_ZONES"
+  },
+  "surveyedSites": [
+    {
+      "id": "site.bz_greywater",
+      "parentZoneId": "bz_greywater",
+      "physicalEnvelopeAu": [
+        705.377,
+        590.5798,
+        868.1276,
+        633.3361
+      ],
+      "cellCount": 104,
+      "suggestedStatus": "SURVEYED_SUGGESTION__NOT_A_LEGAL_RESTRICTION",
+      "owner": "MAP",
+      "measured": {
+        "meanConstructionSuitabilityV3": 1.125,
+        "physicallyPossibleCells": 39,
+        "protectedOverlapCells": 65,
+        "cliffOverlapCells": 0,
+        "waterOverlapCells": 1,
+        "suitabilityHistogram": {
+          "0": 65,
+          "3": 39
+        }
+      },
+      "reconciliationStatus": "SURVEY_CONFLICT__REPORTED_NOT_SILENTLY_FIXED",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "site.bz_gulfwest",
+      "parentZoneId": "bz_gulfwest",
+      "physicalEnvelopeAu": [
+        827.6134,
+        888.1009,
+        929.9952,
+        951.0931
+      ],
+      "cellCount": 104,
+      "suggestedStatus": "SURVEYED_SUGGESTION__NOT_A_LEGAL_RESTRICTION",
+      "owner": "MAP",
+      "measured": {
+        "meanConstructionSuitabilityV3": 2.9231,
+        "physicallyPossibleCells": 102,
+        "protectedOverlapCells": 2,
+        "cliffOverlapCells": 0,
+        "waterOverlapCells": 0,
+        "suitabilityHistogram": {
+          "0": 2,
+          "2": 2,
+          "3": 100
+        }
+      },
+      "reconciliationStatus": "SURVEY_CONFLICT__REPORTED_NOT_SILENTLY_FIXED",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "site.bz_westmouth",
+      "parentZoneId": "bz_westmouth",
+      "physicalEnvelopeAu": [
+        362.0412,
+        557.6086,
+        411.4516,
+        642.7082
+      ],
+      "cellCount": 60,
+      "suggestedStatus": "SURVEYED_SUGGESTION__NOT_A_LEGAL_RESTRICTION",
+      "owner": "MAP",
+      "measured": {
+        "meanConstructionSuitabilityV3": 2.3167,
+        "physicallyPossibleCells": 58,
+        "protectedOverlapCells": 2,
+        "cliffOverlapCells": 0,
+        "waterOverlapCells": 0,
+        "suitabilityHistogram": {
+          "0": 2,
+          "2": 35,
+          "3": 23
+        }
+      },
+      "reconciliationStatus": "SURVEY_CONFLICT__REPORTED_NOT_SILENTLY_FIXED",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "site.bz_hook",
+      "parentZoneId": "bz_hook",
+      "physicalEnvelopeAu": [
+        1222.7991,
+        367.0869,
+        1338.5406,
+        417.533
+      ],
+      "cellCount": 75,
+      "suggestedStatus": "SURVEYED_SUGGESTION__NOT_A_LEGAL_RESTRICTION",
+      "owner": "MAP",
+      "measured": {
+        "meanConstructionSuitabilityV3": 1.9733,
+        "physicallyPossibleCells": 60,
+        "protectedOverlapCells": 2,
+        "cliffOverlapCells": 0,
+        "waterOverlapCells": 9,
+        "suitabilityHistogram": {
+          "0": 2,
+          "1": 13,
+          "2": 45,
+          "3": 15
+        }
+      },
+      "reconciliationStatus": "SURVEY_CONFLICT__REPORTED_NOT_SILENTLY_FIXED",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "site.bz_silver",
+      "parentZoneId": "bz_silver",
+      "physicalEnvelopeAu": [
+        634.4594,
+        652.8304,
+        760.539,
+        686.3801
+      ],
+      "cellCount": 64,
+      "suggestedStatus": "SURVEYED_SUGGESTION__NOT_A_LEGAL_RESTRICTION",
+      "owner": "MAP",
+      "measured": {
+        "meanConstructionSuitabilityV3": 2.0625,
+        "physicallyPossibleCells": 44,
+        "protectedOverlapCells": 20,
+        "cliffOverlapCells": 0,
+        "waterOverlapCells": 0,
+        "suitabilityHistogram": {
+          "0": 20,
+          "3": 44
+        }
+      },
+      "reconciliationStatus": "SURVEY_CONFLICT__REPORTED_NOT_SILENTLY_FIXED",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "site.bz_eastflats",
+      "parentZoneId": "bz_eastflats",
+      "physicalEnvelopeAu": [
+        1202.739,
+        490.6339,
+        1294.8909,
+        521.0779
+      ],
+      "cellCount": 35,
+      "suggestedStatus": "SURVEYED_SUGGESTION__NOT_A_LEGAL_RESTRICTION",
+      "owner": "MAP",
+      "measured": {
+        "meanConstructionSuitabilityV3": 1.6286,
+        "physicallyPossibleCells": 19,
+        "protectedOverlapCells": 13,
+        "cliffOverlapCells": 0,
+        "waterOverlapCells": 13,
+        "suitabilityHistogram": {
+          "0": 13,
+          "1": 3,
+          "2": 3,
+          "3": 16
+        }
+      },
+      "reconciliationStatus": "SURVEY_CONFLICT__REPORTED_NOT_SILENTLY_FIXED",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "site.bz_elder_clear",
+      "parentZoneId": "bz_elder_clear",
+      "physicalEnvelopeAu": [
+        768.4277,
+        761.8308,
+        833.0773,
+        819.1336
+      ],
+      "cellCount": 56,
+      "suggestedStatus": "SURVEYED_SUGGESTION__NOT_A_LEGAL_RESTRICTION",
+      "owner": "MAP",
+      "measured": {
+        "meanConstructionSuitabilityV3": 0.1071,
+        "physicallyPossibleCells": 2,
+        "protectedOverlapCells": 54,
+        "cliffOverlapCells": 0,
+        "waterOverlapCells": 0,
+        "suitabilityHistogram": {
+          "0": 54,
+          "3": 2
+        }
+      },
+      "reconciliationStatus": "SURVEY_CONFLICT__REPORTED_NOT_SILENTLY_FIXED",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "site.bz_westwood",
+      "parentZoneId": "bz_westwood",
+      "physicalEnvelopeAu": [
+        408.067,
+        723.8382,
+        461.3041,
+        814.0088
+      ],
+      "cellCount": 84,
+      "suggestedStatus": "SURVEYED_SUGGESTION__NOT_A_LEGAL_RESTRICTION",
+      "owner": "MAP",
+      "measured": {
+        "meanConstructionSuitabilityV3": 1.619,
+        "physicallyPossibleCells": 38,
+        "protectedOverlapCells": 5,
+        "cliffOverlapCells": 2,
+        "waterOverlapCells": 0,
+        "suitabilityHistogram": {
+          "0": 7,
+          "1": 39,
+          "2": 17,
+          "3": 21
+        }
+      },
+      "reconciliationStatus": "SURVEY_CONFLICT__REPORTED_NOT_SILENTLY_FIXED",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "site.bz_typhon_t",
+      "parentZoneId": "bz_typhon_t",
+      "physicalEnvelopeAu": [
+        667.6213,
+        459.6779,
+        732.0639,
+        496.1399
+      ],
+      "cellCount": 45,
+      "suggestedStatus": "SURVEYED_SUGGESTION__NOT_A_LEGAL_RESTRICTION",
+      "owner": "MAP",
+      "measured": {
+        "meanConstructionSuitabilityV3": 1.0889,
+        "physicallyPossibleCells": 11,
+        "protectedOverlapCells": 11,
+        "cliffOverlapCells": 5,
+        "waterOverlapCells": 0,
+        "suitabilityHistogram": {
+          "0": 13,
+          "1": 21,
+          "2": 5,
+          "3": 6
+        }
+      },
+      "reconciliationStatus": "SURVEY_CONFLICT__REPORTED_NOT_SILENTLY_FIXED",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "site.bz_oasis",
+      "parentZoneId": "bz_oasis",
+      "physicalEnvelopeAu": [
+        613.9112,
+        940.6892,
+        691.2921,
+        982.1553
+      ],
+      "cellCount": 44,
+      "suggestedStatus": "SURVEYED_SUGGESTION__NOT_A_LEGAL_RESTRICTION",
+      "owner": "MAP",
+      "measured": {
+        "meanConstructionSuitabilityV3": 0.0682,
+        "physicallyPossibleCells": 1,
+        "protectedOverlapCells": 43,
+        "cliffOverlapCells": 0,
+        "waterOverlapCells": 1,
+        "suitabilityHistogram": {
+          "0": 43,
+          "3": 1
+        }
+      },
+      "reconciliationStatus": "SURVEY_CONFLICT__REPORTED_NOT_SILENTLY_FIXED",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "site.bz_greyback",
+      "parentZoneId": "bz_greyback",
+      "physicalEnvelopeAu": [
+        526.9347,
+        708.5332,
+        579.1326,
+        789.3882
+      ],
+      "cellCount": 60,
+      "suggestedStatus": "SURVEYED_SUGGESTION__NOT_A_LEGAL_RESTRICTION",
+      "owner": "MAP",
+      "measured": {
+        "meanConstructionSuitabilityV3": 1.5167,
+        "physicallyPossibleCells": 22,
+        "protectedOverlapCells": 0,
+        "cliffOverlapCells": 1,
+        "waterOverlapCells": 0,
+        "suitabilityHistogram": {
+          "0": 5,
+          "1": 33,
+          "2": 8,
+          "3": 14
+        }
+      },
+      "reconciliationStatus": "SURVEY_CONFLICT__REPORTED_NOT_SILENTLY_FIXED",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "site.bz_forest_n",
+      "parentZoneId": "bz_forest_n",
+      "physicalEnvelopeAu": [
+        854.2429,
+        374.6701,
+        902.6691,
+        408.0874
+      ],
+      "cellCount": 24,
+      "suggestedStatus": "SURVEYED_SUGGESTION__NOT_A_LEGAL_RESTRICTION",
+      "owner": "MAP",
+      "measured": {
+        "meanConstructionSuitabilityV3": 2.0833,
+        "physicallyPossibleCells": 20,
+        "protectedOverlapCells": 0,
+        "cliffOverlapCells": 1,
+        "waterOverlapCells": 0,
+        "suitabilityHistogram": {
+          "0": 1,
+          "1": 3,
+          "2": 13,
+          "3": 7
+        }
+      },
+      "reconciliationStatus": "SURVEY_CONFLICT__REPORTED_NOT_SILENTLY_FIXED",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "site.bz_delta",
+      "parentZoneId": "bz_delta",
+      "physicalEnvelopeAu": [
+        1067.9549,
+        812.7424,
+        1136.0638,
+        859.487
+      ],
+      "cellCount": 45,
+      "suggestedStatus": "SURVEYED_SUGGESTION__NOT_A_LEGAL_RESTRICTION",
+      "owner": "MAP",
+      "measured": {
+        "meanConstructionSuitabilityV3": 3,
+        "physicallyPossibleCells": 45,
+        "protectedOverlapCells": 0,
+        "cliffOverlapCells": 0,
+        "waterOverlapCells": 0,
+        "suitabilityHistogram": {
+          "3": 45
+        }
+      },
+      "reconciliationStatus": "RECONCILED_WITH_TERRAIN",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "site.bz_moss",
+      "parentZoneId": "bz_moss",
+      "physicalEnvelopeAu": [
+        1005.4853,
+        568.3925,
+        1078.0772,
+        720.0068
+      ],
+      "cellCount": 152,
+      "suggestedStatus": "SURVEYED_SUGGESTION__NOT_A_LEGAL_RESTRICTION",
+      "owner": "MAP",
+      "measured": {
+        "meanConstructionSuitabilityV3": 1.7368,
+        "physicallyPossibleCells": 78,
+        "protectedOverlapCells": 38,
+        "cliffOverlapCells": 0,
+        "waterOverlapCells": 19,
+        "suitabilityHistogram": {
+          "0": 38,
+          "1": 36,
+          "2": 6,
+          "3": 72
+        }
+      },
+      "reconciliationStatus": "SURVEY_CONFLICT__REPORTED_NOT_SILENTLY_FIXED",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "site.bz_verdant",
+      "parentZoneId": "bz_verdant",
+      "physicalEnvelopeAu": [
+        944.1496,
+        465.4979,
+        1076.5127,
+        502.435
+      ],
+      "cellCount": 78,
+      "suggestedStatus": "SURVEYED_SUGGESTION__NOT_A_LEGAL_RESTRICTION",
+      "owner": "MAP",
+      "measured": {
+        "meanConstructionSuitabilityV3": 2.2692,
+        "physicallyPossibleCells": 56,
+        "protectedOverlapCells": 0,
+        "cliffOverlapCells": 0,
+        "waterOverlapCells": 7,
+        "suitabilityHistogram": {
+          "1": 22,
+          "2": 13,
+          "3": 43
+        }
+      },
+      "reconciliationStatus": "SURVEY_CONFLICT__REPORTED_NOT_SILENTLY_FIXED",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "site.bz_ridge",
+      "parentZoneId": "bz_ridge",
+      "physicalEnvelopeAu": [
+        1135.9022,
+        597.4679,
+        1182.9978,
+        681.4575
+      ],
+      "cellCount": 60,
+      "suggestedStatus": "SURVEYED_SUGGESTION__NOT_A_LEGAL_RESTRICTION",
+      "owner": "MAP",
+      "measured": {
+        "meanConstructionSuitabilityV3": 2.3833,
+        "physicallyPossibleCells": 47,
+        "protectedOverlapCells": 3,
+        "cliffOverlapCells": 0,
+        "waterOverlapCells": 0,
+        "suitabilityHistogram": {
+          "0": 3,
+          "1": 10,
+          "2": 8,
+          "3": 39
+        }
+      },
+      "reconciliationStatus": "SURVEY_CONFLICT__REPORTED_NOT_SILENTLY_FIXED",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "site.bz_kestrel",
+      "parentZoneId": "bz_kestrel",
+      "physicalEnvelopeAu": [
+        696.7493,
+        326.3226,
+        753.1064,
+        362.5548
+      ],
+      "cellCount": 28,
+      "suggestedStatus": "SURVEYED_SUGGESTION__NOT_A_LEGAL_RESTRICTION",
+      "owner": "MAP",
+      "measured": {
+        "meanConstructionSuitabilityV3": 1.3571,
+        "physicallyPossibleCells": 14,
+        "protectedOverlapCells": 12,
+        "cliffOverlapCells": 5,
+        "waterOverlapCells": 0,
+        "suitabilityHistogram": {
+          "0": 12,
+          "1": 2,
+          "2": 6,
+          "3": 8
+        }
+      },
+      "reconciliationStatus": "SURVEY_CONFLICT__REPORTED_NOT_SILENTLY_FIXED",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "site.bz_argus",
+      "parentZoneId": "bz_argus",
+      "physicalEnvelopeAu": [
+        848.2452,
+        288.1857,
+        950.5161,
+        322.6477
+      ],
+      "cellCount": 52,
+      "suggestedStatus": "SURVEYED_SUGGESTION__NOT_A_LEGAL_RESTRICTION",
+      "owner": "MAP",
+      "measured": {
+        "meanConstructionSuitabilityV3": 0.4038,
+        "physicallyPossibleCells": 7,
+        "protectedOverlapCells": 45,
+        "cliffOverlapCells": 0,
+        "waterOverlapCells": 0,
+        "suitabilityHistogram": {
+          "0": 45,
+          "3": 7
+        }
+      },
+      "reconciliationStatus": "SURVEY_CONFLICT__REPORTED_NOT_SILENTLY_FIXED",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "site.bz_dune",
+      "parentZoneId": "bz_dune",
+      "physicalEnvelopeAu": [
+        526.0453,
+        942.7833,
+        570.2022,
+        980.6182
+      ],
+      "cellCount": 25,
+      "suggestedStatus": "SURVEYED_SUGGESTION__NOT_A_LEGAL_RESTRICTION",
+      "owner": "MAP",
+      "measured": {
+        "meanConstructionSuitabilityV3": 0,
+        "physicallyPossibleCells": 0,
+        "protectedOverlapCells": 25,
+        "cliffOverlapCells": 0,
+        "waterOverlapCells": 0,
+        "suitabilityHistogram": {
+          "0": 25
+        }
+      },
+      "reconciliationStatus": "SURVEY_CONFLICT__REPORTED_NOT_SILENTLY_FIXED",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "site.bz_salt",
+      "parentZoneId": "bz_salt",
+      "physicalEnvelopeAu": [
+        1565.331,
+        316.7946,
+        1654.5548,
+        357.0742
+      ],
+      "cellCount": 47,
+      "suggestedStatus": "SURVEYED_SUGGESTION__NOT_A_LEGAL_RESTRICTION",
+      "owner": "MAP",
+      "measured": {
+        "meanConstructionSuitabilityV3": 2.1277,
+        "physicallyPossibleCells": 40,
+        "protectedOverlapCells": 6,
+        "cliffOverlapCells": 0,
+        "waterOverlapCells": 8,
+        "suitabilityHistogram": {
+          "0": 7,
+          "2": 20,
+          "3": 20
+        }
+      },
+      "reconciliationStatus": "SURVEY_CONFLICT__REPORTED_NOT_SILENTLY_FIXED",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "site.bz_slag",
+      "parentZoneId": "bz_slag",
+      "physicalEnvelopeAu": [
+        1202.2991,
+        961.6643,
+        1248.2372,
+        998.4993
+      ],
+      "cellCount": 29,
+      "suggestedStatus": "SURVEYED_SUGGESTION__NOT_A_LEGAL_RESTRICTION",
+      "owner": "MAP",
+      "measured": {
+        "meanConstructionSuitabilityV3": 2.5862,
+        "physicallyPossibleCells": 25,
+        "protectedOverlapCells": 0,
+        "cliffOverlapCells": 0,
+        "waterOverlapCells": 1,
+        "suitabilityHistogram": {
+          "0": 4,
+          "3": 25
+        }
+      },
+      "reconciliationStatus": "SURVEY_CONFLICT__REPORTED_NOT_SILENTLY_FIXED",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "site.bz_cinder",
+      "parentZoneId": "bz_cinder",
+      "physicalEnvelopeAu": [
+        1564.2539,
+        856.7189,
+        1607.4775,
+        896.162
+      ],
+      "cellCount": 25,
+      "suggestedStatus": "SURVEYED_SUGGESTION__NOT_A_LEGAL_RESTRICTION",
+      "owner": "MAP",
+      "measured": {
+        "meanConstructionSuitabilityV3": 0,
+        "physicallyPossibleCells": 0,
+        "protectedOverlapCells": 25,
+        "cliffOverlapCells": 0,
+        "waterOverlapCells": 0,
+        "suitabilityHistogram": {
+          "0": 25
+        }
+      },
+      "reconciliationStatus": "SURVEY_CONFLICT__REPORTED_NOT_SILENTLY_FIXED",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "site.bz_ironholm",
+      "parentZoneId": "bz_ironholm",
+      "physicalEnvelopeAu": [
+        1106.5615,
+        1259.1447,
+        1174.1993,
+        1298.822
+      ],
+      "cellCount": 44,
+      "suggestedStatus": "SURVEYED_SUGGESTION__NOT_A_LEGAL_RESTRICTION",
+      "owner": "MAP",
+      "measured": {
+        "meanConstructionSuitabilityV3": 1.25,
+        "physicallyPossibleCells": 20,
+        "protectedOverlapCells": 12,
+        "cliffOverlapCells": 0,
+        "waterOverlapCells": 1,
+        "suitabilityHistogram": {
+          "0": 12,
+          "1": 12,
+          "2": 17,
+          "3": 3
+        }
+      },
+      "reconciliationStatus": "SURVEY_CONFLICT__REPORTED_NOT_SILENTLY_FIXED",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    }
+  ],
+  "footprints": [
+    {
+      "id": "footprint.v3.001",
+      "cellCount": 1027,
+      "bboxAu": [
+        640,
+        160,
+        1072,
+        648
+      ],
+      "zoneIds": [
+        "bz_kestrel",
+        "bz_argus",
+        "bz_forest_n",
+        "bz_verdant",
+        "bz_moss"
+      ],
+      "outsideSurveyedZoneCells": 917,
+      "meanHeightClass": 0.3272,
+      "protectedOverlapCells": 0,
+      "cliffOverlapCells": 0,
+      "status": "VERIFIED_GEOMETRY__PHYSICALLY_POSSIBLE_FOOTPRINT",
+      "owner": "MAP",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "footprint.v3.002",
+      "cellCount": 367,
+      "bboxAu": [
+        1536,
+        232,
+        1768,
+        376
+      ],
+      "zoneIds": [
+        "bz_salt"
+      ],
+      "outsideSurveyedZoneCells": 335,
+      "meanHeightClass": 0.4632,
+      "protectedOverlapCells": 0,
+      "cliffOverlapCells": 0,
+      "status": "VERIFIED_GEOMETRY__PHYSICALLY_POSSIBLE_FOOTPRINT",
+      "owner": "MAP",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "footprint.v3.003",
+      "cellCount": 733,
+      "bboxAu": [
+        984,
+        280,
+        1408,
+        496
+      ],
+      "zoneIds": [
+        "bz_hook",
+        "bz_eastflats"
+      ],
+      "outsideSurveyedZoneCells": 686,
+      "meanHeightClass": 0.2265,
+      "protectedOverlapCells": 0,
+      "cliffOverlapCells": 0,
+      "status": "VERIFIED_GEOMETRY__PHYSICALLY_POSSIBLE_FOOTPRINT",
+      "owner": "MAP",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "footprint.v3.004",
+      "cellCount": 141,
+      "bboxAu": [
+        320,
+        400,
+        440,
+        544
+      ],
+      "zoneIds": [],
+      "outsideSurveyedZoneCells": 141,
+      "meanHeightClass": 0.0426,
+      "protectedOverlapCells": 0,
+      "cliffOverlapCells": 0,
+      "status": "VERIFIED_GEOMETRY__PHYSICALLY_POSSIBLE_FOOTPRINT",
+      "owner": "MAP",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "footprint.v3.005",
+      "cellCount": 12,
+      "bboxAu": [
+        1872,
+        408,
+        1912,
+        456
+      ],
+      "zoneIds": [],
+      "outsideSurveyedZoneCells": 12,
+      "meanHeightClass": 0,
+      "protectedOverlapCells": 0,
+      "cliffOverlapCells": 0,
+      "status": "VERIFIED_GEOMETRY__PHYSICALLY_POSSIBLE_FOOTPRINT",
+      "owner": "MAP",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "footprint.v3.006",
+      "cellCount": 1196,
+      "bboxAu": [
+        984,
+        416,
+        1248,
+        1104
+      ],
+      "zoneIds": [
+        "bz_verdant",
+        "bz_ridge",
+        "bz_moss",
+        "bz_delta",
+        "bz_slag"
+      ],
+      "outsideSurveyedZoneCells": 1097,
+      "meanHeightClass": 0.1162,
+      "protectedOverlapCells": 0,
+      "cliffOverlapCells": 0,
+      "status": "VERIFIED_GEOMETRY__PHYSICALLY_POSSIBLE_FOOTPRINT",
+      "owner": "MAP",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "footprint.v3.007",
+      "cellCount": 16,
+      "bboxAu": [
+        1848,
+        424,
+        1904,
+        480
+      ],
+      "zoneIds": [],
+      "outsideSurveyedZoneCells": 16,
+      "meanHeightClass": 0,
+      "protectedOverlapCells": 0,
+      "cliffOverlapCells": 0,
+      "status": "VERIFIED_GEOMETRY__PHYSICALLY_POSSIBLE_FOOTPRINT",
+      "owner": "MAP",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "footprint.v3.008",
+      "cellCount": 264,
+      "bboxAu": [
+        616,
+        456,
+        840,
+        648
+      ],
+      "zoneIds": [
+        "bz_typhon_t",
+        "bz_greywater"
+      ],
+      "outsideSurveyedZoneCells": 229,
+      "meanHeightClass": 0.1402,
+      "protectedOverlapCells": 0,
+      "cliffOverlapCells": 0,
+      "status": "VERIFIED_GEOMETRY__PHYSICALLY_POSSIBLE_FOOTPRINT",
+      "owner": "MAP",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "footprint.v3.009",
+      "cellCount": 895,
+      "bboxAu": [
+        328,
+        464,
+        576,
+        992
+      ],
+      "zoneIds": [
+        "bz_westmouth",
+        "bz_westwood"
+      ],
+      "outsideSurveyedZoneCells": 819,
+      "meanHeightClass": 0.3464,
+      "protectedOverlapCells": 0,
+      "cliffOverlapCells": 0,
+      "status": "VERIFIED_GEOMETRY__PHYSICALLY_POSSIBLE_FOOTPRINT",
+      "owner": "MAP",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "footprint.v3.010",
+      "cellCount": 146,
+      "bboxAu": [
+        480,
+        496,
+        664,
+        896
+      ],
+      "zoneIds": [],
+      "outsideSurveyedZoneCells": 146,
+      "meanHeightClass": 1.5137,
+      "protectedOverlapCells": 0,
+      "cliffOverlapCells": 0,
+      "status": "VERIFIED_GEOMETRY__PHYSICALLY_POSSIBLE_FOOTPRINT",
+      "owner": "MAP",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "footprint.v3.011",
+      "cellCount": 397,
+      "bboxAu": [
+        1200,
+        496,
+        1368,
+        840
+      ],
+      "zoneIds": [
+        "bz_eastflats"
+      ],
+      "outsideSurveyedZoneCells": 384,
+      "meanHeightClass": 0.0781,
+      "protectedOverlapCells": 0,
+      "cliffOverlapCells": 0,
+      "status": "VERIFIED_GEOMETRY__PHYSICALLY_POSSIBLE_FOOTPRINT",
+      "owner": "MAP",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "footprint.v3.012",
+      "cellCount": 54,
+      "bboxAu": [
+        1152,
+        536,
+        1240,
+        672
+      ],
+      "zoneIds": [],
+      "outsideSurveyedZoneCells": 54,
+      "meanHeightClass": 1.3333,
+      "protectedOverlapCells": 0,
+      "cliffOverlapCells": 0,
+      "status": "VERIFIED_GEOMETRY__PHYSICALLY_POSSIBLE_FOOTPRINT",
+      "owner": "MAP",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "footprint.v3.013",
+      "cellCount": 1525,
+      "bboxAu": [
+        544,
+        632,
+        984,
+        1160
+      ],
+      "zoneIds": [
+        "bz_silver",
+        "bz_greyback",
+        "bz_elder_clear",
+        "bz_gulfwest"
+      ],
+      "outsideSurveyedZoneCells": 1399,
+      "meanHeightClass": 0.082,
+      "protectedOverlapCells": 0,
+      "cliffOverlapCells": 0,
+      "status": "VERIFIED_GEOMETRY__PHYSICALLY_POSSIBLE_FOOTPRINT",
+      "owner": "MAP",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "footprint.v3.014",
+      "cellCount": 39,
+      "bboxAu": [
+        1160,
+        680,
+        1224,
+        800
+      ],
+      "zoneIds": [],
+      "outsideSurveyedZoneCells": 39,
+      "meanHeightClass": 1.5128,
+      "protectedOverlapCells": 0,
+      "cliffOverlapCells": 0,
+      "status": "VERIFIED_GEOMETRY__PHYSICALLY_POSSIBLE_FOOTPRINT",
+      "owner": "MAP",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "footprint.v3.015",
+      "cellCount": 82,
+      "bboxAu": [
+        128,
+        824,
+        224,
+        912
+      ],
+      "zoneIds": [],
+      "outsideSurveyedZoneCells": 82,
+      "meanHeightClass": 0.8049,
+      "protectedOverlapCells": 0,
+      "cliffOverlapCells": 0,
+      "status": "VERIFIED_GEOMETRY__PHYSICALLY_POSSIBLE_FOOTPRINT",
+      "owner": "MAP",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "footprint.v3.016",
+      "cellCount": 11,
+      "bboxAu": [
+        992,
+        872,
+        1024,
+        912
+      ],
+      "zoneIds": [],
+      "outsideSurveyedZoneCells": 11,
+      "meanHeightClass": 0,
+      "protectedOverlapCells": 0,
+      "cliffOverlapCells": 0,
+      "status": "VERIFIED_GEOMETRY__PHYSICALLY_POSSIBLE_FOOTPRINT",
+      "owner": "MAP",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "footprint.v3.017",
+      "cellCount": 14,
+      "bboxAu": [
+        1584,
+        912,
+        1632,
+        944
+      ],
+      "zoneIds": [],
+      "outsideSurveyedZoneCells": 14,
+      "meanHeightClass": 0.1429,
+      "protectedOverlapCells": 0,
+      "cliffOverlapCells": 0,
+      "status": "VERIFIED_GEOMETRY__PHYSICALLY_POSSIBLE_FOOTPRINT",
+      "owner": "MAP",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "footprint.v3.018",
+      "cellCount": 12,
+      "bboxAu": [
+        576,
+        1144,
+        640,
+        1160
+      ],
+      "zoneIds": [],
+      "outsideSurveyedZoneCells": 12,
+      "meanHeightClass": 0,
+      "protectedOverlapCells": 0,
+      "cliffOverlapCells": 0,
+      "status": "VERIFIED_GEOMETRY__PHYSICALLY_POSSIBLE_FOOTPRINT",
+      "owner": "MAP",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "footprint.v3.019",
+      "cellCount": 60,
+      "bboxAu": [
+        1208,
+        1232,
+        1288,
+        1336
+      ],
+      "zoneIds": [],
+      "outsideSurveyedZoneCells": 60,
+      "meanHeightClass": 0.1833,
+      "protectedOverlapCells": 0,
+      "cliffOverlapCells": 0,
+      "status": "VERIFIED_GEOMETRY__PHYSICALLY_POSSIBLE_FOOTPRINT",
+      "owner": "MAP",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "footprint.v3.020",
+      "cellCount": 30,
+      "bboxAu": [
+        1136,
+        1248,
+        1200,
+        1304
+      ],
+      "zoneIds": [
+        "bz_ironholm"
+      ],
+      "outsideSurveyedZoneCells": 14,
+      "meanHeightClass": 1.3667,
+      "protectedOverlapCells": 0,
+      "cliffOverlapCells": 0,
+      "status": "VERIFIED_GEOMETRY__PHYSICALLY_POSSIBLE_FOOTPRINT",
+      "owner": "MAP",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    },
+    {
+      "id": "footprint.v3.021",
+      "cellCount": 14,
+      "bboxAu": [
+        1152,
+        1304,
+        1200,
+        1328
+      ],
+      "zoneIds": [],
+      "outsideSurveyedZoneCells": 14,
+      "meanHeightClass": 1,
+      "protectedOverlapCells": 0,
+      "cliffOverlapCells": 0,
+      "status": "VERIFIED_GEOMETRY__PHYSICALLY_POSSIBLE_FOOTPRINT",
+      "owner": "MAP",
+      "legalPlacement": {
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      }
+    }
+  ],
+  "noClaims": [
+    "NO placement grant",
+    "NO occupancy or claim",
+    "NO body/swept clearance approval",
+    "NO Gameplay balance",
+    "NO production building tileset"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schema": "soh.wmp.v3.clean_room.v1",
+  "status": "WMP_V3_CLEAN_ROOM_OK",
+  "command": "./clean-room_v3.sh",
+  "isolatedRevisionDigest": "1356735557a421f720e24c6e9dd54ae0812e5f75cc18a48c14ddfc69de9bd114",
+  "sourceRevisionDigest": "1356735557a421f720e24c6e9dd54ae0812e5f75cc18a48c14ddfc69de9bd114",
+  "isolatedTypedHandoffSha256": "53ee6727345288ce1b7898d1dcb97015e2153154c780f288e9a40b25272e65c8",
+  "isolatedTestResultsSha256": "4856307d2dc42310d86fea51f4945434aca88ec0f3aad6dc7043b36b4d87daee",
+  "isolatedViewsIndexSha256": "6665712ad0b204a44ac54f718c6b4150c569697dad8a152928c6bdda6dcb32f2",
+  "v1Regression": "WMP_TESTS 75/75 in the isolated copy; source v1 bytes untouched",
+  "v2Baseline": "WMP-02 build + typed handoff regenerated in isolation from v2/src only",
+  "v3Tests": "WMP_V3_TESTS OK, independent negative fixtures OK",
+  "noExternalGoldTree": true,
+  "noLegacyLab": true,
+  "noMigrationReader": true,
+  "noNetwork": true,
+  "noGameplayRuntimeWrite": true,
+  "equalDigests": true
+}

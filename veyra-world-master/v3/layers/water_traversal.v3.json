@@ -1,0 +1,5131 @@
+{
+  "schema": "soh.wmp.v3.water_traversal",
+  "status": "SEPARATED_FERRY_ROAD_BRIDGE_FORD_WATER_AND_APPROVED_TRAVERSAL",
+  "previousDefect": {
+    "id": "P0-WMP03-T03",
+    "exactSource": "v2/src/intake_v2.mjs:145,150,153-163 + v2/handoff/geographic_handoff.v2.json",
+    "verdict": "FERRY_POLYLINES_BECAME_LAND_WALKABLE_AND_PROPOSED_CROSSINGS_BECAME_SILENT_COLLISION_PERMISSION",
+    "v2FerryRoadIds": [
+      "rd_2c",
+      "rd_2d",
+      "rd_2e",
+      "rd_2f",
+      "rd_2g",
+      "rd_2h",
+      "rd_2i",
+      "rd_2j"
+    ],
+    "v2FerryWalkableCellCount": 219,
+    "v2ProposedWaterRoadCells": 267,
+    "v2ProposedWaterCellsWithWalkable1": 267
+  },
+  "classVocabulary": {
+    "0": "WATER_NO_ROAD",
+    "1": "DRY_LAND_ROAD_SURFACE",
+    "2": "FERRY_ROUTE_NOT_A_LAND_ROAD",
+    "3": "BRIDGE_DECK_PROPOSAL",
+    "4": "FORD_PROPOSAL"
+  },
+  "corrected": {
+    "ferryRoutes": 8,
+    "ferryCellCount": 211,
+    "ferryLandWalkableCells": 0,
+    "bridgeDeckProposals": [
+      {
+        "id": "br_1",
+        "kind": "BRIDGE_DECK_PROPOSAL",
+        "cells": [
+          14127
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 1
+      },
+      {
+        "id": "br_9",
+        "kind": "BRIDGE_DECK_PROPOSAL",
+        "cells": [
+          14347
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 1
+      },
+      {
+        "id": "br_8",
+        "kind": "BRIDGE_DECK_PROPOSAL",
+        "cells": [
+          14394
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 1
+      },
+      {
+        "id": "br_2",
+        "kind": "BRIDGE_DECK_PROPOSAL",
+        "cells": [
+          16411
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 1
+      },
+      {
+        "id": "br_3",
+        "kind": "BRIDGE_DECK_PROPOSAL",
+        "cells": [
+          18106
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 1
+      },
+      {
+        "id": "br_a",
+        "kind": "BRIDGE_DECK_PROPOSAL",
+        "cells": [
+          20110
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 1
+      },
+      {
+        "id": "br_4",
+        "kind": "BRIDGE_DECK_PROPOSAL",
+        "cells": [
+          20341
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 1
+      },
+      {
+        "id": "br_6",
+        "kind": "BRIDGE_DECK_PROPOSAL",
+        "cells": [
+          22875
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 1
+      },
+      {
+        "id": "br_0",
+        "kind": "BRIDGE_DECK_PROPOSAL",
+        "cells": [
+          23374
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 1
+      },
+      {
+        "id": "br_5",
+        "kind": "BRIDGE_DECK_PROPOSAL",
+        "cells": [
+          25621
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 1
+      }
+    ],
+    "bridgeCellCount": 10,
+    "fordProposals": [
+      {
+        "id": "ford.rd_i.v3",
+        "roadId": "rd_i",
+        "kind": "FORD_PROPOSAL",
+        "cells": [
+          8119,
+          8370
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 2
+      },
+      {
+        "id": "ford.rd_z.v3",
+        "roadId": "rd_z",
+        "kind": "FORD_PROPOSAL",
+        "cells": [
+          10204,
+          10453,
+          10702
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 3
+      },
+      {
+        "id": "ford.rd_2a.v3",
+        "roadId": "rd_2a",
+        "kind": "FORD_PROPOSAL",
+        "cells": [
+          10873
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 1
+      },
+      {
+        "id": "ford.rd_1y.v3",
+        "roadId": "rd_1y",
+        "kind": "FORD_PROPOSAL",
+        "cells": [
+          14096,
+          14097
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 2
+      },
+      {
+        "id": "ford.rd_29.v3",
+        "roadId": "rd_29",
+        "kind": "FORD_PROPOSAL",
+        "cells": [
+          15600
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 1
+      },
+      {
+        "id": "ford.rd_5.v3",
+        "roadId": "rd_5",
+        "kind": "FORD_PROPOSAL",
+        "cells": [
+          16160
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 1
+      },
+      {
+        "id": "ford.rd_9.v3",
+        "roadId": "rd_9",
+        "kind": "FORD_PROPOSAL",
+        "cells": [
+          17856,
+          18107
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 2
+      },
+      {
+        "id": "ford.rd_20.v3",
+        "roadId": "rd_20",
+        "kind": "FORD_PROPOSAL",
+        "cells": [
+          20109,
+          20360
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 2
+      },
+      {
+        "id": "ford.rd_b.v3",
+        "roadId": "rd_b",
+        "kind": "FORD_PROPOSAL",
+        "cells": [
+          20342
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 1
+      },
+      {
+        "id": "ford.rd_v.v3",
+        "roadId": "rd_v",
+        "kind": "FORD_PROPOSAL",
+        "cells": [
+          22876
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 1
+      },
+      {
+        "id": "ford.rd_0.v3",
+        "roadId": "rd_0",
+        "kind": "FORD_PROPOSAL",
+        "cells": [
+          23624
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 1
+      },
+      {
+        "id": "ford.rd_n.v3",
+        "roadId": "rd_n",
+        "kind": "FORD_PROPOSAL",
+        "cells": [
+          25371
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 1
+      },
+      {
+        "id": "ford.rd_w.v3",
+        "roadId": "rd_w",
+        "kind": "FORD_PROPOSAL",
+        "cells": [
+          26695
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 1
+      },
+      {
+        "id": "ford.rd_2b.v3",
+        "roadId": "rd_2b",
+        "kind": "FORD_PROPOSAL",
+        "cells": [
+          27620
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 1
+      },
+      {
+        "id": "ford.rd_x.v3",
+        "roadId": "rd_x",
+        "kind": "FORD_PROPOSAL",
+        "cells": [
+          28448
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 1
+      },
+      {
+        "id": "ford.rd_1f.v3",
+        "roadId": "rd_1f",
+        "kind": "FORD_PROPOSAL",
+        "cells": [
+          30074
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 1
+      },
+      {
+        "id": "ford.rd_1l.v3",
+        "roadId": "rd_1l",
+        "kind": "FORD_PROPOSAL",
+        "cells": [
+          30325,
+          30576
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 2
+      },
+      {
+        "id": "ford.rd_k.v3",
+        "roadId": "rd_k",
+        "kind": "FORD_PROPOSAL",
+        "cells": [
+          34085
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 1
+      },
+      {
+        "id": "ford.rd_25.v3",
+        "roadId": "rd_25",
+        "kind": "FORD_PROPOSAL",
+        "cells": [
+          38388
+        ],
+        "landWalkable": false,
+        "activeCollisionPermission": false,
+        "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+        "owner": "MAP+GAMEPLAY",
+        "status": "PROPOSED",
+        "cellCount": 1
+      }
+    ],
+    "fordCellCount": 26,
+    "waterRoadCellCount": 247,
+    "approvedTraversalCellCount": 0,
+    "deprecatedLegacyWalkableWaterCellIndices": [
+      8119,
+      9885,
+      10135,
+      10190,
+      10222,
+      10223,
+      10224,
+      10225,
+      10226,
+      10227,
+      10228,
+      10229,
+      10230,
+      10440,
+      10480,
+      10690,
+      10702,
+      10730,
+      10940,
+      10980,
+      11124,
+      11183,
+      11184,
+      11185,
+      11186,
+      11187,
+      11188,
+      11189,
+      11190,
+      11230,
+      11433,
+      11480,
+      11676,
+      11677,
+      11678,
+      11679,
+      11680,
+      11681,
+      11682,
+      11683,
+      11730,
+      11980,
+      12230,
+      12480,
+      12730,
+      12980,
+      13230,
+      13877,
+      14097,
+      14127,
+      14347,
+      14378,
+      14394,
+      14597,
+      15349,
+      15600,
+      15653,
+      15654,
+      15655,
+      15882,
+      15908,
+      16158,
+      16159,
+      16160,
+      16279,
+      16280,
+      16281,
+      16411,
+      16529,
+      16531,
+      16779,
+      16781,
+      17029,
+      17031,
+      17279,
+      17280,
+      17281,
+      17282,
+      17283,
+      17284,
+      17285,
+      17286,
+      17287,
+      17288,
+      17289,
+      17290,
+      17531,
+      17781,
+      17856,
+      18031,
+      18106,
+      18107,
+      18281,
+      18282,
+      18532,
+      18608,
+      18609,
+      18782,
+      19032,
+      19110,
+      19282,
+      19360,
+      19532,
+      19782,
+      20110,
+      20112,
+      20341,
+      20342,
+      21865,
+      22115,
+      22365,
+      22615,
+      22875,
+      23125,
+      23374,
+      23624,
+      24118,
+      24870,
+      25120,
+      25370,
+      25621,
+      26278,
+      26279,
+      26280,
+      26281,
+      26282,
+      26283,
+      26284,
+      26285,
+      26286,
+      26287,
+      26288,
+      26289,
+      26290,
+      26291,
+      26528,
+      26658,
+      26659,
+      26660,
+      26661,
+      26662,
+      26663,
+      26664,
+      26665,
+      26666,
+      26667,
+      26668,
+      26669,
+      26670,
+      26671,
+      26672,
+      26673,
+      26674,
+      26675,
+      26695,
+      26925,
+      27175,
+      27425,
+      27426,
+      27427,
+      27428,
+      27429,
+      27430,
+      27431,
+      27432,
+      27433,
+      27434,
+      27435,
+      27436,
+      27437,
+      27620,
+      27687,
+      27688,
+      27689,
+      27690,
+      27691,
+      27692,
+      27693,
+      27694,
+      27695,
+      28199,
+      29125,
+      29126,
+      29127,
+      29128,
+      29221,
+      29375,
+      29469,
+      29625,
+      29719,
+      29875,
+      29966,
+      29967,
+      29968,
+      29969,
+      30074,
+      30125,
+      30325,
+      30375,
+      30576,
+      30625,
+      30829,
+      30830,
+      30831,
+      30832,
+      30875,
+      31083,
+      31125,
+      31375,
+      31625,
+      31875,
+      32125,
+      32375,
+      32625,
+      32875,
+      33125,
+      33375,
+      33376,
+      33377,
+      33378,
+      33379,
+      33380,
+      33381,
+      34085,
+      34133,
+      34335,
+      34383,
+      34585,
+      34633,
+      34645,
+      34835,
+      34883,
+      34895,
+      35085,
+      35133,
+      35145,
+      35383,
+      35395,
+      35633,
+      35645,
+      35883,
+      35895,
+      36133,
+      36145,
+      36383,
+      36384,
+      36385,
+      36386,
+      36387,
+      36388,
+      36389,
+      36390,
+      36391,
+      36392,
+      36393,
+      36394,
+      36395,
+      36639,
+      36889,
+      37139,
+      37389,
+      37639,
+      37889,
+      38137,
+      38138,
+      38139,
+      38387
+    ],
+    "deprecatedLegacyStatus": "DEPRECATED__UNSAFE_FOR_COLLISION__NOT_AN_APPROVED_TRAVERSAL_RULE"
+  },
+  "ferryRoutes": [
+    {
+      "id": "rd_2g",
+      "kind": "ferry",
+      "sourceRef": "GOLD project.roads[kind=ferry]",
+      "cells": [
+        10190,
+        10438,
+        10439,
+        10440,
+        10685,
+        10686,
+        10687,
+        10688,
+        10933,
+        10934,
+        10935,
+        11180,
+        11181,
+        11182,
+        11183,
+        11427,
+        11428,
+        11429,
+        11430,
+        11676,
+        11677
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "SOURCE_AUTHORED_GEOMETRY__NOT_A_LAND_ROAD",
+      "authoredLengthAu": 124.6112
+    },
+    {
+      "id": "rd_2h",
+      "kind": "ferry",
+      "sourceRef": "GOLD project.roads[kind=ferry]",
+      "cells": [
+        10471,
+        10472,
+        10722,
+        10972,
+        10973,
+        11223,
+        11473,
+        11474,
+        11724,
+        11725,
+        11975,
+        12225,
+        12226,
+        12476,
+        12477,
+        12727,
+        12977,
+        12978,
+        13228,
+        13478,
+        13479,
+        13729
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "SOURCE_AUTHORED_GEOMETRY__NOT_A_LAND_ROAD",
+      "authoredLengthAu": 133.97
+    },
+    {
+      "id": "rd_2c",
+      "kind": "ferry",
+      "sourceRef": "GOLD project.roads[kind=ferry]",
+      "cells": [
+        16279,
+        16280,
+        16281,
+        16531,
+        16532,
+        16533,
+        16783,
+        16784,
+        16785,
+        16786,
+        17036,
+        17037,
+        17038,
+        17288,
+        17289,
+        17290
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "SOURCE_AUTHORED_GEOMETRY__NOT_A_LAND_ROAD",
+      "authoredLengthAu": 98.0623
+    },
+    {
+      "id": "rd_2e",
+      "kind": "ferry",
+      "sourceRef": "GOLD project.roads[kind=ferry]",
+      "cells": [
+        16529,
+        16779,
+        16780,
+        17030,
+        17280,
+        17530,
+        17780,
+        17781,
+        18031,
+        18281,
+        18531,
+        18781,
+        19031,
+        19032,
+        19282,
+        19532,
+        19782
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "SOURCE_AUTHORED_GEOMETRY__NOT_A_LAND_ROAD",
+      "authoredLengthAu": 119.3612
+    },
+    {
+      "id": "rd_2d",
+      "kind": "ferry",
+      "sourceRef": "GOLD project.roads[kind=ferry]",
+      "cells": [
+        26291,
+        26536,
+        26537,
+        26538,
+        26539,
+        26540,
+        26541,
+        26781,
+        26782,
+        26783,
+        26784,
+        26785,
+        26786,
+        27029,
+        27030,
+        27031
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "SOURCE_AUTHORED_GEOMETRY__NOT_A_LAND_ROAD",
+      "authoredLengthAu": 106.5707
+    },
+    {
+      "id": "rd_2f",
+      "kind": "ferry",
+      "sourceRef": "GOLD project.roads[kind=ferry]",
+      "cells": [
+        26658,
+        26659,
+        26660,
+        26661,
+        26662,
+        26663,
+        26913,
+        26914,
+        26915,
+        26916,
+        26917,
+        26918,
+        26919,
+        27169,
+        27170,
+        27171,
+        27172,
+        27173,
+        27174,
+        27424,
+        27425,
+        27426,
+        27427,
+        27428,
+        27429,
+        27430,
+        27431,
+        27432,
+        27433,
+        27434,
+        27435,
+        27436,
+        27437,
+        27687,
+        27688,
+        27689,
+        27690,
+        27691,
+        27692,
+        27693,
+        27694,
+        27695
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "SOURCE_AUTHORED_GEOMETRY__NOT_A_LAND_ROAD",
+      "authoredLengthAu": 303.1679
+    },
+    {
+      "id": "rd_2j",
+      "kind": "ferry",
+      "sourceRef": "GOLD project.roads[kind=ferry]",
+      "cells": [
+        29127,
+        29128,
+        29377,
+        29626,
+        29627,
+        29876,
+        30126,
+        30375,
+        30376,
+        30625,
+        30875,
+        31125,
+        31375,
+        31625,
+        31875,
+        32125,
+        32375,
+        32625,
+        32875,
+        33125,
+        33375,
+        33625,
+        33875,
+        33876,
+        34126,
+        34127,
+        34377,
+        34378,
+        34628,
+        34629,
+        34879,
+        35129,
+        35130,
+        35380,
+        35381,
+        35631,
+        35632,
+        35882,
+        36132,
+        36133,
+        36383,
+        36384,
+        36634,
+        36635,
+        36885,
+        36886,
+        37136,
+        37386,
+        37387,
+        37637,
+        37638,
+        37888,
+        37889
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "SOURCE_AUTHORED_GEOMETRY__NOT_A_LAND_ROAD",
+      "authoredLengthAu": 338.641
+    },
+    {
+      "id": "rd_2i",
+      "kind": "ferry",
+      "sourceRef": "GOLD project.roads[kind=ferry]",
+      "cells": [
+        34398,
+        34647,
+        34648,
+        34897,
+        35146,
+        35147,
+        35396,
+        35645,
+        35646,
+        35895,
+        36145,
+        36394,
+        36395,
+        36643,
+        36644,
+        36892,
+        36893,
+        37142,
+        37391,
+        37392,
+        37640,
+        37641,
+        37890,
+        38139
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "SOURCE_AUTHORED_GEOMETRY__NOT_A_LAND_ROAD",
+      "authoredLengthAu": 146.6375
+    }
+  ],
+  "bridgeDeckProposals": [
+    {
+      "id": "br_1",
+      "kind": "BRIDGE_DECK_PROPOSAL",
+      "cells": [
+        14127
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "br_9",
+      "kind": "BRIDGE_DECK_PROPOSAL",
+      "cells": [
+        14347
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "br_8",
+      "kind": "BRIDGE_DECK_PROPOSAL",
+      "cells": [
+        14394
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "br_2",
+      "kind": "BRIDGE_DECK_PROPOSAL",
+      "cells": [
+        16411
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "br_3",
+      "kind": "BRIDGE_DECK_PROPOSAL",
+      "cells": [
+        18106
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "br_a",
+      "kind": "BRIDGE_DECK_PROPOSAL",
+      "cells": [
+        20110
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "br_4",
+      "kind": "BRIDGE_DECK_PROPOSAL",
+      "cells": [
+        20341
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "br_6",
+      "kind": "BRIDGE_DECK_PROPOSAL",
+      "cells": [
+        22875
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "br_0",
+      "kind": "BRIDGE_DECK_PROPOSAL",
+      "cells": [
+        23374
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "br_5",
+      "kind": "BRIDGE_DECK_PROPOSAL",
+      "cells": [
+        25621
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    }
+  ],
+  "fordProposals": [
+    {
+      "id": "ford.rd_i.v3",
+      "roadId": "rd_i",
+      "kind": "FORD_PROPOSAL",
+      "cells": [
+        8119,
+        8370
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "ford.rd_z.v3",
+      "roadId": "rd_z",
+      "kind": "FORD_PROPOSAL",
+      "cells": [
+        10204,
+        10453,
+        10702
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "ford.rd_2a.v3",
+      "roadId": "rd_2a",
+      "kind": "FORD_PROPOSAL",
+      "cells": [
+        10873
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "ford.rd_1y.v3",
+      "roadId": "rd_1y",
+      "kind": "FORD_PROPOSAL",
+      "cells": [
+        14096,
+        14097
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "ford.rd_29.v3",
+      "roadId": "rd_29",
+      "kind": "FORD_PROPOSAL",
+      "cells": [
+        15600
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "ford.rd_5.v3",
+      "roadId": "rd_5",
+      "kind": "FORD_PROPOSAL",
+      "cells": [
+        16160
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "ford.rd_9.v3",
+      "roadId": "rd_9",
+      "kind": "FORD_PROPOSAL",
+      "cells": [
+        17856,
+        18107
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "ford.rd_20.v3",
+      "roadId": "rd_20",
+      "kind": "FORD_PROPOSAL",
+      "cells": [
+        20109,
+        20360
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "ford.rd_b.v3",
+      "roadId": "rd_b",
+      "kind": "FORD_PROPOSAL",
+      "cells": [
+        20342
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "ford.rd_v.v3",
+      "roadId": "rd_v",
+      "kind": "FORD_PROPOSAL",
+      "cells": [
+        22876
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "ford.rd_0.v3",
+      "roadId": "rd_0",
+      "kind": "FORD_PROPOSAL",
+      "cells": [
+        23624
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "ford.rd_n.v3",
+      "roadId": "rd_n",
+      "kind": "FORD_PROPOSAL",
+      "cells": [
+        25371
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "ford.rd_w.v3",
+      "roadId": "rd_w",
+      "kind": "FORD_PROPOSAL",
+      "cells": [
+        26695
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "ford.rd_2b.v3",
+      "roadId": "rd_2b",
+      "kind": "FORD_PROPOSAL",
+      "cells": [
+        27620
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "ford.rd_x.v3",
+      "roadId": "rd_x",
+      "kind": "FORD_PROPOSAL",
+      "cells": [
+        28448
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "ford.rd_1f.v3",
+      "roadId": "rd_1f",
+      "kind": "FORD_PROPOSAL",
+      "cells": [
+        30074
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "ford.rd_1l.v3",
+      "roadId": "rd_1l",
+      "kind": "FORD_PROPOSAL",
+      "cells": [
+        30325,
+        30576
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "ford.rd_k.v3",
+      "roadId": "rd_k",
+      "kind": "FORD_PROPOSAL",
+      "cells": [
+        34085
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "ford.rd_25.v3",
+      "roadId": "rd_25",
+      "kind": "FORD_PROPOSAL",
+      "cells": [
+        38388
+      ],
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    }
+  ],
+  "waterRoadCellClassifications": [
+    {
+      "cellIndex": 8119,
+      "atAu": [
+        956,
+        260
+      ],
+      "waterClass": 3,
+      "roadId": "rd_i",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 8370,
+      "atAu": [
+        964,
+        268
+      ],
+      "waterClass": 3,
+      "roadId": "rd_i",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 10190,
+      "atAu": [
+        1524,
+        324
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2g",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 10204,
+      "atAu": [
+        1636,
+        324
+      ],
+      "waterClass": 3,
+      "roadId": "rd_z",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 10438,
+      "atAu": [
+        1508,
+        332
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2g",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 10439,
+      "atAu": [
+        1516,
+        332
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2g",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 10440,
+      "atAu": [
+        1524,
+        332
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2g",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 10453,
+      "atAu": [
+        1628,
+        332
+      ],
+      "waterClass": 3,
+      "roadId": "rd_z",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 10471,
+      "atAu": [
+        1772,
+        332
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2h",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 10472,
+      "atAu": [
+        1780,
+        332
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2h",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 10685,
+      "atAu": [
+        1484,
+        340
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2g",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 10686,
+      "atAu": [
+        1492,
+        340
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2g",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 10687,
+      "atAu": [
+        1500,
+        340
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2g",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 10688,
+      "atAu": [
+        1508,
+        340
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2g",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 10702,
+      "atAu": [
+        1620,
+        340
+      ],
+      "waterClass": 3,
+      "roadId": "rd_z",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 10722,
+      "atAu": [
+        1780,
+        340
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2h",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 10873,
+      "atAu": [
+        988,
+        348
+      ],
+      "waterClass": 3,
+      "roadId": "rd_2a",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 10933,
+      "atAu": [
+        1468,
+        348
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2g",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 10934,
+      "atAu": [
+        1476,
+        348
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2g",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 10935,
+      "atAu": [
+        1484,
+        348
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2g",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 10972,
+      "atAu": [
+        1780,
+        348
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2h",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 10973,
+      "atAu": [
+        1788,
+        348
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2h",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 11180,
+      "atAu": [
+        1444,
+        356
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2g",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 11181,
+      "atAu": [
+        1452,
+        356
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2g",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 11182,
+      "atAu": [
+        1460,
+        356
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2g",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 11183,
+      "atAu": [
+        1468,
+        356
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2g",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 11223,
+      "atAu": [
+        1788,
+        356
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2h",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 11427,
+      "atAu": [
+        1420,
+        364
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2g",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 11428,
+      "atAu": [
+        1428,
+        364
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2g",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 11429,
+      "atAu": [
+        1436,
+        364
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2g",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 11430,
+      "atAu": [
+        1444,
+        364
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2g",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 11473,
+      "atAu": [
+        1788,
+        364
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2h",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 11474,
+      "atAu": [
+        1796,
+        364
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2h",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 11676,
+      "atAu": [
+        1412,
+        372
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2g",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 11677,
+      "atAu": [
+        1420,
+        372
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2g",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 11724,
+      "atAu": [
+        1796,
+        372
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2h",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 11725,
+      "atAu": [
+        1804,
+        372
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2h",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 11975,
+      "atAu": [
+        1804,
+        380
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2h",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 12225,
+      "atAu": [
+        1804,
+        388
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2h",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 12226,
+      "atAu": [
+        1812,
+        388
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2h",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 12476,
+      "atAu": [
+        1812,
+        396
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2h",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 12477,
+      "atAu": [
+        1820,
+        396
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2h",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 12727,
+      "atAu": [
+        1820,
+        404
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2h",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 12977,
+      "atAu": [
+        1820,
+        412
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2h",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 12978,
+      "atAu": [
+        1828,
+        412
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2h",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 13228,
+      "atAu": [
+        1828,
+        420
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2h",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 13478,
+      "atAu": [
+        1828,
+        428
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2h",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 13479,
+      "atAu": [
+        1836,
+        428
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2h",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 13729,
+      "atAu": [
+        1836,
+        436
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2h",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 14096,
+      "atAu": [
+        772,
+        452
+      ],
+      "waterClass": 3,
+      "roadId": "rd_1y",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 14097,
+      "atAu": [
+        780,
+        452
+      ],
+      "waterClass": 3,
+      "roadId": "rd_1y",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 14127,
+      "atAu": [
+        1020,
+        452
+      ],
+      "waterClass": 3,
+      "roadId": "rd_1",
+      "surfaceKind": "BRIDGE_DECK_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 14347,
+      "atAu": [
+        780,
+        460
+      ],
+      "waterClass": 3,
+      "roadId": "rd_29",
+      "surfaceKind": "BRIDGE_DECK_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 14394,
+      "atAu": [
+        1156,
+        460
+      ],
+      "waterClass": 3,
+      "roadId": "rd_1k",
+      "surfaceKind": "BRIDGE_DECK_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 15600,
+      "atAu": [
+        804,
+        500
+      ],
+      "waterClass": 2,
+      "roadId": "rd_29",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 16160,
+      "atAu": [
+        1284,
+        516
+      ],
+      "waterClass": 3,
+      "roadId": "rd_5",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 16279,
+      "atAu": [
+        236,
+        524
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2c",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 16280,
+      "atAu": [
+        244,
+        524
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2c",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 16281,
+      "atAu": [
+        252,
+        524
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2c",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 16411,
+      "atAu": [
+        1292,
+        524
+      ],
+      "waterClass": 3,
+      "roadId": "rd_5",
+      "surfaceKind": "BRIDGE_DECK_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 16529,
+      "atAu": [
+        236,
+        532
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2e",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 16531,
+      "atAu": [
+        252,
+        532
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2c",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 16532,
+      "atAu": [
+        260,
+        532
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2c",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 16533,
+      "atAu": [
+        268,
+        532
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2c",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 16779,
+      "atAu": [
+        236,
+        540
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2e",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 16780,
+      "atAu": [
+        244,
+        540
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2e",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 16783,
+      "atAu": [
+        268,
+        540
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2c",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 16784,
+      "atAu": [
+        276,
+        540
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2c",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 16785,
+      "atAu": [
+        284,
+        540
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2c",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 16786,
+      "atAu": [
+        292,
+        540
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2c",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 17030,
+      "atAu": [
+        244,
+        548
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2e",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 17036,
+      "atAu": [
+        292,
+        548
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2c",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 17037,
+      "atAu": [
+        300,
+        548
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2c",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 17038,
+      "atAu": [
+        308,
+        548
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2c",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 17280,
+      "atAu": [
+        244,
+        556
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2e",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 17288,
+      "atAu": [
+        308,
+        556
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2c",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 17289,
+      "atAu": [
+        316,
+        556
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2c",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 17290,
+      "atAu": [
+        324,
+        556
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2c",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 17530,
+      "atAu": [
+        244,
+        564
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2e",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 17780,
+      "atAu": [
+        244,
+        572
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2e",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 17781,
+      "atAu": [
+        252,
+        572
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2e",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 17856,
+      "atAu": [
+        852,
+        572
+      ],
+      "waterClass": 3,
+      "roadId": "rd_9",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 18031,
+      "atAu": [
+        252,
+        580
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2e",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 18106,
+      "atAu": [
+        852,
+        580
+      ],
+      "waterClass": 3,
+      "roadId": "rd_9",
+      "surfaceKind": "BRIDGE_DECK_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 18107,
+      "atAu": [
+        860,
+        580
+      ],
+      "waterClass": 3,
+      "roadId": "rd_9",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 18281,
+      "atAu": [
+        252,
+        588
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2e",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 18531,
+      "atAu": [
+        252,
+        596
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2e",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 18781,
+      "atAu": [
+        252,
+        604
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2e",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 19031,
+      "atAu": [
+        252,
+        612
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2e",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 19032,
+      "atAu": [
+        260,
+        612
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2e",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 19282,
+      "atAu": [
+        260,
+        620
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2e",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 19532,
+      "atAu": [
+        260,
+        628
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2e",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 19782,
+      "atAu": [
+        260,
+        636
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2e",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 20109,
+      "atAu": [
+        876,
+        644
+      ],
+      "waterClass": 3,
+      "roadId": "rd_20",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 20110,
+      "atAu": [
+        884,
+        644
+      ],
+      "waterClass": 3,
+      "roadId": "rd_20",
+      "surfaceKind": "BRIDGE_DECK_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 20341,
+      "atAu": [
+        732,
+        652
+      ],
+      "waterClass": 3,
+      "roadId": "rd_b",
+      "surfaceKind": "BRIDGE_DECK_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 20342,
+      "atAu": [
+        740,
+        652
+      ],
+      "waterClass": 3,
+      "roadId": "rd_b",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 20360,
+      "atAu": [
+        884,
+        652
+      ],
+      "waterClass": 3,
+      "roadId": "rd_20",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 22875,
+      "atAu": [
+        1004,
+        732
+      ],
+      "waterClass": 3,
+      "roadId": "rd_0",
+      "surfaceKind": "BRIDGE_DECK_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 22876,
+      "atAu": [
+        1012,
+        732
+      ],
+      "waterClass": 3,
+      "roadId": "rd_v",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 23374,
+      "atAu": [
+        996,
+        748
+      ],
+      "waterClass": 3,
+      "roadId": "rd_0",
+      "surfaceKind": "BRIDGE_DECK_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 23624,
+      "atAu": [
+        996,
+        756
+      ],
+      "waterClass": 3,
+      "roadId": "rd_0",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 25371,
+      "atAu": [
+        972,
+        812
+      ],
+      "waterClass": 3,
+      "roadId": "rd_n",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 25621,
+      "atAu": [
+        972,
+        820
+      ],
+      "waterClass": 3,
+      "roadId": "rd_n",
+      "surfaceKind": "BRIDGE_DECK_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DECK_GEOMETRY_ONLY",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26291,
+      "atAu": [
+        332,
+        844
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2d",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26536,
+      "atAu": [
+        292,
+        852
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2d",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26537,
+      "atAu": [
+        300,
+        852
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2d",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26538,
+      "atAu": [
+        308,
+        852
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2d",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26539,
+      "atAu": [
+        316,
+        852
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2d",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26540,
+      "atAu": [
+        324,
+        852
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2d",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26541,
+      "atAu": [
+        332,
+        852
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2d",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26658,
+      "atAu": [
+        1268,
+        852
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26659,
+      "atAu": [
+        1276,
+        852
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26660,
+      "atAu": [
+        1284,
+        852
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26661,
+      "atAu": [
+        1292,
+        852
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26662,
+      "atAu": [
+        1300,
+        852
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26663,
+      "atAu": [
+        1308,
+        852
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26695,
+      "atAu": [
+        1564,
+        852
+      ],
+      "waterClass": 1,
+      "roadId": "rd_w",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26781,
+      "atAu": [
+        252,
+        860
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2d",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26782,
+      "atAu": [
+        260,
+        860
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2d",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26783,
+      "atAu": [
+        268,
+        860
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2d",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26784,
+      "atAu": [
+        276,
+        860
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2d",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26785,
+      "atAu": [
+        284,
+        860
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2d",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26786,
+      "atAu": [
+        292,
+        860
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2d",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26913,
+      "atAu": [
+        1308,
+        860
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26914,
+      "atAu": [
+        1316,
+        860
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26915,
+      "atAu": [
+        1324,
+        860
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26916,
+      "atAu": [
+        1332,
+        860
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26917,
+      "atAu": [
+        1340,
+        860
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26918,
+      "atAu": [
+        1348,
+        860
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 26919,
+      "atAu": [
+        1356,
+        860
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27029,
+      "atAu": [
+        236,
+        868
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2d",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27030,
+      "atAu": [
+        244,
+        868
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2d",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27031,
+      "atAu": [
+        252,
+        868
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2d",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27169,
+      "atAu": [
+        1356,
+        868
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27170,
+      "atAu": [
+        1364,
+        868
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27171,
+      "atAu": [
+        1372,
+        868
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27172,
+      "atAu": [
+        1380,
+        868
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27173,
+      "atAu": [
+        1388,
+        868
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27174,
+      "atAu": [
+        1396,
+        868
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27424,
+      "atAu": [
+        1396,
+        876
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27425,
+      "atAu": [
+        1404,
+        876
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27426,
+      "atAu": [
+        1412,
+        876
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27427,
+      "atAu": [
+        1420,
+        876
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27428,
+      "atAu": [
+        1428,
+        876
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27429,
+      "atAu": [
+        1436,
+        876
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27430,
+      "atAu": [
+        1444,
+        876
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27431,
+      "atAu": [
+        1452,
+        876
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27432,
+      "atAu": [
+        1460,
+        876
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27433,
+      "atAu": [
+        1468,
+        876
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27434,
+      "atAu": [
+        1476,
+        876
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27435,
+      "atAu": [
+        1484,
+        876
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27436,
+      "atAu": [
+        1492,
+        876
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27437,
+      "atAu": [
+        1500,
+        876
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27620,
+      "atAu": [
+        964,
+        884
+      ],
+      "waterClass": 3,
+      "roadId": "rd_2b",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27687,
+      "atAu": [
+        1500,
+        884
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27688,
+      "atAu": [
+        1508,
+        884
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27689,
+      "atAu": [
+        1516,
+        884
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27690,
+      "atAu": [
+        1524,
+        884
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27691,
+      "atAu": [
+        1532,
+        884
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27692,
+      "atAu": [
+        1540,
+        884
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27693,
+      "atAu": [
+        1548,
+        884
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27694,
+      "atAu": [
+        1556,
+        884
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 27695,
+      "atAu": [
+        1564,
+        884
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2f",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 28448,
+      "atAu": [
+        1588,
+        908
+      ],
+      "waterClass": 3,
+      "roadId": "rd_x",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 29127,
+      "atAu": [
+        1020,
+        932
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 29128,
+      "atAu": [
+        1028,
+        932
+      ],
+      "waterClass": 3,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 29377,
+      "atAu": [
+        1020,
+        940
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 29626,
+      "atAu": [
+        1012,
+        948
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 29627,
+      "atAu": [
+        1020,
+        948
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 29876,
+      "atAu": [
+        1012,
+        956
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 30074,
+      "atAu": [
+        596,
+        964
+      ],
+      "waterClass": 3,
+      "roadId": "rd_1f",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 30126,
+      "atAu": [
+        1012,
+        964
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 30325,
+      "atAu": [
+        604,
+        972
+      ],
+      "waterClass": 3,
+      "roadId": "rd_1l",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 30375,
+      "atAu": [
+        1004,
+        972
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 30376,
+      "atAu": [
+        1012,
+        972
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 30576,
+      "atAu": [
+        612,
+        980
+      ],
+      "waterClass": 3,
+      "roadId": "rd_1l",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 30625,
+      "atAu": [
+        1004,
+        980
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 30875,
+      "atAu": [
+        1004,
+        988
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 31125,
+      "atAu": [
+        1004,
+        996
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 31375,
+      "atAu": [
+        1004,
+        1004
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 31625,
+      "atAu": [
+        1004,
+        1012
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 31875,
+      "atAu": [
+        1004,
+        1020
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 32125,
+      "atAu": [
+        1004,
+        1028
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 32375,
+      "atAu": [
+        1004,
+        1036
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 32625,
+      "atAu": [
+        1004,
+        1044
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 32875,
+      "atAu": [
+        1004,
+        1052
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 33125,
+      "atAu": [
+        1004,
+        1060
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 33375,
+      "atAu": [
+        1004,
+        1068
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 33625,
+      "atAu": [
+        1004,
+        1076
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 33875,
+      "atAu": [
+        1004,
+        1084
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 33876,
+      "atAu": [
+        1012,
+        1084
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 34085,
+      "atAu": [
+        684,
+        1092
+      ],
+      "waterClass": 3,
+      "roadId": "rd_k",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 34126,
+      "atAu": [
+        1012,
+        1092
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 34127,
+      "atAu": [
+        1020,
+        1092
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 34377,
+      "atAu": [
+        1020,
+        1100
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 34378,
+      "atAu": [
+        1028,
+        1100
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 34398,
+      "atAu": [
+        1188,
+        1100
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2i",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 34628,
+      "atAu": [
+        1028,
+        1108
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 34629,
+      "atAu": [
+        1036,
+        1108
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 34647,
+      "atAu": [
+        1180,
+        1108
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2i",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 34648,
+      "atAu": [
+        1188,
+        1108
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2i",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 34879,
+      "atAu": [
+        1036,
+        1116
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 34897,
+      "atAu": [
+        1180,
+        1116
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2i",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 35129,
+      "atAu": [
+        1036,
+        1124
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 35130,
+      "atAu": [
+        1044,
+        1124
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 35146,
+      "atAu": [
+        1172,
+        1124
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2i",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 35147,
+      "atAu": [
+        1180,
+        1124
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2i",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 35380,
+      "atAu": [
+        1044,
+        1132
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 35381,
+      "atAu": [
+        1052,
+        1132
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 35396,
+      "atAu": [
+        1172,
+        1132
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2i",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 35631,
+      "atAu": [
+        1052,
+        1140
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 35632,
+      "atAu": [
+        1060,
+        1140
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 35645,
+      "atAu": [
+        1164,
+        1140
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2i",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 35646,
+      "atAu": [
+        1172,
+        1140
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2i",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 35882,
+      "atAu": [
+        1060,
+        1148
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 35895,
+      "atAu": [
+        1164,
+        1148
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2i",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 36132,
+      "atAu": [
+        1060,
+        1156
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 36133,
+      "atAu": [
+        1068,
+        1156
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 36145,
+      "atAu": [
+        1164,
+        1156
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2i",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 36383,
+      "atAu": [
+        1068,
+        1164
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 36384,
+      "atAu": [
+        1076,
+        1164
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 36394,
+      "atAu": [
+        1156,
+        1164
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2i",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 36395,
+      "atAu": [
+        1164,
+        1164
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2i",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 36634,
+      "atAu": [
+        1076,
+        1172
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 36635,
+      "atAu": [
+        1084,
+        1172
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 36643,
+      "atAu": [
+        1148,
+        1172
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2i",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 36644,
+      "atAu": [
+        1156,
+        1172
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2i",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 36885,
+      "atAu": [
+        1084,
+        1180
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 36886,
+      "atAu": [
+        1092,
+        1180
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 36892,
+      "atAu": [
+        1140,
+        1180
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2i",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 36893,
+      "atAu": [
+        1148,
+        1180
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2i",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 37136,
+      "atAu": [
+        1092,
+        1188
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 37142,
+      "atAu": [
+        1140,
+        1188
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2i",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 37386,
+      "atAu": [
+        1092,
+        1196
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 37387,
+      "atAu": [
+        1100,
+        1196
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 37391,
+      "atAu": [
+        1132,
+        1196
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2i",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 37392,
+      "atAu": [
+        1140,
+        1196
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2i",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 37637,
+      "atAu": [
+        1100,
+        1204
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 37638,
+      "atAu": [
+        1108,
+        1204
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 37640,
+      "atAu": [
+        1124,
+        1204
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2i",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 37641,
+      "atAu": [
+        1132,
+        1204
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2i",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 37888,
+      "atAu": [
+        1108,
+        1212
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 37889,
+      "atAu": [
+        1116,
+        1212
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2j",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 37890,
+      "atAu": [
+        1124,
+        1212
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2i",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 38139,
+      "atAu": [
+        1116,
+        1220
+      ],
+      "waterClass": 1,
+      "roadId": "rd_2i",
+      "surfaceKind": "FERRY_ROUTE",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "BLOCKED__GAMEPLAY_OWNS_BOAT_MECHANIC",
+      "owner": "GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "cellIndex": 38388,
+      "atAu": [
+        1108,
+        1228
+      ],
+      "waterClass": 1,
+      "roadId": "rd_25",
+      "surfaceKind": "FORD_PROPOSAL",
+      "landWalkable": false,
+      "activeCollisionPermission": false,
+      "traversalStatus": "PROPOSED__DEPTH_AND_FLOW_UNKNOWN",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    }
+  ],
+  "approvedTraversal": {
+    "status": "UNKNOWN",
+    "owner": "GAMEPLAY",
+    "cellCount": 0,
+    "note": "No ferry/boat, bridge-deck, ford, body-clearance or collision rule is approved. ZERO cells have active collision permission."
+  },
+  "compatibilityBoundary": "v3 deliberately sets economy.walkable=0 on EVERY water cell. Gameplay validateGeographicHandoff() currently requires walkable=1 on all roads[].cells; the exact water-crossing road IDs below are therefore an explicit GAMEPLAY-owned decision, NOT a silent permission and NOT a claimed validator PASS.",
+  "noClaims": [
+    "NO ferry/boat rule",
+    "NO land bridge",
+    "NO collision permission",
+    "NO cart passability",
+    "NO validator PASS"
+  ]
+}

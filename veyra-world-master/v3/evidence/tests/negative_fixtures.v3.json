@@ -1,0 +1,179 @@
+{
+  "schema": "soh.wmp.v3.negative_fixtures",
+  "status": "WMP_V3_FIXTURES_OK",
+  "fixtureCount": 17,
+  "defectsCovered": [
+    "P0-01 flat world must NOT produce false cliffs",
+    "P0-01 absolute threshold >200 changes meaning under a uniform byte relabel",
+    "P0-01 isolated extreme byte must NOT become a cliff face",
+    "P0-01 invented physical units",
+    "P0-02 X-then-Y rasterization distorts diagonal authored segments",
+    "P0-02 correction must not break authored L-shape connectivity/endpoints",
+    "P0-02 reverse-direction diagonal must remain shape-preserving",
+    "P0-03 ferry polyline must never become land-walkable",
+    "P0-03 proposed crossing must not silently become active collision permission",
+    "P0-03 v2 real ferry cells had walkable=1",
+    "P0-04 sandbox construction must not be restricted to 23 surveyed zones",
+    "P0-04 protected geometry must never become physically possible",
+    "P0-04 a cliff face must never become a buildable footprint",
+    "bounded check must not redesign canonical POIs",
+    "bounded check must not auto-shrink all flagged roofs",
+    "unapproved Gameplay values must not appear authoritative",
+    "visible road surface must not be conflated with traversal permission"
+  ],
+  "fixtures": [
+    {
+      "id": "T-NEG-01",
+      "group": "TERRAIN",
+      "defectAgainst": "P0-01 flat world must NOT produce false cliffs",
+      "independentInput": "synthetic S: slope=0, elevation=40 everywhere, no zones/elders",
+      "expected": "cliffCount=0 and max heightClass<=1",
+      "actual": "cliffCount=0 maxHeightClass=0",
+      "status": "PASS"
+    },
+    {
+      "id": "T-NEG-02",
+      "group": "TERRAIN",
+      "defectAgainst": "P0-01 absolute threshold >200 changes meaning under a uniform byte relabel",
+      "independentInput": "synthetic S: every slope byte +51 (same terrain, different labels)",
+      "expected": "WMP-01 rule would flip to >0 cliffs; v3 quantile classification stays bit-identical",
+      "actual": "WMP01 rule cliff cells on shifted=1; v3 invariant=true",
+      "status": "PASS"
+    },
+    {
+      "id": "T-NEG-03",
+      "group": "TERRAIN",
+      "defectAgainst": "P0-01 isolated extreme byte must NOT become a cliff face",
+      "independentInput": "synthetic S: one cell slope=255, neighbours unchanged",
+      "expected": "cliff[isolatedCell]=0",
+      "actual": "cliff=0 steepNeighbours=3",
+      "status": "PASS"
+    },
+    {
+      "id": "T-NEG-04",
+      "group": "TERRAIN",
+      "defectAgainst": "P0-01 invented physical units",
+      "independentInput": "v3 terrain layer unitPolicy JSON",
+      "expected": "no asserted metres/degrees/climb law; UNKNOWN physical unit status",
+      "actual": "assertedUnits=0 slopeUnit=UNRESOLVED__RAW_SOURCE_BYTE",
+      "status": "PASS"
+    },
+    {
+      "id": "R-NEG-01",
+      "group": "ROADS",
+      "defectAgainst": "P0-02 X-then-Y rasterization distorts diagonal authored segments",
+      "independentInput": "independent synthetic diagonal segment (4,4)->(500,500)",
+      "expected": "legacy L-shape drift > 40 au; corrected drift <= 5.7 au",
+      "actual": "legacy=350.725 au (all 63 X-first cells on start row), corrected=5.6569 au",
+      "status": "PASS"
+    },
+    {
+      "id": "R-NEG-02",
+      "group": "ROADS",
+      "defectAgainst": "P0-02 correction must not break authored L-shape connectivity/endpoints",
+      "independentInput": "independent synthetic L polyline with 2 authored segments",
+      "expected": "4-connected, endpoints preserved, drift <= 5.7 au",
+      "actual": "conn=true start=true end=true drift=0",
+      "status": "PASS"
+    },
+    {
+      "id": "R-NEG-03",
+      "group": "ROADS",
+      "defectAgainst": "P0-02 reverse-direction diagonal must remain shape-preserving",
+      "independentInput": "independent synthetic reverse diagonal (900,900)->(100,100)",
+      "expected": "4-connected and drift <= 5.7 au",
+      "actual": "cells=201 drift=5.6569",
+      "status": "PASS"
+    },
+    {
+      "id": "W-NEG-01",
+      "group": "WATER",
+      "defectAgainst": "P0-03 ferry polyline must never become land-walkable",
+      "independentInput": "independent synthetic 20 water cells, one ferry road, one bridge proposal, one ford",
+      "expected": "ferry cells class=2, landWalkable=false, activeCollisionPermission=0 everywhere",
+      "actual": "ferryOk=true activePermissionSum=0",
+      "status": "PASS"
+    },
+    {
+      "id": "W-NEG-02",
+      "group": "WATER",
+      "defectAgainst": "P0-03 proposed crossing must not silently become active collision permission",
+      "independentInput": "same independent synthetic water grid",
+      "expected": "bridge=3, ford=4, both PROPOSED with activeCollisionPermission=false",
+      "actual": "bridge=3 ford=4 proposals=1+1",
+      "status": "PASS"
+    },
+    {
+      "id": "W-NEG-03",
+      "group": "WATER",
+      "defectAgainst": "P0-03 v2 real ferry cells had walkable=1",
+      "independentInput": "v2 handoff ferry road cells vs v3 economy.walkable",
+      "expected": "v2=219 walkable ferry cells, v3=0 for every water cell",
+      "actual": "v2=219 v3WaterWalkable=0",
+      "status": "PASS"
+    },
+    {
+      "id": "C-NEG-01",
+      "group": "CONSTRUCTION",
+      "defectAgainst": "P0-04 sandbox construction must not be restricted to 23 surveyed zones",
+      "independentInput": "independent synthetic 20x20 dry flat patch with zoneId=0 (no surveyed zone)",
+      "expected": ">=1 physically possible footprint, every cell outside surveyed zones",
+      "actual": "footprints=1 cells=400 outside=400",
+      "status": "PASS"
+    },
+    {
+      "id": "C-NEG-02",
+      "group": "CONSTRUCTION",
+      "defectAgainst": "P0-04 protected geometry must never become physically possible",
+      "independentInput": "independent synthetic S with one protectedGeometryCandidate cell",
+      "expected": "suitability[protectedCell]=0",
+      "actual": "suitability=0",
+      "status": "PASS"
+    },
+    {
+      "id": "C-NEG-03",
+      "group": "CONSTRUCTION",
+      "defectAgainst": "P0-04 a cliff face must never become a buildable footprint",
+      "independentInput": "independent synthetic T with one cliffCandidate cell forced",
+      "expected": "suitability[cliffCell]=0",
+      "actual": "suitability=0",
+      "status": "PASS"
+    },
+    {
+      "id": "S-NEG-01",
+      "group": "STRUCTURAL",
+      "defectAgainst": "bounded check must not redesign canonical POIs",
+      "independentInput": "structural_checks.v3.json vs architecture.pois[]",
+      "expected": "canonicalGeometryChanged=false, 0 redesigns",
+      "actual": "changed=0",
+      "status": "PASS"
+    },
+    {
+      "id": "S-NEG-02",
+      "group": "STRUCTURAL",
+      "defectAgainst": "bounded check must not auto-shrink all flagged roofs",
+      "independentInput": "v2 99 corrected insets vs v3 roofBoundarySemantics",
+      "expected": "v3 autoShrinkAppliedCount=0 and 99 classified as boundary-coincident",
+      "actual": "v3Shrinks=0 coincident=99",
+      "status": "PASS"
+    },
+    {
+      "id": "I-NEG-01",
+      "group": "INTERFACE",
+      "defectAgainst": "unapproved Gameplay values must not appear authoritative",
+      "independentInput": "interface fields + handoff validators",
+      "expected": "cargoPassable all 0, approvedTraversal cellCount 0, validators NOT_EXECUTED",
+      "actual": "cargo=0 approved=0",
+      "status": "PASS"
+    },
+    {
+      "id": "I-NEG-02",
+      "group": "INTERFACE",
+      "defectAgainst": "visible road surface must not be conflated with traversal permission",
+      "independentInput": "v3 roadSurface.u8 vs traversal_graph.v3.json + activeCollisionPermission.u8",
+      "expected": "road surface cells > 0, graph edges > 0, ZERO active permissions",
+      "actual": "surfaceCells=1963 edges=1676 permissions=0",
+      "status": "PASS"
+    }
+  ]
+}

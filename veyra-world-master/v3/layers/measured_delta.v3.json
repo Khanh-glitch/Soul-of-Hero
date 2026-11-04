@@ -1,0 +1,109 @@
+{
+  "schema": "soh.wmp.v3.measured_delta",
+  "status": "CHANGED_MEASUREMENTS__BEFORE_AND_AFTER",
+  "measured": {
+    "p0_01_terrain": {
+      "v1CliffThreshold": 200,
+      "observedSlopeMaxRawByte": 150,
+      "v1CliffCells": 0,
+      "v3CliffCandidateCells": 305,
+      "v3TerraceCandidateCells": 996,
+      "heightClassHistogram": {
+        "0": 7199,
+        "1": 3595,
+        "2": 2158,
+        "3": 1008,
+        "4": 361,
+        "5": 71
+      },
+      "slopeClassHistogram": {
+        "0": 5678,
+        "1": 4768,
+        "2": 2311,
+        "3": 1170,
+        "4": 465
+      }
+    },
+    "p0_02_roads": {
+      "roadCount": 92,
+      "legacyMaxDriftAu": 76.198,
+      "correctedMaxDriftAu": 5.6569,
+      "legacyMeanDriftAu": 6.5994,
+      "correctedMeanDriftAu": 2.2759,
+      "authoredLengthAu": 10853.7572,
+      "legacyPathLengthAu": 13408,
+      "correctedPathLengthAu": 13408,
+      "improvedRoads": 78
+    },
+    "p0_03_water": {
+      "v2FerryWalkableCells": 219,
+      "v2WaterCellsWithWalkable1": 267,
+      "v3FerryRoutes": 8,
+      "v3FerryCells": 211,
+      "v3WaterRoadCells": 247,
+      "v3LandWalkableWaterCells": 0,
+      "v3ActiveCollisionPermissionCells": 0,
+      "bridgeDeckProposalCells": 10,
+      "fordProposalCells": 26
+    },
+    "p0_04_construction": {
+      "v2BuildableCells": 1242,
+      "v2SurveyedSites": 23,
+      "v3PhysicallyPossibleFootprints": 21,
+      "v3PhysicallyPossibleCells": 7035,
+      "v3CellsOutsideSurveyedZones": 6481,
+      "surveyedConflicts": [
+        "site.bz_greywater",
+        "site.bz_gulfwest",
+        "site.bz_westmouth",
+        "site.bz_hook",
+        "site.bz_silver",
+        "site.bz_eastflats",
+        "site.bz_elder_clear",
+        "site.bz_westwood",
+        "site.bz_typhon_t",
+        "site.bz_oasis",
+        "site.bz_greyback",
+        "site.bz_forest_n",
+        "site.bz_moss",
+        "site.bz_verdant",
+        "site.bz_ridge",
+        "site.bz_kestrel",
+        "site.bz_argus",
+        "site.bz_dune",
+        "site.bz_salt",
+        "site.bz_slag",
+        "site.bz_cinder",
+        "site.bz_ironholm"
+      ],
+      "legalPlacement": "UNKNOWN__GAMEPLAY_OWNED"
+    },
+    "structural": {
+      "poiAssessed": 81,
+      "poiDistantAccess": 0,
+      "sitesWithHostOverlap": 18,
+      "roofsAssessed": 153,
+      "roofsOutsideBoundary": 0,
+      "autoShrinkApplied": 0,
+      "canonicalPoiChanges": 0
+    },
+    "traversal": {
+      "graphNodes": 1654,
+      "graphEdges": 1676,
+      "visibleSurfaceCells": 1654,
+      "edgeHistogram": {
+        "DRY_LAND_ROAD": 1397,
+        "FORD_PROPOSAL": 44,
+        "BRIDGE_DECK_PROPOSAL": 21,
+        "FERRY_ROUTE": 214
+      }
+    },
+    "compatibility": {
+      "economyArrayLength": 43750,
+      "roadsInHandoff": 84,
+      "ferryRoutesSeparate": 8,
+      "roadsWithWaterCells": 26,
+      "gameplayValidatorsExecuted": false
+    }
+  }
+}

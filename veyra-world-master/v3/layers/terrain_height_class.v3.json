@@ -1,0 +1,305 @@
+{
+  "schema": "soh.wmp.v3.terrain_height_class",
+  "authority": "MAP_DESIGNS_THE_PHYSICAL_WORLD__GAMEPLAY_POPULATES_AND_SIMULATES_IT",
+  "status": "PHYSICAL_TERRAIN_CLASSIFICATION_PROPOSED__NOT_A_COLLISION_OR_CLIMB_LAW",
+  "previousDefect": {
+    "id": "P0-WMP03-T01",
+    "exactSource": "build.mjs:151,156,161-163",
+    "criterion": "slopeRaw > 200 => cliff / slopeClass>=3",
+    "v1CliffThreshold": 200,
+    "observedSourceRaster": "data/rasters/geo01/slope.u8",
+    "observedMinRawByte": 0,
+    "observedMaxRawByte": 150,
+    "v1CliffCellCount": 0,
+    "v1SlopeClassHistogram": {
+      "0": 43624,
+      "1": 107,
+      "2": 19
+    },
+    "verdict": "THRESHOLD_EXCEEDS_OBSERVED_MAXIMUM__NO_CLIFF_CELL_EVER_CLASSIFIED"
+  },
+  "unitPolicy": {
+    "slopeUnit": "UNRESOLVED__RAW_SOURCE_BYTE",
+    "elevationUnit": "UNRESOLVED__RAW_SOURCE_BYTE",
+    "reliefUnit": "UNRESOLVED__RAW_SOURCE_BYTE_DIFFERENCE",
+    "physicalUnitStatus": "UNKNOWN",
+    "noMetres": true,
+    "noDegrees": true,
+    "noClimbRule": true,
+    "note": "Every boundary below is an OBSERVED empirical quantile of the actual source raster, not an invented physical constant or Gameplay balance rate."
+  },
+  "observedQuantiles": {
+    "slope": {
+      "p50": 3,
+      "p75": 9,
+      "p90": 17,
+      "p95": 20,
+      "p97": 22,
+      "p99": 27,
+      "p100": 150
+    },
+    "relief": {
+      "p50": 8,
+      "p75": 24,
+      "p90": 42,
+      "p95": 51,
+      "p97": 56,
+      "p99": 73,
+      "p100": 222
+    },
+    "elevation": {
+      "p50": 51,
+      "p75": 69,
+      "p90": 120,
+      "p95": 155,
+      "p99": 218,
+      "p100": 243
+    }
+  },
+  "analyticWeights": {
+    "slope": 0.4,
+    "relief": 0.25,
+    "elevation": 0.2,
+    "convexity": 0.1,
+    "region": 0.05
+  },
+  "scoreCutQuantiles": [
+    0.5,
+    0.75,
+    0.9,
+    0.97,
+    0.995
+  ],
+  "classCuts": [
+    0.4501,
+    0.6622,
+    0.8065,
+    0.8753,
+    0.9372
+  ],
+  "degenerateInputGuard": false,
+  "degenerateGuardNote": "A perfectly flat / zero-spread source has no relief ordering and therefore no steep faces; absolute-zero quantile thresholds must never make every cell a cliff.",
+  "classVocabulary": [
+    "0 LOWLAND_FLAT",
+    "1 GENTLE_RISE",
+    "2 ROLLING",
+    "3 HILL_TERRACE",
+    "4 STEEP_FACE",
+    "5 RELIEF_HIGH"
+  ],
+  "cliffRule": {
+    "heightClassAtLeast": 4,
+    "slopeRawByteAtLeast": 20,
+    "localReliefRawByteAtLeast": 42,
+    "minSteep8Neighbours": 2,
+    "basis": "connected steep FACE, not an isolated byte; all four inputs are measured"
+  },
+  "regionGeometryInputs": {
+    "highRockZoneCodes": [
+      6,
+      7,
+      8,
+      16,
+      21
+    ],
+    "lowlandZoneCodes": [
+      1,
+      2,
+      4,
+      9,
+      10,
+      11,
+      18,
+      20
+    ],
+    "typhonElderCode": 2,
+    "cinderZoneCode": 17,
+    "rockSnowVolcanicBiomeCodes": [
+      7,
+      8,
+      9
+    ],
+    "sourceRef": "data/rasters/geo01/{zoneId,elderGeometryId,biomeCode}.u8"
+  },
+  "dryLandCellCount": 14392,
+  "heightClassHistogram": {
+    "0": 7199,
+    "1": 3595,
+    "2": 2158,
+    "3": 1008,
+    "4": 361,
+    "5": 71
+  },
+  "slopeClassHistogram": {
+    "0": 5678,
+    "1": 4768,
+    "2": 2311,
+    "3": 1170,
+    "4": 465
+  },
+  "cliffCandidateCount": 305,
+  "terraceCandidateCount": 996,
+  "regionEvidence": [
+    {
+      "id": "TYPHON_TERRITORY",
+      "sourceRef": "GOLD project.elders[id=el_typhon].outer => elderGeometryId raster",
+      "expectedPhysicalSignature": "high relief / steep faces",
+      "cellCount": 789,
+      "status": "VERIFIED",
+      "meanSlopeRawByte": 15.8517,
+      "meanElevationRawByte": 159.82,
+      "slopeRawByteP50": 13,
+      "slopeRawByteP95": 37,
+      "elevationRawByteP50": 151,
+      "heightClassHistogram": {
+        "0": 6,
+        "1": 106,
+        "2": 323,
+        "3": 209,
+        "4": 87,
+        "5": 58
+      },
+      "cliffCandidateCount": 96,
+      "terraceCandidateCount": 197,
+      "cliffPerThousandCells": 121.673
+    },
+    {
+      "id": "CINDER_VOLCANIC",
+      "sourceRef": "GOLD project.zones[id=bz_cinder] + source biomeCode=9 volcanic",
+      "expectedPhysicalSignature": "highest cliff density",
+      "cellCount": 462,
+      "status": "VERIFIED",
+      "meanSlopeRawByte": 17.868,
+      "meanElevationRawByte": 140.3593,
+      "slopeRawByteP50": 18,
+      "slopeRawByteP95": 24,
+      "elevationRawByteP50": 146,
+      "heightClassHistogram": {
+        "0": 4,
+        "1": 19,
+        "2": 100,
+        "3": 187,
+        "4": 151,
+        "5": 1
+      },
+      "cliffCandidateCount": 94,
+      "terraceCandidateCount": 187,
+      "cliffPerThousandCells": 203.4632
+    },
+    {
+      "id": "SNOW_BIOME",
+      "sourceRef": "source biomeCode=8 snow",
+      "expectedPhysicalSignature": "highest raw elevation",
+      "cellCount": 217,
+      "status": "VERIFIED",
+      "meanSlopeRawByte": 13.4839,
+      "meanElevationRawByte": 220.5668,
+      "slopeRawByteP50": 8,
+      "slopeRawByteP95": 55,
+      "elevationRawByteP50": 225,
+      "heightClassHistogram": {
+        "0": 5,
+        "1": 44,
+        "2": 95,
+        "3": 42,
+        "4": 15,
+        "5": 16
+      },
+      "cliffCandidateCount": 18,
+      "terraceCandidateCount": 37,
+      "cliffPerThousandCells": 82.9493
+    },
+    {
+      "id": "WETLAND_BIOME",
+      "sourceRef": "source biomeCode=4 marsh",
+      "expectedPhysicalSignature": "flat, zero cliff faces",
+      "cellCount": 527,
+      "status": "VERIFIED",
+      "meanSlopeRawByte": 3.2087,
+      "meanElevationRawByte": 21.5484,
+      "slopeRawByteP50": 3,
+      "slopeRawByteP95": 9,
+      "elevationRawByteP50": 22,
+      "heightClassHistogram": {
+        "0": 419,
+        "1": 107,
+        "2": 1
+      },
+      "cliffCandidateCount": 0,
+      "terraceCandidateCount": 0,
+      "cliffPerThousandCells": 0
+    },
+    {
+      "id": "LOWLAND_ZONES",
+      "sourceRef": "GOLD project.zones tags include \"bình nguyên\"",
+      "expectedPhysicalSignature": "flat, zero cliff faces",
+      "cellCount": 412,
+      "status": "VERIFIED",
+      "meanSlopeRawByte": 3.6917,
+      "meanElevationRawByte": 47.2015,
+      "slopeRawByteP50": 2,
+      "slopeRawByteP95": 11,
+      "elevationRawByteP50": 53,
+      "heightClassHistogram": {
+        "0": 242,
+        "1": 152,
+        "2": 18
+      },
+      "cliffCandidateCount": 0,
+      "terraceCandidateCount": 0,
+      "cliffPerThousandCells": 0
+    },
+    {
+      "id": "HIGH_ROCK_ZONES",
+      "sourceRef": "GOLD project.zones tags include \"nền đá cao\"",
+      "expectedPhysicalSignature": "elevated steep faces",
+      "cellCount": 161,
+      "status": "VERIFIED",
+      "meanSlopeRawByte": 8.2795,
+      "meanElevationRawByte": 71.9193,
+      "slopeRawByteP50": 5,
+      "slopeRawByteP95": 22,
+      "elevationRawByteP50": 65,
+      "heightClassHistogram": {
+        "0": 43,
+        "1": 54,
+        "2": 37,
+        "3": 12,
+        "4": 10,
+        "5": 5
+      },
+      "cliffCandidateCount": 11,
+      "terraceCandidateCount": 12,
+      "cliffPerThousandCells": 68.323
+    }
+  ],
+  "rasters": [
+    {
+      "file": "v3/rasters/heightClass.v3.u8",
+      "sha256": "ec800274e8af35f2e31caa18352f2c6643a4fe5da1f1235426037040a4823814",
+      "semantics": "0..5 OBSERVED-QUANTILE relief class"
+    },
+    {
+      "file": "v3/rasters/cliffCandidate.v3.u8",
+      "sha256": "6b2897d74409b974d477e767291f1eac0b9614a1b794539aef827c1278682d2d",
+      "semantics": "binary connected steep face"
+    },
+    {
+      "file": "v3/rasters/terraceCandidate.v3.u8",
+      "sha256": "029e929ea10622a43d27ba8c894334c0aa9c0c3061f2f7f135122c55c971d28f",
+      "semantics": "binary hill/terrace band"
+    },
+    {
+      "file": "v3/rasters/slopeClass.v3.u8",
+      "sha256": "8dedebfcd06da83353892ea14f3c2288a19ee410b3c3c42e4c109af157e3a7ea",
+      "semantics": "0..4 observed-quantile slope class"
+    }
+  ],
+  "validation": "Typhon / Cinder / snow / wetland / lowlands measured above; flat regions have zero cliff faces; snow has highest raw elevation.",
+  "noClaims": [
+    "NO metres or degrees",
+    "NO collision or climb law",
+    "NO production tileset",
+    "NO Gameplay balance rate"
+  ]
+}

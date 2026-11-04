@@ -1,0 +1,658 @@
+{
+  "schema": "soh.wmp.v3.test_results",
+  "status": "WMP_V3_TESTS_OK",
+  "total": 91,
+  "physical": 74,
+  "negative": 17,
+  "fail": 0,
+  "groups": [
+    "BASE",
+    "TERRAIN",
+    "ROADS",
+    "WATER",
+    "CONSTRUCTION",
+    "STRUCTURAL",
+    "INTERFACE",
+    "EVIDENCE"
+  ],
+  "results": [
+    {
+      "id": "B-01",
+      "group": "BASE",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "WMP-01 manifest SHA-256 pinned"
+    },
+    {
+      "id": "B-02",
+      "group": "BASE",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "WMP-02 manifest SHA-256 pinned"
+    },
+    {
+      "id": "B-03",
+      "group": "BASE",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "WMP-02 handoff SHA-256 pinned"
+    },
+    {
+      "id": "B-04",
+      "group": "BASE",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "v2 baseline economy arrays intact"
+    },
+    {
+      "id": "B-05",
+      "group": "BASE",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "source + derived rasters digest-verified on load"
+    },
+    {
+      "id": "B-06",
+      "group": "BASE",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "revisionDigest recomputable from pinned method"
+    },
+    {
+      "id": "B-07",
+      "group": "BASE",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "all 17 manifest component SHAs match"
+    },
+    {
+      "id": "B-08",
+      "group": "BASE",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "no overclaim in v3 manifest"
+    },
+    {
+      "id": "T-01",
+      "group": "TERRAIN",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "observed slope max raw byte=150"
+    },
+    {
+      "id": "T-02",
+      "group": "TERRAIN",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "WMP-01 threshold 200 > observed max 150; v1 cliff.u8 had ZERO cells"
+    },
+    {
+      "id": "T-03",
+      "group": "TERRAIN",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "v3 connected cliff candidates=305"
+    },
+    {
+      "id": "T-04",
+      "group": "TERRAIN",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "all 5 slope classes and 6 height classes are reachable/non-empty"
+    },
+    {
+      "id": "T-05",
+      "group": "TERRAIN",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "unknown physical units preserved"
+    },
+    {
+      "id": "T-06",
+      "group": "TERRAIN",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "Typhon/Cinder/snow/wetland/lowlands/high-rock all measured"
+    },
+    {
+      "id": "T-07",
+      "group": "TERRAIN",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "cliff density Cinder=203.4632/1000 vs wetland=0/1000"
+    },
+    {
+      "id": "T-08",
+      "group": "TERRAIN",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "flat wetland + lowlands have ZERO cliff faces"
+    },
+    {
+      "id": "T-09",
+      "group": "TERRAIN",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "snow mean elevation 220.5668 > lowland 47.2015 raw bytes"
+    },
+    {
+      "id": "T-10",
+      "group": "TERRAIN",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "production classifier reproduces emitted cliff raster bit-for-bit"
+    },
+    {
+      "id": "T-11",
+      "group": "TERRAIN",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "cliff requires connected neighbourhood and region-aware relief, not one byte"
+    },
+    {
+      "id": "T-NEG-01",
+      "group": "TERRAIN",
+      "kind": "NEGATIVE_FIXTURE",
+      "status": "PASS",
+      "detail": "P0-01 flat world must NOT produce false cliffs :: cliffCount=0 and max heightClass<=1 :: cliffCount=0 maxHeightClass=0"
+    },
+    {
+      "id": "T-NEG-02",
+      "group": "TERRAIN",
+      "kind": "NEGATIVE_FIXTURE",
+      "status": "PASS",
+      "detail": "P0-01 absolute threshold >200 changes meaning under a uniform byte relabel :: WMP-01 rule would flip to >0 cliffs; v3 quantile classification stays bit-identical :: WMP01 rule cliff cells on shifted=1; v3 invariant=true"
+    },
+    {
+      "id": "T-NEG-03",
+      "group": "TERRAIN",
+      "kind": "NEGATIVE_FIXTURE",
+      "status": "PASS",
+      "detail": "P0-01 isolated extreme byte must NOT become a cliff face :: cliff[isolatedCell]=0 :: cliff=0 steepNeighbours=3"
+    },
+    {
+      "id": "T-NEG-04",
+      "group": "TERRAIN",
+      "kind": "NEGATIVE_FIXTURE",
+      "status": "PASS",
+      "detail": "P0-01 invented physical units :: no asserted metres/degrees/climb law; UNKNOWN physical unit status :: assertedUnits=0 slopeUnit=UNRESOLVED__RAW_SOURCE_BYTE"
+    },
+    {
+      "id": "R-01",
+      "group": "ROADS",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "all 92 authored road IDs preserved"
+    },
+    {
+      "id": "R-02",
+      "group": "ROADS",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "no duplicate or renamed road IDs"
+    },
+    {
+      "id": "R-03",
+      "group": "ROADS",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "every corrected cell path is 4-connected"
+    },
+    {
+      "id": "R-04",
+      "group": "ROADS",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "max drift 76.198 au -> 5.6569 au"
+    },
+    {
+      "id": "R-05",
+      "group": "ROADS",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "mean drift 6.5994 au -> 2.2759 au"
+    },
+    {
+      "id": "R-06",
+      "group": "ROADS",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "authored=10853.7572 au; both monotone 4-connected rasterizations=13408 au (grid quantization, NOT a route-length gain)"
+    },
+    {
+      "id": "R-07",
+      "group": "ROADS",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "worst legacy distortion measured per exact road ID"
+    },
+    {
+      "id": "R-08",
+      "group": "ROADS",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "visible surface raster is a DISTINCT object from traversal graph"
+    },
+    {
+      "id": "R-09",
+      "group": "ROADS",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "no graph edge grants an active collision permission"
+    },
+    {
+      "id": "R-10",
+      "group": "ROADS",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "authored shape/vertices/endpoints preserved, no new roads"
+    },
+    {
+      "id": "R-NEG-01",
+      "group": "ROADS",
+      "kind": "NEGATIVE_FIXTURE",
+      "status": "PASS",
+      "detail": "P0-02 X-then-Y rasterization distorts diagonal authored segments :: legacy L-shape drift > 40 au; corrected drift <= 5.7 au :: legacy=350.725 au (all 63 X-first cells on start row), corrected=5.6569 au"
+    },
+    {
+      "id": "R-NEG-02",
+      "group": "ROADS",
+      "kind": "NEGATIVE_FIXTURE",
+      "status": "PASS",
+      "detail": "P0-02 correction must not break authored L-shape connectivity/endpoints :: 4-connected, endpoints preserved, drift <= 5.7 au :: conn=true start=true end=true drift=0"
+    },
+    {
+      "id": "R-NEG-03",
+      "group": "ROADS",
+      "kind": "NEGATIVE_FIXTURE",
+      "status": "PASS",
+      "detail": "P0-02 reverse-direction diagonal must remain shape-preserving :: 4-connected and drift <= 5.7 au :: cells=201 drift=5.6569"
+    },
+    {
+      "id": "W-01",
+      "group": "WATER",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "v2 defect: 8 ferry routes had 219 LAND-walkable water cells"
+    },
+    {
+      "id": "W-02",
+      "group": "WATER",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "v2 defect: 267 proposed water-road cells silently had walkable=1"
+    },
+    {
+      "id": "W-03",
+      "group": "WATER",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "all 8 ferry routes are NOT land roads and grant NO collision permission"
+    },
+    {
+      "id": "W-04",
+      "group": "WATER",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "ferry traversal is BLOCKED, owner GAMEPLAY"
+    },
+    {
+      "id": "W-05",
+      "group": "WATER",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "ZERO water cells are land-walkable or have active collision permission"
+    },
+    {
+      "id": "W-06",
+      "group": "WATER",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "bridge/ford PROPOSALS distinct from APPROVED traversal (0 cells)"
+    },
+    {
+      "id": "W-07",
+      "group": "WATER",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "ferry routes removed from roads[] but union of IDs remains 92"
+    },
+    {
+      "id": "W-08",
+      "group": "WATER",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "activeCollisionPermission.u8 is entirely zero"
+    },
+    {
+      "id": "W-09",
+      "group": "WATER",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "approvedTraversal is explicitly UNKNOWN/GAMEPLAY"
+    },
+    {
+      "id": "W-10",
+      "group": "WATER",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "247 water-road cells classified = 211 ferry + 10 bridge + 26 ford"
+    },
+    {
+      "id": "W-11",
+      "group": "WATER",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "compatibility boundary is reported in water_traversal.v3.json, not hidden"
+    },
+    {
+      "id": "W-12",
+      "group": "WATER",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "no silent Gameplay validator PASS claim"
+    },
+    {
+      "id": "W-NEG-01",
+      "group": "WATER",
+      "kind": "NEGATIVE_FIXTURE",
+      "status": "PASS",
+      "detail": "P0-03 ferry polyline must never become land-walkable :: ferry cells class=2, landWalkable=false, activeCollisionPermission=0 everywhere :: ferryOk=true activePermissionSum=0"
+    },
+    {
+      "id": "W-NEG-02",
+      "group": "WATER",
+      "kind": "NEGATIVE_FIXTURE",
+      "status": "PASS",
+      "detail": "P0-03 proposed crossing must not silently become active collision permission :: bridge=3, ford=4, both PROPOSED with activeCollisionPermission=false :: bridge=3 ford=4 proposals=1+1"
+    },
+    {
+      "id": "W-NEG-03",
+      "group": "WATER",
+      "kind": "NEGATIVE_FIXTURE",
+      "status": "PASS",
+      "detail": "P0-03 v2 real ferry cells had walkable=1 :: v2=219 walkable ferry cells, v3=0 for every water cell :: v2=219 v3WaterWalkable=0"
+    },
+    {
+      "id": "C-01",
+      "group": "CONSTRUCTION",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "v2 defect: economy.buildable was ONLY 1242 cells from 23 surveyed sites"
+    },
+    {
+      "id": "C-02",
+      "group": "CONSTRUCTION",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "21 full-world physically possible footprints / 7035 cells"
+    },
+    {
+      "id": "C-03",
+      "group": "CONSTRUCTION",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "6481 physically possible cells lie outside any surveyed zone"
+    },
+    {
+      "id": "C-04",
+      "group": "CONSTRUCTION",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "three concepts distinct; legal placement UNKNOWN/GAMEPLAY"
+    },
+    {
+      "id": "C-05",
+      "group": "CONSTRUCTION",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "all 23 surveyed envelopes are suggestions only"
+    },
+    {
+      "id": "C-06",
+      "group": "CONSTRUCTION",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "every surveyed envelope reconciled with measured terrain suitability"
+    },
+    {
+      "id": "C-07",
+      "group": "CONSTRUCTION",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "survey/terrain conflicts are reported, not silently fixed"
+    },
+    {
+      "id": "C-08",
+      "group": "CONSTRUCTION",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "no physically possible footprint overlaps protected geometry or cliff faces"
+    },
+    {
+      "id": "C-09",
+      "group": "CONSTRUCTION",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "production classifier reproduces emitted construction suitability bit-for-bit"
+    },
+    {
+      "id": "C-10",
+      "group": "CONSTRUCTION",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "v3 economy.buildable is full-world, not the 23-site projection"
+    },
+    {
+      "id": "C-NEG-01",
+      "group": "CONSTRUCTION",
+      "kind": "NEGATIVE_FIXTURE",
+      "status": "PASS",
+      "detail": "P0-04 sandbox construction must not be restricted to 23 surveyed zones :: >=1 physically possible footprint, every cell outside surveyed zones :: footprints=1 cells=400 outside=400"
+    },
+    {
+      "id": "C-NEG-02",
+      "group": "CONSTRUCTION",
+      "kind": "NEGATIVE_FIXTURE",
+      "status": "PASS",
+      "detail": "P0-04 protected geometry must never become physically possible :: suitability[protectedCell]=0 :: suitability=0"
+    },
+    {
+      "id": "C-NEG-03",
+      "group": "CONSTRUCTION",
+      "kind": "NEGATIVE_FIXTURE",
+      "status": "PASS",
+      "detail": "P0-04 a cliff face must never become a buildable footprint :: suitability[cliffCell]=0 :: suitability=0"
+    },
+    {
+      "id": "S-01",
+      "group": "STRUCTURAL",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "81 POI road entrances assessed; zero canonical POI relocations"
+    },
+    {
+      "id": "S-02",
+      "group": "STRUCTURAL",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "55/81 POIs have an exterior entrance and ALL 55 have road frontage within 40 au; 26 source POIs have NO exterior entrance (reported by exact ID, NOT redesigned)"
+    },
+    {
+      "id": "S-03",
+      "group": "STRUCTURAL",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "18 host/subsite envelope overlaps reported, none auto-resolved"
+    },
+    {
+      "id": "S-04",
+      "group": "STRUCTURAL",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "153 roofs classified; ZERO automatic shrinks"
+    },
+    {
+      "id": "S-05",
+      "group": "STRUCTURAL",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "v2 99 \"outside\" roofs are actually boundary-COINCIDENT; zero vertices truly outside"
+    },
+    {
+      "id": "S-06",
+      "group": "STRUCTURAL",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "v2 historical 99 insets preserved but NOT re-applied in v3"
+    },
+    {
+      "id": "S-07",
+      "group": "STRUCTURAL",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "canonical POI coordinates byte-identical to authored source"
+    },
+    {
+      "id": "S-NEG-01",
+      "group": "STRUCTURAL",
+      "kind": "NEGATIVE_FIXTURE",
+      "status": "PASS",
+      "detail": "bounded check must not redesign canonical POIs :: canonicalGeometryChanged=false, 0 redesigns :: changed=0"
+    },
+    {
+      "id": "S-NEG-02",
+      "group": "STRUCTURAL",
+      "kind": "NEGATIVE_FIXTURE",
+      "status": "PASS",
+      "detail": "bounded check must not auto-shrink all flagged roofs :: v3 autoShrinkAppliedCount=0 and 99 classified as boundary-coincident :: v3Shrinks=0 coincident=99"
+    },
+    {
+      "id": "I-01",
+      "group": "INTERFACE",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "shape compatibility with EconomyMap + GeographicHandoff declared"
+    },
+    {
+      "id": "I-02",
+      "group": "INTERFACE",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "explicit UNKNOWN/PROPOSED/VERIFIED/UNRESOLVED/BLOCKED vocabulary"
+    },
+    {
+      "id": "I-03",
+      "group": "INTERFACE",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "every typed field has provenance, status, owner and a no-authority claim"
+    },
+    {
+      "id": "I-04",
+      "group": "INTERFACE",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "unapproved values explicitly NOT authoritative"
+    },
+    {
+      "id": "I-05",
+      "group": "INTERFACE",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "13 EconomyMap arrays each 43750 cells (shape compatibility)"
+    },
+    {
+      "id": "I-06",
+      "group": "INTERFACE",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "Gameplay validators NOT executed and NOT claimed PASS"
+    },
+    {
+      "id": "I-07",
+      "group": "INTERFACE",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "every remaining blocker has an exact ID and owner"
+    },
+    {
+      "id": "I-08",
+      "group": "INTERFACE",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "26 water-crossing road IDs reported as an explicit compatibility boundary"
+    },
+    {
+      "id": "I-NEG-01",
+      "group": "INTERFACE",
+      "kind": "NEGATIVE_FIXTURE",
+      "status": "PASS",
+      "detail": "unapproved Gameplay values must not appear authoritative :: cargoPassable all 0, approvedTraversal cellCount 0, validators NOT_EXECUTED :: cargo=0 approved=0"
+    },
+    {
+      "id": "I-NEG-02",
+      "group": "INTERFACE",
+      "kind": "NEGATIVE_FIXTURE",
+      "status": "PASS",
+      "detail": "visible road surface must not be conflated with traversal permission :: road surface cells > 0, graph edges > 0, ZERO active permissions :: surfaceCells=1963 edges=1676 permissions=0"
+    },
+    {
+      "id": "E-01",
+      "group": "EVIDENCE",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "mapStructuralSelfCheckV3 errors=0 (NOT a Gameplay validator PASS)"
+    },
+    {
+      "id": "E-02",
+      "group": "EVIDENCE",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "compatibility boundary explicitly GAMEPLAY-owned"
+    },
+    {
+      "id": "E-03",
+      "group": "EVIDENCE",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "3 windows x 25 masks, disjoint, coverage 43750/43750"
+    },
+    {
+      "id": "E-04",
+      "group": "EVIDENCE",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "technical analytical PNG index exists"
+    },
+    {
+      "id": "E-05",
+      "group": "EVIDENCE",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "7 real PNG files with SHA-256 and byte counts"
+    },
+    {
+      "id": "E-06",
+      "group": "EVIDENCE",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "all views labelled technical, NOT Web runtime or visual acceptance"
+    },
+    {
+      "id": "E-07",
+      "group": "EVIDENCE",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "deterministic revision digest, no wallclock"
+    },
+    {
+      "id": "E-08",
+      "group": "EVIDENCE",
+      "kind": "PHYSICAL",
+      "status": "PASS",
+      "detail": "no production/playable claim"
+    }
+  ],
+  "note": "Negative fixtures mutate independent synthetic SOURCE inputs and execute the SAME pure production classifiers exported from v3/src/lib_v3.mjs. No fixture merely documents a blocker."
+}

@@ -1,0 +1,79 @@
+{
+  "schema": "soh.wmp.v3.views_index",
+  "status": "WMP_V3_VIEWS_OK",
+  "classification": "MAP_ANALYTICAL_TECHNICAL_PREVIEW",
+  "note": "These PNGs are deterministic technical before/after plots of measured geometry. They are NOT playable Web renders, NOT creator-approved art, NOT visual acceptance.",
+  "viewCount": 7,
+  "views": [
+    {
+      "file": "v3/evidence/views/v3_terrain_height_class.png",
+      "bytes": 13911,
+      "width": 760,
+      "height": 559,
+      "sha256": "70d2da79f1a7da22e767ca08e55cef0d9a60ce7f3a1b4054cf3544273f25c7a3",
+      "classification": "MAP_ANALYTICAL_TECHNICAL_PREVIEW",
+      "status": "TECHNICAL_PREVIEW__NOT_WEB_RUNTIME_PROOF__NOT_CREATOR_APPROVED_ART__NOT_VISUAL_ACCEPTANCE",
+      "note": "Six observed-quantile relief classes over dry land; sea left as authored surface. Unit UNRESOLVED."
+    },
+    {
+      "file": "v3/evidence/views/v3_cliff_before_after.png",
+      "bytes": 10071,
+      "width": 760,
+      "height": 559,
+      "sha256": "afb2e402b2c30b75303bba54a83ea6cbc83e39aa5635bc0ea064854f542e989e",
+      "classification": "MAP_ANALYTICAL_TECHNICAL_PREVIEW",
+      "status": "TECHNICAL_PREVIEW__NOT_WEB_RUNTIME_PROOF__NOT_CREATOR_APPROVED_ART__NOT_VISUAL_ACCEPTANCE",
+      "note": "Red = WMP-01 cliff.u8 (empty); amber = WMP-03 connected cliff candidates. Same source raster."
+    },
+    {
+      "file": "v3/evidence/views/v3_road_drift_before_after.png",
+      "bytes": 13403,
+      "width": 900,
+      "height": 600,
+      "sha256": "29be2bc62d0c769e12c8a2d9f7747bbfe5dc17eb0f2cce5e2d3def4439d49a74",
+      "classification": "MAP_ANALYTICAL_TECHNICAL_PREVIEW",
+      "status": "TECHNICAL_PREVIEW__NOT_WEB_RUNTIME_PROOF__NOT_CREATOR_APPROVED_ART__NOT_VISUAL_ACCEPTANCE",
+      "note": "Five worst exact road IDs: rd_s, rd_2h, rd_a, rd_2j, rd_8. Authored polylines in white."
+    },
+    {
+      "file": "v3/evidence/views/v3_water_traversal.png",
+      "bytes": 10508,
+      "width": 760,
+      "height": 559,
+      "sha256": "9beb770fe856a17f00a2e3b395275d149a043abdb290ba0ef0b4dc3d5b4bcca3",
+      "classification": "MAP_ANALYTICAL_TECHNICAL_PREVIEW",
+      "status": "TECHNICAL_PREVIEW__NOT_WEB_RUNTIME_PROOF__NOT_CREATOR_APPROVED_ART__NOT_VISUAL_ACCEPTANCE",
+      "note": "ZERO water cells are land-walkable; ZERO active collision permissions; ferry routes are NOT roads."
+    },
+    {
+      "file": "v3/evidence/views/v3_construction_before_after.png",
+      "bytes": 10831,
+      "width": 760,
+      "height": 559,
+      "sha256": "4136d186500e386be97df841421c9a6265eba916c4f1248e813201125cf7be0a",
+      "classification": "MAP_ANALYTICAL_TECHNICAL_PREVIEW",
+      "status": "TECHNICAL_PREVIEW__NOT_WEB_RUNTIME_PROOF__NOT_CREATOR_APPROVED_ART__NOT_VISUAL_ACCEPTANCE",
+      "note": "v2 buildable=1242; v3 physical=7035; 6481 cells outside surveyed zones."
+    },
+    {
+      "file": "v3/evidence/views/v3_region_evidence.png",
+      "bytes": 10184,
+      "width": 760,
+      "height": 559,
+      "sha256": "5020efd51d3545fa56159850f604f4ce05c26fd8bbf86588dc10e06ac6c2195b",
+      "classification": "MAP_ANALYTICAL_TECHNICAL_PREVIEW",
+      "status": "TECHNICAL_PREVIEW__NOT_WEB_RUNTIME_PROOF__NOT_CREATOR_APPROVED_ART__NOT_VISUAL_ACCEPTANCE",
+      "note": "Non-exclusive authored region masks used by the terrain classifier; measured statistics in terrain_height_class.v3.json."
+    },
+    {
+      "file": "v3/evidence/views/v3_structural_checks.png",
+      "bytes": 11423,
+      "width": 760,
+      "height": 559,
+      "sha256": "fd26a7a9b55722245f6cc69da623ca5b306ba017fd68dc6c6c45855b0e63027d",
+      "classification": "MAP_ANALYTICAL_TECHNICAL_PREVIEW",
+      "status": "TECHNICAL_PREVIEW__NOT_WEB_RUNTIME_PROOF__NOT_CREATOR_APPROVED_ART__NOT_VISUAL_ACCEPTANCE",
+      "note": "81 POI entrances, 18 host overlaps, 153 roofs classified, 0 automatic shrinks, 0 canonical POI changes."
+    }
+  ]
+}

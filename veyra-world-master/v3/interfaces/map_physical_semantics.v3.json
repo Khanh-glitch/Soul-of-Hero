@@ -1,0 +1,187 @@
+{
+  "schema": "soh.wmp.v3.map_physical_semantics_interface",
+  "interfaceName": "MapPhysicalSemanticsV3",
+  "version": 3,
+  "status": "TYPED_INTERFACE__PROPOSED_VALUES_NEVER_AUTHORITATIVE",
+  "authority": "MAP_DESIGNS_THE_PHYSICAL_WORLD__GAMEPLAY_POPULATES_AND_SIMULATES_IT",
+  "compatibleWith": [
+    {
+      "name": "EconomyMap",
+      "source": "web/src/game/world-economy.ts",
+      "note": "13 width*height arrays + id/revision/seed/width/height/tileSize/starts retained verbatim in shape."
+    },
+    {
+      "name": "GeographicHandoff",
+      "source": "web/src/game/geography-contract.ts",
+      "note": "roads/pois/criticalPaths/buildSites/nonbossCashSites/vendorSites/evacuationSites retained; ferryRoutes added as a DISTINCT concept."
+    }
+  ],
+  "statusVocabulary": {
+    "UNKNOWN": "no value asserted; decision outstanding",
+    "PROPOSED": "measured candidate, NOT authoritative and NOT a permission",
+    "VERIFIED": "geometry/measurement verified against authored source; NOT a Gameplay law",
+    "UNRESOLVED": "physical unit or rule not established",
+    "BLOCKED": "requires an owner decision",
+    "SOURCE_AUTHORED": "verbatim authored geometry"
+  },
+  "provenance": {
+    "sourceRasters": "data/rasters/geo01/*.u8 (digest-verified by data/source_manifest.v1.json)",
+    "authoredGeometry": "data/canon/geometry_snapshot.v1.json (GOLD)",
+    "v1Derived": "rasters/*.u8 (digest-verified by manifest.v1.json)",
+    "v2Corrective": "v2/layers/*.v2.json + v2/handoff/geographic_handoff.v2.json",
+    "v3GeneratedBy": "v3/src/build_v3.mjs",
+    "goldReadCount": 1,
+    "transformation": "DETERMINISTIC__NO_WALLCLOCK__NO_NETWORK"
+  },
+  "fields": [
+    {
+      "name": "economy.elevation / economy.slope",
+      "type": "number[]",
+      "unit": "UNRESOLVED__RAW_SOURCE_BYTE_NORMALISED",
+      "status": "PROPOSED",
+      "owner": "MAP",
+      "provenance": "v2 normalized environment potentials; NOT metres/degrees",
+      "noAuthorityClaim": "No vertical scale or climb rule asserted."
+    },
+    {
+      "name": "economy.moisture / economy.temperature",
+      "type": "number[]",
+      "unit": "DIMENSIONLESS_NORMALISED_POTENTIAL",
+      "status": "PROPOSED",
+      "owner": "MAP",
+      "provenance": "v2 environment.v2.json",
+      "noAuthorityClaim": "NOT numeric Gameplay climate/weather/damage/season rates."
+    },
+    {
+      "name": "economy.walkable",
+      "type": "0|1[]",
+      "unit": "BINARY_GEOMETRY_MASK",
+      "status": "VERIFIED",
+      "owner": "MAP",
+      "provenance": "dry land + authored walkableCandidate/roadClass/clearanceCells",
+      "noAuthorityClaim": "ZERO on every water cell. NOT a Gameplay collision permission."
+    },
+    {
+      "name": "economy.road",
+      "type": "0|1[]",
+      "unit": "BINARY_VISIBLE_SURFACE_MASK",
+      "status": "VERIFIED",
+      "owner": "MAP",
+      "provenance": "v3 corrected authored road polylines",
+      "noAuthorityClaim": "Visible tileset geometry only; see distinct traversalGraph."
+    },
+    {
+      "name": "economy.buildable",
+      "type": "0|1[]",
+      "unit": "BINARY_PHYSICAL_GEOMETRY_MASK",
+      "status": "VERIFIED",
+      "owner": "MAP",
+      "provenance": "v3 full-world constructionSuitability + protected geometry",
+      "noAuthorityClaim": "Physically possible, NOT legal placement; NOT restricted to 23 surveyed zones."
+    },
+    {
+      "name": "economy.cargoPassable",
+      "type": "0|1[]",
+      "unit": "UNKNOWN",
+      "status": "UNKNOWN",
+      "owner": "GAMEPLAY",
+      "provenance": "v2 handoff; no approved cart rule exists",
+      "noAuthorityClaim": "No cart passability approved."
+    },
+    {
+      "name": "ferryRoutes",
+      "type": "FerryRouteV3[]",
+      "unit": "authoring_unit",
+      "status": "SOURCE_AUTHORED",
+      "owner": "GAMEPLAY",
+      "provenance": "GOLD project.roads[kind=ferry], 8 verbatim authored polylines",
+      "noAuthorityClaim": "NOT a land road; landWalkable=false; traversal BLOCKED."
+    },
+    {
+      "name": "bridgeDeckProposals / fordProposals",
+      "type": "ProposalV3[]",
+      "unit": "authoring_unit",
+      "status": "PROPOSED",
+      "owner": "MAP+GAMEPLAY",
+      "provenance": "v2 measured decks + v3 corrected road/water cells",
+      "noAuthorityClaim": "activeCollisionPermission=false for every cell."
+    },
+    {
+      "name": "approvedTraversal",
+      "type": "ApprovedTraversalV3",
+      "unit": "UNKNOWN",
+      "status": "UNKNOWN",
+      "owner": "GAMEPLAY",
+      "provenance": "NO Gameplay decision exists; explicitly empty",
+      "noAuthorityClaim": "ZERO cells approved; no boat/bridge/ford rule exists."
+    },
+    {
+      "name": "traversalGraph",
+      "type": "TraversalGraphV3",
+      "unit": "authoring_unit",
+      "status": "VERIFIED",
+      "owner": "MAP",
+      "provenance": "v3 corrected 4-connected road cell chains",
+      "noAuthorityClaim": "Measured adjacency only; edges do not grant traversal."
+    },
+    {
+      "name": "heightClass / cliffCandidate / terraceCandidate / slopeClass",
+      "type": "u8[]",
+      "unit": "ORDINAL_OBSERVED_QUANTILE_CLASS",
+      "status": "PROPOSED",
+      "owner": "MAP",
+      "provenance": "data/rasters/geo01/{slope,elevation,zoneId,elderGeometryId,biomeCode}.u8",
+      "noAuthorityClaim": "No metres, degrees, collision or climb law."
+    },
+    {
+      "name": "suggestedSites",
+      "type": "SiteV3[]",
+      "unit": "authoring_unit",
+      "status": "PROPOSED",
+      "owner": "MAP",
+      "provenance": "GOLD project.zones[] 23 survey envelopes via LR02 M2 criterion",
+      "noAuthorityClaim": "23 surveyed suggestions only."
+    },
+    {
+      "name": "physicallyPossibleFootprints",
+      "type": "FootprintV3[]",
+      "unit": "authoring_unit",
+      "status": "VERIFIED",
+      "owner": "MAP",
+      "provenance": "v3 full-world constructionSuitability connected components",
+      "noAuthorityClaim": "Geometry only; legalPlacement remains UNKNOWN/GAMEPLAY."
+    },
+    {
+      "name": "legalPlacement",
+      "type": "DecisionV3",
+      "unit": "UNKNOWN",
+      "status": "UNKNOWN",
+      "owner": "GAMEPLAY",
+      "provenance": "NO Gameplay placement/claim/occupancy decision exists",
+      "noAuthorityClaim": "No claim, occupancy, cost or body-clearance decision asserted."
+    },
+    {
+      "name": "poiRoadEntrances / overlappingEnvelopes / roofBoundarySemantics",
+      "type": "AssessmentV3[]",
+      "unit": "authoring_unit",
+      "status": "PROPOSED",
+      "owner": "MAP+GAMEPLAY",
+      "provenance": "architecture.pois[], GOLD project.elders[], v2 build_sites/roof_assessment",
+      "noAuthorityClaim": "Read-only reports; no canonical POI redesign, no automatic roof shrink."
+    }
+  ],
+  "separatedConcepts": [
+    "ferry route vs road vs bridge deck vs ford vs water vs approved traversal",
+    "visible road surface vs traversal graph",
+    "suggested site vs physically possible footprint vs legal placement",
+    "measured geometry vs Gameplay-owned permission"
+  ],
+  "unapprovedValuesAreNotAuthoritative": true,
+  "noClaims": [
+    "NO invented numeric Gameplay balance",
+    "NO authoritative unapproved value",
+    "NO playable Veyra",
+    "NO visual acceptance",
+    "NO WORLD_MASTER_SEALED"
+  ]
+}

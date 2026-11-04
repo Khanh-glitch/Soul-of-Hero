@@ -1,0 +1,4439 @@
+{
+  "schema": "soh.wmp.v3.structural_checks",
+  "status": "BOUNDED_READ_ONLY_CHECKS__NO_CANONICAL_REDESIGN",
+  "scope": {
+    "poiCount": 81,
+    "surveyedSiteCount": 23,
+    "roofPolygonCount": 153,
+    "roadSurfaceCellCount": 1654,
+    "frontageThresholdAu": 40
+  },
+  "poiRoadEntrances": {
+    "assessed": 81,
+    "withExteriorEntrance": 55,
+    "withRoadFrontageWithin40Au": 55,
+    "distantAccessIds": [],
+    "noEntranceIds": [
+      "po_hall_eyes",
+      "po_typhon",
+      "po_viaduct",
+      "po_freightyard",
+      "po_fracquarry",
+      "po_pumphouse",
+      "po_glade",
+      "po_sapgrove",
+      "po_elderwood",
+      "po_mere",
+      "po_filter",
+      "po_westbank",
+      "po_greyquarry",
+      "po_necropolis",
+      "po_cairns",
+      "po_dpier",
+      "po_wreck",
+      "po_gullnest",
+      "po_gullpier",
+      "po_obsq",
+      "po_surtur",
+      "po_saltpans",
+      "po_gullwreck",
+      "po_evac_west",
+      "po_evac_south",
+      "po_evac_hook"
+    ],
+    "canonicalLocationsRedesigned": 0,
+    "pois": [
+      {
+        "id": "po_academy",
+        "atAu": [
+          936,
+          262
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_academy.entrance",
+            "centreAu": [
+              934.9447,
+              275.1578
+            ],
+            "nearestRoadCellIndex": 8617,
+            "nearestRoadDistanceAu": 5.125
+          }
+        ],
+        "minRoadDistanceAu": 5.125,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_observatory",
+        "atAu": [
+          958,
+          170
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_observatory.entrance",
+            "centreAu": [
+              957.2519,
+              177.6636
+            ],
+            "nearestRoadCellIndex": 5619,
+            "nearestRoadDistanceAu": 2.6507
+          }
+        ],
+        "minRoadDistanceAu": 2.6507,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_archive",
+        "atAu": [
+          1018,
+          226
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_archive.entrance",
+            "centreAu": [
+              994.5334,
+              220.9683
+            ],
+            "nearestRoadCellIndex": 6624,
+            "nearestRoadDistanceAu": 9.0874
+          }
+        ],
+        "minRoadDistanceAu": 9.0874,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_hall_eyes",
+        "atAu": [
+          992,
+          212
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      },
+      {
+        "id": "po_lantern",
+        "atAu": [
+          1050,
+          152
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_lantern.entrance",
+            "centreAu": [
+              1039.474,
+              155.8266
+            ],
+            "nearestRoadCellIndex": 4879,
+            "nearestRoadDistanceAu": 3.4783
+          }
+        ],
+        "minRoadDistanceAu": 3.4783,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_lanternstn",
+        "atAu": [
+          1077.2153168454608,
+          311.9998727562178
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_lanternstn.entrance",
+            "centreAu": [
+              1067.8934,
+              314.2937
+            ],
+            "nearestRoadCellIndex": 9883,
+            "nearestRoadDistanceAu": 1.7096
+          }
+        ],
+        "minRoadDistanceAu": 1.7096,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_kestrel",
+        "atAu": [
+          700,
+          300
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_kestrel.entrance",
+            "centreAu": [
+              722.721,
+              292.2699
+            ],
+            "nearestRoadCellIndex": 9339,
+            "nearestRoadDistanceAu": 10.2434
+          }
+        ],
+        "minRoadDistanceAu": 10.2434,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_typhon",
+        "atAu": [
+          556,
+          352
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      },
+      {
+        "id": "po_viaduct",
+        "atAu": [
+          655,
+          448
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      },
+      {
+        "id": "po_freightyard",
+        "atAu": [
+          690,
+          500
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      },
+      {
+        "id": "po_fracquarry",
+        "atAu": [
+          600,
+          525
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      },
+      {
+        "id": "po_falls",
+        "atAu": [
+          722,
+          438
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_falls.entrance",
+            "centreAu": [
+              722.0667,
+              450.0999
+            ],
+            "nearestRoadCellIndex": 13840,
+            "nearestRoadDistanceAu": 6.3989
+          }
+        ],
+        "minRoadDistanceAu": 6.3989,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_greywater",
+        "atAu": [
+          812,
+          592
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_greywater.entrance",
+            "centreAu": [
+              816.9041,
+              578.5672
+            ],
+            "nearestRoadCellIndex": 18102,
+            "nearestRoadDistanceAu": 3.4114
+          }
+        ],
+        "minRoadDistanceAu": 3.4114,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_pumphouse",
+        "atAu": [
+          850,
+          556
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      },
+      {
+        "id": "po_confluence",
+        "atAu": [
+          918,
+          668
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_confluence.entrance",
+            "centreAu": [
+              915.8415,
+              661.7629
+            ],
+            "nearestRoadCellIndex": 20614,
+            "nearestRoadDistanceAu": 1.77
+          }
+        ],
+        "minRoadDistanceAu": 1.77,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_sawaion",
+        "atAu": [
+          748,
+          668
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_sawaion.entrance",
+            "centreAu": [
+              746.6083,
+              655.9803
+            ],
+            "nearestRoadCellIndex": 20593,
+            "nearestRoadDistanceAu": 4.2538
+          }
+        ],
+        "minRoadDistanceAu": 4.2538,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_mill",
+        "atAu": [
+          1002,
+          730
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_mill.entrance",
+            "centreAu": [
+              1001.5591,
+              738.7889
+            ],
+            "nearestRoadCellIndex": 23124,
+            "nearestRoadDistanceAu": 5.6895
+          }
+        ],
+        "minRoadDistanceAu": 5.6895,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_kilns",
+        "atAu": [
+          905,
+          785
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_kilns.entrance",
+            "centreAu": [
+              891.5886,
+              784.1229
+            ],
+            "nearestRoadCellIndex": 24611,
+            "nearestRoadDistanceAu": 3.8989
+          }
+        ],
+        "minRoadDistanceAu": 3.8989,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_ranger",
+        "atAu": [
+          800,
+          760
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_ranger.entrance",
+            "centreAu": [
+              797.6342,
+              752.6725
+            ],
+            "nearestRoadCellIndex": 23599,
+            "nearestRoadDistanceAu": 3.7071
+          }
+        ],
+        "minRoadDistanceAu": 3.7071,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_glade",
+        "atAu": [
+          782,
+          705
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      },
+      {
+        "id": "po_sapgrove",
+        "atAu": [
+          960,
+          640
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      },
+      {
+        "id": "po_elderwood",
+        "atAu": [
+          868,
+          712
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      },
+      {
+        "id": "po_siloc",
+        "atAu": [
+          1090,
+          760
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_siloc.entrance",
+            "centreAu": [
+              1090.4339,
+              749.0086
+            ],
+            "nearestRoadCellIndex": 23386,
+            "nearestRoadDistanceAu": 1.8628
+          }
+        ],
+        "minRoadDistanceAu": 1.8628,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_meridian",
+        "atAu": [
+          1120,
+          690
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_meridian.entrance",
+            "centreAu": [
+              1118.8454,
+              676.8506
+            ],
+            "nearestRoadCellIndex": 21139,
+            "nearestRoadDistanceAu": 2.9698
+          }
+        ],
+        "minRoadDistanceAu": 2.9698,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_oldpump",
+        "atAu": [
+          850,
+          985
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_oldpump.entrance",
+            "centreAu": [
+              846.3569,
+              968.9072
+            ],
+            "nearestRoadCellIndex": 30355,
+            "nearestRoadDistanceAu": 3.8885
+          }
+        ],
+        "minRoadDistanceAu": 3.8885,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_strait",
+        "atAu": [
+          1268,
+          490
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_strait.entrance",
+            "centreAu": [
+              1270.4457,
+              477.0285
+            ],
+            "nearestRoadCellIndex": 15158,
+            "nearestRoadDistanceAu": 7.388
+          }
+        ],
+        "minRoadDistanceAu": 7.388,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_ironvein",
+        "atAu": [
+          1205,
+          655
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_ironvein.entrance",
+            "centreAu": [
+              1207.0414,
+              640.8465
+            ],
+            "nearestRoadCellIndex": 20151,
+            "nearestRoadDistanceAu": 5.8764
+          }
+        ],
+        "minRoadDistanceAu": 5.8764,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_ridgestop",
+        "atAu": [
+          1178,
+          578
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_ridgestop.entrance",
+            "centreAu": [
+              1186.9461,
+              574.5175
+            ],
+            "nearestRoadCellIndex": 17898,
+            "nearestRoadDistanceAu": 2.7292
+          }
+        ],
+        "minRoadDistanceAu": 2.7292,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_rapids",
+        "atAu": [
+          1150,
+          462
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_rapids.entrance",
+            "centreAu": [
+              1140.4386,
+              462.8595
+            ],
+            "nearestRoadCellIndex": 14392,
+            "nearestRoadDistanceAu": 2.8929
+          }
+        ],
+        "minRoadDistanceAu": 2.8929,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_hook",
+        "atAu": [
+          1300,
+          335
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_hook.entrance",
+            "centreAu": [
+              1295.6648,
+              321.373
+            ],
+            "nearestRoadCellIndex": 10161,
+            "nearestRoadDistanceAu": 4.5091
+          }
+        ],
+        "minRoadDistanceAu": 4.5091,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_mere",
+        "atAu": [
+          1250,
+          368
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      },
+      {
+        "id": "po_timberyard",
+        "atAu": [
+          1022,
+          454
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_timberyard.entrance",
+            "centreAu": [
+              1025.8717,
+              442.5362
+            ],
+            "nearestRoadCellIndex": 13878,
+            "nearestRoadDistanceAu": 2.5831
+          }
+        ],
+        "minRoadDistanceAu": 2.5831,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_ember",
+        "atAu": [
+          1244,
+          838
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_ember.entrance",
+            "centreAu": [
+              1224.9225,
+              840.1654
+            ],
+            "nearestRoadCellIndex": 26403,
+            "nearestRoadDistanceAu": 4.9168
+          }
+        ],
+        "minRoadDistanceAu": 4.9168,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_slag",
+        "atAu": [
+          1190,
+          936
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_slag.entrance",
+            "centreAu": [
+              1189.5681,
+              949.1929
+            ],
+            "nearestRoadCellIndex": 29648,
+            "nearestRoadDistanceAu": 1.9703
+          }
+        ],
+        "minRoadDistanceAu": 1.9703,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_southfoot",
+        "atAu": [
+          1196,
+          1070
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_southfoot.entrance",
+            "centreAu": [
+              1194.2999,
+              1056.9099
+            ],
+            "nearestRoadCellIndex": 33149,
+            "nearestRoadDistanceAu": 3.5269
+          }
+        ],
+        "minRoadDistanceAu": 3.5269,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_gulfhead",
+        "atAu": [
+          1052,
+          878
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_gulfhead.entrance",
+            "centreAu": [
+              1052.3571,
+              862.164
+            ],
+            "nearestRoadCellIndex": 27131,
+            "nearestRoadDistanceAu": 5.8469
+          }
+        ],
+        "minRoadDistanceAu": 5.8469,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_filter",
+        "atAu": [
+          934,
+          868
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      },
+      {
+        "id": "po_westbank",
+        "atAu": [
+          918,
+          930
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      },
+      {
+        "id": "po_westmouth",
+        "atAu": [
+          352,
+          556
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_westmouth.entrance",
+            "centreAu": [
+              354.8997,
+              568.8776
+            ],
+            "nearestRoadCellIndex": 17544,
+            "nearestRoadDistanceAu": 5.0002
+          }
+        ],
+        "minRoadDistanceAu": 5.0002,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_greyquarry",
+        "atAu": [
+          506,
+          652
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      },
+      {
+        "id": "po_westwood",
+        "atAu": [
+          424,
+          742
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_westwood.entrance",
+            "centreAu": [
+              421.6332,
+              734.6728
+            ],
+            "nearestRoadCellIndex": 22802,
+            "nearestRoadDistanceAu": 3.1323
+          }
+        ],
+        "minRoadDistanceAu": 3.1323,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_fishcamp",
+        "atAu": [
+          352,
+          846
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_fishcamp.entrance",
+            "centreAu": [
+              351.0287,
+              838.3615
+            ],
+            "nearestRoadCellIndex": 26044,
+            "nearestRoadDistanceAu": 5.5037
+          }
+        ],
+        "minRoadDistanceAu": 5.5037,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_necropolis",
+        "atAu": [
+          604,
+          1042
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      },
+      {
+        "id": "po_tombs",
+        "atAu": [
+          520,
+          1086
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_tombs.entrance",
+            "centreAu": [
+              502.4409,
+              1084.7997
+            ],
+            "nearestRoadCellIndex": 33812,
+            "nearestRoadDistanceAu": 2.5686
+          }
+        ],
+        "minRoadDistanceAu": 2.5686,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_cairns",
+        "atAu": [
+          470,
+          990
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      },
+      {
+        "id": "po_oasis",
+        "atAu": [
+          668,
+          984
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_oasis.entrance",
+            "centreAu": [
+              688.7753,
+              982.9848
+            ],
+            "nearestRoadCellIndex": 30836,
+            "nearestRoadDistanceAu": 5.9625
+          }
+        ],
+        "minRoadDistanceAu": 5.9625,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_bonestop",
+        "atAu": [
+          752,
+          975
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_bonestop.entrance",
+            "centreAu": [
+              761.5893,
+              974.5467
+            ],
+            "nearestRoadCellIndex": 30345,
+            "nearestRoadDistanceAu": 3.5067
+          }
+        ],
+        "minRoadDistanceAu": 3.5067,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_sandgate",
+        "atAu": [
+          704,
+          1124
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_sandgate.entrance",
+            "centreAu": [
+              699.3001,
+              1111.665
+            ],
+            "nearestRoadCellIndex": 34587,
+            "nearestRoadDistanceAu": 3.7312
+          }
+        ],
+        "minRoadDistanceAu": 3.7312,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_gate",
+        "atAu": [
+          168,
+          512
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_gate.entrance",
+            "centreAu": [
+              170.7006,
+              523.7948
+            ],
+            "nearestRoadCellIndex": 16021,
+            "nearestRoadDistanceAu": 7.9024
+          }
+        ],
+        "minRoadDistanceAu": 7.9024,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_dpier",
+        "atAu": [
+          226,
+          520
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      },
+      {
+        "id": "po_beacon",
+        "atAu": [
+          268,
+          656
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_beacon.entrance",
+            "centreAu": [
+              269.0939,
+              648.3781
+            ],
+            "nearestRoadCellIndex": 20283,
+            "nearestRoadDistanceAu": 3.7835
+          }
+        ],
+        "minRoadDistanceAu": 3.7835,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_wreck",
+        "atAu": [
+          184,
+          872
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      },
+      {
+        "id": "po_tidecamp",
+        "atAu": [
+          170,
+          548
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_tidecamp.entrance",
+            "centreAu": [
+              170.1171,
+              540.3009
+            ],
+            "nearestRoadCellIndex": 16272,
+            "nearestRoadDistanceAu": 19.0628
+          }
+        ],
+        "minRoadDistanceAu": 19.0628,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_gullnest",
+        "atAu": [
+          1872,
+          428
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      },
+      {
+        "id": "po_gullpier",
+        "atAu": [
+          1862,
+          470
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      },
+      {
+        "id": "po_netcamp",
+        "atAu": [
+          140,
+          848
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_netcamp.entrance",
+            "centreAu": [
+              142.0206,
+              855.4301
+            ],
+            "nearestRoadCellIndex": 26517,
+            "nearestRoadDistanceAu": 3.981
+          }
+        ],
+        "minRoadDistanceAu": 3.981,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_cindercamp",
+        "atAu": [
+          1596,
+          884
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_cindercamp.entrance",
+            "centreAu": [
+              1575.2227,
+              884.9706
+            ],
+            "nearestRoadCellIndex": 27696,
+            "nearestRoadDistanceAu": 3.3657
+          }
+        ],
+        "minRoadDistanceAu": 3.3657,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_obsq",
+        "atAu": [
+          1650,
+          776
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      },
+      {
+        "id": "po_sulfur",
+        "atAu": [
+          1768,
+          882
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_sulfur.entrance",
+            "centreAu": [
+              1764.207,
+              895.7878
+            ],
+            "nearestRoadCellIndex": 27971,
+            "nearestRoadDistanceAu": 8.6648
+          }
+        ],
+        "minRoadDistanceAu": 8.6648,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_geo",
+        "atAu": [
+          1736,
+          916
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_geo.entrance",
+            "centreAu": [
+              1740.6071,
+              927.1886
+            ],
+            "nearestRoadCellIndex": 28967,
+            "nearestRoadDistanceAu": 3.2459
+          }
+        ],
+        "minRoadDistanceAu": 3.2459,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_emberwatch",
+        "atAu": [
+          1620,
+          746
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_emberwatch.entrance",
+            "centreAu": [
+              1619.5579,
+              753.6873
+            ],
+            "nearestRoadCellIndex": 23702,
+            "nearestRoadDistanceAu": 2.3546
+          }
+        ],
+        "minRoadDistanceAu": 2.3546,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_surtur",
+        "atAu": [
+          1694,
+          826
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      },
+      {
+        "id": "po_saltharbor",
+        "atAu": [
+          1546,
+          334
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_saltharbor.entrance",
+            "centreAu": [
+              1564.0822,
+              340.4554
+            ],
+            "nearestRoadCellIndex": 10695,
+            "nearestRoadDistanceAu": 0.4628
+          }
+        ],
+        "minRoadDistanceAu": 0.4628,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_saltpans",
+        "atAu": [
+          1640,
+          322
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      },
+      {
+        "id": "po_saltlight",
+        "atAu": [
+          1732,
+          262
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_saltlight.entrance",
+            "centreAu": [
+              1732.5564,
+              269.6799
+            ],
+            "nearestRoadCellIndex": 8466,
+            "nearestRoadDistanceAu": 1.7696
+          }
+        ],
+        "minRoadDistanceAu": 1.7696,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_racks",
+        "atAu": [
+          1690,
+          354
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_racks.entrance",
+            "centreAu": [
+              1691.3501,
+              346.4193
+            ],
+            "nearestRoadCellIndex": 10961,
+            "nearestRoadDistanceAu": 1.7091
+          }
+        ],
+        "minRoadDistanceAu": 1.7091,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_gullwreck",
+        "atAu": [
+          1886,
+          446
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      },
+      {
+        "id": "po_ironharbor",
+        "atAu": [
+          1108,
+          1264
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_ironharbor.entrance",
+            "centreAu": [
+              1126.6341,
+              1268.6273
+            ],
+            "nearestRoadCellIndex": 39640,
+            "nearestRoadDistanceAu": 2.7078
+          }
+        ],
+        "minRoadDistanceAu": 2.7078,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_ironmine",
+        "atAu": [
+          1186,
+          1290
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_ironmine.entrance",
+            "centreAu": [
+              1165.9682,
+              1284.3995
+            ],
+            "nearestRoadCellIndex": 40145,
+            "nearestRoadDistanceAu": 2.0083
+          }
+        ],
+        "minRoadDistanceAu": 2.0083,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_ironwh",
+        "atAu": [
+          1236,
+          1290
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_ironwh.entrance",
+            "centreAu": [
+              1221.1985,
+              1296.0758
+            ],
+            "nearestRoadCellIndex": 40402,
+            "nearestRoadDistanceAu": 4.2484
+          }
+        ],
+        "minRoadDistanceAu": 4.2484,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_rc_meridian",
+        "atAu": [
+          1138,
+          668
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_rc_meridian.entrance",
+            "centreAu": [
+              1140.1307,
+              660.6006
+            ],
+            "nearestRoadCellIndex": 20642,
+            "nearestRoadDistanceAu": 0.6147
+          }
+        ],
+        "minRoadDistanceAu": 0.6147,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_rc_ironvein",
+        "atAu": [
+          1222,
+          676
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_rc_ironvein.entrance",
+            "centreAu": [
+              1221.9321,
+              668.3003
+            ],
+            "nearestRoadCellIndex": 20401,
+            "nearestRoadDistanceAu": 19.0879
+          }
+        ],
+        "minRoadDistanceAu": 19.0879,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_rc_kestrel",
+        "atAu": [
+          708,
+          318
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_rc_kestrel.entrance",
+            "centreAu": [
+              718.3921,
+              313.8235
+            ],
+            "nearestRoadCellIndex": 9589,
+            "nearestRoadDistanceAu": 6.2957
+          }
+        ],
+        "minRoadDistanceAu": 6.2957,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_rc_dam",
+        "atAu": [
+          754,
+          454
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_rc_dam.entrance",
+            "centreAu": [
+              755.3721,
+              461.5768
+            ],
+            "nearestRoadCellIndex": 14344,
+            "nearestRoadDistanceAu": 1.6972
+          }
+        ],
+        "minRoadDistanceAu": 1.6972,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_rc_sandgate",
+        "atAu": [
+          718,
+          1106
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_rc_sandgate.entrance",
+            "centreAu": [
+              707.2745,
+              1109.2255
+            ],
+            "nearestRoadCellIndex": 34587,
+            "nearestRoadDistanceAu": 7.377
+          }
+        ],
+        "minRoadDistanceAu": 7.377,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_rc_salt",
+        "atAu": [
+          1560,
+          322
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_rc_salt.entrance",
+            "centreAu": [
+              1560.7122,
+              329.667
+            ],
+            "nearestRoadCellIndex": 10695,
+            "nearestRoadDistanceAu": 10.8435
+          }
+        ],
+        "minRoadDistanceAu": 10.8435,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_vend_gulf",
+        "atAu": [
+          1066,
+          894
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_vend_gulf.entrance",
+            "centreAu": [
+              1054.8079,
+              894.4208
+            ],
+            "nearestRoadCellIndex": 27882,
+            "nearestRoadDistanceAu": 5.7287
+          }
+        ],
+        "minRoadDistanceAu": 5.7287,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_vend_strait",
+        "atAu": [
+          1286,
+          500
+        ],
+        "entranceCount": 1,
+        "measures": [
+          {
+            "id": "portal.po_vend_strait.entrance",
+            "centreAu": [
+              1275.271,
+              503.214
+            ],
+            "nearestRoadCellIndex": 15659,
+            "nearestRoadDistanceAu": 3.2956
+          }
+        ],
+        "minRoadDistanceAu": 3.2956,
+        "frontageStatus": "VERIFIED_ROAD_FRONTAGE_WITHIN_40_AU",
+        "canonicalLocationChanged": false,
+        "owner": "MAP"
+      },
+      {
+        "id": "po_evac_west",
+        "atAu": [
+          342,
+          580
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      },
+      {
+        "id": "po_evac_south",
+        "atAu": [
+          1178,
+          1090
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      },
+      {
+        "id": "po_evac_hook",
+        "atAu": [
+          1392,
+          374
+        ],
+        "entranceCount": 0,
+        "measures": [],
+        "minRoadDistanceAu": null,
+        "frontageStatus": "NO_EXTERIOR_ENTRANCE_IN_SOURCE",
+        "canonicalLocationChanged": false,
+        "owner": "MAP+GAMEPLAY"
+      }
+    ]
+  },
+  "overlappingEnvelopes": {
+    "assessedSites": 23,
+    "sitesWithHostOverlap": [
+      {
+        "siteId": "site.bz_greywater",
+        "totalOverlapCells": 74,
+        "hostIds": [
+          "poi.po_greywater.ground",
+          "elder.el_aion.outer"
+        ]
+      },
+      {
+        "siteId": "site.bz_gulfwest",
+        "totalOverlapCells": 2,
+        "hostIds": [
+          "poi.po_westbank.ground"
+        ]
+      },
+      {
+        "siteId": "site.bz_westmouth",
+        "totalOverlapCells": 2,
+        "hostIds": [
+          "poi.po_westmouth.ground"
+        ]
+      },
+      {
+        "siteId": "site.bz_hook",
+        "totalOverlapCells": 2,
+        "hostIds": [
+          "poi.po_mere.ground"
+        ]
+      },
+      {
+        "siteId": "site.bz_silver",
+        "totalOverlapCells": 32,
+        "hostIds": [
+          "poi.po_sawaion.ground",
+          "elder.el_aion.outer"
+        ]
+      },
+      {
+        "siteId": "site.bz_eastflats",
+        "totalOverlapCells": 15,
+        "hostIds": [
+          "poi.po_strait.ground",
+          "poi.po_vend_strait.ground"
+        ]
+      },
+      {
+        "siteId": "site.bz_elder_clear",
+        "totalOverlapCells": 57,
+        "hostIds": [
+          "poi.po_ranger.ground",
+          "elder.el_aion.outer"
+        ]
+      },
+      {
+        "siteId": "site.bz_westwood",
+        "totalOverlapCells": 5,
+        "hostIds": [
+          "poi.po_westwood.ground"
+        ]
+      },
+      {
+        "siteId": "site.bz_typhon_t",
+        "totalOverlapCells": 11,
+        "hostIds": [
+          "poi.po_freightyard.ground",
+          "elder.el_typhon.outer"
+        ]
+      },
+      {
+        "siteId": "site.bz_oasis",
+        "totalOverlapCells": 53,
+        "hostIds": [
+          "poi.po_oasis.ground",
+          "elder.el_anubis.outer"
+        ]
+      },
+      {
+        "siteId": "site.bz_moss",
+        "totalOverlapCells": 38,
+        "hostIds": [
+          "elder.el_aion.outer"
+        ]
+      },
+      {
+        "siteId": "site.bz_ridge",
+        "totalOverlapCells": 3,
+        "hostIds": [
+          "poi.po_rc_meridian.ground"
+        ]
+      },
+      {
+        "siteId": "site.bz_kestrel",
+        "totalOverlapCells": 12,
+        "hostIds": [
+          "elder.el_typhon.outer"
+        ]
+      },
+      {
+        "siteId": "site.bz_argus",
+        "totalOverlapCells": 45,
+        "hostIds": [
+          "elder.el_argus.outer"
+        ]
+      },
+      {
+        "siteId": "site.bz_dune",
+        "totalOverlapCells": 25,
+        "hostIds": [
+          "elder.el_anubis.outer"
+        ]
+      },
+      {
+        "siteId": "site.bz_salt",
+        "totalOverlapCells": 6,
+        "hostIds": [
+          "poi.po_saltpans.ground"
+        ]
+      },
+      {
+        "siteId": "site.bz_cinder",
+        "totalOverlapCells": 37,
+        "hostIds": [
+          "poi.po_cindercamp.ground",
+          "elder.el_surtur.outer"
+        ]
+      },
+      {
+        "siteId": "site.bz_ironholm",
+        "totalOverlapCells": 12,
+        "hostIds": [
+          "poi.po_ironharbor.ground",
+          "poi.po_ironmine.ground"
+        ]
+      }
+    ],
+    "hostEnvelopeCount": 87,
+    "canonicalGeometryChanged": false,
+    "sites": [
+      {
+        "siteId": "site.bz_greywater",
+        "hostEnvelopeCount": 2,
+        "totalOverlapCells": 74,
+        "overlaps": [
+          {
+            "hostId": "poi.po_greywater.ground",
+            "hostKind": "POI_GROUND_LEVEL",
+            "overlapCellCount": 9
+          },
+          {
+            "hostId": "elder.el_aion.outer",
+            "hostKind": "ELDER_OUTER_TERRITORY",
+            "overlapCellCount": 65
+          }
+        ],
+        "status": "OVERLAP_REPORTED__NOT_AUTOMATICALLY_RESOLVED",
+        "canonicalGeometryChanged": false
+      },
+      {
+        "siteId": "site.bz_gulfwest",
+        "hostEnvelopeCount": 1,
+        "totalOverlapCells": 2,
+        "overlaps": [
+          {
+            "hostId": "poi.po_westbank.ground",
+            "hostKind": "POI_GROUND_LEVEL",
+            "overlapCellCount": 2
+          }
+        ],
+        "status": "OVERLAP_REPORTED__NOT_AUTOMATICALLY_RESOLVED",
+        "canonicalGeometryChanged": false
+      },
+      {
+        "siteId": "site.bz_westmouth",
+        "hostEnvelopeCount": 1,
+        "totalOverlapCells": 2,
+        "overlaps": [
+          {
+            "hostId": "poi.po_westmouth.ground",
+            "hostKind": "POI_GROUND_LEVEL",
+            "overlapCellCount": 2
+          }
+        ],
+        "status": "OVERLAP_REPORTED__NOT_AUTOMATICALLY_RESOLVED",
+        "canonicalGeometryChanged": false
+      },
+      {
+        "siteId": "site.bz_hook",
+        "hostEnvelopeCount": 1,
+        "totalOverlapCells": 2,
+        "overlaps": [
+          {
+            "hostId": "poi.po_mere.ground",
+            "hostKind": "POI_GROUND_LEVEL",
+            "overlapCellCount": 2
+          }
+        ],
+        "status": "OVERLAP_REPORTED__NOT_AUTOMATICALLY_RESOLVED",
+        "canonicalGeometryChanged": false
+      },
+      {
+        "siteId": "site.bz_silver",
+        "hostEnvelopeCount": 2,
+        "totalOverlapCells": 32,
+        "overlaps": [
+          {
+            "hostId": "poi.po_sawaion.ground",
+            "hostKind": "POI_GROUND_LEVEL",
+            "overlapCellCount": 12
+          },
+          {
+            "hostId": "elder.el_aion.outer",
+            "hostKind": "ELDER_OUTER_TERRITORY",
+            "overlapCellCount": 20
+          }
+        ],
+        "status": "OVERLAP_REPORTED__NOT_AUTOMATICALLY_RESOLVED",
+        "canonicalGeometryChanged": false
+      },
+      {
+        "siteId": "site.bz_eastflats",
+        "hostEnvelopeCount": 2,
+        "totalOverlapCells": 15,
+        "overlaps": [
+          {
+            "hostId": "poi.po_strait.ground",
+            "hostKind": "POI_GROUND_LEVEL",
+            "overlapCellCount": 10
+          },
+          {
+            "hostId": "poi.po_vend_strait.ground",
+            "hostKind": "POI_GROUND_LEVEL",
+            "overlapCellCount": 5
+          }
+        ],
+        "status": "OVERLAP_REPORTED__NOT_AUTOMATICALLY_RESOLVED",
+        "canonicalGeometryChanged": false
+      },
+      {
+        "siteId": "site.bz_elder_clear",
+        "hostEnvelopeCount": 2,
+        "totalOverlapCells": 57,
+        "overlaps": [
+          {
+            "hostId": "poi.po_ranger.ground",
+            "hostKind": "POI_GROUND_LEVEL",
+            "overlapCellCount": 3
+          },
+          {
+            "hostId": "elder.el_aion.outer",
+            "hostKind": "ELDER_OUTER_TERRITORY",
+            "overlapCellCount": 54
+          }
+        ],
+        "status": "OVERLAP_REPORTED__NOT_AUTOMATICALLY_RESOLVED",
+        "canonicalGeometryChanged": false
+      },
+      {
+        "siteId": "site.bz_westwood",
+        "hostEnvelopeCount": 1,
+        "totalOverlapCells": 5,
+        "overlaps": [
+          {
+            "hostId": "poi.po_westwood.ground",
+            "hostKind": "POI_GROUND_LEVEL",
+            "overlapCellCount": 5
+          }
+        ],
+        "status": "OVERLAP_REPORTED__NOT_AUTOMATICALLY_RESOLVED",
+        "canonicalGeometryChanged": false
+      },
+      {
+        "siteId": "site.bz_typhon_t",
+        "hostEnvelopeCount": 2,
+        "totalOverlapCells": 11,
+        "overlaps": [
+          {
+            "hostId": "poi.po_freightyard.ground",
+            "hostKind": "POI_GROUND_LEVEL",
+            "overlapCellCount": 5
+          },
+          {
+            "hostId": "elder.el_typhon.outer",
+            "hostKind": "ELDER_OUTER_TERRITORY",
+            "overlapCellCount": 6
+          }
+        ],
+        "status": "OVERLAP_REPORTED__NOT_AUTOMATICALLY_RESOLVED",
+        "canonicalGeometryChanged": false
+      },
+      {
+        "siteId": "site.bz_oasis",
+        "hostEnvelopeCount": 2,
+        "totalOverlapCells": 53,
+        "overlaps": [
+          {
+            "hostId": "poi.po_oasis.ground",
+            "hostKind": "POI_GROUND_LEVEL",
+            "overlapCellCount": 10
+          },
+          {
+            "hostId": "elder.el_anubis.outer",
+            "hostKind": "ELDER_OUTER_TERRITORY",
+            "overlapCellCount": 43
+          }
+        ],
+        "status": "OVERLAP_REPORTED__NOT_AUTOMATICALLY_RESOLVED",
+        "canonicalGeometryChanged": false
+      },
+      {
+        "siteId": "site.bz_greyback",
+        "hostEnvelopeCount": 0,
+        "totalOverlapCells": 0,
+        "overlaps": [],
+        "status": "NO_HOST_OVERLAP",
+        "canonicalGeometryChanged": false
+      },
+      {
+        "siteId": "site.bz_forest_n",
+        "hostEnvelopeCount": 0,
+        "totalOverlapCells": 0,
+        "overlaps": [],
+        "status": "NO_HOST_OVERLAP",
+        "canonicalGeometryChanged": false
+      },
+      {
+        "siteId": "site.bz_delta",
+        "hostEnvelopeCount": 0,
+        "totalOverlapCells": 0,
+        "overlaps": [],
+        "status": "NO_HOST_OVERLAP",
+        "canonicalGeometryChanged": false
+      },
+      {
+        "siteId": "site.bz_moss",
+        "hostEnvelopeCount": 1,
+        "totalOverlapCells": 38,
+        "overlaps": [
+          {
+            "hostId": "elder.el_aion.outer",
+            "hostKind": "ELDER_OUTER_TERRITORY",
+            "overlapCellCount": 38
+          }
+        ],
+        "status": "OVERLAP_REPORTED__NOT_AUTOMATICALLY_RESOLVED",
+        "canonicalGeometryChanged": false
+      },
+      {
+        "siteId": "site.bz_verdant",
+        "hostEnvelopeCount": 0,
+        "totalOverlapCells": 0,
+        "overlaps": [],
+        "status": "NO_HOST_OVERLAP",
+        "canonicalGeometryChanged": false
+      },
+      {
+        "siteId": "site.bz_ridge",
+        "hostEnvelopeCount": 1,
+        "totalOverlapCells": 3,
+        "overlaps": [
+          {
+            "hostId": "poi.po_rc_meridian.ground",
+            "hostKind": "POI_GROUND_LEVEL",
+            "overlapCellCount": 3
+          }
+        ],
+        "status": "OVERLAP_REPORTED__NOT_AUTOMATICALLY_RESOLVED",
+        "canonicalGeometryChanged": false
+      },
+      {
+        "siteId": "site.bz_kestrel",
+        "hostEnvelopeCount": 1,
+        "totalOverlapCells": 12,
+        "overlaps": [
+          {
+            "hostId": "elder.el_typhon.outer",
+            "hostKind": "ELDER_OUTER_TERRITORY",
+            "overlapCellCount": 12
+          }
+        ],
+        "status": "OVERLAP_REPORTED__NOT_AUTOMATICALLY_RESOLVED",
+        "canonicalGeometryChanged": false
+      },
+      {
+        "siteId": "site.bz_argus",
+        "hostEnvelopeCount": 1,
+        "totalOverlapCells": 45,
+        "overlaps": [
+          {
+            "hostId": "elder.el_argus.outer",
+            "hostKind": "ELDER_OUTER_TERRITORY",
+            "overlapCellCount": 45
+          }
+        ],
+        "status": "OVERLAP_REPORTED__NOT_AUTOMATICALLY_RESOLVED",
+        "canonicalGeometryChanged": false
+      },
+      {
+        "siteId": "site.bz_dune",
+        "hostEnvelopeCount": 1,
+        "totalOverlapCells": 25,
+        "overlaps": [
+          {
+            "hostId": "elder.el_anubis.outer",
+            "hostKind": "ELDER_OUTER_TERRITORY",
+            "overlapCellCount": 25
+          }
+        ],
+        "status": "OVERLAP_REPORTED__NOT_AUTOMATICALLY_RESOLVED",
+        "canonicalGeometryChanged": false
+      },
+      {
+        "siteId": "site.bz_salt",
+        "hostEnvelopeCount": 1,
+        "totalOverlapCells": 6,
+        "overlaps": [
+          {
+            "hostId": "poi.po_saltpans.ground",
+            "hostKind": "POI_GROUND_LEVEL",
+            "overlapCellCount": 6
+          }
+        ],
+        "status": "OVERLAP_REPORTED__NOT_AUTOMATICALLY_RESOLVED",
+        "canonicalGeometryChanged": false
+      },
+      {
+        "siteId": "site.bz_slag",
+        "hostEnvelopeCount": 0,
+        "totalOverlapCells": 0,
+        "overlaps": [],
+        "status": "NO_HOST_OVERLAP",
+        "canonicalGeometryChanged": false
+      },
+      {
+        "siteId": "site.bz_cinder",
+        "hostEnvelopeCount": 2,
+        "totalOverlapCells": 37,
+        "overlaps": [
+          {
+            "hostId": "poi.po_cindercamp.ground",
+            "hostKind": "POI_GROUND_LEVEL",
+            "overlapCellCount": 12
+          },
+          {
+            "hostId": "elder.el_surtur.outer",
+            "hostKind": "ELDER_OUTER_TERRITORY",
+            "overlapCellCount": 25
+          }
+        ],
+        "status": "OVERLAP_REPORTED__NOT_AUTOMATICALLY_RESOLVED",
+        "canonicalGeometryChanged": false
+      },
+      {
+        "siteId": "site.bz_ironholm",
+        "hostEnvelopeCount": 2,
+        "totalOverlapCells": 12,
+        "overlaps": [
+          {
+            "hostId": "poi.po_ironharbor.ground",
+            "hostKind": "POI_GROUND_LEVEL",
+            "overlapCellCount": 9
+          },
+          {
+            "hostId": "poi.po_ironmine.ground",
+            "hostKind": "POI_GROUND_LEVEL",
+            "overlapCellCount": 3
+          }
+        ],
+        "status": "OVERLAP_REPORTED__NOT_AUTOMATICALLY_RESOLVED",
+        "canonicalGeometryChanged": false
+      }
+    ]
+  },
+  "roofBoundarySemantics": {
+    "assessed": 153,
+    "autoShrinkAppliedCount": 0,
+    "canonicalPolygonChangedCount": 0,
+    "outsideBoundaryCount": 0,
+    "coincidentBoundaryCount": 99,
+    "insideOrOnBoundaryCount": 54,
+    "v2HistoricalCorrectedInsetCount": 99,
+    "v3NewAutoShrinkCount": 0,
+    "roofs": [
+      {
+        "id": "roof.room.po_academy.1.1",
+        "poiId": "po_academy",
+        "parentRoomId": "room.po_academy.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_academy.1.2",
+        "poiId": "po_academy",
+        "parentRoomId": "room.po_academy.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_academy.2.1",
+        "poiId": "po_academy",
+        "parentRoomId": "room.po_academy.2.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_academy.2.2",
+        "poiId": "po_academy",
+        "parentRoomId": "room.po_academy.2.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_academy.deep.1",
+        "poiId": "po_academy",
+        "parentRoomId": "room.po_academy.deep.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_observatory.1.1",
+        "poiId": "po_observatory",
+        "parentRoomId": "room.po_observatory.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_observatory.1.2",
+        "poiId": "po_observatory",
+        "parentRoomId": "room.po_observatory.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_archive.1.1",
+        "poiId": "po_archive",
+        "parentRoomId": "room.po_archive.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_archive.1.2",
+        "poiId": "po_archive",
+        "parentRoomId": "room.po_archive.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_archive.2.1",
+        "poiId": "po_archive",
+        "parentRoomId": "room.po_archive.2.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_archive.2.2",
+        "poiId": "po_archive",
+        "parentRoomId": "room.po_archive.2.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_archive.deep.1",
+        "poiId": "po_archive",
+        "parentRoomId": "room.po_archive.deep.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_hall_eyes.deep.1",
+        "poiId": "po_hall_eyes",
+        "parentRoomId": "room.po_hall_eyes.deep.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_lantern.1.1",
+        "poiId": "po_lantern",
+        "parentRoomId": "room.po_lantern.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_lantern.1.2",
+        "poiId": "po_lantern",
+        "parentRoomId": "room.po_lantern.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_lanternstn.1.1",
+        "poiId": "po_lanternstn",
+        "parentRoomId": "room.po_lanternstn.1.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_lanternstn.1.2",
+        "poiId": "po_lanternstn",
+        "parentRoomId": "room.po_lanternstn.1.2",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_kestrel.1.1",
+        "poiId": "po_kestrel",
+        "parentRoomId": "room.po_kestrel.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_kestrel.1.2",
+        "poiId": "po_kestrel",
+        "parentRoomId": "room.po_kestrel.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_kestrel.2.1",
+        "poiId": "po_kestrel",
+        "parentRoomId": "room.po_kestrel.2.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_kestrel.2.2",
+        "poiId": "po_kestrel",
+        "parentRoomId": "room.po_kestrel.2.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_kestrel.deep.1",
+        "poiId": "po_kestrel",
+        "parentRoomId": "room.po_kestrel.deep.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_typhon.deep.1",
+        "poiId": "po_typhon",
+        "parentRoomId": "room.po_typhon.deep.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_falls.1.1",
+        "poiId": "po_falls",
+        "parentRoomId": "room.po_falls.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_falls.1.2",
+        "poiId": "po_falls",
+        "parentRoomId": "room.po_falls.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_falls.2.1",
+        "poiId": "po_falls",
+        "parentRoomId": "room.po_falls.2.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_falls.2.2",
+        "poiId": "po_falls",
+        "parentRoomId": "room.po_falls.2.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_falls.deep.1",
+        "poiId": "po_falls",
+        "parentRoomId": "room.po_falls.deep.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_greywater.1.1",
+        "poiId": "po_greywater",
+        "parentRoomId": "room.po_greywater.1.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_greywater.1.2",
+        "poiId": "po_greywater",
+        "parentRoomId": "room.po_greywater.1.2",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_greywater.1.3",
+        "poiId": "po_greywater",
+        "parentRoomId": "room.po_greywater.1.3",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_greywater.2.1",
+        "poiId": "po_greywater",
+        "parentRoomId": "room.po_greywater.2.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_greywater.2.2",
+        "poiId": "po_greywater",
+        "parentRoomId": "room.po_greywater.2.2",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_greywater.2.3",
+        "poiId": "po_greywater",
+        "parentRoomId": "room.po_greywater.2.3",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_confluence.1.1",
+        "poiId": "po_confluence",
+        "parentRoomId": "room.po_confluence.1.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_confluence.1.2",
+        "poiId": "po_confluence",
+        "parentRoomId": "room.po_confluence.1.2",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_sawaion.1.1",
+        "poiId": "po_sawaion",
+        "parentRoomId": "room.po_sawaion.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_sawaion.1.2",
+        "poiId": "po_sawaion",
+        "parentRoomId": "room.po_sawaion.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_sawaion.2.1",
+        "poiId": "po_sawaion",
+        "parentRoomId": "room.po_sawaion.2.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_sawaion.2.2",
+        "poiId": "po_sawaion",
+        "parentRoomId": "room.po_sawaion.2.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_mill.1.1",
+        "poiId": "po_mill",
+        "parentRoomId": "room.po_mill.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_mill.1.2",
+        "poiId": "po_mill",
+        "parentRoomId": "room.po_mill.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_mill.2.1",
+        "poiId": "po_mill",
+        "parentRoomId": "room.po_mill.2.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_mill.2.2",
+        "poiId": "po_mill",
+        "parentRoomId": "room.po_mill.2.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_kilns.1.1",
+        "poiId": "po_kilns",
+        "parentRoomId": "room.po_kilns.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_kilns.1.2",
+        "poiId": "po_kilns",
+        "parentRoomId": "room.po_kilns.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_kilns.2.1",
+        "poiId": "po_kilns",
+        "parentRoomId": "room.po_kilns.2.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_kilns.2.2",
+        "poiId": "po_kilns",
+        "parentRoomId": "room.po_kilns.2.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_ranger.1.1",
+        "poiId": "po_ranger",
+        "parentRoomId": "room.po_ranger.1.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_ranger.1.2",
+        "poiId": "po_ranger",
+        "parentRoomId": "room.po_ranger.1.2",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_elderwood.deep.1",
+        "poiId": "po_elderwood",
+        "parentRoomId": "room.po_elderwood.deep.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_siloc.1.1",
+        "poiId": "po_siloc",
+        "parentRoomId": "room.po_siloc.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_siloc.1.2",
+        "poiId": "po_siloc",
+        "parentRoomId": "room.po_siloc.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_siloc.1.3",
+        "poiId": "po_siloc",
+        "parentRoomId": "room.po_siloc.1.3",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_meridian.1.1",
+        "poiId": "po_meridian",
+        "parentRoomId": "room.po_meridian.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_meridian.1.2",
+        "poiId": "po_meridian",
+        "parentRoomId": "room.po_meridian.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_meridian.2.1",
+        "poiId": "po_meridian",
+        "parentRoomId": "room.po_meridian.2.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_meridian.2.2",
+        "poiId": "po_meridian",
+        "parentRoomId": "room.po_meridian.2.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_meridian.deep.1",
+        "poiId": "po_meridian",
+        "parentRoomId": "room.po_meridian.deep.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_oldpump.1.1",
+        "poiId": "po_oldpump",
+        "parentRoomId": "room.po_oldpump.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_oldpump.1.2",
+        "poiId": "po_oldpump",
+        "parentRoomId": "room.po_oldpump.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_oldpump.2.1",
+        "poiId": "po_oldpump",
+        "parentRoomId": "room.po_oldpump.2.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_oldpump.2.2",
+        "poiId": "po_oldpump",
+        "parentRoomId": "room.po_oldpump.2.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_oldpump.deep.1",
+        "poiId": "po_oldpump",
+        "parentRoomId": "room.po_oldpump.deep.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_strait.1.1",
+        "poiId": "po_strait",
+        "parentRoomId": "room.po_strait.1.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_ironvein.deep.1",
+        "poiId": "po_ironvein",
+        "parentRoomId": "room.po_ironvein.deep.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_ridgestop.1.1",
+        "poiId": "po_ridgestop",
+        "parentRoomId": "room.po_ridgestop.1.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_ridgestop.1.2",
+        "poiId": "po_ridgestop",
+        "parentRoomId": "room.po_ridgestop.1.2",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_rapids.1.1",
+        "poiId": "po_rapids",
+        "parentRoomId": "room.po_rapids.1.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_rapids.1.2",
+        "poiId": "po_rapids",
+        "parentRoomId": "room.po_rapids.1.2",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_hook.1.1",
+        "poiId": "po_hook",
+        "parentRoomId": "room.po_hook.1.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_hook.1.2",
+        "poiId": "po_hook",
+        "parentRoomId": "room.po_hook.1.2",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_hook.1.3",
+        "poiId": "po_hook",
+        "parentRoomId": "room.po_hook.1.3",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_hook.2.1",
+        "poiId": "po_hook",
+        "parentRoomId": "room.po_hook.2.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_hook.2.2",
+        "poiId": "po_hook",
+        "parentRoomId": "room.po_hook.2.2",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_hook.2.3",
+        "poiId": "po_hook",
+        "parentRoomId": "room.po_hook.2.3",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_timberyard.1.1",
+        "poiId": "po_timberyard",
+        "parentRoomId": "room.po_timberyard.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_timberyard.1.2",
+        "poiId": "po_timberyard",
+        "parentRoomId": "room.po_timberyard.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_timberyard.2.1",
+        "poiId": "po_timberyard",
+        "parentRoomId": "room.po_timberyard.2.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_timberyard.2.2",
+        "poiId": "po_timberyard",
+        "parentRoomId": "room.po_timberyard.2.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_ember.1.1",
+        "poiId": "po_ember",
+        "parentRoomId": "room.po_ember.1.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_slag.1.1",
+        "poiId": "po_slag",
+        "parentRoomId": "room.po_slag.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_slag.1.2",
+        "poiId": "po_slag",
+        "parentRoomId": "room.po_slag.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_slag.2.1",
+        "poiId": "po_slag",
+        "parentRoomId": "room.po_slag.2.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_slag.2.2",
+        "poiId": "po_slag",
+        "parentRoomId": "room.po_slag.2.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_southfoot.1.1",
+        "poiId": "po_southfoot",
+        "parentRoomId": "room.po_southfoot.1.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_gulfhead.1.1",
+        "poiId": "po_gulfhead",
+        "parentRoomId": "room.po_gulfhead.1.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_westmouth.1.1",
+        "poiId": "po_westmouth",
+        "parentRoomId": "room.po_westmouth.1.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_westwood.1.1",
+        "poiId": "po_westwood",
+        "parentRoomId": "room.po_westwood.1.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_westwood.1.2",
+        "poiId": "po_westwood",
+        "parentRoomId": "room.po_westwood.1.2",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_fishcamp.1.1",
+        "poiId": "po_fishcamp",
+        "parentRoomId": "room.po_fishcamp.1.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_fishcamp.1.2",
+        "poiId": "po_fishcamp",
+        "parentRoomId": "room.po_fishcamp.1.2",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_necropolis.deep.1",
+        "poiId": "po_necropolis",
+        "parentRoomId": "room.po_necropolis.deep.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_tombs.1.1",
+        "poiId": "po_tombs",
+        "parentRoomId": "room.po_tombs.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_tombs.1.2",
+        "poiId": "po_tombs",
+        "parentRoomId": "room.po_tombs.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_tombs.deep.1",
+        "poiId": "po_tombs",
+        "parentRoomId": "room.po_tombs.deep.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_cairns.deep.1",
+        "poiId": "po_cairns",
+        "parentRoomId": "room.po_cairns.deep.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_oasis.1.1",
+        "poiId": "po_oasis",
+        "parentRoomId": "room.po_oasis.1.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_oasis.1.2",
+        "poiId": "po_oasis",
+        "parentRoomId": "room.po_oasis.1.2",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_oasis.1.3",
+        "poiId": "po_oasis",
+        "parentRoomId": "room.po_oasis.1.3",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_oasis.2.1",
+        "poiId": "po_oasis",
+        "parentRoomId": "room.po_oasis.2.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_oasis.2.2",
+        "poiId": "po_oasis",
+        "parentRoomId": "room.po_oasis.2.2",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_oasis.2.3",
+        "poiId": "po_oasis",
+        "parentRoomId": "room.po_oasis.2.3",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_bonestop.1.1",
+        "poiId": "po_bonestop",
+        "parentRoomId": "room.po_bonestop.1.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_bonestop.1.2",
+        "poiId": "po_bonestop",
+        "parentRoomId": "room.po_bonestop.1.2",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_sandgate.1.1",
+        "poiId": "po_sandgate",
+        "parentRoomId": "room.po_sandgate.1.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_gate.1.1",
+        "poiId": "po_gate",
+        "parentRoomId": "room.po_gate.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_gate.deep.1",
+        "poiId": "po_gate",
+        "parentRoomId": "room.po_gate.deep.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_beacon.1.1",
+        "poiId": "po_beacon",
+        "parentRoomId": "room.po_beacon.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_beacon.1.2",
+        "poiId": "po_beacon",
+        "parentRoomId": "room.po_beacon.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_tidecamp.1.1",
+        "poiId": "po_tidecamp",
+        "parentRoomId": "room.po_tidecamp.1.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_tidecamp.1.2",
+        "poiId": "po_tidecamp",
+        "parentRoomId": "room.po_tidecamp.1.2",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_netcamp.1.1",
+        "poiId": "po_netcamp",
+        "parentRoomId": "room.po_netcamp.1.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_netcamp.1.2",
+        "poiId": "po_netcamp",
+        "parentRoomId": "room.po_netcamp.1.2",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_cindercamp.1.1",
+        "poiId": "po_cindercamp",
+        "parentRoomId": "room.po_cindercamp.1.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_cindercamp.1.2",
+        "poiId": "po_cindercamp",
+        "parentRoomId": "room.po_cindercamp.1.2",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_cindercamp.1.3",
+        "poiId": "po_cindercamp",
+        "parentRoomId": "room.po_cindercamp.1.3",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_cindercamp.2.1",
+        "poiId": "po_cindercamp",
+        "parentRoomId": "room.po_cindercamp.2.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_cindercamp.2.2",
+        "poiId": "po_cindercamp",
+        "parentRoomId": "room.po_cindercamp.2.2",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_cindercamp.2.3",
+        "poiId": "po_cindercamp",
+        "parentRoomId": "room.po_cindercamp.2.3",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_sulfur.deep.1",
+        "poiId": "po_sulfur",
+        "parentRoomId": "room.po_sulfur.deep.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_geo.1.1",
+        "poiId": "po_geo",
+        "parentRoomId": "room.po_geo.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_geo.1.2",
+        "poiId": "po_geo",
+        "parentRoomId": "room.po_geo.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_geo.2.1",
+        "poiId": "po_geo",
+        "parentRoomId": "room.po_geo.2.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_geo.2.2",
+        "poiId": "po_geo",
+        "parentRoomId": "room.po_geo.2.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_geo.deep.1",
+        "poiId": "po_geo",
+        "parentRoomId": "room.po_geo.deep.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_emberwatch.1.1",
+        "poiId": "po_emberwatch",
+        "parentRoomId": "room.po_emberwatch.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_emberwatch.1.2",
+        "poiId": "po_emberwatch",
+        "parentRoomId": "room.po_emberwatch.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_surtur.deep.1",
+        "poiId": "po_surtur",
+        "parentRoomId": "room.po_surtur.deep.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_saltharbor.1.1",
+        "poiId": "po_saltharbor",
+        "parentRoomId": "room.po_saltharbor.1.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_saltlight.1.1",
+        "poiId": "po_saltlight",
+        "parentRoomId": "room.po_saltlight.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_saltlight.1.2",
+        "poiId": "po_saltlight",
+        "parentRoomId": "room.po_saltlight.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_racks.1.1",
+        "poiId": "po_racks",
+        "parentRoomId": "room.po_racks.1.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_racks.1.2",
+        "poiId": "po_racks",
+        "parentRoomId": "room.po_racks.1.2",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_ironharbor.1.1",
+        "poiId": "po_ironharbor",
+        "parentRoomId": "room.po_ironharbor.1.1",
+        "vertexCount": 4,
+        "insideVertices": 4,
+        "onBoundaryVertices": 0,
+        "outsideVertices": 0,
+        "boundaryStatus": "INSIDE_OR_ON_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_ironmine.deep.1",
+        "poiId": "po_ironmine",
+        "parentRoomId": "room.po_ironmine.deep.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_ironwh.1.1",
+        "poiId": "po_ironwh",
+        "parentRoomId": "room.po_ironwh.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_ironwh.1.2",
+        "poiId": "po_ironwh",
+        "parentRoomId": "room.po_ironwh.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_ironwh.1.3",
+        "poiId": "po_ironwh",
+        "parentRoomId": "room.po_ironwh.1.3",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_rc_meridian.1.1",
+        "poiId": "po_rc_meridian",
+        "parentRoomId": "room.po_rc_meridian.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_rc_meridian.1.2",
+        "poiId": "po_rc_meridian",
+        "parentRoomId": "room.po_rc_meridian.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_rc_ironvein.1.1",
+        "poiId": "po_rc_ironvein",
+        "parentRoomId": "room.po_rc_ironvein.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_rc_ironvein.1.2",
+        "poiId": "po_rc_ironvein",
+        "parentRoomId": "room.po_rc_ironvein.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_rc_kestrel.1.1",
+        "poiId": "po_rc_kestrel",
+        "parentRoomId": "room.po_rc_kestrel.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_rc_kestrel.1.2",
+        "poiId": "po_rc_kestrel",
+        "parentRoomId": "room.po_rc_kestrel.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_rc_dam.1.1",
+        "poiId": "po_rc_dam",
+        "parentRoomId": "room.po_rc_dam.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_rc_dam.1.2",
+        "poiId": "po_rc_dam",
+        "parentRoomId": "room.po_rc_dam.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_rc_sandgate.1.1",
+        "poiId": "po_rc_sandgate",
+        "parentRoomId": "room.po_rc_sandgate.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_rc_sandgate.1.2",
+        "poiId": "po_rc_sandgate",
+        "parentRoomId": "room.po_rc_sandgate.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_rc_salt.1.1",
+        "poiId": "po_rc_salt",
+        "parentRoomId": "room.po_rc_salt.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_rc_salt.1.2",
+        "poiId": "po_rc_salt",
+        "parentRoomId": "room.po_rc_salt.1.2",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_vend_gulf.1.1",
+        "poiId": "po_vend_gulf",
+        "parentRoomId": "room.po_vend_gulf.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      },
+      {
+        "id": "roof.room.po_vend_strait.1.1",
+        "poiId": "po_vend_strait",
+        "parentRoomId": "room.po_vend_strait.1.1",
+        "vertexCount": 4,
+        "insideVertices": 0,
+        "onBoundaryVertices": 4,
+        "outsideVertices": 0,
+        "boundaryStatus": "COINCIDENT_WITH_PARENT_ROOM_BOUNDARY",
+        "status": "VERIFIED_GEOMETRY",
+        "owner": "MAP",
+        "autoShrinkApplied": false,
+        "canonicalPolygonChanged": false,
+        "note": "Boundary coincidence is a SEMANTIC question (canopy vs full roof), not a licence to shrink every flagged polygon."
+      }
+    ]
+  },
+  "noClaims": [
+    "NO automatic roof shrink",
+    "NO canonical POI relocation",
+    "NO new POI",
+    "NO Gameplay rule change"
+  ]
+}

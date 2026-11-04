@@ -1,0 +1,7 @@
+{
+  "schema": "soh.wmp.v3.build_determinism.v1",
+  "command": "node v3/src/build_v3.mjs (twice)",
+  "run1": "1356735557a421f720e24c6e9dd54ae0812e5f75cc18a48c14ddfc69de9bd114",
+  "run2": "1356735557a421f720e24c6e9dd54ae0812e5f75cc18a48c14ddfc69de9bd114",
+  "equal": true
+}
