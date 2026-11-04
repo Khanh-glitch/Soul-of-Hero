@@ -107,8 +107,15 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       if (!gs.run) { if (!ended) { ended = true; save(gs); onRunEnd(); } return; }
       const i = inp.current; i.mx = mouse.current.x + Math.round(cam.x); i.my = mouse.current.y + Math.round(cam.y);
       let simDt = dt; if (hitstop.current > 0) { hitstop.current -= dt; simDt = dt * 0.08; }
+      const wasDead = gs.run.player.dead;
       tick(gs, i, simDt, now); i.attackPressed = false; i.roll = false; i.cancel = false;
       if (!gs.run) return;
+      // Death transfers the entire pack to a physical bag. Persist that custody
+      // transition immediately instead of leaving a five-second rollback window.
+      if (!wasDead && gs.run.player.dead) {
+        if (!saveSync(gs)) toast('Death save failed. Your changes are not confirmed on disk.', 'bad');
+        void save(gs).then(ok => { if (!ok) toast('Death save failed. Your changes are not confirmed on disk.', 'bad'); });
+      }
       target.current = findInteract(gs, now);
       consumeFX(e => { sfx(e); if (e.type === 'toast') toast(e.text); else if (e.type === 'hitstop') hitstop.current = Math.max(hitstop.current, e.ms); else if (e.type === 'banner') setBanner({ text: e.text, sub: e.sub, id: now }); else if (e.type === 'discover') setBanner({ text: e.name, sub: 'Discovered', id: now }); else if (e.type === 'region') setBanner(b => (b && now - b.id < 2500 ? b : { text: e.name, id: now })); else if (e.type === 'pickup' || e.type === 'struct.destroyed') scheduleSave(); });
       draw(g, gs, now, dt, { buildType: buildRef.current, reclaim: reclaimRef.current || repairRef.current || upgradeRef.current, mouseX: i.mx, mouseY: i.my, target: target.current, time: t });
