@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { type GameState, type Stack } from '../src/game/core';
-import { addItem, C, countItem, dispatch, newGame } from '../src/game/engine';
+import { TILE, WW, type GameState, type Stack } from '../src/game/core';
+import { addItem, C, countItem, dispatch, newGame, mkCreature, blockGrid } from '../src/game/engine';
 import { HAZ, PROJ, tick, type Input } from '../src/game/sim';
 import { serializeSnapshot, validate } from '../src/game/persist';
 import { setActiveLayout } from '../src/game/world';
@@ -20,6 +20,15 @@ describe('Creator Core physical reserves foundation',()=>{
    for(const game of [left,right])for(let i=0;i<6;i++)tick(game,input(game,{viewX:300,viewY:400,...(i===0?{skill:'signature' as const}:{})}),50,T+100+i*50);
    const impacts=(x:GameState)=>x.run!.combat!.hazards.filter(h=>h.style==='meteor').map(h=>({x:h.x,y:h.y,tell:h.tell}));
    const a=impacts(left),b=impacts(right);expect(a).toHaveLength(10);expect(a).toEqual(b);expect(a.every(p=>p.x>=300&&p.x<940&&p.y>=400&&p.y<760)).toBe(true);expect(new Set(a.map(p=>p.tell)).size).toBe(10);expect(C(left.run!,'inv').slots[slot]!.reserves!.signature).toBe(2);expect(validate(snapshot(left))).toBeTruthy();
+ });
+
+ it('Dragon impact conserves exactly twenty percent of included enemies remaining HP',()=>{
+   const {g,r}=setup();expect(addItem(r,'inv','core_dragon',1)).toBe(0);const slot=C(r,'inv').slots.findIndex(s=>s?.key==='core_dragon'),dragon=C(r,'inv').slots[slot]!;r.player.active=slot;
+   expect(cmd(g,'loadCore',{slot,uid:dragon.uid,mode:'signature'}).ok).toBe(true);
+   const grid=blockGrid(r);let pos=0;outer:for(let y=20;y<180;y++)for(let x=20;x<175;x++)if([0,1,2,3].every(dx=>grid[y*WW+x+dx]===0)){pos=y*WW+x;break outer;}expect(pos).toBeGreaterThan(0);r.player.x=(pos%WW)*TILE+8;r.player.y=Math.floor(pos/WW)*TILE+8;
+   const m1=mkCreature(r,'boar',r.player.x+16,r.player.y,40),m2=mkCreature(r,'boar',r.player.x+40,r.player.y,25);r.creatures=[m1,m2];
+   const vx=Math.max(0,r.player.x-320),vy=Math.max(0,r.player.y-180);for(let i=0;i<6;i++)tick(g,input(g,{viewX:vx,viewY:vy,...(i===0?{skill:'signature' as const}:{})}),50,T+100+i*50);
+   expect(r.dragonDive?.ids).toHaveLength(2);let t=T+400;while(r.dragonDive && r.dragonDive.left>50){tick(g,input(g),50,t);t+=50;}const before=m1.hp+m2.hp;tick(g,input(g),50,t);expect(r.dragonDive).toBeUndefined();expect((before-(m1.hp+m2.hp))).toBeCloseTo(before*0.2,8);const line=r.receipts.find(x=>x.kind==='core.dragon.impact')!.detail.split(':');expect(Number(line[0])).toBe(2);expect(Number(line[2])).toBeCloseTo(Number(line[1])*0.2,8);expect(validate(snapshot(g))).toBeTruthy();
  });
 
 });

@@ -77,7 +77,7 @@ export interface Creature {
   offlineUnresolvedAt?: number;
   path: number[] | null; pathT: number; cd: number; kbx: number; kby: number; flash: number;
   elder?: { key: string; awake: boolean; phase: number; pattern: number; special: number; shield?: number; submerged?: boolean };
-  patternKey?: string; atk?: any; slow?: number; signatureBurnNext?: number;
+  patternKey?: string; atk?: any; slow?: number; signatureBurnNext?: number; tornadoNext?: number;
 }
 
 export interface Entity {
@@ -140,6 +140,8 @@ export interface RunState {
   traces: Trace[];
   /** Additive: absent in old saves; physical combat remains unresolved while away. */
   combat?: { projectiles: Proj[]; hazards: Haz[] };
+  /** Committed Dragon collection continues only during physical combat frames. */
+  dragonDive?: { ids: string[]; x: number; y: number; left: number };
   traceWalk?: TraceWalk;
   discovered: number[]; // 4x4-tile cells
   poiSeen: string[];

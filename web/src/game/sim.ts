@@ -187,6 +187,18 @@ function commitCreatorCore(gs: GameState, now: number, slot: number, uid0: strin
   s.reserves[mode]--; receipt(r, now, 'core.commit', `${s.uid}:${mode}:${s.reserves[mode]}`); award(gs,'first_core',now);
   const b = BAL.creatorCoreBlast, hx=p.x+Math.cos(a)*10, hy=p.y+Math.sin(a)*10;
   fx('cast',{x:hx,y:hy,core:'fire',a});
+  if (ITEMS[s.key].creatorCore === 'dragon') {
+    const d=BAL.creatorCoreDragon;
+    if(mode==='basic') { const len=rayLen(r,p.x,p.y,a,d.flameLength);HAZ.push({kind:'line',x:p.x,y:p.y,angle:a,len,w:d.flameWidth,t:0,tell:0,dur:180,dmg:d.flameDamage,style:'burn',effect:'flameLine',owner:'player'}); }
+    if(mode==='refined') { const distance=Math.min(d.tornadoSpeed*d.tornadoSeconds,dist(p.x,p.y,aim.mx,aim.my));PROJ.push({x:hx,y:hy,vx:Math.cos(a)*d.tornadoSpeed,vy:Math.sin(a)*d.tornadoSpeed,life:Math.max(0.2,distance/d.tornadoSpeed),dmg:d.tornadoDamage,from:'player',kind:'fire_tornado',r:8}); }
+    if(mode==='signature') {
+      const vx=clamp(Number.isFinite(aim.viewX)?aim.viewX!:p.x-VIEW_W/2,0,WW*TILE-VIEW_W),vy=clamp(Number.isFinite(aim.viewY)?aim.viewY!:p.y-VIEW_H/2,0,WH*TILE-VIEW_H);
+      const visible=r.creatures.filter(m=>m.state!=='dead'&&!m.elder&&!m.atk?.burrow&&m.hp>0&&m.x>=vx&&m.x<vx+VIEW_W&&m.y>=vy&&m.y<vy+VIEW_H&&clearPhysicalLine(r,p,m,true)).sort((u,v)=>dist(p.x,p.y,u.x,u.y)-dist(p.x,p.y,v.x,v.y)||u.id.localeCompare(v.id));
+      const last=visible[visible.length-1]; if(last){const ids=visible.filter(m=>clearPhysicalLine(r,m,last,true)).map(m=>m.id);r.dragonDive={ids,x:last.x,y:last.y,left:d.collectMs};for(const m of visible)if(ids.includes(m.id))m.slow=Math.max(m.slow||0,d.collectMs);fx('cast',{x:last.x,y:last.y,core:'fire',a});}
+      receipt(r,now,'core.dragon.collect',`${s.uid}:${visible.length}`);
+    }
+    return;
+  }
   if (ITEMS[s.key].creatorCore === 'meteor') {
     const m=BAL.creatorCoreMeteor;
     if(mode==='basic') PROJ.push({x:hx,y:hy,vx:Math.cos(a)*190,vy:Math.sin(a)*190,life:0.95,dmg:m.fireballDamage,from:'player',kind:'fireball',r:5});
@@ -220,7 +232,7 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   else if ((inp.attackPressed || inp.attack) && !p.action) {
     const s = activeStack(r); const d = s ? ITEMS[s.key] : null;
     if (d?.repair && s?.dur !== undefined && s.dur <= 0) { if (inp.attackPressed) fx('toast', { text: `${d.name} is broken. Repair it at a workbench.` }); }
-    else if (d?.creatorCore) { if (s!.reserves && s!.reserves.basic>0) { p.action={kind:'cast',t:0,dur:d.creatorCore==='meteor'?400:180,contact:d.creatorCore==='meteor'?300:100,angle:p.aim,slot:p.active,coreUid:s!.uid,mode:'basic'}; } else if(inp.attackPressed) fx('toast',{text:'Basic reserve empty — press R to reload.'}); }
+    else if (d?.creatorCore) { if (s!.reserves && s!.reserves.basic>0) { p.action={kind:'cast',t:0,dur:d.creatorCore==='meteor'?400:d.creatorCore==='dragon'?280:180,contact:d.creatorCore==='meteor'?300:d.creatorCore==='dragon'?170:100,angle:p.aim,slot:p.active,coreUid:s!.uid,mode:'basic'}; } else if(inp.attackPressed) fx('toast',{text:'Basic reserve empty — press R to reload.'}); }
     else if (d?.core) { if ((s!.charge ?? 0) > 0) { p.action = { kind: 'cast', t: 0, dur: 520, contact: 460, angle: p.aim, slot: p.active }; fx('windup', { x: p.x, y: p.y, core: d.core }); } else if (inp.attackPressed) fx('toast', { text: 'This Core is spent. Study it at a Research Table.' }); }
     else if (d && d.food && inp.attackPressed) { const res = dispatch(gs, { id: 'use' + now, type: 'useItem', slot: p.active }, now); fx(res.ok ? 'eat' : 'toast', { x: p.x, y: p.y, text: res.ok ? '' : (res as any).reason }); }
     else if (d && d.cat === 'bp' && inp.attackPressed) { const res = dispatch(gs, { id: 'use' + now, type: 'useItem', slot: p.active }, now); fx('toast', { text: res.ok ? res.msg : (res as any).reason }); }
@@ -234,7 +246,7 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   if (a2) {
     a2.t += dtMs;
     if (a2.kind === 'swing') { speedMul = 0.45; if (!a2.done && a2.t >= (a2.contact || 0)) { a2.done = true; resolveSwing(gs, now, a2.slot ?? -1, a2.angle); } }
-    if (a2.kind === 'cast') { speedMul = 0.3; a2.angle = p.aim; if (!a2.done && a2.t >= (a2.contact || 0)) { a2.done = true; if (a2.coreUid && a2.mode) commitCreatorCore(gs, now, a2.slot!, a2.coreUid, a2.mode, p.aim, inp); else commitCore(gs, now, a2.slot!, p.aim); } }
+    if (a2.kind === 'cast') { speedMul = a2.mode==='basic' && C(r,'inv').slots[a2.slot!]?.key==='core_dragon' ? 0 : 0.3; a2.angle = p.aim; if (!a2.done && a2.t >= (a2.contact || 0)) { a2.done = true; if (a2.coreUid && a2.mode) commitCreatorCore(gs, now, a2.slot!, a2.coreUid, a2.mode, p.aim, inp); else commitCore(gs, now, a2.slot!, p.aim); } }
     if (a2.kind === 'hurt') speedMul = 0.6;
     if (a2.t >= a2.dur) p.action = null;
   }
@@ -628,6 +640,7 @@ function tickProj(gs: GameState, dtMs: number, now: number) {
       if (b === 1 || b === 2 || b === 3 || b === 5 || !clearPhysicalLine(r, pr, { x, y }, true)) { blocked = true; break; }
       pr.x = x; pr.y = y;
     }
+    if(pr.kind==='fire_tornado') { for(const m of r.creatures){if(m.state==='dead'||m.elder?.submerged||m.atk?.burrow||dist(m.x,m.y,pr.x,pr.y)>BAL.creatorCoreDragon.tornadoRadius||!los(r,m.x,m.y,pr.x,pr.y,true))continue;const a=Math.atan2(pr.y-m.y,pr.x-m.x);moveBody(r,m,Math.cos(a)*20*dt,Math.sin(a)*20*dt,5,'creature');if(now>=(m.tornadoNext||0)){m.tornadoNext=now+500;damageCreature(gs,m,pr.dmg,a,now,0);}}ignite(gs,tileOf(pr.x),tileOf(pr.y),now); }
     if (pr.kind === 'blast_signature') {
       const trailSteps=Math.max(1,Math.ceil(dist(ox,oy,pr.x,pr.y)/12));
       for(let k=1;k<=trailSteps;k++){const x=ox+(pr.x-ox)*k/trailSteps,y=oy+(pr.y-oy)*k/trailSteps;ignite(gs,tileOf(x),tileOf(y),now);HAZ.push({kind:'pool',x,y,r:8,t:0,tell:0,dur:BAL.creatorCoreBlast.signatureBurnMs,dmg:BAL.creatorCoreBlast.signatureBurnDamage,style:'burn',owner:'player'});}
@@ -636,7 +649,7 @@ function tickProj(gs: GameState, dtMs: number, now: number) {
     if (pr.kind === 'blast_bomb' && blocked && !dead) { pr.vx=0; pr.vy=0; blocked=false; }
     if (blocked) { dead = true; if (pr.kind === 'fireball' || pr.kind === 'blast_signature') explode(gs, pr, now); else fx('ping', { x: pr.x, y: pr.y, kind: pr.kind }); }
     else if (pr.from === 'enemy' && dist(pr.x, pr.y, p.x, p.y) < pr.r + 4) { dead = true; if (pr.kind === 'mine') { fx('boom', { x: pr.x, y: pr.y, small: true }); } hurtPlayer(gs, pr.dmg, pr.x - pr.vx, pr.y - pr.vy, 'projectile', now, 100); }
-    else if (pr.from === 'player' && pr.kind !== 'blast_bomb') { for (const m of r.creatures) { if (m.state === 'dead') continue; const rr = m.elder ? ELDERS[m.elder.key].r : 6; if (dist(pr.x, pr.y, m.x, m.y) < rr + pr.r) { dead = true; if (pr.kind === 'fireball' || pr.kind === 'blast_signature') explode(gs, pr, now); else damageCreature(gs, m, pr.dmg, Math.atan2(pr.vy, pr.vx), now, 80); break; } } }
+    else if (pr.from === 'player' && pr.kind !== 'blast_bomb' && pr.kind !== 'fire_tornado') { for (const m of r.creatures) { if (m.state === 'dead') continue; const rr = m.elder ? ELDERS[m.elder.key].r : 6; if (dist(pr.x, pr.y, m.x, m.y) < rr + pr.r) { dead = true; if (pr.kind === 'fireball' || pr.kind === 'blast_signature') explode(gs, pr, now); else damageCreature(gs, m, pr.dmg, Math.atan2(pr.vy, pr.vx), now, 80); break; } } }
     if (dead && (pr.kind === 'fireball' || pr.kind === 'blast_signature') && pr.life <= 0) explode(gs, pr, now);
     if (dead && pr.kind === 'blast_bomb' && pr.life <= 0) {
       explode(gs,pr,now); const base=rngNext(r)*Math.PI*2;
@@ -680,6 +693,7 @@ function onHazActivate(gs: GameState, h: Haz, now: number) {
   fx('hazfire', { x: h.x, y: h.y, style: h.style, kind: h.kind, r: h.r, angle: h.angle, len: h.len });
   if (h.effect === 'quake') { const res = harvestHit(gs, tileOf(h.x), tileOf(h.y), { stone: 6, ore: 5 }, now, h.x, h.y); if (res.result === 'yield') fx('chip', { x: h.x, y: h.y, mat: res.mat }); }
   if (h.effect === 'ignite' || h.effect === 'burnline') { if (h.kind === 'line') { for (let d = 10; d < h.len!; d += 14) { const x = h.x + Math.cos(h.angle!) * d, y = h.y + Math.sin(h.angle!) * d; ignite(gs, tileOf(x), tileOf(y), now); } HAZ.push({ ...h, t: 0, tell: 0, dur: 3000, style: 'burn', effect: undefined, done: false, hit: false, dmg: 10 }); } else ignite(gs, tileOf(h.x), tileOf(h.y), now); }
+  if (h.effect === 'flameLine') for(let d=10;d<(h.len||0);d+=14) ignite(gs,tileOf(h.x+Math.cos(h.angle!)*d),tileOf(h.y+Math.sin(h.angle!)*d),now);
   if (h.effect === 'meteorBurn') { ignite(gs,tileOf(h.x),tileOf(h.y),now); HAZ.push({kind:'pool',x:h.x,y:h.y,r:h.r,t:0,tell:0,dur:BAL.creatorCoreMeteor.burnMs,dmg:BAL.creatorCoreMeteor.burnDamage,style:'burn',owner:'player'}); }
   if (h.effect === 'pool') HAZ.push({ kind: 'pool', x: h.x, y: h.y, r: h.r, t: 0, tell: 0, dur: 6500, dmg: 5, style: 'pool', owner: h.owner, done: false });
   if (h.effect === 'pillar' || h.effect === 'cage') { const tx = tileOf(h.x), ty = tileOf(h.y); const t = effTile(r, tx, ty); const p = r.player;
@@ -783,6 +797,20 @@ export function syncWorld(gs: GameState, now: number): boolean {
   return true;
 }
 
+/** Collect only targets that can be physically brought to the final point.
+ * The second impact debits precisely 20% of their then-current HP, bypassing
+ * unrelated combat multipliers so the locked group-total remains exact. */
+function tickDragonDive(gs: GameState, dtMs: number, now: number) {
+  const r=gs.run!,d=r.dragonDive;if(!d)return;
+  const selected=d.ids.map(id=>r.creatures.find(m=>m.id===id)).filter((m):m is Creature=>!!m&&m.state!=='dead'&&!m.elder&&!m.atk?.burrow&&m.hp>0);
+  for(const m of selected){const a=Math.atan2(d.y-m.y,d.x-m.x),distance=dist(m.x,m.y,d.x,d.y),step=Math.min(distance,220*dtMs/1000);moveBody(r,m,Math.cos(a)*step,Math.sin(a)*step,5,'creature');}
+  d.left-=dtMs;if(d.left>0)return;
+  const included=selected.filter(m=>dist(m.x,m.y,d.x,d.y)<=30&&clearPhysicalLine(r,m,d,true));
+  const total=included.reduce((n,m)=>n+m.hp,0), fraction=BAL.creatorCoreDragon.impactFraction;
+  for(const m of included){const hit=m.hp*fraction;m.hp-=hit;m.flash=120;(m as any).prov=true;fx('mhit',{x:m.x,y:m.y,n:hit,a:0,big:false});}
+  fx('boom',{x:d.x,y:d.y});fx('shake',{m:5});receipt(r,now,'core.dragon.impact',`${included.length}:${total}:${total*fraction}`);delete r.dragonDive;
+}
+
 // ---------- main tick ----------
 export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   const r = gs.run; if (!r || r.ended) return;
@@ -796,6 +824,7 @@ export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   if (slot !== r.clock.weatherSlot) { r.clock.weatherSlot = slot; fx('weather', { w: weather }); }
   tickPlayer(gs, inp, dtMs, now);
   tickCreatures(gs, dtMs, now);
+  tickDragonDive(gs, dtMs, now);
   tickTurrets(gs, dtMs, now);
   tickProj(gs, dtMs, now);
   tickHaz(gs, dtMs, now);

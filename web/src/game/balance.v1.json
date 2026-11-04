@@ -181,5 +181,17 @@
     "staggerMs": 160,
     "burnDamage": 4,
     "burnMs": 3500
+  },
+  "creatorCoreDragon": {
+    "_status": "SOH_NEW_TUNED v1 except impactFraction CREATOR_LOCKED",
+    "flameDamage": 5,
+    "flameLength": 100,
+    "flameWidth": 24,
+    "tornadoSpeed": 45,
+    "tornadoSeconds": 3.5,
+    "tornadoRadius": 32,
+    "tornadoDamage": 4,
+    "collectMs": 1200,
+    "impactFraction": 0.2
   }
 }
