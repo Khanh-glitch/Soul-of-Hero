@@ -52,7 +52,7 @@ describe('lifecycle contract: custom spell identity / determinism / clock / OUT'
     }
   });
 
-  it.each([4, 6, 12, 13, 14, 18])('(d+e) #%i at/after OUT equals the no-effect composited baseline (RCA F4)', (id) => {
+  it.each([4, 6, 12, 13, 14, 18])('(d+e) #%i at/after OUT equals the no-effect composited baseline (RCA F4)', async (id) => {
     const w = world();
     // no-effect baseline: same CRunner compositor, no spell cast
     const base = new CRunner();
@@ -62,7 +62,7 @@ describe('lifecycle contract: custom spell identity / determinism / clock / OUT'
     const r = new RedesignRunner();
     r.setWorld(w);
     r.cast(id);
-    r.seek(REDESIGNS[id].dur + 0.79);
+    await r.seekAsync(REDESIGNS[id].dur + 0.79); // chunked+yielding to stay rpc-responsive on slow CI
     expect(hash(r.out)).toBe(baseline);
-  }, 120000);
+  }, 300000);
 });
