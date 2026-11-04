@@ -1,5 +1,5 @@
-SOH ARCANA20 FX LAB — standalone, 20 skills, 6 authored redesigns + source-contribution fusion
-(F9 in game → FX Lab → "ARCANA20 lab" dropdown; lead / C-study / fusion? modes; scrub slider; open/peak/out phase jumps)
+SOH ARCANA20 FX LAB — standalone, deterministic lifecycle contract (RED->GREEN), 20 skills
+(F9 in game → FX Lab → "ARCANA20 lab" dropdown; lead / C-study / fusion? modes; scrub; open/peak/out jumps)
 built from branch arena/3337c864-soul-of-hero
-artifact sha256    : f88b05722b388f0890eda0cb7edf6f6d6aaca06d935e0d4b4e6f50035abb1976
+artifact sha256    : 9d1eedd3a2dd70fd670e58d2092bbbad65ef3bff1a35fda98e9682967cf00579
 boot: open this file directly (file://)

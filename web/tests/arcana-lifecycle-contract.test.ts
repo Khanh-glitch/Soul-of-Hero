@@ -21,6 +21,7 @@ const hash = (b: Uint8ClampedArray) => createHash('sha256').update(Buffer.from(b
 describe('lifecycle contract: custom spell identity / determinism / clock / OUT', () => {
   it('(a) custom #04 keeps identity after backward seek (RCA F2)', () => {
     const c = new CRunner();
+    c.registerCustom(4, REDESIGNS[4]); // first-class registration is part of the contract
     c.setWorld(world());
     c.castCustom(4);
     c.seek(3.0);
@@ -30,14 +31,14 @@ describe('lifecycle contract: custom spell identity / determinism / clock / OUT'
     expect((c as any).customId ?? (c as any).currentCustomId ?? 4).toBe(4);
   });
 
-  it('(b) same cast+time+world is bit-identical across direct/forward/backward/replay (RCA F3)', () => {
+  it('(b) same cast+time+world is bit-identical across direct/forward/backward/replay (RCA F3)', async () => {
     const r = new RedesignRunner();
     r.setWorld(world()); r.cast(4);
-    r.seek(3.0); const direct = hash(r.out);
-    r.seek(4.2); const fwd = hash(r.out);
-    r.seek(3.0); expect(hash(r.out)).toBe(direct);      // backward == direct
-    r.seek(4.2); expect(hash(r.out)).toBe(fwd);          // replay forward
-    r.cast(4); r.seek(3.0); expect(hash(r.out)).toBe(direct); // fresh cast, same seed
+    await r.seekAsync(3.0); const direct = hash(r.out);
+    await r.seekAsync(4.2); const fwd = hash(r.out);
+    await r.seekAsync(3.0); expect(hash(r.out)).toBe(direct);      // backward == direct
+    await r.seekAsync(4.2); expect(hash(r.out)).toBe(fwd);          // replay forward
+    r.cast(4); await r.seekAsync(3.0); expect(hash(r.out)).toBe(direct); // fresh cast, same seed
   });
 
   it('(c) registered duration/climax match the authored redesign, not the C catalog (RCA F5)', () => {
@@ -56,7 +57,7 @@ describe('lifecycle contract: custom spell identity / determinism / clock / OUT'
     // no-effect baseline: same CRunner compositor, no spell cast
     const base = new CRunner();
     base.setWorld(w);
-    base.seek(0.0); // runs zero-effect frames through the same composite path
+    base.renderBaseline(0); // no-effect baseline through the SAME compositor at the same world
     const baseline = hash(base.out);
     const r = new RedesignRunner();
     r.setWorld(w);

@@ -88,30 +88,55 @@ export class CRunner {
   }
   get count() { return SPELLS.length; }
   get current() { return this.idx; }
-  /** cast a non-vendored Inst factory (used by the REDESIGN implementations) */
-  castInst(make: (rng: Rng, fx: FX) => Inst) {
-    this.inst = make(new Rng(4000 + (this._customId = (this._customId ?? 0) + 1)), this.fx);
+  // ---- first-class custom spell lifecycle registration -------------------
+  // A custom spell owns: id, factory, FIXED per-spell cast seed, duration,
+  // climax. Backward seek rebuilds the SAME custom instance from the same
+  // seed (never wraps to a source-C spell). Same cast+time+world => bit-identical.
+  private customs = new Map<number, import('./c/spells/types').SpellDef>();
+  customId = -1;
+  private customDef: import('./c/spells/types').SpellDef | null = null;
+  registerCustom(id: number, def: import('./c/spells/types').SpellDef) { this.customs.set(id, def); }
+  castCustom(id: number) {
+    const def = this.customs.get(id);
+    if (!def) throw new Error(`CRunner.castCustom: unregistered custom spell #${id}`);
+    this.customId = id;
+    this.customDef = def;
+    this.idx = -1;
+    this.inst = def.make(new Rng(4000 + id * 7919), this.fx); // fixed seed: deterministic per cast
     this.t = 0; this.steps = 0; this.shakeK = 0; this.flashK = 0; this.chromaK = 0;
   }
-  private _customId = 0;
+  /** rebuild current spell (custom or catalog) — used on backward seek */
+  private recast() { if (this.customDef) this.castCustom(this.customId); else this.cast(this.idx); }
   cast(index: number) {
+    this.customId = -1; this.customDef = null;
     this.idx = ((index % SPELLS.length) + SPELLS.length) % SPELLS.length;
     this.inst = SPELLS[this.idx].make(new Rng(1000 + this.idx * 7919), this.fx);
     this.t = 0; this.steps = 0; this.shakeK = 0; this.flashK = 0; this.chromaK = 0;
   }
   reset() { if (this.idx >= 0) this.cast(this.idx); else { this.t = 0; this.steps = 0; } }
-  get duration() { return this.idx >= 0 ? (SPELLS[this.idx]?.dur ?? 0) : 0; }
+  get duration() { return this.customDef ? this.customDef.dur : (this.idx >= 0 ? (SPELLS[this.idx]?.dur ?? 0) : 0); }
+  get climax() { return this.customDef ? this.customDef.climax : (this.idx >= 0 ? (SPELLS[this.idx]?.climax ?? 0) : 0); }
+  /** no-effect baseline through the SAME compositor at the current world (OUT truth) */
+  renderBaseline(t = 0) {
+    const f = this.frame;
+    f.clear(); f.t = t;
+    f.ground.set(this.world);
+    f.base.set(this.world);
+    this.t = t;
+    this.composite();
+  }
   setWorld(rgba: Uint8ClampedArray) {
     if (!rgba || rgba.length < W * H * 4) throw new Error(`CRunner.setWorld: world snapshot missing/wrong size (${rgba?.length} < ${W * H * 4})`);
     this.world.set(rgba.subarray(0, W * H * 4));
   }
   async seekAsync(t: number) { // yields to the event loop between chunks so test runners stay responsive
+    if (t < this.t) { this.seek(t); return; } // backward seek: rebuild deterministically, no chunking needed
     while (this.t < t - 1e-9) { this.seek(Math.min(t, this.t + 0.5)); await new Promise(r => setTimeout(r, 0)); }
   }
   seek(target: number) {
     if (!this.inst) return;
     target = Math.max(0, target);
-    if (target < this.t) this.cast(this.idx);
+    if (target < this.t) this.recast();
     while (this.t < target - 1e-6) this.step();
   }
   playTo(t: number) { this.seek(t); }

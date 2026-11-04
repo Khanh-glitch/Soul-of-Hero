@@ -50,8 +50,9 @@ const C_IDS = new Set([7, 10, 15, 17]);
 
 export const LAB_CATALOG: LabEntry[] = CATALOG.map((c) => {
   const lead = LEAD[c.id] ?? 'C';
+  const rd = REDESIGNS[c.id]; // redesign slots use their AUTHORED clock, not the C catalog
   return {
-    id: c.id, index: c.index, name: c.name, school: c.school, dur: c.dur, climax: c.climax,
+    id: c.id, index: c.index, name: c.name, school: c.school, dur: rd?.dur ?? c.dur, climax: rd?.climax ?? c.climax,
     approvedVisualLead: lead,
     currentlyRenderedSource: sourceLabel(c.id, 'lead'),
     previewStatus: STATUS[c.id] ?? 'SOURCE_PREVIEW',
@@ -179,7 +180,11 @@ export class ArcanaLabClient implements comp.VfxClient {
       if (needRender) { this.bR.setWorld(region); this.bR.cast(entry.index); this.bR.seek(t); }
       out = this.bR.out;
     } else if (useR) {
-      if (needRender) { this.rR.setWorld(region); this.rR.cast(entry.id); this.rR.seek(Math.min(t, this.rR.duration)); }
+      if (needRender) {
+        this.rR.setWorld(region);
+        if (this.rR.currentId !== entry.id) this.rR.cast(entry.id); // no per-frame re-cast
+        this.rR.seek(t);
+      }
       out = this.rR.out;
     } else if (useA) {
       if (needRender) { this.aR.setWorld(region); this.aR.cast(entry.index); this.aR.seek(Math.min(t, this.aR.duration)); }

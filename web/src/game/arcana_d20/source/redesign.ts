@@ -241,15 +241,34 @@ const chrono: SpellDef = {
 
 export const REDESIGNS: Record<number, SpellDef> = { 4: ashen, 6: riptide, 12: skybreaker, 13: rootwake, 14: spore, 18: chrono };
 
+// effect-local OUT gate: at/after the declared duration a redesign draws
+// NOTHING, so the compositor output equals the no-effect baseline exactly.
+for (const [idStr, def] of Object.entries(REDESIGNS)) {
+  const id = Number(idStr);
+  const origMake = def.make;
+  def.make = (rng, fx) => {
+    const inst = origMake(rng, fx);
+    const origRender = inst.render.bind(inst);
+    inst.render = (f, t) => { if (t >= def.dur) return; origRender(f, t); };
+    return inst;
+  };
+  void id;
+}
+
 /** Runner for redesign slots: same C Frame + source composite equation. */
 import { CRunner } from './cRunner';
 
 export class RedesignRunner {
   private core = new CRunner();
-  private id = 0;
-  cast(id: number) { const d = REDESIGNS[id]; if (!d) throw new Error(`no redesign for #${id}`); this.id = id; this.core.castInst(d.make); }
+  private id = -1;
+  constructor() { for (const [id, def] of Object.entries(REDESIGNS)) this.core.registerCustom(Number(id), def); }
+  /** cast only when the spell changes — no per-frame re-cast, fixed seed per id */
+  cast(id: number) { if (this.id === id) return; const d = REDESIGNS[id]; if (!d) throw new Error(`no redesign for #${id}`); this.id = id; this.core.castCustom(id); }
+  get currentId() { return this.id; }
   get duration() { return REDESIGNS[this.id]?.dur ?? 7.5; }
+  get climax() { return REDESIGNS[this.id]?.climax ?? 0; }
   setWorld(rgba: Uint8ClampedArray) { this.core.setWorld(rgba); }
-  seek(t: number) { this.core.seek(t); }
+  seek(t: number) { this.core.seek(Math.min(t, this.duration + 1.0)); }
+  async seekAsync(t: number) { await this.core.seekAsync(Math.min(t, this.duration + 1.0)); }
   get out() { return this.core.out; }
 }

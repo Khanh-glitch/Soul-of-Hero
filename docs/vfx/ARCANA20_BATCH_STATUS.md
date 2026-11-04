@@ -124,3 +124,19 @@ QA gallery incl. #09 fusion/OUT/recast, B#02 day/night, #11 3-phase lead/fusion,
   via the CPU runners; evidence/offline-inspect/ has per-spell PNGs + contact sheet.
 - B window fix verified in pixels (B#02 serpent on un-darkened world).
 - Tests 152/152. PR #39 unmerged; no gameplay changes.
+
+
+## Deterministic lifecycle rework (RCA 6620636979 -> CT decision 6620732812)
+- **RED on frozen a4c2ea4** committed as evidence (`evidence/rca/RED-a4c2ea4-lifecycle.txt`,
+  `tests/arcana-lifecycle-contract.test.ts`): identity wrap to C#20 on backward seek,
+  non-deterministic reseed hashes, OUT residue — all reproduced.
+- **Root fix (one contract, not 6 patches)**: CRunner first-class custom registration
+  (`registerCustom`/`castCustom`): fixed per-spell seed, owned duration/climax,
+  `recast()` on backward seek rebuilds the SAME custom instance. RedesignRunner casts
+  only on id change; arcana_lab uses authored redesign clocks. seekAsync handles
+  backward seeks. OUT gate: redesigns draw nothing at/after declared dur, so output
+  is bit-identical to the no-effect baseline through the same compositor.
+- **GREEN**: 161/161; per-spell report `evidence/offline-inspect/redesign-after/
+  lifecycle-report.txt`: all six backward==mid and OUT==baseline:true.
+- Art status: 6 redesigns + 5 fusion candidates = **CANDIDATE_AWAITING_CREATOR_REVIEW**
+  (technical PASS only, no art GOLD). PR #39 unmerged; PR #38 owns gameplay.
