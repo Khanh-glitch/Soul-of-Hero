@@ -1,0 +1,682 @@
+{
+  "schema": "soh.map.lr02.visual_layers.v1",
+  "version": 1,
+  "revision": 1,
+  "generatedBy": "world_lab/lr02/src/m4_visual.mjs",
+  "status": "PRODUCTION_METHOD_AND_PORTABLE_ART_LAYERS__NOT_WEB_RENDERED_INTEGRATION_PROOF",
+  "nativeResolution": [
+    640,
+    360
+  ],
+  "parent": {
+    "lr01ViewsIndex": "world_lab/lr01/output/views_index.v1.json",
+    "lr01ArtManifest": "world_lab/lr01/output/art_manifest.v1.json",
+    "lr02PortalGeometry": "world_lab/lr02/output/portal_geometry.v1.json",
+    "portalGeometryDigest": "5888572471fecf15a86f056b0179c98043cabe2f0a84808768ed155c736a02b7",
+    "gameplayHeadObserved": "240db32a1a69211f87af161796498b82afcde20e"
+  },
+  "sourceArtAssessment": {
+    "primary": {
+      "file": "web/src/game/art.ts + web/src/game/render.ts",
+      "head": "240db32a1a69211f87af161796498b82afcde20e",
+      "finding": "All sprites, tile textures, icons and VFX are ORIGINAL pixel art painted pixel-by-pixel at boot; web/THIRD_PARTY.md states no third-party sprites/tiles/sounds are used.",
+      "disposition": "RETAIN"
+    },
+    "lr01MilestoneE": {
+      "decision": "Web baseline kept; web_art_patch REJECT; A1/MAP-R01 art REFERENCE_ONLY; NO_EXTERNAL_ART_USED",
+      "disposition": "RETAIN"
+    },
+    "assessedBeforeReplacement": [
+      {
+        "item": "assets/environment/cainos_demo/THIRD_PARTY.md",
+        "disposition": "NOT_ADOPTED"
+      },
+      {
+        "item": "assets/environment/dungeon_0x72/THIRD_PARTY.md",
+        "disposition": "NOT_ADOPTED"
+      },
+      {
+        "item": "assets/environment/ocean_cainos/THIRD_PARTY.md",
+        "disposition": "NOT_ADOPTED"
+      },
+      {
+        "item": "web/THIRD_PARTY.md candidate list (NinjaAdventure, Kenney, simplex-noise, easystar, idb)",
+        "disposition": "NOT_ADOPTED"
+      }
+    ],
+    "newExternalAssetsCreated": 0,
+    "replacedSprites": 0,
+    "replacedTiles": 0,
+    "note": "No unverified sprite pack, no licensed atlas import, no GOLD 1024x768 bytes. The new layer reuses the existing Web palette and pixel-snap conventions only."
+  },
+  "webPalette": {
+    "source": "web/src/game/art.ts + web/src/game/render.ts@240db32a1a69211f87af161796498b82afcde20e",
+    "T.PWALL": [
+      "#4a4048",
+      "#544a52",
+      "#2e2830",
+      "#6a5e66",
+      "#7a5a4a"
+    ],
+    "T.FLOOR": [
+      "#9a6a3e",
+      "#8a5e36",
+      "#5a3a22",
+      "#b0804a",
+      "#7a7a7e"
+    ],
+    "T.BRIDGE": [
+      "#8a6038",
+      "#7a5430",
+      "#4a2e1a",
+      "#a87a4a",
+      "#3a2414"
+    ],
+    "T.DEEP": [
+      "#1e3c6a",
+      "#22426e",
+      "#183058",
+      "#2a5288",
+      "#3a6aa0"
+    ],
+    "T.RIVER": [
+      "#3478a8",
+      "#3a80ae",
+      "#2a6a9a",
+      "#56a0c8",
+      "#3a82a8"
+    ],
+    "shoreGlint": "rgba(235,248,255,0.85)",
+    "waveSparkle": "rgba(220,240,255,0.7)",
+    "note": "Verified from render.ts PAL / SURFC / draw() at the named Gameplay HEAD. No third-party sprite or tile is used (web/THIRD_PARTY.md: \"No third-party sprites, tiles or sound files are used\")."
+  },
+  "visualPreservationChecklist": {
+    "purpose": "The attractive Web visuals are NOT redrawn, replaced or re-authored by Map. These are the exact primary-source locations Gameplay must retain while adding the LR02 static layer.",
+    "pixelTrees": {
+      "source": "web/src/game/art.ts + web/src/game/render.ts@240db32a1a69211f87af161796498b82afcde20e",
+      "location": "art.ts buildSources/drawTree helpers + render.ts drawSource() (lines ~238-259), A.src.oak/pine/snowpine/palm/willow, deterministic per-source variants",
+      "action": "RETAIN_VERBATIM"
+    },
+    "terrainVariation": {
+      "source": "render.ts texel() / PAL / fbm / hash2",
+      "location": "lines ~24-68",
+      "action": "RETAIN_VERBATIM"
+    },
+    "oceanAndLargeWaveMotifs": {
+      "source": "render.ts texel() case T.DEEP / T.SHALLOW",
+      "location": "wv = Math.sin(wx*0.15 + Math.sin(wy*0.09)*2 + wy*0.05)",
+      "action": "RETAIN_VERBATIM"
+    },
+    "animatedShoreline": {
+      "source": "render.ts draw()",
+      "location": "wave = Math.sin(time/520 + tx*0.7 + ty*0.3); glint rgba(235,248,255,0.85); sparkle rgba(220,240,255,0.7)",
+      "action": "RETAIN_IN_GAMEPLAY__NOT_SIMULATED_BY_MAP"
+    },
+    "naturalTransitions": {
+      "source": "render.ts renderChunk() / PRIO / texel()",
+      "location": "neighbour-priority 4px fringe; ctx.sea<=1 sand darkening",
+      "action": "RETAIN_VERBATIM"
+    },
+    "native640x360": {
+      "source": "core.ts VIEW_W/VIEW_H + art.ts mk()",
+      "location": "imageSmoothingEnabled=false, TILE=16",
+      "action": "RETAIN_VERBATIM"
+    },
+    "sohIdentity": {
+      "source": "web/THIRD_PARTY.md + art.ts",
+      "location": "OUT='#140c14' pixel outline, VT323/Pixelify Sans local fonts, original pixel art only",
+      "action": "RETAIN_VERBATIM"
+    }
+  },
+  "visualLanguagePreserved": {
+    "pixelTreesAndTerrainVariation": "Unmodified real Web screenshots (class 1) are preserved byte-for-byte as the quality baseline; the Web pixel trees are NOT re-authored by Map. Class-2 analytical previews keep the authored 12-code biome raster, hard-edged 1px transitions and authored roads. No new procedural grass.",
+    "oceanAndLargeWaveMotifs": "Retained sparse large 3-cell wave motifs drawn ONLY where the next three cells are sea; no flat lake treated as ocean.",
+    "shoreGlints": "Static previews keep the deterministic shore fringe; the Web runtime animated glint (render.ts draw() rgba(235,248,255,0.85) + rgba(220,240,255,0.7) sparkles) stays in Gameplay and is NOT simulated here.",
+    "naturalTransitions": "PRIO-based neighbour fringe from ACTUAL neighbouring biome codes, not random noise.",
+    "nativePixelReadability": "All before/after files are exactly 640x360, integer px, shape-rendering=crispEdges, image-rendering=pixelated, no antialias/resample.",
+    "sohIdentity": "Web T.PWALL / T.FLOOR palette, door jamb colour from T.PWALL[4], existing Web shadow/depth convention."
+  },
+  "layerOrder": [
+    {
+      "z": 1,
+      "name": "terrain_chunks",
+      "owner": "GAMEPLAY",
+      "source": "render.ts getChunk/renderChunk"
+    },
+    {
+      "z": 2,
+      "name": "animated_water_lava_and_shore_glints",
+      "owner": "GAMEPLAY",
+      "source": "render.ts draw()"
+    },
+    {
+      "z": 3,
+      "name": "footprints",
+      "owner": "GAMEPLAY",
+      "source": "render.ts draw()"
+    },
+    {
+      "z": 4,
+      "name": "lr02_static_architecture",
+      "owner": "MAP_DATA__GAMEPLAY_DRAWS",
+      "source": "output/visual/layers/*_lr02_static_walls.svg",
+      "note": "NEW. Clipped solid spans + real static openings. Proposed placement: after footprints, before ground structures so roofs/entities sort correctly."
+    },
+    {
+      "z": 5,
+      "name": "ground_layer_structures_and_hazards",
+      "owner": "GAMEPLAY",
+      "source": "render.ts draw()"
+    },
+    {
+      "z": 6,
+      "name": "buildings_and_roofs",
+      "owner": "GAMEPLAY",
+      "source": "render.ts draw()"
+    },
+    {
+      "z": 7,
+      "name": "entities_and_actors",
+      "owner": "GAMEPLAY",
+      "source": "render.ts draw()"
+    },
+    {
+      "z": 8,
+      "name": "dynamic_doors_locks_power_destruction",
+      "owner": "GAMEPLAY",
+      "source": "A.st.poi_door / poi_door_open at opening centres",
+      "status": "UNKNOWN"
+    },
+    {
+      "z": 9,
+      "name": "hud",
+      "owner": "GAMEPLAY",
+      "source": "render.ts + UI"
+    }
+  ],
+  "integrationInstructions": [
+    "Read portal_geometry.v1.json at its pinned revisionDigest; do not read a preview PNG as geometry.",
+    "For each staticSolid draw a pixel-snapped hard-edged wall segment at integer Web pixels using the existing T.PWALL ramp; blocksMovement/blocksSight come from the package, not from the picture.",
+    "Do NOT draw a stroke inside any staticOpening interval. Openings are static holes; Gameplay owns doorState/lockedState/powerRequirement/destruction.",
+    "Keep imageSmoothingEnabled=false; never scale the layer with smoothing; keep 640x360 native readability.",
+    "Eligibility cellIndices are NOT a visual layer. Do not tint cells, draw grids, arrows, labels or any decorative debug overlay.",
+    "Roof/canopy polygons remain UNRESOLVED; do not substitute a room polygon or landmark for a roof."
+  ],
+  "layerCount": 6,
+  "layers": [
+    {
+      "regionId": "zone_bz_greywater",
+      "file": "output/visual/layers/zone_bz_greywater_lr02_static_walls.svg",
+      "svgSha256": "96a6a098fc45c5d4c676eb1998def0a03f570eee446760f05bf2bf86cbeb2b7b",
+      "width": 640,
+      "height": 360,
+      "transparentBackground": true,
+      "pixelSnapped": true,
+      "shapeRendering": "crispEdges",
+      "staticSolidsDrawn": 33,
+      "staticOpeningsDrawn": 15,
+      "poiCount": 3,
+      "window": {
+        "x0": 626.7523,
+        "y0": 521.9579,
+        "wAu": 320,
+        "hAu": 180,
+        "pxPerAu": 2,
+        "cellPx": 16,
+        "bboxAu": [
+          705.377,
+          590.5798,
+          868.1276,
+          633.3361
+        ]
+      },
+      "source": "world_lab/lr02/output/portal_geometry.v1.json",
+      "authorityDigest": "5888572471fecf15a86f056b0179c98043cabe2f0a84808768ed155c736a02b7",
+      "usage": "Composite AFTER the Web terrain chunks + animated water/shore glints and BEFORE the ground-structure/roof/entity passes. Draw at integer pixels with imageSmoothingEnabled=false; never resample. Openings are ABSENCE of stroke; Gameplay draws dynamic door sprites (A.st.poi_door / poi_door_open) at the opening centre and owns lock/power/destruction state."
+    },
+    {
+      "regionId": "zone_bz_silver",
+      "file": "output/visual/layers/zone_bz_silver_lr02_static_walls.svg",
+      "svgSha256": "ff1da3096bf420b95c6e7d605c517c54314707a0b5469b2140877213fbc54323",
+      "width": 640,
+      "height": 360,
+      "transparentBackground": true,
+      "pixelSnapped": true,
+      "shapeRendering": "crispEdges",
+      "staticSolidsDrawn": 33,
+      "staticOpeningsDrawn": 15,
+      "poiCount": 3,
+      "window": {
+        "x0": 537.4992,
+        "y0": 579.6053,
+        "wAu": 320,
+        "hAu": 180,
+        "pxPerAu": 2,
+        "cellPx": 16,
+        "bboxAu": [
+          634.4594,
+          652.8304,
+          760.539,
+          686.3801
+        ]
+      },
+      "source": "world_lab/lr02/output/portal_geometry.v1.json",
+      "authorityDigest": "5888572471fecf15a86f056b0179c98043cabe2f0a84808768ed155c736a02b7",
+      "usage": "Composite AFTER the Web terrain chunks + animated water/shore glints and BEFORE the ground-structure/roof/entity passes. Draw at integer pixels with imageSmoothingEnabled=false; never resample. Openings are ABSENCE of stroke; Gameplay draws dynamic door sprites (A.st.poi_door / poi_door_open) at the opening centre and owns lock/power/destruction state."
+    },
+    {
+      "regionId": "zone_bz_hook",
+      "file": "output/visual/layers/zone_bz_hook_lr02_static_walls.svg",
+      "svgSha256": "5249f7ab93da9c6bec6cc233c653f05a2b15675a7a09c59e88dde6a8bc2fe0a0",
+      "width": 640,
+      "height": 360,
+      "transparentBackground": true,
+      "pixelSnapped": true,
+      "shapeRendering": "crispEdges",
+      "staticSolidsDrawn": 34,
+      "staticOpeningsDrawn": 13,
+      "poiCount": 4,
+      "window": {
+        "x0": 1120.6698,
+        "y0": 302.31,
+        "wAu": 320,
+        "hAu": 180,
+        "pxPerAu": 2,
+        "cellPx": 16,
+        "bboxAu": [
+          1222.7991,
+          367.0869,
+          1338.5406,
+          417.533
+        ]
+      },
+      "source": "world_lab/lr02/output/portal_geometry.v1.json",
+      "authorityDigest": "5888572471fecf15a86f056b0179c98043cabe2f0a84808768ed155c736a02b7",
+      "usage": "Composite AFTER the Web terrain chunks + animated water/shore glints and BEFORE the ground-structure/roof/entity passes. Draw at integer pixels with imageSmoothingEnabled=false; never resample. Openings are ABSENCE of stroke; Gameplay draws dynamic door sprites (A.st.poi_door / poi_door_open) at the opening centre and owns lock/power/destruction state."
+    },
+    {
+      "regionId": "zone_bz_delta",
+      "file": "output/visual/layers/zone_bz_delta_lr02_static_walls.svg",
+      "svgSha256": "4092e07207dc8a5d9cc9ebc8fd4592bce1099b7ecf4225a5fdd94fc11c4580f2",
+      "width": 640,
+      "height": 360,
+      "transparentBackground": true,
+      "pixelSnapped": true,
+      "shapeRendering": "crispEdges",
+      "staticSolidsDrawn": 52,
+      "staticOpeningsDrawn": 18,
+      "poiCount": 7,
+      "window": {
+        "x0": 942.0093,
+        "y0": 746.1147,
+        "wAu": 320,
+        "hAu": 180,
+        "pxPerAu": 2,
+        "cellPx": 16,
+        "bboxAu": [
+          1067.9549,
+          812.7424,
+          1136.0638,
+          859.487
+        ]
+      },
+      "source": "world_lab/lr02/output/portal_geometry.v1.json",
+      "authorityDigest": "5888572471fecf15a86f056b0179c98043cabe2f0a84808768ed155c736a02b7",
+      "usage": "Composite AFTER the Web terrain chunks + animated water/shore glints and BEFORE the ground-structure/roof/entity passes. Draw at integer pixels with imageSmoothingEnabled=false; never resample. Openings are ABSENCE of stroke; Gameplay draws dynamic door sprites (A.st.poi_door / poi_door_open) at the opening centre and owns lock/power/destruction state."
+    },
+    {
+      "regionId": "land_ld_ironholm",
+      "file": "output/visual/layers/land_ld_ironholm_lr02_static_walls.svg",
+      "svgSha256": "36986aca76758950d470604ac3ef3e5e3b1c3882c73603b128b24be107cedbad",
+      "width": 640,
+      "height": 360,
+      "transparentBackground": true,
+      "pixelSnapped": true,
+      "shapeRendering": "crispEdges",
+      "staticSolidsDrawn": 23,
+      "staticOpeningsDrawn": 7,
+      "poiCount": 3,
+      "window": {
+        "x0": 1010.8713,
+        "y0": 1183.7904,
+        "wAu": 349.0339,
+        "hAu": 196.3315,
+        "pxPerAu": 1.8336,
+        "cellPx": 14.6691,
+        "bboxAu": [
+          1075.0794,
+          1216.5123,
+          1295.697,
+          1347.4
+        ]
+      },
+      "source": "world_lab/lr02/output/portal_geometry.v1.json",
+      "authorityDigest": "5888572471fecf15a86f056b0179c98043cabe2f0a84808768ed155c736a02b7",
+      "usage": "Composite AFTER the Web terrain chunks + animated water/shore glints and BEFORE the ground-structure/roof/entity passes. Draw at integer pixels with imageSmoothingEnabled=false; never resample. Openings are ABSENCE of stroke; Gameplay draws dynamic door sprites (A.st.poi_door / poi_door_open) at the opening centre and owns lock/power/destruction state."
+    },
+    {
+      "regionId": "elder_el_typhon",
+      "file": "output/visual/layers/elder_el_typhon_lr02_static_walls.svg",
+      "svgSha256": "85785f5a96eef458cbbfb64017a444418c5ce30218291983c5931f4750e4284b",
+      "width": 640,
+      "height": 360,
+      "transparentBackground": true,
+      "pixelSnapped": true,
+      "shapeRendering": "crispEdges",
+      "staticSolidsDrawn": 53,
+      "staticOpeningsDrawn": 20,
+      "poiCount": 7,
+      "window": {
+        "x0": 269.394,
+        "y0": 197.5277,
+        "wAu": 641.1397,
+        "hAu": 360.6411,
+        "pxPerAu": 0.9982,
+        "cellPx": 7.9858,
+        "bboxAu": [
+          439.1553,
+          257.6345,
+          740.7725,
+          498.0619
+        ]
+      },
+      "source": "world_lab/lr02/output/portal_geometry.v1.json",
+      "authorityDigest": "5888572471fecf15a86f056b0179c98043cabe2f0a84808768ed155c736a02b7",
+      "usage": "Composite AFTER the Web terrain chunks + animated water/shore glints and BEFORE the ground-structure/roof/entity passes. Draw at integer pixels with imageSmoothingEnabled=false; never resample. Openings are ABSENCE of stroke; Gameplay draws dynamic door sprites (A.st.poi_door / poi_door_open) at the opening centre and owns lock/power/destruction state."
+    }
+  ],
+  "comparisonCount": 6,
+  "comparisons": [
+    {
+      "regionId": "zone_bz_greywater",
+      "kind": "GREYWATER",
+      "before": {
+        "file": "output/visual/comparisons/zone_bz_greywater_before_640x360.png",
+        "source": "world_lab/lr01/output/views/zone_bz_greywater_after_640x360.svg (LR01 debug header stripped)",
+        "sha256": "36c9d7921c8c8c8ed1e7548ffbda77a8a835270d67669f79d9bdbca5751a7bea",
+        "bytes": 13436,
+        "classification": "MAP_ONLY_ANALYTICAL_PREVIEW",
+        "note": "Retained LR01 Web-baseline-style analytical preview, debug header removed. NOT a Web screenshot."
+      },
+      "preservedWebVisualBaseline": {
+        "classification": "REAL_WEB_SCREENSHOT",
+        "files": [
+          "output/visual/web_evidence/select-veyra-greywater-u16-640.png",
+          "output/visual/web_evidence/start-veyra-greywater-u16-640.png",
+          "output/visual/web_evidence/walk-veyra-greywater-u16-640.png",
+          "output/visual/web_evidence/select-veyra-greywater-u20-640.png",
+          "output/visual/web_evidence/start-veyra-greywater-u20-640.png",
+          "output/visual/web_evidence/walk-veyra-greywater-u20-640.png"
+        ],
+        "note": "Unmodified 640x360 Web screenshots from the observed Gameplay HEAD. These are the visual quality baseline to PRESERVE; they are deliberately NOT used as a compositing canvas because camera/transform alignment is Gameplay-owned and unverified."
+      },
+      "after": {
+        "file": "output/visual/comparisons/zone_bz_greywater_after_640x360.png",
+        "sha256": "cc87c1e48035630eea3852cabbad6841b838251269e3c60d149836a0e268b5fb",
+        "bytes": 15626,
+        "classification": "MAP_ONLY_ANALYTICAL_PREVIEW",
+        "note": "Same analytical baseline + LR02 static wall art layer (33 solids, 15 openings, 3 POIs). NOT rendered by the Web game, NOT a visual-acceptance claim."
+      },
+      "actualWebRenderedIntegrationProof": {
+        "classification": "ACTUAL_WEB_RENDERED_INTEGRATION_PROOF",
+        "status": "NOT_AVAILABLE__GAMEPLAY_OWNED",
+        "reason": "Committed projectVeyra() at the observed Gameplay HEAD still returns statics:[]; no LR02 package reader exists. Map does not modify Gameplay code and does not label a Map preview as Web proof."
+      },
+      "nativeResolution": [
+        640,
+        360
+      ]
+    },
+    {
+      "regionId": "zone_bz_silver",
+      "kind": "DISTINCT_REGION",
+      "before": {
+        "file": "output/visual/comparisons/zone_bz_silver_before_640x360.png",
+        "source": "world_lab/lr01/output/views/zone_bz_silver_after_640x360.svg (LR01 debug header stripped)",
+        "sha256": "dd8777c71343b3bdbd9d555365e9b8d9b3d82f260bb0a77ec7f938e1d60446c2",
+        "bytes": 10186,
+        "classification": "MAP_ONLY_ANALYTICAL_PREVIEW",
+        "note": "Retained LR01 Web-baseline-style analytical preview, debug header removed. NOT a Web screenshot."
+      },
+      "preservedWebVisualBaseline": {
+        "classification": "REAL_WEB_SCREENSHOT",
+        "status": "NOT_AVAILABLE",
+        "reason": "Gameplay evidence at the observed HEAD contains only Veyra Greywater windows. No real Web screenshot exists for this region; Map does not fabricate one."
+      },
+      "after": {
+        "file": "output/visual/comparisons/zone_bz_silver_after_640x360.png",
+        "sha256": "bc964951eee29935f9dd567262275dfa2c1740b19ea7cd0ddfb33427c4cae641",
+        "bytes": 12035,
+        "classification": "MAP_ONLY_ANALYTICAL_PREVIEW",
+        "note": "Same analytical baseline + LR02 static wall art layer (33 solids, 15 openings, 3 POIs). NOT rendered by the Web game, NOT a visual-acceptance claim."
+      },
+      "actualWebRenderedIntegrationProof": {
+        "classification": "ACTUAL_WEB_RENDERED_INTEGRATION_PROOF",
+        "status": "NOT_AVAILABLE__GAMEPLAY_OWNED",
+        "reason": "Committed projectVeyra() at the observed Gameplay HEAD still returns statics:[]; no LR02 package reader exists. Map does not modify Gameplay code and does not label a Map preview as Web proof."
+      },
+      "nativeResolution": [
+        640,
+        360
+      ]
+    },
+    {
+      "regionId": "zone_bz_hook",
+      "kind": "DISTINCT_REGION",
+      "before": {
+        "file": "output/visual/comparisons/zone_bz_hook_before_640x360.png",
+        "source": "world_lab/lr01/output/views/zone_bz_hook_after_640x360.svg (LR01 debug header stripped)",
+        "sha256": "b59365120e70a9da5805ada1082e7bbeccbc868593ea48796666c8c3242df076",
+        "bytes": 12262,
+        "classification": "MAP_ONLY_ANALYTICAL_PREVIEW",
+        "note": "Retained LR01 Web-baseline-style analytical preview, debug header removed. NOT a Web screenshot."
+      },
+      "preservedWebVisualBaseline": {
+        "classification": "REAL_WEB_SCREENSHOT",
+        "status": "NOT_AVAILABLE",
+        "reason": "Gameplay evidence at the observed HEAD contains only Veyra Greywater windows. No real Web screenshot exists for this region; Map does not fabricate one."
+      },
+      "after": {
+        "file": "output/visual/comparisons/zone_bz_hook_after_640x360.png",
+        "sha256": "ad158fe9a1ecc076f230b1b734f1bfb6f9c14d2ad75ec59eaec274cae390a370",
+        "bytes": 14130,
+        "classification": "MAP_ONLY_ANALYTICAL_PREVIEW",
+        "note": "Same analytical baseline + LR02 static wall art layer (34 solids, 13 openings, 4 POIs). NOT rendered by the Web game, NOT a visual-acceptance claim."
+      },
+      "actualWebRenderedIntegrationProof": {
+        "classification": "ACTUAL_WEB_RENDERED_INTEGRATION_PROOF",
+        "status": "NOT_AVAILABLE__GAMEPLAY_OWNED",
+        "reason": "Committed projectVeyra() at the observed Gameplay HEAD still returns statics:[]; no LR02 package reader exists. Map does not modify Gameplay code and does not label a Map preview as Web proof."
+      },
+      "nativeResolution": [
+        640,
+        360
+      ]
+    },
+    {
+      "regionId": "zone_bz_delta",
+      "kind": "DISTINCT_REGION",
+      "before": {
+        "file": "output/visual/comparisons/zone_bz_delta_before_640x360.png",
+        "source": "world_lab/lr01/output/views/zone_bz_delta_after_640x360.svg (LR01 debug header stripped)",
+        "sha256": "2c4aeec33cd1601d02800f42ed3d475d1912492708b9f2b8663c27eec7ff58bd",
+        "bytes": 13519,
+        "classification": "MAP_ONLY_ANALYTICAL_PREVIEW",
+        "note": "Retained LR01 Web-baseline-style analytical preview, debug header removed. NOT a Web screenshot."
+      },
+      "preservedWebVisualBaseline": {
+        "classification": "REAL_WEB_SCREENSHOT",
+        "status": "NOT_AVAILABLE",
+        "reason": "Gameplay evidence at the observed HEAD contains only Veyra Greywater windows. No real Web screenshot exists for this region; Map does not fabricate one."
+      },
+      "after": {
+        "file": "output/visual/comparisons/zone_bz_delta_after_640x360.png",
+        "sha256": "c73c185df868573f5aacfa0f88039286499ca453c9ab875f277717b00e44cf54",
+        "bytes": 14617,
+        "classification": "MAP_ONLY_ANALYTICAL_PREVIEW",
+        "note": "Same analytical baseline + LR02 static wall art layer (52 solids, 18 openings, 7 POIs). NOT rendered by the Web game, NOT a visual-acceptance claim."
+      },
+      "actualWebRenderedIntegrationProof": {
+        "classification": "ACTUAL_WEB_RENDERED_INTEGRATION_PROOF",
+        "status": "NOT_AVAILABLE__GAMEPLAY_OWNED",
+        "reason": "Committed projectVeyra() at the observed Gameplay HEAD still returns statics:[]; no LR02 package reader exists. Map does not modify Gameplay code and does not label a Map preview as Web proof."
+      },
+      "nativeResolution": [
+        640,
+        360
+      ]
+    },
+    {
+      "regionId": "land_ld_ironholm",
+      "kind": "DISTINCT_REGION",
+      "before": {
+        "file": "output/visual/comparisons/land_ld_ironholm_before_640x360.png",
+        "source": "world_lab/lr01/output/views/land_ld_ironholm_after_640x360.svg (LR01 debug header stripped)",
+        "sha256": "edc4e55e786292fc93bd879ea5c9c7de8c0780f6ddad6e1e7fc075513ac6d295",
+        "bytes": 10069,
+        "classification": "MAP_ONLY_ANALYTICAL_PREVIEW",
+        "note": "Retained LR01 Web-baseline-style analytical preview, debug header removed. NOT a Web screenshot."
+      },
+      "preservedWebVisualBaseline": {
+        "classification": "REAL_WEB_SCREENSHOT",
+        "status": "NOT_AVAILABLE",
+        "reason": "Gameplay evidence at the observed HEAD contains only Veyra Greywater windows. No real Web screenshot exists for this region; Map does not fabricate one."
+      },
+      "after": {
+        "file": "output/visual/comparisons/land_ld_ironholm_after_640x360.png",
+        "sha256": "222cb7090e9daa19d0503caa2defdd7d6322810f9c96f4c24d98d0f2fbd4e447",
+        "bytes": 12245,
+        "classification": "MAP_ONLY_ANALYTICAL_PREVIEW",
+        "note": "Same analytical baseline + LR02 static wall art layer (23 solids, 7 openings, 3 POIs). NOT rendered by the Web game, NOT a visual-acceptance claim."
+      },
+      "actualWebRenderedIntegrationProof": {
+        "classification": "ACTUAL_WEB_RENDERED_INTEGRATION_PROOF",
+        "status": "NOT_AVAILABLE__GAMEPLAY_OWNED",
+        "reason": "Committed projectVeyra() at the observed Gameplay HEAD still returns statics:[]; no LR02 package reader exists. Map does not modify Gameplay code and does not label a Map preview as Web proof."
+      },
+      "nativeResolution": [
+        640,
+        360
+      ]
+    },
+    {
+      "regionId": "elder_el_typhon",
+      "kind": "DISTINCT_REGION",
+      "before": {
+        "file": "output/visual/comparisons/elder_el_typhon_before_640x360.png",
+        "source": "world_lab/lr01/output/views/elder_el_typhon_after_640x360.svg (LR01 debug header stripped)",
+        "sha256": "5ad6c5b6ac5175ccb06602cb8ca7ed8f91a43f4434b07fefa21ea4df32c3d690",
+        "bytes": 17669,
+        "classification": "MAP_ONLY_ANALYTICAL_PREVIEW",
+        "note": "Retained LR01 Web-baseline-style analytical preview, debug header removed. NOT a Web screenshot."
+      },
+      "preservedWebVisualBaseline": {
+        "classification": "REAL_WEB_SCREENSHOT",
+        "status": "NOT_AVAILABLE",
+        "reason": "Gameplay evidence at the observed HEAD contains only Veyra Greywater windows. No real Web screenshot exists for this region; Map does not fabricate one."
+      },
+      "after": {
+        "file": "output/visual/comparisons/elder_el_typhon_after_640x360.png",
+        "sha256": "60583f3eda90016e4426ca43bd99663d254d8a864aabed5b5fc002e3a2995b39",
+        "bytes": 19056,
+        "classification": "MAP_ONLY_ANALYTICAL_PREVIEW",
+        "note": "Same analytical baseline + LR02 static wall art layer (53 solids, 20 openings, 7 POIs). NOT rendered by the Web game, NOT a visual-acceptance claim."
+      },
+      "actualWebRenderedIntegrationProof": {
+        "classification": "ACTUAL_WEB_RENDERED_INTEGRATION_PROOF",
+        "status": "NOT_AVAILABLE__GAMEPLAY_OWNED",
+        "reason": "Committed projectVeyra() at the observed Gameplay HEAD still returns statics:[]; no LR02 package reader exists. Map does not modify Gameplay code and does not label a Map preview as Web proof."
+      },
+      "nativeResolution": [
+        640,
+        360
+      ]
+    }
+  ],
+  "webEvidenceCount": 6,
+  "webEvidence": [
+    {
+      "file": "output/visual/web_evidence/select-veyra-greywater-u16-640.png",
+      "source": "240db32a1a69211f87af161796498b82afcde20e:web/evidence/veyra-lr02/select-veyra-greywater-u16-640.png",
+      "width": 640,
+      "height": 360,
+      "bytes": 55277,
+      "sha256": "e7e4722d1ea35aade194d72e1dd8341ff77163b1b0c3cb2dc4daabb66d7f2691",
+      "classification": "REAL_WEB_SCREENSHOT",
+      "note": "Unmodified bytes from Gameplay HEAD. NOT a Map render, NOT integration proof."
+    },
+    {
+      "file": "output/visual/web_evidence/start-veyra-greywater-u16-640.png",
+      "source": "240db32a1a69211f87af161796498b82afcde20e:web/evidence/veyra-lr02/start-veyra-greywater-u16-640.png",
+      "width": 640,
+      "height": 360,
+      "bytes": 151749,
+      "sha256": "046fbb50be1f5fadb33d2768b840b0bb0af77c6b8f1af1df5bc3c060e090659f",
+      "classification": "REAL_WEB_SCREENSHOT",
+      "note": "Unmodified bytes from Gameplay HEAD. NOT a Map render, NOT integration proof."
+    },
+    {
+      "file": "output/visual/web_evidence/walk-veyra-greywater-u16-640.png",
+      "source": "240db32a1a69211f87af161796498b82afcde20e:web/evidence/veyra-lr02/walk-veyra-greywater-u16-640.png",
+      "width": 640,
+      "height": 360,
+      "bytes": 149879,
+      "sha256": "94c41d5f62f0e6fc16f94e853ce9b33c7bfae028f5216ecf51bd6d136967a66f",
+      "classification": "REAL_WEB_SCREENSHOT",
+      "note": "Unmodified bytes from Gameplay HEAD. NOT a Map render, NOT integration proof."
+    },
+    {
+      "file": "output/visual/web_evidence/select-veyra-greywater-u20-640.png",
+      "source": "240db32a1a69211f87af161796498b82afcde20e:web/evidence/veyra-lr02/select-veyra-greywater-u20-640.png",
+      "width": 640,
+      "height": 360,
+      "bytes": 53369,
+      "sha256": "cbf7d586d3a588d56ff1e80d6b99c4b46ae494be974cafa95af847febe03eed0",
+      "classification": "REAL_WEB_SCREENSHOT",
+      "note": "Unmodified bytes from Gameplay HEAD. NOT a Map render, NOT integration proof."
+    },
+    {
+      "file": "output/visual/web_evidence/start-veyra-greywater-u20-640.png",
+      "source": "240db32a1a69211f87af161796498b82afcde20e:web/evidence/veyra-lr02/start-veyra-greywater-u20-640.png",
+      "width": 640,
+      "height": 360,
+      "bytes": 135935,
+      "sha256": "ea55cf2ee8c93f2d153da1cfbc6b6bc421f475d475c7af5b49cc3601579ce34f",
+      "classification": "REAL_WEB_SCREENSHOT",
+      "note": "Unmodified bytes from Gameplay HEAD. NOT a Map render, NOT integration proof."
+    },
+    {
+      "file": "output/visual/web_evidence/walk-veyra-greywater-u20-640.png",
+      "source": "240db32a1a69211f87af161796498b82afcde20e:web/evidence/veyra-lr02/walk-veyra-greywater-u20-640.png",
+      "width": 640,
+      "height": 360,
+      "bytes": 135181,
+      "sha256": "abcf4caf7e8000d09864a0e799acbad8ef18ba6f6e4a048df4b86bfff4799732",
+      "classification": "REAL_WEB_SCREENSHOT",
+      "note": "Unmodified bytes from Gameplay HEAD. NOT a Map render, NOT integration proof."
+    }
+  ],
+  "qualityGates": {
+    "realWebScreenshotsPreserved": true,
+    "allComparisonsNative": true,
+    "allComparisonsSameClass": true,
+    "noClass1FabricatedForOtherRegions": true,
+    "noClass2LabelledAsClass3": true,
+    "debugHeaderRemoved": true,
+    "noExternalArt": true,
+    "noInventedCanopy": true,
+    "noProceduralGrass": true,
+    "noDecorativeDebugOverlay": true,
+    "browserErrors": []
+  },
+  "noClaims": [
+    "NO playable Veyra or final world",
+    "NO creator visual approval",
+    "NO Web-rendered integration proof",
+    "NO approved au-to-tile/px scale",
+    "NO animated shoreline simulated in Map previews",
+    "NO third-party or unverified art pack",
+    "NO invented roof/canopy polygon",
+    "NO dynamic door, lock, power or destruction"
+  ]
+}

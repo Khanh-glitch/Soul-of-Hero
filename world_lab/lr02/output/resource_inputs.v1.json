@@ -1,0 +1,1272 @@
+{
+  "schema": "soh.map.lr02.resource_inputs.v1",
+  "version": 1,
+  "revision": 1,
+  "generatedBy": "world_lab/lr02/src/m5_package.mjs",
+  "status": "SOURCE_TERRAIN_AND_HABITAT_INPUTS_ONLY__NO_RESOURCE_POPULATION",
+  "authority": "MAP_DESIGNS_THE_PHYSICAL_WORLD__GAMEPLAY_POPULATES_AND_SIMULATES_IT",
+  "parent": {
+    "schema": "soh.map.lr01.geography_package.v1",
+    "revision": 1,
+    "file": "world_lab/lr01/output/geography_package.v1.json",
+    "revisionDigest": "e3259eb30016f93ab0883c6dc3656f0ec1b9d47a85dc78fd90a56e0185765e63",
+    "mapBranchHeadAtParent": "74062a5baf2731451fad9638c4243c7459ce8e24",
+    "geographyFile": "world_lab/lr01/output/geography.v1.json",
+    "encodingFile": "world_lab/lr01/output/geography_encoding.v1.json"
+  },
+  "source": {
+    "parent": {
+      "schema": "soh.map.lr01.geography_package.v1",
+      "revision": 1,
+      "file": "world_lab/lr01/output/geography_package.v1.json",
+      "revisionDigest": "e3259eb30016f93ab0883c6dc3656f0ec1b9d47a85dc78fd90a56e0185765e63",
+      "mapBranchHeadAtParent": "74062a5baf2731451fad9638c4243c7459ce8e24"
+    },
+    "canon": {
+      "commit": "19d8c6ec820f324a6ac12733165e43b5e2c6eab2",
+      "file": "map_tower/veyra_gold/VEYRA_GOLD_MAP.sohmap.json",
+      "sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256"
+    },
+    "frame": {
+      "authoring": {
+        "w": 2000,
+        "h": 1400,
+        "unit": "authoring_unit"
+      },
+      "sourceGrid": {
+        "gw": 250,
+        "gh": 175,
+        "cell": 8,
+        "cells": 43750
+      },
+      "transform": {
+        "status": "UNDECIDED",
+        "mode": "NONE_APPLIED",
+        "fullFrameRetained": true,
+        "note": "No rescale/crop/warp; runtime U=1.6 and U=2 are DIAGNOSTIC PROJECTIONS only."
+      }
+    },
+    "gp44": {
+      "branch": "arena/d4bfcfff-soul-of-hero",
+      "k6AcceptanceHead": "f8010ec973095c88f3c462a68116c169b61237a3",
+      "gameplayLr02HeadObserved": "7b9805b2ff276d07121063b6dfb2f68a902605db",
+      "jointReview": 6619478477,
+      "mapAck": 6619637224,
+      "state": "OPEN / DRAFT / HOLD"
+    },
+    "canonSha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+    "geographySchema": "soh.map.lr01.geography.v1"
+  },
+  "owner": {
+    "map": [
+      "GEO-01 raster layers",
+      "authored habitat markers",
+      "terrain statistics"
+    ],
+    "gameplay": [
+      "resource nodes",
+      "stock/respawn",
+      "loot tables",
+      "starter resources",
+      "economy",
+      "recipes"
+    ]
+  },
+  "grid": {
+    "gw": 250,
+    "gh": 175,
+    "cells": 43750,
+    "cellAu": 8,
+    "authoring": [
+      2000,
+      1400
+    ],
+    "unit": "authoring_unit",
+    "transformStatus": "UNDECIDED"
+  },
+  "rasterLayerCount": 21,
+  "rasterLayers": [
+    {
+      "name": "biomeCode",
+      "file": "world_lab/geo01/output/rasters/biomeCode.u8",
+      "sha256": "232998e642e836f30129b3a689f7cd458f8c57526ecd2c1bad51449cbeff839d",
+      "bytes": 43750,
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "source": "project.terrain.biome",
+        "unit": "RAW_SOURCE_CODE",
+        "note": "0..11. Semantic legend is NOT committed in the source; do not map to Gameplay Biome strings without an approved transform."
+      }
+    },
+    {
+      "name": "buildableCandidate",
+      "file": "world_lab/geo01/output/rasters/buildableCandidate.u8",
+      "sha256": "afc1067b5493e1cedbb8845718dd3a8263ae1c81b9e904ea912613276a1f641b",
+      "bytes": 43750,
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "walkableCandidate ∩ zones[].ring",
+        "unit": "0/1",
+        "note": "A0 protection / occupancy / route legality is NOT asserted."
+      }
+    },
+    {
+      "name": "cargoCandidate",
+      "file": "world_lab/geo01/output/rasters/cargoCandidate.u8",
+      "sha256": "28b8a3060344cf998673f2c7163bf664563be477124e0bab376bd56645229adb",
+      "bytes": 43750,
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "cart roads + cart-load bridges + docks",
+        "unit": "0/1 SPATIAL CANDIDATE ONLY",
+        "note": "cargoPassable verdict requires Gameplay loaded-cart rules; UNDEFINED."
+      }
+    },
+    {
+      "name": "clearanceCells",
+      "file": "world_lab/geo01/output/rasters/clearanceCells.u8",
+      "sha256": "e8e00caa9ff1018f9b29230784aaf263745d47df100cd25dd4bd26039e50087c",
+      "bytes": 43750,
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "4-neighbour BFS from blocked cells",
+        "unit": "grid cells (x8 = authoring units), capped 255"
+      }
+    },
+    {
+      "name": "coast",
+      "file": "world_lab/geo01/output/rasters/coast.u8",
+      "sha256": "44c0f13ead072f501351f458c9180a31e30f08a321848e10e8faea567067f5d5",
+      "bytes": 43750,
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "land cell with a 4-neighbour sea cell",
+        "unit": "0/1"
+      }
+    },
+    {
+      "name": "crossingCandidate",
+      "file": "world_lab/geo01/output/rasters/crossingCandidate.u8",
+      "sha256": "f1c96bd9fdb04d66117811c941e4a02df7fb3111c1a8671060fccad42c29603b",
+      "bytes": 43750,
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "bridges[].at (load) and roads[].ford points",
+        "unit": "0 none, 1 foot bridge, 2 cart bridge, 3 ford",
+        "note": "Bridge-to-channel fit is UNVERIFIED."
+      }
+    },
+    {
+      "name": "elderGeometryId",
+      "file": "world_lab/geo01/output/rasters/elderGeometryId.u8",
+      "sha256": "e924b646fc53b0886869b5332ef4413345d161d84c3abb76376b555af549eca8",
+      "bytes": 43750,
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "point-in-ring on elders[].outer/core/arenas",
+        "unit": "0=none, 1..6=elder index+1"
+      }
+    },
+    {
+      "name": "elevation",
+      "file": "world_lab/geo01/output/rasters/elevation.u8",
+      "sha256": "54d7641cea57ebd20be1eb17a0ce919f352f2868f4ed123e968a2e59666c6d24",
+      "bytes": 43750,
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "source": "project.terrain.elev",
+        "unit": "UNKNOWN_SOURCE_BYTE",
+        "note": "0 = sea/no-land (verified against land polygons); 1..243 = land height in unspecified source units."
+      }
+    },
+    {
+      "name": "freshwater",
+      "file": "world_lab/geo01/output/rasters/freshwater.u8",
+      "sha256": "9f9716b53e9bc553282860510b0ab1410574d8edf03eabb79fb3181f6d465aa4",
+      "bytes": 43750,
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "lake or river geometry",
+        "unit": "0/1"
+      }
+    },
+    {
+      "name": "freshwaterProximityCells",
+      "file": "world_lab/geo01/output/rasters/freshwaterProximityCells.u8",
+      "sha256": "27244a6693b885fe81de03c8e429bc225f5d848de60db76f22e19dffadc247ea",
+      "bytes": 43750,
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "4-neighbour BFS from lake/river cells",
+        "unit": "grid cells (x8 = authoring units), capped 255",
+        "note": "Geometric potential ONLY; NOT a climate/moisture value."
+      }
+    },
+    {
+      "name": "lakeId",
+      "file": "world_lab/geo01/output/rasters/lakeId.u8",
+      "sha256": "1fcffe83cdac6f1292b374f8cab556f9b4e5bf032769b0413fcab40c6c3738b1",
+      "bytes": 43750,
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "point-in-ring on lakes[].ring",
+        "unit": "0=none, 1..5=lake index+1"
+      }
+    },
+    {
+      "name": "landId",
+      "file": "world_lab/geo01/output/rasters/landId.u8",
+      "sha256": "3aaebb6a358ce04fc33eff56050321639ffc317fe1bb698114a621240c12e8a7",
+      "bytes": 43750,
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "point-in-polygon on land[].rings (holes honoured)",
+        "unit": "0=sea, 1..8=land array index+1"
+      }
+    },
+    {
+      "name": "poiGeometryId",
+      "file": "world_lab/geo01/output/rasters/poiGeometryId.u8",
+      "sha256": "94348636f05c83da80a5b9897bf30c4c0f6951f49a6c9875695454e7aa093881",
+      "bytes": 43750,
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "point-in-ring on pois[].foot / pois[].deep",
+        "unit": "0=none, 1..81=poi index+1"
+      }
+    },
+    {
+      "name": "protectedGeometryCandidate",
+      "file": "world_lab/geo01/output/rasters/protectedGeometryCandidate.u8",
+      "sha256": "9d500a17898dd9bc5e3368be0bc14d86c91ac361a1449c484c1b5322894d0b71",
+      "bytes": 43750,
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "POI foot/deep or Elder outer/core/arena geometry",
+        "unit": "0/1",
+        "note": "Geometry overlap only; NOT the A0 protected mask."
+      }
+    },
+    {
+      "name": "riverId",
+      "file": "world_lab/geo01/output/rasters/riverId.u8",
+      "sha256": "9dfe77adbf89d8c729f3487f585381d6014c27978839cd52bcce2169c6df3310",
+      "bytes": 43750,
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "centre-cell rasterization of rivers[].points",
+        "unit": "0=none, 1..17=river index+1",
+        "note": "river.width is preserved but NOT applied as a physical channel width (unit unestablished)."
+      }
+    },
+    {
+      "name": "roadClass",
+      "file": "world_lab/geo01/output/rasters/roadClass.u8",
+      "sha256": "d84fca5f129c9aa866a4960eaf7902a0fe923668cfdb2e41a9d864979cfe1f8b",
+      "bytes": 43750,
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "centre-cell rasterization of roads[].points",
+        "unit": "0 none, 1 cart, 2 trail, 3 foot, 4 riverside, 5 ferry"
+      }
+    },
+    {
+      "name": "seaDistanceCells",
+      "file": "world_lab/geo01/output/rasters/seaDistanceCells.u8",
+      "sha256": "45ba677aa1dde0b2d662c83386667dee8427f846e75978fd18c0e08f57c70977",
+      "bytes": 43750,
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "4-neighbour BFS from sea cells",
+        "unit": "grid cells (x8 = authoring units), capped 255"
+      }
+    },
+    {
+      "name": "slope",
+      "file": "world_lab/geo01/output/rasters/slope.u8",
+      "sha256": "6648158ad69cd9c136e249394a9aa7b21e31d08ca7ac48d700fa9511a918130e",
+      "bytes": 43750,
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "central difference of raw elevation bytes",
+        "unit": "RAW_BYTE_DELTA_PER_GRID_CELL",
+        "note": "Not normalized. Gameplay slope threshold is UNDEFINED here."
+      }
+    },
+    {
+      "name": "walkableCandidate",
+      "file": "world_lab/geo01/output/rasters/walkableCandidate.u8",
+      "sha256": "fcf691e68785e204634ce5bd05d5f2c500c65e61deea4e3b0c468d282ef0a8d7",
+      "bytes": 43750,
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "land polygon minus lake/river geometry",
+        "unit": "0/1",
+        "note": "Slope, collision and hazard rules are NOT applied."
+      }
+    },
+    {
+      "name": "waterClass",
+      "file": "world_lab/geo01/output/rasters/waterClass.u8",
+      "sha256": "f4c49bfc6279324051b31afaf3165ebde1734ad26d1c7e1bc52fe368748ad254",
+      "bytes": 43750,
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "sea / lake / river precedence",
+        "unit": "0 none, 1 sea, 2 lake, 3 river centreline"
+      }
+    },
+    {
+      "name": "zoneId",
+      "file": "world_lab/geo01/output/rasters/zoneId.u8",
+      "sha256": "e6ea74cd062935bad399002bf7d99e540b71f61ab5a83654db1cef1bdb2a374d",
+      "bytes": 43750,
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "point-in-ring on zones[].ring",
+        "unit": "0=none, 1..23=zone index+1"
+      }
+    }
+  ],
+  "statusVocabulary": [
+    "SOURCE_AUTHORED",
+    "DERIVED",
+    "PROPOSED",
+    "VERIFIED",
+    "UNKNOWN",
+    "UNRESOLVED",
+    "BLOCKED",
+    "INVALID",
+    "UNDECIDED"
+  ],
+  "biomeLegend": [
+    {
+      "code": 0,
+      "key": "meadow",
+      "name": "Bình nguyên / canh tác",
+      "sourceColor": [
+        160,
+        184,
+        100
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 1,
+      "key": "forest",
+      "name": "Rừng lá rộng",
+      "sourceColor": [
+        92,
+        134,
+        74
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 2,
+      "key": "ancient",
+      "name": "Rừng cổ (sống động)",
+      "sourceColor": [
+        52,
+        116,
+        64
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 3,
+      "key": "conifer",
+      "name": "Rừng thông / cao nguyên",
+      "sourceColor": [
+        78,
+        114,
+        96
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 4,
+      "key": "marsh",
+      "name": "Đầm lầy / cửa sông",
+      "sourceColor": [
+        112,
+        136,
+        98
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 5,
+      "key": "desert",
+      "name": "Sa mạc / cồn cát",
+      "sourceColor": [
+        219,
+        190,
+        124
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 6,
+      "key": "scrub",
+      "name": "Thảo nguyên khô",
+      "sourceColor": [
+        190,
+        178,
+        112
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 7,
+      "key": "rock",
+      "name": "Đá trần / núi",
+      "sourceColor": [
+        146,
+        138,
+        128
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 8,
+      "key": "snow",
+      "name": "Lạnh / tuyết",
+      "sourceColor": [
+        234,
+        238,
+        242
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 9,
+      "key": "volcanic",
+      "name": "Núi lửa / obsidian",
+      "sourceColor": [
+        88,
+        72,
+        70
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 10,
+      "key": "toxic",
+      "name": "Đất độc / lưu huỳnh",
+      "sourceColor": [
+        172,
+        168,
+        76
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 11,
+      "key": "beach",
+      "name": "Bãi cát ven biển",
+      "sourceColor": [
+        226,
+        212,
+        164
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    }
+  ],
+  "widthSemantics": {
+    "rivers": [
+      {
+        "id": "rv_grey_up",
+        "name": "Greywater River (thượng lưu)",
+        "kind": "river",
+        "widthAu": 4,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": false,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED"
+      },
+      {
+        "id": "rv_grey_low",
+        "name": "Greywater River",
+        "kind": "river",
+        "widthAu": 7,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 28,
+        "fordWidthHeuristic": false,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED"
+      },
+      {
+        "id": "rv_silver",
+        "name": "Silverrun",
+        "kind": "river",
+        "widthAu": 4,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": false,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED"
+      },
+      {
+        "id": "rv_canal",
+        "name": "Timber Cut Canal",
+        "kind": "canal",
+        "widthAu": 3.5,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 16,
+        "fordWidthHeuristic": false,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED"
+      },
+      {
+        "id": "rv_moss",
+        "name": "Mossbrook",
+        "kind": "river",
+        "widthAu": 4,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": false,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED"
+      },
+      {
+        "id": "rv_argus",
+        "name": "Argus Brook",
+        "kind": "river",
+        "widthAu": 2.5,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": true,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED"
+      },
+      {
+        "id": "rv_east",
+        "name": "Eastwater River",
+        "kind": "river",
+        "widthAu": 6,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 24,
+        "fordWidthHeuristic": false,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED"
+      },
+      {
+        "id": "rv_d1",
+        "name": "Delta West Channel",
+        "kind": "distributary",
+        "widthAu": 4,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": false,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED"
+      },
+      {
+        "id": "rv_d2",
+        "name": "Delta Centre Channel",
+        "kind": "distributary",
+        "widthAu": 5,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": false,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED"
+      },
+      {
+        "id": "rv_d3",
+        "name": "Delta East Channel",
+        "kind": "distributary",
+        "widthAu": 4,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": false,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED"
+      },
+      {
+        "id": "rv_amber_up",
+        "name": "Amber Wadi (thượng lưu)",
+        "kind": "river",
+        "widthAu": 2.5,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": true,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED"
+      },
+      {
+        "id": "rv_amber_low",
+        "name": "Amber River",
+        "kind": "river",
+        "widthAu": 4,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": false,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED"
+      },
+      {
+        "id": "rv_west",
+        "name": "Westbrook",
+        "kind": "river",
+        "widthAu": 3,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": true,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED"
+      },
+      {
+        "id": "rv_hook",
+        "name": "Hook Creek",
+        "kind": "river",
+        "widthAu": 3,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": true,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED"
+      },
+      {
+        "id": "rv_ash",
+        "name": "Ash Spring Brook",
+        "kind": "river",
+        "widthAu": 2.5,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": true,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED"
+      },
+      {
+        "id": "rv_salt",
+        "name": "Salt Brook",
+        "kind": "river",
+        "widthAu": 2.5,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": true,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED"
+      },
+      {
+        "id": "rv_slag",
+        "name": "Slag Run",
+        "kind": "river",
+        "widthAu": 2.5,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": true,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED"
+      }
+    ],
+    "roads": {
+      "authoredWidthField": "NOT_IN_SOURCE (types.ts Road has no width field)",
+      "analysisStrokeAu": 9,
+      "analysisNote": "analysis.ts rasterRoads(): all non-ferry roads use the SAME 9u canvas stroke; cart roads are rasterised a second time with the same 9u stroke. This is an EDITOR ANALYSIS stroke, not an authored road width.",
+      "displayStrokesAu": {
+        "cart": 3.4,
+        "other": 1.6
+      },
+      "displayNote": "exporter.ts renderSVG() strokes are display-only; they are NOT authored road widths.",
+      "bridgeDisplayGlyphAu": {
+        "w": 13,
+        "h": 7.2
+      },
+      "bridgeDisplayNote": "exporter.ts renderSVG(): 13 x 7.2u rectangle is a DISPLAY GLYPH. It is not a physical deck span, load rating or swept-clearance dimension.",
+      "physicalRoadWidth": "UNDEFINED__NOT_AUTHORED",
+      "sweptClearance": "UNVALIDATED__NO_CART_OR_FOOT_FOOTPRINT_DIMENSION_EXISTS_IN_SOURCE"
+    }
+  },
+  "explicitlyNotSupplied": [
+    "moisture",
+    "temperature",
+    "physical road width",
+    "physical river channel width",
+    "cart/foot swept clearance envelope",
+    "authoring-unit -> runtime-tile transform",
+    "any Gameplay passability law"
+  ],
+  "terrain": {
+    "elevation": {
+      "min": 0,
+      "max": 243,
+      "mean": 57.3271,
+      "p25": 24,
+      "p50": 50,
+      "p75": 68,
+      "p95": 153,
+      "unit": "UNKNOWN_SOURCE_BYTE__NO_APPROVED_PHYSICAL_SCALE",
+      "physicalScale": "UNDEFINED",
+      "status": "SOURCE_AUTHORED",
+      "note": "Canonical terrain.elev raw bytes decoded verbatim by GEO-01; byteToScalar=elev/255 is verified MapStudio Editor encoding, NOT an approved real-world height."
+    },
+    "slope": {
+      "min": 0,
+      "max": 150,
+      "mean": 6.378,
+      "p50": 3,
+      "p95": 20,
+      "unit": "RAW_BYTE_DELTA_PER_8au_CELL__NOT_A_GAMEPLAY_THRESHOLD",
+      "status": "DERIVED",
+      "editorThresholds": {
+        "buildSlopeMax": 0.5,
+        "cartSlopeMax": 0.7,
+        "footSlopeMax": 1.5,
+        "spawnReach": 300,
+        "interiorDist": 110,
+        "coastRim": 60
+      },
+      "editorThresholdStatus": "EDITOR_HEURISTIC__NOT_GAMEPLAY_PASSABILITY_LAW"
+    },
+    "landforms": {
+      "lowlandCells": 6361,
+      "highlandCells": 1505,
+      "mountainCells": 652,
+      "cliffCandidateCells": 79,
+      "status": "DERIVED",
+      "note": "Descriptive bins over raw elevation/slope bytes. No approved metre/degree conversion or Gameplay cliff rule exists."
+    },
+    "biomeTransitions": {
+      "landWaterBoundaryEdges": 1158,
+      "distinctTransitions": 73,
+      "totalTransitionEdges": 3501,
+      "top": [
+        {
+          "pair": "1->0",
+          "from": "Rừng lá rộng",
+          "to": "Bình nguyên / canh tác",
+          "edges": 382
+        },
+        {
+          "pair": "0->1",
+          "from": "Bình nguyên / canh tác",
+          "to": "Rừng lá rộng",
+          "edges": 330
+        },
+        {
+          "pair": "11->0",
+          "from": "Bãi cát ven biển",
+          "to": "Bình nguyên / canh tác",
+          "edges": 254
+        },
+        {
+          "pair": "0->11",
+          "from": "Bình nguyên / canh tác",
+          "to": "Bãi cát ven biển",
+          "edges": 233
+        },
+        {
+          "pair": "1->4",
+          "from": "Rừng lá rộng",
+          "to": "Đầm lầy / cửa sông",
+          "edges": 134
+        },
+        {
+          "pair": "0->3",
+          "from": "Bình nguyên / canh tác",
+          "to": "Rừng thông / cao nguyên",
+          "edges": 128
+        },
+        {
+          "pair": "3->0",
+          "from": "Rừng thông / cao nguyên",
+          "to": "Bình nguyên / canh tác",
+          "edges": 126
+        },
+        {
+          "pair": "4->1",
+          "from": "Đầm lầy / cửa sông",
+          "to": "Rừng lá rộng",
+          "edges": 126
+        },
+        {
+          "pair": "6->5",
+          "from": "Thảo nguyên khô",
+          "to": "Sa mạc / cồn cát",
+          "edges": 114
+        },
+        {
+          "pair": "7->3",
+          "from": "Đá trần / núi",
+          "to": "Rừng thông / cao nguyên",
+          "edges": 97
+        },
+        {
+          "pair": "5->6",
+          "from": "Sa mạc / cồn cát",
+          "to": "Thảo nguyên khô",
+          "edges": 97
+        },
+        {
+          "pair": "11->1",
+          "from": "Bãi cát ven biển",
+          "to": "Rừng lá rộng",
+          "edges": 90
+        },
+        {
+          "pair": "0->6",
+          "from": "Bình nguyên / canh tác",
+          "to": "Thảo nguyên khô",
+          "edges": 88
+        },
+        {
+          "pair": "6->11",
+          "from": "Thảo nguyên khô",
+          "to": "Bãi cát ven biển",
+          "edges": 78
+        },
+        {
+          "pair": "3->1",
+          "from": "Rừng thông / cao nguyên",
+          "to": "Rừng lá rộng",
+          "edges": 77
+        },
+        {
+          "pair": "3->7",
+          "from": "Rừng thông / cao nguyên",
+          "to": "Đá trần / núi",
+          "edges": 68
+        },
+        {
+          "pair": "0->2",
+          "from": "Bình nguyên / canh tác",
+          "to": "Rừng cổ (sống động)",
+          "edges": 58
+        },
+        {
+          "pair": "1->3",
+          "from": "Rừng lá rộng",
+          "to": "Rừng thông / cao nguyên",
+          "edges": 55
+        },
+        {
+          "pair": "4->0",
+          "from": "Đầm lầy / cửa sông",
+          "to": "Bình nguyên / canh tác",
+          "edges": 53
+        },
+        {
+          "pair": "0->7",
+          "from": "Bình nguyên / canh tác",
+          "to": "Đá trần / núi",
+          "edges": 51
+        },
+        {
+          "pair": "1->11",
+          "from": "Rừng lá rộng",
+          "to": "Bãi cát ven biển",
+          "edges": 49
+        },
+        {
+          "pair": "0->4",
+          "from": "Bình nguyên / canh tác",
+          "to": "Đầm lầy / cửa sông",
+          "edges": 45
+        },
+        {
+          "pair": "7->8",
+          "from": "Đá trần / núi",
+          "to": "Lạnh / tuyết",
+          "edges": 37
+        },
+        {
+          "pair": "7->0",
+          "from": "Đá trần / núi",
+          "to": "Bình nguyên / canh tác",
+          "edges": 36
+        }
+      ],
+      "status": "DERIVED",
+      "note": "Biome code legend comes from verified GEO-02 MapStudio source excerpt; 12-code -> 14-string Gameplay mapping remains UNRESOLVED."
+    },
+    "noMoistureOrTemperature": {
+      "status": "UNDEFINED_IN_SOURCE",
+      "moisture": {
+        "value": null,
+        "status": "UNKNOWN",
+        "reason": "Veyra has no climate/moisture array. PR44 EconomyMap requires finite 0..1 per cell; supplying one would be fabrication."
+      },
+      "temperature": {
+        "value": null,
+        "status": "UNKNOWN",
+        "reason": "Veyra has no temperature array."
+      },
+      "hazardIntensity": {
+        "value": null,
+        "status": "UNKNOWN",
+        "reason": "Hazard intensity is a Gameplay rule."
+      },
+      "spatialPotentialOnly": [
+        {
+          "layer": "freshwaterProximityCells",
+          "meaning": "BFS cell distance to authored lake/river geometry",
+          "note": "geometric potential, NOT a moisture value"
+        },
+        {
+          "layer": "seaDistanceCells",
+          "meaning": "BFS cell distance to sea",
+          "note": "geometric exposure potential, NOT a climate value"
+        },
+        {
+          "layer": "elevation",
+          "meaning": "raw source elevation byte",
+          "note": "no physical unit established"
+        },
+        {
+          "layer": "slope",
+          "meaning": "raw byte gradient",
+          "note": "no physical grade established"
+        }
+      ]
+    }
+  },
+  "habitatMarkers": {
+    "markerCount": 280,
+    "byKind": {
+      "fish": {
+        "count": 39,
+        "radiusAu": {
+          "16": 28,
+          "20": 5,
+          "34": 6
+        },
+        "gates": {
+          "none": 39
+        },
+        "density": {
+          "1": 2,
+          "2": 37
+        }
+      },
+      "food": {
+        "count": 59,
+        "radiusAu": {
+          "20": 2,
+          "28": 20,
+          "34": 5,
+          "40": 32
+        },
+        "gates": {
+          "none": 59
+        },
+        "density": {
+          "1": 21,
+          "2": 6,
+          "3": 32
+        }
+      },
+      "wood": {
+        "count": 54,
+        "radiusAu": {
+          "20": 4,
+          "28": 1,
+          "34": 37,
+          "40": 12
+        },
+        "gates": {
+          "none": 54
+        },
+        "density": {
+          "1": 3,
+          "2": 39,
+          "3": 12
+        }
+      },
+      "herbs": {
+        "count": 19,
+        "radiusAu": {
+          "28": 9,
+          "34": 9,
+          "36": 1
+        },
+        "gates": {
+          "none": 19
+        },
+        "density": {
+          "1": 9,
+          "2": 9,
+          "3": 1
+        }
+      },
+      "ore": {
+        "count": 3,
+        "radiusAu": {
+          "20": 1,
+          "34": 2
+        },
+        "gates": {
+          "none": 3
+        },
+        "density": {
+          "1": 1,
+          "3": 2
+        }
+      },
+      "stone": {
+        "count": 30,
+        "radiusAu": {
+          "20": 5,
+          "24": 12,
+          "28": 4,
+          "34": 3,
+          "36": 2,
+          "40": 4
+        },
+        "gates": {
+          "none": 30
+        },
+        "density": {
+          "1": 13,
+          "2": 11,
+          "3": 6
+        }
+      },
+      "clay": {
+        "count": 2,
+        "radiusAu": {
+          "30": 1,
+          "34": 1
+        },
+        "gates": {
+          "none": 2
+        },
+        "density": {
+          "2": 1,
+          "3": 1
+        }
+      },
+      "sulfur": {
+        "count": 4,
+        "radiusAu": {
+          "28": 1,
+          "30": 1,
+          "34": 2
+        },
+        "gates": {
+          "none": 4
+        },
+        "density": {
+          "1": 1,
+          "2": 2,
+          "3": 1
+        }
+      },
+      "obsidian": {
+        "count": 4,
+        "radiusAu": {
+          "30": 1,
+          "40": 3
+        },
+        "gates": {
+          "none": 4
+        },
+        "density": {
+          "3": 4
+        }
+      },
+      "fresh_water": {
+        "count": 65,
+        "radiusAu": {
+          "14": 42,
+          "16": 20,
+          "20": 3
+        },
+        "gates": {
+          "none": 65
+        },
+        "density": {
+          "1": 18,
+          "2": 22,
+          "3": 25
+        }
+      },
+      "salt": {
+        "count": 1,
+        "radiusAu": {
+          "34": 1
+        },
+        "gates": {
+          "none": 1
+        },
+        "density": {
+          "3": 1
+        }
+      }
+    },
+    "status": "SOURCE_AUTHORED",
+    "ownership": "MAP records WHERE source-authored habitat markers are. Gameplay owns resource instances, source stock, respawn, loot, locks and economic simulation.",
+    "noFabrication": "No runtime resource instance, quantity, stock, loot table, lock state or spawn rate is produced here.",
+    "note": "Authored GEO-01 habitat markers are BOUNDED INPUT AREAS, not resource nodes. No stock, loot, respawn, gate or starter kit is asserted."
+  },
+  "counts": {
+    "canonicalObjects": 579,
+    "habitatMarkers": 280,
+    "zones": 23,
+    "pois": 81
+  },
+  "gameplayContract": {
+    "id": "GEOGRAPHY_INPUTS_ONLY__GAMEPLAY_POPULATES_RESOURCES",
+    "owner": "GAMEPLAY",
+    "required": [
+      "read parent raster digests",
+      "map authoring cells through an approved transform",
+      "decide resource kinds/stock/respawn/loot",
+      "resolve habitat marker semantics"
+    ],
+    "unknowns": [
+      "au-to-tile transform",
+      "marker-to-node mapping",
+      "stock/respawn rule",
+      "starter resource policy",
+      "economy interaction"
+    ]
+  },
+  "noClaims": [
+    "NO playable Veyra or final world",
+    "NO creator visual approval",
+    "NO approved au-to-tile/px scale or canonical rewrite",
+    "NO runtime spawn coordinate or spawn compound",
+    "NO house/shelter/crate/beacon/cleared corridor/starter resources",
+    "NO occupancy, claim, hazard, creature-free-distance or actor-separation verdict",
+    "NO invented roof/canopy polygon",
+    "NO invented canopy coverage",
+    "NO approved physical road/river/bridge width or swept clearance",
+    "NO cart-passable road/bridge/ferry verdict or approved boat rule",
+    "NO forced land bridge",
+    "NO Gameplay implementation command",
+    "NO Web-rendered integration proof",
+    "NO third-party or unverified art pack"
+  ],
+  "revisionDigest": "fad1de9a960600146e6d96478ad9e5dcf752a63522acd6fff0903b936bcbde59",
+  "digestMethod": "sha256 over JSON.stringify(body) in field insertion order; recompute by deleting revisionDigest and digestMethod"
+}

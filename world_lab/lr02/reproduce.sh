@@ -7,7 +7,7 @@ echo "== MAP-LR02 M1: full-world portal geometry (81 POIs) =="
 node src/m1_portals.mjs
 echo "== MAP-LR02 M2: full-world spawn / build eligibility =="
 node src/m2_spawn.mjs
-echo "== MAP-LR02 M3/M4/M5 (if present) =="
+echo "== MAP-LR02 M3 / M3b / M4 / M5 =="
 for g in src/m3_architecture.mjs src/m3b_regions.mjs src/m4_visual.mjs src/m5_package.mjs; do
   if [ -f "$g" ]; then node "$g"; fi
 done
