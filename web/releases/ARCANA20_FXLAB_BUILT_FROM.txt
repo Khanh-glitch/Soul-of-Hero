@@ -54,5 +54,5 @@ propagate into the game loop and skip presenter.present(), which with preserveDr
 is exactly what leaves a whole-black canvas; (2) CRunner.composite gained a provably bit-exact
 fast path for untouched pixels (round(clamp(g/255)*255)===g). Tests 96/96 + tsc clean. Headless:
 #7/#10/#16/#17/#18 avg 16.7ms/frame, max 34ms, 0 frames >50ms, 0 page errors.
-  SOH-ARCANA20-FX-LAB.html       sha256 (see git show of this commit for exact value)
+  SOH-ARCANA20-FX-LAB.html       sha256 3e77f0b56868fed56164a0f131e90baa67215d3219d80abdbae565401c471e9f
   SOH-ARCANA20-VISUAL-TEST.html  sha256 5625d3ba055715717a6a53a5ac001a3791b0c6f5982a9a7ac0b7ebb5d6411a10
