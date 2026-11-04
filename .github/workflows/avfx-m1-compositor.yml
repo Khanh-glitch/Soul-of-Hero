@@ -30,49 +30,13 @@ jobs:
       - name: Install dependencies
         working-directory: web
         run: npm ci
-      - name: Test file - arcana-d19.test.ts
+      # Serial file execution: ubuntu-latest has 2 vCPUs and the CPU-render lifecycle
+      # contract file is heavy; parallel workers make the full suite fail under CPU
+      # contention even though every file passes in isolation. Same suite and same
+      # assertions as `npm test` (vitest run --testTimeout=300000).
+      - name: Unit tests (full suite, serial files on 2 vCPU runner)
         working-directory: web
-        continue-on-error: true
-        run: npx vitest run tests/arcana-d19.test.ts --testTimeout=300000
-      - name: Test file - arcana-d20-semantic.test.ts
-        working-directory: web
-        continue-on-error: true
-        run: npx vitest run tests/arcana-d20-semantic.test.ts --testTimeout=300000
-      - name: Test file - arcana-lab-routing.test.ts
-        working-directory: web
-        continue-on-error: true
-        run: npx vitest run tests/arcana-lab-routing.test.ts --testTimeout=300000
-      - name: Test file - arcana-lifecycle-contract.test.ts
-        working-directory: web
-        continue-on-error: true
-        run: npx vitest run tests/arcana-lifecycle-contract.test.ts --testTimeout=300000
-      - name: Test file - b1-integrity.test.ts
-        working-directory: web
-        continue-on-error: true
-        run: npx vitest run tests/b1-integrity.test.ts --testTimeout=300000
-      - name: Test file - b1-storage.test.ts
-        working-directory: web
-        continue-on-error: true
-        run: npx vitest run tests/b1-storage.test.ts --testTimeout=300000
-      - name: Test file - b2-perception.test.ts
-        working-directory: web
-        continue-on-error: true
-        run: npx vitest run tests/b2-perception.test.ts --testTimeout=300000
-      - name: Test file - compositor.test.ts
-        working-directory: web
-        continue-on-error: true
-        run: npx vitest run tests/compositor.test.ts --testTimeout=300000
-      - name: Test file - pixelfx.test.ts
-        working-directory: web
-        continue-on-error: true
-        run: npx vitest run tests/pixelfx.test.ts --testTimeout=300000
-      - name: Test file - soh.test.ts
-        working-directory: web
-        continue-on-error: true
-        run: npx vitest run tests/soh.test.ts --testTimeout=300000
-      - name: Full suite gate (npm test)
-        working-directory: web
-        run: npm test
+        run: npx vitest run --testTimeout=300000 --no-file-parallelism
       - name: Types (tsc --noEmit)
         working-directory: web
         run: npx tsc --noEmit
