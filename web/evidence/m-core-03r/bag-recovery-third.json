@@ -1,0 +1,338 @@
+{
+  "method": "Normal-input respawn and recovery after a genuine later death; prior process had rolled back one unpersisted earlier death. Route uses read-only grid.",
+  "errors": [],
+  "respawn": {
+    "p": {
+      "x": 1720,
+      "y": 1816,
+      "vx": 0,
+      "vy": 0,
+      "dir": 1,
+      "aim": 2.9863306596826833,
+      "hp": 60,
+      "stamina": 82.96579999999999,
+      "hunger": 66.20651719997421,
+      "thirst": 56.80977579999334,
+      "warmth": 79.94178769669493,
+      "rad": 19.97791749999997,
+      "active": 0,
+      "action": null,
+      "invuln": 1116.6999999999998,
+      "dead": false,
+      "deadT": 28232.2,
+      "pulling": null,
+      "skills": {
+        "gather": 73,
+        "combat": 2,
+        "craft": 0,
+        "survival": 0
+      },
+      "stepAcc": 9.117720000000013,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Heartland",
+      "sheltered": false
+    },
+    "receipts": [
+      {
+        "id": "r273",
+        "seq": 273,
+        "at": 1793770392769,
+        "kind": "job.queue",
+        "detail": "field_repair_kit@er7"
+      },
+      {
+        "id": "r274",
+        "seq": 274,
+        "at": 1793770393112,
+        "kind": "death",
+        "detail": "projectile; bag=buf"
+      },
+      {
+        "id": "r275",
+        "seq": 275,
+        "at": 1793770404769,
+        "kind": "job.done",
+        "detail": "field_repair_kit"
+      },
+      {
+        "id": "r276",
+        "seq": 276,
+        "at": 1793770434875,
+        "kind": "offline.settle",
+        "detail": "15s"
+      },
+      {
+        "id": "r277",
+        "seq": 277,
+        "at": 1793770436351,
+        "kind": "respawn",
+        "detail": "1720,1816"
+      }
+    ]
+  },
+  "routeSteps": 57,
+  "after": {
+    "p": {
+      "x": 2503.068904000032,
+      "y": 1704.7117599999983,
+      "vx": 0,
+      "vy": 0,
+      "dir": 3,
+      "aim": -1.902805193533781,
+      "hp": 60,
+      "stamina": 100,
+      "hunger": 65.59654519997204,
+      "thirst": 55.8948177999933,
+      "warmth": 79.12578706078895,
+      "rad": 20.392327499999723,
+      "active": 0,
+      "action": null,
+      "invuln": 0,
+      "dead": false,
+      "deadT": 28232.2,
+      "pulling": null,
+      "skills": {
+        "gather": 73,
+        "combat": 2,
+        "craft": 0,
+        "survival": 0
+      },
+      "stepAcc": 11.395440000000026,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Dead Foundry",
+      "sheltered": false
+    },
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 278
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7k",
+        "key": "wood",
+        "qty": 4
+      },
+      {
+        "uid": "s7l",
+        "key": "seed",
+        "qty": 4
+      },
+      {
+        "uid": "s88",
+        "key": "scrap",
+        "qty": 23
+      },
+      {
+        "uid": "s8f",
+        "key": "fasteners",
+        "qty": 2
+      },
+      {
+        "uid": "sew",
+        "key": "meat",
+        "qty": 1
+      },
+      {
+        "uid": "sex",
+        "key": "fur",
+        "qty": 2
+      },
+      {
+        "uid": "sid",
+        "key": "stone",
+        "qty": 3
+      },
+      {
+        "uid": "smm",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "smw",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "snj",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "srh",
+        "key": "mechanical_parts",
+        "qty": 1
+      }
+    ],
+    "bags": [
+      {
+        "id": "bop",
+        "slots": []
+      },
+      {
+        "id": "brl",
+        "slots": []
+      },
+      {
+        "id": "buf",
+        "slots": []
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r272",
+        "seq": 272,
+        "at": 1793770392453,
+        "kind": "item.fieldRepair",
+        "detail": "s1:178->278"
+      },
+      {
+        "id": "r273",
+        "seq": 273,
+        "at": 1793770392769,
+        "kind": "job.queue",
+        "detail": "field_repair_kit@er7"
+      },
+      {
+        "id": "r274",
+        "seq": 274,
+        "at": 1793770393112,
+        "kind": "death",
+        "detail": "projectile; bag=buf"
+      },
+      {
+        "id": "r275",
+        "seq": 275,
+        "at": 1793770404769,
+        "kind": "job.done",
+        "detail": "field_repair_kit"
+      },
+      {
+        "id": "r276",
+        "seq": 276,
+        "at": 1793770434875,
+        "kind": "offline.settle",
+        "detail": "15s"
+      },
+      {
+        "id": "r277",
+        "seq": 277,
+        "at": 1793770436351,
+        "kind": "respawn",
+        "detail": "1720,1816"
+      },
+      {
+        "id": "r278",
+        "seq": 278,
+        "at": 1793770450968,
+        "kind": "move",
+        "detail": "knifex1 cue->inv"
+      },
+      {
+        "id": "r279",
+        "seq": 279,
+        "at": 1793770451033,
+        "kind": "move",
+        "detail": "water_flaskx1 cue->inv"
+      },
+      {
+        "id": "r280",
+        "seq": 280,
+        "at": 1793770451116,
+        "kind": "move",
+        "detail": "berriesx3 cue->inv"
+      },
+      {
+        "id": "r281",
+        "seq": 281,
+        "at": 1793770451184,
+        "kind": "move",
+        "detail": "woodx4 cue->inv"
+      },
+      {
+        "id": "r282",
+        "seq": 282,
+        "at": 1793770451250,
+        "kind": "move",
+        "detail": "seedx4 cue->inv"
+      },
+      {
+        "id": "r283",
+        "seq": 283,
+        "at": 1793770451333,
+        "kind": "move",
+        "detail": "scrapx23 cue->inv"
+      },
+      {
+        "id": "r284",
+        "seq": 284,
+        "at": 1793770451424,
+        "kind": "move",
+        "detail": "fastenersx2 cue->inv"
+      },
+      {
+        "id": "r285",
+        "seq": 285,
+        "at": 1793770451516,
+        "kind": "move",
+        "detail": "meatx1 cue->inv"
+      },
+      {
+        "id": "r286",
+        "seq": 286,
+        "at": 1793770451583,
+        "kind": "move",
+        "detail": "furx2 cue->inv"
+      },
+      {
+        "id": "r287",
+        "seq": 287,
+        "at": 1793770451666,
+        "kind": "move",
+        "detail": "stonex3 cue->inv"
+      },
+      {
+        "id": "r288",
+        "seq": 288,
+        "at": 1793770451732,
+        "kind": "move",
+        "detail": "damaged_drivex1 cue->inv"
+      },
+      {
+        "id": "r289",
+        "seq": 289,
+        "at": 1793770451799,
+        "kind": "move",
+        "detail": "damaged_drivex1 cue->inv"
+      },
+      {
+        "id": "r290",
+        "seq": 290,
+        "at": 1793770451899,
+        "kind": "move",
+        "detail": "damaged_drivex1 cue->inv"
+      },
+      {
+        "id": "r291",
+        "seq": 291,
+        "at": 1793770451968,
+        "kind": "move",
+        "detail": "mechanical_partsx1 cue->inv"
+      }
+    ]
+  }
+}

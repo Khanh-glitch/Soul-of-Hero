@@ -1,0 +1,459 @@
+{
+  "method": "Real mouse/keyboard and paid construction; read-only path/site inspection after blind attempt. The earlier unpersisted death rollback is disclosed.",
+  "events": [
+    {
+      "type": "claim",
+      "site": {
+        "x": 157,
+        "y": 107
+      },
+      "state": {
+        "entities": [
+          {
+            "id": "er6",
+            "kind": "struct",
+            "type": "claim",
+            "tx": 157,
+            "ty": 107,
+            "x": 2520,
+            "y": 1720,
+            "hp": 200,
+            "maxHp": 200,
+            "born": 1793770101818
+          }
+        ],
+        "inv": [
+          {
+            "uid": "s1",
+            "key": "knife",
+            "qty": 1,
+            "dur": 78
+          },
+          {
+            "uid": "s2",
+            "key": "water_flask",
+            "qty": 1,
+            "charge": 2
+          },
+          {
+            "uid": "s3",
+            "key": "berries",
+            "qty": 3
+          },
+          {
+            "uid": "s7k",
+            "key": "wood",
+            "qty": 28
+          },
+          {
+            "uid": "s7l",
+            "key": "seed",
+            "qty": 4
+          },
+          {
+            "uid": "s88",
+            "key": "scrap",
+            "qty": 24
+          },
+          {
+            "uid": "s8f",
+            "key": "fasteners",
+            "qty": 4
+          },
+          {
+            "uid": "s8s",
+            "key": "spares",
+            "qty": 15
+          },
+          {
+            "uid": "sf",
+            "key": "iron_ingot",
+            "qty": 1
+          },
+          {
+            "uid": "sep",
+            "key": "fiber",
+            "qty": 6
+          },
+          {
+            "uid": "sew",
+            "key": "meat",
+            "qty": 1
+          },
+          {
+            "uid": "sex",
+            "key": "fur",
+            "qty": 2
+          },
+          {
+            "uid": "sid",
+            "key": "stone",
+            "qty": 7
+          },
+          {
+            "uid": "smr",
+            "key": "field_repair_kit",
+            "qty": 2
+          },
+          {
+            "uid": "smm",
+            "key": "damaged_drive",
+            "qty": 1
+          },
+          {
+            "uid": "smw",
+            "key": "damaged_drive",
+            "qty": 1
+          },
+          {
+            "uid": "snj",
+            "key": "damaged_drive",
+            "qty": 1
+          },
+          {
+            "uid": "so4",
+            "key": "damaged_drive",
+            "qty": 1
+          }
+        ],
+        "receipts": [
+          {
+            "id": "r224",
+            "seq": 224,
+            "at": 1793770061733,
+            "kind": "offline.settle",
+            "detail": "18s"
+          },
+          {
+            "id": "r225",
+            "seq": 225,
+            "at": 1793770063604,
+            "kind": "move",
+            "detail": "sparesx2 c2i->inv"
+          },
+          {
+            "id": "r226",
+            "seq": 226,
+            "at": 1793770095381,
+            "kind": "offline.settle",
+            "detail": "31s"
+          },
+          {
+            "id": "r227",
+            "seq": 227,
+            "at": 1793770101818,
+            "kind": "build",
+            "detail": "claim@157,107"
+          }
+        ],
+        "hp": 38.87054400000342
+      }
+    },
+    {
+      "type": "workbench",
+      "site": {
+        "x": 158,
+        "y": 107
+      },
+      "state": {
+        "entities": [
+          {
+            "id": "er7",
+            "kind": "struct",
+            "type": "workbench",
+            "tx": 158,
+            "ty": 107,
+            "x": 2536,
+            "y": 1720,
+            "hp": 160,
+            "maxHp": 160,
+            "born": 1793770102672,
+            "station": {
+              "queue": [],
+              "burn": 0,
+              "fuelC": "cr8",
+              "outC": "cr9"
+            },
+            "claim": "er6"
+          }
+        ],
+        "inv": [
+          {
+            "uid": "s1",
+            "key": "knife",
+            "qty": 1,
+            "dur": 78
+          },
+          {
+            "uid": "s2",
+            "key": "water_flask",
+            "qty": 1,
+            "charge": 2
+          },
+          {
+            "uid": "s3",
+            "key": "berries",
+            "qty": 3
+          },
+          {
+            "uid": "s7k",
+            "key": "wood",
+            "qty": 14
+          },
+          {
+            "uid": "s7l",
+            "key": "seed",
+            "qty": 4
+          },
+          {
+            "uid": "s88",
+            "key": "scrap",
+            "qty": 24
+          },
+          {
+            "uid": "s8f",
+            "key": "fasteners",
+            "qty": 4
+          },
+          {
+            "uid": "s8s",
+            "key": "spares",
+            "qty": 15
+          },
+          {
+            "uid": "sf",
+            "key": "iron_ingot",
+            "qty": 1
+          },
+          {
+            "uid": "sep",
+            "key": "fiber",
+            "qty": 6
+          },
+          {
+            "uid": "sew",
+            "key": "meat",
+            "qty": 1
+          },
+          {
+            "uid": "sex",
+            "key": "fur",
+            "qty": 2
+          },
+          {
+            "uid": "sid",
+            "key": "stone",
+            "qty": 3
+          },
+          {
+            "uid": "smr",
+            "key": "field_repair_kit",
+            "qty": 2
+          },
+          {
+            "uid": "smm",
+            "key": "damaged_drive",
+            "qty": 1
+          },
+          {
+            "uid": "smw",
+            "key": "damaged_drive",
+            "qty": 1
+          },
+          {
+            "uid": "snj",
+            "key": "damaged_drive",
+            "qty": 1
+          },
+          {
+            "uid": "so4",
+            "key": "damaged_drive",
+            "qty": 1
+          }
+        ],
+        "receipts": [
+          {
+            "id": "r225",
+            "seq": 225,
+            "at": 1793770063604,
+            "kind": "move",
+            "detail": "sparesx2 c2i->inv"
+          },
+          {
+            "id": "r226",
+            "seq": 226,
+            "at": 1793770095381,
+            "kind": "offline.settle",
+            "detail": "31s"
+          },
+          {
+            "id": "r227",
+            "seq": 227,
+            "at": 1793770101818,
+            "kind": "build",
+            "detail": "claim@157,107"
+          },
+          {
+            "id": "r228",
+            "seq": 228,
+            "at": 1793770102672,
+            "kind": "build",
+            "detail": "workbench@158,107"
+          }
+        ],
+        "hp": 38.9398640000035
+      }
+    },
+    {
+      "type": "research",
+      "site": {
+        "x": 159,
+        "y": 107
+      },
+      "state": {
+        "entities": [
+          {
+            "id": "era",
+            "kind": "struct",
+            "type": "research",
+            "tx": 159,
+            "ty": 107,
+            "x": 2552,
+            "y": 1720,
+            "hp": 160,
+            "maxHp": 160,
+            "born": 1793770103515,
+            "station": {
+              "queue": [],
+              "burn": 0,
+              "fuelC": "crb",
+              "outC": "crc"
+            },
+            "claim": "er6"
+          }
+        ],
+        "inv": [
+          {
+            "uid": "s1",
+            "key": "knife",
+            "qty": 1,
+            "dur": 78
+          },
+          {
+            "uid": "s2",
+            "key": "water_flask",
+            "qty": 1,
+            "charge": 2
+          },
+          {
+            "uid": "s3",
+            "key": "berries",
+            "qty": 3
+          },
+          {
+            "uid": "s7k",
+            "key": "wood",
+            "qty": 4
+          },
+          {
+            "uid": "s7l",
+            "key": "seed",
+            "qty": 4
+          },
+          {
+            "uid": "s88",
+            "key": "scrap",
+            "qty": 24
+          },
+          {
+            "uid": "s8f",
+            "key": "fasteners",
+            "qty": 4
+          },
+          {
+            "uid": "s8s",
+            "key": "spares",
+            "qty": 9
+          },
+          {
+            "uid": "sep",
+            "key": "fiber",
+            "qty": 6
+          },
+          {
+            "uid": "sew",
+            "key": "meat",
+            "qty": 1
+          },
+          {
+            "uid": "sex",
+            "key": "fur",
+            "qty": 2
+          },
+          {
+            "uid": "sid",
+            "key": "stone",
+            "qty": 3
+          },
+          {
+            "uid": "smr",
+            "key": "field_repair_kit",
+            "qty": 2
+          },
+          {
+            "uid": "smm",
+            "key": "damaged_drive",
+            "qty": 1
+          },
+          {
+            "uid": "smw",
+            "key": "damaged_drive",
+            "qty": 1
+          },
+          {
+            "uid": "snj",
+            "key": "damaged_drive",
+            "qty": 1
+          },
+          {
+            "uid": "so4",
+            "key": "damaged_drive",
+            "qty": 1
+          }
+        ],
+        "receipts": [
+          {
+            "id": "r226",
+            "seq": 226,
+            "at": 1793770095381,
+            "kind": "offline.settle",
+            "detail": "31s"
+          },
+          {
+            "id": "r227",
+            "seq": 227,
+            "at": 1793770101818,
+            "kind": "build",
+            "detail": "claim@157,107"
+          },
+          {
+            "id": "r228",
+            "seq": 228,
+            "at": 1793770102672,
+            "kind": "build",
+            "detail": "workbench@158,107"
+          },
+          {
+            "id": "r229",
+            "seq": 229,
+            "at": 1793770103515,
+            "kind": "build",
+            "detail": "research@159,107"
+          }
+        ],
+        "hp": 39.006536000003585
+      }
+    }
+  ],
+  "siteRouteSteps": 9
+}

@@ -1,5 +1,7 @@
 # M-CORE-03 — Gameplay checkpoint
 
+> Historical checkpoint: compatibility, offline and downstream-research status below is superseded by [M-CORE-03R handoff](M_CORE_03R_HANDOFF.md). E04 gameplay remains open; PR #44 remains draft/HOLD.
+
 Authority `web/ref/bible.md`; PR #44 remains DRAFT/HOLD. Preflight 2026-11-04:
 local and fetched branch both `bfbf44df9ebf403290dce45ff197327947762e8e`;
 Control Tower queued this session; no newer public branch commit or concurrent
