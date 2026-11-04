@@ -126,35 +126,46 @@ export class ArcanaLabClient implements comp.VfxClient {
   submitGpu(frame: comp.FrameCtx): void {
     const p = getPresenter();
     if (!p || !p.gl || !this.cast) return;
-    const entry = LAB_CATALOG[this.cast.index];
-    const t = this.qaT >= 0 ? this.qaT : (frame.now - this.cast.startMs) / 1000;
+    try { this.submitGpuInner(frame); } catch (err: any) {
+      // Fail closed: a lab error must never propagate into the game loop (an
+      // exception here would skip presenter.present() and leave a black canvas).
+      (window as any).__arcanaLabError = `lab: ${err?.message ?? err}`;
+      this.qaStop();
+    }
+  }
+
+  private submitGpuInner(frame: comp.FrameCtx): void {
+    const cast = this.cast!; // non-null: guarded by submitGpu
+    const p = getPresenter()!;
+    const entry = LAB_CATALOG[cast.index];
+    const t = this.qaT >= 0 ? this.qaT : (frame.now - cast.startMs) / 1000;
     const dur = entry.dur + 1.0;
     if (t < 0 || t > dur) { if (t > dur) { this.cast = null; this.qaT = -1; this.stopBridges(); } return; }
     const tick = Math.floor(t * 60);
 
     // D (#19) and A+C #20 route to their dedicated bridges — no frame pass here.
-    if (this.cast.mode !== 'study' && (entry.id === 19 || entry.id === 20)) {
+    if (cast.mode !== 'study' && (entry.id === 19 || entry.id === 20)) {
       if (tick !== this.lastTick) {
         this.lastTick = tick;
-        if (entry.id === 19) d19.qaSeek(Math.min(t, 10.2), this.cast.wx, this.cast.wy);
-        else d20.qaSeek(Math.min(t, 10.4), this.cast.wx, this.cast.wy);
+        if (entry.id === 19) d19.qaSeek(Math.min(t, 10.2), cast.wx, cast.wy);
+        else d20.qaSeek(Math.min(t, 10.4), cast.wx, cast.wy);
       }
       return;
     }
 
 
-    const useFusion = this.cast.mode === 'fusion' && !!RECIPES[entry.id];
+    const useFusion = cast.mode === 'fusion' && !!RECIPES[entry.id];
     // salvage routing: #18 lead = source-B cube Chronoshard; #16 lead = gold C (not A)
-    const useB = this.cast.mode === 'lead' && (B_IDS.has(entry.id) || entry.id === 18);
-    const useR = this.cast.mode === 'lead' && REDESIGN_IDS.has(entry.id) && entry.id !== 18;
-    const useA = this.cast.mode === 'lead' && (FUSION_IDS.has(entry.id) && entry.id !== 20) && entry.id !== 16;
+    const useB = cast.mode === 'lead' && (B_IDS.has(entry.id) || entry.id === 18);
+    const useR = cast.mode === 'lead' && REDESIGN_IDS.has(entry.id) && entry.id !== 18;
+    const useA = cast.mode === 'lead' && (FUSION_IDS.has(entry.id) && entry.id !== 20) && entry.id !== 16;
 
     let W = C_W, H = C_H, out: Uint8ClampedArray = this.cR.out;
     if (useB) { W = B_W; H = B_H; }
     else if (useA || useFusion) { W = A_W; H = A_H; }
 
-    const sx = Math.round(this.cast.wx - frame.cam.x - W / 2);
-    const sy = Math.round(this.cast.wy - frame.cam.y - H / 2);
+    const sx = Math.round(cast.wx - frame.cam.x - W / 2);
+    const sy = Math.round(cast.wy - frame.cam.y - H / 2);
     const region = p.worldRegion(sx, sy, W, H);
     if (!region) return;
 
@@ -171,7 +182,7 @@ export class ArcanaLabClient implements comp.VfxClient {
       // missing world aborts the pass (no stale frame is ever presented).
       if (needRender) {
         const recipe = RECIPES[entry.id];
-        const cx = Math.round(this.cast.wx - frame.cam.x), cy = Math.round(this.cast.wy - frame.cam.y);
+        const cx = Math.round(cast.wx - frame.cam.x), cy = Math.round(cast.wy - frame.cam.y);
         const worldFor = (w: number, h: number): Uint8ClampedArray => {
           const r = p.worldRegion(cx - Math.round(w / 2), cy - Math.round(h / 2), w, h);
           if (!r || r.length !== w * h * 4) throw new Error(`arcana-lab: current world snapshot missing/wrong size for ${w}x${h}`);

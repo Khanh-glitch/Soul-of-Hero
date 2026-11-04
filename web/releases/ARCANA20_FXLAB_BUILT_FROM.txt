@@ -47,3 +47,12 @@ removed from the B path (affects #18 cube routing); recast only on spell change.
 Headless: #7/#10/#17/#18 all ~60fps, max frame gap 32ms, 0 frames >50ms, 0 page errors.
   SOH-ARCANA20-FX-LAB.html       sha256 a2fcdebf2edee6392040e851f1ac9a75e25da9bedf779ffeb6b7dd454dbf327f
   SOH-ARCANA20-VISUAL-TEST.html  sha256 c17433cae3f8b5a6a5c6b0f55d8c522f9aa48dbf3a3f4858b440e57e4055f80f
+
+2026-11-04 hardening (7c94892+): (1) ArcanaLabClient.submitGpu now wraps the render body in
+try/catch and fails CLOSED (clears cast, sets __arcanaLabError) — a lab exception can never
+propagate into the game loop and skip presenter.present(), which with preserveDrawingBuffer:false
+is exactly what leaves a whole-black canvas; (2) CRunner.composite gained a provably bit-exact
+fast path for untouched pixels (round(clamp(g/255)*255)===g). Tests 96/96 + tsc clean. Headless:
+#7/#10/#16/#17/#18 avg 16.7ms/frame, max 34ms, 0 frames >50ms, 0 page errors.
+  SOH-ARCANA20-FX-LAB.html       sha256 (see git show of this commit for exact value)
+  SOH-ARCANA20-VISUAL-TEST.html  sha256 5625d3ba055715717a6a53a5ac001a3791b0c6f5982a9a7ac0b7ebb5d6411a10

@@ -215,7 +215,17 @@ export class CRunner {
     const chroma = this.fx.chroma + this.chromaK;
     const inv = this.fx.invert, desat = this.fx.desat;
     const flash = [this.flashC[0] * this.flashK * 0.28, this.flashC[1] * this.flashK * 0.28, this.flashC[2] * this.flashK * 0.28];
+    // Bit-exact fast path: a pixel with no shake/chroma/invert/desat/flash and no
+    // displacement/ink/light composites to exactly its ground byte, so copy it
+    // directly instead of running the full per-pixel math (big win on sparse frames;
+    // provably identical output: round(clamp(g/255)*255) === g for integer g).
+    const fast = this.shakeK <= 0 && chroma <= 0.2 && inv === 0 && desat === 0 && flash[0] === 0 && flash[1] === 0 && flash[2] === 0;
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const o = (y * W + x) * 4;
+      if (fast && f.disp[o] === 0 && f.disp[o + 1] === 0 && f.disp[o + 2] === 1 && f.disp[o + 3] === 0 && f.ink[o + 3] === 0 && f.light[o] === 0 && f.light[o + 1] === 0 && f.light[o + 2] === 0) {
+        out[o] = f.ground[o]; out[o + 1] = f.ground[o + 1]; out[o + 2] = f.ground[o + 2]; out[o + 3] = 255;
+        continue;
+      }
       let qx = clamp(x - Math.round(shx), 0, W - 1), qy = clamp(y - Math.round(shy), 0, H - 1);
       const qi = (qy * W + qx) * 4;
       let spx = clamp(qx + Math.floor(f.disp[qi] + .5), 0, W - 1);
@@ -243,7 +253,6 @@ export class CRunner {
       r += over * .45; g += over * .45; b += over * .45;
       r = clamp(r, 0, 1); g = clamp(g, 0, 1); b = clamp(b, 0, 1);
       if (inv > 0) { r = r + ((1 - r) - r) * inv; g = g + ((1 - g) - g) * inv; b = b + ((1 - b) - b) * inv; }
-      const o = (y * W + x) * 4;
       out[o] = Math.round(clamp(r + flash[0], 0, 1) * 255);
       out[o + 1] = Math.round(clamp(g + flash[1], 0, 1) * 255);
       out[o + 2] = Math.round(clamp(b + flash[2], 0, 1) * 255);
