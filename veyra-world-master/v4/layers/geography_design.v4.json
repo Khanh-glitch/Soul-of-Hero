@@ -1,0 +1,97 @@
+{
+  "schema": "soh.wmp.v4.geography_design",
+  "worldId": "veyra",
+  "sourceRasters": [
+    "data/rasters/geo01/biomeCode.u8",
+    "data/rasters/geo01/landId.u8",
+    "data/rasters/geo01/waterClass.u8",
+    "data/rasters/geo01/elevation.u8"
+  ],
+  "revision": 4,
+  "authoritative": "activeEffectiveBiomeRaster",
+  "parentBiomesPreserved": true,
+  "biomeCodes": {
+    "0": "meadow",
+    "1": "forest",
+    "2": "ancient",
+    "3": "conifer",
+    "4": "marsh",
+    "5": "desert",
+    "6": "scrub_dry_steppe",
+    "7": "rock",
+    "8": "snow",
+    "9": "volcanic",
+    "10": "toxic",
+    "11": "beach"
+  },
+  "snow": {
+    "target": "23-25% all dry land",
+    "achievedPercent": 23.9994,
+    "sourceCells": 217,
+    "afterCells": 3454,
+    "retainedAllOriginalSnow": true,
+    "expansion": "connected northern Typhon→Argus highland snowfield; northmost authored land, multiple POIs",
+    "corePOIs": [
+      "po_academy",
+      "po_observatory",
+      "po_archive",
+      "po_hall_eyes",
+      "po_lanternstn",
+      "po_kestrel",
+      "po_typhon",
+      "po_viaduct",
+      "po_freightyard",
+      "po_fracquarry",
+      "po_falls",
+      "po_pumphouse",
+      "po_greyquarry"
+    ],
+    "snowCoverSemantics": "permanent cold biome potential; dynamic weather/ice/snow accumulation owned by Gameplay",
+    "fadeMasks": "coldTransition 0..3; no instant ice-weather effects"
+  },
+  "dry": {
+    "interpretation": "about 30% INCREASE RELATIVE TO baseline combined desert + scrub dry steppe, not 30 percentage points",
+    "sourceCells": 2632,
+    "afterCells": 3422,
+    "relativeIncreasePercent": 30.0152,
+    "expansion": "east / southeast from original arid belt, convert eligible low meadow into code 6; preserve original code5 dunes and code6 scrub",
+    "excluded": [
+      "water",
+      "coast beach",
+      "snow",
+      "wetland",
+      "volcanic",
+      "toxic",
+      "forest",
+      "islands outside primary land"
+    ],
+    "poiExamples": [
+      "po_westbank",
+      "po_oldpump",
+      "po_ember",
+      "po_necropolis",
+      "po_tombs",
+      "po_oasis",
+      "po_sandgate"
+    ]
+  },
+  "preservation": [
+    "all landmass/coastline/rivers/lakes",
+    "all authored POI positions/footprints",
+    "all 92 roads and 27 docks",
+    "base terrain elevation and slope",
+    "all canonical 579 feature IDs",
+    "original GOLD and WMP-01/02/03"
+  ],
+  "compatibility": {
+    "type": "versioned overlay rather than rewriting pinned parents",
+    "mapReader": "api/current.mjs",
+    "noHistoricalWrite": true,
+    "notCanonicalRates": [
+      "snow physical temperature in C",
+      "dry season duration",
+      "heat damage",
+      "radiation/venom damage"
+    ]
+  }
+}

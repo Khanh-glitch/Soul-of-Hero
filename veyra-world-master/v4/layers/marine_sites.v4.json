@@ -1,0 +1,109 @@
+{
+  "schema": "soh.wmp.v4.marine_sites",
+  "status": "STATIC_LOCATION_CANON__GAMEPLAY_DYNAMIC_UNIMPLEMENTED",
+  "regions": [
+    {
+      "id": "marine_west_deadly_depths",
+      "kind": "abyssal_predator_sea",
+      "name": "Western Deathwater",
+      "rasterCode": 1,
+      "waterType": "open ocean",
+      "environmentTags": [
+        "deep_water",
+        "predator_hunting_ground",
+        "low_visibility",
+        "dangerous_swell"
+      ],
+      "riskFactors": [
+        "sound_and_wake",
+        "weather",
+        "visibility",
+        "monster_proximity"
+      ],
+      "ambientSignals": [
+        "low-frequency underwater calls",
+        "unusual wakes",
+        "displaced fish",
+        "deep-water disturbance"
+      ],
+      "monsterUniqueId": "creature.western_abyss_leviathan",
+      "staticHabitatOnly": true
+    },
+    {
+      "id": "marine_cinder_geothermal_strait",
+      "kind": "geothermal_sea",
+      "name": "Strait of Embers",
+      "rasterCode": 2,
+      "waterType": "open ocean",
+      "environmentTags": [
+        "heated_water",
+        "geothermal_vent_field",
+        "steam_and_bubbles",
+        "variable_hot_currents"
+      ],
+      "ambientSignals": [
+        "steam",
+        "bubbles",
+        "hot current shimmer"
+      ],
+      "riskFactors": [
+        "distance_to_vents",
+        "equipment_exposure",
+        "current_direction",
+        "weather"
+      ],
+      "numericTemperature": "UNRESOLVED_GAMEPLAY",
+      "staticGeography": true
+    }
+  ],
+  "uniqueLandmarks": [
+    {
+      "id": "poi_beacon_engine_out_helicopter",
+      "kind": "stranded_helicopter",
+      "name": "Beacon Rock Emergency Landing",
+      "atAu": [
+        272,
+        652
+      ],
+      "landId": "ld_beacon",
+      "physicalState": "GROUND_STATIONARY__ENGINE_FAILED",
+      "worldUnique": true,
+      "spatialSite": "small island close to mainland in the western three-island cluster",
+      "interactionCandidate": [
+        "inspect wreck/engine",
+        "recover flight log",
+        "salvage some components if explicitly granted by Economy"
+      ],
+      "noStartingLootGrant": true,
+      "repairFlightStatus": "NOT_APPROVED",
+      "gameplayOwnership": "Map location; A0/A3 unique-item custody; A8 interaction; Gameplay machines/vehicles"
+    },
+    {
+      "id": "creature.western_abyss_leviathan",
+      "kind": "unique_world_creature_spawn_domain",
+      "name": "Western Depths Leviathan",
+      "atAu": [
+        223,
+        714
+      ],
+      "marineRegionId": "marine_west_deadly_depths",
+      "spawnKind": "ONE_UNIQUE_WORLD_ENTITY_REQUESTED",
+      "fixedPosition": false,
+      "roamingDomain": true,
+      "notBoundToFerryRoute": true,
+      "spawnAndAiOwner": "GAMEPLAY",
+      "respawnAndUniqueCustodyOwner": "A0/GAMEPLAY",
+      "warningBeforeLethalContact": true,
+      "autoInstantDeath": false,
+      "lootRewards": "UNDECIDED"
+    }
+  ],
+  "strictAssertions": [
+    "helicopter must be inside ld_beacon",
+    "leviathan anchor must be in marineRegion=1",
+    "geothermal sea is marineRegion=2",
+    "no non-water cell can be marineRegion=1 or 2",
+    "existing docks do not move",
+    "no free vessel or auto-spawned items on map build"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "schema": "soh.veyra.current_world_master.v1",
+  "worldId": "veyra",
+  "activeRevision": "WMP-04",
+  "activeManifest": "v4/manifest.v4.json",
+  "activeRuntimeReader": "api/current.mjs",
+  "activeBiomeRaster": "v4/data/biomeEffective.v4.u8",
+  "activeMarineRaster": "v4/data/marineRegion.v4.u8",
+  "activeColdTransitionRaster": "v4/data/coldTransition.v4.u8",
+  "basePhysicalRevision": "WMP-03",
+  "baseManifest": "v3/manifest.v3.json",
+  "archivedLineage": [
+    "manifest.v1.json",
+    "v2/manifest.v2.json",
+    "v3/manifest.v3.json"
+  ],
+  "authority": "World Master v4 active geography and semantic overlays; source GOLD archived; Gameplay runtime not adopted",
+  "policy": "Do not import original GOLD at runtime. Do not treat marine open water as approved swimming/boat collision. Human POI and source IDs unchanged.",
+  "status": "MAP_STATIC_DESIGN_UPDATE__GAMEPLAY_INTAKE_PENDING"
+}

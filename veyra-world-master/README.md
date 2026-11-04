@@ -1,3 +1,15 @@
+# CURRENT VEYRA WORLD MASTER — WMP-04 (creator geography update)
+
+**Active source:** [CURRENT_WORLD_MASTER.json](CURRENT_WORLD_MASTER.json) → [WMP-04 manifest](v4/manifest.v4.json) → [current runtime read API](api/current.mjs).
+
+**Effective design:** snow biome 24.0% of dry land; original desert+scrub +30.0% relative to baseline; western deadly sea/unique aquatic creature geography; Beacon Rock engine-out helicopter; hot Cinder strait; open-water free movement geography with fixed docks. [Before/after map](v4/evidence/biome_marine_before_after.svg) · [handoff](v4/docs/CONTROL_TOWER_HANDOFF.md).
+
+**Read this first:** The WMP-01 text below is the *historical frozen source description*, not the active biome layer. WMP-02 and WMP-03 are preserved in their versioned folders. Consumer code must use `api/current.mjs` rather than direct historical WMP-03/EconomyMap for current geography. Marine dynamic gameplay (AI, watercraft, collision, thermal damage, loot and save) remains unimplemented. No claim of native visual/gameplay acceptance.
+
+---
+
+## Archived WMP-01 README (verbatim below)
+
 # Veyra Physical World Master — WMP-01 / MAP-LR03 candidate
 
 **Authority:** `MAP_DESIGNS_THE_PHYSICAL_WORLD__GAMEPLAY_POPULATES_AND_SIMULATES_IT`
