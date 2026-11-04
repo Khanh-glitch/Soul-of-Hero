@@ -180,8 +180,15 @@ console.log(JSON.stringify(report, null, 2));
 await b.close(); srv.close();
 // GL ERROR GATE (CT 6624135398): a real WebGL2 active-frame run must record zero
 // GL errors — green tests alone do not prove an error-free GPU frame graph.
+// The exit code encodes the FIRST error stage so it is readable from the
+// check-run annotation even though logs are not downloadable from the sandbox.
+const stageExit = (s) =>
+  !s ? 99 : s === 'upload-frame' ? 101 : s === 'upload-frame-delta' ? 102 : s === 'world-upload' ? 103 :
+  s === 'accum-seed' ? 104 : s === 'zero-cast-post' ? 105 : s.startsWith('layer:frame') ? (s.includes(':signed') ? 107 : 106) :
+  s.startsWith('layer:') ? 108 : s === 'final-post' ? 109 : 110;
 if (report.metrics.glError !== 0 || (report.metrics.firstGlError && report.metrics.firstGlError.code !== 0)) {
-  console.log('GL ERROR GATE FAILED:', JSON.stringify({ glError: report.metrics.glError, firstGlError: report.metrics.firstGlError, errHistory: report.metrics.errHistory }));
-  process.exit(3);
+  const fg = report.metrics.firstGlError;
+  console.log('GL ERROR GATE FAILED:', JSON.stringify({ glError: report.metrics.glError, firstGlError: fg, errHistory: report.metrics.errHistory }));
+  process.exit(fg ? stageExit(fg.stage) : (report.metrics.glError !== 0 ? 99 : 3));
 }
 process.exit(errors.length ? 1 : 0);
