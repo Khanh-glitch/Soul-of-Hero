@@ -238,8 +238,8 @@ resolvable physical tasks; **no further Map work is started without a new signal
 | Artifact | Exact value |
 |---|---|
 | Parent WMP-01 Map commit | `d0221688076f823b5e15fe9c1050406928eafbca` |
-| WMP-02 package commit | `WMP02_COMMIT_PLACEHOLDER` |
-| Final metadata/reference commit | recorded in `v2/docs/COMMIT_REFERENCE.md` and the one PR #44 corrective comment |
+| WMP-02 package commit | `caf6429506bc675d8347e731f3c04b2a71aaa8a8` (all WMP-02 code, layers, handoff, windows, views, tests, docs) |
+| Final metadata/reference commit | the follow-up commit that inserts this SHA; its exact SHA is in `v2/docs/COMMIT_REFERENCE.md` and the one PR #44 corrective comment |
 | Branch | `arena/2e3cfbd2-soul-of-hero` (only branch touched) |
 | `manifest.v1.json` SHA-256 | `327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e` |
 | v1 `revisionDigest` | `8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f` |

@@ -6,8 +6,8 @@
   "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
   "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d",
   "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
-  "count": 101,
-  "totalBytes": 5824157,
+  "count": 102,
+  "totalBytes": 5825857,
   "excluded": [
     "v2/evidence/artifact_index.v2.json",
     "*.log runtime transcripts"
@@ -66,6 +66,11 @@
       "sha256": "456ad85df9f4297ae36557a0a70ccb89490682254c97697fa6cd2222da6767e8"
     },
     {
+      "file": "v2/docs/COMMIT_REFERENCE.md",
+      "bytes": 1568,
+      "sha256": "e0a914660f1bb921ef06ba0ee3f31c49c85835727b3861b43b9d52ec45fb5ec4"
+    },
+    {
       "file": "v2/docs/GATES_V2.json",
       "bytes": 1169,
       "sha256": "23004b4316ed4c6533acfa0b231ddad6ad071252a1c50095e9aff37a5e655be7"
@@ -82,8 +87,8 @@
     },
     {
       "file": "v2/docs/MAP_LR03R_DELTA_REPORT.md",
-      "bytes": 17835,
-      "sha256": "7e3d4fc2b054e4b333c92311ca04f238ead3d4c115b5bd5521fb9602c51ecb44"
+      "bytes": 17967,
+      "sha256": "6161eaea83f2944be8a9589cbe5a36c583bfe181a1c72e9ae7b3ef09657044ed"
     },
     {
       "file": "v2/docs/PREFLIGHT_AUDIT.md",
