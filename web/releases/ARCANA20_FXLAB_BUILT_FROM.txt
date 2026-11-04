@@ -39,5 +39,5 @@ redesign guard: re-cast only when the spell index changes; seek() then advances 
 per frame (backward scrub still rebuilds deterministically). B/A/fusion branches and the approved
 #2/#3/#8/#20 untouched. Tests 73/73 (routing+semantic, CI-style timeout). Headless: #7/#10/#17 hold
 60 fps while playing, 0 page errors.
-  SOH-ARCANA20-FX-LAB.html       sha256 (see commit 9b2b637+; rebuilt after lag fix)
+  SOH-ARCANA20-FX-LAB.html       sha256 9d906a63e7a0e7dbd686a0d94c77e7ee951509a5d921370fe1ad9b08d2b4a270
   SOH-ARCANA20-VISUAL-TEST.html  sha256 200a9c98c37ba0121c06e003df03b28fa0f813c11320b13375403364e67c1e50
