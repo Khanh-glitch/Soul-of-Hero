@@ -201,7 +201,15 @@ export class ArcanaLabClient implements comp.VfxClient {
       if (needRender) { this.aR.setWorld(region); this.aR.cast(entry.index); this.aR.seek(Math.min(t, this.aR.duration)); }
       out = this.aR.out;
     } else {
-      if (needRender) { this.cR.setWorld(region); this.cR.cast(entry.index); this.cR.seek(t); }
+      if (needRender) {
+        this.cR.setWorld(region);
+        // no per-frame re-cast: cast() resets the sim to t=0 and seek(t) would replay
+        // the WHOLE spell every tick (O(n^2) full-frame composites = the lag on
+        // #7/#10/#16/#17). Re-cast only on spell change; seek() advances incrementally
+        // (and still rebuilds deterministically on backward scrub).
+        if (this.cR.current !== entry.index) this.cR.cast(entry.index);
+        this.cR.seek(t);
+      }
       out = this.cR.out;
     }
 

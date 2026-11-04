@@ -31,3 +31,13 @@ presenter/compositor. Tests: arcana-d20-semantic 31/31, arcana-lab-routing + fra
 Headless routing check: labels 7/10/16/17 -> "C", 18 -> "B (khối lập phương)", 0 page errors.
   SOH-ARCANA20-FX-LAB.html       sha256 9aae975769acb3a85c3383563f81eb9dd8083288054854a874c19f6bd99eb025
   SOH-ARCANA20-VISUAL-TEST.html  sha256 77050b3f54348e2d08adf724cd6bc81f4ce0fb556eed3f830a63120b2c4b113b
+
+2026-11-04 lag fix (arcana_lab.ts C branch): root cause of "lag kinh hồn" on #7/#10/#16/#17 was a
+per-frame RE-CAST — tick changes every frame, so cast() reset the sim to t=0 and seek(t) replayed
+the whole spell (full-frame composite per step, O(n^2)) every frame. Fix mirrors the existing
+redesign guard: re-cast only when the spell index changes; seek() then advances one fixed step
+per frame (backward scrub still rebuilds deterministically). B/A/fusion branches and the approved
+#2/#3/#8/#20 untouched. Tests 73/73 (routing+semantic, CI-style timeout). Headless: #7/#10/#17 hold
+60 fps while playing, 0 page errors.
+  SOH-ARCANA20-FX-LAB.html       sha256 (see commit 9b2b637+; rebuilt after lag fix)
+  SOH-ARCANA20-VISUAL-TEST.html  sha256 200a9c98c37ba0121c06e003df03b28fa0f813c11320b13375403364e67c1e50
