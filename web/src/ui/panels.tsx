@@ -72,6 +72,7 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
     <Panel title={title} style={{ left: 168, top: 54, width: 230, maxHeight: 286 }} onClose={() => api.open(null)} className="scroll">
       <div className="scroll" style={{ maxHeight: 250, overflowY: 'auto', overflowX: 'hidden' }}>
         {compact && <button className="btn" onClick={()=>{api.setSel(null);setInventoryOnly(true);}}>{e.farm || e.basePower ? 'Inventory / fill fuel' : e.turret ? 'Inventory / load arrows' : 'Inventory'}</button>}
+        {e.kind === 'loot' && <div style={{fontSize:10,color:'#ffd98a',marginBottom:4}}>Withdraw only · remaining items stay here. Empty crates disappear.</div>}
         {e.c && <><Grid api={api} cid={e.c} cols={8} /><div className="flex gap-1" style={{ marginTop: 4 }}><button className="btn" onClick={() => takeAll(e.c!)}>Take all</button>{e.kind === 'cart' && <span style={{ fontSize: 10, color: '#cfc2dc' }}>Load {cartWeight(r, e.c).toFixed(0)}/{cartLimit(e)} kg · [F] pull</span>}{e.kind === 'cart' && <button className="btn ghost" onClick={() => api.act('reclaim', { eid })}>Pack up</button>}</div></>}
         {e.kind === 'cart' && <div style={{ fontSize: 10, marginTop: 6, borderTop: '1px solid #514155' }}>
           <b>{e.deployed?.upgrade === 'freight' ? 'Reinforced freight cart' : 'Hand cart'}</b> · {C(r, e.c!).slots.length} slots<br />

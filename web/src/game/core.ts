@@ -128,6 +128,8 @@ export interface RunState {
   spawnRegion: number; ended: null | string;
   player: Player; creatures: Creature[];
   sources: Record<number, { stock: number; hp: number; regrowAt?: number; burnt?: boolean; fire?: number; fireSpreadAt?: number; fireDepth?: number }>; // K3 deltas over base world
+  /** Authored public loot sites emptied in this run (tile index). Absent on older saves. */
+  depletedLootSites?: number[];
   terrain: Record<number, { t: number; until?: number }>; // K2 terrain mutations (burns, ice)
   entities: Record<string, Entity>;
   custody: Record<string, Container>;

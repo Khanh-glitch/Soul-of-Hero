@@ -30,7 +30,11 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
     // An input arriving before a frame must not precede elapsed world events.
     const ready = syncWorld(gs, now);
     const res = ready ? dispatch(gs, mkIntent(type, payload), now) : { ok: false as const, reason: gs.run ? 'The device clock moved backwards.' : 'No active run.' };
-    if (res.ok) { scheduleSave(); if (res.msg) toast(res.msg, 'ok'); sfx({ type: type === 'build' ? 'build' : type === 'craft' ? 'craft' : type === 'deposit' || type === 'buy' ? 'coin' : 'ui' }); }
+    if (res.ok) {
+      const openPanel = panelRef.current;
+      if (openPanel?.kind === 'container' && openPanel.eid && !gs.run?.entities[openPanel.eid]) { setPanel(null); setSel(null); }
+      scheduleSave(); if (res.msg) toast(res.msg, 'ok'); sfx({ type: type === 'build' ? 'build' : type === 'craft' ? 'craft' : type === 'deposit' || type === 'buy' ? 'coin' : 'ui' });
+    }
     else if (!(res as any).dup) { toast((res as any).reason, 'bad'); sfx({ type: 'deny' }); }
     rerender(); return res;
   }, [gs]);

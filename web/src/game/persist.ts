@@ -1,6 +1,6 @@
 // Local-first snapshots: one serialized profile + run + receipts per write.
 // Checksums detect accidental damage, not malicious edits or rollback of all copies.
-import { BAL, SAVE_VERSION, type GameState, type Stack } from './core';
+import { BAL, SAVE_VERSION, WW, type GameState, type Stack } from './core';
 import { ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS } from './catalog';
 import { newGame } from './engine';
 import { getWorld, hasLayout, webRecyclerSite } from './world';
@@ -112,11 +112,18 @@ export function validate(raw: any): GameState | null {
   if((Object.values(r.entities) as any[]).filter(e=>e.kind==='recycler').length>1)return null;
   if (r.wreckEconomy !== undefined && r.wreckEconomy !== 'direct-v1' && r.wreckEconomy !== 'recycler-v1') return null;
   if (r.wreckEconomy === 'recycler-v1' && !hasAuthorizedRecycler(r)) return null;
+  // A retired site must be a real authored public loot site and cannot also
+  // have a live instance. Absence of this additive ledger preserves old saves.
+  const lootSites = new Set(world.statics.filter(s => s.kind === 'loot').map(s => s.ty * WW + s.tx));
+  if (r.depletedLootSites !== undefined && (!Array.isArray(r.depletedLootSites) || r.depletedLootSites.some((i: any) => !integer(i) || !lootSites.has(i)) || new Set(r.depletedLootSites).size !== r.depletedLootSites.length)) return null;
+  const depleted = new Set<number>(r.depletedLootSites || []);
+  if ((Object.values(r.entities) as any[]).some(e => e.kind === 'loot' && depleted.has(e.ty * WW + e.tx))) return null;
   // New identity-pinned runs retain finite, map-authored cash and loot custody.
   // Older runs are not rewritten or guessed: their legacy history is preserved.
   if (r.sourceLayoutVersion === 3 && r.sourceMap?.mapDigest) {
     for (const site of world.statics.filter(s => s.kind === 'cash' || s.kind === 'loot')) {
       const matches=(Object.values(r.entities) as any[]).filter(e=>e.kind===site.kind && e.tx===site.tx && e.ty===site.ty);
+      if (site.kind === 'loot' && depleted.has(site.ty * WW + site.tx)) { if (matches.length) return null; continue; }
       if (matches.length!==1) return null;
       const ent=matches[0], slots=r.custody[ent.c]?.slots; if (!Array.isArray(slots)) return null;
       if (site.kind==='cash') {

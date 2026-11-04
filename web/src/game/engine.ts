@@ -339,6 +339,20 @@ export function bagStation(r: RunState, e: Entity, now: number, label: string) {
   return bag;
 }
 function removeEntity(r: RunState, e: Entity) { delete r.entities[e.id]; for (const cid of [e.c, e.station?.fuelC, e.station?.outC]) if (cid) delete r.custody[cid]; markDirty(); }
+
+/** Retire only an empty, map-authored public loot instance. No automatic refill:
+ * these sites are one-shot until a separately authenticated respawn policy exists. */
+function retireEmptyLoot(r: RunState, cid: string, now: number) {
+  const e = Object.values(r.entities).find(v => v.kind === 'loot' && v.c === cid);
+  const c = r.custody[cid];
+  if (!e || !c || c.slots.some(Boolean) || !Number.isInteger(e.tx) || !Number.isInteger(e.ty)) return;
+  const site = getWorld(r.layoutId || 'shipping').statics.find(s => s.kind === 'loot' && s.tx === e.tx && s.ty === e.ty);
+  if (!site) return; // do not guess the provenance of non-authored entities
+  const index = e.ty! * WW + e.tx!;
+  (r.depletedLootSites ??= []).push(index);
+  removeEntity(r, e);
+  receipt(r, now, 'loot.depleted', `${index}:${e.id}`);
+}
 /** Destruction and reclaim share the same custody transition. */
 export function destroyStructure(r: RunState, e: Entity, now: number) {
   if (r.entities[e.id] !== e || e.kind !== 'struct') return null;
@@ -476,6 +490,10 @@ export function dispatch(gs: GameState, it: Intent, now: number): Result {
   if (r.seenIntents.includes(it.id)) return { ok: false, reason: 'Duplicate request ignored.', dup: true };
   const res = apply(gs, r, it, now);
   if (res.ok) {
+    // Only a successful withdrawal/use/drop can empty a public crate. Its authored
+    // site remains recorded even after the physical entity and container disappear.
+    const source = it.type === 'move' ? it.from : (it.type === 'drop' || it.type === 'useItem') ? it.c : undefined;
+    if (typeof source === 'string') retireEmptyLoot(r, source, now);
     // The receipt ring is intentionally bounded for UI/history, but irreversible command
     // identity is durable run state and must never be evicted: an old replay is still a replay.
     r.seenIntents.push(it.id);
