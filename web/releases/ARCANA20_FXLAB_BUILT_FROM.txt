@@ -9,3 +9,13 @@ SOH-ARCANA20-FX-LAB.html, sha256 2f371b172eada4f7a3dcd7b880207c2bdd028612ced2651
 save copies on file:// so it never hits the "Save recovery required" block, and
 (b) auto-starts a new run (Meadow Bay) and opens the FX Lab (F9) with the ARCANA20
 dropdown listing all 20 skills. Test artifact only; shipped game code untouched.
+
+SOH-ARCANA20-VISUAL-TEST.html — v2 boot shim (sha256 00d21006e11881def402672a110549a2f6dc0a36a5e67aac83ee93d0a2e68af8),
+built by scripts/build-visual-test.mjs from dist/index.html @ a1ddd34 code. Fix for the
+"Save recovery required" block: the old shim only checked localStorage soh.state.v3 for
+version===3, so a stale copy that was shallow-valid but deep-invalid still fail-closed the
+game. v2 instead watches for the recovery screen the game itself renders; only then does it
+clear soh.state.*/soh.quarantine.* + IDB "soul-of-hero" (once per tab, URL-hash marker) and
+reload — a valid v3 save is never touched. Headless-verified: shallow-v3 stale save →
+recovery cleared + clean boot, 20/20 skills; IDB-only stale copy → same; valid save written
+by the game → preserved across reload, no recovery screen.
