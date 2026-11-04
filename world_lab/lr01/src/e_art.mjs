@@ -1,0 +1,170 @@
+#!/usr/bin/env node
+// MAP-LR01 Milestone E — data-driven art provenance / individual asset review.
+// Tier order: 1 primary Web art, 2 SOH/A1 terrain+props assessed individually,
+// 3 verified committed libraries, 4 authorized Drive/CraftPix (if accessible),
+// 5 external/generated only for real gaps. No unlicensed pack is published.
+// PNG import is NOT proof of improvement. No creator visual approval is claimed.
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { loadVeyra, loadGeoInputs, gitShow, writeJson, sha256, r4, ROOT, LAB, BASELINE } from './lib/veyra.mjs';
+
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+const OUT = process.env.LR01_OUT ? path.resolve(process.env.LR01_OUT) : path.resolve(HERE, '../output');
+const V = loadVeyra();
+const GEO = loadGeoInputs();
+
+const localFile = p => {
+  const f = path.join(ROOT, p);
+  if (!fs.existsSync(f)) return { present: false, path: p };
+  const b = fs.readFileSync(f);
+  return { present: true, path: p, bytes: b.length, sha256: sha256(b) };
+};
+const gitFile = (ref, p) => {
+  try {
+    const b = gitShow(`${ref}:${p}`);
+    return { present: true, path: `${ref}:${p}`, bytes: b.length, sha256: sha256(b) };
+  } catch (e) { return { present: false, path: `${ref}:${p}`, error: String(e.message).slice(0, 120) }; }
+};
+
+const GP44 = BASELINE.gp44Head;
+const A1 = 'ce9d4ba2d3db153011874aa41b789fa8092be042';
+const inspected = [
+  'web/evidence/economy-contract/natural-world-640x360.png (viewed: original trees, grass, UI, blue water)',
+  'web/evidence/map-poi-local/dev-delta/dev-delta-reloaded-640x360.png (viewed: interior floor/wall material hierarchy, river transition)',
+  'web/evidence/map-poi-local/shipping/shipping-reloaded-640x360.png (viewed: original ocean with LARGE wave motifs, sandy beach, shore glints)',
+  'world_lab/web_art_patch/evidence/before/day-spawn-640x360.png and after/day-spawn-640x360.png (viewed side by side)',
+  'world_lab/map_r01/source/assets/soh_slice_atlas.png (viewed: 256x274 admitted A1 slice)',
+  'assets/environment/survival_world/terrain.png @ ce9d4ba2 (viewed: 512x896 authored terrain families)',
+  'assets/environment/survival_world/props.png @ ce9d4ba2 (viewed: 1024x794 houses/lighthouse/towers/trees)',
+];
+
+const assets = [
+  {
+    id: 'WEB-ART-01', tier: 1, name: 'Primary Web pixel art', file: gitFile(GP44, 'web/src/game/art.ts'),
+    origin: 'PR44 HEAD 0b2ba508 web/src/game/art.ts', rights: 'Original project pixel art painted into offscreen canvases; no third-party sprites (web/THIRD_PARTY.md)',
+    kind: 'procedural-original-sprites', assessed: 'Individually inspected via three native 640x360 PR44 evidence captures. Hard-edged 16px silhouettes, consistent material ramp, readable under HUD.',
+    decision: 'KEEP_AS_PRIMARY_WEB_BASELINE', reason: 'This IS the primary Web art. Code-painted originals are not a defect here; they are the accepted authored source. Do not replace visually strong terrain merely because an asset-backed seam exists.',
+  },
+  {
+    id: 'WEB-ART-02', tier: 1, name: 'Primary Web terrain/water renderer', file: gitFile(GP44, 'web/src/game/render.ts'),
+    origin: 'PR44 HEAD 0b2ba508 web/src/game/render.ts', rights: 'Original project code; no third-party art',
+    kind: 'terrain-palette-and-wave-animation', assessed: 'Individually inspected: texel() material ramp and fringe; animated water at lines 173-180 (per-tile wave offset); shore fringe via seaDist; distinct fresh/salt water palettes. The shipping-640x360 capture shows large wave motifs and shore glints.',
+    decision: 'KEEP_AS_WATER_BASELINE', reason: 'Original Web ocean, large wave motifs and animated shore glints remain PREFERRED until a demonstrably better treatment is accepted. Flat lake texture is NOT used for ocean. The runtime animation is not reimplemented here; previews are static frames of that visual language.',
+  },
+  {
+    id: 'WEB-ART-03', tier: 1, name: 'Third-party provenance', file: gitFile(GP44, 'web/THIRD_PARTY.md'),
+    origin: 'PR44 HEAD 0b2ba508 web/THIRD_PARTY.md', rights: 'SIL OFL 1.1 fonts, MIT libraries; explicitly NO third-party sprites/tiles/sound',
+    kind: 'provenance-document', assessed: 'Read in full. Confirms no external art packs are shipped.',
+    decision: 'KEEP_AS_PROVENANCE', reason: 'Authoritative rights statement for Tier 1/3. UI fonts are not world art.',
+  },
+  {
+    id: 'A1-TERRAIN-01', tier: 2, name: 'SOH/A1 baked terrain atlas', file: gitFile(A1, 'assets/environment/survival_world/terrain.png'),
+    origin: 'arena/e385312a-soul-of-hero @ ce9d4ba2', rights: 'A1 docs/survival/world/RESEARCH_AND_LICENSES.md: original baked SOH terrain families; cainos_*/ocean_* crops excluded',
+    kind: 'authored-16px-terrain-atlas', assessed: 'Individually viewed (512x896). Strong hard-edged material families, sand/marsh/grass/road transitions and large wave motif rows. Denser, darker value pattern than the Web baseline; Godot A1 res:// asset path, not a browser URL.',
+    decision: 'REFERENCE_ONLY__NOT_ADOPTED', reason: 'Assessed individually, not bulk-imported. MAP-R01 slice is unapproved/unmerged; old Godot-first conversion docs are historical. Used only as palette/large-wave motif reference for the retained Web baseline.',
+  },
+  {
+    id: 'A1-PROPS-01', tier: 2, name: 'SOH/A1 prop sheet', file: gitFile(A1, 'assets/environment/survival_world/props.png'),
+    origin: 'arena/e385312a-soul-of-hero @ ce9d4ba2', rights: 'A1 license doc admits only nine inherited_original props (camp_crate, signpost, cart, wall_stub, column_broken, tree_dead, bush, rock_a, rock_c); bottom large detailed trees are unverified/likely Cainos-derived',
+    kind: 'authored-prop-sheet', assessed: 'Individually viewed (1024x794). Houses, lighthouse, towers, fences, boats are stronger authored props than code-painted equivalents; large painterly trees at the bottom are stylistically incompatible and license-unproven.',
+    decision: 'REFERENCE_ONLY__UNVERIFIED_SUBSET_EXCLUDED', reason: 'No Web-native intake seam, MAP-R01 unapproved, and unverified subsets must not be published. No prop is imported; previews draw POI silhouettes from Map-owned geometry only.',
+  },
+  {
+    id: 'R01-ATLAS-01', tier: 2, name: 'MAP-R01 admitted A1 slice', file: localFile('world_lab/map_r01/source/assets/soh_slice_atlas.png'),
+    ledger: localFile('world_lab/map_r01/source/assets/frame_ledger.v1.json'),
+    origin: 'world_lab/map_r01 @ ce3f9c58 (UNMERGED / UNAPPROVED)', rights: 'frame_ledger.v1.json: only original baked SOH families + nine inherited_original props; all cainos_* / ocean_* pack crops excluded',
+    kind: '256x274 atlas slice, 181 frames', assessed: 'Individually viewed. Wave rows and coast transitions are compatible with the Web baseline; the rest is a Godot A1 slice.',
+    decision: 'REFERENCE_ONLY__NOT_ADOPTED', reason: 'MAP-R01 is retained non-production research. PNG atlas import is NOT proof of improvement.',
+  },
+  {
+    id: 'PATCH-B-01', tier: 2, name: 'web_art_patch mapArt.ts (B candidate)', file: localFile('world_lab/web_art_patch/source/mapArt.ts'),
+    evidence: [localFile('world_lab/web_art_patch/evidence/before/day-spawn-640x360.png'), localFile('world_lab/web_art_patch/evidence/after/day-spawn-640x360.png')],
+    origin: 'world_lab/web_art_patch (B/reference only)', rights: 'Original project code, no third-party art',
+    kind: 'authored data-driven map art patch', assessed: 'Before/after 640x360 captures viewed side by side. The AFTER replaces strong original trees with a repetitive dense dark canopy and adds procedural grass noise over the whole ground; value ramp shifts away from the primary Web baseline.',
+    decision: 'REJECT', reason: 'Creator explicitly rejects procedural grass noise, repetitive oversized stylistic replacement and replacing visually strong existing terrain merely because an asset-backed seam exists. This patch is not adopted.',
+  },
+  {
+    id: 'A1-LICENSE-01', tier: 3, name: 'A1 research and license decisions', file: gitFile(A1, 'docs/survival/world/RESEARCH_AND_LICENSES.md'),
+    origin: 'arena/e385312a-soul-of-hero @ ce9d4ba2', rights: 'n/a (provenance record)', kind: 'license-document',
+    assessed: 'Read. MIT/CC-By candidates are code-pattern references only; Eden/Herbak rejected (no license); CraftPix freebie terms forbid raw-art redistribution; Cainos demo art REJECTED (standalone license unproven); no third-party code or art committed.',
+    decision: 'PROVENANCE_ONLY', reason: 'Authoritative rights basis for excluding unverified committed libraries and external packs.',
+  },
+  {
+    id: 'LIB-01', tier: 3, name: 'Verified committed libraries (world art)', file: gitFile(GP44, 'web/THIRD_PARTY.md'),
+    origin: 'PR44 HEAD', rights: 'OFL fonts / MIT libraries only', kind: 'library-inventory',
+    assessed: 'No verified committed world terrain/prop library exists in the Web build. Repository assets/ character sheets have no verified redistribution rights for a published world atlas.',
+    decision: 'BLOCKED__NO_VERIFIED_WORLD_ART_LIBRARY', reason: 'No world-art LICENSE/rights proof exists for a published atlas; do not publish unlicensed packs. OFL fonts are UI-only.',
+  },
+  {
+    id: 'EXT-01', tier: 4, name: 'Google Drive / CraftPix packs', file: { present: false, path: 'external (not in workspace)' },
+    origin: 'A1 D050: 22 P0 / 18 P1 / 3 SOURCE_HOLD CraftPix candidates', rights: 'CraftPix free license forbids raw-art redistribution; ZIP bytes not in this checkout; no authorized Drive connector for asset bytes',
+    kind: 'external-pack', assessed: 'Access probed: no bytes, no license proof, no authorized asset connector in this conversation.',
+    decision: 'BLOCKED__NO_BYTES_NO_AUTHORIZED_ACCESS', reason: 'Exact restriction recorded: no LICENSE proof, CraftPix raw-art redistribution forbidden, no authorized connector. Continue independently executable Map work; no external art is used.',
+  },
+  {
+    id: 'GAP-01', tier: 5, name: 'External/generated art for real gaps', file: { present: false, path: 'none' },
+    origin: 'n/a', rights: 'n/a', kind: 'gap-assessment',
+    assessed: 'No real gap requires a new asset pack: the retained Web baseline already supplies ocean wave motifs, shore glints, terrain material ramp and strong authored silhouettes. Previews are generated from Veyra geography + that documented visual language, not a new third-party pack.',
+    decision: 'NO_EXTERNAL_ART_USED', reason: 'Tier 5 is not invoked. Generated previews are data-driven MAP views, not a claim of improved art or creator visual approval.',
+  },
+];
+
+const visualRules = {
+  nativeResolution: [640, 360],
+  pixelScale: 'Hard-edged 1px pixel-art boundaries; no smoothing, no anti-aliased gradients, no procedural grass noise.',
+  palette: {
+    note: 'Derived from the retained primary Web baseline (render.ts texel ramp + evidence captures) and the A1 terrain atlas wave rows as a MOTIF reference only. Exact 12-code -> Gameplay biome mapping still UNRESOLVED.',
+    seaDeep: '#123a58', seaMid: '#1a5573', seaLight: '#287a90', wave: '#0d2740', shoreGlint: '#bfe8f0',
+    sand: '#c29a5e', sandLight: '#dfc184', grass: '#2a5531', grassLight: '#3a7040', forest: '#1e3f28',
+    marsh: '#3a5a44', rock: '#4b5a68', highland: '#6a6a58', snow: '#b9c9cf',
+    lake: '#1c4e6b', river: '#2f8fbd', cartRoad: '#8a6a42', trailRoad: '#5b5346',
+    poiEnclosed: '#e9a15c', poiOpen: '#57c98a', elder: '#d76a7a', zone: '#f0d090',
+  },
+  ocean: 'PREFERRED baseline: deep-blue original Web ocean with LARGE sparse wave motifs and animated shore glints until a demonstrably better treatment is accepted; flat lake texture is NEVER used for ocean. Static preview frames only — runtime animated shore glints remain in Web render.ts and are not reimplemented.',
+  transitions: 'Hard-edged 1px material fringe derived from ACTUAL neighbouring biome codes, not random grass noise.',
+  landmarks: 'POI silhouettes come from Milestone D static footprints (roof/wall/portal geometry), Elder rings from canonical outer/core polygons, bridges from authored points. No code-painted prop replaces a stronger authored asset; no prop pack is imported.',
+  readability: 'Each region also has an after_ui view with a representative HUD frame to verify terrain and landmark legibility beneath UI. UI is a QA overlay only, NOT a gameplay HUD or a playable scene.',
+  forbidden: ['procedural grass noise', 'repetitive oversized cyan sea', 'flat lake texture used as ocean', 'code-painted props replacing stronger authored assets', 'stylistic inconsistency', 'asset showcases mistaken for gameplay scenes', 'claiming PNG import proves improvement', 'claiming creator visual approval'],
+};
+
+const regions = [
+  { id: 'zone_bz_greywater', file: 'output/regions/zone_bz_greywater.v1.json', reason: 'RT-1 corridor: river, bridge br_4, po_kilns context, cart/trail transition' },
+  { id: 'zone_bz_silver', file: 'output/regions/zone_bz_silver.v1.json', reason: 'western spawn / candidate home region' },
+  { id: 'zone_bz_hook', file: 'output/regions/zone_bz_hook.v1.json', reason: 'Hook landmass, coast and logistics' },
+  { id: 'zone_bz_delta', file: 'output/regions/zone_bz_delta.v1.json', reason: 'wetlands, distributaries, biome transitions' },
+  { id: 'land_ld_ironholm', file: 'output/regions/land_ld_ironholm.v1.json', reason: 'island landmass, coastline, beaches, Elder separation' },
+  { id: 'elder_el_typhon', file: 'output/regions/elder_el_typhon.v1.json', reason: 'Elder territory, approach, arenas, separation' },
+];
+
+writeJson(path.join(OUT, 'art_manifest.v1.json'), {
+  schema: 'soh.map.lr01.art_manifest.v1', version: 1,
+  status: 'MILESTONE_E__ASSETS_ASSESSED_INDIVIDUALLY__NO_CREATOR_VISUAL_APPROVAL',
+  authority: 'MAP DESIGNS THE PHYSICAL WORLD. GAMEPLAY POPULATES AND SIMULATES IT.',
+  source: { canon: V.fingerprint, gp44Head: GP44, a1Commit: A1, mapR01: 'ce3f9c58 (unapproved/unmerged)', geo01: GEO.fingerprints.geography },
+  tierOrder: ['1 primary Web art', '2 SOH/A1 terrain+props assessed individually', '3 verified committed libraries', '4 authorized Drive/CraftPix', '5 external/generated only for real gaps'],
+  inspected,
+  assetCount: assets.length, assets,
+  decisions: assets.reduce((m, a) => { m[a.decision] = (m[a.decision] || 0) + 1; return m; }, {}),
+  visualRules,
+  regions,
+  viewModes: {
+    before: 'BEFORE_GEO01_RASTER_DIAGNOSTIC: flat 8au raster cells, no art treatment, no transitions, no wave motifs, no shore glints.',
+    after: 'AFTER_MAP_LR01_DATA_DRIVEN_WEB_BASELINE_STYLE: terrain transitions, Web-baseline ocean/waves/shore glints, authored roads, POI/Elder/bridge landmarks.',
+    after_ui: 'AFTER_PLUS_QA_HUD_OVERLAY: same scene with representative UI frame for readability inspection. NOT a playable scene.',
+  },
+  restrictions: [
+    'No authorized Drive/CraftPix asset bytes in this checkout; CraftPix freebie terms forbid raw-art redistribution.',
+    'Cainos demo art REJECTED in A1 license doc (standalone license unproven).',
+    'A1 prop/terrain sheets are Godot res:// paths from an unapproved MAP-R01 research branch, not browser URLs.',
+    'No human 640x360 playthrough or creator visual approval has occurred.',
+  ],
+  noClaims: [
+    'NO creator visual approval', 'NO claim that PNG import proves improvement',
+    'NO replacement of strong existing terrain by an asset-backed seam', 'NO unlicensed pack published',
+    'NO asset showcase presented as gameplay', 'NO playable survival acceptance',
+    'NO reimplemented runtime wave animation (static preview frames only)',
+    'NO approved 12-code -> Gameplay biome mapping',
+  ],
+});
+console.log(`E_ART_OK assets=${assets.length} decisions=${JSON.stringify(assets.reduce((m, a) => { m[a.decision] = (m[a.decision] || 0) + 1; return m; }, {}))} regions=${regions.length} inspected=${inspected.length}`);

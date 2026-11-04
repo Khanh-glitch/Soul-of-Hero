@@ -22,7 +22,8 @@ echo "== Milestone C: transport audit =="
 if [ -f src/c_transport.mjs ]; then node src/c_transport.mjs; else echo "C_PENDING"; fi
 echo "== Milestone D: POI spatial layouts =="
 if [ -f src/d_poi.mjs ]; then node src/d_poi.mjs; else echo "D_PENDING"; fi
-echo "== Milestone E: native views =="
+echo "== Milestone E: art provenance + native views =="
+if [ -f src/e_art.mjs ]; then node src/e_art.mjs; else echo "E_ART_PENDING"; fi
 if [ -f tools/render_world.mjs ]; then node tools/render_world.mjs; else echo "E_PENDING"; fi
 echo "== Milestone F: geography-only handoff =="
 if [ -f src/f_handoff.mjs ]; then node src/f_handoff.mjs; else echo "F_PENDING"; fi

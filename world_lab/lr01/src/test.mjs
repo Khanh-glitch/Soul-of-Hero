@@ -3,7 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadVeyra, loadGeoInputs, readJson } from './lib/veyra.mjs';
+import { loadVeyra, loadGeoInputs, readJson, sha256 } from './lib/veyra.mjs';
 import { poiGeometry, poiFit, aggregateFit, transformProfile, featureQuantization, travelAt, memoryAt, loadScale01a, CANDIDATE_U, FOCUS_U } from './lib/scale.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -127,8 +127,24 @@ ok('D-13-REPRESENTATIVE-EXAMPLES', DL.representativeExamples.length === 8 && fs.
 ok('D-14-CIRCULATION-CONNECTED', DL.layouts.every(l => l.circulation.reachableRooms === l.circulation.totalRooms));
 ok('D-15-NO-CANON-REWRITE', DL.noClaims.includes('NO canonical Veyra rewrite') && DL.noClaims.some(s => s.includes('one-generic-room')));
 
-// ---- Milestone E-F gates (appended as modules land) ----
-for (const f of ['art_manifest.v1.json', 'handoff.v1.json']) {
+// ---- Milestone E: provenance + native 640x360 views ----
+const AM = readJson(path.join(OUT, 'art_manifest.v1.json'));
+const VI = readJson(path.join(OUT, 'views_index.v1.json'));
+ok('E-01-ART-SCHEMA', AM.schema === 'soh.map.lr01.art_manifest.v1' && AM.status.includes('NO_CREATOR_VISUAL_APPROVAL'));
+ok('E-02-FIVE-TIERS', AM.assetCount === 11 && AM.assets.length === 11 && [1, 2, 3, 4, 5].every(t => AM.assets.some(a => a.tier === t)));
+ok('E-03-INDIVIDUAL-DECISIONS', AM.decisions.KEEP_AS_PRIMARY_WEB_BASELINE === 1 && AM.decisions.KEEP_AS_WATER_BASELINE === 1 && AM.decisions.REJECT === 1 && AM.decisions.NO_EXTERNAL_ART_USED === 1);
+ok('E-04-WEB-WATER-PREFERRED', AM.visualRules.ocean.includes('PREFERRED') && AM.visualRules.forbidden.includes('procedural grass noise') && AM.visualRules.forbidden.includes('flat lake texture used as ocean'));
+ok('E-05-PATCH-B-REJECTED', (() => { const a = AM.assets.find(x => x.id === 'PATCH-B-01'); return a.decision === 'REJECT' && a.reason.includes('procedural grass noise') && a.evidence.every(e => e.present); })());
+ok('E-06-NO-UNLICENSED-PACK', AM.assets.filter(a => a.decision.startsWith('BLOCKED')).every(a => /license|rights|unproven|redistribution/i.test(a.reason)) && AM.restrictions.some(r => r.includes('CraftPix')));
+ok('E-07-VIEWS-INDEX', VI.viewCount === 18 && VI.regionCount === 6 && VI.modes.length === 3 && VI.errors.length === 0 && VI.nativeResolution[0] === 640 && VI.nativeResolution[1] === 360);
+ok('E-08-NATIVE-PNG-DIMENSIONS', VI.views.every(v => { const f = path.join(OUT, 'views', path.basename(v.file)); if (!fs.existsSync(f)) return false; const b = fs.readFileSync(f); return b.readUInt32BE(16) === 640 && b.readUInt32BE(20) === 360; }));
+ok('E-09-VIEW-SHA-VERIFICATION', VI.views.every(v => { const p = path.join(OUT, 'views', path.basename(v.file)), s = path.join(OUT, 'views', path.basename(v.svg)); return fs.existsSync(p) && fs.existsSync(s) && sha256(fs.readFileSync(p)) === v.pngSha256 && sha256(fs.readFileSync(s)) === v.svgSha256; }));
+ok('E-10-TRANSFORM-METADATA', VI.views.every(v => v.transform.previewPxPerAu > 0 && v.transform.runtimeScaleStatus === 'UNDECIDED') && VI.views.filter(v => v.transform.sourceCellPx === 16).length >= 12);
+ok('E-11-THREE-MODES-EVERY-REGION', AM.regions.every(r => ['before', 'after', 'after_ui'].every(m => VI.views.some(v => v.regionId === r.id && v.mode === m))));
+ok('E-12-NO-VISUAL-APPROVAL-CLAIM', AM.noClaims.includes('NO creator visual approval') && VI.status.includes('NOT_PLAYABLE') && AM.noClaims.includes('NO claim that PNG import proves improvement'));
+
+// ---- Milestone F gates (appended as modules land) ----
+for (const f of ['handoff.v1.json']) {
   if (fs.existsSync(path.join(OUT, f))) ok(`GATE-FILE-${f}`, true);
 }
 
