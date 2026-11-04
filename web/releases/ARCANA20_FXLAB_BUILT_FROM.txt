@@ -19,3 +19,15 @@ clear soh.state.*/soh.quarantine.* + IDB "soul-of-hero" (once per tab, URL-hash 
 reload — a valid v3 save is never touched. Headless-verified: shallow-v3 stale save →
 recovery cleared + clean boot, 20/20 skills; IDB-only stale copy → same; valid save written
 by the game → preserved across reload, no recovery screen.
+
+2026-11-04 salvage rebuild (code @ this branch, arcana_lab.ts only): creator-directed fix for
+#7/#10/#16/#17/#18. Root cause of "vỡ pixel / lật / giật lag / sai hiệu ứng" on these five was the
+experimental signed-delta + influence-mask presentation seam (plus redesign/fusion routing); they
+are now re-converted directly from the GOLD vendored sources through the same proven opaque +
+14px-edge-feather window path as the approved B leads: #7/#10/#16/#17 = source-C spell, #18 =
+source-B CUBE Chronoshard ("khối lập phương"). Untouched: pixelfx 244 library, skills #2/#3/#8/#20,
+presenter/compositor. Tests: arcana-d20-semantic 31/31, arcana-lab-routing + frame-delta 56/56
+(with CI-style 300s timeout; sandbox 5s-default timeouts fail identically on pristine HEAD).
+Headless routing check: labels 7/10/16/17 -> "C", 18 -> "B (khối lập phương)", 0 page errors.
+  SOH-ARCANA20-FX-LAB.html       sha256 9aae975769acb3a85c3383563f81eb9dd8083288054854a874c19f6bd99eb025
+  SOH-ARCANA20-VISUAL-TEST.html  sha256 77050b3f54348e2d08adf724cd6bc81f4ce0fb556eed3f830a63120b2c4b113b

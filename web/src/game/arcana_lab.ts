@@ -40,17 +40,24 @@ const STATUS: Record<number, LabEntry['previewStatus']> = {
   1: 'FUSION_PREVIEW', 5: 'FUSION_PREVIEW', 9: 'FUSION_PREVIEW', 11: 'FUSION_PREVIEW',
   16: 'FUSION_PREVIEW', 20: 'FUSION_PREVIEW',
   4: 'REDESIGN_STUDY', 6: 'REDESIGN_STUDY', 12: 'REDESIGN_STUDY', 13: 'REDESIGN_STUDY',
-  14: 'REDESIGN_STUDY', 18: 'REDESIGN_STUDY',
+  14: 'REDESIGN_STUDY',
 };
 const FUSION_IDS = new Set([1, 5, 9, 11, 16, 20]);
 const B_IDS = new Set([2, 3, 8]);
 const REDESIGN_IDS = new Set(Object.keys(REDESIGNS).map(Number));
 const C_IDS = new Set([7, 10, 15, 17]);
+// Creator-directed salvage (2026-11-04): #7/#10/#16/#17 render their GOLD source-C
+// spell directly through the proven opaque + edge-feathered window path (the same
+// presentation the approved B leads #02/#03/#08 use); #18 renders the source-B CUBE
+// Chronoshard instead of the redesign study. The signed-delta/influence-mask seam is
+// bypassed for these five — that experimental path was the root cause of the broken
+// pixels / flipped window / per-frame jank seen on this batch.
+const SALVAGE_DIRECT = new Set([7, 10, 16, 17, 18]);
 
 
 export const LAB_CATALOG: LabEntry[] = CATALOG.map((c) => {
   const lead = LEAD[c.id] ?? 'C';
-  const rd = REDESIGNS[c.id]; // redesign slots use their AUTHORED clock, not the C catalog
+  const rd = c.id === 18 ? undefined : REDESIGNS[c.id]; // #18 renders source-B cube; redesign slots use their AUTHORED clock, not the C catalog
   return {
     id: c.id, index: c.index, name: c.name, school: c.school, dur: rd?.dur ?? c.dur, climax: rd?.climax ?? c.climax,
     approvedVisualLead: lead,
@@ -66,6 +73,8 @@ export function sourceLabel(id: number, mode: RenderMode): string {
   if (id === 19) return 'D (D19 bridge)';
   if (id === 20) return 'A+C (semantic bridge)';
   if (mode === 'fusion' && RECIPES[id]) return recipeLabel(RECIPES[id]) + ' (recipe)';
+  if (id === 18) return 'B (khối lập phương)'; // salvaged to the source-B cube version
+  if (id === 16) return 'C'; // salvaged to the gold source-C spell
   if (FUSION_IDS.has(id) && id !== 20) return 'A'; // lead mode = pure A structure
   if (B_IDS.has(id)) return 'B';
   if (REDESIGN_IDS.has(id)) return 'REDESIGN (new authored)';
@@ -135,9 +144,10 @@ export class ArcanaLabClient implements comp.VfxClient {
 
 
     const useFusion = this.cast.mode === 'fusion' && !!RECIPES[entry.id];
-    const useB = this.cast.mode === 'lead' && B_IDS.has(entry.id);
-    const useR = this.cast.mode === 'lead' && REDESIGN_IDS.has(entry.id);
-    const useA = this.cast.mode === 'lead' && (FUSION_IDS.has(entry.id) && entry.id !== 20);
+    // salvage routing: #18 lead = source-B cube Chronoshard; #16 lead = gold C (not A)
+    const useB = this.cast.mode === 'lead' && (B_IDS.has(entry.id) || entry.id === 18);
+    const useR = this.cast.mode === 'lead' && REDESIGN_IDS.has(entry.id) && entry.id !== 18;
+    const useA = this.cast.mode === 'lead' && (FUSION_IDS.has(entry.id) && entry.id !== 20) && entry.id !== 16;
 
     let W = C_W, H = C_H, out: Uint8ClampedArray = this.cR.out;
     if (useB) { W = B_W; H = B_H; }
@@ -204,7 +214,9 @@ export class ArcanaLabClient implements comp.VfxClient {
     // Frame channels (light incl. negative, ink, displacement, ground decals) —
     // full-frame screen ops (flash/shake/kick) are NOT in the mask, so they can
     // no longer leak a straight-edged rectangle over the real terrain.
-    const signed = useR || (!useB && !useA && !useFusion);
+    // salvaged skills present the gold source frame directly (opaque + feather);
+    // only non-salvaged C/redesign paths keep the signed-delta seam.
+    const signed = !SALVAGE_DIRECT.has(entry.id) && (useR || (!useB && !useA && !useFusion));
     if (signed) {
       const runner = useR ? this.rR : this.cR;
       const infl = runner.influenceMask(3);
