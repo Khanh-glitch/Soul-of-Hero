@@ -102,7 +102,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   // statics → physical entities with real finite loot
   for (const s of w.statics) {
     const e: Entity = { id: uid(r, 'e'), kind: s.kind as any, x: s.tx * TILE + 8, y: s.ty * TILE + 8, tx: s.tx, ty: s.ty, poi: s.poi, label: s.label };
-    if (s.kind === 'loot') { const c = mkContainer(r, 'loot', 8); s.loot!.forEach(([k, q], i) => { if (k.startsWith('blueprint:')) c.slots[i] = mkStack(r, 'blueprint', 1, k.slice(10)); else c.slots[i] = mkStack(r, k, q); }); e.c = c.id; }
+    if (s.kind === 'loot') { const c = mkContainer(r, 'loot', 8); s.loot!.forEach(([k, q], i) => { if (k.startsWith('blueprint:')) c.slots[i] = mkStack(r, 'blueprint', 1, k.slice(10)); else { const stack=mkStack(r,k,q); if (ITEMS[k]?.creatorCore === 'meteor' && stack.reserves) stack.reserves.signature=3; c.slots[i]=stack; } }); e.c = c.id; }
     if (s.kind === 'cash') { e.c = mkContainer(r, 'cash', 2).id; e.minted = false; e.stock = { cash: s.cash! }; }
     if (s.kind === 'door') { e.locked = s.locked; e.open = false; }
     if (s.kind === 'gen') e.power = 0;

@@ -1,10 +1,10 @@
 // Deterministic-ish real-time simulation layered on the engine authority. All state mutation goes through engine helpers.
-import { BAL, TILE, WW, WH, HOUR, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity, type Proj, type Haz } from './core';
+import { BAL, TILE, WW, WH, HOUR, VIEW_W, VIEW_H, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity, type Proj, type Haz } from './core';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
 import { getWorld } from './world';
 import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, turretStatus, stepLootRespawn, migrateLootRespawn } from './engine';
 
-export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature' }
+export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; viewX?: number; viewY?: number }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
 let offlineQuiet = false;
 const fx = (type: string, d: any = {}) => { if (!offlineQuiet && FX.length < 400) FX.push({ type, ...d }); };
@@ -181,12 +181,19 @@ function commitCore(gs: GameState, now: number, slot: number, a: number) {
 }
 
 /** The physical UID captured at windup must still occupy the same slot at commit. */
-function commitCreatorCore(gs: GameState, now: number, slot: number, uid0: string, mode: 'basic'|'refined'|'signature', a: number) {
+function commitCreatorCore(gs: GameState, now: number, slot: number, uid0: string, mode: 'basic'|'refined'|'signature', a: number, aim: Input) {
   const r = gs.run!, p = r.player, s = C(r, 'inv').slots[slot];
-  if (!s || s.uid !== uid0 || ITEMS[s.key]?.creatorCore !== 'blast' || !s.reserves || s.reserves[mode] <= 0) { fx('fizzle', {x:p.x,y:p.y}); return; }
+  if (!s || s.uid !== uid0 || !ITEMS[s.key]?.creatorCore || !s.reserves || s.reserves[mode] <= 0) { fx('fizzle', {x:p.x,y:p.y}); return; }
   s.reserves[mode]--; receipt(r, now, 'core.commit', `${s.uid}:${mode}:${s.reserves[mode]}`); award(gs,'first_core',now);
   const b = BAL.creatorCoreBlast, hx=p.x+Math.cos(a)*10, hy=p.y+Math.sin(a)*10;
   fx('cast',{x:hx,y:hy,core:'fire',a});
+  if (ITEMS[s.key].creatorCore === 'meteor') {
+    const m=BAL.creatorCoreMeteor;
+    if(mode==='basic') PROJ.push({x:hx,y:hy,vx:Math.cos(a)*190,vy:Math.sin(a)*190,life:0.95,dmg:m.fireballDamage,from:'player',kind:'fireball',r:5});
+    if(mode==='refined') { const len=Math.min(m.targetRange,dist(p.x,p.y,aim.mx,aim.my),rayLen(r,p.x,p.y,a,m.targetRange)); HAZ.push({kind:'circle',x:p.x+Math.cos(a)*len,y:p.y+Math.sin(a)*len,r:m.radius,t:0,tell:m.tellMs,dur:120,dmg:m.targetDamage,style:'meteor',effect:'meteorBurn',owner:'player'}); }
+    if(mode==='signature') { const vx=clamp(Number.isFinite(aim.viewX)?aim.viewX!:p.x-VIEW_W/2,0,WW*TILE-VIEW_W),vy=clamp(Number.isFinite(aim.viewY)?aim.viewY!:p.y-VIEW_H/2,0,WH*TILE-VIEW_H);for(let i=0;i<m.stormCount;i++)HAZ.push({kind:'circle',x:vx+rngNext(r)*VIEW_W,y:vy+rngNext(r)*VIEW_H,r:m.radius,t:0,tell:m.tellMs+i*m.staggerMs,dur:120,dmg:m.stormDamage,style:'meteor',effect:'meteorBurn',owner:'player'});receipt(r,now,'core.meteorStorm',`${s.uid}:${m.stormCount}`); }
+    return;
+  }
   if (mode === 'basic') { const angle=a+(rngNext(r)*2-1)*b.spreadRadians; PROJ.push({x:hx,y:hy,vx:Math.cos(angle)*b.basicSpeed,vy:Math.sin(angle)*b.basicSpeed,life:b.basicLife,dmg:b.basicDamage,from:'player',kind:'blast_round',r:2}); }
   if (mode === 'refined') PROJ.push({x:hx,y:hy,vx:Math.cos(a)*100,vy:Math.sin(a)*100,life:b.bombSeconds,dmg:b.bombDamage,from:'player',kind:'blast_bomb',r:4});
   if (mode === 'signature') PROJ.push({x:hx,y:hy,vx:Math.cos(a)*b.signatureSpeed,vy:Math.sin(a)*b.signatureSpeed,life:b.signatureLife,dmg:b.signatureDamage,from:'player',kind:'blast_signature',r:6});
@@ -213,7 +220,7 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   else if ((inp.attackPressed || inp.attack) && !p.action) {
     const s = activeStack(r); const d = s ? ITEMS[s.key] : null;
     if (d?.repair && s?.dur !== undefined && s.dur <= 0) { if (inp.attackPressed) fx('toast', { text: `${d.name} is broken. Repair it at a workbench.` }); }
-    else if (d?.creatorCore) { if (s!.reserves && s!.reserves.basic>0) { p.action={kind:'cast',t:0,dur:180,contact:100,angle:p.aim,slot:p.active,coreUid:s!.uid,mode:'basic'}; } else if(inp.attackPressed) fx('toast',{text:'Basic reserve empty — press R to reload.'}); }
+    else if (d?.creatorCore) { if (s!.reserves && s!.reserves.basic>0) { p.action={kind:'cast',t:0,dur:d.creatorCore==='meteor'?400:180,contact:d.creatorCore==='meteor'?300:100,angle:p.aim,slot:p.active,coreUid:s!.uid,mode:'basic'}; } else if(inp.attackPressed) fx('toast',{text:'Basic reserve empty — press R to reload.'}); }
     else if (d?.core) { if ((s!.charge ?? 0) > 0) { p.action = { kind: 'cast', t: 0, dur: 520, contact: 460, angle: p.aim, slot: p.active }; fx('windup', { x: p.x, y: p.y, core: d.core }); } else if (inp.attackPressed) fx('toast', { text: 'This Core is spent. Study it at a Research Table.' }); }
     else if (d && d.food && inp.attackPressed) { const res = dispatch(gs, { id: 'use' + now, type: 'useItem', slot: p.active }, now); fx(res.ok ? 'eat' : 'toast', { x: p.x, y: p.y, text: res.ok ? '' : (res as any).reason }); }
     else if (d && d.cat === 'bp' && inp.attackPressed) { const res = dispatch(gs, { id: 'use' + now, type: 'useItem', slot: p.active }, now); fx('toast', { text: res.ok ? res.msg : (res as any).reason }); }
@@ -227,7 +234,7 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   if (a2) {
     a2.t += dtMs;
     if (a2.kind === 'swing') { speedMul = 0.45; if (!a2.done && a2.t >= (a2.contact || 0)) { a2.done = true; resolveSwing(gs, now, a2.slot ?? -1, a2.angle); } }
-    if (a2.kind === 'cast') { speedMul = 0.3; a2.angle = p.aim; if (!a2.done && a2.t >= (a2.contact || 0)) { a2.done = true; if (a2.coreUid && a2.mode) commitCreatorCore(gs, now, a2.slot!, a2.coreUid, a2.mode, p.aim); else commitCore(gs, now, a2.slot!, p.aim); } }
+    if (a2.kind === 'cast') { speedMul = 0.3; a2.angle = p.aim; if (!a2.done && a2.t >= (a2.contact || 0)) { a2.done = true; if (a2.coreUid && a2.mode) commitCreatorCore(gs, now, a2.slot!, a2.coreUid, a2.mode, p.aim, inp); else commitCore(gs, now, a2.slot!, p.aim); } }
     if (a2.kind === 'hurt') speedMul = 0.6;
     if (a2.t >= a2.dur) p.action = null;
   }
@@ -673,6 +680,7 @@ function onHazActivate(gs: GameState, h: Haz, now: number) {
   fx('hazfire', { x: h.x, y: h.y, style: h.style, kind: h.kind, r: h.r, angle: h.angle, len: h.len });
   if (h.effect === 'quake') { const res = harvestHit(gs, tileOf(h.x), tileOf(h.y), { stone: 6, ore: 5 }, now, h.x, h.y); if (res.result === 'yield') fx('chip', { x: h.x, y: h.y, mat: res.mat }); }
   if (h.effect === 'ignite' || h.effect === 'burnline') { if (h.kind === 'line') { for (let d = 10; d < h.len!; d += 14) { const x = h.x + Math.cos(h.angle!) * d, y = h.y + Math.sin(h.angle!) * d; ignite(gs, tileOf(x), tileOf(y), now); } HAZ.push({ ...h, t: 0, tell: 0, dur: 3000, style: 'burn', effect: undefined, done: false, hit: false, dmg: 10 }); } else ignite(gs, tileOf(h.x), tileOf(h.y), now); }
+  if (h.effect === 'meteorBurn') { ignite(gs,tileOf(h.x),tileOf(h.y),now); HAZ.push({kind:'pool',x:h.x,y:h.y,r:h.r,t:0,tell:0,dur:BAL.creatorCoreMeteor.burnMs,dmg:BAL.creatorCoreMeteor.burnDamage,style:'burn',owner:'player'}); }
   if (h.effect === 'pool') HAZ.push({ kind: 'pool', x: h.x, y: h.y, r: h.r, t: 0, tell: 0, dur: 6500, dmg: 5, style: 'pool', owner: h.owner, done: false });
   if (h.effect === 'pillar' || h.effect === 'cage') { const tx = tileOf(h.x), ty = tileOf(h.y); const t = effTile(r, tx, ty); const p = r.player;
     if (![T.DEEP, T.PWALL, T.CLIFF].includes(t) && !(tileOf(p.x) === tx && tileOf(p.y) === ty)) { r.terrain[ty * WW + tx] = { t: T.PWALL, until: r.clock.simMs + (h.effect === 'cage' ? 7000 : 11000), ...({ by: h.elder } as any) }; markDirty(); } }

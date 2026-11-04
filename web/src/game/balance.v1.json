@@ -168,5 +168,18 @@
     "signatureBurnMs": 3000,
     "signatureSpeed": 170,
     "signatureLife": 1.15
+  },
+  "creatorCoreMeteor": {
+    "_status": "SOH_NEW_TUNED v1; count is CREATOR_LOCKED",
+    "fireballDamage": 22,
+    "targetDamage": 35,
+    "stormDamage": 22,
+    "radius": 20,
+    "targetRange": 180,
+    "tellMs": 750,
+    "stormCount": 10,
+    "staggerMs": 160,
+    "burnDamage": 4,
+    "burnMs": 3500
   }
 }

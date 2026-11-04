@@ -58,7 +58,7 @@ export interface Player {
   x: number; y: number; vx: number; vy: number; dir: Dir; aim: number;
   hp: number; stamina: number; hunger: number; thirst: number; warmth: number; rad: number;
   active: number; // quickbar index 0..7
-  action: null | { kind: 'swing' | 'cast' | 'roll' | 'hurt'; t: number; dur: number; contact?: number; done?: boolean; angle: number; slot?: number; coreUid?: string; mode?: 'basic' | 'refined' | 'signature' };
+  action: null | { kind: 'swing' | 'cast' | 'roll' | 'hurt'; t: number; dur: number; contact?: number; done?: boolean; angle: number; slot?: number; coreUid?: string; mode?: 'basic' | 'refined' | 'signature'; targetX?: number; targetY?: number; viewX?: number; viewY?: number };
   invuln: number; dead: boolean; deadT: number; pulling: string | null;
   skills: Record<string, number>; // xp
   stepAcc: number; lastTraceX: number; lastTraceY: number;
