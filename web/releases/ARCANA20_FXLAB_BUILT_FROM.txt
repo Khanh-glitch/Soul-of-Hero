@@ -3,3 +3,9 @@ SOH ARCANA20 FX LAB — standalone, deterministic lifecycle contract (RED->GREEN
 built from branch arena/3337c864-soul-of-hero
 artifact sha256    : eb6eed5cf453d4e6a68efc637bc421cda1e431fab460c90ad59734c3245532e2
 boot: open this file directly (file://)
+
+SOH-ARCANA20-VISUAL-TEST.html — dedicated visual-test build (same game code as
+SOH-ARCANA20-FX-LAB.html, sha256 2f371b172eada4f7a3dcd7b880207c2bdd028612ced26514b6b5223b3b444572) + boot shim that (a) clears stale/incompatible
+save copies on file:// so it never hits the "Save recovery required" block, and
+(b) auto-starts a new run (Meadow Bay) and opens the FX Lab (F9) with the ARCANA20
+dropdown listing all 20 skills. Test artifact only; shipped game code untouched.
