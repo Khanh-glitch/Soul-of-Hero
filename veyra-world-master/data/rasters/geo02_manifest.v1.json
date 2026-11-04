@@ -1,0 +1,47 @@
+{
+  "schema": "soh.map.geo02.raster_manifest.v1",
+  "generatedBy": "world_lab/geo02/src/encoding.mjs",
+  "method": "analytic cell-centre reproduction of terrain.ts maskFromDraw() / analysis.ts rasterRoads(); canvas antialiasing may differ by <=1 boundary cell",
+  "grid": {
+    "gw": 250,
+    "gh": 175,
+    "cell": 8,
+    "cells": 43750
+  },
+  "authoringSpace": [
+    2000,
+    1400
+  ],
+  "files": {
+    "landMaplab.u8": {
+      "bytes": 43750,
+      "sha256": "61d69d26fa666420e09e13f452c7d6c145e4c49d6ab50532b9418134b3811f92",
+      "cellCount": 15077,
+      "semantics": "landMaplab"
+    },
+    "lakeMaplab.u8": {
+      "bytes": 43750,
+      "sha256": "aa8f243cee71aca86aff562e29085cb98fc4c5c91fdf277828d42672169177d2",
+      "cellCount": 298,
+      "semantics": "lakeMaplab"
+    },
+    "riverMaplab.u8": {
+      "bytes": 43750,
+      "sha256": "feac18a272f997b1b49eb5d22129ab512bcd987730d0d4223573b82c4ca25ce9",
+      "cellCount": 405,
+      "semantics": "riverMaplab"
+    },
+    "roadFootMaplab.u8": {
+      "bytes": 43750,
+      "sha256": "ab583a4b0b5d974f5e43a11bccdfd7b72b7c78e5ecebf953b2d690950c35c37e",
+      "cellCount": 1224,
+      "semantics": "roadFootMaplab"
+    },
+    "roadCartMaplab.u8": {
+      "bytes": 43750,
+      "sha256": "fab97aee514862459d9300998c32b0637b7b3e2c636e959d0c28299aaae16bd1",
+      "cellCount": 706,
+      "semantics": "roadCartMaplab"
+    }
+  }
+}

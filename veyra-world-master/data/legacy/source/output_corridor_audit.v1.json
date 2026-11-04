@@ -1,0 +1,2328 @@
+{
+  "schema": "soh.map.geo02.corridor_audit.v1",
+  "generatedBy": "world_lab/geo02/src/audit.mjs",
+  "authority": "MAP DESIGNS THE PHYSICAL WORLD. GAMEPLAY POPULATES AND SIMULATES IT.",
+  "frame": {
+    "authoringSpace": [
+      2000,
+      1400
+    ],
+    "grid": {
+      "gw": 250,
+      "gh": 175,
+      "cell": 8,
+      "cells": 43750
+    },
+    "transform": {
+      "status": "UNDECIDED",
+      "mode": "NONE_APPLIED",
+      "configurable": true,
+      "config": {
+        "scaleX": 1,
+        "scaleY": 1,
+        "offsetX": 0,
+        "offsetY": 0,
+        "authoringUnitsPerCell": 8
+      },
+      "runtimeReference": {
+        "source": "PR #44 a956c9e web/src/game/core.ts",
+        "WW": 200,
+        "WH": 200,
+        "TILE": 16,
+        "requiredCells": 40000
+      },
+      "sourceGridCells": 43750,
+      "rule": "Every coordinate in this export remains in Veyra authoring units. No rescale, crop, pad or warp to the 200x200 runtime island was performed. toCell() is the ONLY coordinate conversion used and it is a deterministic index lookup, not a world-scale decision.",
+      "requiredDecision": "An explicit, approved authoring-unit -> runtime-tile transform with measured journey times (t_foot, t_cart_loaded, exposure_time)."
+    }
+  },
+  "sourceEvidence": {
+    "veyra": {
+      "commit": "19d8c6ec820f324a6ac12733165e43b5e2c6eab2",
+      "bytes": 332249,
+      "sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256"
+    },
+    "maplab": {
+      "commit": "0602b59af626d96fc2f76351cdf95ad66863f66e",
+      "innerZipSha256": "887a389cc4da3d50377ebc3ff5c6327651794d84acbcb8b14de0215329ab464e",
+      "excerptVerification": "all MATCH",
+      "zipChain": "VERIFIED"
+    },
+    "geo01": {
+      "corridor": {
+        "file": "../geo01/output/corridor.v1.json",
+        "sha256": "e9212633b277ec0cd7ee932a0d9b1266532e805a2816e23e092edce3582db63e"
+      },
+      "geography": {
+        "file": "../geo01/output/geography.v1.json",
+        "sha256": "13ae97272edc47b063bb4a2ffde5dcf9f92f0f34dc3fd35b6ab3bee7f26c29dd"
+      }
+    }
+  },
+  "sourceIds": {
+    "spawn": "sp_lake",
+    "spawnAt": [
+      790,
+      622
+    ],
+    "poi": "po_kilns",
+    "poiAt": [
+      905,
+      785
+    ],
+    "roads": [
+      "rd_b",
+      "rd_13",
+      "rd_1w",
+      "rd_16",
+      "rd_20"
+    ],
+    "bridges": [
+      "br_4",
+      "br_a"
+    ],
+    "rivers": [
+      "rv_silver"
+    ],
+    "nearestFerryRoadId": "rd_2j",
+    "nearestFerryDistanceAu": 187.1
+  },
+  "connectivityLayers": {
+    "SOURCE_AUTHORED": {
+      "explicitRiverMouthSourceRefs": [
+        {
+          "id": "rv_grey_up",
+          "mouth": {
+            "kind": "lake",
+            "ref": "lk_grey"
+          },
+          "source": {
+            "kind": "lake",
+            "ref": "lk_tarn"
+          }
+        },
+        {
+          "id": "rv_grey_low",
+          "mouth": {
+            "kind": "none"
+          },
+          "source": {
+            "kind": "lake",
+            "ref": "lk_grey"
+          }
+        },
+        {
+          "id": "rv_silver",
+          "mouth": {
+            "kind": "river",
+            "ref": "rv_grey_low"
+          },
+          "source": {
+            "kind": "spring"
+          }
+        },
+        {
+          "id": "rv_canal",
+          "mouth": {
+            "kind": "river",
+            "ref": "rv_moss"
+          },
+          "source": {
+            "kind": "lake",
+            "ref": "lk_verdant"
+          }
+        },
+        {
+          "id": "rv_moss",
+          "mouth": {
+            "kind": "river",
+            "ref": "rv_grey_low"
+          },
+          "source": {
+            "kind": "river",
+            "ref": "rv_canal"
+          }
+        },
+        {
+          "id": "rv_argus",
+          "mouth": {
+            "kind": "lake",
+            "ref": "lk_verdant"
+          },
+          "source": {
+            "kind": "spring"
+          }
+        },
+        {
+          "id": "rv_east",
+          "mouth": {
+            "kind": "sea"
+          },
+          "source": {
+            "kind": "lake",
+            "ref": "lk_verdant"
+          }
+        },
+        {
+          "id": "rv_d1",
+          "mouth": {
+            "kind": "sea"
+          },
+          "source": {
+            "kind": "river",
+            "ref": "rv_grey_low"
+          }
+        },
+        {
+          "id": "rv_d2",
+          "mouth": {
+            "kind": "sea"
+          },
+          "source": {
+            "kind": "river",
+            "ref": "rv_grey_low"
+          }
+        },
+        {
+          "id": "rv_d3",
+          "mouth": {
+            "kind": "sea"
+          },
+          "source": {
+            "kind": "river",
+            "ref": "rv_grey_low"
+          }
+        },
+        {
+          "id": "rv_amber_up",
+          "mouth": {
+            "kind": "lake",
+            "ref": "lk_mirage"
+          },
+          "source": {
+            "kind": "spring"
+          }
+        },
+        {
+          "id": "rv_amber_low",
+          "mouth": {
+            "kind": "sea"
+          },
+          "source": {
+            "kind": "lake",
+            "ref": "lk_mirage"
+          }
+        },
+        {
+          "id": "rv_west",
+          "mouth": {
+            "kind": "sea"
+          },
+          "source": {
+            "kind": "spring"
+          }
+        },
+        {
+          "id": "rv_hook",
+          "mouth": {
+            "kind": "sea"
+          },
+          "source": {
+            "kind": "lake",
+            "ref": "lk_mere"
+          }
+        },
+        {
+          "id": "rv_ash",
+          "mouth": {
+            "kind": "sea"
+          },
+          "source": {
+            "kind": "spring"
+          }
+        },
+        {
+          "id": "rv_salt",
+          "mouth": {
+            "kind": "sea"
+          },
+          "source": {
+            "kind": "spring"
+          }
+        },
+        {
+          "id": "rv_slag",
+          "mouth": {
+            "kind": "sea"
+          },
+          "source": {
+            "kind": "spring"
+          }
+        }
+      ],
+      "bridges": [
+        {
+          "id": "br_0",
+          "at": [
+            995.1738180423941,
+            751.7133740660302
+          ],
+          "load": "cart",
+          "ang": -2.054318994221515
+        },
+        {
+          "id": "br_1",
+          "at": [
+            1022.3338026567787,
+            453.4846086979336
+          ],
+          "load": "cart",
+          "ang": 2.145530710207783
+        },
+        {
+          "id": "br_2",
+          "at": [
+            1289.7896363761217,
+            520.954908737478
+          ],
+          "load": "cart",
+          "ang": -1.5354849237016648
+        },
+        {
+          "id": "br_3",
+          "at": [
+            855.2774622523895,
+            576.127164427206
+          ],
+          "load": "cart",
+          "ang": -0.5191461142465229
+        },
+        {
+          "id": "br_4",
+          "at": [
+            732.00696765689,
+            649.8170519278754
+          ],
+          "load": "cart",
+          "ang": 1.132195670812087
+        },
+        {
+          "id": "br_5",
+          "at": [
+            968.0099487963698,
+            816.1834048937901
+          ],
+          "load": "cart",
+          "ang": -0.6799332596310216
+        },
+        {
+          "id": "br_6",
+          "at": [
+            1006.2145393518304,
+            731.4405222043929
+          ],
+          "load": "foot",
+          "ang": -2.8122431120144404
+        },
+        {
+          "id": "br_7",
+          "at": [
+            1615.6966256260555,
+            343.7965121659527
+          ],
+          "load": "cart",
+          "ang": 0.5157476566419044
+        },
+        {
+          "id": "br_8",
+          "at": [
+            1152.976074337373,
+            457.3329743345741
+          ],
+          "load": "foot",
+          "ang": -1.0031299024230385
+        },
+        {
+          "id": "br_9",
+          "at": [
+            777.5971129981258,
+            456.5828311766566
+          ],
+          "load": "foot",
+          "ang": -1.2639214000332961
+        },
+        {
+          "id": "br_a",
+          "at": [
+            882.9743849116596,
+            646.9030885831578
+          ],
+          "load": "foot",
+          "ang": 1.1844979517413203
+        },
+        {
+          "id": "br_b",
+          "at": [
+            1026.2414698372625,
+            929.687055233648
+          ],
+          "load": "foot",
+          "ang": 0.3976188745484279
+        }
+      ],
+      "exactCoincidentRoadEndpoints": 43,
+      "poiLinks": [
+        {
+          "id": "po_falls",
+          "links": [
+            {
+              "to": "po_meridian",
+              "kind": "điện → cơ sở sâu"
+            },
+            {
+              "to": "po_kestrel",
+              "kind": "điện → cơ sở sâu"
+            }
+          ]
+        },
+        {
+          "id": "po_sawaion",
+          "links": [
+            {
+              "to": "po_ironvein",
+              "kind": "gỗ chống hầm"
+            }
+          ]
+        },
+        {
+          "id": "po_geo",
+          "links": [
+            {
+              "to": "po_surtur",
+              "kind": "điện địa nhiệt"
+            }
+          ]
+        },
+        {
+          "id": "po_vend_gulf",
+          "links": [
+            {
+              "to": "po_rc_meridian",
+              "kind": "tiền Ragnarok → bán rương"
+            }
+          ]
+        },
+        {
+          "id": "po_vend_strait",
+          "links": [
+            {
+              "to": "po_rc_ironvein",
+              "kind": "tiền Ragnarok → bán rương"
+            }
+          ]
+        }
+      ],
+      "statement": "Veyra authors NO explicit road-to-road junction table. Junctions are geometric coincidences/intersections of control polylines. Explicit authored connectivity is limited to river mouth/source refs, bridge at/load, POI links and exact coincident endpoints."
+    },
+    "DERIVED_ROAD_GRAPH": {
+      "geo01JoinToleranceAu": 8,
+      "maplabSnapTolAu": 7,
+      "sourceRef": "source_excerpt/graph.ts :: SNAP_TOL = 7 (\"merge tolerance for graph nodes, same value the editor uses to attach endpoints\")",
+      "roadEndpoints": 168,
+      "exactCoincidentEndpointPairs": 43,
+      "pairsMergedByBoth": {
+        "count": 7,
+        "items": [
+          {
+            "a": "rd_1:end",
+            "b": "rd_a:end",
+            "distanceAu": 4.9403
+          },
+          {
+            "a": "rd_2:start",
+            "b": "rd_5:start",
+            "distanceAu": 0.6126
+          },
+          {
+            "a": "rd_r:end",
+            "b": "rd_1p:start",
+            "distanceAu": 2.1763
+          },
+          {
+            "a": "rd_11:start",
+            "b": "rd_25:end",
+            "distanceAu": 0.5212
+          },
+          {
+            "a": "rd_19:end",
+            "b": "rd_1b:end",
+            "distanceAu": 1.5959
+          },
+          {
+            "a": "rd_1a:start",
+            "b": "rd_1b:end",
+            "distanceAu": 1.5959
+          },
+          {
+            "a": "rd_1k:end",
+            "b": "rd_1n:start",
+            "distanceAu": 5.8207
+          }
+        ]
+      },
+      "pairsMergedOnlyByGeo01Tolerance8": {
+        "count": 4,
+        "items": [
+          {
+            "a": "rd_6:start",
+            "b": "rd_o:start",
+            "distanceAu": 7.4424
+          },
+          {
+            "a": "rd_f:start",
+            "b": "rd_g:start",
+            "distanceAu": 7.6776
+          },
+          {
+            "a": "rd_w:end",
+            "b": "rd_1t:end",
+            "distanceAu": 7.207
+          },
+          {
+            "a": "rd_w:end",
+            "b": "rd_1u:start",
+            "distanceAu": 7.207
+          }
+        ],
+        "note": "these joins exist in the GEO-01 derived graph but NOT under the editor's own SNAP_TOL=7"
+      },
+      "roadRoadSegmentIntersections": 64,
+      "intersectionsToleranceDependentNearAnEndpoint": {
+        "count": 3,
+        "items": [
+          {
+            "roads": [
+              "rd_d",
+              "rd_g"
+            ],
+            "at": [
+              713.5857,
+              500.0438
+            ],
+            "endpoint": "rd_f:start",
+            "distanceAu": 7.6572
+          },
+          {
+            "roads": [
+              "rd_w",
+              "rd_1u"
+            ],
+            "at": [
+              1643.9561,
+              779.8913
+            ],
+            "endpoint": "rd_w:end",
+            "distanceAu": 7.1883
+          },
+          {
+            "roads": [
+              "rd_1t",
+              "rd_1u"
+            ],
+            "at": [
+              1643.8948,
+              779.8299
+            ],
+            "endpoint": "rd_w:end",
+            "distanceAu": 7.207
+          }
+        ]
+      },
+      "maplabResampledGraphNodes": {
+        "atSnapTol7": {
+          "nodes": 1444,
+          "samples": 1689,
+          "consecutiveSampleSelfMerges": 97
+        },
+        "atTolerance8": {
+          "nodes": 790,
+          "samples": 1689,
+          "consecutiveSampleSelfMerges": 773
+        },
+        "note": "Idx over Catmull-Rom smoothed rivers+roads resampled at 8u, graph.ts order. At tol=8 the merge radius equals the 8u resample step, so consecutive samples collapse into one node and graph.ts addEdge(a,a) would DROP those road edges. This is not a harmless 1u difference."
+      },
+      "geo01DerivedGraph": {
+        "nodes": 131,
+        "edges": 105,
+        "method": "road endpoints + exact segment intersections, joinToleranceAu=8"
+      },
+      "verdict": "GEO-01_TOLERANCE_NOT_THE_EDITOR_TOLERANCE__DERIVED_GRAPH_MUST_BE_REDERIVED_AT_7"
+    },
+    "RASTER_CANDIDATE": {
+      "geo01WalkableCandidateBFS": {
+        "connected": true,
+        "gridSteps": 50,
+        "rule": "walkableCandidate=1 OR (river centreline cell AND authored crossingCandidate>0)",
+        "authority": "GEO01_DERIVED_CANDIDATE__NOT_A_GAMEPLAY_PASSABILITY_LAW"
+      },
+      "maplabStepMultDijkstra": {
+        "foot": {
+          "connected": true,
+          "costAu": 286.9503,
+          "steps": 39,
+          "pathCells": 40,
+          "riverCellsOnPath": 0,
+          "bridgeCoveredCellsOnPath": 0,
+          "on9uCartRoadRasterCells": 22,
+          "offCartRoadCells": 18,
+          "note": "Dijkstra over 8-neighbour cells using analysis.ts stepMult (slope limit 1.5, biome multipliers, 9u road stroke DISCOUNT only — NOT a requirement). stepMult adds +80 (cart) / +50 (foot) on river cells but does NOT require a bridge. This is the EDITOR's own analysis heuristic and a RASTER CANDIDATE, NOT an authored road, NOT a Gameplay law and NOT a physically traversable cart route.",
+          "authority": "MAPLAB_EDITOR_HEURISTIC__NOT_GAMEPLAY_PASSABILITY_LAW",
+          "notAPhysicallyTraversableCartRoute": true
+        },
+        "cart": {
+          "connected": true,
+          "costAu": 608.9834,
+          "steps": 41,
+          "pathCells": 42,
+          "riverCellsOnPath": 0,
+          "bridgeCoveredCellsOnPath": 0,
+          "on9uCartRoadRasterCells": 21,
+          "offCartRoadCells": 21,
+          "note": "Dijkstra over 8-neighbour cells using analysis.ts stepMult (slope limit 0.7, biome multipliers, 9u road stroke DISCOUNT only — NOT a requirement). stepMult adds +80 (cart) / +50 (foot) on river cells but does NOT require a bridge. This is the EDITOR's own analysis heuristic and a RASTER CANDIDATE, NOT an authored road, NOT a Gameplay law and NOT a physically traversable cart route.",
+          "authority": "MAPLAB_EDITOR_HEURISTIC__NOT_GAMEPLAY_PASSABILITY_LAW",
+          "notAPhysicallyTraversableCartRoute": true
+        }
+      },
+      "neverConflatedWithRoadGraph": "The Dijkstra raster candidates are NOT the authored corridor: they take 0 river cells (no bridge at all), and roughly half their cells are outside even the 9u cart-road analysis raster. stepMult does not require a bridge or a road. The only authored cart bridge in this corridor is br_4 on rd_b, and no cart road reaches po_kilns within ACCESS_R=48. A connected raster candidate therefore proves NOTHING about a physically traversable cart route."
+    },
+    "PHYSICAL_CLEARANCE": {
+      "status": "UNPROVEN",
+      "geo01PathCellCount": 51,
+      "geo01ClearanceSummary": {
+        "count": 51,
+        "min": 0,
+        "max": 5,
+        "mean": 2.2941
+      },
+      "geo01ClearanceAuAlongPath": {
+        "min": 0,
+        "max": 40,
+        "mean": 18.0411
+      },
+      "zeroClearanceCellCount": 1,
+      "zeroClearanceCells": [
+        {
+          "cell": 20341,
+          "authoringAu": [
+            732,
+            652
+          ],
+          "geo01ClearanceCells": 0,
+          "maplabClearanceAu": 0,
+          "land": 1,
+          "lake": 0,
+          "river": 1,
+          "crossingCandidate": 2,
+          "bridgeId": "br_4"
+        }
+      ],
+      "interpretation": "Zero clearance is NOT a failure by itself: at br_4 the path must enter the river corridor. It means there is no free buffer around the centreline. With NO authored road width, river channel width, bridge deck span or cart footprint, swept clearance CANNOT be validated.",
+      "physicalClearanceStatus": "UNPROVEN"
+    },
+    "neverConflated": true
+  },
+  "audit": {
+    "junctionTolerances": {
+      "geo01JoinToleranceAu": 8,
+      "maplabSnapTolAu": 7,
+      "sourceRef": "source_excerpt/graph.ts :: SNAP_TOL = 7 (\"merge tolerance for graph nodes, same value the editor uses to attach endpoints\")",
+      "roadEndpoints": 168,
+      "exactCoincidentEndpointPairs": 43,
+      "pairsMergedByBoth": {
+        "count": 7,
+        "items": [
+          {
+            "a": "rd_1:end",
+            "b": "rd_a:end",
+            "distanceAu": 4.9403
+          },
+          {
+            "a": "rd_2:start",
+            "b": "rd_5:start",
+            "distanceAu": 0.6126
+          },
+          {
+            "a": "rd_r:end",
+            "b": "rd_1p:start",
+            "distanceAu": 2.1763
+          },
+          {
+            "a": "rd_11:start",
+            "b": "rd_25:end",
+            "distanceAu": 0.5212
+          },
+          {
+            "a": "rd_19:end",
+            "b": "rd_1b:end",
+            "distanceAu": 1.5959
+          },
+          {
+            "a": "rd_1a:start",
+            "b": "rd_1b:end",
+            "distanceAu": 1.5959
+          },
+          {
+            "a": "rd_1k:end",
+            "b": "rd_1n:start",
+            "distanceAu": 5.8207
+          }
+        ]
+      },
+      "pairsMergedOnlyByGeo01Tolerance8": {
+        "count": 4,
+        "items": [
+          {
+            "a": "rd_6:start",
+            "b": "rd_o:start",
+            "distanceAu": 7.4424
+          },
+          {
+            "a": "rd_f:start",
+            "b": "rd_g:start",
+            "distanceAu": 7.6776
+          },
+          {
+            "a": "rd_w:end",
+            "b": "rd_1t:end",
+            "distanceAu": 7.207
+          },
+          {
+            "a": "rd_w:end",
+            "b": "rd_1u:start",
+            "distanceAu": 7.207
+          }
+        ],
+        "note": "these joins exist in the GEO-01 derived graph but NOT under the editor's own SNAP_TOL=7"
+      },
+      "roadRoadSegmentIntersections": 64,
+      "intersectionsToleranceDependentNearAnEndpoint": {
+        "count": 3,
+        "items": [
+          {
+            "roads": [
+              "rd_d",
+              "rd_g"
+            ],
+            "at": [
+              713.5857,
+              500.0438
+            ],
+            "endpoint": "rd_f:start",
+            "distanceAu": 7.6572
+          },
+          {
+            "roads": [
+              "rd_w",
+              "rd_1u"
+            ],
+            "at": [
+              1643.9561,
+              779.8913
+            ],
+            "endpoint": "rd_w:end",
+            "distanceAu": 7.1883
+          },
+          {
+            "roads": [
+              "rd_1t",
+              "rd_1u"
+            ],
+            "at": [
+              1643.8948,
+              779.8299
+            ],
+            "endpoint": "rd_w:end",
+            "distanceAu": 7.207
+          }
+        ]
+      },
+      "maplabResampledGraphNodes": {
+        "atSnapTol7": {
+          "nodes": 1444,
+          "samples": 1689,
+          "consecutiveSampleSelfMerges": 97
+        },
+        "atTolerance8": {
+          "nodes": 790,
+          "samples": 1689,
+          "consecutiveSampleSelfMerges": 773
+        },
+        "note": "Idx over Catmull-Rom smoothed rivers+roads resampled at 8u, graph.ts order. At tol=8 the merge radius equals the 8u resample step, so consecutive samples collapse into one node and graph.ts addEdge(a,a) would DROP those road edges. This is not a harmless 1u difference."
+      },
+      "geo01DerivedGraph": {
+        "nodes": 131,
+        "edges": 105,
+        "method": "road endpoints + exact segment intersections, joinToleranceAu=8"
+      },
+      "verdict": "GEO-01_TOLERANCE_NOT_THE_EDITOR_TOLERANCE__DERIVED_GRAPH_MUST_BE_REDERIVED_AT_7"
+    },
+    "bridgeCrossings": {
+      "method": "graph.ts road/river segment intersections over Catmull-Rom curves resampled at 8u; BRIDGE_R=22, BRIDGE-VALID radius 14",
+      "allCrossings": [
+        {
+          "roadId": "rd_0",
+          "roadKind": "cart",
+          "riverId": "rv_moss",
+          "riverWidthAu": 4,
+          "intersectionAu": [
+            995.8398,
+            750.4629
+          ],
+          "bridgeId": "br_0",
+          "bridgeLoad": "cart",
+          "bridgeDistanceAu": 1.4168,
+          "bridgeWithinBridgeR22": true,
+          "fordWidthHeuristic": false,
+          "cartBlocked": false,
+          "footBlocked": false,
+          "bridgeValidWithin14u": true,
+          "roadDistanceToBridgeAu": 0,
+          "riverDistanceToBridgeAu": 0
+        },
+        {
+          "roadId": "rd_1",
+          "roadKind": "cart",
+          "riverId": "rv_canal",
+          "riverWidthAu": 3.5,
+          "intersectionAu": [
+            1022.3502,
+            453.4593
+          ],
+          "bridgeId": "br_1",
+          "bridgeLoad": "cart",
+          "bridgeDistanceAu": 0.0301,
+          "bridgeWithinBridgeR22": true,
+          "fordWidthHeuristic": false,
+          "cartBlocked": false,
+          "footBlocked": false,
+          "bridgeValidWithin14u": true,
+          "roadDistanceToBridgeAu": 0,
+          "riverDistanceToBridgeAu": 0
+        },
+        {
+          "roadId": "rd_5",
+          "roadKind": "cart",
+          "riverId": "rv_east",
+          "riverWidthAu": 6,
+          "intersectionAu": [
+            1289.7179,
+            520.9264
+          ],
+          "bridgeId": "br_2",
+          "bridgeLoad": "cart",
+          "bridgeDistanceAu": 0.0772,
+          "bridgeWithinBridgeR22": true,
+          "fordWidthHeuristic": false,
+          "cartBlocked": false,
+          "footBlocked": false,
+          "bridgeValidWithin14u": true,
+          "roadDistanceToBridgeAu": 0,
+          "riverDistanceToBridgeAu": 0
+        },
+        {
+          "roadId": "rd_9",
+          "roadKind": "cart",
+          "riverId": "rv_grey_low",
+          "riverWidthAu": 7,
+          "intersectionAu": [
+            855.4395,
+            576.3515
+          ],
+          "bridgeId": "br_3",
+          "bridgeLoad": "cart",
+          "bridgeDistanceAu": 0.2768,
+          "bridgeWithinBridgeR22": true,
+          "fordWidthHeuristic": false,
+          "cartBlocked": false,
+          "footBlocked": false,
+          "bridgeValidWithin14u": true,
+          "roadDistanceToBridgeAu": 0,
+          "riverDistanceToBridgeAu": 0
+        },
+        {
+          "roadId": "rd_a",
+          "roadKind": "cart",
+          "riverId": "rv_canal",
+          "riverWidthAu": 3.5,
+          "intersectionAu": [
+            1022.8461,
+            454.3768
+          ],
+          "bridgeId": "br_1",
+          "bridgeLoad": "cart",
+          "bridgeDistanceAu": 1.0288,
+          "bridgeWithinBridgeR22": true,
+          "fordWidthHeuristic": false,
+          "cartBlocked": false,
+          "footBlocked": false,
+          "bridgeValidWithin14u": true,
+          "roadDistanceToBridgeAu": 0,
+          "riverDistanceToBridgeAu": 0
+        },
+        {
+          "roadId": "rd_b",
+          "roadKind": "cart",
+          "riverId": "rv_silver",
+          "riverWidthAu": 4,
+          "intersectionAu": [
+            732.1486,
+            649.7952
+          ],
+          "bridgeId": "br_4",
+          "bridgeLoad": "cart",
+          "bridgeDistanceAu": 0.1433,
+          "bridgeWithinBridgeR22": true,
+          "fordWidthHeuristic": false,
+          "cartBlocked": false,
+          "footBlocked": false,
+          "bridgeValidWithin14u": true,
+          "roadDistanceToBridgeAu": 0,
+          "riverDistanceToBridgeAu": 0
+        },
+        {
+          "roadId": "rd_n",
+          "roadKind": "cart",
+          "riverId": "rv_grey_low",
+          "riverWidthAu": 7,
+          "intersectionAu": [
+            967.9749,
+            816.1156
+          ],
+          "bridgeId": "br_5",
+          "bridgeLoad": "cart",
+          "bridgeDistanceAu": 0.0763,
+          "bridgeWithinBridgeR22": true,
+          "fordWidthHeuristic": false,
+          "cartBlocked": false,
+          "footBlocked": false,
+          "bridgeValidWithin14u": true,
+          "roadDistanceToBridgeAu": 0,
+          "riverDistanceToBridgeAu": 0
+        },
+        {
+          "roadId": "rd_v",
+          "roadKind": "foot",
+          "riverId": "rv_moss",
+          "riverWidthAu": 4,
+          "intersectionAu": [
+            1006.224,
+            731.4923
+          ],
+          "bridgeId": "br_6",
+          "bridgeLoad": "foot",
+          "bridgeDistanceAu": 0.0526,
+          "bridgeWithinBridgeR22": true,
+          "fordWidthHeuristic": false,
+          "cartBlocked": true,
+          "footBlocked": false,
+          "bridgeValidWithin14u": true,
+          "roadDistanceToBridgeAu": 0,
+          "riverDistanceToBridgeAu": 0
+        },
+        {
+          "roadId": "rd_x",
+          "roadKind": "foot",
+          "riverId": "rv_ash",
+          "riverWidthAu": 2.5,
+          "intersectionAu": [
+            1592.2408,
+            904.2383
+          ],
+          "bridgeId": null,
+          "bridgeLoad": null,
+          "bridgeDistanceAu": null,
+          "bridgeWithinBridgeR22": false,
+          "fordWidthHeuristic": true,
+          "cartBlocked": true,
+          "footBlocked": false,
+          "bridgeValidWithin14u": false,
+          "roadDistanceToBridgeAu": 0.0245,
+          "riverDistanceToBridgeAu": null
+        },
+        {
+          "roadId": "rd_z",
+          "roadKind": "cart",
+          "riverId": "rv_salt",
+          "riverWidthAu": 2.5,
+          "intersectionAu": [
+            1615.7945,
+            343.697
+          ],
+          "bridgeId": "br_7",
+          "bridgeLoad": "cart",
+          "bridgeDistanceAu": 0.1395,
+          "bridgeWithinBridgeR22": true,
+          "fordWidthHeuristic": true,
+          "cartBlocked": false,
+          "footBlocked": false,
+          "bridgeValidWithin14u": true,
+          "roadDistanceToBridgeAu": 0,
+          "riverDistanceToBridgeAu": 0
+        },
+        {
+          "roadId": "rd_1f",
+          "roadKind": "trail",
+          "riverId": "rv_amber_up",
+          "riverWidthAu": 2.5,
+          "intersectionAu": [
+            598.2133,
+            967.8048
+          ],
+          "bridgeId": null,
+          "bridgeLoad": null,
+          "bridgeDistanceAu": null,
+          "bridgeWithinBridgeR22": false,
+          "fordWidthHeuristic": true,
+          "cartBlocked": true,
+          "footBlocked": false,
+          "bridgeValidWithin14u": false,
+          "roadDistanceToBridgeAu": 0,
+          "riverDistanceToBridgeAu": null
+        },
+        {
+          "roadId": "rd_1k",
+          "roadKind": "trail",
+          "riverId": "rv_east",
+          "riverWidthAu": 6,
+          "intersectionAu": [
+            1153.0082,
+            457.3864
+          ],
+          "bridgeId": "br_8",
+          "bridgeLoad": "foot",
+          "bridgeDistanceAu": 0.0623,
+          "bridgeWithinBridgeR22": true,
+          "fordWidthHeuristic": false,
+          "cartBlocked": true,
+          "footBlocked": false,
+          "bridgeValidWithin14u": true,
+          "roadDistanceToBridgeAu": 0,
+          "riverDistanceToBridgeAu": 0
+        },
+        {
+          "roadId": "rd_1l",
+          "roadKind": "trail",
+          "riverId": "rv_amber_up",
+          "riverWidthAu": 2.5,
+          "intersectionAu": [
+            606.9656,
+            975.2896
+          ],
+          "bridgeId": null,
+          "bridgeLoad": null,
+          "bridgeDistanceAu": null,
+          "bridgeWithinBridgeR22": false,
+          "fordWidthHeuristic": true,
+          "cartBlocked": true,
+          "footBlocked": false,
+          "bridgeValidWithin14u": false,
+          "roadDistanceToBridgeAu": 0.2292,
+          "riverDistanceToBridgeAu": null
+        },
+        {
+          "roadId": "rd_1y",
+          "roadKind": "foot",
+          "riverId": "rv_grey_up",
+          "riverWidthAu": 4,
+          "intersectionAu": [
+            777.5546,
+            456.717
+          ],
+          "bridgeId": "br_9",
+          "bridgeLoad": "foot",
+          "bridgeDistanceAu": 0.1408,
+          "bridgeWithinBridgeR22": true,
+          "fordWidthHeuristic": false,
+          "cartBlocked": true,
+          "footBlocked": false,
+          "bridgeValidWithin14u": true,
+          "roadDistanceToBridgeAu": 0,
+          "riverDistanceToBridgeAu": 0
+        },
+        {
+          "roadId": "rd_20",
+          "roadKind": "riverside",
+          "riverId": "rv_silver",
+          "riverWidthAu": 4,
+          "intersectionAu": [
+            882.9405,
+            646.9076
+          ],
+          "bridgeId": "br_a",
+          "bridgeLoad": "foot",
+          "bridgeDistanceAu": 0.0342,
+          "bridgeWithinBridgeR22": true,
+          "fordWidthHeuristic": false,
+          "cartBlocked": true,
+          "footBlocked": false,
+          "bridgeValidWithin14u": true,
+          "roadDistanceToBridgeAu": 0,
+          "riverDistanceToBridgeAu": 0
+        },
+        {
+          "roadId": "rd_28",
+          "roadKind": "trail",
+          "riverId": "rv_d3",
+          "riverWidthAu": 4,
+          "intersectionAu": [
+            1026.2825,
+            929.3724
+          ],
+          "bridgeId": "br_b",
+          "bridgeLoad": "foot",
+          "bridgeDistanceAu": 0.3173,
+          "bridgeWithinBridgeR22": true,
+          "fordWidthHeuristic": false,
+          "cartBlocked": true,
+          "footBlocked": false,
+          "bridgeValidWithin14u": true,
+          "roadDistanceToBridgeAu": 0,
+          "riverDistanceToBridgeAu": 0
+        },
+        {
+          "roadId": "rd_29",
+          "roadKind": "trail",
+          "riverId": "rv_grey_up",
+          "riverWidthAu": 4,
+          "intersectionAu": [
+            779.0802,
+            458.9882
+          ],
+          "bridgeId": "br_9",
+          "bridgeLoad": "foot",
+          "bridgeDistanceAu": 2.8259,
+          "bridgeWithinBridgeR22": true,
+          "fordWidthHeuristic": false,
+          "cartBlocked": true,
+          "footBlocked": false,
+          "bridgeValidWithin14u": true,
+          "roadDistanceToBridgeAu": 0,
+          "riverDistanceToBridgeAu": 0
+        },
+        {
+          "roadId": "rd_2a",
+          "roadKind": "trail",
+          "riverId": "rv_argus",
+          "riverWidthAu": 2.5,
+          "intersectionAu": [
+            991.3756,
+            351.6874
+          ],
+          "bridgeId": null,
+          "bridgeLoad": null,
+          "bridgeDistanceAu": null,
+          "bridgeWithinBridgeR22": false,
+          "fordWidthHeuristic": true,
+          "cartBlocked": true,
+          "footBlocked": false,
+          "bridgeValidWithin14u": false,
+          "roadDistanceToBridgeAu": 0,
+          "riverDistanceToBridgeAu": null
+        }
+      ],
+      "focusBridges": [
+        {
+          "bridgeId": "br_4",
+          "source": {
+            "at": [
+              732.00696765689,
+              649.8170519278754
+            ],
+            "ang": 1.132195670812087,
+            "load": "cart",
+            "conf": "proposal",
+            "name": "Cầu Silverrun"
+          },
+          "coveredIntersections": [
+            {
+              "roadId": "rd_b",
+              "roadKind": "cart",
+              "riverId": "rv_silver",
+              "riverWidthAu": 4,
+              "intersectionAu": [
+                732.1486,
+                649.7952
+              ],
+              "bridgeId": "br_4",
+              "bridgeLoad": "cart",
+              "bridgeDistanceAu": 0.1433,
+              "bridgeWithinBridgeR22": true,
+              "fordWidthHeuristic": false,
+              "cartBlocked": false,
+              "footBlocked": false,
+              "bridgeValidWithin14u": true,
+              "roadDistanceToBridgeAu": 0,
+              "riverDistanceToBridgeAu": 0
+            }
+          ],
+          "riverWidths": [
+            {
+              "riverId": "rv_silver",
+              "widthAu": 4,
+              "maskStrokeAu": 9,
+              "carveRadiusAu": 20
+            }
+          ],
+          "displayGlyphAu": {
+            "w": 13,
+            "h": 7.2
+          },
+          "channelSpanFitVerified": false,
+          "physicalDeckSpan": "UNDEFINED__DISPLAY_GLYPH_ONLY"
+        },
+        {
+          "bridgeId": "br_a",
+          "source": {
+            "at": [
+              882.9743849116596,
+              646.9030885831578
+            ],
+            "ang": 1.1844979517413203,
+            "load": "foot",
+            "conf": "proposal",
+            "name": "Cầu Silverrun"
+          },
+          "coveredIntersections": [
+            {
+              "roadId": "rd_20",
+              "roadKind": "riverside",
+              "riverId": "rv_silver",
+              "riverWidthAu": 4,
+              "intersectionAu": [
+                882.9405,
+                646.9076
+              ],
+              "bridgeId": "br_a",
+              "bridgeLoad": "foot",
+              "bridgeDistanceAu": 0.0342,
+              "bridgeWithinBridgeR22": true,
+              "fordWidthHeuristic": false,
+              "cartBlocked": true,
+              "footBlocked": false,
+              "bridgeValidWithin14u": true,
+              "roadDistanceToBridgeAu": 0,
+              "riverDistanceToBridgeAu": 0
+            }
+          ],
+          "riverWidths": [
+            {
+              "riverId": "rv_silver",
+              "widthAu": 4,
+              "maskStrokeAu": 9,
+              "carveRadiusAu": 20
+            }
+          ],
+          "displayGlyphAu": {
+            "w": 13,
+            "h": 7.2
+          },
+          "channelSpanFitVerified": false,
+          "physicalDeckSpan": "UNDEFINED__DISPLAY_GLYPH_ONLY"
+        }
+      ]
+    },
+    "zeroClearance": {
+      "geo01PathCellCount": 51,
+      "geo01ClearanceSummary": {
+        "count": 51,
+        "min": 0,
+        "max": 5,
+        "mean": 2.2941
+      },
+      "geo01ClearanceAuAlongPath": {
+        "min": 0,
+        "max": 40,
+        "mean": 18.0411
+      },
+      "zeroClearanceCellCount": 1,
+      "zeroClearanceCells": [
+        {
+          "cell": 20341,
+          "authoringAu": [
+            732,
+            652
+          ],
+          "geo01ClearanceCells": 0,
+          "maplabClearanceAu": 0,
+          "land": 1,
+          "lake": 0,
+          "river": 1,
+          "crossingCandidate": 2,
+          "bridgeId": "br_4"
+        }
+      ],
+      "interpretation": "Zero clearance is NOT a failure by itself: at br_4 the path must enter the river corridor. It means there is no free buffer around the centreline. With NO authored road width, river channel width, bridge deck span or cart footprint, swept clearance CANNOT be validated.",
+      "physicalClearanceStatus": "UNPROVEN"
+    },
+    "riverWidths": [
+      {
+        "id": "rv_grey_up",
+        "name": "Greywater River (thượng lưu)",
+        "kind": "river",
+        "widthAu": 4,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": false,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED",
+        "crossedByCorridor": false
+      },
+      {
+        "id": "rv_grey_low",
+        "name": "Greywater River",
+        "kind": "river",
+        "widthAu": 7,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 28,
+        "fordWidthHeuristic": false,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED",
+        "crossedByCorridor": false
+      },
+      {
+        "id": "rv_silver",
+        "name": "Silverrun",
+        "kind": "river",
+        "widthAu": 4,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": false,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED",
+        "crossedByCorridor": true
+      },
+      {
+        "id": "rv_canal",
+        "name": "Timber Cut Canal",
+        "kind": "canal",
+        "widthAu": 3.5,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 16,
+        "fordWidthHeuristic": false,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED",
+        "crossedByCorridor": false
+      },
+      {
+        "id": "rv_moss",
+        "name": "Mossbrook",
+        "kind": "river",
+        "widthAu": 4,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": false,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED",
+        "crossedByCorridor": false
+      },
+      {
+        "id": "rv_argus",
+        "name": "Argus Brook",
+        "kind": "river",
+        "widthAu": 2.5,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": true,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED",
+        "crossedByCorridor": false
+      },
+      {
+        "id": "rv_east",
+        "name": "Eastwater River",
+        "kind": "river",
+        "widthAu": 6,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 24,
+        "fordWidthHeuristic": false,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED",
+        "crossedByCorridor": false
+      },
+      {
+        "id": "rv_d1",
+        "name": "Delta West Channel",
+        "kind": "distributary",
+        "widthAu": 4,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": false,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED",
+        "crossedByCorridor": false
+      },
+      {
+        "id": "rv_d2",
+        "name": "Delta Centre Channel",
+        "kind": "distributary",
+        "widthAu": 5,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": false,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED",
+        "crossedByCorridor": false
+      },
+      {
+        "id": "rv_d3",
+        "name": "Delta East Channel",
+        "kind": "distributary",
+        "widthAu": 4,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": false,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED",
+        "crossedByCorridor": false
+      },
+      {
+        "id": "rv_amber_up",
+        "name": "Amber Wadi (thượng lưu)",
+        "kind": "river",
+        "widthAu": 2.5,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": true,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED",
+        "crossedByCorridor": false
+      },
+      {
+        "id": "rv_amber_low",
+        "name": "Amber River",
+        "kind": "river",
+        "widthAu": 4,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": false,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED",
+        "crossedByCorridor": false
+      },
+      {
+        "id": "rv_west",
+        "name": "Westbrook",
+        "kind": "river",
+        "widthAu": 3,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": true,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED",
+        "crossedByCorridor": false
+      },
+      {
+        "id": "rv_hook",
+        "name": "Hook Creek",
+        "kind": "river",
+        "widthAu": 3,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": true,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED",
+        "crossedByCorridor": false
+      },
+      {
+        "id": "rv_ash",
+        "name": "Ash Spring Brook",
+        "kind": "river",
+        "widthAu": 2.5,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": true,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED",
+        "crossedByCorridor": false
+      },
+      {
+        "id": "rv_salt",
+        "name": "Salt Brook",
+        "kind": "river",
+        "widthAu": 2.5,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": true,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED",
+        "crossedByCorridor": false
+      },
+      {
+        "id": "rv_slag",
+        "name": "Slag Run",
+        "kind": "river",
+        "widthAu": 2.5,
+        "authoredWidthSemantics": "editor stroke width in abstract authoring units (types.ts River.width)",
+        "maskStrokeAu": 9,
+        "carveRadiusAu": 20,
+        "fordWidthHeuristic": true,
+        "physicalChannelWidth": "UNDEFINED__NOT_AUTHORED",
+        "crossedByCorridor": false
+      }
+    ],
+    "surfaceContinuity": {
+      "routes": [
+        {
+          "routeId": "RT-1",
+          "label": "Authored cart corridor via the br_4 river crossing",
+          "totalDistanceAu": 400.1147,
+          "status": "AUTHORED_ROAD_GEOMETRY_PLUS_DERIVED_CONNECTORS",
+          "roadIds": [
+            "rd_b",
+            "rd_13",
+            "rd_1w",
+            "rd_16"
+          ],
+          "roadKinds": [
+            "cart",
+            "trail"
+          ],
+          "cartRouteContinuous": false,
+          "controlPointCount": 16,
+          "smoothedSampleCount": 49,
+          "surface": {
+            "offLandSamples": 0,
+            "inLakeSamples": 0,
+            "inRiverSamples": 2,
+            "outside9uRoadAnalysisStroke": 0,
+            "minClearanceAu": 0,
+            "meanClearanceAu": 57.1284,
+            "slopeMaplabIndexMin": 0.0245,
+            "slopeMaplabIndexMax": 0.1976,
+            "samplesAboveCartSlopeHeuristic": 0,
+            "authority": "MAPLAB_EDITOR_HEURISTIC__NOT_GAMEPLAY_PASSABILITY_LAW"
+          },
+          "samples": [
+            {
+              "at": [
+                812,
+                592
+              ],
+              "cell": 18601,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 1,
+              "elevationScalar": 0.2471,
+              "slopeMaplabIndex": 0.0884,
+              "biomeCode": 2,
+              "clearanceAu": 32
+            },
+            {
+              "at": [
+                780.0791,
+                594.2312
+              ],
+              "cell": 18597,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 1,
+              "elevationScalar": 0.2392,
+              "slopeMaplabIndex": 0.0347,
+              "biomeCode": 2,
+              "clearanceAu": 32
+            },
+            {
+              "at": [
+                752.4934,
+                606.7455
+              ],
+              "cell": 18844,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 1,
+              "elevationScalar": 0.2275,
+              "slopeMaplabIndex": 0.0548,
+              "biomeCode": 0,
+              "clearanceAu": 40
+            },
+            {
+              "at": [
+                734.8284,
+                633.398
+              ],
+              "cell": 19841,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 1,
+              "elevationScalar": 0.2314,
+              "slopeMaplabIndex": 0.0347,
+              "biomeCode": 1,
+              "clearanceAu": 16
+            },
+            {
+              "at": [
+                740.7587,
+                661.2065
+              ],
+              "cell": 20592,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 1,
+              "elevationScalar": 0.2431,
+              "slopeMaplabIndex": 0.0735,
+              "biomeCode": 2,
+              "clearanceAu": 8
+            },
+            {
+              "at": [
+                760.2715,
+                680.3841
+              ],
+              "cell": 21345,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 0,
+              "elevationScalar": 0.2588,
+              "slopeMaplabIndex": 0.1096,
+              "biomeCode": 2,
+              "clearanceAu": 38.6274
+            },
+            {
+              "at": [
+                782.7954,
+                703.1146
+              ],
+              "cell": 21847,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 0,
+              "elevationScalar": 0.2667,
+              "slopeMaplabIndex": 0.098,
+              "biomeCode": 2,
+              "clearanceAu": 56
+            },
+            {
+              "at": [
+                787.4218,
+                727.1332
+              ],
+              "cell": 22598,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 0,
+              "elevationScalar": 0.2745,
+              "slopeMaplabIndex": 0.0775,
+              "biomeCode": 2,
+              "clearanceAu": 80
+            },
+            {
+              "at": [
+                797.9307,
+                756.6613
+              ],
+              "cell": 23599,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 0,
+              "elevationScalar": 0.2667,
+              "slopeMaplabIndex": 0.0775,
+              "biomeCode": 2,
+              "clearanceAu": 112
+            },
+            {
+              "at": [
+                819.4821,
+                777.9765
+              ],
+              "cell": 24352,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 0,
+              "elevationScalar": 0.2392,
+              "slopeMaplabIndex": 0.1011,
+              "biomeCode": 2,
+              "clearanceAu": 125.2548
+            },
+            {
+              "at": [
+                850.8006,
+                779.9209
+              ],
+              "cell": 24356,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 0,
+              "elevationScalar": 0.251,
+              "slopeMaplabIndex": 0.0775,
+              "biomeCode": 2,
+              "clearanceAu": 93.2548
+            },
+            {
+              "at": [
+                880.6641,
+                787.7838
+              ],
+              "cell": 24610,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 0,
+              "elevationScalar": 0.2235,
+              "slopeMaplabIndex": 0.125,
+              "biomeCode": 2,
+              "clearanceAu": 64
+            },
+            {
+              "at": [
+                905,
+                785
+              ],
+              "cell": 24613,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 0,
+              "elevationScalar": 0.2157,
+              "slopeMaplabIndex": 0.1976,
+              "biomeCode": 2,
+              "clearanceAu": 40
+            }
+          ]
+        },
+        {
+          "routeId": "RT-2",
+          "label": "Same corridor without the alt detour rd_1w (full rd_13)",
+          "totalDistanceAu": 403.9036,
+          "status": "AUTHORED_ROAD_GEOMETRY_PLUS_DERIVED_CONNECTORS",
+          "roadIds": [
+            "rd_b",
+            "rd_13",
+            "rd_16"
+          ],
+          "roadKinds": [
+            "cart",
+            "trail"
+          ],
+          "cartRouteContinuous": false,
+          "controlPointCount": 17,
+          "smoothedSampleCount": 49,
+          "surface": {
+            "offLandSamples": 0,
+            "inLakeSamples": 0,
+            "inRiverSamples": 2,
+            "outside9uRoadAnalysisStroke": 0,
+            "minClearanceAu": 0,
+            "meanClearanceAu": 59.0712,
+            "slopeMaplabIndexMin": 0,
+            "slopeMaplabIndexMax": 0.1976,
+            "samplesAboveCartSlopeHeuristic": 0,
+            "authority": "MAPLAB_EDITOR_HEURISTIC__NOT_GAMEPLAY_PASSABILITY_LAW"
+          },
+          "samples": [
+            {
+              "at": [
+                812,
+                592
+              ],
+              "cell": 18601,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 1,
+              "elevationScalar": 0.2471,
+              "slopeMaplabIndex": 0.0884,
+              "biomeCode": 2,
+              "clearanceAu": 32
+            },
+            {
+              "at": [
+                780.0791,
+                594.2312
+              ],
+              "cell": 18597,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 1,
+              "elevationScalar": 0.2392,
+              "slopeMaplabIndex": 0.0347,
+              "biomeCode": 2,
+              "clearanceAu": 32
+            },
+            {
+              "at": [
+                752.4934,
+                606.7455
+              ],
+              "cell": 18844,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 1,
+              "elevationScalar": 0.2275,
+              "slopeMaplabIndex": 0.0548,
+              "biomeCode": 0,
+              "clearanceAu": 40
+            },
+            {
+              "at": [
+                734.8284,
+                633.398
+              ],
+              "cell": 19841,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 1,
+              "elevationScalar": 0.2314,
+              "slopeMaplabIndex": 0.0347,
+              "biomeCode": 1,
+              "clearanceAu": 16
+            },
+            {
+              "at": [
+                740.7587,
+                661.2065
+              ],
+              "cell": 20592,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 1,
+              "elevationScalar": 0.2431,
+              "slopeMaplabIndex": 0.0735,
+              "biomeCode": 2,
+              "clearanceAu": 8
+            },
+            {
+              "at": [
+                760.2715,
+                680.3841
+              ],
+              "cell": 21345,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 0,
+              "elevationScalar": 0.2588,
+              "slopeMaplabIndex": 0.1096,
+              "biomeCode": 2,
+              "clearanceAu": 38.6274
+            },
+            {
+              "at": [
+                782.7954,
+                703.1146
+              ],
+              "cell": 21847,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 0,
+              "elevationScalar": 0.2667,
+              "slopeMaplabIndex": 0.098,
+              "biomeCode": 2,
+              "clearanceAu": 56
+            },
+            {
+              "at": [
+                801.9245,
+                722.1282
+              ],
+              "cell": 22600,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 0,
+              "elevationScalar": 0.2824,
+              "slopeMaplabIndex": 0.0347,
+              "biomeCode": 2,
+              "clearanceAu": 83.3137
+            },
+            {
+              "at": [
+                803.7324,
+                753.7545
+              ],
+              "cell": 23600,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 0,
+              "elevationScalar": 0.2667,
+              "slopeMaplabIndex": 0.0548,
+              "biomeCode": 2,
+              "clearanceAu": 115.3137
+            },
+            {
+              "at": [
+                814.5611,
+                774.6922
+              ],
+              "cell": 24101,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 0,
+              "elevationScalar": 0.2549,
+              "slopeMaplabIndex": 0.1225,
+              "biomeCode": 2,
+              "clearanceAu": 129.9411
+            },
+            {
+              "at": [
+                844.8759,
+                780.3494
+              ],
+              "cell": 24355,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 0,
+              "elevationScalar": 0.2471,
+              "slopeMaplabIndex": 0.104,
+              "biomeCode": 2,
+              "clearanceAu": 101.2548
+            },
+            {
+              "at": [
+                874.7269,
+                787.9779
+              ],
+              "cell": 24609,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 0,
+              "elevationScalar": 0.2275,
+              "slopeMaplabIndex": 0.1429,
+              "biomeCode": 2,
+              "clearanceAu": 72
+            },
+            {
+              "at": [
+                905,
+                785
+              ],
+              "cell": 24613,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 0,
+              "elevationScalar": 0.2157,
+              "slopeMaplabIndex": 0.1976,
+              "biomeCode": 2,
+              "clearanceAu": 40
+            }
+          ]
+        },
+        {
+          "routeId": "RT-3",
+          "label": "Riverside path rd_20 (Greywater West Bank Path)",
+          "totalDistanceAu": 398.0289,
+          "status": "AUTHORED_ROAD_GEOMETRY_PLUS_DERIVED_CONNECTORS",
+          "roadIds": [
+            "rd_20"
+          ],
+          "roadKinds": [
+            "riverside"
+          ],
+          "cartRouteContinuous": false,
+          "controlPointCount": 5,
+          "smoothedSampleCount": 37,
+          "surface": {
+            "offLandSamples": 0,
+            "inLakeSamples": 0,
+            "inRiverSamples": 1,
+            "outside9uRoadAnalysisStroke": 1,
+            "minClearanceAu": 0,
+            "meanClearanceAu": 15.1224,
+            "slopeMaplabIndexMin": 0.0693,
+            "slopeMaplabIndexMax": 0.5442,
+            "samplesAboveCartSlopeHeuristic": 0,
+            "authority": "MAPLAB_EDITOR_HEURISTIC__NOT_GAMEPLAY_PASSABILITY_LAW"
+          },
+          "samples": [
+            {
+              "at": [
+                826.3391,
+                580.4047
+              ],
+              "cell": 18103,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 1,
+              "elevationScalar": 0.2431,
+              "slopeMaplabIndex": 0.0884,
+              "biomeCode": 2,
+              "clearanceAu": 19.3137
+            },
+            {
+              "at": [
+                852.6794,
+                598.2915
+              ],
+              "cell": 18606,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 0,
+              "elevationScalar": 0.2588,
+              "slopeMaplabIndex": 0.0884,
+              "biomeCode": 2,
+              "clearanceAu": 16
+            },
+            {
+              "at": [
+                872.1072,
+                623.5588
+              ],
+              "cell": 19359,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 0,
+              "roadCart": 0,
+              "elevationScalar": 0.2667,
+              "slopeMaplabIndex": 0.2605,
+              "biomeCode": 2,
+              "clearanceAu": 8
+            },
+            {
+              "at": [
+                885.2276,
+                652.7133
+              ],
+              "cell": 20360,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 0,
+              "elevationScalar": 0.2431,
+              "slopeMaplabIndex": 0.4079,
+              "biomeCode": 2,
+              "clearanceAu": 8
+            },
+            {
+              "at": [
+                895.9208,
+                682.872
+              ],
+              "cell": 21361,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 0,
+              "elevationScalar": 0.3098,
+              "slopeMaplabIndex": 0.0775,
+              "biomeCode": 2,
+              "clearanceAu": 22.6274
+            },
+            {
+              "at": [
+                906.0885,
+                713.2136
+              ],
+              "cell": 22363,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 0,
+              "elevationScalar": 0.298,
+              "slopeMaplabIndex": 0.3196,
+              "biomeCode": 2,
+              "clearanceAu": 16
+            },
+            {
+              "at": [
+                916.283,
+                743.5462
+              ],
+              "cell": 23114,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 0,
+              "elevationScalar": 0.2706,
+              "slopeMaplabIndex": 0.2312,
+              "biomeCode": 2,
+              "clearanceAu": 16
+            },
+            {
+              "at": [
+                927.2532,
+                773.6025
+              ],
+              "cell": 24115,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 0,
+              "elevationScalar": 0.2353,
+              "slopeMaplabIndex": 0.155,
+              "biomeCode": 2,
+              "clearanceAu": 19.3137
+            },
+            {
+              "at": [
+                941.0598,
+                802.4465
+              ],
+              "cell": 25117,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 0,
+              "elevationScalar": 0.1647,
+              "slopeMaplabIndex": 0.155,
+              "biomeCode": 2,
+              "clearanceAu": 16
+            },
+            {
+              "at": [
+                954.1168,
+                823.7669
+              ],
+              "cell": 25619,
+              "land": 1,
+              "lake": 0,
+              "river": 0,
+              "roadFoot": 1,
+              "roadCart": 1,
+              "elevationScalar": 0.1333,
+              "slopeMaplabIndex": 0.155,
+              "biomeCode": 1,
+              "clearanceAu": 11.3137
+            }
+          ]
+        }
+      ],
+      "obstacleDefinition": "sea (not land) | lake | river (MapLab 9u-min river mask); chamfer distance in authoring units"
+    },
+    "derivedConnectors": [
+      {
+        "routeId": "RT-1",
+        "from": "spawn:790,622",
+        "to": "graphNode:48@812,592",
+        "distanceAu": 37.20215,
+        "status": "DERIVED_STRAIGHT_LINE__NOT_AUTHORED_ROAD",
+        "onLandFraction": 1,
+        "offLandSamples": 0,
+        "lakeSamples": 0,
+        "riverSamples": 0,
+        "within9uRoadAnalysisStrokeSamples": 6,
+        "exceedsEditorAccessR48": false,
+        "needsMapSpatialAuthoring": true,
+        "physicalWidth": "UNDEFINED__NOT_AUTHORED",
+        "note": "A straight derived connector has no authored centreline, width, surface or clearance envelope. It is NOT a road."
+      },
+      {
+        "routeId": "RT-2",
+        "from": "spawn:790,622",
+        "to": "graphNode:48@812,592",
+        "distanceAu": 37.20215,
+        "status": "DERIVED_STRAIGHT_LINE__NOT_AUTHORED_ROAD",
+        "onLandFraction": 1,
+        "offLandSamples": 0,
+        "lakeSamples": 0,
+        "riverSamples": 0,
+        "within9uRoadAnalysisStrokeSamples": 6,
+        "exceedsEditorAccessR48": false,
+        "needsMapSpatialAuthoring": true,
+        "physicalWidth": "UNDEFINED__NOT_AUTHORED",
+        "note": "A straight derived connector has no authored centreline, width, surface or clearance envelope. It is NOT a road."
+      },
+      {
+        "routeId": "RT-3",
+        "from": "spawn:790,622",
+        "to": "graphNode:49@825.6209,579.9157",
+        "distanceAu": 55.135595,
+        "status": "DERIVED_STRAIGHT_LINE__NOT_AUTHORED_ROAD",
+        "onLandFraction": 1,
+        "offLandSamples": 0,
+        "lakeSamples": 0,
+        "riverSamples": 0,
+        "within9uRoadAnalysisStrokeSamples": 9,
+        "exceedsEditorAccessR48": true,
+        "needsMapSpatialAuthoring": true,
+        "physicalWidth": "UNDEFINED__NOT_AUTHORED",
+        "note": "A straight derived connector has no authored centreline, width, surface or clearance envelope. It is NOT a road."
+      },
+      {
+        "routeId": "RT-3",
+        "from": "graphNode:67@954.1168,823.7669",
+        "to": "poi:905,785",
+        "distanceAu": 62.57266,
+        "status": "DERIVED_STRAIGHT_LINE__NOT_AUTHORED_ROAD",
+        "onLandFraction": 1,
+        "offLandSamples": 0,
+        "lakeSamples": 0,
+        "riverSamples": 0,
+        "within9uRoadAnalysisStrokeSamples": 12,
+        "exceedsEditorAccessR48": true,
+        "needsMapSpatialAuthoring": true,
+        "physicalWidth": "UNDEFINED__NOT_AUTHORED",
+        "note": "A straight derived connector has no authored centreline, width, surface or clearance envelope. It is NOT a road."
+      }
+    ],
+    "poiAccess": {
+      "poiId": "po_kilns",
+      "at": [
+        905,
+        785
+      ],
+      "arche": "smelter",
+      "depth": "surface",
+      "gate": "none",
+      "conf": "proposal",
+      "foot": [
+        [
+          892.1916387148686,
+          774.9026200829348
+        ],
+        [
+          919.0143408602113,
+          776.6567721921422
+        ],
+        [
+          917.8083612851314,
+          795.0973799170652
+        ],
+        [
+          890.9856591397887,
+          793.3432278078578
+        ]
+      ],
+      "deep": null,
+      "retreat": [],
+      "links": [],
+      "editorAccessRAu": 48,
+      "nearestCartRoad": {
+        "d": 56.8792,
+        "roadId": "rd_n"
+      },
+      "cartAccessWithinAccessR": false,
+      "nearestFootRoad": {
+        "d": 0,
+        "roadId": "rd_16"
+      },
+      "footAccessWithinAccessR": true,
+      "verdict": "NO_CART_ACCESS_WITHIN_EDITOR_ACCESS_R__CART_ROUTE_TO_POI_NOT_ESTABLISHED"
+    }
+  },
+  "failingOrNeedsAuthoring": [
+    {
+      "id": "F-01",
+      "severity": "FAIL",
+      "subject": "RT-1 / RT-2 label \"Authored cart corridor\"",
+      "evidence": "Only rd_b is kind:cart; rd_13, rd_1w, rd_16 are kind:trail. br_4 is a cart bridge but that does not make the route a cart route.",
+      "resolution": "Re-label as a FOOT/TRAIL corridor with one cart segment. Do not claim cart traversability."
+    },
+    {
+      "id": "F-02",
+      "severity": "FAIL",
+      "subject": "po_kilns cart access",
+      "evidence": "nearest cart road rd_n is 56.8792au away; editor ACCESS_R=48au.",
+      "resolution": "No cart route to po_kilns is established. Either author a cart road (Map geometry, separate PROPOSED work) or keep the POI foot-access-only."
+    },
+    {
+      "id": "F-03",
+      "severity": "NEEDS_AUTHORING",
+      "subject": "GEO-01 derived connectors",
+      "evidence": "4 straight connectors (37.20au, 55.14au, 62.57au x2) are not authored roads; 2 exceed editor ACCESS_R=48.",
+      "resolution": "Map must author centreline + surface + width before any of these becomes a physical path."
+    },
+    {
+      "id": "F-04",
+      "severity": "UNPROVEN",
+      "subject": "Swept clearance at br_4",
+      "evidence": "1 zero-clearance cells on the GEO-01 BFS path; road width, river channel width, bridge deck span and cart footprint are all UNDEFINED.",
+      "resolution": "Validate dimensions and swept clearance before any cart-route claim. channelSpanFitVerified remains false."
+    },
+    {
+      "id": "F-05",
+      "severity": "NEEDS_REDERIVATION",
+      "subject": "Road junction tolerance",
+      "evidence": "GEO-01 joinToleranceAu=8 vs editor SNAP_TOL=7; 4 endpoint joins exist only at 8; resampled graph nodes 1444 @7 vs 790 @8, with 773 consecutive-sample self-merges at 8 that would delete road edges in graph.ts.",
+      "resolution": "Re-derive the road graph at SNAP_TOL=7 on Catmull-Rom smoothed curves."
+    },
+    {
+      "id": "F-06",
+      "severity": "NEEDS_AUTHORING",
+      "subject": "po_kilns physical shell",
+      "evidence": "rooms/entrances/passages/doorOpenings/circulation/retreatPaths are NOT_IN_SOURCE (now correctly MAP_OWNED).",
+      "resolution": "A PROPOSED, non-canonical Map-owned candidate is in output/poi_po_kilns.proposed.v1.json."
+    },
+    {
+      "id": "F-07",
+      "severity": "UNPROVEN",
+      "subject": "Bridge span fit for both crossings",
+      "evidence": "br_4 (cart) and br_a (foot) are covered by BRIDGE_R=22, but the 13x7.2u exporter rectangle is a display glyph, not a physical deck span. River mask stroke is max(width,9)u.",
+      "resolution": "Author/approve physical channel width and deck span; do not infer span from the glyph."
+    },
+    {
+      "id": "F-08",
+      "severity": "FAIL_FOR_CART",
+      "subject": "br_a / rd_20 crossing (RT-3)",
+      "evidence": "bridge load=foot; rd_20 is kind:riverside. graph.ts blocks cart at any foot-load bridge.",
+      "resolution": "RT-3 is a FOOT candidate only. Never present it as a cart alternative."
+    }
+  ],
+  "correctionsToGeo01": [
+    "RT-1 is NOT an \"Authored cart corridor\": only rd_b is cart; the rest are trails.",
+    "joinToleranceAu=8 is not the editor tolerance (SNAP_TOL=7).",
+    "The 50-step BFS path is a RASTER CANDIDATE, not a physically traversable cart route.",
+    "Zero clearance is reported explicitly with au distances from MapLab masks, not hidden behind a mean.",
+    "Physical POI rooms/entrances/passages/door openings are MAP_OWNED, not Gameplay-owned."
+  ],
+  "noClaim": "NO_CLAIM_OF_PHYSICALLY_TRAVERSABLE_CART_ROUTES_UNTIL_DIMENSIONS_AND_SWEPT_CLEARANCE_ARE_VALIDATED",
+  "noInventedPassabilityRules": true,
+  "noRuntimeMerge": true,
+  "noGameplayPopulation": true
+}

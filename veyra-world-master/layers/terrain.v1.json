@@ -1,0 +1,691 @@
+{
+  "schema": "soh.wmp.terrain.v1",
+  "status": "PHYSICAL_TERRAIN_CANDIDATES__NOT_APPROVED_CANON",
+  "authority": "MAP_DESIGNS_THE_PHYSICAL_WORLD__GAMEPLAY_POPULATES_AND_SIMULATES_IT",
+  "frame": {
+    "authoring": [
+      2000,
+      1400
+    ],
+    "unit": "authoring_unit",
+    "grid": {
+      "gw": 250,
+      "gh": 175,
+      "cellAu": 8
+    },
+    "transformStatus": "UNDECIDED"
+  },
+  "sourceRasters": [
+    "biomeCode",
+    "buildableCandidate",
+    "cargoCandidate",
+    "clearanceCells",
+    "coast",
+    "crossingCandidate",
+    "elderGeometryId",
+    "elevation",
+    "freshwater",
+    "freshwaterProximityCells",
+    "lakeId",
+    "landId",
+    "poiGeometryId",
+    "protectedGeometryCandidate",
+    "riverId",
+    "roadClass",
+    "seaDistanceCells",
+    "slope",
+    "walkableCandidate",
+    "waterClass",
+    "zoneId"
+  ],
+  "elevation": {
+    "sourceLayer": "elevation",
+    "dtype": "u8 RAW BYTE",
+    "unit": "UNRESOLVED",
+    "metresProof": false,
+    "status": "UNRESOLVED",
+    "note": "Existing source elevation values are raw bytes, NOT proven metres. No vertical scale is asserted."
+  },
+  "slope": {
+    "sourceLayer": "slope",
+    "dtype": "u8 RAW BYTE",
+    "unit": "UNRESOLVED",
+    "status": "UNRESOLVED",
+    "note": "Slope classes are ordinal over raw bytes, not degrees or climb rules."
+  },
+  "physicalDimensions": {
+    "landform": true,
+    "substrate": true,
+    "surface": true,
+    "soil": true,
+    "slopeClass": true,
+    "cliffs": true,
+    "terraces": true,
+    "constructionSuitability": true,
+    "vegetationAffordance": true,
+    "biomeTransitions": true
+  },
+  "derivedRasters": [
+    {
+      "name": "surface",
+      "file": "rasters/surface.u8",
+      "bytes": 43750,
+      "sha256": "d570ee3a53b0ee832454e9dcce1c4a316c4fdeb64ebcb9b6174821d50f7a1edf",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "Web T terrain code (0..19) from explicit crosswalk + overrides",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "biomeSubtype",
+      "file": "rasters/biomeSubtype.u8",
+      "bytes": 43750,
+      "sha256": "232998e642e836f30129b3a689f7cd458f8c57526ecd2c1bad51449cbeff839d",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "Verbatim 12-code source biome; preserves forest variants",
+      "status": "SOURCE_AUTHORED",
+      "unit": "SOURCE_CODE"
+    },
+    {
+      "name": "landform",
+      "file": "rasters/landform.u8",
+      "bytes": 43750,
+      "sha256": "8f28a76ba7b5c143f3be0f172187189d5657b70b6e41b3f7425b6c339f784baf",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0 sea,1 coast,2 plain,3 hill,4 cliff,5 wetland,6 lake,7 river,8 beach",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "substrate",
+      "file": "rasters/substrate.u8",
+      "bytes": 43750,
+      "sha256": "d7a86a6bb275e16f631a47cad04862f4fd93194071502000bb3790708c4f7d62",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0 water,1 sand,2 loam,3 clay,4 rock,5 ash,6 snow/ice,7 toxic sludge,8 peat",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "soil",
+      "file": "rasters/soil.u8",
+      "bytes": 43750,
+      "sha256": "c851a7673545b464614e5e8879370a917d8ed6f13e6c72b2f967f158293a8442",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0 none,1 dry sand,2 moist loam,3 waterlogged peat,4 frozen,5 saline,6 contaminated,7 regolith",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "construction",
+      "file": "rasters/construction.u8",
+      "bytes": 43750,
+      "sha256": "1c11793bc4bf66f5a7424c813583a39eaf96be828f2be58143c736ed93e967f5",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0 unsuited,1 marginal,2 suitable,3 preferred (geometry only)",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "vegetation",
+      "file": "rasters/vegetation.u8",
+      "bytes": 43750,
+      "sha256": "7cf7478ad0acf17dea71bd15fb363cac6e47fd0b7cfb09bfef4e15b75f78ca38",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0 none,1 sparse,2 grass,3 wetland,4 forest,5 ancient forest",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "cliff",
+      "file": "rasters/cliff.u8",
+      "bytes": 43750,
+      "sha256": "c394fedefb360cfb0de08d9ec60bf75cd3ea0c5b3f657fda23b7909fdb3c774d",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "1 = steep raw-slope candidate",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "terrace",
+      "file": "rasters/terrace.u8",
+      "bytes": 43750,
+      "sha256": "c3c210a36bcfa90cd61830ffd8c2f1280c5a7d3cb6610384952617a9067dfa5f",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "1 = intermediate raw-slope band",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "slopeClass",
+      "file": "rasters/slopeClass.u8",
+      "bytes": 43750,
+      "sha256": "a0166888fd24a819cd6203b1f09959b798a6e43dd20f8fc063aec987da5907ae",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0..4 ordinal classes over RAW slope byte, NOT proven degrees",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "biomeTransition",
+      "file": "rasters/biomeTransition.u8",
+      "bytes": 43750,
+      "sha256": "5f6724597c1a1030a9396da40dae2c4116a677af6a7a70ed952650f9b5ce7469",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "1 = 4-neighbour authored biome change on land",
+      "status": "DERIVED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "exposure",
+      "file": "rasters/exposure.u8",
+      "bytes": 43750,
+      "sha256": "a70d75e6df94415220d1d0968e9236e917a8f183ca8bacd84a99274488ecb61a",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0..3 ordinal exposure (coast/altitude/canopy)",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "shade",
+      "file": "rasters/shade.u8",
+      "bytes": 43750,
+      "sha256": "9b17deede1e75eb550689167bb96a67d101bd60ccfa14ee6180c36110727bc56",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0..2 canopy/shade potential",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "drainage",
+      "file": "rasters/drainage.u8",
+      "bytes": 43750,
+      "sha256": "2149da46446a3a79b641f38457a8eb7670215acceec68707999180b01b3a6a91",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0 poor,1 waterlogged,2 moderate,3 free water",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "fireFuel",
+      "file": "rasters/fireFuel.u8",
+      "bytes": 43750,
+      "sha256": "2174e03e859286c12be596a676be26c7f8055b521ef038f8b38c26d1d7e6e275",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0..3 fuel load potential, NO damage rate",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "firebreak",
+      "file": "rasters/firebreak.u8",
+      "bytes": 43750,
+      "sha256": "9cdc76f30b9743c70e839a0a1a68c3d8af2fa5089a1b9a407cf2a98c784c6e3d",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0 none,1 road,2 water",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "footprint",
+      "file": "rasters/footprint.u8",
+      "bytes": 43750,
+      "sha256": "feadb6ee3baf7701ad03a02cfcafa4857ab861502ee70b2b9a2725a3616e154a",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0 none,1 hard,2 loam,3 soft/wet/snow (trace retention potential)",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "floodplain",
+      "file": "rasters/floodplain.u8",
+      "bytes": 43750,
+      "sha256": "0be871df9707132f9dad39d8ac4f1c4ebeedd891505d41c41b68b00383f5bb35",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "1 = low raw-elevation land adjacent to water",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "bank",
+      "file": "rasters/bank.u8",
+      "bytes": 43750,
+      "sha256": "130480bb79d826aa63f9b0d9eeaf514ca8c55c3f13b831043b982e5154acd7ed",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0 none,1 sea bank,2 lake bank,3 river bank",
+      "status": "DERIVED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "channel",
+      "file": "rasters/channel.u8",
+      "bytes": 43750,
+      "sha256": "609cb3c3e5b58d84f9b8cea1979de7da2f0f7e8cf2f70e8cbb44ff9820b2a1db",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "1 = authored river centreline cell",
+      "status": "DERIVED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "buildable",
+      "file": "rasters/buildable.u8",
+      "bytes": 43750,
+      "sha256": "11aa06c46cfb36559b77fbedbed66259ea3f588ecae4615512510e496ffcd81e",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "1 = geometric build candidate (NOT occupancy/claim legality)",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "climateRegion",
+      "file": "rasters/climateRegion.u8",
+      "bytes": 43750,
+      "sha256": "6a803c7ec716b5d962f1df3bd96a406a218d3563b96fd0e58cfb3cf6d2ae9461",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "Climate-region index; decode via layers/climate.v1.json",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "temperaturePotential",
+      "file": "rasters/temperaturePotential.u8",
+      "bytes": 43750,
+      "sha256": "d9beeb22e6674cf3e74269027bc0c0c73a26de0d1bb27d42b19d089c290e3749",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0 cold .. 4 hot ORDINAL; NO temperature value",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "humidityPotential",
+      "file": "rasters/humidityPotential.u8",
+      "bytes": 43750,
+      "sha256": "73c07faea29f4dba57e6e708f2c0fa67dfc68977491d9a98f1af5614a765cc2d",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0..4 ORDINAL; NO humidity value",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "rainExposure",
+      "file": "rasters/rainExposure.u8",
+      "bytes": 43750,
+      "sha256": "a70d75e6df94415220d1d0968e9236e917a8f183ca8bacd84a99274488ecb61a",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0..3 ORDINAL",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "sunExposure",
+      "file": "rasters/sunExposure.u8",
+      "bytes": 43750,
+      "sha256": "5bf1a44b90388e44f5a63fb85c66b311483651eef6fe2149e8dfef126c21835b",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0..3 ORDINAL",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "windExposure",
+      "file": "rasters/windExposure.u8",
+      "bytes": 43750,
+      "sha256": "34fd9294e38a51fc3ed255541b143985d1c8ba26d3337a82b8bbcd48aa0f3f88",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0..3 ORDINAL",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "frostPotential",
+      "file": "rasters/frostPotential.u8",
+      "bytes": 43750,
+      "sha256": "ee99786cd4893081bec49433d9203e46ce7bf28e7dc68b82a2929f515307990c",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0..3 ORDINAL",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "soilMoisture",
+      "file": "rasters/soilMoisture.u8",
+      "bytes": 43750,
+      "sha256": "82ab8650ab8dc0eb4d09f6ff37272c1a612df388d372a6d4bb0b8a901ee19cf7",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0..4 ORDINAL; NO numeric moisture",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "evaporation",
+      "file": "rasters/evaporation.u8",
+      "bytes": 43750,
+      "sha256": "fe3dfb87f4beac3756dfccb90da3e957d9012653492ddea25d7fb9f5dfc1ce0f",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0..3 ORDINAL",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "firePropagation",
+      "file": "rasters/firePropagation.u8",
+      "bytes": 43750,
+      "sha256": "e1c297c2f91f707a70d5cdff466f68d652ae68f34a3d4f8da09a7379d02e337a",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0..3 ORDINAL; NO spread/damage rate",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "farmingAffordance",
+      "file": "rasters/farmingAffordance.u8",
+      "bytes": 43750,
+      "sha256": "d2bb8d6c6083b08d862928c2758cd6be08546fe3a78f3ce1156f4abc67444ef9",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0..3 ORDINAL geographic suitability",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    }
+  ],
+  "biomeLegend": [
+    {
+      "code": 0,
+      "key": "meadow",
+      "name": "Bình nguyên / canh tác",
+      "sourceColor": [
+        160,
+        184,
+        100
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 1,
+      "key": "forest",
+      "name": "Rừng lá rộng",
+      "sourceColor": [
+        92,
+        134,
+        74
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 2,
+      "key": "ancient",
+      "name": "Rừng cổ (sống động)",
+      "sourceColor": [
+        52,
+        116,
+        64
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 3,
+      "key": "conifer",
+      "name": "Rừng thông / cao nguyên",
+      "sourceColor": [
+        78,
+        114,
+        96
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 4,
+      "key": "marsh",
+      "name": "Đầm lầy / cửa sông",
+      "sourceColor": [
+        112,
+        136,
+        98
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 5,
+      "key": "desert",
+      "name": "Sa mạc / cồn cát",
+      "sourceColor": [
+        219,
+        190,
+        124
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 6,
+      "key": "scrub",
+      "name": "Thảo nguyên khô",
+      "sourceColor": [
+        190,
+        178,
+        112
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 7,
+      "key": "rock",
+      "name": "Đá trần / núi",
+      "sourceColor": [
+        146,
+        138,
+        128
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 8,
+      "key": "snow",
+      "name": "Lạnh / tuyết",
+      "sourceColor": [
+        234,
+        238,
+        242
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 9,
+      "key": "volcanic",
+      "name": "Núi lửa / obsidian",
+      "sourceColor": [
+        88,
+        72,
+        70
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 10,
+      "key": "toxic",
+      "name": "Đất độc / lưu huỳnh",
+      "sourceColor": [
+        172,
+        168,
+        76
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 11,
+      "key": "beach",
+      "name": "Bãi cát ven biển",
+      "sourceColor": [
+        226,
+        212,
+        164
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    }
+  ],
+  "constructionRule": "Derived from authored landId/waterClass/protectedGeometryCandidate/elderGeometryId/poiGeometryId/clearanceCells/buildableCandidate and RAW slope. It is a GEOMETRIC candidate, never occupancy or claim legality.",
+  "noClaims": [
+    "NO proven metres or degrees",
+    "NO official temperature/damage/weather/season rates",
+    "NO collision law",
+    "NO approved runtime scale"
+  ]
+}

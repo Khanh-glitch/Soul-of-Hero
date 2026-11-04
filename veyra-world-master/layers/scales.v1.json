@@ -1,0 +1,383 @@
+{
+  "schema": "soh.wmp.scale_profiles.v1",
+  "status": "COMPARISON_AND_CONDITIONAL_RECOMMENDATION__NOT_APPROVED_CANON",
+  "authority": "MAP_DESIGNS_THE_PHYSICAL_WORLD__GAMEPLAY_POPULATES_AND_SIMULATES_IT",
+  "evaluated": [
+    "player and vehicle body geometry",
+    "doors, walls, roofs and interiors",
+    "steepness and climbable terrain",
+    "cart/loaded-cart clearance",
+    "world and POI dimensions",
+    "travel and hauling costs",
+    "640x360 1x camera legibility",
+    "streaming/chunk memory",
+    "coordinate round trips and boundary drift"
+  ],
+  "measuredRouteAu": 510.1338,
+  "profiles": [
+    {
+      "id": "scale.U10",
+      "unitsPerTileAu": 1,
+      "tilePx": 16,
+      "worldTiles": [
+        2000,
+        1400
+      ],
+      "worldPx": [
+        32000,
+        22400
+      ],
+      "camera": {
+        "viewPx": [
+          640,
+          360
+        ],
+        "viewTiles": [
+          40,
+          22.5
+        ],
+        "visibleAu": [
+          40,
+          22.5
+        ],
+        "legibleOpeningPx": 64,
+        "legibleWallPx": 32,
+        "playerProxyPx": [
+          8,
+          10
+        ]
+      },
+      "poi": {
+        "footPerimeterAu": 140.4,
+        "footPerimeterTiles": 140.4,
+        "wallThicknessTiles": 2,
+        "openingTiles": 4,
+        "openingPx": 64
+      },
+      "bodies": [
+        {
+          "profileId": "BODY-FOOT",
+          "widthTiles": 2,
+          "widthPx": 32,
+          "sweptClearance": "UNKNOWN"
+        },
+        {
+          "profileId": "BODY-CART",
+          "widthTiles": 8,
+          "widthPx": 128,
+          "sweptClearance": "UNKNOWN"
+        },
+        {
+          "profileId": "BODY-LOADED-CART",
+          "widthTiles": 16,
+          "widthPx": 256,
+          "sweptClearance": "UNKNOWN"
+        }
+      ],
+      "terrain": {
+        "steepnessDegrees": "UNRESOLVED",
+        "climbRule": "GAMEPLAY_OWNED",
+        "note": "Raw slope bytes are not degrees."
+      },
+      "travel": {
+        "routeAu": 510.1338,
+        "routeTiles": 510.1338,
+        "loadedVsUnloadedRatio": "UNKNOWN",
+        "haulCost": "GAMEPLAY_OWNED"
+      },
+      "streaming": {
+        "chunkTiles": 16,
+        "chunkCountAtThisScale": 11000,
+        "bytesPerChunkRastersApprox": 1024,
+        "note": "Approximate raster budget only; no runtime streaming implementation."
+      },
+      "coordinateRoundTrip": {
+        "maxDriftAu": 0.5,
+        "worldRightBoundaryDriftAu": 0,
+        "bottomBoundaryDriftAu": 0,
+        "transform": "cell-centre-v1"
+      },
+      "diagnostic": false,
+      "status": "COMPARISON_PROFILE__NOT_APPROVED_CANON"
+    },
+    {
+      "id": "scale.U16",
+      "unitsPerTileAu": 1.6,
+      "tilePx": 16,
+      "worldTiles": [
+        1250,
+        875
+      ],
+      "worldPx": [
+        20000,
+        14000
+      ],
+      "camera": {
+        "viewPx": [
+          640,
+          360
+        ],
+        "viewTiles": [
+          40,
+          22.5
+        ],
+        "visibleAu": [
+          64,
+          36
+        ],
+        "legibleOpeningPx": 40,
+        "legibleWallPx": 20,
+        "playerProxyPx": [
+          8,
+          10
+        ]
+      },
+      "poi": {
+        "footPerimeterAu": 140.4,
+        "footPerimeterTiles": 87.75,
+        "wallThicknessTiles": 1.25,
+        "openingTiles": 2.5,
+        "openingPx": 40
+      },
+      "bodies": [
+        {
+          "profileId": "BODY-FOOT",
+          "widthTiles": 1.25,
+          "widthPx": 20,
+          "sweptClearance": "UNKNOWN"
+        },
+        {
+          "profileId": "BODY-CART",
+          "widthTiles": 5,
+          "widthPx": 80,
+          "sweptClearance": "UNKNOWN"
+        },
+        {
+          "profileId": "BODY-LOADED-CART",
+          "widthTiles": 10,
+          "widthPx": 160,
+          "sweptClearance": "UNKNOWN"
+        }
+      ],
+      "terrain": {
+        "steepnessDegrees": "UNRESOLVED",
+        "climbRule": "GAMEPLAY_OWNED",
+        "note": "Raw slope bytes are not degrees."
+      },
+      "travel": {
+        "routeAu": 510.1338,
+        "routeTiles": 318.8336,
+        "loadedVsUnloadedRatio": "UNKNOWN",
+        "haulCost": "GAMEPLAY_OWNED"
+      },
+      "streaming": {
+        "chunkTiles": 16,
+        "chunkCountAtThisScale": 4345,
+        "bytesPerChunkRastersApprox": 1024,
+        "note": "Approximate raster budget only; no runtime streaming implementation."
+      },
+      "coordinateRoundTrip": {
+        "maxDriftAu": 0.8,
+        "worldRightBoundaryDriftAu": 0,
+        "bottomBoundaryDriftAu": 0,
+        "transform": "cell-centre-v1"
+      },
+      "diagnostic": true,
+      "status": "COMPARISON_PROFILE__NOT_APPROVED_CANON"
+    },
+    {
+      "id": "scale.U20",
+      "unitsPerTileAu": 2,
+      "tilePx": 16,
+      "worldTiles": [
+        1000,
+        700
+      ],
+      "worldPx": [
+        16000,
+        11200
+      ],
+      "camera": {
+        "viewPx": [
+          640,
+          360
+        ],
+        "viewTiles": [
+          40,
+          22.5
+        ],
+        "visibleAu": [
+          80,
+          45
+        ],
+        "legibleOpeningPx": 32,
+        "legibleWallPx": 16,
+        "playerProxyPx": [
+          8,
+          10
+        ]
+      },
+      "poi": {
+        "footPerimeterAu": 140.4,
+        "footPerimeterTiles": 70.2,
+        "wallThicknessTiles": 1,
+        "openingTiles": 2,
+        "openingPx": 32
+      },
+      "bodies": [
+        {
+          "profileId": "BODY-FOOT",
+          "widthTiles": 1,
+          "widthPx": 16,
+          "sweptClearance": "UNKNOWN"
+        },
+        {
+          "profileId": "BODY-CART",
+          "widthTiles": 4,
+          "widthPx": 64,
+          "sweptClearance": "UNKNOWN"
+        },
+        {
+          "profileId": "BODY-LOADED-CART",
+          "widthTiles": 8,
+          "widthPx": 128,
+          "sweptClearance": "UNKNOWN"
+        }
+      ],
+      "terrain": {
+        "steepnessDegrees": "UNRESOLVED",
+        "climbRule": "GAMEPLAY_OWNED",
+        "note": "Raw slope bytes are not degrees."
+      },
+      "travel": {
+        "routeAu": 510.1338,
+        "routeTiles": 255.0669,
+        "loadedVsUnloadedRatio": "UNKNOWN",
+        "haulCost": "GAMEPLAY_OWNED"
+      },
+      "streaming": {
+        "chunkTiles": 16,
+        "chunkCountAtThisScale": 2772,
+        "bytesPerChunkRastersApprox": 1024,
+        "note": "Approximate raster budget only; no runtime streaming implementation."
+      },
+      "coordinateRoundTrip": {
+        "maxDriftAu": 1,
+        "worldRightBoundaryDriftAu": 0,
+        "bottomBoundaryDriftAu": 0,
+        "transform": "cell-centre-v1"
+      },
+      "diagnostic": true,
+      "status": "COMPARISON_PROFILE__NOT_APPROVED_CANON"
+    },
+    {
+      "id": "scale.U25",
+      "unitsPerTileAu": 2.5,
+      "tilePx": 16,
+      "worldTiles": [
+        800,
+        560
+      ],
+      "worldPx": [
+        12800,
+        8960
+      ],
+      "camera": {
+        "viewPx": [
+          640,
+          360
+        ],
+        "viewTiles": [
+          40,
+          22.5
+        ],
+        "visibleAu": [
+          100,
+          56.25
+        ],
+        "legibleOpeningPx": 25.6,
+        "legibleWallPx": 12.8,
+        "playerProxyPx": [
+          8,
+          10
+        ]
+      },
+      "poi": {
+        "footPerimeterAu": 140.4,
+        "footPerimeterTiles": 56.16,
+        "wallThicknessTiles": 0.8,
+        "openingTiles": 1.6,
+        "openingPx": 25.6
+      },
+      "bodies": [
+        {
+          "profileId": "BODY-FOOT",
+          "widthTiles": 0.8,
+          "widthPx": 12.8,
+          "sweptClearance": "UNKNOWN"
+        },
+        {
+          "profileId": "BODY-CART",
+          "widthTiles": 3.2,
+          "widthPx": 51.2,
+          "sweptClearance": "UNKNOWN"
+        },
+        {
+          "profileId": "BODY-LOADED-CART",
+          "widthTiles": 6.4,
+          "widthPx": 102.4,
+          "sweptClearance": "UNKNOWN"
+        }
+      ],
+      "terrain": {
+        "steepnessDegrees": "UNRESOLVED",
+        "climbRule": "GAMEPLAY_OWNED",
+        "note": "Raw slope bytes are not degrees."
+      },
+      "travel": {
+        "routeAu": 510.1338,
+        "routeTiles": 204.0535,
+        "loadedVsUnloadedRatio": "UNKNOWN",
+        "haulCost": "GAMEPLAY_OWNED"
+      },
+      "streaming": {
+        "chunkTiles": 16,
+        "chunkCountAtThisScale": 1750,
+        "bytesPerChunkRastersApprox": 1024,
+        "note": "Approximate raster budget only; no runtime streaming implementation."
+      },
+      "coordinateRoundTrip": {
+        "maxDriftAu": 1.25,
+        "worldRightBoundaryDriftAu": 0,
+        "bottomBoundaryDriftAu": 0,
+        "transform": "cell-centre-v1"
+      },
+      "diagnostic": false,
+      "status": "COMPARISON_PROFILE__NOT_APPROVED_CANON"
+    }
+  ],
+  "recommendation": {
+    "profileId": "scale.U20",
+    "unitsPerTileAu": 2,
+    "status": "RECOMMENDED_CONDITIONAL__NOT_APPROVED_CANON",
+    "evidence": "At U=2.0 the 4au effective opening is 32px and the 2au wall undefinedpx at native 1x (integer-pixel friendly), the full 2000x1400 frame is 1000x700 tiles, and the representative 510.1338au route is 255.0669 tiles. U=1.6 gives a wider opening in px but 1250x875 tiles and larger streaming budget; U=2.5 gives fewer tiles but a 25.6px opening.",
+    "conditions": [
+      "Gameplay confirms body/cart dimensions",
+      "swept clearance and turning radius measured",
+      "approved runtime transform",
+      "native 640x360 human legibility evidence",
+      "creator scale approval"
+    ],
+    "alternativesPreserved": [
+      "scale.U10",
+      "scale.U16",
+      "scale.U25"
+    ]
+  },
+  "noClaims": [
+    "NO approved canon scale",
+    "NO invented metres or km/minutes",
+    "NO approved cart dimension",
+    "NO playable Veyra"
+  ]
+}

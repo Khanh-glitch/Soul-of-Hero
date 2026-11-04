@@ -1,0 +1,79 @@
+{
+  "schema": "soh.wmp.negative_fixtures.v1",
+  "status": "EXECUTED",
+  "count": 12,
+  "fixtures": [
+    {
+      "id": "NEG-01-INVALID-FEATURE-ID",
+      "subject": "featureInfo(po_DOES_NOT_EXIST)",
+      "expect": "INVALID",
+      "got": "INVALID"
+    },
+    {
+      "id": "NEG-02-INVALID-COORDS",
+      "subject": "groundAt([-1, 99999])",
+      "expect": "INVALID",
+      "got": "INVALID"
+    },
+    {
+      "id": "NEG-03-BRIDGE-CLIPPING",
+      "subject": "br_4 cart traversal at [732,652]",
+      "expect": "BLOCKED",
+      "got": "BLOCKED"
+    },
+    {
+      "id": "NEG-04-BLOCKED-DOOR-LOS",
+      "subject": "static-solid occlusion present in architectural LOS",
+      "expect": "BLOCKED_BY_STATIC_SOLID",
+      "got": "BLOCKED_BY_STATIC_SOLID"
+    },
+    {
+      "id": "NEG-05-DISCONNECTED-CHUNKS",
+      "subject": "injected isolated chunk must be detected",
+      "expect": true,
+      "got": true
+    },
+    {
+      "id": "NEG-06-UNREACHABLE-CANDIDATE",
+      "subject": "deep-sea traversal candidate [10,10] must not be a walkable PASS",
+      "expect": "BLOCKED",
+      "got": "BLOCKED"
+    },
+    {
+      "id": "NEG-07-WATER-OVERLAP",
+      "subject": "build envelope water-overlap defects must be reported, not silently resolved",
+      "expect": true,
+      "got": true
+    },
+    {
+      "id": "NEG-08-FALSE-PASSABILITY",
+      "subject": "traversalCandidateAt without width must be UNKNOWN",
+      "expect": "UNKNOWN",
+      "got": "UNKNOWN"
+    },
+    {
+      "id": "NEG-09-ROOF-OPEN-AIR",
+      "subject": "no roof polygon may be derived from an uncovered source room; open-air status preserved",
+      "expect": true,
+      "got": true
+    },
+    {
+      "id": "NEG-10-VERTICAL-BLOCKER",
+      "subject": "named vertical blockers must carry exact ID/coords/negative test",
+      "expect": true,
+      "got": true
+    },
+    {
+      "id": "NEG-11-CORRUPT-RASTER",
+      "subject": "tampered u8 buffer must fail pinned digest",
+      "expect": true,
+      "got": true
+    },
+    {
+      "id": "NEG-12-CLIMATE-NUMERIC",
+      "subject": "climateBaselineAt must not return numeric temperature",
+      "expect": "UNKNOWN",
+      "got": "UNKNOWN"
+    }
+  ]
+}

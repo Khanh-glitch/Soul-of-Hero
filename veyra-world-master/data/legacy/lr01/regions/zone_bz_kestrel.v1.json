@@ -1,0 +1,198 @@
+{
+  "schema": "soh.map.lr01.region.v1",
+  "kind": "construction_zone",
+  "id": "bz_kestrel",
+  "name": "Kestrel Ridge Shelf",
+  "soil": "đá",
+  "water": "xa nước",
+  "slope": "dốc nhẹ",
+  "tags": [
+    "nền đá cao"
+  ],
+  "notes": "",
+  "conf": "proposal",
+  "sourceRef": "project.zones[] where id=bz_kestrel",
+  "status": [
+    "SOURCE_AUTHORED",
+    "DERIVED",
+    "PROPOSED"
+  ],
+  "geometry": {
+    "ringAu": [
+      [
+        696.749309598201,
+        355.92759627264365
+      ],
+      [
+        696.9045848882176,
+        349.30919875754785
+      ],
+      [
+        698.4218371503671,
+        343.42570010522803
+      ],
+      [
+        701.3010663846492,
+        338.27710031568415
+      ],
+      [
+        705.7851968430975,
+        333.6188951559334
+      ],
+      [
+        711.8742285257119,
+        329.4510846259757
+      ],
+      [
+        719.6290805417793,
+        327.01897361408504
+      ],
+      [
+        729.0497528912995,
+        326.32256212026147
+      ],
+      [
+        737.0167442244665,
+        328.22151500165637
+      ],
+      [
+        743.5300545412806,
+        332.71583225826976
+      ],
+      [
+        748.8932785679826,
+        337.72224316493237
+      ],
+      [
+        753.1064163045727,
+        343.24074772164414
+      ],
+      [
+        752.991340975077,
+        348.70351419782065
+      ],
+      [
+        748.5480525794956,
+        354.11054259346196
+      ],
+      [
+        742.7780218610884,
+        358.2822719948756
+      ],
+      [
+        735.6812488198557,
+        361.2187024020616
+      ],
+      [
+        728.1308023649577,
+        362.554841452512
+      ],
+      [
+        720.1266824963944,
+        362.29068914622684
+      ],
+      [
+        711.2613849098827,
+        361.42815850236104
+      ],
+      [
+        701.5349096054227,
+        359.9672495209147
+      ]
+    ],
+    "ringCount": 1,
+    "areaAu2": 1570.2595,
+    "perimeterAu": 148.3413,
+    "bboxAu": [
+      696.7493,
+      326.3226,
+      753.1064,
+      362.5548
+    ],
+    "centroidAu": [
+      724.3219,
+      345.4339
+    ],
+    "outerVertexCount": 20,
+    "holeCount": 0
+  },
+  "rasterCells": {
+    "cells": 23,
+    "areaAu2": 1472,
+    "elevationRawByte": {
+      "min": 45,
+      "max": 124,
+      "mean": 66.0435,
+      "p25": 53,
+      "p50": 55,
+      "p75": 67,
+      "p95": 104,
+      "unit": "UNKNOWN_SOURCE_BYTE__NO_APPROVED_PHYSICAL_SCALE"
+    },
+    "slopeRawDelta": {
+      "min": 1,
+      "max": 26,
+      "mean": 11.3043,
+      "p50": 8,
+      "p95": 25,
+      "unit": "RAW_BYTE_DELTA_PER_8au_CELL__NOT_A_GAMEPLAY_THRESHOLD"
+    },
+    "seaDistanceCellsMean": 20.8696,
+    "freshwaterProximityCellsMean": 9.5217,
+    "clearanceCellsMean": 9.5217,
+    "biomeHistogram": {
+      "0": 18,
+      "7": 5
+    },
+    "roadClassHistogram": {
+      "0": 23
+    },
+    "coastCells": 0,
+    "coastBandLengthAuApprox": 0,
+    "buildableCells": 23,
+    "walkableCells": 23,
+    "waterCells": 0,
+    "cargoCells": 0,
+    "crossingCells": 0
+  },
+  "buildSuitability": {
+    "buildableCells": 23,
+    "buildableFraction": 1,
+    "meanSlopeRaw": 11.3043,
+    "meanFreshwaterProximityCells": 9.5217,
+    "status": "DERIVED",
+    "note": "Geometric suitability only. A0 occupancy, claim legality and Gameplay building rules are NOT asserted."
+  },
+  "loadingSpace": {
+    "cells": 0,
+    "areaAu2": 0,
+    "bboxAu": null,
+    "status": "PROPOSED",
+    "note": "PROPOSED spatial candidate: buildable cells within 3 grid cells (24 au) of a cart-road/cart-bridge/dock cargo candidate. NOT a loading platform or a Gameplay placement grant."
+  },
+  "naturalChokepoints": {
+    "clusterIds": [],
+    "status": "DERIVED",
+    "note": "clearanceCells <= 2 (<=16 au from blocked geometry); geometric narrowness, not a combat chokepoint claim."
+  },
+  "nearestRoads": [
+    {
+      "id": "rd_1e",
+      "kind": "trail",
+      "d": 31.1665
+    },
+    {
+      "id": "rd_1y",
+      "kind": "foot",
+      "d": 47.3462
+    },
+    {
+      "id": "rd_f",
+      "kind": "cart",
+      "d": 92.5952
+    }
+  ],
+  "walkableComponentIds": [
+    0
+  ]
+}

@@ -1,0 +1,748 @@
+{
+  "schema": "soh.map.geo02.poi_spatial_design.proposed.v1",
+  "generatedBy": "world_lab/geo02/src/poi_design.mjs",
+  "status": "PROPOSED",
+  "canonical": false,
+  "owner": "MAP",
+  "scope": "po_kilns ONLY",
+  "authority": "MAP DESIGNS THE PHYSICAL WORLD. GAMEPLAY POPULATES AND SIMULATES IT.",
+  "separationRule": "existingAuthored[] is verbatim canonical geometry and is NEVER modified; proposed[] is NEW, PROPOSED, non-canonical and is NEVER merged into the source or runtime.",
+  "frame": {
+    "authoringSpace": [
+      2000,
+      1400
+    ],
+    "grid": {
+      "gw": 250,
+      "gh": 175,
+      "cell": 8
+    },
+    "transform": "UNDECIDED (MAP-GEO-01 frame.transform); no rescale, all coordinates remain 2000x1400 authoring units"
+  },
+  "sourceEvidence": {
+    "veyra": {
+      "commit": "19d8c6ec820f324a6ac12733165e43b5e2c6eab2",
+      "bytes": 332249,
+      "sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256"
+    },
+    "poi": {
+      "id": "po_kilns",
+      "at": [
+        905,
+        785
+      ],
+      "arche": "smelter",
+      "depth": "surface",
+      "gate": "none",
+      "conf": "proposal",
+      "foot": [
+        [
+          892.1916,
+          774.9026
+        ],
+        [
+          919.0143,
+          776.6568
+        ],
+        [
+          917.8084,
+          795.0974
+        ],
+        [
+          890.9857,
+          793.3432
+        ]
+      ],
+      "deep": null,
+      "retreat": [],
+      "links": [],
+      "footAreaAu2": 496.7424,
+      "sourceRef": "pois[po_kilns].foot"
+    },
+    "maplabSmelterLibraryDefault": {
+      "source": "types.ts ARCHES[id=\"smelter\"] (editor library default, NOT the po_kilns instance values)",
+      "r": 24,
+      "depth": "surface",
+      "gate": "none"
+    },
+    "editorNote": "AGENT_HANDOFF.md (Greywater input package): foot is a SITE BOUNDARY, not a finished interior layout."
+  },
+  "existingAuthored": [
+    {
+      "id": "po_kilns.foot",
+      "geometryAu": [
+        [
+          892.1916,
+          774.9026
+        ],
+        [
+          919.0143,
+          776.6568
+        ],
+        [
+          917.8084,
+          795.0974
+        ],
+        [
+          890.9857,
+          793.3432
+        ]
+      ],
+      "sourceRef": "pois[po_kilns].foot",
+      "status": "EXISTING_AUTHORED"
+    },
+    {
+      "id": "rd_16",
+      "geometryAu": [
+        [
+          800,
+          760
+        ],
+        [
+          823,
+          780
+        ],
+        [
+          857,
+          780
+        ],
+        [
+          871,
+          788
+        ],
+        [
+          905,
+          785
+        ]
+      ],
+      "sourceRef": "roads[rd_16].points",
+      "kind": "trail",
+      "status": "EXISTING_AUTHORED"
+    },
+    {
+      "id": "rd_20",
+      "geometryAu": [
+        [
+          825.6209,
+          579.9157
+        ],
+        [
+          852.8751,
+          598.4703
+        ],
+        [
+          880.9669,
+          641.9674
+        ],
+        [
+          926.9056,
+          772.7915
+        ],
+        [
+          967.1931,
+          848.2629
+        ]
+      ],
+      "sourceRef": "roads[rd_20].points",
+      "kind": "riverside",
+      "status": "EXISTING_AUTHORED"
+    },
+    {
+      "id": "rd_n",
+      "geometryAu": [
+        [
+          918,
+          930
+        ],
+        [
+          908,
+          913
+        ],
+        [
+          908,
+          863
+        ],
+        [
+          917.5,
+          843
+        ],
+        [
+          967,
+          817
+        ],
+        [
+          1019.3781,
+          766.1828
+        ]
+      ],
+      "sourceRef": "roads[rd_n].points",
+      "kind": "cart",
+      "status": "EXISTING_AUTHORED"
+    }
+  ],
+  "designParameters": {
+    "authority": "PROPOSED_DESIGN_PARAMETERS__NOT_SOURCE_VALUES__NOT_VALIDATED",
+    "coordinateSpace": "2000x1400 authoring units, unchanged; bilinear (u,v) inside the verbatim authored foot quad",
+    "bayInset": {
+      "u": 0.1,
+      "v": 0.1
+    },
+    "bayGap": {
+      "u": 0.12,
+      "v": 0.12
+    },
+    "entranceOpeningFractions": {
+      "west": [
+        0.5124,
+        0.7124
+      ],
+      "north": [
+        0.62,
+        0.82
+      ],
+      "south": [
+        0.36,
+        0.58
+      ],
+      "westDerivedFromSource": "centred on the exact rd_16 x west-foot-edge intersection; +/-0.10 is a PROPOSED opening extent, not a source width"
+    },
+    "note": "Fractions are DESIGN CHOICES for a bounded candidate, not source values and not physical dimensions. No width, height, material, collision envelope or swept clearance is validated."
+  },
+  "proposed": {
+    "physicalFootprint": {
+      "id": "PROPOSED_FP_1",
+      "status": "PROPOSED",
+      "canonical": false,
+      "owner": "MAP",
+      "boundary": "REUSE of existingAuthored po_kilns.foot (no expansion, no rewrite)",
+      "boundarySourceRef": "existingAuthored[0]",
+      "areaAu2": 496.7424,
+      "note": "The candidate does NOT enlarge the canonical site boundary. All new geometry lies inside it except the approach/retreat centrelines, which are explicitly centreline-only with no claimed width."
+    },
+    "approach": {
+      "id": "PROPOSED_AP_1",
+      "status": "PROPOSED",
+      "canonical": false,
+      "owner": "MAP",
+      "existingAuthoredApproach": {
+        "roadId": "rd_16",
+        "kind": "trail",
+        "sourceRef": "roads[rd_16].points",
+        "verbatimLastSegmentAu": [
+          [
+            871,
+            788
+          ],
+          [
+            905,
+            785
+          ]
+        ],
+        "status": "EXISTING_AUTHORED",
+        "observation": "The authored road terminates AT po_kilns.at [905,785], which is INSIDE the authored foot. The road already penetrates the site boundary; that is a source fact, not a proposal.",
+        "authoredControlPointsInsideFoot": [
+          [
+            905,
+            785
+          ]
+        ],
+        "westEdgeCrossingProxy": {
+          "roadSegment": [
+            [
+              871,
+              788
+            ],
+            [
+              905,
+              785
+            ]
+          ],
+          "intersectionAu": [
+            891.4531,
+            786.1953
+          ],
+          "edgeParameterFromF3": 0.3876,
+          "bilinearV": 0.6124,
+          "westEdgePointAu": [
+            891.5886,
+            784.1229
+          ],
+          "distanceToWestEdgeAu": 13.44,
+          "note": "h.u runs F3->F0; bilinear v runs F0->F3, so v = 1 - h.u. The PROPOSED primary opening is centred on this EXACT source crossing."
+        }
+      },
+      "proposedApproachCentrelineAu": [
+        [
+          891.4531,
+          786.1953
+        ],
+        [
+          893.5989,
+          786.336
+        ],
+        [
+          893.7345,
+          784.2633
+        ]
+      ],
+      "width": "NOT_DEFINED",
+      "clearance": "NOT_VALIDATED",
+      "surface": "NOT_DEFINED",
+      "check": {
+        "sampledPoints": 8,
+        "onLandFraction": 1,
+        "riverCells": 0,
+        "lakeCells": 0,
+        "minClearanceAu": 56,
+        "insideAuthoringSpace": true,
+        "note": "Geometric context against MapLab source-semantic masks. NOT a passability rule, NOT swept clearance, NOT a survivability claim."
+      },
+      "note": "Centreline only. No physical width, no apron polygon, no swept envelope is claimed."
+    },
+    "entranceOptions": [
+      {
+        "id": "PROPOSED_EN_A",
+        "label": "primary west opening",
+        "face": "west",
+        "edge": "F3->F0",
+        "openingAu": [
+          [
+            891.5737,
+            784.3516
+          ],
+          [
+            891.3325,
+            788.0397
+          ]
+        ],
+        "midpointAu": [
+          891.4531,
+          786.1956
+        ],
+        "openingWidthAu": 3.696,
+        "facesSourceRoadId": "rd_16",
+        "rationale": "Centred on the exact rd_16 x west-foot-edge intersection at [891.4531,786.1953]; rd_16 already terminates INSIDE the foot.",
+        "widthStatus": "PROPOSED_GEOMETRIC_OPENING__NO_VALIDATED_DOOR_DIMENSION",
+        "status": "PROPOSED",
+        "canonical": false,
+        "owner": "MAP",
+        "physicalDoorOpeningOnly": true,
+        "note": "The OPENING is physical Map geometry. Any lock/key/power condition, door hardware or interaction is GAMEPLAY_OWNED and is NOT defined here."
+      },
+      {
+        "id": "PROPOSED_EN_B",
+        "label": "secondary north opening",
+        "face": "north",
+        "edge": "F0->F1",
+        "openingAu": [
+          [
+            908.8217,
+            775.9902
+          ],
+          [
+            914.1863,
+            776.341
+          ]
+        ],
+        "midpointAu": [
+          911.504,
+          776.1656
+        ],
+        "openingWidthAu": 5.3761,
+        "facesSourceRoadId": "rd_20",
+        "rationale": "rd_20 (riverside) authored control point [926.9056,772.7915] lies ~22au NE of the shell.",
+        "widthStatus": "PROPOSED_GEOMETRIC_OPENING__NO_VALIDATED_DOOR_DIMENSION",
+        "status": "PROPOSED",
+        "canonical": false,
+        "owner": "MAP",
+        "physicalDoorOpeningOnly": true,
+        "note": "The OPENING is physical Map geometry. Any lock/key/power condition, door hardware or interaction is GAMEPLAY_OWNED and is NOT defined here."
+      },
+      {
+        "id": "PROPOSED_EN_C",
+        "label": "retreat / service south opening",
+        "face": "south",
+        "edge": "F2->F3",
+        "openingAu": [
+          [
+            900.6418,
+            793.9747
+          ],
+          [
+            906.5428,
+            794.3606
+          ]
+        ],
+        "midpointAu": [
+          903.5923,
+          794.1677
+        ],
+        "openingWidthAu": 5.9136,
+        "facesSourceRoadId": "rd_n",
+        "rationale": "rd_n (cart) has an authored control point [908,863] to the south; NO cart access to po_kilns is claimed.",
+        "widthStatus": "PROPOSED_GEOMETRIC_OPENING__NO_VALIDATED_DOOR_DIMENSION",
+        "status": "PROPOSED",
+        "canonical": false,
+        "owner": "MAP",
+        "physicalDoorOpeningOnly": true,
+        "note": "The OPENING is physical Map geometry. Any lock/key/power condition, door hardware or interaction is GAMEPLAY_OWNED and is NOT defined here."
+      }
+    ],
+    "interiorWorkingSpaces": [
+      {
+        "id": "PROPOSED_WS_1",
+        "label": "covered enclosure (spatial allocation only)",
+        "uv": [
+          0.1,
+          0.1,
+          0.44,
+          0.44
+        ],
+        "polygonAu": [
+          [
+            894.7533,
+            776.9221
+          ],
+          [
+            903.873,
+            777.5185
+          ],
+          [
+            903.463,
+            783.7883
+          ],
+          [
+            894.3433,
+            783.1919
+          ]
+        ],
+        "status": "PROPOSED",
+        "canonical": false,
+        "owner": "MAP",
+        "areaAu2": 57.4232,
+        "insideAuthoredFoot": true,
+        "check": {
+          "sampledPoints": 68,
+          "onLandFraction": 1,
+          "riverCells": 0,
+          "lakeCells": 0,
+          "minClearanceAu": 45.2548,
+          "insideAuthoringSpace": true,
+          "note": "Geometric context against MapLab source-semantic masks. NOT a passability rule, NOT swept clearance, NOT a survivability claim."
+        }
+      },
+      {
+        "id": "PROPOSED_WS_2",
+        "label": "open yard (spatial allocation only)",
+        "uv": [
+          0.56,
+          0.1,
+          0.9,
+          0.44
+        ],
+        "polygonAu": [
+          [
+            907.0918,
+            777.729
+          ],
+          [
+            916.2115,
+            778.3254
+          ],
+          [
+            915.8014,
+            784.5952
+          ],
+          [
+            906.6817,
+            783.9988
+          ]
+        ],
+        "status": "PROPOSED",
+        "canonical": false,
+        "owner": "MAP",
+        "areaAu2": 57.4233,
+        "insideAuthoredFoot": true,
+        "check": {
+          "sampledPoints": 68,
+          "onLandFraction": 1,
+          "riverCells": 0,
+          "lakeCells": 0,
+          "minClearanceAu": 30.6274,
+          "insideAuthoringSpace": true,
+          "note": "Geometric context against MapLab source-semantic masks. NOT a passability rule, NOT swept clearance, NOT a survivability claim."
+        }
+      },
+      {
+        "id": "PROPOSED_WS_3",
+        "label": "staging enclosure (spatial allocation only)",
+        "uv": [
+          0.1,
+          0.56,
+          0.44,
+          0.9
+        ],
+        "polygonAu": [
+          [
+            894.1986,
+            785.4048
+          ],
+          [
+            903.3183,
+            786.0012
+          ],
+          [
+            902.9082,
+            792.271
+          ],
+          [
+            893.7885,
+            791.6746
+          ]
+        ],
+        "status": "PROPOSED",
+        "canonical": false,
+        "owner": "MAP",
+        "areaAu2": 57.4233,
+        "insideAuthoredFoot": true,
+        "check": {
+          "sampledPoints": 68,
+          "onLandFraction": 1,
+          "riverCells": 0,
+          "lakeCells": 0,
+          "minClearanceAu": 48,
+          "insideAuthoringSpace": true,
+          "note": "Geometric context against MapLab source-semantic masks. NOT a passability rule, NOT swept clearance, NOT a survivability claim."
+        }
+      },
+      {
+        "id": "PROPOSED_WS_4",
+        "label": "transfer / circulation enclosure (spatial allocation only)",
+        "uv": [
+          0.56,
+          0.56,
+          0.9,
+          0.9
+        ],
+        "polygonAu": [
+          [
+            906.537,
+            786.2117
+          ],
+          [
+            915.6567,
+            786.8081
+          ],
+          [
+            915.2467,
+            793.0779
+          ],
+          [
+            906.127,
+            792.4815
+          ]
+        ],
+        "status": "PROPOSED",
+        "canonical": false,
+        "owner": "MAP",
+        "areaAu2": 57.4232,
+        "insideAuthoredFoot": true,
+        "check": {
+          "sampledPoints": 68,
+          "onLandFraction": 1,
+          "riverCells": 0,
+          "lakeCells": 0,
+          "minClearanceAu": 32,
+          "insideAuthoringSpace": true,
+          "note": "Geometric context against MapLab source-semantic masks. NOT a passability rule, NOT swept clearance, NOT a survivability claim."
+        }
+      }
+    ],
+    "circulation": {
+      "status": "PROPOSED",
+      "canonical": false,
+      "owner": "MAP",
+      "note": "Interior circulation centrelines joining the proposed openings to the proposed working spaces. 2D only; no vertical dimension, no collision envelope.",
+      "paths": [
+        {
+          "id": "PROPOSED_C_SPINE",
+          "label": "east-west interior spine",
+          "centrelineAu": [
+            [
+              893.7345,
+              784.2633
+            ],
+            [
+              916.2655,
+              785.7367
+            ]
+          ],
+          "check": {
+            "sampledPoints": 13,
+            "onLandFraction": 1,
+            "riverCells": 0,
+            "lakeCells": 0,
+            "minClearanceAu": 32,
+            "insideAuthoringSpace": true,
+            "note": "Geometric context against MapLab source-semantic masks. NOT a passability rule, NOT swept clearance, NOT a survivability claim."
+          }
+        },
+        {
+          "id": "PROPOSED_C_CROSS",
+          "label": "north-south interior cross",
+          "centrelineAu": [
+            [
+              905.5065,
+              777.2549
+            ],
+            [
+              904.4935,
+              792.7451
+            ]
+          ],
+          "check": {
+            "sampledPoints": 9,
+            "onLandFraction": 1,
+            "riverCells": 0,
+            "lakeCells": 0,
+            "minClearanceAu": 38.6274,
+            "insideAuthoringSpace": true,
+            "note": "Geometric context against MapLab source-semantic masks. NOT a passability rule, NOT swept clearance, NOT a survivability claim."
+          }
+        },
+        {
+          "id": "PROPOSED_C_A",
+          "label": "primary opening to spine",
+          "centrelineAu": [
+            [
+              891.4531,
+              786.1956
+            ],
+            [
+              893.5989,
+              786.336
+            ],
+            [
+              893.7345,
+              784.2633
+            ]
+          ],
+          "check": {
+            "sampledPoints": 8,
+            "onLandFraction": 1,
+            "riverCells": 0,
+            "lakeCells": 0,
+            "minClearanceAu": 56,
+            "insideAuthoringSpace": true,
+            "note": "Geometric context against MapLab source-semantic masks. NOT a passability rule, NOT swept clearance, NOT a survivability claim."
+          }
+        },
+        {
+          "id": "PROPOSED_C_B",
+          "label": "secondary opening to north bay",
+          "centrelineAu": [
+            [
+              911.504,
+              776.1656
+            ],
+            [
+              911.3834,
+              778.0097
+            ]
+          ],
+          "check": {
+            "sampledPoints": 3,
+            "onLandFraction": 1,
+            "riverCells": 0,
+            "lakeCells": 0,
+            "minClearanceAu": 38.6274,
+            "insideAuthoringSpace": true,
+            "note": "Geometric context against MapLab source-semantic masks. NOT a passability rule, NOT swept clearance, NOT a survivability claim."
+          }
+        },
+        {
+          "id": "PROPOSED_C_C",
+          "label": "south opening to spine",
+          "centrelineAu": [
+            [
+              903.5923,
+              794.1677
+            ],
+            [
+              903.6888,
+              792.6924
+            ]
+          ],
+          "check": {
+            "sampledPoints": 3,
+            "onLandFraction": 1,
+            "riverCells": 0,
+            "lakeCells": 0,
+            "minClearanceAu": 51.3137,
+            "insideAuthoringSpace": true,
+            "note": "Geometric context against MapLab source-semantic masks. NOT a passability rule, NOT swept clearance, NOT a survivability claim."
+          }
+        }
+      ]
+    },
+    "retreat": {
+      "status": "PROPOSED",
+      "canonical": false,
+      "owner": "MAP",
+      "note": "Geometric egress from the south opening back toward an EXISTING authored road control point. NOT a survivability, escape-time or Gameplay-behaviour claim.",
+      "fromOpeningId": "PROPOSED_EN_C",
+      "toSourceRoadId": "rd_n",
+      "toAuthoredControlPointAu": [
+        917.5,
+        843
+      ],
+      "centrelineAu": [
+        [
+          903.5923,
+          794.1677
+        ],
+        [
+          917.5,
+          843
+        ]
+      ],
+      "width": "NOT_DEFINED",
+      "clearance": "NOT_VALIDATED",
+      "check": {
+        "sampledPoints": 27,
+        "onLandFraction": 1,
+        "riverCells": 0,
+        "lakeCells": 0,
+        "minClearanceAu": 43.3137,
+        "insideAuthoringSpace": true,
+        "note": "Geometric context against MapLab source-semantic masks. NOT a passability rule, NOT swept clearance, NOT a survivability claim."
+      }
+    }
+  },
+  "excludedFields": [
+    "furnace / kiln recipes",
+    "loot tables or loot sites",
+    "locked / key / power states",
+    "power nodes or generators",
+    "interactive machinery",
+    "hazard intensity",
+    "spawn / resource / NPC placement",
+    "climate",
+    "survivability or travel-time claims",
+    "physical road/river/door width approval",
+    "swept clearance validation"
+  ],
+  "unresolvedConstraints": [
+    "No authoring-unit -> runtime-tile transform; world scale UNDECIDED.",
+    "Road width, river channel width, bridge deck span and cart/foot footprint are UNDEFINED in source.",
+    "Swept clearance, collision and vertical/roof dimension are NOT modelled; this is a 2D spatial candidate.",
+    "po_kilns has NO cart road within editor ACCESS_R=48; no cart access or physically traversable cart route is claimed.",
+    "Entrances are geometric openings only; door hardware, lock/key/power conditions and interactions are Gameplay-owned.",
+    "rd_16 already terminates inside the foot; the source geometry conflict is reported, not silently fixed.",
+    "Human/creator approval is required before any PROPOSED geometry becomes canonical."
+  ],
+  "noRuntimeMerge": true,
+  "noGameplayPopulation": true,
+  "noCanonicalRewrite": true,
+  "noPhysicallyTraversableCartRouteClaim": true
+}

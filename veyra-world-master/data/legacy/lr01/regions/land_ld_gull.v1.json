@@ -1,0 +1,244 @@
+{
+  "schema": "soh.map.lr01.region.v1",
+  "kind": "satellite",
+  "id": "ld_gull",
+  "name": "Gull Isle",
+  "sourceRef": "project.land[] where id=ld_gull",
+  "status": [
+    "SOURCE_AUTHORED",
+    "DERIVED"
+  ],
+  "conf": "proposal",
+  "geometry": {
+    "ringsAu": [
+      [
+        [
+          1858.8205621407496,
+          411.17290632766463
+        ],
+        [
+          1866.0164786587586,
+          405.55193678478696
+        ],
+        [
+          1874.5698487570196,
+          402.4932593219654
+        ],
+        [
+          1883.5792187538805,
+          403.9128806913378
+        ],
+        [
+          1891.6691995781414,
+          406.9373531147135
+        ],
+        [
+          1899.577276018506,
+          410.3328961923135
+        ],
+        [
+          1906.8263367718246,
+          415.398209317671
+        ],
+        [
+          1913.7618765333286,
+          421.2583006120911
+        ],
+        [
+          1917.0263913015465,
+          429.72794341414254
+        ],
+        [
+          1919.3012863539216,
+          438.25519582986703
+        ],
+        [
+          1917.309345435119,
+          446.8818918618231
+        ],
+        [
+          1916.357478697064,
+          455.6660969136086
+        ],
+        [
+          1911.8219666532382,
+          463.3167033523918
+        ],
+        [
+          1907.7933040983655,
+          471.3235422234338
+        ],
+        [
+          1901.0646495882643,
+          477.2055364697069
+        ],
+        [
+          1893.6040750401173,
+          482.0854932840021
+        ],
+        [
+          1884.8585437747856,
+          484.69905954669093
+        ],
+        [
+          1875.7619441502882,
+          483.2548802614802
+        ],
+        [
+          1867.1864459988224,
+          480.00308481883167
+        ],
+        [
+          1858.5097239921708,
+          476.6051274065548
+        ],
+        [
+          1851.7921294299344,
+          470.1958106941861
+        ],
+        [
+          1848.8250689962676,
+          461.24632172006494
+        ],
+        [
+          1844.7117720559343,
+          453.4068207259626
+        ],
+        [
+          1842.0402249870212,
+          444.7473519530727
+        ],
+        [
+          1840.5087198148638,
+          435.5898372734859
+        ],
+        [
+          1842.478498091841,
+          426.28470420348106
+        ],
+        [
+          1848.389720463275,
+          418.92691588596915
+        ],
+        [
+          1855.4298618172468,
+          413.38942021626923
+        ]
+      ]
+    ],
+    "ringCount": 1,
+    "areaAu2": 4791.1764,
+    "perimeterAu": 248.5012,
+    "bboxAu": [
+      1840.5087,
+      402.4933,
+      1919.3013,
+      484.6991
+    ],
+    "centroidAu": [
+      1880.0715,
+      443.2611
+    ],
+    "outerVertexCount": 28,
+    "holeCount": 0
+  },
+  "rasterCells": {
+    "cells": 77,
+    "areaAu2": 4928,
+    "elevationRawByte": {
+      "min": 11,
+      "max": 20,
+      "mean": 14.7013,
+      "p25": 13,
+      "p50": 15,
+      "p75": 16,
+      "p95": 18,
+      "unit": "UNKNOWN_SOURCE_BYTE__NO_APPROVED_PHYSICAL_SCALE"
+    },
+    "slopeRawDelta": {
+      "min": 0,
+      "max": 11,
+      "mean": 3.5714,
+      "p50": 2,
+      "p95": 10,
+      "unit": "RAW_BYTE_DELTA_PER_8au_CELL__NOT_A_GAMEPLAY_THRESHOLD"
+    },
+    "seaDistanceCellsMean": 2.2597,
+    "freshwaterProximityCellsMean": 44.4935,
+    "clearanceCellsMean": 2.2597,
+    "biomeHistogram": {
+      "0": 29,
+      "6": 10,
+      "11": 38
+    },
+    "roadClassHistogram": {
+      "0": 71,
+      "2": 6
+    },
+    "coastCells": 26,
+    "coastBandLengthAuApprox": 208,
+    "buildableCells": 0,
+    "walkableCells": 77,
+    "waterCells": 0,
+    "cargoCells": 1,
+    "crossingCells": 0
+  },
+  "biomeNames": {
+    "0": {
+      "name": "Bình nguyên / canh tác",
+      "cells": 29
+    },
+    "6": {
+      "name": "Thảo nguyên khô",
+      "cells": 10
+    },
+    "11": {
+      "name": "Bãi cát ven biển",
+      "cells": 38
+    }
+  },
+  "roadNames": {
+    "0": {
+      "cls": "none",
+      "cells": 71
+    },
+    "2": {
+      "cls": "trail",
+      "cells": 6
+    }
+  },
+  "coastline": {
+    "coastCells": 26,
+    "approximateLengthAu": 208,
+    "beachBandCells": 48,
+    "beachBandAu2": 3072,
+    "status": "DERIVED",
+    "note": "beachBand = land cells within 2 grid cells (16 au) of sea; derived, not an authored beach polygon."
+  },
+  "wetlands": {
+    "cells": 0,
+    "areaAu2": 0,
+    "status": "DERIVED",
+    "note": "biomeCode 4 (marsh) OR within 1 cell (8 au) of authored freshwater geometry; approximation only."
+  },
+  "relief": {
+    "highlandCells": 0,
+    "steepCells": 0,
+    "status": "DERIVED",
+    "note": "highland = raw elevation byte >= 100, steep = raw slope delta >= 40. Raw byte thresholds are descriptive, NOT approved gameplay slope laws."
+  },
+  "contains": {
+    "rivers": [],
+    "lakes": [],
+    "zones": [],
+    "elders": [],
+    "pois": [
+      "po_gullnest",
+      "po_gullwreck",
+      "po_gullpier"
+    ]
+  },
+  "walkableComponents": [
+    2
+  ]
+}

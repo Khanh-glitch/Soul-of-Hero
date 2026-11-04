@@ -1,0 +1,173 @@
+{
+  "schema": "soh.wmp.decision_register.v1",
+  "status": "ONE_CONSOLIDATED_BATCH__NO_APPROVAL_REQUESTED_MID_RUN",
+  "authority": "MAP_DESIGNS_THE_PHYSICAL_WORLD__GAMEPLAY_POPULATES_AND_SIMULATES_IT",
+  "items": [
+    {
+      "id": "DR-01",
+      "subject": "approved au-to-runtime-tile scale",
+      "alternatives": [
+        "scale.U10",
+        "scale.U16",
+        "scale.U20",
+        "scale.U25"
+      ],
+      "pending": "scale.U20",
+      "owner": "GAMEPLAY+CREATOR",
+      "status": "UNDECIDED"
+    },
+    {
+      "id": "DR-02",
+      "subject": "physical river channel width unit and depth",
+      "alternatives": [
+        "AUTHORED_EDITOR_STROKE_ONLY",
+        "MEASURED_RASTER_CROSS_SECTION"
+      ],
+      "pending": "both preserved, neither canonical",
+      "owner": "MAP+GAMEPLAY",
+      "status": "UNRESOLVED"
+    },
+    {
+      "id": "DR-03",
+      "subject": "vertical separation / stair pitch between GROUND and DEEP levels",
+      "alternatives": [
+        "UNRESOLVED_NUMERIC",
+        "PROPOSED_SHAFT_GEOMETRY_ONLY"
+      ],
+      "pending": "PROPOSED_SHAFT_GEOMETRY_ONLY",
+      "owner": "MAP+GAMEPLAY",
+      "status": "UNRESOLVED"
+    },
+    {
+      "id": "DR-04",
+      "subject": "player / cart / loaded-cart body dimensions and swept clearance",
+      "alternatives": [
+        "BODY-FOOT",
+        "BODY-CART",
+        "BODY-LOADED-CART"
+      ],
+      "pending": "all three preserved",
+      "owner": "GAMEPLAY",
+      "status": "UNKNOWN"
+    },
+    {
+      "id": "DR-05",
+      "subject": "bridge deck bearing / span / cart passability",
+      "alternatives": [
+        "BR4_PROPOSED_DECK",
+        "UNRESOLVED"
+      ],
+      "pending": "both preserved",
+      "owner": "MAP+GAMEPLAY",
+      "status": "UNRESOLVED"
+    },
+    {
+      "id": "DR-06",
+      "subject": "ferry/boat rule for 8 blocked ferries",
+      "alternatives": [
+        "GEOMETRY_ONLY",
+        "BLOCKED"
+      ],
+      "pending": "GEOMETRY_ONLY",
+      "owner": "GAMEPLAY",
+      "status": "BLOCKED"
+    },
+    {
+      "id": "DR-07",
+      "subject": "official temperature, damage, weather and seasonal rates",
+      "alternatives": [
+        "CATEGORICAL_POTENTIAL_ONLY"
+      ],
+      "pending": "CATEGORICAL_POTENTIAL_ONLY",
+      "owner": "GAMEPLAY",
+      "status": "UNKNOWN"
+    },
+    {
+      "id": "DR-08",
+      "subject": "roof/canopy occlusion semantics and runtime sprite",
+      "alternatives": [
+        "PROPOSED_ROOF_POLYGON",
+        "CANOPY_ONLY",
+        "UNRESOLVED"
+      ],
+      "pending": "PROPOSED_ROOF_POLYGON",
+      "owner": "MAP+GAMEPLAY",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "DR-09",
+      "subject": "po_kilns access connector ALT-A vs ALT-B",
+      "alternatives": [
+        "ALT-A",
+        "ALT-B"
+      ],
+      "pending": "UNDECIDED__BOTH_ALTERNATIVES_PRESERVED",
+      "owner": "MAP+GAMEPLAY",
+      "status": "UNDECIDED"
+    },
+    {
+      "id": "DR-10",
+      "subject": "resource stock / loot / yield / respawn / starter grant",
+      "alternatives": [
+        "CANDIDATE_GEOMETRY_ONLY"
+      ],
+      "pending": "CANDIDATE_GEOMETRY_ONLY",
+      "owner": "GAMEPLAY",
+      "status": "UNKNOWN"
+    },
+    {
+      "id": "DR-11",
+      "subject": "escrow price, seller stock, cash quantity, receipts",
+      "alternatives": [
+        "GEOMETRY_ONLY"
+      ],
+      "pending": "GEOMETRY_ONLY",
+      "owner": "GAMEPLAY+CREATOR",
+      "status": "UNKNOWN"
+    },
+    {
+      "id": "DR-12",
+      "subject": "chunk streaming, cross-window transition, duplicate-free source authority",
+      "alternatives": [
+        "CHUNK_AWARE_CONTRACT_ONLY"
+      ],
+      "pending": "CHUNK_AWARE_CONTRACT_ONLY",
+      "owner": "GAMEPLAY",
+      "status": "UNKNOWN"
+    },
+    {
+      "id": "DR-13",
+      "subject": "creator visual approval and native 640x360 human legibility",
+      "alternatives": [
+        "TECHNICAL_VIEWS_ONLY"
+      ],
+      "pending": "TECHNICAL_VIEWS_ONLY",
+      "owner": "CREATOR",
+      "status": "UNKNOWN"
+    },
+    {
+      "id": "DR-14",
+      "subject": "roofless stair-step wall rendering observed in Web Greywater",
+      "alternatives": [
+        "M1_CLIPPED_SOLIDS",
+        "WEB_TILE_CENTRE_PROJECTION"
+      ],
+      "pending": "both recorded",
+      "owner": "GAMEPLAY",
+      "status": "UNKNOWN"
+    },
+    {
+      "id": "DR-15",
+      "subject": "Veyra industrial Recycler POI requested by Gameplay M-CORE-03R / CT 6623791963",
+      "alternatives": [
+        "DECLINE_PLACEMENT_THIS_ROUND",
+        "AUTHOR_NEW_POI_ONLY_ON_CREATOR_DISPATCH",
+        "SELECT_EXISTING_INDUSTRIAL_ZONE_AS_CANDIDATE_GEOMETRY_ONLY"
+      ],
+      "pending": "DECLINE_PLACEMENT_THIS_ROUND; existing industrial ZONE/POI candidate geometry is provided without machine placement",
+      "owner": "MAP+CREATOR+GAMEPLAY",
+      "status": "UNDECIDED",
+      "note": "WMP-01 does not fabricate a Recycler, does not hand-place a Gameplay machine and does not claim reachable approach/clear LOS within 2.8 tiles for an unauthored site. The stable map revision, POI identity, footprint, collision, LOS, finite source reachability and route/risk validation would require a separate creator Map dispatch."
+    }
+  ]
+}

@@ -1,0 +1,855 @@
+{
+  "schema": "soh.map.lr01.poi_example.v1",
+  "reason": "open arena ring, radial sockets, source-authored approach",
+  "layout": {
+    "schema": "soh.map.lr01.poi_layout.v1",
+    "poiId": "po_hall_eyes",
+    "name": "Hall of Eyes",
+    "arche": "elder_site",
+    "atAu": [
+      992,
+      212
+    ],
+    "rot": -0.06089290920644996,
+    "scale": 1,
+    "sourceRef": "project.pois[] where id=po_hall_eyes",
+    "status": "PROPOSED_INTERIOR_AND_CIRCULATION__CANONICAL_FOOTPRINT_ONLY",
+    "ownership": "MAP owns static layout / portals / sockets; GAMEPLAY owns dynamic door states, destruction, construction, devices, locks, power, loot, recipes, quests and machines.",
+    "enclosureClass": "ENCLOSED_MULTI_LAYER",
+    "enclosureClassificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+    "canonical": {
+      "footPolygonAu": [
+        [
+          963.7124,
+          194.9899
+        ],
+        [
+          1018.0116,
+          191.6794
+        ],
+        [
+          1020.2876,
+          229.0101
+        ],
+        [
+          965.9884,
+          232.3206
+        ]
+      ],
+      "footAreaAu2": 2034.56,
+      "minEdgeAu": 37.4,
+      "deepPolygonAu": [
+        [
+          981.2076,
+          206.15
+        ],
+        [
+          1011.7509,
+          204.2878
+        ],
+        [
+          1012.9924,
+          224.65
+        ],
+        [
+          982.4491,
+          226.5122
+        ]
+      ],
+      "gate": "elder",
+      "links": [],
+      "accessText": "Đường tiếp cận + đường rút",
+      "conf": "proposal"
+    },
+    "template": {
+      "archetype": "elder_site",
+      "family": "open",
+      "grid": [
+        1,
+        1
+      ],
+      "roof": 0.2,
+      "sockets": 8,
+      "pattern": "arena_ring",
+      "note": "open arena ring with radial approach sockets",
+      "instantiatedRows": 1,
+      "instantiatedCols": 1
+    },
+    "context": {
+      "landId": "ld_veyra",
+      "biomeCode": 3,
+      "zoneId": null,
+      "elderGeometryId": "el_argus",
+      "seaDistanceCells": 10,
+      "clearanceCells": 10,
+      "nearestRoad": {
+        "id": "rd_1c",
+        "kind": "trail",
+        "distanceAu": 3.3134
+      },
+      "nearestDock": {
+        "id": "dk_verdant_n",
+        "d": 145.9335
+      },
+      "status": "DERIVED"
+    },
+    "contextModifiers": [
+      {
+        "id": "MOD-ELDER",
+        "effect": "Arena ring radial sockets retained; approach kept source-authored",
+        "status": "DERIVED"
+      }
+    ],
+    "levels": [
+      {
+        "id": "level.po_hall_eyes.0",
+        "parentPoiId": "po_hall_eyes",
+        "index": 0,
+        "name": "GROUND",
+        "polygonAu": [
+          [
+            963.7124,
+            194.9899
+          ],
+          [
+            1018.0116,
+            191.6794
+          ],
+          [
+            1020.2876,
+            229.0101
+          ],
+          [
+            965.9884,
+            232.3206
+          ]
+        ],
+        "areaAu2": 2034.56,
+        "status": [
+          "SOURCE_AUTHORED",
+          "DERIVED"
+        ]
+      },
+      {
+        "id": "level.po_hall_eyes.-1",
+        "parentPoiId": "po_hall_eyes",
+        "index": -1,
+        "name": "DEEP",
+        "polygonAu": [
+          [
+            981.2076,
+            206.15
+          ],
+          [
+            1011.7509,
+            204.2878
+          ],
+          [
+            1012.9924,
+            224.65
+          ],
+          [
+            982.4491,
+            226.5122
+          ]
+        ],
+        "areaAu2": 624.24,
+        "status": [
+          "SOURCE_AUTHORED",
+          "DERIVED"
+        ]
+      }
+    ],
+    "footprint": {
+      "obb": {
+        "centre": [
+          992,
+          212
+        ],
+        "ux": [
+          0.9981,
+          -0.0609
+        ],
+        "uy": [
+          0.0609,
+          0.9981
+        ],
+        "wAu": 54.4,
+        "hAu": 37.4,
+        "angleRad": -0.0609,
+        "edgeLengthsAu": [
+          54.4,
+          37.4,
+          54.4,
+          37.4
+        ],
+        "quadEdge2Au": 37.4
+      },
+      "widthAu": 54.3994,
+      "heightAu": 37.4009,
+      "wallThicknessAu": 2,
+      "wallThicknessStatus": "PROPOSED"
+    },
+    "walls": [
+      {
+        "id": "wall.po_hall_eyes.1",
+        "parentPoiId": "po_hall_eyes",
+        "kind": "EXTERIOR",
+        "aAu": [
+          963.7124,
+          194.9899
+        ],
+        "bAu": [
+          1018.0116,
+          191.6794
+        ],
+        "lengthAu": 54.4,
+        "thicknessAu": 2,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_hall_eyes :: foot edge 1 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_hall_eyes.2",
+        "parentPoiId": "po_hall_eyes",
+        "kind": "EXTERIOR",
+        "aAu": [
+          1018.0116,
+          191.6794
+        ],
+        "bAu": [
+          1020.2876,
+          229.0101
+        ],
+        "lengthAu": 37.4,
+        "thicknessAu": 2,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_hall_eyes :: foot edge 2 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_hall_eyes.3",
+        "parentPoiId": "po_hall_eyes",
+        "kind": "EXTERIOR",
+        "aAu": [
+          1020.2876,
+          229.0101
+        ],
+        "bAu": [
+          965.9884,
+          232.3206
+        ],
+        "lengthAu": 54.4,
+        "thicknessAu": 2,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_hall_eyes :: foot edge 3 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_hall_eyes.4",
+        "parentPoiId": "po_hall_eyes",
+        "kind": "EXTERIOR",
+        "aAu": [
+          965.9884,
+          232.3206
+        ],
+        "bAu": [
+          963.7124,
+          194.9899
+        ],
+        "lengthAu": 37.4,
+        "thicknessAu": 2,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_hall_eyes :: foot edge 4 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      }
+    ],
+    "rooms": [
+      {
+        "id": "room.po_hall_eyes.1.1",
+        "parentPoiId": "po_hall_eyes",
+        "levelId": "level.po_hall_eyes.0",
+        "row": 1,
+        "col": 1,
+        "pattern": "arena_ring",
+        "enclosureClass": "ENCLOSED_MULTI_LAYER",
+        "polygonAu": [
+          [
+            964.7721,
+            195.9287
+          ],
+          [
+            1017.072,
+            192.7376
+          ],
+          [
+            1019.2279,
+            228.0713
+          ],
+          [
+            966.928,
+            231.2624
+          ]
+        ],
+        "centroidAu": [
+          992,
+          212
+        ],
+        "areaAu2": 1854.8287,
+        "bboxAu": [
+          964.7721,
+          192.7376,
+          1019.2279,
+          231.2624
+        ],
+        "floor": {
+          "polygonAu": [
+            [
+              964.7721,
+              195.9287
+            ],
+            [
+              1017.072,
+              192.7376
+            ],
+            [
+              1019.2279,
+              228.0713
+            ],
+            [
+              966.928,
+              231.2624
+            ]
+          ],
+          "status": "PROPOSED",
+          "floorLevelId": "floor.po_hall_eyes.1.1"
+        },
+        "roof": {
+          "covered": false,
+          "coverageFractionOfRoom": 0,
+          "canopyOnly": false,
+          "status": "PROPOSED",
+          "note": "Full roof over an enclosed room."
+        },
+        "surface": "ENCLOSURE_INTERIOR",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "room.po_hall_eyes.deep.1",
+        "parentPoiId": "po_hall_eyes",
+        "levelId": "level.po_hall_eyes.-1",
+        "row": 1,
+        "col": 1,
+        "pattern": "DEEP_VAULT",
+        "enclosureClass": "ENCLOSED_MULTI_LAYER",
+        "polygonAu": [
+          [
+            983.3256,
+            208.0246
+          ],
+          [
+            1009.8763,
+            206.4058
+          ],
+          [
+            1010.8744,
+            222.7754
+          ],
+          [
+            984.3237,
+            224.3942
+          ]
+        ],
+        "centroidAu": [
+          997.1,
+          215.4
+        ],
+        "areaAu2": 436.2401,
+        "bboxAu": [
+          983.3256,
+          206.4058,
+          1010.8744,
+          224.3942
+        ],
+        "floor": {
+          "polygonAu": [
+            [
+              983.3256,
+              208.0246
+            ],
+            [
+              1009.8763,
+              206.4058
+            ],
+            [
+              1010.8744,
+              222.7754
+            ],
+            [
+              984.3237,
+              224.3942
+            ]
+          ],
+          "status": "PROPOSED",
+          "floorLevelId": "floor.po_hall_eyes.deep.1"
+        },
+        "roof": {
+          "covered": true,
+          "coverageFractionOfRoom": 1,
+          "status": "PROPOSED"
+        },
+        "surface": "DEEP_INTERIOR",
+        "status": "PROPOSED"
+      }
+    ],
+    "floors": [
+      {
+        "polygonAu": [
+          [
+            964.7721,
+            195.9287
+          ],
+          [
+            1017.072,
+            192.7376
+          ],
+          [
+            1019.2279,
+            228.0713
+          ],
+          [
+            966.928,
+            231.2624
+          ]
+        ],
+        "status": "PROPOSED",
+        "floorLevelId": "floor.po_hall_eyes.1.1"
+      },
+      {
+        "polygonAu": [
+          [
+            983.3256,
+            208.0246
+          ],
+          [
+            1009.8763,
+            206.4058
+          ],
+          [
+            1010.8744,
+            222.7754
+          ],
+          [
+            984.3237,
+            224.3942
+          ]
+        ],
+        "status": "PROPOSED",
+        "floorLevelId": "floor.po_hall_eyes.deep.1"
+      }
+    ],
+    "entrance": {
+      "id": "entrance.po_hall_eyes.1",
+      "parentPoiId": "po_hall_eyes",
+      "kind": "PRIMARY_ENTRANCE",
+      "onWallId": "wall.po_hall_eyes.4",
+      "atAu": [
+        964.8504,
+        213.6553
+      ],
+      "openingAu": 6,
+      "openingStatus": "PROPOSED",
+      "sourceRef": "project.pois[] where id=po_hall_eyes :: no authored entrance; edge 4 chosen by nearest road",
+      "capacityUpperBoundAu": 37.4,
+      "doorStateOwner": "GAMEPLAY",
+      "lockedState": "UNKNOWN",
+      "powerRequirement": "UNKNOWN",
+      "note": "STATIC opening geometry only. No lock, key, power, quest or device rule is authored."
+    },
+    "portals": [
+      {
+        "id": "portal.po_hall_eyes.entrance",
+        "parentPoiId": "po_hall_eyes",
+        "kind": "EXTERIOR_PORTAL",
+        "fromRoomId": null,
+        "toRoomId": "room.po_hall_eyes.1.1",
+        "atAu": [
+          964.8504,
+          213.6553
+        ],
+        "openingAu": 6,
+        "openingStatus": "PROPOSED",
+        "status": "PROPOSED",
+        "doorStateOwner": "GAMEPLAY",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "note": "Static entrance portal. NO door rule, lock, key or power requirement."
+      },
+      {
+        "id": "portal.po_hall_eyes.vertical",
+        "parentPoiId": "po_hall_eyes",
+        "kind": "VERTICAL_LINK",
+        "fromRoomId": "room.po_hall_eyes.1.1",
+        "toRoomId": "room.po_hall_eyes.deep.1",
+        "atAu": [
+          997.1,
+          215.4
+        ],
+        "verticalSeparationAu": null,
+        "verticalSeparationStatus": "UNRESOLVED",
+        "status": "PROPOSED",
+        "doorStateOwner": "GAMEPLAY",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "note": "Canonical deep polygon exists, but NO approved vertical unit / stair / ladder geometry is authored. Vertical separation stays UNKNOWN."
+      }
+    ],
+    "circulation": {
+      "entranceRoomId": "room.po_hall_eyes.1.1",
+      "reachableRooms": 1,
+      "totalRooms": 1,
+      "maxDepth": 0,
+      "depthByRoomId": {
+        "room.po_hall_eyes.1.1": 0
+      },
+      "interiorDepthAu": 27.2,
+      "status": "DERIVED"
+    },
+    "retreat": {
+      "status": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+      "waypointCount": 1,
+      "pathAu": [
+        [
+          992,
+          212
+        ],
+        [
+          973.6265,
+          139.4917
+        ]
+      ],
+      "lengthAu": 74.8,
+      "exitAtAu": [
+        973.6265,
+        139.4917
+      ],
+      "note": "Canonical retreat is a set of waypoints (often one). The segment from the POI anchor is DERIVED; no full retreat corridor is invented."
+    },
+    "sockets": [
+      {
+        "id": "socket.po_hall_eyes.1",
+        "parentPoiId": "po_hall_eyes",
+        "parentRoomId": "room.po_hall_eyes.1.1",
+        "levelId": "level.po_hall_eyes.0",
+        "atAu": [
+          987.2471,
+          207.7937
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_hall_eyes.2",
+        "parentPoiId": "po_hall_eyes",
+        "parentRoomId": "room.po_hall_eyes.1.1",
+        "levelId": "level.po_hall_eyes.0",
+        "atAu": [
+          996.7529,
+          216.2063
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_hall_eyes.3",
+        "parentPoiId": "po_hall_eyes",
+        "parentRoomId": "room.po_hall_eyes.1.1",
+        "levelId": "level.po_hall_eyes.0",
+        "atAu": [
+          987.7937,
+          216.7529
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_hall_eyes.4",
+        "parentPoiId": "po_hall_eyes",
+        "parentRoomId": "room.po_hall_eyes.1.1",
+        "levelId": "level.po_hall_eyes.0",
+        "atAu": [
+          996.2063,
+          207.2471
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_hall_eyes.5",
+        "parentPoiId": "po_hall_eyes",
+        "parentRoomId": "room.po_hall_eyes.1.1",
+        "levelId": "level.po_hall_eyes.0",
+        "atAu": [
+          987.7937,
+          216.7529
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_hall_eyes.6",
+        "parentPoiId": "po_hall_eyes",
+        "parentRoomId": "room.po_hall_eyes.1.1",
+        "levelId": "level.po_hall_eyes.0",
+        "atAu": [
+          996.7529,
+          216.2063
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_hall_eyes.7",
+        "parentPoiId": "po_hall_eyes",
+        "parentRoomId": "room.po_hall_eyes.1.1",
+        "levelId": "level.po_hall_eyes.0",
+        "atAu": [
+          987.2471,
+          207.7937
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_hall_eyes.8",
+        "parentPoiId": "po_hall_eyes",
+        "parentRoomId": "room.po_hall_eyes.1.1",
+        "levelId": "level.po_hall_eyes.0",
+        "atAu": [
+          996.7529,
+          216.2063
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      }
+    ],
+    "roofCoverage": {
+      "coveredRoomCount": 1,
+      "totalRoomCount": 2,
+      "roofAreaAu2": 436.2401,
+      "footAreaAu2": 2034.56,
+      "roofAreaToFootAreaRatioAcrossLevels": 0.2144,
+      "fractionOfFoot": 0.2144,
+      "status": "DERIVED",
+      "note": "Measured over PROPOSED room/canopy polygons weighted by coverageFractionOfRoom. The across-levels ratio can exceed 1 when a DEEP level adds roofed area; it is NOT a single-plane coverage fraction."
+    },
+    "geometryAdapters": {
+      "collision": {
+        "staticWalls": [
+          "wall.po_hall_eyes.1",
+          "wall.po_hall_eyes.2",
+          "wall.po_hall_eyes.3",
+          "wall.po_hall_eyes.4"
+        ],
+        "staticWallCount": 4,
+        "wallThicknessAu": 2,
+        "thicknessStatus": "PROPOSED",
+        "dynamicCollisionOwner": "GAMEPLAY",
+        "destructionOwner": "GAMEPLAY",
+        "status": "PROPOSED_STATIC_COLLISION_GEOMETRY__NOT_RUNTIME_COLLISION_DATA"
+      },
+      "enclosure": {
+        "enclosedAreaAu2": 2291.0688,
+        "footAreaAu2": 2034.56,
+        "enclosureFraction": 1.1261,
+        "enclosureClass": "ENCLOSED_MULTI_LAYER",
+        "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+        "status": "DERIVED"
+      },
+      "reach": {
+        "maxInteriorDistanceAu": 27.2,
+        "nearestRoadAu": 3.3134,
+        "approachLengthAu": 29.3661,
+        "minPortalOpeningAu": null,
+        "status": "DERIVED",
+        "note": "Geometric reach only. Interaction radius / Gameplay reach rules are NOT asserted."
+      },
+      "lineOfSight": {
+        "opaqueWallIds": [
+          "wall.po_hall_eyes.1",
+          "wall.po_hall_eyes.2",
+          "wall.po_hall_eyes.3",
+          "wall.po_hall_eyes.4"
+        ],
+        "transparentPortalIds": [
+          "portal.po_hall_eyes.entrance",
+          "portal.po_hall_eyes.vertical"
+        ],
+        "portalSightOwner": "GAMEPLAY",
+        "status": "PROPOSED",
+        "note": "Static opaque walls + portal gaps. Dynamic door opacity is Gameplay-owned."
+      },
+      "roofCoverage": {
+        "coveredRoomCount": 1,
+        "totalRoomCount": 2,
+        "roofAreaAu2": 436.2401,
+        "footAreaAu2": 2034.56,
+        "roofAreaToFootAreaRatioAcrossLevels": 0.2144,
+        "fractionOfFoot": 0.2144,
+        "status": "DERIVED",
+        "note": "Measured over PROPOSED room/canopy polygons weighted by coverageFractionOfRoom. The across-levels ratio can exceed 1 when a DEEP level adds roofed area; it is NOT a single-plane coverage fraction."
+      },
+      "portalPassability": {
+        "portals": [
+          {
+            "id": "portal.po_hall_eyes.entrance",
+            "openingAu": 6,
+            "kind": "EXTERIOR_PORTAL"
+          },
+          {
+            "id": "portal.po_hall_eyes.vertical",
+            "kind": "VERTICAL_LINK"
+          }
+        ],
+        "passabilityRuleOwner": "GAMEPLAY",
+        "status": "UNKNOWN__DYNAMIC_DOOR_STATE_DESTRUCTION_AND_DEVICES_OWNED_BY_GAMEPLAY",
+        "note": "Map asserts only that a geometric opening exists. No lock, power, key, weight or vehicle rule."
+      }
+    },
+    "stableIds": {
+      "rooms": [
+        "room.po_hall_eyes.1.1",
+        "room.po_hall_eyes.deep.1"
+      ],
+      "walls": [
+        "wall.po_hall_eyes.1",
+        "wall.po_hall_eyes.2",
+        "wall.po_hall_eyes.3",
+        "wall.po_hall_eyes.4"
+      ],
+      "entrances": [
+        "entrance.po_hall_eyes.1"
+      ],
+      "portals": [
+        "portal.po_hall_eyes.entrance",
+        "portal.po_hall_eyes.vertical"
+      ],
+      "sockets": [
+        "socket.po_hall_eyes.1",
+        "socket.po_hall_eyes.2",
+        "socket.po_hall_eyes.3",
+        "socket.po_hall_eyes.4",
+        "socket.po_hall_eyes.5",
+        "socket.po_hall_eyes.6",
+        "socket.po_hall_eyes.7",
+        "socket.po_hall_eyes.8"
+      ],
+      "levels": [
+        "level.po_hall_eyes.0",
+        "level.po_hall_eyes.-1"
+      ],
+      "floors": [
+        "floor.po_hall_eyes.1.1",
+        "floor.po_hall_eyes.deep.1"
+      ]
+    },
+    "noClaims": [
+      "NO loot, loot table, chest contents or reward",
+      "NO locked-door rule, key, card or power requirement",
+      "NO generator, machine, recipe, quest, vendor inventory or economy",
+      "NO dynamic door state or destruction",
+      "NO authored entrance in source (all openings PROPOSED)",
+      "NO approved vertical unit or stair geometry",
+      "NO runtime collision data (static geometry only)",
+      "NO playable survival acceptance"
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+WMP_CLEAN_ROOM_SRC=/home/user/Soul-of-Hero/veyra-world-master
+WMP_CLEAN_ROOM_TMP=/tmp/wmp_cleanroom.wr9gOT
+M-G1 whitelist copied; migration/ excluded; no MapLab source or GOLD git object present
+--- isolated node build.mjs ---
+WMP_BUILD_OK layers=12 derivedRasters=32 features=579 pois=81 roofs=153 vertical=18 proposed=10 blockers=8 chunks=70
+  revisionDigest=1d032deb1b03feac918ed0485aa31c21b4c7951373d4dda5ebfbe3b8f850474e
+--- isolated node tools/views.mjs ---
+WMP_VIEWS_OK analytical=15 realWebCaptures=6 fullWorld=6 detail=6 scale=3
+--- isolated WMP_CLEAN_ROOM=1 node tests/run.mjs ---
+WMP_TESTS 75/75 gates=M-G0:15/15 M-G1:5/5 M-G2:13/13 M-G3:8/8 M-G4:12/12 M-G5:22/22
+WMP_TESTS_OK manifest=1d032deb1b03feac918ed0485aa31c21b4c7951373d4dda5ebfbe3b8f850474e
+M-G1 sourceDigest=1d032deb1b03feac918ed0485aa31c21b4c7951373d4dda5ebfbe3b8f850474e
+M-G1 isolatedDigest=1d032deb1b03feac918ed0485aa31c21b4c7951373d4dda5ebfbe3b8f850474e
+WMP_CLEAN_ROOM_OK digest=1d032deb1b03feac918ed0485aa31c21b4c7951373d4dda5ebfbe3b8f850474e noGold=true noMapLab=true noNetwork=true

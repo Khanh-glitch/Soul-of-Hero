@@ -1,0 +1,109 @@
+{
+  "schema": "soh.map.lr01.final_head.v1",
+  "status": "FINAL_MAP_TOWER_STATE__STAGE_1_GEOGRAPHY_ONLY__WEB_PLAYABILITY_GATE_OPEN",
+  "generatedAtUtc": "2026-11-04T00:35:20.331Z",
+  "branch": "arena/2e3cfbd2-soul-of-hero",
+  "localHeadAtGeneration": "7651ff0baa4ec136170bcf1cdf8ecf16fe9a2df9",
+  "remoteHeadAtGeneration": "7651ff0baa4ec136170bcf1cdf8ecf16fe9a2df9",
+  "localRemoteMatch": true,
+  "deliverableCommit": "7651ff0baa4ec136170bcf1cdf8ecf16fe9a2df9",
+  "commitListNewestFirst": [
+    "7651ff0baa4ec136170bcf1cdf8ecf16fe9a2df9 MAP-LR01 F: versioned geography-only package, PR44 compatibility report, adapter spec, blockers, coordination log, 105/105 gates",
+    "df29ea03b7e228e2a5d9675309bd925383dc7a9a MAP-LR01 E: individual art provenance review, 18 native 640x360 before/after/UI views, inspected visuals, 90/90 gates",
+    "b949d777bce71c8eddb4b71e994f75e8fb0b53d4 MAP-LR01 D: 81 POI spatial layouts, 24 archetypes, 1701 stable IDs, six geometry adapters, 78/78 gates",
+    "e1dfd92130b041ed4b87bdbb1fb07e0695f8c303 MAP-LR01 B+C: whole-Veyra geography compiler, SNAP_TOL=7 transport audit, build sites, 63/63 gates",
+    "5d9334daa9164e08ea36f8ec07ac546e93a6911e MAP-LR01 A: corrected per-POI geometry/scale tool, fractional raster coverage, bounded diagnostic band",
+    "9e0f08055a93ccf6cbd4657c4fc5c128385eb90a MAP-SCALE-01A B: full benchmark, acceptance assessment, visual comparison, bounded U=2 shortlist",
+    "35f517e02189f065761fb1f37f37c3a7ad978a3c MAP-SCALE-01A A: source-linked PR44 HEAD benchmark, scale candidates, visual comparison",
+    "c6a900ae39fb05a83058606a80035a34021cd69d MAP-GEO-02 B: corridor spatial audit, PROPOSED po_kilns shell, before/after visual",
+    "e8ade7e4cf76eb2966466211e922c7ce8f0c588e MAP-GEO-02 A: resolve MapLab v3 encoding semantics and correct POI ownership",
+    "6364c893e2b1c7bf2d8a910c9de7d3f5b697f90c MAP-GEO-01: real Veyra corridor proof, visual inspection and PR44 contract boundary",
+    "93d9894672f6020a27c4b15611ca3cf13e85cdd5 MAP-GEO-01: executable Veyra source verification and derived geography export",
+    "ce3f9c5815b209b3bbd196ba5173d5230ce57b3a MAP-R01: add Veyra crosswalk, exact asset ledger, KEEP/REPLACE/REJECT and review report",
+    "09b96bd2d8fa56a0c16a0f2eb2c577ad7a603b7d MAP-R01: asset-backed playable Web world slice (first working implementation)",
+    "438b813cf041485d3179eda02a2beee313c5e4a2 Add reproducible Fisher's Point Web map-art patch with real before/after in-game evidence"
+  ],
+  "note": "This file is committed immediately after generation. The exact final pushed HEAD is reported in the task handoff message and equals this commit plus the single commit containing this file. All deliverables are already present at deliverableCommit.",
+  "mapLr01Commits": {
+    "A": "5d9334daa9164e08ea36f8ec07ac546e93a6911e",
+    "B_C": "e1dfd92130b041ed4b87bdbb1fb07e0695f8c303",
+    "D": "b949d777bce71c8eddb4b71e994f75e8fb0b53d4",
+    "E": "df29ea03b7e228e2a5d9675309bd925383dc7a9a",
+    "F": "7651ff0baa4ec136170bcf1cdf8ecf16fe9a2df9"
+  },
+  "baselineStart": "9e0f08055a93ccf6cbd4657c4fc5c128385eb90a",
+  "pr44HeadAtCoordination": "f8010ec973095c88f3c462a68116c169b61237a3",
+  "pr44HandoffComment": {
+    "id": 6619191264,
+    "utc": "2026-11-04T00:33:40Z",
+    "url": "https://github.com/Khanh-glitch/Soul-of-Hero/pull/44#issuecomment-6619191264",
+    "acknowledgement": "NONE__DO_NOT_ASSUME_RECEIPT"
+  },
+  "geographyPackage": {
+    "schema": "soh.map.lr01.geography_package.v1",
+    "revisionDigest": "e3259eb30016f93ab0883c6dc3656f0ec1b9d47a85dc78fd90a56e0185765e63",
+    "payloadCount": 79
+  },
+  "artifacts": [
+    {
+      "file": "output/geography_package.v1.json",
+      "bytes": 1969292,
+      "sha256": "b4cc77228caf847d1ad0d8a680457ca65731202513a047826e8bd973662e19ad"
+    },
+    {
+      "file": "output/handoff.v1.json",
+      "bytes": 20413,
+      "sha256": "ef2d9fccfce1f66afa946c239aba6c2719b1878fd586dd107bc08a67dfabe3b8"
+    },
+    {
+      "file": "output/pr44_handoff.md",
+      "bytes": 3326,
+      "sha256": "c76e985c2fe84670181e2ac1817c63b0906b102115cb08e747ff93441dc50645"
+    },
+    {
+      "file": "output/scale_corrected.v1.json",
+      "bytes": 127521,
+      "sha256": "91e10cd6235aa92d46d127b3efa7c01becb1aff3c5cdde1a3391404c8fba884b"
+    },
+    {
+      "file": "output/geography.v1.json",
+      "bytes": 537768,
+      "sha256": "5e3639e0d95bfe7219c819516ea09e16fb0d150e432ceab489a4d3d908438eb6"
+    },
+    {
+      "file": "output/transport.v1.json",
+      "bytes": 282942,
+      "sha256": "24cf621b8d23753cbf28cb2be2d9ffb0bd33a1cee1d272e542ddb5238ee46f79"
+    },
+    {
+      "file": "output/poi_layouts.v1.json",
+      "bytes": 2067441,
+      "sha256": "65a6a107a474a465b935d6a9e72de326523c3fc3d4e94ef36aba8a8496d24f34"
+    },
+    {
+      "file": "output/art_manifest.v1.json",
+      "bytes": 18380,
+      "sha256": "a113bdc9f05e582545c862f576208d7d381b145480429f444965d70c51b902e1"
+    },
+    {
+      "file": "output/views_index.v1.json",
+      "bytes": 25609,
+      "sha256": "57cd3f9a3527b963f0cb9f9628a7068ed9d8bf30af4ab75637662a73f0c712dc"
+    }
+  ],
+  "verification": {
+    "reproduce": "MAP-LR01_REPRODUCE_OK",
+    "tests": "LR01_TESTS 105/105",
+    "geo01": "GEO_TESTS 15/15 passed",
+    "geo02": "GEO02_TESTS 47/47 passed; GEO02_REPRODUCE_OK",
+    "views": "E_RENDER_OK views=18 regions=6 modes=3 size=640x360 errors=[]",
+    "visualInspection": "agent read PR44 evidence, A1 sheets, MAP-R01 atlas, web_art_patch before/after and 6 generated native views; no human/creator approval"
+  },
+  "noClaims": [
+    "NO playable Veyra",
+    "NO creator visual approval",
+    "NO runtime merge",
+    "NO playable survival acceptance",
+    "NO acknowledgement of MAP-LR01 handoff"
+  ]
+}

@@ -1,0 +1,496 @@
+{
+  "schema": "soh.wmp.crosswalks.v1",
+  "status": "EXPLICIT_CROSSWALK__NO_SILENT_HEURISTIC",
+  "authority": "MAP_DESIGNS_THE_PHYSICAL_WORLD__GAMEPLAY_POPULATES_AND_SIMULATES_IT",
+  "sourceBiomeCount": 12,
+  "economyLabelCount": 14,
+  "webTerrainCodeCount": 20,
+  "sourceBiomes": [
+    {
+      "code": 0,
+      "key": "meadow",
+      "name": "Bình nguyên / canh tác",
+      "sourceColor": [
+        160,
+        184,
+        100
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 1,
+      "key": "forest",
+      "name": "Rừng lá rộng",
+      "sourceColor": [
+        92,
+        134,
+        74
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 2,
+      "key": "ancient",
+      "name": "Rừng cổ (sống động)",
+      "sourceColor": [
+        52,
+        116,
+        64
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 3,
+      "key": "conifer",
+      "name": "Rừng thông / cao nguyên",
+      "sourceColor": [
+        78,
+        114,
+        96
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 4,
+      "key": "marsh",
+      "name": "Đầm lầy / cửa sông",
+      "sourceColor": [
+        112,
+        136,
+        98
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 5,
+      "key": "desert",
+      "name": "Sa mạc / cồn cát",
+      "sourceColor": [
+        219,
+        190,
+        124
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 6,
+      "key": "scrub",
+      "name": "Thảo nguyên khô",
+      "sourceColor": [
+        190,
+        178,
+        112
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 7,
+      "key": "rock",
+      "name": "Đá trần / núi",
+      "sourceColor": [
+        146,
+        138,
+        128
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 8,
+      "key": "snow",
+      "name": "Lạnh / tuyết",
+      "sourceColor": [
+        234,
+        238,
+        242
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 9,
+      "key": "volcanic",
+      "name": "Núi lửa / obsidian",
+      "sourceColor": [
+        88,
+        72,
+        70
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 10,
+      "key": "toxic",
+      "name": "Đất độc / lưu huỳnh",
+      "sourceColor": [
+        172,
+        168,
+        76
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    },
+    {
+      "code": 11,
+      "key": "beach",
+      "name": "Bãi cát ven biển",
+      "sourceColor": [
+        226,
+        212,
+        164
+      ],
+      "sourceRef": "source_excerpt/types.ts :: BIOMES[]"
+    }
+  ],
+  "economyLabels": [
+    "water",
+    "sand",
+    "grass",
+    "meadow",
+    "forest",
+    "marsh",
+    "hill",
+    "snow",
+    "ash",
+    "toxic",
+    "road",
+    "floor",
+    "wall",
+    "lava"
+  ],
+  "webTerrainCodes": [
+    {
+      "name": "DEEP",
+      "code": 0
+    },
+    {
+      "name": "SHALLOW",
+      "code": 1
+    },
+    {
+      "name": "SAND",
+      "code": 2
+    },
+    {
+      "name": "GRASS",
+      "code": 3
+    },
+    {
+      "name": "MEADOW",
+      "code": 4
+    },
+    {
+      "name": "FOREST",
+      "code": 5
+    },
+    {
+      "name": "MARSH",
+      "code": 6
+    },
+    {
+      "name": "HILL",
+      "code": 7
+    },
+    {
+      "name": "CLIFF",
+      "code": 8
+    },
+    {
+      "name": "SNOW",
+      "code": 9
+    },
+    {
+      "name": "ASH",
+      "code": 10
+    },
+    {
+      "name": "TOXIC",
+      "code": 11
+    },
+    {
+      "name": "ROAD",
+      "code": 12
+    },
+    {
+      "name": "BRIDGE",
+      "code": 13
+    },
+    {
+      "name": "FLOOR",
+      "code": 14
+    },
+    {
+      "name": "PWALL",
+      "code": 15
+    },
+    {
+      "name": "LAVA",
+      "code": 16
+    },
+    {
+      "name": "BURNT",
+      "code": 17
+    },
+    {
+      "name": "ICE",
+      "code": 18
+    },
+    {
+      "name": "RIVER",
+      "code": 19
+    }
+  ],
+  "biomeMap": [
+    {
+      "sourceBiomeCode": 0,
+      "sourceBiomeKey": "meadow",
+      "economy": "meadow",
+      "web": "MEADOW",
+      "webCode": 4,
+      "substrate": 2,
+      "soil": 2,
+      "vegetation": 2,
+      "climateGroup": "TEMPERATE",
+      "status": "PROPOSED",
+      "subtypePreserved": true,
+      "note": "Original subtype ID is retained in rasters/biomeSubtype.u8; the 14-label and 20-code projections are LOSSY intentional crosswalks."
+    },
+    {
+      "sourceBiomeCode": 1,
+      "sourceBiomeKey": "forest",
+      "economy": "forest",
+      "web": "FOREST",
+      "webCode": 5,
+      "substrate": 2,
+      "soil": 2,
+      "vegetation": 4,
+      "climateGroup": "CANOPY",
+      "status": "PROPOSED",
+      "subtypePreserved": true,
+      "note": "Original subtype ID is retained in rasters/biomeSubtype.u8; the 14-label and 20-code projections are LOSSY intentional crosswalks."
+    },
+    {
+      "sourceBiomeCode": 2,
+      "sourceBiomeKey": "ancient",
+      "economy": "forest",
+      "web": "FOREST",
+      "webCode": 5,
+      "substrate": 2,
+      "soil": 2,
+      "vegetation": 5,
+      "climateGroup": "ANCIENT_CANOPY",
+      "status": "PROPOSED",
+      "subtypePreserved": true,
+      "note": "Original subtype ID is retained in rasters/biomeSubtype.u8; the 14-label and 20-code projections are LOSSY intentional crosswalks."
+    },
+    {
+      "sourceBiomeCode": 3,
+      "sourceBiomeKey": "conifer",
+      "economy": "forest",
+      "web": "FOREST",
+      "webCode": 5,
+      "substrate": 2,
+      "soil": 2,
+      "vegetation": 4,
+      "climateGroup": "CONIFER",
+      "status": "PROPOSED",
+      "subtypePreserved": true,
+      "note": "Original subtype ID is retained in rasters/biomeSubtype.u8; the 14-label and 20-code projections are LOSSY intentional crosswalks."
+    },
+    {
+      "sourceBiomeCode": 4,
+      "sourceBiomeKey": "marsh",
+      "economy": "marsh",
+      "web": "MARSH",
+      "webCode": 6,
+      "substrate": 8,
+      "soil": 3,
+      "vegetation": 3,
+      "climateGroup": "WETLAND",
+      "status": "PROPOSED",
+      "subtypePreserved": true,
+      "note": "Original subtype ID is retained in rasters/biomeSubtype.u8; the 14-label and 20-code projections are LOSSY intentional crosswalks."
+    },
+    {
+      "sourceBiomeCode": 5,
+      "sourceBiomeKey": "desert",
+      "economy": "sand",
+      "web": "SAND",
+      "webCode": 2,
+      "substrate": 1,
+      "soil": 1,
+      "vegetation": 0,
+      "climateGroup": "ARID",
+      "status": "PROPOSED",
+      "subtypePreserved": true,
+      "note": "Original subtype ID is retained in rasters/biomeSubtype.u8; the 14-label and 20-code projections are LOSSY intentional crosswalks."
+    },
+    {
+      "sourceBiomeCode": 6,
+      "sourceBiomeKey": "scrub",
+      "economy": "grass",
+      "web": "GRASS",
+      "webCode": 3,
+      "substrate": 2,
+      "soil": 2,
+      "vegetation": 2,
+      "climateGroup": "SCRUB",
+      "status": "PROPOSED",
+      "subtypePreserved": true,
+      "note": "Original subtype ID is retained in rasters/biomeSubtype.u8; the 14-label and 20-code projections are LOSSY intentional crosswalks."
+    },
+    {
+      "sourceBiomeCode": 7,
+      "sourceBiomeKey": "rock",
+      "economy": "hill",
+      "web": "HILL",
+      "webCode": 7,
+      "substrate": 4,
+      "soil": 7,
+      "vegetation": 1,
+      "climateGroup": "ROCK",
+      "status": "PROPOSED",
+      "subtypePreserved": true,
+      "note": "Original subtype ID is retained in rasters/biomeSubtype.u8; the 14-label and 20-code projections are LOSSY intentional crosswalks."
+    },
+    {
+      "sourceBiomeCode": 8,
+      "sourceBiomeKey": "snow",
+      "economy": "snow",
+      "web": "SNOW",
+      "webCode": 9,
+      "substrate": 6,
+      "soil": 4,
+      "vegetation": 0,
+      "climateGroup": "COLD",
+      "status": "PROPOSED",
+      "subtypePreserved": true,
+      "note": "Original subtype ID is retained in rasters/biomeSubtype.u8; the 14-label and 20-code projections are LOSSY intentional crosswalks."
+    },
+    {
+      "sourceBiomeCode": 9,
+      "sourceBiomeKey": "volcanic",
+      "economy": "ash",
+      "web": "ASH",
+      "webCode": 10,
+      "substrate": 5,
+      "soil": 7,
+      "vegetation": 0,
+      "climateGroup": "VOLCANIC",
+      "status": "PROPOSED",
+      "subtypePreserved": true,
+      "note": "Original subtype ID is retained in rasters/biomeSubtype.u8; the 14-label and 20-code projections are LOSSY intentional crosswalks."
+    },
+    {
+      "sourceBiomeCode": 10,
+      "sourceBiomeKey": "toxic",
+      "economy": "toxic",
+      "web": "TOXIC",
+      "webCode": 11,
+      "substrate": 7,
+      "soil": 6,
+      "vegetation": 0,
+      "climateGroup": "TOXIC",
+      "status": "PROPOSED",
+      "subtypePreserved": true,
+      "note": "Original subtype ID is retained in rasters/biomeSubtype.u8; the 14-label and 20-code projections are LOSSY intentional crosswalks."
+    },
+    {
+      "sourceBiomeCode": 11,
+      "sourceBiomeKey": "beach",
+      "economy": "sand",
+      "web": "SAND",
+      "webCode": 2,
+      "substrate": 1,
+      "soil": 5,
+      "vegetation": 0,
+      "climateGroup": "LITTORAL",
+      "status": "PROPOSED",
+      "subtypePreserved": true,
+      "note": "Original subtype ID is retained in rasters/biomeSubtype.u8; the 14-label and 20-code projections are LOSSY intentional crosswalks."
+    }
+  ],
+  "overrides": [
+    {
+      "id": "OV-WATER-SEA",
+      "test": "waterClass===1",
+      "economy": "water",
+      "web": "CELL_DEPENDENT",
+      "reason": "Authored sea mask; deep/shallow split from authored seaDistanceCells, NOT a depth measurement.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "OV-WATER-LAKE",
+      "test": "waterClass===2",
+      "economy": "water",
+      "web": "CELL_DEPENDENT",
+      "reason": "Authored lake mask; freshwater flag decides shallow vs river colour, no depth claim.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "OV-WATER-RIVER",
+      "test": "waterClass===3",
+      "economy": "water",
+      "web": "RIVER",
+      "reason": "Authored river centreline mask.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "OV-ROAD",
+      "test": "roadClass>0 && waterClass===0",
+      "economy": "road",
+      "web": "ROAD",
+      "reason": "Authored road mask on dry land; width is NOT authored.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "OV-BRIDGE",
+      "test": "waterClass>0 && roadClass>0 && authoredBridgeAtCell",
+      "economy": "road",
+      "web": "BRIDGE",
+      "reason": "Only cells carrying an authored bridge centre are BRIDGE; no land connection is invented.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "OV-PWALL",
+      "test": "M1 staticSolid footprint",
+      "economy": "wall",
+      "web": "PWALL",
+      "reason": "LR02 clipped solid spans; applied by the consumer at runtime, not baked into the 8au raster.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "OV-FLOOR",
+      "test": "POI room floor footprint",
+      "economy": "floor",
+      "web": "FLOOR",
+      "reason": "LR01 PROPOSED room floors; consumer override only.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "OV-LAVA",
+      "test": "volcanic biome && hazard authored",
+      "economy": "lava",
+      "web": "LAVA",
+      "reason": "Hazard cell override; no damage rate supplied.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "OV-ICE",
+      "test": "snow biome && frozen surface",
+      "economy": "snow",
+      "web": "ICE",
+      "reason": "Surface phase candidate, Gameplay owns realization.",
+      "status": "PROPOSED"
+    }
+  ],
+  "waterRoadBuildingOverrideTests": [
+    "waterClass overrides biome",
+    "roadClass overrides biome on dry land only",
+    "bridge override requires authored bridge centre",
+    "wall/floor overrides are consumer-side, not baked into the 8au raster",
+    "building occupancy is GAMEPLAY_OWNED"
+  ],
+  "noClaims": [
+    "NO approved au-to-tile scale",
+    "NO claim that the 200x200 Web window is the whole Veyra world",
+    "NO implied Gameplay Biome semantic equivalence"
+  ]
+}

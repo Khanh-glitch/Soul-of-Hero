@@ -1,0 +1,926 @@
+{
+  "schema": "soh.wmp.test_results.v1",
+  "generatedBy": "tests/run.mjs",
+  "masterRevisionDigest": "1d032deb1b03feac918ed0485aa31c21b4c7951373d4dda5ebfbe3b8f850474e",
+  "cleanRoom": false,
+  "total": 75,
+  "passed": 75,
+  "failed": 0,
+  "gates": [
+    {
+      "gate": "M-G0",
+      "total": 15,
+      "passed": 15,
+      "failed": 0
+    },
+    {
+      "gate": "M-G1",
+      "total": 5,
+      "passed": 5,
+      "failed": 0
+    },
+    {
+      "gate": "M-G2",
+      "total": 13,
+      "passed": 13,
+      "failed": 0
+    },
+    {
+      "gate": "M-G3",
+      "total": 8,
+      "passed": 8,
+      "failed": 0
+    },
+    {
+      "gate": "M-G4",
+      "total": 12,
+      "passed": 12,
+      "failed": 0
+    },
+    {
+      "gate": "M-G5",
+      "total": 22,
+      "passed": 22,
+      "failed": 0
+    }
+  ],
+  "results": [
+    {
+      "id": "M-G0-01",
+      "gate": "M-G0",
+      "name": "Embedded GOLD bytes match pinned SHA-256 and byte length",
+      "status": "PASS",
+      "detail": {
+        "sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+        "bytes": 332249,
+        "ok": true
+      }
+    },
+    {
+      "id": "M-G0-02",
+      "gate": "M-G0",
+      "name": "GOLD format/version/grid/seed and 12 canonical collection counts preserved",
+      "status": "PASS",
+      "detail": {
+        "world": [
+          2000,
+          1400
+        ],
+        "counts": {
+          "land": 8,
+          "lakes": 5,
+          "rivers": 17,
+          "roads": 92,
+          "bridges": 12,
+          "docks": 27,
+          "pois": 81,
+          "zones": 23,
+          "resources": 280,
+          "spawns": 4,
+          "elders": 6,
+          "labels": 24
+        },
+        "total": 579
+      }
+    },
+    {
+      "id": "M-G0-03",
+      "gate": "M-G0",
+      "name": "geometry_snapshot collections are byte-equal (JSON) to embedded GOLD project collections",
+      "status": "PASS",
+      "detail": {
+        "collections": 12,
+        "coordinateDrift": 0
+      }
+    },
+    {
+      "id": "M-G0-04",
+      "gate": "M-G0",
+      "name": "Full float precision, polygon vertices and authored water holes preserved (no rounding)",
+      "status": "PASS",
+      "detail": {
+        "landRings": 8,
+        "vertices": 721,
+        "allPolyVertices": 2305,
+        "highPrecisionCoordinates": 721,
+        "authoredWaterHoleCells": 685
+      }
+    },
+    {
+      "id": "M-G0-05",
+      "gate": "M-G0",
+      "name": "Source manifest self-check equals the real whole-data file/byte count",
+      "status": "PASS",
+      "detail": {
+        "files": 117,
+        "bytes": 15815702
+      }
+    },
+    {
+      "id": "M-G0-06",
+      "gate": "M-G0",
+      "name": "Every embedded data/ file matches its recorded SHA-256 and byte length",
+      "status": "PASS",
+      "detail": {
+        "verified": 116
+      }
+    },
+    {
+      "id": "M-G0-07",
+      "gate": "M-G0",
+      "name": "21 GEO-01 rasters + 5 MapLab masks: byte length and SHA-256 verified by loader",
+      "status": "PASS",
+      "detail": {
+        "layers": 26,
+        "cellCount": 43750
+      }
+    },
+    {
+      "id": "M-G0-08",
+      "gate": "M-G0",
+      "name": "No corrupt raster cells: declared u8 domains respected",
+      "status": "PASS",
+      "detail": {
+        "checkedRasters": 18,
+        "cellsPerRaster": 43750
+      }
+    },
+    {
+      "id": "M-G0-09",
+      "gate": "M-G0",
+      "name": "Invalid-water and water/land contradiction scan",
+      "status": "PASS",
+      "detail": {
+        "waterCells": 29358,
+        "contradictions": 0
+      }
+    },
+    {
+      "id": "M-G0-10",
+      "gate": "M-G0",
+      "name": "579 stable feature IDs: unique, indexed, with chunk ownership",
+      "status": "PASS",
+      "detail": {
+        "features": 579,
+        "idCollisions": 0
+      }
+    },
+    {
+      "id": "M-G0-11",
+      "gate": "M-G0",
+      "name": "Route topology: 92/12/27/17/81 authored IDs, vertices in frame, positive lengths",
+      "status": "PASS",
+      "detail": {
+        "roads": 92,
+        "bridges": 12,
+        "docks": 27,
+        "rivers": 17
+      }
+    },
+    {
+      "id": "M-G0-12",
+      "gate": "M-G0",
+      "name": "LR01 81 layouts / 210 rooms / 410 walls / 235 portals and LR02 463 solids / 169 openings",
+      "status": "PASS",
+      "detail": {
+        "layouts": 81,
+        "rooms": 210,
+        "walls": 410,
+        "portals": 235,
+        "solids": 463,
+        "openings": 169
+      }
+    },
+    {
+      "id": "M-G0-13",
+      "gate": "M-G0",
+      "name": "Immutable LR01 v1 and LR02 v2 package digests preserved verbatim",
+      "status": "PASS",
+      "detail": {
+        "lr01Body": "e3259eb30016f93ab0883c6dc3656f0ec1b9d47a85dc78fd90a56e0185765e63",
+        "lr02V2": "e3ba6d298fe2872cf5a39b2e3e8cc8704f54c5582f15cff49e2aacffdd20b3e7"
+      }
+    },
+    {
+      "id": "M-G0-14",
+      "gate": "M-G0",
+      "name": "Six genuine Web runtime captures preserved byte-for-byte",
+      "status": "PASS",
+      "detail": {
+        "captures": 6,
+        "size": "640x360"
+      }
+    },
+    {
+      "id": "M-G0-15",
+      "gate": "M-G0",
+      "name": "NEGATIVE: a tampered raster cell is detected by the pinned SHA-256 guard",
+      "status": "PASS",
+      "detail": {
+        "fixture": "corrupt raster cell i=1234",
+        "detected": true
+      }
+    },
+    {
+      "id": "M-G1-01",
+      "gate": "M-G1",
+      "name": "Clean-room static scan: no GOLD / MapLab / git / network / Gameplay-runtime references in code",
+      "status": "PASS",
+      "detail": {
+        "scannedFiles": 10,
+        "forbiddenTokens": 13,
+        "hits": 0
+      }
+    },
+    {
+      "id": "M-G1-02",
+      "gate": "M-G1",
+      "name": "Clean-room runtime marker (clean-room.sh runs this test with WMP_CLEAN_ROOM=1)",
+      "status": "PASS",
+      "detail": {
+        "mode": "MAIN_TREE__ISOLATED_PROOF_IN_evidence/clean_room.log"
+      }
+    },
+    {
+      "id": "M-G1-03",
+      "gate": "M-G1",
+      "name": "Master manifest lists every child with a valid SHA-256 and byte length",
+      "status": "PASS",
+      "detail": {
+        "verified": 44,
+        "layers": 12,
+        "rasters": 32
+      }
+    },
+    {
+      "id": "M-G1-04",
+      "gate": "M-G1",
+      "name": "Deterministic build: repeated compiler run reproduces the exact revisionDigest",
+      "status": "PASS",
+      "detail": {
+        "run1": "1d032deb1b03feac918ed0485aa31c21b4c7951373d4dda5ebfbe3b8f850474e",
+        "run2": "1d032deb1b03feac918ed0485aa31c21b4c7951373d4dda5ebfbe3b8f850474e",
+        "equal": true
+      }
+    },
+    {
+      "id": "M-G1-05",
+      "gate": "M-G1",
+      "name": "All 32 derived rasters reload through the digest-verified clean-room loader",
+      "status": "PASS",
+      "detail": {
+        "derivedRasters": 32,
+        "sourceRasters": 26
+      }
+    },
+    {
+      "id": "M-G2-01",
+      "gate": "M-G2",
+      "name": "groundAt returns physical terrain fields with explicit unit unknowns",
+      "status": "PASS",
+      "detail": {
+        "samples": 4,
+        "allPhysicalFieldsPresent": true
+      }
+    },
+    {
+      "id": "M-G2-02",
+      "gate": "M-G2",
+      "name": "Every one of the 43,750 cells has a defined physical terrain classification",
+      "status": "PASS",
+      "detail": {
+        "cells": 43750,
+        "undefinedCells": 0
+      }
+    },
+    {
+      "id": "M-G2-03",
+      "gate": "M-G2",
+      "name": "17 rivers with measured cross-sections, authored editor stroke and UNRESOLVED navigable width",
+      "status": "PASS",
+      "detail": {
+        "rivers": 17,
+        "sampleCount": 84
+      }
+    },
+    {
+      "id": "M-G2-04",
+      "gate": "M-G2",
+      "name": "5 lakes, 8 shoreline rings with holes, banks/channels/floodplains, fresh-salt identity",
+      "status": "PASS",
+      "detail": {
+        "lakes": 5,
+        "shorelineRings": 8,
+        "bankCells": 1484,
+        "channelCells": 400,
+        "floodplainCells": 1398
+      }
+    },
+    {
+      "id": "M-G2-05",
+      "gate": "M-G2",
+      "name": "Ford candidates, river direction and outlet defects are explicit, never fabricated",
+      "status": "PASS",
+      "detail": {
+        "fords": 6,
+        "outletDefects": 1
+      }
+    },
+    {
+      "id": "M-G2-06",
+      "gate": "M-G2",
+      "name": "BR-4 and unbridged river/crossing contradictions named, not silently resolved",
+      "status": "PASS",
+      "detail": {
+        "contradictions": 11,
+        "br4": {
+          "clearanceCells": 0,
+          "waterClass": 3,
+          "roadClass": 1,
+          "elderGeometryId": 3,
+          "riverId": 3
+        }
+      }
+    },
+    {
+      "id": "M-G2-07",
+      "gate": "M-G2",
+      "name": "Static climate potential: 12 regions, 5 explicit unknowns, no numeric temperature/damage/rates",
+      "status": "PASS",
+      "detail": {
+        "regions": 12,
+        "unknowns": 5,
+        "numericRates": 0
+      }
+    },
+    {
+      "id": "M-G2-08",
+      "gate": "M-G2",
+      "name": "At least 3 scale profiles incl U=1.6 and U=2.0; conditional recommendation only",
+      "status": "PASS",
+      "detail": {
+        "profiles": [
+          "scale.U10",
+          "scale.U16",
+          "scale.U20",
+          "scale.U25"
+        ],
+        "recommendation": "scale.U20"
+      }
+    },
+    {
+      "id": "M-G2-09",
+      "gate": "M-G2",
+      "name": "Coordinate round trips and frame-boundary drift are measured for every scale",
+      "status": "PASS",
+      "detail": [
+        {
+          "id": "scale.U10",
+          "maxDriftAu": 0.5,
+          "rightBoundaryDriftAu": 0
+        },
+        {
+          "id": "scale.U16",
+          "maxDriftAu": 0.8,
+          "rightBoundaryDriftAu": 0
+        },
+        {
+          "id": "scale.U20",
+          "maxDriftAu": 1,
+          "rightBoundaryDriftAu": 0
+        },
+        {
+          "id": "scale.U25",
+          "maxDriftAu": 1.25,
+          "rightBoundaryDriftAu": 0
+        }
+      ]
+    },
+    {
+      "id": "M-G2-10",
+      "gate": "M-G2",
+      "name": "terrainProfile crosses multiple chunks and reports raw bytes + chunk sequence",
+      "status": "PASS",
+      "detail": {
+        "samples": 33,
+        "chunks": 7,
+        "lengthAu": 934.824
+      }
+    },
+    {
+      "id": "M-G2-11",
+      "gate": "M-G2",
+      "name": "Explicit 12 source biomes -> 14 EconomyMap labels -> 20 Web terrain codes crosswalk",
+      "status": "PASS",
+      "detail": {
+        "sourceBiomes": 12,
+        "economyLabels": 14,
+        "webCodes": 20,
+        "subtypeCodesPreserved": 12
+      }
+    },
+    {
+      "id": "M-G2-12",
+      "gate": "M-G2",
+      "name": "Resource ecology: 280 authored markers + geographic candidates, no loot/stock/yield/respawn",
+      "status": "PASS",
+      "detail": {
+        "authoredHabitatMarkers": 280,
+        "roadsideCandidates": 75,
+        "industrialZones": 23,
+        "poiOpportunities": 81,
+        "rareEndgame": 6,
+        "total": 465
+      }
+    },
+    {
+      "id": "M-G2-13",
+      "gate": "M-G2",
+      "name": "visualSurfaceIds returns technical surface-code histogram, not art approval",
+      "status": "PASS",
+      "detail": {
+        "cellCount": 43750,
+        "distinctSurfaceCodes": 13
+      }
+    },
+    {
+      "id": "M-G3-01",
+      "gate": "M-G3",
+      "name": "All 81 POIs assessed with 210 rooms, roof candidates only on covered source rooms, open-air preserved",
+      "status": "PASS",
+      "detail": {
+        "pois": 81,
+        "rooms": 210,
+        "roofPolygons": 153,
+        "openAirPois": 43,
+        "note": "Open-air yards can contain partial canopy-only roof candidates; no enclosed roof is invented."
+      }
+    },
+    {
+      "id": "M-G3-02",
+      "gate": "M-G3",
+      "name": "Roof polygons derived only from source room polygons, inside parent bbox, PROPOSED status",
+      "status": "PASS",
+      "detail": {
+        "roofPolygonsChecked": 153
+      }
+    },
+    {
+      "id": "M-G3-03",
+      "gate": "M-G3",
+      "name": "All 18 vertical cases: 10 proposed links, 8 exact-ID named blockers; no hidden exception",
+      "status": "PASS",
+      "detail": {
+        "proposed": 10,
+        "blockers": 8,
+        "blockerIds": [
+          "po_archive",
+          "po_meridian",
+          "po_oldpump",
+          "po_ironvein",
+          "po_tombs",
+          "po_sulfur",
+          "po_geo",
+          "po_ironmine"
+        ]
+      }
+    },
+    {
+      "id": "M-G3-04",
+      "gate": "M-G3",
+      "name": "Proposed shaft polygons lie inside the measured ground/DEEP overlap",
+      "status": "PASS",
+      "detail": {
+        "checkedShafts": 18
+      }
+    },
+    {
+      "id": "M-G3-05",
+      "gate": "M-G3",
+      "name": "Two POI exterior / deep / retreat examples inspectable through poiGraph",
+      "status": "PASS",
+      "detail": {
+        "examples": [
+          "po_academy",
+          "po_archive"
+        ]
+      }
+    },
+    {
+      "id": "M-G3-06",
+      "gate": "M-G3",
+      "name": "LOS/occlusion results are real (blocked AND clear), never undefined PASS",
+      "status": "PASS",
+      "detail": {
+        "blocked": 123,
+        "clear": 38
+      }
+    },
+    {
+      "id": "M-G3-07",
+      "gate": "M-G3",
+      "name": "Every room has a valid polygon, floor and roof descriptor; dynamic state is Gameplay-owned",
+      "status": "PASS",
+      "detail": {
+        "rooms": 210
+      }
+    },
+    {
+      "id": "M-G3-08",
+      "gate": "M-G3",
+      "name": "NEGATIVE: invalid POI ID returns typed INVALID, no fallback or fabricated link",
+      "status": "PASS",
+      "detail": {
+        "fixture": "po_DOES_NOT_EXIST",
+        "status": "INVALID"
+      }
+    },
+    {
+      "id": "M-G4-01",
+      "gate": "M-G4",
+      "name": "70 continuous chunks with neighbours and stable per-chunk ID digests",
+      "status": "PASS",
+      "detail": {
+        "chunks": 70
+      }
+    },
+    {
+      "id": "M-G4-02",
+      "gate": "M-G4",
+      "name": "Features crossing chunk boundaries keep the SAME stable ID in every owning chunk",
+      "status": "PASS",
+      "detail": {
+        "crossingFeatures": 108,
+        "example": "ld_veyra"
+      }
+    },
+    {
+      "id": "M-G4-03",
+      "gate": "M-G4",
+      "name": "92 roads / 12 bridges / 27 docks with parameterized clearance and three body profiles",
+      "status": "PASS",
+      "detail": {
+        "roads": 92,
+        "bridges": 12,
+        "docks": 27
+      }
+    },
+    {
+      "id": "M-G4-04",
+      "gate": "M-G4",
+      "name": "No cartPassable=true; centreline clearance is never a swept-clearance PASS",
+      "status": "PASS",
+      "detail": {
+        "roadsChecked": 92,
+        "bridgesChecked": 12,
+        "falsePasses": 0
+      }
+    },
+    {
+      "id": "M-G4-05",
+      "gate": "M-G4",
+      "name": "Road/bridge clearance comparison distinguishes foot, cart and loaded-cart profiles",
+      "status": "PASS",
+      "detail": {
+        "footWidthAu": 2,
+        "cartWidthAu": 8,
+        "loadedCartWidthAu": 16,
+        "roadsBelowLoadedCart": 51,
+        "roadsAboveFoot": 60
+      }
+    },
+    {
+      "id": "M-G4-06",
+      "gate": "M-G4",
+      "name": "Disconnected roads, false joins, unbridged crossings and 8 blocked ferries preserved",
+      "status": "PASS",
+      "detail": {
+        "disconnected": 7,
+        "falseJoinsFlagged": 13,
+        "unbridged": 10,
+        "ferries": 8,
+        "alternateRouteCandidates": 5
+      }
+    },
+    {
+      "id": "M-G4-07",
+      "gate": "M-G4",
+      "name": "Alternate FOOT / CART_PROPOSED / OFFROAD-WATER route candidates with explicit non-canonical status",
+      "status": "PASS",
+      "detail": {
+        "kinds": [
+          "FOOT",
+          "CART_PROPOSED",
+          "WATER_GEOMETRY_ONLY"
+        ],
+        "candidates": 5,
+        "graphNodes": 1476
+      }
+    },
+    {
+      "id": "M-G4-08",
+      "gate": "M-G4",
+      "name": "23 build envelopes: dry cells, water-overlap cells, occupancy UNKNOWN, claims Gameplay-owned",
+      "status": "PASS",
+      "detail": {
+        "envelopes": 23,
+        "waterOverlapUnresolved": 12
+      }
+    },
+    {
+      "id": "M-G4-09",
+      "gate": "M-G4",
+      "name": "Four distinct spawn areas, three independent homes, six distinct Elder territories",
+      "status": "PASS",
+      "detail": {
+        "spawns": [
+          "sp_west",
+          "sp_lake",
+          "sp_hook",
+          "sp_gulf"
+        ],
+        "homes": 3,
+        "elders": 6,
+        "distinctGeometrySignatures": 6
+      }
+    },
+    {
+      "id": "M-G4-10",
+      "gate": "M-G4",
+      "name": "Possible nonboss source -> vendor -> home -> evacuation route with NO Elder gate",
+      "status": "PASS",
+      "detail": {
+        "routes": 2,
+        "example": "route.nonboss.po_kestrel.wmp.vendor.1.wmp.home.1.dk_emberport.v1",
+        "totalLengthAu": 3152,
+        "bridgeDeckStatuses": [
+          "UNRESOLVED",
+          "UNRESOLVED",
+          "UNRESOLVED"
+        ]
+      }
+    },
+    {
+      "id": "M-G4-11",
+      "gate": "M-G4",
+      "name": "traversalCandidateAt never turns an undefined width or bridge deck into PASS",
+      "status": "PASS",
+      "detail": {
+        "noWidth": "UNKNOWN",
+        "cart": "BLOCKED",
+        "centreClearanceAu": 0
+      }
+    },
+    {
+      "id": "M-G4-12",
+      "gate": "M-G4",
+      "name": "buildEnvelopeAt reports water overlap and unknown occupancy instead of a fabricated PASS",
+      "status": "PASS",
+      "detail": {
+        "siteId": "site.bz_greywater",
+        "waterOverlapCellCount": 3
+      }
+    },
+    {
+      "id": "M-G5-01",
+      "gate": "M-G5",
+      "name": "Every typed query returns the versioned schema and Map/Gameplay authority",
+      "status": "PASS",
+      "detail": {
+        "queriesChecked": 15,
+        "schema": "soh.wmp.query.v1"
+      }
+    },
+    {
+      "id": "M-G5-02",
+      "gate": "M-G5",
+      "name": "Deterministic queries: repeated identical calls produce identical JSON",
+      "status": "PASS",
+      "detail": {
+        "repeatCalls": 8,
+        "drift": 0
+      }
+    },
+    {
+      "id": "M-G5-03",
+      "gate": "M-G5",
+      "name": "Chunk-aware 200x200 intake window: 5 verified masks, chunk continuity, no runtime claims",
+      "status": "PASS",
+      "detail": {
+        "id": "window.U16.200x200.0x0",
+        "chunks": 4,
+        "boundaryMismatches": 0,
+        "masks": [
+          "tiles",
+          "fresh",
+          "zone",
+          "seaDist",
+          "land"
+        ]
+      }
+    },
+    {
+      "id": "M-G5-04",
+      "gate": "M-G5",
+      "name": "Intake contract states 200x200 Web slice is NOT whole Veyra; no runtime modification",
+      "status": "PASS",
+      "detail": {
+        "contract": "soh.wmp.chunk_intake_contract.v1",
+        "note": "The 200x200 Web window is a PLAYABLE_WEB_SLICE, NOT the whole 2000x1400 Veyra authoring frame."
+      }
+    },
+    {
+      "id": "M-G5-05",
+      "gate": "M-G5",
+      "name": "Query performance: 1,000 typed queries complete within 2s",
+      "status": "PASS",
+      "detail": {
+        "queries": 1000,
+        "elapsedMs": 4
+      }
+    },
+    {
+      "id": "M-G5-06",
+      "gate": "M-G5",
+      "name": "Source preservation: manifest pins GOLD/LR01/LR02 digests and source manifest SHA",
+      "status": "PASS",
+      "detail": {
+        "goldReadCount": 1,
+        "childDigests": 44
+      }
+    },
+    {
+      "id": "M-G5-07",
+      "gate": "M-G5",
+      "name": "Forbidden product claims absent from manifest and layer files",
+      "status": "PASS",
+      "detail": {
+        "filesChecked": 13,
+        "forbiddenClaims": [
+          "WORLD_MASTER_SEALED",
+          "VEYRA_PLAYABLE",
+          "VISUAL_ACCEPTED",
+          "MERGE_READY"
+        ]
+      }
+    },
+    {
+      "id": "M-G5-08",
+      "gate": "M-G5",
+      "name": "Technical views and real Web captures are classified separately",
+      "status": "PASS",
+      "detail": {
+        "analytical": 15,
+        "realWeb": 6
+      }
+    },
+    {
+      "id": "M-G5-09",
+      "gate": "M-G5",
+      "name": "Docs, gates, decision register and blockers evidence exist",
+      "status": "PASS",
+      "detail": {
+        "docs": 9
+      }
+    },
+    {
+      "id": "M-G5-NEG-NEG-01-INVALID-FEATURE-ID",
+      "gate": "M-G5",
+      "name": "EXECUTED negative fixture NEG-01-INVALID-FEATURE-ID",
+      "status": "PASS",
+      "detail": {
+        "subject": "featureInfo(po_DOES_NOT_EXIST)",
+        "expect": "INVALID",
+        "got": "INVALID"
+      }
+    },
+    {
+      "id": "M-G5-NEG-NEG-02-INVALID-COORDS",
+      "gate": "M-G5",
+      "name": "EXECUTED negative fixture NEG-02-INVALID-COORDS",
+      "status": "PASS",
+      "detail": {
+        "subject": "groundAt([-1, 99999])",
+        "expect": "INVALID",
+        "got": "INVALID"
+      }
+    },
+    {
+      "id": "M-G5-NEG-NEG-03-BRIDGE-CLIPPING",
+      "gate": "M-G5",
+      "name": "EXECUTED negative fixture NEG-03-BRIDGE-CLIPPING",
+      "status": "PASS",
+      "detail": {
+        "subject": "br_4 cart traversal at [732,652]",
+        "expect": "BLOCKED",
+        "got": "BLOCKED"
+      }
+    },
+    {
+      "id": "M-G5-NEG-NEG-04-BLOCKED-DOOR-LOS",
+      "gate": "M-G5",
+      "name": "EXECUTED negative fixture NEG-04-BLOCKED-DOOR-LOS",
+      "status": "PASS",
+      "detail": {
+        "subject": "static-solid occlusion present in architectural LOS",
+        "expect": "BLOCKED_BY_STATIC_SOLID",
+        "got": "BLOCKED_BY_STATIC_SOLID"
+      }
+    },
+    {
+      "id": "M-G5-NEG-NEG-05-DISCONNECTED-CHUNKS",
+      "gate": "M-G5",
+      "name": "EXECUTED negative fixture NEG-05-DISCONNECTED-CHUNKS",
+      "status": "PASS",
+      "detail": {
+        "subject": "injected isolated chunk must be detected",
+        "expect": true,
+        "got": true
+      }
+    },
+    {
+      "id": "M-G5-NEG-NEG-06-UNREACHABLE-CANDIDATE",
+      "gate": "M-G5",
+      "name": "EXECUTED negative fixture NEG-06-UNREACHABLE-CANDIDATE",
+      "status": "PASS",
+      "detail": {
+        "subject": "deep-sea traversal candidate [10,10] must not be a walkable PASS",
+        "expect": "BLOCKED",
+        "got": "BLOCKED"
+      }
+    },
+    {
+      "id": "M-G5-NEG-NEG-07-WATER-OVERLAP",
+      "gate": "M-G5",
+      "name": "EXECUTED negative fixture NEG-07-WATER-OVERLAP",
+      "status": "PASS",
+      "detail": {
+        "subject": "build envelope water-overlap defects must be reported, not silently resolved",
+        "expect": true,
+        "got": true
+      }
+    },
+    {
+      "id": "M-G5-NEG-NEG-08-FALSE-PASSABILITY",
+      "gate": "M-G5",
+      "name": "EXECUTED negative fixture NEG-08-FALSE-PASSABILITY",
+      "status": "PASS",
+      "detail": {
+        "subject": "traversalCandidateAt without width must be UNKNOWN",
+        "expect": "UNKNOWN",
+        "got": "UNKNOWN"
+      }
+    },
+    {
+      "id": "M-G5-NEG-NEG-09-ROOF-OPEN-AIR",
+      "gate": "M-G5",
+      "name": "EXECUTED negative fixture NEG-09-ROOF-OPEN-AIR",
+      "status": "PASS",
+      "detail": {
+        "subject": "no roof polygon may be derived from an uncovered source room; open-air status preserved",
+        "expect": true,
+        "got": true
+      }
+    },
+    {
+      "id": "M-G5-NEG-NEG-10-VERTICAL-BLOCKER",
+      "gate": "M-G5",
+      "name": "EXECUTED negative fixture NEG-10-VERTICAL-BLOCKER",
+      "status": "PASS",
+      "detail": {
+        "subject": "named vertical blockers must carry exact ID/coords/negative test",
+        "expect": true,
+        "got": true
+      }
+    },
+    {
+      "id": "M-G5-NEG-NEG-11-CORRUPT-RASTER",
+      "gate": "M-G5",
+      "name": "EXECUTED negative fixture NEG-11-CORRUPT-RASTER",
+      "status": "PASS",
+      "detail": {
+        "subject": "tampered u8 buffer must fail pinned digest",
+        "expect": true,
+        "got": true
+      }
+    },
+    {
+      "id": "M-G5-NEG-NEG-12-CLIMATE-NUMERIC",
+      "gate": "M-G5",
+      "name": "EXECUTED negative fixture NEG-12-CLIMATE-NUMERIC",
+      "status": "PASS",
+      "detail": {
+        "subject": "climateBaselineAt must not return numeric temperature",
+        "expect": "UNKNOWN",
+        "got": "UNKNOWN"
+      }
+    },
+    {
+      "id": "M-G5-10",
+      "gate": "M-G5",
+      "name": "All 12 negative fixtures executed and recorded",
+      "status": "PASS",
+      "detail": null
+    }
+  ]
+}

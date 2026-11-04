@@ -1,0 +1,3033 @@
+{
+  "schema": "soh.wmp.hydrology.v1",
+  "status": "PHYSICAL_HYDROLOGY_CANDIDATES__CONTRADICTIONS_NAMED",
+  "authority": "MAP_DESIGNS_THE_PHYSICAL_WORLD__GAMEPLAY_POPULATES_AND_SIMULATES_IT",
+  "frame": {
+    "authoring": [
+      2000,
+      1400
+    ],
+    "unit": "authoring_unit",
+    "grid": {
+      "gw": 250,
+      "gh": 175,
+      "cellAu": 8
+    }
+  },
+  "waterClassLegend": {
+    "0": "LAND",
+    "1": "SEA",
+    "2": "LAKE",
+    "3": "RIVER"
+  },
+  "sea": {
+    "id": "sea_veyra",
+    "kind": "SEA",
+    "coastCells": 812,
+    "shoreline": [
+      {
+        "landId": "ld_veyra",
+        "ringCount": 1,
+        "outerVertexCount": 372,
+        "holeRingCount": 0,
+        "perimeterAu": 4204.6626,
+        "areaAu2": 835818.727,
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "landId": "ld_cinder",
+        "ringCount": 1,
+        "outerVertexCount": 86,
+        "holeRingCount": 0,
+        "perimeterAu": 779.8256,
+        "areaAu2": 46386.8545,
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "landId": "ld_saltwick",
+        "ringCount": 1,
+        "outerVertexCount": 74,
+        "holeRingCount": 0,
+        "perimeterAu": 669.9447,
+        "areaAu2": 31853.1629,
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "landId": "ld_gull",
+        "ringCount": 1,
+        "outerVertexCount": 28,
+        "holeRingCount": 0,
+        "perimeterAu": 248.5012,
+        "areaAu2": 4791.1764,
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "landId": "ld_ironholm",
+        "ringCount": 1,
+        "outerVertexCount": 64,
+        "holeRingCount": 0,
+        "perimeterAu": 576.6555,
+        "areaAu2": 22875.3139,
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "landId": "ld_threshold",
+        "ringCount": 1,
+        "outerVertexCount": 45,
+        "holeRingCount": 0,
+        "perimeterAu": 401.9562,
+        "areaAu2": 12573.4826,
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "landId": "ld_wreck",
+        "ringCount": 1,
+        "outerVertexCount": 38,
+        "holeRingCount": 0,
+        "perimeterAu": 336.5796,
+        "areaAu2": 8764.6646,
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "landId": "ld_beacon",
+        "ringCount": 1,
+        "outerVertexCount": 14,
+        "holeRingCount": 0,
+        "perimeterAu": 117.5483,
+        "areaAu2": 1061.7135,
+        "status": "SOURCE_AUTHORED"
+      }
+    ],
+    "freshwater": false,
+    "status": "SOURCE_AUTHORED"
+  },
+  "waterBodies": [
+    {
+      "id": "lk_tarn",
+      "kind": "LAKE",
+      "name": "Mirror Tarn",
+      "ringAu": [
+        [
+          650.1348681057551,
+          419.328513800563
+        ],
+        [
+          649.015656330035,
+          422.08907695993497
+        ],
+        [
+          647.045935404317,
+          424.3867107093195
+        ],
+        [
+          644.2257053286012,
+          426.22141504871655
+        ],
+        [
+          640.7035649956667,
+          427.04548521422817
+        ],
+        [
+          636.4795144055137,
+          426.8589212058543
+        ],
+        [
+          632.6688689091395,
+          427.17845138876805
+        ],
+        [
+          629.2716285065443,
+          428.00407576296936
+        ],
+        [
+          625.6409734001809,
+          427.9789504842681
+        ],
+        [
+          621.7769035900493,
+          427.10307555266445
+        ],
+        [
+          618.2204489457786,
+          425.6969732930735
+        ],
+        [
+          614.9716094673689,
+          423.76064370549534
+        ],
+        [
+          611.126688757121,
+          422.14599893994205
+        ],
+        [
+          606.6856868150351,
+          420.8530389964136
+        ],
+        [
+          603.4306808877031,
+          418.6885897767597
+        ],
+        [
+          601.3616709751252,
+          415.6526512809804
+        ],
+        [
+          599.9720194423157,
+          412.5863083826211
+        ],
+        [
+          599.2617262892745,
+          409.48956108168164
+        ],
+        [
+          599.4432698419976,
+          406.6039980924056
+        ],
+        [
+          600.5166501004852,
+          403.9296194147931
+        ],
+        [
+          601.2921612085344,
+          401.14369138855994
+        ],
+        [
+          601.7698031661452,
+          398.2462140137063
+        ],
+        [
+          603.4527150681836,
+          395.9578551573457
+        ],
+        [
+          606.3408969146494,
+          394.2786148194779
+        ],
+        [
+          609.5548728539388,
+          393.04420820114154
+        ],
+        [
+          613.0946428860516,
+          392.25463530233657
+        ],
+        [
+          616.7155737385106,
+          391.50743264203163
+        ],
+        [
+          620.4176654113159,
+          390.8026002202268
+        ],
+        [
+          624.1610318300322,
+          391.427658508083
+        ],
+        [
+          627.9456729946598,
+          393.38260750560033
+        ],
+        [
+          631.948369950585,
+          394.6254962038639
+        ],
+        [
+          636.1691226978077,
+          395.1563246028737
+        ],
+        [
+          639.9315069787078,
+          396.595095275546
+        ],
+        [
+          643.2355227932856,
+          398.9418082218805
+        ],
+        [
+          646.1211519833818,
+          401.54645302651005
+        ],
+        [
+          648.5883945489962,
+          404.40902968943465
+        ],
+        [
+          649.6598204103432,
+          407.35706521891905
+        ],
+        [
+          649.3354295674225,
+          410.3905596149635
+        ],
+        [
+          649.5535441078755,
+          413.4175381649585
+        ],
+        [
+          650.3141640317019,
+          416.43800086890417
+        ]
+      ],
+      "ringVertexCount": 40,
+      "areaAu2": 1464.8257,
+      "perimeterAu": 142.4554,
+      "centroidAu": [
+        625.0783,
+        409.8458
+      ],
+      "freshwater": true,
+      "status": "SOURCE_AUTHORED"
+    },
+    {
+      "id": "lk_grey",
+      "kind": "LAKE",
+      "name": "Greywater Lake",
+      "ringAu": [
+        [
+          859.8940949376355,
+          522.7458142314363
+        ],
+        [
+          862.2370029034911,
+          528.2261466154055
+        ],
+        [
+          860.354756346765,
+          533.8986972917721
+        ],
+        [
+          854.2473552674574,
+          539.7634662605362
+        ],
+        [
+          849.7956443934,
+          545.9211728829945
+        ],
+        [
+          846.9996237245929,
+          552.371817159147
+        ],
+        [
+          841.0397344029295,
+          557.6404110273801
+        ],
+        [
+          831.9159764284101,
+          561.7269544876939
+        ],
+        [
+          822.7254780550256,
+          565.2323588879196
+        ],
+        [
+          813.4682392827763,
+          568.1566242280576
+        ],
+        [
+          804.3542291197049,
+          569.511931290574
+        ],
+        [
+          795.3834475658114,
+          569.2982800754693
+        ],
+        [
+          786.0618339667834,
+          570.0658868096289
+        ],
+        [
+          776.3893883226209,
+          571.8147514930531
+        ],
+        [
+          767.2142275072795,
+          571.9574712678221
+        ],
+        [
+          758.5363515207592,
+          570.4940461339361
+        ],
+        [
+          751.0660804849084,
+          567.8739058547044
+        ],
+        [
+          744.803414399727,
+          564.0970504301272
+        ],
+        [
+          741.8763629278471,
+          559.0776960914168
+        ],
+        [
+          742.284926069269,
+          552.8158428385734
+        ],
+        [
+          743.0694755894172,
+          546.8914015836838
+        ],
+        [
+          744.2300114882917,
+          541.3043723267482
+        ],
+        [
+          745.9249459108116,
+          535.7265660477435
+        ],
+        [
+          748.1542788569775,
+          530.1579827466697
+        ],
+        [
+          750.8904179012948,
+          524.2841522512235
+        ],
+        [
+          754.1333630437639,
+          518.105074561405
+        ],
+        [
+          760.0278635508084,
+          512.871958468214
+        ],
+        [
+          768.5739194224286,
+          508.58480397165056
+        ],
+        [
+          777.4971907070824,
+          505.2077559284136
+        ],
+        [
+          786.7976774047696,
+          502.740814338503
+        ],
+        [
+          795.9873654320069,
+          500.85955388036643
+        ],
+        [
+          805.066254788794,
+          499.5639745540037
+        ],
+        [
+          813.9140844058172,
+          499.04731807110704
+        ],
+        [
+          822.5308542830765,
+          499.30958443167634
+        ],
+        [
+          831.3088174392269,
+          499.84582925564854
+        ],
+        [
+          840.2479738742685,
+          500.65605254302375
+        ],
+        [
+          847.3755570091898,
+          503.0910499151957
+        ],
+        [
+          852.6915668439908,
+          507.15082137216444
+        ],
+        [
+          856.1928390597204,
+          511.88694233534954
+        ],
+        [
+          857.8793736563787,
+          517.299412804751
+        ]
+      ],
+      "ringVertexCount": 40,
+      "areaAu2": 6779.5026,
+      "perimeterAu": 314.1585,
+      "centroidAu": [
+        800.5905,
+        535.3702
+      ],
+      "freshwater": true,
+      "status": "SOURCE_AUTHORED"
+    },
+    {
+      "id": "lk_verdant",
+      "kind": "LAKE",
+      "name": "Lake Verdant",
+      "ringAu": [
+        [
+          1069.8145825579518,
+          408.09654609720457
+        ],
+        [
+          1068.7287322996358,
+          414.1710433665422
+        ],
+        [
+          1064.9938922667375,
+          419.54308710693084
+        ],
+        [
+          1058.6100624592568,
+          424.21267731837037
+        ],
+        [
+          1050.1154706064178,
+          427.2458096257845
+        ],
+        [
+          1039.5101167082203,
+          428.6424840291732
+        ],
+        [
+          1030.0864645796778,
+          430.9334795764066
+        ],
+        [
+          1021.8445142207897,
+          434.1187962674848
+        ],
+        [
+          1012.2837423252794,
+          436.3390576769044
+        ],
+        [
+          1001.4041488931464,
+          437.5942638046655
+        ],
+        [
+          990.9844577785441,
+          436.2210415551866
+        ],
+        [
+          981.0246689814728,
+          432.21939092846776
+        ],
+        [
+          970.82871883394,
+          428.9062637101345
+        ],
+        [
+          960.3966073359458,
+          426.2816599001868
+        ],
+        [
+          950.8913800800489,
+          422.609967045477
+        ],
+        [
+          942.3130370662492,
+          417.89118514600494
+        ],
+        [
+          935.1047364154194,
+          412.5248209440616
+        ],
+        [
+          929.2664781275594,
+          406.5108744396469
+        ],
+        [
+          927.9663257556447,
+          400.44288674712584
+        ],
+        [
+          931.2042792996754,
+          394.3208578664985
+        ],
+        [
+          932.3466731607323,
+          388.07961829032246
+        ],
+        [
+          931.3935073388153,
+          381.71916801859777
+        ],
+        [
+          935.3971421510081,
+          376.815428523332
+        ],
+        [
+          944.3575775973105,
+          373.36839980452527
+        ],
+        [
+          951.5560146463835,
+          369.00540397661024
+        ],
+        [
+          956.9924532982269,
+          363.726441039587
+        ],
+        [
+          964.9857191397339,
+          360.1077431971816
+        ],
+        [
+          975.5358121709043,
+          358.1493104493941
+        ],
+        [
+          986.5809051459271,
+          357.6824062545826
+        ],
+        [
+          998.1209980648025,
+          358.7070306127471
+        ],
+        [
+          1009.2889626388419,
+          360.3462659808929
+        ],
+        [
+          1020.0847988680453,
+          362.60011235902
+        ],
+        [
+          1029.293370871904,
+          366.16882870361314
+        ],
+        [
+          1036.9146786504182,
+          371.05241501467253
+        ],
+        [
+          1043.9601491482938,
+          375.8254988734466
+        ],
+        [
+          1050.4297823655309,
+          380.4880802799354
+        ],
+        [
+          1056.3423978719575,
+          385.41186272819624
+        ],
+        [
+          1061.6979956675737,
+          390.5968462182292
+        ],
+        [
+          1065.871222845814,
+          396.1568278380681
+        ],
+        [
+          1068.8620794066778,
+          402.0918075877132
+        ]
+      ],
+      "ringVertexCount": 40,
+      "areaAu2": 8255.5801,
+      "perimeterAu": 352.2447,
+      "centroidAu": [
+        997.9736,
+        397.8299
+      ],
+      "freshwater": true,
+      "status": "SOURCE_AUTHORED"
+    },
+    {
+      "id": "lk_mirage",
+      "kind": "LAKE",
+      "name": "Mirage Pool",
+      "ringAu": [
+        [
+          677.6739650751307,
+          1009.1204657047297
+        ],
+        [
+          676.9653726980432,
+          1011.9981774421776
+        ],
+        [
+          674.5967893176294,
+          1014.0094066444018
+        ],
+        [
+          670.5682149338894,
+          1015.1541533114025
+        ],
+        [
+          667.1403433407445,
+          1016.568594218233
+        ],
+        [
+          664.3131745381946,
+          1018.2527293648933
+        ],
+        [
+          660.8521448993519,
+          1019.109174479113
+        ],
+        [
+          656.7572544242162,
+          1019.1379295608921
+        ],
+        [
+          652.5900953420629,
+          1019.5125524755522
+        ],
+        [
+          648.3506676528921,
+          1020.2330432230933
+        ],
+        [
+          644.2337658424154,
+          1019.6706183901915
+        ],
+        [
+          640.239389910633,
+          1017.8252779768466
+        ],
+        [
+          636.1841991385373,
+          1016.0673311931765
+        ],
+        [
+          632.0681935261284,
+          1014.3967780391815
+        ],
+        [
+          629.290607209848,
+          1012.0517285829872
+        ],
+        [
+          627.851440189696,
+          1009.0321828245935
+        ],
+        [
+          626.3040660738865,
+          1006.180529289602
+        ],
+        [
+          624.6484848624198,
+          1003.4967679780124
+        ],
+        [
+          622.8429225799332,
+          1000.5912593611442
+        ],
+        [
+          620.8873792264268,
+          997.4640034389977
+        ],
+        [
+          621.4390687439728,
+          994.8495231062752
+        ],
+        [
+          624.4979911325712,
+          992.7478183629767
+        ],
+        [
+          627.4806323455416,
+          990.9139834109758
+        ],
+        [
+          630.386992382884,
+          989.3480182502727
+        ],
+        [
+          633.3096975206911,
+          987.8547786491858
+        ],
+        [
+          636.248747758963,
+          986.4342646077151
+        ],
+        [
+          639.641679020677,
+          985.6157375217914
+        ],
+        [
+          643.4884913058333,
+          985.3991973914146
+        ],
+        [
+          647.454718735096,
+          985.0490968223247
+        ],
+        [
+          651.5403613084649,
+          984.5654358145218
+        ],
+        [
+          655.9133060051595,
+          984.6539616686604
+        ],
+        [
+          660.5735528251795,
+          985.3146743847403
+        ],
+        [
+          664.3648489230791,
+          987.0229008659873
+        ],
+        [
+          667.2871942988581,
+          989.7786411124009
+        ],
+        [
+          669.8177341718816,
+          992.4772606865258
+        ],
+        [
+          671.9564685421495,
+          995.1187595883622
+        ],
+        [
+          673.6511008920579,
+          997.7918749280699
+        ],
+        [
+          674.9016312216067,
+          1000.4966067056489
+        ],
+        [
+          676.1522376057046,
+          1003.3071319048304
+        ],
+        [
+          677.4029200443512,
+          1006.223450525614
+        ]
+      ],
+      "ringVertexCount": 40,
+      "areaAu2": 1495.3458,
+      "perimeterAu": 146.1362,
+      "centroidAu": [
+        650.0853,
+        1002.2159
+      ],
+      "freshwater": true,
+      "status": "SOURCE_AUTHORED"
+    },
+    {
+      "id": "lk_mere",
+      "kind": "LAKE",
+      "name": "Hook Mere",
+      "ringAu": [
+        [
+          1257.939392685404,
+          353.1600768751673
+        ],
+        [
+          1258.5466220975245,
+          355.48023062550186
+        ],
+        [
+          1258.2072819526738,
+          357.7822826007677
+        ],
+        [
+          1256.9213722508523,
+          360.0662328009649
+        ],
+        [
+          1255.0045973719618,
+          362.1714364975579
+        ],
+        [
+          1252.4569573160024,
+          364.0978936905468
+        ],
+        [
+          1249.2020171696536,
+          365.2864430559269
+        ],
+        [
+          1245.2397769329152,
+          365.7370845936981
+        ],
+        [
+          1241.4439926109096,
+          366.0600286775371
+        ],
+        [
+          1237.8146642036365,
+          366.2552753074439
+        ],
+        [
+          1234.1896795922428,
+          366.2469197892772
+        ],
+        [
+          1230.5690387767286,
+          366.0349621230369
+        ],
+        [
+          1226.8695710986203,
+          365.62916273463475
+        ],
+        [
+          1223.0912765579185,
+          365.02952162407075
+        ],
+        [
+          1219.6948670044462,
+          363.9115950195121
+        ],
+        [
+          1216.6803424382038,
+          362.27538292095863
+        ],
+        [
+          1215.0031151512076,
+          360.18482896301066
+        ],
+        [
+          1214.6631851434572,
+          357.6399331456681
+        ],
+        [
+          1213.7227524839632,
+          355.27561392774766
+        ],
+        [
+          1212.181817172726,
+          353.0918713092492
+        ],
+        [
+          1211.4401547429713,
+          350.7575157336363
+        ],
+        [
+          1211.4977651947,
+          348.2725472009089
+        ],
+        [
+          1212.710277517563,
+          346.0317763870153
+        ],
+        [
+          1215.0776917115606,
+          344.03520329195567
+        ],
+        [
+          1217.9893695437647,
+          342.5191776990803
+        ],
+        [
+          1221.4453110141753,
+          341.4836996083892
+        ],
+        [
+          1224.522326454375,
+          340.15121278509247
+        ],
+        [
+          1227.2204158643638,
+          338.5217172291901
+        ],
+        [
+          1230.4270954270187,
+          337.74030245328476
+        ],
+        [
+          1234.1423651423395,
+          337.80696845737646
+        ],
+        [
+          1237.9518180251976,
+          337.62580221724664
+        ],
+        [
+          1241.8554540755922,
+          337.1968037328953
+        ],
+        [
+          1245.1898057716605,
+          337.86838999868934
+        ],
+        [
+          1247.9548731134018,
+          339.64056101462876
+        ],
+        [
+          1251.141531448167,
+          341.06165888903456
+        ],
+        [
+          1254.749780775955,
+          342.1316836219068
+        ],
+        [
+          1257.234777603781,
+          343.81825889459657
+        ],
+        [
+          1258.5965219316442,
+          346.12138470710374
+        ],
+        [
+          1258.866990066518,
+          348.45471071001805
+        ],
+        [
+          1258.046182008402,
+          350.81823690333937
+        ]
+      ],
+      "ringVertexCount": 40,
+      "areaAu2": 1110.0111,
+      "perimeterAu": 126.0989,
+      "centroidAu": [
+        1235.8763,
+        352.176
+      ],
+      "freshwater": true,
+      "status": "SOURCE_AUTHORED"
+    },
+    {
+      "id": "rv_grey_up",
+      "kind": "RIVER",
+      "name": "Greywater River (thượng lưu)",
+      "polylineAu": [
+        [
+          650,
+          409
+        ],
+        [
+          690,
+          414
+        ],
+        [
+          724,
+          420
+        ],
+        [
+          748,
+          430
+        ],
+        [
+          776,
+          454
+        ],
+        [
+          792,
+          490
+        ],
+        [
+          800,
+          514
+        ]
+      ],
+      "pointCount": 7,
+      "lengthAu": 202.4085,
+      "authoredStrokeWidthAu": 4,
+      "widthUnit": "EDITOR_STROKE_AU",
+      "physicalChannelWidth": {
+        "status": "UNRESOLVED",
+        "valueAu": null
+      },
+      "direction": {
+        "source": {
+          "kind": "lake",
+          "ref": "lk_tarn"
+        },
+        "mouth": {
+          "kind": "lake",
+          "ref": "lk_grey"
+        },
+        "status": "SOURCE_AUTHORED"
+      },
+      "navFlags": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1
+      ],
+      "features": [
+        {
+          "at": [
+            743.6724753184287,
+            427.53290648994533
+          ],
+          "kind": "waterfall"
+        }
+      ],
+      "crossSection": {
+        "sampleCount": 7,
+        "maxMeasuredWetWidthAu": 96,
+        "minMeasuredWetWidthAu": 8,
+        "samples": [
+          {
+            "atAu": [
+              650,
+              409
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 4,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              690,
+              414
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 4,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              724,
+              420
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 4,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              748,
+              430
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 4,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          }
+        ],
+        "note": "Perpendicular raster sampling at 8au resolution. Authored width is an EDITOR STROKE, not a physical channel width."
+      },
+      "status": "SOURCE_AUTHORED"
+    },
+    {
+      "id": "rv_grey_low",
+      "kind": "RIVER",
+      "name": "Greywater River",
+      "polylineAu": [
+        [
+          836,
+          558
+        ],
+        [
+          868,
+          590
+        ],
+        [
+          896,
+          634
+        ],
+        [
+          918,
+          690
+        ],
+        [
+          934,
+          744
+        ],
+        [
+          956,
+          796
+        ],
+        [
+          978,
+          832
+        ],
+        [
+          990,
+          858
+        ]
+      ],
+      "pointCount": 8,
+      "lengthAu": 341.1835,
+      "authoredStrokeWidthAu": 7,
+      "widthUnit": "EDITOR_STROKE_AU",
+      "physicalChannelWidth": {
+        "status": "UNRESOLVED",
+        "valueAu": null
+      },
+      "direction": {
+        "source": {
+          "kind": "lake",
+          "ref": "lk_grey"
+        },
+        "mouth": {
+          "kind": "none"
+        },
+        "status": "SOURCE_AUTHORED"
+      },
+      "navFlags": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "features": [],
+      "crossSection": {
+        "sampleCount": 8,
+        "maxMeasuredWetWidthAu": 32,
+        "minMeasuredWetWidthAu": 8,
+        "samples": [
+          {
+            "atAu": [
+              836,
+              558
+            ],
+            "waterCellsAcross": 4,
+            "measuredWetWidthAu": 32,
+            "authoredStrokeWidthAu": 7,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              868,
+              590
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 7,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              896,
+              634
+            ],
+            "waterCellsAcross": 3,
+            "measuredWetWidthAu": 24,
+            "authoredStrokeWidthAu": 7,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              918,
+              690
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 7,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          }
+        ],
+        "note": "Perpendicular raster sampling at 8au resolution. Authored width is an EDITOR STROKE, not a physical channel width."
+      },
+      "status": "SOURCE_AUTHORED"
+    },
+    {
+      "id": "rv_silver",
+      "kind": "RIVER",
+      "name": "Silverrun",
+      "polylineAu": [
+        [
+          620,
+          632
+        ],
+        [
+          670,
+          646
+        ],
+        [
+          730,
+          650
+        ],
+        [
+          790,
+          640
+        ],
+        [
+          850,
+          640
+        ],
+        [
+          904.3115122375588,
+          652.682217277754
+        ]
+      ],
+      "pointCount": 6,
+      "lengthAu": 288.6564,
+      "authoredStrokeWidthAu": 4,
+      "widthUnit": "EDITOR_STROKE_AU",
+      "physicalChannelWidth": {
+        "status": "UNRESOLVED",
+        "valueAu": null
+      },
+      "direction": {
+        "source": {
+          "kind": "spring"
+        },
+        "mouth": {
+          "kind": "river",
+          "ref": "rv_grey_low"
+        },
+        "status": "SOURCE_AUTHORED"
+      },
+      "navFlags": [
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "features": [],
+      "crossSection": {
+        "sampleCount": 6,
+        "maxMeasuredWetWidthAu": 32,
+        "minMeasuredWetWidthAu": 8,
+        "samples": [
+          {
+            "atAu": [
+              620,
+              632
+            ],
+            "waterCellsAcross": 2,
+            "measuredWetWidthAu": 16,
+            "authoredStrokeWidthAu": 4,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              670,
+              646
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 4,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              730,
+              650
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 4,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              790,
+              640
+            ],
+            "waterCellsAcross": 3,
+            "measuredWetWidthAu": 24,
+            "authoredStrokeWidthAu": 4,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          }
+        ],
+        "note": "Perpendicular raster sampling at 8au resolution. Authored width is an EDITOR STROKE, not a physical channel width."
+      },
+      "status": "SOURCE_AUTHORED"
+    },
+    {
+      "id": "rv_canal",
+      "kind": "RIVER",
+      "name": "Timber Cut Canal",
+      "polylineAu": [
+        [
+          1012,
+          434
+        ],
+        [
+          1032,
+          470
+        ],
+        [
+          1060,
+          508
+        ],
+        [
+          1088,
+          544
+        ]
+      ],
+      "pointCount": 4,
+      "lengthAu": 133.9912,
+      "authoredStrokeWidthAu": 3.5,
+      "widthUnit": "EDITOR_STROKE_AU",
+      "physicalChannelWidth": {
+        "status": "UNRESOLVED",
+        "valueAu": null
+      },
+      "direction": {
+        "source": {
+          "kind": "lake",
+          "ref": "lk_verdant"
+        },
+        "mouth": {
+          "kind": "river",
+          "ref": "rv_moss"
+        },
+        "status": "SOURCE_AUTHORED"
+      },
+      "navFlags": [
+        1,
+        1,
+        1
+      ],
+      "features": [
+        {
+          "at": [
+            1060,
+            508
+          ],
+          "kind": "lock"
+        }
+      ],
+      "crossSection": {
+        "sampleCount": 4,
+        "maxMeasuredWetWidthAu": 80,
+        "minMeasuredWetWidthAu": 8,
+        "samples": [
+          {
+            "atAu": [
+              1012,
+              434
+            ],
+            "waterCellsAcross": 10,
+            "measuredWetWidthAu": 80,
+            "authoredStrokeWidthAu": 3.5,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              1032,
+              470
+            ],
+            "waterCellsAcross": 2,
+            "measuredWetWidthAu": 16,
+            "authoredStrokeWidthAu": 3.5,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              1060,
+              508
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 3.5,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              1088,
+              544
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 3.5,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          }
+        ],
+        "note": "Perpendicular raster sampling at 8au resolution. Authored width is an EDITOR STROKE, not a physical channel width."
+      },
+      "status": "SOURCE_AUTHORED"
+    },
+    {
+      "id": "rv_moss",
+      "kind": "RIVER",
+      "name": "Mossbrook",
+      "polylineAu": [
+        [
+          1088,
+          544
+        ],
+        [
+          1092,
+          586
+        ],
+        [
+          1074,
+          634
+        ],
+        [
+          1044,
+          680
+        ],
+        [
+          1012,
+          722
+        ],
+        [
+          988,
+          764
+        ],
+        [
+          959.8881003707129,
+          803.1486476991352
+        ]
+      ],
+      "pointCount": 7,
+      "lengthAu": 297.7437,
+      "authoredStrokeWidthAu": 4,
+      "widthUnit": "EDITOR_STROKE_AU",
+      "physicalChannelWidth": {
+        "status": "UNRESOLVED",
+        "valueAu": null
+      },
+      "direction": {
+        "source": {
+          "kind": "river",
+          "ref": "rv_canal"
+        },
+        "mouth": {
+          "kind": "river",
+          "ref": "rv_grey_low"
+        },
+        "status": "SOURCE_AUTHORED"
+      },
+      "navFlags": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "features": [
+        {
+          "at": [
+            1005.8027594486052,
+            732.1641018043075
+          ],
+          "kind": "weir"
+        }
+      ],
+      "crossSection": {
+        "sampleCount": 7,
+        "maxMeasuredWetWidthAu": 32,
+        "minMeasuredWetWidthAu": 8,
+        "samples": [
+          {
+            "atAu": [
+              1088,
+              544
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 4,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              1092,
+              586
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 4,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              1074,
+              634
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 4,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              1044,
+              680
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 4,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          }
+        ],
+        "note": "Perpendicular raster sampling at 8au resolution. Authored width is an EDITOR STROKE, not a physical channel width."
+      },
+      "status": "SOURCE_AUTHORED"
+    },
+    {
+      "id": "rv_argus",
+      "kind": "RIVER",
+      "name": "Argus Brook",
+      "polylineAu": [
+        [
+          958,
+          262
+        ],
+        [
+          970,
+          296
+        ],
+        [
+          984,
+          330
+        ],
+        [
+          996,
+          366
+        ]
+      ],
+      "pointCount": 4,
+      "lengthAu": 110.7724,
+      "authoredStrokeWidthAu": 2.5,
+      "widthUnit": "EDITOR_STROKE_AU",
+      "physicalChannelWidth": {
+        "status": "UNRESOLVED",
+        "valueAu": null
+      },
+      "direction": {
+        "source": {
+          "kind": "spring"
+        },
+        "mouth": {
+          "kind": "lake",
+          "ref": "lk_verdant"
+        },
+        "status": "SOURCE_AUTHORED"
+      },
+      "navFlags": [
+        0,
+        0,
+        0
+      ],
+      "features": [],
+      "crossSection": {
+        "sampleCount": 4,
+        "maxMeasuredWetWidthAu": 80,
+        "minMeasuredWetWidthAu": 8,
+        "samples": [
+          {
+            "atAu": [
+              958,
+              262
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 2.5,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              970,
+              296
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 2.5,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              984,
+              330
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 2.5,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              996,
+              366
+            ],
+            "waterCellsAcross": 10,
+            "measuredWetWidthAu": 80,
+            "authoredStrokeWidthAu": 2.5,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          }
+        ],
+        "note": "Perpendicular raster sampling at 8au resolution. Authored width is an EDITOR STROKE, not a physical channel width."
+      },
+      "status": "SOURCE_AUTHORED"
+    },
+    {
+      "id": "rv_east",
+      "kind": "RIVER",
+      "name": "Eastwater River",
+      "polylineAu": [
+        [
+          1068,
+          404
+        ],
+        [
+          1106,
+          420
+        ],
+        [
+          1140,
+          444
+        ],
+        [
+          1166,
+          470
+        ],
+        [
+          1200,
+          488
+        ],
+        [
+          1240,
+          500
+        ],
+        [
+          1270,
+          512
+        ],
+        [
+          1300.501464865208,
+          525.9314201400798
+        ]
+      ],
+      "pointCount": 8,
+      "lengthAu": 265.6933,
+      "authoredStrokeWidthAu": 6,
+      "widthUnit": "EDITOR_STROKE_AU",
+      "physicalChannelWidth": {
+        "status": "UNRESOLVED",
+        "valueAu": null
+      },
+      "direction": {
+        "source": {
+          "kind": "lake",
+          "ref": "lk_verdant"
+        },
+        "mouth": {
+          "kind": "sea"
+        },
+        "status": "SOURCE_AUTHORED"
+      },
+      "navFlags": [
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "features": [
+        {
+          "at": [
+            1192.3420790349396,
+            484.7515051378324
+          ],
+          "kind": "rapids"
+        }
+      ],
+      "crossSection": {
+        "sampleCount": 8,
+        "maxMeasuredWetWidthAu": 32,
+        "minMeasuredWetWidthAu": 8,
+        "samples": [
+          {
+            "atAu": [
+              1068,
+              404
+            ],
+            "waterCellsAcross": 4,
+            "measuredWetWidthAu": 32,
+            "authoredStrokeWidthAu": 6,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              1106,
+              420
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 6,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              1140,
+              444
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 6,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              1166,
+              470
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 6,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          }
+        ],
+        "note": "Perpendicular raster sampling at 8au resolution. Authored width is an EDITOR STROKE, not a physical channel width."
+      },
+      "status": "SOURCE_AUTHORED"
+    },
+    {
+      "id": "rv_d1",
+      "kind": "RIVER",
+      "name": "Delta West Channel",
+      "polylineAu": [
+        [
+          990,
+          858
+        ],
+        [
+          974,
+          876
+        ],
+        [
+          958,
+          892
+        ],
+        [
+          950.1682948234286,
+          912.1733125364202
+        ]
+      ],
+      "pointCount": 4,
+      "lengthAu": 68.3508,
+      "authoredStrokeWidthAu": 4,
+      "widthUnit": "EDITOR_STROKE_AU",
+      "physicalChannelWidth": {
+        "status": "UNRESOLVED",
+        "valueAu": null
+      },
+      "direction": {
+        "source": {
+          "kind": "river",
+          "ref": "rv_grey_low"
+        },
+        "mouth": {
+          "kind": "sea"
+        },
+        "status": "SOURCE_AUTHORED"
+      },
+      "navFlags": [
+        1,
+        1,
+        1
+      ],
+      "features": [],
+      "crossSection": {
+        "sampleCount": 4,
+        "maxMeasuredWetWidthAu": 72,
+        "minMeasuredWetWidthAu": 0,
+        "samples": [
+          {
+            "atAu": [
+              990,
+              858
+            ],
+            "waterCellsAcross": 9,
+            "measuredWetWidthAu": 72,
+            "authoredStrokeWidthAu": 4,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              974,
+              876
+            ],
+            "waterCellsAcross": 4,
+            "measuredWetWidthAu": 32,
+            "authoredStrokeWidthAu": 4,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              958,
+              892
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 4,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              950.1683,
+              912.1733
+            ],
+            "waterCellsAcross": 0,
+            "measuredWetWidthAu": 0,
+            "authoredStrokeWidthAu": 4,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          }
+        ],
+        "note": "Perpendicular raster sampling at 8au resolution. Authored width is an EDITOR STROKE, not a physical channel width."
+      },
+      "status": "SOURCE_AUTHORED"
+    },
+    {
+      "id": "rv_d2",
+      "kind": "RIVER",
+      "name": "Delta Centre Channel",
+      "polylineAu": [
+        [
+          990,
+          858
+        ],
+        [
+          990,
+          878
+        ],
+        [
+          985.9679384010227,
+          899.929446321378
+        ]
+      ],
+      "pointCount": 3,
+      "lengthAu": 42.297,
+      "authoredStrokeWidthAu": 5,
+      "widthUnit": "EDITOR_STROKE_AU",
+      "physicalChannelWidth": {
+        "status": "UNRESOLVED",
+        "valueAu": null
+      },
+      "direction": {
+        "source": {
+          "kind": "river",
+          "ref": "rv_grey_low"
+        },
+        "mouth": {
+          "kind": "sea"
+        },
+        "status": "SOURCE_AUTHORED"
+      },
+      "navFlags": [
+        1,
+        1
+      ],
+      "features": [],
+      "crossSection": {
+        "sampleCount": 3,
+        "maxMeasuredWetWidthAu": 32,
+        "minMeasuredWetWidthAu": 16,
+        "samples": [
+          {
+            "atAu": [
+              990,
+              858
+            ],
+            "waterCellsAcross": 2,
+            "measuredWetWidthAu": 16,
+            "authoredStrokeWidthAu": 5,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              990,
+              878
+            ],
+            "waterCellsAcross": 4,
+            "measuredWetWidthAu": 32,
+            "authoredStrokeWidthAu": 5,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              985.9679,
+              899.9294
+            ],
+            "waterCellsAcross": 3,
+            "measuredWetWidthAu": 24,
+            "authoredStrokeWidthAu": 5,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          }
+        ],
+        "note": "Perpendicular raster sampling at 8au resolution. Authored width is an EDITOR STROKE, not a physical channel width."
+      },
+      "status": "SOURCE_AUTHORED"
+    },
+    {
+      "id": "rv_d3",
+      "kind": "RIVER",
+      "name": "Delta East Channel",
+      "polylineAu": [
+        [
+          990,
+          858
+        ],
+        [
+          1010,
+          872
+        ],
+        [
+          1026,
+          894
+        ],
+        [
+          1028,
+          916
+        ],
+        [
+          1025.8017324798818,
+          932.0815583659361
+        ]
+      ],
+      "pointCount": 5,
+      "lengthAu": 89.9379,
+      "authoredStrokeWidthAu": 4,
+      "widthUnit": "EDITOR_STROKE_AU",
+      "physicalChannelWidth": {
+        "status": "UNRESOLVED",
+        "valueAu": null
+      },
+      "direction": {
+        "source": {
+          "kind": "river",
+          "ref": "rv_grey_low"
+        },
+        "mouth": {
+          "kind": "sea"
+        },
+        "status": "SOURCE_AUTHORED"
+      },
+      "navFlags": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "features": [],
+      "crossSection": {
+        "sampleCount": 5,
+        "maxMeasuredWetWidthAu": 64,
+        "minMeasuredWetWidthAu": 8,
+        "samples": [
+          {
+            "atAu": [
+              990,
+              858
+            ],
+            "waterCellsAcross": 8,
+            "measuredWetWidthAu": 64,
+            "authoredStrokeWidthAu": 4,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              1010,
+              872
+            ],
+            "waterCellsAcross": 2,
+            "measuredWetWidthAu": 16,
+            "authoredStrokeWidthAu": 4,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              1026,
+              894
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 4,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              1028,
+              916
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 4,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          }
+        ],
+        "note": "Perpendicular raster sampling at 8au resolution. Authored width is an EDITOR STROKE, not a physical channel width."
+      },
+      "status": "SOURCE_AUTHORED"
+    },
+    {
+      "id": "rv_amber_up",
+      "kind": "RIVER",
+      "name": "Amber Wadi (thượng lưu)",
+      "polylineAu": [
+        [
+          505,
+          872
+        ],
+        [
+          540,
+          912
+        ],
+        [
+          578,
+          950
+        ],
+        [
+          628.3247012508718,
+          993.4047801689508
+        ]
+      ],
+      "pointCount": 4,
+      "lengthAu": 173.348,
+      "authoredStrokeWidthAu": 2.5,
+      "widthUnit": "EDITOR_STROKE_AU",
+      "physicalChannelWidth": {
+        "status": "UNRESOLVED",
+        "valueAu": null
+      },
+      "direction": {
+        "source": {
+          "kind": "spring"
+        },
+        "mouth": {
+          "kind": "lake",
+          "ref": "lk_mirage"
+        },
+        "status": "SOURCE_AUTHORED"
+      },
+      "navFlags": [
+        0,
+        0,
+        0
+      ],
+      "features": [],
+      "crossSection": {
+        "sampleCount": 4,
+        "maxMeasuredWetWidthAu": 16,
+        "minMeasuredWetWidthAu": 8,
+        "samples": [
+          {
+            "atAu": [
+              505,
+              872
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 2.5,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              540,
+              912
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 2.5,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              578,
+              950
+            ],
+            "waterCellsAcross": 2,
+            "measuredWetWidthAu": 16,
+            "authoredStrokeWidthAu": 2.5,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              628.3247,
+              993.4048
+            ],
+            "waterCellsAcross": 2,
+            "measuredWetWidthAu": 16,
+            "authoredStrokeWidthAu": 2.5,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          }
+        ],
+        "note": "Perpendicular raster sampling at 8au resolution. Authored width is an EDITOR STROKE, not a physical channel width."
+      },
+      "status": "SOURCE_AUTHORED"
+    },
+    {
+      "id": "rv_amber_low",
+      "kind": "RIVER",
+      "name": "Amber River",
+      "polylineAu": [
+        [
+          652,
+          1018
+        ],
+        [
+          668,
+          1052
+        ],
+        [
+          680,
+          1092
+        ],
+        [
+          688,
+          1128
+        ],
+        [
+          697.951332062101,
+          1147.0765396457082
+        ]
+      ],
+      "pointCount": 5,
+      "lengthAu": 137.7321,
+      "authoredStrokeWidthAu": 4,
+      "widthUnit": "EDITOR_STROKE_AU",
+      "physicalChannelWidth": {
+        "status": "UNRESOLVED",
+        "valueAu": null
+      },
+      "direction": {
+        "source": {
+          "kind": "lake",
+          "ref": "lk_mirage"
+        },
+        "mouth": {
+          "kind": "sea"
+        },
+        "status": "SOURCE_AUTHORED"
+      },
+      "navFlags": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "features": [],
+      "crossSection": {
+        "sampleCount": 5,
+        "maxMeasuredWetWidthAu": 32,
+        "minMeasuredWetWidthAu": 8,
+        "samples": [
+          {
+            "atAu": [
+              652,
+              1018
+            ],
+            "waterCellsAcross": 4,
+            "measuredWetWidthAu": 32,
+            "authoredStrokeWidthAu": 4,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              668,
+              1052
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 4,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              680,
+              1092
+            ],
+            "waterCellsAcross": 3,
+            "measuredWetWidthAu": 24,
+            "authoredStrokeWidthAu": 4,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              688,
+              1128
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 4,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          }
+        ],
+        "note": "Perpendicular raster sampling at 8au resolution. Authored width is an EDITOR STROKE, not a physical channel width."
+      },
+      "status": "SOURCE_AUTHORED"
+    },
+    {
+      "id": "rv_west",
+      "kind": "RIVER",
+      "name": "Westbrook",
+      "polylineAu": [
+        [
+          468,
+          432
+        ],
+        [
+          436,
+          468
+        ],
+        [
+          402,
+          500
+        ],
+        [
+          372,
+          528
+        ],
+        [
+          326.76595154028394,
+          559.3145885433771
+        ]
+      ],
+      "pointCount": 5,
+      "lengthAu": 190.9091,
+      "authoredStrokeWidthAu": 3,
+      "widthUnit": "EDITOR_STROKE_AU",
+      "physicalChannelWidth": {
+        "status": "UNRESOLVED",
+        "valueAu": null
+      },
+      "direction": {
+        "source": {
+          "kind": "spring"
+        },
+        "mouth": {
+          "kind": "sea"
+        },
+        "status": "SOURCE_AUTHORED"
+      },
+      "navFlags": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "features": [],
+      "crossSection": {
+        "sampleCount": 5,
+        "maxMeasuredWetWidthAu": 8,
+        "minMeasuredWetWidthAu": 0,
+        "samples": [
+          {
+            "atAu": [
+              468,
+              432
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 3,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              436,
+              468
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 3,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              402,
+              500
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 3,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              372,
+              528
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 3,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          }
+        ],
+        "note": "Perpendicular raster sampling at 8au resolution. Authored width is an EDITOR STROKE, not a physical channel width."
+      },
+      "status": "SOURCE_AUTHORED"
+    },
+    {
+      "id": "rv_hook",
+      "kind": "RIVER",
+      "name": "Hook Creek",
+      "polylineAu": [
+        [
+          1256,
+          358
+        ],
+        [
+          1296,
+          372
+        ],
+        [
+          1338,
+          386
+        ],
+        [
+          1393.7243146273765,
+          409.1184726511782
+        ]
+      ],
+      "pointCount": 4,
+      "lengthAu": 146.9807,
+      "authoredStrokeWidthAu": 3,
+      "widthUnit": "EDITOR_STROKE_AU",
+      "physicalChannelWidth": {
+        "status": "UNRESOLVED",
+        "valueAu": null
+      },
+      "direction": {
+        "source": {
+          "kind": "lake",
+          "ref": "lk_mere"
+        },
+        "mouth": {
+          "kind": "sea"
+        },
+        "status": "SOURCE_AUTHORED"
+      },
+      "navFlags": [
+        1,
+        1,
+        0
+      ],
+      "features": [],
+      "crossSection": {
+        "sampleCount": 4,
+        "maxMeasuredWetWidthAu": 16,
+        "minMeasuredWetWidthAu": 0,
+        "samples": [
+          {
+            "atAu": [
+              1256,
+              358
+            ],
+            "waterCellsAcross": 2,
+            "measuredWetWidthAu": 16,
+            "authoredStrokeWidthAu": 3,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              1296,
+              372
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 3,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              1338,
+              386
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 3,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              1393.7243,
+              409.1185
+            ],
+            "waterCellsAcross": 0,
+            "measuredWetWidthAu": 0,
+            "authoredStrokeWidthAu": 3,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          }
+        ],
+        "note": "Perpendicular raster sampling at 8au resolution. Authored width is an EDITOR STROKE, not a physical channel width."
+      },
+      "status": "SOURCE_AUTHORED"
+    },
+    {
+      "id": "rv_ash",
+      "kind": "RIVER",
+      "name": "Ash Spring Brook",
+      "polylineAu": [
+        [
+          1668,
+          860
+        ],
+        [
+          1640,
+          884
+        ],
+        [
+          1608,
+          900
+        ],
+        [
+          1570.740720017735,
+          908.6348487432401
+        ]
+      ],
+      "pointCount": 4,
+      "lengthAu": 110.902,
+      "authoredStrokeWidthAu": 2.5,
+      "widthUnit": "EDITOR_STROKE_AU",
+      "physicalChannelWidth": {
+        "status": "UNRESOLVED",
+        "valueAu": null
+      },
+      "direction": {
+        "source": {
+          "kind": "spring"
+        },
+        "mouth": {
+          "kind": "sea"
+        },
+        "status": "SOURCE_AUTHORED"
+      },
+      "navFlags": [
+        0,
+        0,
+        0
+      ],
+      "features": [],
+      "crossSection": {
+        "sampleCount": 4,
+        "maxMeasuredWetWidthAu": 8,
+        "minMeasuredWetWidthAu": 8,
+        "samples": [
+          {
+            "atAu": [
+              1668,
+              860
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 2.5,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              1640,
+              884
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 2.5,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              1608,
+              900
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 2.5,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              1570.7407,
+              908.6348
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 2.5,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          }
+        ],
+        "note": "Perpendicular raster sampling at 8au resolution. Authored width is an EDITOR STROKE, not a physical channel width."
+      },
+      "status": "SOURCE_AUTHORED"
+    },
+    {
+      "id": "rv_salt",
+      "kind": "RIVER",
+      "name": "Salt Brook",
+      "polylineAu": [
+        [
+          1650,
+          304
+        ],
+        [
+          1626,
+          330
+        ],
+        [
+          1596.3454492986477,
+          371.2700005766552
+        ]
+      ],
+      "pointCount": 3,
+      "lengthAu": 86.203,
+      "authoredStrokeWidthAu": 2.5,
+      "widthUnit": "EDITOR_STROKE_AU",
+      "physicalChannelWidth": {
+        "status": "UNRESOLVED",
+        "valueAu": null
+      },
+      "direction": {
+        "source": {
+          "kind": "spring"
+        },
+        "mouth": {
+          "kind": "sea"
+        },
+        "status": "SOURCE_AUTHORED"
+      },
+      "navFlags": [
+        0,
+        0
+      ],
+      "features": [],
+      "crossSection": {
+        "sampleCount": 3,
+        "maxMeasuredWetWidthAu": 16,
+        "minMeasuredWetWidthAu": 0,
+        "samples": [
+          {
+            "atAu": [
+              1650,
+              304
+            ],
+            "waterCellsAcross": 2,
+            "measuredWetWidthAu": 16,
+            "authoredStrokeWidthAu": 2.5,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              1626,
+              330
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 2.5,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              1596.3454,
+              371.27
+            ],
+            "waterCellsAcross": 0,
+            "measuredWetWidthAu": 0,
+            "authoredStrokeWidthAu": 2.5,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          }
+        ],
+        "note": "Perpendicular raster sampling at 8au resolution. Authored width is an EDITOR STROKE, not a physical channel width."
+      },
+      "status": "SOURCE_AUTHORED"
+    },
+    {
+      "id": "rv_slag",
+      "kind": "RIVER",
+      "name": "Slag Run",
+      "polylineAu": [
+        [
+          1180,
+          1288
+        ],
+        [
+          1150,
+          1308
+        ],
+        [
+          1123.0260536514959,
+          1339.087232573394
+        ]
+      ],
+      "pointCount": 3,
+      "lengthAu": 77.2139,
+      "authoredStrokeWidthAu": 2.5,
+      "widthUnit": "EDITOR_STROKE_AU",
+      "physicalChannelWidth": {
+        "status": "UNRESOLVED",
+        "valueAu": null
+      },
+      "direction": {
+        "source": {
+          "kind": "spring"
+        },
+        "mouth": {
+          "kind": "sea"
+        },
+        "status": "SOURCE_AUTHORED"
+      },
+      "navFlags": [
+        0,
+        0
+      ],
+      "features": [],
+      "crossSection": {
+        "sampleCount": 3,
+        "maxMeasuredWetWidthAu": 8,
+        "minMeasuredWetWidthAu": 0,
+        "samples": [
+          {
+            "atAu": [
+              1180,
+              1288
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 2.5,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              1150,
+              1308
+            ],
+            "waterCellsAcross": 1,
+            "measuredWetWidthAu": 8,
+            "authoredStrokeWidthAu": 2.5,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          },
+          {
+            "atAu": [
+              1123.0261,
+              1339.0872
+            ],
+            "waterCellsAcross": 0,
+            "measuredWetWidthAu": 0,
+            "authoredStrokeWidthAu": 2.5,
+            "physicalNavigableWidthStatus": "UNRESOLVED"
+          }
+        ],
+        "note": "Perpendicular raster sampling at 8au resolution. Authored width is an EDITOR STROKE, not a physical channel width."
+      },
+      "status": "SOURCE_AUTHORED"
+    }
+  ],
+  "counts": {
+    "lakes": 5,
+    "rivers": 17,
+    "bankCells": 1484,
+    "channelCells": 400,
+    "floodplainCells": 1398,
+    "fordCandidates": 6,
+    "shorelineRings": 8
+  },
+  "banks": {
+    "sea": 800,
+    "lake": 121,
+    "river": 563,
+    "status": "DERIVED"
+  },
+  "fords": [
+    {
+      "cellIndex": 8119,
+      "atAu": [
+        956,
+        260
+      ],
+      "depth": {
+        "status": "UNKNOWN",
+        "value": null
+      },
+      "fordable": {
+        "status": "UNKNOWN"
+      },
+      "sourceRef": "authored road centreline crossing authored river centreline without a bridge"
+    },
+    {
+      "cellIndex": 10204,
+      "atAu": [
+        1636,
+        324
+      ],
+      "depth": {
+        "status": "UNKNOWN",
+        "value": null
+      },
+      "fordable": {
+        "status": "UNKNOWN"
+      },
+      "sourceRef": "authored road centreline crossing authored river centreline without a bridge"
+    },
+    {
+      "cellIndex": 10873,
+      "atAu": [
+        988,
+        348
+      ],
+      "depth": {
+        "status": "UNKNOWN",
+        "value": null
+      },
+      "fordable": {
+        "status": "UNKNOWN"
+      },
+      "sourceRef": "authored road centreline crossing authored river centreline without a bridge"
+    },
+    {
+      "cellIndex": 27620,
+      "atAu": [
+        964,
+        884
+      ],
+      "depth": {
+        "status": "UNKNOWN",
+        "value": null
+      },
+      "fordable": {
+        "status": "UNKNOWN"
+      },
+      "sourceRef": "authored road centreline crossing authored river centreline without a bridge"
+    },
+    {
+      "cellIndex": 30325,
+      "atAu": [
+        604,
+        972
+      ],
+      "depth": {
+        "status": "UNKNOWN",
+        "value": null
+      },
+      "fordable": {
+        "status": "UNKNOWN"
+      },
+      "sourceRef": "authored road centreline crossing authored river centreline without a bridge"
+    },
+    {
+      "cellIndex": 34085,
+      "atAu": [
+        684,
+        1092
+      ],
+      "depth": {
+        "status": "UNKNOWN",
+        "value": null
+      },
+      "fordable": {
+        "status": "UNKNOWN"
+      },
+      "sourceRef": "authored road centreline crossing authored river centreline without a bridge"
+    }
+  ],
+  "fordsTruncated": 0,
+  "floodplainRaster": "rasters/floodplain.u8",
+  "bankRaster": "rasters/bank.u8",
+  "channelRaster": "rasters/channel.u8",
+  "outletDefects": [
+    {
+      "id": "OUTLET-01",
+      "sourceRef": "LR01 geography.v1.json :: hydrography.watershed (embedded at data/legacy/source/)",
+      "reason": "AUTHORED_OUTLET_GEOMETRY_GAP",
+      "status": "UNRESOLVED",
+      "owner": "MAP"
+    }
+  ],
+  "crossingContradictions": [
+    {
+      "id": "CC-BR4-01",
+      "bridgeId": "br_4",
+      "atAu": [
+        732.007,
+        649.8171
+      ],
+      "cellIndex": 20341,
+      "measured": {
+        "clearanceCells": 0,
+        "waterClass": 3,
+        "roadClass": 1,
+        "elderGeometryId": 3,
+        "riverId": 3
+      },
+      "authoredRiverStrokeWidthAu": 4,
+      "contradiction": "Authored river stroke width (4) is an EDITOR value; the same cell has clearanceCells=0, waterClass=3 (river) and roadClass=1, inside Elder geometry el_aion. There is no authored physical channel width, deck bearing or swept cart clearance, so a cart-passable bridge cannot be derived.",
+      "status": "BLOCKED",
+      "owner": "MAP+GAMEPLAY"
+    },
+    {
+      "id": "CC-rd_v-rv_moss",
+      "roadId": "rd_v",
+      "roadKind": "foot",
+      "riverId": "rv_moss",
+      "atAu": [
+        1006.224,
+        731.4923
+      ],
+      "bridgeId": "br_6",
+      "bridgeLoad": "foot",
+      "disposition": "BRIDGE_FOOT_ONLY",
+      "riverWidthAuthored": 4,
+      "unit": "UNDEFINED__EDITOR_STROKE",
+      "status": "UNRESOLVED",
+      "owner": "MAP+GAMEPLAY",
+      "contradiction": "Road and river centrelines intersect but no authored bridge (or only a foot-load bridge) exists; physical width undefined."
+    },
+    {
+      "id": "CC-rd_x-rv_ash",
+      "roadId": "rd_x",
+      "roadKind": "foot",
+      "riverId": "rv_ash",
+      "atAu": [
+        1592.2408,
+        904.2383
+      ],
+      "bridgeId": null,
+      "bridgeLoad": null,
+      "disposition": "FORD_EDITOR_HEURISTIC",
+      "riverWidthAuthored": 2.5,
+      "unit": "UNDEFINED__EDITOR_STROKE",
+      "status": "UNRESOLVED",
+      "owner": "MAP+GAMEPLAY",
+      "contradiction": "Road and river centrelines intersect but no authored bridge (or only a foot-load bridge) exists; physical width undefined."
+    },
+    {
+      "id": "CC-rd_1f-rv_amber_up",
+      "roadId": "rd_1f",
+      "roadKind": "trail",
+      "riverId": "rv_amber_up",
+      "atAu": [
+        598.2133,
+        967.8048
+      ],
+      "bridgeId": null,
+      "bridgeLoad": null,
+      "disposition": "FORD_EDITOR_HEURISTIC",
+      "riverWidthAuthored": 2.5,
+      "unit": "UNDEFINED__EDITOR_STROKE",
+      "status": "UNRESOLVED",
+      "owner": "MAP+GAMEPLAY",
+      "contradiction": "Road and river centrelines intersect but no authored bridge (or only a foot-load bridge) exists; physical width undefined."
+    },
+    {
+      "id": "CC-rd_1k-rv_east",
+      "roadId": "rd_1k",
+      "roadKind": "trail",
+      "riverId": "rv_east",
+      "atAu": [
+        1153.0082,
+        457.3864
+      ],
+      "bridgeId": "br_8",
+      "bridgeLoad": "foot",
+      "disposition": "BRIDGE_FOOT_ONLY",
+      "riverWidthAuthored": 6,
+      "unit": "UNDEFINED__EDITOR_STROKE",
+      "status": "UNRESOLVED",
+      "owner": "MAP+GAMEPLAY",
+      "contradiction": "Road and river centrelines intersect but no authored bridge (or only a foot-load bridge) exists; physical width undefined."
+    },
+    {
+      "id": "CC-rd_1l-rv_amber_up",
+      "roadId": "rd_1l",
+      "roadKind": "trail",
+      "riverId": "rv_amber_up",
+      "atAu": [
+        606.9656,
+        975.2896
+      ],
+      "bridgeId": null,
+      "bridgeLoad": null,
+      "disposition": "FORD_EDITOR_HEURISTIC",
+      "riverWidthAuthored": 2.5,
+      "unit": "UNDEFINED__EDITOR_STROKE",
+      "status": "UNRESOLVED",
+      "owner": "MAP+GAMEPLAY",
+      "contradiction": "Road and river centrelines intersect but no authored bridge (or only a foot-load bridge) exists; physical width undefined."
+    },
+    {
+      "id": "CC-rd_1y-rv_grey_up",
+      "roadId": "rd_1y",
+      "roadKind": "foot",
+      "riverId": "rv_grey_up",
+      "atAu": [
+        777.5546,
+        456.717
+      ],
+      "bridgeId": "br_9",
+      "bridgeLoad": "foot",
+      "disposition": "BRIDGE_FOOT_ONLY",
+      "riverWidthAuthored": 4,
+      "unit": "UNDEFINED__EDITOR_STROKE",
+      "status": "UNRESOLVED",
+      "owner": "MAP+GAMEPLAY",
+      "contradiction": "Road and river centrelines intersect but no authored bridge (or only a foot-load bridge) exists; physical width undefined."
+    },
+    {
+      "id": "CC-rd_20-rv_silver",
+      "roadId": "rd_20",
+      "roadKind": "riverside",
+      "riverId": "rv_silver",
+      "atAu": [
+        882.9405,
+        646.9076
+      ],
+      "bridgeId": "br_a",
+      "bridgeLoad": "foot",
+      "disposition": "BRIDGE_FOOT_ONLY",
+      "riverWidthAuthored": 4,
+      "unit": "UNDEFINED__EDITOR_STROKE",
+      "status": "UNRESOLVED",
+      "owner": "MAP+GAMEPLAY",
+      "contradiction": "Road and river centrelines intersect but no authored bridge (or only a foot-load bridge) exists; physical width undefined."
+    },
+    {
+      "id": "CC-rd_28-rv_d3",
+      "roadId": "rd_28",
+      "roadKind": "trail",
+      "riverId": "rv_d3",
+      "atAu": [
+        1026.2825,
+        929.3724
+      ],
+      "bridgeId": "br_b",
+      "bridgeLoad": "foot",
+      "disposition": "BRIDGE_FOOT_ONLY",
+      "riverWidthAuthored": 4,
+      "unit": "UNDEFINED__EDITOR_STROKE",
+      "status": "UNRESOLVED",
+      "owner": "MAP+GAMEPLAY",
+      "contradiction": "Road and river centrelines intersect but no authored bridge (or only a foot-load bridge) exists; physical width undefined."
+    },
+    {
+      "id": "CC-rd_29-rv_grey_up",
+      "roadId": "rd_29",
+      "roadKind": "trail",
+      "riverId": "rv_grey_up",
+      "atAu": [
+        779.0802,
+        458.9882
+      ],
+      "bridgeId": "br_9",
+      "bridgeLoad": "foot",
+      "disposition": "BRIDGE_FOOT_ONLY",
+      "riverWidthAuthored": 4,
+      "unit": "UNDEFINED__EDITOR_STROKE",
+      "status": "UNRESOLVED",
+      "owner": "MAP+GAMEPLAY",
+      "contradiction": "Road and river centrelines intersect but no authored bridge (or only a foot-load bridge) exists; physical width undefined."
+    },
+    {
+      "id": "CC-rd_2a-rv_argus",
+      "roadId": "rd_2a",
+      "roadKind": "trail",
+      "riverId": "rv_argus",
+      "atAu": [
+        991.3756,
+        351.6874
+      ],
+      "bridgeId": null,
+      "bridgeLoad": null,
+      "disposition": "FORD_EDITOR_HEURISTIC",
+      "riverWidthAuthored": 2.5,
+      "unit": "UNDEFINED__EDITOR_STROKE",
+      "status": "UNRESOLVED",
+      "owner": "MAP+GAMEPLAY",
+      "contradiction": "Road and river centrelines intersect but no authored bridge (or only a foot-load bridge) exists; physical width undefined."
+    }
+  ],
+  "widthSemantics": {
+    "authoredStrokeUnit": "editor stroke in abstract authoring units",
+    "physicalNavigableWidth": "UNRESOLVED",
+    "sweptClearance": "UNKNOWN",
+    "owner": "MAP+GAMEPLAY"
+  },
+  "noClaims": [
+    "NO fabricated river, bridge or land connection",
+    "NO invented channel depth or flow rate",
+    "NO approved ferry/boat rule",
+    "NO cart-passability verdict"
+  ]
+}

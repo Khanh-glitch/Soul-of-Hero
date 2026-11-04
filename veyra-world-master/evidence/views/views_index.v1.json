@@ -1,0 +1,172 @@
+{
+  "schema": "soh.wmp.views_index.v1",
+  "status": "MAP_ANALYTICAL_VIEWS__NOT_VISUAL_APPROVAL",
+  "authority": "MAP_DESIGNS_THE_PHYSICAL_WORLD__GAMEPLAY_POPULATES_AND_SIMULATES_IT",
+  "masterRevisionDigest": "1d032deb1b03feac918ed0485aa31c21b4c7951373d4dda5ebfbe3b8f850474e",
+  "classification": {
+    "MAP_ANALYTICAL_VIEW": "Generated here from physical rasters + authored vector geometry. Schematic/technical, NOT a Web render, NOT art direction.",
+    "SCALE_DIAGNOSTIC": "Diagnostic camera comparison at U=1.6/2.0/2.5.",
+    "REAL_WEB_RUNTIME_CAPTURE": "Byte-preserved genuine Web runtime capture from Gameplay LR02 M4, classified in evidence/web_captures_index.v1.json."
+  },
+  "views": [
+    {
+      "file": "/home/user/Soul-of-Hero/veyra-world-master/evidence/views/world_terrain_full.png",
+      "bytes": 20610,
+      "width": 1000,
+      "height": 700,
+      "sha256": "ded4eca908daa3fd836e879b6c68f5dc552d770cdfd670fdf1445e3c770fccfb",
+      "classification": "FULL_WORLD_ANALYTICAL",
+      "status": "MAP_ANALYTICAL_VIEW__NOT_WEB_RUNTIME_PROOF",
+      "note": "VEYRA PHYSICAL SURFACE / 2000X1400 AU. 250x175 authored grid at 4px per 8au cell; not an art-direction tileset."
+    },
+    {
+      "file": "/home/user/Soul-of-Hero/veyra-world-master/evidence/views/world_elevation_slope_full.png",
+      "bytes": 37713,
+      "width": 1000,
+      "height": 700,
+      "sha256": "704bbe824f544bbbf896002e1542223d6a111ee5d9420aed5dc56ab0f7897546",
+      "classification": "FULL_WORLD_ANALYTICAL",
+      "status": "MAP_ANALYTICAL_VIEW__NOT_WEB_RUNTIME_PROOF",
+      "note": "RAW ELEVATION BYTE + SLOPE ORDINAL. 250x175 authored grid at 4px per 8au cell; not an art-direction tileset."
+    },
+    {
+      "file": "/home/user/Soul-of-Hero/veyra-world-master/evidence/views/world_water_transport_full.png",
+      "bytes": 26939,
+      "width": 1000,
+      "height": 700,
+      "sha256": "41a6c630f9cd8ba4a8475148b1592b8d55789c7ab50f39226843b9ce201af732",
+      "classification": "FULL_WORLD_ANALYTICAL",
+      "status": "MAP_ANALYTICAL_VIEW__NOT_WEB_RUNTIME_PROOF",
+      "note": "WATER / ROADS / BRIDGES / DOCKS / POIS. 250x175 authored grid at 4px per 8au cell; not an art-direction tileset."
+    },
+    {
+      "file": "/home/user/Soul-of-Hero/veyra-world-master/evidence/views/world_climate_regions_full.png",
+      "bytes": 11844,
+      "width": 1000,
+      "height": 700,
+      "sha256": "0b9f92fef035c5eb4d566be813a5b9da8bcc50a75b7d9accc994d4d3fad90b35",
+      "classification": "FULL_WORLD_ANALYTICAL",
+      "status": "MAP_ANALYTICAL_VIEW__NOT_WEB_RUNTIME_PROOF",
+      "note": "STATIC CLIMATE POTENTIAL REGIONS. 250x175 authored grid at 4px per 8au cell; not an art-direction tileset."
+    },
+    {
+      "file": "/home/user/Soul-of-Hero/veyra-world-master/evidence/views/world_chunks_full.png",
+      "bytes": 14968,
+      "width": 1000,
+      "height": 700,
+      "sha256": "a3e9548cb36fde6198e3a58979174b3b3629c148a3ed4291d571c1b4d2815b52",
+      "classification": "FULL_WORLD_ANALYTICAL",
+      "status": "MAP_ANALYTICAL_VIEW__NOT_WEB_RUNTIME_PROOF",
+      "note": "70 CHUNKS / 25X25 CELLS / STABLE FEATURE IDS. 250x175 authored grid at 4px per 8au cell; not an art-direction tileset."
+    },
+    {
+      "file": "/home/user/Soul-of-Hero/veyra-world-master/evidence/views/world_resources_zones_full.png",
+      "bytes": 31125,
+      "width": 1000,
+      "height": 700,
+      "sha256": "cd2ee3030b52a6e1d2e681a13910b898d9f2e7b0e304e6eaf924b938cfb64617",
+      "classification": "FULL_WORLD_ANALYTICAL",
+      "status": "MAP_ANALYTICAL_VIEW__NOT_WEB_RUNTIME_PROOF",
+      "note": "280 HABITAT MARKERS / 23 ZONES / 6 ELDERS. 250x175 authored grid at 4px per 8au cell; not an art-direction tileset."
+    },
+    {
+      "file": "/home/user/Soul-of-Hero/veyra-world-master/evidence/views/detail_po_greywater.png",
+      "bytes": 11436,
+      "width": 640,
+      "height": 360,
+      "sha256": "c3375c8dfa3a25cc7a90497e6cf9eb15a5e1f9f30abfc77d93e20f425f4acd6d",
+      "classification": "DETAIL_ANALYTICAL",
+      "status": "MAP_ANALYTICAL_VIEW__NOT_WEB_RUNTIME_PROOF",
+      "note": "POI PO_GREYWATER / VILLAGE. ROOMS 6 ROOFS 6 OPENINGS 8 VERTICAL 0"
+    },
+    {
+      "file": "/home/user/Soul-of-Hero/veyra-world-master/evidence/views/detail_po_academy.png",
+      "bytes": 8385,
+      "width": 640,
+      "height": 360,
+      "sha256": "8b24ce49b7c0223926eef029dfe1e52188175e61f0e5cc289f428d5709a5ba35",
+      "classification": "DETAIL_ANALYTICAL",
+      "status": "MAP_ANALYTICAL_VIEW__NOT_WEB_RUNTIME_PROOF",
+      "note": "POI PO_ACADEMY / RESEARCH. ROOMS 5 ROOFS 5 OPENINGS 5 VERTICAL 1"
+    },
+    {
+      "file": "/home/user/Soul-of-Hero/veyra-world-master/evidence/views/detail_po_kilns.png",
+      "bytes": 8079,
+      "width": 640,
+      "height": 360,
+      "sha256": "272b5fdd1a73dff23c115c953633e4fc76be3266e7f24cf1801dde8c44b1fdc7",
+      "classification": "DETAIL_ANALYTICAL",
+      "status": "MAP_ANALYTICAL_VIEW__NOT_WEB_RUNTIME_PROOF",
+      "note": "POI PO_KILNS / SMELTER. ROOMS 4 ROOFS 4 OPENINGS 5 VERTICAL 0"
+    },
+    {
+      "file": "/home/user/Soul-of-Hero/veyra-world-master/evidence/views/detail_br4_crossing.png",
+      "bytes": 7278,
+      "width": 640,
+      "height": 360,
+      "sha256": "17e2b27b098e4d1c959c55deb5a76de6bf1f0283438a9f09edeacc391b2db794",
+      "classification": "DETAIL_ANALYTICAL",
+      "status": "MAP_ANALYTICAL_VIEW__NOT_WEB_RUNTIME_PROOF",
+      "note": "BRIDGE BR_4 / RIVER-CROSSING CONTRADICTION. CLEARANCE 0 / WATER 3 / ROAD 1 / ELDER GEOMETRY / NO CART PASSABILITY"
+    },
+    {
+      "file": "/home/user/Soul-of-Hero/veyra-world-master/evidence/views/detail_build_envelope_water_overlap.png",
+      "bytes": 9105,
+      "width": 640,
+      "height": 360,
+      "sha256": "ba0024d7a9ac1765d6adbe3fe4a2d8e29d7b58a27f55e5244564b253fb341753",
+      "classification": "DETAIL_ANALYTICAL",
+      "status": "MAP_ANALYTICAL_VIEW__NOT_WEB_RUNTIME_PROOF",
+      "note": "BUILD ENVELOPE SITE.BZ_GREYWATER. DRY 144 / WATER OVERLAP 3 / CLAIMS GAMEPLAY OWNED"
+    },
+    {
+      "file": "/home/user/Soul-of-Hero/veyra-world-master/evidence/views/detail_elder_territories.png",
+      "bytes": 13645,
+      "width": 640,
+      "height": 360,
+      "sha256": "142ac113e5284c28ef678513eac428ffa75ecf60ba873b07f06d5b729c39a2bf",
+      "classification": "DETAIL_ANALYTICAL",
+      "status": "MAP_ANALYTICAL_VIEW__NOT_WEB_RUNTIME_PROOF",
+      "note": "Six authored distinct Elder territories with outer/core/approach geometry; no uniform regions or spawn counts."
+    },
+    {
+      "file": "/home/user/Soul-of-Hero/veyra-world-master/evidence/views/scale_U16_camera.png",
+      "bytes": 17230,
+      "width": 640,
+      "height": 360,
+      "sha256": "28785d7f40a8ee93fa081313d51ad8ce0badaec12c8f11122bc4634fcbe09eaa",
+      "classification": "SCALE_DIAGNOSTIC",
+      "status": "MAP_ANALYTICAL_VIEW__NOT_WEB_RUNTIME_PROOF",
+      "note": "Diagnostic U=1.6 scale profile; 640x360 1x camera; not approved canon."
+    },
+    {
+      "file": "/home/user/Soul-of-Hero/veyra-world-master/evidence/views/scale_U20_camera.png",
+      "bytes": 15122,
+      "width": 640,
+      "height": 360,
+      "sha256": "42fd1162da9c72c245ae8b9da8c5e390f07180dbf1edcb05dc9bc3202dd941c7",
+      "classification": "SCALE_DIAGNOSTIC",
+      "status": "MAP_ANALYTICAL_VIEW__NOT_WEB_RUNTIME_PROOF",
+      "note": "Diagnostic U=2 scale profile; 640x360 1x camera; not approved canon."
+    },
+    {
+      "file": "/home/user/Soul-of-Hero/veyra-world-master/evidence/views/scale_U25_camera.png",
+      "bytes": 13219,
+      "width": 640,
+      "height": 360,
+      "sha256": "713f4759fd3f7bd916c0f6b3e9ae032d6708432e43d093d131edbd2a0746c412",
+      "classification": "SCALE_DIAGNOSTIC",
+      "status": "MAP_ANALYTICAL_VIEW__NOT_WEB_RUNTIME_PROOF",
+      "note": "Diagnostic U=2.5 scale profile; 640x360 1x camera; not approved canon."
+    }
+  ],
+  "analyticalViewCount": 15,
+  "realWebCaptureCount": 6,
+  "noClaims": [
+    "NO VISUAL_ACCEPTED",
+    "NO creator visual approval",
+    "NO new art-direction exercise",
+    "NO unverified replacement tileset",
+    "NO Web-rendered WMP integration proof"
+  ]
+}

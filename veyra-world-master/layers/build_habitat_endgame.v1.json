@@ -1,0 +1,6316 @@
+{
+  "schema": "soh.wmp.build_habitat_endgame.v1",
+  "authority": "MAP_DESIGNS_THE_PHYSICAL_WORLD__GAMEPLAY_POPULATES_AND_SIMULATES_IT",
+  "status": "GEOMETRIC_CANDIDATES_ONLY__NO_POPULATION_OR_ECONOMY",
+  "buildEnvelopes": {
+    "count": 23,
+    "waterOverlapResolvedCount": 11,
+    "sites": [
+      {
+        "siteId": "site.bz_greywater",
+        "parentZoneId": "bz_greywater",
+        "sourceRef": "project.zones[] where id=bz_greywater",
+        "physicalEnvelopeAu": [
+          705.377,
+          590.5798,
+          868.1276,
+          633.3361
+        ],
+        "footprintAreaAu2": 5707.4164,
+        "derivedCellCount": 105,
+        "dryCellIndices": [
+          18338,
+          18339,
+          18340,
+          18341,
+          18342,
+          18343,
+          18344,
+          18345,
+          18346,
+          18347,
+          18348,
+          18349,
+          18350,
+          18351,
+          18352,
+          18353,
+          18354,
+          18355,
+          18356,
+          18588,
+          18589,
+          18590,
+          18591,
+          18592,
+          18593,
+          18594,
+          18595,
+          18596,
+          18597,
+          18598,
+          18599,
+          18600,
+          18601,
+          18602,
+          18603,
+          18604,
+          18605,
+          18606,
+          18607,
+          18838,
+          18839,
+          18840,
+          18841,
+          18842,
+          18843,
+          18844,
+          18845,
+          18846,
+          18847,
+          18848,
+          18849,
+          18850,
+          18851,
+          18852,
+          18853,
+          18854,
+          18855,
+          18856,
+          18857,
+          18858,
+          19088,
+          19089,
+          19090,
+          19091,
+          19092,
+          19093,
+          19094,
+          19095,
+          19096,
+          19097,
+          19098,
+          19099,
+          19100,
+          19101,
+          19102,
+          19103,
+          19104,
+          19105,
+          19106,
+          19107,
+          19108,
+          19338,
+          19339,
+          19340,
+          19341,
+          19342,
+          19343,
+          19344,
+          19345,
+          19346,
+          19347,
+          19348,
+          19349,
+          19350,
+          19351,
+          19352,
+          19353,
+          19354,
+          19355,
+          19356,
+          19357,
+          19358,
+          19588,
+          19589,
+          19590,
+          19591,
+          19592,
+          19593,
+          19594,
+          19595,
+          19596,
+          19597,
+          19598,
+          19599,
+          19600,
+          19601,
+          19602,
+          19603,
+          19604,
+          19605,
+          19606,
+          19607,
+          19608,
+          19838,
+          19839,
+          19840,
+          19841,
+          19842,
+          19843,
+          19844,
+          19845,
+          19846,
+          19847,
+          19848,
+          19849,
+          19850,
+          19851,
+          19852,
+          19853,
+          19854,
+          19855,
+          19856,
+          19857,
+          19858
+        ],
+        "waterOverlapCellIndices": [
+          18357,
+          18358,
+          18608
+        ],
+        "dryCellCount": 144,
+        "waterOverlapCellCount": 3,
+        "geometricEnvelopeStatus": "PARTIAL_WATER_OVERLAP__DRY_SUBSET_REQUIRED",
+        "waterOverlapResolved": false,
+        "roadFrontage": {
+          "nearestCartRoadId": "rd_b",
+          "distanceAu": 17.2748,
+          "derivedCartRoadCellDistance": 0,
+          "status": "MEASURED_FROM_SOURCE_ROAD_GEOMETRY"
+        },
+        "slopeRawDeltaMean": 1.8476,
+        "elevationRawByteMean": 63.3048,
+        "minStaticClearanceAu": 0,
+        "sweptClearanceStatus": "UNKNOWN",
+        "nearestSourceRoutes": [
+          "wsc.habitat.rs_1l",
+          "wsc.habitat.rs_1m",
+          "wsc.habitat.rs_1u"
+        ],
+        "habitatPathIntersections": "UNKNOWN",
+        "traceSurface": "MIXED_SEE_BIOME_HISTOGRAM",
+        "retreatRoutes": {
+          "nearestRoad": {
+            "roadId": "rd_b",
+            "kind": "cart",
+            "d": 17.4608,
+            "at": [
+              785.0881,
+              594.5767
+            ],
+            "segment": 0,
+            "t": 0.5726
+          },
+          "status": "DERIVED"
+        },
+        "occupancyStatus": "UNKNOWN",
+        "claimLegalityStatus": "GAMEPLAY_OWNED",
+        "ownerLegality": "GAMEPLAY",
+        "placedStructure": null,
+        "status": "GEOMETRIC_ENVELOPE_ONLY"
+      },
+      {
+        "siteId": "site.bz_gulfwest",
+        "parentZoneId": "bz_gulfwest",
+        "sourceRef": "project.zones[] where id=bz_gulfwest",
+        "physicalEnvelopeAu": [
+          827.6134,
+          888.1009,
+          929.9952,
+          951.0931
+        ],
+        "footprintAreaAu2": 4647.5514,
+        "derivedCellCount": 104,
+        "dryCellIndices": [
+          27853,
+          27854,
+          27855,
+          27856,
+          27857,
+          27858,
+          27859,
+          27860,
+          27861,
+          27862,
+          27863,
+          27864,
+          27865,
+          27866,
+          28103,
+          28104,
+          28105,
+          28106,
+          28107,
+          28108,
+          28109,
+          28110,
+          28111,
+          28112,
+          28113,
+          28114,
+          28115,
+          28116,
+          28353,
+          28354,
+          28355,
+          28356,
+          28357,
+          28358,
+          28359,
+          28360,
+          28361,
+          28362,
+          28363,
+          28364,
+          28365,
+          28366,
+          28603,
+          28604,
+          28605,
+          28606,
+          28607,
+          28608,
+          28609,
+          28610,
+          28611,
+          28612,
+          28613,
+          28614,
+          28615,
+          28616,
+          28853,
+          28854,
+          28855,
+          28856,
+          28857,
+          28858,
+          28859,
+          28860,
+          28861,
+          28862,
+          28863,
+          28864,
+          28865,
+          28866,
+          29103,
+          29104,
+          29105,
+          29106,
+          29107,
+          29108,
+          29109,
+          29110,
+          29111,
+          29112,
+          29113,
+          29114,
+          29115,
+          29116,
+          29353,
+          29354,
+          29355,
+          29356,
+          29357,
+          29358,
+          29359,
+          29360,
+          29361,
+          29362,
+          29363,
+          29364,
+          29365,
+          29366,
+          29603,
+          29604,
+          29605,
+          29606,
+          29607,
+          29608,
+          29609,
+          29610,
+          29611,
+          29612,
+          29613,
+          29614,
+          29615,
+          29616
+        ],
+        "waterOverlapCellIndices": [],
+        "dryCellCount": 112,
+        "waterOverlapCellCount": 0,
+        "geometricEnvelopeStatus": "VERIFIED_GEOMETRIC_ENVELOPE",
+        "waterOverlapResolved": true,
+        "roadFrontage": {
+          "nearestCartRoadId": "rd_n",
+          "distanceAu": 28.9594,
+          "derivedCartRoadCellDistance": 0,
+          "status": "MEASURED_FROM_SOURCE_ROAD_GEOMETRY"
+        },
+        "slopeRawDeltaMean": 2.4135,
+        "elevationRawByteMean": 25.25,
+        "minStaticClearanceAu": 16,
+        "sweptClearanceStatus": "UNKNOWN",
+        "nearestSourceRoutes": [
+          "wsc.habitat.rs_37",
+          "wsc.habitat.rs_3o",
+          "wsc.habitat.rs_4e"
+        ],
+        "habitatPathIntersections": "UNKNOWN",
+        "traceSurface": "MIXED_SEE_BIOME_HISTOGRAM",
+        "retreatRoutes": {
+          "nearestRoad": {
+            "roadId": "rd_n",
+            "kind": "cart",
+            "d": 29.9317,
+            "at": [
+              908,
+              913
+            ],
+            "segment": 0,
+            "t": 1
+          },
+          "status": "DERIVED"
+        },
+        "occupancyStatus": "UNKNOWN",
+        "claimLegalityStatus": "GAMEPLAY_OWNED",
+        "ownerLegality": "GAMEPLAY",
+        "placedStructure": null,
+        "status": "GEOMETRIC_ENVELOPE_ONLY"
+      },
+      {
+        "siteId": "site.bz_westmouth",
+        "parentZoneId": "bz_westmouth",
+        "sourceRef": "project.zones[] where id=bz_westmouth",
+        "physicalEnvelopeAu": [
+          362.0412,
+          557.6086,
+          411.4516,
+          642.7082
+        ],
+        "footprintAreaAu2": 3323.49,
+        "derivedCellCount": 60,
+        "dryCellIndices": [
+          17295,
+          17296,
+          17297,
+          17298,
+          17299,
+          17300,
+          17301,
+          17545,
+          17546,
+          17547,
+          17548,
+          17549,
+          17550,
+          17551,
+          17795,
+          17796,
+          17797,
+          17798,
+          17799,
+          17800,
+          17801,
+          18045,
+          18046,
+          18047,
+          18048,
+          18049,
+          18050,
+          18051,
+          18295,
+          18296,
+          18297,
+          18298,
+          18299,
+          18300,
+          18301,
+          18545,
+          18546,
+          18547,
+          18548,
+          18549,
+          18550,
+          18551,
+          18795,
+          18796,
+          18797,
+          18798,
+          18799,
+          18800,
+          18801,
+          19045,
+          19046,
+          19047,
+          19048,
+          19049,
+          19050,
+          19051,
+          19295,
+          19296,
+          19297,
+          19298,
+          19299,
+          19300,
+          19301,
+          19545,
+          19546,
+          19547,
+          19548,
+          19549,
+          19550,
+          19551,
+          19795,
+          19796,
+          19797,
+          19798,
+          19799,
+          19800,
+          19801,
+          20045,
+          20046,
+          20047,
+          20048,
+          20049,
+          20050,
+          20051
+        ],
+        "waterOverlapCellIndices": [],
+        "dryCellCount": 84,
+        "waterOverlapCellCount": 0,
+        "geometricEnvelopeStatus": "VERIFIED_GEOMETRIC_ENVELOPE",
+        "waterOverlapResolved": true,
+        "roadFrontage": {
+          "nearestCartRoadId": "rd_r",
+          "distanceAu": 7.1307,
+          "derivedCartRoadCellDistance": 0,
+          "status": "MEASURED_FROM_SOURCE_ROAD_GEOMETRY"
+        },
+        "slopeRawDeltaMean": 3.65,
+        "elevationRawByteMean": 39.6333,
+        "minStaticClearanceAu": 32,
+        "sweptClearanceStatus": "UNKNOWN",
+        "nearestSourceRoutes": [
+          "wsc.habitat.rs_x",
+          "wsc.habitat.rs_y",
+          "wsc.habitat.rs_1s"
+        ],
+        "habitatPathIntersections": "UNKNOWN",
+        "traceSurface": "MIXED_SEE_BIOME_HISTOGRAM",
+        "retreatRoutes": {
+          "nearestRoad": {
+            "roadId": "rd_r",
+            "kind": "cart",
+            "d": 8.3024,
+            "at": [
+              392.4409,
+              594.1167
+            ],
+            "segment": 0,
+            "t": 0.9297
+          },
+          "status": "DERIVED"
+        },
+        "occupancyStatus": "UNKNOWN",
+        "claimLegalityStatus": "GAMEPLAY_OWNED",
+        "ownerLegality": "GAMEPLAY",
+        "placedStructure": null,
+        "status": "GEOMETRIC_ENVELOPE_ONLY"
+      },
+      {
+        "siteId": "site.bz_hook",
+        "parentZoneId": "bz_hook",
+        "sourceRef": "project.zones[] where id=bz_hook",
+        "physicalEnvelopeAu": [
+          1222.7991,
+          367.0869,
+          1338.5406,
+          417.533
+        ],
+        "footprintAreaAu2": 4079.5653,
+        "derivedCellCount": 84,
+        "dryCellIndices": [
+          11411,
+          11412,
+          11413,
+          11414,
+          11415,
+          11416,
+          11417,
+          11652,
+          11653,
+          11654,
+          11655,
+          11656,
+          11657,
+          11658,
+          11659,
+          11664,
+          11665,
+          11666,
+          11667,
+          11902,
+          11903,
+          11904,
+          11905,
+          11906,
+          11907,
+          11908,
+          11909,
+          11910,
+          11911,
+          11912,
+          11917,
+          12152,
+          12153,
+          12154,
+          12155,
+          12156,
+          12157,
+          12158,
+          12159,
+          12160,
+          12161,
+          12162,
+          12163,
+          12164,
+          12165,
+          12402,
+          12403,
+          12404,
+          12405,
+          12406,
+          12407,
+          12408,
+          12409,
+          12410,
+          12411,
+          12412,
+          12413,
+          12414,
+          12415,
+          12416,
+          12417,
+          12652,
+          12653,
+          12654,
+          12655,
+          12656,
+          12657,
+          12658,
+          12659,
+          12660,
+          12661,
+          12662,
+          12663,
+          12664,
+          12665,
+          12666,
+          12667,
+          12902,
+          12903,
+          12904,
+          12905,
+          12906,
+          12907,
+          12908,
+          12909,
+          12910,
+          12911,
+          12912,
+          12913,
+          12914,
+          12915,
+          12916,
+          12917,
+          13152,
+          13153,
+          13154,
+          13155,
+          13156,
+          13157,
+          13158,
+          13159,
+          13160,
+          13161,
+          13162,
+          13163,
+          13164,
+          13165,
+          13166,
+          13167
+        ],
+        "waterOverlapCellIndices": [
+          11402,
+          11403,
+          11404,
+          11405,
+          11406,
+          11407,
+          11408,
+          11409,
+          11410,
+          11660,
+          11661,
+          11662,
+          11663,
+          11913,
+          11914,
+          11915,
+          11916,
+          12166,
+          12167
+        ],
+        "dryCellCount": 109,
+        "waterOverlapCellCount": 19,
+        "geometricEnvelopeStatus": "PARTIAL_WATER_OVERLAP__DRY_SUBSET_REQUIRED",
+        "waterOverlapResolved": false,
+        "roadFrontage": {
+          "nearestCartRoadId": "rd_1n",
+          "distanceAu": 29.8592,
+          "derivedCartRoadCellDistance": 0,
+          "status": "MEASURED_FROM_SOURCE_ROAD_GEOMETRY"
+        },
+        "slopeRawDeltaMean": 6.2619,
+        "elevationRawByteMean": 33.1071,
+        "minStaticClearanceAu": 0,
+        "sweptClearanceStatus": "UNKNOWN",
+        "nearestSourceRoutes": [
+          "wsc.habitat.rs_5l",
+          "wsc.habitat.rs_5m",
+          "wsc.habitat.rs_6i"
+        ],
+        "habitatPathIntersections": "UNKNOWN",
+        "traceSurface": "MIXED_SEE_BIOME_HISTOGRAM",
+        "retreatRoutes": {
+          "nearestRoad": {
+            "roadId": "rd_1n",
+            "kind": "trail",
+            "d": 29.2742,
+            "at": [
+              1251.4408,
+              393.9338
+            ],
+            "segment": 1,
+            "t": 0.0395
+          },
+          "status": "DERIVED"
+        },
+        "occupancyStatus": "UNKNOWN",
+        "claimLegalityStatus": "GAMEPLAY_OWNED",
+        "ownerLegality": "GAMEPLAY",
+        "placedStructure": null,
+        "status": "GEOMETRIC_ENVELOPE_ONLY"
+      },
+      {
+        "siteId": "site.bz_silver",
+        "parentZoneId": "bz_silver",
+        "sourceRef": "project.zones[] where id=bz_silver",
+        "physicalEnvelopeAu": [
+          634.4594,
+          652.8304,
+          760.539,
+          686.3801
+        ],
+        "footprintAreaAu2": 3285.1819,
+        "derivedCellCount": 64,
+        "dryCellIndices": [
+          20329,
+          20330,
+          20331,
+          20332,
+          20333,
+          20334,
+          20335,
+          20336,
+          20343,
+          20344,
+          20345,
+          20579,
+          20580,
+          20581,
+          20582,
+          20583,
+          20584,
+          20585,
+          20586,
+          20587,
+          20588,
+          20589,
+          20590,
+          20591,
+          20592,
+          20593,
+          20594,
+          20595,
+          20829,
+          20830,
+          20831,
+          20832,
+          20833,
+          20834,
+          20835,
+          20836,
+          20837,
+          20838,
+          20839,
+          20840,
+          20841,
+          20842,
+          20843,
+          20844,
+          20845,
+          21079,
+          21080,
+          21081,
+          21082,
+          21083,
+          21084,
+          21085,
+          21086,
+          21087,
+          21088,
+          21089,
+          21090,
+          21091,
+          21092,
+          21093,
+          21094,
+          21095,
+          21329,
+          21330,
+          21331,
+          21332,
+          21333,
+          21334,
+          21335,
+          21336,
+          21337,
+          21338,
+          21339,
+          21340,
+          21341,
+          21342,
+          21343,
+          21344,
+          21345
+        ],
+        "waterOverlapCellIndices": [
+          20337,
+          20338,
+          20339,
+          20340,
+          20341,
+          20342
+        ],
+        "dryCellCount": 79,
+        "waterOverlapCellCount": 6,
+        "geometricEnvelopeStatus": "VERIFIED_GEOMETRIC_ENVELOPE",
+        "waterOverlapResolved": false,
+        "roadFrontage": {
+          "nearestCartRoadId": "rd_c",
+          "distanceAu": 37.2348,
+          "derivedCartRoadCellDistance": 0,
+          "status": "MEASURED_FROM_SOURCE_ROAD_GEOMETRY"
+        },
+        "slopeRawDeltaMean": 1.6094,
+        "elevationRawByteMean": 63.125,
+        "minStaticClearanceAu": 8,
+        "sweptClearanceStatus": "UNKNOWN",
+        "nearestSourceRoutes": [
+          "wsc.habitat.rs_28",
+          "wsc.habitat.rs_2l"
+        ],
+        "habitatPathIntersections": "UNKNOWN",
+        "traceSurface": "MIXED_SEE_BIOME_HISTOGRAM",
+        "retreatRoutes": {
+          "nearestRoad": {
+            "roadId": "rd_c",
+            "kind": "cart",
+            "d": 37.3922,
+            "at": [
+              733.5,
+              659.5
+            ],
+            "segment": 1,
+            "t": 0
+          },
+          "status": "DERIVED"
+        },
+        "occupancyStatus": "UNKNOWN",
+        "claimLegalityStatus": "GAMEPLAY_OWNED",
+        "ownerLegality": "GAMEPLAY",
+        "placedStructure": null,
+        "status": "GEOMETRIC_ENVELOPE_ONLY"
+      },
+      {
+        "siteId": "site.bz_eastflats",
+        "parentZoneId": "bz_eastflats",
+        "sourceRef": "project.zones[] where id=bz_eastflats",
+        "physicalEnvelopeAu": [
+          1202.739,
+          490.6339,
+          1294.8909,
+          521.0779
+        ],
+        "footprintAreaAu2": 2336.5906,
+        "derivedCellCount": 48,
+        "dryCellIndices": [
+          15404,
+          15405,
+          15406,
+          15407,
+          15408,
+          15409,
+          15410,
+          15411,
+          15650,
+          15651,
+          15652,
+          15656,
+          15657,
+          15658,
+          15659,
+          15660,
+          15661,
+          15900,
+          15901,
+          15902,
+          15903,
+          15904,
+          15905,
+          15909,
+          15910,
+          15911,
+          16150,
+          16151,
+          16152,
+          16153,
+          16154,
+          16155,
+          16156,
+          16157,
+          16161,
+          16400,
+          16401,
+          16402,
+          16403,
+          16404,
+          16405,
+          16406,
+          16407,
+          16408,
+          16409,
+          16410
+        ],
+        "waterOverlapCellIndices": [
+          15400,
+          15401,
+          15402,
+          15403,
+          15653,
+          15654,
+          15655,
+          15906,
+          15907,
+          15908,
+          16158,
+          16159,
+          16160,
+          16411
+        ],
+        "dryCellCount": 46,
+        "waterOverlapCellCount": 14,
+        "geometricEnvelopeStatus": "PARTIAL_WATER_OVERLAP__DRY_SUBSET_REQUIRED",
+        "waterOverlapResolved": false,
+        "roadFrontage": {
+          "nearestCartRoadId": "rd_21",
+          "distanceAu": 14.358,
+          "derivedCartRoadCellDistance": 0,
+          "status": "MEASURED_FROM_SOURCE_ROAD_GEOMETRY"
+        },
+        "slopeRawDeltaMean": 2.3333,
+        "elevationRawByteMean": 21.4792,
+        "minStaticClearanceAu": 0,
+        "sweptClearanceStatus": "UNKNOWN",
+        "nearestSourceRoutes": [
+          "wsc.habitat.rs_1h",
+          "wsc.habitat.rs_4y"
+        ],
+        "habitatPathIntersections": "UNKNOWN",
+        "traceSurface": "MIXED_SEE_BIOME_HISTOGRAM",
+        "retreatRoutes": {
+          "nearestRoad": {
+            "roadId": "rd_21",
+            "kind": "riverside",
+            "d": 14.582,
+            "at": [
+              1243.8559,
+              519.5687
+            ],
+            "segment": 0,
+            "t": 0.5066
+          },
+          "status": "DERIVED"
+        },
+        "occupancyStatus": "UNKNOWN",
+        "claimLegalityStatus": "GAMEPLAY_OWNED",
+        "ownerLegality": "GAMEPLAY",
+        "placedStructure": null,
+        "status": "GEOMETRIC_ENVELOPE_ONLY"
+      },
+      {
+        "siteId": "site.bz_elder_clear",
+        "parentZoneId": "bz_elder_clear",
+        "sourceRef": "project.zones[] where id=bz_elder_clear",
+        "physicalEnvelopeAu": [
+          768.4277,
+          761.8308,
+          833.0773,
+          819.1336
+        ],
+        "footprintAreaAu2": 2721.074,
+        "derivedCellCount": 56,
+        "dryCellIndices": [
+          23846,
+          23847,
+          23848,
+          23849,
+          23850,
+          23851,
+          23852,
+          23853,
+          23854,
+          24096,
+          24097,
+          24098,
+          24099,
+          24100,
+          24101,
+          24102,
+          24103,
+          24104,
+          24346,
+          24347,
+          24348,
+          24349,
+          24350,
+          24351,
+          24352,
+          24353,
+          24354,
+          24596,
+          24597,
+          24598,
+          24599,
+          24600,
+          24601,
+          24602,
+          24603,
+          24604,
+          24846,
+          24847,
+          24848,
+          24849,
+          24850,
+          24851,
+          24852,
+          24853,
+          24854,
+          25096,
+          25097,
+          25098,
+          25099,
+          25100,
+          25101,
+          25102,
+          25103,
+          25104,
+          25346,
+          25347,
+          25348,
+          25349,
+          25350,
+          25351,
+          25352,
+          25353,
+          25354,
+          25596,
+          25597,
+          25598,
+          25599,
+          25600,
+          25601,
+          25602,
+          25603,
+          25604
+        ],
+        "waterOverlapCellIndices": [],
+        "dryCellCount": 72,
+        "waterOverlapCellCount": 0,
+        "geometricEnvelopeStatus": "VERIFIED_GEOMETRIC_ENVELOPE",
+        "waterOverlapResolved": true,
+        "roadFrontage": {
+          "nearestCartRoadId": "rd_1x",
+          "distanceAu": 22.9811,
+          "derivedCartRoadCellDistance": 15,
+          "status": "MEASURED_FROM_SOURCE_ROAD_GEOMETRY"
+        },
+        "slopeRawDeltaMean": 1.6964,
+        "elevationRawByteMean": 60.8571,
+        "minStaticClearanceAu": 112,
+        "sweptClearanceStatus": "UNKNOWN",
+        "nearestSourceRoutes": [
+          "wsc.habitat.rs_33"
+        ],
+        "habitatPathIntersections": "UNKNOWN",
+        "traceSurface": "MIXED_SEE_BIOME_HISTOGRAM",
+        "retreatRoutes": {
+          "nearestRoad": {
+            "roadId": "rd_1x",
+            "kind": "trail",
+            "d": 21.3625,
+            "at": [
+              811.8134,
+              772.2062
+            ],
+            "segment": 0,
+            "t": 1
+          },
+          "status": "DERIVED"
+        },
+        "occupancyStatus": "UNKNOWN",
+        "claimLegalityStatus": "GAMEPLAY_OWNED",
+        "ownerLegality": "GAMEPLAY",
+        "placedStructure": null,
+        "status": "GEOMETRIC_ENVELOPE_ONLY"
+      },
+      {
+        "siteId": "site.bz_westwood",
+        "parentZoneId": "bz_westwood",
+        "sourceRef": "project.zones[] where id=bz_westwood",
+        "physicalEnvelopeAu": [
+          408.067,
+          723.8382,
+          461.3041,
+          814.0088
+        ],
+        "footprintAreaAu2": 3657.7089,
+        "derivedCellCount": 84,
+        "dryCellIndices": [
+          22551,
+          22552,
+          22553,
+          22554,
+          22555,
+          22556,
+          22557,
+          22801,
+          22802,
+          22803,
+          22804,
+          22805,
+          22806,
+          22807,
+          23051,
+          23052,
+          23053,
+          23054,
+          23055,
+          23056,
+          23057,
+          23301,
+          23302,
+          23303,
+          23304,
+          23305,
+          23306,
+          23307,
+          23551,
+          23552,
+          23553,
+          23554,
+          23555,
+          23556,
+          23557,
+          23801,
+          23802,
+          23803,
+          23804,
+          23805,
+          23806,
+          23807,
+          24051,
+          24052,
+          24053,
+          24054,
+          24055,
+          24056,
+          24057,
+          24301,
+          24302,
+          24303,
+          24304,
+          24305,
+          24306,
+          24307,
+          24551,
+          24552,
+          24553,
+          24554,
+          24555,
+          24556,
+          24557,
+          24801,
+          24802,
+          24803,
+          24804,
+          24805,
+          24806,
+          24807,
+          25051,
+          25052,
+          25053,
+          25054,
+          25055,
+          25056,
+          25057,
+          25301,
+          25302,
+          25303,
+          25304,
+          25305,
+          25306,
+          25307
+        ],
+        "waterOverlapCellIndices": [],
+        "dryCellCount": 84,
+        "waterOverlapCellCount": 0,
+        "geometricEnvelopeStatus": "VERIFIED_GEOMETRIC_ENVELOPE",
+        "waterOverlapResolved": true,
+        "roadFrontage": {
+          "nearestCartRoadId": "rd_1p",
+          "distanceAu": 28.0045,
+          "derivedCartRoadCellDistance": 0,
+          "status": "MEASURED_FROM_SOURCE_ROAD_GEOMETRY"
+        },
+        "slopeRawDeltaMean": 10.8333,
+        "elevationRawByteMean": 47.8452,
+        "minStaticClearanceAu": 64,
+        "sweptClearanceStatus": "UNKNOWN",
+        "nearestSourceRoutes": [
+          "wsc.habitat.rs_2h",
+          "wsc.habitat.rs_2i",
+          "wsc.habitat.rs_2x"
+        ],
+        "habitatPathIntersections": "UNKNOWN",
+        "traceSurface": "MIXED_SEE_BIOME_HISTOGRAM",
+        "retreatRoutes": {
+          "nearestRoad": {
+            "roadId": "rd_1p",
+            "kind": "foot",
+            "d": 26.3034,
+            "at": [
+              413.8522,
+              752.8662
+            ],
+            "segment": 0,
+            "t": 0.518
+          },
+          "status": "DERIVED"
+        },
+        "occupancyStatus": "UNKNOWN",
+        "claimLegalityStatus": "GAMEPLAY_OWNED",
+        "ownerLegality": "GAMEPLAY",
+        "placedStructure": null,
+        "status": "GEOMETRIC_ENVELOPE_ONLY"
+      },
+      {
+        "siteId": "site.bz_typhon_t",
+        "parentZoneId": "bz_typhon_t",
+        "sourceRef": "project.zones[] where id=bz_typhon_t",
+        "physicalEnvelopeAu": [
+          667.6213,
+          459.6779,
+          732.0639,
+          496.1399
+        ],
+        "footprintAreaAu2": 1920.3132,
+        "derivedCellCount": 45,
+        "dryCellIndices": [
+          14333,
+          14334,
+          14335,
+          14336,
+          14337,
+          14338,
+          14339,
+          14340,
+          14341,
+          14583,
+          14584,
+          14585,
+          14586,
+          14587,
+          14588,
+          14589,
+          14590,
+          14591,
+          14833,
+          14834,
+          14835,
+          14836,
+          14837,
+          14838,
+          14839,
+          14840,
+          14841,
+          15083,
+          15084,
+          15085,
+          15086,
+          15087,
+          15088,
+          15089,
+          15090,
+          15091,
+          15333,
+          15334,
+          15335,
+          15336,
+          15337,
+          15338,
+          15339,
+          15340,
+          15341,
+          15583,
+          15584,
+          15585,
+          15586,
+          15587,
+          15588,
+          15589,
+          15590,
+          15591
+        ],
+        "waterOverlapCellIndices": [],
+        "dryCellCount": 54,
+        "waterOverlapCellCount": 0,
+        "geometricEnvelopeStatus": "VERIFIED_GEOMETRIC_ENVELOPE",
+        "waterOverlapResolved": true,
+        "roadFrontage": {
+          "nearestCartRoadId": "rd_d",
+          "distanceAu": 1.4145,
+          "derivedCartRoadCellDistance": 0,
+          "status": "MEASURED_FROM_SOURCE_ROAD_GEOMETRY"
+        },
+        "slopeRawDeltaMean": 12.1556,
+        "elevationRawByteMean": 91.5778,
+        "minStaticClearanceAu": 32,
+        "sweptClearanceStatus": "UNKNOWN",
+        "nearestSourceRoutes": [
+          "wsc.habitat.rs_11",
+          "wsc.habitat.rs_1b",
+          "wsc.habitat.rs_1c"
+        ],
+        "habitatPathIntersections": "UNKNOWN",
+        "traceSurface": "MIXED_SEE_BIOME_HISTOGRAM",
+        "retreatRoutes": {
+          "nearestRoad": {
+            "roadId": "rd_d",
+            "kind": "cart",
+            "d": 1.244,
+            "at": [
+              700.711,
+              477.0182
+            ],
+            "segment": 2,
+            "t": 0.6144
+          },
+          "status": "DERIVED"
+        },
+        "occupancyStatus": "UNKNOWN",
+        "claimLegalityStatus": "GAMEPLAY_OWNED",
+        "ownerLegality": "GAMEPLAY",
+        "placedStructure": null,
+        "status": "GEOMETRIC_ENVELOPE_ONLY"
+      },
+      {
+        "siteId": "site.bz_oasis",
+        "parentZoneId": "bz_oasis",
+        "sourceRef": "project.zones[] where id=bz_oasis",
+        "physicalEnvelopeAu": [
+          613.9112,
+          940.6892,
+          691.2921,
+          982.1553
+        ],
+        "footprintAreaAu2": 2481.2417,
+        "derivedCellCount": 45,
+        "dryCellIndices": [
+          29326,
+          29327,
+          29328,
+          29329,
+          29330,
+          29331,
+          29332,
+          29333,
+          29334,
+          29335,
+          29336,
+          29576,
+          29577,
+          29578,
+          29579,
+          29580,
+          29581,
+          29582,
+          29583,
+          29584,
+          29585,
+          29586,
+          29826,
+          29827,
+          29828,
+          29829,
+          29830,
+          29831,
+          29832,
+          29833,
+          29834,
+          29835,
+          29836,
+          30076,
+          30077,
+          30078,
+          30079,
+          30080,
+          30081,
+          30082,
+          30083,
+          30084,
+          30085,
+          30086,
+          30326,
+          30327,
+          30328,
+          30329,
+          30330,
+          30331,
+          30332,
+          30333,
+          30334,
+          30335,
+          30336,
+          30578,
+          30579,
+          30580,
+          30581,
+          30582,
+          30583,
+          30584,
+          30585,
+          30586
+        ],
+        "waterOverlapCellIndices": [
+          30576,
+          30577
+        ],
+        "dryCellCount": 64,
+        "waterOverlapCellCount": 2,
+        "geometricEnvelopeStatus": "PARTIAL_WATER_OVERLAP__DRY_SUBSET_REQUIRED",
+        "waterOverlapResolved": false,
+        "roadFrontage": {
+          "nearestCartRoadId": "rd_1f",
+          "distanceAu": 6.282,
+          "derivedCartRoadCellDistance": 1,
+          "status": "MEASURED_FROM_SOURCE_ROAD_GEOMETRY"
+        },
+        "slopeRawDeltaMean": 4.8,
+        "elevationRawByteMean": 58.0444,
+        "minStaticClearanceAu": 0,
+        "sweptClearanceStatus": "UNKNOWN",
+        "nearestSourceRoutes": [
+          "wsc.habitat.rs_32",
+          "wsc.habitat.rs_3h",
+          "wsc.habitat.rs_6h"
+        ],
+        "habitatPathIntersections": "UNKNOWN",
+        "traceSurface": "MIXED_SEE_BIOME_HISTOGRAM",
+        "retreatRoutes": {
+          "nearestRoad": {
+            "roadId": "rd_1f",
+            "kind": "trail",
+            "d": 8.011,
+            "at": [
+              647.5972,
+              967.6778
+            ],
+            "segment": 0,
+            "t": 0.5829
+          },
+          "status": "DERIVED"
+        },
+        "occupancyStatus": "UNKNOWN",
+        "claimLegalityStatus": "GAMEPLAY_OWNED",
+        "ownerLegality": "GAMEPLAY",
+        "placedStructure": null,
+        "status": "GEOMETRIC_ENVELOPE_ONLY"
+      },
+      {
+        "siteId": "site.bz_greyback",
+        "parentZoneId": "bz_greyback",
+        "sourceRef": "project.zones[] where id=bz_greyback",
+        "physicalEnvelopeAu": [
+          526.9347,
+          708.5332,
+          579.1326,
+          789.3882
+        ],
+        "footprintAreaAu2": 3086.3132,
+        "derivedCellCount": 60,
+        "dryCellIndices": [
+          22065,
+          22066,
+          22067,
+          22068,
+          22069,
+          22070,
+          22071,
+          22072,
+          22315,
+          22316,
+          22317,
+          22318,
+          22319,
+          22320,
+          22321,
+          22322,
+          22565,
+          22566,
+          22567,
+          22568,
+          22569,
+          22570,
+          22571,
+          22572,
+          22815,
+          22816,
+          22817,
+          22818,
+          22819,
+          22820,
+          22821,
+          22822,
+          23065,
+          23066,
+          23067,
+          23068,
+          23069,
+          23070,
+          23071,
+          23072,
+          23315,
+          23316,
+          23317,
+          23318,
+          23319,
+          23320,
+          23321,
+          23322,
+          23565,
+          23566,
+          23567,
+          23568,
+          23569,
+          23570,
+          23571,
+          23572,
+          23815,
+          23816,
+          23817,
+          23818,
+          23819,
+          23820,
+          23821,
+          23822,
+          24065,
+          24066,
+          24067,
+          24068,
+          24069,
+          24070,
+          24071,
+          24072,
+          24315,
+          24316,
+          24317,
+          24318,
+          24319,
+          24320,
+          24321,
+          24322,
+          24565,
+          24566,
+          24567,
+          24568,
+          24569,
+          24570,
+          24571,
+          24572
+        ],
+        "waterOverlapCellIndices": [],
+        "dryCellCount": 88,
+        "waterOverlapCellCount": 0,
+        "geometricEnvelopeStatus": "VERIFIED_GEOMETRIC_ENVELOPE",
+        "waterOverlapResolved": true,
+        "roadFrontage": {
+          "nearestCartRoadId": "rd_d",
+          "distanceAu": 85.5622,
+          "derivedCartRoadCellDistance": 6,
+          "status": "MEASURED_FROM_SOURCE_ROAD_GEOMETRY"
+        },
+        "slopeRawDeltaMean": 10.7667,
+        "elevationRawByteMean": 79.7,
+        "minStaticClearanceAu": 112,
+        "sweptClearanceStatus": "UNKNOWN",
+        "nearestSourceRoutes": [
+          "wsc.habitat.rs_11",
+          "wsc.habitat.rs_1b",
+          "wsc.habitat.rs_1c"
+        ],
+        "habitatPathIntersections": "UNKNOWN",
+        "traceSurface": "MIXED_SEE_BIOME_HISTOGRAM",
+        "retreatRoutes": {
+          "nearestRoad": {
+            "roadId": "rd_d",
+            "kind": "cart",
+            "d": 86.1495,
+            "at": [
+              525,
+              667.5
+            ],
+            "segment": 16,
+            "t": 0
+          },
+          "status": "DERIVED"
+        },
+        "occupancyStatus": "UNKNOWN",
+        "claimLegalityStatus": "GAMEPLAY_OWNED",
+        "ownerLegality": "GAMEPLAY",
+        "placedStructure": null,
+        "status": "GEOMETRIC_ENVELOPE_ONLY"
+      },
+      {
+        "siteId": "site.bz_forest_n",
+        "parentZoneId": "bz_forest_n",
+        "sourceRef": "project.zones[] where id=bz_forest_n",
+        "physicalEnvelopeAu": [
+          854.2429,
+          374.6701,
+          902.6691,
+          408.0874
+        ],
+        "footprintAreaAu2": 1272.2819,
+        "derivedCellCount": 24,
+        "dryCellIndices": [
+          11606,
+          11607,
+          11608,
+          11609,
+          11610,
+          11611,
+          11612,
+          11856,
+          11857,
+          11858,
+          11859,
+          11860,
+          11861,
+          11862,
+          12106,
+          12107,
+          12108,
+          12109,
+          12110,
+          12111,
+          12112,
+          12356,
+          12357,
+          12358,
+          12359,
+          12360,
+          12361,
+          12362,
+          12606,
+          12607,
+          12608,
+          12609,
+          12610,
+          12611,
+          12612,
+          12856,
+          12857,
+          12858,
+          12859,
+          12860,
+          12861,
+          12862
+        ],
+        "waterOverlapCellIndices": [],
+        "dryCellCount": 42,
+        "waterOverlapCellCount": 0,
+        "geometricEnvelopeStatus": "VERIFIED_GEOMETRIC_ENVELOPE",
+        "waterOverlapResolved": true,
+        "roadFrontage": {
+          "nearestCartRoadId": "rd_h",
+          "distanceAu": 14.4009,
+          "derivedCartRoadCellDistance": 0,
+          "status": "MEASURED_FROM_SOURCE_ROAD_GEOMETRY"
+        },
+        "slopeRawDeltaMean": 5.0417,
+        "elevationRawByteMean": 76.75,
+        "minStaticClearanceAu": 32,
+        "sweptClearanceStatus": "UNKNOWN",
+        "nearestSourceRoutes": [
+          "wsc.habitat.rs_5",
+          "wsc.habitat.rs_l",
+          "wsc.habitat.rs_s"
+        ],
+        "habitatPathIntersections": "UNKNOWN",
+        "traceSurface": "MIXED_SEE_BIOME_HISTOGRAM",
+        "retreatRoutes": {
+          "nearestRoad": {
+            "roadId": "rd_h",
+            "kind": "cart",
+            "d": 14.044,
+            "at": [
+              892.5,
+              391.3787
+            ],
+            "segment": 3,
+            "t": 0.2516
+          },
+          "status": "DERIVED"
+        },
+        "occupancyStatus": "UNKNOWN",
+        "claimLegalityStatus": "GAMEPLAY_OWNED",
+        "ownerLegality": "GAMEPLAY",
+        "placedStructure": null,
+        "status": "GEOMETRIC_ENVELOPE_ONLY"
+      },
+      {
+        "siteId": "site.bz_delta",
+        "parentZoneId": "bz_delta",
+        "sourceRef": "project.zones[] where id=bz_delta",
+        "physicalEnvelopeAu": [
+          1067.9549,
+          812.7424,
+          1136.0638,
+          859.487
+        ],
+        "footprintAreaAu2": 2464.4506,
+        "derivedCellCount": 45,
+        "dryCellIndices": [
+          25383,
+          25384,
+          25385,
+          25386,
+          25387,
+          25388,
+          25389,
+          25390,
+          25391,
+          25392,
+          25633,
+          25634,
+          25635,
+          25636,
+          25637,
+          25638,
+          25639,
+          25640,
+          25641,
+          25642,
+          25883,
+          25884,
+          25885,
+          25886,
+          25887,
+          25888,
+          25889,
+          25890,
+          25891,
+          25892,
+          26133,
+          26134,
+          26135,
+          26136,
+          26137,
+          26138,
+          26139,
+          26140,
+          26141,
+          26142,
+          26383,
+          26384,
+          26385,
+          26386,
+          26387,
+          26388,
+          26389,
+          26390,
+          26391,
+          26392,
+          26633,
+          26634,
+          26635,
+          26636,
+          26637,
+          26638,
+          26639,
+          26640,
+          26641,
+          26642,
+          26883,
+          26884,
+          26885,
+          26886,
+          26887,
+          26888,
+          26889,
+          26890,
+          26891,
+          26892
+        ],
+        "waterOverlapCellIndices": [],
+        "dryCellCount": 70,
+        "waterOverlapCellCount": 0,
+        "geometricEnvelopeStatus": "VERIFIED_GEOMETRIC_ENVELOPE",
+        "waterOverlapResolved": true,
+        "roadFrontage": {
+          "nearestCartRoadId": "rd_0",
+          "distanceAu": 32.1317,
+          "derivedCartRoadCellDistance": 0,
+          "status": "MEASURED_FROM_SOURCE_ROAD_GEOMETRY"
+        },
+        "slopeRawDeltaMean": 2.2667,
+        "elevationRawByteMean": 34.6222,
+        "minStaticClearanceAu": 80,
+        "sweptClearanceStatus": "UNKNOWN",
+        "nearestSourceRoutes": [
+          "wsc.habitat.rs_2c",
+          "wsc.habitat.rs_38"
+        ],
+        "habitatPathIntersections": "UNKNOWN",
+        "traceSurface": "MIXED_SEE_BIOME_HISTOGRAM",
+        "retreatRoutes": {
+          "nearestRoad": {
+            "roadId": "rd_2",
+            "kind": "cart",
+            "d": 32.6499,
+            "at": [
+              1124.964,
+              812.8962
+            ],
+            "segment": 3,
+            "t": 0.8645
+          },
+          "status": "DERIVED"
+        },
+        "occupancyStatus": "UNKNOWN",
+        "claimLegalityStatus": "GAMEPLAY_OWNED",
+        "ownerLegality": "GAMEPLAY",
+        "placedStructure": null,
+        "status": "GEOMETRIC_ENVELOPE_ONLY"
+      },
+      {
+        "siteId": "site.bz_moss",
+        "parentZoneId": "bz_moss",
+        "sourceRef": "project.zones[] where id=bz_moss",
+        "physicalEnvelopeAu": [
+          1005.4853,
+          568.3925,
+          1078.0772,
+          720.0068
+        ],
+        "footprintAreaAu2": 7667.2685,
+        "derivedCellCount": 171,
+        "dryCellIndices": [
+          17875,
+          17876,
+          17877,
+          17878,
+          17879,
+          17880,
+          17881,
+          17882,
+          17883,
+          17884,
+          18125,
+          18126,
+          18127,
+          18128,
+          18129,
+          18130,
+          18131,
+          18132,
+          18133,
+          18134,
+          18375,
+          18376,
+          18377,
+          18378,
+          18379,
+          18380,
+          18381,
+          18382,
+          18383,
+          18384,
+          18625,
+          18626,
+          18627,
+          18628,
+          18629,
+          18630,
+          18631,
+          18632,
+          18633,
+          18634,
+          18875,
+          18876,
+          18877,
+          18878,
+          18879,
+          18880,
+          18881,
+          18882,
+          18883,
+          18884,
+          19125,
+          19126,
+          19127,
+          19128,
+          19129,
+          19130,
+          19131,
+          19132,
+          19133,
+          19134,
+          19375,
+          19376,
+          19377,
+          19378,
+          19379,
+          19380,
+          19381,
+          19382,
+          19383,
+          19625,
+          19626,
+          19627,
+          19628,
+          19629,
+          19630,
+          19631,
+          19632,
+          19633,
+          19875,
+          19876,
+          19877,
+          19878,
+          19879,
+          19880,
+          19881,
+          19882,
+          20125,
+          20126,
+          20127,
+          20128,
+          20129,
+          20130,
+          20131,
+          20132,
+          20134,
+          20375,
+          20376,
+          20377,
+          20378,
+          20379,
+          20380,
+          20381,
+          20383,
+          20384,
+          20625,
+          20626,
+          20627,
+          20628,
+          20629,
+          20630,
+          20633,
+          20634,
+          20875,
+          20876,
+          20877,
+          20878,
+          20879,
+          20880,
+          20882,
+          20883,
+          20884,
+          21125,
+          21126,
+          21127,
+          21128,
+          21129,
+          21132,
+          21133,
+          21134,
+          21375,
+          21376,
+          21377,
+          21378,
+          21381,
+          21382,
+          21383,
+          21384,
+          21625,
+          21626,
+          21627,
+          21628,
+          21630,
+          21631,
+          21632,
+          21633,
+          21634,
+          21875,
+          21876,
+          21877,
+          21879,
+          21880,
+          21881,
+          21882,
+          21883,
+          21884,
+          22125,
+          22126,
+          22129,
+          22130,
+          22131,
+          22132,
+          22133,
+          22134,
+          22375,
+          22378,
+          22379,
+          22380,
+          22381,
+          22382,
+          22383,
+          22384,
+          22625,
+          22627,
+          22628,
+          22629,
+          22630,
+          22631,
+          22632,
+          22633,
+          22634
+        ],
+        "waterOverlapCellIndices": [
+          19384,
+          19634,
+          19883,
+          19884,
+          20133,
+          20382,
+          20631,
+          20632,
+          20881,
+          21130,
+          21131,
+          21379,
+          21380,
+          21629,
+          21878,
+          22127,
+          22128,
+          22376,
+          22377,
+          22626
+        ],
+        "dryCellCount": 180,
+        "waterOverlapCellCount": 20,
+        "geometricEnvelopeStatus": "PARTIAL_WATER_OVERLAP__DRY_SUBSET_REQUIRED",
+        "waterOverlapResolved": false,
+        "roadFrontage": {
+          "nearestCartRoadId": "rd_1",
+          "distanceAu": 73.3888,
+          "derivedCartRoadCellDistance": 3,
+          "status": "MEASURED_FROM_SOURCE_ROAD_GEOMETRY"
+        },
+        "slopeRawDeltaMean": 7.4971,
+        "elevationRawByteMean": 56.0292,
+        "minStaticClearanceAu": 0,
+        "sweptClearanceStatus": "UNKNOWN",
+        "nearestSourceRoutes": [
+          "wsc.habitat.rs_16",
+          "wsc.habitat.rs_1f",
+          "wsc.habitat.rs_1g"
+        ],
+        "habitatPathIntersections": "UNKNOWN",
+        "traceSurface": "MIXED_SEE_BIOME_HISTOGRAM",
+        "retreatRoutes": {
+          "nearestRoad": {
+            "roadId": "rd_1",
+            "kind": "cart",
+            "d": 74.2188,
+            "at": [
+              1116,
+              644.1997
+            ],
+            "segment": 4,
+            "t": 0.3069
+          },
+          "status": "DERIVED"
+        },
+        "occupancyStatus": "UNKNOWN",
+        "claimLegalityStatus": "GAMEPLAY_OWNED",
+        "ownerLegality": "GAMEPLAY",
+        "placedStructure": null,
+        "status": "GEOMETRIC_ENVELOPE_ONLY"
+      },
+      {
+        "siteId": "site.bz_verdant",
+        "parentZoneId": "bz_verdant",
+        "sourceRef": "project.zones[] where id=bz_verdant",
+        "physicalEnvelopeAu": [
+          944.1496,
+          465.4979,
+          1076.5127,
+          502.435
+        ],
+        "footprintAreaAu2": 4001.5029,
+        "derivedCellCount": 85,
+        "dryCellIndices": [
+          14618,
+          14619,
+          14620,
+          14621,
+          14622,
+          14623,
+          14624,
+          14625,
+          14626,
+          14627,
+          14630,
+          14631,
+          14632,
+          14633,
+          14634,
+          14868,
+          14869,
+          14870,
+          14871,
+          14872,
+          14873,
+          14874,
+          14875,
+          14876,
+          14877,
+          14878,
+          14880,
+          14881,
+          14882,
+          14883,
+          14884,
+          15118,
+          15119,
+          15120,
+          15121,
+          15122,
+          15123,
+          15124,
+          15125,
+          15126,
+          15127,
+          15128,
+          15129,
+          15131,
+          15132,
+          15133,
+          15134,
+          15368,
+          15369,
+          15370,
+          15371,
+          15372,
+          15373,
+          15374,
+          15375,
+          15376,
+          15377,
+          15378,
+          15379,
+          15382,
+          15383,
+          15384,
+          15618,
+          15619,
+          15620,
+          15621,
+          15622,
+          15623,
+          15624,
+          15625,
+          15626,
+          15627,
+          15628,
+          15629,
+          15630,
+          15632,
+          15633,
+          15634
+        ],
+        "waterOverlapCellIndices": [
+          14628,
+          14629,
+          14879,
+          15130,
+          15380,
+          15381,
+          15631
+        ],
+        "dryCellCount": 78,
+        "waterOverlapCellCount": 7,
+        "geometricEnvelopeStatus": "PARTIAL_WATER_OVERLAP__DRY_SUBSET_REQUIRED",
+        "waterOverlapResolved": false,
+        "roadFrontage": {
+          "nearestCartRoadId": "rd_a",
+          "distanceAu": 6.4104,
+          "derivedCartRoadCellDistance": 0,
+          "status": "MEASURED_FROM_SOURCE_ROAD_GEOMETRY"
+        },
+        "slopeRawDeltaMean": 6.2118,
+        "elevationRawByteMean": 50.8824,
+        "minStaticClearanceAu": 0,
+        "sweptClearanceStatus": "UNKNOWN",
+        "nearestSourceRoutes": [
+          "wsc.habitat.rs_1e",
+          "wsc.habitat.rs_1o",
+          "wsc.habitat.rs_4m"
+        ],
+        "habitatPathIntersections": "UNKNOWN",
+        "traceSurface": "MIXED_SEE_BIOME_HISTOGRAM",
+        "retreatRoutes": {
+          "nearestRoad": {
+            "roadId": "rd_a",
+            "kind": "cart",
+            "d": 6.0575,
+            "at": [
+              1004.3051,
+              483.3501
+            ],
+            "segment": 2,
+            "t": 0.4011
+          },
+          "status": "DERIVED"
+        },
+        "occupancyStatus": "UNKNOWN",
+        "claimLegalityStatus": "GAMEPLAY_OWNED",
+        "ownerLegality": "GAMEPLAY",
+        "placedStructure": null,
+        "status": "GEOMETRIC_ENVELOPE_ONLY"
+      },
+      {
+        "siteId": "site.bz_ridge",
+        "parentZoneId": "bz_ridge",
+        "sourceRef": "project.zones[] where id=bz_ridge",
+        "physicalEnvelopeAu": [
+          1135.9022,
+          597.4679,
+          1182.9978,
+          681.4575
+        ],
+        "footprintAreaAu2": 2850.4982,
+        "derivedCellCount": 60,
+        "dryCellIndices": [
+          18641,
+          18642,
+          18643,
+          18644,
+          18645,
+          18646,
+          18647,
+          18891,
+          18892,
+          18893,
+          18894,
+          18895,
+          18896,
+          18897,
+          19141,
+          19142,
+          19143,
+          19144,
+          19145,
+          19146,
+          19147,
+          19391,
+          19392,
+          19393,
+          19394,
+          19395,
+          19396,
+          19397,
+          19641,
+          19642,
+          19643,
+          19644,
+          19645,
+          19646,
+          19647,
+          19891,
+          19892,
+          19893,
+          19894,
+          19895,
+          19896,
+          19897,
+          20141,
+          20142,
+          20143,
+          20144,
+          20145,
+          20146,
+          20147,
+          20391,
+          20392,
+          20393,
+          20394,
+          20395,
+          20396,
+          20397,
+          20641,
+          20642,
+          20643,
+          20644,
+          20645,
+          20646,
+          20647,
+          20891,
+          20892,
+          20893,
+          20894,
+          20895,
+          20896,
+          20897,
+          21141,
+          21142,
+          21143,
+          21144,
+          21145,
+          21146,
+          21147,
+          21391,
+          21392,
+          21393,
+          21394,
+          21395,
+          21396,
+          21397
+        ],
+        "waterOverlapCellIndices": [],
+        "dryCellCount": 84,
+        "waterOverlapCellCount": 0,
+        "geometricEnvelopeStatus": "VERIFIED_GEOMETRIC_ENVELOPE",
+        "waterOverlapResolved": true,
+        "roadFrontage": {
+          "nearestCartRoadId": "rd_3",
+          "distanceAu": 12.2321,
+          "derivedCartRoadCellDistance": 0,
+          "status": "MEASURED_FROM_SOURCE_ROAD_GEOMETRY"
+        },
+        "slopeRawDeltaMean": 3.9833,
+        "elevationRawByteMean": 63.2833,
+        "minStaticClearanceAu": 56,
+        "sweptClearanceStatus": "UNKNOWN",
+        "nearestSourceRoutes": [
+          "wsc.habitat.rs_20",
+          "wsc.habitat.rs_2f",
+          "wsc.habitat.rs_6o"
+        ],
+        "habitatPathIntersections": "UNKNOWN",
+        "traceSurface": "MIXED_SEE_BIOME_HISTOGRAM",
+        "retreatRoutes": {
+          "nearestRoad": {
+            "roadId": "rd_3",
+            "kind": "cart",
+            "d": 12.5443,
+            "at": [
+              1167.4806,
+              649.0995
+            ],
+            "segment": 2,
+            "t": 0.6934
+          },
+          "status": "DERIVED"
+        },
+        "occupancyStatus": "UNKNOWN",
+        "claimLegalityStatus": "GAMEPLAY_OWNED",
+        "ownerLegality": "GAMEPLAY",
+        "placedStructure": null,
+        "status": "GEOMETRIC_ENVELOPE_ONLY"
+      },
+      {
+        "siteId": "site.bz_kestrel",
+        "parentZoneId": "bz_kestrel",
+        "sourceRef": "project.zones[] where id=bz_kestrel",
+        "physicalEnvelopeAu": [
+          696.7493,
+          326.3226,
+          753.1064,
+          362.5548
+        ],
+        "footprintAreaAu2": 1570.2595,
+        "derivedCellCount": 28,
+        "dryCellIndices": [
+          10087,
+          10088,
+          10089,
+          10090,
+          10091,
+          10092,
+          10093,
+          10094,
+          10337,
+          10338,
+          10339,
+          10340,
+          10341,
+          10342,
+          10343,
+          10344,
+          10587,
+          10588,
+          10589,
+          10590,
+          10591,
+          10592,
+          10593,
+          10594,
+          10837,
+          10838,
+          10839,
+          10840,
+          10841,
+          10842,
+          10843,
+          10844,
+          11087,
+          11088,
+          11089,
+          11090,
+          11091,
+          11092,
+          11093,
+          11094,
+          11337,
+          11338,
+          11339,
+          11340,
+          11341,
+          11342,
+          11343,
+          11344
+        ],
+        "waterOverlapCellIndices": [],
+        "dryCellCount": 48,
+        "waterOverlapCellCount": 0,
+        "geometricEnvelopeStatus": "VERIFIED_GEOMETRIC_ENVELOPE",
+        "waterOverlapResolved": true,
+        "roadFrontage": {
+          "nearestCartRoadId": "rd_1e",
+          "distanceAu": 31.1665,
+          "derivedCartRoadCellDistance": 10,
+          "status": "MEASURED_FROM_SOURCE_ROAD_GEOMETRY"
+        },
+        "slopeRawDeltaMean": 11.6429,
+        "elevationRawByteMean": 66.6071,
+        "minStaticClearanceAu": 56,
+        "sweptClearanceStatus": "UNKNOWN",
+        "nearestSourceRoutes": [
+          "wsc.habitat.rs_1",
+          "wsc.habitat.rs_2",
+          "wsc.habitat.rs_c"
+        ],
+        "habitatPathIntersections": "UNKNOWN",
+        "traceSurface": "MIXED_SEE_BIOME_HISTOGRAM",
+        "retreatRoutes": {
+          "nearestRoad": {
+            "roadId": "rd_1e",
+            "kind": "trail",
+            "d": 30.0434,
+            "at": [
+              733,
+              315.5
+            ],
+            "segment": 2,
+            "t": 1
+          },
+          "status": "DERIVED"
+        },
+        "occupancyStatus": "UNKNOWN",
+        "claimLegalityStatus": "GAMEPLAY_OWNED",
+        "ownerLegality": "GAMEPLAY",
+        "placedStructure": null,
+        "status": "GEOMETRIC_ENVELOPE_ONLY"
+      },
+      {
+        "siteId": "site.bz_argus",
+        "parentZoneId": "bz_argus",
+        "sourceRef": "project.zones[] where id=bz_argus",
+        "physicalEnvelopeAu": [
+          848.2452,
+          288.1857,
+          950.5161,
+          322.6477
+        ],
+        "footprintAreaAu2": 2730.2184,
+        "derivedCellCount": 52,
+        "dryCellIndices": [
+          9106,
+          9107,
+          9108,
+          9109,
+          9110,
+          9111,
+          9112,
+          9113,
+          9114,
+          9115,
+          9116,
+          9117,
+          9118,
+          9356,
+          9357,
+          9358,
+          9359,
+          9360,
+          9361,
+          9362,
+          9363,
+          9364,
+          9365,
+          9366,
+          9367,
+          9368,
+          9606,
+          9607,
+          9608,
+          9609,
+          9610,
+          9611,
+          9612,
+          9613,
+          9614,
+          9615,
+          9616,
+          9617,
+          9618,
+          9856,
+          9857,
+          9858,
+          9859,
+          9860,
+          9861,
+          9862,
+          9863,
+          9864,
+          9865,
+          9866,
+          9867,
+          9868,
+          10106,
+          10107,
+          10108,
+          10109,
+          10110,
+          10111,
+          10112,
+          10113,
+          10114,
+          10115,
+          10116,
+          10117,
+          10118
+        ],
+        "waterOverlapCellIndices": [],
+        "dryCellCount": 65,
+        "waterOverlapCellCount": 0,
+        "geometricEnvelopeStatus": "VERIFIED_GEOMETRIC_ENVELOPE",
+        "waterOverlapResolved": true,
+        "roadFrontage": {
+          "nearestCartRoadId": "rd_h",
+          "distanceAu": 12.0394,
+          "derivedCartRoadCellDistance": 0,
+          "status": "MEASURED_FROM_SOURCE_ROAD_GEOMETRY"
+        },
+        "slopeRawDeltaMean": 2.2115,
+        "elevationRawByteMean": 51.6923,
+        "minStaticClearanceAu": 16,
+        "sweptClearanceStatus": "UNKNOWN",
+        "nearestSourceRoutes": [
+          "wsc.habitat.rs_5",
+          "wsc.habitat.rs_l",
+          "wsc.habitat.rs_s"
+        ],
+        "habitatPathIntersections": "UNKNOWN",
+        "traceSurface": "MIXED_SEE_BIOME_HISTOGRAM",
+        "retreatRoutes": {
+          "nearestRoad": {
+            "roadId": "rd_h",
+            "kind": "cart",
+            "d": 12.1913,
+            "at": [
+              908.8012,
+              313.155
+            ],
+            "segment": 4,
+            "t": 0.3544
+          },
+          "status": "DERIVED"
+        },
+        "occupancyStatus": "UNKNOWN",
+        "claimLegalityStatus": "GAMEPLAY_OWNED",
+        "ownerLegality": "GAMEPLAY",
+        "placedStructure": null,
+        "status": "GEOMETRIC_ENVELOPE_ONLY"
+      },
+      {
+        "siteId": "site.bz_dune",
+        "parentZoneId": "bz_dune",
+        "sourceRef": "project.zones[] where id=bz_dune",
+        "physicalEnvelopeAu": [
+          526.0453,
+          942.7833,
+          570.2022,
+          980.6182
+        ],
+        "footprintAreaAu2": 1237.8299,
+        "derivedCellCount": 25,
+        "dryCellIndices": [
+          29315,
+          29316,
+          29317,
+          29318,
+          29319,
+          29565,
+          29566,
+          29567,
+          29568,
+          29569,
+          29570,
+          29815,
+          29816,
+          29817,
+          29818,
+          29819,
+          29820,
+          29821,
+          30065,
+          30066,
+          30067,
+          30068,
+          30069,
+          30070,
+          30071,
+          30315,
+          30316,
+          30317,
+          30318,
+          30319,
+          30320,
+          30321,
+          30565,
+          30566,
+          30567,
+          30568,
+          30569,
+          30570,
+          30571
+        ],
+        "waterOverlapCellIndices": [
+          29320,
+          29321,
+          29571
+        ],
+        "dryCellCount": 39,
+        "waterOverlapCellCount": 3,
+        "geometricEnvelopeStatus": "VERIFIED_GEOMETRIC_ENVELOPE",
+        "waterOverlapResolved": false,
+        "roadFrontage": {
+          "nearestCartRoadId": "rd_1g",
+          "distanceAu": 19.2072,
+          "derivedCartRoadCellDistance": 14,
+          "status": "MEASURED_FROM_SOURCE_ROAD_GEOMETRY"
+        },
+        "slopeRawDeltaMean": 3,
+        "elevationRawByteMean": 61.48,
+        "minStaticClearanceAu": 8,
+        "sweptClearanceStatus": "UNKNOWN",
+        "nearestSourceRoutes": [
+          "wsc.habitat.rs_3g",
+          "wsc.habitat.rs_5a"
+        ],
+        "habitatPathIntersections": "UNKNOWN",
+        "traceSurface": "MIXED_SEE_BIOME_HISTOGRAM",
+        "retreatRoutes": {
+          "nearestRoad": {
+            "roadId": "rd_1g",
+            "kind": "trail",
+            "d": 18.2993,
+            "at": [
+              548.1237,
+              980
+            ],
+            "segment": 1,
+            "t": 0.1951
+          },
+          "status": "DERIVED"
+        },
+        "occupancyStatus": "UNKNOWN",
+        "claimLegalityStatus": "GAMEPLAY_OWNED",
+        "ownerLegality": "GAMEPLAY",
+        "placedStructure": null,
+        "status": "GEOMETRIC_ENVELOPE_ONLY"
+      },
+      {
+        "siteId": "site.bz_salt",
+        "parentZoneId": "bz_salt",
+        "sourceRef": "project.zones[] where id=bz_salt",
+        "physicalEnvelopeAu": [
+          1565.331,
+          316.7946,
+          1654.5548,
+          357.0742
+        ],
+        "footprintAreaAu2": 2722.9709,
+        "derivedCellCount": 55,
+        "dryCellIndices": [
+          9945,
+          9946,
+          9947,
+          9948,
+          9949,
+          9950,
+          9951,
+          9952,
+          9953,
+          9956,
+          10195,
+          10196,
+          10197,
+          10198,
+          10199,
+          10200,
+          10201,
+          10202,
+          10205,
+          10206,
+          10445,
+          10446,
+          10447,
+          10448,
+          10449,
+          10450,
+          10451,
+          10454,
+          10455,
+          10456,
+          10695,
+          10696,
+          10697,
+          10698,
+          10699,
+          10700,
+          10701,
+          10703,
+          10704,
+          10705,
+          10706,
+          10945,
+          10946,
+          10947,
+          10948,
+          10949,
+          10950,
+          10952,
+          10953,
+          10954,
+          10955,
+          10956,
+          11195,
+          11196,
+          11197,
+          11198,
+          11199,
+          11202,
+          11203,
+          11204,
+          11205,
+          11206
+        ],
+        "waterOverlapCellIndices": [
+          9954,
+          9955,
+          10203,
+          10204,
+          10452,
+          10453,
+          10702,
+          10951,
+          11200,
+          11201
+        ],
+        "dryCellCount": 62,
+        "waterOverlapCellCount": 10,
+        "geometricEnvelopeStatus": "PARTIAL_WATER_OVERLAP__DRY_SUBSET_REQUIRED",
+        "waterOverlapResolved": false,
+        "roadFrontage": {
+          "nearestCartRoadId": "rd_z",
+          "distanceAu": 2.7743,
+          "derivedCartRoadCellDistance": 0,
+          "status": "MEASURED_FROM_SOURCE_ROAD_GEOMETRY"
+        },
+        "slopeRawDeltaMean": 4.5273,
+        "elevationRawByteMean": 19.1091,
+        "minStaticClearanceAu": 0,
+        "sweptClearanceStatus": "UNKNOWN",
+        "nearestSourceRoutes": [
+          "wsc.habitat.rs_8",
+          "wsc.habitat.rs_9",
+          "wsc.habitat.rs_h"
+        ],
+        "habitatPathIntersections": "UNKNOWN",
+        "traceSurface": "MIXED_SEE_BIOME_HISTOGRAM",
+        "retreatRoutes": {
+          "nearestRoad": {
+            "roadId": "rd_z",
+            "kind": "cart",
+            "d": 3.2073,
+            "at": [
+              1609,
+              340
+            ],
+            "segment": 1,
+            "t": 1
+          },
+          "status": "DERIVED"
+        },
+        "occupancyStatus": "UNKNOWN",
+        "claimLegalityStatus": "GAMEPLAY_OWNED",
+        "ownerLegality": "GAMEPLAY",
+        "placedStructure": null,
+        "status": "GEOMETRIC_ENVELOPE_ONLY"
+      },
+      {
+        "siteId": "site.bz_slag",
+        "parentZoneId": "bz_slag",
+        "sourceRef": "project.zones[] where id=bz_slag",
+        "physicalEnvelopeAu": [
+          1202.2991,
+          961.6643,
+          1248.2372,
+          998.4993
+        ],
+        "footprintAreaAu2": 1266.7701,
+        "derivedCellCount": 30,
+        "dryCellIndices": [
+          30150,
+          30151,
+          30152,
+          30153,
+          30154,
+          30400,
+          30401,
+          30402,
+          30403,
+          30404,
+          30405,
+          30650,
+          30651,
+          30652,
+          30653,
+          30654,
+          30655,
+          30900,
+          30901,
+          30902,
+          30903,
+          30904,
+          30905,
+          31150,
+          31151,
+          31152,
+          31153,
+          31154,
+          31155,
+          31156
+        ],
+        "waterOverlapCellIndices": [
+          30155,
+          30156,
+          30406,
+          30656,
+          30906
+        ],
+        "dryCellCount": 30,
+        "waterOverlapCellCount": 5,
+        "geometricEnvelopeStatus": "PARTIAL_WATER_OVERLAP__DRY_SUBSET_REQUIRED",
+        "waterOverlapResolved": false,
+        "roadFrontage": {
+          "nearestCartRoadId": "rd_u",
+          "distanceAu": 37.1201,
+          "derivedCartRoadCellDistance": 2,
+          "status": "MEASURED_FROM_SOURCE_ROAD_GEOMETRY"
+        },
+        "slopeRawDeltaMean": 3.7667,
+        "elevationRawByteMean": 24.2333,
+        "minStaticClearanceAu": 0,
+        "sweptClearanceStatus": "UNKNOWN",
+        "nearestSourceRoutes": [
+          "wsc.habitat.rs_3v",
+          "wsc.habitat.rs_3x",
+          "wsc.habitat.rs_3z"
+        ],
+        "habitatPathIntersections": "UNKNOWN",
+        "traceSurface": "MIXED_SEE_BIOME_HISTOGRAM",
+        "retreatRoutes": {
+          "nearestRoad": {
+            "roadId": "rd_u",
+            "kind": "cart",
+            "d": 36.7922,
+            "at": [
+              1188.4985,
+              978.7916
+            ],
+            "segment": 0,
+            "t": 0.7507
+          },
+          "status": "DERIVED"
+        },
+        "occupancyStatus": "UNKNOWN",
+        "claimLegalityStatus": "GAMEPLAY_OWNED",
+        "ownerLegality": "GAMEPLAY",
+        "placedStructure": null,
+        "status": "GEOMETRIC_ENVELOPE_ONLY"
+      },
+      {
+        "siteId": "site.bz_cinder",
+        "parentZoneId": "bz_cinder",
+        "sourceRef": "project.zones[] where id=bz_cinder",
+        "physicalEnvelopeAu": [
+          1564.2539,
+          856.7189,
+          1607.4775,
+          896.162
+        ],
+        "footprintAreaAu2": 1376.1661,
+        "derivedCellCount": 25,
+        "dryCellIndices": [
+          26945,
+          26946,
+          26947,
+          26948,
+          26949,
+          26950,
+          27195,
+          27196,
+          27197,
+          27198,
+          27199,
+          27200,
+          27445,
+          27446,
+          27447,
+          27448,
+          27449,
+          27450,
+          27696,
+          27697,
+          27698,
+          27699,
+          27700,
+          27946,
+          27947,
+          27948,
+          27949,
+          27950,
+          28196,
+          28197,
+          28198
+        ],
+        "waterOverlapCellIndices": [
+          27695,
+          27945,
+          28195,
+          28199,
+          28200
+        ],
+        "dryCellCount": 31,
+        "waterOverlapCellCount": 5,
+        "geometricEnvelopeStatus": "VERIFIED_GEOMETRIC_ENVELOPE",
+        "waterOverlapResolved": false,
+        "roadFrontage": {
+          "nearestCartRoadId": "rd_w",
+          "distanceAu": 0.3983,
+          "derivedCartRoadCellDistance": 43,
+          "status": "MEASURED_FROM_SOURCE_ROAD_GEOMETRY"
+        },
+        "slopeRawDeltaMean": 13.44,
+        "elevationRawByteMean": 33.48,
+        "minStaticClearanceAu": 8,
+        "sweptClearanceStatus": "UNKNOWN",
+        "nearestSourceRoutes": [
+          "wsc.habitat.rs_2v",
+          "wsc.habitat.rs_3k"
+        ],
+        "habitatPathIntersections": "UNKNOWN",
+        "traceSurface": "MIXED_SEE_BIOME_HISTOGRAM",
+        "retreatRoutes": {
+          "nearestRoad": {
+            "roadId": "rd_w",
+            "kind": "foot",
+            "d": 0.1789,
+            "at": [
+              1585.7608,
+              876.5854
+            ],
+            "segment": 0,
+            "t": 0.3531
+          },
+          "status": "DERIVED"
+        },
+        "occupancyStatus": "UNKNOWN",
+        "claimLegalityStatus": "GAMEPLAY_OWNED",
+        "ownerLegality": "GAMEPLAY",
+        "placedStructure": null,
+        "status": "GEOMETRIC_ENVELOPE_ONLY"
+      },
+      {
+        "siteId": "site.bz_ironholm",
+        "parentZoneId": "bz_ironholm",
+        "sourceRef": "project.zones[] where id=bz_ironholm",
+        "physicalEnvelopeAu": [
+          1106.5615,
+          1259.1447,
+          1174.1993,
+          1298.822
+        ],
+        "footprintAreaAu2": 2034.7836,
+        "derivedCellCount": 45,
+        "dryCellIndices": [
+          39388,
+          39389,
+          39390,
+          39391,
+          39392,
+          39393,
+          39394,
+          39395,
+          39396,
+          39638,
+          39639,
+          39640,
+          39641,
+          39642,
+          39643,
+          39644,
+          39645,
+          39646,
+          39888,
+          39889,
+          39890,
+          39891,
+          39892,
+          39893,
+          39894,
+          39895,
+          39896,
+          40138,
+          40139,
+          40140,
+          40141,
+          40142,
+          40143,
+          40144,
+          40145,
+          40146,
+          40388,
+          40389,
+          40390,
+          40391,
+          40392,
+          40393,
+          40394,
+          40395,
+          40638,
+          40639,
+          40640,
+          40641,
+          40642,
+          40643
+        ],
+        "waterOverlapCellIndices": [
+          40396,
+          40644,
+          40645,
+          40646
+        ],
+        "dryCellCount": 50,
+        "waterOverlapCellCount": 4,
+        "geometricEnvelopeStatus": "PARTIAL_WATER_OVERLAP__DRY_SUBSET_REQUIRED",
+        "waterOverlapResolved": false,
+        "roadFrontage": {
+          "nearestCartRoadId": "rd_11",
+          "distanceAu": 5.2445,
+          "derivedCartRoadCellDistance": 0,
+          "status": "MEASURED_FROM_SOURCE_ROAD_GEOMETRY"
+        },
+        "slopeRawDeltaMean": 7.4444,
+        "elevationRawByteMean": 59.8,
+        "minStaticClearanceAu": 0,
+        "sweptClearanceStatus": "UNKNOWN",
+        "nearestSourceRoutes": [
+          "wsc.habitat.rs_41",
+          "wsc.habitat.rs_43",
+          "wsc.habitat.rs_44"
+        ],
+        "habitatPathIntersections": "UNKNOWN",
+        "traceSurface": "MIXED_SEE_BIOME_HISTOGRAM",
+        "retreatRoutes": {
+          "nearestRoad": {
+            "roadId": "rd_11",
+            "kind": "cart",
+            "d": 4.6287,
+            "at": [
+              1142.6222,
+              1274.9337
+            ],
+            "segment": 1,
+            "t": 0.4151
+          },
+          "status": "DERIVED"
+        },
+        "occupancyStatus": "UNKNOWN",
+        "claimLegalityStatus": "GAMEPLAY_OWNED",
+        "ownerLegality": "GAMEPLAY",
+        "placedStructure": null,
+        "status": "GEOMETRIC_ENVELOPE_ONLY"
+      }
+    ],
+    "occupancy": "UNKNOWN",
+    "claims": "GAMEPLAY_OWNED"
+  },
+  "habitatRegions": {
+    "count": 12,
+    "regions": [
+      {
+        "id": "hab.temperate.v1",
+        "biomeGroup": "TEMPERATE",
+        "cellCount": 33048,
+        "centroidAu": [
+          1032.8765,
+          698.9271
+        ],
+        "visibilityBarriers": [
+          "CLIFF",
+          "POI_STATIC_WALL"
+        ],
+        "footprintSensitiveSurfaces": [
+          "SNOW",
+          "MARSH",
+          "BEACH",
+          "ASH",
+          "TOXIC"
+        ],
+        "roamingCorridors": [
+          {
+            "id": "corridor.ALT-A",
+            "kind": "CART_PROPOSED_NONCANONICAL",
+            "status": "PROPOSED",
+            "canonical": false
+          },
+          {
+            "id": "corridor.ALT-B",
+            "kind": "FOOT",
+            "status": "PROPOSED",
+            "canonical": false
+          }
+        ],
+        "elderTerritoryIds": [
+          "el_aion"
+        ],
+        "spawnCounts": "UNKNOWN",
+        "raidPercentages": "UNKNOWN",
+        "aiBehaviour": "GAMEPLAY_OWNED",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "hab.canopy.v1",
+        "biomeGroup": "CANOPY",
+        "cellCount": 3019,
+        "centroidAu": [
+          918.9135,
+          560.9116
+        ],
+        "visibilityBarriers": [
+          "CANOPY",
+          "CLIFF",
+          "POI_STATIC_WALL"
+        ],
+        "footprintSensitiveSurfaces": [
+          "SNOW",
+          "MARSH",
+          "BEACH",
+          "ASH",
+          "TOXIC"
+        ],
+        "roamingCorridors": [
+          {
+            "id": "corridor.ALT-A",
+            "kind": "CART_PROPOSED_NONCANONICAL",
+            "status": "PROPOSED",
+            "canonical": false
+          },
+          {
+            "id": "corridor.ALT-B",
+            "kind": "FOOT",
+            "status": "PROPOSED",
+            "canonical": false
+          }
+        ],
+        "elderTerritoryIds": [],
+        "spawnCounts": "UNKNOWN",
+        "raidPercentages": "UNKNOWN",
+        "aiBehaviour": "GAMEPLAY_OWNED",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "hab.ancient_canopy.v1",
+        "biomeGroup": "ANCIENT_CANOPY",
+        "cellCount": 1111,
+        "centroidAu": [
+          877.9766,
+          705.3177
+        ],
+        "visibilityBarriers": [
+          "CANOPY",
+          "CLIFF",
+          "POI_STATIC_WALL"
+        ],
+        "footprintSensitiveSurfaces": [
+          "SNOW",
+          "MARSH",
+          "BEACH",
+          "ASH",
+          "TOXIC"
+        ],
+        "roamingCorridors": [
+          {
+            "id": "corridor.ALT-A",
+            "kind": "CART_PROPOSED_NONCANONICAL",
+            "status": "PROPOSED",
+            "canonical": false
+          },
+          {
+            "id": "corridor.ALT-B",
+            "kind": "FOOT",
+            "status": "PROPOSED",
+            "canonical": false
+          }
+        ],
+        "elderTerritoryIds": [
+          "el_aion"
+        ],
+        "spawnCounts": "UNKNOWN",
+        "raidPercentages": "UNKNOWN",
+        "aiBehaviour": "GAMEPLAY_OWNED",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "hab.conifer.v1",
+        "biomeGroup": "CONIFER",
+        "cellCount": 834,
+        "centroidAu": [
+          740.5851,
+          513.3909
+        ],
+        "visibilityBarriers": [
+          "CANOPY",
+          "CLIFF",
+          "POI_STATIC_WALL"
+        ],
+        "footprintSensitiveSurfaces": [
+          "SNOW",
+          "MARSH",
+          "BEACH",
+          "ASH",
+          "TOXIC"
+        ],
+        "roamingCorridors": [
+          {
+            "id": "corridor.ALT-A",
+            "kind": "CART_PROPOSED_NONCANONICAL",
+            "status": "PROPOSED",
+            "canonical": false
+          },
+          {
+            "id": "corridor.ALT-B",
+            "kind": "FOOT",
+            "status": "PROPOSED",
+            "canonical": false
+          }
+        ],
+        "elderTerritoryIds": [],
+        "spawnCounts": "UNKNOWN",
+        "raidPercentages": "UNKNOWN",
+        "aiBehaviour": "GAMEPLAY_OWNED",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "hab.wetland.v1",
+        "biomeGroup": "WETLAND",
+        "cellCount": 770,
+        "centroidAu": [
+          1020.7481,
+          538.4623
+        ],
+        "visibilityBarriers": [
+          "CLIFF",
+          "POI_STATIC_WALL"
+        ],
+        "footprintSensitiveSurfaces": [
+          "SNOW",
+          "MARSH",
+          "BEACH",
+          "ASH",
+          "TOXIC"
+        ],
+        "roamingCorridors": [
+          {
+            "id": "corridor.ALT-A",
+            "kind": "CART_PROPOSED_NONCANONICAL",
+            "status": "PROPOSED",
+            "canonical": false
+          },
+          {
+            "id": "corridor.ALT-B",
+            "kind": "FOOT",
+            "status": "PROPOSED",
+            "canonical": false
+          }
+        ],
+        "elderTerritoryIds": [],
+        "spawnCounts": "UNKNOWN",
+        "raidPercentages": "UNKNOWN",
+        "aiBehaviour": "GAMEPLAY_OWNED",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "hab.arid.v1",
+        "biomeGroup": "ARID",
+        "cellCount": 1308,
+        "centroidAu": [
+          613.7554,
+          1020.4037
+        ],
+        "visibilityBarriers": [
+          "CLIFF",
+          "POI_STATIC_WALL"
+        ],
+        "footprintSensitiveSurfaces": [
+          "SNOW",
+          "MARSH",
+          "BEACH",
+          "ASH",
+          "TOXIC"
+        ],
+        "roamingCorridors": [
+          {
+            "id": "corridor.ALT-A",
+            "kind": "CART_PROPOSED_NONCANONICAL",
+            "status": "PROPOSED",
+            "canonical": false
+          },
+          {
+            "id": "corridor.ALT-B",
+            "kind": "FOOT",
+            "status": "PROPOSED",
+            "canonical": false
+          }
+        ],
+        "elderTerritoryIds": [
+          "el_anubis"
+        ],
+        "spawnCounts": "UNKNOWN",
+        "raidPercentages": "UNKNOWN",
+        "aiBehaviour": "GAMEPLAY_OWNED",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "hab.scrub.v1",
+        "biomeGroup": "SCRUB",
+        "cellCount": 1400,
+        "centroidAu": [
+          804.5143,
+          883.3771
+        ],
+        "visibilityBarriers": [
+          "CLIFF",
+          "POI_STATIC_WALL"
+        ],
+        "footprintSensitiveSurfaces": [
+          "SNOW",
+          "MARSH",
+          "BEACH",
+          "ASH",
+          "TOXIC"
+        ],
+        "roamingCorridors": [
+          {
+            "id": "corridor.ALT-A",
+            "kind": "CART_PROPOSED_NONCANONICAL",
+            "status": "PROPOSED",
+            "canonical": false
+          },
+          {
+            "id": "corridor.ALT-B",
+            "kind": "FOOT",
+            "status": "PROPOSED",
+            "canonical": false
+          }
+        ],
+        "elderTerritoryIds": [],
+        "spawnCounts": "UNKNOWN",
+        "raidPercentages": "UNKNOWN",
+        "aiBehaviour": "GAMEPLAY_OWNED",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "hab.rock.v1",
+        "biomeGroup": "ROCK",
+        "cellCount": 511,
+        "centroidAu": [
+          634.0196,
+          458.4266
+        ],
+        "visibilityBarriers": [
+          "CLIFF",
+          "POI_STATIC_WALL"
+        ],
+        "footprintSensitiveSurfaces": [
+          "SNOW",
+          "MARSH",
+          "BEACH",
+          "ASH",
+          "TOXIC"
+        ],
+        "roamingCorridors": [
+          {
+            "id": "corridor.ALT-A",
+            "kind": "CART_PROPOSED_NONCANONICAL",
+            "status": "PROPOSED",
+            "canonical": false
+          },
+          {
+            "id": "corridor.ALT-B",
+            "kind": "FOOT",
+            "status": "PROPOSED",
+            "canonical": false
+          }
+        ],
+        "elderTerritoryIds": [
+          "el_typhon"
+        ],
+        "spawnCounts": "UNKNOWN",
+        "raidPercentages": "UNKNOWN",
+        "aiBehaviour": "GAMEPLAY_OWNED",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "hab.cold.v1",
+        "biomeGroup": "COLD",
+        "cellCount": 217,
+        "centroidAu": [
+          565.235,
+          333.53
+        ],
+        "visibilityBarriers": [
+          "CLIFF",
+          "POI_STATIC_WALL"
+        ],
+        "footprintSensitiveSurfaces": [
+          "SNOW",
+          "MARSH",
+          "BEACH",
+          "ASH",
+          "TOXIC"
+        ],
+        "roamingCorridors": [
+          {
+            "id": "corridor.ALT-A",
+            "kind": "CART_PROPOSED_NONCANONICAL",
+            "status": "PROPOSED",
+            "canonical": false
+          },
+          {
+            "id": "corridor.ALT-B",
+            "kind": "FOOT",
+            "status": "PROPOSED",
+            "canonical": false
+          }
+        ],
+        "elderTerritoryIds": [
+          "el_typhon"
+        ],
+        "spawnCounts": "UNKNOWN",
+        "raidPercentages": "UNKNOWN",
+        "aiBehaviour": "GAMEPLAY_OWNED",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "hab.volcanic.v1",
+        "biomeGroup": "VOLCANIC",
+        "cellCount": 452,
+        "centroidAu": [
+          1684.5133,
+          815.7876
+        ],
+        "visibilityBarriers": [
+          "CLIFF",
+          "POI_STATIC_WALL"
+        ],
+        "footprintSensitiveSurfaces": [
+          "SNOW",
+          "MARSH",
+          "BEACH",
+          "ASH",
+          "TOXIC"
+        ],
+        "roamingCorridors": [
+          {
+            "id": "corridor.ALT-A",
+            "kind": "CART_PROPOSED_NONCANONICAL",
+            "status": "PROPOSED",
+            "canonical": false
+          },
+          {
+            "id": "corridor.ALT-B",
+            "kind": "FOOT",
+            "status": "PROPOSED",
+            "canonical": false
+          }
+        ],
+        "elderTerritoryIds": [
+          "el_surtur"
+        ],
+        "spawnCounts": "UNKNOWN",
+        "raidPercentages": "UNKNOWN",
+        "aiBehaviour": "GAMEPLAY_OWNED",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "hab.toxic.v1",
+        "biomeGroup": "TOXIC",
+        "cellCount": 199,
+        "centroidAu": [
+          1310.1508,
+          958.593
+        ],
+        "visibilityBarriers": [
+          "CLIFF",
+          "POI_STATIC_WALL"
+        ],
+        "footprintSensitiveSurfaces": [
+          "SNOW",
+          "MARSH",
+          "BEACH",
+          "ASH",
+          "TOXIC"
+        ],
+        "roamingCorridors": [
+          {
+            "id": "corridor.ALT-A",
+            "kind": "CART_PROPOSED_NONCANONICAL",
+            "status": "PROPOSED",
+            "canonical": false
+          },
+          {
+            "id": "corridor.ALT-B",
+            "kind": "FOOT",
+            "status": "PROPOSED",
+            "canonical": false
+          }
+        ],
+        "elderTerritoryIds": [],
+        "spawnCounts": "UNKNOWN",
+        "raidPercentages": "UNKNOWN",
+        "aiBehaviour": "GAMEPLAY_OWNED",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "hab.littoral.v1",
+        "biomeGroup": "LITTORAL",
+        "cellCount": 881,
+        "centroidAu": [
+          1009.4983,
+          674.8331
+        ],
+        "visibilityBarriers": [
+          "CLIFF",
+          "POI_STATIC_WALL"
+        ],
+        "footprintSensitiveSurfaces": [
+          "SNOW",
+          "MARSH",
+          "BEACH",
+          "ASH",
+          "TOXIC"
+        ],
+        "roamingCorridors": [
+          {
+            "id": "corridor.ALT-A",
+            "kind": "CART_PROPOSED_NONCANONICAL",
+            "status": "PROPOSED",
+            "canonical": false
+          },
+          {
+            "id": "corridor.ALT-B",
+            "kind": "FOOT",
+            "status": "PROPOSED",
+            "canonical": false
+          }
+        ],
+        "elderTerritoryIds": [
+          "el_aion"
+        ],
+        "spawnCounts": "UNKNOWN",
+        "raidPercentages": "UNKNOWN",
+        "aiBehaviour": "GAMEPLAY_OWNED",
+        "status": "PROPOSED"
+      }
+    ],
+    "spawnCounts": "UNKNOWN",
+    "raidPercentages": "UNKNOWN"
+  },
+  "endgame": {
+    "elderTerritories": [
+      {
+        "id": "el_surtur",
+        "elder": "surtur",
+        "outerAu": [
+          [
+            1820.2151008015085,
+            840.6141300951231
+          ],
+          [
+            1811.4846011678,
+            857.8423902853693
+          ],
+          [
+            1804.2727716188335,
+            874.9525232842598
+          ],
+          [
+            1798.5796121546089,
+            891.9445290917945
+          ],
+          [
+            1788.996989900081,
+            906.646591835241
+          ],
+          [
+            1775.5249048552503,
+            919.058711514599
+          ],
+          [
+            1762.1950035761365,
+            932.42655279241
+          ],
+          [
+            1749.0072860627397,
+            946.7501156686736
+          ],
+          [
+            1732.3538087480588,
+            953.5549544327032
+          ],
+          [
+            1712.2345716320933,
+            952.8410690844989
+          ],
+          [
+            1692.5489983560924,
+            956.0537682664077
+          ],
+          [
+            1673.297088920056,
+            963.1930519784295
+          ],
+          [
+            1655.6714455426359,
+            960.3746448433275
+          ],
+          [
+            1639.672068223832,
+            947.5985468611017
+          ],
+          [
+            1626.3946113178163,
+            934.1028694258953
+          ],
+          [
+            1615.8390748245888,
+            919.8876125377083
+          ],
+          [
+            1600.4217643489997,
+            910.0417905373874
+          ],
+          [
+            1580.142679891049,
+            904.5654034249327
+          ],
+          [
+            1564.9475178211585,
+            893.7611559557802
+          ],
+          [
+            1554.8362781393284,
+            877.6290481299301
+          ],
+          [
+            1552.8515670183901,
+            860.1722456627538
+          ],
+          [
+            1558.9933844583431,
+            841.3907485542513
+          ],
+          [
+            1563.206909340699,
+            823.7884601110768
+          ],
+          [
+            1565.492141665457,
+            807.3653803332303
+          ],
+          [
+            1565.6137105469334,
+            788.7673357169101
+          ],
+          [
+            1563.5716159851277,
+            767.9943262621164
+          ],
+          [
+            1572.5069601882496,
+            753.7600196967627
+          ],
+          [
+            1592.4197431562998,
+            746.0644160208492
+          ],
+          [
+            1610.5583381121905,
+            739.1508241906306
+          ],
+          [
+            1626.9227450559224,
+            733.019244206107
+          ],
+          [
+            1643.0769722429886,
+            727.2797591512735
+          ],
+          [
+            1659.0210196733892,
+            721.9323690261301
+          ],
+          [
+            1676.070879996851,
+            715.4511781176067
+          ],
+          [
+            1694.2265532133738,
+            707.8361864257033
+          ],
+          [
+            1712.9239268394913,
+            705.8727185103182
+          ],
+          [
+            1732.1630008752038,
+            709.5607743714514
+          ],
+          [
+            1747.177068908904,
+            719.7301163410252
+          ],
+          [
+            1757.9661309405924,
+            736.3807444190394
+          ],
+          [
+            1768.6762417682585,
+            751.1207381053139
+          ],
+          [
+            1779.3074013919022,
+            763.950097399849
+          ],
+          [
+            1790.5192147266835,
+            777.0832905651471
+          ],
+          [
+            1802.3116817726025,
+            790.5203176012083
+          ],
+          [
+            1812.3010241262618,
+            805.9291233394291
+          ],
+          [
+            1820.4872417876622,
+            823.3097077798097
+          ]
+        ],
+        "outerVertexCount": 44,
+        "coreAu": [
+          [
+            1762.248344560344,
+            842.6312037527001
+          ],
+          [
+            1757.6202018552335,
+            850.4753514455027
+          ],
+          [
+            1753.9558163792237,
+            859.126754263482
+          ],
+          [
+            1751.255188132315,
+            868.5854122066379
+          ],
+          [
+            1745.0923844851764,
+            875.4654035084295
+          ],
+          [
+            1735.4674054378079,
+            879.766728168857
+          ],
+          [
+            1725.1062857919846,
+            881.3483929991571
+          ],
+          [
+            1714.0090255477066,
+            880.2103979993303
+          ],
+          [
+            1703.8038682007887,
+            881.3921334005831
+          ],
+          [
+            1694.490813751231,
+            884.8935992029155
+          ],
+          [
+            1685.1700315709152,
+            884.588294045388
+          ],
+          [
+            1675.8415216598419,
+            880.4762179280006
+          ],
+          [
+            1665.899624835108,
+            877.5786025191258
+          ],
+          [
+            1655.3443410967134,
+            875.8954478187634
+          ],
+          [
+            1645.2499036813833,
+            872.364405579737
+          ],
+          [
+            1635.6163125891178,
+            866.9854758020467
+          ],
+          [
+            1629.7220199601022,
+            859.3861956719824
+          ],
+          [
+            1627.5670257943368,
+            849.5665651895439
+          ],
+          [
+            1626.3189521383051,
+            840.2817566510535
+          ],
+          [
+            1625.9777989920074,
+            831.5317700565109
+          ],
+          [
+            1622.8270252218854,
+            822.4089816163357
+          ],
+          [
+            1616.8666308279392,
+            812.9133913305279
+          ],
+          [
+            1616.2508123696757,
+            803.882628839478
+          ],
+          [
+            1620.9795698470946,
+            795.3166941431859
+          ],
+          [
+            1628.0440958113431,
+            788.6604320463869
+          ],
+          [
+            1637.4443902624212,
+            783.9138425490809
+          ],
+          [
+            1646.1651291421351,
+            779.5046940069666
+          ],
+          [
+            1654.2063124504846,
+            775.4329864200439
+          ],
+          [
+            1662.141932366966,
+            770.740930852201
+          ],
+          [
+            1669.9719888915795,
+            765.4285273034377
+          ],
+          [
+            1678.9807708822866,
+            761.7216453927881
+          ],
+          [
+            1689.168278339087,
+            759.6202851202522
+          ],
+          [
+            1699.4273317273503,
+            759.9497471219163
+          ],
+          [
+            1709.7579310470762,
+            762.7100313977803
+          ],
+          [
+            1717.914706719624,
+            768.4482337897866
+          ],
+          [
+            1723.8976587449943,
+            777.1643542979355
+          ],
+          [
+            1731.9330640623186,
+            783.0777734711709
+          ],
+          [
+            1742.0209226715972,
+            786.1884913094929
+          ],
+          [
+            1751.3632187819617,
+            791.1117676389828
+          ],
+          [
+            1759.9599523934116,
+            797.8476024596406
+          ],
+          [
+            1761.751865490575,
+            806.1696627161914
+          ],
+          [
+            1756.7389580734518,
+            816.0779484086352
+          ],
+          [
+            1756.8149822518926,
+            825.4513509177176
+          ],
+          [
+            1761.9799380258971,
+            834.2898702434385
+          ]
+        ],
+        "arenaCount": 1,
+        "approachAu": [
+          [
+            1596,
+            884
+          ],
+          [
+            1640,
+            850
+          ]
+        ],
+        "distinctive": true
+      },
+      {
+        "id": "el_typhon",
+        "elder": "typhon",
+        "outerAu": [
+          [
+            736.0207539390516,
+            413.4156201054874
+          ],
+          [
+            716.3660516464613,
+            425.0358101297554
+          ],
+          [
+            700.6171665743082,
+            436.46078786421543
+          ],
+          [
+            688.7740987225924,
+            447.69055330886744
+          ],
+          [
+            679.6014483702959,
+            463.11202692504617
+          ],
+          [
+            673.099215517419,
+            482.7252087127516
+          ],
+          [
+            658.8579779723692,
+            494.12777965089464
+          ],
+          [
+            636.8777357351466,
+            497.3197397394752
+          ],
+          [
+            614.9975608547791,
+            498.06194070068375
+          ],
+          [
+            593.2174533312661,
+            496.3543825345203
+          ],
+          [
+            571.7855900935369,
+            493.61978620058386
+          ],
+          [
+            550.7019711415911,
+            489.85815169887445
+          ],
+          [
+            531.4038343987941,
+            482.55694332447956
+          ],
+          [
+            513.8911798651457,
+            471.71616107739925
+          ],
+          [
+            495.68977992238564,
+            461.32298638955785
+          ],
+          [
+            476.7996345705142,
+            451.3774192609554
+          ],
+          [
+            460.151288322661,
+            438.87976392768525
+          ],
+          [
+            445.7447411788262,
+            423.8300203897474
+          ],
+          [
+            440.5278114203278,
+            407.04291917204864
+          ],
+          [
+            444.50049904716576,
+            388.51846027458896
+          ],
+          [
+            449.38289527697407,
+            371.7597302570183
+          ],
+          [
+            455.1750001097527,
+            356.7667291193367
+          ],
+          [
+            451.76581805674664,
+            338.2248062766673
+          ],
+          [
+            439.1553491179558,
+            316.1339617290103
+          ],
+          [
+            440.5833739609499,
+            298.3157930599921
+          ],
+          [
+            456.049892585729,
+            284.7703002696126
+          ],
+          [
+            472.7027709322017,
+            272.6261735750103
+          ],
+          [
+            490.54200900036795,
+            261.8834129761849
+          ],
+          [
+            512.3538218181095,
+            260.3966032765737
+          ],
+          [
+            538.1382093854264,
+            268.16574447617666
+          ],
+          [
+            560.1760530173433,
+            268.334363670046
+          ],
+          [
+            578.4673527138602,
+            260.9024608581817
+          ],
+          [
+            598.47178068294,
+            257.6344625368798
+          ],
+          [
+            620.1893369245827,
+            258.5303687061404
+          ],
+          [
+            640.3204741712077,
+            264.2246078923638
+          ],
+          [
+            658.8651924228151,
+            274.7171800955499
+          ],
+          [
+            676.0457492843805,
+            286.3076989377805
+          ],
+          [
+            691.8621447559036,
+            298.9961644190556
+          ],
+          [
+            705.1967921260787,
+            313.1328347802239
+          ],
+          [
+            716.0496913949055,
+            328.7177100212855
+          ],
+          [
+            722.4935426803162,
+            345.05293867010414
+          ],
+          [
+            724.5283459823106,
+            362.13852072667993
+          ],
+          [
+            730.6213369963177,
+            379.9123650895642
+          ],
+          [
+            740.7725157223371,
+            398.37447175875695
+          ]
+        ],
+        "outerVertexCount": 44,
+        "coreAu": [
+          [
+            620.4333787135838,
+            349.5584383704976
+          ],
+          [
+            627.4420723131102,
+            358.67531511149264
+          ],
+          [
+            628.1134733569772,
+            367.1438628368437
+          ],
+          [
+            622.4475818451847,
+            374.9640815465507
+          ],
+          [
+            614.7689119944661,
+            380.9794882816297
+          ],
+          [
+            605.0774638048216,
+            385.1900830420808
+          ],
+          [
+            596.3610990937664,
+            389.76157528826246
+          ],
+          [
+            588.6198178613005,
+            394.69396502017486
+          ],
+          [
+            580.0397923354227,
+            398.3999174815683
+          ],
+          [
+            570.6210225161329,
+            400.87943267244293
+          ],
+          [
+            561.2718810752377,
+            400.29777368998924
+          ],
+          [
+            551.992368012737,
+            396.6549405342072
+          ],
+          [
+            541.7828399030427,
+            396.4027606814395
+          ],
+          [
+            530.6432967461548,
+            399.541234131686
+          ],
+          [
+            521.1279540947694,
+            398.24884361211116
+          ],
+          [
+            513.2368119488865,
+            392.525589122715
+          ],
+          [
+            505.1978381379158,
+            386.8956624818138
+          ],
+          [
+            497.0110326618574,
+            381.3590636894076
+          ],
+          [
+            491.17945775812166,
+            374.4527897322439
+          ],
+          [
+            487.70311342670846,
+            366.1768406103227
+          ],
+          [
+            483.89338981514396,
+            357.77914953702157
+          ],
+          [
+            479.75028692342835,
+            349.2597165123405
+          ],
+          [
+            481.24136625964303,
+            341.1030489587847
+          ],
+          [
+            488.3666278237881,
+            333.3091468763541
+          ],
+          [
+            494.8574998035564,
+            326.3391419023973
+          ],
+          [
+            500.7139821989478,
+            320.1930340369143
+          ],
+          [
+            505.12784568320603,
+            312.99415065425086
+          ],
+          [
+            508.0990902563311,
+            304.74249175440707
+          ],
+          [
+            512.9570303084918,
+            296.7779277759923
+          ],
+          [
+            519.7016658396878,
+            289.1004587190065
+          ],
+          [
+            528.725119123408,
+            285.32603963224636
+          ],
+          [
+            540.0273901596523,
+            285.4546705157118
+          ],
+          [
+            550.9677063768861,
+            284.7787862874287
+          ],
+          [
+            561.5460677751095,
+            283.29838694739715
+          ],
+          [
+            570.8976714369933,
+            285.8834643829811
+          ],
+          [
+            579.0225173625374,
+            292.5340185941807
+          ],
+          [
+            589.0852478609518,
+            295.932036607102
+          ],
+          [
+            601.085862932236,
+            296.077518421745
+          ],
+          [
+            608.6160896952287,
+            300.7473015862175
+          ],
+          [
+            611.67592814993,
+            309.9413861005193
+          ],
+          [
+            617.3365892937838,
+            317.6694407803937
+          ],
+          [
+            625.5980731267906,
+            323.9314656258407
+          ],
+          [
+            626.5288692609256,
+            331.54685853642314
+          ],
+          [
+            620.1289776961889,
+            340.51561951214103
+          ]
+        ],
+        "arenaCount": 1,
+        "approachAu": [
+          [
+            690,
+            500
+          ],
+          [
+            655,
+            448
+          ]
+        ],
+        "distinctive": true
+      },
+      {
+        "id": "el_aion",
+        "elder": "aion",
+        "outerAu": [
+          [
+            1054.4602958294286,
+            742.1813059306877
+          ],
+          [
+            1036.1913160014533,
+            757.3007338553927
+          ],
+          [
+            1025.3566570725372,
+            774.4078086442604
+          ],
+          [
+            1021.9563190426809,
+            793.5025302972907
+          ],
+          [
+            1011.800703845729,
+            809.9612445863735
+          ],
+          [
+            994.8898114816814,
+            823.7839515115089
+          ],
+          [
+            974.8636137390522,
+            834.4395482046418
+          ],
+          [
+            951.7221106178417,
+            841.9280346657725
+          ],
+          [
+            927.7833944144102,
+            848.6143517631732
+          ],
+          [
+            903.0474651287577,
+            854.4984994968438
+          ],
+          [
+            877.3299001394505,
+            856.2673712153154
+          ],
+          [
+            850.6306994464886,
+            853.9209669185876
+          ],
+          [
+            825.2046192564057,
+            848.0236802438469
+          ],
+          [
+            801.051659569202,
+            838.575511191093
+          ],
+          [
+            783.5834438034415,
+            823.8545797587693
+          ],
+          [
+            772.7999719591242,
+            803.860885946876
+          ],
+          [
+            754.8620064038796,
+            789.0309195715181
+          ],
+          [
+            729.7695471377081,
+            779.3646806326956
+          ],
+          [
+            718.1501350732638,
+            764.5044768007507
+          ],
+          [
+            720.0037702105467,
+            744.4503080756832
+          ],
+          [
+            720.7185027249453,
+            725.856261308033
+          ],
+          [
+            720.2943326164594,
+            708.7223364978001
+          ],
+          [
+            719.256298512787,
+            690.9045273507224
+          ],
+          [
+            717.6044004139281,
+            672.4028338668002
+          ],
+          [
+            724.0507730889505,
+            656.1502790278715
+          ],
+          [
+            738.5954165378541,
+            642.1468628339366
+          ],
+          [
+            751.8033172418683,
+            626.6967858682538
+          ],
+          [
+            763.6744752009927,
+            609.8000481308234
+          ],
+          [
+            781.2642267486365,
+            597.792908280275
+          ],
+          [
+            804.5725718847997,
+            590.6753663166089
+          ],
+          [
+            828.3802545100048,
+            582.6394913697344
+          ],
+          [
+            852.6872746242516,
+            573.6852834396515
+          ],
+          [
+            877.218830708851,
+            575.3847605321666
+          ],
+          [
+            901.9749227638031,
+            587.7379226472799
+          ],
+          [
+            928.1800707283302,
+            594.1004500801113
+          ],
+          [
+            955.8342746024323,
+            594.4723428306606
+          ],
+          [
+            979.9041334379881,
+            601.6481839201978
+          ],
+          [
+            1000.3896472349975,
+            615.6279733487225
+          ],
+          [
+            1020.2347939353776,
+            630.3962289558036
+          ],
+          [
+            1039.4395735391283,
+            645.9529507414411
+          ],
+          [
+            1045.3244018516536,
+            664.7190012434849
+          ],
+          [
+            1037.8892788729531,
+            686.6943804619351
+          ],
+          [
+            1041.5274844735563,
+            706.9169505454539
+          ],
+          [
+            1056.239018653463,
+            725.3867114940415
+          ]
+        ],
+        "outerVertexCount": 44,
+        "coreAu": [
+          [
+            955.3056114235884,
+            716.4093520444358
+          ],
+          [
+            950.064608846118,
+            725.2280561333075
+          ],
+          [
+            943.6247538547077,
+            733.0229360926339
+          ],
+          [
+            935.9860464493576,
+            739.7939919224152
+          ],
+          [
+            927.9324864628131,
+            745.6876359616913
+          ],
+          [
+            919.4640738950742,
+            750.7038682104621
+          ],
+          [
+            911.8518246696696,
+            756.8649340640794
+          ],
+          [
+            905.0957387865992,
+            764.170833522543
+          ],
+          [
+            896.4543960865542,
+            770.5177692257079
+          ],
+          [
+            885.9277965695346,
+            775.905741173574
+          ],
+          [
+            874.8739394325833,
+            775.7510964328808
+          ],
+          [
+            863.2928246757002,
+            770.0538350036279
+          ],
+          [
+            851.7661047295547,
+            767.2458954685139
+          ],
+          [
+            840.2937795941469,
+            767.3272778275391
+          ],
+          [
+            828.4297461552912,
+            766.1683678809579
+          ],
+          [
+            816.1740044129875,
+            763.7691656287705
+          ],
+          [
+            806.0555048263031,
+            758.9064318482849
+          ],
+          [
+            798.074247395238,
+            751.5801665395011
+          ],
+          [
+            794.143649801669,
+            743.0269969266527
+          ],
+          [
+            794.2637120455959,
+            733.2469230097397
+          ],
+          [
+            794.7007986226977,
+            724.2676645384624
+          ],
+          [
+            795.4549095329742,
+            716.0892215128208
+          ],
+          [
+            793.7877323602571,
+            707.540648024343
+          ],
+          [
+            789.6992671045464,
+            698.6219440730288
+          ],
+          [
+            790.2591784160938,
+            690.1271412299948
+          ],
+          [
+            795.4674662948995,
+            682.0562394952411
+          ],
+          [
+            802.4376738365812,
+            675.0707619921477
+          ],
+          [
+            811.169801041139,
+            669.1707087207149
+          ],
+          [
+            821.1179446275078,
+            665.1921264022574
+          ],
+          [
+            832.2821045956875,
+            663.1350150367757
+          ],
+          [
+            842.2126529073273,
+            657.8280958965418
+          ],
+          [
+            850.9095895624271,
+            649.2713689815557
+          ],
+          [
+            861.6319312061134,
+            644.977743188581
+          ],
+          [
+            874.3796778383866,
+            644.9472185176178
+          ],
+          [
+            885.4108606955981,
+            648.70945239618
+          ],
+          [
+            894.7254797777482,
+            656.2644448242679
+          ],
+          [
+            903.8652790152847,
+            662.2740881150789
+          ],
+          [
+            912.8302584082076,
+            666.7383822686133
+          ],
+          [
+            922.5698865459129,
+            671.1829341819622
+          ],
+          [
+            933.0841634284012,
+            675.6077438551256
+          ],
+          [
+            938.9352915672794,
+            682.329116756977
+          ],
+          [
+            940.1232709625474,
+            691.3470528875166
+          ],
+          [
+            945.019473673217,
+            699.8920157145898
+          ],
+          [
+            953.6238996992881,
+            707.9640052381966
+          ]
+        ],
+        "arenaCount": 1,
+        "approachAu": [
+          [
+            748,
+            668
+          ],
+          [
+            918,
+            668
+          ],
+          [
+            990,
+            740
+          ]
+        ],
+        "distinctive": true
+      },
+      {
+        "id": "el_atlas",
+        "elder": "atlas",
+        "outerAu": [
+          [
+            261.4788112074375,
+            519.2696110740567
+          ],
+          [
+            254.2418748904734,
+            529.8088332221698
+          ],
+          [
+            249.42880244584384,
+            540.641476227732
+          ],
+          [
+            247.03959387354877,
+            551.7675400907431
+          ],
+          [
+            240.6483996665388,
+            560.475009290506
+          ],
+          [
+            230.25521982481396,
+            566.7638838270209
+          ],
+          [
+            220.22861346960912,
+            572.7945034398447
+          ],
+          [
+            210.56858060092426,
+            578.566868128977
+          ],
+          [
+            201.0157096466251,
+            588.1609569249683
+          ],
+          [
+            191.5700006067117,
+            601.5767698278187
+          ],
+          [
+            180.1665252573532,
+            603.5666645767701
+          ],
+          [
+            166.80528359854958,
+            594.1306411718231
+          ],
+          [
+            154.2002021993517,
+            588.3397150692842
+          ],
+          [
+            142.35128105975954,
+            586.1938862691538
+          ],
+          [
+            128.580806129074,
+            584.9790787330821
+          ],
+          [
+            112.88877740729507,
+            584.6952924610691
+          ],
+          [
+            104.00146883148271,
+            577.3483060063638
+          ],
+          [
+            101.91888040163693,
+            562.9381193689662
+          ],
+          [
+            98.19951187187803,
+            550.7846132710756
+          ],
+          [
+            92.84336324220608,
+            540.8877877126918
+          ],
+          [
+            90.01315130688346,
+            530.454531200125
+          ],
+          [
+            89.70887606591018,
+            519.484843733375
+          ],
+          [
+            90.02595555901848,
+            508.60016329838265
+          ],
+          [
+            90.96438978620836,
+            497.80048989514796
+          ],
+          [
+            89.84507976608506,
+            485.04974310327987
+          ],
+          [
+            86.66802549864859,
+            470.3479229227785
+          ],
+          [
+            93.63783860147015,
+            461.8685396720524
+          ],
+          [
+            110.75451907454976,
+            459.61159335110176
+          ],
+          [
+            122.16367416211686,
+            451.72776516299973
+          ],
+          [
+            127.86530386417147,
+            438.2170551077462
+          ],
+          [
+            137.79946637175027,
+            431.53621570140416
+          ],
+          [
+            151.96616168485326,
+            431.6852469439735
+          ],
+          [
+            165.19418260196252,
+            433.85901317584523
+          ],
+          [
+            177.48352912307806,
+            438.0575143970195
+          ],
+          [
+            190.64318673519088,
+            438.78058481903685
+          ],
+          [
+            204.673155438301,
+            436.02822444189746
+          ],
+          [
+            216.07169364692854,
+            439.4151148888849
+          ],
+          [
+            224.83880136107354,
+            448.9412561599991
+          ],
+          [
+            234.0012370140655,
+            457.5799087913882
+          ],
+          [
+            243.5590006059045,
+            465.33107278305215
+          ],
+          [
+            250.77364884587115,
+            474.6355499388511
+          ],
+          [
+            255.64518173396556,
+            485.49334025878505
+          ],
+          [
+            259.8350309749895,
+            496.69167656406404
+          ],
+          [
+            263.3431965689428,
+            508.230558854688
+          ]
+        ],
+        "outerVertexCount": 44,
+        "coreAu": [
+          [
+            201.70805579551433,
+            514.2322770589489
+          ],
+          [
+            200.6354722834265,
+            518.6968311768467
+          ],
+          [
+            199.87177665625845,
+            523.4441692592479
+          ],
+          [
+            199.41696891401006,
+            528.4742913061525
+          ],
+          [
+            196.89554996051726,
+            532.2589734181611
+          ],
+          [
+            192.30751979578,
+            534.7982155952734
+          ],
+          [
+            188.1971891439654,
+            537.6994911043071
+          ],
+          [
+            184.5645580050735,
+            540.9627999452621
+          ],
+          [
+            180.3293749868824,
+            543.3020823066614
+          ],
+          [
+            175.49164008939218,
+            544.7173381885053
+          ],
+          [
+            170.46451775310697,
+            545.8985147378817
+          ],
+          [
+            165.24800797802675,
+            546.8456119547907
+          ],
+          [
+            160.23429173999352,
+            546.2592613353295
+          ],
+          [
+            155.4233690390073,
+            544.1394628794978
+          ],
+          [
+            149.81147579591,
+            542.9103941613325
+          ],
+          [
+            143.39861201070164,
+            542.5720551808336
+          ],
+          [
+            138.11529366685204,
+            540.2992544213097
+          ],
+          [
+            133.96152076436115,
+            536.0919918827609
+          ],
+          [
+            132.26896412041071,
+            530.8959355818602
+          ],
+          [
+            133.03762373500064,
+            524.7110855186074
+          ],
+          [
+            131.2909271137331,
+            519.2139953652359
+          ],
+          [
+            127.02887425660802,
+            514.4046651217453
+          ],
+          [
+            126.1562945682309,
+            509.3526072336898
+          ],
+          [
+            128.67318804860173,
+            504.0578217010693
+          ],
+          [
+            132.38358402315492,
+            499.75630381161625
+          ],
+          [
+            137.2874824918904,
+            496.4480535653305
+          ],
+          [
+            141.31476686743412,
+            493.0933227138352
+          ],
+          [
+            144.465437149786,
+            489.6921112571306
+          ],
+          [
+            147.90573598459338,
+            486.4740822325533
+          ],
+          [
+            151.63566337185614,
+            483.4392356401034
+          ],
+          [
+            155.63904377780028,
+            479.64715800971123
+          ],
+          [
+            159.9158772024258,
+            475.0978493413769
+          ],
+          [
+            164.87898638717365,
+            473.79943864975394
+          ],
+          [
+            170.52837133204392,
+            475.7519259348426
+          ],
+          [
+            175.51486169658543,
+            478.28542856107583
+          ],
+          [
+            179.83845748079818,
+            481.3999465284536
+          ],
+          [
+            185.36044122341224,
+            482.7174460567302
+          ],
+          [
+            192.08081292442753,
+            482.2379271459055
+          ],
+          [
+            196.8636828026811,
+            484.45567160856456
+          ],
+          [
+            199.70905085817296,
+            489.37067944470743
+          ],
+          [
+            203.0262246888759,
+            494.04005851264634
+          ],
+          [
+            206.81520429478996,
+            498.46380881238133
+          ],
+          [
+            207.0933574611998,
+            503.5067629716866
+          ],
+          [
+            203.8606841881054,
+            509.1689209905622
+          ]
+        ],
+        "arenaCount": 1,
+        "approachAu": [
+          [
+            226,
+            520
+          ]
+        ],
+        "distinctive": true
+      },
+      {
+        "id": "el_argus",
+        "elder": "argus",
+        "outerAu": [
+          [
+            1121.3125488442913,
+            219.4140200167969
+          ],
+          [
+            1136.9063773086068,
+            232.04459504713282
+          ],
+          [
+            1132.0726232145175,
+            243.49214417609744
+          ],
+          [
+            1106.8112865620242,
+            253.7566674036908
+          ],
+          [
+            1095.151773444432,
+            267.57709450246
+          ],
+          [
+            1097.0940838617412,
+            284.9534254724051
+          ],
+          [
+            1082.157431720606,
+            294.0587902124821
+          ],
+          [
+            1050.3418170210266,
+            294.8931887226911
+          ],
+          [
+            1025.4423412651383,
+            300.732890208109
+          ],
+          [
+            1007.4590044529411,
+            311.57789466873567
+          ],
+          [
+            986.8016527353708,
+            315.23373834217364
+          ],
+          [
+            963.4702861124272,
+            311.7004212284228
+          ],
+          [
+            938.4442896333504,
+            313.75259142753646
+          ],
+          [
+            911.7236632981404,
+            321.3902489395148
+          ],
+          [
+            888.7901728730476,
+            321.1935015818352
+          ],
+          [
+            869.6438183580716,
+            313.162349354498
+          ],
+          [
+            847.6080726422333,
+            306.82731833254536
+          ],
+          [
+            822.6829357255326,
+            302.1884085159774
+          ],
+          [
+            807.342132885045,
+            292.8536843779407
+          ],
+          [
+            801.5856641207708,
+            278.8231459184353
+          ],
+          [
+            792.7387511811821,
+            265.6260005492125
+          ],
+          [
+            780.8013940662788,
+            253.26224827027244
+          ],
+          [
+            778.4449711377601,
+            239.7777426285288
+          ],
+          [
+            785.6694823956257,
+            225.17248362398166
+          ],
+          [
+            792.9825366531528,
+            210.7831184347239
+          ],
+          [
+            800.3841339103417,
+            196.60964706075546
+          ],
+          [
+            810.9266204078174,
+            182.67220986889072
+          ],
+          [
+            824.6099961455801,
+            168.97080685912962
+          ],
+          [
+            844.7441316655223,
+            159.11003690766458
+          ],
+          [
+            871.3290269676439,
+            153.08990001449564
+          ],
+          [
+            897.2378335413562,
+            149.6727451394554
+          ],
+          [
+            922.4705513866589,
+            148.85857228254383
+          ],
+          [
+            946.6564423513485,
+            142.93488537624944
+          ],
+          [
+            969.7955064354248,
+            131.90168442057222
+          ],
+          [
+            990.9725485357632,
+            131.80514378194002
+          ],
+          [
+            1010.1875686523633,
+            142.64526346035282
+          ],
+          [
+            1032.2395334021817,
+            147.8312162305212
+          ],
+          [
+            1057.1284427852188,
+            147.36300209244519
+          ],
+          [
+            1077.7205430074077,
+            151.42436356797398
+          ],
+          [
+            1094.0158340687487,
+            160.01530065710762
+          ],
+          [
+            1112.786666391229,
+            168.400982093626
+          ],
+          [
+            1134.0330399748484,
+            176.5814078775291
+          ],
+          [
+            1136.871078728027,
+            188.77839870251773
+          ],
+          [
+            1121.3007826507646,
+            204.9919545685919
+          ]
+        ],
+        "outerVertexCount": 44,
+        "coreAu": [
+          [
+            1044.4164584815126,
+            216.653051878975
+          ],
+          [
+            1046.2754251437254,
+            221.95915563692495
+          ],
+          [
+            1044.5461019198913,
+            226.58294243630155
+          ],
+          [
+            1039.2284888100105,
+            230.52441227710483
+          ],
+          [
+            1034.6707925302685,
+            234.65739993908352
+          ],
+          [
+            1030.8730130806648,
+            238.98190542223762
+          ],
+          [
+            1025.5973987866707,
+            242.114902147411
+          ],
+          [
+            1018.8439496482861,
+            244.05639011460363
+          ],
+          [
+            1012.3008619048521,
+            246.66194036739387
+          ],
+          [
+            1005.9681355563689,
+            249.93155290578173
+          ],
+          [
+            998.9710043675507,
+            251.22873273913683
+          ],
+          [
+            991.3094683383972,
+            250.55347986745912
+          ],
+          [
+            983.5853028245599,
+            249.91452063434411
+          ],
+          [
+            975.7985078260388,
+            249.31185503979185
+          ],
+          [
+            968.0176553749816,
+            247.97684071364915
+          ],
+          [
+            960.2427454713886,
+            245.90947765591602
+          ],
+          [
+            955.2903393310908,
+            241.92910696808303
+          ],
+          [
+            953.1604369540878,
+            236.03572865015013
+          ],
+          [
+            951.7348094185731,
+            230.57050398615337
+          ],
+          [
+            951.0134567245466,
+            225.53343297609274
+          ],
+          [
+            946.9572801185893,
+            220.7611731032968
+          ],
+          [
+            939.5662796007014,
+            216.2537243677656
+          ],
+          [
+            937.6889653238431,
+            211.3646554118257
+          ],
+          [
+            941.3253372880149,
+            206.09396623547715
+          ],
+          [
+            945.4760938025146,
+            201.36378677406577
+          ],
+          [
+            950.1412348673421,
+            197.17411702759154
+          ],
+          [
+            955.3009341830374,
+            193.57399808307338
+          ],
+          [
+            960.9551917496005,
+            190.5634299405113
+          ],
+          [
+            965.5648069224414,
+            186.16470517547717
+          ],
+          [
+            969.12977970156,
+            180.37782378797104
+          ],
+          [
+            974.9811014030802,
+            177.20891308536864
+          ],
+          [
+            983.1187720270023,
+            176.65797306766993
+          ],
+          [
+            991.0848575235998,
+            176.425579697432
+          ],
+          [
+            998.8793578928723,
+            176.5117329746548
+          ],
+          [
+            1006.4288304219016,
+            177.4323260829329
+          ],
+          [
+            1013.7332751106871,
+            179.18735902226626
+          ],
+          [
+            1021.1619948953098,
+            181.06005383641389
+          ],
+          [
+            1028.7149897757695,
+            183.05041052537575
+          ],
+          [
+            1033.8637346881912,
+            186.75348244589645
+          ],
+          [
+            1036.608229632575,
+            192.169269597976
+          ],
+          [
+            1040.339283058067,
+            196.99410803591488
+          ],
+          [
+            1045.0568949646674,
+            201.22799775971305
+          ],
+          [
+            1046.4335194760772,
+            206.0087069662091
+          ],
+          [
+            1044.4691565922967,
+            211.33623565540304
+          ]
+        ],
+        "arenaCount": 1,
+        "approachAu": [
+          [
+            936,
+            262
+          ]
+        ],
+        "distinctive": true
+      },
+      {
+        "id": "el_anubis",
+        "elder": "anubis",
+        "outerAu": [
+          [
+            768.7586818210447,
+            1055.5836391982614
+          ],
+          [
+            771.7068548400528,
+            1071.5766728103551
+          ],
+          [
+            769.670828517236,
+            1087.550464950539
+          ],
+          [
+            762.6506028525946,
+            1103.5050156188129
+          ],
+          [
+            745.3287739384607,
+            1113.981453548741
+          ],
+          [
+            717.7053417748344,
+            1118.9797787403238
+          ],
+          [
+            693.2337788201694,
+            1125.5164889592918
+          ],
+          [
+            671.9140850744654,
+            1133.5915842056447
+          ],
+          [
+            648.1827302992706,
+            1139.7137349647771
+          ],
+          [
+            622.0397144945846,
+            1143.8829412366888
+          ],
+          [
+            593.9737749799365,
+            1146.8685130009671
+          ],
+          [
+            563.9849117553265,
+            1148.6704502576124
+          ],
+          [
+            537.4612830549722,
+            1142.5764043727447
+          ],
+          [
+            514.4028888788738,
+            1128.5863753463639
+          ],
+          [
+            488.4958116808893,
+            1118.0289367474045
+          ],
+          [
+            459.7400514610186,
+            1110.9040885758661
+          ],
+          [
+            440.0494932122625,
+            1098.8847728668338
+          ],
+          [
+            429.424136934621,
+            1081.970989620308
+          ],
+          [
+            425.0392033350595,
+            1065.3927571459071
+          ],
+          [
+            426.89469241357796,
+            1049.150075443631
+          ],
+          [
+            422.83859256503797,
+            1033.6533230639639
+          ],
+          [
+            412.87090378943947,
+            1018.902500006905
+          ],
+          [
+            407.7651477622704,
+            1003.5181053477738
+          ],
+          [
+            407.5213244835307,
+            987.5001390865701
+          ],
+          [
+            417.4088981245604,
+            974.4995129363618
+          ],
+          [
+            437.42786868535956,
+            964.5162268971487
+          ],
+          [
+            456.8678156285904,
+            955.3064405847626
+          ],
+          [
+            475.728738954253,
+            946.8701539992036
+          ],
+          [
+            495.60736564742683,
+            939.2159166725107
+          ],
+          [
+            516.5036957081118,
+            932.343728604684
+          ],
+          [
+            538.5578973959585,
+            922.359762997321
+          ],
+          [
+            561.7699707109673,
+            909.2640198504223
+          ],
+          [
+            587.6675057379363,
+            907.7493108368843
+          ],
+          [
+            616.2505024768656,
+            917.8156359567074
+          ],
+          [
+            641.8956397343368,
+            928.0669428400455
+          ],
+          [
+            664.6029175103499,
+            938.5032314868987
+          ],
+          [
+            685.2064088539846,
+            949.341982687206
+          ],
+          [
+            703.706113765241,
+            960.5831964409675
+          ],
+          [
+            729.837981173097,
+            969.9398206746755
+          ],
+          [
+            763.6020110775529,
+            977.41185538833
+          ],
+          [
+            783.3043273974679,
+            990.0060647163579
+          ],
+          [
+            788.9449301328418,
+            1007.7224486587592
+          ],
+          [
+            785.6450724532817,
+            1024.3322610705234
+          ],
+          [
+            773.4047543587877,
+            1039.8355019516507
+          ]
+        ],
+        "outerVertexCount": 44,
+        "coreAu": [
+          [
+            667.3014269350858,
+            1044.9703634981763
+          ],
+          [
+            661.1389984276195,
+            1050.911090494529
+          ],
+          [
+            656.0208774274282,
+            1056.4999703350538
+          ],
+          [
+            651.9470639345118,
+            1061.737003019751
+          ],
+          [
+            648.6314376078415,
+            1067.7743643380163
+          ],
+          [
+            646.0739984474174,
+            1074.61205428985
+          ],
+          [
+            640.3869299335937,
+            1079.3864565688432
+          ],
+          [
+            631.5702320663707,
+            1082.0975711749957
+          ],
+          [
+            622.7889020360099,
+            1084.8087018781816
+          ],
+          [
+            614.0429398425108,
+            1087.5198486784016
+          ],
+          [
+            605.0756994525007,
+            1087.7085240976999
+          ],
+          [
+            595.8871808659794,
+            1085.374728136077
+          ],
+          [
+            586.5859780454997,
+            1084.1614566202095
+          ],
+          [
+            577.1720909910616,
+            1084.0687095500975
+          ],
+          [
+            568.5517735151825,
+            1082.2013448272724
+          ],
+          [
+            560.7250256178622,
+            1078.5593624517342
+          ],
+          [
+            553.9339965792716,
+            1074.1789036857106
+          ],
+          [
+            548.1786863994105,
+            1069.0599685292011
+          ],
+          [
+            542.935544474629,
+            1063.6579888149095
+          ],
+          [
+            538.204570804927,
+            1057.9729645428351
+          ],
+          [
+            534.7647475217506,
+            1051.8478393050984
+          ],
+          [
+            532.6160746250997,
+            1045.2826131016996
+          ],
+          [
+            533.4158127133982,
+            1038.881052312638
+          ],
+          [
+            537.1639617866459,
+            1032.6431569379138
+          ],
+          [
+            541.6643245782043,
+            1026.9930634942982
+          ],
+          [
+            546.9169010880735,
+            1021.9307719817912
+          ],
+          [
+            550.3897668696917,
+            1015.5844785399303
+          ],
+          [
+            552.0829219230592,
+            1007.9541831687155
+          ],
+          [
+            557.3439047991029,
+            1002.3821546733591
+          ],
+          [
+            566.1727154978229,
+            998.8683930538609
+          ],
+          [
+            575.6955353973499,
+            997.451871831908
+          ],
+          [
+            585.9123644976839,
+            998.1325910075004
+          ],
+          [
+            595.3801557399057,
+            999.104262864078
+          ],
+          [
+            604.0989091240151,
+            1000.366887401641
+          ],
+          [
+            613.5479371498311,
+            1000.2539196986894
+          ],
+          [
+            623.7272398173537,
+            998.7653597552231
+          ],
+          [
+            633.5753837948419,
+            999.3936486287237
+          ],
+          [
+            643.0923690822954,
+            1002.1387863191907
+          ],
+          [
+            651.6678220941334,
+            1006.0655593132585
+          ],
+          [
+            659.3017428303561,
+            1011.1739676109271
+          ],
+          [
+            664.181505727031,
+            1017.3493363831676
+          ],
+          [
+            666.307110784158,
+            1024.59166562998
+          ],
+          [
+            668.1230952817459,
+            1031.6596226900397
+          ],
+          [
+            669.6294592197946,
+            1038.5532075633466
+          ]
+        ],
+        "arenaCount": 1,
+        "approachAu": [
+          [
+            752,
+            975
+          ],
+          [
+            668,
+            984
+          ]
+        ],
+        "distinctive": true
+      }
+    ],
+    "nonbossSourceSites": [
+      {
+        "siteId": "wmp.nonboss.po_kestrel",
+        "poiId": "po_kestrel",
+        "atAu": [
+          700,
+          300
+        ],
+        "elderGate": "NONE",
+        "deepLevelIds": [
+          "level.po_kestrel.-1"
+        ],
+        "physicalAccess": {
+          "nearestRoad": {
+            "roadId": "rd_1e",
+            "kind": "trail",
+            "d": 0,
+            "at": [
+              700,
+              300
+            ],
+            "segment": 4,
+            "t": 1
+          }
+        },
+        "cashItem": null,
+        "status": "CANDIDATE_GEOMETRY__NO_CASH_OR_LOOT"
+      },
+      {
+        "siteId": "wmp.nonboss.po_falls",
+        "poiId": "po_falls",
+        "atAu": [
+          722,
+          438
+        ],
+        "elderGate": "NONE",
+        "deepLevelIds": [
+          "level.po_falls.-1"
+        ],
+        "physicalAccess": {
+          "nearestRoad": {
+            "roadId": "rd_f",
+            "kind": "cart",
+            "d": 0,
+            "at": [
+              722,
+              438
+            ],
+            "segment": 2,
+            "t": 1
+          }
+        },
+        "cashItem": null,
+        "status": "CANDIDATE_GEOMETRY__NO_CASH_OR_LOOT"
+      },
+      {
+        "siteId": "wmp.nonboss.po_meridian",
+        "poiId": "po_meridian",
+        "atAu": [
+          1120,
+          690
+        ],
+        "elderGate": "NONE",
+        "deepLevelIds": [
+          "level.po_meridian.-1"
+        ],
+        "physicalAccess": {
+          "nearestRoad": {
+            "roadId": "rd_1",
+            "kind": "cart",
+            "d": 4.1231,
+            "at": [
+              1116,
+              689
+            ],
+            "segment": 3,
+            "t": 1
+          }
+        },
+        "cashItem": null,
+        "status": "CANDIDATE_GEOMETRY__NO_CASH_OR_LOOT"
+      },
+      {
+        "siteId": "wmp.nonboss.po_oldpump",
+        "poiId": "po_oldpump",
+        "atAu": [
+          850,
+          985
+        ],
+        "elderGate": "NONE",
+        "deepLevelIds": [
+          "level.po_oldpump.-1"
+        ],
+        "physicalAccess": {
+          "nearestRoad": {
+            "roadId": "rd_p",
+            "kind": "cart",
+            "d": 10.0599,
+            "at": [
+              849.4305,
+              974.9562
+            ],
+            "segment": 0,
+            "t": 0
+          }
+        },
+        "cashItem": null,
+        "status": "CANDIDATE_GEOMETRY__NO_CASH_OR_LOOT"
+      },
+      {
+        "siteId": "wmp.nonboss.po_ironvein",
+        "poiId": "po_ironvein",
+        "atAu": [
+          1205,
+          655
+        ],
+        "elderGate": "NONE",
+        "deepLevelIds": [
+          "level.po_ironvein.-1"
+        ],
+        "physicalAccess": {
+          "nearestRoad": {
+            "roadId": "rd_3",
+            "kind": "cart",
+            "d": 0,
+            "at": [
+              1205,
+              655
+            ],
+            "segment": 4,
+            "t": 1
+          }
+        },
+        "cashItem": null,
+        "status": "CANDIDATE_GEOMETRY__NO_CASH_OR_LOOT"
+      },
+      {
+        "siteId": "wmp.nonboss.po_ironmine",
+        "poiId": "po_ironmine",
+        "atAu": [
+          1186,
+          1290
+        ],
+        "elderGate": "NONE",
+        "deepLevelIds": [
+          "level.po_ironmine.-1"
+        ],
+        "physicalAccess": {
+          "nearestRoad": {
+            "roadId": "rd_11",
+            "kind": "cart",
+            "d": 0,
+            "at": [
+              1186,
+              1290
+            ],
+            "segment": 3,
+            "t": 1
+          }
+        },
+        "cashItem": null,
+        "status": "CANDIDATE_GEOMETRY__NO_CASH_OR_LOOT"
+      }
+    ],
+    "vendorCandidates": [
+      {
+        "siteId": "wmp.vendor.1",
+        "roadId": "rd_0",
+        "atAu": [
+          1037,
+          773.5
+        ],
+        "nearestPoi": {
+          "poiId": "po_siloc",
+          "arche": "warehouse",
+          "d": 54.6923
+        },
+        "stock": null,
+        "price": null,
+        "status": "PROPOSED_VENDOR_SITE_GEOMETRY__STOCK_AND_PRICE_GAMEPLAY_OWNED"
+      },
+      {
+        "siteId": "wmp.vendor.2",
+        "roadId": "rd_1",
+        "atAu": [
+          1116,
+          543
+        ],
+        "nearestPoi": {
+          "poiId": "po_ridgestop",
+          "arche": "roadstop",
+          "d": 71.1969
+        },
+        "stock": null,
+        "price": null,
+        "status": "PROPOSED_VENDOR_SITE_GEOMETRY__STOCK_AND_PRICE_GAMEPLAY_OWNED"
+      },
+      {
+        "siteId": "wmp.vendor.3",
+        "roadId": "rd_2",
+        "atAu": [
+          1163,
+          850.5
+        ],
+        "nearestPoi": {
+          "poiId": "po_ember",
+          "arche": "port",
+          "d": 81.9588
+        },
+        "stock": null,
+        "price": null,
+        "status": "PROPOSED_VENDOR_SITE_GEOMETRY__STOCK_AND_PRICE_GAMEPLAY_OWNED"
+      }
+    ],
+    "homeCandidates": [
+      {
+        "siteId": "wmp.home.1",
+        "candidateRegionId": "se.1.000",
+        "cellCount": 834,
+        "bboxAu": [
+          656,
+          192,
+          1072,
+          640
+        ],
+        "anchorAu": [
+          732,
+          196
+        ],
+        "dryCellCount": 834,
+        "independentlySelectable": true,
+        "ownedHomeLegality": "GAMEPLAY",
+        "escrowPlacementCandidate": {
+          "cells": [
+            6091,
+            6092,
+            6341,
+            6093
+          ],
+          "status": "GEOMETRY_ONLY"
+        },
+        "status": "CANDIDATE_GEOMETRY__NO_HOUSE_OR_FREE_STRUCTURE"
+      },
+      {
+        "siteId": "wmp.home.2",
+        "candidateRegionId": "se.3.001",
+        "cellCount": 28,
+        "bboxAu": [
+          1560,
+          240,
+          1600,
+          328
+        ],
+        "anchorAu": [
+          1596,
+          244
+        ],
+        "dryCellCount": 28,
+        "independentlySelectable": true,
+        "ownedHomeLegality": "GAMEPLAY",
+        "escrowPlacementCandidate": {
+          "cells": [
+            7699,
+            7949,
+            7948,
+            8198
+          ],
+          "status": "GEOMETRY_ONLY"
+        },
+        "status": "CANDIDATE_GEOMETRY__NO_HOUSE_OR_FREE_STRUCTURE"
+      },
+      {
+        "siteId": "wmp.home.3",
+        "candidateRegionId": "se.3.004",
+        "cellCount": 55,
+        "bboxAu": [
+          1688,
+          264,
+          1760,
+          360
+        ],
+        "anchorAu": [
+          1748,
+          268
+        ],
+        "dryCellCount": 55,
+        "independentlySelectable": true,
+        "ownedHomeLegality": "GAMEPLAY",
+        "escrowPlacementCandidate": {
+          "cells": [
+            8468,
+            8718,
+            8717,
+            8719
+          ],
+          "status": "GEOMETRY_ONLY"
+        },
+        "status": "CANDIDATE_GEOMETRY__NO_HOUSE_OR_FREE_STRUCTURE"
+      }
+    ],
+    "evacuationCandidates": [
+      {
+        "siteId": "wmp.evac.dk_westmouth",
+        "dockId": "dk_westmouth",
+        "atAu": [
+          326.1488,
+          558.2655
+        ],
+        "anchorAu": [
+          324,
+          548
+        ],
+        "anchorCellIndex": 17040,
+        "independentOfElder": true,
+        "status": "CANDIDATE_GEOMETRY__NO_TIMER_OR_RECEIPT"
+      },
+      {
+        "siteId": "wmp.evac.dk_emberport",
+        "dockId": "dk_emberport",
+        "atAu": [
+          1264.1151,
+          848.7746
+        ],
+        "anchorAu": [
+          1268,
+          844
+        ],
+        "anchorCellIndex": 26408,
+        "independentOfElder": true,
+        "status": "CANDIDATE_GEOMETRY__NO_TIMER_OR_RECEIPT"
+      },
+      {
+        "siteId": "wmp.evac.dk_cinder",
+        "dockId": "dk_cinder",
+        "atAu": [
+          1564.8438,
+          884.4013
+        ],
+        "anchorAu": [
+          1564,
+          876
+        ],
+        "anchorCellIndex": 27445,
+        "independentOfElder": true,
+        "status": "CANDIDATE_GEOMETRY__NO_TIMER_OR_RECEIPT"
+      },
+      {
+        "siteId": "wmp.evac.dk_hook",
+        "dockId": "dk_hook",
+        "atAu": [
+          1411.7569,
+          371.0204
+        ],
+        "anchorAu": [
+          1412,
+          364
+        ],
+        "anchorCellIndex": 11426,
+        "independentOfElder": true,
+        "status": "CANDIDATE_GEOMETRY__NO_TIMER_OR_RECEIPT"
+      }
+    ],
+    "routeCandidates": [
+      {
+        "id": "route.nonboss.po_kestrel.wmp.vendor.1.wmp.home.1.dk_emberport.v1",
+        "legs": [
+          {
+            "from": "wmp.nonboss.po_kestrel",
+            "to": "wmp.vendor.1",
+            "reachable": true,
+            "cellCount": 118,
+            "lengthAu": 944,
+            "elderGate": "NONE",
+            "bridgeGeometryCellsUsed": 1,
+            "bridgeDeckStatus": "UNRESOLVED",
+            "sweptClearance": "UNKNOWN",
+            "status": "PHYSICAL_GEOMETRY_PATH_CANDIDATE__BRIDGE_DECK_UNVERIFIED"
+          },
+          {
+            "from": "wmp.vendor.1",
+            "to": "wmp.home.1",
+            "reachable": true,
+            "cellCount": 127,
+            "lengthAu": 1016,
+            "elderGate": "NONE",
+            "bridgeGeometryCellsUsed": 1,
+            "bridgeDeckStatus": "UNRESOLVED",
+            "sweptClearance": "UNKNOWN",
+            "status": "PHYSICAL_GEOMETRY_PATH_CANDIDATE__BRIDGE_DECK_UNVERIFIED"
+          },
+          {
+            "from": "wmp.home.1",
+            "to": "wmp.evac.dk_emberport",
+            "reachable": true,
+            "cellCount": 149,
+            "lengthAu": 1192,
+            "elderGate": "NONE",
+            "bridgeGeometryCellsUsed": 2,
+            "bridgeDeckStatus": "UNRESOLVED",
+            "sweptClearance": "UNKNOWN",
+            "status": "PHYSICAL_GEOMETRY_PATH_CANDIDATE__BRIDGE_DECK_UNVERIFIED"
+          }
+        ],
+        "totalLengthAu": 3152,
+        "elderGate": "NONE",
+        "sourceNonboss": true,
+        "economicFeasibility": "GAMEPLAY_OWNED",
+        "stockAndCash": "UNKNOWN",
+        "status": "PHYSICAL_ROUTE_CANDIDATES_ONLY__NO_CASH_OR_RECEIPT",
+        "owner": "GAMEPLAY"
+      },
+      {
+        "id": "route.nonboss.po_kestrel.wmp.vendor.1.wmp.home.1.dk_hook.v1",
+        "legs": [
+          {
+            "from": "wmp.nonboss.po_kestrel",
+            "to": "wmp.vendor.1",
+            "reachable": true,
+            "cellCount": 118,
+            "lengthAu": 944,
+            "elderGate": "NONE",
+            "bridgeGeometryCellsUsed": 1,
+            "bridgeDeckStatus": "UNRESOLVED",
+            "sweptClearance": "UNKNOWN",
+            "status": "PHYSICAL_GEOMETRY_PATH_CANDIDATE__BRIDGE_DECK_UNVERIFIED"
+          },
+          {
+            "from": "wmp.vendor.1",
+            "to": "wmp.home.1",
+            "reachable": true,
+            "cellCount": 127,
+            "lengthAu": 1016,
+            "elderGate": "NONE",
+            "bridgeGeometryCellsUsed": 1,
+            "bridgeDeckStatus": "UNRESOLVED",
+            "sweptClearance": "UNKNOWN",
+            "status": "PHYSICAL_GEOMETRY_PATH_CANDIDATE__BRIDGE_DECK_UNVERIFIED"
+          },
+          {
+            "from": "wmp.home.1",
+            "to": "wmp.evac.dk_hook",
+            "reachable": true,
+            "cellCount": 139,
+            "lengthAu": 1112,
+            "elderGate": "NONE",
+            "bridgeGeometryCellsUsed": 2,
+            "bridgeDeckStatus": "UNRESOLVED",
+            "sweptClearance": "UNKNOWN",
+            "status": "PHYSICAL_GEOMETRY_PATH_CANDIDATE__BRIDGE_DECK_UNVERIFIED"
+          }
+        ],
+        "totalLengthAu": 3072,
+        "elderGate": "NONE",
+        "sourceNonboss": true,
+        "economicFeasibility": "GAMEPLAY_OWNED",
+        "stockAndCash": "UNKNOWN",
+        "status": "PHYSICAL_ROUTE_CANDIDATES_ONLY__NO_CASH_OR_RECEIPT",
+        "owner": "GAMEPLAY"
+      }
+    ]
+  },
+  "noClaims": [
+    "NO loot/stock/price/cash/receipt",
+    "NO house/shelter/structure placement",
+    "NO spawn counts or raid percentages",
+    "NO escrow placement receipt",
+    "NO claim of survival/economy proof"
+  ]
+}

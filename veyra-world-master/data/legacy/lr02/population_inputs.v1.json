@@ -1,0 +1,276 @@
+{
+  "schema": "soh.map.lr02.population_inputs.v1",
+  "version": 1,
+  "revision": 1,
+  "generatedBy": "world_lab/lr02/src/m5_package.mjs",
+  "status": "BOUNDED_STATIC_INPUT_ENVELOPES_ONLY__NOT_POPULATION_AUTHORITY",
+  "authority": "MAP_DESIGNS_THE_PHYSICAL_WORLD__GAMEPLAY_POPULATES_AND_SIMULATES_IT",
+  "parent": {
+    "schema": "soh.map.lr01.geography_package.v1",
+    "revision": 1,
+    "file": "world_lab/lr01/output/geography_package.v1.json",
+    "revisionDigest": "e3259eb30016f93ab0883c6dc3656f0ec1b9d47a85dc78fd90a56e0185765e63",
+    "mapBranchHeadAtParent": "74062a5baf2731451fad9638c4243c7459ce8e24"
+  },
+  "source": {
+    "parent": {
+      "schema": "soh.map.lr01.geography_package.v1",
+      "revision": 1,
+      "file": "world_lab/lr01/output/geography_package.v1.json",
+      "revisionDigest": "e3259eb30016f93ab0883c6dc3656f0ec1b9d47a85dc78fd90a56e0185765e63",
+      "mapBranchHeadAtParent": "74062a5baf2731451fad9638c4243c7459ce8e24"
+    },
+    "canon": {
+      "commit": "19d8c6ec820f324a6ac12733165e43b5e2c6eab2",
+      "file": "map_tower/veyra_gold/VEYRA_GOLD_MAP.sohmap.json",
+      "sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256"
+    },
+    "frame": {
+      "authoring": {
+        "w": 2000,
+        "h": 1400,
+        "unit": "authoring_unit"
+      },
+      "sourceGrid": {
+        "gw": 250,
+        "gh": 175,
+        "cell": 8,
+        "cells": 43750
+      },
+      "transform": {
+        "status": "UNDECIDED",
+        "mode": "NONE_APPLIED",
+        "fullFrameRetained": true,
+        "note": "No rescale/crop/warp; runtime U=1.6 and U=2 are DIAGNOSTIC PROJECTIONS only."
+      }
+    },
+    "gp44": {
+      "branch": "arena/d4bfcfff-soul-of-hero",
+      "k6AcceptanceHead": "f8010ec973095c88f3c462a68116c169b61237a3",
+      "gameplayLr02HeadObserved": "7b9805b2ff276d07121063b6dfb2f68a902605db",
+      "jointReview": 6619478477,
+      "mapAck": 6619637224,
+      "state": "OPEN / DRAFT / HOLD"
+    },
+    "portalGeometryDigest": "5888572471fecf15a86f056b0179c98043cabe2f0a84808768ed155c736a02b7",
+    "spawnEligibilityDigest": "637dd4e8706133773d1fe58643b74386a3832f7acbe5d00b5ec91ecc7a1573fc",
+    "worldArchitectureDigest": "b909a6227fa69991ffb57d1b011ae4f797d1b113e2441bd3277f00c50fc070ea",
+    "regionStaticDigest": "b13dd27578067b9cae2db3d3cb5421fdf6157460d62d853304fd411abbae8734"
+  },
+  "owner": {
+    "map": [
+      "source integrity",
+      "physical static geometry",
+      "clipped solids/openings",
+      "stable IDs/status",
+      "bounded eligibility areas",
+      "terrain/resource inputs",
+      "metadata",
+      "reproducible tests",
+      "portable static art layers"
+    ],
+    "gameplay": [
+      "Stage-1 read-only intake",
+      "projection with existing SOH Web art",
+      "population",
+      "simulation",
+      "dynamic doors/locks/power/destruction",
+      "seeded final spawn",
+      "occupancy/claims/hazards/actor separation",
+      "K6/persistence",
+      "runtime collision",
+      "transform",
+      "playability acceptance",
+      "all rendering"
+    ]
+  },
+  "boundedInputs": {
+    "eligibilityAreas": {
+      "count": 16,
+      "eligibleCells": 5151,
+      "totalLandCells": 15077,
+      "landmasses": 3,
+      "landmassIds": [
+        "ld_veyra",
+        "ld_saltwick",
+        "ld_ironholm"
+      ],
+      "sourceZones": 18,
+      "status": "DERIVED_STATIC_ELIGIBILITY__NOT_RUNTIME_SPAWN_AUTHORITY",
+      "pointer": "spawn_eligibility.v1.json $.candidateRegions[*].geometry.cellIndices"
+    },
+    "buildSiteEnvelopes": {
+      "count": 23,
+      "statusHistogram": {
+        "PARTIAL_WATER_OVERLAP__DRY_SUBSET_REQUIRED": 9,
+        "VERIFIED_GEOMETRIC_ENVELOPE": 14
+      },
+      "pointer": "spawn_eligibility.v1.json $.buildSiteEnvelopes"
+    },
+    "staticGeometry": {
+      "poiCount": 81,
+      "solids": 463,
+      "openings": 169,
+      "pointer": "portal_geometry.v1.json $.pois"
+    },
+    "regionStaticViews": {
+      "regionCount": 7,
+      "poiRecords": 28,
+      "pointer": "region_static_geometry.v1.json $.regions"
+    },
+    "archetypeAccess": {
+      "archetypeCount": 24,
+      "pointer": "world_architecture.v1.json $.archetypeAccess"
+    },
+    "transportEvidence": {
+      "disconnectedRoads": 7,
+      "falseDisconnects": 3,
+      "bridges": 12,
+      "docks": 27,
+      "pointer": "world_architecture.v1.json $.transportTopology"
+    }
+  },
+  "samplingContract": {
+    "schema": "soh.map.lr02.spawn_eligibility_contract.v1",
+    "consumer": "GAMEPLAY",
+    "decision": "SEEDED_RANDOM_LEGAL_POSITION_SAMPLING",
+    "mapProvides": [
+      "staticEligibleCells",
+      "candidateRegionGeometry",
+      "parentGeographicIds",
+      "sourceResolutionAu",
+      "localClearanceAu",
+      "reliefAndSlopeDescriptors",
+      "rejectionEvidence"
+    ],
+    "gameplayMustProvide": [
+      "seed",
+      "runtime tile transform",
+      "runtime collision test",
+      "dynamic occupancy",
+      "claim legality",
+      "hazard/creature exposure",
+      "actor separation",
+      "final position persistence",
+      "starter resource policy"
+    ],
+    "algorithm": "Choose a candidate region by Gameplay-owned policy, then seed a uniform sample over its cellIndices; project with the Gameplay-approved transform; reject on runtime collision/occupancy/claim/hazard; resample. Map never pre-selects the final point.",
+    "unknowns": [
+      {
+        "id": "U01",
+        "name": "dynamic_occupancy",
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      },
+      {
+        "id": "U02",
+        "name": "claim_legality",
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      },
+      {
+        "id": "U03",
+        "name": "hazard_and_creature_exposure",
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      },
+      {
+        "id": "U04",
+        "name": "actor_separation_and_population",
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      },
+      {
+        "id": "U05",
+        "name": "runtime_collision_and_swept_clearance",
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      },
+      {
+        "id": "U06",
+        "name": "authoring_unit_to_runtime_tile_transform",
+        "status": "UNDECIDED",
+        "owner": "GAMEPLAY+MAP"
+      },
+      {
+        "id": "U07",
+        "name": "seeded_random_seed_and_final_position",
+        "status": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      },
+      {
+        "id": "U08",
+        "name": "starter_resources_inventory_and_items",
+        "status": "GAMEPLAY_OWNED",
+        "owner": "GAMEPLAY"
+      }
+    ],
+    "forbidden": [
+      "No runtime spawn point",
+      "No spawn compound/hub",
+      "No pre-placed house",
+      "No cleared corridor",
+      "No beacon",
+      "No free shelter",
+      "No starter crate",
+      "No creature-free distance",
+      "No occupancy/claim verdict",
+      "No starter-resource stock"
+    ]
+  },
+  "statusVocabulary": [
+    "SOURCE_AUTHORED",
+    "DERIVED",
+    "PROPOSED",
+    "VERIFIED",
+    "UNKNOWN",
+    "UNRESOLVED",
+    "BLOCKED",
+    "INVALID",
+    "UNDECIDED"
+  ],
+  "crosswalk": {
+    "SOURCE_AUTHORED": "SOURCE_AUTHORED",
+    "DERIVED": "DERIVED",
+    "PROPOSED": "PROPOSED",
+    "VERIFIED": "VALIDATED",
+    "UNKNOWN": "UNDECIDED",
+    "UNRESOLVED": "UNRESOLVED",
+    "BLOCKED": "BLOCKED",
+    "INVALID": "BLOCKED",
+    "UNDECIDED": "UNDECIDED"
+  },
+  "notPopulationAuthority": {
+    "noSpawnCoordinate": true,
+    "noSpawnCompound": true,
+    "noHouseOrShelter": true,
+    "noCrateOrBeacon": true,
+    "noClearedCorridor": true,
+    "noStarterResources": true,
+    "noCreatureOrNpcPlacement": true,
+    "noOccupancyOrClaims": true,
+    "noHazardOrActorSeparation": true,
+    "noK6Persistence": true,
+    "noDynamicDoorLockPowerOrDestruction": true,
+    "noRuntimeCollision": true,
+    "note": "These are BOUNDED AREAS and STATIC GEOMETRY. Gameplay alone seeds the final legal position, populates and simulates."
+  },
+  "noClaims": [
+    "NO playable Veyra or final world",
+    "NO creator visual approval",
+    "NO approved au-to-tile/px scale or canonical rewrite",
+    "NO runtime spawn coordinate or spawn compound",
+    "NO house/shelter/crate/beacon/cleared corridor/starter resources",
+    "NO occupancy, claim, hazard, creature-free-distance or actor-separation verdict",
+    "NO invented roof/canopy polygon",
+    "NO invented canopy coverage",
+    "NO approved physical road/river/bridge width or swept clearance",
+    "NO cart-passable road/bridge/ferry verdict or approved boat rule",
+    "NO forced land bridge",
+    "NO Gameplay implementation command",
+    "NO Web-rendered integration proof",
+    "NO third-party or unverified art pack"
+  ],
+  "revisionDigest": "9c1d61bfd1a82948d198a2387c7247a8e9c1f4e78036d294c7e945d16a15a478",
+  "digestMethod": "sha256 over JSON.stringify(body) in field insertion order; recompute by deleting revisionDigest and digestMethod"
+}

@@ -1,0 +1,1138 @@
+{
+  "schema": "soh.wmp.source_manifest.v1",
+  "generatedBy": "veyra-world-master/migration/migrate.mjs",
+  "status": "ONE_TIME_MIGRATION_COMPLETE__NOT_A_RUNTIME_DEPENDENCY",
+  "gold": {
+    "commit": "19d8c6ec820f324a6ac12733165e43b5e2c6eab2",
+    "path": "map_tower/veyra_gold/VEYRA_GOLD_MAP.sohmap.json",
+    "bytes": 332249,
+    "sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+    "readCount": 1,
+    "note": "Read once through the pinned git object during the successful first migration. Reruns reuse the embedded byte-identical copy; the clean-room Master NEVER reads GOLD or MapLab again."
+  },
+  "canonicalCounts": {
+    "land": 8,
+    "lakes": 5,
+    "rivers": 17,
+    "roads": 92,
+    "bridges": 12,
+    "docks": 27,
+    "pois": 81,
+    "zones": 23,
+    "resources": 280,
+    "spawns": 4,
+    "elders": 6,
+    "labels": 24
+  },
+  "world": {
+    "wAu": 2000,
+    "hAu": 1400,
+    "grid": {
+      "gw": 250,
+      "gh": 175,
+      "cellAu": 8
+    },
+    "unit": "authoring_unit",
+    "scaleStatus": "UNDECIDED"
+  },
+  "rasterLayers": [
+    {
+      "group": "geo01",
+      "name": "biomeCode",
+      "file": "data/rasters/geo01/biomeCode.u8",
+      "bytes": 43750,
+      "sha256": "232998e642e836f30129b3a689f7cd458f8c57526ecd2c1bad51449cbeff839d",
+      "dtype": "uint8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "source": "project.terrain.biome",
+        "unit": "RAW_SOURCE_CODE",
+        "note": "0..11. Semantic legend is NOT committed in the source; do not map to Gameplay Biome strings without an approved transform."
+      },
+      "sourceStatus": "SOURCE_AUTHORED"
+    },
+    {
+      "group": "geo01",
+      "name": "buildableCandidate",
+      "file": "data/rasters/geo01/buildableCandidate.u8",
+      "bytes": 43750,
+      "sha256": "afc1067b5493e1cedbb8845718dd3a8263ae1c81b9e904ea912613276a1f641b",
+      "dtype": "uint8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "walkableCandidate ∩ zones[].ring",
+        "unit": "0/1",
+        "note": "A0 protection / occupancy / route legality is NOT asserted."
+      },
+      "sourceStatus": "SOURCE_AUTHORED"
+    },
+    {
+      "group": "geo01",
+      "name": "cargoCandidate",
+      "file": "data/rasters/geo01/cargoCandidate.u8",
+      "bytes": 43750,
+      "sha256": "28b8a3060344cf998673f2c7163bf664563be477124e0bab376bd56645229adb",
+      "dtype": "uint8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "cart roads + cart-load bridges + docks",
+        "unit": "0/1 SPATIAL CANDIDATE ONLY",
+        "note": "cargoPassable verdict requires Gameplay loaded-cart rules; UNDEFINED."
+      },
+      "sourceStatus": "SOURCE_AUTHORED"
+    },
+    {
+      "group": "geo01",
+      "name": "clearanceCells",
+      "file": "data/rasters/geo01/clearanceCells.u8",
+      "bytes": 43750,
+      "sha256": "e8e00caa9ff1018f9b29230784aaf263745d47df100cd25dd4bd26039e50087c",
+      "dtype": "uint8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "4-neighbour BFS from blocked cells",
+        "unit": "grid cells (x8 = authoring units), capped 255"
+      },
+      "sourceStatus": "SOURCE_AUTHORED"
+    },
+    {
+      "group": "geo01",
+      "name": "coast",
+      "file": "data/rasters/geo01/coast.u8",
+      "bytes": 43750,
+      "sha256": "44c0f13ead072f501351f458c9180a31e30f08a321848e10e8faea567067f5d5",
+      "dtype": "uint8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "land cell with a 4-neighbour sea cell",
+        "unit": "0/1"
+      },
+      "sourceStatus": "SOURCE_AUTHORED"
+    },
+    {
+      "group": "geo01",
+      "name": "crossingCandidate",
+      "file": "data/rasters/geo01/crossingCandidate.u8",
+      "bytes": 43750,
+      "sha256": "f1c96bd9fdb04d66117811c941e4a02df7fb3111c1a8671060fccad42c29603b",
+      "dtype": "uint8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "bridges[].at (load) and roads[].ford points",
+        "unit": "0 none, 1 foot bridge, 2 cart bridge, 3 ford",
+        "note": "Bridge-to-channel fit is UNVERIFIED."
+      },
+      "sourceStatus": "SOURCE_AUTHORED"
+    },
+    {
+      "group": "geo01",
+      "name": "elderGeometryId",
+      "file": "data/rasters/geo01/elderGeometryId.u8",
+      "bytes": 43750,
+      "sha256": "e924b646fc53b0886869b5332ef4413345d161d84c3abb76376b555af549eca8",
+      "dtype": "uint8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "point-in-ring on elders[].outer/core/arenas",
+        "unit": "0=none, 1..6=elder index+1"
+      },
+      "sourceStatus": "SOURCE_AUTHORED"
+    },
+    {
+      "group": "geo01",
+      "name": "elevation",
+      "file": "data/rasters/geo01/elevation.u8",
+      "bytes": 43750,
+      "sha256": "54d7641cea57ebd20be1eb17a0ce919f352f2868f4ed123e968a2e59666c6d24",
+      "dtype": "uint8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "source": "project.terrain.elev",
+        "unit": "UNKNOWN_SOURCE_BYTE",
+        "note": "0 = sea/no-land (verified against land polygons); 1..243 = land height in unspecified source units."
+      },
+      "sourceStatus": "SOURCE_AUTHORED"
+    },
+    {
+      "group": "geo01",
+      "name": "freshwater",
+      "file": "data/rasters/geo01/freshwater.u8",
+      "bytes": 43750,
+      "sha256": "9f9716b53e9bc553282860510b0ab1410574d8edf03eabb79fb3181f6d465aa4",
+      "dtype": "uint8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "lake or river geometry",
+        "unit": "0/1"
+      },
+      "sourceStatus": "SOURCE_AUTHORED"
+    },
+    {
+      "group": "geo01",
+      "name": "freshwaterProximityCells",
+      "file": "data/rasters/geo01/freshwaterProximityCells.u8",
+      "bytes": 43750,
+      "sha256": "27244a6693b885fe81de03c8e429bc225f5d848de60db76f22e19dffadc247ea",
+      "dtype": "uint8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "4-neighbour BFS from lake/river cells",
+        "unit": "grid cells (x8 = authoring units), capped 255",
+        "note": "Geometric potential ONLY; NOT a climate/moisture value."
+      },
+      "sourceStatus": "SOURCE_AUTHORED"
+    },
+    {
+      "group": "geo01",
+      "name": "lakeId",
+      "file": "data/rasters/geo01/lakeId.u8",
+      "bytes": 43750,
+      "sha256": "1fcffe83cdac6f1292b374f8cab556f9b4e5bf032769b0413fcab40c6c3738b1",
+      "dtype": "uint8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "point-in-ring on lakes[].ring",
+        "unit": "0=none, 1..5=lake index+1"
+      },
+      "sourceStatus": "SOURCE_AUTHORED"
+    },
+    {
+      "group": "geo01",
+      "name": "landId",
+      "file": "data/rasters/geo01/landId.u8",
+      "bytes": 43750,
+      "sha256": "3aaebb6a358ce04fc33eff56050321639ffc317fe1bb698114a621240c12e8a7",
+      "dtype": "uint8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "point-in-polygon on land[].rings (holes honoured)",
+        "unit": "0=sea, 1..8=land array index+1"
+      },
+      "sourceStatus": "SOURCE_AUTHORED"
+    },
+    {
+      "group": "geo01",
+      "name": "poiGeometryId",
+      "file": "data/rasters/geo01/poiGeometryId.u8",
+      "bytes": 43750,
+      "sha256": "94348636f05c83da80a5b9897bf30c4c0f6951f49a6c9875695454e7aa093881",
+      "dtype": "uint8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "point-in-ring on pois[].foot / pois[].deep",
+        "unit": "0=none, 1..81=poi index+1"
+      },
+      "sourceStatus": "SOURCE_AUTHORED"
+    },
+    {
+      "group": "geo01",
+      "name": "protectedGeometryCandidate",
+      "file": "data/rasters/geo01/protectedGeometryCandidate.u8",
+      "bytes": 43750,
+      "sha256": "9d500a17898dd9bc5e3368be0bc14d86c91ac361a1449c484c1b5322894d0b71",
+      "dtype": "uint8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "POI foot/deep or Elder outer/core/arena geometry",
+        "unit": "0/1",
+        "note": "Geometry overlap only; NOT the A0 protected mask."
+      },
+      "sourceStatus": "SOURCE_AUTHORED"
+    },
+    {
+      "group": "geo01",
+      "name": "riverId",
+      "file": "data/rasters/geo01/riverId.u8",
+      "bytes": 43750,
+      "sha256": "9dfe77adbf89d8c729f3487f585381d6014c27978839cd52bcce2169c6df3310",
+      "dtype": "uint8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "centre-cell rasterization of rivers[].points",
+        "unit": "0=none, 1..17=river index+1",
+        "note": "river.width is preserved but NOT applied as a physical channel width (unit unestablished)."
+      },
+      "sourceStatus": "SOURCE_AUTHORED"
+    },
+    {
+      "group": "geo01",
+      "name": "roadClass",
+      "file": "data/rasters/geo01/roadClass.u8",
+      "bytes": 43750,
+      "sha256": "d84fca5f129c9aa866a4960eaf7902a0fe923668cfdb2e41a9d864979cfe1f8b",
+      "dtype": "uint8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "centre-cell rasterization of roads[].points",
+        "unit": "0 none, 1 cart, 2 trail, 3 foot, 4 riverside, 5 ferry"
+      },
+      "sourceStatus": "SOURCE_AUTHORED"
+    },
+    {
+      "group": "geo01",
+      "name": "seaDistanceCells",
+      "file": "data/rasters/geo01/seaDistanceCells.u8",
+      "bytes": 43750,
+      "sha256": "45ba677aa1dde0b2d662c83386667dee8427f846e75978fd18c0e08f57c70977",
+      "dtype": "uint8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "4-neighbour BFS from sea cells",
+        "unit": "grid cells (x8 = authoring units), capped 255"
+      },
+      "sourceStatus": "SOURCE_AUTHORED"
+    },
+    {
+      "group": "geo01",
+      "name": "slope",
+      "file": "data/rasters/geo01/slope.u8",
+      "bytes": 43750,
+      "sha256": "6648158ad69cd9c136e249394a9aa7b21e31d08ca7ac48d700fa9511a918130e",
+      "dtype": "uint8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "central difference of raw elevation bytes",
+        "unit": "RAW_BYTE_DELTA_PER_GRID_CELL",
+        "note": "Not normalized. Gameplay slope threshold is UNDEFINED here."
+      },
+      "sourceStatus": "SOURCE_AUTHORED"
+    },
+    {
+      "group": "geo01",
+      "name": "walkableCandidate",
+      "file": "data/rasters/geo01/walkableCandidate.u8",
+      "bytes": 43750,
+      "sha256": "fcf691e68785e204634ce5bd05d5f2c500c65e61deea4e3b0c468d282ef0a8d7",
+      "dtype": "uint8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "land polygon minus lake/river geometry",
+        "unit": "0/1",
+        "note": "Slope, collision and hazard rules are NOT applied."
+      },
+      "sourceStatus": "SOURCE_AUTHORED"
+    },
+    {
+      "group": "geo01",
+      "name": "waterClass",
+      "file": "data/rasters/geo01/waterClass.u8",
+      "bytes": 43750,
+      "sha256": "f4c49bfc6279324051b31afaf3165ebde1734ad26d1c7e1bc52fe368748ad254",
+      "dtype": "uint8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "sea / lake / river precedence",
+        "unit": "0 none, 1 sea, 2 lake, 3 river centreline"
+      },
+      "sourceStatus": "SOURCE_AUTHORED"
+    },
+    {
+      "group": "geo01",
+      "name": "zoneId",
+      "file": "data/rasters/geo01/zoneId.u8",
+      "bytes": 43750,
+      "sha256": "e6ea74cd062935bad399002bf7d99e540b71f61ab5a83654db1cef1bdb2a374d",
+      "dtype": "uint8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": {
+        "derived": "point-in-ring on zones[].ring",
+        "unit": "0=none, 1..23=zone index+1"
+      },
+      "sourceStatus": "SOURCE_AUTHORED"
+    },
+    {
+      "group": "geo02",
+      "name": "landMaplab",
+      "file": "data/rasters/geo02/landMaplab.u8",
+      "bytes": 43750,
+      "sha256": "61d69d26fa666420e09e13f452c7d6c145e4c49d6ab50532b9418134b3811f92",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": "MapLab analysis mask",
+      "sourceStatus": "SOURCE_AUTHORED"
+    },
+    {
+      "group": "geo02",
+      "name": "lakeMaplab",
+      "file": "data/rasters/geo02/lakeMaplab.u8",
+      "bytes": 43750,
+      "sha256": "aa8f243cee71aca86aff562e29085cb98fc4c5c91fdf277828d42672169177d2",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": "MapLab analysis mask",
+      "sourceStatus": "SOURCE_AUTHORED"
+    },
+    {
+      "group": "geo02",
+      "name": "riverMaplab",
+      "file": "data/rasters/geo02/riverMaplab.u8",
+      "bytes": 43750,
+      "sha256": "feac18a272f997b1b49eb5d22129ab512bcd987730d0d4223573b82c4ca25ce9",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": "MapLab analysis mask",
+      "sourceStatus": "SOURCE_AUTHORED"
+    },
+    {
+      "group": "geo02",
+      "name": "roadFootMaplab",
+      "file": "data/rasters/geo02/roadFootMaplab.u8",
+      "bytes": 43750,
+      "sha256": "ab583a4b0b5d974f5e43a11bccdfd7b72b7c78e5ecebf953b2d690950c35c37e",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": "MapLab analysis mask",
+      "sourceStatus": "SOURCE_AUTHORED"
+    },
+    {
+      "group": "geo02",
+      "name": "roadCartMaplab",
+      "file": "data/rasters/geo02/roadCartMaplab.u8",
+      "bytes": 43750,
+      "sha256": "fab97aee514862459d9300998c32b0637b7b3e2c636e959d0c28299aaae16bd1",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": "MapLab analysis mask",
+      "sourceStatus": "SOURCE_AUTHORED"
+    }
+  ],
+  "counts": {
+    "geo01Rasters": 21,
+    "geo02Masks": 5,
+    "lr01Artifacts": 64,
+    "embeddedFiles": 117
+  },
+  "files": [
+    {
+      "file": "data/canon/VEYRA_GOLD_MAP.sohmap.json",
+      "bytes": 332249,
+      "sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256"
+    },
+    {
+      "file": "data/canon/geometry_snapshot.v1.json",
+      "bytes": 452404,
+      "sha256": "91873a69ba0d8a0e036573b3cacc9869e3baeb3a69f6837bda746238577560d6"
+    },
+    {
+      "file": "data/rasters/geo01_manifest.v1.json",
+      "bytes": 13188,
+      "sha256": "ff5442c8b6fed09b35e049ca81fb0fa749eabdcd828f0dff2d7e5ad555567683"
+    },
+    {
+      "file": "data/rasters/geo02_manifest.v1.json",
+      "bytes": 1388,
+      "sha256": "f258d0f2816b9556311d816b6bc90f69cbd20d47f5ccbb6732a65da771002171"
+    },
+    {
+      "file": "data/rasters/geo01/biomeCode.u8",
+      "bytes": 43750,
+      "sha256": "232998e642e836f30129b3a689f7cd458f8c57526ecd2c1bad51449cbeff839d"
+    },
+    {
+      "file": "data/rasters/geo01/buildableCandidate.u8",
+      "bytes": 43750,
+      "sha256": "afc1067b5493e1cedbb8845718dd3a8263ae1c81b9e904ea912613276a1f641b"
+    },
+    {
+      "file": "data/rasters/geo01/cargoCandidate.u8",
+      "bytes": 43750,
+      "sha256": "28b8a3060344cf998673f2c7163bf664563be477124e0bab376bd56645229adb"
+    },
+    {
+      "file": "data/rasters/geo01/clearanceCells.u8",
+      "bytes": 43750,
+      "sha256": "e8e00caa9ff1018f9b29230784aaf263745d47df100cd25dd4bd26039e50087c"
+    },
+    {
+      "file": "data/rasters/geo01/coast.u8",
+      "bytes": 43750,
+      "sha256": "44c0f13ead072f501351f458c9180a31e30f08a321848e10e8faea567067f5d5"
+    },
+    {
+      "file": "data/rasters/geo01/crossingCandidate.u8",
+      "bytes": 43750,
+      "sha256": "f1c96bd9fdb04d66117811c941e4a02df7fb3111c1a8671060fccad42c29603b"
+    },
+    {
+      "file": "data/rasters/geo01/elderGeometryId.u8",
+      "bytes": 43750,
+      "sha256": "e924b646fc53b0886869b5332ef4413345d161d84c3abb76376b555af549eca8"
+    },
+    {
+      "file": "data/rasters/geo01/elevation.u8",
+      "bytes": 43750,
+      "sha256": "54d7641cea57ebd20be1eb17a0ce919f352f2868f4ed123e968a2e59666c6d24"
+    },
+    {
+      "file": "data/rasters/geo01/freshwater.u8",
+      "bytes": 43750,
+      "sha256": "9f9716b53e9bc553282860510b0ab1410574d8edf03eabb79fb3181f6d465aa4"
+    },
+    {
+      "file": "data/rasters/geo01/freshwaterProximityCells.u8",
+      "bytes": 43750,
+      "sha256": "27244a6693b885fe81de03c8e429bc225f5d848de60db76f22e19dffadc247ea"
+    },
+    {
+      "file": "data/rasters/geo01/lakeId.u8",
+      "bytes": 43750,
+      "sha256": "1fcffe83cdac6f1292b374f8cab556f9b4e5bf032769b0413fcab40c6c3738b1"
+    },
+    {
+      "file": "data/rasters/geo01/landId.u8",
+      "bytes": 43750,
+      "sha256": "3aaebb6a358ce04fc33eff56050321639ffc317fe1bb698114a621240c12e8a7"
+    },
+    {
+      "file": "data/rasters/geo01/poiGeometryId.u8",
+      "bytes": 43750,
+      "sha256": "94348636f05c83da80a5b9897bf30c4c0f6951f49a6c9875695454e7aa093881"
+    },
+    {
+      "file": "data/rasters/geo01/protectedGeometryCandidate.u8",
+      "bytes": 43750,
+      "sha256": "9d500a17898dd9bc5e3368be0bc14d86c91ac361a1449c484c1b5322894d0b71"
+    },
+    {
+      "file": "data/rasters/geo01/riverId.u8",
+      "bytes": 43750,
+      "sha256": "9dfe77adbf89d8c729f3487f585381d6014c27978839cd52bcce2169c6df3310"
+    },
+    {
+      "file": "data/rasters/geo01/roadClass.u8",
+      "bytes": 43750,
+      "sha256": "d84fca5f129c9aa866a4960eaf7902a0fe923668cfdb2e41a9d864979cfe1f8b"
+    },
+    {
+      "file": "data/rasters/geo01/seaDistanceCells.u8",
+      "bytes": 43750,
+      "sha256": "45ba677aa1dde0b2d662c83386667dee8427f846e75978fd18c0e08f57c70977"
+    },
+    {
+      "file": "data/rasters/geo01/slope.u8",
+      "bytes": 43750,
+      "sha256": "6648158ad69cd9c136e249394a9aa7b21e31d08ca7ac48d700fa9511a918130e"
+    },
+    {
+      "file": "data/rasters/geo01/walkableCandidate.u8",
+      "bytes": 43750,
+      "sha256": "fcf691e68785e204634ce5bd05d5f2c500c65e61deea4e3b0c468d282ef0a8d7"
+    },
+    {
+      "file": "data/rasters/geo01/waterClass.u8",
+      "bytes": 43750,
+      "sha256": "f4c49bfc6279324051b31afaf3165ebde1734ad26d1c7e1bc52fe368748ad254"
+    },
+    {
+      "file": "data/rasters/geo01/zoneId.u8",
+      "bytes": 43750,
+      "sha256": "e6ea74cd062935bad399002bf7d99e540b71f61ab5a83654db1cef1bdb2a374d"
+    },
+    {
+      "file": "data/rasters/geo02/landMaplab.u8",
+      "bytes": 43750,
+      "sha256": "61d69d26fa666420e09e13f452c7d6c145e4c49d6ab50532b9418134b3811f92"
+    },
+    {
+      "file": "data/rasters/geo02/lakeMaplab.u8",
+      "bytes": 43750,
+      "sha256": "aa8f243cee71aca86aff562e29085cb98fc4c5c91fdf277828d42672169177d2"
+    },
+    {
+      "file": "data/rasters/geo02/riverMaplab.u8",
+      "bytes": 43750,
+      "sha256": "feac18a272f997b1b49eb5d22129ab512bcd987730d0d4223573b82c4ca25ce9"
+    },
+    {
+      "file": "data/rasters/geo02/roadFootMaplab.u8",
+      "bytes": 43750,
+      "sha256": "ab583a4b0b5d974f5e43a11bccdfd7b72b7c78e5ecebf953b2d690950c35c37e"
+    },
+    {
+      "file": "data/rasters/geo02/roadCartMaplab.u8",
+      "bytes": 43750,
+      "sha256": "fab97aee514862459d9300998c32b0637b7b3e2c636e959d0c28299aaae16bd1"
+    },
+    {
+      "file": "data/legacy/source/output_geography.v1.json",
+      "bytes": 1427751,
+      "sha256": "13ae97272edc47b063bb4a2ffde5dcf9f92f0f34dc3fd35b6ab3bee7f26c29dd"
+    },
+    {
+      "file": "data/legacy/source/output_corridor.v1.json",
+      "bytes": 56653,
+      "sha256": "e9212633b277ec0cd7ee932a0d9b1266532e805a2816e23e092edce3582db63e"
+    },
+    {
+      "file": "data/legacy/source/output_maplab_encoding.v1.json",
+      "bytes": 21420,
+      "sha256": "14560c6c523ca01bb831898f914e0f298b8aa76fe0625cbd2fb565db902ea4db"
+    },
+    {
+      "file": "data/legacy/source/output_corridor_audit.v1.json",
+      "bytes": 68739,
+      "sha256": "7377b97ad2cfe33d92b5857f06307c028b3b7b1b00b7c510c21014638e73a70d"
+    },
+    {
+      "file": "data/legacy/source/output_poi_po_kilns.proposed.v1.json",
+      "bytes": 20323,
+      "sha256": "14f968fe7bc94db7aba5020fcdfda80f5bb8f24b5e3c4ab9c16c8e564c4072c5"
+    },
+    {
+      "file": "data/legacy/lr01/art_manifest.v1.json",
+      "bytes": 18380,
+      "sha256": "a113bdc9f05e582545c862f576208d7d381b145480429f444965d70c51b902e1"
+    },
+    {
+      "file": "data/legacy/lr01/build_sites.v1.json",
+      "bytes": 76508,
+      "sha256": "6f5522d00420c872489e318f87c615f1597fe8813a13f49911e6cf2e4f79bd5e"
+    },
+    {
+      "file": "data/legacy/lr01/feature_status.v1.json",
+      "bytes": 265880,
+      "sha256": "9c1169d10d653698e157c54d7ac70686bb2a6a765d8d41f173ce1057ddf930e0"
+    },
+    {
+      "file": "data/legacy/lr01/final_head.v1.json",
+      "bytes": 5709,
+      "sha256": "572a26110e33def8e2ddfc0c6b36328281bf706ce5fa1f2441963545d30ee1b1"
+    },
+    {
+      "file": "data/legacy/lr01/geography.v1.json",
+      "bytes": 537768,
+      "sha256": "5e3639e0d95bfe7219c819516ea09e16fb0d150e432ceab489a4d3d908438eb6"
+    },
+    {
+      "file": "data/legacy/lr01/geography_package.v1.json",
+      "bytes": 1969292,
+      "sha256": "b4cc77228caf847d1ad0d8a680457ca65731202513a047826e8bd973662e19ad"
+    },
+    {
+      "file": "data/legacy/lr01/handoff.v1.json",
+      "bytes": 20413,
+      "sha256": "ef2d9fccfce1f66afa946c239aba6c2719b1878fd586dd107bc08a67dfabe3b8"
+    },
+    {
+      "file": "data/legacy/lr01/poi_geometry.v1.json",
+      "bytes": 179039,
+      "sha256": "758fa5d03d3a826ee2b1e6689358b3389b489b2b9104ac99f26b6701a4d978aa"
+    },
+    {
+      "file": "data/legacy/lr01/poi_layouts.v1.json",
+      "bytes": 2067441,
+      "sha256": "65a6a107a474a465b935d6a9e72de326523c3fc3d4e94ef36aba8a8496d24f34"
+    },
+    {
+      "file": "data/legacy/lr01/poi_summary.v1.json",
+      "bytes": 65289,
+      "sha256": "81b7933a11abe07b9fc4a9cd713bb2a608761062b45a32d88a7424d7fd867388"
+    },
+    {
+      "file": "data/legacy/lr01/route_graph.v1.json",
+      "bytes": 345031,
+      "sha256": "ff63f1acfa00149213c91906948d92a0a3f7d619c517668f0b7172d093351a05"
+    },
+    {
+      "file": "data/legacy/lr01/scale_corrected.v1.json",
+      "bytes": 127521,
+      "sha256": "91e10cd6235aa92d46d127b3efa7c01becb1aff3c5cdde1a3391404c8fba884b"
+    },
+    {
+      "file": "data/legacy/lr01/transport.v1.json",
+      "bytes": 282942,
+      "sha256": "24cf621b8d23753cbf28cb2be2d9ffb0bd33a1cee1d272e542ddb5238ee46f79"
+    },
+    {
+      "file": "data/legacy/lr01/transport_failures.v1.json",
+      "bytes": 5529,
+      "sha256": "e7ede045cee795c5a83072f9de81b7a6324ce0fdca50210e5c83fa5f410858ce"
+    },
+    {
+      "file": "data/legacy/lr01/views_index.v1.json",
+      "bytes": 25609,
+      "sha256": "57cd3f9a3527b963f0cb9f9628a7068ed9d8bf30af4ab75637662a73f0c712dc"
+    },
+    {
+      "file": "data/legacy/lr01/regions/elder_el_aion.v1.json",
+      "bytes": 12128,
+      "sha256": "33bef706405dac4bedb52bb25837ad3e69253f9a4a896eb82219b441dc4e668c"
+    },
+    {
+      "file": "data/legacy/lr01/regions/elder_el_anubis.v1.json",
+      "bytes": 12192,
+      "sha256": "d8bd39a374271100144213ba21ba420d390511f7d1070469c9b36696961c2700"
+    },
+    {
+      "file": "data/legacy/lr01/regions/elder_el_argus.v1.json",
+      "bytes": 12184,
+      "sha256": "b5fcdde6e8421ebdcba4cd20880d52e059efe5c2ac75c5c4bb804504d1f1487b"
+    },
+    {
+      "file": "data/legacy/lr01/regions/elder_el_atlas.v1.json",
+      "bytes": 12102,
+      "sha256": "786eb74370880942c5d091216f7c57dfdd3f146d3cb81674707a4cfd70ea0f99"
+    },
+    {
+      "file": "data/legacy/lr01/regions/elder_el_surtur.v1.json",
+      "bytes": 12221,
+      "sha256": "fad35f4fa59aa8d8e74d95e18dc67f02cd99cda0f8ee72084ae7c93671fc9b64"
+    },
+    {
+      "file": "data/legacy/lr01/regions/elder_el_typhon.v1.json",
+      "bytes": 12102,
+      "sha256": "ad779c876cce89e80dac3b24cdd56add3c6331fba865e356d91a5c874b362a1b"
+    },
+    {
+      "file": "data/legacy/lr01/regions/land_ld_beacon.v1.json",
+      "bytes": 3616,
+      "sha256": "c3921c07213d280255212ac160520c3bd0baaa56b287ccc976cd1cd122445b4d"
+    },
+    {
+      "file": "data/legacy/lr01/regions/land_ld_cinder.v1.json",
+      "bytes": 10200,
+      "sha256": "6469bfc5b98f092cf01bb1968cdea8a05df6b8f37ef357109c9dce8e5d9252b5"
+    },
+    {
+      "file": "data/legacy/lr01/regions/land_ld_gull.v1.json",
+      "bytes": 4973,
+      "sha256": "c011c12005971999814a90369e31aae3837e24e241532062405e66c4d42d9467"
+    },
+    {
+      "file": "data/legacy/lr01/regions/land_ld_ironholm.v1.json",
+      "bytes": 8130,
+      "sha256": "5f27721452875cfb156bf7e028bd11f6611037894056faf826732b1261a959c6"
+    },
+    {
+      "file": "data/legacy/lr01/regions/land_ld_saltwick.v1.json",
+      "bytes": 8981,
+      "sha256": "8a504b21a2fcb0aaf1158417d23a96399827c9562f3184c8dd6d1ccfbea48143"
+    },
+    {
+      "file": "data/legacy/lr01/regions/land_ld_threshold.v1.json",
+      "bytes": 6255,
+      "sha256": "e87d2963cc31b5c0f3cd8c7f071b6c637eca8778e1f7bb36e2ea2f0277ef713a"
+    },
+    {
+      "file": "data/legacy/lr01/regions/land_ld_veyra.v1.json",
+      "bytes": 35158,
+      "sha256": "780571d360357e008ee1a312382b917d181597547f3d99d02daa7b8dc81f5541"
+    },
+    {
+      "file": "data/legacy/lr01/regions/land_ld_wreck.v1.json",
+      "bytes": 5705,
+      "sha256": "3ed0af9611806aa4e5548698394238dbf19ffbcaae01c70eeb37c389ad295f10"
+    },
+    {
+      "file": "data/legacy/lr01/regions/spawn_sp_gulf.v1.json",
+      "bytes": 1525,
+      "sha256": "5cfeb1c2e07ef140bb07156089fae6b260ed9e7d41a13ae70ddc2df1e709b1b3"
+    },
+    {
+      "file": "data/legacy/lr01/regions/spawn_sp_hook.v1.json",
+      "bytes": 1504,
+      "sha256": "c3ff101351edb81ce932c83877730bf7bb80ff8957cf39c4f9a98143cd8d1f7b"
+    },
+    {
+      "file": "data/legacy/lr01/regions/spawn_sp_lake.v1.json",
+      "bytes": 1536,
+      "sha256": "79d852bd31068b7bb51dcc920993511539fbdc7a271c5358210afee94f4405e4"
+    },
+    {
+      "file": "data/legacy/lr01/regions/spawn_sp_west.v1.json",
+      "bytes": 1526,
+      "sha256": "346f839007151de15095269544f063dab019ad12daacbc2466a01b392cada59c"
+    },
+    {
+      "file": "data/legacy/lr01/regions/zone_bz_argus.v1.json",
+      "bytes": 4135,
+      "sha256": "da2b231065f46e54fef25139aa1dfdd56e87bff5b3ee8aa9cd37846e7e186b36"
+    },
+    {
+      "file": "data/legacy/lr01/regions/zone_bz_cinder.v1.json",
+      "bytes": 4101,
+      "sha256": "1197139d239771111cfd0a8ff44caa35642cc204b0b775d27ea3468c3b3e35dd"
+    },
+    {
+      "file": "data/legacy/lr01/regions/zone_bz_delta.v1.json",
+      "bytes": 4181,
+      "sha256": "113a5c5b351ef789e9745932a2e285f8a00060c92cabacc8a7708e321ca22abd"
+    },
+    {
+      "file": "data/legacy/lr01/regions/zone_bz_dune.v1.json",
+      "bytes": 4018,
+      "sha256": "5ff94fe54a53e63b709111ee27bb86572d71f6cbc5f6c09cd153c442ae6caa41"
+    },
+    {
+      "file": "data/legacy/lr01/regions/zone_bz_eastflats.v1.json",
+      "bytes": 4209,
+      "sha256": "abf06bf703182102e0edd4bfa5b8484da3492a0c722ec0bb1962678fe4c935a1"
+    },
+    {
+      "file": "data/legacy/lr01/regions/zone_bz_elder_clear.v1.json",
+      "bytes": 4144,
+      "sha256": "d330f4797769d011eb0cd7d863e0dfc469c99407d2999f406b7422851897a10b"
+    },
+    {
+      "file": "data/legacy/lr01/regions/zone_bz_forest_n.v1.json",
+      "bytes": 4127,
+      "sha256": "91adb0072f0328ac87c6477968bbcec4266e8187938090b87360c36f025b401a"
+    },
+    {
+      "file": "data/legacy/lr01/regions/zone_bz_greyback.v1.json",
+      "bytes": 4122,
+      "sha256": "f84f32284a21f922e0d8038ee1a4332a72894d759fc8019c2f4e793bb55036d3"
+    },
+    {
+      "file": "data/legacy/lr01/regions/zone_bz_greywater.v1.json",
+      "bytes": 4160,
+      "sha256": "b5ad8030cb56e9bb55e019892a3cf22ce5a1a1dbc8dab755a7413d76377d832c"
+    },
+    {
+      "file": "data/legacy/lr01/regions/zone_bz_gulfwest.v1.json",
+      "bytes": 4159,
+      "sha256": "b936784c085bc4d12f4855a27349f680debfa6f2d789a3feea883b9a2db5beed"
+    },
+    {
+      "file": "data/legacy/lr01/regions/zone_bz_hook.v1.json",
+      "bytes": 4165,
+      "sha256": "87c8ac108f33c109aa8e5680894132218ecc25f242e6052cb3e598e6b306f126"
+    },
+    {
+      "file": "data/legacy/lr01/regions/zone_bz_ironholm.v1.json",
+      "bytes": 4181,
+      "sha256": "1a14ca7137e7d0da9b0b1501a79b0396fee0486d339453fdccbbef2f5ac3aeb0"
+    },
+    {
+      "file": "data/legacy/lr01/regions/zone_bz_kestrel.v1.json",
+      "bytes": 4064,
+      "sha256": "7de71ea2b95bc1087b107e1e0cda8ea75c5ee5e05e05da99250346183ef6ae9a"
+    },
+    {
+      "file": "data/legacy/lr01/regions/zone_bz_moss.v1.json",
+      "bytes": 4128,
+      "sha256": "dfe91946678d1ff0fd61d2312cc4626498e1e6f07a0b7c41bea74b9b225e4c76"
+    },
+    {
+      "file": "data/legacy/lr01/regions/zone_bz_oasis.v1.json",
+      "bytes": 4124,
+      "sha256": "9f0458036b217dfffc69f59fe779ac31e5eaa5e396543fd3fa0fa3878a012f95"
+    },
+    {
+      "file": "data/legacy/lr01/regions/zone_bz_ridge.v1.json",
+      "bytes": 4158,
+      "sha256": "11c30db525e5f0b980d42627618ba6d4188813cc84d84f872230c227ddc742b8"
+    },
+    {
+      "file": "data/legacy/lr01/regions/zone_bz_salt.v1.json",
+      "bytes": 4155,
+      "sha256": "d3fc74a911cfd7e1434e7d73bfe89e4362f7e419d2ae01a3a068590e23967def"
+    },
+    {
+      "file": "data/legacy/lr01/regions/zone_bz_silver.v1.json",
+      "bytes": 4126,
+      "sha256": "20d5be8619fa19194356dc14854c4ea3e399ec0d02909e45352327b5cbb06d60"
+    },
+    {
+      "file": "data/legacy/lr01/regions/zone_bz_slag.v1.json",
+      "bytes": 4192,
+      "sha256": "41ac3b8334db459b45a3d7f9427c56a0a6a65858bcad4b51389dbcb433d7a719"
+    },
+    {
+      "file": "data/legacy/lr01/regions/zone_bz_typhon_t.v1.json",
+      "bytes": 4185,
+      "sha256": "ffe98417a49793e5451a1690cf2ba4e801c2ff1b29d28172f2c6bad0bf877954"
+    },
+    {
+      "file": "data/legacy/lr01/regions/zone_bz_verdant.v1.json",
+      "bytes": 4186,
+      "sha256": "b162bd51910bb5d1e14ab607dc0aa7f4479a87f685b14b5db8e7fed069688217"
+    },
+    {
+      "file": "data/legacy/lr01/regions/zone_bz_westmouth.v1.json",
+      "bytes": 4130,
+      "sha256": "44e0b9e8925b1683b6f779e69532e84e730269088800ff1cc51c139ac66faa7e"
+    },
+    {
+      "file": "data/legacy/lr01/regions/zone_bz_westwood.v1.json",
+      "bytes": 4142,
+      "sha256": "e8992ad52ea9c7c817d113c051e75e3e26ab89f507d423621312569fed93b9bf"
+    },
+    {
+      "file": "data/legacy/lr01/poi_examples/po_academy.v1.json",
+      "bytes": 31911,
+      "sha256": "e84db17bd797c058fd1145e170f1b79bc416e42e49c9f34f6fe66baa87d0b513"
+    },
+    {
+      "file": "data/legacy/lr01/poi_examples/po_fracquarry.v1.json",
+      "bytes": 17221,
+      "sha256": "43b84994ad55f9c7956ad500c67f055546dfcdafad54602c9ce721668f2e7116"
+    },
+    {
+      "file": "data/legacy/lr01/poi_examples/po_hall_eyes.v1.json",
+      "bytes": 23363,
+      "sha256": "1b4c2dc7e1b2a98204506f1a5a589e003c23709349799fbebb46a0f0782cdc3e"
+    },
+    {
+      "file": "data/legacy/lr01/poi_examples/po_kilns.v1.json",
+      "bytes": 27850,
+      "sha256": "9f41d113b26ec2f670a52c48e54e876219c10e9750f3e53d60ddd3cc6177b3ee"
+    },
+    {
+      "file": "data/legacy/lr01/poi_examples/po_mere.v1.json",
+      "bytes": 15890,
+      "sha256": "4dd6d246c11edd62221a6144a165f76324bab1a2dcffc9e78c5756acb3c26348"
+    },
+    {
+      "file": "data/legacy/lr01/poi_examples/po_rc_meridian.v1.json",
+      "bytes": 20855,
+      "sha256": "278beebf251ec36803cff99d94ca5213a0bad68dfca1bb2f6c210c18d0e130f5"
+    },
+    {
+      "file": "data/legacy/lr01/poi_examples/po_siloc.v1.json",
+      "bytes": 26367,
+      "sha256": "6bbe45f6a20625e0a5e97cbf934a5875a8ed2cd30e4ac1f32222d30e03c7fa50"
+    },
+    {
+      "file": "data/legacy/lr01/poi_examples/po_strait.v1.json",
+      "bytes": 21875,
+      "sha256": "265c544fac799db9478128729c13d00779b2d549e936fd98705794ccac8a3604"
+    },
+    {
+      "file": "data/legacy/lr02/geography_package.v2.json",
+      "bytes": 2209899,
+      "sha256": "598a6bdded25966659be303b655089aa3e54b00f264d777ab72211ff2cb27234"
+    },
+    {
+      "file": "data/legacy/lr02/greywater_spatial_patch.v1.json",
+      "bytes": 139590,
+      "sha256": "2a9cfcc4360cd62088c4e938fa04f53a99aae6c0a8f2749580453869c502be78"
+    },
+    {
+      "file": "data/legacy/lr02/population_inputs.v1.json",
+      "bytes": 8846,
+      "sha256": "114f0431aec4ce588328e4d069c0c3ca55717c45539236ae8b0e0e8ecaf72d08"
+    },
+    {
+      "file": "data/legacy/lr02/portal_geometry.v1.json",
+      "bytes": 1751649,
+      "sha256": "8a33a810d79497544fa6b628a1b15bd8352f47313d98e65e130021947515bac1"
+    },
+    {
+      "file": "data/legacy/lr02/region_static_geometry.v1.json",
+      "bytes": 467480,
+      "sha256": "9f63ad38a88728548529c48679680aaedcb6921b962b73b2ac12581cf629a22d"
+    },
+    {
+      "file": "data/legacy/lr02/resource_inputs.v1.json",
+      "bytes": 36227,
+      "sha256": "f9f7578be0077b44269261903bc8f6497e58b26cd54bf5daa3cf4c9b63494b48"
+    },
+    {
+      "file": "data/legacy/lr02/spawn_eligibility.v1.json",
+      "bytes": 194525,
+      "sha256": "377d5452579d638711bb41fbedcab5dafc98af2c17327a90ec954b8c277a19b9"
+    },
+    {
+      "file": "data/legacy/lr02/world_architecture.v1.json",
+      "bytes": 298778,
+      "sha256": "48929b5949d4326cbd75e0321bbf50058c320f8609512abe3c80e2cabf7a293e"
+    },
+    {
+      "file": "data/legacy/lr02/GAMEPLAY_HANDOFF.md",
+      "bytes": 11127,
+      "sha256": "8a9dfb5c64537b8869b91142998f8f8413740194beb50bfa0cfc823ff92473a2"
+    },
+    {
+      "file": "data/legacy/lr02/EVIDENCE_M1_M5.md",
+      "bytes": 7497,
+      "sha256": "52cdb0a9808e0668267afa253f774c041ff7dd4702eeb9a5ab7718f127cdec59"
+    },
+    {
+      "file": "data/legacy/lr02/MILESTONE_M4_VISUAL.md",
+      "bytes": 4783,
+      "sha256": "4d99dbfd533bc19bc1bf0fd7348af0f2712c2652ef7180424449b1d7eccd3773"
+    },
+    {
+      "file": "data/evidence/web_real/select-veyra-greywater-u16-640.png",
+      "bytes": 55277,
+      "sha256": "e7e4722d1ea35aade194d72e1dd8341ff77163b1b0c3cb2dc4daabb66d7f2691"
+    },
+    {
+      "file": "data/evidence/web_real/select-veyra-greywater-u20-640.png",
+      "bytes": 53369,
+      "sha256": "cbf7d586d3a588d56ff1e80d6b99c4b46ae494be974cafa95af847febe03eed0"
+    },
+    {
+      "file": "data/evidence/web_real/start-veyra-greywater-u16-640.png",
+      "bytes": 151749,
+      "sha256": "046fbb50be1f5fadb33d2768b840b0bb0af77c6b8f1af1df5bc3c060e090659f"
+    },
+    {
+      "file": "data/evidence/web_real/start-veyra-greywater-u20-640.png",
+      "bytes": 135935,
+      "sha256": "ea55cf2ee8c93f2d153da1cfbc6b6bc421f475d475c7af5b49cc3601579ce34f"
+    },
+    {
+      "file": "data/evidence/web_real/walk-veyra-greywater-u16-640.png",
+      "bytes": 149879,
+      "sha256": "94c41d5f62f0e6fc16f94e853ce9b33c7bfae028f5216ecf51bd6d136967a66f"
+    },
+    {
+      "file": "data/evidence/web_real/walk-veyra-greywater-u20-640.png",
+      "bytes": 135181,
+      "sha256": "abcf4caf7e8000d09864a0e799acbad8ef18ba6f6e4a048df4b86bfff4799732"
+    }
+  ],
+  "self": {
+    "file": "data/source_manifest.v1.json",
+    "sha256": "SELF_REFERENTIAL_EXCLUDED",
+    "verifyCommand": "sha256sum data/source_manifest.v1.json",
+    "note": "The manifest cannot contain its own SHA-256; its real digest is pinned by reproduce.sh and the authoritative master manifest."
+  },
+  "selfCheck": {
+    "files": 117,
+    "bytes": 15815702,
+    "status": "WHOLE_DATA_DIR_CHECK"
+  },
+  "prohibitedAfterMigration": [
+    "git show",
+    "map_tower/veyra_gold",
+    "world_lab/geo01",
+    "world_lab/geo02",
+    "world_lab/lr01",
+    "world_lab/lr02",
+    "network"
+  ],
+  "note": "All files under data/ are self-contained. build.mjs, api/, tests/ and tools/ import ONLY from data/ and each other."
+}

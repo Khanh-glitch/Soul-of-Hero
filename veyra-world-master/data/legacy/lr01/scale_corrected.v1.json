@@ -1,0 +1,3067 @@
+{
+  "schema": "soh.map.lr01.scale_corrected.v1",
+  "status": "MILESTONE_A__CORRECTED_SCALE_METHODOLOGY__RUNTIME_SCALE_STILL_UNDECIDED",
+  "authority": "MAP DESIGNS THE PHYSICAL WORLD. GAMEPLAY POPULATES AND SIMULATES IT.",
+  "creatorRule": "Full 2000x1400 authoring frame UNCHANGED. No rescale/crop/warp of canon. Transform metadata explicit; no premature runtime tile binding.",
+  "source": {
+    "veyra": {
+      "branch": "map/veyra-gold-asset-canon-20261102",
+      "commit": "19d8c6ec820f324a6ac12733165e43b5e2c6eab2",
+      "path": "map_tower/veyra_gold/VEYRA_GOLD_MAP.sohmap.json",
+      "bytes": 332249,
+      "sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+      "actualBytes": 332249,
+      "actualSha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+      "verified": true
+    },
+    "geo01": {
+      "bytes": 1427751,
+      "sha256": "13ae97272edc47b063bb4a2ffde5dcf9f92f0f34dc3fd35b6ab3bee7f26c29dd"
+    },
+    "geo01Corridor": {
+      "bytes": 56653,
+      "sha256": "e9212633b277ec0cd7ee932a0d9b1266532e805a2816e23e092edce3582db63e"
+    },
+    "geo02Encoding": {
+      "bytes": 21420,
+      "sha256": "14560c6c523ca01bb831898f914e0f298b8aa76fe0625cbd2fb565db902ea4db"
+    },
+    "geo02Audit": {
+      "bytes": 68739,
+      "sha256": "7377b97ad2cfe33d92b5857f06307c028b3b7b1b00b7c510c21014638e73a70d"
+    },
+    "scale01aBenchmark": "world_lab/scale01a/output/benchmark.v1.json @ 9e0f0805",
+    "gameplayAck": "PR44 issue comment 6608030530 @ 0b2ba508 (two-stage geography/population; temporary engine constants)"
+  },
+  "defectCorrection": {
+    "id": "SCALE01A-PER-POI-DEFECT",
+    "priorRule": "poiFeetUnableToHostSmallestRoom used F.poiFoot.minEdgeAu (GLOBAL 11 au) for all 81 POIs plus a flat area threshold; reported 81/81 failures at U=4 and U=8.",
+    "correction": "Each POI now measured with its own quad OBB, own edge lengths and own deep polygon; enclosure class separates open-air yards from enclosed rooms; only enclosed POIs are tested for a room.",
+    "priorCounts": {
+      "2": 0,
+      "4": 81,
+      "8": 81
+    },
+    "correctedCounts": {
+      "2": 0,
+      "4": 17,
+      "8": 38
+    },
+    "enclosedPoICount": 38,
+    "openAirPoiCount": 43,
+    "unresolvedPoiCount": 0,
+    "note": "The corrected count is NOT directly comparable to 81/81 because the population and the rule both changed. It is a per-POI measurement, not a global multiplication."
+  },
+  "candidateU": [
+    1,
+    1.25,
+    1.5,
+    1.6,
+    1.68,
+    1.75,
+    1.8,
+    2,
+    2.25,
+    2.5,
+    3,
+    4,
+    8
+  ],
+  "focusBandU": [
+    1.68,
+    1.75,
+    1.8,
+    2,
+    2.25
+  ],
+  "boundedBand": {
+    "min": 1,
+    "max": 2.5,
+    "members": [
+      1,
+      1.25,
+      1.5,
+      1.6,
+      1.68,
+      1.75,
+      1.8,
+      2,
+      2.25,
+      2.5
+    ]
+  },
+  "boundedBandStatement": "Physical-fit evidence supports a BOUNDED BAND U in [1, 2.5] among the tested candidates, not a single approved integer. U=2 is one member, NOT canonized. Fractional U within the band has explicit raster-coverage costs measured below.",
+  "profiles": [
+    {
+      "U": 1,
+      "focusBand": false,
+      "status": "BOUNDED_DIAGNOSTIC_PROFILE__NOT_APPROVED",
+      "transform": {
+        "U": 1,
+        "unit": "authoring_units_per_runtime_tile",
+        "exactIntegerDims": true,
+        "worldTilesExact": [
+          2000,
+          1400
+        ],
+        "floorTiles": [
+          2000,
+          1400
+        ],
+        "ceilTiles": [
+          2000,
+          1400
+        ],
+        "remainderTiles": [
+          0,
+          0
+        ],
+        "fractionalEdge": false,
+        "coverage": {
+          "frameAu2": 2800000,
+          "wholeTileAreaAu2": 2800000,
+          "wholeTileCoverageFraction": 1,
+          "ceilTileAreaAu2": 2800000,
+          "ceilOverhangFraction": 0,
+          "unrepresentedAu2WithFloor": 0,
+          "partialEdgeTileCount": 0,
+          "transformModes": [
+            "EXACT_1:1_TILE_GRID"
+          ],
+          "note": "For fractional U the last runtime row/column is partial. Any runtime intake must choose one documented mode; none is approved."
+        },
+        "raster": {
+          "sourceGrid": {
+            "gw": 250,
+            "gh": 175,
+            "cellAu": 8,
+            "cells": 43750
+          },
+          "tilesPerSourceCellAxis": 8,
+          "exactRasterAlignment": true,
+          "sourceCellsWithTileBoundaryInsideX": 250,
+          "sourceCellsWithTileBoundaryInsideY": 175,
+          "sourceCellsWithTileBoundaryInside2D": 43750,
+          "sourceCellsWithTileBoundaryInsideMeaning": "Upsampling count: a tile boundary inside an 8 au source cell. When 8/U is an INTEGER the clip is exact and costs no resampling.",
+          "fractionalSourceCellsRequiringResampling": 0,
+          "runtimeTileColumnsRowsStraddlingSourceCellBoundary": 0,
+          "runtimeTileStraddleMeaning": "A source-cell EDGE falling strictly inside a runtime tile. This is the explicit fractional-coverage cost and is ZERO when 8/U is an integer.",
+          "sourceCellsExactlyAligned": 43750,
+          "note": "Fractional U needs a documented FLOOR/CEIL/NONUNIFORM mode for partial edge tiles AND a resampling rule for 8 au source cells cut mid-tile."
+        }
+      },
+      "perPoi": {
+        "U": 1,
+        "poiCount": 81,
+        "enclosedCount": 38,
+        "enclosedWithRoom5x4": 38,
+        "enclosedWithRoomAndEntrance": 38,
+        "enclosedFail": 0,
+        "openAirCount": 43,
+        "openAirWithYard": 43,
+        "openAirFail": 0,
+        "unresolvedCount": 0,
+        "entranceCapacityZeroOpenTiles": 0,
+        "entranceCapacityStatus": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceLostCount": 0,
+        "proposedEntranceStatus": "3.696 au GEO-02 PROPOSED po_kilns opening; NON-CANONICAL worked example only.",
+        "entranceZeroOpenTiles": 0,
+        "poiFeetUnableToHostSmallestRoom_CORRECTED": 0,
+        "scale01aDefectReproduction": {
+          "flawedRule": "footAreaAu2/U^2 < 20 || GLOBAL_minEdgeAu/U < 4, applied to all 81 POIs",
+          "flawedFailCount": 0,
+          "note": "SCALE-01A reported 81/81 at U=4 and U=8 because it used the global 11 au minimum edge for every POI. The corrected count only considers ENCLOSED POIs and each POI's own quad."
+        }
+      },
+      "quantization": {
+        "U": 1,
+        "features": [
+          {
+            "id": "road_display_stroke_other",
+            "au": 1.6,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.other",
+            "tiles": 1.6,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "river_authored_width_min",
+            "au": 2.5,
+            "source": "canon rivers[].width min",
+            "tiles": 2.5,
+            "openTiles": 2,
+            "lostAtThisU": false
+          },
+          {
+            "id": "road_display_stroke_cart",
+            "au": 3.4,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.cart",
+            "tiles": 3.4,
+            "openTiles": 3,
+            "lostAtThisU": false
+          },
+          {
+            "id": "proposed_po_kilns_west_opening",
+            "au": 3.696,
+            "source": "geo02 poi_po_kilns.proposed.v1.json PROPOSED",
+            "tiles": 3.696,
+            "openTiles": 3,
+            "lostAtThisU": false
+          },
+          {
+            "id": "bridge_display_glyph_short_axis",
+            "au": 7.2,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.h",
+            "tiles": 7.2,
+            "openTiles": 7,
+            "lostAtThisU": false
+          },
+          {
+            "id": "source_raster_cell",
+            "au": 8,
+            "source": "canon terrain.cell",
+            "tiles": 8,
+            "openTiles": 8,
+            "lostAtThisU": false
+          },
+          {
+            "id": "road_analysis_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.roads.analysisStrokeAu",
+            "tiles": 9,
+            "openTiles": 9,
+            "lostAtThisU": false
+          },
+          {
+            "id": "river_mask_min_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.rivers.maskStrokeAu",
+            "tiles": 9,
+            "openTiles": 9,
+            "lostAtThisU": false
+          },
+          {
+            "id": "bridge_display_glyph_long_axis",
+            "au": 13,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.w",
+            "tiles": 13,
+            "openTiles": 13,
+            "lostAtThisU": false
+          },
+          {
+            "id": "po_kilns_cart_road_gap",
+            "au": 56.8792,
+            "source": "geo02 corridor_audit nearest cart road rd_n",
+            "tiles": 56.8792,
+            "openTiles": 56,
+            "lostAtThisU": false
+          }
+        ],
+        "lostCount": 0,
+        "note": "Editor strokes / display glyphs are NOT authored physical widths. lostAtThisU means the feature quantizes to ZERO whole runtime tiles."
+      },
+      "travel": {
+        "U": 1,
+        "speedAuPerSec": 4.5,
+        "basis": "PR44 balance.player.speed=72 px/s; k=16/U px per authoring unit; 1 game hour=3600 real s",
+        "rt1": {
+          "straightAu": 199.4843,
+          "routeAu": 346.1492,
+          "effectiveFootAu": 284.1852,
+          "effectiveCartAu": 464.1813,
+          "straightLineTheoreticalSeconds": 44.3298,
+          "geographicRouteSeconds": 63.1523,
+          "loadedCartScenarioSeconds": 181.6046,
+          "cartStatus": "MODELLED_SCENARIO_ON_FOOT_ROUTE__NOT_CART_PASSABLE"
+        },
+        "crossWorldWidthSeconds": 444.4444,
+        "crossWorldFractionOfFictionalDay": 0.3086,
+        "uncertainty": "Times are modelled from pinned movement constants; they are NOT native-input measured times. Physical clearance, trail cart-passability, ferry rules and exposure are UNRESOLVED."
+      },
+      "memory": {
+        "cells": 2800000,
+        "worldTypedArraysBytes": 16800000,
+        "blockGridBytes": 2800000,
+        "economyNumericArraysBytes": 291200000,
+        "sourceV3Bytes": 22400000,
+        "packageArraysBytes": 89600000,
+        "totalBytesLowerBound": 422800000,
+        "totalMBLowerBound": 403.2135,
+        "renderChunkCacheUpperBoundMB": 2750,
+        "compileEconomyNeighbourhoodChecksWorstCase": 137200000,
+        "model": "LOWER-BOUND MODEL, NOT MEASURED. Assumes 1-byte typed arrays for World/BlockGrid and 8-byte slots for JS arrays. Chunk key stride 100 and 1M-cell cap are TEMPORARY engine constants, not design limits."
+      },
+      "physicalFit": {
+        "enclosedFitRate": 1,
+        "openAirFitRate": 1,
+        "allEnclosedFit": true,
+        "allOpenAirFit": true,
+        "entranceCapacityNeverZero": true,
+        "entranceCapacityCaveat": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceOpenTiles": 3,
+        "proposedEntranceLost": false,
+        "note": "Rates are computed ONLY over the relevant enclosure class, using each POI's own quad/deep polygon/edges. The 3.696 au PROPOSED entrance is a separate worked example: at U>=3.696 it quantizes to ZERO open tiles."
+      },
+      "resolution": {
+        "sourceRasterUpsampleFactor": 64,
+        "tilesPerSourceCellAxis": 8,
+        "newAuthoredDetail": "NONE: Veyra raster is 8 au/cell. U<8 duplicates/interpolates; U>8 loses authored cells.",
+        "fractionalRasterCellsRequiringResampling": 0,
+        "runtimeTileStraddles": 0
+      },
+      "uncertainty": [
+        "Enclosure class is a DERIVED heuristic from canonical depth/deep/gate/arche fields, not a canonical field.",
+        "Wall thickness = 1 runtime tile and room requirement = 5x4 tiles are assumptions anchored to PR44 smallest authored building; not approved Veyra dimensions.",
+        "Entrance capacity is bounded by each POI's own shortest foot edge; canonical Veyra authors NO door openings.",
+        "WW=WH=200, TILE=16, validateEconomyMap 1,000,000-cell cap and render.ts chunk key stride 100 are TEMPORARY engine constants (Gameplay ACK 6608030530), NOT permanent design laws.",
+        "No streaming/LOD implementation was found in PR44 HEAD; chunk culling is not world streaming.",
+        "Loaded-cart times are modelled on the foot route; RT-1 contains kind=trail segments and is NOT cart-passable."
+      ]
+    },
+    {
+      "U": 1.25,
+      "focusBand": false,
+      "status": "BOUNDED_DIAGNOSTIC_PROFILE__NOT_APPROVED",
+      "transform": {
+        "U": 1.25,
+        "unit": "authoring_units_per_runtime_tile",
+        "exactIntegerDims": true,
+        "worldTilesExact": [
+          1600,
+          1120
+        ],
+        "floorTiles": [
+          1600,
+          1120
+        ],
+        "ceilTiles": [
+          1600,
+          1120
+        ],
+        "remainderTiles": [
+          0,
+          0
+        ],
+        "fractionalEdge": false,
+        "coverage": {
+          "frameAu2": 2800000,
+          "wholeTileAreaAu2": 2800000,
+          "wholeTileCoverageFraction": 1,
+          "ceilTileAreaAu2": 2800000,
+          "ceilOverhangFraction": 0,
+          "unrepresentedAu2WithFloor": 0,
+          "partialEdgeTileCount": 0,
+          "transformModes": [
+            "EXACT_1:1_TILE_GRID"
+          ],
+          "note": "For fractional U the last runtime row/column is partial. Any runtime intake must choose one documented mode; none is approved."
+        },
+        "raster": {
+          "sourceGrid": {
+            "gw": 250,
+            "gh": 175,
+            "cellAu": 8,
+            "cells": 43750
+          },
+          "tilesPerSourceCellAxis": 6.4,
+          "exactRasterAlignment": false,
+          "sourceCellsWithTileBoundaryInsideX": 250,
+          "sourceCellsWithTileBoundaryInsideY": 175,
+          "sourceCellsWithTileBoundaryInside2D": 43750,
+          "sourceCellsWithTileBoundaryInsideMeaning": "Upsampling count: a tile boundary inside an 8 au source cell. When 8/U is an INTEGER the clip is exact and costs no resampling.",
+          "fractionalSourceCellsRequiringResampling": 43750,
+          "runtimeTileColumnsRowsStraddlingSourceCellBoundary": 340,
+          "runtimeTileStraddleMeaning": "A source-cell EDGE falling strictly inside a runtime tile. This is the explicit fractional-coverage cost and is ZERO when 8/U is an integer.",
+          "sourceCellsExactlyAligned": 0,
+          "note": "Fractional U needs a documented FLOOR/CEIL/NONUNIFORM mode for partial edge tiles AND a resampling rule for 8 au source cells cut mid-tile."
+        }
+      },
+      "perPoi": {
+        "U": 1.25,
+        "poiCount": 81,
+        "enclosedCount": 38,
+        "enclosedWithRoom5x4": 38,
+        "enclosedWithRoomAndEntrance": 38,
+        "enclosedFail": 0,
+        "openAirCount": 43,
+        "openAirWithYard": 43,
+        "openAirFail": 0,
+        "unresolvedCount": 0,
+        "entranceCapacityZeroOpenTiles": 0,
+        "entranceCapacityStatus": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceLostCount": 0,
+        "proposedEntranceStatus": "3.696 au GEO-02 PROPOSED po_kilns opening; NON-CANONICAL worked example only.",
+        "entranceZeroOpenTiles": 0,
+        "poiFeetUnableToHostSmallestRoom_CORRECTED": 0,
+        "scale01aDefectReproduction": {
+          "flawedRule": "footAreaAu2/U^2 < 20 || GLOBAL_minEdgeAu/U < 4, applied to all 81 POIs",
+          "flawedFailCount": 0,
+          "note": "SCALE-01A reported 81/81 at U=4 and U=8 because it used the global 11 au minimum edge for every POI. The corrected count only considers ENCLOSED POIs and each POI's own quad."
+        }
+      },
+      "quantization": {
+        "U": 1.25,
+        "features": [
+          {
+            "id": "road_display_stroke_other",
+            "au": 1.6,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.other",
+            "tiles": 1.28,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "river_authored_width_min",
+            "au": 2.5,
+            "source": "canon rivers[].width min",
+            "tiles": 2,
+            "openTiles": 2,
+            "lostAtThisU": false
+          },
+          {
+            "id": "road_display_stroke_cart",
+            "au": 3.4,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.cart",
+            "tiles": 2.72,
+            "openTiles": 2,
+            "lostAtThisU": false
+          },
+          {
+            "id": "proposed_po_kilns_west_opening",
+            "au": 3.696,
+            "source": "geo02 poi_po_kilns.proposed.v1.json PROPOSED",
+            "tiles": 2.9568,
+            "openTiles": 2,
+            "lostAtThisU": false
+          },
+          {
+            "id": "bridge_display_glyph_short_axis",
+            "au": 7.2,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.h",
+            "tiles": 5.76,
+            "openTiles": 5,
+            "lostAtThisU": false
+          },
+          {
+            "id": "source_raster_cell",
+            "au": 8,
+            "source": "canon terrain.cell",
+            "tiles": 6.4,
+            "openTiles": 6,
+            "lostAtThisU": false
+          },
+          {
+            "id": "road_analysis_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.roads.analysisStrokeAu",
+            "tiles": 7.2,
+            "openTiles": 7,
+            "lostAtThisU": false
+          },
+          {
+            "id": "river_mask_min_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.rivers.maskStrokeAu",
+            "tiles": 7.2,
+            "openTiles": 7,
+            "lostAtThisU": false
+          },
+          {
+            "id": "bridge_display_glyph_long_axis",
+            "au": 13,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.w",
+            "tiles": 10.4,
+            "openTiles": 10,
+            "lostAtThisU": false
+          },
+          {
+            "id": "po_kilns_cart_road_gap",
+            "au": 56.8792,
+            "source": "geo02 corridor_audit nearest cart road rd_n",
+            "tiles": 45.5034,
+            "openTiles": 45,
+            "lostAtThisU": false
+          }
+        ],
+        "lostCount": 0,
+        "note": "Editor strokes / display glyphs are NOT authored physical widths. lostAtThisU means the feature quantizes to ZERO whole runtime tiles."
+      },
+      "travel": {
+        "U": 1.25,
+        "speedAuPerSec": 5.625,
+        "basis": "PR44 balance.player.speed=72 px/s; k=16/U px per authoring unit; 1 game hour=3600 real s",
+        "rt1": {
+          "straightAu": 199.4843,
+          "routeAu": 346.1492,
+          "effectiveFootAu": 284.1852,
+          "effectiveCartAu": 464.1813,
+          "straightLineTheoreticalSeconds": 35.4639,
+          "geographicRouteSeconds": 50.5218,
+          "loadedCartScenarioSeconds": 145.2837,
+          "cartStatus": "MODELLED_SCENARIO_ON_FOOT_ROUTE__NOT_CART_PASSABLE"
+        },
+        "crossWorldWidthSeconds": 355.5556,
+        "crossWorldFractionOfFictionalDay": 0.2469,
+        "uncertainty": "Times are modelled from pinned movement constants; they are NOT native-input measured times. Physical clearance, trail cart-passability, ferry rules and exposure are UNRESOLVED."
+      },
+      "memory": {
+        "cells": 1792000,
+        "worldTypedArraysBytes": 10752000,
+        "blockGridBytes": 1792000,
+        "economyNumericArraysBytes": 186368000,
+        "sourceV3Bytes": 14336000,
+        "packageArraysBytes": 57344000,
+        "totalBytesLowerBound": 270592000,
+        "totalMBLowerBound": 258.0566,
+        "renderChunkCacheUpperBoundMB": 1750,
+        "compileEconomyNeighbourhoodChecksWorstCase": 87808000,
+        "model": "LOWER-BOUND MODEL, NOT MEASURED. Assumes 1-byte typed arrays for World/BlockGrid and 8-byte slots for JS arrays. Chunk key stride 100 and 1M-cell cap are TEMPORARY engine constants, not design limits."
+      },
+      "physicalFit": {
+        "enclosedFitRate": 1,
+        "openAirFitRate": 1,
+        "allEnclosedFit": true,
+        "allOpenAirFit": true,
+        "entranceCapacityNeverZero": true,
+        "entranceCapacityCaveat": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceOpenTiles": 2,
+        "proposedEntranceLost": false,
+        "note": "Rates are computed ONLY over the relevant enclosure class, using each POI's own quad/deep polygon/edges. The 3.696 au PROPOSED entrance is a separate worked example: at U>=3.696 it quantizes to ZERO open tiles."
+      },
+      "resolution": {
+        "sourceRasterUpsampleFactor": 40.96,
+        "tilesPerSourceCellAxis": 6.4,
+        "newAuthoredDetail": "NONE: Veyra raster is 8 au/cell. U<8 duplicates/interpolates; U>8 loses authored cells.",
+        "fractionalRasterCellsRequiringResampling": 43750,
+        "runtimeTileStraddles": 340
+      },
+      "uncertainty": [
+        "Enclosure class is a DERIVED heuristic from canonical depth/deep/gate/arche fields, not a canonical field.",
+        "Wall thickness = 1 runtime tile and room requirement = 5x4 tiles are assumptions anchored to PR44 smallest authored building; not approved Veyra dimensions.",
+        "Entrance capacity is bounded by each POI's own shortest foot edge; canonical Veyra authors NO door openings.",
+        "WW=WH=200, TILE=16, validateEconomyMap 1,000,000-cell cap and render.ts chunk key stride 100 are TEMPORARY engine constants (Gameplay ACK 6608030530), NOT permanent design laws.",
+        "No streaming/LOD implementation was found in PR44 HEAD; chunk culling is not world streaming.",
+        "Loaded-cart times are modelled on the foot route; RT-1 contains kind=trail segments and is NOT cart-passable."
+      ]
+    },
+    {
+      "U": 1.5,
+      "focusBand": false,
+      "status": "BOUNDED_DIAGNOSTIC_PROFILE__NOT_APPROVED",
+      "transform": {
+        "U": 1.5,
+        "unit": "authoring_units_per_runtime_tile",
+        "exactIntegerDims": false,
+        "worldTilesExact": [
+          1333.3333,
+          933.3333
+        ],
+        "floorTiles": [
+          1333,
+          933
+        ],
+        "ceilTiles": [
+          1334,
+          934
+        ],
+        "remainderTiles": [
+          0.3333,
+          0.3333
+        ],
+        "fractionalEdge": true,
+        "coverage": {
+          "frameAu2": 2800000,
+          "wholeTileAreaAu2": 2798300.25,
+          "wholeTileCoverageFraction": 0.9994,
+          "ceilTileAreaAu2": 2803401,
+          "ceilOverhangFraction": 0.0012,
+          "unrepresentedAu2WithFloor": 1699.75,
+          "partialEdgeTileCount": 2267,
+          "transformModes": [
+            "FLOOR_DROPS_PARTIAL_EDGE_STRIP",
+            "CEIL_PADS_BEYOND_FRAME",
+            "NONUNIFORM_RESAMPLE_REQUIRED"
+          ],
+          "note": "For fractional U the last runtime row/column is partial. Any runtime intake must choose one documented mode; none is approved."
+        },
+        "raster": {
+          "sourceGrid": {
+            "gw": 250,
+            "gh": 175,
+            "cellAu": 8,
+            "cells": 43750
+          },
+          "tilesPerSourceCellAxis": 5.3333,
+          "exactRasterAlignment": false,
+          "sourceCellsWithTileBoundaryInsideX": 250,
+          "sourceCellsWithTileBoundaryInsideY": 175,
+          "sourceCellsWithTileBoundaryInside2D": 43750,
+          "sourceCellsWithTileBoundaryInsideMeaning": "Upsampling count: a tile boundary inside an 8 au source cell. When 8/U is an INTEGER the clip is exact and costs no resampling.",
+          "fractionalSourceCellsRequiringResampling": 43750,
+          "runtimeTileColumnsRowsStraddlingSourceCellBoundary": 282,
+          "runtimeTileStraddleMeaning": "A source-cell EDGE falling strictly inside a runtime tile. This is the explicit fractional-coverage cost and is ZERO when 8/U is an integer.",
+          "sourceCellsExactlyAligned": 0,
+          "note": "Fractional U needs a documented FLOOR/CEIL/NONUNIFORM mode for partial edge tiles AND a resampling rule for 8 au source cells cut mid-tile."
+        }
+      },
+      "perPoi": {
+        "U": 1.5,
+        "poiCount": 81,
+        "enclosedCount": 38,
+        "enclosedWithRoom5x4": 38,
+        "enclosedWithRoomAndEntrance": 38,
+        "enclosedFail": 0,
+        "openAirCount": 43,
+        "openAirWithYard": 43,
+        "openAirFail": 0,
+        "unresolvedCount": 0,
+        "entranceCapacityZeroOpenTiles": 0,
+        "entranceCapacityStatus": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceLostCount": 0,
+        "proposedEntranceStatus": "3.696 au GEO-02 PROPOSED po_kilns opening; NON-CANONICAL worked example only.",
+        "entranceZeroOpenTiles": 0,
+        "poiFeetUnableToHostSmallestRoom_CORRECTED": 0,
+        "scale01aDefectReproduction": {
+          "flawedRule": "footAreaAu2/U^2 < 20 || GLOBAL_minEdgeAu/U < 4, applied to all 81 POIs",
+          "flawedFailCount": 0,
+          "note": "SCALE-01A reported 81/81 at U=4 and U=8 because it used the global 11 au minimum edge for every POI. The corrected count only considers ENCLOSED POIs and each POI's own quad."
+        }
+      },
+      "quantization": {
+        "U": 1.5,
+        "features": [
+          {
+            "id": "road_display_stroke_other",
+            "au": 1.6,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.other",
+            "tiles": 1.0667,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "river_authored_width_min",
+            "au": 2.5,
+            "source": "canon rivers[].width min",
+            "tiles": 1.6667,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "road_display_stroke_cart",
+            "au": 3.4,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.cart",
+            "tiles": 2.2667,
+            "openTiles": 2,
+            "lostAtThisU": false
+          },
+          {
+            "id": "proposed_po_kilns_west_opening",
+            "au": 3.696,
+            "source": "geo02 poi_po_kilns.proposed.v1.json PROPOSED",
+            "tiles": 2.464,
+            "openTiles": 2,
+            "lostAtThisU": false
+          },
+          {
+            "id": "bridge_display_glyph_short_axis",
+            "au": 7.2,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.h",
+            "tiles": 4.8,
+            "openTiles": 4,
+            "lostAtThisU": false
+          },
+          {
+            "id": "source_raster_cell",
+            "au": 8,
+            "source": "canon terrain.cell",
+            "tiles": 5.3333,
+            "openTiles": 5,
+            "lostAtThisU": false
+          },
+          {
+            "id": "road_analysis_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.roads.analysisStrokeAu",
+            "tiles": 6,
+            "openTiles": 6,
+            "lostAtThisU": false
+          },
+          {
+            "id": "river_mask_min_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.rivers.maskStrokeAu",
+            "tiles": 6,
+            "openTiles": 6,
+            "lostAtThisU": false
+          },
+          {
+            "id": "bridge_display_glyph_long_axis",
+            "au": 13,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.w",
+            "tiles": 8.6667,
+            "openTiles": 8,
+            "lostAtThisU": false
+          },
+          {
+            "id": "po_kilns_cart_road_gap",
+            "au": 56.8792,
+            "source": "geo02 corridor_audit nearest cart road rd_n",
+            "tiles": 37.9195,
+            "openTiles": 37,
+            "lostAtThisU": false
+          }
+        ],
+        "lostCount": 0,
+        "note": "Editor strokes / display glyphs are NOT authored physical widths. lostAtThisU means the feature quantizes to ZERO whole runtime tiles."
+      },
+      "travel": {
+        "U": 1.5,
+        "speedAuPerSec": 6.75,
+        "basis": "PR44 balance.player.speed=72 px/s; k=16/U px per authoring unit; 1 game hour=3600 real s",
+        "rt1": {
+          "straightAu": 199.4843,
+          "routeAu": 346.1492,
+          "effectiveFootAu": 284.1852,
+          "effectiveCartAu": 464.1813,
+          "straightLineTheoreticalSeconds": 29.5532,
+          "geographicRouteSeconds": 42.1015,
+          "loadedCartScenarioSeconds": 121.0697,
+          "cartStatus": "MODELLED_SCENARIO_ON_FOOT_ROUTE__NOT_CART_PASSABLE"
+        },
+        "crossWorldWidthSeconds": 296.2963,
+        "crossWorldFractionOfFictionalDay": 0.2058,
+        "uncertainty": "Times are modelled from pinned movement constants; they are NOT native-input measured times. Physical clearance, trail cart-passability, ferry rules and exposure are UNRESOLVED."
+      },
+      "memory": {
+        "cells": 1245956,
+        "worldTypedArraysBytes": 7475736,
+        "blockGridBytes": 1245956,
+        "economyNumericArraysBytes": 129579424,
+        "sourceV3Bytes": 9967648,
+        "packageArraysBytes": 39870592,
+        "totalBytesLowerBound": 188139356,
+        "totalMBLowerBound": 179.4237,
+        "renderChunkCacheUpperBoundMB": 1239,
+        "compileEconomyNeighbourhoodChecksWorstCase": 61051844,
+        "model": "LOWER-BOUND MODEL, NOT MEASURED. Assumes 1-byte typed arrays for World/BlockGrid and 8-byte slots for JS arrays. Chunk key stride 100 and 1M-cell cap are TEMPORARY engine constants, not design limits."
+      },
+      "physicalFit": {
+        "enclosedFitRate": 1,
+        "openAirFitRate": 1,
+        "allEnclosedFit": true,
+        "allOpenAirFit": true,
+        "entranceCapacityNeverZero": true,
+        "entranceCapacityCaveat": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceOpenTiles": 2,
+        "proposedEntranceLost": false,
+        "note": "Rates are computed ONLY over the relevant enclosure class, using each POI's own quad/deep polygon/edges. The 3.696 au PROPOSED entrance is a separate worked example: at U>=3.696 it quantizes to ZERO open tiles."
+      },
+      "resolution": {
+        "sourceRasterUpsampleFactor": 28.4444,
+        "tilesPerSourceCellAxis": 5.3333,
+        "newAuthoredDetail": "NONE: Veyra raster is 8 au/cell. U<8 duplicates/interpolates; U>8 loses authored cells.",
+        "fractionalRasterCellsRequiringResampling": 43750,
+        "runtimeTileStraddles": 282
+      },
+      "uncertainty": [
+        "Enclosure class is a DERIVED heuristic from canonical depth/deep/gate/arche fields, not a canonical field.",
+        "Wall thickness = 1 runtime tile and room requirement = 5x4 tiles are assumptions anchored to PR44 smallest authored building; not approved Veyra dimensions.",
+        "Entrance capacity is bounded by each POI's own shortest foot edge; canonical Veyra authors NO door openings.",
+        "WW=WH=200, TILE=16, validateEconomyMap 1,000,000-cell cap and render.ts chunk key stride 100 are TEMPORARY engine constants (Gameplay ACK 6608030530), NOT permanent design laws.",
+        "No streaming/LOD implementation was found in PR44 HEAD; chunk culling is not world streaming.",
+        "Loaded-cart times are modelled on the foot route; RT-1 contains kind=trail segments and is NOT cart-passable."
+      ]
+    },
+    {
+      "U": 1.6,
+      "focusBand": false,
+      "status": "BOUNDED_DIAGNOSTIC_PROFILE__NOT_APPROVED",
+      "transform": {
+        "U": 1.6,
+        "unit": "authoring_units_per_runtime_tile",
+        "exactIntegerDims": true,
+        "worldTilesExact": [
+          1250,
+          875
+        ],
+        "floorTiles": [
+          1250,
+          875
+        ],
+        "ceilTiles": [
+          1250,
+          875
+        ],
+        "remainderTiles": [
+          0,
+          0
+        ],
+        "fractionalEdge": false,
+        "coverage": {
+          "frameAu2": 2800000,
+          "wholeTileAreaAu2": 2800000,
+          "wholeTileCoverageFraction": 1,
+          "ceilTileAreaAu2": 2800000,
+          "ceilOverhangFraction": 0,
+          "unrepresentedAu2WithFloor": 0,
+          "partialEdgeTileCount": 0,
+          "transformModes": [
+            "EXACT_1:1_TILE_GRID"
+          ],
+          "note": "For fractional U the last runtime row/column is partial. Any runtime intake must choose one documented mode; none is approved."
+        },
+        "raster": {
+          "sourceGrid": {
+            "gw": 250,
+            "gh": 175,
+            "cellAu": 8,
+            "cells": 43750
+          },
+          "tilesPerSourceCellAxis": 5,
+          "exactRasterAlignment": true,
+          "sourceCellsWithTileBoundaryInsideX": 250,
+          "sourceCellsWithTileBoundaryInsideY": 175,
+          "sourceCellsWithTileBoundaryInside2D": 43750,
+          "sourceCellsWithTileBoundaryInsideMeaning": "Upsampling count: a tile boundary inside an 8 au source cell. When 8/U is an INTEGER the clip is exact and costs no resampling.",
+          "fractionalSourceCellsRequiringResampling": 0,
+          "runtimeTileColumnsRowsStraddlingSourceCellBoundary": 0,
+          "runtimeTileStraddleMeaning": "A source-cell EDGE falling strictly inside a runtime tile. This is the explicit fractional-coverage cost and is ZERO when 8/U is an integer.",
+          "sourceCellsExactlyAligned": 43750,
+          "note": "Fractional U needs a documented FLOOR/CEIL/NONUNIFORM mode for partial edge tiles AND a resampling rule for 8 au source cells cut mid-tile."
+        }
+      },
+      "perPoi": {
+        "U": 1.6,
+        "poiCount": 81,
+        "enclosedCount": 38,
+        "enclosedWithRoom5x4": 38,
+        "enclosedWithRoomAndEntrance": 38,
+        "enclosedFail": 0,
+        "openAirCount": 43,
+        "openAirWithYard": 43,
+        "openAirFail": 0,
+        "unresolvedCount": 0,
+        "entranceCapacityZeroOpenTiles": 0,
+        "entranceCapacityStatus": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceLostCount": 0,
+        "proposedEntranceStatus": "3.696 au GEO-02 PROPOSED po_kilns opening; NON-CANONICAL worked example only.",
+        "entranceZeroOpenTiles": 0,
+        "poiFeetUnableToHostSmallestRoom_CORRECTED": 0,
+        "scale01aDefectReproduction": {
+          "flawedRule": "footAreaAu2/U^2 < 20 || GLOBAL_minEdgeAu/U < 4, applied to all 81 POIs",
+          "flawedFailCount": 0,
+          "note": "SCALE-01A reported 81/81 at U=4 and U=8 because it used the global 11 au minimum edge for every POI. The corrected count only considers ENCLOSED POIs and each POI's own quad."
+        }
+      },
+      "quantization": {
+        "U": 1.6,
+        "features": [
+          {
+            "id": "road_display_stroke_other",
+            "au": 1.6,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.other",
+            "tiles": 1,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "river_authored_width_min",
+            "au": 2.5,
+            "source": "canon rivers[].width min",
+            "tiles": 1.5625,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "road_display_stroke_cart",
+            "au": 3.4,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.cart",
+            "tiles": 2.125,
+            "openTiles": 2,
+            "lostAtThisU": false
+          },
+          {
+            "id": "proposed_po_kilns_west_opening",
+            "au": 3.696,
+            "source": "geo02 poi_po_kilns.proposed.v1.json PROPOSED",
+            "tiles": 2.31,
+            "openTiles": 2,
+            "lostAtThisU": false
+          },
+          {
+            "id": "bridge_display_glyph_short_axis",
+            "au": 7.2,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.h",
+            "tiles": 4.5,
+            "openTiles": 4,
+            "lostAtThisU": false
+          },
+          {
+            "id": "source_raster_cell",
+            "au": 8,
+            "source": "canon terrain.cell",
+            "tiles": 5,
+            "openTiles": 5,
+            "lostAtThisU": false
+          },
+          {
+            "id": "road_analysis_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.roads.analysisStrokeAu",
+            "tiles": 5.625,
+            "openTiles": 5,
+            "lostAtThisU": false
+          },
+          {
+            "id": "river_mask_min_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.rivers.maskStrokeAu",
+            "tiles": 5.625,
+            "openTiles": 5,
+            "lostAtThisU": false
+          },
+          {
+            "id": "bridge_display_glyph_long_axis",
+            "au": 13,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.w",
+            "tiles": 8.125,
+            "openTiles": 8,
+            "lostAtThisU": false
+          },
+          {
+            "id": "po_kilns_cart_road_gap",
+            "au": 56.8792,
+            "source": "geo02 corridor_audit nearest cart road rd_n",
+            "tiles": 35.5495,
+            "openTiles": 35,
+            "lostAtThisU": false
+          }
+        ],
+        "lostCount": 0,
+        "note": "Editor strokes / display glyphs are NOT authored physical widths. lostAtThisU means the feature quantizes to ZERO whole runtime tiles."
+      },
+      "travel": {
+        "U": 1.6,
+        "speedAuPerSec": 7.2,
+        "basis": "PR44 balance.player.speed=72 px/s; k=16/U px per authoring unit; 1 game hour=3600 real s",
+        "rt1": {
+          "straightAu": 199.4843,
+          "routeAu": 346.1492,
+          "effectiveFootAu": 284.1852,
+          "effectiveCartAu": 464.1813,
+          "straightLineTheoreticalSeconds": 27.7062,
+          "geographicRouteSeconds": 39.4702,
+          "loadedCartScenarioSeconds": 113.5029,
+          "cartStatus": "MODELLED_SCENARIO_ON_FOOT_ROUTE__NOT_CART_PASSABLE"
+        },
+        "crossWorldWidthSeconds": 277.7778,
+        "crossWorldFractionOfFictionalDay": 0.1929,
+        "uncertainty": "Times are modelled from pinned movement constants; they are NOT native-input measured times. Physical clearance, trail cart-passability, ferry rules and exposure are UNRESOLVED."
+      },
+      "memory": {
+        "cells": 1093750,
+        "worldTypedArraysBytes": 6562500,
+        "blockGridBytes": 1093750,
+        "economyNumericArraysBytes": 113750000,
+        "sourceV3Bytes": 8750000,
+        "packageArraysBytes": 35000000,
+        "totalBytesLowerBound": 165156250,
+        "totalMBLowerBound": 157.5053,
+        "renderChunkCacheUpperBoundMB": 1086.25,
+        "compileEconomyNeighbourhoodChecksWorstCase": 53593750,
+        "model": "LOWER-BOUND MODEL, NOT MEASURED. Assumes 1-byte typed arrays for World/BlockGrid and 8-byte slots for JS arrays. Chunk key stride 100 and 1M-cell cap are TEMPORARY engine constants, not design limits."
+      },
+      "physicalFit": {
+        "enclosedFitRate": 1,
+        "openAirFitRate": 1,
+        "allEnclosedFit": true,
+        "allOpenAirFit": true,
+        "entranceCapacityNeverZero": true,
+        "entranceCapacityCaveat": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceOpenTiles": 2,
+        "proposedEntranceLost": false,
+        "note": "Rates are computed ONLY over the relevant enclosure class, using each POI's own quad/deep polygon/edges. The 3.696 au PROPOSED entrance is a separate worked example: at U>=3.696 it quantizes to ZERO open tiles."
+      },
+      "resolution": {
+        "sourceRasterUpsampleFactor": 25,
+        "tilesPerSourceCellAxis": 5,
+        "newAuthoredDetail": "NONE: Veyra raster is 8 au/cell. U<8 duplicates/interpolates; U>8 loses authored cells.",
+        "fractionalRasterCellsRequiringResampling": 0,
+        "runtimeTileStraddles": 0
+      },
+      "uncertainty": [
+        "Enclosure class is a DERIVED heuristic from canonical depth/deep/gate/arche fields, not a canonical field.",
+        "Wall thickness = 1 runtime tile and room requirement = 5x4 tiles are assumptions anchored to PR44 smallest authored building; not approved Veyra dimensions.",
+        "Entrance capacity is bounded by each POI's own shortest foot edge; canonical Veyra authors NO door openings.",
+        "WW=WH=200, TILE=16, validateEconomyMap 1,000,000-cell cap and render.ts chunk key stride 100 are TEMPORARY engine constants (Gameplay ACK 6608030530), NOT permanent design laws.",
+        "No streaming/LOD implementation was found in PR44 HEAD; chunk culling is not world streaming.",
+        "Loaded-cart times are modelled on the foot route; RT-1 contains kind=trail segments and is NOT cart-passable."
+      ]
+    },
+    {
+      "U": 1.68,
+      "focusBand": true,
+      "status": "BOUNDED_DIAGNOSTIC_PROFILE__NOT_APPROVED",
+      "transform": {
+        "U": 1.68,
+        "unit": "authoring_units_per_runtime_tile",
+        "exactIntegerDims": false,
+        "worldTilesExact": [
+          1190.4762,
+          833.3333
+        ],
+        "floorTiles": [
+          1190,
+          833
+        ],
+        "ceilTiles": [
+          1191,
+          834
+        ],
+        "remainderTiles": [
+          0.4762,
+          0.3333
+        ],
+        "fractionalEdge": true,
+        "coverage": {
+          "frameAu2": 2800000,
+          "wholeTileAreaAu2": 2797760.448,
+          "wholeTileCoverageFraction": 0.9992,
+          "ceilTileAreaAu2": 2803472.9856,
+          "ceilOverhangFraction": 0.0012,
+          "unrepresentedAu2WithFloor": 2239.552,
+          "partialEdgeTileCount": 2024,
+          "transformModes": [
+            "FLOOR_DROPS_PARTIAL_EDGE_STRIP",
+            "CEIL_PADS_BEYOND_FRAME",
+            "NONUNIFORM_RESAMPLE_REQUIRED"
+          ],
+          "note": "For fractional U the last runtime row/column is partial. Any runtime intake must choose one documented mode; none is approved."
+        },
+        "raster": {
+          "sourceGrid": {
+            "gw": 250,
+            "gh": 175,
+            "cellAu": 8,
+            "cells": 43750
+          },
+          "tilesPerSourceCellAxis": 4.7619,
+          "exactRasterAlignment": false,
+          "sourceCellsWithTileBoundaryInsideX": 250,
+          "sourceCellsWithTileBoundaryInsideY": 175,
+          "sourceCellsWithTileBoundaryInside2D": 43750,
+          "sourceCellsWithTileBoundaryInsideMeaning": "Upsampling count: a tile boundary inside an 8 au source cell. When 8/U is an INTEGER the clip is exact and costs no resampling.",
+          "fractionalSourceCellsRequiringResampling": 43750,
+          "runtimeTileColumnsRowsStraddlingSourceCellBoundary": 404,
+          "runtimeTileStraddleMeaning": "A source-cell EDGE falling strictly inside a runtime tile. This is the explicit fractional-coverage cost and is ZERO when 8/U is an integer.",
+          "sourceCellsExactlyAligned": 0,
+          "note": "Fractional U needs a documented FLOOR/CEIL/NONUNIFORM mode for partial edge tiles AND a resampling rule for 8 au source cells cut mid-tile."
+        }
+      },
+      "perPoi": {
+        "U": 1.68,
+        "poiCount": 81,
+        "enclosedCount": 38,
+        "enclosedWithRoom5x4": 38,
+        "enclosedWithRoomAndEntrance": 38,
+        "enclosedFail": 0,
+        "openAirCount": 43,
+        "openAirWithYard": 43,
+        "openAirFail": 0,
+        "unresolvedCount": 0,
+        "entranceCapacityZeroOpenTiles": 0,
+        "entranceCapacityStatus": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceLostCount": 0,
+        "proposedEntranceStatus": "3.696 au GEO-02 PROPOSED po_kilns opening; NON-CANONICAL worked example only.",
+        "entranceZeroOpenTiles": 0,
+        "poiFeetUnableToHostSmallestRoom_CORRECTED": 0,
+        "scale01aDefectReproduction": {
+          "flawedRule": "footAreaAu2/U^2 < 20 || GLOBAL_minEdgeAu/U < 4, applied to all 81 POIs",
+          "flawedFailCount": 0,
+          "note": "SCALE-01A reported 81/81 at U=4 and U=8 because it used the global 11 au minimum edge for every POI. The corrected count only considers ENCLOSED POIs and each POI's own quad."
+        }
+      },
+      "quantization": {
+        "U": 1.68,
+        "features": [
+          {
+            "id": "road_display_stroke_other",
+            "au": 1.6,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.other",
+            "tiles": 0.9524,
+            "openTiles": 0,
+            "lostAtThisU": true
+          },
+          {
+            "id": "river_authored_width_min",
+            "au": 2.5,
+            "source": "canon rivers[].width min",
+            "tiles": 1.4881,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "road_display_stroke_cart",
+            "au": 3.4,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.cart",
+            "tiles": 2.0238,
+            "openTiles": 2,
+            "lostAtThisU": false
+          },
+          {
+            "id": "proposed_po_kilns_west_opening",
+            "au": 3.696,
+            "source": "geo02 poi_po_kilns.proposed.v1.json PROPOSED",
+            "tiles": 2.2,
+            "openTiles": 2,
+            "lostAtThisU": false
+          },
+          {
+            "id": "bridge_display_glyph_short_axis",
+            "au": 7.2,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.h",
+            "tiles": 4.2857,
+            "openTiles": 4,
+            "lostAtThisU": false
+          },
+          {
+            "id": "source_raster_cell",
+            "au": 8,
+            "source": "canon terrain.cell",
+            "tiles": 4.7619,
+            "openTiles": 4,
+            "lostAtThisU": false
+          },
+          {
+            "id": "road_analysis_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.roads.analysisStrokeAu",
+            "tiles": 5.3571,
+            "openTiles": 5,
+            "lostAtThisU": false
+          },
+          {
+            "id": "river_mask_min_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.rivers.maskStrokeAu",
+            "tiles": 5.3571,
+            "openTiles": 5,
+            "lostAtThisU": false
+          },
+          {
+            "id": "bridge_display_glyph_long_axis",
+            "au": 13,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.w",
+            "tiles": 7.7381,
+            "openTiles": 7,
+            "lostAtThisU": false
+          },
+          {
+            "id": "po_kilns_cart_road_gap",
+            "au": 56.8792,
+            "source": "geo02 corridor_audit nearest cart road rd_n",
+            "tiles": 33.8567,
+            "openTiles": 33,
+            "lostAtThisU": false
+          }
+        ],
+        "lostCount": 1,
+        "note": "Editor strokes / display glyphs are NOT authored physical widths. lostAtThisU means the feature quantizes to ZERO whole runtime tiles."
+      },
+      "travel": {
+        "U": 1.68,
+        "speedAuPerSec": 7.56,
+        "basis": "PR44 balance.player.speed=72 px/s; k=16/U px per authoring unit; 1 game hour=3600 real s",
+        "rt1": {
+          "straightAu": 199.4843,
+          "routeAu": 346.1492,
+          "effectiveFootAu": 284.1852,
+          "effectiveCartAu": 464.1813,
+          "straightLineTheoreticalSeconds": 26.3868,
+          "geographicRouteSeconds": 37.5906,
+          "loadedCartScenarioSeconds": 108.098,
+          "cartStatus": "MODELLED_SCENARIO_ON_FOOT_ROUTE__NOT_CART_PASSABLE"
+        },
+        "crossWorldWidthSeconds": 264.5503,
+        "crossWorldFractionOfFictionalDay": 0.1837,
+        "uncertainty": "Times are modelled from pinned movement constants; they are NOT native-input measured times. Physical clearance, trail cart-passability, ferry rules and exposure are UNRESOLVED."
+      },
+      "memory": {
+        "cells": 993294,
+        "worldTypedArraysBytes": 5959764,
+        "blockGridBytes": 993294,
+        "economyNumericArraysBytes": 103302576,
+        "sourceV3Bytes": 7946352,
+        "packageArraysBytes": 31785408,
+        "totalBytesLowerBound": 149987394,
+        "totalMBLowerBound": 143.0391,
+        "renderChunkCacheUpperBoundMB": 993.75,
+        "compileEconomyNeighbourhoodChecksWorstCase": 48671406,
+        "model": "LOWER-BOUND MODEL, NOT MEASURED. Assumes 1-byte typed arrays for World/BlockGrid and 8-byte slots for JS arrays. Chunk key stride 100 and 1M-cell cap are TEMPORARY engine constants, not design limits."
+      },
+      "physicalFit": {
+        "enclosedFitRate": 1,
+        "openAirFitRate": 1,
+        "allEnclosedFit": true,
+        "allOpenAirFit": true,
+        "entranceCapacityNeverZero": true,
+        "entranceCapacityCaveat": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceOpenTiles": 2,
+        "proposedEntranceLost": false,
+        "note": "Rates are computed ONLY over the relevant enclosure class, using each POI's own quad/deep polygon/edges. The 3.696 au PROPOSED entrance is a separate worked example: at U>=3.696 it quantizes to ZERO open tiles."
+      },
+      "resolution": {
+        "sourceRasterUpsampleFactor": 22.6757,
+        "tilesPerSourceCellAxis": 4.7619,
+        "newAuthoredDetail": "NONE: Veyra raster is 8 au/cell. U<8 duplicates/interpolates; U>8 loses authored cells.",
+        "fractionalRasterCellsRequiringResampling": 43750,
+        "runtimeTileStraddles": 404
+      },
+      "uncertainty": [
+        "Enclosure class is a DERIVED heuristic from canonical depth/deep/gate/arche fields, not a canonical field.",
+        "Wall thickness = 1 runtime tile and room requirement = 5x4 tiles are assumptions anchored to PR44 smallest authored building; not approved Veyra dimensions.",
+        "Entrance capacity is bounded by each POI's own shortest foot edge; canonical Veyra authors NO door openings.",
+        "WW=WH=200, TILE=16, validateEconomyMap 1,000,000-cell cap and render.ts chunk key stride 100 are TEMPORARY engine constants (Gameplay ACK 6608030530), NOT permanent design laws.",
+        "No streaming/LOD implementation was found in PR44 HEAD; chunk culling is not world streaming.",
+        "Loaded-cart times are modelled on the foot route; RT-1 contains kind=trail segments and is NOT cart-passable."
+      ]
+    },
+    {
+      "U": 1.75,
+      "focusBand": true,
+      "status": "BOUNDED_DIAGNOSTIC_PROFILE__NOT_APPROVED",
+      "transform": {
+        "U": 1.75,
+        "unit": "authoring_units_per_runtime_tile",
+        "exactIntegerDims": false,
+        "worldTilesExact": [
+          1142.8571,
+          800
+        ],
+        "floorTiles": [
+          1142,
+          800
+        ],
+        "ceilTiles": [
+          1143,
+          800
+        ],
+        "remainderTiles": [
+          0.8571,
+          0
+        ],
+        "fractionalEdge": true,
+        "coverage": {
+          "frameAu2": 2800000,
+          "wholeTileAreaAu2": 2797900,
+          "wholeTileCoverageFraction": 0.9992,
+          "ceilTileAreaAu2": 2800350,
+          "ceilOverhangFraction": 0.0001,
+          "unrepresentedAu2WithFloor": 2100,
+          "partialEdgeTileCount": 800,
+          "transformModes": [
+            "FLOOR_DROPS_PARTIAL_EDGE_STRIP",
+            "CEIL_PADS_BEYOND_FRAME",
+            "NONUNIFORM_RESAMPLE_REQUIRED"
+          ],
+          "note": "For fractional U the last runtime row/column is partial. Any runtime intake must choose one documented mode; none is approved."
+        },
+        "raster": {
+          "sourceGrid": {
+            "gw": 250,
+            "gh": 175,
+            "cellAu": 8,
+            "cells": 43750
+          },
+          "tilesPerSourceCellAxis": 4.5714,
+          "exactRasterAlignment": false,
+          "sourceCellsWithTileBoundaryInsideX": 250,
+          "sourceCellsWithTileBoundaryInsideY": 175,
+          "sourceCellsWithTileBoundaryInside2D": 43750,
+          "sourceCellsWithTileBoundaryInsideMeaning": "Upsampling count: a tile boundary inside an 8 au source cell. When 8/U is an INTEGER the clip is exact and costs no resampling.",
+          "fractionalSourceCellsRequiringResampling": 43750,
+          "runtimeTileColumnsRowsStraddlingSourceCellBoundary": 364,
+          "runtimeTileStraddleMeaning": "A source-cell EDGE falling strictly inside a runtime tile. This is the explicit fractional-coverage cost and is ZERO when 8/U is an integer.",
+          "sourceCellsExactlyAligned": 0,
+          "note": "Fractional U needs a documented FLOOR/CEIL/NONUNIFORM mode for partial edge tiles AND a resampling rule for 8 au source cells cut mid-tile."
+        }
+      },
+      "perPoi": {
+        "U": 1.75,
+        "poiCount": 81,
+        "enclosedCount": 38,
+        "enclosedWithRoom5x4": 38,
+        "enclosedWithRoomAndEntrance": 38,
+        "enclosedFail": 0,
+        "openAirCount": 43,
+        "openAirWithYard": 43,
+        "openAirFail": 0,
+        "unresolvedCount": 0,
+        "entranceCapacityZeroOpenTiles": 0,
+        "entranceCapacityStatus": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceLostCount": 0,
+        "proposedEntranceStatus": "3.696 au GEO-02 PROPOSED po_kilns opening; NON-CANONICAL worked example only.",
+        "entranceZeroOpenTiles": 0,
+        "poiFeetUnableToHostSmallestRoom_CORRECTED": 0,
+        "scale01aDefectReproduction": {
+          "flawedRule": "footAreaAu2/U^2 < 20 || GLOBAL_minEdgeAu/U < 4, applied to all 81 POIs",
+          "flawedFailCount": 0,
+          "note": "SCALE-01A reported 81/81 at U=4 and U=8 because it used the global 11 au minimum edge for every POI. The corrected count only considers ENCLOSED POIs and each POI's own quad."
+        }
+      },
+      "quantization": {
+        "U": 1.75,
+        "features": [
+          {
+            "id": "road_display_stroke_other",
+            "au": 1.6,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.other",
+            "tiles": 0.9143,
+            "openTiles": 0,
+            "lostAtThisU": true
+          },
+          {
+            "id": "river_authored_width_min",
+            "au": 2.5,
+            "source": "canon rivers[].width min",
+            "tiles": 1.4286,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "road_display_stroke_cart",
+            "au": 3.4,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.cart",
+            "tiles": 1.9429,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "proposed_po_kilns_west_opening",
+            "au": 3.696,
+            "source": "geo02 poi_po_kilns.proposed.v1.json PROPOSED",
+            "tiles": 2.112,
+            "openTiles": 2,
+            "lostAtThisU": false
+          },
+          {
+            "id": "bridge_display_glyph_short_axis",
+            "au": 7.2,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.h",
+            "tiles": 4.1143,
+            "openTiles": 4,
+            "lostAtThisU": false
+          },
+          {
+            "id": "source_raster_cell",
+            "au": 8,
+            "source": "canon terrain.cell",
+            "tiles": 4.5714,
+            "openTiles": 4,
+            "lostAtThisU": false
+          },
+          {
+            "id": "road_analysis_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.roads.analysisStrokeAu",
+            "tiles": 5.1429,
+            "openTiles": 5,
+            "lostAtThisU": false
+          },
+          {
+            "id": "river_mask_min_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.rivers.maskStrokeAu",
+            "tiles": 5.1429,
+            "openTiles": 5,
+            "lostAtThisU": false
+          },
+          {
+            "id": "bridge_display_glyph_long_axis",
+            "au": 13,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.w",
+            "tiles": 7.4286,
+            "openTiles": 7,
+            "lostAtThisU": false
+          },
+          {
+            "id": "po_kilns_cart_road_gap",
+            "au": 56.8792,
+            "source": "geo02 corridor_audit nearest cart road rd_n",
+            "tiles": 32.5024,
+            "openTiles": 32,
+            "lostAtThisU": false
+          }
+        ],
+        "lostCount": 1,
+        "note": "Editor strokes / display glyphs are NOT authored physical widths. lostAtThisU means the feature quantizes to ZERO whole runtime tiles."
+      },
+      "travel": {
+        "U": 1.75,
+        "speedAuPerSec": 7.875,
+        "basis": "PR44 balance.player.speed=72 px/s; k=16/U px per authoring unit; 1 game hour=3600 real s",
+        "rt1": {
+          "straightAu": 199.4843,
+          "routeAu": 346.1492,
+          "effectiveFootAu": 284.1852,
+          "effectiveCartAu": 464.1813,
+          "straightLineTheoreticalSeconds": 25.3313,
+          "geographicRouteSeconds": 36.087,
+          "loadedCartScenarioSeconds": 103.774,
+          "cartStatus": "MODELLED_SCENARIO_ON_FOOT_ROUTE__NOT_CART_PASSABLE"
+        },
+        "crossWorldWidthSeconds": 253.9683,
+        "crossWorldFractionOfFictionalDay": 0.1764,
+        "uncertainty": "Times are modelled from pinned movement constants; they are NOT native-input measured times. Physical clearance, trail cart-passability, ferry rules and exposure are UNRESOLVED."
+      },
+      "memory": {
+        "cells": 914400,
+        "worldTypedArraysBytes": 5486400,
+        "blockGridBytes": 914400,
+        "economyNumericArraysBytes": 95097600,
+        "sourceV3Bytes": 7315200,
+        "packageArraysBytes": 29260800,
+        "totalBytesLowerBound": 138074400,
+        "totalMBLowerBound": 131.678,
+        "renderChunkCacheUpperBoundMB": 900,
+        "compileEconomyNeighbourhoodChecksWorstCase": 44805600,
+        "model": "LOWER-BOUND MODEL, NOT MEASURED. Assumes 1-byte typed arrays for World/BlockGrid and 8-byte slots for JS arrays. Chunk key stride 100 and 1M-cell cap are TEMPORARY engine constants, not design limits."
+      },
+      "physicalFit": {
+        "enclosedFitRate": 1,
+        "openAirFitRate": 1,
+        "allEnclosedFit": true,
+        "allOpenAirFit": true,
+        "entranceCapacityNeverZero": true,
+        "entranceCapacityCaveat": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceOpenTiles": 2,
+        "proposedEntranceLost": false,
+        "note": "Rates are computed ONLY over the relevant enclosure class, using each POI's own quad/deep polygon/edges. The 3.696 au PROPOSED entrance is a separate worked example: at U>=3.696 it quantizes to ZERO open tiles."
+      },
+      "resolution": {
+        "sourceRasterUpsampleFactor": 20.898,
+        "tilesPerSourceCellAxis": 4.5714,
+        "newAuthoredDetail": "NONE: Veyra raster is 8 au/cell. U<8 duplicates/interpolates; U>8 loses authored cells.",
+        "fractionalRasterCellsRequiringResampling": 43750,
+        "runtimeTileStraddles": 364
+      },
+      "uncertainty": [
+        "Enclosure class is a DERIVED heuristic from canonical depth/deep/gate/arche fields, not a canonical field.",
+        "Wall thickness = 1 runtime tile and room requirement = 5x4 tiles are assumptions anchored to PR44 smallest authored building; not approved Veyra dimensions.",
+        "Entrance capacity is bounded by each POI's own shortest foot edge; canonical Veyra authors NO door openings.",
+        "WW=WH=200, TILE=16, validateEconomyMap 1,000,000-cell cap and render.ts chunk key stride 100 are TEMPORARY engine constants (Gameplay ACK 6608030530), NOT permanent design laws.",
+        "No streaming/LOD implementation was found in PR44 HEAD; chunk culling is not world streaming.",
+        "Loaded-cart times are modelled on the foot route; RT-1 contains kind=trail segments and is NOT cart-passable."
+      ]
+    },
+    {
+      "U": 1.8,
+      "focusBand": true,
+      "status": "BOUNDED_DIAGNOSTIC_PROFILE__NOT_APPROVED",
+      "transform": {
+        "U": 1.8,
+        "unit": "authoring_units_per_runtime_tile",
+        "exactIntegerDims": false,
+        "worldTilesExact": [
+          1111.1111,
+          777.7778
+        ],
+        "floorTiles": [
+          1111,
+          777
+        ],
+        "ceilTiles": [
+          1112,
+          778
+        ],
+        "remainderTiles": [
+          0.1111,
+          0.7778
+        ],
+        "fractionalEdge": true,
+        "coverage": {
+          "frameAu2": 2800000,
+          "wholeTileAreaAu2": 2796920.28,
+          "wholeTileCoverageFraction": 0.9989,
+          "ceilTileAreaAu2": 2803040.64,
+          "ceilOverhangFraction": 0.0011,
+          "unrepresentedAu2WithFloor": 3079.72,
+          "partialEdgeTileCount": 1889,
+          "transformModes": [
+            "FLOOR_DROPS_PARTIAL_EDGE_STRIP",
+            "CEIL_PADS_BEYOND_FRAME",
+            "NONUNIFORM_RESAMPLE_REQUIRED"
+          ],
+          "note": "For fractional U the last runtime row/column is partial. Any runtime intake must choose one documented mode; none is approved."
+        },
+        "raster": {
+          "sourceGrid": {
+            "gw": 250,
+            "gh": 175,
+            "cellAu": 8,
+            "cells": 43750
+          },
+          "tilesPerSourceCellAxis": 4.4444,
+          "exactRasterAlignment": false,
+          "sourceCellsWithTileBoundaryInsideX": 250,
+          "sourceCellsWithTileBoundaryInsideY": 175,
+          "sourceCellsWithTileBoundaryInside2D": 43750,
+          "sourceCellsWithTileBoundaryInsideMeaning": "Upsampling count: a tile boundary inside an 8 au source cell. When 8/U is an INTEGER the clip is exact and costs no resampling.",
+          "fractionalSourceCellsRequiringResampling": 43750,
+          "runtimeTileColumnsRowsStraddlingSourceCellBoundary": 377,
+          "runtimeTileStraddleMeaning": "A source-cell EDGE falling strictly inside a runtime tile. This is the explicit fractional-coverage cost and is ZERO when 8/U is an integer.",
+          "sourceCellsExactlyAligned": 0,
+          "note": "Fractional U needs a documented FLOOR/CEIL/NONUNIFORM mode for partial edge tiles AND a resampling rule for 8 au source cells cut mid-tile."
+        }
+      },
+      "perPoi": {
+        "U": 1.8,
+        "poiCount": 81,
+        "enclosedCount": 38,
+        "enclosedWithRoom5x4": 38,
+        "enclosedWithRoomAndEntrance": 38,
+        "enclosedFail": 0,
+        "openAirCount": 43,
+        "openAirWithYard": 43,
+        "openAirFail": 0,
+        "unresolvedCount": 0,
+        "entranceCapacityZeroOpenTiles": 0,
+        "entranceCapacityStatus": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceLostCount": 0,
+        "proposedEntranceStatus": "3.696 au GEO-02 PROPOSED po_kilns opening; NON-CANONICAL worked example only.",
+        "entranceZeroOpenTiles": 0,
+        "poiFeetUnableToHostSmallestRoom_CORRECTED": 0,
+        "scale01aDefectReproduction": {
+          "flawedRule": "footAreaAu2/U^2 < 20 || GLOBAL_minEdgeAu/U < 4, applied to all 81 POIs",
+          "flawedFailCount": 0,
+          "note": "SCALE-01A reported 81/81 at U=4 and U=8 because it used the global 11 au minimum edge for every POI. The corrected count only considers ENCLOSED POIs and each POI's own quad."
+        }
+      },
+      "quantization": {
+        "U": 1.8,
+        "features": [
+          {
+            "id": "road_display_stroke_other",
+            "au": 1.6,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.other",
+            "tiles": 0.8889,
+            "openTiles": 0,
+            "lostAtThisU": true
+          },
+          {
+            "id": "river_authored_width_min",
+            "au": 2.5,
+            "source": "canon rivers[].width min",
+            "tiles": 1.3889,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "road_display_stroke_cart",
+            "au": 3.4,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.cart",
+            "tiles": 1.8889,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "proposed_po_kilns_west_opening",
+            "au": 3.696,
+            "source": "geo02 poi_po_kilns.proposed.v1.json PROPOSED",
+            "tiles": 2.0533,
+            "openTiles": 2,
+            "lostAtThisU": false
+          },
+          {
+            "id": "bridge_display_glyph_short_axis",
+            "au": 7.2,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.h",
+            "tiles": 4,
+            "openTiles": 4,
+            "lostAtThisU": false
+          },
+          {
+            "id": "source_raster_cell",
+            "au": 8,
+            "source": "canon terrain.cell",
+            "tiles": 4.4444,
+            "openTiles": 4,
+            "lostAtThisU": false
+          },
+          {
+            "id": "road_analysis_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.roads.analysisStrokeAu",
+            "tiles": 5,
+            "openTiles": 5,
+            "lostAtThisU": false
+          },
+          {
+            "id": "river_mask_min_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.rivers.maskStrokeAu",
+            "tiles": 5,
+            "openTiles": 5,
+            "lostAtThisU": false
+          },
+          {
+            "id": "bridge_display_glyph_long_axis",
+            "au": 13,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.w",
+            "tiles": 7.2222,
+            "openTiles": 7,
+            "lostAtThisU": false
+          },
+          {
+            "id": "po_kilns_cart_road_gap",
+            "au": 56.8792,
+            "source": "geo02 corridor_audit nearest cart road rd_n",
+            "tiles": 31.5996,
+            "openTiles": 31,
+            "lostAtThisU": false
+          }
+        ],
+        "lostCount": 1,
+        "note": "Editor strokes / display glyphs are NOT authored physical widths. lostAtThisU means the feature quantizes to ZERO whole runtime tiles."
+      },
+      "travel": {
+        "U": 1.8,
+        "speedAuPerSec": 8.1,
+        "basis": "PR44 balance.player.speed=72 px/s; k=16/U px per authoring unit; 1 game hour=3600 real s",
+        "rt1": {
+          "straightAu": 199.4843,
+          "routeAu": 346.1492,
+          "effectiveFootAu": 284.1852,
+          "effectiveCartAu": 464.1813,
+          "straightLineTheoreticalSeconds": 24.6277,
+          "geographicRouteSeconds": 35.0846,
+          "loadedCartScenarioSeconds": 100.8914,
+          "cartStatus": "MODELLED_SCENARIO_ON_FOOT_ROUTE__NOT_CART_PASSABLE"
+        },
+        "crossWorldWidthSeconds": 246.9136,
+        "crossWorldFractionOfFictionalDay": 0.1715,
+        "uncertainty": "Times are modelled from pinned movement constants; they are NOT native-input measured times. Physical clearance, trail cart-passability, ferry rules and exposure are UNRESOLVED."
+      },
+      "memory": {
+        "cells": 865136,
+        "worldTypedArraysBytes": 5190816,
+        "blockGridBytes": 865136,
+        "economyNumericArraysBytes": 89974144,
+        "sourceV3Bytes": 6921088,
+        "packageArraysBytes": 27684352,
+        "totalBytesLowerBound": 130635536,
+        "totalMBLowerBound": 124.5838,
+        "renderChunkCacheUpperBoundMB": 857.5,
+        "compileEconomyNeighbourhoodChecksWorstCase": 42391664,
+        "model": "LOWER-BOUND MODEL, NOT MEASURED. Assumes 1-byte typed arrays for World/BlockGrid and 8-byte slots for JS arrays. Chunk key stride 100 and 1M-cell cap are TEMPORARY engine constants, not design limits."
+      },
+      "physicalFit": {
+        "enclosedFitRate": 1,
+        "openAirFitRate": 1,
+        "allEnclosedFit": true,
+        "allOpenAirFit": true,
+        "entranceCapacityNeverZero": true,
+        "entranceCapacityCaveat": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceOpenTiles": 2,
+        "proposedEntranceLost": false,
+        "note": "Rates are computed ONLY over the relevant enclosure class, using each POI's own quad/deep polygon/edges. The 3.696 au PROPOSED entrance is a separate worked example: at U>=3.696 it quantizes to ZERO open tiles."
+      },
+      "resolution": {
+        "sourceRasterUpsampleFactor": 19.7531,
+        "tilesPerSourceCellAxis": 4.4444,
+        "newAuthoredDetail": "NONE: Veyra raster is 8 au/cell. U<8 duplicates/interpolates; U>8 loses authored cells.",
+        "fractionalRasterCellsRequiringResampling": 43750,
+        "runtimeTileStraddles": 377
+      },
+      "uncertainty": [
+        "Enclosure class is a DERIVED heuristic from canonical depth/deep/gate/arche fields, not a canonical field.",
+        "Wall thickness = 1 runtime tile and room requirement = 5x4 tiles are assumptions anchored to PR44 smallest authored building; not approved Veyra dimensions.",
+        "Entrance capacity is bounded by each POI's own shortest foot edge; canonical Veyra authors NO door openings.",
+        "WW=WH=200, TILE=16, validateEconomyMap 1,000,000-cell cap and render.ts chunk key stride 100 are TEMPORARY engine constants (Gameplay ACK 6608030530), NOT permanent design laws.",
+        "No streaming/LOD implementation was found in PR44 HEAD; chunk culling is not world streaming.",
+        "Loaded-cart times are modelled on the foot route; RT-1 contains kind=trail segments and is NOT cart-passable."
+      ]
+    },
+    {
+      "U": 2,
+      "focusBand": true,
+      "status": "BOUNDED_DIAGNOSTIC_PROFILE__NOT_APPROVED",
+      "transform": {
+        "U": 2,
+        "unit": "authoring_units_per_runtime_tile",
+        "exactIntegerDims": true,
+        "worldTilesExact": [
+          1000,
+          700
+        ],
+        "floorTiles": [
+          1000,
+          700
+        ],
+        "ceilTiles": [
+          1000,
+          700
+        ],
+        "remainderTiles": [
+          0,
+          0
+        ],
+        "fractionalEdge": false,
+        "coverage": {
+          "frameAu2": 2800000,
+          "wholeTileAreaAu2": 2800000,
+          "wholeTileCoverageFraction": 1,
+          "ceilTileAreaAu2": 2800000,
+          "ceilOverhangFraction": 0,
+          "unrepresentedAu2WithFloor": 0,
+          "partialEdgeTileCount": 0,
+          "transformModes": [
+            "EXACT_1:1_TILE_GRID"
+          ],
+          "note": "For fractional U the last runtime row/column is partial. Any runtime intake must choose one documented mode; none is approved."
+        },
+        "raster": {
+          "sourceGrid": {
+            "gw": 250,
+            "gh": 175,
+            "cellAu": 8,
+            "cells": 43750
+          },
+          "tilesPerSourceCellAxis": 4,
+          "exactRasterAlignment": true,
+          "sourceCellsWithTileBoundaryInsideX": 250,
+          "sourceCellsWithTileBoundaryInsideY": 175,
+          "sourceCellsWithTileBoundaryInside2D": 43750,
+          "sourceCellsWithTileBoundaryInsideMeaning": "Upsampling count: a tile boundary inside an 8 au source cell. When 8/U is an INTEGER the clip is exact and costs no resampling.",
+          "fractionalSourceCellsRequiringResampling": 0,
+          "runtimeTileColumnsRowsStraddlingSourceCellBoundary": 0,
+          "runtimeTileStraddleMeaning": "A source-cell EDGE falling strictly inside a runtime tile. This is the explicit fractional-coverage cost and is ZERO when 8/U is an integer.",
+          "sourceCellsExactlyAligned": 43750,
+          "note": "Fractional U needs a documented FLOOR/CEIL/NONUNIFORM mode for partial edge tiles AND a resampling rule for 8 au source cells cut mid-tile."
+        }
+      },
+      "perPoi": {
+        "U": 2,
+        "poiCount": 81,
+        "enclosedCount": 38,
+        "enclosedWithRoom5x4": 38,
+        "enclosedWithRoomAndEntrance": 38,
+        "enclosedFail": 0,
+        "openAirCount": 43,
+        "openAirWithYard": 43,
+        "openAirFail": 0,
+        "unresolvedCount": 0,
+        "entranceCapacityZeroOpenTiles": 0,
+        "entranceCapacityStatus": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceLostCount": 0,
+        "proposedEntranceStatus": "3.696 au GEO-02 PROPOSED po_kilns opening; NON-CANONICAL worked example only.",
+        "entranceZeroOpenTiles": 0,
+        "poiFeetUnableToHostSmallestRoom_CORRECTED": 0,
+        "scale01aDefectReproduction": {
+          "flawedRule": "footAreaAu2/U^2 < 20 || GLOBAL_minEdgeAu/U < 4, applied to all 81 POIs",
+          "flawedFailCount": 0,
+          "note": "SCALE-01A reported 81/81 at U=4 and U=8 because it used the global 11 au minimum edge for every POI. The corrected count only considers ENCLOSED POIs and each POI's own quad."
+        }
+      },
+      "quantization": {
+        "U": 2,
+        "features": [
+          {
+            "id": "road_display_stroke_other",
+            "au": 1.6,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.other",
+            "tiles": 0.8,
+            "openTiles": 0,
+            "lostAtThisU": true
+          },
+          {
+            "id": "river_authored_width_min",
+            "au": 2.5,
+            "source": "canon rivers[].width min",
+            "tiles": 1.25,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "road_display_stroke_cart",
+            "au": 3.4,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.cart",
+            "tiles": 1.7,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "proposed_po_kilns_west_opening",
+            "au": 3.696,
+            "source": "geo02 poi_po_kilns.proposed.v1.json PROPOSED",
+            "tiles": 1.848,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "bridge_display_glyph_short_axis",
+            "au": 7.2,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.h",
+            "tiles": 3.6,
+            "openTiles": 3,
+            "lostAtThisU": false
+          },
+          {
+            "id": "source_raster_cell",
+            "au": 8,
+            "source": "canon terrain.cell",
+            "tiles": 4,
+            "openTiles": 4,
+            "lostAtThisU": false
+          },
+          {
+            "id": "road_analysis_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.roads.analysisStrokeAu",
+            "tiles": 4.5,
+            "openTiles": 4,
+            "lostAtThisU": false
+          },
+          {
+            "id": "river_mask_min_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.rivers.maskStrokeAu",
+            "tiles": 4.5,
+            "openTiles": 4,
+            "lostAtThisU": false
+          },
+          {
+            "id": "bridge_display_glyph_long_axis",
+            "au": 13,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.w",
+            "tiles": 6.5,
+            "openTiles": 6,
+            "lostAtThisU": false
+          },
+          {
+            "id": "po_kilns_cart_road_gap",
+            "au": 56.8792,
+            "source": "geo02 corridor_audit nearest cart road rd_n",
+            "tiles": 28.4396,
+            "openTiles": 28,
+            "lostAtThisU": false
+          }
+        ],
+        "lostCount": 1,
+        "note": "Editor strokes / display glyphs are NOT authored physical widths. lostAtThisU means the feature quantizes to ZERO whole runtime tiles."
+      },
+      "travel": {
+        "U": 2,
+        "speedAuPerSec": 9,
+        "basis": "PR44 balance.player.speed=72 px/s; k=16/U px per authoring unit; 1 game hour=3600 real s",
+        "rt1": {
+          "straightAu": 199.4843,
+          "routeAu": 346.1492,
+          "effectiveFootAu": 284.1852,
+          "effectiveCartAu": 464.1813,
+          "straightLineTheoreticalSeconds": 22.1649,
+          "geographicRouteSeconds": 31.5761,
+          "loadedCartScenarioSeconds": 90.8023,
+          "cartStatus": "MODELLED_SCENARIO_ON_FOOT_ROUTE__NOT_CART_PASSABLE"
+        },
+        "crossWorldWidthSeconds": 222.2222,
+        "crossWorldFractionOfFictionalDay": 0.1543,
+        "uncertainty": "Times are modelled from pinned movement constants; they are NOT native-input measured times. Physical clearance, trail cart-passability, ferry rules and exposure are UNRESOLVED."
+      },
+      "memory": {
+        "cells": 700000,
+        "worldTypedArraysBytes": 4200000,
+        "blockGridBytes": 700000,
+        "economyNumericArraysBytes": 72800000,
+        "sourceV3Bytes": 5600000,
+        "packageArraysBytes": 22400000,
+        "totalBytesLowerBound": 105700000,
+        "totalMBLowerBound": 100.8034,
+        "renderChunkCacheUpperBoundMB": 693,
+        "compileEconomyNeighbourhoodChecksWorstCase": 34300000,
+        "model": "LOWER-BOUND MODEL, NOT MEASURED. Assumes 1-byte typed arrays for World/BlockGrid and 8-byte slots for JS arrays. Chunk key stride 100 and 1M-cell cap are TEMPORARY engine constants, not design limits."
+      },
+      "physicalFit": {
+        "enclosedFitRate": 1,
+        "openAirFitRate": 1,
+        "allEnclosedFit": true,
+        "allOpenAirFit": true,
+        "entranceCapacityNeverZero": true,
+        "entranceCapacityCaveat": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceOpenTiles": 1,
+        "proposedEntranceLost": false,
+        "note": "Rates are computed ONLY over the relevant enclosure class, using each POI's own quad/deep polygon/edges. The 3.696 au PROPOSED entrance is a separate worked example: at U>=3.696 it quantizes to ZERO open tiles."
+      },
+      "resolution": {
+        "sourceRasterUpsampleFactor": 16,
+        "tilesPerSourceCellAxis": 4,
+        "newAuthoredDetail": "NONE: Veyra raster is 8 au/cell. U<8 duplicates/interpolates; U>8 loses authored cells.",
+        "fractionalRasterCellsRequiringResampling": 0,
+        "runtimeTileStraddles": 0
+      },
+      "uncertainty": [
+        "Enclosure class is a DERIVED heuristic from canonical depth/deep/gate/arche fields, not a canonical field.",
+        "Wall thickness = 1 runtime tile and room requirement = 5x4 tiles are assumptions anchored to PR44 smallest authored building; not approved Veyra dimensions.",
+        "Entrance capacity is bounded by each POI's own shortest foot edge; canonical Veyra authors NO door openings.",
+        "WW=WH=200, TILE=16, validateEconomyMap 1,000,000-cell cap and render.ts chunk key stride 100 are TEMPORARY engine constants (Gameplay ACK 6608030530), NOT permanent design laws.",
+        "No streaming/LOD implementation was found in PR44 HEAD; chunk culling is not world streaming.",
+        "Loaded-cart times are modelled on the foot route; RT-1 contains kind=trail segments and is NOT cart-passable."
+      ]
+    },
+    {
+      "U": 2.25,
+      "focusBand": true,
+      "status": "BOUNDED_DIAGNOSTIC_PROFILE__NOT_APPROVED",
+      "transform": {
+        "U": 2.25,
+        "unit": "authoring_units_per_runtime_tile",
+        "exactIntegerDims": false,
+        "worldTilesExact": [
+          888.8889,
+          622.2222
+        ],
+        "floorTiles": [
+          888,
+          622
+        ],
+        "ceilTiles": [
+          889,
+          623
+        ],
+        "remainderTiles": [
+          0.8889,
+          0.2222
+        ],
+        "fractionalEdge": true,
+        "coverage": {
+          "frameAu2": 2800000,
+          "wholeTileAreaAu2": 2796201,
+          "wholeTileCoverageFraction": 0.9986,
+          "ceilTileAreaAu2": 2803850.4375,
+          "ceilOverhangFraction": 0.0014,
+          "unrepresentedAu2WithFloor": 3799,
+          "partialEdgeTileCount": 1511,
+          "transformModes": [
+            "FLOOR_DROPS_PARTIAL_EDGE_STRIP",
+            "CEIL_PADS_BEYOND_FRAME",
+            "NONUNIFORM_RESAMPLE_REQUIRED"
+          ],
+          "note": "For fractional U the last runtime row/column is partial. Any runtime intake must choose one documented mode; none is approved."
+        },
+        "raster": {
+          "sourceGrid": {
+            "gw": 250,
+            "gh": 175,
+            "cellAu": 8,
+            "cells": 43750
+          },
+          "tilesPerSourceCellAxis": 3.5556,
+          "exactRasterAlignment": false,
+          "sourceCellsWithTileBoundaryInsideX": 250,
+          "sourceCellsWithTileBoundaryInsideY": 175,
+          "sourceCellsWithTileBoundaryInside2D": 43750,
+          "sourceCellsWithTileBoundaryInsideMeaning": "Upsampling count: a tile boundary inside an 8 au source cell. When 8/U is an INTEGER the clip is exact and costs no resampling.",
+          "fractionalSourceCellsRequiringResampling": 43750,
+          "runtimeTileColumnsRowsStraddlingSourceCellBoundary": 377,
+          "runtimeTileStraddleMeaning": "A source-cell EDGE falling strictly inside a runtime tile. This is the explicit fractional-coverage cost and is ZERO when 8/U is an integer.",
+          "sourceCellsExactlyAligned": 0,
+          "note": "Fractional U needs a documented FLOOR/CEIL/NONUNIFORM mode for partial edge tiles AND a resampling rule for 8 au source cells cut mid-tile."
+        }
+      },
+      "perPoi": {
+        "U": 2.25,
+        "poiCount": 81,
+        "enclosedCount": 38,
+        "enclosedWithRoom5x4": 38,
+        "enclosedWithRoomAndEntrance": 38,
+        "enclosedFail": 0,
+        "openAirCount": 43,
+        "openAirWithYard": 43,
+        "openAirFail": 0,
+        "unresolvedCount": 0,
+        "entranceCapacityZeroOpenTiles": 0,
+        "entranceCapacityStatus": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceLostCount": 0,
+        "proposedEntranceStatus": "3.696 au GEO-02 PROPOSED po_kilns opening; NON-CANONICAL worked example only.",
+        "entranceZeroOpenTiles": 0,
+        "poiFeetUnableToHostSmallestRoom_CORRECTED": 0,
+        "scale01aDefectReproduction": {
+          "flawedRule": "footAreaAu2/U^2 < 20 || GLOBAL_minEdgeAu/U < 4, applied to all 81 POIs",
+          "flawedFailCount": 0,
+          "note": "SCALE-01A reported 81/81 at U=4 and U=8 because it used the global 11 au minimum edge for every POI. The corrected count only considers ENCLOSED POIs and each POI's own quad."
+        }
+      },
+      "quantization": {
+        "U": 2.25,
+        "features": [
+          {
+            "id": "road_display_stroke_other",
+            "au": 1.6,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.other",
+            "tiles": 0.7111,
+            "openTiles": 0,
+            "lostAtThisU": true
+          },
+          {
+            "id": "river_authored_width_min",
+            "au": 2.5,
+            "source": "canon rivers[].width min",
+            "tiles": 1.1111,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "road_display_stroke_cart",
+            "au": 3.4,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.cart",
+            "tiles": 1.5111,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "proposed_po_kilns_west_opening",
+            "au": 3.696,
+            "source": "geo02 poi_po_kilns.proposed.v1.json PROPOSED",
+            "tiles": 1.6427,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "bridge_display_glyph_short_axis",
+            "au": 7.2,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.h",
+            "tiles": 3.2,
+            "openTiles": 3,
+            "lostAtThisU": false
+          },
+          {
+            "id": "source_raster_cell",
+            "au": 8,
+            "source": "canon terrain.cell",
+            "tiles": 3.5556,
+            "openTiles": 3,
+            "lostAtThisU": false
+          },
+          {
+            "id": "road_analysis_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.roads.analysisStrokeAu",
+            "tiles": 4,
+            "openTiles": 4,
+            "lostAtThisU": false
+          },
+          {
+            "id": "river_mask_min_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.rivers.maskStrokeAu",
+            "tiles": 4,
+            "openTiles": 4,
+            "lostAtThisU": false
+          },
+          {
+            "id": "bridge_display_glyph_long_axis",
+            "au": 13,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.w",
+            "tiles": 5.7778,
+            "openTiles": 5,
+            "lostAtThisU": false
+          },
+          {
+            "id": "po_kilns_cart_road_gap",
+            "au": 56.8792,
+            "source": "geo02 corridor_audit nearest cart road rd_n",
+            "tiles": 25.2796,
+            "openTiles": 25,
+            "lostAtThisU": false
+          }
+        ],
+        "lostCount": 1,
+        "note": "Editor strokes / display glyphs are NOT authored physical widths. lostAtThisU means the feature quantizes to ZERO whole runtime tiles."
+      },
+      "travel": {
+        "U": 2.25,
+        "speedAuPerSec": 10.125,
+        "basis": "PR44 balance.player.speed=72 px/s; k=16/U px per authoring unit; 1 game hour=3600 real s",
+        "rt1": {
+          "straightAu": 199.4843,
+          "routeAu": 346.1492,
+          "effectiveFootAu": 284.1852,
+          "effectiveCartAu": 464.1813,
+          "straightLineTheoreticalSeconds": 19.7022,
+          "geographicRouteSeconds": 28.0677,
+          "loadedCartScenarioSeconds": 80.7131,
+          "cartStatus": "MODELLED_SCENARIO_ON_FOOT_ROUTE__NOT_CART_PASSABLE"
+        },
+        "crossWorldWidthSeconds": 197.5309,
+        "crossWorldFractionOfFictionalDay": 0.1372,
+        "uncertainty": "Times are modelled from pinned movement constants; they are NOT native-input measured times. Physical clearance, trail cart-passability, ferry rules and exposure are UNRESOLVED."
+      },
+      "memory": {
+        "cells": 553847,
+        "worldTypedArraysBytes": 3323082,
+        "blockGridBytes": 553847,
+        "economyNumericArraysBytes": 57600088,
+        "sourceV3Bytes": 4430776,
+        "packageArraysBytes": 17723104,
+        "totalBytesLowerBound": 83630897,
+        "totalMBLowerBound": 79.7566,
+        "renderChunkCacheUpperBoundMB": 546,
+        "compileEconomyNeighbourhoodChecksWorstCase": 27138503,
+        "model": "LOWER-BOUND MODEL, NOT MEASURED. Assumes 1-byte typed arrays for World/BlockGrid and 8-byte slots for JS arrays. Chunk key stride 100 and 1M-cell cap are TEMPORARY engine constants, not design limits."
+      },
+      "physicalFit": {
+        "enclosedFitRate": 1,
+        "openAirFitRate": 1,
+        "allEnclosedFit": true,
+        "allOpenAirFit": true,
+        "entranceCapacityNeverZero": true,
+        "entranceCapacityCaveat": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceOpenTiles": 1,
+        "proposedEntranceLost": false,
+        "note": "Rates are computed ONLY over the relevant enclosure class, using each POI's own quad/deep polygon/edges. The 3.696 au PROPOSED entrance is a separate worked example: at U>=3.696 it quantizes to ZERO open tiles."
+      },
+      "resolution": {
+        "sourceRasterUpsampleFactor": 12.642,
+        "tilesPerSourceCellAxis": 3.5556,
+        "newAuthoredDetail": "NONE: Veyra raster is 8 au/cell. U<8 duplicates/interpolates; U>8 loses authored cells.",
+        "fractionalRasterCellsRequiringResampling": 43750,
+        "runtimeTileStraddles": 377
+      },
+      "uncertainty": [
+        "Enclosure class is a DERIVED heuristic from canonical depth/deep/gate/arche fields, not a canonical field.",
+        "Wall thickness = 1 runtime tile and room requirement = 5x4 tiles are assumptions anchored to PR44 smallest authored building; not approved Veyra dimensions.",
+        "Entrance capacity is bounded by each POI's own shortest foot edge; canonical Veyra authors NO door openings.",
+        "WW=WH=200, TILE=16, validateEconomyMap 1,000,000-cell cap and render.ts chunk key stride 100 are TEMPORARY engine constants (Gameplay ACK 6608030530), NOT permanent design laws.",
+        "No streaming/LOD implementation was found in PR44 HEAD; chunk culling is not world streaming.",
+        "Loaded-cart times are modelled on the foot route; RT-1 contains kind=trail segments and is NOT cart-passable."
+      ]
+    },
+    {
+      "U": 2.5,
+      "focusBand": false,
+      "status": "BOUNDED_DIAGNOSTIC_PROFILE__NOT_APPROVED",
+      "transform": {
+        "U": 2.5,
+        "unit": "authoring_units_per_runtime_tile",
+        "exactIntegerDims": true,
+        "worldTilesExact": [
+          800,
+          560
+        ],
+        "floorTiles": [
+          800,
+          560
+        ],
+        "ceilTiles": [
+          800,
+          560
+        ],
+        "remainderTiles": [
+          0,
+          0
+        ],
+        "fractionalEdge": false,
+        "coverage": {
+          "frameAu2": 2800000,
+          "wholeTileAreaAu2": 2800000,
+          "wholeTileCoverageFraction": 1,
+          "ceilTileAreaAu2": 2800000,
+          "ceilOverhangFraction": 0,
+          "unrepresentedAu2WithFloor": 0,
+          "partialEdgeTileCount": 0,
+          "transformModes": [
+            "EXACT_1:1_TILE_GRID"
+          ],
+          "note": "For fractional U the last runtime row/column is partial. Any runtime intake must choose one documented mode; none is approved."
+        },
+        "raster": {
+          "sourceGrid": {
+            "gw": 250,
+            "gh": 175,
+            "cellAu": 8,
+            "cells": 43750
+          },
+          "tilesPerSourceCellAxis": 3.2,
+          "exactRasterAlignment": false,
+          "sourceCellsWithTileBoundaryInsideX": 250,
+          "sourceCellsWithTileBoundaryInsideY": 175,
+          "sourceCellsWithTileBoundaryInside2D": 43750,
+          "sourceCellsWithTileBoundaryInsideMeaning": "Upsampling count: a tile boundary inside an 8 au source cell. When 8/U is an INTEGER the clip is exact and costs no resampling.",
+          "fractionalSourceCellsRequiringResampling": 43750,
+          "runtimeTileColumnsRowsStraddlingSourceCellBoundary": 340,
+          "runtimeTileStraddleMeaning": "A source-cell EDGE falling strictly inside a runtime tile. This is the explicit fractional-coverage cost and is ZERO when 8/U is an integer.",
+          "sourceCellsExactlyAligned": 0,
+          "note": "Fractional U needs a documented FLOOR/CEIL/NONUNIFORM mode for partial edge tiles AND a resampling rule for 8 au source cells cut mid-tile."
+        }
+      },
+      "perPoi": {
+        "U": 2.5,
+        "poiCount": 81,
+        "enclosedCount": 38,
+        "enclosedWithRoom5x4": 38,
+        "enclosedWithRoomAndEntrance": 38,
+        "enclosedFail": 0,
+        "openAirCount": 43,
+        "openAirWithYard": 43,
+        "openAirFail": 0,
+        "unresolvedCount": 0,
+        "entranceCapacityZeroOpenTiles": 0,
+        "entranceCapacityStatus": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceLostCount": 0,
+        "proposedEntranceStatus": "3.696 au GEO-02 PROPOSED po_kilns opening; NON-CANONICAL worked example only.",
+        "entranceZeroOpenTiles": 0,
+        "poiFeetUnableToHostSmallestRoom_CORRECTED": 0,
+        "scale01aDefectReproduction": {
+          "flawedRule": "footAreaAu2/U^2 < 20 || GLOBAL_minEdgeAu/U < 4, applied to all 81 POIs",
+          "flawedFailCount": 0,
+          "note": "SCALE-01A reported 81/81 at U=4 and U=8 because it used the global 11 au minimum edge for every POI. The corrected count only considers ENCLOSED POIs and each POI's own quad."
+        }
+      },
+      "quantization": {
+        "U": 2.5,
+        "features": [
+          {
+            "id": "road_display_stroke_other",
+            "au": 1.6,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.other",
+            "tiles": 0.64,
+            "openTiles": 0,
+            "lostAtThisU": true
+          },
+          {
+            "id": "river_authored_width_min",
+            "au": 2.5,
+            "source": "canon rivers[].width min",
+            "tiles": 1,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "road_display_stroke_cart",
+            "au": 3.4,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.cart",
+            "tiles": 1.36,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "proposed_po_kilns_west_opening",
+            "au": 3.696,
+            "source": "geo02 poi_po_kilns.proposed.v1.json PROPOSED",
+            "tiles": 1.4784,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "bridge_display_glyph_short_axis",
+            "au": 7.2,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.h",
+            "tiles": 2.88,
+            "openTiles": 2,
+            "lostAtThisU": false
+          },
+          {
+            "id": "source_raster_cell",
+            "au": 8,
+            "source": "canon terrain.cell",
+            "tiles": 3.2,
+            "openTiles": 3,
+            "lostAtThisU": false
+          },
+          {
+            "id": "road_analysis_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.roads.analysisStrokeAu",
+            "tiles": 3.6,
+            "openTiles": 3,
+            "lostAtThisU": false
+          },
+          {
+            "id": "river_mask_min_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.rivers.maskStrokeAu",
+            "tiles": 3.6,
+            "openTiles": 3,
+            "lostAtThisU": false
+          },
+          {
+            "id": "bridge_display_glyph_long_axis",
+            "au": 13,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.w",
+            "tiles": 5.2,
+            "openTiles": 5,
+            "lostAtThisU": false
+          },
+          {
+            "id": "po_kilns_cart_road_gap",
+            "au": 56.8792,
+            "source": "geo02 corridor_audit nearest cart road rd_n",
+            "tiles": 22.7517,
+            "openTiles": 22,
+            "lostAtThisU": false
+          }
+        ],
+        "lostCount": 1,
+        "note": "Editor strokes / display glyphs are NOT authored physical widths. lostAtThisU means the feature quantizes to ZERO whole runtime tiles."
+      },
+      "travel": {
+        "U": 2.5,
+        "speedAuPerSec": 11.25,
+        "basis": "PR44 balance.player.speed=72 px/s; k=16/U px per authoring unit; 1 game hour=3600 real s",
+        "rt1": {
+          "straightAu": 199.4843,
+          "routeAu": 346.1492,
+          "effectiveFootAu": 284.1852,
+          "effectiveCartAu": 464.1813,
+          "straightLineTheoreticalSeconds": 17.7319,
+          "geographicRouteSeconds": 25.2609,
+          "loadedCartScenarioSeconds": 72.6418,
+          "cartStatus": "MODELLED_SCENARIO_ON_FOOT_ROUTE__NOT_CART_PASSABLE"
+        },
+        "crossWorldWidthSeconds": 177.7778,
+        "crossWorldFractionOfFictionalDay": 0.1235,
+        "uncertainty": "Times are modelled from pinned movement constants; they are NOT native-input measured times. Physical clearance, trail cart-passability, ferry rules and exposure are UNRESOLVED."
+      },
+      "memory": {
+        "cells": 448000,
+        "worldTypedArraysBytes": 2688000,
+        "blockGridBytes": 448000,
+        "economyNumericArraysBytes": 46592000,
+        "sourceV3Bytes": 3584000,
+        "packageArraysBytes": 14336000,
+        "totalBytesLowerBound": 67648000,
+        "totalMBLowerBound": 64.5142,
+        "renderChunkCacheUpperBoundMB": 437.5,
+        "compileEconomyNeighbourhoodChecksWorstCase": 21952000,
+        "model": "LOWER-BOUND MODEL, NOT MEASURED. Assumes 1-byte typed arrays for World/BlockGrid and 8-byte slots for JS arrays. Chunk key stride 100 and 1M-cell cap are TEMPORARY engine constants, not design limits."
+      },
+      "physicalFit": {
+        "enclosedFitRate": 1,
+        "openAirFitRate": 1,
+        "allEnclosedFit": true,
+        "allOpenAirFit": true,
+        "entranceCapacityNeverZero": true,
+        "entranceCapacityCaveat": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceOpenTiles": 1,
+        "proposedEntranceLost": false,
+        "note": "Rates are computed ONLY over the relevant enclosure class, using each POI's own quad/deep polygon/edges. The 3.696 au PROPOSED entrance is a separate worked example: at U>=3.696 it quantizes to ZERO open tiles."
+      },
+      "resolution": {
+        "sourceRasterUpsampleFactor": 10.24,
+        "tilesPerSourceCellAxis": 3.2,
+        "newAuthoredDetail": "NONE: Veyra raster is 8 au/cell. U<8 duplicates/interpolates; U>8 loses authored cells.",
+        "fractionalRasterCellsRequiringResampling": 43750,
+        "runtimeTileStraddles": 340
+      },
+      "uncertainty": [
+        "Enclosure class is a DERIVED heuristic from canonical depth/deep/gate/arche fields, not a canonical field.",
+        "Wall thickness = 1 runtime tile and room requirement = 5x4 tiles are assumptions anchored to PR44 smallest authored building; not approved Veyra dimensions.",
+        "Entrance capacity is bounded by each POI's own shortest foot edge; canonical Veyra authors NO door openings.",
+        "WW=WH=200, TILE=16, validateEconomyMap 1,000,000-cell cap and render.ts chunk key stride 100 are TEMPORARY engine constants (Gameplay ACK 6608030530), NOT permanent design laws.",
+        "No streaming/LOD implementation was found in PR44 HEAD; chunk culling is not world streaming.",
+        "Loaded-cart times are modelled on the foot route; RT-1 contains kind=trail segments and is NOT cart-passable."
+      ]
+    },
+    {
+      "U": 3,
+      "focusBand": false,
+      "status": "BOUNDED_DIAGNOSTIC_PROFILE__NOT_APPROVED",
+      "transform": {
+        "U": 3,
+        "unit": "authoring_units_per_runtime_tile",
+        "exactIntegerDims": false,
+        "worldTilesExact": [
+          666.6667,
+          466.6667
+        ],
+        "floorTiles": [
+          666,
+          466
+        ],
+        "ceilTiles": [
+          667,
+          467
+        ],
+        "remainderTiles": [
+          0.6667,
+          0.6667
+        ],
+        "fractionalEdge": true,
+        "coverage": {
+          "frameAu2": 2800000,
+          "wholeTileAreaAu2": 2793204,
+          "wholeTileCoverageFraction": 0.9976,
+          "ceilTileAreaAu2": 2803401,
+          "ceilOverhangFraction": 0.0012,
+          "unrepresentedAu2WithFloor": 6796,
+          "partialEdgeTileCount": 1133,
+          "transformModes": [
+            "FLOOR_DROPS_PARTIAL_EDGE_STRIP",
+            "CEIL_PADS_BEYOND_FRAME",
+            "NONUNIFORM_RESAMPLE_REQUIRED"
+          ],
+          "note": "For fractional U the last runtime row/column is partial. Any runtime intake must choose one documented mode; none is approved."
+        },
+        "raster": {
+          "sourceGrid": {
+            "gw": 250,
+            "gh": 175,
+            "cellAu": 8,
+            "cells": 43750
+          },
+          "tilesPerSourceCellAxis": 2.6667,
+          "exactRasterAlignment": false,
+          "sourceCellsWithTileBoundaryInsideX": 250,
+          "sourceCellsWithTileBoundaryInsideY": 175,
+          "sourceCellsWithTileBoundaryInside2D": 43750,
+          "sourceCellsWithTileBoundaryInsideMeaning": "Upsampling count: a tile boundary inside an 8 au source cell. When 8/U is an INTEGER the clip is exact and costs no resampling.",
+          "fractionalSourceCellsRequiringResampling": 43750,
+          "runtimeTileColumnsRowsStraddlingSourceCellBoundary": 282,
+          "runtimeTileStraddleMeaning": "A source-cell EDGE falling strictly inside a runtime tile. This is the explicit fractional-coverage cost and is ZERO when 8/U is an integer.",
+          "sourceCellsExactlyAligned": 0,
+          "note": "Fractional U needs a documented FLOOR/CEIL/NONUNIFORM mode for partial edge tiles AND a resampling rule for 8 au source cells cut mid-tile."
+        }
+      },
+      "perPoi": {
+        "U": 3,
+        "poiCount": 81,
+        "enclosedCount": 38,
+        "enclosedWithRoom5x4": 24,
+        "enclosedWithRoomAndEntrance": 24,
+        "enclosedFail": 14,
+        "openAirCount": 43,
+        "openAirWithYard": 43,
+        "openAirFail": 0,
+        "unresolvedCount": 0,
+        "entranceCapacityZeroOpenTiles": 0,
+        "entranceCapacityStatus": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceLostCount": 0,
+        "proposedEntranceStatus": "3.696 au GEO-02 PROPOSED po_kilns opening; NON-CANONICAL worked example only.",
+        "entranceZeroOpenTiles": 0,
+        "poiFeetUnableToHostSmallestRoom_CORRECTED": 14,
+        "scale01aDefectReproduction": {
+          "flawedRule": "footAreaAu2/U^2 < 20 || GLOBAL_minEdgeAu/U < 4, applied to all 81 POIs",
+          "flawedFailCount": 81,
+          "note": "SCALE-01A reported 81/81 at U=4 and U=8 because it used the global 11 au minimum edge for every POI. The corrected count only considers ENCLOSED POIs and each POI's own quad."
+        }
+      },
+      "quantization": {
+        "U": 3,
+        "features": [
+          {
+            "id": "road_display_stroke_other",
+            "au": 1.6,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.other",
+            "tiles": 0.5333,
+            "openTiles": 0,
+            "lostAtThisU": true
+          },
+          {
+            "id": "river_authored_width_min",
+            "au": 2.5,
+            "source": "canon rivers[].width min",
+            "tiles": 0.8333,
+            "openTiles": 0,
+            "lostAtThisU": true
+          },
+          {
+            "id": "road_display_stroke_cart",
+            "au": 3.4,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.cart",
+            "tiles": 1.1333,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "proposed_po_kilns_west_opening",
+            "au": 3.696,
+            "source": "geo02 poi_po_kilns.proposed.v1.json PROPOSED",
+            "tiles": 1.232,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "bridge_display_glyph_short_axis",
+            "au": 7.2,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.h",
+            "tiles": 2.4,
+            "openTiles": 2,
+            "lostAtThisU": false
+          },
+          {
+            "id": "source_raster_cell",
+            "au": 8,
+            "source": "canon terrain.cell",
+            "tiles": 2.6667,
+            "openTiles": 2,
+            "lostAtThisU": false
+          },
+          {
+            "id": "road_analysis_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.roads.analysisStrokeAu",
+            "tiles": 3,
+            "openTiles": 3,
+            "lostAtThisU": false
+          },
+          {
+            "id": "river_mask_min_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.rivers.maskStrokeAu",
+            "tiles": 3,
+            "openTiles": 3,
+            "lostAtThisU": false
+          },
+          {
+            "id": "bridge_display_glyph_long_axis",
+            "au": 13,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.w",
+            "tiles": 4.3333,
+            "openTiles": 4,
+            "lostAtThisU": false
+          },
+          {
+            "id": "po_kilns_cart_road_gap",
+            "au": 56.8792,
+            "source": "geo02 corridor_audit nearest cart road rd_n",
+            "tiles": 18.9597,
+            "openTiles": 18,
+            "lostAtThisU": false
+          }
+        ],
+        "lostCount": 2,
+        "note": "Editor strokes / display glyphs are NOT authored physical widths. lostAtThisU means the feature quantizes to ZERO whole runtime tiles."
+      },
+      "travel": {
+        "U": 3,
+        "speedAuPerSec": 13.5,
+        "basis": "PR44 balance.player.speed=72 px/s; k=16/U px per authoring unit; 1 game hour=3600 real s",
+        "rt1": {
+          "straightAu": 199.4843,
+          "routeAu": 346.1492,
+          "effectiveFootAu": 284.1852,
+          "effectiveCartAu": 464.1813,
+          "straightLineTheoreticalSeconds": 14.7766,
+          "geographicRouteSeconds": 21.0508,
+          "loadedCartScenarioSeconds": 60.5349,
+          "cartStatus": "MODELLED_SCENARIO_ON_FOOT_ROUTE__NOT_CART_PASSABLE"
+        },
+        "crossWorldWidthSeconds": 148.1481,
+        "crossWorldFractionOfFictionalDay": 0.1029,
+        "uncertainty": "Times are modelled from pinned movement constants; they are NOT native-input measured times. Physical clearance, trail cart-passability, ferry rules and exposure are UNRESOLVED."
+      },
+      "memory": {
+        "cells": 311489,
+        "worldTypedArraysBytes": 1868934,
+        "blockGridBytes": 311489,
+        "economyNumericArraysBytes": 32394856,
+        "sourceV3Bytes": 2491912,
+        "packageArraysBytes": 9967648,
+        "totalBytesLowerBound": 47034839,
+        "totalMBLowerBound": 44.8559,
+        "renderChunkCacheUpperBoundMB": 315,
+        "compileEconomyNeighbourhoodChecksWorstCase": 15262961,
+        "model": "LOWER-BOUND MODEL, NOT MEASURED. Assumes 1-byte typed arrays for World/BlockGrid and 8-byte slots for JS arrays. Chunk key stride 100 and 1M-cell cap are TEMPORARY engine constants, not design limits."
+      },
+      "physicalFit": {
+        "enclosedFitRate": 0.6316,
+        "openAirFitRate": 1,
+        "allEnclosedFit": false,
+        "allOpenAirFit": true,
+        "entranceCapacityNeverZero": true,
+        "entranceCapacityCaveat": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceOpenTiles": 1,
+        "proposedEntranceLost": false,
+        "note": "Rates are computed ONLY over the relevant enclosure class, using each POI's own quad/deep polygon/edges. The 3.696 au PROPOSED entrance is a separate worked example: at U>=3.696 it quantizes to ZERO open tiles."
+      },
+      "resolution": {
+        "sourceRasterUpsampleFactor": 7.1111,
+        "tilesPerSourceCellAxis": 2.6667,
+        "newAuthoredDetail": "NONE: Veyra raster is 8 au/cell. U<8 duplicates/interpolates; U>8 loses authored cells.",
+        "fractionalRasterCellsRequiringResampling": 43750,
+        "runtimeTileStraddles": 282
+      },
+      "uncertainty": [
+        "Enclosure class is a DERIVED heuristic from canonical depth/deep/gate/arche fields, not a canonical field.",
+        "Wall thickness = 1 runtime tile and room requirement = 5x4 tiles are assumptions anchored to PR44 smallest authored building; not approved Veyra dimensions.",
+        "Entrance capacity is bounded by each POI's own shortest foot edge; canonical Veyra authors NO door openings.",
+        "WW=WH=200, TILE=16, validateEconomyMap 1,000,000-cell cap and render.ts chunk key stride 100 are TEMPORARY engine constants (Gameplay ACK 6608030530), NOT permanent design laws.",
+        "No streaming/LOD implementation was found in PR44 HEAD; chunk culling is not world streaming.",
+        "Loaded-cart times are modelled on the foot route; RT-1 contains kind=trail segments and is NOT cart-passable."
+      ]
+    },
+    {
+      "U": 4,
+      "focusBand": false,
+      "status": "BOUNDED_DIAGNOSTIC_PROFILE__NOT_APPROVED",
+      "transform": {
+        "U": 4,
+        "unit": "authoring_units_per_runtime_tile",
+        "exactIntegerDims": true,
+        "worldTilesExact": [
+          500,
+          350
+        ],
+        "floorTiles": [
+          500,
+          350
+        ],
+        "ceilTiles": [
+          500,
+          350
+        ],
+        "remainderTiles": [
+          0,
+          0
+        ],
+        "fractionalEdge": false,
+        "coverage": {
+          "frameAu2": 2800000,
+          "wholeTileAreaAu2": 2800000,
+          "wholeTileCoverageFraction": 1,
+          "ceilTileAreaAu2": 2800000,
+          "ceilOverhangFraction": 0,
+          "unrepresentedAu2WithFloor": 0,
+          "partialEdgeTileCount": 0,
+          "transformModes": [
+            "EXACT_1:1_TILE_GRID"
+          ],
+          "note": "For fractional U the last runtime row/column is partial. Any runtime intake must choose one documented mode; none is approved."
+        },
+        "raster": {
+          "sourceGrid": {
+            "gw": 250,
+            "gh": 175,
+            "cellAu": 8,
+            "cells": 43750
+          },
+          "tilesPerSourceCellAxis": 2,
+          "exactRasterAlignment": true,
+          "sourceCellsWithTileBoundaryInsideX": 250,
+          "sourceCellsWithTileBoundaryInsideY": 175,
+          "sourceCellsWithTileBoundaryInside2D": 43750,
+          "sourceCellsWithTileBoundaryInsideMeaning": "Upsampling count: a tile boundary inside an 8 au source cell. When 8/U is an INTEGER the clip is exact and costs no resampling.",
+          "fractionalSourceCellsRequiringResampling": 0,
+          "runtimeTileColumnsRowsStraddlingSourceCellBoundary": 0,
+          "runtimeTileStraddleMeaning": "A source-cell EDGE falling strictly inside a runtime tile. This is the explicit fractional-coverage cost and is ZERO when 8/U is an integer.",
+          "sourceCellsExactlyAligned": 43750,
+          "note": "Fractional U needs a documented FLOOR/CEIL/NONUNIFORM mode for partial edge tiles AND a resampling rule for 8 au source cells cut mid-tile."
+        }
+      },
+      "perPoi": {
+        "U": 4,
+        "poiCount": 81,
+        "enclosedCount": 38,
+        "enclosedWithRoom5x4": 21,
+        "enclosedWithRoomAndEntrance": 21,
+        "enclosedFail": 17,
+        "openAirCount": 43,
+        "openAirWithYard": 39,
+        "openAirFail": 4,
+        "unresolvedCount": 0,
+        "entranceCapacityZeroOpenTiles": 0,
+        "entranceCapacityStatus": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceLostCount": 81,
+        "proposedEntranceStatus": "3.696 au GEO-02 PROPOSED po_kilns opening; NON-CANONICAL worked example only.",
+        "entranceZeroOpenTiles": 0,
+        "poiFeetUnableToHostSmallestRoom_CORRECTED": 17,
+        "scale01aDefectReproduction": {
+          "flawedRule": "footAreaAu2/U^2 < 20 || GLOBAL_minEdgeAu/U < 4, applied to all 81 POIs",
+          "flawedFailCount": 81,
+          "note": "SCALE-01A reported 81/81 at U=4 and U=8 because it used the global 11 au minimum edge for every POI. The corrected count only considers ENCLOSED POIs and each POI's own quad."
+        }
+      },
+      "quantization": {
+        "U": 4,
+        "features": [
+          {
+            "id": "road_display_stroke_other",
+            "au": 1.6,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.other",
+            "tiles": 0.4,
+            "openTiles": 0,
+            "lostAtThisU": true
+          },
+          {
+            "id": "river_authored_width_min",
+            "au": 2.5,
+            "source": "canon rivers[].width min",
+            "tiles": 0.625,
+            "openTiles": 0,
+            "lostAtThisU": true
+          },
+          {
+            "id": "road_display_stroke_cart",
+            "au": 3.4,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.cart",
+            "tiles": 0.85,
+            "openTiles": 0,
+            "lostAtThisU": true
+          },
+          {
+            "id": "proposed_po_kilns_west_opening",
+            "au": 3.696,
+            "source": "geo02 poi_po_kilns.proposed.v1.json PROPOSED",
+            "tiles": 0.924,
+            "openTiles": 0,
+            "lostAtThisU": true
+          },
+          {
+            "id": "bridge_display_glyph_short_axis",
+            "au": 7.2,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.h",
+            "tiles": 1.8,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "source_raster_cell",
+            "au": 8,
+            "source": "canon terrain.cell",
+            "tiles": 2,
+            "openTiles": 2,
+            "lostAtThisU": false
+          },
+          {
+            "id": "road_analysis_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.roads.analysisStrokeAu",
+            "tiles": 2.25,
+            "openTiles": 2,
+            "lostAtThisU": false
+          },
+          {
+            "id": "river_mask_min_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.rivers.maskStrokeAu",
+            "tiles": 2.25,
+            "openTiles": 2,
+            "lostAtThisU": false
+          },
+          {
+            "id": "bridge_display_glyph_long_axis",
+            "au": 13,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.w",
+            "tiles": 3.25,
+            "openTiles": 3,
+            "lostAtThisU": false
+          },
+          {
+            "id": "po_kilns_cart_road_gap",
+            "au": 56.8792,
+            "source": "geo02 corridor_audit nearest cart road rd_n",
+            "tiles": 14.2198,
+            "openTiles": 14,
+            "lostAtThisU": false
+          }
+        ],
+        "lostCount": 4,
+        "note": "Editor strokes / display glyphs are NOT authored physical widths. lostAtThisU means the feature quantizes to ZERO whole runtime tiles."
+      },
+      "travel": {
+        "U": 4,
+        "speedAuPerSec": 18,
+        "basis": "PR44 balance.player.speed=72 px/s; k=16/U px per authoring unit; 1 game hour=3600 real s",
+        "rt1": {
+          "straightAu": 199.4843,
+          "routeAu": 346.1492,
+          "effectiveFootAu": 284.1852,
+          "effectiveCartAu": 464.1813,
+          "straightLineTheoreticalSeconds": 11.0825,
+          "geographicRouteSeconds": 15.7881,
+          "loadedCartScenarioSeconds": 45.4011,
+          "cartStatus": "MODELLED_SCENARIO_ON_FOOT_ROUTE__NOT_CART_PASSABLE"
+        },
+        "crossWorldWidthSeconds": 111.1111,
+        "crossWorldFractionOfFictionalDay": 0.0772,
+        "uncertainty": "Times are modelled from pinned movement constants; they are NOT native-input measured times. Physical clearance, trail cart-passability, ferry rules and exposure are UNRESOLVED."
+      },
+      "memory": {
+        "cells": 175000,
+        "worldTypedArraysBytes": 1050000,
+        "blockGridBytes": 175000,
+        "economyNumericArraysBytes": 18200000,
+        "sourceV3Bytes": 1400000,
+        "packageArraysBytes": 5600000,
+        "totalBytesLowerBound": 26425000,
+        "totalMBLowerBound": 25.2008,
+        "renderChunkCacheUpperBoundMB": 176,
+        "compileEconomyNeighbourhoodChecksWorstCase": 8575000,
+        "model": "LOWER-BOUND MODEL, NOT MEASURED. Assumes 1-byte typed arrays for World/BlockGrid and 8-byte slots for JS arrays. Chunk key stride 100 and 1M-cell cap are TEMPORARY engine constants, not design limits."
+      },
+      "physicalFit": {
+        "enclosedFitRate": 0.5526,
+        "openAirFitRate": 0.907,
+        "allEnclosedFit": false,
+        "allOpenAirFit": false,
+        "entranceCapacityNeverZero": true,
+        "entranceCapacityCaveat": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceOpenTiles": 0,
+        "proposedEntranceLost": true,
+        "note": "Rates are computed ONLY over the relevant enclosure class, using each POI's own quad/deep polygon/edges. The 3.696 au PROPOSED entrance is a separate worked example: at U>=3.696 it quantizes to ZERO open tiles."
+      },
+      "resolution": {
+        "sourceRasterUpsampleFactor": 4,
+        "tilesPerSourceCellAxis": 2,
+        "newAuthoredDetail": "NONE: Veyra raster is 8 au/cell. U<8 duplicates/interpolates; U>8 loses authored cells.",
+        "fractionalRasterCellsRequiringResampling": 0,
+        "runtimeTileStraddles": 0
+      },
+      "uncertainty": [
+        "Enclosure class is a DERIVED heuristic from canonical depth/deep/gate/arche fields, not a canonical field.",
+        "Wall thickness = 1 runtime tile and room requirement = 5x4 tiles are assumptions anchored to PR44 smallest authored building; not approved Veyra dimensions.",
+        "Entrance capacity is bounded by each POI's own shortest foot edge; canonical Veyra authors NO door openings.",
+        "WW=WH=200, TILE=16, validateEconomyMap 1,000,000-cell cap and render.ts chunk key stride 100 are TEMPORARY engine constants (Gameplay ACK 6608030530), NOT permanent design laws.",
+        "No streaming/LOD implementation was found in PR44 HEAD; chunk culling is not world streaming.",
+        "Loaded-cart times are modelled on the foot route; RT-1 contains kind=trail segments and is NOT cart-passable."
+      ]
+    },
+    {
+      "U": 8,
+      "focusBand": false,
+      "status": "BOUNDED_DIAGNOSTIC_PROFILE__NOT_APPROVED",
+      "transform": {
+        "U": 8,
+        "unit": "authoring_units_per_runtime_tile",
+        "exactIntegerDims": true,
+        "worldTilesExact": [
+          250,
+          175
+        ],
+        "floorTiles": [
+          250,
+          175
+        ],
+        "ceilTiles": [
+          250,
+          175
+        ],
+        "remainderTiles": [
+          0,
+          0
+        ],
+        "fractionalEdge": false,
+        "coverage": {
+          "frameAu2": 2800000,
+          "wholeTileAreaAu2": 2800000,
+          "wholeTileCoverageFraction": 1,
+          "ceilTileAreaAu2": 2800000,
+          "ceilOverhangFraction": 0,
+          "unrepresentedAu2WithFloor": 0,
+          "partialEdgeTileCount": 0,
+          "transformModes": [
+            "EXACT_1:1_TILE_GRID"
+          ],
+          "note": "For fractional U the last runtime row/column is partial. Any runtime intake must choose one documented mode; none is approved."
+        },
+        "raster": {
+          "sourceGrid": {
+            "gw": 250,
+            "gh": 175,
+            "cellAu": 8,
+            "cells": 43750
+          },
+          "tilesPerSourceCellAxis": 1,
+          "exactRasterAlignment": true,
+          "sourceCellsWithTileBoundaryInsideX": 0,
+          "sourceCellsWithTileBoundaryInsideY": 0,
+          "sourceCellsWithTileBoundaryInside2D": 0,
+          "sourceCellsWithTileBoundaryInsideMeaning": "Upsampling count: a tile boundary inside an 8 au source cell. When 8/U is an INTEGER the clip is exact and costs no resampling.",
+          "fractionalSourceCellsRequiringResampling": 0,
+          "runtimeTileColumnsRowsStraddlingSourceCellBoundary": 0,
+          "runtimeTileStraddleMeaning": "A source-cell EDGE falling strictly inside a runtime tile. This is the explicit fractional-coverage cost and is ZERO when 8/U is an integer.",
+          "sourceCellsExactlyAligned": 43750,
+          "note": "Fractional U needs a documented FLOOR/CEIL/NONUNIFORM mode for partial edge tiles AND a resampling rule for 8 au source cells cut mid-tile."
+        }
+      },
+      "perPoi": {
+        "U": 8,
+        "poiCount": 81,
+        "enclosedCount": 38,
+        "enclosedWithRoom5x4": 0,
+        "enclosedWithRoomAndEntrance": 0,
+        "enclosedFail": 38,
+        "openAirCount": 43,
+        "openAirWithYard": 20,
+        "openAirFail": 23,
+        "unresolvedCount": 0,
+        "entranceCapacityZeroOpenTiles": 0,
+        "entranceCapacityStatus": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceLostCount": 81,
+        "proposedEntranceStatus": "3.696 au GEO-02 PROPOSED po_kilns opening; NON-CANONICAL worked example only.",
+        "entranceZeroOpenTiles": 0,
+        "poiFeetUnableToHostSmallestRoom_CORRECTED": 38,
+        "scale01aDefectReproduction": {
+          "flawedRule": "footAreaAu2/U^2 < 20 || GLOBAL_minEdgeAu/U < 4, applied to all 81 POIs",
+          "flawedFailCount": 81,
+          "note": "SCALE-01A reported 81/81 at U=4 and U=8 because it used the global 11 au minimum edge for every POI. The corrected count only considers ENCLOSED POIs and each POI's own quad."
+        }
+      },
+      "quantization": {
+        "U": 8,
+        "features": [
+          {
+            "id": "road_display_stroke_other",
+            "au": 1.6,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.other",
+            "tiles": 0.2,
+            "openTiles": 0,
+            "lostAtThisU": true
+          },
+          {
+            "id": "river_authored_width_min",
+            "au": 2.5,
+            "source": "canon rivers[].width min",
+            "tiles": 0.3125,
+            "openTiles": 0,
+            "lostAtThisU": true
+          },
+          {
+            "id": "road_display_stroke_cart",
+            "au": 3.4,
+            "source": "geo02 maplab_encoding.widthSemantics.roads.displayStrokesAu.cart",
+            "tiles": 0.425,
+            "openTiles": 0,
+            "lostAtThisU": true
+          },
+          {
+            "id": "proposed_po_kilns_west_opening",
+            "au": 3.696,
+            "source": "geo02 poi_po_kilns.proposed.v1.json PROPOSED",
+            "tiles": 0.462,
+            "openTiles": 0,
+            "lostAtThisU": true
+          },
+          {
+            "id": "bridge_display_glyph_short_axis",
+            "au": 7.2,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.h",
+            "tiles": 0.9,
+            "openTiles": 0,
+            "lostAtThisU": true
+          },
+          {
+            "id": "source_raster_cell",
+            "au": 8,
+            "source": "canon terrain.cell",
+            "tiles": 1,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "road_analysis_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.roads.analysisStrokeAu",
+            "tiles": 1.125,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "river_mask_min_stroke",
+            "au": 9,
+            "source": "geo02 widthSemantics.rivers.maskStrokeAu",
+            "tiles": 1.125,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "bridge_display_glyph_long_axis",
+            "au": 13,
+            "source": "geo02 widthSemantics.roads.bridgeDisplayGlyphAu.w",
+            "tiles": 1.625,
+            "openTiles": 1,
+            "lostAtThisU": false
+          },
+          {
+            "id": "po_kilns_cart_road_gap",
+            "au": 56.8792,
+            "source": "geo02 corridor_audit nearest cart road rd_n",
+            "tiles": 7.1099,
+            "openTiles": 7,
+            "lostAtThisU": false
+          }
+        ],
+        "lostCount": 5,
+        "note": "Editor strokes / display glyphs are NOT authored physical widths. lostAtThisU means the feature quantizes to ZERO whole runtime tiles."
+      },
+      "travel": {
+        "U": 8,
+        "speedAuPerSec": 36,
+        "basis": "PR44 balance.player.speed=72 px/s; k=16/U px per authoring unit; 1 game hour=3600 real s",
+        "rt1": {
+          "straightAu": 199.4843,
+          "routeAu": 346.1492,
+          "effectiveFootAu": 284.1852,
+          "effectiveCartAu": 464.1813,
+          "straightLineTheoreticalSeconds": 5.5412,
+          "geographicRouteSeconds": 7.894,
+          "loadedCartScenarioSeconds": 22.7006,
+          "cartStatus": "MODELLED_SCENARIO_ON_FOOT_ROUTE__NOT_CART_PASSABLE"
+        },
+        "crossWorldWidthSeconds": 55.5556,
+        "crossWorldFractionOfFictionalDay": 0.0386,
+        "uncertainty": "Times are modelled from pinned movement constants; they are NOT native-input measured times. Physical clearance, trail cart-passability, ferry rules and exposure are UNRESOLVED."
+      },
+      "memory": {
+        "cells": 43750,
+        "worldTypedArraysBytes": 262500,
+        "blockGridBytes": 43750,
+        "economyNumericArraysBytes": 4550000,
+        "sourceV3Bytes": 350000,
+        "packageArraysBytes": 1400000,
+        "totalBytesLowerBound": 6606250,
+        "totalMBLowerBound": 6.3002,
+        "renderChunkCacheUpperBoundMB": 44,
+        "compileEconomyNeighbourhoodChecksWorstCase": 2143750,
+        "model": "LOWER-BOUND MODEL, NOT MEASURED. Assumes 1-byte typed arrays for World/BlockGrid and 8-byte slots for JS arrays. Chunk key stride 100 and 1M-cell cap are TEMPORARY engine constants, not design limits."
+      },
+      "physicalFit": {
+        "enclosedFitRate": 0,
+        "openAirFitRate": 0.4651,
+        "allEnclosedFit": false,
+        "allOpenAirFit": false,
+        "entranceCapacityNeverZero": true,
+        "entranceCapacityCaveat": "NOT an authored opening: canonical POIs have zero door dimensions; this is each POI's own shortest-edge UPPER BOUND.",
+        "proposedEntranceOpenTiles": 0,
+        "proposedEntranceLost": true,
+        "note": "Rates are computed ONLY over the relevant enclosure class, using each POI's own quad/deep polygon/edges. The 3.696 au PROPOSED entrance is a separate worked example: at U>=3.696 it quantizes to ZERO open tiles."
+      },
+      "resolution": {
+        "sourceRasterUpsampleFactor": 1,
+        "tilesPerSourceCellAxis": 1,
+        "newAuthoredDetail": "NONE: Veyra raster is 8 au/cell. U<8 duplicates/interpolates; U>8 loses authored cells.",
+        "fractionalRasterCellsRequiringResampling": 0,
+        "runtimeTileStraddles": 0
+      },
+      "uncertainty": [
+        "Enclosure class is a DERIVED heuristic from canonical depth/deep/gate/arche fields, not a canonical field.",
+        "Wall thickness = 1 runtime tile and room requirement = 5x4 tiles are assumptions anchored to PR44 smallest authored building; not approved Veyra dimensions.",
+        "Entrance capacity is bounded by each POI's own shortest foot edge; canonical Veyra authors NO door openings.",
+        "WW=WH=200, TILE=16, validateEconomyMap 1,000,000-cell cap and render.ts chunk key stride 100 are TEMPORARY engine constants (Gameplay ACK 6608030530), NOT permanent design laws.",
+        "No streaming/LOD implementation was found in PR44 HEAD; chunk culling is not world streaming.",
+        "Loaded-cart times are modelled on the foot route; RT-1 contains kind=trail segments and is NOT cart-passable."
+      ]
+    }
+  ],
+  "frame": {
+    "authoring": [
+      2000,
+      1400
+    ],
+    "sourceGrid": {
+      "gw": 250,
+      "gh": 175,
+      "cell": 8,
+      "cells": 43750
+    },
+    "transformStatus": "UNDECIDED"
+  },
+  "noClaims": [
+    "NO approved scale",
+    "NO canon edit",
+    "NO runtime merge",
+    "NO fabricated travel time",
+    "NO cart-passable trail",
+    "NO playable integration"
+  ]
+}

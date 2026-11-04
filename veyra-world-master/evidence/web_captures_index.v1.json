@@ -1,0 +1,75 @@
+{
+  "schema": "soh.wmp.web_captures_index.v1",
+  "status": "REAL_WEB_CAPTURES_CLASSIFIED_SEPARATELY",
+  "authority": "SELF_CONTAINED_PHYSICAL_WORLD_MASTER_CANDIDATE__NOT_SEALED",
+  "count": 6,
+  "captures": [
+    {
+      "file": "evidence/web_real/select-veyra-greywater-u16-640.png",
+      "bytes": 55277,
+      "sha256": "e7e4722d1ea35aade194d72e1dd8341ff77163b1b0c3cb2dc4daabb66d7f2691",
+      "width": 640,
+      "height": 360,
+      "classification": "REAL_WEB_RUNTIME_CAPTURE",
+      "source": "Gameplay LR02 M4 byte-preserved evidence",
+      "status": "ACTUAL_WEB_RENDERED_INTEGRATION_PROOF=NOT_AVAILABLE__GAMEPLAY_OWNED",
+      "note": "These are genuine Web runtime captures, NOT Map analytical views. They do not prove WMP layer ingestion."
+    },
+    {
+      "file": "evidence/web_real/select-veyra-greywater-u20-640.png",
+      "bytes": 53369,
+      "sha256": "cbf7d586d3a588d56ff1e80d6b99c4b46ae494be974cafa95af847febe03eed0",
+      "width": 640,
+      "height": 360,
+      "classification": "REAL_WEB_RUNTIME_CAPTURE",
+      "source": "Gameplay LR02 M4 byte-preserved evidence",
+      "status": "ACTUAL_WEB_RENDERED_INTEGRATION_PROOF=NOT_AVAILABLE__GAMEPLAY_OWNED",
+      "note": "These are genuine Web runtime captures, NOT Map analytical views. They do not prove WMP layer ingestion."
+    },
+    {
+      "file": "evidence/web_real/start-veyra-greywater-u16-640.png",
+      "bytes": 151749,
+      "sha256": "046fbb50be1f5fadb33d2768b840b0bb0af77c6b8f1af1df5bc3c060e090659f",
+      "width": 640,
+      "height": 360,
+      "classification": "REAL_WEB_RUNTIME_CAPTURE",
+      "source": "Gameplay LR02 M4 byte-preserved evidence",
+      "status": "ACTUAL_WEB_RENDERED_INTEGRATION_PROOF=NOT_AVAILABLE__GAMEPLAY_OWNED",
+      "note": "These are genuine Web runtime captures, NOT Map analytical views. They do not prove WMP layer ingestion."
+    },
+    {
+      "file": "evidence/web_real/start-veyra-greywater-u20-640.png",
+      "bytes": 135935,
+      "sha256": "ea55cf2ee8c93f2d153da1cfbc6b6bc421f475d475c7af5b49cc3601579ce34f",
+      "width": 640,
+      "height": 360,
+      "classification": "REAL_WEB_RUNTIME_CAPTURE",
+      "source": "Gameplay LR02 M4 byte-preserved evidence",
+      "status": "ACTUAL_WEB_RENDERED_INTEGRATION_PROOF=NOT_AVAILABLE__GAMEPLAY_OWNED",
+      "note": "These are genuine Web runtime captures, NOT Map analytical views. They do not prove WMP layer ingestion."
+    },
+    {
+      "file": "evidence/web_real/walk-veyra-greywater-u16-640.png",
+      "bytes": 149879,
+      "sha256": "94c41d5f62f0e6fc16f94e853ce9b33c7bfae028f5216ecf51bd6d136967a66f",
+      "width": 640,
+      "height": 360,
+      "classification": "REAL_WEB_RUNTIME_CAPTURE",
+      "source": "Gameplay LR02 M4 byte-preserved evidence",
+      "status": "ACTUAL_WEB_RENDERED_INTEGRATION_PROOF=NOT_AVAILABLE__GAMEPLAY_OWNED",
+      "note": "These are genuine Web runtime captures, NOT Map analytical views. They do not prove WMP layer ingestion."
+    },
+    {
+      "file": "evidence/web_real/walk-veyra-greywater-u20-640.png",
+      "bytes": 135181,
+      "sha256": "abcf4caf7e8000d09864a0e799acbad8ef18ba6f6e4a048df4b86bfff4799732",
+      "width": 640,
+      "height": 360,
+      "classification": "REAL_WEB_RUNTIME_CAPTURE",
+      "source": "Gameplay LR02 M4 byte-preserved evidence",
+      "status": "ACTUAL_WEB_RENDERED_INTEGRATION_PROOF=NOT_AVAILABLE__GAMEPLAY_OWNED",
+      "note": "These are genuine Web runtime captures, NOT Map analytical views. They do not prove WMP layer ingestion."
+    }
+  ],
+  "actualWebRenderedIntegrationProof": "NOT_AVAILABLE__GAMEPLAY_OWNED"
+}

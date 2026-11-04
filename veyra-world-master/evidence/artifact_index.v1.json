@@ -1,0 +1,269 @@
+{
+  "schema": "soh.wmp.artifact_index.v1",
+  "status": "SUPPLEMENTARY__AUTHORITATIVE_MANIFEST_IS_manifest.v1.json",
+  "masterRevisionDigest": "1d032deb1b03feac918ed0485aa31c21b4c7951373d4dda5ebfbe3b8f850474e",
+  "manifestSha256": "f3eb991998c47c0e4713376c50c73766cf0766d9f8ea88413aca08a22e5efb83",
+  "count": 51,
+  "totalBytes": 1463135,
+  "excluded": [
+    "evidence/artifact_index.v1.json",
+    "*.log runtime transcripts (evidence/reproduce.log, evidence/clean_room.log)"
+  ],
+  "files": [
+    {
+      "file": "README.md",
+      "bytes": 4624,
+      "sha256": "876be524e70af7dc0d3e603480033800d2e081d7176ec8b42ce30a419c108646"
+    },
+    {
+      "file": "api/intake.mjs",
+      "bytes": 7653,
+      "sha256": "ebc763b0baa2bba3d032dde7713c9faa317fd6da67197f9fbec55aeac7f6ef08"
+    },
+    {
+      "file": "api/world.mjs",
+      "bytes": 20010,
+      "sha256": "50f497346cc523892c6154710b5f11ca9172847c135b207b84878b74e22210bc"
+    },
+    {
+      "file": "build.mjs",
+      "bytes": 79832,
+      "sha256": "584e14ffb5a5f6ddb1967cb360661a518740d6d3234638bccd8d2bdfbd65058b"
+    },
+    {
+      "file": "clean-room.sh",
+      "bytes": 1807,
+      "sha256": "eeb4861617967ef1204dcc67d27fbec756cf860fe57a88880f75d979ffed8b64"
+    },
+    {
+      "file": "data/source_manifest.v1.json",
+      "bytes": 37283,
+      "sha256": "c1f0b7a8664656842d97df95a63ee93a258268b6856ac579f27c1908a072cc4d"
+    },
+    {
+      "file": "docs/BLOCKERS_AND_OWNERS.md",
+      "bytes": 7242,
+      "sha256": "cda4c395dfeaa9de8c3b87dec6e944347cc55e2ed15683864d75edad2c4972f6"
+    },
+    {
+      "file": "docs/CLEAN_ROOM.md",
+      "bytes": 2057,
+      "sha256": "b5c81a40574a8d15da79ab462fc6613cb61456bc7ecb8d615c39a287e8880f3e"
+    },
+    {
+      "file": "docs/DECISION_REGISTER.md",
+      "bytes": 2869,
+      "sha256": "795e983c87bc2405ec5e5e583b8152d030d67cf417213b7be40578d5ad5a002d"
+    },
+    {
+      "file": "docs/GATES_M_G0_M_G5.md",
+      "bytes": 10425,
+      "sha256": "dfa37e5cd69644ec888bdb09cadd4ba5141ccf035c06a623ebdd33e51e17ba5b"
+    },
+    {
+      "file": "docs/INTAKE_CONTRACT.md",
+      "bytes": 4285,
+      "sha256": "be43f74e83a841a0a00890cd6c00f6a8ea02fb4b1a95ead36e6c2860e581633c"
+    },
+    {
+      "file": "docs/MAP_LR03_FINAL_HANDOFF.md",
+      "bytes": 13205,
+      "sha256": "40985950bf1182c9d56b8b9923275b7774d80b7a3c2d2295d0428c7e8e5690a9"
+    },
+    {
+      "file": "docs/TECHNICAL_VIEWS.md",
+      "bytes": 3203,
+      "sha256": "22b3d435a987723da026a91350b13dce55eb8eebad6b3b5de39093ea63583a0e"
+    },
+    {
+      "file": "evidence/build_determinism.v1.json",
+      "bytes": 259,
+      "sha256": "6e4f3c0fc6a904cc21b224441b7f9852bfe12071885230c75dba15f5786d9b82"
+    },
+    {
+      "file": "evidence/tests/negative_fixtures.v1.json",
+      "bytes": 2173,
+      "sha256": "659af8033a5d7843c70ed99c2c07a6fbdbd474c8e08bd263bf21e7d0159ec184"
+    },
+    {
+      "file": "evidence/tests/test_results.v1.json",
+      "bytes": 24131,
+      "sha256": "08b7afb389f41830aa3763130997deebfe7b5e77155c102a82a9ec84b8c130e5"
+    },
+    {
+      "file": "evidence/views/detail_br4_crossing.png",
+      "bytes": 7278,
+      "sha256": "17e2b27b098e4d1c959c55deb5a76de6bf1f0283438a9f09edeacc391b2db794"
+    },
+    {
+      "file": "evidence/views/detail_build_envelope_water_overlap.png",
+      "bytes": 9105,
+      "sha256": "ba0024d7a9ac1765d6adbe3fe4a2d8e29d7b58a27f55e5244564b253fb341753"
+    },
+    {
+      "file": "evidence/views/detail_elder_territories.png",
+      "bytes": 13645,
+      "sha256": "142ac113e5284c28ef678513eac428ffa75ecf60ba873b07f06d5b729c39a2bf"
+    },
+    {
+      "file": "evidence/views/detail_po_academy.png",
+      "bytes": 8385,
+      "sha256": "8b24ce49b7c0223926eef029dfe1e52188175e61f0e5cc289f428d5709a5ba35"
+    },
+    {
+      "file": "evidence/views/detail_po_greywater.png",
+      "bytes": 11436,
+      "sha256": "c3375c8dfa3a25cc7a90497e6cf9eb15a5e1f9f30abfc77d93e20f425f4acd6d"
+    },
+    {
+      "file": "evidence/views/detail_po_kilns.png",
+      "bytes": 8079,
+      "sha256": "272b5fdd1a73dff23c115c953633e4fc76be3266e7f24cf1801dde8c44b1fdc7"
+    },
+    {
+      "file": "evidence/views/scale_U16_camera.png",
+      "bytes": 17230,
+      "sha256": "28785d7f40a8ee93fa081313d51ad8ce0badaec12c8f11122bc4634fcbe09eaa"
+    },
+    {
+      "file": "evidence/views/scale_U20_camera.png",
+      "bytes": 15122,
+      "sha256": "42fd1162da9c72c245ae8b9da8c5e390f07180dbf1edcb05dc9bc3202dd941c7"
+    },
+    {
+      "file": "evidence/views/scale_U25_camera.png",
+      "bytes": 13219,
+      "sha256": "713f4759fd3f7bd916c0f6b3e9ae032d6708432e43d093d131edbd2a0746c412"
+    },
+    {
+      "file": "evidence/views/views_index.v1.json",
+      "bytes": 8133,
+      "sha256": "1a2b2b510c9de7305725e878ba2dd49e8966e37d3205dfff5b73160c70c0877d"
+    },
+    {
+      "file": "evidence/views/world_chunks_full.png",
+      "bytes": 14968,
+      "sha256": "a3e9548cb36fde6198e3a58979174b3b3629c148a3ed4291d571c1b4d2815b52"
+    },
+    {
+      "file": "evidence/views/world_climate_regions_full.png",
+      "bytes": 11844,
+      "sha256": "0b9f92fef035c5eb4d566be813a5b9da8bcc50a75b7d9accc994d4d3fad90b35"
+    },
+    {
+      "file": "evidence/views/world_elevation_slope_full.png",
+      "bytes": 37713,
+      "sha256": "704bbe824f544bbbf896002e1542223d6a111ee5d9420aed5dc56ab0f7897546"
+    },
+    {
+      "file": "evidence/views/world_resources_zones_full.png",
+      "bytes": 31125,
+      "sha256": "cd2ee3030b52a6e1d2e681a13910b898d9f2e7b0e304e6eaf924b938cfb64617"
+    },
+    {
+      "file": "evidence/views/world_terrain_full.png",
+      "bytes": 20610,
+      "sha256": "ded4eca908daa3fd836e879b6c68f5dc552d770cdfd670fdf1445e3c770fccfb"
+    },
+    {
+      "file": "evidence/views/world_water_transport_full.png",
+      "bytes": 26939,
+      "sha256": "41a6c630f9cd8ba4a8475148b1592b8d55789c7ab50f39226843b9ce201af732"
+    },
+    {
+      "file": "evidence/web_captures_index.v1.json",
+      "bytes": 3584,
+      "sha256": "ce2f2e7e83083a465134417f01ae498cf4725151f102b47a2a0b0f7235e973a6"
+    },
+    {
+      "file": "evidence/web_real/select-veyra-greywater-u16-640.png",
+      "bytes": 55277,
+      "sha256": "e7e4722d1ea35aade194d72e1dd8341ff77163b1b0c3cb2dc4daabb66d7f2691"
+    },
+    {
+      "file": "evidence/web_real/select-veyra-greywater-u20-640.png",
+      "bytes": 53369,
+      "sha256": "cbf7d586d3a588d56ff1e80d6b99c4b46ae494be974cafa95af847febe03eed0"
+    },
+    {
+      "file": "evidence/web_real/start-veyra-greywater-u16-640.png",
+      "bytes": 151749,
+      "sha256": "046fbb50be1f5fadb33d2768b840b0bb0af77c6b8f1af1df5bc3c060e090659f"
+    },
+    {
+      "file": "evidence/web_real/start-veyra-greywater-u20-640.png",
+      "bytes": 135935,
+      "sha256": "ea55cf2ee8c93f2d153da1cfbc6b6bc421f475d475c7af5b49cc3601579ce34f"
+    },
+    {
+      "file": "evidence/web_real/walk-veyra-greywater-u16-640.png",
+      "bytes": 149879,
+      "sha256": "94c41d5f62f0e6fc16f94e853ce9b33c7bfae028f5216ecf51bd6d136967a66f"
+    },
+    {
+      "file": "evidence/web_real/walk-veyra-greywater-u20-640.png",
+      "bytes": 135181,
+      "sha256": "abcf4caf7e8000d09864a0e799acbad8ef18ba6f6e4a048df4b86bfff4799732"
+    },
+    {
+      "file": "evidence/windows/window.U16.200x200.0x0.fresh.u8",
+      "bytes": 40000,
+      "sha256": "e7e2dcff542de95352682dc186432e98f0188084896773f1973276b0577d5305"
+    },
+    {
+      "file": "evidence/windows/window.U16.200x200.0x0.land.u8",
+      "bytes": 40000,
+      "sha256": "e7e2dcff542de95352682dc186432e98f0188084896773f1973276b0577d5305"
+    },
+    {
+      "file": "evidence/windows/window.U16.200x200.0x0.seaDist.u8",
+      "bytes": 40000,
+      "sha256": "e7e2dcff542de95352682dc186432e98f0188084896773f1973276b0577d5305"
+    },
+    {
+      "file": "evidence/windows/window.U16.200x200.0x0.tiles.u8",
+      "bytes": 40000,
+      "sha256": "fb67091504b666f393f1530f351a3fa5ae5168228b9aa06dcce5835be0402356"
+    },
+    {
+      "file": "evidence/windows/window.U16.200x200.0x0.zone.u8",
+      "bytes": 40000,
+      "sha256": "e7e2dcff542de95352682dc186432e98f0188084896773f1973276b0577d5305"
+    },
+    {
+      "file": "lib/wmp.mjs",
+      "bytes": 6869,
+      "sha256": "d6816f005c65a4a85f1702b6a55bfedc47f70d9cf158a37a421a038d8fe26df5"
+    },
+    {
+      "file": "manifest.v1.json",
+      "bytes": 19699,
+      "sha256": "f3eb991998c47c0e4713376c50c73766cf0766d9f8ea88413aca08a22e5efb83"
+    },
+    {
+      "file": "reproduce.sh",
+      "bytes": 1426,
+      "sha256": "a5e7ed1c4eb7193bef9fa280290af5d7d736fea7ecf05dd4cc5f7a5f1c6aec2b"
+    },
+    {
+      "file": "tests/run.mjs",
+      "bytes": 48403,
+      "sha256": "b41ee433ca33cdfce1af60af64430365515d122f6f5eab1d602c3ed3e50e7d38"
+    },
+    {
+      "file": "tools/artifact_index.mjs",
+      "bytes": 2063,
+      "sha256": "d5f5513932ca6c33c9deececafdad9bef0d62bb437996d4a669cf22f2cd3793b"
+    },
+    {
+      "file": "tools/png.mjs",
+      "bytes": 6680,
+      "sha256": "47665e20619706bf55e8247fca0eba411d85853d6e86b7511f7edf004c5098e2"
+    },
+    {
+      "file": "tools/views.mjs",
+      "bytes": 17132,
+      "sha256": "c6d13e3c745e030f21338fe582e71b8b6e3cff7af882d29622e49842c33dc561"
+    }
+  ]
+}

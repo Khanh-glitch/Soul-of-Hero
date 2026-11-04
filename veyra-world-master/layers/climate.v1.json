@@ -1,0 +1,620 @@
+{
+  "schema": "soh.wmp.climate.v1",
+  "status": "STATIC_SPATIAL_POTENTIAL_ONLY__GAMEPLAY_OWNS_REALIZATION",
+  "authority": "MAP_DESIGNS_THE_PHYSICAL_WORLD__GAMEPLAY_POPULATES_AND_SIMULATES_IT",
+  "frame": {
+    "authoring": [
+      2000,
+      1400
+    ],
+    "unit": "authoring_unit",
+    "grid": {
+      "gw": 250,
+      "gh": 175,
+      "cellAu": 8
+    }
+  },
+  "ownership": {
+    "map": [
+      "terrain",
+      "height proxy",
+      "water",
+      "canopy",
+      "shade",
+      "drainage",
+      "exposure",
+      "spatial climate baseline"
+    ],
+    "gameplay": [
+      "actual weather realization",
+      "thermal effects",
+      "seasons",
+      "survival consequences",
+      "timeline",
+      "all numeric rates"
+    ]
+  },
+  "regionCount": 12,
+  "climateRegions": [
+    {
+      "id": "clim.temperate.v1",
+      "key": "TEMPERATE",
+      "cellCount": 33048,
+      "areaAu2": 2115072,
+      "temperaturePotential": "PROPOSED",
+      "humidityPotential": "PROPOSED",
+      "hot": "BASELINE",
+      "cold": "BASELINE",
+      "wetland": "BASELINE",
+      "snow": "BASELINE",
+      "toxic": "BASELINE",
+      "radiation": "UNKNOWN",
+      "numericValues": {
+        "temperatureCelsius": "UNKNOWN",
+        "damagePerSecond": "UNKNOWN",
+        "rainRate": "UNKNOWN",
+        "seasonalRate": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      },
+      "status": "PROPOSED"
+    },
+    {
+      "id": "clim.canopy.v1",
+      "key": "CANOPY",
+      "cellCount": 3019,
+      "areaAu2": 193216,
+      "temperaturePotential": "PROPOSED",
+      "humidityPotential": "PROPOSED",
+      "hot": "BASELINE",
+      "cold": "BASELINE",
+      "wetland": "BASELINE",
+      "snow": "BASELINE",
+      "toxic": "BASELINE",
+      "radiation": "UNKNOWN",
+      "numericValues": {
+        "temperatureCelsius": "UNKNOWN",
+        "damagePerSecond": "UNKNOWN",
+        "rainRate": "UNKNOWN",
+        "seasonalRate": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      },
+      "status": "PROPOSED"
+    },
+    {
+      "id": "clim.ancient_canopy.v1",
+      "key": "ANCIENT_CANOPY",
+      "cellCount": 1111,
+      "areaAu2": 71104,
+      "temperaturePotential": "PROPOSED",
+      "humidityPotential": "PROPOSED",
+      "hot": "BASELINE",
+      "cold": "BASELINE",
+      "wetland": "BASELINE",
+      "snow": "BASELINE",
+      "toxic": "BASELINE",
+      "radiation": "UNKNOWN",
+      "numericValues": {
+        "temperatureCelsius": "UNKNOWN",
+        "damagePerSecond": "UNKNOWN",
+        "rainRate": "UNKNOWN",
+        "seasonalRate": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      },
+      "status": "PROPOSED"
+    },
+    {
+      "id": "clim.conifer.v1",
+      "key": "CONIFER",
+      "cellCount": 834,
+      "areaAu2": 53376,
+      "temperaturePotential": "PROPOSED",
+      "humidityPotential": "PROPOSED",
+      "hot": "BASELINE",
+      "cold": "ELEVATED_POTENTIAL",
+      "wetland": "BASELINE",
+      "snow": "BASELINE",
+      "toxic": "BASELINE",
+      "radiation": "UNKNOWN",
+      "numericValues": {
+        "temperatureCelsius": "UNKNOWN",
+        "damagePerSecond": "UNKNOWN",
+        "rainRate": "UNKNOWN",
+        "seasonalRate": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      },
+      "status": "PROPOSED"
+    },
+    {
+      "id": "clim.wetland.v1",
+      "key": "WETLAND",
+      "cellCount": 770,
+      "areaAu2": 49280,
+      "temperaturePotential": "PROPOSED",
+      "humidityPotential": "PROPOSED",
+      "hot": "BASELINE",
+      "cold": "BASELINE",
+      "wetland": "ELEVATED_POTENTIAL",
+      "snow": "BASELINE",
+      "toxic": "BASELINE",
+      "radiation": "UNKNOWN",
+      "numericValues": {
+        "temperatureCelsius": "UNKNOWN",
+        "damagePerSecond": "UNKNOWN",
+        "rainRate": "UNKNOWN",
+        "seasonalRate": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      },
+      "status": "PROPOSED"
+    },
+    {
+      "id": "clim.arid.v1",
+      "key": "ARID",
+      "cellCount": 1308,
+      "areaAu2": 83712,
+      "temperaturePotential": "PROPOSED",
+      "humidityPotential": "PROPOSED",
+      "hot": "ELEVATED_POTENTIAL",
+      "cold": "BASELINE",
+      "wetland": "BASELINE",
+      "snow": "BASELINE",
+      "toxic": "BASELINE",
+      "radiation": "UNKNOWN",
+      "numericValues": {
+        "temperatureCelsius": "UNKNOWN",
+        "damagePerSecond": "UNKNOWN",
+        "rainRate": "UNKNOWN",
+        "seasonalRate": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      },
+      "status": "PROPOSED"
+    },
+    {
+      "id": "clim.scrub.v1",
+      "key": "SCRUB",
+      "cellCount": 1400,
+      "areaAu2": 89600,
+      "temperaturePotential": "PROPOSED",
+      "humidityPotential": "PROPOSED",
+      "hot": "BASELINE",
+      "cold": "BASELINE",
+      "wetland": "BASELINE",
+      "snow": "BASELINE",
+      "toxic": "BASELINE",
+      "radiation": "UNKNOWN",
+      "numericValues": {
+        "temperatureCelsius": "UNKNOWN",
+        "damagePerSecond": "UNKNOWN",
+        "rainRate": "UNKNOWN",
+        "seasonalRate": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      },
+      "status": "PROPOSED"
+    },
+    {
+      "id": "clim.rock.v1",
+      "key": "ROCK",
+      "cellCount": 511,
+      "areaAu2": 32704,
+      "temperaturePotential": "PROPOSED",
+      "humidityPotential": "PROPOSED",
+      "hot": "BASELINE",
+      "cold": "BASELINE",
+      "wetland": "BASELINE",
+      "snow": "BASELINE",
+      "toxic": "BASELINE",
+      "radiation": "UNKNOWN",
+      "numericValues": {
+        "temperatureCelsius": "UNKNOWN",
+        "damagePerSecond": "UNKNOWN",
+        "rainRate": "UNKNOWN",
+        "seasonalRate": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      },
+      "status": "PROPOSED"
+    },
+    {
+      "id": "clim.cold.v1",
+      "key": "COLD",
+      "cellCount": 217,
+      "areaAu2": 13888,
+      "temperaturePotential": "PROPOSED",
+      "humidityPotential": "PROPOSED",
+      "hot": "BASELINE",
+      "cold": "ELEVATED_POTENTIAL",
+      "wetland": "BASELINE",
+      "snow": "ELEVATED_POTENTIAL",
+      "toxic": "BASELINE",
+      "radiation": "UNKNOWN",
+      "numericValues": {
+        "temperatureCelsius": "UNKNOWN",
+        "damagePerSecond": "UNKNOWN",
+        "rainRate": "UNKNOWN",
+        "seasonalRate": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      },
+      "status": "PROPOSED"
+    },
+    {
+      "id": "clim.volcanic.v1",
+      "key": "VOLCANIC",
+      "cellCount": 452,
+      "areaAu2": 28928,
+      "temperaturePotential": "PROPOSED",
+      "humidityPotential": "PROPOSED",
+      "hot": "ELEVATED_POTENTIAL",
+      "cold": "BASELINE",
+      "wetland": "BASELINE",
+      "snow": "BASELINE",
+      "toxic": "BASELINE",
+      "radiation": "UNKNOWN",
+      "numericValues": {
+        "temperatureCelsius": "UNKNOWN",
+        "damagePerSecond": "UNKNOWN",
+        "rainRate": "UNKNOWN",
+        "seasonalRate": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      },
+      "status": "PROPOSED"
+    },
+    {
+      "id": "clim.toxic.v1",
+      "key": "TOXIC",
+      "cellCount": 199,
+      "areaAu2": 12736,
+      "temperaturePotential": "PROPOSED",
+      "humidityPotential": "PROPOSED",
+      "hot": "BASELINE",
+      "cold": "BASELINE",
+      "wetland": "BASELINE",
+      "snow": "BASELINE",
+      "toxic": "ELEVATED_POTENTIAL",
+      "radiation": "UNKNOWN",
+      "numericValues": {
+        "temperatureCelsius": "UNKNOWN",
+        "damagePerSecond": "UNKNOWN",
+        "rainRate": "UNKNOWN",
+        "seasonalRate": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      },
+      "status": "PROPOSED"
+    },
+    {
+      "id": "clim.littoral.v1",
+      "key": "LITTORAL",
+      "cellCount": 881,
+      "areaAu2": 56384,
+      "temperaturePotential": "PROPOSED",
+      "humidityPotential": "PROPOSED",
+      "hot": "BASELINE",
+      "cold": "BASELINE",
+      "wetland": "BASELINE",
+      "snow": "BASELINE",
+      "toxic": "BASELINE",
+      "radiation": "UNKNOWN",
+      "numericValues": {
+        "temperatureCelsius": "UNKNOWN",
+        "damagePerSecond": "UNKNOWN",
+        "rainRate": "UNKNOWN",
+        "seasonalRate": "UNKNOWN",
+        "owner": "GAMEPLAY"
+      },
+      "status": "PROPOSED"
+    }
+  ],
+  "environmentalProperties": [
+    "temperaturePotential",
+    "humidityPotential",
+    "hot",
+    "cold",
+    "wetland",
+    "snow",
+    "toxic",
+    "radiation",
+    "rainExposure",
+    "sun",
+    "wind",
+    "frost",
+    "soilMoisture",
+    "evaporation",
+    "drainage",
+    "firePropagationPotential",
+    "naturalFirebreak",
+    "vegetationAffordance",
+    "farmingAffordance",
+    "footprintRetention"
+  ],
+  "derivedRasters": [
+    {
+      "name": "exposure",
+      "file": "rasters/exposure.u8",
+      "bytes": 43750,
+      "sha256": "a70d75e6df94415220d1d0968e9236e917a8f183ca8bacd84a99274488ecb61a",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0..3 ordinal exposure (coast/altitude/canopy)",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "shade",
+      "file": "rasters/shade.u8",
+      "bytes": 43750,
+      "sha256": "9b17deede1e75eb550689167bb96a67d101bd60ccfa14ee6180c36110727bc56",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0..2 canopy/shade potential",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "drainage",
+      "file": "rasters/drainage.u8",
+      "bytes": 43750,
+      "sha256": "2149da46446a3a79b641f38457a8eb7670215acceec68707999180b01b3a6a91",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0 poor,1 waterlogged,2 moderate,3 free water",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "fireFuel",
+      "file": "rasters/fireFuel.u8",
+      "bytes": 43750,
+      "sha256": "2174e03e859286c12be596a676be26c7f8055b521ef038f8b38c26d1d7e6e275",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0..3 fuel load potential, NO damage rate",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "firebreak",
+      "file": "rasters/firebreak.u8",
+      "bytes": 43750,
+      "sha256": "9cdc76f30b9743c70e839a0a1a68c3d8af2fa5089a1b9a407cf2a98c784c6e3d",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0 none,1 road,2 water",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "footprint",
+      "file": "rasters/footprint.u8",
+      "bytes": 43750,
+      "sha256": "feadb6ee3baf7701ad03a02cfcafa4857ab861502ee70b2b9a2725a3616e154a",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0 none,1 hard,2 loam,3 soft/wet/snow (trace retention potential)",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "climateRegion",
+      "file": "rasters/climateRegion.u8",
+      "bytes": 43750,
+      "sha256": "6a803c7ec716b5d962f1df3bd96a406a218d3563b96fd0e58cfb3cf6d2ae9461",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "Climate-region index; decode via layers/climate.v1.json",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "temperaturePotential",
+      "file": "rasters/temperaturePotential.u8",
+      "bytes": 43750,
+      "sha256": "d9beeb22e6674cf3e74269027bc0c0c73a26de0d1bb27d42b19d089c290e3749",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0 cold .. 4 hot ORDINAL; NO temperature value",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "humidityPotential",
+      "file": "rasters/humidityPotential.u8",
+      "bytes": 43750,
+      "sha256": "73c07faea29f4dba57e6e708f2c0fa67dfc68977491d9a98f1af5614a765cc2d",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0..4 ORDINAL; NO humidity value",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "rainExposure",
+      "file": "rasters/rainExposure.u8",
+      "bytes": 43750,
+      "sha256": "a70d75e6df94415220d1d0968e9236e917a8f183ca8bacd84a99274488ecb61a",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0..3 ORDINAL",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "sunExposure",
+      "file": "rasters/sunExposure.u8",
+      "bytes": 43750,
+      "sha256": "5bf1a44b90388e44f5a63fb85c66b311483651eef6fe2149e8dfef126c21835b",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0..3 ORDINAL",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "windExposure",
+      "file": "rasters/windExposure.u8",
+      "bytes": 43750,
+      "sha256": "34fd9294e38a51fc3ed255541b143985d1c8ba26d3337a82b8bbcd48aa0f3f88",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0..3 ORDINAL",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "frostPotential",
+      "file": "rasters/frostPotential.u8",
+      "bytes": 43750,
+      "sha256": "ee99786cd4893081bec49433d9203e46ce7bf28e7dc68b82a2929f515307990c",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0..3 ORDINAL",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "soilMoisture",
+      "file": "rasters/soilMoisture.u8",
+      "bytes": 43750,
+      "sha256": "82ab8650ab8dc0eb4d09f6ff37272c1a612df388d372a6d4bb0b8a901ee19cf7",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0..4 ORDINAL; NO numeric moisture",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "evaporation",
+      "file": "rasters/evaporation.u8",
+      "bytes": 43750,
+      "sha256": "fe3dfb87f4beac3756dfccb90da3e957d9012653492ddea25d7fb9f5dfc1ce0f",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0..3 ORDINAL",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "firePropagation",
+      "file": "rasters/firePropagation.u8",
+      "bytes": 43750,
+      "sha256": "e1c297c2f91f707a70d5cdff466f68d652ae68f34a3d4f8da09a7379d02e337a",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0..3 ORDINAL; NO spread/damage rate",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    },
+    {
+      "name": "farmingAffordance",
+      "file": "rasters/farmingAffordance.u8",
+      "bytes": 43750,
+      "sha256": "d2bb8d6c6083b08d862928c2758cd6be08546fe3a78f3ce1156f4abc67444ef9",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8
+      },
+      "semantics": "0..3 ORDINAL geographic suitability",
+      "status": "PROPOSED",
+      "unit": "ORDINAL_CLASS"
+    }
+  ],
+  "explicitUnknowns": [
+    {
+      "id": "CL-U01",
+      "subject": "official temperature values",
+      "status": "UNKNOWN",
+      "owner": "GAMEPLAY"
+    },
+    {
+      "id": "CL-U02",
+      "subject": "damage / weather / seasonal rates",
+      "status": "UNKNOWN",
+      "owner": "GAMEPLAY"
+    },
+    {
+      "id": "CL-U03",
+      "subject": "radiation numeric field",
+      "status": "UNKNOWN",
+      "owner": "GAMEPLAY"
+    },
+    {
+      "id": "CL-U04",
+      "subject": "water depth / flow rate",
+      "status": "UNRESOLVED",
+      "owner": "MAP+GAMEPLAY"
+    },
+    {
+      "id": "CL-U05",
+      "subject": "vertical elevation in metres",
+      "status": "UNRESOLVED",
+      "owner": "JOINT"
+    }
+  ],
+  "noClaims": [
+    "NO invented official temperature",
+    "NO invented damage/weather/season rates",
+    "NO claim that climate potential is a survival rule"
+  ]
+}

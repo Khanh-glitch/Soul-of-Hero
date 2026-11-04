@@ -1,0 +1,979 @@
+{
+  "schema": "soh.map.lr01.poi_example.v1",
+  "reason": "long roofed aisle with repeated bays, highest roof coverage",
+  "layout": {
+    "schema": "soh.map.lr01.poi_layout.v1",
+    "poiId": "po_siloc",
+    "name": "Grain Silo Complex",
+    "arche": "warehouse",
+    "atAu": [
+      1090,
+      760
+    ],
+    "rot": 0.03945979569107294,
+    "scale": 1,
+    "sourceRef": "project.pois[] where id=po_siloc",
+    "status": "PROPOSED_INTERIOR_AND_CIRCULATION__CANONICAL_FOOTPRINT_ONLY",
+    "ownership": "MAP owns static layout / portals / sockets; GAMEPLAY owns dynamic door states, destruction, construction, devices, locks, power, loot, recipes, quests and machines.",
+    "enclosureClass": "ENCLOSED_SINGLE",
+    "enclosureClassificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+    "canonical": {
+      "footPolygonAu": [
+        [
+          1074.4464,
+          748.3774
+        ],
+        [
+          1106.4215,
+          749.6398
+        ],
+        [
+          1105.5536,
+          771.6226
+        ],
+        [
+          1073.5785,
+          770.3602
+        ]
+      ],
+      "footAreaAu2": 704,
+      "minEdgeAu": 22,
+      "deepPolygonAu": null,
+      "gate": "none",
+      "links": [],
+      "accessText": "Đường xe",
+      "conf": "proposal"
+    },
+    "template": {
+      "archetype": "warehouse",
+      "family": "enclosed",
+      "grid": [
+        1,
+        3
+      ],
+      "roof": 1,
+      "sockets": 9,
+      "pattern": "long_aisle",
+      "note": "long roofed aisle with repeated bays",
+      "instantiatedRows": 1,
+      "instantiatedCols": 3
+    },
+    "context": {
+      "landId": "ld_veyra",
+      "biomeCode": 0,
+      "zoneId": null,
+      "elderGeometryId": null,
+      "seaDistanceCells": 29,
+      "clearanceCells": 13,
+      "nearestRoad": {
+        "id": "rd_2",
+        "kind": "cart",
+        "distanceAu": 4.1375
+      },
+      "nearestDock": {
+        "id": "dk_moss",
+        "d": 88.1831
+      },
+      "status": "DERIVED"
+    },
+    "contextModifiers": [
+      {
+        "id": "MOD-CART-FRONTAGE",
+        "effect": "Entrance edge chosen toward a cart-road centreline; NO cart clearance claim",
+        "status": "DERIVED"
+      }
+    ],
+    "levels": [
+      {
+        "id": "level.po_siloc.0",
+        "parentPoiId": "po_siloc",
+        "index": 0,
+        "name": "GROUND",
+        "polygonAu": [
+          [
+            1074.4464,
+            748.3774
+          ],
+          [
+            1106.4215,
+            749.6398
+          ],
+          [
+            1105.5536,
+            771.6226
+          ],
+          [
+            1073.5785,
+            770.3602
+          ]
+        ],
+        "areaAu2": 704,
+        "status": [
+          "SOURCE_AUTHORED",
+          "DERIVED"
+        ]
+      }
+    ],
+    "footprint": {
+      "obb": {
+        "centre": [
+          1090,
+          760
+        ],
+        "ux": [
+          0.9992,
+          0.0394
+        ],
+        "uy": [
+          -0.0394,
+          0.9992
+        ],
+        "wAu": 32,
+        "hAu": 22,
+        "angleRad": 0.0395,
+        "edgeLengthsAu": [
+          32,
+          22,
+          32,
+          22
+        ],
+        "quadEdge2Au": 22
+      },
+      "widthAu": 32.0003,
+      "heightAu": 22.001,
+      "wallThicknessAu": 1.76,
+      "wallThicknessStatus": "PROPOSED"
+    },
+    "walls": [
+      {
+        "id": "wall.po_siloc.1",
+        "parentPoiId": "po_siloc",
+        "kind": "EXTERIOR",
+        "aAu": [
+          1074.4464,
+          748.3774
+        ],
+        "bAu": [
+          1106.4215,
+          749.6398
+        ],
+        "lengthAu": 32,
+        "thicknessAu": 1.76,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_siloc :: foot edge 1 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_siloc.2",
+        "parentPoiId": "po_siloc",
+        "kind": "EXTERIOR",
+        "aAu": [
+          1106.4215,
+          749.6398
+        ],
+        "bAu": [
+          1105.5536,
+          771.6226
+        ],
+        "lengthAu": 22,
+        "thicknessAu": 1.76,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_siloc :: foot edge 2 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_siloc.3",
+        "parentPoiId": "po_siloc",
+        "kind": "EXTERIOR",
+        "aAu": [
+          1105.5536,
+          771.6226
+        ],
+        "bAu": [
+          1073.5785,
+          770.3602
+        ],
+        "lengthAu": 32,
+        "thicknessAu": 1.76,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_siloc :: foot edge 3 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_siloc.4",
+        "parentPoiId": "po_siloc",
+        "kind": "EXTERIOR",
+        "aAu": [
+          1073.5785,
+          770.3602
+        ],
+        "bAu": [
+          1074.4464,
+          748.3774
+        ],
+        "lengthAu": 22,
+        "thicknessAu": 1.76,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_siloc :: foot edge 4 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_siloc.split.v.1",
+        "parentPoiId": "po_siloc",
+        "kind": "INTERIOR_PARTITION",
+        "aAu": [
+          1085.1043,
+          748.7981
+        ],
+        "bAu": [
+          1084.2375,
+          770.7816
+        ],
+        "thicknessAu": 1.76,
+        "status": "PROPOSED",
+        "opaqueSight": true
+      },
+      {
+        "id": "wall.po_siloc.split.v.2",
+        "parentPoiId": "po_siloc",
+        "kind": "INTERIOR_PARTITION",
+        "aAu": [
+          1095.7625,
+          749.2184
+        ],
+        "bAu": [
+          1094.8957,
+          771.2019
+        ],
+        "thicknessAu": 1.76,
+        "status": "PROPOSED",
+        "opaqueSight": true
+      }
+    ],
+    "rooms": [
+      {
+        "id": "room.po_siloc.1.1",
+        "parentPoiId": "po_siloc",
+        "levelId": "level.po_siloc.0",
+        "row": 1,
+        "col": 1,
+        "pattern": "long_aisle",
+        "enclosureClass": "ENCLOSED_SINGLE",
+        "polygonAu": [
+          [
+            1075.2907,
+            749.2919
+          ],
+          [
+            1084.1903,
+            749.6427
+          ],
+          [
+            1083.3929,
+            769.8676
+          ],
+          [
+            1074.4932,
+            769.5167
+          ]
+        ],
+        "centroidAu": [
+          1079.3418,
+          759.5797
+        ],
+        "areaAu2": 180.2739,
+        "bboxAu": [
+          1074.4932,
+          749.2919,
+          1084.1903,
+          769.8676
+        ],
+        "floor": {
+          "polygonAu": [
+            [
+              1075.2907,
+              749.2919
+            ],
+            [
+              1084.1903,
+              749.6427
+            ],
+            [
+              1083.3929,
+              769.8676
+            ],
+            [
+              1074.4932,
+              769.5167
+            ]
+          ],
+          "status": "PROPOSED",
+          "floorLevelId": "floor.po_siloc.1.1"
+        },
+        "roof": {
+          "covered": true,
+          "coverageFractionOfRoom": 1,
+          "canopyOnly": false,
+          "status": "PROPOSED",
+          "note": "Full roof over an enclosed room."
+        },
+        "surface": "ENCLOSURE_INTERIOR",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "room.po_siloc.1.2",
+        "parentPoiId": "po_siloc",
+        "levelId": "level.po_siloc.0",
+        "row": 1,
+        "col": 2,
+        "pattern": "long_aisle",
+        "enclosureClass": "ENCLOSED_SINGLE",
+        "polygonAu": [
+          [
+            1085.9489,
+            749.7121
+          ],
+          [
+            1094.8485,
+            750.063
+          ],
+          [
+            1094.0511,
+            770.2879
+          ],
+          [
+            1085.1515,
+            769.937
+          ]
+        ],
+        "centroidAu": [
+          1090,
+          760
+        ],
+        "areaAu2": 180.2733,
+        "bboxAu": [
+          1085.1515,
+          749.7121,
+          1094.8485,
+          770.2879
+        ],
+        "floor": {
+          "polygonAu": [
+            [
+              1085.9489,
+              749.7121
+            ],
+            [
+              1094.8485,
+              750.063
+            ],
+            [
+              1094.0511,
+              770.2879
+            ],
+            [
+              1085.1515,
+              769.937
+            ]
+          ],
+          "status": "PROPOSED",
+          "floorLevelId": "floor.po_siloc.1.2"
+        },
+        "roof": {
+          "covered": true,
+          "coverageFractionOfRoom": 1,
+          "canopyOnly": false,
+          "status": "PROPOSED",
+          "note": "Full roof over an enclosed room."
+        },
+        "surface": "ENCLOSURE_INTERIOR",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "room.po_siloc.1.3",
+        "parentPoiId": "po_siloc",
+        "levelId": "level.po_siloc.0",
+        "row": 1,
+        "col": 3,
+        "pattern": "long_aisle",
+        "enclosureClass": "ENCLOSED_SINGLE",
+        "polygonAu": [
+          [
+            1096.6071,
+            750.1324
+          ],
+          [
+            1105.5068,
+            750.4833
+          ],
+          [
+            1104.7093,
+            770.7081
+          ],
+          [
+            1095.8097,
+            770.3573
+          ]
+        ],
+        "centroidAu": [
+          1100.6582,
+          760.4203
+        ],
+        "areaAu2": 180.2739,
+        "bboxAu": [
+          1095.8097,
+          750.1324,
+          1105.5068,
+          770.7081
+        ],
+        "floor": {
+          "polygonAu": [
+            [
+              1096.6071,
+              750.1324
+            ],
+            [
+              1105.5068,
+              750.4833
+            ],
+            [
+              1104.7093,
+              770.7081
+            ],
+            [
+              1095.8097,
+              770.3573
+            ]
+          ],
+          "status": "PROPOSED",
+          "floorLevelId": "floor.po_siloc.1.3"
+        },
+        "roof": {
+          "covered": true,
+          "coverageFractionOfRoom": 1,
+          "canopyOnly": false,
+          "status": "PROPOSED",
+          "note": "Full roof over an enclosed room."
+        },
+        "surface": "ENCLOSURE_INTERIOR",
+        "status": "PROPOSED"
+      }
+    ],
+    "floors": [
+      {
+        "polygonAu": [
+          [
+            1075.2907,
+            749.2919
+          ],
+          [
+            1084.1903,
+            749.6427
+          ],
+          [
+            1083.3929,
+            769.8676
+          ],
+          [
+            1074.4932,
+            769.5167
+          ]
+        ],
+        "status": "PROPOSED",
+        "floorLevelId": "floor.po_siloc.1.1"
+      },
+      {
+        "polygonAu": [
+          [
+            1085.9489,
+            749.7121
+          ],
+          [
+            1094.8485,
+            750.063
+          ],
+          [
+            1094.0511,
+            770.2879
+          ],
+          [
+            1085.1515,
+            769.937
+          ]
+        ],
+        "status": "PROPOSED",
+        "floorLevelId": "floor.po_siloc.1.2"
+      },
+      {
+        "polygonAu": [
+          [
+            1096.6071,
+            750.1324
+          ],
+          [
+            1105.5068,
+            750.4833
+          ],
+          [
+            1104.7093,
+            770.7081
+          ],
+          [
+            1095.8097,
+            770.3573
+          ]
+        ],
+        "status": "PROPOSED",
+        "floorLevelId": "floor.po_siloc.1.3"
+      }
+    ],
+    "entrance": {
+      "id": "entrance.po_siloc.1",
+      "parentPoiId": "po_siloc",
+      "kind": "PRIMARY_ENTRANCE",
+      "onWallId": "wall.po_siloc.1",
+      "atAu": [
+        1090.4339,
+        749.0086
+      ],
+      "openingAu": 6,
+      "openingStatus": "PROPOSED",
+      "sourceRef": "project.pois[] where id=po_siloc :: no authored entrance; edge 1 chosen by nearest road",
+      "capacityUpperBoundAu": 32,
+      "doorStateOwner": "GAMEPLAY",
+      "lockedState": "UNKNOWN",
+      "powerRequirement": "UNKNOWN",
+      "note": "STATIC opening geometry only. No lock, key, power, quest or device rule is authored."
+    },
+    "portals": [
+      {
+        "id": "portal.po_siloc.entrance",
+        "parentPoiId": "po_siloc",
+        "kind": "EXTERIOR_PORTAL",
+        "fromRoomId": null,
+        "toRoomId": "room.po_siloc.1.2",
+        "atAu": [
+          1090.4339,
+          749.0086
+        ],
+        "openingAu": 6,
+        "openingStatus": "PROPOSED",
+        "status": "PROPOSED",
+        "doorStateOwner": "GAMEPLAY",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "note": "Static entrance portal. NO door rule, lock, key or power requirement."
+      },
+      {
+        "id": "portal.po_siloc.h.1.1",
+        "parentPoiId": "po_siloc",
+        "kind": "INTERIOR_DOORWAY",
+        "fromRoomId": "room.po_siloc.1.1",
+        "toRoomId": "room.po_siloc.1.2",
+        "atAu": [
+          1084.6709,
+          759.7899
+        ],
+        "openingAu": 5.5,
+        "status": "PROPOSED",
+        "openingStatus": "PROPOSED",
+        "doorStateOwner": "GAMEPLAY",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "note": "Static portal geometry. Gameplay owns dynamic door state, destruction and devices."
+      },
+      {
+        "id": "portal.po_siloc.h.1.2",
+        "parentPoiId": "po_siloc",
+        "kind": "INTERIOR_DOORWAY",
+        "fromRoomId": "room.po_siloc.1.2",
+        "toRoomId": "room.po_siloc.1.3",
+        "atAu": [
+          1095.3291,
+          760.2101
+        ],
+        "openingAu": 5.5,
+        "status": "PROPOSED",
+        "openingStatus": "PROPOSED",
+        "doorStateOwner": "GAMEPLAY",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "note": "Static portal geometry. Gameplay owns dynamic door state, destruction and devices."
+      }
+    ],
+    "circulation": {
+      "entranceRoomId": "room.po_siloc.1.2",
+      "reachableRooms": 3,
+      "totalRooms": 3,
+      "maxDepth": 1,
+      "depthByRoomId": {
+        "room.po_siloc.1.2": 0,
+        "room.po_siloc.1.1": 1,
+        "room.po_siloc.1.3": 1
+      },
+      "interiorDepthAu": 15.3226,
+      "status": "DERIVED"
+    },
+    "retreat": {
+      "status": "UNRESOLVED",
+      "pathAu": null,
+      "lengthAu": null,
+      "exitAtAu": null,
+      "note": "No authored retreat polyline. An exit is NOT invented; Gameplay may route through static portals."
+    },
+    "sockets": [
+      {
+        "id": "socket.po_siloc.1",
+        "parentPoiId": "po_siloc",
+        "parentRoomId": "room.po_siloc.1.1",
+        "levelId": "level.po_siloc.0",
+        "atAu": [
+          1076.8083,
+          756.8377
+        ],
+        "fitEnvelopeAu": {
+          "w": 5.3334,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_siloc.2",
+        "parentPoiId": "po_siloc",
+        "parentRoomId": "room.po_siloc.1.2",
+        "levelId": "level.po_siloc.0",
+        "atAu": [
+          1092.534,
+          762.742
+        ],
+        "fitEnvelopeAu": {
+          "w": 5.3334,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_siloc.3",
+        "parentPoiId": "po_siloc",
+        "parentRoomId": "room.po_siloc.1.3",
+        "levelId": "level.po_siloc.0",
+        "atAu": [
+          1097.9157,
+          762.9543
+        ],
+        "fitEnvelopeAu": {
+          "w": 5.3334,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_siloc.4",
+        "parentPoiId": "po_siloc",
+        "parentRoomId": "room.po_siloc.1.1",
+        "levelId": "level.po_siloc.0",
+        "atAu": [
+          1082.0843,
+          757.0457
+        ],
+        "fitEnvelopeAu": {
+          "w": 5.3334,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_siloc.5",
+        "parentPoiId": "po_siloc",
+        "parentRoomId": "room.po_siloc.1.2",
+        "levelId": "level.po_siloc.0",
+        "atAu": [
+          1087.258,
+          762.534
+        ],
+        "fitEnvelopeAu": {
+          "w": 5.3334,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_siloc.6",
+        "parentPoiId": "po_siloc",
+        "parentRoomId": "room.po_siloc.1.3",
+        "levelId": "level.po_siloc.0",
+        "atAu": [
+          1103.1917,
+          763.1623
+        ],
+        "fitEnvelopeAu": {
+          "w": 5.3334,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_siloc.7",
+        "parentPoiId": "po_siloc",
+        "parentRoomId": "room.po_siloc.1.1",
+        "levelId": "level.po_siloc.0",
+        "atAu": [
+          1076.8083,
+          756.8377
+        ],
+        "fitEnvelopeAu": {
+          "w": 5.3334,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_siloc.8",
+        "parentPoiId": "po_siloc",
+        "parentRoomId": "room.po_siloc.1.2",
+        "levelId": "level.po_siloc.0",
+        "atAu": [
+          1092.534,
+          762.742
+        ],
+        "fitEnvelopeAu": {
+          "w": 5.3334,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_siloc.9",
+        "parentPoiId": "po_siloc",
+        "parentRoomId": "room.po_siloc.1.3",
+        "levelId": "level.po_siloc.0",
+        "atAu": [
+          1097.9157,
+          762.9543
+        ],
+        "fitEnvelopeAu": {
+          "w": 5.3334,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      }
+    ],
+    "roofCoverage": {
+      "coveredRoomCount": 3,
+      "totalRoomCount": 3,
+      "roofAreaAu2": 540.8211,
+      "footAreaAu2": 704,
+      "roofAreaToFootAreaRatioAcrossLevels": 0.7682,
+      "fractionOfFoot": 0.7682,
+      "status": "DERIVED",
+      "note": "Measured over PROPOSED room/canopy polygons weighted by coverageFractionOfRoom. The across-levels ratio can exceed 1 when a DEEP level adds roofed area; it is NOT a single-plane coverage fraction."
+    },
+    "geometryAdapters": {
+      "collision": {
+        "staticWalls": [
+          "wall.po_siloc.1",
+          "wall.po_siloc.2",
+          "wall.po_siloc.3",
+          "wall.po_siloc.4",
+          "wall.po_siloc.split.v.1",
+          "wall.po_siloc.split.v.2"
+        ],
+        "staticWallCount": 6,
+        "wallThicknessAu": 1.76,
+        "thicknessStatus": "PROPOSED",
+        "dynamicCollisionOwner": "GAMEPLAY",
+        "destructionOwner": "GAMEPLAY",
+        "status": "PROPOSED_STATIC_COLLISION_GEOMETRY__NOT_RUNTIME_COLLISION_DATA"
+      },
+      "enclosure": {
+        "enclosedAreaAu2": 540.8211,
+        "footAreaAu2": 704,
+        "enclosureFraction": 0.7682,
+        "enclosureClass": "ENCLOSED_SINGLE",
+        "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+        "status": "DERIVED"
+      },
+      "reach": {
+        "maxInteriorDistanceAu": 15.3226,
+        "nearestRoadAu": 4.1375,
+        "approachLengthAu": 8.4889,
+        "minPortalOpeningAu": 5.5,
+        "status": "DERIVED",
+        "note": "Geometric reach only. Interaction radius / Gameplay reach rules are NOT asserted."
+      },
+      "lineOfSight": {
+        "opaqueWallIds": [
+          "wall.po_siloc.1",
+          "wall.po_siloc.2",
+          "wall.po_siloc.3",
+          "wall.po_siloc.4",
+          "wall.po_siloc.split.v.1",
+          "wall.po_siloc.split.v.2"
+        ],
+        "transparentPortalIds": [
+          "portal.po_siloc.entrance",
+          "portal.po_siloc.h.1.1",
+          "portal.po_siloc.h.1.2"
+        ],
+        "portalSightOwner": "GAMEPLAY",
+        "status": "PROPOSED",
+        "note": "Static opaque walls + portal gaps. Dynamic door opacity is Gameplay-owned."
+      },
+      "roofCoverage": {
+        "coveredRoomCount": 3,
+        "totalRoomCount": 3,
+        "roofAreaAu2": 540.8211,
+        "footAreaAu2": 704,
+        "roofAreaToFootAreaRatioAcrossLevels": 0.7682,
+        "fractionOfFoot": 0.7682,
+        "status": "DERIVED",
+        "note": "Measured over PROPOSED room/canopy polygons weighted by coverageFractionOfRoom. The across-levels ratio can exceed 1 when a DEEP level adds roofed area; it is NOT a single-plane coverage fraction."
+      },
+      "portalPassability": {
+        "portals": [
+          {
+            "id": "portal.po_siloc.entrance",
+            "openingAu": 6,
+            "kind": "EXTERIOR_PORTAL"
+          },
+          {
+            "id": "portal.po_siloc.h.1.1",
+            "openingAu": 5.5,
+            "kind": "INTERIOR_DOORWAY"
+          },
+          {
+            "id": "portal.po_siloc.h.1.2",
+            "openingAu": 5.5,
+            "kind": "INTERIOR_DOORWAY"
+          }
+        ],
+        "passabilityRuleOwner": "GAMEPLAY",
+        "status": "UNKNOWN__DYNAMIC_DOOR_STATE_DESTRUCTION_AND_DEVICES_OWNED_BY_GAMEPLAY",
+        "note": "Map asserts only that a geometric opening exists. No lock, power, key, weight or vehicle rule."
+      }
+    },
+    "stableIds": {
+      "rooms": [
+        "room.po_siloc.1.1",
+        "room.po_siloc.1.2",
+        "room.po_siloc.1.3"
+      ],
+      "walls": [
+        "wall.po_siloc.1",
+        "wall.po_siloc.2",
+        "wall.po_siloc.3",
+        "wall.po_siloc.4",
+        "wall.po_siloc.split.v.1",
+        "wall.po_siloc.split.v.2"
+      ],
+      "entrances": [
+        "entrance.po_siloc.1"
+      ],
+      "portals": [
+        "portal.po_siloc.entrance",
+        "portal.po_siloc.h.1.1",
+        "portal.po_siloc.h.1.2"
+      ],
+      "sockets": [
+        "socket.po_siloc.1",
+        "socket.po_siloc.2",
+        "socket.po_siloc.3",
+        "socket.po_siloc.4",
+        "socket.po_siloc.5",
+        "socket.po_siloc.6",
+        "socket.po_siloc.7",
+        "socket.po_siloc.8",
+        "socket.po_siloc.9"
+      ],
+      "levels": [
+        "level.po_siloc.0"
+      ],
+      "floors": [
+        "floor.po_siloc.1.1",
+        "floor.po_siloc.1.2",
+        "floor.po_siloc.1.3"
+      ]
+    },
+    "noClaims": [
+      "NO loot, loot table, chest contents or reward",
+      "NO locked-door rule, key, card or power requirement",
+      "NO generator, machine, recipe, quest, vendor inventory or economy",
+      "NO dynamic door state or destruction",
+      "NO authored entrance in source (all openings PROPOSED)",
+      "NO approved vertical unit or stair geometry",
+      "NO runtime collision data (static geometry only)",
+      "NO playable survival acceptance"
+    ]
+  }
+}

@@ -1,0 +1,207 @@
+{
+  "schema": "soh.map.lr01.region.v1",
+  "kind": "construction_zone",
+  "id": "bz_typhon_t",
+  "name": "Typhon Terrace",
+  "soil": "đá vụn",
+  "water": "thác gần",
+  "slope": "dốc nhẹ",
+  "tags": [
+    "nền đá cao",
+    "gần trung tâm khai thác"
+  ],
+  "notes": "",
+  "conf": "proposal",
+  "sourceRef": "project.zones[] where id=bz_typhon_t",
+  "status": [
+    "SOURCE_AUTHORED",
+    "DERIVED",
+    "PROPOSED"
+  ],
+  "geometry": {
+    "ringAu": [
+      [
+        667.6213022949851,
+        488.20438317640776
+      ],
+      [
+        668.4078399482719,
+        481.4014610588026
+      ],
+      [
+        670.2604616677763,
+        475.3676866369268
+      ],
+      [
+        673.1791674534984,
+        470.1030599107803
+      ],
+      [
+        678.3577548535307,
+        465.49333117450107
+      ],
+      [
+        685.796223867873,
+        461.53850042808904
+      ],
+      [
+        694.6913135550642,
+        459.6778886540984
+      ],
+      [
+        705.043023915104,
+        459.9114958525291
+      ],
+      [
+        715.1566895805954,
+        461.4105720884004
+      ],
+      [
+        725.0323105515383,
+        464.1751173617122
+      ],
+      [
+        729.9571985238555,
+        468.6680424987761
+      ],
+      [
+        729.931353497547,
+        474.8893474995921
+      ],
+      [
+        730.6335713538688,
+        481.40219029271793
+      ],
+      [
+        732.0638520928205,
+        488.20657087815385
+      ],
+      [
+        727.0315063927012,
+        492.51051265533255
+      ],
+      [
+        715.5365342535106,
+        494.31401562425407
+      ],
+      [
+        704.7193632759959,
+        495.5238182856542
+      ],
+      [
+        694.5799934601569,
+        496.1399206395329
+      ],
+      [
+        683.9397397812636,
+        495.2374399211568
+      ],
+      [
+        672.7986022393156,
+        492.8163761305258
+      ]
+    ],
+    "ringCount": 1,
+    "areaAu2": 1920.3132,
+    "perimeterAu": 169.1632,
+    "bboxAu": [
+      667.6213,
+      459.6779,
+      732.0639,
+      496.1399
+    ],
+    "centroidAu": [
+      700.3325,
+      478.6247
+    ],
+    "outerVertexCount": 20,
+    "holeCount": 0
+  },
+  "rasterCells": {
+    "cells": 29,
+    "areaAu2": 1856,
+    "elevationRawByte": {
+      "min": 64,
+      "max": 141,
+      "mean": 87.1724,
+      "p25": 71,
+      "p50": 83,
+      "p75": 98,
+      "p95": 119,
+      "unit": "UNKNOWN_SOURCE_BYTE__NO_APPROVED_PHYSICAL_SCALE"
+    },
+    "slopeRawDelta": {
+      "min": 1,
+      "max": 23,
+      "mean": 12.4138,
+      "p50": 13,
+      "p95": 22,
+      "unit": "RAW_BYTE_DELTA_PER_8au_CELL__NOT_A_GAMEPLAY_THRESHOLD"
+    },
+    "seaDistanceCellsMean": 36.6897,
+    "freshwaterProximityCellsMean": 7.7931,
+    "clearanceCellsMean": 7.7931,
+    "biomeHistogram": {
+      "0": 1,
+      "1": 20,
+      "3": 2,
+      "7": 6
+    },
+    "roadClassHistogram": {
+      "0": 21,
+      "1": 8
+    },
+    "coastCells": 0,
+    "coastBandLengthAuApprox": 0,
+    "buildableCells": 29,
+    "walkableCells": 29,
+    "waterCells": 0,
+    "cargoCells": 8,
+    "crossingCells": 0
+  },
+  "buildSuitability": {
+    "buildableCells": 29,
+    "buildableFraction": 1,
+    "meanSlopeRaw": 12.4138,
+    "meanFreshwaterProximityCells": 7.7931,
+    "status": "DERIVED",
+    "note": "Geometric suitability only. A0 occupancy, claim legality and Gameplay building rules are NOT asserted."
+  },
+  "loadingSpace": {
+    "cells": 29,
+    "areaAu2": 1856,
+    "bboxAu": [
+      676,
+      460,
+      724,
+      492
+    ],
+    "status": "PROPOSED",
+    "note": "PROPOSED spatial candidate: buildable cells within 3 grid cells (24 au) of a cart-road/cart-bridge/dock cargo candidate. NOT a loading platform or a Gameplay placement grant."
+  },
+  "naturalChokepoints": {
+    "clusterIds": [],
+    "status": "DERIVED",
+    "note": "clearanceCells <= 2 (<=16 au from blocked geometry); geometric narrowness, not a combat chokepoint claim."
+  },
+  "nearestRoads": [
+    {
+      "id": "rd_d",
+      "kind": "cart",
+      "d": 1.4145
+    },
+    {
+      "id": "rd_f",
+      "kind": "cart",
+      "d": 19.0678
+    },
+    {
+      "id": "rd_g",
+      "kind": "foot",
+      "d": 21.3944
+    }
+  ],
+  "walkableComponentIds": [
+    0
+  ]
+}

@@ -1,0 +1,680 @@
+{
+  "schema": "soh.wmp.world_master_manifest.v1",
+  "version": 1,
+  "revision": 1,
+  "packageId": "veyra-physical-world-master",
+  "status": "SELF_CONTAINED_PHYSICAL_WORLD_MASTER_CANDIDATE__NOT_SEALED",
+  "authority": "MAP_DESIGNS_THE_PHYSICAL_WORLD__GAMEPLAY_POPULATES_AND_SIMULATES_IT",
+  "generatedBy": "veyra-world-master/build.mjs",
+  "generatedAtUtc": "DETERMINISTIC_BUILD_NO_WALLCLOCK",
+  "frame": {
+    "authoring": [
+      2000,
+      1400
+    ],
+    "unit": "authoring_unit",
+    "grid": {
+      "gw": 250,
+      "gh": 175,
+      "cellAu": 8
+    },
+    "chunkAu": 200,
+    "chunksX": 10,
+    "chunksY": 7
+  },
+  "sourceIntegrity": {
+    "goldSha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+    "goldCommit": "19d8c6ec820f324a6ac12733165e43b5e2c6eab2",
+    "goldBytes": 332249,
+    "lr01BodyDigest": "e3259eb30016f93ab0883c6dc3656f0ec1b9d47a85dc78fd90a56e0185765e63",
+    "lr01PackageRawSha": "b4cc77228caf847d1ad0d8a680457ca65731202513a047826e8bd973662e19ad",
+    "lr02M0Digest": "db5bcc3dcf28210fa63e9a68cdf2128a7f76213bead7d1e975bbb901b50cfe1a",
+    "lr02V2Digest": "e3ba6d298fe2872cf5a39b2e3e8cc8704f54c5582f15cff49e2aacffdd20b3e7",
+    "lr02M1Digest": "5888572471fecf15a86f056b0179c98043cabe2f0a84808768ed155c736a02b7",
+    "lr02M2Digest": "637dd4e8706133773d1fe58643b74386a3832f7acbe5d00b5ec91ecc7a1573fc",
+    "migration": {
+      "tool": "migration/migrate.mjs",
+      "sourceManifest": "data/source_manifest.v1.json",
+      "sourceManifestSha256": "c1f0b7a8664656842d97df95a63ee93a258268b6856ac579f27c1908a072cc4d",
+      "goldReadCount": 1
+    },
+    "note": "GOLD was read ONCE by the migration tool. This manifest, all layers, readers, queries, views and tests are generated from data/ only."
+  },
+  "canonicalCounts": {
+    "land": 8,
+    "lakes": 5,
+    "rivers": 17,
+    "roads": 92,
+    "bridges": 12,
+    "docks": 27,
+    "pois": 81,
+    "zones": 23,
+    "resources": 280,
+    "spawns": 4,
+    "elders": 6,
+    "labels": 24,
+    "features": 579,
+    "sourceBiomes": 12,
+    "economyLabels": 14,
+    "webTerrainCodes": 20,
+    "geo01Rasters": 21,
+    "geo02Masks": 5
+  },
+  "layerCounts": {
+    "pois": 81,
+    "rooms": 210,
+    "roofPolygons": 153,
+    "openAirPois": 43,
+    "verticalLinks": 18,
+    "verticalProposed": 10,
+    "verticalNamedBlockers": 8,
+    "roads": 92,
+    "bridges": 12,
+    "docks": 27,
+    "chunks": 70,
+    "buildEnvelopes": 23,
+    "habitatRegions": 12,
+    "resourceCandidates": 465,
+    "scaleProfiles": 4,
+    "derivedRasters": 32,
+    "fordCandidates": 6,
+    "crossingContradictions": 11,
+    "outletDefects": 1
+  },
+  "components": [
+    {
+      "file": "layers/crosswalks.v1.json",
+      "bytes": 12238,
+      "sha256": "5959e3633ff5f3606a27139b93df5aabe9e8a162d40f13ae076452a090c3221c",
+      "kind": "layer"
+    },
+    {
+      "file": "rasters/surface.u8",
+      "bytes": 43750,
+      "sha256": "d570ee3a53b0ee832454e9dcce1c4a316c4fdeb64ebcb9b6174821d50f7a1edf",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "Web T terrain code (0..19) from explicit crosswalk + overrides",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/biomeSubtype.u8",
+      "bytes": 43750,
+      "sha256": "232998e642e836f30129b3a689f7cd458f8c57526ecd2c1bad51449cbeff839d",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "Verbatim 12-code source biome; preserves forest variants",
+      "status": "SOURCE_AUTHORED"
+    },
+    {
+      "file": "rasters/landform.u8",
+      "bytes": 43750,
+      "sha256": "8f28a76ba7b5c143f3be0f172187189d5657b70b6e41b3f7425b6c339f784baf",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "0 sea,1 coast,2 plain,3 hill,4 cliff,5 wetland,6 lake,7 river,8 beach",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/substrate.u8",
+      "bytes": 43750,
+      "sha256": "d7a86a6bb275e16f631a47cad04862f4fd93194071502000bb3790708c4f7d62",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "0 water,1 sand,2 loam,3 clay,4 rock,5 ash,6 snow/ice,7 toxic sludge,8 peat",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/soil.u8",
+      "bytes": 43750,
+      "sha256": "c851a7673545b464614e5e8879370a917d8ed6f13e6c72b2f967f158293a8442",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "0 none,1 dry sand,2 moist loam,3 waterlogged peat,4 frozen,5 saline,6 contaminated,7 regolith",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/construction.u8",
+      "bytes": 43750,
+      "sha256": "1c11793bc4bf66f5a7424c813583a39eaf96be828f2be58143c736ed93e967f5",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "0 unsuited,1 marginal,2 suitable,3 preferred (geometry only)",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/vegetation.u8",
+      "bytes": 43750,
+      "sha256": "7cf7478ad0acf17dea71bd15fb363cac6e47fd0b7cfb09bfef4e15b75f78ca38",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "0 none,1 sparse,2 grass,3 wetland,4 forest,5 ancient forest",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/cliff.u8",
+      "bytes": 43750,
+      "sha256": "c394fedefb360cfb0de08d9ec60bf75cd3ea0c5b3f657fda23b7909fdb3c774d",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "1 = steep raw-slope candidate",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/terrace.u8",
+      "bytes": 43750,
+      "sha256": "c3c210a36bcfa90cd61830ffd8c2f1280c5a7d3cb6610384952617a9067dfa5f",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "1 = intermediate raw-slope band",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/slopeClass.u8",
+      "bytes": 43750,
+      "sha256": "a0166888fd24a819cd6203b1f09959b798a6e43dd20f8fc063aec987da5907ae",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "0..4 ordinal classes over RAW slope byte, NOT proven degrees",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/biomeTransition.u8",
+      "bytes": 43750,
+      "sha256": "5f6724597c1a1030a9396da40dae2c4116a677af6a7a70ed952650f9b5ce7469",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "1 = 4-neighbour authored biome change on land",
+      "status": "DERIVED"
+    },
+    {
+      "file": "rasters/exposure.u8",
+      "bytes": 43750,
+      "sha256": "a70d75e6df94415220d1d0968e9236e917a8f183ca8bacd84a99274488ecb61a",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "0..3 ordinal exposure (coast/altitude/canopy)",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/shade.u8",
+      "bytes": 43750,
+      "sha256": "9b17deede1e75eb550689167bb96a67d101bd60ccfa14ee6180c36110727bc56",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "0..2 canopy/shade potential",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/drainage.u8",
+      "bytes": 43750,
+      "sha256": "2149da46446a3a79b641f38457a8eb7670215acceec68707999180b01b3a6a91",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "0 poor,1 waterlogged,2 moderate,3 free water",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/fireFuel.u8",
+      "bytes": 43750,
+      "sha256": "2174e03e859286c12be596a676be26c7f8055b521ef038f8b38c26d1d7e6e275",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "0..3 fuel load potential, NO damage rate",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/firebreak.u8",
+      "bytes": 43750,
+      "sha256": "9cdc76f30b9743c70e839a0a1a68c3d8af2fa5089a1b9a407cf2a98c784c6e3d",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "0 none,1 road,2 water",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/footprint.u8",
+      "bytes": 43750,
+      "sha256": "feadb6ee3baf7701ad03a02cfcafa4857ab861502ee70b2b9a2725a3616e154a",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "0 none,1 hard,2 loam,3 soft/wet/snow (trace retention potential)",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/floodplain.u8",
+      "bytes": 43750,
+      "sha256": "0be871df9707132f9dad39d8ac4f1c4ebeedd891505d41c41b68b00383f5bb35",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "1 = low raw-elevation land adjacent to water",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/bank.u8",
+      "bytes": 43750,
+      "sha256": "130480bb79d826aa63f9b0d9eeaf514ca8c55c3f13b831043b982e5154acd7ed",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "0 none,1 sea bank,2 lake bank,3 river bank",
+      "status": "DERIVED"
+    },
+    {
+      "file": "rasters/channel.u8",
+      "bytes": 43750,
+      "sha256": "609cb3c3e5b58d84f9b8cea1979de7da2f0f7e8cf2f70e8cbb44ff9820b2a1db",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "1 = authored river centreline cell",
+      "status": "DERIVED"
+    },
+    {
+      "file": "rasters/buildable.u8",
+      "bytes": 43750,
+      "sha256": "11aa06c46cfb36559b77fbedbed66259ea3f588ecae4615512510e496ffcd81e",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "1 = geometric build candidate (NOT occupancy/claim legality)",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/climateRegion.u8",
+      "bytes": 43750,
+      "sha256": "6a803c7ec716b5d962f1df3bd96a406a218d3563b96fd0e58cfb3cf6d2ae9461",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "Climate-region index; decode via layers/climate.v1.json",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/temperaturePotential.u8",
+      "bytes": 43750,
+      "sha256": "d9beeb22e6674cf3e74269027bc0c0c73a26de0d1bb27d42b19d089c290e3749",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "0 cold .. 4 hot ORDINAL; NO temperature value",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/humidityPotential.u8",
+      "bytes": 43750,
+      "sha256": "73c07faea29f4dba57e6e708f2c0fa67dfc68977491d9a98f1af5614a765cc2d",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "0..4 ORDINAL; NO humidity value",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/rainExposure.u8",
+      "bytes": 43750,
+      "sha256": "a70d75e6df94415220d1d0968e9236e917a8f183ca8bacd84a99274488ecb61a",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "0..3 ORDINAL",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/sunExposure.u8",
+      "bytes": 43750,
+      "sha256": "5bf1a44b90388e44f5a63fb85c66b311483651eef6fe2149e8dfef126c21835b",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "0..3 ORDINAL",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/windExposure.u8",
+      "bytes": 43750,
+      "sha256": "34fd9294e38a51fc3ed255541b143985d1c8ba26d3337a82b8bbcd48aa0f3f88",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "0..3 ORDINAL",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/frostPotential.u8",
+      "bytes": 43750,
+      "sha256": "ee99786cd4893081bec49433d9203e46ce7bf28e7dc68b82a2929f515307990c",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "0..3 ORDINAL",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/soilMoisture.u8",
+      "bytes": 43750,
+      "sha256": "82ab8650ab8dc0eb4d09f6ff37272c1a612df388d372a6d4bb0b8a901ee19cf7",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "0..4 ORDINAL; NO numeric moisture",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/evaporation.u8",
+      "bytes": 43750,
+      "sha256": "fe3dfb87f4beac3756dfccb90da3e957d9012653492ddea25d7fb9f5dfc1ce0f",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "0..3 ORDINAL",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/firePropagation.u8",
+      "bytes": 43750,
+      "sha256": "e1c297c2f91f707a70d5cdff466f68d652ae68f34a3d4f8da09a7379d02e337a",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "0..3 ORDINAL; NO spread/damage rate",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "rasters/farmingAffordance.u8",
+      "bytes": 43750,
+      "sha256": "d2bb8d6c6083b08d862928c2758cd6be08546fe3a78f3ce1156f4abc67444ef9",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "kind": "derived_raster",
+      "semantics": "0..3 ORDINAL geographic suitability",
+      "status": "PROPOSED"
+    },
+    {
+      "file": "layers/terrain.v1.json",
+      "bytes": 17938,
+      "sha256": "753814462fdf9bff2339b9bfbdfb4aba978cf0cf0f02d871b601e82caf60cb3f",
+      "kind": "layer"
+    },
+    {
+      "file": "layers/hydrology.v1.json",
+      "bytes": 68554,
+      "sha256": "88d2053cdbb4b56c6134762bd36c623c295589f6a5521e9235d7a3d3c1274f69",
+      "kind": "layer"
+    },
+    {
+      "file": "layers/climate.v1.json",
+      "bytes": 16208,
+      "sha256": "420913054598dc6576eb0eb5b2614a01c1381450acc9888ebff8139b53239239",
+      "kind": "layer"
+    },
+    {
+      "file": "layers/resources.v1.json",
+      "bytes": 658167,
+      "sha256": "41f886287fa2621498530d521a0e17cd97027a74bbe99b937cee4d8a91d039bb",
+      "kind": "layer"
+    },
+    {
+      "file": "layers/transport.v1.json",
+      "bytes": 328717,
+      "sha256": "8f35fcfb3364029a763e1b2d5a8cb2d4567456d231f4a9140bb2cfcca7fbd0a9",
+      "kind": "layer"
+    },
+    {
+      "file": "layers/architecture.v1.json",
+      "bytes": 1282051,
+      "sha256": "76435059eaf9e77a507d3f5e111a94236d0ac46121631a18b43b14d3e8c07a85",
+      "kind": "layer"
+    },
+    {
+      "file": "layers/build_habitat_endgame.v1.json",
+      "bytes": 142205,
+      "sha256": "ec3e54296baa9c0b95ff35bba6aaea7c0c64ca9380dd29a027ebbf7e4bee57ec",
+      "kind": "layer"
+    },
+    {
+      "file": "layers/chunks.v1.json",
+      "bytes": 381275,
+      "sha256": "4872f13429f30f8d8bd3829a5a548ebfeaff14c16360c2b0b7515267e2d29fa5",
+      "kind": "layer"
+    },
+    {
+      "file": "layers/feature_index.v1.json",
+      "bytes": 302995,
+      "sha256": "94e471a89cbee4ba19368b80d0b9309d3b8c4f7aa2dc4e16a61939a9518edb50",
+      "kind": "layer"
+    },
+    {
+      "file": "layers/scales.v1.json",
+      "bytes": 9675,
+      "sha256": "6ef7dd3b727514309e34f625a0b00e8714f706014af54e614863e8f78572f152",
+      "kind": "layer"
+    },
+    {
+      "file": "layers/decision_register.v1.json",
+      "bytes": 5169,
+      "sha256": "2f66a7046a4ed1c6f8af0298c70d4e962c71619c287f54cb0f7cfaba18f253e0",
+      "kind": "layer"
+    }
+  ],
+  "cleanRoom": {
+    "command": "./clean-room.sh",
+    "forbidden": [
+      "git show",
+      "map_tower/veyra_gold",
+      "world_lab/geo01",
+      "world_lab/geo02",
+      "world_lab/lr01",
+      "world_lab/lr02",
+      "network"
+    ],
+    "noGold": true,
+    "noNetwork": true,
+    "noMapLab": true
+  },
+  "reproduce": {
+    "command": "./reproduce.sh",
+    "steps": [
+      "node build.mjs",
+      "node tests/run.mjs",
+      "node tools/views.mjs"
+    ],
+    "deterministic": true
+  },
+  "gates": {
+    "M-G0": "tests/run.mjs",
+    "M-G1": "clean-room.sh",
+    "M-G2": "layers/terrain.v1.json + hydrology + climate",
+    "M-G3": "layers/architecture.v1.json",
+    "M-G4": "layers/chunks.v1.json + transport + build_habitat_endgame",
+    "M-G5": "api/ + tests/ + docs/"
+  },
+  "noClaims": [
+    "NO WORLD_MASTER_SEALED",
+    "NO VEYRA_PLAYABLE",
+    "NO VISUAL_ACCEPTED",
+    "NO MERGE_READY",
+    "NO approved scale",
+    "NO Gameplay runtime modification"
+  ],
+  "revisionDigest": "1d032deb1b03feac918ed0485aa31c21b4c7951373d4dda5ebfbe3b8f850474e",
+  "digestMethod": "sha256 over JSON.stringify(body) in field insertion order"
+}
