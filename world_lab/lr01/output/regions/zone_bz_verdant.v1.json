@@ -1,0 +1,206 @@
+{
+  "schema": "soh.map.lr01.region.v1",
+  "kind": "construction_zone",
+  "id": "bz_verdant",
+  "name": "Lake Verdant South Meadow",
+  "soil": "đất mùn",
+  "water": "hồ + kênh",
+  "slope": "thoải",
+  "tags": [
+    "bờ hồ",
+    "bình nguyên",
+    "gần đường vận tải"
+  ],
+  "notes": "",
+  "conf": "proposal",
+  "sourceRef": "project.zones[] where id=bz_verdant",
+  "status": [
+    "SOURCE_AUTHORED",
+    "DERIVED",
+    "PROPOSED"
+  ],
+  "geometry": {
+    "ringAu": [
+      [
+        944.1496174117209,
+        493.7052185772443
+      ],
+      [
+        946.0297260745625,
+        487.2350728590814
+      ],
+      [
+        948.6859677994604,
+        481.2795598283321
+      ],
+      [
+        952.1183425864145,
+        475.83867948499625
+      ],
+      [
+        962.116227640508,
+        471.11162853574086
+      ],
+      [
+        978.6796229617406,
+        467.0984069805659
+      ],
+      [
+        997.9857895444972,
+        465.49794436608363
+      ],
+      [
+        1020.0347273887776,
+        466.3102406922939
+      ],
+      [
+        1042.1829756602488,
+        467.86209185466646
+      ],
+      [
+        1064.4305343589108,
+        470.15349785320126
+      ],
+      [
+        1075.87377387203,
+        474.4744006393515
+      ],
+      [
+        1076.512694199606,
+        480.82480021311716
+      ],
+      [
+        1075.2112134794095,
+        486.9230448288557
+      ],
+      [
+        1071.969331711441,
+        492.7691344865672
+      ],
+      [
+        1060.7336943653577,
+        497.2604196118553
+      ],
+      [
+        1041.504301441159,
+        500.39690020471994
+      ],
+      [
+        1020.7539658375899,
+        502.12176312034296
+      ],
+      [
+        998.4826875546506,
+        502.4350083587242
+      ],
+      [
+        976.3126770799607,
+        501.17879609251753
+      ],
+      [
+        954.2439344135203,
+        498.35312632172304
+      ]
+    ],
+    "ringCount": 1,
+    "areaAu2": 4001.5029,
+    "perimeterAu": 295.5787,
+    "bboxAu": [
+      944.1496,
+      465.4979,
+      1076.5127,
+      502.435
+    ],
+    "centroidAu": [
+      1010.6553,
+      484.266
+    ],
+    "outerVertexCount": 20,
+    "holeCount": 0
+  },
+  "rasterCells": {
+    "cells": 65,
+    "areaAu2": 4160,
+    "elevationRawByte": {
+      "min": 23,
+      "max": 71,
+      "mean": 50.5846,
+      "p25": 33,
+      "p50": 56,
+      "p75": 61,
+      "p95": 68,
+      "unit": "UNKNOWN_SOURCE_BYTE__NO_APPROVED_PHYSICAL_SCALE"
+    },
+    "slopeRawDelta": {
+      "min": 1,
+      "max": 22,
+      "mean": 6.3385,
+      "p50": 3,
+      "p95": 18,
+      "unit": "RAW_BYTE_DELTA_PER_8au_CELL__NOT_A_GAMEPLAY_THRESHOLD"
+    },
+    "seaDistanceCellsMean": 29.3538,
+    "freshwaterProximityCellsMean": 4.3231,
+    "clearanceCellsMean": 4.3231,
+    "biomeHistogram": {
+      "0": 65
+    },
+    "roadClassHistogram": {
+      "0": 51,
+      "1": 14
+    },
+    "coastCells": 0,
+    "coastBandLengthAuApprox": 0,
+    "buildableCells": 59,
+    "walkableCells": 59,
+    "waterCells": 6,
+    "cargoCells": 14,
+    "crossingCells": 0
+  },
+  "buildSuitability": {
+    "buildableCells": 59,
+    "buildableFraction": 0.9077,
+    "meanSlopeRaw": 6.3385,
+    "meanFreshwaterProximityCells": 4.3231,
+    "status": "DERIVED",
+    "note": "Geometric suitability only. A0 occupancy, claim legality and Gameplay building rules are NOT asserted."
+  },
+  "loadingSpace": {
+    "cells": 56,
+    "areaAu2": 3584,
+    "bboxAu": [
+      948,
+      468,
+      1076,
+      500
+    ],
+    "status": "PROPOSED",
+    "note": "PROPOSED spatial candidate: buildable cells within 3 grid cells (24 au) of a cart-road/cart-bridge/dock cargo candidate. NOT a loading platform or a Gameplay placement grant."
+  },
+  "naturalChokepoints": {
+    "clusterIds": [],
+    "status": "DERIVED",
+    "note": "clearanceCells <= 2 (<=16 au from blocked geometry); geometric narrowness, not a combat chokepoint claim."
+  },
+  "nearestRoads": [
+    {
+      "id": "rd_a",
+      "kind": "cart",
+      "d": 6.4104
+    },
+    {
+      "id": "rd_h",
+      "kind": "cart",
+      "d": 16.1376
+    },
+    {
+      "id": "rd_1",
+      "kind": "cart",
+      "d": 32.3223
+    }
+  ],
+  "walkableComponentIds": [
+    0,
+    3
+  ]
+}

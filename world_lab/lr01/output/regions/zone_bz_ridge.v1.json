@@ -1,0 +1,205 @@
+{
+  "schema": "soh.map.lr01.region.v1",
+  "kind": "construction_zone",
+  "id": "bz_ridge",
+  "name": "Ironvein Ridge Ledge",
+  "soil": "đá",
+  "water": "xa nước",
+  "slope": "dốc nhẹ",
+  "tags": [
+    "nền đá cao",
+    "gần trung tâm khai thác"
+  ],
+  "notes": "",
+  "conf": "proposal",
+  "sourceRef": "project.zones[] where id=bz_ridge",
+  "status": [
+    "SOURCE_AUTHORED",
+    "DERIVED",
+    "PROPOSED"
+  ],
+  "geometry": {
+    "ringAu": [
+      [
+        1135.902169056681,
+        645.9422536368373
+      ],
+      [
+        1136.4719351940648,
+        634.7776756324265
+      ],
+      [
+        1141.1358453730631,
+        624.3330268972796
+      ],
+      [
+        1145.576957615572,
+        613.5001550011335
+      ],
+      [
+        1149.7952719215912,
+        602.2790599439883
+      ],
+      [
+        1155.8028692812406,
+        597.4678818692082
+      ],
+      [
+        1163.59974969452,
+        599.0666207767933
+      ],
+      [
+        1170.5409810178194,
+        603.6861785657163
+      ],
+      [
+        1176.6265632511386,
+        611.3265552359769
+      ],
+      [
+        1180.7788317269985,
+        621.3600576783303
+      ],
+      [
+        1182.9977864453992,
+        633.7866858927769
+      ],
+      [
+        1182.821286581909,
+        645.9902973124183
+      ],
+      [
+        1180.2493321365278,
+        657.9708919372548
+      ],
+      [
+        1175.8595696269838,
+        666.7332092010932
+      ],
+      [
+        1169.6519990532775,
+        672.2772491039335
+      ],
+      [
+        1162.8750273984074,
+        677.1853392473681
+      ],
+      [
+        1155.5286546623734,
+        681.4574796313971
+      ],
+      [
+        1149.188785199024,
+        678.637416004396
+      ],
+      [
+        1143.8554190083591,
+        668.7251483663649
+      ],
+      [
+        1139.4265469609115,
+        657.826760910512
+      ]
+    ],
+    "ringCount": 1,
+    "areaAu2": 2850.4982,
+    "perimeterAu": 205.3592,
+    "bboxAu": [
+      1135.9022,
+      597.4679,
+      1182.9978,
+      681.4575
+    ],
+    "centroidAu": [
+      1159.9107,
+      639.4851
+    ],
+    "outerVertexCount": 20,
+    "holeCount": 0
+  },
+  "rasterCells": {
+    "cells": 46,
+    "areaAu2": 2944,
+    "elevationRawByte": {
+      "min": 57,
+      "max": 67,
+      "mean": 62.1957,
+      "p25": 60,
+      "p50": 63,
+      "p75": 65,
+      "p95": 66,
+      "unit": "UNKNOWN_SOURCE_BYTE__NO_APPROVED_PHYSICAL_SCALE"
+    },
+    "slopeRawDelta": {
+      "min": 1,
+      "max": 12,
+      "mean": 3.2391,
+      "p50": 2,
+      "p95": 9,
+      "unit": "RAW_BYTE_DELTA_PER_8au_CELL__NOT_A_GAMEPLAY_THRESHOLD"
+    },
+    "seaDistanceCellsMean": 25.6957,
+    "freshwaterProximityCellsMean": 11.413,
+    "clearanceCellsMean": 11.413,
+    "biomeHistogram": {
+      "0": 41,
+      "1": 5
+    },
+    "roadClassHistogram": {
+      "0": 41,
+      "1": 5
+    },
+    "coastCells": 0,
+    "coastBandLengthAuApprox": 0,
+    "buildableCells": 46,
+    "walkableCells": 46,
+    "waterCells": 0,
+    "cargoCells": 5,
+    "crossingCells": 0
+  },
+  "buildSuitability": {
+    "buildableCells": 46,
+    "buildableFraction": 1,
+    "meanSlopeRaw": 3.2391,
+    "meanFreshwaterProximityCells": 11.413,
+    "status": "DERIVED",
+    "note": "Geometric suitability only. A0 occupancy, claim legality and Gameplay building rules are NOT asserted."
+  },
+  "loadingSpace": {
+    "cells": 35,
+    "areaAu2": 2240,
+    "bboxAu": [
+      1140,
+      620,
+      1180,
+      676
+    ],
+    "status": "PROPOSED",
+    "note": "PROPOSED spatial candidate: buildable cells within 3 grid cells (24 au) of a cart-road/cart-bridge/dock cargo candidate. NOT a loading platform or a Gameplay placement grant."
+  },
+  "naturalChokepoints": {
+    "clusterIds": [],
+    "status": "DERIVED",
+    "note": "clearanceCells <= 2 (<=16 au from blocked geometry); geometric narrowness, not a combat chokepoint claim."
+  },
+  "nearestRoads": [
+    {
+      "id": "rd_3",
+      "kind": "cart",
+      "d": 12.2321
+    },
+    {
+      "id": "rd_1",
+      "kind": "cart",
+      "d": 43.9107
+    },
+    {
+      "id": "rd_4",
+      "kind": "cart",
+      "d": 47.6839
+    }
+  ],
+  "walkableComponentIds": [
+    3
+  ]
+}

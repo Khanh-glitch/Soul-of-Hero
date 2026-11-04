@@ -1,0 +1,199 @@
+{
+  "schema": "soh.map.lr01.region.v1",
+  "kind": "construction_zone",
+  "id": "bz_greyback",
+  "name": "Greyback Foothill Shelf",
+  "soil": "nền đá",
+  "water": "xa nước",
+  "slope": "dốc nhẹ",
+  "tags": [
+    "nền đá cao"
+  ],
+  "notes": "Nền đá cao, dễ phòng thủ, khó làm vườn.",
+  "conf": "proposal",
+  "sourceRef": "project.zones[] where id=bz_greyback",
+  "status": [
+    "SOURCE_AUTHORED",
+    "DERIVED",
+    "PROPOSED"
+  ],
+  "geometry": {
+    "ringAu": [
+      [
+        526.9346509100232,
+        758.856656184869
+      ],
+      [
+        527.7578867439096,
+        746.7710954324712
+      ],
+      [
+        530.6253231521545,
+        735.730689102152
+      ],
+      [
+        535.536960134758,
+        725.7354371939116
+      ],
+      [
+        541.8869913934842,
+        717.4183995989829
+      ],
+      [
+        549.675416928333,
+        710.7795763173661
+      ],
+      [
+        557.8275390985729,
+        708.5332284305309
+      ],
+      [
+        566.3433579042036,
+        710.6793559384771
+      ],
+      [
+        572.4882420551568,
+        716.4635315207956
+      ],
+      [
+        576.2621915514325,
+        725.8857551774863
+      ],
+      [
+        578.4769831190393,
+        735.7290255239308
+      ],
+      [
+        579.1326167579776,
+        745.9933425601289
+      ],
+      [
+        577.2490236692431,
+        755.8595708996195
+      ],
+      [
+        572.8262038528361,
+        765.3277105424025
+      ],
+      [
+        567.0110355315595,
+        775.3790955367575
+      ],
+      [
+        559.8035187054135,
+        786.0137258826843
+      ],
+      [
+        551.5377060315882,
+        789.38824900663
+      ],
+      [
+        542.2135975100834,
+        785.5026649085945
+      ],
+      [
+        534.7944156852684,
+        778.8947637849495
+      ],
+      [
+        529.2801605571427,
+        769.5645456356951
+      ]
+    ],
+    "ringCount": 1,
+    "areaAu2": 3086.3132,
+    "perimeterAu": 207.2748,
+    "bboxAu": [
+      526.9347,
+      708.5332,
+      579.1326,
+      789.3882
+    ],
+    "centroidAu": [
+      553.18,
+      748.2885
+    ],
+    "outerVertexCount": 20,
+    "holeCount": 0
+  },
+  "rasterCells": {
+    "cells": 45,
+    "areaAu2": 2880,
+    "elevationRawByte": {
+      "min": 56,
+      "max": 121,
+      "mean": 79.0444,
+      "p25": 65,
+      "p50": 74,
+      "p75": 90,
+      "p95": 111,
+      "unit": "UNKNOWN_SOURCE_BYTE__NO_APPROVED_PHYSICAL_SCALE"
+    },
+    "slopeRawDelta": {
+      "min": 1,
+      "max": 21,
+      "mean": 11.3111,
+      "p50": 12,
+      "p95": 20,
+      "unit": "RAW_BYTE_DELTA_PER_8au_CELL__NOT_A_GAMEPLAY_THRESHOLD"
+    },
+    "seaDistanceCellsMean": 27.4,
+    "freshwaterProximityCellsMean": 19.4222,
+    "clearanceCellsMean": 19.4222,
+    "biomeHistogram": {
+      "0": 37,
+      "3": 5,
+      "6": 3
+    },
+    "roadClassHistogram": {
+      "0": 45
+    },
+    "coastCells": 0,
+    "coastBandLengthAuApprox": 0,
+    "buildableCells": 45,
+    "walkableCells": 45,
+    "waterCells": 0,
+    "cargoCells": 0,
+    "crossingCells": 0
+  },
+  "buildSuitability": {
+    "buildableCells": 45,
+    "buildableFraction": 1,
+    "meanSlopeRaw": 11.3111,
+    "meanFreshwaterProximityCells": 19.4222,
+    "status": "DERIVED",
+    "note": "Geometric suitability only. A0 occupancy, claim legality and Gameplay building rules are NOT asserted."
+  },
+  "loadingSpace": {
+    "cells": 0,
+    "areaAu2": 0,
+    "bboxAu": null,
+    "status": "PROPOSED",
+    "note": "PROPOSED spatial candidate: buildable cells within 3 grid cells (24 au) of a cart-road/cart-bridge/dock cargo candidate. NOT a loading platform or a Gameplay placement grant."
+  },
+  "naturalChokepoints": {
+    "clusterIds": [],
+    "status": "DERIVED",
+    "note": "clearanceCells <= 2 (<=16 au from blocked geometry); geometric narrowness, not a combat chokepoint claim."
+  },
+  "nearestRoads": [
+    {
+      "id": "rd_d",
+      "kind": "cart",
+      "d": 85.5622
+    },
+    {
+      "id": "rd_t",
+      "kind": "cart",
+      "d": 95.4662
+    },
+    {
+      "id": "rd_r",
+      "kind": "cart",
+      "d": 129.333
+    }
+  ],
+  "walkableComponentIds": [
+    0
+  ]
+}
