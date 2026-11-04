@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { BAL, TILE, WW, VIEW_W, VIEW_H, HOUR, type GameState } from '../game/core';
 import { ITEMS, STRUCTS, ELDERS, CREATURES, STRUCTURE_UPGRADES } from '../game/catalog';
 import { dispatch, phaseOf, runHours, dayTime, weatherAt, weatherSlot, countItem, C, entsAt, cartWeight, cartLimit, effTile, isRagnarok, buildReason, clearWallLine } from '../game/engine';
-import { tick, syncWorld, findInteract, activeStack, SPEED_KEY, type Input, type Interact } from '../game/sim';
+import { tick, syncWorld, findInteract, activeStack, SPEED_KEY, rayLen, type Input, type Interact } from '../game/sim';
 import { draw, consumeFX, cam } from '../game/render';
 import { getWorld, ZONES } from '../game/world';
 import { sfx, setAmbience, initAudio } from '../game/audio';
@@ -20,6 +20,8 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
   const [toasts, setToasts] = useState<{ id: number; text: string; tone?: string; t: number }[]>([]);
   const [banner, setBanner] = useState<{ text: string; sub?: string; id: number } | null>(null);
   const inp = useRef<Input>({ up: false, down: false, left: false, right: false, mx: 0, my: 0, attack: false, attackPressed: false, roll: false, cancel: false });
+  const [coreAim, setCoreAim] = useState<null | { mode: 'refined' | 'signature'; uid: string; code: string }>(null);
+  const coreAimRef = useRef(coreAim); coreAimRef.current = coreAim;
   const mouse = useRef({ x: 320, y: 180 }); const target = useRef<Interact | null>(null); const hitstop = useRef(0);
   const panelRef = useRef(panel); panelRef.current = panel; const buildRef = useRef(buildType); buildRef.current = buildType; const reclaimRef = useRef(reclaim); reclaimRef.current = reclaim; const repairRef = useRef(repairMode); repairRef.current = repairMode; const upgradeRef = useRef(upgradeMode); upgradeRef.current = upgradeMode;
   const saveT = useRef<any>(null); const toastKeys = useRef<Record<string, number>>({});
@@ -71,7 +73,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
   // input
   useEffect(() => {
     const keyMap: Record<string, keyof Input> = { KeyW: 'up', ArrowUp: 'up', KeyS: 'down', ArrowDown: 'down', KeyA: 'left', ArrowLeft: 'left', KeyD: 'right', ArrowRight: 'right' };
-    const toggle = (k: PanelState['kind']) => { setPanel(p => (p?.kind === k ? null : { kind: k })); setSel(null); sfx({ type: 'ui' }); };
+    const toggle = (k: PanelState['kind']) => { coreAimRef.current=null; setCoreAim(null); inp.current.skill=undefined; inp.current.cancel=true; setPanel(p => (p?.kind === k ? null : { kind: k })); setSel(null); sfx({ type: 'ui' }); };
     const down = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLElement && (e.target.matches('input, textarea, select') || e.target.isContentEditable)) { if (e.code === 'Escape') e.target.blur(); return; }
       initAudio(); const r = gs.run; if (!r) return;
@@ -80,26 +82,35 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       if (e.repeat) return;
       switch (e.code) {
         case 'Space': inp.current.roll = true; e.preventDefault(); break;
-        case 'KeyE': interact(); break;
-        case 'KeyF': { const c = Object.values(r.entities).find(x => x.kind === 'cart' && Math.hypot(x.x - r.player.x, x.y - r.player.y) < 34); if (c) { act('grabCart', { eid: c.id }); } else if (r.player.pulling) act('grabCart', { eid: r.player.pulling }); else toast('No cart within reach.'); break; }
+        case 'KeyQ': case 'KeyE': {
+          const s=activeStack(r);
+          if(s && ITEMS[s.key]?.creatorCore && !panelRef.current && !r.player.dead && !r.player.action){const aim={mode:e.code==='KeyQ'?'refined' as const:'signature' as const,uid:s.uid,code:e.code};coreAimRef.current=aim;setCoreAim(aim);e.preventDefault();}
+          else if(e.code==='KeyE' && !ITEMS[s?.key||'']?.creatorCore && !panelRef.current) interact();
+          break;
+        }
+        case 'KeyF': { if(e.shiftKey || r.player.pulling){const c = Object.values(r.entities).find(x => x.kind === 'cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34); if(c) act('grabCart',{eid:c.id}); else if(r.player.pulling) act('grabCart',{eid:r.player.pulling}); else toast('No cart within reach.');} else if(target.current) interact(); else {const c=Object.values(r.entities).find(x=>x.kind==='cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34);if(c)act('grabCart',{eid:c.id});} break; }
         case 'KeyI': toggle('inv'); break; case 'KeyC': toggle('craft'); break; case 'KeyM': toggle('map'); break;
         case 'KeyB': setUpgradeMode(false); setBuildType(null); setReclaim(false); setRepairMode(false); toggle('build'); break;
         case 'KeyG': setEditLayer(v => { const a=['auto','wall','obj','roof','floor']; return a[(a.indexOf(v)+1)%a.length]; }); break;
         case 'KeyU': setPanel(null); setUpgradeMode(v => !v); setBuildType(null); setReclaim(false); setRepairMode(false); break;
         case 'KeyX': setPanel(null); setUpgradeMode(false); setReclaim(v => !v); setBuildType(null); setRepairMode(false); break;
         case 'KeyV': setPanel(null); setUpgradeMode(false); setRepairMode(v => !v); setBuildType(null); setReclaim(false); break;
-        case 'KeyR': { const t = Object.values(r.entities).find(x => x.type === 'research' && Math.hypot(x.x - r.player.x, x.y - r.player.y) < 3 * TILE && clearWallLine(r, r.player, x)); if (t) setPanel({ kind: 'container', eid: t.id }); else toast('Research needs a Research Table within reach (build one on your claim).'); break; }
-        case 'Escape': if (buildRef.current || reclaimRef.current || repairRef.current || upgradeRef.current) { setUpgradeMode(false); setBuildType(null); setReclaim(false); setRepairMode(false); } else if (panelRef.current) setPanel(null); else setPanel({ kind: 'menu' }); setSel(null); break;
+        case 'KeyR': { const selected=activeStack(r); if(selected && ITEMS[selected.key]?.creatorCore && !panelRef.current){act('loadCore',{slot:r.player.active,uid:selected.uid,mode:e.altKey?'signature':e.shiftKey?'refined':'basic'});break;} const t = Object.values(r.entities).find(x => x.type === 'research' && Math.hypot(x.x - r.player.x, x.y - r.player.y) < 3 * TILE && clearWallLine(r, r.player, x)); if (t) setPanel({ kind: 'container', eid: t.id }); else toast('Research needs a Research Table within reach (build one on your claim).'); break; }
+        case 'Escape': if(coreAimRef.current || (r.player.action?.kind==='cast' && !r.player.action.done)){coreAimRef.current=null;setCoreAim(null);inp.current.skill=undefined;inp.current.cancel=true;break;} if (buildRef.current || reclaimRef.current || repairRef.current || upgradeRef.current) { setUpgradeMode(false); setBuildType(null); setReclaim(false); setRepairMode(false); } else if (panelRef.current) setPanel(null); else setPanel({ kind: 'menu' }); setSel(null); break;
         default: if (/^Digit[1-8]$/.test(e.code)) { r.player.active = +e.code.slice(5) - 1; rerender(); }
       }
     };
-    const up = (e: KeyboardEvent) => { if (keyMap[e.code]) (inp.current as any)[keyMap[e.code]] = false; };
-    const blur = () => { const i = inp.current; i.up = i.down = i.left = i.right = i.attack = false; };
+    const up = (e: KeyboardEvent) => { if (keyMap[e.code]) (inp.current as any)[keyMap[e.code]] = false; const a=coreAimRef.current;if(a && a.code===e.code){coreAimRef.current=null;setCoreAim(null);const selected=gs.run && activeStack(gs.run);if(!panelRef.current && selected?.uid===a.uid && !gs.run?.player.dead)inp.current.skill=a.mode;} };
+    const blur = () => { const i = inp.current; i.up = i.down = i.left = i.right = i.attack = false; i.skill=undefined;i.cancel=true;coreAimRef.current=null;setCoreAim(null); };
     const wheel = (e: WheelEvent) => { const r = gs.run; if (!r || panelRef.current) return; r.player.active = (r.player.active + (e.deltaY > 0 ? 1 : 7)) % 8; rerender(); };
     const vis = () => { if (document.hidden) { saveSync(gs); save(gs); blur(); } };
     window.addEventListener('keydown', down); window.addEventListener('keyup', up); window.addEventListener('blur', blur); window.addEventListener('wheel', wheel, { passive: true }); document.addEventListener('visibilitychange', vis); window.addEventListener('beforeunload', vis as any);
     return () => { window.removeEventListener('keydown', down); window.removeEventListener('keyup', up); window.removeEventListener('blur', blur); window.removeEventListener('wheel', wheel); document.removeEventListener('visibilitychange', vis); window.removeEventListener('beforeunload', vis as any); };
   }, [gs]);
+
+  // Never resume an uncommitted Creator cast after a saved/reopened UI.
+  useEffect(() => { const a=gs.run?.player.action; if(a?.kind==='cast' && a.coreUid && !a.done) gs.run!.player.action=null; }, [gs]);
+  useEffect(() => { if(panel){coreAimRef.current=null;setCoreAim(null);inp.current.skill=undefined;inp.current.cancel=true;inp.current.attack=false;} }, [panel]);
 
   // main loop
   useEffect(() => {
@@ -112,7 +123,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       const i = inp.current; i.mx = mouse.current.x + Math.round(cam.x); i.my = mouse.current.y + Math.round(cam.y);
       let simDt = dt; if (hitstop.current > 0) { hitstop.current -= dt; simDt = dt * 0.08; }
       const wasDead = gs.run.player.dead;
-      tick(gs, i, simDt, now); i.attackPressed = false; i.roll = false; i.cancel = false;
+      tick(gs, i, simDt, now); i.attackPressed = false; i.roll = false; i.cancel = false; i.skill=undefined;
       if (!gs.run) return;
       // Death transfers the entire pack to a physical bag. Persist that custody
       // transition immediately instead of leaving a five-second rollback window.
@@ -135,9 +146,9 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
   const onMouseMove = (e: React.MouseEvent) => { const s = scaleRef.current; mouse.current = { x: (e.clientX - offRef.current.x) / s, y: (e.clientY - offRef.current.y) / s }; };
   const onMouseDown = (e: React.MouseEvent) => {
     initAudio(); const r = gs.run; if (!r) return; onMouseMove(e);
-    if (e.button === 2) { inp.current.cancel = true; setBuildType(null); setReclaim(false); setRepairMode(false); setUpgradeMode(false); return; }
+    if (e.button === 2) { coreAimRef.current=null;setCoreAim(null);inp.current.skill=undefined;inp.current.cancel = true; setBuildType(null); setReclaim(false); setRepairMode(false); setUpgradeMode(false); return; }
     if (e.button !== 0) return;
-    if (panel && ['menu', 'report', 'evac'].includes(panel.kind)) return;
+    if (panel || coreAimRef.current) return;
     const wx = mouse.current.x + Math.round(cam.x), wy = mouse.current.y + Math.round(cam.y); const tx = Math.floor(wx / 16), ty = Math.floor(wy / 16);
     if (buildType) { const res = act('build', { struct: buildType, tx, ty }); if (res.ok && buildType === 'escrow') setBuildType(null); return; }
     if (upgradeMode || repairMode || reclaim) {
@@ -189,8 +200,10 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       </div>
       {engaged && (() => { const d = ELDERS[engaged.elder!.key]; return <div className="absolute" style={{ left: 170, top: 6, width: 300, textAlign: 'center' }}><div className="title-font" style={{ fontSize: 10, color: d.color, textShadow: '1px 1px 0 #000' }}>{d.name} <span style={{ color: '#cfc2dc', fontSize: 9 }}>— {engaged.elder!.awake ? 'awakened' : 'latent'}</span></div><div className="bar" style={{ width: 300, height: 6 }}><i style={{ width: `${(engaged.hp / engaged.maxHp) * 100}%`, background: `linear-gradient(${d.color}, #8a2a1a)` }} /></div></div>; })()}
       {banner && <div key={banner.id} className="absolute banner" style={{ left: 0, right: 0, top: 70, textAlign: 'center', pointerEvents: 'none' }} onAnimationEnd={() => setBanner(null)}><div className="title-font" style={{ fontSize: 22, color: '#ffe8b0', textShadow: '2px 2px 0 #2a1006, 0 0 8px #ff9a3a' }}>{banner.text}</div>{banner.sub && <div style={{ fontSize: 12, color: '#e0d0f0', textShadow: '1px 1px 0 #000' }}>{banner.sub}</div>}</div>}
+      {coreAim && (()=>{const px=p.x-Math.round(cam.x),py=p.y-Math.round(cam.y),len=rayLen(r,p.x,p.y,p.aim,coreAim.mode==='refined'?120:195);return <svg className="absolute" width={VIEW_W} height={VIEW_H} style={{left:0,top:0,pointerEvents:'none'}}><line x1={px} y1={py} x2={px+Math.cos(p.aim)*len} y2={py+Math.sin(p.aim)*len} stroke="#ffd98a" strokeWidth="1" strokeDasharray="4 3"/><circle cx={px+Math.cos(p.aim)*len} cy={py+Math.sin(p.aim)*len} r="4" fill="none" stroke="#ffd98a"/></svg>;})()}
+      {coreAim && <div className="panel absolute" style={{left:220,top:38,padding:'2px 6px',fontSize:10,pointerEvents:'none'}}> {coreAim.mode==='refined'?'Q: timed bomb · release to throw':'E: burning projectile · release to cast'} · RMB/Esc cancel</div>}
       {/* interaction prompt */}
-      {tgt && ts && !panel && <div className="absolute" style={{ left: Math.round(ts.x), top: Math.round(ts.y) - 34, transform: 'translateX(-50%)', fontSize: 10, background: '#120c18e0', border: '1px solid #5a4a6a', padding: '0 4px', whiteSpace: 'nowrap', pointerEvents: 'none' }}><span style={{ color: '#ffe27a' }}>[E]</span> {tgt.label}{targetHp && <span style={{ color: '#ffb66a' }}>{targetHp}</span>}</div>}
+      {tgt && ts && !panel && <div className="absolute" style={{ left: Math.round(ts.x), top: Math.round(ts.y) - 34, transform: 'translateX(-50%)', fontSize: 10, background: '#120c18e0', border: '1px solid #5a4a6a', padding: '0 4px', whiteSpace: 'nowrap', pointerEvents: 'none' }}><span style={{ color: '#ffe27a' }}>[F/E]</span> {tgt.label}{targetHp && <span style={{ color: '#ffb66a' }}>{targetHp}</span>}</div>}
       {/* build helper */}
       {(buildType || reclaim || repairMode || upgradeMode) && <div className="panel absolute" style={{ left: 145, bottom: 34, width: 350, padding: '3px 6px', fontSize: 11, textAlign: 'center',lineHeight:1.1 }} onMouseDown={e => e.stopPropagation()}>{buildType ? <><b style={{color:'#ffd98a'}}>Place {STRUCTS[buildType].name}</b> · {STRUCTS[buildType].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(' · ')}<br/><span style={{color:placementReason?'#ff9a8a':'#9ae0a0'}}>{placementReason||'Placement allowed'} · RMB/Esc stop</span></> : <><b>{upgradeMode?'Upgrade':repairMode?'Repair':'Dismantle'}</b> · G layer: {editLayer} · RMB/Esc stop<br/>{hover ? <span>{STRUCTS[hover.type!].name} · HP {Math.ceil(hover.hp||0)}/{hover.maxHp} · {hover.owner && hover.owner!=='player'?'not owned':'owned'}{upgradeMode && STRUCTURE_UPGRADES[hover.type!] ? ` → ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].name}: ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(', ')}` : ''}{repairMode ? ` · Repair: ${STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${Math.max(1,Math.ceil(q/4))}`).join(', ')}` : ''}{reclaim ? ` · Refund: ${STRUCTS[hover.type!].item ? ITEMS[STRUCTS[hover.type!].item!].name : STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${Math.floor(q*BAL.economy.reclaimRefund)}`).join(', ')}` : ''}</span> : 'Point at a structure; click to act.'}</>}</div>}
       {/* cargo */}
@@ -202,7 +215,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       {/* quickbar */}
       <div className="panel absolute flex gap-0.5" style={{ left: '50%', transform: 'translateX(-50%)', bottom: 4, padding: 3 }} onMouseDown={e => e.stopPropagation()}>
         {C(r, 'inv').slots.slice(0, 8).map((s, i) => <Slot key={i} s={s} active={i === p.active} hotkey={String(i + 1)} onClick={() => { p.active = i; rerender(); }} onContext={() => act('useItem', { slot: i })} />)}
-        <div style={{ fontSize: 9, width: 74, lineHeight: 1, marginLeft: 3, color: '#cfc2dc', alignSelf: 'center' }}>{(() => { const s = activeStack(r); if (!s) return 'Fists'; const d = ITEMS[s.key]; return <><span style={{ color: '#ffe0a0' }}>{d.name}</span><br />{d.core ? `${s.charge}/${d.charge} charges · LMB cast, RMB cancel` : d.food ? 'LMB eat/drink' : d.dmg ? `dmg ${d.dmg}${d.power ? ' · tool' : ''}` : d.place ? 'LMB to place' : d.cat === 'bp' ? 'LMB learn' : ''}</>; })()}</div>
+        <div style={{ fontSize: 9, width: 74, lineHeight: 1, marginLeft: 3, color: '#cfc2dc', alignSelf: 'center' }}>{(() => { const s = activeStack(r); if (!s) return 'Fists'; const d = ITEMS[s.key]; return <><span style={{ color: '#ffe0a0' }}>{d.name}</span><br />{d.creatorCore && s.reserves ? `B${s.reserves.basic} Q${s.reserves.refined} E${s.reserves.signature} · R/Shift/Alt reload` : d.core ? `${s.charge}/${d.charge} charges · LMB cast, RMB cancel` : d.food ? 'LMB eat/drink' : d.dmg ? `dmg ${d.dmg}${d.power ? ' · tool' : ''}` : d.place ? 'LMB to place' : d.cat === 'bp' ? 'LMB learn' : ''}</>; })()}</div>
       </div>
       {/* panels */}
       {panel?.kind === 'inv' && <InventoryPanel api={api} />}
@@ -221,7 +234,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
         <div style={{ fontSize: 12, color: '#e0d0c0', maxWidth: 320, textAlign: 'center' }}>Death does not end the run. Everything you carried lies in a bag where you fell — go back for it. {Object.values(r.entities).some(e => e.type === 'bed_straw') ? 'You will wake at your bed.' : 'With no bed, you wake at a landing site.'}</div>
         <button className="btn gold" style={{ marginTop: 8, fontSize: 14 }} disabled={p.deadT < 1200} onClick={() => act('respawn')}>Rise again</button>
       </div>}
-      {!panel && hrs < 0.08 && !r.qaUsed && <div className="absolute fadein" style={{ right: 4, top: 60, width: 150, fontSize: 10, color: '#cfc2dc', lineHeight: 1.1, textShadow: '1px 1px 0 #000', pointerEvents: 'none' }}>WASD move · mouse aim · LMB swing · Space roll · E interact · I/C/B/M panels · Esc menu. No quests — choose your own way.</div>}
+      {!panel && hrs < 0.08 && !r.qaUsed && <div className="absolute fadein" style={{ right: 4, top: 60, width: 150, fontSize: 10, color: '#cfc2dc', lineHeight: 1.1, textShadow: '1px 1px 0 #000', pointerEvents: 'none' }}>WASD move · mouse aim · LMB swing · Space roll · F/E interact · I/C/B/M panels · Esc menu. No quests — choose your own way.</div>}
       {isRagnarok(r, now) && heldCash > 0 && !panel && <div className="absolute pulse" style={{ right: 4, top: 62, fontSize: 10, color: '#ffe27a', textShadow: '1px 1px 0 #000' }}>Unsecured cash: {heldCash} — deposit it in your Rương ký gửi</div>}
     </div>
   </div>;

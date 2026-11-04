@@ -4,7 +4,7 @@ import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
 import { getWorld } from './world';
 import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, turretStatus, stepLootRespawn, migrateLootRespawn } from './engine';
 
-export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean }
+export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature' }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
 let offlineQuiet = false;
 const fx = (type: string, d: any = {}) => { if (!offlineQuiet && FX.length < 400) FX.push({ type, ...d }); };
@@ -56,7 +56,7 @@ function observePlayer(r: RunState, m: Creature, now: number, range: number, eli
   else if (m.knows?.kind === 'sight' && now - m.knows.at > 4000) m.knows = null;
   return seen;
 }
-function rayLen(r: RunState, x: number, y: number, a: number, max: number) { const g = blockGrid(r); for (let d = 8; d < max; d += 4) { const b = g[tileOf(y + Math.sin(a) * d) * WW + tileOf(x + Math.cos(a) * d)]; if (b === 1 || b === 2 || b === 3) return d; } return max; }
+export function rayLen(r: RunState, x: number, y: number, a: number, max: number) { const g = blockGrid(r); for (let d = 8; d < max; d += 4) { const tx=tileOf(x+Math.cos(a)*d),ty=tileOf(y+Math.sin(a)*d); if(tx<0||ty<0||tx>=WW||ty>=WH)return d; const b=g[ty*WW+tx]; if (b === 1 || b === 2 || b === 3 || b === 5) return d; } return max; }
 
 // ---------- player damage ----------
 export function hurtPlayer(gs: GameState, dmg: number, fx0: number, fy0: number, cause: string, now: number, kb = 140) {
@@ -180,6 +180,18 @@ function commitCore(gs: GameState, now: number, slot: number, a: number) {
   }
 }
 
+/** The physical UID captured at windup must still occupy the same slot at commit. */
+function commitCreatorCore(gs: GameState, now: number, slot: number, uid0: string, mode: 'basic'|'refined'|'signature', a: number) {
+  const r = gs.run!, p = r.player, s = C(r, 'inv').slots[slot];
+  if (!s || s.uid !== uid0 || ITEMS[s.key]?.creatorCore !== 'blast' || !s.reserves || s.reserves[mode] <= 0) { fx('fizzle', {x:p.x,y:p.y}); return; }
+  s.reserves[mode]--; receipt(r, now, 'core.commit', `${s.uid}:${mode}:${s.reserves[mode]}`); award(gs,'first_core',now);
+  const b = BAL.creatorCoreBlast, hx=p.x+Math.cos(a)*10, hy=p.y+Math.sin(a)*10;
+  fx('cast',{x:hx,y:hy,core:'fire',a});
+  if (mode === 'basic') { const angle=a+(rngNext(r)*2-1)*b.spreadRadians; PROJ.push({x:hx,y:hy,vx:Math.cos(angle)*b.basicSpeed,vy:Math.sin(angle)*b.basicSpeed,life:b.basicLife,dmg:b.basicDamage,from:'player',kind:'blast_round',r:2}); }
+  if (mode === 'refined') PROJ.push({x:hx,y:hy,vx:Math.cos(a)*100,vy:Math.sin(a)*100,life:b.bombSeconds,dmg:b.bombDamage,from:'player',kind:'blast_bomb',r:4});
+  if (mode === 'signature') PROJ.push({x:hx,y:hy,vx:Math.cos(a)*b.signatureSpeed,vy:Math.sin(a)*b.signatureSpeed,life:b.signatureLife,dmg:b.signatureDamage,from:'player',kind:'blast_signature',r:6});
+}
+
 // ---------- player ----------
 function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   const r = gs.run!; const p = r.player; const dt = dtMs / 1000; const B = BAL.player;
@@ -193,9 +205,15 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   if (inp.roll && p.stamina >= B.rollCost && (!act || act.kind === 'hurt' || (act.kind === 'swing' && act.done))) {
     p.stamina -= B.rollCost; p.action = { kind: 'roll', t: 0, dur: B.rollMs, angle: ml ? Math.atan2(my, mx) : p.aim }; p.invuln = Math.max(p.invuln, B.rollMs - 40); fx('roll', { x: p.x, y: p.y });
   } else if (inp.cancel && act?.kind === 'cast') { dispatch(gs, { id: 'cc' + now, type: 'castCancel' }, now); p.action = null; fx('fizzle', { x: p.x, y: p.y }); }
+  else if (inp.skill && !p.action) {
+    const s = activeStack(r), mode=inp.skill;
+    if (s && ITEMS[s.key]?.creatorCore && s.reserves && s.reserves[mode]>0) { p.action={kind:'cast',t:0,dur:380,contact:300,angle:p.aim,slot:p.active,coreUid:s.uid,mode}; fx('windup',{x:p.x,y:p.y,core:'fire'}); }
+    else fx('toast',{text:'Creator Core reserve empty — reload with R.'});
+  }
   else if ((inp.attackPressed || inp.attack) && !p.action) {
     const s = activeStack(r); const d = s ? ITEMS[s.key] : null;
     if (d?.repair && s?.dur !== undefined && s.dur <= 0) { if (inp.attackPressed) fx('toast', { text: `${d.name} is broken. Repair it at a workbench.` }); }
+    else if (d?.creatorCore) { if (s!.reserves && s!.reserves.basic>0) { p.action={kind:'cast',t:0,dur:180,contact:100,angle:p.aim,slot:p.active,coreUid:s!.uid,mode:'basic'}; } else if(inp.attackPressed) fx('toast',{text:'Basic reserve empty — press R to reload.'}); }
     else if (d?.core) { if ((s!.charge ?? 0) > 0) { p.action = { kind: 'cast', t: 0, dur: 520, contact: 460, angle: p.aim, slot: p.active }; fx('windup', { x: p.x, y: p.y, core: d.core }); } else if (inp.attackPressed) fx('toast', { text: 'This Core is spent. Study it at a Research Table.' }); }
     else if (d && d.food && inp.attackPressed) { const res = dispatch(gs, { id: 'use' + now, type: 'useItem', slot: p.active }, now); fx(res.ok ? 'eat' : 'toast', { x: p.x, y: p.y, text: res.ok ? '' : (res as any).reason }); }
     else if (d && d.cat === 'bp' && inp.attackPressed) { const res = dispatch(gs, { id: 'use' + now, type: 'useItem', slot: p.active }, now); fx('toast', { text: res.ok ? res.msg : (res as any).reason }); }
@@ -209,7 +227,7 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   if (a2) {
     a2.t += dtMs;
     if (a2.kind === 'swing') { speedMul = 0.45; if (!a2.done && a2.t >= (a2.contact || 0)) { a2.done = true; resolveSwing(gs, now, a2.slot ?? -1, a2.angle); } }
-    if (a2.kind === 'cast') { speedMul = 0.3; a2.angle = p.aim; if (!a2.done && a2.t >= (a2.contact || 0)) { a2.done = true; commitCore(gs, now, a2.slot!, p.aim); } }
+    if (a2.kind === 'cast') { speedMul = 0.3; a2.angle = p.aim; if (!a2.done && a2.t >= (a2.contact || 0)) { a2.done = true; if (a2.coreUid && a2.mode) commitCreatorCore(gs, now, a2.slot!, a2.coreUid, a2.mode, p.aim); else commitCore(gs, now, a2.slot!, p.aim); } }
     if (a2.kind === 'hurt') speedMul = 0.6;
     if (a2.t >= a2.dur) p.action = null;
   }
@@ -603,11 +621,20 @@ function tickProj(gs: GameState, dtMs: number, now: number) {
       if (b === 1 || b === 2 || b === 3 || b === 5 || !clearPhysicalLine(r, pr, { x, y }, true)) { blocked = true; break; }
       pr.x = x; pr.y = y;
     }
+    if (pr.kind === 'blast_signature') {
+      const trailSteps=Math.max(1,Math.ceil(dist(ox,oy,pr.x,pr.y)/12));
+      for(let k=1;k<=trailSteps;k++){const x=ox+(pr.x-ox)*k/trailSteps,y=oy+(pr.y-oy)*k/trailSteps;ignite(gs,tileOf(x),tileOf(y),now);HAZ.push({kind:'pool',x,y,r:8,t:0,tell:0,dur:BAL.creatorCoreBlast.signatureBurnMs,dmg:BAL.creatorCoreBlast.signatureBurnDamage,style:'burn',owner:'player'});}
+    }
     pr.life -= dt; let dead = pr.life <= 0;
-    if (blocked) { dead = true; if (pr.kind === 'fireball') explode(gs, pr, now); else fx('ping', { x: pr.x, y: pr.y, kind: pr.kind }); }
+    if (pr.kind === 'blast_bomb' && blocked && !dead) { pr.vx=0; pr.vy=0; blocked=false; }
+    if (blocked) { dead = true; if (pr.kind === 'fireball' || pr.kind === 'blast_signature') explode(gs, pr, now); else fx('ping', { x: pr.x, y: pr.y, kind: pr.kind }); }
     else if (pr.from === 'enemy' && dist(pr.x, pr.y, p.x, p.y) < pr.r + 4) { dead = true; if (pr.kind === 'mine') { fx('boom', { x: pr.x, y: pr.y, small: true }); } hurtPlayer(gs, pr.dmg, pr.x - pr.vx, pr.y - pr.vy, 'projectile', now, 100); }
-    else if (pr.from === 'player') { for (const m of r.creatures) { if (m.state === 'dead') continue; const rr = m.elder ? ELDERS[m.elder.key].r : 6; if (dist(pr.x, pr.y, m.x, m.y) < rr + pr.r) { dead = true; if (pr.kind === 'fireball') explode(gs, pr, now); else damageCreature(gs, m, pr.dmg, Math.atan2(pr.vy, pr.vx), now, 80); break; } } }
-    if (dead && pr.kind === 'fireball' && pr.life <= 0) explode(gs, pr, now);
+    else if (pr.from === 'player' && pr.kind !== 'blast_bomb') { for (const m of r.creatures) { if (m.state === 'dead') continue; const rr = m.elder ? ELDERS[m.elder.key].r : 6; if (dist(pr.x, pr.y, m.x, m.y) < rr + pr.r) { dead = true; if (pr.kind === 'fireball' || pr.kind === 'blast_signature') explode(gs, pr, now); else damageCreature(gs, m, pr.dmg, Math.atan2(pr.vy, pr.vx), now, 80); break; } } }
+    if (dead && (pr.kind === 'fireball' || pr.kind === 'blast_signature') && pr.life <= 0) explode(gs, pr, now);
+    if (dead && pr.kind === 'blast_bomb' && pr.life <= 0) {
+      explode(gs,pr,now); const base=rngNext(r)*Math.PI*2;
+      for(let k=0;k<BAL.creatorCoreBlast.fragmentCount;k++){const angle=base+k*Math.PI*2/BAL.creatorCoreBlast.fragmentCount;PROJ.push({x:pr.x,y:pr.y,vx:Math.cos(angle)*120,vy:Math.sin(angle)*120,life:0.65,dmg:BAL.creatorCoreBlast.fragmentDamage,from:'player',kind:'blast_round',r:2});}
+    }
     if (dead && pr.kind === 'mine' && pr.life <= 0) fx('boom', { x: pr.x, y: pr.y, small: true });
     if (dead) PROJ.splice(i, 1);
   }
@@ -631,7 +658,8 @@ function tickHaz(gs: GameState, dtMs: number, now: number) {
     const h = HAZ[i]; h.t += dtMs; if (h.t < h.tell) continue;
     const first = !h.done; h.done = true;
     if (first) onHazActivate(gs, h, now);
-    if (h.owner === 'player') { if (first || h.kind === 'ring') for (const m of r.creatures) { if (m.state === 'dead' || (h as any)['h_' + m.id]) continue; if (inHaz(h, m.x, m.y)) { (h as any)['h_' + m.id] = 1; damageCreature(gs, m, h.dmg, Math.atan2(m.y - h.y, m.x - h.x), now, 90); if (h.effect === 'slowm') m.slow = 3000; } } }
+    if (h.owner === 'player' && h.kind === 'pool' && h.style === 'burn') { h.tickAcc=(h.tickAcc||0)-dtMs; if(h.tickAcc<=0){h.tickAcc=500;for(const m of r.creatures)if(m.state!=='dead'&&inHaz(h,m.x,m.y)&&now >= (m.signatureBurnNext||0)){m.signatureBurnNext=now+500;damageCreature(gs,m,h.dmg,Math.atan2(m.y-h.y,m.x-h.x),now,10);}} }
+    else if (h.owner === 'player') { if (first || h.kind === 'ring') for (const m of r.creatures) { if (m.state === 'dead' || (h as any)['h_' + m.id]) continue; if (inHaz(h, m.x, m.y)) { (h as any)['h_' + m.id] = 1; damageCreature(gs, m, h.dmg, Math.atan2(m.y - h.y, m.x - h.x), now, 90); if (h.effect === 'slowm') m.slow = 3000; } } }
     else {
       const dot = h.kind === 'pool' || h.effect === 'dot' || h.kind === 'sweep' || h.style === 'burn';
       if (dot) { h.tickAcc = (h.tickAcc || 0) - dtMs; if (h.tickAcc <= 0 && inHaz(h, p.x, p.y)) { h.tickAcc = h.kind === 'pool' ? 500 : 220; hurtPlayer(gs, h.kind === 'pool' ? 5 : h.dmg * 0.45, h.x, h.y, h.elder ? ELDERS[h.elder].name : 'hazard', now, 30); if (h.kind === 'pool') p.rad = Math.min(100, p.rad + 4); } }
@@ -908,7 +936,7 @@ export function findInteract(gs: GameState, now: number): Interact | null {
     else if (e.kind === 'recycler') label = 'Use Foundry Recycler';
     else if (e.kind === 'gen') label = e.power ? 'Generator (running)' : 'Fuel generator';
     else if (e.kind === 'evac') label = 'Evacuation beacon';
-    else if (e.kind === 'cart') label = 'Cart cargo  [F] pull';
+    else if (e.kind === 'cart') label = 'Cart cargo  [Shift+F] pull';
     else if (e.kind === 'struct') { const d2 = STRUCTS[e.type!]; kind = 'struct:' + e.type; if (e.type!.startsWith('door')) label = e.open ? 'Close door' : 'Open door'; else if (d2.station) label = `Use ${d2.name}`; else if (e.turret) label = `Turret: ${turretStatus(r,e)}${e.turret.tracking ? ' · target' : ''}`; else if (e.basePower) label = `Generator: ${e.basePower.enabled && e.basePower.energy>0 ? 'running' : e.basePower.enabled ? 'no fuel' : 'off'}`; else if (d2.slots) label = `Open ${d2.name}`; else if (e.type === 'escrow') label = 'Rương ký gửi'; else if (e.type === 'garden') label = 'Tend garden'; else if (e.type === 'barrel') label = `Rain barrel (${Math.floor(e.water || 0)})`; else continue; }
     else continue;
     bd = d; best = { kind, label, eid: e.id, x: e.x, y: e.y };

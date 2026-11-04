@@ -54,6 +54,7 @@ export function newGame(): GameState { return { version: SAVE_VERSION, revision:
 
 export function mkStack(r: RunState, key: string, qty: number, meta?: string): Stack {
   const d = ITEMS[key]; const s: Stack = { uid: uid(r, 's'), key, qty };
+  if (d?.creatorCore) s.reserves = { basic: 0, refined: 0, signature: 0 };
   if (d?.dur) s.dur = d.dur; if (d?.charge) s.charge = d.initialCharge ?? d.charge; if (meta) s.meta = meta; return s;
 }
 export function mkContainer(r: RunState, kind: string, n: number): Container { const c = { id: uid(r, 'c'), kind, slots: Array(n).fill(null) }; r.custody[c.id] = c; return c; }
@@ -584,6 +585,21 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
   if (p.dead && !['respawn', 'abandon', 'qaAdvance'].includes(it.type)) return fail('You are dead.');
   switch (it.type) {
     case 'respawn': return respawn(gs, now);
+    case 'loadCore': {
+      if (!Number.isInteger(it.slot) || it.slot < 0 || it.slot >= 8 || !['basic','refined','signature'].includes(it.mode)) return fail('Invalid Core reload.');
+      if (p.action) return fail('Finish your current action first.');
+      const s = C(r, 'inv').slots[it.slot];
+      if (!s || s.uid !== it.uid || !ITEMS[s.key]?.creatorCore || !s.reserves) return fail('Select the same physical Creator Core.');
+      const mode = it.mode as 'basic'|'refined'|'signature';
+      const caps = { basic: 40, refined: 12, signature: 4 }; const room = caps[mode] - s.reserves[mode];
+      const energy = mode === 'basic' ? 'energy_basic' : 'energy_refined';
+      const essence = `essence_${ITEMS[s.key].essence}`;
+      const n = Math.min(room, countItem(r, 'inv', energy), mode === 'signature' ? countItem(r, 'inv', essence) : room);
+      if (n <= 0) return fail(room <= 0 ? 'Reserve is full.' : `Missing ${mode === 'signature' ? 'Refined Energy or matching Essence' : ITEMS[energy].name}.`);
+      removeItem(r, 'inv', energy, n); if (mode === 'signature') removeItem(r, 'inv', essence, n);
+      s.reserves[mode] += n;
+      return ok('core.load', `${s.uid}:${mode}+${n}`);
+    }
     case 'pickup': {
       const e = r.entities[it.eid]; if (!e || e.kind !== 'drop' || !owned(e)) return fail('Nothing to pick up.');
       if (!near(r, e, 2.5)) return fail('Too far.');

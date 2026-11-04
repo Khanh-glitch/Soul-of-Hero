@@ -20,10 +20,18 @@ export interface ItemDef {
   power?: Partial<Record<Mat, number>>; dmg?: number; reach?: number; arc?: number; swing?: number; dur?: number;
   food?: { hunger?: number; thirst?: number; hp?: number; warmth?: number; rad?: number; stamina?: number };
   slot?: 'head' | 'body' | 'back'; armor?: number; cold?: number; mask?: boolean; fuel?: number; charge?: number; initialCharge?: number; waterContainer?: boolean; carryBonus?: number;
-  core?: string; specimen?: string; studyRecipe?: string; repair?: { station: 'workbench'; cost: [string, number][] }; salvage?: { station: 'workbench'; yields: [string, number][] }; place?: string; light?: number; ranged?: string;
+  core?: string; creatorCore?: 'blast'; essence?: 'fire' | 'nature' | 'water' | 'spirit'; specimen?: string; studyRecipe?: string; repair?: { station: 'workbench'; cost: [string, number][] }; salvage?: { station: 'workbench'; yields: [string, number][] }; place?: string; light?: number; ranged?: string;
 }
 const I = (d: ItemDef) => d;
 export const ITEMS: Record<string, ItemDef> = {
+  // SOH_NEW_TUNED v1: shared physical Core ammunition, not legacy Core charge.
+  energy_basic: I({ name:'Basic Energy', cat:'res', icon:'crystal', c1:'#5d9fc3', c2:'#e9faff', w:0.04, max:100, desc:'Load into a Creator Core for its primary attack.' }),
+  energy_refined: I({ name:'Refined Energy', cat:'res', icon:'crystal', c1:'#727be4', c2:'#f3eaff', w:0.06, max:100, desc:'Load for techniques or combine with matching essence for Signature.' }),
+  essence_fire: I({ name:'Fire Essence', cat:'res', icon:'crystal', c1:'#c94a28', c2:'#ffd16c', w:0.1, max:30, desc:'Fire Signature loading material.' }),
+  essence_nature: I({ name:'Nature Essence', cat:'res', icon:'crystal', c1:'#43813e', c2:'#c6ee80', w:0.1, max:30, desc:'Nature Signature loading material.' }),
+  essence_water: I({ name:'Water Essence', cat:'res', icon:'crystal', c1:'#468da5', c2:'#b9f5ff', w:0.1, max:30, desc:'Water Signature loading material.' }),
+  essence_spirit: I({ name:'Spirit Essence', cat:'res', icon:'crystal', c1:'#8954ac', c2:'#efd8ff', w:0.1, max:30, desc:'Spirit Signature loading material.' }),
+  core_blast: I({ name:'Vụ nổ lớn', cat:'core', icon:'core', c1:'#b63c21', c2:'#ffcb6a', w:0.3, max:1, desc:'Common Fire Core. Reload each reserve with Basic, Refined or Refined plus Fire Essence.', creatorCore:'blast', essence:'fire' }),
   // All lifecycle and upgrade costs are provisional TUNABLE values.
   damaged_drive: I({ name: 'Damaged Drive', cat: 'res', icon: 'parts', c1: '#4b6570', c2: '#f0bd56', w: 3, max: 1, desc: 'Finite wreck salvage. At a workbench: 1 drive + 1 scrap → 1 Mechanical Parts. Or carry to the Foundry Recycler: 1 drive → 2 Spares. The same drive is spent either way.' }),
   mechanical_parts: I({ name: 'Mechanical Parts', cat: 'res', icon: 'parts', c1: '#707984', c2: '#c9d2d8', w: 0.5, max: 30, desc: 'Found in industrial wrecks or made at a bench. Improve tools or maintain equipment.' }),
@@ -168,12 +176,19 @@ export const ELDERS: Record<string, ElderDef> = {
 // Knowledge and equipment are independent: tier never implies a station upgrade.
 export const permitsDirectedResearch = (recipe: RecipeDef) => recipe.tier < 3;
 // Recovery is a base recipe introduced after older run snapshots were saved.
-export const isRecipeKnown = (known: readonly string[], key: string) => key === 'recover_drive' || known.includes(key);
+export const isRecipeKnown = (known: readonly string[], key: string) => ['recover_drive','energy_basic','energy_refined','essence_fire','essence_nature','essence_water','essence_spirit','core_blast'].includes(key) || known.includes(key);
 export const requiredStationLevel = (recipe: RecipeDef): 1 | 2 => recipe.stationLevel ?? 1;
 
 // ---------- Recipes (K4: one run-local authority) ----------
 export type Recipe = RecipeDef;
 export const RECIPES: Record<string, Recipe> = {
+  energy_basic: { out:'energy_basic', qty:8, ins:[['stone',2],['fiber',2]], station:null, secs:2, base:true, tier:0 },
+  energy_refined: { out:'energy_refined', qty:4, ins:[['crystal',1],['iron_ingot',1]], station:'workbench', stationLevel:2, secs:16, base:true, tier:2 },
+  essence_fire: { out:'essence_fire', qty:2, ins:[['sulfur',2],['coal',1]], station:'workbench', stationLevel:2, secs:16, base:true, tier:2 },
+  essence_nature: { out:'essence_nature', qty:2, ins:[['herb',2],['seed',2]], station:'workbench', stationLevel:2, secs:16, base:true, tier:2 },
+  essence_water: { out:'essence_water', qty:2, ins:[['shell',2],['crystal',1]], station:'workbench', stationLevel:2, secs:16, base:true, tier:2 },
+  essence_spirit: { out:'essence_spirit', qty:2, ins:[['crawler_optic',1],['crystal',1]], station:'workbench', stationLevel:2, secs:16, base:true, tier:2 },
+  core_blast: { out:'core_blast', qty:1, ins:[['iron_ingot',2],['spares',4],['crystal',1]], station:'workbench', secs:30, base:true, tier:1 },
   fasteners: { out: 'fasteners', qty: 3, ins: [['iron_ingot', 1], ['scrap', 1]], station: 'workbench', secs: 10, tier: 1 },
   treated_canvas: { out: 'treated_canvas', qty: 2, ins: [['cloth', 1], ['raw_salt', 1], ['herb', 1]], station: 'campfire', secs: 12, tier: 1 },
   field_repair_kit: { out: 'field_repair_kit', qty: 1, ins: [['fasteners', 2], ['cloth', 1]], station: 'workbench', secs: 12, tier: 1 },

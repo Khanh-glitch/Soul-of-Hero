@@ -66,11 +66,12 @@ export function validate(raw: any): GameState | null {
   if (!r.custody.inv || !r.custody.eq || r.custody.inv.kind !== 'inv' || r.custody.eq.kind !== 'eq' || r.custody.inv.slots?.length !== 24 || r.custody.eq.slots?.length !== 3) return null;
   if (!Number.isInteger(r.player.active) || r.player.active < 0 || r.player.active > 7 || !['vx','vy','dir','aim','invuln','deadT','stepAcc','lastTraceX','lastTraceY'].every(k => finite(r.player[k])) || !['gather','combat','craft','survival'].every(k => finite(r.player.skills[k]))) return null;
   const beforeNext = (id: string, re: RegExp) => { const m = re.exec(id); return !m || parseInt(m[1], 36) < r.nextId; };
-  if (r.creatures.some((m: any) => !obj(m) || typeof m.id !== 'string' || !beforeNext(m.id, /^m([a-z0-9]+)$/) || typeof m.type !== 'string' || typeof m.state !== 'string' || !finite(m.x) || !finite(m.y) || !finite(m.hp) || (m.offlineUnresolvedAt !== undefined && !finite(m.offlineUnresolvedAt)))) return null;
+  if (r.creatures.some((m: any) => !obj(m) || typeof m.id !== 'string' || !beforeNext(m.id, /^m([a-z0-9]+)$/) || typeof m.type !== 'string' || typeof m.state !== 'string' || !finite(m.x) || !finite(m.y) || !finite(m.hp) || (m.offlineUnresolvedAt !== undefined && !finite(m.offlineUnresolvedAt)) || (m.signatureBurnNext !== undefined && !finite(m.signatureBurnNext)))) return null;
   const uids = new Set<string>(), ownedContainers = new Set<string>(['inv', 'eq']);
   const stack = (s: any): s is Stack => {
     if (!obj(s) || typeof s.uid !== 'string' || !s.uid || !beforeNext(s.uid, /^s([a-z0-9]+)$/) || uids.has(s.uid) || typeof s.key !== 'string' || !has(ITEMS, s.key) || !integer(s.qty) || s.qty < 1 || s.qty > ITEMS[s.key].max) return false;
     if (s.upgrade !== undefined && (s.key !== 'cart_kit' || s.upgrade !== 'freight')) return false;
+    if (ITEMS[s.key].creatorCore ? (!obj(s.reserves) || Object.keys(s.reserves).sort().join(',') !== 'basic,refined,signature' || !['basic','refined','signature'].every(k => integer(s.reserves[k]) && s.reserves[k] >= 0 && s.reserves[k] <= ({basic:40,refined:12,signature:4} as any)[k])) : s.reserves !== undefined) return false;
     if ((s.dur !== undefined && (!finite(s.dur) || s.dur < 0)) || (s.charge !== undefined && (!finite(s.charge) || s.charge < 0)) || (s.meta !== undefined && typeof s.meta !== 'string') || (s.key === 'blueprint' && (!s.meta || !has(RECIPES, s.meta)))) return false;
     uids.add(s.uid); return true;
   };

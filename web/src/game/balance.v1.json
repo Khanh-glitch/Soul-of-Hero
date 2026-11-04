@@ -152,5 +152,21 @@
     "supplyHours": 12,
     "industrialHours": 24,
     "otherHours": 18
+  },
+  "creatorCoreBlast": {
+    "_status": "SOH_NEW_TUNED v1; provisional, not historical LI",
+    "basicDamage": 7,
+    "basicSpeed": 240,
+    "basicLife": 0.8,
+    "spreadRadians": 0.18,
+    "bombDamage": 20,
+    "bombSeconds": 1.2,
+    "fragmentCount": 8,
+    "fragmentDamage": 8,
+    "signatureDamage": 70,
+    "signatureBurnDamage": 4,
+    "signatureBurnMs": 3000,
+    "signatureSpeed": 170,
+    "signatureLife": 1.15
   }
 }

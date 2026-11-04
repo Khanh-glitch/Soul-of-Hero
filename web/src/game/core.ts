@@ -48,7 +48,8 @@ export const enum T {
 export const TERRAIN_NAME = ['deep', 'shallow', 'sand', 'grass', 'meadow', 'forest', 'marsh', 'hill', 'cliff', 'snow', 'ash', 'toxic', 'road', 'bridge', 'floor', 'wall', 'lava', 'burnt', 'ice', 'shallow'];
 
 // ---------- Items & custody ----------
-export interface Stack { uid: string; key: string; qty: number; dur?: number; charge?: number; meta?: string; upgrade?: 'freight' }
+export interface CoreReserve { basic: number; refined: number; signature: number }
+export interface Stack { uid: string; key: string; qty: number; dur?: number; charge?: number; meta?: string; upgrade?: 'freight'; reserves?: CoreReserve }
 export interface Container { id: string; kind: string; slots: (Stack | null)[] }
 
 export type Dir = 0 | 1 | 2 | 3; // down, left, right, up
@@ -57,7 +58,7 @@ export interface Player {
   x: number; y: number; vx: number; vy: number; dir: Dir; aim: number;
   hp: number; stamina: number; hunger: number; thirst: number; warmth: number; rad: number;
   active: number; // quickbar index 0..7
-  action: null | { kind: 'swing' | 'cast' | 'roll' | 'hurt'; t: number; dur: number; contact?: number; done?: boolean; angle: number; slot?: number };
+  action: null | { kind: 'swing' | 'cast' | 'roll' | 'hurt'; t: number; dur: number; contact?: number; done?: boolean; angle: number; slot?: number; coreUid?: string; mode?: 'basic' | 'refined' | 'signature' };
   invuln: number; dead: boolean; deadT: number; pulling: string | null;
   skills: Record<string, number>; // xp
   stepAcc: number; lastTraceX: number; lastTraceY: number;
@@ -76,7 +77,7 @@ export interface Creature {
   offlineUnresolvedAt?: number;
   path: number[] | null; pathT: number; cd: number; kbx: number; kby: number; flash: number;
   elder?: { key: string; awake: boolean; phase: number; pattern: number; special: number; shield?: number; submerged?: boolean };
-  patternKey?: string; atk?: any; slow?: number;
+  patternKey?: string; atk?: any; slow?: number; signatureBurnNext?: number;
 }
 
 export interface Entity {
