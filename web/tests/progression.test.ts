@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ITEMS, RECIPES, SOURCES, WORKBENCH_UPGRADE, validateGameplayCatalog } from '../src/game/catalog';
+import { ITEMS, RECIPES, SOURCES, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, validateGameplayCatalog } from '../src/game/catalog';
 import { TILE, type Entity, type GameState } from '../src/game/core';
 import { addItem, C, countItem, destroyStructure, dispatch, markDirty, mkContainer, newGame, stepStations } from '../src/game/engine';
 import { getWorld, SRC_KEYS } from '../src/game/world';
@@ -88,7 +88,19 @@ describe('physical progression',()=>{
     give(restored,'iron_ingot',1);expect(act(restored,'craft',{eid:e.id,recipe:'reinforced_spear'}).ok).toBe(true);stepStations(restored,20000,T0+44000);
     expect(o.slots.some(s=>s?.key==='reinforced_spear')).toBe(true);expect(ITEMS.reinforced_spear.dmg).toBeGreaterThan(ITEMS.wood_spear.dmg!);
     delete rr.entities[e.id].station!.level;expect(validate(restored)).toBeTruthy(); // additive v3 legacy default = level 1
-    rr.entities[e.id].station!.level=3 as any;expect(validate(restored)).toBeNull();
+    rr.entities[e.id].station!.level=4 as any;expect(validate(restored)).toBeNull();
+  });
+  it('upgrades II to III once with paid materials and produces a real industrial energy batch without regating legacy recipes',()=>{
+    const gs=fresh(),r=gs.run!,e=station(gs,'workbench');e.station!.level=2;
+    for(const [k,q] of WORKBENCH_UPGRADE_III.cost)give(gs,k,q);
+    const known=structuredClone(r.knowledge);give(gs,'crystal',2);give(gs,'iron_ingot',2);give(gs,'charcoal',2);
+    expect(act(gs,'craft',{eid:e.id,recipe:'energy_refined_industrial'}).ok).toBe(false);
+    expect(act(gs,'upgradeStation',{eid:e.id},'upgrade-three').ok).toBe(true);expect(e.station!.level).toBe(3);expect(r.knowledge).toEqual(known);
+    expect(act(gs,'upgradeStation',{eid:e.id},'upgrade-three')).toMatchObject({ok:false,dup:true});expect(act(gs,'upgradeStation',{eid:e.id}).ok).toBe(false);
+    expect(act(gs,'craft',{eid:e.id,recipe:'energy_refined_industrial'}).ok).toBe(true);expect(countItem(r,'inv','crystal')).toBe(0);expect(countItem(r,'inv','charcoal')).toBe(0);
+    const restored=JSON.parse(JSON.parse(serializeSnapshot(gs)).payload) as GameState;expect(validate(restored)).toBeTruthy();stepStations(restored,40000,T0+40010);
+    const out=C(restored.run!,restored.run!.entities[e.id].station!.outC);expect(out.slots.find(s=>s?.key==='energy_refined')?.qty).toBe(12);expect(validate(restored)).toBeTruthy();
+    expect(RECIPES.core_fire.tier).toBe(3);expect(RECIPES.core_fire.stationLevel).toBeUndefined();
   });
   it.each(['herb_roast','salted_meat'])('funded home job %s continues through persisted offline time, not free output',recipe=>{
     const gs=fresh(),r=gs.run!,e=station(gs,'campfire');give(gs,'meat');give(gs,recipe==='herb_roast'?'herb':'raw_salt');addItem(r,e.station!.fuelC,'wood',1);

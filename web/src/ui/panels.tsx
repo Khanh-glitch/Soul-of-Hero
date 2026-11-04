@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ITEMS, RECIPES, permitsDirectedResearch, isRecipeKnown, STRUCTS, BUILD_ORDER, VENDOR_SECURED, ACHIEVEMENTS, ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING } from '../game/catalog';
+import { ITEMS, RECIPES, permitsDirectedResearch, isRecipeKnown, STRUCTS, BUILD_ORDER, VENDOR_SECURED, ACHIEVEMENTS, ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING } from '../game/catalog';
 import { BAL, TILE, WW, type Stack } from '../game/core';
 import { C, countItem, invWeight, isRagnarok, runHours, cartWeight, cartLimit, carryLimit, spaceFor, phaseOf, tenderStatus, gardenEnvironment, weatherAt, isWet, isSheltered, wetOutlook, turretStatus } from '../game/engine';
 import { getWorld, ZONES } from '../game/world';
@@ -130,8 +130,8 @@ function StationBody({ api, eid }: { api: Api; eid: string }) {
   return <div>
     {kind === 'workbench' && <details style={{ fontSize: 10, marginBottom: 5, borderBottom: '1px solid #514155', paddingBottom: 4 }}>
       <summary style={{ color: '#ffd98a', cursor: 'pointer' }}>Equipment maintenance &amp; upgrades</summary>
-      <div style={{ color: '#ffd98a' }}>Workbench level {level} / 2</div>
-      {level < 2 ? <><div>Upgrade unlocks improved tools and reinforced spear production.</div><div>Cost: <Cost ins={WORKBENCH_UPGRADE.cost} have={have(api)} /></div><button className="btn gold" onClick={() => api.act('upgradeStation', { eid })}>Upgrade workbench</button></> : <div>Improved production unlocked.</div>}
+      <div style={{ color: '#ffd98a' }}>Workbench level {level} / 3</div>
+      {level < 3 ? <><div>{level === 1 ? "Upgrade unlocks improved tools and reinforced spear production." : "Industrial upgrade enables an efficient Refined Energy batch."}</div><div>Cost: <Cost ins={level === 1 ? WORKBENCH_UPGRADE.cost : WORKBENCH_UPGRADE_III.cost} have={have(api)} /></div><button className="btn gold" onClick={() => api.act('upgradeStation', { eid })}>Upgrade workbench</button></> : <div>Industrial production unlocked.</div>}
       <div style={{ color: '#ffd98a', marginTop: 3 }}>Equipment maintenance · carried items</div>
       {maintenance.length === 0 && <div>Carry repairable equipment to use this bench.</div>}
       {maintenance.map(([s, i]) => { const d = ITEMS[s!.key]; return <div key={s!.uid} style={{ borderTop: '1px solid #3a2e46', paddingTop: 2, marginTop: 2 }}>

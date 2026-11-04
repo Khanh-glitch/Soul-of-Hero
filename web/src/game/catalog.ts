@@ -3,7 +3,7 @@ import { BAL } from './core';
 export type Mat = 'wood' | 'stone' | 'ore' | 'plant' | 'scrap';
 export interface SourcePlacementRule { terrain: 'sand' | 'marsh' | 'ash' | 'snow' | 'hill'; chance: number }
 /** `tier` governs discovery; `stationLevel` alone specifies physical workbench capability. */
-export interface RecipeDef { out: string; qty: number; ins: [string, number][]; station: null | 'campfire' | 'furnace' | 'workbench'; secs: number; base?: boolean; tier: number; stationLevel?: 1 | 2 }
+export interface RecipeDef { out: string; qty: number; ins: [string, number][]; station: null | 'campfire' | 'furnace' | 'workbench'; secs: number; base?: boolean; tier: number; stationLevel?: 1 | 2 | 3 }
 
 // TUNABLE: a capability upgrade, not a learned recipe. The cart itself remains physical.
 export const FURNACE_LINING: { cost: [string, number][]; benchLevel: number } = { cost: [['brick', 2], ['fasteners', 3], ['mechanical_parts', 1]], benchLevel: 2 };
@@ -176,13 +176,14 @@ export const ELDERS: Record<string, ElderDef> = {
 // Knowledge and equipment are independent: tier never implies a station upgrade.
 export const permitsDirectedResearch = (recipe: RecipeDef) => recipe.tier < 3;
 // Recovery is a base recipe introduced after older run snapshots were saved.
-export const isRecipeKnown = (known: readonly string[], key: string) => ['recover_drive','energy_basic','energy_refined','essence_fire','essence_nature','essence_water','essence_spirit','core_blast'].includes(key) || known.includes(key);
-export const requiredStationLevel = (recipe: RecipeDef): 1 | 2 => recipe.stationLevel ?? 1;
+export const isRecipeKnown = (known: readonly string[], key: string) => ['recover_drive','energy_refined_industrial','energy_basic','energy_refined','essence_fire','essence_nature','essence_water','essence_spirit','core_blast'].includes(key) || known.includes(key);
+export const requiredStationLevel = (recipe: RecipeDef): 1 | 2 | 3 => recipe.stationLevel ?? 1;
 
 // ---------- Recipes (K4: one run-local authority) ----------
 export type Recipe = RecipeDef;
 export const RECIPES: Record<string, Recipe> = {
   energy_basic: { out:'energy_basic', qty:8, ins:[['stone',2],['fiber',2]], station:null, secs:2, base:true, tier:0 },
+  energy_refined_industrial: { out:'energy_refined', qty:12, ins:[['crystal',2],['iron_ingot',2],['charcoal',2]], station:'workbench', stationLevel:3, secs:40, base:true, tier:2 },
   energy_refined: { out:'energy_refined', qty:4, ins:[['crystal',1],['iron_ingot',1]], station:'workbench', stationLevel:2, secs:16, base:true, tier:2 },
   essence_fire: { out:'essence_fire', qty:2, ins:[['sulfur',2],['coal',1]], station:'workbench', stationLevel:2, secs:16, base:true, tier:2 },
   essence_nature: { out:'essence_nature', qty:2, ins:[['herb',2],['seed',2]], station:'workbench', stationLevel:2, secs:16, base:true, tier:2 },
@@ -242,6 +243,8 @@ export const RECIPES: Record<string, Recipe> = {
 // Core study → recipe (specimen-study path)
 /** Paid upgrade; old workbenches without a level remain level 1. */
 export const WORKBENCH_UPGRADE: { toLevel: 2; cost: [string, number][] } = { toLevel: 2, cost: [['mechanical_parts', 2], ['iron_ingot', 1]] };
+/** SOH_NEW_TUNED v1; knowledge tier remains independent of this physical upgrade. */
+export const WORKBENCH_UPGRADE_III: { toLevel: 3; cost: [string, number][] } = { toLevel: 3, cost: [['mechanical_parts', 6], ['iron_ingot', 8], ['fasteners', 8], ['spares', 12]] };
 export const CORE_STUDY: Record<string, string> = { core_fire: 'core_fire', core_earth: 'core_earth', core_storm: 'core_storm', core_frost: 'core_frost' };
 
 // ---------- Structures (K6) ----------
@@ -328,7 +331,7 @@ export function validateGameplayCatalog(catalog: GameplayCatalogData = { items: 
   for (const [id, recipe] of Object.entries(recipes)) {
     if (!items[recipe.out] || !Number.isInteger(recipe.qty) || recipe.qty <= 0 || !Number.isFinite(recipe.secs) || recipe.secs <= 0) errors.push(`recipe ${id}: invalid output/time`);
     for (const [item, qty] of recipe.ins) if (!items[item] || !Number.isInteger(qty) || qty <= 0) errors.push(`recipe ${id}: invalid input ${item} x${qty}`);
-    if (recipe.stationLevel !== undefined && (recipe.station !== 'workbench' || ![1, 2].includes(recipe.stationLevel))) errors.push(`recipe ${id}: invalid station level`);
+    if (recipe.stationLevel !== undefined && (recipe.station !== 'workbench' || ![1, 2, 3].includes(recipe.stationLevel))) errors.push(`recipe ${id}: invalid station level`);
     if (recipe.station && (!structures[recipe.station] || structures[recipe.station].station !== recipe.station)) errors.push(`recipe ${id}: missing station ${recipe.station}`);
   }
   if (errors.length) throw new Error(`Invalid gameplay catalog:\n${errors.join('\n')}`);

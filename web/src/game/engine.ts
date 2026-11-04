@@ -2,7 +2,7 @@
 // Rule: validate EVERYTHING first, then commit. Failed preconditions never partially debit.
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
-import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
+import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
 import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, webRecyclerSite, type StaticEnt } from './world';
 import { sourceDigest } from './world-economy';
 import { wreckBonuses, wreckEconomy } from './wreck-economy';
@@ -707,12 +707,14 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
     }
     case 'upgradeStation': {
       const e = r.entities[it.eid];
-      if (!e || e.kind !== 'struct' || e.type !== 'workbench' || !e.station || !owned(e) || !near(r, e, 3)) return fail('Use your workbench within reach.');
-      if ((e.station.level ?? 1) >= WORKBENCH_UPGRADE.toLevel) return fail('Workbench already upgraded.');
-      if (!hasAll(r, 'inv', WORKBENCH_UPGRADE.cost)) return fail('Missing upgrade materials.');
-      for (const [key, qty] of WORKBENCH_UPGRADE.cost) removeItem(r, 'inv', key, qty);
-      e.station.level = WORKBENCH_UPGRADE.toLevel;
-      return ok('station.upgrade', `${e.id}:2`, 'Workbench improved. Its new capabilities are available.');
+      if (!e || e.kind !== 'struct' || e.type !== 'workbench' || !e.station || !owned(e) || !near(r, e, 3) || !clearInteraction(r, e)) return fail('Use your workbench within reach and clear of walls.');
+      const level=e.station.level ?? 1;
+      if (level >= 3) return fail('Workbench already at level 3.');
+      const upgrade=level===1 ? WORKBENCH_UPGRADE : WORKBENCH_UPGRADE_III;
+      if (!hasAll(r, 'inv', upgrade.cost)) return fail('Missing upgrade materials.');
+      for (const [key, qty] of upgrade.cost) removeItem(r, 'inv', key, qty);
+      e.station.level = upgrade.toLevel;
+      return ok('station.upgrade', `${e.id}:${upgrade.toLevel}`, `Workbench improved to level ${upgrade.toLevel}. Knowledge is unchanged.`);
     }
     case 'upgradeFurnace': {
       const e = r.entities[it.eid], bench = r.entities[it.benchId];
