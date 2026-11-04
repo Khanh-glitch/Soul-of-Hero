@@ -1,0 +1,64 @@
+{
+  "schema": "soh.wmp04.art_audition_browser.qa.v1",
+  "status": "BROWSER_PREVIEW_PASS__NOT_NATIVE_GAMEPLAY",
+  "headSource": "103a755477a8086ff29c11aad0fcbdeab6900165",
+  "embeddedSourceBytes": 1377578,
+  "screens": [
+    {
+      "scene": "forest",
+      "title": "01 · SOH baseline (để giữ)",
+      "summary": "WMP04 @ AU 790, 622 · 40×23 analysis cells · snow=72 dry=0 marine=0",
+      "sources": 3,
+      "baselineLoaded": true,
+      "canvasNotEmpty": true,
+      "path": "veyra-world-master/v4/art/evidence/01_forest_source_and_lab.png",
+      "bytes": 355170,
+      "sha256": "4ccaf96094e4a6272c32bd9c3340c52d6c3c097a14a113a2d59e856982fa90e9"
+    },
+    {
+      "scene": "snow",
+      "title": "02 · Tuyết Typhon–Argus 24%",
+      "summary": "WMP04 @ AU 936, 262 · 40×23 analysis cells · snow=862 dry=0 marine=0",
+      "sources": 3,
+      "baselineLoaded": true,
+      "canvasNotEmpty": true,
+      "path": "veyra-world-master/v4/art/evidence/02_snow_source_and_lab.png",
+      "bytes": 343284,
+      "sha256": "5c8ff0fbcbd3ca4837a6ebaf5ca00f914994e559b95aff4cc287a06c29fc6d9c"
+    },
+    {
+      "scene": "dry",
+      "title": "03 · Arid +30% đông/đông nam",
+      "summary": "WMP04 @ AU 1080, 870 · 40×23 analysis cells · snow=0 dry=350 marine=0",
+      "sources": 3,
+      "baselineLoaded": true,
+      "canvasNotEmpty": true,
+      "path": "veyra-world-master/v4/art/evidence/03_dry_source_and_lab.png",
+      "bytes": 329441,
+      "sha256": "38ba403c7d3109539d342bc2a80de65e41cf2bbcc0df70ddfe436ea96005b15e"
+    },
+    {
+      "scene": "sea",
+      "title": "04 · Deathwater / Strait of Embers",
+      "summary": "WMP04 @ AU 223, 714 · 40×23 analysis cells · snow=0 dry=0 marine=713",
+      "sources": 3,
+      "baselineLoaded": true,
+      "canvasNotEmpty": true,
+      "path": "veyra-world-master/v4/art/evidence/04_sea_source_and_lab.png",
+      "bytes": 336811,
+      "sha256": "d71cd8963023927a53e0d6571f9e9326d176d993548491b99486ac4751257049"
+    },
+    {
+      "scene": "architecture",
+      "title": "05 · POI architecture & ports",
+      "summary": "WMP04 @ AU 990, 212 · 40×23 analysis cells · snow=672 dry=0 marine=0",
+      "sources": 3,
+      "baselineLoaded": true,
+      "canvasNotEmpty": true,
+      "path": "veyra-world-master/v4/art/evidence/05_architecture_source_and_lab.png",
+      "bytes": 289916,
+      "sha256": "97f5dd46df85bc7ede8fff0ba6f1057487ed4e6f362276d3d823aa3a28196cfb"
+    }
+  ],
+  "errors": []
+}
