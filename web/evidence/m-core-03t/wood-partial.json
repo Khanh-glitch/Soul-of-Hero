@@ -1,0 +1,106 @@
+{
+  "events": [
+    {
+      "mat": "wood",
+      "plan": {
+        "path": [
+          33923,
+          33922,
+          33921,
+          33920,
+          33919,
+          33918,
+          33917,
+          33916,
+          33716,
+          33516,
+          33316,
+          33116,
+          32916,
+          32716,
+          32516,
+          32316,
+          32116
+        ],
+        "target": 31916,
+        "key": "oak"
+      },
+      "before": 6,
+      "after": 0,
+      "inventory": {
+        "wood": 19,
+        "stone": 5,
+        "fiber": 1,
+        "herb": 4,
+        "damaged_drive": 0,
+        "spares": 1
+      },
+      "receipts": [
+        {
+          "id": "r304",
+          "seq": 304,
+          "at": 1793778302255,
+          "kind": "harvest",
+          "detail": "herb@120,85 -1"
+        },
+        {
+          "id": "r305",
+          "seq": 305,
+          "at": 1793778302539,
+          "kind": "harvest",
+          "detail": "herb@120,85 -1"
+        },
+        {
+          "id": "r325",
+          "seq": 325,
+          "at": 1793778394169,
+          "kind": "harvest",
+          "detail": "oak@116,159 -1"
+        },
+        {
+          "id": "r327",
+          "seq": 327,
+          "at": 1793778395068,
+          "kind": "harvest",
+          "detail": "oak@116,159 -1"
+        },
+        {
+          "id": "r330",
+          "seq": 330,
+          "at": 1793778396002,
+          "kind": "harvest",
+          "detail": "oak@116,159 -1"
+        },
+        {
+          "id": "r333",
+          "seq": 333,
+          "at": 1793778396918,
+          "kind": "harvest",
+          "detail": "oak@116,159 -1"
+        },
+        {
+          "id": "r335",
+          "seq": 335,
+          "at": 1793778397835,
+          "kind": "harvest",
+          "detail": "oak@116,159 -1"
+        },
+        {
+          "id": "r337",
+          "seq": 337,
+          "at": 1793778398901,
+          "kind": "harvest",
+          "detail": "oak@116,159 -1"
+        }
+      ]
+    }
+  ],
+  "inventory": {
+    "wood": 19,
+    "stone": 5,
+    "fiber": 1,
+    "herb": 4,
+    "damaged_drive": 0,
+    "spares": 1
+  }
+}

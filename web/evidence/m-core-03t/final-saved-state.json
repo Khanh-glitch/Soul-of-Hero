@@ -1,0 +1,758 @@
+{
+  "id": "run_gedzhx",
+  "layout": "shipping_fresh",
+  "wreckEconomy": "recycler-v1",
+  "clock": {
+    "lastSimAt": 1793778677091,
+    "simMs": 6158871,
+    "respawnAcc": 118815.71999999837,
+    "weatherSlot": 11
+  },
+  "player": {
+    "x": 1947.858255999996,
+    "y": 2699.6259563745098,
+    "vx": 0,
+    "vy": 0,
+    "dir": 3,
+    "aim": -1.8866875570629695,
+    "hp": 6,
+    "stamina": 100,
+    "hunger": 31.239103200003683,
+    "thirst": 50.18451871999771,
+    "warmth": 86.96142255107952,
+    "rad": 0,
+    "active": 1,
+    "action": null,
+    "invuln": 136.59999999999945,
+    "dead": false,
+    "deadT": 1549.9,
+    "pulling": null,
+    "skills": {
+      "gather": 91,
+      "combat": 2,
+      "craft": 2,
+      "survival": 0
+    },
+    "stepAcc": 5.2862399999999665,
+    "lastTraceX": 0,
+    "lastTraceY": 0,
+    "regionName": "Caldera Wastes",
+    "sheltered": false
+  },
+  "inv": [
+    null,
+    {
+      "uid": "s1",
+      "key": "knife",
+      "qty": 1,
+      "dur": 87
+    },
+    {
+      "uid": "s2",
+      "key": "water_flask",
+      "qty": 1,
+      "charge": 2
+    },
+    {
+      "uid": "s3",
+      "key": "berries",
+      "qty": 6
+    },
+    {
+      "uid": "s7c",
+      "key": "wood",
+      "qty": 5
+    },
+    {
+      "uid": "s81",
+      "key": "stone",
+      "qty": 1
+    },
+    {
+      "uid": "s8o",
+      "key": "fiber",
+      "qty": 1
+    },
+    {
+      "uid": "s9t",
+      "key": "crystal",
+      "qty": 3
+    },
+    {
+      "uid": "s8x",
+      "key": "stone_pick",
+      "qty": 1,
+      "dur": 170
+    },
+    {
+      "uid": "s1t",
+      "key": "spares",
+      "qty": 1
+    },
+    {
+      "uid": "sj5",
+      "key": "seed",
+      "qty": 12
+    },
+    {
+      "uid": "sls",
+      "key": "charcoal",
+      "qty": 3
+    },
+    {
+      "uid": "sm8",
+      "key": "chitin",
+      "qty": 2
+    },
+    {
+      "uid": "sm9",
+      "key": "sulfur",
+      "qty": 1
+    },
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+  ],
+  "equipment": [
+    null,
+    null,
+    null
+  ],
+  "knowledge": {
+    "recipes": [
+      "recover_drive",
+      "mechanical_parts",
+      "rope",
+      "torch",
+      "stone_axe",
+      "stone_pick",
+      "wood_spear",
+      "bandage",
+      "water_flask",
+      "root_broth",
+      "herb_roast",
+      "cooked_meat",
+      "salted_meat",
+      "charcoal",
+      "iron_ingot",
+      "scrap_ingot",
+      "shell_glass",
+      "leather",
+      "cloth",
+      "iron_axe",
+      "iron_pick",
+      "chitin_armor",
+      "core_frost"
+    ],
+    "studied": []
+  },
+  "structures": [
+    {
+      "id": "eq3",
+      "kind": "struct",
+      "type": "claim",
+      "tx": 125,
+      "ty": 170,
+      "x": 2008,
+      "y": 2728,
+      "hp": 148,
+      "maxHp": 200,
+      "born": 1793773060843
+    },
+    {
+      "id": "eyx",
+      "kind": "struct",
+      "type": "research",
+      "tx": 123,
+      "ty": 168,
+      "x": 1976,
+      "y": 2696,
+      "hp": 160,
+      "maxHp": 160,
+      "born": 1793773179302,
+      "station": {
+        "queue": [],
+        "burn": 0,
+        "fuelC": "cyy",
+        "outC": "cyz"
+      },
+      "claim": "eq3"
+    },
+    {
+      "id": "e1rw",
+      "kind": "struct",
+      "type": "workbench",
+      "tx": 122,
+      "ty": 168,
+      "x": 1960,
+      "y": 2696,
+      "hp": 160,
+      "maxHp": 160,
+      "born": 1793778486045,
+      "station": {
+        "queue": [],
+        "burn": 0,
+        "fuelC": "c1rx",
+        "outC": "c1ry"
+      },
+      "claim": "eq3"
+    }
+  ],
+  "bags": [
+    {
+      "id": "bz3",
+      "x": 2006.8701972397444,
+      "y": 2708.7696136610325,
+      "slots": []
+    },
+    {
+      "id": "b13r",
+      "x": 2154.956680980587,
+      "y": 2381.126381729679,
+      "slots": []
+    },
+    {
+      "id": "b18n",
+      "x": 1999.7612330519382,
+      "y": 2703.2641603580023,
+      "slots": []
+    },
+    {
+      "id": "b1ez",
+      "x": 2010.574687166422,
+      "y": 2713.9117626095003,
+      "slots": []
+    },
+    {
+      "id": "b1i0",
+      "x": 1982.5970257395963,
+      "y": 2720.0323843938204,
+      "slots": []
+    },
+    {
+      "id": "b1k6",
+      "x": 1892.3015060688144,
+      "y": 2588.3826301587133,
+      "slots": []
+    }
+  ],
+  "sources": {
+    "6944": {
+      "stock": 0,
+      "hp": 0
+    },
+    "9740": {
+      "stock": 2,
+      "hp": 3
+    },
+    "9938": {
+      "stock": 0,
+      "hp": 0
+    },
+    "9940": {
+      "stock": 2,
+      "hp": 3
+    },
+    "9942": {
+      "stock": 0,
+      "hp": 0
+    },
+    "14732": {
+      "stock": 0,
+      "hp": 0,
+      "regrowAt": 1793778893939
+    },
+    "16329": {
+      "stock": 0,
+      "hp": 0,
+      "regrowAt": 1793778897955
+    },
+    "17120": {
+      "stock": 0,
+      "hp": 0,
+      "regrowAt": 1793778902539
+    },
+    "31916": {
+      "stock": 0,
+      "hp": 0
+    },
+    "32515": {
+      "stock": 0,
+      "hp": 0
+    },
+    "32713": {
+      "stock": 0,
+      "hp": 0
+    },
+    "33108": {
+      "stock": 2,
+      "hp": 3
+    },
+    "33123": {
+      "stock": 0,
+      "hp": 0
+    },
+    "33308": {
+      "stock": 0,
+      "hp": 0
+    },
+    "33318": {
+      "stock": 0,
+      "hp": 0
+    },
+    "33513": {
+      "stock": 0,
+      "hp": 0
+    },
+    "33521": {
+      "stock": 0,
+      "hp": 0,
+      "regrowAt": 1793779071625
+    },
+    "33720": {
+      "stock": 0,
+      "hp": 0
+    },
+    "33908": {
+      "stock": 2,
+      "hp": 3
+    },
+    "34114": {
+      "stock": 0,
+      "hp": 0
+    },
+    "34525": {
+      "stock": 0,
+      "hp": 0
+    },
+    "35304": {
+      "stock": 2,
+      "hp": 3
+    }
+  },
+  "creatures": [
+    {
+      "id": "m40",
+      "type": "beetle",
+      "x": 1947.6516523452271,
+      "y": 2697.661711011806,
+      "hp": 2,
+      "maxHp": 52,
+      "homeX": 1912,
+      "homeY": 2488,
+      "state": "recover",
+      "t": 216.70000000000073,
+      "tx": 1872.8422938383687,
+      "ty": 2491.8369998152652,
+      "angle": 1.465999456312618,
+      "dir": 0,
+      "knows": {
+        "kind": "sight",
+        "x": 1947.858255999996,
+        "y": 2699.6259563745098,
+        "at": 1793778677091
+      },
+      "path": null,
+      "pathT": 0.1000000000003638,
+      "cd": 0,
+      "kbx": -0.10186193182323255,
+      "kby": -0.7492485497194149,
+      "flash": 0,
+      "atk": {
+        "target": {
+          "x": 1947.858255999996,
+          "y": 2699.6259563745098
+        },
+        "burrow": false,
+        "bt": 0,
+        "hit": false
+      },
+      "prov": true
+    },
+    {
+      "id": "m4l",
+      "type": "boar",
+      "x": 1905.8814553789582,
+      "y": 2807.4640247969205,
+      "hp": 40,
+      "maxHp": 40,
+      "homeX": 1896,
+      "homeY": 2792,
+      "state": "wander",
+      "t": 1750.0000000000005,
+      "tx": 1871.764842953714,
+      "ty": 2854.4727003652374,
+      "angle": 2.198596867136008,
+      "dir": 0,
+      "knows": null,
+      "path": null,
+      "pathT": 766.8000000000011,
+      "cd": 0,
+      "kbx": 0,
+      "kby": 0,
+      "flash": 0,
+      "traceIgnore": "trq7"
+    },
+    {
+      "id": "m4m",
+      "type": "boar",
+      "x": 1937.7294981578916,
+      "y": 2743.8224348271724,
+      "hp": 40,
+      "maxHp": 40,
+      "homeX": 1976,
+      "homeY": 2728,
+      "state": "wander",
+      "t": 1116.7000000000007,
+      "tx": 1961.9780634802032,
+      "ty": 2786.580578270473,
+      "angle": 1.0549119026967806,
+      "dir": 0,
+      "knows": null,
+      "path": [
+        34122,
+        34123,
+        34124,
+        33924,
+        33925,
+        33926,
+        33726,
+        33526
+      ],
+      "pathT": 883.3000000000002,
+      "cd": 0,
+      "kbx": 0,
+      "kby": 0,
+      "flash": 0,
+      "atk": {
+        "hit": true
+      }
+    },
+    {
+      "id": "m57",
+      "type": "beetle",
+      "x": 1976.2388418718626,
+      "y": 2502.9754381560033,
+      "hp": 52,
+      "maxHp": 52,
+      "homeX": 1992,
+      "homeY": 2504,
+      "state": "wander",
+      "t": 250.10000000000036,
+      "tx": 1941.6003679894725,
+      "ty": 2473.6224065431966,
+      "angle": -2.4386034274146793,
+      "dir": 1,
+      "knows": null,
+      "path": [
+        31522,
+        31523,
+        31323
+      ],
+      "pathT": 311.27199999999993,
+      "cd": 0,
+      "kbx": 0,
+      "kby": 0,
+      "flash": 0,
+      "atk": {
+        "target": {
+          "x": 2106.5832128000015,
+          "y": 2464.723689600024
+        },
+        "burrow": false,
+        "bt": 0,
+        "hit": false
+      },
+      "traceIgnore": "trfk"
+    }
+  ],
+  "receipts": [
+    {
+      "id": "r318",
+      "seq": 318,
+      "at": 1793778374014,
+      "kind": "move",
+      "detail": "stone_pickx1 c1hz->inv"
+    },
+    {
+      "id": "r319",
+      "seq": 319,
+      "at": 1793778374014,
+      "kind": "move",
+      "detail": "sparesx1 c1hz->inv"
+    },
+    {
+      "id": "r320",
+      "seq": 320,
+      "at": 1793778374014,
+      "kind": "move",
+      "detail": "seedx9 c1hz->inv"
+    },
+    {
+      "id": "r321",
+      "seq": 321,
+      "at": 1793778374014,
+      "kind": "move",
+      "detail": "charcoalx3 c1hz->inv"
+    },
+    {
+      "id": "r322",
+      "seq": 322,
+      "at": 1793778374014,
+      "kind": "move",
+      "detail": "chitinx2 c1hz->inv"
+    },
+    {
+      "id": "r323",
+      "seq": 323,
+      "at": 1793778374014,
+      "kind": "move",
+      "detail": "sulfurx1 c1hz->inv"
+    },
+    {
+      "id": "r324",
+      "seq": 324,
+      "at": 1793778387848,
+      "kind": "offline.settle",
+      "detail": "13s"
+    },
+    {
+      "id": "r325",
+      "seq": 325,
+      "at": 1793778394169,
+      "kind": "harvest",
+      "detail": "oak@116,159 -1"
+    },
+    {
+      "id": "r326",
+      "seq": 326,
+      "at": 1793778394602,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r327",
+      "seq": 327,
+      "at": 1793778395068,
+      "kind": "harvest",
+      "detail": "oak@116,159 -1"
+    },
+    {
+      "id": "r328",
+      "seq": 328,
+      "at": 1793778395502,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r329",
+      "seq": 329,
+      "at": 1793778395502,
+      "kind": "pickup",
+      "detail": "seedx1"
+    },
+    {
+      "id": "r330",
+      "seq": 330,
+      "at": 1793778396002,
+      "kind": "harvest",
+      "detail": "oak@116,159 -1"
+    },
+    {
+      "id": "r331",
+      "seq": 331,
+      "at": 1793778396386,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r332",
+      "seq": 332,
+      "at": 1793778396386,
+      "kind": "pickup",
+      "detail": "seedx1"
+    },
+    {
+      "id": "r333",
+      "seq": 333,
+      "at": 1793778396918,
+      "kind": "harvest",
+      "detail": "oak@116,159 -1"
+    },
+    {
+      "id": "r334",
+      "seq": 334,
+      "at": 1793778397352,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r335",
+      "seq": 335,
+      "at": 1793778397835,
+      "kind": "harvest",
+      "detail": "oak@116,159 -1"
+    },
+    {
+      "id": "r336",
+      "seq": 336,
+      "at": 1793778398268,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r337",
+      "seq": 337,
+      "at": 1793778398901,
+      "kind": "harvest",
+      "detail": "oak@116,159 -1"
+    },
+    {
+      "id": "r338",
+      "seq": 338,
+      "at": 1793778399318,
+      "kind": "pickup",
+      "detail": "seedx1"
+    },
+    {
+      "id": "r339",
+      "seq": 339,
+      "at": 1793778399335,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r340",
+      "seq": 340,
+      "at": 1793778414459,
+      "kind": "offline.settle",
+      "detail": "15s"
+    },
+    {
+      "id": "r341",
+      "seq": 341,
+      "at": 1793778415709,
+      "kind": "consume",
+      "detail": "herb"
+    },
+    {
+      "id": "r342",
+      "seq": 342,
+      "at": 1793778415791,
+      "kind": "consume",
+      "detail": "herb"
+    },
+    {
+      "id": "r343",
+      "seq": 343,
+      "at": 1793778415842,
+      "kind": "consume",
+      "detail": "herb"
+    },
+    {
+      "id": "r344",
+      "seq": 344,
+      "at": 1793778415927,
+      "kind": "consume",
+      "detail": "herb"
+    },
+    {
+      "id": "r345",
+      "seq": 345,
+      "at": 1793778444276,
+      "kind": "offline.settle",
+      "detail": "28s"
+    },
+    {
+      "id": "r346",
+      "seq": 346,
+      "at": 1793778470125,
+      "kind": "offline.settle",
+      "detail": "25s"
+    },
+    {
+      "id": "r347",
+      "seq": 347,
+      "at": 1793778483041,
+      "kind": "offline.settle",
+      "detail": "9s"
+    },
+    {
+      "id": "r348",
+      "seq": 348,
+      "at": 1793778486045,
+      "kind": "build",
+      "detail": "workbench@122,168"
+    },
+    {
+      "id": "r349",
+      "seq": 349,
+      "at": 1793778525261,
+      "kind": "offline.settle",
+      "detail": "38s"
+    },
+    {
+      "id": "r350",
+      "seq": 350,
+      "at": 1793778647285,
+      "kind": "offline.settle",
+      "detail": "120s"
+    },
+    {
+      "id": "r351",
+      "seq": 351,
+      "at": 1793778648625,
+      "kind": "harvest",
+      "detail": "bush@121,167 -1"
+    },
+    {
+      "id": "r352",
+      "seq": 352,
+      "at": 1793778649009,
+      "kind": "pickup",
+      "detail": "berriesx1"
+    },
+    {
+      "id": "r353",
+      "seq": 353,
+      "at": 1793778649325,
+      "kind": "harvest",
+      "detail": "bush@121,167 -1"
+    },
+    {
+      "id": "r354",
+      "seq": 354,
+      "at": 1793778649775,
+      "kind": "pickup",
+      "detail": "berriesx1"
+    },
+    {
+      "id": "r355",
+      "seq": 355,
+      "at": 1793778651625,
+      "kind": "harvest",
+      "detail": "bush@121,167 -1"
+    },
+    {
+      "id": "r356",
+      "seq": 356,
+      "at": 1793778652008,
+      "kind": "pickup",
+      "detail": "berriesx1"
+    },
+    {
+      "id": "r357",
+      "seq": 357,
+      "at": 1793778673421,
+      "kind": "offline.settle",
+      "detail": "18s"
+    }
+  ]
+}

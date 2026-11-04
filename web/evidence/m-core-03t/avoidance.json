@@ -1,0 +1,434 @@
+{
+  "method": "Different recovery strategy after death: respawn at Old Mill; replan around live hostile sight-radius buffers and lava, rather than repeat the 03S/low-HP path.",
+  "steps": [],
+  "errors": [],
+  "start": {
+    "player": {
+      "x": 2008,
+      "y": 1096,
+      "vx": 0,
+      "vy": 0,
+      "dir": 3,
+      "aim": -1.5707963267948966,
+      "hp": 60,
+      "stamina": 96.83419999999992,
+      "hunger": 39.525418000000066,
+      "thirst": 39.288126999999996,
+      "warmth": 79.21391580313103,
+      "rad": 0,
+      "active": 0,
+      "action": null,
+      "invuln": 583.3000000000006,
+      "dead": false,
+      "deadT": 1549.9,
+      "pulling": null,
+      "skills": {
+        "gather": 76,
+        "combat": 2,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 0,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Old Mill",
+      "sheltered": false
+    },
+    "inventory": [],
+    "bags": [
+      {
+        "id": "bz3",
+        "x": 2006.8701972397444,
+        "y": 2708.7696136610325,
+        "slots": []
+      },
+      {
+        "id": "b13r",
+        "x": 2154.956680980587,
+        "y": 2381.126381729679,
+        "slots": []
+      },
+      {
+        "id": "b18n",
+        "x": 1999.7612330519382,
+        "y": 2703.2641603580023,
+        "slots": []
+      },
+      {
+        "id": "b1ez",
+        "x": 2010.574687166422,
+        "y": 2713.9117626095003,
+        "slots": []
+      },
+      {
+        "id": "b1i0",
+        "x": 1982.5970257395963,
+        "y": 2720.0323843938204,
+        "slots": [
+          {
+            "uid": "s1",
+            "key": "knife",
+            "qty": 1,
+            "dur": 107
+          },
+          {
+            "uid": "s2",
+            "key": "water_flask",
+            "qty": 1,
+            "charge": 2
+          },
+          {
+            "uid": "s3",
+            "key": "berries",
+            "qty": 3
+          },
+          {
+            "uid": "s7c",
+            "key": "wood",
+            "qty": 13
+          },
+          {
+            "uid": "s81",
+            "key": "stone",
+            "qty": 5
+          },
+          {
+            "uid": "s8o",
+            "key": "fiber",
+            "qty": 1
+          },
+          {
+            "uid": "s9t",
+            "key": "crystal",
+            "qty": 3
+          },
+          {
+            "uid": "s8x",
+            "key": "stone_pick",
+            "qty": 1,
+            "dur": 170
+          },
+          {
+            "uid": "s1t",
+            "key": "spares",
+            "qty": 1
+          },
+          {
+            "uid": "sj5",
+            "key": "seed",
+            "qty": 9
+          },
+          {
+            "uid": "sls",
+            "key": "charcoal",
+            "qty": 3
+          },
+          {
+            "uid": "sm8",
+            "key": "chitin",
+            "qty": 2
+          },
+          {
+            "uid": "sm9",
+            "key": "sulfur",
+            "qty": 1
+          }
+        ]
+      },
+      {
+        "id": "b1k6",
+        "x": 1892.3015060688144,
+        "y": 2588.3826301587133,
+        "slots": []
+      }
+    ],
+    "threats": [],
+    "receipts": [
+      {
+        "id": "r283",
+        "seq": 283,
+        "at": 1793773627134,
+        "kind": "death",
+        "detail": "Greyfang Wolf; bag=b1i0"
+      },
+      {
+        "id": "r284",
+        "seq": 284,
+        "at": 1793773774224,
+        "kind": "offline.settle",
+        "detail": "147s"
+      },
+      {
+        "id": "r285",
+        "seq": 285,
+        "at": 1793773789557,
+        "kind": "offline.settle",
+        "detail": "15s"
+      },
+      {
+        "id": "r286",
+        "seq": 286,
+        "at": 1793773791272,
+        "kind": "respawn",
+        "detail": "2104,2072"
+      },
+      {
+        "id": "r287",
+        "seq": 287,
+        "at": 1793773810502,
+        "kind": "offline.settle",
+        "detail": "19s"
+      },
+      {
+        "id": "r288",
+        "seq": 288,
+        "at": 1793778157370,
+        "kind": "offline.settle",
+        "detail": "4347s"
+      },
+      {
+        "id": "r289",
+        "seq": 289,
+        "at": 1793778170827,
+        "kind": "death",
+        "detail": "Greyfang Wolf; bag=b1k6"
+      },
+      {
+        "id": "r290",
+        "seq": 290,
+        "at": 1793778207703,
+        "kind": "offline.settle",
+        "detail": "37s"
+      },
+      {
+        "id": "r291",
+        "seq": 291,
+        "at": 1793778209487,
+        "kind": "respawn",
+        "detail": "2008,1096"
+      },
+      {
+        "id": "r292",
+        "seq": 292,
+        "at": 1793778240050,
+        "kind": "offline.settle",
+        "detail": "30s"
+      }
+    ]
+  },
+  "failure": "Error: no safe route with current live threat/lava buffers",
+  "end": {
+    "player": {
+      "x": 2008,
+      "y": 1096,
+      "vx": 0,
+      "vy": 0,
+      "dir": 1,
+      "aim": 2.607591550418194,
+      "hp": 60,
+      "stamina": 98.13419999999992,
+      "hunger": 39.52341800000007,
+      "thirst": 39.285126999999996,
+      "warmth": 79.20563426382041,
+      "rad": 0,
+      "active": 0,
+      "action": null,
+      "invuln": 533.3000000000006,
+      "dead": false,
+      "deadT": 1549.9,
+      "pulling": null,
+      "skills": {
+        "gather": 76,
+        "combat": 2,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 0,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Old Mill",
+      "sheltered": false
+    },
+    "inventory": [],
+    "bags": [
+      {
+        "id": "bz3",
+        "x": 2006.8701972397444,
+        "y": 2708.7696136610325,
+        "slots": []
+      },
+      {
+        "id": "b13r",
+        "x": 2154.956680980587,
+        "y": 2381.126381729679,
+        "slots": []
+      },
+      {
+        "id": "b18n",
+        "x": 1999.7612330519382,
+        "y": 2703.2641603580023,
+        "slots": []
+      },
+      {
+        "id": "b1ez",
+        "x": 2010.574687166422,
+        "y": 2713.9117626095003,
+        "slots": []
+      },
+      {
+        "id": "b1i0",
+        "x": 1982.5970257395963,
+        "y": 2720.0323843938204,
+        "slots": [
+          {
+            "uid": "s1",
+            "key": "knife",
+            "qty": 1,
+            "dur": 107
+          },
+          {
+            "uid": "s2",
+            "key": "water_flask",
+            "qty": 1,
+            "charge": 2
+          },
+          {
+            "uid": "s3",
+            "key": "berries",
+            "qty": 3
+          },
+          {
+            "uid": "s7c",
+            "key": "wood",
+            "qty": 13
+          },
+          {
+            "uid": "s81",
+            "key": "stone",
+            "qty": 5
+          },
+          {
+            "uid": "s8o",
+            "key": "fiber",
+            "qty": 1
+          },
+          {
+            "uid": "s9t",
+            "key": "crystal",
+            "qty": 3
+          },
+          {
+            "uid": "s8x",
+            "key": "stone_pick",
+            "qty": 1,
+            "dur": 170
+          },
+          {
+            "uid": "s1t",
+            "key": "spares",
+            "qty": 1
+          },
+          {
+            "uid": "sj5",
+            "key": "seed",
+            "qty": 9
+          },
+          {
+            "uid": "sls",
+            "key": "charcoal",
+            "qty": 3
+          },
+          {
+            "uid": "sm8",
+            "key": "chitin",
+            "qty": 2
+          },
+          {
+            "uid": "sm9",
+            "key": "sulfur",
+            "qty": 1
+          }
+        ]
+      },
+      {
+        "id": "b1k6",
+        "x": 1892.3015060688144,
+        "y": 2588.3826301587133,
+        "slots": []
+      }
+    ],
+    "threats": [],
+    "receipts": [
+      {
+        "id": "r283",
+        "seq": 283,
+        "at": 1793773627134,
+        "kind": "death",
+        "detail": "Greyfang Wolf; bag=b1i0"
+      },
+      {
+        "id": "r284",
+        "seq": 284,
+        "at": 1793773774224,
+        "kind": "offline.settle",
+        "detail": "147s"
+      },
+      {
+        "id": "r285",
+        "seq": 285,
+        "at": 1793773789557,
+        "kind": "offline.settle",
+        "detail": "15s"
+      },
+      {
+        "id": "r286",
+        "seq": 286,
+        "at": 1793773791272,
+        "kind": "respawn",
+        "detail": "2104,2072"
+      },
+      {
+        "id": "r287",
+        "seq": 287,
+        "at": 1793773810502,
+        "kind": "offline.settle",
+        "detail": "19s"
+      },
+      {
+        "id": "r288",
+        "seq": 288,
+        "at": 1793778157370,
+        "kind": "offline.settle",
+        "detail": "4347s"
+      },
+      {
+        "id": "r289",
+        "seq": 289,
+        "at": 1793778170827,
+        "kind": "death",
+        "detail": "Greyfang Wolf; bag=b1k6"
+      },
+      {
+        "id": "r290",
+        "seq": 290,
+        "at": 1793778207703,
+        "kind": "offline.settle",
+        "detail": "37s"
+      },
+      {
+        "id": "r291",
+        "seq": 291,
+        "at": 1793778209487,
+        "kind": "respawn",
+        "detail": "2008,1096"
+      },
+      {
+        "id": "r292",
+        "seq": 292,
+        "at": 1793778240050,
+        "kind": "offline.settle",
+        "detail": "30s"
+      }
+    ]
+  }
+}
