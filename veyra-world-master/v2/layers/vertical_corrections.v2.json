@@ -1,0 +1,3531 @@
+{
+  "schema": "soh.wmp.v2.vertical_corrections.v1",
+  "status": "CORRECTED_CANDIDATES__CANONICAL_PORTALS_UNCHANGED",
+  "authority": "MAP_DESIGNS_THE_PHYSICAL_WORLD__GAMEPLAY_POPULATES_AND_SIMULATES_IT",
+  "v1BlockerCount": 8,
+  "resolvedVerified": 7,
+  "resolvedProposed": 1,
+  "stillBlocked": 0,
+  "canonicalPortalPolicy": "NO canonical portal was moved. Every original atAu, portalId, ground room and DEEP room is preserved verbatim. A corrected CANDIDATE with its own v2 id is proposed/verified alongside the immutable canonical portal.",
+  "noClaims": [
+    "NO numeric vertical separation",
+    "NO stair pitch or ladder collision law",
+    "NO dynamic lock/power state",
+    "NO claim that Gameplay has ingested these candidates"
+  ],
+  "corrections": [
+    {
+      "id": "vlink.corrected.po_archive.v2",
+      "portalId": "portal.po_archive.vertical",
+      "poiId": "po_archive",
+      "previousFailure": {
+        "code": "SOURCE_VERTICAL_PORTAL_AT_OUTSIDE_GROUND_ROOM",
+        "atAu": [
+          1022.5,
+          229
+        ],
+        "groundRoomId": "room.po_archive.2.1",
+        "deepRoomId": "room.po_archive.deep.1",
+        "v1Verdict": "NAMED_BLOCKER_WITH_PROPOSED_ALTERNATIVE",
+        "sourceRef": "GOLD project.pois[] where id=po_archive; LR01 poi_layouts.v1.json portals[] where id=portal.po_archive.vertical"
+      },
+      "canonicalPortal": {
+        "atAu": [
+          1022.5,
+          229
+        ],
+        "status": "UNCHANGED__SOURCE_AUTHORED",
+        "verdict": "BLOCKED",
+        "note": "The canonical portal coordinate is NEVER moved. v2 adds a separate corrected CANDIDATE."
+      },
+      "correctedCandidate": {
+        "id": "vlink.corrected.po_archive.v2",
+        "status": "VERIFIED_GEOMETRY",
+        "atAu": [
+          1011.9131,
+          231.6544
+        ],
+        "displacementFromCanonicalAu": 10.9146,
+        "shaftHalfSizeAu": 2.3698,
+        "shaftPolygonAu": [
+          [
+            1009.5433,
+            229.2846
+          ],
+          [
+            1014.2829,
+            229.2846
+          ],
+          [
+            1014.2829,
+            234.0242
+          ],
+          [
+            1009.5433,
+            234.0242
+          ]
+        ],
+        "stairRunAu": [
+          [
+            1011.9131,
+            231.6544
+          ],
+          [
+            1022.5,
+            229
+          ]
+        ],
+        "groundRoomPolygonAu": [
+          [
+            995.2995,
+            222.1544
+          ],
+          [
+            1016.8125,
+            226.7681
+          ],
+          [
+            1013.7715,
+            240.9476
+          ],
+          [
+            992.2585,
+            236.3339
+          ]
+        ],
+        "deepLevelPolygonAu": [
+          [
+            1011.1869,
+            217.3697
+          ],
+          [
+            1037.5869,
+            223.0304
+          ],
+          [
+            1033.8131,
+            240.6303
+          ],
+          [
+            1007.4131,
+            234.9696
+          ]
+        ],
+        "overlapBBoxAu": [
+          1007.4131,
+          222.1544,
+          1016.8125,
+          240.6303
+        ],
+        "groundBoundaryDistanceAu": 3.7658,
+        "deepBoundaryDistanceAu": 3.7049,
+        "nearestSolidClearanceAu": 4.0129,
+        "verticalSeparationAu": null,
+        "verticalSeparationStatus": "UNRESOLVED",
+        "basis": "Grid search (0.5 au) over the measured ground-room/DEEP polygon overlap, maximising half-size subject to polygon-edge distance and M1 clipped-solid clearance. Canonical portal coordinate is preserved separately.",
+        "owner": "MAP",
+        "canonical": false
+      },
+      "checks": {
+        "shaftCornersInsideBothPolygons": true,
+        "shaftStaticSolidCollisions": [],
+        "collisionFree": true,
+        "groundBoundaryOpening": {
+          "edgeAu": [
+            [
+              1016.8125,
+              226.7681
+            ],
+            [
+              1013.7715,
+              240.9476
+            ]
+          ],
+          "centreAu": [
+            1015.292,
+            233.8578
+          ],
+          "widthAu": 4,
+          "openingSegmentAu": [
+            [
+              1015.7114,
+              231.9023
+            ],
+            [
+              1014.8726,
+              235.8134
+            ]
+          ],
+          "blockedByStaticSolid": false,
+          "status": "PROPOSED",
+          "candidatesTried": 12
+        },
+        "deepBoundaryOpening": {
+          "edgeAu": [
+            [
+              1007.4131,
+              234.9696
+            ],
+            [
+              1011.1869,
+              217.3697
+            ]
+          ],
+          "centreAu": [
+            1008.3565,
+            230.5696
+          ],
+          "widthAu": 4,
+          "openingSegmentAu": [
+            [
+              1007.9372,
+              232.5252
+            ],
+            [
+              1008.7759,
+              228.6141
+            ]
+          ],
+          "blockedByStaticSolid": false,
+          "status": "PROPOSED",
+          "candidatesTried": 12
+        },
+        "bidirectionalTraversal": {
+          "verified": true,
+          "legs": {
+            "groundToShaft": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 12,
+              "pathLengthAu": 22,
+              "passesShaft": true,
+              "path": [
+                [
+                  996.2585,
+                  225.3697
+                ],
+                [
+                  998.2585,
+                  225.3697
+                ],
+                [
+                  1000.2585,
+                  225.3697
+                ],
+                [
+                  1002.2585,
+                  225.3697
+                ],
+                [
+                  1004.2585,
+                  225.3697
+                ],
+                [
+                  1006.2585,
+                  225.3697
+                ]
+              ],
+              "pathTruncated": 6
+            },
+            "shaftToGround": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 12,
+              "pathLengthAu": 22,
+              "passesShaft": true,
+              "path": [
+                [
+                  1012.2585,
+                  231.3697
+                ],
+                [
+                  1010.2585,
+                  231.3697
+                ],
+                [
+                  1008.2585,
+                  231.3697
+                ],
+                [
+                  1006.2585,
+                  231.3697
+                ],
+                [
+                  1004.2585,
+                  231.3697
+                ],
+                [
+                  1002.2585,
+                  231.3697
+                ]
+              ],
+              "pathTruncated": 6
+            },
+            "shaftToDeep": {
+              "reachable": true,
+              "endpointsSnapped": false,
+              "gridStepAu": 2,
+              "pathCells": 9,
+              "pathLengthAu": 16,
+              "passesShaft": true,
+              "path": [
+                [
+                  1012.2585,
+                  231.3697
+                ],
+                [
+                  1014.2585,
+                  231.3697
+                ],
+                [
+                  1014.2585,
+                  233.3697
+                ],
+                [
+                  1016.2585,
+                  233.3697
+                ],
+                [
+                  1018.2585,
+                  233.3697
+                ],
+                [
+                  1020.2585,
+                  233.3697
+                ]
+              ],
+              "pathTruncated": 3
+            },
+            "deepToShaft": {
+              "reachable": true,
+              "endpointsSnapped": false,
+              "gridStepAu": 2,
+              "pathCells": 9,
+              "pathLengthAu": 16,
+              "passesShaft": true,
+              "path": [
+                [
+                  1022.2585,
+                  229.3697
+                ],
+                [
+                  1020.2585,
+                  229.3697
+                ],
+                [
+                  1020.2585,
+                  231.3697
+                ],
+                [
+                  1020.2585,
+                  233.3697
+                ],
+                [
+                  1018.2585,
+                  233.3697
+                ],
+                [
+                  1016.2585,
+                  233.3697
+                ]
+              ],
+              "pathTruncated": 3
+            }
+          },
+          "directPath": {
+            "forward": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 20,
+              "pathLengthAu": 38,
+              "passesShaft": true,
+              "path": [
+                [
+                  996.2585,
+                  225.3697
+                ],
+                [
+                  998.2585,
+                  225.3697
+                ],
+                [
+                  1000.2585,
+                  225.3697
+                ],
+                [
+                  1002.2585,
+                  225.3697
+                ],
+                [
+                  1004.2585,
+                  225.3697
+                ],
+                [
+                  1006.2585,
+                  225.3697
+                ]
+              ],
+              "pathTruncated": 14
+            },
+            "reverse": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 20,
+              "pathLengthAu": 38,
+              "passesShaft": true,
+              "path": [
+                [
+                  1022.2585,
+                  229.3697
+                ],
+                [
+                  1020.2585,
+                  229.3697
+                ],
+                [
+                  1020.2585,
+                  231.3697
+                ],
+                [
+                  1020.2585,
+                  233.3697
+                ],
+                [
+                  1018.2585,
+                  233.3697
+                ],
+                [
+                  1016.2585,
+                  233.3697
+                ]
+              ],
+              "pathTruncated": 14
+            }
+          },
+          "note": "Four BFS traversals over a 2 au grid inside the ground+DEEP polygon union with M1 clipped-static-solid clearance, in BOTH directions. A direct path may bypass the shaft; that is recorded, not hidden."
+        },
+        "los": {
+          "entranceToShaftBlocked": true,
+          "shaftToDeepCentroidBlocked": true,
+          "owner": "MAP_STATIC_OCCLUSION"
+        },
+        "nearbyAuthoredOpenings": [
+          {
+            "id": "portal.po_archive.h.1.1",
+            "kind": "INTERIOR_DOORWAY",
+            "centreAu": [
+              1019.7302,
+              217.9325
+            ]
+          },
+          {
+            "id": "portal.po_archive.h.2.1",
+            "kind": "INTERIOR_DOORWAY",
+            "centreAu": [
+              1016.2698,
+              234.0675
+            ]
+          },
+          {
+            "id": "portal.po_archive.v.1.1",
+            "kind": "INTERIOR_DOORWAY",
+            "centreAu": [
+              1006.2657,
+              223.4835
+            ]
+          }
+        ]
+      },
+      "verdict": "RESOLVED_AS_VERIFIED_CORRECTED_CANDIDATE",
+      "negativeCounterexamples": [
+        {
+          "id": "NEG-V2-VLINK-po_archive-CANONICAL",
+          "subject": "shaft centred on the ORIGINAL canonical portal",
+          "expected": "REJECTED",
+          "actual": "OUTSIDE_GROUND_ROOM",
+          "pass": true
+        },
+        {
+          "id": "NEG-V2-VLINK-po_archive-OUTSIDE",
+          "subject": "shaft centred 200 au outside both polygons",
+          "expected": "REJECTED",
+          "actual": "OUTSIDE_BOTH",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "id": "vlink.corrected.po_meridian.v2",
+      "portalId": "portal.po_meridian.vertical",
+      "poiId": "po_meridian",
+      "previousFailure": {
+        "code": "SOURCE_VERTICAL_PORTAL_AT_OUTSIDE_GROUND_ROOM",
+        "atAu": [
+          1123.6,
+          692.4
+        ],
+        "groundRoomId": "room.po_meridian.1.2",
+        "deepRoomId": "room.po_meridian.deep.1",
+        "v1Verdict": "NAMED_BLOCKER_WITH_PROPOSED_ALTERNATIVE",
+        "sourceRef": "GOLD project.pois[] where id=po_meridian; LR01 poi_layouts.v1.json portals[] where id=portal.po_meridian.vertical"
+      },
+      "canonicalPortal": {
+        "atAu": [
+          1123.6,
+          692.4
+        ],
+        "status": "UNCHANGED__SOURCE_AUTHORED",
+        "verdict": "BLOCKED",
+        "note": "The canonical portal coordinate is NEVER moved. v2 adds a separate corrected CANDIDATE."
+      },
+      "narrowShaftNote": "The measured ground/DEEP overlap permits only a sub-2 au shaft. This is a PROPOSED geometry candidate, NOT VERIFIED, because no Gameplay body/collision envelope is approved. It is NOT counted as a resolved physical blocker.",
+      "correctedCandidate": {
+        "id": "vlink.corrected.po_meridian.v2",
+        "status": "PROPOSED_GEOMETRY__NARROW_SHAFT_BELOW_2AU",
+        "atAu": [
+          1125.4286,
+          686.7829
+        ],
+        "displacementFromCanonicalAu": 5.9072,
+        "shaftHalfSizeAu": 0.9731,
+        "shaftPolygonAu": [
+          [
+            1124.4555,
+            685.8098
+          ],
+          [
+            1126.4017,
+            685.8098
+          ],
+          [
+            1126.4017,
+            687.756
+          ],
+          [
+            1124.4555,
+            687.756
+          ]
+        ],
+        "stairRunAu": [
+          [
+            1125.4286,
+            686.7829
+          ],
+          [
+            1123.6,
+            692.4
+          ]
+        ],
+        "groundRoomPolygonAu": [
+          [
+            1119.9286,
+            677.7579
+          ],
+          [
+            1137.0643,
+            676.2528
+          ],
+          [
+            1138.0444,
+            687.4112
+          ],
+          [
+            1120.9087,
+            688.9163
+          ]
+        ],
+        "deepLevelPolygonAu": [
+          [
+            1112.2116,
+            686.1723
+          ],
+          [
+            1133.7288,
+            684.2829
+          ],
+          [
+            1134.9884,
+            698.6277
+          ],
+          [
+            1113.4712,
+            700.5171
+          ]
+        ],
+        "overlapBBoxAu": [
+          1119.9286,
+          684.2829,
+          1134.9884,
+          688.9163
+        ],
+        "groundBoundaryDistanceAu": 1.7297,
+        "deepBoundaryDistanceAu": 1.7644,
+        "nearestSolidClearanceAu": 1.7297,
+        "verticalSeparationAu": null,
+        "verticalSeparationStatus": "UNRESOLVED",
+        "basis": "Grid search (0.5 au) over the measured ground-room/DEEP polygon overlap, maximising half-size subject to polygon-edge distance and M1 clipped-solid clearance. Canonical portal coordinate is preserved separately.",
+        "owner": "MAP",
+        "canonical": false
+      },
+      "checks": {
+        "shaftCornersInsideBothPolygons": true,
+        "shaftStaticSolidCollisions": [],
+        "collisionFree": true,
+        "groundBoundaryOpening": {
+          "edgeAu": [
+            [
+              1138.0444,
+              687.4112
+            ],
+            [
+              1120.9087,
+              688.9163
+            ]
+          ],
+          "centreAu": [
+            1125.1926,
+            688.54
+          ],
+          "widthAu": 4,
+          "openingSegmentAu": [
+            [
+              1127.185,
+              688.365
+            ],
+            [
+              1123.2003,
+              688.715
+            ]
+          ],
+          "blockedByStaticSolid": false,
+          "status": "PROPOSED",
+          "candidatesTried": 12
+        },
+        "deepBoundaryOpening": {
+          "edgeAu": [
+            [
+              1112.2116,
+              686.1723
+            ],
+            [
+              1133.7288,
+              684.2829
+            ]
+          ],
+          "centreAu": [
+            1122.9702,
+            685.2276
+          ],
+          "widthAu": 4,
+          "openingSegmentAu": [
+            [
+              1120.9779,
+              685.4025
+            ],
+            [
+              1124.9625,
+              685.0527
+            ]
+          ],
+          "blockedByStaticSolid": false,
+          "status": "PROPOSED",
+          "candidatesTried": 12
+        },
+        "bidirectionalTraversal": {
+          "verified": true,
+          "legs": {
+            "groundToShaft": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 6,
+              "pathLengthAu": 10,
+              "passesShaft": true,
+              "path": [
+                [
+                  1122.2116,
+                  680.2528
+                ],
+                [
+                  1124.2116,
+                  680.2528
+                ],
+                [
+                  1126.2116,
+                  680.2528
+                ],
+                [
+                  1126.2116,
+                  682.2528
+                ],
+                [
+                  1126.2116,
+                  684.2528
+                ],
+                [
+                  1126.2116,
+                  686.2528
+                ]
+              ],
+              "pathTruncated": 0
+            },
+            "shaftToGround": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 6,
+              "pathLengthAu": 10,
+              "passesShaft": true,
+              "path": [
+                [
+                  1126.2116,
+                  686.2528
+                ],
+                [
+                  1124.2116,
+                  686.2528
+                ],
+                [
+                  1122.2116,
+                  686.2528
+                ],
+                [
+                  1122.2116,
+                  684.2528
+                ],
+                [
+                  1122.2116,
+                  682.2528
+                ],
+                [
+                  1122.2116,
+                  680.2528
+                ]
+              ],
+              "pathTruncated": 0
+            },
+            "shaftToDeep": {
+              "reachable": true,
+              "endpointsSnapped": false,
+              "gridStepAu": 2,
+              "pathCells": 9,
+              "pathLengthAu": 16,
+              "passesShaft": true,
+              "path": [
+                [
+                  1126.2116,
+                  686.2528
+                ],
+                [
+                  1128.2116,
+                  686.2528
+                ],
+                [
+                  1130.2116,
+                  686.2528
+                ],
+                [
+                  1130.2116,
+                  688.2528
+                ],
+                [
+                  1130.2116,
+                  690.2528
+                ],
+                [
+                  1130.2116,
+                  692.2528
+                ]
+              ],
+              "pathTruncated": 3
+            },
+            "deepToShaft": {
+              "reachable": true,
+              "endpointsSnapped": false,
+              "gridStepAu": 2,
+              "pathCells": 9,
+              "pathLengthAu": 16,
+              "passesShaft": true,
+              "path": [
+                [
+                  1124.2116,
+                  692.2528
+                ],
+                [
+                  1126.2116,
+                  692.2528
+                ],
+                [
+                  1128.2116,
+                  692.2528
+                ],
+                [
+                  1130.2116,
+                  692.2528
+                ],
+                [
+                  1130.2116,
+                  690.2528
+                ],
+                [
+                  1130.2116,
+                  688.2528
+                ]
+              ],
+              "pathTruncated": 3
+            }
+          },
+          "directPath": {
+            "forward": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 14,
+              "pathLengthAu": 26,
+              "passesShaft": false,
+              "path": [
+                [
+                  1122.2116,
+                  680.2528
+                ],
+                [
+                  1124.2116,
+                  680.2528
+                ],
+                [
+                  1126.2116,
+                  680.2528
+                ],
+                [
+                  1128.2116,
+                  680.2528
+                ],
+                [
+                  1130.2116,
+                  680.2528
+                ],
+                [
+                  1130.2116,
+                  682.2528
+                ]
+              ],
+              "pathTruncated": 8
+            },
+            "reverse": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 14,
+              "pathLengthAu": 26,
+              "passesShaft": true,
+              "path": [
+                [
+                  1124.2116,
+                  692.2528
+                ],
+                [
+                  1126.2116,
+                  692.2528
+                ],
+                [
+                  1128.2116,
+                  692.2528
+                ],
+                [
+                  1130.2116,
+                  692.2528
+                ],
+                [
+                  1130.2116,
+                  690.2528
+                ],
+                [
+                  1130.2116,
+                  688.2528
+                ]
+              ],
+              "pathTruncated": 8
+            }
+          },
+          "note": "Four BFS traversals over a 2 au grid inside the ground+DEEP polygon union with M1 clipped-static-solid clearance, in BOTH directions. A direct path may bypass the shaft; that is recorded, not hidden."
+        },
+        "los": {
+          "entranceToShaftBlocked": true,
+          "shaftToDeepCentroidBlocked": true,
+          "owner": "MAP_STATIC_OCCLUSION"
+        },
+        "nearbyAuthoredOpenings": [
+          {
+            "id": "portal.po_meridian.entrance",
+            "kind": "EXTERIOR_ENTRANCE",
+            "centreAu": [
+              1118.8454,
+              676.8506
+            ]
+          },
+          {
+            "id": "portal.po_meridian.h.1.1",
+            "kind": "INTERIOR_DOORWAY",
+            "centreAu": [
+              1119.4225,
+              683.4246
+            ]
+          },
+          {
+            "id": "portal.po_meridian.h.2.1",
+            "kind": "INTERIOR_DOORWAY",
+            "centreAu": [
+              1120.5775,
+              696.5754
+            ]
+          },
+          {
+            "id": "portal.po_meridian.v.1.1",
+            "kind": "INTERIOR_DOORWAY",
+            "centreAu": [
+              1110.436,
+              690.8401
+            ]
+          },
+          {
+            "id": "portal.po_meridian.v.1.2",
+            "kind": "INTERIOR_DOORWAY",
+            "centreAu": [
+              1129.564,
+              689.1599
+            ]
+          }
+        ]
+      },
+      "verdict": "PARTIALLY_RESOLVED_AS_PROPOSED_CANDIDATE",
+      "negativeCounterexamples": [
+        {
+          "id": "NEG-V2-VLINK-po_meridian-CANONICAL",
+          "subject": "shaft centred on the ORIGINAL canonical portal",
+          "expected": "REJECTED",
+          "actual": "OUTSIDE_GROUND_ROOM",
+          "pass": true
+        },
+        {
+          "id": "NEG-V2-VLINK-po_meridian-OUTSIDE",
+          "subject": "shaft centred 200 au outside both polygons",
+          "expected": "REJECTED",
+          "actual": "OUTSIDE_BOTH",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "id": "vlink.corrected.po_oldpump.v2",
+      "portalId": "portal.po_oldpump.vertical",
+      "poiId": "po_oldpump",
+      "previousFailure": {
+        "code": "SOURCE_VERTICAL_PORTAL_AT_OUTSIDE_GROUND_ROOM",
+        "atAu": [
+          854.5,
+          988
+        ],
+        "groundRoomId": "room.po_oldpump.1.2",
+        "deepRoomId": "room.po_oldpump.deep.1",
+        "v1Verdict": "NAMED_BLOCKER_WITH_PROPOSED_ALTERNATIVE",
+        "sourceRef": "GOLD project.pois[] where id=po_oldpump; LR01 poi_layouts.v1.json portals[] where id=portal.po_oldpump.vertical"
+      },
+      "canonicalPortal": {
+        "atAu": [
+          854.5,
+          988
+        ],
+        "status": "UNCHANGED__SOURCE_AUTHORED",
+        "verdict": "BLOCKED",
+        "note": "The canonical portal coordinate is NEVER moved. v2 adds a separate corrected CANDIDATE."
+      },
+      "correctedCandidate": {
+        "id": "vlink.corrected.po_oldpump.v2",
+        "status": "VERIFIED_GEOMETRY",
+        "atAu": [
+          855.0529,
+          980.7414
+        ],
+        "displacementFromCanonicalAu": 7.2796,
+        "shaftHalfSizeAu": 1.191,
+        "shaftPolygonAu": [
+          [
+            853.8619,
+            979.5504
+          ],
+          [
+            856.2439,
+            979.5504
+          ],
+          [
+            856.2439,
+            981.9324
+          ],
+          [
+            853.8619,
+            981.9324
+          ]
+        ],
+        "stairRunAu": [
+          [
+            855.0529,
+            980.7414
+          ],
+          [
+            854.5,
+            988
+          ]
+        ],
+        "groundRoomPolygonAu": [
+          [
+            847.5529,
+            969.6621
+          ],
+          [
+            869.0092,
+            964.8046
+          ],
+          [
+            872.2108,
+            978.9464
+          ],
+          [
+            850.7545,
+            983.8039
+          ]
+        ],
+        "deepLevelPolygonAu": [
+          [
+            839.346,
+            982.2028
+          ],
+          [
+            865.6797,
+            976.2414
+          ],
+          [
+            869.654,
+            993.7972
+          ],
+          [
+            843.3203,
+            999.7586
+          ]
+        ],
+        "overlapBBoxAu": [
+          847.5529,
+          976.2414,
+          869.654,
+          983.8039
+        ],
+        "groundBoundaryDistanceAu": 2.0378,
+        "deepBoundaryDistanceAu": 2.0426,
+        "nearestSolidClearanceAu": 2.0378,
+        "verticalSeparationAu": null,
+        "verticalSeparationStatus": "UNRESOLVED",
+        "basis": "Grid search (0.5 au) over the measured ground-room/DEEP polygon overlap, maximising half-size subject to polygon-edge distance and M1 clipped-solid clearance. Canonical portal coordinate is preserved separately.",
+        "owner": "MAP",
+        "canonical": false
+      },
+      "checks": {
+        "shaftCornersInsideBothPolygons": true,
+        "shaftStaticSolidCollisions": [],
+        "collisionFree": true,
+        "groundBoundaryOpening": {
+          "edgeAu": [
+            [
+              872.2108,
+              978.9464
+            ],
+            [
+              850.7545,
+              983.8039
+            ]
+          ],
+          "centreAu": [
+            856.1186,
+            982.5895
+          ],
+          "widthAu": 4,
+          "openingSegmentAu": [
+            [
+              858.0692,
+              982.1479
+            ],
+            [
+              854.1679,
+              983.0311
+            ]
+          ],
+          "blockedByStaticSolid": false,
+          "status": "PROPOSED",
+          "candidatesTried": 12
+        },
+        "deepBoundaryOpening": {
+          "edgeAu": [
+            [
+              839.346,
+              982.2028
+            ],
+            [
+              865.6797,
+              976.2414
+            ]
+          ],
+          "centreAu": [
+            852.5129,
+            979.2221
+          ],
+          "widthAu": 4,
+          "openingSegmentAu": [
+            [
+              850.5622,
+              979.6637
+            ],
+            [
+              854.4635,
+              978.7805
+            ]
+          ],
+          "blockedByStaticSolid": false,
+          "status": "PROPOSED",
+          "candidatesTried": 12
+        },
+        "bidirectionalTraversal": {
+          "verified": true,
+          "legs": {
+            "groundToShaft": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 9,
+              "pathLengthAu": 16,
+              "passesShaft": true,
+              "path": [
+                [
+                  849.346,
+                  970.8046
+                ],
+                [
+                  851.346,
+                  970.8046
+                ],
+                [
+                  853.346,
+                  970.8046
+                ],
+                [
+                  855.346,
+                  970.8046
+                ],
+                [
+                  855.346,
+                  972.8046
+                ],
+                [
+                  855.346,
+                  974.8046
+                ]
+              ],
+              "pathTruncated": 3
+            },
+            "shaftToGround": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 9,
+              "pathLengthAu": 16,
+              "passesShaft": true,
+              "path": [
+                [
+                  855.346,
+                  980.8046
+                ],
+                [
+                  853.346,
+                  980.8046
+                ],
+                [
+                  851.346,
+                  980.8046
+                ],
+                [
+                  851.346,
+                  978.8046
+                ],
+                [
+                  851.346,
+                  976.8046
+                ],
+                [
+                  851.346,
+                  974.8046
+                ]
+              ],
+              "pathTruncated": 3
+            },
+            "shaftToDeep": {
+              "reachable": true,
+              "endpointsSnapped": false,
+              "gridStepAu": 2,
+              "pathCells": 11,
+              "pathLengthAu": 20,
+              "passesShaft": true,
+              "path": [
+                [
+                  855.346,
+                  980.8046
+                ],
+                [
+                  857.346,
+                  980.8046
+                ],
+                [
+                  859.346,
+                  980.8046
+                ],
+                [
+                  861.346,
+                  980.8046
+                ],
+                [
+                  861.346,
+                  982.8046
+                ],
+                [
+                  861.346,
+                  984.8046
+                ]
+              ],
+              "pathTruncated": 5
+            },
+            "deepToShaft": {
+              "reachable": true,
+              "endpointsSnapped": false,
+              "gridStepAu": 2,
+              "pathCells": 11,
+              "pathLengthAu": 20,
+              "passesShaft": true,
+              "path": [
+                [
+                  855.346,
+                  988.8046
+                ],
+                [
+                  857.346,
+                  988.8046
+                ],
+                [
+                  859.346,
+                  988.8046
+                ],
+                [
+                  861.346,
+                  988.8046
+                ],
+                [
+                  861.346,
+                  986.8046
+                ],
+                [
+                  861.346,
+                  984.8046
+                ]
+              ],
+              "pathTruncated": 5
+            }
+          },
+          "directPath": {
+            "forward": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 19,
+              "pathLengthAu": 36,
+              "passesShaft": false,
+              "path": [
+                [
+                  849.346,
+                  970.8046
+                ],
+                [
+                  851.346,
+                  970.8046
+                ],
+                [
+                  853.346,
+                  970.8046
+                ],
+                [
+                  855.346,
+                  970.8046
+                ],
+                [
+                  857.346,
+                  970.8046
+                ],
+                [
+                  859.346,
+                  970.8046
+                ]
+              ],
+              "pathTruncated": 13
+            },
+            "reverse": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 19,
+              "pathLengthAu": 36,
+              "passesShaft": true,
+              "path": [
+                [
+                  855.346,
+                  988.8046
+                ],
+                [
+                  857.346,
+                  988.8046
+                ],
+                [
+                  859.346,
+                  988.8046
+                ],
+                [
+                  861.346,
+                  988.8046
+                ],
+                [
+                  861.346,
+                  986.8046
+                ],
+                [
+                  861.346,
+                  984.8046
+                ]
+              ],
+              "pathTruncated": 13
+            }
+          },
+          "note": "Four BFS traversals over a 2 au grid inside the ground+DEEP polygon union with M1 clipped-static-solid clearance, in BOTH directions. A direct path may bypass the shaft; that is recorded, not hidden."
+        },
+        "los": {
+          "entranceToShaftBlocked": true,
+          "shaftToDeepCentroidBlocked": true,
+          "owner": "MAP_STATIC_OCCLUSION"
+        },
+        "nearbyAuthoredOpenings": [
+          {
+            "id": "portal.po_oldpump.entrance",
+            "kind": "EXTERIOR_ENTRANCE",
+            "centreAu": [
+              846.3569,
+              968.9072
+            ]
+          },
+          {
+            "id": "portal.po_oldpump.h.1.1",
+            "kind": "INTERIOR_DOORWAY",
+            "centreAu": [
+              848.1784,
+              976.9538
+            ]
+          },
+          {
+            "id": "portal.po_oldpump.h.2.1",
+            "kind": "INTERIOR_DOORWAY",
+            "centreAu": [
+              851.8216,
+              993.0462
+            ]
+          },
+          {
+            "id": "portal.po_oldpump.v.1.2",
+            "kind": "INTERIOR_DOORWAY",
+            "centreAu": [
+              861.7034,
+              982.3505
+            ]
+          }
+        ]
+      },
+      "verdict": "RESOLVED_AS_VERIFIED_CORRECTED_CANDIDATE",
+      "negativeCounterexamples": [
+        {
+          "id": "NEG-V2-VLINK-po_oldpump-CANONICAL",
+          "subject": "shaft centred on the ORIGINAL canonical portal",
+          "expected": "REJECTED",
+          "actual": "OUTSIDE_GROUND_ROOM",
+          "pass": true
+        },
+        {
+          "id": "NEG-V2-VLINK-po_oldpump-OUTSIDE",
+          "subject": "shaft centred 200 au outside both polygons",
+          "expected": "REJECTED",
+          "actual": "OUTSIDE_BOTH",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "id": "vlink.corrected.po_ironvein.v2",
+      "portalId": "portal.po_ironvein.vertical",
+      "poiId": "po_ironvein",
+      "previousFailure": {
+        "code": "SOURCE_VERTICAL_PORTAL_AT_OUTSIDE_GROUND_ROOM",
+        "atAu": [
+          1208.9,
+          657.6
+        ],
+        "groundRoomId": "room.po_ironvein.1.1",
+        "deepRoomId": "room.po_ironvein.deep.1",
+        "v1Verdict": "NAMED_BLOCKER_WITH_PROPOSED_ALTERNATIVE",
+        "sourceRef": "GOLD project.pois[] where id=po_ironvein; LR01 poi_layouts.v1.json portals[] where id=portal.po_ironvein.vertical"
+      },
+      "canonicalPortal": {
+        "atAu": [
+          1208.9,
+          657.6
+        ],
+        "status": "UNCHANGED__SOURCE_AUTHORED",
+        "verdict": "BLOCKED",
+        "note": "The canonical portal coordinate is NEVER moved. v2 adds a separate corrected CANDIDATE."
+      },
+      "correctedCandidate": {
+        "id": "vlink.corrected.po_ironvein.v2",
+        "status": "VERIFIED_GEOMETRY",
+        "atAu": [
+          1200.7064,
+          655.2097
+        ],
+        "displacementFromCanonicalAu": 8.5351,
+        "shaftHalfSizeAu": 2.0266,
+        "shaftPolygonAu": [
+          [
+            1198.6798,
+            653.1831
+          ],
+          [
+            1202.733,
+            653.1831
+          ],
+          [
+            1202.733,
+            657.2363
+          ],
+          [
+            1198.6798,
+            657.2363
+          ]
+        ],
+        "stairRunAu": [
+          [
+            1200.7064,
+            655.2097
+          ],
+          [
+            1208.9,
+            657.6
+          ]
+        ],
+        "groundRoomPolygonAu": [
+          [
+            1187.2998,
+            639.0064
+          ],
+          [
+            1205.9098,
+            641.6913
+          ],
+          [
+            1202.1107,
+            668.0232
+          ],
+          [
+            1183.5008,
+            665.3382
+          ]
+        ],
+        "deepLevelPolygonAu": [
+          [
+            1198.4333,
+            648.2097
+          ],
+          [
+            1221.5936,
+            651.5501
+          ],
+          [
+            1219.3667,
+            666.9903
+          ],
+          [
+            1196.2064,
+            663.6499
+          ]
+        ],
+        "overlapBBoxAu": [
+          1196.2064,
+          648.2097,
+          1205.9098,
+          666.9903
+        ],
+        "groundBoundaryDistanceAu": 3.2197,
+        "deepBoundaryDistanceAu": 3.2491,
+        "nearestSolidClearanceAu": 3.7492,
+        "verticalSeparationAu": null,
+        "verticalSeparationStatus": "UNRESOLVED",
+        "basis": "Grid search (0.5 au) over the measured ground-room/DEEP polygon overlap, maximising half-size subject to polygon-edge distance and M1 clipped-solid clearance. Canonical portal coordinate is preserved separately.",
+        "owner": "MAP",
+        "canonical": false
+      },
+      "checks": {
+        "shaftCornersInsideBothPolygons": true,
+        "shaftStaticSolidCollisions": [],
+        "collisionFree": true,
+        "groundBoundaryOpening": {
+          "edgeAu": [
+            [
+              1205.9098,
+              641.6913
+            ],
+            [
+              1202.1107,
+              668.0232
+            ]
+          ],
+          "centreAu": [
+            1204.0102,
+            654.8573
+          ],
+          "widthAu": 4,
+          "openingSegmentAu": [
+            [
+              1204.2958,
+              652.8777
+            ],
+            [
+              1203.7247,
+              656.8368
+            ]
+          ],
+          "blockedByStaticSolid": false,
+          "status": "PROPOSED",
+          "candidatesTried": 12
+        },
+        "deepBoundaryOpening": {
+          "edgeAu": [
+            [
+              1196.2064,
+              663.6499
+            ],
+            [
+              1198.4333,
+              648.2097
+            ]
+          ],
+          "centreAu": [
+            1197.3198,
+            655.9298
+          ],
+          "widthAu": 4,
+          "openingSegmentAu": [
+            [
+              1197.0343,
+              657.9093
+            ],
+            [
+              1197.6054,
+              653.9503
+            ]
+          ],
+          "blockedByStaticSolid": false,
+          "status": "PROPOSED",
+          "candidatesTried": 12
+        },
+        "bidirectionalTraversal": {
+          "verified": true,
+          "legs": {
+            "groundToShaft": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 8,
+              "pathLengthAu": 14,
+              "passesShaft": true,
+              "path": [
+                [
+                  1203.5008,
+                  643.0064
+                ],
+                [
+                  1201.5008,
+                  643.0064
+                ],
+                [
+                  1201.5008,
+                  645.0064
+                ],
+                [
+                  1201.5008,
+                  647.0064
+                ],
+                [
+                  1201.5008,
+                  649.0064
+                ],
+                [
+                  1201.5008,
+                  651.0064
+                ]
+              ],
+              "pathTruncated": 2
+            },
+            "shaftToGround": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 8,
+              "pathLengthAu": 14,
+              "passesShaft": true,
+              "path": [
+                [
+                  1201.5008,
+                  655.0064
+                ],
+                [
+                  1203.5008,
+                  655.0064
+                ],
+                [
+                  1203.5008,
+                  653.0064
+                ],
+                [
+                  1203.5008,
+                  651.0064
+                ],
+                [
+                  1203.5008,
+                  649.0064
+                ],
+                [
+                  1203.5008,
+                  647.0064
+                ]
+              ],
+              "pathTruncated": 2
+            },
+            "shaftToDeep": {
+              "reachable": true,
+              "endpointsSnapped": false,
+              "gridStepAu": 2,
+              "pathCells": 6,
+              "pathLengthAu": 10,
+              "passesShaft": true,
+              "path": [
+                [
+                  1201.5008,
+                  655.0064
+                ],
+                [
+                  1203.5008,
+                  655.0064
+                ],
+                [
+                  1205.5008,
+                  655.0064
+                ],
+                [
+                  1207.5008,
+                  655.0064
+                ],
+                [
+                  1209.5008,
+                  655.0064
+                ],
+                [
+                  1209.5008,
+                  657.0064
+                ]
+              ],
+              "pathTruncated": 0
+            },
+            "deepToShaft": {
+              "reachable": true,
+              "endpointsSnapped": false,
+              "gridStepAu": 2,
+              "pathCells": 6,
+              "pathLengthAu": 10,
+              "passesShaft": true,
+              "path": [
+                [
+                  1209.5008,
+                  657.0064
+                ],
+                [
+                  1207.5008,
+                  657.0064
+                ],
+                [
+                  1207.5008,
+                  655.0064
+                ],
+                [
+                  1205.5008,
+                  655.0064
+                ],
+                [
+                  1203.5008,
+                  655.0064
+                ],
+                [
+                  1201.5008,
+                  655.0064
+                ]
+              ],
+              "pathTruncated": 0
+            }
+          },
+          "directPath": {
+            "forward": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 11,
+              "pathLengthAu": 20,
+              "passesShaft": true,
+              "path": [
+                [
+                  1203.5008,
+                  643.0064
+                ],
+                [
+                  1203.5008,
+                  645.0064
+                ],
+                [
+                  1203.5008,
+                  647.0064
+                ],
+                [
+                  1203.5008,
+                  649.0064
+                ],
+                [
+                  1203.5008,
+                  651.0064
+                ],
+                [
+                  1203.5008,
+                  653.0064
+                ]
+              ],
+              "pathTruncated": 5
+            },
+            "reverse": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 11,
+              "pathLengthAu": 20,
+              "passesShaft": true,
+              "path": [
+                [
+                  1209.5008,
+                  657.0064
+                ],
+                [
+                  1207.5008,
+                  657.0064
+                ],
+                [
+                  1207.5008,
+                  655.0064
+                ],
+                [
+                  1205.5008,
+                  655.0064
+                ],
+                [
+                  1203.5008,
+                  655.0064
+                ],
+                [
+                  1203.5008,
+                  653.0064
+                ]
+              ],
+              "pathTruncated": 5
+            }
+          },
+          "note": "Four BFS traversals over a 2 au grid inside the ground+DEEP polygon union with M1 clipped-static-solid clearance, in BOTH directions. A direct path may bypass the shaft; that is recorded, not hidden."
+        },
+        "los": {
+          "entranceToShaftBlocked": true,
+          "shaftToDeepCentroidBlocked": false,
+          "owner": "MAP_STATIC_OCCLUSION"
+        },
+        "nearbyAuthoredOpenings": [
+          {
+            "id": "portal.po_ironvein.entrance",
+            "kind": "EXTERIOR_ENTRANCE",
+            "centreAu": [
+              1207.0414,
+              640.8465
+            ]
+          },
+          {
+            "id": "portal.po_ironvein.h.1.1",
+            "kind": "INTERIOR_DOORWAY",
+            "centreAu": [
+              1205,
+              655
+            ]
+          }
+        ]
+      },
+      "verdict": "RESOLVED_AS_VERIFIED_CORRECTED_CANDIDATE",
+      "negativeCounterexamples": [
+        {
+          "id": "NEG-V2-VLINK-po_ironvein-CANONICAL",
+          "subject": "shaft centred on the ORIGINAL canonical portal",
+          "expected": "REJECTED",
+          "actual": "OUTSIDE_GROUND_ROOM",
+          "pass": true
+        },
+        {
+          "id": "NEG-V2-VLINK-po_ironvein-OUTSIDE",
+          "subject": "shaft centred 200 au outside both polygons",
+          "expected": "REJECTED",
+          "actual": "OUTSIDE_BOTH",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "id": "vlink.corrected.po_tombs.v2",
+      "portalId": "portal.po_tombs.vertical",
+      "poiId": "po_tombs",
+      "previousFailure": {
+        "code": "SOURCE_VERTICAL_PORTAL_AT_OUTSIDE_GROUND_ROOM",
+        "atAu": [
+          523.3,
+          1088.2
+        ],
+        "groundRoomId": "room.po_tombs.1.1",
+        "deepRoomId": "room.po_tombs.deep.1",
+        "v1Verdict": "NAMED_BLOCKER_WITH_PROPOSED_ALTERNATIVE",
+        "sourceRef": "GOLD project.pois[] where id=po_tombs; LR01 poi_layouts.v1.json portals[] where id=portal.po_tombs.vertical"
+      },
+      "canonicalPortal": {
+        "atAu": [
+          523.3,
+          1088.2
+        ],
+        "status": "UNCHANGED__SOURCE_AUTHORED",
+        "verdict": "BLOCKED",
+        "note": "The canonical portal coordinate is NEVER moved. v2 adds a separate corrected CANDIDATE."
+      },
+      "correctedCandidate": {
+        "id": "vlink.corrected.po_tombs.v2",
+        "status": "VERIFIED_GEOMETRY",
+        "atAu": [
+          515.9729,
+          1090.4402
+        ],
+        "displacementFromCanonicalAu": 7.6619,
+        "shaftHalfSizeAu": 1.6894,
+        "shaftPolygonAu": [
+          [
+            514.2835,
+            1088.7508
+          ],
+          [
+            517.6623,
+            1088.7508
+          ],
+          [
+            517.6623,
+            1092.1296
+          ],
+          [
+            514.2835,
+            1092.1296
+          ]
+        ],
+        "stairRunAu": [
+          [
+            515.9729,
+            1090.4402
+          ],
+          [
+            523.3,
+            1088.2
+          ]
+        ],
+        "groundRoomPolygonAu": [
+          [
+            504.1649,
+            1073.7589
+          ],
+          [
+            519.7934,
+            1074.8271
+          ],
+          [
+            518.2751,
+            1097.0408
+          ],
+          [
+            502.6465,
+            1095.9725
+          ]
+        ],
+        "deepLevelPolygonAu": [
+          [
+            513.8732,
+            1080.9402
+          ],
+          [
+            533.6271,
+            1082.2906
+          ],
+          [
+            532.7268,
+            1095.4598
+          ],
+          [
+            512.9729,
+            1094.1094
+          ]
+        ],
+        "overlapBBoxAu": [
+          512.9729,
+          1080.9402,
+          519.7934,
+          1095.4598
+        ],
+        "groundBoundaryDistanceAu": 2.7469,
+        "deepBoundaryDistanceAu": 2.7428,
+        "nearestSolidClearanceAu": 2.7469,
+        "verticalSeparationAu": null,
+        "verticalSeparationStatus": "UNRESOLVED",
+        "basis": "Grid search (0.5 au) over the measured ground-room/DEEP polygon overlap, maximising half-size subject to polygon-edge distance and M1 clipped-solid clearance. Canonical portal coordinate is preserved separately.",
+        "owner": "MAP",
+        "canonical": false
+      },
+      "checks": {
+        "shaftCornersInsideBothPolygons": true,
+        "shaftStaticSolidCollisions": [],
+        "collisionFree": true,
+        "groundBoundaryOpening": {
+          "edgeAu": [
+            [
+              519.7934,
+              1074.8271
+            ],
+            [
+              518.2751,
+              1097.0408
+            ]
+          ],
+          "centreAu": [
+            519.0342,
+            1085.934
+          ],
+          "widthAu": 4,
+          "openingSegmentAu": [
+            [
+              519.1706,
+              1083.9386
+            ],
+            [
+              518.8979,
+              1087.9293
+            ]
+          ],
+          "blockedByStaticSolid": false,
+          "status": "PROPOSED",
+          "candidatesTried": 12
+        },
+        "deepBoundaryOpening": {
+          "edgeAu": [
+            [
+              512.9729,
+              1094.1094
+            ],
+            [
+              513.8732,
+              1080.9402
+            ]
+          ],
+          "centreAu": [
+            513.198,
+            1090.8171
+          ],
+          "widthAu": 4,
+          "openingSegmentAu": [
+            [
+              513.0616,
+              1092.8124
+            ],
+            [
+              513.3344,
+              1088.8218
+            ]
+          ],
+          "blockedByStaticSolid": false,
+          "status": "PROPOSED",
+          "candidatesTried": 12
+        },
+        "bidirectionalTraversal": {
+          "verified": true,
+          "legs": {
+            "groundToShaft": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 10,
+              "pathLengthAu": 18,
+              "passesShaft": true,
+              "path": [
+                [
+                  504.6465,
+                  1083.7589
+                ],
+                [
+                  506.6465,
+                  1083.7589
+                ],
+                [
+                  508.6465,
+                  1083.7589
+                ],
+                [
+                  510.6465,
+                  1083.7589
+                ],
+                [
+                  512.6465,
+                  1083.7589
+                ],
+                [
+                  514.6465,
+                  1083.7589
+                ]
+              ],
+              "pathTruncated": 4
+            },
+            "shaftToGround": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 10,
+              "pathLengthAu": 18,
+              "passesShaft": true,
+              "path": [
+                [
+                  516.6465,
+                  1089.7589
+                ],
+                [
+                  514.6465,
+                  1089.7589
+                ],
+                [
+                  512.6465,
+                  1089.7589
+                ],
+                [
+                  510.6465,
+                  1089.7589
+                ],
+                [
+                  508.6465,
+                  1089.7589
+                ],
+                [
+                  506.6465,
+                  1089.7589
+                ]
+              ],
+              "pathTruncated": 4
+            },
+            "shaftToDeep": {
+              "reachable": true,
+              "endpointsSnapped": false,
+              "gridStepAu": 2,
+              "pathCells": 7,
+              "pathLengthAu": 12,
+              "passesShaft": true,
+              "path": [
+                [
+                  516.6465,
+                  1089.7589
+                ],
+                [
+                  516.6465,
+                  1087.7589
+                ],
+                [
+                  516.6465,
+                  1085.7589
+                ],
+                [
+                  518.6465,
+                  1085.7589
+                ],
+                [
+                  520.6465,
+                  1085.7589
+                ],
+                [
+                  522.6465,
+                  1085.7589
+                ]
+              ],
+              "pathTruncated": 1
+            },
+            "deepToShaft": {
+              "reachable": true,
+              "endpointsSnapped": false,
+              "gridStepAu": 2,
+              "pathCells": 7,
+              "pathLengthAu": 12,
+              "passesShaft": true,
+              "path": [
+                [
+                  522.6465,
+                  1087.7589
+                ],
+                [
+                  522.6465,
+                  1085.7589
+                ],
+                [
+                  520.6465,
+                  1085.7589
+                ],
+                [
+                  518.6465,
+                  1085.7589
+                ],
+                [
+                  516.6465,
+                  1085.7589
+                ],
+                [
+                  516.6465,
+                  1087.7589
+                ]
+              ],
+              "pathTruncated": 1
+            }
+          },
+          "directPath": {
+            "forward": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 12,
+              "pathLengthAu": 22,
+              "passesShaft": false,
+              "path": [
+                [
+                  504.6465,
+                  1083.7589
+                ],
+                [
+                  506.6465,
+                  1083.7589
+                ],
+                [
+                  508.6465,
+                  1083.7589
+                ],
+                [
+                  510.6465,
+                  1083.7589
+                ],
+                [
+                  512.6465,
+                  1083.7589
+                ],
+                [
+                  514.6465,
+                  1083.7589
+                ]
+              ],
+              "pathTruncated": 6
+            },
+            "reverse": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 12,
+              "pathLengthAu": 22,
+              "passesShaft": false,
+              "path": [
+                [
+                  522.6465,
+                  1087.7589
+                ],
+                [
+                  522.6465,
+                  1085.7589
+                ],
+                [
+                  520.6465,
+                  1085.7589
+                ],
+                [
+                  518.6465,
+                  1085.7589
+                ],
+                [
+                  516.6465,
+                  1085.7589
+                ],
+                [
+                  514.6465,
+                  1085.7589
+                ]
+              ],
+              "pathTruncated": 6
+            }
+          },
+          "note": "Four BFS traversals over a 2 au grid inside the ground+DEEP polygon union with M1 clipped-static-solid clearance, in BOTH directions. A direct path may bypass the shaft; that is recorded, not hidden."
+        },
+        "los": {
+          "entranceToShaftBlocked": false,
+          "shaftToDeepCentroidBlocked": true,
+          "owner": "MAP_STATIC_OCCLUSION"
+        },
+        "nearbyAuthoredOpenings": [
+          {
+            "id": "portal.po_tombs.entrance",
+            "kind": "EXTERIOR_ENTRANCE",
+            "centreAu": [
+              502.4409,
+              1084.7997
+            ]
+          },
+          {
+            "id": "portal.po_tombs.h.1.1",
+            "kind": "INTERIOR_DOORWAY",
+            "centreAu": [
+              520,
+              1086
+            ]
+          }
+        ]
+      },
+      "verdict": "RESOLVED_AS_VERIFIED_CORRECTED_CANDIDATE",
+      "negativeCounterexamples": [
+        {
+          "id": "NEG-V2-VLINK-po_tombs-CANONICAL",
+          "subject": "shaft centred on the ORIGINAL canonical portal",
+          "expected": "REJECTED",
+          "actual": "OUTSIDE_GROUND_ROOM",
+          "pass": true
+        },
+        {
+          "id": "NEG-V2-VLINK-po_tombs-OUTSIDE",
+          "subject": "shaft centred 200 au outside both polygons",
+          "expected": "REJECTED",
+          "actual": "OUTSIDE_BOTH",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "id": "vlink.corrected.po_sulfur.v2",
+      "portalId": "portal.po_sulfur.vertical",
+      "poiId": "po_sulfur",
+      "previousFailure": {
+        "code": "SOURCE_VERTICAL_PORTAL_AT_OUTSIDE_GROUND_ROOM",
+        "atAu": [
+          1771.9,
+          884.6
+        ],
+        "groundRoomId": "room.po_sulfur.1.1",
+        "deepRoomId": "room.po_sulfur.deep.1",
+        "v1Verdict": "NAMED_BLOCKER_WITH_PROPOSED_ALTERNATIVE",
+        "sourceRef": "GOLD project.pois[] where id=po_sulfur; LR01 poi_layouts.v1.json portals[] where id=portal.po_sulfur.vertical"
+      },
+      "canonicalPortal": {
+        "atAu": [
+          1771.9,
+          884.6
+        ],
+        "status": "UNCHANGED__SOURCE_AUTHORED",
+        "verdict": "BLOCKED",
+        "note": "The canonical portal coordinate is NEVER moved. v2 adds a separate corrected CANDIDATE."
+      },
+      "correctedCandidate": {
+        "id": "vlink.corrected.po_sulfur.v2",
+        "status": "VERIFIED_GEOMETRY",
+        "atAu": [
+          1764.5502,
+          878.976
+        ],
+        "displacementFromCanonicalAu": 9.2547,
+        "shaftHalfSizeAu": 1.9574,
+        "shaftPolygonAu": [
+          [
+            1762.5928,
+            877.0186
+          ],
+          [
+            1766.5076,
+            877.0186
+          ],
+          [
+            1766.5076,
+            880.9334
+          ],
+          [
+            1762.5928,
+            880.9334
+          ]
+        ],
+        "stairRunAu": [
+          [
+            1764.5502,
+            878.976
+          ],
+          [
+            1771.9,
+            884.6
+          ]
+        ],
+        "groundRoomPolygonAu": [
+          [
+            1752.4355,
+            863.9239
+          ],
+          [
+            1770.5633,
+            868.9099
+          ],
+          [
+            1763.5083,
+            894.5597
+          ],
+          [
+            1745.3806,
+            889.5738
+          ]
+        ],
+        "deepLevelPolygonAu": [
+          [
+            1762.688,
+            873.976
+          ],
+          [
+            1785.2498,
+            880.1828
+          ],
+          [
+            1781.112,
+            895.224
+          ],
+          [
+            1758.5502,
+            889.0172
+          ]
+        ],
+        "overlapBBoxAu": [
+          1758.5502,
+          873.976,
+          1770.5633,
+          894.5597
+        ],
+        "groundBoundaryDistanceAu": 3.1282,
+        "deepBoundaryDistanceAu": 3.1217,
+        "nearestSolidClearanceAu": 3.2474,
+        "verticalSeparationAu": null,
+        "verticalSeparationStatus": "UNRESOLVED",
+        "basis": "Grid search (0.5 au) over the measured ground-room/DEEP polygon overlap, maximising half-size subject to polygon-edge distance and M1 clipped-solid clearance. Canonical portal coordinate is preserved separately.",
+        "owner": "MAP",
+        "canonical": false
+      },
+      "checks": {
+        "shaftCornersInsideBothPolygons": true,
+        "shaftStaticSolidCollisions": [],
+        "collisionFree": true,
+        "groundBoundaryOpening": {
+          "edgeAu": [
+            [
+              1770.5633,
+              868.9099
+            ],
+            [
+              1763.5083,
+              894.5597
+            ]
+          ],
+          "centreAu": [
+            1767.0358,
+            881.7348
+          ],
+          "widthAu": 4,
+          "openingSegmentAu": [
+            [
+              1767.5662,
+              879.8064
+            ],
+            [
+              1766.5054,
+              883.6632
+            ]
+          ],
+          "blockedByStaticSolid": false,
+          "status": "PROPOSED",
+          "candidatesTried": 12
+        },
+        "deepBoundaryOpening": {
+          "edgeAu": [
+            [
+              1758.5502,
+              889.0172
+            ],
+            [
+              1762.688,
+              873.976
+            ]
+          ],
+          "centreAu": [
+            1761.6535,
+            877.7363
+          ],
+          "widthAu": 4,
+          "openingSegmentAu": [
+            [
+              1761.1231,
+              879.6647
+            ],
+            [
+              1762.184,
+              875.8079
+            ]
+          ],
+          "blockedByStaticSolid": false,
+          "status": "PROPOSED",
+          "candidatesTried": 12
+        },
+        "bidirectionalTraversal": {
+          "verified": true,
+          "legs": {
+            "groundToShaft": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 10,
+              "pathLengthAu": 18,
+              "passesShaft": true,
+              "path": [
+                [
+                  1759.3806,
+                  891.9239
+                ],
+                [
+                  1761.3806,
+                  891.9239
+                ],
+                [
+                  1761.3806,
+                  889.9239
+                ],
+                [
+                  1763.3806,
+                  889.9239
+                ],
+                [
+                  1763.3806,
+                  887.9239
+                ],
+                [
+                  1763.3806,
+                  885.9239
+                ]
+              ],
+              "pathTruncated": 4
+            },
+            "shaftToGround": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 10,
+              "pathLengthAu": 18,
+              "passesShaft": true,
+              "path": [
+                [
+                  1765.3806,
+                  879.9239
+                ],
+                [
+                  1763.3806,
+                  879.9239
+                ],
+                [
+                  1761.3806,
+                  879.9239
+                ],
+                [
+                  1759.3806,
+                  879.9239
+                ],
+                [
+                  1759.3806,
+                  881.9239
+                ],
+                [
+                  1759.3806,
+                  883.9239
+                ]
+              ],
+              "pathTruncated": 4
+            },
+            "shaftToDeep": {
+              "reachable": true,
+              "endpointsSnapped": false,
+              "gridStepAu": 2,
+              "pathCells": 6,
+              "pathLengthAu": 10,
+              "passesShaft": true,
+              "path": [
+                [
+                  1765.3806,
+                  879.9239
+                ],
+                [
+                  1765.3806,
+                  881.9239
+                ],
+                [
+                  1767.3806,
+                  881.9239
+                ],
+                [
+                  1769.3806,
+                  881.9239
+                ],
+                [
+                  1771.3806,
+                  881.9239
+                ],
+                [
+                  1771.3806,
+                  883.9239
+                ]
+              ],
+              "pathTruncated": 0
+            },
+            "deepToShaft": {
+              "reachable": true,
+              "endpointsSnapped": false,
+              "gridStepAu": 2,
+              "pathCells": 6,
+              "pathLengthAu": 10,
+              "passesShaft": true,
+              "path": [
+                [
+                  1771.3806,
+                  883.9239
+                ],
+                [
+                  1769.3806,
+                  883.9239
+                ],
+                [
+                  1769.3806,
+                  881.9239
+                ],
+                [
+                  1767.3806,
+                  881.9239
+                ],
+                [
+                  1765.3806,
+                  881.9239
+                ],
+                [
+                  1765.3806,
+                  879.9239
+                ]
+              ],
+              "pathTruncated": 0
+            }
+          },
+          "directPath": {
+            "forward": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 13,
+              "pathLengthAu": 24,
+              "passesShaft": true,
+              "path": [
+                [
+                  1759.3806,
+                  891.9239
+                ],
+                [
+                  1761.3806,
+                  891.9239
+                ],
+                [
+                  1761.3806,
+                  889.9239
+                ],
+                [
+                  1763.3806,
+                  889.9239
+                ],
+                [
+                  1763.3806,
+                  887.9239
+                ],
+                [
+                  1763.3806,
+                  885.9239
+                ]
+              ],
+              "pathTruncated": 7
+            },
+            "reverse": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 13,
+              "pathLengthAu": 24,
+              "passesShaft": true,
+              "path": [
+                [
+                  1771.3806,
+                  883.9239
+                ],
+                [
+                  1769.3806,
+                  883.9239
+                ],
+                [
+                  1769.3806,
+                  881.9239
+                ],
+                [
+                  1767.3806,
+                  881.9239
+                ],
+                [
+                  1765.3806,
+                  881.9239
+                ],
+                [
+                  1763.3806,
+                  881.9239
+                ]
+              ],
+              "pathTruncated": 7
+            }
+          },
+          "note": "Four BFS traversals over a 2 au grid inside the ground+DEEP polygon union with M1 clipped-static-solid clearance, in BOTH directions. A direct path may bypass the shaft; that is recorded, not hidden."
+        },
+        "los": {
+          "entranceToShaftBlocked": true,
+          "shaftToDeepCentroidBlocked": false,
+          "owner": "MAP_STATIC_OCCLUSION"
+        },
+        "nearbyAuthoredOpenings": [
+          {
+            "id": "portal.po_sulfur.h.1.1",
+            "kind": "INTERIOR_DOORWAY",
+            "centreAu": [
+              1768,
+              882
+            ]
+          }
+        ]
+      },
+      "verdict": "RESOLVED_AS_VERIFIED_CORRECTED_CANDIDATE",
+      "negativeCounterexamples": [
+        {
+          "id": "NEG-V2-VLINK-po_sulfur-CANONICAL",
+          "subject": "shaft centred on the ORIGINAL canonical portal",
+          "expected": "REJECTED",
+          "actual": "OUTSIDE_GROUND_ROOM",
+          "pass": true
+        },
+        {
+          "id": "NEG-V2-VLINK-po_sulfur-OUTSIDE",
+          "subject": "shaft centred 200 au outside both polygons",
+          "expected": "REJECTED",
+          "actual": "OUTSIDE_BOTH",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "id": "vlink.corrected.po_geo.v2",
+      "portalId": "portal.po_geo.vertical",
+      "poiId": "po_geo",
+      "previousFailure": {
+        "code": "SOURCE_VERTICAL_PORTAL_AT_OUTSIDE_GROUND_ROOM",
+        "atAu": [
+          1739.3,
+          918.2
+        ],
+        "groundRoomId": "room.po_geo.2.1",
+        "deepRoomId": "room.po_geo.deep.1",
+        "v1Verdict": "NAMED_BLOCKER_WITH_PROPOSED_ALTERNATIVE",
+        "sourceRef": "GOLD project.pois[] where id=po_geo; LR01 poi_layouts.v1.json portals[] where id=portal.po_geo.vertical"
+      },
+      "canonicalPortal": {
+        "atAu": [
+          1739.3,
+          918.2
+        ],
+        "status": "UNCHANGED__SOURCE_AUTHORED",
+        "verdict": "BLOCKED",
+        "note": "The canonical portal coordinate is NEVER moved. v2 adds a separate corrected CANDIDATE."
+      },
+      "correctedCandidate": {
+        "id": "vlink.corrected.po_geo.v2",
+        "status": "VERIFIED_GEOMETRY",
+        "atAu": [
+          1734.1327,
+          922.7637
+        ],
+        "displacementFromCanonicalAu": 6.8941,
+        "shaftHalfSizeAu": 2.1076,
+        "shaftPolygonAu": [
+          [
+            1732.0251,
+            920.6561
+          ],
+          [
+            1736.2403,
+            920.6561
+          ],
+          [
+            1736.2403,
+            924.8713
+          ],
+          [
+            1732.0251,
+            924.8713
+          ]
+        ],
+        "stairRunAu": [
+          [
+            1734.1327,
+            922.7637
+          ],
+          [
+            1739.3,
+            918.2
+          ]
+        ],
+        "groundRoomPolygonAu": [
+          [
+            1720.9879,
+            923.229
+          ],
+          [
+            1735.4735,
+            917.2637
+          ],
+          [
+            1739.3444,
+            926.6634
+          ],
+          [
+            1724.8588,
+            932.6287
+          ]
+        ],
+        "deepLevelPolygonAu": [
+          [
+            1727.6327,
+            915.8666
+          ],
+          [
+            1745.9414,
+            908.3277
+          ],
+          [
+            1750.9673,
+            920.5334
+          ],
+          [
+            1732.6586,
+            928.0723
+          ]
+        ],
+        "overlapBBoxAu": [
+          1727.6327,
+          917.2637,
+          1739.3444,
+          928.0723
+        ],
+        "groundBoundaryDistanceAu": 3.3341,
+        "deepBoundaryDistanceAu": 3.3843,
+        "nearestSolidClearanceAu": 4.0039,
+        "verticalSeparationAu": null,
+        "verticalSeparationStatus": "UNRESOLVED",
+        "basis": "Grid search (0.5 au) over the measured ground-room/DEEP polygon overlap, maximising half-size subject to polygon-edge distance and M1 clipped-solid clearance. Canonical portal coordinate is preserved separately.",
+        "owner": "MAP",
+        "canonical": false
+      },
+      "checks": {
+        "shaftCornersInsideBothPolygons": true,
+        "shaftStaticSolidCollisions": [],
+        "collisionFree": true,
+        "groundBoundaryOpening": {
+          "edgeAu": [
+            [
+              1735.4735,
+              917.2637
+            ],
+            [
+              1739.3444,
+              926.6634
+            ]
+          ],
+          "centreAu": [
+            1737.409,
+            921.9635
+          ],
+          "widthAu": 4,
+          "openingSegmentAu": [
+            [
+              1736.6474,
+              920.1142
+            ],
+            [
+              1738.1705,
+              923.8129
+            ]
+          ],
+          "blockedByStaticSolid": false,
+          "status": "PROPOSED",
+          "candidatesTried": 12
+        },
+        "deepBoundaryOpening": {
+          "edgeAu": [
+            [
+              1732.6586,
+              928.0723
+            ],
+            [
+              1727.6327,
+              915.8666
+            ]
+          ],
+          "centreAu": [
+            1731.4021,
+            925.0209
+          ],
+          "widthAu": 4,
+          "openingSegmentAu": [
+            [
+              1732.1636,
+              926.8702
+            ],
+            [
+              1730.6406,
+              923.1715
+            ]
+          ],
+          "blockedByStaticSolid": false,
+          "status": "PROPOSED",
+          "candidatesTried": 12
+        },
+        "bidirectionalTraversal": {
+          "verified": true,
+          "legs": {
+            "groundToShaft": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 2,
+              "pathLengthAu": 2,
+              "passesShaft": true,
+              "path": [
+                [
+                  1736.9879,
+                  922.3277
+                ],
+                [
+                  1734.9879,
+                  922.3277
+                ]
+              ],
+              "pathTruncated": 0
+            },
+            "shaftToGround": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 2,
+              "pathLengthAu": 2,
+              "passesShaft": true,
+              "path": [
+                [
+                  1734.9879,
+                  922.3277
+                ],
+                [
+                  1736.9879,
+                  922.3277
+                ]
+              ],
+              "pathTruncated": 0
+            },
+            "shaftToDeep": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 7,
+              "pathLengthAu": 12,
+              "passesShaft": true,
+              "path": [
+                [
+                  1734.9879,
+                  922.3277
+                ],
+                [
+                  1736.9879,
+                  922.3277
+                ],
+                [
+                  1738.9879,
+                  922.3277
+                ],
+                [
+                  1740.9879,
+                  922.3277
+                ],
+                [
+                  1740.9879,
+                  920.3277
+                ],
+                [
+                  1740.9879,
+                  918.3277
+                ]
+              ],
+              "pathTruncated": 1
+            },
+            "deepToShaft": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 7,
+              "pathLengthAu": 12,
+              "passesShaft": true,
+              "path": [
+                [
+                  1740.9879,
+                  916.3277
+                ],
+                [
+                  1740.9879,
+                  918.3277
+                ],
+                [
+                  1740.9879,
+                  920.3277
+                ],
+                [
+                  1738.9879,
+                  920.3277
+                ],
+                [
+                  1738.9879,
+                  922.3277
+                ],
+                [
+                  1736.9879,
+                  922.3277
+                ]
+              ],
+              "pathTruncated": 1
+            }
+          },
+          "directPath": {
+            "forward": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 6,
+              "pathLengthAu": 10,
+              "passesShaft": true,
+              "path": [
+                [
+                  1736.9879,
+                  922.3277
+                ],
+                [
+                  1738.9879,
+                  922.3277
+                ],
+                [
+                  1740.9879,
+                  922.3277
+                ],
+                [
+                  1740.9879,
+                  920.3277
+                ],
+                [
+                  1740.9879,
+                  918.3277
+                ],
+                [
+                  1740.9879,
+                  916.3277
+                ]
+              ],
+              "pathTruncated": 0
+            },
+            "reverse": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 6,
+              "pathLengthAu": 10,
+              "passesShaft": true,
+              "path": [
+                [
+                  1740.9879,
+                  916.3277
+                ],
+                [
+                  1740.9879,
+                  918.3277
+                ],
+                [
+                  1740.9879,
+                  920.3277
+                ],
+                [
+                  1738.9879,
+                  920.3277
+                ],
+                [
+                  1738.9879,
+                  922.3277
+                ],
+                [
+                  1736.9879,
+                  922.3277
+                ]
+              ],
+              "pathTruncated": 0
+            }
+          },
+          "note": "Four BFS traversals over a 2 au grid inside the ground+DEEP polygon union with M1 clipped-static-solid clearance, in BOTH directions. A direct path may bypass the shaft; that is recorded, not hidden."
+        },
+        "los": {
+          "entranceToShaftBlocked": true,
+          "shaftToDeepCentroidBlocked": true,
+          "owner": "MAP_STATIC_OCCLUSION"
+        },
+        "nearbyAuthoredOpenings": [
+          {
+            "id": "portal.po_geo.entrance",
+            "kind": "EXTERIOR_ENTRANCE",
+            "centreAu": [
+              1740.6071,
+              927.1886
+            ]
+          },
+          {
+            "id": "portal.po_geo.h.1.1",
+            "kind": "INTERIOR_DOORWAY",
+            "centreAu": [
+              1733.696,
+              910.4051
+            ]
+          },
+          {
+            "id": "portal.po_geo.h.2.1",
+            "kind": "INTERIOR_DOORWAY",
+            "centreAu": [
+              1738.304,
+              921.5949
+            ]
+          },
+          {
+            "id": "portal.po_geo.v.1.1",
+            "kind": "INTERIOR_DOORWAY",
+            "centreAu": [
+              1727.8621,
+              919.3512
+            ]
+          },
+          {
+            "id": "portal.po_geo.v.1.2",
+            "kind": "INTERIOR_DOORWAY",
+            "centreAu": [
+              1744.1379,
+              912.6488
+            ]
+          }
+        ]
+      },
+      "verdict": "RESOLVED_AS_VERIFIED_CORRECTED_CANDIDATE",
+      "negativeCounterexamples": [
+        {
+          "id": "NEG-V2-VLINK-po_geo-CANONICAL",
+          "subject": "shaft centred on the ORIGINAL canonical portal",
+          "expected": "REJECTED",
+          "actual": "OUTSIDE_GROUND_ROOM",
+          "pass": true
+        },
+        {
+          "id": "NEG-V2-VLINK-po_geo-OUTSIDE",
+          "subject": "shaft centred 200 au outside both polygons",
+          "expected": "REJECTED",
+          "actual": "OUTSIDE_BOTH",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "id": "vlink.corrected.po_ironmine.v2",
+      "portalId": "portal.po_ironmine.vertical",
+      "poiId": "po_ironmine",
+      "previousFailure": {
+        "code": "SOURCE_VERTICAL_PORTAL_AT_OUTSIDE_GROUND_ROOM",
+        "atAu": [
+          1189.9,
+          1292.6
+        ],
+        "groundRoomId": "room.po_ironmine.1.1",
+        "deepRoomId": "room.po_ironmine.deep.1",
+        "v1Verdict": "NAMED_BLOCKER_WITH_PROPOSED_ALTERNATIVE",
+        "sourceRef": "GOLD project.pois[] where id=po_ironmine; LR01 poi_layouts.v1.json portals[] where id=portal.po_ironmine.vertical"
+      },
+      "canonicalPortal": {
+        "atAu": [
+          1189.9,
+          1292.6
+        ],
+        "status": "UNCHANGED__SOURCE_AUTHORED",
+        "verdict": "BLOCKED",
+        "note": "The canonical portal coordinate is NEVER moved. v2 adds a separate corrected CANDIDATE."
+      },
+      "correctedCandidate": {
+        "id": "vlink.corrected.po_ironmine.v2",
+        "status": "VERIFIED_GEOMETRY",
+        "atAu": [
+          1181.0319,
+          1292.4378
+        ],
+        "displacementFromCanonicalAu": 8.8696,
+        "shaftHalfSizeAu": 1.9531,
+        "shaftPolygonAu": [
+          [
+            1179.0788,
+            1290.4847
+          ],
+          [
+            1182.985,
+            1290.4847
+          ],
+          [
+            1182.985,
+            1294.3909
+          ],
+          [
+            1179.0788,
+            1294.3909
+          ]
+        ],
+        "stairRunAu": [
+          [
+            1181.0319,
+            1292.4378
+          ],
+          [
+            1189.9,
+            1292.6
+          ]
+        ],
+        "groundRoomPolygonAu": [
+          [
+            1170.5113,
+            1271.8569
+          ],
+          [
+            1188.619,
+            1276.9202
+          ],
+          [
+            1181.4548,
+            1302.5413
+          ],
+          [
+            1163.3471,
+            1297.478
+          ]
+        ],
+        "deepLevelPolygonAu": [
+          [
+            1180.7323,
+            1281.9378
+          ],
+          [
+            1203.2681,
+            1288.2383
+          ],
+          [
+            1199.0677,
+            1303.2622
+          ],
+          [
+            1176.5319,
+            1296.9617
+          ]
+        ],
+        "overlapBBoxAu": [
+          1176.5319,
+          1281.9378,
+          1188.619,
+          1302.5413
+        ],
+        "groundBoundaryDistanceAu": 3.1281,
+        "deepBoundaryDistanceAu": 3.1157,
+        "nearestSolidClearanceAu": 3.1281,
+        "verticalSeparationAu": null,
+        "verticalSeparationStatus": "UNRESOLVED",
+        "basis": "Grid search (0.5 au) over the measured ground-room/DEEP polygon overlap, maximising half-size subject to polygon-edge distance and M1 clipped-solid clearance. Canonical portal coordinate is preserved separately.",
+        "owner": "MAP",
+        "canonical": false
+      },
+      "checks": {
+        "shaftCornersInsideBothPolygons": true,
+        "shaftStaticSolidCollisions": [],
+        "collisionFree": true,
+        "groundBoundaryOpening": {
+          "edgeAu": [
+            [
+              1188.619,
+              1276.9202
+            ],
+            [
+              1181.4548,
+              1302.5413
+            ]
+          ],
+          "centreAu": [
+            1185.0369,
+            1289.7308
+          ],
+          "widthAu": 4,
+          "openingSegmentAu": [
+            [
+              1185.5755,
+              1287.8046
+            ],
+            [
+              1184.4983,
+              1291.6569
+            ]
+          ],
+          "blockedByStaticSolid": false,
+          "status": "PROPOSED",
+          "candidatesTried": 12
+        },
+        "deepBoundaryOpening": {
+          "edgeAu": [
+            [
+              1176.5319,
+              1296.9617
+            ],
+            [
+              1180.7323,
+              1281.9378
+            ]
+          ],
+          "centreAu": [
+            1177.582,
+            1293.2057
+          ],
+          "widthAu": 4,
+          "openingSegmentAu": [
+            [
+              1177.0435,
+              1295.1319
+            ],
+            [
+              1178.1205,
+              1291.2796
+            ]
+          ],
+          "blockedByStaticSolid": false,
+          "status": "PROPOSED",
+          "candidatesTried": 12
+        },
+        "bidirectionalTraversal": {
+          "verified": true,
+          "legs": {
+            "groundToShaft": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 12,
+              "pathLengthAu": 22,
+              "passesShaft": true,
+              "path": [
+                [
+                  1167.3471,
+                  1283.8569
+                ],
+                [
+                  1169.3471,
+                  1283.8569
+                ],
+                [
+                  1171.3471,
+                  1283.8569
+                ],
+                [
+                  1173.3471,
+                  1283.8569
+                ],
+                [
+                  1175.3471,
+                  1283.8569
+                ],
+                [
+                  1177.3471,
+                  1283.8569
+                ]
+              ],
+              "pathTruncated": 6
+            },
+            "shaftToGround": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 12,
+              "pathLengthAu": 22,
+              "passesShaft": true,
+              "path": [
+                [
+                  1181.3471,
+                  1291.8569
+                ],
+                [
+                  1179.3471,
+                  1291.8569
+                ],
+                [
+                  1177.3471,
+                  1291.8569
+                ],
+                [
+                  1175.3471,
+                  1291.8569
+                ],
+                [
+                  1173.3471,
+                  1291.8569
+                ],
+                [
+                  1171.3471,
+                  1291.8569
+                ]
+              ],
+              "pathTruncated": 6
+            },
+            "shaftToDeep": {
+              "reachable": true,
+              "endpointsSnapped": false,
+              "gridStepAu": 2,
+              "pathCells": 7,
+              "pathLengthAu": 12,
+              "passesShaft": true,
+              "path": [
+                [
+                  1181.3471,
+                  1291.8569
+                ],
+                [
+                  1183.3471,
+                  1291.8569
+                ],
+                [
+                  1183.3471,
+                  1289.8569
+                ],
+                [
+                  1185.3471,
+                  1289.8569
+                ],
+                [
+                  1187.3471,
+                  1289.8569
+                ],
+                [
+                  1189.3471,
+                  1289.8569
+                ]
+              ],
+              "pathTruncated": 1
+            },
+            "deepToShaft": {
+              "reachable": true,
+              "endpointsSnapped": false,
+              "gridStepAu": 2,
+              "pathCells": 7,
+              "pathLengthAu": 12,
+              "passesShaft": true,
+              "path": [
+                [
+                  1189.3471,
+                  1291.8569
+                ],
+                [
+                  1187.3471,
+                  1291.8569
+                ],
+                [
+                  1187.3471,
+                  1289.8569
+                ],
+                [
+                  1185.3471,
+                  1289.8569
+                ],
+                [
+                  1183.3471,
+                  1289.8569
+                ],
+                [
+                  1181.3471,
+                  1289.8569
+                ]
+              ],
+              "pathTruncated": 1
+            }
+          },
+          "directPath": {
+            "forward": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 16,
+              "pathLengthAu": 30,
+              "passesShaft": true,
+              "path": [
+                [
+                  1167.3471,
+                  1283.8569
+                ],
+                [
+                  1169.3471,
+                  1283.8569
+                ],
+                [
+                  1171.3471,
+                  1283.8569
+                ],
+                [
+                  1173.3471,
+                  1283.8569
+                ],
+                [
+                  1175.3471,
+                  1283.8569
+                ],
+                [
+                  1177.3471,
+                  1283.8569
+                ]
+              ],
+              "pathTruncated": 10
+            },
+            "reverse": {
+              "reachable": true,
+              "endpointsSnapped": true,
+              "gridStepAu": 2,
+              "pathCells": 16,
+              "pathLengthAu": 30,
+              "passesShaft": true,
+              "path": [
+                [
+                  1189.3471,
+                  1291.8569
+                ],
+                [
+                  1187.3471,
+                  1291.8569
+                ],
+                [
+                  1187.3471,
+                  1289.8569
+                ],
+                [
+                  1185.3471,
+                  1289.8569
+                ],
+                [
+                  1183.3471,
+                  1289.8569
+                ],
+                [
+                  1181.3471,
+                  1289.8569
+                ]
+              ],
+              "pathTruncated": 10
+            }
+          },
+          "note": "Four BFS traversals over a 2 au grid inside the ground+DEEP polygon union with M1 clipped-static-solid clearance, in BOTH directions. A direct path may bypass the shaft; that is recorded, not hidden."
+        },
+        "los": {
+          "entranceToShaftBlocked": false,
+          "shaftToDeepCentroidBlocked": true,
+          "owner": "MAP_STATIC_OCCLUSION"
+        },
+        "nearbyAuthoredOpenings": [
+          {
+            "id": "portal.po_ironmine.h.1.1",
+            "kind": "INTERIOR_DOORWAY",
+            "centreAu": [
+              1186,
+              1290
+            ]
+          }
+        ]
+      },
+      "verdict": "RESOLVED_AS_VERIFIED_CORRECTED_CANDIDATE",
+      "negativeCounterexamples": [
+        {
+          "id": "NEG-V2-VLINK-po_ironmine-CANONICAL",
+          "subject": "shaft centred on the ORIGINAL canonical portal",
+          "expected": "REJECTED",
+          "actual": "OUTSIDE_GROUND_ROOM",
+          "pass": true
+        },
+        {
+          "id": "NEG-V2-VLINK-po_ironmine-OUTSIDE",
+          "subject": "shaft centred 200 au outside both polygons",
+          "expected": "REJECTED",
+          "actual": "OUTSIDE_BOTH",
+          "pass": true
+        }
+      ]
+    }
+  ]
+}

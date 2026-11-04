@@ -1,0 +1,311 @@
+{
+  "schema": "soh.wmp.v2.environment.v1",
+  "authority": "MAP_DESIGNS_THE_PHYSICAL_WORLD__GAMEPLAY_POPULATES_AND_SIMULATES_IT",
+  "status": "REPRODUCIBLE_NORMALIZED_PROPOSED_POTENTIAL",
+  "inputs": {
+    "elevation": "data/rasters/geo01/elevation.u8 (RAW BYTE)",
+    "slope": "data/rasters/geo01/slope.u8 (RAW BYTE)",
+    "biome": "data/rasters/geo01/biomeCode.u8 (12 source subtypes)",
+    "water": "waterClass/freshwater/seaDistanceCells/freshwaterProximityCells",
+    "canopy": "biomeCode forest variants",
+    "substrate": "rasters/substrate.u8",
+    "drainage": "rasters/drainage.u8",
+    "exposure": "rasters/exposure.u8",
+    "soil": "rasters/soil.u8",
+    "v1Climate": "rasters/climateRegion.u8, temperaturePotential.u8, frostPotential.u8, sunExposure.u8, soilMoisture.u8"
+  },
+  "formulas": {
+    "moisturePotentialNorm": "water?255:clamp255((35*waterProximityNorm + 20*canopyNorm + 15*soilMoistureOrdinal*63.75 + 15*(255-elevationNorm) + 15*drainageWet)/100)",
+    "temperaturePotentialNorm": "clamp255((40*temperaturePotentialOrdinal*63.75 + 20*(255-elevationNorm) + 20*sunExposureOrdinal*85 + 10*(255-canopyNorm) + 10*(255-frostPotentialOrdinal*85))/100)",
+    "soilSuitabilityNorm": "water?0:clamp255((30*soilQuality + 25*(255-drainageNorm) + 20*(255-slopeNorm) + 15*moistureNorm + 10*(255-exposureNorm))/100)",
+    "climateSuitabilityNorm": "water?0:clamp255((35*(255-abs(temperatureNorm-128)) + 25*moistureNorm + 20*(255-slopeNorm) + 10*substrateNorm + 10*(255-exposureNorm))/100)"
+  },
+  "rasters": [
+    {
+      "name": "elevationNorm",
+      "file": "v2/rasters/elevationNorm.u8",
+      "semantics": "Normalized raw elevation byte [0..255]; NOT metres",
+      "status": "NORMALIZED_RAW_BYTE",
+      "unit": "NORMALIZED_0_255"
+    },
+    {
+      "name": "slopeNorm",
+      "file": "v2/rasters/slopeNorm.u8",
+      "semantics": "Normalized raw slope byte (slopeRaw/64 clipped); NOT degrees",
+      "status": "NORMALIZED_RAW_BYTE",
+      "unit": "NORMALIZED_0_255"
+    },
+    {
+      "name": "waterProximityNorm",
+      "file": "v2/rasters/waterProximityNorm.u8",
+      "semantics": "Inverse distance to authored freshwater/sea cells",
+      "status": "PROPOSED_NORMALIZED_POTENTIAL",
+      "unit": "NORMALIZED_0_255"
+    },
+    {
+      "name": "canopyNorm",
+      "file": "v2/rasters/canopyNorm.u8",
+      "semantics": "Authored forest/marsh biome canopy potential",
+      "status": "PROPOSED_NORMALIZED_POTENTIAL",
+      "unit": "NORMALIZED_0_255"
+    },
+    {
+      "name": "exposureNorm",
+      "file": "v2/rasters/exposureNorm.u8",
+      "semantics": "v1 exposure ordinal normalized",
+      "status": "PROPOSED_NORMALIZED_POTENTIAL",
+      "unit": "NORMALIZED_0_255"
+    },
+    {
+      "name": "substrateNorm",
+      "file": "v2/rasters/substrateNorm.u8",
+      "semantics": "v1 substrate ordinal normalized",
+      "status": "PROPOSED_NORMALIZED_POTENTIAL",
+      "unit": "NORMALIZED_0_255"
+    },
+    {
+      "name": "drainageNorm",
+      "file": "v2/rasters/drainageNorm.u8",
+      "semantics": "v1 drainage ordinal normalized",
+      "status": "PROPOSED_NORMALIZED_POTENTIAL",
+      "unit": "NORMALIZED_0_255"
+    },
+    {
+      "name": "moisturePotentialNorm",
+      "file": "v2/rasters/moisturePotentialNorm.u8",
+      "semantics": "Weighted moisture POTENTIAL [0..255] -> [0,1] for EconomyMap",
+      "status": "PROPOSED_NORMALIZED_POTENTIAL",
+      "unit": "NORMALIZED_0_255"
+    },
+    {
+      "name": "temperaturePotentialNorm",
+      "file": "v2/rasters/temperaturePotentialNorm.u8",
+      "semantics": "Weighted thermal POTENTIAL [0..255] -> [0,1] for EconomyMap; NOT degrees celsius",
+      "status": "PROPOSED_NORMALIZED_POTENTIAL",
+      "unit": "NORMALIZED_0_255"
+    },
+    {
+      "name": "soilSuitabilityNorm",
+      "file": "v2/rasters/soilSuitabilityNorm.u8",
+      "semantics": "Weighted soil/farming geographic suitability",
+      "status": "PROPOSED_NORMALIZED_POTENTIAL",
+      "unit": "NORMALIZED_0_255"
+    },
+    {
+      "name": "climateSuitabilityNorm",
+      "file": "v2/rasters/climateSuitabilityNorm.u8",
+      "semantics": "Weighted combined climate geographic suitability",
+      "status": "PROPOSED_NORMALIZED_POTENTIAL",
+      "unit": "NORMALIZED_0_255"
+    }
+  ],
+  "regionEvidence": [
+    {
+      "regionId": "clim.temperate.v1",
+      "key": "TEMPERATE",
+      "totalRasterCells": 33048,
+      "dryLandCellCount": 4366,
+      "meanMoisturePotential": 78.7153,
+      "meanTemperaturePotential": 177.5309,
+      "meanSoilSuitability": 163.7668,
+      "meanClimateSuitability": 152.1443,
+      "meanWaterProximity": 26.4104,
+      "meanElevationNorm": 47.3717,
+      "meanSlopeNorm": 26.2968,
+      "evidenceBasis": "dry-land cells only; mean of v2 normalized u8 rasters; reproducible from v1 rasters + formulas"
+    },
+    {
+      "regionId": "clim.canopy.v1",
+      "key": "CANOPY",
+      "totalRasterCells": 3019,
+      "dryLandCellCount": 2843,
+      "meanMoisturePotential": 144.8663,
+      "meanTemperaturePotential": 97.6486,
+      "meanSoilSuitability": 182.7372,
+      "meanClimateSuitability": 184.5086,
+      "meanWaterProximity": 102.1456,
+      "meanElevationNorm": 49.7133,
+      "meanSlopeNorm": 23.0897,
+      "evidenceBasis": "dry-land cells only; mean of v2 normalized u8 rasters; reproducible from v1 rasters + formulas"
+    },
+    {
+      "regionId": "clim.ancient_canopy.v1",
+      "key": "ANCIENT_CANOPY",
+      "totalRasterCells": 1111,
+      "dryLandCellCount": 1028,
+      "meanMoisturePotential": 148.2121,
+      "meanTemperaturePotential": 95.1021,
+      "meanSoilSuitability": 185.2909,
+      "meanClimateSuitability": 186.4922,
+      "meanWaterProximity": 117.1518,
+      "meanElevationNorm": 62.4689,
+      "meanSlopeNorm": 13.4747,
+      "evidenceBasis": "dry-land cells only; mean of v2 normalized u8 rasters; reproducible from v1 rasters + formulas"
+    },
+    {
+      "regionId": "clim.conifer.v1",
+      "key": "CONIFER",
+      "totalRasterCells": 834,
+      "dryLandCellCount": 796,
+      "meanMoisturePotential": 119.1972,
+      "meanTemperaturePotential": 99.4636,
+      "meanSoilSuitability": 175.1834,
+      "meanClimateSuitability": 175.0214,
+      "meanWaterProximity": 61.4397,
+      "meanElevationNorm": 125.7161,
+      "meanSlopeNorm": 42.3656,
+      "evidenceBasis": "dry-land cells only; mean of v2 normalized u8 rasters; reproducible from v1 rasters + formulas"
+    },
+    {
+      "regionId": "clim.wetland.v1",
+      "key": "WETLAND",
+      "totalRasterCells": 770,
+      "dryLandCellCount": 527,
+      "meanMoisturePotential": 190.6528,
+      "meanTemperaturePotential": 172.6641,
+      "meanSoilSuitability": 187.9355,
+      "meanClimateSuitability": 203.6015,
+      "meanWaterProximity": 196.3435,
+      "meanElevationNorm": 21.5484,
+      "meanSlopeNorm": 12.8349,
+      "evidenceBasis": "dry-land cells only; mean of v2 normalized u8 rasters; reproducible from v1 rasters + formulas"
+    },
+    {
+      "regionId": "clim.arid.v1",
+      "key": "ARID",
+      "totalRasterCells": 1308,
+      "dryLandCellCount": 1241,
+      "meanMoisturePotential": 93.8646,
+      "meanTemperaturePotential": 221.4061,
+      "meanSoilSuitability": 134.1668,
+      "meanClimateSuitability": 140.1168,
+      "meanWaterProximity": 66.9428,
+      "meanElevationNorm": 40.8767,
+      "meanSlopeNorm": 12.3449,
+      "evidenceBasis": "dry-land cells only; mean of v2 normalized u8 rasters; reproducible from v1 rasters + formulas"
+    },
+    {
+      "regionId": "clim.scrub.v1",
+      "key": "SCRUB",
+      "totalRasterCells": 1400,
+      "dryLandCellCount": 1391,
+      "meanMoisturePotential": 82.5672,
+      "meanTemperaturePotential": 174.9533,
+      "meanSoilSuitability": 167.739,
+      "meanClimateSuitability": 157.3702,
+      "meanWaterProximity": 11.422,
+      "meanElevationNorm": 40.1675,
+      "meanSlopeNorm": 10.0101,
+      "evidenceBasis": "dry-land cells only; mean of v2 normalized u8 rasters; reproducible from v1 rasters + formulas"
+    },
+    {
+      "regionId": "clim.rock.v1",
+      "key": "ROCK",
+      "totalRasterCells": 511,
+      "dryLandCellCount": 510,
+      "meanMoisturePotential": 39.202,
+      "meanTemperaturePotential": 155.7216,
+      "meanSoilSuitability": 129.1627,
+      "meanClimateSuitability": 143.7,
+      "meanWaterProximity": 38.3824,
+      "meanElevationNorm": 146.9784,
+      "meanSlopeNorm": 77.549,
+      "evidenceBasis": "dry-land cells only; mean of v2 normalized u8 rasters; reproducible from v1 rasters + formulas"
+    },
+    {
+      "regionId": "clim.cold.v1",
+      "key": "COLD",
+      "totalRasterCells": 217,
+      "dryLandCellCount": 217,
+      "meanMoisturePotential": 28.7972,
+      "meanTemperaturePotential": 66.4793,
+      "meanSoilSuitability": 136.0737,
+      "meanClimateSuitability": 135.0645,
+      "meanWaterProximity": 40.0369,
+      "meanElevationNorm": 220.5668,
+      "meanSlopeNorm": 51.3272,
+      "evidenceBasis": "dry-land cells only; mean of v2 normalized u8 rasters; reproducible from v1 rasters + formulas"
+    },
+    {
+      "regionId": "clim.volcanic.v1",
+      "key": "VOLCANIC",
+      "totalRasterCells": 452,
+      "dryLandCellCount": 445,
+      "meanMoisturePotential": 43.1596,
+      "meanTemperaturePotential": 205.4382,
+      "meanSoilSuitability": 129.9506,
+      "meanClimateSuitability": 130.5685,
+      "meanWaterProximity": 48.6809,
+      "meanElevationNorm": 144.7326,
+      "meanSlopeNorm": 72.1596,
+      "evidenceBasis": "dry-land cells only; mean of v2 normalized u8 rasters; reproducible from v1 rasters + formulas"
+    },
+    {
+      "regionId": "clim.toxic.v1",
+      "key": "TOXIC",
+      "totalRasterCells": 199,
+      "dryLandCellCount": 199,
+      "meanMoisturePotential": 72.2563,
+      "meanTemperaturePotential": 181.2513,
+      "meanSoilSuitability": 104.1106,
+      "meanClimateSuitability": 165.1005,
+      "meanWaterProximity": 0,
+      "meanElevationNorm": 28.7739,
+      "meanSlopeNorm": 23.1156,
+      "evidenceBasis": "dry-land cells only; mean of v2 normalized u8 rasters; reproducible from v1 rasters + formulas"
+    },
+    {
+      "regionId": "clim.littoral.v1",
+      "key": "LITTORAL",
+      "totalRasterCells": 881,
+      "dryLandCellCount": 829,
+      "meanMoisturePotential": 83.3969,
+      "meanTemperaturePotential": 184.2099,
+      "meanSoilSuitability": 99.6803,
+      "meanClimateSuitability": 141.5018,
+      "meanWaterProximity": 25.5127,
+      "meanElevationNorm": 13.8251,
+      "meanSlopeNorm": 26.538,
+      "evidenceBasis": "dry-land cells only; mean of v2 normalized u8 rasters; reproducible from v1 rasters + formulas"
+    }
+  ],
+  "semantics": "These are dimensionless NORMALIZED PROPOSED geographic potentials for spatial comparison and EconomyMap structural completeness. They are NOT numeric temperature, weather, damage, crop yield or seasonal rates.",
+  "gameplayOwnedUnknowns": [
+    {
+      "id": "ENV-U01",
+      "subject": "temperature in degrees / thermal damage rate",
+      "status": "UNKNOWN",
+      "owner": "GAMEPLAY"
+    },
+    {
+      "id": "ENV-U02",
+      "subject": "weather realization and seasonal timeline",
+      "status": "UNKNOWN",
+      "owner": "GAMEPLAY"
+    },
+    {
+      "id": "ENV-U03",
+      "subject": "crop growth/yield and farming benefit",
+      "status": "UNKNOWN",
+      "owner": "GAMEPLAY"
+    },
+    {
+      "id": "ENV-U04",
+      "subject": "radiation numeric and survival consequence",
+      "status": "UNKNOWN",
+      "owner": "GAMEPLAY"
+    },
+    {
+      "id": "ENV-U05",
+      "subject": "elevation in metres and slope in degrees",
+      "status": "UNRESOLVED",
+      "owner": "MAP+GAMEPLAY"
+    }
+  ],
+  "noClaims": [
+    "NO official temperature value",
+    "NO damage/weather/season rate",
+    "NO crop yield",
+    "NO approved physical unit"
+  ]
+}

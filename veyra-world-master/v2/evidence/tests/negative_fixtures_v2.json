@@ -1,0 +1,138 @@
+{
+  "schema": "soh.wmp.v2.negative_fixtures.v1",
+  "count": 18,
+  "fixtures": [
+    {
+      "id": "NF-V-po_archive",
+      "subject": "shaft centred on canonical portal.po_archive.vertical",
+      "expected": "REJECTED_OUTSIDE_GROUND_ROOM",
+      "actual": "OUTSIDE_GROUND_ROOM",
+      "pass": true
+    },
+    {
+      "id": "NF-V-po_meridian",
+      "subject": "shaft centred on canonical portal.po_meridian.vertical",
+      "expected": "REJECTED_OUTSIDE_GROUND_ROOM",
+      "actual": "OUTSIDE_GROUND_ROOM",
+      "pass": true
+    },
+    {
+      "id": "NF-V-po_oldpump",
+      "subject": "shaft centred on canonical portal.po_oldpump.vertical",
+      "expected": "REJECTED_OUTSIDE_GROUND_ROOM",
+      "actual": "OUTSIDE_GROUND_ROOM",
+      "pass": true
+    },
+    {
+      "id": "NF-V-po_ironvein",
+      "subject": "shaft centred on canonical portal.po_ironvein.vertical",
+      "expected": "REJECTED_OUTSIDE_GROUND_ROOM",
+      "actual": "OUTSIDE_GROUND_ROOM",
+      "pass": true
+    },
+    {
+      "id": "NF-V-po_tombs",
+      "subject": "shaft centred on canonical portal.po_tombs.vertical",
+      "expected": "REJECTED_OUTSIDE_GROUND_ROOM",
+      "actual": "OUTSIDE_GROUND_ROOM",
+      "pass": true
+    },
+    {
+      "id": "NF-V-po_sulfur",
+      "subject": "shaft centred on canonical portal.po_sulfur.vertical",
+      "expected": "REJECTED_OUTSIDE_GROUND_ROOM",
+      "actual": "OUTSIDE_GROUND_ROOM",
+      "pass": true
+    },
+    {
+      "id": "NF-V-po_geo",
+      "subject": "shaft centred on canonical portal.po_geo.vertical",
+      "expected": "REJECTED_OUTSIDE_GROUND_ROOM",
+      "actual": "OUTSIDE_GROUND_ROOM",
+      "pass": true
+    },
+    {
+      "id": "NF-V-po_ironmine",
+      "subject": "shaft centred on canonical portal.po_ironmine.vertical",
+      "expected": "REJECTED_OUTSIDE_GROUND_ROOM",
+      "actual": "OUTSIDE_GROUND_ROOM",
+      "pass": true
+    },
+    {
+      "id": "NF-V-OUTSIDE",
+      "subject": "shaft 200au outside both polygons",
+      "expected": "REJECTED",
+      "actual": "REJECTED",
+      "pass": true
+    },
+    {
+      "id": "NF-V-NARROW",
+      "subject": "sub-2au po_meridian shaft as VERIFIED",
+      "expected": "REJECTED_AS_VERIFIED",
+      "actual": "PROPOSED_GEOMETRY__NARROW_SHAFT_BELOW_2AU",
+      "pass": true
+    },
+    {
+      "id": "NF-T-CART",
+      "subject": "invented cart-passability approval",
+      "expected": "ABSENT",
+      "actual": "ABSENT",
+      "pass": true
+    },
+    {
+      "id": "NF-T-CANON",
+      "subject": "canonical bridge/road/river count changed",
+      "expected": "UNCHANGED",
+      "actual": "12/92/17",
+      "pass": true
+    },
+    {
+      "id": "NF-B-WET",
+      "subject": "water/sea cell inside a dry build subset",
+      "expected": "ZERO",
+      "actual": 0,
+      "pass": true
+    },
+    {
+      "id": "NF-R-OUTSIDE",
+      "subject": "v1 roof polygon outside parent room",
+      "expected": "REJECTED_NOT_AUTO_COMPLETED",
+      "actual": "99 rejected",
+      "pass": true
+    },
+    {
+      "id": "NF-E-RATES",
+      "subject": "invented Gameplay numeric climate rate",
+      "expected": "ABSENT",
+      "actual": "ABSENT",
+      "pass": true
+    },
+    {
+      "id": "NF-H-5MASK",
+      "subject": "v1 5-mask window as complete EconomyMap",
+      "expected": "REJECTED",
+      "actual": "REJECTED",
+      "pass": true
+    },
+    {
+      "id": "NF-H-CORRUPT",
+      "subject": "moisture=2 outside [0,1]",
+      "expected": "REJECTED",
+      "actual": "invalid terrain or climate at cell 10",
+      "pass": true
+    },
+    {
+      "id": "NF-H-DUPSTART",
+      "subject": "duplicate authored start id",
+      "expected": "REJECTED",
+      "actual": "REJECTED",
+      "pass": true
+    }
+  ],
+  "sourceSha": {
+    "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+    "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+    "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+    "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+  }
+}

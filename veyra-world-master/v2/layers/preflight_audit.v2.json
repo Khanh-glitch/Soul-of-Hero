@@ -1,0 +1,123 @@
+{
+  "schema": "soh.wmp.v2.preflight_audit.v1",
+  "status": "INDEPENDENT_PREFLIGHT",
+  "verifiedFrom": {
+    "mapHead": "d0221688076f823b5e15fe9c1050406928eafbca",
+    "v1ManifestSha": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+    "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+    "sourceManifestSha": "c1f0b7a8664656842d97df95a63ee93a258268b6856ac579f27c1908a072cc4d"
+  },
+  "independentReproduction": {
+    "command": "cp -a veyra-world-master /tmp/wmp_preflight_verify && cd /tmp/wmp_preflight_verify && ./reproduce.sh",
+    "result": "WMP_TESTS 75/75, WMP_REPRODUCE_OK, isolated clean-room 75/75, identical revisionDigest=8e3e76da…",
+    "note": "Ran in an isolated copy so NO v1 evidence byte was modified."
+  },
+  "classification": [
+    {
+      "test": "M-G3-01",
+      "kind": "COVERAGE",
+      "why": "Counts 81 POIs / 210 rooms and checks roof count equals covered-room count. Does not test roof visibility, wall collision or opening access."
+    },
+    {
+      "test": "M-G3-02",
+      "kind": "PARTIAL_PHYSICAL",
+      "why": "Checks roof polygon lies inside parent room bbox and status=PROPOSED. Bbox containment is weaker than polygon containment; no wall/opening/LOS test."
+    },
+    {
+      "test": "M-G3-03",
+      "kind": "DOCUMENTATION_PASS",
+      "why": "Asserts 10 proposed + 8 named blockers = 18 and that blockers have ID/conflict strings. It EXPLICITLY passes because blockers are documented, not because they are resolved."
+    },
+    {
+      "test": "M-G3-04",
+      "kind": "PARTIAL_PHYSICAL",
+      "why": "Checks shaft CENTRE inside the overlap bbox. No collision, bidirectional traversal, boundary opening or LOS test."
+    },
+    {
+      "test": "M-G3-05",
+      "kind": "COVERAGE",
+      "why": "Checks two POI examples are inspectable via poiGraph; not a physical access proof."
+    },
+    {
+      "test": "M-G3-06",
+      "kind": "PARTIAL_PHYSICAL",
+      "why": "Counts blocked/clear direct LOS segments; does not connect LOS to room usability or roof occlusion."
+    },
+    {
+      "test": "M-G3-07",
+      "kind": "COVERAGE",
+      "why": "Checks room polygon validity and ownership strings."
+    },
+    {
+      "test": "M-G3-08",
+      "kind": "NEGATIVE_FIXTURE",
+      "why": "Invalid POI ID returns INVALID."
+    },
+    {
+      "test": "M-G4-01",
+      "kind": "PARTIAL_PHYSICAL",
+      "why": "Chunk count/neighbour/digest checks; not a geometry-continuity sweep."
+    },
+    {
+      "test": "M-G4-02",
+      "kind": "PARTIAL_PHYSICAL",
+      "why": "Checks stable feature IDs in chunk lists (first 40 crossing features); not all 579 and not boundary geometry."
+    },
+    {
+      "test": "M-G4-03",
+      "kind": "COVERAGE",
+      "why": "Counts roads/bridges/docks and profile objects."
+    },
+    {
+      "test": "M-G4-04",
+      "kind": "DOCUMENTATION_PASS",
+      "why": "Passes because cartPassable=false and deckStatus=UNRESOLVED are recorded. It does not resolve any deck or swept clearance."
+    },
+    {
+      "test": "M-G4-05",
+      "kind": "PARTIAL_PHYSICAL",
+      "why": "Compares centre clearance to 3 body widths; centreline only, no swept envelope."
+    },
+    {
+      "test": "M-G4-06",
+      "kind": "DOCUMENTATION_PASS",
+      "why": "Passes because 7 disconnected roads, 8 blocked ferries and crossing defects are preserved as strings."
+    },
+    {
+      "test": "M-G4-07",
+      "kind": "DOCUMENTATION_PASS",
+      "why": "Passes because alternate candidates exist and are non-canonical."
+    },
+    {
+      "test": "M-G4-08",
+      "kind": "DOCUMENTATION_PASS",
+      "why": "Passes because >0 envelopes have unresolved water overlap. The v1 overlap count (12) was itself WRONG (see build_sites_v2)."
+    },
+    {
+      "test": "M-G4-09",
+      "kind": "COVERAGE",
+      "why": "Counts spawns/homes/Elders and >=3 distinct signatures."
+    },
+    {
+      "test": "M-G4-10",
+      "kind": "PHYSICAL_CHECK",
+      "why": "BFS reachability of nonboss route legs over dry land. Real spatial check."
+    },
+    {
+      "test": "M-G4-11",
+      "kind": "NEGATIVE_FIXTURE",
+      "why": "Missing body width returns UNKNOWN."
+    },
+    {
+      "test": "M-G4-12",
+      "kind": "NEGATIVE_FIXTURE",
+      "why": "Water-overlap envelope reports unresolved."
+    },
+    {
+      "test": "M-G5-03",
+      "kind": "COVERAGE",
+      "why": "Window masks exist and chunk continuity flag is 0; five masks are NOT a complete EconomyMap."
+    }
+  ],
+  "verdict": "v1 M-G3/M-G4 are predominantly COVERAGE / DOCUMENTATION passes; physical completion was NOT proven. v2 adds physical checks and keeps documentation PASS separate from VERIFIED_GEOMETRY."
+}

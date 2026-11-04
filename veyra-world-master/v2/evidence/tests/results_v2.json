@@ -1,0 +1,1364 @@
+{
+  "schema": "soh.wmp.v2.test_results.v1",
+  "authority": "MAP_DESIGNS_THE_PHYSICAL_WORLD__GAMEPLAY_POPULATES_AND_SIMULATES_IT",
+  "status": "WMP_V2_TESTS_PASS",
+  "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+  "sourceSha": {
+    "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+    "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+    "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+    "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+  },
+  "counts": {
+    "total": 47,
+    "pass": 47,
+    "fail": 0,
+    "physical": 29,
+    "negativeFixtures": 11,
+    "coverageOrDocumentation": 7
+  },
+  "gates": {
+    "PV": {
+      "total": 5,
+      "pass": 5,
+      "fail": 0
+    },
+    "V": {
+      "total": 11,
+      "pass": 11,
+      "fail": 0
+    },
+    "T": {
+      "total": 9,
+      "pass": 9,
+      "fail": 0
+    },
+    "B": {
+      "total": 5,
+      "pass": 5,
+      "fail": 0
+    },
+    "R": {
+      "total": 3,
+      "pass": 3,
+      "fail": 0
+    },
+    "E": {
+      "total": 4,
+      "pass": 4,
+      "fail": 0
+    },
+    "H": {
+      "total": 9,
+      "pass": 9,
+      "fail": 0
+    },
+    "TV": {
+      "total": 1,
+      "pass": 1,
+      "fail": 0
+    }
+  },
+  "results": [
+    {
+      "id": "PV-01",
+      "kind": "INTEGRITY",
+      "name": "v1 manifest SHA and all v1 compiler bytes are unchanged",
+      "pass": true,
+      "detail": "v1 components=44",
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "PV-02",
+      "kind": "INTEGRITY",
+      "name": "v2 manifest pins v1 parent and every v2 component SHA",
+      "pass": true,
+      "detail": "v2 layers=8 rasters=11",
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "PV-03",
+      "kind": "INTEGRITY",
+      "name": "v2 build is deterministic (no wallclock, reproducible revisionDigest)",
+      "pass": true,
+      "detail": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d",
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "PV-04",
+      "kind": "COVERAGE",
+      "name": "M-G3/M-G4 audit separates DOCUMENTATION_PASS from physical checks",
+      "pass": true,
+      "detail": {
+        "documentation": 5,
+        "physical": 7
+      },
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "PV-05",
+      "kind": "INTEGRITY",
+      "name": "v1 regression suite is still 75/75 reproducible (documented, not re-executed here)",
+      "pass": true,
+      "detail": "v1 ./reproduce.sh 75/75; v2 reproduce_v2.sh re-runs it",
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "V-ARCHIVE",
+      "kind": "PHYSICAL",
+      "name": "portal.po_archive.vertical: corrected shaft is collision-free and bidirectionally traversable",
+      "pass": true,
+      "detail": {
+        "status": "VERIFIED_GEOMETRY",
+        "halfSizeAu": 2.3698,
+        "displacementAu": 10.9146,
+        "canonicalAtAu": [
+          1022.5,
+          229
+        ]
+      },
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "V-MERIDIAN",
+      "kind": "PHYSICAL",
+      "name": "portal.po_meridian.vertical: corrected shaft is collision-free and bidirectionally traversable",
+      "pass": true,
+      "detail": {
+        "status": "PROPOSED_GEOMETRY__NARROW_SHAFT_BELOW_2AU",
+        "halfSizeAu": 0.9731,
+        "displacementAu": 5.9072,
+        "canonicalAtAu": [
+          1123.6,
+          692.4
+        ]
+      },
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "V-OLDPUMP",
+      "kind": "PHYSICAL",
+      "name": "portal.po_oldpump.vertical: corrected shaft is collision-free and bidirectionally traversable",
+      "pass": true,
+      "detail": {
+        "status": "VERIFIED_GEOMETRY",
+        "halfSizeAu": 1.191,
+        "displacementAu": 7.2796,
+        "canonicalAtAu": [
+          854.5,
+          988
+        ]
+      },
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "V-IRONVEIN",
+      "kind": "PHYSICAL",
+      "name": "portal.po_ironvein.vertical: corrected shaft is collision-free and bidirectionally traversable",
+      "pass": true,
+      "detail": {
+        "status": "VERIFIED_GEOMETRY",
+        "halfSizeAu": 2.0266,
+        "displacementAu": 8.5351,
+        "canonicalAtAu": [
+          1208.9,
+          657.6
+        ]
+      },
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "V-TOMBS",
+      "kind": "PHYSICAL",
+      "name": "portal.po_tombs.vertical: corrected shaft is collision-free and bidirectionally traversable",
+      "pass": true,
+      "detail": {
+        "status": "VERIFIED_GEOMETRY",
+        "halfSizeAu": 1.6894,
+        "displacementAu": 7.6619,
+        "canonicalAtAu": [
+          523.3,
+          1088.2
+        ]
+      },
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "V-SULFUR",
+      "kind": "PHYSICAL",
+      "name": "portal.po_sulfur.vertical: corrected shaft is collision-free and bidirectionally traversable",
+      "pass": true,
+      "detail": {
+        "status": "VERIFIED_GEOMETRY",
+        "halfSizeAu": 1.9574,
+        "displacementAu": 9.2547,
+        "canonicalAtAu": [
+          1771.9,
+          884.6
+        ]
+      },
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "V-GEO",
+      "kind": "PHYSICAL",
+      "name": "portal.po_geo.vertical: corrected shaft is collision-free and bidirectionally traversable",
+      "pass": true,
+      "detail": {
+        "status": "VERIFIED_GEOMETRY",
+        "halfSizeAu": 2.1076,
+        "displacementAu": 6.8941,
+        "canonicalAtAu": [
+          1739.3,
+          918.2
+        ]
+      },
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "V-IRONMINE",
+      "kind": "PHYSICAL",
+      "name": "portal.po_ironmine.vertical: corrected shaft is collision-free and bidirectionally traversable",
+      "pass": true,
+      "detail": {
+        "status": "VERIFIED_GEOMETRY",
+        "halfSizeAu": 1.9531,
+        "displacementAu": 8.8696,
+        "canonicalAtAu": [
+          1189.9,
+          1292.6
+        ]
+      },
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "V-NEG-01",
+      "kind": "NEGATIVE_FIXTURE",
+      "name": "Canonical portal shaft is REJECTED (outside ground room) for all 8 exact IDs",
+      "pass": true,
+      "detail": {
+        "rejected": 8,
+        "failed": []
+      },
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "V-NEG-02",
+      "kind": "NEGATIVE_FIXTURE",
+      "name": "Shaft outside both room polygons is REJECTED",
+      "pass": true,
+      "detail": [
+        1211.9131,
+        431.6544
+      ],
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "V-NEG-03",
+      "kind": "NEGATIVE_FIXTURE",
+      "name": "po_meridian narrow shaft is NOT promoted to VERIFIED",
+      "pass": true,
+      "detail": "PROPOSED_GEOMETRY__NARROW_SHAFT_BELOW_2AU",
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "T-01",
+      "kind": "PHYSICAL",
+      "name": "12 bridges have measured deck polygons derived from wet chord + dry bearing cells",
+      "pass": true,
+      "detail": [
+        [
+          "br_0",
+          40,
+          8
+        ],
+        [
+          "br_1",
+          24,
+          8
+        ],
+        [
+          "br_2",
+          24,
+          8
+        ],
+        [
+          "br_3",
+          40,
+          8
+        ],
+        [
+          "br_4",
+          24,
+          8
+        ],
+        [
+          "br_5",
+          40,
+          8
+        ],
+        [
+          "br_6",
+          40,
+          8
+        ],
+        [
+          "br_7",
+          24,
+          8
+        ],
+        [
+          "br_8",
+          24,
+          8
+        ],
+        [
+          "br_9",
+          40,
+          8
+        ],
+        [
+          "br_a",
+          40,
+          8
+        ],
+        [
+          "br_b",
+          184,
+          8
+        ]
+      ],
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "T-02",
+      "kind": "PHYSICAL",
+      "name": "Bridge connector role verified WITH deck vs WITHOUT deck (5 exact IDs)",
+      "pass": true,
+      "detail": [
+        "br_0",
+        "br_1",
+        "br_2",
+        "br_6",
+        "br_8"
+      ],
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "T-03",
+      "kind": "PHYSICAL",
+      "name": "Remaining blocked bridges are reported with exact IDs, not silently dropped",
+      "pass": true,
+      "detail": [
+        [
+          "br_5",
+          40
+        ],
+        [
+          "br_b",
+          184
+        ]
+      ],
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "T-04",
+      "kind": "PHYSICAL",
+      "name": "3 FALSE_DISCONNECT roads reclassified with measured coincident endpoints",
+      "pass": true,
+      "detail": [
+        "rd_22",
+        "rd_25",
+        "rd_28"
+      ],
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "T-05",
+      "kind": "PHYSICAL",
+      "name": "4 real road splits have measured 4-connected DRY-LAND connectors (no water cells)",
+      "pass": true,
+      "detail": [
+        [
+          "rd_w",
+          16
+        ],
+        [
+          "rd_1n",
+          16
+        ],
+        [
+          "rd_1p",
+          16
+        ],
+        [
+          "rd_2a",
+          80
+        ]
+      ],
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "T-06",
+      "kind": "PHYSICAL",
+      "name": "11 crossing contradictions have measured geometry, all cartPassability UNRESOLVED",
+      "pass": true,
+      "detail": [
+        [
+          "CC-BR4-01",
+          48,
+          "MEASURED_DECK_FOR_AUTHORED_FOOT_BRIDGE"
+        ],
+        [
+          "CC-rd_v-rv_moss",
+          96,
+          "MEASURED_DECK_FOR_AUTHORED_FOOT_BRIDGE"
+        ],
+        [
+          "CC-rd_x-rv_ash",
+          24,
+          "MEASURED_FORD_CANDIDATE"
+        ],
+        [
+          "CC-rd_1f-rv_amber_up",
+          40,
+          "MEASURED_FORD_CANDIDATE"
+        ],
+        [
+          "CC-rd_1k-rv_east",
+          56,
+          "MEASURED_DECK_FOR_AUTHORED_FOOT_BRIDGE"
+        ],
+        [
+          "CC-rd_1l-rv_amber_up",
+          24,
+          "MEASURED_FORD_CANDIDATE"
+        ],
+        [
+          "CC-rd_1y-rv_grey_up",
+          32,
+          "MEASURED_DECK_FOR_AUTHORED_FOOT_BRIDGE"
+        ],
+        [
+          "CC-rd_20-rv_silver",
+          8,
+          "MEASURED_DECK_FOR_AUTHORED_FOOT_BRIDGE"
+        ],
+        [
+          "CC-rd_28-rv_d3",
+          48,
+          "MEASURED_DECK_FOR_AUTHORED_FOOT_BRIDGE"
+        ],
+        [
+          "CC-rd_29-rv_grey_up",
+          16,
+          "MEASURED_DECK_FOR_AUTHORED_FOOT_BRIDGE"
+        ],
+        [
+          "CC-rd_2a-rv_argus",
+          112,
+          "MEASURED_FORD_CANDIDATE"
+        ]
+      ],
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "T-07",
+      "kind": "PHYSICAL",
+      "name": "Outlet gap has exact river ID rv_grey_low and measured channel to nearest SEA cell",
+      "pass": true,
+      "detail": {
+        "gapAu": 42.0476,
+        "seaCell": 28123
+      },
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "T-NEG-01",
+      "kind": "NEGATIVE_FIXTURE",
+      "name": "No cartPassable=true / approved swept clearance in any v2 transport layer",
+      "pass": true,
+      "detail": "all 12 bridges deckStatus PROPOSED, bodySweep verdict UNKNOWN under 3 assumption profiles",
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "T-NEG-02",
+      "kind": "NEGATIVE_FIXTURE",
+      "name": "No bridge/road/river was added to the canonical authored collections",
+      "pass": true,
+      "detail": "12/92/17",
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "B-01",
+      "kind": "PHYSICAL",
+      "name": "All 23 envelopes reconcile EXACTLY with LR02 under identical criterion",
+      "pass": true,
+      "detail": "23/23 exact",
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "B-02",
+      "kind": "PHYSICAL",
+      "name": "LR02 9 overlaps vs LR03 v1 12: 3 exact false-positive IDs identified",
+      "pass": true,
+      "detail": {
+        "lr02": 9,
+        "v1": 12,
+        "recomputed": 9,
+        "falsePositives": [
+          "site.bz_cinder",
+          "site.bz_dune",
+          "site.bz_silver"
+        ]
+      },
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "B-03",
+      "kind": "PHYSICAL",
+      "name": "Every dry subset is a single 4-connected component with >=8 cells",
+      "pass": true,
+      "detail": [
+        [
+          "site.bz_greywater",
+          104
+        ],
+        [
+          "site.bz_gulfwest",
+          104
+        ],
+        [
+          "site.bz_westmouth",
+          60
+        ],
+        [
+          "site.bz_hook",
+          72
+        ],
+        [
+          "site.bz_silver",
+          64
+        ],
+        [
+          "site.bz_eastflats",
+          18
+        ],
+        [
+          "site.bz_elder_clear",
+          56
+        ],
+        [
+          "site.bz_westwood",
+          84
+        ],
+        [
+          "site.bz_typhon_t",
+          45
+        ],
+        [
+          "site.bz_oasis",
+          44
+        ],
+        [
+          "site.bz_greyback",
+          60
+        ],
+        [
+          "site.bz_forest_n",
+          24
+        ],
+        [
+          "site.bz_delta",
+          45
+        ],
+        [
+          "site.bz_moss",
+          113
+        ],
+        [
+          "site.bz_verdant",
+          58
+        ],
+        [
+          "site.bz_ridge",
+          60
+        ],
+        [
+          "site.bz_kestrel",
+          28
+        ],
+        [
+          "site.bz_argus",
+          52
+        ],
+        [
+          "site.bz_dune",
+          25
+        ],
+        [
+          "site.bz_salt",
+          28
+        ],
+        [
+          "site.bz_slag",
+          29
+        ],
+        [
+          "site.bz_cinder",
+          25
+        ],
+        [
+          "site.bz_ironholm",
+          44
+        ]
+      ],
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "B-04",
+      "kind": "NEGATIVE_FIXTURE",
+      "name": "No authored water cell appears in any dry subset",
+      "pass": true,
+      "detail": "wetCellsInDrySubsets=0",
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "B-05",
+      "kind": "PHYSICAL",
+      "name": "3 home candidates are dry, independently selectable and road-reachable",
+      "pass": true,
+      "detail": [
+        [
+          "site.bz_greywater",
+          [
+            836,
+            628
+          ]
+        ],
+        [
+          "site.bz_gulfwest",
+          [
+            908,
+            892
+          ]
+        ],
+        [
+          "site.bz_westmouth",
+          [
+            396,
+            628
+          ]
+        ]
+      ],
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "R-01",
+      "kind": "PHYSICAL",
+      "name": "All 153 roof polygons assessed; 99 defective roofs have a corrected source-room inset",
+      "pass": true,
+      "detail": {
+        "verifiedMeaningful": 54,
+        "correctedInsets": 99
+      },
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "R-02",
+      "kind": "NEGATIVE_FIXTURE",
+      "name": "Original v1 roof polygon with vertices outside parent room is REJECTED",
+      "pass": true,
+      "detail": "rejected=99",
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "R-03",
+      "kind": "COVERAGE",
+      "name": "No roof is labelled completed / runtime canopy / creator-approved sprite",
+      "pass": true,
+      "detail": [
+        "NO runtime canopy sprite",
+        "NO creator visual approval",
+        "NO claim that a roof is a completed building"
+      ],
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E-01",
+      "kind": "PHYSICAL",
+      "name": "11 normalized u8 rasters are length 43750 and reproducible from declared formula",
+      "pass": true,
+      "detail": "sampled=111 cells",
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E-02",
+      "kind": "PHYSICAL",
+      "name": "12 climate regions have reproducible dry-land spatial evidence summing to all land cells",
+      "pass": true,
+      "detail": {
+        "sum": 14392,
+        "land": 14392
+      },
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E-03",
+      "kind": "NEGATIVE_FIXTURE",
+      "name": "No official numeric temperature/weather/damage/crop/season rate is present",
+      "pass": true,
+      "detail": [
+        "ENV-U01",
+        "ENV-U02",
+        "ENV-U03",
+        "ENV-U04",
+        "ENV-U05"
+      ],
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E-04",
+      "kind": "PHYSICAL",
+      "name": "moisture/temperature normalized potentials are within [0,1] for EconomyMap",
+      "pass": true,
+      "detail": "all 43750 cells in [0,1]",
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "H-01",
+      "kind": "PHYSICAL",
+      "name": "Map-side structural self-check has 0 errors and Gameplay checks are NOT executed",
+      "pass": true,
+      "detail": {
+        "errors": 0,
+        "checksNotExecuted": 3
+      },
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "H-02",
+      "kind": "PHYSICAL",
+      "name": "All 13 EconomyMap arrays are length 43750 and binary masks strictly 0/1",
+      "pass": true,
+      "detail": {
+        "fields": 20,
+        "cells": 43750
+      },
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "H-03",
+      "kind": "PHYSICAL",
+      "name": "14 unsupported Gameplay-owned fields are explicitly UNRESOLVED (no fake fallback)",
+      "pass": true,
+      "detail": [
+        "seed",
+        "tileSize",
+        "elevation",
+        "slope",
+        "moisture",
+        "temperature",
+        "cargoPassable",
+        "industrial",
+        "roads[].widthTiles",
+        "roads[].cargoPassable",
+        "pois[].powerNodes/hazardCells/exteriorLootSites/interiorLootSites",
+        "pois[].doors dynamic state",
+        "nonbossCashSites cash item / vendor stock+price / evacuation timer+receipt",
+        "stock/custody/escrow/save/offline/AI/visual approval"
+      ],
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "H-04",
+      "kind": "PHYSICAL",
+      "name": "92 roads: cargoPassable=false, 4-connected cells, road mask covers all cells",
+      "pass": true,
+      "detail": "roads=92 bridgeCells=18",
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "H-05",
+      "kind": "PHYSICAL",
+      "name": "81 POIs: entrances/rooms subset of footprint, valid retreat paths",
+      "pass": true,
+      "detail": "81 POIs",
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "H-06",
+      "kind": "PHYSICAL",
+      "name": "3 windows × 18 masks: zero duplicate global tiles, full coverage, stable chunk IDs",
+      "pass": true,
+      "detail": {
+        "windows": 3,
+        "masks": 18,
+        "duplicates": 0,
+        "coverage": 43750,
+        "chunkStatus": "VERIFIED__STABLE_IDS_AND_CONSISTENT_CHUNK_BOUNDARIES"
+      },
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "H-07",
+      "kind": "NEGATIVE_FIXTURE",
+      "name": "v1 five-mask projectWindow is NOT accepted as a complete EconomyMap",
+      "pass": true,
+      "detail": {
+        "v1Masks": 5,
+        "v2Masks": 18
+      },
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "H-NEG-01",
+      "kind": "NEGATIVE_FIXTURE",
+      "name": "Corrupted economy (moisture=2) is REJECTED by structural self-check",
+      "pass": true,
+      "detail": "invalid terrain or climate at cell 10",
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "H-NEG-02",
+      "kind": "NEGATIVE_FIXTURE",
+      "name": "Duplicate start id is REJECTED by structural self-check",
+      "pass": true,
+      "detail": "invalid or duplicate start sp_west",
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "TV-01",
+      "kind": "COVERAGE",
+      "name": "8 v2 technical views exist, are valid PNGs, and are labelled NOT Web proof",
+      "pass": true,
+      "detail": [
+        "v2/evidence/views/v2_vertical_before_after.png",
+        "v2/evidence/views/v2_bridge_decks_full.png",
+        "v2/evidence/views/v2_build_envelopes.png",
+        "v2/evidence/views/v2_env_moisture.png",
+        "v2/evidence/views/v2_env_temperature.png",
+        "v2/evidence/views/v2_env_soil.png",
+        "v2/evidence/views/v2_windows_adjacent.png",
+        "v2/evidence/views/v2_roof_corrections.png"
+      ],
+      "error": null,
+      "command": "node v2/src/run_v2.mjs (via ./reproduce_v2.sh)",
+      "sourceSha": {
+        "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+        "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+        "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+      },
+      "verdict": "PASS"
+    }
+  ],
+  "negativeFixtures": [
+    {
+      "id": "NF-V-po_archive",
+      "subject": "shaft centred on canonical portal.po_archive.vertical",
+      "expected": "REJECTED_OUTSIDE_GROUND_ROOM",
+      "actual": "OUTSIDE_GROUND_ROOM",
+      "pass": true
+    },
+    {
+      "id": "NF-V-po_meridian",
+      "subject": "shaft centred on canonical portal.po_meridian.vertical",
+      "expected": "REJECTED_OUTSIDE_GROUND_ROOM",
+      "actual": "OUTSIDE_GROUND_ROOM",
+      "pass": true
+    },
+    {
+      "id": "NF-V-po_oldpump",
+      "subject": "shaft centred on canonical portal.po_oldpump.vertical",
+      "expected": "REJECTED_OUTSIDE_GROUND_ROOM",
+      "actual": "OUTSIDE_GROUND_ROOM",
+      "pass": true
+    },
+    {
+      "id": "NF-V-po_ironvein",
+      "subject": "shaft centred on canonical portal.po_ironvein.vertical",
+      "expected": "REJECTED_OUTSIDE_GROUND_ROOM",
+      "actual": "OUTSIDE_GROUND_ROOM",
+      "pass": true
+    },
+    {
+      "id": "NF-V-po_tombs",
+      "subject": "shaft centred on canonical portal.po_tombs.vertical",
+      "expected": "REJECTED_OUTSIDE_GROUND_ROOM",
+      "actual": "OUTSIDE_GROUND_ROOM",
+      "pass": true
+    },
+    {
+      "id": "NF-V-po_sulfur",
+      "subject": "shaft centred on canonical portal.po_sulfur.vertical",
+      "expected": "REJECTED_OUTSIDE_GROUND_ROOM",
+      "actual": "OUTSIDE_GROUND_ROOM",
+      "pass": true
+    },
+    {
+      "id": "NF-V-po_geo",
+      "subject": "shaft centred on canonical portal.po_geo.vertical",
+      "expected": "REJECTED_OUTSIDE_GROUND_ROOM",
+      "actual": "OUTSIDE_GROUND_ROOM",
+      "pass": true
+    },
+    {
+      "id": "NF-V-po_ironmine",
+      "subject": "shaft centred on canonical portal.po_ironmine.vertical",
+      "expected": "REJECTED_OUTSIDE_GROUND_ROOM",
+      "actual": "OUTSIDE_GROUND_ROOM",
+      "pass": true
+    },
+    {
+      "id": "NF-V-OUTSIDE",
+      "subject": "shaft 200au outside both polygons",
+      "expected": "REJECTED",
+      "actual": "REJECTED",
+      "pass": true
+    },
+    {
+      "id": "NF-V-NARROW",
+      "subject": "sub-2au po_meridian shaft as VERIFIED",
+      "expected": "REJECTED_AS_VERIFIED",
+      "actual": "PROPOSED_GEOMETRY__NARROW_SHAFT_BELOW_2AU",
+      "pass": true
+    },
+    {
+      "id": "NF-T-CART",
+      "subject": "invented cart-passability approval",
+      "expected": "ABSENT",
+      "actual": "ABSENT",
+      "pass": true
+    },
+    {
+      "id": "NF-T-CANON",
+      "subject": "canonical bridge/road/river count changed",
+      "expected": "UNCHANGED",
+      "actual": "12/92/17",
+      "pass": true
+    },
+    {
+      "id": "NF-B-WET",
+      "subject": "water/sea cell inside a dry build subset",
+      "expected": "ZERO",
+      "actual": 0,
+      "pass": true
+    },
+    {
+      "id": "NF-R-OUTSIDE",
+      "subject": "v1 roof polygon outside parent room",
+      "expected": "REJECTED_NOT_AUTO_COMPLETED",
+      "actual": "99 rejected",
+      "pass": true
+    },
+    {
+      "id": "NF-E-RATES",
+      "subject": "invented Gameplay numeric climate rate",
+      "expected": "ABSENT",
+      "actual": "ABSENT",
+      "pass": true
+    },
+    {
+      "id": "NF-H-5MASK",
+      "subject": "v1 5-mask window as complete EconomyMap",
+      "expected": "REJECTED",
+      "actual": "REJECTED",
+      "pass": true
+    },
+    {
+      "id": "NF-H-CORRUPT",
+      "subject": "moisture=2 outside [0,1]",
+      "expected": "REJECTED",
+      "actual": "invalid terrain or climate at cell 10",
+      "pass": true
+    },
+    {
+      "id": "NF-H-DUPSTART",
+      "subject": "duplicate authored start id",
+      "expected": "REJECTED",
+      "actual": "REJECTED",
+      "pass": true
+    }
+  ],
+  "v1Regression": {
+    "command": "./reproduce.sh",
+    "expected": "WMP_TESTS 75/75",
+    "note": "v1 suite remains byte-identical and is re-run by reproduce_v2.sh; NOT counted as v2 physical completion."
+  },
+  "noClaims": [
+    "NO Gameplay ingestion",
+    "NO validateGeographicHandoff() PASS",
+    "NO Web runtime change",
+    "NO visual acceptance",
+    "NO MERGE_READY"
+  ]
+}

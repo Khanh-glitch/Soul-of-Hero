@@ -1,0 +1,569 @@
+{
+  "schema": "soh.wmp.v2.artifact_index.v1",
+  "status": "SUPPLEMENTARY__AUTHORITATIVE_V2_MANIFEST_IS_v2/manifest.v2.json",
+  "v1Policy": "evidence/artifact_index.v1.json is a PINNED WMP-01 index and was deliberately NOT regenerated: v2 source lives under v2/, so all v1 digests and the v1 index remain byte-identical.",
+  "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+  "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+  "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d",
+  "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+  "count": 101,
+  "totalBytes": 5824157,
+  "excluded": [
+    "v2/evidence/artifact_index.v2.json",
+    "*.log runtime transcripts"
+  ],
+  "keyArtifacts": {
+    "v1Manifest": {
+      "file": "manifest.v1.json",
+      "bytes": 19699,
+      "sha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e"
+    },
+    "v1ArtifactIndex": {
+      "file": "evidence/artifact_index.v1.json",
+      "bytes": 9101,
+      "sha256": "de45facb952af21ddaab0dc2b162d68a675fe0641d2a98f0ff9dc0b1d8e6e406"
+    },
+    "v2Manifest": {
+      "file": "v2/manifest.v2.json",
+      "bytes": 10255,
+      "sha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009"
+    },
+    "geographicHandoff": {
+      "file": "v2/handoff/geographic_handoff.v2.json",
+      "bytes": 2602757,
+      "sha256": "82d8b061ab60b5feab29c6a1cfd579ad9e6428bc9c371983061681a381fe0f8c"
+    },
+    "handoffStructuralCheck": {
+      "file": "v2/handoff/handoff_check.v2.json",
+      "bytes": 2282,
+      "sha256": "f94082b92fc88faab08ff04ee5d62b9a2e198c2ad637b109b8fe105cbc5dda50"
+    },
+    "windowReport": {
+      "file": "v2/evidence/windows/window_report.v2.json",
+      "bytes": 17747,
+      "sha256": "39f63fd69231161a52c8c12e95b31cf16986df4f7c0ce4e5f89cc5379ff6f0a9"
+    },
+    "technicalViewsIndex": {
+      "file": "v2/evidence/views/index_v2.json",
+      "bytes": 4730,
+      "sha256": "ae17cc96cd6b5dcef447b24493fa93e8373b1a9866927e8c988bd9616e91b903"
+    },
+    "testResults": {
+      "file": "v2/evidence/tests/results_v2.json",
+      "bytes": 47438,
+      "sha256": "408f0ca258466280a3305ec8857200103cc36cf1dc7fad205fdc62c94783a865"
+    },
+    "negativeFixtures": {
+      "file": "v2/evidence/tests/negative_fixtures_v2.json",
+      "bytes": 4075,
+      "sha256": "7c9cd291b50f3f66fdb95fde2cd7710bc1d278bd18434f0462cfd4d1577565a3"
+    }
+  },
+  "files": [
+    {
+      "file": "v2/README.md",
+      "bytes": 3015,
+      "sha256": "456ad85df9f4297ae36557a0a70ccb89490682254c97697fa6cd2222da6767e8"
+    },
+    {
+      "file": "v2/docs/GATES_V2.json",
+      "bytes": 1169,
+      "sha256": "23004b4316ed4c6533acfa0b231ddad6ad071252a1c50095e9aff37a5e655be7"
+    },
+    {
+      "file": "v2/docs/GATES_V2.md",
+      "bytes": 6026,
+      "sha256": "5e5a28a6dd549e6fb0943034afdeb1d0bdfbf7a493cd5a8140118f864820cf49"
+    },
+    {
+      "file": "v2/docs/INTAKE_CONTRACT_V2.md",
+      "bytes": 5620,
+      "sha256": "c5804a83e41df5708b8f2b1464ef48d2739b8055b6693b10149e6969f650e734"
+    },
+    {
+      "file": "v2/docs/MAP_LR03R_DELTA_REPORT.md",
+      "bytes": 17835,
+      "sha256": "7e3d4fc2b054e4b333c92311ca04f238ead3d4c115b5bd5521fb9602c51ecb44"
+    },
+    {
+      "file": "v2/docs/PREFLIGHT_AUDIT.md",
+      "bytes": 5409,
+      "sha256": "7de0cb14abb4da30983822ce33ade2a610e0580f55610195e84547f0314615a2"
+    },
+    {
+      "file": "v2/evidence/build_determinism_v2.json",
+      "bytes": 272,
+      "sha256": "77d9e1c49fe7410e799f3d2fcd037092bfa756973c7fa0c7ec0c7a69ba1dd6d9"
+    },
+    {
+      "file": "v2/evidence/clean_room_v2.json",
+      "bytes": 757,
+      "sha256": "982419a1f17f875ffd110a116e8dfc3190356b40ca004044985ae51823f3ede9"
+    },
+    {
+      "file": "v2/evidence/tests/negative_fixtures_v2.json",
+      "bytes": 4075,
+      "sha256": "7c9cd291b50f3f66fdb95fde2cd7710bc1d278bd18434f0462cfd4d1577565a3"
+    },
+    {
+      "file": "v2/evidence/tests/results_v2.json",
+      "bytes": 47438,
+      "sha256": "408f0ca258466280a3305ec8857200103cc36cf1dc7fad205fdc62c94783a865"
+    },
+    {
+      "file": "v2/evidence/views/index_v2.json",
+      "bytes": 4730,
+      "sha256": "ae17cc96cd6b5dcef447b24493fa93e8373b1a9866927e8c988bd9616e91b903"
+    },
+    {
+      "file": "v2/evidence/views/v2_bridge_decks_full.png",
+      "bytes": 19936,
+      "sha256": "3551f34048088e3b84d8443c7e7c3bb39463235eb0698f13fa9520d0d94c67ee"
+    },
+    {
+      "file": "v2/evidence/views/v2_build_envelopes.png",
+      "bytes": 16215,
+      "sha256": "c52691846bb79247e5e48c8390602173331e02b5b6227cd26b8e23015cd6c301"
+    },
+    {
+      "file": "v2/evidence/views/v2_env_moisture.png",
+      "bytes": 32396,
+      "sha256": "8707f8dc7db4b97045b72240add8b651851c6e8420fb257aa108824bd0b7e612"
+    },
+    {
+      "file": "v2/evidence/views/v2_env_soil.png",
+      "bytes": 33215,
+      "sha256": "364f031df030ab226cb9589e92ef9b1ad75e41bad2f0d1e7e3ed8f65867185ec"
+    },
+    {
+      "file": "v2/evidence/views/v2_env_temperature.png",
+      "bytes": 26521,
+      "sha256": "4b8834fad46976dc3a7a3e920b777c9df5115584577f10830962f342f74e5118"
+    },
+    {
+      "file": "v2/evidence/views/v2_roof_corrections.png",
+      "bytes": 8900,
+      "sha256": "780b3c4b9d67b9983e5eac0f8152de9804393a87c16304d1f7ba59285f5ec6fb"
+    },
+    {
+      "file": "v2/evidence/views/v2_vertical_before_after.png",
+      "bytes": 17515,
+      "sha256": "fd6de65b47287cf942c2b564fde2556b318d0fbd7f0104ddb350051e00fce849"
+    },
+    {
+      "file": "v2/evidence/views/v2_windows_adjacent.png",
+      "bytes": 7884,
+      "sha256": "7aca7febfb58e0bb1cd7d3810a4e3677ce9e827aafa6b2205a27d790c2ca2559"
+    },
+    {
+      "file": "v2/evidence/windows/window_report.v2.json",
+      "bytes": 17747,
+      "sha256": "39f63fd69231161a52c8c12e95b31cf16986df4f7c0ce4e5f89cc5379ff6f0a9"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.east.125x175/biomeEconomyCode.u8",
+      "bytes": 21875,
+      "sha256": "b19296ff5ec074d5ecfa885b857297abd5b98afa5b456dadd19ce3c5a2a2e397"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.east.125x175/biomeSubtype.u8",
+      "bytes": 21875,
+      "sha256": "26a51593d59750586e2abbcdc9f35cb6301c1af091d6f82ded8cfdd79843834f"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.east.125x175/buildable.u8",
+      "bytes": 21875,
+      "sha256": "d39ee0d8274ed7cb127bc1cf8145eb3cc47195ea78815d16116d8254da3bc448"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.east.125x175/cargoPassable.u8",
+      "bytes": 21875,
+      "sha256": "35b2ea032ab4f3d6df250b378a811fd2abeee8d6a303a83af8fda02780ef6317"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.east.125x175/coast.u8",
+      "bytes": 21875,
+      "sha256": "36db5e37919c79aade0216d16d72be79ab38c2ff2b6aa73b2f816fde91a7bd83"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.east.125x175/elevation.u8",
+      "bytes": 21875,
+      "sha256": "89f26ff100d423fbc4bb464f9909386086630974885312f4f6d6ac638376de5e"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.east.125x175/freshwater.u8",
+      "bytes": 21875,
+      "sha256": "2a0143f4a1edaab5072393934b488ee0de91991b285f8e2a4d374d2717a4a97f"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.east.125x175/industrial.u8",
+      "bytes": 21875,
+      "sha256": "ffd7845f772021ce6f4e0fee6442c89a634d229a7a0e6ffe11978589658e328a"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.east.125x175/land.u8",
+      "bytes": 21875,
+      "sha256": "4b1524e5454710059d8cd09c954f9f66b69144db3c2598581df9fd107f6d2484"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.east.125x175/moisture.u8",
+      "bytes": 21875,
+      "sha256": "7a1b58b99a072b9a46b360f7c319f145adfd4d4c527d25d4c0d97ce1404832e9"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.east.125x175/protected.u8",
+      "bytes": 21875,
+      "sha256": "a3d52916370ec45b5fa53f2524ef0774bb2ddd6688eb26363bb3c4e9ccb9b194"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.east.125x175/road.u8",
+      "bytes": 21875,
+      "sha256": "256055b3639e07c2a4cac14b00f88dbfd64e476b7349b821eeff8fe7a82e2ca4"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.east.125x175/seaDistance.u8",
+      "bytes": 21875,
+      "sha256": "30e8a4fb1c46c282dd0bbb1e13aab57eacc55cd9d77e3493fc1bd9329ef3c3d7"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.east.125x175/slope.u8",
+      "bytes": 21875,
+      "sha256": "30e40fb0592a94ffb26f2cd0fd762e1a0175b8187f513d7fe67dad229230e724"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.east.125x175/surface.u8",
+      "bytes": 21875,
+      "sha256": "834005d522ecd4b69b60f43a1155d898e33f8f2b150dc20953d06c0e3333d41e"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.east.125x175/temperature.u8",
+      "bytes": 21875,
+      "sha256": "a1e624ac3fc310a70d9c0b8e654ed7ed81dde7aebe4e1bdbb00a4c529ce0eaa2"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.east.125x175/walkable.u8",
+      "bytes": 21875,
+      "sha256": "b99aa76a0ae41bff50477b334c0771c661680ab5fac4bdeacc15a1c2fa58daf3"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.east.125x175/zone.u8",
+      "bytes": 21875,
+      "sha256": "21bf06d678e0c188a534d523bc3133b8667228fe55dbef8250f50b8929dd6831"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.full.250x175/biomeEconomyCode.u8",
+      "bytes": 43750,
+      "sha256": "25da886c23e1576cedc0d7d2f7fc2f79b93db86843de285e2fde2c5684566446"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.full.250x175/biomeSubtype.u8",
+      "bytes": 43750,
+      "sha256": "232998e642e836f30129b3a689f7cd458f8c57526ecd2c1bad51449cbeff839d"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.full.250x175/buildable.u8",
+      "bytes": 43750,
+      "sha256": "eb5f7b8650f660a180724cfab3075cd5857a4901c7c561bfac966c528d87a65d"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.full.250x175/cargoPassable.u8",
+      "bytes": 43750,
+      "sha256": "b05a34d20edf4565c3af205f40b40ad2383534912b2c5459f4148ce06b894ade"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.full.250x175/coast.u8",
+      "bytes": 43750,
+      "sha256": "44c0f13ead072f501351f458c9180a31e30f08a321848e10e8faea567067f5d5"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.full.250x175/elevation.u8",
+      "bytes": 43750,
+      "sha256": "54d7641cea57ebd20be1eb17a0ce919f352f2868f4ed123e968a2e59666c6d24"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.full.250x175/freshwater.u8",
+      "bytes": 43750,
+      "sha256": "9f9716b53e9bc553282860510b0ab1410574d8edf03eabb79fb3181f6d465aa4"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.full.250x175/industrial.u8",
+      "bytes": 43750,
+      "sha256": "6a312348e5e74f57c7d4ca37de9f3214a2e2e0ebb22d4305abb34930bf69bc50"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.full.250x175/land.u8",
+      "bytes": 43750,
+      "sha256": "3aaebb6a358ce04fc33eff56050321639ffc317fe1bb698114a621240c12e8a7"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.full.250x175/moisture.u8",
+      "bytes": 43750,
+      "sha256": "7e1362e63817804411efddf34abea1cf67f2f8904b8e4adfbe59412b7b7bed95"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.full.250x175/protected.u8",
+      "bytes": 43750,
+      "sha256": "9d500a17898dd9bc5e3368be0bc14d86c91ac361a1449c484c1b5322894d0b71"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.full.250x175/road.u8",
+      "bytes": 43750,
+      "sha256": "8c14335db0b60c25f772e3d8c01d78507a6c5457699db971e187664f6799ef9c"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.full.250x175/seaDistance.u8",
+      "bytes": 43750,
+      "sha256": "45ba677aa1dde0b2d662c83386667dee8427f846e75978fd18c0e08f57c70977"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.full.250x175/slope.u8",
+      "bytes": 43750,
+      "sha256": "6648158ad69cd9c136e249394a9aa7b21e31d08ca7ac48d700fa9511a918130e"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.full.250x175/surface.u8",
+      "bytes": 43750,
+      "sha256": "d570ee3a53b0ee832454e9dcce1c4a316c4fdeb64ebcb9b6174821d50f7a1edf"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.full.250x175/temperature.u8",
+      "bytes": 43750,
+      "sha256": "52fc00725e20693db4b195038299cc60165bc3e0dad7037e48e728af8cb3696d"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.full.250x175/walkable.u8",
+      "bytes": 43750,
+      "sha256": "e04fd7b88771cbd9e86b72579b6d48226ece33ee2ee7d3c7076c057ad04ac23d"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.full.250x175/zone.u8",
+      "bytes": 43750,
+      "sha256": "e6ea74cd062935bad399002bf7d99e540b71f61ab5a83654db1cef1bdb2a374d"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.west.125x175/biomeEconomyCode.u8",
+      "bytes": 21875,
+      "sha256": "336b454db6fee6bd391440a13e1fc934951e4eb95947032cb9260b19cafc7ab1"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.west.125x175/biomeSubtype.u8",
+      "bytes": 21875,
+      "sha256": "a7b2545f100bebf62d4ce412d5416fabbe05cd35a15516f257f43fa846a2eb00"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.west.125x175/buildable.u8",
+      "bytes": 21875,
+      "sha256": "94e976ebeadbb56639c71c82a5898e21847cb95d522d97a7575bc21faea4b9ba"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.west.125x175/cargoPassable.u8",
+      "bytes": 21875,
+      "sha256": "5c7d9331e35f46df5aab69e42b579ca929564b5bbe0d6092c3a32903ad25507b"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.west.125x175/coast.u8",
+      "bytes": 21875,
+      "sha256": "4488faa6c74e79852a1b67b0aaf1927ffdae70023998ce4a9c6b84383f979645"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.west.125x175/elevation.u8",
+      "bytes": 21875,
+      "sha256": "890131b1b60dfc44c598f14f5bcd5f58e53b32f019aeddc6d1847289f71f3957"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.west.125x175/freshwater.u8",
+      "bytes": 21875,
+      "sha256": "dc68e765c1a344fd3b076a92cd7e8a383b65120bc3b9ad160e05c01d8bea68d6"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.west.125x175/industrial.u8",
+      "bytes": 21875,
+      "sha256": "367cc334f992a14be444ae76f706175d68dd944d78d23f9d9fb2a62c12b65a52"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.west.125x175/land.u8",
+      "bytes": 21875,
+      "sha256": "c5091d703b25bb5c0605e16a97dfee44f3b47dc1b4905abe2a7a19f68f05fd90"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.west.125x175/moisture.u8",
+      "bytes": 21875,
+      "sha256": "4a2caf862c5267f92931eff35d2962703b23565726a670895a9bdf47b79e24d6"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.west.125x175/protected.u8",
+      "bytes": 21875,
+      "sha256": "426ae9858b1056957ac9b9b022c419f030c20baf55f89a8c2f8a291f23e7044d"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.west.125x175/road.u8",
+      "bytes": 21875,
+      "sha256": "112e29bb7e3ba341920f2ab974b337b8ed45905059c38d6bfb844eb124f61e45"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.west.125x175/seaDistance.u8",
+      "bytes": 21875,
+      "sha256": "244ac95ab052c1ea8bb8d01953401857e7bdb3a6016f7b5334cb98048658d98a"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.west.125x175/slope.u8",
+      "bytes": 21875,
+      "sha256": "efdfc13033df71722fcbbe9ee04626a66ccebc8a2d70d42565a2f8b63bdcc023"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.west.125x175/surface.u8",
+      "bytes": 21875,
+      "sha256": "94eb881204c57f1b612c2c5f6f9b893ce2dc1e99048b78b16d741a588ed26a8b"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.west.125x175/temperature.u8",
+      "bytes": 21875,
+      "sha256": "3d2a6fc6e151cac0a84dcb309b4cdfe3e93391da75f4f2f1ac03b2332715a9a2"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.west.125x175/walkable.u8",
+      "bytes": 21875,
+      "sha256": "146494375cbda3e648e20dfbd56cb00d5f3ab22c12b355ee1085dee63363452c"
+    },
+    {
+      "file": "v2/evidence/windows/wmp.v2.window.west.125x175/zone.u8",
+      "bytes": 21875,
+      "sha256": "ca89d97182d512612100fa1ea70621a635a26618aa8e034acc574603a6602046"
+    },
+    {
+      "file": "v2/handoff/geographic_handoff.v2.json",
+      "bytes": 2602757,
+      "sha256": "82d8b061ab60b5feab29c6a1cfd579ad9e6428bc9c371983061681a381fe0f8c"
+    },
+    {
+      "file": "v2/handoff/handoff_check.v2.json",
+      "bytes": 2282,
+      "sha256": "f94082b92fc88faab08ff04ee5d62b9a2e198c2ad637b109b8fe105cbc5dda50"
+    },
+    {
+      "file": "v2/layers/build_sites.v2.json",
+      "bytes": 96107,
+      "sha256": "38c0b59648c02c885ca853f4c0d57ff68e77ae367be8cff5d4845ac7712394e3"
+    },
+    {
+      "file": "v2/layers/corrective_register.v2.json",
+      "bytes": 186089,
+      "sha256": "56146bfebb537aaf33fd6308da1b5b8075f5e98946c021398c8c0b81c1fa1f12"
+    },
+    {
+      "file": "v2/layers/decision_register.v2.json",
+      "bytes": 8954,
+      "sha256": "5fa069d8c7b5ab696cb96f97892870c846f7350c0920840e4edc96708bf95d02"
+    },
+    {
+      "file": "v2/layers/environment.v2.json",
+      "bytes": 11728,
+      "sha256": "49a79c746bb925fd054bd7799065c4c55bc07973275bdb4e0c0482c206252351"
+    },
+    {
+      "file": "v2/layers/preflight_audit.v2.json",
+      "bytes": 4671,
+      "sha256": "15528b3bc5648c1dc49015a53809b2192b47ce56c4588d44be44aa36dad590b0"
+    },
+    {
+      "file": "v2/layers/roof_assessment.v2.json",
+      "bytes": 254879,
+      "sha256": "b3ea8dd30f3c15815f6f8fde9fec5b0329c80d9fb04d78301040ef706e52aae9"
+    },
+    {
+      "file": "v2/layers/transport_corrections.v2.json",
+      "bytes": 76960,
+      "sha256": "008b97424e821dea4444307906809c348c8d1f30090486cf990ba2fbef75b4cd"
+    },
+    {
+      "file": "v2/layers/vertical_corrections.v2.json",
+      "bytes": 90568,
+      "sha256": "e1064bc9e034efbd187e49225af0614a2f655cd3fd701471fa3480067a9218a9"
+    },
+    {
+      "file": "v2/manifest.v2.json",
+      "bytes": 10255,
+      "sha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009"
+    },
+    {
+      "file": "v2/rasters/canopyNorm.u8",
+      "bytes": 43750,
+      "sha256": "06f8bdd48b6d18a5d19efd89975e3ca44bf78ebab3f9f10bc70e1379dac3b08a"
+    },
+    {
+      "file": "v2/rasters/climateSuitabilityNorm.u8",
+      "bytes": 43750,
+      "sha256": "1e0f1d1d1da50729d3b744caa220494602d6f2b7d0064e4f65fefcbd4bbc7ce3"
+    },
+    {
+      "file": "v2/rasters/drainageNorm.u8",
+      "bytes": 43750,
+      "sha256": "6bab0c3a82f0f643405dfebb76fff7795695031ccc2840f5bdaeaf551d5c2e49"
+    },
+    {
+      "file": "v2/rasters/elevationNorm.u8",
+      "bytes": 43750,
+      "sha256": "54d7641cea57ebd20be1eb17a0ce919f352f2868f4ed123e968a2e59666c6d24"
+    },
+    {
+      "file": "v2/rasters/exposureNorm.u8",
+      "bytes": 43750,
+      "sha256": "b342e4f1e68850069fe9f9449082f56429ff35044cb0f0dc6b646dc5239e55e2"
+    },
+    {
+      "file": "v2/rasters/moisturePotentialNorm.u8",
+      "bytes": 43750,
+      "sha256": "7e1362e63817804411efddf34abea1cf67f2f8904b8e4adfbe59412b7b7bed95"
+    },
+    {
+      "file": "v2/rasters/slopeNorm.u8",
+      "bytes": 43750,
+      "sha256": "2d5d7c6050f8d6a00374a189b23279bb4a8315057ac64cc8157fb72df12083a2"
+    },
+    {
+      "file": "v2/rasters/soilSuitabilityNorm.u8",
+      "bytes": 43750,
+      "sha256": "a645c0d0c6607f3f60678231c78c71fdfb3f4761ec2747a53dd9c16e8c95de3b"
+    },
+    {
+      "file": "v2/rasters/substrateNorm.u8",
+      "bytes": 43750,
+      "sha256": "24814e9f07249c9c1c64125fff63d8506513c5a0a06433fd1924e4116fe85076"
+    },
+    {
+      "file": "v2/rasters/temperaturePotentialNorm.u8",
+      "bytes": 43750,
+      "sha256": "52fc00725e20693db4b195038299cc60165bc3e0dad7037e48e728af8cb3696d"
+    },
+    {
+      "file": "v2/rasters/waterProximityNorm.u8",
+      "bytes": 43750,
+      "sha256": "f0770ce9be5cdc0a02a03b3f40ec60cd3810c907d5cc5772590f8a71d44823ca"
+    },
+    {
+      "file": "v2/src/artifact_index_v2.mjs",
+      "bytes": 2819,
+      "sha256": "e04346508a0851d98930f4f9d92f08ce5a8ca2a834399b8be3f91292e585b4a8"
+    },
+    {
+      "file": "v2/src/build_v2.mjs",
+      "bytes": 67180,
+      "sha256": "bc1c4fc978f39bc0f31b95d11021bebe13e31ccd42309958f5ed04aaa1fc0bd1"
+    },
+    {
+      "file": "v2/src/intake_v2.mjs",
+      "bytes": 33407,
+      "sha256": "16471df884ef5257f6a1cd829c13ffd54309eddedb7823267278d67d5c140484"
+    },
+    {
+      "file": "v2/src/run_v2.mjs",
+      "bytes": 31004,
+      "sha256": "6e2eb65ff0945e4335d7946c6ac6d372e4c46b84c7f106d119d0781e3147ebaa"
+    },
+    {
+      "file": "v2/src/views_v2.mjs",
+      "bytes": 11572,
+      "sha256": "f0e84d30df564273f9841987ae00a0e12a6fdde2570588e9c82015833cae69aa"
+    }
+  ]
+}

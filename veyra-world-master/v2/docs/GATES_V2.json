@@ -1,0 +1,60 @@
+{
+  "schema": "soh.wmp.v2.gates.v1",
+  "generated": true,
+  "sourceSha": {
+    "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+    "v1RevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+    "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+    "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d"
+  },
+  "counts": {
+    "total": 47,
+    "pass": 47,
+    "fail": 0,
+    "physical": 29,
+    "negativeFixtures": 11,
+    "coverageOrDocumentation": 7
+  },
+  "gates": {
+    "PV": {
+      "total": 5,
+      "pass": 5,
+      "fail": 0
+    },
+    "V": {
+      "total": 11,
+      "pass": 11,
+      "fail": 0
+    },
+    "T": {
+      "total": 9,
+      "pass": 9,
+      "fail": 0
+    },
+    "B": {
+      "total": 5,
+      "pass": 5,
+      "fail": 0
+    },
+    "R": {
+      "total": 3,
+      "pass": 3,
+      "fail": 0
+    },
+    "E": {
+      "total": 4,
+      "pass": 4,
+      "fail": 0
+    },
+    "H": {
+      "total": 9,
+      "pass": 9,
+      "fail": 0
+    },
+    "TV": {
+      "total": 1,
+      "pass": 1,
+      "fail": 0
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "schema": "soh.wmp.v2.clean_room.v1",
+  "status": "WMP_V2_CLEAN_ROOM_OK",
+  "command": "./clean-room_v2.sh",
+  "isolatedRevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d",
+  "sourceRevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d",
+  "isolatedHandoffSha256": "82d8b061ab60b5feab29c6a1cfd579ad9e6428bc9c371983061681a381fe0f8c",
+  "isolatedTestResultsSha256": "408f0ca258466280a3305ec8857200103cc36cf1dc7fad205fdc62c94783a865",
+  "v1Regression": "WMP_TESTS 75/75 in the isolated copy; source v1 bytes untouched",
+  "v2Tests": "WMP_V2_TESTS 47/47",
+  "noExternalCanonicalSource": true,
+  "noLegacyLab": true,
+  "noNetwork": true,
+  "noGameplayRuntimeWrite": true,
+  "equalDigests": true
+}

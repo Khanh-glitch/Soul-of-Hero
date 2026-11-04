@@ -1,0 +1,327 @@
+{
+  "schema": "soh.wmp.world_master_manifest.v2",
+  "version": 2,
+  "revision": 1,
+  "packageId": "veyra-physical-world-master",
+  "status": "CORRECTED_PHYSICAL_WORLD_MASTER_CANDIDATE__NOT_SEALED",
+  "authority": "MAP_DESIGNS_THE_PHYSICAL_WORLD__GAMEPLAY_POPULATES_AND_SIMULATES_IT",
+  "generatedBy": "veyra-world-master/v2/src/build_v2.mjs",
+  "generatedAtUtc": "DETERMINISTIC_BUILD_NO_WALLCLOCK",
+  "parent": {
+    "file": "manifest.v1.json",
+    "sha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+    "revisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+    "pinnedUnchanged": true,
+    "note": "ALL v1 files are byte-identical; v2 only ADDS corrective layers/rasters/evidence."
+  },
+  "sourceIntegrity": {
+    "goldSha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+    "goldCommit": "19d8c6ec820f324a6ac12733165e43b5e2c6eab2",
+    "goldReadCount": 1,
+    "sourceManifestSha256": "c1f0b7a8664656842d97df95a63ee93a258268b6856ac579f27c1908a072cc4d",
+    "lr01BodyDigest": "e3259eb30016f93ab0883c6dc3656f0ec1b9d47a85dc78fd90a56e0185765e63",
+    "lr02V2Digest": "e3ba6d298fe2872cf5a39b2e3e8cc8704f54c5582f15cff49e2aacffdd20b3e7"
+  },
+  "frame": {
+    "authoring": [
+      2000,
+      1400
+    ],
+    "unit": "authoring_unit",
+    "grid": {
+      "gw": 250,
+      "gh": 175,
+      "cellAu": 8
+    },
+    "chunkAu": 200,
+    "chunksX": 10,
+    "chunksY": 7
+  },
+  "corrections": {
+    "vertical": {
+      "v1Blockers": 8,
+      "resolvedVerified": 7,
+      "resolvedProposed": 1,
+      "stillBlocked": 0
+    },
+    "transport": {
+      "bridgesWithMeasuredDecks": 12,
+      "bridgesWithVerifiedConnectorRole": 5,
+      "falseDisconnectsReclassified": 3,
+      "realSplitsWithMeasuredConnectors": 4,
+      "realSplitsBlocked": 0,
+      "crossingsWithMeasuredGeometry": 11,
+      "crossingsStillBlocked": 0,
+      "outletResolvedAsProposedGeometry": true
+    },
+    "buildSites": {
+      "lr02OverlapSites": 9,
+      "lr03V1OverlapSites": 12,
+      "recomputedOverlapSites": 9,
+      "exactReconciliation": 23,
+      "v1FalsePositiveIds": [
+        "site.bz_silver",
+        "site.bz_dune",
+        "site.bz_cinder"
+      ],
+      "usableDrySites": 23
+    },
+    "roofs": {
+      "count": 153,
+      "verifiedMeaningful": 54,
+      "withNamedDefects": 99
+    },
+    "environment": {
+      "normalizedRasters": 11,
+      "regionEvidence": 12
+    }
+  },
+  "components": [
+    {
+      "file": "v2/layers/preflight_audit.v2.json",
+      "bytes": 4671,
+      "sha256": "15528b3bc5648c1dc49015a53809b2192b47ce56c4588d44be44aa36dad590b0",
+      "kind": "layer"
+    },
+    {
+      "file": "v2/layers/vertical_corrections.v2.json",
+      "bytes": 90568,
+      "sha256": "e1064bc9e034efbd187e49225af0614a2f655cd3fd701471fa3480067a9218a9",
+      "kind": "layer"
+    },
+    {
+      "file": "v2/layers/transport_corrections.v2.json",
+      "bytes": 76960,
+      "sha256": "008b97424e821dea4444307906809c348c8d1f30090486cf990ba2fbef75b4cd",
+      "kind": "layer"
+    },
+    {
+      "file": "v2/layers/build_sites.v2.json",
+      "bytes": 96107,
+      "sha256": "38c0b59648c02c885ca853f4c0d57ff68e77ae367be8cff5d4845ac7712394e3",
+      "kind": "layer"
+    },
+    {
+      "file": "v2/layers/roof_assessment.v2.json",
+      "bytes": 254879,
+      "sha256": "b3ea8dd30f3c15815f6f8fde9fec5b0329c80d9fb04d78301040ef706e52aae9",
+      "kind": "layer"
+    },
+    {
+      "file": "v2/rasters/elevationNorm.u8",
+      "bytes": 43750,
+      "sha256": "54d7641cea57ebd20be1eb17a0ce919f352f2868f4ed123e968a2e59666c6d24",
+      "kind": "derived_raster",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": "Normalized raw elevation byte [0..255]; NOT metres",
+      "status": "NORMALIZED_RAW_BYTE"
+    },
+    {
+      "file": "v2/rasters/slopeNorm.u8",
+      "bytes": 43750,
+      "sha256": "2d5d7c6050f8d6a00374a189b23279bb4a8315057ac64cc8157fb72df12083a2",
+      "kind": "derived_raster",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": "Normalized raw slope byte (slopeRaw/64 clipped); NOT degrees",
+      "status": "NORMALIZED_RAW_BYTE"
+    },
+    {
+      "file": "v2/rasters/waterProximityNorm.u8",
+      "bytes": 43750,
+      "sha256": "f0770ce9be5cdc0a02a03b3f40ec60cd3810c907d5cc5772590f8a71d44823ca",
+      "kind": "derived_raster",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": "Inverse distance to authored freshwater/sea cells",
+      "status": "PROPOSED_NORMALIZED_POTENTIAL"
+    },
+    {
+      "file": "v2/rasters/canopyNorm.u8",
+      "bytes": 43750,
+      "sha256": "06f8bdd48b6d18a5d19efd89975e3ca44bf78ebab3f9f10bc70e1379dac3b08a",
+      "kind": "derived_raster",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": "Authored forest/marsh biome canopy potential",
+      "status": "PROPOSED_NORMALIZED_POTENTIAL"
+    },
+    {
+      "file": "v2/rasters/exposureNorm.u8",
+      "bytes": 43750,
+      "sha256": "b342e4f1e68850069fe9f9449082f56429ff35044cb0f0dc6b646dc5239e55e2",
+      "kind": "derived_raster",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": "v1 exposure ordinal normalized",
+      "status": "PROPOSED_NORMALIZED_POTENTIAL"
+    },
+    {
+      "file": "v2/rasters/substrateNorm.u8",
+      "bytes": 43750,
+      "sha256": "24814e9f07249c9c1c64125fff63d8506513c5a0a06433fd1924e4116fe85076",
+      "kind": "derived_raster",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": "v1 substrate ordinal normalized",
+      "status": "PROPOSED_NORMALIZED_POTENTIAL"
+    },
+    {
+      "file": "v2/rasters/drainageNorm.u8",
+      "bytes": 43750,
+      "sha256": "6bab0c3a82f0f643405dfebb76fff7795695031ccc2840f5bdaeaf551d5c2e49",
+      "kind": "derived_raster",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": "v1 drainage ordinal normalized",
+      "status": "PROPOSED_NORMALIZED_POTENTIAL"
+    },
+    {
+      "file": "v2/rasters/moisturePotentialNorm.u8",
+      "bytes": 43750,
+      "sha256": "7e1362e63817804411efddf34abea1cf67f2f8904b8e4adfbe59412b7b7bed95",
+      "kind": "derived_raster",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": "Weighted moisture POTENTIAL [0..255] -> [0,1] for EconomyMap",
+      "status": "PROPOSED_NORMALIZED_POTENTIAL"
+    },
+    {
+      "file": "v2/rasters/temperaturePotentialNorm.u8",
+      "bytes": 43750,
+      "sha256": "52fc00725e20693db4b195038299cc60165bc3e0dad7037e48e728af8cb3696d",
+      "kind": "derived_raster",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": "Weighted thermal POTENTIAL [0..255] -> [0,1] for EconomyMap; NOT degrees celsius",
+      "status": "PROPOSED_NORMALIZED_POTENTIAL"
+    },
+    {
+      "file": "v2/rasters/soilSuitabilityNorm.u8",
+      "bytes": 43750,
+      "sha256": "a645c0d0c6607f3f60678231c78c71fdfb3f4761ec2747a53dd9c16e8c95de3b",
+      "kind": "derived_raster",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": "Weighted soil/farming geographic suitability",
+      "status": "PROPOSED_NORMALIZED_POTENTIAL"
+    },
+    {
+      "file": "v2/rasters/climateSuitabilityNorm.u8",
+      "bytes": 43750,
+      "sha256": "1e0f1d1d1da50729d3b744caa220494602d6f2b7d0064e4f65fefcbd4bbc7ce3",
+      "kind": "derived_raster",
+      "dtype": "u8",
+      "grid": {
+        "gw": 250,
+        "gh": 175,
+        "cellAu": 8,
+        "order": "row_major i=gy*250+gx"
+      },
+      "semantics": "Weighted combined climate geographic suitability",
+      "status": "PROPOSED_NORMALIZED_POTENTIAL"
+    },
+    {
+      "file": "v2/layers/environment.v2.json",
+      "bytes": 11728,
+      "sha256": "49a79c746bb925fd054bd7799065c4c55bc07973275bdb4e0c0482c206252351",
+      "kind": "layer"
+    },
+    {
+      "file": "v2/layers/decision_register.v2.json",
+      "bytes": 8954,
+      "sha256": "5fa069d8c7b5ab696cb96f97892870c846f7350c0920840e4edc96708bf95d02",
+      "kind": "layer"
+    },
+    {
+      "file": "v2/layers/corrective_register.v2.json",
+      "bytes": 186089,
+      "sha256": "56146bfebb537aaf33fd6308da1b5b8075f5e98946c021398c8c0b81c1fa1f12",
+      "kind": "layer"
+    }
+  ],
+  "reproduce": {
+    "command": "./reproduce_v2.sh",
+    "steps": [
+      "node v2/src/build_v2.mjs",
+      "node v2/src/intake_v2.mjs",
+      "node v2/src/views_v2.mjs",
+      "node tests/run.mjs",
+      "node v2/src/run_v2.mjs",
+      "node v2/src/artifact_index_v2.mjs",
+      "./clean-room_v2.sh"
+    ],
+    "deterministic": true
+  },
+  "cleanRoom": {
+    "command": "./clean-room_v2.sh",
+    "noExternalCanonicalSource": true,
+    "noLegacyLab": true,
+    "noNetwork": true,
+    "v1Regression": "WMP_TESTS 75/75 in isolated copy; source v1 bytes untouched",
+    "v2Tests": "WMP_V2_TESTS 47/47"
+  },
+  "v1Policy": "v1 files, including evidence/artifact_index.v1.json and evidence/tests/test_results.v1.json, were deliberately NOT regenerated. All WMP-01 digests remain byte-identical.",
+  "noClaims": [
+    "NO WORLD_MASTER_SEALED",
+    "NO VEYRA_PLAYABLE",
+    "NO VISUAL_ACCEPTED",
+    "NO MERGE_READY",
+    "NO approved scale",
+    "NO Gameplay runtime modification",
+    "NO cartPassable=true"
+  ],
+  "revisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d",
+  "digestMethod": "sha256 over JSON.stringify(body) in field insertion order"
+}

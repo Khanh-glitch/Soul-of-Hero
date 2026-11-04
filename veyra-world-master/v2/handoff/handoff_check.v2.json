@@ -1,0 +1,88 @@
+{
+  "schema": "soh.wmp.v2.handoff_structural_check.v1",
+  "authority": "MAP_DESIGNS_THE_PHYSICAL_WORLD__GAMEPLAY_POPULATES_AND_SIMULATES_IT",
+  "status": "MAP_SIDE_STRUCTURAL_SELF_CHECK_PASSED",
+  "errors": [],
+  "errorCount": 0,
+  "checksExecuted": [
+    "validateEconomyMap structural port",
+    "GeographicHandoff roads/pois/criticalPaths/buildSites/site-array structural port"
+  ],
+  "checksNotExecuted": [
+    {
+      "name": "compileEconomy()",
+      "owner": "GAMEPLAY",
+      "reason": "Gameplay runtime code; Map must not run or modify it."
+    },
+    {
+      "name": "diagnoseStarts()",
+      "owner": "GAMEPLAY",
+      "reason": "Gameplay runtime code; depends on compileEconomy() source placement."
+    },
+    {
+      "name": "validateGeographicHandoff()",
+      "owner": "GAMEPLAY",
+      "reason": "Full Gameplay validator that calls the two functions above."
+    }
+  ],
+  "disclaimer": "A MAP-SIDE STRUCTURAL SELF-CHECK PASS is NOT validateGeographicHandoff() PASS, NOT Gameplay ingestion, NOT balanced starts, NOT playable Veyra.",
+  "fieldCounts": {
+    "economyFields": 20,
+    "economyCells": 43750,
+    "roads": 92,
+    "pois": 81,
+    "criticalPaths": 1,
+    "buildSites": 23,
+    "nonbossCashSites": 6,
+    "vendorSites": 3,
+    "evacuationSites": 4,
+    "unresolvedGameplayOwnedFields": 14
+  },
+  "assumedProfileOverrides": [],
+  "starts": [
+    {
+      "id": "sp_west",
+      "x": 46,
+      "y": 75,
+      "authoredAnchorAu": [
+        372,
+        606
+      ],
+      "cellIndex": 18796,
+      "status": "AUTHORED_SPAWN_ANCHOR_SNAPPED_TO_NEAREST_WALKABLE_CELL"
+    },
+    {
+      "id": "sp_lake",
+      "x": 98,
+      "y": 77,
+      "authoredAnchorAu": [
+        790,
+        622
+      ],
+      "cellIndex": 19348,
+      "status": "AUTHORED_SPAWN_ANCHOR_SNAPPED_TO_NEAREST_WALKABLE_CELL"
+    },
+    {
+      "id": "sp_hook",
+      "x": 160,
+      "y": 49,
+      "authoredAnchorAu": [
+        1282,
+        392
+      ],
+      "cellIndex": 12410,
+      "status": "AUTHORED_SPAWN_ANCHOR_SNAPPED_TO_NEAREST_WALKABLE_CELL"
+    },
+    {
+      "id": "sp_gulf",
+      "x": 109,
+      "y": 116,
+      "authoredAnchorAu": [
+        872,
+        930
+      ],
+      "cellIndex": 29109,
+      "status": "AUTHORED_SPAWN_ANCHOR_SNAPPED_TO_NEAREST_WALKABLE_CELL"
+    }
+  ]
+}

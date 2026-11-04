@@ -1,0 +1,94 @@
+{
+  "schema": "soh.wmp.v2.technical_views.v1",
+  "authority": "MAP_DESIGNS_THE_PHYSICAL_WORLD__GAMEPLAY_POPULATES_AND_SIMULATES_IT",
+  "status": "TECHNICAL_ANALYTICAL_PREVIEWS__NOT_WEB_RUNTIME_PROOF__NOT_CREATOR_APPROVED_ART",
+  "count": 8,
+  "views": [
+    {
+      "file": "v2/evidence/views/v2_vertical_before_after.png",
+      "bytes": 17515,
+      "width": 1000,
+      "height": 390,
+      "sha256": "fd6de65b47287cf942c2b564fde2556b318d0fbd7f0104ddb350051e00fce849",
+      "classification": "MAP_ANALYTICAL_BEFORE_AFTER_PREVIEW",
+      "status": "TECHNICAL_VIEW__NOT_WEB_RUNTIME_PROOF__NOT_CREATOR_APPROVED_ART",
+      "note": "8 panels: blue=ground room, purple=DEEP level, red=original canonical portal (unchanged), green=measured corrected shaft, yellow=boundary openings and DEEP centroid."
+    },
+    {
+      "file": "v2/evidence/views/v2_bridge_decks_full.png",
+      "bytes": 19936,
+      "width": 1000,
+      "height": 700,
+      "sha256": "3551f34048088e3b84d8443c7e7c3bb39463235eb0698f13fa9520d0d94c67ee",
+      "classification": "MAP_ANALYTICAL_BEFORE_AFTER_PREVIEW",
+      "status": "TECHNICAL_VIEW__NOT_WEB_RUNTIME_PROOF__NOT_CREATOR_APPROVED_ART",
+      "note": "12 proposed non-canonical deck polygons from measured wet chord + dry bearing cells. No approved cart passability."
+    },
+    {
+      "file": "v2/evidence/views/v2_build_envelopes.png",
+      "bytes": 16215,
+      "width": 1000,
+      "height": 700,
+      "sha256": "c52691846bb79247e5e48c8390602173331e02b5b6227cd26b8e23015cd6c301",
+      "classification": "MAP_ANALYTICAL_BEFORE_AFTER_PREVIEW",
+      "status": "TECHNICAL_VIEW__NOT_WEB_RUNTIME_PROOF__NOT_CREATOR_APPROVED_ART",
+      "note": "Recomputed with the exact LR02 M2 criterion. 3 v1 false-positive IDs eliminated: site.bz_silver, site.bz_dune, site.bz_cinder."
+    },
+    {
+      "file": "v2/evidence/views/v2_env_moisture.png",
+      "bytes": 32396,
+      "width": 1000,
+      "height": 700,
+      "sha256": "8707f8dc7db4b97045b72240add8b651851c6e8420fb257aa108824bd0b7e612",
+      "classification": "MAP_ANALYTICAL_BEFORE_AFTER_PREVIEW",
+      "status": "TECHNICAL_VIEW__NOT_WEB_RUNTIME_PROOF__NOT_CREATOR_APPROVED_ART",
+      "note": "NORMALIZED MOISTURE POTENTIAL: reproducible weighted combination of elevation, canopy, water proximity, drainage, substrate, exposure and v1 climatic ordinals. No numeric Gameplay rate."
+    },
+    {
+      "file": "v2/evidence/views/v2_env_temperature.png",
+      "bytes": 26521,
+      "width": 1000,
+      "height": 700,
+      "sha256": "4b8834fad46976dc3a7a3e920b777c9df5115584577f10830962f342f74e5118",
+      "classification": "MAP_ANALYTICAL_BEFORE_AFTER_PREVIEW",
+      "status": "TECHNICAL_VIEW__NOT_WEB_RUNTIME_PROOF__NOT_CREATOR_APPROVED_ART",
+      "note": "NORMALIZED THERMAL POTENTIAL: reproducible weighted combination of elevation, canopy, water proximity, drainage, substrate, exposure and v1 climatic ordinals. No numeric Gameplay rate."
+    },
+    {
+      "file": "v2/evidence/views/v2_env_soil.png",
+      "bytes": 33215,
+      "width": 1000,
+      "height": 700,
+      "sha256": "364f031df030ab226cb9589e92ef9b1ad75e41bad2f0d1e7e3ed8f65867185ec",
+      "classification": "MAP_ANALYTICAL_BEFORE_AFTER_PREVIEW",
+      "status": "TECHNICAL_VIEW__NOT_WEB_RUNTIME_PROOF__NOT_CREATOR_APPROVED_ART",
+      "note": "NORMALIZED SOIL SUITABILITY: reproducible weighted combination of elevation, canopy, water proximity, drainage, substrate, exposure and v1 climatic ordinals. No numeric Gameplay rate."
+    },
+    {
+      "file": "v2/evidence/views/v2_windows_adjacent.png",
+      "bytes": 7884,
+      "width": 1000,
+      "height": 700,
+      "sha256": "7aca7febfb58e0bb1cd7d3810a4e3677ce9e827aafa6b2205a27d790c2ca2559",
+      "classification": "MAP_ANALYTICAL_BEFORE_AFTER_PREVIEW",
+      "status": "TECHNICAL_VIEW__NOT_WEB_RUNTIME_PROOF__NOT_CREATOR_APPROVED_ART",
+      "note": "West/east window road masks on disjoint global tile ranges; union covers all 43750 source cells with zero duplicates."
+    },
+    {
+      "file": "v2/evidence/views/v2_roof_corrections.png",
+      "bytes": 8900,
+      "width": 1000,
+      "height": 700,
+      "sha256": "780b3c4b9d67b9983e5eac0f8152de9804393a87c16304d1f7ba59285f5ec6fb",
+      "classification": "MAP_ANALYTICAL_BEFORE_AFTER_PREVIEW",
+      "status": "TECHNICAL_VIEW__NOT_WEB_RUNTIME_PROOF__NOT_CREATOR_APPROVED_ART",
+      "note": "Corrected roof polygons are the largest source-room inset whose vertices are strictly inside the room and whose interior excludes static-wall midpoints."
+    }
+  ],
+  "v1ViewsPreserved": "evidence/views/ (15 analytical PNGs) unchanged; v2 adds a separate set.",
+  "noClaims": [
+    "NO playable Web",
+    "NO visual acceptance",
+    "NO art approval"
+  ]
+}

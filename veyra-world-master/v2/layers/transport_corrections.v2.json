@@ -1,0 +1,2631 @@
+{
+  "schema": "soh.wmp.v2.transport_corrections.v1",
+  "authority": "MAP_DESIGNS_THE_PHYSICAL_WORLD__GAMEPLAY_POPULATES_AND_SIMULATES_IT",
+  "status": "MEASURED_ALTERNATIVES__NO_APPROVED_CART_PASSABILITY",
+  "previousCounts": {
+    "bridges": 12,
+    "disconnectedRoads": 7,
+    "crossingContradictions": 11,
+    "outletDefects": 1
+  },
+  "bridgeDecks": [
+    {
+      "bridgeId": "br_0",
+      "sourceRef": "GOLD project.bridges[] where id=br_0",
+      "atAu": [
+        995.1738,
+        751.7134
+      ],
+      "angleRad": -2.054318994221515,
+      "authoredLoad": "cart",
+      "previousFailure": "v1 deckStatus=UNRESOLVED, deckPolygonAu=null, cartPassable=false for all 12 bridges.",
+      "measured": {
+        "waterChord": {
+          "upstreamCells": 1,
+          "downstreamCells": 0,
+          "wetChordAu": 16
+        },
+        "lateralDryLandAu": [
+          0,
+          128
+        ],
+        "dryBearingA": [
+          1002.6122,
+          765.8792
+        ],
+        "dryBearingB": [
+          991.4546,
+          744.6305
+        ],
+        "deckCellCount": 4,
+        "deckCells": [
+          23123,
+          23374,
+          23624,
+          23875
+        ],
+        "centreCellIndex": 23374,
+        "clearanceCells": 0,
+        "waterClass": 3,
+        "roadClass": 1
+      },
+      "proposedDeck": {
+        "id": "deck.br_0.v2",
+        "spanAu": 40,
+        "widthAu": 8,
+        "deckPolygonAu": [
+          [
+            1000.9304,
+            771.2802
+          ],
+          [
+            982.3343,
+            735.8657
+          ],
+          [
+            989.4173,
+            732.1465
+          ],
+          [
+            1008.0133,
+            767.561
+          ]
+        ],
+        "deckBboxAu": [
+          982.3343,
+          732.1465,
+          1008.0133,
+          771.2802
+        ],
+        "status": "PROPOSED",
+        "canonical": false,
+        "basis": "Span reaches the FIRST dry bearing cell beyond the measured wet chord in each direction along the authored bridge axis, plus one 8 au cell. Width = conservative min(24 au, measured lateral dry land at both ends). No editor glyph size and no vehicle envelope assumed.",
+        "owner": "MAP"
+      },
+      "connectivity": {
+        "endpointCells": [
+          23875,
+          23373
+        ],
+        "withDeckReachable": true,
+        "withoutDeckReachable": false,
+        "bridgeIsNecessaryConnector": true,
+        "pathLengthWithDeckAu": 40,
+        "method": "4-connected BFS over GEO-01 dry-land walkable cells WITH the proposed deck cells added vs WITHOUT them. This is a geometry continuity check, NOT a cart-passability verdict.",
+        "status": "VERIFIED_GEOMETRY__BRIDGE_CONNECTS_DRY_LAND"
+      },
+      "bodySweep": {
+        "profileSet": "ASSUMPTION_PROFILE_2_8_16_AU",
+        "profiles": [
+          {
+            "profileId": "BODY-FOOT",
+            "widthAu": 2,
+            "deckGeometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          },
+          {
+            "profileId": "BODY-CART",
+            "widthAu": 8,
+            "deckGeometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          },
+          {
+            "profileId": "BODY-LOADED-CART",
+            "widthAu": 16,
+            "deckGeometricFit": "INSUFFICIENT_DECK_WIDTH",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          }
+        ],
+        "approvedCartPassability": "UNRESOLVED",
+        "owner": "MAP+GAMEPLAY"
+      },
+      "verdict": "PROPOSED_MEASURED_DECK",
+      "canonicalPortalOrBridgeUnchanged": true
+    },
+    {
+      "bridgeId": "br_1",
+      "sourceRef": "GOLD project.bridges[] where id=br_1",
+      "atAu": [
+        1022.3338,
+        453.4846
+      ],
+      "angleRad": 2.145530710207783,
+      "authoredLoad": "cart",
+      "previousFailure": "v1 deckStatus=UNRESOLVED, deckPolygonAu=null, cartPassable=false for all 12 bridges.",
+      "measured": {
+        "waterChord": {
+          "upstreamCells": 0,
+          "downstreamCells": 0,
+          "wetChordAu": 8
+        },
+        "lateralDryLandAu": [
+          0,
+          8
+        ],
+        "dryBearingA": [
+          1026.6827,
+          446.7699
+        ],
+        "dryBearingB": [
+          1017.9849,
+          460.1993
+        ],
+        "deckCellCount": 4,
+        "deckCells": [
+          13878,
+          14127,
+          14128,
+          14377
+        ],
+        "centreCellIndex": 14127,
+        "clearanceCells": 0,
+        "waterClass": 3,
+        "roadClass": 1
+      },
+      "proposedDeck": {
+        "id": "deck.br_1.v2",
+        "spanAu": 24,
+        "widthAu": 8,
+        "deckPolygonAu": [
+          [
+            1032.2145,
+            445.587
+          ],
+          [
+            1019.1678,
+            465.7311
+          ],
+          [
+            1012.4531,
+            461.3822
+          ],
+          [
+            1025.4998,
+            441.2381
+          ]
+        ],
+        "deckBboxAu": [
+          1012.4531,
+          441.2381,
+          1032.2145,
+          465.7311
+        ],
+        "status": "PROPOSED",
+        "canonical": false,
+        "basis": "Span reaches the FIRST dry bearing cell beyond the measured wet chord in each direction along the authored bridge axis, plus one 8 au cell. Width = conservative min(24 au, measured lateral dry land at both ends). No editor glyph size and no vehicle envelope assumed.",
+        "owner": "MAP"
+      },
+      "connectivity": {
+        "endpointCells": [
+          13878,
+          14377
+        ],
+        "withDeckReachable": true,
+        "withoutDeckReachable": false,
+        "bridgeIsNecessaryConnector": true,
+        "pathLengthWithDeckAu": 32,
+        "method": "4-connected BFS over GEO-01 dry-land walkable cells WITH the proposed deck cells added vs WITHOUT them. This is a geometry continuity check, NOT a cart-passability verdict.",
+        "status": "VERIFIED_GEOMETRY__BRIDGE_CONNECTS_DRY_LAND"
+      },
+      "bodySweep": {
+        "profileSet": "ASSUMPTION_PROFILE_2_8_16_AU",
+        "profiles": [
+          {
+            "profileId": "BODY-FOOT",
+            "widthAu": 2,
+            "deckGeometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          },
+          {
+            "profileId": "BODY-CART",
+            "widthAu": 8,
+            "deckGeometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          },
+          {
+            "profileId": "BODY-LOADED-CART",
+            "widthAu": 16,
+            "deckGeometricFit": "INSUFFICIENT_DECK_WIDTH",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          }
+        ],
+        "approvedCartPassability": "UNRESOLVED",
+        "owner": "MAP+GAMEPLAY"
+      },
+      "verdict": "PROPOSED_MEASURED_DECK",
+      "canonicalPortalOrBridgeUnchanged": true
+    },
+    {
+      "bridgeId": "br_2",
+      "sourceRef": "GOLD project.bridges[] where id=br_2",
+      "atAu": [
+        1289.7896,
+        520.9549
+      ],
+      "angleRad": -1.5354849237016648,
+      "authoredLoad": "cart",
+      "previousFailure": "v1 deckStatus=UNRESOLVED, deckPolygonAu=null, cartPassable=false for all 12 bridges.",
+      "measured": {
+        "waterChord": {
+          "upstreamCells": 0,
+          "downstreamCells": 0,
+          "wetChordAu": 8
+        },
+        "lateralDryLandAu": [
+          128,
+          0
+        ],
+        "dryBearingA": [
+          1289.5072,
+          528.9499
+        ],
+        "dryBearingB": [
+          1290.0721,
+          512.9599
+        ],
+        "deckCellCount": 3,
+        "deckCells": [
+          16161,
+          16411,
+          16661
+        ],
+        "centreCellIndex": 16411,
+        "clearanceCells": 0,
+        "waterClass": 3,
+        "roadClass": 1
+      },
+      "proposedDeck": {
+        "id": "deck.br_2.v2",
+        "spanAu": 24,
+        "widthAu": 8,
+        "deckPolygonAu": [
+          [
+            1285.3685,
+            532.8062
+          ],
+          [
+            1286.2158,
+            508.8212
+          ],
+          [
+            1294.2108,
+            509.1036
+          ],
+          [
+            1293.3635,
+            533.0886
+          ]
+        ],
+        "deckBboxAu": [
+          1285.3685,
+          508.8212,
+          1294.2108,
+          533.0886
+        ],
+        "status": "PROPOSED",
+        "canonical": false,
+        "basis": "Span reaches the FIRST dry bearing cell beyond the measured wet chord in each direction along the authored bridge axis, plus one 8 au cell. Width = conservative min(24 au, measured lateral dry land at both ends). No editor glyph size and no vehicle envelope assumed.",
+        "owner": "MAP"
+      },
+      "connectivity": {
+        "endpointCells": [
+          16661,
+          16161
+        ],
+        "withDeckReachable": true,
+        "withoutDeckReachable": false,
+        "bridgeIsNecessaryConnector": true,
+        "pathLengthWithDeckAu": 24,
+        "method": "4-connected BFS over GEO-01 dry-land walkable cells WITH the proposed deck cells added vs WITHOUT them. This is a geometry continuity check, NOT a cart-passability verdict.",
+        "status": "VERIFIED_GEOMETRY__BRIDGE_CONNECTS_DRY_LAND"
+      },
+      "bodySweep": {
+        "profileSet": "ASSUMPTION_PROFILE_2_8_16_AU",
+        "profiles": [
+          {
+            "profileId": "BODY-FOOT",
+            "widthAu": 2,
+            "deckGeometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          },
+          {
+            "profileId": "BODY-CART",
+            "widthAu": 8,
+            "deckGeometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          },
+          {
+            "profileId": "BODY-LOADED-CART",
+            "widthAu": 16,
+            "deckGeometricFit": "INSUFFICIENT_DECK_WIDTH",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          }
+        ],
+        "approvedCartPassability": "UNRESOLVED",
+        "owner": "MAP+GAMEPLAY"
+      },
+      "verdict": "PROPOSED_MEASURED_DECK",
+      "canonicalPortalOrBridgeUnchanged": true
+    },
+    {
+      "bridgeId": "br_3",
+      "sourceRef": "GOLD project.bridges[] where id=br_3",
+      "atAu": [
+        855.2775,
+        576.1272
+      ],
+      "angleRad": -0.5191461142465229,
+      "authoredLoad": "cart",
+      "previousFailure": "v1 deckStatus=UNRESOLVED, deckPolygonAu=null, cartPassable=false for all 12 bridges.",
+      "measured": {
+        "waterChord": {
+          "upstreamCells": 1,
+          "downstreamCells": 0,
+          "wetChordAu": 16
+        },
+        "lateralDryLandAu": [
+          0,
+          0
+        ],
+        "dryBearingA": [
+          841.3856,
+          584.0654
+        ],
+        "dryBearingB": [
+          862.2234,
+          572.1581
+        ],
+        "deckCellCount": 4,
+        "deckCells": [
+          17857,
+          17858,
+          18105,
+          18106
+        ],
+        "centreCellIndex": 18106,
+        "clearanceCells": 0,
+        "waterClass": 3,
+        "roadClass": 1
+      },
+      "proposedDeck": {
+        "id": "deck.br_3.v2",
+        "spanAu": 40,
+        "widthAu": 8,
+        "deckPolygonAu": [
+          [
+            835.928,
+            582.577
+          ],
+          [
+            870.6578,
+            562.7314
+          ],
+          [
+            874.6269,
+            569.6774
+          ],
+          [
+            839.8972,
+            589.5229
+          ]
+        ],
+        "deckBboxAu": [
+          835.928,
+          562.7314,
+          874.6269,
+          589.5229
+        ],
+        "status": "PROPOSED",
+        "canonical": false,
+        "basis": "Span reaches the FIRST dry bearing cell beyond the measured wet chord in each direction along the authored bridge axis, plus one 8 au cell. Width = conservative min(24 au, measured lateral dry land at both ends). No editor glyph size and no vehicle envelope assumed.",
+        "owner": "MAP"
+      },
+      "connectivity": {
+        "endpointCells": [
+          18355,
+          17857
+        ],
+        "withDeckReachable": true,
+        "withoutDeckReachable": true,
+        "bridgeIsNecessaryConnector": false,
+        "pathLengthWithDeckAu": 920,
+        "method": "4-connected BFS over GEO-01 dry-land walkable cells WITH the proposed deck cells added vs WITHOUT them. This is a geometry continuity check, NOT a cart-passability verdict.",
+        "status": "PROPOSED__BOTH_ENDPOINTS_ALREADY_CONNECTED_ON_LAND"
+      },
+      "bodySweep": {
+        "profileSet": "ASSUMPTION_PROFILE_2_8_16_AU",
+        "profiles": [
+          {
+            "profileId": "BODY-FOOT",
+            "widthAu": 2,
+            "deckGeometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          },
+          {
+            "profileId": "BODY-CART",
+            "widthAu": 8,
+            "deckGeometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          },
+          {
+            "profileId": "BODY-LOADED-CART",
+            "widthAu": 16,
+            "deckGeometricFit": "INSUFFICIENT_DECK_WIDTH",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          }
+        ],
+        "approvedCartPassability": "UNRESOLVED",
+        "owner": "MAP+GAMEPLAY"
+      },
+      "verdict": "PROPOSED_MEASURED_DECK",
+      "canonicalPortalOrBridgeUnchanged": true
+    },
+    {
+      "bridgeId": "br_4",
+      "sourceRef": "GOLD project.bridges[] where id=br_4",
+      "atAu": [
+        732.007,
+        649.8171
+      ],
+      "angleRad": 1.132195670812087,
+      "authoredLoad": "cart",
+      "previousFailure": "v1 deckStatus=UNRESOLVED, deckPolygonAu=null, cartPassable=false for all 12 bridges.",
+      "measured": {
+        "waterChord": {
+          "upstreamCells": 0,
+          "downstreamCells": 0,
+          "wetChordAu": 8
+        },
+        "lateralDryLandAu": [
+          8,
+          0
+        ],
+        "dryBearingA": [
+          728.6096,
+          642.5743
+        ],
+        "dryBearingB": [
+          735.4044,
+          657.0598
+        ],
+        "deckCellCount": 2,
+        "deckCells": [
+          20091,
+          20341
+        ],
+        "centreCellIndex": 20341,
+        "clearanceCells": 0,
+        "waterClass": 3,
+        "roadClass": 1
+      },
+      "proposedDeck": {
+        "id": "deck.br_4.v2",
+        "spanAu": 24,
+        "widthAu": 8,
+        "deckPolygonAu": [
+          [
+            730.5323,
+            637.2542
+          ],
+          [
+            740.7244,
+            658.9825
+          ],
+          [
+            733.4817,
+            662.3799
+          ],
+          [
+            723.2895,
+            640.6516
+          ]
+        ],
+        "deckBboxAu": [
+          723.2895,
+          637.2542,
+          740.7244,
+          662.3799
+        ],
+        "status": "PROPOSED",
+        "canonical": false,
+        "basis": "Span reaches the FIRST dry bearing cell beyond the measured wet chord in each direction along the authored bridge axis, plus one 8 au cell. Width = conservative min(24 au, measured lateral dry land at both ends). No editor glyph size and no vehicle envelope assumed.",
+        "owner": "MAP"
+      },
+      "connectivity": {
+        "endpointCells": [
+          20091,
+          20591
+        ],
+        "withDeckReachable": true,
+        "withoutDeckReachable": true,
+        "bridgeIsNecessaryConnector": false,
+        "pathLengthWithDeckAu": 24,
+        "method": "4-connected BFS over GEO-01 dry-land walkable cells WITH the proposed deck cells added vs WITHOUT them. This is a geometry continuity check, NOT a cart-passability verdict.",
+        "status": "PROPOSED__BOTH_ENDPOINTS_ALREADY_CONNECTED_ON_LAND"
+      },
+      "bodySweep": {
+        "profileSet": "ASSUMPTION_PROFILE_2_8_16_AU",
+        "profiles": [
+          {
+            "profileId": "BODY-FOOT",
+            "widthAu": 2,
+            "deckGeometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          },
+          {
+            "profileId": "BODY-CART",
+            "widthAu": 8,
+            "deckGeometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          },
+          {
+            "profileId": "BODY-LOADED-CART",
+            "widthAu": 16,
+            "deckGeometricFit": "INSUFFICIENT_DECK_WIDTH",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          }
+        ],
+        "approvedCartPassability": "UNRESOLVED",
+        "owner": "MAP+GAMEPLAY"
+      },
+      "verdict": "PROPOSED_MEASURED_DECK",
+      "canonicalPortalOrBridgeUnchanged": true
+    },
+    {
+      "bridgeId": "br_5",
+      "sourceRef": "GOLD project.bridges[] where id=br_5",
+      "atAu": [
+        968.0099,
+        816.1834
+      ],
+      "angleRad": -0.6799332596310216,
+      "authoredLoad": "cart",
+      "previousFailure": "v1 deckStatus=UNRESOLVED, deckPolygonAu=null, cartPassable=false for all 12 bridges.",
+      "measured": {
+        "waterChord": {
+          "upstreamCells": 0,
+          "downstreamCells": 1,
+          "wetChordAu": 16
+        },
+        "lateralDryLandAu": [
+          0,
+          0
+        ],
+        "dryBearingA": [
+          961.789,
+          821.2133
+        ],
+        "dryBearingB": [
+          980.4518,
+          806.1235
+        ],
+        "deckCellCount": 4,
+        "deckCells": [
+          25122,
+          25371,
+          25620,
+          25869
+        ],
+        "centreCellIndex": 25621,
+        "clearanceCells": 0,
+        "waterClass": 3,
+        "roadClass": 0
+      },
+      "proposedDeck": {
+        "id": "deck.br_5.v2",
+        "spanAu": 40,
+        "widthAu": 8,
+        "deckPolygonAu": [
+          [
+            949.9427,
+            825.6478
+          ],
+          [
+            981.0473,
+            800.4981
+          ],
+          [
+            986.0772,
+            806.719
+          ],
+          [
+            954.9726,
+            831.8687
+          ]
+        ],
+        "deckBboxAu": [
+          949.9427,
+          800.4981,
+          986.0772,
+          831.8687
+        ],
+        "status": "PROPOSED",
+        "canonical": false,
+        "basis": "Span reaches the FIRST dry bearing cell beyond the measured wet chord in each direction along the authored bridge axis, plus one 8 au cell. Width = conservative min(24 au, measured lateral dry land at both ends). No editor glyph size and no vehicle envelope assumed.",
+        "owner": "MAP"
+      },
+      "connectivity": {
+        "endpointCells": [
+          25620,
+          25122
+        ],
+        "withDeckReachable": false,
+        "withoutDeckReachable": false,
+        "bridgeIsNecessaryConnector": false,
+        "pathLengthWithDeckAu": null,
+        "method": "4-connected BFS over GEO-01 dry-land walkable cells WITH the proposed deck cells added vs WITHOUT them. This is a geometry continuity check, NOT a cart-passability verdict.",
+        "status": "BLOCKED__NO_DRY_LAND_CONNECTION"
+      },
+      "bodySweep": {
+        "profileSet": "ASSUMPTION_PROFILE_2_8_16_AU",
+        "profiles": [
+          {
+            "profileId": "BODY-FOOT",
+            "widthAu": 2,
+            "deckGeometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          },
+          {
+            "profileId": "BODY-CART",
+            "widthAu": 8,
+            "deckGeometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          },
+          {
+            "profileId": "BODY-LOADED-CART",
+            "widthAu": 16,
+            "deckGeometricFit": "INSUFFICIENT_DECK_WIDTH",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          }
+        ],
+        "approvedCartPassability": "UNRESOLVED",
+        "owner": "MAP+GAMEPLAY"
+      },
+      "verdict": "PROPOSED_MEASURED_DECK",
+      "canonicalPortalOrBridgeUnchanged": true
+    },
+    {
+      "bridgeId": "br_6",
+      "sourceRef": "GOLD project.bridges[] where id=br_6",
+      "atAu": [
+        1006.2145,
+        731.4405
+      ],
+      "angleRad": -2.8122431120144404,
+      "authoredLoad": "foot",
+      "previousFailure": "v1 deckStatus=UNRESOLVED, deckPolygonAu=null, cartPassable=false for all 12 bridges.",
+      "measured": {
+        "waterChord": {
+          "upstreamCells": 1,
+          "downstreamCells": 0,
+          "wetChordAu": 16
+        },
+        "lateralDryLandAu": [
+          0,
+          0
+        ],
+        "dryBearingA": [
+          1021.3546,
+          736.6154
+        ],
+        "dryBearingB": [
+          998.6445,
+          728.8531
+        ],
+        "deckCellCount": 7,
+        "deckCells": [
+          22623,
+          22624,
+          22874,
+          22875,
+          22876,
+          22877,
+          23127
+        ],
+        "centreCellIndex": 22875,
+        "clearanceCells": 0,
+        "waterClass": 3,
+        "roadClass": 1
+      },
+      "proposedDeck": {
+        "id": "deck.br_6.v2",
+        "spanAu": 40,
+        "widthAu": 8,
+        "deckPolygonAu": [
+          [
+            1023.8459,
+            741.6941
+          ],
+          [
+            985.9958,
+            728.757
+          ],
+          [
+            988.5832,
+            721.187
+          ],
+          [
+            1026.4333,
+            734.1241
+          ]
+        ],
+        "deckBboxAu": [
+          985.9958,
+          721.187,
+          1026.4333,
+          741.6941
+        ],
+        "status": "PROPOSED",
+        "canonical": false,
+        "basis": "Span reaches the FIRST dry bearing cell beyond the measured wet chord in each direction along the authored bridge axis, plus one 8 au cell. Width = conservative min(24 au, measured lateral dry land at both ends). No editor glyph size and no vehicle envelope assumed.",
+        "owner": "MAP"
+      },
+      "connectivity": {
+        "endpointCells": [
+          23127,
+          22874
+        ],
+        "withDeckReachable": true,
+        "withoutDeckReachable": false,
+        "bridgeIsNecessaryConnector": true,
+        "pathLengthWithDeckAu": 40,
+        "method": "4-connected BFS over GEO-01 dry-land walkable cells WITH the proposed deck cells added vs WITHOUT them. This is a geometry continuity check, NOT a cart-passability verdict.",
+        "status": "VERIFIED_GEOMETRY__BRIDGE_CONNECTS_DRY_LAND"
+      },
+      "bodySweep": {
+        "profileSet": "ASSUMPTION_PROFILE_2_8_16_AU",
+        "profiles": [
+          {
+            "profileId": "BODY-FOOT",
+            "widthAu": 2,
+            "deckGeometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          },
+          {
+            "profileId": "BODY-CART",
+            "widthAu": 8,
+            "deckGeometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          },
+          {
+            "profileId": "BODY-LOADED-CART",
+            "widthAu": 16,
+            "deckGeometricFit": "INSUFFICIENT_DECK_WIDTH",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          }
+        ],
+        "approvedCartPassability": "UNRESOLVED",
+        "owner": "MAP+GAMEPLAY"
+      },
+      "verdict": "PROPOSED_MEASURED_DECK",
+      "canonicalPortalOrBridgeUnchanged": true
+    },
+    {
+      "bridgeId": "br_7",
+      "sourceRef": "GOLD project.bridges[] where id=br_7",
+      "atAu": [
+        1615.6966,
+        343.7965
+      ],
+      "angleRad": 0.5157476566419044,
+      "authoredLoad": "cart",
+      "previousFailure": "v1 deckStatus=UNRESOLVED, deckPolygonAu=null, cartPassable=false for all 12 bridges.",
+      "measured": {
+        "waterChord": {
+          "upstreamCells": 0,
+          "downstreamCells": 0,
+          "wetChordAu": 8
+        },
+        "lateralDryLandAu": [
+          0,
+          0
+        ],
+        "dryBearingA": [
+          1608.7372,
+          339.851
+        ],
+        "dryBearingB": [
+          1622.656,
+          347.742
+        ],
+        "deckCellCount": 2,
+        "deckCells": [
+          10701,
+          10952
+        ],
+        "centreCellIndex": 10701,
+        "clearanceCells": 1,
+        "waterClass": 0,
+        "roadClass": 1
+      },
+      "proposedDeck": {
+        "id": "deck.br_7.v2",
+        "spanAu": 24,
+        "widthAu": 8,
+        "deckPolygonAu": [
+          [
+            1607.2303,
+            334.3986
+          ],
+          [
+            1628.1085,
+            346.235
+          ],
+          [
+            1624.163,
+            353.1944
+          ],
+          [
+            1603.2848,
+            341.358
+          ]
+        ],
+        "deckBboxAu": [
+          1603.2848,
+          334.3986,
+          1628.1085,
+          353.1944
+        ],
+        "status": "PROPOSED",
+        "canonical": false,
+        "basis": "Span reaches the FIRST dry bearing cell beyond the measured wet chord in each direction along the authored bridge axis, plus one 8 au cell. Width = conservative min(24 au, measured lateral dry land at both ends). No editor glyph size and no vehicle envelope assumed.",
+        "owner": "MAP"
+      },
+      "connectivity": {
+        "endpointCells": [
+          10701,
+          10952
+        ],
+        "withDeckReachable": true,
+        "withoutDeckReachable": true,
+        "bridgeIsNecessaryConnector": false,
+        "pathLengthWithDeckAu": 184,
+        "method": "4-connected BFS over GEO-01 dry-land walkable cells WITH the proposed deck cells added vs WITHOUT them. This is a geometry continuity check, NOT a cart-passability verdict.",
+        "status": "PROPOSED__BOTH_ENDPOINTS_ALREADY_CONNECTED_ON_LAND"
+      },
+      "bodySweep": {
+        "profileSet": "ASSUMPTION_PROFILE_2_8_16_AU",
+        "profiles": [
+          {
+            "profileId": "BODY-FOOT",
+            "widthAu": 2,
+            "deckGeometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          },
+          {
+            "profileId": "BODY-CART",
+            "widthAu": 8,
+            "deckGeometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          },
+          {
+            "profileId": "BODY-LOADED-CART",
+            "widthAu": 16,
+            "deckGeometricFit": "INSUFFICIENT_DECK_WIDTH",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          }
+        ],
+        "approvedCartPassability": "UNRESOLVED",
+        "owner": "MAP+GAMEPLAY"
+      },
+      "verdict": "PROPOSED_MEASURED_DECK",
+      "canonicalPortalOrBridgeUnchanged": true
+    },
+    {
+      "bridgeId": "br_8",
+      "sourceRef": "GOLD project.bridges[] where id=br_8",
+      "atAu": [
+        1152.9761,
+        457.333
+      ],
+      "angleRad": -1.0031299024230385,
+      "authoredLoad": "foot",
+      "previousFailure": "v1 deckStatus=UNRESOLVED, deckPolygonAu=null, cartPassable=false for all 12 bridges.",
+      "measured": {
+        "waterChord": {
+          "upstreamCells": 0,
+          "downstreamCells": 0,
+          "wetChordAu": 8
+        },
+        "lateralDryLandAu": [
+          0,
+          0
+        ],
+        "dryBearingA": [
+          1148.6747,
+          464.0782
+        ],
+        "dryBearingB": [
+          1157.2774,
+          450.5877
+        ],
+        "deckCellCount": 4,
+        "deckCells": [
+          14144,
+          14393,
+          14394,
+          14643
+        ],
+        "centreCellIndex": 14394,
+        "clearanceCells": 0,
+        "waterClass": 3,
+        "roadClass": 2
+      },
+      "proposedDeck": {
+        "id": "deck.br_8.v2",
+        "spanAu": 24,
+        "widthAu": 8,
+        "deckPolygonAu": [
+          [
+            1143.1515,
+            465.3002
+          ],
+          [
+            1156.0554,
+            445.0644
+          ],
+          [
+            1162.8007,
+            449.3657
+          ],
+          [
+            1149.8967,
+            469.6015
+          ]
+        ],
+        "deckBboxAu": [
+          1143.1515,
+          445.0644,
+          1162.8007,
+          469.6015
+        ],
+        "status": "PROPOSED",
+        "canonical": false,
+        "basis": "Span reaches the FIRST dry bearing cell beyond the measured wet chord in each direction along the authored bridge axis, plus one 8 au cell. Width = conservative min(24 au, measured lateral dry land at both ends). No editor glyph size and no vehicle envelope assumed.",
+        "owner": "MAP"
+      },
+      "connectivity": {
+        "endpointCells": [
+          14643,
+          14144
+        ],
+        "withDeckReachable": true,
+        "withoutDeckReachable": false,
+        "bridgeIsNecessaryConnector": true,
+        "pathLengthWithDeckAu": 32,
+        "method": "4-connected BFS over GEO-01 dry-land walkable cells WITH the proposed deck cells added vs WITHOUT them. This is a geometry continuity check, NOT a cart-passability verdict.",
+        "status": "VERIFIED_GEOMETRY__BRIDGE_CONNECTS_DRY_LAND"
+      },
+      "bodySweep": {
+        "profileSet": "ASSUMPTION_PROFILE_2_8_16_AU",
+        "profiles": [
+          {
+            "profileId": "BODY-FOOT",
+            "widthAu": 2,
+            "deckGeometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          },
+          {
+            "profileId": "BODY-CART",
+            "widthAu": 8,
+            "deckGeometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          },
+          {
+            "profileId": "BODY-LOADED-CART",
+            "widthAu": 16,
+            "deckGeometricFit": "INSUFFICIENT_DECK_WIDTH",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          }
+        ],
+        "approvedCartPassability": "UNRESOLVED",
+        "owner": "MAP+GAMEPLAY"
+      },
+      "verdict": "PROPOSED_MEASURED_DECK",
+      "canonicalPortalOrBridgeUnchanged": true
+    },
+    {
+      "bridgeId": "br_9",
+      "sourceRef": "GOLD project.bridges[] where id=br_9",
+      "atAu": [
+        777.5971,
+        456.5828
+      ],
+      "angleRad": -1.2639214000332961,
+      "authoredLoad": "foot",
+      "previousFailure": "v1 deckStatus=UNRESOLVED, deckPolygonAu=null, cartPassable=false for all 12 bridges.",
+      "measured": {
+        "waterChord": {
+          "upstreamCells": 0,
+          "downstreamCells": 1,
+          "wetChordAu": 16
+        },
+        "lateralDryLandAu": [
+          0,
+          128
+        ],
+        "dryBearingA": [
+          775.1805,
+          464.2091
+        ],
+        "dryBearingB": [
+          782.4304,
+          441.3303
+        ],
+        "deckCellCount": 4,
+        "deckCells": [
+          13847,
+          14097,
+          14347,
+          14596
+        ],
+        "centreCellIndex": 14347,
+        "clearanceCells": 0,
+        "waterClass": 3,
+        "roadClass": 2
+      },
+      "proposedDeck": {
+        "id": "deck.br_9.v2",
+        "spanAu": 40,
+        "widthAu": 8,
+        "deckPolygonAu": [
+          [
+            767.7424,
+            474.4402
+          ],
+          [
+            779.8256,
+            436.3089
+          ],
+          [
+            787.4519,
+            438.7255
+          ],
+          [
+            775.3686,
+            476.8568
+          ]
+        ],
+        "deckBboxAu": [
+          767.7424,
+          436.3089,
+          787.4519,
+          476.8568
+        ],
+        "status": "PROPOSED",
+        "canonical": false,
+        "basis": "Span reaches the FIRST dry bearing cell beyond the measured wet chord in each direction along the authored bridge axis, plus one 8 au cell. Width = conservative min(24 au, measured lateral dry land at both ends). No editor glyph size and no vehicle envelope assumed.",
+        "owner": "MAP"
+      },
+      "connectivity": {
+        "endpointCells": [
+          14596,
+          13847
+        ],
+        "withDeckReachable": true,
+        "withoutDeckReachable": true,
+        "bridgeIsNecessaryConnector": false,
+        "pathLengthWithDeckAu": 40,
+        "method": "4-connected BFS over GEO-01 dry-land walkable cells WITH the proposed deck cells added vs WITHOUT them. This is a geometry continuity check, NOT a cart-passability verdict.",
+        "status": "PROPOSED__BOTH_ENDPOINTS_ALREADY_CONNECTED_ON_LAND"
+      },
+      "bodySweep": {
+        "profileSet": "ASSUMPTION_PROFILE_2_8_16_AU",
+        "profiles": [
+          {
+            "profileId": "BODY-FOOT",
+            "widthAu": 2,
+            "deckGeometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          },
+          {
+            "profileId": "BODY-CART",
+            "widthAu": 8,
+            "deckGeometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          },
+          {
+            "profileId": "BODY-LOADED-CART",
+            "widthAu": 16,
+            "deckGeometricFit": "INSUFFICIENT_DECK_WIDTH",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          }
+        ],
+        "approvedCartPassability": "UNRESOLVED",
+        "owner": "MAP+GAMEPLAY"
+      },
+      "verdict": "PROPOSED_MEASURED_DECK",
+      "canonicalPortalOrBridgeUnchanged": true
+    },
+    {
+      "bridgeId": "br_a",
+      "sourceRef": "GOLD project.bridges[] where id=br_a",
+      "atAu": [
+        882.9744,
+        646.9031
+      ],
+      "angleRad": 1.1844979517413203,
+      "authoredLoad": "foot",
+      "previousFailure": "v1 deckStatus=UNRESOLVED, deckPolygonAu=null, cartPassable=false for all 12 bridges.",
+      "measured": {
+        "waterChord": {
+          "upstreamCells": 0,
+          "downstreamCells": 1,
+          "wetChordAu": 16
+        },
+        "lateralDryLandAu": [
+          8,
+          128
+        ],
+        "dryBearingA": [
+          879.9603,
+          639.4926
+        ],
+        "dryBearingB": [
+          889.0026,
+          661.724
+        ],
+        "deckCellCount": 5,
+        "deckCells": [
+          19859,
+          20110,
+          20360,
+          20610,
+          20611
+        ],
+        "centreCellIndex": 20110,
+        "clearanceCells": 0,
+        "waterClass": 3,
+        "roadClass": 4
+      },
+      "proposedDeck": {
+        "id": "deck.br_a.v2",
+        "spanAu": 40,
+        "widthAu": 8,
+        "deckPolygonAu": [
+          [
+            879.1444,
+            626.8698
+          ],
+          [
+            894.2149,
+            663.9222
+          ],
+          [
+            886.8044,
+            666.9363
+          ],
+          [
+            871.7339,
+            629.8839
+          ]
+        ],
+        "deckBboxAu": [
+          871.7339,
+          626.8698,
+          894.2149,
+          666.9363
+        ],
+        "status": "PROPOSED",
+        "canonical": false,
+        "basis": "Span reaches the FIRST dry bearing cell beyond the measured wet chord in each direction along the authored bridge axis, plus one 8 au cell. Width = conservative min(24 au, measured lateral dry land at both ends). No editor glyph size and no vehicle envelope assumed.",
+        "owner": "MAP"
+      },
+      "connectivity": {
+        "endpointCells": [
+          19859,
+          20611
+        ],
+        "withDeckReachable": true,
+        "withoutDeckReachable": true,
+        "bridgeIsNecessaryConnector": false,
+        "pathLengthWithDeckAu": 48,
+        "method": "4-connected BFS over GEO-01 dry-land walkable cells WITH the proposed deck cells added vs WITHOUT them. This is a geometry continuity check, NOT a cart-passability verdict.",
+        "status": "PROPOSED__BOTH_ENDPOINTS_ALREADY_CONNECTED_ON_LAND"
+      },
+      "bodySweep": {
+        "profileSet": "ASSUMPTION_PROFILE_2_8_16_AU",
+        "profiles": [
+          {
+            "profileId": "BODY-FOOT",
+            "widthAu": 2,
+            "deckGeometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          },
+          {
+            "profileId": "BODY-CART",
+            "widthAu": 8,
+            "deckGeometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          },
+          {
+            "profileId": "BODY-LOADED-CART",
+            "widthAu": 16,
+            "deckGeometricFit": "INSUFFICIENT_DECK_WIDTH",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          }
+        ],
+        "approvedCartPassability": "UNRESOLVED",
+        "owner": "MAP+GAMEPLAY"
+      },
+      "verdict": "PROPOSED_MEASURED_DECK",
+      "canonicalPortalOrBridgeUnchanged": true
+    },
+    {
+      "bridgeId": "br_b",
+      "sourceRef": "GOLD project.bridges[] where id=br_b",
+      "atAu": [
+        1026.2415,
+        929.6871
+      ],
+      "angleRad": 0.3976188745484279,
+      "authoredLoad": "foot",
+      "previousFailure": "v1 deckStatus=UNRESOLVED, deckPolygonAu=null, cartPassable=false for all 12 bridges.",
+      "measured": {
+        "waterChord": {
+          "upstreamCells": 10,
+          "downstreamCells": 0,
+          "wetChordAu": 88
+        },
+        "lateralDryLandAu": [
+          0,
+          0
+        ],
+        "dryBearingA": [
+          945.1067,
+          895.6113
+        ],
+        "dryBearingB": [
+          1033.6174,
+          932.7848
+        ],
+        "deckCellCount": 22,
+        "deckCells": [
+          28118,
+          28119,
+          28120,
+          28371,
+          28372,
+          28623,
+          28624,
+          28875,
+          28876,
+          28877,
+          29128,
+          29129,
+          29380,
+          29381,
+          29382,
+          29632,
+          29633,
+          29634,
+          29885,
+          29886,
+          30137,
+          30138
+        ],
+        "centreCellIndex": 29128,
+        "clearanceCells": 0,
+        "waterClass": 3,
+        "roadClass": 2
+      },
+      "proposedDeck": {
+        "id": "deck.br_b.v2",
+        "spanAu": 184,
+        "widthAu": 8,
+        "deckPolygonAu": [
+          [
+            942.9677,
+            890.3745
+          ],
+          [
+            1112.613,
+            961.6237
+          ],
+          [
+            1109.5153,
+            968.9996
+          ],
+          [
+            939.8699,
+            897.7504
+          ]
+        ],
+        "deckBboxAu": [
+          939.8699,
+          890.3745,
+          1112.613,
+          968.9996
+        ],
+        "status": "PROPOSED",
+        "canonical": false,
+        "basis": "Span reaches the FIRST dry bearing cell beyond the measured wet chord in each direction along the authored bridge axis, plus one 8 au cell. Width = conservative min(24 au, measured lateral dry land at both ends). No editor glyph size and no vehicle envelope assumed.",
+        "owner": "MAP"
+      },
+      "connectivity": {
+        "endpointCells": [
+          27868,
+          29129
+        ],
+        "withDeckReachable": false,
+        "withoutDeckReachable": false,
+        "bridgeIsNecessaryConnector": false,
+        "pathLengthWithDeckAu": null,
+        "method": "4-connected BFS over GEO-01 dry-land walkable cells WITH the proposed deck cells added vs WITHOUT them. This is a geometry continuity check, NOT a cart-passability verdict.",
+        "status": "BLOCKED__NO_DRY_LAND_CONNECTION"
+      },
+      "bodySweep": {
+        "profileSet": "ASSUMPTION_PROFILE_2_8_16_AU",
+        "profiles": [
+          {
+            "profileId": "BODY-FOOT",
+            "widthAu": 2,
+            "deckGeometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          },
+          {
+            "profileId": "BODY-CART",
+            "widthAu": 8,
+            "deckGeometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          },
+          {
+            "profileId": "BODY-LOADED-CART",
+            "widthAu": 16,
+            "deckGeometricFit": "INSUFFICIENT_DECK_WIDTH",
+            "sweptClearance": "UNKNOWN",
+            "turningRadius": "UNKNOWN",
+            "trailerSweep": "UNKNOWN",
+            "verdict": "UNKNOWN",
+            "note": "Assumed footprint profile, NOT an approved vehicle envelope."
+          }
+        ],
+        "approvedCartPassability": "UNRESOLVED",
+        "owner": "MAP+GAMEPLAY"
+      },
+      "verdict": "PROPOSED_MEASURED_DECK",
+      "canonicalPortalOrBridgeUnchanged": true
+    }
+  ],
+  "roadConnectors": [
+    {
+      "roadId": "rd_w",
+      "kind": "FOOT_COMPONENT_SPLIT",
+      "previousFailure": "v1/DERIVED FOOT_COMPONENT_SPLIT nearestDistanceAu=undefined, no measured connector geometry.",
+      "fromAu": [
+        1650,
+        776
+      ],
+      "toAu": [
+        1643.8948,
+        779.8299
+      ],
+      "measuredConnector": {
+        "id": "connector.rd_w.v2",
+        "polylineAu": [
+          [
+            1652,
+            780
+          ],
+          [
+            1644,
+            780
+          ]
+        ],
+        "cellCount": 2,
+        "lengthAu": 16,
+        "minClearanceAu": 48,
+        "status": "PROPOSED",
+        "canonical": false,
+        "basis": "Shortest 4-connected dry-land BFS between the two authored endpoint cells; NOT an authored road, NO land is created."
+      },
+      "connectivity": {
+        "reachable": true,
+        "reason": null
+      },
+      "bodySweep": {
+        "profileSet": "ASSUMPTION_PROFILE_2_8_16_AU",
+        "profiles": [
+          {
+            "profileId": "BODY-FOOT",
+            "widthAu": 2,
+            "minGeometricClearanceAu": 48,
+            "geometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "verdict": "UNKNOWN"
+          },
+          {
+            "profileId": "BODY-CART",
+            "widthAu": 8,
+            "minGeometricClearanceAu": 48,
+            "geometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "verdict": "UNKNOWN"
+          },
+          {
+            "profileId": "BODY-LOADED-CART",
+            "widthAu": 16,
+            "minGeometricClearanceAu": 48,
+            "geometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "verdict": "UNKNOWN"
+          }
+        ],
+        "approvedCartPassability": "UNRESOLVED"
+      },
+      "resolution": "PROPOSED_MEASURED_DRY_LAND_CONNECTOR",
+      "status": "PROPOSED",
+      "canonical": false
+    },
+    {
+      "roadId": "rd_1n",
+      "kind": "CART_COMPONENT_SPLIT",
+      "previousFailure": "v1/DERIVED CART_COMPONENT_SPLIT nearestDistanceAu=undefined, no measured connector geometry.",
+      "fromAu": [
+        1232.4341,
+        415.7798
+      ],
+      "toAu": [
+        1228.1957,
+        411.7903
+      ],
+      "measuredConnector": {
+        "id": "connector.rd_1n.v2",
+        "polylineAu": [
+          [
+            1236,
+            412
+          ],
+          [
+            1228,
+            412
+          ]
+        ],
+        "cellCount": 2,
+        "lengthAu": 16,
+        "minClearanceAu": 48,
+        "status": "PROPOSED",
+        "canonical": false,
+        "basis": "Shortest 4-connected dry-land BFS between the two authored endpoint cells; NOT an authored road, NO land is created."
+      },
+      "connectivity": {
+        "reachable": true,
+        "reason": null
+      },
+      "bodySweep": {
+        "profileSet": "ASSUMPTION_PROFILE_2_8_16_AU",
+        "profiles": [
+          {
+            "profileId": "BODY-FOOT",
+            "widthAu": 2,
+            "minGeometricClearanceAu": 48,
+            "geometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "verdict": "UNKNOWN"
+          },
+          {
+            "profileId": "BODY-CART",
+            "widthAu": 8,
+            "minGeometricClearanceAu": 48,
+            "geometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "verdict": "UNKNOWN"
+          },
+          {
+            "profileId": "BODY-LOADED-CART",
+            "widthAu": 16,
+            "minGeometricClearanceAu": 48,
+            "geometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "verdict": "UNKNOWN"
+          }
+        ],
+        "approvedCartPassability": "UNRESOLVED"
+      },
+      "resolution": "PROPOSED_MEASURED_DRY_LAND_CONNECTOR",
+      "status": "PROPOSED",
+      "canonical": false
+    },
+    {
+      "roadId": "rd_1p",
+      "kind": "CART_COMPONENT_SPLIT",
+      "previousFailure": "v1/DERIVED CART_COMPONENT_SPLIT nearestDistanceAu=undefined, no measured connector geometry.",
+      "fromAu": [
+        423.903,
+        739.8259
+      ],
+      "toAu": [
+        424,
+        742
+      ],
+      "measuredConnector": {
+        "id": "connector.rd_1p.v2",
+        "polylineAu": [
+          [
+            420,
+            740
+          ],
+          [
+            428,
+            740
+          ]
+        ],
+        "cellCount": 2,
+        "lengthAu": 16,
+        "minClearanceAu": 88,
+        "status": "PROPOSED",
+        "canonical": false,
+        "basis": "Shortest 4-connected dry-land BFS between the two authored endpoint cells; NOT an authored road, NO land is created."
+      },
+      "connectivity": {
+        "reachable": true,
+        "reason": null
+      },
+      "bodySweep": {
+        "profileSet": "ASSUMPTION_PROFILE_2_8_16_AU",
+        "profiles": [
+          {
+            "profileId": "BODY-FOOT",
+            "widthAu": 2,
+            "minGeometricClearanceAu": 88,
+            "geometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "verdict": "UNKNOWN"
+          },
+          {
+            "profileId": "BODY-CART",
+            "widthAu": 8,
+            "minGeometricClearanceAu": 88,
+            "geometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "verdict": "UNKNOWN"
+          },
+          {
+            "profileId": "BODY-LOADED-CART",
+            "widthAu": 16,
+            "minGeometricClearanceAu": 88,
+            "geometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "verdict": "UNKNOWN"
+          }
+        ],
+        "approvedCartPassability": "UNRESOLVED"
+      },
+      "resolution": "PROPOSED_MEASURED_DRY_LAND_CONNECTOR",
+      "status": "PROPOSED",
+      "canonical": false
+    },
+    {
+      "roadId": "rd_22",
+      "previousFailure": "v1 counted this among 7 disconnected roads; LR02 already flagged it FALSE_DISCONNECT__COINCIDENT_ENDPOINT.",
+      "measuredEndpointDistanceAu": 0,
+      "fromAu": [
+        1300,
+        335
+      ],
+      "toAu": [
+        1300,
+        335
+      ],
+      "resolution": "VERIFIED_GEOMETRY__COINCIDENT_ENDPOINT_NO_NEW_ROAD_REQUIRED",
+      "connectorGeometry": null,
+      "note": "Endpoints coincide; the defect is a graph-topology artefact, NOT missing physical geometry. NO road is invented.",
+      "status": "VERIFIED_GEOMETRY",
+      "canonical": false
+    },
+    {
+      "roadId": "rd_25",
+      "previousFailure": "v1 counted this among 7 disconnected roads; LR02 already flagged it FALSE_DISCONNECT__COINCIDENT_ENDPOINT.",
+      "measuredEndpointDistanceAu": 0,
+      "fromAu": [
+        1117.9395,
+        1222.5984
+      ],
+      "toAu": [
+        1117.9395,
+        1222.5984
+      ],
+      "resolution": "VERIFIED_GEOMETRY__COINCIDENT_ENDPOINT_NO_NEW_ROAD_REQUIRED",
+      "connectorGeometry": null,
+      "note": "Endpoints coincide; the defect is a graph-topology artefact, NOT missing physical geometry. NO road is invented.",
+      "status": "VERIFIED_GEOMETRY",
+      "canonical": false
+    },
+    {
+      "roadId": "rd_28",
+      "previousFailure": "v1 counted this among 7 disconnected roads; LR02 already flagged it FALSE_DISCONNECT__COINCIDENT_ENDPOINT.",
+      "measuredEndpointDistanceAu": 0,
+      "fromAu": [
+        1052,
+        878
+      ],
+      "toAu": [
+        1052,
+        878
+      ],
+      "resolution": "VERIFIED_GEOMETRY__COINCIDENT_ENDPOINT_NO_NEW_ROAD_REQUIRED",
+      "connectorGeometry": null,
+      "note": "Endpoints coincide; the defect is a graph-topology artefact, NOT missing physical geometry. NO road is invented.",
+      "status": "VERIFIED_GEOMETRY",
+      "canonical": false
+    },
+    {
+      "roadId": "rd_2a",
+      "kind": "CART_COMPONENT_SPLIT",
+      "previousFailure": "v1/DERIVED CART_COMPONENT_SPLIT nearestDistanceAu=undefined, no measured connector geometry.",
+      "fromAu": [
+        1012.726,
+        296.7355
+      ],
+      "toAu": [
+        1067.6244,
+        314.2565
+      ],
+      "measuredConnector": {
+        "id": "connector.rd_2a.v2",
+        "polylineAu": [
+          [
+            1012,
+            300
+          ],
+          [
+            1020,
+            300
+          ],
+          [
+            1028,
+            300
+          ],
+          [
+            1036,
+            300
+          ],
+          [
+            1044,
+            300
+          ],
+          [
+            1052,
+            300
+          ],
+          [
+            1060,
+            300
+          ],
+          [
+            1068,
+            300
+          ],
+          [
+            1068,
+            308
+          ],
+          [
+            1068,
+            316
+          ]
+        ],
+        "cellCount": 10,
+        "lengthAu": 80,
+        "minClearanceAu": 8,
+        "status": "PROPOSED",
+        "canonical": false,
+        "basis": "Shortest 4-connected dry-land BFS between the two authored endpoint cells; NOT an authored road, NO land is created."
+      },
+      "connectivity": {
+        "reachable": true,
+        "reason": null
+      },
+      "bodySweep": {
+        "profileSet": "ASSUMPTION_PROFILE_2_8_16_AU",
+        "profiles": [
+          {
+            "profileId": "BODY-FOOT",
+            "widthAu": 2,
+            "minGeometricClearanceAu": 8,
+            "geometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "verdict": "UNKNOWN"
+          },
+          {
+            "profileId": "BODY-CART",
+            "widthAu": 8,
+            "minGeometricClearanceAu": 8,
+            "geometricFit": "GEOMETRIC_FIT_ONLY",
+            "sweptClearance": "UNKNOWN",
+            "verdict": "UNKNOWN"
+          },
+          {
+            "profileId": "BODY-LOADED-CART",
+            "widthAu": 16,
+            "minGeometricClearanceAu": 8,
+            "geometricFit": "INSUFFICIENT_CLEARANCE",
+            "sweptClearance": "UNKNOWN",
+            "verdict": "UNKNOWN"
+          }
+        ],
+        "approvedCartPassability": "UNRESOLVED"
+      },
+      "resolution": "PROPOSED_MEASURED_DRY_LAND_CONNECTOR",
+      "status": "PROPOSED",
+      "canonical": false
+    }
+  ],
+  "crossingResolutions": [
+    {
+      "id": "CC-BR4-01",
+      "roadId": "rd_b",
+      "riverId": "rv_silver",
+      "riverIdProvenance": "RESOLVED_FROM_RASTER_RIVER_ID_3__1_BASED_INDEX",
+      "atAu": [
+        732.007,
+        649.8171
+      ],
+      "measuredWetChord": {
+        "wetCells": 6,
+        "dir": [
+          -0.9943,
+          0.1065
+        ],
+        "sides": [
+          1,
+          4
+        ],
+        "basis": "PERPENDICULAR_TO_AUTHORED_ROAD",
+        "nearestRoadId": "rd_b",
+        "nearestRoadDistanceAu": 1.1454
+      },
+      "previousFailure": "Authored river stroke width (4) is an EDITOR value; the same cell has clearanceCells=0, waterClass=3 (river) and roadClass=1, inside Elder geometry el_aion. There is no authored physical channel width, deck bearing or swept cart clearance, so a cart-passable bridge cannot be derived.",
+      "measuredWetWidthAu": 48,
+      "authoredEditorStrokeWidthAu": 4,
+      "widthSemantics": "Measured raster width vs EDITOR STROKE; physical navigable width remains UNRESOLVED.",
+      "resolutionType": "MEASURED_DECK_FOR_AUTHORED_FOOT_BRIDGE",
+      "proposedGeometry": {
+        "deckId": "deck.br_4.v2",
+        "spanAu": 24,
+        "widthAu": 8,
+        "deckPolygonAu": [
+          [
+            730.5323,
+            637.2542
+          ],
+          [
+            740.7244,
+            658.9825
+          ],
+          [
+            733.4817,
+            662.3799
+          ],
+          [
+            723.2895,
+            640.6516
+          ]
+        ],
+        "status": "PROPOSED",
+        "canonical": false
+      },
+      "cartPassability": {
+        "value": false,
+        "status": "UNRESOLVED",
+        "owner": "MAP+GAMEPLAY"
+      },
+      "verdict": "PROPOSED_MEASURED_DECK",
+      "stillRequiresGameplay": [
+        "approved body/cart footprint",
+        "swept clearance",
+        "bridge deck bearing",
+        "ford depth/flow rule"
+      ]
+    },
+    {
+      "id": "CC-rd_v-rv_moss",
+      "roadId": "rd_v",
+      "riverId": "rv_moss",
+      "riverIdProvenance": "AUTHORED_ID",
+      "atAu": [
+        1006.224,
+        731.4923
+      ],
+      "measuredWetChord": {
+        "wetCells": 12,
+        "dir": [
+          0.4789,
+          -0.8779
+        ],
+        "sides": [
+          8,
+          3
+        ],
+        "basis": "PERPENDICULAR_TO_AUTHORED_ROAD",
+        "nearestRoadId": "rd_v",
+        "nearestRoadDistanceAu": 0.7126
+      },
+      "previousFailure": "Road and river centrelines intersect but no authored bridge (or only a foot-load bridge) exists; physical width undefined.",
+      "measuredWetWidthAu": 96,
+      "authoredEditorStrokeWidthAu": 4,
+      "widthSemantics": "Measured raster width vs EDITOR STROKE; physical navigable width remains UNRESOLVED.",
+      "resolutionType": "MEASURED_DECK_FOR_AUTHORED_FOOT_BRIDGE",
+      "proposedGeometry": {
+        "deckId": "deck.br_6.v2",
+        "spanAu": 40,
+        "widthAu": 8,
+        "deckPolygonAu": [
+          [
+            1023.8459,
+            741.6941
+          ],
+          [
+            985.9958,
+            728.757
+          ],
+          [
+            988.5832,
+            721.187
+          ],
+          [
+            1026.4333,
+            734.1241
+          ]
+        ],
+        "status": "PROPOSED",
+        "canonical": false
+      },
+      "cartPassability": {
+        "value": false,
+        "status": "UNRESOLVED",
+        "owner": "MAP+GAMEPLAY"
+      },
+      "verdict": "PROPOSED_MEASURED_DECK",
+      "stillRequiresGameplay": [
+        "approved body/cart footprint",
+        "swept clearance",
+        "bridge deck bearing",
+        "ford depth/flow rule"
+      ]
+    },
+    {
+      "id": "CC-rd_x-rv_ash",
+      "roadId": "rd_x",
+      "riverId": "rv_ash",
+      "riverIdProvenance": "AUTHORED_ID",
+      "atAu": [
+        1592.2408,
+        904.2383
+      ],
+      "measuredWetChord": {
+        "wetCells": 3,
+        "dir": [
+          -0.7372,
+          0.6757
+        ],
+        "sides": [
+          1,
+          1
+        ],
+        "basis": "PERPENDICULAR_TO_AUTHORED_ROAD",
+        "nearestRoadId": "rd_x",
+        "nearestRoadDistanceAu": 0.2008
+      },
+      "previousFailure": "Road and river centrelines intersect but no authored bridge (or only a foot-load bridge) exists; physical width undefined.",
+      "measuredWetWidthAu": 24,
+      "authoredEditorStrokeWidthAu": 2.5,
+      "widthSemantics": "Measured raster width vs EDITOR STROKE; physical navigable width remains UNRESOLVED.",
+      "resolutionType": "MEASURED_FORD_CANDIDATE",
+      "proposedGeometry": {
+        "id": "ford.rd_x.rv_ash.v2",
+        "centreAu": [
+          1592.2408,
+          904.2383
+        ],
+        "measuredWetWidthAu": 24,
+        "depth": "UNKNOWN",
+        "fordable": "UNKNOWN",
+        "status": "PROPOSED",
+        "canonical": false,
+        "note": "Ford GEOMETRY only; no depth, flow, boat or cart rule."
+      },
+      "cartPassability": {
+        "value": false,
+        "status": "UNRESOLVED",
+        "owner": "MAP+GAMEPLAY"
+      },
+      "verdict": "PROPOSED_MEASURED_FORD_GEOMETRY",
+      "stillRequiresGameplay": [
+        "approved body/cart footprint",
+        "swept clearance",
+        "bridge deck bearing",
+        "ford depth/flow rule"
+      ]
+    },
+    {
+      "id": "CC-rd_1f-rv_amber_up",
+      "roadId": "rd_1f",
+      "riverId": "rv_amber_up",
+      "riverIdProvenance": "AUTHORED_ID",
+      "atAu": [
+        598.2133,
+        967.8048
+      ],
+      "measuredWetChord": {
+        "wetCells": 5,
+        "dir": [
+          -0.6084,
+          -0.7936
+        ],
+        "sides": [
+          1,
+          3
+        ],
+        "basis": "PERPENDICULAR_TO_AUTHORED_ROAD",
+        "nearestRoadId": "rd_1f",
+        "nearestRoadDistanceAu": 0.0251
+      },
+      "previousFailure": "Road and river centrelines intersect but no authored bridge (or only a foot-load bridge) exists; physical width undefined.",
+      "measuredWetWidthAu": 40,
+      "authoredEditorStrokeWidthAu": 2.5,
+      "widthSemantics": "Measured raster width vs EDITOR STROKE; physical navigable width remains UNRESOLVED.",
+      "resolutionType": "MEASURED_FORD_CANDIDATE",
+      "proposedGeometry": {
+        "id": "ford.rd_1f.rv_amber_up.v2",
+        "centreAu": [
+          598.2133,
+          967.8048
+        ],
+        "measuredWetWidthAu": 40,
+        "depth": "UNKNOWN",
+        "fordable": "UNKNOWN",
+        "status": "PROPOSED",
+        "canonical": false,
+        "note": "Ford GEOMETRY only; no depth, flow, boat or cart rule."
+      },
+      "cartPassability": {
+        "value": false,
+        "status": "UNRESOLVED",
+        "owner": "MAP+GAMEPLAY"
+      },
+      "verdict": "PROPOSED_MEASURED_FORD_GEOMETRY",
+      "stillRequiresGameplay": [
+        "approved body/cart footprint",
+        "swept clearance",
+        "bridge deck bearing",
+        "ford depth/flow rule"
+      ]
+    },
+    {
+      "id": "CC-rd_1k-rv_east",
+      "roadId": "rd_1k",
+      "riverId": "rv_east",
+      "riverIdProvenance": "AUTHORED_ID",
+      "atAu": [
+        1153.0082,
+        457.3864
+      ],
+      "measuredWetChord": {
+        "wetCells": 7,
+        "dir": [
+          0.7593,
+          0.6508
+        ],
+        "sides": [
+          2,
+          4
+        ],
+        "basis": "PERPENDICULAR_TO_AUTHORED_ROAD",
+        "nearestRoadId": "rd_1k",
+        "nearestRoadDistanceAu": 0.7185
+      },
+      "previousFailure": "Road and river centrelines intersect but no authored bridge (or only a foot-load bridge) exists; physical width undefined.",
+      "measuredWetWidthAu": 56,
+      "authoredEditorStrokeWidthAu": 6,
+      "widthSemantics": "Measured raster width vs EDITOR STROKE; physical navigable width remains UNRESOLVED.",
+      "resolutionType": "MEASURED_DECK_FOR_AUTHORED_FOOT_BRIDGE",
+      "proposedGeometry": {
+        "deckId": "deck.br_8.v2",
+        "spanAu": 24,
+        "widthAu": 8,
+        "deckPolygonAu": [
+          [
+            1143.1515,
+            465.3002
+          ],
+          [
+            1156.0554,
+            445.0644
+          ],
+          [
+            1162.8007,
+            449.3657
+          ],
+          [
+            1149.8967,
+            469.6015
+          ]
+        ],
+        "status": "PROPOSED",
+        "canonical": false
+      },
+      "cartPassability": {
+        "value": false,
+        "status": "UNRESOLVED",
+        "owner": "MAP+GAMEPLAY"
+      },
+      "verdict": "PROPOSED_MEASURED_DECK",
+      "stillRequiresGameplay": [
+        "approved body/cart footprint",
+        "swept clearance",
+        "bridge deck bearing",
+        "ford depth/flow rule"
+      ]
+    },
+    {
+      "id": "CC-rd_1l-rv_amber_up",
+      "roadId": "rd_1l",
+      "riverId": "rv_amber_up",
+      "riverIdProvenance": "AUTHORED_ID",
+      "atAu": [
+        606.9656,
+        975.2896
+      ],
+      "measuredWetChord": {
+        "wetCells": 3,
+        "dir": [
+          -0.96,
+          -0.2799
+        ],
+        "sides": [
+          2,
+          0
+        ],
+        "basis": "PERPENDICULAR_TO_AUTHORED_ROAD",
+        "nearestRoadId": "rd_1l",
+        "nearestRoadDistanceAu": 0.1115
+      },
+      "previousFailure": "Road and river centrelines intersect but no authored bridge (or only a foot-load bridge) exists; physical width undefined.",
+      "measuredWetWidthAu": 24,
+      "authoredEditorStrokeWidthAu": 2.5,
+      "widthSemantics": "Measured raster width vs EDITOR STROKE; physical navigable width remains UNRESOLVED.",
+      "resolutionType": "MEASURED_FORD_CANDIDATE",
+      "proposedGeometry": {
+        "id": "ford.rd_1l.rv_amber_up.v2",
+        "centreAu": [
+          606.9656,
+          975.2896
+        ],
+        "measuredWetWidthAu": 24,
+        "depth": "UNKNOWN",
+        "fordable": "UNKNOWN",
+        "status": "PROPOSED",
+        "canonical": false,
+        "note": "Ford GEOMETRY only; no depth, flow, boat or cart rule."
+      },
+      "cartPassability": {
+        "value": false,
+        "status": "UNRESOLVED",
+        "owner": "MAP+GAMEPLAY"
+      },
+      "verdict": "PROPOSED_MEASURED_FORD_GEOMETRY",
+      "stillRequiresGameplay": [
+        "approved body/cart footprint",
+        "swept clearance",
+        "bridge deck bearing",
+        "ford depth/flow rule"
+      ]
+    },
+    {
+      "id": "CC-rd_1y-rv_grey_up",
+      "roadId": "rd_1y",
+      "riverId": "rv_grey_up",
+      "riverIdProvenance": "AUTHORED_ID",
+      "atAu": [
+        777.5546,
+        456.717
+      ],
+      "measuredWetChord": {
+        "wetCells": 4,
+        "dir": [
+          0.7593,
+          0.6508
+        ],
+        "sides": [
+          2,
+          1
+        ],
+        "basis": "PERPENDICULAR_TO_AUTHORED_ROAD",
+        "nearestRoadId": "rd_1y",
+        "nearestRoadDistanceAu": 3.1655
+      },
+      "previousFailure": "Road and river centrelines intersect but no authored bridge (or only a foot-load bridge) exists; physical width undefined.",
+      "measuredWetWidthAu": 32,
+      "authoredEditorStrokeWidthAu": 4,
+      "widthSemantics": "Measured raster width vs EDITOR STROKE; physical navigable width remains UNRESOLVED.",
+      "resolutionType": "MEASURED_DECK_FOR_AUTHORED_FOOT_BRIDGE",
+      "proposedGeometry": {
+        "deckId": "deck.br_9.v2",
+        "spanAu": 40,
+        "widthAu": 8,
+        "deckPolygonAu": [
+          [
+            767.7424,
+            474.4402
+          ],
+          [
+            779.8256,
+            436.3089
+          ],
+          [
+            787.4519,
+            438.7255
+          ],
+          [
+            775.3686,
+            476.8568
+          ]
+        ],
+        "status": "PROPOSED",
+        "canonical": false
+      },
+      "cartPassability": {
+        "value": false,
+        "status": "UNRESOLVED",
+        "owner": "MAP+GAMEPLAY"
+      },
+      "verdict": "PROPOSED_MEASURED_DECK",
+      "stillRequiresGameplay": [
+        "approved body/cart footprint",
+        "swept clearance",
+        "bridge deck bearing",
+        "ford depth/flow rule"
+      ]
+    },
+    {
+      "id": "CC-rd_20-rv_silver",
+      "roadId": "rd_20",
+      "riverId": "rv_silver",
+      "riverIdProvenance": "AUTHORED_ID",
+      "atAu": [
+        882.9405,
+        646.9076
+      ],
+      "measuredWetChord": {
+        "wetCells": 1,
+        "dir": [
+          -0.9435,
+          0.3313
+        ],
+        "sides": [
+          0,
+          0
+        ],
+        "basis": "PERPENDICULAR_TO_AUTHORED_ROAD",
+        "nearestRoadId": "rd_20",
+        "nearestRoadDistanceAu": 0.2254
+      },
+      "previousFailure": "Road and river centrelines intersect but no authored bridge (or only a foot-load bridge) exists; physical width undefined.",
+      "measuredWetWidthAu": 8,
+      "authoredEditorStrokeWidthAu": 4,
+      "widthSemantics": "Measured raster width vs EDITOR STROKE; physical navigable width remains UNRESOLVED.",
+      "resolutionType": "MEASURED_DECK_FOR_AUTHORED_FOOT_BRIDGE",
+      "proposedGeometry": {
+        "deckId": "deck.br_a.v2",
+        "spanAu": 40,
+        "widthAu": 8,
+        "deckPolygonAu": [
+          [
+            879.1444,
+            626.8698
+          ],
+          [
+            894.2149,
+            663.9222
+          ],
+          [
+            886.8044,
+            666.9363
+          ],
+          [
+            871.7339,
+            629.8839
+          ]
+        ],
+        "status": "PROPOSED",
+        "canonical": false
+      },
+      "cartPassability": {
+        "value": false,
+        "status": "UNRESOLVED",
+        "owner": "MAP+GAMEPLAY"
+      },
+      "verdict": "PROPOSED_MEASURED_DECK",
+      "stillRequiresGameplay": [
+        "approved body/cart footprint",
+        "swept clearance",
+        "bridge deck bearing",
+        "ford depth/flow rule"
+      ]
+    },
+    {
+      "id": "CC-rd_28-rv_d3",
+      "roadId": "rd_28",
+      "riverId": "rv_d3",
+      "riverIdProvenance": "AUTHORED_ID",
+      "atAu": [
+        1026.2825,
+        929.3724
+      ],
+      "measuredWetChord": {
+        "wetCells": 6,
+        "dir": [
+          -0.1091,
+          0.994
+        ],
+        "sides": [
+          5,
+          0
+        ],
+        "basis": "PERPENDICULAR_TO_AUTHORED_ROAD",
+        "nearestRoadId": "rd_28",
+        "nearestRoadDistanceAu": 0.2138
+      },
+      "previousFailure": "Road and river centrelines intersect but no authored bridge (or only a foot-load bridge) exists; physical width undefined.",
+      "measuredWetWidthAu": 48,
+      "authoredEditorStrokeWidthAu": 4,
+      "widthSemantics": "Measured raster width vs EDITOR STROKE; physical navigable width remains UNRESOLVED.",
+      "resolutionType": "MEASURED_DECK_FOR_AUTHORED_FOOT_BRIDGE",
+      "proposedGeometry": {
+        "deckId": "deck.br_b.v2",
+        "spanAu": 184,
+        "widthAu": 8,
+        "deckPolygonAu": [
+          [
+            942.9677,
+            890.3745
+          ],
+          [
+            1112.613,
+            961.6237
+          ],
+          [
+            1109.5153,
+            968.9996
+          ],
+          [
+            939.8699,
+            897.7504
+          ]
+        ],
+        "status": "PROPOSED",
+        "canonical": false
+      },
+      "cartPassability": {
+        "value": false,
+        "status": "UNRESOLVED",
+        "owner": "MAP+GAMEPLAY"
+      },
+      "verdict": "PROPOSED_MEASURED_DECK",
+      "stillRequiresGameplay": [
+        "approved body/cart footprint",
+        "swept clearance",
+        "bridge deck bearing",
+        "ford depth/flow rule"
+      ]
+    },
+    {
+      "id": "CC-rd_29-rv_grey_up",
+      "roadId": "rd_29",
+      "riverId": "rv_grey_up",
+      "riverIdProvenance": "AUTHORED_ID",
+      "atAu": [
+        779.0802,
+        458.9882
+      ],
+      "measuredWetChord": {
+        "wetCells": 2,
+        "dir": [
+          0.4468,
+          -0.8946
+        ],
+        "sides": [
+          0,
+          1
+        ],
+        "basis": "PERPENDICULAR_TO_AUTHORED_ROAD",
+        "nearestRoadId": "rd_29",
+        "nearestRoadDistanceAu": 0.2783
+      },
+      "previousFailure": "Road and river centrelines intersect but no authored bridge (or only a foot-load bridge) exists; physical width undefined.",
+      "measuredWetWidthAu": 16,
+      "authoredEditorStrokeWidthAu": 4,
+      "widthSemantics": "Measured raster width vs EDITOR STROKE; physical navigable width remains UNRESOLVED.",
+      "resolutionType": "MEASURED_DECK_FOR_AUTHORED_FOOT_BRIDGE",
+      "proposedGeometry": {
+        "deckId": "deck.br_9.v2",
+        "spanAu": 40,
+        "widthAu": 8,
+        "deckPolygonAu": [
+          [
+            767.7424,
+            474.4402
+          ],
+          [
+            779.8256,
+            436.3089
+          ],
+          [
+            787.4519,
+            438.7255
+          ],
+          [
+            775.3686,
+            476.8568
+          ]
+        ],
+        "status": "PROPOSED",
+        "canonical": false
+      },
+      "cartPassability": {
+        "value": false,
+        "status": "UNRESOLVED",
+        "owner": "MAP+GAMEPLAY"
+      },
+      "verdict": "PROPOSED_MEASURED_DECK",
+      "stillRequiresGameplay": [
+        "approved body/cart footprint",
+        "swept clearance",
+        "bridge deck bearing",
+        "ford depth/flow rule"
+      ]
+    },
+    {
+      "id": "CC-rd_2a-rv_argus",
+      "roadId": "rd_2a",
+      "riverId": "rv_argus",
+      "riverIdProvenance": "AUTHORED_ID",
+      "atAu": [
+        991.3756,
+        351.6874
+      ],
+      "measuredWetChord": {
+        "wetCells": 14,
+        "dir": [
+          0.7521,
+          0.6591
+        ],
+        "sides": [
+          1,
+          12
+        ],
+        "basis": "PERPENDICULAR_TO_AUTHORED_ROAD",
+        "nearestRoadId": "rd_2a",
+        "nearestRoadDistanceAu": 0.9296
+      },
+      "previousFailure": "Road and river centrelines intersect but no authored bridge (or only a foot-load bridge) exists; physical width undefined.",
+      "measuredWetWidthAu": 112,
+      "authoredEditorStrokeWidthAu": 2.5,
+      "widthSemantics": "Measured raster width vs EDITOR STROKE; physical navigable width remains UNRESOLVED.",
+      "resolutionType": "MEASURED_FORD_CANDIDATE",
+      "proposedGeometry": {
+        "id": "ford.rd_2a.rv_argus.v2",
+        "centreAu": [
+          991.3756,
+          351.6874
+        ],
+        "measuredWetWidthAu": 112,
+        "depth": "UNKNOWN",
+        "fordable": "UNKNOWN",
+        "status": "PROPOSED",
+        "canonical": false,
+        "note": "Ford GEOMETRY only; no depth, flow, boat or cart rule."
+      },
+      "cartPassability": {
+        "value": false,
+        "status": "UNRESOLVED",
+        "owner": "MAP+GAMEPLAY"
+      },
+      "verdict": "PROPOSED_MEASURED_FORD_GEOMETRY",
+      "stillRequiresGameplay": [
+        "approved body/cart footprint",
+        "swept clearance",
+        "bridge deck bearing",
+        "ford depth/flow rule"
+      ]
+    }
+  ],
+  "outletGap": {
+    "sourceId": "rv_grey_low",
+    "previousFailure": "v1 OUTLET-01 AUTHORED_OUTLET_GEOMETRY_GAP (no exact river/coordinate recorded).",
+    "authoredMouth": {
+      "kind": "none"
+    },
+    "authoredTerminalPointAu": [
+      990,
+      858
+    ],
+    "nearestSeaCellIndex": 28123,
+    "nearestSeaAtAu": [
+      988,
+      900
+    ],
+    "measuredGapAu": 42.0476,
+    "proposedChannel": {
+      "id": "outlet.rv_grey_low.v2",
+      "polylineAu": [
+        [
+          990,
+          858
+        ],
+        [
+          988,
+          900
+        ]
+      ],
+      "lengthAu": 42.0476,
+      "measuredWetWidthAu": 7,
+      "widthUnit": "EDITOR_STROKE_AU",
+      "status": "PROPOSED",
+      "canonical": false,
+      "basis": "Straight measured channel from the authored terminal vertex to the nearest authored SEA cell. NO new river is canonized; the authored mouth.kind=none is preserved.",
+      "owner": "MAP"
+    },
+    "verdict": "PROPOSED_MEASURED_OUTLET_CHANNEL",
+    "resolutionType": "GEOMETRY_CANDIDATE__NOT_AUTHORED",
+    "note": "Do NOT count this as an authored river. Gameplay owns any navigability/flood rule."
+  },
+  "summary": {
+    "bridgesWithMeasuredDecks": 12,
+    "bridgesWithVerifiedConnectorRole": 5,
+    "falseDisconnectsReclassified": 3,
+    "realSplitsWithMeasuredConnectors": 4,
+    "realSplitsBlocked": 0,
+    "crossingsWithMeasuredGeometry": 11,
+    "crossingsStillBlocked": 0,
+    "outletResolvedAsProposedGeometry": true
+  },
+  "noClaims": [
+    "NO cartPassable=true",
+    "NO invented road, bridge, land connection or river",
+    "NO approved vehicle dimension",
+    "NO ferry/boat rule",
+    "NO Gameplay runtime modification"
+  ]
+}
