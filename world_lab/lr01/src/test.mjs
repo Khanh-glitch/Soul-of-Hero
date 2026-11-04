@@ -108,8 +108,27 @@ ok('C-11-FERRIES-BLOCKED', TR.ferries.length === 8 && TF.failures.some(f => f.id
 ok('C-12-WIDTHS-UNRESOLVED', TR.roadPhysicalProposals.every(r => r.physicalWidthAu === null && r.physicalWidthStatus === 'UNRESOLVED' && r.proposedSurface.status === 'PROPOSED' && r.sweptClearanceAu === null));
 ok('C-13-ACTIVE-VS-ISOLATED', TR.graph.footComponentsActive < TR.graph.footComponentsIncludingIsolatedNodes && TR.graph.isolatedNodeInflation.cart > 0);
 
-// ---- Milestone D-F gates (appended as modules land) ----
-for (const f of ['poi_layouts.v1.json', 'art_manifest.v1.json', 'handoff.v1.json']) {
+// ---- Milestone D: 81 POI spatial layouts ----
+const DL = readJson(path.join(OUT, 'poi_layouts.v1.json'));
+const EXDIR = path.join(OUT, 'poi_examples');
+ok('D-01-SCHEMA', DL.schema === 'soh.map.lr01.poi_layouts.v1' && DL.status.includes('INTERIORS_PROPOSED_NOT_CANON') && DL.stage === 'STAGE_1_MAP_GEOGRAPHY');
+ok('D-02-81-POIS', DL.layouts.length === 81 && new Set(DL.layouts.map(l => l.poiId)).size === 81);
+ok('D-03-24-ARCHETYPES', DL.archetypeCoverage.length === 24 && DL.archetypeCoverage.reduce((s, a) => s + a.poiCount, 0) === 81);
+ok('D-04-STABLE-IDS', DL.counts.duplicateStableIds === 0 && DL.counts.stableIds === 1701 && DL.layouts.every(l => l.stableIds.rooms.every(id => id.includes(l.poiId)) && l.stableIds.sockets.every(id => id.includes(l.poiId))));
+ok('D-05-SOURCE-SHELLS', DL.layouts.every(l => l.canonical.footPolygonAu.length >= 3 && l.status.includes('CANONICAL_FOOTPRINT_ONLY')));
+ok('D-06-NO-INVENTED-DOORS', DL.layouts.every(l => l.entrance.lockedState === 'UNKNOWN' && l.entrance.powerRequirement === 'UNKNOWN' && l.entrance.doorStateOwner === 'GAMEPLAY' && l.entrance.openingStatus.includes('PROPOSED')));
+ok('D-07-KILNS-WEST-OPENING', (() => { const k = DL.layouts.find(l => l.poiId === 'po_kilns'); const minX = Math.min(...k.canonical.footPolygonAu.map(p => p[0])); return k.entrance.openingAu === 3.696 && k.entrance.openingStatus.includes('GEO02_PROPOSED') && k.entrance.atAu[0] < minX + 2; })());
+ok('D-08-SOCKETS-ARE-FIT-ONLY', DL.layouts.every(l => l.sockets.every(s => s.gameplayObject === null && s.purpose === 'SPATIAL_FIT_ONLY' && s.parentPoiId === l.poiId)));
+ok('D-09-SIX-ADAPTERS', DL.adapterVocabulary.length === 6 && DL.layouts.every(l => DL.adapterVocabulary.every(k => l.geometryAdapters[k]) && l.geometryAdapters.portalPassability.status.startsWith('UNKNOWN__')));
+ok('D-10-DEEP-LEVELS', DL.layouts.filter(l => l.levels.length > 1).length === 18 && DL.layouts.filter(l => l.portals.some(p => p.kind === 'VERTICAL_LINK')).every(l => l.portals.find(p => p.kind === 'VERTICAL_LINK').verticalSeparationAu === null));
+ok('D-11-NO-LOOT-OR-DEVICES', DL.noClaims.some(s => s.includes('NO loot')) && DL.noClaims.some(s => s.includes('NO generator')) && DL.noClaims.some(s => s.includes('NO locked-door')));
+ok('D-12-ARCHETYPE-VARIETY', new Set(DL.archetypeCoverage.map(a => a.template.pattern)).size >= 20 && new Set(DL.summary.map(s => s.rooms)).size >= 3 && new Set(DL.summary.map(s => s.sockets)).size >= 3);
+ok('D-13-REPRESENTATIVE-EXAMPLES', DL.representativeExamples.length === 8 && fs.readdirSync(EXDIR).filter(f => f.endsWith('.v1.json')).length === 8 && DL.representativeExamples.every(e => e.reason && fs.existsSync(path.join(EXDIR, `${e.poiId}.v1.json`))));
+ok('D-14-CIRCULATION-CONNECTED', DL.layouts.every(l => l.circulation.reachableRooms === l.circulation.totalRooms));
+ok('D-15-NO-CANON-REWRITE', DL.noClaims.includes('NO canonical Veyra rewrite') && DL.noClaims.some(s => s.includes('one-generic-room')));
+
+// ---- Milestone E-F gates (appended as modules land) ----
+for (const f of ['art_manifest.v1.json', 'handoff.v1.json']) {
   if (fs.existsSync(path.join(OUT, f))) ok(`GATE-FILE-${f}`, true);
 }
 

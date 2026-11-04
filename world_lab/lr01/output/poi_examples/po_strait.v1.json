@@ -1,0 +1,800 @@
+{
+  "schema": "soh.map.lr01.poi_example.v1",
+  "reason": "coastal dockside loading strip; mixed shelter + yard",
+  "layout": {
+    "schema": "soh.map.lr01.poi_layout.v1",
+    "poiId": "po_strait",
+    "name": "Strait Landing",
+    "arche": "port",
+    "atAu": [
+      1268,
+      490
+    ],
+    "rot": 0.18635912071913485,
+    "scale": 1,
+    "sourceRef": "project.pois[] where id=po_strait",
+    "status": "PROPOSED_INTERIOR_AND_CIRCULATION__CANONICAL_FOOTPRINT_ONLY",
+    "ownership": "MAP owns static layout / portals / sockets; GAMEPLAY owns dynamic door states, destruction, construction, devices, locks, power, loot, recipes, quests and machines.",
+    "enclosureClass": "OPEN_AIR_YARD",
+    "enclosureClassificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+    "canonical": {
+      "footPolygonAu": [
+        [
+          1251.5782,
+          473.4711
+        ],
+        [
+          1289.3133,
+          480.586
+        ],
+        [
+          1284.4218,
+          506.5289
+        ],
+        [
+          1246.6867,
+          499.414
+        ]
+      ],
+      "footAreaAu2": 1013.76,
+      "minEdgeAu": 26.4,
+      "deepPolygonAu": null,
+      "gate": "none",
+      "links": [],
+      "accessText": "Đường xe + tuyến phà",
+      "conf": "proposal"
+    },
+    "template": {
+      "archetype": "port",
+      "family": "mixed",
+      "grid": [
+        1,
+        2
+      ],
+      "roof": 0.3,
+      "sockets": 7,
+      "pattern": "dockside_loading",
+      "note": "dock-side loading strip + shed",
+      "instantiatedRows": 1,
+      "instantiatedCols": 2
+    },
+    "context": {
+      "landId": "ld_veyra",
+      "biomeCode": 0,
+      "zoneId": "bz_eastflats",
+      "elderGeometryId": null,
+      "seaDistanceCells": 5,
+      "clearanceCells": 2,
+      "nearestRoad": {
+        "id": "rd_5",
+        "kind": "cart",
+        "distanceAu": 0
+      },
+      "nearestDock": {
+        "id": "dk_strait",
+        "d": 19.5156
+      },
+      "status": "DERIVED"
+    },
+    "contextModifiers": [
+      {
+        "id": "MOD-CART-FRONTAGE",
+        "effect": "Entrance edge chosen toward a cart-road centreline; NO cart clearance claim",
+        "status": "DERIVED"
+      },
+      {
+        "id": "MOD-ZONE",
+        "effect": "Layout sits inside a candidate construction zone; occupancy still UNKNOWN",
+        "status": "DERIVED"
+      }
+    ],
+    "levels": [
+      {
+        "id": "level.po_strait.0",
+        "parentPoiId": "po_strait",
+        "index": 0,
+        "name": "GROUND",
+        "polygonAu": [
+          [
+            1251.5782,
+            473.4711
+          ],
+          [
+            1289.3133,
+            480.586
+          ],
+          [
+            1284.4218,
+            506.5289
+          ],
+          [
+            1246.6867,
+            499.414
+          ]
+        ],
+        "areaAu2": 1013.76,
+        "status": [
+          "SOURCE_AUTHORED",
+          "DERIVED"
+        ]
+      }
+    ],
+    "footprint": {
+      "obb": {
+        "centre": [
+          1268,
+          490
+        ],
+        "ux": [
+          0.9827,
+          0.1853
+        ],
+        "uy": [
+          -0.1853,
+          0.9827
+        ],
+        "wAu": 38.4,
+        "hAu": 26.4,
+        "angleRad": 0.1864,
+        "edgeLengthsAu": [
+          38.4,
+          26.4,
+          38.4,
+          26.4
+        ],
+        "quadEdge2Au": 26.4
+      },
+      "widthAu": 38.4011,
+      "heightAu": 26.401,
+      "wallThicknessAu": 2,
+      "wallThicknessStatus": "PROPOSED"
+    },
+    "walls": [
+      {
+        "id": "wall.po_strait.1",
+        "parentPoiId": "po_strait",
+        "kind": "EXTERIOR",
+        "aAu": [
+          1251.5782,
+          473.4711
+        ],
+        "bAu": [
+          1289.3133,
+          480.586
+        ],
+        "lengthAu": 38.4,
+        "thicknessAu": 2,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_strait :: foot edge 1 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_strait.2",
+        "parentPoiId": "po_strait",
+        "kind": "EXTERIOR",
+        "aAu": [
+          1289.3133,
+          480.586
+        ],
+        "bAu": [
+          1284.4218,
+          506.5289
+        ],
+        "lengthAu": 26.4,
+        "thicknessAu": 2,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_strait :: foot edge 2 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_strait.3",
+        "parentPoiId": "po_strait",
+        "kind": "EXTERIOR",
+        "aAu": [
+          1284.4218,
+          506.5289
+        ],
+        "bAu": [
+          1246.6867,
+          499.414
+        ],
+        "lengthAu": 38.4,
+        "thicknessAu": 2,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_strait :: foot edge 3 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_strait.4",
+        "parentPoiId": "po_strait",
+        "kind": "EXTERIOR",
+        "aAu": [
+          1246.6867,
+          499.414
+        ],
+        "bAu": [
+          1251.5782,
+          473.4711
+        ],
+        "lengthAu": 26.4,
+        "thicknessAu": 2,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_strait :: foot edge 4 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_strait.split.v.1",
+        "parentPoiId": "po_strait",
+        "kind": "INTERIOR_PARTITION",
+        "aAu": [
+          1270.4461,
+          477.0279
+        ],
+        "bAu": [
+          1265.5539,
+          502.9721
+        ],
+        "thicknessAu": 2,
+        "status": "PROPOSED",
+        "opaqueSight": true
+      }
+    ],
+    "rooms": [
+      {
+        "id": "room.po_strait.1.1",
+        "parentPoiId": "po_strait",
+        "levelId": "level.po_strait.0",
+        "row": 1,
+        "col": 1,
+        "pattern": "dockside_loading",
+        "enclosureClass": "OPEN_AIR_YARD",
+        "polygonAu": [
+          [
+            1252.3751,
+            474.638
+          ],
+          [
+            1269.2781,
+            477.8253
+          ],
+          [
+            1264.7565,
+            501.8041
+          ],
+          [
+            1247.8536,
+            498.6169
+          ]
+        ],
+        "centroidAu": [
+          1258.5658,
+          488.2211
+        ],
+        "areaAu2": 419.7246,
+        "bboxAu": [
+          1247.8536,
+          474.638,
+          1269.2781,
+          501.8041
+        ],
+        "floor": {
+          "polygonAu": [
+            [
+              1252.3751,
+              474.638
+            ],
+            [
+              1269.2781,
+              477.8253
+            ],
+            [
+              1264.7565,
+              501.8041
+            ],
+            [
+              1247.8536,
+              498.6169
+            ]
+          ],
+          "status": "PROPOSED",
+          "floorLevelId": "floor.po_strait.1.1"
+        },
+        "roof": {
+          "covered": true,
+          "coverageFractionOfRoom": 0.5,
+          "canopyOnly": true,
+          "status": "PROPOSED",
+          "note": "Partial canopy over an open yard cell; NOT an enclosed room."
+        },
+        "surface": "YARD_OR_OPEN_CELL",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "room.po_strait.1.2",
+        "parentPoiId": "po_strait",
+        "levelId": "level.po_strait.0",
+        "row": 1,
+        "col": 2,
+        "pattern": "dockside_loading",
+        "enclosureClass": "OPEN_AIR_YARD",
+        "polygonAu": [
+          [
+            1271.2435,
+            478.1959
+          ],
+          [
+            1288.1464,
+            481.3831
+          ],
+          [
+            1283.6249,
+            505.362
+          ],
+          [
+            1266.7219,
+            502.1747
+          ]
+        ],
+        "centroidAu": [
+          1277.4342,
+          491.7789
+        ],
+        "areaAu2": 419.7246,
+        "bboxAu": [
+          1266.7219,
+          478.1959,
+          1288.1464,
+          505.362
+        ],
+        "floor": {
+          "polygonAu": [
+            [
+              1271.2435,
+              478.1959
+            ],
+            [
+              1288.1464,
+              481.3831
+            ],
+            [
+              1283.6249,
+              505.362
+            ],
+            [
+              1266.7219,
+              502.1747
+            ]
+          ],
+          "status": "PROPOSED",
+          "floorLevelId": "floor.po_strait.1.2"
+        },
+        "roof": {
+          "covered": false,
+          "coverageFractionOfRoom": 0,
+          "canopyOnly": true,
+          "status": "PROPOSED",
+          "note": "Partial canopy over an open yard cell; NOT an enclosed room."
+        },
+        "surface": "YARD_OR_OPEN_CELL",
+        "status": "PROPOSED"
+      }
+    ],
+    "floors": [
+      {
+        "polygonAu": [
+          [
+            1252.3751,
+            474.638
+          ],
+          [
+            1269.2781,
+            477.8253
+          ],
+          [
+            1264.7565,
+            501.8041
+          ],
+          [
+            1247.8536,
+            498.6169
+          ]
+        ],
+        "status": "PROPOSED",
+        "floorLevelId": "floor.po_strait.1.1"
+      },
+      {
+        "polygonAu": [
+          [
+            1271.2435,
+            478.1959
+          ],
+          [
+            1288.1464,
+            481.3831
+          ],
+          [
+            1283.6249,
+            505.362
+          ],
+          [
+            1266.7219,
+            502.1747
+          ]
+        ],
+        "status": "PROPOSED",
+        "floorLevelId": "floor.po_strait.1.2"
+      }
+    ],
+    "entrance": {
+      "id": "entrance.po_strait.1",
+      "parentPoiId": "po_strait",
+      "kind": "PRIMARY_ENTRANCE",
+      "onWallId": "wall.po_strait.1",
+      "atAu": [
+        1270.4457,
+        477.0286
+      ],
+      "openingAu": 6,
+      "openingStatus": "PROPOSED",
+      "sourceRef": "project.pois[] where id=po_strait :: no authored entrance; edge 1 chosen by nearest road",
+      "capacityUpperBoundAu": 38.4,
+      "doorStateOwner": "GAMEPLAY",
+      "lockedState": "UNKNOWN",
+      "powerRequirement": "UNKNOWN",
+      "note": "STATIC opening geometry only. No lock, key, power, quest or device rule is authored."
+    },
+    "portals": [
+      {
+        "id": "portal.po_strait.entrance",
+        "parentPoiId": "po_strait",
+        "kind": "EXTERIOR_PORTAL",
+        "fromRoomId": null,
+        "toRoomId": "room.po_strait.1.1",
+        "atAu": [
+          1270.4457,
+          477.0286
+        ],
+        "openingAu": 6,
+        "openingStatus": "PROPOSED",
+        "status": "PROPOSED",
+        "doorStateOwner": "GAMEPLAY",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "note": "Static entrance portal. NO door rule, lock, key or power requirement."
+      },
+      {
+        "id": "portal.po_strait.h.1.1",
+        "parentPoiId": "po_strait",
+        "kind": "INTERIOR_DOORWAY",
+        "fromRoomId": "room.po_strait.1.1",
+        "toRoomId": "room.po_strait.1.2",
+        "atAu": [
+          1268,
+          490
+        ],
+        "openingAu": 6,
+        "status": "PROPOSED",
+        "openingStatus": "PROPOSED",
+        "doorStateOwner": "GAMEPLAY",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "note": "Static portal geometry. Gameplay owns dynamic door state, destruction and devices."
+      }
+    ],
+    "circulation": {
+      "entranceRoomId": "room.po_strait.1.1",
+      "reachableRooms": 2,
+      "totalRooms": 2,
+      "maxDepth": 1,
+      "depthByRoomId": {
+        "room.po_strait.1.1": 0,
+        "room.po_strait.1.2": 1
+      },
+      "interiorDepthAu": 16.3221,
+      "status": "DERIVED"
+    },
+    "retreat": {
+      "status": "UNRESOLVED",
+      "pathAu": null,
+      "lengthAu": null,
+      "exitAtAu": null,
+      "note": "No authored retreat polyline. An exit is NOT invented; Gameplay may route through static portals."
+    },
+    "sockets": [
+      {
+        "id": "socket.po_strait.1",
+        "parentPoiId": "po_strait",
+        "parentRoomId": "room.po_strait.1.1",
+        "levelId": "level.po_strait.0",
+        "atAu": [
+          1256.0392,
+          484.5207
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "YARD_OR_DECK",
+        "kind": "DOCKSIDE_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_strait.2",
+        "parentPoiId": "po_strait",
+        "parentRoomId": "room.po_strait.1.2",
+        "levelId": "level.po_strait.0",
+        "atAu": [
+          1279.9608,
+          495.4793
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "YARD_OR_DECK",
+        "kind": "DOCKSIDE_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_strait.3",
+        "parentPoiId": "po_strait",
+        "parentRoomId": "room.po_strait.1.1",
+        "levelId": "level.po_strait.0",
+        "atAu": [
+          1254.8651,
+          490.7473
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "YARD_OR_DECK",
+        "kind": "DOCKSIDE_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_strait.4",
+        "parentPoiId": "po_strait",
+        "parentRoomId": "room.po_strait.1.2",
+        "levelId": "level.po_strait.0",
+        "atAu": [
+          1281.1349,
+          489.2527
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "YARD_OR_DECK",
+        "kind": "DOCKSIDE_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_strait.5",
+        "parentPoiId": "po_strait",
+        "parentRoomId": "room.po_strait.1.1",
+        "levelId": "level.po_strait.0",
+        "atAu": [
+          1254.8651,
+          490.7473
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "YARD_OR_DECK",
+        "kind": "DOCKSIDE_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_strait.6",
+        "parentPoiId": "po_strait",
+        "parentRoomId": "room.po_strait.1.2",
+        "levelId": "level.po_strait.0",
+        "atAu": [
+          1279.9608,
+          495.4793
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "YARD_OR_DECK",
+        "kind": "DOCKSIDE_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_strait.7",
+        "parentPoiId": "po_strait",
+        "parentRoomId": "room.po_strait.1.1",
+        "levelId": "level.po_strait.0",
+        "atAu": [
+          1256.0392,
+          484.5207
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "YARD_OR_DECK",
+        "kind": "DOCKSIDE_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      }
+    ],
+    "roofCoverage": {
+      "coveredRoomCount": 1,
+      "totalRoomCount": 2,
+      "roofAreaAu2": 209.8623,
+      "footAreaAu2": 1013.76,
+      "roofAreaToFootAreaRatioAcrossLevels": 0.207,
+      "fractionOfFoot": 0.207,
+      "status": "DERIVED",
+      "note": "Measured over PROPOSED room/canopy polygons weighted by coverageFractionOfRoom. The across-levels ratio can exceed 1 when a DEEP level adds roofed area; it is NOT a single-plane coverage fraction."
+    },
+    "geometryAdapters": {
+      "collision": {
+        "staticWalls": [
+          "wall.po_strait.1",
+          "wall.po_strait.2",
+          "wall.po_strait.3",
+          "wall.po_strait.4",
+          "wall.po_strait.split.v.1"
+        ],
+        "staticWallCount": 5,
+        "wallThicknessAu": 2,
+        "thicknessStatus": "PROPOSED",
+        "dynamicCollisionOwner": "GAMEPLAY",
+        "destructionOwner": "GAMEPLAY",
+        "status": "PROPOSED_STATIC_COLLISION_GEOMETRY__NOT_RUNTIME_COLLISION_DATA"
+      },
+      "enclosure": {
+        "enclosedAreaAu2": 0,
+        "footAreaAu2": 1013.76,
+        "enclosureFraction": 0,
+        "enclosureClass": "OPEN_AIR_YARD",
+        "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+        "status": "DERIVED"
+      },
+      "reach": {
+        "maxInteriorDistanceAu": 16.3221,
+        "nearestRoadAu": 0,
+        "approachLengthAu": 13.1999,
+        "minPortalOpeningAu": 6,
+        "status": "DERIVED",
+        "note": "Geometric reach only. Interaction radius / Gameplay reach rules are NOT asserted."
+      },
+      "lineOfSight": {
+        "opaqueWallIds": [
+          "wall.po_strait.1",
+          "wall.po_strait.2",
+          "wall.po_strait.3",
+          "wall.po_strait.4",
+          "wall.po_strait.split.v.1"
+        ],
+        "transparentPortalIds": [
+          "portal.po_strait.entrance",
+          "portal.po_strait.h.1.1"
+        ],
+        "portalSightOwner": "GAMEPLAY",
+        "status": "PROPOSED",
+        "note": "Static opaque walls + portal gaps. Dynamic door opacity is Gameplay-owned."
+      },
+      "roofCoverage": {
+        "coveredRoomCount": 1,
+        "totalRoomCount": 2,
+        "roofAreaAu2": 209.8623,
+        "footAreaAu2": 1013.76,
+        "roofAreaToFootAreaRatioAcrossLevels": 0.207,
+        "fractionOfFoot": 0.207,
+        "status": "DERIVED",
+        "note": "Measured over PROPOSED room/canopy polygons weighted by coverageFractionOfRoom. The across-levels ratio can exceed 1 when a DEEP level adds roofed area; it is NOT a single-plane coverage fraction."
+      },
+      "portalPassability": {
+        "portals": [
+          {
+            "id": "portal.po_strait.entrance",
+            "openingAu": 6,
+            "kind": "EXTERIOR_PORTAL"
+          },
+          {
+            "id": "portal.po_strait.h.1.1",
+            "openingAu": 6,
+            "kind": "INTERIOR_DOORWAY"
+          }
+        ],
+        "passabilityRuleOwner": "GAMEPLAY",
+        "status": "UNKNOWN__DYNAMIC_DOOR_STATE_DESTRUCTION_AND_DEVICES_OWNED_BY_GAMEPLAY",
+        "note": "Map asserts only that a geometric opening exists. No lock, power, key, weight or vehicle rule."
+      }
+    },
+    "stableIds": {
+      "rooms": [
+        "room.po_strait.1.1",
+        "room.po_strait.1.2"
+      ],
+      "walls": [
+        "wall.po_strait.1",
+        "wall.po_strait.2",
+        "wall.po_strait.3",
+        "wall.po_strait.4",
+        "wall.po_strait.split.v.1"
+      ],
+      "entrances": [
+        "entrance.po_strait.1"
+      ],
+      "portals": [
+        "portal.po_strait.entrance",
+        "portal.po_strait.h.1.1"
+      ],
+      "sockets": [
+        "socket.po_strait.1",
+        "socket.po_strait.2",
+        "socket.po_strait.3",
+        "socket.po_strait.4",
+        "socket.po_strait.5",
+        "socket.po_strait.6",
+        "socket.po_strait.7"
+      ],
+      "levels": [
+        "level.po_strait.0"
+      ],
+      "floors": [
+        "floor.po_strait.1.1",
+        "floor.po_strait.1.2"
+      ]
+    },
+    "noClaims": [
+      "NO loot, loot table, chest contents or reward",
+      "NO locked-door rule, key, card or power requirement",
+      "NO generator, machine, recipe, quest, vendor inventory or economy",
+      "NO dynamic door state or destruction",
+      "NO authored entrance in source (all openings PROPOSED)",
+      "NO approved vertical unit or stair geometry",
+      "NO runtime collision data (static geometry only)",
+      "NO playable survival acceptance"
+    ]
+  }
+}

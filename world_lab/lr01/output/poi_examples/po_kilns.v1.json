@@ -1,0 +1,1054 @@
+{
+  "schema": "soh.map.lr01.poi_example.v1",
+  "reason": "GEO-02 PROPOSED 3.696 au west opening (po_kilns); enclosed multi-bay with yard",
+  "layout": {
+    "schema": "soh.map.lr01.poi_layout.v1",
+    "poiId": "po_kilns",
+    "name": "Charcoal Kilns",
+    "arche": "smelter",
+    "atAu": [
+      905,
+      785
+    ],
+    "rot": 0.06530504338443277,
+    "scale": 0.7,
+    "sourceRef": "project.pois[] where id=po_kilns",
+    "status": "PROPOSED_INTERIOR_AND_CIRCULATION__CANONICAL_FOOTPRINT_ONLY",
+    "ownership": "MAP owns static layout / portals / sockets; GAMEPLAY owns dynamic door states, destruction, construction, devices, locks, power, loot, recipes, quests and machines.",
+    "enclosureClass": "ENCLOSED_SINGLE",
+    "enclosureClassificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+    "canonical": {
+      "footPolygonAu": [
+        [
+          892.1916,
+          774.9026
+        ],
+        [
+          919.0143,
+          776.6568
+        ],
+        [
+          917.8084,
+          795.0974
+        ],
+        [
+          890.9857,
+          793.3432
+        ]
+      ],
+      "footAreaAu2": 496.7424,
+      "minEdgeAu": 18.48,
+      "deepPolygonAu": null,
+      "gate": "none",
+      "links": [],
+      "accessText": "Đường xe + bến",
+      "conf": "proposal"
+    },
+    "template": {
+      "archetype": "smelter",
+      "family": "enclosed",
+      "grid": [
+        2,
+        2
+      ],
+      "roof": 0.85,
+      "sockets": 6,
+      "pattern": "hot_bay_and_yard",
+      "note": "enclosed hot bay with external yard",
+      "instantiatedRows": 2,
+      "instantiatedCols": 2
+    },
+    "context": {
+      "landId": "ld_veyra",
+      "biomeCode": 2,
+      "zoneId": null,
+      "elderGeometryId": "el_aion",
+      "seaDistanceCells": 21,
+      "clearanceCells": 5,
+      "nearestRoad": {
+        "id": "rd_16",
+        "kind": "trail",
+        "distanceAu": 0
+      },
+      "nearestDock": {
+        "id": "dk_delta",
+        "d": 115.6341
+      },
+      "status": "DERIVED"
+    },
+    "contextModifiers": [
+      {
+        "id": "MOD-ELDER",
+        "effect": "Arena ring radial sockets retained; approach kept source-authored",
+        "status": "DERIVED"
+      }
+    ],
+    "levels": [
+      {
+        "id": "level.po_kilns.0",
+        "parentPoiId": "po_kilns",
+        "index": 0,
+        "name": "GROUND",
+        "polygonAu": [
+          [
+            892.1916,
+            774.9026
+          ],
+          [
+            919.0143,
+            776.6568
+          ],
+          [
+            917.8084,
+            795.0974
+          ],
+          [
+            890.9857,
+            793.3432
+          ]
+        ],
+        "areaAu2": 496.7424,
+        "status": [
+          "SOURCE_AUTHORED",
+          "DERIVED"
+        ]
+      }
+    ],
+    "footprint": {
+      "obb": {
+        "centre": [
+          905,
+          785
+        ],
+        "ux": [
+          0.9979,
+          0.0653
+        ],
+        "uy": [
+          -0.0653,
+          0.9979
+        ],
+        "wAu": 26.88,
+        "hAu": 18.48,
+        "angleRad": 0.0653,
+        "edgeLengthsAu": [
+          26.88,
+          18.48,
+          26.88,
+          18.48
+        ],
+        "quadEdge2Au": 18.48
+      },
+      "widthAu": 26.8816,
+      "heightAu": 18.4817,
+      "wallThicknessAu": 1.4784,
+      "wallThicknessStatus": "PROPOSED"
+    },
+    "walls": [
+      {
+        "id": "wall.po_kilns.1",
+        "parentPoiId": "po_kilns",
+        "kind": "EXTERIOR",
+        "aAu": [
+          892.1916,
+          774.9026
+        ],
+        "bAu": [
+          919.0143,
+          776.6568
+        ],
+        "lengthAu": 26.88,
+        "thicknessAu": 1.4784,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_kilns :: foot edge 1 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_kilns.2",
+        "parentPoiId": "po_kilns",
+        "kind": "EXTERIOR",
+        "aAu": [
+          919.0143,
+          776.6568
+        ],
+        "bAu": [
+          917.8084,
+          795.0974
+        ],
+        "lengthAu": 18.48,
+        "thicknessAu": 1.4784,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_kilns :: foot edge 2 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_kilns.3",
+        "parentPoiId": "po_kilns",
+        "kind": "EXTERIOR",
+        "aAu": [
+          917.8084,
+          795.0974
+        ],
+        "bAu": [
+          890.9857,
+          793.3432
+        ],
+        "lengthAu": 26.88,
+        "thicknessAu": 1.4784,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_kilns :: foot edge 3 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_kilns.4",
+        "parentPoiId": "po_kilns",
+        "kind": "EXTERIOR",
+        "aAu": [
+          890.9857,
+          793.3432
+        ],
+        "bAu": [
+          892.1916,
+          774.9026
+        ],
+        "lengthAu": 18.48,
+        "thicknessAu": 1.4784,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_kilns :: foot edge 4 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_kilns.split.v.1",
+        "parentPoiId": "po_kilns",
+        "kind": "INTERIOR_PARTITION",
+        "aAu": [
+          905.6034,
+          775.7786
+        ],
+        "bAu": [
+          904.3966,
+          794.2214
+        ],
+        "thicknessAu": 1.4784,
+        "status": "PROPOSED",
+        "opaqueSight": true
+      },
+      {
+        "id": "wall.po_kilns.split.h.1",
+        "parentPoiId": "po_kilns",
+        "kind": "INTERIOR_PARTITION",
+        "aAu": [
+          891.5874,
+          784.1223
+        ],
+        "bAu": [
+          918.4126,
+          785.8777
+        ],
+        "thicknessAu": 1.4784,
+        "status": "PROPOSED",
+        "opaqueSight": true
+      }
+    ],
+    "rooms": [
+      {
+        "id": "room.po_kilns.1.1",
+        "parentPoiId": "po_kilns",
+        "levelId": "level.po_kilns.0",
+        "row": 1,
+        "col": 1,
+        "pattern": "hot_bay_and_yard",
+        "enclosureClass": "ENCLOSED_SINGLE",
+        "polygonAu": [
+          [
+            892.8802,
+            775.6868
+          ],
+          [
+            904.8175,
+            776.468
+          ],
+          [
+            904.3106,
+            784.2141
+          ],
+          [
+            892.3733,
+            783.4329
+          ]
+        ],
+        "centroidAu": [
+          898.5954,
+          779.9505
+        ],
+        "areaAu2": 92.8635,
+        "bboxAu": [
+          892.3733,
+          775.6868,
+          904.8175,
+          784.2141
+        ],
+        "floor": {
+          "polygonAu": [
+            [
+              892.8802,
+              775.6868
+            ],
+            [
+              904.8175,
+              776.468
+            ],
+            [
+              904.3106,
+              784.2141
+            ],
+            [
+              892.3733,
+              783.4329
+            ]
+          ],
+          "status": "PROPOSED",
+          "floorLevelId": "floor.po_kilns.1.1"
+        },
+        "roof": {
+          "covered": true,
+          "coverageFractionOfRoom": 1,
+          "canopyOnly": false,
+          "status": "PROPOSED",
+          "note": "Full roof over an enclosed room."
+        },
+        "surface": "ENCLOSURE_INTERIOR",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "room.po_kilns.1.2",
+        "parentPoiId": "po_kilns",
+        "levelId": "level.po_kilns.0",
+        "row": 1,
+        "col": 2,
+        "pattern": "hot_bay_and_yard",
+        "enclosureClass": "ENCLOSED_SINGLE",
+        "polygonAu": [
+          [
+            906.2928,
+            776.5645
+          ],
+          [
+            918.2301,
+            777.3456
+          ],
+          [
+            917.7232,
+            785.0918
+          ],
+          [
+            905.7859,
+            784.3106
+          ]
+        ],
+        "centroidAu": [
+          912.008,
+          780.8281
+        ],
+        "areaAu2": 92.8641,
+        "bboxAu": [
+          905.7859,
+          776.5645,
+          918.2301,
+          785.0918
+        ],
+        "floor": {
+          "polygonAu": [
+            [
+              906.2928,
+              776.5645
+            ],
+            [
+              918.2301,
+              777.3456
+            ],
+            [
+              917.7232,
+              785.0918
+            ],
+            [
+              905.7859,
+              784.3106
+            ]
+          ],
+          "status": "PROPOSED",
+          "floorLevelId": "floor.po_kilns.1.2"
+        },
+        "roof": {
+          "covered": true,
+          "coverageFractionOfRoom": 1,
+          "canopyOnly": false,
+          "status": "PROPOSED",
+          "note": "Full roof over an enclosed room."
+        },
+        "surface": "ENCLOSURE_INTERIOR",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "room.po_kilns.2.1",
+        "parentPoiId": "po_kilns",
+        "levelId": "level.po_kilns.0",
+        "row": 2,
+        "col": 1,
+        "pattern": "hot_bay_and_yard",
+        "enclosureClass": "ENCLOSED_SINGLE",
+        "polygonAu": [
+          [
+            892.2768,
+            784.9082
+          ],
+          [
+            904.2141,
+            785.6894
+          ],
+          [
+            903.7072,
+            793.4355
+          ],
+          [
+            891.7699,
+            792.6544
+          ]
+        ],
+        "centroidAu": [
+          897.992,
+          789.1719
+        ],
+        "areaAu2": 92.8641,
+        "bboxAu": [
+          891.7699,
+          784.9082,
+          904.2141,
+          793.4355
+        ],
+        "floor": {
+          "polygonAu": [
+            [
+              892.2768,
+              784.9082
+            ],
+            [
+              904.2141,
+              785.6894
+            ],
+            [
+              903.7072,
+              793.4355
+            ],
+            [
+              891.7699,
+              792.6544
+            ]
+          ],
+          "status": "PROPOSED",
+          "floorLevelId": "floor.po_kilns.2.1"
+        },
+        "roof": {
+          "covered": true,
+          "coverageFractionOfRoom": 1,
+          "canopyOnly": false,
+          "status": "PROPOSED",
+          "note": "Full roof over an enclosed room."
+        },
+        "surface": "ENCLOSURE_INTERIOR",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "room.po_kilns.2.2",
+        "parentPoiId": "po_kilns",
+        "levelId": "level.po_kilns.0",
+        "row": 2,
+        "col": 2,
+        "pattern": "hot_bay_and_yard",
+        "enclosureClass": "ENCLOSED_SINGLE",
+        "polygonAu": [
+          [
+            905.6894,
+            785.7859
+          ],
+          [
+            917.6267,
+            786.5671
+          ],
+          [
+            917.1198,
+            794.3132
+          ],
+          [
+            905.1825,
+            793.532
+          ]
+        ],
+        "centroidAu": [
+          911.4046,
+          790.0495
+        ],
+        "areaAu2": 92.8635,
+        "bboxAu": [
+          905.1825,
+          785.7859,
+          917.6267,
+          794.3132
+        ],
+        "floor": {
+          "polygonAu": [
+            [
+              905.6894,
+              785.7859
+            ],
+            [
+              917.6267,
+              786.5671
+            ],
+            [
+              917.1198,
+              794.3132
+            ],
+            [
+              905.1825,
+              793.532
+            ]
+          ],
+          "status": "PROPOSED",
+          "floorLevelId": "floor.po_kilns.2.2"
+        },
+        "roof": {
+          "covered": true,
+          "coverageFractionOfRoom": 1,
+          "canopyOnly": false,
+          "status": "PROPOSED",
+          "note": "Full roof over an enclosed room."
+        },
+        "surface": "ENCLOSURE_INTERIOR",
+        "status": "PROPOSED"
+      }
+    ],
+    "floors": [
+      {
+        "polygonAu": [
+          [
+            892.8802,
+            775.6868
+          ],
+          [
+            904.8175,
+            776.468
+          ],
+          [
+            904.3106,
+            784.2141
+          ],
+          [
+            892.3733,
+            783.4329
+          ]
+        ],
+        "status": "PROPOSED",
+        "floorLevelId": "floor.po_kilns.1.1"
+      },
+      {
+        "polygonAu": [
+          [
+            906.2928,
+            776.5645
+          ],
+          [
+            918.2301,
+            777.3456
+          ],
+          [
+            917.7232,
+            785.0918
+          ],
+          [
+            905.7859,
+            784.3106
+          ]
+        ],
+        "status": "PROPOSED",
+        "floorLevelId": "floor.po_kilns.1.2"
+      },
+      {
+        "polygonAu": [
+          [
+            892.2768,
+            784.9082
+          ],
+          [
+            904.2141,
+            785.6894
+          ],
+          [
+            903.7072,
+            793.4355
+          ],
+          [
+            891.7699,
+            792.6544
+          ]
+        ],
+        "status": "PROPOSED",
+        "floorLevelId": "floor.po_kilns.2.1"
+      },
+      {
+        "polygonAu": [
+          [
+            905.6894,
+            785.7859
+          ],
+          [
+            917.6267,
+            786.5671
+          ],
+          [
+            917.1198,
+            794.3132
+          ],
+          [
+            905.1825,
+            793.532
+          ]
+        ],
+        "status": "PROPOSED",
+        "floorLevelId": "floor.po_kilns.2.2"
+      }
+    ],
+    "entrance": {
+      "id": "entrance.po_kilns.1",
+      "parentPoiId": "po_kilns",
+      "kind": "PRIMARY_ENTRANCE",
+      "onWallId": "wall.po_kilns.4",
+      "atAu": [
+        891.5886,
+        784.1229
+      ],
+      "openingAu": 3.696,
+      "openingStatus": "GEO02_PROPOSED_WEST_OPENING__NON_CANONICAL",
+      "sourceRef": "world_lab/geo02/output/poi_po_kilns.proposed.v1.json :: westOpeningAu=3.696",
+      "capacityUpperBoundAu": 18.48,
+      "doorStateOwner": "GAMEPLAY",
+      "lockedState": "UNKNOWN",
+      "powerRequirement": "UNKNOWN",
+      "note": "STATIC opening geometry only. No lock, key, power, quest or device rule is authored."
+    },
+    "portals": [
+      {
+        "id": "portal.po_kilns.entrance",
+        "parentPoiId": "po_kilns",
+        "kind": "EXTERIOR_PORTAL",
+        "fromRoomId": null,
+        "toRoomId": "room.po_kilns.2.1",
+        "atAu": [
+          891.5886,
+          784.1229
+        ],
+        "openingAu": 3.696,
+        "openingStatus": "GEO02_PROPOSED_WEST_OPENING__NON_CANONICAL",
+        "status": "PROPOSED",
+        "doorStateOwner": "GAMEPLAY",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "note": "Static entrance portal. NO door rule, lock, key or power requirement."
+      },
+      {
+        "id": "portal.po_kilns.h.1.1",
+        "parentPoiId": "po_kilns",
+        "kind": "INTERIOR_DOORWAY",
+        "fromRoomId": "room.po_kilns.1.1",
+        "toRoomId": "room.po_kilns.1.2",
+        "atAu": [
+          905.3017,
+          780.3893
+        ],
+        "openingAu": 4.62,
+        "status": "PROPOSED",
+        "openingStatus": "PROPOSED",
+        "doorStateOwner": "GAMEPLAY",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "note": "Static portal geometry. Gameplay owns dynamic door state, destruction and devices."
+      },
+      {
+        "id": "portal.po_kilns.v.1.1",
+        "parentPoiId": "po_kilns",
+        "kind": "INTERIOR_DOORWAY",
+        "fromRoomId": "room.po_kilns.1.1",
+        "toRoomId": "room.po_kilns.2.1",
+        "atAu": [
+          898.2937,
+          784.5612
+        ],
+        "openingAu": 4.62,
+        "status": "PROPOSED",
+        "openingStatus": "PROPOSED",
+        "doorStateOwner": "GAMEPLAY",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "note": "Static portal geometry. Gameplay owns dynamic door state, destruction and devices."
+      },
+      {
+        "id": "portal.po_kilns.v.1.2",
+        "parentPoiId": "po_kilns",
+        "kind": "INTERIOR_DOORWAY",
+        "fromRoomId": "room.po_kilns.1.2",
+        "toRoomId": "room.po_kilns.2.2",
+        "atAu": [
+          911.7063,
+          785.4388
+        ],
+        "openingAu": 4.62,
+        "status": "PROPOSED",
+        "openingStatus": "PROPOSED",
+        "doorStateOwner": "GAMEPLAY",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "note": "Static portal geometry. Gameplay owns dynamic door state, destruction and devices."
+      },
+      {
+        "id": "portal.po_kilns.h.2.1",
+        "parentPoiId": "po_kilns",
+        "kind": "INTERIOR_DOORWAY",
+        "fromRoomId": "room.po_kilns.2.1",
+        "toRoomId": "room.po_kilns.2.2",
+        "atAu": [
+          904.6983,
+          789.6107
+        ],
+        "openingAu": 4.62,
+        "status": "PROPOSED",
+        "openingStatus": "PROPOSED",
+        "doorStateOwner": "GAMEPLAY",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "note": "Static portal geometry. Gameplay owns dynamic door state, destruction and devices."
+      }
+    ],
+    "circulation": {
+      "entranceRoomId": "room.po_kilns.2.1",
+      "reachableRooms": 4,
+      "totalRooms": 4,
+      "maxDepth": 2,
+      "depthByRoomId": {
+        "room.po_kilns.2.1": 0,
+        "room.po_kilns.1.1": 1,
+        "room.po_kilns.2.2": 1,
+        "room.po_kilns.1.2": 2
+      },
+      "interiorDepthAu": 20.6835,
+      "status": "DERIVED"
+    },
+    "retreat": {
+      "status": "UNRESOLVED",
+      "pathAu": null,
+      "lengthAu": null,
+      "exitAtAu": null,
+      "note": "No authored retreat polyline. An exit is NOT invented; Gameplay may route through static portals."
+    },
+    "sockets": [
+      {
+        "id": "socket.po_kilns.1",
+        "parentPoiId": "po_kilns",
+        "parentRoomId": "room.po_kilns.1.1",
+        "levelId": "level.po_kilns.0",
+        "atAu": [
+          896.5266,
+          777.5922
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 4.6204,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_kilns.2",
+        "parentPoiId": "po_kilns",
+        "parentRoomId": "room.po_kilns.1.2",
+        "levelId": "level.po_kilns.0",
+        "atAu": [
+          914.0768,
+          783.1858
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 4.6204,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_kilns.3",
+        "parentPoiId": "po_kilns",
+        "parentRoomId": "room.po_kilns.2.1",
+        "levelId": "level.po_kilns.0",
+        "atAu": [
+          895.6336,
+          791.2405
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 4.6204,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_kilns.4",
+        "parentPoiId": "po_kilns",
+        "parentRoomId": "room.po_kilns.2.2",
+        "levelId": "level.po_kilns.0",
+        "atAu": [
+          913.763,
+          787.9815
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 4.6204,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_kilns.5",
+        "parentPoiId": "po_kilns",
+        "parentRoomId": "room.po_kilns.1.1",
+        "levelId": "level.po_kilns.0",
+        "atAu": [
+          896.237,
+          782.0185
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 4.6204,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_kilns.6",
+        "parentPoiId": "po_kilns",
+        "parentRoomId": "room.po_kilns.1.2",
+        "levelId": "level.po_kilns.0",
+        "atAu": [
+          914.0768,
+          783.1858
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 4.6204,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      }
+    ],
+    "roofCoverage": {
+      "coveredRoomCount": 4,
+      "totalRoomCount": 4,
+      "roofAreaAu2": 371.4552,
+      "footAreaAu2": 496.7424,
+      "roofAreaToFootAreaRatioAcrossLevels": 0.7478,
+      "fractionOfFoot": 0.7478,
+      "status": "DERIVED",
+      "note": "Measured over PROPOSED room/canopy polygons weighted by coverageFractionOfRoom. The across-levels ratio can exceed 1 when a DEEP level adds roofed area; it is NOT a single-plane coverage fraction."
+    },
+    "geometryAdapters": {
+      "collision": {
+        "staticWalls": [
+          "wall.po_kilns.1",
+          "wall.po_kilns.2",
+          "wall.po_kilns.3",
+          "wall.po_kilns.4",
+          "wall.po_kilns.split.v.1",
+          "wall.po_kilns.split.h.1"
+        ],
+        "staticWallCount": 6,
+        "wallThicknessAu": 1.4784,
+        "thicknessStatus": "PROPOSED",
+        "dynamicCollisionOwner": "GAMEPLAY",
+        "destructionOwner": "GAMEPLAY",
+        "status": "PROPOSED_STATIC_COLLISION_GEOMETRY__NOT_RUNTIME_COLLISION_DATA"
+      },
+      "enclosure": {
+        "enclosedAreaAu2": 371.4552,
+        "footAreaAu2": 496.7424,
+        "enclosureFraction": 0.7478,
+        "enclosureClass": "ENCLOSED_SINGLE",
+        "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+        "status": "DERIVED"
+      },
+      "reach": {
+        "maxInteriorDistanceAu": 20.6835,
+        "nearestRoadAu": 0,
+        "approachLengthAu": 13.4401,
+        "minPortalOpeningAu": 3.696,
+        "status": "DERIVED",
+        "note": "Geometric reach only. Interaction radius / Gameplay reach rules are NOT asserted."
+      },
+      "lineOfSight": {
+        "opaqueWallIds": [
+          "wall.po_kilns.1",
+          "wall.po_kilns.2",
+          "wall.po_kilns.3",
+          "wall.po_kilns.4",
+          "wall.po_kilns.split.v.1",
+          "wall.po_kilns.split.h.1"
+        ],
+        "transparentPortalIds": [
+          "portal.po_kilns.entrance",
+          "portal.po_kilns.h.1.1",
+          "portal.po_kilns.v.1.1",
+          "portal.po_kilns.v.1.2",
+          "portal.po_kilns.h.2.1"
+        ],
+        "portalSightOwner": "GAMEPLAY",
+        "status": "PROPOSED",
+        "note": "Static opaque walls + portal gaps. Dynamic door opacity is Gameplay-owned."
+      },
+      "roofCoverage": {
+        "coveredRoomCount": 4,
+        "totalRoomCount": 4,
+        "roofAreaAu2": 371.4552,
+        "footAreaAu2": 496.7424,
+        "roofAreaToFootAreaRatioAcrossLevels": 0.7478,
+        "fractionOfFoot": 0.7478,
+        "status": "DERIVED",
+        "note": "Measured over PROPOSED room/canopy polygons weighted by coverageFractionOfRoom. The across-levels ratio can exceed 1 when a DEEP level adds roofed area; it is NOT a single-plane coverage fraction."
+      },
+      "portalPassability": {
+        "portals": [
+          {
+            "id": "portal.po_kilns.entrance",
+            "openingAu": 3.696,
+            "kind": "EXTERIOR_PORTAL"
+          },
+          {
+            "id": "portal.po_kilns.h.1.1",
+            "openingAu": 4.62,
+            "kind": "INTERIOR_DOORWAY"
+          },
+          {
+            "id": "portal.po_kilns.v.1.1",
+            "openingAu": 4.62,
+            "kind": "INTERIOR_DOORWAY"
+          },
+          {
+            "id": "portal.po_kilns.v.1.2",
+            "openingAu": 4.62,
+            "kind": "INTERIOR_DOORWAY"
+          },
+          {
+            "id": "portal.po_kilns.h.2.1",
+            "openingAu": 4.62,
+            "kind": "INTERIOR_DOORWAY"
+          }
+        ],
+        "passabilityRuleOwner": "GAMEPLAY",
+        "status": "UNKNOWN__DYNAMIC_DOOR_STATE_DESTRUCTION_AND_DEVICES_OWNED_BY_GAMEPLAY",
+        "note": "Map asserts only that a geometric opening exists. No lock, power, key, weight or vehicle rule."
+      }
+    },
+    "stableIds": {
+      "rooms": [
+        "room.po_kilns.1.1",
+        "room.po_kilns.1.2",
+        "room.po_kilns.2.1",
+        "room.po_kilns.2.2"
+      ],
+      "walls": [
+        "wall.po_kilns.1",
+        "wall.po_kilns.2",
+        "wall.po_kilns.3",
+        "wall.po_kilns.4",
+        "wall.po_kilns.split.v.1",
+        "wall.po_kilns.split.h.1"
+      ],
+      "entrances": [
+        "entrance.po_kilns.1"
+      ],
+      "portals": [
+        "portal.po_kilns.entrance",
+        "portal.po_kilns.h.1.1",
+        "portal.po_kilns.v.1.1",
+        "portal.po_kilns.v.1.2",
+        "portal.po_kilns.h.2.1"
+      ],
+      "sockets": [
+        "socket.po_kilns.1",
+        "socket.po_kilns.2",
+        "socket.po_kilns.3",
+        "socket.po_kilns.4",
+        "socket.po_kilns.5",
+        "socket.po_kilns.6"
+      ],
+      "levels": [
+        "level.po_kilns.0"
+      ],
+      "floors": [
+        "floor.po_kilns.1.1",
+        "floor.po_kilns.1.2",
+        "floor.po_kilns.2.1",
+        "floor.po_kilns.2.2"
+      ]
+    },
+    "noClaims": [
+      "NO loot, loot table, chest contents or reward",
+      "NO locked-door rule, key, card or power requirement",
+      "NO generator, machine, recipe, quest, vendor inventory or economy",
+      "NO dynamic door state or destruction",
+      "NO authored entrance in source (all openings PROPOSED)",
+      "NO approved vertical unit or stair geometry",
+      "NO runtime collision data (static geometry only)",
+      "NO playable survival acceptance"
+    ]
+  }
+}
