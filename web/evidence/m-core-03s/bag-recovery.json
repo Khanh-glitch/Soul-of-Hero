@@ -1,0 +1,330 @@
+{
+  "method": "Normal-input respawn and recovery after lava death on a first assisted recovery attempt. Read-only route now avoids ash except near destination and buffers lava.",
+  "errors": [],
+  "respawn": {
+    "p": {
+      "x": 984,
+      "y": 1512,
+      "vx": 0,
+      "vy": 0,
+      "dir": 1,
+      "aim": 2.9863306596826833,
+      "hp": 60,
+      "stamina": 83.39999999999986,
+      "hunger": 66.98330055997268,
+      "thirst": 53.38852909599968,
+      "warmth": 79.94069546105472,
+      "rad": 0.06968249999998982,
+      "active": 0,
+      "action": null,
+      "invuln": 1100,
+      "dead": false,
+      "deadT": 1349.9,
+      "pulling": null,
+      "skills": {
+        "gather": 76,
+        "combat": 2,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 2.205791999999711,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Pinewatch",
+      "sheltered": false
+    },
+    "receipts": [
+      {
+        "id": "r208",
+        "seq": 208,
+        "at": 1793773281629,
+        "kind": "respawn",
+        "detail": "2232,760"
+      },
+      {
+        "id": "r209",
+        "seq": 209,
+        "at": 1793773312030,
+        "kind": "death",
+        "detail": "lava; bag=b13r"
+      },
+      {
+        "id": "r210",
+        "seq": 210,
+        "at": 1793773320088,
+        "kind": "offline.settle",
+        "detail": "8s"
+      },
+      {
+        "id": "r211",
+        "seq": 211,
+        "at": 1793773336487,
+        "kind": "offline.settle",
+        "detail": "16s"
+      },
+      {
+        "id": "r212",
+        "seq": 212,
+        "at": 1793773338073,
+        "kind": "respawn",
+        "detail": "984,1512"
+      }
+    ]
+  },
+  "routeSteps": 139,
+  "after": {
+    "p": {
+      "x": 2006.3218953705882,
+      "y": 2681.1823389898914,
+      "vx": 0,
+      "vy": 0,
+      "dir": 3,
+      "aim": -2.1447988248295857,
+      "hp": 21,
+      "stamina": 100,
+      "hunger": 65.39333655996685,
+      "thirst": 50.4312046959987,
+      "warmth": 79.6554938555537,
+      "rad": 0,
+      "active": 0,
+      "action": null,
+      "invuln": 0,
+      "dead": false,
+      "deadT": 1349.9,
+      "pulling": null,
+      "skills": {
+        "gather": 76,
+        "combat": 2,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 6.6240000000000006,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Caldera Wastes",
+      "sheltered": false
+    },
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 107
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7c",
+        "key": "wood",
+        "qty": 13
+      },
+      {
+        "uid": "s81",
+        "key": "stone",
+        "qty": 5
+      },
+      {
+        "uid": "s8o",
+        "key": "fiber",
+        "qty": 1
+      },
+      {
+        "uid": "s9t",
+        "key": "crystal",
+        "qty": 3
+      },
+      {
+        "uid": "s8x",
+        "key": "stone_pick",
+        "qty": 1,
+        "dur": 170
+      },
+      {
+        "uid": "s1t",
+        "key": "spares",
+        "qty": 1
+      },
+      {
+        "uid": "sj5",
+        "key": "seed",
+        "qty": 9
+      },
+      {
+        "uid": "sls",
+        "key": "charcoal",
+        "qty": 3
+      },
+      {
+        "uid": "sm8",
+        "key": "chitin",
+        "qty": 2
+      },
+      {
+        "uid": "sm9",
+        "key": "sulfur",
+        "qty": 1
+      }
+    ],
+    "bags": [
+      {
+        "id": "bz3",
+        "slots": []
+      },
+      {
+        "id": "b13r",
+        "slots": []
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r206",
+        "seq": 206,
+        "at": 1793773270909,
+        "kind": "offline.settle",
+        "detail": "13s"
+      },
+      {
+        "id": "r207",
+        "seq": 207,
+        "at": 1793773280089,
+        "kind": "offline.settle",
+        "detail": "9s"
+      },
+      {
+        "id": "r208",
+        "seq": 208,
+        "at": 1793773281629,
+        "kind": "respawn",
+        "detail": "2232,760"
+      },
+      {
+        "id": "r209",
+        "seq": 209,
+        "at": 1793773312030,
+        "kind": "death",
+        "detail": "lava; bag=b13r"
+      },
+      {
+        "id": "r210",
+        "seq": 210,
+        "at": 1793773320088,
+        "kind": "offline.settle",
+        "detail": "8s"
+      },
+      {
+        "id": "r211",
+        "seq": 211,
+        "at": 1793773336487,
+        "kind": "offline.settle",
+        "detail": "16s"
+      },
+      {
+        "id": "r212",
+        "seq": 212,
+        "at": 1793773338073,
+        "kind": "respawn",
+        "detail": "984,1512"
+      },
+      {
+        "id": "r213",
+        "seq": 213,
+        "at": 1793773377177,
+        "kind": "move",
+        "detail": "knifex1 cz2->inv"
+      },
+      {
+        "id": "r214",
+        "seq": 214,
+        "at": 1793773377311,
+        "kind": "move",
+        "detail": "water_flaskx1 cz2->inv"
+      },
+      {
+        "id": "r215",
+        "seq": 215,
+        "at": 1793773377412,
+        "kind": "move",
+        "detail": "berriesx3 cz2->inv"
+      },
+      {
+        "id": "r216",
+        "seq": 216,
+        "at": 1793773377545,
+        "kind": "move",
+        "detail": "woodx13 cz2->inv"
+      },
+      {
+        "id": "r217",
+        "seq": 217,
+        "at": 1793773377638,
+        "kind": "move",
+        "detail": "stonex5 cz2->inv"
+      },
+      {
+        "id": "r218",
+        "seq": 218,
+        "at": 1793773377743,
+        "kind": "move",
+        "detail": "fiberx1 cz2->inv"
+      },
+      {
+        "id": "r219",
+        "seq": 219,
+        "at": 1793773377823,
+        "kind": "move",
+        "detail": "crystalx3 cz2->inv"
+      },
+      {
+        "id": "r220",
+        "seq": 220,
+        "at": 1793773377921,
+        "kind": "move",
+        "detail": "stone_pickx1 cz2->inv"
+      },
+      {
+        "id": "r221",
+        "seq": 221,
+        "at": 1793773378021,
+        "kind": "move",
+        "detail": "sparesx1 cz2->inv"
+      },
+      {
+        "id": "r222",
+        "seq": 222,
+        "at": 1793773378092,
+        "kind": "move",
+        "detail": "seedx9 cz2->inv"
+      },
+      {
+        "id": "r223",
+        "seq": 223,
+        "at": 1793773378172,
+        "kind": "move",
+        "detail": "charcoalx3 cz2->inv"
+      },
+      {
+        "id": "r224",
+        "seq": 224,
+        "at": 1793773378271,
+        "kind": "move",
+        "detail": "chitinx2 cz2->inv"
+      },
+      {
+        "id": "r225",
+        "seq": 225,
+        "at": 1793773378372,
+        "kind": "move",
+        "detail": "sulfurx1 cz2->inv"
+      }
+    ]
+  }
+}

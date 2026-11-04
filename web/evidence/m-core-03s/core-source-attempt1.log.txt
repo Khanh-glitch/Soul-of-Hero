@@ -1,0 +1,9 @@
+file:///home/user/Soul-of-Hero/web/e2e/m-core-03s-core-source.mjs:4
+async function walk(path){for(const i of path.slice(1))for(let n=0;n<32;n++){const a=await p.evaluate(()=>({x:window.__soh.run.player.x,y:window.__soh.run.player.y,dead:window.__soh.run.player.dead,hp:window.__soh.run.player.hp}));assert(!a.dead,'alive');const dx=i%200*16+8-a.x,dy=Math.floor(i/200)*16+8-a.y;if(Math.hypot(dx,dy)<3.7)break;const k=Math.abs(dx)>Math.abs(dy)?(dx>0?'d':'a'):(dy>0?'s':'w');await p.keyboard.down(k);await p.waitForTimeout(45);await p.keyboard.up(k);if(n===31)throw Error('blocked '+i)}}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ^
+
+Error: blocked 32528
+    at walk (file:///home/user/Soul-of-Hero/web/e2e/m-core-03s-core-source.mjs:4:496)
+    at async file:///home/user/Soul-of-Hero/web/e2e/m-core-03s-core-source.mjs:5:195
+
+Node.js v22.22.3

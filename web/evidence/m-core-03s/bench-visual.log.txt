@@ -1,0 +1,10 @@
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+page.evaluate: TypeError: Cannot read properties of undefined (reading 'tx')
+    at eval (eval at evaluate (:291:30), <anonymous>:1:425)
+    at async <anonymous>:317:30
+    at /home/user/Soul-of-Hero/web/e2e/m-core-03s-bench-visual.mjs:1:1146
+
+Node.js v22.22.3

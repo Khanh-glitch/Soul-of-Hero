@@ -1,0 +1,262 @@
+{
+  "p": {
+    "x": 2424.036972134815,
+    "y": 1674.4872399999967,
+    "vx": 0,
+    "vy": 0,
+    "dir": 3,
+    "aim": -1.929167143139315,
+    "hp": 0,
+    "stamina": 100,
+    "hunger": 31.469938010031292,
+    "thirst": 4.704907015081162,
+    "warmth": 82.42462754633199,
+    "rad": 100,
+    "active": 0,
+    "action": null,
+    "invuln": 0,
+    "dead": true,
+    "deadT": 100,
+    "pulling": null,
+    "skills": {
+      "gather": 73,
+      "combat": 2,
+      "craft": 0,
+      "survival": 0
+    },
+    "stepAcc": 9.23472000000003,
+    "lastTraceX": 0,
+    "lastTraceY": 0,
+    "regionName": "Dead Foundry",
+    "sheltered": false
+  },
+  "out": [
+    null,
+    null,
+    null,
+    null
+  ],
+  "queue": [],
+  "inv": [],
+  "bags": [
+    [],
+    [],
+    [],
+    [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 300
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7k",
+        "key": "wood",
+        "qty": 4
+      },
+      {
+        "uid": "s7l",
+        "key": "seed",
+        "qty": 4
+      },
+      {
+        "uid": "s88",
+        "key": "scrap",
+        "qty": 23
+      },
+      {
+        "uid": "s8f",
+        "key": "fasteners",
+        "qty": 2
+      },
+      {
+        "uid": "sew",
+        "key": "meat",
+        "qty": 1
+      },
+      {
+        "uid": "sex",
+        "key": "fur",
+        "qty": 2
+      },
+      {
+        "uid": "sid",
+        "key": "stone",
+        "qty": 3
+      },
+      {
+        "uid": "sx6",
+        "key": "spares",
+        "qty": 2
+      },
+      {
+        "uid": "smw",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "snj",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "srh",
+        "key": "mechanical_parts",
+        "qty": 1
+      }
+    ]
+  ],
+  "receipts": [
+    {
+      "id": "r293",
+      "seq": 293,
+      "at": 1793770480794,
+      "kind": "offline.settle",
+      "detail": "10s"
+    },
+    {
+      "id": "r294",
+      "seq": 294,
+      "at": 1793770537117,
+      "kind": "offline.settle",
+      "detail": "56s"
+    },
+    {
+      "id": "r295",
+      "seq": 295,
+      "at": 1793770568547,
+      "kind": "offline.settle",
+      "detail": "31s"
+    },
+    {
+      "id": "r296",
+      "seq": 296,
+      "at": 1793770587447,
+      "kind": "offline.settle",
+      "detail": "19s"
+    },
+    {
+      "id": "r297",
+      "seq": 297,
+      "at": 1793770600232,
+      "kind": "offline.settle",
+      "detail": "13s"
+    },
+    {
+      "id": "r298",
+      "seq": 298,
+      "at": 1793770602516,
+      "kind": "move",
+      "detail": "field_repair_kitx1 cr9->inv"
+    },
+    {
+      "id": "r299",
+      "seq": 299,
+      "at": 1793770603110,
+      "kind": "item.fieldRepair",
+      "detail": "s1:278->300"
+    },
+    {
+      "id": "r300",
+      "seq": 300,
+      "at": 1793771077769,
+      "kind": "offline.settle",
+      "detail": "474s"
+    },
+    {
+      "id": "r301",
+      "seq": 301,
+      "at": 1793772591800,
+      "kind": "offline.settle",
+      "detail": "1514s"
+    },
+    {
+      "id": "r302",
+      "seq": 302,
+      "at": 1793772595665,
+      "kind": "recycle.start",
+      "detail": "smm@e2g"
+    },
+    {
+      "id": "r303",
+      "seq": 303,
+      "at": 1793772595818,
+      "kind": "job.cancel",
+      "detail": "X:drive"
+    },
+    {
+      "id": "r304",
+      "seq": 304,
+      "at": 1793772595983,
+      "kind": "recycle.start",
+      "detail": "smm@e2g"
+    },
+    {
+      "id": "r305",
+      "seq": 305,
+      "at": 1793772607983,
+      "kind": "job.done",
+      "detail": "X:drive"
+    },
+    {
+      "id": "r306",
+      "seq": 306,
+      "at": 1793772626216,
+      "kind": "offline.settle",
+      "detail": "30s"
+    },
+    {
+      "id": "r307",
+      "seq": 307,
+      "at": 1793772639200,
+      "kind": "offline.settle",
+      "detail": "13s"
+    },
+    {
+      "id": "r308",
+      "seq": 308,
+      "at": 1793772641250,
+      "kind": "move",
+      "detail": "sparesx2 c2i->inv"
+    },
+    {
+      "id": "r309",
+      "seq": 309,
+      "at": 1793772641332,
+      "kind": "recycle.start",
+      "detail": "smw@e2g"
+    },
+    {
+      "id": "r310",
+      "seq": 310,
+      "at": 1793772641521,
+      "kind": "job.cancel",
+      "detail": "X:drive"
+    },
+    {
+      "id": "r311",
+      "seq": 311,
+      "at": 1793772870530.9421,
+      "kind": "death",
+      "detail": "exposure while offline; bag=bx9"
+    },
+    {
+      "id": "r312",
+      "seq": 312,
+      "at": 1793773748357,
+      "kind": "offline.settle",
+      "detail": "1106s"
+    }
+  ]
+}

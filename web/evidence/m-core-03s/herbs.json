@@ -1,0 +1,835 @@
+{
+  "method": "Normal inputs; read-only route planning after blind discovery.",
+  "events": [
+    {
+      "mat": "plant",
+      "plan": {
+        "path": [
+          35534,
+          35533,
+          35532,
+          35332,
+          35331,
+          35330,
+          35329,
+          35328,
+          35327,
+          35326,
+          35325,
+          35324,
+          35323,
+          35322,
+          35321,
+          35320,
+          35319,
+          35318,
+          35317,
+          35316,
+          35315,
+          35314,
+          35313,
+          35312,
+          35311,
+          35310,
+          35309,
+          35308,
+          35307,
+          35306,
+          35305
+        ],
+        "target": 35304,
+        "key": "herb"
+      },
+      "before": 2,
+      "after": 0,
+      "inventory": {
+        "wood": 3,
+        "stone": 2,
+        "fiber": 1,
+        "herb": 2,
+        "damaged_drive": 0,
+        "spares": 4
+      },
+      "receipts": [
+        {
+          "id": "r24",
+          "seq": 24,
+          "at": 1793772685972,
+          "kind": "harvest",
+          "detail": "rock@138,49 -1"
+        },
+        {
+          "id": "r26",
+          "seq": 26,
+          "at": 1793772686872,
+          "kind": "harvest",
+          "detail": "rock@138,49 -1"
+        },
+        {
+          "id": "r28",
+          "seq": 28,
+          "at": 1793772688322,
+          "kind": "harvest",
+          "detail": "grass@140,48 -2"
+        },
+        {
+          "id": "r31",
+          "seq": 31,
+          "at": 1793772689755,
+          "kind": "harvest",
+          "detail": "grass@140,49 -2"
+        },
+        {
+          "id": "r40",
+          "seq": 40,
+          "at": 1793772742320,
+          "kind": "harvest",
+          "detail": "crystal@144,34 -1"
+        },
+        {
+          "id": "r42",
+          "seq": 42,
+          "at": 1793772743686,
+          "kind": "harvest",
+          "detail": "crystal@144,34 -1"
+        },
+        {
+          "id": "r44",
+          "seq": 44,
+          "at": 1793772745053,
+          "kind": "harvest",
+          "detail": "crystal@144,34 -1"
+        },
+        {
+          "id": "r57",
+          "seq": 57,
+          "at": 1793772939445,
+          "kind": "harvest",
+          "detail": "herb@104,176 -2"
+        }
+      ]
+    },
+    {
+      "mat": "plant",
+      "plan": {
+        "path": [
+          35305,
+          35306,
+          35307,
+          35308,
+          35108,
+          34908,
+          34708,
+          34508,
+          34308,
+          34108
+        ],
+        "target": 33908,
+        "key": "herb"
+      },
+      "before": 2,
+      "after": 0,
+      "inventory": {
+        "wood": 3,
+        "stone": 2,
+        "fiber": 1,
+        "herb": 4,
+        "damaged_drive": 0,
+        "spares": 4
+      },
+      "receipts": [
+        {
+          "id": "r26",
+          "seq": 26,
+          "at": 1793772686872,
+          "kind": "harvest",
+          "detail": "rock@138,49 -1"
+        },
+        {
+          "id": "r28",
+          "seq": 28,
+          "at": 1793772688322,
+          "kind": "harvest",
+          "detail": "grass@140,48 -2"
+        },
+        {
+          "id": "r31",
+          "seq": 31,
+          "at": 1793772689755,
+          "kind": "harvest",
+          "detail": "grass@140,49 -2"
+        },
+        {
+          "id": "r40",
+          "seq": 40,
+          "at": 1793772742320,
+          "kind": "harvest",
+          "detail": "crystal@144,34 -1"
+        },
+        {
+          "id": "r42",
+          "seq": 42,
+          "at": 1793772743686,
+          "kind": "harvest",
+          "detail": "crystal@144,34 -1"
+        },
+        {
+          "id": "r44",
+          "seq": 44,
+          "at": 1793772745053,
+          "kind": "harvest",
+          "detail": "crystal@144,34 -1"
+        },
+        {
+          "id": "r57",
+          "seq": 57,
+          "at": 1793772939445,
+          "kind": "harvest",
+          "detail": "herb@104,176 -2"
+        },
+        {
+          "id": "r60",
+          "seq": 60,
+          "at": 1793772942845,
+          "kind": "harvest",
+          "detail": "herb@108,169 -2"
+        }
+      ]
+    },
+    {
+      "mat": "plant",
+      "plan": {
+        "path": [
+          34108,
+          34109,
+          33909,
+          33709,
+          33509,
+          33309,
+          33109
+        ],
+        "target": 33108,
+        "key": "herb"
+      },
+      "before": 2,
+      "after": 0,
+      "inventory": {
+        "wood": 3,
+        "stone": 2,
+        "fiber": 1,
+        "herb": 6,
+        "damaged_drive": 0,
+        "spares": 4
+      },
+      "receipts": [
+        {
+          "id": "r28",
+          "seq": 28,
+          "at": 1793772688322,
+          "kind": "harvest",
+          "detail": "grass@140,48 -2"
+        },
+        {
+          "id": "r31",
+          "seq": 31,
+          "at": 1793772689755,
+          "kind": "harvest",
+          "detail": "grass@140,49 -2"
+        },
+        {
+          "id": "r40",
+          "seq": 40,
+          "at": 1793772742320,
+          "kind": "harvest",
+          "detail": "crystal@144,34 -1"
+        },
+        {
+          "id": "r42",
+          "seq": 42,
+          "at": 1793772743686,
+          "kind": "harvest",
+          "detail": "crystal@144,34 -1"
+        },
+        {
+          "id": "r44",
+          "seq": 44,
+          "at": 1793772745053,
+          "kind": "harvest",
+          "detail": "crystal@144,34 -1"
+        },
+        {
+          "id": "r57",
+          "seq": 57,
+          "at": 1793772939445,
+          "kind": "harvest",
+          "detail": "herb@104,176 -2"
+        },
+        {
+          "id": "r60",
+          "seq": 60,
+          "at": 1793772942845,
+          "kind": "harvest",
+          "detail": "herb@108,169 -2"
+        },
+        {
+          "id": "r63",
+          "seq": 63,
+          "at": 1793772946895,
+          "kind": "harvest",
+          "detail": "herb@108,165 -2"
+        }
+      ]
+    }
+  ],
+  "final": {
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 259
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7c",
+        "key": "wood",
+        "qty": 3
+      },
+      {
+        "uid": "s81",
+        "key": "stone",
+        "qty": 2
+      },
+      {
+        "uid": "s8o",
+        "key": "fiber",
+        "qty": 1
+      },
+      {
+        "uid": "s1s",
+        "key": "core_frost",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s9t",
+        "key": "crystal",
+        "qty": 3
+      },
+      {
+        "uid": "s8x",
+        "key": "stone_pick",
+        "qty": 1,
+        "dur": 170
+      },
+      {
+        "uid": "s1t",
+        "key": "spares",
+        "qty": 4
+      },
+      {
+        "uid": "shz",
+        "key": "herb",
+        "qty": 6
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r1",
+        "seq": 1,
+        "at": 1793772518220,
+        "kind": "run.start",
+        "detail": "female@the island"
+      },
+      {
+        "id": "r2",
+        "seq": 2,
+        "at": 1793772658987,
+        "kind": "offline.settle",
+        "detail": "136s"
+      },
+      {
+        "id": "r3",
+        "seq": 3,
+        "at": 1793772672230,
+        "kind": "offline.settle",
+        "detail": "13s"
+      },
+      {
+        "id": "r4",
+        "seq": 4,
+        "at": 1793772674956,
+        "kind": "harvest",
+        "detail": "oak@142,49 -1"
+      },
+      {
+        "id": "r5",
+        "seq": 5,
+        "at": 1793772675406,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r6",
+        "seq": 6,
+        "at": 1793772675856,
+        "kind": "harvest",
+        "detail": "oak@142,49 -1"
+      },
+      {
+        "id": "r7",
+        "seq": 7,
+        "at": 1793772676256,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r8",
+        "seq": 8,
+        "at": 1793772676789,
+        "kind": "harvest",
+        "detail": "oak@142,49 -1"
+      },
+      {
+        "id": "r9",
+        "seq": 9,
+        "at": 1793772677206,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r10",
+        "seq": 10,
+        "at": 1793772677706,
+        "kind": "harvest",
+        "detail": "oak@142,49 -1"
+      },
+      {
+        "id": "r11",
+        "seq": 11,
+        "at": 1793772678139,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r12",
+        "seq": 12,
+        "at": 1793772678622,
+        "kind": "harvest",
+        "detail": "oak@142,49 -1"
+      },
+      {
+        "id": "r13",
+        "seq": 13,
+        "at": 1793772679022,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r14",
+        "seq": 14,
+        "at": 1793772679539,
+        "kind": "harvest",
+        "detail": "oak@142,49 -1"
+      },
+      {
+        "id": "r15",
+        "seq": 15,
+        "at": 1793772679939,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r16",
+        "seq": 16,
+        "at": 1793772682305,
+        "kind": "harvest",
+        "detail": "rock@138,49 -1"
+      },
+      {
+        "id": "r17",
+        "seq": 17,
+        "at": 1793772682689,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r18",
+        "seq": 18,
+        "at": 1793772683205,
+        "kind": "harvest",
+        "detail": "rock@138,49 -1"
+      },
+      {
+        "id": "r19",
+        "seq": 19,
+        "at": 1793772683655,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r20",
+        "seq": 20,
+        "at": 1793772684122,
+        "kind": "harvest",
+        "detail": "rock@138,49 -1"
+      },
+      {
+        "id": "r21",
+        "seq": 21,
+        "at": 1793772684505,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r22",
+        "seq": 22,
+        "at": 1793772685055,
+        "kind": "harvest",
+        "detail": "rock@138,49 -1"
+      },
+      {
+        "id": "r23",
+        "seq": 23,
+        "at": 1793772685505,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r24",
+        "seq": 24,
+        "at": 1793772685972,
+        "kind": "harvest",
+        "detail": "rock@138,49 -1"
+      },
+      {
+        "id": "r25",
+        "seq": 25,
+        "at": 1793772686356,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r26",
+        "seq": 26,
+        "at": 1793772686872,
+        "kind": "harvest",
+        "detail": "rock@138,49 -1"
+      },
+      {
+        "id": "r27",
+        "seq": 27,
+        "at": 1793772687305,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r28",
+        "seq": 28,
+        "at": 1793772688322,
+        "kind": "harvest",
+        "detail": "grass@140,48 -2"
+      },
+      {
+        "id": "r29",
+        "seq": 29,
+        "at": 1793772688755,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r30",
+        "seq": 30,
+        "at": 1793772688772,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r31",
+        "seq": 31,
+        "at": 1793772689755,
+        "kind": "harvest",
+        "detail": "grass@140,49 -2"
+      },
+      {
+        "id": "r32",
+        "seq": 32,
+        "at": 1793772690205,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r33",
+        "seq": 33,
+        "at": 1793772690222,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r34",
+        "seq": 34,
+        "at": 1793772700313,
+        "kind": "offline.settle",
+        "detail": "9s"
+      },
+      {
+        "id": "r35",
+        "seq": 35,
+        "at": 1793772710133,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r36",
+        "seq": 36,
+        "at": 1793772719915,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r37",
+        "seq": 37,
+        "at": 1793772721777,
+        "kind": "craft.hand",
+        "detail": "rope"
+      },
+      {
+        "id": "r38",
+        "seq": 38,
+        "at": 1793772721912,
+        "kind": "craft.hand",
+        "detail": "stone_pick"
+      },
+      {
+        "id": "r39",
+        "seq": 39,
+        "at": 1793772734161,
+        "kind": "offline.settle",
+        "detail": "11s"
+      },
+      {
+        "id": "r40",
+        "seq": 40,
+        "at": 1793772742320,
+        "kind": "harvest",
+        "detail": "crystal@144,34 -1"
+      },
+      {
+        "id": "r41",
+        "seq": 41,
+        "at": 1793772742770,
+        "kind": "pickup",
+        "detail": "crystalx1"
+      },
+      {
+        "id": "r42",
+        "seq": 42,
+        "at": 1793772743686,
+        "kind": "harvest",
+        "detail": "crystal@144,34 -1"
+      },
+      {
+        "id": "r43",
+        "seq": 43,
+        "at": 1793772744103,
+        "kind": "pickup",
+        "detail": "crystalx1"
+      },
+      {
+        "id": "r44",
+        "seq": 44,
+        "at": 1793772745053,
+        "kind": "harvest",
+        "detail": "crystal@144,34 -1"
+      },
+      {
+        "id": "r45",
+        "seq": 45,
+        "at": 1793772745436,
+        "kind": "pickup",
+        "detail": "crystalx1"
+      },
+      {
+        "id": "r46",
+        "seq": 46,
+        "at": 1793772769644,
+        "kind": "offline.settle",
+        "detail": "24s"
+      },
+      {
+        "id": "r47",
+        "seq": 47,
+        "at": 1793772816945,
+        "kind": "offline.settle",
+        "detail": "12s"
+      },
+      {
+        "id": "r48",
+        "seq": 48,
+        "at": 1793772827896,
+        "kind": "offline.settle",
+        "detail": "11s"
+      },
+      {
+        "id": "r49",
+        "seq": 49,
+        "at": 1793772840327,
+        "kind": "move",
+        "detail": "core_frostx1 c1r->inv"
+      },
+      {
+        "id": "r50",
+        "seq": 50,
+        "at": 1793772840450,
+        "kind": "move",
+        "detail": "sparesx4 c1r->inv"
+      },
+      {
+        "id": "r51",
+        "seq": 51,
+        "at": 1793772879144,
+        "kind": "offline.settle",
+        "detail": "38s"
+      },
+      {
+        "id": "r52",
+        "seq": 52,
+        "at": 1793772880813,
+        "kind": "move",
+        "detail": "core_frost inv->inv"
+      },
+      {
+        "id": "r53",
+        "seq": 53,
+        "at": 1793772896973,
+        "kind": "offline.settle",
+        "detail": "16s"
+      },
+      {
+        "id": "r54",
+        "seq": 54,
+        "at": 1793772903697,
+        "kind": "core.commit",
+        "detail": "core_frost charge→2"
+      },
+      {
+        "id": "r55",
+        "seq": 55,
+        "at": 1793772903697,
+        "kind": "achievement",
+        "detail": "first_core"
+      },
+      {
+        "id": "r56",
+        "seq": 56,
+        "at": 1793772928774,
+        "kind": "offline.settle",
+        "detail": "24s"
+      },
+      {
+        "id": "r57",
+        "seq": 57,
+        "at": 1793772939445,
+        "kind": "harvest",
+        "detail": "herb@104,176 -2"
+      },
+      {
+        "id": "r58",
+        "seq": 58,
+        "at": 1793772939846,
+        "kind": "pickup",
+        "detail": "herbx1"
+      },
+      {
+        "id": "r59",
+        "seq": 59,
+        "at": 1793772939880,
+        "kind": "pickup",
+        "detail": "herbx1"
+      },
+      {
+        "id": "r60",
+        "seq": 60,
+        "at": 1793772942845,
+        "kind": "harvest",
+        "detail": "herb@108,169 -2"
+      },
+      {
+        "id": "r61",
+        "seq": 61,
+        "at": 1793772943262,
+        "kind": "pickup",
+        "detail": "herbx1"
+      },
+      {
+        "id": "r62",
+        "seq": 62,
+        "at": 1793772943262,
+        "kind": "pickup",
+        "detail": "herbx1"
+      },
+      {
+        "id": "r63",
+        "seq": 63,
+        "at": 1793772946895,
+        "kind": "harvest",
+        "detail": "herb@108,165 -2"
+      },
+      {
+        "id": "r64",
+        "seq": 64,
+        "at": 1793772947295,
+        "kind": "pickup",
+        "detail": "herbx1"
+      },
+      {
+        "id": "r65",
+        "seq": 65,
+        "at": 1793772947328,
+        "kind": "pickup",
+        "detail": "herbx1"
+      }
+    ],
+    "player": {
+      "x": 1750.0808535353046,
+      "y": 2649.458285987877,
+      "vx": 0,
+      "vy": 0,
+      "dir": 1,
+      "aim": -3.0383953901743004,
+      "hp": 32.63093888000077,
+      "stamina": 100,
+      "hunger": 76.0637485599862,
+      "thirst": 70.40559049599977,
+      "warmth": 89.91528231200134,
+      "rad": 0,
+      "active": 0,
+      "action": null,
+      "invuln": 0,
+      "dead": false,
+      "deadT": 0,
+      "pulling": null,
+      "skills": {
+        "gather": 25,
+        "combat": 0,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 10.796399999999926,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Wreck Coast",
+      "sheltered": false
+    }
+  }
+}

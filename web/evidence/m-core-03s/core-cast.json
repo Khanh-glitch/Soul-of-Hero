@@ -1,0 +1,497 @@
+{
+  "method": "Real keyboard/mouse; after initial blind observation, source and path were read-only assisted. Uses the original looted Core, not a crafted replacement.",
+  "errors": [],
+  "before": {
+    "player": {
+      "x": 2153.998117535328,
+      "y": 2841.987149987896,
+      "vx": 0,
+      "vy": -72,
+      "dir": 1,
+      "aim": 2.805556373807579,
+      "hp": 31.025240000000423,
+      "stamina": 100,
+      "hunger": 77.21157199998918,
+      "thirst": 72.35890659999919,
+      "warmth": 92.89793105429113,
+      "rad": 0,
+      "active": 6,
+      "action": null,
+      "invuln": 0,
+      "dead": false,
+      "deadT": 0,
+      "pulling": null,
+      "skills": {
+        "gather": 19,
+        "combat": 0,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 8.395199999999962,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Caldera Wastes",
+      "sheltered": false
+    },
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 262
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7c",
+        "key": "wood",
+        "qty": 3
+      },
+      {
+        "uid": "s81",
+        "key": "stone",
+        "qty": 2
+      },
+      {
+        "uid": "s8o",
+        "key": "fiber",
+        "qty": 1
+      },
+      {
+        "uid": "s1s",
+        "key": "core_frost",
+        "qty": 1,
+        "charge": 3
+      },
+      {
+        "uid": "s9t",
+        "key": "crystal",
+        "qty": 3
+      },
+      {
+        "uid": "s8x",
+        "key": "stone_pick",
+        "qty": 1,
+        "dur": 170
+      },
+      {
+        "uid": "s1t",
+        "key": "spares",
+        "qty": 4
+      }
+    ],
+    "terrain": {},
+    "receipts": [
+      {
+        "id": "r34",
+        "seq": 34,
+        "at": 1793772700313,
+        "kind": "offline.settle",
+        "detail": "9s"
+      },
+      {
+        "id": "r35",
+        "seq": 35,
+        "at": 1793772710133,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r36",
+        "seq": 36,
+        "at": 1793772719915,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r37",
+        "seq": 37,
+        "at": 1793772721777,
+        "kind": "craft.hand",
+        "detail": "rope"
+      },
+      {
+        "id": "r38",
+        "seq": 38,
+        "at": 1793772721912,
+        "kind": "craft.hand",
+        "detail": "stone_pick"
+      },
+      {
+        "id": "r39",
+        "seq": 39,
+        "at": 1793772734161,
+        "kind": "offline.settle",
+        "detail": "11s"
+      },
+      {
+        "id": "r40",
+        "seq": 40,
+        "at": 1793772742320,
+        "kind": "harvest",
+        "detail": "crystal@144,34 -1"
+      },
+      {
+        "id": "r41",
+        "seq": 41,
+        "at": 1793772742770,
+        "kind": "pickup",
+        "detail": "crystalx1"
+      },
+      {
+        "id": "r42",
+        "seq": 42,
+        "at": 1793772743686,
+        "kind": "harvest",
+        "detail": "crystal@144,34 -1"
+      },
+      {
+        "id": "r43",
+        "seq": 43,
+        "at": 1793772744103,
+        "kind": "pickup",
+        "detail": "crystalx1"
+      },
+      {
+        "id": "r44",
+        "seq": 44,
+        "at": 1793772745053,
+        "kind": "harvest",
+        "detail": "crystal@144,34 -1"
+      },
+      {
+        "id": "r45",
+        "seq": 45,
+        "at": 1793772745436,
+        "kind": "pickup",
+        "detail": "crystalx1"
+      },
+      {
+        "id": "r46",
+        "seq": 46,
+        "at": 1793772769644,
+        "kind": "offline.settle",
+        "detail": "24s"
+      },
+      {
+        "id": "r47",
+        "seq": 47,
+        "at": 1793772816945,
+        "kind": "offline.settle",
+        "detail": "12s"
+      },
+      {
+        "id": "r48",
+        "seq": 48,
+        "at": 1793772827896,
+        "kind": "offline.settle",
+        "detail": "11s"
+      },
+      {
+        "id": "r49",
+        "seq": 49,
+        "at": 1793772840327,
+        "kind": "move",
+        "detail": "core_frostx1 c1r->inv"
+      },
+      {
+        "id": "r50",
+        "seq": 50,
+        "at": 1793772840450,
+        "kind": "move",
+        "detail": "sparesx4 c1r->inv"
+      },
+      {
+        "id": "r51",
+        "seq": 51,
+        "at": 1793772879144,
+        "kind": "offline.settle",
+        "detail": "38s"
+      },
+      {
+        "id": "r52",
+        "seq": 52,
+        "at": 1793772880813,
+        "kind": "move",
+        "detail": "core_frost inv->inv"
+      },
+      {
+        "id": "r53",
+        "seq": 53,
+        "at": 1793772896973,
+        "kind": "offline.settle",
+        "detail": "16s"
+      }
+    ]
+  },
+  "after": {
+    "player": {
+      "x": 2153.998117535328,
+      "y": 2841.987149987896,
+      "vx": 0,
+      "vy": 0,
+      "dir": 3,
+      "aim": -1.570624993495958,
+      "hp": 31.0932400000004,
+      "stamina": 100,
+      "hunger": 77.17757199998907,
+      "thirst": 72.2620065999993,
+      "warmth": 93.05713690853968,
+      "rad": 0,
+      "active": 6,
+      "action": null,
+      "invuln": 0,
+      "dead": false,
+      "deadT": 0,
+      "pulling": null,
+      "skills": {
+        "gather": 19,
+        "combat": 0,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 8.395199999999962,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Caldera Wastes",
+      "sheltered": false
+    },
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 262
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7c",
+        "key": "wood",
+        "qty": 3
+      },
+      {
+        "uid": "s81",
+        "key": "stone",
+        "qty": 2
+      },
+      {
+        "uid": "s8o",
+        "key": "fiber",
+        "qty": 1
+      },
+      {
+        "uid": "s1s",
+        "key": "core_frost",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s9t",
+        "key": "crystal",
+        "qty": 3
+      },
+      {
+        "uid": "s8x",
+        "key": "stone_pick",
+        "qty": 1,
+        "dur": 170
+      },
+      {
+        "uid": "s1t",
+        "key": "spares",
+        "qty": 4
+      }
+    ],
+    "terrain": {
+      "34733": {
+        "t": 18,
+        "until": 475477
+      },
+      "34734": {
+        "t": 18,
+        "until": 475477
+      },
+      "34932": {
+        "t": 18,
+        "until": 475477
+      },
+      "34933": {
+        "t": 18,
+        "until": 475477
+      },
+      "34934": {
+        "t": 18,
+        "until": 475477
+      },
+      "35133": {
+        "t": 18,
+        "until": 475477
+      },
+      "35134": {
+        "t": 18,
+        "until": 475477
+      }
+    },
+    "receipts": [
+      {
+        "id": "r36",
+        "seq": 36,
+        "at": 1793772719915,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r37",
+        "seq": 37,
+        "at": 1793772721777,
+        "kind": "craft.hand",
+        "detail": "rope"
+      },
+      {
+        "id": "r38",
+        "seq": 38,
+        "at": 1793772721912,
+        "kind": "craft.hand",
+        "detail": "stone_pick"
+      },
+      {
+        "id": "r39",
+        "seq": 39,
+        "at": 1793772734161,
+        "kind": "offline.settle",
+        "detail": "11s"
+      },
+      {
+        "id": "r40",
+        "seq": 40,
+        "at": 1793772742320,
+        "kind": "harvest",
+        "detail": "crystal@144,34 -1"
+      },
+      {
+        "id": "r41",
+        "seq": 41,
+        "at": 1793772742770,
+        "kind": "pickup",
+        "detail": "crystalx1"
+      },
+      {
+        "id": "r42",
+        "seq": 42,
+        "at": 1793772743686,
+        "kind": "harvest",
+        "detail": "crystal@144,34 -1"
+      },
+      {
+        "id": "r43",
+        "seq": 43,
+        "at": 1793772744103,
+        "kind": "pickup",
+        "detail": "crystalx1"
+      },
+      {
+        "id": "r44",
+        "seq": 44,
+        "at": 1793772745053,
+        "kind": "harvest",
+        "detail": "crystal@144,34 -1"
+      },
+      {
+        "id": "r45",
+        "seq": 45,
+        "at": 1793772745436,
+        "kind": "pickup",
+        "detail": "crystalx1"
+      },
+      {
+        "id": "r46",
+        "seq": 46,
+        "at": 1793772769644,
+        "kind": "offline.settle",
+        "detail": "24s"
+      },
+      {
+        "id": "r47",
+        "seq": 47,
+        "at": 1793772816945,
+        "kind": "offline.settle",
+        "detail": "12s"
+      },
+      {
+        "id": "r48",
+        "seq": 48,
+        "at": 1793772827896,
+        "kind": "offline.settle",
+        "detail": "11s"
+      },
+      {
+        "id": "r49",
+        "seq": 49,
+        "at": 1793772840327,
+        "kind": "move",
+        "detail": "core_frostx1 c1r->inv"
+      },
+      {
+        "id": "r50",
+        "seq": 50,
+        "at": 1793772840450,
+        "kind": "move",
+        "detail": "sparesx4 c1r->inv"
+      },
+      {
+        "id": "r51",
+        "seq": 51,
+        "at": 1793772879144,
+        "kind": "offline.settle",
+        "detail": "38s"
+      },
+      {
+        "id": "r52",
+        "seq": 52,
+        "at": 1793772880813,
+        "kind": "move",
+        "detail": "core_frost inv->inv"
+      },
+      {
+        "id": "r53",
+        "seq": 53,
+        "at": 1793772896973,
+        "kind": "offline.settle",
+        "detail": "16s"
+      },
+      {
+        "id": "r54",
+        "seq": 54,
+        "at": 1793772903697,
+        "kind": "core.commit",
+        "detail": "core_frost charge→2"
+      },
+      {
+        "id": "r55",
+        "seq": 55,
+        "at": 1793772903697,
+        "kind": "achievement",
+        "detail": "first_core"
+      }
+    ]
+  }
+}

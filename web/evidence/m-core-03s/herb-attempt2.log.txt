@@ -1,0 +1,36 @@
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for getByRole('button', { name: 'Continue', exact: true })
+    - locator resolved to <button class="btn gold">Continue</button>
+  - attempting click action
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="absolute inset-0 flex flex-col items-center justify-center fadein">…</div> intercepts pointer events
+    - retrying click action
+    - waiting 20ms
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="absolute inset-0 flex flex-col items-center justify-center fadein">…</div> intercepts pointer events
+    - retrying click action
+      - waiting 100ms
+    56 × waiting for element to be visible, enabled and stable
+       - element is visible, enabled and stable
+       - scrolling into view if needed
+       - done scrolling
+       - <div class="absolute inset-0 flex flex-col items-center justify-center fadein">…</div> intercepts pointer events
+     - retrying click action
+       - waiting 500ms
+
+    at /home/user/Soul-of-Hero/web/e2e/m-core-03s-herbs.mjs:5:453 {
+  name: 'TimeoutError'
+}
+
+Node.js v22.22.3

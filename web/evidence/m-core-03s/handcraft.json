@@ -1,0 +1,427 @@
+{
+  "method": "After visual-only initial observation, read-only assisted planning, normal keyboard/mouse.",
+  "before": {
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 262
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7c",
+        "key": "wood",
+        "qty": 6
+      },
+      {
+        "uid": "s81",
+        "key": "stone",
+        "qty": 6
+      },
+      {
+        "uid": "s8o",
+        "key": "fiber",
+        "qty": 4
+      }
+    ],
+    "player": {
+      "x": 2230.3928000000014,
+      "y": 789.5999999999993,
+      "vx": 0,
+      "vy": 0,
+      "dir": 1,
+      "aim": 2.8439289503252825,
+      "hp": 100,
+      "stamina": 100,
+      "hunger": 81.54224599999637,
+      "thirst": 79.81336899999994,
+      "warmth": 100,
+      "rad": 0,
+      "active": 0,
+      "action": null,
+      "invuln": 0,
+      "dead": false,
+      "deadT": 0,
+      "pulling": null,
+      "skills": {
+        "gather": 16,
+        "combat": 0,
+        "craft": 0,
+        "survival": 0
+      },
+      "stepAcc": 7.199999999999999,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Harbor Reach",
+      "sheltered": false
+    },
+    "receipts": [
+      {
+        "id": "r17",
+        "seq": 17,
+        "at": 1793772682689,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r18",
+        "seq": 18,
+        "at": 1793772683205,
+        "kind": "harvest",
+        "detail": "rock@138,49 -1"
+      },
+      {
+        "id": "r19",
+        "seq": 19,
+        "at": 1793772683655,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r20",
+        "seq": 20,
+        "at": 1793772684122,
+        "kind": "harvest",
+        "detail": "rock@138,49 -1"
+      },
+      {
+        "id": "r21",
+        "seq": 21,
+        "at": 1793772684505,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r22",
+        "seq": 22,
+        "at": 1793772685055,
+        "kind": "harvest",
+        "detail": "rock@138,49 -1"
+      },
+      {
+        "id": "r23",
+        "seq": 23,
+        "at": 1793772685505,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r24",
+        "seq": 24,
+        "at": 1793772685972,
+        "kind": "harvest",
+        "detail": "rock@138,49 -1"
+      },
+      {
+        "id": "r25",
+        "seq": 25,
+        "at": 1793772686356,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r26",
+        "seq": 26,
+        "at": 1793772686872,
+        "kind": "harvest",
+        "detail": "rock@138,49 -1"
+      },
+      {
+        "id": "r27",
+        "seq": 27,
+        "at": 1793772687305,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r28",
+        "seq": 28,
+        "at": 1793772688322,
+        "kind": "harvest",
+        "detail": "grass@140,48 -2"
+      },
+      {
+        "id": "r29",
+        "seq": 29,
+        "at": 1793772688755,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r30",
+        "seq": 30,
+        "at": 1793772688772,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r31",
+        "seq": 31,
+        "at": 1793772689755,
+        "kind": "harvest",
+        "detail": "grass@140,49 -2"
+      },
+      {
+        "id": "r32",
+        "seq": 32,
+        "at": 1793772690205,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r33",
+        "seq": 33,
+        "at": 1793772690222,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r34",
+        "seq": 34,
+        "at": 1793772700313,
+        "kind": "offline.settle",
+        "detail": "9s"
+      },
+      {
+        "id": "r35",
+        "seq": 35,
+        "at": 1793772710133,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r36",
+        "seq": 36,
+        "at": 1793772719915,
+        "kind": "offline.settle",
+        "detail": "10s"
+      }
+    ]
+  },
+  "after": {
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 262
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7c",
+        "key": "wood",
+        "qty": 3
+      },
+      {
+        "uid": "s81",
+        "key": "stone",
+        "qty": 2
+      },
+      {
+        "uid": "s8o",
+        "key": "fiber",
+        "qty": 1
+      },
+      {
+        "uid": "s8x",
+        "key": "stone_pick",
+        "qty": 1,
+        "dur": 180
+      }
+    ],
+    "player": {
+      "x": 2230.3928000000014,
+      "y": 789.5999999999993,
+      "vx": 0,
+      "vy": 0,
+      "dir": 1,
+      "aim": 2.9906777881236213,
+      "hp": 100,
+      "stamina": 100,
+      "hunger": 81.50491399999623,
+      "thirst": 79.75737099999994,
+      "warmth": 100,
+      "rad": 0,
+      "active": 0,
+      "action": null,
+      "invuln": 0,
+      "dead": false,
+      "deadT": 0,
+      "pulling": null,
+      "skills": {
+        "gather": 16,
+        "combat": 0,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 7.199999999999999,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Harbor Reach",
+      "sheltered": false
+    },
+    "receipts": [
+      {
+        "id": "r19",
+        "seq": 19,
+        "at": 1793772683655,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r20",
+        "seq": 20,
+        "at": 1793772684122,
+        "kind": "harvest",
+        "detail": "rock@138,49 -1"
+      },
+      {
+        "id": "r21",
+        "seq": 21,
+        "at": 1793772684505,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r22",
+        "seq": 22,
+        "at": 1793772685055,
+        "kind": "harvest",
+        "detail": "rock@138,49 -1"
+      },
+      {
+        "id": "r23",
+        "seq": 23,
+        "at": 1793772685505,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r24",
+        "seq": 24,
+        "at": 1793772685972,
+        "kind": "harvest",
+        "detail": "rock@138,49 -1"
+      },
+      {
+        "id": "r25",
+        "seq": 25,
+        "at": 1793772686356,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r26",
+        "seq": 26,
+        "at": 1793772686872,
+        "kind": "harvest",
+        "detail": "rock@138,49 -1"
+      },
+      {
+        "id": "r27",
+        "seq": 27,
+        "at": 1793772687305,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r28",
+        "seq": 28,
+        "at": 1793772688322,
+        "kind": "harvest",
+        "detail": "grass@140,48 -2"
+      },
+      {
+        "id": "r29",
+        "seq": 29,
+        "at": 1793772688755,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r30",
+        "seq": 30,
+        "at": 1793772688772,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r31",
+        "seq": 31,
+        "at": 1793772689755,
+        "kind": "harvest",
+        "detail": "grass@140,49 -2"
+      },
+      {
+        "id": "r32",
+        "seq": 32,
+        "at": 1793772690205,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r33",
+        "seq": 33,
+        "at": 1793772690222,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r34",
+        "seq": 34,
+        "at": 1793772700313,
+        "kind": "offline.settle",
+        "detail": "9s"
+      },
+      {
+        "id": "r35",
+        "seq": 35,
+        "at": 1793772710133,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r36",
+        "seq": 36,
+        "at": 1793772719915,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r37",
+        "seq": 37,
+        "at": 1793772721777,
+        "kind": "craft.hand",
+        "detail": "rope"
+      },
+      {
+        "id": "r38",
+        "seq": 38,
+        "at": 1793772721912,
+        "kind": "craft.hand",
+        "detail": "stone_pick"
+      }
+    ]
+  }
+}

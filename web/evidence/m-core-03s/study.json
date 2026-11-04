@@ -1,0 +1,537 @@
+{
+  "method": "Actual found Rime Core and Cinder Beetle Horn, normal input; assisted routes and previously disclosed failed approach. Core retained two charges: sacrificing them is costly, not proof of a good choice.",
+  "before": {
+    "player": {
+      "x": 1994.9401767353204,
+      "y": 2710.0636811878726,
+      "vx": 0,
+      "vy": 0,
+      "dir": 1,
+      "aim": 2.8465139493600367,
+      "hp": 8.145138880005028,
+      "stamina": 100,
+      "hunger": 68.53531055997583,
+      "thirst": 56.18181889600028,
+      "warmth": 94.3695760011831,
+      "rad": 0.8954799999999913,
+      "active": 0,
+      "action": null,
+      "invuln": 0,
+      "dead": false,
+      "deadT": 0,
+      "pulling": null,
+      "skills": {
+        "gather": 76,
+        "combat": 2,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 2.3975999999999478,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Caldera Wastes",
+      "sheltered": false
+    },
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 107
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7c",
+        "key": "wood",
+        "qty": 13
+      },
+      {
+        "uid": "s81",
+        "key": "stone",
+        "qty": 5
+      },
+      {
+        "uid": "s8o",
+        "key": "fiber",
+        "qty": 1
+      },
+      {
+        "uid": "s1s",
+        "key": "core_frost",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s9t",
+        "key": "crystal",
+        "qty": 3
+      },
+      {
+        "uid": "s8x",
+        "key": "stone_pick",
+        "qty": 1,
+        "dur": 170
+      },
+      {
+        "uid": "s1t",
+        "key": "spares",
+        "qty": 1
+      },
+      {
+        "uid": "sj5",
+        "key": "seed",
+        "qty": 9
+      },
+      {
+        "uid": "sls",
+        "key": "charcoal",
+        "qty": 3
+      },
+      {
+        "uid": "sm8",
+        "key": "chitin",
+        "qty": 2
+      },
+      {
+        "uid": "sm9",
+        "key": "sulfur",
+        "qty": 1
+      },
+      {
+        "uid": "sma",
+        "key": "beetle_horn",
+        "qty": 1
+      }
+    ],
+    "queue": [],
+    "receipts": [
+      {
+        "id": "r179",
+        "seq": 179,
+        "at": 1793773035742,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r180",
+        "seq": 180,
+        "at": 1793773036275,
+        "kind": "harvest",
+        "detail": "rock@125,172 -1"
+      },
+      {
+        "id": "r181",
+        "seq": 181,
+        "at": 1793773036708,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r182",
+        "seq": 182,
+        "at": 1793773037225,
+        "kind": "harvest",
+        "detail": "rock@125,172 -1"
+      },
+      {
+        "id": "r183",
+        "seq": 183,
+        "at": 1793773037675,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r184",
+        "seq": 184,
+        "at": 1793773038125,
+        "kind": "harvest",
+        "detail": "rock@125,172 -1"
+      },
+      {
+        "id": "r185",
+        "seq": 185,
+        "at": 1793773038525,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r186",
+        "seq": 186,
+        "at": 1793773039058,
+        "kind": "harvest",
+        "detail": "rock@125,172 -1"
+      },
+      {
+        "id": "r187",
+        "seq": 187,
+        "at": 1793773039491,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r188",
+        "seq": 188,
+        "at": 1793773059185,
+        "kind": "offline.settle",
+        "detail": "19s"
+      },
+      {
+        "id": "r189",
+        "seq": 189,
+        "at": 1793773060843,
+        "kind": "build",
+        "detail": "claim@125,170"
+      },
+      {
+        "id": "r190",
+        "seq": 190,
+        "at": 1793773061740,
+        "kind": "build",
+        "detail": "workbench@124,170"
+      },
+      {
+        "id": "r191",
+        "seq": 191,
+        "at": 1793773071783,
+        "kind": "offline.settle",
+        "detail": "9s"
+      },
+      {
+        "id": "r192",
+        "seq": 192,
+        "at": 1793773095006,
+        "kind": "move",
+        "detail": "iron_ingotx1 cd->inv"
+      },
+      {
+        "id": "r193",
+        "seq": 193,
+        "at": 1793773095133,
+        "kind": "move",
+        "detail": "woodx8 cd->inv"
+      },
+      {
+        "id": "r194",
+        "seq": 194,
+        "at": 1793773111002,
+        "kind": "offline.settle",
+        "detail": "15s"
+      },
+      {
+        "id": "r195",
+        "seq": 195,
+        "at": 1793773130418,
+        "kind": "move",
+        "detail": "sparesx3 c14->inv"
+      },
+      {
+        "id": "r196",
+        "seq": 196,
+        "at": 1793773151913,
+        "kind": "offline.settle",
+        "detail": "21s"
+      },
+      {
+        "id": "r197",
+        "seq": 197,
+        "at": 1793773179302,
+        "kind": "build",
+        "detail": "research@123,168"
+      },
+      {
+        "id": "r198",
+        "seq": 198,
+        "at": 1793773208578,
+        "kind": "offline.settle",
+        "detail": "28s"
+      }
+    ],
+    "table": "eyx"
+  },
+  "queued": {
+    "player": {
+      "x": 1994.9401767353204,
+      "y": 2710.0636811878726,
+      "vx": 0,
+      "vy": 0,
+      "dir": 3,
+      "aim": -1.6988894345291714,
+      "hp": 8.145138880005028,
+      "stamina": 100,
+      "hunger": 68.50997855997574,
+      "thirst": 56.10962269600024,
+      "warmth": 94.46388716426989,
+      "rad": 0.8796474999999924,
+      "active": 0,
+      "action": null,
+      "invuln": 0,
+      "dead": false,
+      "deadT": 0,
+      "pulling": null,
+      "skills": {
+        "gather": 76,
+        "combat": 2,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 2.3975999999999478,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Caldera Wastes",
+      "sheltered": false
+    },
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 107
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7c",
+        "key": "wood",
+        "qty": 13
+      },
+      {
+        "uid": "s81",
+        "key": "stone",
+        "qty": 5
+      },
+      {
+        "uid": "s8o",
+        "key": "fiber",
+        "qty": 1
+      },
+      {
+        "uid": "s9t",
+        "key": "crystal",
+        "qty": 3
+      },
+      {
+        "uid": "s8x",
+        "key": "stone_pick",
+        "qty": 1,
+        "dur": 170
+      },
+      {
+        "uid": "s1t",
+        "key": "spares",
+        "qty": 1
+      },
+      {
+        "uid": "sj5",
+        "key": "seed",
+        "qty": 9
+      },
+      {
+        "uid": "sls",
+        "key": "charcoal",
+        "qty": 3
+      },
+      {
+        "uid": "sm8",
+        "key": "chitin",
+        "qty": 2
+      },
+      {
+        "uid": "sm9",
+        "key": "sulfur",
+        "qty": 1
+      }
+    ],
+    "queue": [
+      {
+        "id": "jz0",
+        "recipe": "R:chitin_armor",
+        "left": 29677,
+        "total": 30000,
+        "reserved": [
+          {
+            "uid": "sma",
+            "key": "beetle_horn",
+            "qty": 1
+          }
+        ]
+      },
+      {
+        "id": "jz1",
+        "recipe": "R:core_frost",
+        "left": 30000,
+        "total": 30000,
+        "reserved": [
+          {
+            "uid": "s1s",
+            "key": "core_frost",
+            "qty": 1,
+            "charge": 2
+          }
+        ]
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r181",
+        "seq": 181,
+        "at": 1793773036708,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r182",
+        "seq": 182,
+        "at": 1793773037225,
+        "kind": "harvest",
+        "detail": "rock@125,172 -1"
+      },
+      {
+        "id": "r183",
+        "seq": 183,
+        "at": 1793773037675,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r184",
+        "seq": 184,
+        "at": 1793773038125,
+        "kind": "harvest",
+        "detail": "rock@125,172 -1"
+      },
+      {
+        "id": "r185",
+        "seq": 185,
+        "at": 1793773038525,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r186",
+        "seq": 186,
+        "at": 1793773039058,
+        "kind": "harvest",
+        "detail": "rock@125,172 -1"
+      },
+      {
+        "id": "r187",
+        "seq": 187,
+        "at": 1793773039491,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r188",
+        "seq": 188,
+        "at": 1793773059185,
+        "kind": "offline.settle",
+        "detail": "19s"
+      },
+      {
+        "id": "r189",
+        "seq": 189,
+        "at": 1793773060843,
+        "kind": "build",
+        "detail": "claim@125,170"
+      },
+      {
+        "id": "r190",
+        "seq": 190,
+        "at": 1793773061740,
+        "kind": "build",
+        "detail": "workbench@124,170"
+      },
+      {
+        "id": "r191",
+        "seq": 191,
+        "at": 1793773071783,
+        "kind": "offline.settle",
+        "detail": "9s"
+      },
+      {
+        "id": "r192",
+        "seq": 192,
+        "at": 1793773095006,
+        "kind": "move",
+        "detail": "iron_ingotx1 cd->inv"
+      },
+      {
+        "id": "r193",
+        "seq": 193,
+        "at": 1793773095133,
+        "kind": "move",
+        "detail": "woodx8 cd->inv"
+      },
+      {
+        "id": "r194",
+        "seq": 194,
+        "at": 1793773111002,
+        "kind": "offline.settle",
+        "detail": "15s"
+      },
+      {
+        "id": "r195",
+        "seq": 195,
+        "at": 1793773130418,
+        "kind": "move",
+        "detail": "sparesx3 c14->inv"
+      },
+      {
+        "id": "r196",
+        "seq": 196,
+        "at": 1793773151913,
+        "kind": "offline.settle",
+        "detail": "21s"
+      },
+      {
+        "id": "r197",
+        "seq": 197,
+        "at": 1793773179302,
+        "kind": "build",
+        "detail": "research@123,168"
+      },
+      {
+        "id": "r198",
+        "seq": 198,
+        "at": 1793773208578,
+        "kind": "offline.settle",
+        "detail": "28s"
+      },
+      {
+        "id": "r199",
+        "seq": 199,
+        "at": 1793773210450,
+        "kind": "research.specimen",
+        "detail": "beetle_horn->chitin_armor"
+      },
+      {
+        "id": "r200",
+        "seq": 200,
+        "at": 1793773210680,
+        "kind": "research.specimen",
+        "detail": "core_frost->core_frost"
+      }
+    ],
+    "table": "eyx"
+  },
+  "closedAt": 1793773211288
+}

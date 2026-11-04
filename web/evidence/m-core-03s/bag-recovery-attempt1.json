@@ -1,0 +1,76 @@
+{
+  "method": "Normal-input respawn and recovery after a genuine later death; prior process had rolled back one unpersisted earlier death. Route uses read-only grid.",
+  "errors": [],
+  "respawn": {
+    "p": {
+      "x": 2232,
+      "y": 760,
+      "vx": 0,
+      "vy": 0,
+      "dir": 1,
+      "aim": 2.9863306596826833,
+      "hp": 60,
+      "stamina": 88.16579999999993,
+      "hunger": 68.18788455997712,
+      "thirst": 55.55809069600034,
+      "warmth": 79.92879277461637,
+      "rad": 0.8209024999999962,
+      "active": 0,
+      "action": null,
+      "invuln": 916.6999999999994,
+      "dead": false,
+      "deadT": 30532.200000000004,
+      "pulling": null,
+      "skills": {
+        "gather": 76,
+        "combat": 2,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 2.3975999999999478,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Harbor Reach",
+      "sheltered": false
+    },
+    "receipts": [
+      {
+        "id": "r204",
+        "seq": 204,
+        "at": 1793773240450,
+        "kind": "job.done",
+        "detail": "R:chitin_armor"
+      },
+      {
+        "id": "r205",
+        "seq": 205,
+        "at": 1793773270450,
+        "kind": "job.done",
+        "detail": "R:core_frost"
+      },
+      {
+        "id": "r206",
+        "seq": 206,
+        "at": 1793773270909,
+        "kind": "offline.settle",
+        "detail": "13s"
+      },
+      {
+        "id": "r207",
+        "seq": 207,
+        "at": 1793773280089,
+        "kind": "offline.settle",
+        "detail": "9s"
+      },
+      {
+        "id": "r208",
+        "seq": 208,
+        "at": 1793773281629,
+        "kind": "respawn",
+        "detail": "2232,760"
+      }
+    ]
+  },
+  "routeSteps": 144,
+  "failure": "AssertionError [ERR_ASSERTION]: survive return"
+}
