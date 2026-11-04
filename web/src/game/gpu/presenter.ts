@@ -505,6 +505,7 @@ export class Presenter {
       gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, L.lightTex);
       gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, this.warpTex);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, 480, 270, 0, gl.RGBA, gl.FLOAT, L.warp); // warp or rift field
+      this.checkGl('layer-warp-upload:' + li);
       if (L.kind === 'frame') {
         // The integer sampler `infl` MUST reference a valid R8UI texture in BOTH
         // frame modes: leaving it at unit 0 (RGBA8 accumulator) is a sampler-type

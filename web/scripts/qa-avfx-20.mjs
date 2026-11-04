@@ -184,7 +184,7 @@ await b.close(); srv.close();
 // check-run annotation even though logs are not downloadable from the sandbox.
 const stageExit = (s) =>
   !s ? 99 : s === 'upload-frame' ? 101 : s === 'upload-frame-delta' ? 102 : s === 'world-upload' ? 103 :
-  s === 'accum-seed' ? 104 : s === 'zero-cast-post' ? 105 : s.startsWith('layer:frame') ? (s.includes(':signed') ? 107 : 106) :
+  s === 'accum-seed' ? 104 : s === 'zero-cast-post' ? 105 : s.startsWith('layer-warp-upload') ? 111 : s.startsWith('layer:frame') ? (s.includes(':signed') ? 107 : 106) :
   s.startsWith('layer:') ? 108 : s === 'final-post' ? 109 : 110;
 if (report.metrics.glError !== 0 || (report.metrics.firstGlError && report.metrics.firstGlError.code !== 0)) {
   const fg = report.metrics.firstGlError;
