@@ -116,7 +116,7 @@ function RecyclerBody({api,eid}:{api:Api;eid:string}) {
  const r=api.gs.run!,e=r.entities[eid],st=e.station!,drives=C(r,'inv').slots.map((s,i)=>({s,i})).filter(v=>v.s?.key==='damaged_drive');
  return <div style={{fontSize:11}}><b style={{color:'#ffd98a'}}>1 Damaged Drive → 2 Spares</b><div>12 seconds · consumes the drive. Or take it to a workbench for Mechanical Parts. No base required here.</div>
  {st.queue.map(j=><div key={j.id}>Processing · {Math.ceil(j.left/1000)}s <button className="btn ghost" onClick={()=>api.act('cancelJob',{eid,jobId:j.id})}>Cancel &amp; return drive</button></div>)}
- {!st.queue.length && (drives.length ? drives.map(({s,i})=><button className="btn gold" key={s!.uid} onClick={()=>api.act('recycleDrive',{eid,slot:i,uid:s!.uid})}>Recycle carried drive</button>) : <div>Carry a Damaged Drive from a finite car wreck.</div>)}
+ {!st.queue.length && (drives.length ? <><div style={{fontSize:10,color:'#cfc2dc'}}>Choose a Drive by inventory row and slot (left to right):</div>{drives.map(({s,i})=><button className="btn gold" style={{marginRight:3,marginBottom:2}} key={s!.uid} onClick={()=>api.act('recycleDrive',{eid,slot:i,uid:s!.uid})}>Recycle row {Math.floor(i/8)+1}, slot {i%8+1}</button>)}</> : <div>Carry a Damaged Drive from a finite car wreck.</div>)}
  <div style={{marginTop:5,color:'#ffd98a'}}>Output · collect before it fills</div><Grid api={api} cid={st.outC} cols={4}/><button className="btn" onClick={()=>{for(let i=0;i<C(r,st.outC).slots.length;i++)if(C(r,st.outC).slots[i])api.act('move',{from:st.outC,fs:i,to:'inv'});}}>Take output</button></div>;
 }
 function StationBody({ api, eid }: { api: Api; eid: string }) {
@@ -147,7 +147,12 @@ function StationBody({ api, eid }: { api: Api; eid: string }) {
     <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>Output</div><Grid api={api} cid={st.outC} cols={6} />
     <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>Recipes</div>
     {kind === 'workbench' && <div style={{ fontSize: 10, color: '#cfc2dc' }}>Drive recovery: 1 Damaged Drive + 1 Scrap → 1 Mechanical Parts (12s).</div>}
-    {known.map(([k, rc]) => <div key={k} className="flex items-center gap-1" style={{ fontSize: 10, marginBottom: 1 }}><Icon k={rc.out} size={12} /><span style={{ width: 82 }}>{ITEMS[rc.out].name}{rc.qty > 1 ? ` ×${rc.qty}` : ''}</span><Cost ins={rc.ins} have={have(api)} /><span style={{ color: '#8a7a9a' }}>{rc.secs}s{(rc.stationLevel ?? 1) > level ? ` · bench ${rc.stationLevel} required` : ''}</span><button className="btn" disabled={(rc.stationLevel ?? 1) > level} style={{ marginLeft: 'auto', padding: '1px 5px' }} onClick={() => api.act('craft', { recipe: k, eid })}>Queue</button></div>)}
+    <div style={{fontSize: 9, color: '#cfc2dc'}}>Red cost = missing · queue holds up to 6.</div>
+    {known.map(([k, rc]) => {
+      const missing = rc.ins.some(([item, qty]) => countItem(r, 'inv', item) < qty);
+      const reason = (rc.stationLevel ?? 1) > level ? `Requires bench ${rc.stationLevel}` : st.queue.length >= 6 ? 'Queue full' : missing ? 'Missing ingredients' : 'Queue this recipe';
+      return <div key={k} className="flex items-center gap-1" style={{ fontSize: 10, marginBottom: 1 }}><Icon k={rc.out} size={12} /><span style={{ width: 82 }}>{k === 'recover_drive' ? 'Recover Drive → Parts' : ITEMS[rc.out].name + (rc.qty > 1 ? ` ×${rc.qty}` : '')}</span><Cost ins={rc.ins} have={have(api)} /><span style={{ color: '#8a7a9a' }}>{rc.secs}s{(rc.stationLevel ?? 1) > level ? ` · bench ${rc.stationLevel} required` : ''}</span><button className="btn" title={reason} disabled={reason !== 'Queue this recipe'} style={{ marginLeft: 'auto', padding: '1px 5px' }} onClick={() => api.act('craft', { recipe: k, eid })}>Queue</button></div>;
+    })}
     {recipes.length > known.length && <div style={{ fontSize: 10, color: '#8a7a9a' }}>{recipes.length - known.length} more recipes undiscovered here (blueprints, research, specimens).</div>}
   </div>;
 }

@@ -268,7 +268,23 @@ function drawEntity(g: CanvasRenderingContext2D, r: RunState, e: Entity, time: n
     case 'loot': { const empty = !C(r, e.c!).slots.some(Boolean); shadow(g, X, Y + 5, 7); g.drawImage(empty ? A.st.loot_open : A.st.loot, X - 8, Y - 10); return; }
     case 'cash': { const rag = isRagnarok(r, now); shadow(g, X, Y + 5, 7); g.drawImage(e.minted && !C(r, e.c!).slots.some(Boolean) ? A.st.cash_open : A.st.cash, X - 8, Y - 10); if (rag && !e.minted) { const a = 0.4 + Math.sin(time / 200) * 0.3; g.fillStyle = `rgba(255,208,64,${a})`; g.fillRect(X - 7, Y - 12, 14, 1); if (Math.random() < 0.2) add({ x: X - 6 + Math.random() * 12, y: Y - 8, vx: 0, vy: -16, col: '#ffe27a', max: 700, s: 1, g: -4 }); } return; }
     case 'vendor': { shadow(g, X, Y + 6, 5); const bob = Math.floor(time / 600) % 2; g.drawImage(A.st.vendor, X - 8, Y - 18 + bob); return; }
-    case 'recycler': { shadow(g,X,Y+5,7); g.drawImage(A.st.gen,X-8,Y-10); g.fillStyle='#eac55c';g.fillRect(X-4,Y-9,8,2);g.fillStyle=e.station?.queue.length?'#77ee88':'#e8c45c';g.fillRect(X+4,Y-5,2,2);if(e.station?.queue.length){const j=e.station.queue[0];g.fillStyle='#120c18';g.fillRect(X-7,Y-16,14,3);g.fillStyle='#7aff6a';g.fillRect(X-6,Y-15,Math.round(12*(1-j.left/j.total)),1);}return; }
+    case 'recycler': {
+      // Taller crusher silhouette, hopper, teeth and striped output: distinct from the generator.
+      shadow(g, X, Y+6, 9);
+      g.fillStyle='#201e29'; g.fillRect(X-10,Y-19,20,25);
+      g.fillStyle='#53666a'; g.fillRect(X-9,Y-18,18,23);
+      g.fillStyle='#24363c'; g.fillRect(X-7,Y-16,14,7);
+      g.fillStyle='#a1b3a4'; g.fillRect(X-7,Y-16,14,1);
+      g.fillStyle='#c99435'; g.fillRect(X-6,Y-13,12,2);
+      g.fillStyle='#25242b'; for(let i=0;i<4;i++) g.fillRect(X-5+i*3,Y-13,1,2);
+      g.fillStyle='#829496'; g.fillRect(X-7,Y-8,14,8);
+      g.fillStyle='#26343a'; g.fillRect(X-4,Y-6,8,5);
+      g.fillStyle='#d99f32'; g.fillRect(X-3,Y-5,6,1); g.fillRect(X-1,Y-7,2,4);
+      g.fillStyle='#e6bd4b'; g.fillRect(X-8,Y+1,16,3);
+      g.fillStyle='#342d29'; for(let i=0;i<4;i++) g.fillRect(X-7+i*4,Y+1,2,3);
+      g.fillStyle=e.station?.queue.length?'#80ef85':'#e6d596'; g.fillRect(X+6,Y-7,2,2);
+      if(e.station?.queue.length){const j=e.station.queue[0];g.fillStyle='#120c18';g.fillRect(X-7,Y-23,14,3);g.fillStyle='#7aff6a';g.fillRect(X-6,Y-22,Math.round(12*(1-j.left/j.total)),1);} return;
+    }
     case 'gen': { shadow(g, X, Y + 5, 7); const run = (e.power || 0) > 0; g.drawImage(A.st.gen, X - 8 + (run ? Math.round(Math.sin(time / 40)) : 0), Y - 10); if (run && Math.random() < 0.15) add({ x: X + 5, y: Y - 10, vx: 0, vy: -14, col: '#6a6a6a', max: 1000, s: 2, g: -3 }); return; }
     case 'evac': { g.drawImage(A.st.evac, X - 8, Y - 34); if (Math.floor(time / 500) % 2) { g.fillStyle = '#ff5a3a'; g.fillRect(X - 1, Y - 32, 3, 2); } return; }
     case 'door': { g.drawImage(e.open ? A.st.poi_door_open : A.st.poi_door, X - 8, Y - 16); return; }
