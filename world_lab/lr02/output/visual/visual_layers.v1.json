@@ -15,6 +15,17 @@
     "portalGeometryDigest": "5888572471fecf15a86f056b0179c98043cabe2f0a84808768ed155c736a02b7",
     "gameplayHeadObserved": "240db32a1a69211f87af161796498b82afcde20e"
   },
+  "gameplayOwnIntegrationObserved": {
+    "head": "bfbf44df9ebf403290dce45ff197327947762e8e",
+    "pr44Comment": 6620726633,
+    "files": [
+      "web/src/game/veyra/lr02.ts",
+      "web/src/game/veyra/eligibility.ts",
+      "web/src/game/veyra/projection.ts"
+    ],
+    "status": "SEPARATELY_VERSIONED_DIAGNOSTIC_LAYOUTS__GAMEPLAY_OWNED",
+    "note": "Gameplay pins M0 raw/body SHA and M2 raw/body SHA and projects M0 clipped solids to T.PWALL tile centres in its own diagnostic layouts. This is NOT an integration of the M4 portable SVG layers or M1/M3/M3b geometry, and it is not creator visual approval."
+  },
   "sourceArtAssessment": {
     "primary": {
       "file": "web/src/game/art.ts + web/src/game/render.ts",
@@ -420,7 +431,7 @@
       "actualWebRenderedIntegrationProof": {
         "classification": "ACTUAL_WEB_RENDERED_INTEGRATION_PROOF",
         "status": "NOT_AVAILABLE__GAMEPLAY_OWNED",
-        "reason": "Committed projectVeyra() at the observed Gameplay HEAD still returns statics:[]; no LR02 package reader exists. Map does not modify Gameplay code and does not label a Map preview as Web proof."
+        "reason": "No Web-rendered integration of the M4 portable static-wall layers or of M1/M3/M3b physical geometry exists. Gameplay HAS separately pinned M0 Greywater clipped solids and M2 cell sets in its own diagnostic LR02/Oasis layouts (web/src/game/veyra/lr02.ts, eligibility.ts, PR44 6620726633); that is Gameplay evidence, not a rendering of these Map layers. Map does not modify Gameplay code and never labels a Map preview as Web proof."
       },
       "nativeResolution": [
         640,
@@ -453,7 +464,7 @@
       "actualWebRenderedIntegrationProof": {
         "classification": "ACTUAL_WEB_RENDERED_INTEGRATION_PROOF",
         "status": "NOT_AVAILABLE__GAMEPLAY_OWNED",
-        "reason": "Committed projectVeyra() at the observed Gameplay HEAD still returns statics:[]; no LR02 package reader exists. Map does not modify Gameplay code and does not label a Map preview as Web proof."
+        "reason": "No Web-rendered integration of the M4 portable static-wall layers or of M1/M3/M3b physical geometry exists. Gameplay HAS separately pinned M0 Greywater clipped solids and M2 cell sets in its own diagnostic LR02/Oasis layouts (web/src/game/veyra/lr02.ts, eligibility.ts, PR44 6620726633); that is Gameplay evidence, not a rendering of these Map layers. Map does not modify Gameplay code and never labels a Map preview as Web proof."
       },
       "nativeResolution": [
         640,
@@ -486,7 +497,7 @@
       "actualWebRenderedIntegrationProof": {
         "classification": "ACTUAL_WEB_RENDERED_INTEGRATION_PROOF",
         "status": "NOT_AVAILABLE__GAMEPLAY_OWNED",
-        "reason": "Committed projectVeyra() at the observed Gameplay HEAD still returns statics:[]; no LR02 package reader exists. Map does not modify Gameplay code and does not label a Map preview as Web proof."
+        "reason": "No Web-rendered integration of the M4 portable static-wall layers or of M1/M3/M3b physical geometry exists. Gameplay HAS separately pinned M0 Greywater clipped solids and M2 cell sets in its own diagnostic LR02/Oasis layouts (web/src/game/veyra/lr02.ts, eligibility.ts, PR44 6620726633); that is Gameplay evidence, not a rendering of these Map layers. Map does not modify Gameplay code and never labels a Map preview as Web proof."
       },
       "nativeResolution": [
         640,
@@ -519,7 +530,7 @@
       "actualWebRenderedIntegrationProof": {
         "classification": "ACTUAL_WEB_RENDERED_INTEGRATION_PROOF",
         "status": "NOT_AVAILABLE__GAMEPLAY_OWNED",
-        "reason": "Committed projectVeyra() at the observed Gameplay HEAD still returns statics:[]; no LR02 package reader exists. Map does not modify Gameplay code and does not label a Map preview as Web proof."
+        "reason": "No Web-rendered integration of the M4 portable static-wall layers or of M1/M3/M3b physical geometry exists. Gameplay HAS separately pinned M0 Greywater clipped solids and M2 cell sets in its own diagnostic LR02/Oasis layouts (web/src/game/veyra/lr02.ts, eligibility.ts, PR44 6620726633); that is Gameplay evidence, not a rendering of these Map layers. Map does not modify Gameplay code and never labels a Map preview as Web proof."
       },
       "nativeResolution": [
         640,
@@ -552,7 +563,7 @@
       "actualWebRenderedIntegrationProof": {
         "classification": "ACTUAL_WEB_RENDERED_INTEGRATION_PROOF",
         "status": "NOT_AVAILABLE__GAMEPLAY_OWNED",
-        "reason": "Committed projectVeyra() at the observed Gameplay HEAD still returns statics:[]; no LR02 package reader exists. Map does not modify Gameplay code and does not label a Map preview as Web proof."
+        "reason": "No Web-rendered integration of the M4 portable static-wall layers or of M1/M3/M3b physical geometry exists. Gameplay HAS separately pinned M0 Greywater clipped solids and M2 cell sets in its own diagnostic LR02/Oasis layouts (web/src/game/veyra/lr02.ts, eligibility.ts, PR44 6620726633); that is Gameplay evidence, not a rendering of these Map layers. Map does not modify Gameplay code and never labels a Map preview as Web proof."
       },
       "nativeResolution": [
         640,
@@ -585,7 +596,7 @@
       "actualWebRenderedIntegrationProof": {
         "classification": "ACTUAL_WEB_RENDERED_INTEGRATION_PROOF",
         "status": "NOT_AVAILABLE__GAMEPLAY_OWNED",
-        "reason": "Committed projectVeyra() at the observed Gameplay HEAD still returns statics:[]; no LR02 package reader exists. Map does not modify Gameplay code and does not label a Map preview as Web proof."
+        "reason": "No Web-rendered integration of the M4 portable static-wall layers or of M1/M3/M3b physical geometry exists. Gameplay HAS separately pinned M0 Greywater clipped solids and M2 cell sets in its own diagnostic LR02/Oasis layouts (web/src/game/veyra/lr02.ts, eligibility.ts, PR44 6620726633); that is Gameplay evidence, not a rendering of these Map layers. Map does not modify Gameplay code and never labels a Map preview as Web proof."
       },
       "nativeResolution": [
         640,

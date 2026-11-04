@@ -44,9 +44,12 @@ const visual = readJson(visualPath);
 const visualRaw = sha256(fs.readFileSync(visualPath));
 
 const GAMEPLAY_HEAD = '240db32a1a69211f87af161796498b82afcde20e';
+const GAMEPLAY_HANDOFF_HEAD = 'bfbf44df9ebf403290dce45ff197327947762e8e';
+const GAMEPLAY_RUNTIME_CHECKPOINT = 'e0294889ad522ded3b42e92cfea197c057344afc';
 const PR44_COMMENTS = {
   fHandoff: 6619191264, k6Ack: 6619188131, jointReview: 6619478477, mapAck: 6619637224,
   gameLr02Checkpoint: 6619873863, m0Handoff: 6620427232, gameM0bIntake: 6620503177, m123Handoff: 6620589329,
+  gameM2Handoff: 6620726633,
 };
 
 const STATUS_VOCABULARY = ['SOURCE_AUTHORED', 'DERIVED', 'PROPOSED', 'VERIFIED', 'UNKNOWN', 'UNRESOLVED', 'BLOCKED', 'INVALID', 'UNDECIDED'];
@@ -147,6 +150,7 @@ const popDigest = writeRevisionPackage(path.join(OUT, 'population_inputs.v1.json
 // ---------------- 3. geography_package.v2.json ----------------
 const COMPAT = {
   observedAtGameplayHead: GAMEPLAY_HEAD,
+  observedHeads: { visualEvidenceHead: GAMEPLAY_HEAD, handoffEvidenceHead: GAMEPLAY_HANDOFF_HEAD, runtimeCheckpoint: GAMEPLAY_RUNTIME_CHECKPOINT },
   observedIntakePins: {
     mapSourceSha: '74062a5baf2731451fad9638c4243c7459ce8e24',
     packageCanonicalSha: V1_CANONICAL_SHA,
@@ -159,21 +163,30 @@ const COMPAT = {
   matrix: [
     { id: 'CMP-01', seam: 'schema pin', observed: 'intake.ts strictly pins LR01 v1 schema/revision/packageId/stage and whole-package SHA', mapPosition: 'v2 is a SEPARATE reviewed package; no silent v1 pin rewrite', status: 'NEW_PIN_REQUIRED' },
     { id: 'CMP-02', seam: 'coordinate origin', observed: 'originAu [640,440]; frameAu [2000,1400]; cell-centre-v1', mapPosition: 'authoring units unchanged; transform UNDECIDED', status: 'DIAGNOSTIC' },
-    { id: 'CMP-03', seam: 'static collision seam', observed: 'projectVeyra() still returns statics:[] at the committed head', mapPosition: 'M1/M0 supply clipped solids + static holes with exact ID mapping', status: 'OPEN' },
+    { id: 'CMP-03', seam: 'static collision seam', observed: 'projectVeyra() still returns statics:[]; M0 clipped solids ARE projected to T.PWALL tile centres in the separately versioned lr02 diagnostic layout (candidate representation, not proof every opening fits)', mapPosition: 'M0/M1 supply clipped solids + static holes with exact ID mapping; a full runtime static-entity seam remains Gameplay-owned', status: 'DIAGNOSTIC_PROJECTION_PRESENT__FULL_SEAM_OPEN' },
     { id: 'CMP-04', seam: 'status crosswalk', observed: 'Map VERIFIED is geometric proof only, never playable acceptance', mapPosition: CROSSWALK, status: 'PROVIDED' },
-    { id: 'CMP-05', seam: 'spawn reader', observed: 'no reader of cellIndices in committed Web code; chooseLegalSpawn uses runtime-only eligibility', mapPosition: 'M2 contract SEEDED_RANDOM_LEGAL_POSITION_SAMPLING; Map supplies areas, Gameplay samples', status: 'OPEN' },
+    { id: 'CMP-05', seam: 'spawn reader', observed: 'web/src/game/veyra/eligibility.ts now pins M2 exact raw/body SHA and builds a spawnEligible mask over all 16 candidate regions for the Oasis window; chooseLegalSpawn still applies Gameplay runtime safety checks afterwards', mapPosition: 'M2 contract SEEDED_RANDOM_LEGAL_POSITION_SAMPLING; Map supplies areas, Gameplay samples', status: 'INTAKE_IMPLEMENTED__GAMEPLAY_OWNED' },
     { id: 'CMP-06', seam: 'diagnostic scale', observed: 'U=1.6 and U=2.0 same-origin projections; 9au analytical stroke', mapPosition: 'no au-to-tile/px scale approved', status: 'DIAGNOSTIC_ONLY' },
     { id: 'CMP-07', seam: 'road/water width', observed: 'editor stroke widths; SNAP_TOL/ACCESS_R are graph heuristics', mapPosition: 'physical channel width UNDEFINED; br_4 PROPOSED deck is non-canonical', status: 'UNRESOLVED' },
     { id: 'CMP-08', seam: 'roof/canopy polygons', observed: 'Gameplay requested future region-specific roof polygons; no invented canopy', mapPosition: 'roof polygons explicitly UNRESOLVED; LR01 has coverage descriptors only', status: 'UNRESOLVED' },
     { id: 'CMP-09', seam: 'visual layers', observed: 'Web art is original pixel art; no third-party sprites', mapPosition: 'M4 portable SVG static-wall layers + layer order; class-3 Web integration proof NOT_AVAILABLE', status: 'METHOD_PROVIDED' },
-    { id: 'CMP-10', seam: 'Gameplay ACK', observed: 'PR44 6620503177 independently verified M0 raw SHA 2a9cfcc4… and body digest db5bcc3d…', mapPosition: 'M0 rev1 immutable; reproduce.sh verifies instead of rewriting', status: 'ACKNOWLEDGED' },
+    { id: 'CMP-10', seam: 'Gameplay ACK', observed: 'PR44 6620503177 verified M0 raw/body SHA; PR44 6620726633 verified unchanged M2 bytes/body/parent and reported M0/M2 intake', mapPosition: 'M0 rev1 immutable; reproduce.sh verifies instead of rewriting', status: 'ACKNOWLEDGED' },
   ],
+  observedGameplayIntegration: {
+    head: GAMEPLAY_HANDOFF_HEAD, runtimeCheckpoint: GAMEPLAY_RUNTIME_CHECKPOINT, pr44Comment: PR44_COMMENTS.gameM2Handoff,
+    m0Intake: { file: 'web/src/game/veyra/lr02.ts', pinnedCommit: '3c073d9da07b0ad936a57293a51dbba968a885dc', rawSha: '2a9cfcc4360cd62088c4e938fa04f53a99aae6c0a8f2749580453869c502be78', bodySha: 'db5bcc3dcf28210fa63e9a68cdf2128a7f76213bead7d1e975bbb901b50cfe1a', solids: 15, openings: 8, cells: 107, note: 'separate exact-SHA intake; never mutates the LR01 package' },
+    m2Intake: { file: 'web/src/game/veyra/eligibility.ts', pinnedCommit: '05f25672da61b4009f38c9a963e2652004dbdf51', rawSha: '377d5452579d638711bb41fbedcab5dafc98af2c17327a90ec954b8c277a19b9', bodySha: pk.m2.revisionDigest, regions: 16, cells: se.coverage.staticallyEligibleCells, note: 'exact-SHA static candidate areas, not dynamic spawn authority' },
+    projection: 'M0 clipped solids -> T.PWALL tile centres in the lr02 diagnostic layout; spawnEligible mask from M0 107 cells / M2 16 regions; statics:[] and starts:[] remain; Gameplay comment calls the tile-centre raster a candidate collision representation, not proof that every opening fits.',
+    evidenceReportedByGameplay: ['215 Web tests, typecheck, build and audit pass', '10 deterministic Oasis seeds + real browser movement/save/reload', 'natural browser keyboard runs entered ONE Greywater source room from a seeded start at both scales', 'six-room coverage remains controlled tick evidence only'],
+    stillOpen: ['M1/M3/M3b physical proposals not integrated', 'roof polygons unresolved (Map correctly reports this)', 'no bridge or canopy fabricated', 'no global streaming/transition/duplicate-free cross-window authority', 'no visual quality approval', 'no merge'],
+    sourceDoc: 'docs/survival/GAME_LR02_VEYRA_HANDOFF.md (Gameplay branch)',
+  },
   observedGameplayFacts: [
-    'chooseLegalSpawn() uses runtime-only eligibility (full 200x200 walkable grid, real collision, hazards, local source reachability) with seeded non-repeating traversal; randomSpawn:true.',
+    'chooseLegalSpawn() applies Gameplay runtime safety (full 200x200 walkable grid, real collision, hazards, local source reachability) after the Map spawnEligible mask; seeded non-repeating traversal; randomSpawn:true.',
     'shipping_fresh / dev_delta_fresh remove fixed starter shelters, crates and start roads; historical shipping snapshot and mapDigest fingerprints remain loadable.',
-    'clearWallLine() now blocks through-wall build/repair/upgrade/device access; contact access still allowed.',
-    'projectVeyra() at the committed head returns statics:[]; no LR02 package reader was found in the committed Web tree.',
-    '10 tested seeds per scale, 6/6 proposed Greywater room traversal at U=1.6/2.0 and negative solid LOS were reported by Gameplay as work in progress, NOT as committed integration proof.',
+    'clearWallLine() blocks through-wall build/repair/upgrade/device access; contact access still allowed.',
+    'projectVeyra() returns statics:[] and starts:[]; the LR02 diagnostic layout derives wall tiles directly from M0 clipped solids instead of a static entity list.',
+    'U=1.6 and U=2.0 remain separately versioned diagnostic windows (Greywater origin [640,440], Oasis origin [400,840]); no approved scale.',
   ],
   pr44: { number: 44, state: 'OPEN', isDraft: true, hold: true, base: 'arena/4795760e-soul-of-hero', headBranch: 'arena/d4bfcfff-soul-of-hero', comments: PR44_COMMENTS, noMerge: true },
 };
@@ -209,14 +222,15 @@ const v2Body = {
     ],
     portableArtLayers: visual.layers.map(l => ({ regionId: l.regionId, file: l.file, svgSha256: l.svgSha256, staticSolidsDrawn: l.staticSolidsDrawn, staticOpeningsDrawn: l.staticOpeningsDrawn })),
     comparisons: visual.comparisons.map(c => ({ regionId: c.regionId, before: c.before.file, beforeClass: c.before.classification, after: c.after.file, afterClass: c.after.classification, class3: c.actualWebRenderedIntegrationProof.status })),
+    gameplayIntegrationObserved: COMPAT.observedGameplayIntegration,
     testResults: { command: 'cd world_lab/lr02 && ./reproduce.sh', exit: 0, gates: 'LR02_TESTS 46/46', m1TestsPass: pg.counts.testsPass, m1TestsApplicable: pg.counts.testsApplicable, m1TestsNotApplicable: pg.counts.testsNotApplicable, negativeTests: '8/8' },
   },
   gameplayCompatibility: COMPAT,
   integrationGate: {
     status: 'STAGE_1_ONLY__NO_RUNTIME_INTEGRATION_PROOF',
     realIntegrationProof: false,
-    reason: 'Committed projectVeyra() returns statics:[] and no LR02 reader exists; runtime collision, transform, population and playability are Gameplay-owned.',
-    preciseNextStep: 'Gameplay reviews the separately versioned LR02 packages, pins their schemas/SHAs in a NEW reviewed intake (never rewriting the LR01 v1 pin), integrates the static collision seam, projects with existing SOH Web art, seeds the final legal position and runs native 640x360 playability evidence.',
+    reason: 'Gameplay has a separately pinned M0/M2 diagnostic intake, but M1/M3/M3b physical geometry, the M4 portable layers, roof/canopy polygons, full runtime static-entity seam, approved transform, population and playability acceptance remain Gameplay/joint owned. projectVeyra() still returns statics:[] and starts:[].',
+    preciseNextStep: 'Gameplay reviews the separately versioned LR02 packages, pins their schemas/SHAs in NEW reviewed intakes (never rewriting the LR01 v1 pin), integrates M1/M3/M3b static geometry with existing SOH Web art, resolves roof polygons jointly, seeds the final legal position and runs native 640x360 playability evidence.',
     forbidden: ['canonical rewrite', 'LR01 v1 pin mutation', 'Map-authored runtime spawn or population', 'treating a Map analytical preview as Web proof'],
   },
   blockers: [
@@ -274,7 +288,16 @@ ${table}
 - **M4** 6 unmodified real \`640×360\` Web screenshots preserved as class (1); 6 portable static-wall SVG art layers in the exact Web \`T.PWALL\` palette; 6 genuine \`640×360\` before/after pairs, both explicitly class (2) Map-only analytical previews; layer order and integration instructions. Class (3) actual Web-rendered integration proof is \`NOT_AVAILABLE__GAMEPLAY_OWNED\`.
 - **M5** source-preserving v2 package, terrain/resource INPUTS (21 GEO-01 rasters + 280 authored habitat markers, no resource population), population INPUT envelopes (no spawn, no actors, no occupancy), and this handoff.
 
-## Compatibility matrix (read-only observation of Gameplay HEAD \`${GAMEPLAY_HEAD}\`)
+## Latest Gameplay checkpoint (read-only)
+
+PR44 \`${PR44_COMMENTS.gameM2Handoff}\` at 2026-11-04T02:16:20Z: handoff/evidence HEAD \`${GAMEPLAY_HANDOFF_HEAD}\`, runtime checkpoint \`${GAMEPLAY_RUNTIME_CHECKPOINT}\`. Gameplay independently verified the **unchanged M2 eligibility bytes/body/parent**, now consumes the M2 cell sets for a separately versioned **Oasis** window in addition to the M0b Greywater 107-cell contract, and reports 10 deterministic Oasis seeds + real browser movement/save/reload. Eligibility is still followed by Gameplay runtime safety checks. M1/M3/M3b physical proposals and roof polygons are **not** integrated; Gameplay confirms Map correctly reports roof polygons unresolved and that no bridge or canopy was fabricated. 215 Web tests, typecheck, build and audit pass. Natural browser keyboard runs entered **one** Greywater source room from a seeded start at both scales; six-room coverage remains controlled tick evidence. Still no global streaming/transition/duplicate-free cross-window authority, visual quality approval or merge. Gameplay source: \`docs/survival/GAME_LR02_VEYRA_HANDOFF.md\`.
+
+Exact-SHA intakes observed (Gameplay-owned):
+- \`web/src/game/veyra/lr02.ts\` pins M0 commit \`3c073d9da07b0ad936a57293a51dbba968a885dc\`, raw \`2a9cfcc4360cd62088c4e938fa04f53a99aae6c0a8f2749580453869c502be78\`, body \`db5bcc3dcf28210fa63e9a68cdf2128a7f76213bead7d1e975bbb901b50cfe1a\`, 15 solids / 8 openings / 107 cells.
+- \`web/src/game/veyra/eligibility.ts\` pins M2 commit \`05f25672da61b4009f38c9a963e2652004dbdf51\`, raw \`377d5452579d638711bb41fbedcab5dafc98af2c17327a90ec954b8c277a19b9\`, body \`${pk.m2.revisionDigest}\`, 16 regions / ${se.coverage.staticallyEligibleCells} cells.
+- \`projection.ts\` projects M0 clipped solids to \`T.PWALL\` tile centres in the LR02 diagnostic layout and builds a \`spawnEligible\` mask; \`statics:[]\` and \`starts:[]\` remain. Gameplay calls the tile-centre raster a candidate collision representation, **not** proof that every opening fits.
+
+## Compatibility matrix (read-only observation of Gameplay HEAD \`${GAMEPLAY_HEAD}\`, refreshed at \`${GAMEPLAY_HANDOFF_HEAD}\`)
 
 | ID | Seam | Observed | Map position | Status |
 | --- | --- | --- | --- | --- |
@@ -289,7 +312,7 @@ Status crosswalk: \`VERIFIED → VALIDATED\` (Map geometric proof only), \`UNKNO
 
 Committed Web ingestion of the new package schemas and SHA pins; runtime static collision seam; approved au→tile transform; real roof/canopy polygons; dynamic doors/locks/power/destruction; seeded final legal spawn and K6 persistence; compiled local resource and paid structure in Veyra; playable traversal from exterior portal into another room; native \`640×360\` creator visual acceptance and perf; occupancy/claims/hazards/actor separation; Gameplay implementation command. **No playable Veyra, no final world, no creator approval.**
 
-PR44 comments: F \`${PR44_COMMENTS.fHandoff}\`, K6 \`${PR44_COMMENTS.k6Ack}\`, joint \`${PR44_COMMENTS.jointReview}\`, Map ACK \`${PR44_COMMENTS.mapAck}\`, GAME-LR02 \`${PR44_COMMENTS.gameLr02Checkpoint}\`, M0 \`${PR44_COMMENTS.m0Handoff}\`, Gameplay M0b intake \`${PR44_COMMENTS.gameM0bIntake}\`, M1–M3b \`${PR44_COMMENTS.m123Handoff}\`.
+PR44 comments: F \`${PR44_COMMENTS.fHandoff}\`, K6 \`${PR44_COMMENTS.k6Ack}\`, joint \`${PR44_COMMENTS.jointReview}\`, Map ACK \`${PR44_COMMENTS.mapAck}\`, GAME-LR02 \`${PR44_COMMENTS.gameLr02Checkpoint}\`, M0 \`${PR44_COMMENTS.m0Handoff}\`, Gameplay M0b intake \`${PR44_COMMENTS.gameM0bIntake}\`, M1–M3b \`${PR44_COMMENTS.m123Handoff}\`, Gameplay M2 intake \`${PR44_COMMENTS.gameM2Handoff}\`.
 
 Evidence: \`docs/EVIDENCE_M1_M5.md\`, \`docs/MILESTONE_M4_VISUAL.md\`.
 `;
@@ -331,6 +354,7 @@ Run \`cd world_lab/lr02 && ./reproduce.sh\`. Parent LR01 body digest \`${V1_PINN
 - 6 genuine \`640×360\` before/after pairs for Greywater and 5 distinct regions. Both sides are class (2) \`MAP_ONLY_ANALYTICAL_PREVIEW\`; LR01 debug header removed; terrain, hard-edged transitions, sparse large wave motifs and authored roads retained. Class (3) \`ACTUAL_WEB_RENDERED_INTEGRATION_PROOF\` is \`NOT_AVAILABLE__GAMEPLAY_OWNED\` — no preview is labelled Web-rendered.
 - Images actually inspected: \`zone_bz_greywater_before/after_640x360.png\` (clipped wall spans + gaps appear only in after), \`zone_bz_hook_after_640x360.png\` (wave motifs preserved), real \`start-veyra-greywater-u16-640.png\`, \`walk-veyra-greywater-u20-640.png\`, \`select-veyra-greywater-u16-640.png\`.
 - No new external asset, no noisy procedural grass, no generic polygon fill, no decorative debug overlay, no invented roof.
+- Gameplay's own Web-rendered evidence (\`poi-inside-640.png\`, \`poi-outside-640.png\`, Oasis windows at \`${GAMEPLAY_HANDOFF_HEAD}\`) is Gameplay-owned proof of its M0/M2 diagnostic intake, **not** proof that the M4 SVG layers or M1/M3/M3b geometry were rendered in Web.
 
 ## M5 — source-preserving v2
 - \`geography_package.v2.json\` digest \`${v2Digest}\`; embeds full LR01 v1 package verbatim (\`parentPackage\`) with raw SHA \`${V1_RAW}\` and re-verified body digest \`${V1_BODY}\`.
@@ -349,7 +373,7 @@ const visualDoc = `# MAP-LR02 M4 — visual production method (production-ready,
 
 1. \`REAL_WEB_SCREENSHOT\` — unmodified \`640×360\` bytes from Gameplay HEAD \`${GAMEPLAY_HEAD}\`, in \`output/visual/web_evidence/\`. This is the visual quality baseline to PRESERVE.
 2. \`MAP_ONLY_ANALYTICAL_PREVIEW\` — \`640×360\` pairs in \`output/visual/comparisons/\`. Both before and after are Map analytical previews; after adds ONLY the LR02 static-wall art layer.
-3. \`ACTUAL_WEB_RENDERED_INTEGRATION_PROOF\` — \`NOT_AVAILABLE__GAMEPLAY_OWNED\`. Committed \`projectVeyra()\` returns \`statics:[]\`; Map does not modify Gameplay code and never labels class (2) as class (3).
+3. \`ACTUAL_WEB_RENDERED_INTEGRATION_PROOF\` — \`NOT_AVAILABLE__GAMEPLAY_OWNED\` **for the M4 portable layers and M1/M3/M3b geometry**. Gameplay separately pinned M0 clipped solids and M2 cell sets in its own diagnostic LR02/Oasis layouts (\`web/src/game/veyra/lr02.ts\`, \`eligibility.ts\`, PR44 \`${PR44_COMMENTS.gameM2Handoff}\`, HEAD \`${GAMEPLAY_HANDOFF_HEAD}\`) and published its own Web-rendered evidence. \`projectVeyra()\` still returns \`statics:[]\`; Map does not modify Gameplay code and never labels class (2) as class (3).
 
 ## What is preserved (exact primary-source locations)
 

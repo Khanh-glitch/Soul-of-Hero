@@ -4,7 +4,7 @@
 
 1. `REAL_WEB_SCREENSHOT` — unmodified `640×360` bytes from Gameplay HEAD `240db32a1a69211f87af161796498b82afcde20e`, in `output/visual/web_evidence/`. This is the visual quality baseline to PRESERVE.
 2. `MAP_ONLY_ANALYTICAL_PREVIEW` — `640×360` pairs in `output/visual/comparisons/`. Both before and after are Map analytical previews; after adds ONLY the LR02 static-wall art layer.
-3. `ACTUAL_WEB_RENDERED_INTEGRATION_PROOF` — `NOT_AVAILABLE__GAMEPLAY_OWNED`. Committed `projectVeyra()` returns `statics:[]`; Map does not modify Gameplay code and never labels class (2) as class (3).
+3. `ACTUAL_WEB_RENDERED_INTEGRATION_PROOF` — `NOT_AVAILABLE__GAMEPLAY_OWNED` **for the M4 portable layers and M1/M3/M3b geometry**. Gameplay separately pinned M0 clipped solids and M2 cell sets in its own diagnostic LR02/Oasis layouts (`web/src/game/veyra/lr02.ts`, `eligibility.ts`, PR44 `6620726633`, HEAD `bfbf44df9ebf403290dce45ff197327947762e8e`) and published its own Web-rendered evidence. `projectVeyra()` still returns `statics:[]`; Map does not modify Gameplay code and never labels class (2) as class (3).
 
 ## What is preserved (exact primary-source locations)
 

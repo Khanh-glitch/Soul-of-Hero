@@ -108484,8 +108484,8 @@
         "file": "world_lab/lr02/output/visual/visual_layers.v1.json",
         "schema": "soh.map.lr02.visual_layers.v1",
         "revision": 1,
-        "bytes": 30765,
-        "rawSha256": "2488b87a13880fe5c8d0cafa17e2aaad857b21a737aec0b8e5ef010498340eb8"
+        "bytes": 32807,
+        "rawSha256": "a51c35cace3692b8feff575d84f94460f42f1d75aaf0093121ce3214c7a1d8c7"
       },
       {
         "id": "resources",
@@ -108596,6 +108596,46 @@
         "class3": "NOT_AVAILABLE__GAMEPLAY_OWNED"
       }
     ],
+    "gameplayIntegrationObserved": {
+      "head": "bfbf44df9ebf403290dce45ff197327947762e8e",
+      "runtimeCheckpoint": "e0294889ad522ded3b42e92cfea197c057344afc",
+      "pr44Comment": 6620726633,
+      "m0Intake": {
+        "file": "web/src/game/veyra/lr02.ts",
+        "pinnedCommit": "3c073d9da07b0ad936a57293a51dbba968a885dc",
+        "rawSha": "2a9cfcc4360cd62088c4e938fa04f53a99aae6c0a8f2749580453869c502be78",
+        "bodySha": "db5bcc3dcf28210fa63e9a68cdf2128a7f76213bead7d1e975bbb901b50cfe1a",
+        "solids": 15,
+        "openings": 8,
+        "cells": 107,
+        "note": "separate exact-SHA intake; never mutates the LR01 package"
+      },
+      "m2Intake": {
+        "file": "web/src/game/veyra/eligibility.ts",
+        "pinnedCommit": "05f25672da61b4009f38c9a963e2652004dbdf51",
+        "rawSha": "377d5452579d638711bb41fbedcab5dafc98af2c17327a90ec954b8c277a19b9",
+        "bodySha": "637dd4e8706133773d1fe58643b74386a3832f7acbe5d00b5ec91ecc7a1573fc",
+        "regions": 16,
+        "cells": 5151,
+        "note": "exact-SHA static candidate areas, not dynamic spawn authority"
+      },
+      "projection": "M0 clipped solids -> T.PWALL tile centres in the lr02 diagnostic layout; spawnEligible mask from M0 107 cells / M2 16 regions; statics:[] and starts:[] remain; Gameplay comment calls the tile-centre raster a candidate collision representation, not proof that every opening fits.",
+      "evidenceReportedByGameplay": [
+        "215 Web tests, typecheck, build and audit pass",
+        "10 deterministic Oasis seeds + real browser movement/save/reload",
+        "natural browser keyboard runs entered ONE Greywater source room from a seeded start at both scales",
+        "six-room coverage remains controlled tick evidence only"
+      ],
+      "stillOpen": [
+        "M1/M3/M3b physical proposals not integrated",
+        "roof polygons unresolved (Map correctly reports this)",
+        "no bridge or canopy fabricated",
+        "no global streaming/transition/duplicate-free cross-window authority",
+        "no visual quality approval",
+        "no merge"
+      ],
+      "sourceDoc": "docs/survival/GAME_LR02_VEYRA_HANDOFF.md (Gameplay branch)"
+    },
     "testResults": {
       "command": "cd world_lab/lr02 && ./reproduce.sh",
       "exit": 0,
@@ -108608,6 +108648,11 @@
   },
   "gameplayCompatibility": {
     "observedAtGameplayHead": "240db32a1a69211f87af161796498b82afcde20e",
+    "observedHeads": {
+      "visualEvidenceHead": "240db32a1a69211f87af161796498b82afcde20e",
+      "handoffEvidenceHead": "bfbf44df9ebf403290dce45ff197327947762e8e",
+      "runtimeCheckpoint": "e0294889ad522ded3b42e92cfea197c057344afc"
+    },
     "observedIntakePins": {
       "mapSourceSha": "74062a5baf2731451fad9638c4243c7459ce8e24",
       "packageCanonicalSha": "ac9317ae385d47327f02765e4b2e8ca8465c504f3c7146737ab3ff9b91952eb4",
@@ -108646,9 +108691,9 @@
       {
         "id": "CMP-03",
         "seam": "static collision seam",
-        "observed": "projectVeyra() still returns statics:[] at the committed head",
-        "mapPosition": "M1/M0 supply clipped solids + static holes with exact ID mapping",
-        "status": "OPEN"
+        "observed": "projectVeyra() still returns statics:[]; M0 clipped solids ARE projected to T.PWALL tile centres in the separately versioned lr02 diagnostic layout (candidate representation, not proof every opening fits)",
+        "mapPosition": "M0/M1 supply clipped solids + static holes with exact ID mapping; a full runtime static-entity seam remains Gameplay-owned",
+        "status": "DIAGNOSTIC_PROJECTION_PRESENT__FULL_SEAM_OPEN"
       },
       {
         "id": "CMP-04",
@@ -108670,9 +108715,9 @@
       {
         "id": "CMP-05",
         "seam": "spawn reader",
-        "observed": "no reader of cellIndices in committed Web code; chooseLegalSpawn uses runtime-only eligibility",
+        "observed": "web/src/game/veyra/eligibility.ts now pins M2 exact raw/body SHA and builds a spawnEligible mask over all 16 candidate regions for the Oasis window; chooseLegalSpawn still applies Gameplay runtime safety checks afterwards",
         "mapPosition": "M2 contract SEEDED_RANDOM_LEGAL_POSITION_SAMPLING; Map supplies areas, Gameplay samples",
-        "status": "OPEN"
+        "status": "INTAKE_IMPLEMENTED__GAMEPLAY_OWNED"
       },
       {
         "id": "CMP-06",
@@ -108705,17 +108750,57 @@
       {
         "id": "CMP-10",
         "seam": "Gameplay ACK",
-        "observed": "PR44 6620503177 independently verified M0 raw SHA 2a9cfcc4… and body digest db5bcc3d…",
+        "observed": "PR44 6620503177 verified M0 raw/body SHA; PR44 6620726633 verified unchanged M2 bytes/body/parent and reported M0/M2 intake",
         "mapPosition": "M0 rev1 immutable; reproduce.sh verifies instead of rewriting",
         "status": "ACKNOWLEDGED"
       }
     ],
+    "observedGameplayIntegration": {
+      "head": "bfbf44df9ebf403290dce45ff197327947762e8e",
+      "runtimeCheckpoint": "e0294889ad522ded3b42e92cfea197c057344afc",
+      "pr44Comment": 6620726633,
+      "m0Intake": {
+        "file": "web/src/game/veyra/lr02.ts",
+        "pinnedCommit": "3c073d9da07b0ad936a57293a51dbba968a885dc",
+        "rawSha": "2a9cfcc4360cd62088c4e938fa04f53a99aae6c0a8f2749580453869c502be78",
+        "bodySha": "db5bcc3dcf28210fa63e9a68cdf2128a7f76213bead7d1e975bbb901b50cfe1a",
+        "solids": 15,
+        "openings": 8,
+        "cells": 107,
+        "note": "separate exact-SHA intake; never mutates the LR01 package"
+      },
+      "m2Intake": {
+        "file": "web/src/game/veyra/eligibility.ts",
+        "pinnedCommit": "05f25672da61b4009f38c9a963e2652004dbdf51",
+        "rawSha": "377d5452579d638711bb41fbedcab5dafc98af2c17327a90ec954b8c277a19b9",
+        "bodySha": "637dd4e8706133773d1fe58643b74386a3832f7acbe5d00b5ec91ecc7a1573fc",
+        "regions": 16,
+        "cells": 5151,
+        "note": "exact-SHA static candidate areas, not dynamic spawn authority"
+      },
+      "projection": "M0 clipped solids -> T.PWALL tile centres in the lr02 diagnostic layout; spawnEligible mask from M0 107 cells / M2 16 regions; statics:[] and starts:[] remain; Gameplay comment calls the tile-centre raster a candidate collision representation, not proof that every opening fits.",
+      "evidenceReportedByGameplay": [
+        "215 Web tests, typecheck, build and audit pass",
+        "10 deterministic Oasis seeds + real browser movement/save/reload",
+        "natural browser keyboard runs entered ONE Greywater source room from a seeded start at both scales",
+        "six-room coverage remains controlled tick evidence only"
+      ],
+      "stillOpen": [
+        "M1/M3/M3b physical proposals not integrated",
+        "roof polygons unresolved (Map correctly reports this)",
+        "no bridge or canopy fabricated",
+        "no global streaming/transition/duplicate-free cross-window authority",
+        "no visual quality approval",
+        "no merge"
+      ],
+      "sourceDoc": "docs/survival/GAME_LR02_VEYRA_HANDOFF.md (Gameplay branch)"
+    },
     "observedGameplayFacts": [
-      "chooseLegalSpawn() uses runtime-only eligibility (full 200x200 walkable grid, real collision, hazards, local source reachability) with seeded non-repeating traversal; randomSpawn:true.",
+      "chooseLegalSpawn() applies Gameplay runtime safety (full 200x200 walkable grid, real collision, hazards, local source reachability) after the Map spawnEligible mask; seeded non-repeating traversal; randomSpawn:true.",
       "shipping_fresh / dev_delta_fresh remove fixed starter shelters, crates and start roads; historical shipping snapshot and mapDigest fingerprints remain loadable.",
-      "clearWallLine() now blocks through-wall build/repair/upgrade/device access; contact access still allowed.",
-      "projectVeyra() at the committed head returns statics:[]; no LR02 package reader was found in the committed Web tree.",
-      "10 tested seeds per scale, 6/6 proposed Greywater room traversal at U=1.6/2.0 and negative solid LOS were reported by Gameplay as work in progress, NOT as committed integration proof."
+      "clearWallLine() blocks through-wall build/repair/upgrade/device access; contact access still allowed.",
+      "projectVeyra() returns statics:[] and starts:[]; the LR02 diagnostic layout derives wall tiles directly from M0 clipped solids instead of a static entity list.",
+      "U=1.6 and U=2.0 remain separately versioned diagnostic windows (Greywater origin [640,440], Oasis origin [400,840]); no approved scale."
     ],
     "pr44": {
       "number": 44,
@@ -108732,7 +108817,8 @@
         "gameLr02Checkpoint": 6619873863,
         "m0Handoff": 6620427232,
         "gameM0bIntake": 6620503177,
-        "m123Handoff": 6620589329
+        "m123Handoff": 6620589329,
+        "gameM2Handoff": 6620726633
       },
       "noMerge": true
     }
@@ -108740,8 +108826,8 @@
   "integrationGate": {
     "status": "STAGE_1_ONLY__NO_RUNTIME_INTEGRATION_PROOF",
     "realIntegrationProof": false,
-    "reason": "Committed projectVeyra() returns statics:[] and no LR02 reader exists; runtime collision, transform, population and playability are Gameplay-owned.",
-    "preciseNextStep": "Gameplay reviews the separately versioned LR02 packages, pins their schemas/SHAs in a NEW reviewed intake (never rewriting the LR01 v1 pin), integrates the static collision seam, projects with existing SOH Web art, seeds the final legal position and runs native 640x360 playability evidence.",
+    "reason": "Gameplay has a separately pinned M0/M2 diagnostic intake, but M1/M3/M3b physical geometry, the M4 portable layers, roof/canopy polygons, full runtime static-entity seam, approved transform, population and playability acceptance remain Gameplay/joint owned. projectVeyra() still returns statics:[] and starts:[].",
+    "preciseNextStep": "Gameplay reviews the separately versioned LR02 packages, pins their schemas/SHAs in NEW reviewed intakes (never rewriting the LR01 v1 pin), integrates M1/M3/M3b static geometry with existing SOH Web art, resolves roof polygons jointly, seeds the final legal position and runs native 640x360 playability evidence.",
     "forbidden": [
       "canonical rewrite",
       "LR01 v1 pin mutation",
@@ -108812,6 +108898,6 @@
     ],
     "note": "All outputs are deterministic except the Chromium screenshot byte encoding, which is recorded by SHA-256 in visual_layers.v1.json."
   },
-  "revisionDigest": "2f292bcdafd38d9c64ac0fa402b902023daa97cfd57f140e9eb6e2fc3fc84ce1",
+  "revisionDigest": "e3ba6d298fe2872cf5a39b2e3e8cc8704f54c5582f15cff49e2aacffdd20b3e7",
   "digestMethod": "sha256 over JSON.stringify(body) in field insertion order; recompute by deleting revisionDigest and digestMethod"
 }
