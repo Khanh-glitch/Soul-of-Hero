@@ -1,0 +1,19 @@
+name: WMP04 Active Veyra Geography
+on:
+  push:
+    branches:
+      - arena/2e3cfbd2-soul-of-hero
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  static-world-v4:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Validate WMP04 map revision and open-sea semantics
+        run: node veyra-world-master/v4/tests/run_v4.mjs
