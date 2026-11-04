@@ -61,7 +61,7 @@ export function rayLen(r: RunState, x: number, y: number, a: number, max: number
 // ---------- player damage ----------
 export function hurtPlayer(gs: GameState, dmg: number, fx0: number, fy0: number, cause: string, now: number, kb = 140) {
   const r = gs.run!; const p = r.player; if (p.dead) return false;
-  if (p.invuln > 0 || p.action?.kind === 'roll') { fx('dodge', { x: p.x, y: p.y }); return false; }
+  if (p.invuln > 0 || (p.iceUntil !== undefined && now < p.iceUntil) || p.action?.kind === 'roll') { fx('dodge', { x: p.x, y: p.y }); return false; }
   let armor = 0; for (const s of C(r, 'eq').slots) if (s) armor += ITEMS[s.key].armor || 0;
   const d = Math.max(1, Math.round(dmg * (1 - Math.min(0.6, armor))));
   p.hp -= d; p.invuln = 520; const a = Math.atan2(p.y - fy0, p.x - fx0);
@@ -180,6 +180,13 @@ function commitCore(gs: GameState, now: number, slot: number, a: number) {
   }
 }
 
+function freezeTile(r: RunState, tx:number, ty:number, ms:number) {
+  if(tx<0||ty<0||tx>=WW||ty>=WH)return false;const t=effTile(r,tx,ty);
+  if(![T.DEEP,T.SHALLOW,T.RIVER,T.GRASS,T.MEADOW,T.FOREST,T.MARSH,T.SAND,T.ROAD].includes(t))return false;
+  r.terrain[ty*WW+tx]={t:T.ICE,until:r.clock.simMs+ms};return true;
+}
+function freezeAround(r: RunState, x:number, y:number, ms:number) {let changed=false;const cx=tileOf(x),cy=tileOf(y);for(let yy=cy-1;yy<=cy+1;yy++)for(let xx=cx-1;xx<=cx+1;xx++)changed=freezeTile(r,xx,yy,ms)||changed;if(changed)markDirty();}
+
 /** The physical UID captured at windup must still occupy the same slot at commit. */
 function commitCreatorCore(gs: GameState, now: number, slot: number, uid0: string, mode: 'basic'|'refined'|'signature', a: number, aim: Input) {
   const r = gs.run!, p = r.player, s = C(r, 'inv').slots[slot];
@@ -187,6 +194,18 @@ function commitCreatorCore(gs: GameState, now: number, slot: number, uid0: strin
   s.reserves[mode]--; receipt(r, now, 'core.commit', `${s.uid}:${mode}:${s.reserves[mode]}`); award(gs,'first_core',now);
   const b = BAL.creatorCoreBlast, hx=p.x+Math.cos(a)*10, hy=p.y+Math.sin(a)*10;
   fx('cast',{x:hx,y:hy,core:'fire',a});
+  if (ITEMS[s.key].creatorCore === 'elsa') {
+    const e=BAL.creatorCoreElsa;
+    if(mode==='basic') PROJ.push({x:hx,y:hy,vx:Math.cos(a)*e.shardSpeed,vy:Math.sin(a)*e.shardSpeed,life:e.shardLife,dmg:e.shardDamage,from:'player',kind:'elsa_shard',r:3});
+    if(mode==='refined') { p.iceUntil=now+e.selfMs; fx('cast',{x:p.x,y:p.y,core:'frost',a}); }
+    if(mode==='signature') {
+      const vx=clamp(Number.isFinite(aim.viewX)?aim.viewX!:p.x-VIEW_W/2,0,WW*TILE-VIEW_W),vy=clamp(Number.isFinite(aim.viewY)?aim.viewY!:p.y-VIEW_H/2,0,WH*TILE-VIEW_H);
+      for(const m of r.creatures)if(m.state!=='dead'&&!m.elder?.submerged&&!m.atk?.burrow&&m.x>=vx&&m.x<vx+VIEW_W&&m.y>=vy&&m.y<vy+VIEW_H&&clearPhysicalLine(r,p,m,true))m.frozenUntil=Math.max(m.frozenUntil||0,now+e.enemyMs);
+      let cells=0; for(let y=Math.floor(vy/TILE);y<=Math.floor((vy+VIEW_H-1)/TILE);y++)for(let x=Math.floor(vx/TILE);x<=Math.floor((vx+VIEW_W-1)/TILE);x++)if(freezeTile(r,x,y,e.terrainMs))cells++;
+      if(cells)markDirty();receipt(r,now,'core.elsa.freeze',`${s.uid}:${cells}`);fx('cast',{x:p.x,y:p.y,core:'frost',a});
+    }
+    return;
+  }
   if (ITEMS[s.key].creatorCore === 'dragon') {
     const d=BAL.creatorCoreDragon;
     if(mode==='basic') { const len=rayLen(r,p.x,p.y,a,d.flameLength);HAZ.push({kind:'line',x:p.x,y:p.y,angle:a,len,w:d.flameWidth,t:0,tell:0,dur:180,dmg:d.flameDamage,style:'burn',effect:'flameLine',owner:'player'}); }
@@ -221,15 +240,17 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   let mx = (inp.right ? 1 : 0) - (inp.left ? 1 : 0), my = (inp.down ? 1 : 0) - (inp.up ? 1 : 0); const ml = Math.hypot(mx, my); if (ml) { mx /= ml; my /= ml; }
   const act = p.action;
   // start actions
-  if (inp.roll && p.stamina >= B.rollCost && (!act || act.kind === 'hurt' || (act.kind === 'swing' && act.done))) {
+  const selfFrozen=(p.iceUntil||0)>now;
+  if (selfFrozen) { for(const m of r.creatures)if(m.state!=='dead'&&!m.elder?.submerged&&!m.atk?.burrow&&dist(p.x,p.y,m.x,m.y)<BAL.creatorCoreElsa.auraRadius&&los(r,p.x,p.y,m.x,m.y,true))m.frozenUntil=Math.max(m.frozenUntil||0,now+BAL.creatorCoreElsa.enemyMs); }
+  if (!selfFrozen && inp.roll && p.stamina >= B.rollCost && (!act || act.kind === 'hurt' || (act.kind === 'swing' && act.done))) {
     p.stamina -= B.rollCost; p.action = { kind: 'roll', t: 0, dur: B.rollMs, angle: ml ? Math.atan2(my, mx) : p.aim }; p.invuln = Math.max(p.invuln, B.rollMs - 40); fx('roll', { x: p.x, y: p.y });
   } else if (inp.cancel && act?.kind === 'cast') { dispatch(gs, { id: 'cc' + now, type: 'castCancel' }, now); p.action = null; fx('fizzle', { x: p.x, y: p.y }); }
-  else if (inp.skill && !p.action) {
+  else if (!selfFrozen && inp.skill && !p.action) {
     const s = activeStack(r), mode=inp.skill;
     if (s && ITEMS[s.key]?.creatorCore && s.reserves && s.reserves[mode]>0) { p.action={kind:'cast',t:0,dur:380,contact:300,angle:p.aim,slot:p.active,coreUid:s.uid,mode}; fx('windup',{x:p.x,y:p.y,core:'fire'}); }
     else fx('toast',{text:'Creator Core reserve empty — reload with R.'});
   }
-  else if ((inp.attackPressed || inp.attack) && !p.action) {
+  else if (!selfFrozen && (inp.attackPressed || inp.attack) && !p.action) {
     const s = activeStack(r); const d = s ? ITEMS[s.key] : null;
     if (d?.repair && s?.dur !== undefined && s.dur <= 0) { if (inp.attackPressed) fx('toast', { text: `${d.name} is broken. Repair it at a workbench.` }); }
     else if (d?.creatorCore) { if (s!.reserves && s!.reserves.basic>0) { p.action={kind:'cast',t:0,dur:d.creatorCore==='meteor'?400:d.creatorCore==='dragon'?280:180,contact:d.creatorCore==='meteor'?300:d.creatorCore==='dragon'?170:100,angle:p.aim,slot:p.active,coreUid:s!.uid,mode:'basic'}; } else if(inp.attackPressed) fx('toast',{text:'Basic reserve empty — press R to reload.'}); }
@@ -242,16 +263,17 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
     else { const tool = d?.dmg ? d : FISTS; p.action = { kind: 'swing', t: 0, dur: tool.swing, contact: tool.swing * 0.45, angle: p.aim, slot: d?.dmg ? p.active : -1 }; fx('whoosh', { x: p.x, y: p.y }); }
   }
   // progress action
-  let speedMul = 1; const a2 = p.action;
+  let speedMul = selfFrozen ? 0 : 1; const a2 = p.action;
   if (a2) {
     a2.t += dtMs;
     if (a2.kind === 'swing') { speedMul = 0.45; if (!a2.done && a2.t >= (a2.contact || 0)) { a2.done = true; resolveSwing(gs, now, a2.slot ?? -1, a2.angle); } }
-    if (a2.kind === 'cast') { speedMul = a2.mode==='basic' && C(r,'inv').slots[a2.slot!]?.key==='core_dragon' ? 0 : 0.3; a2.angle = p.aim; if (!a2.done && a2.t >= (a2.contact || 0)) { a2.done = true; if (a2.coreUid && a2.mode) commitCreatorCore(gs, now, a2.slot!, a2.coreUid, a2.mode, p.aim, inp); else commitCore(gs, now, a2.slot!, p.aim); } }
+    if (a2.kind === 'cast') { speedMul = selfFrozen ? 0 : a2.mode==='basic' && C(r,'inv').slots[a2.slot!]?.key==='core_dragon' ? 0 : 0.3; a2.angle = p.aim; if (!a2.done && a2.t >= (a2.contact || 0)) { a2.done = true; if (a2.coreUid && a2.mode) commitCreatorCore(gs, now, a2.slot!, a2.coreUid, a2.mode, p.aim, inp); else commitCore(gs, now, a2.slot!, p.aim); } }
     if (a2.kind === 'hurt') speedMul = 0.6;
     if (a2.t >= a2.dur) p.action = null;
   }
   // terrain & load
   const t = effTile(r, tileOf(p.x), tileOf(p.y));
+  if ((p.iceUntil||0)>now) speedMul=0;
   let sp = B.speed * (BAL.terrainSpeed[SPEED_KEY[t]] ?? 1) * speedMul;
   const w = invWeight(r), limit = carryLimit(r), personalLoad = w > limit ? Math.max(0.35, 1 - (w - limit) / limit) : 1;
   let condition = 1; if (slowTimer > 0) { condition *= 0.5; slowTimer -= dtMs; } if (rootTimer > 0) { condition *= 0.15; rootTimer -= dtMs; }
@@ -441,6 +463,7 @@ function encounteredTrace(r: RunState, m: Creature, now: number) {
 /** Only established local evidence is simulated outside the active player area. */
 function traceOnly(gs: GameState, m: Creature, dtMs: number, now: number): 'advanced' | 'defer' | 'done' {
   const r = gs.run!, p = r.player, d = CREATURES[m.type];
+  if ((m.frozenUntil||0)>now) return 'done';
   if (!d || m.elder || !['idle', 'wander', 'track', 'chase'].includes(m.state) || (m.knows && m.knows.kind !== 'trace') || Math.abs(m.kbx) + Math.abs(m.kby) > 1) return 'defer';
   // Player combat and in-flight effects require the full actor simulation, not a guess.
   const sight = (darkness(r, now) > 0.45 ? BAL.ai.sightNight : BAL.ai.sightDay) * (d.sight / 100) * (weatherAt(r, now) === 'fog' ? 0.6 : 1) * (p.sheltered ? 0.5 : 1);
@@ -464,6 +487,7 @@ function tickCreatures(gs: GameState, dtMs: number, now: number) {
   for (let i = r.creatures.length - 1; i >= 0; i--) {
     const m = r.creatures[i];
     if (m.state === 'dead') { m.t += dtMs; if (!m.elder && m.t > 1600) r.creatures.splice(i, 1); continue; }
+    if ((m.frozenUntil||0)>now) continue;
     const dp = dist(m.x, m.y, p.x, p.y); if (dp > ACT) { if (m.offlineUnresolvedAt === undefined && (m.knows?.kind === 'trace' || (!m.knows && encounteredTrace(r, m, now)))) { if (traceOnly(gs, m, dtMs, now) === 'defer') m.offlineUnresolvedAt = now - dtMs; } continue; }
     delete m.offlineUnresolvedAt; // resume from the last justified checkpoint in live play
     m.cd = Math.max(0, m.cd - dtMs); m.flash = Math.max(0, m.flash - dtMs); m.t += dtMs; if (m.slow) m.slow = Math.max(0, m.slow - dtMs);
@@ -649,8 +673,9 @@ function tickProj(gs: GameState, dtMs: number, now: number) {
     if (pr.kind === 'blast_bomb' && blocked && !dead) { pr.vx=0; pr.vy=0; blocked=false; }
     if (blocked) { dead = true; if (pr.kind === 'fireball' || pr.kind === 'blast_signature') explode(gs, pr, now); else fx('ping', { x: pr.x, y: pr.y, kind: pr.kind }); }
     else if (pr.from === 'enemy' && dist(pr.x, pr.y, p.x, p.y) < pr.r + 4) { dead = true; if (pr.kind === 'mine') { fx('boom', { x: pr.x, y: pr.y, small: true }); } hurtPlayer(gs, pr.dmg, pr.x - pr.vx, pr.y - pr.vy, 'projectile', now, 100); }
-    else if (pr.from === 'player' && pr.kind !== 'blast_bomb' && pr.kind !== 'fire_tornado') { for (const m of r.creatures) { if (m.state === 'dead') continue; const rr = m.elder ? ELDERS[m.elder.key].r : 6; if (dist(pr.x, pr.y, m.x, m.y) < rr + pr.r) { dead = true; if (pr.kind === 'fireball' || pr.kind === 'blast_signature') explode(gs, pr, now); else damageCreature(gs, m, pr.dmg, Math.atan2(pr.vy, pr.vx), now, 80); break; } } }
+    else if (pr.from === 'player' && pr.kind !== 'blast_bomb' && pr.kind !== 'fire_tornado') { for (const m of r.creatures) { if (m.state === 'dead') continue; const rr = m.elder ? ELDERS[m.elder.key].r : 6; if (dist(pr.x, pr.y, m.x, m.y) < rr + pr.r) { dead = true; if (pr.kind === 'fireball' || pr.kind === 'blast_signature') explode(gs, pr, now); else { damageCreature(gs, m, pr.dmg, Math.atan2(pr.vy, pr.vx), now, 80); if(pr.kind==='elsa_shard' && m.hp>0 && rngNext(r)<BAL.creatorCoreElsa.freezeChance)m.frozenUntil=now+BAL.creatorCoreElsa.enemyMs; } break; } } }
     if (dead && (pr.kind === 'fireball' || pr.kind === 'blast_signature') && pr.life <= 0) explode(gs, pr, now);
+    if (dead && pr.kind === 'elsa_shard') {freezeAround(r,pr.x,pr.y,BAL.creatorCoreElsa.terrainMs);fx('cast',{x:pr.x,y:pr.y,core:'frost',a:0});}
     if (dead && pr.kind === 'blast_bomb' && pr.life <= 0) {
       explode(gs,pr,now); const base=rngNext(r)*Math.PI*2;
       for(let k=0;k<BAL.creatorCoreBlast.fragmentCount;k++){const angle=base+k*Math.PI*2/BAL.creatorCoreBlast.fragmentCount;PROJ.push({x:pr.x,y:pr.y,vx:Math.cos(angle)*120,vy:Math.sin(angle)*120,life:0.65,dmg:BAL.creatorCoreBlast.fragmentDamage,from:'player',kind:'blast_round',r:2});}

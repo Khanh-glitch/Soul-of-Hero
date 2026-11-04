@@ -59,7 +59,7 @@ export interface Player {
   hp: number; stamina: number; hunger: number; thirst: number; warmth: number; rad: number;
   active: number; // quickbar index 0..7
   action: null | { kind: 'swing' | 'cast' | 'roll' | 'hurt'; t: number; dur: number; contact?: number; done?: boolean; angle: number; slot?: number; coreUid?: string; mode?: 'basic' | 'refined' | 'signature'; targetX?: number; targetY?: number; viewX?: number; viewY?: number };
-  invuln: number; dead: boolean; deadT: number; pulling: string | null;
+  invuln: number; iceUntil?: number; dead: boolean; deadT: number; pulling: string | null;
   skills: Record<string, number>; // xp
   stepAcc: number; lastTraceX: number; lastTraceY: number;
   regionName: string; sheltered: boolean;
@@ -77,7 +77,7 @@ export interface Creature {
   offlineUnresolvedAt?: number;
   path: number[] | null; pathT: number; cd: number; kbx: number; kby: number; flash: number;
   elder?: { key: string; awake: boolean; phase: number; pattern: number; special: number; shield?: number; submerged?: boolean };
-  patternKey?: string; atk?: any; slow?: number; signatureBurnNext?: number; tornadoNext?: number;
+  patternKey?: string; atk?: any; slow?: number; signatureBurnNext?: number; tornadoNext?: number; frozenUntil?: number;
 }
 
 export interface Entity {

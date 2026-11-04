@@ -193,5 +193,16 @@
     "tornadoDamage": 4,
     "collectMs": 1200,
     "impactFraction": 0.2
+  },
+  "creatorCoreElsa": {
+    "_status": "SOH_NEW_TUNED v1 except selfMs CREATOR_LOCKED",
+    "shardDamage": 14,
+    "shardSpeed": 180,
+    "shardLife": 0.7,
+    "freezeChance": 0.4,
+    "enemyMs": 3000,
+    "selfMs": 1000,
+    "auraRadius": 32,
+    "terrainMs": 90000
   }
 }

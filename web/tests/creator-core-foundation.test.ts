@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { TILE, WW, type GameState, type Stack } from '../src/game/core';
+import { TILE, WW, T as Tile, type GameState, type Stack } from '../src/game/core';
 import { addItem, C, countItem, dispatch, newGame, mkCreature, blockGrid } from '../src/game/engine';
-import { HAZ, PROJ, tick, type Input } from '../src/game/sim';
+import { HAZ, PROJ, tick, hurtPlayer, syncWorld, type Input } from '../src/game/sim';
 import { serializeSnapshot, validate } from '../src/game/persist';
-import { setActiveLayout } from '../src/game/world';
+import { getWorld, setActiveLayout } from '../src/game/world';
 const T=Date.UTC(2026,10,4);let n=0;const cmd=(g:GameState,type:string,p:object={},id=`cc-${++n}`)=>dispatch(g,{id,type,...p},T+10);
 function setup(){setActiveLayout('shipping_fresh');const g=newGame();expect(cmd(g,'startRun',{character:'female',seed:33}).ok).toBe(true);const r=g.run!;r.creatures=[];expect(addItem(r,'inv','core_blast',1)).toBe(0);const slot=C(r,'inv').slots.findIndex(s=>s?.key==='core_blast'),core=C(r,'inv').slots[slot]!;r.player.active=slot;for(const [k,v] of [['energy_basic',10],['energy_refined',8],['essence_fire',3]] as [string,number][])expect(addItem(r,'inv',k,v)).toBe(0);return {g,r,core,slot};}
 const snapshot=(g:GameState)=>JSON.parse(JSON.parse(serializeSnapshot(g)).payload) as GameState;
@@ -29,6 +29,16 @@ describe('Creator Core physical reserves foundation',()=>{
    const m1=mkCreature(r,'boar',r.player.x+16,r.player.y,40),m2=mkCreature(r,'boar',r.player.x+40,r.player.y,25);r.creatures=[m1,m2];
    const vx=Math.max(0,r.player.x-320),vy=Math.max(0,r.player.y-180);for(let i=0;i<6;i++)tick(g,input(g,{viewX:vx,viewY:vy,...(i===0?{skill:'signature' as const}:{})}),50,T+100+i*50);
    expect(r.dragonDive?.ids).toHaveLength(2);let t=T+400;while(r.dragonDive && r.dragonDive.left>50){tick(g,input(g),50,t);t+=50;}const before=m1.hp+m2.hp;tick(g,input(g),50,t);expect(r.dragonDive).toBeUndefined();expect((before-(m1.hp+m2.hp))).toBeCloseTo(before*0.2,8);const line=r.receipts.find(x=>x.kind==='core.dragon.impact')!.detail.split(':');expect(Number(line[0])).toBe(2);expect(Number(line[2])).toBeCloseTo(Number(line[1])*0.2,8);expect(validate(snapshot(g))).toBeTruthy();
+ });
+
+ it('Elsa self-freeze grants exactly one second of invulnerability and freezes nearby enemies longer',()=>{
+  const {g,r}=setup();addItem(r,'inv','core_elsa',1);addItem(r,'inv','energy_refined',2);const slot=C(r,'inv').slots.findIndex(s=>s?.key==='core_elsa'),elsa=C(r,'inv').slots[slot]!;r.player.active=slot;cmd(g,'loadCore',{slot,uid:elsa.uid,mode:'refined'});const enemy=mkCreature(r,'boar',r.player.x+12,r.player.y,40);r.creatures=[enemy];
+  frames(g,T+100,6,{skill:'refined'});const until=r.player.iceUntil!;expect(until).toBeGreaterThan(T+100);const hp=r.player.hp;expect(hurtPlayer(g,10,r.player.x,r.player.y,'test',until-1)).toBe(false);expect(r.player.hp).toBe(hp);frames(g,T+400,1);expect(enemy.frozenUntil).toBeGreaterThan(until);expect(hurtPlayer(g,10,r.player.x,r.player.y,'test',until)).toBe(true);expect(r.player.hp).toBeLessThan(hp);expect(validate(snapshot(g))).toBeTruthy();
+ });
+ it('Elsa signature freezes only cast-time visible water and thaws through the run clock',()=>{
+  const {g,r}=setup();addItem(r,'inv','core_elsa',1);addItem(r,'inv','essence_water',1);const slot=C(r,'inv').slots.findIndex(s=>s?.key==='core_elsa'),elsa=C(r,'inv').slots[slot]!;r.player.active=slot;expect(cmd(g,'loadCore',{slot,uid:elsa.uid,mode:'signature'}).ok).toBe(true);
+  const w=getWorld();const i=w.tiles.findIndex(t=>[Tile.DEEP,Tile.SHALLOW,Tile.RIVER].includes(t));expect(i).toBeGreaterThanOrEqual(0);const x=i%WW,y=Math.floor(i/WW),vx=Math.max(0,Math.min(WW*TILE-640,x*TILE-80)),vy=Math.max(0,Math.min(WW*TILE-360,y*TILE-80));for(let j=0;j<6;j++)tick(g,input(g,{viewX:vx,viewY:vy,...(j===0?{skill:'signature' as const}:{})}),50,T+100+j*50);
+  expect(r.terrain[i]?.t).toBe(Tile.ICE);expect(validate(snapshot(g))).toBeTruthy();const outside=Object.keys(r.terrain).map(Number).filter(j=>{const tx=(j%WW)*TILE,ty=Math.floor(j/WW)*TILE;return tx+TILE<=vx||tx>=vx+640||ty+TILE<=vy||ty>=vy+360});expect(outside).toHaveLength(0);syncWorld(g,T+100000);expect(r.terrain[i]).toBeUndefined();
  });
 
 });

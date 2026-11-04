@@ -204,7 +204,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
     const s = sourceAt(r, tx, ty, now); if (!s) continue; if (s.stock <= 0 && entsAt(r, tx, ty).length) continue; list.push({ y: ty * 16 + 14, f: () => drawSource(g, r, s, tx, ty, time, p) });
   }
   for (const e of ents) { if (e.x < cx - 40 || e.x > cx + VIEW_W + 40 || e.y < cy - 20 || e.y > cy + VIEW_H + 60) continue; if (e.kind === 'struct' && ['floor', 'roof'].includes(STRUCTS[e.type!].layer)) continue; if (e.type === 'garden' || e.type === 'spikes') continue; list.push({ y: e.y + (e.kind === 'drop' ? -2 : 6), f: () => drawEntity(g, r, e, time, now) }); }
-  for (const m of r.creatures) { if (m.x < cx - 40 || m.x > cx + VIEW_W + 40 || m.y < cy - 40 || m.y > cy + VIEW_H + 60) continue; list.push({ y: m.y + 4, f: () => drawCreature(g, m, time) }); }
+  for (const m of r.creatures) { if (m.x < cx - 40 || m.x > cx + VIEW_W + 40 || m.y < cy - 40 || m.y > cy + VIEW_H + 60) continue; list.push({ y: m.y + 4, f: () => drawCreature(g, m, time, now) }); }
   list.push({ y: p.y + 4, f: () => drawPlayer(g, gs, time) });
   // POI terrain walls need y-sorting vs player? They are flat tiles; fine.
   list.sort((a, b) => a.y - b.y); for (const d of list) d.f();
@@ -311,7 +311,7 @@ function drawFlame(g: CanvasRenderingContext2D, x: number, y: number, time: numb
   const f = Math.floor(time / 90); for (let i = 0; i < 6; i++) { const h = hash2(i, f, 3); const fx0 = x - 3 * s + h * 6 * s, hgt = (3 + hash2(i, f, 4) * 5) * s; g.fillStyle = i % 3 === 0 ? '#fff0a0' : i % 3 === 1 ? '#ffb040' : '#ff6a1e'; g.fillRect(Math.round(fx0), Math.round(y - hgt), 1, Math.round(hgt)); }
   if (Math.random() < 0.25) add({ x: x + (Math.random() - 0.5) * 4, y: y - 6, vx: (Math.random() - 0.5) * 8, vy: -26, col: '#ffb040', max: 600, s: 1, g: -10 });
 }
-function drawCreature(g: CanvasRenderingContext2D, m: Creature, time: number) {
+function drawCreature(g: CanvasRenderingContext2D, m: Creature, time: number, now: number) {
   const A = getArt(); const X = Math.round(m.x), Y = Math.round(m.y);
   if (m.elder) {
     const d = ELDERS[m.elder.key]; const set = A.elder[m.elder.key]; const aw = m.elder.awake;
@@ -336,6 +336,7 @@ function drawCreature(g: CanvasRenderingContext2D, m: Creature, time: number) {
   if (flip) { g.translate(X * 2, 0); g.scale(-1, 1); }
   if (m.state === 'dead') { g.translate(X, Y); g.rotate(Math.PI / 2 * Math.min(1, m.t / 200)); g.translate(-X, -Y); }
   g.drawImage(m.flash > 0 ? white(spr) : spr, X - 12 + jx, Y - 14); g.restore();
+  if ((m.frozenUntil||0)>now) {g.save();g.globalAlpha=0.7;g.drawImage(A.st.icepillar,X-8,Y-14);g.restore();}
   if (m.type === 'crab' && m.atk?.tuck > 0) pixCircle(g, X, Y - 3, 8, 'rgba(255,255,255,0.6)', 3);
   if (m.state === 'tell' && d.style === 'tongue') { pixLine(g, X, Y - 4, X + Math.cos(m.angle) * 84, Y - 4 + Math.sin(m.angle) * 84, 'rgba(255,80,80,0.35)'); }
   if (m.state === 'attack' && d.style === 'tongue') { const len = Math.min(1, m.t / 120) * 84; pixLine(g, X + Math.cos(m.angle) * 6, Y - 4 + Math.sin(m.angle) * 6, X + Math.cos(m.angle) * len, Y - 4 + Math.sin(m.angle) * len, '#e05a7a', 2); }
@@ -361,6 +362,7 @@ function drawPlayer(g: CanvasRenderingContext2D, gs: GameState, time: number) {
   g.drawImage(blink ? white(spr) : spr, X - 8, Y - 19);
   if (p.dir !== 3) drawWeapon();
   if (act?.kind === 'cast') { const f = Math.min(1, act.t / (act.contact || 1)); const core = ITEMS[s?.key || '']?.core; const col = core === 'fire' ? '#ffb040' : core === 'frost' ? '#c8f0ff' : core === 'storm' ? '#a0c8ff' : '#e0c080'; pixCircle(g, X, Y - 6, 18 * (1 - f) + 4, col, 2); for (let i = 0; i < 3; i++) { const a = time / 100 + i * 2.1; add({ x: X + Math.cos(a) * 14, y: Y - 6 + Math.sin(a) * 14, vx: -Math.cos(a) * 40, vy: -Math.sin(a) * 40, col, max: 300, s: 1, g: 0 }); } }
+  if ((p.iceUntil||0)>Date.now()) {g.save();g.globalAlpha=0.7;g.drawImage(A.st.icepillar,X-8,Y-16);g.restore();}
   if (s?.key === 'torch') drawFlame(g, X + Math.cos(p.aim) * 7, Y - 12 + Math.sin(p.aim) * 4, time, 0.5);
 }
 function drawProj(g: CanvasRenderingContext2D, pr: any, time: number) {
@@ -368,7 +370,7 @@ function drawProj(g: CanvasRenderingContext2D, pr: any, time: number) {
   switch (pr.kind) {
     case 'arrow': pixLine(g, X - Math.cos(a) * 6, Y - Math.sin(a) * 6, X, Y, '#8a5a32'); g.fillStyle = '#e0e0e8'; g.fillRect(X, Y, 1, 1); break;
     case 'bolt': g.fillStyle = '#ff6a3a'; g.fillRect(X - 1, Y - 1, 3, 3); g.fillStyle = '#fff0c0'; g.fillRect(X, Y, 1, 1); add({ x: X, y: Y, vx: 0, vy: 0, col: '#ff6a3a', max: 160, s: 1, g: 0 }); break;
-    case 'shard': g.save(); g.translate(X, Y); g.rotate(a); g.fillStyle = '#bff0ff'; g.fillRect(-4, -1, 8, 2); g.fillStyle = '#ffffff'; g.fillRect(1, 0, 3, 1); g.restore(); break;
+    case 'elsa_shard': case 'shard': g.save(); g.translate(X, Y); g.rotate(a); g.fillStyle = '#bff0ff'; g.fillRect(-4, -1, 8, 2); g.fillStyle = '#ffffff'; g.fillRect(1, 0, 3, 1); g.restore(); break;
     case 'spit': g.fillStyle = pr.kind === 'spit' ? '#6ad0ff' : '#a0d050'; g.fillRect(X - 2, Y - 2, 4, 4); g.fillStyle = '#ffffff'; g.fillRect(X - 1, Y - 1, 1, 1); add({ x: X, y: Y, vx: 0, vy: 10, col: '#a0e0ff', max: 200, s: 1, g: 0 }); break;
     case 'mine': g.fillStyle = '#3a3e46'; g.fillRect(X - 3, Y - 3, 6, 6); g.fillStyle = Math.floor(time / 150) % 2 ? '#ff3a2a' : '#6a1e14'; g.fillRect(X - 1, Y - 1, 2, 2); for (const [dx, dy] of [[-4, 0], [3, 0], [0, -4], [0, 3]]) { g.fillStyle = '#6a7280'; g.fillRect(X + dx, Y + dy, 1, 1); } break;
     case 'fire_tornado': case 'blast_round': case 'blast_bomb': case 'blast_signature': case 'fireball': g.fillStyle = '#ff6a1e'; g.fillRect(X - 3, Y - 3, 6, 6); g.fillStyle = '#ffb040'; g.fillRect(X - 2, Y - 2, 4, 4); g.fillStyle = '#fff0a0'; g.fillRect(X - 1, Y - 1, 2, 2); for (let i = 0; i < 2; i++) add({ x: X, y: Y, vx: -pr.vx * 0.2 + (Math.random() - 0.5) * 30, vy: -pr.vy * 0.2 + (Math.random() - 0.5) * 30, col: i ? '#ff6a1e' : '#ffb040', max: 300, s: 1, g: -20 }); break;

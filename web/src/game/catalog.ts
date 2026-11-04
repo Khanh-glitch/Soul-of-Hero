@@ -20,7 +20,7 @@ export interface ItemDef {
   power?: Partial<Record<Mat, number>>; dmg?: number; reach?: number; arc?: number; swing?: number; dur?: number;
   food?: { hunger?: number; thirst?: number; hp?: number; warmth?: number; rad?: number; stamina?: number };
   slot?: 'head' | 'body' | 'back'; armor?: number; cold?: number; mask?: boolean; fuel?: number; charge?: number; initialCharge?: number; waterContainer?: boolean; carryBonus?: number;
-  core?: string; creatorCore?: 'blast' | 'meteor' | 'dragon'; essence?: 'fire' | 'nature' | 'water' | 'spirit'; specimen?: string; studyRecipe?: string; repair?: { station: 'workbench'; cost: [string, number][] }; salvage?: { station: 'workbench'; yields: [string, number][] }; place?: string; light?: number; ranged?: string;
+  core?: string; creatorCore?: 'blast' | 'meteor' | 'dragon' | 'elsa'; essence?: 'fire' | 'nature' | 'water' | 'spirit'; specimen?: string; studyRecipe?: string; repair?: { station: 'workbench'; cost: [string, number][] }; salvage?: { station: 'workbench'; yields: [string, number][] }; place?: string; light?: number; ranged?: string;
 }
 const I = (d: ItemDef) => d;
 export const ITEMS: Record<string, ItemDef> = {
@@ -34,6 +34,7 @@ export const ITEMS: Record<string, ItemDef> = {
   core_blast: I({ name:'Vụ nổ lớn', cat:'core', icon:'core', c1:'#b63c21', c2:'#ffcb6a', w:0.3, max:1, desc:'Common Fire Core. Reload each reserve with Basic, Refined or Refined plus Fire Essence.', creatorCore:'blast', essence:'fire' }),
   core_meteor: I({ name:'Thiên thạch', cat:'core', icon:'core', c1:'#b64b30', c2:'#ffe695', w:0.3, max:1, desc:'Rare Fire Core. A fireball, targeted meteor and ten-meteor storm.', creatorCore:'meteor', essence:'fire' }),
   core_dragon: I({ name:'Hơi thở của rồng', cat:'core', icon:'core', c1:'#96332b', c2:'#ffda79', w:0.3, max:1, desc:'Top-tier Fire Core: flamethrower, fire tornado and dragon dive.', creatorCore:'dragon', essence:'fire' }),
+  core_elsa: I({ name:'Gươm Elsa', cat:'core', icon:'core', c1:'#5c9fc5', c2:'#d9ffff', w:0.3, max:1, desc:'Rare Water Core: ice projectile, one-second self-freeze and viewport freeze.', creatorCore:'elsa', essence:'water' }),
   // All lifecycle and upgrade costs are provisional TUNABLE values.
   damaged_drive: I({ name: 'Damaged Drive', cat: 'res', icon: 'parts', c1: '#4b6570', c2: '#f0bd56', w: 3, max: 1, desc: 'Finite wreck salvage. At a workbench: 1 drive + 1 scrap → 1 Mechanical Parts. Or carry to the Foundry Recycler: 1 drive → 2 Spares. The same drive is spent either way.' }),
   mechanical_parts: I({ name: 'Mechanical Parts', cat: 'res', icon: 'parts', c1: '#707984', c2: '#c9d2d8', w: 0.5, max: 30, desc: 'Found in industrial wrecks or made at a bench. Improve tools or maintain equipment.' }),
@@ -178,7 +179,7 @@ export const ELDERS: Record<string, ElderDef> = {
 // Knowledge and equipment are independent: tier never implies a station upgrade.
 export const permitsDirectedResearch = (recipe: RecipeDef) => recipe.tier < 3;
 // Recovery is a base recipe introduced after older run snapshots were saved.
-export const isRecipeKnown = (known: readonly string[], key: string) => ['recover_drive','energy_refined_industrial','energy_basic','energy_refined','essence_fire','essence_nature','essence_water','essence_spirit','core_blast','core_meteor','core_dragon'].includes(key) || known.includes(key);
+export const isRecipeKnown = (known: readonly string[], key: string) => ['recover_drive','energy_refined_industrial','energy_basic','energy_refined','essence_fire','essence_nature','essence_water','essence_spirit','core_blast','core_meteor','core_dragon','core_elsa'].includes(key) || known.includes(key);
 export const requiredStationLevel = (recipe: RecipeDef): 1 | 2 | 3 => recipe.stationLevel ?? 1;
 
 // ---------- Recipes (K4: one run-local authority) ----------
@@ -194,6 +195,7 @@ export const RECIPES: Record<string, Recipe> = {
   core_blast: { out:'core_blast', qty:1, ins:[['iron_ingot',2],['spares',4],['crystal',1]], station:'workbench', secs:30, base:true, tier:1 },
   core_meteor: { out:'core_meteor', qty:1, ins:[['iron_ingot',4],['spares',8],['crystal',3],['sulfur',3]], station:'workbench', stationLevel:2, secs:45, base:true, tier:2 },
   core_dragon: { out:'core_dragon', qty:1, ins:[['iron_ingot',8],['spares',16],['crystal',6],['sulfur',6]], station:'workbench', stationLevel:3, secs:75, base:true, tier:3 },
+  core_elsa: { out:'core_elsa', qty:1, ins:[['iron_ingot',3],['spares',8],['crystal',4],['shell',3]], station:'workbench', stationLevel:2, secs:45, base:true, tier:2 },
   fasteners: { out: 'fasteners', qty: 3, ins: [['iron_ingot', 1], ['scrap', 1]], station: 'workbench', secs: 10, tier: 1 },
   treated_canvas: { out: 'treated_canvas', qty: 2, ins: [['cloth', 1], ['raw_salt', 1], ['herb', 1]], station: 'campfire', secs: 12, tier: 1 },
   field_repair_kit: { out: 'field_repair_kit', qty: 1, ins: [['fasteners', 2], ['cloth', 1]], station: 'workbench', secs: 12, tier: 1 },
