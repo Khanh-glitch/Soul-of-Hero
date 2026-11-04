@@ -472,7 +472,7 @@ export class Presenter {
       gl.uniform2f(gl.getUniformLocation(this.progPass, 'size'), this.canvas.width, this.canvas.height);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       this.postCount++; this.postCalls++;
-      this.lastGlError = gl.getError();
+      this.lastGlError = this.checkGl('zero-cast-post');
       return;
     }
     // ---- frame graph: seed accumulator with the world, composite each layer ----
@@ -484,8 +484,10 @@ export class Presenter {
     gl.bindFramebuffer(gl.FRAMEBUFFER, curFbo);
     gl.viewport(0, 0, this.canvas.width, this.canvas.height);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); // world -> accum
+    this.checkGl('accum-seed');
 
-    for (const L of layers) {
+    for (let li = 0; li < layers.length; li++) {
+      const L = layers[li];
       const prog = L.kind === 'rift' ? this.progRift : L.kind === 'glow' ? this.progAdd : L.kind === 'blit' ? this.progBlit : L.kind === 'frame' ? this.progFrame : this.progComp;
       gl.useProgram(prog); setupPos(prog);
       gl.uniform1i(gl.getUniformLocation(prog, 'scene'), 0);
@@ -554,6 +556,7 @@ export class Presenter {
       const wFbo = curFbo === this.accumA ? otherFbo : this.accumA; // write into the other buffer
       gl.bindFramebuffer(gl.FRAMEBUFFER, wFbo);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); // one bounded region pass per layer
+      this.checkGl('layer:' + L.kind + ':' + li + (L.kind === 'frame' ? ((L as any).signedDelta ? ':signed' : ':legacy') : ''));
       this.gpuPasses++;
       curFbo = wFbo;
       curTex = wFbo === this.accumA ? this.accumATex : this.accumBTex;
