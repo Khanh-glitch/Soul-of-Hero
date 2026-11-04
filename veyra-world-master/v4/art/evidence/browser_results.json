@@ -2,18 +2,18 @@
   "schema": "soh.wmp04.art_audition_browser.qa.v1",
   "status": "BROWSER_PREVIEW_PASS__NOT_NATIVE_GAMEPLAY",
   "headSource": "103a755477a8086ff29c11aad0fcbdeab6900165",
-  "embeddedSourceBytes": 1377578,
+  "embeddedSourceBytes": 1377561,
   "screens": [
     {
       "scene": "forest",
       "title": "01 · SOH baseline (để giữ)",
-      "summary": "WMP04 @ AU 790, 622 · 40×23 analysis cells · snow=72 dry=0 marine=0",
+      "summary": "WMP04 @ AU 1100, 650 · 40×23 analysis cells · snow=0 dry=9 marine=0",
       "sources": 3,
       "baselineLoaded": true,
       "canvasNotEmpty": true,
       "path": "veyra-world-master/v4/art/evidence/01_forest_source_and_lab.png",
-      "bytes": 355170,
-      "sha256": "4ccaf96094e4a6272c32bd9c3340c52d6c3c097a14a113a2d59e856982fa90e9"
+      "bytes": 354154,
+      "sha256": "1e41ee2a1afce4444d6cffa456774e502e6a8e078535e1498dbe068c0feb8e8e"
     },
     {
       "scene": "snow",
@@ -23,8 +23,8 @@
       "baselineLoaded": true,
       "canvasNotEmpty": true,
       "path": "veyra-world-master/v4/art/evidence/02_snow_source_and_lab.png",
-      "bytes": 343284,
-      "sha256": "5c8ff0fbcbd3ca4837a6ebaf5ca00f914994e559b95aff4cc287a06c29fc6d9c"
+      "bytes": 342946,
+      "sha256": "a91b61f8b6c0442a6b5a28049f502cc746bd7d3f6a6d01aa53aa2a09b87e084b"
     },
     {
       "scene": "dry",
@@ -34,8 +34,8 @@
       "baselineLoaded": true,
       "canvasNotEmpty": true,
       "path": "veyra-world-master/v4/art/evidence/03_dry_source_and_lab.png",
-      "bytes": 329441,
-      "sha256": "38ba403c7d3109539d342bc2a80de65e41cf2bbcc0df70ddfe436ea96005b15e"
+      "bytes": 329042,
+      "sha256": "21946094cdc0ecd52efc850c97db03f3ee8a60a3c74545538a10c11357acc228"
     },
     {
       "scene": "sea",
@@ -45,8 +45,8 @@
       "baselineLoaded": true,
       "canvasNotEmpty": true,
       "path": "veyra-world-master/v4/art/evidence/04_sea_source_and_lab.png",
-      "bytes": 336811,
-      "sha256": "d71cd8963023927a53e0d6571f9e9326d176d993548491b99486ac4751257049"
+      "bytes": 334406,
+      "sha256": "6c4a0fdfba1eaaeb2acba2e5e2126c241ce8913946b37d8391fbb12af497a69a"
     },
     {
       "scene": "architecture",
@@ -56,8 +56,8 @@
       "baselineLoaded": true,
       "canvasNotEmpty": true,
       "path": "veyra-world-master/v4/art/evidence/05_architecture_source_and_lab.png",
-      "bytes": 289916,
-      "sha256": "97f5dd46df85bc7ede8fff0ba6f1057487ed4e6f362276d3d823aa3a28196cfb"
+      "bytes": 285347,
+      "sha256": "74e04fc98ed530eec64133b2830e07ebfddfe7206603bff1c42fd2501af548a6"
     }
   ],
   "errors": []
