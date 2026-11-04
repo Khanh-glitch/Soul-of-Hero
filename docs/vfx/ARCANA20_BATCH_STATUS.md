@@ -187,3 +187,24 @@ QA gallery incl. #09 fusion/OUT/recast, B#02 day/night, #11 3-phase lead/fusion,
   #09 fusion + OUT + recast, fusions #01/#05/#16, legacy<->signed switching across
   the gallery loop, zero-cast frames, #20 replay scenes. Unit suite unchanged:
   175/175, tsc clean, build clean.
+
+## GL 1282 eliminated — undersized placeholder uploads guarded (CT 6624135398)
+- **Runtime-confirmed first error stage** (per-stage `checkGl` instrumentation, stage
+  encoded into the QA gate exit code readable from check-run annotations):
+  avfx-20 exit 111 = `layer-warp-upload:0` → the generic per-layer code uploaded
+  `L.warp` at fixed 480×270 RGBA32F, but frame layers submit a 4-element placeholder
+  (`warp: new Float32Array(4)`) → undersized `texImage2D` → GL_INVALID_OPERATION.
+  m1 exit 108 = same class via the R8UI influence upload. The earlier `infl` sampler
+  binding fix (R8UI on unit 2 in BOTH frame modes) is kept — it was a real latent
+  mismatch — but the first producing call was the placeholder upload. Note: the old
+  `lastGlError` only reflected the LAST frame, so the BEFORE artifact's glError=0 did
+  not prove the run was error-free; the new cumulative `firstGlError`/`glErrHistory`
+  records the first error + stage for the whole session.
+- **Fix:** warp/influence uploads now happen only when the buffer is full-size
+  (480*270*4 floats / 480*270 bytes); placeholder layers keep the previous texture
+  content, which their shaders never sample. Signed-delta frame contract unchanged.
+- **CI 4/4 SUCCESS at `bb396d0` (run 41786966833→… see PR) with the GL gate active:**
+  qa-avfx-20 / qa-avfx-m1 exit 3 unless `glError===0` AND `firstGlError===null`
+  (stage encoded in exit code: 101-112). All jobs green ⇒ zero GL errors across
+  B#02 day/night, #09/#11, C leads, all 6 redesigns, mode switching, zero-cast, OUT,
+  replay, D19 ticks. Unit suite 175/175, tsc clean, build clean, fallback smoke clean.

@@ -188,7 +188,7 @@
     "worldUploads": 0,
     "layerUploads": 0,
     "gpuPasses": 0,
-    "postCalls": 5600,
+    "postCalls": 5519,
     "glError": 0,
     "firstGlError": null,
     "errHistory": [],
