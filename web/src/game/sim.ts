@@ -575,14 +575,14 @@ function setTimeoutHaz(gs: GameState, m: Creature, dmg: number) { const p = gs.r
 /** Live-only: no speculative targeting or ammunition expenditure during offline catch-up. */
 function tickTurrets(gs: GameState, dtMs: number, now: number) {
   const r=gs.run!, active=BAL.ai.activeRadiusTiles*TILE;
-  for (const e of Object.values(r.entities)) { const t=e.turret; if (!t) continue; t.cooldown=Math.max(0,t.cooldown-dtMs); if (turretStatus(r,e)!=='Ready') continue;
+  for (const e of Object.values(r.entities)) { const t=e.turret; if (!t) continue; t.cooldown=Math.max(0,t.cooldown-dtMs); t.tracking=false; if (turretStatus(r,e)!=='Ready') continue;
     const range = weatherAt(r,now)==='fog' ? 60 : weatherAt(r,now)==='storm' ? 72 : 96;
     const targets=r.creatures.filter(m=>m.state!=='dead' && m.state!=='sleep' && m.offlineUnresolvedAt===undefined && dist(m.x,m.y,r.player.x,r.player.y)<=active && dist(e.x,e.y,m.x,m.y)<=range && (CREATURES[m.type]?.aggro || (m as any).prov || isRagnarok(r,now)) && clearPhysicalLine(r,e,m,true,true));
-    targets.sort((a,b)=>dist(e.x,e.y,a.x,a.y)-dist(e.x,e.y,b.x,b.y)); const m=targets[0]; if (!m) continue;
+    targets.sort((a,b)=>dist(e.x,e.y,a.x,a.y)-dist(e.x,e.y,b.x,b.y)); const m=targets[0]; if (!m) continue; t.tracking=true;
     const a=Math.atan2(m.y-e.y,m.x-e.x); t.angle=a; if (t.cooldown>0) continue;
     const sx=e.x+Math.cos(a)*12, sy=e.y+Math.sin(a)*12; if (blockedAtTurret(r,sx,sy)) continue;
     removeItem(r,e.c!,'arrow',1); t.cooldown=1000; PROJ.push({x:sx,y:sy,vx:Math.cos(a)*260,vy:Math.sin(a)*260,life:.5,dmg:16,from:'player',kind:'arrow',r:3});
-    receipt(r,now,'turret.fire',`${e.id}:${m.id}`); fx('bowshot',{x:sx,y:sy,a});
+    receipt(r,now,'turret.fire',`${e.id}:${m.id}`); fx('bowshot',{x:sx,y:sy,a}); fx('turretshot',{x:sx,y:sy,a});
   }
 }
 function blockedAtTurret(r: RunState,x:number,y:number) { const b=blockGrid(r)[tileOf(y)*WW+tileOf(x)]; return b===1||b===2||b===3||b===5; }
@@ -803,6 +803,7 @@ export function settle(gs: GameState, now: number, silent = false): string[] {
   const report: string[] = []; const B = BAL.player; const p = r.player;
   markDirty(); // Continue may replace the run object while retaining its ID.
   let sheltered = isSheltered(r, p.x, p.y); p.sheltered = sheltered;
+  for (const e of Object.values(r.entities)) if (e.turret) e.turret.tracking = false;
   // Bounded, deterministic playback starts only at saved positions with actual
   // local evidence. Other roaming/combat remains unresolved, not fabricated.
   const eligible = r.creatures.filter(m => m.offlineUnresolvedAt === undefined && !m.elder && ['idle', 'wander', 'track', 'chase'].includes(m.state) && (!m.knows || m.knows.kind === 'trace') && (m.knows?.kind === 'trace' || !!encounteredTrace(r, m, start)));
@@ -902,7 +903,7 @@ export function findInteract(gs: GameState, now: number): Interact | null {
     else if (e.kind === 'gen') label = e.power ? 'Generator (running)' : 'Fuel generator';
     else if (e.kind === 'evac') label = 'Evacuation beacon';
     else if (e.kind === 'cart') label = 'Cart cargo  [F] pull';
-    else if (e.kind === 'struct') { const d2 = STRUCTS[e.type!]; kind = 'struct:' + e.type; if (e.type!.startsWith('door')) label = e.open ? 'Close door' : 'Open door'; else if (d2.station) label = `Use ${d2.name}`; else if (d2.slots) label = `Open ${d2.name}`; else if (e.type === 'escrow') label = 'Rương ký gửi'; else if (e.type === 'garden') label = 'Tend garden'; else if (e.type === 'barrel') label = `Rain barrel (${Math.floor(e.water || 0)})`; else continue; }
+    else if (e.kind === 'struct') { const d2 = STRUCTS[e.type!]; kind = 'struct:' + e.type; if (e.type!.startsWith('door')) label = e.open ? 'Close door' : 'Open door'; else if (d2.station) label = `Use ${d2.name}`; else if (e.turret) label = `Turret: ${turretStatus(r,e)}${e.turret.tracking ? ' · target' : ''}`; else if (e.basePower) label = `Generator: ${e.basePower.enabled && e.basePower.energy>0 ? 'running' : e.basePower.enabled ? 'no fuel' : 'off'}`; else if (d2.slots) label = `Open ${d2.name}`; else if (e.type === 'escrow') label = 'Rương ký gửi'; else if (e.type === 'garden') label = 'Tend garden'; else if (e.type === 'barrel') label = `Rain barrel (${Math.floor(e.water || 0)})`; else continue; }
     else continue;
     bd = d; best = { kind, label, eid: e.id, x: e.x, y: e.y };
   }

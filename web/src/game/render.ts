@@ -105,6 +105,7 @@ export function consumeFX(onFx: (e: any) => void) {
       case 'chip': burst(e.x, e.y - 6, e.depleted ? 14 : 7, MATC[e.mat] || MATC.wood, 55, 160, 500); shakeT.set(Math.floor(e.x / 16) + Math.floor(e.y / 16) * WW, 160); break;
       case 'fell': burst(e.x, e.y - 14, 16, ['#6aa84a', '#3f7a32', '#c9935a'], 70, 60, 900); break;
       case 'clank': burst(e.x, e.y - 6, e.soft ? 2 : 5, ['#ffffff', '#ffe070'], 80, 200, 220); break;
+      case 'turretshot': burst(e.x, e.y - 4, 7, ['#fff6b5', '#ffc653', '#ffffff'], 50, 100, 350); break;
       case 'mhit': burst(e.x, e.y - 6, e.big ? 12 : 8, ['#ffffff', '#ff5a4a', '#a01e1e'], 90, 220, 380); TEXTS.push({ x: e.x, y: e.y - 14, vx: 0, vy: -28, life: 0, max: 700, col: '#ffffff', text: String(e.n) } as Part); break;
       case 'phit': burst(e.x, e.y - 8, 8, ['#ff3a3a', '#ffffff', '#a01e1e'], 80, 200, 350); TEXTS.push({ x: e.x, y: e.y - 18, vx: 0, vy: -24, life: 0, max: 800, col: '#ff5a5a', text: '-' + e.n } as Part); flash = Math.max(flash, 0.25); break;
       case 'mdeath': burst(e.x, e.y - 6, 18, e.type === 'crawler' ? ['#ffd070', '#6f7378', '#ffffff'] : ['#3a2a2a', '#a01e1e', '#e0e0e0'], 70, 120, 700); break;
@@ -278,7 +279,7 @@ function drawEntity(g: CanvasRenderingContext2D, r: RunState, e: Entity, time: n
       if (!spr) return; if (d.layer !== 'wall') shadow(g, X, Y + 5, 7);
       g.drawImage(spr, X - spr.width / 2, Y + 8 - spr.height);
       if (e.basePower) { g.fillStyle=e.basePower.enabled && e.basePower.energy>0 ? '#9cf26b' : '#d96758'; g.fillRect(X+3,Y-5,2,2); }
-      if (e.turret) { const a=e.turret.angle; g.strokeStyle=e.turret.enabled?'#e2d4a0':'#746d5f'; g.lineWidth=2; g.beginPath(); g.moveTo(X,Y-4); g.lineTo(Math.round(X+Math.cos(a)*8),Math.round(Y-4+Math.sin(a)*8)); g.stroke(); }
+      if (e.turret) { const a=e.turret.angle; g.strokeStyle=e.turret.cooldown>750?'#ffe36a':e.turret.enabled?'#e2d4a0':'#746d5f'; g.lineWidth=2; g.beginPath(); g.moveTo(X,Y-4); g.lineTo(Math.round(X+Math.cos(a)*8),Math.round(Y-4+Math.sin(a)*8)); g.stroke(); if(e.turret.tracking){ g.fillStyle='#ffd76a'; g.fillRect(X+6,Y-15,2,5); g.fillRect(X+6,Y-9,2,2); } }
       if (e.type === 'campfire' && e.station && e.station.burn > 0) drawFlame(g, X, Y - 1, time, 1);
       if (e.type === 'torch_post') drawFlame(g, X, Y - 12, time, 0.6);
       if (e.type === 'escrow' && Math.random() < 0.06) add({ x: X - 6 + Math.random() * 12, y: Y - 6, vx: 0, vy: -10, col: '#c8a0ff', max: 900, s: 1, g: -2 });

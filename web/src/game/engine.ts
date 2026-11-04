@@ -478,7 +478,7 @@ export function clearPhysicalLine(r: RunState, p: { x: number; y: number }, e: {
 function clearSegment(r: RunState, p: { x: number; y: number }, e: { x: number; y: number }) {
   return clearPhysicalLine(r, p, e, true, true);
 }
-function clearWallLine(r: RunState, p: {x:number;y:number}, e: {x:number;y:number}) { return clearPhysicalLine(r, p, e, false, true, true); }
+export function clearWallLine(r: RunState, p: {x:number;y:number}, e: {x:number;y:number}) { return clearPhysicalLine(r, p, e, false, true, true); }
 export function clearInteraction(r:RunState,e:{x:number;y:number}) { return clearSegment(r,r.player,e); }
 
 function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {

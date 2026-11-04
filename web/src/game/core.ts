@@ -89,7 +89,7 @@ export interface Entity {
   garden?: { crop: string | null; growth: number; water: number; coldFrame?: boolean };
   farm?: { enabled: boolean; crop: 'crop' | 'herb'; energy: number; gardenId?: string; barrelId?: string; chestId?: string };
   basePower?: { enabled: boolean; energy: number };
-  turret?: { enabled: boolean; generatorId?: string; cooldown: number; angle: number };
+  turret?: { enabled: boolean; generatorId?: string; cooldown: number; angle: number; tracking?: boolean };
   water?: number; minted?: boolean; claim?: string; vx?: number; vy?: number; born?: number; owner?: string;
   power?: number; fire?: number;
   /** The original deployable instance, retained until reclaim or destruction. */

@@ -14,7 +14,7 @@ export interface Api {
   toast: (t: string, tone?: string) => void;
   open: (p: PanelState | null) => void; panel: PanelState | null;
   sel: { c: string; slot: number } | null; setSel: (s: { c: string; slot: number } | null) => void;
-  setBuild: (t: string | null) => void; buildType: string | null; reclaim: boolean; setReclaim: (b: boolean) => void; repairMode: boolean; setRepairMode: (b: boolean) => void;
+  setBuild: (t: string | null) => void; buildType: string | null; reclaim: boolean; setReclaim: (b: boolean) => void; repairMode: boolean; setRepairMode: (b: boolean) => void; setUpgradeMode: (b: boolean) => void;
   sfx: (t: string) => void; rerender: () => void;
 }
 export type PanelState = { kind: 'inv' | 'craft' | 'build' | 'map' | 'skills' | 'menu' | 'container' | 'vendor' | 'escrow' | 'evac' | 'report' | 'research'; eid?: string; lines?: string[] };
