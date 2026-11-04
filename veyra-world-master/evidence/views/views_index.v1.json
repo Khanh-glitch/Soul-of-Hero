@@ -2,7 +2,7 @@
   "schema": "soh.wmp.views_index.v1",
   "status": "MAP_ANALYTICAL_VIEWS__NOT_VISUAL_APPROVAL",
   "authority": "MAP_DESIGNS_THE_PHYSICAL_WORLD__GAMEPLAY_POPULATES_AND_SIMULATES_IT",
-  "masterRevisionDigest": "1d032deb1b03feac918ed0485aa31c21b4c7951373d4dda5ebfbe3b8f850474e",
+  "masterRevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
   "classification": {
     "MAP_ANALYTICAL_VIEW": "Generated here from physical rasters + authored vector geometry. Schematic/technical, NOT a Web render, NOT art direction.",
     "SCALE_DIAGNOSTIC": "Diagnostic camera comparison at U=1.6/2.0/2.5.",
@@ -131,30 +131,30 @@
     },
     {
       "file": "/home/user/Soul-of-Hero/veyra-world-master/evidence/views/scale_U16_camera.png",
-      "bytes": 17230,
+      "bytes": 17175,
       "width": 640,
       "height": 360,
-      "sha256": "28785d7f40a8ee93fa081313d51ad8ce0badaec12c8f11122bc4634fcbe09eaa",
+      "sha256": "d3e0e5a72a5cd244c7549f56c4d542c6daa7f20bf327ff821049db47c7b6e4bc",
       "classification": "SCALE_DIAGNOSTIC",
       "status": "MAP_ANALYTICAL_VIEW__NOT_WEB_RUNTIME_PROOF",
       "note": "Diagnostic U=1.6 scale profile; 640x360 1x camera; not approved canon."
     },
     {
       "file": "/home/user/Soul-of-Hero/veyra-world-master/evidence/views/scale_U20_camera.png",
-      "bytes": 15122,
+      "bytes": 15077,
       "width": 640,
       "height": 360,
-      "sha256": "42fd1162da9c72c245ae8b9da8c5e390f07180dbf1edcb05dc9bc3202dd941c7",
+      "sha256": "a5fd33adb83e9647a519b80fb405398b7ecc4cff628789ee568a9c68bfcc4ac7",
       "classification": "SCALE_DIAGNOSTIC",
       "status": "MAP_ANALYTICAL_VIEW__NOT_WEB_RUNTIME_PROOF",
       "note": "Diagnostic U=2 scale profile; 640x360 1x camera; not approved canon."
     },
     {
       "file": "/home/user/Soul-of-Hero/veyra-world-master/evidence/views/scale_U25_camera.png",
-      "bytes": 13219,
+      "bytes": 13166,
       "width": 640,
       "height": 360,
-      "sha256": "713f4759fd3f7bd916c0f6b3e9ae032d6708432e43d093d131edbd2a0746c412",
+      "sha256": "6891324563a6f14287ad6be1fe747831061f3e57d5d75b34ffd636bcbdb01219",
       "classification": "SCALE_DIAGNOSTIC",
       "status": "MAP_ANALYTICAL_VIEW__NOT_WEB_RUNTIME_PROOF",
       "note": "Diagnostic U=2.5 scale profile; 640x360 1x camera; not approved canon."

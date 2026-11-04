@@ -1,6 +1,6 @@
 # MAP-LR03 / WMP-01 — Gates M-G0..M-G5 (actual commands and results)
 
-Master revision digest: `1d032deb1b03feac918ed0485aa31c21b4c7951373d4dda5ebfbe3b8f850474e`.
+Master revision digest: `8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f`.
 Test command: `node tests/run.mjs`. Total **75/75** PASS, **0** FAIL.
 Clean-room command: `./clean-room.sh` (logs `evidence/clean_room.log`).
 Reproduction command: `./reproduce.sh`.

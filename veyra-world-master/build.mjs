@@ -841,7 +841,7 @@ const scaleProfiles = [1.0, 1.6, 2.0, 2.5].map(U => {
   return {
     id: `scale.U${U.toFixed(1).replace('.', '')}`, unitsPerTileAu: U, tilePx: 16,
     worldTiles, worldPx, camera: { viewPx: [640, 360], viewTiles: cameraTiles, visibleAu: cameraAu, legibleOpeningPx: openingPx, legibleWallPx: wallPx, playerProxyPx: [8, 10] },
-    poi: { footPerimeterAu: r4(poiFootAu), footPerimeterTiles: r4(poiFootAu / U), wallThicknessTiles: r4(2 / U), openingTiles: r4(4 / U), openingPx },
+    poi: { footPerimeterAu: r4(poiFootAu), footPerimeterTiles: r4(poiFootAu / U), wallThicknessTiles: r4(2 / U), wallPx, openingTiles: r4(4 / U), openingPx },
     bodies: BODY_PROFILES.map(p => ({ profileId: p.id, widthTiles: r4(p.widthAu / U), widthPx: r4(p.widthAu / U * 16), sweptClearance: STATUS.UNKNOWN })),
     terrain: { steepnessDegrees: STATUS.UNRESOLVED, climbRule: 'GAMEPLAY_OWNED', note: 'Raw slope bytes are not degrees.' },
     travel: { routeAu: measuredRouteAu, routeTiles: travelTiles, loadedVsUnloadedRatio: STATUS.UNKNOWN, haulCost: 'GAMEPLAY_OWNED' },
@@ -857,7 +857,7 @@ const scales = {
   measuredRouteAu, profiles: scaleProfiles,
   recommendation: {
     profileId: recommended.id, unitsPerTileAu: 2.0, status: 'RECOMMENDED_CONDITIONAL__NOT_APPROVED_CANON',
-    evidence: `At U=2.0 the 4au effective opening is ${recommended.poi.openingPx}px and the 2au wall ${recommended.poi.wallPx}px at native 1x (integer-pixel friendly), the full 2000x1400 frame is ${recommended.worldTiles.join('x')} tiles, and the representative ${measuredRouteAu}au route is ${recommended.travel.routeTiles} tiles. U=1.6 gives a wider opening in px but ${scaleProfiles[1].worldTiles.join('x')} tiles and larger streaming budget; U=2.5 gives fewer tiles but a ${scaleProfiles[3].poi.openingPx}px opening.`,
+    evidence: `At U=2.0 the 4au effective opening is ${recommended.poi.openingPx}px and the 2au wall ${recommended.camera.legibleWallPx}px at native 1x (integer-pixel friendly), the full 2000x1400 frame is ${recommended.worldTiles.join('x')} tiles, and the representative ${measuredRouteAu}au route is ${recommended.travel.routeTiles} tiles. U=1.6 gives a wider opening in px but ${scaleProfiles[1].worldTiles.join('x')} tiles and larger streaming budget; U=2.5 gives fewer tiles but a ${scaleProfiles[3].poi.openingPx}px opening.`,
     conditions: ['Gameplay confirms body/cart dimensions', 'swept clearance and turning radius measured', 'approved runtime transform', 'native 640x360 human legibility evidence', 'creator scale approval'],
     alternativesPreserved: scaleProfiles.filter(p => p.id !== recommended.id).map(p => p.id),
   },

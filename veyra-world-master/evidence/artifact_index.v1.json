@@ -1,10 +1,10 @@
 {
   "schema": "soh.wmp.artifact_index.v1",
   "status": "SUPPLEMENTARY__AUTHORITATIVE_MANIFEST_IS_manifest.v1.json",
-  "masterRevisionDigest": "1d032deb1b03feac918ed0485aa31c21b4c7951373d4dda5ebfbe3b8f850474e",
-  "manifestSha256": "f3eb991998c47c0e4713376c50c73766cf0766d9f8ea88413aca08a22e5efb83",
+  "masterRevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+  "manifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
   "count": 51,
-  "totalBytes": 1463135,
+  "totalBytes": 1463000,
   "excluded": [
     "evidence/artifact_index.v1.json",
     "*.log runtime transcripts (evidence/reproduce.log, evidence/clean_room.log)"
@@ -13,7 +13,7 @@
     {
       "file": "README.md",
       "bytes": 4624,
-      "sha256": "876be524e70af7dc0d3e603480033800d2e081d7176ec8b42ce30a419c108646"
+      "sha256": "076ada9974de2b457d121ddf402c55bae3ca887e54c4bdfb3b146f2cf72f466e"
     },
     {
       "file": "api/intake.mjs",
@@ -27,8 +27,8 @@
     },
     {
       "file": "build.mjs",
-      "bytes": 79832,
-      "sha256": "584e14ffb5a5f6ddb1967cb360661a518740d6d3234638bccd8d2bdfbd65058b"
+      "bytes": 79850,
+      "sha256": "94a774d05fed87692981470a9ece6edf522693e48e338ce4083b64df916e01a3"
     },
     {
       "file": "clean-room.sh",
@@ -58,7 +58,7 @@
     {
       "file": "docs/GATES_M_G0_M_G5.md",
       "bytes": 10425,
-      "sha256": "dfa37e5cd69644ec888bdb09cadd4ba5141ccf035c06a623ebdd33e51e17ba5b"
+      "sha256": "97d962a1e794d0a048db24254ebddc16890bc6e27ad1df3789f42a16009c9dcb"
     },
     {
       "file": "docs/INTAKE_CONTRACT.md",
@@ -68,7 +68,7 @@
     {
       "file": "docs/MAP_LR03_FINAL_HANDOFF.md",
       "bytes": 13205,
-      "sha256": "40985950bf1182c9d56b8b9923275b7774d80b7a3c2d2295d0428c7e8e5690a9"
+      "sha256": "564f3593f5b7445203965e7fef92a40fd8d237f353a7dcbf54f5ffea66ab5a8b"
     },
     {
       "file": "docs/TECHNICAL_VIEWS.md",
@@ -78,7 +78,7 @@
     {
       "file": "evidence/build_determinism.v1.json",
       "bytes": 259,
-      "sha256": "6e4f3c0fc6a904cc21b224441b7f9852bfe12071885230c75dba15f5786d9b82"
+      "sha256": "0992c4852ceced92a8bf569036683e9ff739bd04d6a8157e99b22c6c162b0e6a"
     },
     {
       "file": "evidence/tests/negative_fixtures.v1.json",
@@ -88,7 +88,7 @@
     {
       "file": "evidence/tests/test_results.v1.json",
       "bytes": 24131,
-      "sha256": "08b7afb389f41830aa3763130997deebfe7b5e77155c102a82a9ec84b8c130e5"
+      "sha256": "9f67ac63da76c618bf0797f21a4fb2ba738e67b2e06ab6982ab56d8255cca8d3"
     },
     {
       "file": "evidence/views/detail_br4_crossing.png",
@@ -122,23 +122,23 @@
     },
     {
       "file": "evidence/views/scale_U16_camera.png",
-      "bytes": 17230,
-      "sha256": "28785d7f40a8ee93fa081313d51ad8ce0badaec12c8f11122bc4634fcbe09eaa"
+      "bytes": 17175,
+      "sha256": "d3e0e5a72a5cd244c7549f56c4d542c6daa7f20bf327ff821049db47c7b6e4bc"
     },
     {
       "file": "evidence/views/scale_U20_camera.png",
-      "bytes": 15122,
-      "sha256": "42fd1162da9c72c245ae8b9da8c5e390f07180dbf1edcb05dc9bc3202dd941c7"
+      "bytes": 15077,
+      "sha256": "a5fd33adb83e9647a519b80fb405398b7ecc4cff628789ee568a9c68bfcc4ac7"
     },
     {
       "file": "evidence/views/scale_U25_camera.png",
-      "bytes": 13219,
-      "sha256": "713f4759fd3f7bd916c0f6b3e9ae032d6708432e43d093d131edbd2a0746c412"
+      "bytes": 13166,
+      "sha256": "6891324563a6f14287ad6be1fe747831061f3e57d5d75b34ffd636bcbdb01219"
     },
     {
       "file": "evidence/views/views_index.v1.json",
       "bytes": 8133,
-      "sha256": "1a2b2b510c9de7305725e878ba2dd49e8966e37d3205dfff5b73160c70c0877d"
+      "sha256": "80080710f0390b2539b3e2e6490bafb6bddb987ff30e1c419acacd90f3cd713f"
     },
     {
       "file": "evidence/views/world_chunks_full.png",
@@ -238,7 +238,7 @@
     {
       "file": "manifest.v1.json",
       "bytes": 19699,
-      "sha256": "f3eb991998c47c0e4713376c50c73766cf0766d9f8ea88413aca08a22e5efb83"
+      "sha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e"
     },
     {
       "file": "reproduce.sh",

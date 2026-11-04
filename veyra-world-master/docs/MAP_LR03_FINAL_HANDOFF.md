@@ -27,7 +27,7 @@ Self-contained physical world master candidate delivered. Product gate remains
 | LR01 v1 body digest | `e3259eb30016f93ab0883c6dc3656f0ec1b9d47a85dc78fd90a56e0185765e63` |
 | LR01 v1 raw SHA | `b4cc77228caf847d1ad0d8a680457ca65731202513a047826e8bd973662e19ad` |
 | LR02 v2 digest | `e3ba6d298fe2872cf5a39b2e3e8cc8704f54c5582f15cff49e2aacffdd20b3e7` |
-| Master manifest | `manifest.v1.json` `revisionDigest=1d032deb1b03feac918ed0485aa31c21b4c7951373d4dda5ebfbe3b8f850474e` |
+| Master manifest | `manifest.v1.json` `revisionDigest=8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f` |
 | Source manifest SHA-256 | `c1f0b7a8664656842d97df95a63ee93a258268b6856ac579f27c1908a072cc4d` |
 | Compiler children | 12 `layers/*.v1.json` + 32 `rasters/*.u8`, all SHA-256 pinned in `manifest.v1.json` |
 | Gates | `WMP_TESTS 75/75` — M-G0 15/15, M-G1 5/5, M-G2 13/13, M-G3 8/8, M-G4 12/12, M-G5 22/22 |
@@ -84,7 +84,7 @@ Commands actually run: `node migration/migrate.mjs` (one-time), `node build.mjs`
 `node tools/views.mjs`, `node tests/run.mjs`, `./clean-room.sh`, `./reproduce.sh`,
 `node tools/artifact_index.mjs`.
 LR02 baseline `cd world_lab/lr02 && ./reproduce.sh` → EXIT 0, `LR02_TESTS 46/46`.
-`./clean-room.sh` reported `WMP_CLEAN_ROOM_OK digest=1d032deb… noGold=true noMapLab=true
+`./clean-room.sh` reported `WMP_CLEAN_ROOM_OK digest=8e3e76da… noGold=true noMapLab=true
 noNetwork=true` with an isolated `WMP_TESTS 75/75`.
 
 ## 4. Phase A parity

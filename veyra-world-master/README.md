@@ -11,7 +11,7 @@ Status: `MAP_MASTER_CANDIDATE_PARTIAL_BLOCKED`. **Not** `WORLD_MASTER_SEALED`,
 `VEYRA_PLAYABLE`, `VISUAL_ACCEPTED` or `MERGE_READY`.
 
 Final `manifest.v1.json` revision digest:
-`1d032deb1b03feac918ed0485aa31c21b4c7951373d4dda5ebfbe3b8f850474e`
+`8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f`
 (`WMP_TESTS 75/75`, isolated clean-room `75/75`, identical digest).
 
 ## What is here

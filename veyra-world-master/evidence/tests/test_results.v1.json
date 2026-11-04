@@ -1,7 +1,7 @@
 {
   "schema": "soh.wmp.test_results.v1",
   "generatedBy": "tests/run.mjs",
-  "masterRevisionDigest": "1d032deb1b03feac918ed0485aa31c21b4c7951373d4dda5ebfbe3b8f850474e",
+  "masterRevisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
   "cleanRoom": false,
   "total": 75,
   "passed": 75,
@@ -258,8 +258,8 @@
       "name": "Deterministic build: repeated compiler run reproduces the exact revisionDigest",
       "status": "PASS",
       "detail": {
-        "run1": "1d032deb1b03feac918ed0485aa31c21b4c7951373d4dda5ebfbe3b8f850474e",
-        "run2": "1d032deb1b03feac918ed0485aa31c21b4c7951373d4dda5ebfbe3b8f850474e",
+        "run1": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
+        "run2": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
         "equal": true
       }
     },

@@ -51,6 +51,7 @@
         "footPerimeterAu": 140.4,
         "footPerimeterTiles": 140.4,
         "wallThicknessTiles": 2,
+        "wallPx": 32,
         "openingTiles": 4,
         "openingPx": 64
       },
@@ -136,6 +137,7 @@
         "footPerimeterAu": 140.4,
         "footPerimeterTiles": 87.75,
         "wallThicknessTiles": 1.25,
+        "wallPx": 20,
         "openingTiles": 2.5,
         "openingPx": 40
       },
@@ -221,6 +223,7 @@
         "footPerimeterAu": 140.4,
         "footPerimeterTiles": 70.2,
         "wallThicknessTiles": 1,
+        "wallPx": 16,
         "openingTiles": 2,
         "openingPx": 32
       },
@@ -306,6 +309,7 @@
         "footPerimeterAu": 140.4,
         "footPerimeterTiles": 56.16,
         "wallThicknessTiles": 0.8,
+        "wallPx": 12.8,
         "openingTiles": 1.6,
         "openingPx": 25.6
       },
@@ -360,7 +364,7 @@
     "profileId": "scale.U20",
     "unitsPerTileAu": 2,
     "status": "RECOMMENDED_CONDITIONAL__NOT_APPROVED_CANON",
-    "evidence": "At U=2.0 the 4au effective opening is 32px and the 2au wall undefinedpx at native 1x (integer-pixel friendly), the full 2000x1400 frame is 1000x700 tiles, and the representative 510.1338au route is 255.0669 tiles. U=1.6 gives a wider opening in px but 1250x875 tiles and larger streaming budget; U=2.5 gives fewer tiles but a 25.6px opening.",
+    "evidence": "At U=2.0 the 4au effective opening is 32px and the 2au wall 16px at native 1x (integer-pixel friendly), the full 2000x1400 frame is 1000x700 tiles, and the representative 510.1338au route is 255.0669 tiles. U=1.6 gives a wider opening in px but 1250x875 tiles and larger streaming budget; U=2.5 gives fewer tiles but a 25.6px opening.",
     "conditions": [
       "Gameplay confirms body/cart dimensions",
       "swept clearance and turning radius measured",

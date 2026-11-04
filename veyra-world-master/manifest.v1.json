@@ -624,8 +624,8 @@
     },
     {
       "file": "layers/scales.v1.json",
-      "bytes": 9675,
-      "sha256": "6ef7dd3b727514309e34f625a0b00e8714f706014af54e614863e8f78572f152",
+      "bytes": 9758,
+      "sha256": "6013292c9a61151b9900e165d7a03831c44810db31cd4ea1aa5a89c684317a2b",
       "kind": "layer"
     },
     {
@@ -675,6 +675,6 @@
     "NO approved scale",
     "NO Gameplay runtime modification"
   ],
-  "revisionDigest": "1d032deb1b03feac918ed0485aa31c21b4c7951373d4dda5ebfbe3b8f850474e",
+  "revisionDigest": "8e3e76da5b7f8db35c66322b0236ef37599b4d2dfbe381ea7b2e5ae176d38e4f",
   "digestMethod": "sha256 over JSON.stringify(body) in field insertion order"
 }
