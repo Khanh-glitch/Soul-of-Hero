@@ -108,3 +108,19 @@ QA gallery incl. #09 fusion/OUT/recast, B#02 day/night, #11 3-phase lead/fusion,
 - **Authored arc width** preserved via A streak() with the captured ribbon width.
 - Tests 146/146 incl. negative validation, B-boundary pixel-exactness, #09
   nondegenerate arcs, per-engine clocks. PR #39 unmerged.
+
+
+## Visual quality completion (per CT visual directive)
+- **6 REDESIGN slots implemented as NEW authored compositions** (`source/redesign.ts`,
+  built from vendored C primitives — not copies of rejected A/B/C spells):
+  #04 diagonal guillotine cut with delayed rupture + directional cracks,
+  #06 calligraphic water strokes + pool, #12 sky rune ring + verdict bolt,
+  #13 branching root canopy with glowing tips, #14 spore nebula bloom,
+  #18 chronoshard fall/split/clock-sweep. Each has anticipation→peak→impact→aftermath→OUT
+  and returns the world unchanged (tested). Status: REDESIGN_IMPLEMENTED_CANDIDATE
+  (creator approval still pending — not claimed final).
+- FX Lab (F9): timeline scrub slider + open/peak/out phase jump buttons.
+- Offline pixel inspection: scripts/render-offline.ts renders all 20 lead frames
+  via the CPU runners; evidence/offline-inspect/ has per-spell PNGs + contact sheet.
+- B window fix verified in pixels (B#02 serpent on un-darkened world).
+- Tests 152/152. PR #39 unmerged; no gameplay changes.

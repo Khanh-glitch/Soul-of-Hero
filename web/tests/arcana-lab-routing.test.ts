@@ -255,3 +255,30 @@ describe('ARCANA20 final contract: fail-closed validation, per-engine clocks, B 
     arcanaLab.qaStop();
   });
 });
+
+describe('ARCANA20 visual completion: 6 authored redesigns', () => {
+  it.each([4, 6, 12, 13, 14, 18])('redesign #%i renders distinct non-empty frames at 3 phases and returns to world at OUT', async (id) => {
+    const { RedesignRunner, REDESIGNS } = await import('../src/game/arcana_d20/source/redesign');
+    const r = new RedesignRunner();
+    const world = new Uint8ClampedArray(384 * 216 * 4);
+    for (let i = 0; i < world.length; i += 4) { world[i] = 100; world[i + 1] = 130; world[i + 2] = 90; world[i + 3] = 255; }
+    r.setWorld(world);
+    r.cast(id);
+    const dur = REDESIGNS[id].dur;
+    const frames: number[] = [];
+    for (const ph of [0.2, 0.55, 0.8]) {
+      r.seek(dur * ph);
+      let changed = 0;
+      for (let i = 0; i < r.out.length; i += 4) if (Math.abs(r.out[i] - 100) + Math.abs(r.out[i + 1] - 130) > 25) changed++;
+      frames.push(changed);
+      expect(changed, `redesign #${id} @${ph}`).toBeGreaterThan(150);
+    }
+    // phases differ from each other (real motion, not a static decal)
+    expect(new Set(frames.map(f => Math.round(f / 500))).size).toBeGreaterThan(1);
+    // OUT: near the end the frame mostly returns to the world
+    r.seek(dur + 0.7);
+    let changed = 0;
+    for (let i = 0; i < r.out.length; i += 4) if (Math.abs(r.out[i] - 100) + Math.abs(r.out[i + 1] - 130) > 25) changed++;
+    expect(changed).toBeLessThan(frames[1]);
+  }, 120000);
+});

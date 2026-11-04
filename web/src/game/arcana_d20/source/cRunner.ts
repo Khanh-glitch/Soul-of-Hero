@@ -88,6 +88,12 @@ export class CRunner {
   }
   get count() { return SPELLS.length; }
   get current() { return this.idx; }
+  /** cast a non-vendored Inst factory (used by the REDESIGN implementations) */
+  castInst(make: (rng: Rng, fx: FX) => Inst) {
+    this.inst = make(new Rng(4000 + (this._customId = (this._customId ?? 0) + 1)), this.fx);
+    this.t = 0; this.steps = 0; this.shakeK = 0; this.flashK = 0; this.chromaK = 0;
+  }
+  private _customId = 0;
   cast(index: number) {
     this.idx = ((index % SPELLS.length) + SPELLS.length) % SPELLS.length;
     this.inst = SPELLS[this.idx].make(new Rng(1000 + this.idx * 7919), this.fx);

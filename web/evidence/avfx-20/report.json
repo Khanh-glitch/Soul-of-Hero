@@ -33,7 +33,7 @@
       "name": "Ashen Guillotine",
       "status": "REDESIGN_STUDY",
       "lead": "NEW",
-      "rendered": "C"
+      "rendered": "REDESIGN (new authored)"
     },
     {
       "id": 5,
@@ -47,7 +47,7 @@
       "name": "Riptide Calligraphy",
       "status": "REDESIGN_STUDY",
       "lead": "NEW",
-      "rendered": "C"
+      "rendered": "REDESIGN (new authored)"
     },
     {
       "id": 7,
@@ -89,21 +89,21 @@
       "name": "Skybreaker Script",
       "status": "REDESIGN_STUDY",
       "lead": "NEW",
-      "rendered": "C"
+      "rendered": "REDESIGN (new authored)"
     },
     {
       "id": 13,
       "name": "Rootwake",
       "status": "REDESIGN_STUDY",
       "lead": "NEW",
-      "rendered": "C"
+      "rendered": "REDESIGN (new authored)"
     },
     {
       "id": 14,
       "name": "Spore Nebula",
       "status": "REDESIGN_STUDY",
       "lead": "NEW",
-      "rendered": "C"
+      "rendered": "REDESIGN (new authored)"
     },
     {
       "id": 15,
@@ -131,7 +131,7 @@
       "name": "Chronoshard",
       "status": "REDESIGN_STUDY",
       "lead": "NEW",
-      "rendered": "C"
+      "rendered": "REDESIGN (new authored)"
     },
     {
       "id": 19,
@@ -188,7 +188,7 @@
     "worldUploads": 0,
     "layerUploads": 0,
     "gpuPasses": 0,
-    "postCalls": 5605,
+    "postCalls": 5681,
     "glError": 0,
     "fbo": ""
   }

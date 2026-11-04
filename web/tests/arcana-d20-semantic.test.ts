@@ -115,7 +115,7 @@ describe('ARCANA20 phase 2: A and B source-semantic adapters', () => {
     expect(sourceLabel(19, 'lead')).toContain('D');
     expect(sourceLabel(20, 'lead')).toContain('A+C');
     expect(sourceLabel(7, 'lead')).toBe('C');
-    expect(byId[4].artAcceptance).toBe('STUDY_NOT_APPROVED');
+    expect(byId[4].artAcceptance).toBe('REDESIGN_IMPLEMENTED_CANDIDATE');
     expect(byId[1].fusionStatus).toBe('CANDIDATE_ONLY_NOT_APPROVED');
     expect(LAB_CATALOG.filter(e => e.approvedVisualLead === 'B').map(e => e.id)).toEqual([2, 3, 8]);
   });

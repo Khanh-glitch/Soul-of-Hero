@@ -120,6 +120,12 @@ export default function FxLab({ gs, hidden, onHide, onClose, nightOverride, setN
         <button className="btn" style={{ fontSize: 9, padding: '0 4px' }} title="approved visual lead (A/B/C/D/A+C per creator vote)" onClick={() => { const L = (window as any).__arcanaLab; const info = L.info(); if (info) L.seek(0.01, info.index, 'lead'); }}>▶lead</button>
         <button className="btn" style={{ fontSize: 9, padding: '0 4px' }} title="C source study (comparison only)" onClick={() => { const L = (window as any).__arcanaLab; const info = L.info(); if (info) L.seek(0.01, info.index, 'study'); }}>C-study</button>
         <button className="btn" style={{ fontSize: 9, padding: '0 4px' }} title="fusion recipe candidate (not creator-approved final)" onClick={() => { const L = (window as any).__arcanaLab; const info = L.info(); if (info) L.seek(0.01, info.index, 'fusion'); }}>fusion?</button>
+        <input type="range" min={0} max={100} defaultValue={1} style={{ width: 90, height: 10, verticalAlign: 'middle' }}
+          onChange={(e) => { const L = (window as any).__arcanaLab; const info = L.info(); if (info) L.seek((parseInt(e.target.value) / 100) * info.dur, info.index, info.mode); }}
+          title="scrub timeline" />
+        {['open', 'peak', 'out'].map((ph) => (
+          <button key={ph} className="btn" style={{ fontSize: 9, padding: '0 4px' }} onClick={() => { const L = (window as any).__arcanaLab; const info = L.info(); if (!info) return; const t = ph === 'open' ? info.dur * 0.15 : ph === 'peak' ? Math.min(info.climax + 0.3, info.dur * 0.62) : info.dur * 0.92; L.seek(t, info.index, info.mode); }}>{ph}</button>
+        ))}
       </div>
       <div style={{ marginTop: 2 }}>
         <button className="btn" style={{ fontSize: 9, padding: '0 4px', marginRight: 2, borderColor: nightOverride ? '#8ab0ff' : undefined }} onClick={() => setNightOverride(!nightOverride)}>{nightOverride ? '☾ QA night' : '☼ day'}</button>

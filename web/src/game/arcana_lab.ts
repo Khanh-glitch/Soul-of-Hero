@@ -13,6 +13,7 @@ import { ARunner, A_W, A_H, A_SPELLS } from './arcana_d20/source/aRunner';
 import { d19 } from './arcanaD19';
 import { d20 } from './arcana20';
 import { RECIPES, recipeLabel, composeFusion } from './arcana_d20/source/fusionRecipe';
+import { RedesignRunner, REDESIGNS } from './arcana_d20/source/redesign';
 import * as comp from './compositor';
 import { getPresenter } from './gpu/presenter';
 
@@ -27,7 +28,7 @@ export interface LabEntry {
   currentlyRenderedSource: string;
   previewStatus: 'SOURCE_PREVIEW' | 'FUSION_PREVIEW' | 'REDESIGN_STUDY';
   fusionStatus: 'NONE' | 'CANDIDATE_ONLY_NOT_APPROVED';
-  artAcceptance: 'CREATOR_APPROVED_LEAD' | 'STUDY_NOT_APPROVED';
+  artAcceptance: 'CREATOR_APPROVED_LEAD' | 'STUDY_NOT_APPROVED' | 'REDESIGN_IMPLEMENTED_CANDIDATE';
 }
 
 const LEAD: Record<number, string> = {
@@ -43,6 +44,7 @@ const STATUS: Record<number, LabEntry['previewStatus']> = {
 };
 const FUSION_IDS = new Set([1, 5, 9, 11, 16, 20]);
 const B_IDS = new Set([2, 3, 8]);
+const REDESIGN_IDS = new Set(Object.keys(REDESIGNS).map(Number));
 const C_IDS = new Set([7, 10, 15, 17]);
 
 
@@ -54,7 +56,7 @@ export const LAB_CATALOG: LabEntry[] = CATALOG.map((c) => {
     currentlyRenderedSource: sourceLabel(c.id, 'lead'),
     previewStatus: STATUS[c.id] ?? 'SOURCE_PREVIEW',
     fusionStatus: FUSION_IDS.has(c.id) ? 'CANDIDATE_ONLY_NOT_APPROVED' : 'NONE',
-    artAcceptance: STATUS[c.id] === 'REDESIGN_STUDY' ? 'STUDY_NOT_APPROVED' : 'CREATOR_APPROVED_LEAD',
+    artAcceptance: STATUS[c.id] === 'REDESIGN_STUDY' ? 'REDESIGN_IMPLEMENTED_CANDIDATE' : 'CREATOR_APPROVED_LEAD',
   };
 });
 
@@ -65,6 +67,7 @@ export function sourceLabel(id: number, mode: RenderMode): string {
   if (mode === 'fusion' && RECIPES[id]) return recipeLabel(RECIPES[id]) + ' (recipe)';
   if (FUSION_IDS.has(id) && id !== 20) return 'A'; // lead mode = pure A structure
   if (B_IDS.has(id)) return 'B';
+  if (REDESIGN_IDS.has(id)) return 'REDESIGN (new authored)';
   return 'C';
 }
 
@@ -74,6 +77,7 @@ export class ArcanaLabClient implements comp.VfxClient {
   readonly id = 'arcana-lab';
   catalog = LAB_CATALOG;
   private cR = new CRunner();
+  private rR = new RedesignRunner();
   private bR = new BRunner();
   private aR = new ARunner();
   private blend = new Uint8ClampedArray(Math.max(C_W, A_W) * Math.max(C_H, A_H) * 4);
@@ -130,6 +134,7 @@ export class ArcanaLabClient implements comp.VfxClient {
 
     const useFusion = this.cast.mode === 'fusion' && !!RECIPES[entry.id];
     const useB = this.cast.mode === 'lead' && B_IDS.has(entry.id);
+    const useR = this.cast.mode === 'lead' && REDESIGN_IDS.has(entry.id);
     const useA = this.cast.mode === 'lead' && (FUSION_IDS.has(entry.id) && entry.id !== 20);
 
     let W = C_W, H = C_H, out: Uint8ClampedArray = this.cR.out;
@@ -173,6 +178,9 @@ export class ArcanaLabClient implements comp.VfxClient {
     } else if (useB) {
       if (needRender) { this.bR.setWorld(region); this.bR.cast(entry.index); this.bR.seek(t); }
       out = this.bR.out;
+    } else if (useR) {
+      if (needRender) { this.rR.setWorld(region); this.rR.cast(entry.id); this.rR.seek(Math.min(t, this.rR.duration)); }
+      out = this.rR.out;
     } else if (useA) {
       if (needRender) { this.aR.setWorld(region); this.aR.cast(entry.index); this.aR.seek(Math.min(t, this.aR.duration)); }
       out = this.aR.out;
