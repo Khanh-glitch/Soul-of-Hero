@@ -2,7 +2,7 @@
 // Rule: validate EVERYTHING first, then commit. Failed preconditions never partially debit.
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
-import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel } from './catalog';
+import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
 import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, webRecyclerSite } from './world';
 import { sourceDigest } from './world-economy';
 import { mapDigest } from './map-package';
@@ -908,7 +908,7 @@ function useItem(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: st
   const cid = it.c ?? 'inv'; const c = C(r, cid); if (!c || !canAccess(r, cid) || !validSlot(c, it.slot)) return fail('Invalid or out of reach container.');
   const s = c.slots[it.slot]; if (!s) return fail('Empty.');
   const d = ITEMS[s.key]; const p = r.player;
-  if (d.cat === 'bp') { const rec = s.meta!; if (!RECIPES[rec]) return fail('Invalid blueprint.'); if (r.knowledge.recipes.includes(rec)) return fail('You already know this recipe.'); r.knowledge.recipes.push(rec); c.slots[it.slot] = null; return ok('learn.blueprint', rec, `Learned: ${ITEMS[RECIPES[rec].out].name}`); }
+  if (d.cat === 'bp') { const rec = s.meta!; if (!RECIPES[rec]) return fail('Invalid blueprint.'); if (isRecipeKnown(r.knowledge.recipes, rec)) return fail('You already know this recipe.'); r.knowledge.recipes.push(rec); c.slots[it.slot] = null; return ok('learn.blueprint', rec, `Learned: ${ITEMS[RECIPES[rec].out].name}`); }
   if (d.slot) { const idx = ['head', 'body', 'back'].indexOf(d.slot); const eq = C(r, 'eq'); if (c === eq) return fail('Already equipped.'); const prev = eq.slots[idx]; if (prev && !accepts(c, it.slot, prev)) return fail('Move the old equipment to inventory first.'); eq.slots[idx] = s; c.slots[it.slot] = prev; return ok('equip', s.key); }
   if (d.food) {
     if (d.waterContainer) { if ((s.charge ?? 0) <= 0) return fail('Flask is empty.'); s.charge!--; p.thirst = Math.min(100, p.thirst + (d.food.thirst ?? 0)); return ok('drink.flask', `${s.uid}:${s.charge}`); }
@@ -920,12 +920,12 @@ function useItem(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: st
 }
 
 function stationNear(r: RunState, kind: string, eid?: string) {
-  if (eid) { const e = r.entities[eid]; if (e?.station && owned(e) && STRUCTS[e.type!].station === kind && near(r, e, 3)) return e; return null; }
+  if (eid) { const e = r.entities[eid]; if (e?.kind === 'struct' && e.station && owned(e) && STRUCTS[e.type!]?.station === kind && near(r, e, 3)) return e; return null; }
   return Object.values(r.entities).find(e => e.kind === 'struct' && owned(e) && STRUCTS[e.type!].station === kind && near(r, e, 3)) || null;
 }
 function craft(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: string, d: string, m?: string) => Result): Result {
   if (typeof it.recipe !== 'string' || !Object.prototype.hasOwnProperty.call(RECIPES, it.recipe)) return fail('Unknown recipe.'); const rc = RECIPES[it.recipe];
-  if (!r.knowledge.recipes.includes(it.recipe) && it.recipe !== 'recover_drive') return fail('You have not learned this recipe.');
+  if (!isRecipeKnown(r.knowledge.recipes, it.recipe)) return fail('You have not learned this recipe.');
   const ins = rc.ins.filter(([, q]) => q > 0);
   const activeAction = r.player.action; const activeInput = activeAction?.slot !== undefined && activeAction.slot >= 0 ? C(r, 'inv').slots[activeAction.slot] : null;
   if (activeInput && ins.some(([key]) => key === activeInput.key)) return fail('Finish using that item before crafting.');
@@ -937,6 +937,7 @@ function craft(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: stri
     return ok('craft.hand', it.recipe, `Crafted ${ITEMS[rc.out].name}`);
   }
   const st = stationNear(r, rc.station, it.eid); if (!st) return fail(`Requires a ${STRUCTS[rc.station].name} within reach.`);
+  if (it.recipe === 'recover_drive' && !clearInteraction(r, st)) return fail('A wall blocks access to the workbench.');
   if ((st.station!.level ?? 1) < requiredStationLevel(rc)) return fail(`Requires workbench level ${rc.stationLevel}.`);
   if (st.station!.queue.length >= 6) return fail('Station queue is full.');
   const reserved = reserveInputs(r, ins);
@@ -947,7 +948,7 @@ function craft(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: stri
 function research(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: string, d: string, m?: string) => Result): Result {
   const st = stationNear(r, 'research', it.eid); if (!st) return fail('Requires a Research Table within reach.');
   if (st.station!.queue.length >= 3) return fail('Research queue is full.');
-  const known = new Set(r.knowledge.recipes); const pending = new Set(st.station!.queue.map(j => j.recipe.split(':')[1]));
+  const known = new Set(r.knowledge.recipes); known.add('recover_drive'); const pending = new Set(st.station!.queue.map(j => j.recipe.split(':')[1]));
   const unknown = Object.keys(RECIPES).filter(k => !known.has(k) && !pending.has(k));
   const B = BAL.research;
   if (it.mode === 'random') {

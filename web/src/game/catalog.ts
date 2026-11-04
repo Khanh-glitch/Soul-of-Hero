@@ -167,6 +167,8 @@ export const ELDERS: Record<string, ElderDef> = {
 
 // Knowledge and equipment are independent: tier never implies a station upgrade.
 export const permitsDirectedResearch = (recipe: RecipeDef) => recipe.tier < 3;
+// Recovery is a base recipe introduced after older run snapshots were saved.
+export const isRecipeKnown = (known: readonly string[], key: string) => key === 'recover_drive' || known.includes(key);
 export const requiredStationLevel = (recipe: RecipeDef): 1 | 2 => recipe.stationLevel ?? 1;
 
 // ---------- Recipes (K4: one run-local authority) ----------

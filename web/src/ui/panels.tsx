@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ITEMS, RECIPES, permitsDirectedResearch, STRUCTS, BUILD_ORDER, VENDOR_SECURED, ACHIEVEMENTS, ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING } from '../game/catalog';
+import { ITEMS, RECIPES, permitsDirectedResearch, isRecipeKnown, STRUCTS, BUILD_ORDER, VENDOR_SECURED, ACHIEVEMENTS, ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING } from '../game/catalog';
 import { BAL, TILE, WW, type Stack } from '../game/core';
 import { C, countItem, invWeight, isRagnarok, runHours, cartWeight, cartLimit, carryLimit, spaceFor, phaseOf, tenderStatus, gardenEnvironment, weatherAt, isWet, isSheltered, wetOutlook, turretStatus } from '../game/engine';
 import { getWorld, ZONES } from '../game/world';
@@ -34,7 +34,7 @@ function ItemInfo({ s, known }: { s: Stack | null; known: string[] }) {
 
 function KnownUses({ item, known }: { item: string; known: string[] }) {
   // The active run's known recipes only: no undiscovered POI or recipe spoilers.
-  const uses = known.filter(k => RECIPES[k]?.ins.some(([key]) => key === item)).map(k => ITEMS[RECIPES[k].out].name);
+  const uses = Object.keys(RECIPES).filter(k => isRecipeKnown(known,k) && RECIPES[k]?.ins.some(([key]) => key === item)).map(k => ITEMS[RECIPES[k].out].name);
   if (!uses.length) return null;
   return <details><summary style={{ cursor: 'pointer', color: '#ffd98a' }}>Known uses ({uses.length})</summary><div style={{ maxHeight: 36, overflowY: 'auto', color: '#cfc2dc' }}>{uses.join(' · ')}</div></details>;
 }
@@ -121,7 +121,7 @@ function RecyclerBody({api,eid}:{api:Api;eid:string}) {
 }
 function StationBody({ api, eid }: { api: Api; eid: string }) {
   const r = api.gs.run!; const e = r.entities[eid]; const st = e.station!; const kind = STRUCTS[e.type!].station!;
-  const recipes = Object.entries(RECIPES).filter(([, rc]) => rc.station === kind); const known = recipes.filter(([k]) => r.knowledge.recipes.includes(k) || k === 'recover_drive');
+  const recipes = Object.entries(RECIPES).filter(([, rc]) => rc.station === kind); const known = recipes.filter(([k]) => isRecipeKnown(r.knowledge.recipes, k));
   const fuelled = kind === 'campfire' || kind === 'furnace';
   const level = st.level ?? 1;
   const [confirmSalvage, setConfirmSalvage] = useState<string | null>(null);
@@ -146,6 +146,7 @@ function StationBody({ api, eid }: { api: Api; eid: string }) {
     {st.queue.map((j, i) => { const out = j.recipe.startsWith('R:') ? 'blueprint' : RECIPES[j.recipe].out; return <div key={j.id} className="flex items-center gap-1" style={{ fontSize: 10 }}><Icon k={out} size={12} /><span style={{ width: 90 }}>{ITEMS[out].name}</span><div className="bar" style={{ width: 60 }}><i style={{ width: `${(1 - j.left / j.total) * 100}%`, background: i === 0 && (!fuelled || st.burn > 0) ? '#7aff6a' : '#a07a3a' }} /></div><span>{Math.ceil(j.left / 1000)}s</span><button className="btn ghost" style={{ padding: '0 3px' }} onClick={() => api.act('cancelJob', { eid, jobId: j.id })}>✕</button></div>; })}
     <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>Output</div><Grid api={api} cid={st.outC} cols={6} />
     <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>Recipes</div>
+    {kind === 'workbench' && <div style={{ fontSize: 10, color: '#cfc2dc' }}>Drive recovery: 1 Damaged Drive + 1 Scrap → 1 Mechanical Parts (12s).</div>}
     {known.map(([k, rc]) => <div key={k} className="flex items-center gap-1" style={{ fontSize: 10, marginBottom: 1 }}><Icon k={rc.out} size={12} /><span style={{ width: 82 }}>{ITEMS[rc.out].name}{rc.qty > 1 ? ` ×${rc.qty}` : ''}</span><Cost ins={rc.ins} have={have(api)} /><span style={{ color: '#8a7a9a' }}>{rc.secs}s{(rc.stationLevel ?? 1) > level ? ` · bench ${rc.stationLevel} required` : ''}</span><button className="btn" disabled={(rc.stationLevel ?? 1) > level} style={{ marginLeft: 'auto', padding: '1px 5px' }} onClick={() => api.act('craft', { recipe: k, eid })}>Queue</button></div>)}
     {recipes.length > known.length && <div style={{ fontSize: 10, color: '#8a7a9a' }}>{recipes.length - known.length} more recipes undiscovered here (blueprints, research, specimens).</div>}
   </div>;
@@ -153,10 +154,10 @@ function StationBody({ api, eid }: { api: Api; eid: string }) {
 function ResearchBody({ api, eid }: { api: Api; eid: string }) {
   const r = api.gs.run!; const e = r.entities[eid]; const st = e.station!; const B = BAL.research;
   const [search, setSearch] = useState(''); const [confirmStudy, setConfirmStudy] = useState<string | null>(null);
-  const unknown = Object.keys(RECIPES).filter(k => !r.knowledge.recipes.includes(k));
+  const unknown = Object.keys(RECIPES).filter(k => !isRecipeKnown(r.knowledge.recipes, k));
   const specimens = C(r, 'inv').slots.map((s, i) => [s, i] as const).filter(([s]) => s && (ITEMS[s.key].specimen || CORE_STUDY[s.key] || ITEMS[s.key].studyRecipe));
   return <div>
-    <div style={{ fontSize: 10, color: '#cfc2dc' }}>Spares in pack: <b style={{ color: '#ffe27a' }}>{countItem(r, 'inv', 'spares')}</b> · Known recipes {r.knowledge.recipes.length}/{Object.keys(RECIPES).length}</div>
+    <div style={{ fontSize: 10, color: '#cfc2dc' }}>Spares in pack: <b style={{ color: '#ffe27a' }}>{countItem(r, 'inv', 'spares')}</b> · Known recipes {Object.keys(RECIPES).filter(k => isRecipeKnown(r.knowledge.recipes,k)).length}/{Object.keys(RECIPES).length}</div>
     <div className="flex gap-1 items-center" style={{ margin: '3px 0' }}><button className="btn gold" onClick={() => api.act('research', { mode: 'random', eid })}>Tinker ({B.randomSparesCost} Spares, {B.randomSeconds}s)</button><span style={{ fontSize: 9, color: '#8a7a9a' }}>random unknown recipe</span></div>
     <details style={{ marginBottom: 3 }}><summary style={{ fontSize: 10, color: '#ffd98a', cursor: 'pointer' }}>Directed study ({B.directedSparesCost} Spares, {B.directedSeconds}s)</summary>
     <label style={{ fontSize: 10 }}>Find <input aria-label="Find research recipe" value={search} onChange={e => setSearch(e.target.value)} style={{ width: 120, color: '#fff', background: '#21182a', border: '1px solid #6c5770' }} /></label>
@@ -174,7 +175,7 @@ function RecipeTree({ recipe, known, ancestors = [] }: { recipe: string; known: 
   if (ancestors.includes(recipe)) return <span>Cycle</span>;
   const rc = RECIPES[recipe], seen = [...ancestors, recipe];
   return <div style={{ paddingLeft: 8 }}>{rc.ins.map(([key, qty]) => {
-    const producers = known.filter(k => RECIPES[k]?.out === key && !seen.includes(k));
+    const producers = Object.keys(RECIPES).filter(k => isRecipeKnown(known,k) && RECIPES[k]?.out === key && !seen.includes(k));
     return <div key={key}>{qty} × {ITEMS[key].name}{producers.length > 0 && <details><summary style={{ cursor: 'pointer', color: '#a9dca8' }}>Known ways to craft</summary>{producers.map(k => <div key={k}>{ITEMS[RECIPES[k].out].name} ×{RECIPES[k].qty} · {RECIPES[k].station ? STRUCTS[RECIPES[k].station!].name : 'hand'}{RECIPES[k].stationLevel ? ` level ${RECIPES[k].stationLevel}` : ''}<RecipeTree recipe={k} known={known} ancestors={seen} /></div>)}</details>}</div>;
   })}</div>;
 }
@@ -193,7 +194,7 @@ export function CraftPanel({ api }: { api: Api }) {
   const fuelReady = !fuelNeeded || !!st && (st.station!.burn > 0 || C(r, st.station!.fuelC).slots.some(s => s && ITEMS[s.key].fuel));
   const outputReady = !rc?.station || !st || spaceFor(r, st.station!.outC, rc.out) >= rc.qty;
   return <Panel title="Crafting" style={{ left: 8, top: 34, width: 302, height: 306 }} onClose={() => api.open(null)}>
-    <div className="flex gap-1" style={{ marginBottom: 4 }}><button className="btn" onClick={() => setInventory(true)}>Inventory</button>{selectedRecipe && <button className="btn" onClick={() => setSelectedRecipe(null)}>Close details</button>}<span style={{ fontSize: 10, color: '#b7a8bf', alignSelf: 'center' }}>{r.knowledge.recipes.length} learned</span></div>
+    <div className="flex gap-1" style={{ marginBottom: 4 }}><button className="btn" onClick={() => setInventory(true)}>Inventory</button>{selectedRecipe && <button className="btn" onClick={() => setSelectedRecipe(null)}>Close details</button>}<span style={{ fontSize: 10, color: '#b7a8bf', alignSelf: 'center' }}>{Object.keys(RECIPES).filter(k => isRecipeKnown(r.knowledge.recipes,k)).length} learned</span></div>
     {rc && selectedRecipe ? <div className="scroll" style={{ maxHeight: 245, overflowY: 'auto', fontSize: 11 }}>
       <div className="flex items-center gap-1"><Icon k={rc.out} size={20} /><b style={{ color: '#ffd98a' }}>{ITEMS[rc.out].name} ×{rc.qty}</b><span> · learned</span></div>
       <div style={{ color: '#cfc2dc', margin: '3px 0' }}>{ITEMS[rc.out].desc}</div>
@@ -206,7 +207,7 @@ export function CraftPanel({ api }: { api: Api }) {
       <label style={{ fontSize: 10 }}>Find known recipe <input aria-label="Find known recipe" value={search} onChange={e => setSearch(e.target.value)} style={{ width: 135, color: '#fff', background: '#21182a', border: '1px solid #6c5770' }} /></label>
       <div className="flex gap-1" style={{ margin: '4px 0', flexWrap: 'wrap' }}>{groups.map(([label]) => <button key={label} className="btn" aria-pressed={category === label} onClick={() => { setCategory(label); setSearch(''); }} style={{ color: category === label ? '#ffd98a' : undefined }}>{label}</button>)}</div>
       <div className="scroll" style={{ maxHeight: 190, overflowY: 'auto', fontSize: 11 }}>
-        {groups.filter(([label]) => search.trim() || category === label).map(([label, station]) => { const all = Object.entries(RECIPES).filter(([,v]) => v.station === station); const list = all.filter(([k,v]) => r.knowledge.recipes.includes(k) && ITEMS[v.out].name.toLowerCase().includes(search.trim().toLowerCase())); const hidden = all.filter(([k]) => !r.knowledge.recipes.includes(k)).length; return <div key={label}>
+        {groups.filter(([label]) => search.trim() || category === label).map(([label, station]) => { const all = Object.entries(RECIPES).filter(([,v]) => v.station === station); const list = all.filter(([k,v]) => isRecipeKnown(r.knowledge.recipes, k) && ITEMS[v.out].name.toLowerCase().includes(search.trim().toLowerCase())); const hidden = all.filter(([k]) => !isRecipeKnown(r.knowledge.recipes, k)).length; return <div key={label}>
           {search.trim() && list.length > 0 && <div style={{ color: '#ffd98a' }}>{label}</div>}
           {list.map(([k,v]) => <button key={k} className="ghost flex items-center gap-1" onClick={() => setSelectedRecipe(k)} style={{ width: '100%', padding: '3px 0', textAlign: 'left', borderBottom: '1px solid #2a2034', cursor: 'pointer' }}><Icon k={v.out} size={15} /><span>{ITEMS[v.out].name}{v.qty > 1 ? ` ×${v.qty}` : ''}</span><span style={{ marginLeft: 'auto', color: v.ins.every(([id,q]) => countItem(r,'inv',id) >= q) ? '#a9dca8' : '#ff9a8a' }}>{v.ins.every(([id,q]) => countItem(r,'inv',id) >= q) ? 'materials ready' : 'missing materials'}</span></button>)}
           {!search.trim() && hidden > 0 && <div style={{ color: '#a093aa', fontSize: 10, marginTop: 4 }}>{hidden} undiscovered · explore, find blueprints or research</div>}
@@ -273,8 +274,8 @@ export function SkillsPanel({ api }: { api: Api }) {
         <div style={{ color: '#ffd98a', marginTop: 6 }}>Run achievements · {r.score} local score</div>{r.achievements.map(a => <div key={a}>★ {ACHIEVEMENTS[a].name} <span style={{ color: '#8a7a9a' }}>+{ACHIEVEMENTS[a].score}</span></div>)}
         <div style={{ color: '#ff9a7a', fontSize: 9 }}>LOCAL/UNVERIFIED — never converts into cash.</div>
       </div>
-      <div style={{ flex: 1 }}><div style={{ color: '#ffd98a' }}>Known recipes ({r.knowledge.recipes.length})</div>
-        <div className="scroll" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', maxHeight: 220, overflowY: 'auto' }}>{r.knowledge.recipes.map(k => <div key={k} className="flex items-center gap-1"><Icon k={RECIPES[k].out} size={10} />{ITEMS[RECIPES[k].out].name}</div>)}</div></div>
+      <div style={{ flex: 1 }}><div style={{ color: '#ffd98a' }}>Known recipes ({Object.keys(RECIPES).filter(k => isRecipeKnown(r.knowledge.recipes,k)).length})</div>
+        <div className="scroll" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', maxHeight: 220, overflowY: 'auto' }}>{Object.keys(RECIPES).filter(k => isRecipeKnown(r.knowledge.recipes,k)).map(k => <div key={k} className="flex items-center gap-1"><Icon k={RECIPES[k].out} size={10} />{ITEMS[RECIPES[k].out].name}</div>)}</div></div>
     </div></Panel>;
 }
 

@@ -1,6 +1,6 @@
 import {afterAll,describe,expect,it} from 'vitest';
 import {TILE,WW,type GameState,type Entity} from '../src/game/core';
-import {ITEMS,RECIPES,SOURCES} from '../src/game/catalog';
+import {ITEMS,RECIPES,SOURCES,isRecipeKnown} from '../src/game/catalog';
 import {addItem,blockGrid,C,countItem,dispatch,harvestHit,killPlayer,markDirty,mkContainer,newGame,sourceAt,stepStations} from '../src/game/engine';
 import {getWorld,setActiveLayout,webRecyclerSite} from '../src/game/world';
 import {serializeSnapshot,validate} from '../src/game/persist';
@@ -27,4 +27,10 @@ describe('physical salvage choice',()=>{
   const g=start(),r=g.run!,p=r.player,f=mkContainer(r,'fuel',0),o=mkContainer(r,'out',6),e:Entity={id:'bench-fixture',kind:'struct',type:'workbench',x:p.x+TILE,y:p.y,tx:Math.floor(p.x/TILE)+1,ty:Math.floor(p.y/TILE),hp:100,maxHp:100,station:{fuelC:f.id,outC:o.id,queue:[],burn:0}};r.entities[e.id]=e;markDirty();addItem(r,'inv','damaged_drive',1);addItem(r,'inv','scrap',1);const u=C(r,'inv').slots.find(s=>s?.key==='damaged_drive')!.uid;
   expect(act(g,'recover','craft',{eid:e.id,recipe:'recover_drive'}).ok).toBe(true);expect(e.station!.queue[0].reserved?.some(s=>s.uid===u)).toBe(true);expect(countItem(r,'inv','damaged_drive')).toBe(0);stepStations(g,12000,now+12000);expect(countItem(r,o.id,'mechanical_parts')).toBe(1);expect(countItem(r,'inv','scrap')).toBe(0);expect(validate(snap(g))).toBeTruthy();
  });
+ it('treats recovery as known on old runs without re-researching it and rejects recycler as an arbitrary workbench',()=>{
+  const g=start(),r=g.run!,p=r.player;r.knowledge.recipes=Object.keys(RECIPES).filter(k=>k!=='recover_drive');expect(isRecipeKnown(r.knowledge.recipes,'recover_drive')).toBe(true);const f=mkContainer(r,'fuel',0),o=mkContainer(r,'out',4),table:Entity={id:'research-fixture',kind:'struct',type:'research',x:p.x+TILE,y:p.y,tx:Math.floor(p.x/TILE)+1,ty:Math.floor(p.y/TILE),hp:100,maxHp:100,station:{fuelC:f.id,outC:o.id,queue:[],burn:0}};r.entities[table.id]=table;markDirty();addItem(r,'inv','spares',9);expect(act(g,'directed','research',{eid:table.id,mode:'directed',recipe:'recover_drive'}).ok).toBe(false);expect(act(g,'random','research',{eid:table.id,mode:'random'}).ok).toBe(false);expect(countItem(r,'inv','spares')).toBe(9);expect(r.knowledge.recipes).not.toContain('recover_drive');
+  const recycler=Object.values(r.entities).find(e=>e.kind==='recycler')!;p.x=recycler.x+TILE;p.y=recycler.y;addItem(r,'inv','damaged_drive',1);addItem(r,'inv','scrap',1);expect(act(g,'wrong-station','craft',{eid:recycler.id,recipe:'recover_drive'}).ok).toBe(false);expect(countItem(r,'inv','damaged_drive')).toBe(1);
+  const bf=mkContainer(r,'fuel',0),bo=mkContainer(r,'out',6),bench:Entity={id:'wall-bench',kind:'struct',type:'workbench',x:p.x+2*TILE,y:p.y,tx:Math.floor((p.x+2*TILE)/TILE),ty:Math.floor(p.y/TILE),station:{fuelC:bf.id,outC:bo.id,queue:[],burn:0}};const wall:Entity={id:'wall-between',kind:'struct',type:'wall_wood',x:p.x+TILE,y:p.y,tx:Math.floor((p.x+TILE)/TILE),ty:Math.floor(p.y/TILE)};r.entities[bench.id]=bench;r.entities[wall.id]=wall;markDirty();expect(act(g,'walled-bench','craft',{eid:bench.id,recipe:'recover_drive'}).ok).toBe(false);expect(countItem(r,'inv','damaged_drive')).toBe(1);
+ });
+
 });
