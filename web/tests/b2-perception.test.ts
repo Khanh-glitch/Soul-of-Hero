@@ -54,7 +54,7 @@ describe('B2-A existing movement and causal trace authority', () => {
     for (let i = 33; i <= 39; i++) step(gs, { ...idle(), right: true }, i);
     expect(r.traces.at(-1)!.chainId).not.toBe(beforeTeleport.chainId);
     const prior = r.traces.at(-1)!; prior.life = 0;
-    for (let i = 40; i <= 46; i++) step(gs, { ...idle(), right: true }, i);
+    for (let i = 40; i <= 46; i++) step(gs, { ...idle(), left: true }, i);
     expect(r.traces.at(-1)!.chainId).not.toBe(prior.chainId);
   });
   it('breaks after a tick gap and a cart rope snap rather than joining displaced points', () => {

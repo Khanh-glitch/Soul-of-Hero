@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { ITEMS, RECIPES, CREATURES, SOURCES } from '../src/game/catalog';
 import { TILE, type Entity, type GameState } from '../src/game/core';
-import { addItem, C, countItem, dispatch, harvestHit, markDirty, mkContainer, mkCreature, newGame, stepStations, stepGardensBarrels } from '../src/game/engine';
+import { addItem, C, countItem, dispatch, harvestHit, gardenEnvironment, blockGrid, markDirty, mkContainer, mkCreature, newGame, stepStations, stepGardensBarrels } from '../src/game/engine';
 import { getWorld, SRC_KEYS } from '../src/game/world';
 import { tick, settle, type Input } from '../src/game/sim';
 import { serializeSnapshot, validate } from '../src/game/persist';
 const T = Date.UTC(2026, 10, 1); let n=0;
 function act(g:GameState,type:string,p:object={},id=`economy-${++n}`,now=T+1){return dispatch(g,{id,type,...p},now);}
-function fresh(){const g=newGame();expect(act(g,'startRun',{character:'male',region:0,seed:123}).ok).toBe(true);g.run!.creatures=[];return g;}
+function fresh(){const g=newGame();expect(act(g,'startRun',{character:'male',region:0,seed:123}).ok).toBe(true);g.run!.creatures=[]; const r=g.run!, grid=blockGrid(r); for(let y=85;y<150;y++)for(let x=20;x<180;x++){const e:Entity={id:'climate-fixture',kind:'struct',type:'garden',x:x*TILE+8,y:y*TILE+8,tx:x,ty:y};if(!grid[y*200+x]&&!grid[y*200+x+1]&&gardenEnvironment(r,e,false,'crop').rate===1&&gardenEnvironment(r,e,true,'crop').rate===1){r.player.x=e.x;r.player.y=e.y;return g;}} throw new Error('No suitable climate fixture');}
 function give(g:GameState,key:string,q=1){expect(addItem(g.run!,'inv',key,q)).toBe(0);}
 function station(g:GameState,type:'workbench'|'furnace'|'campfire') {const r=g.run!,p=r.player,f=mkContainer(r,'fuel',3),o=mkContainer(r,'out',6);const e:Entity={id:`fixture-${++n}`,kind:'struct',type,x:p.x+16,y:p.y,tx:Math.floor(p.x/TILE)+1,ty:Math.floor(p.y/TILE),hp:100,maxHp:100,station:{fuelC:f.id,outC:o.id,burn:0,queue:[]}};r.entities[e.id]=e;markDirty();return e;}
 const input=(x:number,y:number):Input=>({up:false,down:false,left:false,right:false,mx:x+40,my:y,attack:true,attackPressed:true,roll:false,cancel:false});
@@ -19,7 +19,7 @@ describe('connected economy',()=>{
   expect(RECIPES.industrial_pick.stationLevel).toBe(2);expect(ITEMS.industrial_pick.power!.ore!).toBeGreaterThan(ITEMS.iron_pick.power!.ore!);expect(ITEMS.industrial_axe.power!.wood!).toBeGreaterThan(ITEMS.iron_axe.power!.wood!);
  });
  it('wrecks produce rare physical parts only while finite source stock is harvested',()=>{
-  const g=fresh(),r=g.run!,w=getWorld('shipping'),i=w.sourceV3.findIndex(k=>k==='wreck');expect(i).toBeGreaterThanOrEqual(0);
+  const g=fresh(),r=g.run!,w=getWorld(),i=w.sourceV3.findIndex(k=>k==='wreck');expect(i).toBeGreaterThanOrEqual(0);
   r.rng=4;const tx=i%200,ty=Math.floor(i/200),x=tx*16+8,y=ty*16+8;r.player.x=x-15;r.player.y=y;
   const result=harvestHit(g,tx,ty,{scrap:100},T+10,r.player.x,r.player.y);expect(result.depleted).toBe(true);
   const pieces=Object.values(r.entities).filter(e=>e.kind==='drop').flatMap(e=>C(r,e.c!).slots.filter(s=>s?.key==='mechanical_parts'));expect(pieces.length).toBeGreaterThan(0);expect(pieces.length).toBeLessThanOrEqual(SOURCES.wreck.stock);

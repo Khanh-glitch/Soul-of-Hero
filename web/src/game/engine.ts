@@ -3,7 +3,7 @@
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
 import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES } from './catalog';
-import { getWorld, getActiveLayout, SRC_KEYS, tileAt } from './world';
+import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt } from './world';
 import { sourceDigest } from './world-economy';
 import { mapDigest } from './map-package';
 
@@ -59,23 +59,25 @@ export function mkContainer(r: RunState, kind: string, n: number): Container { c
 
 /** Random eligible cell, using real collision, current hazards and reachable local sources.
  * Compiler reachability anchors and Map sp_* are never player spawn authorities. */
-export function chooseVeyraSpawn(r:RunState): {tx:number;ty:number;name:string}|null {
-  const w=getWorld(); if(!w.veyra)return null; markDirty();const grid=blockGrid(r), n=WW*WH;
+export function chooseLegalSpawn(r:RunState): {tx:number;ty:number;name:string}|null {
+  const w=getWorld(); markDirty();const grid=blockGrid(r), n=WW*WH;
   const safe=(x:number,y:number)=>{const i=y*WW+x;return x>2&&y>2&&x<WW-3&&y<WH-3&&grid[i]===0&&w.economyMap.walkable[i]&&![T.TOXIC,T.ASH,T.SNOW].includes(effTile(r,x,y))&&!r.sources[i]?.fire&&!Object.values(r.entities).some(e=>e.type==='spikes'&&e.tx===x&&e.ty===y)&&!r.creatures.some(m=>m.state!=='dead'&&Math.hypot(m.x-(x*TILE+8),m.y-(y*TILE+8))<10*TILE);};
   const eligible=(tx:number,ty:number)=>{if(!safe(tx,ty))return false;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)if(!safe(tx+dx,ty+dy))return false;
     const seen=new Uint8Array(n),q=new Int32Array(n),depth=new Uint8Array(n);let head=0,tail=0;const start=ty*WW+tx;q[tail++]=start;seen[start]=1;let wood=false,stone=false,food=false,water=false,sites=0;
-    while(head<tail){const i=q[head++],x=i%WW,y=Math.floor(i/WW);if(w.economyMap.buildable[i]&&!w.sourceV3[i])sites++;for(const [dx,dy]of [[0,0],[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy;if(nx<1||ny<1||nx>=WW-1||ny>=WH-1)continue;const j=ny*WW+nx;if(w.fresh[j])water=true;const src=sourceAt(r,nx,ny);if(src&&src.stock>0&&!src.fire){if(['oak','pine','snowpine','palm','willow'].includes(src.key))wood=true;if(src.key==='rock')stone=true;if(['bush','mushroom'].includes(src.key))food=true;}
+    while(head<tail){const i=q[head++],x=i%WW,y=Math.floor(i/WW);if(w.economyMap.buildable[i]&&!sourceAt(r,x,y))sites++;for(const [dx,dy]of [[0,0],[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy;if(nx<1||ny<1||nx>=WW-1||ny>=WH-1)continue;const j=ny*WW+nx;if(w.fresh[j])water=true;const src=sourceAt(r,nx,ny);if(src&&src.stock>0&&!src.fire){if(['oak','pine','snowpine','palm','willow'].includes(src.key))wood=true;if(src.key==='rock')stone=true;if(['bush','mushroom'].includes(src.key))food=true;}
       if((dx||dy)&&depth[i]<30&&!seen[j]&&grid[j]===0&&w.economyMap.walkable[j]){seen[j]=1;depth[j]=depth[i]+1;q[tail++]=j;}}
       if(wood&&stone&&food&&water&&sites>=9)return true;
     }return false;
   };
   // Seed determines a full, non-repeating traversal; no fixed fallback or spawn beacon.
   const count=(WW-6)*(WH-6),start=Math.floor(rngNext(r)*count),step=1+2*Math.floor(rngNext(r)*(count/2));let stride=step;while((function gcd(a:number,b:number):number{return b?gcd(b,a%b):a})(stride,count)!==1)stride+=2;
-  for(let k=0;k<count;k++){const i=(start+k*stride)%count,tx=3+i%(WW-6),ty=3+Math.floor(i/(WW-6));if(eligible(tx,ty))return{tx,ty,name:'Veyra · Greywater region'};}return null;
+  for(let k=0;k<count;k++){const i=(start+k*stride)%count,tx=3+i%(WW-6),ty=3+Math.floor(i/(WW-6));if(eligible(tx,ty))return{tx,ty,name:w.veyra?'Veyra · Greywater region':'the island'};}return null;
 }
 
 export function startRun(gs: GameState, character: 'male' | 'female', now: number, region: number | null = null, seedOverride?: number): Result {
   if (gs.run && !gs.run.ended) return { ok: false, reason: 'A run is already active.' };
+  if(getActiveLayout()==='shipping')setActiveLayout('shipping_fresh');
+  if(getActiveLayout()==='dev_delta')setActiveLayout('dev_delta_fresh');
   const w = getWorld();
   const seed = seedOverride ?? ((now ^ 0x9e3779b9) >>> 0);
   const r: RunState = {
@@ -85,7 +87,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
     clock: { lastSimAt: now, simMs: 0, respawnAcc: 0, weatherSlot: -1 }, rng: seed, nextId: 1, receipts: [], seenIntents: [], seq: 0,
     vendorStock: { escrow_chest: 4, ...Object.fromEntries(Object.entries(VENDOR_SECURED).map(([k, v]) => [k, v.stock])) }, log: [],
   };
-  const reg = w.veyra ? 0 : (region ?? Math.floor(rngNext(r) * w.starts.length)); r.spawnRegion = reg; const sp = w.veyra ? chooseVeyraSpawn(r) : w.starts[reg]; if(!sp)return {ok:false,reason:'No safe, resource-accessible spawn in this region.'}; if(w.veyra)r.spawnChoice={x:sp.tx,y:sp.ty,contract:'seeded-geographic-v1'};
+  const reg = 0; r.spawnRegion = reg; const sp = chooseLegalSpawn(r); if(!sp)return {ok:false,reason:'No safe, resource-accessible spawn in this region.'}; r.spawnChoice={x:sp.tx,y:sp.ty,contract:'seeded-geographic-v1'};
   r.custody.inv = { id: 'inv', kind: 'inv', slots: Array(24).fill(null) };
   r.custody.eq = { id: 'eq', kind: 'eq', slots: [null, null, null] };
   r.custody.inv.slots[0] = mkStack(r, 'knife', 1);
@@ -391,7 +393,7 @@ export function respawn(gs: GameState, now: number): Result {
   const beds = Object.values(r.entities).filter(e => e.kind === 'struct' && e.type === 'bed_straw');
   let x: number, y: number;
   if (beds.length) { x = beds[0].x; y = beds[0].y + 10; }
-  else { const s = w.veyra ? chooseVeyraSpawn(r) : w.starts[Math.floor(rngNext(r) * w.starts.length)]; if(!s)return {ok:false,reason:'No safe spawn is currently available.'}; x = s.tx * TILE + 8; y = s.ty * TILE + 8; }
+  else { const s = chooseLegalSpawn(r); if(!s)return {ok:false,reason:'No safe spawn is currently available.'}; x = s.tx * TILE + 8; y = s.ty * TILE + 8; }
   Object.assign(p, { x, y, dead: false, hp: 60, stamina: 60, hunger: Math.max(p.hunger, 40), thirst: Math.max(p.thirst, 40), warmth: 80, rad: Math.min(p.rad, 20), invuln: 2000 });
   return { ok: true, receipt: receipt(r, now, 'respawn', `${Math.round(x)},${Math.round(y)}`) };
 }
@@ -417,6 +419,7 @@ export function buildReason(gs: GameState, type: string, tx: number, ty: number)
   if (type === 'farm_controller' && !Object.values(r.entities).some(e=>e.kind==='struct' && e.type==='workbench' && e.station && owned(e) && (e.station.level ?? 1)>=2 && near(r,e,3) && dist(e.x,e.y,tx*TILE+8,ty*TILE+8)<=3*TILE)) return 'Build near your level 2 workbench.';
   if (!Number.isInteger(tx) || !Number.isInteger(ty) || tx < 1 || ty < 1 || tx >= WW - 1 || ty >= WH - 1) return 'Out of bounds.';
   if (dist(p.x, p.y, tx * TILE + 8, ty * TILE + 8) > 4.6 * TILE) return 'Too far away.';
+  if (!clearWallLine(r, p, {x:tx*TILE+8,y:ty*TILE+8})) return 'A wall blocks access to that tile.';
   const t = effTile(r, tx, ty);
   if ([T.DEEP, T.SHALLOW, T.RIVER, T.CLIFF, T.PWALL, T.LAVA, T.FLOOR, T.ICE].includes(t)) return 'Ground is not buildable here.';
   if (t === T.ROAD || t === T.BRIDGE) return 'Keep roads clear — build beside them.';
@@ -448,7 +451,7 @@ export function dispatch(gs: GameState, it: Intent, now: number): Result {
   if (gs.profile.profileReceipts.includes(`intent:${it.id}`)) return { ok: false, reason: 'Duplicate request ignored.', dup: true };
   const r = gs.run;
   if (it.type === 'startRun') {
-    if (!['male', 'female'].includes(it.character) || (it.region != null && (!Number.isInteger(it.region) || it.region < 0 || it.region >= getWorld().starts.length) && !getWorld().veyra) || (it.seed !== undefined && (!Number.isSafeInteger(it.seed) || it.seed < 0 || it.seed > 0xffffffff))) return { ok: false, reason: 'Invalid start.' };
+    if (!['male', 'female'].includes(it.character) || (it.region != null && (!Number.isInteger(it.region) || it.region < 0)) || (it.seed !== undefined && (!Number.isSafeInteger(it.seed) || it.seed < 0 || it.seed > 0xffffffff))) return { ok: false, reason: 'Invalid start.' };
     const res = startRun(gs, it.character, now, it.region ?? null, it.seed); if (res.ok) gs.profile.profileReceipts.push(`intent:${it.id}`); return res;
   }
   if (!r) return { ok: false, reason: 'No active run.' };

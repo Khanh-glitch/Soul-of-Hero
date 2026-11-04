@@ -57,5 +57,5 @@ export function projectVeyra(layout:string):World {
   const economyMap:EconomyMap={id:layout,revision:1,seed:2026,width:WW,height:WH,tileSize:TILE,biome,elevation,slope,moisture,temperature,freshwater:fresh,coast,walkable,buildable,cargoPassable,road,protected:protectedCells,industrial,starts:anchors};
   const generated=compileEconomy(economyMap);if(generated.errors.length)throw Error(`Veyra source compiler: ${generated.errors.join('; ')}`);
   const places:Place[]=bounds.map(q=>{const [tx,ty]=tileFromGlobal(identity,q.at[0],q.at[1]);return{id:q.id,name:q.name,tx,ty,kind:'poi' as const};}).filter(q=>q.tx>0&&q.ty>0&&q.tx<WW-1&&q.ty<WH-1);
-  return {tiles,fresh,zone,seaDist,src:new Int8Array(n).fill(-1),sourceOverlayV2:new Int8Array(n).fill(-1),buildings:[],statics:[],places,starts:[],elders:[],economyMap,sourceV3:generated.sources,veyra:identity,enforceMasks:true,zoneNames:['Veyra · Greywater region']};
+  return {tiles,fresh,zone,seaDist,src:new Int8Array(n).fill(-1),sourceOverlayV2:new Int8Array(n).fill(-1),buildings:[],statics:[],places,starts:[],elders:[],economyMap,sourceV3:generated.sources,veyra:identity,randomSpawn:true,enforceMasks:true,zoneNames:['Veyra · Greywater region']};
 }

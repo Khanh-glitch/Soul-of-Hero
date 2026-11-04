@@ -1,13 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { BAL, TILE, WW, type Entity, type GameState } from '../src/game/core';
 import { ITEMS, GARDEN_CROPS } from '../src/game/catalog';
-import { addItem, blockGrid, C, cartLimit, countItem, dispatch, harvestHit, markDirty, mkContainer, newGame, sourceAt, stepGardensBarrels, stepStations } from '../src/game/engine';
-import { getWorld, SRC_KEYS } from '../src/game/world';
+import { addItem, blockGrid, C, cartLimit, countItem, dispatch, harvestHit, gardenEnvironment, markDirty, mkContainer, newGame, sourceAt, stepGardensBarrels, stepStations } from '../src/game/engine';
+import { getWorld, setActiveLayout, SRC_KEYS } from '../src/game/world';
 import { settle, tick, type Input } from '../src/game/sim';
 import { serializeSnapshot, validate } from '../src/game/persist';
+import legacyShipping from './fixtures/7b9805b2-shipping-v3.json';
 const T=Date.UTC(2026,10,1); let seq=0;
 const act=(g:GameState,type:string,p:object={},id=`log-${++seq}`,now=T+1)=>dispatch(g,{id,type,...p},now);
-function fresh(){const g=newGame();expect(act(g,'startRun',{character:'male',region:0,seed:555}).ok).toBe(true);g.run!.creatures=[];return g;}
+function fresh(){const g=newGame();expect(act(g,'startRun',{character:'male',region:0,seed:555}).ok).toBe(true);g.run!.creatures=[]; const r=g.run!,grid=blockGrid(r);for(let y=85;y<150;y++)for(let x=20;x<180;x++){const e:Entity={id:'climate-fixture',kind:'struct',type:'garden',x:x*TILE+8,y:y*TILE+8,tx:x,ty:y};if(!grid[y*WW+x]&&!grid[y*WW+x+1]&&gardenEnvironment(r,e,false,'herb').rate===1&&gardenEnvironment(r,e,true,'herb').rate===1){r.player.x=e.x;r.player.y=e.y;return g;}} throw new Error('No suitable climate fixture');}
 function give(g:GameState,k:string,n=1){expect(addItem(g.run!,'inv',k,n)).toBe(0);}
 function bench(g:GameState){const r=g.run!,p=r.player,f=mkContainer(r,'fuel',3),o=mkContainer(r,'out',6);const e:Entity={id:`fixture-${++seq}`,kind:'struct',type:'workbench',x:p.x+16,y:p.y,tx:Math.floor(p.x/TILE)+1,ty:Math.floor(p.y/TILE),hp:100,maxHp:160,station:{fuelC:f.id,outC:o.id,burn:0,queue:[],level:2}};r.entities[e.id]=e;markDirty();return e;}
 function plot(g:GameState){const r=g.run!,p=r.player;const e:Entity={id:`fixture-${++seq}`,kind:'struct',type:'garden',x:p.x+8,y:p.y,tx:Math.floor(p.x/TILE),ty:Math.floor(p.y/TILE),hp:60,maxHp:60,garden:{crop:null,growth:0,water:0}};r.entities[e.id]=e;markDirty();return e;}
@@ -72,7 +73,7 @@ describe('integrated logistics and cultivation',()=>{
  });
  it('adds palms only to previously empty tiles on run-pinned v2; legacy source depletion and burns are unchanged',()=>{
   for(const layout of ['shipping','dev_delta'] as const){const w=getWorld(layout);const overlay=[...w.sourceOverlayV2].map((v,i)=>v>=0?i:-1).filter(i=>i>=0);expect(overlay.length).toBeGreaterThan(0);expect(overlay.every(i=>w.src[i]===-1 && SRC_KEYS[w.sourceOverlayV2[i]]==='palm')).toBe(true);expect(w.statics.every(s=>w.sourceOverlayV2[s.ty*WW+s.tx]<0)).toBe(true);}
-  const g=fresh(),r=g.run!,w=getWorld('shipping'),i=w.sourceOverlayV2.findIndex(v=>v>=0),tx=i%WW,ty=Math.floor(i/WW);r.sourceLayoutVersion=2;delete r.sourceMap;markDirty();expect(r.sourceLayoutVersion).toBe(2);expect(sourceAt(r,tx,ty)?.key).toBe('palm');expect(blockGrid(r)[i]).toBe(2);
+  setActiveLayout('shipping');const g=structuredClone(legacyShipping.save) as GameState,r=g.run!,w=getWorld('shipping'),i=w.sourceOverlayV2.findIndex(v=>v>=0),tx=i%WW,ty=Math.floor(i/WW);r.sourceLayoutVersion=2;delete r.sourceMap;markDirty();expect(r.sourceLayoutVersion).toBe(2);expect(sourceAt(r,tx,ty)?.key).toBe('palm');expect(blockGrid(r)[i]).toBe(2);
   expect(harvestHit(g,tx,ty,{wood:999},T+2,tx*TILE,ty*TILE).depleted).toBe(true);const saved=snapshot(g);expect(sourceAt(saved.run!,tx,ty)?.stock).toBe(0);expect(blockGrid(saved.run!)[i]).not.toBe(2);
   const legacy=structuredClone(saved);delete legacy.run!.sourceLayoutVersion;delete legacy.run!.sources[i];const j=w.src.findIndex(v=>v>=0),jx=j%WW,jy=Math.floor(j/WW);const orig=SRC_KEYS[w.src[j]];legacy.run!.sources[j]={stock:0,hp:0,burnt:false};expect(sourceAt(legacy.run!,tx,ty)).toBeNull();expect(sourceAt(legacy.run!,jx,jy)).toMatchObject({key:orig,stock:0});legacy.run!.sources[j].burnt=true;expect(sourceAt(legacy.run!,jx,jy)?.key).toBe('deadtree');expect(validate(legacy)).toBeTruthy();
  });

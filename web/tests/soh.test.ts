@@ -60,7 +60,7 @@ describe('typed versioned map content packs', () => {
     expect(setActiveLayout('dev_delta')).toBe(true); expect(getActiveLayout()).toBe('dev_delta');
     expect(setActiveLayout('bogus')).toBe(false); expect(getActiveLayout()).toBe('dev_delta');
     const started = newGame(); markDirty(); expect(dispatch(started, { id: id(), type: 'startRun', character: 'female', region: 1, seed: 90210 }, T0).ok).toBe(true);
-    expect(started.run?.layoutId).toBe('dev_delta');
+    expect(started.run?.layoutId).toBe('dev_delta_fresh'); expect(getWorld().starts).toEqual([]);
     setActiveLayout('shipping');
   });
   it('rejects negative schema, broken POI geometry, unknown or empty loot, and invalid terrain', () => {
