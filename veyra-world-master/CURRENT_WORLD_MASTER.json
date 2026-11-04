@@ -1,12 +1,12 @@
 {
   "schema": "soh.veyra.current_world_master.v1",
   "worldId": "veyra",
-  "activeRevision": "WMP-04",
-  "activeManifest": "v4/manifest.v4.json",
+  "activeRevision": "WMP-04R1",
+  "activeManifest": "v4/r1/manifest.r1.json",
   "activeRuntimeReader": "api/current.mjs",
-  "activeBiomeRaster": "v4/data/biomeEffective.v4.u8",
+  "activeBiomeRaster": "v4/r1/data/biomeEffective.r1.u8",
   "activeMarineRaster": "v4/data/marineRegion.v4.u8",
-  "activeColdTransitionRaster": "v4/data/coldTransition.v4.u8",
+  "activeColdTransitionRaster": "v4/r1/data/coldTransition.r1.u8",
   "basePhysicalRevision": "WMP-03",
   "baseManifest": "v3/manifest.v3.json",
   "archivedLineage": [
@@ -14,21 +14,33 @@
     "v2/manifest.v2.json",
     "v3/manifest.v3.json"
   ],
-  "authority": "World Master v4 active geography and semantic overlays; source GOLD archived; Gameplay runtime not adopted",
+  "authority": "WMP-04R1 active biome and original-rock restoration, with WMP-04 unchanged ocean semantics; WMP-03 physical geometry preserved",
   "policy": "Do not import original GOLD at runtime. Do not treat marine open water as approved swimming/boat collision. Human POI and source IDs unchanged.",
-  "status": "MAP_STATIC_DESIGN_UPDATE__GAMEPLAY_INTAKE_PENDING",
+  "status": "MAP_GEO_R1_CORRECTED__GAMEPLAY_INTAKE_PENDING",
   "artDirection": {
-    "selection": "SOH_WEB_FOREST_TERRAIN_OCEAN_RETAIN_BASELINE",
-    "stage": "ART_AUDITION_01_SOURCE_TRIAGE_COMPLETE",
-    "visualVerdict": "NONE_OF_FIVE_LAB_CANDIDATES_PASSES_GAMEPLAY_ART_GATE",
+    "selection": "REUSE_EXISTING_SOH_GAME_ART_RENDERER_AND_SPRITES_FIRST",
+    "stage": "ART_INVENTORY_RECONCILED__REUSE_FIRST__NO_AUTO_ASSET_CREATION",
+    "visualVerdict": "REUSE_FIRST__REAL_GAME_PROOF_REQUIRED",
     "creatorVisualApproval": "NOT_REQUESTED",
-    "productionAtlas": "NOT_SELECTED",
-    "snowKit": "REQUIRED_NOT_IN_INSPECTED_REPO",
-    "aridKit": "PARTIAL_SOURCE_PROPS_ONLY",
-    "poiKit": "PARTIAL_PROTOTYPE_SOURCE_ONLY",
-    "activeSourceLedger": "v4/art/ART_AUDITION_01_REPORT.md",
+    "productionAtlas": "NOT_AUTHORIZED",
+    "snowKit": "NATIVE_PRESENT__T_SNOW_T_ICE_SNOWPINE__VERIFY_IN_REAL_RENDER",
+    "aridKit": "NATIVE_PRESENT__T_SAND_HILL_AND_SOURCE_SPRITES__CHECK_COVERAGE",
+    "poiKit": "NATIVE_STRUCTURES_PRESENT__REUSE_BEFORE_NEW_BUILD",
+    "activeSourceLedger": "v4/r1/docs/ASSET_REUSE_AND_MAP_CORRECTION.md",
     "browserBoard": "v4/art/AUDITION_01_REAL_ASSETS.html",
     "ciRun": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41833172794",
-    "notNativeProof": true
-  }
+    "notNativeProof": true,
+    "assetRequestPolicy": "Never buy, download, redraw or reimplement any source/tile/sprite/effect already in SOH. Requests allowed ONLY for individually named proven gaps after exact native runtime inspection.",
+    "sourceAudit": [
+      "web/src/game/render.ts",
+      "web/src/game/art.ts",
+      "web/src/game/world.ts"
+    ],
+    "gameEvidenceRef": "d73aa63f9f7f98aa1f6c6a42211693c7710cf3c4",
+    "historicalAuditionBoard": "v4/art/AUDITION_01_REAL_ASSETS.html",
+    "legacyAuditionDecision": "NOT_AUTHORITY_FOR_NEW_ASSET_REQUEST"
+  },
+  "archiveBiomes": [
+    "v4/data/biomeEffective.v4.u8"
+  ]
 }

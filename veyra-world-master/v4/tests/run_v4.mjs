@@ -17,7 +17,7 @@ const manifest=JSON.parse(local('v4/manifest.v4.json').toString());
 const w=createWorld();const S=w._internal.S;
 const C=createCurrentWorld();const x=buildWorldV4({biomeCode:S.biomeCode,landId:S.landId,waterClass:S.waterClass,elevation:S.elevation});
 const snow=read('v4/data/biomeEffective.v4.u8'),marine=read('v4/data/marineRegion.v4.u8'),cold=read('v4/data/coldTransition.v4.u8');
-check('current pointer is WMP04',()=>assert.equal(C.activeRevision,'WMP-04'));
+check('active pointer is corrected WMP04R1 while WMP04 is archived',()=>assert.equal(C.activeRevision,'WMP-04R1'));
 check('all expected raster sizes',()=>{for(const a of [snow,marine,cold])assert.equal(a.length,43750)});
 check('recompile biome matches byte-for-byte',()=>assert.deepEqual(snow,x.biomeEffective));
 check('recompile marine matches byte-for-byte',()=>assert.deepEqual(marine,x.marineRegion));

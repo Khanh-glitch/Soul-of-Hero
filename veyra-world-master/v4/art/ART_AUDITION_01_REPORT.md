@@ -1,3 +1,11 @@
+# CORRECTION — Reuse SOH existing art first (WMP-04R1)
+
+The earlier board compared **weak custom LAB renders** against SOH. Those labs did **not use SOH's existing native snow/ice/cliff art**. Direct Gameplay source audit confirms `web/src/game/render.ts` already contains `T.SNOW`, `T.ICE`, `T.HILL`, `T.CLIFF`, `T.SAND` and wave materials; `web/src/game/art.ts` already contains `snowpine`, `rock`, ore and vegetation sprites. The earlier conclusion to acquire or manufacture an entire winter tileset is **withdrawn**. No redundant new asset work authorized.
+
+Use the renderer and sprites already in SOH at exact GameRoot first. Only explicitly demonstrated missing features may warrant an asset request. Current R1 geographic correction restores 510/510 rocks and reduces inland snow while keeping northern 23%.
+
+---
+
 # Independent five-scene visual inspection (04 Nov 2026)
 
 Viewed the actual CI browser screenshots at 1x. **All five LAB outputs REJECTED as game-art improvements over the frozen SOH Web**. They are useful source-compatibility probes, not choices to approve.

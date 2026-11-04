@@ -16,4 +16,6 @@ jobs:
         with:
           node-version: '20'
       - name: Validate WMP04 map revision and open-sea semantics
-        run: node veyra-world-master/v4/tests/run_v4.mjs
+        run: |
+          node veyra-world-master/v4/tests/run_v4.mjs
+          node veyra-world-master/v4/r1/tests/run_r1.mjs

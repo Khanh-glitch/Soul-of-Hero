@@ -1,3 +1,11 @@
+# ACTIVE CURRENT SOURCE — WMP-04R1 ROCK/SNOW CORRECTION
+
+Read `CURRENT_WORLD_MASTER.json` then `api/current.mjs`. **Snow 23.0058%**, rocks **510/510 restored**, inward snow tail removed beyond AU Y600. [Evidence & asset reuse decision](v4/r1/docs/ASSET_REUSE_AND_MAP_CORRECTION.md) · [before/after SVG](v4/r1/evidence/snow_and_rock_before_after.svg).
+
+**Do not request new asset for snow/ice/cliff/water/stone/crops already rendered or drawn by SOH.** Native Web already contains `T.SNOW`, `T.ICE`, `T.CLIFF`, `S.snowpine`, `S.rock` etc. The older Art Audition rejected five weak external compositions, not SOH's original snow art. WMP-04R1 is static Map data, not gameplay or visual acceptance.
+
+---
+
 # CURRENT VEYRA WORLD MASTER — WMP-04 (creator geography update)
 
 **Active source:** [CURRENT_WORLD_MASTER.json](CURRENT_WORLD_MASTER.json) → [WMP-04 manifest](v4/manifest.v4.json) → [current runtime read API](api/current.mjs).
