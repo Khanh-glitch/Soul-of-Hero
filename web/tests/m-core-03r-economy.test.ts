@@ -1,7 +1,8 @@
 import {afterAll,describe,expect,it} from 'vitest';
-import {WW,type GameState} from '../src/game/core';
-import {addItem,blockGrid,C,dispatch,harvestHit,newGame} from '../src/game/engine';
+import {WW,type GameState,type Entity} from '../src/game/core';
+import {addItem,blockGrid,C,dispatch,harvestHit,mkContainer,newGame} from '../src/game/engine';
 import {serializeSnapshot,validate} from '../src/game/persist';
+import {findInteract} from '../src/game/sim';
 import {getWorld,setActiveLayout} from '../src/game/world';
 import {hasAuthorizedRecycler,wreckBonuses,wreckEconomy} from '../src/game/wreck-economy';
 import historical from './fixtures/7b9805b2-shipping-v3.json';
@@ -19,4 +20,6 @@ describe('run-pinned wreck economy',()=>{
   const old=structuredClone(historical.save) as GameState;addItem(old.run!,'inv','damaged_drive',1);const drive=C(old.run!,'inv').slots.find(s=>s?.key==='damaged_drive')!;const out=snapshot(old);expect(out.run!.wreckEconomy).toBe('direct-v1');expect(C(out.run!,'inv').slots.some(s=>s?.uid===drive.uid)).toBe(true);expect(validate(out)).toBeTruthy();});
  it('Veyra keeps old direct policy whether or not a projected window has wrecks',()=>{for(const layout of ['veyra-greywater-lr02-u16','veyra-greywater-lr02-u20','veyra-oasis-lr02-u20']){const g=fresh(layout);expect(g.run!.wreckEconomy).toBe('direct-v1');expect(hasAuthorizedRecycler(g.run!)).toBe(false);expect(wreckBonuses(g.run!)).toContainEqual(['spares',.7]);expect(validate(snapshot(g))).toBeTruthy();const n=getWorld(layout).sourceV3.filter(k=>k==='wreck').length;console.log(layout,'actual wreck sources',n);if(n){const observed=harvestSample(g,30);console.log(layout,'controlled finite harvest',JSON.stringify(observed));expect(observed.scrap).toBe(observed.units);expect(observed.drives).toBe(0);expect(observed.spares).toBeGreaterThan(0);}}});
  it('measures real harvest rolls on independent cloned finite scenarios without duplicate yields',()=>{const split=fresh('shipping_fresh'),direct=structuredClone(historical.save) as GameState;const a=harvestSample(split),b=harvestSample(direct);console.log('controlled 400 fresh finite scenarios',JSON.stringify({split:a,direct:b}));expect(a.scrap).toBe(a.units);expect(b.scrap).toBe(b.units);expect(a.spares/a.units).toBeGreaterThan(.27);expect(a.spares/a.units).toBeLessThan(.33);expect(a.drives/a.units).toBeGreaterThan(.17);expect(a.drives/a.units).toBeLessThan(.23);expect(b.spares/b.units).toBeGreaterThan(.67);expect(b.spares/b.units).toBeLessThan(.73);expect(b.drives).toBe(0);});
+ it('does not let an empty death bag hide a nearby working station',()=>{const g=fresh('shipping_fresh'),r=g.run!,p=r.player;p.aim=0;const c=mkContainer(r,'bag',2);const bag:Entity={id:'test-empty-bag',kind:'bag',x:p.x+7,y:p.y,c:c.id};const station:Entity={id:'test-station',kind:'struct',type:'workbench',x:p.x+12,y:p.y,tx:Math.floor(p.x/16),ty:Math.floor(p.y/16)};r.entities[bag.id]=bag;r.entities[station.id]=station;expect(findInteract(g,at)?.eid).toBe(station.id);addItem(r,c.id,'wood',1);expect(findInteract(g,at)?.eid).toBe(bag.id);C(r,c.id).slots.fill(null);bag.legacyJobs={stationType:'workbench',queue:[{id:'legacy',recipe:'cloth',left:1,total:1}]};expect(findInteract(g,at)?.eid).toBe(bag.id);});
+
 });

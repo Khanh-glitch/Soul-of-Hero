@@ -3,6 +3,9 @@ import { dispatch, markDirty, newGame } from '../src/game/engine';
 import { settle } from '../src/game/sim';
 import legacyPair from './fixtures/3b37ae9-legacy-pair.json';
 
+// Loading a pre-policy save pins its compatible fallback without changing the raw fixture.
+const laterWithPolicy = { ...legacyPair.later, run: { ...legacyPair.later.run, wreckEconomy: 'direct-v1' } };
+
 function fakeStorage() {
   const map = new Map<string, string>(); let failWrites = false, failReads = false;
   return { map, getItem: (k: string) => { if (failReads) throw Error('read failed'); return map.get(k) ?? null; }, setItem: (k: string, v: string) => { if (failWrites) throw Error('quota'); map.set(k, v); }, removeItem: (k: string) => map.delete(k), fail: (v: boolean) => { failWrites = v; }, failRead: (v: boolean) => { failReads = v; } };
@@ -66,7 +69,7 @@ it.each([true, false])('continues a real same-revision legacy pair, preserving t
   const older = JSON.stringify(legacyPair.earlier), later = JSON.stringify(legacyPair.later);
   idb.state.value = laterIsLocal ? older : later; local.setItem('soh.state.v3', laterIsLocal ? later : older);
   const p = await import('../src/game/persist'); const result = await p.load();
-  expect(result.gs).toEqual(legacyPair.later); expect(result.note).toContain('older save copy was preserved');
+  expect(result.gs).toEqual(laterWithPolicy); expect(result.note).toContain('older save copy was preserved');
   expect([...local.map.entries()].some(([key, value]) => key.startsWith('soh.quarantine.') && value === older)).toBe(true);
   expect(await p.save(result.gs!)).toBe(true);
   expect([...local.map.values()]).toContain(older);
@@ -75,7 +78,7 @@ it('uses readable local fallback if IDB read fails, without writing the unreadab
   const local = fakeStorage(), idb = fakeIDB(); idb.state.value = 'original IDB bytes'; idb.state.failRead = true;
   local.setItem('soh.state.v3', JSON.stringify(legacyPair.later)); vi.stubGlobal('localStorage', local); vi.stubGlobal('indexedDB', idb.indexedDB);
   const p = await import('../src/game/persist'); const loaded = await p.load();
-  expect(loaded.gs).toEqual(legacyPair.later); expect(loaded.note).toContain('will not be overwritten');
+  expect(loaded.gs).toEqual(laterWithPolicy); expect(loaded.note).toContain('will not be overwritten');
   loaded.gs!.run!.player.hunger = 42; expect(await p.save(loaded.gs!)).toBe(true);
   await new Promise(resolve => setTimeout(resolve, 0)); expect(idb.state.value).toBe('original IDB bytes');
   expect((await p.load()).gs!.run!.player.hunger).toBe(42);
@@ -83,13 +86,13 @@ it('uses readable local fallback if IDB read fails, without writing the unreadab
 it('continues from local storage when IndexedDB cannot open, leaving its contents untouched', async () => {
   const local = fakeStorage(), idb = fakeIDB(); idb.state.value = 'unreadable IDB'; idb.state.failOpen = true;
   local.setItem('soh.state.v3', JSON.stringify(legacyPair.later)); vi.stubGlobal('localStorage', local); vi.stubGlobal('indexedDB', idb.indexedDB);
-  const p = await import('../src/game/persist'); const loaded = await p.load(); expect(loaded.gs).toEqual(legacyPair.later);
+  const p = await import('../src/game/persist'); const loaded = await p.load(); expect(loaded.gs).toEqual(laterWithPolicy);
   expect(await p.save(loaded.gs!)).toBe(true); expect(idb.state.value).toBe('unreadable IDB');
 });
 it('uses readable IDB if local storage cannot be read, without touching local storage', async () => {
   const local = fakeStorage(), idb = fakeIDB(); idb.state.value = JSON.stringify(legacyPair.later);
   local.setItem('soh.state.v3', 'original local bytes'); local.failRead(true); vi.stubGlobal('localStorage', local); vi.stubGlobal('indexedDB', idb.indexedDB);
-  const p = await import('../src/game/persist'); const loaded = await p.load(); expect(loaded.gs).toEqual(legacyPair.later);
+  const p = await import('../src/game/persist'); const loaded = await p.load(); expect(loaded.gs).toEqual(laterWithPolicy);
   loaded.gs!.run!.player.hunger = 43; expect(await p.save(loaded.gs!)).toBe(true); expect(local.map.get('soh.state.v3')).toBe('original local bytes');
   expect((await p.load()).gs!.run!.player.hunger).toBe(43);
 });

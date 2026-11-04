@@ -895,7 +895,7 @@ export function findInteract(gs: GameState, now: number): Interact | null {
   for (const e of Object.values(r.entities)) {
     if (e.kind === 'drop') continue; const d = dist(fx0, fy0, e.x, e.y); if (d > bd || !clearInteraction(r, e)) continue;
     let label = ''; let kind = e.kind as string;
-    if (e.kind === 'bag') label = `Open ${e.label || 'bag'}`;
+    if (e.kind === 'bag') { if (!C(r,e.c!).slots.some(Boolean) && !e.legacyJobs?.queue.length) continue; label = `Open ${e.label || 'bag'}`; }
     else if (e.kind === 'loot') label = C(r, e.c!).slots.some(Boolean) ? 'Search crate' : 'Empty crate';
     else if (e.kind === 'cash') label = isRagnarok(r, now) ? (e.minted ? 'Ragnarok chest' : 'Break the Ragnarok seal') : 'Sealed Ragnarok chest';
     else if (e.kind === 'vendor') label = `Trade with ${e.label}`;
