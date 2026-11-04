@@ -63,6 +63,22 @@ async function meanLum(tag) {
 
 const report = { probe, errors, skills: {} };
 let failures = 0;
+
+// baseline: rAF gaps with NO cast active (game alone on WebGL2)
+{
+  const g = await page.evaluate(async () => {
+    const gaps = await new Promise(resolve => {
+      const a = []; let last = performance.now(); const t0 = last;
+      const tick = () => { const n = performance.now(); a.push(n - last); last = n; if (n - t0 < 2000) requestAnimationFrame(tick); else resolve(a); };
+      requestAnimationFrame(tick);
+    });
+    const s = gaps.reduce((x, y) => x + y, 0);
+    return { avg: +(s / gaps.length).toFixed(1), max: +Math.max.apply(null, gaps).toFixed(0), over50: gaps.filter(x => x > 50).length };
+  });
+  report.baseline = g;
+  console.log(`::warning ::SALVAGE-BASELINE avg=${g.avg} max=${g.max} over50=${g.over50}`);
+}
+
 const IDS = [7, 10, 16, 17, 18];
 for (const id of IDS) {
   const r = await page.evaluate(async (id) => {
@@ -85,7 +101,7 @@ for (const id of IDS) {
     };
   }, id);
   report.skills[id] = r;
-  console.log('JANK', JSON.stringify(r));
+  console.log(`::warning ::SALVAGE-JANK id=${id} avg=${r.avg} max=${r.max} over50=${r.over50} frames=${r.frames}`);
   if (r.over50 > 2 || r.max > 80) { console.log(`::error ::SALVAGE-JANK id=${id} avg=${r.avg} max=${r.max} over50=${r.over50}`); failures++; }
   // ending phase luminance
   await page.evaluate((id) => {
@@ -108,8 +124,8 @@ for (const id of IDS) {
   await page.screenshot({ path: `${OUT}/after-${id}.png` });
   report.skills[id].lumEnd = +lumEnd.toFixed(1);
   report.skills[id].lumAfter = +lumAfter.toFixed(1);
+  console.log(`::warning ::SALVAGE-LUM id=${id} lumEnd=${lumEnd.toFixed(1)} lumAfter=${lumAfter.toFixed(1)}`);
   if (lumEnd < 12 || lumAfter < 12) { console.log(`::error ::SALVAGE-BLACK id=${id} lumEnd=${lumEnd.toFixed(1)} lumAfter=${lumAfter.toFixed(1)}`); failures++; }
-  else console.log(`SALVAGE-OK id=${id} lumEnd=${lumEnd.toFixed(1)} lumAfter=${lumAfter.toFixed(1)}`);
   await page.evaluate(() => window.__arcanaLab.stop());
 }
 
@@ -127,7 +143,7 @@ while (Date.now() - t0 < 11000) {
   minLum = Math.min(minLum, l);
 }
 report.realtime10 = { minLum: +minLum.toFixed(1) };
-console.log('REALTIME id10 minLum=', minLum.toFixed(1));
+console.log(`::warning ::SALVAGE-REALTIME id=10 minLum=${minLum.toFixed(1)}`);
 if (minLum < 12) { console.log(`::error ::SALVAGE-BLACK-RT id=10 minLum=${minLum.toFixed(1)}`); failures++; }
 
 if (errors.length) { console.log(`::error ::SALVAGE-PAGEERRORS ${errors.slice(0, 3).join(' | ')}`); failures++; }

@@ -97,16 +97,26 @@ export class ArcanaLabClient implements comp.VfxClient {
   private lastTick = -1;
   private lastAnchor = -1;
   private lastWorld = -1;
+  /** playback clock advanced at most one fixed step per presented frame */
+  private playT = -1;
+  /** cached world-region readback (avoids a GPU->CPU getImageData stall every frame) */
+  private lastRegion: Uint8ClampedArray | null = null;
+  private lastRegionAnchor = 0;
+  private lastRegionW = 0;
+  private lastRegionH = 0;
+  private lastRegionAt = 0;
 
   qaCast(index: number, wx = 0, wy = 0, mode: RenderMode = 'lead') {
     this.stopBridges();
     this.cast = { index, mode, wx, wy, startMs: Date.now() };
     this.qaT = -1;
+    this.playT = -1;
     this.lastTick = -1;
     this.lastAnchor = -1;
     this.lastWorld = -1;
+    this.lastRegion = null;
   }
-  qaStop() { this.cast = null; this.qaT = -1; this.lastTick = -1; this.lastAnchor = -1; this.lastWorld = -1; this.stopBridges(); }
+  qaStop() { this.cast = null; this.qaT = -1; this.playT = -1; this.lastTick = -1; this.lastAnchor = -1; this.lastWorld = -1; this.lastRegion = null; this.stopBridges(); }
   qaSeek(t: number, index?: number, wx = 0, wy = 0, mode?: RenderMode) {
     if (index !== undefined) {
       const m = mode ?? this.cast?.mode ?? 'lead';
@@ -138,7 +148,17 @@ export class ArcanaLabClient implements comp.VfxClient {
     const cast = this.cast!; // non-null: guarded by submitGpu
     const p = getPresenter()!;
     const entry = LAB_CATALOG[cast.index];
-    const t = this.qaT >= 0 ? this.qaT : (frame.now - cast.startMs) / 1000;
+    let t: number;
+    if (this.qaT >= 0) t = this.qaT;
+    else {
+      // Playback clock advances at most ONE fixed step per presented frame.
+      // Wall-clock time here caused a death spiral: one slow frame made the next
+      // frame seek many sim steps at once (O(n) full-frame composites), which made
+      // it slower still. Now the spell simply plays at the display rate.
+      const wall = (frame.now - cast.startMs) / 1000;
+      this.playT = Math.min(wall, (this.playT < 0 ? 0 : this.playT) + 1 / 60);
+      t = this.playT;
+    }
     const dur = entry.dur + 1.0;
     if (t < 0 || t > dur) { if (t > dur) { this.cast = null; this.qaT = -1; this.stopBridges(); } return; }
     const tick = Math.floor(t * 60);
@@ -166,10 +186,17 @@ export class ArcanaLabClient implements comp.VfxClient {
 
     const sx = Math.round(cast.wx - frame.cam.x - W / 2);
     const sy = Math.round(cast.wy - frame.cam.y - H / 2);
-    const region = p.worldRegion(sx, sy, W, H);
-    if (!region) return;
-
     const anchor = sx * 4096 + sy;
+    // Throttled world-region readback: re-read only when the camera anchor moved,
+    // the window size changed, or 150ms elapsed. A per-frame getImageData is a
+    // GPU->CPU sync stall and a major source of playback jank in WebGL2 mode.
+    let region = this.lastRegion;
+    if (!region || anchor !== this.lastRegionAnchor || W !== this.lastRegionW || H !== this.lastRegionH || frame.now - this.lastRegionAt > 150) {
+      region = p.worldRegion(sx, sy, W, H);
+      if (!region) return;
+      this.lastRegion = region; this.lastRegionAnchor = anchor;
+      this.lastRegionW = W; this.lastRegionH = H; this.lastRegionAt = frame.now;
+    }
     // world snapshot revision participates in cache validity: same tick+camera
     // with a changed world (day/night, recast elsewhere) must re-render.
     let wsum = 0;
