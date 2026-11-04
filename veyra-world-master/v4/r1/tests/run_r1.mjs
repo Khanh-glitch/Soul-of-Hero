@@ -27,7 +27,7 @@ check('do not erase original source snow',()=>{let src=0;for(let i=0;i<actual.le
 check('snow stays in 23-25 percent dry land',()=>{assert.equal(out.stats.snow,3311);assert.ok(out.stats.snowPercent>=23&&out.stats.snowPercent<=25)});
 check('central/southern snow invasion removed',()=>{assert.equal(out.stats.snowCellsAtY610Plus,0);assert.equal(out.stats.trimmedInlandSnow,217)});
 check('north redistribution deterministic and bounded',()=>assert.equal(out.stats.redistributedToNorthernFringe,557));
-check('arid/dry region unchanged',()=>{let a=0,b=0;for(let i=0;i<actual.length;i++){if(prior[i]===5||prior[i]===6)a++;if(actual[i]===5||actual[i]===6)b++}assert.equal(a,b);assert.equal(a,3422)});
+check('arid/dry region unchanged',()=>{let a=0,b=0;for(let i=0;i<actual.length;i++){if(S.landId[i]!==0&&S.waterClass[i]===0){if(prior[i]===5||prior[i]===6)a++;if(actual[i]===5||actual[i]===6)b++}}assert.equal(a,b);assert.equal(a,3422)});
 check('no non-snow/rock class modified',()=>{for(let i=0;i<actual.length;i++)if(prior[i]!==8&&actual[i]!==8)assert.equal(actual[i],prior[i])});
 check('zero water or coastline changes',()=>{for(let i=0;i<actual.length;i++)if(S.waterClass[i]!==0||!S.landId[i]||fromSource[i]===11)assert.equal(actual[i],fromSource[i])});
 check('original marine hazard mask byte-identical',()=>assert.deepEqual(live.rasters.marineRegion,read('v4/data/marineRegion.v4.u8')));
