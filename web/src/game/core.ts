@@ -122,6 +122,8 @@ export interface RunState {
   sourceLayoutVersion?: 2 | 3;
   /** Source map identity is mandatory for v3; older runs retain their own layout. */
   sourceMap?: { id: string; revision: number; seed: number; rules: 3; digest: string; mapDigest?: string; veyra?: {sourceCommit:string;sourceDigest:string;originAu:[number,number];unitsPerTile:1.6|2;frameAu:[number,number];projection:'cell-centre-v1'} };
+  /** Additive, pinned when a run is created or first resumed/saved. */
+  wreckEconomy?: 'direct-v1' | 'recycler-v1';
   spawnChoice?: { x:number; y:number; contract:'seeded-geographic-v1' };
   spawnRegion: number; ended: null | string;
   player: Player; creatures: Creature[];

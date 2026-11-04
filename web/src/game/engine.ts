@@ -5,6 +5,7 @@ import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dis
 import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, CART_FREIGHT_UPGRADE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
 import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, webRecyclerSite } from './world';
 import { sourceDigest } from './world-economy';
+import { wreckBonuses, wreckEconomy } from './wreck-economy';
 import { mapDigest } from './map-package';
 
 export type Intent = { id: string; type: string; [k: string]: any };
@@ -110,6 +111,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   // placement is inferred; old runs without this adapter remain unchanged.
   const site=webRecyclerSite(w,getActiveLayout());
   if(site){const e:Entity={id:uid(r,'e'),kind:'recycler',x:site.tx*TILE+8,y:site.ty*TILE+8,tx:site.tx,ty:site.ty,poi:'factory',label:'Foundry Recycler',station:{queue:[],burn:0,fuelC:mkContainer(r,'fuel',0).id,outC:mkContainer(r,'out',4).id}};r.entities[e.id]=e;}
+  r.wreckEconomy = wreckEconomy(r);
   // creatures (deterministic per run seed) + elders
   for (let k = 0; k < 900 && r.creatures.length < 150; k++) trySpawnCreature(r, now, sp.tx * TILE, sp.ty * TILE, 16);
   for (const p of w.elders) {
@@ -364,7 +366,7 @@ export function harvestHit(gs: GameState, tx: number, ty: number, power: Partial
   const ox = (fromX - cx) * 0.3, oy = (fromY - cy) * 0.3;
   for (let u = 0; u < units; u++) {
     st.stock--; for (const [k, q] of s.def.yields) { spawnDrop(r, k, q, cx + ox, cy + oy, now); got += q; }
-    for (const [k, ch] of s.def.bonus || []) if (rngNext(r) < ch) { const drop=spawnDrop(r, k, 1, cx + ox, cy + oy, now); if(k==='damaged_drive')receipt(r,now,'harvest.component',`${s.key}@${tx},${ty}:${C(r,drop.c!).slots[0]!.uid}`); }
+    for (const [k, ch] of (s.key === 'wreck' ? wreckBonuses(r) : s.def.bonus || [])) if (rngNext(r) < ch) { const drop=spawnDrop(r, k, 1, cx + ox, cy + oy, now); if(k==='damaged_drive')receipt(r,now,'harvest.component',`${s.key}@${tx},${ty}:${C(r,drop.c!).slots[0]!.uid}`); }
   }
   r.player.skills.gather += units;
   const depleted = st.stock <= 0;

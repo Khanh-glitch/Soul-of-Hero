@@ -6,6 +6,7 @@ import { newGame } from './engine';
 import { getWorld, hasLayout, webRecyclerSite } from './world';
 import { mapDigest } from './map-package';
 import { sourceDigest } from './world-economy';
+import { hasAuthorizedRecycler, wreckEconomy } from './wreck-economy';
 
 const DB = 'soul-of-hero', STORE = 'kv', KEY = 'state', LS = 'soh.state.v' + SAVE_VERSION;
 const FORMAT = 'soh-snapshot-v1';
@@ -109,6 +110,8 @@ export function validate(raw: any): GameState | null {
     if (e.legacyJobs && (e.kind !== 'bag' || !STRUCTS[e.legacyJobs.stationType]?.station || !jobs(e.legacyJobs.queue, STRUCTS[e.legacyJobs.stationType].station!) || e.legacyJobs.queue.some((j: any) => j.reserved !== undefined))) return null;
   }
   if((Object.values(r.entities) as any[]).filter(e=>e.kind==='recycler').length>1)return null;
+  if (r.wreckEconomy !== undefined && r.wreckEconomy !== 'direct-v1' && r.wreckEconomy !== 'recycler-v1') return null;
+  if (r.wreckEconomy === 'recycler-v1' && !hasAuthorizedRecycler(r)) return null;
   // New identity-pinned runs retain finite, map-authored cash and loot custody.
   // Older runs are not rewritten or guessed: their legacy history is preserved.
   if (r.sourceLayoutVersion === 3 && r.sourceMap?.mapDigest) {
@@ -140,6 +143,7 @@ function checksum(text: string) { let h = 2166136261; for (let i = 0; i < text.l
 /** Each serialized snapshot gets a new sequence even when only the simulation changed. */
 export function serializeSnapshot(gs: GameState): string {
   if (!validate(gs)) throw new Error('Refusing to save invalid game state.');
+  if (gs.run && !gs.run.wreckEconomy) gs.run.wreckEconomy = wreckEconomy(gs.run);
   if (!Number.isSafeInteger(gs.revision + 1)) throw new Error('Snapshot sequence exhausted.');
   gs.revision++;
   const payload = JSON.stringify(gs);
@@ -197,6 +201,7 @@ export async function load(): Promise<LoadResult> {
     catch { return { gs: null, note: 'A save copy could not be preserved. Original copies were left untouched; retry after freeing storage.' }; }
   }
   const m = migrate(selected.gs); const r = m.gs?.run;
+  if (r && !r.wreckEconomy) r.wreckEconomy = wreckEconomy(r);
   const legacy = r && Object.values(r.entities).some(e => e.station?.queue.some(j => j.reserved === undefined) || e.legacyJobs?.queue.length);
   const notes = [selected.bad.length ? 'A damaged save copy was quarantined; a valid copy was recovered, but it may be older.' : '', selected.legacyAlternate !== null ? 'An older save copy was preserved; the later same-run snapshot was continued.' : '', !idbReadable || !localReadable ? 'A browser storage copy could not be read and will not be overwritten this session.' : '', m.note || '', legacy ? 'Older queued jobs have no recorded inputs: finish them before cancellation or reclaim; destroyed jobs can be resumed from their recovery bag.' : ''].filter(Boolean);
   return { gs: m.gs, note: notes.join(' ') || undefined };
