@@ -17,7 +17,7 @@ Exact Gameplay source at `d73aa63f9f7f98aa1f6c6a42211693c7710cf3c4`:
 - `web/src/game/render.ts`: `T.SNOW`, `T.ICE`, `T.HILL`, `T.CLIFF`, `T.SAND`, `T.DEEP`, `T.SHALLOW`, `T.RIVER`, `T.LAVA` native 16px pixel material ramps, texel variation, water-wave and shoreline painting.
 - `web/src/game/art.ts`: native `S.snowpine`, `S.pine`, `S.rock`, `S.iron`, `S.coal`, `S.sulfur`, `S.crystal` and other source sprites (generated from actual game code).
 - `web/src/game/world.ts`: stable source keys and world terrain catalog.
-The past "must find a winter tileset" conclusion from five *inferior off-game LAB renders* is **withdrawn**. Those labs were never a valid test of Web's own snow/rock visuals.
+Existing snow and rock renderers are reused; no separate tile pack is assumed necessary.
 
 Art decisions: **KEEP** actual native materials and sprites; compose them first in correct WMP04R1 geometry. Only after inspecting exact GameRoot at native 640×360 1x may one request a specifically identified absent asset/feature. Any new asset needs exact gap evidence, size and source licensing. Existing water, snow, cliff, ice, dry land, snowpine, stone/ore assets must not be purchased, remade, cloned or re-packed gratuitously.
 
