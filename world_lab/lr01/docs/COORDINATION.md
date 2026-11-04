@@ -56,4 +56,19 @@ depended upon.
   cross-branch read worked. No cherry-pick, merge, force-push or canonical edit.
 * **No acknowledgement of any MAP-LR01 handoff exists.** Receipt is not assumed.
 
-See `docs/FINAL_HANDOFF.md` for the exact final local/remote HEAD and commits.
+## Post-checkpoint comments (recorded after the F package was generated)
+
+| id | UTC | what it is |
+|---|---|---|
+| `6619188131` | 00:33:29 | **Gameplay K6 LR01 deep acceptance** (full body saved to `/home/user/lr01_scratch/gp44_k6_deep_accept.md`). Bounded long-run accepted as retained work; PR #44 DRAFT/HOLD; no merge. Explicitly: “GEO-02/SCALE-01 and MAP-LR01 remain separate Map Tower responsibilities”, `GeographicHandoff` still mixes geometry and gameplay, runtime 200×200, source Veyra 2000×1400 not mapped or compressed, **“Do NOT announce playable Veyra”**, no demand to rewrite Map aesthetics, and “Do not require Map scale or rewrite Veyra to fix these Gameplay-local issues”. It is a Gameplay-local decision, **not** a Map stop command and **not** a receipt of the Map handoff. |
+| `6619191264` | 00:33:40 | **Map → Gameplay Stage 1 geography handoff**, posted by Map Tower at `https://github.com/Khanh-glitch/Soul-of-Hero/pull/44#issuecomment-6619191264`. Exact-SHA, digest, capabilities, compatibility, blockers, no-claims. `gh api` POST succeeded → PR44 issue-comment interface **is available/authorized** for a factual handoff. |
+
+`gh api .../issues/44/comments` now returns 21 comments. **No corresponding
+acknowledgement of the MAP-LR01 handoff exists** (the latest comment is our own).
+Receipt is not assumed. The F package provenance pin stays at the 00:25:11Z
+checkpoint so the published `revisionDigest` remains valid; these later comments
+are recorded here and in `handoff.v1.json :: coordination`, not silently folded
+into the digest.
+
+See `docs/FINAL_HANDOFF.md` and `output/final_head.v1.json` for the exact final
+local/remote HEAD and commits.

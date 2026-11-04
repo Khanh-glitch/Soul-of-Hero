@@ -20,6 +20,8 @@
 | PR #38 HEAD | `8421b9c3335c7648488ce8ae5dab43eb5787977e` |
 | Veyra GOLD | `19d8c6ec820f324a6ac12733165e43b5e2c6eab2`, `88780f78…`, 332249 B |
 | `main` | `5214788933b1a827f3a177d11ff486433dfe5e8a` (untouched) |
+| PR #44 handoff comment | `6619191264` @ 00:33:40Z — posted, **no corresponding acknowledgement** |
+| later Gameplay comment read | `6619188131` @ 00:33:29Z — Gameplay K6 bounded acceptance; MAP-LR01 remains separate; “Do NOT announce playable Veyra” |
 
 No merge into #38/#44, no cross-branch write, no cherry-pick, no canonical Veyra
 rewrite. Cross-branch **read** worked; cross-branch **push** was intentionally not

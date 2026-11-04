@@ -19,7 +19,10 @@ const GP44_LIVE_HEAD = 'f8010ec973095c88f3c462a68116c169b61237a3';
 const GP44_ACK = '6608030530';
 const GP44_BENCH = '6606283007';
 const GP44_K6_HANDOFF = '6619055192';
-const COORDINATION_UTC = '2026-11-04T00:25:11Z';
+const GP44_K6_DEEP_ACCEPT = '6619188131';
+const MAP_HANDOFF_COMMENT = '6619191264';
+const MAP_HANDOFF_COMMENT_UTC = '2026-11-04T00:33:40Z';
+const COORDINATION_UTC = '2026-11-04T00:25:11Z'; // PR44 HEAD read checkpoint; package provenance pin (do not change after publication)
 
 const digestFile = rel => {
   const f = path.join(OUT, '..', rel);
@@ -309,9 +312,22 @@ const handoff = {
   coordination: {
     checkedAtUtc: COORDINATION_UTC, mapBranch: BASELINE.mapBranch,
     gp44Head: GP44_LIVE_HEAD, gp44State: 'OPEN / DRAFT / HOLD',
-    commentsRead: [GP44_ACK, GP44_BENCH, GP44_K6_HANDOFF],
-    acknowledgementOfMapLr01Handoff: 'NONE__DO_NOT_ASSUME_RECEIPT',
-    commentInterface: 'see docs/COORDINATION.md',
+    commentsRead: [GP44_ACK, GP44_BENCH, GP44_K6_HANDOFF, GP44_K6_DEEP_ACCEPT],
+    commentInterface: {
+      status: 'AUTHORIZED__POST_SUCCEEDED',
+      handoffCommentId: MAP_HANDOFF_COMMENT,
+      handoffCommentUtc: MAP_HANDOFF_COMMENT_UTC,
+      handoffCommentUrl: `https://github.com/Khanh-glitch/Soul-of-Hero/pull/44#issuecomment-${MAP_HANDOFF_COMMENT}`,
+      note: 'Concise factual exact-SHA geography handoff posted. A posted comment is NOT an acknowledgement.',
+    },
+    postHandoffCreatorComment: {
+      id: GP44_K6_DEEP_ACCEPT, utc: '2026-11-04T00:33:29Z',
+      decision: 'Gameplay K6 bounded long-run ACCEPTED as retained work; PR #44 DRAFT/HOLD; no merge.',
+      mapRelevant: 'GEO-02/SCALE-01 and MAP-LR01 remain separate Map Tower responsibilities; GeographicHandoff still mixes geometry and gameplay; runtime 200x200; source Veyra 2000x1400 not mapped or compressed; "Do NOT announce playable Veyra"; no demand to rewrite Map aesthetics; do not require Map scale or rewrite Veyra to fix Gameplay-local issues.',
+      isAcknowledgementOfMapHandoff: false,
+      note: 'This is a Gameplay K6 decision, not a Map stop command and not a receipt of the Map geography handoff.',
+    },
+    acknowledgementOfMapLr01Handoff: 'NONE__HANDOFF_COMMENT_6619191264_POSTED_BUT_NO_CORRESPONDING_ACKNOWLEDGEMENT',
   },
   compatibility, fieldOwnership, adapterSpec, integrationGate,
   blockers, unknowns,
