@@ -7,9 +7,11 @@ import { BODY_SHA, CANON_SHA, PACKAGE_CANONICAL_SHA, MAP_SOURCE_SHA, expandRle, 
 import { T, TILE, WW, WH } from '../core';
 import { compileEconomy, type Biome, type EconomyMap } from '../world-economy';
 import type { World, Place } from '../world';
+import { greywaterPatch, PATCH_BODY_SHA, PATCH_SOURCE_SHA } from './lr02';
+import { eligibleRegions, ELIGIBILITY_BODY_SHA, ELIGIBILITY_SOURCE_SHA } from './eligibility';
 
-export interface VeyraViewIdentity {sourceCommit:string;sourceDigest:string;originAu:[number,number];unitsPerTile:1.6|2;frameAu:[number,number];projection:'cell-centre-v1'}
-export const VEYRA_LAYOUTS = ['veyra-greywater-u16','veyra-greywater-u20'] as const;
+export interface VeyraViewIdentity {sourceCommit:string;sourceDigest:string;originAu:[number,number];unitsPerTile:1.6|2;frameAu:[number,number];projection:'cell-centre-v1';patchSourceCommit?:string;patchDigest?:string}
+export const VEYRA_LAYOUTS = ['veyra-greywater-u16','veyra-greywater-u20','veyra-greywater-lr02-u16','veyra-greywater-lr02-u20','veyra-oasis-u20','veyra-oasis-lr02-u20'] as const;
 const p=JSON.parse(raw) as GeographyStage1;
 const canon=JSON.parse(canonRaw) as {project:{pois:{id:string;name:string;at:number[];foot:number[][]}[];land:{rings:number[][][]}[];lakes:{ring:number[][]}[];rivers:{points:number[][]}[];roads:{points:number[][];kind:string}[]}};
 const hash=(s:string)=>bytesToHex(sha256(s));
@@ -23,8 +25,8 @@ function onLine(x:number,y:number,s:{a:number[];b:number[];radius:number;minx:nu
 export function globalFromTile(identity:VeyraViewIdentity,x:number,y:number):[number,number]{return[identity.originAu[0]+(x+.5)*identity.unitsPerTile,identity.originAu[1]+(y+.5)*identity.unitsPerTile];}
 export function tileFromGlobal(identity:VeyraViewIdentity,x:number,y:number):[number,number]{return[Math.floor((x-identity.originAu[0])/identity.unitsPerTile),Math.floor((y-identity.originAu[1])/identity.unitsPerTile)];}
 export function projectVeyra(layout:string):World {
-  verifyEmbedded();const unitsPerTile=layout==='veyra-greywater-u16'?1.6:layout==='veyra-greywater-u20'?2:null;if(!unitsPerTile)throw Error(`Unknown Veyra view ${layout}`);
-  const identity:VeyraViewIdentity={sourceCommit:MAP_SOURCE_SHA,sourceDigest:BODY_SHA,originAu:[640,440],unitsPerTile,frameAu:[2000,1400],projection:'cell-centre-v1'};
+  verifyEmbedded();const oasis=layout==='veyra-oasis-u20'||layout==='veyra-oasis-lr02-u20', oasisM2=layout==='veyra-oasis-lr02-u20';const lr02=layout==='veyra-greywater-lr02-u16'||layout==='veyra-greywater-lr02-u20';const unitsPerTile=layout==='veyra-greywater-u16'||layout==='veyra-greywater-lr02-u16'?1.6:layout==='veyra-greywater-u20'||layout==='veyra-greywater-lr02-u20'||oasis?2:null;if(!unitsPerTile)throw Error(`Unknown Veyra view ${layout}`);
+  const identity:VeyraViewIdentity={sourceCommit:MAP_SOURCE_SHA,sourceDigest:BODY_SHA,originAu:oasis?[400,840]:[640,440],unitsPerTile,frameAu:[2000,1400],projection:'cell-centre-v1',...(lr02?{patchSourceCommit:PATCH_SOURCE_SHA,patchDigest:PATCH_BODY_SHA}:oasisM2?{patchSourceCommit:ELIGIBILITY_SOURCE_SHA,patchDigest:ELIGIBILITY_BODY_SHA}:{})};
   const n=WW*WH,mask=p.body.compactMasks,water=expandRle(mask.landWaterRle,2),codes=expandRle(mask.biomeRle,11),roads=expandRle(mask.roadClassRle,5),rawElevation=expandRle(mask.elevationRle,255);
   // Candidate render/economy mappings, NOT authored climate or approved physical height.
   const codeTile=[T.MEADOW,T.FOREST,T.FOREST,T.FOREST,T.MARSH,T.SAND,T.MEADOW,T.HILL,T.SNOW,T.ASH,T.TOXIC,T.SAND];
@@ -32,7 +34,7 @@ export function projectVeyra(layout:string):World {
   const tiles=new Uint8Array(n),fresh=new Uint8Array(n),zone=new Uint8Array(n),seaDist=new Uint8Array(n).fill(255),biome:Biome[]=Array(n),elevation=new Float32Array(n),slope=new Float32Array(n),moisture=new Float32Array(n),temperature=new Float32Array(n),walkable=new Uint8Array(n),buildable=new Uint8Array(n),cargoPassable=new Uint8Array(n),road=new Uint8Array(n),protectedCells=new Uint8Array(n),industrial=new Uint8Array(n),coast=new Uint8Array(n);
   const zones=(p.body.construction as {zones:{id:string;geometry:{ringAu:number[][]}}[]}).zones;
   const riverLines=canon.project.rivers.flatMap(r=>lines(r.points,4.5)),roadLines=canon.project.roads.filter(r=>r.kind!=='ferry').flatMap(r=>lines(r.points,4.5));
-  const bounds=canon.project.pois.filter(a=>a.foot&&a.foot.length>=3&&a.foot.some(([x,y])=>x>=640&&x<640+WW*unitsPerTile&&y>=440&&y<440+WH*unitsPerTile));
+  const bounds=canon.project.pois.filter(a=>a.foot&&a.foot.length>=3&&a.foot.some(([x,y])=>x>=identity.originAu[0]&&x<identity.originAu[0]+WW*unitsPerTile&&y>=identity.originAu[1]&&y<identity.originAu[1]+WH*unitsPerTile));
   for(let y=0;y<WH;y++)for(let x=0;x<WW;x++){
     const i=y*WW+x,[gx,gy]=globalFromTile(identity,x,y),ri=Math.floor(gy/8)*250+Math.floor(gx/8),code=codes[ri];
     const land=canon.project.land.some(a=>a.rings.length>0&&contains(gx,gy,a.rings[0])&&!a.rings.slice(1).some(h=>contains(gx,gy,h)));
@@ -47,6 +49,21 @@ export function projectVeyra(layout:string):World {
     protectedCells[i]=+(poi||isRoad);buildable[i]=+(w===0&&!isRoad&&!poi&&candidate); // Map zones are candidates, not forced structures.
     cargoPassable[i]=+(w===0); // ordinary dry ground only; no water crossing or swept-clearance claim
   }
+  // LR02 is a separately pinned diagnostic layout. Project Map's *clipped*
+  // solids, not the older continuous parent walls. A tile-centre raster is a
+  // candidate collision representation, not proof that every opening fits.
+  let spawnEligible:Uint8Array|undefined;
+  if(lr02){
+    const allowed=new Set(greywaterPatch.spawnEligibility.greywaterEligibleArea.cellIndices);
+    spawnEligible=new Uint8Array(n);
+    const solids=greywaterPatch.staticArchitecture.staticSolids.flatMap(s=>lines([s.aAu,s.bAu],s.thicknessAu/2));
+    for(let y=1;y<WH-1;y++)for(let x=1;x<WW-1;x++){
+      const i=y*WW+x,[gx,gy]=globalFromTile(identity,x,y),ri=Math.floor(gy/8)*250+Math.floor(gx/8);
+      spawnEligible[i]=+allowed.has(ri);
+      if(solids.some(s=>onLine(gx,gy,s))){tiles[i]=T.PWALL;biome[i]='wall';walkable[i]=0;buildable[i]=0;cargoPassable[i]=0;road[i]=0;protectedCells[i]=1;}
+    }
+  }
+  if(oasisM2){const allowed=new Set(eligibleRegions.candidateRegions.flatMap(r=>r.geometry.cellIndices));spawnEligible=new Uint8Array(n);for(let y=1;y<WH-1;y++)for(let x=1;x<WW-1;x++){const [gx,gy]=globalFromTile(identity,x,y),ri=Math.floor(gy/8)*250+Math.floor(gx/8);spawnEligible[y*WW+x]=+allowed.has(ri);}}
   // Coast distance for the existing Web shore renderer, in projected gameplay tiles.
   const queue=new Int32Array(n);let head=0,tail=0;for(let i=0;i<n;i++)if(tiles[i]===T.DEEP){seaDist[i]=0;queue[tail++]=i;}
   while(head<tail){const i=queue[head++],x=i%WW,y=Math.floor(i/WW);if(seaDist[i]>=8)continue;for(const [dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy;if(nx<0||ny<0||nx>=WW||ny>=WH)continue;const j=ny*WW+nx;if(seaDist[j]>seaDist[i]+1){seaDist[j]=seaDist[i]+1;queue[tail++]=j;}}}
@@ -57,5 +74,5 @@ export function projectVeyra(layout:string):World {
   const economyMap:EconomyMap={id:layout,revision:1,seed:2026,width:WW,height:WH,tileSize:TILE,biome,elevation,slope,moisture,temperature,freshwater:fresh,coast,walkable,buildable,cargoPassable,road,protected:protectedCells,industrial,starts:anchors};
   const generated=compileEconomy(economyMap);if(generated.errors.length)throw Error(`Veyra source compiler: ${generated.errors.join('; ')}`);
   const places:Place[]=bounds.map(q=>{const [tx,ty]=tileFromGlobal(identity,q.at[0],q.at[1]);return{id:q.id,name:q.name,tx,ty,kind:'poi' as const};}).filter(q=>q.tx>0&&q.ty>0&&q.tx<WW-1&&q.ty<WH-1);
-  return {tiles,fresh,zone,seaDist,src:new Int8Array(n).fill(-1),sourceOverlayV2:new Int8Array(n).fill(-1),buildings:[],statics:[],places,starts:[],elders:[],economyMap,sourceV3:generated.sources,veyra:identity,randomSpawn:true,enforceMasks:true,zoneNames:['Veyra · Greywater region']};
+  return {tiles,fresh,zone,seaDist,src:new Int8Array(n).fill(-1),sourceOverlayV2:new Int8Array(n).fill(-1),buildings:[],statics:[],places,starts:[],elders:[],economyMap,sourceV3:generated.sources,veyra:identity,randomSpawn:true,...(spawnEligible?{spawnEligible}:{}),enforceMasks:true,zoneNames:[oasis?'Veyra · Oasis and Dunes region':'Veyra · Greywater region']};
 }

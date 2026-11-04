@@ -156,11 +156,17 @@ describe('C01/C05 harvesting & shared hit rules', () => {
     const gs = fresh(); const r = gs.run!; const w = getWorld();
     let tgt = -1; for (let i = 0; i < WW * WH; i++) if (w.sourceV3[i] === 'rock') { tgt = i; break; }
     const tx = tgt % WW, ty = (tgt / WW) | 0; const before = Object.keys(r.entities).length;
-    expect(harvestHit(gs, tx, ty, { wood: 5 }, T0, 0, 0).result).toBe('nopower'); // knife/axe on stone
+    expect(harvestHit(gs, tx, ty, { wood: 5 }, T0, 0, 0).result).toBe('nopower'); // wood-only power on stone
     let guard = 0; while (harvestHit(gs, tx, ty, { stone: 3 }, T0, 0, 0).result === 'yield' && guard++ < 50) {/* */}
     const drops = Object.values(r.entities).filter(e => e.kind === 'drop'); expect(Object.keys(r.entities).length - before).toBe(drops.length);
     expect(drops.reduce((a, e) => a + (C(r, e.c!).slots[0]?.key === 'stone' ? C(r, e.c!).slots[0]!.qty : 0), 0)).toBe(6);
     expect(harvestHit(gs, tx, ty, { stone: 9 }, T0, 0, 0).result).toBe('empty');
+  });
+  it('the starting knife can bootstrap finite stone without yielding ore or duplicating stock', () => {
+    const gs=fresh(),r=gs.run!,w=getWorld();r.creatures=[];const i=w.sourceV3.findIndex((key,j)=>key==='rock'&&[[-1,0],[1,0],[0,-1],[0,1]].some(([dx,dy])=>!blockedAt(r,j%WW+dx,Math.floor(j/WW)+dy)));
+    expect(i).toBeGreaterThanOrEqual(0);const tx=i%WW,ty=Math.floor(i/WW),offset=[[-1,0],[1,0],[0,-1],[0,1]].find(([dx,dy])=>!blockedAt(r,tx+dx,ty+dy))!;tp(gs,(tx+offset[0])*TILE+8,(ty+offset[1])*TILE+8);const aim=idle(tx*TILE+8,ty*TILE+8),stock=sourceAt(r,tx,ty)!.stock,stone=totalItems(gs,'stone');
+    for(let hit=0;hit<SOURCES.rock.hp+3;hit++){const at=T0+hit*1000;tick(gs,{...aim,attackPressed:true},16,at);for(let frame=0;frame<32;frame++)tick(gs,aim,16,at+16*(frame+1));}
+    expect(sourceAt(r,tx,ty)!.stock).toBe(0);expect(totalItems(gs,'stone')-stone).toBe(stock);expect(C(r,'inv').slots[0]?.dur).toBeLessThan(300);
   });
   it('the same knife swing damages a creature through the real input path', () => {
     const gs = fresh(); const r = gs.run!; const p = r.player;

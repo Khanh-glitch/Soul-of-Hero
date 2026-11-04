@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { TILE, WW, type Entity } from '../src/game/core';
-import { addItem, blockGrid, buildReason, countItem, dispatch, markDirty, newGame } from '../src/game/engine';
+import { addItem, blockGrid, buildReason, countItem, dispatch, killPlayer, markDirty, newGame, respawn } from '../src/game/engine';
 import { getWorld, setActiveLayout } from '../src/game/world';
 import { mapDigest } from '../src/game/map-package';
 import { serializeSnapshot, validate } from '../src/game/persist';
@@ -23,4 +23,11 @@ describe('LR02 seeded sandbox and authoritative wall access',()=>{
   const device:Entity={id:'test-gen',kind:'struct',type:'base_generator',x:(x+3)*TILE+8,y:y*TILE+8,tx:x+3,ty:y,basePower:{enabled:false,energy:0}};r.entities[device.id]=device;markDirty();expect(dispatch(g,{id:'blocked-device',type:'basePower',eid:device.id,enabled:true},now+4).ok).toBe(false);expect(device.basePower!.enabled).toBe(false);
   expect(dispatch(g,{id:'contact-repair',type:'repairStructure',eid:wall.id},now+5).ok).toBe(true);expect(wall.hp).toBeGreaterThan(40);delete r.entities[wall.id];markDirty();expect(dispatch(g,{id:'open-repair',type:'repairStructure',eid:other.id},now+6).ok).toBe(true);expect(other.hp).toBeGreaterThan(40);
  });
+ it('uses a paid owned bed without spawning inside an adjacent wall; death custody remains singular',()=>{
+  const g=run('veyra-greywater-lr02-u20',55),r=g.run!,w=getWorld();r.creatures=[];addItem(r,'inv','wood',12);addItem(r,'inv','stone',5);addItem(r,'inv','fiber',10);let spot:{x:number;y:number}|undefined;
+  const grid=blockGrid(r);outer:for(let y=10;y<190;y++)for(let x=10;x<188;x++){if([0,1,2].every(dx=>!grid[y*WW+x+dx]&&w.economyMap.buildable[y*WW+x+dx]&&!w.sourceV3[y*WW+x+dx])){spot={x,y};break outer;}}expect(spot).toBeDefined();
+  const {x,y}=spot!;r.player.x=x*TILE+8;r.player.y=y*TILE+8;expect(dispatch(g,{id:'paid-claim',type:'build',struct:'claim',tx:x+1,ty:y},now+1).ok).toBe(true);expect(dispatch(g,{id:'paid-bed',type:'build',struct:'bed_straw',tx:x+2,ty:y},now+2).ok).toBe(true);const bed=Object.values(r.entities).find(e=>e.type==='bed_straw')!;
+  const wall:Entity={id:'bed-wall-fixture',kind:'struct',type:'wall_wood',x:bed.x,y:bed.y+TILE,tx:bed.tx,ty:bed.ty!+1,hp:160,maxHp:160};r.entities[wall.id]=wall;markDirty();killPlayer(g,now+3,'fixture');expect(Object.values(r.entities).filter(e=>e.kind==='bag')).toHaveLength(1);expect(respawn(g,now+4).ok).toBe(true);expect(r.player.x).toBe(bed.x);expect(r.player.y).toBe(bed.y);expect(blockGrid(r)[Math.floor(r.player.y/TILE)*WW+Math.floor(r.player.x/TILE)]).not.toBe(3);expect(Object.values(r.entities).filter(e=>e.kind==='bag')).toHaveLength(1);expect(validate(JSON.parse(JSON.parse(serializeSnapshot(g)).payload))).toBeTruthy();
+ });
+
 });

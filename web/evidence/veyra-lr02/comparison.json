@@ -1,0 +1,103 @@
+{
+  "method": "Headless Chromium; sequential fresh browser contexts; 1.5s warmup; 5s requestAnimationFrame callback cadence while stationary, no state injection. Startup includes navigation/networkidle. Not a controlled gameplay or GPU benchmark.",
+  "records": [
+    {
+      "name": "pre-integration-shipping",
+      "width": 640,
+      "height": 360,
+      "startMs": 1904,
+      "frames": 301,
+      "elapsedMs": 5007.399999998883,
+      "fps": 60.111035667225934,
+      "p95FrameMs": 16.700000000000728,
+      "maxFrameMs": 16.80000000000109,
+      "layout": "shipping",
+      "creatures": 156
+    },
+    {
+      "name": "u16",
+      "width": 640,
+      "height": 360,
+      "startMs": 3361,
+      "frames": 301,
+      "elapsedMs": 5009.1,
+      "fps": 60.09063504421952,
+      "p95FrameMs": 16.700000000000728,
+      "maxFrameMs": 16.80000000000109,
+      "layout": "veyra-greywater-lr02-u16",
+      "spawn": {
+        "x": 53,
+        "y": 110,
+        "contract": "seeded-geographic-v1"
+      },
+      "creatures": 150
+    },
+    {
+      "name": "u20",
+      "width": 640,
+      "height": 360,
+      "startMs": 3663,
+      "frames": 300,
+      "elapsedMs": 5000.900000001118,
+      "fps": 59.98920194363673,
+      "p95FrameMs": 16.799999999999272,
+      "maxFrameMs": 33.399999999999636,
+      "layout": "veyra-greywater-lr02-u20",
+      "spawn": {
+        "x": 45,
+        "y": 74,
+        "contract": "seeded-geographic-v1"
+      },
+      "creatures": 150
+    },
+    {
+      "name": "pre-integration-shipping",
+      "width": 1280,
+      "height": 720,
+      "startMs": 2345,
+      "frames": 301,
+      "elapsedMs": 5007.800000001118,
+      "fps": 60.106234274518314,
+      "p95FrameMs": 16.700000000000728,
+      "maxFrameMs": 16.800000000000182,
+      "layout": "shipping",
+      "creatures": 156
+    },
+    {
+      "name": "u16",
+      "width": 1280,
+      "height": 720,
+      "startMs": 3640,
+      "frames": 301,
+      "elapsedMs": 5006.099999998882,
+      "fps": 60.12664549251258,
+      "p95FrameMs": 16.700000000000728,
+      "maxFrameMs": 16.80000000000109,
+      "layout": "veyra-greywater-lr02-u16",
+      "spawn": {
+        "x": 84,
+        "y": 98,
+        "contract": "seeded-geographic-v1"
+      },
+      "creatures": 150
+    },
+    {
+      "name": "u20",
+      "width": 1280,
+      "height": 720,
+      "startMs": 3609,
+      "frames": 301,
+      "elapsedMs": 5003.600000000373,
+      "fps": 60.15668718522215,
+      "p95FrameMs": 16.700000000000728,
+      "maxFrameMs": 16.80000000000109,
+      "layout": "veyra-greywater-lr02-u20",
+      "spawn": {
+        "x": 70,
+        "y": 73,
+        "contract": "seeded-geographic-v1"
+      },
+      "creatures": 150
+    }
+  ]
+}

@@ -62,7 +62,7 @@ export function mkContainer(r: RunState, kind: string, n: number): Container { c
 export function chooseLegalSpawn(r:RunState): {tx:number;ty:number;name:string}|null {
   const w=getWorld(); markDirty();const grid=blockGrid(r), n=WW*WH;
   const safe=(x:number,y:number)=>{const i=y*WW+x;return x>2&&y>2&&x<WW-3&&y<WH-3&&grid[i]===0&&w.economyMap.walkable[i]&&![T.TOXIC,T.ASH,T.SNOW].includes(effTile(r,x,y))&&!r.sources[i]?.fire&&!Object.values(r.entities).some(e=>e.type==='spikes'&&e.tx===x&&e.ty===y)&&!r.creatures.some(m=>m.state!=='dead'&&Math.hypot(m.x-(x*TILE+8),m.y-(y*TILE+8))<10*TILE);};
-  const eligible=(tx:number,ty:number)=>{if(!safe(tx,ty))return false;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)if(!safe(tx+dx,ty+dy))return false;
+  const eligible=(tx:number,ty:number)=>{if(w.spawnEligible&&!w.spawnEligible[ty*WW+tx])return false;if(!safe(tx,ty))return false;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)if(!safe(tx+dx,ty+dy))return false;
     const seen=new Uint8Array(n),q=new Int32Array(n),depth=new Uint8Array(n);let head=0,tail=0;const start=ty*WW+tx;q[tail++]=start;seen[start]=1;let wood=false,stone=false,food=false,water=false,sites=0;
     while(head<tail){const i=q[head++],x=i%WW,y=Math.floor(i/WW);if(w.economyMap.buildable[i]&&!sourceAt(r,x,y))sites++;for(const [dx,dy]of [[0,0],[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy;if(nx<1||ny<1||nx>=WW-1||ny>=WH-1)continue;const j=ny*WW+nx;if(w.fresh[j])water=true;const src=sourceAt(r,nx,ny);if(src&&src.stock>0&&!src.fire){if(['oak','pine','snowpine','palm','willow'].includes(src.key))wood=true;if(src.key==='rock')stone=true;if(['bush','mushroom'].includes(src.key))food=true;}
       if((dx||dy)&&depth[i]<30&&!seen[j]&&grid[j]===0&&w.economyMap.walkable[j]){seen[j]=1;depth[j]=depth[i]+1;q[tail++]=j;}}
@@ -71,13 +71,16 @@ export function chooseLegalSpawn(r:RunState): {tx:number;ty:number;name:string}|
   };
   // Seed determines a full, non-repeating traversal; no fixed fallback or spawn beacon.
   const count=(WW-6)*(WH-6),start=Math.floor(rngNext(r)*count),step=1+2*Math.floor(rngNext(r)*(count/2));let stride=step;while((function gcd(a:number,b:number):number{return b?gcd(b,a%b):a})(stride,count)!==1)stride+=2;
-  for(let k=0;k<count;k++){const i=(start+k*stride)%count,tx=3+i%(WW-6),ty=3+Math.floor(i/(WW-6));if(eligible(tx,ty))return{tx,ty,name:w.veyra?'Veyra · Greywater region':'the island'};}return null;
+  for(let k=0;k<count;k++){const i=(start+k*stride)%count,tx=3+i%(WW-6),ty=3+Math.floor(i/(WW-6));if(eligible(tx,ty))return{tx,ty,name:w.veyra?(w.zoneNames?.[0]||'Veyra region'):'the island'};}return null;
 }
 
 export function startRun(gs: GameState, character: 'male' | 'female', now: number, region: number | null = null, seedOverride?: number): Result {
   if (gs.run && !gs.run.ended) return { ok: false, reason: 'A run is already active.' };
   if(getActiveLayout()==='shipping')setActiveLayout('shipping_fresh');
   if(getActiveLayout()==='dev_delta')setActiveLayout('dev_delta_fresh');
+  if(getActiveLayout()==='veyra-greywater-u16')setActiveLayout('veyra-greywater-lr02-u16');
+  if(getActiveLayout()==='veyra-greywater-u20')setActiveLayout('veyra-greywater-lr02-u20');
+  if(getActiveLayout()==='veyra-oasis-u20')setActiveLayout('veyra-oasis-lr02-u20');
   const w = getWorld();
   const seed = seedOverride ?? ((now ^ 0x9e3779b9) >>> 0);
   const r: RunState = {
@@ -389,11 +392,18 @@ export function killPlayer(gs: GameState, now: number, cause: string) {
 }
 export function respawn(gs: GameState, now: number): Result {
   const r = gs.run!; const p = r.player; if (!p.dead) return { ok: false, reason: 'Not dead.' };
-  const w = getWorld();
-  const beds = Object.values(r.entities).filter(e => e.kind === 'struct' && e.type === 'bed_straw');
-  let x: number, y: number;
-  if (beds.length) { x = beds[0].x; y = beds[0].y + 10; }
-  else { const s = chooseLegalSpawn(r); if(!s)return {ok:false,reason:'No safe spawn is currently available.'}; x = s.tx * TILE + 8; y = s.ty * TILE + 8; }
+  const beds = Object.values(r.entities).filter(e => e.kind === 'struct' && e.type === 'bed_straw' && owned(e) && (e.hp ?? 0) > 0);
+  // Preserve the bed as the preferred wake point, but never wake inside a
+  // newly placed wall, burning source, live creature, or adjacent trap.
+  markDirty(); const grid=blockGrid(r);
+  const safeBedPoint=(x:number,y:number) => {
+    for(const [dx,dy] of [[-3,-3],[3,-3],[-3,3],[3,3]]) { const tx=Math.floor((x+dx)/TILE),ty=Math.floor((y+dy)/TILE); if(tx<1||ty<1||tx>=WW-1||ty>=WH-1)return false;const i=ty*WW+tx,t=effTile(r,tx,ty);if([1,2,3,5].includes(grid[i])||[T.DEEP,T.LAVA,T.TOXIC].includes(t)||(r.sources[i]?.fire??0)>r.clock.simMs||Object.values(r.entities).some(e=>e.type==='spikes'&&e.tx===tx&&e.ty===ty))return false; }
+    return !r.creatures.some(m=>m.state!=='dead'&&Math.hypot(m.x-x,m.y-y)<12);
+  };
+  let wake:{x:number;y:number}|undefined;
+  for(const bed of beds){for(const [dx,dy] of [[0,10],[0,0],[0,-16],[16,0],[-16,0],[0,16]]){const candidate={x:bed.x+dx,y:bed.y+dy};if(safeBedPoint(candidate.x,candidate.y)&&clearWallLine(r,bed,candidate)){wake=candidate;break;}}if(wake)break;}
+  if(!wake){const s=chooseLegalSpawn(r);if(!s)return {ok:false,reason:'No safe spawn is currently available.'};wake={x:s.tx*TILE+8,y:s.ty*TILE+8};}
+  const {x,y}=wake;
   Object.assign(p, { x, y, dead: false, hp: 60, stamina: 60, hunger: Math.max(p.hunger, 40), thirst: Math.max(p.thirst, 40), warmth: 80, rad: Math.min(p.rad, 20), invuln: 2000 });
   return { ok: true, receipt: receipt(r, now, 'respawn', `${Math.round(x)},${Math.round(y)}`) };
 }

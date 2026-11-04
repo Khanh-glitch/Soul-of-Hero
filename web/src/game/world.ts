@@ -18,7 +18,7 @@ export interface Place { id: string; name: string; tx: number; ty: number; kind:
 export interface World {
   tiles: Uint8Array; fresh: Uint8Array; src: Int8Array; sourceOverlayV2: Int8Array; zone: Uint8Array; seaDist: Uint8Array;
   buildings: Building[]; statics: StaticEnt[]; places: Place[]; starts: Place[]; elders: Place[];
-  economyMap: EconomyMap; sourceV3: (string | null)[]; packageContract?: GeographicHandoff; accessCorridors?: AccessCorridors; veyra?: VeyraViewIdentity; enforceMasks?: boolean; zoneNames?: string[]; randomSpawn?: boolean;
+  economyMap: EconomyMap; sourceV3: (string | null)[]; packageContract?: GeographicHandoff; accessCorridors?: AccessCorridors; veyra?: VeyraViewIdentity; enforceMasks?: boolean; zoneNames?: string[]; randomSpawn?: boolean; spawnEligible?: Uint8Array;
 }
 
 function vnoise(x: number, y: number, s: number) {
@@ -72,7 +72,7 @@ for (const [path, value] of Object.entries(import.meta.glob('../map-packages/*.j
   const errors = installMapPackage(value); if (errors.length) packageErrors.push(`${path}: ${errors.join('; ')}`);
 }
 export function mapPackageErrors() { return [...packageErrors]; }
-export function listLayouts() { return [{id:'veyra-greywater-u16',title:'Veyra · Greywater U=1.6',description:'Bounded diagnostic view; POI geometry and final scale are not approved.'},{id:'veyra-greywater-u20',title:'Veyra · Greywater U=2.0',description:'Same origin and source, diagnostic scale only.'},{id:'shipping_fresh', title:'Shipping Island', description:'Original sandbox, without fixed spawn compounds.'}, {id:'dev_delta_fresh',title:'Delta Ridge · Dev',description:'Development sandbox without fixed spawn compounds.'}, ...[...external.entries()].map(([id,p])=>({id,title:`${p.title} · r${p.revision}`,description:p.description}))]; }
+export function listLayouts() { return [{id:'veyra-greywater-lr02-u16',title:'Veyra · Greywater U=1.6',description:'LR02 proposed walls, static openings and eligible area; diagnostic scale.'},{id:'veyra-greywater-lr02-u20',title:'Veyra · Greywater U=2.0',description:'LR02 proposed geometry; same origin; no scale approval.'},{id:'veyra-oasis-lr02-u20',title:'Veyra · Oasis U=2.0',description:'Map M2 eligibility; separate bounded diagnostic view; no window transitions.'},{id:'shipping_fresh', title:'Shipping Island', description:'Original sandbox, without fixed spawn compounds.'}, {id:'dev_delta_fresh',title:'Delta Ridge · Dev',description:'Development sandbox without fixed spawn compounds.'}, ...[...external.entries()].map(([id,p])=>({id,title:`${p.title} · r${p.revision}`,description:p.description}))]; }
 export function getActiveLayout(): string { return activeLayout; }
 export function setActiveLayout(id: string): boolean {
   if (id !== 'shipping' && id !== 'dev_delta' && id !== 'shipping_fresh' && id !== 'dev_delta_fresh' && !VEYRA_LAYOUTS.includes(id as any) && !external.has(id)) return false;

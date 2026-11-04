@@ -1,0 +1,162 @@
+[
+  {
+    "layout": "veyra-greywater-lr02-u16",
+    "width": 640,
+    "height": 360,
+    "method": "New run, read-only grid route, real keyboard; no injected state.",
+    "outsideSteps": 78,
+    "insideSteps": 10,
+    "closestEntranceAu": 1.5364043392448117,
+    "before": {
+      "player": {
+        "x": 1753.7262399999995,
+        "y": 1446.5978240000081,
+        "hp": 100
+      },
+      "sourceMap": {
+        "id": "veyra-greywater-lr02-u16",
+        "revision": 1,
+        "seed": 2026,
+        "rules": 3,
+        "digest": "bbc6d4e3",
+        "mapDigest": "4541d85e",
+        "veyra": {
+          "sourceCommit": "74062a5baf2731451fad9638c4243c7459ce8e24",
+          "sourceDigest": "e3259eb30016f93ab0883c6dc3656f0ec1b9d47a85dc78fd90a56e0185765e63",
+          "originAu": [
+            640,
+            440
+          ],
+          "unitsPerTile": 1.6,
+          "frameAu": [
+            2000,
+            1400
+          ],
+          "projection": "cell-centre-v1",
+          "patchSourceCommit": "3c073d9da07b0ad936a57293a51dbba968a885dc",
+          "patchDigest": "db5bcc3dcf28210fa63e9a68cdf2128a7f76213bead7d1e975bbb901b50cfe1a"
+        }
+      },
+      "poiSeen": [
+        "po_greywater"
+      ],
+      "receipts": [
+        {
+          "id": "r1",
+          "seq": 1,
+          "at": 1793758361394,
+          "kind": "run.start",
+          "detail": "female@Veyra · Greywater region"
+        }
+      ]
+    },
+    "after": {
+      "x": 1753.7262399999995,
+      "y": 1446.5978240000081,
+      "map": {
+        "id": "veyra-greywater-lr02-u16",
+        "revision": 1,
+        "seed": 2026,
+        "rules": 3,
+        "digest": "bbc6d4e3",
+        "mapDigest": "4541d85e",
+        "veyra": {
+          "sourceCommit": "74062a5baf2731451fad9638c4243c7459ce8e24",
+          "sourceDigest": "e3259eb30016f93ab0883c6dc3656f0ec1b9d47a85dc78fd90a56e0185765e63",
+          "originAu": [
+            640,
+            440
+          ],
+          "unitsPerTile": 1.6,
+          "frameAu": [
+            2000,
+            1400
+          ],
+          "projection": "cell-centre-v1",
+          "patchSourceCommit": "3c073d9da07b0ad936a57293a51dbba968a885dc",
+          "patchDigest": "db5bcc3dcf28210fa63e9a68cdf2128a7f76213bead7d1e975bbb901b50cfe1a"
+        }
+      }
+    }
+  },
+  {
+    "layout": "veyra-greywater-lr02-u20",
+    "width": 1280,
+    "height": 720,
+    "method": "New run, read-only grid route, real keyboard; no injected state.",
+    "outsideSteps": 49,
+    "insideSteps": 9,
+    "closestEntranceAu": 1.6004185509510986,
+    "before": {
+      "player": {
+        "x": 1398.216985684753,
+        "y": 1157.8474274754892,
+        "hp": 91.38798399999935
+      },
+      "sourceMap": {
+        "id": "veyra-greywater-lr02-u20",
+        "revision": 1,
+        "seed": 2026,
+        "rules": 3,
+        "digest": "43a4f81f",
+        "mapDigest": "4ce43379",
+        "veyra": {
+          "sourceCommit": "74062a5baf2731451fad9638c4243c7459ce8e24",
+          "sourceDigest": "e3259eb30016f93ab0883c6dc3656f0ec1b9d47a85dc78fd90a56e0185765e63",
+          "originAu": [
+            640,
+            440
+          ],
+          "unitsPerTile": 2,
+          "frameAu": [
+            2000,
+            1400
+          ],
+          "projection": "cell-centre-v1",
+          "patchSourceCommit": "3c073d9da07b0ad936a57293a51dbba968a885dc",
+          "patchDigest": "db5bcc3dcf28210fa63e9a68cdf2128a7f76213bead7d1e975bbb901b50cfe1a"
+        }
+      },
+      "poiSeen": [
+        "po_greywater"
+      ],
+      "receipts": [
+        {
+          "id": "r1",
+          "seq": 1,
+          "at": 1793758396007,
+          "kind": "run.start",
+          "detail": "female@Veyra · Greywater region"
+        }
+      ]
+    },
+    "after": {
+      "x": 1398.216985684753,
+      "y": 1157.8474274754892,
+      "map": {
+        "id": "veyra-greywater-lr02-u20",
+        "revision": 1,
+        "seed": 2026,
+        "rules": 3,
+        "digest": "43a4f81f",
+        "mapDigest": "4ce43379",
+        "veyra": {
+          "sourceCommit": "74062a5baf2731451fad9638c4243c7459ce8e24",
+          "sourceDigest": "e3259eb30016f93ab0883c6dc3656f0ec1b9d47a85dc78fd90a56e0185765e63",
+          "originAu": [
+            640,
+            440
+          ],
+          "unitsPerTile": 2,
+          "frameAu": [
+            2000,
+            1400
+          ],
+          "projection": "cell-centre-v1",
+          "patchSourceCommit": "3c073d9da07b0ad936a57293a51dbba968a885dc",
+          "patchDigest": "db5bcc3dcf28210fa63e9a68cdf2128a7f76213bead7d1e975bbb901b50cfe1a"
+        }
+      }
+    }
+  }
+]
