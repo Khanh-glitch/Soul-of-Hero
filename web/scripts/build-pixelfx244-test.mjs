@@ -199,7 +199,10 @@ const SHIM = `<script>
 const dist = readFileSync(join(web, 'dist/index.html'), 'utf8');
 if (!dist.includes('<title>')) throw new Error('dist/index.html has no <title>');
 if (dist.includes('PIXELF-244 TEST build')) throw new Error('shim already injected — rebuild dist first');
-const outHtml = dist.replace('<title>', `<script>window.__PFX244_MANIFEST__=${manifestJson};</script>\n    ` + SHIM + '<title>');
+// optional extra demo shim (e.g. --demo demon-spirit appends scripts/demo-demon-spirit.js)
+const DEMO = flag('--demo', '');
+const shim = DEMO ? SHIM + '\n' + readFileSync(join(here, 'demo-' + DEMO + '.js'), 'utf8') : SHIM;
+const outHtml = dist.replace('<title>', `<script>window.__PFX244_MANIFEST__=${manifestJson};</script>\n    ` + shim + '<title>');
 const target = OUT_HTML;
 writeFileSync(target, outHtml);
 const sha = createHash('sha256').update(outHtml).digest('hex');
