@@ -119,6 +119,17 @@ const SHIM = `<script>
     //    "Save recovery required", clear stale save copies once per tab and reload.
     // 2) auto-start a new run (Meadow Bay), inject the embedded 244-effect manifest
     //    via the QA-only __pfx.injectManifest hook, open the FX Lab (F9).
+    // 3) CRISP RENDER: force imageSmoothingEnabled=false on every 2d context so atlas
+    //    cells are drawn nearest-neighbor (like the original pixelfx 1:1 render).
+    //    Without this, the light/warp draw paths bilinear-blur the effect edges.
+    (function () {
+      try {
+        var d = Object.getOwnPropertyDescriptor(CanvasRenderingContext2D.prototype, 'imageSmoothingEnabled');
+        if (d && d.set && d.get) Object.defineProperty(CanvasRenderingContext2D.prototype, 'imageSmoothingEnabled', {
+          configurable: true, get: d.get, set: function () { d.set.call(this, false); }
+        });
+      } catch (e) {}
+    })();
     (function () {
       try {
         var ALREADY = /pfx244-cleared/.test(location.hash);

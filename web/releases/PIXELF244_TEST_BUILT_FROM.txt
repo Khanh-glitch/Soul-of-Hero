@@ -24,3 +24,5 @@ codec). Worst 15 listed in page-fidelity.json (fish-school, haste, leaf-storm, e
 fire-breath, slime, jellyfish, black-hole, ...). Spawn check: 244/244 spawn + load + render;
 frame-0-blank intros verified at mid-frame (243/244; moves/dash-strike frame 35 is a blank tail
 frame by design — frames 5-22 carry the slash).
+
+# crisp-render rebuild note: test HTMLs embed lossless fullres category + forced imageSmoothingEnabled=false shim (build-pixelfx244-test.mjs)
