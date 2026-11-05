@@ -22,19 +22,29 @@ const here = dirname(fileURLToPath(import.meta.url));
 const web = join(here, '..');
 const argv = process.argv.slice(2);
 const flag = (n, d) => { const i = argv.indexOf(n); return i < 0 ? d : argv[i + 1]; };
+const OUT_HTML = resolve(web, flag('--out', 'releases/SOH-PIXELF-244-TEST.html'));
 const packDir = resolve(web, flag('--pack', 'pixelfx-assets'));
 const K = Number(flag('--k', '0.5'));
 const Q = Number(flag('--q', '0.95'));
 const CHANNELS = flag('--channels', 'combined,light').split(',');
+// categories embedded at 100% original resolution (lossless PNG data URLs), e.g. --fullres arcane
+const FULLRES = new Set(flag('--fullres', '').split(',').filter(Boolean));
 
 const manifest = JSON.parse(readFileSync(join(packDir, 'index.json'), 'utf8'));
 if (!manifest.effects || manifest.effects.length !== 244) throw new Error(`pack must have 244 effects, got ${manifest.effects?.length}`);
 
 // collect unique page paths (only the channels we embed)
 const pagePaths = new Set();
-for (const e of manifest.effects) for (const ch of CHANNELS) for (const p of e.export.pages[ch] ?? []) pagePaths.add(p.path);
-const paths = [...pagePaths];
-console.log(`pack: ${manifest.effects.length} effects, ${paths.length} atlas pages, k=${K} q=${Q}`);
+const fullresPaths = new Set();
+for (const e of manifest.effects) {
+  const full = FULLRES.has(e.id.split('/')[0]);
+  for (const ch of CHANNELS) for (const p of e.export.pages[ch] ?? []) {
+    pagePaths.add(p.path);
+    if (full) fullresPaths.add(p.path);
+  }
+}
+const paths = [...pagePaths].filter(p => !fullresPaths.has(p));
+console.log(`pack: ${manifest.effects.length} effects, ${pagePaths.size} atlas pages, k=${K} q=${Q}, fullres categories: ${[...FULLRES].join(',') || '(none)'} (${fullresPaths.size} pages lossless)`);
 
 // serve pack over http (avoids file:// canvas taint), re-encode in the browser
 const srv = createServer((q, s) => {
@@ -55,6 +65,10 @@ for (let i = 0; i < N; i++) ctxs.push(await (await browser.newContext()).newPage
 for (const p of ctxs) await p.goto('http://localhost:4398/index.json');
 
 const dataUrl = new Map();
+// full-res categories: embed original PNGs losslessly (100% sharpness)
+for (const p of fullresPaths) {
+  dataUrl.set(p, 'data:image/png;base64,' + readFileSync(join(packDir, p)).toString('base64'));
+}
 let done = 0;
 const t0 = Date.now();
 async function worker(pi) {
@@ -81,8 +95,11 @@ await Promise.all(ctxs.map((_, i) => worker(i)));
 await browser.close();
 srv.close();
 
-// rewrite manifest: data URLs + scaled page dimensions
-const scalePage = (p) => ({ ...p, path: dataUrl.get(p.path) ?? p.path, dimensions: [Math.max(1, Math.round(p.dimensions[0] * K)), Math.max(1, Math.round(p.dimensions[1] * K))] });
+// rewrite manifest: data URLs + scaled page dimensions (fullres pages keep k=1)
+const scalePage = (p) => {
+  const k = fullresPaths.has(p.path) ? 1 : K;
+  return { ...p, path: dataUrl.get(p.path) ?? p.path, dimensions: [Math.max(1, Math.round(p.dimensions[0] * k)), Math.max(1, Math.round(p.dimensions[1] * k))] };
+};
 const out = { effects: manifest.effects.map(e => ({
   ...e,
   export: {
@@ -155,7 +172,7 @@ const dist = readFileSync(join(web, 'dist/index.html'), 'utf8');
 if (!dist.includes('<title>')) throw new Error('dist/index.html has no <title>');
 if (dist.includes('PIXELF-244 TEST build')) throw new Error('shim already injected — rebuild dist first');
 const outHtml = dist.replace('<title>', `<script>window.__PFX244_MANIFEST__=${manifestJson};</script>\n    ` + SHIM + '<title>');
-const target = join(web, 'releases/SOH-PIXELF-244-TEST.html');
+const target = OUT_HTML;
 writeFileSync(target, outHtml);
 const sha = createHash('sha256').update(outHtml).digest('hex');
 console.log('wrote', target, `(${(statSync(target).size / 1e6).toFixed(1)} MB)`);
