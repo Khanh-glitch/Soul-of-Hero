@@ -13,7 +13,8 @@
 
 | Mục | Giá trị |
 |---|---|
-| Map branch / HEAD local + remote | `arena/2e3cfbd2-soul-of-hero` @ `3e02fde05a24f6d645ea00ed5ab78900655e1272` (MAP-GEO-01 delivery) |
+| Map branch / HEAD **đầu task** (local + remote) | `arena/2e3cfbd2-soul-of-hero` @ `3e02fde05a24f6d645ea00ed5ab78900655e1272` (MAP-GEO-01 delivery) |
+| MAP-GEO-02 **audit commit** / final delivery commit | `d360e2a3283b0b2358b95da59fa738b72c8f9988` / commit ngay sau đó chứa `evidence/mapgeo02-delivery.json` (HEAD cuối của branch) |
 | `main` | `5214788933b1a827f3a177d11ff486433dfe5e8a` |
 | Gameplay HEAD **được pin trong yêu cầu** | `6e7d116b4400ea3c24373fe884b7fad258f4f7bc` |
 | Gameplay / PR44 **HEAD sống hiện tại** | `c2418b5405ff3325e0ac4806a5309785e816b093` — PR44 **OPEN**, **không** edit/merge/close |
@@ -174,6 +175,7 @@ NATURE-01/02 vẫn là R&D lưu trữ, không phải production resource placeme
 | `creator-u05/evidence/mapgeo02-traversal.json` | 17 lượt phím thật, 28 check, 52 ảnh, 0 leak |
 | `creator-u05/evidence/mapgeo02-shots/*.png` | 52 ảnh native 640×360 |
 | `creator-u05/evidence/mapgeo02-gameplay-handoff.json`, `creator-u05/docs/MAPGEO02_GAMEPLAY_HANDOFF.md` | Bàn giao Gameplay |
+| `creator-u05/evidence/mapgeo02-delivery.json` | Chốt commit, pinned links, ref Gameplay, gate, acceptance |
 | `creator-u05/build-mapgeo02.mjs`, `vite.mapgeo02.config.mjs`, `web-u05/src/mapgeo02/*` | Nguồn build + overlay (additive) |
 | `tools/preflight-mapgeo02.mjs`, `tools/classify-mapgeo02-crossings.mjs`, `tools/build-mapgeo02-handoff.mjs` | Tool chỉ-đọc / phân loại / bàn giao |
 | `creator-u05/tests/qa-mapgeo02-traversal.mjs`, `creator-u05/tests/test-mapgeo02.mjs` | QA browser + 125 static test |

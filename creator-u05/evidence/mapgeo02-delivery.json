@@ -1,0 +1,66 @@
+{
+  "schema": "soh.mapgeo02.delivery.v1",
+  "task": "SOH — MAP-GEO-REJOIN-02 / Correct Real Bridge & Cliff Projection — No New Geography",
+  "status": "MAP_PHYSICAL_GEOMETRY_CORRECTED__QA_VERIFIED__GAMEPLAY_WORLDTRAVERSAL_INTAKE_PENDING",
+  "branch": "arena/2e3cfbd2-soul-of-hero",
+  "pinnedMapHeadAtTaskStart": "3e02fde05a24f6d645ea00ed5ab78900655e1272",
+  "mainHead": "5214788933b1a827f3a177d11ff486433dfe5e8a",
+  "commit": "d360e2a3283b0b2358b95da59fa738b72c8f9988",
+  "commitRole": "MAP-GEO-REJOIN-02 audit/delivery content commit; the FINAL branch HEAD is the immediately following delivery commit that contains this file",
+  "pinnedLinks": {
+    "status": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/d360e2a3283b0b2358b95da59fa738b72c8f9988/creator-u05/docs/MAP_GEO_REJOIN_02_STATUS.md",
+    "handoff": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/d360e2a3283b0b2358b95da59fa738b72c8f9988/creator-u05/docs/MAPGEO02_GAMEPLAY_HANDOFF.md",
+    "handoffJson": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/d360e2a3283b0b2358b95da59fa738b72c8f9988/creator-u05/evidence/mapgeo02-gameplay-handoff.json",
+    "traversal": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/d360e2a3283b0b2358b95da59fa738b72c8f9988/creator-u05/evidence/mapgeo02-traversal.json",
+    "qaExecutable": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/d360e2a3283b0b2358b95da59fa738b72c8f9988/creator-u05/SoulOfHero_MapGeo02_CorrectedProjection.html"
+  },
+  "gameplay": {
+    "pinnedObservedHead": "6e7d116b4400ea3c24373fe884b7fad258f4f7bc",
+    "livePR44HeadVerified": "c2418b5405ff3325e0ac4806a5309785e816b093",
+    "driftDuringTask": true,
+    "pr44State": "OPEN — NOT edited / merged / closed",
+    "creatorVerified": "5b3e683402bbc8540dea9404576164097e753f97",
+    "u05SourcePin": "b5c8004ca4e77be62484fb3cd296fe296d7de4c9",
+    "painterBlockSha256": "f29c1a68803505c2dbf82aaae3ed37ab7240cb71dff47937f964e753c8d0f803",
+    "painterByteIdenticalAcrossFourHeads": true
+  },
+  "protectedBaselines": {
+    "SoulOfHero_TerrainOnly_U05_x10.html": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0",
+    "SoulOfHero_Nature01_U05.html": "ac4d54e310f0f3cf7e0e12d728bc5e9ad62f801994be37ce64f76b099af4a0a7",
+    "SoulOfHero_Nature02_ForestSlice.html": "6e1e897a0e365412f6bc92d65390dc10bf7b0352e6ad8ef4a1c38e57f4f30fa6",
+    "unchanged": true
+  },
+  "defects": {
+    "MGP-D01": "10/12 bounded deck candidates rendered; 596 deck tiles 100% on water / 0 on land; br_9 and br_b UNRESOLVED with exact owners, NO stamp, NO forced 12 PASS",
+    "MGP-D10": "305/305 binary candidate cells independently qualified; thin jagged 2..4/16-tile downhill face band; 187 visible cliff tiles in highland window (old 0); 0 filled slabs; 0 production walls"
+  },
+  "roadWater": "31 = 8 FERRY_NAVIGATION_REFERENCE + 9 AUTHORED_BRIDGE + 8 UNBRIDGED_LAND_ROAD_CROSSING + 6 AMBIGUOUS_OWNER_REVIEW",
+  "gates": {
+    "mapgeo02RuntimeChecks": "28/28 PASS",
+    "mapgeo02StaticTests": "125/125 PASS",
+    "mapgeo01StaticTests": "130/130 PASS",
+    "u05StaticTests": "272/0",
+    "tscNoEmit": "clean",
+    "browserErrors": 0,
+    "nativeShots": 52,
+    "realKeyRuns": 17,
+    "permissionLeaksOver10086Tiles": 0
+  },
+  "acceptance": {
+    "PAPER": "MEASURED",
+    "RUNTIME": "ISOLATED_VIEWER_PHYSICAL_VERIFIED_QA_ONLY",
+    "VISUAL": "NOT_REQUESTED_AND_NOT_GRANTED",
+    "GAMEPLAY": "NOT_REQUESTED_AND_NOT_GRANTED",
+    "fullWorldVisualAcceptance": false,
+    "veyraPlayable": false,
+    "productionMerge": false,
+    "pr44EditedOrMerged": false,
+    "goldAmended": false,
+    "newAtlasOrArt": false
+  },
+  "noClaims": [
+    "NO VEYRA_PLAYABLE", "NO VISUAL_ACCEPTED", "NO MERGE_READY", "NO production merge",
+    "NO PR44 edit/merge", "NO GOLD amendment", "NO new atlas/art/world",
+    "NO full-world visual acceptance", "NO full Gameplay integration"
+  ]
+}
