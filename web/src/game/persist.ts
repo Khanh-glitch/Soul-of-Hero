@@ -1,9 +1,10 @@
+import { LOOT_ECOLOGY_VERSION, lootClass, lootRoll, lootSiteIndex } from './loot-ecology';
 import { creatorLootV1 } from './creator-loot';
 // Local-first snapshots: one serialized profile + run + receipts per write.
 // Checksums detect accidental damage, not malicious edits or rollback of all copies.
 import { BAL, SAVE_VERSION, WW, TILE, type GameState, type Stack } from './core';
 import { ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, VENDOR_SPARES } from './catalog';
-import { newGame } from './engine';
+import { newGame, renewableLoot } from './engine';
 import { getWorld, hasLayout, webRecyclerSite } from './world';
 import { mapDigest } from './map-package';
 import { sourceDigest } from './world-economy';
@@ -129,6 +130,19 @@ export function validate(raw: any): GameState | null {
   if (r.depletedLootSites !== undefined && (!Array.isArray(r.depletedLootSites) || r.depletedLootSites.some((i: any) => !integer(i) || !lootSites.has(i)) || new Set(r.depletedLootSites).size !== r.depletedLootSites.length)) return null;
   if (r.creatorLootV1 !== undefined && (r.creatorLootV1 !== true || !['shipping_fresh','dev_delta_fresh'].includes(r.layoutId) || r.sourceLayoutVersion!==3)) return null;
   if (r.renewedLootSites !== undefined && (!r.creatorLootV1 || !Array.isArray(r.renewedLootSites) || new Set(r.renewedLootSites).size!==r.renewedLootSites.length || r.renewedLootSites.some((i:any)=>!integer(i)||!lootSites.has(i)))) return null;
+  if (r.lootEcology !== undefined) {
+    const policy=r.lootEcology;
+    if(!obj(policy) || policy.version!==LOOT_ECOLOGY_VERSION || !obj(policy.cycles) || !r.creatorLootV1 || !['shipping_fresh','dev_delta_fresh'].includes(r.layoutId))return null;
+    for(const [key,value] of Object.entries(policy.cycles)) {
+      if(!/^(0|[1-9][0-9]*)$/.test(key) || !Number.isSafeInteger(value) || (value as number)<1) return null;
+      const site=world.statics.find(s=>s.kind==='loot' && lootSiteIndex(s)===Number(key));
+      if(!site || !lootClass(site) || !r.renewedLootSites?.includes(Number(key)))return null;
+    }
+    for(const site of world.statics.filter(s=>lootClass(s))) {
+      const index=lootSiteIndex(site);
+      if(!!policy.cycles[index] !== !!r.renewedLootSites?.includes(index))return null;
+    }
+  }
   const depleted = new Set<number>(r.depletedLootSites || []);
   if (r.lootRespawnAt !== undefined && (!obj(r.lootRespawnAt) || Object.entries(r.lootRespawnAt).some(([key, value]) => !/^(0|[1-9][0-9]*)$/.test(key) || !depleted.has(Number(key)) || !finite(value) || (value as number) < r.startedAt))) return null;
   if ((Object.values(r.entities) as any[]).some(e => e.kind === 'loot' && depleted.has(e.ty * WW + e.tx))) return null;
@@ -144,7 +158,9 @@ export function validate(raw: any): GameState | null {
         if(typeof ent.minted!=='boolean' || !obj(ent.stock) || ent.stock.cash!==(ent.minted?0:site.cash) || slots.some((s:any)=>s && (s.key!=='rcash'||!ent.minted))) return null;
         if(slots.reduce((n:number,s:any)=>n+(s?.qty||0),0)>(site.cash||0))return null;
       } else {
-        const available = new Map<string,number>(); for(const [k,q] of site.loot || []) available.set(k,(available.get(k)||0)+q); const unique=r.creatorLootV1 && !r.renewedLootSites?.includes(site.ty*WW+site.tx) && creatorLootV1(site);if(unique)available.set(unique,1);
+        const cycle=r.lootEcology?.cycles[lootSiteIndex(site)] || 0;
+        const base=r.lootEcology && lootClass(site) && cycle>0 ? renewableLoot(site) : site.loot || [];
+        const available = new Map<string,number>(); for(const [k,q] of [...base,...lootRoll(r,site,cycle)]) available.set(k,(available.get(k)||0)+q); const unique=r.creatorLootV1 && !r.renewedLootSites?.includes(site.ty*WW+site.tx) && creatorLootV1(site);if(unique)available.set(unique,1);
         for(const stack of slots){if(!stack)continue;const key=stack.key==='blueprint'?`blueprint:${stack.meta}`:stack.key;const left=(available.get(key)||0)-stack.qty;if(left<0)return null;available.set(key,left);}
       }
     }

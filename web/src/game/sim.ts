@@ -1,3 +1,4 @@
+import { LOOT_CLASSES, lootClass } from './loot-ecology';
 // Deterministic-ish real-time simulation layered on the engine authority. All state mutation goes through engine helpers.
 import { BAL, TILE, WW, WH, HOUR, VIEW_W, VIEW_H, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity, type Proj, type Haz } from './core';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
@@ -1102,7 +1103,7 @@ export function findInteract(gs: GameState, now: number): Interact | null {
     if (e.kind === 'drop') continue; const d = dist(fx0, fy0, e.x, e.y); if (d > bd || !clearInteraction(r, e)) continue;
     let label = ''; let kind = e.kind as string;
     if (e.kind === 'bag') { if (!C(r,e.c!).slots.some(Boolean) && !e.legacyJobs?.queue.length) continue; label = `Open ${e.label || 'bag'}`; }
-    else if (e.kind === 'loot') label = C(r, e.c!).slots.some(Boolean) ? 'Search crate' : 'Empty crate';
+    else if (e.kind === 'loot') { const site=r.lootEcology && getWorld(r.layoutId||'shipping').statics.find(s=>s.kind==='loot'&&s.tx===e.tx&&s.ty===e.ty);const cls=site && lootClass(site);label=C(r,e.c!).slots.some(Boolean) ? `Search ${cls ? LOOT_CLASSES[cls].name : 'crate'}` : 'Empty crate'; }
     else if (e.kind === 'cash') label = isRagnarok(r, now) ? (e.minted ? 'Ragnarok chest' : 'Break the Ragnarok seal') : 'Sealed Ragnarok chest';
     else if (e.kind === 'vendor') label = `Trade with ${e.label}`;
     else if (e.kind === 'door') label = e.locked ? `${e.label} (${e.locked === 'keycard' ? 'keycard' : 'no power'})` : e.open ? 'Close door' : 'Open door';

@@ -1,3 +1,4 @@
+import { LOOT_ECOLOGY_VERSION, LOOT_CLASSES, lootClass, lootRoll, lootSiteIndex, lootSourceId } from './loot-ecology';
 import { creatorLootV1 } from './creator-loot';
 // Authoritative game engine: GameState + dispatch(intent) → committed state + receipt | rejection.
 // Rule: validate EVERYTHING first, then commit. Failed preconditions never partially debit.
@@ -93,7 +94,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
     clock: { lastSimAt: now, simMs: 0, respawnAcc: 0, weatherSlot: -1 }, rng: seed, nextId: 1, receipts: [], seenIntents: [], seq: 0,
     vendorStock: { escrow_chest: 4, ...Object.fromEntries(Object.entries(VENDOR_SECURED).map(([k, v]) => [k, v.stock])), ...Object.fromEntries(Object.entries(VENDOR_SPARES).map(([k,v]) => [`spares:${k}`,v.stock])) }, log: [],
   };
-  if (getActiveLayout()==='shipping_fresh' || getActiveLayout()==='dev_delta_fresh') r.creatorLootV1=true;
+  if (getActiveLayout()==='shipping_fresh' || getActiveLayout()==='dev_delta_fresh') { r.creatorLootV1=true; r.lootEcology={version:LOOT_ECOLOGY_VERSION,cycles:{}}; }
   const reg = 0; r.spawnRegion = reg; const sp = chooseLegalSpawn(r); if(!sp)return {ok:false,reason:'No safe, resource-accessible spawn in this region.'}; r.spawnChoice={x:sp.tx,y:sp.ty,contract:'seeded-geographic-v1'};
   r.custody.inv = { id: 'inv', kind: 'inv', slots: Array(24).fill(null) };
   r.custody.eq = { id: 'eq', kind: 'eq', slots: [null, null, null] };
@@ -104,7 +105,23 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   // statics → physical entities with real finite loot
   for (const s of w.statics) {
     const e: Entity = { id: uid(r, 'e'), kind: s.kind as any, x: s.tx * TILE + 8, y: s.ty * TILE + 8, tx: s.tx, ty: s.ty, poi: s.poi, label: s.label };
-    if (s.kind === 'loot') { const c = mkContainer(r, 'loot', 8); s.loot!.forEach(([k, q], i) => { if (k.startsWith('blueprint:')) c.slots[i] = mkStack(r, 'blueprint', 1, k.slice(10)); else { const stack=mkStack(r,k,q); if (['meteor','dragon','elsa'].includes(ITEMS[k]?.creatorCore || '') && stack.reserves) stack.reserves.signature=3; c.slots[i]=stack; } }); const unique=r.creatorLootV1 && creatorLootV1(s); if(unique){const free=c.slots.findIndex(x=>!x);if(free>=0){const stack=mkStack(r,unique,1);stack.reserves!.signature=3;c.slots[free]=stack;}} e.c = c.id; }
+    if (s.kind === 'loot') {
+      const c = mkContainer(r, 'loot', 8);
+      s.loot!.forEach(([k, q], i) => {
+        if (k.startsWith('blueprint:')) c.slots[i] = mkStack(r, 'blueprint', 1, k.slice(10));
+        else { const stack=mkStack(r,k,q); if (['meteor','dragon','elsa'].includes(ITEMS[k]?.creatorCore || '') && stack.reserves) stack.reserves.signature=3; c.slots[i]=stack; }
+      });
+      const unique=r.creatorLootV1 && creatorLootV1(s);
+      if(unique){const free=c.slots.findIndex(x=>!x);if(free>=0){const stack=mkStack(r,unique,1);stack.reserves!.signature=3;c.slots[free]=stack;}}
+      for(const [key,qty] of lootRoll(r,s,0)) {
+        const i=c.slots.findIndex(v=>!v); if(i<0)throw new Error('Loot ecology exceeded authored container capacity');
+        c.slots[i]=mkStack(r,key,qty);
+      }
+      if(r.lootEcology && lootClass(s)) c.slots.forEach((stack,i)=>{
+        if(stack)receipt(r,now,'loot.roll',`${lootSourceId(r,s)}:${LOOT_ECOLOGY_VERSION}:cycle0:slot${i}:${stack.key}${stack.meta?':'+stack.meta:''}x${stack.qty}:${stack.uid}`);
+      });
+      e.c = c.id;
+    }
     if (s.kind === 'cash') { e.c = mkContainer(r, 'cash', 2).id; e.minted = false; e.stock = { cash: s.cash! }; }
     if (s.kind === 'door') { e.locked = s.locked; e.open = false; }
     if (s.kind === 'gen') e.power = 0;
@@ -455,12 +472,15 @@ function removeEntity(r: RunState, e: Entity) {  for(const other of Object.value
 export function renewableLoot(site: StaticEnt): [string, number][] {
   return (site.loot || []).filter(([k]) => k !== 'damaged_drive' && !!ITEMS[k] && ['res', 'food'].includes(ITEMS[k].cat));
 }
-export function lootCooldown(site: StaticEnt): number {
+export function lootCooldown(site: StaticEnt, r?:RunState): number {
+  const kind=r?.lootEcology && lootClass(site); if(kind)return LOOT_CLASSES[kind].hours*HOUR;
   const stock = renewableLoot(site);
   const industrial = stock.some(([k]) => ['spares', 'scrap', 'iron_ore', 'iron_ingot', 'coal', 'mechanical_parts', 'fasteners'].includes(k));
   const food = stock.some(([k]) => ITEMS[k]?.cat === 'food');
   return (industrial ? BAL.lootRespawn.industrialHours : food ? BAL.lootRespawn.supplyHours : BAL.lootRespawn.otherHours) * HOUR;
 }
+/** Ordinary replenishment is the old authored renewable stock plus a bounded W06 roll. */
+export function renewableStock(r:RunState,site:StaticEnt,cycle:number):[string,number][] {return [...renewableLoot(site),...lootRoll(r,site,cycle)];}
 /** Retire an authored public loot instance only after an actual final withdrawal. */
 function retireEmptyLoot(r: RunState, cid: string, now: number) {
   const e = Object.values(r.entities).find(v => v.kind === 'loot' && v.c === cid);
@@ -470,7 +490,7 @@ function retireEmptyLoot(r: RunState, cid: string, now: number) {
   if (!site) return;
   const index = e.ty! * WW + e.tx!;
   (r.depletedLootSites ??= []).push(index);
-  if (renewableLoot(site).length) (r.lootRespawnAt ??= {})[index] = now + lootCooldown(site);
+  if (renewableStock(r,site,(r.lootEcology?.cycles[index]||0)+1).length) (r.lootRespawnAt ??= {})[index] = now + lootCooldown(site,r);
   removeEntity(r, e);
   receipt(r, now, 'loot.depleted', `${index}:${e.id}`);
 }
@@ -481,9 +501,9 @@ export function migrateLootRespawn(r: RunState, now: number) {
   const world = getWorld(r.layoutId || 'shipping');
   for (const index of r.depletedLootSites) {
     const site = world.statics.find(s => s.kind === 'loot' && s.ty * WW + s.tx === index);
-    if (!site || !renewableLoot(site).length) continue;
+    if (!site || !renewableStock(r,site,(r.lootEcology?.cycles[index]||0)+1).length) continue;
     const timers = r.lootRespawnAt ??= {};
-    if (timers[index] === undefined) timers[index] = now + lootCooldown(site);
+    if (timers[index] === undefined) timers[index] = now + lootCooldown(site,r);
   }
 }
 /** Called by the same run-clock settlement path for online and offline time. */
@@ -493,7 +513,7 @@ export function stepLootRespawn(r: RunState, now: number) {
   for (const index of [...r.depletedLootSites]) {
     const site = world.statics.find(s => s.kind === 'loot' && s.ty * WW + s.tx === index);
     if (!site) continue;
-    const stock = renewableLoot(site); if (!stock.length) continue;
+    const cycle=(r.lootEcology?.cycles[index]||0)+1; const stock = renewableStock(r,site,cycle); if (!stock.length) continue;
     const timers = r.lootRespawnAt ??= {};
     if (timers[index] === undefined) continue;
     if (timers[index] > now) continue;
@@ -501,7 +521,8 @@ export function stepLootRespawn(r: RunState, now: number) {
     if (Object.values(r.entities).some(e => e.tx === site.tx && e.ty === site.ty && ['loot','struct','door','gen','recycler'].includes(e.kind))) continue;
     const e: Entity = { id: uid(r, 'e'), kind: 'loot', x: site.tx * TILE + 8, y: site.ty * TILE + 8, tx: site.tx, ty: site.ty, poi: site.poi, label: site.label };
     const c = mkContainer(r, 'loot', 8); e.c = c.id;
-    stock.forEach(([key, qty], i) => { c.slots[i] = mkStack(r, key, qty); });
+    stock.forEach(([key, qty], i) => { c.slots[i] = mkStack(r, key, qty); if(r.lootEcology && lootClass(site)) receipt(r,now,'loot.roll',`${lootSourceId(r,site)}:${LOOT_ECOLOGY_VERSION}:cycle${cycle}:slot${i}:${key}x${qty}:${c.slots[i]!.uid}`); });
+    if(r.lootEcology && lootClass(site))r.lootEcology.cycles[lootSiteIndex(site)]=cycle;
     r.entities[e.id] = e; delete timers[index];
     if(r.creatorLootV1 && !(r.renewedLootSites||[]).includes(index)) (r.renewedLootSites ??= []).push(index);
     r.depletedLootSites = r.depletedLootSites.filter(i => i !== index);

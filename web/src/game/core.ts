@@ -139,6 +139,8 @@ export interface RunState {
   /** Gameplay-owned initial unique rewards, only on explicitly versioned fresh Web layouts. */
   creatorLootV1?: true;
   renewedLootSites?: number[];
+  /** New-run pinned authored-site economy; old runs retain their original tables. */
+  lootEcology?: { version: 'w06-v1'; cycles: Record<string,number> };
   natureTrees?: {tx:number;ty:number;until:number}[];
   spiritTransit?: { x:number; y:number; arriveAt:number; uid:string };
   terrain: Record<number, { t: number; until?: number }>; // K2 terrain mutations (burns, ice)

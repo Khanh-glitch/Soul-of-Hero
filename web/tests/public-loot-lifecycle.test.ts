@@ -73,7 +73,7 @@ describe('authored public loot custody and retirement', () => {
     for (const mode of ['useItem', 'drop'] as const) {
       const { g, r, e, c } = fixture();
       // Remove other slots with normal transactions, then learn or drop the last blueprint.
-      for (const i of [0, 1]) expect(act(g, 'move', { from: c.id, fs: i, to: 'inv' }).ok).toBe(true);
+      for (let i=0;i<c.slots.length;i++) if(i!==2 && c.slots[i]) expect(act(g, 'move', { from: c.id, fs: i, to: 'inv' }).ok).toBe(true);
       if (mode === 'useItem') expect(act(g, 'useItem', { c: c.id, slot: 2 }).ok).toBe(true);
       else expect(act(g, 'drop', { c: c.id, slot: 2 }).ok).toBe(true);
       expect(r.entities[e.id]).toBeUndefined(); expect(r.depletedLootSites).toContain(e.ty! * WW + e.tx!); expect(validate(saveRoundTrip(g))).toBeTruthy();
