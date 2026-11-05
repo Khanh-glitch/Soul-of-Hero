@@ -1,0 +1,30 @@
+{
+  "schema": "soh.u05.nature01-preview.v1",
+  "generatedAt": "2026-11-05T11:01:37.135Z",
+  "url": "http://127.0.0.1:5183/nature01",
+  "previewHost": "https://5183-iedijpwzkleoc2bvjmqg0.e2b.app/nature01",
+  "ready": true,
+  "viewport": [
+    640,
+    360
+  ],
+  "dpr": 1,
+  "nKeyToggle": [
+    true,
+    false,
+    true
+  ],
+  "siteButtonResultTile": [
+    2152,
+    828
+  ],
+  "siteButtonExpectedShotTile": [
+    2152,
+    828
+  ],
+  "natureObjectsAtMarsh": 156,
+  "mode": "NATURE01__TERRAIN_BASELINE_PLUS_DECORATIVE_NATURE",
+  "pageErrors": [],
+  "pass": true,
+  "note": "Live-preview route check only. NOT visual acceptance."
+}

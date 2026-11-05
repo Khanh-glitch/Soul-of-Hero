@@ -1,0 +1,262 @@
+{
+  "schema": "soh.u05.nature01-sites.v1",
+  "authority": "GOLD VEYRA_GOLD_MAP.sohmap.json + WMP-04R1 v4/r1 rasters, sampled at U=0.5 through sampleTile()",
+  "measurement": "each site is a 96x64-tile (1536x1024 px) window; counts are exact GOLD tile samples, not raster upscale",
+  "mapHead": "b327e8049607791567defaf24bb6c6afc0871c84",
+  "note": "These are READ-ONLY observations. No biome, road, river, lake, shoreline or GOLD polygon was authored or modified.",
+  "pilotSiteKeys": [
+    "temperate_forest",
+    "snow_forest",
+    "marsh",
+    "dry",
+    "rocky_highlands"
+  ],
+  "sites": {
+    "temperate_forest": {
+      "centreTile": [
+        1440,
+        1320
+      ],
+      "boundsTile": [
+        1392,
+        1288,
+        1488,
+        1352
+      ],
+      "tiles": 6144,
+      "biomeCounts": {
+        "forest": 4473,
+        "meadow": 115,
+        "ancient": 1556
+      },
+      "tileCounts": {
+        "4": 71,
+        "5": 4778,
+        "12": 522,
+        "19": 773
+      },
+      "roadPct": 9.78,
+      "waterPct": 12.58,
+      "coastPct": 0,
+      "bridge": 0,
+      "sourceTileCount": 117,
+      "avgHeightClass": 0,
+      "avgColdClass": 0,
+      "avgWalkable": 0.73,
+      "label": "01 Rừng ôn đới / Temperate forest",
+      "demonstrates": "oak/pine trees, undergrowth, scattered rocks, noise-driven clearings, road corridor kept open",
+      "isPilotSite": true,
+      "shotTile": [
+        1472,
+        1336
+      ],
+      "shotFocus": "ancient/forest stand beside a GOLD road corridor (2-tile object-free buffer)"
+    },
+    "snow_forest": {
+      "centreTile": [
+        1360,
+        840
+      ],
+      "boundsTile": [
+        1312,
+        808,
+        1408,
+        872
+      ],
+      "tiles": 6144,
+      "biomeCounts": {
+        "snow": 4137,
+        "rock": 248,
+        "conifer": 1759
+      },
+      "tileCounts": {
+        "5": 1059,
+        "7": 248,
+        "9": 4064,
+        "19": 773
+      },
+      "roadPct": 0,
+      "waterPct": 12.58,
+      "coastPct": 0,
+      "bridge": 0,
+      "sourceTileCount": 9,
+      "avgHeightClass": 1.52,
+      "avgColdClass": 2.08,
+      "avgWalkable": 0.71,
+      "label": "02 Rừng tuyết / Snow forest",
+      "demonstrates": "snow pines on snow, green pines on conifer, exposed rock, snow/conifer transition, lake shore legible",
+      "isPilotSite": true,
+      "shotTile": [
+        1360,
+        840
+      ],
+      "shotFocus": "snow-pine field with a conifer/snow transition, exposed rocks and a legible lake shore"
+    },
+    "marsh": {
+      "centreTile": [
+        2160,
+        840
+      ],
+      "boundsTile": [
+        2112,
+        808,
+        2208,
+        872
+      ],
+      "tiles": 6144,
+      "biomeCounts": {
+        "marsh": 4766,
+        "forest": 1378
+      },
+      "tileCounts": {
+        "5": 1377,
+        "6": 3010,
+        "19": 1757
+      },
+      "roadPct": 0,
+      "waterPct": 28.6,
+      "coastPct": 0,
+      "bridge": 0,
+      "sourceTileCount": 58,
+      "avgHeightClass": 0.33,
+      "avgColdClass": 0,
+      "avgWalkable": 0.65,
+      "label": "03 Đầm lầy / Marsh",
+      "demonstrates": "reeds on the land side of water edges, willow behind them, wet marsh ground left visible",
+      "isPilotSite": true,
+      "shotTile": [
+        2152,
+        828
+      ],
+      "shotFocus": "lake shore with a reed fringe, willow behind it and visible wet marsh ground"
+    },
+    "dry": {
+      "centreTile": [
+        2640,
+        1320
+      ],
+      "boundsTile": [
+        2592,
+        1288,
+        2688,
+        1352
+      ],
+      "tiles": 6144,
+      "biomeCounts": {
+        "scrub_dry_steppe": 6144
+      },
+      "tileCounts": {
+        "7": 6144
+      },
+      "roadPct": 0,
+      "waterPct": 0,
+      "coastPct": 0,
+      "bridge": 0,
+      "sourceTileCount": 49,
+      "avgHeightClass": 0,
+      "avgColdClass": 0,
+      "avgWalkable": 1,
+      "label": "04 Vùng khô / Dry region",
+      "demonstrates": "sparse dead scrub and rock formations with a deliberately large open-ground floor",
+      "isPilotSite": true,
+      "shotTile": [
+        2640,
+        1320
+      ],
+      "shotFocus": "very sparse scrub and rock formations on a large open dry floor"
+    },
+    "rocky_highlands": {
+      "centreTile": [
+        1100,
+        1200
+      ],
+      "boundsTile": [
+        1052,
+        1168,
+        1148,
+        1232
+      ],
+      "tiles": 6144,
+      "biomeCounts": {
+        "meadow": 84,
+        "conifer": 2011,
+        "rock": 4049
+      },
+      "tileCounts": {
+        "4": 84,
+        "5": 2011,
+        "7": 3521,
+        "12": 528
+      },
+      "roadPct": 8.59,
+      "waterPct": 0,
+      "coastPct": 0,
+      "bridge": 0,
+      "sourceTileCount": 118,
+      "avgHeightClass": 2.38,
+      "avgColdClass": 0,
+      "avgWalkable": 1,
+      "label": "05 Cao nguyên đá / Rocky highlands",
+      "demonstrates": "low-frequency rock clusters, y-sorted depth, conifer/rock transition, visible traversable road corridor",
+      "isPilotSite": true,
+      "shotTile": [
+        1100,
+        1200
+      ],
+      "shotFocus": "rock clusters, conifer/rock transition and an open traversable road corridor"
+    },
+    "beacon_road": {
+      "centreTile": [
+        544,
+        1304
+      ],
+      "boundsTile": [
+        496,
+        1272,
+        592,
+        1336
+      ],
+      "tiles": 6144,
+      "biomeCounts": {
+        "meadow": 2374,
+        "beach": 3770
+      },
+      "tileCounts": {
+        "0": 1312,
+        "1": 944,
+        "2": 3402,
+        "4": 44,
+        "12": 442
+      },
+      "roadPct": 8.01,
+      "waterPct": 36.72,
+      "coastPct": 32.54,
+      "bridge": 0,
+      "sourceTileCount": 0,
+      "avgHeightClass": 0.29,
+      "avgColdClass": 0,
+      "avgWalkable": 0.58,
+      "label": "Beacon road control (NATURE-01 adds ZERO objects here; window is outside all five pilots)",
+      "demonstrates": "control window outside the five bounded pilot sites — must contain zero nature objects",
+      "isPilotSite": false,
+      "shotTile": [
+        544,
+        1304
+      ],
+      "shotFocus": "control: outside all five bounded pilot windows, zero nature objects ON or OFF"
+    }
+  },
+  "nature01HtmlSha256": "ac4d54e310f0f3cf7e0e12d728bc5e9ad62f801994be37ce64f76b099af4a0a7",
+  "offOnPairFiles": [
+    "creator-u05/evidence/nature01-shots/temperate_forest_off.png",
+    "creator-u05/evidence/nature01-shots/snow_forest_off.png",
+    "creator-u05/evidence/nature01-shots/marsh_off.png",
+    "creator-u05/evidence/nature01-shots/dry_off.png",
+    "creator-u05/evidence/nature01-shots/rocky_highlands_off.png",
+    "creator-u05/evidence/nature01-shots/temperate_forest_on.png",
+    "creator-u05/evidence/nature01-shots/snow_forest_on.png",
+    "creator-u05/evidence/nature01-shots/marsh_on.png",
+    "creator-u05/evidence/nature01-shots/dry_on.png",
+    "creator-u05/evidence/nature01-shots/rocky_highlands_on.png"
+  ]
+}

@@ -89,9 +89,32 @@ Vite server đã chạy tại cổng **5182** trong phiên làm việc này; LW-
 | `docs/ASSET_INVENTORY.md` | 12/68 sprite reuse, 0 atlas mới |
 | `docs/CONTROL_TOWER_U05_HANDOFF.md` | Bàn giao Control Tower |
 | `SoulOfHero_TerrainOnly_U05_x10.html` | **FILE GAME terrain-only**, chạy độc lập, x1–x10 |
+| `SoulOfHero_Nature01_U05.html` | **FILE GAME NATURE-01** (mới, tách biệt), 5 biome, `N` OFF/ON, x1–x10 |
 | `docs/TERRAIN_ONLY_VIEWER.md` | Hướng dẫn file game terrain-only |
+| `docs/NATURE01_PILOT.md` | Báo cáo pilot 5 biome + bàn giao Control Tower |
 | `evidence/terrain-only-{build,qa}.json` | Build + QA của file game |
 | `evidence/terrain-only-shots/*.png` | 6 ảnh terrain-only |
+
+## NATURE-01 — pilot 5 biome (file MỚI, nền GIỮ NGUYÊN)
+
+| File | Vai trò |
+|---|---|
+| `SoulOfHero_Nature01_U05.html` | **File game mới**: nền terrain-only + lớp thiên nhiên trang trí, tắt/bật bằng `N`, 5 cửa sổ thử nghiệm có ranh giới |
+| `SoulOfHero_TerrainOnly_U05_x10.html` | **Baseline không sửa** (`sha256 540f095e…`); khi `N = TẮT` canvas mới giống hệt từng pixel file này |
+| `docs/NATURE01_PILOT.md` | Báo cáo pilot đầy đủ: 5 vùng GOLD, quy tắc đặt, 12/12 QA, yếu điểm, bàn giao Control Tower |
+| `evidence/nature01-{build,qa,sites,assets}.json` | Nguồn SHA, browser evidence, inventory art, định nghĩa 5 vùng |
+| `evidence/nature01-shots/*.png` | 32 ảnh native 640×360: 5 cặp OFF/ON cùng vị trí + Beacon + 4 ảnh đi phím thật mỗi vùng |
+| `web-u05/src/nature01/*` | `sites.ts` (5 vùng + `BIOME_RULES`), `nature.ts` (đặt/vẽ/audit), `main.ts` (bản terrain-only + toggle) |
+| `tests/qa-nature01.mjs`, `tests/test-nature01.mjs` | 12 gate browser + 31 static test |
+| `tools/build-nature01-game.mjs`, `tools/build-asset-inventory-nature01.mjs` | Build 1 file HTML + inventory art |
+
+`N` bật/tắt; `Digit1…5` hoặc nút `01…05` đưa viewer tới 5 mẫu (spawn control,
+không phải route/teleport). Chỉ 12 sprite `getArt().src` có sẵn, **0 art mới**;
+vật thể **trang trí, KHÔNG phải tài nguyên thu hoạch**, không thưởng / cạn kiệt /
+sở hữu / tương tác / chặn đường. Không công trình, POI, tường, mái, cửa, hàng rào,
+tàn tích; không sửa GOLD, raster biome, đường Beacon, sông. Chưa nhân rộng toàn
+map, chưa POI architecture, chưa visual acceptance, chưa merge production,
+không `VEYRA_PLAYABLE`. `P5-G5/G6` vẫn FAIL, `P5-G7/G8` PARTIAL.
 
 ## Điều KHÔNG làm
 

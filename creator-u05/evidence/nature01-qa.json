@@ -1,0 +1,2409 @@
+{
+  "schema": "soh.u05.nature01-qa.v1",
+  "generatedAt": "2026-11-05T11:01:35.645Z",
+  "browser": {
+    "chromium": "/tmp/chromium",
+    "viewport": [
+      640,
+      360
+    ],
+    "dpr": 1,
+    "fileProtocol": true,
+    "frozenClockContextA": true,
+    "realClockContextB": true
+  },
+  "files": {
+    "nature": "creator-u05/SoulOfHero_Nature01_U05.html",
+    "natureSha256": "ac4d54e310f0f3cf7e0e12d728bc5e9ad62f801994be37ce64f76b099af4a0a7",
+    "baseline": "creator-u05/SoulOfHero_TerrainOnly_U05_x10.html",
+    "baselineSha256": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0"
+  },
+  "sourceHead": "b327e8049607791567defaf24bb6c6afc0871c84",
+  "siteWindows": {
+    "temperate_forest": {
+      "centreTile": [
+        1440,
+        1320
+      ],
+      "boundsTile": [
+        1392,
+        1288,
+        1488,
+        1352
+      ],
+      "tiles": 6144,
+      "biomeCounts": {
+        "forest": 4473,
+        "meadow": 115,
+        "ancient": 1556
+      },
+      "tileCounts": {
+        "4": 71,
+        "5": 4778,
+        "12": 522,
+        "19": 773
+      },
+      "roadPct": 9.78,
+      "waterPct": 12.58,
+      "coastPct": 0,
+      "bridge": 0,
+      "sourceTileCount": 117,
+      "avgHeightClass": 0,
+      "avgColdClass": 0,
+      "avgWalkable": 0.73,
+      "label": "01 Rừng ôn đới / Temperate forest",
+      "demonstrates": "oak/pine trees, undergrowth, scattered rocks, noise-driven clearings, road corridor kept open",
+      "isPilotSite": true,
+      "shotTile": [
+        1472,
+        1336
+      ],
+      "shotFocus": "ancient/forest stand beside a GOLD road corridor (2-tile object-free buffer)"
+    },
+    "snow_forest": {
+      "centreTile": [
+        1360,
+        840
+      ],
+      "boundsTile": [
+        1312,
+        808,
+        1408,
+        872
+      ],
+      "tiles": 6144,
+      "biomeCounts": {
+        "snow": 4137,
+        "rock": 248,
+        "conifer": 1759
+      },
+      "tileCounts": {
+        "5": 1059,
+        "7": 248,
+        "9": 4064,
+        "19": 773
+      },
+      "roadPct": 0,
+      "waterPct": 12.58,
+      "coastPct": 0,
+      "bridge": 0,
+      "sourceTileCount": 9,
+      "avgHeightClass": 1.52,
+      "avgColdClass": 2.08,
+      "avgWalkable": 0.71,
+      "label": "02 Rừng tuyết / Snow forest",
+      "demonstrates": "snow pines on snow, green pines on conifer, exposed rock, snow/conifer transition, lake shore legible",
+      "isPilotSite": true,
+      "shotTile": [
+        1360,
+        840
+      ],
+      "shotFocus": "snow-pine field with a conifer/snow transition, exposed rocks and a legible lake shore"
+    },
+    "marsh": {
+      "centreTile": [
+        2160,
+        840
+      ],
+      "boundsTile": [
+        2112,
+        808,
+        2208,
+        872
+      ],
+      "tiles": 6144,
+      "biomeCounts": {
+        "marsh": 4766,
+        "forest": 1378
+      },
+      "tileCounts": {
+        "5": 1377,
+        "6": 3010,
+        "19": 1757
+      },
+      "roadPct": 0,
+      "waterPct": 28.6,
+      "coastPct": 0,
+      "bridge": 0,
+      "sourceTileCount": 58,
+      "avgHeightClass": 0.33,
+      "avgColdClass": 0,
+      "avgWalkable": 0.65,
+      "label": "03 Đầm lầy / Marsh",
+      "demonstrates": "reeds on the land side of water edges, willow behind them, wet marsh ground left visible",
+      "isPilotSite": true,
+      "shotTile": [
+        2152,
+        828
+      ],
+      "shotFocus": "lake shore with a reed fringe, willow behind it and visible wet marsh ground"
+    },
+    "dry": {
+      "centreTile": [
+        2640,
+        1320
+      ],
+      "boundsTile": [
+        2592,
+        1288,
+        2688,
+        1352
+      ],
+      "tiles": 6144,
+      "biomeCounts": {
+        "scrub_dry_steppe": 6144
+      },
+      "tileCounts": {
+        "7": 6144
+      },
+      "roadPct": 0,
+      "waterPct": 0,
+      "coastPct": 0,
+      "bridge": 0,
+      "sourceTileCount": 49,
+      "avgHeightClass": 0,
+      "avgColdClass": 0,
+      "avgWalkable": 1,
+      "label": "04 Vùng khô / Dry region",
+      "demonstrates": "sparse dead scrub and rock formations with a deliberately large open-ground floor",
+      "isPilotSite": true,
+      "shotTile": [
+        2640,
+        1320
+      ],
+      "shotFocus": "very sparse scrub and rock formations on a large open dry floor"
+    },
+    "rocky_highlands": {
+      "centreTile": [
+        1100,
+        1200
+      ],
+      "boundsTile": [
+        1052,
+        1168,
+        1148,
+        1232
+      ],
+      "tiles": 6144,
+      "biomeCounts": {
+        "meadow": 84,
+        "conifer": 2011,
+        "rock": 4049
+      },
+      "tileCounts": {
+        "4": 84,
+        "5": 2011,
+        "7": 3521,
+        "12": 528
+      },
+      "roadPct": 8.59,
+      "waterPct": 0,
+      "coastPct": 0,
+      "bridge": 0,
+      "sourceTileCount": 118,
+      "avgHeightClass": 2.38,
+      "avgColdClass": 0,
+      "avgWalkable": 1,
+      "label": "05 Cao nguyên đá / Rocky highlands",
+      "demonstrates": "low-frequency rock clusters, y-sorted depth, conifer/rock transition, visible traversable road corridor",
+      "isPilotSite": true,
+      "shotTile": [
+        1100,
+        1200
+      ],
+      "shotFocus": "rock clusters, conifer/rock transition and an open traversable road corridor"
+    },
+    "beacon_road": {
+      "centreTile": [
+        544,
+        1304
+      ],
+      "boundsTile": [
+        496,
+        1272,
+        592,
+        1336
+      ],
+      "tiles": 6144,
+      "biomeCounts": {
+        "meadow": 2374,
+        "beach": 3770
+      },
+      "tileCounts": {
+        "0": 1312,
+        "1": 944,
+        "2": 3402,
+        "4": 44,
+        "12": 442
+      },
+      "roadPct": 8.01,
+      "waterPct": 36.72,
+      "coastPct": 32.54,
+      "bridge": 0,
+      "sourceTileCount": 0,
+      "avgHeightClass": 0.29,
+      "avgColdClass": 0,
+      "avgWalkable": 0.58,
+      "label": "Beacon road control (NATURE-01 adds ZERO objects here; window is outside all five pilots)",
+      "demonstrates": "control window outside the five bounded pilot sites — must contain zero nature objects",
+      "isPilotSite": false,
+      "shotTile": [
+        544,
+        1304
+      ],
+      "shotFocus": "control: outside all five bounded pilot windows, zero nature objects ON or OFF"
+    }
+  },
+  "shotTiles": {
+    "temperate_forest": [
+      1472,
+      1336
+    ],
+    "snow_forest": [
+      1360,
+      840
+    ],
+    "marsh": [
+      2152,
+      828
+    ],
+    "dry": [
+      2640,
+      1320
+    ],
+    "rocky_highlands": [
+      1100,
+      1200
+    ]
+  },
+  "gates": [
+    {
+      "id": "N-G0",
+      "name": "boot + untouched baseline + native contract",
+      "pass": true,
+      "detail": {
+        "baseSha": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0",
+        "natureSha": "ac4d54e310f0f3cf7e0e12d728bc5e9ad62f801994be37ce64f76b099af4a0a7",
+        "bytes": 1427241,
+        "U": 0.5,
+        "viewport": [
+          640,
+          360
+        ],
+        "hero": [
+          16,
+          24
+        ],
+        "leaked": []
+      }
+    },
+    {
+      "id": "N-G1",
+      "name": "OFF canvas pixel-identical to untouched terrain baseline at 6 positions",
+      "pass": true,
+      "detail": [
+        {
+          "site": "temperate_forest",
+          "tile": [
+            1472,
+            1336
+          ],
+          "offEqualsBaseline": true,
+          "onDiffersFromOff": true,
+          "drawn": 128
+        },
+        {
+          "site": "snow_forest",
+          "tile": [
+            1360,
+            840
+          ],
+          "offEqualsBaseline": true,
+          "onDiffersFromOff": true,
+          "drawn": 119
+        },
+        {
+          "site": "marsh",
+          "tile": [
+            2152,
+            828
+          ],
+          "offEqualsBaseline": true,
+          "onDiffersFromOff": true,
+          "drawn": 156
+        },
+        {
+          "site": "dry",
+          "tile": [
+            2640,
+            1320
+          ],
+          "offEqualsBaseline": true,
+          "onDiffersFromOff": true,
+          "drawn": 39
+        },
+        {
+          "site": "rocky_highlands",
+          "tile": [
+            1100,
+            1200
+          ],
+          "offEqualsBaseline": true,
+          "onDiffersFromOff": true,
+          "drawn": 92
+        },
+        {
+          "site": "beacon_road",
+          "tile": [
+            544,
+            1304
+          ],
+          "offEqualsBaseline": true,
+          "onDiffersFromOff": false,
+          "drawn": 0
+        }
+      ]
+    },
+    {
+      "id": "N-G2",
+      "name": "five distinct GOLD-biome samples, density / access / no-authority-write audit",
+      "pass": true,
+      "detail": {
+        "totalObjects": 2944,
+        "openGround": {
+          "temperate_forest": 0.844,
+          "snow_forest": 0.8905,
+          "marsh": 0.8244,
+          "dry": 0.9509,
+          "rocky_highlands": 0.8989
+        },
+        "designedFloor": {
+          "temperate_forest": 0.72,
+          "snow_forest": 0.82,
+          "marsh": 0.72,
+          "dry": 0.9,
+          "rocky_highlands": 0.82
+        },
+        "violations": {
+          "road": 0,
+          "bridge": 0,
+          "water": 0,
+          "river": 0,
+          "lake": 0,
+          "coast": 0,
+          "sourceTile": 0,
+          "roadBuffer": 0,
+          "outsideSites": 0,
+          "nonDecorative": 0,
+          "gameplayOwned": 0
+        },
+        "distinctKindProfiles": true,
+        "auditMs": 1388,
+        "kindProfiles": {
+          "temperate_forest": [
+            [
+              "grass",
+              170
+            ],
+            [
+              "oak",
+              170
+            ],
+            [
+              "bush",
+              119
+            ],
+            [
+              "bush_empty",
+              110
+            ],
+            [
+              "mush",
+              74
+            ]
+          ],
+          "snow_forest": [
+            [
+              "rock",
+              199
+            ],
+            [
+              "snowpine",
+              165
+            ],
+            [
+              "bush_empty",
+              110
+            ],
+            [
+              "grass",
+              62
+            ],
+            [
+              "pine",
+              28
+            ]
+          ],
+          "marsh": [
+            [
+              "reed",
+              244
+            ],
+            [
+              "grass",
+              198
+            ],
+            [
+              "bush_empty",
+              129
+            ],
+            [
+              "herb",
+              49
+            ],
+            [
+              "oak",
+              46
+            ]
+          ],
+          "dry": [
+            [
+              "grass",
+              137
+            ],
+            [
+              "bush_empty",
+              73
+            ],
+            [
+              "rock",
+              64
+            ],
+            [
+              "dead",
+              25
+            ]
+          ],
+          "rocky_highlands": [
+            [
+              "rock",
+              295
+            ],
+            [
+              "pine",
+              85
+            ],
+            [
+              "grass",
+              66
+            ],
+            [
+              "bush_empty",
+              60
+            ],
+            [
+              "snowpine",
+              26
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "id": "N-G3",
+      "name": "existing SOH art only; decorative NOT Gameplay-owned; no structures / mechanics",
+      "pass": true,
+      "detail": {
+        "usedSprites": [
+          "src.oak",
+          "src.pine",
+          "src.snowpine",
+          "src.willow",
+          "src.dead",
+          "src.rock",
+          "src.bush",
+          "src.bush_empty",
+          "src.grass",
+          "src.reed",
+          "src.herb",
+          "src.mush"
+        ],
+        "excludedGameplayOwned": [
+          "src.iron",
+          "src.coal",
+          "src.sulfur",
+          "src.crystal",
+          "src.stump",
+          "src.rubble",
+          "src.picked"
+        ],
+        "excludedArtificial": [
+          "src.scrap",
+          "src.wreck",
+          "src.palm (unused: no oasis in these five windows)"
+        ],
+        "flags": {
+          "decorativeOnly": true,
+          "gameplayOwned": false,
+          "blocksMovement": false,
+          "hasRewards": false,
+          "hasDepletion": false,
+          "hasOwnership": false,
+          "newArtAssets": 0
+        }
+      }
+    },
+    {
+      "id": "N-G4",
+      "name": "deterministic positions, stable across cache resets and 32-tile chunk boundaries",
+      "pass": true,
+      "detail": {
+        "stabilityHash1": "1c8074e8",
+        "stabilityHash2": "1c8074e8",
+        "chunkChecks": [
+          {
+            "site": "temperate_forest",
+            "boundaryTile": [
+              1440,
+              1312
+            ],
+            "window": [
+              1434,
+              1306,
+              1446,
+              1318
+            ],
+            "objects": 23,
+            "left": 8,
+            "right": 15,
+            "stableAcrossCacheReset": true,
+            "windowHash": "10001cc448f166e39462bc008b8e377e32ad6aec326f390a4bbed6dc16d033f7",
+            "presentInFrame": 23,
+            "missing": 0
+          },
+          {
+            "site": "snow_forest",
+            "boundaryTile": [
+              1344,
+              832
+            ],
+            "window": [
+              1338,
+              826,
+              1350,
+              838
+            ],
+            "objects": 14,
+            "left": 8,
+            "right": 6,
+            "stableAcrossCacheReset": true,
+            "windowHash": "879a86a30f943d005c6ac604fad9176e385e04e18e27a8ddf47cc2e89a2bdde2",
+            "presentInFrame": 14,
+            "missing": 0
+          },
+          {
+            "site": "marsh",
+            "boundaryTile": [
+              2144,
+              832
+            ],
+            "window": [
+              2138,
+              826,
+              2150,
+              838
+            ],
+            "objects": 24,
+            "left": 13,
+            "right": 11,
+            "stableAcrossCacheReset": true,
+            "windowHash": "f2279d1d81812259f82ed1b14a2d135c01f1e5ef0b4272102e7df330dac16b7c",
+            "presentInFrame": 24,
+            "missing": 0
+          },
+          {
+            "site": "dry",
+            "boundaryTile": [
+              2624,
+              1312
+            ],
+            "window": [
+              2618,
+              1306,
+              2630,
+              1318
+            ],
+            "objects": 4,
+            "left": 3,
+            "right": 1,
+            "stableAcrossCacheReset": true,
+            "windowHash": "d3192a51b83a8f0e75e8bb4b3ba120cb04ecea3829071363a9a7dccc5af87e96",
+            "presentInFrame": 4,
+            "missing": 0
+          },
+          {
+            "site": "rocky_highlands",
+            "boundaryTile": [
+              1088,
+              1184
+            ],
+            "window": [
+              1082,
+              1178,
+              1094,
+              1190
+            ],
+            "objects": 11,
+            "left": 5,
+            "right": 6,
+            "stableAcrossCacheReset": true,
+            "windowHash": "ec1c074746c99f6cc88b32b15f2d0bc50f1f264a9e2f34fef5905965a0c4c981",
+            "presentInFrame": 11,
+            "missing": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "N-G5",
+      "name": "y-sorted draw order: nature objects both behind and in front of the hero",
+      "pass": true,
+      "detail": [
+        {
+          "site": "temperate_forest",
+          "sorted": true,
+          "behindHero": 47,
+          "inFrontOfHero": 81
+        },
+        {
+          "site": "snow_forest",
+          "sorted": true,
+          "behindHero": 51,
+          "inFrontOfHero": 68
+        },
+        {
+          "site": "marsh",
+          "sorted": true,
+          "behindHero": 71,
+          "inFrontOfHero": 85
+        },
+        {
+          "site": "dry",
+          "sorted": true,
+          "behindHero": 22,
+          "inFrontOfHero": 17
+        },
+        {
+          "site": "rocky_highlands",
+          "sorted": true,
+          "behindHero": 67,
+          "inFrontOfHero": 25
+        }
+      ]
+    },
+    {
+      "id": "N-G9",
+      "name": "Beacon road / GOLD polygons / roads / rivers / biome raster / despeckle unchanged",
+      "pass": true,
+      "detail": {
+        "tilesCompared": 12,
+        "terrainIdentical": true,
+        "despeckleConfigIdentical": true,
+        "isolatedPainted": 0,
+        "beaconNatureObjects": 0,
+        "beaconOpenGroundCharacter": "unchanged; site is outside all five bounded pilot windows"
+      }
+    },
+    {
+      "id": "N-G11",
+      "name": "source SHA + build + site evidence present and consistent",
+      "pass": true,
+      "detail": {
+        "sourceHead": "b327e8049607791567defaf24bb6c6afc0871c84",
+        "buildSha": "ac4d54e310f0f3cf",
+        "baselineUntouched": true,
+        "sourceFiles": [
+          "web-u05/src/nature01/main.ts",
+          "web-u05/src/nature01/nature.ts",
+          "web-u05/src/nature01/sites.ts",
+          "web-u05/src/game/art.ts",
+          "web-u05/src/u05/terrain.ts",
+          "web-u05/src/u05/world.ts"
+        ]
+      }
+    },
+    {
+      "id": "N-G8",
+      "name": "wider real-keyboard traversal in each of the five environments (4 native shots each)",
+      "pass": true,
+      "detail": [
+        {
+          "site": "temperate_forest",
+          "totalMovedPx": 1212,
+          "realKeys": {
+            "down": 4,
+            "up": 4
+          },
+          "shots": 4,
+          "startTile": [
+            1472,
+            1336
+          ],
+          "endTile": [
+            1472,
+            1335
+          ]
+        },
+        {
+          "site": "snow_forest",
+          "totalMovedPx": 1224,
+          "realKeys": {
+            "down": 4,
+            "up": 4
+          },
+          "shots": 4,
+          "startTile": [
+            1360,
+            840
+          ],
+          "endTile": [
+            1361,
+            841
+          ]
+        },
+        {
+          "site": "marsh",
+          "totalMovedPx": 1212,
+          "realKeys": {
+            "down": 4,
+            "up": 4
+          },
+          "shots": 4,
+          "startTile": [
+            2152,
+            828
+          ],
+          "endTile": [
+            2152,
+            827
+          ]
+        },
+        {
+          "site": "dry",
+          "totalMovedPx": 1212,
+          "realKeys": {
+            "down": 4,
+            "up": 4
+          },
+          "shots": 4,
+          "startTile": [
+            2640,
+            1320
+          ],
+          "endTile": [
+            2640,
+            1319
+          ]
+        },
+        {
+          "site": "rocky_highlands",
+          "totalMovedPx": 1224,
+          "realKeys": {
+            "down": 4,
+            "up": 4
+          },
+          "shots": 4,
+          "startTile": [
+            1100,
+            1200
+          ],
+          "endTile": [
+            1100,
+            1200
+          ]
+        }
+      ]
+    },
+    {
+      "id": "N-G6",
+      "name": "decorative layer does not obstruct movement or alter natural-terrain collision",
+      "pass": true,
+      "detail": [
+        {
+          "site": "temperate_forest",
+          "off": {
+            "movedPx": 31,
+            "blockedSubsteps": 0,
+            "collision": "FREE_ROAM__NO_COLLISION",
+            "natureBlocksMovement": false,
+            "terrain": 5
+          },
+          "on": {
+            "movedPx": 30,
+            "blockedSubsteps": 0,
+            "collision": "FREE_ROAM__NO_COLLISION",
+            "natureBlocksMovement": false,
+            "terrain": 5
+          },
+          "movedPxRatio": 0.968
+        },
+        {
+          "site": "snow_forest",
+          "off": {
+            "movedPx": 34,
+            "blockedSubsteps": 0,
+            "collision": "FREE_ROAM__NO_COLLISION",
+            "natureBlocksMovement": false,
+            "terrain": 9
+          },
+          "on": {
+            "movedPx": 31,
+            "blockedSubsteps": 0,
+            "collision": "FREE_ROAM__NO_COLLISION",
+            "natureBlocksMovement": false,
+            "terrain": 9
+          },
+          "movedPxRatio": 0.912
+        },
+        {
+          "site": "marsh",
+          "off": {
+            "movedPx": 30,
+            "blockedSubsteps": 0,
+            "collision": "FREE_ROAM__NO_COLLISION",
+            "natureBlocksMovement": false,
+            "terrain": 6
+          },
+          "on": {
+            "movedPx": 30,
+            "blockedSubsteps": 0,
+            "collision": "FREE_ROAM__NO_COLLISION",
+            "natureBlocksMovement": false,
+            "terrain": 6
+          },
+          "movedPxRatio": 1
+        },
+        {
+          "site": "dry",
+          "off": {
+            "movedPx": 30,
+            "blockedSubsteps": 0,
+            "collision": "FREE_ROAM__NO_COLLISION",
+            "natureBlocksMovement": false,
+            "terrain": 7
+          },
+          "on": {
+            "movedPx": 30,
+            "blockedSubsteps": 0,
+            "collision": "FREE_ROAM__NO_COLLISION",
+            "natureBlocksMovement": false,
+            "terrain": 7
+          },
+          "movedPxRatio": 1
+        },
+        {
+          "site": "rocky_highlands",
+          "off": {
+            "movedPx": 30,
+            "blockedSubsteps": 0,
+            "collision": "FREE_ROAM__NO_COLLISION",
+            "natureBlocksMovement": false,
+            "terrain": 5
+          },
+          "on": {
+            "movedPx": 31,
+            "blockedSubsteps": 0,
+            "collision": "FREE_ROAM__NO_COLLISION",
+            "natureBlocksMovement": false,
+            "terrain": 5
+          },
+          "movedPxRatio": 1.033
+        }
+      ]
+    },
+    {
+      "id": "N-G7",
+      "name": "bounded chunks / native frame budget with nature ON",
+      "pass": true,
+      "detail": [
+        {
+          "site": "temperate_forest",
+          "onP50": 16.7,
+          "onP95": 16.7,
+          "offP50": 16.7,
+          "offP95": 16.7,
+          "p95Ratio": 1,
+          "onObjects": 128,
+          "natureChunks": 10,
+          "maxNatureChunks": 36,
+          "terrainChunks": 3,
+          "maxTerrainChunks": 36,
+          "displayCanvases": 32,
+          "materializedAllCells": false,
+          "overviewFullFrameAllocated": false
+        },
+        {
+          "site": "snow_forest",
+          "onP50": 16.7,
+          "onP95": 16.8,
+          "offP50": 16.7,
+          "offP95": 16.8,
+          "p95Ratio": 1,
+          "onObjects": 119,
+          "natureChunks": 19,
+          "maxNatureChunks": 36,
+          "terrainChunks": 5,
+          "maxTerrainChunks": 36,
+          "displayCanvases": 36,
+          "materializedAllCells": false,
+          "overviewFullFrameAllocated": false
+        },
+        {
+          "site": "marsh",
+          "onP50": 16.7,
+          "onP95": 16.8,
+          "offP50": 16.7,
+          "offP95": 16.8,
+          "p95Ratio": 1,
+          "onObjects": 156,
+          "natureChunks": 25,
+          "maxNatureChunks": 36,
+          "terrainChunks": 7,
+          "maxTerrainChunks": 36,
+          "displayCanvases": 36,
+          "materializedAllCells": false,
+          "overviewFullFrameAllocated": false
+        },
+        {
+          "site": "dry",
+          "onP50": 16.7,
+          "onP95": 16.8,
+          "offP50": 16.7,
+          "offP95": 16.8,
+          "p95Ratio": 1,
+          "onObjects": 39,
+          "natureChunks": 34,
+          "maxNatureChunks": 36,
+          "terrainChunks": 9,
+          "maxTerrainChunks": 36,
+          "displayCanvases": 36,
+          "materializedAllCells": false,
+          "overviewFullFrameAllocated": false
+        },
+        {
+          "site": "rocky_highlands",
+          "onP50": 16.7,
+          "onP95": 16.8,
+          "offP50": 16.7,
+          "offP95": 16.8,
+          "p95Ratio": 1,
+          "onObjects": 92,
+          "natureChunks": 36,
+          "maxNatureChunks": 36,
+          "terrainChunks": 13,
+          "maxTerrainChunks": 36,
+          "displayCanvases": 36,
+          "materializedAllCells": false,
+          "overviewFullFrameAllocated": false
+        }
+      ]
+    },
+    {
+      "id": "N-G10",
+      "name": "no page errors / no camera trick / real input log",
+      "pass": true,
+      "detail": {
+        "browserErrors": [],
+        "cameraTrick": false,
+        "followModes": "FIT_FOLLOW"
+      }
+    }
+  ],
+  "passing": 12,
+  "total": 12,
+  "failing": [],
+  "pairs": [
+    {
+      "site": "temperate_forest",
+      "tile": [
+        1472,
+        1336
+      ],
+      "offEqualsBaseline": true,
+      "offSha": "91f0323607c2e6dec3bb258334cd59670d6205b656e591ac6931b8df651eece1",
+      "onSha": "f8be8d8ec46332c3bb28c1a499e42c5ef8e8ba817fe107f0b15910ce7da3a05d",
+      "baselineSha": "91f0323607c2e6dec3bb258334cd59670d6205b656e591ac6931b8df651eece1",
+      "onDiffersFromOff": true,
+      "natureObjectsDrawn": 128,
+      "camera": {
+        "x": 23240,
+        "y": 21198,
+        "anchorTile": [
+          544,
+          1304
+        ]
+      },
+      "zoomMode": "NATIVE_1X",
+      "behindHero": 47,
+      "inFrontOfHero": 81,
+      "drawOrderSorted": true,
+      "shotFiles": [
+        "creator-u05/evidence/nature01-shots/temperate_forest_off.png",
+        "creator-u05/evidence/nature01-shots/temperate_forest_on.png"
+      ]
+    },
+    {
+      "site": "snow_forest",
+      "tile": [
+        1360,
+        840
+      ],
+      "offEqualsBaseline": true,
+      "offSha": "1438b856033432372b269ac8e7ebb838779f057aba9461560faf8dfc8bb6d3c4",
+      "onSha": "83cb42d8831a17582a4797a450691db6a1f5fa8c17fa468a3c233d561171e75f",
+      "baselineSha": "1438b856033432372b269ac8e7ebb838779f057aba9461560faf8dfc8bb6d3c4",
+      "onDiffersFromOff": true,
+      "natureObjectsDrawn": 119,
+      "camera": {
+        "x": 21448,
+        "y": 13262,
+        "anchorTile": [
+          544,
+          1304
+        ]
+      },
+      "zoomMode": "NATIVE_1X",
+      "behindHero": 51,
+      "inFrontOfHero": 68,
+      "drawOrderSorted": true,
+      "shotFiles": [
+        "creator-u05/evidence/nature01-shots/snow_forest_off.png",
+        "creator-u05/evidence/nature01-shots/snow_forest_on.png"
+      ]
+    },
+    {
+      "site": "marsh",
+      "tile": [
+        2152,
+        828
+      ],
+      "offEqualsBaseline": true,
+      "offSha": "9f627a0fd5531f837e89d1c3799164c1c1a1136b30f867a6b580085453f55d21",
+      "onSha": "2551a8f04bfe904dcf56023fcd600053e583b7d5d7f69f60165ee026294c72cc",
+      "baselineSha": "9f627a0fd5531f837e89d1c3799164c1c1a1136b30f867a6b580085453f55d21",
+      "onDiffersFromOff": true,
+      "natureObjectsDrawn": 156,
+      "camera": {
+        "x": 34120,
+        "y": 13070,
+        "anchorTile": [
+          544,
+          1304
+        ]
+      },
+      "zoomMode": "NATIVE_1X",
+      "behindHero": 71,
+      "inFrontOfHero": 85,
+      "drawOrderSorted": true,
+      "shotFiles": [
+        "creator-u05/evidence/nature01-shots/marsh_off.png",
+        "creator-u05/evidence/nature01-shots/marsh_on.png"
+      ]
+    },
+    {
+      "site": "dry",
+      "tile": [
+        2640,
+        1320
+      ],
+      "offEqualsBaseline": true,
+      "offSha": "2fb3e37a3b03aa5faf60244166c6e933065247eec24f64706490d2c219884696",
+      "onSha": "1448da5ff5646dc5a99314ba035c64fb42b7e081892d4270a397acbdc9ab7c9e",
+      "baselineSha": "2fb3e37a3b03aa5faf60244166c6e933065247eec24f64706490d2c219884696",
+      "onDiffersFromOff": true,
+      "natureObjectsDrawn": 39,
+      "camera": {
+        "x": 41928,
+        "y": 20942,
+        "anchorTile": [
+          544,
+          1304
+        ]
+      },
+      "zoomMode": "NATIVE_1X",
+      "behindHero": 22,
+      "inFrontOfHero": 17,
+      "drawOrderSorted": true,
+      "shotFiles": [
+        "creator-u05/evidence/nature01-shots/dry_off.png",
+        "creator-u05/evidence/nature01-shots/dry_on.png"
+      ]
+    },
+    {
+      "site": "rocky_highlands",
+      "tile": [
+        1100,
+        1200
+      ],
+      "offEqualsBaseline": true,
+      "offSha": "319abf48ee41127fe344b6f98330cc6bf32f13b72af7be65c1a9b79eba96f77a",
+      "onSha": "cf64330b8355a33d65648c44ed6a02c66d9a142e7ed29a9b4b31bd85520d1819",
+      "baselineSha": "319abf48ee41127fe344b6f98330cc6bf32f13b72af7be65c1a9b79eba96f77a",
+      "onDiffersFromOff": true,
+      "natureObjectsDrawn": 92,
+      "camera": {
+        "x": 17288,
+        "y": 19022,
+        "anchorTile": [
+          544,
+          1304
+        ]
+      },
+      "zoomMode": "NATIVE_1X",
+      "behindHero": 67,
+      "inFrontOfHero": 25,
+      "drawOrderSorted": true,
+      "shotFiles": [
+        "creator-u05/evidence/nature01-shots/rocky_highlands_off.png",
+        "creator-u05/evidence/nature01-shots/rocky_highlands_on.png"
+      ]
+    },
+    {
+      "site": "beacon_road",
+      "tile": [
+        544,
+        1304
+      ],
+      "offEqualsBaseline": true,
+      "offSha": "aab4bd5e73c25d84016ae737a239b6f6c46ff2a23af0cd123a3c3aafb2d0184d",
+      "onSha": "aab4bd5e73c25d84016ae737a239b6f6c46ff2a23af0cd123a3c3aafb2d0184d",
+      "baselineSha": "aab4bd5e73c25d84016ae737a239b6f6c46ff2a23af0cd123a3c3aafb2d0184d",
+      "onDiffersFromOff": false,
+      "natureObjectsDrawn": 0,
+      "camera": {
+        "x": 8392,
+        "y": 20686,
+        "anchorTile": [
+          544,
+          1304
+        ]
+      },
+      "zoomMode": "NATIVE_1X",
+      "behindHero": 0,
+      "inFrontOfHero": 0,
+      "drawOrderSorted": true,
+      "shotFiles": [
+        "creator-u05/evidence/nature01-shots/beacon_road_off.png",
+        "creator-u05/evidence/nature01-shots/beacon_road_on.png"
+      ]
+    }
+  ],
+  "audit": {
+    "totalObjects": 2944,
+    "bySite": {
+      "temperate_forest": {
+        "objects": 738,
+        "kinds": {
+          "herb": 39,
+          "grass": 170,
+          "bush": 119,
+          "oak": 170,
+          "bush_empty": 110,
+          "pine": 35,
+          "mush": 74,
+          "rock": 19,
+          "willow": 2
+        },
+        "biomes": {
+          "forest": 569,
+          "meadow": 8,
+          "ancient": 161
+        }
+      },
+      "snow_forest": {
+        "objects": 588,
+        "kinds": {
+          "rock": 199,
+          "grass": 62,
+          "snowpine": 165,
+          "bush_empty": 110,
+          "dead": 24,
+          "pine": 28
+        },
+        "biomes": {
+          "snow": 468,
+          "conifer": 106,
+          "rock": 14
+        }
+      },
+      "marsh": {
+        "objects": 763,
+        "kinds": {
+          "reed": 244,
+          "grass": 198,
+          "willow": 12,
+          "oak": 46,
+          "bush_empty": 129,
+          "mush": 31,
+          "herb": 49,
+          "rock": 6,
+          "pine": 11,
+          "bush": 37
+        },
+        "biomes": {
+          "marsh": 557,
+          "forest": 206
+        }
+      },
+      "dry": {
+        "objects": 299,
+        "kinds": {
+          "bush_empty": 73,
+          "grass": 137,
+          "rock": 64,
+          "dead": 25
+        },
+        "biomes": {
+          "scrub_dry_steppe": 299
+        }
+      },
+      "rocky_highlands": {
+        "objects": 556,
+        "kinds": {
+          "bush_empty": 60,
+          "dead": 22,
+          "grass": 66,
+          "rock": 295,
+          "pine": 85,
+          "oak": 1,
+          "snowpine": 26,
+          "bush": 1
+        },
+        "biomes": {
+          "conifer": 251,
+          "meadow": 8,
+          "rock": 297
+        }
+      }
+    },
+    "openGround": {
+      "temperate_forest": 0.844,
+      "snow_forest": 0.8905,
+      "marsh": 0.8244,
+      "dry": 0.9509,
+      "rocky_highlands": 0.8989
+    },
+    "violations": {
+      "road": 0,
+      "bridge": 0,
+      "water": 0,
+      "river": 0,
+      "lake": 0,
+      "coast": 0,
+      "sourceTile": 0,
+      "roadBuffer": 0,
+      "outsideSites": 0,
+      "nonDecorative": 0,
+      "gameplayOwned": 0
+    },
+    "stabilityHash": "1c8074e8",
+    "elapsedMs": 1388
+  },
+  "placementRules": {
+    "forest": {
+      "big": [
+        {
+          "kind": "oak",
+          "w": 0.72
+        },
+        {
+          "kind": "pine",
+          "w": 0.16
+        },
+        {
+          "kind": "rock",
+          "w": 0.08
+        },
+        {
+          "kind": "willow",
+          "w": 0.04
+        }
+      ],
+      "small": [
+        {
+          "kind": "bush",
+          "w": 0.22
+        },
+        {
+          "kind": "bush_empty",
+          "w": 0.2
+        },
+        {
+          "kind": "grass",
+          "w": 0.4
+        },
+        {
+          "kind": "mush",
+          "w": 0.1
+        },
+        {
+          "kind": "herb",
+          "w": 0.08
+        }
+      ],
+      "bigChance": 0.86,
+      "smallChance": 0.46,
+      "clearingFloor": 0.43,
+      "bigWaterMin": 2,
+      "designedOpenGroundFloor": 0.72
+    },
+    "ancient": {
+      "big": [
+        {
+          "kind": "oak",
+          "w": 0.58
+        },
+        {
+          "kind": "willow",
+          "w": 0.22
+        },
+        {
+          "kind": "rock",
+          "w": 0.12
+        },
+        {
+          "kind": "pine",
+          "w": 0.08
+        }
+      ],
+      "small": [
+        {
+          "kind": "bush",
+          "w": 0.18
+        },
+        {
+          "kind": "grass",
+          "w": 0.38
+        },
+        {
+          "kind": "mush",
+          "w": 0.2
+        },
+        {
+          "kind": "herb",
+          "w": 0.14
+        },
+        {
+          "kind": "bush_empty",
+          "w": 0.1
+        }
+      ],
+      "bigChance": 0.78,
+      "smallChance": 0.5,
+      "clearingFloor": 0.4,
+      "bigWaterMin": 2,
+      "designedOpenGroundFloor": 0.72
+    },
+    "meadow": {
+      "big": [
+        {
+          "kind": "oak",
+          "w": 0.32
+        },
+        {
+          "kind": "rock",
+          "w": 0.18
+        },
+        {
+          "kind": "bush",
+          "w": 0.34
+        },
+        {
+          "kind": "willow",
+          "w": 0.16
+        }
+      ],
+      "small": [
+        {
+          "kind": "grass",
+          "w": 0.64
+        },
+        {
+          "kind": "bush_empty",
+          "w": 0.2
+        },
+        {
+          "kind": "herb",
+          "w": 0.1
+        },
+        {
+          "kind": "mush",
+          "w": 0.06
+        }
+      ],
+      "bigChance": 0.42,
+      "smallChance": 0.52,
+      "clearingFloor": 0.3,
+      "bigWaterMin": 2,
+      "designedOpenGroundFloor": 0.78
+    },
+    "snow": {
+      "big": [
+        {
+          "kind": "snowpine",
+          "w": 0.66
+        },
+        {
+          "kind": "rock",
+          "w": 0.24
+        },
+        {
+          "kind": "dead",
+          "w": 0.1
+        }
+      ],
+      "small": [
+        {
+          "kind": "bush_empty",
+          "w": 0.42
+        },
+        {
+          "kind": "grass",
+          "w": 0.24
+        },
+        {
+          "kind": "rock",
+          "w": 0.34
+        }
+      ],
+      "bigChance": 0.66,
+      "smallChance": 0.2,
+      "clearingFloor": 0.3,
+      "formationFloor": 0.66,
+      "bigWaterMin": 2,
+      "designedOpenGroundFloor": 0.82
+    },
+    "conifer": {
+      "big": [
+        {
+          "kind": "pine",
+          "w": 0.58
+        },
+        {
+          "kind": "snowpine",
+          "w": 0.2
+        },
+        {
+          "kind": "rock",
+          "w": 0.14
+        },
+        {
+          "kind": "dead",
+          "w": 0.08
+        }
+      ],
+      "small": [
+        {
+          "kind": "bush_empty",
+          "w": 0.36
+        },
+        {
+          "kind": "grass",
+          "w": 0.34
+        },
+        {
+          "kind": "rock",
+          "w": 0.3
+        }
+      ],
+      "bigChance": 0.68,
+      "smallChance": 0.22,
+      "clearingFloor": 0.3,
+      "bigWaterMin": 2,
+      "designedOpenGroundFloor": 0.8
+    },
+    "marsh": {
+      "big": [
+        {
+          "kind": "willow",
+          "w": 0.58
+        },
+        {
+          "kind": "oak",
+          "w": 0.24
+        },
+        {
+          "kind": "rock",
+          "w": 0.18
+        }
+      ],
+      "small": [
+        {
+          "kind": "grass",
+          "w": 0.52
+        },
+        {
+          "kind": "bush_empty",
+          "w": 0.34
+        },
+        {
+          "kind": "mush",
+          "w": 0.06
+        },
+        {
+          "kind": "herb",
+          "w": 0.08
+        }
+      ],
+      "bigChance": 0.54,
+      "smallChance": 0.44,
+      "clearingFloor": 0.28,
+      "bigWaterMin": 2,
+      "bigWaterMax": 6,
+      "waterEdgeGround": true,
+      "designedOpenGroundFloor": 0.72
+    },
+    "desert": {
+      "big": [
+        {
+          "kind": "dead",
+          "w": 0.4
+        },
+        {
+          "kind": "rock",
+          "w": 0.46
+        },
+        {
+          "kind": "bush_empty",
+          "w": 0.14
+        }
+      ],
+      "small": [
+        {
+          "kind": "grass",
+          "w": 0.52
+        },
+        {
+          "kind": "bush_empty",
+          "w": 0.32
+        },
+        {
+          "kind": "rock",
+          "w": 0.16
+        }
+      ],
+      "bigChance": 0.26,
+      "smallChance": 0.18,
+      "openGapCeiling": 0.62,
+      "clusterFloor": 0.44,
+      "formationFloor": 0.5,
+      "bigWaterMin": 2,
+      "designedOpenGroundFloor": 0.88
+    },
+    "scrub_dry_steppe": {
+      "big": [
+        {
+          "kind": "dead",
+          "w": 0.38
+        },
+        {
+          "kind": "rock",
+          "w": 0.46
+        },
+        {
+          "kind": "bush_empty",
+          "w": 0.16
+        }
+      ],
+      "small": [
+        {
+          "kind": "grass",
+          "w": 0.56
+        },
+        {
+          "kind": "bush_empty",
+          "w": 0.3
+        },
+        {
+          "kind": "rock",
+          "w": 0.14
+        }
+      ],
+      "bigChance": 0.24,
+      "smallChance": 0.16,
+      "openGapCeiling": 0.62,
+      "clusterFloor": 0.44,
+      "formationFloor": 0.5,
+      "bigWaterMin": 2,
+      "designedOpenGroundFloor": 0.9
+    },
+    "beach": {
+      "big": [
+        {
+          "kind": "rock",
+          "w": 0.6
+        },
+        {
+          "kind": "bush_empty",
+          "w": 0.4
+        }
+      ],
+      "small": [
+        {
+          "kind": "grass",
+          "w": 0.6
+        },
+        {
+          "kind": "reed",
+          "w": 0.4
+        }
+      ],
+      "bigChance": 0.18,
+      "smallChance": 0.14,
+      "openGapCeiling": 0.6,
+      "bigWaterMin": 2,
+      "waterEdgeGround": true,
+      "designedOpenGroundFloor": 0.92
+    },
+    "rock": {
+      "big": [
+        {
+          "kind": "rock",
+          "w": 0.8
+        },
+        {
+          "kind": "dead",
+          "w": 0.1
+        },
+        {
+          "kind": "pine",
+          "w": 0.1
+        }
+      ],
+      "small": [
+        {
+          "kind": "rock",
+          "w": 0.62
+        },
+        {
+          "kind": "grass",
+          "w": 0.24
+        },
+        {
+          "kind": "bush_empty",
+          "w": 0.14
+        }
+      ],
+      "bigChance": 0.62,
+      "smallChance": 0.16,
+      "clusterFloor": 0.47,
+      "clearingFloor": 0.22,
+      "formationFloor": 0.6,
+      "bigWaterMin": 2,
+      "designedOpenGroundFloor": 0.82
+    },
+    "volcanic": {
+      "big": [
+        {
+          "kind": "rock",
+          "w": 0.72
+        },
+        {
+          "kind": "dead",
+          "w": 0.28
+        }
+      ],
+      "small": [
+        {
+          "kind": "rock",
+          "w": 0.72
+        },
+        {
+          "kind": "bush_empty",
+          "w": 0.28
+        }
+      ],
+      "bigChance": 0.5,
+      "smallChance": 0.12,
+      "clusterFloor": 0.5,
+      "formationFloor": 0.62,
+      "bigWaterMin": 2,
+      "designedOpenGroundFloor": 0.86
+    },
+    "toxic": {
+      "big": [
+        {
+          "kind": "dead",
+          "w": 0.56
+        },
+        {
+          "kind": "rock",
+          "w": 0.44
+        }
+      ],
+      "small": [
+        {
+          "kind": "bush_empty",
+          "w": 0.6
+        },
+        {
+          "kind": "grass",
+          "w": 0.4
+        }
+      ],
+      "bigChance": 0.36,
+      "smallChance": 0.14,
+      "bigWaterMin": 2,
+      "designedOpenGroundFloor": 0.86
+    }
+  },
+  "chunkChecks": [
+    {
+      "site": "temperate_forest",
+      "boundaryTile": [
+        1440,
+        1312
+      ],
+      "window": [
+        1434,
+        1306,
+        1446,
+        1318
+      ],
+      "objects": 23,
+      "left": 8,
+      "right": 15,
+      "stableAcrossCacheReset": true,
+      "windowHash": "10001cc448f166e39462bc008b8e377e32ad6aec326f390a4bbed6dc16d033f7",
+      "presentInFrame": 23,
+      "missing": 0
+    },
+    {
+      "site": "snow_forest",
+      "boundaryTile": [
+        1344,
+        832
+      ],
+      "window": [
+        1338,
+        826,
+        1350,
+        838
+      ],
+      "objects": 14,
+      "left": 8,
+      "right": 6,
+      "stableAcrossCacheReset": true,
+      "windowHash": "879a86a30f943d005c6ac604fad9176e385e04e18e27a8ddf47cc2e89a2bdde2",
+      "presentInFrame": 14,
+      "missing": 0
+    },
+    {
+      "site": "marsh",
+      "boundaryTile": [
+        2144,
+        832
+      ],
+      "window": [
+        2138,
+        826,
+        2150,
+        838
+      ],
+      "objects": 24,
+      "left": 13,
+      "right": 11,
+      "stableAcrossCacheReset": true,
+      "windowHash": "f2279d1d81812259f82ed1b14a2d135c01f1e5ef0b4272102e7df330dac16b7c",
+      "presentInFrame": 24,
+      "missing": 0
+    },
+    {
+      "site": "dry",
+      "boundaryTile": [
+        2624,
+        1312
+      ],
+      "window": [
+        2618,
+        1306,
+        2630,
+        1318
+      ],
+      "objects": 4,
+      "left": 3,
+      "right": 1,
+      "stableAcrossCacheReset": true,
+      "windowHash": "d3192a51b83a8f0e75e8bb4b3ba120cb04ecea3829071363a9a7dccc5af87e96",
+      "presentInFrame": 4,
+      "missing": 0
+    },
+    {
+      "site": "rocky_highlands",
+      "boundaryTile": [
+        1088,
+        1184
+      ],
+      "window": [
+        1082,
+        1178,
+        1094,
+        1190
+      ],
+      "objects": 11,
+      "left": 5,
+      "right": 6,
+      "stableAcrossCacheReset": true,
+      "windowHash": "ec1c074746c99f6cc88b32b15f2d0bc50f1f264a9e2f34fef5905965a0c4c981",
+      "presentInFrame": 11,
+      "missing": 0
+    }
+  ],
+  "traversal": [
+    {
+      "site": "temperate_forest",
+      "startTile": [
+        1472,
+        1336
+      ],
+      "endTile": [
+        1472,
+        1335
+      ],
+      "totalMovedPx": 1212,
+      "netDisplacementPx": 12,
+      "realKeyEvents": {
+        "down": 4,
+        "up": 4
+      },
+      "teleportUsed": false,
+      "camUsedAsRoute": false,
+      "spawnFixtureOnlyAtReset": true,
+      "zoomMode": "NATIVE_1X",
+      "cameraFollowsPlayer": true,
+      "steps": [
+        {
+          "key": "d",
+          "tile": [
+            1491,
+            1336
+          ],
+          "px": 23872,
+          "py": 21384,
+          "movedPx": 312,
+          "natureObjectsDrawn": 49,
+          "file": "creator-u05/evidence/nature01-shots/temperate_forest_walk_1.png"
+        },
+        {
+          "key": "s",
+          "tile": [
+            1491,
+            1354
+          ],
+          "px": 23872,
+          "py": 21672,
+          "movedPx": 600,
+          "natureObjectsDrawn": 31,
+          "file": "creator-u05/evidence/nature01-shots/temperate_forest_walk_2.png"
+        },
+        {
+          "key": "a",
+          "tile": [
+            1472,
+            1354
+          ],
+          "px": 23560,
+          "py": 21672,
+          "movedPx": 912,
+          "natureObjectsDrawn": 63,
+          "file": "creator-u05/evidence/nature01-shots/temperate_forest_walk_3.png"
+        },
+        {
+          "key": "w",
+          "tile": [
+            1472,
+            1335
+          ],
+          "px": 23560,
+          "py": 21372,
+          "movedPx": 1212,
+          "natureObjectsDrawn": 120,
+          "file": "creator-u05/evidence/nature01-shots/temperate_forest_walk_4.png"
+        }
+      ]
+    },
+    {
+      "site": "snow_forest",
+      "startTile": [
+        1360,
+        840
+      ],
+      "endTile": [
+        1361,
+        841
+      ],
+      "totalMovedPx": 1224,
+      "netDisplacementPx": 24,
+      "realKeyEvents": {
+        "down": 4,
+        "up": 4
+      },
+      "teleportUsed": false,
+      "camUsedAsRoute": false,
+      "spawnFixtureOnlyAtReset": true,
+      "zoomMode": "NATIVE_1X",
+      "cameraFollowsPlayer": true,
+      "steps": [
+        {
+          "key": "d",
+          "tile": [
+            1379,
+            840
+          ],
+          "px": 22080,
+          "py": 13448,
+          "movedPx": 312,
+          "natureObjectsDrawn": 87,
+          "file": "creator-u05/evidence/nature01-shots/snow_forest_walk_1.png"
+        },
+        {
+          "key": "s",
+          "tile": [
+            1379,
+            859
+          ],
+          "px": 22080,
+          "py": 13760,
+          "movedPx": 624,
+          "natureObjectsDrawn": 97,
+          "file": "creator-u05/evidence/nature01-shots/snow_forest_walk_2.png"
+        },
+        {
+          "key": "a",
+          "tile": [
+            1361,
+            859
+          ],
+          "px": 21780,
+          "py": 13760,
+          "movedPx": 924,
+          "natureObjectsDrawn": 114,
+          "file": "creator-u05/evidence/nature01-shots/snow_forest_walk_3.png"
+        },
+        {
+          "key": "w",
+          "tile": [
+            1361,
+            841
+          ],
+          "px": 21780,
+          "py": 13460,
+          "movedPx": 1224,
+          "natureObjectsDrawn": 113,
+          "file": "creator-u05/evidence/nature01-shots/snow_forest_walk_4.png"
+        }
+      ]
+    },
+    {
+      "site": "marsh",
+      "startTile": [
+        2152,
+        828
+      ],
+      "endTile": [
+        2152,
+        827
+      ],
+      "totalMovedPx": 1212,
+      "netDisplacementPx": 12,
+      "realKeyEvents": {
+        "down": 4,
+        "up": 4
+      },
+      "teleportUsed": false,
+      "camUsedAsRoute": false,
+      "spawnFixtureOnlyAtReset": true,
+      "zoomMode": "NATIVE_1X",
+      "cameraFollowsPlayer": true,
+      "steps": [
+        {
+          "key": "d",
+          "tile": [
+            2171,
+            828
+          ],
+          "px": 34740,
+          "py": 13256,
+          "movedPx": 300,
+          "natureObjectsDrawn": 164,
+          "file": "creator-u05/evidence/nature01-shots/marsh_walk_1.png"
+        },
+        {
+          "key": "s",
+          "tile": [
+            2171,
+            847
+          ],
+          "px": 34740,
+          "py": 13556,
+          "movedPx": 600,
+          "natureObjectsDrawn": 131,
+          "file": "creator-u05/evidence/nature01-shots/marsh_walk_2.png"
+        },
+        {
+          "key": "a",
+          "tile": [
+            2152,
+            847
+          ],
+          "px": 34440,
+          "py": 13556,
+          "movedPx": 900,
+          "natureObjectsDrawn": 111,
+          "file": "creator-u05/evidence/nature01-shots/marsh_walk_3.png"
+        },
+        {
+          "key": "w",
+          "tile": [
+            2152,
+            827
+          ],
+          "px": 34440,
+          "py": 13244,
+          "movedPx": 1212,
+          "natureObjectsDrawn": 154,
+          "file": "creator-u05/evidence/nature01-shots/marsh_walk_4.png"
+        }
+      ]
+    },
+    {
+      "site": "dry",
+      "startTile": [
+        2640,
+        1320
+      ],
+      "endTile": [
+        2640,
+        1319
+      ],
+      "totalMovedPx": 1212,
+      "netDisplacementPx": 12,
+      "realKeyEvents": {
+        "down": 4,
+        "up": 4
+      },
+      "teleportUsed": false,
+      "camUsedAsRoute": false,
+      "spawnFixtureOnlyAtReset": true,
+      "zoomMode": "NATIVE_1X",
+      "cameraFollowsPlayer": true,
+      "steps": [
+        {
+          "key": "d",
+          "tile": [
+            2659,
+            1320
+          ],
+          "px": 42548,
+          "py": 21128,
+          "movedPx": 300,
+          "natureObjectsDrawn": 42,
+          "file": "creator-u05/evidence/nature01-shots/dry_walk_1.png"
+        },
+        {
+          "key": "s",
+          "tile": [
+            2659,
+            1339
+          ],
+          "px": 42548,
+          "py": 21428,
+          "movedPx": 600,
+          "natureObjectsDrawn": 55,
+          "file": "creator-u05/evidence/nature01-shots/dry_walk_2.png"
+        },
+        {
+          "key": "a",
+          "tile": [
+            2640,
+            1339
+          ],
+          "px": 42248,
+          "py": 21428,
+          "movedPx": 900,
+          "natureObjectsDrawn": 46,
+          "file": "creator-u05/evidence/nature01-shots/dry_walk_3.png"
+        },
+        {
+          "key": "w",
+          "tile": [
+            2640,
+            1319
+          ],
+          "px": 42248,
+          "py": 21116,
+          "movedPx": 1212,
+          "natureObjectsDrawn": 35,
+          "file": "creator-u05/evidence/nature01-shots/dry_walk_4.png"
+        }
+      ]
+    },
+    {
+      "site": "rocky_highlands",
+      "startTile": [
+        1100,
+        1200
+      ],
+      "endTile": [
+        1100,
+        1200
+      ],
+      "totalMovedPx": 1224,
+      "netDisplacementPx": 0,
+      "realKeyEvents": {
+        "down": 4,
+        "up": 4
+      },
+      "teleportUsed": false,
+      "camUsedAsRoute": false,
+      "spawnFixtureOnlyAtReset": true,
+      "zoomMode": "NATIVE_1X",
+      "cameraFollowsPlayer": true,
+      "steps": [
+        {
+          "key": "d",
+          "tile": [
+            1120,
+            1200
+          ],
+          "px": 17920,
+          "py": 19208,
+          "movedPx": 312,
+          "natureObjectsDrawn": 79,
+          "file": "creator-u05/evidence/nature01-shots/rocky_highlands_walk_1.png"
+        },
+        {
+          "key": "s",
+          "tile": [
+            1120,
+            1219
+          ],
+          "px": 17920,
+          "py": 19508,
+          "movedPx": 612,
+          "natureObjectsDrawn": 42,
+          "file": "creator-u05/evidence/nature01-shots/rocky_highlands_walk_2.png"
+        },
+        {
+          "key": "a",
+          "tile": [
+            1100,
+            1219
+          ],
+          "px": 17608,
+          "py": 19508,
+          "movedPx": 924,
+          "natureObjectsDrawn": 72,
+          "file": "creator-u05/evidence/nature01-shots/rocky_highlands_walk_3.png"
+        },
+        {
+          "key": "w",
+          "tile": [
+            1100,
+            1200
+          ],
+          "px": 17608,
+          "py": 19208,
+          "movedPx": 1224,
+          "natureObjectsDrawn": 92,
+          "file": "creator-u05/evidence/nature01-shots/rocky_highlands_walk_4.png"
+        }
+      ]
+    }
+  ],
+  "obstruction": [
+    {
+      "site": "temperate_forest",
+      "off": {
+        "movedPx": 31,
+        "blockedSubsteps": 0,
+        "collision": "FREE_ROAM__NO_COLLISION",
+        "natureBlocksMovement": false,
+        "terrain": 5
+      },
+      "on": {
+        "movedPx": 30,
+        "blockedSubsteps": 0,
+        "collision": "FREE_ROAM__NO_COLLISION",
+        "natureBlocksMovement": false,
+        "terrain": 5
+      },
+      "movedPxRatio": 0.968
+    },
+    {
+      "site": "snow_forest",
+      "off": {
+        "movedPx": 34,
+        "blockedSubsteps": 0,
+        "collision": "FREE_ROAM__NO_COLLISION",
+        "natureBlocksMovement": false,
+        "terrain": 9
+      },
+      "on": {
+        "movedPx": 31,
+        "blockedSubsteps": 0,
+        "collision": "FREE_ROAM__NO_COLLISION",
+        "natureBlocksMovement": false,
+        "terrain": 9
+      },
+      "movedPxRatio": 0.912
+    },
+    {
+      "site": "marsh",
+      "off": {
+        "movedPx": 30,
+        "blockedSubsteps": 0,
+        "collision": "FREE_ROAM__NO_COLLISION",
+        "natureBlocksMovement": false,
+        "terrain": 6
+      },
+      "on": {
+        "movedPx": 30,
+        "blockedSubsteps": 0,
+        "collision": "FREE_ROAM__NO_COLLISION",
+        "natureBlocksMovement": false,
+        "terrain": 6
+      },
+      "movedPxRatio": 1
+    },
+    {
+      "site": "dry",
+      "off": {
+        "movedPx": 30,
+        "blockedSubsteps": 0,
+        "collision": "FREE_ROAM__NO_COLLISION",
+        "natureBlocksMovement": false,
+        "terrain": 7
+      },
+      "on": {
+        "movedPx": 30,
+        "blockedSubsteps": 0,
+        "collision": "FREE_ROAM__NO_COLLISION",
+        "natureBlocksMovement": false,
+        "terrain": 7
+      },
+      "movedPxRatio": 1
+    },
+    {
+      "site": "rocky_highlands",
+      "off": {
+        "movedPx": 30,
+        "blockedSubsteps": 0,
+        "collision": "FREE_ROAM__NO_COLLISION",
+        "natureBlocksMovement": false,
+        "terrain": 5
+      },
+      "on": {
+        "movedPx": 31,
+        "blockedSubsteps": 0,
+        "collision": "FREE_ROAM__NO_COLLISION",
+        "natureBlocksMovement": false,
+        "terrain": 5
+      },
+      "movedPxRatio": 1.033
+    }
+  ],
+  "perf": [
+    {
+      "site": "temperate_forest",
+      "onP50": 16.7,
+      "onP95": 16.7,
+      "offP50": 16.7,
+      "offP95": 16.7,
+      "p95Ratio": 1,
+      "onObjects": 128,
+      "natureChunks": 10,
+      "maxNatureChunks": 36,
+      "terrainChunks": 3,
+      "maxTerrainChunks": 36,
+      "displayCanvases": 32,
+      "materializedAllCells": false,
+      "overviewFullFrameAllocated": false
+    },
+    {
+      "site": "snow_forest",
+      "onP50": 16.7,
+      "onP95": 16.8,
+      "offP50": 16.7,
+      "offP95": 16.8,
+      "p95Ratio": 1,
+      "onObjects": 119,
+      "natureChunks": 19,
+      "maxNatureChunks": 36,
+      "terrainChunks": 5,
+      "maxTerrainChunks": 36,
+      "displayCanvases": 36,
+      "materializedAllCells": false,
+      "overviewFullFrameAllocated": false
+    },
+    {
+      "site": "marsh",
+      "onP50": 16.7,
+      "onP95": 16.8,
+      "offP50": 16.7,
+      "offP95": 16.8,
+      "p95Ratio": 1,
+      "onObjects": 156,
+      "natureChunks": 25,
+      "maxNatureChunks": 36,
+      "terrainChunks": 7,
+      "maxTerrainChunks": 36,
+      "displayCanvases": 36,
+      "materializedAllCells": false,
+      "overviewFullFrameAllocated": false
+    },
+    {
+      "site": "dry",
+      "onP50": 16.7,
+      "onP95": 16.8,
+      "offP50": 16.7,
+      "offP95": 16.8,
+      "p95Ratio": 1,
+      "onObjects": 39,
+      "natureChunks": 34,
+      "maxNatureChunks": 36,
+      "terrainChunks": 9,
+      "maxTerrainChunks": 36,
+      "displayCanvases": 36,
+      "materializedAllCells": false,
+      "overviewFullFrameAllocated": false
+    },
+    {
+      "site": "rocky_highlands",
+      "onP50": 16.7,
+      "onP95": 16.8,
+      "offP50": 16.7,
+      "offP95": 16.8,
+      "p95Ratio": 1,
+      "onObjects": 92,
+      "natureChunks": 36,
+      "maxNatureChunks": 36,
+      "terrainChunks": 13,
+      "maxTerrainChunks": 36,
+      "displayCanvases": 36,
+      "materializedAllCells": false,
+      "overviewFullFrameAllocated": false
+    }
+  ],
+  "terrainComparison": {
+    "tilesCompared": 12,
+    "identical": true,
+    "despeckleConfigIdentical": true,
+    "despeckleRuntimeCountersAreVisitDependent": true,
+    "isolatedPainted": 0
+  },
+  "shotsDirectory": "creator-u05/evidence/nature01-shots/",
+  "shotCount": 32,
+  "browserErrors": [],
+  "scope": "QA IS NOT VISUAL ACCEPTANCE. Five-biome pilot only; no full-world propagation, no POI architecture, no production merge, no VEYRA_PLAYABLE claim."
+}

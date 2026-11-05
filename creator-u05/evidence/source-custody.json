@@ -436,5 +436,32 @@
     },
     "u05Action": "NONE_REQUIRED__DRIFT_RECORDED",
     "fullGameplayIntegration": "NOT_YET_VALIDATED"
+  },
+  "nature01Disclosure": {
+    "pilot": "NATURE-01 five-biome decorative ecology pilot",
+    "branch": "arena/2e3cfbd2-soul-of-hero",
+    "verifiedMapHeadAtPilotStart": "b327e8049607791567defaf24bb6c6afc0871c84",
+    "gameplayHeadVerified": "5b3e683402bbc8540dea9404576164097e753f97",
+    "artSourceDrift": "web/src/game/art.ts unchanged between b5c8004c and 5b3e683 (git diff --stat empty)",
+    "newExecutable": "creator-u05/SoulOfHero_Nature01_U05.html",
+    "newExecutableSha256": "ac4d54e310f0f3cf7e0e12d728bc5e9ad62f801994be37ce64f76b099af4a0a7",
+    "baselineExecutable": "creator-u05/SoulOfHero_TerrainOnly_U05_x10.html",
+    "baselineSha256": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0",
+    "baselineUntouched": true,
+    "goldOrRasterOrRoadOrRiverEdits": 0,
+    "newArtAssets": 0,
+    "newAtlas": false,
+    "fullWorldPropagation": false,
+    "poiArchitectureStarted": false,
+    "productionMerge": false,
+    "creatorVisualAcceptance": "NOT_GRANTED",
+    "veyraPlayable": "NOT_CLAIMED",
+    "decorativeOnly": true,
+    "gameplayOwned": false,
+    "note": "Separate additive pilot. No PR44/main merge, no isolated branch, no Gameplay runtime integration claim. P5-G5/G6 remain FAIL, P5-G7/G8 PARTIAL. Standing verification packet at 5b3e683 is preserved; later live drift is disclosed above.",
+    "gameplayHeadObservedLaterInSession": "2f0836587b76a4a98fffedf8c202fb37cbb2a67c (Implement provisional territory cabinet upkeep)",
+    "driftAfterVerifiedHead": "The live Gameplay branch moved by 1 commit after the Creator-verified 5b3e683 head. git diff shows web/src/game/art.ts changed ONLY S.claim (a structure sprite); buildSources() (all 12 nature sprites) is unchanged. core.ts/catalog.ts/render.ts/balance.v1.json also changed in that commit.",
+    "reVendoredAfterDrift": false,
+    "custodyDecision": "NATURE-01 stays pinned to the Creator-verified 5b3e683 / vendored b5c8004c source. No re-vendor, no silent sync, no new atlas. The standing verification packet at 5b3e683 is preserved; the newer head is disclosed, not adopted."
   }
 }

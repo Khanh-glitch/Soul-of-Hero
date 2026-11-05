@@ -7,3 +7,6 @@ web-u05/node_modules
 web-u05/dist
 web-u05/terrain-only-dist
 *.log
+
+# NATURE-01 standalone build output (not committed)
+web-u05/nature01-dist

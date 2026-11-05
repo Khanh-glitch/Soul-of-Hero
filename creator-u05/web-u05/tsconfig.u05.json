@@ -9,6 +9,7 @@
   "include": [
     "src/u05/**/*.ts",
     "src/terrain-only/**/*.ts",
+    "src/nature01/**/*.ts",
     "src/game/core.ts",
     "src/game/art.ts",
     "src/game/catalog.ts",

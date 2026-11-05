@@ -312,3 +312,71 @@ QA **T-G20…T-G23 PASS**, tổng **T-G0…T-G23 = 24/24 PASS**, 15 ảnh, 0 l�
 `terrain_only_despeckled.png`. File HTML build lại 1.407.498 bytes
 (`sha256 540f095e…`), ZIP 120.378 bytes. Các cổng `P5-G5/G6` vẫn FAIL,
 `P5-G7/G8` PARTIAL; không claim tích hợp Gameplay đầy đủ / chấp nhận thị giác.
+
+
+---
+
+## 13. NATURE-01 — pilot 5 biome, lớp thiên nhiên trang trí có thể tắt
+
+Yêu cầu mới `SOH — NATURE-01: REAL WORLD ECOLOGY PILOT`. Đây là **file game MỚI**,
+không phải sửa file terrain-only:
+
+| File | Bytes | SHA-256 |
+|---|---:|---|
+| `SoulOfHero_TerrainOnly_U05_x10.html` (**giữ nguyên**) | 1.407.498 | `540f095e…` |
+| `SoulOfHero_Nature01_U05.html` (**mới**) | 1.427.241 | `ac4d54e3…` |
+
+Build script **assert SHA baseline trước khi ghi**; `src/terrain-only/*`,
+`src/u05/terrain.ts` (PAL/PRIO/texel verbatim), `src/u05/world.ts` (despeckle),
+21 raster WMP-04R1 và đường Beacon **không đổi**. `N` bật/tắt lớp thiên nhiên;
+khi **TẮT** canvas 640×360 1× **giống hệt từng pixel** file nền tại 6 vị trí
+(`N-G1`, so sánh SHA-256 PNG, clock rAF được đóng băng để khung hero xác định).
+
+**5 cửa sổ thử nghiệm có ranh giới** 96×64 tile, lấy đúng GOLD/WMP-04R1:
+(01) rừng ôn đới `[1440,1320]`, (02) rừng tuyết `[1360,840]`,
+(03) đầm lầy `[2160,840]`, (04) vùng khô `[2640,1320]`,
+(05) cao nguyên đá `[1100,1200]`. Ngoài 5 cửa sổ này **không có vật thể nào**
+→ đây là **pilot**, chưa nhân rộng toàn map. Beacon `[544,1304]` nằm ngoài,
+khi BẬT vẫn 0 vật thể.
+
+**Art & phân loại nguồn:** chỉ 12 mảng sprite có sẵn trong `getArt().src`
+(oak/pine/snowpine/willow/dead/rock/bush/bush_empty/grass/reed/herb/mush),
+`newArtAssets=0`, không atlas/PNG mới. Mọi vật thể
+`decorativeOnly=true, gameplayOwned=false`: **KHÔNG** phải tài nguyên thu hoạch,
+không stock/cạn kiệt/thưởng/sở hữu/tương tác, không chặn đường, không đổi
+`canStand()`. 7 sprite Gameplay-owned (`iron/coal/sulfur/crystal/stump/rubble/picked`)
+và `scrap/wreck` bị loại tường minh. Vẫn có **điểm yếu**: người chơi có thể nhầm
+cây trang trí với cây tài nguyên — quyết định phân biệt thuộc Gameplay, chưa bịa.
+
+**Quy tắc đặt (không rải ngẫu nhiên):** lưới jitter 3×3 / 2×2 xác định +
+`fbm` ~16 tile (clearings / open gap / rock cluster) + bảng `BIOME_RULES`;
+loại `water/road/bridge/river/lake/coast/sourceTile/cliff`, đệm **2 tile** quanh
+đường, reed chỉ ở bờ phía đất (`waterDist 1–2`), willow sau reed, cụm đá 1–3 viên
+y-sort. `auditPilot`: **2.944 vật thể, 0 vi phạm**, open ground
+84,4 % / 89,1 % / 82,4 % / **95,1 %** / 89,9 %. Thứ tự vẽ y-sort cùng hero
+(`tile*16+14`), có vật thể cả trước và sau hero ở cả 5 nơi.
+
+**Browser evidence:** `evidence/nature01-shots/` 32 ảnh native — 5 cặp OFF/ON
+cùng toạ độ + cặp Beacon + 4 ảnh đi bằng phím thật (`D→S→A→W`, x10,
+~1.200 px/mẫu, 4 keydown + 4 keyup, không teleport). `N-G0…N-G11`
+**12/12 PASS**, `errors=0`; `tests/test-nature01.mjs` **31/31**;
+`tests/test-u05.mjs` **272/0**; `tsc` sạch; p50/p95 = 16,7–16,8 ms ON và OFF
+(ratio 1,00), nature chunk ≤36, không cấp phát 11,2 triệu ô.
+`N-G9`: 12 tile authority (gồm Beacon) + cấu hình despeckle giống hệt,
+ô cô lập đã vẽ vẫn 0.
+
+**Bàn giao:** xin Creator **visual acceptance cho 5 mẫu** (có/không + ghi chú
+mật độ, màu sprite, clearing, mép nước, cụm đá, độ đọc đường). QA **không** phải
+chấp nhận thị giác. **DỪNG** trước khi nhân rộng toàn thế giới, trước POI
+architecture, trước production merge / PR44 / `main`, trước `VISUAL_ACCEPTED`,
+`productionAtlas`, `VEYRA_PLAYABLE` và mọi claim tích hợp Gameplay đầy đủ.
+`P5-G5/G6` vẫn **FAIL**, `P5-G7/G8` vẫn **PARTIAL**. Chi tiết:
+`docs/NATURE01_PILOT.md`, `evidence/nature01-{build,qa,sites,assets}.json`.
+
+**Lưu ý source custody:** trong lúc làm pilot, nhánh Gameplay live đã tiến thêm
+1 commit `2f083658…` (*Implement provisional territory cabinet upkeep*) sau HEAD
+`5b3e683…` mà Creator đã verify. `git diff … -- web/src/game/art.ts` chỉ đổi
+`S.claim` (sprite công trình, **không dùng** trong NATURE-01); `buildSources()`
+và 12 sprite thiên nhiên không đổi. Không re-vendor, không sync ngầm, không tạo
+atlas mới; gói verification đứng ở `5b3e683…` được **giữ nguyên**, drift được
+ghi rõ trong `evidence/source-custody.json → nature01Disclosure`.
