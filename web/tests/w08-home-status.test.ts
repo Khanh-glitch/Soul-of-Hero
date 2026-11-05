@@ -87,4 +87,25 @@ describe('W08 homeStatus (controlled fixtures)',()=>{
     expect(s.structures.find(x=>x.id===o.wall.id)!.state).toBe('uncovered');
     expect(stockBefore).toBe(30);
   });
+
+  it('a Cabinet standing alone is idle (no external coverage), not unreachable; billing for itself is unchanged', ()=>{
+    const o=setup();addItem(o.r,'inv','wood',40);addItem(o.r,'inv','stone',20);
+    buildAt(o,'floor_wood',3,-2);const cab=buildAt(o,'claim',3,-2);
+    const s=homeStatus(o.r);
+    const c=s.cabinets.find(x=>x.id===cab.id)!;
+    expect(c.state).toBe('idle');
+    expect(c.selfOnly).toBe(true);
+    expect(c.external).toBe(0);
+    expect(c.count).toBeGreaterThan(0);
+    expect(Object.keys(c.per24h).length).toBeGreaterThan(0);
+  });
+
+  it('a Cabinet funded only by its own upkeep does not count as covered structures', ()=>{
+    const o=setup();addItem(o.r,'inv','wood',40);addItem(o.r,'inv','stone',20);
+    buildAt(o,'floor_wood',3,-2);const cab=buildAt(o,'claim',3,-2);
+    addItem(o.r,cab.c!,'wood',20);addItem(o.r,cab.c!,'stone',10);
+    const c=homeStatus(o.r).cabinets.find(x=>x.id===cab.id)!;
+    expect(c.external).toBe(0);
+    expect(c.state).toBe('idle');
+  });
 });

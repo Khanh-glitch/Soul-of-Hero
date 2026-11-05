@@ -277,8 +277,11 @@ export function homeStatus(r: RunState) {
     for (const [k, q] of Object.entries(c.cabinet?.credit || {})) if (q > 1e-9) prepaid[k] = q;
     const per24h: Record<string, number> = {};
     for (const [k, rate] of Object.entries(f.rates)) per24h[k] = rate * 24 * HOUR;
-    const state: HomeCabinetState = f.count === 0 ? 'idle' : !f.funded ? 'unfunded' : f.hours < HOME_LOW_HOURS ? 'low' : 'funded';
-    return { id: c.id, tx: c.tx!, ty: c.ty!, state, hours: f.hours, funded: f.funded, count: f.count, per24h, stock, prepaid };
+    // The Cabinet is itself assigned to itself by planTerritory and pays its own upkeep (kept, not silently re-billed).
+    // 'idle' means no OTHER structure is covered; self-only Cabinets therefore never report 'idle' while a foundation stands alone.
+    const external = plan.structures.filter(e => e.id !== c.id && e.tx !== c.tx && e.ty !== c.ty && plan.assigned.get(e.id)?.id === c.id).length; // foundation under the Cabinet supports it, it is not covered
+    const state: HomeCabinetState = external === 0 ? 'idle' : !f.funded ? 'unfunded' : f.hours < HOME_LOW_HOURS ? 'low' : 'funded';
+    return { id: c.id, tx: c.tx!, ty: c.ty!, state, hours: f.hours, funded: f.funded, count: f.count, external, selfOnly: external === 0, per24h, stock, prepaid };
   });
   const structures = plan.structures.map(e => {
     const c = plan.assigned.get(e.id) ?? null;

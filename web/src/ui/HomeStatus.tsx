@@ -6,7 +6,7 @@ import type { RunState } from '../game/core';
 import { homeStatus, nearestHomeStructure, claimAt, type HomeCabinetState } from '../game/engine';
 
 export const CABINET_STATE_LABEL: Record<HomeCabinetState, string> = {
-  idle: 'No structures covered',
+  idle: 'No structures covered yet',
   unfunded: 'UNFUNDED',
   low: 'Low stock',
   funded: 'Funded',
@@ -65,13 +65,13 @@ export function CabinetReadout({ r, eid }: { r: RunState; eid: string }) {
   const status = homeStatus(r);
   const c = status.cabinets.find(x => x.id === eid);
   if (!c) return null;
-  const mine = status.structures.filter(s => s.cabinetId === eid);
+  const mine = status.structures.filter(s => s.cabinetId === eid && s.id !== eid);
   const shown = [...mine].sort((a, b) => (a.hoursToCollapse ?? 1e9) - (b.hoursToCollapse ?? 1e9)).slice(0, 8);
   const rates = Object.entries(c.per24h).map(([k, v]) => `${v.toFixed(2)} ${ITEMS[k].name}`).join(' · ') || 'none';
   const color = c.state === 'funded' ? '#9ae0a0' : c.state === 'low' ? '#e8c060' : c.state === 'unfunded' ? '#ff9a8a' : '#b8a8c8';
   return (
     <div data-testid="cabinet-readout" style={{ fontSize: 10, lineHeight: 1.25 }}>
-      <div><b style={{ color }}>{CABINET_STATE_LABEL[c.state]}</b> · {mine.length} covered · 25-tile coverage, nearest Cabinet assigned</div>
+      <div><b style={{ color }}>{CABINET_STATE_LABEL[c.state]}</b> · {c.external} covered · 25-tile coverage, nearest Cabinet assigned{c.selfOnly ? ' · Cabinet pays only its own upkeep' : ''}</div>
       <div>Physical stock: {stockList(c.stock)}</div>
       <div>Prepaid credit: {stockList(Object.fromEntries(Object.entries(c.prepaid).map(([k, q]) => [k, Math.round(q * 100) / 100])), 'none')}</div>
       <div>Upkeep per 24h: {rates}{c.state === 'funded' || c.state === 'low' ? ` · lasts ${hoursLabel(c.hours)}` : ''}</div>
