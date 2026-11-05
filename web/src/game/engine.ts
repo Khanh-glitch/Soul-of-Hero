@@ -264,6 +264,43 @@ function planTerritory(r:RunState):TerritoryPlan {
 }
 export function territoryRates(r: RunState,c:Entity):Record<string,number> {return planTerritory(r).forecast.get(c.id)?.rates||{};}
 export function territoryForecast(r: RunState,c: Entity) {return planTerritory(r).forecast.get(c.id)||{rates:{},hours:0,funded:false,count:0};}
+/** Read-only home maintenance view. Derived from the same planTerritory authority as upkeep and decay; never a second ledger. */
+export type HomeStructureState = 'uncovered' | 'unfunded' | 'funded';
+export type HomeCabinetState = 'idle' | 'unfunded' | 'low' | 'funded';
+export const HOME_LOW_HOURS = 24;
+export function homeStatus(r: RunState) {
+  const plan = planTerritory(r);
+  const cabinets = plan.cabinets.map(c => {
+    const f = plan.forecast.get(c.id)!;
+    const stock: Record<string, number> = {}, prepaid: Record<string, number> = {};
+    for (const k of BAL.territory.materials) { const q = countItem(r, c.c!, k); if (q > 0) stock[k] = q; }
+    for (const [k, q] of Object.entries(c.cabinet?.credit || {})) if (q > 1e-9) prepaid[k] = q;
+    const per24h: Record<string, number> = {};
+    for (const [k, rate] of Object.entries(f.rates)) per24h[k] = rate * 24 * HOUR;
+    const state: HomeCabinetState = f.count === 0 ? 'idle' : !f.funded ? 'unfunded' : f.hours < HOME_LOW_HOURS ? 'low' : 'funded';
+    return { id: c.id, tx: c.tx!, ty: c.ty!, state, hours: f.hours, funded: f.funded, count: f.count, per24h, stock, prepaid };
+  });
+  const structures = plan.structures.map(e => {
+    const c = plan.assigned.get(e.id) ?? null;
+    const f = c ? plan.forecast.get(c.id)! : null;
+    const funded = !!(c && f?.funded);
+    const state: HomeStructureState = !c ? 'uncovered' : funded ? 'funded' : 'unfunded';
+    const collapseHours = c ? BAL.territory.unfundedCollapseHours : BAL.territory.unprotectedCollapseHours;
+    const hoursToCollapse = funded ? null : (e.hp! / e.maxHp!) * collapseHours;
+    return { id: e.id, type: e.type!, name: STRUCTS[e.type!]?.name || e.type!, tx: e.tx!, ty: e.ty!, hp: e.hp!, maxHp: e.maxHp!, damaged: e.hp! < e.maxHp!, state, cabinetId: c?.id ?? null, hoursToCollapse, repairCost: structureRepairCost(e) };
+  });
+  return { cabinets, structures, uncoveredCount: structures.filter(s => s.state === 'uncovered').length };
+}
+/** Nearest owned structure to a tile, for the contextual HUD. */
+export function nearestHomeStructure(r: RunState, tx: number, ty: number, maxTiles = 6) {
+  let best: Entity | null = null, bestD = Infinity;
+  for (const e of Object.values(r.entities)) {
+    if (e.kind !== 'struct' || (e.owner !== undefined && e.owner !== 'player') || e.tx === undefined || e.ty === undefined || e.hp === undefined || STRUCTS[e.type!]?.item) continue;
+    const d = Math.hypot(e.tx - tx, e.ty - ty);
+    if (d <= maxTiles && (d < bestD || (d === bestD && e.id.localeCompare(best!.id) < 0))) { best = e; bestD = d; }
+  }
+  return best;
+}
 /** Bound at the first exhaustion or real structure collapse. */
 export function territoryBoundary(r:RunState,limit:number) {
   let dt=limit;const plan=planTerritory(r);

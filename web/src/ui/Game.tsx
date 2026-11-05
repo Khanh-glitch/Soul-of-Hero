@@ -12,6 +12,7 @@ import { getWorld, ZONES } from '../game/world';
 import { sfx, setAmbience, initAudio } from '../game/audio';
 import { save, saveSync } from '../game/persist';
 import { Slot, Bar, Icon, mkIntent, type Api, type PanelState } from './common';
+import { HomeStatusCard } from './HomeStatus';
 import { InventoryPanel, ContainerPanel, CraftPanel, BuildPanel, MapPanel, SkillsPanel, MenuPanel, VendorPanel, EscrowPanel, EvacPanel, ReportPanel } from './panels';
 
 export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; report: string[] | null; onExit: () => void; onRunEnd: () => void }) {
@@ -190,7 +191,6 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
   const hoverX=Math.floor((mouse.current.x+Math.round(cam.x))/TILE), hoverY=Math.floor((mouse.current.y+Math.round(cam.y))/TILE);
   const layers=['wall','obj','roof','floor']; const hover=entsAt(r,hoverX,hoverY).filter(e=>e.kind==='struct'&&(editLayer==='auto'||STRUCTS[e.type!].layer===editLayer)&&(!upgradeMode||!!STRUCTURE_UPGRADES[e.type!])).sort((a,b)=>layers.indexOf(STRUCTS[a.type!].layer)-layers.indexOf(STRUCTS[b.type!].layer))[0];
   const placementReason=buildType?buildReason(gs,buildType,hoverX,hoverY):null;
-  const nearbyUnfunded = Object.values(r.entities).find(e=>e.kind==='struct' && (e.owner===undefined||e.owner==='player') && e.tx!==undefined && e.ty!==undefined && Math.hypot(e.x-p.x,e.y-p.y)<5*TILE && (()=>{const c=claimAt(r,e.tx!,e.ty!);return !c||!territoryForecast(r,c).funded;})());
   const heldCash = countItem(r, 'inv', 'rcash'); const surf = SPEED_KEY[effTile(r, Math.floor(p.x / 16), Math.floor(p.y / 16))] || '';
 
   return <div style={{ position: 'fixed', inset: 0, cursor: buildType || reclaim || repairMode || upgradeMode ? 'cell' : 'crosshair' }} onMouseMove={onMouseMove} onMouseDown={onMouseDown} onMouseUp={onMouseUp} onContextMenu={e => e.preventDefault()}>
@@ -211,7 +211,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
         {ph === 'calm' && hrs > 230 && <div style={{ color: '#ff9a5a' }}>Ragnarok in {(264 - hrs).toFixed(1)}h</div>}
       </div>
       {Object.values(r.entities).filter(e=>e.kind==='airdrop'&&e.airdrop).map(e=><div key={e.id} className="panel absolute" style={{left:165,top:5,padding:'2px 6px',fontSize:10,color:'#ffe27a',pointerEvents:'none'}}>Airdrop reported near {airdropArea(e.tx!,e.ty!)} · {e.airdrop!.phase==='signal'?'incoming':e.airdrop!.phase==='descending'?'descending':'landed'}</div>)}
-      {nearbyUnfunded && !panel && <div className="panel absolute" style={{right:4,top:105,padding:'2px 5px',fontSize:10,color:'#ffae89',pointerEvents:'none'}}>Nearby building: no funded upkeep · decaying</div>}
+      {!panel && <HomeStatusCard r={r} px={p.x} py={p.y} />}
       {engaged && (() => { const d = ELDERS[engaged.elder!.key]; return <div className="absolute" style={{ left: 170, top: 6, width: 300, textAlign: 'center' }}><div className="title-font" style={{ fontSize: 10, color: d.color, textShadow: '1px 1px 0 #000' }}>{d.name} <span style={{ color: '#cfc2dc', fontSize: 9 }}>— {engaged.elder!.awake ? 'awakened' : 'latent'}</span></div><div className="bar" style={{ width: 300, height: 6 }}><i style={{ width: `${(engaged.hp / engaged.maxHp) * 100}%`, background: `linear-gradient(${d.color}, #8a2a1a)` }} /></div></div>; })()}
       {banner && <div key={banner.id} className="absolute banner" style={{ left: 0, right: 0, top: 70, textAlign: 'center', pointerEvents: 'none' }} onAnimationEnd={() => setBanner(null)}><div className="title-font" style={{ fontSize: 22, color: '#ffe8b0', textShadow: '2px 2px 0 #2a1006, 0 0 8px #ff9a3a' }}>{banner.text}</div>{banner.sub && <div style={{ fontSize: 12, color: '#e0d0f0', textShadow: '1px 1px 0 #000' }}>{banner.sub}</div>}</div>}
       {coreAim && ['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'') && coreAim.mode==='signature' && <svg className="absolute" width={VIEW_W} height={VIEW_H} style={{left:0,top:0,pointerEvents:'none'}}><rect x="2" y="2" width={VIEW_W-4} height={VIEW_H-4} fill="none" stroke="#ffd98a" strokeDasharray="4 3"/></svg>}

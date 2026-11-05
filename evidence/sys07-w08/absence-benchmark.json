@@ -1,0 +1,3485 @@
+{
+ "generatedAt": "2026-11-05T20:53:23.589Z",
+ "controlledFixture": true,
+ "note": "Controlled fixture: stock is injected into real containers and time advances through settle(). Natural acquisition time is NOT measured here. Player survival is reported separately (thirst/hunger are not topped up).",
+ "baseline": {
+  "upkeepFractionPerDay": 0.25,
+  "unprotectedCollapseHours": 12,
+  "unfundedCollapseHours": 12,
+  "status": "SOH_PROVISIONAL_REVERSIBLE: not historical LI numeric parity"
+ },
+ "rowsBaseline": [
+  {
+   "scenario": "temporary",
+   "hours": 8,
+   "structuresStart": 6,
+   "structuresEnd": 6,
+   "lost": 0,
+   "meanHpEnd": 46.7,
+   "stockSpent": {},
+   "cabinetStockEnd": null,
+   "prepaidEnd": null,
+   "claimAlive": false,
+   "player": {
+    "hp": 100,
+    "dead": false,
+    "sheltered": true
+   },
+   "bags": 0,
+   "upkeepDebits": {}
+  },
+  {
+   "scenario": "temporary",
+   "hours": 24,
+   "structuresStart": 6,
+   "structuresEnd": 0,
+   "lost": 6,
+   "meanHpEnd": null,
+   "stockSpent": {},
+   "cabinetStockEnd": null,
+   "prepaidEnd": null,
+   "claimAlive": false,
+   "player": {
+    "hp": 0,
+    "dead": true,
+    "sheltered": false
+   },
+   "bags": 1,
+   "upkeepDebits": {}
+  },
+  {
+   "scenario": "temporary",
+   "hours": 48,
+   "structuresStart": 6,
+   "structuresEnd": 0,
+   "lost": 6,
+   "meanHpEnd": null,
+   "stockSpent": {},
+   "cabinetStockEnd": null,
+   "prepaidEnd": null,
+   "claimAlive": false,
+   "player": {
+    "hp": 0,
+    "dead": true,
+    "sheltered": false
+   },
+   "bags": 1,
+   "upkeepDebits": {}
+  },
+  {
+   "scenario": "temporary",
+   "hours": 72,
+   "structuresStart": 6,
+   "structuresEnd": 0,
+   "lost": 6,
+   "meanHpEnd": null,
+   "stockSpent": {},
+   "cabinetStockEnd": null,
+   "prepaidEnd": null,
+   "claimAlive": false,
+   "player": {
+    "hp": 0,
+    "dead": true,
+    "sheltered": false
+   },
+   "bags": 1,
+   "upkeepDebits": {}
+  },
+  {
+   "scenario": "unfunded",
+   "hours": 8,
+   "structuresStart": 8,
+   "structuresEnd": 8,
+   "lost": 0,
+   "meanHpEnd": 48.3,
+   "stockSpent": {},
+   "cabinetStockEnd": {},
+   "prepaidEnd": {},
+   "claimAlive": true,
+   "player": {
+    "hp": 100,
+    "dead": false,
+    "sheltered": true
+   },
+   "bags": 0,
+   "upkeepDebits": {}
+  },
+  {
+   "scenario": "unfunded",
+   "hours": 24,
+   "structuresStart": 8,
+   "structuresEnd": 0,
+   "lost": 8,
+   "meanHpEnd": null,
+   "stockSpent": {},
+   "cabinetStockEnd": null,
+   "prepaidEnd": null,
+   "claimAlive": false,
+   "player": {
+    "hp": 0,
+    "dead": true,
+    "sheltered": false
+   },
+   "bags": 1,
+   "upkeepDebits": {}
+  },
+  {
+   "scenario": "unfunded",
+   "hours": 48,
+   "structuresStart": 8,
+   "structuresEnd": 0,
+   "lost": 8,
+   "meanHpEnd": null,
+   "stockSpent": {},
+   "cabinetStockEnd": null,
+   "prepaidEnd": null,
+   "claimAlive": false,
+   "player": {
+    "hp": 0,
+    "dead": true,
+    "sheltered": false
+   },
+   "bags": 1,
+   "upkeepDebits": {}
+  },
+  {
+   "scenario": "unfunded",
+   "hours": 72,
+   "structuresStart": 8,
+   "structuresEnd": 0,
+   "lost": 8,
+   "meanHpEnd": null,
+   "stockSpent": {},
+   "cabinetStockEnd": null,
+   "prepaidEnd": null,
+   "claimAlive": false,
+   "player": {
+    "hp": 0,
+    "dead": true,
+    "sheltered": false
+   },
+   "bags": 1,
+   "upkeepDebits": {}
+  },
+  {
+   "scenario": "compact",
+   "hours": 8,
+   "structuresStart": 8,
+   "structuresEnd": 8,
+   "lost": 0,
+   "meanHpEnd": 145,
+   "stockSpent": {
+    "wood": 4,
+    "stone": 1,
+    "fiber": 1
+   },
+   "cabinetStockEnd": {
+    "wood": 27,
+    "stone": 4,
+    "fiber": 4
+   },
+   "prepaidEnd": {
+    "fiber": 0.583,
+    "stone": 0.583,
+    "wood": 0.667
+   },
+   "claimAlive": true,
+   "player": {
+    "hp": 100,
+    "dead": false,
+    "sheltered": true
+   },
+   "bags": 0,
+   "upkeepDebits": {
+    "wood": 4,
+    "fiber": 1,
+    "stone": 1
+   }
+  },
+  {
+   "scenario": "compact",
+   "hours": 24,
+   "structuresStart": 8,
+   "structuresEnd": 8,
+   "lost": 0,
+   "meanHpEnd": 145,
+   "stockSpent": {
+    "wood": 10,
+    "stone": 2,
+    "fiber": 2
+   },
+   "cabinetStockEnd": {
+    "wood": 21,
+    "stone": 3,
+    "fiber": 3
+   },
+   "prepaidEnd": {
+    "fiber": 0.75,
+    "stone": 0.75
+   },
+   "claimAlive": true,
+   "player": {
+    "hp": 0,
+    "dead": true,
+    "sheltered": true
+   },
+   "bags": 1,
+   "upkeepDebits": {
+    "wood": 10,
+    "fiber": 2,
+    "stone": 2
+   }
+  },
+  {
+   "scenario": "compact",
+   "hours": 48,
+   "structuresStart": 8,
+   "structuresEnd": 8,
+   "lost": 0,
+   "meanHpEnd": 145,
+   "stockSpent": {
+    "wood": 20,
+    "stone": 3,
+    "fiber": 3
+   },
+   "cabinetStockEnd": {
+    "wood": 11,
+    "stone": 2,
+    "fiber": 2
+   },
+   "prepaidEnd": {
+    "fiber": 0.5,
+    "stone": 0.5
+   },
+   "claimAlive": true,
+   "player": {
+    "hp": 0,
+    "dead": true,
+    "sheltered": true
+   },
+   "bags": 1,
+   "upkeepDebits": {
+    "wood": 20,
+    "fiber": 3,
+    "stone": 3
+   }
+  },
+  {
+   "scenario": "compact",
+   "hours": 72,
+   "structuresStart": 8,
+   "structuresEnd": 8,
+   "lost": 0,
+   "meanHpEnd": 145,
+   "stockSpent": {
+    "wood": 30,
+    "stone": 4,
+    "fiber": 4
+   },
+   "cabinetStockEnd": {
+    "wood": 1,
+    "stone": 1,
+    "fiber": 1
+   },
+   "prepaidEnd": {
+    "fiber": 0.25,
+    "stone": 0.25
+   },
+   "claimAlive": true,
+   "player": {
+    "hp": 0,
+    "dead": true,
+    "sheltered": true
+   },
+   "bags": 1,
+   "upkeepDebits": {
+    "wood": 30,
+    "fiber": 4,
+    "stone": 4
+   }
+  },
+  {
+   "scenario": "workshop",
+   "hours": 8,
+   "structuresStart": 12,
+   "structuresEnd": 12,
+   "lost": 0,
+   "meanHpEnd": 155,
+   "stockSpent": {
+    "wood": 6,
+    "stone": 3,
+    "fiber": 1
+   },
+   "cabinetStockEnd": {
+    "wood": 45,
+    "stone": 19,
+    "fiber": 4
+   },
+   "prepaidEnd": {
+    "wood": 0.5,
+    "fiber": 0.583,
+    "stone": 0.75
+   },
+   "claimAlive": true,
+   "player": {
+    "hp": 100,
+    "dead": false,
+    "sheltered": true
+   },
+   "bags": 0,
+   "upkeepDebits": {
+    "wood": 6,
+    "fiber": 1,
+    "stone": 3
+   }
+  },
+  {
+   "scenario": "workshop",
+   "hours": 24,
+   "structuresStart": 12,
+   "structuresEnd": 12,
+   "lost": 0,
+   "meanHpEnd": 155,
+   "stockSpent": {
+    "wood": 17,
+    "stone": 7,
+    "fiber": 2
+   },
+   "cabinetStockEnd": {
+    "wood": 34,
+    "stone": 15,
+    "fiber": 3
+   },
+   "prepaidEnd": {
+    "wood": 0.5,
+    "fiber": 0.75,
+    "stone": 0.25
+   },
+   "claimAlive": true,
+   "player": {
+    "hp": 0,
+    "dead": true,
+    "sheltered": true
+   },
+   "bags": 1,
+   "upkeepDebits": {
+    "wood": 17,
+    "fiber": 2,
+    "stone": 7
+   }
+  },
+  {
+   "scenario": "workshop",
+   "hours": 48,
+   "structuresStart": 12,
+   "structuresEnd": 12,
+   "lost": 0,
+   "meanHpEnd": 155,
+   "stockSpent": {
+    "wood": 33,
+    "stone": 14,
+    "fiber": 3
+   },
+   "cabinetStockEnd": {
+    "wood": 18,
+    "stone": 8,
+    "fiber": 2
+   },
+   "prepaidEnd": {
+    "fiber": 0.5,
+    "stone": 0.5
+   },
+   "claimAlive": true,
+   "player": {
+    "hp": 0,
+    "dead": true,
+    "sheltered": true
+   },
+   "bags": 1,
+   "upkeepDebits": {
+    "wood": 33,
+    "fiber": 3,
+    "stone": 14
+   }
+  },
+  {
+   "scenario": "workshop",
+   "hours": 72,
+   "structuresStart": 12,
+   "structuresEnd": 12,
+   "lost": 0,
+   "meanHpEnd": 155,
+   "stockSpent": {
+    "wood": 50,
+    "stone": 21,
+    "fiber": 4
+   },
+   "cabinetStockEnd": {
+    "wood": 1,
+    "stone": 1,
+    "fiber": 1
+   },
+   "prepaidEnd": {
+    "fiber": 0.25,
+    "wood": 0.5,
+    "stone": 0.75
+   },
+   "claimAlive": true,
+   "player": {
+    "hp": 0,
+    "dead": true,
+    "sheltered": true
+   },
+   "bags": 1,
+   "upkeepDebits": {
+    "wood": 50,
+    "fiber": 4,
+    "stone": 21
+   }
+  }
+ ],
+ "collapseSweep": [
+  {
+   "candidate": {
+    "unprotectedCollapseHours": 2,
+    "unfundedCollapseHours": 2
+   },
+   "rows": [
+    {
+     "scenario": "temporary",
+     "hours": 8,
+     "structuresStart": 6,
+     "structuresEnd": 0,
+     "lost": 6,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": false
+     },
+     "bags": 0,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "temporary",
+     "hours": 24,
+     "structuresStart": 6,
+     "structuresEnd": 0,
+     "lost": 6,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "temporary",
+     "hours": 48,
+     "structuresStart": 6,
+     "structuresEnd": 0,
+     "lost": 6,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "temporary",
+     "hours": 72,
+     "structuresStart": 6,
+     "structuresEnd": 0,
+     "lost": 6,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 8,
+     "structuresStart": 8,
+     "structuresEnd": 0,
+     "lost": 8,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": false
+     },
+     "bags": 0,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 24,
+     "structuresStart": 8,
+     "structuresEnd": 0,
+     "lost": 8,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 48,
+     "structuresStart": 8,
+     "structuresEnd": 0,
+     "lost": 8,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 72,
+     "structuresStart": 8,
+     "structuresEnd": 0,
+     "lost": 8,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "compact",
+     "hours": 8,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 4,
+      "stone": 1,
+      "fiber": 1
+     },
+     "cabinetStockEnd": {
+      "wood": 27,
+      "stone": 4,
+      "fiber": 4
+     },
+     "prepaidEnd": {
+      "fiber": 0.583,
+      "stone": 0.583,
+      "wood": 0.667
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": true
+     },
+     "bags": 0,
+     "upkeepDebits": {
+      "wood": 4,
+      "fiber": 1,
+      "stone": 1
+     }
+    },
+    {
+     "scenario": "compact",
+     "hours": 24,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 10,
+      "stone": 2,
+      "fiber": 2
+     },
+     "cabinetStockEnd": {
+      "wood": 21,
+      "stone": 3,
+      "fiber": 3
+     },
+     "prepaidEnd": {
+      "fiber": 0.75,
+      "stone": 0.75
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 10,
+      "fiber": 2,
+      "stone": 2
+     }
+    },
+    {
+     "scenario": "compact",
+     "hours": 48,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 20,
+      "stone": 3,
+      "fiber": 3
+     },
+     "cabinetStockEnd": {
+      "wood": 11,
+      "stone": 2,
+      "fiber": 2
+     },
+     "prepaidEnd": {
+      "fiber": 0.5,
+      "stone": 0.5
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 20,
+      "fiber": 3,
+      "stone": 3
+     }
+    },
+    {
+     "scenario": "compact",
+     "hours": 72,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 30,
+      "stone": 4,
+      "fiber": 4
+     },
+     "cabinetStockEnd": {
+      "wood": 1,
+      "stone": 1,
+      "fiber": 1
+     },
+     "prepaidEnd": {
+      "fiber": 0.25,
+      "stone": 0.25
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 30,
+      "fiber": 4,
+      "stone": 4
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 8,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 6,
+      "stone": 3,
+      "fiber": 1
+     },
+     "cabinetStockEnd": {
+      "wood": 45,
+      "stone": 19,
+      "fiber": 4
+     },
+     "prepaidEnd": {
+      "wood": 0.5,
+      "fiber": 0.583,
+      "stone": 0.75
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": true
+     },
+     "bags": 0,
+     "upkeepDebits": {
+      "wood": 6,
+      "fiber": 1,
+      "stone": 3
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 24,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 17,
+      "stone": 7,
+      "fiber": 2
+     },
+     "cabinetStockEnd": {
+      "wood": 34,
+      "stone": 15,
+      "fiber": 3
+     },
+     "prepaidEnd": {
+      "wood": 0.5,
+      "fiber": 0.75,
+      "stone": 0.25
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 17,
+      "fiber": 2,
+      "stone": 7
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 48,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 33,
+      "stone": 14,
+      "fiber": 3
+     },
+     "cabinetStockEnd": {
+      "wood": 18,
+      "stone": 8,
+      "fiber": 2
+     },
+     "prepaidEnd": {
+      "fiber": 0.5,
+      "stone": 0.5
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 33,
+      "fiber": 3,
+      "stone": 14
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 72,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 50,
+      "stone": 21,
+      "fiber": 4
+     },
+     "cabinetStockEnd": {
+      "wood": 1,
+      "stone": 1,
+      "fiber": 1
+     },
+     "prepaidEnd": {
+      "fiber": 0.25,
+      "wood": 0.5,
+      "stone": 0.75
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 50,
+      "fiber": 4,
+      "stone": 21
+     }
+    }
+   ]
+  },
+  {
+   "candidate": {
+    "unprotectedCollapseHours": 4,
+    "unfundedCollapseHours": 4
+   },
+   "rows": [
+    {
+     "scenario": "temporary",
+     "hours": 8,
+     "structuresStart": 6,
+     "structuresEnd": 0,
+     "lost": 6,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": false
+     },
+     "bags": 0,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "temporary",
+     "hours": 24,
+     "structuresStart": 6,
+     "structuresEnd": 0,
+     "lost": 6,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "temporary",
+     "hours": 48,
+     "structuresStart": 6,
+     "structuresEnd": 0,
+     "lost": 6,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "temporary",
+     "hours": 72,
+     "structuresStart": 6,
+     "structuresEnd": 0,
+     "lost": 6,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 8,
+     "structuresStart": 8,
+     "structuresEnd": 0,
+     "lost": 8,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": false
+     },
+     "bags": 0,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 24,
+     "structuresStart": 8,
+     "structuresEnd": 0,
+     "lost": 8,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 48,
+     "structuresStart": 8,
+     "structuresEnd": 0,
+     "lost": 8,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 72,
+     "structuresStart": 8,
+     "structuresEnd": 0,
+     "lost": 8,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "compact",
+     "hours": 8,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 4,
+      "stone": 1,
+      "fiber": 1
+     },
+     "cabinetStockEnd": {
+      "wood": 27,
+      "stone": 4,
+      "fiber": 4
+     },
+     "prepaidEnd": {
+      "fiber": 0.583,
+      "stone": 0.583,
+      "wood": 0.667
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": true
+     },
+     "bags": 0,
+     "upkeepDebits": {
+      "wood": 4,
+      "fiber": 1,
+      "stone": 1
+     }
+    },
+    {
+     "scenario": "compact",
+     "hours": 24,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 10,
+      "stone": 2,
+      "fiber": 2
+     },
+     "cabinetStockEnd": {
+      "wood": 21,
+      "stone": 3,
+      "fiber": 3
+     },
+     "prepaidEnd": {
+      "fiber": 0.75,
+      "stone": 0.75
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 10,
+      "fiber": 2,
+      "stone": 2
+     }
+    },
+    {
+     "scenario": "compact",
+     "hours": 48,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 20,
+      "stone": 3,
+      "fiber": 3
+     },
+     "cabinetStockEnd": {
+      "wood": 11,
+      "stone": 2,
+      "fiber": 2
+     },
+     "prepaidEnd": {
+      "fiber": 0.5,
+      "stone": 0.5
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 20,
+      "fiber": 3,
+      "stone": 3
+     }
+    },
+    {
+     "scenario": "compact",
+     "hours": 72,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 30,
+      "stone": 4,
+      "fiber": 4
+     },
+     "cabinetStockEnd": {
+      "wood": 1,
+      "stone": 1,
+      "fiber": 1
+     },
+     "prepaidEnd": {
+      "fiber": 0.25,
+      "stone": 0.25
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 30,
+      "fiber": 4,
+      "stone": 4
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 8,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 6,
+      "stone": 3,
+      "fiber": 1
+     },
+     "cabinetStockEnd": {
+      "wood": 45,
+      "stone": 19,
+      "fiber": 4
+     },
+     "prepaidEnd": {
+      "wood": 0.5,
+      "fiber": 0.583,
+      "stone": 0.75
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": true
+     },
+     "bags": 0,
+     "upkeepDebits": {
+      "wood": 6,
+      "fiber": 1,
+      "stone": 3
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 24,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 17,
+      "stone": 7,
+      "fiber": 2
+     },
+     "cabinetStockEnd": {
+      "wood": 34,
+      "stone": 15,
+      "fiber": 3
+     },
+     "prepaidEnd": {
+      "wood": 0.5,
+      "fiber": 0.75,
+      "stone": 0.25
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 17,
+      "fiber": 2,
+      "stone": 7
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 48,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 33,
+      "stone": 14,
+      "fiber": 3
+     },
+     "cabinetStockEnd": {
+      "wood": 18,
+      "stone": 8,
+      "fiber": 2
+     },
+     "prepaidEnd": {
+      "fiber": 0.5,
+      "stone": 0.5
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 33,
+      "fiber": 3,
+      "stone": 14
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 72,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 50,
+      "stone": 21,
+      "fiber": 4
+     },
+     "cabinetStockEnd": {
+      "wood": 1,
+      "stone": 1,
+      "fiber": 1
+     },
+     "prepaidEnd": {
+      "fiber": 0.25,
+      "wood": 0.5,
+      "stone": 0.75
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 50,
+      "fiber": 4,
+      "stone": 21
+     }
+    }
+   ]
+  },
+  {
+   "candidate": {
+    "unprotectedCollapseHours": 8,
+    "unfundedCollapseHours": 8
+   },
+   "rows": [
+    {
+     "scenario": "temporary",
+     "hours": 8,
+     "structuresStart": 6,
+     "structuresEnd": 0,
+     "lost": 6,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": false
+     },
+     "bags": 0,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "temporary",
+     "hours": 24,
+     "structuresStart": 6,
+     "structuresEnd": 0,
+     "lost": 6,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "temporary",
+     "hours": 48,
+     "structuresStart": 6,
+     "structuresEnd": 0,
+     "lost": 6,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "temporary",
+     "hours": 72,
+     "structuresStart": 6,
+     "structuresEnd": 0,
+     "lost": 6,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 8,
+     "structuresStart": 8,
+     "structuresEnd": 0,
+     "lost": 8,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": false
+     },
+     "bags": 0,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 24,
+     "structuresStart": 8,
+     "structuresEnd": 0,
+     "lost": 8,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 48,
+     "structuresStart": 8,
+     "structuresEnd": 0,
+     "lost": 8,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 72,
+     "structuresStart": 8,
+     "structuresEnd": 0,
+     "lost": 8,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "compact",
+     "hours": 8,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 4,
+      "stone": 1,
+      "fiber": 1
+     },
+     "cabinetStockEnd": {
+      "wood": 27,
+      "stone": 4,
+      "fiber": 4
+     },
+     "prepaidEnd": {
+      "fiber": 0.583,
+      "stone": 0.583,
+      "wood": 0.667
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": true
+     },
+     "bags": 0,
+     "upkeepDebits": {
+      "wood": 4,
+      "fiber": 1,
+      "stone": 1
+     }
+    },
+    {
+     "scenario": "compact",
+     "hours": 24,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 10,
+      "stone": 2,
+      "fiber": 2
+     },
+     "cabinetStockEnd": {
+      "wood": 21,
+      "stone": 3,
+      "fiber": 3
+     },
+     "prepaidEnd": {
+      "fiber": 0.75,
+      "stone": 0.75
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 10,
+      "fiber": 2,
+      "stone": 2
+     }
+    },
+    {
+     "scenario": "compact",
+     "hours": 48,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 20,
+      "stone": 3,
+      "fiber": 3
+     },
+     "cabinetStockEnd": {
+      "wood": 11,
+      "stone": 2,
+      "fiber": 2
+     },
+     "prepaidEnd": {
+      "fiber": 0.5,
+      "stone": 0.5
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 20,
+      "fiber": 3,
+      "stone": 3
+     }
+    },
+    {
+     "scenario": "compact",
+     "hours": 72,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 30,
+      "stone": 4,
+      "fiber": 4
+     },
+     "cabinetStockEnd": {
+      "wood": 1,
+      "stone": 1,
+      "fiber": 1
+     },
+     "prepaidEnd": {
+      "fiber": 0.25,
+      "stone": 0.25
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 30,
+      "fiber": 4,
+      "stone": 4
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 8,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 6,
+      "stone": 3,
+      "fiber": 1
+     },
+     "cabinetStockEnd": {
+      "wood": 45,
+      "stone": 19,
+      "fiber": 4
+     },
+     "prepaidEnd": {
+      "wood": 0.5,
+      "fiber": 0.583,
+      "stone": 0.75
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": true
+     },
+     "bags": 0,
+     "upkeepDebits": {
+      "wood": 6,
+      "fiber": 1,
+      "stone": 3
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 24,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 17,
+      "stone": 7,
+      "fiber": 2
+     },
+     "cabinetStockEnd": {
+      "wood": 34,
+      "stone": 15,
+      "fiber": 3
+     },
+     "prepaidEnd": {
+      "wood": 0.5,
+      "fiber": 0.75,
+      "stone": 0.25
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 17,
+      "fiber": 2,
+      "stone": 7
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 48,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 33,
+      "stone": 14,
+      "fiber": 3
+     },
+     "cabinetStockEnd": {
+      "wood": 18,
+      "stone": 8,
+      "fiber": 2
+     },
+     "prepaidEnd": {
+      "fiber": 0.5,
+      "stone": 0.5
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 33,
+      "fiber": 3,
+      "stone": 14
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 72,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 50,
+      "stone": 21,
+      "fiber": 4
+     },
+     "cabinetStockEnd": {
+      "wood": 1,
+      "stone": 1,
+      "fiber": 1
+     },
+     "prepaidEnd": {
+      "fiber": 0.25,
+      "wood": 0.5,
+      "stone": 0.75
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 50,
+      "fiber": 4,
+      "stone": 21
+     }
+    }
+   ]
+  },
+  {
+   "candidate": {
+    "unprotectedCollapseHours": 12,
+    "unfundedCollapseHours": 12
+   },
+   "rows": [
+    {
+     "scenario": "temporary",
+     "hours": 8,
+     "structuresStart": 6,
+     "structuresEnd": 6,
+     "lost": 0,
+     "meanHpEnd": 46.7,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": true
+     },
+     "bags": 0,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "temporary",
+     "hours": 24,
+     "structuresStart": 6,
+     "structuresEnd": 0,
+     "lost": 6,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "temporary",
+     "hours": 48,
+     "structuresStart": 6,
+     "structuresEnd": 0,
+     "lost": 6,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "temporary",
+     "hours": 72,
+     "structuresStart": 6,
+     "structuresEnd": 0,
+     "lost": 6,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 8,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 48.3,
+     "stockSpent": {},
+     "cabinetStockEnd": {},
+     "prepaidEnd": {},
+     "claimAlive": true,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": true
+     },
+     "bags": 0,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 24,
+     "structuresStart": 8,
+     "structuresEnd": 0,
+     "lost": 8,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 48,
+     "structuresStart": 8,
+     "structuresEnd": 0,
+     "lost": 8,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 72,
+     "structuresStart": 8,
+     "structuresEnd": 0,
+     "lost": 8,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "compact",
+     "hours": 8,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 4,
+      "stone": 1,
+      "fiber": 1
+     },
+     "cabinetStockEnd": {
+      "wood": 27,
+      "stone": 4,
+      "fiber": 4
+     },
+     "prepaidEnd": {
+      "fiber": 0.583,
+      "stone": 0.583,
+      "wood": 0.667
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": true
+     },
+     "bags": 0,
+     "upkeepDebits": {
+      "wood": 4,
+      "fiber": 1,
+      "stone": 1
+     }
+    },
+    {
+     "scenario": "compact",
+     "hours": 24,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 10,
+      "stone": 2,
+      "fiber": 2
+     },
+     "cabinetStockEnd": {
+      "wood": 21,
+      "stone": 3,
+      "fiber": 3
+     },
+     "prepaidEnd": {
+      "fiber": 0.75,
+      "stone": 0.75
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 10,
+      "fiber": 2,
+      "stone": 2
+     }
+    },
+    {
+     "scenario": "compact",
+     "hours": 48,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 20,
+      "stone": 3,
+      "fiber": 3
+     },
+     "cabinetStockEnd": {
+      "wood": 11,
+      "stone": 2,
+      "fiber": 2
+     },
+     "prepaidEnd": {
+      "fiber": 0.5,
+      "stone": 0.5
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 20,
+      "fiber": 3,
+      "stone": 3
+     }
+    },
+    {
+     "scenario": "compact",
+     "hours": 72,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 30,
+      "stone": 4,
+      "fiber": 4
+     },
+     "cabinetStockEnd": {
+      "wood": 1,
+      "stone": 1,
+      "fiber": 1
+     },
+     "prepaidEnd": {
+      "fiber": 0.25,
+      "stone": 0.25
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 30,
+      "fiber": 4,
+      "stone": 4
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 8,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 6,
+      "stone": 3,
+      "fiber": 1
+     },
+     "cabinetStockEnd": {
+      "wood": 45,
+      "stone": 19,
+      "fiber": 4
+     },
+     "prepaidEnd": {
+      "wood": 0.5,
+      "fiber": 0.583,
+      "stone": 0.75
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": true
+     },
+     "bags": 0,
+     "upkeepDebits": {
+      "wood": 6,
+      "fiber": 1,
+      "stone": 3
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 24,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 17,
+      "stone": 7,
+      "fiber": 2
+     },
+     "cabinetStockEnd": {
+      "wood": 34,
+      "stone": 15,
+      "fiber": 3
+     },
+     "prepaidEnd": {
+      "wood": 0.5,
+      "fiber": 0.75,
+      "stone": 0.25
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 17,
+      "fiber": 2,
+      "stone": 7
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 48,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 33,
+      "stone": 14,
+      "fiber": 3
+     },
+     "cabinetStockEnd": {
+      "wood": 18,
+      "stone": 8,
+      "fiber": 2
+     },
+     "prepaidEnd": {
+      "fiber": 0.5,
+      "stone": 0.5
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 33,
+      "fiber": 3,
+      "stone": 14
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 72,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 50,
+      "stone": 21,
+      "fiber": 4
+     },
+     "cabinetStockEnd": {
+      "wood": 1,
+      "stone": 1,
+      "fiber": 1
+     },
+     "prepaidEnd": {
+      "fiber": 0.25,
+      "wood": 0.5,
+      "stone": 0.75
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 50,
+      "fiber": 4,
+      "stone": 21
+     }
+    }
+   ]
+  }
+ ],
+ "upkeepSweep": [
+  {
+   "upkeepFractionPerDay": 0.25,
+   "rows": [
+    {
+     "scenario": "temporary",
+     "hours": 8,
+     "structuresStart": 6,
+     "structuresEnd": 6,
+     "lost": 0,
+     "meanHpEnd": 46.7,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": true
+     },
+     "bags": 0,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "temporary",
+     "hours": 24,
+     "structuresStart": 6,
+     "structuresEnd": 0,
+     "lost": 6,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "temporary",
+     "hours": 48,
+     "structuresStart": 6,
+     "structuresEnd": 0,
+     "lost": 6,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "temporary",
+     "hours": 72,
+     "structuresStart": 6,
+     "structuresEnd": 0,
+     "lost": 6,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 8,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 48.3,
+     "stockSpent": {},
+     "cabinetStockEnd": {},
+     "prepaidEnd": {},
+     "claimAlive": true,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": true
+     },
+     "bags": 0,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 24,
+     "structuresStart": 8,
+     "structuresEnd": 0,
+     "lost": 8,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 48,
+     "structuresStart": 8,
+     "structuresEnd": 0,
+     "lost": 8,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 72,
+     "structuresStart": 8,
+     "structuresEnd": 0,
+     "lost": 8,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "compact",
+     "hours": 8,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 4,
+      "stone": 1,
+      "fiber": 1
+     },
+     "cabinetStockEnd": {
+      "wood": 27,
+      "stone": 4,
+      "fiber": 4
+     },
+     "prepaidEnd": {
+      "fiber": 0.583,
+      "stone": 0.583,
+      "wood": 0.667
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": true
+     },
+     "bags": 0,
+     "upkeepDebits": {
+      "wood": 4,
+      "fiber": 1,
+      "stone": 1
+     }
+    },
+    {
+     "scenario": "compact",
+     "hours": 24,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 10,
+      "stone": 2,
+      "fiber": 2
+     },
+     "cabinetStockEnd": {
+      "wood": 21,
+      "stone": 3,
+      "fiber": 3
+     },
+     "prepaidEnd": {
+      "fiber": 0.75,
+      "stone": 0.75
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 10,
+      "fiber": 2,
+      "stone": 2
+     }
+    },
+    {
+     "scenario": "compact",
+     "hours": 48,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 20,
+      "stone": 3,
+      "fiber": 3
+     },
+     "cabinetStockEnd": {
+      "wood": 11,
+      "stone": 2,
+      "fiber": 2
+     },
+     "prepaidEnd": {
+      "fiber": 0.5,
+      "stone": 0.5
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 20,
+      "fiber": 3,
+      "stone": 3
+     }
+    },
+    {
+     "scenario": "compact",
+     "hours": 72,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 30,
+      "stone": 4,
+      "fiber": 4
+     },
+     "cabinetStockEnd": {
+      "wood": 1,
+      "stone": 1,
+      "fiber": 1
+     },
+     "prepaidEnd": {
+      "fiber": 0.25,
+      "stone": 0.25
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 30,
+      "fiber": 4,
+      "stone": 4
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 8,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 6,
+      "stone": 3,
+      "fiber": 1
+     },
+     "cabinetStockEnd": {
+      "wood": 45,
+      "stone": 19,
+      "fiber": 4
+     },
+     "prepaidEnd": {
+      "wood": 0.5,
+      "fiber": 0.583,
+      "stone": 0.75
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": true
+     },
+     "bags": 0,
+     "upkeepDebits": {
+      "wood": 6,
+      "fiber": 1,
+      "stone": 3
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 24,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 17,
+      "stone": 7,
+      "fiber": 2
+     },
+     "cabinetStockEnd": {
+      "wood": 34,
+      "stone": 15,
+      "fiber": 3
+     },
+     "prepaidEnd": {
+      "wood": 0.5,
+      "fiber": 0.75,
+      "stone": 0.25
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 17,
+      "fiber": 2,
+      "stone": 7
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 48,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 33,
+      "stone": 14,
+      "fiber": 3
+     },
+     "cabinetStockEnd": {
+      "wood": 18,
+      "stone": 8,
+      "fiber": 2
+     },
+     "prepaidEnd": {
+      "fiber": 0.5,
+      "stone": 0.5
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 33,
+      "fiber": 3,
+      "stone": 14
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 72,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 50,
+      "stone": 21,
+      "fiber": 4
+     },
+     "cabinetStockEnd": {
+      "wood": 1,
+      "stone": 1,
+      "fiber": 1
+     },
+     "prepaidEnd": {
+      "fiber": 0.25,
+      "wood": 0.5,
+      "stone": 0.75
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 50,
+      "fiber": 4,
+      "stone": 21
+     }
+    }
+   ]
+  },
+  {
+   "upkeepFractionPerDay": 0.15,
+   "rows": [
+    {
+     "scenario": "temporary",
+     "hours": 8,
+     "structuresStart": 6,
+     "structuresEnd": 6,
+     "lost": 0,
+     "meanHpEnd": 46.7,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": true
+     },
+     "bags": 0,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "temporary",
+     "hours": 24,
+     "structuresStart": 6,
+     "structuresEnd": 0,
+     "lost": 6,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "temporary",
+     "hours": 48,
+     "structuresStart": 6,
+     "structuresEnd": 0,
+     "lost": 6,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "temporary",
+     "hours": 72,
+     "structuresStart": 6,
+     "structuresEnd": 0,
+     "lost": 6,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 8,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 48.3,
+     "stockSpent": {},
+     "cabinetStockEnd": {},
+     "prepaidEnd": {},
+     "claimAlive": true,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": true
+     },
+     "bags": 0,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 24,
+     "structuresStart": 8,
+     "structuresEnd": 0,
+     "lost": 8,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 48,
+     "structuresStart": 8,
+     "structuresEnd": 0,
+     "lost": 8,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 72,
+     "structuresStart": 8,
+     "structuresEnd": 0,
+     "lost": 8,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "compact",
+     "hours": 8,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 2,
+      "stone": 1,
+      "fiber": 1
+     },
+     "cabinetStockEnd": {
+      "wood": 17,
+      "stone": 3,
+      "fiber": 3
+     },
+     "prepaidEnd": {
+      "fiber": 0.75,
+      "stone": 0.75
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": true
+     },
+     "bags": 0,
+     "upkeepDebits": {
+      "wood": 2,
+      "fiber": 1,
+      "stone": 1
+     }
+    },
+    {
+     "scenario": "compact",
+     "hours": 24,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 6,
+      "stone": 1,
+      "fiber": 1
+     },
+     "cabinetStockEnd": {
+      "wood": 13,
+      "stone": 3,
+      "fiber": 3
+     },
+     "prepaidEnd": {
+      "fiber": 0.25,
+      "stone": 0.25
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 6,
+      "fiber": 1,
+      "stone": 1
+     }
+    },
+    {
+     "scenario": "compact",
+     "hours": 48,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 12,
+      "stone": 2,
+      "fiber": 2
+     },
+     "cabinetStockEnd": {
+      "wood": 7,
+      "stone": 2,
+      "fiber": 2
+     },
+     "prepaidEnd": {
+      "fiber": 0.5,
+      "stone": 0.5
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 12,
+      "fiber": 2,
+      "stone": 2
+     }
+    },
+    {
+     "scenario": "compact",
+     "hours": 72,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 18,
+      "stone": 3,
+      "fiber": 3
+     },
+     "cabinetStockEnd": {
+      "wood": 1,
+      "stone": 1,
+      "fiber": 1
+     },
+     "prepaidEnd": {
+      "fiber": 0.75,
+      "stone": 0.75
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 18,
+      "fiber": 3,
+      "stone": 3
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 8,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 4,
+      "stone": 2,
+      "fiber": 1
+     },
+     "cabinetStockEnd": {
+      "wood": 27,
+      "stone": 12,
+      "fiber": 3
+     },
+     "prepaidEnd": {
+      "wood": 0.7,
+      "fiber": 0.75,
+      "stone": 0.65
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": true
+     },
+     "bags": 0,
+     "upkeepDebits": {
+      "wood": 4,
+      "fiber": 1,
+      "stone": 2
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 24,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 10,
+      "stone": 5,
+      "fiber": 1
+     },
+     "cabinetStockEnd": {
+      "wood": 21,
+      "stone": 9,
+      "fiber": 3
+     },
+     "prepaidEnd": {
+      "wood": 0.1,
+      "fiber": 0.25,
+      "stone": 0.95
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 10,
+      "fiber": 1,
+      "stone": 5
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 48,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 20,
+      "stone": 9,
+      "fiber": 2
+     },
+     "cabinetStockEnd": {
+      "wood": 11,
+      "stone": 5,
+      "fiber": 2
+     },
+     "prepaidEnd": {
+      "stone": 0.9,
+      "wood": 0.2,
+      "fiber": 0.5
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 20,
+      "fiber": 2,
+      "stone": 9
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 72,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 30,
+      "stone": 13,
+      "fiber": 3
+     },
+     "cabinetStockEnd": {
+      "wood": 1,
+      "stone": 1,
+      "fiber": 1
+     },
+     "prepaidEnd": {
+      "wood": 0.3,
+      "stone": 0.85,
+      "fiber": 0.75
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 30,
+      "fiber": 3,
+      "stone": 13
+     }
+    }
+   ]
+  },
+  {
+   "upkeepFractionPerDay": 0.1,
+   "rows": [
+    {
+     "scenario": "temporary",
+     "hours": 8,
+     "structuresStart": 6,
+     "structuresEnd": 6,
+     "lost": 0,
+     "meanHpEnd": 46.7,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": true
+     },
+     "bags": 0,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "temporary",
+     "hours": 24,
+     "structuresStart": 6,
+     "structuresEnd": 0,
+     "lost": 6,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "temporary",
+     "hours": 48,
+     "structuresStart": 6,
+     "structuresEnd": 0,
+     "lost": 6,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "temporary",
+     "hours": 72,
+     "structuresStart": 6,
+     "structuresEnd": 0,
+     "lost": 6,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 8,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 48.3,
+     "stockSpent": {},
+     "cabinetStockEnd": {},
+     "prepaidEnd": {},
+     "claimAlive": true,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": true
+     },
+     "bags": 0,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 24,
+     "structuresStart": 8,
+     "structuresEnd": 0,
+     "lost": 8,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 48,
+     "structuresStart": 8,
+     "structuresEnd": 0,
+     "lost": 8,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "unfunded",
+     "hours": 72,
+     "structuresStart": 8,
+     "structuresEnd": 0,
+     "lost": 8,
+     "meanHpEnd": null,
+     "stockSpent": {},
+     "cabinetStockEnd": null,
+     "prepaidEnd": null,
+     "claimAlive": false,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": false
+     },
+     "bags": 1,
+     "upkeepDebits": {}
+    },
+    {
+     "scenario": "compact",
+     "hours": 8,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 2,
+      "stone": 1,
+      "fiber": 1
+     },
+     "cabinetStockEnd": {
+      "wood": 12,
+      "stone": 2,
+      "fiber": 2
+     },
+     "prepaidEnd": {
+      "fiber": 0.833,
+      "stone": 0.833,
+      "wood": 0.667
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": true
+     },
+     "bags": 0,
+     "upkeepDebits": {
+      "wood": 2,
+      "fiber": 1,
+      "stone": 1
+     }
+    },
+    {
+     "scenario": "compact",
+     "hours": 24,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 4,
+      "stone": 1,
+      "fiber": 1
+     },
+     "cabinetStockEnd": {
+      "wood": 10,
+      "stone": 2,
+      "fiber": 2
+     },
+     "prepaidEnd": {
+      "fiber": 0.5,
+      "stone": 0.5
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 4,
+      "fiber": 1,
+      "stone": 1
+     }
+    },
+    {
+     "scenario": "compact",
+     "hours": 48,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 8,
+      "stone": 1,
+      "fiber": 1
+     },
+     "cabinetStockEnd": {
+      "wood": 6,
+      "stone": 2,
+      "fiber": 2
+     },
+     "prepaidEnd": {},
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 8,
+      "fiber": 1,
+      "stone": 1
+     }
+    },
+    {
+     "scenario": "compact",
+     "hours": 72,
+     "structuresStart": 8,
+     "structuresEnd": 8,
+     "lost": 0,
+     "meanHpEnd": 145,
+     "stockSpent": {
+      "wood": 12,
+      "stone": 2,
+      "fiber": 2
+     },
+     "cabinetStockEnd": {
+      "wood": 2,
+      "stone": 1,
+      "fiber": 1
+     },
+     "prepaidEnd": {
+      "fiber": 0.5,
+      "stone": 0.5
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 12,
+      "fiber": 2,
+      "stone": 2
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 8,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 3,
+      "stone": 1,
+      "fiber": 1
+     },
+     "cabinetStockEnd": {
+      "wood": 18,
+      "stone": 9,
+      "fiber": 2
+     },
+     "prepaidEnd": {
+      "wood": 0.8,
+      "fiber": 0.833,
+      "stone": 0.1
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 100,
+      "dead": false,
+      "sheltered": true
+     },
+     "bags": 0,
+     "upkeepDebits": {
+      "wood": 3,
+      "fiber": 1,
+      "stone": 1
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 24,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 7,
+      "stone": 3,
+      "fiber": 1
+     },
+     "cabinetStockEnd": {
+      "wood": 14,
+      "stone": 7,
+      "fiber": 2
+     },
+     "prepaidEnd": {
+      "wood": 0.4,
+      "fiber": 0.5,
+      "stone": 0.3
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 7,
+      "fiber": 1,
+      "stone": 3
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 48,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 14,
+      "stone": 6,
+      "fiber": 1
+     },
+     "cabinetStockEnd": {
+      "wood": 7,
+      "stone": 4,
+      "fiber": 2
+     },
+     "prepaidEnd": {
+      "stone": 0.6,
+      "wood": 0.8
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 14,
+      "fiber": 1,
+      "stone": 6
+     }
+    },
+    {
+     "scenario": "workshop",
+     "hours": 72,
+     "structuresStart": 12,
+     "structuresEnd": 12,
+     "lost": 0,
+     "meanHpEnd": 155,
+     "stockSpent": {
+      "wood": 20,
+      "stone": 9,
+      "fiber": 2
+     },
+     "cabinetStockEnd": {
+      "wood": 1,
+      "stone": 1,
+      "fiber": 1
+     },
+     "prepaidEnd": {
+      "wood": 0.2,
+      "fiber": 0.5,
+      "stone": 0.9
+     },
+     "claimAlive": true,
+     "player": {
+      "hp": 0,
+      "dead": true,
+      "sheltered": true
+     },
+     "bags": 1,
+     "upkeepDebits": {
+      "wood": 20,
+      "fiber": 2,
+      "stone": 9
+     }
+    }
+   ]
+  }
+ ]
+}

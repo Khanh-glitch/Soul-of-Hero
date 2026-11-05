@@ -1,7 +1,7 @@
 {
   "_meta": {
     "version": 1,
-    "status_legend": "LOCKED_CANON = Bible [CH\u1ed0T] law; TUNABLE_BALANCE = editable number; PROPOSED_MECHANISM = reversible design choice ([\u0110\u1ec0 XU\u1ea4T])",
+    "status_legend": "LOCKED_CANON = Bible [CHỐT] law; TUNABLE_BALANCE = editable number; PROPOSED_MECHANISM = reversible design choice ([ĐỀ XUẤT])",
     "note": "All numbers here are TUNABLE_BALANCE unless marked. Edit and rebuild."
   },
   "run": {
@@ -141,8 +141,8 @@
   },
   "territory": {
     "_status": "SOH_PROVISIONAL_REVERSIBLE: not historical LI numeric parity",
-    "unprotectedCollapseHours": 2,
-    "unfundedCollapseHours": 2,
+    "unprotectedCollapseHours": 12,
+    "unfundedCollapseHours": 12,
     "upkeepFractionPerDay": 0.25,
     "materials": [
       "wood",
@@ -156,7 +156,8 @@
       "spares",
       "mechanical_parts",
       "fasteners"
-    ]
+    ],
+    "_tuning": "W08 2026-11-06 SOH_PROVISIONAL: unprotectedCollapseHours and unfundedCollapseHours 2 -> 12 (reversible). Evidence: evidence/sys07-w08/absence-benchmark.json. 2h removed every uncovered/unfunded structure before an 8h overnight; 12h keeps a full-HP shelter through 8h (~47-48 HP mean) and still collapses it by 24h. upkeepFractionPerDay 0.25 UNCHANGED: real acquisition rates not measured. Before: 2/2/0.25."
   },
   "research": {
     "_status": "TUNABLE_BALANCE",
