@@ -205,6 +205,25 @@ export function claimAt(r: RunState, tx: number, ty: number) {
   const R = BAL.economy.claimRadius;
   for (const e of Object.values(r.entities)) if (e.kind === 'struct' && e.type === 'claim' && Math.hypot(e.tx! - tx, e.ty! - ty) <= R + 0.01) return e; return null;
 }
+/** Same materials and HP restored as manual repair; never pays for a destroyed structure. */
+export function structureRepairCost(e: Entity): [string, number][] {
+  return (STRUCTS[e.type!]?.cost || []).map(([k,q]) => [k, Math.max(1, Math.ceil(q * 0.25))]);
+}
+export function validMaintenanceChest(r: RunState, claim: Entity, chest: Entity | undefined) {
+  return !!chest && chest.kind === 'struct' && ['chest_small','chest_large'].includes(chest.type || '') && owned(chest) && !!chest.c && !!r.custody[chest.c] && chest.claim === claim.id && Math.hypot(chest.tx! - claim.tx!, chest.ty! - claim.ty!) <= BAL.economy.claimRadius + 0.01 && (chest.hp ?? 0) > 0;
+}
+/** Called only after a real nonlethal impact; no periodic or weather damage is invented. */
+export function maintainDamagedStructure(r: RunState, e: Entity, now: number): [string, number][] | null {
+  if (e.kind !== 'struct' || !owned(e) || !e.hp || !e.maxHp || e.hp >= e.maxHp || !STRUCTS[e.type!] || STRUCTS[e.type!].item) return null;
+  const claim = e.type === 'claim' ? e : r.entities[e.claim || ''];
+  if (!claim || claim.type !== 'claim' || !owned(claim) || !claim.hp || !claim.maintenance?.enabled || (e !== claim && Math.hypot(e.tx! - claim.tx!, e.ty! - claim.ty!) > BAL.economy.claimRadius + 0.01)) return null;
+  const chest = r.entities[claim.maintenance.chestId || ''];
+  if (!validMaintenanceChest(r, claim, chest)) return null;
+  const cost = structureRepairCost(e); if (!cost.length || cost.some(([k,q]) => countItem(r,chest.c!,k) < q)) return null;
+  for (const [k,q] of cost) removeItem(r,chest.c!,k,q);
+  e.hp = Math.min(e.maxHp,e.hp + Math.ceil(e.maxHp / 4)); markDirty();
+  receipt(r,now,'struct.maintenance',`${e.id}:${cost.map(([k,q])=>`${k}x${q}`).join(',')}`); return cost;
+}
 /** Both adapters supply roof coverage to the same room traversal. */
 export function roofAt(r: RunState, x: number, y: number) {
   if (x < 0 || y < 0 || x >= WW || y >= WH) return false;
@@ -375,7 +394,7 @@ export function bagStation(r: RunState, e: Entity, now: number, label: string) {
   if (e.station) e.station.queue = [];
   return bag;
 }
-function removeEntity(r: RunState, e: Entity) { if(e.basePower)for(const other of Object.values(r.entities)){if(other.turret?.generatorId===e.id)delete other.turret.generatorId;if(other.industrial?.generatorId===e.id)delete other.industrial.generatorId;} delete r.entities[e.id]; for (const cid of [e.c, e.station?.fuelC, e.station?.outC]) if (cid) delete r.custody[cid]; markDirty(); }
+function removeEntity(r: RunState, e: Entity) { for(const other of Object.values(r.entities)) if(other.maintenance?.chestId===e.id) { delete other.maintenance.chestId; other.maintenance.enabled=false; } if(e.basePower)for(const other of Object.values(r.entities)){if(other.turret?.generatorId===e.id)delete other.turret.generatorId;if(other.industrial?.generatorId===e.id)delete other.industrial.generatorId;} delete r.entities[e.id]; for (const cid of [e.c, e.station?.fuelC, e.station?.outC]) if (cid) delete r.custody[cid]; markDirty(); }
 
 /** Versioned SOH-only renewable stock policy. Unique technology, credentials,
  * equipment, and damaged drives remain finite; cash is never a loot site. */
@@ -770,7 +789,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (!e || e.kind !== 'struct' || !owned(e) || !near(r, e, 3)) return fail('Use your structure within reach.');
       const def = STRUCTS[e.type!];
       if (!def || def.item || !Number.isFinite(e.hp) || !Number.isFinite(e.maxHp) || e.hp! <= 0 || e.hp! >= e.maxHp!) return fail('This structure cannot be repaired.');
-      const cost: [string, number][] = def.cost.map(([key, qty]) => [key, Math.max(1, Math.ceil(qty / 4))]);
+      const cost = structureRepairCost(e);
       if (!hasAll(r, 'inv', cost)) return fail('Missing repair materials: ' + cost.filter(([key, qty]) => countItem(r, 'inv', key) < qty).map(([key, qty]) => `${ITEMS[key].name} ${countItem(r, 'inv', key)}/${qty}`).join(', '));
       for (const [key, qty] of cost) removeItem(r, 'inv', key, qty);
       const before = e.hp!; e.hp = Math.min(e.maxHp!, e.hp! + Math.ceil(e.maxHp! / 4));
@@ -891,6 +910,18 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       e.deployed.upgrade = 'freight';
       while (cargo.slots.length < BAL.cart.freightSlots) cargo.slots.push(null);
       return ok('cart.upgrade', `${e.deployed.uid}:freight`, 'Cart reinforced: 32 slots and a higher overload threshold.');
+    }
+    case 'maintenanceConfigure': {
+      const claim = r.entities[it.eid];
+      if (!claim || claim.kind !== 'struct' || claim.type !== 'claim' || !owned(claim) || !claim.hp || !near(r,claim,2.2) || !clearInteraction(r,claim)) return fail('Claim out of reach or not owned.');
+      if (it.field === 'chestId') {
+        if (it.value !== '' && !validMaintenanceChest(r,claim,r.entities[it.value])) return fail('Choose an owned, intact chest on this claim.');
+        claim.maintenance ??= {enabled:false}; claim.maintenance.chestId = it.value || undefined;
+      } else if (it.field === 'enabled' && typeof it.value === 'boolean') {
+        if (it.value && !validMaintenanceChest(r,claim,r.entities[claim.maintenance?.chestId || ''])) return fail('Link a valid reserve chest first.');
+        claim.maintenance ??= {enabled:false}; claim.maintenance.enabled = it.value;
+      } else return fail('Invalid reserve setting.');
+      return ok('maintenance.configure',`${claim.id}:${it.field}:${it.value}`);
     }
     case 'reclaim': {
       const e = r.entities[it.eid]; if (!e || !owned(e) || !near(r, e, 3)) return fail('Out of reach or not owned.');

@@ -68,6 +68,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       const d = STRUCTS[e.type!];
       if (e.type!.startsWith('door')) act('door', { eid: e.id });
       else if (e.type === 'escrow') setPanel({ kind: 'escrow', eid: e.id });
+      else if (e.type === 'claim') setPanel({ kind: 'container', eid: e.id });
       else if (e.type === 'garden') setPanel({ kind: 'container', eid: e.id });
       else if (e.type === 'barrel') act('barrel', { eid: e.id });
       else if (d.station || d.slots) setPanel({ kind: 'container', eid: e.id });

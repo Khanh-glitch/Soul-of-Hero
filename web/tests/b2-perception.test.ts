@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { TILE, WW, T, uid, type GameState, type Trace } from '../src/game/core';
-import { blockedAt, dispatch, markDirty, mkCreature, newGame, addItem, C, sourceAt, weatherAt, isWet, clearPhysicalLine, wetOutlook } from '../src/game/engine';
+import { blockedAt, dispatch, markDirty, mkCreature, newGame, addItem, mkContainer, countItem, C, sourceAt, weatherAt, isWet, clearPhysicalLine, wetOutlook } from '../src/game/engine';
 import { getWorld } from '../src/game/world';
 import { decayTraces, HAZ, nextContiguousTrace, PROJ, tick, settle, bindCombat, type Input } from '../src/game/sim';
 import { selectSnapshots, serializeSnapshot, validate } from '../src/game/persist';
@@ -311,6 +311,15 @@ describe('bounded offline trace consequences', () => {
       const { gs, r, m, doorId } = setupTrail(); if (variant === 'broken') r.traces = r.traces.filter(t => t.id !== 'a1'); else r.traces = [];
       settle(gs, T0 + 4000); expect(r.entities[doorId].hp).toBe(140); expect(m.knows).toBeNull(); expect(r.receipts.some(q => q.kind === 'struct.hit')).toBe(false);
     }
+  });
+  it('reports physically spent reserve after an evidenced offline hit', () => {
+    const { gs, r, doorId, spot, x, y } = setupTrail();
+    const ci=uid(r,'e'), hi=uid(r,'e'), chest=mkContainer(r,'chest',12);
+    r.entities[ci]={id:ci,kind:'struct',type:'claim',tx:spot.x+4,ty:spot.y+2,x:x+64,y:y+32,hp:200,maxHp:200,maintenance:{enabled:true,chestId:hi}};
+    r.entities[hi]={id:hi,kind:'struct',type:'chest_small',tx:spot.x+5,ty:spot.y+2,x:x+80,y:y+32,hp:100,maxHp:100,c:chest.id,claim:ci};
+    r.entities[doorId].claim=ci; addItem(r,chest.id,'wood',10); addItem(r,chest.id,'rope',3); markDirty();
+    const report=settle(gs,T0+4000); expect(r.receipts.some(q=>q.kind==='struct.maintenance')).toBe(true);
+    expect(countItem(r,chest.id,'wood')).toBeLessThan(10); expect(report.join(' ')).toContain('Claim reserve spent:');
   });
   it('a real impact can destroy a door and is reported as such', () => {
     const { gs, r, doorId } = setupTrail(); r.entities[doorId].hp = 26;

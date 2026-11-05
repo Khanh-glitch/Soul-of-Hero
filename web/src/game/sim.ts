@@ -2,7 +2,7 @@
 import { BAL, TILE, WW, WH, HOUR, VIEW_W, VIEW_H, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity, type Proj, type Haz } from './core';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
 import { getWorld } from './world';
-import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, stepLootRespawn, migrateLootRespawn, spawnDrop } from './engine';
+import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, stepLootRespawn, migrateLootRespawn, maintainDamagedStructure, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
@@ -448,6 +448,8 @@ function steer(gs: GameState, m: Creature, tx: number, ty: number, sp: number, d
 }
 let offlineImpacts: Map<string, { name: string; before: number; after: number; destroyed: boolean }> | null = null;
 let offlineStructureChange = 0;
+let offlineRepairs: Map<string, number> | null = null;
+function applyReserve(r: RunState, e: Entity, now: number) { const cost = maintainDamagedStructure(r,e,now); if (cost && offlineRepairs) { for (const [k,q] of cost) offlineRepairs.set(k,(offlineRepairs.get(k)||0)+q); const prior=offlineImpacts?.get(e.id); if(prior) prior.after=e.hp!; } }
 function bashAhead(gs: GameState, m: Creature, a: number, now: number) {
   // Physical impact only: charge-capable trackers may batter a remembered obstruction,
   // and committed charges may hit it. Wandering and ordinary melee cannot.
@@ -457,6 +459,7 @@ function bashAhead(gs: GameState, m: Creature, a: number, now: number) {
   const dmg = m.elder ? ELDERS[m.elder.key].dmg * 2 : CREATURES[m.type].dmg; const before = e.hp!; e.hp! = Math.max(0, before - dmg); m.cd = 900;
   if (offlineImpacts && (e.owner === undefined || e.owner === 'player')) { const prior = offlineImpacts.get(e.id); offlineImpacts.set(e.id, { name: STRUCTS[e.type!].name, before: prior?.before ?? before, after: e.hp!, destroyed: e.hp! <= 0 }); }
   receipt(r, now, 'struct.hit', `${e.id}:${m.type}:${before - e.hp!}`); fx('structhit', { x: e.x, y: e.y, n: before - e.hp! });
+  if (e.hp! > 0) applyReserve(r,e,now);
   if (e.hp! <= 0) { if (offlineImpacts) offlineStructureChange++; destroyStructure(r, e, now); receipt(r, now, 'struct.destroyed', `${e.type} by ${m.type}`); pushLog(r, now, `${STRUCTS[e.type!].name} was smashed by a ${CREATURES[m.type]?.name || 'beast'}!`, 'red'); fx('structbreak', { x: e.x, y: e.y }); }
 }
 
@@ -466,6 +469,7 @@ function triggerSpikes(gs: GameState, m: Creature, now: number) {
   if (!trap || m.cd > 0) return;
   damageCreature(gs, m, 12, 0, now, 0); m.cd = 700; const before = trap.hp!; trap.hp = Math.max(0, before - 4);
   if (offlineImpacts && (trap.owner === undefined || trap.owner === 'player')) { const prior = offlineImpacts.get(trap.id); offlineImpacts.set(trap.id, { name: STRUCTS[trap.type!].name, before: prior?.before ?? before, after: trap.hp, destroyed: trap.hp <= 0 }); }
+  if (trap.hp > 0) applyReserve(r,trap,now);
   if (trap.hp <= 0) { if (offlineImpacts) offlineStructureChange++; destroyStructure(r, trap, now); receipt(r, now, 'struct.destroyed', `${trap.type} by contact`); }
 }
 
@@ -990,6 +994,7 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   const pending = eligible.slice(0, 24);
   for (const m of eligible.slice(24)) m.offlineUnresolvedAt = start;
   const impacts = new Map<string, { name: string; before: number; after: number; destroyed: boolean }>();
+  const repairs = new Map<string, number>();
   let frames = 0, structureEpoch = offlineStructureChange;
 
   let t = start, wetMs = 0; const zone = getWorld().zone[tileOf(p.y) * WW + tileOf(p.x)];
@@ -1027,13 +1032,13 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
     if (isWet(weatherAt(r, t))) wetMs += dtMs;
     advanceWorld(gs, t, until, silent ? undefined : report, false);
     if (pending.length && frames < 2400) {
-      frames++; offlineImpacts = impacts; offlineQuiet = true;
+      frames++; offlineImpacts = impacts; offlineRepairs = repairs; offlineQuiet = true;
       try {
         for (let i = pending.length - 1; i >= 0; i--) {
           const m = pending[i], outcome = traceOnly(gs, m, dtMs, until);
           if (outcome !== 'advanced') { if (outcome === 'defer') m.offlineUnresolvedAt = t; pending.splice(i, 1); }
         }
-      } finally { offlineQuiet = false; offlineImpacts = null; }
+      } finally { offlineQuiet = false; offlineImpacts = null; offlineRepairs = null; }
       if (frames === 2400) for (const m of pending) m.offlineUnresolvedAt = until;
     }
     t = until; r.clock.lastSimAt = t;
@@ -1047,6 +1052,7 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   }
   if (now >= expiry) {
     if (!silent) for (const impact of impacts.values()) report.push(impact.destroyed ? `${impact.name} was destroyed while away.` : `${impact.name}: ${Math.round(impact.before)} → ${Math.round(impact.after)} HP while away.`);
+    if (!silent && repairs.size) report.push(`Claim reserve spent: ${[...repairs].map(([k,q])=>`${q} ${ITEMS[k]?.name || k}`).join(', ')} on repairs after real impacts.`);
     endRun(gs, 'expired', expiry); if (!silent) report.push('The run reached its 336-hour end while you were away.'); return report;
   }
   if (silent || (gap < 4000 && impacts.size === 0)) return [];
@@ -1058,6 +1064,7 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
     const nearby = r.traces.filter(tr => dist(p.x, p.y, tr.x, tr.y) <= 64 && los(r, p.x, p.y, tr.x, tr.y, true)).length;
     report.push(`Here: ${sheltered ? 'sheltered' : 'not sheltered'}; ${weatherAt(r, end)}; ${nearby} visible nearby footprint${nearby === 1 ? '' : 's'}.`);
   }
+  if (repairs.size) report.push(`Claim reserve spent: ${[...repairs].map(([k,q])=>`${q} ${ITEMS[k]?.name || k}`).join(', ')} on repairs after real impacts.`);
   if (wetMs) report.push(`Rain fell for ~${wetMs >= 60000 ? Math.round(wetMs / 60000) + ' min' : Math.round(wetMs / 1000) + ' sec'}, accelerating footprint decay; exposed gardens and barrels could collect water.`);
   if (Math.round(startHunger - p.hunger) > 0) report.push(`Hunger ${Math.round(startHunger)} → ${Math.round(p.hunger)}${sheltered ? ' (sheltered: hunger cannot kill you)' : ''}.`);
   if (!p.dead && startHp - p.hp >= 1) report.push(`HP ${Math.round(startHp)} → ${Math.round(p.hp)}.`);
@@ -1082,7 +1089,7 @@ export function findInteract(gs: GameState, now: number): Interact | null {
     else if (e.kind === 'gen') label = e.power ? 'Generator (running)' : 'Fuel generator';
     else if (e.kind === 'evac') label = 'Evacuation beacon';
     else if (e.kind === 'cart') label = 'Cart cargo  [Shift+F] pull';
-    else if (e.kind === 'struct') { const d2 = STRUCTS[e.type!]; kind = 'struct:' + e.type; if (e.type!.startsWith('door')) label = e.open ? 'Close door' : 'Open door'; else if (d2.station) label = `Use ${d2.name}`; else if (e.turret) label = `Turret: ${turretStatus(r,e)}${e.turret.tracking ? ' · target' : ''}`; else if (e.basePower) label = `Generator: ${e.basePower.enabled && e.basePower.energy>0 ? 'running' : e.basePower.enabled ? 'no fuel' : 'off'}`; else if (d2.slots) label = `Open ${d2.name}`; else if (e.type === 'escrow') label = 'Rương ký gửi'; else if (e.type === 'garden') label = 'Tend garden'; else if (e.type === 'barrel') label = `Rain barrel (${Math.floor(e.water || 0)})`; else continue; }
+    else if (e.kind === 'struct') { const d2 = STRUCTS[e.type!]; kind = 'struct:' + e.type; if (e.type!.startsWith('door')) label = e.open ? 'Close door' : 'Open door'; else if (e.type === 'claim') label = 'Configure claim repair reserve'; else if (d2.station) label = `Use ${d2.name}`; else if (e.turret) label = `Turret: ${turretStatus(r,e)}${e.turret.tracking ? ' · target' : ''}`; else if (e.basePower) label = `Generator: ${e.basePower.enabled && e.basePower.energy>0 ? 'running' : e.basePower.enabled ? 'no fuel' : 'off'}`; else if (d2.slots) label = `Open ${d2.name}`; else if (e.type === 'escrow') label = 'Rương ký gửi'; else if (e.type === 'garden') label = 'Tend garden'; else if (e.type === 'barrel') label = `Rain barrel (${Math.floor(e.water || 0)})`; else continue; }
     else continue;
     bd = d; best = { kind, label, eid: e.id, x: e.x, y: e.y };
   }
