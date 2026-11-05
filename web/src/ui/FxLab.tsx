@@ -26,7 +26,7 @@ export default function FxLab({ gs, hidden, onHide, onClose, nightOverride, setN
   const [paused, setPaused] = useState(false);
   const [layers, setLayers] = useState({ ...pfx.layers });
 
-  useEffect(() => { pfx.fullMode().then(setFull); const a = setInterval(() => setTick(t => t + 1), 500); return () => clearInterval(a); }, []);
+  useEffect(() => { pfx.fullMode().then(setFull); const a = setInterval(() => { setTick(t => t + 1); pfx.fullMode().then(setFull); }, 500); return () => clearInterval(a); }, []);
   useEffect(() => { const iv = setInterval(() => setSt(pfx.getStats()), 500); return () => clearInterval(iv); }, []);
   useEffect(() => { pfx.setPaused(paused); }, [paused]);
   useEffect(() => { Object.assign(pfx.layers, layers); }, [layers]);
