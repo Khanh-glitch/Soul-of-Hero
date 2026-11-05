@@ -1,0 +1,99 @@
+{
+  "method": "new run, injected core/supplies; browser input for map and cast",
+  "fixture": {
+    "res": {
+      "ok": true,
+      "receipt": "r2"
+    },
+    "dest": {
+      "x": 50,
+      "y": 113,
+      "wx": 808,
+      "wy": 1816
+    },
+    "slot": 3,
+    "uid": "s70",
+    "start": {
+      "x": 824,
+      "y": 1944
+    }
+  },
+  "end": {
+    "player": {
+      "x": 808,
+      "y": 1816,
+      "vx": 0,
+      "vy": 0,
+      "dir": 1,
+      "aim": 3.024937218148724,
+      "hp": 100,
+      "stamina": 100,
+      "hunger": 84.81440999999923,
+      "thirst": 84.72161499999999,
+      "warmth": 96.914407619039,
+      "rad": 0,
+      "active": 3,
+      "action": null,
+      "invuln": 0,
+      "dead": false,
+      "deadT": 0,
+      "pulling": null,
+      "skills": {
+        "gather": 0,
+        "combat": 0,
+        "craft": 0,
+        "survival": 0
+      },
+      "stepAcc": 0,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Meadow Bay",
+      "sheltered": false
+    },
+    "receipts": [
+      {
+        "id": "r1",
+        "seq": 1,
+        "at": 1793842616746,
+        "kind": "run.start",
+        "detail": "female@the island"
+      },
+      {
+        "id": "r2",
+        "seq": 2,
+        "at": 1793842617752,
+        "kind": "core.load",
+        "detail": "s70:signature+1"
+      },
+      {
+        "id": "r3",
+        "seq": 3,
+        "at": 1793842619340,
+        "kind": "core.commit",
+        "detail": "s70:signature:0"
+      },
+      {
+        "id": "r4",
+        "seq": 4,
+        "at": 1793842619340,
+        "kind": "achievement",
+        "detail": "first_core"
+      },
+      {
+        "id": "r5",
+        "seq": 5,
+        "at": 1793842619340,
+        "kind": "core.spirit.depart",
+        "detail": "s70"
+      },
+      {
+        "id": "r6",
+        "seq": 6,
+        "at": 1793842619941,
+        "kind": "core.spirit.arrive",
+        "detail": "s70"
+      }
+    ]
+  },
+  "errors": []
+}

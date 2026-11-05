@@ -99,6 +99,7 @@ const burst = (x: number, y: number, n: number, cols: string[], sp = 60, g = 120
 const MATC: Record<string, string[]> = { wood: ['#c9935a', '#8a5a32', '#e0b070', '#6aa84a'], stone: ['#b9bcc4', '#7d8088', '#ffffff'], ore: ['#d08a5a', '#7d8088', '#ffe0a0'], plant: ['#8ac25a', '#5a9a3c', '#e05a7a'], scrap: ['#c0a07a', '#ffd070', '#6f7378', '#ffffff'] };
 const SURFC: Record<number, string[]> = { [T.SNOW]: ['#ffffff', '#c8d8e8'], [T.SAND]: ['#e8d8a0', '#c4aa74'], [T.MARSH]: ['#4a3e2a', '#3a5a5a'], [T.SHALLOW]: ['#a0d0ff', '#ffffff'], [T.RIVER]: ['#a0d0ff', '#ffffff'], [T.ASH]: ['#6a5a5a', '#3a3236'], [T.ROAD]: ['#b89470', '#9a7a58'] };
 export let shake = 0; export let flash = 0; export const banners: { text: string; sub: string; t: number }[] = [];
+if (import.meta.hot) comp.unregisterVfxClient('pixelfx');
 comp.registerVfxClient({id:'pixelfx',depthItems:g=>pfx.depthItems(g),drawAuras:(g,c)=>pfx.drawAuras(g,c),drawWarpPass:(g,c,n)=>pfx.drawWarpPass(g,c,n),drawScreen:g=>pfx.drawScreen(g),drawPostNight:(g,c,d)=>pfx.drawPostNight(g,c,d)});
 
 export function consumeFX(onFx: (e: any) => void) {
@@ -122,6 +123,7 @@ export function consumeFX(onFx: (e: any) => void) {
       case 'ignite': burst(e.x, e.y - 12, 10, ['#ffb040', '#ff6a1e', '#fff0a0'], 30, -40, 700); break;
       case 'steam': burst(e.x, e.y - 10, 8, ['#e0e8f0', '#b0b8c0'], 20, -30, 900, 2); break;
       case 'scorch': burst(e.x, e.y, 4, ['#3a302a', '#8a3a1e'], 20, -10, 500); break;
+      case 'spiritHit': burst(e.x,e.y-5,6,['#d79aff','#fff2ff'],25,10,260); break;
       case 'spiritDepart': case 'spiritArrive': burst(e.x,e.y-6,24,['#bd7bff','#f5e2ff','#69328c'],42,-15,750,2);ARCS.push({x:e.x,y:e.y,life:0,max:650,kind:'spiritRing',reach:24} as Part);break;
       case 'cast': burst(e.x, e.y, 16, e.core === 'fire' ? ['#ffb040', '#fff0a0'] : e.core === 'frost' ? ['#c8f0ff', '#ffffff'] : e.core === 'storm' ? ['#c0e0ff', '#ffffff'] : e.core === 'spirit' ? ['#bd7bff','#f4dfff'] : ['#e0c080', '#7a5a32'], 70, 0, 400); break;
       case 'fizzle': burst(e.x, e.y - 8, 8, ['#8a8a9a', '#c0c0d0'], 30, -20, 500); break;
@@ -220,7 +222,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   // temporary terrain sprites (ice pillars, root cages)
   for (const k in r.terrain) { const m: any = r.terrain[+k]; if (!m.until || m.t !== T.PWALL) continue; const i = +k; const X = (i % WW) * 16, Y = ((i / WW) | 0) * 16; if (X < cx - 20 || X > cx + VIEW_W || Y < cy - 30 || Y > cy + VIEW_H) continue; g.drawImage(m.by === 'grove' ? A.st.rootwall : A.st.icepillar, X, Y - 8); }
   // projectiles
-  for (const pr of PROJ) { if (pr.delay && pr.delay > 0) continue; drawProj(g, pr, time); }
+  for (const pr of PROJ) { if (pr.delay && pr.delay > 0) continue; const visual=pr.kind==='spirit_ray'?'arcane/arcane-orb':pr.kind==='fireball'?'fire/fireball':null; if(!visual || !pfx.ready(visual))drawProj(g, pr, time); }
   // roofs
   const room = roofRoom(r, p.x, p.y);
   for (const b of w.buildings) { if ((b.x + b.w) * 16 < cx || b.x * 16 > cx + VIEW_W || (b.y + b.h) * 16 < cy - 16 || b.y * 16 > cy + VIEW_H) continue;
@@ -394,7 +396,7 @@ function drawProj(g: CanvasRenderingContext2D, pr: any, time: number) {
 }
 function drawHaz(g: CanvasRenderingContext2D, h: any, time: number) {
   const col = hazCol(h.style); const tell = h.t < h.tell; const f = tell ? h.t / h.tell : 1;
-  if(h.owner==='player' && h.effect==='spiritBeam' && !tell){g.save();g.translate(h.x,h.y);g.rotate(h.angle);g.fillStyle='rgba(143,57,213,0.65)';g.fillRect(0,-h.w/2,h.len,h.w);g.fillStyle='#f3d5ff';g.fillRect(0,-2,h.len,4);g.fillStyle='#b978fa';for(let x=5;x<h.len;x+=12)g.fillRect(x,Math.sin((x+time)/14)*3-1,4,2);g.restore();return;}
+  if(h.owner==='player' && h.effect==='spiritBeam' && !tell){const growth=Math.min(1,0.45+h.t/220),collapse=Math.min(1,Math.max(0,(h.tell+h.dur-h.t)/300)),width=Math.max(1,h.w*growth*collapse);g.save();g.translate(h.x,h.y);g.rotate(h.angle);g.fillStyle='rgba(143,57,213,0.65)';g.fillRect(0,-width/2,h.len,width);g.fillStyle='#f3d5ff';g.fillRect(0,-Math.max(1,width/6),h.len,Math.max(2,width/3));g.fillStyle='#b978fa';for(let x=5;x<h.len;x+=12)g.fillRect(x,Math.sin((x+time)/14)*width/4-1,4,2);g.restore();return;}
   if (h.owner === 'player' && h.style !== 'meteor' && h.style !== 'burn') { if (!tell && h.style === 'spike') { const X = Math.round(h.x), Y = Math.round(h.y); const k = Math.min(1, (h.t - h.tell) / 60); g.fillStyle = '#7a5a32'; g.fillRect(X - 3, Y - Math.round(10 * k), 2, Math.round(10 * k)); g.fillStyle = '#c9a070'; g.fillRect(X + 1, Y - Math.round(7 * k), 2, Math.round(7 * k)); g.fillStyle = '#e0d0b0'; g.fillRect(X - 3, Y - Math.round(10 * k), 1, 1); } if (h.kind === 'ring' && !tell) { const rr = h.r * Math.min(1, (h.t - h.tell) / h.dur); pixCircle(g, h.x, h.y, rr, '#e0ffff'); pixCircle(g, h.x, h.y, rr - 2, 'rgba(160,220,255,0.6)', 2); } return; }
   g.save(); g.globalAlpha = tell ? 0.18 + f * 0.25 : 0.55;
   if (h.kind === 'circle' || h.kind === 'pool') {

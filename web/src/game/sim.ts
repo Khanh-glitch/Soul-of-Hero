@@ -757,7 +757,7 @@ function tickHaz(gs: GameState, dtMs: number, now: number) {
     const h = HAZ[i]; if(h.expiresSimMs!==undefined && r.clock.simMs>=h.expiresSimMs){HAZ.splice(i,1);continue;} h.t += dtMs; if (h.t < h.tell) continue;
     const first = !h.done; h.done = true;
     if (first) onHazActivate(gs, h, now);
-    if(h.owner==='player' && h.effect==='spiritBeam'){if(p.dead || (p.channelUntil||0)<=now){HAZ.splice(i,1);continue;}for(const m of r.creatures)if(m.state!=='dead'&&inHaz(h,m.x,m.y)&&clearPhysicalLine(r,h,m,true)&&now>=(m.beamHitNext||0)){m.beamHitNext=now+BAL.creatorCoreDemon.beamTickMs;damageCreature(gs,m,h.dmg,h.angle||0,now,0);}}
+    if(h.owner==='player' && h.effect==='spiritBeam'){if(p.dead || (p.channelUntil||0)<=now){HAZ.splice(i,1);continue;}for(const m of r.creatures)if(m.state!=='dead'&&inHaz(h,m.x,m.y)&&clearPhysicalLine(r,h,m,true)&&now>=(m.beamHitNext||0)){m.beamHitNext=now+BAL.creatorCoreDemon.beamTickMs;if(damageCreature(gs,m,h.dmg,h.angle||0,now,0))fx('spiritHit',{x:m.x,y:m.y});}}
     else if(h.owner==='player' && h.effect==='mjolnirPull'){for(const m of r.creatures)if(m.state!=='dead'&&!m.elder?.submerged&&!m.atk?.burrow&&inHaz(h,m.x,m.y)&&clearPhysicalLine(r,h,m,true)){const a=Math.atan2(h.y-m.y,h.x-m.x),step=Math.min(dist(h.x,h.y,m.x,m.y),BAL.creatorCoreMjolnir.attractSpeed*dtMs/1000*(m.elder?0.15:1));moveBody(r,m,Math.cos(a)*step,Math.sin(a)*step,5,'creature');}}
     else if(h.owner==='player' && h.effect==='natureRoot'){for(const m of r.creatures)if(m.state!=='dead'&&!m.elder?.submerged&&!m.atk?.burrow&&inHaz(h,m.x,m.y)&&clearPhysicalLine(r,h,m,true)){m.rootedUntil=Math.max(m.rootedUntil||0,Math.min(now+150,now+Math.max(0,h.tell+h.dur-h.t)));if(now >= (m.rootHitNext||0)){m.rootHitNext=now+BAL.creatorCoreEarthmother.rootTickMs;damageCreature(gs,m,h.dmg,0,now,0);}}}
     else if (h.owner === 'player' && h.kind === 'pool' && h.style === 'burn') { h.tickAcc=(h.tickAcc||0)-dtMs; if(h.tickAcc<=0){h.tickAcc=500;for(const m of r.creatures)if(m.state!=='dead'&&inHaz(h,m.x,m.y)&&now >= (m.signatureBurnNext||0)){m.signatureBurnNext=now+500;damageCreature(gs,m,h.dmg,Math.atan2(m.y-h.y,m.x-h.x),now,10);}} }
@@ -876,7 +876,7 @@ export function syncWorld(gs: GameState, now: number): boolean {
   migrateLootRespawn(r, Math.min(now, expiry));
   if (now >= expiry) { settle(gs, now, true); if (gs.run) endRun(gs, 'expired', expiry); return false; }
   const activeStart = Math.max(r.clock.lastSimAt, now - 50);
-  if (activeStart > r.clock.lastSimAt) settle(gs, activeStart, true);
+  if (activeStart > r.clock.lastSimAt) settle(gs, activeStart, true, false);
   if (!gs.run || r.clock.lastSimAt < activeStart) return false;
   advanceWorld(gs, r.clock.lastSimAt, now);
   r.clock.lastSimAt = now;
@@ -964,7 +964,7 @@ function discover(gs: GameState, now: number) {
 }
 
 // ---------- offline settlement (C09) ----------
-export function settle(gs: GameState, now: number, silent = false): string[] {
+export function settle(gs: GameState, now: number, silent = false, interruptTransit = true): string[] {
   const r = gs.run; if (!r) return [];
   const expiry = r.startedAt - r.qaOffset + BAL.run.maxRunHours * HOUR;
   if (now < r.clock.lastSimAt || (now === r.clock.lastSimAt && now < expiry)) return []; // never replay time
@@ -974,7 +974,7 @@ export function settle(gs: GameState, now: number, silent = false): string[] {
   migrateLootRespawn(r, end);
   if (start > r.clock.lastSimAt && now >= start) r.clock.lastSimAt = start;
   const report: string[] = []; const B = BAL.player; const p = r.player;
-  if(r.spiritTransit && gap>BAL.creatorCoreDemon.teleportMs){delete r.spiritTransit;receipt(r,start,'core.spirit.offline_abort','Transit interrupted while away');if(!silent)report.push('Teleport interrupted while away; you remained at the departure point.');}
+  if(interruptTransit && r.spiritTransit && gap>BAL.creatorCoreDemon.teleportMs){delete r.spiritTransit;receipt(r,start,'core.spirit.offline_abort','Transit interrupted while away');if(!silent)report.push('Teleport interrupted while away; you remained at the departure point.');}
   markDirty(); // Continue may replace the run object while retaining its ID.
   let sheltered = isSheltered(r, p.x, p.y); p.sheltered = sheltered;
   for (const e of Object.values(r.entities)) if (e.turret) e.turret.tracking = false;

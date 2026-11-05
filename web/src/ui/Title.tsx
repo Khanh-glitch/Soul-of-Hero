@@ -59,12 +59,12 @@ export default function Title({ gs, onContinue, onStart, note, summary, clearSum
           {note && <div style={{ fontSize: 10, color: '#ffb08a', maxWidth: 380, textAlign: 'center' }}>{note}</div>}
           <div style={{ fontSize: 9, color: '#7a6a8a', position: 'absolute', top: 186 }}>Offline · single-player · saves locally in this browser (LOCAL/UNVERIFIED)</div>
         </div>}
-        {mode === 'select' && <div className="panel absolute fadein" style={{ left: 90, top: 48, width: 460, padding: 8 }}>
+        {mode === 'select' && <div className="panel absolute fadein" style={{ left: 90, top: 26, width: 460, padding: 8 }}>
           <div className="panel-h" style={{ marginBottom: 4 }}>Choose your Adventurer</div>
           <div className="flex gap-2">{(['female', 'male'] as const).map(h => <button key={h} className={`btn ${hero === h ? 'gold' : 'ghost'}`} style={{ flex: 1, padding: 4, textAlign: 'left' }} onClick={() => { click(); setHero(h); }}>
             <div className="flex items-center gap-2"><HeroPreview female={h === 'female'} active={hero === h} /><div style={{ fontSize: 11, lineHeight: 1.15 }}><div className="title-font" style={{ fontSize: 13 }}>{h === 'female' ? 'Adventurer ♀' : 'Adventurer ♂'}</div><div>Survival knife, a half-full flask, a few berries. No Core, no map, no orders.</div></div></div></button>)}</div>
           <div style={{ fontSize: 11, marginTop: 5, color: '#ffd98a' }}>Map layout</div>
-          <div className="flex flex-wrap gap-1" style={{ marginTop: 2 }}>
+          <div className="flex flex-wrap gap-1" style={{ marginTop: 2, maxHeight: 50, overflowY: 'auto' }}>
             {listLayouts().map(m => <button key={m.id} data-testid={`layout-${m.id.replace('_','-')}`} className={`btn ${layout === m.id ? 'gold' : 'ghost'}`} onClick={() => { chooseLayout(m.id); setRegion(null); }}>{m.title}</button>)}
           </div>
           <div style={{ fontSize: 9, color: '#cfc2dc', marginTop: 1 }}>{listLayouts().find(m => m.id === layout)?.description}{mapPackageErrors().length > 0 && ` · ${mapPackageErrors().length} invalid map package(s): ${mapPackageErrors().join('; ')}`}</div>

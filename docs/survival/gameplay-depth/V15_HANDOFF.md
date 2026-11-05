@@ -1,4 +1,6 @@
-# V15 Gameplay continuation — OPEN / DRAFT / HOLD
+# V15 Gameplay continuation — historical checkpoint / HOLD
+
+> For subsequent work and updated evidence, see [V16 handoff](V16_HANDOFF.md).
 
 This is a continuation, not completion or Creator acceptance. W00 is historical; its implementation and regression statements describe that checkpoint, not the current tree. PR #44 must remain draft and unmerged. See the current git HEAD and PR comment for the exact tested SHA.
 

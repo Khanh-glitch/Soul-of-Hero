@@ -102,7 +102,7 @@ function loadImg(path: string, pilot: boolean): Promise<HTMLImageElement | null>
       const im = new Image();
       im.onload = () => { ns.img = im; res(im); };
       im.onerror = () => { ns.err = true; res(null); };
-      im.src = path.startsWith('data:') ? path : base + path;
+      im.src = /^(data:|blob:|https?:|\/)/.test(path) ? path : base + path;
     });
     evictIfNeeded();
   }
@@ -126,6 +126,8 @@ export function isFailed(id: string): boolean {
   return e.export.pages.combined.some(p => imgs.get(p.path)?.err);
 }
 export function hasEntry(id: string) { return manifest.has(id); }
+/** Use the legacy fallback until all combined pages decoded successfully. */
+export function ready(id:string){const e=manifest.get(id);return !!e && pageLoaded(e) && !isFailed(id);}
 
 export function initPfx(): Promise<boolean> {
   const pilotList: PfxEntry[] = ((PILOT_MANIFEST as any).effects ?? PILOT_MANIFEST) as PfxEntry[];
@@ -172,7 +174,7 @@ export function spawn(id: string, o: PfxOpts): PfxInst | null {
     warpCache: { cv: null, at: -1, x: 0, y: 0, r: 0 },
   };
   instances.push(inst);
-  const pilot = (PILOT_MANIFEST as any).effects?.some((p: any) => p.id === id) ?? false;
+  const pilot = ((PILOT_MANIFEST as any).effects ?? PILOT_MANIFEST).some((p: any) => p.id === id);
   for (const chan of ['combined', 'light'] as const) for (const p of entry.export.pages[chan]) loadImg(p.path, pilot);
   return inst;
 }
@@ -425,9 +427,9 @@ export function syncHazards(hazards: any[], player: { x: number; y: number; aim:
 const projInst = new Map<object, PfxInst>();
 export function syncProjFx(projs: any[], now: number) {
   for (const pr of projs) {
-    if (pr.kind !== 'fireball') continue;
+    if (pr.kind !== 'fireball' && pr.kind !== 'spirit_ray') continue;
     let inst = projInst.get(pr);
-    if (!inst) { inst = spawn('fire/fireball', { x: pr.x, y: pr.y, family: 'proj', loop: true, follow: pr, scale: SCALE['fire/fireball'] })!; projInst.set(pr, inst); }
+    if (!inst) { const id=pr.kind==='spirit_ray'?'arcane/arcane-orb':'fire/fireball'; const created=spawn(id, { x: pr.x, y: pr.y, family: 'proj', loop: true, follow: pr, scale: pr.kind==='spirit_ray'?0.18:SCALE['fire/fireball'] }); if(created){inst=created;projInst.set(pr,inst);} }
   }
   for (const [pr, inst] of [...projInst]) if (!projs.includes(pr) || !instances.includes(inst)) projInst.delete(pr);
   void now;
