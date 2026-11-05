@@ -7,12 +7,14 @@ import './spirit-vfx-editor.css';
 const keys=Object.keys(LAYERS) as SpiritLayer[];
 function NumberField({label,value,min,max,step,onValue}:{label:string;value:number;min:number;max:number;step:number;onValue:(v:string)=>void}){const [draft,setDraft]=useState(String(value));useEffect(()=>setDraft(String(value)),[value]);return <input aria-label={label} type="number" min={min} max={max} step={step} value={draft} onChange={e=>{const v=e.target.value;setDraft(v);if(v!==''&&Number(v)>=min&&Number(v)<=max)onValue(v);}} onBlur={()=>setDraft(String(value))}/>;}
 const fields=[['dx','X lệch (px)',-500,500,1],['dy','Y lệch (px)',-500,500,1],['scale','Cỡ',0.05,3,0.01],['stretch','Kéo ngang',0.1,5,0.05],['angle','Góc thêm (độ)',-360,360,1],['delayMs','Trễ xuất hiện (ms)',0,5000,50],['durationMs','Thời gian tối đa (ms)',50,10000,50]] as const;
-export default function SpiritVfxEditor({gs}:{gs:GameState}){
+export default function SpiritVfxEditor({gs,top,right}:{gs:GameState;top:number;right:number}){
  const [open,setOpen]=useState(false),[key,setKey]=useState<SpiritLayer>('q.beam'),[settings,setSettings]=useState(getSpiritSettings),[status,setStatus]=useState(''),[tick,setTick]=useState(0),[playing,setPlaying]=useState(true),[rate,setRate]=useState(1);
  const preview=useRef<pfx.PfxInst|null>(null), anchor=useRef({x:0,y:0});const file=useRef<HTMLInputElement>(null);
  const layer=settings.layers[key], info=LAYERS[key];
  const stop=()=>{pfx.removePreview(preview.current);preview.current=null;};
  useEffect(()=>()=>stop(),[]);
+ useEffect(()=>{const keydown=(event:KeyboardEvent)=>{if(event.code==='F8'&&!event.repeat){event.preventDefault();setOpen(value=>!value);}};window.addEventListener('keydown',keydown);return()=>window.removeEventListener('keydown',keydown);},[]);
+ useEffect(()=>{if(!open)stop();},[open]);
  useEffect(()=>{const timer=setInterval(()=>setTick(t=>t+1),200);return()=>clearInterval(timer);},[]);
  const apply=(next:SpiritSettings)=>{if(setSpiritSettings(next)){setSettings(next);setStatus('Đã lưu riêng cho bản thử; áp dụng cho lần thi triển tiếp theo.');}else setStatus('Giá trị không hợp lệ.');};
  const change=(name:typeof fields[number][0],value:string)=>{const n=Number(value);if(!Number.isFinite(n))return;const spec=fields.find(f=>f[0]===name)!;if(n<spec[2]||n>spec[3])return;apply({...settings,layers:{...settings.layers,[key]:{...layer,[name]:n}}});};
@@ -23,8 +25,8 @@ export default function SpiritVfxEditor({gs}:{gs:GameState}){
  const exportFile=()=>{const payload={schema:'soh-spirit-vfx-export-v1',exportedAt:new Date().toISOString(),settings:getSpiritSettings(),events:spiritEvents(),note:'Tọa độ trong thế giới game; thời gian sự kiện là đồng hồ thực. Xem mẫu không phải sự kiện chiến đấu.'};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='spirit-vfx-notes.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);setStatus('Đã xuất cấu hình, ghi chú và nhật ký sự kiện.');};
  const importFile=async(e:React.ChangeEvent<HTMLInputElement>)=>{const f=e.target.files?.[0];e.target.value='';if(!f)return;try{if(f.size>200000)throw Error();const data=JSON.parse(await f.text());const next=data.schema==='soh-spirit-vfx-export-v1'?data.settings:data;if(!setSpiritSettings(next))throw Error();setSettings(getSpiritSettings());stop();setStatus('Đã nhập cấu hình và ghi chú. Nhật ký cũ trong tệp không được phát lại.');}catch{setStatus('Không thể nhập: tệp sai định dạng hoặc giá trị ngoài giới hạn.');}};
  const inst=preview.current;const duration=inst?.dur||1200;void tick;
- return <div className="vfx-editor-root" onMouseDown={e=>e.stopPropagation()} onMouseUp={e=>e.stopPropagation()} onMouseMove={e=>e.stopPropagation()} onContextMenu={e=>e.stopPropagation()} onKeyDown={e=>e.stopPropagation()}>
-  {!open?<button className="vfx-open" onClick={()=>setOpen(true)}>Chỉnh VFX Spirit Q/E</button>:<section className="vfx-panel" aria-label="Trình chỉnh VFX Spirit">
+ return <div className="vfx-editor-root" style={{top,right}} onMouseDown={e=>e.stopPropagation()} onMouseUp={e=>e.stopPropagation()} onMouseMove={e=>e.stopPropagation()} onContextMenu={e=>e.stopPropagation()} onKeyDown={e=>{e.stopPropagation();if(e.code==='F8'&&!e.repeat){e.preventDefault();setOpen(value=>!value);}}}>
+  {!open?<button className="vfx-open" onClick={()=>setOpen(true)}>⚙ Chỉnh VFX Spirit Q/E (F8)</button>:<section className="vfx-panel" style={{maxHeight:`calc(100vh - ${top + 8}px)`}} aria-label="Trình chỉnh VFX Spirit">
    <header><strong>VFX Spirit · bản thử</strong><button onClick={()=>{stop();setOpen(false);}}>Thu gọn ✕</button></header>
    <p>Bản mẫu dùng hiệu ứng thật, không sửa chiến đấu. Chỉnh áp dụng cho lần dùng Q/E tiếp theo.</p>
    <label>Lớp <select aria-label="Chọn lớp" value={key} onChange={e=>{stop();setKey(e.target.value as SpiritLayer);}}>{keys.map(k=><option key={k} value={k}>{LAYERS[k].name}</option>)}</select></label>
