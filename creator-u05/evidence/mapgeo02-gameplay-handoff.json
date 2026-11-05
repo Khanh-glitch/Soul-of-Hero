@@ -2,7 +2,7 @@
   "schema": "soh.mapgeo02.gameplay-handoff.v1",
   "task": "SOH — MAP-GEO-REJOIN-02",
   "status": "MAP_PHYSICAL_GEOMETRY_CORRECTED__GAMEPLAY_WORLDTRAVERSAL_INTAKE_PENDING",
-  "generatedAt": "2026-11-05T15:43:47.897Z",
+  "generatedAt": "2026-11-05T15:46:35.318Z",
   "exactRefs": {
     "mapBranch": "arena/2e3cfbd2-soul-of-hero",
     "mapPinnedAndLive": "3e02fde05a24f6d645ea00ed5ab78900655e1272",
@@ -2288,7 +2288,7 @@
     },
     {
       "path": "creator-u05/evidence/mapgeo02a-refs.json",
-      "sha256": "971a436d3a877f10c198bedb431647a7168d264255f1d3feae16d898c55c7a5f"
+      "sha256": "c9e05a2c9a4ee412bd2a94c15a0c1172306f90a753b638f4a27eaa15099bb849"
     },
     {
       "path": "creator-u05/evidence/mapgeo02a-visual-inspection.json",

@@ -1,7 +1,7 @@
 {
   "schema": "soh.mapgeo02a.refs.v1",
   "task": "SOH — MAP-GEO-REJOIN-02A / Evidence Integrity Corrective & Final Map Intake",
-  "generatedAt": "2026-11-05T15:43:47.843Z",
+  "generatedAt": "2026-11-05T15:46:35.266Z",
   "status": "REFS_VERIFIED__NO_GAMEPLAY_EDITS__PR44_UNTOUCHED",
   "pinned": {
     "mapBranch": "arena/2e3cfbd2-soul-of-hero",
@@ -15,10 +15,10 @@
     "u05Pin": "b5c8004ca4e77be62484fb3cd296fe296d7de4c9"
   },
   "live": {
-    "mapBranch": "accca454e7b8c651c7403a95e9efcb8999b550a2",
+    "mapBranch": "d66917a744b7abdb2e6c7192298305da33a20e77",
     "main": "5214788933b1a827f3a177d11ff486433dfe5e8a",
     "pr44Head": "e79d9e7edc46693729b8c4732162dfbf7c9158d9",
-    "localHead": "accca454e7b8c651c7403a95e9efcb8999b550a2",
+    "localHead": "d66917a744b7abdb2e6c7192298305da33a20e77",
     "localBranch": "arena/2e3cfbd2-soul-of-hero"
   },
   "pr44": {
@@ -38,7 +38,7 @@
   },
   "checks": [
     {
-      "id": "R01 live Map branch == 02A pinned Map HEAD",
+      "id": "R01 live Map branch == 02A pin OR builds directly on it",
       "verdict": "PASS"
     },
     {

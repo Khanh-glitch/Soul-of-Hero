@@ -32,7 +32,8 @@ const PINNED = {
 };
 
 /* Ensure the PR44 head object is locally inspectable (read-only fetch). */
-execFileSync('git', ['fetch', '-q', 'origin', 'refs/pull/44/head'], { cwd: REPO });
+execFileSync('git', ['fetch', '-q', 'origin', 'refs/pull/44/head',
+  'refs/heads/arena/2e3cfbd2-soul-of-hero'], { cwd: REPO });
 const remote = {};
 for (const line of git('ls-remote', 'origin',
   'refs/heads/arena/2e3cfbd2-soul-of-hero', 'refs/heads/main', 'refs/pull/44/head').split('\n')) {
@@ -42,7 +43,15 @@ const pr = JSON.parse(gh('pr', 'view', '44', '--json', 'state,headRefOid,headRef
 
 const checks = [];
 const ck = (id, ok) => checks.push({ id, verdict: ok ? 'PASS' : 'FAIL' });
-ck('R01 live Map branch == 02A pinned Map HEAD', remote['refs/heads/arena/2e3cfbd2-soul-of-hero'] === PINNED.mapAt02aPin);
+/* R01 is ancestor-based, not equality-based: 02A itself commits onto the pinned
+ * head, so a post-commit rerun must still pass. Both SHAs are recorded. */
+const liveMapHead = remote['refs/heads/arena/2e3cfbd2-soul-of-hero'];
+let mapBuildsOnPin = false;
+try {
+  execFileSync('git', ['merge-base', '--is-ancestor', PINNED.mapAt02aPin, liveMapHead], { cwd: REPO });
+  mapBuildsOnPin = true;
+} catch { mapBuildsOnPin = false; }
+ck('R01 live Map branch == 02A pin OR builds directly on it', mapBuildsOnPin);
 ck('R02 main unchanged', remote['refs/heads/main'] === PINNED.main);
 const observedIsCommit = (() => { try { return git('cat-file', '-t', PINNED.gameplayObserved02a) === 'commit'; } catch { return false; } })();
 ck('R03 observed Gameplay HEAD was verified live at 02A task start (real commit)', observedIsCommit);

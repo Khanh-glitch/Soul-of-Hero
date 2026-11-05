@@ -3,7 +3,7 @@
 > **Map physical geometry is measured and corrected in an isolated QA viewer.
 > Gameplay traversal permission is NOT granted.** Active authority remains
 > `WMP-04R1` / `U=0.5` / `CREATOR_CHOSEN_U05.v1`. Generated
-> 2026-11-05T15:43:47.897Z. Machine-readable packet:
+> 2026-11-05T15:46:35.318Z. Machine-readable packet:
 > `creator-u05/evidence/mapgeo02-gameplay-handoff.json`.
 
 ---
