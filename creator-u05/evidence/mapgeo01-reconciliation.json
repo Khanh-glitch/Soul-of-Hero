@@ -1,0 +1,97 @@
+{
+  "schema": "soh.u05.mapgeo01-reconciliation.v1",
+  "generatedAt": "2026-11-05T12:50:11.965Z",
+  "total": 62,
+  "categories": {
+    "INTENTIONAL_OVERLAP_OR_HOST_SUBSITE": 12,
+    "GAMEPLAY_A8_SEMANTIC_DECISION": 46,
+    "CREATOR_DECISION_REQUIRED": 1,
+    "MISSING_EVIDENCE": 3
+  },
+  "byKind": {
+    "POI_ENVELOPE_OVERLAP": 11,
+    "MISSING_EXTERIOR_ENTRANCE_RECORD": 26,
+    "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER": 19,
+    "HELICOPTER_VS_LIGHTHOUSE": 1,
+    "ROAD_CENTRELINE_ENTERS_POI_ENVELOPE": 1,
+    "VERTICAL_LINK_NAMED_BLOCKERS": 1,
+    "POI_RETREAT_POLYLINE": 1,
+    "CART_SWEPT_CLEARANCE": 1,
+    "MARINE_FOOT_PERMISSION": 1
+  },
+  "summary": {
+    "totalFindings": 62,
+    "classified": 62,
+    "unresolvedBefore": 61,
+    "explicitlyClassifiedAfter": 62,
+    "genuineMapGeometryDefectsCorrectable": 0,
+    "intentionalOverlaps": 12,
+    "gameplayA8Decisions": 46,
+    "creatorDecisions": 1,
+    "missingEvidence": 3,
+    "polygonFindingsRemeasuredAtU05": 30,
+    "zonesWithDoubleCountedOriginalMeasurement": 7,
+    "mapGeometryCorrectionsApplied": 0,
+    "goldAmendments": 0
+  },
+  "corrections": [
+    {
+      "id": "C-01",
+      "name": "U=0.5-native remeasurement of polygon findings",
+      "geometryChanged": false
+    },
+    {
+      "id": "C-02",
+      "name": "Explicit 5-category classification for every finding",
+      "geometryChanged": false
+    },
+    {
+      "id": "C-03",
+      "name": "Source-pinned immutable GOLD provenance record",
+      "geometryChanged": false
+    }
+  ],
+  "provenance": {
+    "gold": {
+      "path": "veyra-world-master/data/canon/VEYRA_GOLD_MAP.sohmap.json",
+      "sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+      "bytes": 332249
+    },
+    "originalFindings": {
+      "path": "creator-u05/map-data/U05_GEOMETRY_CONFLICTS.json",
+      "sha256": "2ac08fd0881a7a584ab321b303e9dd71b54296c02ab5cb89a4a890edd83b4abc",
+      "bytes": 18063,
+      "unchanged": true
+    },
+    "activeWorldMaster": {
+      "path": "veyra-world-master/CURRENT_WORLD_MASTER.json",
+      "sha256": "6adfa7167937a5fed0af2c11348fcdff6cbe445daaba5bbfb1bfb208f1239679"
+    },
+    "activeManifest": {
+      "path": "veyra-world-master/v4/r1/manifest.r1.json",
+      "sha256": "57195f7d842ce524d0bda566a140ffba67f2a6f8563830b8c1030bc583224f15"
+    },
+    "u05Contract": {
+      "path": "creator-u05/contracts/CREATOR_CHOSEN_U05.v1.json",
+      "sha256": "1faf5e4dc2758f190263853d82cd6f90d9e5cb23727161ff62a14348d6ccbcf2"
+    },
+    "protectedViewer": {
+      "path": "creator-u05/SoulOfHero_TerrainOnly_U05_x10.html",
+      "sha256": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0",
+      "unchanged": true
+    },
+    "immutableGoldAssertions": {
+      "amendedPolygons": 0,
+      "relocatedObjects": 0,
+      "expandedEnvelopes": 0,
+      "recolouredRoads": 0,
+      "widenedRoads": 0,
+      "newBuildings": 0,
+      "newDoors": 0,
+      "newProps": 0,
+      "canonicalIdsChanged": 0,
+      "note": "GOLD JSON and WMP-04R1 rasters were READ ONLY. All changes are in new Map evidence files."
+    }
+  },
+  "output": "creator-u05/map-data/MAPGEO01_FINDINGS_RECONCILED.json"
+}

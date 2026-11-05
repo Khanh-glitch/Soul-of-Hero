@@ -165,3 +165,36 @@ Gameplay owner, Map không bịa reward/collision/source ownership.
 `N02-ASSET-GAP-01` chỉ là **ĐỀ XUẤT**, không tạo asset thay thế. Không đụng 4
 biome kia, không nhân rộng world, không công trình/POI/tàn tích/hàng rào/prop,
 không merge Gameplay, không `VISUAL_ACCEPTED`, không `VEYRA_PLAYABLE`.
+
+---
+
+## MAP-GEO-REJOIN-01 — Physical Terrain & Traversal Readiness (KHÔNG tạo game mới)
+
+> Trở lại đúng production plan Veyra Map: **WMP-04R1 / U=0.5**, đo địa hình vật
+> lý & mạng đi lại, đối soát 62 finding, thử đi phím thật trong **chính**
+> `SoulOfHero_TerrainOnly_U05_x10.html` (`540f095e…`, KHÔNG rebuild). Đây **không**
+> phải ecology, không rải tài nguyên, không sản xuất POI, không atlas/product mới.
+
+| File | Vai trò |
+|---|---|
+| `docs/MAP_GEO_REJOIN_01_STATUS.md` | **Báo cáo trạng thái Map hiện tại** — SHA nguồn, matrix lớp, 10 defect owner/severity, before/after runtime, 6 hành trình, 4 trạng thái nghiệm thu riêng, 1 việc tiếp theo |
+| `docs/MAPGEO01_GAMEPLAY_HANDOFF.md` + `evidence/mapgeo01-gameplay-handoff.json` | Bàn giao **chốt nguồn** cho Gameplay owner `arena/d4bfcfff-soul-of-hero` @ `6e7d116b…` (PR44 OPEN, **không đụng**) |
+| `evidence/mapgeo01-preflight.json` | Ref sống, drift Gameplay, §V/§11.5 bible, painter byte-identical, SHA 21 nguồn, 3 executable bảo vệ |
+| `evidence/mapgeo01-physical-audit.json` | Đo A–F từ `sampleTile()/u05Tile()/terrainBlocked()`: thuỷ hệ, cao độ/vách, 92 đường, 12 cầu, 27 bến, 4 spawn, 81 POI; bảng tách 3 lớp; 10 defect |
+| `map-data/MAPGEO01_FINDINGS_RECONCILED.json`, `evidence/mapgeo01-reconciliation.json` | 62 finding phân loại 5 nhóm, 30 finding đo lại 0.5 AU theo union, provenance GOLD bất biến |
+| `evidence/mapgeo01-traversal.json`, `evidence/mapgeo01-shots/*.png` | 6 hành trình phím thật + **16 ảnh native 640×360** before/after + cặp OFF/ON cùng toạ độ |
+| `tools/preflight-mapgeo01.mjs`, `tools/audit-mapgeo01-physical.mjs`, `tools/reconcile-mapgeo01-findings.mjs`, `tools/build-mapgeo01-handoff.mjs` | Tool chỉ-đọc / đo lường / bàn giao |
+| `tests/qa-mapgeo01-traversal.mjs`, `tests/test-mapgeo01.mjs` | QA browser đi phím thật + **130/130 static test** |
+
+**Phát hiện chặn:** `MGP-D01` — 12/12 cầu GOLD render `RIVER` và bị chặn, **0 cầu
+đi qua được**; `MGP-D10` — 305 ô `cliffCandidate` nhưng **0 tile `T.CLIFF`** vì
+mã hoá raster chỉ 0/1 trong khi luật U05 đòi `>=2`. Cả hai **không tự sửa**: sửa
+sẽ bịa deck cầu ~48 tile hoặc tạo blocker từ dữ liệu CANDIDATE. `4 PASS / 1 FAIL
+/ 1 PARTIAL` hành trình; crossing `br_1` FAIL với **122 sub-step bị chặn** là bằng
+chứng thật, không phải gate giả. **0** đa giác/ID GOLD bị sửa, **0** cửa/prop/
+công trình/atlas mới.
+
+`PAPER=MEASURED` · `RUNTIME=ISOLATED_VIEWER_PHYSICAL_PARTIAL` ·
+`VISUAL=NOT_REQUESTED_AND_NOT_GRANTED` · `GAMEPLAY=NOT_REQUESTED_AND_NOT_GRANTED`.
+Không `VEYRA_PLAYABLE`, không `VISUAL_ACCEPTED`, không merge. NATURE-01/02 vẫn là
+R&D lưu trữ, không phải hệ đặt tài nguyên production.

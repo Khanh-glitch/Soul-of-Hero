@@ -1,0 +1,2681 @@
+{
+  "schema": "soh.u05.mapgeo01-findings-reconciled.v1",
+  "generatedAt": "2026-11-05T12:50:11.965Z",
+  "pilot": "MAP-GEO-REJOIN-01",
+  "sourceRegister": "creator-u05/map-data/U05_GEOMETRY_CONFLICTS.json (62 findings, preserved verbatim)",
+  "transform": {
+    "U": 0.5,
+    "TILES_PER_AU": 2,
+    "tileAu": 0.5,
+    "rule": "cell centre = (x0 + (i+0.5)*step); polygon vertices evaluated in continuous AU; NO rounding to whole tiles before point-in-polygon",
+    "unionRule": "overlapping POI/Elder shapes inside one zone are counted ONCE (union), not summed per object"
+  },
+  "categories": {
+    "MAP_GEOMETRY_DEFECT__SOURCE_BACKED_CORRECTABLE": {
+      "count": 0,
+      "severity": "HIGH",
+      "owner": "MAP_U05"
+    },
+    "INTENTIONAL_OVERLAP_OR_HOST_SUBSITE": {
+      "count": 12,
+      "severity": "INFO",
+      "owner": "MAP_U05 / CREATOR"
+    },
+    "GAMEPLAY_A8_SEMANTIC_DECISION": {
+      "count": 46,
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0"
+    },
+    "CREATOR_DECISION_REQUIRED": {
+      "count": 1,
+      "severity": "MEDIUM",
+      "owner": "CREATOR / GAMEPLAY A8"
+    },
+    "MISSING_EVIDENCE": {
+      "count": 3,
+      "severity": "MEDIUM",
+      "owner": "GAMEPLAY / CREATOR"
+    }
+  },
+  "summary": {
+    "totalFindings": 62,
+    "classified": 62,
+    "unresolvedBefore": 61,
+    "explicitlyClassifiedAfter": 62,
+    "genuineMapGeometryDefectsCorrectable": 0,
+    "intentionalOverlaps": 12,
+    "gameplayA8Decisions": 46,
+    "creatorDecisions": 1,
+    "missingEvidence": 3,
+    "polygonFindingsRemeasuredAtU05": 30,
+    "zonesWithDoubleCountedOriginalMeasurement": 7,
+    "mapGeometryCorrectionsApplied": 0,
+    "goldAmendments": 0
+  },
+  "corrections": [
+    {
+      "id": "C-01",
+      "name": "U=0.5-native remeasurement of polygon findings",
+      "before": "AU2 analytic / tile2 analytic / 1-AU-cell sums (per-object, double counting)",
+      "after": "exact 0.5 AU tile-centre counts using a UNION of shapes",
+      "measured": {
+        "findingsRemeasured": 30,
+        "zonesWithDoubleCount": 7,
+        "example": {
+          "id": "bz_cinder",
+          "beforeCells1Au": 2131,
+          "naive4x": 8524,
+          "afterNativeTiles": 5505
+        }
+      },
+      "geometryChanged": false
+    },
+    {
+      "id": "C-02",
+      "name": "Explicit 5-category classification for every finding",
+      "before": {
+        "unresolved": 61,
+        "distinctOwnerStrings": 6,
+        "categories": 0
+      },
+      "after": {
+        "classified": 62,
+        "categories": 5,
+        "ownerStrings": 4
+      },
+      "geometryChanged": false
+    },
+    {
+      "id": "C-03",
+      "name": "Source-pinned immutable GOLD provenance record",
+      "before": "no per-reconciliation SHA/provenance block",
+      "after": {
+        "gold": {
+          "path": "veyra-world-master/data/canon/VEYRA_GOLD_MAP.sohmap.json",
+          "sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+          "bytes": 332249
+        },
+        "originalFindings": {
+          "path": "creator-u05/map-data/U05_GEOMETRY_CONFLICTS.json",
+          "sha256": "2ac08fd0881a7a584ab321b303e9dd71b54296c02ab5cb89a4a890edd83b4abc",
+          "bytes": 18063,
+          "unchanged": true
+        },
+        "activeWorldMaster": {
+          "path": "veyra-world-master/CURRENT_WORLD_MASTER.json",
+          "sha256": "6adfa7167937a5fed0af2c11348fcdff6cbe445daaba5bbfb1bfb208f1239679"
+        },
+        "activeManifest": {
+          "path": "veyra-world-master/v4/r1/manifest.r1.json",
+          "sha256": "57195f7d842ce524d0bda566a140ffba67f2a6f8563830b8c1030bc583224f15"
+        },
+        "u05Contract": {
+          "path": "creator-u05/contracts/CREATOR_CHOSEN_U05.v1.json",
+          "sha256": "1faf5e4dc2758f190263853d82cd6f90d9e5cb23727161ff62a14348d6ccbcf2"
+        },
+        "protectedViewer": {
+          "path": "creator-u05/SoulOfHero_TerrainOnly_U05_x10.html",
+          "sha256": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0",
+          "unchanged": true
+        },
+        "immutableGoldAssertions": {
+          "amendedPolygons": 0,
+          "relocatedObjects": 0,
+          "expandedEnvelopes": 0,
+          "recolouredRoads": 0,
+          "widenedRoads": 0,
+          "newBuildings": 0,
+          "newDoors": 0,
+          "newProps": 0,
+          "canonicalIdsChanged": 0,
+          "note": "GOLD JSON and WMP-04R1 rasters were READ ONLY. All changes are in new Map evidence files."
+        }
+      },
+      "geometryChanged": false
+    }
+  ],
+  "byKind": {
+    "POI_ENVELOPE_OVERLAP": 11,
+    "MISSING_EXTERIOR_ENTRANCE_RECORD": 26,
+    "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER": 19,
+    "HELICOPTER_VS_LIGHTHOUSE": 1,
+    "ROAD_CENTRELINE_ENTERS_POI_ENVELOPE": 1,
+    "VERTICAL_LINK_NAMED_BLOCKERS": 1,
+    "POI_RETREAT_POLYLINE": 1,
+    "CART_SWEPT_CLEARANCE": 1,
+    "MARINE_FOOT_PERMISSION": 1
+  },
+  "items": [
+    {
+      "index": 1,
+      "id": "MG01-F01",
+      "kind": "POI_ENVELOPE_OVERLAP",
+      "sourceIds": [
+        "po_archive",
+        "po_hall_eyes"
+      ],
+      "original": {
+        "status": "HOST_SUBSITE_OR_INTENTIONAL__UNRESOLVED",
+        "owner": "MAP_U05 / CREATOR",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 560.0523,
+          "unit": "AU2"
+        }
+      },
+      "classification": "INTENTIONAL_OVERLAP_OR_HOST_SUBSITE",
+      "severity": "INFO",
+      "owner": "MAP_U05 / CREATOR",
+      "decisionRequired": "Confirm host/subsite relationship in the Gameplay site registry. NO shrink / relocate / expand / door generation.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "exact GOLD foot polygon intersection at U=0.5 tile centres (0.5 AU step)",
+        "before": {
+          "analyticAu2": 560.0523,
+          "analyticTile2": 2240.2092,
+          "cells1Au": 559
+        },
+        "after": {
+          "nativeTileCount": 2238,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsAnalyticTile2": -2.21,
+        "hostArche": "facility",
+        "subsiteArche": "elder_site",
+        "hostAccess": "Ngoại vi tự do; lõi cần thẻ + điện + bảo hộ",
+        "subsiteAccess": "Đường tiếp cận + đường rút",
+        "relationshipEvidence": "Argus Archive Vaults (facility) / Hall of Eyes (elder_site); foot envelopes overlap, GOLD IDs unchanged"
+      }
+    },
+    {
+      "index": 2,
+      "id": "MG01-F02",
+      "kind": "POI_ENVELOPE_OVERLAP",
+      "sourceIds": [
+        "po_gulfhead",
+        "po_vend_gulf"
+      ],
+      "original": {
+        "status": "HOST_SUBSITE_OR_INTENTIONAL__UNRESOLVED",
+        "owner": "MAP_U05 / CREATOR",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 156.6744,
+          "unit": "AU2"
+        }
+      },
+      "classification": "INTENTIONAL_OVERLAP_OR_HOST_SUBSITE",
+      "severity": "INFO",
+      "owner": "MAP_U05 / CREATOR",
+      "decisionRequired": "Confirm host/subsite relationship in the Gameplay site registry. NO shrink / relocate / expand / door generation.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "exact GOLD foot polygon intersection at U=0.5 tile centres (0.5 AU step)",
+        "before": {
+          "analyticAu2": 156.6744,
+          "analyticTile2": 626.6976,
+          "cells1Au": 154
+        },
+        "after": {
+          "nativeTileCount": 632,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsAnalyticTile2": 5.3,
+        "hostArche": "port",
+        "subsiteArche": "chest_vendor",
+        "hostAccess": "Đường xe + tuyến phà",
+        "subsiteAccess": "Đường xe/đường nhỏ",
+        "relationshipEvidence": "Gulfhead (port) / Gulfhead Trading House [ĐỀ XUẤT] (chest_vendor); foot envelopes overlap, GOLD IDs unchanged"
+      }
+    },
+    {
+      "index": 3,
+      "id": "MG01-F03",
+      "kind": "POI_ENVELOPE_OVERLAP",
+      "sourceIds": [
+        "po_strait",
+        "po_vend_strait"
+      ],
+      "original": {
+        "status": "HOST_SUBSITE_OR_INTENTIONAL__UNRESOLVED",
+        "owner": "MAP_U05 / CREATOR",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 136.8639,
+          "unit": "AU2"
+        }
+      },
+      "classification": "INTENTIONAL_OVERLAP_OR_HOST_SUBSITE",
+      "severity": "INFO",
+      "owner": "MAP_U05 / CREATOR",
+      "decisionRequired": "Confirm host/subsite relationship in the Gameplay site registry. NO shrink / relocate / expand / door generation.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "exact GOLD foot polygon intersection at U=0.5 tile centres (0.5 AU step)",
+        "before": {
+          "analyticAu2": 136.8639,
+          "analyticTile2": 547.4557,
+          "cells1Au": 137
+        },
+        "after": {
+          "nativeTileCount": 548,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsAnalyticTile2": 0.54,
+        "hostArche": "port",
+        "subsiteArche": "chest_vendor",
+        "hostAccess": "Đường xe + tuyến phà",
+        "subsiteAccess": "Đường xe/đường nhỏ",
+        "relationshipEvidence": "Strait Landing (port) / Strait Landing Counter [ĐỀ XUẤT] (chest_vendor); foot envelopes overlap, GOLD IDs unchanged"
+      }
+    },
+    {
+      "index": 4,
+      "id": "MG01-F04",
+      "kind": "POI_ENVELOPE_OVERLAP",
+      "sourceIds": [
+        "po_gullnest",
+        "po_gullwreck"
+      ],
+      "original": {
+        "status": "HOST_SUBSITE_OR_INTENTIONAL__UNRESOLVED",
+        "owner": "MAP_U05 / CREATOR",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 115.2011,
+          "unit": "AU2"
+        }
+      },
+      "classification": "INTENTIONAL_OVERLAP_OR_HOST_SUBSITE",
+      "severity": "INFO",
+      "owner": "MAP_U05 / CREATOR",
+      "decisionRequired": "Confirm host/subsite relationship in the Gameplay site registry. NO shrink / relocate / expand / door generation.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "exact GOLD foot polygon intersection at U=0.5 tile centres (0.5 AU step)",
+        "before": {
+          "analyticAu2": 115.2011,
+          "analyticTile2": 460.8042,
+          "cells1Au": 115
+        },
+        "after": {
+          "nativeTileCount": 460,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsAnalyticTile2": -0.8,
+        "hostArche": "grove",
+        "subsiteArche": "ruins",
+        "hostAccess": "Đường rừng",
+        "subsiteAccess": "Đường mòn",
+        "relationshipEvidence": "Seabird Nesting Cliffs (grove) / Gull Isle Wreck (ruins); foot envelopes overlap, GOLD IDs unchanged"
+      }
+    },
+    {
+      "index": 5,
+      "id": "MG01-F05",
+      "kind": "POI_ENVELOPE_OVERLAP",
+      "sourceIds": [
+        "po_kestrel",
+        "po_rc_kestrel"
+      ],
+      "original": {
+        "status": "HOST_SUBSITE_OR_INTENTIONAL__UNRESOLVED",
+        "owner": "MAP_U05 / CREATOR",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 102.5458,
+          "unit": "AU2"
+        }
+      },
+      "classification": "INTENTIONAL_OVERLAP_OR_HOST_SUBSITE",
+      "severity": "INFO",
+      "owner": "MAP_U05 / CREATOR",
+      "decisionRequired": "Confirm host/subsite relationship in the Gameplay site registry. NO shrink / relocate / expand / door generation.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "exact GOLD foot polygon intersection at U=0.5 tile centres (0.5 AU step)",
+        "before": {
+          "analyticAu2": 102.5458,
+          "analyticTile2": 410.1832,
+          "cells1Au": 103
+        },
+        "after": {
+          "nativeTileCount": 412,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsAnalyticTile2": 1.82,
+        "hostArche": "facility",
+        "subsiteArche": "ragnarok_cache",
+        "hostAccess": "Ngoại vi tự do; lõi cần thẻ + điện + bảo hộ",
+        "subsiteAccess": "Đường bộ; không qua Elder",
+        "relationshipEvidence": "Kestrel Radio Tower (facility) / Kestrel Tower Safe (ragnarok_cache); foot envelopes overlap, GOLD IDs unchanged"
+      }
+    },
+    {
+      "index": 6,
+      "id": "MG01-F06",
+      "kind": "POI_ENVELOPE_OVERLAP",
+      "sourceIds": [
+        "po_saltharbor",
+        "po_rc_salt"
+      ],
+      "original": {
+        "status": "HOST_SUBSITE_OR_INTENTIONAL__UNRESOLVED",
+        "owner": "MAP_U05 / CREATOR",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 102.3998,
+          "unit": "AU2"
+        }
+      },
+      "classification": "INTENTIONAL_OVERLAP_OR_HOST_SUBSITE",
+      "severity": "INFO",
+      "owner": "MAP_U05 / CREATOR",
+      "decisionRequired": "Confirm host/subsite relationship in the Gameplay site registry. NO shrink / relocate / expand / door generation.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "exact GOLD foot polygon intersection at U=0.5 tile centres (0.5 AU step)",
+        "before": {
+          "analyticAu2": 102.3998,
+          "analyticTile2": 409.599,
+          "cells1Au": 102
+        },
+        "after": {
+          "nativeTileCount": 410,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsAnalyticTile2": 0.4,
+        "hostArche": "port",
+        "subsiteArche": "ragnarok_cache",
+        "hostAccess": "Đường xe + tuyến phà",
+        "subsiteAccess": "Đường bộ; không qua Elder",
+        "relationshipEvidence": "Saltwick Harbor (port) / Saltwick Harbor Safe (ragnarok_cache); foot envelopes overlap, GOLD IDs unchanged"
+      }
+    },
+    {
+      "index": 7,
+      "id": "MG01-F07",
+      "kind": "POI_ENVELOPE_OVERLAP",
+      "sourceIds": [
+        "po_sandgate",
+        "po_rc_sandgate"
+      ],
+      "original": {
+        "status": "HOST_SUBSITE_OR_INTENTIONAL__UNRESOLVED",
+        "owner": "MAP_U05 / CREATOR",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 96.4658,
+          "unit": "AU2"
+        }
+      },
+      "classification": "INTENTIONAL_OVERLAP_OR_HOST_SUBSITE",
+      "severity": "INFO",
+      "owner": "MAP_U05 / CREATOR",
+      "decisionRequired": "Confirm host/subsite relationship in the Gameplay site registry. NO shrink / relocate / expand / door generation.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "exact GOLD foot polygon intersection at U=0.5 tile centres (0.5 AU step)",
+        "before": {
+          "analyticAu2": 96.4658,
+          "analyticTile2": 385.8632,
+          "cells1Au": 96
+        },
+        "after": {
+          "nativeTileCount": 387,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsAnalyticTile2": 1.14,
+        "hostArche": "port",
+        "subsiteArche": "ragnarok_cache",
+        "hostAccess": "Đường xe + tuyến phà",
+        "subsiteAccess": "Đường bộ; không qua Elder",
+        "relationshipEvidence": "Sandgate (port) / Sandgate Customs Strongbox (ragnarok_cache); foot envelopes overlap, GOLD IDs unchanged"
+      }
+    },
+    {
+      "index": 8,
+      "id": "MG01-F08",
+      "kind": "POI_ENVELOPE_OVERLAP",
+      "sourceIds": [
+        "po_southfoot",
+        "po_evac_south"
+      ],
+      "original": {
+        "status": "HOST_SUBSITE_OR_INTENTIONAL__UNRESOLVED",
+        "owner": "MAP_U05 / CREATOR",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 50.6646,
+          "unit": "AU2"
+        }
+      },
+      "classification": "INTENTIONAL_OVERLAP_OR_HOST_SUBSITE",
+      "severity": "INFO",
+      "owner": "MAP_U05 / CREATOR",
+      "decisionRequired": "Confirm host/subsite relationship in the Gameplay site registry. NO shrink / relocate / expand / door generation.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "exact GOLD foot polygon intersection at U=0.5 tile centres (0.5 AU step)",
+        "before": {
+          "analyticAu2": 50.6646,
+          "analyticTile2": 202.6585,
+          "cells1Au": 50
+        },
+        "after": {
+          "nativeTileCount": 203,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsAnalyticTile2": 0.34,
+        "hostArche": "port",
+        "subsiteArche": "evac",
+        "hostAccess": "Đường xe + tuyến phà",
+        "subsiteAccess": "Đường + bến",
+        "relationshipEvidence": "Southfoot Landing (port) / Southfoot Evac Beach (evac); foot envelopes overlap, GOLD IDs unchanged"
+      }
+    },
+    {
+      "index": 9,
+      "id": "MG01-F09",
+      "kind": "POI_ENVELOPE_OVERLAP",
+      "sourceIds": [
+        "po_ironvein",
+        "po_rc_ironvein"
+      ],
+      "original": {
+        "status": "HOST_SUBSITE_OR_INTENTIONAL__UNRESOLVED",
+        "owner": "MAP_U05 / CREATOR",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 37.6444,
+          "unit": "AU2"
+        }
+      },
+      "classification": "INTENTIONAL_OVERLAP_OR_HOST_SUBSITE",
+      "severity": "INFO",
+      "owner": "MAP_U05 / CREATOR",
+      "decisionRequired": "Confirm host/subsite relationship in the Gameplay site registry. NO shrink / relocate / expand / door generation.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "exact GOLD foot polygon intersection at U=0.5 tile centres (0.5 AU step)",
+        "before": {
+          "analyticAu2": 37.6444,
+          "analyticTile2": 150.5775,
+          "cells1Au": 43
+        },
+        "after": {
+          "nativeTileCount": 144,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsAnalyticTile2": -6.58,
+        "hostArche": "mine",
+        "subsiteArche": "ragnarok_cache",
+        "hostAccess": "Đường xe + đường hầm",
+        "subsiteAccess": "Đường bộ; không qua Elder",
+        "relationshipEvidence": "Ironvein Mine (mine) / Foreman's Strongbox (ragnarok_cache); foot envelopes overlap, GOLD IDs unchanged"
+      }
+    },
+    {
+      "index": 10,
+      "id": "MG01-F10",
+      "kind": "POI_ENVELOPE_OVERLAP",
+      "sourceIds": [
+        "po_westmouth",
+        "po_evac_west"
+      ],
+      "original": {
+        "status": "HOST_SUBSITE_OR_INTENTIONAL__UNRESOLVED",
+        "owner": "MAP_U05 / CREATOR",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 7.549,
+          "unit": "AU2"
+        }
+      },
+      "classification": "INTENTIONAL_OVERLAP_OR_HOST_SUBSITE",
+      "severity": "INFO",
+      "owner": "MAP_U05 / CREATOR",
+      "decisionRequired": "Confirm host/subsite relationship in the Gameplay site registry. NO shrink / relocate / expand / door generation.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "exact GOLD foot polygon intersection at U=0.5 tile centres (0.5 AU step)",
+        "before": {
+          "analyticAu2": 7.549,
+          "analyticTile2": 30.1961,
+          "cells1Au": 8
+        },
+        "after": {
+          "nativeTileCount": 30,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsAnalyticTile2": -0.2,
+        "hostArche": "port",
+        "subsiteArche": "evac",
+        "hostAccess": "Đường xe + tuyến phà",
+        "subsiteAccess": "Đường + bến",
+        "relationshipEvidence": "Westmouth (port) / Westmouth Evac Pier (evac); foot envelopes overlap, GOLD IDs unchanged"
+      }
+    },
+    {
+      "index": 11,
+      "id": "MG01-F11",
+      "kind": "POI_ENVELOPE_OVERLAP",
+      "sourceIds": [
+        "po_meridian",
+        "po_rc_meridian"
+      ],
+      "original": {
+        "status": "HOST_SUBSITE_OR_INTENTIONAL__UNRESOLVED",
+        "owner": "MAP_U05 / CREATOR",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 0.9559,
+          "unit": "AU2"
+        }
+      },
+      "classification": "INTENTIONAL_OVERLAP_OR_HOST_SUBSITE",
+      "severity": "INFO",
+      "owner": "MAP_U05 / CREATOR",
+      "decisionRequired": "Confirm host/subsite relationship in the Gameplay site registry. NO shrink / relocate / expand / door generation.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "exact GOLD foot polygon intersection at U=0.5 tile centres (0.5 AU step)",
+        "before": {
+          "analyticAu2": 0.9559,
+          "analyticTile2": 3.8236,
+          "cells1Au": 2
+        },
+        "after": {
+          "nativeTileCount": 4,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsAnalyticTile2": 0.18,
+        "hostArche": "research",
+        "subsiteArche": "ragnarok_cache",
+        "hostAccess": "Đường nhỏ + lối rút",
+        "subsiteAccess": "Đường bộ; không qua Elder",
+        "relationshipEvidence": "Meridian Research Station (research) / Meridian Archive Cache (ragnarok_cache); foot envelopes overlap, GOLD IDs unchanged"
+      }
+    },
+    {
+      "index": 12,
+      "id": "MG01-F12",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_hall_eyes"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 8132,
+        "arche": "elder_site",
+        "gate": "elder",
+        "accessText": "Đường tiếp cận + đường rút",
+        "hasRetreat": true,
+        "hasDeepPolygon": true,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 13,
+      "id": "MG01-F13",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_typhon"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 8142,
+        "arche": "elder_site",
+        "gate": "elder",
+        "accessText": "Đường tiếp cận + đường rút",
+        "hasRetreat": true,
+        "hasDeepPolygon": true,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 14,
+      "id": "MG01-F14",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_viaduct"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 4054,
+        "arche": "ruins",
+        "gate": "none",
+        "accessText": "Đường mòn",
+        "hasRetreat": false,
+        "hasDeepPolygon": false,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 15,
+      "id": "MG01-F15",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_freightyard"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 4058,
+        "arche": "ruins",
+        "gate": "none",
+        "accessText": "Đường mòn",
+        "hasRetreat": false,
+        "hasDeepPolygon": false,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 16,
+      "id": "MG01-F16",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_fracquarry"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 5520,
+        "arche": "quarry",
+        "gate": "none",
+        "accessText": "Đường xe tải hàng",
+        "hasRetreat": false,
+        "hasDeepPolygon": false,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 17,
+      "id": "MG01-F17",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_pumphouse"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 1804,
+        "arche": "filter",
+        "gate": "hazard",
+        "accessText": "Đường nhỏ",
+        "hasRetreat": false,
+        "hasDeepPolygon": false,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 18,
+      "id": "MG01-F18",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_glade"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 1802,
+        "arche": "grove",
+        "gate": "none",
+        "accessText": "Đường rừng",
+        "hasRetreat": false,
+        "hasDeepPolygon": false,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 19,
+      "id": "MG01-F19",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_sapgrove"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 1804,
+        "arche": "grove",
+        "gate": "none",
+        "accessText": "Đường rừng",
+        "hasRetreat": false,
+        "hasDeepPolygon": false,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 20,
+      "id": "MG01-F20",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_elderwood"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 8134,
+        "arche": "elder_site",
+        "gate": "elder",
+        "accessText": "Đường tiếp cận + đường rút",
+        "hasRetreat": true,
+        "hasDeepPolygon": true,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 21,
+      "id": "MG01-F21",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_mere"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 704,
+        "arche": "pier",
+        "gate": "none",
+        "accessText": "Đường mòn + thủy lộ",
+        "hasRetreat": false,
+        "hasDeepPolygon": false,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 22,
+      "id": "MG01-F22",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_filter"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 1802,
+        "arche": "filter",
+        "gate": "hazard",
+        "accessText": "Đường nhỏ",
+        "hasRetreat": false,
+        "hasDeepPolygon": false,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 23,
+      "id": "MG01-F23",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_westbank"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 704,
+        "arche": "pier",
+        "gate": "none",
+        "accessText": "Đường mòn + thủy lộ",
+        "hasRetreat": false,
+        "hasDeepPolygon": false,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 24,
+      "id": "MG01-F24",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_greyquarry"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 5520,
+        "arche": "quarry",
+        "gate": "none",
+        "accessText": "Đường xe tải hàng",
+        "hasRetreat": false,
+        "hasDeepPolygon": false,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 25,
+      "id": "MG01-F25",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_necropolis"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 8134,
+        "arche": "elder_site",
+        "gate": "elder",
+        "accessText": "Đường tiếp cận + đường rút",
+        "hasRetreat": true,
+        "hasDeepPolygon": true,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 26,
+      "id": "MG01-F26",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_cairns"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 4058,
+        "arche": "ruins",
+        "gate": "none",
+        "accessText": "Đường mòn",
+        "hasRetreat": true,
+        "hasDeepPolygon": true,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 27,
+      "id": "MG01-F27",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_dpier"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 704,
+        "arche": "pier",
+        "gate": "none",
+        "accessText": "Đường mòn + thủy lộ",
+        "hasRetreat": false,
+        "hasDeepPolygon": false,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 28,
+      "id": "MG01-F28",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_wreck"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 4056,
+        "arche": "ruins",
+        "gate": "none",
+        "accessText": "Đường mòn",
+        "hasRetreat": false,
+        "hasDeepPolygon": false,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 29,
+      "id": "MG01-F29",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_gullnest"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 1800,
+        "arche": "grove",
+        "gate": "none",
+        "accessText": "Đường rừng",
+        "hasRetreat": false,
+        "hasDeepPolygon": false,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 30,
+      "id": "MG01-F30",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_gullpier"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 700,
+        "arche": "pier",
+        "gate": "none",
+        "accessText": "Đường mòn + thủy lộ",
+        "hasRetreat": false,
+        "hasDeepPolygon": false,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 31,
+      "id": "MG01-F31",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_obsq"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 5518,
+        "arche": "quarry",
+        "gate": "none",
+        "accessText": "Đường xe tải hàng",
+        "hasRetreat": false,
+        "hasDeepPolygon": false,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 32,
+      "id": "MG01-F32",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_surtur"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 8138,
+        "arche": "elder_site",
+        "gate": "elder",
+        "accessText": "Đường tiếp cận + đường rút",
+        "hasRetreat": true,
+        "hasDeepPolygon": true,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 33,
+      "id": "MG01-F33",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_saltpans"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 5520,
+        "arche": "quarry",
+        "gate": "none",
+        "accessText": "Đường xe tải hàng",
+        "hasRetreat": false,
+        "hasDeepPolygon": false,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 34,
+      "id": "MG01-F34",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_gullwreck"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 4054,
+        "arche": "ruins",
+        "gate": "none",
+        "accessText": "Đường mòn",
+        "hasRetreat": false,
+        "hasDeepPolygon": false,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 35,
+      "id": "MG01-F35",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_evac_west"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 1804,
+        "arche": "evac",
+        "gate": "none",
+        "accessText": "Đường + bến",
+        "hasRetreat": false,
+        "hasDeepPolygon": false,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 36,
+      "id": "MG01-F36",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_evac_south"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 1802,
+        "arche": "evac",
+        "gate": "none",
+        "accessText": "Đường + bến",
+        "hasRetreat": false,
+        "hasDeepPolygon": false,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 37,
+      "id": "MG01-F37",
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "sourceIds": [
+        "po_evac_hook"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY A8",
+        "resolution": "NO_DOOR_INVENTED",
+        "measurement": {
+          "value": 1,
+          "unit": "record_count"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footEnvelopeNativeTiles": 1802,
+        "arche": "evac",
+        "gate": "none",
+        "accessText": "Đường + bến",
+        "hasRetreat": false,
+        "hasDeepPolygon": false,
+        "explicitDoorRecord": false,
+        "note": "GOLD provides a SITE ENVELOPE and a qualitative access string only. An exterior entrance/door is an A8 interaction record; no prop or door was generated."
+      }
+    },
+    {
+      "index": 38,
+      "id": "MG01-F38",
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "sourceIds": [
+        "bz_greywater"
+      ],
+      "original": {
+        "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+        "owner": "MAP_U05 / GAMEPLAY",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 4472,
+          "unit": "cells_1AU"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "zone ring ∩ UNION(POI foot / Elder outer) at exact U=0.5 tile centres; no double counting",
+        "before": {
+          "cells1Au": 4472,
+          "unit": "1 AU cells (sum of per-object counts)",
+          "naive4xTileEstimate": 17888,
+          "recomputedUnionCells1Au": 3885,
+          "doubleCountedCells1Au": 587
+        },
+        "after": {
+          "nativeTileCount": 15522,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsNaive4x": -2366,
+        "members": [
+          {
+            "id": "po_greywater",
+            "kind": "poi",
+            "cells1Au": 617
+          },
+          {
+            "id": "el_aion",
+            "kind": "elder",
+            "cells1Au": 3855
+          }
+        ],
+        "zoneSoil": "đất bồi pha cát",
+        "zoneSlope": "thoải",
+        "note": "Legal placement after A0 protection/collision/route/resource/dynamic occupancy checks is GAMEPLAY-owned. This remeasurement changes the EVIDENCE UNIT only."
+      }
+    },
+    {
+      "index": 39,
+      "id": "MG01-F39",
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "sourceIds": [
+        "bz_silver"
+      ],
+      "original": {
+        "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+        "owner": "MAP_U05 / GAMEPLAY",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 1473,
+          "unit": "cells_1AU"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "zone ring ∩ UNION(POI foot / Elder outer) at exact U=0.5 tile centres; no double counting",
+        "before": {
+          "cells1Au": 1473,
+          "unit": "1 AU cells (sum of per-object counts)",
+          "naive4xTileEstimate": 5892,
+          "recomputedUnionCells1Au": 907,
+          "doubleCountedCells1Au": 566
+        },
+        "after": {
+          "nativeTileCount": 3644,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsNaive4x": -2248,
+        "members": [
+          {
+            "id": "po_sawaion",
+            "kind": "poi",
+            "cells1Au": 566
+          },
+          {
+            "id": "el_aion",
+            "kind": "elder",
+            "cells1Au": 907
+          }
+        ],
+        "zoneSoil": "đất phù sa",
+        "zoneSlope": "phẳng",
+        "note": "Legal placement after A0 protection/collision/route/resource/dynamic occupancy checks is GAMEPLAY-owned. This remeasurement changes the EVIDENCE UNIT only."
+      }
+    },
+    {
+      "index": 40,
+      "id": "MG01-F40",
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "sourceIds": [
+        "bz_moss"
+      ],
+      "original": {
+        "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+        "owner": "MAP_U05 / GAMEPLAY",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 2735,
+          "unit": "cells_1AU"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "zone ring ∩ UNION(POI foot / Elder outer) at exact U=0.5 tile centres; no double counting",
+        "before": {
+          "cells1Au": 2735,
+          "unit": "1 AU cells (sum of per-object counts)",
+          "naive4xTileEstimate": 10940,
+          "recomputedUnionCells1Au": 2735,
+          "doubleCountedCells1Au": 0
+        },
+        "after": {
+          "nativeTileCount": 10940,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsNaive4x": 0,
+        "members": [
+          {
+            "id": "el_aion",
+            "kind": "elder",
+            "cells1Au": 2735
+          }
+        ],
+        "zoneSoil": "đất phù sa",
+        "zoneSlope": "phẳng",
+        "note": "Legal placement after A0 protection/collision/route/resource/dynamic occupancy checks is GAMEPLAY-owned. This remeasurement changes the EVIDENCE UNIT only."
+      }
+    },
+    {
+      "index": 41,
+      "id": "MG01-F41",
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "sourceIds": [
+        "bz_verdant"
+      ],
+      "original": {
+        "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+        "owner": "MAP_U05 / GAMEPLAY",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 30,
+          "unit": "cells_1AU"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "zone ring ∩ UNION(POI foot / Elder outer) at exact U=0.5 tile centres; no double counting",
+        "before": {
+          "cells1Au": 30,
+          "unit": "1 AU cells (sum of per-object counts)",
+          "naive4xTileEstimate": 120,
+          "recomputedUnionCells1Au": 30,
+          "doubleCountedCells1Au": 0
+        },
+        "after": {
+          "nativeTileCount": 113,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsNaive4x": -7,
+        "members": [
+          {
+            "id": "po_timberyard",
+            "kind": "poi",
+            "cells1Au": 30
+          }
+        ],
+        "zoneSoil": "đất mùn",
+        "zoneSlope": "thoải",
+        "note": "Legal placement after A0 protection/collision/route/resource/dynamic occupancy checks is GAMEPLAY-owned. This remeasurement changes the EVIDENCE UNIT only."
+      }
+    },
+    {
+      "index": 42,
+      "id": "MG01-F42",
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "sourceIds": [
+        "bz_elder_clear"
+      ],
+      "original": {
+        "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+        "owner": "MAP_U05 / GAMEPLAY",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 2771,
+          "unit": "cells_1AU"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "zone ring ∩ UNION(POI foot / Elder outer) at exact U=0.5 tile centres; no double counting",
+        "before": {
+          "cells1Au": 2771,
+          "unit": "1 AU cells (sum of per-object counts)",
+          "naive4xTileEstimate": 11084,
+          "recomputedUnionCells1Au": 2684,
+          "doubleCountedCells1Au": 87
+        },
+        "after": {
+          "nativeTileCount": 10746,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsNaive4x": -338,
+        "members": [
+          {
+            "id": "po_ranger",
+            "kind": "poi",
+            "cells1Au": 87
+          },
+          {
+            "id": "el_aion",
+            "kind": "elder",
+            "cells1Au": 2684
+          }
+        ],
+        "zoneSoil": "đất mùn rừng",
+        "zoneSlope": "thoải",
+        "note": "Legal placement after A0 protection/collision/route/resource/dynamic occupancy checks is GAMEPLAY-owned. This remeasurement changes the EVIDENCE UNIT only."
+      }
+    },
+    {
+      "index": 43,
+      "id": "MG01-F43",
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "sourceIds": [
+        "bz_typhon_t"
+      ],
+      "original": {
+        "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+        "owner": "MAP_U05 / GAMEPLAY",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 395,
+          "unit": "cells_1AU"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "zone ring ∩ UNION(POI foot / Elder outer) at exact U=0.5 tile centres; no double counting",
+        "before": {
+          "cells1Au": 395,
+          "unit": "1 AU cells (sum of per-object counts)",
+          "naive4xTileEstimate": 1580,
+          "recomputedUnionCells1Au": 395,
+          "doubleCountedCells1Au": 0
+        },
+        "after": {
+          "nativeTileCount": 1579,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsNaive4x": -1,
+        "members": [
+          {
+            "id": "po_freightyard",
+            "kind": "poi",
+            "cells1Au": 312
+          },
+          {
+            "id": "el_typhon",
+            "kind": "elder",
+            "cells1Au": 83
+          }
+        ],
+        "zoneSoil": "đá vụn",
+        "zoneSlope": "dốc nhẹ",
+        "note": "Legal placement after A0 protection/collision/route/resource/dynamic occupancy checks is GAMEPLAY-owned. This remeasurement changes the EVIDENCE UNIT only."
+      }
+    },
+    {
+      "index": 44,
+      "id": "MG01-F44",
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "sourceIds": [
+        "bz_ridge"
+      ],
+      "original": {
+        "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+        "owner": "MAP_U05 / GAMEPLAY",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 70,
+          "unit": "cells_1AU"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "zone ring ∩ UNION(POI foot / Elder outer) at exact U=0.5 tile centres; no double counting",
+        "before": {
+          "cells1Au": 70,
+          "unit": "1 AU cells (sum of per-object counts)",
+          "naive4xTileEstimate": 280,
+          "recomputedUnionCells1Au": 70,
+          "doubleCountedCells1Au": 0
+        },
+        "after": {
+          "nativeTileCount": 276,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsNaive4x": -4,
+        "members": [
+          {
+            "id": "po_rc_meridian",
+            "kind": "poi",
+            "cells1Au": 70
+          }
+        ],
+        "zoneSoil": "đá",
+        "zoneSlope": "dốc nhẹ",
+        "note": "Legal placement after A0 protection/collision/route/resource/dynamic occupancy checks is GAMEPLAY-owned. This remeasurement changes the EVIDENCE UNIT only."
+      }
+    },
+    {
+      "index": 45,
+      "id": "MG01-F45",
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "sourceIds": [
+        "bz_eastflats"
+      ],
+      "original": {
+        "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+        "owner": "MAP_U05 / GAMEPLAY",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 663,
+          "unit": "cells_1AU"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "zone ring ∩ UNION(POI foot / Elder outer) at exact U=0.5 tile centres; no double counting",
+        "before": {
+          "cells1Au": 663,
+          "unit": "1 AU cells (sum of per-object counts)",
+          "naive4xTileEstimate": 2652,
+          "recomputedUnionCells1Au": 540,
+          "doubleCountedCells1Au": 123
+        },
+        "after": {
+          "nativeTileCount": 2168,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsNaive4x": -484,
+        "members": [
+          {
+            "id": "po_strait",
+            "kind": "poi",
+            "cells1Au": 427
+          },
+          {
+            "id": "po_vend_strait",
+            "kind": "poi",
+            "cells1Au": 236
+          }
+        ],
+        "zoneSoil": "phù sa ven biển",
+        "zoneSlope": "phẳng",
+        "note": "Legal placement after A0 protection/collision/route/resource/dynamic occupancy checks is GAMEPLAY-owned. This remeasurement changes the EVIDENCE UNIT only."
+      }
+    },
+    {
+      "index": 46,
+      "id": "MG01-F46",
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "sourceIds": [
+        "bz_hook"
+      ],
+      "original": {
+        "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+        "owner": "MAP_U05 / GAMEPLAY",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 8,
+          "unit": "cells_1AU"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "zone ring ∩ UNION(POI foot / Elder outer) at exact U=0.5 tile centres; no double counting",
+        "before": {
+          "cells1Au": 8,
+          "unit": "1 AU cells (sum of per-object counts)",
+          "naive4xTileEstimate": 32,
+          "recomputedUnionCells1Au": 8,
+          "doubleCountedCells1Au": 0
+        },
+        "after": {
+          "nativeTileCount": 40,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsNaive4x": 8,
+        "members": [
+          {
+            "id": "po_mere",
+            "kind": "poi",
+            "cells1Au": 8
+          }
+        ],
+        "zoneSoil": "đất mùn",
+        "zoneSlope": "phẳng",
+        "note": "Legal placement after A0 protection/collision/route/resource/dynamic occupancy checks is GAMEPLAY-owned. This remeasurement changes the EVIDENCE UNIT only."
+      }
+    },
+    {
+      "index": 47,
+      "id": "MG01-F47",
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "sourceIds": [
+        "bz_westmouth"
+      ],
+      "original": {
+        "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+        "owner": "MAP_U05 / GAMEPLAY",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 1,
+          "unit": "cells_1AU"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "zone ring ∩ UNION(POI foot / Elder outer) at exact U=0.5 tile centres; no double counting",
+        "before": {
+          "cells1Au": 1,
+          "unit": "1 AU cells (sum of per-object counts)",
+          "naive4xTileEstimate": 4,
+          "recomputedUnionCells1Au": 1,
+          "doubleCountedCells1Au": 0
+        },
+        "after": {
+          "nativeTileCount": 0,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsNaive4x": -4,
+        "members": [
+          {
+            "id": "po_westmouth",
+            "kind": "poi",
+            "cells1Au": 1
+          }
+        ],
+        "zoneSoil": "cát pha",
+        "zoneSlope": "thoải",
+        "note": "Legal placement after A0 protection/collision/route/resource/dynamic occupancy checks is GAMEPLAY-owned. This remeasurement changes the EVIDENCE UNIT only."
+      }
+    },
+    {
+      "index": 48,
+      "id": "MG01-F48",
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "sourceIds": [
+        "bz_westwood"
+      ],
+      "original": {
+        "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+        "owner": "MAP_U05 / GAMEPLAY",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 285,
+          "unit": "cells_1AU"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "zone ring ∩ UNION(POI foot / Elder outer) at exact U=0.5 tile centres; no double counting",
+        "before": {
+          "cells1Au": 285,
+          "unit": "1 AU cells (sum of per-object counts)",
+          "naive4xTileEstimate": 1140,
+          "recomputedUnionCells1Au": 285,
+          "doubleCountedCells1Au": 0
+        },
+        "after": {
+          "nativeTileCount": 1140,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsNaive4x": 0,
+        "members": [
+          {
+            "id": "po_westwood",
+            "kind": "poi",
+            "cells1Au": 285
+          }
+        ],
+        "zoneSoil": "đất rừng",
+        "zoneSlope": "thoải",
+        "note": "Legal placement after A0 protection/collision/route/resource/dynamic occupancy checks is GAMEPLAY-owned. This remeasurement changes the EVIDENCE UNIT only."
+      }
+    },
+    {
+      "index": 49,
+      "id": "MG01-F49",
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "sourceIds": [
+        "bz_gulfwest"
+      ],
+      "original": {
+        "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+        "owner": "MAP_U05 / GAMEPLAY",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 164,
+          "unit": "cells_1AU"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "zone ring ∩ UNION(POI foot / Elder outer) at exact U=0.5 tile centres; no double counting",
+        "before": {
+          "cells1Au": 164,
+          "unit": "1 AU cells (sum of per-object counts)",
+          "naive4xTileEstimate": 656,
+          "recomputedUnionCells1Au": 164,
+          "doubleCountedCells1Au": 0
+        },
+        "after": {
+          "nativeTileCount": 658,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsNaive4x": 2,
+        "members": [
+          {
+            "id": "po_westbank",
+            "kind": "poi",
+            "cells1Au": 164
+          }
+        ],
+        "zoneSoil": "cát pha",
+        "zoneSlope": "phẳng",
+        "note": "Legal placement after A0 protection/collision/route/resource/dynamic occupancy checks is GAMEPLAY-owned. This remeasurement changes the EVIDENCE UNIT only."
+      }
+    },
+    {
+      "index": 50,
+      "id": "MG01-F50",
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "sourceIds": [
+        "bz_oasis"
+      ],
+      "original": {
+        "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+        "owner": "MAP_U05 / GAMEPLAY",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 2861,
+          "unit": "cells_1AU"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "zone ring ∩ UNION(POI foot / Elder outer) at exact U=0.5 tile centres; no double counting",
+        "before": {
+          "cells1Au": 2861,
+          "unit": "1 AU cells (sum of per-object counts)",
+          "naive4xTileEstimate": 11444,
+          "recomputedUnionCells1Au": 2480,
+          "doubleCountedCells1Au": 381
+        },
+        "after": {
+          "nativeTileCount": 9928,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsNaive4x": -1516,
+        "members": [
+          {
+            "id": "po_oasis",
+            "kind": "poi",
+            "cells1Au": 381
+          },
+          {
+            "id": "el_anubis",
+            "kind": "elder",
+            "cells1Au": 2480
+          }
+        ],
+        "zoneSoil": "cát cứng",
+        "zoneSlope": "phẳng",
+        "note": "Legal placement after A0 protection/collision/route/resource/dynamic occupancy checks is GAMEPLAY-owned. This remeasurement changes the EVIDENCE UNIT only."
+      }
+    },
+    {
+      "index": 51,
+      "id": "MG01-F51",
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "sourceIds": [
+        "bz_dune"
+      ],
+      "original": {
+        "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+        "owner": "MAP_U05 / GAMEPLAY",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 1239,
+          "unit": "cells_1AU"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "zone ring ∩ UNION(POI foot / Elder outer) at exact U=0.5 tile centres; no double counting",
+        "before": {
+          "cells1Au": 1239,
+          "unit": "1 AU cells (sum of per-object counts)",
+          "naive4xTileEstimate": 4956,
+          "recomputedUnionCells1Au": 1239,
+          "doubleCountedCells1Au": 0
+        },
+        "after": {
+          "nativeTileCount": 4950,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsNaive4x": -6,
+        "members": [
+          {
+            "id": "el_anubis",
+            "kind": "elder",
+            "cells1Au": 1239
+          }
+        ],
+        "zoneSoil": "đá nổi",
+        "zoneSlope": "dốc nhẹ",
+        "note": "Legal placement after A0 protection/collision/route/resource/dynamic occupancy checks is GAMEPLAY-owned. This remeasurement changes the EVIDENCE UNIT only."
+      }
+    },
+    {
+      "index": 52,
+      "id": "MG01-F52",
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "sourceIds": [
+        "bz_cinder"
+      ],
+      "original": {
+        "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+        "owner": "MAP_U05 / GAMEPLAY",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 2131,
+          "unit": "cells_1AU"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "zone ring ∩ UNION(POI foot / Elder outer) at exact U=0.5 tile centres; no double counting",
+        "before": {
+          "cells1Au": 2131,
+          "unit": "1 AU cells (sum of per-object counts)",
+          "naive4xTileEstimate": 8524,
+          "recomputedUnionCells1Au": 1373,
+          "doubleCountedCells1Au": 758
+        },
+        "after": {
+          "nativeTileCount": 5505,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsNaive4x": -3019,
+        "members": [
+          {
+            "id": "po_cindercamp",
+            "kind": "poi",
+            "cells1Au": 758
+          },
+          {
+            "id": "el_surtur",
+            "kind": "elder",
+            "cells1Au": 1373
+          }
+        ],
+        "zoneSoil": "tro + đá",
+        "zoneSlope": "thoải",
+        "note": "Legal placement after A0 protection/collision/route/resource/dynamic occupancy checks is GAMEPLAY-owned. This remeasurement changes the EVIDENCE UNIT only."
+      }
+    },
+    {
+      "index": 53,
+      "id": "MG01-F53",
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "sourceIds": [
+        "bz_salt"
+      ],
+      "original": {
+        "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+        "owner": "MAP_U05 / GAMEPLAY",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 485,
+          "unit": "cells_1AU"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "zone ring ∩ UNION(POI foot / Elder outer) at exact U=0.5 tile centres; no double counting",
+        "before": {
+          "cells1Au": 485,
+          "unit": "1 AU cells (sum of per-object counts)",
+          "naive4xTileEstimate": 1940,
+          "recomputedUnionCells1Au": 482,
+          "doubleCountedCells1Au": 3
+        },
+        "after": {
+          "nativeTileCount": 1923,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsNaive4x": -17,
+        "members": [
+          {
+            "id": "po_saltharbor",
+            "kind": "poi",
+            "cells1Au": 12
+          },
+          {
+            "id": "po_saltpans",
+            "kind": "poi",
+            "cells1Au": 451
+          },
+          {
+            "id": "po_rc_salt",
+            "kind": "poi",
+            "cells1Au": 22
+          }
+        ],
+        "zoneSoil": "đất mặn",
+        "zoneSlope": "phẳng",
+        "note": "Legal placement after A0 protection/collision/route/resource/dynamic occupancy checks is GAMEPLAY-owned. This remeasurement changes the EVIDENCE UNIT only."
+      }
+    },
+    {
+      "index": 54,
+      "id": "MG01-F54",
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "sourceIds": [
+        "bz_ironholm"
+      ],
+      "original": {
+        "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+        "owner": "MAP_U05 / GAMEPLAY",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 332,
+          "unit": "cells_1AU"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "zone ring ∩ UNION(POI foot / Elder outer) at exact U=0.5 tile centres; no double counting",
+        "before": {
+          "cells1Au": 332,
+          "unit": "1 AU cells (sum of per-object counts)",
+          "naive4xTileEstimate": 1328,
+          "recomputedUnionCells1Au": 332,
+          "doubleCountedCells1Au": 0
+        },
+        "after": {
+          "nativeTileCount": 1324,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsNaive4x": -4,
+        "members": [
+          {
+            "id": "po_ironharbor",
+            "kind": "poi",
+            "cells1Au": 209
+          },
+          {
+            "id": "po_ironmine",
+            "kind": "poi",
+            "cells1Au": 123
+          }
+        ],
+        "zoneSoil": "đá",
+        "zoneSlope": "thoải",
+        "note": "Legal placement after A0 protection/collision/route/resource/dynamic occupancy checks is GAMEPLAY-owned. This remeasurement changes the EVIDENCE UNIT only."
+      }
+    },
+    {
+      "index": 55,
+      "id": "MG01-F55",
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "sourceIds": [
+        "bz_argus"
+      ],
+      "original": {
+        "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+        "owner": "MAP_U05 / GAMEPLAY",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 2337,
+          "unit": "cells_1AU"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "zone ring ∩ UNION(POI foot / Elder outer) at exact U=0.5 tile centres; no double counting",
+        "before": {
+          "cells1Au": 2337,
+          "unit": "1 AU cells (sum of per-object counts)",
+          "naive4xTileEstimate": 9348,
+          "recomputedUnionCells1Au": 2337,
+          "doubleCountedCells1Au": 0
+        },
+        "after": {
+          "nativeTileCount": 9381,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsNaive4x": 33,
+        "members": [
+          {
+            "id": "el_argus",
+            "kind": "elder",
+            "cells1Au": 2337
+          }
+        ],
+        "zoneSoil": "đất mùn",
+        "zoneSlope": "thoải",
+        "note": "Legal placement after A0 protection/collision/route/resource/dynamic occupancy checks is GAMEPLAY-owned. This remeasurement changes the EVIDENCE UNIT only."
+      }
+    },
+    {
+      "index": 56,
+      "id": "MG01-F56",
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "sourceIds": [
+        "bz_kestrel"
+      ],
+      "original": {
+        "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+        "owner": "MAP_U05 / GAMEPLAY",
+        "resolution": "NONE_APPLIED",
+        "measurement": {
+          "value": 672,
+          "unit": "cells_1AU"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "method": "zone ring ∩ UNION(POI foot / Elder outer) at exact U=0.5 tile centres; no double counting",
+        "before": {
+          "cells1Au": 672,
+          "unit": "1 AU cells (sum of per-object counts)",
+          "naive4xTileEstimate": 2688,
+          "recomputedUnionCells1Au": 672,
+          "doubleCountedCells1Au": 0
+        },
+        "after": {
+          "nativeTileCount": 2694,
+          "unit": "U=0.5 tiles"
+        },
+        "deltaVsNaive4x": 6,
+        "members": [
+          {
+            "id": "el_typhon",
+            "kind": "elder",
+            "cells1Au": 672
+          }
+        ],
+        "zoneSoil": "đá",
+        "zoneSlope": "dốc nhẹ",
+        "note": "Legal placement after A0 protection/collision/route/resource/dynamic occupancy checks is GAMEPLAY-owned. This remeasurement changes the EVIDENCE UNIT only."
+      }
+    },
+    {
+      "index": 57,
+      "id": "MG01-F57",
+      "kind": "HELICOPTER_VS_LIGHTHOUSE",
+      "sourceIds": [
+        "po_beacon"
+      ],
+      "original": {
+        "status": "UNRESOLVED__HELIPAD_COLLISION_PLAN_ONLY__NO_RELOCATION__NO_SUBSTITUTE",
+        "owner": "CREATOR / GAMEPLAY A8",
+        "resolution": "PROVEN_MISSING_SPRITE__NO_SUBSTITUTE__NO_RELOCATION",
+        "measurement": {
+          "value": 5.6569,
+          "unit": "AU"
+        }
+      },
+      "classification": "CREATOR_DECISION_REQUIRED",
+      "severity": "MEDIUM",
+      "owner": "CREATOR / GAMEPLAY A8",
+      "decisionRequired": "Creator decision on the missing sprite / separation. NO_RELOCATION__NO_SUBSTITUTE remains in force.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "separationAu": 5.6569,
+        "separationTiles": 11.3138,
+        "helicopterAtAu": [
+          272,
+          652
+        ],
+        "lighthouseAtAu": [
+          268,
+          656
+        ],
+        "sprite": "PROVEN_MISSING__NO_SUBSTITUTE__NO_RELOCATION"
+      }
+    },
+    {
+      "index": 58,
+      "id": "MG01-F58",
+      "kind": "ROAD_CENTRELINE_ENTERS_POI_ENVELOPE",
+      "sourceIds": [],
+      "original": {
+        "status": "SCHEMATIC_CONNECTOR__NOT_AN_AUTHORED_ENTRANCE",
+        "owner": "MAP_U05 / GAMEPLAY",
+        "resolution": "NO_ROAD_CHANGE",
+        "measurement": {
+          "value": null,
+          "unit": "none"
+        }
+      },
+      "classification": "INTENTIONAL_OVERLAP_OR_HOST_SUBSITE",
+      "severity": "INFO",
+      "owner": "MAP_U05 / CREATOR",
+      "decisionRequired": "Confirm host/subsite relationship in the Gameplay site registry. NO shrink / relocate / expand / door generation.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "distinctPois": 73,
+        "pairs": 122,
+        "schematicConnector": true,
+        "authoredEntrance": false,
+        "note": "GOLD road centreline touches a GOLD foot envelope. Not an entrance; no road was moved, widened or recoloured."
+      }
+    },
+    {
+      "index": 59,
+      "id": "MG01-F59",
+      "kind": "VERTICAL_LINK_NAMED_BLOCKERS",
+      "sourceIds": [
+        "blocker.portal.po_archive.vertical",
+        "blocker.portal.po_meridian.vertical",
+        "blocker.portal.po_oldpump.vertical",
+        "blocker.portal.po_ironvein.vertical",
+        "blocker.portal.po_tombs.vertical",
+        "blocker.portal.po_sulfur.vertical",
+        "blocker.portal.po_geo.vertical",
+        "blocker.portal.po_ironmine.vertical"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY",
+        "resolution": "NO_INVENTED_VERTICAL_SEPARATION",
+        "measurement": {
+          "value": 8,
+          "unit": "count"
+        }
+      },
+      "classification": "MISSING_EVIDENCE",
+      "severity": "MEDIUM",
+      "owner": "GAMEPLAY / CREATOR",
+      "decisionRequired": "Produce the missing source evidence or declare the interface GAMEPLAY_UNRESOLVED. No invented clearance / exit / vertical law.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "count": 8,
+        "blockerIds": [
+          "blocker.portal.po_archive.vertical",
+          "blocker.portal.po_meridian.vertical",
+          "blocker.portal.po_oldpump.vertical",
+          "blocker.portal.po_ironvein.vertical",
+          "blocker.portal.po_tombs.vertical",
+          "blocker.portal.po_sulfur.vertical",
+          "blocker.portal.po_geo.vertical",
+          "blocker.portal.po_ironmine.vertical"
+        ],
+        "verticalSeparationRule": "NOT_AUTHORED"
+      }
+    },
+    {
+      "index": 60,
+      "id": "MG01-F60",
+      "kind": "POI_RETREAT_POLYLINE",
+      "sourceIds": [],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "GAMEPLAY",
+        "resolution": "NO_EXIT_INVENTED",
+        "measurement": {
+          "value": 63,
+          "unit": "count"
+        }
+      },
+      "classification": "MISSING_EVIDENCE",
+      "severity": "MEDIUM",
+      "owner": "GAMEPLAY / CREATOR",
+      "decisionRequired": "Produce the missing source evidence or declare the interface GAMEPLAY_UNRESOLVED. No invented clearance / exit / vertical law.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "poisWithoutRetreatPolyline": 63,
+        "poisWithRetreatPolyline": 18,
+        "totalPois": 81,
+        "exitRouteLaw": "NOT_AUTHORED"
+      }
+    },
+    {
+      "index": 61,
+      "id": "MG01-F61",
+      "kind": "CART_SWEPT_CLEARANCE",
+      "sourceIds": [
+        "po_ironmine",
+        "po_westmouth"
+      ],
+      "original": {
+        "status": "UNRESOLVED",
+        "owner": "MAP_U05 / GAMEPLAY",
+        "resolution": "NO_CART_LAW_CREATED",
+        "measurement": {
+          "value": null,
+          "unit": "none"
+        }
+      },
+      "classification": "MISSING_EVIDENCE",
+      "severity": "MEDIUM",
+      "owner": "GAMEPLAY / CREATOR",
+      "decisionRequired": "Produce the missing source evidence or declare the interface GAMEPLAY_UNRESOLVED. No invented clearance / exit / vertical law.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "poiIds": [
+          "po_ironmine",
+          "po_westmouth"
+        ],
+        "cartClearanceLaw": "NOT_AUTHORED",
+        "cartApproved": false,
+        "note": "No cart width/turn radius/loading capacity may be invented."
+      }
+    },
+    {
+      "index": 62,
+      "id": "MG01-F62",
+      "kind": "MARINE_FOOT_PERMISSION",
+      "sourceIds": [],
+      "original": {
+        "status": "UNRESOLVED_GAMEPLAY__FOOT_PASSABLE_ON_SEA_FALSE",
+        "owner": "GAMEPLAY / CREATOR",
+        "resolution": "NO_BOAT_OR_SWIM_PERMISSION",
+        "measurement": {
+          "value": null,
+          "unit": "none"
+        }
+      },
+      "classification": "GAMEPLAY_A8_SEMANTIC_DECISION",
+      "severity": "HIGH",
+      "owner": "GAMEPLAY A8 / A0",
+      "decisionRequired": "Gameplay must author the semantic record (entrance / legal placement / marine permission). Map supplies candidate geometry only.",
+      "mapGeometryCorrectionApplied": false,
+      "goldAmendment": false,
+      "u05Evidence": {
+        "footOnSea": false,
+        "boat": false,
+        "swim": false,
+        "ferryFoot": false,
+        "wmp04Policy": "FIXED_DOCKS__FREE_OPEN_WATER_TRAVEL — footOnSea FORBIDDEN",
+        "note": "Open-water traversal is a Gameplay vehicle/permission decision, not Map geometry."
+      }
+    }
+  ],
+  "provenance": {
+    "gold": {
+      "path": "veyra-world-master/data/canon/VEYRA_GOLD_MAP.sohmap.json",
+      "sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+      "bytes": 332249
+    },
+    "originalFindings": {
+      "path": "creator-u05/map-data/U05_GEOMETRY_CONFLICTS.json",
+      "sha256": "2ac08fd0881a7a584ab321b303e9dd71b54296c02ab5cb89a4a890edd83b4abc",
+      "bytes": 18063,
+      "unchanged": true
+    },
+    "activeWorldMaster": {
+      "path": "veyra-world-master/CURRENT_WORLD_MASTER.json",
+      "sha256": "6adfa7167937a5fed0af2c11348fcdff6cbe445daaba5bbfb1bfb208f1239679"
+    },
+    "activeManifest": {
+      "path": "veyra-world-master/v4/r1/manifest.r1.json",
+      "sha256": "57195f7d842ce524d0bda566a140ffba67f2a6f8563830b8c1030bc583224f15"
+    },
+    "u05Contract": {
+      "path": "creator-u05/contracts/CREATOR_CHOSEN_U05.v1.json",
+      "sha256": "1faf5e4dc2758f190263853d82cd6f90d9e5cb23727161ff62a14348d6ccbcf2"
+    },
+    "protectedViewer": {
+      "path": "creator-u05/SoulOfHero_TerrainOnly_U05_x10.html",
+      "sha256": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0",
+      "unchanged": true
+    },
+    "immutableGoldAssertions": {
+      "amendedPolygons": 0,
+      "relocatedObjects": 0,
+      "expandedEnvelopes": 0,
+      "recolouredRoads": 0,
+      "widenedRoads": 0,
+      "newBuildings": 0,
+      "newDoors": 0,
+      "newProps": 0,
+      "canonicalIdsChanged": 0,
+      "note": "GOLD JSON and WMP-04R1 rasters were READ ONLY. All changes are in new Map evidence files."
+    }
+  },
+  "physicalDefectRegister": "creator-u05/evidence/mapgeo01-physical-audit.json :: defects (10 named, measured, owner + severity)",
+  "notClaims": [
+    "No VISUAL_ACCEPTED",
+    "No VEYRA_PLAYABLE",
+    "No MERGE_READY",
+    "No production merge",
+    "No new atlas",
+    "No GOLD amendment",
+    "No invented doors/props/build rights"
+  ]
+}

@@ -1,0 +1,1953 @@
+{
+  "schema": "soh.u05.mapgeo01-traversal.v1",
+  "generatedAt": "2026-11-05T12:55:33.044Z",
+  "pilot": "MAP-GEO-REJOIN-01",
+  "runtime": {
+    "executable": "creator-u05/SoulOfHero_TerrainOnly_U05_x10.html",
+    "sha256": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0",
+    "openedFrom": "file://",
+    "rebuilt": false,
+    "modified": false,
+    "browser": {
+      "viewport": [
+        640,
+        360
+      ],
+      "dpr": 1,
+      "realKeyboard": true
+    },
+    "nativeCanvas": [
+      640,
+      360
+    ],
+    "shotMethod": "document.getElementById(\"game\").toDataURL(\"image/png\")",
+    "browserErrors": []
+  },
+  "rule": {
+    "noCameraTeleportCalledTraversal": true,
+    "spawnControl": "window.__terrain.reset(tx,ty) ONCE per run; source comment: \"viewer spawn control, NOT a route / teleport claim\"",
+    "movement": "held WASD keys -> requestAnimationFrame loop -> SPEED*mult*dt sub-stepped <=6px; NATURAL_TERRAIN_ONLY collision ON",
+    "speed": "x10 VIEWER multiplier (720 px/s), NOT a Gameplay law; base SPEED=72 px/s unchanged"
+  },
+  "traversals": [
+    {
+      "id": "T1_spawn_to_route",
+      "label": "spawn -> safe terrain -> reachable route",
+      "physicalFeature": "sp_west [372,606] AU; nearest authored road measured at 29 tiles (U=0.5)",
+      "spawn": {
+        "tile": [
+          744,
+          1212
+        ],
+        "au": [
+          372.25,
+          606.25
+        ],
+        "method": "window.__terrain.reset(tx,ty) VIEWER SPAWN CONTROL",
+        "spawnFixture": true,
+        "resetOnlyAtStart": true,
+        "cameraTeleportUsed": false,
+        "traversalByRealKeys": true,
+        "cameraUsedAsRoute": false
+      },
+      "runtime": {
+        "viewport": [
+          640,
+          360
+        ],
+        "dpr": 1,
+        "zoom": 1,
+        "zoomMode": "NATIVE_1X",
+        "U": 0.5,
+        "TILE": 16,
+        "heroSpritePx": [
+          16,
+          24
+        ],
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "speedMultiplier": 10,
+        "speedPxPerSec": 720,
+        "cameraTrick": false,
+        "overlays": {
+          "buildings": 0,
+          "walls": 0,
+          "roofs": 0,
+          "doors": 0,
+          "props": 0,
+          "markers": 0,
+          "labels": 0,
+          "helipad": 0,
+          "hudOnCanvas": 0,
+          "particles": 0
+        }
+      },
+      "legs": [
+        {
+          "keys": [
+            "w",
+            "d"
+          ],
+          "ms": 950
+        }
+      ],
+      "plannedLegs": [
+        {
+          "keys": [
+            "w",
+            "d"
+          ],
+          "ms": 950,
+          "fromTile": [
+            744,
+            1212
+          ],
+          "toTile": [
+            774,
+            1182
+          ],
+          "tiles": 30,
+          "sx": 1,
+          "sy": -1
+        }
+      ],
+      "measurement": {
+        "heldMs": 950,
+        "inputEvents": 4,
+        "realKeyDownEvents": 2,
+        "distancePx": 967,
+        "netDisplacementPx": 684,
+        "tilesTraversed": 60.44,
+        "blockedSubsteps": 0,
+        "startTile": [
+          744,
+          1212
+        ],
+        "endTile": [
+          774,
+          1182
+        ],
+        "tileDelta": [
+          30,
+          -30
+        ],
+        "endTerrain": {
+          "tile": 12,
+          "tileRendered": 12,
+          "biome": "meadow",
+          "authoredLand": true,
+          "water": false,
+          "road": true,
+          "poiId": null
+        },
+        "biomeAtStart": "meadow",
+        "biomeAtEnd": "meadow",
+        "biomeTransitionObserved": false,
+        "endTileIsAuthoredRoad": true
+      },
+      "corridor": {
+        "plannedLegs": [
+          {
+            "keys": [
+              "w",
+              "d"
+            ],
+            "ms": 950,
+            "fromTile": [
+              744,
+              1212
+            ],
+            "toTile": [
+              774,
+              1182
+            ],
+            "tiles": 30,
+            "sx": 1,
+            "sy": -1
+          }
+        ],
+        "corridorTiles": 31,
+        "blockedTiles": 0,
+        "roadOrBridgeTiles": 2,
+        "poiIds": [],
+        "distinctTileCodes": [
+          4,
+          12
+        ],
+        "distinctBiomeCodes": [
+          0
+        ],
+        "firstBlockedTile": null
+      },
+      "samples": [
+        {
+          "leg": "start",
+          "tile": [
+            744,
+            1212
+          ],
+          "px": 11912,
+          "py": 19400,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "terrain": {
+            "tile": 4,
+            "tileRendered": 4,
+            "biome": "meadow",
+            "authoredLand": true,
+            "water": false,
+            "road": false,
+            "poiId": null
+          }
+        },
+        {
+          "leg": 1,
+          "keys": [
+            "w",
+            "d"
+          ],
+          "heldMs": 950,
+          "tile": [
+            774,
+            1182
+          ],
+          "px": 12395.7,
+          "py": 18916.3,
+          "movedPx": 967,
+          "blockedSubsteps": 0,
+          "terrain": {
+            "tile": 12,
+            "tileRendered": 12,
+            "biome": "meadow",
+            "authoredLand": true,
+            "water": false,
+            "road": true,
+            "poiId": null
+          }
+        }
+      ],
+      "before": {
+        "file": "creator-u05/evidence/mapgeo01-shots/T1_spawn_to_route_before.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "after": {
+        "file": "creator-u05/evidence/mapgeo01-shots/T1_spawn_to_route_after.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "inputLogSample": [
+        {
+          "code": "KeyW",
+          "type": "down",
+          "t": 200
+        },
+        {
+          "code": "KeyD",
+          "type": "down",
+          "t": 200
+        },
+        {
+          "code": "KeyW",
+          "type": "up",
+          "t": 1150
+        },
+        {
+          "code": "KeyD",
+          "type": "up",
+          "t": 1150
+        }
+      ],
+      "result": "PASS_VIEWER_PHYSICAL",
+      "failures": [],
+      "note": "Real diagonal + east WASD on NATURAL_TERRAIN_ONLY collision. Radius-40 probe: 6561/6561 tiles walkable, 230 road tiles. A0 spawn legality is Gameplay-owned."
+    },
+    {
+      "id": "T2_road_biome_transition",
+      "label": "land road through terrain/biome transition",
+      "physicalFeature": "GOLD rd_12 cart road [2372,2580]->[2472,2580] tiles; audit distinctBiomeCodesAlongRoad [0,1]; visibleSurfaceContinuity=1",
+      "spawn": {
+        "tile": [
+          2372,
+          2580
+        ],
+        "au": [
+          1186.25,
+          1290.25
+        ],
+        "method": "window.__terrain.reset(tx,ty) VIEWER SPAWN CONTROL",
+        "spawnFixture": true,
+        "resetOnlyAtStart": true,
+        "cameraTeleportUsed": false,
+        "traversalByRealKeys": true,
+        "cameraUsedAsRoute": false
+      },
+      "runtime": {
+        "viewport": [
+          640,
+          360
+        ],
+        "dpr": 1,
+        "zoom": 1,
+        "zoomMode": "NATIVE_1X",
+        "U": 0.5,
+        "TILE": 16,
+        "heroSpritePx": [
+          16,
+          24
+        ],
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "speedMultiplier": 10,
+        "speedPxPerSec": 720,
+        "cameraTrick": false,
+        "overlays": {
+          "buildings": 0,
+          "walls": 0,
+          "roofs": 0,
+          "doors": 0,
+          "props": 0,
+          "markers": 0,
+          "labels": 0,
+          "helipad": 0,
+          "hudOnCanvas": 0,
+          "particles": 0
+        }
+      },
+      "legs": [
+        {
+          "keys": [
+            "d"
+          ],
+          "ms": 2200
+        }
+      ],
+      "plannedLegs": [
+        {
+          "keys": [
+            "d"
+          ],
+          "ms": 2200,
+          "fromTile": [
+            2372,
+            2580
+          ],
+          "toTile": [
+            2471,
+            2580
+          ],
+          "tiles": 99,
+          "sx": 1,
+          "sy": 0
+        }
+      ],
+      "measurement": {
+        "heldMs": 2200,
+        "inputEvents": 2,
+        "realKeyDownEvents": 1,
+        "distancePx": 1620,
+        "netDisplacementPx": 1619.9,
+        "tilesTraversed": 101.25,
+        "blockedSubsteps": 0,
+        "startTile": [
+          2372,
+          2580
+        ],
+        "endTile": [
+          2473,
+          2580
+        ],
+        "tileDelta": [
+          101,
+          0
+        ],
+        "endTerrain": {
+          "tile": 12,
+          "tileRendered": 12,
+          "biome": "meadow",
+          "authoredLand": true,
+          "water": false,
+          "road": true,
+          "poiId": "po_ironwh"
+        },
+        "biomeAtStart": "forest",
+        "biomeAtEnd": "meadow",
+        "biomeTransitionObserved": true,
+        "endTileIsAuthoredRoad": true
+      },
+      "corridor": {
+        "plannedLegs": [
+          {
+            "keys": [
+              "d"
+            ],
+            "ms": 2200,
+            "fromTile": [
+              2372,
+              2580
+            ],
+            "toTile": [
+              2471,
+              2580
+            ],
+            "tiles": 99,
+            "sx": 1,
+            "sy": 0
+          }
+        ],
+        "corridorTiles": 100,
+        "blockedTiles": 0,
+        "roadOrBridgeTiles": 100,
+        "poiIds": [
+          "po_ironmine",
+          "po_ironwh"
+        ],
+        "distinctTileCodes": [
+          12
+        ],
+        "distinctBiomeCodes": [
+          0,
+          1
+        ],
+        "firstBlockedTile": null
+      },
+      "samples": [
+        {
+          "leg": "start",
+          "tile": [
+            2372,
+            2580
+          ],
+          "px": 37960,
+          "py": 41288,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "terrain": {
+            "tile": 12,
+            "tileRendered": 12,
+            "biome": "forest",
+            "authoredLand": true,
+            "water": false,
+            "road": true,
+            "poiId": "po_ironmine"
+          }
+        },
+        {
+          "leg": 1,
+          "keys": [
+            "d"
+          ],
+          "heldMs": 2200,
+          "tile": [
+            2473,
+            2580
+          ],
+          "px": 39579.9,
+          "py": 41288,
+          "movedPx": 1620,
+          "blockedSubsteps": 0,
+          "terrain": {
+            "tile": 12,
+            "tileRendered": 12,
+            "biome": "meadow",
+            "authoredLand": true,
+            "water": false,
+            "road": true,
+            "poiId": "po_ironwh"
+          }
+        }
+      ],
+      "before": {
+        "file": "creator-u05/evidence/mapgeo01-shots/T2_road_biome_transition_before.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "after": {
+        "file": "creator-u05/evidence/mapgeo01-shots/T2_road_biome_transition_after.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "inputLogSample": [
+        {
+          "code": "KeyD",
+          "type": "down",
+          "t": 1233
+        },
+        {
+          "code": "KeyD",
+          "type": "up",
+          "t": 3483
+        }
+      ],
+      "result": "PASS_VIEWER_PHYSICAL",
+      "failures": [],
+      "note": "Continuous held D on a GOLD centreline with collision ON; no water/cliff override on this road. Road width and palette are the Creator-locked verbatim painter, unchanged."
+    },
+    {
+      "id": "T3_bridge_approach_crossing",
+      "label": "river-bank/bridge approach and crossing where physically supported",
+      "physicalFeature": "GOLD br_1 at [2045,907] tiles; centre renders RIVER (code 19), terrainBlocked=true",
+      "spawn": {
+        "tile": [
+          2020,
+          907
+        ],
+        "au": [
+          1010.25,
+          453.75
+        ],
+        "method": "window.__terrain.reset(tx,ty) VIEWER SPAWN CONTROL",
+        "spawnFixture": true,
+        "resetOnlyAtStart": true,
+        "cameraTeleportUsed": false,
+        "traversalByRealKeys": true,
+        "cameraUsedAsRoute": false
+      },
+      "runtime": {
+        "viewport": [
+          640,
+          360
+        ],
+        "dpr": 1,
+        "zoom": 1,
+        "zoomMode": "NATIVE_1X",
+        "U": 0.5,
+        "TILE": 16,
+        "heroSpritePx": [
+          16,
+          24
+        ],
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "speedMultiplier": 10,
+        "speedPxPerSec": 720,
+        "cameraTrick": false,
+        "overlays": {
+          "buildings": 0,
+          "walls": 0,
+          "roofs": 0,
+          "doors": 0,
+          "props": 0,
+          "markers": 0,
+          "labels": 0,
+          "helipad": 0,
+          "hudOnCanvas": 0,
+          "particles": 0
+        }
+      },
+      "legs": [
+        {
+          "keys": [
+            "d"
+          ],
+          "ms": 1250
+        }
+      ],
+      "plannedLegs": [
+        {
+          "keys": [
+            "d"
+          ],
+          "ms": 1250,
+          "fromTile": [
+            2020,
+            907
+          ],
+          "toTile": [
+            2076,
+            907
+          ],
+          "tiles": 56,
+          "sx": 1,
+          "sy": 0
+        }
+      ],
+      "measurement": {
+        "heldMs": 1250,
+        "inputEvents": 2,
+        "realKeyDownEvents": 1,
+        "distancePx": 342,
+        "netDisplacementPx": 342,
+        "tilesTraversed": 21.38,
+        "blockedSubsteps": 122,
+        "startTile": [
+          2020,
+          907
+        ],
+        "endTile": [
+          2041,
+          907
+        ],
+        "tileDelta": [
+          21,
+          0
+        ],
+        "endTerrain": {
+          "tile": 13,
+          "tileRendered": 13,
+          "biome": "meadow",
+          "authoredLand": true,
+          "water": false,
+          "road": true,
+          "poiId": "po_timberyard"
+        },
+        "biomeAtStart": "snow",
+        "biomeAtEnd": "meadow",
+        "biomeTransitionObserved": true,
+        "endTileIsAuthoredRoad": true
+      },
+      "corridor": {
+        "plannedLegs": [
+          {
+            "keys": [
+              "d"
+            ],
+            "ms": 1250,
+            "fromTile": [
+              2020,
+              907
+            ],
+            "toTile": [
+              2076,
+              907
+            ],
+            "tiles": 56,
+            "sx": 1,
+            "sy": 0
+          }
+        ],
+        "corridorTiles": 57,
+        "blockedTiles": 8,
+        "roadOrBridgeTiles": 40,
+        "poiIds": [
+          "po_timberyard"
+        ],
+        "distinctTileCodes": [
+          4,
+          9,
+          13,
+          19
+        ],
+        "distinctBiomeCodes": [
+          0,
+          8
+        ],
+        "firstBlockedTile": [
+          2042,
+          907
+        ]
+      },
+      "samples": [
+        {
+          "leg": "start",
+          "tile": [
+            2020,
+            907
+          ],
+          "px": 32328,
+          "py": 14520,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "terrain": {
+            "tile": 9,
+            "tileRendered": 9,
+            "biome": "snow",
+            "authoredLand": true,
+            "water": false,
+            "road": false,
+            "poiId": "po_timberyard"
+          }
+        },
+        {
+          "leg": 1,
+          "keys": [
+            "d"
+          ],
+          "heldMs": 1250,
+          "tile": [
+            2041,
+            907
+          ],
+          "px": 32670,
+          "py": 14520,
+          "movedPx": 342,
+          "blockedSubsteps": 122,
+          "terrain": {
+            "tile": 13,
+            "tileRendered": 13,
+            "biome": "meadow",
+            "authoredLand": true,
+            "water": false,
+            "road": true,
+            "poiId": "po_timberyard"
+          }
+        }
+      ],
+      "before": {
+        "file": "creator-u05/evidence/mapgeo01-shots/T3_bridge_approach_crossing_before.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "after": {
+        "file": "creator-u05/evidence/mapgeo01-shots/T3_bridge_approach_crossing_after.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "inputLogSample": [
+        {
+          "code": "KeyD",
+          "type": "down",
+          "t": 3633
+        },
+        {
+          "code": "KeyD",
+          "type": "up",
+          "t": 4883
+        }
+      ],
+      "result": "FAIL_CROSSING__BANK_APPROACH_PASS",
+      "failures": [
+        "MGP-D01: bridge deck does not span the river; crossing blocked by natural terrain",
+        "MGP-D02: road centreline overridden by river at the crossing"
+      ],
+      "note": "Crossing is NOT physically supported. No camera teleport, no collision disable, no invented bridge. The attempted crossing is a REAL held-D movement that is blocked at the bank. This is the named blocker, not a fabricated PASS."
+    },
+    {
+      "id": "T4_highland_and_alternative",
+      "label": "cliff/highland route and alternative",
+      "physicalFeature": "W_open_plain window [1200,1200]: FOREST/HILL transition, 470 material transitions; WMP-03 cliffCandidate max code=1, U05 rule requires >=2",
+      "spawn": {
+        "tile": [
+          1200,
+          1200
+        ],
+        "au": [
+          600.25,
+          600.25
+        ],
+        "method": "window.__terrain.reset(tx,ty) VIEWER SPAWN CONTROL",
+        "spawnFixture": true,
+        "resetOnlyAtStart": true,
+        "cameraTeleportUsed": false,
+        "traversalByRealKeys": true,
+        "cameraUsedAsRoute": false
+      },
+      "runtime": {
+        "viewport": [
+          640,
+          360
+        ],
+        "dpr": 1,
+        "zoom": 1,
+        "zoomMode": "NATIVE_1X",
+        "U": 0.5,
+        "TILE": 16,
+        "heroSpritePx": [
+          16,
+          24
+        ],
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "speedMultiplier": 10,
+        "speedPxPerSec": 720,
+        "cameraTrick": false,
+        "overlays": {
+          "buildings": 0,
+          "walls": 0,
+          "roofs": 0,
+          "doors": 0,
+          "props": 0,
+          "markers": 0,
+          "labels": 0,
+          "helipad": 0,
+          "hudOnCanvas": 0,
+          "particles": 0
+        }
+      },
+      "legs": [
+        {
+          "keys": [
+            "d"
+          ],
+          "ms": 700
+        },
+        {
+          "keys": [
+            "s"
+          ],
+          "ms": 600
+        },
+        {
+          "keys": [
+            "a"
+          ],
+          "ms": 700
+        },
+        {
+          "keys": [
+            "w"
+          ],
+          "ms": 600
+        }
+      ],
+      "plannedLegs": [
+        {
+          "keys": [
+            "d"
+          ],
+          "ms": 700,
+          "fromTile": [
+            1200,
+            1200
+          ],
+          "toTile": [
+            1232,
+            1200
+          ],
+          "tiles": 32,
+          "sx": 1,
+          "sy": 0
+        },
+        {
+          "keys": [
+            "s"
+          ],
+          "ms": 600,
+          "fromTile": [
+            1232,
+            1200
+          ],
+          "toTile": [
+            1232,
+            1227
+          ],
+          "tiles": 27,
+          "sx": 0,
+          "sy": 1
+        },
+        {
+          "keys": [
+            "a"
+          ],
+          "ms": 700,
+          "fromTile": [
+            1232,
+            1227
+          ],
+          "toTile": [
+            1200,
+            1227
+          ],
+          "tiles": 32,
+          "sx": -1,
+          "sy": 0
+        },
+        {
+          "keys": [
+            "w"
+          ],
+          "ms": 600,
+          "fromTile": [
+            1200,
+            1227
+          ],
+          "toTile": [
+            1200,
+            1200
+          ],
+          "tiles": 27,
+          "sx": 0,
+          "sy": -1
+        }
+      ],
+      "measurement": {
+        "heldMs": 2600,
+        "inputEvents": 8,
+        "realKeyDownEvents": 4,
+        "distancePx": 1908,
+        "netDisplacementPx": 49.5,
+        "tilesTraversed": 119.25,
+        "blockedSubsteps": 0,
+        "startTile": [
+          1200,
+          1200
+        ],
+        "endTile": [
+          1203,
+          1199
+        ],
+        "tileDelta": [
+          3,
+          -1
+        ],
+        "endTerrain": {
+          "tile": 5,
+          "tileRendered": 5,
+          "biome": "conifer",
+          "authoredLand": true,
+          "water": false,
+          "road": false,
+          "poiId": null
+        },
+        "biomeAtStart": "conifer",
+        "biomeAtEnd": "conifer",
+        "biomeTransitionObserved": false,
+        "endTileIsAuthoredRoad": false
+      },
+      "corridor": {
+        "plannedLegs": [
+          {
+            "keys": [
+              "d"
+            ],
+            "ms": 700,
+            "fromTile": [
+              1200,
+              1200
+            ],
+            "toTile": [
+              1232,
+              1200
+            ],
+            "tiles": 32,
+            "sx": 1,
+            "sy": 0
+          },
+          {
+            "keys": [
+              "s"
+            ],
+            "ms": 600,
+            "fromTile": [
+              1232,
+              1200
+            ],
+            "toTile": [
+              1232,
+              1227
+            ],
+            "tiles": 27,
+            "sx": 0,
+            "sy": 1
+          },
+          {
+            "keys": [
+              "a"
+            ],
+            "ms": 700,
+            "fromTile": [
+              1232,
+              1227
+            ],
+            "toTile": [
+              1200,
+              1227
+            ],
+            "tiles": 32,
+            "sx": -1,
+            "sy": 0
+          },
+          {
+            "keys": [
+              "w"
+            ],
+            "ms": 600,
+            "fromTile": [
+              1200,
+              1227
+            ],
+            "toTile": [
+              1200,
+              1200
+            ],
+            "tiles": 27,
+            "sx": 0,
+            "sy": -1
+          }
+        ],
+        "corridorTiles": 122,
+        "blockedTiles": 0,
+        "roadOrBridgeTiles": 0,
+        "poiIds": [],
+        "distinctTileCodes": [
+          5,
+          7
+        ],
+        "distinctBiomeCodes": [
+          1,
+          3,
+          7
+        ],
+        "firstBlockedTile": null
+      },
+      "samples": [
+        {
+          "leg": "start",
+          "tile": [
+            1200,
+            1200
+          ],
+          "px": 19208,
+          "py": 19208,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "terrain": {
+            "tile": 5,
+            "tileRendered": 5,
+            "biome": "conifer",
+            "authoredLand": true,
+            "water": false,
+            "road": false,
+            "poiId": null
+          }
+        },
+        {
+          "leg": 1,
+          "keys": [
+            "d"
+          ],
+          "heldMs": 700,
+          "tile": [
+            1234,
+            1200
+          ],
+          "px": 19760,
+          "py": 19208,
+          "movedPx": 552,
+          "blockedSubsteps": 0,
+          "terrain": {
+            "tile": 5,
+            "tileRendered": 5,
+            "biome": "conifer",
+            "authoredLand": true,
+            "water": false,
+            "road": false,
+            "poiId": null
+          }
+        },
+        {
+          "leg": 2,
+          "keys": [
+            "s"
+          ],
+          "heldMs": 600,
+          "tile": [
+            1234,
+            1226
+          ],
+          "px": 19760,
+          "py": 19628,
+          "movedPx": 972,
+          "blockedSubsteps": 0,
+          "terrain": {
+            "tile": 5,
+            "tileRendered": 5,
+            "biome": "forest",
+            "authoredLand": true,
+            "water": false,
+            "road": false,
+            "poiId": null
+          }
+        },
+        {
+          "leg": 3,
+          "keys": [
+            "a"
+          ],
+          "heldMs": 700,
+          "tile": [
+            1203,
+            1226
+          ],
+          "px": 19256,
+          "py": 19628,
+          "movedPx": 1476,
+          "blockedSubsteps": 0,
+          "terrain": {
+            "tile": 5,
+            "tileRendered": 5,
+            "biome": "conifer",
+            "authoredLand": true,
+            "water": false,
+            "road": false,
+            "poiId": null
+          }
+        },
+        {
+          "leg": 4,
+          "keys": [
+            "w"
+          ],
+          "heldMs": 600,
+          "tile": [
+            1203,
+            1199
+          ],
+          "px": 19256,
+          "py": 19196,
+          "movedPx": 1908,
+          "blockedSubsteps": 0,
+          "terrain": {
+            "tile": 5,
+            "tileRendered": 5,
+            "biome": "conifer",
+            "authoredLand": true,
+            "water": false,
+            "road": false,
+            "poiId": null
+          }
+        }
+      ],
+      "before": {
+        "file": "creator-u05/evidence/mapgeo01-shots/T4_highland_and_alternative_before.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "after": {
+        "file": "creator-u05/evidence/mapgeo01-shots/T4_highland_and_alternative_after.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "inputLogSample": [
+        {
+          "code": "KeyD",
+          "type": "down",
+          "t": 5000
+        },
+        {
+          "code": "KeyD",
+          "type": "up",
+          "t": 5766
+        },
+        {
+          "code": "KeyS",
+          "type": "down",
+          "t": 5766
+        },
+        {
+          "code": "KeyS",
+          "type": "up",
+          "t": 6350
+        },
+        {
+          "code": "KeyA",
+          "type": "down",
+          "t": 6350
+        },
+        {
+          "code": "KeyA",
+          "type": "up",
+          "t": 7050
+        },
+        {
+          "code": "KeyW",
+          "type": "down",
+          "t": 7083
+        },
+        {
+          "code": "KeyW",
+          "type": "up",
+          "t": 7683
+        }
+      ],
+      "result": "PARTIAL__NO_PHYSICAL_CLIFF_BLOCKER_EXISTS",
+      "failures": [
+        "MGP-D10: zero T.CLIFF tiles exist in the U=0.5 runtime; highland route cannot be blocked or alt-route-forced physically"
+      ],
+      "note": "A real rectangular out-and-back on HILL/FOREST terrain with collision ON. The alternative route is proven as continuous movement, NOT as a cliff detour. Gameplay/Creator must approve a cliff collision law before any physical cliff route can exist."
+    },
+    {
+      "id": "T5_coastal_dock_approach",
+      "label": "coastal/dock approach",
+      "physicalFeature": "GOLD dk_cinder [3130,1769] tiles: centre on dry ROAD, 28/49 dry-land tiles, 48/49 road tiles; ocean to the west",
+      "spawn": {
+        "tile": [
+          3170,
+          1769
+        ],
+        "au": [
+          1585.25,
+          884.75
+        ],
+        "method": "window.__terrain.reset(tx,ty) VIEWER SPAWN CONTROL",
+        "spawnFixture": true,
+        "resetOnlyAtStart": true,
+        "cameraTeleportUsed": false,
+        "traversalByRealKeys": true,
+        "cameraUsedAsRoute": false
+      },
+      "runtime": {
+        "viewport": [
+          640,
+          360
+        ],
+        "dpr": 1,
+        "zoom": 1,
+        "zoomMode": "NATIVE_1X",
+        "U": 0.5,
+        "TILE": 16,
+        "heroSpritePx": [
+          16,
+          24
+        ],
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "speedMultiplier": 10,
+        "speedPxPerSec": 720,
+        "cameraTrick": false,
+        "overlays": {
+          "buildings": 0,
+          "walls": 0,
+          "roofs": 0,
+          "doors": 0,
+          "props": 0,
+          "markers": 0,
+          "labels": 0,
+          "helipad": 0,
+          "hudOnCanvas": 0,
+          "particles": 0
+        }
+      },
+      "legs": [
+        {
+          "keys": [
+            "a"
+          ],
+          "ms": 600
+        },
+        {
+          "keys": [
+            "a"
+          ],
+          "ms": 250
+        },
+        {
+          "keys": [
+            "a"
+          ],
+          "ms": 90
+        }
+      ],
+      "plannedLegs": [
+        {
+          "keys": [
+            "a"
+          ],
+          "ms": 600,
+          "fromTile": [
+            3170,
+            1769
+          ],
+          "toTile": [
+            3143,
+            1769
+          ],
+          "tiles": 27,
+          "sx": -1,
+          "sy": 0
+        },
+        {
+          "keys": [
+            "a"
+          ],
+          "ms": 250,
+          "fromTile": [
+            3143,
+            1769
+          ],
+          "toTile": [
+            3132,
+            1769
+          ],
+          "tiles": 11,
+          "sx": -1,
+          "sy": 0
+        },
+        {
+          "keys": [
+            "a"
+          ],
+          "ms": 90,
+          "fromTile": [
+            3132,
+            1769
+          ],
+          "toTile": [
+            3128,
+            1769
+          ],
+          "tiles": 4,
+          "sx": -1,
+          "sy": 0
+        }
+      ],
+      "measurement": {
+        "heldMs": 940,
+        "inputEvents": 6,
+        "realKeyDownEvents": 3,
+        "distancePx": 644,
+        "netDisplacementPx": 644,
+        "tilesTraversed": 40.25,
+        "blockedSubsteps": 17,
+        "startTile": [
+          3170,
+          1769
+        ],
+        "endTile": [
+          3130,
+          1769
+        ],
+        "tileDelta": [
+          -40,
+          0
+        ],
+        "endTerrain": {
+          "tile": 12,
+          "tileRendered": 12,
+          "biome": "meadow",
+          "authoredLand": true,
+          "water": false,
+          "road": true,
+          "poiId": null
+        },
+        "biomeAtStart": "marsh",
+        "biomeAtEnd": "meadow",
+        "biomeTransitionObserved": true,
+        "endTileIsAuthoredRoad": true
+      },
+      "corridor": {
+        "plannedLegs": [
+          {
+            "keys": [
+              "a"
+            ],
+            "ms": 600,
+            "fromTile": [
+              3170,
+              1769
+            ],
+            "toTile": [
+              3143,
+              1769
+            ],
+            "tiles": 27,
+            "sx": -1,
+            "sy": 0
+          },
+          {
+            "keys": [
+              "a"
+            ],
+            "ms": 250,
+            "fromTile": [
+              3143,
+              1769
+            ],
+            "toTile": [
+              3132,
+              1769
+            ],
+            "tiles": 11,
+            "sx": -1,
+            "sy": 0
+          },
+          {
+            "keys": [
+              "a"
+            ],
+            "ms": 90,
+            "fromTile": [
+              3132,
+              1769
+            ],
+            "toTile": [
+              3128,
+              1769
+            ],
+            "tiles": 4,
+            "sx": -1,
+            "sy": 0
+          }
+        ],
+        "corridorTiles": 45,
+        "blockedTiles": 2,
+        "roadOrBridgeTiles": 19,
+        "poiIds": [
+          "po_cindercamp"
+        ],
+        "distinctTileCodes": [
+          1,
+          2,
+          6,
+          12
+        ],
+        "distinctBiomeCodes": [
+          0,
+          4,
+          11
+        ],
+        "firstBlockedTile": [
+          3129,
+          1769
+        ]
+      },
+      "samples": [
+        {
+          "leg": "start",
+          "tile": [
+            3170,
+            1769
+          ],
+          "px": 50728,
+          "py": 28312,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "terrain": {
+            "tile": 6,
+            "tileRendered": 6,
+            "biome": "marsh",
+            "authoredLand": true,
+            "water": false,
+            "road": false,
+            "poiId": "po_cindercamp"
+          }
+        },
+        {
+          "leg": 1,
+          "keys": [
+            "a"
+          ],
+          "heldMs": 600,
+          "tile": [
+            3141,
+            1769
+          ],
+          "px": 50260,
+          "py": 28312,
+          "movedPx": 468,
+          "blockedSubsteps": 0,
+          "terrain": {
+            "tile": 2,
+            "tileRendered": 2,
+            "biome": "beach",
+            "authoredLand": true,
+            "water": false,
+            "road": false,
+            "poiId": null
+          }
+        },
+        {
+          "leg": 2,
+          "keys": [
+            "a"
+          ],
+          "heldMs": 250,
+          "tile": [
+            3130,
+            1769
+          ],
+          "px": 50084,
+          "py": 28312,
+          "movedPx": 644,
+          "blockedSubsteps": 1,
+          "terrain": {
+            "tile": 12,
+            "tileRendered": 12,
+            "biome": "meadow",
+            "authoredLand": true,
+            "water": false,
+            "road": true,
+            "poiId": null
+          }
+        },
+        {
+          "leg": 3,
+          "keys": [
+            "a"
+          ],
+          "heldMs": 90,
+          "tile": [
+            3130,
+            1769
+          ],
+          "px": 50084,
+          "py": 28312,
+          "movedPx": 644,
+          "blockedSubsteps": 17,
+          "terrain": {
+            "tile": 12,
+            "tileRendered": 12,
+            "biome": "meadow",
+            "authoredLand": true,
+            "water": false,
+            "road": true,
+            "poiId": null
+          }
+        }
+      ],
+      "before": {
+        "file": "creator-u05/evidence/mapgeo01-shots/T5_coastal_dock_approach_before.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "after": {
+        "file": "creator-u05/evidence/mapgeo01-shots/T5_coastal_dock_approach_after.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "inputLogSample": [
+        {
+          "code": "KeyA",
+          "type": "down",
+          "t": 7733
+        },
+        {
+          "code": "KeyA",
+          "type": "up",
+          "t": 8383
+        },
+        {
+          "code": "KeyA",
+          "type": "down",
+          "t": 8383
+        },
+        {
+          "code": "KeyA",
+          "type": "up",
+          "t": 8633
+        },
+        {
+          "code": "KeyA",
+          "type": "down",
+          "t": 8633
+        },
+        {
+          "code": "KeyA",
+          "type": "up",
+          "t": 8733
+        }
+      ],
+      "result": "PASS_VIEWER_PHYSICAL",
+      "failures": [],
+      "note": "Real westward WASD approach from inland toward the coastal dock with collision ON. NO boarding/disembark cell, boat or dock permission is asserted (MGP-D03)."
+    },
+    {
+      "id": "T6_poi_exterior_return",
+      "label": "POI exterior and return route",
+      "physicalFeature": "GOLD po_beacon foot envelope at [544,1304] tiles; SAND/coast land, creator-locked Beacon benchmark",
+      "spawn": {
+        "tile": [
+          520,
+          1304
+        ],
+        "au": [
+          260.25,
+          652.25
+        ],
+        "method": "window.__terrain.reset(tx,ty) VIEWER SPAWN CONTROL",
+        "spawnFixture": true,
+        "resetOnlyAtStart": true,
+        "cameraTeleportUsed": false,
+        "traversalByRealKeys": true,
+        "cameraUsedAsRoute": false
+      },
+      "runtime": {
+        "viewport": [
+          640,
+          360
+        ],
+        "dpr": 1,
+        "zoom": 1,
+        "zoomMode": "NATIVE_1X",
+        "U": 0.5,
+        "TILE": 16,
+        "heroSpritePx": [
+          16,
+          24
+        ],
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "speedMultiplier": 10,
+        "speedPxPerSec": 720,
+        "cameraTrick": false,
+        "overlays": {
+          "buildings": 0,
+          "walls": 0,
+          "roofs": 0,
+          "doors": 0,
+          "props": 0,
+          "markers": 0,
+          "labels": 0,
+          "helipad": 0,
+          "hudOnCanvas": 0,
+          "particles": 0
+        }
+      },
+      "legs": [
+        {
+          "keys": [
+            "d"
+          ],
+          "ms": 450
+        },
+        {
+          "keys": [
+            "a"
+          ],
+          "ms": 450
+        }
+      ],
+      "plannedLegs": [
+        {
+          "keys": [
+            "d"
+          ],
+          "ms": 450,
+          "fromTile": [
+            520,
+            1304
+          ],
+          "toTile": [
+            540,
+            1304
+          ],
+          "tiles": 20,
+          "sx": 1,
+          "sy": 0
+        },
+        {
+          "keys": [
+            "a"
+          ],
+          "ms": 450,
+          "fromTile": [
+            540,
+            1304
+          ],
+          "toTile": [
+            520,
+            1304
+          ],
+          "tiles": 20,
+          "sx": -1,
+          "sy": 0
+        }
+      ],
+      "measurement": {
+        "heldMs": 900,
+        "inputEvents": 4,
+        "realKeyDownEvents": 2,
+        "distancePx": 636,
+        "netDisplacementPx": 12,
+        "tilesTraversed": 39.75,
+        "blockedSubsteps": 0,
+        "startTile": [
+          520,
+          1304
+        ],
+        "endTile": [
+          519,
+          1304
+        ],
+        "tileDelta": [
+          -1,
+          0
+        ],
+        "endTerrain": {
+          "tile": 2,
+          "tileRendered": 2,
+          "biome": "beach",
+          "authoredLand": true,
+          "water": false,
+          "road": false,
+          "poiId": "po_beacon"
+        },
+        "biomeAtStart": "beach",
+        "biomeAtEnd": "beach",
+        "biomeTransitionObserved": false,
+        "endTileIsAuthoredRoad": false
+      },
+      "corridor": {
+        "plannedLegs": [
+          {
+            "keys": [
+              "d"
+            ],
+            "ms": 450,
+            "fromTile": [
+              520,
+              1304
+            ],
+            "toTile": [
+              540,
+              1304
+            ],
+            "tiles": 20,
+            "sx": 1,
+            "sy": 0
+          },
+          {
+            "keys": [
+              "a"
+            ],
+            "ms": 450,
+            "fromTile": [
+              540,
+              1304
+            ],
+            "toTile": [
+              520,
+              1304
+            ],
+            "tiles": 20,
+            "sx": -1,
+            "sy": 0
+          }
+        ],
+        "corridorTiles": 42,
+        "blockedTiles": 0,
+        "roadOrBridgeTiles": 18,
+        "poiIds": [
+          "po_beacon"
+        ],
+        "distinctTileCodes": [
+          2,
+          12
+        ],
+        "distinctBiomeCodes": [
+          11
+        ],
+        "firstBlockedTile": null
+      },
+      "samples": [
+        {
+          "leg": "start",
+          "tile": [
+            520,
+            1304
+          ],
+          "px": 8328,
+          "py": 20872,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "terrain": {
+            "tile": 2,
+            "tileRendered": 2,
+            "biome": "beach",
+            "authoredLand": true,
+            "water": false,
+            "road": false,
+            "poiId": "po_beacon"
+          }
+        },
+        {
+          "leg": 1,
+          "keys": [
+            "d"
+          ],
+          "heldMs": 450,
+          "tile": [
+            539,
+            1304
+          ],
+          "px": 8640,
+          "py": 20872,
+          "movedPx": 312,
+          "blockedSubsteps": 0,
+          "terrain": {
+            "tile": 12,
+            "tileRendered": 12,
+            "biome": "beach",
+            "authoredLand": true,
+            "water": false,
+            "road": true,
+            "poiId": "po_beacon"
+          }
+        },
+        {
+          "leg": 2,
+          "keys": [
+            "a"
+          ],
+          "heldMs": 450,
+          "tile": [
+            519,
+            1304
+          ],
+          "px": 8316,
+          "py": 20872,
+          "movedPx": 636,
+          "blockedSubsteps": 0,
+          "terrain": {
+            "tile": 2,
+            "tileRendered": 2,
+            "biome": "beach",
+            "authoredLand": true,
+            "water": false,
+            "road": false,
+            "poiId": "po_beacon"
+          }
+        }
+      ],
+      "before": {
+        "file": "creator-u05/evidence/mapgeo01-shots/T6_poi_exterior_return_before.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "after": {
+        "file": "creator-u05/evidence/mapgeo01-shots/T6_poi_exterior_return_after.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "inputLogSample": [
+        {
+          "code": "KeyD",
+          "type": "down",
+          "t": 8833
+        },
+        {
+          "code": "KeyD",
+          "type": "up",
+          "t": 9266
+        },
+        {
+          "code": "KeyA",
+          "type": "down",
+          "t": 9283
+        },
+        {
+          "code": "KeyA",
+          "type": "up",
+          "t": 9733
+        }
+      ],
+      "result": "PASS_VIEWER_PHYSICAL",
+      "failures": [],
+      "note": "Real out-and-back on the POI exterior. NO door, entrance prop, key, room or loot was generated. A8 interaction semantics remain unresolved (26 missing entrance records)."
+    }
+  ],
+  "physicalBeforeAfterPair": [
+    {
+      "id": "physical_free_roam",
+      "label": "viewer free-roam diagnostic (NOT a traversal proof)",
+      "collision": "FREE_ROAM__NO_COLLISION",
+      "before": {
+        "file": "creator-u05/evidence/mapgeo01-shots/physical_free_roam_before.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "after": {
+        "file": "creator-u05/evidence/mapgeo01-shots/physical_free_roam_after.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "distancePx": 888,
+      "blockedSubsteps": 0,
+      "endTile": [
+        2075,
+        907
+      ],
+      "endTerrain": {
+        "tile": 4,
+        "tileRendered": 4,
+        "biome": "meadow",
+        "authoredLand": true,
+        "water": false,
+        "road": false,
+        "poiId": "po_timberyard"
+      }
+    },
+    {
+      "id": "physical_natural_collision",
+      "label": "NATURAL_TERRAIN_ONLY physical proof",
+      "collision": "NATURAL_TERRAIN_ONLY",
+      "before": {
+        "file": "creator-u05/evidence/mapgeo01-shots/physical_natural_collision_before.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "after": {
+        "file": "creator-u05/evidence/mapgeo01-shots/physical_natural_collision_after.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "distancePx": 340,
+      "blockedSubsteps": 123,
+      "endTile": [
+        2041,
+        907
+      ],
+      "endTerrain": {
+        "tile": 13,
+        "tileRendered": 13,
+        "biome": "meadow",
+        "authoredLand": true,
+        "water": false,
+        "road": true,
+        "poiId": "po_timberyard"
+      }
+    }
+  ],
+  "proofBoundary": {
+    "provenInIsolatedViewer": [
+      "native 640x360 1x camera with real hero 16x24 and verbatim WMP-04R1/GOLD terrain painter",
+      "continuous real-key movement (inputLog + movedPx + blockedSubsteps) with no camera teleport",
+      "natural terrain blocking: water / river / lake / deep / shallow / cliff / ice / lava / burnt",
+      "authored road surface continuity and width at U=0.5, biome/material transitions along a road",
+      "spawn tiles are dry, unblocked and within 29-57 tiles of a rendered authored road",
+      "bridge crossing is NOT physically supported (measured blocked bank approach)",
+      "zero physical T.CLIFF tiles; cliff/highland route cannot be blocked"
+    ],
+    "requiresFullGameplayRuntime": [
+      "building/wall/door/roof collision and POI/room interaction (A8)",
+      "spawn legality / safe route / no softlock after A0 protection and dynamic occupancy checks",
+      "legal placement after A0 checks (19 buildable-site overlaps)",
+      "foot/cart/boat/swim/ferry permissions, loading capacity and swept cart clearance",
+      "bridge deck span, bridge sprite/asset and collision contract (12 bridges)",
+      "dock boarding/disembark cells, water depth and vehicle rules (27 docks)",
+      "cliff collision law and vertical-link separation (8 blockers)",
+      "retreat polylines / exit routes for 63 POIs",
+      "full 4000x2800 streaming, offline save migration and production clock"
+    ],
+    "notProven": [
+      "VISUAL_ACCEPTED",
+      "GAMEPLAY_ACCEPTED",
+      "VEYRA_PLAYABLE",
+      "MERGE_READY",
+      "production merge",
+      "full Gameplay runtime integration"
+    ]
+  },
+  "acceptanceSeparation": {
+    "PAPER": "MEASURED (62 findings reconciled, 10 physical defects named)",
+    "RUNTIME": "ISOLATED_VIEWER_PHYSICAL_PARTIAL (6 traversals, 1 crossing FAIL, 1 cliff PARTIAL)",
+    "VISUAL": "NOT_REQUESTED_AND_NOT_GRANTED (QA screenshots are not visual acceptance)",
+    "GAMEPLAY": "NOT_REQUESTED_AND_NOT_GRANTED"
+  }
+}

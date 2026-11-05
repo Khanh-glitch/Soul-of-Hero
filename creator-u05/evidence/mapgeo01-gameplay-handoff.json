@@ -1,0 +1,265 @@
+{
+  "schema": "soh.u05.mapgeo01-gameplay-handoff.v1",
+  "generatedAt": "2026-11-05T13:05:01.858Z",
+  "title": "MAP-GEO-REJOIN-01 — exact source-pinned Map handoff for Gameplay integration",
+  "recipient": {
+    "role": "Gameplay owner",
+    "branch": "arena/d4bfcfff-soul-of-hero",
+    "liveHead": "6e7d116b4400ea3c24373fe884b7fad258f4f7bc",
+    "pr44": "OPEN — headRefOid 6e7d116b4400ea3c24373fe884b7fad258f4f7bc — NOT edited or merged by Map",
+    "observedHeadInTask": "2f0836587b76a4a98fffedf8c202fb37cbb2a67c (superseded)",
+    "creatorVerifiedHead": "5b3e683402bbc8540dea9404576164097e753f97"
+  },
+  "sender": {
+    "role": "Map / U05 physical geography",
+    "branch": "arena/2e3cfbd2-soul-of-hero",
+    "liveHeadAtPacketCreation": "99a196f3b601155ae216ba8968d4f94ee2d0a157",
+    "packetCommit": "creator-u05/evidence/mapgeo01-delivery.json :: commit",
+    "activeRevision": "WMP-04R1",
+    "status": "MAP_GEO_R1_CORRECTED__GAMEPLAY_INTAKE_PENDING",
+    "scale": {
+      "U": 0.5,
+      "unit": "AU per runtime tile",
+      "TILE_PX": 16,
+      "viewport": [
+        640,
+        360
+      ],
+      "frameTiles": [
+        4000,
+        2800
+      ]
+    }
+  },
+  "pinnedSources": {
+    "veyra-world-master/CURRENT_WORLD_MASTER.json": {
+      "path": "veyra-world-master/CURRENT_WORLD_MASTER.json",
+      "bytes": 1376,
+      "sha256": "6adfa7167937a5fed0af2c11348fcdff6cbe445daaba5bbfb1bfb208f1239679"
+    },
+    "veyra-world-master/v4/r1/manifest.r1.json": {
+      "path": "veyra-world-master/v4/r1/manifest.r1.json",
+      "bytes": 1865,
+      "sha256": "57195f7d842ce524d0bda566a140ffba67f2a6f8563830b8c1030bc583224f15"
+    },
+    "veyra-world-master/data/canon/VEYRA_GOLD_MAP.sohmap.json": {
+      "path": "veyra-world-master/data/canon/VEYRA_GOLD_MAP.sohmap.json",
+      "bytes": 332249,
+      "sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256"
+    },
+    "veyra-world-master/v4/r1/data/biomeEffective.r1.u8": {
+      "path": "veyra-world-master/v4/r1/data/biomeEffective.r1.u8",
+      "bytes": 43750,
+      "sha256": "43e700ef9b1d50e7a2e7d5342f0473df4e15a2a1f27a0097cc50dc7c2a46a87b"
+    },
+    "veyra-world-master/v4/data/marineRegion.v4.u8": {
+      "path": "veyra-world-master/v4/data/marineRegion.v4.u8",
+      "bytes": 43750,
+      "sha256": "615a5ce04f4c133edb2d95c91b48431bebc5f45c2048a6903e1b31afb01d8311"
+    },
+    "veyra-world-master/v4/r1/data/coldTransition.r1.u8": {
+      "path": "veyra-world-master/v4/r1/data/coldTransition.r1.u8",
+      "bytes": 43750,
+      "sha256": "e7849ccb37e2ef54e6bb55f709dc93ae1557a4c948235e0d1452ec1114d59971"
+    },
+    "veyra-world-master/v3/rasters/cliffCandidate.v3.u8": {
+      "path": "veyra-world-master/v3/rasters/cliffCandidate.v3.u8",
+      "bytes": 43750,
+      "sha256": "6b2897d74409b974d477e767291f1eac0b9614a1b794539aef827c1278682d2d"
+    },
+    "world_lab/src/gold/REAL_MAP_CONVERSION_CONTRACT.md": {
+      "path": "world_lab/src/gold/REAL_MAP_CONVERSION_CONTRACT.md",
+      "bytes": 5220,
+      "sha256": "a16deb29f27ad33a7e1788d52aa5bd7e27d36c0c4ecdcee9a4b76ee990e688d1"
+    },
+    "creator-u05/contracts/CREATOR_CHOSEN_U05.v1.json": {
+      "path": "creator-u05/contracts/CREATOR_CHOSEN_U05.v1.json",
+      "bytes": 7496,
+      "sha256": "1faf5e4dc2758f190263853d82cd6f90d9e5cb23727161ff62a14348d6ccbcf2"
+    },
+    "creator-u05/contracts/LAYER_INVENTORY.json": {
+      "path": "creator-u05/contracts/LAYER_INVENTORY.json",
+      "bytes": 15975,
+      "sha256": "f39156b0040cbe390afe00661617ca9b52a69ad5658773af5043caa593926feb"
+    },
+    "creator-u05/map-data/U05_GEOMETRY_CONFLICTS.json": {
+      "path": "creator-u05/map-data/U05_GEOMETRY_CONFLICTS.json",
+      "bytes": 18063,
+      "sha256": "2ac08fd0881a7a584ab321b303e9dd71b54296c02ab5cb89a4a890edd83b4abc"
+    },
+    "creator-u05/map-data/MAPGEO01_FINDINGS_RECONCILED.json": {
+      "path": "creator-u05/map-data/MAPGEO01_FINDINGS_RECONCILED.json",
+      "bytes": 93249,
+      "sha256": "e7d106ad2d0608c6d8f80f4dab6dbbda779d4930bf276c1055fab627690802e7"
+    },
+    "creator-u05/docs/TERRAIN_ONLY_VIEWER.md": {
+      "path": "creator-u05/docs/TERRAIN_ONLY_VIEWER.md",
+      "bytes": 14414,
+      "sha256": "f41bc186a091a3bec4b1fe264db7869d4d014983bee593f1d8ffe8863ec45f90"
+    },
+    "creator-u05/docs/MAP_GEO_REJOIN_01_STATUS.md": {
+      "path": "creator-u05/docs/MAP_GEO_REJOIN_01_STATUS.md",
+      "bytes": 17728,
+      "sha256": "b58334518e547a13c5a960858b47a0930691e4a352449ebc89e1553017beef9f"
+    },
+    "creator-u05/docs/MAPGEO01_GAMEPLAY_HANDOFF.md": {
+      "path": "creator-u05/docs/MAPGEO01_GAMEPLAY_HANDOFF.md",
+      "bytes": 8171,
+      "sha256": "cbd773386ad776f2956011fb0e3744dd727b74d5db583339a882c6f84a220c6b"
+    },
+    "creator-u05/web-u05/src/u05/world.ts": {
+      "path": "creator-u05/web-u05/src/u05/world.ts",
+      "bytes": 8325,
+      "sha256": "78317efe40c18f7ed4bf7d3c129be4f423b6a7abaac7625e8f9938c73b2264fd"
+    },
+    "creator-u05/web-u05/src/u05/terrain.ts": {
+      "path": "creator-u05/web-u05/src/u05/terrain.ts",
+      "bytes": 9693,
+      "sha256": "3d3fa1605a121ba2bcd8b26e0333cbf8a7ada71adfca67ce7e8e3ee3ca225bc4"
+    },
+    "creator-u05/web-u05/src/u05/lw/geometry.ts": {
+      "path": "creator-u05/web-u05/src/u05/lw/geometry.ts",
+      "bytes": 14075,
+      "sha256": "b10bab33d49c7c0f840722d815c7b7613f791f5c5c056643c9983dd95767da4e"
+    },
+    "creator-u05/web-u05/src/u05/lw/sources.generated.ts": {
+      "path": "creator-u05/web-u05/src/u05/lw/sources.generated.ts",
+      "bytes": 1334611,
+      "sha256": "5a3249189c984028472ce29163ddd5be1a5326111c4cb8256d5c077e74d5ba19"
+    },
+    "creator-u05/web-u05/src/game/art.ts": {
+      "path": "creator-u05/web-u05/src/game/art.ts",
+      "bytes": 42172,
+      "sha256": "896aa51abfac516b4228994ae7a20a67c4644a587028146b5c79336103a1ec20"
+    },
+    "creator-u05/web-u05/src/terrain-only/main.ts": {
+      "path": "creator-u05/web-u05/src/terrain-only/main.ts",
+      "bytes": 25352,
+      "sha256": "ee0dd8d633a11c4d5d0369100aaa28416fa83cb97a4f4d76652b390ae072a615"
+    },
+    "creator-u05/SoulOfHero_TerrainOnly_U05_x10.html": {
+      "path": "creator-u05/SoulOfHero_TerrainOnly_U05_x10.html",
+      "bytes": 1407498,
+      "sha256": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0"
+    },
+    "creator-u05/evidence/mapgeo01-preflight.json": {
+      "path": "creator-u05/evidence/mapgeo01-preflight.json",
+      "bytes": 12523,
+      "sha256": "33a6c7af63c58571b25f86795346ce49829ddaee7d8a6ba62c17caace4822ad9"
+    },
+    "creator-u05/evidence/mapgeo01-physical-audit.json": {
+      "path": "creator-u05/evidence/mapgeo01-physical-audit.json",
+      "bytes": 309957,
+      "sha256": "402c16ec0f301b7df380c9d60c2b2d922148107d95963f18e5399be2a8b92f8f"
+    },
+    "creator-u05/evidence/mapgeo01-reconciliation.json": {
+      "path": "creator-u05/evidence/mapgeo01-reconciliation.json",
+      "bytes": 3149,
+      "sha256": "61bc024366062599fe1c0847f9b6e85085d7e978ce3984cf5961f7c1c1948d51"
+    },
+    "creator-u05/evidence/mapgeo01-traversal.json": {
+      "path": "creator-u05/evidence/mapgeo01-traversal.json",
+      "bytes": 44485,
+      "sha256": "f142ec4b155120c64fefb20ac25dfea2da95e02eb0b0b33afd620205b0e745dc"
+    }
+  },
+  "integrationContract": {
+    "mapExposes": [
+      "window.__terrain.sampleTile(tx,ty) -> TileSample (authoredLand, water, lake, river, road, bridge, dock, poiId, zoneId, elevation, heightClass, cliffCandidate, walkableCandidate, cargoCandidate, buildableCandidate, waterTraversalClass, permissions)",
+      "window.__terrain.u05Tile(tx,ty) -> visible terrain tile code (verbatim live-Gameplay PAL/PRIO/texel painter)",
+      "window.__terrain.terrainBlocked(tx,ty) -> natural-terrain collision (DEEP/SHALLOW/RIVER/CLIFF/PWALL/LAVA/ICE/BURNT)",
+      "evidence/mapgeo01-physical-audit.json :: defects, separation, roads, connections, spawns, poiAccess",
+      "map-data/MAPGEO01_FINDINGS_RECONCILED.json :: 62 classified findings with U=0.5-native measurements"
+    ],
+    "gameplayMustOwn": [
+      "WorldTraversal edges: bridge span/width/load validity/alternate edges for all 12 GOLD bridges (currently 0 crossable)",
+      "POIAccessGraphCandidate: 26 exterior entrance records, door/room/power/exit/stand positions",
+      "BuildSiteSample: legal placement after A0 checks for 19 buildable-zone overlaps",
+      "foot/cart/boat/swim/ferry permissions, cart swept clearance, loading capacity and measured t_foot/t_cart_loaded/t_cart_unloaded/distance_to_road",
+      "dock boarding/disembark cells, water depth and harbour collision for 27 docks",
+      "cliff collision law (305 WMP-03 candidate cells currently produce 0 physical cliffs) and 8 vertical-link blockers",
+      "63 POI retreat routes, MAP-SPAWN-04 / HOME-03 / POI-02 / LOG-03 / U1–U5 / CAMERA full-runtime tests",
+      "Beacon helicopter sprite approval (NO_RELOCATION__NO_SUBSTITUTE) and po_timberyard centre decision"
+    ],
+    "typedBoundary": {
+      "visibleSurface": "u05Tile() — never a permission",
+      "physicalGeometry": "sampleTile() flags + terrainBlocked() — candidates only",
+      "gameplayPermission": "permissions.foot/cart are MAP CANDIDATES; build/boat/swim/ferryFoot are FALSE everywhere; GAMEPLAY_ONLY__NOT_APPROVED"
+    },
+    "hardRules": [
+      "Do NOT import raw GOLD at runtime; use the WMP-04R1 reader and the U=0.5 additive reprojection.",
+      "Do NOT treat visible surfaces, QA screenshots or candidate rasters as Gameplay permission.",
+      "Do NOT invent walkable water, approved carts/boats, loading capacity, POI doors or build rights.",
+      "Do NOT amend GOLD polygons/IDs/coastline/roads/docks/resources; all 81 POI IDs stay unchanged.",
+      "Do NOT silently re-vendor web/src/game/art.ts: vendored copy is pinned to b5c8004c, live added S.claim.",
+      "Terrain painter block SHA f29c1a68803505c2dbf82aaae3ed37ab7240cb71dff47937f964e753c8d0f803 is byte-identical at b5c8004c / 2f083658 / 6e7d116b; the Creator-locked Beacon road must not be widened/recoloured/redrawn.",
+      "web/ref/bible.md §V and §11.5 are unchanged at the live head; §K6 and §11.3 C07/C09 changed with the Creator 2026-11-05 claim/upkeep decision.",
+      "Map does NOT edit or merge PR44. Integration is the Gameplay owner’s action."
+    ]
+  },
+  "measuredHandoff": {
+    "findings": {
+      "total": 62,
+      "mapGeometryDefectsCorrectable": 0,
+      "intentionalOverlaps": 12,
+      "gameplayA8": 46,
+      "creator": 1,
+      "missingEvidence": 3
+    },
+    "physicalDefects": 10,
+    "bridges": {
+      "count": 12,
+      "physicallyCrossable": 0,
+      "allCentresBlocked": 12
+    },
+    "roads": {
+      "count": 92,
+      "centrelineContinuous": 92,
+      "waterOverrideRoads": 31
+    },
+    "docks": {
+      "count": 27,
+      "landApproach": 25,
+      "roadAdjacency": 18
+    },
+    "spawns": {
+      "count": 4,
+      "allDryWalkable": true,
+      "nearestRenderedRoadTiles": [
+        29,
+        48,
+        57,
+        42
+      ]
+    },
+    "cliffs": {
+      "candidateCells": 305,
+      "physicalCliffTiles": 0
+    },
+    "traversals": {
+      "runs": 6,
+      "pass": 4,
+      "fail": 1,
+      "partial": 1,
+      "nativeShots": 16,
+      "viewerRuntimeOnly": true
+    },
+    "goldAmendments": 0
+  },
+  "acceptance": {
+    "PAPER": "MEASURED",
+    "RUNTIME": "ISOLATED_VIEWER_PHYSICAL_PARTIAL",
+    "VISUAL": "NOT_REQUESTED_AND_NOT_GRANTED",
+    "GAMEPLAY": "NOT_REQUESTED_AND_NOT_GRANTED"
+  },
+  "recommendedNextAction": "Gameplay owner pins 6e7d116b4400ea3c24373fe884b7fad258f4f7bc, consumes this packet, and decides the MGP-D01 bridge span/art + WorldTraversal collision contract with the Creator. This unblocks the only FAIL traversal and converts 31 water-overridden road segments into measurable alternatives.",
+  "notClaims": [
+    "No VEYRA_PLAYABLE",
+    "No VISUAL_ACCEPTED",
+    "No MERGE_READY",
+    "No production merge",
+    "No new atlas",
+    "No PR44 edit/merge",
+    "No GOLD amendment"
+  ]
+}

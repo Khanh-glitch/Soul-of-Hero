@@ -504,5 +504,88 @@
     "veyraPlayable": "NOT_CLAIMED",
     "qaIsNotVisualAcceptance": true,
     "note": "Separate additive ONE-biome pilot. NATURE-01, terrain-only, their sources/evidence and the standing 5b3e683 verification packet are preserved. No re-vendor, no silent sync, no Gameplay merge, no production approval. See docs/NATURE02_FOREST_SLICE.md."
+  },
+  "mapgeo01Disclosure": {
+    "pilot": "MAP-GEO-REJOIN-01 — Physical Terrain & Traversal Readiness (NOT ecology / NOT a standalone map)",
+    "branch": "arena/2e3cfbd2-soul-of-hero",
+    "verifiedMapHeadAtPilotStart": "99a196f3b601155ae216ba8968d4f94ee2d0a157",
+    "mainHead": "5214788933b1a827f3a177d11ff486433dfe5e8a",
+    "gameplayOwnerBranch": "arena/d4bfcfff-soul-of-hero",
+    "gameplayHeadObservedInTask": "2f0836587b76a4a98fffedf8c202fb37cbb2a67c",
+    "gameplayLiveHeadVerified": "6e7d116b4400ea3c24373fe884b7fad258f4f7bc",
+    "pr44": "OPEN — NOT edited / NOT merged by Map",
+    "activeRevision": "WMP-04R1",
+    "activeWorldMasterStatus": "MAP_GEO_R1_CORRECTED__GAMEPLAY_INTAKE_PENDING",
+    "scale": {
+      "U": 0.5,
+      "unit": "AU per runtime tile",
+      "TILE_PX": 16,
+      "viewport": [
+        640,
+        360
+      ],
+      "frameTiles": [
+        4000,
+        2800
+      ]
+    },
+    "bible": "web/ref/bible.md MISSING in Map worktree; §V and §11.5 read from live 6e7d116b… object; live bible changed at §K6 / §11.3 C07-C09, §V and §11.5 unchanged; vendored creator-u05/web-u05/ref/bible.md differs",
+    "terrainPainterBlockSha256": "f29c1a68803505c2dbf82aaae3ed37ab7240cb71dff47937f964e753c8d0f803",
+    "terrainPainterByteIdenticalAcrossHeads": true,
+    "artTs": "vendored pinned to b5c8004c blob 9312b4c4…; live 6e7d116b blob a1a0c77c… (S.claim); NOT silently re-vendored",
+    "runtimeUsed": "creator-u05/SoulOfHero_TerrainOnly_U05_x10.html (540f095e…) opened from file:// in Chromium 640x360 DPR1 — NOT rebuilt, NOT modified",
+    "newStandaloneExecutable": 0,
+    "newVisualSimulation": 0,
+    "replacementGeography": 0,
+    "protectedExecutablesUntouched": true,
+    "goldOrRasterOrRoadOrRiverOrCollisionEdits": 0,
+    "amendedPolygons": 0,
+    "relocatedObjects": 0,
+    "expandedEnvelopes": 0,
+    "recolouredRoads": 0,
+    "widenedRoads": 0,
+    "newBuildings": 0,
+    "newDoors": 0,
+    "newProps": 0,
+    "newAtlas": 0,
+    "canonicalIdsChanged": 0,
+    "findingsReconciled": 62,
+    "findingsClassified": 62,
+    "genuineMapGeometryDefectsCorrectable": 0,
+    "u05NativePolygonRemeasurements": 30,
+    "physicalDefectsNamed": 10,
+    "traversals": 6,
+    "traversalResults": "4 PASS_VIEWER_PHYSICAL / 1 FAIL_CROSSING__BANK_APPROACH_PASS / 1 PARTIAL__NO_PHYSICAL_CLIFF_BLOCKER_EXISTS",
+    "nativeShots": 16,
+    "shotViewport": [
+      640,
+      360
+    ],
+    "cameraTeleportCalledTraversal": false,
+    "qaIsNotVisualAcceptance": true,
+    "isolatedViewerProofOnly": true,
+    "fullGameplayRuntimeIntegration": false,
+    "acceptance": {
+      "PAPER": "MEASURED",
+      "RUNTIME": "ISOLATED_VIEWER_PHYSICAL_PARTIAL",
+      "VISUAL": "NOT_REQUESTED_AND_NOT_GRANTED",
+      "GAMEPLAY": "NOT_REQUESTED_AND_NOT_GRANTED"
+    },
+    "gameplayHandoff": "creator-u05/docs/MAPGEO01_GAMEPLAY_HANDOFF.md + evidence/mapgeo01-gameplay-handoff.json — exact source-pinned, addressed to Gameplay owner; PR44 untouched",
+    "status": "creator-u05/docs/MAP_GEO_REJOIN_01_STATUS.md",
+    "notClaims": [
+      "No VEYRA_PLAYABLE",
+      "No VISUAL_ACCEPTED",
+      "No MERGE_READY",
+      "No production merge",
+      "No PR44 edit/merge",
+      "No new atlas",
+      "No mass POI production",
+      "No resource scattering",
+      "No walkable water",
+      "No approved cart/boat/loading capacity",
+      "No POI doors or build rights"
+    ],
+    "note": "NATURE-01/02 remain archived R&D, not production resource placement. All MAP-GEO work is additive evidence/measurement; GOLD, WMP-04R1 rasters, U05 source modules and all protected executables are byte-identical."
   }
 }

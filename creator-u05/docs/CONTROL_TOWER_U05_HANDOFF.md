@@ -460,3 +460,66 @@ biome khác, nhân rộng world, thêm công trình/POI/tàn tích/hàng rào/pr
 Gameplay/PR44/main, `VISUAL_ACCEPTED`, `productionAtlas`,
 `VEYRA_PLAYABLE`. QA **không** phải chấp nhận thị giác. Chi tiết:
 `docs/NATURE02_FOREST_SLICE.md`.
+
+---
+
+## 15. MAP-GEO-REJOIN-01 — trở lại Veyra Map production plan (ĐỊA LÝ VẬT LÝ, KHÔNG phải ecology)
+
+**Yêu cầu:** kiểm tra địa hình vật lý / mạng đi lại trên **WMP-04R1, U=0.5**, đối
+soát **62 finding U05**, chỉ sửa lỗi thuộc Map có bằng chứng nguồn, và thử các
+hành trình **liên tục bằng phím thật** trong chính terrain renderer U=0.5 hiện có.
+**KHÔNG** tạo map/product mới, KHÔNG rải tài nguyên / sản xuất POI hàng loạt,
+KHÔNG atlas mới, KHÔNG merge, KHÔNG `VEYRA_PLAYABLE`.
+
+**Ref sống đã kiểm tra:** Map `99a196f3…` = local = remote; `main 5214788…`;
+Gameplay/PR44 **đã nhảy** từ `2f083658…` lên **`6e7d116b…`** (OPEN, không đụng).
+Bible live đổi §K6 + §11.3 C07/C09; **§V và §11.5 không đổi**;
+`web/ref/bible.md` **vắng mặt** trong worktree Map. `art.ts` live thêm `S.claim`
+nhưng **block painter `PAL/PRIO/texel` vẫn byte-identical** ở cả 3 head
+(`f29c1a68…`) → đường Beacon Creator khoá giữ nguyên. 3 executable được bảo vệ
+giữ nguyên SHA.
+
+**Kết quả đo (`evidence/mapgeo01-physical-audit.json`):** 17/17 sông liền mạch và
+đều có cửa đổ ra nước; 92/92 centreline đường liền mạch, 17 giao lộ GOLD,
+58 đường cắt biome, 31 đường bị nước override ở khúc qua sông; **12/12 cầu render
+`RIVER`, 12/12 `terrainBlocked=true`, 0 cầu đi qua được**; 27 bến (25 có lối bộ,
+18 có đường); 4 spawn đều khô/rảnh, đường gần nhất 29 / 48 / 57 / 42 tile;
+81 POI (18 có retreat); **305 ô `cliffCandidate` nhưng 0 tile `T.CLIFF`** vì luật
+U05 đòi `cliff>=2` trong khi raster chỉ mã hoá 0/1. `build/boat/swim/ferryFoot`
+**false ở mọi tile** → ranh giới bề mặt nhìn thấy / hình học vật lý / quyền
+Gameplay được giữ riêng, không bịa nước đi được, xe, thuyền, cửa hay quyền xây.
+
+**62 finding (`map-data/MAPGEO01_FINDINGS_RECONCILED.json`):** `0` lỗi hình học
+Map sửa được bằng bằng chứng nguồn · `12` overlap host/subsite có chủ đích ·
+`46` quyết định Gameplay/A8 · `1` quyết định Creator · `3` thiếu bằng chứng.
+**30** finding đa giác được đo lại ở đúng tâm tile 0.5 AU theo **union** (phát hiện
+**7** zone bị đếm trùng ở bản 1 AU; `bz_cinder` 2.131 → **5.505** tile thay vì
+8.524 suy diễn ×4). **0** đa giác / ID GOLD bị sửa; **0** cửa, prop, công trình,
+atlas mới. 10 lỗi vật lý `MGP-D01…D10` có owner + severity, trong đó
+`MGP-D01` (cầu) và `MGP-D10` (cliff) là BLOCKER/HIGH.
+
+**Hành trình thật (`evidence/mapgeo01-traversal.json`, 16 ảnh native 640×360):**
+`x10` viewer (720 px/s, luật gốc 72 px/s không đổi), collision
+`NATURAL_TERRAIN_ONLY` BẬT, `reset()` **chỉ 1 lần làm spawn control**,
+`cameraTeleportUsed=false`. Kết quả **4 PASS / 1 FAIL / 1 PARTIAL**:
+spawn→đường 967 px; đường `rd_12` 1.620 px (`forest→meadow`, 100/100 tile ROAD);
+**cầu `br_1` 342 px, 122 sub-step bị chặn → crossing FAIL**; highland 1.908 px
+(không hề có vách chặn → PARTIAL); bến `dk_cinder` 644 px (17 sub-step chặn ở
+bờ); `po_beacon` exterior đi-về 636 px. Cặp before/after **OFF→ON cùng toạ độ**
+`[2020,907]`: 888 px / 0 chặn → 344 px / 122 chặn. Ảnh free-roam là diagnostic
+viewer, **không** phải proof đi bộ trên nước.
+
+**Sửa thuộc Map đã làm:** chỉ 3 sửa tầng **bằng chứng** (C-01 đo lại U=0.5,
+C-02 phân loại 62, C-03 provenance + defect register) — **không** sửa hình học.
+`tests/test-mapgeo01.mjs` **130/130 PASS**. Bàn giao nguồn-chốt cho Gameplay
+owner: `docs/MAPGEO01_GAMEPLAY_HANDOFF.md` + `evidence/mapgeo01-gameplay-handoff.json`.
+
+**4 trạng thái RIÊNG:** `PAPER=MEASURED` ·
+`RUNTIME=ISOLATED_VIEWER_PHYSICAL_PARTIAL` ·
+`VISUAL=NOT_REQUESTED_AND_NOT_GRANTED` ·
+`GAMEPLAY=NOT_REQUESTED_AND_NOT_GRANTED`. QA/ảnh **không** phải chấp nhận thị giác.
+
+**MỘT việc tiếp theo duy nhất:** Gameplay owner pin `6e7d116b…`, nhận packet và
+cùng Creator chốt `MGP-D01` (span/art cầu + hợp đồng `WorldTraversal`). Map
+**không** sửa/merge PR44, không bịa deck cầu, không tuyên bố tích hợp. Chi tiết:
+`docs/MAP_GEO_REJOIN_01_STATUS.md`.
