@@ -49,6 +49,19 @@
 
 **Tiêu chuẩn nghiệm thu:** proof theo input thật chứng minh *khả năng* phát sinh J; free-form deviation chứng minh người chơi có thể chọn khác mà thế giới vẫn nhất quán; human observation chứng minh trải nghiệm. Không yêu cầu một người hoàn thành đủ 20 J. Không cộng số J pass thành tiến trình cốt truyện. Không định nghĩa nút hay quest “về nhà trước khi thoát” chỉ vì J10 mô tả một tình huống hữu ích.
 
+### 0.1b. [CHỐT — CREATOR 2026-11-05] NGUYÊN TẮC LAST ISLAND 100% → SOH VƯỢT TRỘI
+
+> **Lời Creator:** “Cái gì học từ Last Island là học cho tới, ít nhất là 100% thì mới có cơ sở mà hơn. Cái gì sai khác thì phải khai thác nó làm điểm đặc biệt và trội hơn cả Last Island.”
+
+**Ý nghĩa thực thi (diễn giải kiểm toán, không tự thêm luật gameplay):**
+1. **Học cho tới, không học vỏ ngoài.** Mỗi cơ chế, mạng cơ chế hoặc cảm giác gameplay được SOH viện dẫn là “học từ Last Island” phải được truy nguồn đúng phiên bản/mode; phục hồi trọn hành vi, điều kiện nguồn/đầu vào, giá phải trả, quyền sở hữu, sự khan hiếm, luật thời gian, phụ thuộc trước–sau, tương tác nhiều hệ, đường chơi thực, hậu quả và giá trị quyết định. Không công nhận là “đã học đủ” nếu mới có tên item, UI, sprite, recipe đứng một mình, hoặc test cấp sẵn vật tư.
+2. **Mốc 100% là chuẩn bao phủ giá trị và cơ chế của nội dung đã lựa chọn nghiên cứu/tái hiện, không phải sao chép nguyên văn mọi con số, PvP, monetization, chế độ 2021–2026 hay đặc tính LI trái luật SOH đã [CHỐT].** Nếu điều gì tương đương thật sự không thể giữ vì luật SOH khác, phải ghi rõ cơ chế nguồn, chênh lệch, điều gì thay thế chức năng đó, và vì sao gameplay mới không yếu hơn.
+3. **Sai khác phải trở thành ưu thế, không phải khoảng trống.** Các khác biệt SOH (sandbox PvE, Core tác động địa hình, 336h/run, Ragnarok, reset, nhà/dấu chân, bản đồ liên tục, offline, kinh tế nhiều tuyến, v.v.) phải có *mối nối nhân quả và lựa chọn chiến thuật mới* do khác biệt đó sinh ra; không được chỉ khác tên, bối cảnh, giao diện hay số lượng.
+4. **Thước đo vượt trội:** so sánh cùng một nhiệm vụ người chơi giữa LI nguồn và SOH bằng hai lớp: (a) *mechanic parity*: các điều kiện–hành động–kết quả–sinks/consumers–rủi ro–lựa chọn tương ứng đã được thực hiện; (b) *SOH advantage*: có thêm quyết định hữu ích, liên kết/synergy, hậu quả thế giới hoặc trải nghiệm hấp dẫn có thể chứng minh bằng test end-to-end + quan sát người chơi. Tránh nhầm “200%” thành gấp đôi số item/recipe hoặc gấp đôi thời gian grind.
+5. **Quyền quyết định:** LI nghiên cứu và v11 là nguồn tham khảo/trace. Các cạnh mới hoặc cơ chế mâu thuẫn Bible vẫn là [ĐỀ XUẤT] cho tới khi Creator chốt. Kết quả source/fixture không tự thăng cấp thành native, visual hay human acceptance. Khi có mâu thuẫn, trình đúng câu hỏi và phương án; tiếp tục các việc độc lập, không lén giản lược tham vọng 100%→vượt trội.
+
+**Quy tắc nghiệm thu bắt buộc cho mỗi hàng LI→SOH:** `LI_SOURCE+VERSION → ORIGINAL_MECHANIC_GRAPH → SOH_EQUIVALENT_OR_AUTHORIZED_DIFFERENCE → PHYSICAL_SOURCE → RECIPE/PROCESS → PLAYER_ACTION → CODE → TARGETED_TEST → NATURAL_PLAY → ADVANTAGE_EVIDENCE`. Nếu thiếu mắt xích, gắn trạng thái và chủ sở hữu cụ thể; không gọi DONE hoặc “hay hơn LI” bằng lời nói.
+
 ### 0.2. Những bất biến sản phẩm không được thay
 
 - **[CHỐT]** Offline-first, **solo** top-down pixel action-RPG sinh tồn; có **bảng xếp hạng online toàn cầu tùy chọn**. Không có PvP/clan raid bắt buộc, không bắt mạng để chơi bình thường. Male/Female Adventurer là hai nhân vật gốc được chọn đầu run; Knight cũ không là avatar chính.
