@@ -70,9 +70,12 @@ export interface Creature {
   homeX: number; homeY: number; state: 'idle' | 'wander' | 'chase' | 'track' | 'tell' | 'attack' | 'recover' | 'flee' | 'sleep' | 'dead';
   t: number; tx: number; ty: number; angle: number; dir: Dir;
   /** knowledge is limited to what it physically sensed */
-  knows: null | { kind: 'sight' | 'trace'; x: number; y: number; at: number; traceId?: string; chainId?: string };
+  knows: null | { kind: 'sight' | 'trace' | 'stimulus'; x: number; y: number; at: number; traceId?: string; chainId?: string; sourceId?: string; eventIndex?: number; expiresAt?: number; goalX?: number; goalY?: number };
   /** Last completed/lost chain, preventing repeated reacquisition of the same marks. */
   traceIgnore?: string;
+  /** Most recently sensed world event, so arrival/reload cannot retrigger it. */
+  stimulusIgnore?: string;
+  stimulusRouteAt?: number;
   /** Last justified physical checkpoint after offline activity was deferred. */
   offlineUnresolvedAt?: number;
   path: number[] | null; pathT: number; cd: number; kbx: number; kby: number; flash: number;
@@ -109,6 +112,8 @@ export interface Entity {
 }
 /** Undefined reserved means an older save whose paid inputs cannot be reconstructed safely. */
 export interface Job { id: string; recipe: string; left: number; total: number; reserved?: Stack[] }
+
+export interface WorldStimulus { version:'world-stimulus-v1'; id:string; sourceId:string; eventIndex:number; kind:'airdrop-landing'; modality:'sound'; eligibility:'audible-landing-v1'; x:number; y:number; at:number; expiresAt:number; range:number; strength:number }
 
 export interface Trace { x: number; y: number; t: number; life: number; a: number; s: number; id?: string; chainId?: string; prevId?: string }
 /** Run-local movement continuity; absent in legacy saves. */
@@ -157,6 +162,8 @@ export interface RunState {
   custody: Record<string, Container>;
   knowledge: { recipes: string[]; studied: string[] };
   traces: Trace[];
+  /** Bounded, ephemeral real event impulses; absent in legacy runs. */
+  worldStimuli?: WorldStimulus[];
   /** Additive: absent in old saves; physical combat remains unresolved while away. */
   combat?: { projectiles: Proj[]; hazards: Haz[] };
   /** Committed Dragon collection continues only during physical combat frames. */

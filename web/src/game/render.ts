@@ -4,7 +4,7 @@ import * as comp from './compositor';
 import { BAL, TILE, WW, WH, VIEW_W, VIEW_H, T, hash2, clamp, type GameState, type RunState, type Creature, type Entity } from './core';
 import { STRUCTS, ELDERS, CREATURES, ITEMS } from './catalog';
 import { getWorld, SRC_KEYS, fbm } from './world';
-import { effTile, sourceAt, darkness, weatherAt, isRagnarok, entsAt, buildReason, C, roofRoom } from './engine';
+import { effTile, sourceAt, darkness, weatherAt, isRagnarok, entsAt, buildReason, C, roofRoom, clearPhysicalLine } from './engine';
 import { FX, PROJ, HAZ, activeStack } from './sim';
 import { getArt, pixelText, mk, type Sprite } from './art';
 
@@ -212,6 +212,8 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   pfx.syncHazards(HAZ,p);pfx.syncProjFx(PROJ,now);
   // hazard telegraphs (ground)
   for (const h of HAZ) drawHaz(g, h, time);
+  // A short source-local impact pulse, not a global creature-location marker.
+  for(const s of r.worldStimuli||[])if(now>=s.at&&now<s.expiresAt&&Math.hypot(s.x-p.x,s.y-p.y)<s.range&&clearPhysicalLine(r,p,s,true,true)){const age=(now-s.at)/(s.expiresAt-s.at);g.save();g.strokeStyle=`rgba(255,218,148,${(1-age)*0.8})`;g.lineWidth=1;g.beginPath();g.arc(s.x,s.y,6+age*16,0,Math.PI*2);g.stroke();g.restore();}
   // y-sorted drawables
   const list: { y: number; f: () => void }[] = [];
   for (let ty = vy0; ty <= vy1 + 1 && ty < WH; ty++) for (let tx = vx0; tx <= vx1; tx++) {
@@ -219,7 +221,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   }
   for (const e of ents) { if (e.x < cx - 40 || e.x > cx + VIEW_W + 40 || e.y < cy - 20 || e.y > cy + VIEW_H + 60) continue; if (e.kind === 'struct' && ['floor', 'roof'].includes(STRUCTS[e.type!].layer)) continue; if (e.type === 'garden' || e.type === 'spikes') continue; list.push({ y: e.y + (e.kind === 'drop' ? -2 : 6), f: () => drawEntity(g, r, e, time, now) }); }
   for(const q of r.natureTrees||[]){const x=q.tx*TILE,y=q.ty*TILE;if(x>=cx-32&&x<cx+VIEW_W+32&&y>=cy-32&&y<cy+VIEW_H+32)list.push({y:y+14,f:()=>g.drawImage(A.src.oak[(q.tx+q.ty)%A.src.oak.length],x-4,y-16)});}
-  for (const m of r.creatures) { if (m.x < cx - 40 || m.x > cx + VIEW_W + 40 || m.y < cy - 40 || m.y > cy + VIEW_H + 60) continue; list.push({ y: m.y + 4, f: () => drawCreature(g, m, time, now) }); }
+  for (const m of r.creatures) { if (m.x < cx - 40 || m.x > cx + VIEW_W + 40 || m.y < cy - 40 || m.y > cy + VIEW_H + 60) continue; list.push({ y: m.y + 4, f: () => drawCreature(g, r, m, time, now) }); }
   if(!r.spiritTransit)list.push({ y: p.y + 4, f: () => drawPlayer(g, gs, time) });
   const dragon=r.dragonDive;if(dragon?.phase && dragon.dragonX!==undefined && dragon.dragonY!==undefined) list.push({y:dragon.dragonY+4,f:()=>{const x=dragon.dragonX!,y=dragon.dragonY!;g.save();g.translate(x,y);g.fillStyle='#70241e';g.beginPath();g.moveTo(-19,-12);g.lineTo(-7,-22);g.lineTo(0,-14);g.lineTo(10,-21);g.lineTo(18,-10);g.lineTo(7,-12);g.lineTo(3,-3);g.lineTo(-5,-3);g.lineTo(-9,-11);g.closePath();g.fill();g.fillStyle='#ff8c2b';g.fillRect(-7,-14,14,6);g.fillStyle='#ffe6a0';g.fillRect(3,-13,2,2);g.restore();}});
   for(const item of comp.depthItems(g))list.push(item);
@@ -344,7 +346,7 @@ function drawFlame(g: CanvasRenderingContext2D, x: number, y: number, time: numb
   const f = Math.floor(time / 90); for (let i = 0; i < 6; i++) { const h = hash2(i, f, 3); const fx0 = x - 3 * s + h * 6 * s, hgt = (3 + hash2(i, f, 4) * 5) * s; g.fillStyle = i % 3 === 0 ? '#fff0a0' : i % 3 === 1 ? '#ffb040' : '#ff6a1e'; g.fillRect(Math.round(fx0), Math.round(y - hgt), 1, Math.round(hgt)); }
   if (Math.random() < 0.25) add({ x: x + (Math.random() - 0.5) * 4, y: y - 6, vx: (Math.random() - 0.5) * 8, vy: -26, col: '#ffb040', max: 600, s: 1, g: -10 });
 }
-function drawCreature(g: CanvasRenderingContext2D, m: Creature, time: number, now: number) {
+function drawCreature(g: CanvasRenderingContext2D, r: RunState, m: Creature, time: number, now: number) {
   const A = getArt(); const X = Math.round(m.x), Y = Math.round(m.y);
   if (m.elder) {
     const d = ELDERS[m.elder.key]; const set = A.elder[m.elder.key]; const aw = m.elder.awake;
@@ -373,6 +375,7 @@ function drawCreature(g: CanvasRenderingContext2D, m: Creature, time: number, no
   g.drawImage(m.flash > 0 ? white(spr) : spr, X - 12 + jx, Y - 14); g.restore();
   if ((m.rootedUntil||0)>now) g.drawImage(A.st.rootwall,X-8,Y-7);
   if ((m.frozenUntil||0)>now) {g.save();g.globalAlpha=0.7;g.drawImage(A.st.icepillar,X-8,Y-14);g.restore();}
+  if(m.knows?.kind==='stimulus' && m.state!=='dead' && clearPhysicalLine(r,r.player,m,true,true)) pixelText(g,'?',X-2,Y-25,'#ffe59a');
   if (m.type === 'crab' && m.atk?.tuck > 0) pixCircle(g, X, Y - 3, 8, 'rgba(255,255,255,0.6)', 3);
   if (m.state === 'tell' && d.style === 'tongue') { pixLine(g, X, Y - 4, X + Math.cos(m.angle) * 84, Y - 4 + Math.sin(m.angle) * 84, 'rgba(255,80,80,0.35)'); }
   if (m.state === 'attack' && d.style === 'tongue') { const len = Math.min(1, m.t / 120) * 84; pixLine(g, X + Math.cos(m.angle) * 6, Y - 4 + Math.sin(m.angle) * 6, X + Math.cos(m.angle) * len, Y - 4 + Math.sin(m.angle) * len, '#e05a7a', 2); }

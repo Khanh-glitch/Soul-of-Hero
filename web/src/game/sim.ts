@@ -1,3 +1,4 @@
+import { stimulusNearHome } from './stimulus';
 import { airdropBoundary, stepAirdrops } from './engine';
 import { advancePoiAccess, poiDoorLabel, poiGenLabel } from './poi-access';
 import { vehicleClear, vehicleExitPoint } from './motorbike';
@@ -534,6 +535,33 @@ function encounteredTrace(r: RunState, m: Creature, now: number) {
   }
   return best;
 }
+/** Find a reachable cardinal approach cell; the physical crate itself is solid. */
+function stimulusApproach(r:RunState,m:Creature,x:number,y:number):{x:number;y:number}|null {
+  const tx=tileOf(x),ty=tileOf(y),grid=blockGrid(r),options:{x:number;y:number;length:number}[]=[];
+  for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=tx+dx,ny=ty+dy;if(nx<1||ny<1||nx>=WW-1||ny>=WH-1)continue;const b=grid[ny*WW+nx];if(b!==0&&b!==4)continue;const path=astar(r,tileOf(m.x),tileOf(m.y),nx,ny);if(path)options.push({x:nx*TILE+8,y:ny*TILE+8,length:path.length});}
+  options.sort((a,b)=>a.length-b.length||a.y-b.y||a.x-b.x);return options[0]||null;
+}
+function endInvestigation(r:RunState,m:Creature,now:number,reason:string){const id=m.knows?.sourceId;m.knows=null;delete m.stimulusRouteAt;m.path=null;m.pathT=0;m.state='wander';m.t=0;m.tx=m.x;m.ty=m.y;receipt(r,now,'stimulus.lost',`${m.id}:${id}:${reason}`);fx('lost',{x:m.x,y:m.y-10});}
+function noticeStimulus(r:RunState,m:Creature,now:number) {
+  if(m.elder||m.knows||m.state==='sleep'||!['idle','wander','track','chase'].includes(m.state)||m.hp<=0)return;
+  const hearing=(BAL.worldStimulusV1.hearing as Record<string,number>)[m.type]||0;if(!hearing)return;
+  for(const s of r.worldStimuli||[]){if(now<s.at||now>=s.expiresAt||m.stimulusIgnore===s.sourceId||dist(m.x,m.y,s.x,s.y)>s.range*hearing||stimulusNearHome(r,s)||!clearPhysicalLine(r,m,s,false,true))continue;
+    const goal=stimulusApproach(r,m,s.x,s.y);if(!goal)continue;
+    m.stimulusIgnore=s.sourceId;m.knows={kind:'stimulus',x:s.x,y:s.y,at:s.at,sourceId:s.sourceId,eventIndex:s.eventIndex,expiresAt:s.at+BAL.worldStimulusV1.memoryMs,goalX:goal.x,goalY:goal.y};m.state='track';m.path=null;m.t=0;
+    receipt(r,now,'stimulus.notice',`${m.id}:${s.id}`);return;
+  }
+}
+function investigateStimulus(gs:GameState,m:Creature,speed:number,dt:number,now:number) {
+  const r=gs.run!,k=m.knows;if(!k||k.kind!=='stimulus')return;
+  if(now>=k.expiresAt!){endInvestigation(r,m,now,'expired');return;}
+  const goalCell=tileOf(k.goalY!)*WW+tileOf(k.goalX!),grid=blockGrid(r);
+  if(grid[goalCell]!==0 && grid[goalCell]!==4){const next=stimulusApproach(r,m,k.x,k.y);if(!next){endInvestigation(r,m,now,'blocked');return;}k.goalX=next.x;k.goalY=next.y;m.path=null;}
+  if(dist(m.x,m.y,k.goalX!,k.goalY!)<=BAL.worldStimulusV1.arrivalPixels){endInvestigation(r,m,now,'arrived');return;}
+  // Recheck reachability when geometry changes; never bash a home for an event.
+  if(now >= (m.stimulusRouteAt||0)){if(!astar(r,tileOf(m.x),tileOf(m.y),tileOf(k.goalX!),tileOf(k.goalY!))){endInvestigation(r,m,now,'unreachable');return;}m.stimulusRouteAt=now+900;}
+  steer(gs,m,k.goalX!,k.goalY!,speed*BAL.worldStimulusV1.speedMultiplier,dt,now);
+}
+
 /** Only established local evidence is simulated outside the active player area. */
 function traceOnly(gs: GameState, m: Creature, dtMs: number, now: number): 'advanced' | 'defer' | 'done' {
   const r = gs.run!, p = r.player, d = CREATURES[m.type];
@@ -576,12 +604,13 @@ function tickCreatures(gs: GameState, dtMs: number, now: number) {
     // sensing
     const sight = (night ? BAL.ai.sightNight : BAL.ai.sightDay) * (d.sight / 100) * (w === 'fog' ? 0.6 : 1) * (p.sheltered ? 0.5 : 1);
     const seesPlayer = observePlayer(r, m, now, sight, aggro);
-    if (!seesPlayer && aggro && !m.knows && ['idle', 'wander', 'track', 'chase'].includes(m.state) && (m.t % 500) < dtMs) {
+    if (!seesPlayer && aggro && (!m.knows || m.knows.kind==='stimulus') && ['idle', 'wander', 'track', 'chase'].includes(m.state) && (m.t % 500) < dtMs) {
       // Independent encounter: live, identified mark in circular range and line of sight.
       const R = BAL.ai.traceSenseRadius; let best: RunState['traces'][number] | undefined;
       for (const tr of r.traces) { if (tr.life <= 0 || tr.t > now || !tr.id || !tr.chainId || tr.chainId === m.traceIgnore || dist(tr.x, tr.y, m.x, m.y) > R || !los(r, m.x, m.y, tr.x, tr.y, true)) continue; if (!best || tr.t > best.t) best = tr; }
       if (best) { fx('sniff', { x: m.x, y: m.y - 10 }); m.knows = { kind: 'trace', x: best.x, y: best.y, at: best.t, traceId: best.id, chainId: best.chainId }; m.state = 'track'; }
     }
+    if (!seesPlayer && !m.knows) noticeStimulus(r,m,now);
     if (m.knows?.kind === 'trace' && !r.traces.some(tr => tr.id && tr.id === m.knows!.traceId && tr.chainId === m.knows!.chainId && tr.life > 0)) { m.traceIgnore = m.knows.chainId; m.knows = null; if (m.state === 'track') m.state = 'wander'; }
     // state machine
     switch (m.state) {
@@ -594,6 +623,8 @@ function tickCreatures(gs: GameState, dtMs: number, now: number) {
             else if (d.style === 'shoot' && knownDist < 70) steer(gs, m, m.x - (target.x - m.x), m.y - (target.y - m.y), spd, dt, now);
             else if (d.style === 'lunge' && knownDist < 70) { const a = Math.atan2(m.y - target.y, m.x - target.x) + 0.9 * dt * 2; steer(gs, m, target.x + Math.cos(a) * 46, target.y + Math.sin(a) * 46, spd, dt, now); }
             else steer(gs, m, target.x, target.y, spd, dt, now);
+          } else if(m.knows.kind==='stimulus') {
+            investigateStimulus(gs,m,spd,dt,now);
           } else {
             trackEvidence(gs, m, spd, dt, now);
           }
@@ -840,10 +871,11 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
   initializeCabinets(r);
   const syncPoi=(at:number)=>{const events=advancePoiAccess(r,at);if(events.closed.length)markDirty();for(const id of events.expired)receipt(r,at,'poi.power.expire',id);for(const id of events.closed)receipt(r,at,'poi.door.close',id);};
   const syncHome=(at:number)=>{for(const id of syncElectricDoors(r,at,visual))receipt(r,at,'circuit.door.close',id);};
+  const syncDrops=(at:number)=>{const before=new Set((r.worldStimuli||[]).map(s=>s.id));stepAirdrops(r,at,report);if(visual)for(const s of r.worldStimuli||[])if(!before.has(s.id)&&dist(r.player.x,r.player.y,s.x,s.y)<=s.range&&clearPhysicalLine(r,r.player,s,false,true))fx('airdropImpact',{x:s.x,y:s.y});};
   syncPoi(t); syncHome(t);
   resolveFires(gs, t, visual);
   stepLootRespawn(r, t);
-  stepAirdrops(r,t,report);
+  syncDrops(t);
   stepNatureTrees(r,t);
   while (t < end) {
     // Commit already-finished jobs first; their next jobs determine the next boundary.
@@ -888,7 +920,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
       const live = new Set(r.traces.filter(tr => tr.id && tr.chainId).map(tr => `${tr.chainId}:${tr.id}`));
       for (const m of r.creatures) {
         const k = m.knows;
-        if (k && (k.kind === 'sight' ? t - k.at > 4000 : !k.traceId || !k.chainId || !live.has(`${k.chainId}:${k.traceId}`))) {
+        if (k && (k.kind === 'sight' ? t - k.at > 4000 : k.kind === 'trace' ? !k.traceId || !k.chainId || !live.has(`${k.chainId}:${k.traceId}`) : false)) {
           if (k.kind === 'trace') m.traceIgnore = k.chainId;
           m.knows = null; m.path = null;
           if (m.state === 'track' || m.state === 'chase') { m.state = 'wander'; m.t = 0; }
@@ -898,7 +930,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     let dirty = false; for (const k in r.terrain) { const m = r.terrain[k]; if (m.until && m.until <= r.clock.simMs) { delete r.terrain[k]; dirty = true; } } if (dirty) markDirty();
     resolveFires(gs, t, visual);
     stepLootRespawn(r, t);
-    stepAirdrops(r,t,report);
+    syncDrops(t);
     stepNatureTrees(r,t);
   }
   stepTenders(gs, end);
@@ -1018,7 +1050,7 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   // local evidence. Other roaming/combat remains unresolved, not fabricated.
   const eligible = r.creatures.filter(m => m.offlineUnresolvedAt === undefined && !m.elder && ['idle', 'wander', 'track', 'chase'].includes(m.state) && (!m.knows || m.knows.kind === 'trace') && (m.knows?.kind === 'trace' || !!encounteredTrace(r, m, start)));
   // Combat/last-sight checkpoints cannot be reconstructed by trace-only playback.
-  for (const m of r.creatures) if (m.state !== 'dead' && m.offlineUnresolvedAt === undefined && (m.knows?.kind === 'sight' || ['tell', 'attack', 'recover'].includes(m.state) || Math.abs(m.kbx) + Math.abs(m.kby) > 1)) m.offlineUnresolvedAt = start;
+  for (const m of r.creatures) if (m.state !== 'dead' && m.offlineUnresolvedAt === undefined && (m.knows?.kind === 'sight' || m.knows?.kind === 'stimulus' || ['tell', 'attack', 'recover'].includes(m.state) || Math.abs(m.kbx) + Math.abs(m.kby) > 1)) m.offlineUnresolvedAt = start;
   const pending = eligible.slice(0, 24);
   for (const m of eligible.slice(24)) m.offlineUnresolvedAt = start;
   const impacts = new Map<string, { name: string; before: number; after: number; destroyed: boolean }>();

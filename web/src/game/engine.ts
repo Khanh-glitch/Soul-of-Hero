@@ -1,3 +1,4 @@
+import { landingStimulus } from './stimulus';
 import { supportsAirdrops, airdropArea, airdropTimes, airdropRewards, chooseAirdropSite, airdropStaticEligible } from './airdrop';
 import { recoveryPlan, recoveryFits } from './recycler';
 import { poiDoorContract, poiGeneratorContract, poiGenerator, poiPowered, interiorRelease, doorwayOccupied, advancePoiAccess, poiContractDigest } from './poi-access';
@@ -514,12 +515,16 @@ function removeEntity(r: RunState, e: Entity) {  for(const other of Object.value
 
 /** Chronological event authority shared by online and offline advancement. */
 export function airdropBoundary(r:RunState,t:number,dt:number):number {
+  for(const s of r.worldStimuli||[])if(s.expiresAt>t)dt=Math.min(dt,s.expiresAt-t);
+  for(const m of r.creatures)if(m.knows?.kind==='stimulus'&&m.knows.expiresAt!>t)dt=Math.min(dt,m.knows.expiresAt!-t);
   if(!r.airdrops)return dt;
   if(r.airdrops.nextIndex<BAL.airdropV1.maxEvents){const n=airdropTimes(r,r.airdrops.nextIndex).signalAt;if(n>t)dt=Math.min(dt,n-t);}
   for(const e of Object.values(r.entities))if(e.kind==='airdrop'&&e.airdrop){const a=e.airdrop;for(const n of [a.descentAt,a.landAt,a.unlockAt,a.expiresAt])if(n>t)dt=Math.min(dt,n-t);}
   return dt;
 }
 export function stepAirdrops(r:RunState,at:number,report?:string[]) {
+  if(r.worldStimuli)r.worldStimuli=r.worldStimuli.filter(s=>s.expiresAt>at);
+  for(const m of r.creatures)if(m.knows?.kind==='stimulus' && m.knows.expiresAt!<=at){const id=m.knows.sourceId;m.knows=null;delete m.stimulusRouteAt;m.path=null;if(m.state==='track'){m.state='wander';m.t=0;}receipt(r,at,'stimulus.lost',`${m.id}:${id}:expired`);}
   const d=r.airdrops;if(!d)return;
   const say=(msg:string)=>{pushLog(r,at,msg,'gold');if(report)report.push(msg);};
   while(d.nextIndex<BAL.airdropV1.maxEvents && airdropTimes(r,d.nextIndex).signalAt<=at){
@@ -538,7 +543,7 @@ export function stepAirdrops(r:RunState,at:number,report?:string[]) {
       if(!r.player.dead&&Math.abs(r.player.x-e.x)<(rad+1)*TILE&&Math.abs(r.player.y-e.y)<(rad+1)*TILE)clear=false;
       if(r.creatures.some(m=>m.state!=='dead'&&Math.abs(m.x-e.x)<(rad+1)*TILE&&Math.abs(m.y-e.y)<(rad+1)*TILE))clear=false;
       if(!clear){receipt(r,at,'airdrop.aborted',String(a.index));say(`Airdrop ${a.index+1} aborted: landing obstructed.`);removeEntity(r,e);continue;}
-      const c=C(r,e.c!);airdropRewards(r,a.index).forEach(([key,qty],i)=>c.slots[i]=mkStack(r,key,qty));a.phase='locked';markDirty();receipt(r,at,'airdrop.landed',String(a.index));
+      const c=C(r,e.c!);airdropRewards(r,a.index).forEach(([key,qty],i)=>c.slots[i]=mkStack(r,key,qty));a.phase='locked';markDirty();receipt(r,at,'airdrop.landed',String(a.index));const cue=landingStimulus(r,e,a.landAt);r.worldStimuli??=[];if(!r.worldStimuli.some(s=>s.id===cue.id)){r.worldStimuli.push(cue);receipt(r,a.landAt,'stimulus.emit',`${cue.id}@${e.tx},${e.ty}`);}
     }
     if(a.phase==='locked'&&at>=a.unlockAt){a.phase='open';receipt(r,at,'airdrop.accessible',String(a.index));}
     if(at>=a.expiresAt){const missed=C(r,e.c!).slots.some(Boolean);receipt(r,at,'airdrop.expired',`${a.index}:${missed?'stock lost':'empty'}`);if(missed)say(`Airdrop ${a.index+1} expired with unclaimed stock.`);removeEntity(r,e);}

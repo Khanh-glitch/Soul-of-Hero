@@ -35,6 +35,7 @@ export function sfx(e: any) {
     case 'roll': noise(0.18, 700, 0.1); break;
     case 'windup': tone(200, 800, 0.45, 'sine', 0.08); break;
     case 'cast': tone(e.core === 'frost' ? 1200 : 300, e.core === 'frost' ? 400 : 900, 0.25, 'sawtooth', 0.1); noise(0.2, 2000, 0.1); break;
+    case 'airdropImpact': noise(0.25, 500, 0.16); tone(130, 55, 0.22, 'triangle', 0.12); break;
     case 'boom': noise(0.6, 300, 0.4); tone(90, 30, 0.5, 'sine', 0.3); break;
     case 'bolt': case 'lightning': noise(0.3, 5000, 0.25, 'highpass'); tone(80, 40, 0.5, 'sawtooth', 0.12, 0.05); break;
     case 'fizzle': tone(400, 100, 0.25, 'sine', 0.08); break;

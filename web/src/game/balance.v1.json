@@ -339,5 +339,15 @@
     "fixed": [["mechanical_parts",2],["fasteners",2]],
     "weights": [1,1,1,1],
     "options": [["fuel_can",1],["energy_refined",2],["iron_ingot",2],["iron_sword",1]]
+  },
+  "worldStimulusV1": {
+    "_status": "SOH_PROVISIONAL; ORIGINAL_UNKNOWN sensory ranges, duration and species sensitivity",
+    "landingSoundRange": 160,
+    "signalMs": 4000,
+    "memoryMs": 24000,
+    "homeExclusionTiles": 8,
+    "arrivalPixels": 10,
+    "speedMultiplier": 0.7,
+    "hearing": {"wolf": 1, "crawler": 0.8, "toad": 0.55, "beetle": 0.7, "boar": 0, "crab": 0}
   }
 }
