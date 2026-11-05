@@ -1,0 +1,94 @@
+{
+  "schema": "soh.u05.nature01-delivery.v1",
+  "generatedAt": "2026-11-05T11:02:31.847457Z",
+  "branch": "arena/2e3cfbd2-soul-of-hero",
+  "deliveryCommit": "5245f30dd9ce429d002f450f1ea81d0a7edb224e",
+  "verifiedMapHeadAtPilotStart": "b327e8049607791567defaf24bb6c6afc0871c84",
+  "gameplayHeadVerifiedByCreator": "5b3e683402bbc8540dea9404576164097e753f97",
+  "gameplayHeadObservedLater": "2f0836587b76a4a98fffedf8c202fb37cbb2a67c",
+  "sourceCustodyNote": "Pinned to 5b3e683 / vendored b5c8004c. Later live drift disclosed; only S.claim (unused structure sprite) changed in art.ts. No re-vendor.",
+  "deliverable": {
+    "file": "creator-u05/SoulOfHero_Nature01_U05.html",
+    "bytes": 1427241,
+    "sha256": "ac4d54e310f0f3cf7e0e12d728bc5e9ad62f801994be37ce64f76b099af4a0a7",
+    "zipMirror": "creator-u05/SoulOfHero_Nature01_U05.zip",
+    "zipBytes": 127215,
+    "runsFrom": [
+      "file://",
+      "http(s):// static host",
+      "vite dev /nature01.html"
+    ]
+  },
+  "untouchedBaseline": {
+    "file": "creator-u05/SoulOfHero_TerrainOnly_U05_x10.html",
+    "sha256": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0",
+    "verifiedUntouched": true
+  },
+  "links": {
+    "playPreview": "https://5183-iedijpwzkleoc2bvjmqg0.e2b.app/nature01",
+    "downloadPreview": "https://5183-iedijpwzkleoc2bvjmqg0.e2b.app/nature01-download",
+    "baselinePreview": "https://5183-iedijpwzkleoc2bvjmqg0.e2b.app/",
+    "baselineDownload": "https://5183-iedijpwzkleoc2bvjmqg0.e2b.app/download",
+    "commitPinnedRawHtml": "https://github.com/Khanh-glitch/Soul-of-Hero/raw/5245f30dd9ce429d002f450f1ea81d0a7edb224e/creator-u05/SoulOfHero_Nature01_U05.html",
+    "commitPinnedBlobHtml": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/5245f30dd9ce429d002f450f1ea81d0a7edb224e/creator-u05/SoulOfHero_Nature01_U05.html",
+    "commitPinnedRawZip": "https://github.com/Khanh-glitch/Soul-of-Hero/raw/5245f30dd9ce429d002f450f1ea81d0a7edb224e/creator-u05/SoulOfHero_Nature01_U05.zip",
+    "branchPinnedRawHtml": "https://github.com/Khanh-glitch/Soul-of-Hero/raw/refs/heads/arena/2e3cfbd2-soul-of-hero/creator-u05/SoulOfHero_Nature01_U05.html"
+  },
+  "sourceSha256": {
+    "web-u05/src/nature01/main.ts": "806a7f3bfa1f684eadfc741241af3d156f3e211437687da2b4d3728dfc431547",
+    "web-u05/src/nature01/nature.ts": "56943558dd4439538b182c75f6b350a5866c0fe3efd70cd78fb0951e918ee9fa",
+    "web-u05/src/nature01/sites.ts": "577bb1a575358183eb8c1c690f788e5755ea2c523645ec49469c0ba887a93ac7",
+    "web-u05/src/game/art.ts": "896aa51abfac516b4228994ae7a20a67c4644a587028146b5c79336103a1ec20",
+    "web-u05/src/u05/terrain.ts": "3d3fa1605a121ba2bcd8b26e0333cbf8a7ada71adfca67ce7e8e3ee3ca225bc4",
+    "web-u05/src/u05/world.ts": "78317efe40c18f7ed4bf7d3c129be4f423b6a7abaac7625e8f9938c73b2264fd"
+  },
+  "verification": {
+    "browserQaGates": "12/12",
+    "browserQaFailing": [],
+    "nativeScreenshots": 32,
+    "browserErrors": [],
+    "staticTests": "31/31 PASS",
+    "u05StaticTests": "272/0 (unchanged)",
+    "tsc": "clean",
+    "httpPreview": true,
+    "offIdenticalToBaseline": true,
+    "natureObjectsTotal": 2944,
+    "authorityViolations": {
+      "road": 0,
+      "bridge": 0,
+      "water": 0,
+      "river": 0,
+      "lake": 0,
+      "coast": 0,
+      "sourceTile": 0,
+      "roadBuffer": 0,
+      "outsideSites": 0,
+      "nonDecorative": 0,
+      "gameplayOwned": 0
+    },
+    "openGround": {
+      "temperate_forest": 0.844,
+      "snow_forest": 0.8905,
+      "marsh": 0.8244,
+      "dry": 0.9509,
+      "rocky_highlands": 0.8989
+    },
+    "newArtAssets": 0
+  },
+  "scope": {
+    "pilotSites": 5,
+    "fullWorldPropagation": false,
+    "poiArchitectureStarted": false,
+    "creatorVisualAcceptance": "NOT_GRANTED",
+    "productionMerge": "NOT_DONE",
+    "veyraPlayable": "NOT_CLAIMED",
+    "decorativeOnly": true,
+    "gameplayOwned": false,
+    "p5G5": "FAIL",
+    "p5G6": "FAIL",
+    "p5G7": "PARTIAL",
+    "p5G8": "PARTIAL"
+  },
+  "stopCondition": "Delivery stops before full-world propagation, POI architecture, Creator visual acceptance, production merge and VEYRA_PLAYABLE. QA is not visual acceptance.",
+  "handoff": "creator-u05/docs/NATURE01_PILOT.md §8; creator-u05/docs/CONTROL_TOWER_U05_HANDOFF.md §13"
+}

@@ -6,6 +6,8 @@ merge, **NOT** `VEYRA_PLAYABLE`.
 
 **Branch:** `arena/2e3cfbd2-soul-of-hero`
 **Verified Map HEAD at pilot start / source SHA:** `b327e8049607791567defaf24bb6c6afc0871c84`
+**Delivery commit (this pilot):** `5245f30dd9ce429d002f450f1ea81d0a7edb224e`
+**Full source SHA / links record:** `creator-u05/evidence/nature01-delivery.json`
 **Gameplay HEAD verified:** `5b3e683402bbc8540dea9404576164097e753f97`
 (`Publish standalone M1-M4 gameplay build`); `web/src/game/art.ts` is unchanged
 between the vendored pin `b5c8004c…` and that HEAD.
