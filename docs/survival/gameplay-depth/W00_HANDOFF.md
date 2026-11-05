@@ -1,4 +1,6 @@
-# Gameplay depth W00 — public-loot partial implementation, HOLD
+# Gameplay depth W00 — historical checkpoint, HOLD
+
+> Historical checkpoint only. For changes and current program gates see [V15 handoff](V15_HANDOFF.md). Statements below are not current implementation or validation claims.
 
 ## Ownership and revisions
 

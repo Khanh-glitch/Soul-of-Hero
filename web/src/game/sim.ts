@@ -61,7 +61,7 @@ export function rayLen(r: RunState, x: number, y: number, a: number, max: number
 // ---------- player damage ----------
 export function hurtPlayer(gs: GameState, dmg: number, fx0: number, fy0: number, cause: string, now: number, kb = 140) {
   const r = gs.run!; const p = r.player; if (p.dead) return false;
-  if (p.invuln > 0 || (p.iceUntil !== undefined && now < p.iceUntil) || p.action?.kind === 'roll') { fx('dodge', { x: p.x, y: p.y }); return false; }
+  if ((r.spiritTransit && now < r.spiritTransit.arriveAt) || p.invuln > 0 || (p.iceUntil !== undefined && now < p.iceUntil) || p.action?.kind === 'roll') { fx('dodge', { x: p.x, y: p.y }); return false; }
   let armor = 0; for (const s of C(r, 'eq').slots) if (s) armor += ITEMS[s.key].armor || 0;
   const d = Math.max(1, Math.round(dmg * (1 - Math.min(0.6, armor))));
   p.hp -= d; p.invuln = 520; const a = Math.atan2(p.y - fy0, p.x - fx0);
@@ -189,22 +189,40 @@ function freezeAround(r: RunState, x:number, y:number, ms:number) {let changed=f
 
 /** Select ten genuinely vacant nearby tiles without overwriting map sources,
  * structures, creatures or the player; failure spends no reserve. */
-function groveCells(r:RunState,x:number,y:number) {
+export function groveCells(r:RunState,x:number,y:number) {
   const cx=tileOf(x),cy=tileOf(y),grid=blockGrid(r),cells:{tx:number;ty:number;d:number}[]=[];
+  if(dist(r.player.x,r.player.y,x,y)<3*TILE)return []; // never cage the caster
   for(let dy=-5;dy<=5;dy++)for(let dx=-5;dx<=5;dx++) {const tx=cx+dx,ty=cy+dy,d=Math.hypot(dx,dy);if(d<2||d>5||tx<1||ty<1||tx>=WW-1||ty>=WH-1)continue;const i=ty*WW+tx;if(grid[i]!==0||!clearPhysicalLine(r,{x,y},{x:tx*TILE+8,y:ty*TILE+8},true)||entsAt(r,tx,ty).length||r.natureTrees?.some(q=>q.tx===tx&&q.ty===ty)||r.creatures.some(m=>m.state!=='dead'&&tileOf(m.x)===tx&&tileOf(m.y)===ty)||(tileOf(r.player.x)===tx&&tileOf(r.player.y)===ty))continue;cells.push({tx,ty,d});}
-  cells.sort((a,b)=>a.d-b.d||a.ty-b.ty||a.tx-b.tx);return cells.slice(0,BAL.creatorCoreEarthmother.treeCount);
+  const selected:typeof cells=[];const count=BAL.creatorCoreEarthmother.treeCount;for(let k=0;k<count;k++){const angle=2*Math.PI*k/count;const candidates=cells.filter(q=>!selected.includes(q)&&Math.abs(angDiff(Math.atan2(q.ty*TILE+8-y,q.tx*TILE+8-x),angle))<=Math.PI/count).sort((a,b)=>Math.abs(a.d-3)-Math.abs(b.d-3)||a.ty-b.ty||a.tx-b.tx);if(!candidates.length)return [];selected.push(candidates[0]);}return selected;
 }
 function stepNatureTrees(r:RunState,now:number){if(!r.natureTrees?.length)return;const ready=r.natureTrees.filter(q=>q.until<=r.clock.simMs);if(!ready.length)return;r.natureTrees=r.natureTrees.filter(q=>q.until>r.clock.simMs);for(const q of ready){spawnDrop(r,'wood',BAL.creatorCoreEarthmother.woodPerTree,q.tx*TILE+8,q.ty*TILE+8,now,undefined,false);receipt(r,now,'core.grove.wood',`${q.tx},${q.ty}`);}markDirty();}
 
+/** Only an explored, reachable, clear safe cell may be selected. Flood-fill
+ * checks the LIVE collision graph, including locked doors and player walls. */
+export function spiritDestination(r:RunState,x:number,y:number):string|null {
+  if(!Number.isFinite(x)||!Number.isFinite(y))return 'Choose a map destination.';const tx=tileOf(x),ty=tileOf(y),sx=tileOf(r.player.x),sy=tileOf(r.player.y);if(tx<1||ty<1||tx>=WW-1||ty>=WH-1)return 'Outside the map.';
+  const i=ty*WW+tx,w=getWorld(),grid=blockGrid(r),terrain=effTile(r,tx,ty);if(!r.discovered[(ty>>2)*50+(tx>>2)])return 'Explore this area first.';if(w.economyMap.protected[i])return 'Protected POI or road: choose open ground.';if(grid[i]!==0||[T.LAVA,T.TOXIC,T.SHALLOW,T.RIVER,T.DEEP].includes(terrain)||r.sources[i]?.fire)return 'Destination is obstructed or hazardous.';
+  if(r.creatures.some(m=>m.state!=='dead'&&dist(m.x,m.y,x,y)<16))return 'Destination occupied.';
+  for(const [dx,dy] of [[-4,-4],[4,-4],[-4,4],[4,4]])if(solidFor(r,x+dx,y+dy,'player'))return 'Not enough landing clearance.';
+  const start=sy*WW+sx,seen=new Uint8Array(WW*WH),q=new Int32Array(WW*WH);let head=0,tail=0;q[tail++]=start;seen[start]=1;while(head<tail){const p=q[head++];if(p===i)return null;const px=p%WW,py=Math.floor(p/WW);for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=px+dx,ny=py+dy;if(nx<1||ny<1||nx>=WW-1||ny>=WH-1)continue;const v=ny*WW+nx;if(!seen[v]&&(grid[v]===0||grid[v]===4)){seen[v]=1;q[tail++]=v;}}}return 'No legal physical route; sealed areas cannot be bypassed.';
+}
 /** The physical UID captured at windup must still occupy the same slot at commit. */
 function commitCreatorCore(gs: GameState, now: number, slot: number, uid0: string, mode: 'basic'|'refined'|'signature', a: number, aim: Input) {
   const r = gs.run!, p = r.player, s = C(r, 'inv').slots[slot];
   if (!s || p.active !== slot || s.uid !== uid0 || !ITEMS[s.key]?.creatorCore || !s.reserves || s.reserves[mode] <= 0) { fx('fizzle', {x:p.x,y:p.y}); return; }
   let grove:{tx:number;ty:number;d:number}[] | undefined;
   if(ITEMS[s.key].creatorCore==='earthmother' && mode==='refined') { const len=Math.min(BAL.creatorCoreEarthmother.groveRange,dist(p.x,p.y,aim.mx,aim.my),rayLen(r,p.x,p.y,a,BAL.creatorCoreEarthmother.groveRange));grove=groveCells(r,p.x+Math.cos(a)*len,p.y+Math.sin(a)*len);if(grove.length!==BAL.creatorCoreEarthmother.treeCount || (r.natureTrees?.length||0)+grove.length>100){fx('toast',{text:'Need open ground for all ten trees.'});return;} }
+  if(ITEMS[s.key].creatorCore==='demon'&&mode==='signature'){const reason=spiritDestination(r,aim.mx,aim.my);if(reason){fx('toast',{text:reason});return;}}
   s.reserves[mode]--; receipt(r, now, 'core.commit', `${s.uid}:${mode}:${s.reserves[mode]}`); award(gs,'first_core',now);
   const b = BAL.creatorCoreBlast, hx=p.x+Math.cos(a)*10, hy=p.y+Math.sin(a)*10;
-  fx('cast',{x:hx,y:hy,core:'fire',a});
+  const visualCore=ITEMS[s.key].essence==='water'?'frost':ITEMS[s.key].essence==='nature'?(ITEMS[s.key].creatorCore==='mjolnir'?'storm':'earth'):ITEMS[s.key].essence==='spirit'?'spirit':'fire';
+  fx('cast',{x:hx,y:hy,core:visualCore,a});
+  if(ITEMS[s.key].creatorCore==='demon') {const e=BAL.creatorCoreDemon;
+    if(mode==='basic')PROJ.push({x:hx,y:hy,vx:Math.cos(a)*e.raySpeed,vy:Math.sin(a)*e.raySpeed,life:e.rayLife,dmg:e.rayDamage,from:'player',kind:'spirit_ray',r:3});
+    if(mode==='refined'){const len=rayLen(r,p.x,p.y,a,e.beamRange);p.channelUntil=now+e.beamMs;HAZ.push({kind:'line',x:p.x,y:p.y,angle:a,len,w:e.beamWidth,t:0,tell:0,dur:e.beamMs,dmg:e.beamDamage,style:'beam',effect:'spiritBeam',owner:'player',expiresSimMs:r.clock.simMs+e.beamMs});}
+    if(mode==='signature'){r.spiritTransit={x:aim.mx,y:aim.my,arriveAt:now+e.teleportMs,uid:s.uid};fx('spiritDepart',{x:p.x,y:p.y});receipt(r,now,'core.spirit.depart',s.uid);}
+    return;
+  }
   if(ITEMS[s.key].creatorCore==='mjolnir') {
     const e=BAL.creatorCoreMjolnir;
     if(mode==='basic') {let from={x:p.x,y:p.y};const hit=new Set<string>();for(let j=0;j<3;j++){const candidates=r.creatures.filter(m=>m.state!=='dead'&&!m.elder?.submerged&&!m.atk?.burrow&&!hit.has(m.id)&&dist(from.x,from.y,m.x,m.y)<(j?e.chainRange:e.punchRange)&&(j||Math.abs(angDiff(Math.atan2(m.y-p.y,m.x-p.x),a))<0.8)&&clearPhysicalLine(r,from,m,true)).sort((u,v)=>dist(from.x,from.y,u.x,u.y)-dist(from.x,from.y,v.x,v.y));const m=candidates[0];if(!m)break;hit.add(m.id);const wet=isWet(weatherAt(r,now))||[T.SHALLOW,T.RIVER].includes(effTile(r,tileOf(m.x),tileOf(m.y)));fx('bolt',{x0:from.x,y0:from.y,x1:m.x,y1:m.y});damageCreature(gs,m,(j?e.chainDamage:e.punchDamage)*(wet?e.wetMultiplier:1),a,now,j?25:130);from={x:m.x,y:m.y};} }
@@ -263,21 +281,22 @@ function commitCreatorCore(gs: GameState, now: number, slot: number, uid0: strin
 // ---------- player ----------
 function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   const r = gs.run!; const p = r.player; const dt = dtMs / 1000; const B = BAL.player;
-  if (p.dead) { p.deadT += dtMs; delete r.traceWalk; return; }
+  if (p.dead) { delete r.spiritTransit; p.deadT += dtMs; delete r.traceWalk; return; }
+  if(r.spiritTransit && now>=r.spiritTransit.arriveAt){const t=r.spiritTransit,reason=spiritDestination(r,t.x,t.y);delete r.spiritTransit;if(!reason){p.x=t.x;p.y=t.y;delete r.traceWalk;fx('spiritArrive',{x:p.x,y:p.y});receipt(r,now,'core.spirit.arrive',t.uid);}else fx('toast',{text:`Teleport aborted: ${reason}`});}
   const startX = p.x, startY = p.y;
   p.invuln = Math.max(0, p.invuln - dtMs);
   p.aim = Math.atan2(inp.my - p.y, inp.mx - p.x);
   let mx = (inp.right ? 1 : 0) - (inp.left ? 1 : 0), my = (inp.down ? 1 : 0) - (inp.up ? 1 : 0); const ml = Math.hypot(mx, my); if (ml) { mx /= ml; my /= ml; }
   const act = p.action;
   // start actions
-  const selfFrozen=(p.iceUntil||0)>now;
-  if (selfFrozen) { for(const m of r.creatures)if(m.state!=='dead'&&!m.elder?.submerged&&!m.atk?.burrow&&dist(p.x,p.y,m.x,m.y)<BAL.creatorCoreElsa.auraRadius&&los(r,p.x,p.y,m.x,m.y,true))m.frozenUntil=Math.max(m.frozenUntil||0,now+BAL.creatorCoreElsa.enemyMs); }
+  const selfFrozen=(p.iceUntil||0)>now || (p.channelUntil||0)>now || !!r.spiritTransit;
+  if ((p.iceUntil||0)>now) { for(const m of r.creatures)if(m.state!=='dead'&&!m.elder?.submerged&&!m.atk?.burrow&&dist(p.x,p.y,m.x,m.y)<BAL.creatorCoreElsa.auraRadius&&los(r,p.x,p.y,m.x,m.y,true))m.frozenUntil=Math.max(m.frozenUntil||0,now+BAL.creatorCoreElsa.enemyMs); }
   if (!selfFrozen && inp.roll && p.stamina >= B.rollCost && (!act || act.kind === 'hurt' || (act.kind === 'swing' && act.done))) {
     p.stamina -= B.rollCost; p.action = { kind: 'roll', t: 0, dur: B.rollMs, angle: ml ? Math.atan2(my, mx) : p.aim }; p.invuln = Math.max(p.invuln, B.rollMs - 40); fx('roll', { x: p.x, y: p.y });
   } else if (inp.cancel && act?.kind === 'cast') { dispatch(gs, { id: 'cc' + now, type: 'castCancel' }, now); p.action = null; fx('fizzle', { x: p.x, y: p.y }); }
   else if (!selfFrozen && inp.skill && !p.action) {
     const s = activeStack(r), mode=inp.skill, chosen=inp.skillAim;
-    if (s && (!chosen || (chosen.uid===s.uid && chosen.slot===p.active)) && ITEMS[s.key]?.creatorCore && s.reserves && s.reserves[mode]>0) { const tx=chosen?.mx ?? inp.mx,ty=chosen?.my ?? inp.my; p.action={kind:'cast',t:0,dur:380,contact:300,angle:Math.atan2(ty-p.y,tx-p.x),slot:p.active,coreUid:s.uid,mode,targetX:tx,targetY:ty,viewX:chosen?.viewX ?? inp.viewX,viewY:chosen?.viewY ?? inp.viewY}; fx('windup',{x:p.x,y:p.y,core:'fire'}); }
+    if (s && (!chosen || (chosen.uid===s.uid && chosen.slot===p.active)) && ITEMS[s.key]?.creatorCore && s.reserves && s.reserves[mode]>0) { const tx=chosen?.mx ?? inp.mx,ty=chosen?.my ?? inp.my; p.action={kind:'cast',t:0,dur:380,contact:300,angle:Math.atan2(ty-p.y,tx-p.x),slot:p.active,coreUid:s.uid,mode,targetX:tx,targetY:ty,viewX:chosen?.viewX ?? inp.viewX,viewY:chosen?.viewY ?? inp.viewY}; fx('windup',{x:p.x,y:p.y,core:ITEMS[s.key].essence==='water'?'frost':ITEMS[s.key].essence==='nature'?(ITEMS[s.key].creatorCore==='mjolnir'?'storm':'earth'):ITEMS[s.key].essence==='spirit'?'spirit':'fire'}); }
     else fx('toast',{text:'Creator Core reserve empty — reload with R.'});
   }
   else if (!selfFrozen && (inp.attackPressed || inp.attack) && !p.action) {
@@ -303,7 +322,7 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   }
   // terrain & load
   const t = effTile(r, tileOf(p.x), tileOf(p.y));
-  if ((p.iceUntil||0)>now) speedMul=0;
+  if ((p.iceUntil||0)>now || (p.channelUntil||0)>now || r.spiritTransit) speedMul=0;
   let sp = B.speed * (BAL.terrainSpeed[SPEED_KEY[t]] ?? 1) * speedMul;
   const w = invWeight(r), limit = carryLimit(r), personalLoad = w > limit ? Math.max(0.35, 1 - (w - limit) / limit) : 1;
   let condition = 1; if (slowTimer > 0) { condition *= 0.5; slowTimer -= dtMs; } if (rootTimer > 0) { condition *= 0.15; rootTimer -= dtMs; }
@@ -735,7 +754,8 @@ function tickHaz(gs: GameState, dtMs: number, now: number) {
     const h = HAZ[i]; if(h.expiresSimMs!==undefined && r.clock.simMs>=h.expiresSimMs){HAZ.splice(i,1);continue;} h.t += dtMs; if (h.t < h.tell) continue;
     const first = !h.done; h.done = true;
     if (first) onHazActivate(gs, h, now);
-    if(h.owner==='player' && h.effect==='mjolnirPull'){for(const m of r.creatures)if(m.state!=='dead'&&!m.elder?.submerged&&!m.atk?.burrow&&inHaz(h,m.x,m.y)&&clearPhysicalLine(r,h,m,true)){const a=Math.atan2(h.y-m.y,h.x-m.x),step=Math.min(dist(h.x,h.y,m.x,m.y),BAL.creatorCoreMjolnir.attractSpeed*dtMs/1000*(m.elder?0.15:1));moveBody(r,m,Math.cos(a)*step,Math.sin(a)*step,5,'creature');}}
+    if(h.owner==='player' && h.effect==='spiritBeam'){if(p.dead || (p.channelUntil||0)<=now){HAZ.splice(i,1);continue;}for(const m of r.creatures)if(m.state!=='dead'&&inHaz(h,m.x,m.y)&&clearPhysicalLine(r,h,m,true)&&now>=(m.beamHitNext||0)){m.beamHitNext=now+BAL.creatorCoreDemon.beamTickMs;damageCreature(gs,m,h.dmg,h.angle||0,now,0);}}
+    else if(h.owner==='player' && h.effect==='mjolnirPull'){for(const m of r.creatures)if(m.state!=='dead'&&!m.elder?.submerged&&!m.atk?.burrow&&inHaz(h,m.x,m.y)&&clearPhysicalLine(r,h,m,true)){const a=Math.atan2(h.y-m.y,h.x-m.x),step=Math.min(dist(h.x,h.y,m.x,m.y),BAL.creatorCoreMjolnir.attractSpeed*dtMs/1000*(m.elder?0.15:1));moveBody(r,m,Math.cos(a)*step,Math.sin(a)*step,5,'creature');}}
     else if(h.owner==='player' && h.effect==='natureRoot'){for(const m of r.creatures)if(m.state!=='dead'&&!m.elder?.submerged&&!m.atk?.burrow&&inHaz(h,m.x,m.y)&&clearPhysicalLine(r,h,m,true)){m.rootedUntil=Math.max(m.rootedUntil||0,Math.min(now+150,now+Math.max(0,h.tell+h.dur-h.t)));if(now >= (m.rootHitNext||0)){m.rootHitNext=now+BAL.creatorCoreEarthmother.rootTickMs;damageCreature(gs,m,h.dmg,0,now,0);}}}
     else if (h.owner === 'player' && h.kind === 'pool' && h.style === 'burn') { h.tickAcc=(h.tickAcc||0)-dtMs; if(h.tickAcc<=0){h.tickAcc=500;for(const m of r.creatures)if(m.state!=='dead'&&inHaz(h,m.x,m.y)&&now >= (m.signatureBurnNext||0)){m.signatureBurnNext=now+500;damageCreature(gs,m,h.dmg,Math.atan2(m.y-h.y,m.x-h.x),now,10);}} }
     else if (h.owner === 'player') { if (first || h.kind === 'ring') for (const m of r.creatures) { if (m.state === 'dead' || (h as any)['h_' + m.id]) continue; if (inHaz(h, m.x, m.y)) { (h as any)['h_' + m.id] = 1; damageCreature(gs, m, h.dmg * (h.effect==='mjolnirStrike' && (isWet(weatherAt(r,now)) || [T.SHALLOW,T.RIVER].includes(effTile(r,tileOf(m.x),tileOf(m.y)))) ? BAL.creatorCoreMjolnir.wetMultiplier : 1), Math.atan2(m.y - h.y, m.x - h.x), now, 90); if (h.effect === 'slowm') m.slow = 3000; } } }

@@ -1,3 +1,5 @@
+import * as pfx from './pixelfx';
+import * as comp from './compositor';
 // Canvas 2D renderer — draws authoritative state + observed effects. Never mutates game state.
 import { TILE, WW, WH, VIEW_W, VIEW_H, T, hash2, clamp, type GameState, type RunState, type Creature, type Entity } from './core';
 import { STRUCTS, ELDERS, CREATURES, ITEMS } from './catalog';
@@ -97,6 +99,8 @@ const burst = (x: number, y: number, n: number, cols: string[], sp = 60, g = 120
 const MATC: Record<string, string[]> = { wood: ['#c9935a', '#8a5a32', '#e0b070', '#6aa84a'], stone: ['#b9bcc4', '#7d8088', '#ffffff'], ore: ['#d08a5a', '#7d8088', '#ffe0a0'], plant: ['#8ac25a', '#5a9a3c', '#e05a7a'], scrap: ['#c0a07a', '#ffd070', '#6f7378', '#ffffff'] };
 const SURFC: Record<number, string[]> = { [T.SNOW]: ['#ffffff', '#c8d8e8'], [T.SAND]: ['#e8d8a0', '#c4aa74'], [T.MARSH]: ['#4a3e2a', '#3a5a5a'], [T.SHALLOW]: ['#a0d0ff', '#ffffff'], [T.RIVER]: ['#a0d0ff', '#ffffff'], [T.ASH]: ['#6a5a5a', '#3a3236'], [T.ROAD]: ['#b89470', '#9a7a58'] };
 export let shake = 0; export let flash = 0; export const banners: { text: string; sub: string; t: number }[] = [];
+comp.registerVfxClient({id:'pixelfx',depthItems:g=>pfx.depthItems(g),drawAuras:(g,c)=>pfx.drawAuras(g,c),drawWarpPass:(g,c,n)=>pfx.drawWarpPass(g,c,n),drawScreen:g=>pfx.drawScreen(g),drawPostNight:(g,c,d)=>pfx.drawPostNight(g,c,d)});
+
 export function consumeFX(onFx: (e: any) => void) {
   while (FX.length) {
     const e = FX.shift(); onFx(e);
@@ -118,7 +122,8 @@ export function consumeFX(onFx: (e: any) => void) {
       case 'ignite': burst(e.x, e.y - 12, 10, ['#ffb040', '#ff6a1e', '#fff0a0'], 30, -40, 700); break;
       case 'steam': burst(e.x, e.y - 10, 8, ['#e0e8f0', '#b0b8c0'], 20, -30, 900, 2); break;
       case 'scorch': burst(e.x, e.y, 4, ['#3a302a', '#8a3a1e'], 20, -10, 500); break;
-      case 'cast': burst(e.x, e.y, 16, e.core === 'fire' ? ['#ffb040', '#fff0a0'] : e.core === 'frost' ? ['#c8f0ff', '#ffffff'] : e.core === 'storm' ? ['#c0e0ff', '#ffffff'] : ['#e0c080', '#7a5a32'], 70, 0, 400); break;
+      case 'spiritDepart': case 'spiritArrive': burst(e.x,e.y-6,24,['#bd7bff','#f5e2ff','#69328c'],42,-15,750,2);ARCS.push({x:e.x,y:e.y,life:0,max:650,kind:'spiritRing',reach:24} as Part);break;
+      case 'cast': burst(e.x, e.y, 16, e.core === 'fire' ? ['#ffb040', '#fff0a0'] : e.core === 'frost' ? ['#c8f0ff', '#ffffff'] : e.core === 'storm' ? ['#c0e0ff', '#ffffff'] : e.core === 'spirit' ? ['#bd7bff','#f4dfff'] : ['#e0c080', '#7a5a32'], 70, 0, 400); break;
       case 'fizzle': burst(e.x, e.y - 8, 8, ['#8a8a9a', '#c0c0d0'], 30, -20, 500); break;
       case 'dodge': burst(e.x, e.y - 6, 5, ['#ffffff', '#c0e0ff'], 40, 0, 250); break;
       case 'structhit': burst(e.x, e.y - 6, 10, ['#ffe3a0', '#c9935a', '#8a8a90'], 60, 150, 500); TEXTS.push({ x: e.x, y: e.y - 20, vx: 0, vy: -20, life: 0, max: 1100, col: '#ffbd77', text: '-' + e.n } as Part); break;
@@ -196,6 +201,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
     if (e.type === 'spikes') g.drawImage(A.st.spikes, e.x - 8, e.y - 8);
     if (e.type === 'claim') { const R = 6 * 16; g.fillStyle = 'rgba(255,208,64,0.5)'; for (let k = 0; k < 64; k++) { const a = k / 64 * Math.PI * 2 + time / 4000; g.fillRect(Math.round(e.x + Math.cos(a) * R), Math.round(e.y + Math.sin(a) * R), 2, 1); } }
   }
+  pfx.syncHazards(HAZ,p);pfx.syncProjFx(PROJ,now);
   // hazard telegraphs (ground)
   for (const h of HAZ) drawHaz(g, h, time);
   // y-sorted drawables
@@ -206,8 +212,9 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   for (const e of ents) { if (e.x < cx - 40 || e.x > cx + VIEW_W + 40 || e.y < cy - 20 || e.y > cy + VIEW_H + 60) continue; if (e.kind === 'struct' && ['floor', 'roof'].includes(STRUCTS[e.type!].layer)) continue; if (e.type === 'garden' || e.type === 'spikes') continue; list.push({ y: e.y + (e.kind === 'drop' ? -2 : 6), f: () => drawEntity(g, r, e, time, now) }); }
   for(const q of r.natureTrees||[]){const x=q.tx*TILE,y=q.ty*TILE;if(x>=cx-32&&x<cx+VIEW_W+32&&y>=cy-32&&y<cy+VIEW_H+32)list.push({y:y+14,f:()=>g.drawImage(A.src.oak[(q.tx+q.ty)%A.src.oak.length],x-4,y-16)});}
   for (const m of r.creatures) { if (m.x < cx - 40 || m.x > cx + VIEW_W + 40 || m.y < cy - 40 || m.y > cy + VIEW_H + 60) continue; list.push({ y: m.y + 4, f: () => drawCreature(g, m, time, now) }); }
-  list.push({ y: p.y + 4, f: () => drawPlayer(g, gs, time) });
+  if(!r.spiritTransit)list.push({ y: p.y + 4, f: () => drawPlayer(g, gs, time) });
   const dragon=r.dragonDive;if(dragon?.phase && dragon.dragonX!==undefined && dragon.dragonY!==undefined) list.push({y:dragon.dragonY+4,f:()=>{const x=dragon.dragonX!,y=dragon.dragonY!;g.save();g.translate(x,y);g.fillStyle='#70241e';g.beginPath();g.moveTo(-19,-12);g.lineTo(-7,-22);g.lineTo(0,-14);g.lineTo(10,-21);g.lineTo(18,-10);g.lineTo(7,-12);g.lineTo(3,-3);g.lineTo(-5,-3);g.lineTo(-9,-11);g.closePath();g.fill();g.fillStyle='#ff8c2b';g.fillRect(-7,-14,14,6);g.fillStyle='#ffe6a0';g.fillRect(3,-13,2,2);g.restore();}});
+  for(const item of comp.depthItems(g))list.push(item);
   // POI terrain walls need y-sorting vs player? They are flat tiles; fine.
   list.sort((a, b) => a.y - b.y); for (const d of list) d.f();
   // temporary terrain sprites (ice pillars, root cages)
@@ -230,9 +237,11 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
     else { g.strokeStyle = '#ffb040'; g.setLineDash([2, 2]); g.strokeRect(tx * 16 + 0.5, ty * 16 + 0.5, 15, 15); g.setLineDash([]); } }
   if (o.target) { const bob = Math.round(Math.sin(time / 160) * 1.5); g.fillStyle = '#ffe27a'; const X = Math.round(o.target.x), Y = Math.round(o.target.y) - 20 + bob; g.fillRect(X - 2, Y, 5, 1); g.fillRect(X - 1, Y + 1, 3, 1); g.fillRect(X, Y + 2, 1, 1); }
   g.restore();
+  comp.drawAuras(g,{x:cx,y:cy});comp.drawWarpPass(g,{x:cx,y:cy},now);comp.drawScreen(g);
   // weather & light (screen space)
   drawWeather(g, r, now, time, cx, cy);
   drawLight(g, r, now, time, cx, cy, ents);
+  comp.drawPostNight(g,{x:cx,y:cy},Math.min(0.85,darkness(r,now)+(weatherAt(r,now)==='storm'?0.15:0)));
   if (flash > 0) { g.fillStyle = `rgba(255,255,255,${flash})`; g.fillRect(0, 0, VIEW_W, VIEW_H); flash = Math.max(0, flash - dtMs / 400); }
   if (p.hp < 30 && !p.dead) { const a = (1 - p.hp / 30) * (0.25 + Math.sin(time / 200) * 0.08); g.fillStyle = `rgba(160,0,0,${a})`; g.fillRect(0, 0, VIEW_W, 6); g.fillRect(0, VIEW_H - 6, VIEW_W, 6); g.fillRect(0, 0, 6, VIEW_H); g.fillRect(VIEW_W - 6, 0, 6, VIEW_H); }
 }
@@ -359,14 +368,14 @@ function drawPlayer(g: CanvasRenderingContext2D, gs: GameState, time: number) {
   else if (act?.kind === 'cast') spr = set['wind' + p.dir][0];
   else if (moving) spr = set['walk' + p.dir][Math.floor(time / 120) % 4]; else spr = set['idle' + p.dir][Math.floor(time / 600) % 2];
   const blink = p.invuln > 0 && act?.kind !== 'roll' && Math.floor(time / 70) % 2 === 0;
-  const s = activeStack(r); const icon = s && (ITEMS[s.key].dmg || ITEMS[s.key].core || ITEMS[s.key].ranged) ? A.icon[s.key] : null;
+  const s = activeStack(r); const icon = s && (ITEMS[s.key].dmg || ITEMS[s.key].core || ITEMS[s.key].creatorCore || ITEMS[s.key].ranged) ? A.icon[s.key] : null;
   const drawWeapon = () => { if (!icon || act?.kind === 'roll') return; let ang = p.aim; const d = ITEMS[s!.key];
     if (act?.kind === 'swing' && !d.ranged) { const arc = d.arc || 1.2; const t = act.t / act.dur; const k = act.t < (act.contact || 0) ? -0.5 - 0.15 * (act.t / (act.contact || 1)) : -0.5 + Math.min(1, (act.t - (act.contact || 0)) / 80); ang = p.aim + arc * k * (Math.cos(p.aim) >= 0 ? 1 : -1); void t; }
-    const hx = X + Math.cos(ang) * 5, hy = Y - 6 + Math.sin(ang) * 4; g.save(); g.translate(Math.round(hx), Math.round(hy)); g.rotate(ang + Math.PI / 4); if (d.core) g.rotate(-ang - Math.PI / 4); g.drawImage(icon, d.core ? -6 : -3, d.core ? -6 : -12, d.core ? 12 : 14, d.core ? 12 : 14); g.restore(); };
+    const hx = X + Math.cos(ang) * 5, hy = Y - 6 + Math.sin(ang) * 4; g.save(); g.translate(Math.round(hx), Math.round(hy)); g.rotate(ang + Math.PI / 4); if (d.core || d.creatorCore) g.rotate(-ang - Math.PI / 4); g.drawImage(icon, (d.core||d.creatorCore) ? -6 : -3, (d.core||d.creatorCore) ? -6 : -12, (d.core||d.creatorCore) ? 12 : 14, (d.core||d.creatorCore) ? 12 : 14); g.restore(); };
   if (p.dir === 3) drawWeapon();
   g.drawImage(blink ? white(spr) : spr, X - 8, Y - 19);
   if (p.dir !== 3) drawWeapon();
-  if (act?.kind === 'cast') { const f = Math.min(1, act.t / (act.contact || 1)); const core = ITEMS[s?.key || '']?.core; const col = core === 'fire' ? '#ffb040' : core === 'frost' ? '#c8f0ff' : core === 'storm' ? '#a0c8ff' : '#e0c080'; pixCircle(g, X, Y - 6, 18 * (1 - f) + 4, col, 2); for (let i = 0; i < 3; i++) { const a = time / 100 + i * 2.1; add({ x: X + Math.cos(a) * 14, y: Y - 6 + Math.sin(a) * 14, vx: -Math.cos(a) * 40, vy: -Math.sin(a) * 40, col, max: 300, s: 1, g: 0 }); } }
+  if (act?.kind === 'cast') { const f = Math.min(1, act.t / (act.contact || 1)); const d=ITEMS[s?.key || '']; const core = d?.core || (d?.essence==='water'?'frost':d?.essence==='nature'?(d.creatorCore==='mjolnir'?'storm':'earth'):d?.essence==='spirit'?'spirit':'fire'); const col = core === 'spirit' ? '#cf8fff' : core === 'fire' ? '#ffb040' : core === 'frost' ? '#c8f0ff' : core === 'storm' ? '#a0c8ff' : '#e0c080'; pixCircle(g, X, Y - 6, 18 * (1 - f) + 4, col, 2); for (let i = 0; i < 3; i++) { const a = time / 100 + i * 2.1; add({ x: X + Math.cos(a) * 14, y: Y - 6 + Math.sin(a) * 14, vx: -Math.cos(a) * 40, vy: -Math.sin(a) * 40, col, max: 300, s: 1, g: 0 }); } }
   if ((p.iceUntil||0)>Date.now()) {g.save();g.globalAlpha=0.7;g.drawImage(A.st.icepillar,X-8,Y-16);g.restore();}
   if (s?.key === 'torch') drawFlame(g, X + Math.cos(p.aim) * 7, Y - 12 + Math.sin(p.aim) * 4, time, 0.5);
 }
@@ -375,6 +384,7 @@ function drawProj(g: CanvasRenderingContext2D, pr: any, time: number) {
   switch (pr.kind) {
     case 'arrow': pixLine(g, X - Math.cos(a) * 6, Y - Math.sin(a) * 6, X, Y, '#8a5a32'); g.fillStyle = '#e0e0e8'; g.fillRect(X, Y, 1, 1); break;
     case 'bolt': g.fillStyle = '#ff6a3a'; g.fillRect(X - 1, Y - 1, 3, 3); g.fillStyle = '#fff0c0'; g.fillRect(X, Y, 1, 1); add({ x: X, y: Y, vx: 0, vy: 0, col: '#ff6a3a', max: 160, s: 1, g: 0 }); break;
+    case 'spirit_ray': g.fillStyle='#b86bff';g.fillRect(X-5,Y-2,10,4);g.fillStyle='#f7e6ff';g.fillRect(X-3,Y-1,6,2);break;
     case 'nature_rock': g.fillStyle='#797369';g.fillRect(X-4,Y-3,8,6);g.fillStyle='#b2a99a';g.fillRect(X-2,Y-3,4,2);break;
     case 'elsa_shard': case 'shard': g.save(); g.translate(X, Y); g.rotate(a); g.fillStyle = '#bff0ff'; g.fillRect(-4, -1, 8, 2); g.fillStyle = '#ffffff'; g.fillRect(1, 0, 3, 1); g.restore(); break;
     case 'spit': g.fillStyle = pr.kind === 'spit' ? '#6ad0ff' : '#a0d050'; g.fillRect(X - 2, Y - 2, 4, 4); g.fillStyle = '#ffffff'; g.fillRect(X - 1, Y - 1, 1, 1); add({ x: X, y: Y, vx: 0, vy: 10, col: '#a0e0ff', max: 200, s: 1, g: 0 }); break;
@@ -409,6 +419,7 @@ function drawFx(g: CanvasRenderingContext2D, dtMs: number, time: number) {
     if (p.kind === 'star') { const a = p.a! + p.life / 150; g.fillStyle = p.col; g.fillRect(Math.round(p.x + Math.cos(a) * 6), Math.round(p.y + Math.sin(a) * 2), 1, 1); continue; }
     g.fillStyle = p.col; g.globalAlpha = Math.min(1, (1 - p.life / p.max) * 1.6); g.fillRect(Math.round(p.x), Math.round(p.y), p.s, p.s); g.globalAlpha = 1; }
   for (let i = ARCS.length - 1; i >= 0; i--) { const a = ARCS[i]; a.life += dtMs; if (a.life >= a.max) { ARCS.splice(i, 1); continue; } const f = a.life / a.max;
+    if (a.kind === 'spiritRing') {pixCircle(g,a.x,a.y,a.reach!*(0.35+f),'#d49bff',2);continue;}
     if (a.kind === 'ring') { pixCircle(g, a.x, a.y, a.reach! * (0.3 + f), f < 0.5 ? '#fff0a0' : '#ff8a3a'); continue; }
     if (a.kind === 'bolt' || a.kind === 'drain') { const n = 7; let px = a.x, py = a.y; const col = a.kind === 'drain' ? '#8ae05a' : '#e0f0ff'; for (let k = 1; k <= n; k++) { const t = k / n; const nx = a.x + (a.x1! - a.x) * t + (k < n ? (hash2(k, Math.floor(time / 40), 1) - 0.5) * (a.kind === 'drain' ? 6 : 12) : 0), ny = a.y + (a.y1! - a.y) * t + (k < n ? (hash2(k, Math.floor(time / 40), 2) - 0.5) * (a.kind === 'drain' ? 6 : 12) : 0); pixLine(g, px, py, nx, ny, col); if (a.kind === 'bolt') pixLine(g, px + 1, py, nx + 1, ny, 'rgba(120,160,255,0.6)'); px = nx; py = ny; } continue; }
     // weapon slash arc — drawn exactly at the hitbox reach/angle

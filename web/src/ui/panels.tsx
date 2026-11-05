@@ -248,20 +248,20 @@ export function BuildPanel({ api }: { api: Api }) {
 import { iconUrl } from './common';
 const iconUrlSt = (k: string) => iconUrl('st:' + (k === 'escrow' ? 'escrow' : k));
 
-export function MapPanel({ api }: { api: Api }) {
+export function MapPanel({ api, onTeleportSelect, teleportTarget }: { api: Api; onTeleportSelect?: (x:number,y:number)=>void; teleportTarget?: {x:number;y:number} | null }) {
   const ref = useRef<HTMLCanvasElement>(null); const r = api.gs.run!; const w = getWorld();
   useEffect(() => { const c = ref.current!; const g = c.getContext('2d')!; g.imageSmoothingEnabled = false; g.drawImage(getMapCanvas(r), 0, 0);
     const disc = r.discovered; g.fillStyle = 'rgba(12,10,20,0.86)'; for (let y = 0; y < 50; y++) for (let x = 0; x < 50; x++) if (!disc[y * 50 + x]) g.fillRect(x * 4, y * 4, 4, 4);
     const dot = (x: number, y: number, col: string, s = 3) => { g.fillStyle = '#000'; g.fillRect(x - 1 - (s >> 1), y - 1 - (s >> 1), s + 2, s + 2); g.fillStyle = col; g.fillRect(x - (s >> 1), y - (s >> 1), s, s); };
     for (const p of w.places) if (r.poiSeen.includes(p.id)) dot(p.tx, p.ty, p.kind === 'elder' ? '#ff4a3a' : p.kind === 'evac' ? '#5af0ff' : p.kind === 'start' ? '#a0e070' : '#ffd040');
     for (const e of Object.values(r.entities)) { if (e.type === 'claim') dot(e.tx!, e.ty!, '#ff9a3a', 4); if (e.kind === 'bag') dot(e.x / 16, e.y / 16, '#ffffff'); if (e.kind === 'cart') dot(e.x / 16, e.y / 16, '#c9935a'); }
-    const p = r.player; dot(p.x / 16, p.y / 16, Math.floor(Date.now() / 300) % 2 ? '#ffffff' : '#ff4a8a', 3);
+    const p = r.player; dot(p.x / 16, p.y / 16, Math.floor(Date.now() / 300) % 2 ? '#ffffff' : '#ff4a8a', 3);if(teleportTarget)dot(teleportTarget.x/TILE,teleportTarget.y/TILE,'#d79cff',5);
   });
   const p = r.player; const h = runHours(r, api.now());
   return <Panel title={`${w.veyra ? 'Map · bounded view' : 'Map of the island'} — ${(w.zoneNames || ZONES)[w.zone[Math.floor(p.y / 16) * WW + Math.floor(p.x / 16)]]}`} style={{ left: 120, top: 26, width: 400 }} onClose={() => api.open(null)}>
-    <div className="flex gap-2"><canvas ref={ref} width={200} height={200} style={{ width: 260, height: 260, border: '1px solid #3a2e46' }} />
+    <div className="flex gap-2"><canvas ref={ref} width={200} height={200} style={{ width: 260, height: 260, border: '1px solid #3a2e46', cursor:onTeleportSelect?'crosshair':'default' }} onClick={onTeleportSelect ? e=>{const rect=e.currentTarget.getBoundingClientRect(),x=Math.floor((e.clientX-rect.left)/rect.width*200),y=Math.floor((e.clientY-rect.top)/rect.height*200);onTeleportSelect(x*TILE+8,y*TILE+8);} : undefined} />
       <div style={{ fontSize: 10, lineHeight: 1.15, width: 125 }}>
-        <div style={{ color: '#ffd98a' }}>Discovered</div>{w.places.filter(pl => r.poiSeen.includes(pl.id)).map(pl => <div key={pl.id} style={{ color: pl.kind === 'elder' ? '#ff8a7a' : pl.kind === 'evac' ? '#5af0ff' : '#e0d0b0' }}>• {pl.name}</div>)}
+        {onTeleportSelect && <div style={{color:'#d7a9ff',marginBottom:4}}>Lõi quỷ: select explored safe ground. Then hold and release E to depart. No sealed-room bypass. Purple marker: selected destination.</div>}<div style={{ color: '#ffd98a' }}>Discovered</div>{w.places.filter(pl => r.poiSeen.includes(pl.id)).map(pl => <div key={pl.id} style={{ color: pl.kind === 'elder' ? '#ff8a7a' : pl.kind === 'evac' ? '#5af0ff' : '#e0d0b0' }}>• {pl.name}</div>)}
         {r.poiSeen.length === 0 && <div style={{ color: '#8a7a9a' }}>Nothing yet — explore.</div>}
         <div style={{ color: '#ffd98a', marginTop: 4 }}>Legend</div><div><span style={{ color: '#ffd040' }}>■</span> landmark <span style={{ color: '#ff4a3a' }}>■</span> elder</div><div><span style={{ color: '#ff9a3a' }}>■</span> your claim <span style={{ color: '#fff' }}>■</span> bag</div><div><span style={{ color: '#5af0ff' }}>■</span> evacuation</div>
         <div style={{ color: '#8a7a9a', marginTop: 4 }}>Run hour {h.toFixed(1)} / {BAL.run.maxRunHours} · {phaseOf(r, api.now()).toUpperCase()}</div>

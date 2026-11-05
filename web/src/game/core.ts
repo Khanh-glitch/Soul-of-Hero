@@ -59,7 +59,7 @@ export interface Player {
   hp: number; stamina: number; hunger: number; thirst: number; warmth: number; rad: number;
   active: number; // quickbar index 0..7
   action: null | { kind: 'swing' | 'cast' | 'roll' | 'hurt'; t: number; dur: number; contact?: number; done?: boolean; angle: number; slot?: number; coreUid?: string; mode?: 'basic' | 'refined' | 'signature'; targetX?: number; targetY?: number; viewX?: number; viewY?: number };
-  invuln: number; iceUntil?: number; dead: boolean; deadT: number; pulling: string | null;
+  invuln: number; iceUntil?: number; channelUntil?:number; dead: boolean; deadT: number; pulling: string | null;
   skills: Record<string, number>; // xp
   stepAcc: number; lastTraceX: number; lastTraceY: number;
   regionName: string; sheltered: boolean;
@@ -77,7 +77,7 @@ export interface Creature {
   offlineUnresolvedAt?: number;
   path: number[] | null; pathT: number; cd: number; kbx: number; kby: number; flash: number;
   elder?: { key: string; awake: boolean; phase: number; pattern: number; special: number; shield?: number; submerged?: boolean };
-  patternKey?: string; atk?: any; slow?: number; signatureBurnNext?: number; tornadoNext?: number; frozenUntil?: number; rootedUntil?:number; rootHitNext?:number;
+  patternKey?: string; atk?: any; slow?: number; signatureBurnNext?: number; tornadoNext?: number; frozenUntil?: number; rootedUntil?:number; rootHitNext?:number; beamHitNext?:number;
 }
 
 export interface Entity {
@@ -137,6 +137,7 @@ export interface RunState {
   creatorLootV1?: true;
   renewedLootSites?: number[];
   natureTrees?: {tx:number;ty:number;until:number}[];
+  spiritTransit?: { x:number; y:number; arriveAt:number; uid:string };
   terrain: Record<number, { t: number; until?: number }>; // K2 terrain mutations (burns, ice)
   entities: Record<string, Entity>;
   custody: Record<string, Container>;

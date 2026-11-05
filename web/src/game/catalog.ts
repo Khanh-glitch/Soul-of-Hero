@@ -20,7 +20,7 @@ export interface ItemDef {
   power?: Partial<Record<Mat, number>>; dmg?: number; reach?: number; arc?: number; swing?: number; dur?: number;
   food?: { hunger?: number; thirst?: number; hp?: number; warmth?: number; rad?: number; stamina?: number };
   slot?: 'head' | 'body' | 'back'; armor?: number; cold?: number; mask?: boolean; fuel?: number; charge?: number; initialCharge?: number; waterContainer?: boolean; carryBonus?: number;
-  core?: string; creatorCore?: 'blast' | 'meteor' | 'dragon' | 'elsa' | 'earthmother' | 'mjolnir'; essence?: 'fire' | 'nature' | 'water' | 'spirit'; specimen?: string; studyRecipe?: string; repair?: { station: 'workbench'; cost: [string, number][] }; salvage?: { station: 'workbench'; yields: [string, number][] }; place?: string; light?: number; ranged?: string;
+  core?: string; creatorCore?: 'blast' | 'meteor' | 'dragon' | 'elsa' | 'earthmother' | 'mjolnir' | 'demon'; essence?: 'fire' | 'nature' | 'water' | 'spirit'; specimen?: string; studyRecipe?: string; repair?: { station: 'workbench'; cost: [string, number][] }; salvage?: { station: 'workbench'; yields: [string, number][] }; place?: string; light?: number; ranged?: string;
 }
 const I = (d: ItemDef) => d;
 export const ITEMS: Record<string, ItemDef> = {
@@ -37,6 +37,7 @@ export const ITEMS: Record<string, ItemDef> = {
   core_elsa: I({ name:'Gươm Elsa', cat:'core', icon:'core', c1:'#5c9fc5', c2:'#d9ffff', w:0.3, max:1, desc:'Rare Water Core: ice projectile, one-second self-freeze and viewport freeze.', creatorCore:'elsa', essence:'water' }),
   core_earthmother: I({ name:'Hơi thở đất mẹ', cat:'core', icon:'core', c1:'#436f37', c2:'#cbe998', w:0.3, max:1, desc:'Common Nature Core: rock, grove and binding roots.', creatorCore:'earthmother', essence:'nature' }),
   core_mjolnir: I({ name:'Mjolnir', cat:'core', icon:'core', c1:'#6689ad', c2:'#eefbff', w:0.3, max:1, desc:'Rare Nature Core: thunder punch, five lightning strikes and electrical attraction.', creatorCore:'mjolnir', essence:'nature' }),
+  core_demon: I({ name:'Lõi quỷ', cat:'core', icon:'core', c1:'#593777', c2:'#ebc5ff', w:0.3, max:1, desc:'Rare Spirit Core: directed rays, a stationary beam and a map-selected teleport.', creatorCore:'demon', essence:'spirit' }),
   // All lifecycle and upgrade costs are provisional TUNABLE values.
   damaged_drive: I({ name: 'Damaged Drive', cat: 'res', icon: 'parts', c1: '#4b6570', c2: '#f0bd56', w: 3, max: 1, desc: 'Finite wreck salvage. At a workbench: 1 drive + 1 scrap → 1 Mechanical Parts. Or carry to the Foundry Recycler: 1 drive → 2 Spares. The same drive is spent either way.' }),
   mechanical_parts: I({ name: 'Mechanical Parts', cat: 'res', icon: 'parts', c1: '#707984', c2: '#c9d2d8', w: 0.5, max: 30, desc: 'Found in industrial wrecks or made at a bench. Improve tools or maintain equipment.' }),
@@ -197,6 +198,7 @@ export const RECIPES: Record<string, Recipe> = {
   core_blast: { out:'core_blast', qty:1, ins:[['iron_ingot',2],['spares',4],['crystal',1]], station:'workbench', secs:30, base:true, tier:1 },
   core_earthmother: { out:'core_earthmother', qty:1, ins:[['iron_ingot',2],['spares',4],['crystal',1]], station:'workbench', secs:30, base:true, tier:1 },
   core_mjolnir: { out:'core_mjolnir', qty:1, ins:[['iron_ingot',4],['spares',9],['crystal',4],['mechanical_parts',2]], station:'workbench', stationLevel:2, secs:50, tier:2 },
+  core_demon: { out:'core_demon', qty:1, ins:[['iron_ingot',4],['spares',12],['crystal',5],['crawler_optic',2]], station:'workbench', stationLevel:2, secs:55, tier:2 },
   core_meteor: { out:'core_meteor', qty:1, ins:[['iron_ingot',4],['spares',8],['crystal',3],['sulfur',3]], station:'workbench', stationLevel:2, secs:45, tier:2 },
   core_dragon: { out:'core_dragon', qty:1, ins:[['iron_ingot',8],['spares',16],['crystal',6],['sulfur',6]], station:'workbench', stationLevel:3, secs:75, tier:3 },
   core_elsa: { out:'core_elsa', qty:1, ins:[['iron_ingot',3],['spares',8],['crystal',4],['shell',3]], station:'workbench', stationLevel:2, secs:45, tier:2 },
@@ -255,7 +257,7 @@ export const RECIPES: Record<string, Recipe> = {
 export const WORKBENCH_UPGRADE: { toLevel: 2; cost: [string, number][] } = { toLevel: 2, cost: [['mechanical_parts', 2], ['iron_ingot', 1]] };
 /** SOH_NEW_TUNED v1; knowledge tier remains independent of this physical upgrade. */
 export const WORKBENCH_UPGRADE_III: { toLevel: 3; cost: [string, number][] } = { toLevel: 3, cost: [['mechanical_parts', 6], ['iron_ingot', 8], ['fasteners', 8], ['spares', 12]] };
-export const CORE_STUDY: Record<string, string> = { core_fire: 'core_fire', core_earth: 'core_earth', core_storm: 'core_storm', core_frost: 'core_frost', core_meteor: 'core_meteor', core_dragon: 'core_dragon', core_elsa: 'core_elsa', core_mjolnir: 'core_mjolnir' };
+export const CORE_STUDY: Record<string, string> = { core_fire: 'core_fire', core_earth: 'core_earth', core_storm: 'core_storm', core_frost: 'core_frost', core_meteor: 'core_meteor', core_dragon: 'core_dragon', core_elsa: 'core_elsa', core_mjolnir: 'core_mjolnir', core_demon: 'core_demon' };
 
 // ---------- Structures (K6) ----------
 export interface StructDef { name: string; cost: [string, number][]; hp: number; need: 'claim' | 'any' | 'free'; block: boolean; layer: 'floor' | 'wall' | 'obj' | 'roof'; slots?: number; station?: 'campfire' | 'furnace' | 'workbench' | 'research'; light?: number; desc: string; item?: string; shelter?: boolean; warmth?: number }

@@ -12,7 +12,7 @@ afterEach(()=>setActiveLayout('shipping'));
 describe('versioned unique Creator Core acquisition',()=>{
  it('places one initially charged rare body into each existing site and does not grant their recipes',()=>{
   setActiveLayout('shipping_fresh');const g=newGame();expect(act(g,'startRun',{character:'female',seed:31},T).ok).toBe(true);const r=g.run!;
-  for(const [key,poi] of [['core_meteor','light_top'],['core_dragon','factory_vault'],['core_elsa','wreck']]){
+  for(const [key,poi] of [['core_meteor','light_top'],['core_dragon','factory_vault'],['core_elsa','wreck'],['core_mjolnir','watch'],['core_demon','factory_vault']]){
    const found=Object.values(r.entities).filter(e=>e.kind==='loot'&&e.poi===poi&&C(r,e.c!).slots.some(s=>s?.key===key));expect(found).toHaveLength(1);
    const body=C(r,found[0].c!).slots.find(s=>s?.key===key)!;expect(body.reserves).toEqual({basic:0,refined:0,signature:3});expect(isRecipeKnown(r.knowledge.recipes,key)).toBe(false);
   }expect(validate(snap(g))).toBeTruthy();

@@ -1,7 +1,7 @@
 import {afterEach,describe,expect,it} from 'vitest';
 import {TILE,WW,type GameState} from '../src/game/core';
 import {addItem,blockGrid,C,dispatch,mkCreature,newGame} from '../src/game/engine';
-import {tick,syncWorld,type Input} from '../src/game/sim';
+import {tick,syncWorld,groveCells,type Input} from '../src/game/sim';
 import {setActiveLayout} from '../src/game/world';
 import {serializeSnapshot,validate} from '../src/game/persist';
 const T=Date.UTC(2026,10,4);let seq=0;
@@ -12,7 +12,7 @@ function cast(g:GameState,mode:'refined'|'signature',now=T+100){const r=g.run!,i
 afterEach(()=>setActiveLayout('shipping'));
 describe('Earthmother physical grove',()=>{
  it('places ten physical blockers for exactly three seconds, then produces ten collectible wood once, including offline',()=>{
-  const {g,r,core}=setup();cast(g,'refined');expect(r.natureTrees).toHaveLength(10);expect(core.reserves!.refined).toBe(1);const trees=[...r.natureTrees!];for(const q of trees)expect(blockGrid(r)[q.ty*WW+q.tx]).toBe(2);
+  const {g,r,core}=setup();let found=false;const grid=blockGrid(r);outer:for(let y=10;y<190;y++)for(let x=10;x<180;x++){if(grid[y*WW+x]!==0)continue;r.player.x=x*TILE+8;r.player.y=y*TILE+8;if(groveCells(r,r.player.x+60,r.player.y).length===10){found=true;break outer;}}expect(found).toBe(true);cast(g,'refined');expect(r.natureTrees).toHaveLength(10);expect(core.reserves!.refined).toBe(1);const trees=[...r.natureTrees!];for(const q of trees)expect(blockGrid(r)[q.ty*WW+q.tx]).toBe(2);
   const saved=snap(g);expect(validate(saved)).toBeTruthy();const due=T+350+3000;syncWorld(saved,due-1);expect(saved.run!.natureTrees).toHaveLength(10);syncWorld(saved,due);expect(saved.run!.natureTrees).toHaveLength(0);
   expect(saved.run!.receipts.filter(x=>x.kind==='core.grove.wood')).toHaveLength(10);expect(Object.values(saved.run!.entities).filter(e=>e.kind==='drop'&&C(saved.run!,e.c!).slots[0]?.key==='wood')).toHaveLength(10);syncWorld(saved,due+100);expect(saved.run!.receipts.filter(x=>x.kind==='core.grove.wood')).toHaveLength(10);expect(validate(snap(saved))).toBeTruthy();
  });

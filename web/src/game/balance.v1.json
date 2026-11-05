@@ -239,5 +239,17 @@
     "attractSpeed": 32,
     "burstDamage": 35,
     "wetMultiplier": 1.5
+  },
+  "creatorCoreDemon": {
+    "_status": "SOH_NEW_TUNED v1; requires discovered physically reachable destination",
+    "rayDamage": 16,
+    "raySpeed": 240,
+    "rayLife": 0.8,
+    "beamDamage": 7,
+    "beamRange": 130,
+    "beamWidth": 12,
+    "beamMs": 2000,
+    "beamTickMs": 250,
+    "teleportMs": 600
   }
 }
