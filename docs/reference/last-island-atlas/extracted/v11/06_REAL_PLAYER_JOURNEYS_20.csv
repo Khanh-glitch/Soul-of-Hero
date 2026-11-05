@@ -1,0 +1,22 @@
+<PARSED TEXT FOR SHEET: 1 / 1 TABS
+TAB NAME: v11__06_REAL_PLAYER_JOURNEYS_20.csv>index,id,journey,natural_actions,game_stage,experience_outcome,negative,status,evidence_sha
+0,J01,"New run, knife-first, no Core/Elder",Spawn→harvest→knife combat→craft→return alive,First 30–90 min,Starter autonomy; multiple viable spawns,No tutorial/item injection,NOT_RUN,NONE
+1,J02,First Core discovery,Road/POI→first Core UID→Gold cast with starter charge→death bag,Early/mid,Rare find feels comparable to valuable LI gun,No first cast requiring advanced refinery,NOT_RUN,NONE
+2,J03,Common energy supply chain,Mine/salvage→craft Basic→load Core→fire many LMB→repair,Early,Ammo manufacturing accessible like common LI 9mm,No extreme biome requirement,NOT_RUN,NONE
+3,J04,Workshop II/III investment,Ore→furnace→parts→bench II→industrial outputs→bench III,Mid,Technology adds practical consumers and reverses loot value,No station tier confusion,NOT_RUN,NONE
+4,J05,Scrap/R&D tradeoff,Road scrap→recycler→Spares→research OR vendor buy,Mid,Choice between immediate power and recipe freedom,No sell-recycle mint loop,NOT_RUN,NONE
+5,J06,Progressive POI card raid,Green key→powered door→next key→hazard→deep loot→safe exit,Mid/late,Real routes and energy/timer constraints,No hardcode skip gate,NOT_RUN,NONE
+6,J07,Large loot cargo and repeat visit,Partially loot military crate→leave→return→empty/despawn→later new box,Multi-session,Crate behaves like Last Island one-way loot,No storing own items,NOT_RUN,NONE
+7,J08,Airdrop sight and recovery,Hear/see drop→plan route→wait/defend→open→choose cargo→return,Timed world,Excitement without PvP copy,No scheduled money-printing,NOT_RUN,NONE
+8,J09,Biome essence expedition,Common essence low-yield vs rich dangerous hot/cold/wet/spirit region,Mid/late,Special destination enriches Gold without mandatory Elder,No single exclusive source,NOT_RUN,NONE
+9,J10,Elemental Core multi-interactions,"Fire vs rain, Elsa vs water, Earth trees→wood, Storm vs wet enemy",Mid/late,World reacts and economy remains closed,No visual-only damage/land effect,NOT_RUN,NONE
+10,J11,Defensible home and offline,Build house→load upkeep→walk out with trace→logout 24/48/72h→return,Mid/late,Maintenance pressure with understandable consequences,No omniscient raid or unfair instant collapse,NOT_RUN,NONE
+11,J12,Village future hook only,Inspect future villager roles as contract but play without invented workers,All,"No forgotten user vision, no unauthorized automation",No automatically paid NPC labor,NOT_RUN,NONE
+12,J13,Home manufacturing surprise,Fuel job and garden→go explore→return after offline→collect exactly produced goods,All,Reasons to log in again,No phantom offline output,NOT_RUN,NONE
+13,J14,Industrial oil loop,Find crude/fuel→extract→refine→generator or vehicle→repair/refuel,Mid/late,Oil creates connected industry,No tank slider only,NOT_RUN,NONE
+14,J15,Freight route comparison,Same ore source visited walking/cart/powered vehicle with full upkeep,Mid/late,Vehicle changes radius and net goods,No transport teleport,NOT_RUN,NONE
+15,J16,Core rarity and loadouts,Compare common/rare/premium 7 Core across same enemies/terrain,Multi-run,Identity beyond raw damage; common cartridge remains useful,No strongest element hierarchy,NOT_RUN,NONE
+16,J17,Ragnarok non-boss physical cash,Final 72h nonboss POI→cash→legal owned escrow buy→positive deposit,Endgame,Alternative endgame meaningful,No infinite cash/login awards,NOT_RUN,NONE
+17,J18,Six Elder optional route,"Prepare Core/PPE/vehicle, fight distinct Elder with authentic FX",Endgame,Boss reward not mandatory to survive,No generic arena clones,NOT_RUN,NONE
+18,J19,Run ends and re-entry,336h finalize→wipe world/run economy→retain history & secured cash only,Run boundary,Clear stakes and replayability,No Core/Spare carries over,NOT_RUN,NONE
+19,J20,Visual/UI first-hour usability,New player without guide uses inventory/research/reload/Q/E and sees HUD,Early,Readable attractive original pixel art,No 640x360 clipping,NOT_RUN,NONE
