@@ -69,3 +69,6 @@ SOH GAMEPLAY V18 — integrate player-world source→recipe→action, no more fa
 AVFX HEAD ca8eaac49cf28b904cd0511b7bec1a366f211be8 updated at 03:32Z; wait for Arena IDLE/DONE and exact-head QA to inspect. Next prompt should require seven Core × three Gold actions mapped to actual Gameplay event phases (anticipation/impact/world effect/OUT/recast), current real map, and visual side-by-side timing. Current 244 and ARCANA20 counts do NOT supply this automatically. Do not send while AVFX possibly running.
 
 **No prompt was sent to Arena in this audit.** This file provides Creator-ready copyable scripts, not an issued job. When user verifies Map/Gameplay session IDLE, next corrective prompt can be pasted immediately. Release and merge are NOT ready.
+
+## 8. Live AVFX HEAD drift after initial visual sample
+At 2026-11-05 03:46Z AVFX advanced from ca8eaac4 to cc7a5d9a57f99181d1a3e25d43fd500dd3d8fb27: a new adaptive resampling change in pixelfx244 build script and arcane HTML test build. No prior saved visual evidence asset was modified by this commit in the compare file list. Thus the #04 visual sample remains a source-image observation from the prior SHA, NOT independent QA of the new AVFX HEAD. Treat owner as potentially actively implementing, do not deliver overlapping Arena prompt. All other Gameplay/Map pins unchanged at this refresh.
