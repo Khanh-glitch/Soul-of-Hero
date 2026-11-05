@@ -96,5 +96,17 @@ t('T-F52 baseline / NATURE-01 QA evidence still all-pass (no regression)', (() =
   return Object.keys(g).length === 24 && Object.values(g).every(v => v.status === 'PASS') && n.passing === n.total && n.failing.length === 0;
 })());
 
+t('T-F53 delivery record exists with commit-pinned links', (() => {
+  const d = JSON.parse(read('evidence/nature02-delivery.json'));
+  return d.schema === 'soh.u05.nature02-delivery.v1' && d.deliveryCommit.length === 40 &&
+    d.links.commitPinnedRaw.includes(d.deliveryCommit) && d.links.play.includes('/nature02') &&
+    d.links.download.includes('/nature02-download') && d.executable.sha256 === build.sha256 &&
+    d.stopConditions.visualAccepted === false && d.stopConditions.productionApproved === false;
+})());
+t('T-F54 preview evidence 6/6 routes with correct SHAs', (() => {
+  const d = JSON.parse(read('evidence/nature02-preview.json'));
+  return d.pass === true && d.routes.length === 6 && d.routes.every(r => r.status === 200 && r.matchesOnDisk && r.downloadHeaderOk) &&
+    d.nKeyToggle.join(',') === 'true,false,true' && d.pageErrors.length === 0;
+})());
 console.log(`U05_NATURE02_TESTS pass=${pass} fail=${fail} verdict=${fail ? 'FAIL' : 'U05_NATURE02_STATIC_TESTS_PASS'}`);
 if (fail) process.exit(1);

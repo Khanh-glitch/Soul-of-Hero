@@ -146,7 +146,7 @@ không `VEYRA_PLAYABLE`. `P5-G5/G6` vẫn FAIL, `P5-G7/G8` PARTIAL.
 | `evidence/nature02-{build,forest,assets,qa,visual-review,preview,delivery}.json` | Nguồn SHA, thiết kế 13 stand/3 clearing/3 route, audit alpha-bbox thật, 15 gate QA, 5 đánh giá thị giác RIÊNG, preview 6 route, links giao |
 | `evidence/nature02-shots/*.png` | 44 ảnh native 640×360: 4 cặp OFF/ON, 4 bộ so sánh baseline/NATURE-01/NATURE-02 cùng toạ độ, 3 full-viewport, 12 đi phím thật, 1 bảng audit art |
 | `web-u05/src/nature02/*` | `forest-sites.ts` (composition + owner dependency + asset gap), `forest.ts` (đặt/vẽ/audit), `art-audit.ts` (đo sprite thật), `main.ts` (viewer + `N`/`M`/1–3) |
-| `tests/qa-nature02.mjs`, `tests/test-nature02.mjs`, `tests/qa-nature02-preview.mjs` | 15 gate browser + 52 static test + 6 route live preview |
+| `tests/qa-nature02.mjs`, `tests/test-nature02.mjs`, `tests/qa-nature02-preview.mjs` | 15 gate browser + 54 static test + 6 route live preview |
 | `tools/build-asset-inventory-nature02.mjs`, `build-nature02-forest-slice.mjs` | Inventory/audit art thật + build 1 file HTML |
 
 `1`/`2`/`3` → rừng sâu / khoảng trống / rìa đường; `N` tắt/bật; `M` mở bảng

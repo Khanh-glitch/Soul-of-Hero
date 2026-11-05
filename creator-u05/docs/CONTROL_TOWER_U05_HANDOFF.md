@@ -440,7 +440,7 @@ OFF/ON, 4 bộ so sánh baseline / NATURE-01 / NATURE-02 **cùng toạ độ** (
 site-01 `[1472,1336]`), 3 ảnh full-viewport Chromium, 12 ảnh đi phím thật
 (`D→S→A→W`, 1.152 / 1.188 / 1.224 px, 4 keydown + 4 keyup mỗi composition), 1
 bảng audit art. `tests/qa-nature02.mjs` **15/15 PASS, errors=0**;
-`tests/test-nature02.mjs` **52/52**; `test-nature01.mjs` 31/31; `test-u05.mjs`
+`tests/test-nature02.mjs` **54/54**; `test-nature01.mjs` 31/31; `test-u05.mjs`
 272/0; `tsc` sạch; preview **6/6 route** gồm `/nature02` +
 `/nature02-download` (4 route cũ không đổi). p50/p95 16,7–16,8 ms ON=OFF.
 

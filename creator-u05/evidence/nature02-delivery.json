@@ -1,0 +1,248 @@
+{
+  "schema": "soh.u05.nature02-delivery.v1",
+  "generatedAt": "2026-11-05",
+  "pilot": "NATURE-02 FOREST QUALITY VERTICAL SLICE — ONE biome, THREE compositions",
+  "status": "REVIEWABLE_PILOT__NOT_APPROVED_FOR_PRODUCTION__NOT_VISUAL_ACCEPTANCE",
+  "branch": "arena/2e3cfbd2-soul-of-hero",
+  "deliveryCommit": "e705593ef25e204d3d3d3341a1a421c5fecb4a57",
+  "verifiedMapHeadAtPilotStart": "b5dfafb278eb15333a66a4d3b24c23d4aa17c427",
+  "gameplayHeadVerifiedByCreator": "5b3e683402bbc8540dea9404576164097e753f97",
+  "gameplayHeadObservedLater": "2f0836587b76a4a98fffedf8c202fb37cbb2a67c",
+  "gameplayOwnerBranch": "arena/d4bfcfff-soul-of-hero",
+  "protected": {
+    "terrainBaseline": {
+      "file": "creator-u05/SoulOfHero_TerrainOnly_U05_x10.html",
+      "sha256": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0",
+      "untouched": true
+    },
+    "nature01": {
+      "file": "creator-u05/SoulOfHero_Nature01_U05.html",
+      "sha256": "ac4d54e310f0f3cf7e0e12d728bc5e9ad62f801994be37ce64f76b099af4a0a7",
+      "untouched": true
+    },
+    "nature01EvidencePreserved": true,
+    "terrainOnlyEvidencePreserved": true,
+    "goldWmp04r1RoadsRiversCollisionAuthorityUnchanged": true
+  },
+  "executable": {
+    "file": "creator-u05/SoulOfHero_Nature02_ForestSlice.html",
+    "bytes": 1436807,
+    "sha256": "6e1e897a0e365412f6bc92d65390dc10bf7b0352e6ad8ef4a1c38e57f4f30fa6",
+    "zipMirror": {
+      "file": "creator-u05/SoulOfHero_Nature02_ForestSlice.zip",
+      "bytes": 131874,
+      "sha256": "aad5955d9f7669d61be70ad3dd45c092033064e31f6c7a29f1c959a00670fc58"
+    },
+    "selfContained": true,
+    "runsFrom": [
+      "file:// double-click",
+      "static http(s) host",
+      "vite dev nature02.html"
+    ]
+  },
+  "links": {
+    "play": "https://5183-iedijpwzkleoc2bvjmqg0.e2b.app/nature02",
+    "download": "https://5183-iedijpwzkleoc2bvjmqg0.e2b.app/nature02-download",
+    "baselinePlay": "https://5183-iedijpwzkleoc2bvjmqg0.e2b.app/",
+    "baselineDownload": "https://5183-iedijpwzkleoc2bvjmqg0.e2b.app/download",
+    "nature01Play": "https://5183-iedijpwzkleoc2bvjmqg0.e2b.app/nature01",
+    "nature01Download": "https://5183-iedijpwzkleoc2bvjmqg0.e2b.app/nature01-download",
+    "commitPinnedRaw": "https://github.com/Khanh-glitch/Soul-of-Hero/raw/e705593ef25e204d3d3d3341a1a421c5fecb4a57/creator-u05/SoulOfHero_Nature02_ForestSlice.html",
+    "commitPinnedBlob": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/e705593ef25e204d3d3d3341a1a421c5fecb4a57/creator-u05/SoulOfHero_Nature02_ForestSlice.html",
+    "commitPinnedZipRaw": "https://github.com/Khanh-glitch/Soul-of-Hero/raw/e705593ef25e204d3d3d3341a1a421c5fecb4a57/creator-u05/SoulOfHero_Nature02_ForestSlice.zip",
+    "branchPinnedRaw": "https://github.com/Khanh-glitch/Soul-of-Hero/raw/refs/heads/arena/2e3cfbd2-soul-of-hero/creator-u05/SoulOfHero_Nature02_ForestSlice.html",
+    "previewRoutesVerified": [
+      {
+        "path": "/",
+        "status": 200,
+        "bytes": 1407498,
+        "sha256": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0",
+        "contentDisposition": null,
+        "contentType": "text/html; charset=utf-8",
+        "matchesOnDisk": true,
+        "downloadHeaderOk": true
+      },
+      {
+        "path": "/download",
+        "status": 200,
+        "bytes": 1407498,
+        "sha256": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0",
+        "contentDisposition": "attachment; filename=\"SoulOfHero_TerrainOnly_U05_x10.html\"",
+        "contentType": "application/octet-stream",
+        "matchesOnDisk": true,
+        "downloadHeaderOk": true
+      },
+      {
+        "path": "/nature01",
+        "status": 200,
+        "bytes": 1427241,
+        "sha256": "ac4d54e310f0f3cf7e0e12d728bc5e9ad62f801994be37ce64f76b099af4a0a7",
+        "contentDisposition": null,
+        "contentType": "text/html; charset=utf-8",
+        "matchesOnDisk": true,
+        "downloadHeaderOk": true
+      },
+      {
+        "path": "/nature01-download",
+        "status": 200,
+        "bytes": 1427241,
+        "sha256": "ac4d54e310f0f3cf7e0e12d728bc5e9ad62f801994be37ce64f76b099af4a0a7",
+        "contentDisposition": "attachment; filename=\"SoulOfHero_Nature01_U05.html\"",
+        "contentType": "application/octet-stream",
+        "matchesOnDisk": true,
+        "downloadHeaderOk": true
+      },
+      {
+        "path": "/nature02",
+        "status": 200,
+        "bytes": 1436807,
+        "sha256": "6e1e897a0e365412f6bc92d65390dc10bf7b0352e6ad8ef4a1c38e57f4f30fa6",
+        "contentDisposition": null,
+        "contentType": "text/html; charset=utf-8",
+        "matchesOnDisk": true,
+        "downloadHeaderOk": true
+      },
+      {
+        "path": "/nature02-download",
+        "status": 200,
+        "bytes": 1436807,
+        "sha256": "6e1e897a0e365412f6bc92d65390dc10bf7b0352e6ad8ef4a1c38e57f4f30fa6",
+        "contentDisposition": "attachment; filename=\"SoulOfHero_Nature02_ForestSlice.html\"",
+        "contentType": "application/octet-stream",
+        "matchesOnDisk": true,
+        "downloadHeaderOk": true
+      }
+    ]
+  },
+  "sourceSha256": {
+    "SoulOfHero_Nature02_ForestSlice.html": "6e1e897a0e365412f6bc92d65390dc10bf7b0352e6ad8ef4a1c38e57f4f30fa6",
+    "SoulOfHero_Nature01_U05.html": "ac4d54e310f0f3cf7e0e12d728bc5e9ad62f801994be37ce64f76b099af4a0a7",
+    "SoulOfHero_TerrainOnly_U05_x10.html": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0",
+    "web-u05/nature02.html": "920524226864ce6af7a28536c80532e245ed75e5cb89bc4bfe6da748f8c65fff",
+    "web-u05/src/nature02/main.ts": "cc5f273400d97149c68f80727133595de1dd14c67a463baa9d4f67a3cd62c37e",
+    "web-u05/src/nature02/forest.ts": "a022e552bdf695e08b05a99163beb605b800f539b54ce5df0bcae780610ba9eb",
+    "web-u05/src/nature02/forest-sites.ts": "917a2e619221fb5725004c87be733406a883e264b348ca302e19773fcb4908de",
+    "web-u05/src/nature02/art-audit.ts": "31ab211257aabc66360ee78ef28eed3125ef389ab04f411585c3a82c7832088c",
+    "web-u05/src/game/art.ts": "896aa51abfac516b4228994ae7a20a67c4644a587028146b5c79336103a1ec20",
+    "web-u05/src/u05/terrain.ts": "3d3fa1605a121ba2bcd8b26e0333cbf8a7ada71adfca67ce7e8e3ee3ca225bc4",
+    "web-u05/src/u05/world.ts": "78317efe40c18f7ed4bf7d3c129be4f423b6a7abaac7625e8f9938c73b2264fd"
+  },
+  "sourceCustody": {
+    "artSource": "creator-u05/web-u05/src/game/art.ts vendored verbatim from b5c8004ca4e77be62484fb3cd296fe296d7de4c9:web/src/game/art.ts",
+    "artUnchanged": true,
+    "reVendored": false,
+    "newAtlas": false,
+    "newArtAssets": 0,
+    "spriteScaling": false,
+    "geography": "GOLD VEYRA_GOLD_MAP.sohmap.json + WMP-04R1 via sampleTile() — READ ONLY",
+    "disclosure": "creator-u05/evidence/source-custody.json → nature02Disclosure"
+  },
+  "design": {
+    "oneBiomeOnly": true,
+    "biome": "temperate_forest",
+    "window": [
+      1392,
+      1288,
+      1488,
+      1352
+    ],
+    "compositions": [
+      {
+        "key": "dense_interior",
+        "shotTile": [
+          1416,
+          1320
+        ]
+      },
+      {
+        "key": "clearing",
+        "shotTile": [
+          1408,
+          1332
+        ]
+      },
+      {
+        "key": "road_forest_edge",
+        "shotTile": [
+          1452,
+          1316
+        ]
+      }
+    ],
+    "stands": 13,
+    "clearings": 3,
+    "routes": 3,
+    "routeDefinition": "OBJECT-FREE CORRIDORS ONLY (1-tile half-width = 3-tile corridor): no path/road/ground pixel painted, no GOLD geometry authored, no Gameplay navigation permission minted.",
+    "totalObjects": 1350,
+    "stabilityHash": "5dccf0df",
+    "zeroVetoViolations": true,
+    "openGround": {
+      "dense_interior": 0.6137,
+      "clearing": 0.7035,
+      "road_forest_edge": 0.6846
+    }
+  },
+  "artAudit": {
+    "heroCanvas": [
+      16,
+      24
+    ],
+    "treeCanvas": [
+      24,
+      32
+    ],
+    "treeHeightVsHero": 1.3333333333333333,
+    "getArtSrcArrays": 22,
+    "audited": 12,
+    "used": 6,
+    "excluded": 16,
+    "canopyVerdict": "NOT_CONVINCING_WITH_EXISTING_ART_ALONE",
+    "undergrowthVerdict": "NOT_CONVINCING_WITH_EXISTING_ART_ALONE: grass/rock/reed/herb/mush are harvestable SOURCES; bush/bush_empty encode stocked/depleted Berry Bush; there is no dedicated non-harvestable fern/sapling layer.",
+    "assetGapSpec": "N02-ASSET-GAP-01",
+    "assetGapStatus": "PROPOSED__NOT_CREATED__NOT_APPROVED"
+  },
+  "semanticConflict": {
+    "status": "UNRESOLVED__BLOCKS_PRODUCTION",
+    "conflicts": 8,
+    "pilotStatus": "NOT_APPROVED_FOR_PRODUCTION",
+    "decisionRequiredFromGameplay": "Designate, in Gameplay-owned data, which oak/pine/rock/grass instances are harvestable and which are purely visual; OR ship a distinct non-harvestable forest asset set. Map must not invent rewards, collision, stock, depletion or source ownership.",
+    "mapCannotChange": true
+  },
+  "evidence": {
+    "shotsDirectory": "creator-u05/evidence/nature02-shots/",
+    "shotCount": 44,
+    "build": "creator-u05/evidence/nature02-build.json",
+    "design": "creator-u05/evidence/nature02-forest.json",
+    "assets": "creator-u05/evidence/nature02-assets.json",
+    "qa": "creator-u05/evidence/nature02-qa.json",
+    "visualReviewSeparate": "creator-u05/evidence/nature02-visual-review.json",
+    "preview": "creator-u05/evidence/nature02-preview.json",
+    "docs": "creator-u05/docs/NATURE02_FOREST_SLICE.md",
+    "handoff": "creator-u05/docs/CONTROL_TOWER_U05_HANDOFF.md §14"
+  },
+  "verification": {
+    "qaGates": "15/15 PASS",
+    "browserErrors": 0,
+    "staticTests": "54/54",
+    "nature01StaticTests": "31/31",
+    "u05StaticTests": "272/0",
+    "tsc": "clean",
+    "previewRoutes": "6/6",
+    "offPixelIdenticalToBaseline": true,
+    "visualEvaluations": 5,
+    "objectiveFailures": 12
+  },
+  "stopConditions": {
+    "oneBiomeOnly": true,
+    "newStandalonePilotFile": "creator-u05/SoulOfHero_Nature02_ForestSlice.html",
+    "nature01AndTerrainOnlyUnchanged": true,
+    "otherBiomesUnchanged": true,
+    "fullWorldPropagation": false,
+    "gameplayMerge": false,
+    "visualAccepted": false,
+    "veyraPlayableClaimed": false,
+    "productionApproved": false,
+    "unapprovedSubstituteAssetManufactured": false
+  },
+  "note": "Delivery record only. No full-world propagation, no other biome, no Gameplay merge, no VISUAL_ACCEPTED, no VEYRA_PLAYABLE, no unapproved substitute asset. QA/browser evidence is NOT visual acceptance."
+}

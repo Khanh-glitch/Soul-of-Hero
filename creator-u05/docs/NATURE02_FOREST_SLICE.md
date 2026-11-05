@@ -203,7 +203,7 @@ keydowns + 4 keyups each, camera follows, no teleport, no camera-as-route.
 | F-G12 | 16 authority tiles identical, despeckle config identical, 0 isolated painted cells, 0 objects outside the window |
 | F-G13 | 0 errors, no camera trick, evidence SHA consistency |
 
-`tests/test-nature02.mjs` **52/52**; `tests/test-nature01.mjs` **31/31**;
+`tests/test-nature02.mjs` **54/54**; `tests/test-nature01.mjs` **31/31**;
 `tests/test-u05.mjs` **272/0** (its regenerated `test-results.json` was restored
 to the standing packet); `npx tsc --noEmit -p web-u05/tsconfig.u05.json` clean;
 `tests/qa-nature02-preview.mjs` PASS, 6/6 routes. `evidence/nature01-*.json` and
@@ -325,3 +325,16 @@ node tests/test-nature02.mjs
 LD_LIBRARY_PATH=/tmp/al2023/lib node tests/qa-nature02-preview.mjs
 cd web-u05 && npx tsc --noEmit -p tsconfig.u05.json
 ```
+
+
+---
+
+## 12. Delivery record
+
+**Feature commit:** `e705593ef25e204d3d3d3341a1a421c5fecb4a57` (this slice's
+sources, standalone HTML/ZIP, 44 PNGs, QA, docs and evidence).
+**Full link / SHA / custody record:** `creator-u05/evidence/nature02-delivery.json`
+(`soh.u05.nature02-delivery.v1`) — commit-pinned raw/blob/ZIP URLs, preview +
+download routes, 11 source SHA-256 values, protected baseline/NATURE-01 SHAs,
+and the stop conditions. A second commit adds this note and that JSON; both are
+pushed only to `arena/2e3cfbd2-soul-of-hero`.
