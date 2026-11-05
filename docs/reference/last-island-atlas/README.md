@@ -35,4 +35,21 @@ For each implementation/review: select SOH Bible K/C laws; read the correspondin
 
 Do not elevate a failed scripted journey into a universal sandbox blocker without identifying a code-level cause. Agent implementation work should prioritize building connected mechanics over repeating long QA scripts.
 
-Any source that is not in GitHub's extracted tree must be marked as unavailable there, rather than invented or claimed read. The original package remains separately preserved; exact ZIP bytes are not claimed to be committed in this tree.
+Some sources are not directly indexed in `extracted/`, but all original source bytes are now recoverable from the tracked multipart archive described below. Read the actual files from the verified reconstruction, not inferred summaries.
+
+## Full original archive now recoverable from GitHub
+
+The exact original `atlas.zip` **is present as 13 Git-tracked Base64 source parts** in `source/`. This preserves the complete 26-entry source package, including all original XLSX workbooks and the nested v10/v11 ZIPs, without depending on external Drive access.
+
+To restore on a checked-out docs branch (Python 3 standard library only):
+
+```bash
+python3 docs/reference/last-island-atlas/restore_atlas.py --extract
+```
+
+The script reassembles `atlas.zip`, checks its byte length and SHA-256 against `SOURCE_MANIFEST.json`, verifies all top-level ZIP CRC checksums, and writes the extracted top-level files to `extracted_full/`. The v10 and v11 packages inside may then be unpacked as needed. Do not confuse directly tracked `extracted/` (selected readable text subset) with `extracted_full/` (the verified full source, generated locally).
+
+**Source verification:** all 13 GitHub blob SHA-1 objects and sizes were compared against the local parts generated from the source ZIP. Their bytes match. The complete joined archive was verified locally against the original ZIP and SHA-256:
+`8b4fdedaa9397baaa1bcb8ba58d5c95ca2e7cbdd679963c6d4177fc9ab861e98`.
+
+If you are working from PR #44, fetch `docs/gameplay-mechanics-first-policy-20261105` as a **read-only reference branch**. Do not reset, rebase or overwrite active Gameplay work just to access the source.
