@@ -16,3 +16,16 @@ They live in this folder in the workspace and can always be regenerated:
   node web/scripts/export-pixelfx244-batches.mjs --pack /tmp/pfx244 --out web/releases/pixelfx244-batches
 
 See BATCHES-MANIFEST.json for per-batch effect lists, sizes and sha256.
+
+## Hợp đồng sử dụng cho agent khác (quality cố định, behavior tự do)
+- **Chất lượng hình ảnh = 100% cố định**: toàn bộ 732 file PNG trong 21 zip này byte-identical
+  với bản gốc upstream render (đã kiểm chứng sha256 732/732 trùng khớp, 0 sai khác). Agent KHÔNG
+  nên re-encode/nén lại ảnh; muốn nét đúng như bản gốc thì dùng nguyên file trong zip.
+- **Trigger / scale / vị trí / cách hoạt động = tự do thiết kế**: mỗi chiêu chỉ cần `id`
+  (ví dụ `arcane/rune-circle`) + metadata trong `index.json` của batch (frames, fps, page atlas,
+  coreBounds, presentation.anchor). Agent tự chọn khi nào trigger, đặt ở đâu, scale bao nhiêu,
+  loop hay one-shot — không ảnh hưởng gì đến chất lượng ảnh (ảnh luôn full-res).
+- Lấy 1 chiêu riêng lẻ: giải nén đúng folder `assets/<category>/<effect>/` trong zip của category đó.
+- Batch nào cũng tái tạo được từ source: `intake.mjs` (upstream pinned a841596...) rồi
+  `export-pixelfx244-batches.mjs` — xem `BATCHES-MANIFEST.json` để biết zip nào chứa effect id nào,
+  kèm sha256 để verify.
