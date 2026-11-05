@@ -1,0 +1,28 @@
+SOH-PIXELF-244-TEST.html — single-file test build embedding the FULL 244-effect PixelFX pack.
+
+Pack provenance: upstream https://github.com/patch-gg/pixelfx pinned at
+a84159688af3ca37a4be05a0d422b94451b2e24e (codeload tarball), rendered with
+  node tools/pixelfx_foundry/intake.mjs --upstream <checkout> --out <pack>  => 244/244 PARITY_PASS.
+Encoding: atlas pages re-encoded to WebP q=0.85 at scale k=0.5 (both channels) and embedded as
+data: URLs; page dimensions scaled by k so frame lookup is unchanged. k=0.5 is the highest
+resolution that fits a single file under the 100 MB GitHub per-file limit (k=0.5 q=0.95 -> 122 MB only via Release asset; k=0.6 q=0.93 -> 153 MB, k=0.75 ->
+187 MB — over cap). On screen, effect cores render at 20-90 px while k=0.5 cells are 42-90 px,
+so most families draw 1:1 or downscaled (crisp); only screen-family effects on small-frame
+atlases upscale ~2x. The 11 pilot effects stay embedded full-res (they are part of the game
+bundle), which is why they look sharper than the rest — known, size-driven difference.
+
+artifact sha256 : 1b8b54a55bb627b74b80042e1485b05c418e1809bcc538a918eef0c3b9a07c73
+size            : 97.4 MB (kept under the 100 MB GitHub raw-file limit; a k=0.5 q=0.95 122 MB variant is attached to release pixelfx244-test-v2)
+built by scripts/build-pixelfx244-test.mjs from dist/index.html + boot shim (stale-save
+recovery watcher, auto New run/Meadow Bay/Begin, inject via QA-only pfx.injectManifest, F9).
+
+Per-effect fidelity QA (scripts/qa-pixelfx244-fidelity.mjs, report in
+evidence/pixelfx244-fidelity/): all 732 atlas pages compared pixel-wise against the original
+PNGs (embedded drawn back at original page size): 244/244 effects compared, 0 missing,
+overall mean abs diff 19.6/1020 (~1.9% per channel, dominated by the k=0.5 downscale, not the
+codec). Worst 15 listed in page-fidelity.json (fish-school, haste, leaf-storm, energy-core,
+fire-breath, slime, jellyfish, black-hole, ...). Spawn check: 244/244 spawn + load + render;
+frame-0-blank intros verified at mid-frame (243/244; moves/dash-strike frame 35 is a blank tail
+frame by design — frames 5-22 carry the slash).
+
+# crisp-render rebuild note: test HTMLs embed lossless fullres category + forced imageSmoothingEnabled=false shim (build-pixelfx244-test.mjs)

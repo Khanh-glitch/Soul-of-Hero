@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest run --testTimeout=120000"
+    "test": "vitest run --testTimeout=300000",
+    "qa:pixelfx": "node scripts/qa-pixelfx.mjs",
+    "gen:pilot": "node scripts/gen-pilot.mjs"
   },
   "dependencies": {
     "@fontsource/pixelify-sans": "^5.2.5",
@@ -23,7 +25,7 @@
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "5.1.1",
-    "playwright": "^1.49.1",
+    "playwright": "^1.64.1",
     "tailwindcss": "4.1.17",
     "typescript": "5.9.3",
     "vite": "7.3.2",

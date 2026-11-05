@@ -1,0 +1,797 @@
+{
+ "note": "CPU emulation of the presenter frame graph over the REAL captured SOH world region (640x360 canvas, region 384x216 at 128,78). BEFORE=frozen 354054e opaque replace+14px feather; AFTER=signed delta * influence.",
+ "spells": {
+  "#4-day": {
+   "open": {
+    "t": 1,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0.55,
+     "fracChanged": 0.0048
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0.55,
+     "fracChanged": 0.0048
+    },
+    "inflEdgeFrac": 0
+   },
+   "peak": {
+    "t": 4.1,
+    "beforeVsScene": {
+     "edgeMean": 16.21,
+     "edgeMax": 185,
+     "interiorMean": 36.5,
+     "fracChanged": 0.9298
+    },
+    "afterVsScene": {
+     "edgeMean": 3.08,
+     "edgeMax": 211,
+     "interiorMean": 10.2,
+     "fracChanged": 0.2025
+    },
+    "inflEdgeFrac": 0.0673
+   },
+   "impact": {
+    "t": 4.25,
+    "beforeVsScene": {
+     "edgeMean": 16.21,
+     "edgeMax": 185,
+     "interiorMean": 38.43,
+     "fracChanged": 0.9298
+    },
+    "afterVsScene": {
+     "edgeMean": 3.08,
+     "edgeMax": 211,
+     "interiorMean": 12.29,
+     "fracChanged": 0.2065
+    },
+    "inflEdgeFrac": 0.0674
+   },
+   "out": {
+    "t": 7.99,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0,
+     "fracChanged": 0
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0,
+     "fracChanged": 0
+    },
+    "inflEdgeFrac": 0
+   }
+  },
+  "#6-day": {
+   "open": {
+    "t": 1,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 2.7,
+     "fracChanged": 0.0132
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 2.7,
+     "fracChanged": 0.0132
+    },
+    "inflEdgeFrac": 0
+   },
+   "peak": {
+    "t": 5.2,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 12.2,
+     "fracChanged": 0.0921
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 12.2,
+     "fracChanged": 0.0921
+    },
+    "inflEdgeFrac": 0.0046
+   },
+   "impact": {
+    "t": 5.35,
+    "beforeVsScene": {
+     "edgeMean": 15.43,
+     "edgeMax": 200,
+     "interiorMean": 42.92,
+     "fracChanged": 0.9207
+    },
+    "afterVsScene": {
+     "edgeMean": 0.1,
+     "edgeMax": 57,
+     "interiorMean": 22.01,
+     "fracChanged": 0.3071
+    },
+    "inflEdgeFrac": 0.0046
+   },
+   "out": {
+    "t": 8.39,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0,
+     "fracChanged": 0
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0,
+     "fracChanged": 0
+    },
+    "inflEdgeFrac": 0
+   }
+  },
+  "#12-day": {
+   "open": {
+    "t": 1,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0.85,
+     "fracChanged": 0.0048
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0.85,
+     "fracChanged": 0.0048
+    },
+    "inflEdgeFrac": 0
+   },
+   "peak": {
+    "t": 7.14,
+    "beforeVsScene": {
+     "edgeMean": 24.25,
+     "edgeMax": 208,
+     "interiorMean": 54.94,
+     "fracChanged": 0.9448
+    },
+    "afterVsScene": {
+     "edgeMean": 6.47,
+     "edgeMax": 227,
+     "interiorMean": 13.18,
+     "fracChanged": 0.1604
+    },
+    "inflEdgeFrac": 0.092
+   },
+   "impact": {
+    "t": 7.29,
+    "beforeVsScene": {
+     "edgeMean": 11.7,
+     "edgeMax": 205,
+     "interiorMean": 30.37,
+     "fracChanged": 0.8801
+    },
+    "afterVsScene": {
+     "edgeMean": 1.99,
+     "edgeMax": 227,
+     "interiorMean": 10.76,
+     "fracChanged": 0.1598
+    },
+    "inflEdgeFrac": 0.0569
+   },
+   "out": {
+    "t": 9.59,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0,
+     "fracChanged": 0
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0,
+     "fracChanged": 0
+    },
+    "inflEdgeFrac": 0
+   }
+  },
+  "#13-day": {
+   "open": {
+    "t": 1,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 2.15,
+     "fracChanged": 0.0202
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 2.15,
+     "fracChanged": 0.0202
+    },
+    "inflEdgeFrac": 0
+   },
+   "peak": {
+    "t": 4.6,
+    "beforeVsScene": {
+     "edgeMean": 0.01,
+     "edgeMax": 32,
+     "interiorMean": 4.48,
+     "fracChanged": 0.0504
+    },
+    "afterVsScene": {
+     "edgeMean": 0.01,
+     "edgeMax": 32,
+     "interiorMean": 4.48,
+     "fracChanged": 0.0504
+    },
+    "inflEdgeFrac": 0.0337
+   },
+   "impact": {
+    "t": 4.75,
+    "beforeVsScene": {
+     "edgeMean": 13.04,
+     "edgeMax": 165,
+     "interiorMean": 33.21,
+     "fracChanged": 0.8867
+    },
+    "afterVsScene": {
+     "edgeMean": 1.92,
+     "edgeMax": 151,
+     "interiorMean": 11.71,
+     "fracChanged": 0.2016
+    },
+    "inflEdgeFrac": 0.0783
+   },
+   "out": {
+    "t": 8.19,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0,
+     "fracChanged": 0
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0,
+     "fracChanged": 0
+    },
+    "inflEdgeFrac": 0
+   }
+  },
+  "#14-day": {
+   "open": {
+    "t": 1,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 5.18,
+     "fracChanged": 0.0378
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 5.18,
+     "fracChanged": 0.0378
+    },
+    "inflEdgeFrac": 0
+   },
+   "peak": {
+    "t": 5.6,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 8.57,
+     "fracChanged": 0.0957
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 8.57,
+     "fracChanged": 0.0957
+    },
+    "inflEdgeFrac": 0
+   },
+   "impact": {
+    "t": 5.75,
+    "beforeVsScene": {
+     "edgeMean": 13.19,
+     "edgeMax": 191,
+     "interiorMean": 36.85,
+     "fracChanged": 0.9215
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 20.42,
+     "fracChanged": 0.3521
+    },
+    "inflEdgeFrac": 0
+   },
+   "out": {
+    "t": 8.79,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0,
+     "fracChanged": 0
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0,
+     "fracChanged": 0
+    },
+    "inflEdgeFrac": 0
+   }
+  },
+  "#18-day": {
+   "open": {
+    "t": 1,
+    "beforeVsScene": {
+     "edgeMean": 4.13,
+     "edgeMax": 224,
+     "interiorMean": 5.56,
+     "fracChanged": 0.0313
+    },
+    "afterVsScene": {
+     "edgeMean": 8.83,
+     "edgeMax": 244,
+     "interiorMean": 5.56,
+     "fracChanged": 0.0324
+    },
+    "inflEdgeFrac": 0.0477
+   },
+   "peak": {
+    "t": 4.4,
+    "beforeVsScene": {
+     "edgeMean": 21.98,
+     "edgeMax": 187,
+     "interiorMean": 51.76,
+     "fracChanged": 0.9432
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 12.21,
+     "fracChanged": 0.1459
+    },
+    "inflEdgeFrac": 0
+   },
+   "impact": {
+    "t": 4.55,
+    "beforeVsScene": {
+     "edgeMean": 17.7,
+     "edgeMax": 178,
+     "interiorMean": 41.92,
+     "fracChanged": 0.9339
+    },
+    "afterVsScene": {
+     "edgeMean": 0.33,
+     "edgeMax": 136,
+     "interiorMean": 12.01,
+     "fracChanged": 0.1639
+    },
+    "inflEdgeFrac": 0.0099
+   },
+   "out": {
+    "t": 8.99,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0,
+     "fracChanged": 0
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0,
+     "fracChanged": 0
+    },
+    "inflEdgeFrac": 0
+   }
+  },
+  "#4-night": {
+   "open": {
+    "t": 1,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0.18,
+     "fracChanged": 0.0048
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0.18,
+     "fracChanged": 0.0048
+    },
+    "inflEdgeFrac": 0
+   },
+   "peak": {
+    "t": 4.1,
+    "beforeVsScene": {
+     "edgeMean": 13.32,
+     "edgeMax": 64,
+     "interiorMean": 31.42,
+     "fracChanged": 0.9294
+    },
+    "afterVsScene": {
+     "edgeMean": 2.03,
+     "edgeMax": 76,
+     "interiorMean": 8.96,
+     "fracChanged": 0.2024
+    },
+    "inflEdgeFrac": 0.0673
+   },
+   "impact": {
+    "t": 4.25,
+    "beforeVsScene": {
+     "edgeMean": 13.32,
+     "edgeMax": 64,
+     "interiorMean": 34.07,
+     "fracChanged": 0.9294
+    },
+    "afterVsScene": {
+     "edgeMean": 2.03,
+     "edgeMax": 76,
+     "interiorMean": 11.76,
+     "fracChanged": 0.2065
+    },
+    "inflEdgeFrac": 0.0674
+   },
+   "out": {
+    "t": 7.99,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0,
+     "fracChanged": 0
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0,
+     "fracChanged": 0
+    },
+    "inflEdgeFrac": 0
+   }
+  },
+  "#6-night": {
+   "open": {
+    "t": 1,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 2.93,
+     "fracChanged": 0.0132
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 2.93,
+     "fracChanged": 0.0132
+    },
+    "inflEdgeFrac": 0
+   },
+   "peak": {
+    "t": 5.2,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 12.89,
+     "fracChanged": 0.0921
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 12.89,
+     "fracChanged": 0.0921
+    },
+    "inflEdgeFrac": 0.0046
+   },
+   "impact": {
+    "t": 5.35,
+    "beforeVsScene": {
+     "edgeMean": 10.02,
+     "edgeMax": 67,
+     "interiorMean": 34.69,
+     "fracChanged": 0.9155
+    },
+    "afterVsScene": {
+     "edgeMean": 0.09,
+     "edgeMax": 26,
+     "interiorMean": 20.76,
+     "fracChanged": 0.3071
+    },
+    "inflEdgeFrac": 0.0046
+   },
+   "out": {
+    "t": 8.39,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0,
+     "fracChanged": 0
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0,
+     "fracChanged": 0
+    },
+    "inflEdgeFrac": 0
+   }
+  },
+  "#12-night": {
+   "open": {
+    "t": 1,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0.97,
+     "fracChanged": 0.0048
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0.97,
+     "fracChanged": 0.0048
+    },
+    "inflEdgeFrac": 0
+   },
+   "peak": {
+    "t": 7.14,
+    "beforeVsScene": {
+     "edgeMean": 20.27,
+     "edgeMax": 235,
+     "interiorMean": 48.84,
+     "fracChanged": 0.9429
+    },
+    "afterVsScene": {
+     "edgeMean": 5.95,
+     "edgeMax": 243,
+     "interiorMean": 13.42,
+     "fracChanged": 0.1605
+    },
+    "inflEdgeFrac": 0.092
+   },
+   "impact": {
+    "t": 7.29,
+    "beforeVsScene": {
+     "edgeMean": 5.51,
+     "edgeMax": 215,
+     "interiorMean": 19.15,
+     "fracChanged": 0.8018
+    },
+    "afterVsScene": {
+     "edgeMean": 1.49,
+     "edgeMax": 243,
+     "interiorMean": 10.27,
+     "fracChanged": 0.1518
+    },
+    "inflEdgeFrac": 0.0569
+   },
+   "out": {
+    "t": 9.59,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0,
+     "fracChanged": 0
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0,
+     "fracChanged": 0
+    },
+    "inflEdgeFrac": 0
+   }
+  },
+  "#13-night": {
+   "open": {
+    "t": 1,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 1.58,
+     "fracChanged": 0.0202
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 1.58,
+     "fracChanged": 0.0202
+    },
+    "inflEdgeFrac": 0
+   },
+   "peak": {
+    "t": 4.6,
+    "beforeVsScene": {
+     "edgeMean": 0.01,
+     "edgeMax": 32,
+     "interiorMean": 4.16,
+     "fracChanged": 0.0486
+    },
+    "afterVsScene": {
+     "edgeMean": 0.01,
+     "edgeMax": 32,
+     "interiorMean": 4.16,
+     "fracChanged": 0.0486
+    },
+    "inflEdgeFrac": 0.0337
+   },
+   "impact": {
+    "t": 4.75,
+    "beforeVsScene": {
+     "edgeMean": 7.47,
+     "edgeMax": 53,
+     "interiorMean": 23.98,
+     "fracChanged": 0.8674
+    },
+    "afterVsScene": {
+     "edgeMean": 1.24,
+     "edgeMax": 51,
+     "interiorMean": 11.69,
+     "fracChanged": 0.208
+    },
+    "inflEdgeFrac": 0.0783
+   },
+   "out": {
+    "t": 8.19,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0,
+     "fracChanged": 0
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0,
+     "fracChanged": 0
+    },
+    "inflEdgeFrac": 0
+   }
+  },
+  "#14-night": {
+   "open": {
+    "t": 1,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 5.32,
+     "fracChanged": 0.0378
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 5.32,
+     "fracChanged": 0.0378
+    },
+    "inflEdgeFrac": 0
+   },
+   "peak": {
+    "t": 5.6,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 8.22,
+     "fracChanged": 0.0843
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 8.22,
+     "fracChanged": 0.0843
+    },
+    "inflEdgeFrac": 0
+   },
+   "impact": {
+    "t": 5.75,
+    "beforeVsScene": {
+     "edgeMean": 9.48,
+     "edgeMax": 58,
+     "interiorMean": 30.79,
+     "fracChanged": 0.916
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 19.06,
+     "fracChanged": 0.3534
+    },
+    "inflEdgeFrac": 0
+   },
+   "out": {
+    "t": 8.79,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0,
+     "fracChanged": 0
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0,
+     "fracChanged": 0
+    },
+    "inflEdgeFrac": 0
+   }
+  },
+  "#18-night": {
+   "open": {
+    "t": 1,
+    "beforeVsScene": {
+     "edgeMean": 4.66,
+     "edgeMax": 239,
+     "interiorMean": 6.12,
+     "fracChanged": 0.0313
+    },
+    "afterVsScene": {
+     "edgeMean": 9.94,
+     "edgeMax": 247,
+     "interiorMean": 6.12,
+     "fracChanged": 0.0324
+    },
+    "inflEdgeFrac": 0.0477
+   },
+   "peak": {
+    "t": 4.4,
+    "beforeVsScene": {
+     "edgeMean": 17.4,
+     "edgeMax": 76,
+     "interiorMean": 43.69,
+     "fracChanged": 0.9422
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 12.03,
+     "fracChanged": 0.1461
+    },
+    "inflEdgeFrac": 0
+   },
+   "impact": {
+    "t": 4.55,
+    "beforeVsScene": {
+     "edgeMean": 12.28,
+     "edgeMax": 64,
+     "interiorMean": 33.08,
+     "fracChanged": 0.9279
+    },
+    "afterVsScene": {
+     "edgeMean": 0.26,
+     "edgeMax": 54,
+     "interiorMean": 11.56,
+     "fracChanged": 0.164
+    },
+    "inflEdgeFrac": 0.0099
+   },
+   "out": {
+    "t": 8.99,
+    "beforeVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0,
+     "fracChanged": 0
+    },
+    "afterVsScene": {
+     "edgeMean": 0,
+     "edgeMax": 0,
+     "interiorMean": 0,
+     "fracChanged": 0
+    },
+    "inflEdgeFrac": 0
+   }
+  }
+ }
+}

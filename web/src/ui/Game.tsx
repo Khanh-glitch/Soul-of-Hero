@@ -4,6 +4,14 @@ import { ITEMS, STRUCTS, ELDERS, CREATURES } from '../game/catalog';
 import { dispatch, phaseOf, runHours, dayTime, weatherAt, weatherSlot, countItem, C, entsAt, cartWeight, effTile, isRagnarok } from '../game/engine';
 import { tick, syncWorld, findInteract, activeStack, SPEED_KEY, type Input, type Interact } from '../game/sim';
 import { draw, consumeFX, cam } from '../game/render';
+import * as pfx from '../game/pixelfx';
+import * as comp from '../game/compositor';
+import { initPresenter } from '../game/gpu/presenter';
+import { d19 } from '../game/arcanaD19';
+import { d20 } from '../game/arcana20';
+import { arcanaLab } from '../game/arcana_lab';
+import { pfxFromSimEvent } from '../game/pixelfxMap';
+import FxLab from './FxLab';
 import { getWorld, ZONES } from '../game/world';
 import { sfx, setAmbience, initAudio } from '../game/audio';
 import { save, saveSync } from '../game/persist';
@@ -18,6 +26,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
   const [buildType, setBuildType] = useState<string | null>(null); const [reclaim, setReclaim] = useState(false);
   const [toasts, setToasts] = useState<{ id: number; text: string; tone?: string; t: number }[]>([]);
   const [banner, setBanner] = useState<{ text: string; sub?: string; id: number } | null>(null);
+  const [labOpen, setLabOpen] = useState(false); const [labHidden, setLabHidden] = useState(false); const labHiddenRef = useRef(false); labHiddenRef.current = labHidden; const labOpenRef = useRef(false); labOpenRef.current = labOpen; const [nightOverride, setNightOverride] = useState(false);
   const inp = useRef<Input>({ up: false, down: false, left: false, right: false, mx: 0, my: 0, attack: false, attackPressed: false, roll: false, cancel: false });
   const mouse = useRef({ x: 320, y: 180 }); const target = useRef<Interact | null>(null); const hitstop = useRef(0);
   const panelRef = useRef(panel); panelRef.current = panel; const buildRef = useRef(buildType); buildRef.current = buildType; const reclaimRef = useRef(reclaim); reclaimRef.current = reclaim;
@@ -70,6 +79,8 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       initAudio(); const r = gs.run; if (!r) return;
       if (keyMap[e.code]) { (inp.current as any)[keyMap[e.code]] = true; e.preventDefault(); return; }
       if (e.code === 'Tab') { e.preventDefault(); toggle('skills'); return; }
+      if (e.code === 'F9') { e.preventDefault(); setLabOpen(v => (labHiddenRef.current ? true : !v)); setLabHidden(false); return; }
+      if (e.code === 'KeyH' && labOpenRef.current) { setLabHidden(true); return; } // collapse lab for clean visual QA
       if (e.repeat) return;
       switch (e.code) {
         case 'Space': inp.current.roll = true; e.preventDefault(); break;
@@ -93,7 +104,17 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
 
   // main loop
   useEffect(() => {
-    const cv = cvRef.current!; const g = cv.getContext('2d')!; g.imageSmoothingEnabled = false;
+    pfx.initPfx(); // embedded pilot + full pack (lazy pages)
+    const cv = cvRef.current!;
+    // AVFX M1: visible canvas is the single WebGL2 presenter; the game keeps its
+    // Canvas2D world producer (offscreen) and the presenter does ONE upload +
+    // ONE post per frame. Zero-cast frames are an identity passthrough.
+    const presenter = initPresenter(cv, VIEW_W, VIEW_H);
+    try { comp.registerVfxClient(d19); } catch { /* already registered */ }
+    try { comp.registerVfxClient(d20); } catch { /* already registered */ }
+    try { comp.registerVfxClient(arcanaLab); } catch { /* already registered */ }
+    const g = presenter.worldContext();
+    (window as any).__presenter = presenter; (window as any).__comp = comp; // QA-only hooks
     let last = performance.now(); let raf = 0; let uiAcc = 0, saveAcc = 0, ambAcc = 0; let ended = false;
     const loop = (t: number) => {
       // Cap animation/input physics only; tick catches up autonomous wall time from lastSimAt.
@@ -103,9 +124,14 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       let simDt = dt; if (hitstop.current > 0) { hitstop.current -= dt; simDt = dt * 0.08; }
       tick(gs, i, simDt, now); i.attackPressed = false; i.roll = false; i.cancel = false;
       if (!gs.run) return;
+      pfx.update(simDt, now); pfx.tickStats(dt);
       target.current = findInteract(gs, now);
-      consumeFX(e => { sfx(e); if (e.type === 'toast') toast(e.text); else if (e.type === 'hitstop') hitstop.current = Math.max(hitstop.current, e.ms); else if (e.type === 'banner') setBanner({ text: e.text, sub: e.sub, id: now }); else if (e.type === 'discover') setBanner({ text: e.name, sub: 'Discovered', id: now }); else if (e.type === 'region') setBanner(b => (b && now - b.id < 2500 ? b : { text: e.name, id: now })); else if (e.type === 'pickup' || e.type === 'struct.destroyed') scheduleSave(); });
-      draw(g, gs, now, dt, { buildType: buildRef.current, reclaim: reclaimRef.current, mouseX: i.mx, mouseY: i.my, target: target.current, time: t });
+      consumeFX(e => { pfxFromSimEvent(e); sfx(e); if (e.type === 'toast') toast(e.text); else if (e.type === 'hitstop') hitstop.current = Math.max(hitstop.current, e.ms); else if (e.type === 'banner') setBanner({ text: e.text, sub: e.sub, id: now }); else if (e.type === 'discover') setBanner({ text: e.name, sub: 'Discovered', id: now }); else if (e.type === 'region') setBanner(b => (b && now - b.id < 2500 ? b : { text: e.name, id: now })); else if (e.type === 'pickup' || e.type === 'struct.destroyed') scheduleSave(); });
+      draw(g, gs, now, dt, { buildType: buildRef.current, reclaim: reclaimRef.current, mouseX: i.mx, mouseY: i.my, target: target.current, time: t, nightOverride: nightRef.current });
+      // unified compositor: collect typed GPU passes (deterministic client order),
+      // then the presenter owns the single post and presents the final frame
+      const layers = comp.collectGpuPasses({ g, cam: { x: Math.round(cam.x), y: Math.round(cam.y) }, now, dark: 0 });
+      presenter.present(layers);
       // close container panels when walking away
       const P = panelRef.current; if (P?.eid && gs.run.entities[P.eid]) { const e = gs.run.entities[P.eid]; if (Math.hypot(e.x - gs.run.player.x, e.y - gs.run.player.y) > 3.4 * TILE) setPanel(null); } else if (P?.eid && !gs.run.entities[P.eid]) setPanel(null);
       uiAcc += dt; if (uiAcc > 100) { uiAcc = 0; rerender(); }
@@ -129,7 +155,14 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
   };
   const onMouseUp = () => { inp.current.attack = false; };
 
+  const nightRef = useRef(nightOverride); nightRef.current = nightOverride;
   (window as any).__soh = gs; // QA-only inspection hook (browser automation); no gameplay authority
+  (window as any).__pfx = pfx; // QA-only hook for FX stats/instances
+  (window as any).__cam = cam; // QA-only camera hook
+  (window as any).__qaNight = (v: boolean) => setNightOverride(v); // QA-only darkness override; never touches game clock/save
+  (window as any).__d20qa = { play: () => { const r = (window as any).__soh?.run; d20.qaPlay(r?.player.x ?? 0, r?.player.y ?? 0); }, seek: (t: number) => { const r = (window as any).__soh?.run; d20.qaSeek(t, r?.player.x ?? 0, r?.player.y ?? 0); }, client: d20 }; // QA-only #20 visual bridge — NOT a gameplay cast event
+  (window as any).__arcanaLab = { cast: (i: number, mode?: string) => { const r = (window as any).__soh?.run; arcanaLab.qaCast(i, r?.player.x ?? 0, r?.player.y ?? 0, (mode as any) ?? 'lead'); }, seek: (t: number, i?: number, mode?: string) => { const r = (window as any).__soh?.run; arcanaLab.qaSeek(t, i, r?.player.x ?? 0, r?.player.y ?? 0, mode as any); }, catalog: arcanaLab.catalog, info: () => arcanaLab.qaInfo(), stop: () => arcanaLab.qaStop() }; // QA-only batch preview bridge
+  (window as any).__d19qa = { seek: (seconds: number, wx?: number, wy?: number) => { const r = (window as any).__soh?.run; d19.qaSeek(seconds, wx ?? r?.player.x ?? 0, wy ?? r?.player.y ?? 0); }, client: d19 }; // QA-only D19 visual bridge — NOT a gameplay cast event
   const r = gs.run; if (!r) return <div className="stage" />;
   const p = r.player; const now = Date.now(); const ph = phaseOf(r, now); const hrs = runHours(r, now); const day = Math.floor(hrs / 24) + 1;
   const dtm = dayTime(r, now); const clock = `${String(Math.floor(dtm * 24)).padStart(2, '0')}:${String(Math.floor((dtm * 24 % 1) * 60)).padStart(2, '0')}`;
@@ -177,6 +210,11 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
         <div style={{ fontSize: 9, width: 74, lineHeight: 1, marginLeft: 3, color: '#cfc2dc', alignSelf: 'center' }}>{(() => { const s = activeStack(r); if (!s) return 'Fists'; const d = ITEMS[s.key]; return <><span style={{ color: '#ffe0a0' }}>{d.name}</span><br />{d.core ? `${s.charge}/${d.charge} charges · LMB cast, RMB cancel` : d.food ? 'LMB eat/drink' : d.dmg ? `dmg ${d.dmg}${d.power ? ' · tool' : ''}` : d.place ? 'LMB to place' : d.cat === 'bp' ? 'LMB learn' : ''}</>; })()}</div>
       </div>
       {/* panels */}
+      {/* FX Test Lab (dev/QA, F9) — same compositor as gameplay, visual-only casts */}
+      {labOpen && <FxLab gs={gs} hidden={labHidden} onHide={() => setLabHidden(true)} onClose={() => setLabOpen(false)}
+        nightOverride={nightOverride} setNightOverride={setNightOverride}
+        getMouseWorld={() => ({ x: mouse.current.x + Math.round(cam.x), y: mouse.current.y + Math.round(cam.y) })}
+        getTarget={() => target.current ? { x: target.current.x, y: target.current.y } : null} />}
       {panel?.kind === 'inv' && <InventoryPanel api={api} />}
       {panel?.kind === 'container' && panel.eid && <ContainerPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'craft' && <CraftPanel api={api} />}

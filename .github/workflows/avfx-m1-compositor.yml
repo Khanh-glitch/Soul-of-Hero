@@ -1,0 +1,174 @@
+name: AVFX M1 unified compositor QA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/3337c864-soul-of-hero]
+    paths:
+      - 'web/src/**'
+      - 'web/tests/**'
+      - 'web/scripts/qa-avfx-m1.mjs'
+      - 'web/scripts/qa-salvage-end.mjs'
+      - '.github/workflows/avfx-m1-compositor.yml'
+
+permissions:
+  contents: read
+
+env:
+  CI: true
+
+jobs:
+  unit-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install dependencies
+        working-directory: web
+        run: npm ci
+      # Serial file execution: ubuntu-latest has 2 vCPUs and the CPU-render lifecycle
+      # contract file is heavy; parallel workers make the full suite fail under CPU
+      # contention even though every file passes in isolation. Same suite and same
+      # assertions as `npm test` (vitest run --testTimeout=300000).
+      - name: Unit tests (full suite, serial files on 2 vCPU runner)
+        working-directory: web
+        run: npx vitest run --testTimeout=300000 --no-file-parallelism
+      - name: Types (tsc --noEmit)
+        working-directory: web
+        run: npx tsc --noEmit
+      - name: Build (vite build)
+        working-directory: web
+        run: npm run build
+
+  gpu-acceptance:
+    # Software WebGL2 via ANGLE/SwiftShader on the runner — labelled software, NOT hardware GPU.
+    # HARD GATE: qa-avfx-m1.mjs exits 2 unless presenter.mode === 'webgl2'.
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: unit-and-build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install dependencies
+        working-directory: web
+        run: npm ci
+      - name: Install Playwright Chromium (system deps)
+        working-directory: web
+        run: |
+          npm i -D playwright
+          npx playwright install --with-deps chromium
+      - name: Build
+        working-directory: web
+        run: npm run build
+      - name: GPU acceptance QA (zero-cast GPU identity, D19 ticks 60/240/498/552 day/night, overlap, OUT)
+        working-directory: web
+        run: node scripts/qa-avfx-m1.mjs
+      - name: Upload GPU-mode evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: avfx-m1-gpu-evidence
+          path: web/evidence/avfx-m1/
+
+  reality-ripper-20:
+    # #20 GPU visual evidence on the real primary map (software WebGL2, labelled).
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: unit-and-build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install dependencies
+        working-directory: web
+        run: npm ci
+      - name: Install Playwright Chromium (system deps)
+        working-directory: web
+        run: |
+          npm i -D playwright
+          npx playwright install --with-deps chromium
+      - name: Build
+        working-directory: web
+        run: npm run build
+      - name: #20 visual QA (BEFORE/OPENING/CLIMAX/RESTITCH/AFTER, day+night scenes; GPU gate)
+        working-directory: web
+        run: node scripts/qa-avfx-20.mjs
+      - name: Upload #20 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: avfx-20-evidence
+          path: web/evidence/avfx-20/
+
+  salvage-end-probe:
+    # Salvaged skills #7/#10/#16/#17/#18: playback jank metrics + ending/after-end
+    # screen luminance on real (software) WebGL2. ::error annotations on failure.
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: unit-and-build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install dependencies
+        working-directory: web
+        run: npm ci
+      - name: Install Playwright Chromium (system deps)
+        working-directory: web
+        run: |
+          npm i -D playwright
+          npx playwright install --with-deps chromium
+      - name: Build
+        working-directory: web
+        run: npm run build
+      - name: Salvage ending probe (WebGL2 gate)
+        working-directory: web
+        run: node scripts/qa-salvage-end.mjs
+      - name: Upload probe evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: salvage-end-evidence
+          path: web/evidence/salvage-end/
+
+  fallback-smoke:
+    # Separate job: game must stay playable where WebGL2 is unavailable.
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: unit-and-build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install dependencies
+        working-directory: web
+        run: npm ci
+      - name: Install Playwright Chromium
+        working-directory: web
+        run: |
+          npm i -D playwright
+          npx playwright install chromium
+      - name: Build
+        working-directory: web
+        run: npm run build
+      - name: Fallback smoke QA (allowed to run in 2d-fallback mode)
+        working-directory: web
+        run: QA_ALLOW_FALLBACK=1 node scripts/qa-avfx-m1.mjs

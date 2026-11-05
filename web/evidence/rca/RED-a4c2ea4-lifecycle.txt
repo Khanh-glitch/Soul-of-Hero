@@ -1,0 +1,18 @@
+   × lifecycle contract: custom spell identity / determinism / clock / OUT > (a) custom #04 keeps identity after backward seek (RCA F2) 11ms
+     → c.castCustom is not a function
+   × lifecycle contract: custom spell identity / determinism / clock / OUT > (b) same cast+time+world is bit-identical across direct/forward/backward/replay (RCA F3) 9213ms
+     → expected '740fe50eb72e984b0d9878cd60c2ca75b3ea5…' to be '3c50486c4a14ea179ae38d630488afc1785e6…' // Object.is equality
+   × lifecycle contract: custom spell identity / determinism / clock / OUT > (d+e) #4 at/after OUT equals the no-effect composited baseline (RCA F4) 10338ms
+     → expected '5a6b4638541beed87f7935f28f2e8bf78dc92…' to be 'a251c7b271e711604c800658cf80ad17ef323…' // Object.is equality
+   × lifecycle contract: custom spell identity / determinism / clock / OUT > (d+e) #6 at/after OUT equals the no-effect composited baseline (RCA F4) 10844ms
+     → expected '0043d74d2bec8c465ac7b941a97935f42ca43…' to be 'a251c7b271e711604c800658cf80ad17ef323…' // Object.is equality
+   × lifecycle contract: custom spell identity / determinism / clock / OUT > (d+e) #12 at/after OUT equals the no-effect composited baseline (RCA F4) 12461ms
+     → expected '012a9c1aba266366fd9148b4d559b75be827d…' to be 'a251c7b271e711604c800658cf80ad17ef323…' // Object.is equality
+   × lifecycle contract: custom spell identity / determinism / clock / OUT > (d+e) #13 at/after OUT equals the no-effect composited baseline (RCA F4) 10366ms
+     → expected 'a1f601b090e78ff83216c9e3637444280f952…' to be 'a251c7b271e711604c800658cf80ad17ef323…' // Object.is equality
+   × lifecycle contract: custom spell identity / determinism / clock / OUT > (d+e) #14 at/after OUT equals the no-effect composited baseline (RCA F4) 12442ms
+     → expected '6bf05abdc4f5c4ab555d97973ae5d7f1789ab…' to be 'a251c7b271e711604c800658cf80ad17ef323…' // Object.is equality
+   × lifecycle contract: custom spell identity / determinism / clock / OUT > (d+e) #18 at/after OUT equals the no-effect composited baseline (RCA F4) 11356ms
+     → expected '784f83170243ff217e4c17f373afbee5811fa…' to be 'a251c7b271e711604c800658cf80ad17ef323…' // Object.is equality
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  8 failed | 1 passed (9)

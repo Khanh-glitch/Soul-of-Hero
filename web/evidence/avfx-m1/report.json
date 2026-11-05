@@ -1,0 +1,48 @@
+{
+  "errors": [],
+  "softwareGL": true,
+  "webgl2Probe": {
+    "webgl2": false,
+    "renderer": null,
+    "presenterMode": "2d-fallback",
+    "fbo": ""
+  },
+  "zeroCastGPU": {
+    "skipped": "fallback",
+    "mode": "2d-fallback"
+  },
+  "d19metrics": {
+    "mode": "2d-fallback",
+    "worldUploads": 0,
+    "layerUploads": 0,
+    "gpuPasses": 0,
+    "postCalls": 320,
+    "sourceDraws": 0,
+    "glError": 0,
+    "fbo": ""
+  },
+  "frozenTickPersists": {
+    "passesAtFrozenTick": 1,
+    "tick": 498,
+    "seed": 97
+  },
+  "overlap": {
+    "skipped": "fallback"
+  },
+  "twoClient": {
+    "ids": [
+      "arcana-d19",
+      "zz-fake"
+    ],
+    "duplicateRejected": "duplicate VfxClient id: zz-fake",
+    "postsPerCollect": 0
+  },
+  "out": {
+    "leftoverPasses": 0
+  },
+  "pixelfx": {
+    "charge": 2,
+    "fx": 2,
+    "mode": "2d-fallback"
+  }
+}

@@ -1,0 +1,58 @@
+SOH ARCANA20 FX LAB — standalone, deterministic lifecycle contract (RED->GREEN) + active-frame signed-delta compositing closure, 20 skills
+(F9 in game → FX Lab → "ARCANA20 lab" dropdown; lead / C-study / fusion? modes; scrub; open/peak/out jumps)
+built from branch arena/3337c864-soul-of-hero
+artifact sha256    : eb6eed5cf453d4e6a68efc637bc421cda1e431fab460c90ad59734c3245532e2
+boot: open this file directly (file://)
+
+SOH-ARCANA20-VISUAL-TEST.html — dedicated visual-test build (same game code as
+SOH-ARCANA20-FX-LAB.html, sha256 2f371b172eada4f7a3dcd7b880207c2bdd028612ced26514b6b5223b3b444572) + boot shim that (a) clears stale/incompatible
+save copies on file:// so it never hits the "Save recovery required" block, and
+(b) auto-starts a new run (Meadow Bay) and opens the FX Lab (F9) with the ARCANA20
+dropdown listing all 20 skills. Test artifact only; shipped game code untouched.
+
+SOH-ARCANA20-VISUAL-TEST.html — v2 boot shim (sha256 00d21006e11881def402672a110549a2f6dc0a36a5e67aac83ee93d0a2e68af8),
+built by scripts/build-visual-test.mjs from dist/index.html @ a1ddd34 code. Fix for the
+"Save recovery required" block: the old shim only checked localStorage soh.state.v3 for
+version===3, so a stale copy that was shallow-valid but deep-invalid still fail-closed the
+game. v2 instead watches for the recovery screen the game itself renders; only then does it
+clear soh.state.*/soh.quarantine.* + IDB "soul-of-hero" (once per tab, URL-hash marker) and
+reload — a valid v3 save is never touched. Headless-verified: shallow-v3 stale save →
+recovery cleared + clean boot, 20/20 skills; IDB-only stale copy → same; valid save written
+by the game → preserved across reload, no recovery screen.
+
+2026-11-04 salvage rebuild (code @ this branch, arcana_lab.ts only): creator-directed fix for
+#7/#10/#16/#17/#18. Root cause of "vỡ pixel / lật / giật lag / sai hiệu ứng" on these five was the
+experimental signed-delta + influence-mask presentation seam (plus redesign/fusion routing); they
+are now re-converted directly from the GOLD vendored sources through the same proven opaque +
+14px-edge-feather window path as the approved B leads: #7/#10/#16/#17 = source-C spell, #18 =
+source-B CUBE Chronoshard ("khối lập phương"). Untouched: pixelfx 244 library, skills #2/#3/#8/#20,
+presenter/compositor. Tests: arcana-d20-semantic 31/31, arcana-lab-routing + frame-delta 56/56
+(with CI-style 300s timeout; sandbox 5s-default timeouts fail identically on pristine HEAD).
+Headless routing check: labels 7/10/16/17 -> "C", 18 -> "B (khối lập phương)", 0 page errors.
+  SOH-ARCANA20-FX-LAB.html       sha256 9aae975769acb3a85c3383563f81eb9dd8083288054854a874c19f6bd99eb025
+  SOH-ARCANA20-VISUAL-TEST.html  sha256 77050b3f54348e2d08adf724cd6bc81f4ce0fb556eed3f830a63120b2c4b113b
+
+2026-11-04 lag fix (arcana_lab.ts C branch): root cause of "lag kinh hồn" on #7/#10/#16/#17 was a
+per-frame RE-CAST — tick changes every frame, so cast() reset the sim to t=0 and seek(t) replayed
+the whole spell (full-frame composite per step, O(n^2)) every frame. Fix mirrors the existing
+redesign guard: re-cast only when the spell index changes; seek() then advances one fixed step
+per frame (backward scrub still rebuilds deterministically). B/A/fusion branches and the approved
+#2/#3/#8/#20 untouched. Tests 73/73 (routing+semantic, CI-style timeout). Headless: #7/#10/#17 hold
+60 fps while playing, 0 page errors.
+  SOH-ARCANA20-FX-LAB.html       sha256 9d906a63e7a0e7dbd686a0d94c77e7ee951509a5d921370fe1ad9b08d2b4a270
+  SOH-ARCANA20-VISUAL-TEST.html  sha256 200a9c98c37ba0121c06e003df03b28fa0f813c11320b13375403364e67c1e50
+
+2026-11-04 lag fix #2 (arcana_lab.ts B branch + bRunner.current getter): same per-frame re-cast
+removed from the B path (affects #18 cube routing); recast only on spell change. Tests 87/87.
+Headless: #7/#10/#17/#18 all ~60fps, max frame gap 32ms, 0 frames >50ms, 0 page errors.
+  SOH-ARCANA20-FX-LAB.html       sha256 a2fcdebf2edee6392040e851f1ac9a75e25da9bedf779ffeb6b7dd454dbf327f
+  SOH-ARCANA20-VISUAL-TEST.html  sha256 c17433cae3f8b5a6a5c6b0f55d8c522f9aa48dbf3a3f4858b440e57e4055f80f
+
+2026-11-04 hardening (7c94892+): (1) ArcanaLabClient.submitGpu now wraps the render body in
+try/catch and fails CLOSED (clears cast, sets __arcanaLabError) — a lab exception can never
+propagate into the game loop and skip presenter.present(), which with preserveDrawingBuffer:false
+is exactly what leaves a whole-black canvas; (2) CRunner.composite gained a provably bit-exact
+fast path for untouched pixels (round(clamp(g/255)*255)===g). Tests 96/96 + tsc clean. Headless:
+#7/#10/#16/#17/#18 avg 16.7ms/frame, max 34ms, 0 frames >50ms, 0 page errors.
+  SOH-ARCANA20-FX-LAB.html       sha256 3e77f0b56868fed56164a0f131e90baa67215d3219d80abdbae565401c471e9f
+  SOH-ARCANA20-VISUAL-TEST.html  sha256 5625d3ba055715717a6a53a5ac001a3791b0c6f5982a9a7ac0b7ebb5d6411a10
