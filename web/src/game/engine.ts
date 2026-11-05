@@ -136,7 +136,7 @@ export function trySpawnCreature(r: RunState, _now: number, avoidX: number, avoi
   if (Math.hypot(tx * TILE - avoidX, ty * TILE - avoidY) < avoidTiles * TILE) return false;
   for (const s of w.starts) if (Math.hypot(s.tx - tx, s.ty - ty) < 12) return false;
   if (blockedAt(r, tx, ty)) return false;
-  for (const e of Object.values(r.entities)) if (e.kind === 'struct' && e.type === 'claim' && Math.hypot(e.tx! - tx, e.ty! - ty) < BAL.economy.claimRadius + 6) return false;
+  for (const e of Object.values(r.entities)) if (e.kind === 'struct' && e.type === 'claim' && Math.hypot(e.tx! - tx, e.ty! - ty) < BAL.economy.claimSpawnExclusionTiles) return false;
   const type = opts[Math.floor(rngNext(r) * opts.length)];
   const d = CREATURES[type];
   r.creatures.push(mkCreature(r, type, tx * TILE + 8, ty * TILE + 8, d.hp));
@@ -201,28 +201,71 @@ export function entsAt(r: RunState, tx: number, ty: number): Entity[] {
   if (!tileIndex || tileIndexRun !== r.id) { tileIndex = new Map(); tileIndexRun = r.id; for (const e of Object.values(r.entities)) if (e.tx !== undefined && e.kind !== 'drop' && e.kind !== 'bag' && e.kind !== 'cart') { const i = e.ty! * WW + e.tx; const l = tileIndex.get(i); if (l) l.push(e); else tileIndex.set(i, [e]); } }
   return tileIndex.get(ty * WW + tx) || [];
 }
+/** Authoritative SOH coverage: nearest valid owned cabinet, stable ID tie-break. */
+export function cabinetSupported(r: RunState, c: Entity) {
+  return c.type==='claim' && c.kind==='struct' && owned(c) && (c.hp??0)>0 && (c.cabinet?.legacy === true || !c.cabinet || Object.values(r.entities).some(e=>e.kind==='struct' && ['floor_wood','floor_stone'].includes(e.type||'') && owned(e) && (e.hp??0)>0 && e.tx===c.tx && e.ty===c.ty));
+}
+function nearestCabinet(cabinets:Entity[],tx:number,ty:number) {
+  let best:Entity|null=null, bestDistance=Infinity;
+  for(const c of cabinets) {const d=Math.hypot(c.tx!-tx,c.ty!-ty);if(d<=BAL.economy.claimRadius+1e-9 && (d<bestDistance || (d===bestDistance && c.id.localeCompare(best!.id)<0))){best=c;bestDistance=d;}}
+  return best;
+}
 export function claimAt(r: RunState, tx: number, ty: number) {
-  const R = BAL.economy.claimRadius;
-  for (const e of Object.values(r.entities)) if (e.kind === 'struct' && e.type === 'claim' && Math.hypot(e.tx! - tx, e.ty! - ty) <= R + 0.01) return e; return null;
+  return nearestCabinet(Object.values(r.entities).filter(e=>cabinetSupported(r,e)),tx,ty);
+}
+/** Synchronize legacy ownership hints with the same geometric coverage authority. */
+export function refreshTerritoryLinks(r:RunState) {
+  for(const e of Object.values(r.entities)) if(e.kind==='struct' && owned(e) && e.tx!==undefined && e.ty!==undefined) {
+    const c=claimAt(r,e.tx,e.ty); if(c && c.id!==e.id)e.claim=c.id; else delete e.claim;
+  }
+}
+/** Add empty storage to existing totems without moving a single old stack. */
+export function initializeCabinets(r: RunState) {
+  for (const e of Object.values(r.entities)) if(e.kind==='struct' && e.type==='claim' && !e.cabinet) {
+    if(!e.c) e.c=mkContainer(r,'chest',24).id;
+    e.cabinet={credit:{},legacy:true};
+  }
+}
+type TerritoryPlan = { structures:Entity[]; cabinets:Entity[]; assigned:Map<string,Entity|null>; forecast:Map<string,{rates:Record<string,number>;hours:number;funded:boolean;count:number}> };
+function planTerritory(r:RunState):TerritoryPlan {
+  const all=Object.values(r.entities), structures=all.filter(e=>e.kind==='struct'&&owned(e)&&(e.hp??0)>0&&(e.maxHp??0)>0&&e.tx!==undefined&&e.ty!==undefined);
+  const cabinets=structures.filter(e=>cabinetSupported(r,e)), assigned=new Map<string,Entity|null>();
+  const forecast=new Map<string,{rates:Record<string,number>;hours:number;funded:boolean;count:number}>();
+  for(const c of cabinets)forecast.set(c.id,{rates:{},hours:0,funded:false,count:0});
+  for(const e of structures){const c=nearestCabinet(cabinets,e.tx!,e.ty!);assigned.set(e.id,c);if(!c)continue;const f=forecast.get(c.id)!;f.count++;for(const [key,q] of STRUCTS[e.type!]?.cost||[])if(BAL.territory.materials.includes(key))f.rates[key]=(f.rates[key]||0)+q*BAL.territory.upkeepFractionPerDay/(24*HOUR);}
+  for(const c of cabinets){const f=forecast.get(c.id)!;if(!c.c||!c.cabinet)continue;const entries=Object.entries(f.rates),ms=entries.length?Math.min(...entries.map(([k,rate])=>(countItem(r,c.c!,k)+(c.cabinet!.credit[k]||0))/rate)):Infinity;f.hours=ms/HOUR;f.funded=ms>=0.001;}
+  return {structures,cabinets,assigned,forecast};
+}
+export function territoryRates(r: RunState,c:Entity):Record<string,number> {return planTerritory(r).forecast.get(c.id)?.rates||{};}
+export function territoryForecast(r: RunState,c: Entity) {return planTerritory(r).forecast.get(c.id)||{rates:{},hours:0,funded:false,count:0};}
+/** Bound at the first exhaustion or real structure collapse. */
+export function territoryBoundary(r:RunState,limit:number) {
+  let dt=limit;const plan=planTerritory(r);
+  for(const f of plan.forecast.values()) if(f.funded && Number.isFinite(f.hours))dt=Math.min(dt,f.hours*HOUR);
+  for(const e of plan.structures){const c=plan.assigned.get(e.id);if(!c||!plan.forecast.get(c.id)?.funded)dt=Math.min(dt,e.hp!/(e.maxHp!/(BAL.territory[c?'unfundedCollapseHours':'unprotectedCollapseHours']*HOUR)));}
+  return dt;
+}
+/** Integrate one bounded interval, debiting whole stacks against fractional prepaid credit. */
+export function stepTerritory(r:RunState,dt:number,now:number,report?:string[]) {
+  if(dt<=0)return false; const plan=planTerritory(r);
+  const funded=new Set<string>();
+  for(const c of plan.cabinets) { const f=plan.forecast.get(c.id)!; if(!f.funded || !c.c || !c.cabinet)continue; funded.add(c.id);
+    for(const [key,rate] of Object.entries(f.rates)) {const need=rate*dt, old=c.cabinet.credit[key]||0, n=Math.max(0,Math.ceil(need-old-1e-9));
+      if(n>0){removeItem(r,c.c,key,n);receipt(r,now-dt,'territory.upkeep',`${c.id}:${key}x${n}`);if(report){const prefix=`Cabinet ${c.tx},${c.ty}: ${ITEMS[key].name} spent `;const i=report.findIndex(line=>line.startsWith(prefix));const total=n+(i>=0?Number(report[i].slice(prefix.length)):0);if(i>=0)report[i]=prefix+total;else report.push(prefix+total);}}
+      const credit=Math.max(0,old+n-need); if(credit<1e-9) delete c.cabinet.credit[key];else c.cabinet.credit[key]=credit;
+    }
+  }
+  const collapsed:Entity[]=[];
+  for(const e of plan.structures) {const c=plan.assigned.get(e.id);if(c&&funded.has(c.id))continue;const before=e.hp!;e.hp=Math.max(0,before-e.maxHp!*dt/(BAL.territory[c?'unfundedCollapseHours':'unprotectedCollapseHours']*HOUR));if(e.hp<=1e-7)collapsed.push(e);}
+  const reasons=new Map(collapsed.map(e=>[e.id,plan.assigned.get(e.id)?'unfunded upkeep':'no cabinet coverage']));
+  const directlyReported=new Set<string>();
+  for(const e of collapsed) if(r.entities[e.id]){directlyReported.add(e.id);const name=STRUCTS[e.type!]?.name||e.type,reason=reasons.get(e.id)!;destroyStructure(r,e,now);receipt(r,now,'territory.collapse',`${e.id}:${name}:${reason}`);if(report)report.push(`${name} collapsed: ${reason}.`);}
+  if(report)for(const e of plan.structures)if(!r.entities[e.id]&&!directlyReported.has(e.id))report.push(`${STRUCTS[e.type!]?.name||e.type} was lost with its foundation.`);
+  return collapsed.length>0;
 }
 /** Same materials and HP restored as manual repair; never pays for a destroyed structure. */
 export function structureRepairCost(e: Entity): [string, number][] {
   return (STRUCTS[e.type!]?.cost || []).map(([k,q]) => [k, Math.max(1, Math.ceil(q * 0.25))]);
-}
-export function validMaintenanceChest(r: RunState, claim: Entity, chest: Entity | undefined) {
-  return !!chest && chest.kind === 'struct' && ['chest_small','chest_large'].includes(chest.type || '') && owned(chest) && !!chest.c && !!r.custody[chest.c] && chest.claim === claim.id && Math.hypot(chest.tx! - claim.tx!, chest.ty! - claim.ty!) <= BAL.economy.claimRadius + 0.01 && (chest.hp ?? 0) > 0;
-}
-/** Called only after a real nonlethal impact; no periodic or weather damage is invented. */
-export function maintainDamagedStructure(r: RunState, e: Entity, now: number): [string, number][] | null {
-  if (e.kind !== 'struct' || !owned(e) || !e.hp || !e.maxHp || e.hp >= e.maxHp || !STRUCTS[e.type!] || STRUCTS[e.type!].item) return null;
-  const claim = e.type === 'claim' ? e : r.entities[e.claim || ''];
-  if (!claim || claim.type !== 'claim' || !owned(claim) || !claim.hp || !claim.maintenance?.enabled || (e !== claim && Math.hypot(e.tx! - claim.tx!, e.ty! - claim.ty!) > BAL.economy.claimRadius + 0.01)) return null;
-  const chest = r.entities[claim.maintenance.chestId || ''];
-  if (!validMaintenanceChest(r, claim, chest)) return null;
-  const cost = structureRepairCost(e); if (!cost.length || cost.some(([k,q]) => countItem(r,chest.c!,k) < q)) return null;
-  for (const [k,q] of cost) removeItem(r,chest.c!,k,q);
-  e.hp = Math.min(e.maxHp,e.hp + Math.ceil(e.maxHp / 4)); markDirty();
-  receipt(r,now,'struct.maintenance',`${e.id}:${cost.map(([k,q])=>`${k}x${q}`).join(',')}`); return cost;
 }
 /** Rough neutral-exposure forecast; not a safety guarantee or a simulation of combat/environment. */
 export function offlineSurvivalEstimate(r: RunState) {
@@ -278,10 +321,10 @@ function hasPowerFuel(r:RunState,g:Entity) {
   return !!g.basePower && !!g.c && (g.basePower.energy>1e-8 || C(r,g.c).slots.some(s=>s&&!!ITEMS[s.key]?.fuel));
 }
 /** Stable allocation order; priority is a player choice, not a magic extra load. */
-export function powerAllocation(r:RunState,g:Entity):Entity[] {
+export function powerAllocation(r:RunState,g:Entity,online=true):Entity[] {
   if(!g.basePower?.enabled || !owned(g) || (g.hp??1)<=0 || !hasPowerFuel(r,g))return [];
   const choices=Object.values(r.entities).filter(e=>connectedPower(r,g,e) && (
-    e.turret?.enabled && e.turret.generatorId===g.id ||
+    online && e.turret?.enabled && e.turret.generatorId===g.id && !!e.c && countItem(r,e.c,'arrow')>0 ||
     e.type==='workbench' && e.industrial?.enabled && e.industrial.generatorId===g.id && !!e.station?.queue[0] && e.station.queue[0].left>0));
   const priority=g.basePower.priority??'defense';
   choices.sort((a,b)=>{const rank=(e:Entity)=>priority==='defense' ? (e.turret?0:1) : (e.industrial?0:1);return rank(a)-rank(b)||a.id.localeCompare(b.id);});
@@ -300,20 +343,20 @@ export function turretStatus(r: RunState, e: Entity): string {
   if (!g?.basePower || g.type!=='base_generator' || !owned(g)) return 'No generator';
   if (!connectedPower(r,g,e)) return 'Connection blocked';
   if (!g.basePower.enabled) return 'Generator off'; if (!hasPowerFuel(r,g)) return 'No power';
-  if(!powerAllocation(r,g).includes(e))return 'Capacity allocated elsewhere';
-  if (!e.c || countItem(r,e.c,'arrow')<1) return 'No arrows'; return 'Ready';
+  if (!e.c || countItem(r,e.c,'arrow')<1) return 'No arrows';
+  if(!powerAllocation(r,g).includes(e))return 'Capacity allocated elsewhere'; return 'Ready';
 }
 /** Split the common timeline at the next generator fuel boundary. */
-export function basePowerBoundary(r:RunState,limit:number):number {
+export function basePowerBoundary(r:RunState,limit:number,online=true):number {
   let result=limit;for(const g of Object.values(r.entities)){if(!g.basePower?.enabled||!g.c)continue;
     let fuel=g.basePower.energy;if(fuel<=1e-8){const s=C(r,g.c).slots.find(s=>s&&ITEMS[s.key]?.fuel);fuel=s?ITEMS[s.key].fuel!*1000:0;}
-    if(fuel>1e-8)result=Math.min(result,fuel/Math.max(1,powerAllocation(r,g).length));
+    if(fuel>1e-8)result=Math.min(result,fuel/Math.max(1,powerAllocation(r,g,online).length));
   }return result;
 }
 /** Fuel is consumed exactly once over each chronological interval. */
-export function stepBasePower(r: RunState, dt: number, now: number) {
+export function stepBasePower(r: RunState, dt: number, now: number, online=true) {
   for (const e of Object.values(r.entities)) { const power=e.basePower; if (!power?.enabled || !e.c) continue;
-    const load=Math.max(1,powerAllocation(r,e).length);let left=dt*load;
+    const load=Math.max(1,powerAllocation(r,e,online).length);let left=dt*load;
     while(left>1e-8){if(power.energy<=1e-8){const slot=C(r,e.c).slots.find(s=>s&&ITEMS[s.key]?.fuel);if(!slot){power.energy=0;break;}power.energy=ITEMS[slot.key].fuel!*1000;const key=slot.key;removeItem(r,e.c,key,1);receipt(r,now-left/load,'power.fuel',`${e.id}:${key}`);}
       const used=Math.min(left,power.energy);power.energy-=used;left-=used;
     }
@@ -405,7 +448,7 @@ export function bagStation(r: RunState, e: Entity, now: number, label: string) {
   if (e.station) e.station.queue = [];
   return bag;
 }
-function removeEntity(r: RunState, e: Entity) { for(const other of Object.values(r.entities)) if(other.maintenance?.chestId===e.id) { delete other.maintenance.chestId; other.maintenance.enabled=false; } if(e.basePower)for(const other of Object.values(r.entities)){if(other.turret?.generatorId===e.id)delete other.turret.generatorId;if(other.industrial?.generatorId===e.id)delete other.industrial.generatorId;} delete r.entities[e.id]; for (const cid of [e.c, e.station?.fuelC, e.station?.outC]) if (cid) delete r.custody[cid]; markDirty(); }
+function removeEntity(r: RunState, e: Entity) {  for(const other of Object.values(r.entities)) if(other.maintenance?.chestId===e.id) { delete other.maintenance.chestId; other.maintenance.enabled=false; } if(e.basePower)for(const other of Object.values(r.entities)){if(other.turret?.generatorId===e.id)delete other.turret.generatorId;if(other.industrial?.generatorId===e.id)delete other.industrial.generatorId;} delete r.entities[e.id]; for (const cid of [e.c, e.station?.fuelC, e.station?.outC]) if (cid) delete r.custody[cid]; if(e.type==='claim' || STRUCTS[e.type!]?.layer==='floor')refreshTerritoryLinks(r); markDirty(); }
 
 /** Versioned SOH-only renewable stock policy. Unique technology, credentials,
  * equipment, and damaged drives remain finite; cash is never a loot site. */
@@ -468,6 +511,7 @@ export function stepLootRespawn(r: RunState, now: number) {
 /** Destruction and reclaim share the same custody transition. */
 export function destroyStructure(r: RunState, e: Entity, now: number) {
   if (r.entities[e.id] !== e || e.kind !== 'struct') return null;
+  if (STRUCTS[e.type!]?.layer === 'floor') for (const cabinet of [...entsAt(r,e.tx!,e.ty!)]) if(cabinet.type==='claim' && cabinet.cabinet?.legacy!==true) { destroyStructure(r,cabinet,now); receipt(r,now,'territory.collapse',`${cabinet.id}:lost foundation`); }
   if (STRUCTS[e.type!]?.layer === 'floor') for (const roof of [...entsAt(r, e.tx!, e.ty!)]) if (roof.kind === 'struct' && STRUCTS[roof.type!]?.layer === 'roof') { destroyStructure(r, roof, now); receipt(r, now, 'struct.destroyed', `${roof.type}:lost support`); }
   const bag = bagStation(r, e, now, 'Wreckage'); removeEntity(r, e); return bag;
 }
@@ -580,11 +624,12 @@ export function buildReason(gs: GameState, type: string, tx: number, ty: number)
   if ((d.layer === 'wall' || d.layer === 'obj') && (layers.includes('wall') || layers.includes('obj'))) return 'Tile occupied.';
   if (d.block && Math.hypot(p.x - (tx * TILE + 8), p.y - (ty * TILE + 8)) < 11) return 'You are standing there.';
   if (d.block && r.creatures.some(m => m.state !== 'dead' && Math.hypot(m.x - (tx * TILE + 8), m.y - (ty * TILE + 8)) < 12)) return 'A creature is in the way.';
-  if (d.need === 'claim' && (!claimAt(r, tx, ty) || !owned(claimAt(r, tx, ty)!))) return 'Must be inside your claimed land (place a Claim Totem).';
+  if (type === 'escrow' && !claimAt(r,tx,ty)) return 'Escrow requires an owned territory cabinet.';
+  if (type === 'claim' && !here.some(e=>e.kind==='struct' && ['floor_wood','floor_stone'].includes(e.type||'') && owned(e) && (e.hp??0)>0)) return 'Place the cabinet on an intact owned foundation.';
   if (d.need === 'free') {
     const claims = Object.values(r.entities).filter(e => e.kind === 'struct' && e.type === 'claim');
     if (claims.length >= BAL.economy.maxClaims) return `Claim limit reached (${BAL.economy.maxClaims}).`;
-    if (claims.some(c => Math.hypot(c.tx! - tx, c.ty! - ty) < BAL.economy.claimRadius * 2 + 1)) return 'Too close to your other claim.';
+    if (claims.some(c => c.tx===tx && c.ty===ty)) return 'A cabinet already occupies this tile.';
   }
   const cost = d.cost; if (!hasAll(r, 'inv', cost)) return 'Missing materials: ' + cost.filter(([k, q]) => countItem(r, 'inv', k) < q).map(([k, q]) => `${ITEMS[k].name} ${countItem(r, 'inv', k)}/${q}`).join(', ');
   return null;
@@ -888,6 +933,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (d.slots) e.c = mkContainer(r, 'chest', d.slots).id;
       if (d.station && d.station !== 'research') e.station = { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 3).id, outC: mkContainer(r, 'out', 6).id };
       if (d.station === 'research') e.station = { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 0).id, outC: mkContainer(r, 'out', 4).id };
+      if (it.struct === 'claim') e.cabinet = {credit:{},legacy:false};
       if (it.struct === 'base_generator') e.basePower = { enabled: false, energy: 0 };
       if (it.struct === 'arrow_turret') e.turret = { enabled: false, cooldown: 0, angle: 0 };
       if (it.struct === 'farm_controller') e.farm = { enabled:false, crop:'crop', energy:0 };
@@ -895,7 +941,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (it.struct === 'barrel') e.water = 0;
       if (it.struct.startsWith('door')) e.open = false;
       const cl = claimAt(r, it.tx, it.ty); if (cl) e.claim = cl.id;
-      r.entities[e.id] = e; markDirty();
+      r.entities[e.id] = e; markDirty(); if(it.struct==='claim')refreshTerritoryLinks(r);
       if ((it.struct === 'bed_straw' || it.struct.startsWith('roof')) && homeComplete(r)) award(gs, 'first_home', now);
       return ok('build', `${it.struct}@${it.tx},${it.ty}`);
     }
@@ -922,23 +968,21 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       while (cargo.slots.length < BAL.cart.freightSlots) cargo.slots.push(null);
       return ok('cart.upgrade', `${e.deployed.uid}:freight`, 'Cart reinforced: 32 slots and a higher overload threshold.');
     }
-    case 'maintenanceConfigure': {
-      const claim = r.entities[it.eid];
-      if (!claim || claim.kind !== 'struct' || claim.type !== 'claim' || !owned(claim) || !claim.hp || !near(r,claim,2.2) || !clearInteraction(r,claim)) return fail('Claim out of reach or not owned.');
-      if (it.field === 'chestId') {
-        if (it.value !== '' && !validMaintenanceChest(r,claim,r.entities[it.value])) return fail('Choose an owned, intact chest on this claim.');
-        claim.maintenance ??= {enabled:false}; claim.maintenance.chestId = it.value || undefined;
-      } else if (it.field === 'enabled' && typeof it.value === 'boolean') {
-        if (it.value && !validMaintenanceChest(r,claim,r.entities[claim.maintenance?.chestId || ''])) return fail('Link a valid reserve chest first.');
-        claim.maintenance ??= {enabled:false}; claim.maintenance.enabled = it.value;
-      } else return fail('Invalid reserve setting.');
-      return ok('maintenance.configure',`${claim.id}:${it.field}:${it.value}`);
+    case 'cabinetRepair': {
+      const c=r.entities[it.eid]; if(!c || !cabinetSupported(r,c) || !c.c || !near(r,c,2.2) || !clearInteraction(r,c))return fail('Use your supported cabinet within reach.');
+      let repaired=0; for(const e of Object.values(r.entities).sort((a,b)=>a.id.localeCompare(b.id))) {
+        if(e.kind!=='struct'||!owned(e)||!e.hp||!e.maxHp||e.hp>=e.maxHp||STRUCTS[e.type!]?.item||claimAt(r,e.tx!,e.ty!)?.id!==c.id)continue;
+        const cost=structureRepairCost(e);if(!cost.length||!hasAll(r,c.c,cost))continue;
+        for(const [k,q] of cost)removeItem(r,c.c,k,q);const before=e.hp;e.hp=Math.min(e.maxHp,e.hp+Math.ceil(e.maxHp/4));repaired++;receipt(r,now,'territory.repair',`${e.id}:${before}->${e.hp}:${cost.map(([k,q])=>`${k}x${q}`).join(',')}`);
+      }
+      if(!repaired)return fail('No eligible damaged structure with affordable cabinet materials.');
+      return ok('territory.repair.batch',`${c.id}:${repaired}`,`Repaired ${repaired} structures using cabinet materials.`);
     }
     case 'reclaim': {
       const e = r.entities[it.eid]; if (!e || !owned(e) || !near(r, e, 3)) return fail('Out of reach or not owned.');
       if (e.kind === 'cart') { if (C(r, e.c!).slots.some(Boolean)) return fail('Unload the cart first.'); if (C(r, 'inv').slots.indexOf(null) < 0) return fail('Inventory full.'); if (p.pulling === e.id) p.pulling = null; removeEntity(r, e); if (e.deployed) returnReservations(r, [e.deployed], e.x, e.y, now); else addItem(r, 'inv', 'cart_kit', 1); return ok('cart.pack', e.id); }
       if (e.kind !== 'struct') return fail('Cannot reclaim that.');
-      if (e.type === 'claim' && Object.values(r.entities).some(o => o.kind === 'struct' && o.claim === e.id)) return fail('Remove the structures on this claim first.');
+      if (STRUCTS[e.type!].layer === 'floor' && entsAt(r,e.tx!,e.ty!).some(o=>o.type==='claim')) return fail('Remove the cabinet on this foundation first.');
       const d = STRUCTS[e.type!];
       if (entsAt(r, e.tx!, e.ty!).some(o => o.id !== e.id && STRUCTS[o.type!]?.layer === 'roof') && d.layer === 'floor') return fail('Remove the roof above first.');
       if (e.station?.queue.some(j => j.reserved === undefined)) return fail('Legacy job has no recoverable input record; let it finish before reclaiming.');

@@ -182,12 +182,13 @@ describe('C07 build / reclaim custody', () => {
     const gs = fresh(); const r = gs.run!; const { tx, ty } = buildSpot(gs); tp(gs, tx * TILE + 8, (ty + 2) * TILE + 8);
     expect(dispatch(gs, { id: id(), type: 'build', struct: 'claim', tx, ty }, T0).ok).toBe(false);
     addItem(r, 'inv', 'wood', 40); addItem(r, 'inv', 'stone', 20);
-    expect(dispatch(gs, { id: id(), type: 'build', struct: 'wall_wood', tx, ty }, T0).ok).toBe(false); // not owned
+    expect(dispatch(gs, { id: id(), type: 'build', struct: 'claim', tx, ty }, T0).ok).toBe(false); // foundation required
     expect(countItem(r, 'inv', 'wood')).toBe(40);
+    expect(dispatch(gs,{id:id(),type:'build',struct:'floor_wood',tx,ty},T0).ok).toBe(true);
     const bid = id(); expect(dispatch(gs, { id: bid, type: 'build', struct: 'claim', tx, ty }, T0).ok).toBe(true);
-    expect(countItem(r, 'inv', 'wood')).toBe(30); expect(countItem(r, 'inv', 'stone')).toBe(15);
+    expect(countItem(r, 'inv', 'wood')).toBe(26); expect(countItem(r, 'inv', 'stone')).toBe(15);
     expect(dispatch(gs, { id: bid, type: 'build', struct: 'claim', tx, ty }, T0)).toMatchObject({ ok: false, dup: true });
-    expect(countItem(r, 'inv', 'wood')).toBe(30);
+    expect(countItem(r, 'inv', 'wood')).toBe(26);
     expect(dispatch(gs, { id: id(), type: 'build', struct: 'chest_small', tx: tx + 1, ty }, T0).ok).toBe(true);
     const chest = Object.values(r.entities).find(e => e.type === 'chest_small')!;
     addItem(r, 'inv', 'berries', 7); const bi = C(r, 'inv').slots.findIndex(s => s?.key === 'berries');
@@ -315,8 +316,9 @@ describe('C15–C18, C22–C23 Ragnarok cash, escrow, evacuation, run 2', () => 
     const vendor = Object.values(r.entities).find(e => e.kind === 'vendor')!; tp(gs, vendor.x, vendor.y + 16);
     expect(dispatch(gs, { id: id(), type: 'buy', eid: vendor.id, item: 'escrow_chest' }, T0).ok).toBe(true);
     expect(countItem(r, 'inv', 'rcash')).toBe(6); expect(countItem(r, 'inv', 'escrow_chest')).toBe(1);
-    const { tx, ty } = buildSpot(gs); tp(gs, tx * TILE + 8, (ty + 2) * TILE + 8); addItem(r, 'inv', 'wood', 10); addItem(r, 'inv', 'stone', 5);
+    const { tx, ty } = buildSpot(gs); tp(gs, tx * TILE + 8, (ty + 2) * TILE + 8); addItem(r, 'inv', 'wood', 14); addItem(r, 'inv', 'stone', 5);
     expect(dispatch(gs, { id: id(), type: 'build', struct: 'escrow', tx: tx + 1, ty }, T0).ok).toBe(false); // not owned land
+    expect(dispatch(gs, { id: id(), type: 'build', struct: 'floor_wood', tx, ty }, T0).ok).toBe(true);
     expect(dispatch(gs, { id: id(), type: 'build', struct: 'claim', tx, ty }, T0).ok).toBe(true);
     expect(dispatch(gs, { id: id(), type: 'build', struct: 'escrow', tx: tx + 1, ty }, T0).ok).toBe(true);
     const esc = Object.values(r.entities).find(e => e.type === 'escrow')!; expect(claimAt(r, esc.tx!, esc.ty!)).toBeTruthy();

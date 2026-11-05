@@ -2,7 +2,7 @@
 import { BAL, TILE, WW, WH, HOUR, VIEW_W, VIEW_H, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity, type Proj, type Haz } from './core';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
 import { getWorld } from './world';
-import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, stepLootRespawn, migrateLootRespawn, maintainDamagedStructure, spawnDrop } from './engine';
+import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
@@ -448,8 +448,6 @@ function steer(gs: GameState, m: Creature, tx: number, ty: number, sp: number, d
 }
 let offlineImpacts: Map<string, { name: string; before: number; after: number; destroyed: boolean }> | null = null;
 let offlineStructureChange = 0;
-let offlineRepairs: Map<string, number> | null = null;
-function applyReserve(r: RunState, e: Entity, now: number) { const cost = maintainDamagedStructure(r,e,now); if (cost && offlineRepairs) { for (const [k,q] of cost) offlineRepairs.set(k,(offlineRepairs.get(k)||0)+q); const prior=offlineImpacts?.get(e.id); if(prior) prior.after=e.hp!; } }
 function bashAhead(gs: GameState, m: Creature, a: number, now: number) {
   // Physical impact only: charge-capable trackers may batter a remembered obstruction,
   // and committed charges may hit it. Wandering and ordinary melee cannot.
@@ -459,7 +457,6 @@ function bashAhead(gs: GameState, m: Creature, a: number, now: number) {
   const dmg = m.elder ? ELDERS[m.elder.key].dmg * 2 : CREATURES[m.type].dmg; const before = e.hp!; e.hp! = Math.max(0, before - dmg); m.cd = 900;
   if (offlineImpacts && (e.owner === undefined || e.owner === 'player')) { const prior = offlineImpacts.get(e.id); offlineImpacts.set(e.id, { name: STRUCTS[e.type!].name, before: prior?.before ?? before, after: e.hp!, destroyed: e.hp! <= 0 }); }
   receipt(r, now, 'struct.hit', `${e.id}:${m.type}:${before - e.hp!}`); fx('structhit', { x: e.x, y: e.y, n: before - e.hp! });
-  if (e.hp! > 0) applyReserve(r,e,now);
   if (e.hp! <= 0) { if (offlineImpacts) offlineStructureChange++; destroyStructure(r, e, now); receipt(r, now, 'struct.destroyed', `${e.type} by ${m.type}`); pushLog(r, now, `${STRUCTS[e.type!].name} was smashed by a ${CREATURES[m.type]?.name || 'beast'}!`, 'red'); fx('structbreak', { x: e.x, y: e.y }); }
 }
 
@@ -469,7 +466,6 @@ function triggerSpikes(gs: GameState, m: Creature, now: number) {
   if (!trap || m.cd > 0) return;
   damageCreature(gs, m, 12, 0, now, 0); m.cd = 700; const before = trap.hp!; trap.hp = Math.max(0, before - 4);
   if (offlineImpacts && (trap.owner === undefined || trap.owner === 'player')) { const prior = offlineImpacts.get(trap.id); offlineImpacts.set(trap.id, { name: STRUCTS[trap.type!].name, before: prior?.before ?? before, after: trap.hp, destroyed: trap.hp <= 0 }); }
-  if (trap.hp > 0) applyReserve(r,trap,now);
   if (trap.hp <= 0) { if (offlineImpacts) offlineStructureChange++; destroyStructure(r, trap, now); receipt(r, now, 'struct.destroyed', `${trap.type} by contact`); }
 }
 
@@ -821,6 +817,7 @@ function tickSurvival(gs: GameState, dtMs: number, now: number) {
  * Physical actors, spread, damage, lightning and player input are deliberately not replayed. */
 function advanceWorld(gs: GameState, start: number, end: number, report?: string[], visual = true) {
   const r = gs.run!; let t = start; const slotMs = BAL.weather.slotMinutes * 60000;
+  initializeCabinets(r);
   resolveFires(gs, t, visual);
   stepLootRespawn(r, t);
   stepNatureTrees(r,t);
@@ -832,7 +829,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     const slot = Math.floor((t - r.startedAt + r.qaOffset) / slotMs);
     const nextWeather = r.startedAt - r.qaOffset + (slot + 1) * slotMs;
     let dt = Math.min(end - t, nextWeather - t);
-    const powered=new Set(Object.values(r.entities).filter(e=>e.basePower).flatMap(g=>powerAllocation(r,g).filter(e=>e.industrial).map(e=>e.id)));
+    const powered=new Set(Object.values(r.entities).filter(e=>e.basePower).flatMap(g=>powerAllocation(r,g,visual).filter(e=>e.industrial).map(e=>e.id)));
     for (const e of Object.values(r.entities)) {
       const st = e.station; if (!st) continue; const kind = e.kind==='recycler'?'recycler':STRUCTS[e.type!].station; const job = st.queue[0];
       const fuelled = kind === 'campfire' || kind === 'furnace';
@@ -843,7 +840,8 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
       if (fuelled) dt = Math.min(dt, fuel);
       if (job && job.left > 0) dt = Math.min(dt, job.left / (powered.has(e.id) ? BAL.industrialPower.workSpeedMultiplier : 1));
     }
-    dt = basePowerBoundary(r, dt);
+    dt = basePowerBoundary(r, dt, visual);
+    dt = territoryBoundary(r, dt);
     dt = tenderBoundary(r, isWet(weather), dt);
     for (const tree of r.natureTrees||[]) if(tree.until>r.clock.simMs)dt=Math.min(dt,tree.until-r.clock.simMs);
     for (const due of Object.values(r.lootRespawnAt || {})) if (due > t) dt = Math.min(dt, due - t);
@@ -851,10 +849,11 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     for (const terrain of Object.values(r.terrain)) if (terrain.until && terrain.until > r.clock.simMs) dt = Math.min(dt, terrain.until - r.clock.simMs);
     if (!(dt > 0)) break;
     dt = Math.min(end - t, Math.max(dt, 0.001)); // avoid sub-millisecond timestamp stalls
-    stepBasePower(r, dt, t + dt);
+    stepBasePower(r, dt, t + dt, visual);
     stepStations(gs, dt, t + dt, report, powered);
     stepGardensBarrels(gs, dt, isWet(weather));
     decayTraces(r, dt, weather);
+    if(stepTerritory(r,dt,t+dt,report)) offlineStructureChange++;
     r.clock.simMs += dt; t += dt;
     // Offline time cannot confirm a fresh sighting or retain an expired mark.
     // Keep committed tells/attacks intact; they resume, not resolve speculatively.
@@ -983,6 +982,7 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   if (start > r.clock.lastSimAt && now >= start) r.clock.lastSimAt = start;
   const report: string[] = []; const B = BAL.player; const p = r.player;
   if(interruptTransit && r.spiritTransit && gap>BAL.creatorCoreDemon.teleportMs){delete r.spiritTransit;receipt(r,start,'core.spirit.offline_abort','Transit interrupted while away');if(!silent)report.push('Teleport interrupted while away; you remained at the departure point.');}
+  initializeCabinets(r);
   markDirty(); // Continue may replace the run object while retaining its ID.
   let sheltered = isSheltered(r, p.x, p.y); p.sheltered = sheltered;
   for (const e of Object.values(r.entities)) if (e.turret) e.turret.tracking = false;
@@ -994,17 +994,18 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   const pending = eligible.slice(0, 24);
   for (const m of eligible.slice(24)) m.offlineUnresolvedAt = start;
   const impacts = new Map<string, { name: string; before: number; after: number; destroyed: boolean }>();
-  const repairs = new Map<string, number>();
   let frames = 0, structureEpoch = offlineStructureChange;
 
   let t = start, wetMs = 0; const zone = getWorld().zone[tileOf(p.y) * WW + tileOf(p.x)];
   const startHp = p.hp, startHunger = p.hunger, startThirst = p.thirst;
+  const territoryBefore = new Map(Object.values(r.entities).filter(e=>e.kind==='struct' && (e.owner===undefined||e.owner==='player') && e.hp!==undefined).map(e=>[e.id,{name:STRUCTS[e.type!]?.name||e.type||'Structure',hp:e.hp!}]));
   // Minute-sized survival integration, not frame replay; world helper splits further at weather/fire boundaries.
   while (t < end) {
     const slotMs = BAL.weather.slotMinutes * 60000;
     const nextWeather = r.startedAt - r.qaOffset + (Math.floor((t - r.startedAt + r.qaOffset) / slotMs) + 1) * slotMs;
     let dtMs = Math.min(60000, end - t, nextWeather - t);
     if (pending.length && frames < 2400) dtMs = Math.min(dtMs, 50);
+    dtMs = territoryBoundary(r,dtMs);
     // Integrate the existing offline drains at their actual depletion/death boundaries.
     // Hunger follows the sourced 24h baseline; thirst is an explicit provisional SOH assumption.
     // Resolve only already-committed source fire; the stationary offline body is
@@ -1045,13 +1046,13 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
     if (isWet(weatherAt(r, t))) wetMs += dtMs;
     advanceWorld(gs, t, until, silent ? undefined : report, false);
     if (pending.length && frames < 2400) {
-      frames++; offlineImpacts = impacts; offlineRepairs = repairs; offlineQuiet = true;
+      frames++; offlineImpacts = impacts; offlineQuiet = true;
       try {
         for (let i = pending.length - 1; i >= 0; i--) {
           const m = pending[i], outcome = traceOnly(gs, m, dtMs, until);
           if (outcome !== 'advanced') { if (outcome === 'defer') m.offlineUnresolvedAt = t; pending.splice(i, 1); }
         }
-      } finally { offlineQuiet = false; offlineImpacts = null; offlineRepairs = null; }
+      } finally { offlineQuiet = false; offlineImpacts = null; }
       if (frames === 2400) for (const m of pending) m.offlineUnresolvedAt = until;
     }
     t = until; r.clock.lastSimAt = t;
@@ -1063,9 +1064,10 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
     if (Math.abs(p.hp - 1) < 1e-8) p.hp = 1;
     if (p.hp <= 1e-8) { killPlayer(gs, t, 'exposure while offline'); if (!silent) report.push('You did not survive the time away. Your bag lies where you rested.'); }
   }
+  if (!silent) for(const [id,before] of territoryBefore) { const e=r.entities[id]; if(e && e.hp!==undefined && e.hp<before.hp-0.01) report.push(`${before.name}: ${Math.round(before.hp)} → ${Math.round(e.hp)} HP while away (upkeep decay or actual impact).`); }
+  if (!silent) for(const c of Object.values(r.entities)) if(c.type==='claim' && c.c && c.cabinet) { const amounts=BAL.territory.materials.map((k:string)=>[k,countItem(r,c.c!,k)] as const).filter(([,q]:readonly [string,number])=>q>0); report.push(`Cabinet ${c.tx},${c.ty} remaining: ${amounts.map(([k,q]:readonly [string,number])=>`${q} ${ITEMS[k].name}`).join(', ') || 'no upkeep materials'}.`); }
   if (now >= expiry) {
     if (!silent) for (const impact of impacts.values()) report.push(impact.destroyed ? `${impact.name} was destroyed while away.` : `${impact.name}: ${Math.round(impact.before)} → ${Math.round(impact.after)} HP while away.`);
-    if (!silent && repairs.size) report.push(`Claim reserve spent: ${[...repairs].map(([k,q])=>`${q} ${ITEMS[k]?.name || k}`).join(', ')} on repairs after real impacts.`);
     endRun(gs, 'expired', expiry); if (!silent) report.push('The run reached its 336-hour end while you were away.'); return report;
   }
   if (silent || (gap < 4000 && impacts.size === 0)) return [];
@@ -1077,7 +1079,6 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
     const nearby = r.traces.filter(tr => dist(p.x, p.y, tr.x, tr.y) <= 64 && los(r, p.x, p.y, tr.x, tr.y, true)).length;
     report.push(`Here: ${sheltered ? 'sheltered' : 'not sheltered'}; ${weatherAt(r, end)}; ${nearby} visible nearby footprint${nearby === 1 ? '' : 's'}.`);
   }
-  if (repairs.size) report.push(`Claim reserve spent: ${[...repairs].map(([k,q])=>`${q} ${ITEMS[k]?.name || k}`).join(', ')} on repairs after real impacts.`);
   if (wetMs) report.push(`Rain fell for ~${wetMs >= 60000 ? Math.round(wetMs / 60000) + ' min' : Math.round(wetMs / 1000) + ' sec'}, accelerating footprint decay; exposed gardens and barrels could collect water.`);
   if (Math.round(startHunger - p.hunger) > 0) report.push(`Hunger ${Math.round(startHunger)} → ${Math.round(p.hunger)}${sheltered ? ' (sheltered: hunger cannot kill you)' : ''}.`);
   if (Math.round(startThirst - p.thirst) > 0) report.push(`Thirst ${Math.round(startThirst)} → ${Math.round(p.thirst)} (shelter does not prevent thirst death).`);

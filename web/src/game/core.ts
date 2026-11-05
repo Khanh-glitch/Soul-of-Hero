@@ -90,6 +90,7 @@ export interface Entity {
   garden?: { crop: string | null; growth: number; water: number; coldFrame?: boolean };
   farm?: { enabled: boolean; crop: 'crop' | 'herb'; energy: number; gardenId?: string; barrelId?: string; chestId?: string };
   basePower?: { enabled: boolean; energy: number; capacity?: 2; priority?: 'defense' | 'production' };
+  cabinet?: { credit: Record<string, number>; legacy: boolean };
   maintenance?: { enabled: boolean; chestId?: string }; // opt-in claim reserve
   industrial?: { enabled: boolean; generatorId?: string }; // optional paid workbench module
   turret?: { enabled: boolean; generatorId?: string; cooldown: number; angle: number; tracking?: boolean };

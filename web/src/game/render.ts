@@ -1,7 +1,7 @@
 import * as pfx from './pixelfx';
 import * as comp from './compositor';
 // Canvas 2D renderer — draws authoritative state + observed effects. Never mutates game state.
-import { TILE, WW, WH, VIEW_W, VIEW_H, T, hash2, clamp, type GameState, type RunState, type Creature, type Entity } from './core';
+import { BAL, TILE, WW, WH, VIEW_W, VIEW_H, T, hash2, clamp, type GameState, type RunState, type Creature, type Entity } from './core';
 import { STRUCTS, ELDERS, CREATURES, ITEMS } from './catalog';
 import { getWorld, SRC_KEYS, fbm } from './world';
 import { effTile, sourceAt, darkness, weatherAt, isRagnarok, entsAt, buildReason, C, roofRoom } from './engine';
@@ -201,7 +201,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
     if (e.type === 'garden') { g.drawImage(A.st.garden, e.x - 8, e.y - 8); const gd = e.garden!; if (gd.water > 0) { g.fillStyle = 'rgba(40,60,90,0.35)'; g.fillRect(e.x - 7, e.y - 5, 14, 11); } if (gd.crop) { const st = gd.growth; for (let k = 0; k < 3; k++) { const X = e.x - 5 + k * 5, Y = e.y + 3; const hgt = 1 + Math.round(st * 5); g.fillStyle = '#4a9a3a'; g.fillRect(X, Y - hgt, 1, hgt); if (st > 0.4) { g.fillStyle = '#6ac04a'; g.fillRect(X - 1, Y - hgt, 3, 1); } if (st >= 1) { g.fillStyle = gd.crop === 'herb' ? '#7ad08a' : '#f0b050'; g.fillRect(X - 1, Y - 1, 3, 2); } } } }
     if (e.type === 'garden' && e.garden?.coldFrame) { g.strokeStyle='#c5e5df';g.lineWidth=1;g.strokeRect(e.x-7.5,e.y-7.5,15,13);g.fillStyle='rgba(156,211,203,.24)';g.fillRect(e.x-7,e.y-7,14,12); }
     if (e.type === 'spikes') g.drawImage(A.st.spikes, e.x - 8, e.y - 8);
-    if (e.type === 'claim') { const R = 6 * 16; g.fillStyle = 'rgba(255,208,64,0.5)'; for (let k = 0; k < 64; k++) { const a = k / 64 * Math.PI * 2 + time / 4000; g.fillRect(Math.round(e.x + Math.cos(a) * R), Math.round(e.y + Math.sin(a) * R), 2, 1); } }
+    if (e.type === 'claim') { const R = BAL.economy.claimRadius * TILE; g.fillStyle = 'rgba(255,208,64,0.5)'; for (let k = 0; k < 64; k++) { const a = k / 64 * Math.PI * 2 + time / 4000; g.fillRect(Math.round(e.x + Math.cos(a) * R), Math.round(e.y + Math.sin(a) * R), 2, 1); } }
   }
   pfx.syncHazards(HAZ,p);pfx.syncProjFx(PROJ,now);
   // hazard telegraphs (ground)

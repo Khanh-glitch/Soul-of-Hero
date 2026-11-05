@@ -132,10 +132,19 @@
   "economy": {
     "_status": "PROPOSED_MECHANISM vendor/price/ownership; LOCKED_CANON cash-only escrow purchase",
     "escrowChestPrice": 30,
-    "claimRadius": 6,
+    "claimRadius": 25,
+    "claimSpawnExclusionTiles": 12,
+    "_claimRadius": "SOH spatial adaptation: 25 gameplay tiles, inspired by LI 25m; tiles are not metres.",
     "maxClaims": 2,
     "claimMinDistFromPoi": 10,
     "reclaimRefund": 0.5
+  },
+  "territory": {
+    "_status": "SOH_PROVISIONAL_REVERSIBLE: not historical LI numeric parity",
+    "unprotectedCollapseHours": 2,
+    "unfundedCollapseHours": 2,
+    "upkeepFractionPerDay": 0.25,
+    "materials": ["wood", "stone", "fiber", "rope", "brick", "iron_ingot", "scrap", "glass", "spares", "mechanical_parts", "fasteners"]
   },
   "research": {
     "_status": "TUNABLE_BALANCE",

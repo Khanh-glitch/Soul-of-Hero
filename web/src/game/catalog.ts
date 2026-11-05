@@ -268,9 +268,9 @@ export const CORE_STUDY: Record<string, string> = { core_fire: 'core_fire', core
 // ---------- Structures (K6) ----------
 export interface StructDef { name: string; cost: [string, number][]; hp: number; need: 'claim' | 'any' | 'free'; block: boolean; layer: 'floor' | 'wall' | 'obj' | 'roof'; slots?: number; station?: 'campfire' | 'furnace' | 'workbench' | 'research'; light?: number; desc: string; item?: string; shelter?: boolean; warmth?: number }
 export const STRUCTS: Record<string, StructDef> = {
-  claim: { name: 'Claim Totem', cost: [['wood', 10], ['stone', 5]], hp: 200, need: 'free', block: true, layer: 'obj', desc: 'Claims land (radius 6) as your home plot. PROPOSED ownership mechanism.' },
-  floor_wood: { name: 'Wood Floor', cost: [['wood', 4]], hp: 120, need: 'claim', block: false, layer: 'floor', desc: 'Foundation tile. Roofs need it.' },
-  floor_stone: { name: 'Stone Floor', cost: [['stone', 6]], hp: 260, need: 'claim', block: false, layer: 'floor', desc: 'Sturdy foundation.' },
+  claim: { name: 'Territory Cabinet', cost: [['wood', 10], ['stone', 5]], hp: 200, need: 'free', block: true, layer: 'obj', slots: 24, desc: 'Place on your foundation. 24 physical slots fund upkeep within 25 SOH tiles.' },
+  floor_wood: { name: 'Wood Floor', cost: [['wood', 4]], hp: 120, need: 'any', block: false, layer: 'floor', desc: 'Foundation tile. Roofs need it.' },
+  floor_stone: { name: 'Stone Floor', cost: [['stone', 6]], hp: 260, need: 'any', block: false, layer: 'floor', desc: 'Sturdy foundation.' },
   wall_wood: { name: 'Wood Wall', cost: [['wood', 5]], hp: 160, need: 'claim', block: true, layer: 'wall', desc: 'Blocks movement and paths.' },
   wall_stone: { name: 'Stone Wall', cost: [['stone', 8], ['wood', 1]], hp: 380, need: 'claim', block: true, layer: 'wall', desc: 'Heavy wall.' },
   wall_brick: { name: 'Brick Wall', cost: [['brick', 6]], hp: 600, need: 'claim', block: true, layer: 'wall', desc: 'Fired brick. Strongest wall.' },

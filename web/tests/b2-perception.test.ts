@@ -192,7 +192,7 @@ describe('trace-grounded home safety', () => {
       r.player.x = x + 160; r.player.y = y; const m = creature(gs, type, x + 3, y);
       m.state = 'wander'; m.tx = x + 16; m.ty = y; m.t = 0;
       for (let i = 1; i <= 30; i++) step(gs, idle(), i);
-      expect(house.hp).toBe(160); expect(m.knows).toBeNull();
+      expect(house.hp).toBeCloseTo(160,0); expect(r.receipts.some(q=>q.kind==='struct.hit')).toBe(false); expect(m.knows).toBeNull();
     }
   });
   it('lets a committed boar charge physically impact a closed door, without reaching through it', () => {
@@ -208,7 +208,7 @@ describe('trace-grounded home safety', () => {
     r.player.x = x + 150; r.player.y = y;
     const m = creature(gs, 'boar', x + 2, y); (m as any).prov = true; m.tx = x + 40; m.ty = y;
     const tr = mark('visible', 'A', undefined, x + 19, y, T0); r.traces = [tr];
-    step(gs, idle(), 1); expect(m.knows?.traceId).toBe('visible'); expect(r.entities[id].hp).toBe(140);
+    step(gs, idle(), 1); expect(m.knows?.traceId).toBe('visible'); expect(r.entities[id].hp).toBeCloseTo(140,0);
     r.entities[id].open = false; markDirty();
     for (let i = 2; i <= 6; i++) step(gs, idle(), i);
     expect(r.entities[id].hp).toBeLessThan(140); expect(m.x).toBeLessThan(x + 8); expect(m.knows?.traceId).toBe('visible');
@@ -289,7 +289,7 @@ describe('bounded offline trace consequences', () => {
   }
   it('walks from an actual encountered chain to physical door impact only after enough time, even off-camera', () => {
     const { gs, r, m, doorId, x } = setupTrail();
-    settle(gs, T0 + 1000, true); expect(m.x).toBeGreaterThan(x - 8); expect(r.entities[doorId].hp).toBe(140);
+    settle(gs, T0 + 1000, true); expect(m.x).toBeGreaterThan(x - 8); expect(r.entities[doorId].hp).toBeCloseTo(140,0);
     const report = settle(gs, T0 + 4000); expect(m.x).toBeGreaterThan(x + 40); expect(m.x).toBeLessThan(x + 56);
     expect(r.entities[doorId].hp).toBeLessThan(140); expect(report.join(' ')).toMatch(/Wood Door: 140 → \d+ HP/);
     expect(r.receipts.some(q => q.kind === 'struct.hit' && q.detail.startsWith(doorId))).toBe(true);
@@ -309,17 +309,17 @@ describe('bounded offline trace consequences', () => {
   it('a broken chain and an unrelated house do not create an impact', () => {
     for (const variant of ['broken', 'unrelated']) {
       const { gs, r, m, doorId } = setupTrail(); if (variant === 'broken') r.traces = r.traces.filter(t => t.id !== 'a1'); else r.traces = [];
-      settle(gs, T0 + 4000); expect(r.entities[doorId].hp).toBe(140); expect(m.knows).toBeNull(); expect(r.receipts.some(q => q.kind === 'struct.hit')).toBe(false);
+      settle(gs, T0 + 4000); expect(r.entities[doorId].hp).toBeCloseTo(140,0); expect(m.knows).toBeNull(); expect(r.receipts.some(q => q.kind === 'struct.hit')).toBe(false);
     }
   });
-  it('reports physically spent reserve after an evidenced offline hit', () => {
+  it('does not automatically spend an old linked chest after an evidenced hit', () => {
     const { gs, r, doorId, spot, x, y } = setupTrail();
     const ci=uid(r,'e'), hi=uid(r,'e'), chest=mkContainer(r,'chest',12);
     r.entities[ci]={id:ci,kind:'struct',type:'claim',tx:spot.x+4,ty:spot.y+2,x:x+64,y:y+32,hp:200,maxHp:200,maintenance:{enabled:true,chestId:hi}};
     r.entities[hi]={id:hi,kind:'struct',type:'chest_small',tx:spot.x+5,ty:spot.y+2,x:x+80,y:y+32,hp:100,maxHp:100,c:chest.id,claim:ci};
     r.entities[doorId].claim=ci; addItem(r,chest.id,'wood',10); addItem(r,chest.id,'rope',3); markDirty();
-    const report=settle(gs,T0+4000); expect(r.receipts.some(q=>q.kind==='struct.maintenance')).toBe(true);
-    expect(countItem(r,chest.id,'wood')).toBeLessThan(10); expect(report.join(' ')).toContain('Claim reserve spent:');
+    const report=settle(gs,T0+4000); expect(r.receipts.some(q=>q.kind==='struct.hit')).toBe(true); expect(r.receipts.some(q=>q.kind==='struct.maintenance')).toBe(false);
+    expect(countItem(r,chest.id,'wood')).toBe(10); expect(report.join(' ')).not.toContain('Claim reserve spent:');
   });
   it('a real impact can destroy a door and is reported as such', () => {
     const { gs, r, doorId } = setupTrail(); r.entities[doorId].hp = 26;
@@ -346,12 +346,12 @@ describe('bounded offline trace consequences', () => {
     for (const tr of wet.r.traces) tr.life = 2500; for (const tr of dry.run!.traces) tr.life = 2500;
     // Same footprint lifetimes; only the weather schedule differs.
     settle(wet.gs, T0 + 4000); settle(dry, T0 + 4000);
-    expect(wet.r.entities[wet.doorId].hp).toBe(140); expect(dry.run!.entities[wet.doorId].hp).toBeLessThan(140);
+    expect(wet.r.entities[wet.doorId].hp).toBeCloseTo(140,0); expect(wet.r.receipts.some(q=>q.kind==='struct.hit')).toBe(false); expect(dry.run!.entities[wet.doorId].hp).toBeLessThan(140);
   });
   it('actual spikes can stop the tracker before it reaches the door', () => {
     const { gs, r, m, doorId, x, y, spot } = setupTrail(); m.hp = 10;
     const id = uid(r, 'trap'); r.entities[id] = { id, kind: 'struct', type: 'spikes', x: x + 32, y, tx: spot.x + 2, ty: spot.y, hp: 90, maxHp: 90, owner: 'player' }; markDirty();
-    settle(gs, T0 + 4000); expect(m.state).toBe('dead'); expect(r.entities[doorId].hp).toBe(140); expect(r.entities[id].hp).toBe(86);
+    settle(gs, T0 + 4000); expect(m.state).toBe('dead'); expect(r.entities[doorId].hp).toBeCloseTo(140,0); expect(r.entities[id].hp).toBeCloseTo(86,0);
   });
   it('persists over-cap and previously sighted actors at their unresolved checkpoints', () => {
     const { gs, r, m, x, y } = setupTrail();
@@ -366,9 +366,9 @@ describe('bounded offline trace consequences', () => {
     const invalid = structuredClone(loaded); invalid.run!.creatures[24].offlineUnresolvedAt = NaN; expect(validate(invalid)).toBeNull();
   });
   it('expired evidence cannot produce a later impact and a pending combat encounter stays unresolved', () => {
-    const a = setupTrail(); for (const tr of a.r.traces) tr.life = 250; settle(a.gs, T0 + 4000); expect(a.r.entities[a.doorId].hp).toBe(140);
+    const a = setupTrail(); for (const tr of a.r.traces) tr.life = 250; settle(a.gs, T0 + 4000); expect(a.r.entities[a.doorId].hp).toBeCloseTo(140,0);
     const b = setupTrail(); b.r.combat = { projectiles: [{ x: b.x, y: b.y, vx: 0, vy: 0, life: 1, dmg: 5, from: 'enemy', kind: 'bolt', r: 3 }], hazards: [] };
-    const startX = b.m.x; settle(b.gs, T0 + 4000); expect(b.m.x).toBe(startX); expect(b.r.entities[b.doorId].hp).toBe(140); expect(b.r.combat.projectiles[0].life).toBe(1); expect(b.m.offlineUnresolvedAt).toBeDefined();
-    b.r.combat = { projectiles: [], hazards: [] }; settle(b.gs, T0 + 8000); expect(b.m.x).toBe(startX); expect(b.r.entities[b.doorId].hp).toBe(140);
+    const startX = b.m.x; settle(b.gs, T0 + 4000); expect(b.m.x).toBe(startX); expect(b.r.entities[b.doorId].hp).toBeCloseTo(140,0); expect(b.r.combat.projectiles[0].life).toBe(1); expect(b.m.offlineUnresolvedAt).toBeDefined();
+    b.r.combat = { projectiles: [], hazards: [] }; settle(b.gs, T0 + 8000); expect(b.m.x).toBe(startX); expect(b.r.entities[b.doorId].hp).toBeCloseTo(140,0);
   });
 });
