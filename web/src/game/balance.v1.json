@@ -676,5 +676,17 @@
       "boar": 0,
       "crab": 0
     }
+  },
+  "restV1": {
+    "_status": "SOH_PROVISIONAL_REVERSIBLE: physically supplied bed rest. No LI parity claim. Rates reuse player.offlineHungerPerHour / offlineThirstPerHour.",
+    "triggerStat": 25,
+    "durationsHours": [
+      1,
+      8,
+      24
+    ],
+    "reserveSlots": 12,
+    "bedChestRadiusTiles": 3,
+    "wakeRadiusTiles": 4
   }
 }

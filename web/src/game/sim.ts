@@ -7,7 +7,7 @@ import { LOOT_CLASSES, lootClass } from './loot-ecology';
 import { BAL, TILE, WW, WH, HOUR, VIEW_W, VIEW_H, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity, type Proj, type Haz } from './core';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
 import { getWorld } from './world';
-import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
+import { restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
@@ -989,6 +989,8 @@ export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   bindCombat(r);
   dtMs = Math.max(0, Math.min(dtMs, 50));
   if (!syncWorld(gs, now)) { if (!gs.run) fx('banner', { text: 'The run has ended', sub: 'Ragnarok consumed the island.' }); return; }
+  // Resting hands the online clock to the same chronological settlement used offline (no online drain while asleep).
+  if (r.rest) { settle(gs, now, true); return; }
   const ph = phaseOf(r, now);
   if (ph !== 'calm' && ragAnnounced !== r.id + ph) { ragAnnounced = r.id + ph; if (ph === 'danger') { award(gs, 'ragnarok', now); fx('banner', { text: 'RAGNAROK', sub: 'The final 72 hours. Sealed chests can now be opened.' }); } if (ph === 'awakening') fx('banner', { text: 'DAY 14', sub: 'The six Elders awaken.' }); }
   const weather = weatherAt(r, now);
@@ -1092,6 +1094,8 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
       if (p.hunger < 1e-9) p.hunger = 0; if (p.thirst < 1e-9) p.thirst = 0;
       if (p.hunger > 0) dtMs = Math.min(dtMs, p.hunger / hungerRate);
       if (p.thirst > 0) dtMs = Math.min(dtMs, p.thirst / thirstRate);
+      // Rest consumes provisions exactly at the trigger, so the slice must end there.
+      if (r.rest) { const trig = BAL.restV1.triggerStat; if (p.hunger > trig) dtMs = Math.min(dtMs, (p.hunger - trig) / hungerRate); if (p.thirst > trig) dtMs = Math.min(dtMs, (p.thirst - trig) / thirstRate); dtMs = Math.min(dtMs, Math.max(0.001, r.rest.targetAt - t)); }
       if (radRate && p.rad < 50) dtMs = Math.min(dtMs, (50 - p.rad) / radRate);
       const thirsty = p.thirst <= 0, hungry = p.hunger <= 0;
       if (thirsty || (hungry && (!sheltered || p.hp > 1 + 1e-9))) damageRate += B.starveDamagePerMin * unit;
@@ -1107,6 +1111,7 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
     const until = Math.min(end, nextWeather, t + Math.max(dtMs, 0.001)); dtMs = until - t;
     if (isWet(weatherAt(r, t))) wetMs += dtMs;
     advanceWorld(gs, t, until, silent ? undefined : report, false);
+    if (r.rest) restStep(r, until);
     if (pending.length && frames < 2400) {
       frames++; offlineImpacts = impacts; offlineQuiet = true;
       try {
@@ -1173,7 +1178,7 @@ export function findInteract(gs: GameState, now: number): Interact | null {
     else if (e.kind === 'evac') label = 'Evacuation beacon';
     else if (e.kind === 'cart') label = 'Cart cargo  [Shift+F] pull';
     else if (e.kind === 'vehicle') label = r.player.vehicle===e.id ? 'Exit motorbike' : 'Motorbike cargo and controls';
-    else if (e.kind === 'struct') { const d2 = STRUCTS[e.type!]; kind = 'struct:' + e.type; if (e.type!.startsWith('door')) label = e.electricDoor ? (e.open ? 'Close powered door' : electricDoorPowered(r,e) ? 'Open powered door' : electricInterior(r,e) ? 'Open interior release' : 'Powered door · no power') : e.open ? 'Close door' : 'Open door'; else if(e.wireSwitch) label=`Switch ${e.wireSwitch.on?'on':'off'} · toggle`; else if (e.type === 'claim') label = 'Open Territory Cabinet'; else if (d2.station) label = `Use ${d2.name}`; else if (e.turret) label = `Turret: ${turretStatus(r,e)}${e.turret.tracking ? ' · target' : ''}`; else if (e.basePower) label = `Generator: ${e.basePower.enabled && e.basePower.energy>0 ? 'running' : e.basePower.enabled ? 'no fuel' : 'off'}`; else if (d2.slots) label = `Open ${d2.name}`; else if (e.type === 'escrow') label = 'Rương ký gửi'; else if (e.type === 'garden') label = 'Tend garden'; else if (e.type === 'barrel') label = `Rain barrel (${Math.floor(e.water || 0)})`; else continue; }
+    else if (e.kind === 'struct') { const d2 = STRUCTS[e.type!]; kind = 'struct:' + e.type; if (e.type!.startsWith('door')) label = e.electricDoor ? (e.open ? 'Close powered door' : electricDoorPowered(r,e) ? 'Open powered door' : electricInterior(r,e) ? 'Open interior release' : 'Powered door · no power') : e.open ? 'Close door' : 'Open door'; else if(e.wireSwitch) label=`Switch ${e.wireSwitch.on?'on':'off'} · toggle`; else if (e.type === 'claim') label = 'Open Territory Cabinet'; else if (e.type === 'bed_straw') label = e.hp && e.hp > 0 ? 'Rest on straw bed' : 'Broken straw bed'; else if (d2.station) label = `Use ${d2.name}`; else if (e.turret) label = `Turret: ${turretStatus(r,e)}${e.turret.tracking ? ' · target' : ''}`; else if (e.basePower) label = `Generator: ${e.basePower.enabled && e.basePower.energy>0 ? 'running' : e.basePower.enabled ? 'no fuel' : 'off'}`; else if (d2.slots) label = `Open ${d2.name}`; else if (e.type === 'escrow') label = 'Rương ký gửi'; else if (e.type === 'garden') label = 'Tend garden'; else if (e.type === 'barrel') label = `Rain barrel (${Math.floor(e.water || 0)})`; else continue; }
     else continue;
     if((e.kind==='door'||e.kind==='gen') && (effTile(r,tileOf(p.x),tileOf(p.y))===T.TOXIC || (getWorld().zone[tileOf(p.y)*WW+tileOf(p.x)]===7 && effTile(r,tileOf(p.x),tileOf(p.y))===T.FLOOR)))label+=' · radiation exposure';
     bd = d; best = { kind, label, eid: e.id, x: e.x, y: e.y };

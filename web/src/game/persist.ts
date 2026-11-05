@@ -102,7 +102,7 @@ export function validate(raw: any): GameState | null {
     uids.add(s.uid); return true;
   };
   for (const [id, c] of Object.entries(r.custody) as [string, any][]) {
-    if (!obj(c) || c.id !== id || (id !== 'inv' && id !== 'eq' && !beforeNext(id, /^c([a-z0-9]+)$/)) || !['inv','eq','drop','bag','cart','vehicle','loot','cash','chest','fuel','out'].includes(c.kind) || !Array.isArray(c.slots)) return null;
+    if (!obj(c) || c.id !== id || (id !== 'inv' && id !== 'eq' && !beforeNext(id, /^c([a-z0-9]+)$/)) || !['inv','eq','drop','bag','cart','vehicle','loot','cash','chest','fuel','out','rest'].includes(c.kind) || !Array.isArray(c.slots)) return null;
     for (let i = 0; i < c.slots.length; i++) { const s = c.slots[i]; if (s !== null && (!stack(s) || (c.kind === 'eq' && ITEMS[s.key].slot !== ['head','body','back'][i]) || (c.kind === 'fuel' && !ITEMS[s.key].fuel))) return null; }
   }
   const jobIds = new Set<string>();
@@ -218,6 +218,8 @@ export function validate(raw: any): GameState | null {
     }
   }
   const depleted = new Set<number>(r.depletedLootSites || []);
+  if (r.rest !== undefined && (!obj(r.rest) || r.rest.version !== 'rest-v1' || typeof r.rest.bedId !== 'string' || typeof r.rest.chestId !== 'string' || typeof r.rest.reserveId !== 'string' || !obj(r.custody[r.rest.reserveId]) || r.custody[r.rest.reserveId].kind !== 'rest' || !finite(r.rest.startedAt) || !finite(r.rest.targetAt) || r.rest.targetAt < r.rest.startedAt || !finite(r.rest.eatenHunger) || !finite(r.rest.drunkThirst))) return null;
+  if (r.rest !== undefined) { if (ownedContainers.has(r.rest.reserveId)) return null; ownedContainers.add(r.rest.reserveId); }
   if (r.lootRespawnAt !== undefined && (!obj(r.lootRespawnAt) || Object.entries(r.lootRespawnAt).some(([key, value]) => !/^(0|[1-9][0-9]*)$/.test(key) || !depleted.has(Number(key)) || !finite(value) || (value as number) < r.startedAt))) return null;
   if ((Object.values(r.entities) as any[]).some(e => e.kind === 'loot' && depleted.has(e.ty * WW + e.tx))) return null;
   // New identity-pinned runs retain finite, map-authored cash and loot custody.

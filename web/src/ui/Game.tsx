@@ -13,6 +13,7 @@ import { sfx, setAmbience, initAudio } from '../game/audio';
 import { save, saveSync } from '../game/persist';
 import { Slot, Bar, Icon, mkIntent, type Api, type PanelState } from './common';
 import { HomeStatusCard } from './HomeStatus';
+import { RestPanel } from './RestPanel';
 import { InventoryPanel, ContainerPanel, CraftPanel, BuildPanel, MapPanel, SkillsPanel, MenuPanel, VendorPanel, EscrowPanel, EvacPanel, ReportPanel } from './panels';
 
 export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; report: string[] | null; onExit: () => void; onRunEnd: () => void }) {
@@ -72,6 +73,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       if (e.type!.startsWith('door')) act('door', { eid: e.id });
       else if (e.type === 'power_switch') act('wireSwitch', { eid: e.id });
       else if (e.type === 'escrow') setPanel({ kind: 'escrow', eid: e.id });
+      else if (e.type === 'bed_straw' && (e.hp ?? 0) > 0) setPanel({ kind: 'rest', eid: e.id });
       else if (e.type === 'claim') setPanel({ kind: 'container', eid: e.id });
       else if (e.type === 'garden') setPanel({ kind: 'container', eid: e.id });
       else if (e.type === 'barrel') act('barrel', { eid: e.id });
@@ -243,6 +245,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       {panel?.kind === 'menu' && <MenuPanel api={api} onSave={() => save(gs)} onQuit={async () => { if (await save(gs)) onExit(); else toast('Save failed; staying in the run.', 'bad'); }} />}
       {panel?.kind === 'vendor' && panel.eid && <VendorPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'escrow' && panel.eid && <EscrowPanel api={api} eid={panel.eid} />}
+      {panel?.kind === 'rest' && panel.eid && <RestPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'evac' && panel.eid && <EvacPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'report' && <ReportPanel api={api} lines={panel.lines || []} />}
       {p.dead && <div className="absolute inset-0 flex flex-col items-center justify-center fadein" style={{ background: 'radial-gradient(#3a0a0aa0, #000c)' }} onMouseDown={e => e.stopPropagation()}>

@@ -279,7 +279,7 @@ export function homeStatus(r: RunState) {
     for (const [k, rate] of Object.entries(f.rates)) per24h[k] = rate * 24 * HOUR;
     // The Cabinet is itself assigned to itself by planTerritory and pays its own upkeep (kept, not silently re-billed).
     // 'idle' means no OTHER structure is covered; self-only Cabinets therefore never report 'idle' while a foundation stands alone.
-    const external = plan.structures.filter(e => e.id !== c.id && e.tx !== c.tx && e.ty !== c.ty && plan.assigned.get(e.id)?.id === c.id).length; // foundation under the Cabinet supports it, it is not covered
+    const external = plan.structures.filter(e => e.id !== c.id && !(e.tx === c.tx && e.ty === c.ty) && plan.assigned.get(e.id)?.id === c.id).length; // foundation under the Cabinet supports it, it is not covered
     const state: HomeCabinetState = external === 0 ? 'idle' : !f.funded ? 'unfunded' : f.hours < HOME_LOW_HOURS ? 'low' : 'funded';
     return { id: c.id, tx: c.tx!, ty: c.ty!, state, hours: f.hours, funded: f.funded, count: f.count, external, selfOnly: external === 0, per24h, stock, prepaid };
   });
@@ -555,7 +555,7 @@ export function bagStation(r: RunState, e: Entity, now: number, label: string) {
   if (e.station) e.station.queue = [];
   return bag;
 }
-function removeEntity(r: RunState, e: Entity) {  for(const other of Object.values(r.entities)) if(other.maintenance?.chestId===e.id) { delete other.maintenance.chestId; other.maintenance.enabled=false; } if(e.basePower)for(const other of Object.values(r.entities)){if(other.turret?.generatorId===e.id)delete other.turret.generatorId;if(other.industrial?.generatorId===e.id)delete other.industrial.generatorId;} delete r.entities[e.id]; for (const cid of [e.c, e.station?.fuelC, e.station?.outC]) if (cid) delete r.custody[cid]; if(e.type==='claim' || STRUCTS[e.type!]?.layer==='floor')refreshTerritoryLinks(r); markDirty(); }
+function removeEntity(r: RunState, e: Entity) {  if (r.rest && (e.id === r.rest.bedId || e.id === r.rest.chestId)) endRest(r, r.clock.lastSimAt, 'bed or chest removed');  for(const other of Object.values(r.entities)) if(other.maintenance?.chestId===e.id) { delete other.maintenance.chestId; other.maintenance.enabled=false; } if(e.basePower)for(const other of Object.values(r.entities)){if(other.turret?.generatorId===e.id)delete other.turret.generatorId;if(other.industrial?.generatorId===e.id)delete other.industrial.generatorId;} delete r.entities[e.id]; for (const cid of [e.c, e.station?.fuelC, e.station?.outC]) if (cid) delete r.custody[cid]; if(e.type==='claim' || STRUCTS[e.type!]?.layer==='floor')refreshTerritoryLinks(r); markDirty(); }
 
 /** Chronological event authority shared by online and offline advancement. */
 export function airdropBoundary(r:RunState,t:number,dt:number):number {
@@ -659,6 +659,7 @@ export function stepLootRespawn(r: RunState, now: number) {
 /** Destruction and reclaim share the same custody transition. */
 export function destroyStructure(r: RunState, e: Entity, now: number) {
   if (r.entities[e.id] !== e || e.kind !== 'struct') return null;
+  if (r.rest && (e.id === r.rest.bedId || e.id === r.rest.chestId)) endRest(r, now, 'bed or chest destroyed');
   if (STRUCTS[e.type!]?.layer === 'floor') for (const cabinet of [...entsAt(r,e.tx!,e.ty!)]) if(cabinet.type==='claim' && cabinet.cabinet?.legacy!==true) { destroyStructure(r,cabinet,now); receipt(r,now,'territory.collapse',`${cabinet.id}:lost foundation`); }
   if (STRUCTS[e.type!]?.layer === 'floor') for (const roof of [...entsAt(r, e.tx!, e.ty!)]) if (roof.kind === 'struct' && STRUCTS[roof.type!]?.layer === 'roof') { destroyStructure(r, roof, now); receipt(r, now, 'struct.destroyed', `${roof.type}:lost support`); }
   const bag = bagStation(r, e, now, 'Wreckage'); removeEntity(r, e); return bag;
@@ -710,8 +711,128 @@ export function killCreature(gs: GameState, m: Creature, now: number) {
 }
 
 // ---------------- death & respawn (C10) ----------------
+// ---------------- physically supplied bed rest (SOH_PROVISIONAL, restV1) ----------------
+// Reserve stacks are REAL custody moved out of the chest with their UIDs and charges. Consumption happens
+// only at the trigger threshold inside restStep(), which runs in the same chronological settle() path online
+// and offline. Ending the rest always returns leftovers to the chest, or to a bag if the chest is gone.
+/** Safe, real provisions only: no raw meat, no irradiated food. */
+function restSafe(d: { food?: { hp?: number; rad?: number } }) { return ((d.food?.hp ?? 0) >= 0) && ((d.food?.rad ?? 0) <= 0); }
+export function restEligible(s: Stack | null | undefined): 'food' | 'water' | null {
+  if (!s) return null; const d = ITEMS[s.key]; if (!d?.food || !restSafe(d)) return null;
+  if (d.waterContainer) return (s.charge ?? 0) > 0 ? 'water' : null;
+  if ((d.food.hunger ?? 0) > 0) return 'food';
+  if ((d.food.thirst ?? 0) > 0) return 'water';
+  return null;
+}
+/** Hunger and thirst the given stacks can still supply. Flasks count per charge. */
+export function restSupply(stacks: (Stack | null)[]) {
+  let hunger = 0, thirst = 0;
+  for (const s of stacks) {
+    if (!s) continue; const d = ITEMS[s.key]; if (!d?.food || !restSafe(d)) continue;
+    if (d.waterContainer) thirst += Math.max(0, s.charge ?? 0) * (d.food.thirst ?? 0);
+    else { hunger += (d.food.hunger ?? 0) * s.qty; thirst += (d.food.thirst ?? 0) * s.qty; }
+  }
+  return { hunger, thirst };
+}
+/** Forecast from the same offline rates the simulator uses. Honest about its limit: a wake happens when supplies run out. */
+export function restForecast(r: RunState, stacks: (Stack | null)[], hours: number) {
+  const B = BAL.player, trig = BAL.restV1.triggerStat, sup = restSupply(stacks);
+  const foodHours = (Math.max(0, r.player.hunger - trig) + sup.hunger) / B.offlineHungerPerHour;
+  const waterHours = (Math.max(0, r.player.thirst - trig) + sup.thirst) / B.offlineThirstPerHour;
+  const coveredHours = Math.min(hours, foodHours, waterHours);
+  const limitedBy = hours <= Math.min(foodHours, waterHours) + 1e-9 ? 'duration' : foodHours <= waterHours ? 'food' : 'water';
+  return { hungerSupply: sup.hunger, thirstSupply: sup.thirst, foodHours, waterHours, coveredHours, limitedBy };
+}
+export function endRest(r: RunState, now: number, reason: string) {
+  const rs = r.rest; if (!rs) return; delete r.rest;
+  const reserve = r.custody[rs.reserveId]; const chest = r.entities[rs.chestId]; const bed = r.entities[rs.bedId];
+  let returned = 0, bagId = 'none';
+  if (reserve) {
+    const dest = chest?.c ? C(r, chest.c) : null;
+    if (dest) for (let i = 0; i < reserve.slots.length; i++) {
+      const st = reserve.slots[i]; if (!st) continue; const j = dest.slots.findIndex(x => x === null);
+      if (j < 0) break; dest.slots[j] = st; reserve.slots[i] = null; returned++;
+    }
+    if (reserve.slots.some(Boolean)) { const at = bed ?? { x: r.player.x, y: r.player.y }; bagId = bagContainers(r, [reserve.id], at.x, at.y, now, 'Rest supplies')?.id ?? 'none'; }
+    delete r.custody[reserve.id];
+  }
+  markDirty(); receipt(r, now, 'rest.end', `${reason}; returned=${returned}; bag=${bagId}`);
+  pushLog(r, now, reason === 'rested' ? 'You wake rested. Leftover supplies are back in the chest.' : `You wake: ${reason}.`, 'gold');
+}
+/** Shared chronological step. Called after every settle slice and by the online tick while resting. */
+export function restStep(r: RunState, now: number) {
+  const rs = r.rest; if (!rs) return; const p = r.player, cfg = BAL.restV1, trig = cfg.triggerStat;
+  if (p.dead) { endRest(r, now, 'death'); return; }
+  const bed = r.entities[rs.bedId];
+  if (!bed || bed.kind !== 'struct' || !((bed.hp ?? 0) > 0)) { endRest(r, now, 'bed lost'); return; }
+  if (!roofRoom(r, bed.x!, bed.y!).enclosed) { endRest(r, now, 'shelter lost'); return; }
+  if (dist(p.x, p.y, bed.x!, bed.y!) > cfg.wakeRadiusTiles * TILE) { endRest(r, now, 'left the bed'); return; }
+  const rc = r.custody[rs.reserveId]; if (!rc) { endRest(r, now, 'supplies lost'); return; }
+  let guard = 0;
+  while (p.hunger <= trig + 1e-6 && guard++ < 20) {
+    const i = rc.slots.findIndex(s => s && restEligible(s) === 'food');
+    if (i < 0) { endRest(r, now, 'food out'); return; }
+    const st = rc.slots[i]!, d = ITEMS[st.key].food!, before = p.hunger;
+    p.hunger = clamp(p.hunger + (d.hunger || 0), 0, 100); p.thirst = clamp(p.thirst + (d.thirst || 0), 0, 100);
+    p.hp = clamp(p.hp + (d.hp || 0), 1, BAL.player.maxHp); p.warmth = clamp(p.warmth + (d.warmth || 0), 0, 100); p.rad = clamp(p.rad + (d.rad || 0), 0, 100);
+    rs.eatenHunger += p.hunger - before;
+    if (st.qty > 1) st.qty--; else rc.slots[i] = null;
+    receipt(r, now, 'rest.eat', `${st.uid}:${st.key}`);
+  }
+  guard = 0;
+  while (p.thirst <= trig + 1e-6 && guard++ < 40) {
+    let i = rc.slots.findIndex(s => s && ITEMS[s.key].waterContainer && restEligible(s) === 'water');
+    if (i >= 0) {
+      const st = rc.slots[i]!, before = p.thirst; p.thirst = clamp(p.thirst + (ITEMS[st.key].food?.thirst || 0), 0, 100);
+      rs.drunkThirst += p.thirst - before; st.charge = (st.charge ?? 1) - 1;
+      receipt(r, now, 'rest.drink', `${st.uid}:charge=${st.charge}`); continue;
+    }
+    i = rc.slots.findIndex(s => s && !ITEMS[s.key].waterContainer && restEligible(s) === 'water');
+    if (i < 0) { endRest(r, now, 'water out'); return; }
+    const st = rc.slots[i]!, before = p.thirst; p.thirst = clamp(p.thirst + (ITEMS[st.key].food?.thirst || 0), 0, 100);
+    p.hunger = clamp(p.hunger + (ITEMS[st.key].food?.hunger || 0), 0, 100);
+    rs.drunkThirst += p.thirst - before;
+    if (st.qty > 1) st.qty--; else rc.slots[i] = null;
+    receipt(r, now, 'rest.drink.food', `${st.uid}:${st.key}`);
+  }
+  if (now >= rs.targetAt) endRest(r, now, 'rested');
+}
+function startRest(gs: GameState, it: Intent, now: number): Result {
+  const r = gs.run!, p = r.player, cfg = BAL.restV1;
+  const ok = (kind: string, detail: string, msg?: string): Result => ({ ok: true, receipt: receipt(r, now, kind, detail), msg });
+  if (r.rest) return { ok: false, reason: 'You are already resting.' };
+  if (p.dead) return { ok: false, reason: 'You are dead.' };
+  const bed = r.entities[it.eid];
+  if (!bed || bed.kind !== 'struct' || bed.type !== 'bed_straw' || !owned(bed) || !((bed.hp ?? 0) > 0)) return { ok: false, reason: 'Use an intact owned straw bed.' };
+  if (!near(r, bed, 2.2)) return { ok: false, reason: 'Too far from the bed.' };
+  if (!roofRoom(r, bed.x!, bed.y!).enclosed) return { ok: false, reason: 'The bed needs an enclosed, roofed shelter.' };
+  const chest = r.entities[it.chestId];
+  if (!chest || chest.kind !== 'struct' || !['chest_small', 'chest_large'].includes(chest.type!) || !owned(chest) || !((chest.hp ?? 0) > 0) || !chest.c) return { ok: false, reason: 'Choose an intact owned chest.' };
+  if (dist(chest.x!, chest.y!, bed.x!, bed.y!) > cfg.bedChestRadiusTiles * TILE) return { ok: false, reason: `The chest must be within ${cfg.bedChestRadiusTiles} tiles of the bed.` };
+  const room = roofRoom(r, bed.x!, bed.y!);
+  if (!room.cells.has(Math.floor(chest.y! / TILE) * WW + Math.floor(chest.x! / TILE))) return { ok: false, reason: 'The chest must be inside the same shelter.' };
+  if (!cfg.durationsHours.includes(it.hours)) return { ok: false, reason: 'Choose 1, 8 or 24 hours.' };
+  const ids: string[] = Array.isArray(it.items) ? it.items : [];
+  if (!ids.length) return { ok: false, reason: 'Choose food or charged water from the chest.' };
+  if (new Set(ids).size !== ids.length || ids.length > cfg.reserveSlots) return { ok: false, reason: `Choose up to ${cfg.reserveSlots} distinct stacks.` };
+  const cc = C(r, chest.c);
+  const picks: number[] = [];
+  for (const uid of ids) {
+    const i = cc.slots.findIndex(s => s && s.uid === uid);
+    if (i < 0) return { ok: false, reason: 'That item is not in the chest.' };
+    const s = cc.slots[i]!;
+    if (!restEligible(s)) return { ok: false, reason: `${ITEMS[s.key].name} is not safe food or charged water.` };
+    picks.push(i);
+  }
+  const rc = mkContainer(r, 'rest', cfg.reserveSlots);
+  picks.forEach((i, k) => { rc.slots[k] = cc.slots[i]; cc.slots[i] = null; });
+  r.rest = { version: 'rest-v1', bedId: bed.id, chestId: chest.id, reserveId: rc.id, startedAt: now, targetAt: now + it.hours * HOUR, eatenHunger: 0, drunkThirst: 0 };
+  markDirty(); pushLog(r, now, `You lie down on the straw bed. ${ids.length} supply stack${ids.length === 1 ? '' : 's'} set beside you.`, 'gold');
+  return ok('rest.start', `${bed.id}:${chest.id}:${it.hours}h:${ids.join(',')}`, `Resting ${it.hours} h.`);
+}
 export function killPlayer(gs: GameState, now: number, cause: string) {
   const r = gs.run!; const p = r.player; if (p.dead) return;
+  if (r.rest) endRest(r, now, 'death'); // reserve returns to the chest before the bag is formed
   p.dead = true; p.deadT = 0; p.hp = 0; p.action = null; p.pulling = null; delete p.vehicle;
   const bag = bagContainers(r, ['inv', 'eq'], p.x, p.y, now, 'Your bag', [], undefined, true);
   receipt(r, now, 'death', `${cause}; bag=${bag?.id ?? 'none'}`);
@@ -797,6 +918,7 @@ export function dispatch(gs: GameState, it: Intent, now: number): Result {
   }
   if (!r) return { ok: false, reason: 'No active run.' };
   if (r.seenIntents.includes(it.id)) return { ok: false, reason: 'Duplicate request ignored.', dup: true };
+  if (r.rest && !['restCancel'].includes(it.type)) return { ok: false, reason: 'You are resting. Wake up first.' };
   if (now < r.clock.lastSimAt) return { ok: false, reason: 'Command predates the committed world clock.' };
   // No command can transact after the run boundary while the caller awaits settlement.
   if (phaseOf(r, now) === 'expired') return { ok: false, reason: 'Run has expired.' };
@@ -852,6 +974,8 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
   if (p.dead && !['respawn', 'abandon', 'qaAdvance'].includes(it.type)) return fail('You are dead.');
   switch (it.type) {
     case 'respawn': return respawn(gs, now);
+    case 'restStart': return startRest(gs, it, now);
+    case 'restCancel': { if (!r.rest) return { ok: false, reason: 'You are not resting.' }; endRest(r, now, 'woke by choice'); return { ok: true, receipt: receipt(r, now, 'rest.cancel', it.id), msg: 'You wake up.' }; }
     case 'loadCore': {
       if (!Number.isInteger(it.slot) || it.slot < 0 || it.slot >= 8 || !['basic','refined','signature'].includes(it.mode)) return fail('Invalid Core reload.');
       if (p.action) return fail('Finish your current action first.');
@@ -1388,7 +1512,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
   return fail('Unknown action.');
 }
 
-function owned(e: Entity) { return e.owner === undefined || e.owner === 'player'; }
+export function owned(e: Entity) { return e.owner === undefined || e.owner === 'player'; }
 function validSlot(c: Container, slot: unknown): slot is number { return Number.isInteger(slot) && (slot as number) >= 0 && (slot as number) < c.slots.length; }
 function accepts(c: Container, slot: number, s: Stack) {
   if (['loot', 'cash', 'out'].includes(c.kind)) return false;

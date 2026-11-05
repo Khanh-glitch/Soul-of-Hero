@@ -131,7 +131,10 @@ export interface Profile {
   securedCash: number; achievements: Record<string, { at: number; score: number; runId: string }>;
   history: RunRecord[]; settings: { volume: number; muted: boolean }; profileReceipts: string[];
 }
+/** Physically supplied bed rest (SOH_PROVISIONAL). Reserve stacks are real custody, not copies. */
+export interface RestState { version: 'rest-v1'; bedId: string; chestId: string; reserveId: string; startedAt: number; targetAt: number; eatenHunger: number; drunkThirst: number; }
 export interface RunState {
+  rest?: RestState;
   id: string; seed: number; character: 'male' | 'female'; startedAt: number; qaOffset: number; qaUsed: boolean;
   /** Added additively; absent legacy saves are interpreted as the canonical shipping layout. */
   layoutId?: string;
