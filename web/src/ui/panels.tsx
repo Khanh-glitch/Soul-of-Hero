@@ -1,3 +1,4 @@
+import { recoveryPlan, recoveryFits } from '../game/recycler';
 import { LOOT_CLASSES, lootClass } from '../game/loot-ecology';
 import { useEffect, useRef, useState } from 'react';
 import { ITEMS, RECIPES, permitsDirectedResearch, isRecipeKnown, STRUCTS, BUILD_ORDER, VENDOR_SECURED, VENDOR_SPARES, ACHIEVEMENTS, ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING } from '../game/catalog';
@@ -132,11 +133,18 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
   </>;
 }
 function RecyclerBody({api,eid}:{api:Api;eid:string}) {
- const r=api.gs.run!,e=r.entities[eid],st=e.station!,drives=C(r,'inv').slots.map((s,i)=>({s,i})).filter(v=>v.s?.key==='damaged_drive');
- return <div style={{fontSize:11}}><b style={{color:'#ffd98a'}}>1 Damaged Drive → 2 Spares</b><div>12 seconds · consumes the drive. Or take it to a workbench for Mechanical Parts. No base required here.</div>
- {st.queue.map(j=><div key={j.id}>Processing · {Math.ceil(j.left/1000)}s <button className="btn ghost" onClick={()=>api.act('cancelJob',{eid,jobId:j.id})}>Cancel &amp; return drive</button></div>)}
- {!st.queue.length && (drives.length ? <><div style={{fontSize:10,color:'#cfc2dc'}}>Choose a Drive by inventory row and slot (left to right):</div>{drives.map(({s,i})=><button className="btn gold" style={{marginRight:3,marginBottom:2}} key={s!.uid} onClick={()=>api.act('recycleDrive',{eid,slot:i,uid:s!.uid})}>Recycle row {Math.floor(i/8)+1}, slot {i%8+1}</button>)}</> : <div>Carry a Damaged Drive from a finite car wreck.</div>)}
- <div style={{marginTop:5,color:'#ffd98a'}}>Output · collect before it fills</div><Grid api={api} cid={st.outC} cols={4}/><button className="btn" onClick={()=>{for(let i=0;i<C(r,st.outC).slots.length;i++)if(C(r,st.outC).slots[i])api.act('move',{from:st.outC,fs:i,to:'inv'});}}>Take output</button></div>;
+ const r=api.gs.run!,e=r.entities[eid],st=e.station!,[selected,setSelected]=useState(''),[confirm,setConfirm]=useState(false);
+ const entries=C(r,'inv').slots.map((s,i)=>({s,i})).filter((v):v is {s:NonNullable<typeof v.s>;i:number}=>!!v.s);
+ const choice=entries.find(v=>v.s.uid===selected),plan=choice?recoveryPlan(choice.s):null, output=C(r,st.outC),fits=!!plan&&recoveryFits(output,plan.outputs);
+ const list=(p:NonNullable<typeof plan>)=>p.outputs.map(([k,q])=>`${q} ${ITEMS[k].name}`).join(' + ');
+ return <div style={{fontSize:10}}>
+  <div>Destroy one carried item for physical materials. Keep, repair or study it instead. Cores, cards, cash and unlisted items cannot be recycled.</div>
+  {st.queue.map(j=><div key={j.id} style={{marginTop:4,color:'#ffd98a'}}>{j.left>0?`Processing · ${Math.ceil(j.left/1000)}s`:'Complete · output blocked'} <button className="btn ghost" onClick={()=>api.act('cancelJob',{eid,jobId:j.id})}>Cancel / return input</button></div>)}
+  {!st.queue.length && <><label>Carried item <select aria-label="Recycler item" value={selected} style={{maxWidth:180,background:'#2b1e30',color:'white'}} onChange={ev=>{setSelected(ev.target.value);setConfirm(false);}}><option value="">Select item</option>{entries.map(({s,i})=><option key={s.uid} value={s.uid}>{ITEMS[s.key].name} · {s.uid} · {recoveryPlan(s)?'eligible':'not eligible'} (slot {i+1})</option>)}</select></label>
+  {choice && (plan ? <div>UID {choice.s.uid} · {plan.condition===null?'fixed drive':`condition ${Math.round(plan.condition*100)}%`}<br/>Returns: {list(plan)} · {plan.total/1000}s<br/>Output: {fits?'all results fit':'not enough space for all results'}<br/>{confirm ? <><span style={{color:'#ffb8a0'}}>Permanently destroy this item?</span> <button className="btn danger" disabled={!fits} onClick={()=>{api.act('recycleItem',{eid,slot:choice.i,uid:choice.s.uid});setConfirm(false);setSelected('');}}>Confirm recycle</button> <button className="btn ghost" onClick={()=>setConfirm(false)}>Back</button></> : <button className="btn gold" disabled={!fits} onClick={()=>setConfirm(true)}>Recycle item…</button>}</div> : <div style={{color:'#ffb8a0'}}>Not eligible: protected, unlisted, stacked or missing valid condition.</div>)}
+  </>}
+  <div style={{marginTop:4,color:'#ffd98a'}}>Output · {output.slots.filter(Boolean).length}/{output.slots.length} slots occupied</div><Grid api={api} cid={st.outC} cols={4}/><button className="btn" onClick={()=>{for(let i=0;i<output.slots.length;i++)if(output.slots[i])api.act('move',{from:st.outC,fs:i,to:'inv'});}}>Take output</button>
+ </div>;
 }
 function StationBody({ api, eid }: { api: Api; eid: string }) {
   const r = api.gs.run!; const e = r.entities[eid]; const st = e.station!; const kind = STRUCTS[e.type!].station!;

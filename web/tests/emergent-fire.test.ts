@@ -7,9 +7,10 @@ import {validate,serializeSnapshot} from '../src/game/persist';
 const NOW=Date.UTC(2026,0,1);let id=0;
 const act=(g:GameState,type:string,data:object={},t=NOW)=>dispatch(g,{id:`emergent-${++id}`,type,...data},t);
 const saved=(g:GameState)=>JSON.parse(JSON.parse(serializeSnapshot(g)).payload) as GameState;
-function setup(){const g=newGame();expect(act(g,'startRun',{character:'female',region:0,seed:1}).ok).toBe(true);const r=g.run!;r.creatures=[];const w=getWorld();let from=-1,to=-1;
+function setup(initialSeed=1){const g=newGame();expect(act(g,'startRun',{character:'female',region:0,seed:initialSeed}).ok).toBe(true);const r=g.run!;r.creatures=[];const w=getWorld();let from=-1,to=-1;
  for(let y=2;y<198&&from<0;y++)for(let x=2;x<198;x++){const i=y*WW+x,a=sourceAt(r,x,y);if(!a||a.def.mat!=='wood'||!a.def.tall||a.stock<=0||[T.SNOW,T.SAND].includes(w.tiles[i]))continue;for(const [dx,dy] of [[2,0],[0,2],[-2,0],[0,-2]]){const b=sourceAt(r,x+dx,y+dy);if(b?.def.mat==='wood'&&b.def.tall&&[T.GRASS,T.MEADOW,T.FOREST].includes(w.tiles[(y+dy/2)*WW+x+dx/2])&&!sourceAt(r,x+dx/2,y+dy/2)){from=i;to=(y+dy)*WW+x+dx;break;}}if(from>=0)break;}
  expect(from).toBeGreaterThan(0);for(let seed=1;seed<10000;seed++){const hash=(Math.imul(from+1,73856093)^Math.imul(to+1,19349663)^seed)>>>0;r.seed=seed;if(hash%100<55&&!isWet(weatherAt(r,NOW))&&!isWet(weatherAt(r,NOW+18000)))break;}
+ if(r.seed!==initialSeed)return setup(r.seed); // Recreate authored loot from the selected seed; never rewrite a live run's seed.
  const x=from%WW,y=Math.floor(from/WW);r.player.x=x*TILE+8;r.player.y=(y+1)*TILE+8;r.player.aim=-Math.PI/2;markDirty();return {g,r,from,to,x,y};}
 
 describe('bounded physical fire, water and soil',()=>{

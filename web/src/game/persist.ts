@@ -1,3 +1,4 @@
+import { recoveryPlan } from './recycler';
 import { poiContractDigest } from './poi-access';
 import { LOOT_ECOLOGY_VERSION, lootClass, lootRoll, lootSiteIndex } from './loot-ecology';
 import { creatorLootV1 } from './creator-loot';
@@ -91,6 +92,11 @@ export function validate(raw: any): GameState | null {
   const jobIds = new Set<string>();
   const jobs = (queue: any, station: string): boolean => Array.isArray(queue) && queue.every((j: any) => {
     if (!obj(j) || typeof j.id !== 'string' || !j.id || jobIds.has(j.id) || !beforeNext(j.id, /^j([a-z0-9]+)$/) || typeof j.recipe !== 'string') return false;
+    if(j.recipe==='X:recover-v1'){
+      if(station!=='recycler'||!finite(j.left)||!finite(j.total)||j.left<0||j.left>j.total||!Array.isArray(j.reserved)||j.reserved.length!==1)return false;
+      const plan=recoveryPlan(j.reserved[0]);if(!plan||plan.recipe!==j.recipe||j.total!==plan.total||!j.reserved.every(stack))return false;
+      jobIds.add(j.id);return true;
+    }
     const recycler = j.recipe==='X:drive';
     if(recycler){if(station!=='recycler'||!finite(j.left)||!finite(j.total)||j.total!==12000||j.left<0||j.left>j.total||!Array.isArray(j.reserved)||j.reserved.length!==1||j.reserved[0]?.key!=='damaged_drive'||j.reserved[0]?.qty!==1||!j.reserved.every(stack))return false;jobIds.add(j.id);return true;}
     const research = j.recipe.startsWith('R:'), recipe = research ? j.recipe.slice(2) : j.recipe;

@@ -1,3 +1,4 @@
+import { recoveryPlan, recoveryFits } from './recycler';
 import { poiDoorContract, poiGeneratorContract, poiGenerator, poiPowered, interiorRelease, doorwayOccupied, advancePoiAccess, poiContractDigest } from './poi-access';
 import { vehicleClear, vehicleExitPoint } from './motorbike';
 import { LOOT_ECOLOGY_VERSION, LOOT_CLASSES, lootClass, lootRoll, lootSiteIndex, lootSourceId } from './loot-ecology';
@@ -978,7 +979,16 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
     }
     case 'useItem': return useItem(gs, r, it, now, ok);
     case 'craft': return craft(gs, r, it, now, ok);
-    case 'recycleDrive': { const e=r.entities[it.eid]; if(!e||e.kind!=='recycler'||!e.station||!near(r,e,2.8)||!clearInteraction(r,e))return fail('Stand at the Foundry Recycler with a clear path.'); const inv=C(r,'inv');if(!validSlot(inv,it.slot))return fail('Choose a carried Damaged Drive.');const s=inv.slots[it.slot];if(!s||s.key!=='damaged_drive'||s.uid!==it.uid||s.qty!==1)return fail('That Damaged Drive is no longer carried.');if(p.action?.slot===it.slot)return fail('Finish your current action.');if(e.station.queue.length>=1)return fail('Recycler is already processing a drive.');if(spaceFor(r,e.station.outC,'spares')<2)return fail('Recycler output full; collect it first.');inv.slots[it.slot]=null;e.station.queue.push({id:uid(r,'j'),recipe:'X:drive',left:12000,total:12000,reserved:[s]});return ok('recycle.start',`${s.uid}@${e.id}`,'Recycling Damaged Drive: 12 seconds; output will be 2 Spares.'); }
+    case 'recycleDrive': case 'recycleItem': {
+      const e=r.entities[it.eid];if(!e||e.kind!=='recycler'||!e.station||!near(r,e,2.8)||!clearInteraction(r,e))return fail('Stand at the Foundry Recycler with a clear path.');
+      const inv=C(r,'inv');if(!validSlot(inv,it.slot))return fail('Choose a carried recyclable item.');const s=inv.slots[it.slot];
+      if(!s||s.uid!==it.uid||s.qty!==1)return fail('That item is no longer carried.');
+      const plan=recoveryPlan(s);if(!plan||(it.type==='recycleDrive'&&s.key!=='damaged_drive'))return fail('This item is not an eligible Recycler input.');
+      if(p.action?.slot===it.slot)return fail('Finish your current action.');if(e.station.queue.length>=1)return fail('Recycler is already processing an item.');
+      if(!recoveryFits(C(r,e.station.outC),plan.outputs))return fail('Recycler output cannot hold all results; collect items first.');
+      inv.slots[it.slot]=null;e.station.queue.push({id:uid(r,'j'),recipe:plan.recipe,left:plan.total,total:plan.total,reserved:[s]});
+      return ok('recycle.start',`${s.uid}:${s.key}@${e.id}`,`Recycling ${ITEMS[s.key].name}: ${plan.total/1000} seconds.`);
+    }
     case 'cancelJob': { const e = r.entities[it.eid]; if (!e?.station || !((e.kind === 'struct' && owned(e)) || (e.kind === 'recycler' && clearInteraction(r,e))) || !near(r, e, e.kind==='recycler'?2.8:3)) return fail('Not here.'); const j = e.station.queue.findIndex(q => q.id === it.jobId); if (j < 0) return fail('No such job.');
       const job = e.station.queue[j]; if (!job.reserved) return fail('Legacy job has no recoverable input record; let it finish.');
       e.station.queue.splice(j, 1); returnReservations(r, job.reserved, p.x, p.y, now); return ok('job.cancel', job.recipe, 'Reserved inputs returned to inventory or dropped nearby.'); }
@@ -1387,9 +1397,13 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
       // A finished job is committed at its event time without requiring extra work or fuel.
       if (job && job.left <= 0) {
         const at = now - t;
-        if (job.recipe==='X:drive') {
-          if (e.kind!=='recycler' || spaceFor(r,st.outC,'spares')<2) { blocked=true; note('Recycler: output full.'); continue; }
-          addItem(r,st.outC,'spares',2); note('Recycler finished: 2 Spares in output.');
+        if (job.recipe==='X:drive'||job.recipe==='X:recover-v1') {
+          const plan=job.reserved?.length===1?recoveryPlan(job.reserved[0]):null;
+          if(e.kind!=='recycler'||!plan||plan.recipe!==job.recipe||!recoveryFits(C(r,st.outC),plan.outputs)){blocked=true;note('Recycler: output full or invalid reservation.');continue;}
+          // Capacity was checked for the whole set before any output is committed.
+          for(const [key,qty] of plan.outputs)addItem(r,st.outC,key,qty);
+          if(job.recipe==='X:recover-v1')receipt(r,at,'recycle.finish',`${job.reserved![0].uid}:${job.reserved![0].key}:${plan.outputs.map(([key,qty])=>`${key}x${qty}`).join(',')}`);
+          note(`Recycler finished: ${plan.outputs.map(([key,qty])=>`${qty} ${ITEMS[key].name}`).join(', ')} in output.`);
         } else if (job.recipe.startsWith('R:')) {
           const k = job.recipe.slice(2);
           if (addItem(r, st.outC, 'blueprint', 1, { meta: k }) > 0) { blocked = true; note('Research table: output slots full.'); continue; }

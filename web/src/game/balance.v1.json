@@ -309,5 +309,19 @@
     "interiorDepthTiles": 0.35,
     "interiorHalfWidthTiles": 0.75,
     "emergencyReleaseMs": 4000
+  },
+  "recyclerV1": {
+    "_status": "SOH_PROVISIONAL; ORIGINAL_UNKNOWN per-item returns, condition tiers and times; v1 jobs must remain immutable",
+    "midCondition": 0.25,
+    "highCondition": 0.75,
+    "seconds": 15,
+    "rules": {
+      "iron_pick": {"base": [["scrap",1]], "mid": [["iron_ingot",1]], "high": [["wood",1]]},
+      "iron_axe": {"base": [["scrap",1]], "mid": [["iron_ingot",1]], "high": [["wood",1]]},
+      "iron_sword": {"base": [["scrap",1]], "mid": [["iron_ingot",1]], "high": [["leather",1]]},
+      "industrial_pick": {"base": [["scrap",1]], "mid": [["iron_ingot",1]], "high": [["mechanical_parts",1]]},
+      "industrial_axe": {"base": [["scrap",1]], "mid": [["iron_ingot",1]], "high": [["mechanical_parts",1]]},
+      "reinforced_spear": {"base": [["scrap",1]], "mid": [["iron_ingot",1]], "high": [["mechanical_parts",1]]}
+    }
   }
 }
