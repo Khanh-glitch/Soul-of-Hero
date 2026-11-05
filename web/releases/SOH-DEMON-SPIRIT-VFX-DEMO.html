@@ -168,7 +168,12 @@
     panel.querySelectorAll('button').forEach(function (b) {
       b.onclick = function () { run(b.dataset.m === 'basic' ? basic : b.dataset.m === 'refined' ? refined : signature); };
     });
-    say('Nhấn Q / E / R để xem 3 mode của Demon core');
+    window.addEventListener('keydown', function (ev) {
+      if (ev.code === 'KeyQ') run(basic);
+      else if (ev.code === 'KeyE') run(refined);
+      else if (ev.code === 'KeyR') run(signature);
+    });
+    say('Nhấn Q / E / R (hoặc click nút) để xem 3 mode của Demon core');
   }
   boot();
 })();
