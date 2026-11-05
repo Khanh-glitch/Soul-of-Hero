@@ -1056,6 +1056,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (d.slots) e.c = mkContainer(r, 'chest', d.slots).id;
       if (d.station && d.station !== 'research') e.station = { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 3).id, outC: mkContainer(r, 'out', 6).id };
       if (d.station === 'research') e.station = { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 0).id, outC: mkContainer(r, 'out', 4).id };
+      if (it.struct === 'refinery') e.identity = 'refinery-v1';
       if (it.struct === 'claim') e.cabinet = {credit:{},legacy:false};
       if (it.struct === 'base_generator') e.basePower = { enabled: false, energy: 0, network:'wire-v1' };
       if (it.struct === 'power_switch') e.wireSwitch={version:'wire-v1',on:false};
@@ -1111,7 +1112,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if(!Number.isFinite(e.vehicle.lube)) e.vehicle.lube=0;
       if((e.vehicle.lube||0) >= BAL.oilRefineryV1.lubricantDistancePx) return fail('Motorbike already fully lubricated.');
       if(countItem(r,'inv','lubricant')<1) return fail('Need 1 Machine Lubricant from the Oil Refinery.');
-      removeItem(r,'inv','lubricant',1); const add=BAL.oilRefineryV1.lubricantDistancePx; e.vehicle.lube=Math.min(BAL.oilRefineryV1.lubricantDistancePx*1.5, (e.vehicle.lube||0)+add);
+      removeItem(r,'inv','lubricant',1); const add=BAL.oilRefineryV1.lubricantDistancePx; e.vehicle.lube=Math.min(BAL.oilRefineryV1.lubricantDistancePx*BAL.oilRefineryV1.lubricantOverCapFactor, (e.vehicle.lube||0)+add);
       return ok('vehicle.lubricate',`${e.deployed.uid}:lube+${add}->${e.vehicle.lube}`,`Lubricated: wear halved for next ${(e.vehicle.lube/TILE).toFixed(0)} tiles.`);
     }
     case 'placeCart': {
@@ -1404,7 +1405,7 @@ function craft(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: stri
   if (rc.outs && !recoveryFits(C(r, st.station!.outC), rc.outs)) return fail('Refinery output cannot hold the whole batch; collect items first.');
   const reserved = reserveInputs(r, ins);
   st.station!.queue.push({ id: uid(r, 'j'), recipe: it.recipe, left: rc.secs * 1000, total: rc.secs * 1000, reserved });
-  return ok('job.queue', `${it.recipe}@${st.id}`, `${ITEMS[rc.out].name} queued at ${STRUCTS[st.type!].name}.`);
+  return ok('job.queue', `${it.recipe}@${st.id}`, `${recipeOutputs(rc).map(([k, q]) => `${q} ${ITEMS[k].name}`).join(' + ')} queued at ${STRUCTS[st.type!].name}.`);
 }
 
 function research(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: string, d: string, m?: string) => Result): Result {

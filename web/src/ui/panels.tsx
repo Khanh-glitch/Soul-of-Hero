@@ -5,6 +5,9 @@ import { ITEMS, RECIPES, permitsDirectedResearch, isRecipeKnown, STRUCTS, BUILD_
 import { BAL, TILE, WW, type Stack } from '../game/core';
 import { C, countItem, invWeight, isRagnarok, runHours, cartWeight, cartLimit, carryLimit, spaceFor, phaseOf, tenderStatus, gardenEnvironment, weatherAt, isWet, isSheltered, wetOutlook, turretStatus, industrialStatus, powerAllocation, connectedPower, offlineSurvivalEstimate, territoryForecast, claimAt, structureRepairCost } from '../game/engine';
 import { getWorld, ZONES } from '../game/world';
+import { recipeOutputs } from '../game/engine';
+/** Every product a recipe commits together, e.g. "2 Fuel Canister + 1 Machine Lubricant". */
+const bundleLabel = (rc: { out: string; qty: number; outs?: [string, number][] }) => recipeOutputs(rc).map(([k, q]) => `${q} ${ITEMS[k].name}`).join(' + ');
 import { getMapCanvas } from '../game/render';
 import { setVolume } from '../game/audio';
 import { Panel, Slot, Icon, Cost, type Api } from './common';
@@ -157,7 +160,7 @@ function StationBody({ api, eid }: { api: Api; eid: string }) {
   const [confirmSalvage, setConfirmSalvage] = useState<string | null>(null);
   const maintenance = C(r, 'inv').slots.map((s, i) => [s, i] as const).filter(([s]) => s && (ITEMS[s.key].repair || ITEMS[s.key].salvage));
   return <div>
-    {kind === 'refinery' && <div style={{fontSize:10,marginBottom:4,color:'#8fd19b'}}>Oil Refinery — finite salvaged oil only. Batch 5 oil→2 fuel is 17% more oil-efficient than single. Lubricant halves motorbike wear for {Math.round(BAL.oilRefineryV1.lubricantDistancePx/TILE)} tiles. Fuel shared with generators/bike.</div>}
+    {kind === 'refinery' && <div style={{fontSize:10,marginBottom:4,color:'#8fd19b'}}><b>Industrial batch:</b> 6 Salvaged Oil + 1 Glass → 2 Fuel Canister + 1 Machine Lubricant, {BAL.oilRefineryV1.recipes.industrial.secs}s, one job. Needs fuel to run; both products wait in Output until there is room for the whole batch. Lubricant halves motorbike wear for {Math.round(BAL.oilRefineryV1.lubricantDistancePx/TILE)} tiles.</div>}
     {kind === 'workbench' && <details style={{ fontSize: 10, marginBottom: 5, borderBottom: '1px solid #514155', paddingBottom: 4 }}>
       <summary style={{ color: '#ffd98a', cursor: 'pointer' }}>Equipment maintenance &amp; upgrades</summary>
       <div style={{ color: '#ffd98a' }}>Workbench level {level} / 3</div>
@@ -177,7 +180,7 @@ function StationBody({ api, eid }: { api: Api; eid: string }) {
     {fuelled && <div style={{ marginBottom: 4 }}><div style={{ fontSize: 10, color: '#ffd98a' }}>Fuel {st.burn > 0 ? <span style={{ color: '#ffb040' }}>· burning {Math.ceil(st.burn / 1000)}s</span> : <span style={{ color: '#8a7a9a' }}>· cold</span>}{kind === 'campfire' ? ' (burns continuously; warmth + light)' : ' (burns only while working)'}</div><Grid api={api} cid={st.fuelC} cols={3} /></div>}
     <div style={{ fontSize: 10, color: '#ffd98a' }}>Queue</div>
     {st.queue.length === 0 && <div style={{ fontSize: 10, color: '#8a7a9a' }}>Idle.</div>}
-    {st.queue.map((j, i) => { const out = j.recipe.startsWith('R:') ? 'blueprint' : RECIPES[j.recipe].out; return <div key={j.id} className="flex items-center gap-1" style={{ fontSize: 10 }}><Icon k={out} size={12} /><span style={{ width: 90 }}>{ITEMS[out].name}</span><div className="bar" style={{ width: 60 }}><i style={{ width: `${(1 - j.left / j.total) * 100}%`, background: i === 0 && (!fuelled || st.burn > 0) ? '#7aff6a' : '#a07a3a' }} /></div><span>{Math.ceil(j.left / 1000)}s</span><button className="btn ghost" style={{ padding: '0 3px' }} onClick={() => api.act('cancelJob', { eid, jobId: j.id })}>✕</button></div>; })}
+    {st.queue.map((j, i) => { const rcj = j.recipe.startsWith('R:') ? null : RECIPES[j.recipe]; const out = rcj ? rcj.out : 'blueprint'; const label = rcj ? bundleLabel(rcj) : ITEMS[out].name; const pause = i === 0 && rcj?.station === 'refinery' ? (j.left <= 0 ? (rcj.outs && !recoveryFits(C(r, st.outC), recipeOutputs(rcj)) ? 'paused: output storage full' : '') : (st.burn <= 0 && !C(r, st.fuelC).slots.some(s => s && ITEMS[s.key].fuel) ? 'paused: no fuel' : '')) : ''; return <div key={j.id} className="flex items-center gap-1" style={{ fontSize: 10, flexWrap: 'wrap' }}><Icon k={out} size={12} /><span style={{ width: 150 }}>{label}</span>{pause && <span style={{ color: '#ffb040', width: '100%' }}>{pause}</span>}<div className="bar" style={{ width: 60 }}><i style={{ width: `${(1 - j.left / j.total) * 100}%`, background: i === 0 && (!fuelled || st.burn > 0) ? '#7aff6a' : '#a07a3a' }} /></div><span>{Math.ceil(j.left / 1000)}s</span><button className="btn ghost" style={{ padding: '0 3px' }} onClick={() => api.act('cancelJob', { eid, jobId: j.id })}>✕</button></div>; })}
     <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>Output</div><Grid api={api} cid={st.outC} cols={6} />
     <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>Recipes</div>
     {kind === 'workbench' && <div style={{ fontSize: 10, color: '#cfc2dc' }}>Drive recovery: 1 Damaged Drive + 1 Scrap → 1 Mechanical Parts (12s).</div>}
@@ -185,7 +188,7 @@ function StationBody({ api, eid }: { api: Api; eid: string }) {
     {known.map(([k, rc]) => {
       const missing = rc.ins.some(([item, qty]) => countItem(r, 'inv', item) < qty);
       const reason = (rc.stationLevel ?? 1) > level ? `Requires bench ${rc.stationLevel}` : st.queue.length >= 6 ? 'Queue full' : missing ? 'Missing ingredients' : 'Queue this recipe';
-      return <div key={k} className="flex items-center gap-1" style={{ fontSize: 10, marginBottom: 1 }}><Icon k={rc.out} size={12} /><span style={{ width: 82 }}>{k === 'recover_drive' ? 'Recover Drive → Parts' : ITEMS[rc.out].name + (rc.qty > 1 ? ` ×${rc.qty}` : '')}</span><Cost ins={rc.ins} have={have(api)} /><span style={{ color: '#8a7a9a' }}>{rc.secs}s{(rc.stationLevel ?? 1) > level ? ` · bench ${rc.stationLevel} required` : ''}</span><button className="btn" title={reason} disabled={reason !== 'Queue this recipe'} style={{ marginLeft: 'auto', padding: '1px 5px' }} onClick={() => api.act('craft', { recipe: k, eid })}>Queue</button></div>;
+      return <div key={k} className="flex items-center gap-1" style={{ fontSize: 10, marginBottom: 1 }}><Icon k={rc.out} size={12} /><span style={{ width: 150 }}>{k === 'recover_drive' ? 'Recover Drive → Parts' : rc.outs ? bundleLabel(rc) : ITEMS[rc.out].name + (rc.qty > 1 ? ` ×${rc.qty}` : '')}</span><Cost ins={rc.ins} have={have(api)} /><span style={{ color: '#8a7a9a' }}>{rc.secs}s{(rc.stationLevel ?? 1) > level ? ` · bench ${rc.stationLevel} required` : ''}</span><button className="btn" title={reason} disabled={reason !== 'Queue this recipe'} style={{ marginLeft: 'auto', padding: '1px 5px' }} onClick={() => api.act('craft', { recipe: k, eid })}>Queue</button></div>;
     })}
     {recipes.length > known.length && <div style={{ fontSize: 10, color: '#8a7a9a' }}>{recipes.length - known.length} more recipes undiscovered here (blueprints, research, specimens).</div>}
   </div>;
@@ -231,11 +234,11 @@ export function CraftPanel({ api }: { api: Api }) {
   const stationReady = !rc?.station || (!!st && (st.station!.level ?? 1) >= (rc.stationLevel ?? 1));
   const fuelNeeded = rc?.station === 'campfire' || rc?.station === 'furnace' || rc?.station === 'refinery';
   const fuelReady = !fuelNeeded || !!st && (st.station!.burn > 0 || C(r, st.station!.fuelC).slots.some(s => s && ITEMS[s.key].fuel));
-  const outputReady = !rc?.station || !st || spaceFor(r, st.station!.outC, rc.out) >= rc.qty;
+  const outputReady = !rc?.station || !st || (rc.outs ? recoveryFits(C(r, st.station!.outC), rc.outs) : spaceFor(r, st.station!.outC, rc.out) >= rc.qty);
   return <Panel title="Crafting" style={{ left: 8, top: 34, width: 302, height: 306 }} onClose={() => api.open(null)}>
     <div className="flex gap-1" style={{ marginBottom: 4 }}><button className="btn" onClick={() => setInventory(true)}>Inventory</button>{selectedRecipe && <button className="btn" onClick={() => setSelectedRecipe(null)}>Close details</button>}<span style={{ fontSize: 10, color: '#b7a8bf', alignSelf: 'center' }}>{Object.keys(RECIPES).filter(k => isRecipeKnown(r.knowledge.recipes,k)).length} learned</span></div>
     {rc && selectedRecipe ? <div className="scroll" style={{ maxHeight: 245, overflowY: 'auto', fontSize: 11 }}>
-      <div className="flex items-center gap-1"><Icon k={rc.out} size={20} /><b style={{ color: '#ffd98a' }}>{ITEMS[rc.out].name} ×{rc.qty}</b><span> · learned</span></div>
+      <div className="flex items-center gap-1"><Icon k={rc.out} size={20} /><b style={{ color: '#ffd98a' }}>{rc.outs ? bundleLabel(rc) : `${ITEMS[rc.out].name} ×${rc.qty}`}</b><span> · learned</span></div>
       <div style={{ color: '#cfc2dc', margin: '3px 0' }}>{ITEMS[rc.out].desc}</div>
       <b>Ingredients per batch</b>{rc.ins.map(([k,q]) => <div key={k} style={{ color: countItem(r,'inv',k) >= q ? '#bfe8a8' : '#ff9a8a' }}>{ITEMS[k].name}: {countItem(r,'inv',k)}/{q}</div>)}
       <div style={{ marginTop: 3 }}>{rc.station ? `${STRUCTS[rc.station].name}${rc.stationLevel ? ` level ${rc.stationLevel}` : ''}: ${stationReady ? 'in reach' : 'missing / insufficient level'}` : 'By hand'} · {rc.secs}s</div>

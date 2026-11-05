@@ -1,0 +1,21 @@
+{
+  "url": "http://localhost:8765/index.html",
+  "canvases": 1,
+  "info": {
+    "title": "Soul of Hero",
+    "canvases": [
+      {
+        "w": 640,
+        "h": 360,
+        "cw": 640,
+        "ch": 360
+      }
+    ]
+  },
+  "shots": [
+    "01-title",
+    "02-after-continue",
+    "03-after-F-interact"
+  ],
+  "consoleNote": "real clicks: Continue only; world interaction not yet driven"
+}

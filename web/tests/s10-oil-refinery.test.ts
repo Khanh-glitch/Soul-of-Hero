@@ -45,6 +45,7 @@ function fixtureStation(g: GameState, type: string, level?: number): Entity {
   const r = g.run!, p = r.player;
   const f = mkContainer(r, 'fuel', 3), o = mkContainer(r, 'out', 6);
   const e: Entity = { id: `fixture-${type}-${++serial}`, kind: 'struct', type, x: p.x + 8, y: p.y, tx: Math.floor(p.x / TILE), ty: Math.floor(p.y / TILE), hp: STRUCT_HP(type), maxHp: STRUCT_HP(type), station: { fuelC: f.id, outC: o.id, burn: 0, queue: [], ...(level ? { level: level as any } : {}) } };
+  if (type === 'refinery') e.identity = 'refinery-v1';   // same identity stamp the build intent writes
   r.entities[e.id] = e;
   return e;
 }
@@ -273,7 +274,7 @@ describe('SYS10-R1 oil refinery — canonical balance, industrial co-products, v
     expect(e.kind).toBe('vehicle');
   });
 
-  it('legacy single-output recipes and queued jobs without reservations still validate', () => {
+  it('legacy single-output furnace recipes still validate', () => {
     const g = setup(), r = g.run!;
     const furnace = fixtureStation(g, 'furnace');
     addItem(r, furnace.station!.fuelC, 'wood', 2);
@@ -281,11 +282,109 @@ describe('SYS10-R1 oil refinery — canonical balance, industrial co-products, v
     r.knowledge.recipes.push('refine_salvaged_oil');
     expect(act(g, 'craft', { recipe: 'refine_salvaged_oil', eid: furnace.id }).ok).toBe(true);
     stepStations(g, 19000, T + 30000);
-    expect(countItem(r, 'inv', 'fuel_can') + fuelQty(C(r, furnace.station!.outC))).toBeGreaterThanOrEqual(1);
     expect(validate(snapshot(g))).toBeTruthy();
-    // A pre-reservation refinery job (no reserved array) is still accepted.
-    const ref = fixtureStation(g, 'refinery');
-    ref.station!.queue.push({ id: 'j1', recipe: 'refinery_lubricant', left: 12000, total: 12000 } as any);
+  });
+
+  it('rejects a refinery job with no paid reservation, even on an otherwise valid refinery', () => {
+    const g = setup(), r = g.run!, ref = fixtureStation(g, 'refinery');
     expect(validate(snapshot(g))).toBeTruthy();
+    // Forged job: no paid reservation. Validation must reject the raw state (save guard would throw).
+    ref.station!.queue.push({ id: 'j1', recipe: 'refinery_industrial', left: 26000, total: 26000 } as any);
+    expect(validate(structuredClone(g))).toBeNull();
+    // The same job with a canonical reservation is accepted.
+    ref.station!.queue[0].reserved = [{ uid: 'resv1', key: 'salvaged_oil', qty: 6 }, { uid: 'resv2', key: 'glass', qty: 1 }] as any;
+    expect(validate(structuredClone(g))).toBeTruthy();
+    expect(r).toBeTruthy();
+  });
+
+  it('rejects an EMPTY refinery retyped to furnace, and a furnace relabeled as refinery', () => {
+    const g = setup();
+    fixtureStation(g, 'refinery');                                  // empty, no queue
+    expect(validate(snapshot(g))).toBeTruthy();
+    const emptyRetyped = snapshot(g);
+    Object.values(emptyRetyped.run!.entities).find(e => e.type === 'refinery')!.type = 'furnace';
+    expect(validate(emptyRetyped)).toBeNull();
+    // A genuine plain furnace (no identity) is legitimate...
+    const plainFurnace = snapshot(g);
+    const pf = Object.values(plainFurnace.run!.entities).find(e => e.type === 'refinery')!;
+    delete pf.identity; pf.type = 'furnace';
+    expect(validate(plainFurnace)).toBeTruthy();
+    // ...but relabeling that plain furnace as a refinery without identity is rejected.
+    const relabeled = structuredClone(plainFurnace);
+    Object.values(relabeled.run!.entities).find(e => e.type === 'furnace')!.type = 'refinery';
+    expect(validate(relabeled)).toBeNull();
+    const missingStation = structuredClone(g);
+    delete Object.values(missingStation.run!.entities).find(e => e.type === 'refinery')!.station;
+    expect(validate(missingStation)).toBeNull();
+  });
+
+  it('rejects an ACTIVE industrial job whose refinery is retyped, separately from the empty case', () => {
+    const g = setup(), r = g.run!, ref = bindRefinery(g);
+    addItem(r, 'inv', 'salvaged_oil', 6); addItem(r, 'inv', 'glass', 1);
+    expect(act(g, 'craft', { recipe: 'refinery_industrial', eid: ref.id }).ok).toBe(true);
+    expect(validate(snapshot(g))).toBeTruthy();
+    const retyped = snapshot(g);
+    Object.values(retyped.run!.entities).find(e => e.type === 'refinery')!.type = 'furnace';
+    expect(validate(retyped)).toBeNull();
+  });
+
+
+  it('save -> reopen mid-job keeps UID, job progress and reservation; completion matches an uninterrupted run', () => {
+    const reference = (() => {
+      const g = setup(), r = g.run!, ref = bindRefinery(g);
+      addItem(r, 'inv', 'salvaged_oil', 6); addItem(r, 'inv', 'glass', 1);
+      act(g, 'craft', { recipe: 'refinery_industrial', eid: ref.id }, 'ref-job', T + 1);
+      settle(g, T + 60000, true);
+      const out = C(r, ref.station!.outC);
+      return { fuel: fuelQty(out), lube: lubeQty(out), oil: countItem(r, 'inv', 'salvaged_oil') };
+    })();
+    const g = setup(), r = g.run!, ref = bindRefinery(g);
+    addItem(r, 'inv', 'salvaged_oil', 6); addItem(r, 'inv', 'glass', 1);
+    act(g, 'craft', { recipe: 'refinery_industrial', eid: ref.id }, 'rj', T + 1);
+    settle(g, T + 10000, true);
+    const reservedBefore = JSON.stringify(ref.station!.queue[0].reserved);
+    const leftBefore = ref.station!.queue[0].left;
+    // Persist, then reopen from the serialized save text only (no in-memory object reuse).
+    const text = serializeSnapshot(g);
+    const reopened = JSON.parse(JSON.parse(text).payload) as GameState;
+    expect(validate(reopened)).toBeTruthy();
+    const rref = Object.values(reopened.run!.entities).find(e => e.type === 'refinery')!;
+    expect(rref.station!.queue[0].left).toBe(leftBefore);
+    expect(JSON.stringify(rref.station!.queue[0].reserved)).toBe(reservedBefore);
+    settle(reopened, T + 60000, true);
+    const out = C(reopened.run!, rref.station!.outC);
+    expect({ fuel: fuelQty(out), lube: lubeQty(out), oil: countItem(reopened.run!, 'inv', 'salvaged_oil') }).toEqual(reference);
+    expect(rref.station!.queue).toHaveLength(0);
+  });
+
+  it('fault: no fuel never advances or grants output, and resumes exactly once fuel arrives', () => {
+    const g = setup(), r = g.run!, ref = fixtureStation(g, 'refinery');
+    addItem(r, 'inv', 'salvaged_oil', 2);
+    act(g, 'craft', { recipe: 'refinery_lubricant', eid: ref.id }, 'nf', T + 1);
+    settle(g, T + 600000, true);                                   // ten minutes, no fuel
+    expect(ref.station!.queue[0].left).toBe(12000);
+    expect(lubeQty(C(r, ref.station!.outC))).toBe(0);
+    addItem(r, ref.station!.fuelC, 'wood', 3);
+    settle(g, T + 700000, true);
+    expect(ref.station!.queue).toHaveLength(0);
+    expect(lubeQty(C(r, ref.station!.outC))).toBe(1);             // exactly one lubricant, no duplicate
+  });
+
+  it('fault: finished industrial job waits for storage, grants nothing partial, and lands once room exists', () => {
+    const g = setup(), r = g.run!, ref = bindRefinery(g);
+    const out = C(r, ref.station!.outC);
+    addItem(r, 'inv', 'salvaged_oil', 6); addItem(r, 'inv', 'glass', 1);
+    act(g, 'craft', { recipe: 'refinery_industrial', eid: ref.id }, 'full', T + 1);
+    for (let i = 0; i < 5; i++) out.slots[i] = { uid: `full${i}`, key: 'stone', qty: ITEMS.stone.max };
+    settle(g, T + 900000, true);                                   // fifteen minutes blocked
+    expect(ref.station!.queue).toHaveLength(1);
+    expect(ref.station!.queue[0].left).toBe(0);
+    expect(fuelQty(out)).toBe(0);
+    expect(lubeQty(out)).toBe(0);
+    out.slots[0] = null; out.slots[1] = null;
+    settle(g, T + 901000, true);
+    expect(ref.station!.queue).toHaveLength(0);
+    expect(fuelQty(out)).toBe(2);
+    expect(lubeQty(out)).toBe(1);
   });
 });

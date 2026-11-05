@@ -73,3 +73,13 @@ Results:
 - Browser capture `evidence/sys10-r1/refinery-640x360.png` shows the title screen only; refinery interaction, output collection and fuel use in the browser are **not** captured.
 - Territory cabinet/upkeep coverage is a separate Bible decision and is not modeled here.
 - Generic `validate()` gaps outside refinery queues remain.
+
+## SYS10-R2 current state (supersedes R1 declarations where they differ)
+
+- Industrial batch 6 Salvaged Oil + 1 Glass → 2 Fuel Canister + 1 Machine Lubricant, 26 s, one paid job, atomic bundle commit. Shown in Station and Craft UI with full bundle, fuel status, pause reason and output-space state.
+- Refinery queue jobs always require a paid reservation (no migration: the refinery is branch-local and no shipped save contains refinery jobs). Refinery identity (`identity: 'refinery-v1'`) binds station type for both empty and active refineries.
+- Unused balance knob `fuelBurnSecondsPerFuel` removed; `lubricantOverCapFactor` now read by the engine; `need` read from balance.
+- Economy model: `evidence/sys10-r2/economy_model.py` (outputs in `economy_model.out.txt`). Conclusion: refinery batch saves 0.5 oil per can vs furnace; industrial saves 2 oil vs batch+separate lube; one lubricant saves ~12 HP per 12000 px on flat road (0.24 repair) for 2 oil. Provisional tuning kept; the lubricant repair value is a design tradeoff for Creator decision, not a fix.
+- Furnace `STRUCTS.furnace.need = 'claim'` is label-only like the refinery's was. Not changed in R2 (Furnace behavior is preserved); K6 reconciliation dependency.
+- Browser: portable HTTP build `web/dist-http` (vite.http.config.ts). Real clicks: Title → Continue → world; F → Oil Refinery panel. Controlled fixture disclosed.
+- NOT achieved: UI queue of the batch by real input, completion wait, output collection, fuel/lubricant use on a motorbike in browser, browser save/reopen. S3 is NOT claimed.

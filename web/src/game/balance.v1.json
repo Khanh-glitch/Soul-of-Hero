@@ -329,7 +329,6 @@
       ]
     ],
     "requiresWorkbenchLevel": 2,
-    "fuelBurnSecondsPerFuel": 60,
     "recipes": {
       "single": {
         "ins": [

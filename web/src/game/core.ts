@@ -104,6 +104,8 @@ export interface Entity {
   /** The original deployable instance, retained until reclaim or destruction. */
   deployed?: Stack;
   vehicle?: { fuel:number; angle:number; odometer:number; geometry:'vehicle-geometry-v1'; lube?: number };
+  /** Deterministic local identity marker for station types that must not be relabeled (refinery-v1). */
+  identity?: 'refinery-v1';
   airdrop?: { index:number; phase:'signal'|'descending'|'locked'|'open'|'partial'; signalAt:number; descentAt:number; landAt:number; unlockAt:number; expiresAt:number };
   poiPower?: {version:'poi-access-v1'; fueledAt:number; expiresAt:number; budgetMs:number; runAt:number; runMs:number; pausedMs?:number};
   poiDoor?: {version:'poi-access-v1'; closeAt:number; scans:number; lastCardUid?:string};
