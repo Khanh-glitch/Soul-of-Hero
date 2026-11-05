@@ -4,7 +4,7 @@ import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
 import { getWorld } from './world';
 import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, turretStatus, stepLootRespawn, migrateLootRespawn } from './engine';
 
-export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; viewX?: number; viewY?: number }
+export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
 let offlineQuiet = false;
 const fx = (type: string, d: any = {}) => { if (!offlineQuiet && FX.length < 400) FX.push({ type, ...d }); };
@@ -190,7 +190,7 @@ function freezeAround(r: RunState, x:number, y:number, ms:number) {let changed=f
 /** The physical UID captured at windup must still occupy the same slot at commit. */
 function commitCreatorCore(gs: GameState, now: number, slot: number, uid0: string, mode: 'basic'|'refined'|'signature', a: number, aim: Input) {
   const r = gs.run!, p = r.player, s = C(r, 'inv').slots[slot];
-  if (!s || s.uid !== uid0 || !ITEMS[s.key]?.creatorCore || !s.reserves || s.reserves[mode] <= 0) { fx('fizzle', {x:p.x,y:p.y}); return; }
+  if (!s || p.active !== slot || s.uid !== uid0 || !ITEMS[s.key]?.creatorCore || !s.reserves || s.reserves[mode] <= 0) { fx('fizzle', {x:p.x,y:p.y}); return; }
   s.reserves[mode]--; receipt(r, now, 'core.commit', `${s.uid}:${mode}:${s.reserves[mode]}`); award(gs,'first_core',now);
   const b = BAL.creatorCoreBlast, hx=p.x+Math.cos(a)*10, hy=p.y+Math.sin(a)*10;
   fx('cast',{x:hx,y:hy,core:'fire',a});
@@ -212,8 +212,12 @@ function commitCreatorCore(gs: GameState, now: number, slot: number, uid0: strin
     if(mode==='refined') { const distance=Math.min(d.tornadoSpeed*d.tornadoSeconds,dist(p.x,p.y,aim.mx,aim.my));PROJ.push({x:hx,y:hy,vx:Math.cos(a)*d.tornadoSpeed,vy:Math.sin(a)*d.tornadoSpeed,life:Math.max(0.2,distance/d.tornadoSpeed),dmg:d.tornadoDamage,from:'player',kind:'fire_tornado',r:8}); }
     if(mode==='signature') {
       const vx=clamp(Number.isFinite(aim.viewX)?aim.viewX!:p.x-VIEW_W/2,0,WW*TILE-VIEW_W),vy=clamp(Number.isFinite(aim.viewY)?aim.viewY!:p.y-VIEW_H/2,0,WH*TILE-VIEW_H);
-      const visible=r.creatures.filter(m=>m.state!=='dead'&&!m.elder&&!m.atk?.burrow&&m.hp>0&&m.x>=vx&&m.x<vx+VIEW_W&&m.y>=vy&&m.y<vy+VIEW_H&&clearPhysicalLine(r,p,m,true)).sort((u,v)=>dist(p.x,p.y,u.x,u.y)-dist(p.x,p.y,v.x,v.y)||u.id.localeCompare(v.id));
-      const last=visible[visible.length-1]; if(last){const ids=visible.filter(m=>clearPhysicalLine(r,m,last,true)).map(m=>m.id);r.dragonDive={ids,x:last.x,y:last.y,left:d.collectMs};for(const m of visible)if(ids.includes(m.id))m.slow=Math.max(m.slow||0,d.collectMs);fx('cast',{x:last.x,y:last.y,core:'fire',a});}
+      // Route is built only from physically connected visible targets. Anchors
+      // and order are captured once; later camera movement cannot change it.
+      const visible=r.creatures.filter(m=>m.state!=='dead'&&!m.elder?.submerged&&!m.atk?.burrow&&m.hp>0&&m.x>=vx&&m.x<vx+VIEW_W&&m.y>=vy&&m.y<vy+VIEW_H);
+      const remaining=[...visible], route:{id:string;x:number;y:number}[]=[];let cursor={x:p.x,y:p.y};
+      while(remaining.length){const choices=remaining.filter(m=>clearPhysicalLine(r,cursor,m,true)).sort((u,v)=>dist(cursor.x,cursor.y,u.x,u.y)-dist(cursor.x,cursor.y,v.x,v.y)||u.id.localeCompare(v.id));if(!choices.length)break;const m=choices[0];route.push({id:m.id,x:m.x,y:m.y});remaining.splice(remaining.indexOf(m),1);cursor={x:m.x,y:m.y};}
+      const last=route[route.length-1];if(last)r.dragonDive={ids:route.map(q=>q.id),x:last.x,y:last.y,left:d.collectMs,route,index:0,dragonX:p.x,dragonY:p.y,phase:'traverse',hitIds:[]};
       receipt(r,now,'core.dragon.collect',`${s.uid}:${visible.length}`);
     }
     return;
@@ -246,8 +250,8 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
     p.stamina -= B.rollCost; p.action = { kind: 'roll', t: 0, dur: B.rollMs, angle: ml ? Math.atan2(my, mx) : p.aim }; p.invuln = Math.max(p.invuln, B.rollMs - 40); fx('roll', { x: p.x, y: p.y });
   } else if (inp.cancel && act?.kind === 'cast') { dispatch(gs, { id: 'cc' + now, type: 'castCancel' }, now); p.action = null; fx('fizzle', { x: p.x, y: p.y }); }
   else if (!selfFrozen && inp.skill && !p.action) {
-    const s = activeStack(r), mode=inp.skill;
-    if (s && ITEMS[s.key]?.creatorCore && s.reserves && s.reserves[mode]>0) { p.action={kind:'cast',t:0,dur:380,contact:300,angle:p.aim,slot:p.active,coreUid:s.uid,mode}; fx('windup',{x:p.x,y:p.y,core:'fire'}); }
+    const s = activeStack(r), mode=inp.skill, chosen=inp.skillAim;
+    if (s && (!chosen || (chosen.uid===s.uid && chosen.slot===p.active)) && ITEMS[s.key]?.creatorCore && s.reserves && s.reserves[mode]>0) { const tx=chosen?.mx ?? inp.mx,ty=chosen?.my ?? inp.my; p.action={kind:'cast',t:0,dur:380,contact:300,angle:Math.atan2(ty-p.y,tx-p.x),slot:p.active,coreUid:s.uid,mode,targetX:tx,targetY:ty,viewX:chosen?.viewX ?? inp.viewX,viewY:chosen?.viewY ?? inp.viewY}; fx('windup',{x:p.x,y:p.y,core:'fire'}); }
     else fx('toast',{text:'Creator Core reserve empty — reload with R.'});
   }
   else if (!selfFrozen && (inp.attackPressed || inp.attack) && !p.action) {
@@ -267,7 +271,7 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   if (a2) {
     a2.t += dtMs;
     if (a2.kind === 'swing') { speedMul = 0.45; if (!a2.done && a2.t >= (a2.contact || 0)) { a2.done = true; resolveSwing(gs, now, a2.slot ?? -1, a2.angle); } }
-    if (a2.kind === 'cast') { speedMul = selfFrozen ? 0 : a2.mode==='basic' && C(r,'inv').slots[a2.slot!]?.key==='core_dragon' ? 0 : 0.3; a2.angle = p.aim; if (!a2.done && a2.t >= (a2.contact || 0)) { a2.done = true; if (a2.coreUid && a2.mode) commitCreatorCore(gs, now, a2.slot!, a2.coreUid, a2.mode, p.aim, inp); else commitCore(gs, now, a2.slot!, p.aim); } }
+    if (a2.kind === 'cast') { speedMul = selfFrozen ? 0 : a2.mode==='basic' && C(r,'inv').slots[a2.slot!]?.key==='core_dragon' ? 0 : 0.3; if (!a2.coreUid || a2.mode==='basic') a2.angle = p.aim; if (!a2.done && a2.t >= (a2.contact || 0)) { a2.done = true; if (a2.coreUid && a2.mode) commitCreatorCore(gs, now, a2.slot!, a2.coreUid, a2.mode, a2.angle, {...inp,mx:a2.targetX ?? inp.mx,my:a2.targetY ?? inp.my,viewX:a2.viewX ?? inp.viewX,viewY:a2.viewY ?? inp.viewY}); else commitCore(gs, now, a2.slot!, a2.angle); } }
     if (a2.kind === 'hurt') speedMul = 0.6;
     if (a2.t >= a2.dur) p.action = null;
   }
@@ -826,13 +830,30 @@ export function syncWorld(gs: GameState, now: number): boolean {
  * The second impact debits precisely 20% of their then-current HP, bypassing
  * unrelated combat multipliers so the locked group-total remains exact. */
 function tickDragonDive(gs: GameState, dtMs: number, now: number) {
-  const r=gs.run!,d=r.dragonDive;if(!d)return;
-  const selected=d.ids.map(id=>r.creatures.find(m=>m.id===id)).filter((m):m is Creature=>!!m&&m.state!=='dead'&&!m.elder&&!m.atk?.burrow&&m.hp>0);
-  for(const m of selected){const a=Math.atan2(d.y-m.y,d.x-m.x),distance=dist(m.x,m.y,d.x,d.y),step=Math.min(distance,220*dtMs/1000);moveBody(r,m,Math.cos(a)*step,Math.sin(a)*step,5,'creature');}
-  d.left-=dtMs;if(d.left>0)return;
+  const r=gs.run!,d=r.dragonDive;if(!d)return;const b=BAL.creatorCoreDragon;
+  // Pre-V14 saves retain their already-committed collection without minting
+  // a second first-hit pass. New casts persist every route and hit receipt.
+  if(d.phase==='traverse' && d.route && d.index!==undefined) {
+    const q=d.route[d.index];if(!q){d.phase='gather';d.left=b.collectMs;}
+    else {
+      const from={x:d.dragonX!,y:d.dragonY!},target={x:q.x,y:q.y};
+      if(!clearPhysicalLine(r,from,target,true)){d.index++;receipt(r,now,'core.dragon.blocked',q.id);return;}
+      const distance=dist(from.x,from.y,target.x,target.y),step=Math.min(distance,b.traverseSpeed*dtMs/1000),a=Math.atan2(target.y-from.y,target.x-from.x);
+      d.dragonX=from.x+Math.cos(a)*step;d.dragonY=from.y+Math.sin(a)*step;
+      if(distance<=step+0.001){const m=r.creatures.find(m=>m.id===q.id);if(m&&m.hp>0&&m.state!=='dead'&&dist(m.x,m.y,q.x,q.y)<(m.elder?28:16)&&clearPhysicalLine(r,target,m,true)&&damageCreature(gs,m,b.firstDamage,a,now,0)){d.hitIds!.push(m.id);receipt(r,now,'core.dragon.first',m.id);}d.index++;}
+      return;
+    }
+  }
+  const eligibleIds=d.hitIds ?? d.ids;
+  const selected=eligibleIds.map(id=>r.creatures.find(m=>m.id===id)).filter((m):m is Creature=>!!m&&m.state!=='dead'&&!m.elder?.submerged&&!m.atk?.burrow&&m.hp>0);
+  if(d.phase!=='dive'){
+    for(const m of selected){const a=Math.atan2(d.y-m.y,d.x-m.x),distance=dist(m.x,m.y,d.x,d.y),step=Math.min(distance,220*(m.elder?0.15:1)*dtMs/1000);if(clearPhysicalLine(r,m,d,true))moveBody(r,m,Math.cos(a)*step,Math.sin(a)*step,5,'creature');}
+    d.left-=dtMs;if(d.left>0)return;
+    if(d.phase==='gather'){d.phase='dive';d.left=b.diveMs;return;}
+  }else {d.left-=dtMs;if(d.left>0)return;}
   const included=selected.filter(m=>dist(m.x,m.y,d.x,d.y)<=30&&clearPhysicalLine(r,m,d,true));
-  const total=included.reduce((n,m)=>n+m.hp,0), fraction=BAL.creatorCoreDragon.impactFraction;
-  for(const m of included){const hit=m.hp*fraction;m.hp-=hit;m.flash=120;(m as any).prov=true;fx('mhit',{x:m.x,y:m.y,n:hit,a:0,big:false});}
+  const total=included.reduce((n,m)=>n+m.hp,0), fraction=b.impactFraction;
+  for(const m of included){const hit=m.hp*fraction;m.hp-=hit;m.flash=120;(m as any).prov=true;fx('mhit',{x:m.x,y:m.y,n:hit,a:0,big:!!m.elder});}
   fx('boom',{x:d.x,y:d.y});fx('shake',{m:5});receipt(r,now,'core.dragon.impact',`${included.length}:${total}:${total*fraction}`);delete r.dragonDive;
 }
 

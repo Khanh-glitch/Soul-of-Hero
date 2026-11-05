@@ -84,7 +84,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
         case 'Space': inp.current.roll = true; e.preventDefault(); break;
         case 'KeyQ': case 'KeyE': {
           const s=activeStack(r);
-          if(s && ITEMS[s.key]?.creatorCore && !panelRef.current && !r.player.dead && !r.player.action){const aim={mode:e.code==='KeyQ'?'refined' as const:'signature' as const,uid:s.uid,code:e.code};coreAimRef.current=aim;setCoreAim(aim);e.preventDefault();}
+          if(s && ITEMS[s.key]?.creatorCore && !coreAimRef.current && !panelRef.current && !r.player.dead && !r.player.action){const aim={mode:e.code==='KeyQ'?'refined' as const:'signature' as const,uid:s.uid,code:e.code};coreAimRef.current=aim;setCoreAim(aim);e.preventDefault();}
           else if(e.code==='KeyE' && !ITEMS[s?.key||'']?.creatorCore && !panelRef.current) interact();
           break;
         }
@@ -100,7 +100,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
         default: if (/^Digit[1-8]$/.test(e.code)) { r.player.active = +e.code.slice(5) - 1; rerender(); }
       }
     };
-    const up = (e: KeyboardEvent) => { if (keyMap[e.code]) (inp.current as any)[keyMap[e.code]] = false; const a=coreAimRef.current;if(a && a.code===e.code){coreAimRef.current=null;setCoreAim(null);const selected=gs.run && activeStack(gs.run);if(!panelRef.current && selected?.uid===a.uid && !gs.run?.player.dead)inp.current.skill=a.mode;} };
+    const up = (e: KeyboardEvent) => { if (keyMap[e.code]) (inp.current as any)[keyMap[e.code]] = false; const a=coreAimRef.current;if(a && a.code===e.code){coreAimRef.current=null;setCoreAim(null);const selected=gs.run && activeStack(gs.run);if(!panelRef.current && selected?.uid===a.uid && gs.run && !gs.run.player.dead){const vx=Math.round(cam.x),vy=Math.round(cam.y);inp.current.skill=a.mode;inp.current.skillAim={uid:a.uid,slot:gs.run.player.active,mx:mouse.current.x+vx,my:mouse.current.y+vy,viewX:vx,viewY:vy};}} };
     const blur = () => { const i = inp.current; i.up = i.down = i.left = i.right = i.attack = false; i.skill=undefined;i.cancel=true;coreAimRef.current=null;setCoreAim(null); };
     const wheel = (e: WheelEvent) => { const r = gs.run; if (!r || panelRef.current) return; r.player.active = (r.player.active + (e.deltaY > 0 ? 1 : 7)) % 8; rerender(); };
     const vis = () => { if (document.hidden) { saveSync(gs); save(gs); blur(); } };
@@ -123,7 +123,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       const i = inp.current; i.mx = mouse.current.x + Math.round(cam.x); i.my = mouse.current.y + Math.round(cam.y); i.viewX=Math.round(cam.x); i.viewY=Math.round(cam.y);
       let simDt = dt; if (hitstop.current > 0) { hitstop.current -= dt; simDt = dt * 0.08; }
       const wasDead = gs.run.player.dead;
-      tick(gs, i, simDt, now); i.attackPressed = false; i.roll = false; i.cancel = false; i.skill=undefined;
+      tick(gs, i, simDt, now); i.attackPressed = false; i.roll = false; i.cancel = false; i.skill=undefined; i.skillAim=undefined;
       if (!gs.run) return;
       // Death transfers the entire pack to a physical bag. Persist that custody
       // transition immediately instead of leaving a five-second rollback window.

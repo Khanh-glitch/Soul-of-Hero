@@ -28,7 +28,7 @@ describe('Creator Core physical reserves foundation',()=>{
    const grid=blockGrid(r);let pos=0;outer:for(let y=20;y<180;y++)for(let x=20;x<175;x++)if([0,1,2,3].every(dx=>grid[y*WW+x+dx]===0)){pos=y*WW+x;break outer;}expect(pos).toBeGreaterThan(0);r.player.x=(pos%WW)*TILE+8;r.player.y=Math.floor(pos/WW)*TILE+8;
    const m1=mkCreature(r,'boar',r.player.x+16,r.player.y,40),m2=mkCreature(r,'boar',r.player.x+40,r.player.y,25);r.creatures=[m1,m2];
    const vx=Math.max(0,r.player.x-320),vy=Math.max(0,r.player.y-180);for(let i=0;i<6;i++)tick(g,input(g,{viewX:vx,viewY:vy,...(i===0?{skill:'signature' as const}:{})}),50,T+100+i*50);
-   expect(r.dragonDive?.ids).toHaveLength(2);let t=T+400;while(r.dragonDive && r.dragonDive.left>50){tick(g,input(g),50,t);t+=50;}const before=m1.hp+m2.hp;tick(g,input(g),50,t);expect(r.dragonDive).toBeUndefined();expect((before-(m1.hp+m2.hp))).toBeCloseTo(before*0.2,8);const line=r.receipts.find(x=>x.kind==='core.dragon.impact')!.detail.split(':');expect(Number(line[0])).toBe(2);expect(Number(line[2])).toBeCloseTo(Number(line[1])*0.2,8);expect(validate(snapshot(g))).toBeTruthy();
+   expect(r.dragonDive?.ids).toHaveLength(2);let t=T+400;while(r.dragonDive && !(r.dragonDive.phase==='dive' && r.dragonDive.left<=50)){tick(g,input(g),50,t);t+=50;expect(t).toBeLessThan(T+10000);}expect(r.receipts.filter(x=>x.kind==='core.dragon.first')).toHaveLength(2);const before=m1.hp+m2.hp;tick(g,input(g),50,t);expect(r.dragonDive).toBeUndefined();expect((before-(m1.hp+m2.hp))).toBeCloseTo(before*0.2,8);const line=r.receipts.find(x=>x.kind==='core.dragon.impact')!.detail.split(':');expect(Number(line[0])).toBe(2);expect(Number(line[2])).toBeCloseTo(Number(line[1])*0.2,8);expect(validate(snapshot(g))).toBeTruthy();
  });
 
  it('Elsa self-freeze grants exactly one second of invulnerability and freezes nearby enemies longer',()=>{
@@ -39,6 +39,27 @@ describe('Creator Core physical reserves foundation',()=>{
   const {g,r}=setup();addItem(r,'inv','core_elsa',1);addItem(r,'inv','essence_water',1);const slot=C(r,'inv').slots.findIndex(s=>s?.key==='core_elsa'),elsa=C(r,'inv').slots[slot]!;r.player.active=slot;expect(cmd(g,'loadCore',{slot,uid:elsa.uid,mode:'signature'}).ok).toBe(true);
   const w=getWorld();const i=w.tiles.findIndex(t=>[Tile.DEEP,Tile.SHALLOW,Tile.RIVER].includes(t));expect(i).toBeGreaterThanOrEqual(0);const x=i%WW,y=Math.floor(i/WW),vx=Math.max(0,Math.min(WW*TILE-640,x*TILE-80)),vy=Math.max(0,Math.min(WW*TILE-360,y*TILE-80));for(let j=0;j<6;j++)tick(g,input(g,{viewX:vx,viewY:vy,...(j===0?{skill:'signature' as const}:{})}),50,T+100+j*50);
   expect(r.terrain[i]?.t).toBe(Tile.ICE);expect(validate(snapshot(g))).toBeTruthy();const outside=Object.keys(r.terrain).map(Number).filter(j=>{const tx=(j%WW)*TILE,ty=Math.floor(j/WW)*TILE;return tx+TILE<=vx||tx>=vx+640||ty+TILE<=vy||ty>=vy+360});expect(outside).toHaveLength(0);syncWorld(g,T+100000);expect(r.terrain[i]).toBeUndefined();
+ });
+
+ it('locks the release viewport and target across later camera motion, and cancels if the equipped slot changes',()=>{
+  const {g,r}=setup();addItem(r,'inv','core_meteor',1);const slot=C(r,'inv').slots.findIndex(s=>s?.key==='core_meteor'),core=C(r,'inv').slots[slot]!;r.player.active=slot;cmd(g,'loadCore',{slot,uid:core.uid,mode:'signature'});
+  const lock={uid:core.uid,slot,mx:420,my:420,viewX:300,viewY:400};tick(g,input(g,{skill:'signature',skillAim:lock,viewX:900,viewY:900}),50,T+100);
+  for(let i=1;i<6;i++)tick(g,input(g,{mx:2000,my:2000,viewX:900,viewY:900}),50,T+100+i*50);
+  const hits=r.combat!.hazards.filter(h=>h.style==='meteor');expect(hits).toHaveLength(10);expect(hits.every(h=>h.x>=300&&h.x<940&&h.y>=400&&h.y<760)).toBe(true);
+  frames(g,T+500,4);tick(g,input(g,{skill:'signature',skillAim:lock}),50,T+700);r.player.active=0;frames(g,T+750,6);expect(core.reserves!.signature).toBe(2);expect(r.receipts.filter(x=>x.kind==='core.commit')).toHaveLength(1);
+ });
+
+ it('Dragon traversal survives reload and target death without replaying its first hits',()=>{
+  const {g,r}=setup();addItem(r,'inv','core_dragon',1);const slot=C(r,'inv').slots.findIndex(s=>s?.key==='core_dragon'),core=C(r,'inv').slots[slot]!;r.player.active=slot;cmd(g,'loadCore',{slot,uid:core.uid,mode:'signature'});
+  const grid=blockGrid(r);let pos=0;outer:for(let y=20;y<180;y++)for(let x=20;x<175;x++)if([0,1,2,3,4,5].every(dx=>grid[y*WW+x+dx]===0)){pos=y*WW+x;break outer;}r.player.x=(pos%WW)*TILE+8;r.player.y=Math.floor(pos/WW)*TILE+8;
+  const one=mkCreature(r,'boar',r.player.x+16,r.player.y,5),two=mkCreature(r,'boar',r.player.x+64,r.player.y,100);one.frozenUntil=two.frozenUntil=T+20000;r.creatures=[one,two];const viewX=r.player.x-100,viewY=r.player.y-100;
+  for(let i=0;i<8;i++)tick(g,input(g,{viewX,viewY,...(i===0?{skill:'signature' as const}:{})}),50,T+100+i*50);
+  expect(one.state).toBe('dead');expect(r.receipts.filter(x=>x.kind==='core.dragon.first'&&x.detail===one.id)).toHaveLength(1);const resumed=snapshot(g);expect(validate(resumed)).toBeTruthy();
+  let at=T+500;for(let i=0;i<80&&resumed.run!.dragonDive;i++){tick(resumed,input(resumed),50,at);at+=50;expect(validate(snapshot(resumed))).toBeTruthy();}
+  const rr=resumed.run!;expect(rr.dragonDive).toBeUndefined();expect(rr.receipts.filter(x=>x.kind==='core.dragon.first'&&x.detail===one.id)).toHaveLength(1);expect(rr.receipts.filter(x=>x.kind==='core.dragon.first'&&x.detail===two.id)).toHaveLength(1);expect(rr.receipts.filter(x=>x.kind==='core.dragon.impact')).toHaveLength(1);
+ });
+ it('Dragon zero-target cast resolves without inventing targets or a second impact',()=>{
+  const {g,r}=setup();addItem(r,'inv','core_dragon',1);const slot=C(r,'inv').slots.findIndex(s=>s?.key==='core_dragon'),core=C(r,'inv').slots[slot]!;r.player.active=slot;cmd(g,'loadCore',{slot,uid:core.uid,mode:'signature'});frames(g,T+100,10,{skill:'signature'});expect(r.dragonDive).toBeUndefined();expect(r.receipts.filter(x=>x.kind==='core.dragon.first'||x.kind==='core.dragon.impact')).toHaveLength(0);expect(core.reserves!.signature).toBe(2);
  });
 
 });

@@ -141,7 +141,7 @@ export interface RunState {
   /** Additive: absent in old saves; physical combat remains unresolved while away. */
   combat?: { projectiles: Proj[]; hazards: Haz[] };
   /** Committed Dragon collection continues only during physical combat frames. */
-  dragonDive?: { ids: string[]; x: number; y: number; left: number };
+  dragonDive?: { ids: string[]; x: number; y: number; left: number; route?: { id:string; x:number; y:number }[]; index?: number; dragonX?:number; dragonY?:number; phase?: 'traverse'|'gather'|'dive'; hitIds?:string[] };
   traceWalk?: TraceWalk;
   discovered: number[]; // 4x4-tile cells
   poiSeen: string[];

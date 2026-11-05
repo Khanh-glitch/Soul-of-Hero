@@ -192,7 +192,10 @@
     "tornadoRadius": 32,
     "tornadoDamage": 4,
     "collectMs": 1200,
-    "impactFraction": 0.2
+    "impactFraction": 0.2,
+    "firstDamage": 12,
+    "traverseSpeed": 350,
+    "diveMs": 300
   },
   "creatorCoreElsa": {
     "_status": "SOH_NEW_TUNED v1 except selfMs CREATOR_LOCKED",
