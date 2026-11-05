@@ -1,3 +1,4 @@
+import { poiContractDigest } from './poi-access';
 import { LOOT_ECOLOGY_VERSION, lootClass, lootRoll, lootSiteIndex } from './loot-ecology';
 import { creatorLootV1 } from './creator-loot';
 // Local-first snapshots: one serialized profile + run + receipts per write.
@@ -77,6 +78,7 @@ export function validate(raw: any): GameState | null {
   const stack = (s: any): s is Stack => {
     if (!obj(s) || typeof s.uid !== 'string' || !s.uid || !beforeNext(s.uid, /^s([a-z0-9]+)$/) || uids.has(s.uid) || typeof s.key !== 'string' || !has(ITEMS, s.key) || !integer(s.qty) || s.qty < 1 || s.qty > ITEMS[s.key].max) return false;
     if (s.upgrade !== undefined && (s.key !== 'cart_kit' || s.upgrade !== 'freight')) return false;
+    if(s.key==='keycard' && s.charge!==undefined && (!integer(s.charge)||s.charge<1||s.charge>100||s.qty!==1))return false;
     if(s.key==='motorbike_kit' && (!finite(s.dur)||s.dur<0||s.dur>BAL.motorbike.maxHp))return false;
     if (ITEMS[s.key].creatorCore ? (!obj(s.reserves) || Object.keys(s.reserves).sort().join(',') !== 'basic,refined,signature' || !['basic','refined','signature'].every(k => integer(s.reserves[k]) && s.reserves[k] >= 0 && s.reserves[k] <= ({basic:40,refined:12,signature:4} as any)[k])) : s.reserves !== undefined) return false;
     if ((s.dur !== undefined && (!finite(s.dur) || s.dur < 0)) || (s.charge !== undefined && (!finite(s.charge) || s.charge < 0)) || (s.meta !== undefined && typeof s.meta !== 'string') || (s.key === 'blueprint' && (!s.meta || !has(RECIPES, s.meta)))) return false;
@@ -102,6 +104,8 @@ export function validate(raw: any): GameState | null {
     if(e.kind==='recycler'){const site=webRecyclerSite(world,r.layoutId);if(!site||e.tx!==site.tx||e.ty!==site.ty||e.x!==site.tx*16+8||e.y!==site.ty*16+8||e.poi!=='factory'||e.type!==undefined||!e.station||e.station.queue?.length>1)return null;}
     if (e.deployed !== undefined && (!stack(e.deployed) || e.deployed.qty !== 1 || (e.kind === 'cart' ? e.deployed.key !== 'cart_kit' : e.kind === 'vehicle' ? e.deployed.key !== 'motorbike_kit' : e.kind !== 'struct' || STRUCTS[e.type]?.item !== e.deployed.key))) return null;
     if (['drop','bag','cart','vehicle','loot','cash'].includes(e.kind) && (!e.c || r.custody[e.c]?.kind !== e.kind)) return null;
+    if(e.poiPower!==undefined){const p=e.poiPower;const valid=world.poiAccess?.doors.some(d=>d.generator?.tx===e.tx&&d.generator?.ty===e.ty);if(e.kind!=='gen'||!valid||!obj(p)||p.version!=='poi-access-v1'||!finite(p.fueledAt)||!finite(p.expiresAt)||!finite(p.budgetMs)||p.budgetMs<=0||p.budgetMs>86400000||!finite(p.runAt)||!finite(p.runMs)||p.runAt<p.fueledAt||p.runMs<=0||p.runMs>p.budgetMs||p.expiresAt!==p.runAt+p.runMs||![0,1].includes(e.power)||(p.pausedMs!==undefined&&(!finite(p.pausedMs)||p.pausedMs<=0||p.pausedMs>p.runMs||e.power!==0)))return null;}
+    if(e.poiDoor!==undefined){const d=world.poiAccess?.doors.find(d=>d.tx===e.tx&&d.ty===e.ty);const p=e.poiDoor;if(e.kind!=='door'||!d||d.requirement!==e.locked||!obj(p)||p.version!=='poi-access-v1'||!finite(p.closeAt)||p.closeAt<r.startedAt||!integer(p.scans)||p.scans<0||(p.lastCardUid!==undefined&&(typeof p.lastCardUid!=='string'||!/^s[0-9a-z]+$/.test(p.lastCardUid)||!beforeNext(p.lastCardUid,/^s([a-z0-9]+)$/))))return null;}
     if(e.kind==='vehicle') {
       if(!e.deployed || !obj(e.vehicle) || e.vehicle.geometry!=='vehicle-geometry-v1' || !world.vehicleGeometry || !finite(e.vehicle.fuel) || e.vehicle.fuel<0 || e.vehicle.fuel>BAL.motorbike.tank || !finite(e.vehicle.angle) || !finite(e.vehicle.odometer) || e.vehicle.odometer<0 || e.x<BAL.motorbike.radius || e.y<BAL.motorbike.radius || e.x>=WW*TILE-BAL.motorbike.radius || e.y>=WH*TILE-BAL.motorbike.radius || !finite(e.hp) || e.hp<0 || e.hp>BAL.motorbike.maxHp || e.maxHp!==BAL.motorbike.maxHp || e.deployed.dur!==e.hp || r.custody[e.c]?.slots.length!==BAL.motorbike.slots)return null;
       if(r.custody[e.c].slots.reduce((sum:number,s:any)=>sum+(s?ITEMS[s.key].w*s.qty:0),0)>BAL.motorbike.maxWeight+1e-8)return null;
@@ -136,6 +140,11 @@ export function validate(raw: any): GameState | null {
   if (r.depletedLootSites !== undefined && (!Array.isArray(r.depletedLootSites) || r.depletedLootSites.some((i: any) => !integer(i) || !lootSites.has(i)) || new Set(r.depletedLootSites).size !== r.depletedLootSites.length)) return null;
   if (r.creatorLootV1 !== undefined && (r.creatorLootV1 !== true || !['shipping_fresh','dev_delta_fresh'].includes(r.layoutId) || r.sourceLayoutVersion!==3)) return null;
   if (r.renewedLootSites !== undefined && (!r.creatorLootV1 || !Array.isArray(r.renewedLootSites) || new Set(r.renewedLootSites).size!==r.renewedLootSites.length || r.renewedLootSites.some((i:any)=>!integer(i)||!lootSites.has(i)))) return null;
+  if(r.poiAccessVersion!==undefined && r.poiAccessVersion!=='poi-access-v1')return null;
+  if(r.poiAccessDigest!==undefined && (typeof r.poiAccessDigest!=='string'||r.poiAccessDigest!==poiContractDigest(world)))return null;
+  if(r.poiAccessVersion==='poi-access-v1'&&world.poiAccess&&!r.poiAccessDigest)return null;
+  if(r.poiAccessVersion==='poi-access-v1'){for(const s of world.statics.filter(s=>s.kind==='door'||s.kind==='gen')){const found=(Object.values(r.entities) as any[]).filter(e=>e.kind===s.kind&&e.tx===s.tx&&e.ty===s.ty);if(found.length!==1||found[0].x!==s.tx*TILE+TILE/2||found[0].y!==s.ty*TILE+TILE/2||(s.kind==='door'&&found[0].locked!==s.locked))return null;}}
+  if(r.poiAccessVersion==='poi-access-v1'&&world.poiAccess){for(const d of world.poiAccess.doors){const doors=(Object.values(r.entities) as any[]).filter(e=>e.kind==='door'&&e.tx===d.tx&&e.ty===d.ty);if(doors.length!==1||doors[0].locked!==d.requirement)return null;if(d.generator&&(Object.values(r.entities) as any[]).filter(e=>e.kind==='gen'&&e.tx===d.generator!.tx&&e.ty===d.generator!.ty).length!==1)return null;}}
   if (r.lootEcology !== undefined) {
     const policy=r.lootEcology;
     if(!obj(policy) || policy.version!==LOOT_ECOLOGY_VERSION || !obj(policy.cycles) || !r.creatorLootV1 || !['shipping_fresh','dev_delta_fresh'].includes(r.layoutId))return null;

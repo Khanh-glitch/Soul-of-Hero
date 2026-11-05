@@ -122,7 +122,7 @@ export const ITEMS: Record<string, ItemDef> = {
   crawler_optic: I({ name: 'Crawler Optic (specimen)', cat: 'res', icon: 'gem', c1: '#a01e1e', c2: '#ff8a6a', w: 0.1, max: 10, desc: 'Study at a research table.', specimen: 'gas_mask' }),
   boar_tusk: I({ name: 'Boar Tusk (specimen)', cat: 'res', icon: 'fang', c1: '#c0a070', c2: '#fff0d0', w: 0.1, max: 10, desc: 'Study at a research table.', specimen: 'iron_sword' }),
   beetle_horn: I({ name: 'Beetle Horn (specimen)', cat: 'res', icon: 'fang', c1: '#5a2a1e', c2: '#e06a3a', w: 0.1, max: 10, desc: 'Study at a research table.', specimen: 'chitin_armor' }),
-  keycard: I({ name: 'Vault Keycard', cat: 'misc', icon: 'card', c1: '#2a6a5a', c2: '#a0f0d0', w: 0.05, max: 5, desc: 'Opens a sealed industrial door. Consumed.' }),
+  keycard: I({ name: 'Vault Keycard', cat: 'misc', icon: 'card', c1: '#2a6a5a', c2: '#a0f0d0', w: 0.05, max: 5, desc: 'A physical Vault Keycard. New cards have limited scans; legacy cards retain one use.' }),
   fuel_can: I({ name: 'Fuel Canister', cat: 'misc', icon: 'can', c1: '#a03a1e', c2: '#f0c060', w: 1.5, max: 5, desc: 'Fuels generators or motorbikes. Can be studied or burned instead.', fuel: 60, studyRecipe: 'fuel_can' }),
   // Ragnarok & profile
   rcash: I({ name: 'Ragnarok Cash', cat: 'cash', icon: 'coin', c1: '#b07a1e', c2: '#ffe27a', w: 0.01, max: 999, desc: 'Physical, unsecured. Can be lost. Deposit in an owned Rương ký gửi.' }),

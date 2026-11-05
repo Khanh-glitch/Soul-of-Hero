@@ -1,3 +1,4 @@
+import { poiDoorContract, poiGeneratorContract, poiGenerator, poiPowered, interiorRelease, doorwayOccupied, advancePoiAccess, poiContractDigest } from './poi-access';
 import { vehicleClear, vehicleExitPoint } from './motorbike';
 import { LOOT_ECOLOGY_VERSION, LOOT_CLASSES, lootClass, lootRoll, lootSiteIndex, lootSourceId } from './loot-ecology';
 import { creatorLootV1 } from './creator-loot';
@@ -58,7 +59,7 @@ export function newGame(): GameState { return { version: SAVE_VERSION, revision:
 export function mkStack(r: RunState, key: string, qty: number, meta?: string): Stack {
   const d = ITEMS[key]; const s: Stack = { uid: uid(r, 's'), key, qty };
   if (d?.creatorCore) s.reserves = { basic: 0, refined: 0, signature: 0 };
-  if (d?.dur) s.dur = d.dur; if (d?.charge) s.charge = d.initialCharge ?? d.charge; if (meta) s.meta = meta; return s;
+  if (d?.dur) s.dur = d.dur; if (d?.charge) s.charge = d.initialCharge ?? d.charge; if(key==='keycard' && qty===1 && r.poiAccessVersion==='poi-access-v1') s.charge=BAL.poiAccess.cardUses; if (meta) s.meta = meta; return s;
 }
 export function mkContainer(r: RunState, kind: string, n: number): Container { const c = { id: uid(r, 'c'), kind, slots: Array(n).fill(null) }; r.custody[c.id] = c; return c; }
 
@@ -95,6 +96,8 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
     clock: { lastSimAt: now, simMs: 0, respawnAcc: 0, weatherSlot: -1 }, rng: seed, nextId: 1, receipts: [], seenIntents: [], seq: 0,
     vendorStock: { escrow_chest: 4, ...Object.fromEntries(Object.entries(VENDOR_SECURED).map(([k, v]) => [k, v.stock])), ...Object.fromEntries(Object.entries(VENDOR_SPARES).map(([k,v]) => [`spares:${k}`,v.stock])) }, log: [],
   };
+  r.poiAccessVersion='poi-access-v1';
+  r.poiAccessDigest=poiContractDigest(w);
   if (getActiveLayout()==='shipping_fresh' || getActiveLayout()==='dev_delta_fresh') { r.creatorLootV1=true; r.lootEcology={version:LOOT_ECOLOGY_VERSION,cycles:{}}; }
   const reg = 0; r.spawnRegion = reg; const sp = chooseLegalSpawn(r); if(!sp)return {ok:false,reason:'No safe, resource-accessible spawn in this region.'}; r.spawnChoice={x:sp.tx,y:sp.ty,contract:'seeded-geographic-v1'};
   r.custody.inv = { id: 'inv', kind: 'inv', slots: Array(24).fill(null) };
@@ -208,7 +211,7 @@ export function blockGrid(r: RunState) {
   for (const e of Object.values(r.entities)) {
     if (e.tx === undefined) continue; const i = e.ty! * WW + e.tx;
     if (e.kind === 'struct') { const d = STRUCTS[e.type!]; if (d.block && !(e.type!.startsWith('door') && e.open)) arr[i] = 3; }
-    else if (e.kind === 'door') { if (!e.open) arr[i] = 3; }
+    else if (e.kind === 'door') { if (!e.open) arr[i] = 3; else if (!r.terrain[i] && getWorld().tiles[i]===T.PWALL && getWorld().statics.some(s=>s.kind==='door'&&s.tx===e.tx&&s.ty===e.ty)) arr[i]=0; }
     else if (e.kind === 'loot' || e.kind === 'cash' || e.kind === 'vendor' || e.kind === 'gen' || e.kind === 'evac' || e.kind === 'recycler') arr[i] = 3;
   }
   blockCache = { run: r.id, layout, sourceVersion: r.sourceLayoutVersion ?? 1, arr }; blockDirty = false; return arr;
@@ -304,7 +307,7 @@ export function roofAt(r: RunState, x: number, y: number) {
 }
 function roomWall(r: RunState, x: number, y: number) {
   if (x < 0 || y < 0 || x >= WW || y >= WH) return false;
-  const t = effTile(r, x, y); if (t === T.PWALL || t === T.CLIFF) return true;
+  const t = effTile(r, x, y); if (t === T.PWALL || t === T.CLIFF) { const door=entsAt(r,x,y).find(e=>e.kind==='door'&&e.open);if(t!==T.PWALL||!door||r.terrain[y*WW+x]||!getWorld().statics.some(s=>s.kind==='door'&&s.tx===x&&s.ty===y))return true; }
   return entsAt(r, x, y).some(e => e.kind === 'struct' && STRUCTS[e.type!]?.layer === 'wall' && !(e.type!.startsWith('door') && e.open) || e.kind === 'door' && !e.open);
 }
 let roomCache: { run: RunState; start: number; cells: Set<number>; enclosed: boolean } | null = null;
@@ -385,23 +388,23 @@ export function stepBasePower(r: RunState, dt: number, now: number, online=true)
 export const C = (r: RunState, id: string): Container => typeof id === 'string' && Object.prototype.hasOwnProperty.call(r.custody, id) ? r.custody[id] : undefined as unknown as Container;
 export function countItem(r: RunState, cid: string, key: string) { return C(r, cid).slots.reduce((a, s) => a + (s && s.key === key ? s.qty : 0), 0); }
 export function spaceFor(r: RunState, cid: string, key: string) {
-  const d = ITEMS[key]; let n = 0; for (const s of C(r, cid).slots) { if (!s) n += d.max; else if (s.key === key && d.max > 1 && s.meta === undefined && s.dur === undefined && s.charge === undefined && !d.dur && !d.charge) n += d.max - s.qty; } return n;
+  const d = ITEMS[key]; const uniqueCard=key==='keycard'&&r.poiAccessVersion==='poi-access-v1'; let n = 0; for (const s of C(r, cid).slots) { if (!s) n += uniqueCard?1:d.max; else if (!uniqueCard && s.key === key && d.max > 1 && s.meta === undefined && s.dur === undefined && s.charge === undefined && !d.dur && !d.charge) n += d.max - s.qty; } return n;
 }
 /** Adds qty; returns leftover that did not fit (caller decides what to do — never silently deleted). */
 export function addItem(r: RunState, cid: string, key: string, qty: number, tmpl?: Partial<Stack>): number {
   const d = ITEMS[key]; const c = C(r, cid);
-  if (d.max > 1 && !d.dur && !d.charge && tmpl?.meta === undefined && tmpl?.dur === undefined && tmpl?.charge === undefined) for (const s of c.slots) if (s && s.key === key && s.meta === undefined && s.dur === undefined && s.charge === undefined && s.qty < d.max && qty > 0) { const m = Math.min(qty, d.max - s.qty); s.qty += m; qty -= m; }
-  for (let i = 0; i < c.slots.length && qty > 0; i++) if (!c.slots[i]) { const m = Math.min(qty, d.max); const s = mkStack(r, key, m, tmpl?.meta); if (tmpl?.charge !== undefined) s.charge = tmpl.charge; if (tmpl?.dur !== undefined) s.dur = tmpl.dur; c.slots[i] = s; qty -= m; }
+  if (!(key==='keycard'&&r.poiAccessVersion==='poi-access-v1') && d.max > 1 && !d.dur && !d.charge && tmpl?.meta === undefined && tmpl?.dur === undefined && tmpl?.charge === undefined) for (const s of c.slots) if (s && s.key === key && s.meta === undefined && s.dur === undefined && s.charge === undefined && s.qty < d.max && qty > 0) { const m = Math.min(qty, d.max - s.qty); s.qty += m; qty -= m; }
+  for (let i = 0; i < c.slots.length && qty > 0; i++) if (!c.slots[i]) { const m = Math.min(qty, key==='keycard'&&r.poiAccessVersion==='poi-access-v1'?1:d.max); const s = mkStack(r, key, m, tmpl?.meta); if (tmpl?.charge !== undefined) s.charge = tmpl.charge; if (tmpl?.dur !== undefined) s.dur = tmpl.dur; c.slots[i] = s; qty -= m; }
   return qty;
 }
 export function addStack(r: RunState, cid: string, s: Stack): boolean {
   const c = C(r, cid); const d = ITEMS[s.key];
-  if (d.max > 1 && s.meta === undefined && s.dur === undefined && s.charge === undefined) { const room = spaceFor(r, cid, s.key); if (room >= s.qty) { addItem(r, cid, s.key, s.qty); return true; } }
+  if (s.key!=='keycard' && d.max > 1 && s.meta === undefined && s.dur === undefined && s.charge === undefined) { const room = spaceFor(r, cid, s.key); if (room >= s.qty) { addItem(r, cid, s.key, s.qty); return true; } }
   const i = c.slots.indexOf(null); if (i < 0) return false; c.slots[i] = s; return true;
 }
 // Unique or stateful stacks must never be merged into a different instance.
 function mergeable(a: Stack, b: Stack) {
-  return a.key === b.key && ITEMS[a.key].max > 1 && a.meta === undefined && b.meta === undefined &&
+  return a.key === b.key && a.key!=='keycard' && ITEMS[a.key].max > 1 && a.meta === undefined && b.meta === undefined &&
     a.dur === undefined && b.dur === undefined && a.charge === undefined && b.charge === undefined;
 }
 function portion(r: RunState, s: Stack, qty: number): Stack {
@@ -442,7 +445,8 @@ export function cartLimit(e: Entity | undefined) { return e?.deployed?.upgrade =
 export function cartWeight(r: RunState, cid: string) { return C(r, cid).slots.reduce((a, s) => a + (s ? ITEMS[s.key].w * s.qty : 0), 0); }
 export function hasAll(r: RunState, cid: string, ins: [string, number][]) { return ins.every(([k, q]) => countItem(r, cid, k) >= q); }
 export function spawnDrop(r: RunState, key: string, qty: number, x: number, y: number, now: number, tmpl?: Partial<Stack>, burst = true): Entity {
-  if (qty > ITEMS[key].max) { const first = spawnDrop(r, key, ITEMS[key].max, x, y, now, tmpl, burst); spawnDrop(r, key, qty - ITEMS[key].max, x, y, now, tmpl, burst); return first; }
+  const max = key==='keycard'&&r.poiAccessVersion==='poi-access-v1' ? 1 : ITEMS[key].max;
+  if (qty > max) { const first = spawnDrop(r, key, max, x, y, now, tmpl, burst); spawnDrop(r, key, qty - max, x, y, now, tmpl, burst); return first; }
   const c = mkContainer(r, 'drop', 1); const s = mkStack(r, key, qty, tmpl?.meta); if (tmpl?.charge !== undefined) s.charge = tmpl.charge; if (tmpl?.dur !== undefined) s.dur = tmpl.dur; c.slots[0] = s;
   const a = rngNext(r) * Math.PI * 2, sp = burst ? 30 + rngNext(r) * 40 : 0;
   const e: Entity = { id: uid(r, 'd'), kind: 'drop', x, y, c: c.id, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, born: now }; r.entities[e.id] = e; return e;
@@ -1058,21 +1062,48 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
     }
     case 'door': {
       const e = r.entities[it.eid]; if (!e || !near(r, e, 2) || !clearInteraction(r,e)) return fail('Door is out of reach or blocked.');
-      if (e.kind === 'door' && e.locked && !e.open) {
-        if (e.locked === 'keycard') { if (countItem(r, 'inv', 'keycard') < 1) return fail('Sealed. A keycard reader blinks red.'); removeItem(r, 'inv', 'keycard', 1); e.locked = undefined; award(gs, 'vault', now); }
-        else if (e.locked === 'power') return fail('No power. The generator outside is dry.');
+      if(e.kind!=='door' && (e.kind!=='struct'||!e.type?.startsWith('door')))return fail('Not a door.');
+      if(e.open) {
+        if(doorwayOccupied(r,e))return fail('Doorway occupied. Step clear before closing.');
+        e.open=false;markDirty();return ok('door',`${e.id}:closed`);
       }
-      if (e.kind === 'struct' && !e.type!.startsWith('door')) return fail('Not a door.');
-      if (e.open && Math.hypot(p.x - e.x, p.y - e.y) < 9) return fail('Step out of the doorway.');
-      e.open = !e.open; markDirty(); return ok('door', `${e.id}:${e.open ? 'open' : 'closed'}`);
+      const d=e.kind==='door'?poiDoorContract(r,e):undefined;
+      // A prior save whose authored lock was already removed keeps its prior access.
+      // Locked imported gates require explicit spatial metadata, never POI-name inference.
+      if(e.kind==='door' && e.locked) {
+        if(!d||d.requirement!==e.locked)return fail('Access disabled: this gate lacks an authorized exit/circuit contract.');
+        const exit=interiorRelease(r,e,d);
+        if(!exit && d.requirement==='power') {
+          if(!poiGenerator(r,d))return fail('Circuit has no authorized generator.');
+          if(!poiPowered(r,d,now))return fail('Gate unpowered. Fuel its connected generator.');
+        }
+        let cardUid:string|undefined, remaining=0;
+        if(!exit && d.requirement==='keycard') {
+          const inv=C(r,'inv'),i=inv.slots.findIndex(s=>s?.key==='keycard' && (s.meta??'vault')===(d.cardClass??'vault') && (s.charge===undefined||s.charge>0));
+          if(i<0)return fail(inv.slots.some(s=>s?.key==='keycard')?'Sealed. Carried card is incompatible or exhausted.':`Sealed. A ${d.cardClass??'vault'} keycard is required.`);
+          const card=inv.slots[i]!;cardUid=card.uid;
+          if(card.charge===undefined){card.qty--;if(!card.qty)inv.slots[i]=null;}
+          else {card.charge--;remaining=card.charge;if(card.charge===0)inv.slots[i]=null;}
+          award(gs,'vault',now);
+        }
+        r.poiAccessDigest=poiContractDigest(getWorld(r.layoutId||'shipping'));
+        e.poiDoor={version:'poi-access-v1',closeAt:now+BAL.poiAccess.doorOpenMs,scans:(e.poiDoor?.scans||0)+(cardUid?1:0),...(cardUid?{lastCardUid:cardUid}:e.poiDoor?.lastCardUid?{lastCardUid:e.poiDoor.lastCardUid}:{})};
+        e.open=true;markDirty();
+        return ok(cardUid?'poi.card.scan':'poi.door.open',`${e.id}:${exit?'interior-release':cardUid?`${cardUid}:remaining=${remaining}`:'powered'}`,cardUid?`Vault card scanned; ${remaining} uses remain.`:exit?'Interior release opened the door.':'Powered gate opened.');
+      }
+      e.open=true;markDirty();return ok('door',`${e.id}:open`);
     }
     case 'generator': {
-      const e = r.entities[it.eid]; if (!e || e.kind !== 'gen' || !near(r, e, 2.2) || !clearInteraction(r,e)) return fail('Out of reach.');
-      if ((e.power || 0) > 0) return fail('Already running.');
-      if (countItem(r, 'inv', 'fuel_can') < 1) return fail('Needs a Fuel Canister.');
-      removeItem(r, 'inv', 'fuel_can', 1); e.power = 1;
-      for (const d of Object.values(r.entities)) if (d.kind === 'door' && d.poi === e.poi && d.locked === 'power') { d.locked = undefined; }
-      markDirty(); return ok('gen.power', e.poi!, 'The generator coughs alive. A lock clunks open.');
+      const e = r.entities[it.eid]; if (!e || e.kind !== 'gen' || !near(r, e, 2.2) || !clearInteraction(r,e)) return fail('Generator out of reach or blocked.');
+      if(!poiGeneratorContract(r,e))return fail('No authorized local circuit for this generator.');
+      if(e.power===1&&!e.poiPower&&getWorld(r.layoutId||'shipping').poiAccess?.doors.some(d=>d.generator?.tx===e.tx&&d.generator?.ty===e.ty&&Object.values(r.entities).some(o=>o.kind==='door'&&o.tx===d.tx&&o.ty===d.ty&&!o.locked)))return fail('Legacy circuit already unlocked; existing access is preserved.');
+      if(e.poiPower && e.power===1 && e.poiPower.expiresAt>now){e.poiPower.pausedMs=e.poiPower.expiresAt-now;e.power=0;const change=advancePoiAccess(r,now);if(change.closed.length)markDirty();for(const id of change.closed)receipt(r,now,'poi.door.close',id);return ok('poi.power.pause',`${e.id}:remaining=${e.poiPower.pausedMs}`,`Generator off; ${Math.ceil(e.poiPower.pausedMs/1000)} seconds reserved.`);}
+      if(e.poiPower?.pausedMs){e.poiPower.runAt=now;e.poiPower.runMs=e.poiPower.pausedMs;e.poiPower.expiresAt=now+e.poiPower.pausedMs;delete e.poiPower.pausedMs;e.power=1;return ok('poi.power.resume',`${e.id}:until=${e.poiPower.expiresAt}`,'Generator resumed without another canister.');}
+      if (countItem(r, 'inv', 'fuel_can') < 1) return fail('Generator needs one physical Fuel Canister.');
+      r.poiAccessDigest=poiContractDigest(getWorld(r.layoutId||'shipping'));
+      const fuel=[...C(r,'inv').slots].reverse().find(s=>s?.key==='fuel_can')!; const fuelUid=fuel.uid;
+      removeItem(r, 'inv', 'fuel_can', 1); e.power=1;e.poiPower={version:'poi-access-v1',fueledAt:now,expiresAt:now+BAL.poiAccess.fuelRuntimeMs,budgetMs:BAL.poiAccess.fuelRuntimeMs,runAt:now,runMs:BAL.poiAccess.fuelRuntimeMs};
+      return ok('poi.power.fuel',`${e.id}:fuel_can:${fuelUid}:until=${e.poiPower.expiresAt}`,`Generator running for ${BAL.poiAccess.fuelRuntimeMs/1000} seconds.`);
     }
     case 'openCash': { // C15: special finite POI chest mints physical cash ONCE, only during the final 72h
       const e = r.entities[it.eid]; if (!e || e.kind !== 'cash' || !near(r, e, 2.2) || !clearInteraction(r,e)) return fail('Out of reach.');

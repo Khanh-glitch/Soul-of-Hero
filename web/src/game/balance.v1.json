@@ -288,5 +288,11 @@
     "maxSlope": 0.6,
     "radius": 6,
     "repairHp": 50
+  },
+  "poiAccess": {
+    "_status": "SOH_PROVISIONAL v1; ORIGINAL_UNKNOWN card uses and POI fuel runtime",
+    "cardUses": 3,
+    "fuelRuntimeMs": 180000,
+    "doorOpenMs": 15000
   }
 }

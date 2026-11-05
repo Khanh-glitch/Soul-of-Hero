@@ -58,7 +58,7 @@ function texel(t: number, wx: number, wy: number, tx: number, ty: number, r: Run
 function renderChunk(r: RunState, cx: number, cy: number) {
   const cv = document.createElement('canvas'); cv.width = CH * TILE; cv.height = CH * TILE; const g = cv.getContext('2d')!;
   const img = g.createImageData(cv.width, cv.height); const buf = new Uint32Array(img.data.buffer); const w = getWorld();
-  const tt = (x: number, y: number) => (x < 0 || y < 0 || x >= WW || y >= WH) ? T.DEEP : effTile(r, x, y);
+  const tt = (x: number, y: number) => { if(x<0||y<0||x>=WW||y>=WH)return T.DEEP;const t=effTile(r,x,y);return t===T.PWALL&&!r.terrain[y*WW+x]&&w.statics.some(s=>s.kind==='door'&&s.tx===x&&s.ty===y)?T.FLOOR:t; };
   for (let j = 0; j < CH; j++) for (let i = 0; i < CH; i++) {
     const tx = cx * CH + i, ty = cy * CH + j; const t = tt(tx, ty);
     const ctx = { n: tt(tx, ty - 1), s: tt(tx, ty + 1), e: tt(tx + 1, ty), w: tt(tx - 1, ty), zone: w.zone[ty * WW + tx] ?? 0, sea: w.seaDist[ty * WW + tx] ?? 9 };

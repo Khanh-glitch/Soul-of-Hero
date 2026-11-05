@@ -1,3 +1,4 @@
+import { advancePoiAccess, poiDoorLabel, poiGenLabel } from './poi-access';
 import { vehicleClear, vehicleExitPoint } from './motorbike';
 import { LOOT_CLASSES, lootClass } from './loot-ecology';
 // Deterministic-ish real-time simulation layered on the engine authority. All state mutation goes through engine helpers.
@@ -836,6 +837,8 @@ function tickSurvival(gs: GameState, dtMs: number, now: number) {
 function advanceWorld(gs: GameState, start: number, end: number, report?: string[], visual = true) {
   const r = gs.run!; let t = start; const slotMs = BAL.weather.slotMinutes * 60000;
   initializeCabinets(r);
+  const syncPoi=(at:number)=>{const events=advancePoiAccess(r,at);if(events.closed.length)markDirty();for(const id of events.expired)receipt(r,at,'poi.power.expire',id);for(const id of events.closed)receipt(r,at,'poi.door.close',id);};
+  syncPoi(t);
   resolveFires(gs, t, visual);
   stepLootRespawn(r, t);
   stepNatureTrees(r,t);
@@ -862,6 +865,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     dt = territoryBoundary(r, dt);
     dt = tenderBoundary(r, isWet(weather), dt);
     for (const tree of r.natureTrees||[]) if(tree.until>r.clock.simMs)dt=Math.min(dt,tree.until-r.clock.simMs);
+    for(const e of Object.values(r.entities)){if(e.poiPower&&e.power===1&&e.poiPower.expiresAt>t)dt=Math.min(dt,e.poiPower.expiresAt-t);if(e.open&&e.poiDoor&&e.poiDoor.closeAt>t)dt=Math.min(dt,e.poiDoor.closeAt-t);}
     for (const due of Object.values(r.lootRespawnAt || {})) if (due > t) dt = Math.min(dt, due - t);
     for (const st of Object.values(r.sources)) { if (st.fire && st.fire > r.clock.simMs) dt = Math.min(dt, st.fire - r.clock.simMs); if(st.fireSpreadAt && st.fireSpreadAt > r.clock.simMs) dt = Math.min(dt, st.fireSpreadAt - r.clock.simMs); }
     for (const terrain of Object.values(r.terrain)) if (terrain.until && terrain.until > r.clock.simMs) dt = Math.min(dt, terrain.until - r.clock.simMs);
@@ -873,6 +877,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     decayTraces(r, dt, weather);
     if(stepTerritory(r,dt,t+dt,report)) offlineStructureChange++;
     r.clock.simMs += dt; t += dt;
+    syncPoi(t);
     // Offline time cannot confirm a fresh sighting or retain an expired mark.
     // Keep committed tells/attacks intact; they resume, not resolve speculatively.
     if (!visual) {
@@ -1122,14 +1127,15 @@ export function findInteract(gs: GameState, now: number): Interact | null {
     else if (e.kind === 'loot') { const site=r.lootEcology && getWorld(r.layoutId||'shipping').statics.find(s=>s.kind==='loot'&&s.tx===e.tx&&s.ty===e.ty);const cls=site && lootClass(site);label=C(r,e.c!).slots.some(Boolean) ? `Search ${cls ? LOOT_CLASSES[cls].name : 'crate'}` : 'Empty crate'; }
     else if (e.kind === 'cash') label = isRagnarok(r, now) ? (e.minted ? 'Ragnarok chest' : 'Break the Ragnarok seal') : 'Sealed Ragnarok chest';
     else if (e.kind === 'vendor') label = `Trade with ${e.label}`;
-    else if (e.kind === 'door') label = e.locked ? `${e.label} (${e.locked === 'keycard' ? 'keycard' : 'no power'})` : e.open ? 'Close door' : 'Open door';
+    else if (e.kind === 'door') label = e.locked || e.poiDoor ? poiDoorLabel(r,e,now) : e.open ? 'Close door' : 'Open door';
     else if (e.kind === 'recycler') label = 'Use Foundry Recycler';
-    else if (e.kind === 'gen') label = e.power ? 'Generator (running)' : 'Fuel generator';
+    else if (e.kind === 'gen') label = poiGenLabel(r,e,now);
     else if (e.kind === 'evac') label = 'Evacuation beacon';
     else if (e.kind === 'cart') label = 'Cart cargo  [Shift+F] pull';
     else if (e.kind === 'vehicle') label = r.player.vehicle===e.id ? 'Exit motorbike' : 'Motorbike cargo and controls';
     else if (e.kind === 'struct') { const d2 = STRUCTS[e.type!]; kind = 'struct:' + e.type; if (e.type!.startsWith('door')) label = e.open ? 'Close door' : 'Open door'; else if (e.type === 'claim') label = 'Open Territory Cabinet'; else if (d2.station) label = `Use ${d2.name}`; else if (e.turret) label = `Turret: ${turretStatus(r,e)}${e.turret.tracking ? ' · target' : ''}`; else if (e.basePower) label = `Generator: ${e.basePower.enabled && e.basePower.energy>0 ? 'running' : e.basePower.enabled ? 'no fuel' : 'off'}`; else if (d2.slots) label = `Open ${d2.name}`; else if (e.type === 'escrow') label = 'Rương ký gửi'; else if (e.type === 'garden') label = 'Tend garden'; else if (e.type === 'barrel') label = `Rain barrel (${Math.floor(e.water || 0)})`; else continue; }
     else continue;
+    if((e.kind==='door'||e.kind==='gen') && (effTile(r,tileOf(p.x),tileOf(p.y))===T.TOXIC || (getWorld().zone[tileOf(p.y)*WW+tileOf(p.x)]===7 && effTile(r,tileOf(p.x),tileOf(p.y))===T.FLOOR)))label+=' · radiation exposure';
     bd = d; best = { kind, label, eid: e.id, x: e.x, y: e.y };
   }
   for (const key in r.sources) { const st=r.sources[key]; if(!st.fire || st.fire<=r.clock.simMs)continue; const i=+key,x=(i%WW)*TILE+8,y=Math.floor(i/WW)*TILE+8,d=dist(fx0,fy0,x,y); if(d<bd && dist(p.x,p.y,x,y)<=2.2*TILE && clearInteraction(r,{x,y})){bd=d;best={kind:'fire',label:'Douse burning tree (1 flask water)',x,y};} }

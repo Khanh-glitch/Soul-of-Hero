@@ -18,11 +18,16 @@ export interface StaticEnt { kind: string; tx: number; ty: number; type?: string
 export interface Place { id: string; name: string; tx: number; ty: number; kind: 'start' | 'poi' | 'elder' | 'evac' }
 /** Map-supplied vehicle capability; absence disables deployment. Arrays are world-sized masks. */
 export interface VehicleGeometry { version:'vehicle-geometry-v1'; mapId:string; mapRevision:number; width:number; height:number; tileSize:number; passable:ArrayLike<number>; road:ArrayLike<number>; slope:ArrayLike<number>; parking:ArrayLike<number>; exit:ArrayLike<number> }
+export type PoiCardClass='vault'|'green'|'blue'|'purple';
+export interface PoiDoorContract { tx:number; ty:number; requirement:'keycard'|'power'; interior:[number,number]; cardClass?:PoiCardClass; generator?:{tx:number;ty:number} }
+export interface PoiAccessContract { version:'poi-access-v1'; doors:PoiDoorContract[] }
 export interface World {
   tiles: Uint8Array; fresh: Uint8Array; src: Int8Array; sourceOverlayV2: Int8Array; zone: Uint8Array; seaDist: Uint8Array;
   wmp04r1?: { scene:Wmp04Scene; revision:string; marineRegion:Uint8Array; coldTransition:Uint8Array; effectiveBiome:Uint8Array; cliffCandidate:Uint8Array; heightClassSamples:Uint8Array; integrity:{ok:boolean;digests:Record<string,string>;revision:string}; note:string };
   buildings: Building[]; statics: StaticEnt[]; places: Place[]; starts: Place[]; elders: Place[];
   vehicleGeometry?: VehicleGeometry;
+  /** Web gameplay adapter; imported maps need an explicit authoritative contract. */
+  poiAccess?: PoiAccessContract;
   economyMap: EconomyMap; sourceV3: (string | null)[]; packageContract?: GeographicHandoff; accessCorridors?: AccessCorridors; veyra?: VeyraViewIdentity; enforceMasks?: boolean; zoneNames?: string[]; randomSpawn?: boolean; spawnEligible?: Uint8Array;
 }
 
@@ -201,7 +206,7 @@ function genWorld(layoutId: LayoutId, freshSpawn = false): World {
   for (const [a, b] of [['s0', 'tp'], ['s1', 'tp'], ['tp', 'mill'], ['mill', 's2'], ['s2', 'watch'], ['s0', 's2'], ['mill', 's3'], ['s3', 'factory'], ['s3', 'evac'], ['s1', 'light'], ['s1', 'wreck'], ['tp', 'factory']]) if (!freshSpawn || (!/^s[0-3]$/.test(a) && !/^s[0-3]$/.test(b))) road(byId(a), byId(b));
   for (const [a, b] of pack.roadLinks) if (!freshSpawn || (!/^s[0-3]$/.test(a) && !/^s[0-3]$/.test(b))) road(byId(a), byId(b));
   // buildings & statics
-  const buildings: Building[] = []; const statics: StaticEnt[] = [];
+  const buildings: Building[] = []; const statics: StaticEnt[] = []; const poiDoors:PoiDoorContract[] = [];
   const stamp = (id: string, name: string, cx: number, cy: number, w: number, h: number, roof: string, doors: [number, number][], floorOnly = false) => {
     const x0 = cx - (w >> 1), y0 = cy - (h >> 1);
     for (let y = y0; y < y0 + h; y++) for (let x = x0; x < x0 + w; x++) { const edge = x === x0 || y === y0 || x === x0 + w - 1 || y === y0 + h - 1; tiles[y * WW + x] = edge && !floorOnly ? T.PWALL : T.FLOOR; src[y * WW + x] = -1; }
@@ -231,6 +236,7 @@ function genWorld(layoutId: LayoutId, freshSpawn = false): World {
   const fa = byId('factory'); stamp('b_fa', 'Foundry Hall', fa.tx, fa.ty, 17, 12, 'tin', [[8, 11], [0, 5]]);
   for (let y = fa.ty - 5; y <= fa.ty - 1; y++) tiles[y * WW + fa.tx + 2] = T.PWALL; for (let x = fa.tx + 2; x <= fa.tx + 7; x++) tiles[(fa.ty - 1) * WW + x] = T.PWALL;
   statics.push({ kind: 'door', tx: fa.tx + 4, ty: fa.ty - 1, poi: 'factory', locked: 'keycard', label: 'Vault Door' });
+  poiDoors.push({tx:fa.tx+4,ty:fa.ty-1,requirement:'keycard',cardClass:'vault',interior:[0,-1]});
   buildings.push({ id: 'b_vault', name: 'Sealed Vault', x: fa.tx + 3, y: fa.ty - 5, w: 5, h: 4, roof: 'tin' });
   crate(fa.tx + 4, fa.ty - 4, 'factory_vault', [['core_fire', 1], ['blueprint:core_earth', 1], ['spares', 6]]);
   crate(fa.tx + 6, fa.ty - 4, 'factory_vault', [['blueprint:gas_mask', 1], ['iron_ingot', 4]]);
@@ -240,6 +246,7 @@ function genWorld(layoutId: LayoutId, freshSpawn = false): World {
   const li = byId('light'); stamp('b_li', 'Lighthouse', li.tx, li.ty, 5, 5, 'light', [[2, 4]]);
   statics.push({ kind: 'door', tx: li.tx, ty: li.ty + 2, poi: 'light', locked: 'power', label: 'Lighthouse Door' });
   statics.push({ kind: 'gen', tx: li.tx + 3, ty: li.ty + 3, poi: 'light', label: 'Generator' });
+  poiDoors.push({tx:li.tx,ty:li.ty+2,requirement:'power',interior:[0,-1],generator:{tx:li.tx+3,ty:li.ty+3}});
   crate(li.tx - 1, li.ty - 1, 'light_top', [['core_storm', 1], ['blueprint:leather_armor', 1]]);
   statics.push({ kind: 'cash', tx: li.tx + 1, ty: li.ty - 1, poi: 'light_top', cash: 60 });
   crate(li.tx + 3, li.ty - 2, 'light', [['fuel_can', 1], ['rope', 2]]);
@@ -274,6 +281,8 @@ function genWorld(layoutId: LayoutId, freshSpawn = false): World {
       const a = at(p); statics.push({ kind: 'door', ...a, poi: q.id, locked, label });
     }
     const gen = at(q.generator); statics.push({ kind: 'gen', ...gen, poi: q.id, label: `${q.name} Generator` });
+    poiDoors.push({...at(q.keycardDoor),requirement:'keycard',cardClass:'vault',interior:[0,-1]});
+    poiDoors.push({...at(q.powerDoor),requirement:'power',interior:[1,0],generator:gen});
     const putLoot = (p: { x: number; y: number }, loot: typeof q.loot.outer, label: string) => {
       const a = at(p); statics.push({ kind: 'loot', ...a, poi: q.id, label, loot: loot.map(i => [i.item, i.quantity]) });
     };
@@ -349,7 +358,7 @@ function genWorld(layoutId: LayoutId, freshSpawn = false): World {
   if (freshSpawn) { economyMap.id = layoutId + '_fresh'; for (let y=20;y<WH-2;y+=40) for(let x=20;x<WW-2;x+=40) if(economyMap.walkable[y*WW+x]) economyMap.starts.push({id:`compiler_${x}_${y}`,x,y}); }
   const result = compileEconomy(economyMap);
   if (result.errors.length) throw new Error(`Invalid economy map ${layoutId}: ${result.errors.join('; ')}`);
-  return { tiles, fresh, src, sourceOverlayV2, sourceV3: result.sources, economyMap, vehicleGeometry:{version:'vehicle-geometry-v1',mapId:economyMap.id,mapRevision:economyMap.revision,width:WW,height:WH,tileSize:TILE,passable:economyMap.cargoPassable,road:economyMap.road,slope:economyMap.slope,parking:economyMap.cargoPassable,exit:economyMap.walkable}, zone, seaDist, buildings, statics, places: [...all, ...elders], starts: freshSpawn ? [] : starts, elders, ...(freshSpawn ? {randomSpawn:true} : {}) };
+  return { tiles, fresh, src, sourceOverlayV2, sourceV3: result.sources, economyMap, poiAccess:{version:'poi-access-v1',doors:poiDoors}, vehicleGeometry:{version:'vehicle-geometry-v1',mapId:economyMap.id,mapRevision:economyMap.revision,width:WW,height:WH,tileSize:TILE,passable:economyMap.cargoPassable,road:economyMap.road,slope:economyMap.slope,parking:economyMap.cargoPassable,exit:economyMap.walkable}, zone, seaDist, buildings, statics, places: [...all, ...elders], starts: freshSpawn ? [] : starts, elders, ...(freshSpawn ? {randomSpawn:true} : {}) };
 }
 
 export function tileAt(w: World, tx: number, ty: number) { if (tx < 0 || ty < 0 || tx >= WW || ty >= WH) return T.DEEP; return w.tiles[ty * WW + tx]; }

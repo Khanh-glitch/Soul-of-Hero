@@ -99,6 +99,8 @@ export interface Entity {
   /** The original deployable instance, retained until reclaim or destruction. */
   deployed?: Stack;
   vehicle?: { fuel:number; angle:number; odometer:number; geometry:'vehicle-geometry-v1' };
+  poiPower?: {version:'poi-access-v1'; fueledAt:number; expiresAt:number; budgetMs:number; runAt:number; runMs:number; pausedMs?:number};
+  poiDoor?: {version:'poi-access-v1'; closeAt:number; scans:number; lastCardUid?:string};
   /** Legacy jobs with unknowable paid inputs, preserved after station destruction. */
   legacyJobs?: { stationType: string; queue: Job[] };
 }
@@ -142,6 +144,8 @@ export interface RunState {
   renewedLootSites?: number[];
   /** New-run pinned authored-site economy; old runs retain their original tables. */
   lootEcology?: { version: 'w06-v1'; cycles: Record<string,number> };
+  poiAccessVersion?: 'poi-access-v1';
+  poiAccessDigest?: string;
   natureTrees?: {tx:number;ty:number;until:number}[];
   spiritTransit?: { x:number; y:number; arriveAt:number; uid:string };
   terrain: Record<number, { t: number; until?: number }>; // K2 terrain mutations (burns, ice)
