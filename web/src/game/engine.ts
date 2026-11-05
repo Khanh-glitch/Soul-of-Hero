@@ -224,6 +224,17 @@ export function maintainDamagedStructure(r: RunState, e: Entity, now: number): [
   e.hp = Math.min(e.maxHp,e.hp + Math.ceil(e.maxHp / 4)); markDirty();
   receipt(r,now,'struct.maintenance',`${e.id}:${cost.map(([k,q])=>`${k}x${q}`).join(',')}`); return cost;
 }
+/** Rough neutral-exposure forecast; not a safety guarantee or a simulation of combat/environment. */
+export function offlineSurvivalEstimate(r: RunState) {
+  const p=r.player, sheltered=isSheltered(r,p.x,p.y), b=BAL.player;
+  const hungerHours=Math.max(0,p.hunger)/b.offlineHungerPerHour;
+  const thirstHours=Math.max(0,p.thirst)/b.offlineThirstPerHour;
+  const damagePerHour=b.starveDamagePerMin*b.offlineDrainFactor*60;
+  let survivalHours: number;
+  if (!sheltered) survivalHours=Math.min(hungerHours,thirstHours)+Math.max(0,p.hp)/damagePerHour;
+  else { const hpAtThirst=hungerHours<thirstHours ? Math.max(1,p.hp-(thirstHours-hungerHours)*damagePerHour) : p.hp; survivalHours=thirstHours+Math.max(0,hpAtThirst)/damagePerHour; }
+  return {hungerHours,thirstHours,survivalHours:p.dead?0:survivalHours,sheltered};
+}
 /** Both adapters supply roof coverage to the same room traversal. */
 export function roofAt(r: RunState, x: number, y: number) {
   if (x < 0 || y < 0 || x >= WW || y >= WH) return false;

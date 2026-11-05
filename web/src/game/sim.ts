@@ -998,7 +998,7 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   let frames = 0, structureEpoch = offlineStructureChange;
 
   let t = start, wetMs = 0; const zone = getWorld().zone[tileOf(p.y) * WW + tileOf(p.x)];
-  const startHp = p.hp, startHunger = p.hunger;
+  const startHp = p.hp, startHunger = p.hunger, startThirst = p.thirst;
   // Minute-sized survival integration, not frame replay; world helper splits further at weather/fire boundaries.
   while (t < end) {
     const slotMs = BAL.weather.slotMinutes * 60000;
@@ -1006,9 +1006,21 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
     let dtMs = Math.min(60000, end - t, nextWeather - t);
     if (pending.length && frames < 2400) dtMs = Math.min(dtMs, 50);
     // Integrate the existing offline drains at their actual depletion/death boundaries.
-    // Rates and hunger-only shelter protection are unchanged.
+    // Hunger follows the sourced 24h baseline; thirst is an explicit provisional SOH assumption.
+    // Resolve only already-committed source fire; the stationary offline body is
+    // exposed at the existing fire radius. Continuous damage approximates online
+    // ticks; knockback/combat cannot be reconstructed from an absent input stream.
+    resolveFires(gs,t,false);
+    for (const st of Object.values(r.sources)) {
+      if (st.fire && st.fire > r.clock.simMs) dtMs=Math.min(dtMs,st.fire-r.clock.simMs);
+      if (st.fireSpreadAt && st.fireSpreadAt > r.clock.simMs) dtMs=Math.min(dtMs,st.fireSpreadAt-r.clock.simMs);
+    }
+    if ((p.iceUntil||0)>t) dtMs=Math.min(dtMs,p.iceUntil!-t);
+    const activeFire = !isWet(weatherAt(r,t)) && Object.entries(r.sources).some(([key,st])=>!!st.fire && st.fire>r.clock.simMs && dist(p.x,p.y,(+key%WW)*TILE+8,Math.floor(+key/WW)*TILE+8)<18);
+    const armor = C(r,'eq').slots.reduce((n,s)=>n+(s ? ITEMS[s.key].armor||0 : 0),0);
+    const fireRate = activeFire && (p.iceUntil||0)<=t ? Math.max(1,Math.round(B.offlineFireHitDamage*(1-Math.min(0.6,armor))))/B.offlineFireHitMs : 0;
     const unit = B.offlineDrainFactor / 60000;
-    const hungerRate = B.hungerDrainPerMin * unit, thirstRate = B.thirstDrainPerMin * unit;
+    const hungerRate = B.offlineHungerPerHour / HOUR, thirstRate = B.offlineThirstPerHour / HOUR;
     // The same equipped protection used online also applies during chronological offline exposure.
     const protectedByMask = C(r, 'eq').slots.some(s => s && ITEMS[s.key].mask);
     const radRate = zone === 7 ? 6 * (protectedByMask ? 0.8 / 7 : 1) * unit : 0;
@@ -1020,6 +1032,7 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
       if (radRate && p.rad < 50) dtMs = Math.min(dtMs, (50 - p.rad) / radRate);
       const thirsty = p.thirst <= 0, hungry = p.hunger <= 0;
       if (thirsty || (hungry && (!sheltered || p.hp > 1 + 1e-9))) damageRate += B.starveDamagePerMin * unit;
+      damageRate += fireRate;
       if (zone === 5 && !sheltered) damageRate += B.coldDamagePerMin * unit;
       if (zone === 7 && p.rad >= 50 - 1e-9) damageRate += B.radDamagePerMinOver50 * unit;
       if (damageRate > 0) {
@@ -1067,6 +1080,7 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   if (repairs.size) report.push(`Claim reserve spent: ${[...repairs].map(([k,q])=>`${q} ${ITEMS[k]?.name || k}`).join(', ')} on repairs after real impacts.`);
   if (wetMs) report.push(`Rain fell for ~${wetMs >= 60000 ? Math.round(wetMs / 60000) + ' min' : Math.round(wetMs / 1000) + ' sec'}, accelerating footprint decay; exposed gardens and barrels could collect water.`);
   if (Math.round(startHunger - p.hunger) > 0) report.push(`Hunger ${Math.round(startHunger)} → ${Math.round(p.hunger)}${sheltered ? ' (sheltered: hunger cannot kill you)' : ''}.`);
+  if (Math.round(startThirst - p.thirst) > 0) report.push(`Thirst ${Math.round(startThirst)} → ${Math.round(p.thirst)} (shelter does not prevent thirst death).`);
   if (!p.dead && startHp - p.hp >= 1) report.push(`HP ${Math.round(startHp)} → ${Math.round(p.hp)}.`);
   receipt(r, now, 'offline.settle', `${Math.round(gap / 1000)}s`);
   return report;

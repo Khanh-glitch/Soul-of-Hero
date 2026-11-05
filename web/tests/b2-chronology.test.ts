@@ -122,12 +122,12 @@ describe('B2-B chronology', () => {
     const uids = Object.values(resumed.run!.custody).flatMap(c => c.slots.filter(Boolean).map(s => s!.uid)); expect(new Set(uids).size).toBe(uids.length); expect(reserved.every(id => !uids.includes(id))).toBe(true);
   });
 
-  it('does not simulate fire spread, attacks or wildlife during offline catch-up', () => {
+  it('applies committed nearby fire while not inventing wildlife attacks during offline catch-up', () => {
     const gs = fresh(), r = gs.run!; scheduleRain(gs, 20000); const i = fire(gs, 7000), x = (i % WW) * TILE + 8, y = Math.floor(i / WW) * TILE + 8;
     r.player.x = x; r.player.y = y; const m = mkCreature(r, 'wolf', x, y, 100); r.creatures.push(m);
     const rng = r.rng, creature = structuredClone(m), sourceCount = Object.keys(r.sources).length;
     const control = structuredClone(gs); (control.run!.sources[i] as any).fire = 0; markDirty();
-    settle(gs, T0 + 10000); settle(control, T0 + 10000); expect(r.rng).toBe(rng); expect(r.player.hp).toBe(control.run!.player.hp); expect(m).toEqual(creature); expect(Object.keys(r.sources)).toHaveLength(sourceCount);
+    settle(gs, T0 + 10000); settle(control, T0 + 10000); expect(r.rng).toBe(rng); expect(r.player.hp).toBeLessThan(control.run!.player.hp); expect(m).toEqual(creature); expect(Object.keys(r.sources)).toHaveLength(sourceCount);
   });
   it('roof blocks rain intake while existing garden water still feeds the crop', () => {
     const gs = fresh(), r = gs.run!, e = garden(gs, 0.05);

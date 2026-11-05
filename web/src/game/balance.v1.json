@@ -30,6 +30,11 @@
     "hungerDrainPerMin": 2.4,
     "thirstDrainPerMin": 3.6,
     "offlineDrainFactor": 0.35,
+    "offlineHungerPerHour": 4.166666666666667,
+    "offlineThirstPerHour": 6.25,
+    "offlineFireHitMs": 900,
+    "offlineFireHitDamage": 6,
+    "_offlineRates": "Hunger: LI 2020-08-26 100 points/24h baseline, SOH adaptation. Thirst: SOH_NEW_TUNED provisional 1.5x hunger, not a sourced LI rate. Damage/environment retain SOH offline factor; active source-fire damage is approximated continuously from existing 6 HP/900ms tick with armor, no movement replay.",
     "starveDamagePerMin": 4,
     "coldDamagePerMin": 6,
     "radDamagePerMinOver50": 5

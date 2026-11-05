@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ITEMS, RECIPES, permitsDirectedResearch, isRecipeKnown, STRUCTS, BUILD_ORDER, VENDOR_SECURED, VENDOR_SPARES, ACHIEVEMENTS, ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING } from '../game/catalog';
 import { BAL, TILE, WW, type Stack } from '../game/core';
-import { C, countItem, invWeight, isRagnarok, runHours, cartWeight, cartLimit, carryLimit, spaceFor, phaseOf, tenderStatus, gardenEnvironment, weatherAt, isWet, isSheltered, wetOutlook, turretStatus, industrialStatus, powerAllocation } from '../game/engine';
+import { C, countItem, invWeight, isRagnarok, runHours, cartWeight, cartLimit, carryLimit, spaceFor, phaseOf, tenderStatus, gardenEnvironment, weatherAt, isWet, isSheltered, wetOutlook, turretStatus, industrialStatus, powerAllocation, offlineSurvivalEstimate } from '../game/engine';
 import { getWorld, ZONES } from '../game/world';
 import { getMapCanvas } from '../game/render';
 import { setVolume } from '../game/audio';
@@ -290,11 +290,12 @@ export function SkillsPanel({ api }: { api: Api }) {
 }
 
 export function MenuPanel({ api, onQuit, onSave }: { api: Api; onQuit: () => void; onSave: () => Promise<boolean> }) {
-  const [confirm, setConfirm] = useState(false); const pf = api.gs.profile; const r = api.gs.run!; const outlook = wetOutlook(r, api.now());
-  return <Panel title="Menu — world time continues" style={{ left: 150, top: 40, width: 340 }} onClose={() => api.open(null)}>
+  const [confirm, setConfirm] = useState(false); const pf = api.gs.profile; const r = api.gs.run!; const outlook = wetOutlook(r, api.now()); const survival = offlineSurvivalEstimate(r);
+  return <Panel title="Menu — world time continues" style={{ left: 150, top: 40, width: 340, maxHeight: 280, overflowY: 'auto' }} onClose={() => api.open(null)}>
     <div className="flex flex-wrap gap-1"><button className="btn gold" onClick={() => api.open(null)}>Resume</button><button className="btn" onClick={async () => { const ok = await onSave(); api.toast(ok ? 'Saved locally.' : 'Save failed. Your changes are not confirmed on disk.'); }}>Save now</button><button className="btn" onClick={onQuit}>Save & quit to title</button></div>
     <div style={{ fontSize: 10, marginTop: 5, color: '#e6d9bc', lineHeight: 1.2 }}>
       <b>Before you leave</b> · {isSheltered(r, r.player.x, r.player.y) ? 'Sheltered here' : 'Not sheltered here'} · Weather: {weatherAt(r, api.now())}.<br />
+      Hunger {Math.round(r.player.hunger)} / thirst {Math.round(r.player.thirst)} / HP {Math.round(r.player.hp)}. Without new hazards: hunger empty ~{survival.hungerHours.toFixed(1)}h; thirst empty ~{survival.thirstHours.toFixed(1)}h; estimated survival ~{survival.survivalHours.toFixed(1)}h. This is not a guarantee: cold, radiation, fire, monsters, changing shelter or run expiry can end it sooner. Shelter prevents hunger-only death, not thirst or other hazards.<br />
       Next {Math.round(outlook.hours)}h outlook: ~{Math.round(outlook.wetHours)}h wet (global schedule estimate). Footprints fade; rain washes them faster. Change route, clear nearby creatures, wait, or use doors and terrain. No home is required.<br />
       While away: weather, fire, production and exposure advance. Limited trace playback can damage reachable structures; other encounters remain unresolved.
     </div>
