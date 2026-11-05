@@ -177,6 +177,10 @@ const SHIM = `<script>
           else if (step === 2 && clickText('Begin the 14 days')) step = 3;
           else if (step === 3 && window.__pfx && window.__pfx.injectManifest && window.__PFX244_MANIFEST__) {
             window.__pfx.injectManifest(window.__PFX244_MANIFEST__.effects);
+            // TEST BUILD ONLY: render atlas cells 1:1 at NATIVE size (like the upstream
+            // pixelfx gallery) instead of the gameplay 44px normalization, so visual
+            // comparison against the original is pixel-faithful. Toggle: window.__PFX_NATIVE_SCALE__=false
+            try { if (window.__PFX_NATIVE_SCALE__ !== false && window.__pfx.setNativeScale) window.__pfx.setNativeScale(true); } catch (e) {}
             step = 4;
           } else if (step === 4 && window.__soh && window.__soh.run) {
             window.dispatchEvent(new KeyboardEvent('keydown', { code: 'F9', bubbles: true }));

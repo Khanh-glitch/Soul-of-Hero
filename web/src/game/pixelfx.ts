@@ -59,6 +59,13 @@ const TINT_CAT: Record<string, string> = {
 };
 const TINT: Record<string, string> = { 'shadow/black-hole': '#b050ff', 'arcane/arcane-orb': '#a050ff', 'ice/ice-lance': '#6ac8ff' };
 function tintOf(e: PfxEntry) { return TINT[e.id] ?? TINT_CAT[e.category] ?? '#c0d0ff'; }
+// QA/test-build hook (same pattern as injectManifest): when enabled, spawned effects
+// render their atlas cells 1:1 at NATIVE size (like the upstream pixelfx gallery)
+// instead of the gameplay world-footprint normalization.
+let nativeScale = false;
+export function setNativeScale(v: boolean) { nativeScale = v; }
+export function getNativeScale() { return nativeScale; }
+
 // Generic scale default: fit the visual core to a family-appropriate world
 // footprint (world is 640x360, tiles 16px, player 16px tall).
 function defaultScale(entry: PfxEntry, family: PfxFamily): number {
@@ -175,7 +182,7 @@ export function spawn(id: string, o: PfxOpts): PfxInst | null {
   const family: PfxFamily = o.family ?? (entry.presentation.anchor === 'screen' ? 'screen' : entry.presentation.anchor === 'act' ? 'body' : 'ground');
   const inst: PfxInst = {
     id, entry, family, x: o.x, y: o.y,
-    scale: (o.scale ?? SCALE[id] ?? defaultScale(entry, family)) * (o.scaleMul ?? 1),
+    scale: (o.scale ?? SCALE[id] ?? (nativeScale ? 1 : defaultScale(entry, family))) * (o.scaleMul ?? 1),
     stretch: o.stretch ?? 1, angle: o.angle ?? 0,
     loop: o.loop ?? entry.meta.loop, t: -(o.delayMs ?? 0), dur: (e.frames / e.fps) * 1000,
     maxAgeMs: o.maxAgeMs ?? 0, lift: o.lift ?? 0, body: o.body ?? null, follow: o.follow ?? null,
