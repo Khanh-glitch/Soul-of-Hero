@@ -1,0 +1,11 @@
+{
+  "url": "http://localhost:8765/index.html",
+  "clockIso": "2026-11-05T19:56:23.468Z",
+  "steps": [
+    "Continue click",
+    "F key",
+    "Queue click on 2 Fuel Canister + 1 Machine Lubricant row",
+    "wait 32s real time",
+    "screenshot"
+  ]
+}

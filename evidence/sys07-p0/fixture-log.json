@@ -1,0 +1,11 @@
+{
+  "clockAnchorIso": "2026-11-05T19:45:40.799Z",
+  "disclosure": "controlled fixture: L2 workbench, refinery placed by real build intent (no cabinet), 6 oil + 3 glass + 3 wood injected; no craft pre-queued",
+  "intents": [
+    {
+      "intent": "build refinery",
+      "ok": true,
+      "reason": null
+    }
+  ]
+}
