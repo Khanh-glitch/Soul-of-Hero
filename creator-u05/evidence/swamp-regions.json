@@ -1,0 +1,110 @@
+{
+  "schema": "soh.u05.swamp-regions.v1",
+  "note": "DIAGNOSTIC ONLY — không phải lớp vẽ trong game. Game vẫn chỉ có nền; ảnh chẩn đoán được tạo riêng để trả lời câu hỏi vị trí đầm lầy.",
+  "source": "window.__terrain.sampleTile() trên file SoulOfHero_TerrainOnly_U05_x10.html, lưới stride 4 tile, biome==marsh (gồm cả T.MARSH=6 và T.RIVER=19 có biome marsh)",
+  "frameAu": [
+    2000,
+    1400
+  ],
+  "frameTiles": [
+    4000,
+    2800
+  ],
+  "U": 0.5,
+  "grid": [
+    27,
+    11
+  ],
+  "sampledMarshCells": 12327,
+  "disjointPatches": 27,
+  "patchesOver20Cells": 11,
+  "macroRegionCount": 5,
+  "macroRegionMergeRule": "gộp các mảng có bbox AU chạm hoặc cách <=60 AU",
+  "regions": [
+    {
+      "n": 7303,
+      "patches": 7,
+      "bboxAu": [
+        910,
+        310,
+        1402,
+        554
+      ],
+      "centreAu": [
+        1111.2,
+        401.9
+      ],
+      "landmark": "Lake Verdant / vùng hồ trung-bắc (cụm lớn nhất, gồm 7 mảng)"
+    },
+    {
+      "n": 3076,
+      "patches": 1,
+      "bboxAu": [
+        910,
+        814,
+        1074,
+        952
+      ],
+      "centreAu": [
+        990.9,
+        872.5
+      ],
+      "landmark": "Delta Marsh (label GOLD lb_7 tại AU [1010,826])"
+    },
+    {
+      "n": 1357,
+      "patches": 1,
+      "bboxAu": [
+        326,
+        440,
+        448,
+        578
+      ],
+      "centreAu": [
+        384,
+        501.2
+      ],
+      "landmark": "Tây đảo chính, gần Threshold Isle / Typhon Massif"
+    },
+    {
+      "n": 281,
+      "patches": 1,
+      "bboxAu": [
+        1574,
+        342,
+        1642,
+        370
+      ],
+      "centreAu": [
+        1608.9,
+        354.6
+      ],
+      "landmark": "Saltwick Flats (bz_salt), đảo nhỏ phía đông-bắc"
+    },
+    {
+      "n": 278,
+      "patches": 1,
+      "bboxAu": [
+        1574,
+        878,
+        1618,
+        930
+      ],
+      "centreAu": [
+        1593.6,
+        904.9
+      ],
+      "landmark": "Gần Cinder Isle / Strait of Embers, đảo đông-nam"
+    }
+  ],
+  "image": "creator-u05/evidence/terrain-only-shots/swamp_regions_diagnostic.png",
+  "goldMarshLabel": {
+    "id": "lb_7",
+    "name": "Delta Marsh",
+    "at": [
+      1010,
+      826
+    ]
+  },
+  "noOverlayInGame": true
+}
