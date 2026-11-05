@@ -6,6 +6,7 @@ export interface SourcePlacementRule { terrain: 'sand' | 'marsh' | 'ash' | 'snow
 export interface RecipeDef { out: string; qty: number; ins: [string, number][]; station: null | 'campfire' | 'furnace' | 'workbench'; secs: number; base?: boolean; tier: number; stationLevel?: 1 | 2 | 3 }
 
 // TUNABLE: a capability upgrade, not a learned recipe. The cart itself remains physical.
+export const INDUSTRIAL_MODULE: { cost: [string, number][]; benchLevel: number } = { cost: [['mechanical_parts', 3], ['fasteners', 3], ['spares', 4], ['iron_ingot', 2]], benchLevel: 2 }; // SOH_NEW_TUNED provisional; no equivalent LI numerical table established
 export const FURNACE_LINING: { cost: [string, number][]; benchLevel: number } = { cost: [['brick', 2], ['fasteners', 3], ['mechanical_parts', 1]], benchLevel: 2 };
 export const GENERATOR_CAPACITY_UPGRADE: { cost: [string, number][]; benchLevel: number } = { cost: [['mechanical_parts', 4], ['iron_ingot', 2], ['fasteners', 2], ['spares', 4]], benchLevel: 2 }; // SOH_NEW_TUNED v1
 export const CART_FREIGHT_UPGRADE: { cost: [string, number][]; benchLevel: number } = { cost: [['mechanical_parts', 4], ['iron_ingot', 2], ['spares', 3]], benchLevel: 2 };

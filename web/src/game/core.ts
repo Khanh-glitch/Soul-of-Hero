@@ -89,7 +89,8 @@ export interface Entity {
   station?: { queue: Job[]; burn: number; fuelC: string; outC: string; level?: 1 | 2 | 3; upgrade?: 'kiln_lining' };
   garden?: { crop: string | null; growth: number; water: number; coldFrame?: boolean };
   farm?: { enabled: boolean; crop: 'crop' | 'herb'; energy: number; gardenId?: string; barrelId?: string; chestId?: string };
-  basePower?: { enabled: boolean; energy: number; capacity?: 2 };
+  basePower?: { enabled: boolean; energy: number; capacity?: 2; priority?: 'defense' | 'production' };
+  industrial?: { enabled: boolean; generatorId?: string }; // optional paid workbench module
   turret?: { enabled: boolean; generatorId?: string; cooldown: number; angle: number; tracking?: boolean };
   water?: number; minted?: boolean; claim?: string; vx?: number; vy?: number; born?: number; owner?: string;
   power?: number; fire?: number;

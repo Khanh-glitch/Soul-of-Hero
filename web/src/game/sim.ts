@@ -2,7 +2,7 @@
 import { BAL, TILE, WW, WH, HOUR, VIEW_W, VIEW_H, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity, type Proj, type Haz } from './core';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
 import { getWorld } from './world';
-import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, turretStatus, stepLootRespawn, migrateLootRespawn, spawnDrop } from './engine';
+import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, stepLootRespawn, migrateLootRespawn, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
@@ -828,6 +828,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     const slot = Math.floor((t - r.startedAt + r.qaOffset) / slotMs);
     const nextWeather = r.startedAt - r.qaOffset + (slot + 1) * slotMs;
     let dt = Math.min(end - t, nextWeather - t);
+    const powered=new Set(Object.values(r.entities).filter(e=>e.basePower).flatMap(g=>powerAllocation(r,g).filter(e=>e.industrial).map(e=>e.id)));
     for (const e of Object.values(r.entities)) {
       const st = e.station; if (!st) continue; const kind = e.kind==='recycler'?'recycler':STRUCTS[e.type!].station; const job = st.queue[0];
       const fuelled = kind === 'campfire' || kind === 'furnace';
@@ -836,8 +837,9 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
       let fuel = st.burn;
       if (fuelled && fuel <= 0) { const next = C(r, st.fuelC).slots.find(s => s && ITEMS[s.key].fuel); if (!next) continue; fuel = ITEMS[next.key].fuel! * 1000; }
       if (fuelled) dt = Math.min(dt, fuel);
-      if (job && job.left > 0) dt = Math.min(dt, job.left);
+      if (job && job.left > 0) dt = Math.min(dt, job.left / (powered.has(e.id) ? BAL.industrialPower.workSpeedMultiplier : 1));
     }
+    dt = basePowerBoundary(r, dt);
     dt = tenderBoundary(r, isWet(weather), dt);
     for (const tree of r.natureTrees||[]) if(tree.until>r.clock.simMs)dt=Math.min(dt,tree.until-r.clock.simMs);
     for (const due of Object.values(r.lootRespawnAt || {})) if (due > t) dt = Math.min(dt, due - t);
@@ -846,7 +848,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     if (!(dt > 0)) break;
     dt = Math.min(end - t, Math.max(dt, 0.001)); // avoid sub-millisecond timestamp stalls
     stepBasePower(r, dt, t + dt);
-    stepStations(gs, dt, t + dt, report);
+    stepStations(gs, dt, t + dt, report, powered);
     stepGardensBarrels(gs, dt, isWet(weather));
     decayTraces(r, dt, weather);
     r.clock.simMs += dt; t += dt;

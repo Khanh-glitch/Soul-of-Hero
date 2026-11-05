@@ -104,7 +104,8 @@ export function validate(raw: any): GameState | null {
     if (e.kind === 'struct' && e.c && r.custody[e.c]?.kind !== 'chest') return null;
     const refs = [e.c, e.station?.fuelC, e.station?.outC].filter((v: any) => v !== undefined);
     for (const cid of refs) { if (typeof cid !== 'string' || !r.custody[cid] || ownedContainers.has(cid)) return null; ownedContainers.add(cid); }
-    if (e.basePower !== undefined && (!obj(e.basePower) || e.type !== 'base_generator' || typeof e.basePower.enabled !== 'boolean' || !finite(e.basePower.energy) || e.basePower.energy < 0 || (e.basePower.capacity !== undefined && e.basePower.capacity !== 2) || !e.c)) return null;
+    if (e.basePower !== undefined && (!obj(e.basePower) || e.type !== 'base_generator' || typeof e.basePower.enabled !== 'boolean' || !finite(e.basePower.energy) || e.basePower.energy < 0 || (e.basePower.capacity !== undefined && e.basePower.capacity !== 2) || (e.basePower.priority !== undefined && !['defense','production'].includes(e.basePower.priority)) || !e.c)) return null;
+    if(e.industrial !== undefined && (!obj(e.industrial) || e.type!=='workbench' || !e.station || typeof e.industrial.enabled!=='boolean' || (e.industrial.generatorId!==undefined && (typeof e.industrial.generatorId!=='string'||!e.industrial.generatorId))))return null;
     if (e.turret !== undefined && (!obj(e.turret) || e.type !== 'arrow_turret' || typeof e.turret.enabled !== 'boolean' || !finite(e.turret.cooldown) || e.turret.cooldown < 0 || !finite(e.turret.angle) || (e.turret.tracking !== undefined && typeof e.turret.tracking !== 'boolean') || (e.turret.generatorId !== undefined && (typeof e.turret.generatorId !== 'string' || !e.turret.generatorId)) || !e.c)) return null;
     if (e.type === 'base_generator' && !e.basePower || e.type === 'arrow_turret' && !e.turret) return null;
     if(e.garden?.coldFrame !== undefined && (e.type !== 'garden' || e.garden.coldFrame !== true)) return null;

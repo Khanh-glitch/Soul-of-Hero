@@ -3,7 +3,7 @@ import { creatorLootV1 } from './creator-loot';
 // Rule: validate EVERYTHING first, then commit. Failed preconditions never partially debit.
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
-import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
+import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
 import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, webRecyclerSite, type StaticEnt } from './world';
 import { sourceDigest } from './world-economy';
 import { wreckBonuses, wreckEconomy } from './wreck-economy';
@@ -240,21 +240,52 @@ export function roofRoom(r: RunState, px: number, py: number) {
 }
 export function isSheltered(r: RunState, px: number, py: number) { return roofRoom(r, px, py).enclosed; }
 
-/** One generator powers one locally wired turret; blocked/destroyed links fail closed. */
+/** Optional industrial power shares real capacity with existing turret loads. */
+function connectedPower(r:RunState,g:Entity,e:Entity) {
+  return owned(e) && (e.hp??1)>0 && dist(e.x,e.y,g.x,g.y)<=BAL.industrialPower.connectionTiles*TILE && clearPhysicalLine(r,e,g,true,true);
+}
+function hasPowerFuel(r:RunState,g:Entity) {
+  return !!g.basePower && !!g.c && (g.basePower.energy>1e-8 || C(r,g.c).slots.some(s=>s&&!!ITEMS[s.key]?.fuel));
+}
+/** Stable allocation order; priority is a player choice, not a magic extra load. */
+export function powerAllocation(r:RunState,g:Entity):Entity[] {
+  if(!g.basePower?.enabled || !owned(g) || (g.hp??1)<=0 || !hasPowerFuel(r,g))return [];
+  const choices=Object.values(r.entities).filter(e=>connectedPower(r,g,e) && (
+    e.turret?.enabled && e.turret.generatorId===g.id ||
+    e.type==='workbench' && e.industrial?.enabled && e.industrial.generatorId===g.id && !!e.station?.queue[0] && e.station.queue[0].left>0));
+  const priority=g.basePower.priority??'defense';
+  choices.sort((a,b)=>{const rank=(e:Entity)=>priority==='defense' ? (e.turret?0:1) : (e.industrial?0:1);return rank(a)-rank(b)||a.id.localeCompare(b.id);});
+  return choices.slice(0,g.basePower.capacity??1);
+}
+export function industrialStatus(r:RunState,e:Entity):string {
+  if(!e.industrial)return 'Not installed';if(!e.industrial.enabled)return 'Off';
+  const g=e.industrial.generatorId?r.entities[e.industrial.generatorId]:undefined;
+  if(!g?.basePower || g.type!=='base_generator' || !owned(g))return 'No generator';
+  if(!connectedPower(r,g,e))return 'Connection blocked';if(!g.basePower.enabled)return 'Generator off';
+  if(!hasPowerFuel(r,g))return 'No power';if(!e.station?.queue[0] || e.station.queue[0].left<=0)return 'Idle';
+  return powerAllocation(r,g).includes(e)?'Powered':'Capacity allocated elsewhere';
+}
 export function turretStatus(r: RunState, e: Entity): string {
   const t=e.turret; if (!t?.enabled) return 'Off'; const g=t.generatorId ? r.entities[t.generatorId] : undefined;
   if (!g?.basePower || g.type!=='base_generator' || !owned(g)) return 'No generator';
-  if (dist(e.x,e.y,g.x,g.y)>3*TILE || !clearPhysicalLine(r,e,g,true,true)) return 'Connection blocked';
-  if (!g.basePower.enabled) return 'Generator off'; if (g.basePower.energy<=0) return 'No power';
+  if (!connectedPower(r,g,e)) return 'Connection blocked';
+  if (!g.basePower.enabled) return 'Generator off'; if (!hasPowerFuel(r,g)) return 'No power';
+  if(!powerAllocation(r,g).includes(e))return 'Capacity allocated elsewhere';
   if (!e.c || countItem(r,e.c,'arrow')<1) return 'No arrows'; return 'Ready';
 }
-/** Fuel is real, local and consumed while switched on, online or offline. */
+/** Split the common timeline at the next generator fuel boundary. */
+export function basePowerBoundary(r:RunState,limit:number):number {
+  let result=limit;for(const g of Object.values(r.entities)){if(!g.basePower?.enabled||!g.c)continue;
+    let fuel=g.basePower.energy;if(fuel<=1e-8){const s=C(r,g.c).slots.find(s=>s&&ITEMS[s.key]?.fuel);fuel=s?ITEMS[s.key].fuel!*1000:0;}
+    if(fuel>1e-8)result=Math.min(result,fuel/Math.max(1,powerAllocation(r,g).length));
+  }return result;
+}
+/** Fuel is consumed exactly once over each chronological interval. */
 export function stepBasePower(r: RunState, dt: number, now: number) {
   for (const e of Object.values(r.entities)) { const power=e.basePower; if (!power?.enabled || !e.c) continue;
-    // Two active, physically connected consumers draw twice the fuel per second.
-    const load=Math.max(1,Object.values(r.entities).filter(t=>t.turret?.enabled && t.turret.generatorId===e.id && owned(t) && dist(e.x,e.y,t.x,t.y)<=3*TILE && clearPhysicalLine(r,e,t,true,true)).length); let left=dt*load;
-    while (left>1e-8) { if (power.energy<=1e-8) { const slot=C(r,e.c).slots.find(s=>s && ITEMS[s.key]?.fuel); if (!slot) {power.energy=0; break;} power.energy=ITEMS[slot.key].fuel!*1000; const key=slot.key; removeItem(r,e.c,key,1); receipt(r,now-left/load,'power.fuel',`${e.id}:${key}`); }
-      const used=Math.min(left,power.energy); power.energy-=used; left-=used;
+    const load=Math.max(1,powerAllocation(r,e).length);let left=dt*load;
+    while(left>1e-8){if(power.energy<=1e-8){const slot=C(r,e.c).slots.find(s=>s&&ITEMS[s.key]?.fuel);if(!slot){power.energy=0;break;}power.energy=ITEMS[slot.key].fuel!*1000;const key=slot.key;removeItem(r,e.c,key,1);receipt(r,now-left/load,'power.fuel',`${e.id}:${key}`);}
+      const used=Math.min(left,power.energy);power.energy-=used;left-=used;
     }
   }
 }
@@ -344,7 +375,7 @@ export function bagStation(r: RunState, e: Entity, now: number, label: string) {
   if (e.station) e.station.queue = [];
   return bag;
 }
-function removeEntity(r: RunState, e: Entity) { delete r.entities[e.id]; for (const cid of [e.c, e.station?.fuelC, e.station?.outC]) if (cid) delete r.custody[cid]; markDirty(); }
+function removeEntity(r: RunState, e: Entity) { if(e.basePower)for(const other of Object.values(r.entities)){if(other.turret?.generatorId===e.id)delete other.turret.generatorId;if(other.industrial?.generatorId===e.id)delete other.industrial.generatorId;} delete r.entities[e.id]; for (const cid of [e.c, e.station?.fuelC, e.station?.outC]) if (cid) delete r.custody[cid]; markDirty(); }
 
 /** Versioned SOH-only renewable stock policy. Unique technology, credentials,
  * equipment, and damaged drives remain finite; cash is never a loot site. */
@@ -696,6 +727,28 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if(!hasAll(r,'inv',GENERATOR_CAPACITY_UPGRADE.cost)) return fail('Missing generator upgrade materials.');
       for(const [k,q] of GENERATOR_CAPACITY_UPGRADE.cost) removeItem(r,'inv',k,q);
       e.basePower.capacity=2;return ok('power.upgrade',e.id,'Generator reinforced for two linked turrets. Two active loads burn fuel twice as fast.');
+    }
+    case 'installIndustrial': {
+      const e=r.entities[it.eid];if(!e || e.kind!=='struct' || e.type!=='workbench' || !e.station || !owned(e) || !near(r,e,3))return fail('Use your workbench within reach.');
+      if(e.industrial)return fail('Industrial module already installed.');
+      if((e.station.level??1)<INDUSTRIAL_MODULE.benchLevel)return fail('Requires a level 2 workbench.');
+      if(!hasAll(r,'inv',INDUSTRIAL_MODULE.cost))return fail('Missing industrial module materials.');
+      for(const [k,q] of INDUSTRIAL_MODULE.cost)removeItem(r,'inv',k,q);
+      e.industrial={enabled:false};return ok('industrial.install',e.id,'Industrial workbench module installed. Manual production still works.');
+    }
+    case 'industrialConfigure': {
+      const e=r.entities[it.eid];if(!e?.industrial || e.type!=='workbench' || !owned(e) || !near(r,e,3))return fail('Use your upgraded workbench within reach.');
+      if(it.field==='enabled' && typeof it.value==='boolean')e.industrial.enabled=it.value;
+      else if(it.field==='generatorId' && typeof it.value==='string'){
+        if(it.value){const g=r.entities[it.value];if(!g?.basePower||g.type!=='base_generator'||!owned(g)||!connectedPower(r,g,e))return fail('Generator must be owned, within 3 tiles and unobstructed.');}
+        e.industrial.generatorId=it.value||undefined;
+      } else return fail('Invalid industrial setting.');
+      return ok('industrial.configure',`${e.id}:${it.field}`);
+    }
+    case 'powerPriority': {
+      const e=r.entities[it.eid];if(!e?.basePower||!owned(e)||!near(r,e,2.2))return fail('Use your generator within reach.');
+      if(it.value!=='defense'&&it.value!=='production')return fail('Invalid power priority.');
+      e.basePower.priority=it.value;return ok('power.priority',`${e.id}:${it.value}`);
     }
     case 'basePower': {
       const e = r.entities[it.eid]; if (!e?.basePower || e.type !== 'base_generator' || !owned(e) || !near(r,e,2.2)) return fail('Use your generator within reach.');
@@ -1090,7 +1143,7 @@ function research(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: s
 }
 
 // ---------------- station work (C06) — shared by online tick and offline settle ----------------
-export function stepStations(gs: GameState, dtMs: number, now: number, report?: string[]) {
+export function stepStations(gs: GameState, dtMs: number, now: number, report?: string[], powered:ReadonlySet<string>=new Set()) {
   const r = gs.run!;
   const note = (message: string) => { if (report && !report.includes(message)) report.push(message); };
   for (const e of Object.values(r.entities)) {
@@ -1127,10 +1180,11 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
         }
       }
       const fuelRate = kind === 'furnace' && st.upgrade === 'kiln_lining' ? BAL.fuel.linedFurnaceFuelMultiplier : 1;
-      let step = needsFuel ? Math.min(t, st.burn / fuelRate) : t; if (job) step = Math.min(step, job.left);
+      const speed=kind==='workbench' && powered.has(e.id) ? BAL.industrialPower.workSpeedMultiplier : 1;
+      let step = needsFuel ? Math.min(t, st.burn / fuelRate) : t; if (job) step = Math.min(step, job.left / speed);
       if (needsFuel) st.burn = Math.max(0, st.burn - step * fuelRate);
       t -= step;
-      if (job) job.left -= step;
+      if (job) job.left = Math.max(0, job.left - step * speed);
     }
   }
 }

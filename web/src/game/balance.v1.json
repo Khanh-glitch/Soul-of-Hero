@@ -92,6 +92,11 @@
     "respawnIntervalSec": 150,
     "ragnarokCapMult": 1.6
   },
+  "industrialPower": {
+    "_status": "SOH_NEW_TUNED provisional: optional powered workbench; not historical LI values",
+    "workSpeedMultiplier": 2,
+    "connectionTiles": 3
+  },
   "fuel": {
     "_status": "TUNABLE_BALANCE fuel seconds per item",
     "wood": 20,
