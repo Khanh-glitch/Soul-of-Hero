@@ -208,6 +208,14 @@ if (fs.existsSync(tBuildPath) && fs.existsSync(tQaPath)) {
   ok('T13 file:// and HTTP both boot', tq.fileUrl.startsWith('file://') && tq.http.mode === 'TERRAIN_ONLY__NO_BUILDINGS__NO_OVERLAY_LAYERS');
   ok('T14 no production/visual claims', tq.notClaims.includes('VISUAL_ACCEPTANCE') && tq.notClaims.includes('VEYRA_PLAYABLE'));
   ok('T15 terrain-only docs present', fs.existsSync(path.join(U, 'docs/TERRAIN_ONLY_VIEWER.md')));
+  ok('T16 whole-map zoom build metadata', tb.wholeMapZoom?.overviewBitmap[0] === 500 && tb.wholeMapZoom.strideTiles === 8 && tb.wholeMapZoom.tileSamples === 525000 && tb.wholeMapZoom.fullFrameAllocated === false);
+  ok('T17 zoom markers bundled', fs.readFileSync(tFile, 'utf8').includes('zoomRange') && fs.readFileSync(tFile, 'utf8').includes('WHOLE_MAP_OVERVIEW'));
+  ok('T18 T-G10..T-G14 all PASS', ['T-G10','T-G11','T-G12','T-G13','T-G14'].every(k => tq.gates[k]?.status === 'PASS'));
+  ok('T19 whole frame fits at smallest zoom', tq.zoom.fit.mapFitsViewport === true && tq.zoom.fit.zoom < 0.01 && Math.abs(tq.zoom.fit.pxPerTile - 0.128571) < 0.0001);
+  ok('T20 native 1x restored', tq.zoom.nativeAgain.zoom === 1 && tq.zoom.nativeAgain.zoomMode === 'NATIVE_1X' && tq.zoom.nativeAgain.draw.drawn.hero === 1);
+  ok('T21 overview shots exist', tq.zoom.shots.every(f => fs.existsSync(path.join(U, 'evidence/terrain-only-shots', f))));
+  ok('T22 x10 pan while zoomed out', tq.zoom.panAtX10.deltaPx > 100);
+  ok('T23 ?zoom=fit deep link', tq.deepLink?.zoomMode === 'WHOLE_MAP_OVERVIEW' && tq.deepLink.mapFitsViewport === true && tq.gates['T-G15']?.status === 'PASS');
 }
 
 const result = {

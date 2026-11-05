@@ -111,17 +111,17 @@ reauthor. Không khẳng định pixel-equality (không có PIL/cv2/matplotlib; 
 | `main` | `5214788933b1a827f3a177d11ff486433dfe5e8a` |
 | LW-01 code / handoff | `38d13514…` / `b12d0586…` (HISTORICAL COMPLETE, không đụng) |
 | Gameplay pin đã vendor | `b5c8004ca4e77be62484fb3cd296fe296d7de4c9` |
-| PR44 | **OPEN / DRAFT**, head `arena/d4bfcfff-soul-of-hero` = `291fee6fde9aaa0dec256c93f0c185493309dd44`, base `8421b9c333…` |
-| Commits sau pin | **6**: `1b460360`, `dada8dc3`, `d6e2d462`, `00c86c38`, `ae268550`, `291fee6f` |
+| PR44 | **OPEN / DRAFT**, head `arena/d4bfcfff-soul-of-hero` = `5b3e683402bbc8540dea9404576164097e753f97` (thời điểm xác minh; nhánh PR44 đang hoạt động), base `8421b9c333…` |
+| Commits sau pin | **14** (tính đến snapshot; nhánh vẫn nhận commit mới) |
 
-6 commit mới thêm owner VFX / VFX review build / Bible docs / persist tweak.
+14 commit mới thêm owner VFX / VFX review build / optional powered workbench / claim reserve / research targets / offline tuning / Bible docs / persist tweak.
 `render.ts` đổi 3 dòng ở **projectile/hazard VFX hooks**, nằm **ngoài** terrain painter.
 `art.ts`, `core.ts`, `veyra/wmp04r1.generated.ts` và terrain block **byte-identical**
 (`u05RelevantBlocksIdentical=true`). U05 **không** re-vendor từ head cũ một cách im lặng,
 **không** bỏ commit mới; drift nằm trong `source-custody.json.verificationDrift`.
 Owner VFX atlas mới bị loại vì `productionAtlas=NOT_AUTHORIZED`.
 
-**Helicopter Beacon:** kiểm chứng lại trên cả `b5c8004c` và `291fee6f` — chỉ có metadata tĩnh
+**Helicopter Beacon:** kiểm chứng lại trên cả `b5c8004c` và `5b3e683` — chỉ có metadata tĩnh
 `poi_beacon_engine_out_helicopter` trong `wmp04r1.generated.ts`; `art.ts` / `render.ts` **không**
 có sprite/entity helicopter/helipad/chopper, không có `car_wreck` / `ship_hull`.
 → `PROVEN_MISSING` vẫn đúng. U05 **chỉ vẽ nét đứt reservation helipad**, không thay thế, không dời
@@ -208,3 +208,33 @@ Chi tiết: `docs/TERRAIN_ONLY_VIEWER.md`.
 
 **Các cổng P5-G5 / G6 / G7 / G8 vẫn giữ nguyên FAIL / PARTIAL.** File game mới là
 viewer nền, không nâng cấp thành tích hợp Gameplay hay chấp nhận thị giác.
+
+
+---
+
+## 10. PHỤ LỤC — Zoom toàn cảnh (yêu cầu tiếp theo)
+
+Creator: *"thêm chức năng zoom map nhỏ nhất có thể để nhìn toàn cảnh map dc k"*.
+
+**Có.** Đã thêm vào cùng file game `SoulOfHero_TerrainOnly_U05_x10.html`
+(build lại, HTML 1.400.483 bytes, `sha256 97fd8263…`, ZIP 117.643 bytes).
+
+- **Deep link** `?zoom=fit` mở ngay chế độ toàn cảnh (cả `file://` lẫn HTTP).
+- **`Z`** = mức zoom **nhỏ nhất có thể**: `0.128571 px/tile` = `0.8036%` (1:124)
+  → `4000×2800 tile` thành `514×360 px`, **nằm gọn trong 640×360**, thấy hết
+  đảo chính, các đảo vệ tinh, biển, hồ, sông, đường. Slider *Zoom bản đồ*,
+  `,` / `.`, lăn chuột; `V` về **1× native**; `B` khung nhìn tuỳ chọn (mặc định tắt).
+- Bản toàn cảnh là **bản xem mẫu 500×350 px** (175.000 pixel, 1 px = 8×8 tile = 4 AU,
+  525.000 mẫu từ chính `u05Tile()` tại **tâm tile GOLD**, 3 điểm/block để giữ đường
+  6 tile). Màu lấy base PAL verbatim. Xây progressive 6 hàng/frame (~3,3 s).
+  **Không** cấp phát 11,2 triệu ô, **không** phóng raster 8 AU, **không** nhận
+  là chi tiết authored, **không** vẽ công trình/marker/lên canvas.
+- **Camera chơi thường không đổi**: 640×360 1×, hero 16×24, U=0.5, nền 72 px/s.
+  Zoom là viewer control, không phải luật Gameplay / không phải chấp nhận thị giác.
+  Ở chế độ zoom vẫn đi WASD + x10 được (QA pan 360 px / 500 ms).
+- QA: **T-G0…T-G15 đều PASS**, 9 ảnh (thêm `terrain_only_whole_map.png`,
+  `terrain_only_whole_map_guides.png`, `terrain_only_zoom_fit_deeplink.png`),
+  0 lỗi. `P6-G0 / P6-G1 PASS`.
+
+Các cổng `P5-G5/G6` vẫn FAIL, `P5-G7/G8` PARTIAL. Link tải không đổi:
+`https://5183-<sandboxId>.e2b.app/download` (ép tải) và GitHub raw / ZIP mirror.

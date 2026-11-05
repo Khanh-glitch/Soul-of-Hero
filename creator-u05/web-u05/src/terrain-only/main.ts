@@ -1,17 +1,20 @@
 /**
  * TERRAIN-ONLY GAME — Creator request: "bỏ toàn bộ công trình và các lớp nổi,
  * chỉ giữ phần nền của đường, sông, biome,... và di chuyển với tốc độ tùy chỉnh
- * lên x10".
+ * lên x10" + "thêm chức năng zoom map nhỏ nhất có thể để nhìn toàn cảnh map".
  *
- * This module deliberately imports NO PhysicalLayer, NO scene data, NO roof /
- * wall / door / prop / marker / label draw calls. The canvas contains exactly
- * two things: the verbatim live-Gameplay terrain chunk painter (biome / roads /
- * rivers / lakes / sea / shoreline / bridges) and the native 16x24 SOH hero.
+ * Canvas contains exactly two things in NATIVE mode: the verbatim live-Gameplay
+ * terrain chunk painter (biome / roads / rivers / lakes / sea / shoreline /
+ * bridges) and the native 16x24 SOH hero. NO PhysicalLayer, NO scene data,
+ * NO roof/wall/door/prop/marker/label/HUD-on-canvas.
  *
- * Native camera 640x360 @1x, U=0.5, TILE=16. Base speed SPEED=72 px/s is NOT
- * changed; the 1..10 multiplier is a VIEWER control, not a Gameplay law.
- * Bounded LRU chunks (<=36) and display canvases (<=36) are reused unchanged;
- * the 11.2M-cell frame is never materialised.
+ * WHOLE-MAP OVERVIEW is a SEPARATE viewer mode (Z / slider / wheel). It draws a
+ * 500x350 SAMPLED preview of exact GOLD tile centres, scaled so the entire
+ * 4000x2800-tile frame fits the 640x360 view. It is NOT a camera law change:
+ * native play stays at 640x360 @1x, hero 16x24, U=0.5, SPEED=72 px/s base.
+ * The 11.2M-cell frame is NEVER materialised; overview uses 175,000 pixels.
+ *
+ * The x1..x10 multiplier is a VIEWER control, not a Gameplay law.
  */
 import { getArt } from '../game/art';
 import {
@@ -23,6 +26,7 @@ import {
   stats as worldStats, resetCaches
 } from '../u05/world';
 import { getDisplayChunk, displayStats, resetDisplay } from '../u05/display';
+import { buildOverviewRows, getOverview, progress as overviewProgress, overviewSize } from './overview';
 
 const canvas = document.getElementById('game') as HTMLCanvasElement;
 const g = canvas.getContext('2d', { alpha: false })!;
@@ -30,15 +34,20 @@ g.imageSmoothingEnabled = false;
 const art: any = getArt();
 
 const ANCHOR_TILE: [number, number] = [544, 1304]; // Creator-liked Beacon road at U=0.5
+/** Smallest possible zoom: the WHOLE 4000x2800-tile frame fits 640x360. */
+const FIT_PX_PER_TILE = Math.min(VIEW_W / FRAME_W, VIEW_H / FRAME_H); // 0.128571... px/tile
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 const MOVE_KEYS = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+const CONTROL_KEYS = ['Equal', 'Minus', 'NumpadAdd', 'NumpadSubtract', 'BracketLeft', 'BracketRight', 'KeyC', 'KeyH', 'KeyR', 'KeyZ', 'KeyV', 'KeyB', 'Comma', 'Period'];
 
 const S = {
   x: ANCHOR_TILE[0] * TILE + TILE / 2,
   y: ANCHOR_TILE[1] * TILE + TILE / 2,
   camX: 0, camY: 0,
   dir: 0,
-  mult: 1,                  // 1..10, VIEWER multiplier only
+  mult: 1,                  // 1..10 speed, VIEWER multiplier only
+  zoomLevel: 1,             // 1 = native 1x, 0 = whole-map FIT
+  guides: false,            // optional viewport rectangle + player dot
   collision: false,         // false = free roam over the whole map (default)
   hudVisible: true,
   pressed: new Set<string>(),
@@ -51,14 +60,22 @@ const S = {
   spawnFixture: false
 };
 
-/** Draw-stat proof: NO overlay layer is ever drawn on the canvas. */
+/** Draw-stat proof: NO overlay layer is ever drawn on the canvas in native mode. */
 const drawStats = {
   terrainOnly: true,
-  drawn: { terrainChunks: 0, hero: 1 },
+  drawn: { terrainChunks: 0, hero: 1, overviewBitmap: 0 },
   overlays: { buildings: 0, walls: 0, roofs: 0, doors: 0, props: 0, markers: 0, labels: 0, helipad: 0, hudOnCanvas: 0, particles: 0 },
+  viewerGuides: { viewportRect: 0, playerDot: 0 },
   physicalLayerLoaded: false,
-  sceneDataLoaded: false
+  sceneDataLoaded: false,
+  zoomMode: 'NATIVE_1X' as string
 };
+
+/** Smooth perceptual zoom: level 0 -> FIT, level 1 -> native TILE px/tile. */
+function pxPerTile() { return FIT_PX_PER_TILE * Math.pow(TILE / FIT_PX_PER_TILE, S.zoomLevel); }
+function zoomScale() { return pxPerTile() / TILE; }
+function zoomMode() { return S.zoomLevel >= 0.999 ? 'NATIVE_1X' : 'WHOLE_MAP_OVERVIEW'; }
+function mapFitsViewport() { return FRAME_W * pxPerTile() <= VIEW_W + 0.5 && FRAME_H * pxPerTile() <= VIEW_H + 0.5; }
 
 function reset(tileX = ANCHOR_TILE[0], tileY = ANCHOR_TILE[1]) {
   S.x = tileX * TILE + TILE / 2;
@@ -80,6 +97,17 @@ function setSpeed(m: number) {
   return S.mult;
 }
 function setCollision(on: boolean) { S.collision = !!on; syncUI(); return S.collision; }
+function setZoom(level: number) {
+  S.zoomLevel = clamp(Number(level) || 0, 0, 1);
+  if (S.zoomLevel > 0.995) S.zoomLevel = 1;
+  if (S.zoomLevel < 0.005) S.zoomLevel = 0;
+  syncUI();
+  return S.zoomLevel;
+}
+function zoomFit() { return setZoom(0); }
+function zoomNative() { return setZoom(1); }
+function toggleZoom() { return S.zoomLevel > 0.001 ? zoomFit() : zoomNative(); }
+function setGuides(on: boolean) { S.guides = !!on; syncUI(); return S.guides; }
 
 // ---- input -----------------------------------------------------------------
 function key(code: string, type: 'down' | 'up') {
@@ -91,15 +119,25 @@ function key(code: string, type: 'down' | 'up') {
     else if (code === 'KeyC') setCollision(!S.collision);
     else if (code === 'KeyH') toggleHud();
     else if (code === 'KeyR') reset();
+    else if (code === 'KeyZ') toggleZoom();
+    else if (code === 'KeyV') zoomNative();
+    else if (code === 'KeyB') setGuides(!S.guides);
+    else if (code === 'Comma') setZoom(S.zoomLevel - 0.08);
+    else if (code === 'Period') setZoom(S.zoomLevel + 0.08);
   }
   if (S.inputLog.length < 4000) S.inputLog.push({ code, type, t: Math.round(S.simMs) });
 }
 window.addEventListener('keydown', (e) => {
-  if (MOVE_KEYS.includes(e.code) || ['Equal', 'Minus', 'NumpadAdd', 'NumpadSubtract', 'BracketLeft', 'BracketRight', 'KeyC', 'KeyH', 'KeyR'].includes(e.code)) e.preventDefault();
+  if (MOVE_KEYS.includes(e.code) || CONTROL_KEYS.includes(e.code)) e.preventDefault();
   key(e.code, 'down');
 });
 window.addEventListener('keyup', (e) => key(e.code, 'up'));
 window.addEventListener('blur', () => S.pressed.clear());
+// Mouse wheel = zoom out / in (viewer only).
+window.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  setZoom(S.zoomLevel - Math.sign(e.deltaY) * 0.06);
+}, { passive: false });
 
 function axis() {
   let dx = 0, dy = 0;
@@ -137,13 +175,23 @@ const loop = (now: number) => {
   }
   syncCamera();
   touchGeometryChunk(Math.floor(S.x / TILE), Math.floor(S.y / TILE));
+  if (zoomMode() === 'WHOLE_MAP_OVERVIEW' && !overviewProgress().ready) buildOverviewRows(6);
   draw(now);
   S.frameMs.push(dt); if (S.frameMs.length > 600) S.frameMs.shift();
   requestAnimationFrame(loop);
 };
 
 function draw(now: number) {
+  drawStats.drawn.terrainChunks = 0; drawStats.drawn.overviewBitmap = 0;
+  drawStats.drawn.hero = 0;
+  drawStats.viewerGuides.viewportRect = 0; drawStats.viewerGuides.playerDot = 0;
+  drawStats.zoomMode = zoomMode();
   g.fillStyle = '#0b1020'; g.fillRect(0, 0, VIEW_W, VIEW_H);
+  if (zoomMode() === 'WHOLE_MAP_OVERVIEW') drawOverview();
+  else drawNative(now);
+}
+
+function drawNative(now: number) {
   const c0 = Math.floor(S.camX / (RENDER_CHUNK * TILE)), c1 = Math.floor((S.camX + VIEW_W) / (RENDER_CHUNK * TILE));
   const r0 = Math.floor(S.camY / (RENDER_CHUNK * TILE)), r1 = Math.floor((S.camY + VIEW_H) / (RENDER_CHUNK * TILE));
   let chunks = 0;
@@ -158,6 +206,40 @@ function draw(now: number) {
   const frames = hero[(moving ? 'walk' : 'idle') + S.dir] as HTMLCanvasElement[];
   const spr = frames[Math.floor(now / (moving ? 120 : 600)) % frames.length];
   g.drawImage(spr, Math.round(S.x - S.camX - HERO_W / 2), Math.round(S.y - S.camY - 19));
+  drawStats.drawn.hero = 1;
+}
+
+/** Whole-map FIT view. Sampled GOLD terrain only; no hero sprite at this scale. */
+function drawOverview() {
+  const ppt = pxPerTile();
+  const mapW = FRAME_W * ppt, mapH = FRAME_H * ppt;
+  const offX = mapW <= VIEW_W ? (VIEW_W - mapW) / 2 : clamp(VIEW_W / 2 - S.x * ppt, VIEW_W - mapW, 0);
+  const offY = mapH <= VIEW_H ? (VIEW_H - mapH) / 2 : clamp(VIEW_H / 2 - S.y * ppt, VIEW_H - mapH, 0);
+  const ov = getOverview();
+  if (ov) {
+    g.imageSmoothingEnabled = false;
+    g.drawImage(ov, Math.round(offX), Math.round(offY), Math.ceil(mapW), Math.ceil(mapH));
+    drawStats.drawn.overviewBitmap = 1;
+  }
+  if (S.guides) {
+    // Optional VIEWER guides (not map layers): the 640x360 native viewport + a dot.
+    g.save();
+    const vw = (VIEW_W / TILE) * ppt, vh = (VIEW_H / TILE) * ppt;
+    const vx = Math.round(offX + (S.x - VIEW_W / 2) * ppt), vy = Math.round(offY + (S.y - VIEW_H / 2 - 6) * ppt);
+    // Dark outline first so the tiny rectangle stays legible on snow / sea.
+    g.strokeStyle = 'rgba(20,16,24,0.9)'; g.lineWidth = 3;
+    g.strokeRect(vx, vy, Math.max(2, Math.round(vw)), Math.max(2, Math.round(vh)));
+    g.strokeStyle = 'rgba(255,240,180,0.95)'; g.lineWidth = 1;
+    g.strokeRect(vx, vy, Math.max(2, Math.round(vw)), Math.max(2, Math.round(vh)));
+    const px = Math.round(offX + S.x * ppt), py = Math.round(offY + S.y * ppt);
+    g.lineWidth = 3; g.strokeStyle = 'rgba(20,16,24,0.9)';
+    g.beginPath(); g.arc(px, py, 4, 0, Math.PI * 2); g.stroke();
+    g.lineWidth = 1; g.strokeStyle = '#fff2b0';
+    g.beginPath(); g.arc(px, py, 4, 0, Math.PI * 2); g.stroke();
+    g.fillStyle = '#fff2b0'; g.fillRect(px - 1, py - 1, 2, 2);
+    g.restore();
+    drawStats.viewerGuides.viewportRect = 1; drawStats.viewerGuides.playerDot = 1;
+  }
 }
 
 // ---- state / API -----------------------------------------------------------
@@ -169,7 +251,11 @@ function state() {
     mode: 'TERRAIN_ONLY__NO_BUILDINGS__NO_OVERLAY_LAYERS',
     contract: 'CREATOR_CHOSEN_U05.v1',
     status: 'STANDALONE_VIEWER__FULL_GAMEPLAY_RUNTIME_INTEGRATION_NOT_YET_VALIDATED__VISUAL_ACCEPTANCE_NOT_GRANTED',
-    viewport: [VIEW_W, VIEW_H], dpr: window.devicePixelRatio || 1, zoom: 1, cameraTrick: false,
+    viewport: [VIEW_W, VIEW_H], dpr: window.devicePixelRatio || 1,
+    zoom: Number(zoomScale().toFixed(6)), zoomLevel: S.zoomLevel,
+    zoomMode: zoomMode(), pxPerTile: Number(pxPerTile().toFixed(6)),
+    fitPxPerTile: Number(FIT_PX_PER_TILE.toFixed(6)), mapFitsViewport: mapFitsViewport(),
+    cameraTrick: false,
     U, TILE, frameTiles: [FRAME_W, FRAME_H], addressableCells: FRAME_W * FRAME_H,
     heroSpritePx: [HERO_W, HERO_H], speedBasePxPerSec: SPEED, speedMultiplier: S.mult,
     speedMultiplierRange: [1, 10], speedPxPerSec: SPEED * S.mult,
@@ -177,7 +263,8 @@ function state() {
     player: { px: S.x, py: S.y, tile: [tx, ty], au: tileToAuCentre(tx, ty), dir: S.dir },
     camera: { x: S.camX, y: S.camY, anchorTile: ANCHOR_TILE },
     terrain: s ? { tile: s.tile, biome: s.biome, authoredLand: s.authoredLand, water: s.water, road: s.road, poiId: s.poiId } : null,
-    draw: JSON.parse(JSON.stringify(drawStats)),
+    draw: { ...JSON.parse(JSON.stringify(drawStats)), zoomMode: zoomMode() },
+    overview: { ...overviewProgress(), bitmapSize: overviewSize(), guides: S.guides },
     stats: { ...worldStats(), ...displayStats(), simMs: Math.round(S.simMs), movedPx: Math.round(S.movedPx), blockedSubsteps: S.blockedSubsteps, spawnFixture: S.spawnFixture },
     input: { logLength: S.inputLog.length, last: S.inputLog.slice(-8) },
     frameMs: { p50: percentile(S.frameMs, .5), p95: percentile(S.frameMs, .95), max: Math.max(0, ...S.frameMs) }
@@ -191,15 +278,24 @@ function percentile(a: number[], p: number) {
 const ui = document.getElementById('ui')!;
 const range = document.getElementById('speedRange') as HTMLInputElement;
 const speedLabel = document.getElementById('speed')!;
+const zoomRange = document.getElementById('zoomRange') as HTMLInputElement;
+const zoomLabel = document.getElementById('zoomLabel')!;
 const collisionBtn = document.getElementById('collision') as HTMLButtonElement;
 const hideBtn = document.getElementById('hide') as HTMLButtonElement;
 const resetBtn = document.getElementById('reset') as HTMLButtonElement;
+const fitBtn = document.getElementById('fit') as HTMLButtonElement;
+const nativeBtn = document.getElementById('native') as HTMLButtonElement;
+const guidesBtn = document.getElementById('guides') as HTMLButtonElement;
 const statusEl = document.getElementById('status')!;
 range.oninput = () => setSpeed(Number(range.value));
+zoomRange.oninput = () => setZoom(Number(zoomRange.value));
 for (const b of Array.from(document.querySelectorAll('#presets button[data-speed]'))) (b as HTMLButtonElement).onclick = () => setSpeed(Number((b as HTMLButtonElement).dataset.speed));
 collisionBtn.onclick = () => setCollision(!S.collision);
 hideBtn.onclick = () => toggleHud();
 resetBtn.onclick = () => reset();
+fitBtn.onclick = () => zoomFit();
+nativeBtn.onclick = () => zoomNative();
+guidesBtn.onclick = () => setGuides(!S.guides);
 function toggleHud() {
   S.hudVisible = !S.hudVisible;
   ui.classList.toggle('hidden', !S.hudVisible);
@@ -208,8 +304,15 @@ function toggleHud() {
 function syncUI() {
   range.value = String(S.mult);
   speedLabel.textContent = `x${S.mult} · ${SPEED * S.mult} px/s`;
+  zoomRange.value = String(S.zoomLevel);
+  const z = zoomScale();
+  zoomLabel.textContent = S.zoomLevel === 0 ? 'TOÀN CẢNH · 0.8%' : S.zoomLevel === 1 ? '1× (native)' : `${(z * 100).toFixed(1)}% · 1:${Math.round(1 / z)}`;
   collisionBtn.textContent = `Chặn địa hình: ${S.collision ? 'BẬT' : 'TẮT'}`;
   collisionBtn.classList.toggle('on', S.collision);
+  fitBtn.classList.toggle('on', S.zoomLevel === 0);
+  nativeBtn.classList.toggle('on', S.zoomLevel === 1);
+  guidesBtn.classList.toggle('on', S.guides);
+  guidesBtn.textContent = `Khung nhìn (B): ${S.guides ? 'BẬT' : 'TẮT'}`;
   for (const b of Array.from(document.querySelectorAll('#presets button[data-speed]'))) (b as HTMLButtonElement).classList.toggle('on', Number((b as HTMLButtonElement).dataset.speed) === S.mult);
   hideBtn.textContent = S.hudVisible ? 'Ẩn bảng (H)' : 'Hiện bảng (H)';
 }
@@ -217,16 +320,20 @@ setInterval(() => {
   if (!S.hudVisible) return;
   const s = state();
   statusEl.textContent =
-    `x${s.speedMultiplier} · ${s.speedPxPerSec} px/s  |  ${s.collision}  |  U=${s.U} TILE=${s.TILE} hero=${s.heroSpritePx.join('x')} zoom=${s.zoom} dpr=${s.dpr}\n` +
+    `x${s.speedMultiplier} · ${s.speedPxPerSec} px/s  |  ${s.collision}  |  zoom=${s.zoomMode} ${s.zoomLevel === 0 ? 'FIT' : (s.zoom * 100).toFixed(1) + '%'}  |  U=${s.U} TILE=${s.TILE} hero=${s.heroSpritePx.join('x')} dpr=${s.dpr}\n` +
     `tile=${s.player.tile.join(',')}  AU=${s.player.au.map((v: number) => v.toFixed(2)).join(',')}  px=${s.player.px.toFixed(0)},${s.player.py.toFixed(0)}  cam=${s.camera.x},${s.camera.y}\n` +
     `biome=${s.terrain?.biome}  tileCode=${s.terrain?.tile}  road=${s.terrain?.road}  water=${s.terrain?.water}  land=${s.terrain?.authoredLand}\n` +
     `frame=${s.frameTiles.join('x')} cells=${s.addressableCells} materializedAllCells=${s.stats.materializedAllCells}  chunks=${s.stats.residentChunks}/${s.stats.maxResidentChunks}  canvases=${s.stats.displayCanvases}/${s.stats.maxDisplayCanvases}\n` +
-    `overlays=${JSON.stringify(s.draw.overlays)}  movedPx=${s.stats.movedPx}  frameMs p50/p95=${s.frameMs.p50.toFixed(1)}/${s.frameMs.p95.toFixed(1)}`;
+    `overview=${s.overview.rowsDone}/${s.overview.rowsTotal} rows, ${s.overview.pixels} px, stride=${s.overview.strideTiles} tiles, samples=${s.overview.tileSamples}, fullFrameAllocated=${s.overview.fullFrameAllocated}\n` +
+    `overlays=${JSON.stringify(s.draw.overlays)}  guides=${JSON.stringify(s.draw.viewerGuides)}  movedPx=${s.stats.movedPx}  frameMs p50/p95=${s.frameMs.p50.toFixed(1)}/${s.frameMs.p95.toFixed(1)}`;
 }, 250);
 
 (window as any).__terrain = {
   ready: true, state,
   setSpeed, setCollision, toggleHud,
+  setZoom, zoomFit, zoomNative, toggleZoom, setGuides,
+  pxPerTile: () => pxPerTile(), zoomScale, mapFitsViewport,
+  overviewStats: () => ({ ...overviewProgress(), bitmapSize: overviewSize() }),
   reset: (tx?: number, ty?: number) => { reset(tx ?? ANCHOR_TILE[0], ty ?? ANCHOR_TILE[1]); return state(); },
   clearInputLog: () => { S.inputLog = []; },
   inputLog: () => S.inputLog.slice(),
@@ -235,6 +342,8 @@ setInterval(() => {
   stats: () => ({ ...worldStats(), ...displayStats() })
 };
 reset();
+// Deep link: ?zoom=fit opens directly at the smallest whole-map zoom.
+if (new URLSearchParams(location.search).get('zoom') === 'fit') zoomFit();
 syncUI();
 S.lastFrame = performance.now();
 requestAnimationFrame(loop);

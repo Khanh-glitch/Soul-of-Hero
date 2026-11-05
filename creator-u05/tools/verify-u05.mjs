@@ -115,6 +115,9 @@ const verification = {
     terrainOnlySpeedRatio: terrainQa.speed.ratio,
     terrainOnlyGatesPass: terrainGatesPass,
     terrainOnlyOverlaysAllZero: Object.values(terrainQa.initial.draw.overlays).every(v => v === 0),
+    terrainOnlyWholeMapFits: terrainQa.zoom.fit.mapFitsViewport,
+    terrainOnlyFitZoomScale: terrainQa.zoom.fit.zoom,
+    terrainOnlyOverviewPixels: terrainQa.zoom.fit.overview.pixels,
     u05RelevantBlocksIdentical: cust.verificationDrift?.u05RelevantBlocksIdentical
   },
   gates: {
@@ -127,6 +130,7 @@ const verification = {
     'P5-G6': { status: 'FAIL', scope: 'Creator visual acceptance. NOT_REQUESTED_AND_NOT_GRANTED. No pixel-diff proof; whitebox only.' },
     'P5-G7': { status: 'PARTIAL', scope: 'All 81 POIs art-complete/interactive, full 4000x2800 streaming, sustained 60 FPS, exhaustive traversal. Only six scenes proven.' },
     'P5-G8': { status: 'PARTIAL', scope: 'Gameplay semantic validators, marine/boat/ferry/swim law, helicopter entity, economy/inventory/ownership/loot/keys/power/HP/boss/reward, §11.5 proof packet. Unresolved.' },
+    'P6-G1': { status: terrainQa.zoom.fit.mapFitsViewport === true && terrainQa.zoom.fit.overview.fullFrameAllocated === false && ['T-G10','T-G11','T-G12','T-G13','T-G14','T-G15'].every(k => terrainQa.gates[k]?.status === 'PASS') ? 'PASS' : 'FAIL', scope: 'Whole-map smallest zoom: entire 4000x2800 frame fits 640x360, sampled 500x350 overview, no 11.2M-cell allocation, native 1x restored.' },
     'P6-G0': { status: terrainBuild.selfContained.allFalse && fs.existsSync(U('SoulOfHero_TerrainOnly_U05_x10.html')) && terrainGatesPass && terrainQa.consoleErrors.length === 0 ? 'PASS' : 'FAIL', scope: 'Standalone single-file terrain-only game: ZERO overlay layers, x1..x10 viewer speed (real x1→x10 ratio ' + terrainQa.speed.ratio + '), runs from file:// and HTTP, T-G0..T-G9 PASS.' },
     'P5-G9': { status: zeroDelta ? 'PASS' : 'FAIL', scope: 'Creator-liked Beacon road preserved verbatim: no reauthor/redraw/widen/recolour; terrain painter byte-identical; GOLD polygons unchanged.' }
   },

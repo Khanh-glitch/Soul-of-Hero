@@ -1,6 +1,6 @@
 {
   "schema": "soh.u05.verification.v1",
-  "generatedAt": "2026-11-05T08:35:09.036Z",
+  "generatedAt": "2026-11-05T09:00:57.408Z",
   "program": "P1–P5 Creator-chosen U=0.5 additive physical POI program",
   "scope": "ISOLATED six-scene Creator selector / audition. Additive physical POI proof ONLY.",
   "status": "P5_ISOLATED_AUDITION_VERIFIED__FULL_GAMEPLAY_RUNTIME_INTEGRATION_NOT_YET_VALIDATED__VISUAL_ACCEPTANCE_NOT_GRANTED",
@@ -15,7 +15,7 @@
       "label": "static-suite",
       "command": "node /home/user/Soul-of-Hero/creator-u05/tests/test-u05.mjs",
       "ok": true,
-      "output": "U05_TESTS pass=252 fail=0 verdict=U05_STATIC_TESTS_PASS"
+      "output": "U05_TESTS pass=260 fail=0 verdict=U05_STATIC_TESTS_PASS"
     },
     {
       "label": "asset-inventory",
@@ -27,18 +27,18 @@
       "label": "drift-record",
       "command": "node /home/user/Soul-of-Hero/creator-u05/tools/record-drift-u05.mjs",
       "ok": true,
-      "output": "U05_DRIFT_OK live=63d0801013d3c2d68221333305407ed73ca9d4e2 commitsAfterPin=9 u05RelevantBlocksIdentical=true terrainIdentical=true"
+      "output": "U05_DRIFT_OK live=5b3e683402bbc8540dea9404576164097e753f97 commitsAfterPin=14 u05RelevantBlocksIdentical=true terrain=true core=true balance=true"
     }
   ],
   "refs": {
     "arenaBranch": "arena/2e3cfbd2-soul-of-hero",
     "mapHeadBeforeU05": "b12d05866366de0d50e4d305ff7b72fcf36b4921",
-    "mapHeadAtVerification": "aac229ec4e30ef318ebe989639784cfa97e91693",
+    "mapHeadAtVerification": "b74fc7d293d36317857b374dfb75d1ee12666e1b",
     "mapHeadNote": "HEAD at the moment this verification packet was generated (i.e. before the U05 commit itself). The final U05 commit SHA is the tip of this branch in git log.",
-    "remoteMap": "aac229ec4e30ef318ebe989639784cfa97e91693\trefs/heads/arena/2e3cfbd2-soul-of-hero",
+    "remoteMap": "b74fc7d293d36317857b374dfb75d1ee12666e1b\trefs/heads/arena/2e3cfbd2-soul-of-hero",
     "main": "5214788933b1a827f3a177d11ff486433dfe5e8a\trefs/heads/main",
     "gameplayPin": "b5c8004ca4e77be62484fb3cd296fe296d7de4c9",
-    "gameplayLiveHead": "63d0801013d3c2d68221333305407ed73ca9d4e2",
+    "gameplayLiveHead": "5b3e683402bbc8540dea9404576164097e753f97",
     "pr44": {
       "number": 44,
       "state": "OPEN",
@@ -79,40 +79,40 @@
       {
         "path": "docs/U05_GEOMETRY_CONFLICTS_DELTA.md",
         "exists": true,
-        "bytes": 14037
+        "bytes": 14298
       },
       {
         "path": "docs/ASSET_INVENTORY.md",
         "exists": true,
-        "bytes": 2806
+        "bytes": 2805
       },
       {
         "path": "docs/CONTROL_TOWER_U05_HANDOFF.md",
         "exists": true,
-        "bytes": 14319
+        "bytes": 16318
       },
       {
         "path": "docs/TERRAIN_ONLY_VIEWER.md",
         "exists": true,
-        "bytes": 5636
+        "bytes": 8631
       },
       {
         "path": "README.md",
         "exists": true,
-        "bytes": 6355
+        "bytes": 6688
       }
     ],
     "standaloneTerrainOnlyGame": {
       "file": "creator-u05/SoulOfHero_TerrainOnly_U05_x10.html",
-      "bytes": 1394306,
-      "sha256": "9933b44c835e76e06f30d77b5546946bc7628de633b393025595be6ac26dd8ac",
+      "bytes": 1400483,
+      "sha256": "97fd82630942e6dc916d3e60e8dafe0a015e89cd8d31d198265c69de79c0c4ab",
       "selfContained": true,
-      "shots": 6
+      "shots": 9
     }
   },
   "measured": {
     "staticTests": {
-      "pass": 252,
+      "pass": 260,
       "fail": 0,
       "verdict": "U05_STATIC_TESTS_PASS"
     },
@@ -168,10 +168,13 @@
     },
     "p4Errors": 0,
     "realKeyboardEvents": 1122,
-    "driftCommitsAfterPin": 9,
+    "driftCommitsAfterPin": 14,
     "terrainOnlySpeedRatio": 9.667,
     "terrainOnlyGatesPass": true,
     "terrainOnlyOverlaysAllZero": true,
+    "terrainOnlyWholeMapFits": true,
+    "terrainOnlyFitZoomScale": 0.008036,
+    "terrainOnlyOverviewPixels": 175000,
     "u05RelevantBlocksIdentical": true
   },
   "gates": {
@@ -210,6 +213,10 @@
     "P5-G8": {
       "status": "PARTIAL",
       "scope": "Gameplay semantic validators, marine/boat/ferry/swim law, helicopter entity, economy/inventory/ownership/loot/keys/power/HP/boss/reward, §11.5 proof packet. Unresolved."
+    },
+    "P6-G1": {
+      "status": "PASS",
+      "scope": "Whole-map smallest zoom: entire 4000x2800 frame fits 640x360, sampled 500x350 overview, no 11.2M-cell allocation, native 1x restored."
     },
     "P6-G0": {
       "status": "PASS",

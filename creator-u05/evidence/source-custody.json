@@ -341,10 +341,14 @@
     }
   ],
   "verificationDrift": {
-    "checkedAt": "2026-11-05T08:35:08.336Z",
+    "checkedAt": "2026-11-05T09:00:56.651Z",
     "pinnedVerifiedGameplaySha": "b5c8004ca4e77be62484fb3cd296fe296d7de4c9",
     "liveBranch": "arena/d4bfcfff-soul-of-hero",
-    "liveHeadSha": "63d0801013d3c2d68221333305407ed73ca9d4e2",
+    "liveHeadSha": "5b3e683402bbc8540dea9404576164097e753f97",
+    "lsRemoteHeadAtFetch": "5b3e683402bbc8540dea9404576164097e753f97",
+    "snapshotConsistent": true,
+    "branchIsActive": true,
+    "movingTargetNote": "PR44 head branch is ACTIVE and receives additive commits during this session. U05 stays pinned to the verified b5c8004c source; this record is a point-in-time snapshot, not a claim that U05 consumes the newest Gameplay law.",
     "pr44": {
       "number": 44,
       "state": "OPEN",
@@ -352,6 +356,11 @@
       "baseRefName": "arena/4795760e-soul-of-hero"
     },
     "commitsAfterPin": [
+      "5b3e6834 Publish standalone M1-M4 gameplay build",
+      "e9d0f3e1 Reconcile offline survival and expose preparation forecast",
+      "712ecd2f Show research targets and physical costs in existing progression",
+      "d899db9a Add opt-in physical claim repair reserve",
+      "4f669622 Add optional powered workbench with shared generator priority",
       "63d08010 Add direct manipulation to Spirit VFX preview",
       "1314a7c4 Keep VFX editor control inside game viewport",
       "6c854ab0 Add Spirit VFX manual test editor",
@@ -378,24 +387,49 @@
       {
         "file": "web/src/game/core.ts",
         "pinnedSha256": "b8140254088e0484fce82dac9aba2f76cc59df08317fa9093ee81d0bedd0ee48",
-        "liveSha256": "b8140254088e0484fce82dac9aba2f76cc59df08317fa9093ee81d0bedd0ee48",
-        "identical": true
+        "liveSha256": "45452062b5a8be8bded3fcbad62525598ff569f7a7356e41e50198973c6d7e09",
+        "identical": false
       },
       {
         "file": "web/src/game/veyra/wmp04r1.generated.ts",
         "pinnedSha256": "86d9b683df4d73bd123e3f308a63d7fbdda084c633aa4cd62cc99e6458c73bae",
         "liveSha256": "86d9b683df4d73bd123e3f308a63d7fbdda084c633aa4cd62cc99e6458c73bae",
         "identical": true
+      },
+      {
+        "file": "web/src/game/balance.v1.json",
+        "pinnedSha256": "5de34ecc18b770fa39f6804892d39beef0e6951a82cc92042f8ba816b4de48d2",
+        "liveSha256": "b34fe71a4398565773891d099b8ef00bac31b03d7e38f6dffd5513d7e41e605c",
+        "identical": false
       }
     ],
     "u05RelevantBlocksIdentical": true,
+    "u05RelevantScope": {
+      "web/src/game/render.ts": "PAL/PRIO/texel terrain painter block only (byte-identical)",
+      "web/src/game/core.ts": "TILE / WW / WH / VIEW_W / VIEW_H / WORLD_SEED / SAVE_VERSION / enum T / hash2 only (byte-identical)",
+      "web/src/game/balance.v1.json": "dayNight block (dayLengthMinutes etc.) only (unchanged)",
+      "web/src/game/art.ts": "whole file (byte-identical)",
+      "web/src/game/veyra/wmp04r1.generated.ts": "whole file (byte-identical)"
+    },
+    "balanceClockKey": {
+      "pinned": "{\"_status\":\"TUNABLE_BALANCE (fictional clock, separate from run clock)\",\"dayLengthMinutes\":24,\"nightFraction\":0.38}",
+      "live": "{\"_status\":\"TUNABLE_BALANCE (fictional clock, separate from run clock)\",\"dayLengthMinutes\":24,\"nightFraction\":0.38}",
+      "identical": true
+    },
     "terrainPainterBlock": {
       "pinnedSha256": "694d10ac833afb7eb8553700adcc31db8fd03cb00efa4e064acfa9af897724eb",
       "liveSha256": "694d10ac833afb7eb8553700adcc31db8fd03cb00efa4e064acfa9af897724eb",
       "identical": true
     },
+    "coreConstants": {
+      "pinnedSha256": "af5108cf1670924e77dd9492d2bc802453c43381057d4ab2f5e318ad210ef757",
+      "liveSha256": "af5108cf1670924e77dd9492d2bc802453c43381057d4ab2f5e318ad210ef757",
+      "identical": true
+    },
     "renderTsDiffScope": "render.ts changed ONLY in projectile/hazard VFX draw hooks (outside the PAL/PRIO/texel terrain painter block). Those hooks are NOT used by the isolated U05 audition.",
-    "impact": "The six newer commits add owner VFX assets / VFX draw hooks / Bible docs and tweaks outside the U05 terrain painter. The terrain PAL/PRIO/texel block plus art.ts, core.ts and WMP-04R1 generated data are byte-identical, so the locked U=0.5 Beacon road reproduction and every reused structure sprite remain valid. U05 is NOT re-vendored from a stale head, and no newer commit is discarded.",
+    "coreTsDiffScope": "core.ts differs ONLY in additive optional TypeScript interface fields (basePower.priority / maintenance / industrial). Every U05-used constant (TILE, WW, WH, VIEW_W, VIEW_H, WORLD_SEED, SAVE_VERSION, enum T, hash2) is byte-identical.",
+    "balanceDiffScope": "balance.v1.json gained additive offline-drain and industrialPower tuning keys; the dayNight block is unchanged. U05 reads BAL.dayLengthMinutes (top-level, absent => 24-minute fallback) and the hardcoded SPEED=72 px/s; neither is affected.",
+    "impact": "Newer Gameplay commits add owner VFX, optional powered-workbench / claim-reserve / research-target type declarations and Bible docs. The terrain PAL/PRIO/texel block, every U05-used core.ts constant, art.ts, balance.v1.json and WMP-04R1 generated data are unchanged, so the locked U=0.5 Beacon road reproduction and every reused structure sprite remain valid. U05 is NOT re-vendored from a stale head, and no newer commit is discarded.",
     "newOwnerVfxAssets": {
       "excludedFromU05Vendor": true,
       "reason": "Production/owner VFX atlas is NOT_AUTHORIZED for the additive U05 physical POI program; the U05 app uses NO new atlas."

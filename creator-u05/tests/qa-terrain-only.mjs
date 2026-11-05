@@ -42,9 +42,38 @@ const hudHiddenShot = await shot('terrain_only_beacon_no_hud.png');
 const hudHidden = await ev(() => document.getElementById('ui').classList.contains('hidden'));
 await page.keyboard.press('KeyH');
 
+// ---- WHOLE-MAP ZOOM (Creator follow-up) ----------------------------------
+// Z zooms to the SMALLEST possible scale: the entire 4000x2800-tile frame
+// must fit inside the native 640x360 view.
+await page.keyboard.press('KeyZ');
+const zoomAfterZ = await ev(() => window.__terrain.state());
+await page.waitForFunction(() => window.__terrain.overviewStats().ready === true, { timeout: 30000 });
+const fitState = await ev(() => window.__terrain.state());
+const wholeMapShot = await shot('terrain_only_whole_map.png');
+await page.keyboard.press('KeyB');
+await page.waitForTimeout(120);
+const guidesState = await ev(() => window.__terrain.state());
+const guidesShot = await shot('terrain_only_whole_map_guides.png');
+await page.keyboard.press('KeyB');
+// Mid zoom via API + mouse wheel (viewer controls).
+await ev(() => window.__terrain.setZoom(0.5));
+const midZoom = await ev(() => window.__terrain.state());
+await page.mouse.wheel(0, -120);
+const afterWheel = await ev(() => window.__terrain.state());
+// Movement still works while zoomed out (x10 pans the whole map).
+await ev(() => { window.__terrain.zoomFit(); window.__terrain.setSpeed(10); });
+const panBefore = await ev(() => window.__terrain.state().player.px);
+await page.keyboard.down('KeyD'); await page.waitForTimeout(500); await page.keyboard.up('KeyD');
+const panAfter = await ev(() => window.__terrain.state().player.px);
+// Return to native 1x and prove the camera/hero contract is intact.
+await page.keyboard.press('KeyV');
+await page.waitForTimeout(200);
+const nativeAgain = await ev(() => window.__terrain.state());
+await ev(() => window.__terrain.setSpeed(1));
+
 /** Measure real keyboard movement at a given multiplier. */
 async function measure(mult) {
-  await ev(([m, tx, ty]) => { window.__terrain.setSpeed(m); window.__terrain.reset(tx, ty); }, [mult, 544, 1304]);
+  await ev(([m, tx, ty]) => { window.__terrain.zoomNative(); window.__terrain.setSpeed(m); window.__terrain.reset(tx, ty); }, [mult, 544, 1304]);
   await ev(() => window.__terrain.clearInputLog());
   const before = await ev(() => window.__terrain.state());
   await page.keyboard.down('KeyD');
@@ -121,6 +150,11 @@ await page.goto(HTTP, { waitUntil: 'networkidle', timeout: 60000 });
 await page.waitForFunction(() => window.__terrain?.ready === true, { timeout: 30000 });
 const httpState = await ev(() => window.__terrain.state());
 const httpShot = await shot('terrain_only_http.png');
+// Deep link ?zoom=fit opens straight into the whole-map view.
+await page.goto(HTTP + '?zoom=fit', { waitUntil: 'networkidle', timeout: 60000 });
+await page.waitForFunction(() => window.__terrain?.ready === true, { timeout: 30000 });
+const deepLink = await ev(() => window.__terrain.state());
+const deepLinkShot = await shot('terrain_only_zoom_fit_deeplink.png');
 
 const gates = {
   'T-G0': { status: initial.ready && initial.mode === 'TERRAIN_ONLY__NO_BUILDINGS__NO_OVERLAY_LAYERS' ? 'PASS' : 'FAIL', reason: 'standalone file:// game boots' },
@@ -132,7 +166,13 @@ const gates = {
   'T-G6': { status: longRun.stats.materializedAllCells === false && longRun.stats.residentChunks <= 36 && longRun.stats.displayCanvases <= 36 ? 'PASS' : 'FAIL', reason: 'bounded LRU over a long x10 run' },
   'T-G7': { status: initial.viewport[0] === 640 && initial.viewport[1] === 360 && initial.dpr === 1 && initial.zoom === 1 && initial.U === 0.5 && initial.heroSpritePx[0] === 16 && initial.heroSpritePx[1] === 24 && initial.speedBasePxPerSec === 72 ? 'PASS' : 'FAIL', reason: 'native 640x360 1x camera, unstretched 16x24 hero, base 72 px/s' },
   'T-G8': { status: httpState.ready === true && Object.values(httpState.draw.overlays).every(v => v === 0) ? 'PASS' : 'FAIL', reason: 'HTTP live preview entry also terrain-only' },
-  'T-G9': { status: consoleErrors.length === 0 && pageErrors.length === 0 && failedRequests.length === 0 ? 'PASS' : 'FAIL', reason: 'zero console / page / request errors' }
+  'T-G9': { status: consoleErrors.length === 0 && pageErrors.length === 0 && failedRequests.length === 0 ? 'PASS' : 'FAIL', reason: 'zero console / page / request errors' },
+  'T-G10': { status: zoomAfterZ.zoomMode === 'WHOLE_MAP_OVERVIEW' && fitState.mapFitsViewport === true && fitState.zoom < 0.01 && Math.abs(fitState.pxPerTile - 0.128571) < 0.0001 ? 'PASS' : 'FAIL', reason: 'Z reaches the smallest zoom; whole 4000x2800 frame fits 640x360' },
+  'T-G11': { status: fitState.overview.ready === true && fitState.overview.pixels === 175000 && fitState.overview.strideTiles === 8 && fitState.overview.tileSamples > 500000 && fitState.overview.fullFrameAllocated === false && fitState.stats.materializedAllCells === false ? 'PASS' : 'FAIL', reason: 'sampled 500x350 overview, no 11.2M-cell allocation, no 8AU raster upscale' },
+  'T-G12': { status: Object.values(fitState.draw.overlays).every(v => v === 0) && fitState.draw.drawn.hero === 0 && fitState.draw.drawn.overviewBitmap === 1 && fitState.draw.terrainOnly === true ? 'PASS' : 'FAIL', reason: 'overview is pure terrain sample, no overlay layers' },
+  'T-G13': { status: guidesState.draw.viewerGuides.viewportRect === 1 && guidesState.draw.viewerGuides.playerDot === 1 && guidesState.overview.guides === true ? 'PASS' : 'FAIL', reason: 'optional viewer guides (B) explicitly reported, not map layers' },
+  'T-G15': { status: deepLink.zoomMode === 'WHOLE_MAP_OVERVIEW' && deepLink.mapFitsViewport === true && deepLink.zoomLevel === 0 && Object.values(deepLink.draw.overlays).every(v => v === 0) ? 'PASS' : 'FAIL', reason: '?zoom=fit deep link opens directly at the smallest whole-map zoom' },
+  'T-G14': { status: midZoom.zoomMode === 'WHOLE_MAP_OVERVIEW' && midZoom.zoom > fitState.zoom && midZoom.zoom < 1 && afterWheel.zoomLevel > midZoom.zoomLevel && panAfter > panBefore && nativeAgain.zoom === 1 && nativeAgain.zoomMode === 'NATIVE_1X' && nativeAgain.draw.drawn.hero === 1 && nativeAgain.draw.drawn.overviewBitmap === 0 ? 'PASS' : 'FAIL', reason: 'slider/wheel zoom, x10 pan while zoomed out, V restores native 1x hero' }
 };
 const report = {
   schema: 'soh.u05.terrain-only-qa.v1',
@@ -144,8 +184,19 @@ const report = {
   speed: { x1: m1, x10: m10, ratio: Number(ratio.toFixed(3)), keyboard: { afterPlus, afterMinus }, rangeBounds, clamped },
   collisionProof,
   hudHidden,
+  zoom: {
+    afterZ: { zoom: zoomAfterZ.zoom, mode: zoomAfterZ.zoomMode },
+    fit: { zoom: fitState.zoom, pxPerTile: fitState.pxPerTile, mapFitsViewport: fitState.mapFitsViewport, overview: fitState.overview, draw: fitState.draw },
+    guides: { viewerGuides: guidesState.draw.viewerGuides, enabled: guidesState.overview.guides },
+    midZoom: { zoom: midZoom.zoom, level: midZoom.zoomLevel, mode: midZoom.zoomMode, zoomMode: midZoom.zoomMode, fits: midZoom.mapFitsViewport },
+    wheel: { levelBefore: midZoom.zoomLevel, levelAfter: afterWheel.zoomLevel, zoomAfter: afterWheel.zoom },
+    panAtX10: { beforePx: Math.round(panBefore), afterPx: Math.round(panAfter), deltaPx: Math.round(panAfter - panBefore) },
+    nativeAgain: { zoom: nativeAgain.zoom, mode: nativeAgain.zoomMode, zoomMode: nativeAgain.zoomMode, draw: nativeAgain.draw },
+    shots: [wholeMapShot, guidesShot]
+  },
   longRun: { player: longRun.player, camera: longRun.camera, stats: longRun.stats, frameMs: longRun.frameMs },
   http: { mode: httpState.mode, viewport: httpState.viewport, draw: httpState.draw },
+  deepLink: { zoomMode: deepLink.zoomMode, mapFitsViewport: deepLink.mapFitsViewport, zoomLevel: deepLink.zoomLevel, draw: deepLink.draw, shot: deepLinkShot },
   consoleErrors, pageErrors, failedRequests,
   shots: fs.readdirSync(SHOTS).filter(f => f.endsWith('.png')).sort(),
   gates,

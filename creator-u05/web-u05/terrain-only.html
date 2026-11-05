@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Soul of Hero — U=0.5 Terrain Only (x10 speed)</title>
+    <title>Soul of Hero — U=0.5 Terrain Only (x10 speed + whole-map zoom)</title>
     <style>
       :root { color-scheme: dark; }
       html, body { margin: 0; background: #141018; color: #e8e0d0; font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; }
@@ -32,18 +32,27 @@
           <input id="speedRange" type="range" min="1" max="10" step="0.5" value="1" />
           <span id="speed">x1 · 72 px/s</span>
         </div>
+        <div class="row">
+          <label for="zoomRange">Zoom bản đồ</label>
+          <input id="zoomRange" type="range" min="0" max="1" step="0.01" value="1" />
+          <span id="zoomLabel">1× (native)</span>
+        </div>
         <div class="row" id="presets">
           <button data-speed="1">x1</button>
           <button data-speed="2">x2</button>
           <button data-speed="5">x5</button>
           <button data-speed="10">x10</button>
+          <button id="fit">Toàn cảnh (Z)</button>
+          <button id="native">1× (V)</button>
+          <button id="guides">Khung nhìn (B): TẮT</button>
           <button id="collision">Chặn địa hình: TẮT</button>
           <button id="hide">Ẩn bảng (H)</button>
           <button id="reset">Về Beacon (R)</button>
         </div>
         <pre id="status"></pre>
         <div class="note" id="pure">Chỉ nền: đường · sông · hồ · biển · biome · bờ biển · cầu. <b>Không</b> công trình, tường, cửa, mái, marker, label, POI overlay, hiệu ứng nổi.</div>
-        <div class="note">Di chuyển <kbd>WASD</kbd> / <kbd>↑↓←→</kbd> · chỉnh tốc <kbd>+</kbd> <kbd>-</kbd> hoặc <kbd>[</kbd> <kbd>]</kbd> (1→10) · <kbd>C</kbd> chặn địa hình · <kbd>H</kbd> ẩn/hiện bảng · <kbd>R</kbd> về Beacon. Camera 640×360 1×, hero 16×24, U=0.5.</div>
+        <div class="note">Di chuyển <kbd>WASD</kbd> / <kbd>↑↓←→</kbd> · tốc độ <kbd>+</kbd> <kbd>-</kbd> hoặc <kbd>[</kbd> <kbd>]</kbd> (1→10) · <b>zoom</b> <kbd>Z</kbd> toàn cảnh ↔ 1×, <kbd>,</kbd> <kbd>.</kbd> hoặc lăn chuột, <kbd>V</kbd> về 1×, <kbd>B</kbd> khung nhìn · <kbd>C</kbd> chặn địa hình · <kbd>H</kbd> ẩn bảng · <kbd>R</kbd> về Beacon.</div>
+        <div class="note">Chế độ <b>Toàn cảnh</b> thu nhỏ tới mức nhỏ nhất để <b>toàn bộ khung 4000×2800 tile nằm gọn trong 640×360</b>. Đây là bản xem mẫu (500×350 pixel, 1 pixel = 8×8 tile, lấy đúng tâm tile GOLD) — <b>không</b> cấp phát 11,2 triệu ô, <b>không</b> phải raster 8 AU phóng to, <b>không</b> đổi luật camera: chơi bình thường vẫn 640×360 1×, hero 16×24.</div>
         <div class="note">Tốc độ gốc 72 px/s không đổi; hệ số là điều khiển <i>viewer</i>, không phải luật Gameplay. File chạy độc lập, không cần server, không nạp atlas mới.</div>
       </div>
     </div>

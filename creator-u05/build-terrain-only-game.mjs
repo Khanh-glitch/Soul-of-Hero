@@ -34,7 +34,7 @@ const externalScript = /<script[^>]+src=/i.test(html);
 const externalCss = /<link[^>]+rel=["']?stylesheet/i.test(html);
 const importFromUrl = /(?:from\s*|import\s*)["']https?:\/\//.test(html);
 if (externalScript || externalCss || importFromUrl) throw Error('U05_TERRAIN_ONLY_NOT_SELF_CONTAINED');
-for (const marker of ['speedRange', 'x10', 'TERRAIN_ONLY', 'render16', 'creator-u05'])
+for (const marker of ['speedRange', 'x10', 'TERRAIN_ONLY', 'render16', 'creator-u05', 'zoomRange', 'WHOLE_MAP_OVERVIEW'])
   if (!html.includes(marker)) throw Error('U05_TERRAIN_ONLY_MARKER_MISSING ' + marker);
 // Forbidden overlay code must not be bundled at all.
 for (const forbidden of ['PhysicalLayer', 'U05_SCENES', 'SITE_ENVELOPE', 'roofHiddenCount', 'wall.u05.'])
@@ -61,6 +61,17 @@ const record = {
   layersRemoved: ['buildings / footprints', 'walls / solid collision meshes', 'doors / rooms', 'roofs / occlusion', 'props', 'markers / labels', 'helipad reservation outline', 'HUD on canvas', 'particles / VFX', 'all scene JSON data'],
   speed: { basePxPerSec: 72, multiplierMin: 1, multiplierMax: 10, step: 0.5, maxPxPerSec: 720, note: 'VIEWER multiplier only; base SPEED constant unchanged and NOT a Gameplay law.' },
   camera: { viewport: [640, 360], dpr: 1, zoom: 1, U: 0.5, TILE: 16, frameTiles: [4000, 2800], addressableCells: 11200000, materializedAllCells: false },
+  wholeMapZoom: {
+    deepLink: '?zoom=fit opens directly at the smallest whole-map zoom',
+    keys: ['Z whole-map FIT <-> native 1x', 'V back to native', ', / . step zoom', 'mouse wheel', 'zoom slider', 'B optional viewer guides'],
+    fitPxPerTile: 0.12857142857142856, fitZoomScale: 0.008035714285714286,
+    fitsWholeFrame: '4000x2800 tiles inside 640x360',
+    overviewBitmap: [500, 350], strideTiles: 8, strideAu: 4, samplePointsPerPixel: 3, tileSamples: 525000,
+    class: 'SAMPLED_VIEWER_PREVIEW_OF_EXACT_GOLD_TILE_CENTRES__NOT_8AU_RASTER_UPSCALE__NOT_AUTHORED_DETAIL',
+    fullFrameAllocated: false,
+    nativeUnchanged: '640x360 @1x, hero 16x24, U=0.5, base 72 px/s',
+    note: 'Zoom is a VIEWER control only, NOT a camera Gameplay law change.'
+  },
   collisionDefault: 'FREE_ROAM__NO_COLLISION', collisionOptional: 'NATURAL_TERRAIN_ONLY (water/cliff/river); no walls, no POI collision, no marine/boat/ferry permission',
   scope: 'STANDALONE TERRAIN VIEWER ONLY — NOT full Gameplay runtime integration, NOT visual acceptance, NOT production game.'
 };

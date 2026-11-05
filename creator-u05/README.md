@@ -15,7 +15,8 @@ mirror `SoulOfHero_TerrainOnly_U05_x10.zip` trên GitHub raw (xem `docs/TERRAIN_
 
 Bỏ **toàn bộ công trình và mọi lớp nổi**; canvas chỉ còn nền: biome, đường, cầu,
 sông, hồ, biển, bờ biển + hero gốc 16×24. Tốc độ chỉnh **x1 → x10** (720 px/s),
-camera 640×360 1×, WASD/mũi tên thật. Hướng dẫn đầy đủ:
+**`Z` zoom nhỏ nhất để nhìn toàn cảnh 4000×2800 tile** (slider / lăn chuột / `,` `.`,
+`V` về 1×), camera chơi bình thường vẫn 640×360 1×, WASD/mũi tên thật. Hướng dẫn đầy đủ:
 `docs/TERRAIN_ONLY_VIEWER.md` · QA: `evidence/terrain-only-qa.json` ·
 ảnh: `evidence/terrain-only-shots/`.
 

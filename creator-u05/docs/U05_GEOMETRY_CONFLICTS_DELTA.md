@@ -17,7 +17,7 @@
 | Raster phân tích | `v4/r1/manifest.r1.json`, `v4/r1/data/*.u8`, `v4/data/marineRegion.v4.u8`, `data/rasters/geo01/*.u8` | 21 raster, `CELL_AU=8`, lưới 250×175, khung 2000×1400 AU |
 | Luật | `/tmp/u05_bible.md` (§11.3 C07/C11/C24, §11.5) | Chỉ dẫn bằng chứng; Map Lead **không** chọn giá / quest / luật Gameplay |
 | Gameplay nguồn (đã pin & kiểm chứng) | `b5c8004ca4e77be62484fb3cd296fe296d7de4c9:web` | 934 files / 87,954,910 blob bytes; U05 vendored **231 files / 2,535,968 bytes**, `verbatimMismatches=0` |
-| Gameplay head lúc xác minh | `arena/d4bfcfff-soul-of-hero` = `291fee6fde9aaa0dec256c93f0c185493309dd44` (PR44 OPEN/DRAFT) | 6 commit mới sau pin; xem §7 |
+| Gameplay head lúc xác minh | `arena/d4bfcfff-soul-of-hero` = `5b3e683402bbc8540dea9404576164097e753f97` (thời điểm xác minh; nhánh PR44 đang hoạt động) (PR44 OPEN/DRAFT) | 14 commit mới sau pin (snapshot); xem §7 |
 | Benchmark thị giác | `large-world-01/evidence/shots/beacon_beacon_u05.png` | **CHỈ** tham chiếu bảo tồn đường Beacon; không reauthor / redraw / widen / recolour |
 
 `source-custody.json` ghi rõ `ARENA_BRANCH_PINNED__NO_ISOLATED_BRANCH_CREATED`: Arena cố định nhánh làm việc,
@@ -94,7 +94,7 @@ min / median / max = **176.0 / 851.84 / 2034.56 AU²** → **704 / 3407.36 / 813
 "physical readiness".
 
 ### 3.5 Helicopter Beacon — kiểm chứng lại trên live source
-`git grep` trên `b5c8004c` (và `291fee6f`) cho thấy **chỉ** có metadata tĩnh
+`git grep` trên `b5c8004c` (và `5b3e683`) cho thấy **chỉ** có metadata tĩnh
 `poi_beacon_engine_out_helicopter` / `kind: stranded_helicopter` trong
 `web/src/game/veyra/wmp04r1.generated.ts`; `art.ts` và `render.ts` **không** có sprite/entity
 helicopter / helipad / chopper, cũng không có `car_wreck` / `ship_hull`.
@@ -170,17 +170,18 @@ benchmark có HUD, ảnh `physical=0` của audition không có HUD) → không 
 | | SHA |
 |---|---|
 | U05 pin (đã vendor, đã kiểm chứng) | `b5c8004ca4e77be62484fb3cd296fe296d7de4c9` |
-| Live `arena/d4bfcfff-soul-of-hero` / PR44 head | `291fee6fde9aaa0dec256c93f0c185493309dd44` |
+| Live `arena/d4bfcfff-soul-of-hero` / PR44 head | `5b3e683402bbc8540dea9404576164097e753f97` (thời điểm xác minh; nhánh PR44 đang hoạt động) |
 | PR44 base `arena/4795760e-soul-of-hero` | `8421b9c3335c7648488ce8ae5dab43eb5787977e` |
 | Map Arena branch | `b12d05866366de0d50e4d305ff7b72fcf36b4921` (trước commit U05) |
 | `main` | `5214788933b1a827f3a177d11ff486433dfe5e8a` |
 
-6 commit mới: `1b460360`, `dada8dc3`, `d6e2d462`, `00c86c38`, `ae268550`, `291fee6f`
+14 commit mới tính đến snapshot (owner VFX, optional powered workbench / claim reserve / research targets, Bible docs, offline tuning)
 (owner VFX, isolated VFX review build, Bible docs, persist tweak).
 `render.ts` đổi **3 dòng** ở projectile/hazard VFX hooks — **ngoài** block PAL/PRIO/texel.
 `art.ts`, `core.ts`, `veyra/wmp04r1.generated.ts` và terrain block **byte-identical**
 (`u05RelevantBlocksIdentical=true`). U05 **không** re-vendor từ head cũ một cách im lặng và
-**không** loại bỏ commit mới; drift được ghi vào `evidence/source-custody.json.verificationDrift`.
+**không** loại bỏ commit mới; nhánh PR44 là **moving target** nên drift là snapshot
+có `snapshotConsistent=true`, ghi vào `evidence/source-custody.json.verificationDrift`.
 Owner VFX atlas mới bị loại khỏi U05 vendor vì `productionAtlas=NOT_AUTHORIZED`.
 
 ---

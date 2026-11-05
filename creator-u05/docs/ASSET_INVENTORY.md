@@ -30,7 +30,7 @@ U05 là lớp **additive physical POI proof**, không phải đợt art producti
 `wall_brick`, `wall_stone`, `wall_wood`.
 
 Tất cả lấy từ `b5c8004ca4e77be62484fb3cd296fe296d7de4c9:web/src/game/art.ts`.
-`art.ts` **byte-identical** giữa pin và live head `291fee6f`.
+`art.ts` **byte-identical** giữa pin và live head `5b3e683`.
 
 ### Cố ý KHÔNG dùng làm vật thay thế
 `wreck`, `roof_hull`, `cart`, `cargo` tồn tại trong `art.ts` nhưng **không** được dùng để
