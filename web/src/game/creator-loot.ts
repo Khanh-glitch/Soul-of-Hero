@@ -7,5 +7,6 @@ export function creatorLootV1(site: StaticEnt): string | undefined {
   if (site.kind !== 'loot') return;
   if (site.poi === 'factory_vault' && site.loot?.some(([key]) => key === 'core_fire')) return 'core_dragon';
   if (site.poi === 'light_top' && site.loot?.some(([key]) => key === 'core_storm')) return 'core_meteor';
+  if (site.poi === 'watch' && site.loot?.some(([key]) => key === 'keycard')) return 'core_mjolnir';
   if (site.poi === 'wreck' && site.loot?.some(([key]) => key === 'core_frost')) return 'core_elsa';
 }

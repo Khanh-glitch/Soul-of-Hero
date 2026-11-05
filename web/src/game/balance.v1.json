@@ -222,5 +222,22 @@
     "rootMs": 10000,
     "rootDamage": 4,
     "rootTickMs": 1000
+  },
+  "creatorCoreMjolnir": {
+    "_status": "SOH_NEW_TUNED v1; strikeCount CREATOR_LOCKED",
+    "punchDamage": 25,
+    "chainDamage": 12,
+    "punchRange": 28,
+    "chainRange": 70,
+    "strikeDamage": 18,
+    "strikeCount": 5,
+    "strikeIntervalMs": 300,
+    "strikeRadius": 26,
+    "targetRange": 140,
+    "attractRadius": 65,
+    "attractMs": 2000,
+    "attractSpeed": 32,
+    "burstDamage": 35,
+    "wetMultiplier": 1.5
   }
 }
