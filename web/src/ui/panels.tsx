@@ -85,12 +85,14 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
         </div>}
         {e.c && <><Grid api={api} cid={e.c} cols={8} /><div className="flex gap-1" style={{ marginTop: 4 }}><button className="btn" onClick={() => takeAll(e.c!)}>Take all</button>{e.kind === 'cart' && <span style={{ fontSize: 10, color: '#cfc2dc' }}>Load {cartWeight(r, e.c).toFixed(0)}/{cartLimit(e)} kg · [F] pull</span>}{e.kind === 'cart' && <button className="btn ghost" onClick={() => api.act('reclaim', { eid })}>Pack up</button>}</div></>}
         {e.kind === 'vehicle' && e.vehicle && <div style={{fontSize:10,marginTop:5}}>
-          <b>Fuel {e.vehicle.fuel.toFixed(1)}/{BAL.motorbike.tank} · condition {Math.ceil(e.hp||0)}/{BAL.motorbike.maxHp}</b><br />
+          <b>Fuel {e.vehicle.fuel.toFixed(1)}/{BAL.motorbike.tank} · condition {Math.ceil(e.hp||0)}/{BAL.motorbike.maxHp} {e.vehicle.lube ? `· lubed ${(e.vehicle.lube/TILE).toFixed(0)} tiles` : ''}</b><br />
           Cargo {cartWeight(r,e.c!).toFixed(1)}/{BAL.motorbike.maxWeight} kg · {C(r,e.c!).slots.filter(Boolean).length}/{BAL.motorbike.slots} slots<br />
           Approx. road range {(e.vehicle.fuel/BAL.motorbike.fuelPerPixel/TILE).toFixed(0)} tiles empty; load and rough ground reduce it.<br />
+          {e.vehicle.lube ? <div style={{color:'#8fd19b'}}>Lubricated: wear -{Math.round((BAL.motorbike.lubricantWearReduction??BAL.oilRefineryV1.lubricantWearReduction)*100)}% for next {(e.vehicle.lube/TILE).toFixed(0)} tiles ({Math.ceil((e.vehicle.lube||0)/TILE)} tiles protection).</div> : <div style={{color:'#cfc2dc'}}>No lubricant — full wear. Refine salvaged oil at an Oil Refinery into lubricant.</div>}
           <button className="btn" onClick={()=>{const res=api.act(r.player.vehicle?'vehicleExit':'vehicleMount',{eid:e.id});if(res.ok)api.open(null);}}>{r.player.vehicle?'Exit':'Enter and drive'}</button>{' '}
           <button className="btn" onClick={()=>api.act('vehicleRefuel',{eid:e.id})}>Add 1 Fuel Canister</button>{' '}
-          <button className="btn" onClick={()=>api.act('vehicleRepair',{eid:e.id})}>Repair: 1 Part + 1 Fastener</button>
+          <button className="btn" onClick={()=>api.act('vehicleRepair',{eid:e.id})}>Repair: 1 Part + 1 Fastener</button>{' '}
+          <button className="btn" onClick={()=>api.act('vehicleLubricate',{eid:e.id})}>Lubricate: 1 Lubricant ({Math.round((BAL.oilRefineryV1.lubricantDistancePx)/TILE)} tiles, -{Math.round(BAL.oilRefineryV1.lubricantWearReduction*100)}% wear)</button>
           <div>WASD drive · F exit. Fuel burns only on movement. Each can needs 100 tank space. No packing: vehicle and cargo stay parked here.</div>
         </div>}
         {e.kind === 'cart' && <div style={{ fontSize: 10, marginTop: 6, borderTop: '1px solid #514155' }}>
@@ -150,11 +152,12 @@ function RecyclerBody({api,eid}:{api:Api;eid:string}) {
 function StationBody({ api, eid }: { api: Api; eid: string }) {
   const r = api.gs.run!; const e = r.entities[eid]; const st = e.station!; const kind = STRUCTS[e.type!].station!;
   const recipes = Object.entries(RECIPES).filter(([, rc]) => rc.station === kind); const known = recipes.filter(([k]) => isRecipeKnown(r.knowledge.recipes, k));
-  const fuelled = kind === 'campfire' || kind === 'furnace';
+  const fuelled = kind === 'campfire' || kind === 'furnace' || kind === 'refinery';
   const level = st.level ?? 1;
   const [confirmSalvage, setConfirmSalvage] = useState<string | null>(null);
   const maintenance = C(r, 'inv').slots.map((s, i) => [s, i] as const).filter(([s]) => s && (ITEMS[s.key].repair || ITEMS[s.key].salvage));
   return <div>
+    {kind === 'refinery' && <div style={{fontSize:10,marginBottom:4,color:'#8fd19b'}}>Oil Refinery — finite salvaged oil only. Batch 5 oil→2 fuel is 17% more oil-efficient than single. Lubricant halves motorbike wear for {Math.round(BAL.oilRefineryV1.lubricantDistancePx/TILE)} tiles. Fuel shared with generators/bike.</div>}
     {kind === 'workbench' && <details style={{ fontSize: 10, marginBottom: 5, borderBottom: '1px solid #514155', paddingBottom: 4 }}>
       <summary style={{ color: '#ffd98a', cursor: 'pointer' }}>Equipment maintenance &amp; upgrades</summary>
       <div style={{ color: '#ffd98a' }}>Workbench level {level} / 3</div>
@@ -220,13 +223,13 @@ export function CraftPanel({ api }: { api: Api }) {
   const [search, setSearch] = useState(''); const [selectedRecipe, setSelectedRecipe] = useState<string | null>(null);
   const [category, setCategory] = useState<string>('Hand'); const [inventory, setInventory] = useState(false);
   const r = api.gs.run!;
-  const groups: [string, string | null][] = [['Hand', null], ['Campfire', 'campfire'], ['Furnace', 'furnace'], ['Workbench', 'workbench']];
+  const groups: [string, string | null][] = [['Hand', null], ['Campfire', 'campfire'], ['Furnace', 'furnace'], ['Refinery', 'refinery'], ['Workbench', 'workbench']];
   const nearSt = (k: string) => Object.values(r.entities).find(e => e.kind === 'struct' && e.station && (e.owner === undefined || e.owner === 'player') && STRUCTS[e.type!]?.station === k && Math.hypot(e.x-r.player.x,e.y-r.player.y) <= 3*TILE);
   if (inventory) return <InventoryPanel api={api} x={8} top={34} onClose={() => { api.setSel(null); setInventory(false); }} />;
   const rc = selectedRecipe ? RECIPES[selectedRecipe] : null; const st = rc?.station ? nearSt(rc.station) : null;
   const materials = !!rc && rc.ins.every(([k,q]) => countItem(r,'inv',k) >= q);
   const stationReady = !rc?.station || (!!st && (st.station!.level ?? 1) >= (rc.stationLevel ?? 1));
-  const fuelNeeded = rc?.station === 'campfire' || rc?.station === 'furnace';
+  const fuelNeeded = rc?.station === 'campfire' || rc?.station === 'furnace' || rc?.station === 'refinery';
   const fuelReady = !fuelNeeded || !!st && (st.station!.burn > 0 || C(r, st.station!.fuelC).slots.some(s => s && ITEMS[s.key].fuel));
   const outputReady = !rc?.station || !st || spaceFor(r, st.station!.outC, rc.out) >= rc.qty;
   return <Panel title="Crafting" style={{ left: 8, top: 34, width: 302, height: 306 }} onClose={() => api.open(null)}>
@@ -259,7 +262,7 @@ export function BuildPanel({ api }: { api: Api }) {
   const groups: Record<string,string[]> = {
     Shell:['claim','floor_wood','floor_stone','wall_wood','wall_stone','wall_brick','door_wood','door_iron','roof_thatch','roof_tile'],
     Home:['bed_straw','chest_small','chest_large','escrow'],
-    Work:['campfire','furnace','workbench','research','garden','barrel','farm_controller'],
+    Work:['campfire','furnace','refinery','workbench','research','garden','barrel','farm_controller'],
     Defense:['base_generator','power_cable','power_switch','pressure_switch','door_powered','arrow_turret','spikes','barricade','torch_post'],
   };
   const keys=BUILD_ORDER.filter(k=>query.trim() ? STRUCTS[k].name.toLowerCase().includes(query.trim().toLowerCase()) : groups[category].includes(k));

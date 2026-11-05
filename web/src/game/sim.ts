@@ -348,11 +348,11 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   if(bike?.kind==='vehicle' && bike.vehicle && bike.deployed) {
     const V=BAL.motorbike, load=cartWeightOf(r,bike)/V.maxWeight, road=!!getWorld(r.layoutId||'shipping').vehicleGeometry?.road[tileOf(bike.y)*WW+tileOf(bike.x)], rough=[T.FOREST,T.MARSH,T.HILL,T.SNOW].includes(t);
     sp=(road?V.roadSpeed:rough?V.roughSpeed:V.groundSpeed)*Math.max(.5,1-load*.35)*condition*speedMul;
-    const rate=V.fuelPerPixel*(rough?V.roughFuelMultiplier:1)*(1+load*V.loadFuelMultiplier), wear=V.wearPerPixel*(rough?1.5:1)*(1+load*.5);
+    const baseWear=V.wearPerPixel*(rough?1.5:1)*(1+load*.5); const lube=bike.vehicle.lube||0; const wear=lube>0 ? baseWear*(1-(V.lubricantWearReduction??BAL.oilRefineryV1.lubricantWearReduction)) : baseWear; const rate=V.fuelPerPixel*(rough?V.roughFuelMultiplier:1)*(1+load*V.loadFuelMultiplier);
     let remaining=ml ? Math.min(sp*dt,bike.vehicle.fuel/rate,(bike.hp||0)/wear) : 0;
     const ox=bike.x,oy=bike.y;
     while(remaining>1e-8){const step=Math.min(remaining,3);const nx=bike.x+mx*step,ny=bike.y+my*step;if(!vehicleClear(r,nx,ny,bike.id)||!vehicleExitPoint(r,nx,ny,bike.id))break;bike.x=nx;bike.y=ny;remaining-=step;}
-    const travelled=dist(ox,oy,bike.x,bike.y);if(travelled>0){bike.vehicle.fuel=Math.max(0,bike.vehicle.fuel-travelled*rate);bike.vehicle.odometer+=travelled;bike.hp=Math.max(0,(bike.hp||0)-travelled*wear);bike.deployed.dur=bike.hp;bike.vehicle.angle=Math.atan2(my,mx);}
+    const travelled=dist(ox,oy,bike.x,bike.y);if(travelled>0){bike.vehicle.fuel=Math.max(0,bike.vehicle.fuel-travelled*rate);bike.vehicle.odometer+=travelled;bike.hp=Math.max(0,(bike.hp||0)-travelled*wear);bike.deployed.dur=bike.hp;bike.vehicle.angle=Math.atan2(my,mx); if((bike.vehicle.lube||0)>0) bike.vehicle.lube=Math.max(0,(bike.vehicle.lube||0)-travelled);}
     p.x=bike.x;p.y=bike.y; if(ml)p.aim=bike.vehicle.angle;
   } else if (p.action?.kind === 'roll') { const ra = p.action.angle; moveBody(r, p, Math.cos(ra) * B.rollSpeed * dt, Math.sin(ra) * B.rollSpeed * dt, 4, 'player'); }
   else if (ml) { moveBody(r, p, mx * sp * dt, my * sp * dt, 4, 'player'); p.stepAcc += sp * dt; if (p.stepAcc > 13) { p.stepAcc = 0; fx('step', { x: p.x, y: p.y + 6, t }); } }

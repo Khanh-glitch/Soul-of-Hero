@@ -3,7 +3,7 @@ import { BAL } from './core';
 export type Mat = 'wood' | 'stone' | 'ore' | 'plant' | 'scrap';
 export interface SourcePlacementRule { terrain: 'sand' | 'marsh' | 'ash' | 'snow' | 'hill'; chance: number }
 /** `tier` governs discovery; `stationLevel` alone specifies physical workbench capability. */
-export interface RecipeDef { out: string; qty: number; ins: [string, number][]; station: null | 'campfire' | 'furnace' | 'workbench'; secs: number; base?: boolean; tier: number; stationLevel?: 1 | 2 | 3 }
+export interface RecipeDef { out: string; qty: number; ins: [string, number][]; station: null | 'campfire' | 'furnace' | 'workbench' | 'refinery'; secs: number; base?: boolean; tier: number; stationLevel?: 1 | 2 | 3 }
 
 // TUNABLE: a capability upgrade, not a learned recipe. The cart itself remains physical.
 export const INDUSTRIAL_MODULE: { cost: [string, number][]; benchLevel: number } = { cost: [['mechanical_parts', 3], ['fasteners', 3], ['spares', 4], ['iron_ingot', 2]], benchLevel: 2 }; // SOH_NEW_TUNED provisional; no equivalent LI numerical table established
@@ -43,6 +43,8 @@ export const ITEMS: Record<string, ItemDef> = {
   // All lifecycle and upgrade costs are provisional TUNABLE values.
   // SOH_NEW_TUNED v1: physical salvage, not an oil well or approved Map resource.
   salvaged_oil: I({ name:'Salvaged Oil', cat:'res', icon:'can', c1:'#3d3025', c2:'#9c8050', w:0.7, max:30, desc:'Recovered from car wrecks. Study a sample to learn furnace refining into generator canisters.', specimen:'refine_salvaged_oil' }),
+  // SOH_PROVISIONAL v1: Oil Refinery output; motorbike wear mitigator, not a LI-verified lubricant grade.
+  lubricant: I({ name:'Machine Lubricant', cat:'res', icon:'can', c1:'#2b4a3a', c2:'#8fd19b', w:0.6, max:20, desc:'Refined from Salvaged Oil at an Oil Refinery. Service a motorbike within reach to halve wear for a limited distance.' }),
   damaged_drive: I({ name: 'Damaged Drive', cat: 'res', icon: 'parts', c1: '#4b6570', c2: '#f0bd56', w: 3, max: 1, desc: 'Finite wreck salvage. At a workbench: 1 drive + 1 scrap → 1 Mechanical Parts. Or carry to the Foundry Recycler: 1 drive → 2 Spares. The same drive is spent either way.' }),
   mechanical_parts: I({ name: 'Mechanical Parts', cat: 'res', icon: 'parts', c1: '#707984', c2: '#c9d2d8', w: 0.5, max: 30, desc: 'Found in industrial wrecks or made at a bench. Improve tools or maintain equipment.' }),
   // Provisional, run-local cross-system materials and equipment.
@@ -200,6 +202,10 @@ export const RECIPES: Record<string, Recipe> = {
   vehicle_drive: { out:'vehicle_drive', qty:1, ins:[['iron_ingot',2],['mechanical_parts',2],['fasteners',2],['spares',3]], station:'workbench', stationLevel:2, secs:25, base:true, tier:1 },
   motorbike_kit: { out:'motorbike_kit', qty:1, ins:[['vehicle_frame',1],['vehicle_drive',1],['iron_ingot',2],['fasteners',2]], station:'workbench', stationLevel:3, secs:40, tier:2 },
   refine_salvaged_oil: { out:'fuel_can', qty:1, ins:[['salvaged_oil',3],['glass',1]], station:'furnace', secs:18, tier:1 },
+  // SOH_PROVISIONAL v1 Oil Refinery: batch-efficient fuel + dedicated lubricant, distinct from furnace single-pot.
+  refinery_fuel: { out:'fuel_can', qty:1, ins:[['salvaged_oil',3],['glass',1]], station:'refinery', secs:14, base:true, tier:1 },
+  refinery_fuel_batch: { out:'fuel_can', qty:2, ins:[['salvaged_oil',5],['glass',1]], station:'refinery', secs:22, base:true, tier:1 },
+  refinery_lubricant: { out:'lubricant', qty:1, ins:[['salvaged_oil',2]], station:'refinery', secs:12, base:true, tier:1 },
   energy_basic: { out:'energy_basic', qty:8, ins:[['stone',2],['fiber',2]], station:null, secs:2, base:true, tier:0 },
   energy_refined_industrial: { out:'energy_refined', qty:12, ins:[['crystal',2],['iron_ingot',2],['charcoal',2]], station:'workbench', stationLevel:3, secs:40, base:true, tier:2 },
   energy_refined: { out:'energy_refined', qty:4, ins:[['crystal',1],['iron_ingot',1]], station:'workbench', stationLevel:2, secs:16, base:true, tier:2 },
@@ -272,7 +278,7 @@ export const WORKBENCH_UPGRADE_III: { toLevel: 3; cost: [string, number][] } = {
 export const CORE_STUDY: Record<string, string> = { core_fire: 'core_fire', core_earth: 'core_earth', core_storm: 'core_storm', core_frost: 'core_frost', core_meteor: 'core_meteor', core_dragon: 'core_dragon', core_elsa: 'core_elsa', core_mjolnir: 'core_mjolnir', core_demon: 'core_demon' };
 
 // ---------- Structures (K6) ----------
-export interface StructDef { name: string; cost: [string, number][]; hp: number; need: 'claim' | 'any' | 'free'; block: boolean; layer: 'floor' | 'wall' | 'obj' | 'roof'; slots?: number; station?: 'campfire' | 'furnace' | 'workbench' | 'research'; light?: number; desc: string; item?: string; shelter?: boolean; warmth?: number }
+export interface StructDef { name: string; cost: [string, number][]; hp: number; need: 'claim' | 'any' | 'free'; block: boolean; layer: 'floor' | 'wall' | 'obj' | 'roof'; slots?: number; station?: 'campfire' | 'furnace' | 'workbench' | 'research' | 'refinery'; light?: number; desc: string; item?: string; shelter?: boolean; warmth?: number }
 export const STRUCTS: Record<string, StructDef> = {
   claim: { name: 'Territory Cabinet', cost: [['wood', 10], ['stone', 5]], hp: 200, need: 'free', block: true, layer: 'obj', slots: 24, desc: 'Place on your foundation. 24 physical slots fund upkeep within 25 SOH tiles.' },
   floor_wood: { name: 'Wood Floor', cost: [['wood', 4]], hp: 120, need: 'any', block: false, layer: 'floor', desc: 'Foundation tile. Roofs need it.' },
@@ -289,6 +295,7 @@ export const STRUCTS: Record<string, StructDef> = {
   chest_large: { name: 'Iron-bound Chest', cost: [['wood', 12], ['iron_ingot', 2]], hp: 220, need: 'claim', block: true, layer: 'obj', slots: 24, desc: '24-slot storage.' },
   campfire: { name: 'Campfire', cost: [['wood', 5], ['stone', 3]], hp: 60, need: 'any', block: true, layer: 'obj', station: 'campfire', light: 90, warmth: 1, desc: 'Cooks with fuel. Warmth + light while burning.' },
   furnace: { name: 'Furnace', cost: [['stone', 18], ['wood', 4]], hp: 300, need: 'claim', block: true, layer: 'obj', station: 'furnace', light: 50, warmth: 1, desc: 'Smelts with fuel. Output waits in its slots.' },
+  refinery: { name: 'Oil Refinery', cost: [['iron_ingot', 4], ['mechanical_parts', 3], ['spares', 5], ['brick', 6], ['glass', 2]], hp: 280, need: 'claim', block: true, layer: 'obj', station: 'refinery', light: 40, desc: 'Converts finite Salvaged Oil into Fuel Canisters and Machine Lubricant. Requires fuel to operate; batch recipe is more oil-efficient.' },
   workbench: { name: 'Workbench', cost: [['wood', 14], ['stone', 4]], hp: 160, need: 'claim', block: true, layer: 'obj', station: 'workbench', desc: 'Timed crafting for tools, armor and parts.' },
   research: { name: 'Research Table', cost: [['wood', 10], ['spares', 6], ['iron_ingot', 1]], hp: 160, need: 'claim', block: true, layer: 'obj', station: 'research', desc: 'Spend Spares or study specimens to unlock recipes.' },
   garden: { name: 'Garden Plot', cost: [['wood', 4], ['fiber', 4]], hp: 60, need: 'claim', block: false, layer: 'obj', desc: 'Plant seeds; grows only while watered (rain counts).' },
@@ -307,7 +314,7 @@ export const STRUCTS: Record<string, StructDef> = {
 };
 /** Full target materials are paid again; condition is preserved, never a free repair. */
 export const STRUCTURE_UPGRADES: Record<string, string> = { floor_wood: 'floor_stone', wall_wood: 'wall_stone', wall_stone: 'wall_brick', door_wood: 'door_iron', roof_thatch: 'roof_tile', chest_small: 'chest_large' };
-export const BUILD_ORDER = ['floor_wood', 'floor_stone', 'claim', 'wall_wood', 'wall_stone', 'wall_brick', 'door_wood', 'door_iron', 'roof_thatch', 'roof_tile', 'bed_straw', 'chest_small', 'chest_large', 'campfire', 'furnace', 'workbench', 'research', 'garden', 'barrel', 'farm_controller', 'base_generator', 'power_cable', 'power_switch', 'pressure_switch', 'door_powered', 'arrow_turret', 'spikes', 'barricade', 'torch_post', 'escrow'];
+export const BUILD_ORDER = ['floor_wood', 'floor_stone', 'claim', 'wall_wood', 'wall_stone', 'wall_brick', 'door_wood', 'door_iron', 'roof_thatch', 'roof_tile', 'bed_straw', 'chest_small', 'chest_large', 'campfire', 'furnace', 'refinery', 'workbench', 'research', 'garden', 'barrel', 'farm_controller', 'base_generator', 'power_cable', 'power_switch', 'pressure_switch', 'door_powered', 'arrow_turret', 'spikes', 'barricade', 'torch_post', 'escrow'];
 
 // Run-2 vendor stock purchasable with SECURED profile cash (PROPOSED prices) → run-local items
 export const SALVAGED_OIL_WRECK_CHANCE = 0.35; // SOH_NEW_TUNED v1 per finite wreck stock unit

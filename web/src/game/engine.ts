@@ -712,6 +712,7 @@ export function buildReason(gs: GameState, type: string, tx: number, ty: number)
   if(p.vehicle)return 'Exit the motorbike before building.';
   if (Object.values(r.entities).some(e=>e.kind==='vehicle' && Math.abs(e.x-(tx*TILE+8))<TILE && Math.abs(e.y-(ty*TILE+8))<TILE)) return 'Move the motorbike away before building here.';
   if (type === 'farm_controller' && !Object.values(r.entities).some(e=>e.kind==='struct' && e.type==='workbench' && e.station && owned(e) && (e.station.level ?? 1)>=2 && near(r,e,3) && dist(e.x,e.y,tx*TILE+8,ty*TILE+8)<=3*TILE)) return 'Build near your level 2 workbench.';
+  if (type === 'refinery' && !Object.values(r.entities).some(e=>e.kind==='struct' && e.type==='workbench' && e.station && owned(e) && (e.station.level ?? 1)>=BAL.oilRefineryV1.requiresWorkbenchLevel && near(r,e,3) && dist(e.x,e.y,tx*TILE+8,ty*TILE+8)<=3*TILE)) return 'Build near your level 2 workbench.';
   if (!Number.isInteger(tx) || !Number.isInteger(ty) || tx < 1 || ty < 1 || tx >= WW - 1 || ty >= WH - 1) return 'Out of bounds.';
   if (dist(p.x, p.y, tx * TILE + 8, ty * TILE + 8) > 4.6 * TILE) return 'Too far away.';
   if (!clearWallLine(r, p, {x:tx*TILE+8,y:ty*TILE+8})) return 'A wall blocks access to that tile.';
@@ -1101,6 +1102,14 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       for(const [key,qty] of cost)removeItem(r,'inv',key,qty);const before=e.hp||0;e.hp=Math.min(BAL.motorbike.maxHp,before+BAL.motorbike.repairHp);e.deployed.dur=e.hp;
       return ok('vehicle.repair',`${e.deployed.uid}:${before.toFixed(2)}->${e.hp.toFixed(2)}:mechanical_partsx1,fastenersx1`);
     }
+    case 'vehicleLubricate': {
+      const e=r.entities[it.eid];if(!e||e.kind!=='vehicle'||!e.vehicle||!e.deployed||!owned(e)||!near(r,e,2)||p.vehicle)return fail('Dismount near your motorbike.');
+      if(!Number.isFinite(e.vehicle.lube)) e.vehicle.lube=0;
+      if((e.vehicle.lube||0) >= BAL.oilRefineryV1.lubricantDistancePx) return fail('Motorbike already fully lubricated.');
+      if(countItem(r,'inv','lubricant')<1) return fail('Need 1 Machine Lubricant from the Oil Refinery.');
+      removeItem(r,'inv','lubricant',1); const add=BAL.oilRefineryV1.lubricantDistancePx; e.vehicle.lube=Math.min(BAL.oilRefineryV1.lubricantDistancePx*1.5, (e.vehicle.lube||0)+add);
+      return ok('vehicle.lubricate',`${e.deployed.uid}:lube+${add}->${e.vehicle.lube}`,`Lubricated: wear halved for next ${(e.vehicle.lube/TILE).toFixed(0)} tiles.`);
+    }
     case 'placeCart': {
       if(p.vehicle)return fail('Exit the vehicle first.');
       const slots = C(r, 'inv').slots; const idx = slots[p.active]?.key === 'cart_kit' ? p.active : slots.findIndex(s => s?.key === 'cart_kit'); if (idx < 0) return fail('No packed cart.');
@@ -1432,7 +1441,7 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
   const note = (message: string) => { if (report && !report.includes(message)) report.push(message); };
   for (const e of Object.values(r.entities)) {
     const st = e.station; if (!st) continue; const kind = e.kind==='recycler'?'recycler':STRUCTS[e.type!].station!;
-    const needsFuel = kind === 'campfire' || kind === 'furnace';
+    const needsFuel = kind === 'campfire' || kind === 'furnace' || kind === 'refinery';
     let t = dtMs, blocked = false;
     while (t > 0 || (!blocked && !!st.queue[0] && st.queue[0].left <= 0)) {
       const job = blocked ? undefined : st.queue[0];
