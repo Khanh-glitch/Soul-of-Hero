@@ -40,7 +40,7 @@ This is a continuation, not completion or Creator acceptance. W00 is historical;
 | FUNCTIONAL_CODE | PARTIAL — fixture tests do not establish all program behaviors |
 | SOURCE_AND_ECONOMY_VALID | PARTIAL — finite Shipping sources tested; balance and Veyra sourcing pending |
 | REAL_WORLD_INTEGRATED | PARTIAL — existing play paths and assisted Spirit fixture, not complete journeys |
-| VISUAL_TIMELINE_INSPECTED | PARTIAL — sampled Spirit E sequence at 640×360/1280×720; all other actions/conditions pending |
+| VISUAL_TIMELINE_INSPECTED | PARTIAL — sampled Spirit E and Q sequences at 640×360/1280×720; other actions/conditions pending |
 | CONTROLS_AND_FEEDBACK_VERIFIED | PARTIAL — assisted Spirit map/select/E; natural discovery, other actions pending |
 | ASSISTED_USABILITY | PARTIAL — selected assisted segments only |
 | UNFAMILIAR_HUMAN_TESTED | NOT_TESTED — HUMAN_LEARNABILITY_PENDING |
@@ -50,6 +50,8 @@ This is a continuation, not completion or Creator acceptance. W00 is historical;
 | CREATOR_ART_ACCEPTANCE | OWNER_BLOCKED / NOT_TESTED |
 
 `web/e2e/v15-spirit-assisted.mjs` creates a fresh run, **injects** Spirit and supplies and clears enemies, then uses mouse and keys for map, selection and cast; it is not natural acquisition or independent human play. `web/evidence/v15-spirit-assisted/` contains 14 sequential captures at each resolution and state results. We inspected sampled departure/arrival frames, including 640 sequence 00/03/06/10 and 1280 sequence 02/09: purple ring and disappearance/reappearance were visible, but effect contrast is modest, arrival is brief, tutorial text small at 640 and first-use source sprite rendering is not established. This is a defect/observation, not art acceptance. The test does not cover hostile, dark, interrupted, saved-offline or true human conditions.
+
+A review found that the Q beam was damaging but invisible because player hazards returned before the generic beam renderer. This was corrected. `web/e2e/v15-spirit-beam-assisted.mjs` and `web/evidence/v15-spirit-beam/` are another injected-core/supplies assisted fixture. Sampled 640 frame 03 and 1280 frame 04 show a visible purple beam; frame 640-10 shows it cleared. It remains provisional visual output, not an approved AVFX timeline or game-feel review.
 
 ## Continue next
 

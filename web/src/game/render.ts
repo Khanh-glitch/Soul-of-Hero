@@ -394,6 +394,7 @@ function drawProj(g: CanvasRenderingContext2D, pr: any, time: number) {
 }
 function drawHaz(g: CanvasRenderingContext2D, h: any, time: number) {
   const col = hazCol(h.style); const tell = h.t < h.tell; const f = tell ? h.t / h.tell : 1;
+  if(h.owner==='player' && h.effect==='spiritBeam' && !tell){g.save();g.translate(h.x,h.y);g.rotate(h.angle);g.fillStyle='rgba(143,57,213,0.65)';g.fillRect(0,-h.w/2,h.len,h.w);g.fillStyle='#f3d5ff';g.fillRect(0,-2,h.len,4);g.fillStyle='#b978fa';for(let x=5;x<h.len;x+=12)g.fillRect(x,Math.sin((x+time)/14)*3-1,4,2);g.restore();return;}
   if (h.owner === 'player' && h.style !== 'meteor' && h.style !== 'burn') { if (!tell && h.style === 'spike') { const X = Math.round(h.x), Y = Math.round(h.y); const k = Math.min(1, (h.t - h.tell) / 60); g.fillStyle = '#7a5a32'; g.fillRect(X - 3, Y - Math.round(10 * k), 2, Math.round(10 * k)); g.fillStyle = '#c9a070'; g.fillRect(X + 1, Y - Math.round(7 * k), 2, Math.round(7 * k)); g.fillStyle = '#e0d0b0'; g.fillRect(X - 3, Y - Math.round(10 * k), 1, 1); } if (h.kind === 'ring' && !tell) { const rr = h.r * Math.min(1, (h.t - h.tell) / h.dur); pixCircle(g, h.x, h.y, rr, '#e0ffff'); pixCircle(g, h.x, h.y, rr - 2, 'rgba(160,220,255,0.6)', 2); } return; }
   g.save(); g.globalAlpha = tell ? 0.18 + f * 0.25 : 0.55;
   if (h.kind === 'circle' || h.kind === 'pool') {
