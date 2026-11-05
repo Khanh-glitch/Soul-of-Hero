@@ -1,0 +1,795 @@
+{
+  "schema": "soh.u05.nature02-assets.v1",
+  "generatedAt": "2026-11-05T11:44:47.556Z",
+  "auditQuestion": "Can the ACTUAL native SOH tree / shrub / rock sprites convincingly represent forest canopy and undergrowth at U=0.5, 640x360 @1x, hero 16x24, WITHOUT arbitrarily enlarging them?",
+  "answer": "PARTIAL / NOT CONVINCING AS A SURVIVAL FOREST. Coherent stands, dense edges and readable clearings ARE achievable at native scale with existing art, but there is NO overhead canopy, NO mid-storey, NO non-harvestable undergrowth and NO semantic separation from harvestable SOURCES.",
+  "artSource": {
+    "file": "creator-u05/web-u05/src/game/art.ts",
+    "sha256": "896aa51abfac516b4228994ae7a20a67c4644a587028146b5c79336103a1ec20",
+    "vendoredFrom": "b5c8004ca4e77be62484fb3cd296fe296d7de4c9:web/src/game/art.ts",
+    "note": "Original SOH pixel art painted into offscreen canvases at boot. No third-party sprites, no new PNG/JPG, no new atlas.",
+    "htmlSha256": "6e1e897a0e365412f6bc92d65390dc10bf7b0352e6ad8ef4a1c38e57f4f30fa6"
+  },
+  "method": {
+    "hero": "getArt().hero.male.idle0[0], alpha bounding box measured from the live canvas",
+    "sprites": "AUDIT_KEYS = 12 real getArt().src arrays; alpha bounding box = min/max opaque pixel coordinates",
+    "inspection": "creator-u05/evidence/nature02-shots/art_audit_sheet.png — 640x360 native sheet, sprites at 1x plus a labelled 2x inspection panel (M key in the pilot)",
+    "spriteScaling": false,
+    "spriteEnlargement": false,
+    "newPixelsPaintedIntoArt": false,
+    "renderingOnlyEffect": "a translucent 0.22-alpha ground shadow ellipse under tall sprites (render effect, not an asset, not a prop)"
+  },
+  "hero": {
+    "key": "hero_male_idle0",
+    "canvasPx": [
+      16,
+      24
+    ],
+    "canvasWidthVsHero": 1,
+    "canvasHeightVsHero": 1,
+    "alphaBBox": [
+      2,
+      0,
+      13,
+      22
+    ],
+    "alphaPixels": 224,
+    "visibleWidthPx": 12,
+    "visibleHeightPx": 23,
+    "visibleWidthVsHero": 0.75,
+    "visibleHeightVsHero": 0.958
+  },
+  "totalGetArtSrcArrays": 22,
+  "auditedSpriteArrays": 12,
+  "auditedSprites": [
+    {
+      "spriteArray": "src.oak",
+      "canvasPx": [
+        24,
+        32
+      ],
+      "canvasWidthVsHero": 1.5,
+      "canvasHeightVsHero": 1.333,
+      "alphaBBox": [
+        0,
+        0,
+        23,
+        31
+      ],
+      "alphaPixels": 432,
+      "visibleWidthPx": 24,
+      "visibleHeightPx": 32,
+      "visibleWidthVsHero": 1.5,
+      "visibleHeightVsHero": 1.333
+    },
+    {
+      "spriteArray": "src.pine",
+      "canvasPx": [
+        24,
+        32
+      ],
+      "canvasWidthVsHero": 1.5,
+      "canvasHeightVsHero": 1.333,
+      "alphaBBox": [
+        1,
+        2,
+        23,
+        31
+      ],
+      "alphaPixels": 338,
+      "visibleWidthPx": 23,
+      "visibleHeightPx": 30,
+      "visibleWidthVsHero": 1.438,
+      "visibleHeightVsHero": 1.25
+    },
+    {
+      "spriteArray": "src.snowpine",
+      "canvasPx": [
+        24,
+        32
+      ],
+      "canvasWidthVsHero": 1.5,
+      "canvasHeightVsHero": 1.333,
+      "alphaBBox": [
+        1,
+        2,
+        23,
+        31
+      ],
+      "alphaPixels": 341,
+      "visibleWidthPx": 23,
+      "visibleHeightPx": 30,
+      "visibleWidthVsHero": 1.438,
+      "visibleHeightVsHero": 1.25
+    },
+    {
+      "spriteArray": "src.willow",
+      "canvasPx": [
+        24,
+        32
+      ],
+      "canvasWidthVsHero": 1.5,
+      "canvasHeightVsHero": 1.333,
+      "alphaBBox": [
+        1,
+        1,
+        22,
+        31
+      ],
+      "alphaPixels": 482,
+      "visibleWidthPx": 22,
+      "visibleHeightPx": 31,
+      "visibleWidthVsHero": 1.375,
+      "visibleHeightVsHero": 1.292
+    },
+    {
+      "spriteArray": "src.dead",
+      "canvasPx": [
+        24,
+        32
+      ],
+      "canvasWidthVsHero": 1.5,
+      "canvasHeightVsHero": 1.333,
+      "alphaBBox": [
+        5,
+        5,
+        18,
+        31
+      ],
+      "alphaPixels": 169,
+      "visibleWidthPx": 14,
+      "visibleHeightPx": 27,
+      "visibleWidthVsHero": 0.875,
+      "visibleHeightVsHero": 1.125
+    },
+    {
+      "spriteArray": "src.rock",
+      "canvasPx": [
+        16,
+        16
+      ],
+      "canvasWidthVsHero": 1,
+      "canvasHeightVsHero": 0.667,
+      "alphaBBox": [
+        0,
+        4,
+        15,
+        15
+      ],
+      "alphaPixels": 152,
+      "visibleWidthPx": 16,
+      "visibleHeightPx": 12,
+      "visibleWidthVsHero": 1,
+      "visibleHeightVsHero": 0.5
+    },
+    {
+      "spriteArray": "src.bush",
+      "canvasPx": [
+        16,
+        16
+      ],
+      "canvasWidthVsHero": 1,
+      "canvasHeightVsHero": 0.667,
+      "alphaBBox": [
+        0,
+        4,
+        15,
+        15
+      ],
+      "alphaPixels": 152,
+      "visibleWidthPx": 16,
+      "visibleHeightPx": 12,
+      "visibleWidthVsHero": 1,
+      "visibleHeightVsHero": 0.5
+    },
+    {
+      "spriteArray": "src.bush_empty",
+      "canvasPx": [
+        16,
+        16
+      ],
+      "canvasWidthVsHero": 1,
+      "canvasHeightVsHero": 0.667,
+      "alphaBBox": [
+        0,
+        4,
+        15,
+        15
+      ],
+      "alphaPixels": 152,
+      "visibleWidthPx": 16,
+      "visibleHeightPx": 12,
+      "visibleWidthVsHero": 1,
+      "visibleHeightVsHero": 0.5
+    },
+    {
+      "spriteArray": "src.grass",
+      "canvasPx": [
+        16,
+        16
+      ],
+      "canvasWidthVsHero": 1,
+      "canvasHeightVsHero": 0.667,
+      "alphaBBox": [
+        3,
+        6,
+        11,
+        14
+      ],
+      "alphaPixels": 52,
+      "visibleWidthPx": 9,
+      "visibleHeightPx": 9,
+      "visibleWidthVsHero": 0.563,
+      "visibleHeightVsHero": 0.375
+    },
+    {
+      "spriteArray": "src.reed",
+      "canvasPx": [
+        16,
+        16
+      ],
+      "canvasWidthVsHero": 1,
+      "canvasHeightVsHero": 0.667,
+      "alphaBBox": [
+        3,
+        3,
+        12,
+        14
+      ],
+      "alphaPixels": 61,
+      "visibleWidthPx": 10,
+      "visibleHeightPx": 12,
+      "visibleWidthVsHero": 0.625,
+      "visibleHeightVsHero": 0.5
+    },
+    {
+      "spriteArray": "src.herb",
+      "canvasPx": [
+        16,
+        16
+      ],
+      "canvasWidthVsHero": 1,
+      "canvasHeightVsHero": 0.667,
+      "alphaBBox": [
+        4,
+        8,
+        13,
+        15
+      ],
+      "alphaPixels": 52,
+      "visibleWidthPx": 10,
+      "visibleHeightPx": 8,
+      "visibleWidthVsHero": 0.625,
+      "visibleHeightVsHero": 0.333
+    },
+    {
+      "spriteArray": "src.mush",
+      "canvasPx": [
+        16,
+        16
+      ],
+      "canvasWidthVsHero": 1,
+      "canvasHeightVsHero": 0.667,
+      "alphaBBox": [
+        2,
+        7,
+        13,
+        15
+      ],
+      "alphaPixels": 69,
+      "visibleWidthPx": 12,
+      "visibleHeightPx": 9,
+      "visibleWidthVsHero": 0.75,
+      "visibleHeightVsHero": 0.375
+    }
+  ],
+  "usedByNATURE02": [
+    {
+      "spriteArray": "src.oak",
+      "canvasPx": [
+        24,
+        32
+      ],
+      "canvasWidthVsHero": 1.5,
+      "canvasHeightVsHero": 1.333,
+      "alphaBBox": [
+        0,
+        0,
+        23,
+        31
+      ],
+      "alphaPixels": 432,
+      "visibleWidthPx": 24,
+      "visibleHeightPx": 32,
+      "visibleWidthVsHero": 1.5,
+      "visibleHeightVsHero": 1.333,
+      "role": "canopy tree",
+      "semanticRisk": "IDENTICAL to SOURCES.oak (solid, harvestable, wood)",
+      "classification": "DECORATIVE_FOREST_ONLY__NOT_APPROVED_FOR_PRODUCTION",
+      "decorativeOnly": true,
+      "gameplayOwned": false,
+      "hasStock": false,
+      "hasDepletion": false,
+      "hasReward": false,
+      "hasOwnership": false,
+      "hasInteraction": false,
+      "blocksMovement": false,
+      "spriteScaling": false
+    },
+    {
+      "spriteArray": "src.pine",
+      "canvasPx": [
+        24,
+        32
+      ],
+      "canvasWidthVsHero": 1.5,
+      "canvasHeightVsHero": 1.333,
+      "alphaBBox": [
+        1,
+        2,
+        23,
+        31
+      ],
+      "alphaPixels": 338,
+      "visibleWidthPx": 23,
+      "visibleHeightPx": 30,
+      "visibleWidthVsHero": 1.438,
+      "visibleHeightVsHero": 1.25,
+      "role": "canopy tree / stand admixture",
+      "semanticRisk": "IDENTICAL to SOURCES.pine",
+      "classification": "DECORATIVE_FOREST_ONLY__NOT_APPROVED_FOR_PRODUCTION",
+      "decorativeOnly": true,
+      "gameplayOwned": false,
+      "hasStock": false,
+      "hasDepletion": false,
+      "hasReward": false,
+      "hasOwnership": false,
+      "hasInteraction": false,
+      "blocksMovement": false,
+      "spriteScaling": false
+    },
+    {
+      "spriteArray": "src.willow",
+      "canvasPx": [
+        24,
+        32
+      ],
+      "canvasWidthVsHero": 1.5,
+      "canvasHeightVsHero": 1.333,
+      "alphaBBox": [
+        1,
+        1,
+        22,
+        31
+      ],
+      "alphaPixels": 482,
+      "visibleWidthPx": 22,
+      "visibleHeightPx": 31,
+      "visibleWidthVsHero": 1.375,
+      "visibleHeightVsHero": 1.292,
+      "role": "wet-edge tree",
+      "semanticRisk": "IDENTICAL to SOURCES.willow",
+      "classification": "DECORATIVE_FOREST_ONLY__NOT_APPROVED_FOR_PRODUCTION",
+      "decorativeOnly": true,
+      "gameplayOwned": false,
+      "hasStock": false,
+      "hasDepletion": false,
+      "hasReward": false,
+      "hasOwnership": false,
+      "hasInteraction": false,
+      "blocksMovement": false,
+      "spriteScaling": false
+    },
+    {
+      "spriteArray": "src.dead",
+      "canvasPx": [
+        24,
+        32
+      ],
+      "canvasWidthVsHero": 1.5,
+      "canvasHeightVsHero": 1.333,
+      "alphaBBox": [
+        5,
+        5,
+        18,
+        31
+      ],
+      "alphaPixels": 169,
+      "visibleWidthPx": 14,
+      "visibleHeightPx": 27,
+      "visibleWidthVsHero": 0.875,
+      "visibleHeightVsHero": 1.125,
+      "role": "snag",
+      "semanticRisk": "IDENTICAL to SOURCES.deadtree",
+      "classification": "DECORATIVE_FOREST_ONLY__NOT_APPROVED_FOR_PRODUCTION",
+      "decorativeOnly": true,
+      "gameplayOwned": false,
+      "hasStock": false,
+      "hasDepletion": false,
+      "hasReward": false,
+      "hasOwnership": false,
+      "hasInteraction": false,
+      "blocksMovement": false,
+      "spriteScaling": false
+    },
+    {
+      "spriteArray": "src.rock",
+      "canvasPx": [
+        16,
+        16
+      ],
+      "canvasWidthVsHero": 1,
+      "canvasHeightVsHero": 0.667,
+      "alphaBBox": [
+        0,
+        4,
+        15,
+        15
+      ],
+      "alphaPixels": 152,
+      "visibleWidthPx": 16,
+      "visibleHeightPx": 12,
+      "visibleWidthVsHero": 1,
+      "visibleHeightVsHero": 0.5,
+      "role": "edge mantle",
+      "semanticRisk": "IDENTICAL to SOURCES.rock (solid, harvestable)",
+      "classification": "DECORATIVE_FOREST_ONLY__NOT_APPROVED_FOR_PRODUCTION",
+      "decorativeOnly": true,
+      "gameplayOwned": false,
+      "hasStock": false,
+      "hasDepletion": false,
+      "hasReward": false,
+      "hasOwnership": false,
+      "hasInteraction": false,
+      "blocksMovement": false,
+      "spriteScaling": false
+    },
+    {
+      "spriteArray": "src.grass",
+      "canvasPx": [
+        16,
+        16
+      ],
+      "canvasWidthVsHero": 1,
+      "canvasHeightVsHero": 0.667,
+      "alphaBBox": [
+        3,
+        6,
+        11,
+        14
+      ],
+      "alphaPixels": 52,
+      "visibleWidthPx": 9,
+      "visibleHeightPx": 9,
+      "visibleWidthVsHero": 0.563,
+      "visibleHeightVsHero": 0.375,
+      "role": "forest floor",
+      "semanticRisk": "IDENTICAL to SOURCES.grass (harvestable fiber)",
+      "classification": "DECORATIVE_FOREST_ONLY__NOT_APPROVED_FOR_PRODUCTION",
+      "decorativeOnly": true,
+      "gameplayOwned": false,
+      "hasStock": false,
+      "hasDepletion": false,
+      "hasReward": false,
+      "hasOwnership": false,
+      "hasInteraction": false,
+      "blocksMovement": false,
+      "spriteScaling": false
+    }
+  ],
+  "excludedSprites": [
+    {
+      "spriteArray": "src.snowpine",
+      "canvasPx": [
+        24,
+        32
+      ],
+      "canvasWidthVsHero": 1.5,
+      "canvasHeightVsHero": 1.333,
+      "alphaBBox": [
+        1,
+        2,
+        23,
+        31
+      ],
+      "alphaPixels": 341,
+      "visibleWidthPx": 23,
+      "visibleHeightPx": 30,
+      "visibleWidthVsHero": 1.438,
+      "visibleHeightVsHero": 1.25,
+      "usedByNATURE02": false,
+      "reason": "snow/conifer biome; this slice is temperate forest only"
+    },
+    {
+      "spriteArray": "src.palm",
+      "usedByNATURE02": false,
+      "reason": "unrelated biome"
+    },
+    {
+      "spriteArray": "src.iron",
+      "usedByNATURE02": false,
+      "reason": "ore SOURCE"
+    },
+    {
+      "spriteArray": "src.coal",
+      "usedByNATURE02": false,
+      "reason": "ore SOURCE"
+    },
+    {
+      "spriteArray": "src.sulfur",
+      "usedByNATURE02": false,
+      "reason": "ore SOURCE"
+    },
+    {
+      "spriteArray": "src.crystal",
+      "usedByNATURE02": false,
+      "reason": "ore SOURCE"
+    },
+    {
+      "spriteArray": "src.bush",
+      "canvasPx": [
+        16,
+        16
+      ],
+      "canvasWidthVsHero": 1,
+      "canvasHeightVsHero": 0.667,
+      "alphaBBox": [
+        0,
+        4,
+        15,
+        15
+      ],
+      "alphaPixels": 152,
+      "visibleWidthPx": 16,
+      "visibleHeightPx": 12,
+      "visibleWidthVsHero": 1,
+      "visibleHeightVsHero": 0.5,
+      "usedByNATURE02": false,
+      "reason": "stocked / DEPLETED Berry Bush states"
+    },
+    {
+      "spriteArray": "src.bush_empty",
+      "canvasPx": [
+        16,
+        16
+      ],
+      "canvasWidthVsHero": 1,
+      "canvasHeightVsHero": 0.667,
+      "alphaBBox": [
+        0,
+        4,
+        15,
+        15
+      ],
+      "alphaPixels": 152,
+      "visibleWidthPx": 16,
+      "visibleHeightPx": 12,
+      "visibleWidthVsHero": 1,
+      "visibleHeightVsHero": 0.5,
+      "usedByNATURE02": false,
+      "reason": "stocked / DEPLETED Berry Bush states"
+    },
+    {
+      "spriteArray": "src.reed",
+      "canvasPx": [
+        16,
+        16
+      ],
+      "canvasWidthVsHero": 1,
+      "canvasHeightVsHero": 0.667,
+      "alphaBBox": [
+        3,
+        3,
+        12,
+        14
+      ],
+      "alphaPixels": 61,
+      "visibleWidthPx": 10,
+      "visibleHeightPx": 12,
+      "visibleWidthVsHero": 0.625,
+      "visibleHeightVsHero": 0.5,
+      "usedByNATURE02": false,
+      "reason": "harvestable plant SOURCE"
+    },
+    {
+      "spriteArray": "src.herb",
+      "canvasPx": [
+        16,
+        16
+      ],
+      "canvasWidthVsHero": 1,
+      "canvasHeightVsHero": 0.667,
+      "alphaBBox": [
+        4,
+        8,
+        13,
+        15
+      ],
+      "alphaPixels": 52,
+      "visibleWidthPx": 10,
+      "visibleHeightPx": 8,
+      "visibleWidthVsHero": 0.625,
+      "visibleHeightVsHero": 0.333,
+      "usedByNATURE02": false,
+      "reason": "harvestable plant SOURCE"
+    },
+    {
+      "spriteArray": "src.mush",
+      "canvasPx": [
+        16,
+        16
+      ],
+      "canvasWidthVsHero": 1,
+      "canvasHeightVsHero": 0.667,
+      "alphaBBox": [
+        2,
+        7,
+        13,
+        15
+      ],
+      "alphaPixels": 69,
+      "visibleWidthPx": 12,
+      "visibleHeightPx": 9,
+      "visibleWidthVsHero": 0.75,
+      "visibleHeightVsHero": 0.375,
+      "usedByNATURE02": false,
+      "reason": "harvestable plant SOURCE"
+    },
+    {
+      "spriteArray": "src.scrap",
+      "usedByNATURE02": false,
+      "reason": "artificial prop"
+    },
+    {
+      "spriteArray": "src.wreck",
+      "usedByNATURE02": false,
+      "reason": "artificial prop"
+    },
+    {
+      "spriteArray": "src.stump",
+      "usedByNATURE02": false,
+      "reason": "harvest depletion state"
+    },
+    {
+      "spriteArray": "src.rubble",
+      "usedByNATURE02": false,
+      "reason": "harvest depletion state"
+    },
+    {
+      "spriteArray": "src.picked",
+      "usedByNATURE02": false,
+      "reason": "harvest depletion state"
+    }
+  ],
+  "proportionsSummary": {
+    "treeCanvasHeightVsHero": 1.3333,
+    "treeCanvasWidthVsHero": 1.5,
+    "heroVisibleAlphaBBoxPx": [
+      12,
+      23
+    ],
+    "oakVisibleAlphaBBoxPx": [
+      24,
+      32
+    ],
+    "interpretation": "A tree is only 1.333x the hero height (8px taller), and its crown starts at the TOP of its 32px canvas. With the hero drawn at tile y+14 and trees at tile y-16, the crown never rises above the hero head by more than a few pixels. At native 1x the forest is a WALL of separate lollipop crowns seen obliquely; there is no overhead canopy, no layered silhouette and no sense of walking UNDER trees."
+  },
+  "canopyVerdict": "NOT_CONVINCING_WITH_EXISTING_ART_ALONE",
+  "undergrowthVerdict": "NOT_CONVINCING_WITH_EXISTING_ART_ALONE: grass/rock/reed/herb/mush are harvestable SOURCES; bush/bush_empty encode stocked/depleted Berry Bush; there is no dedicated non-harvestable fern/sapling layer.",
+  "semanticConflict": {
+    "status": "UNRESOLVED__BLOCKS_PRODUCTION",
+    "ownerDependency": {
+      "branch": "arena/d4bfcfff-soul-of-hero",
+      "verifiedHead": "5b3e683402bbc8540dea9404576164097e753f97",
+      "observedLaterHead": "2f0836587b76a4a98fffedf8c202fb37cbb2a67c",
+      "mapCannotChange": true,
+      "conflicts": [
+        {
+          "file": "web/src/game/catalog.ts",
+          "line": 143,
+          "symbol": "SOURCES.oak",
+          "fact": "art:'oak', stock:6, yields:[['wood',1]], block:true -> a visually identical oak is SOLID and HARVESTABLE in live Gameplay"
+        },
+        {
+          "file": "web/src/game/catalog.ts",
+          "line": 149,
+          "symbol": "SOURCES.rock",
+          "fact": "art:'rock', stock:6, block:true -> a visually identical rock is SOLID and HARVESTABLE"
+        },
+        {
+          "file": "web/src/game/catalog.ts",
+          "line": 156,
+          "symbol": "SOURCES.grass",
+          "fact": "art:'grass', stock:2, yields:[['fiber',1]], regrow:300 -> visually identical grass is a harvestable source"
+        },
+        {
+          "file": "web/src/game/render.ts",
+          "line": 212,
+          "symbol": "render.ts sourceAt draw list",
+          "fact": "y = ty*16+14; the Gameplay source renderer draws A.src[art], depleted forms A.src.stump / A.src.rubble / A.src.picked"
+        },
+        {
+          "file": "web/src/game/render.ts",
+          "line": 215,
+          "symbol": "r.natureTrees",
+          "fact": "DRAWS THE SAME A.src.oak at x-4,y-16,y+14 for Gameplay grove trees, NOT decoration"
+        },
+        {
+          "file": "web/src/game/sim.ts",
+          "line": 199,
+          "symbol": "stepNatureTrees",
+          "fact": "grove trees spawn wood drops and receipts ('core.grove.wood') when mature -> they HAVE rewards"
+        },
+        {
+          "file": "web/src/game/engine.ts",
+          "line": 189,
+          "symbol": "blockGrid()",
+          "fact": "for (const tree of r.natureTrees||[]) arr[...] = 2 -> grove trees are SOLID COLLISION"
+        },
+        {
+          "file": "web/src/game/engine.ts",
+          "line": 156,
+          "symbol": "engine.ts sourceAt owner",
+          "fact": "owner of stock/hp/regrow/burnt state and source layout version"
+        }
+      ],
+      "decisionRequiredFromGameplay": "Designate, in Gameplay-owned data, which oak/pine/rock/grass instances are harvestable and which are purely visual; OR ship a distinct non-harvestable forest asset set. Map must not invent rewards, collision, stock, depletion or source ownership.",
+      "pilotStatus": "NOT_APPROVED_FOR_PRODUCTION",
+      "pilotGuarantee": "NATURE-02 objects have NO interaction, NO collision, NO reward, NO stock, NO depletion and NO owner; they never occupy a GOLD sourceTile. Therefore no contradictory interaction exists INSIDE this pilot, but production approval is blocked until the Gameplay owner resolves the identical-sprite conflict."
+    },
+    "exactFact": "A visually identical oak/rock/grass sprite is SOLID and HARVESTABLE (stock, yields, block:true) in live Gameplay, and r.natureTrees reuses A.src.oak for SOLID grove trees that spawn wood drops. NATURE-02 objects have none of those properties. Two identical-looking objects with contradictory interactions may NOT be approved for production.",
+    "mapCannotChange": true,
+    "pilotGuarantee": "NATURE-02 objects have NO interaction, NO collision, NO reward, NO stock, NO depletion and NO owner; they never occupy a GOLD sourceTile. Therefore no contradictory interaction exists INSIDE this pilot, but production approval is blocked until the Gameplay owner resolves the identical-sprite conflict."
+  },
+  "assetGap": {
+    "id": "N02-ASSET-GAP-01",
+    "status": "PROPOSED__NOT_CREATED__NOT_APPROVED",
+    "exactGap": "There is NO dedicated non-harvestable forest art. Every tree, shrub and ground sprite in getArt().src is bound to a SOURCES definition with stock/yields/block, and live Gameplay reuses A.src.oak for grove trees that are solid and yield wood. Existing 24x32 trees are only 1.333x the 16x24 hero height, so they cannot form an overhead canopy; there is no mid-storey or non-harvestable undergrowth layer.",
+    "owner": "Gameplay art + Gameplay semantic registry (NOT Map)",
+    "proposedAssets": [
+      {
+        "key": "forest_canopy_oak",
+        "sizePx": [
+          24,
+          40
+        ],
+        "variants": 3,
+        "note": "NEW asset, NOT an enlargement of S.oak; two irregular crown tiers + visible trunk; still native 1x pixel grid, outline #140c14"
+      },
+      {
+        "key": "forest_fern",
+        "sizePx": [
+          16,
+          16
+        ],
+        "variants": 3,
+        "note": "non-harvestable undergrowth; NO berries, NO flowers, NO picked/depleted state"
+      },
+      {
+        "key": "forest_snag",
+        "sizePx": [
+          24,
+          32
+        ],
+        "variants": 2,
+        "note": "standing deadwood without the charcoal/orange-ember reward cue of S.dead"
+      }
+    ],
+    "registrationConstraint": "MUST NOT be added to SOURCES, sourceAt(), yields, stock, regrow, blockGrid() or any loot/receipt path.",
+    "cameraConstraint": "U=0.5, 640x360 @1x, hero 16x24 unchanged; no sprite scaling, no camera zoom.",
+    "note": "This is a specification for Control Tower review, NOT a substitute asset and NOT a claim that the gap is solved."
+  },
+  "decorativeOnlyClassification": {
+    "newArtAssets": 0,
+    "newAtlases": 0,
+    "newPngOrJpgFiles": 0,
+    "externalAssetsAtRuntime": 0,
+    "spriteScaling": false,
+    "fullWorldPropagation": false,
+    "noBuildingsOrPoiOrRuinsOrFencesOrArbitraryProps": true,
+    "productionApproved": false,
+    "creatorVisualAcceptance": "NOT_GRANTED"
+  },
+  "browserErrors": [],
+  "scope": "ONE-BIOME FOREST ART AUDIT — not a production-art claim, not a substitute asset, not visual acceptance."
+}

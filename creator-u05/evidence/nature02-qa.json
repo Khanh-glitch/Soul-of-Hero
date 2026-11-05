@@ -1,0 +1,2644 @@
+{
+  "schema": "soh.u05.nature02-qa.v1",
+  "generatedAt": "2026-11-05T11:47:05.973Z",
+  "browser": {
+    "chromium": "/tmp/chromium",
+    "viewport": [
+      640,
+      360
+    ],
+    "dpr": 1,
+    "fileProtocol": true,
+    "frozenClockContextA": true,
+    "realClockContextB": true
+  },
+  "files": {
+    "nature02": "creator-u05/SoulOfHero_Nature02_ForestSlice.html",
+    "nature02Sha256": "6e1e897a0e365412f6bc92d65390dc10bf7b0352e6ad8ef4a1c38e57f4f30fa6",
+    "nature01": "creator-u05/SoulOfHero_Nature01_U05.html",
+    "nature01Sha256": "ac4d54e310f0f3cf7e0e12d728bc5e9ad62f801994be37ce64f76b099af4a0a7",
+    "baseline": "creator-u05/SoulOfHero_TerrainOnly_U05_x10.html",
+    "baselineSha256": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0"
+  },
+  "pilot": "NATURE-02 ONE-BIOME FOREST QUALITY VERTICAL SLICE — three compositions",
+  "compareTiles": {
+    "dense_interior": [
+      1416,
+      1320
+    ],
+    "clearing": [
+      1408,
+      1332
+    ],
+    "road_forest_edge": [
+      1452,
+      1316
+    ],
+    "nature01_site01_tile": [
+      1472,
+      1336
+    ]
+  },
+  "shotTiles": {
+    "dense_interior": [
+      1416,
+      1320
+    ],
+    "clearing": [
+      1408,
+      1332
+    ],
+    "road_forest_edge": [
+      1452,
+      1316
+    ]
+  },
+  "window": [
+    1392,
+    1288,
+    1488,
+    1352
+  ],
+  "gates": [
+    {
+      "id": "F-G0",
+      "name": "boot + THREE untouched executables + native contract + no forbidden leak",
+      "pass": true,
+      "detail": {
+        "baseSha": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0",
+        "n1Sha": "ac4d54e310f0f3cf7e0e12d728bc5e9ad62f801994be37ce64f76b099af4a0a7",
+        "n2Sha": "6e1e897a0e365412f6bc92d65390dc10bf7b0352e6ad8ef4a1c38e57f4f30fa6",
+        "bytes": 1436807,
+        "U": 0.5,
+        "viewport": [
+          640,
+          360
+        ],
+        "hero": [
+          16,
+          24
+        ],
+        "leaked": []
+      }
+    },
+    {
+      "id": "F-G1",
+      "name": "OFF canvas pixel-identical to untouched baseline; ON changes exactly the 3 forest compositions",
+      "pass": true,
+      "detail": [
+        {
+          "composition": "dense_interior",
+          "tile": [
+            1416,
+            1320
+          ],
+          "offEqualsBaseline": true,
+          "offVsBaselineDiff": 0,
+          "offOnDiff": 0.04423,
+          "drawn": 369
+        },
+        {
+          "composition": "clearing",
+          "tile": [
+            1408,
+            1332
+          ],
+          "offEqualsBaseline": true,
+          "offVsBaselineDiff": 0,
+          "offOnDiff": 0.030609,
+          "drawn": 302
+        },
+        {
+          "composition": "road_forest_edge",
+          "tile": [
+            1452,
+            1316
+          ],
+          "offEqualsBaseline": true,
+          "offVsBaselineDiff": 0,
+          "offOnDiff": 0.026731,
+          "drawn": 241
+        },
+        {
+          "composition": "beacon_control",
+          "tile": [
+            544,
+            1304
+          ],
+          "offEqualsBaseline": true,
+          "offVsBaselineDiff": 0,
+          "offOnDiff": 0,
+          "drawn": 0
+        }
+      ]
+    },
+    {
+      "id": "F-G2",
+      "name": "exact 640x360 baseline / NATURE-01 / NATURE-02 comparisons at 4 identical tiles",
+      "pass": true,
+      "detail": [
+        {
+          "composition": "dense_interior",
+          "tile": [
+            1416,
+            1320
+          ],
+          "diff": {
+            "baselineVsNature01": 0.00939,
+            "baselineVsNature02": 0.04423,
+            "nature01VsNature02": 0.050978,
+            "nature02OffVsBaseline": 0,
+            "nature02OffVsNature02": 0.04423
+          },
+          "distinctFiles": 3
+        },
+        {
+          "composition": "clearing",
+          "tile": [
+            1408,
+            1332
+          ],
+          "diff": {
+            "baselineVsNature01": 0.011986,
+            "baselineVsNature02": 0.030609,
+            "nature01VsNature02": 0.040506,
+            "nature02OffVsBaseline": 0,
+            "nature02OffVsNature02": 0.030609
+          },
+          "distinctFiles": 3
+        },
+        {
+          "composition": "road_forest_edge",
+          "tile": [
+            1452,
+            1316
+          ],
+          "diff": {
+            "baselineVsNature01": 0.0126,
+            "baselineVsNature02": 0.026731,
+            "nature01VsNature02": 0.03596,
+            "nature02OffVsBaseline": 0,
+            "nature02OffVsNature02": 0.026731
+          },
+          "distinctFiles": 3
+        },
+        {
+          "composition": "nature01_site01_tile",
+          "tile": [
+            1472,
+            1336
+          ],
+          "diff": {
+            "baselineVsNature01": 0.011919,
+            "baselineVsNature02": 0.010923,
+            "nature01VsNature02": 0.021618,
+            "nature02OffVsBaseline": 0,
+            "nature02OffVsNature02": 0.010923
+          },
+          "distinctFiles": 3
+        }
+      ]
+    },
+    {
+      "id": "F-G2b",
+      "name": "3 genuine full-viewport Chromium screenshots at exactly 640x360",
+      "pass": true,
+      "detail": [
+        {
+          "composition": "dense_interior",
+          "tile": [
+            1416,
+            1320
+          ],
+          "file": "creator-u05/evidence/nature02-shots/browser_viewport_dense_interior.png",
+          "sha256": "fd84026dba743d2ca4dbf2bc2950d2cc261beb48468bb64d05b4aa8aae5a3650",
+          "size": [
+            640,
+            360
+          ],
+          "bytes": 173045
+        },
+        {
+          "composition": "clearing",
+          "tile": [
+            1408,
+            1332
+          ],
+          "file": "creator-u05/evidence/nature02-shots/browser_viewport_clearing.png",
+          "sha256": "18961bb7d685a1983844ca735de73d36823aa73c4247af5deb0fd45f8b432bc0",
+          "size": [
+            640,
+            360
+          ],
+          "bytes": 180026
+        },
+        {
+          "composition": "road_forest_edge",
+          "tile": [
+            1452,
+            1316
+          ],
+          "file": "creator-u05/evidence/nature02-shots/browser_viewport_road_forest_edge.png",
+          "sha256": "85749c18a7be5eabd7414d8e026ec799c2cedc6653f238ea0cc7b4750d8183cf",
+          "size": [
+            640,
+            360
+          ],
+          "bytes": 186067
+        }
+      ]
+    },
+    {
+      "id": "F-G3",
+      "name": "3 distinct reviewable compositions; clearing readable; road pixel-identical OFF/ON",
+      "pass": true,
+      "detail": {
+        "onShaDistinct": 3,
+        "drawnCounts": [
+          369,
+          302,
+          241
+        ],
+        "compositionDesign": {
+          "dense_interior": {
+            "shotTile": [
+              1416,
+              1320
+            ],
+            "objectsInViewport": 339,
+            "treeTiles": 237,
+            "byZone": {
+              "edge": 317,
+              "core": 161,
+              "route": 110,
+              "clearing_rim": 47,
+              "clearing_interior": 20,
+              "exterior": 225
+            },
+            "clearingInteriorTiles": 20,
+            "clearingInteriorObjects": 1,
+            "clearingRimUndergrowth": 21
+          },
+          "clearing": {
+            "shotTile": [
+              1408,
+              1332
+            ],
+            "objectsInViewport": 252,
+            "treeTiles": 139,
+            "byZone": {
+              "exterior": 320,
+              "edge": 194,
+              "core": 115,
+              "route": 69,
+              "clearing_rim": 98,
+              "clearing_interior": 84
+            },
+            "clearingInteriorTiles": 84,
+            "clearingInteriorObjects": 8,
+            "clearingRimUndergrowth": 43
+          },
+          "road_forest_edge": {
+            "shotTile": [
+              1452,
+              1316
+            ],
+            "objectsInViewport": 211,
+            "treeTiles": 139,
+            "byZone": {
+              "clearing_interior": 3,
+              "clearing_rim": 10,
+              "core": 143,
+              "edge": 203,
+              "exterior": 453,
+              "route": 68
+            },
+            "clearingInteriorTiles": 3,
+            "clearingInteriorObjects": 0,
+            "clearingRimUndergrowth": 2
+          }
+        },
+        "roadPixelsUnchanged": true,
+        "roadPixels": 51424
+      }
+    },
+    {
+      "id": "F-G4",
+      "name": "native art audit sheet: real alpha-BBox metrics vs 16x24 hero, no sprite scaling",
+      "pass": true,
+      "detail": {
+        "hero": {
+          "key": "hero_male_idle0",
+          "size": [
+            16,
+            24
+          ],
+          "alphaBBox": [
+            2,
+            0,
+            13,
+            22
+          ],
+          "alphaPixels": 224,
+          "topBandWidth": 12,
+          "bottomBandWidth": 10,
+          "widthRatioVsHero": 1,
+          "heightRatioVsHero": 1,
+          "bboxWidthRatioVsHero": 0.75,
+          "bboxHeightRatioVsHero": 0.958
+        },
+        "treeCanvas": [
+          24,
+          32
+        ],
+        "groundCanvas": [
+          16,
+          16
+        ],
+        "treeHeightVsHero": 1.3333333333333333,
+        "treeWidthVsHero": 1.5,
+        "sprites": [
+          {
+            "key": "oak",
+            "size": [
+              24,
+              32
+            ],
+            "alphaBBox": [
+              0,
+              0,
+              23,
+              31
+            ],
+            "alphaPixels": 432
+          },
+          {
+            "key": "pine",
+            "size": [
+              24,
+              32
+            ],
+            "alphaBBox": [
+              1,
+              2,
+              23,
+              31
+            ],
+            "alphaPixels": 338
+          },
+          {
+            "key": "snowpine",
+            "size": [
+              24,
+              32
+            ],
+            "alphaBBox": [
+              1,
+              2,
+              23,
+              31
+            ],
+            "alphaPixels": 341
+          },
+          {
+            "key": "willow",
+            "size": [
+              24,
+              32
+            ],
+            "alphaBBox": [
+              1,
+              1,
+              22,
+              31
+            ],
+            "alphaPixels": 482
+          },
+          {
+            "key": "dead",
+            "size": [
+              24,
+              32
+            ],
+            "alphaBBox": [
+              5,
+              5,
+              18,
+              31
+            ],
+            "alphaPixels": 169
+          },
+          {
+            "key": "rock",
+            "size": [
+              16,
+              16
+            ],
+            "alphaBBox": [
+              0,
+              4,
+              15,
+              15
+            ],
+            "alphaPixels": 152
+          },
+          {
+            "key": "bush",
+            "size": [
+              16,
+              16
+            ],
+            "alphaBBox": [
+              0,
+              4,
+              15,
+              15
+            ],
+            "alphaPixels": 152
+          },
+          {
+            "key": "bush_empty",
+            "size": [
+              16,
+              16
+            ],
+            "alphaBBox": [
+              0,
+              4,
+              15,
+              15
+            ],
+            "alphaPixels": 152
+          },
+          {
+            "key": "grass",
+            "size": [
+              16,
+              16
+            ],
+            "alphaBBox": [
+              3,
+              6,
+              11,
+              14
+            ],
+            "alphaPixels": 52
+          },
+          {
+            "key": "reed",
+            "size": [
+              16,
+              16
+            ],
+            "alphaBBox": [
+              3,
+              3,
+              12,
+              14
+            ],
+            "alphaPixels": 61
+          },
+          {
+            "key": "herb",
+            "size": [
+              16,
+              16
+            ],
+            "alphaBBox": [
+              4,
+              8,
+              13,
+              15
+            ],
+            "alphaPixels": 52
+          },
+          {
+            "key": "mush",
+            "size": [
+              16,
+              16
+            ],
+            "alphaBBox": [
+              2,
+              7,
+              13,
+              15
+            ],
+            "alphaPixels": 69
+          }
+        ],
+        "sheetFile": "creator-u05/evidence/nature02-shots/art_audit_sheet.png",
+        "sheetBytes": 118922,
+        "sheetSize": [
+          640,
+          360
+        ]
+      }
+    },
+    {
+      "id": "F-G5",
+      "name": "decorative-only; exact Gameplay owner dependency recorded; asset gap PROPOSED not manufactured",
+      "pass": true,
+      "detail": {
+        "usedSprites": [
+          "oak",
+          "pine",
+          "willow",
+          "dead",
+          "rock",
+          "grass"
+        ],
+        "excluded": [
+          "src.bush / src.bush_empty (stocked vs DEPLETED Berry Bush states)",
+          "src.herb / src.mush / src.reed (harvestable plant sources)",
+          "src.picked / src.stump / src.rubble (harvest depletion states)",
+          "src.iron / src.coal / src.sulfur / src.crystal (ore sources)",
+          "src.scrap / src.wreck / src.palm (artificial props / unrelated biome)"
+        ],
+        "newArtAssets": 0,
+        "ownerHead": "5b3e683402bbc8540dea9404576164097e753f97",
+        "ownerLaterHead": "2f0836587b76a4a98fffedf8c202fb37cbb2a67c",
+        "conflicts": 8,
+        "decision": "Designate, in Gameplay-owned data, which oak/pine/rock/grass instances are harvestable and which are purely visual; OR ship a distinct non-harvestable forest asset set. Map must not invent rewards, collision, stock, depletion or source ownership.",
+        "gapId": "N02-ASSET-GAP-01",
+        "gapStatus": "PROPOSED__NOT_CREATED__NOT_APPROVED",
+        "proposedAssets": [
+          "forest_canopy_oak",
+          "forest_fern",
+          "forest_snag"
+        ],
+        "pilotStatus": "NOT_APPROVED_FOR_PRODUCTION"
+      }
+    },
+    {
+      "id": "F-G6",
+      "name": "deterministic placement, stable across cache resets and 32-tile chunk boundaries",
+      "pass": true,
+      "detail": {
+        "stabilityHash": "5dccf0df",
+        "chunkChecks": [
+          {
+            "composition": "dense_interior",
+            "boundaryTile": [
+              1408,
+              1312
+            ],
+            "window": [
+              1402,
+              1306,
+              1414,
+              1318
+            ],
+            "objects": 52,
+            "left": 29,
+            "right": 23,
+            "stableAcrossCacheReset": true,
+            "presentInFrame": 52,
+            "missing": 0
+          },
+          {
+            "composition": "clearing",
+            "boundaryTile": [
+              1408,
+              1312
+            ],
+            "window": [
+              1402,
+              1306,
+              1414,
+              1318
+            ],
+            "objects": 52,
+            "left": 29,
+            "right": 23,
+            "stableAcrossCacheReset": true,
+            "presentInFrame": 52,
+            "missing": 0
+          },
+          {
+            "composition": "road_forest_edge",
+            "boundaryTile": [
+              1440,
+              1312
+            ],
+            "window": [
+              1434,
+              1306,
+              1446,
+              1318
+            ],
+            "objects": 56,
+            "left": 23,
+            "right": 33,
+            "stableAcrossCacheReset": true,
+            "presentInFrame": 56,
+            "missing": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "F-G7",
+      "name": "uniform scatter corrected: coherent canopy stands, dense edges, natural empty space, zero veto violations",
+      "pass": true,
+      "detail": {
+        "nature01": {
+          "objects": 738,
+          "treeTiles": 207,
+          "blocks": 96,
+          "blockMean": 2.16,
+          "blockSd": 2.53,
+          "blockCv": 1.172,
+          "largestTreeComponentTiles": 3,
+          "top5Components": [
+            3,
+            3,
+            2,
+            2,
+            2
+          ],
+          "components": 180
+        },
+        "nature02": {
+          "objects": 1350,
+          "treeTiles": 839,
+          "blocks": 96,
+          "blockMean": 8.74,
+          "blockSd": 10.75,
+          "blockCv": 1.231,
+          "largestTreeComponentTiles": 178,
+          "top5Components": [
+            178,
+            79,
+            62,
+            59,
+            56
+          ],
+          "components": 118
+        },
+        "largestComponentGain": 59.3,
+        "totalObjects": 1350,
+        "byZone": {
+          "exterior": 95,
+          "edge": 727,
+          "core": 414,
+          "clearing_rim": 102,
+          "clearing_interior": 12
+        },
+        "kinds": {
+          "rock": 119,
+          "oak": 486,
+          "grass": 392,
+          "dead": 136,
+          "willow": 83,
+          "pine": 134
+        },
+        "openGround": {
+          "dense_interior": 0.6137,
+          "clearing": 0.7035,
+          "road_forest_edge": 0.6846
+        },
+        "violations": {
+          "road": 0,
+          "bridge": 0,
+          "water": 0,
+          "river": 0,
+          "lake": 0,
+          "coast": 0,
+          "sourceTile": 0,
+          "roadBuffer": 0,
+          "outsideWindow": 0,
+          "route": 0,
+          "nonDecorative": 0,
+          "gameplayOwned": 0,
+          "scaledSprite": 0
+        },
+        "stabilityHash": "5dccf0df"
+      }
+    },
+    {
+      "id": "F-G8",
+      "name": "y-sorted draw order: forest objects both behind and in front of the hero",
+      "pass": true,
+      "detail": [
+        {
+          "composition": "dense_interior",
+          "sorted": true,
+          "behindHero": 214,
+          "inFrontOfHero": 155
+        },
+        {
+          "composition": "clearing",
+          "sorted": true,
+          "behindHero": 141,
+          "inFrontOfHero": 161
+        },
+        {
+          "composition": "road_forest_edge",
+          "sorted": true,
+          "behindHero": 138,
+          "inFrontOfHero": 103
+        }
+      ]
+    },
+    {
+      "id": "F-G12",
+      "name": "GOLD polygons / roads / rivers / biome raster / despeckle + collision authority unchanged; one window only",
+      "pass": true,
+      "detail": {
+        "tilesCompared": 16,
+        "terrainIdentical": true,
+        "despeckleConfigIdentical": true,
+        "isolatedPainted": 0,
+        "beaconForestObjects": 0,
+        "otherNature01WindowObjects": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "objectsOutsideForestWindow": 0
+      }
+    },
+    {
+      "id": "F-G9",
+      "name": "REAL keyboard walking sequences in all 3 compositions (4 native 640x360 shots each)",
+      "pass": true,
+      "detail": [
+        {
+          "composition": "dense_interior",
+          "totalMovedPx": 1152,
+          "realKeys": {
+            "down": 4,
+            "up": 4
+          },
+          "shots": 4,
+          "startTile": [
+            1416,
+            1320
+          ],
+          "endTile": [
+            1412,
+            1321
+          ]
+        },
+        {
+          "composition": "clearing",
+          "totalMovedPx": 1188,
+          "realKeys": {
+            "down": 4,
+            "up": 4
+          },
+          "shots": 4,
+          "startTile": [
+            1408,
+            1332
+          ],
+          "endTile": [
+            1408,
+            1330
+          ]
+        },
+        {
+          "composition": "road_forest_edge",
+          "totalMovedPx": 1224,
+          "realKeys": {
+            "down": 4,
+            "up": 4
+          },
+          "shots": 4,
+          "startTile": [
+            1452,
+            1316
+          ],
+          "endTile": [
+            1452,
+            1316
+          ]
+        }
+      ]
+    },
+    {
+      "id": "F-G10",
+      "name": "decorative layer does not obstruct movement or alter natural-terrain collision (BOTH collision modes)",
+      "pass": true,
+      "detail": [
+        {
+          "composition": "dense_interior",
+          "off": {
+            "movedPx": 31,
+            "blockedSubsteps": 0,
+            "collision": "FREE_ROAM__NO_COLLISION",
+            "forestBlocksMovement": false,
+            "terrain": 5
+          },
+          "on": {
+            "movedPx": 30,
+            "blockedSubsteps": 0,
+            "collision": "FREE_ROAM__NO_COLLISION",
+            "forestBlocksMovement": false,
+            "terrain": 5
+          },
+          "offCollisionOn": {
+            "movedPx": 31,
+            "blockedSubsteps": 0,
+            "collision": "NATURAL_TERRAIN_ONLY",
+            "forestBlocksMovement": false,
+            "terrain": 5
+          },
+          "onCollisionOn": {
+            "movedPx": 31,
+            "blockedSubsteps": 0,
+            "collision": "NATURAL_TERRAIN_ONLY",
+            "forestBlocksMovement": false,
+            "terrain": 5
+          },
+          "movedPxRatio": 0.968,
+          "collisionOnMovedPxRatio": 1
+        },
+        {
+          "composition": "clearing",
+          "off": {
+            "movedPx": 31,
+            "blockedSubsteps": 0,
+            "collision": "FREE_ROAM__NO_COLLISION",
+            "forestBlocksMovement": false,
+            "terrain": 5
+          },
+          "on": {
+            "movedPx": 30,
+            "blockedSubsteps": 0,
+            "collision": "FREE_ROAM__NO_COLLISION",
+            "forestBlocksMovement": false,
+            "terrain": 5
+          },
+          "offCollisionOn": {
+            "movedPx": 31,
+            "blockedSubsteps": 0,
+            "collision": "NATURAL_TERRAIN_ONLY",
+            "forestBlocksMovement": false,
+            "terrain": 5
+          },
+          "onCollisionOn": {
+            "movedPx": 31,
+            "blockedSubsteps": 0,
+            "collision": "NATURAL_TERRAIN_ONLY",
+            "forestBlocksMovement": false,
+            "terrain": 5
+          },
+          "movedPxRatio": 0.968,
+          "collisionOnMovedPxRatio": 1
+        },
+        {
+          "composition": "road_forest_edge",
+          "off": {
+            "movedPx": 31,
+            "blockedSubsteps": 0,
+            "collision": "FREE_ROAM__NO_COLLISION",
+            "forestBlocksMovement": false,
+            "terrain": 5
+          },
+          "on": {
+            "movedPx": 30,
+            "blockedSubsteps": 0,
+            "collision": "FREE_ROAM__NO_COLLISION",
+            "forestBlocksMovement": false,
+            "terrain": 5
+          },
+          "offCollisionOn": {
+            "movedPx": 31,
+            "blockedSubsteps": 0,
+            "collision": "NATURAL_TERRAIN_ONLY",
+            "forestBlocksMovement": false,
+            "terrain": 5
+          },
+          "onCollisionOn": {
+            "movedPx": 30,
+            "blockedSubsteps": 0,
+            "collision": "NATURAL_TERRAIN_ONLY",
+            "forestBlocksMovement": false,
+            "terrain": 5
+          },
+          "movedPxRatio": 0.968,
+          "collisionOnMovedPxRatio": 0.968
+        }
+      ]
+    },
+    {
+      "id": "F-G11",
+      "name": "bounded chunks / native frame budget with forest ON",
+      "pass": true,
+      "detail": [
+        {
+          "composition": "dense_interior",
+          "onP50": 16.7,
+          "onP95": 16.8,
+          "offP50": 16.7,
+          "offP95": 16.8,
+          "p95Ratio": 1,
+          "onObjects": 369,
+          "forestChunks": 9,
+          "maxForestChunks": 36,
+          "terrainChunks": 2,
+          "maxTerrainChunks": 36,
+          "displayCanvases": 16,
+          "materializedAllCells": false,
+          "overviewFullFrameAllocated": false
+        },
+        {
+          "composition": "clearing",
+          "onP50": 16.7,
+          "onP95": 16.8,
+          "offP50": 16.7,
+          "offP95": 16.8,
+          "p95Ratio": 1,
+          "onObjects": 302,
+          "forestChunks": 9,
+          "maxForestChunks": 36,
+          "terrainChunks": 3,
+          "maxTerrainChunks": 36,
+          "displayCanvases": 24,
+          "materializedAllCells": false,
+          "overviewFullFrameAllocated": false
+        },
+        {
+          "composition": "road_forest_edge",
+          "onP50": 16.7,
+          "onP95": 16.8,
+          "offP50": 16.7,
+          "offP95": 16.8,
+          "p95Ratio": 1,
+          "onObjects": 241,
+          "forestChunks": 12,
+          "maxForestChunks": 36,
+          "terrainChunks": 4,
+          "maxTerrainChunks": 36,
+          "displayCanvases": 36,
+          "materializedAllCells": false,
+          "overviewFullFrameAllocated": false
+        }
+      ]
+    },
+    {
+      "id": "F-G13",
+      "name": "no page errors / no camera trick / real input log / evidence consistency",
+      "pass": true,
+      "detail": {
+        "browserErrors": [],
+        "cameraTrick": false,
+        "followMode": "FIT_FOLLOW",
+        "sourceFiles": [
+          "SoulOfHero_Nature02_ForestSlice.html",
+          "SoulOfHero_Nature01_U05.html",
+          "SoulOfHero_TerrainOnly_U05_x10.html",
+          "web-u05/nature02.html",
+          "web-u05/src/nature02/main.ts",
+          "web-u05/src/nature02/forest.ts",
+          "web-u05/src/nature02/forest-sites.ts",
+          "web-u05/src/nature02/art-audit.ts",
+          "web-u05/src/game/art.ts",
+          "web-u05/src/u05/terrain.ts",
+          "web-u05/src/u05/world.ts"
+        ],
+        "visualAcceptance": "NOT_GRANTED"
+      }
+    }
+  ],
+  "passing": 15,
+  "total": 15,
+  "failing": [],
+  "pairs": [
+    {
+      "composition": "dense_interior",
+      "tile": [
+        1416,
+        1320
+      ],
+      "off": {
+        "file": "creator-u05/evidence/nature02-shots/dense_interior_off.png",
+        "sha256": "9d10320fb9e61b7ed48ee08794d8d38a4f422a50e02b1b0a3a2d3d3f098e57d5",
+        "bytes": 188773,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "on": {
+        "file": "creator-u05/evidence/nature02-shots/dense_interior_on.png",
+        "sha256": "1fd869748464652274ce69745f4f1ca0ad80c944fdfa074257193499eeec9115",
+        "bytes": 213849,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "baseline": {
+        "file": "creator-u05/evidence/nature02-shots/dense_interior_baseline.png",
+        "sha256": "9d10320fb9e61b7ed48ee08794d8d38a4f422a50e02b1b0a3a2d3d3f098e57d5",
+        "bytes": 188773,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "offEqualsBaseline": true,
+      "offVsBaselineDiff": 0,
+      "offOnDiff": 0.04423,
+      "onDiffersFromOff": true,
+      "forestObjectsDrawn": 369,
+      "kindCounts": {
+        "dead": 34,
+        "oak": 164,
+        "pine": 40,
+        "grass": 83,
+        "willow": 17,
+        "rock": 31
+      },
+      "zoneCounts": {
+        "edge": 205,
+        "core": 119,
+        "clearing_interior": 3,
+        "clearing_rim": 31,
+        "exterior": 11
+      },
+      "behindHero": 214,
+      "inFrontOfHero": 155,
+      "drawOrderSorted": true,
+      "zoomMode": "NATIVE_1X",
+      "nativePx": [
+        640,
+        360
+      ]
+    },
+    {
+      "composition": "clearing",
+      "tile": [
+        1408,
+        1332
+      ],
+      "off": {
+        "file": "creator-u05/evidence/nature02-shots/clearing_off.png",
+        "sha256": "409c542d93e9be7de9e8bc3fdf5a7ccd676223462acbcc66620e50654627b249",
+        "bytes": 188595,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "on": {
+        "file": "creator-u05/evidence/nature02-shots/clearing_on.png",
+        "sha256": "665130f95c30e516320055128e57dd7767cc15a2393858d6fcd5f3b558a197ec",
+        "bytes": 211296,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "baseline": {
+        "file": "creator-u05/evidence/nature02-shots/clearing_baseline.png",
+        "sha256": "409c542d93e9be7de9e8bc3fdf5a7ccd676223462acbcc66620e50654627b249",
+        "bytes": 188595,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "offEqualsBaseline": true,
+      "offVsBaselineDiff": 0,
+      "offOnDiff": 0.030609,
+      "onDiffersFromOff": true,
+      "forestObjectsDrawn": 302,
+      "kindCounts": {
+        "oak": 106,
+        "pine": 39,
+        "grass": 98,
+        "rock": 28,
+        "dead": 26,
+        "willow": 5
+      },
+      "zoneCounts": {
+        "edge": 138,
+        "core": 93,
+        "exterior": 11,
+        "clearing_rim": 52,
+        "clearing_interior": 8
+      },
+      "behindHero": 141,
+      "inFrontOfHero": 161,
+      "drawOrderSorted": true,
+      "zoomMode": "NATIVE_1X",
+      "nativePx": [
+        640,
+        360
+      ]
+    },
+    {
+      "composition": "road_forest_edge",
+      "tile": [
+        1452,
+        1316
+      ],
+      "off": {
+        "file": "creator-u05/evidence/nature02-shots/road_forest_edge_off.png",
+        "sha256": "1c093ed7abc06841dfc05dd332dfbffc5cf1d38c22305f8d2d71e0d8625511d3",
+        "bytes": 197928,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "on": {
+        "file": "creator-u05/evidence/nature02-shots/road_forest_edge_on.png",
+        "sha256": "9728dd61c9761d7c5e50cbd1646fb8f8df8b4e7430367bf28afe2e2c56ce38d6",
+        "bytes": 216933,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "baseline": {
+        "file": "creator-u05/evidence/nature02-shots/road_forest_edge_baseline.png",
+        "sha256": "1c093ed7abc06841dfc05dd332dfbffc5cf1d38c22305f8d2d71e0d8625511d3",
+        "bytes": 197928,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "offEqualsBaseline": true,
+      "offVsBaselineDiff": 0,
+      "offOnDiff": 0.026731,
+      "onDiffersFromOff": true,
+      "forestObjectsDrawn": 241,
+      "kindCounts": {
+        "grass": 62,
+        "pine": 31,
+        "willow": 26,
+        "oak": 81,
+        "dead": 25,
+        "rock": 16
+      },
+      "zoneCounts": {
+        "clearing_rim": 4,
+        "core": 95,
+        "edge": 132,
+        "exterior": 10
+      },
+      "behindHero": 138,
+      "inFrontOfHero": 103,
+      "drawOrderSorted": true,
+      "zoomMode": "NATIVE_1X",
+      "nativePx": [
+        640,
+        360
+      ]
+    },
+    {
+      "composition": "beacon_control",
+      "tile": [
+        544,
+        1304
+      ],
+      "off": {
+        "file": "creator-u05/evidence/nature02-shots/beacon_control_off.png",
+        "sha256": "fba80d5a375c45e4ce93f86de5b91cb6749e342c58ff9507bebc606e55b7527f",
+        "bytes": 192565,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "on": {
+        "file": "creator-u05/evidence/nature02-shots/beacon_control_on.png",
+        "sha256": "fba80d5a375c45e4ce93f86de5b91cb6749e342c58ff9507bebc606e55b7527f",
+        "bytes": 192565,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "baseline": {
+        "file": "creator-u05/evidence/nature02-shots/beacon_control_baseline.png",
+        "sha256": "fba80d5a375c45e4ce93f86de5b91cb6749e342c58ff9507bebc606e55b7527f",
+        "bytes": 192565,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "offEqualsBaseline": true,
+      "offVsBaselineDiff": 0,
+      "offOnDiff": 0,
+      "onDiffersFromOff": false,
+      "forestObjectsDrawn": 0,
+      "kindCounts": {},
+      "zoneCounts": {},
+      "behindHero": 0,
+      "inFrontOfHero": 0,
+      "drawOrderSorted": true,
+      "zoomMode": "NATIVE_1X",
+      "nativePx": [
+        640,
+        360
+      ]
+    }
+  ],
+  "triptychs": [
+    {
+      "composition": "dense_interior",
+      "tile": [
+        1416,
+        1320
+      ],
+      "baseline": {
+        "file": "creator-u05/evidence/nature02-shots/compare_dense_interior_baseline.png",
+        "sha256": "9d10320fb9e61b7ed48ee08794d8d38a4f422a50e02b1b0a3a2d3d3f098e57d5",
+        "bytes": 188773,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "nature01": {
+        "file": "creator-u05/evidence/nature02-shots/compare_dense_interior_nature01.png",
+        "sha256": "b72892b407b04ba2f0d71329ab21200cbcbde596f4e40b5158a6449c3df64d90",
+        "bytes": 200636,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "nature02": {
+        "file": "creator-u05/evidence/nature02-shots/compare_dense_interior_nature02.png",
+        "sha256": "1fd869748464652274ce69745f4f1ca0ad80c944fdfa074257193499eeec9115",
+        "bytes": 213849,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "nature02Off": {
+        "file": "creator-u05/evidence/nature02-shots/compare_dense_interior_nature02_off.png",
+        "sha256": "9d10320fb9e61b7ed48ee08794d8d38a4f422a50e02b1b0a3a2d3d3f098e57d5",
+        "bytes": 188773,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "diff": {
+        "baselineVsNature01": 0.00939,
+        "baselineVsNature02": 0.04423,
+        "nature01VsNature02": 0.050978,
+        "nature02OffVsBaseline": 0,
+        "nature02OffVsNature02": 0.04423
+      },
+      "distinctFiles": 3
+    },
+    {
+      "composition": "clearing",
+      "tile": [
+        1408,
+        1332
+      ],
+      "baseline": {
+        "file": "creator-u05/evidence/nature02-shots/compare_clearing_baseline.png",
+        "sha256": "409c542d93e9be7de9e8bc3fdf5a7ccd676223462acbcc66620e50654627b249",
+        "bytes": 188595,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "nature01": {
+        "file": "creator-u05/evidence/nature02-shots/compare_clearing_nature01.png",
+        "sha256": "30fb02b1f5998e16b7f2889ca555a4bed4579d0081399849cd3a83ec6d353be4",
+        "bytes": 202110,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "nature02": {
+        "file": "creator-u05/evidence/nature02-shots/compare_clearing_nature02.png",
+        "sha256": "665130f95c30e516320055128e57dd7767cc15a2393858d6fcd5f3b558a197ec",
+        "bytes": 211296,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "nature02Off": {
+        "file": "creator-u05/evidence/nature02-shots/compare_clearing_nature02_off.png",
+        "sha256": "409c542d93e9be7de9e8bc3fdf5a7ccd676223462acbcc66620e50654627b249",
+        "bytes": 188595,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "diff": {
+        "baselineVsNature01": 0.011986,
+        "baselineVsNature02": 0.030609,
+        "nature01VsNature02": 0.040506,
+        "nature02OffVsBaseline": 0,
+        "nature02OffVsNature02": 0.030609
+      },
+      "distinctFiles": 3
+    },
+    {
+      "composition": "road_forest_edge",
+      "tile": [
+        1452,
+        1316
+      ],
+      "baseline": {
+        "file": "creator-u05/evidence/nature02-shots/compare_road_forest_edge_baseline.png",
+        "sha256": "1c093ed7abc06841dfc05dd332dfbffc5cf1d38c22305f8d2d71e0d8625511d3",
+        "bytes": 197928,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "nature01": {
+        "file": "creator-u05/evidence/nature02-shots/compare_road_forest_edge_nature01.png",
+        "sha256": "c57644c58183a39c325bed7c9d39ae62d8417964e80bac943f86df7ddcaf02d6",
+        "bytes": 211008,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "nature02": {
+        "file": "creator-u05/evidence/nature02-shots/compare_road_forest_edge_nature02.png",
+        "sha256": "9728dd61c9761d7c5e50cbd1646fb8f8df8b4e7430367bf28afe2e2c56ce38d6",
+        "bytes": 216933,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "nature02Off": {
+        "file": "creator-u05/evidence/nature02-shots/compare_road_forest_edge_nature02_off.png",
+        "sha256": "1c093ed7abc06841dfc05dd332dfbffc5cf1d38c22305f8d2d71e0d8625511d3",
+        "bytes": 197928,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "diff": {
+        "baselineVsNature01": 0.0126,
+        "baselineVsNature02": 0.026731,
+        "nature01VsNature02": 0.03596,
+        "nature02OffVsBaseline": 0,
+        "nature02OffVsNature02": 0.026731
+      },
+      "distinctFiles": 3
+    },
+    {
+      "composition": "nature01_site01_tile",
+      "tile": [
+        1472,
+        1336
+      ],
+      "baseline": {
+        "file": "creator-u05/evidence/nature02-shots/compare_nature01_site01_tile_baseline.png",
+        "sha256": "0d73a0ca0c9a9f41b863958cb1bf59ef6bb7963bc88496d80a1a12b613e1f2cd",
+        "bytes": 194380,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "nature01": {
+        "file": "creator-u05/evidence/nature02-shots/compare_nature01_site01_tile_nature01.png",
+        "sha256": "b3aceb6fd20f16f14874dbe89e77a550d10aaf961c516118845711c20adc43d7",
+        "bytes": 206857,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "nature02": {
+        "file": "creator-u05/evidence/nature02-shots/compare_nature01_site01_tile_nature02.png",
+        "sha256": "8a687d44362a1f9e545a66fdb711fd30bfde34c122ba5fcca3ed2194ceb93c4d",
+        "bytes": 204141,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "nature02Off": {
+        "file": "creator-u05/evidence/nature02-shots/compare_nature01_site01_tile_nature02_off.png",
+        "sha256": "0d73a0ca0c9a9f41b863958cb1bf59ef6bb7963bc88496d80a1a12b613e1f2cd",
+        "bytes": 194380,
+        "size": [
+          640,
+          360
+        ],
+        "capture": "native canvas.toDataURL 640x360 DPR1"
+      },
+      "diff": {
+        "baselineVsNature01": 0.011919,
+        "baselineVsNature02": 0.010923,
+        "nature01VsNature02": 0.021618,
+        "nature02OffVsBaseline": 0,
+        "nature02OffVsNature02": 0.010923
+      },
+      "distinctFiles": 3
+    }
+  ],
+  "browserViewportShots": [
+    {
+      "composition": "dense_interior",
+      "tile": [
+        1416,
+        1320
+      ],
+      "file": "creator-u05/evidence/nature02-shots/browser_viewport_dense_interior.png",
+      "sha256": "fd84026dba743d2ca4dbf2bc2950d2cc261beb48468bb64d05b4aa8aae5a3650",
+      "size": [
+        640,
+        360
+      ],
+      "bytes": 173045
+    },
+    {
+      "composition": "clearing",
+      "tile": [
+        1408,
+        1332
+      ],
+      "file": "creator-u05/evidence/nature02-shots/browser_viewport_clearing.png",
+      "sha256": "18961bb7d685a1983844ca735de73d36823aa73c4247af5deb0fd45f8b432bc0",
+      "size": [
+        640,
+        360
+      ],
+      "bytes": 180026
+    },
+    {
+      "composition": "road_forest_edge",
+      "tile": [
+        1452,
+        1316
+      ],
+      "file": "creator-u05/evidence/nature02-shots/browser_viewport_road_forest_edge.png",
+      "sha256": "85749c18a7be5eabd7414d8e026ec799c2cedc6653f238ea0cc7b4750d8183cf",
+      "size": [
+        640,
+        360
+      ],
+      "bytes": 186067
+    }
+  ],
+  "compositionDesign": {
+    "dense_interior": {
+      "shotTile": [
+        1416,
+        1320
+      ],
+      "objectsInViewport": 339,
+      "treeTiles": 237,
+      "byZone": {
+        "edge": 317,
+        "core": 161,
+        "route": 110,
+        "clearing_rim": 47,
+        "clearing_interior": 20,
+        "exterior": 225
+      },
+      "clearingInteriorTiles": 20,
+      "clearingInteriorObjects": 1,
+      "clearingRimUndergrowth": 21
+    },
+    "clearing": {
+      "shotTile": [
+        1408,
+        1332
+      ],
+      "objectsInViewport": 252,
+      "treeTiles": 139,
+      "byZone": {
+        "exterior": 320,
+        "edge": 194,
+        "core": 115,
+        "route": 69,
+        "clearing_rim": 98,
+        "clearing_interior": 84
+      },
+      "clearingInteriorTiles": 84,
+      "clearingInteriorObjects": 8,
+      "clearingRimUndergrowth": 43
+    },
+    "road_forest_edge": {
+      "shotTile": [
+        1452,
+        1316
+      ],
+      "objectsInViewport": 211,
+      "treeTiles": 139,
+      "byZone": {
+        "clearing_interior": 3,
+        "clearing_rim": 10,
+        "core": 143,
+        "edge": 203,
+        "exterior": 453,
+        "route": 68
+      },
+      "clearingInteriorTiles": 3,
+      "clearingInteriorObjects": 0,
+      "clearingRimUndergrowth": 2
+    }
+  },
+  "roadPixelsUnchanged": {
+    "off": {
+      "hash": "9242f6ad",
+      "pixels": 51424
+    },
+    "on": {
+      "hash": "9242f6ad",
+      "pixels": 51424
+    }
+  },
+  "artMetrics": {
+    "hero": {
+      "key": "hero_male_idle0",
+      "size": [
+        16,
+        24
+      ],
+      "alphaBBox": [
+        2,
+        0,
+        13,
+        22
+      ],
+      "alphaPixels": 224,
+      "topBandWidth": 12,
+      "bottomBandWidth": 10,
+      "widthRatioVsHero": 1,
+      "heightRatioVsHero": 1,
+      "bboxWidthRatioVsHero": 0.75,
+      "bboxHeightRatioVsHero": 0.958
+    },
+    "sprites": [
+      {
+        "key": "oak",
+        "size": [
+          24,
+          32
+        ],
+        "alphaBBox": [
+          0,
+          0,
+          23,
+          31
+        ],
+        "alphaPixels": 432,
+        "topBandWidth": 20,
+        "bottomBandWidth": 8,
+        "widthRatioVsHero": 1.5,
+        "heightRatioVsHero": 1.333,
+        "bboxWidthRatioVsHero": 1.5,
+        "bboxHeightRatioVsHero": 1.333
+      },
+      {
+        "key": "pine",
+        "size": [
+          24,
+          32
+        ],
+        "alphaBBox": [
+          1,
+          2,
+          23,
+          31
+        ],
+        "alphaPixels": 338,
+        "topBandWidth": 9,
+        "bottomBandWidth": 23,
+        "widthRatioVsHero": 1.5,
+        "heightRatioVsHero": 1.333,
+        "bboxWidthRatioVsHero": 1.438,
+        "bboxHeightRatioVsHero": 1.25
+      },
+      {
+        "key": "snowpine",
+        "size": [
+          24,
+          32
+        ],
+        "alphaBBox": [
+          1,
+          2,
+          23,
+          31
+        ],
+        "alphaPixels": 341,
+        "topBandWidth": 10,
+        "bottomBandWidth": 23,
+        "widthRatioVsHero": 1.5,
+        "heightRatioVsHero": 1.333,
+        "bboxWidthRatioVsHero": 1.438,
+        "bboxHeightRatioVsHero": 1.25
+      },
+      {
+        "key": "willow",
+        "size": [
+          24,
+          32
+        ],
+        "alphaBBox": [
+          1,
+          1,
+          22,
+          31
+        ],
+        "alphaPixels": 482,
+        "topBandWidth": 22,
+        "bottomBandWidth": 12,
+        "widthRatioVsHero": 1.5,
+        "heightRatioVsHero": 1.333,
+        "bboxWidthRatioVsHero": 1.375,
+        "bboxHeightRatioVsHero": 1.292
+      },
+      {
+        "key": "dead",
+        "size": [
+          24,
+          32
+        ],
+        "alphaBBox": [
+          5,
+          5,
+          18,
+          31
+        ],
+        "alphaPixels": 169,
+        "topBandWidth": 14,
+        "bottomBandWidth": 9,
+        "widthRatioVsHero": 1.5,
+        "heightRatioVsHero": 1.333,
+        "bboxWidthRatioVsHero": 0.875,
+        "bboxHeightRatioVsHero": 1.125
+      },
+      {
+        "key": "rock",
+        "size": [
+          16,
+          16
+        ],
+        "alphaBBox": [
+          0,
+          4,
+          15,
+          15
+        ],
+        "alphaPixels": 152,
+        "topBandWidth": 14,
+        "bottomBandWidth": 14,
+        "widthRatioVsHero": 1,
+        "heightRatioVsHero": 0.667,
+        "bboxWidthRatioVsHero": 1,
+        "bboxHeightRatioVsHero": 0.5
+      },
+      {
+        "key": "bush",
+        "size": [
+          16,
+          16
+        ],
+        "alphaBBox": [
+          0,
+          4,
+          15,
+          15
+        ],
+        "alphaPixels": 152,
+        "topBandWidth": 14,
+        "bottomBandWidth": 14,
+        "widthRatioVsHero": 1,
+        "heightRatioVsHero": 0.667,
+        "bboxWidthRatioVsHero": 1,
+        "bboxHeightRatioVsHero": 0.5
+      },
+      {
+        "key": "bush_empty",
+        "size": [
+          16,
+          16
+        ],
+        "alphaBBox": [
+          0,
+          4,
+          15,
+          15
+        ],
+        "alphaPixels": 152,
+        "topBandWidth": 14,
+        "bottomBandWidth": 14,
+        "widthRatioVsHero": 1,
+        "heightRatioVsHero": 0.667,
+        "bboxWidthRatioVsHero": 1,
+        "bboxHeightRatioVsHero": 0.5
+      },
+      {
+        "key": "grass",
+        "size": [
+          16,
+          16
+        ],
+        "alphaBBox": [
+          3,
+          6,
+          11,
+          14
+        ],
+        "alphaPixels": 52,
+        "topBandWidth": 9,
+        "bottomBandWidth": 8,
+        "widthRatioVsHero": 1,
+        "heightRatioVsHero": 0.667,
+        "bboxWidthRatioVsHero": 0.563,
+        "bboxHeightRatioVsHero": 0.375
+      },
+      {
+        "key": "reed",
+        "size": [
+          16,
+          16
+        ],
+        "alphaBBox": [
+          3,
+          3,
+          12,
+          14
+        ],
+        "alphaPixels": 61,
+        "topBandWidth": 9,
+        "bottomBandWidth": 8,
+        "widthRatioVsHero": 1,
+        "heightRatioVsHero": 0.667,
+        "bboxWidthRatioVsHero": 0.625,
+        "bboxHeightRatioVsHero": 0.5
+      },
+      {
+        "key": "herb",
+        "size": [
+          16,
+          16
+        ],
+        "alphaBBox": [
+          4,
+          8,
+          13,
+          15
+        ],
+        "alphaPixels": 52,
+        "topBandWidth": 8,
+        "bottomBandWidth": 9,
+        "widthRatioVsHero": 1,
+        "heightRatioVsHero": 0.667,
+        "bboxWidthRatioVsHero": 0.625,
+        "bboxHeightRatioVsHero": 0.333
+      },
+      {
+        "key": "mush",
+        "size": [
+          16,
+          16
+        ],
+        "alphaBBox": [
+          2,
+          7,
+          13,
+          15
+        ],
+        "alphaPixels": 69,
+        "topBandWidth": 11,
+        "bottomBandWidth": 8,
+        "widthRatioVsHero": 1,
+        "heightRatioVsHero": 0.667,
+        "bboxWidthRatioVsHero": 0.75,
+        "bboxHeightRatioVsHero": 0.375
+      }
+    ],
+    "heroSize": [
+      16,
+      24
+    ],
+    "treeCanvas": [
+      24,
+      32
+    ],
+    "groundCanvas": [
+      16,
+      16
+    ],
+    "findings": {
+      "treeHeightVsHero": 1.3333333333333333,
+      "treeWidthVsHero": 1.5,
+      "treeIsOnlyOneAndAThirdHeroesTall": true,
+      "canopyCannotBeOverhead": "A 32px tree crown sits only 8px above the 24px hero; no overhead canopy is possible at native scale without a NEW taller asset.",
+      "undergrowthAllBoundToSources": "bush/bush_empty encode stocked/depleted Berry Bush; grass/reed/herb/mush are harvestable SOURCES with yields and regrow; rock is a solid harvestable Boulder. No dedicated non-harvestable undergrowth sprite exists.",
+      "singleCanopyTier": "All six tree forms are one 24x32 crown + thin trunk; no mid-storey, no sapling, no canopy-tier silhouette."
+    }
+  },
+  "artAuditSheet": "creator-u05/evidence/nature02-shots/art_audit_sheet.png",
+  "ownerDependency": {
+    "branch": "arena/d4bfcfff-soul-of-hero",
+    "verifiedHead": "5b3e683402bbc8540dea9404576164097e753f97",
+    "observedLaterHead": "2f0836587b76a4a98fffedf8c202fb37cbb2a67c",
+    "mapCannotChange": true,
+    "conflicts": [
+      {
+        "file": "web/src/game/catalog.ts",
+        "line": 143,
+        "symbol": "SOURCES.oak",
+        "fact": "art:'oak', stock:6, yields:[['wood',1]], block:true -> a visually identical oak is SOLID and HARVESTABLE in live Gameplay"
+      },
+      {
+        "file": "web/src/game/catalog.ts",
+        "line": 149,
+        "symbol": "SOURCES.rock",
+        "fact": "art:'rock', stock:6, block:true -> a visually identical rock is SOLID and HARVESTABLE"
+      },
+      {
+        "file": "web/src/game/catalog.ts",
+        "line": 156,
+        "symbol": "SOURCES.grass",
+        "fact": "art:'grass', stock:2, yields:[['fiber',1]], regrow:300 -> visually identical grass is a harvestable source"
+      },
+      {
+        "file": "web/src/game/render.ts",
+        "line": 212,
+        "symbol": "render.ts sourceAt draw list",
+        "fact": "y = ty*16+14; the Gameplay source renderer draws A.src[art], depleted forms A.src.stump / A.src.rubble / A.src.picked"
+      },
+      {
+        "file": "web/src/game/render.ts",
+        "line": 215,
+        "symbol": "r.natureTrees",
+        "fact": "DRAWS THE SAME A.src.oak at x-4,y-16,y+14 for Gameplay grove trees, NOT decoration"
+      },
+      {
+        "file": "web/src/game/sim.ts",
+        "line": 199,
+        "symbol": "stepNatureTrees",
+        "fact": "grove trees spawn wood drops and receipts ('core.grove.wood') when mature -> they HAVE rewards"
+      },
+      {
+        "file": "web/src/game/engine.ts",
+        "line": 189,
+        "symbol": "blockGrid()",
+        "fact": "for (const tree of r.natureTrees||[]) arr[...] = 2 -> grove trees are SOLID COLLISION"
+      },
+      {
+        "file": "web/src/game/engine.ts",
+        "line": 156,
+        "symbol": "engine.ts sourceAt owner",
+        "fact": "owner of stock/hp/regrow/burnt state and source layout version"
+      }
+    ],
+    "decisionRequiredFromGameplay": "Designate, in Gameplay-owned data, which oak/pine/rock/grass instances are harvestable and which are purely visual; OR ship a distinct non-harvestable forest asset set. Map must not invent rewards, collision, stock, depletion or source ownership.",
+    "pilotStatus": "NOT_APPROVED_FOR_PRODUCTION",
+    "pilotGuarantee": "NATURE-02 objects have NO interaction, NO collision, NO reward, NO stock, NO depletion and NO owner; they never occupy a GOLD sourceTile. Therefore no contradictory interaction exists INSIDE this pilot, but production approval is blocked until the Gameplay owner resolves the identical-sprite conflict."
+  },
+  "assetGapSpec": {
+    "id": "N02-ASSET-GAP-01",
+    "status": "PROPOSED__NOT_CREATED__NOT_APPROVED",
+    "exactGap": "There is NO dedicated non-harvestable forest art. Every tree, shrub and ground sprite in getArt().src is bound to a SOURCES definition with stock/yields/block, and live Gameplay reuses A.src.oak for grove trees that are solid and yield wood. Existing 24x32 trees are only 1.333x the 16x24 hero height, so they cannot form an overhead canopy; there is no mid-storey or non-harvestable undergrowth layer.",
+    "owner": "Gameplay art + Gameplay semantic registry (NOT Map)",
+    "proposedAssets": [
+      {
+        "key": "forest_canopy_oak",
+        "sizePx": [
+          24,
+          40
+        ],
+        "variants": 3,
+        "note": "NEW asset, NOT an enlargement of S.oak; two irregular crown tiers + visible trunk; still native 1x pixel grid, outline #140c14"
+      },
+      {
+        "key": "forest_fern",
+        "sizePx": [
+          16,
+          16
+        ],
+        "variants": 3,
+        "note": "non-harvestable undergrowth; NO berries, NO flowers, NO picked/depleted state"
+      },
+      {
+        "key": "forest_snag",
+        "sizePx": [
+          24,
+          32
+        ],
+        "variants": 2,
+        "note": "standing deadwood without the charcoal/orange-ember reward cue of S.dead"
+      }
+    ],
+    "registrationConstraint": "MUST NOT be added to SOURCES, sourceAt(), yields, stock, regrow, blockGrid() or any loot/receipt path.",
+    "cameraConstraint": "U=0.5, 640x360 @1x, hero 16x24 unchanged; no sprite scaling, no camera zoom.",
+    "note": "This is a specification for Control Tower review, NOT a substitute asset and NOT a claim that the gap is solved."
+  },
+  "assetInventory": {
+    "sourceFile": "creator-u05/web-u05/src/game/art.ts (vendored verbatim from b5c8004c:web/src/game/art.ts)",
+    "used": [
+      {
+        "kind": "oak",
+        "size": [
+          24,
+          32
+        ],
+        "variants": 3,
+        "role": "canopy tree",
+        "risk": "IDENTICAL to SOURCES.oak (solid, harvestable, wood)"
+      },
+      {
+        "kind": "pine",
+        "size": [
+          24,
+          32
+        ],
+        "variants": 2,
+        "role": "canopy tree / stand admixture",
+        "risk": "IDENTICAL to SOURCES.pine"
+      },
+      {
+        "kind": "willow",
+        "size": [
+          24,
+          32
+        ],
+        "variants": 2,
+        "role": "wet-edge tree",
+        "risk": "IDENTICAL to SOURCES.willow"
+      },
+      {
+        "kind": "dead",
+        "size": [
+          24,
+          32
+        ],
+        "variants": 2,
+        "role": "snag",
+        "risk": "IDENTICAL to SOURCES.deadtree"
+      },
+      {
+        "kind": "rock",
+        "size": [
+          16,
+          16
+        ],
+        "variants": 3,
+        "role": "edge mantle",
+        "risk": "IDENTICAL to SOURCES.rock (solid, harvestable)"
+      },
+      {
+        "kind": "grass",
+        "size": [
+          16,
+          16
+        ],
+        "variants": 3,
+        "role": "forest floor",
+        "risk": "IDENTICAL to SOURCES.grass (harvestable fiber)"
+      }
+    ],
+    "deliberatelyExcluded": [
+      "src.bush / src.bush_empty (stocked vs DEPLETED Berry Bush states)",
+      "src.herb / src.mush / src.reed (harvestable plant sources)",
+      "src.picked / src.stump / src.rubble (harvest depletion states)",
+      "src.iron / src.coal / src.sulfur / src.crystal (ore sources)",
+      "src.scrap / src.wreck / src.palm (artificial props / unrelated biome)"
+    ],
+    "newArtAssets": 0,
+    "newAtlases": 0,
+    "spriteScaling": false,
+    "decorativeOnly": true,
+    "gameplayOwned": false,
+    "productionApproved": false
+  },
+  "standCoherence": {
+    "nature01": {
+      "objects": 738,
+      "treeTiles": 207,
+      "blocks": 96,
+      "blockMean": 2.16,
+      "blockSd": 2.53,
+      "blockCv": 1.172,
+      "largestTreeComponentTiles": 3,
+      "top5Components": [
+        3,
+        3,
+        2,
+        2,
+        2
+      ],
+      "components": 180
+    },
+    "nature02": {
+      "objects": 1350,
+      "treeTiles": 839,
+      "blocks": 96,
+      "blockMean": 8.74,
+      "blockSd": 10.75,
+      "blockCv": 1.231,
+      "largestTreeComponentTiles": 178,
+      "top5Components": [
+        178,
+        79,
+        62,
+        59,
+        56
+      ],
+      "components": 118
+    }
+  },
+  "audit": {
+    "totalObjects": 1350,
+    "byZone": {
+      "exterior": 95,
+      "edge": 727,
+      "core": 414,
+      "clearing_rim": 102,
+      "clearing_interior": 12
+    },
+    "kinds": {
+      "rock": 119,
+      "oak": 486,
+      "grass": 392,
+      "dead": 136,
+      "willow": 83,
+      "pine": 134
+    },
+    "compositionObjects": {
+      "dense_interior": 350,
+      "clearing": 268,
+      "road_forest_edge": 223
+    },
+    "openGround": {
+      "dense_interior": 0.6137,
+      "clearing": 0.7035,
+      "road_forest_edge": 0.6846
+    },
+    "violations": {
+      "road": 0,
+      "bridge": 0,
+      "water": 0,
+      "river": 0,
+      "lake": 0,
+      "coast": 0,
+      "sourceTile": 0,
+      "roadBuffer": 0,
+      "outsideWindow": 0,
+      "route": 0,
+      "nonDecorative": 0,
+      "gameplayOwned": 0,
+      "scaledSprite": 0
+    },
+    "stabilityHash": "5dccf0df",
+    "stands": 13,
+    "clearings": 3,
+    "routes": 3
+  },
+  "chunkChecks": [
+    {
+      "composition": "dense_interior",
+      "boundaryTile": [
+        1408,
+        1312
+      ],
+      "window": [
+        1402,
+        1306,
+        1414,
+        1318
+      ],
+      "objects": 52,
+      "left": 29,
+      "right": 23,
+      "stableAcrossCacheReset": true,
+      "presentInFrame": 52,
+      "missing": 0
+    },
+    {
+      "composition": "clearing",
+      "boundaryTile": [
+        1408,
+        1312
+      ],
+      "window": [
+        1402,
+        1306,
+        1414,
+        1318
+      ],
+      "objects": 52,
+      "left": 29,
+      "right": 23,
+      "stableAcrossCacheReset": true,
+      "presentInFrame": 52,
+      "missing": 0
+    },
+    {
+      "composition": "road_forest_edge",
+      "boundaryTile": [
+        1440,
+        1312
+      ],
+      "window": [
+        1434,
+        1306,
+        1446,
+        1318
+      ],
+      "objects": 56,
+      "left": 23,
+      "right": 33,
+      "stableAcrossCacheReset": true,
+      "presentInFrame": 56,
+      "missing": 0
+    }
+  ],
+  "traversal": [
+    {
+      "composition": "dense_interior",
+      "startTile": [
+        1416,
+        1320
+      ],
+      "endTile": [
+        1412,
+        1321
+      ],
+      "totalMovedPx": 1152,
+      "netDisplacementPx": 72,
+      "realKeyEvents": {
+        "down": 4,
+        "up": 4
+      },
+      "teleportUsed": false,
+      "camUsedAsRoute": false,
+      "spawnFixtureOnlyAtReset": true,
+      "zoomMode": "NATIVE_1X",
+      "cameraFollowsPlayer": true,
+      "steps": [
+        {
+          "key": "d",
+          "tile": [
+            1431,
+            1320
+          ],
+          "px": 22904,
+          "py": 21128,
+          "movedPx": 240,
+          "forestObjectsDrawn": 380,
+          "file": "creator-u05/evidence/nature02-shots/dense_interior_walk_1.png",
+          "nativePx": [
+            640,
+            360
+          ],
+          "sha256": "c48e74d0232292065a7d01139ea47a2a609dea0f30d253e6ffca7df3c3e2ab54"
+        },
+        {
+          "key": "s",
+          "tile": [
+            1431,
+            1339
+          ],
+          "px": 22904,
+          "py": 21440,
+          "movedPx": 552,
+          "forestObjectsDrawn": 402,
+          "file": "creator-u05/evidence/nature02-shots/dense_interior_walk_2.png",
+          "nativePx": [
+            640,
+            360
+          ],
+          "sha256": "ba7b35b2fe1b832845050f88496e59a9c86e173c3ffbe49f1a56564bd55fbab7"
+        },
+        {
+          "key": "a",
+          "tile": [
+            1412,
+            1339
+          ],
+          "px": 22604,
+          "py": 21440,
+          "movedPx": 852,
+          "forestObjectsDrawn": 377,
+          "file": "creator-u05/evidence/nature02-shots/dense_interior_walk_3.png",
+          "nativePx": [
+            640,
+            360
+          ],
+          "sha256": "fbebfd88747a15db5c2b8b256ed0b22a89492352ac962f0f3fa1b776d5257a6a"
+        },
+        {
+          "key": "w",
+          "tile": [
+            1412,
+            1321
+          ],
+          "px": 22604,
+          "py": 21140,
+          "movedPx": 1152,
+          "forestObjectsDrawn": 365,
+          "file": "creator-u05/evidence/nature02-shots/dense_interior_walk_4.png",
+          "nativePx": [
+            640,
+            360
+          ],
+          "sha256": "41587e0c56031a94ba78f71f466d566ba29a6e1dd7a3ac65e364a5777ff0f1fa"
+        }
+      ]
+    },
+    {
+      "composition": "clearing",
+      "startTile": [
+        1408,
+        1332
+      ],
+      "endTile": [
+        1408,
+        1330
+      ],
+      "totalMovedPx": 1188,
+      "netDisplacementPx": 36,
+      "realKeyEvents": {
+        "down": 4,
+        "up": 4
+      },
+      "teleportUsed": false,
+      "camUsedAsRoute": false,
+      "spawnFixtureOnlyAtReset": true,
+      "zoomMode": "NATIVE_1X",
+      "cameraFollowsPlayer": true,
+      "steps": [
+        {
+          "key": "d",
+          "tile": [
+            1427,
+            1332
+          ],
+          "px": 22836,
+          "py": 21320,
+          "movedPx": 300,
+          "forestObjectsDrawn": 392,
+          "file": "creator-u05/evidence/nature02-shots/clearing_walk_1.png",
+          "nativePx": [
+            640,
+            360
+          ],
+          "sha256": "a8e483a75d203d8472dd8f5cff3f47f5a6902f2216d7024e1fdc5a8a5fed72b6"
+        },
+        {
+          "key": "s",
+          "tile": [
+            1427,
+            1349
+          ],
+          "px": 22836,
+          "py": 21596,
+          "movedPx": 576,
+          "forestObjectsDrawn": 284,
+          "file": "creator-u05/evidence/nature02-shots/clearing_walk_2.png",
+          "nativePx": [
+            640,
+            360
+          ],
+          "sha256": "b7387564ecef40ec9ce2e678c6fca5c899888ae501a9c2bfa8903bc626da6d00"
+        },
+        {
+          "key": "a",
+          "tile": [
+            1408,
+            1349
+          ],
+          "px": 22536,
+          "py": 21596,
+          "movedPx": 876,
+          "forestObjectsDrawn": 229,
+          "file": "creator-u05/evidence/nature02-shots/clearing_walk_3.png",
+          "nativePx": [
+            640,
+            360
+          ],
+          "sha256": "a30ee805d36c65c1e26eb2fd916ff825c5d65a25ebb9cc8dcccbfbe5091c8b64"
+        },
+        {
+          "key": "w",
+          "tile": [
+            1408,
+            1330
+          ],
+          "px": 22536,
+          "py": 21284,
+          "movedPx": 1188,
+          "forestObjectsDrawn": 289,
+          "file": "creator-u05/evidence/nature02-shots/clearing_walk_4.png",
+          "nativePx": [
+            640,
+            360
+          ],
+          "sha256": "6923b0d4a9285ab649a49d3e8dd2eee69f1abb5483f40ff14fa5ece538f81cb9"
+        }
+      ]
+    },
+    {
+      "composition": "road_forest_edge",
+      "startTile": [
+        1452,
+        1316
+      ],
+      "endTile": [
+        1452,
+        1316
+      ],
+      "totalMovedPx": 1224,
+      "netDisplacementPx": 0,
+      "realKeyEvents": {
+        "down": 4,
+        "up": 4
+      },
+      "teleportUsed": false,
+      "camUsedAsRoute": false,
+      "spawnFixtureOnlyAtReset": true,
+      "zoomMode": "NATIVE_1X",
+      "cameraFollowsPlayer": true,
+      "steps": [
+        {
+          "key": "d",
+          "tile": [
+            1471,
+            1316
+          ],
+          "px": 23540,
+          "py": 21064,
+          "movedPx": 300,
+          "forestObjectsDrawn": 55,
+          "file": "creator-u05/evidence/nature02-shots/road_forest_edge_walk_1.png",
+          "nativePx": [
+            640,
+            360
+          ],
+          "sha256": "33a6cf43e04e77cb7a04931abca26bd5a742a3f874bf2573eae07edc506ce753"
+        },
+        {
+          "key": "s",
+          "tile": [
+            1471,
+            1335
+          ],
+          "px": 23540,
+          "py": 21376,
+          "movedPx": 612,
+          "forestObjectsDrawn": 115,
+          "file": "creator-u05/evidence/nature02-shots/road_forest_edge_walk_2.png",
+          "nativePx": [
+            640,
+            360
+          ],
+          "sha256": "6ff89aec2c977ad04391a37f73c9d1437e0fa29466db9e4955cdabd0997ae983"
+        },
+        {
+          "key": "a",
+          "tile": [
+            1452,
+            1335
+          ],
+          "px": 23240,
+          "py": 21376,
+          "movedPx": 912,
+          "forestObjectsDrawn": 271,
+          "file": "creator-u05/evidence/nature02-shots/road_forest_edge_walk_3.png",
+          "nativePx": [
+            640,
+            360
+          ],
+          "sha256": "10c97e72182801386ad0be9899d8cbdc614fcc0d43aee4507d664e2eaff2fe27"
+        },
+        {
+          "key": "w",
+          "tile": [
+            1452,
+            1316
+          ],
+          "px": 23240,
+          "py": 21064,
+          "movedPx": 1224,
+          "forestObjectsDrawn": 241,
+          "file": "creator-u05/evidence/nature02-shots/road_forest_edge_walk_4.png",
+          "nativePx": [
+            640,
+            360
+          ],
+          "sha256": "e67b2ec57c5933496d1432bd0dc9807b497e98a120c0d36d316fbe8c4c1566dc"
+        }
+      ]
+    }
+  ],
+  "obstruction": [
+    {
+      "composition": "dense_interior",
+      "off": {
+        "movedPx": 31,
+        "blockedSubsteps": 0,
+        "collision": "FREE_ROAM__NO_COLLISION",
+        "forestBlocksMovement": false,
+        "terrain": 5
+      },
+      "on": {
+        "movedPx": 30,
+        "blockedSubsteps": 0,
+        "collision": "FREE_ROAM__NO_COLLISION",
+        "forestBlocksMovement": false,
+        "terrain": 5
+      },
+      "offCollisionOn": {
+        "movedPx": 31,
+        "blockedSubsteps": 0,
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "forestBlocksMovement": false,
+        "terrain": 5
+      },
+      "onCollisionOn": {
+        "movedPx": 31,
+        "blockedSubsteps": 0,
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "forestBlocksMovement": false,
+        "terrain": 5
+      },
+      "movedPxRatio": 0.968,
+      "collisionOnMovedPxRatio": 1
+    },
+    {
+      "composition": "clearing",
+      "off": {
+        "movedPx": 31,
+        "blockedSubsteps": 0,
+        "collision": "FREE_ROAM__NO_COLLISION",
+        "forestBlocksMovement": false,
+        "terrain": 5
+      },
+      "on": {
+        "movedPx": 30,
+        "blockedSubsteps": 0,
+        "collision": "FREE_ROAM__NO_COLLISION",
+        "forestBlocksMovement": false,
+        "terrain": 5
+      },
+      "offCollisionOn": {
+        "movedPx": 31,
+        "blockedSubsteps": 0,
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "forestBlocksMovement": false,
+        "terrain": 5
+      },
+      "onCollisionOn": {
+        "movedPx": 31,
+        "blockedSubsteps": 0,
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "forestBlocksMovement": false,
+        "terrain": 5
+      },
+      "movedPxRatio": 0.968,
+      "collisionOnMovedPxRatio": 1
+    },
+    {
+      "composition": "road_forest_edge",
+      "off": {
+        "movedPx": 31,
+        "blockedSubsteps": 0,
+        "collision": "FREE_ROAM__NO_COLLISION",
+        "forestBlocksMovement": false,
+        "terrain": 5
+      },
+      "on": {
+        "movedPx": 30,
+        "blockedSubsteps": 0,
+        "collision": "FREE_ROAM__NO_COLLISION",
+        "forestBlocksMovement": false,
+        "terrain": 5
+      },
+      "offCollisionOn": {
+        "movedPx": 31,
+        "blockedSubsteps": 0,
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "forestBlocksMovement": false,
+        "terrain": 5
+      },
+      "onCollisionOn": {
+        "movedPx": 30,
+        "blockedSubsteps": 0,
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "forestBlocksMovement": false,
+        "terrain": 5
+      },
+      "movedPxRatio": 0.968,
+      "collisionOnMovedPxRatio": 0.968
+    }
+  ],
+  "perf": [
+    {
+      "composition": "dense_interior",
+      "onP50": 16.7,
+      "onP95": 16.8,
+      "offP50": 16.7,
+      "offP95": 16.8,
+      "p95Ratio": 1,
+      "onObjects": 369,
+      "forestChunks": 9,
+      "maxForestChunks": 36,
+      "terrainChunks": 2,
+      "maxTerrainChunks": 36,
+      "displayCanvases": 16,
+      "materializedAllCells": false,
+      "overviewFullFrameAllocated": false
+    },
+    {
+      "composition": "clearing",
+      "onP50": 16.7,
+      "onP95": 16.8,
+      "offP50": 16.7,
+      "offP95": 16.8,
+      "p95Ratio": 1,
+      "onObjects": 302,
+      "forestChunks": 9,
+      "maxForestChunks": 36,
+      "terrainChunks": 3,
+      "maxTerrainChunks": 36,
+      "displayCanvases": 24,
+      "materializedAllCells": false,
+      "overviewFullFrameAllocated": false
+    },
+    {
+      "composition": "road_forest_edge",
+      "onP50": 16.7,
+      "onP95": 16.8,
+      "offP50": 16.7,
+      "offP95": 16.8,
+      "p95Ratio": 1,
+      "onObjects": 241,
+      "forestChunks": 12,
+      "maxForestChunks": 36,
+      "terrainChunks": 4,
+      "maxTerrainChunks": 36,
+      "displayCanvases": 36,
+      "materializedAllCells": false,
+      "overviewFullFrameAllocated": false
+    }
+  ],
+  "terrainComparison": {
+    "tilesCompared": 16,
+    "identical": true,
+    "despeckleConfigIdentical": true,
+    "despeckleRuntimeCountersAreVisitDependent": true,
+    "isolatedPainted": 0,
+    "otherNature01WindowObjects": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "objectsOutsideForestWindow": 0
+  },
+  "shotsDirectory": "creator-u05/evidence/nature02-shots/",
+  "shotCount": 44,
+  "browserErrors": [],
+  "visualEvaluationIsSeparate": true,
+  "visualReviewFile": "creator-u05/evidence/nature02-visual-review.json",
+  "scope": "QA / BROWSER EVIDENCE IS NOT VISUAL ACCEPTANCE. One-biome pilot only; no other biome, no world propagation, no Gameplay merge, no VISUAL_ACCEPTED, no VEYRA_PLAYABLE."
+}

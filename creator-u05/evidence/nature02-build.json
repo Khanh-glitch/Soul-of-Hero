@@ -1,0 +1,162 @@
+{
+  "schema": "soh.u05.nature02-build.v1",
+  "generatedAt": "2026-11-05T11:35:17.942Z",
+  "file": "creator-u05/SoulOfHero_Nature02_ForestSlice.html",
+  "zipMirror": "creator-u05/SoulOfHero_Nature02_ForestSlice.zip",
+  "zipBytes": 131874,
+  "bytes": 1436807,
+  "sha256": "6e1e897a0e365412f6bc92d65390dc10bf7b0352e6ad8ef4a1c38e57f4f30fa6",
+  "sourceHead": "b5dfafb278eb15333a66a4d3b24c23d4aa17c427",
+  "preserved": {
+    "terrainBaseline": {
+      "file": "creator-u05/SoulOfHero_TerrainOnly_U05_x10.html",
+      "sha256": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0",
+      "untouched": true
+    },
+    "nature01": {
+      "file": "creator-u05/SoulOfHero_Nature01_U05.html",
+      "sha256": "ac4d54e310f0f3cf7e0e12d728bc5e9ad62f801994be37ce64f76b099af4a0a7",
+      "untouched": true
+    },
+    "nature01EvidenceUntouched": true,
+    "goldPolygonsUnchanged": true,
+    "wmp04r1RastersUnchanged": true,
+    "roadsRiversCollisionAuthorityUnchanged": true,
+    "verbatimPainterUnchanged": true
+  },
+  "selfContained": {
+    "externalScript": false,
+    "externalCss": false,
+    "importFromUrl": false,
+    "allFalse": true
+  },
+  "runsFrom": [
+    "file:// (double-click)",
+    "http(s):// static host",
+    "vite dev /nature02.html"
+  ],
+  "sourceSha256": {
+    "SoulOfHero_Nature02_ForestSlice.html": "6e1e897a0e365412f6bc92d65390dc10bf7b0352e6ad8ef4a1c38e57f4f30fa6",
+    "SoulOfHero_Nature01_U05.html": "ac4d54e310f0f3cf7e0e12d728bc5e9ad62f801994be37ce64f76b099af4a0a7",
+    "SoulOfHero_TerrainOnly_U05_x10.html": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0",
+    "web-u05/nature02.html": "920524226864ce6af7a28536c80532e245ed75e5cb89bc4bfe6da748f8c65fff",
+    "web-u05/src/nature02/main.ts": "cc5f273400d97149c68f80727133595de1dd14c67a463baa9d4f67a3cd62c37e",
+    "web-u05/src/nature02/forest.ts": "a022e552bdf695e08b05a99163beb605b800f539b54ce5df0bcae780610ba9eb",
+    "web-u05/src/nature02/forest-sites.ts": "917a2e619221fb5725004c87be733406a883e264b348ca302e19773fcb4908de",
+    "web-u05/src/nature02/art-audit.ts": "31ab211257aabc66360ee78ef28eed3125ef389ab04f411585c3a82c7832088c",
+    "web-u05/src/game/art.ts": "896aa51abfac516b4228994ae7a20a67c4644a587028146b5c79336103a1ec20",
+    "web-u05/src/u05/terrain.ts": "3d3fa1605a121ba2bcd8b26e0333cbf8a7ada71adfca67ce7e8e3ee3ca225bc4",
+    "web-u05/src/u05/world.ts": "78317efe40c18f7ed4bf7d3c129be4f423b6a7abaac7625e8f9938c73b2264fd"
+  },
+  "artSource": "creator-u05/web-u05/src/game/art.ts (vendored verbatim from b5c8004c:web/src/game/art.ts)",
+  "geographySource": "GOLD VEYRA_GOLD_MAP.sohmap.json + WMP-04R1 v4/r1 via sampleTile() — READ ONLY",
+  "contract": {
+    "U": 0.5,
+    "TILE": 16,
+    "viewport": [
+      640,
+      360
+    ],
+    "dpr": 1,
+    "hero": [
+      16,
+      24
+    ],
+    "basePxPerSec": 72,
+    "speedMultiplierRange": [
+      1,
+      10
+    ],
+    "maxPxPerSec": 720,
+    "frameTiles": [
+      4000,
+      2800
+    ],
+    "addressableCells": 11200000,
+    "materializedAllCells": false
+  },
+  "forestSlice": {
+    "oneBiomeOnly": true,
+    "biome": "temperate_forest",
+    "window": [
+      1392,
+      1288,
+      1488,
+      1352
+    ],
+    "compositions": [
+      {
+        "key": "dense_interior",
+        "label": "Dense forest interior",
+        "shotTile": [
+          1416,
+          1320
+        ],
+        "intent": "coherent overlapping oak stands, thicket edges, object-free corridor; no uniform per-tile scatter",
+        "reviewQuestions": [
+          "does the canopy read as connected stands rather than isolated trees?",
+          "are gaps legible and is the object-free corridor walkable?"
+        ]
+      },
+      {
+        "key": "clearing",
+        "label": "Clearing",
+        "shotTile": [
+          1408,
+          1332
+        ],
+        "intent": "designed opening C1 with sparse floor, dense low rim, two trail heads",
+        "reviewQuestions": [
+          "is the opening readable at native 640x360?",
+          "is the rim clearly denser than the interior?"
+        ]
+      },
+      {
+        "key": "road_forest_edge",
+        "label": "Road / forest edge",
+        "shotTile": [
+          1452,
+          1316
+        ],
+        "intent": "forest stops before the 3-tile road veto; authored GOLD road stays fully visible",
+        "reviewQuestions": [
+          "is the existing GOLD road unobstructed?",
+          "does the forest edge read as a mantle rather than a hard line?"
+        ]
+      }
+    ],
+    "stands": 13,
+    "clearings": 3,
+    "routes": 3,
+    "routeDefinition": "OBJECT-FREE CORRIDORS ONLY. No path/road/ground pixel painted, no GOLD geometry authored, no Gameplay navigation permission minted.",
+    "toggle": "N key / button, or window.__nature02.setForest(false|true)",
+    "offIsPixelIdenticalToBaseline": "PROVEN_BY_QA (see nature02-qa.json F-G1)",
+    "spriteScaling": false,
+    "newArtAssets": 0,
+    "newAtlases": 0,
+    "decorativeOnly": true,
+    "gameplayOwned": false,
+    "productionApproved": false,
+    "noRewards": true,
+    "noDepletion": true,
+    "noOwnership": true,
+    "noInteraction": true,
+    "blocksMovement": false,
+    "collisionUnchanged": true,
+    "noBuildingsOrPoiStructuresOrRuinsOrFencesOrProps": true,
+    "otherBiomesUnchanged": true,
+    "fullWorldPropagation": false,
+    "creatorVisualAcceptance": "NOT_GRANTED",
+    "productionMerge": "NOT_DONE",
+    "veyraPlayable": "NOT_CLAIMED"
+  },
+  "semanticConflict": {
+    "summary": "Existing SOH oak/pine/rock/grass sprites are visually identical to live Gameplay SOURCES (block:true, stock, yields) and to r.natureTrees (solid, wood drops). Exact owner dependency is recorded in src/nature02/forest-sites.ts OWNER_DEPENDENCY.",
+    "ownerBranch": "arena/d4bfcfff-soul-of-hero",
+    "verifiedHead": "5b3e683402bbc8540dea9404576164097e753f97",
+    "observedLaterHead": "2f0836587b76a4a98fffedf8c202fb37cbb2a67c",
+    "mapCannotChange": true,
+    "pilotStatus": "NOT_APPROVED_FOR_PRODUCTION"
+  },
+  "scope": "ONE-BIOME FOREST QUALITY VERTICAL SLICE — reviewable pilot only. QA and screenshots are NOT visual acceptance."
+}

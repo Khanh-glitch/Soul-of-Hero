@@ -90,8 +90,10 @@ Vite server đã chạy tại cổng **5182** trong phiên làm việc này; LW-
 | `docs/CONTROL_TOWER_U05_HANDOFF.md` | Bàn giao Control Tower |
 | `SoulOfHero_TerrainOnly_U05_x10.html` | **FILE GAME terrain-only**, chạy độc lập, x1–x10 |
 | `SoulOfHero_Nature01_U05.html` | **FILE GAME NATURE-01** (mới, tách biệt), 5 biome, `N` OFF/ON, x1–x10 |
+| `SoulOfHero_Nature02_ForestSlice.html` | **FILE GAME NATURE-02** (MỚI, MỘT biome), 3 composition rừng, `N` OFF/ON, `M` audit art, x1–x10 |
 | `docs/TERRAIN_ONLY_VIEWER.md` | Hướng dẫn file game terrain-only |
 | `docs/NATURE01_PILOT.md` | Báo cáo pilot 5 biome + bàn giao Control Tower |
+| `docs/NATURE02_FOREST_SLICE.md` | Báo cáo vertical slice rừng: audit art, 3 composition, so sánh 3 phiên bản, 5 đánh giá thị giác, 12 yếu điểm, bàn giao |
 | `evidence/terrain-only-{build,qa}.json` | Build + QA của file game |
 | `evidence/terrain-only-shots/*.png` | 6 ảnh terrain-only |
 
@@ -132,3 +134,34 @@ không `VEYRA_PLAYABLE`. `P5-G5/G6` vẫn FAIL, `P5-G7/G8` PARTIAL.
 `P5-G0…G4`, `P5-G9` = **PASS** trong phạm vi **audition cô lập**.
 `P5-G5` (full Gameplay runtime) = **FAIL**, `P5-G6` (visual acceptance) = **FAIL**,
 `P5-G7`, `P5-G8` = **PARTIAL**. Chi tiết: `evidence/verification.json`.
+
+
+## NATURE-02 — forest quality vertical slice (MỘT biome, file MỚI)
+
+| File | Vai trò |
+|---|---|
+| `SoulOfHero_Nature02_ForestSlice.html` | **File game MỚI**: nền terrain-only + lớp rừng MỘT cửa sổ 96×64, 3 composition, `N` OFF/ON, `M` bảng audit art 1× |
+| `SoulOfHero_TerrainOnly_U05_x10.html`, `SoulOfHero_Nature01_U05.html` | **CẢ HAI GIỮ NGUYÊN** (`540f095e…`, `ac4d54e3…`); build assert cả 2 SHA trước khi ghi |
+| `docs/NATURE02_FOREST_SLICE.md` | Báo cáo đầy đủ + Control Tower handoff |
+| `evidence/nature02-{build,forest,assets,qa,visual-review,preview,delivery}.json` | Nguồn SHA, thiết kế 13 stand/3 clearing/3 route, audit alpha-bbox thật, 15 gate QA, 5 đánh giá thị giác RIÊNG, preview 6 route, links giao |
+| `evidence/nature02-shots/*.png` | 44 ảnh native 640×360: 4 cặp OFF/ON, 4 bộ so sánh baseline/NATURE-01/NATURE-02 cùng toạ độ, 3 full-viewport, 12 đi phím thật, 1 bảng audit art |
+| `web-u05/src/nature02/*` | `forest-sites.ts` (composition + owner dependency + asset gap), `forest.ts` (đặt/vẽ/audit), `art-audit.ts` (đo sprite thật), `main.ts` (viewer + `N`/`M`/1–3) |
+| `tests/qa-nature02.mjs`, `tests/test-nature02.mjs`, `tests/qa-nature02-preview.mjs` | 15 gate browser + 52 static test + 6 route live preview |
+| `tools/build-asset-inventory-nature02.mjs`, `build-nature02-forest-slice.mjs` | Inventory/audit art thật + build 1 file HTML |
+
+`1`/`2`/`3` → rừng sâu / khoảng trống / rìa đường; `N` tắt/bật; `M` mở bảng
+audit art (2× chỉ để soi, KHÔNG có trong game). **Không phóng to sprite**: cây
+24×32 chỉ gấp **1,333** chiều cao hero 16×24 → không thể có overhead canopy,
+đây là sửa composition, không phải sửa asset. 13 stand gắn kết (cụm cây lớn
+nhất 178 tile so với 3 tile ở NATURE-01), 3 clearing, 3 hành lang **KHÔNG vật
+thể** (không vẽ path, không sửa GOLD), đệm đường 3 tile; 51.424 pixel đường
+giống hệt khi BẬT/TẮT. Chỉ 6 sprite có sẵn, **0 art mới**, 0 atlas, 0 scale.
+
+**CHẶN PRODUCTION:** cùng sprite oak/rock/grass trong Gameplay live là
+`SOURCES` có `stock/yields/block:true` và `r.natureTrees` đặc + rơi gỗ. Vật thể
+ở đây chỉ trang trí, nhưng **hai cây trông giống hệt với tương tác trái ngược
+không được duyệt production** → `NOT_APPROVED_FOR_PRODUCTION`; quyết định thuộc
+Gameplay owner, Map không bịa reward/collision/source ownership.
+`N02-ASSET-GAP-01` chỉ là **ĐỀ XUẤT**, không tạo asset thay thế. Không đụng 4
+biome kia, không nhân rộng world, không công trình/POI/tàn tích/hàng rào/prop,
+không merge Gameplay, không `VISUAL_ACCEPTED`, không `VEYRA_PLAYABLE`.

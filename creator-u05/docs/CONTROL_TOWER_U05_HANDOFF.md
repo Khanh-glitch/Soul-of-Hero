@@ -380,3 +380,83 @@ architecture, trước production merge / PR44 / `main`, trước `VISUAL_ACCEPT
 và 12 sprite thiên nhiên không đổi. Không re-vendor, không sync ngầm, không tạo
 atlas mới; gói verification đứng ở `5b3e683…` được **giữ nguyên**, drift được
 ghi rõ trong `evidence/source-custody.json → nature01Disclosure`.
+
+---
+
+## 14. NATURE-02 — FOREST QUALITY VERTICAL SLICE (MỘT biome, BA composition)
+
+**Trạng thái:** pilot MỘT cửa sổ rừng ôn đới, có ảnh 640×360 thật, **CHƯA**
+`VISUAL_ACCEPTED`, **CHƯA** duyệt production, **CHƯA** merge Gameplay,
+**KHÔNG** `VEYRA_PLAYABLE`. Map HEAD bắt đầu: `b5dfafb278eb15333a66a4d3b24c23d4aa17c427`.
+
+| File | Bytes | SHA-256 |
+|---|---:|---|
+| `SoulOfHero_TerrainOnly_U05_x10.html` (**giữ nguyên**) | 1.407.498 | `540f095e…` |
+| `SoulOfHero_Nature01_U05.html` (**giữ nguyên**) | 1.427.241 | `ac4d54e3…` |
+| `SoulOfHero_Nature02_ForestSlice.html` (**MỚI**) | 1.436.807 | `6e1e897a…` |
+
+Build script **assert cả 2 SHA được bảo vệ** trước khi ghi. `N` tắt/bật lớp rừng;
+khi **TẮT** canvas 640×360 1× giống hệt từng pixel baseline tại 4 vị trí. Chỉ
+**MỘT** cửa sổ `[1392,1288,1488,1352)` (96×64 tile) có vật thể; 4 cửa sổ
+NATURE-01 kia và toàn bộ phần còn lại của khung **0 vật thể**. Không đụng GOLD,
+raster WMP-04R1, đường, sông, `sourceTile`, despeckle hay `canStand()`.
+
+**Ba composition độc lập:** `dense_interior [1416,1320]`, `clearing [1408,1332]`,
+`road_forest_edge [1452,1316]`. 13 **stand** (loài quyết theo cụm), 3
+**clearing**, 3 **route** chỉ là hành lang KHÔNG vật thể (không vẽ path, không sửa
+GOLD, không cấp quyền navigation). Đệm đường **3 tile**, đệm nước 2 tile.
+`auditForest()`: 1.350 vật thể, `stabilityHash=5dccf0df`, **0 vi phạm**, open
+ground 0,6137 / 0,7035 / 0,6846 → vẫn giữ khoảng trống tự nhiên.
+
+**Sửa lỗi rải đều, đo được:** cùng cửa sổ 96×64, cụm cây lớn nhất (8-connected)
+NATURE-01 = **3 tile**, NATURE-02 = **178 tile**; tree tile 207 → 839. Cánh rừng
+giờ là một khối gắn kết, không phải cây lẻ cách đều. **51.424 pixel đường/bridge**
+có cùng hash `9242f6ad` khi BẬT và TẮT → đường GOLD không bị che.
+
+**Audit art THẬT (không phóng to):** hero 16×24 (alpha bbox 12×23); oak/pine/
+willow/dead 24×32; rock/grass 16×16. Tỷ lệ cây/hero = **1,333** chiều cao,
+**1,500** chiều rộng. 22 mảng `getArt().src`, đo 12, dùng 6, loại 16.
+`newArtAssets=0`, `spriteScaling=false`. Bảng audit 640×360 ở phím `M`
+(2× chỉ để soi, KHÔNG có trong game). **Kết luận trung thực:** tán cây CHỈ cao
+hơn hero 8 px → **không thể có overhead canopy**; chỉ một tầng tán, không
+mid-storey, không undergrowth phi-thu-hoạch. Đây là sửa **composition**, không
+phải sửa **asset**.
+
+**XUNG ĐỘT NGỮ NGHĨA — CHƯA GIẢI QUYẾT, CHẶN PRODUCTION:** `catalog.ts:143,149,156`
+(`SOURCES.oak/rock/grass` có `stock/yields/block:true`), `render.ts:212,215`
+(`r.natureTrees` vẽ **cùng** `A.src.oak`), `sim.ts:199` (rơi gỗ), `engine.ts:189`
+(va chạm class 2), `engine.ts:156` (`sourceAt()` sở hữu stock/hp/regrow). Vật thể
+NATURE-02 **chỉ trang trí**: không tương tác/va chạm/thưởng/stock/cạn kiệt/sở hữu,
+không chiếm `sourceTile`. Nhưng **hai cây trông giống hệt nhau với tương tác trái
+ngược không được duyệt production** → `pilotStatus=NOT_APPROVED_FOR_PRODUCTION`.
+Map **không** bịa reward, collision hay source ownership; quyết định thuộc
+**Gameplay owner** (`arena/d4bfcfff-soul-of-hero`, HEAD verify `5b3e683…`, quan
+sát sau `2f083658…`). Đề xuất `N02-ASSET-GAP-01`
+(`forest_canopy_oak` 24×40 / `forest_fern` 16×16 / `forest_snag` 24×32) là
+**PROPOSED__NOT_CREATED__NOT_APPROVED** — không tạo asset thay thế.
+
+**Bằng chứng:** `evidence/nature02-shots/` **44 ảnh 640×360 thật** — 4 cặp
+OFF/ON, 4 bộ so sánh baseline / NATURE-01 / NATURE-02 **cùng toạ độ** (thêm tile
+site-01 `[1472,1336]`), 3 ảnh full-viewport Chromium, 12 ảnh đi phím thật
+(`D→S→A→W`, 1.152 / 1.188 / 1.224 px, 4 keydown + 4 keyup mỗi composition), 1
+bảng audit art. `tests/qa-nature02.mjs` **15/15 PASS, errors=0**;
+`tests/test-nature02.mjs` **52/52**; `test-nature01.mjs` 31/31; `test-u05.mjs`
+272/0; `tsc` sạch; preview **6/6 route** gồm `/nature02` +
+`/nature02-download` (4 route cũ không đổi). p50/p95 16,7–16,8 ms ON=OFF.
+
+**ĐÁNH GIÁ THỊ GIÁC RIÊNG BIỆT** (`evidence/nature02-visual-review.json`, 5 trục
+tách khỏi gate tự động): Silhouette `PARTIAL__CANOPY_STILL_MISSING`, Ecological
+`PARTIAL_PASS`, Navigation `PASS_FOR_PILOT__LIMITED`, Sprite scale
+`PASS_NO_ENLARGEMENT__FAIL_AS_SURVIVAL_FOREST_SCALE`, Semantic
+`FAIL_FOR_PRODUCTION`. **12 objective failures** `N02-F1…F12` (tán cây, xung
+đột sprite, lặp silhouette, undergrowth thu hoạch được, route vô hình, nền không
+đổi, mép đường GOLD bậc thang, shadow render-effect, không animation/LOD, chỉ
+review 640×360, walk không chứng minh survival, cố ý không nhân rộng world).
+
+**BÀN GIAO / DỪNG:** xin Creator duyệt hay từ chối (1) hướng stand/clearing/edge
+ở 1×, (2) quy ước route âm-không-gian, (3) Gameplay owner phân định cây thu hoạch
+vs cây trang trí, (4) có đặt `N02-ASSET-GAP-01` hay không. **DỪNG** trước khi mở
+biome khác, nhân rộng world, thêm công trình/POI/tàn tích/hàng rào/prop, merge
+Gameplay/PR44/main, `VISUAL_ACCEPTED`, `productionAtlas`,
+`VEYRA_PLAYABLE`. QA **không** phải chấp nhận thị giác. Chi tiết:
+`docs/NATURE02_FOREST_SLICE.md`.

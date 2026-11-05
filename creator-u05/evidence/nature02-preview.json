@@ -1,0 +1,130 @@
+{
+  "schema": "soh.u05.nature02-preview.v1",
+  "generatedAt": "2026-11-05T11:50:47.017Z",
+  "url": "http://127.0.0.1:5183/nature02",
+  "previewHost": "https://5183-iedijpwzkleoc2bvjmqg0.e2b.app/nature02",
+  "downloadHost": "https://5183-iedijpwzkleoc2bvjmqg0.e2b.app/nature02-download",
+  "ready": true,
+  "viewport": [
+    640,
+    360
+  ],
+  "dpr": 1,
+  "routes": [
+    {
+      "path": "/",
+      "status": 200,
+      "bytes": 1407498,
+      "sha256": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0",
+      "contentDisposition": null,
+      "contentType": "text/html; charset=utf-8",
+      "matchesOnDisk": true,
+      "downloadHeaderOk": true
+    },
+    {
+      "path": "/download",
+      "status": 200,
+      "bytes": 1407498,
+      "sha256": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0",
+      "contentDisposition": "attachment; filename=\"SoulOfHero_TerrainOnly_U05_x10.html\"",
+      "contentType": "application/octet-stream",
+      "matchesOnDisk": true,
+      "downloadHeaderOk": true
+    },
+    {
+      "path": "/nature01",
+      "status": 200,
+      "bytes": 1427241,
+      "sha256": "ac4d54e310f0f3cf7e0e12d728bc5e9ad62f801994be37ce64f76b099af4a0a7",
+      "contentDisposition": null,
+      "contentType": "text/html; charset=utf-8",
+      "matchesOnDisk": true,
+      "downloadHeaderOk": true
+    },
+    {
+      "path": "/nature01-download",
+      "status": 200,
+      "bytes": 1427241,
+      "sha256": "ac4d54e310f0f3cf7e0e12d728bc5e9ad62f801994be37ce64f76b099af4a0a7",
+      "contentDisposition": "attachment; filename=\"SoulOfHero_Nature01_U05.html\"",
+      "contentType": "application/octet-stream",
+      "matchesOnDisk": true,
+      "downloadHeaderOk": true
+    },
+    {
+      "path": "/nature02",
+      "status": 200,
+      "bytes": 1436807,
+      "sha256": "6e1e897a0e365412f6bc92d65390dc10bf7b0352e6ad8ef4a1c38e57f4f30fa6",
+      "contentDisposition": null,
+      "contentType": "text/html; charset=utf-8",
+      "matchesOnDisk": true,
+      "downloadHeaderOk": true
+    },
+    {
+      "path": "/nature02-download",
+      "status": 200,
+      "bytes": 1436807,
+      "sha256": "6e1e897a0e365412f6bc92d65390dc10bf7b0352e6ad8ef4a1c38e57f4f30fa6",
+      "contentDisposition": "attachment; filename=\"SoulOfHero_Nature02_ForestSlice.html\"",
+      "contentType": "application/octet-stream",
+      "matchesOnDisk": true,
+      "downloadHeaderOk": true
+    }
+  ],
+  "nKeyToggle": [
+    true,
+    false,
+    true
+  ],
+  "mKeyArtAuditToggle": [
+    true,
+    true
+  ],
+  "artAuditSheetNonBlank": true,
+  "presets": {
+    "dense_interior": {
+      "tile": [
+        1416,
+        1320
+      ],
+      "expected": [
+        1416,
+        1320
+      ],
+      "objects": 369,
+      "composition": 3,
+      "productionApproved": false
+    },
+    "clearing": {
+      "tile": [
+        1408,
+        1332
+      ],
+      "expected": [
+        1408,
+        1332
+      ],
+      "objects": 302,
+      "composition": 3,
+      "productionApproved": false
+    },
+    "road_forest_edge": {
+      "tile": [
+        1452,
+        1316
+      ],
+      "expected": [
+        1452,
+        1316
+      ],
+      "objects": 241,
+      "composition": 3,
+      "productionApproved": false
+    }
+  },
+  "pilotStatus": "NOT_APPROVED_FOR_PRODUCTION",
+  "pageErrors": [],
+  "pass": true,
+  "note": "Live-preview route + UI smoke only. NOT visual acceptance, NOT production approval."
+}

@@ -1,0 +1,455 @@
+{
+  "schema": "soh.u05.nature02-forest-design.v1",
+  "pilot": "NATURE-02 forest quality vertical slice",
+  "status": "REVIEWABLE_PILOT__NOT_APPROVED_FOR_PRODUCTION",
+  "window": [
+    1392,
+    1288,
+    1488,
+    1352
+  ],
+  "windowNote": "[x0,y0,x1,y1) in GOLD tiles \u2014 the SAME temperate-forest window used by NATURE-01 site 01. U=0.5 AU/tile, TILE=16 px, 96x64 tiles.",
+  "biome": "temperate_forest",
+  "oneBiomeOnly": true,
+  "compositions": [
+    {
+      "key": "dense_interior",
+      "label": "Dense forest interior",
+      "shotTile": [
+        1416,
+        1320
+      ],
+      "intent": "coherent overlapping oak stands, thicket edges, object-free corridor; no uniform per-tile scatter",
+      "reviewQuestions": [
+        "does the canopy read as connected stands rather than isolated trees?",
+        "are gaps legible and is the object-free corridor walkable?"
+      ]
+    },
+    {
+      "key": "clearing",
+      "label": "Clearing",
+      "shotTile": [
+        1408,
+        1332
+      ],
+      "intent": "designed opening C1 with sparse floor, dense low rim, two trail heads",
+      "reviewQuestions": [
+        "is the opening readable at native 640x360?",
+        "is the rim clearly denser than the interior?"
+      ]
+    },
+    {
+      "key": "road_forest_edge",
+      "label": "Road / forest edge",
+      "shotTile": [
+        1452,
+        1316
+      ],
+      "intent": "forest stops before the 3-tile road veto; authored GOLD road stays fully visible",
+      "reviewQuestions": [
+        "is the existing GOLD road unobstructed?",
+        "does the forest edge read as a mantle rather than a hard line?"
+      ]
+    }
+  ],
+  "goldMeasurementsAtShot": {
+    "dense_interior": {
+      "shotTile": [
+        1416,
+        1320
+      ],
+      "viewportTiles": 920,
+      "biomeCounts": {
+        "forest": 920
+      },
+      "roadTiles": 0,
+      "waterTiles": 0,
+      "landTiles": 920,
+      "sourceTiles": 14,
+      "cliffTiles": 0,
+      "avgHeightClass": 0,
+      "avgWalkable": 0.87
+    },
+    "clearing": {
+      "shotTile": [
+        1408,
+        1332
+      ],
+      "viewportTiles": 920,
+      "biomeCounts": {
+        "forest": 920
+      },
+      "roadTiles": 0,
+      "waterTiles": 0,
+      "landTiles": 920,
+      "sourceTiles": 16,
+      "cliffTiles": 0,
+      "avgHeightClass": 0,
+      "avgWalkable": 1
+    },
+    "road_forest_edge": {
+      "shotTile": [
+        1452,
+        1316
+      ],
+      "viewportTiles": 920,
+      "biomeCounts": {
+        "forest": 659,
+        "ancient": 261
+      },
+      "roadTiles": 190,
+      "waterTiles": 0,
+      "landTiles": 920,
+      "sourceTiles": 23,
+      "cliffTiles": 0,
+      "avgHeightClass": 0,
+      "avgWalkable": 0.7
+    }
+  },
+  "stands": [
+    {
+      "id": "S01",
+      "c": [
+        1404,
+        1308
+      ],
+      "r": [
+        12,
+        9
+      ],
+      "species": "oak",
+      "note": "north-west oak stand beside the lake"
+    },
+    {
+      "id": "S02",
+      "c": [
+        1422,
+        1312
+      ],
+      "r": [
+        11,
+        8
+      ],
+      "species": "oak_pine",
+      "note": "mixed stand, pine admixture"
+    },
+    {
+      "id": "S03",
+      "c": [
+        1402,
+        1324
+      ],
+      "r": [
+        13,
+        10
+      ],
+      "species": "oak",
+      "note": "main interior stand, carved by clearing C1"
+    },
+    {
+      "id": "S04",
+      "c": [
+        1424,
+        1338
+      ],
+      "r": [
+        12,
+        9
+      ],
+      "species": "pine_oak",
+      "note": "pine-dominant south stand"
+    },
+    {
+      "id": "S05",
+      "c": [
+        1398,
+        1346
+      ],
+      "r": [
+        9,
+        7
+      ],
+      "species": "oak",
+      "note": "south-west regrowth stand"
+    },
+    {
+      "id": "S06",
+      "c": [
+        1438,
+        1306
+      ],
+      "r": [
+        9,
+        7
+      ],
+      "species": "willow_oak",
+      "note": "wet edge near the lake; willow admixture"
+    },
+    {
+      "id": "S07",
+      "c": [
+        1438,
+        1344
+      ],
+      "r": [
+        13,
+        9
+      ],
+      "species": "ancient_oak",
+      "note": "ancient stand west of the road"
+    },
+    {
+      "id": "S08",
+      "c": [
+        1468,
+        1346
+      ],
+      "r": [
+        12,
+        8
+      ],
+      "species": "ancient_oak",
+      "note": "ancient stand east of the road"
+    },
+    {
+      "id": "S09",
+      "c": [
+        1478,
+        1310
+      ],
+      "r": [
+        8,
+        7
+      ],
+      "species": "ancient_oak",
+      "note": "north-east ancient stand"
+    },
+    {
+      "id": "S10",
+      "c": [
+        1418,
+        1348
+      ],
+      "r": [
+        9,
+        6
+      ],
+      "species": "oak",
+      "note": "south connector stand"
+    },
+    {
+      "id": "S11",
+      "c": [
+        1448,
+        1310
+      ],
+      "r": [
+        10,
+        8
+      ],
+      "species": "oak_pine",
+      "note": "road-side stand north-west of the authored road; stops at the 3-tile buffer"
+    },
+    {
+      "id": "S12",
+      "c": [
+        1444,
+        1324
+      ],
+      "r": [
+        10,
+        9
+      ],
+      "species": "ancient_oak",
+      "note": "road-side stand west of the road; dense wall behind the open corridor"
+    },
+    {
+      "id": "S13",
+      "c": [
+        1430,
+        1324
+      ],
+      "r": [
+        10,
+        7
+      ],
+      "species": "oak",
+      "note": "interior connector closing the gap between the glade and the road stands"
+    }
+  ],
+  "clearings": [
+    {
+      "id": "C1",
+      "c": [
+        1408,
+        1332
+      ],
+      "r": [
+        12,
+        8
+      ],
+      "note": "REVIEWED CLEARING \u2014 sparse floor, dense rim, trail heads here"
+    },
+    {
+      "id": "C2",
+      "c": [
+        1428,
+        1306
+      ],
+      "r": [
+        8,
+        5
+      ],
+      "note": "small natural gap near the lake shore"
+    },
+    {
+      "id": "C3",
+      "c": [
+        1464,
+        1340
+      ],
+      "r": [
+        9,
+        6
+      ],
+      "note": "natural gap in the ancient stands"
+    }
+  ],
+  "routes": [
+    {
+      "id": "TRAIL_TO_ROAD",
+      "width": 1,
+      "points": [
+        [
+          1408,
+          1332
+        ],
+        [
+          1422,
+          1326
+        ],
+        [
+          1436,
+          1320
+        ],
+        [
+          1452,
+          1316
+        ]
+      ],
+      "note": "clearing -> authored GOLD road"
+    },
+    {
+      "id": "TRAIL_TO_LAKE",
+      "width": 1,
+      "points": [
+        [
+          1408,
+          1332
+        ],
+        [
+          1400,
+          1318
+        ],
+        [
+          1412,
+          1306
+        ],
+        [
+          1422,
+          1302
+        ]
+      ],
+      "note": "clearing -> lake shore"
+    },
+    {
+      "id": "ANCIENT_TRACK",
+      "width": 1,
+      "points": [
+        [
+          1464,
+          1340
+        ],
+        [
+          1456,
+          1330
+        ],
+        [
+          1452,
+          1316
+        ]
+      ],
+      "note": "ancient gap -> road"
+    }
+  ],
+  "routeDefinition": "OBJECT-FREE CORRIDORS ONLY (1-tile half-width = 3-tile corridor): no path/road/ground pixel painted, no GOLD geometry authored, no Gameplay navigation permission minted.",
+  "zoneRules": {
+    "core": {
+      "tree": 0.66,
+      "under": 0.14,
+      "note": "overlapping native canopies, thicket/gap modulation"
+    },
+    "edge": {
+      "tree": 0.3,
+      "under": 0.42,
+      "note": "dense mantle: floor tufts + rocks + occasional snag"
+    },
+    "exterior": {
+      "tree": 0.015,
+      "under": 0.09,
+      "note": "natural empty ground, sparse tufts"
+    },
+    "clearing_rim": {
+      "tree": 0.06,
+      "under": 0.5,
+      "note": "dense but low rim framing the opening"
+    },
+    "clearing_interior": {
+      "tree": 0.0,
+      "under": 0.1,
+      "note": "readable open floor, a few tufts/rocks"
+    }
+  },
+  "vetoes": {
+    "roadBufferTiles": 3,
+    "waterBufferTiles": 2,
+    "sourceTile": true,
+    "nonForestOrAncient": true,
+    "nonAuthoredLandOrWater": true,
+    "steepOrCliff": true,
+    "chunkTiles": 32,
+    "maxResidentChunks": 36
+  },
+  "palette": [
+    "oak",
+    "pine",
+    "willow",
+    "dead",
+    "rock",
+    "grass"
+  ],
+  "undergrowth": {
+    "grass": 0.68,
+    "rock": 0.24,
+    "dead": 0.08
+  },
+  "spriteScaling": false,
+  "newArtAssets": 0,
+  "newAtlases": 0,
+  "decorativeOnly": true,
+  "gameplayOwned": false,
+  "productionApproved": false,
+  "noBuildingsOrPoiOrRuinsOrFencesOrArbitraryProps": true,
+  "otherBiomesUnchanged": true,
+  "fullWorldPropagation": false,
+  "creatorVisualAcceptance": "NOT_GRANTED",
+  "productionMerge": "NOT_DONE",
+  "veyraPlayable": "NOT_CLAIMED",
+  "zoneThresholds": {
+    "clearingInterior": "clearing >= 0.40",
+    "clearingRim": "clearing >= 0.15",
+    "standCore": "stand >= 0.55",
+    "standEdge": "stand >= 0.18"
+  },
+  "reviewIteration": "v2: 3 road-side stands added, route half-width narrowed 2->1, clearing interior widened and 2x2 lattice floor replaced by independent per-tile probability after native 640x360 inspection."
+}

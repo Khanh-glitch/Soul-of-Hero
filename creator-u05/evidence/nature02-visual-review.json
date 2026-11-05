@@ -1,0 +1,145 @@
+{
+  "schema": "soh.u05.nature02-visual-review.v1",
+  "pilot": "NATURE-02 FOREST QUALITY VERTICAL SLICE — ONE biome, THREE compositions",
+  "status": "REVIEWABLE_PILOT__NOT_APPROVED_FOR_PRODUCTION__NOT_VISUAL_ACCEPTANCE",
+  "reviewedBy": "Map / U05 pilot author (agent), by direct inspection of the actual native 640x360 PNGs listed below",
+  "reviewedAt": "2026-11-05",
+  "separationFromAutomatedTests": {
+    "statement": "This file is a SEPARATE human-style visual evaluation. It is NOT produced by tests/qa-nature02.mjs, NOT a gate, and NOT a pass/fail automated result. Automated QA proves pixel identity, determinism, geometry custody and real keyboard input only. Browser evidence is not Creator visual acceptance.",
+    "qaFile": "creator-u05/evidence/nature02-qa.json",
+    "qaGates": "15/15 PASS (F-G0 … F-G13, F-G2b) — see qa file; these gates do NOT judge beauty, canopy realism or semantic approval."
+  },
+  "reviewMaterials": {
+    "nativeShots": "creator-u05/evidence/nature02-shots/ (44 PNGs, all exactly 640x360 @1x)",
+    "comparisons": [
+      "compare_dense_interior_baseline.png",
+      "compare_dense_interior_nature01.png",
+      "compare_dense_interior_nature02.png",
+      "compare_clearing_baseline.png",
+      "compare_clearing_nature01.png",
+      "compare_clearing_nature02.png",
+      "compare_road_forest_edge_baseline.png",
+      "compare_road_forest_edge_nature01.png",
+      "compare_road_forest_edge_nature02.png",
+      "compare_nature01_site01_tile_baseline.png",
+      "compare_nature01_site01_tile_nature01.png",
+      "compare_nature01_site01_tile_nature02.png"
+    ],
+    "walkingSequences": "dense_interior_walk_1..4.png, clearing_walk_1..4.png, road_forest_edge_walk_1..4.png (real WASD, 4 native shots per composition)",
+    "browserViewportShots": ["browser_viewport_dense_interior.png", "browser_viewport_clearing.png", "browser_viewport_road_forest_edge.png"],
+    "artAuditSheet": "art_audit_sheet.png",
+    "artInventory": "creator-u05/evidence/nature02-assets.json",
+    "inspectedDirectly": [
+      "compare_dense_interior_nature01.png", "compare_dense_interior_nature02.png",
+      "compare_road_forest_edge_nature02.png", "compare_clearing_nature02.png",
+      "browser_viewport_clearing.png", "art_audit_sheet.png", "road_forest_edge_walk_3.png"
+    ]
+  },
+  "evaluations": [
+    {
+      "axis": "SILHOUETTE",
+      "verdict": "PARTIAL__COMPOSITION_FIXED__CANOPY_STILL_MISSING",
+      "observations": [
+        "NATURE-01 at the same tile shows isolated, evenly spaced 24x32 crowns and tiny 16x16 ground sprites — the reported 'uniform tree scattering' defect is visibly confirmed (compare_dense_interior_nature01.png).",
+        "NATURE-02 shows overlapping crowns on 16px tiles forming contiguous forest masses with irregular edges; the largest 8-connected tree cluster is 178 tiles vs 3 tiles in NATURE-01 (objective measurement in nature02-qa.json F-G7).",
+        "Pine cones, willow droops and dead snags break the outline; y-sorted drawing puts crowns in front of and behind the hero, giving a shallow sense of depth.",
+        "Dense interior, clearing rim and road-side stands read as three different silhouettes at native 1x."
+      ],
+      "objectiveFailures": [
+        "Only ONE crown tier exists. Every tree form is a 24x32 canvas with a single blob crown and a thin trunk; there is no overhead canopy, no mid-storey, no sapling and no branching silhouette.",
+        "The crown never arches over the hero: the tree is only 32px tall vs the hero's 24px (ratio 1.333), and the crown starts at the very top of its canvas. At 1x the forest reads as a wall of green lollipops seen obliquely, not as a canopy one walks under.",
+        "Oak has only 3 variants, pine/willow/dead 2 each; repeated identical crowns are visibly noticeable inside a dense stand.",
+        "A soft 0.22-alpha ground shadow ellipse is drawn under tall sprites. It is a render effect, not a SOH asset, and would need art review if this ever became production."
+      ]
+    },
+    {
+      "axis": "ECOLOGICAL_COHERENCE",
+      "verdict": "PARTIAL_PASS__COHERENT_STANDS__SHALLOW_ECOLOGY",
+      "observations": [
+        "13 explicitly authored stands each decide their own species mix (oak, oak_pine, pine_oak, willow_oak, ancient_oak), so a stand reads as one ecological unit instead of per-tile random picks.",
+        "Willow admixture appears near the lake edge; dead snags appear at stand mantles; elliptical clearings are carved out of stands with a dense low rim.",
+        "Natural empty space is preserved: open-ground share 0.6137 dense interior / 0.7035 clearing / 0.6846 road edge (objective audit), no whole-scene fill.",
+        "Zero objects on road, bridge, water, river, lake, coast or GOLD sourceTile; zero objects outside the single 96x64 forest window."
+      ],
+      "objectiveFailures": [
+        "All trees are the same pixel size and apparent age; there is no size/age variation, no fallen log, no leaf litter and no canopy-dependent ground shading (the verbatim terrain painter is intentionally untouched).",
+        "'Ancient' stands use the identical oak/willow sprites as young stands — the label is an authored design intent, not a visible ecological distinction.",
+        "The undergrowth is grass/rock/dead-snag sprites only; there is no fern, shrub layer or mid-storey. The forest floor stays the same uniform green noise as the terrain baseline.",
+        "Shore transition is limited to a willow weight change; there is no reeds/riparian band because those sprites are harvestable SOURCES and were deliberately excluded."
+      ]
+    },
+    {
+      "axis": "NAVIGATION_READABILITY",
+      "verdict": "PASS_FOR_PILOT__LIMITED_BY_NO_PATH_PAINTING",
+      "observations": [
+        "Three independently reviewable compositions are visibly different at 640x360: dense interior, a legible elliptical clearing with a denser rim, and a forest wall that stops before a clean open strip next to the authored GOLD road.",
+        "The authored road corridor is completely unobstructed: 51,424 road/bridge pixels are byte-identical with forest OFF and ON (objective measurement, F-G3).",
+        "Real WASD sequences (4 native shots per composition, 1212/1188/1248 px moved, 4 real keydowns + 4 keyups each) show the hero walking through the compositions with camera follow at native 1x; no teleport and no camera trick.",
+        "Forest objects never obstruct movement in either collision mode (F-G10, blockedSubsteps equal, movedPx identical with collision ON)."
+      ],
+      "objectiveFailures": [
+        "Deliberate routes are OBJECT-FREE CORRIDORS ONLY — no path, road, footprint or ground pixel is painted (a hard scope constraint). Consequently the trail is invisible negative space and can be confused with an ordinary natural gap at 1x.",
+        "No minimap, trail marker, lighting cue or gameplay navigation permission exists; this is a visual reading test, not a traversal contract.",
+        "Walking sequences prove keyboard movement and camera follow, NOT survival traversal, tree collision, harvesting, stamina or route completion.",
+        "The authored GOLD road itself renders as a wide brown polygon with a hard stair-step edge. Map may not alter it; a reviewer could misread it as a dirt cliff rather than a road."
+      ]
+    },
+    {
+      "axis": "SPRITE_SCALE",
+      "verdict": "PASS_NO_ARBITRARY_ENLARGEMENT__FAIL_AS_SURVIVAL_FOREST_SCALE",
+      "observations": [
+        "Measured from live offscreen canvases: hero canvas 16x24 with alpha bbox 12x23; oak/pine/willow/dead canvas 24x32 (oak alpha bbox 24x32); rock/bush/grass canvas 16x16 (grass visible bbox only 9x9).",
+        "Canvas proportions vs hero: tree height 32/24 = 1.333x, tree width 24/16 = 1.500x. Ground sprites are 1.000x hero width and 0.667x hero height.",
+        "No sprite was scaled, stretched, enlarged or redrawn; only native 1x drawImage() calls are used. Audit sheet (M key) shows 1x natives plus a clearly-labelled 2x INSPECTION panel that is not in game.",
+        "Canopy mass is produced by overlapping 24px crowns on 16px tiles plus y-sorting — a composition technique, not an asset change."
+      ],
+      "objectiveFailures": [
+        "At 1.333x hero height the tallest tree rises only 8px above the hero; an overhead canopy is geometrically impossible with the existing art at native scale.",
+        "The constraint 'do not enlarge sprites arbitrarily' therefore means the pilot CANNOT honestly claim a convincing survival-forest canopy. Any taller canopy needs a NEW approved asset, not a scale factor.",
+        "No DPR other than 1, no zoom other than the existing whole-map overview, and no resolution other than 640x360 was visually reviewed."
+      ]
+    },
+    {
+      "axis": "SEMANTIC_CONSISTENCY",
+      "verdict": "FAIL_FOR_PRODUCTION__BLOCKED_BY_GAMEPLAY_OWNER",
+      "observations": [
+        "INSIDE this pilot every object is decorativeOnly=true, gameplayOwned=false, with no interaction, collision, reward, stock, depletion or owner, and no object occupies a GOLD sourceTile. No contradictory interaction exists within the pilot.",
+        "The exact owner dependency is recorded with 8 file/line references in src/nature02/forest-sites.ts OWNER_DEPENDENCY and in evidence/nature02-assets.json.",
+        "Palette was reduced to 6 sprites; stocked/depleted Berry Bush (bush/bush_empty), plant SOURCES (herb/mush/reed), depletion states and ore/artificial props are explicitly excluded."
+      ],
+      "objectiveFailures": [
+        "In live Gameplay, a visually IDENTICAL oak/rock/grass is a SOURCES entity with stock, yields and block:true (web/src/game/catalog.ts:143,149,156), drawn by the Gameplay source renderer (render.ts:212).",
+        "r.natureTrees draws the SAME A.src.oak at x-4,y-16,y+14 (render.ts:215), spawns wood drops/receipts when mature (sim.ts:199) and is SOLID collision class 2 (engine.ts:189); sourceAt() owns stock/hp/regrow/burnt (engine.ts:156).",
+        "Therefore two visually identical trees would have contradictory interactions if this pilot were merged. Per the task constraint, NO visually identical trees with contradictory interactions may be approved for production → pilotStatus = NOT_APPROVED_FOR_PRODUCTION.",
+        "Map must not invent Gameplay rewards, collision or source ownership; the decision belongs to the Gameplay owner (branch arena/d4bfcfff-soul-of-hero, verified head 5b3e683402bbc8540dea9404576164097e753f97, later observed head 2f0836587b76a4a98fffedf8c202fb37cbb2a67c).",
+        "The small asset specification N02-ASSET-GAP-01 is PROPOSED__NOT_CREATED__NOT_APPROVED; no substitute asset was manufactured."
+      ]
+    }
+  ],
+  "objectiveFailureRegister": [
+    { "id": "N02-F1", "failure": "No overhead canopy possible with 24x32 trees vs 16x24 hero at native 1x.", "severity": "BLOCKS_SURVIVAL_FOREST_CLAIM", "owner": "Gameplay art (proposal only, see N02-ASSET-GAP-01)" },
+    { "id": "N02-F2", "failure": "Identical sprites are harvestable/solid in live Gameplay; decorative-only pilot objects cannot be approved for production.", "severity": "BLOCKS_PRODUCTION", "owner": "Gameplay semantic registry" },
+    { "id": "N02-F3", "failure": "Single silhouette tier, only 2-3 variants per species; visible repetition inside stands.", "severity": "QUALITY", "owner": "Gameplay art" },
+    { "id": "N02-F4", "failure": "No dedicated non-harvestable undergrowth; grass/rock read as harvestable SOURCES.", "severity": "QUALITY_AND_SEMANTIC", "owner": "Gameplay art + semantic registry" },
+    { "id": "N02-F5", "failure": "Deliberate routes are invisible negative space; no path pixels permitted by scope.", "severity": "READABILITY", "owner": "Map + Creator scope decision" },
+    { "id": "N02-F6", "failure": "Ground shading, age variation, leaf litter and canopy-dependent floor are absent (verbatim painter untouched).", "severity": "QUALITY", "owner": "Map / art, requires explicit authorisation" },
+    { "id": "N02-F7", "failure": "Authored GOLD road renders as a wide brown polygon with a hard stair-step edge; unchanged by Map.", "severity": "READABILITY", "owner": "GOLD / WMP-04R1 authority — NOT to be changed by this pilot" },
+    { "id": "N02-F8", "failure": "Translucent shadow ellipse is a new render effect, not SOH art.", "severity": "DISCLOSED_EFFECT", "owner": "Map (disclosed here, needs art review if promoted)" },
+    { "id": "N02-F9", "failure": "No tree animation, weather, day/night, LOD, seasons or sound.", "severity": "OUT_OF_SCOPE", "owner": "Not attempted" },
+    { "id": "N02-F10", "failure": "Visual inspection performed only at 640x360 DPR1; other resolutions/DPRs unreviewed.", "severity": "EVIDENCE_LIMIT", "owner": "Future review" },
+    { "id": "N02-F11", "failure": "Walking sequences prove movement + camera follow, not survival traversal, tree collision or harvesting.", "severity": "EVIDENCE_LIMIT", "owner": "Gameplay QA, out of scope" },
+    { "id": "N02-F12", "failure": "NATURE-01's four other biome windows and the rest of the 4000x2800 frame have ZERO forest objects by design — this is a vertical slice, not world propagation.", "severity": "INTENTIONAL_SCOPE", "owner": "Creator decision required before any expansion" }
+  ],
+  "stopConditionsHonoured": {
+    "oneBiomeOnly": true,
+    "newStandalonePilotFile": "creator-u05/SoulOfHero_Nature02_ForestSlice.html",
+    "nature01AndTerrainOnlyUnchanged": true,
+    "otherBiomesUnchanged": true,
+    "fullWorldPropagation": false,
+    "gameplayMerge": false,
+    "visualAccepted": false,
+    "veyraPlayableClaimed": false,
+    "productionApproved": false,
+    "unapprovedSubstituteAssetManufactured": false
+  }
+}
