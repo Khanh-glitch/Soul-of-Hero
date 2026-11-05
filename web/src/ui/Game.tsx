@@ -244,7 +244,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       {!panel && hrs < 0.08 && !r.qaUsed && <div className="absolute fadein" style={{ right: 4, top: 60, width: 150, fontSize: 10, color: '#cfc2dc', lineHeight: 1.1, textShadow: '1px 1px 0 #000', pointerEvents: 'none' }}>WASD move · mouse aim · LMB swing · Space roll · F/E interact · I/C/B/M panels · Esc menu. No quests — choose your own way.</div>}
       {isRagnarok(r, now) && heldCash > 0 && !panel && <div className="absolute pulse" style={{ right: 4, top: 62, fontSize: 10, color: '#ffe27a', textShadow: '1px 1px 0 #000' }}>Unsecured cash: {heldCash} — deposit it in your Rương ký gửi</div>}
     </div>
-    {import.meta.env.VITE_FX_TEST === '1' && <SpiritVfxEditor gs={gs} top={off.y + Math.round(62 * scale) + 4} right={Math.max(0, window.innerWidth - off.x - VIEW_W * scale) + 8} />}
+    {import.meta.env.VITE_FX_TEST === '1' && <SpiritVfxEditor gs={gs} top={off.y + Math.round(62 * scale) + 4} right={Math.max(0, window.innerWidth - off.x - VIEW_W * scale) + 8} viewport={{left:off.x,top:off.y,scale,width:VIEW_W,height:VIEW_H}} />}
   </div>;
 }
 void HOUR; void CREATURES;

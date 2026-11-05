@@ -44,6 +44,7 @@ export interface PfxInst {
   body: { x: number; y: number } | null; follow: PfxOpts['follow'] | null; born: number; warp: boolean;
   warpCache: { cv: HTMLCanvasElement | null; at: number; x: number; y: number; r: number };
   previewRate?: number;
+  previewCycle?: boolean;
 }
 
 // ---- declarative presentation data (not per-effect renderers) --------------
@@ -190,7 +191,10 @@ export function scrub(ms: number) { for (const i of instances) i.t += ms; }
 
 export function update(dtMs: number, now: number) {
   nowMs = now;
-  if (!paused) for (const inst of instances) inst.t += dtMs * (inst.previewRate ?? 1);
+  if (!paused) for (const inst of instances) {
+    inst.t += dtMs * (inst.previewRate ?? 1);
+    if (inst.previewCycle && inst.previewRate && inst.t >= inst.dur) inst.t %= inst.dur;
+  }
   for (let i = instances.length - 1; i >= 0; i--) {
     const inst = instances[i];
     if (inst.follow) { inst.x = inst.follow.x; inst.y = inst.follow.y; if (inst.follow.vx !== undefined) inst.angle = Math.atan2(inst.follow.vy ?? 0, inst.follow.vx); }
