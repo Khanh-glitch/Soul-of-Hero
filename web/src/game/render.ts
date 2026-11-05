@@ -204,6 +204,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
     const s = sourceAt(r, tx, ty, now); if (!s) continue; if (s.stock <= 0 && entsAt(r, tx, ty).length) continue; list.push({ y: ty * 16 + 14, f: () => drawSource(g, r, s, tx, ty, time, p) });
   }
   for (const e of ents) { if (e.x < cx - 40 || e.x > cx + VIEW_W + 40 || e.y < cy - 20 || e.y > cy + VIEW_H + 60) continue; if (e.kind === 'struct' && ['floor', 'roof'].includes(STRUCTS[e.type!].layer)) continue; if (e.type === 'garden' || e.type === 'spikes') continue; list.push({ y: e.y + (e.kind === 'drop' ? -2 : 6), f: () => drawEntity(g, r, e, time, now) }); }
+  for(const q of r.natureTrees||[]){const x=q.tx*TILE,y=q.ty*TILE;if(x>=cx-32&&x<cx+VIEW_W+32&&y>=cy-32&&y<cy+VIEW_H+32)list.push({y:y+14,f:()=>g.drawImage(A.src.oak[(q.tx+q.ty)%A.src.oak.length],x-4,y-16)});}
   for (const m of r.creatures) { if (m.x < cx - 40 || m.x > cx + VIEW_W + 40 || m.y < cy - 40 || m.y > cy + VIEW_H + 60) continue; list.push({ y: m.y + 4, f: () => drawCreature(g, m, time, now) }); }
   list.push({ y: p.y + 4, f: () => drawPlayer(g, gs, time) });
   const dragon=r.dragonDive;if(dragon?.phase && dragon.dragonX!==undefined && dragon.dragonY!==undefined) list.push({y:dragon.dragonY+4,f:()=>{const x=dragon.dragonX!,y=dragon.dragonY!;g.save();g.translate(x,y);g.fillStyle='#70241e';g.beginPath();g.moveTo(-19,-12);g.lineTo(-7,-22);g.lineTo(0,-14);g.lineTo(10,-21);g.lineTo(18,-10);g.lineTo(7,-12);g.lineTo(3,-3);g.lineTo(-5,-3);g.lineTo(-9,-11);g.closePath();g.fill();g.fillStyle='#ff8c2b';g.fillRect(-7,-14,14,6);g.fillStyle='#ffe6a0';g.fillRect(3,-13,2,2);g.restore();}});
@@ -324,7 +325,8 @@ function drawCreature(g: CanvasRenderingContext2D, m: Creature, time: number, no
     g.drawImage(m.flash > 0 ? white(spr) : spr, X - 24 + jx, Y - 40); g.restore();
     if (aw && Math.random() < 0.4) add({ x: X + (Math.random() - 0.5) * 36, y: Y - Math.random() * 30, vx: 0, vy: -14, col: d.color, max: 800, s: 1, g: -6 });
     if (m.atk?.vuln > 0) { pixCircle(g, X, Y - 16, 22 + Math.sin(time / 80) * 2, '#ffe070', 2); }
-    if ((m.frozenUntil||0)>now) {g.save();g.globalAlpha=0.7;g.drawImage(A.st.icepillar,X-8,Y-18);g.restore();}
+    if ((m.rootedUntil||0)>now) g.drawImage(A.st.rootwall,X-8,Y-7);
+  if ((m.frozenUntil||0)>now) {g.save();g.globalAlpha=0.7;g.drawImage(A.st.icepillar,X-8,Y-18);g.restore();}
     if (m.state === 'sleep') { const z = Math.floor(time / 700) % 3; g.fillStyle = '#c0d0ff'; g.fillRect(X + 10 + z * 3, Y - 40 - z * 4, 3, 1); g.fillRect(X + 12 + z * 3, Y - 39 - z * 4, 1, 1); g.fillRect(X + 10 + z * 3, Y - 38 - z * 4, 3, 1); }
     return;
   }
@@ -338,6 +340,7 @@ function drawCreature(g: CanvasRenderingContext2D, m: Creature, time: number, no
   if (flip) { g.translate(X * 2, 0); g.scale(-1, 1); }
   if (m.state === 'dead') { g.translate(X, Y); g.rotate(Math.PI / 2 * Math.min(1, m.t / 200)); g.translate(-X, -Y); }
   g.drawImage(m.flash > 0 ? white(spr) : spr, X - 12 + jx, Y - 14); g.restore();
+  if ((m.rootedUntil||0)>now) g.drawImage(A.st.rootwall,X-8,Y-7);
   if ((m.frozenUntil||0)>now) {g.save();g.globalAlpha=0.7;g.drawImage(A.st.icepillar,X-8,Y-14);g.restore();}
   if (m.type === 'crab' && m.atk?.tuck > 0) pixCircle(g, X, Y - 3, 8, 'rgba(255,255,255,0.6)', 3);
   if (m.state === 'tell' && d.style === 'tongue') { pixLine(g, X, Y - 4, X + Math.cos(m.angle) * 84, Y - 4 + Math.sin(m.angle) * 84, 'rgba(255,80,80,0.35)'); }
@@ -372,6 +375,7 @@ function drawProj(g: CanvasRenderingContext2D, pr: any, time: number) {
   switch (pr.kind) {
     case 'arrow': pixLine(g, X - Math.cos(a) * 6, Y - Math.sin(a) * 6, X, Y, '#8a5a32'); g.fillStyle = '#e0e0e8'; g.fillRect(X, Y, 1, 1); break;
     case 'bolt': g.fillStyle = '#ff6a3a'; g.fillRect(X - 1, Y - 1, 3, 3); g.fillStyle = '#fff0c0'; g.fillRect(X, Y, 1, 1); add({ x: X, y: Y, vx: 0, vy: 0, col: '#ff6a3a', max: 160, s: 1, g: 0 }); break;
+    case 'nature_rock': g.fillStyle='#797369';g.fillRect(X-4,Y-3,8,6);g.fillStyle='#b2a99a';g.fillRect(X-2,Y-3,4,2);break;
     case 'elsa_shard': case 'shard': g.save(); g.translate(X, Y); g.rotate(a); g.fillStyle = '#bff0ff'; g.fillRect(-4, -1, 8, 2); g.fillStyle = '#ffffff'; g.fillRect(1, 0, 3, 1); g.restore(); break;
     case 'spit': g.fillStyle = pr.kind === 'spit' ? '#6ad0ff' : '#a0d050'; g.fillRect(X - 2, Y - 2, 4, 4); g.fillStyle = '#ffffff'; g.fillRect(X - 1, Y - 1, 1, 1); add({ x: X, y: Y, vx: 0, vy: 10, col: '#a0e0ff', max: 200, s: 1, g: 0 }); break;
     case 'mine': g.fillStyle = '#3a3e46'; g.fillRect(X - 3, Y - 3, 6, 6); g.fillStyle = Math.floor(time / 150) % 2 ? '#ff3a2a' : '#6a1e14'; g.fillRect(X - 1, Y - 1, 2, 2); for (const [dx, dy] of [[-4, 0], [3, 0], [0, -4], [0, 3]]) { g.fillStyle = '#6a7280'; g.fillRect(X + dx, Y + dy, 1, 1); } break;

@@ -1,3 +1,4 @@
+import { creatorLootV1 } from './creator-loot';
 // Local-first snapshots: one serialized profile + run + receipts per write.
 // Checksums detect accidental damage, not malicious edits or rollback of all copies.
 import { BAL, SAVE_VERSION, WW, type GameState, type Stack } from './core';
@@ -56,7 +57,7 @@ export function validate(raw: any): GameState | null {
     const c = r.combat;
     if (!obj(c) || !Array.isArray(c.projectiles) || !Array.isArray(c.hazards) || c.projectiles.length > 5000 || c.hazards.length > 5000) return null;
     if (c.projectiles.some((q: any) => !obj(q) || !['x','y','vx','vy','life','dmg','r'].every(k => finite(q[k])) || !['player','enemy'].includes(q.from) || typeof q.kind !== 'string' || (q.delay !== undefined && !finite(q.delay)) || (q.homing !== undefined && !finite(q.homing)))) return null;
-    if (c.hazards.some((h: any) => !obj(h) || !['circle','line','ring','wave','sweep','pool'].includes(h.kind) || !['x','y','t','tell','dur','dmg'].every(k => finite(h[k])) || typeof h.style !== 'string' || (h.elder !== undefined && !has(ELDERS, h.elder)) || ['r','angle','len','w','tickAcc','a0','a1'].some(k => h[k] !== undefined && !finite(h[k])))) return null;
+    if (c.hazards.some((h: any) => !obj(h) || !['circle','line','ring','wave','sweep','pool'].includes(h.kind) || !['x','y','t','tell','dur','dmg'].every(k => finite(h[k])) || typeof h.style !== 'string' || (h.elder !== undefined && !has(ELDERS, h.elder)) || ['r','angle','len','w','tickAcc','a0','a1','expiresSimMs'].some(k => h[k] !== undefined && !finite(h[k])))) return null;
   }
   if (r.sourceLayoutVersion === 3) for (const [key, st] of Object.entries(r.sources) as [string, any][]) {
     const i=Number(key); if (!Number.isInteger(i) || String(i)!==key || i<0 || i>=world.sourceV3.length || !world.sourceV3[i] || !obj(st)) return null;
@@ -66,8 +67,9 @@ export function validate(raw: any): GameState | null {
   if (!r.custody.inv || !r.custody.eq || r.custody.inv.kind !== 'inv' || r.custody.eq.kind !== 'eq' || r.custody.inv.slots?.length !== 24 || r.custody.eq.slots?.length !== 3) return null;
   if (!Number.isInteger(r.player.active) || r.player.active < 0 || r.player.active > 7 || !['vx','vy','dir','aim','invuln','deadT','stepAcc','lastTraceX','lastTraceY'].every(k => finite(r.player[k])) || !['gather','combat','craft','survival'].every(k => finite(r.player.skills[k]))) return null;
   const beforeNext = (id: string, re: RegExp) => { const m = re.exec(id); return !m || parseInt(m[1], 36) < r.nextId; };
-  if (r.creatures.some((m: any) => !obj(m) || typeof m.id !== 'string' || !beforeNext(m.id, /^m([a-z0-9]+)$/) || typeof m.type !== 'string' || typeof m.state !== 'string' || !finite(m.x) || !finite(m.y) || !finite(m.hp) || (m.offlineUnresolvedAt !== undefined && !finite(m.offlineUnresolvedAt)) || (m.signatureBurnNext !== undefined && !finite(m.signatureBurnNext)) || (m.tornadoNext !== undefined && !finite(m.tornadoNext)) || (m.frozenUntil !== undefined && !finite(m.frozenUntil)))) return null;
+  if (r.creatures.some((m: any) => !obj(m) || typeof m.id !== 'string' || !beforeNext(m.id, /^m([a-z0-9]+)$/) || typeof m.type !== 'string' || typeof m.state !== 'string' || !finite(m.x) || !finite(m.y) || !finite(m.hp) || (m.offlineUnresolvedAt !== undefined && !finite(m.offlineUnresolvedAt)) || (m.signatureBurnNext !== undefined && !finite(m.signatureBurnNext)) || (m.tornadoNext !== undefined && !finite(m.tornadoNext)) || (m.frozenUntil !== undefined && !finite(m.frozenUntil)) || (m.rootedUntil !== undefined && !finite(m.rootedUntil)) || (m.rootHitNext !== undefined && !finite(m.rootHitNext)))) return null;
   if (r.dragonDive !== undefined && (!obj(r.dragonDive) || !Array.isArray(r.dragonDive.ids) || new Set(r.dragonDive.ids).size !== r.dragonDive.ids.length || r.dragonDive.ids.some((id: any) => typeof id !== 'string' || !id) || !finite(r.dragonDive.x) || !finite(r.dragonDive.y) || !finite(r.dragonDive.left) || r.dragonDive.left <= 0 || r.dragonDive.left > BAL.creatorCoreDragon.collectMs || (r.dragonDive.route !== undefined && (!Array.isArray(r.dragonDive.route) || r.dragonDive.route.length>500 || r.dragonDive.route.length!==r.dragonDive.ids.length || r.dragonDive.route.some((q:any,i:number)=>!obj(q)||q.id!==r.dragonDive.ids[i]||!finite(q.x)||!finite(q.y)) || !Number.isInteger(r.dragonDive.index) || r.dragonDive.index<0 || r.dragonDive.index>r.dragonDive.route.length || !finite(r.dragonDive.dragonX) || !finite(r.dragonDive.dragonY) || !['traverse','gather','dive'].includes(r.dragonDive.phase) || !Array.isArray(r.dragonDive.hitIds) || new Set(r.dragonDive.hitIds).size!==r.dragonDive.hitIds.length || r.dragonDive.hitIds.some((id:any)=>!r.dragonDive.ids.includes(id)))))) return null;
+  if (r.natureTrees !== undefined && (!Array.isArray(r.natureTrees) || r.natureTrees.length>100 || new Set(r.natureTrees.map((q:any)=>`${q.tx},${q.ty}`)).size!==r.natureTrees.length || r.natureTrees.some((q:any)=>!obj(q)||!integer(q.tx)||!integer(q.ty)||q.tx<0||q.ty<0||q.tx>=WW||q.ty>=WW||!finite(q.until)||q.until<=0))) return null;
   const uids = new Set<string>(), ownedContainers = new Set<string>(['inv', 'eq']);
   const stack = (s: any): s is Stack => {
     if (!obj(s) || typeof s.uid !== 'string' || !s.uid || !beforeNext(s.uid, /^s([a-z0-9]+)$/) || uids.has(s.uid) || typeof s.key !== 'string' || !has(ITEMS, s.key) || !integer(s.qty) || s.qty < 1 || s.qty > ITEMS[s.key].max) return false;
@@ -118,6 +120,8 @@ export function validate(raw: any): GameState | null {
   // have a live instance. Absence of this additive ledger preserves old saves.
   const lootSites = new Set(world.statics.filter(s => s.kind === 'loot').map(s => s.ty * WW + s.tx));
   if (r.depletedLootSites !== undefined && (!Array.isArray(r.depletedLootSites) || r.depletedLootSites.some((i: any) => !integer(i) || !lootSites.has(i)) || new Set(r.depletedLootSites).size !== r.depletedLootSites.length)) return null;
+  if (r.creatorLootV1 !== undefined && (r.creatorLootV1 !== true || !['shipping_fresh','dev_delta_fresh'].includes(r.layoutId) || r.sourceLayoutVersion!==3)) return null;
+  if (r.renewedLootSites !== undefined && (!r.creatorLootV1 || !Array.isArray(r.renewedLootSites) || new Set(r.renewedLootSites).size!==r.renewedLootSites.length || r.renewedLootSites.some((i:any)=>!integer(i)||!lootSites.has(i)))) return null;
   const depleted = new Set<number>(r.depletedLootSites || []);
   if (r.lootRespawnAt !== undefined && (!obj(r.lootRespawnAt) || Object.entries(r.lootRespawnAt).some(([key, value]) => !/^(0|[1-9][0-9]*)$/.test(key) || !depleted.has(Number(key)) || !finite(value) || (value as number) < r.startedAt))) return null;
   if ((Object.values(r.entities) as any[]).some(e => e.kind === 'loot' && depleted.has(e.ty * WW + e.tx))) return null;
@@ -133,7 +137,7 @@ export function validate(raw: any): GameState | null {
         if(typeof ent.minted!=='boolean' || !obj(ent.stock) || ent.stock.cash!==(ent.minted?0:site.cash) || slots.some((s:any)=>s && (s.key!=='rcash'||!ent.minted))) return null;
         if(slots.reduce((n:number,s:any)=>n+(s?.qty||0),0)>(site.cash||0))return null;
       } else {
-        const available = new Map<string,number>(); for(const [k,q] of site.loot || []) available.set(k,(available.get(k)||0)+q);
+        const available = new Map<string,number>(); for(const [k,q] of site.loot || []) available.set(k,(available.get(k)||0)+q); const unique=r.creatorLootV1 && !r.renewedLootSites?.includes(site.ty*WW+site.tx) && creatorLootV1(site);if(unique)available.set(unique,1);
         for(const stack of slots){if(!stack)continue;const key=stack.key==='blueprint'?`blueprint:${stack.meta}`:stack.key;const left=(available.get(key)||0)-stack.qty;if(left<0)return null;available.set(key,left);}
       }
     }

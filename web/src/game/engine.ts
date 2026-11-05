@@ -1,3 +1,4 @@
+import { creatorLootV1 } from './creator-loot';
 // Authoritative game engine: GameState + dispatch(intent) → committed state + receipt | rejection.
 // Rule: validate EVERYTHING first, then commit. Failed preconditions never partially debit.
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dist, clamp,
@@ -92,6 +93,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
     clock: { lastSimAt: now, simMs: 0, respawnAcc: 0, weatherSlot: -1 }, rng: seed, nextId: 1, receipts: [], seenIntents: [], seq: 0,
     vendorStock: { escrow_chest: 4, ...Object.fromEntries(Object.entries(VENDOR_SECURED).map(([k, v]) => [k, v.stock])) }, log: [],
   };
+  if (getActiveLayout()==='shipping_fresh' || getActiveLayout()==='dev_delta_fresh') r.creatorLootV1=true;
   const reg = 0; r.spawnRegion = reg; const sp = chooseLegalSpawn(r); if(!sp)return {ok:false,reason:'No safe, resource-accessible spawn in this region.'}; r.spawnChoice={x:sp.tx,y:sp.ty,contract:'seeded-geographic-v1'};
   r.custody.inv = { id: 'inv', kind: 'inv', slots: Array(24).fill(null) };
   r.custody.eq = { id: 'eq', kind: 'eq', slots: [null, null, null] };
@@ -102,7 +104,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   // statics → physical entities with real finite loot
   for (const s of w.statics) {
     const e: Entity = { id: uid(r, 'e'), kind: s.kind as any, x: s.tx * TILE + 8, y: s.ty * TILE + 8, tx: s.tx, ty: s.ty, poi: s.poi, label: s.label };
-    if (s.kind === 'loot') { const c = mkContainer(r, 'loot', 8); s.loot!.forEach(([k, q], i) => { if (k.startsWith('blueprint:')) c.slots[i] = mkStack(r, 'blueprint', 1, k.slice(10)); else { const stack=mkStack(r,k,q); if (['meteor','dragon','elsa'].includes(ITEMS[k]?.creatorCore || '') && stack.reserves) stack.reserves.signature=3; c.slots[i]=stack; } }); e.c = c.id; }
+    if (s.kind === 'loot') { const c = mkContainer(r, 'loot', 8); s.loot!.forEach(([k, q], i) => { if (k.startsWith('blueprint:')) c.slots[i] = mkStack(r, 'blueprint', 1, k.slice(10)); else { const stack=mkStack(r,k,q); if (['meteor','dragon','elsa'].includes(ITEMS[k]?.creatorCore || '') && stack.reserves) stack.reserves.signature=3; c.slots[i]=stack; } }); const unique=r.creatorLootV1 && creatorLootV1(s); if(unique){const free=c.slots.findIndex(x=>!x);if(free>=0){const stack=mkStack(r,unique,1);stack.reserves!.signature=3;c.slots[free]=stack;}} e.c = c.id; }
     if (s.kind === 'cash') { e.c = mkContainer(r, 'cash', 2).id; e.minted = false; e.stock = { cash: s.cash! }; }
     if (s.kind === 'door') { e.locked = s.locked; e.open = false; }
     if (s.kind === 'gen') e.power = 0;
@@ -184,6 +186,7 @@ export function blockGrid(r: RunState) {
   if (r.sourceLayoutVersion === 2) { const overlay = getWorld().sourceOverlayV2; for (let i = 0; i < overlay.length; i++) if (overlay[i] >= 0) arr[i] = cellClass(r, i % WW, (i / WW) | 0); }
   for (const k in r.terrain) { const i = +k; arr[i] = cellClass(r, i % WW, (i / WW) | 0); }
   for (const k in r.sources) { const i = +k; arr[i] = cellClass(r, i % WW, (i / WW) | 0); }
+  for (const tree of r.natureTrees || []) arr[tree.ty * WW + tree.tx] = 2;
   for (const e of Object.values(r.entities)) {
     if (e.tx === undefined) continue; const i = e.ty! * WW + e.tx;
     if (e.kind === 'struct') { const d = STRUCTS[e.type!]; if (d.block && !(e.type!.startsWith('door') && e.open)) arr[i] = 3; }
@@ -394,6 +397,7 @@ export function stepLootRespawn(r: RunState, now: number) {
     const c = mkContainer(r, 'loot', 8); e.c = c.id;
     stock.forEach(([key, qty], i) => { c.slots[i] = mkStack(r, key, qty); });
     r.entities[e.id] = e; delete timers[index];
+    if(r.creatorLootV1 && !(r.renewedLootSites||[]).includes(index)) (r.renewedLootSites ??= []).push(index);
     r.depletedLootSites = r.depletedLootSites.filter(i => i !== index);
     markDirty(); receipt(r, now, 'loot.respawn', `${index}:${e.id}`);
   }
@@ -1030,7 +1034,7 @@ function craft(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: stri
 function research(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: string, d: string, m?: string) => Result): Result {
   const st = stationNear(r, 'research', it.eid); if (!st) return fail('Requires a Research Table within reach.');
   if (st.station!.queue.length >= 3) return fail('Research queue is full.');
-  const known = new Set(r.knowledge.recipes); known.add('recover_drive'); const pending = new Set(st.station!.queue.map(j => j.recipe.split(':')[1]));
+  const known = new Set(r.knowledge.recipes); for(const k of Object.keys(RECIPES)) if(isRecipeKnown(r.knowledge.recipes,k)) known.add(k); const pending = new Set(st.station!.queue.map(j => j.recipe.split(':')[1]));
   const unknown = Object.keys(RECIPES).filter(k => !known.has(k) && !pending.has(k));
   const B = BAL.research;
   if (it.mode === 'random') {

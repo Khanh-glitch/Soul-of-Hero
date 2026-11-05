@@ -2,7 +2,7 @@
 import { BAL, TILE, WW, WH, HOUR, VIEW_W, VIEW_H, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity, type Proj, type Haz } from './core';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
 import { getWorld } from './world';
-import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, turretStatus, stepLootRespawn, migrateLootRespawn } from './engine';
+import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, turretStatus, stepLootRespawn, migrateLootRespawn, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
@@ -187,13 +187,31 @@ function freezeTile(r: RunState, tx:number, ty:number, ms:number) {
 }
 function freezeAround(r: RunState, x:number, y:number, ms:number) {let changed=false;const cx=tileOf(x),cy=tileOf(y);for(let yy=cy-1;yy<=cy+1;yy++)for(let xx=cx-1;xx<=cx+1;xx++)changed=freezeTile(r,xx,yy,ms)||changed;if(changed)markDirty();}
 
+/** Select ten genuinely vacant nearby tiles without overwriting map sources,
+ * structures, creatures or the player; failure spends no reserve. */
+function groveCells(r:RunState,x:number,y:number) {
+  const cx=tileOf(x),cy=tileOf(y),grid=blockGrid(r),cells:{tx:number;ty:number;d:number}[]=[];
+  for(let dy=-5;dy<=5;dy++)for(let dx=-5;dx<=5;dx++) {const tx=cx+dx,ty=cy+dy,d=Math.hypot(dx,dy);if(d<2||d>5||tx<1||ty<1||tx>=WW-1||ty>=WH-1)continue;const i=ty*WW+tx;if(grid[i]!==0||!clearPhysicalLine(r,{x,y},{x:tx*TILE+8,y:ty*TILE+8},true)||entsAt(r,tx,ty).length||r.natureTrees?.some(q=>q.tx===tx&&q.ty===ty)||r.creatures.some(m=>m.state!=='dead'&&tileOf(m.x)===tx&&tileOf(m.y)===ty)||(tileOf(r.player.x)===tx&&tileOf(r.player.y)===ty))continue;cells.push({tx,ty,d});}
+  cells.sort((a,b)=>a.d-b.d||a.ty-b.ty||a.tx-b.tx);return cells.slice(0,BAL.creatorCoreEarthmother.treeCount);
+}
+function stepNatureTrees(r:RunState,now:number){if(!r.natureTrees?.length)return;const ready=r.natureTrees.filter(q=>q.until<=r.clock.simMs);if(!ready.length)return;r.natureTrees=r.natureTrees.filter(q=>q.until>r.clock.simMs);for(const q of ready){spawnDrop(r,'wood',BAL.creatorCoreEarthmother.woodPerTree,q.tx*TILE+8,q.ty*TILE+8,now,undefined,false);receipt(r,now,'core.grove.wood',`${q.tx},${q.ty}`);}markDirty();}
+
 /** The physical UID captured at windup must still occupy the same slot at commit. */
 function commitCreatorCore(gs: GameState, now: number, slot: number, uid0: string, mode: 'basic'|'refined'|'signature', a: number, aim: Input) {
   const r = gs.run!, p = r.player, s = C(r, 'inv').slots[slot];
   if (!s || p.active !== slot || s.uid !== uid0 || !ITEMS[s.key]?.creatorCore || !s.reserves || s.reserves[mode] <= 0) { fx('fizzle', {x:p.x,y:p.y}); return; }
+  let grove:{tx:number;ty:number;d:number}[] | undefined;
+  if(ITEMS[s.key].creatorCore==='earthmother' && mode==='refined') { const len=Math.min(BAL.creatorCoreEarthmother.groveRange,dist(p.x,p.y,aim.mx,aim.my),rayLen(r,p.x,p.y,a,BAL.creatorCoreEarthmother.groveRange));grove=groveCells(r,p.x+Math.cos(a)*len,p.y+Math.sin(a)*len);if(grove.length!==BAL.creatorCoreEarthmother.treeCount || (r.natureTrees?.length||0)+grove.length>100){fx('toast',{text:'Need open ground for all ten trees.'});return;} }
   s.reserves[mode]--; receipt(r, now, 'core.commit', `${s.uid}:${mode}:${s.reserves[mode]}`); award(gs,'first_core',now);
   const b = BAL.creatorCoreBlast, hx=p.x+Math.cos(a)*10, hy=p.y+Math.sin(a)*10;
   fx('cast',{x:hx,y:hy,core:'fire',a});
+  if(ITEMS[s.key].creatorCore==='earthmother') {
+    const e=BAL.creatorCoreEarthmother;
+    if(mode==='basic')PROJ.push({x:hx,y:hy,vx:Math.cos(a)*e.rockSpeed,vy:Math.sin(a)*e.rockSpeed,life:e.rockLife,dmg:e.rockDamage,from:'player',kind:'nature_rock',r:4});
+    if(mode==='refined'){(r.natureTrees ??= []).push(...grove!.map(q=>({tx:q.tx,ty:q.ty,until:r.clock.simMs+e.treeMs})));markDirty();receipt(r,now,'core.grove.grow',`${s.uid}:${grove!.length}`);}
+    if(mode==='signature'){const len=Math.min(e.groveRange,dist(p.x,p.y,aim.mx,aim.my),rayLen(r,p.x,p.y,a,e.groveRange)),x=p.x+Math.cos(a)*len,y=p.y+Math.sin(a)*len;HAZ.push({kind:'pool',x,y,r:e.rootRange,t:0,tell:0,dur:e.rootMs,dmg:e.rootDamage,style:'roots',effect:'natureRoot',owner:'player',expiresSimMs:r.clock.simMs+e.rootMs});let n=0;const cx=tileOf(x),cy=tileOf(y);for(let yy=cy-4;yy<=cy+4;yy++)for(let xx=cx-4;xx<=cx+4;xx++){if(xx<0||yy<0||xx>=WW||yy>=WH||dist(x,y,xx*TILE+8,yy*TILE+8)>e.rootRange)continue;const i=yy*WW+xx,t=effTile(r,xx,yy);if(!r.terrain[i]&&clearPhysicalLine(r,{x,y},{x:xx*TILE+8,y:yy*TILE+8},true)&&[T.SAND,T.MEADOW,T.FOREST,T.MARSH,T.HILL,T.BURNT].includes(t)){r.terrain[i]={t:T.GRASS,until:r.clock.simMs+e.rootMs};n++;}}if(n)markDirty();receipt(r,now,'core.roots',`${s.uid}:${n}`);}
+    return;
+  }
   if (ITEMS[s.key].creatorCore === 'elsa') {
     const e=BAL.creatorCoreElsa;
     if(mode==='basic') PROJ.push({x:hx,y:hy,vx:Math.cos(a)*e.shardSpeed,vy:Math.sin(a)*e.shardSpeed,life:e.shardLife,dmg:e.shardDamage,from:'player',kind:'elsa_shard',r:3});
@@ -467,7 +485,7 @@ function encounteredTrace(r: RunState, m: Creature, now: number) {
 /** Only established local evidence is simulated outside the active player area. */
 function traceOnly(gs: GameState, m: Creature, dtMs: number, now: number): 'advanced' | 'defer' | 'done' {
   const r = gs.run!, p = r.player, d = CREATURES[m.type];
-  if ((m.frozenUntil||0)>now) return 'done';
+  if ((m.frozenUntil||0)>now || (m.rootedUntil||0)>now) return 'done';
   if (!d || m.elder || !['idle', 'wander', 'track', 'chase'].includes(m.state) || (m.knows && m.knows.kind !== 'trace') || Math.abs(m.kbx) + Math.abs(m.kby) > 1) return 'defer';
   // Player combat and in-flight effects require the full actor simulation, not a guess.
   const sight = (darkness(r, now) > 0.45 ? BAL.ai.sightNight : BAL.ai.sightDay) * (d.sight / 100) * (weatherAt(r, now) === 'fog' ? 0.6 : 1) * (p.sheltered ? 0.5 : 1);
@@ -491,7 +509,7 @@ function tickCreatures(gs: GameState, dtMs: number, now: number) {
   for (let i = r.creatures.length - 1; i >= 0; i--) {
     const m = r.creatures[i];
     if (m.state === 'dead') { m.t += dtMs; if (!m.elder && m.t > 1600) r.creatures.splice(i, 1); continue; }
-    if ((m.frozenUntil||0)>now) continue;
+    if ((m.frozenUntil||0)>now || (m.rootedUntil||0)>now) continue;
     const dp = dist(m.x, m.y, p.x, p.y); if (dp > ACT) { if (m.offlineUnresolvedAt === undefined && (m.knows?.kind === 'trace' || (!m.knows && encounteredTrace(r, m, now)))) { if (traceOnly(gs, m, dtMs, now) === 'defer') m.offlineUnresolvedAt = now - dtMs; } continue; }
     delete m.offlineUnresolvedAt; // resume from the last justified checkpoint in live play
     m.cd = Math.max(0, m.cd - dtMs); m.flash = Math.max(0, m.flash - dtMs); m.t += dtMs; if (m.slow) m.slow = Math.max(0, m.slow - dtMs);
@@ -653,6 +671,7 @@ function tickTurrets(gs: GameState, dtMs: number, now: number) {
 function blockedAtTurret(r: RunState,x:number,y:number) { const b=blockGrid(r)[tileOf(y)*WW+tileOf(x)]; return b===1||b===2||b===3||b===5; }
 
 // ---------- projectiles & hazards ----------
+function impactRock(gs:GameState,pr:Proj,now:number){if((pr as any).exploded)return;(pr as any).exploded=true;const r=gs.run!;for(const m of r.creatures)if(m.state!=='dead'&&dist(m.x,m.y,pr.x,pr.y)<BAL.creatorCoreEarthmother.rockRadius&&clearPhysicalLine(r,pr,m,true))damageCreature(gs,m,pr.dmg,Math.atan2(m.y-pr.y,m.x-pr.x),now,190);fx('chip',{x:pr.x,y:pr.y,mat:'stone'});}
 function tickProj(gs: GameState, dtMs: number, now: number) {
   const r = gs.run!; const p = r.player; const dt = dtMs / 1000; const g = blockGrid(r);
   for (let i = PROJ.length - 1; i >= 0; i--) {
@@ -675,10 +694,11 @@ function tickProj(gs: GameState, dtMs: number, now: number) {
     }
     pr.life -= dt; let dead = pr.life <= 0;
     if (pr.kind === 'blast_bomb' && blocked && !dead) { pr.vx=0; pr.vy=0; blocked=false; }
-    if (blocked) { dead = true; if (pr.kind === 'fireball' || pr.kind === 'blast_signature') explode(gs, pr, now); else fx('ping', { x: pr.x, y: pr.y, kind: pr.kind }); }
+    if (blocked) { dead = true; if(pr.kind==='nature_rock')impactRock(gs,pr,now); else if (pr.kind === 'fireball' || pr.kind === 'blast_signature') explode(gs, pr, now); else fx('ping', { x: pr.x, y: pr.y, kind: pr.kind }); }
     else if (pr.from === 'enemy' && dist(pr.x, pr.y, p.x, p.y) < pr.r + 4) { dead = true; if (pr.kind === 'mine') { fx('boom', { x: pr.x, y: pr.y, small: true }); } hurtPlayer(gs, pr.dmg, pr.x - pr.vx, pr.y - pr.vy, 'projectile', now, 100); }
-    else if (pr.from === 'player' && pr.kind !== 'blast_bomb' && pr.kind !== 'fire_tornado') { for (const m of r.creatures) { if (m.state === 'dead') continue; const rr = m.elder ? ELDERS[m.elder.key].r : 6; if (dist(pr.x, pr.y, m.x, m.y) < rr + pr.r) { dead = true; if (pr.kind === 'fireball' || pr.kind === 'blast_signature') explode(gs, pr, now); else { damageCreature(gs, m, pr.dmg, Math.atan2(pr.vy, pr.vx), now, 80); if(pr.kind==='elsa_shard' && m.hp>0 && rngNext(r)<BAL.creatorCoreElsa.freezeChance)m.frozenUntil=now+BAL.creatorCoreElsa.enemyMs; } break; } } }
+    else if (pr.from === 'player' && pr.kind !== 'blast_bomb' && pr.kind !== 'fire_tornado') { for (const m of r.creatures) { if (m.state === 'dead') continue; const rr = m.elder ? ELDERS[m.elder.key].r : 6; if (dist(pr.x, pr.y, m.x, m.y) < rr + pr.r) { dead = true; if(pr.kind==='nature_rock')impactRock(gs,pr,now); else if (pr.kind === 'fireball' || pr.kind === 'blast_signature') explode(gs, pr, now); else { damageCreature(gs, m, pr.dmg, Math.atan2(pr.vy, pr.vx), now, 80); if(pr.kind==='elsa_shard' && m.hp>0 && rngNext(r)<BAL.creatorCoreElsa.freezeChance)m.frozenUntil=now+BAL.creatorCoreElsa.enemyMs; } break; } } }
     if (dead && (pr.kind === 'fireball' || pr.kind === 'blast_signature') && pr.life <= 0) explode(gs, pr, now);
+    if (dead && pr.kind === 'nature_rock') impactRock(gs,pr,now);
     if (dead && pr.kind === 'elsa_shard') {freezeAround(r,pr.x,pr.y,BAL.creatorCoreElsa.terrainMs);fx('cast',{x:pr.x,y:pr.y,core:'frost',a:0});}
     if (dead && pr.kind === 'blast_bomb' && pr.life <= 0) {
       explode(gs,pr,now); const base=rngNext(r)*Math.PI*2;
@@ -704,10 +724,11 @@ function inHaz(h: Haz, x: number, y: number) {
 function tickHaz(gs: GameState, dtMs: number, now: number) {
   const r = gs.run!; const p = r.player;
   for (let i = HAZ.length - 1; i >= 0; i--) {
-    const h = HAZ[i]; h.t += dtMs; if (h.t < h.tell) continue;
+    const h = HAZ[i]; if(h.expiresSimMs!==undefined && r.clock.simMs>=h.expiresSimMs){HAZ.splice(i,1);continue;} h.t += dtMs; if (h.t < h.tell) continue;
     const first = !h.done; h.done = true;
     if (first) onHazActivate(gs, h, now);
-    if (h.owner === 'player' && h.kind === 'pool' && h.style === 'burn') { h.tickAcc=(h.tickAcc||0)-dtMs; if(h.tickAcc<=0){h.tickAcc=500;for(const m of r.creatures)if(m.state!=='dead'&&inHaz(h,m.x,m.y)&&now >= (m.signatureBurnNext||0)){m.signatureBurnNext=now+500;damageCreature(gs,m,h.dmg,Math.atan2(m.y-h.y,m.x-h.x),now,10);}} }
+    if(h.owner==='player' && h.effect==='natureRoot'){for(const m of r.creatures)if(m.state!=='dead'&&!m.elder?.submerged&&!m.atk?.burrow&&inHaz(h,m.x,m.y)&&clearPhysicalLine(r,h,m,true)){m.rootedUntil=Math.max(m.rootedUntil||0,Math.min(now+150,now+Math.max(0,h.tell+h.dur-h.t)));if(now >= (m.rootHitNext||0)){m.rootHitNext=now+BAL.creatorCoreEarthmother.rootTickMs;damageCreature(gs,m,h.dmg,0,now,0);}}}
+    else if (h.owner === 'player' && h.kind === 'pool' && h.style === 'burn') { h.tickAcc=(h.tickAcc||0)-dtMs; if(h.tickAcc<=0){h.tickAcc=500;for(const m of r.creatures)if(m.state!=='dead'&&inHaz(h,m.x,m.y)&&now >= (m.signatureBurnNext||0)){m.signatureBurnNext=now+500;damageCreature(gs,m,h.dmg,Math.atan2(m.y-h.y,m.x-h.x),now,10);}} }
     else if (h.owner === 'player') { if (first || h.kind === 'ring') for (const m of r.creatures) { if (m.state === 'dead' || (h as any)['h_' + m.id]) continue; if (inHaz(h, m.x, m.y)) { (h as any)['h_' + m.id] = 1; damageCreature(gs, m, h.dmg, Math.atan2(m.y - h.y, m.x - h.x), now, 90); if (h.effect === 'slowm') m.slow = 3000; } } }
     else {
       const dot = h.kind === 'pool' || h.effect === 'dot' || h.kind === 'sweep' || h.style === 'burn';
@@ -763,6 +784,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
   const r = gs.run!; let t = start; const slotMs = BAL.weather.slotMinutes * 60000;
   resolveFires(gs, t, visual);
   stepLootRespawn(r, t);
+  stepNatureTrees(r,t);
   while (t < end) {
     // Commit already-finished jobs first; their next jobs determine the next boundary.
     stepStations(gs, 0, t, report);
@@ -782,6 +804,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
       if (job && job.left > 0) dt = Math.min(dt, job.left);
     }
     dt = tenderBoundary(r, isWet(weather), dt);
+    for (const tree of r.natureTrees||[]) if(tree.until>r.clock.simMs)dt=Math.min(dt,tree.until-r.clock.simMs);
     for (const due of Object.values(r.lootRespawnAt || {})) if (due > t) dt = Math.min(dt, due - t);
     for (const st of Object.values(r.sources)) { if (st.fire && st.fire > r.clock.simMs) dt = Math.min(dt, st.fire - r.clock.simMs); if(st.fireSpreadAt && st.fireSpreadAt > r.clock.simMs) dt = Math.min(dt, st.fireSpreadAt - r.clock.simMs); }
     for (const terrain of Object.values(r.terrain)) if (terrain.until && terrain.until > r.clock.simMs) dt = Math.min(dt, terrain.until - r.clock.simMs);
@@ -808,6 +831,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     let dirty = false; for (const k in r.terrain) { const m = r.terrain[k]; if (m.until && m.until <= r.clock.simMs) { delete r.terrain[k]; dirty = true; } } if (dirty) markDirty();
     resolveFires(gs, t, visual);
     stepLootRespawn(r, t);
+    stepNatureTrees(r,t);
   }
   stepTenders(gs, end);
 }

@@ -13,7 +13,7 @@ export const HOUR = 3600_000;
 
 // Committed physical combat effects are run-local and resume after an offline gap.
 export interface Proj { x: number; y: number; vx: number; vy: number; life: number; dmg: number; from: 'player' | 'enemy'; kind: string; r: number; delay?: number; homing?: number; owner?: string }
-export interface Haz { kind: 'circle' | 'line' | 'ring' | 'wave' | 'sweep' | 'pool'; x: number; y: number; r?: number; angle?: number; len?: number; w?: number; t: number; tell: number; dur: number; dmg: number; style: string; effect?: string; hit?: boolean; tickAcc?: number; a0?: number; a1?: number; done?: boolean; owner?: string; elder?: string }
+export interface Haz { kind: 'circle' | 'line' | 'ring' | 'wave' | 'sweep' | 'pool'; x: number; y: number; r?: number; angle?: number; len?: number; w?: number; t: number; tell: number; dur: number; dmg: number; style: string; effect?: string; hit?: boolean; tickAcc?: number; a0?: number; a1?: number; done?: boolean; owner?: string; elder?: string; expiresSimMs?:number }
 
 // ---------- Seeded RNG ----------
 export function mulberry(seed: number) {
@@ -77,7 +77,7 @@ export interface Creature {
   offlineUnresolvedAt?: number;
   path: number[] | null; pathT: number; cd: number; kbx: number; kby: number; flash: number;
   elder?: { key: string; awake: boolean; phase: number; pattern: number; special: number; shield?: number; submerged?: boolean };
-  patternKey?: string; atk?: any; slow?: number; signatureBurnNext?: number; tornadoNext?: number; frozenUntil?: number;
+  patternKey?: string; atk?: any; slow?: number; signatureBurnNext?: number; tornadoNext?: number; frozenUntil?: number; rootedUntil?:number; rootHitNext?:number;
 }
 
 export interface Entity {
@@ -133,6 +133,10 @@ export interface RunState {
   depletedLootSites?: number[];
   /** Absolute due times for renewable authored loot; absent W00 entries migrate conservatively. */
   lootRespawnAt?: Record<number, number>;
+  /** Gameplay-owned initial unique rewards, only on explicitly versioned fresh Web layouts. */
+  creatorLootV1?: true;
+  renewedLootSites?: number[];
+  natureTrees?: {tx:number;ty:number;until:number}[];
   terrain: Record<number, { t: number; until?: number }>; // K2 terrain mutations (burns, ice)
   entities: Record<string, Entity>;
   custody: Record<string, Container>;

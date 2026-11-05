@@ -207,5 +207,20 @@
     "selfMs": 1000,
     "auraRadius": 32,
     "terrainMs": 90000
+  },
+  "creatorCoreEarthmother": {
+    "_status": "SOH_NEW_TUNED v1; tree count, tree duration and grass duration CREATOR_LOCKED",
+    "rockDamage": 20,
+    "rockRadius": 24,
+    "rockSpeed": 180,
+    "rockLife": 0.8,
+    "treeCount": 10,
+    "treeMs": 3000,
+    "woodPerTree": 1,
+    "groveRange": 130,
+    "rootRange": 55,
+    "rootMs": 10000,
+    "rootDamage": 4,
+    "rootTickMs": 1000
   }
 }
