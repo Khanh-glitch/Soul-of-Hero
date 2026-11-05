@@ -139,6 +139,17 @@ export function initPfx(): Promise<boolean> {
   return fullManifest;
 }
 export function fullMode(): Promise<boolean> { return fullManifest ?? Promise.resolve(false); }
+/** QA-only hook for single-file test builds: register externally supplied manifest
+ *  entries (atlas pages embedded as data: URLs in the HTML) and mark full mode on.
+ *  Injected entries are pilot-flagged so their pages are never LRU-evicted. */
+export function injectManifest(effects: PfxEntry[]): void {
+  const pilotList = (PILOT_MANIFEST as any).effects ?? PILOT_MANIFEST;
+  for (const e of effects) {
+    if (!manifest.has(e.id)) manifest.set(e.id, e);
+    if (!pilotList.some((p: any) => p.id === e.id)) pilotList.push(e);
+  }
+  fullManifest = Promise.resolve(true);
+}
 export function catalog(): { id: string; name: string; category: string; state: string; loaded: boolean; pilot: boolean }[] {
   const pilotIds = new Set(((PILOT_MANIFEST as any).effects ?? PILOT_MANIFEST).map((p: any) => p.id));
   return [...manifest.values()].sort((a, b) => a.id.localeCompare(b.id)).map(e => ({
