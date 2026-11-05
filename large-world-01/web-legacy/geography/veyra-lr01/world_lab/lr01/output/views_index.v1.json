@@ -1,0 +1,722 @@
+{
+  "schema": "soh.map.lr01.views_index.v1",
+  "status": "STATIC_GEOGRAPHY_QA_VIEWS__NOT_PLAYABLE__NO_CREATOR_VISUAL_APPROVAL",
+  "nativeResolution": [
+    640,
+    360
+  ],
+  "regionCount": 6,
+  "modes": [
+    "before",
+    "after",
+    "after_ui"
+  ],
+  "viewCount": 18,
+  "errors": [],
+  "views": [
+    {
+      "regionId": "zone_bz_greywater",
+      "mode": "before",
+      "reason": "RT-1 corridor: river, bridge br_4, po_kilns context, cart/trail transition",
+      "file": "output/views/zone_bz_greywater_before_640x360.png",
+      "svg": "output/views/zone_bz_greywater_before_640x360.svg",
+      "width": 640,
+      "height": 360,
+      "bytes": 11748,
+      "svgSha256": "95f90194999507d3a0cf5d879f182a410400ea33895c4f5355c897feb16388b1",
+      "pngSha256": "786b5bfd2d1852c20fa6de709c12e7d77c4cd49df9249ef17090725559e2ebe9",
+      "window": {
+        "x0": 626.7523,
+        "y0": 521.9579,
+        "wAu": 320,
+        "hAu": 180,
+        "pxPerAu": 2,
+        "cellPx": 16,
+        "bboxAu": [
+          705.377,
+          590.5798,
+          868.1276,
+          633.3361
+        ]
+      },
+      "transform": {
+        "authoringAuPerPreviewPx": 0.5,
+        "previewPxPerAu": 2,
+        "sourceCellPx": 16,
+        "runtimeScaleStatus": "UNDECIDED",
+        "note": "MAP geography QA view, not a native gameplay camera. cellPx=16 at pxPerAu=2 preserves Web 16px tile scale without canonizing U."
+      },
+      "sourceIds": {
+        "canon": "88780f78b9e80278",
+        "geo01": "13ae97272edc47b0",
+        "poiLayouts": "poi_layouts.v1.json"
+      },
+      "status": "BEFORE_GEO01_RASTER_DIAGNOSTIC: flat 8au raster cells, no art treatment, no transitions, no wave motifs, no shore glints."
+    },
+    {
+      "regionId": "zone_bz_greywater",
+      "mode": "after",
+      "reason": "RT-1 corridor: river, bridge br_4, po_kilns context, cart/trail transition",
+      "file": "output/views/zone_bz_greywater_after_640x360.png",
+      "svg": "output/views/zone_bz_greywater_after_640x360.svg",
+      "width": 640,
+      "height": 360,
+      "bytes": 18427,
+      "svgSha256": "eff034c72e2829e580f3abc62a958663e7c68f3c44b2138a3dfd77ebc422dfcf",
+      "pngSha256": "3c202bedfad0a6022e394406e8d9105365bb5946552c675eb8f2d50264c3193a",
+      "window": {
+        "x0": 626.7523,
+        "y0": 521.9579,
+        "wAu": 320,
+        "hAu": 180,
+        "pxPerAu": 2,
+        "cellPx": 16,
+        "bboxAu": [
+          705.377,
+          590.5798,
+          868.1276,
+          633.3361
+        ]
+      },
+      "transform": {
+        "authoringAuPerPreviewPx": 0.5,
+        "previewPxPerAu": 2,
+        "sourceCellPx": 16,
+        "runtimeScaleStatus": "UNDECIDED",
+        "note": "MAP geography QA view, not a native gameplay camera. cellPx=16 at pxPerAu=2 preserves Web 16px tile scale without canonizing U."
+      },
+      "sourceIds": {
+        "canon": "88780f78b9e80278",
+        "geo01": "13ae97272edc47b0",
+        "poiLayouts": "poi_layouts.v1.json"
+      },
+      "status": "AFTER_MAP_LR01_DATA_DRIVEN_WEB_BASELINE_STYLE: terrain transitions, Web-baseline ocean/waves/shore glints, authored roads, POI/Elder/bridge landmarks."
+    },
+    {
+      "regionId": "zone_bz_greywater",
+      "mode": "after_ui",
+      "reason": "RT-1 corridor: river, bridge br_4, po_kilns context, cart/trail transition",
+      "file": "output/views/zone_bz_greywater_after_ui_640x360.png",
+      "svg": "output/views/zone_bz_greywater_after_ui_640x360.svg",
+      "width": 640,
+      "height": 360,
+      "bytes": 25095,
+      "svgSha256": "6c8b680cfadd55ab4dd549811cd3e9b009e02b56ad2b11f714b2be40ac306c0a",
+      "pngSha256": "b1a73dffde72fc2b37f5aa609bc169e2fe52bde9b0718035c95cae1057aa8e4f",
+      "window": {
+        "x0": 626.7523,
+        "y0": 521.9579,
+        "wAu": 320,
+        "hAu": 180,
+        "pxPerAu": 2,
+        "cellPx": 16,
+        "bboxAu": [
+          705.377,
+          590.5798,
+          868.1276,
+          633.3361
+        ]
+      },
+      "transform": {
+        "authoringAuPerPreviewPx": 0.5,
+        "previewPxPerAu": 2,
+        "sourceCellPx": 16,
+        "runtimeScaleStatus": "UNDECIDED",
+        "note": "MAP geography QA view, not a native gameplay camera. cellPx=16 at pxPerAu=2 preserves Web 16px tile scale without canonizing U."
+      },
+      "sourceIds": {
+        "canon": "88780f78b9e80278",
+        "geo01": "13ae97272edc47b0",
+        "poiLayouts": "poi_layouts.v1.json"
+      },
+      "status": "AFTER_PLUS_QA_HUD_OVERLAY: same scene with representative UI frame for readability inspection. NOT a playable scene."
+    },
+    {
+      "regionId": "zone_bz_silver",
+      "mode": "before",
+      "reason": "western spawn / candidate home region",
+      "file": "output/views/zone_bz_silver_before_640x360.png",
+      "svg": "output/views/zone_bz_silver_before_640x360.svg",
+      "width": 640,
+      "height": 360,
+      "bytes": 9772,
+      "svgSha256": "c5731a84ba29c882d4bbf59fd572bc5ffc4bc7da820a15e334612a413653c011",
+      "pngSha256": "b1b9aa34a7bf340fb6f44f817b9bb239a3594a4613868279feaef77c834a1c22",
+      "window": {
+        "x0": 537.4992,
+        "y0": 579.6053,
+        "wAu": 320,
+        "hAu": 180,
+        "pxPerAu": 2,
+        "cellPx": 16,
+        "bboxAu": [
+          634.4594,
+          652.8304,
+          760.539,
+          686.3801
+        ]
+      },
+      "transform": {
+        "authoringAuPerPreviewPx": 0.5,
+        "previewPxPerAu": 2,
+        "sourceCellPx": 16,
+        "runtimeScaleStatus": "UNDECIDED",
+        "note": "MAP geography QA view, not a native gameplay camera. cellPx=16 at pxPerAu=2 preserves Web 16px tile scale without canonizing U."
+      },
+      "sourceIds": {
+        "canon": "88780f78b9e80278",
+        "geo01": "13ae97272edc47b0",
+        "poiLayouts": "poi_layouts.v1.json"
+      },
+      "status": "BEFORE_GEO01_RASTER_DIAGNOSTIC: flat 8au raster cells, no art treatment, no transitions, no wave motifs, no shore glints."
+    },
+    {
+      "regionId": "zone_bz_silver",
+      "mode": "after",
+      "reason": "western spawn / candidate home region",
+      "file": "output/views/zone_bz_silver_after_640x360.png",
+      "svg": "output/views/zone_bz_silver_after_640x360.svg",
+      "width": 640,
+      "height": 360,
+      "bytes": 15148,
+      "svgSha256": "cdd67e072959cec83e58c2e5586ff4cb6d42d26843db8f9e9716f7c9a2b05c66",
+      "pngSha256": "eaaf83a6815eb9df76d1f1a416cabf4d3e9d78278a641dd36d4d4971a7e3963c",
+      "window": {
+        "x0": 537.4992,
+        "y0": 579.6053,
+        "wAu": 320,
+        "hAu": 180,
+        "pxPerAu": 2,
+        "cellPx": 16,
+        "bboxAu": [
+          634.4594,
+          652.8304,
+          760.539,
+          686.3801
+        ]
+      },
+      "transform": {
+        "authoringAuPerPreviewPx": 0.5,
+        "previewPxPerAu": 2,
+        "sourceCellPx": 16,
+        "runtimeScaleStatus": "UNDECIDED",
+        "note": "MAP geography QA view, not a native gameplay camera. cellPx=16 at pxPerAu=2 preserves Web 16px tile scale without canonizing U."
+      },
+      "sourceIds": {
+        "canon": "88780f78b9e80278",
+        "geo01": "13ae97272edc47b0",
+        "poiLayouts": "poi_layouts.v1.json"
+      },
+      "status": "AFTER_MAP_LR01_DATA_DRIVEN_WEB_BASELINE_STYLE: terrain transitions, Web-baseline ocean/waves/shore glints, authored roads, POI/Elder/bridge landmarks."
+    },
+    {
+      "regionId": "zone_bz_silver",
+      "mode": "after_ui",
+      "reason": "western spawn / candidate home region",
+      "file": "output/views/zone_bz_silver_after_ui_640x360.png",
+      "svg": "output/views/zone_bz_silver_after_ui_640x360.svg",
+      "width": 640,
+      "height": 360,
+      "bytes": 21687,
+      "svgSha256": "ac249cf9ff7fa201790dff856b90c68f4fa2ef40a11f04d536dc100237d5b3da",
+      "pngSha256": "3f3d2f9d70c790219179a7f287c4689b46c937fec793bdca3e90d8f8a5c3bd41",
+      "window": {
+        "x0": 537.4992,
+        "y0": 579.6053,
+        "wAu": 320,
+        "hAu": 180,
+        "pxPerAu": 2,
+        "cellPx": 16,
+        "bboxAu": [
+          634.4594,
+          652.8304,
+          760.539,
+          686.3801
+        ]
+      },
+      "transform": {
+        "authoringAuPerPreviewPx": 0.5,
+        "previewPxPerAu": 2,
+        "sourceCellPx": 16,
+        "runtimeScaleStatus": "UNDECIDED",
+        "note": "MAP geography QA view, not a native gameplay camera. cellPx=16 at pxPerAu=2 preserves Web 16px tile scale without canonizing U."
+      },
+      "sourceIds": {
+        "canon": "88780f78b9e80278",
+        "geo01": "13ae97272edc47b0",
+        "poiLayouts": "poi_layouts.v1.json"
+      },
+      "status": "AFTER_PLUS_QA_HUD_OVERLAY: same scene with representative UI frame for readability inspection. NOT a playable scene."
+    },
+    {
+      "regionId": "zone_bz_hook",
+      "mode": "before",
+      "reason": "Hook landmass, coast and logistics",
+      "file": "output/views/zone_bz_hook_before_640x360.png",
+      "svg": "output/views/zone_bz_hook_before_640x360.svg",
+      "width": 640,
+      "height": 360,
+      "bytes": 10943,
+      "svgSha256": "86e5619d1b943bee2995cb0fc0251c5c66f0da930e008e7afd395612974725ec",
+      "pngSha256": "8ef9d8c94fee0ec14c3509a04cb9edee700e510fd2451f0e6c9c7b6c36a56c94",
+      "window": {
+        "x0": 1120.6698,
+        "y0": 302.31,
+        "wAu": 320,
+        "hAu": 180,
+        "pxPerAu": 2,
+        "cellPx": 16,
+        "bboxAu": [
+          1222.7991,
+          367.0869,
+          1338.5406,
+          417.533
+        ]
+      },
+      "transform": {
+        "authoringAuPerPreviewPx": 0.5,
+        "previewPxPerAu": 2,
+        "sourceCellPx": 16,
+        "runtimeScaleStatus": "UNDECIDED",
+        "note": "MAP geography QA view, not a native gameplay camera. cellPx=16 at pxPerAu=2 preserves Web 16px tile scale without canonizing U."
+      },
+      "sourceIds": {
+        "canon": "88780f78b9e80278",
+        "geo01": "13ae97272edc47b0",
+        "poiLayouts": "poi_layouts.v1.json"
+      },
+      "status": "BEFORE_GEO01_RASTER_DIAGNOSTIC: flat 8au raster cells, no art treatment, no transitions, no wave motifs, no shore glints."
+    },
+    {
+      "regionId": "zone_bz_hook",
+      "mode": "after",
+      "reason": "Hook landmass, coast and logistics",
+      "file": "output/views/zone_bz_hook_after_640x360.png",
+      "svg": "output/views/zone_bz_hook_after_640x360.svg",
+      "width": 640,
+      "height": 360,
+      "bytes": 16965,
+      "svgSha256": "f1fff46d06eed228ce35dfddeed89af030821b3b5dfe7045afd67a658bf5c958",
+      "pngSha256": "8c3ffa2edefedba3d0832a15fc771ccd567b528edf89f1f943da5e82d63ff7fd",
+      "window": {
+        "x0": 1120.6698,
+        "y0": 302.31,
+        "wAu": 320,
+        "hAu": 180,
+        "pxPerAu": 2,
+        "cellPx": 16,
+        "bboxAu": [
+          1222.7991,
+          367.0869,
+          1338.5406,
+          417.533
+        ]
+      },
+      "transform": {
+        "authoringAuPerPreviewPx": 0.5,
+        "previewPxPerAu": 2,
+        "sourceCellPx": 16,
+        "runtimeScaleStatus": "UNDECIDED",
+        "note": "MAP geography QA view, not a native gameplay camera. cellPx=16 at pxPerAu=2 preserves Web 16px tile scale without canonizing U."
+      },
+      "sourceIds": {
+        "canon": "88780f78b9e80278",
+        "geo01": "13ae97272edc47b0",
+        "poiLayouts": "poi_layouts.v1.json"
+      },
+      "status": "AFTER_MAP_LR01_DATA_DRIVEN_WEB_BASELINE_STYLE: terrain transitions, Web-baseline ocean/waves/shore glints, authored roads, POI/Elder/bridge landmarks."
+    },
+    {
+      "regionId": "zone_bz_hook",
+      "mode": "after_ui",
+      "reason": "Hook landmass, coast and logistics",
+      "file": "output/views/zone_bz_hook_after_ui_640x360.png",
+      "svg": "output/views/zone_bz_hook_after_ui_640x360.svg",
+      "width": 640,
+      "height": 360,
+      "bytes": 23584,
+      "svgSha256": "d6f3ab2e1fae218f09e4aad0aa1282b4d75b5b3a69931ebbfd99e6a23a158cad",
+      "pngSha256": "9860c296457c0fcd8ee071daad3c008934bb79394a456a25713442b50bf9fc5c",
+      "window": {
+        "x0": 1120.6698,
+        "y0": 302.31,
+        "wAu": 320,
+        "hAu": 180,
+        "pxPerAu": 2,
+        "cellPx": 16,
+        "bboxAu": [
+          1222.7991,
+          367.0869,
+          1338.5406,
+          417.533
+        ]
+      },
+      "transform": {
+        "authoringAuPerPreviewPx": 0.5,
+        "previewPxPerAu": 2,
+        "sourceCellPx": 16,
+        "runtimeScaleStatus": "UNDECIDED",
+        "note": "MAP geography QA view, not a native gameplay camera. cellPx=16 at pxPerAu=2 preserves Web 16px tile scale without canonizing U."
+      },
+      "sourceIds": {
+        "canon": "88780f78b9e80278",
+        "geo01": "13ae97272edc47b0",
+        "poiLayouts": "poi_layouts.v1.json"
+      },
+      "status": "AFTER_PLUS_QA_HUD_OVERLAY: same scene with representative UI frame for readability inspection. NOT a playable scene."
+    },
+    {
+      "regionId": "zone_bz_delta",
+      "mode": "before",
+      "reason": "wetlands, distributaries, biome transitions",
+      "file": "output/views/zone_bz_delta_before_640x360.png",
+      "svg": "output/views/zone_bz_delta_before_640x360.svg",
+      "width": 640,
+      "height": 360,
+      "bytes": 11858,
+      "svgSha256": "86f13ac0ab40d8e6c870341d793e8ee0ba34c04a939a95cea2a73adac4316b9c",
+      "pngSha256": "92a18b7007ca872104f11470ceed2b94127e37613efe200f1f7d8fa504c97900",
+      "window": {
+        "x0": 942.0093,
+        "y0": 746.1147,
+        "wAu": 320,
+        "hAu": 180,
+        "pxPerAu": 2,
+        "cellPx": 16,
+        "bboxAu": [
+          1067.9549,
+          812.7424,
+          1136.0638,
+          859.487
+        ]
+      },
+      "transform": {
+        "authoringAuPerPreviewPx": 0.5,
+        "previewPxPerAu": 2,
+        "sourceCellPx": 16,
+        "runtimeScaleStatus": "UNDECIDED",
+        "note": "MAP geography QA view, not a native gameplay camera. cellPx=16 at pxPerAu=2 preserves Web 16px tile scale without canonizing U."
+      },
+      "sourceIds": {
+        "canon": "88780f78b9e80278",
+        "geo01": "13ae97272edc47b0",
+        "poiLayouts": "poi_layouts.v1.json"
+      },
+      "status": "BEFORE_GEO01_RASTER_DIAGNOSTIC: flat 8au raster cells, no art treatment, no transitions, no wave motifs, no shore glints."
+    },
+    {
+      "regionId": "zone_bz_delta",
+      "mode": "after",
+      "reason": "wetlands, distributaries, biome transitions",
+      "file": "output/views/zone_bz_delta_after_640x360.png",
+      "svg": "output/views/zone_bz_delta_after_640x360.svg",
+      "width": 640,
+      "height": 360,
+      "bytes": 18104,
+      "svgSha256": "925d917502cfd7710631be262498080f5d9c731cc90d94587ef9b8f81d41d891",
+      "pngSha256": "b6e3d3697d111ce3b90dadd6043e93a0bcb5a9ad1b38db3083ae6579059e2ef9",
+      "window": {
+        "x0": 942.0093,
+        "y0": 746.1147,
+        "wAu": 320,
+        "hAu": 180,
+        "pxPerAu": 2,
+        "cellPx": 16,
+        "bboxAu": [
+          1067.9549,
+          812.7424,
+          1136.0638,
+          859.487
+        ]
+      },
+      "transform": {
+        "authoringAuPerPreviewPx": 0.5,
+        "previewPxPerAu": 2,
+        "sourceCellPx": 16,
+        "runtimeScaleStatus": "UNDECIDED",
+        "note": "MAP geography QA view, not a native gameplay camera. cellPx=16 at pxPerAu=2 preserves Web 16px tile scale without canonizing U."
+      },
+      "sourceIds": {
+        "canon": "88780f78b9e80278",
+        "geo01": "13ae97272edc47b0",
+        "poiLayouts": "poi_layouts.v1.json"
+      },
+      "status": "AFTER_MAP_LR01_DATA_DRIVEN_WEB_BASELINE_STYLE: terrain transitions, Web-baseline ocean/waves/shore glints, authored roads, POI/Elder/bridge landmarks."
+    },
+    {
+      "regionId": "zone_bz_delta",
+      "mode": "after_ui",
+      "reason": "wetlands, distributaries, biome transitions",
+      "file": "output/views/zone_bz_delta_after_ui_640x360.png",
+      "svg": "output/views/zone_bz_delta_after_ui_640x360.svg",
+      "width": 640,
+      "height": 360,
+      "bytes": 24541,
+      "svgSha256": "279567c4f846e74c2c44394d879e7881774583d9d6db10effb472cb30408830c",
+      "pngSha256": "a07abc8107ab285a9bf51fb56d7ffd9c16f5135b7815a210a62a862ef62eb9a3",
+      "window": {
+        "x0": 942.0093,
+        "y0": 746.1147,
+        "wAu": 320,
+        "hAu": 180,
+        "pxPerAu": 2,
+        "cellPx": 16,
+        "bboxAu": [
+          1067.9549,
+          812.7424,
+          1136.0638,
+          859.487
+        ]
+      },
+      "transform": {
+        "authoringAuPerPreviewPx": 0.5,
+        "previewPxPerAu": 2,
+        "sourceCellPx": 16,
+        "runtimeScaleStatus": "UNDECIDED",
+        "note": "MAP geography QA view, not a native gameplay camera. cellPx=16 at pxPerAu=2 preserves Web 16px tile scale without canonizing U."
+      },
+      "sourceIds": {
+        "canon": "88780f78b9e80278",
+        "geo01": "13ae97272edc47b0",
+        "poiLayouts": "poi_layouts.v1.json"
+      },
+      "status": "AFTER_PLUS_QA_HUD_OVERLAY: same scene with representative UI frame for readability inspection. NOT a playable scene."
+    },
+    {
+      "regionId": "land_ld_ironholm",
+      "mode": "before",
+      "reason": "island landmass, coastline, beaches, Elder separation",
+      "file": "output/views/land_ld_ironholm_before_640x360.png",
+      "svg": "output/views/land_ld_ironholm_before_640x360.svg",
+      "width": 640,
+      "height": 360,
+      "bytes": 9689,
+      "svgSha256": "239562f38f47d97b79e513b7601e1ba44d945598b47038179642dfc1f806f343",
+      "pngSha256": "ba1b205ecbaed27147803c3db2e0cddff37ac442e6dabde0a08b7f1932b3c9bc",
+      "window": {
+        "x0": 1010.8713,
+        "y0": 1183.7904,
+        "wAu": 349.0339,
+        "hAu": 196.3315,
+        "pxPerAu": 1.8336,
+        "cellPx": 14.6691,
+        "bboxAu": [
+          1075.0794,
+          1216.5123,
+          1295.697,
+          1347.4
+        ]
+      },
+      "transform": {
+        "authoringAuPerPreviewPx": 0.5454,
+        "previewPxPerAu": 1.8336,
+        "sourceCellPx": 14.6691,
+        "runtimeScaleStatus": "UNDECIDED",
+        "note": "MAP geography QA view, not a native gameplay camera. cellPx=16 at pxPerAu=2 preserves Web 16px tile scale without canonizing U."
+      },
+      "sourceIds": {
+        "canon": "88780f78b9e80278",
+        "geo01": "13ae97272edc47b0",
+        "poiLayouts": "poi_layouts.v1.json"
+      },
+      "status": "BEFORE_GEO01_RASTER_DIAGNOSTIC: flat 8au raster cells, no art treatment, no transitions, no wave motifs, no shore glints."
+    },
+    {
+      "regionId": "land_ld_ironholm",
+      "mode": "after",
+      "reason": "island landmass, coastline, beaches, Elder separation",
+      "file": "output/views/land_ld_ironholm_after_640x360.png",
+      "svg": "output/views/land_ld_ironholm_after_640x360.svg",
+      "width": 640,
+      "height": 360,
+      "bytes": 15188,
+      "svgSha256": "49dc9a9b3881b8e9795abb989acecfb7efae349d7351b44b03399e60fe23273b",
+      "pngSha256": "bd8c7b85e9fa2097bc97874973eaab1ecf7413d36780a3ce1a4a4065f30182c2",
+      "window": {
+        "x0": 1010.8713,
+        "y0": 1183.7904,
+        "wAu": 349.0339,
+        "hAu": 196.3315,
+        "pxPerAu": 1.8336,
+        "cellPx": 14.6691,
+        "bboxAu": [
+          1075.0794,
+          1216.5123,
+          1295.697,
+          1347.4
+        ]
+      },
+      "transform": {
+        "authoringAuPerPreviewPx": 0.5454,
+        "previewPxPerAu": 1.8336,
+        "sourceCellPx": 14.6691,
+        "runtimeScaleStatus": "UNDECIDED",
+        "note": "MAP geography QA view, not a native gameplay camera. cellPx=16 at pxPerAu=2 preserves Web 16px tile scale without canonizing U."
+      },
+      "sourceIds": {
+        "canon": "88780f78b9e80278",
+        "geo01": "13ae97272edc47b0",
+        "poiLayouts": "poi_layouts.v1.json"
+      },
+      "status": "AFTER_MAP_LR01_DATA_DRIVEN_WEB_BASELINE_STYLE: terrain transitions, Web-baseline ocean/waves/shore glints, authored roads, POI/Elder/bridge landmarks."
+    },
+    {
+      "regionId": "land_ld_ironholm",
+      "mode": "after_ui",
+      "reason": "island landmass, coastline, beaches, Elder separation",
+      "file": "output/views/land_ld_ironholm_after_ui_640x360.png",
+      "svg": "output/views/land_ld_ironholm_after_ui_640x360.svg",
+      "width": 640,
+      "height": 360,
+      "bytes": 20886,
+      "svgSha256": "4683c79644143388bd9c9e51e0112d1da86c7d1ad0bdd21d569cd3c0f0217e0b",
+      "pngSha256": "b7d58cf615dc5ceb72d9b328c381705ed09c08dc8b6efa6f782d9426763d98ce",
+      "window": {
+        "x0": 1010.8713,
+        "y0": 1183.7904,
+        "wAu": 349.0339,
+        "hAu": 196.3315,
+        "pxPerAu": 1.8336,
+        "cellPx": 14.6691,
+        "bboxAu": [
+          1075.0794,
+          1216.5123,
+          1295.697,
+          1347.4
+        ]
+      },
+      "transform": {
+        "authoringAuPerPreviewPx": 0.5454,
+        "previewPxPerAu": 1.8336,
+        "sourceCellPx": 14.6691,
+        "runtimeScaleStatus": "UNDECIDED",
+        "note": "MAP geography QA view, not a native gameplay camera. cellPx=16 at pxPerAu=2 preserves Web 16px tile scale without canonizing U."
+      },
+      "sourceIds": {
+        "canon": "88780f78b9e80278",
+        "geo01": "13ae97272edc47b0",
+        "poiLayouts": "poi_layouts.v1.json"
+      },
+      "status": "AFTER_PLUS_QA_HUD_OVERLAY: same scene with representative UI frame for readability inspection. NOT a playable scene."
+    },
+    {
+      "regionId": "elder_el_typhon",
+      "mode": "before",
+      "reason": "Elder territory, approach, arenas, separation",
+      "file": "output/views/elder_el_typhon_before_640x360.png",
+      "svg": "output/views/elder_el_typhon_before_640x360.svg",
+      "width": 640,
+      "height": 360,
+      "bytes": 14411,
+      "svgSha256": "f52ebcb7a356c015ec1998a65d4c31f5322238d4855df2cc1fd62f6d9822dfe1",
+      "pngSha256": "9a07a734dfeb814ddef6c2e17254047a5a4a5f3b46ebe4301f1a0ffefd72d964",
+      "window": {
+        "x0": 269.394,
+        "y0": 197.5277,
+        "wAu": 641.1397,
+        "hAu": 360.6411,
+        "pxPerAu": 0.9982,
+        "cellPx": 7.9858,
+        "bboxAu": [
+          439.1553,
+          257.6345,
+          740.7725,
+          498.0619
+        ]
+      },
+      "transform": {
+        "authoringAuPerPreviewPx": 1.0018,
+        "previewPxPerAu": 0.9982,
+        "sourceCellPx": 7.9858,
+        "runtimeScaleStatus": "UNDECIDED",
+        "note": "MAP geography QA view, not a native gameplay camera. cellPx=16 at pxPerAu=2 preserves Web 16px tile scale without canonizing U."
+      },
+      "sourceIds": {
+        "canon": "88780f78b9e80278",
+        "geo01": "13ae97272edc47b0",
+        "poiLayouts": "poi_layouts.v1.json"
+      },
+      "status": "BEFORE_GEO01_RASTER_DIAGNOSTIC: flat 8au raster cells, no art treatment, no transitions, no wave motifs, no shore glints."
+    },
+    {
+      "regionId": "elder_el_typhon",
+      "mode": "after",
+      "reason": "Elder territory, approach, arenas, separation",
+      "file": "output/views/elder_el_typhon_after_640x360.png",
+      "svg": "output/views/elder_el_typhon_after_640x360.svg",
+      "width": 640,
+      "height": 360,
+      "bytes": 22917,
+      "svgSha256": "aa375c4f1efa35515660d7b05b660f592b0aa738c9218b17acd29ecc6a56745c",
+      "pngSha256": "84c5e9e4ad463243bef5dbabf65ed66c6cb5755b6e25fb756ee9bafd7315b8ca",
+      "window": {
+        "x0": 269.394,
+        "y0": 197.5277,
+        "wAu": 641.1397,
+        "hAu": 360.6411,
+        "pxPerAu": 0.9982,
+        "cellPx": 7.9858,
+        "bboxAu": [
+          439.1553,
+          257.6345,
+          740.7725,
+          498.0619
+        ]
+      },
+      "transform": {
+        "authoringAuPerPreviewPx": 1.0018,
+        "previewPxPerAu": 0.9982,
+        "sourceCellPx": 7.9858,
+        "runtimeScaleStatus": "UNDECIDED",
+        "note": "MAP geography QA view, not a native gameplay camera. cellPx=16 at pxPerAu=2 preserves Web 16px tile scale without canonizing U."
+      },
+      "sourceIds": {
+        "canon": "88780f78b9e80278",
+        "geo01": "13ae97272edc47b0",
+        "poiLayouts": "poi_layouts.v1.json"
+      },
+      "status": "AFTER_MAP_LR01_DATA_DRIVEN_WEB_BASELINE_STYLE: terrain transitions, Web-baseline ocean/waves/shore glints, authored roads, POI/Elder/bridge landmarks."
+    },
+    {
+      "regionId": "elder_el_typhon",
+      "mode": "after_ui",
+      "reason": "Elder territory, approach, arenas, separation",
+      "file": "output/views/elder_el_typhon_after_ui_640x360.png",
+      "svg": "output/views/elder_el_typhon_after_ui_640x360.svg",
+      "width": 640,
+      "height": 360,
+      "bytes": 29536,
+      "svgSha256": "e0768b8a475d0bc894d6fc6df7f0d38e5cb925d17757180f73beef97b54ee276",
+      "pngSha256": "d0452d52d00680078682b08619da9b4f2cd87bdc5cbd7a7644a04f15ea27d64b",
+      "window": {
+        "x0": 269.394,
+        "y0": 197.5277,
+        "wAu": 641.1397,
+        "hAu": 360.6411,
+        "pxPerAu": 0.9982,
+        "cellPx": 7.9858,
+        "bboxAu": [
+          439.1553,
+          257.6345,
+          740.7725,
+          498.0619
+        ]
+      },
+      "transform": {
+        "authoringAuPerPreviewPx": 1.0018,
+        "previewPxPerAu": 0.9982,
+        "sourceCellPx": 7.9858,
+        "runtimeScaleStatus": "UNDECIDED",
+        "note": "MAP geography QA view, not a native gameplay camera. cellPx=16 at pxPerAu=2 preserves Web 16px tile scale without canonizing U."
+      },
+      "sourceIds": {
+        "canon": "88780f78b9e80278",
+        "geo01": "13ae97272edc47b0",
+        "poiLayouts": "poi_layouts.v1.json"
+      },
+      "status": "AFTER_PLUS_QA_HUD_OVERLAY: same scene with representative UI frame for readability inspection. NOT a playable scene."
+    }
+  ],
+  "inspectedByAgent": "see docs/MILESTONE_E.md",
+  "reproducibility": "node tools/render_world.mjs (deterministic SVG + Chromium screenshot)"
+}

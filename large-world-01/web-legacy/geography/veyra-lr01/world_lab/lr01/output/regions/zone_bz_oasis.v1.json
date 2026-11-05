@@ -1,0 +1,203 @@
+{
+  "schema": "soh.map.lr01.region.v1",
+  "kind": "construction_zone",
+  "id": "bz_oasis",
+  "name": "Mirage Oasis Terrace",
+  "soil": "cát cứng",
+  "water": "ốc đảo",
+  "slope": "phẳng",
+  "tags": [
+    "bờ hồ"
+  ],
+  "notes": "Nước quý hiếm trong sa mạc.",
+  "conf": "proposal",
+  "sourceRef": "project.zones[] where id=bz_oasis",
+  "status": [
+    "SOURCE_AUTHORED",
+    "DERIVED",
+    "PROPOSED"
+  ],
+  "geometry": {
+    "ringAu": [
+      [
+        613.9112489272912,
+        971.9077903392281
+      ],
+      [
+        614.4638987537808,
+        965.3025967797428
+      ],
+      [
+        614.6401629451304,
+        958.7614349358473
+      ],
+      [
+        614.4400415013401,
+        952.2843048075417
+      ],
+      [
+        619.9348780748967,
+        947.1751846954337
+      ],
+      [
+        631.1246726657998,
+        943.4340745995235
+      ],
+      [
+        643.5491687209551,
+        941.272087941658
+      ],
+      [
+        657.2083662403622,
+        940.6892247218377
+      ],
+      [
+        667.7735628550845,
+        943.1664121569474
+      ],
+      [
+        675.244758565122,
+        948.7036502469874
+      ],
+      [
+        682.6484220140138,
+        954.1042019690055
+      ],
+      [
+        689.9845532017601,
+        959.3680673230018
+      ],
+      [
+        691.2921177763053,
+        965.1069333127583
+      ],
+      [
+        686.5711157376492,
+        971.320799938275
+      ],
+      [
+        679.0303293239474,
+        976.510341114611
+      ],
+      [
+        668.6697585351999,
+        980.6755568417665
+      ],
+      [
+        657.1365144319559,
+        982.1552805679942
+      ],
+      [
+        644.4305970142156,
+        980.9495122932939
+      ],
+      [
+        631.9669597325205,
+        979.0625678967006
+      ],
+      [
+        619.7456025868712,
+        976.4944473782141
+      ]
+    ],
+    "ringCount": 1,
+    "areaAu2": 2481.2417,
+    "perimeterAu": 194.4974,
+    "bboxAu": [
+      613.9112,
+      940.6892,
+      691.2921,
+      982.1553
+    ],
+    "centroidAu": [
+      650.3614,
+      961.8442
+    ],
+    "outerVertexCount": 20,
+    "holeCount": 0
+  },
+  "rasterCells": {
+    "cells": 38,
+    "areaAu2": 2432,
+    "elevationRawByte": {
+      "min": 47,
+      "max": 72,
+      "mean": 59.0526,
+      "p25": 48,
+      "p50": 61,
+      "p75": 64,
+      "p95": 70,
+      "unit": "UNKNOWN_SOURCE_BYTE__NO_APPROVED_PHYSICAL_SCALE"
+    },
+    "slopeRawDelta": {
+      "min": 1,
+      "max": 13,
+      "mean": 5.1316,
+      "p50": 3,
+      "p95": 10,
+      "unit": "RAW_BYTE_DELTA_PER_8au_CELL__NOT_A_GAMEPLAY_THRESHOLD"
+    },
+    "seaDistanceCellsMean": 24.3158,
+    "freshwaterProximityCellsMean": 3.5789,
+    "clearanceCellsMean": 3.5789,
+    "biomeHistogram": {
+      "5": 38
+    },
+    "roadClassHistogram": {
+      "0": 29,
+      "2": 9
+    },
+    "coastCells": 0,
+    "coastBandLengthAuApprox": 0,
+    "buildableCells": 38,
+    "walkableCells": 38,
+    "waterCells": 0,
+    "cargoCells": 0,
+    "crossingCells": 1
+  },
+  "buildSuitability": {
+    "buildableCells": 38,
+    "buildableFraction": 1,
+    "meanSlopeRaw": 5.1316,
+    "meanFreshwaterProximityCells": 3.5789,
+    "status": "DERIVED",
+    "note": "Geometric suitability only. A0 occupancy, claim legality and Gameplay building rules are NOT asserted."
+  },
+  "loadingSpace": {
+    "cells": 10,
+    "areaAu2": 640,
+    "bboxAu": [
+      652,
+      964,
+      684,
+      980
+    ],
+    "status": "PROPOSED",
+    "note": "PROPOSED spatial candidate: buildable cells within 3 grid cells (24 au) of a cart-road/cart-bridge/dock cargo candidate. NOT a loading platform or a Gameplay placement grant."
+  },
+  "naturalChokepoints": {
+    "clusterIds": [],
+    "status": "DERIVED",
+    "note": "clearanceCells <= 2 (<=16 au from blocked geometry); geometric narrowness, not a combat chokepoint claim."
+  },
+  "nearestRoads": [
+    {
+      "id": "rd_1f",
+      "kind": "trail",
+      "d": 6.282
+    },
+    {
+      "id": "rd_k",
+      "kind": "cart",
+      "d": 28.3196
+    },
+    {
+      "id": "rd_1l",
+      "kind": "trail",
+      "d": 38.2248
+    }
+  ],
+  "walkableComponentIds": [
+    0
+  ]
+}

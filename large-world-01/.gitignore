@@ -1,0 +1,12 @@
+# LW-01 pilot: keep generated dependencies / builds / upstream Gameplay evidence
+# out of Git. The vendored web/ trees remain byte-identical on disk; only the
+# source, tests, tools and LW-01 evidence are tracked.
+**/node_modules/
+**/dist/
+web-large/evidence/
+web-legacy/evidence/
+!evidence/build.log
+!evidence/qa-report.json
+!evidence/verification.json
+!evidence/shots/
+!evidence/shots/*.png

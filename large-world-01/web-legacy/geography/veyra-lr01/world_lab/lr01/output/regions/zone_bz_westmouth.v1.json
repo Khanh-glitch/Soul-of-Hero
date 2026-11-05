@@ -1,0 +1,204 @@
+{
+  "schema": "soh.map.lr01.region.v1",
+  "kind": "construction_zone",
+  "id": "bz_westmouth",
+  "name": "Westmouth Coastal Terrace",
+  "soil": "cát pha",
+  "water": "suối Westbrook",
+  "slope": "thoải",
+  "tags": [
+    "ven biển",
+    "bình nguyên"
+  ],
+  "notes": "",
+  "conf": "proposal",
+  "sourceRef": "project.zones[] where id=bz_westmouth",
+  "status": [
+    "SOURCE_AUTHORED",
+    "DERIVED",
+    "PROPOSED"
+  ],
+  "geometry": {
+    "ringAu": [
+      [
+        362.04116180000034,
+        617.0272250640966
+      ],
+      [
+        362.1449246678661,
+        603.0090750213656
+      ],
+      [
+        363.1011676385072,
+        590.1074893835438
+      ],
+      [
+        364.9098907119236,
+        578.3224681506315
+      ],
+      [
+        368.98859577561495,
+        569.0625753585078
+      ],
+      [
+        375.3372828295813,
+        562.327811007173
+      ],
+      [
+        382.3469138844282,
+        558.5098194936885
+      ],
+      [
+        390.01748894015583,
+        557.6086008180544
+      ],
+      [
+        398.14559086558705,
+        559.5636175079273
+      ],
+      [
+        406.7312196607218,
+        564.3748695633071
+      ],
+      [
+        411.1665514062617,
+        574.0853716932479
+      ],
+      [
+        411.45158610220665,
+        588.6951238977492
+      ],
+      [
+        410.15457305865044,
+        601.790408920163
+      ],
+      [
+        407.2755122755932,
+        613.371226760489
+      ],
+      [
+        403.30207270290146,
+        625.3663755738088
+      ],
+      [
+        398.23425434057526,
+        637.7758553601225
+      ],
+      [
+        391.1074128544335,
+        642.7082135697716
+      ],
+      [
+        381.9215482444761,
+        640.1634502027563
+      ],
+      [
+        373.49378204614,
+        635.177376410802
+      ],
+      [
+        365.82411425942496,
+        627.7499921939087
+      ]
+    ],
+    "ringCount": 1,
+    "areaAu2": 3323.49,
+    "perimeterAu": 218.619,
+    "bboxAu": [
+      362.0412,
+      557.6086,
+      411.4516,
+      642.7082
+    ],
+    "centroidAu": [
+      386.645,
+      598.4527
+    ],
+    "outerVertexCount": 20,
+    "holeCount": 0
+  },
+  "rasterCells": {
+    "cells": 51,
+    "areaAu2": 3264,
+    "elevationRawByte": {
+      "min": 29,
+      "max": 52,
+      "mean": 40.3725,
+      "p25": 36,
+      "p50": 40,
+      "p75": 45,
+      "p95": 50,
+      "unit": "UNKNOWN_SOURCE_BYTE__NO_APPROVED_PHYSICAL_SCALE"
+    },
+    "slopeRawDelta": {
+      "min": 2,
+      "max": 5,
+      "mean": 3.6078,
+      "p50": 4,
+      "p95": 4,
+      "unit": "RAW_BYTE_DELTA_PER_8au_CELL__NOT_A_GAMEPLAY_THRESHOLD"
+    },
+    "seaDistanceCellsMean": 7.2745,
+    "freshwaterProximityCellsMean": 10.1961,
+    "clearanceCellsMean": 7.1176,
+    "biomeHistogram": {
+      "0": 51
+    },
+    "roadClassHistogram": {
+      "0": 41,
+      "1": 10
+    },
+    "coastCells": 0,
+    "coastBandLengthAuApprox": 0,
+    "buildableCells": 51,
+    "walkableCells": 51,
+    "waterCells": 0,
+    "cargoCells": 10,
+    "crossingCells": 0
+  },
+  "buildSuitability": {
+    "buildableCells": 51,
+    "buildableFraction": 1,
+    "meanSlopeRaw": 3.6078,
+    "meanFreshwaterProximityCells": 10.1961,
+    "status": "DERIVED",
+    "note": "Geometric suitability only. A0 occupancy, claim legality and Gameplay building rules are NOT asserted."
+  },
+  "loadingSpace": {
+    "cells": 45,
+    "areaAu2": 2880,
+    "bboxAu": [
+      364,
+      564,
+      404,
+      636
+    ],
+    "status": "PROPOSED",
+    "note": "PROPOSED spatial candidate: buildable cells within 3 grid cells (24 au) of a cart-road/cart-bridge/dock cargo candidate. NOT a loading platform or a Gameplay placement grant."
+  },
+  "naturalChokepoints": {
+    "clusterIds": [],
+    "status": "DERIVED",
+    "note": "clearanceCells <= 2 (<=16 au from blocked geometry); geometric narrowness, not a combat chokepoint claim."
+  },
+  "nearestRoads": [
+    {
+      "id": "rd_r",
+      "kind": "cart",
+      "d": 7.1307
+    },
+    {
+      "id": "rd_s",
+      "kind": "cart",
+      "d": 40.6784
+    },
+    {
+      "id": "rd_2c",
+      "kind": "ferry",
+      "d": 72.6278
+    }
+  ],
+  "walkableComponentIds": [
+    0
+  ]
+}

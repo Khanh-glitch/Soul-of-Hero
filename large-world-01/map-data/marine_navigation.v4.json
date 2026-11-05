@@ -1,0 +1,44 @@
+{
+  "schema": "soh.wmp.v4.marine_navigation",
+  "decision": "FIXED_DOCKS__FREE_OPEN_WATER_TRAVEL",
+  "static": {
+    "portsAndDocks": "preserve 27 canonical docking coordinates and harbor interactions; coast can expose separate landing candidates after collision review",
+    "openWater": "free choice of heading anywhere in connected physically navigable water; no mandatory ferry corridor, teleport edge, rail path or predetermined A→B voyage",
+    "currentAuthoredFerries": "8 inherited ferries are optional navigational suggestions/story routes, NOT physical permissions and NOT the only water connections",
+    "boatCollision": "open-water candidate only; depth, draft, obstacles, current and mode to be signed off before actual movement",
+    "footOnSea": "FORBIDDEN; cargoPassable on sea likewise false",
+    "moveGraph": "cells adjacent over actual water, with continuous spatial movement and no ferry-only route constraints; later renderer uses continuous world positions not 8AU snaps",
+    "shoreline": "solid coast except validated docks/landings; cannot dock automatically just because a water cell neighbors dry land",
+    "optionalRoutePlanner": "createCurrentWorld().optionalMarineRoute({fromAu,toAu,riskPolicy})",
+    "pathChoice": "any sea water start and destination; returns an optional geometric route and hazards, never moves the player automatically",
+    "riskPolicies": [
+      "min_distance",
+      "avoid_hazards"
+    ]
+  },
+  "gameSystems": {
+    "vehicle": "Gameplay selects boat/raft/swim/ship capabilities, steering/throttle/stamina/fuel, weather impact and physical clearance",
+    "heatedSea": "localized water/air exposure, steam, thermal clues, overheating risk and cooling opportunity; no invented damage or temperature constants",
+    "deathSea": "roaming unique aquatic threat with telegraphed detection/wake cues, evasion/stealth/alternate route; no automatic proximity raid while offline",
+    "routePlanning": "optional map hints, no hard path; hazard info changes navigational decisions, not locked scripted ferry",
+    "save": "persistent vessel world position, item custody, unique monster identity, encounter state and environmental mutation across offline/online",
+    "weather": "wind/waves/storm/fog/current interactions; ocean may be risky but navigable with equipment and decisions"
+  },
+  "notImplemented": [
+    "player water movement",
+    "boats/rafting",
+    "leviathan AI and spawn",
+    "helicopter live object/loot",
+    "thermal damage",
+    "wetness/weather",
+    "runtime save migrations"
+  ],
+  "owner": {
+    "MAP": "static sea polygon, dock and island geometry, exposure domain",
+    "GAMEPLAY": "movement, vehicle, monster, weather, hazard rules",
+    "A0": "source custody, saving and anti-duplication",
+    "A3": "resource/loot/economy if any",
+    "A8": "POI interactions",
+    "CREATOR": "art/visual approval"
+  }
+}

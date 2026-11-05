@@ -1,0 +1,626 @@
+{
+  "schema": "soh.lw01.verification.v1",
+  "generatedAt": "2026-11-05T03:01:59.155Z",
+  "checks": 38,
+  "passed": 38,
+  "failed": 0,
+  "failures": [],
+  "checksDetail": [
+    {
+      "id": "G0.1 active revision WMP-04R1",
+      "pass": true,
+      "detail": {
+        "activeRevision": "WMP-04R1",
+        "mapAuthority": "veyra-world-master/CURRENT_WORLD_MASTER.json (WMP-04R1, v4/r1/manifest.r1.json)"
+      }
+    },
+    {
+      "id": "G0.2 pinned heads",
+      "pass": true,
+      "detail": {
+        "mapHead": "f0c2182bd2ec5e067f5c59cf3985dcf71856cdb1",
+        "gameplayHead": "e11a9b4471a0832cd6d039b5510725b10ee0275c"
+      }
+    },
+    {
+      "id": "G0.3 39 authoritative files / 1,675,828 bytes / 803 verbatim Gameplay files",
+      "pass": true,
+      "detail": {
+        "fileCount": 39,
+        "totalBytes": 1675828,
+        "legacyWebFiles": 803
+      }
+    },
+    {
+      "id": "G0.4 every vendored source digest still matches",
+      "pass": true,
+      "detail": {
+        "checked": 39
+      }
+    },
+    {
+      "id": "G0.5 21 raster digests + GOLD geometry present",
+      "pass": true,
+      "detail": {
+        "rasters": 21,
+        "goldLand": 8
+      }
+    },
+    {
+      "id": "G0.6 legacy 200x200 tree byte-identical in core/art/map-package",
+      "pass": true,
+      "detail": {
+        "identicalCore": true,
+        "identicalArt": true,
+        "identicalMapPackage": true
+      }
+    },
+    {
+      "id": "G1.1 2,000x2,000 = 4,000,000 cells synthetic NON-CANON",
+      "pass": true,
+      "detail": {
+        "cells": 4000000,
+        "kind": "CAPACITY_FIXTURE"
+      }
+    },
+    {
+      "id": "G1.2 exhaustive 3,969 chunk keys unique",
+      "pass": true,
+      "detail": {
+        "totalChunks": 3969,
+        "uniqueKeys": 3969,
+        "collisions": 0,
+        "legacyKeyCollisions": 0
+      }
+    },
+    {
+      "id": "G1.3 legacy 100-stride render key collides in-frame, new key does not",
+      "pass": true,
+      "detail": {
+        "renderChunk": 16,
+        "renderChunksX": 125,
+        "renderChunksY": 88,
+        "total": 11000,
+        "legacyKeyCollisions": 2175,
+        "newKeyCollisions": 0,
+        "note": "Original render.ts caches 16x16-tile canvases at cy*100+cx; with 125 display chunks across a 2,000-tile frame this aliases. New string key has zero collisions."
+      }
+    },
+    {
+      "id": "G1.4 bounded residency (never a 4M-cell materialization)",
+      "pass": true,
+      "detail": {
+        "resident": 25,
+        "residentBytes": 128000,
+        "peakResident": 25,
+        "peakResidentBytes": 128000,
+        "loads": 25,
+        "unloads": 0,
+        "evictions": 0,
+        "uniqueKeysEver": 25,
+        "materializeMsTotal": 5.999999992549419,
+        "materializeMsMax": 0.6000000014901161,
+        "simSetSize": 25,
+        "canvasCached": 0,
+        "canvasBytes": 0
+      }
+    },
+    {
+      "id": "G1.5 new render.ts has no WW/WH / cy*100+cx",
+      "pass": true,
+      "detail": {
+        "newPathClean": true,
+        "legacyPreserved": true
+      }
+    },
+    {
+      "id": "G1.6 U=1 authored Veyra = 2,000x1,400 = 2,800,000 cells, NOT square",
+      "pass": true,
+      "detail": {
+        "w": 2000,
+        "h": 1400,
+        "cells": 2800000
+      }
+    },
+    {
+      "id": "G2.1 5 authored U=1 scenes + day/night captured",
+      "pass": true,
+      "detail": {
+        "scenes": 6
+      }
+    },
+    {
+      "id": "G2.2 real WASD >=3 consecutive chunk boundaries away and back",
+      "pass": true,
+      "detail": {
+        "start": {
+          "x": 352,
+          "y": 556
+        },
+        "far": {
+          "x": 452,
+          "y": 560
+        },
+        "returned": {
+          "x": 352,
+          "y": 556
+        },
+        "boundaries": [
+          {
+            "at": 1793845717360,
+            "from": "veyra-u1|11:17",
+            "to": "veyra-u1|12:17",
+            "tile": {
+              "x": 384,
+              "y": 560
+            }
+          },
+          {
+            "at": 1793845724543,
+            "from": "veyra-u1|12:17",
+            "to": "veyra-u1|13:17",
+            "tile": {
+              "x": 416,
+              "y": 560
+            }
+          },
+          {
+            "at": 1793845732492,
+            "from": "veyra-u1|13:17",
+            "to": "veyra-u1|14:17",
+            "tile": {
+              "x": 448,
+              "y": 560
+            }
+          },
+          {
+            "at": 1793845734793,
+            "from": "veyra-u1|14:17",
+            "to": "veyra-u1|13:17",
+            "tile": {
+              "x": 447,
+              "y": 560
+            }
+          },
+          {
+            "at": 1793845742759,
+            "from": "veyra-u1|13:17",
+            "to": "veyra-u1|12:17",
+            "tile": {
+              "x": 415,
+              "y": 560
+            }
+          },
+          {
+            "at": 1793845749943,
+            "from": "veyra-u1|12:17",
+            "to": "veyra-u1|11:17",
+            "tile": {
+              "x": 383,
+              "y": 560
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "G2.3 no teleport in lieu of route",
+      "pass": true,
+      "detail": {
+        "qaUsed": true,
+        "teleportUsed": false,
+        "camUsedAsRoute": false
+      }
+    },
+    {
+      "id": "G2.4 all geometry negative fixtures pass",
+      "pass": true,
+      "detail": [
+        {
+          "id": "LW-N01 chunk coordinate uniqueness (2,000×2,000)",
+          "pass": true
+        },
+        {
+          "id": "LW-N01b exhaustive ALL-chunk key uniqueness for active frame",
+          "pass": true
+        },
+        {
+          "id": "LW-N02 legacy 100-stride key arithmetic alias (cx>=100)",
+          "pass": true
+        },
+        {
+          "id": "LW-N02b legacy render-cache 100-stride key collides IN-FRAME",
+          "pass": true
+        },
+        {
+          "id": "LW-N03 negative coords and frame edges",
+          "pass": true
+        },
+        {
+          "id": "LW-N04 no wrong-stride / cross-chunk index aliasing",
+          "pass": true
+        },
+        {
+          "id": "LW-N05 no land-walk on sea",
+          "pass": true
+        },
+        {
+          "id": "LW-N06 no ferry foot permission",
+          "pass": true
+        },
+        {
+          "id": "LW-N07 no default walkability on cliffs / blocked crossings",
+          "pass": true
+        },
+        {
+          "id": "LW-N08 no bogus buildable grants",
+          "pass": true
+        },
+        {
+          "id": "LW-N09 no beach/land duplication",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "id": "G2.5 all resident chunk packages exact",
+      "pass": true,
+      "detail": {
+        "packages": 25
+      }
+    },
+    {
+      "id": "G2.6 no helicopter object claimed (honest missing label)",
+      "pass": true,
+      "detail": {
+        "helicopterObject": "PROVEN_MISSING"
+      }
+    },
+    {
+      "id": "G2.7 Boat/swim/ferry/build legality NOT minted",
+      "pass": true,
+      "detail": {
+        "boundary": "GAMEPLAY_ONLY__NOT_APPROVED"
+      }
+    },
+    {
+      "id": "G3.1 save/relaunch resumes exact global coordinate",
+      "pass": true,
+      "detail": {
+        "x": 352,
+        "y": 556
+      }
+    },
+    {
+      "id": "G3.2 world-global durable IDs stable (source/struct/monster/ownership/trace/txn)",
+      "pass": true,
+      "detail": {
+        "stableIds": true,
+        "kinds": [
+          "monster",
+          "ownership",
+          "source",
+          "struct",
+          "trace",
+          "txn"
+        ]
+      }
+    },
+    {
+      "id": "G3.3 no duplicate receipts / no duplicate grants",
+      "pass": true,
+      "detail": {
+        "duplicateReceipts": 0,
+        "durableNegatives": 3
+      }
+    },
+    {
+      "id": "G3.4 legacy 200x200 save byte-identical (no wipe/migration)",
+      "pass": true,
+      "detail": {
+        "byteIdentical": true,
+        "saveErrors": []
+      }
+    },
+    {
+      "id": "G3.5 bounded sim: distant monster persisted but NOT ticked",
+      "pass": true,
+      "detail": {
+        "tickedChunks": 25,
+        "tickedCreatures": 0,
+        "distantCreatureCount": 1,
+        "deferredEvents": 2,
+        "processedEvents": 0,
+        "simMs": 49528.22799999546,
+        "lastTickMs": 0.20000000298023224
+      }
+    },
+    {
+      "id": "G3.6 offline catch-up causal and bounded (cap 5000)",
+      "pass": true,
+      "detail": {
+        "processed": 2,
+        "deferred": 0,
+        "truncated": 0,
+        "cap": 5000
+      }
+    },
+    {
+      "id": "G3.7 save size measured vs legacy 200x200",
+      "pass": true,
+      "detail": {
+        "lwSaveBytes": 1932,
+        "legacySaveBytes": 52812
+      }
+    },
+    {
+      "id": "G3.8 production Gameplay interaction range NOT implemented (QA probe only)",
+      "pass": true,
+      "detail": {
+        "note": "H/J are QA-only state fixtures, NOT production interaction range. The harvested source is a WORLD-GLOBAL durable identity whose chunk is unloaded and reloaded by the walked journey.",
+        "distanceTiles": 23.086792761230395,
+        "interactionRangeImplemented": false
+      }
+    },
+    {
+      "id": "G4.1 same Beacon AU [272,652] at U=2 / U=1 / U=0.5",
+      "pass": true,
+      "detail": [
+        {
+          "id": "veyra-u2",
+          "U": 2,
+          "tile": {
+            "x": 136,
+            "y": 326
+          }
+        },
+        {
+          "id": "veyra-u1",
+          "U": 1,
+          "tile": {
+            "x": 272,
+            "y": 652
+          }
+        },
+        {
+          "id": "beacon-u05",
+          "U": 0.5,
+          "tile": {
+            "x": 544,
+            "y": 1304
+          }
+        }
+      ]
+    },
+    {
+      "id": "G4.2 tile transform exact for each U",
+      "pass": true,
+      "detail": [
+        {
+          "U": 2,
+          "expected": {
+            "x": 136,
+            "y": 326
+          },
+          "actual": {
+            "x": 136,
+            "y": 326
+          }
+        },
+        {
+          "U": 1,
+          "expected": {
+            "x": 272,
+            "y": 652
+          },
+          "actual": {
+            "x": 272,
+            "y": 652
+          }
+        },
+        {
+          "U": 0.5,
+          "expected": {
+            "x": 544,
+            "y": 1304
+          },
+          "actual": {
+            "x": 544,
+            "y": 1304
+          }
+        }
+      ]
+    },
+    {
+      "id": "G4.3 U=0.5 explicitly bounded Beacon-only",
+      "pass": true,
+      "detail": {
+        "boundedPilot": "BEACON_ONLY__LAZY_CHUNKS_AROUND_BEACON"
+      }
+    },
+    {
+      "id": "G4.4 no approved final U / creator visual decision pending",
+      "pass": true,
+      "detail": {
+        "finalU": "NOT_APPROVED",
+        "visualApproval": "NOT_REQUESTED"
+      }
+    },
+    {
+      "id": "G4.5 equal native camera/player size vs legacy baseline",
+      "pass": true,
+      "detail": {
+        "TILE": 16,
+        "VIEW_W": 640,
+        "VIEW_H": 360,
+        "playerSpeed": 72,
+        "dayLengthMinutes": 24,
+        "heroSprite": {
+          "w": 16,
+          "h": 24
+        },
+        "WW": 200,
+        "WH": 200
+      }
+    },
+    {
+      "id": "G5.1 both trees typecheck, test and build",
+      "pass": true,
+      "detail": {
+        "large": "35 files / 274 tests",
+        "legacy": "34 files / 257 tests"
+      }
+    },
+    {
+      "id": "G5.2 zero browser errors, 16 real 640x360 captures",
+      "pass": true,
+      "detail": {
+        "browserErrors": 0,
+        "captures": 16
+      }
+    },
+    {
+      "id": "G5.3 measured frame p50/p95/dt/heap reported (no unmeasured 60 FPS claim)",
+      "pass": true,
+      "detail": {
+        "frames": 1200,
+        "frameMsP50": 1.1,
+        "frameMsP95": 1.9,
+        "dtP50": 16.7,
+        "heapUsedBytes": 36567451
+      }
+    },
+    {
+      "id": "G5.4 neutral-terrain theoretical vs physically walked times separated",
+      "pass": true,
+      "detail": {
+        "theoretical": 222.22222222222223,
+        "physicallyWalked": 226.2443438914027
+      }
+    },
+    {
+      "id": "G5.5 dev HUD off by default, toggle exposes all required fields",
+      "pass": true,
+      "detail": {
+        "offByDefault": true,
+        "toggledOn": true
+      }
+    },
+    {
+      "id": "G5.6 no weakened validator: verbatim legacy tests still pass",
+      "pass": true,
+      "detail": {
+        "note": "map-package.ts is byte-identical; the new profile-aware validator is additive."
+      }
+    }
+  ],
+  "gates": [
+    {
+      "gate": "LW-G0",
+      "verdict": "PASS",
+      "evidence": [
+        "G0.1 active revision WMP-04R1",
+        "G0.2 pinned heads",
+        "G0.3 39 authoritative files / 1,675,828 bytes / 803 verbatim Gameplay files",
+        "G0.4 every vendored source digest still matches",
+        "G0.5 21 raster digests + GOLD geometry present",
+        "G0.6 legacy 200x200 tree byte-identical in core/art/map-package"
+      ],
+      "note": "Active WMP-04R1 custody, pinned heads, 39 authoritative files with matching digests, verbatim Gameplay legacy tree."
+    },
+    {
+      "gate": "LW-G1",
+      "verdict": "PASS",
+      "evidence": [
+        "G1.1 2,000x2,000 = 4,000,000 cells synthetic NON-CANON",
+        "G1.2 exhaustive 3,969 chunk keys unique",
+        "G1.3 legacy 100-stride render key collides in-frame, new key does not",
+        "G1.4 bounded residency (never a 4M-cell materialization)",
+        "G1.5 new render.ts has no WW/WH / cy*100+cx",
+        "G1.6 U=1 authored Veyra = 2,000x1,400 = 2,800,000 cells, NOT square"
+      ],
+      "note": "Generic 2,000×2,000 capacity fixture: 4,000,000 cells, 3,969 unique chunk keys, bounded 25-chunk residency, no WW/WH or cy*100+cx in new path."
+    },
+    {
+      "gate": "LW-G2",
+      "verdict": "PARTIAL",
+      "evidence": [
+        "G2.1 5 authored U=1 scenes + day/night captured",
+        "G2.2 real WASD >=3 consecutive chunk boundaries away and back",
+        "G2.3 no teleport in lieu of route",
+        "G2.4 all geometry negative fixtures pass",
+        "G2.5 all resident chunk packages exact",
+        "G2.6 no helicopter object claimed (honest missing label)",
+        "G2.7 Boat/swim/ferry/build legality NOT minted"
+      ],
+      "note": "Continuous U=1 geography, real WASD 3+ boundaries away/back, negative fixtures and exact chunk packages PASS. Full-world traversal, Gameplay semantic validators/traversal/collision permission, marine/boat/ferry law and the helicopter object remain unresolved. See blockers."
+    },
+    {
+      "gate": "LW-G3",
+      "verdict": "PARTIAL",
+      "evidence": [
+        "G3.1 save/relaunch resumes exact global coordinate",
+        "G3.2 world-global durable IDs stable (source/struct/monster/ownership/trace/txn)",
+        "G3.3 no duplicate receipts / no duplicate grants",
+        "G3.4 legacy 200x200 save byte-identical (no wipe/migration)",
+        "G3.5 bounded sim: distant monster persisted but NOT ticked",
+        "G3.6 offline catch-up causal and bounded (cap 5000)",
+        "G3.7 save size measured vs legacy 200x200",
+        "G3.8 production Gameplay interaction range NOT implemented (QA probe only)"
+      ],
+      "note": "World-global durable identities, versioned save, idempotent grants, offline catch-up, bounded sim and legacy-save preservation PASS in the bounded pilot. Production Gameplay inventory/transactions/traces/monsters/ownership systems, interaction range, real harvest economy and full offline drains are NOT integrated. VEYRA_PLAYABLE is BLOCKED."
+    },
+    {
+      "gate": "LW-G4",
+      "verdict": "PASS",
+      "evidence": [
+        "G4.1 same Beacon AU [272,652] at U=2 / U=1 / U=0.5",
+        "G4.2 tile transform exact for each U",
+        "G4.3 U=0.5 explicitly bounded Beacon-only",
+        "G4.4 no approved final U / creator visual decision pending",
+        "G4.5 equal native camera/player size vs legacy baseline"
+      ],
+      "note": "EVIDENCE ONLY. Same Beacon AU at U=2/1/0.5, exact transforms, equal native camera/player size, bounded U=0.5. No approved final U; creator visual decision pending."
+    },
+    {
+      "gate": "LW-G5",
+      "verdict": "PASS",
+      "evidence": [
+        "G5.1 both trees typecheck, test and build",
+        "G5.2 zero browser errors, 16 real 640x360 captures",
+        "G5.3 measured frame p50/p95/dt/heap reported (no unmeasured 60 FPS claim)",
+        "G5.4 neutral-terrain theoretical vs physically walked times separated",
+        "G5.5 dev HUD off by default, toggle exposes all required fields",
+        "G5.6 no weakened validator: verbatim legacy tests still pass"
+      ],
+      "note": "Both trees typecheck/test/build, 274+257 tests, 16 real 640×360 captures, 0 browser errors, measured frame/heap/save metrics, HUD default off. Production integration regression suite is NOT part of this pilot."
+    }
+  ],
+  "pilotStopCondition": {
+    "verdict": "PASS",
+    "scope": "BOUNDED LW-01 SCALE/STREAMING PILOT ONLY",
+    "notClaimed": [
+      "VEYRA_PLAYABLE",
+      "VISUAL_ACCEPTED",
+      "MERGE_READY",
+      "WORLD_MASTER_SEALED",
+      "production art approval",
+      "complete Veyra gameplay",
+      "approved final U",
+      "sustained 60 FPS"
+    ],
+    "note": "The full pilot stop condition is met; the ENTIRE production Gameplay program is NOT complete."
+  },
+  "exactSourceSha256": {
+    "web-large/src/game/large/coords.ts": "a96f6fed74fecb22eb61c092be52cf5dc589d60e9c4c48ab7bd14576fffaa374",
+    "web-large/src/game/large/geometry.ts": "16976b1eade8da5d615f6296cbcab4863e970998bf9ffda69037e96214171121",
+    "web-large/src/game/large/chunk.ts": "a150c8502c0faec8774af22b3535d79619b53805e550622b889fd4e8006b2b91",
+    "web-large/src/game/large/state.ts": "af726ca363246a4acb57eca07bcedaced082e418abd493421f8362ae502d9f4d",
+    "web-large/src/game/large/runtime.ts": "f8ef7f606eaa9de10c1fdc8f5f34fc8aecb27b19a8cadecbee7a02c7a5a93962",
+    "web-large/src/game/render.ts": "d7cb50cd39a6ba85f714c08221c83d9b66634660ebda14f5c31b4a10bedb9bce",
+    "web-large/src/App.tsx": "08444a44cb1c4a8bb8769f4cf9afb461e78d2f9a10f32c297f73d085f679dc00",
+    "web-large/src/ui/GameLarge.tsx": "3bde611eebb8d389d70afee8640356c3b1f31b0b27c537926d78ff428b3612e9",
+    "tools/qa-browser.mjs": "2df9ef983d683ce525863e60104a7ab63dbd8948602efd517641e39961a1b1a2",
+    "tools/verify.mjs": "6290c4ee38d9a7b103722984a5e2eb3ba60a6841b31718381eaf0bfca51ceef0"
+  }
+}

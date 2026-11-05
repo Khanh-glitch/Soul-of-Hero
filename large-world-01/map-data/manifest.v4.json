@@ -1,0 +1,97 @@
+{
+  "schema": "soh.wmp.v4.manifest",
+  "worldId": "veyra",
+  "revision": "WMP-04",
+  "status": "ACTIVE_MAP_STATIC_V4__GAMEPLAY_NOT_INTEGRATED",
+  "baseline": {
+    "parent": "v3/manifest.v3.json",
+    "gitCommit": "92feba6b108d237be9e110e9f35d1d17ae5a837c",
+    "revisionDigest": "1356735557a421f720e24c6e9dd54ae0812e5f75cc18a48c14ddfc69de9bd114",
+    "goldSource": "data/canon/VEYRA_GOLD_MAP.sohmap.json"
+  },
+  "authority": {
+    "geometry": "WMP-03 preserved",
+    "biome": "WMP-04 active",
+    "coldRegion": "WMP-04 geographic physical potential",
+    "marineRegion": "WMP-04 active static zone",
+    "marineActors": "GAMEPLAY",
+    "physicalSeaMovement": "GAMEPLAY",
+    "resourceRewards": "GAMEPLAY"
+  },
+  "frameAu": [
+    2000,
+    1400
+  ],
+  "analysisRaster": {
+    "width": 250,
+    "height": 175,
+    "cellAu": 8
+  },
+  "scope": "All Veyra mapped dry land and connected ocean; no modification to land/water/POI/road/dock geometry",
+  "data": [
+    {
+      "path": "v4/data/biomeEffective.v4.u8",
+      "gitBlobSha1": "e517f85f963f572b6fb7cbd198bffa82bbeacb05",
+      "bytes": 43750,
+      "codes": "same 12 canonical biome codes; effective replacement on dry land only"
+    },
+    {
+      "path": "v4/data/marineRegion.v4.u8",
+      "gitBlobSha1": "d41065719d4696eb47764384c5ed9563ab6664a1",
+      "bytes": 43750,
+      "codes": "0 ordinary, 1 west deadly sea, 2 Cinder geothermal strait"
+    },
+    {
+      "path": "v4/data/coldTransition.v4.u8",
+      "gitBlobSha1": "f7b617bb0646751505190768ed695204f008924a",
+      "bytes": 43750,
+      "codes": "0 unrelated,1 outer fringe,2 frost boundary,3 snow biome core"
+    }
+  ],
+  "productionGenerator": "v4/src/world_v4.mjs",
+  "consumer": "api/current.mjs",
+  "checks": "v4/tests/run_v4.mjs",
+  "targets": {
+    "snowPercentOfDryLand": [
+      23,
+      25
+    ],
+    "dryRegionRelativeGrowthPercent": [
+      29,
+      31
+    ]
+  },
+  "observed": {
+    "dryLandCells": 14392,
+    "sourceSnowCells": 217,
+    "snowCells": 3454,
+    "snowPercentOfDryLand": 23.9994,
+    "snowAddedCells": 3237,
+    "sourceDryCells": 2632,
+    "dryCells": 3422,
+    "dryRelativeGrowthPercent": 30.0152,
+    "dryAddedCells": 790,
+    "changedLandBiomeCells": 4027,
+    "changedWaterCells": 0,
+    "changedBeachCells": 0,
+    "westDeadlySeaCells": 1451,
+    "hotCinderSeaCells": 1332
+  },
+  "design": "v4/layers/geography_design.v4.json",
+  "marineSites": "v4/layers/marine_sites.v4.json",
+  "navigationContract": "v4/layers/marine_navigation.v4.json",
+  "unresolved": [
+    "AU_to_runtime_tile_approval",
+    "temperature_rates_C",
+    "snow_seasonal_state_and_accumulation",
+    "open_water_swim_or_boat_capability",
+    "marine_AI_behaviors_and_persistence",
+    "helicopter_repair_salvage_and_items",
+    "full_Gameplay_EconomyMap_integration",
+    "visual_approval"
+  ],
+  "openSeaRoutePlanner": "v4/src/marine_routing.mjs",
+  "activeConsumer": "api/current.mjs",
+  "visualEvidence": "v4/evidence/biome_marine_before_after.svg",
+  "testCommand": "cd veyra-world-master && node v4/tests/run_v4.mjs"
+}

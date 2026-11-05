@@ -1,0 +1,208 @@
+{
+  "schema": "soh.map.lr01.region.v1",
+  "kind": "construction_zone",
+  "id": "bz_eastflats",
+  "name": "Eastwater Estuary Flats",
+  "soil": "phù sa ven biển",
+  "water": "sông + biển",
+  "slope": "phẳng",
+  "tags": [
+    "ven sông",
+    "ven biển",
+    "bình nguyên"
+  ],
+  "notes": "",
+  "conf": "proposal",
+  "sourceRef": "project.zones[] where id=bz_eastflats",
+  "status": [
+    "SOURCE_AUTHORED",
+    "DERIVED",
+    "PROPOSED"
+  ],
+  "geometry": {
+    "ringAu": [
+      [
+        1202.7389900625622,
+        508.4773130459448
+      ],
+      [
+        1203.16192475456,
+        502.95249980258876
+      ],
+      [
+        1205.2172435282769,
+        497.5437701300146
+      ],
+      [
+        1213.0787994816192,
+        494.03353476479265
+      ],
+      [
+        1226.7465926145876,
+        492.4217937069228
+      ],
+      [
+        1239.9002043230885,
+        491.2885846798147
+      ],
+      [
+        1252.5396346071216,
+        490.63390768346824
+      ],
+      [
+        1265.98507133217,
+        491.2824063896398
+      ],
+      [
+        1280.2365144982336,
+        493.23408079832933
+      ],
+      [
+        1289.8586679279492,
+        497.0716546617245
+      ],
+      [
+        1294.8515316213166,
+        502.7951279798254
+      ],
+      [
+        1294.8908928594374,
+        508.52940484078505
+      ],
+      [
+        1289.9767516423121,
+        514.2744852446035
+      ],
+      [
+        1280.4211653551324,
+        518.1894554230629
+      ],
+      [
+        1266.2241339978987,
+        520.2743153761633
+      ],
+      [
+        1252.5966975727983,
+        521.077853490207
+      ],
+      [
+        1239.5388560798317,
+        520.600069765194
+      ],
+      [
+        1225.8957425367973,
+        519.5055479938037
+      ],
+      [
+        1211.6673569436953,
+        517.7942881760357
+      ],
+      [
+        1203.9484394522838,
+        514.1182098600829
+      ]
+    ],
+    "ringCount": 1,
+    "areaAu2": 2336.5906,
+    "perimeterAu": 212.3823,
+    "bboxAu": [
+      1202.739,
+      490.6339,
+      1294.8909,
+      521.0779
+    ],
+    "centroidAu": [
+      1248.29,
+      505.9042
+    ],
+    "outerVertexCount": 20,
+    "holeCount": 0
+  },
+  "rasterCells": {
+    "cells": 38,
+    "areaAu2": 2432,
+    "elevationRawByte": {
+      "min": 14,
+      "max": 32,
+      "mean": 21,
+      "p25": 18,
+      "p50": 20,
+      "p75": 23,
+      "p95": 28,
+      "unit": "UNKNOWN_SOURCE_BYTE__NO_APPROVED_PHYSICAL_SCALE"
+    },
+    "slopeRawDelta": {
+      "min": 0,
+      "max": 9,
+      "mean": 2.0263,
+      "p50": 2,
+      "p95": 4,
+      "unit": "RAW_BYTE_DELTA_PER_8au_CELL__NOT_A_GAMEPLAY_THRESHOLD"
+    },
+    "seaDistanceCellsMean": 7.2895,
+    "freshwaterProximityCellsMean": 1.2368,
+    "clearanceCellsMean": 1.2105,
+    "biomeHistogram": {
+      "0": 37,
+      "4": 1
+    },
+    "roadClassHistogram": {
+      "0": 27,
+      "1": 5,
+      "4": 6
+    },
+    "coastCells": 0,
+    "coastBandLengthAuApprox": 0,
+    "buildableCells": 29,
+    "walkableCells": 29,
+    "waterCells": 9,
+    "cargoCells": 6,
+    "crossingCells": 0
+  },
+  "buildSuitability": {
+    "buildableCells": 29,
+    "buildableFraction": 0.7632,
+    "meanSlopeRaw": 2.0263,
+    "meanFreshwaterProximityCells": 1.2368,
+    "status": "DERIVED",
+    "note": "Geometric suitability only. A0 occupancy, claim legality and Gameplay building rules are NOT asserted."
+  },
+  "loadingSpace": {
+    "cells": 13,
+    "areaAu2": 832,
+    "bboxAu": [
+      1244,
+      492,
+      1292,
+      508
+    ],
+    "status": "PROPOSED",
+    "note": "PROPOSED spatial candidate: buildable cells within 3 grid cells (24 au) of a cart-road/cart-bridge/dock cargo candidate. NOT a loading platform or a Gameplay placement grant."
+  },
+  "naturalChokepoints": {
+    "clusterIds": [],
+    "status": "DERIVED",
+    "note": "clearanceCells <= 2 (<=16 au from blocked geometry); geometric narrowness, not a combat chokepoint claim."
+  },
+  "nearestRoads": [
+    {
+      "id": "rd_21",
+      "kind": "riverside",
+      "d": 14.358
+    },
+    {
+      "id": "rd_5",
+      "kind": "cart",
+      "d": 25.3264
+    },
+    {
+      "id": "rd_8",
+      "kind": "cart",
+      "d": 25.3264
+    }
+  ],
+  "walkableComponentIds": [
+    0,
+    3
+  ]
+}

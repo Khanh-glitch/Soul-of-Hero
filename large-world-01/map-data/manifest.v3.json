@@ -1,0 +1,339 @@
+{
+  "schema": "soh.wmp.world_master_manifest.v3",
+  "version": 3,
+  "revision": 1,
+  "packageId": "veyra-physical-world-master",
+  "status": "WMP03_PHYSICAL_SEMANTICS_CORRECTIVE_CANDIDATE__NOT_SEALED",
+  "authority": "MAP_DESIGNS_THE_PHYSICAL_WORLD__GAMEPLAY_POPULATES_AND_SIMULATES_IT",
+  "generatedBy": "veyra-world-master/v3/src/build_v3.mjs",
+  "generatedAtUtc": "DETERMINISTIC_BUILD_NO_WALLCLOCK",
+  "parent": {
+    "v1ManifestSha256": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+    "v2ManifestSha256": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+    "v2RevisionDigest": "872502373e783b190f94a3c86065d6b3fd8c08d010b2ecc4130623f4283a682d",
+    "v1Policy": "BYTE_FOR_BYTE_UNCHANGED",
+    "v2Policy": "BYTE_FOR_BYTE_UNCHANGED"
+  },
+  "pins": {
+    "manifest.v1.json": "327bf48c05c92d9ce0ee3ddf1281aca9ce2a47dcf47ede81dc524f80e86e313e",
+    "v2/manifest.v2.json": "6954e17a6fa46da2123e9bffa4faeb65f0cbc87be6def9483e43aa012be94009",
+    "v2/handoff/geographic_handoff.v2.json": "82d8b061ab60b5feab29c6a1cfd579ad9e6428bc9c371983061681a381fe0f8c",
+    "data/source_manifest.v1.json": "c1f0b7a8664656842d97df95a63ee93a258268b6856ac579f27c1908a072cc4d"
+  },
+  "frame": {
+    "authoring": [
+      2000,
+      1400
+    ],
+    "unit": "authoring_unit",
+    "grid": {
+      "gw": 250,
+      "gh": 175,
+      "cellAu": 8
+    },
+    "transformStatus": "UNDECIDED"
+  },
+  "corrections": [
+    {
+      "id": "P0-WMP03-T01",
+      "subject": "cliff threshold above observed raster maximum",
+      "status": "CORRECTED_WITH_MEASURED_TERRAIN_CLASSIFICATION"
+    },
+    {
+      "id": "P0-WMP03-T02",
+      "subject": "X-then-Y road rasterization",
+      "status": "CORRECTED_WITH_SHAPE_PRESERVING_4_CONNECTED_PATH"
+    },
+    {
+      "id": "P0-WMP03-T03",
+      "subject": "ferry routes land-walkable / proposed crossings as collision permission",
+      "status": "CORRECTED_WITH_SEPARATED_TRAVERSAL_SEMANTICS"
+    },
+    {
+      "id": "P0-WMP03-T04",
+      "subject": "buildable restricted to 23 surveyed zones",
+      "status": "CORRECTED_WITH_FULL_WORLD_PHYSICAL_POSSIBILITY_AND_THREE_DISTINCT_CONCEPTS"
+    }
+  ],
+  "structuralChecks": [
+    "POI road entrances",
+    "overlapping host/subsite envelopes",
+    "roof-boundary semantics"
+  ],
+  "components": [
+    {
+      "file": "v3/layers/terrain_height_class.v3.json",
+      "sha256": "520d1d374f87753858ab741aa3b9ac09832fccdc823e3b7b240673dcd9662e4f",
+      "bytes": 8080
+    },
+    {
+      "file": "v3/layers/road_rasterization_delta.v3.json",
+      "sha256": "b364bf388d10de68391b0359226bfccee438ca7717aade6b538f45a39113a215",
+      "bytes": 62621
+    },
+    {
+      "file": "v3/layers/water_traversal.v3.json",
+      "sha256": "bfccaeed220ea167d1a743f85ecdb1df491f48c705fd79d496d0b7b209b1d004",
+      "bytes": 121893
+    },
+    {
+      "file": "v3/layers/traversal_graph.v3.json",
+      "sha256": "c6ca8dfb71b53ff42abf7d2f0653b773d2fdb3d4ffac980d485d770c8bbf8ba4",
+      "bytes": 411539
+    },
+    {
+      "file": "v3/layers/construction_semantics.v3.json",
+      "sha256": "a98a265cc2898028ff573696fe00fb2fbde9bd8eed52de5ab8deaca9bebd4338",
+      "bytes": 30927
+    },
+    {
+      "file": "v3/layers/structural_checks.v3.json",
+      "sha256": "fee5d7714590e81880a1897f2197685c9a84a06f20a713d8e6844b9046ae9117",
+      "bytes": 145103
+    },
+    {
+      "file": "v3/rasters/heightClass.v3.u8",
+      "sha256": "ec800274e8af35f2e31caa18352f2c6643a4fe5da1f1235426037040a4823814",
+      "bytes": 43750
+    },
+    {
+      "file": "v3/rasters/cliffCandidate.v3.u8",
+      "sha256": "6b2897d74409b974d477e767291f1eac0b9614a1b794539aef827c1278682d2d",
+      "bytes": 43750
+    },
+    {
+      "file": "v3/rasters/terraceCandidate.v3.u8",
+      "sha256": "029e929ea10622a43d27ba8c894334c0aa9c0c3061f2f7f135122c55c971d28f",
+      "bytes": 43750
+    },
+    {
+      "file": "v3/rasters/slopeClass.v3.u8",
+      "sha256": "8dedebfcd06da83353892ea14f3c2288a19ee410b3c3c42e4c109af157e3a7ea",
+      "bytes": 43750
+    },
+    {
+      "file": "v3/rasters/roadSurface.v3.u8",
+      "sha256": "8479bf0d122b165433a73c1c809f694bd75b6a105403535fb08fd9c9de138592",
+      "bytes": 43750
+    },
+    {
+      "file": "v3/rasters/waterTraversalClass.v3.u8",
+      "sha256": "8479bf0d122b165433a73c1c809f694bd75b6a105403535fb08fd9c9de138592",
+      "bytes": 43750
+    },
+    {
+      "file": "v3/rasters/activeCollisionPermission.v3.u8",
+      "sha256": "c394fedefb360cfb0de08d9ec60bf75cd3ea0c5b3f657fda23b7909fdb3c774d",
+      "bytes": 43750
+    },
+    {
+      "file": "v3/rasters/constructionSuitability.v3.u8",
+      "sha256": "505acbcf578df18712a239ea9a88cba62fce560a23c8a33573cfd7819d792a20",
+      "bytes": 43750
+    },
+    {
+      "file": "v3/interfaces/map_physical_semantics.v3.json",
+      "sha256": "031f6100448799225611d8a29de5f9f18c4ba065cb2754196f4d4bbec75e583d",
+      "bytes": 7187
+    },
+    {
+      "file": "v3/handoff/map_to_gameplay_v3.json",
+      "sha256": "53ee6727345288ce1b7898d1dcb97015e2153154c780f288e9a40b25272e65c8",
+      "bytes": 6644191
+    },
+    {
+      "file": "v3/layers/measured_delta.v3.json",
+      "sha256": "9de6922d61987b7b8df15ec6de4612b62f98fe98406f50da97d958a84d398934",
+      "bytes": 2871
+    }
+  ],
+  "measured": {
+    "p0_01_terrain": {
+      "v1CliffThreshold": 200,
+      "observedSlopeMaxRawByte": 150,
+      "v1CliffCells": 0,
+      "v3CliffCandidateCells": 305,
+      "v3TerraceCandidateCells": 996,
+      "heightClassHistogram": {
+        "0": 7199,
+        "1": 3595,
+        "2": 2158,
+        "3": 1008,
+        "4": 361,
+        "5": 71
+      },
+      "slopeClassHistogram": {
+        "0": 5678,
+        "1": 4768,
+        "2": 2311,
+        "3": 1170,
+        "4": 465
+      }
+    },
+    "p0_02_roads": {
+      "roadCount": 92,
+      "legacyMaxDriftAu": 76.198,
+      "correctedMaxDriftAu": 5.6569,
+      "legacyMeanDriftAu": 6.5994,
+      "correctedMeanDriftAu": 2.2759,
+      "authoredLengthAu": 10853.7572,
+      "legacyPathLengthAu": 13408,
+      "correctedPathLengthAu": 13408,
+      "improvedRoads": 78
+    },
+    "p0_03_water": {
+      "v2FerryWalkableCells": 219,
+      "v2WaterCellsWithWalkable1": 267,
+      "v3FerryRoutes": 8,
+      "v3FerryCells": 211,
+      "v3WaterRoadCells": 247,
+      "v3LandWalkableWaterCells": 0,
+      "v3ActiveCollisionPermissionCells": 0,
+      "bridgeDeckProposalCells": 10,
+      "fordProposalCells": 26
+    },
+    "p0_04_construction": {
+      "v2BuildableCells": 1242,
+      "v2SurveyedSites": 23,
+      "v3PhysicallyPossibleFootprints": 21,
+      "v3PhysicallyPossibleCells": 7035,
+      "v3CellsOutsideSurveyedZones": 6481,
+      "surveyedConflicts": [
+        "site.bz_greywater",
+        "site.bz_gulfwest",
+        "site.bz_westmouth",
+        "site.bz_hook",
+        "site.bz_silver",
+        "site.bz_eastflats",
+        "site.bz_elder_clear",
+        "site.bz_westwood",
+        "site.bz_typhon_t",
+        "site.bz_oasis",
+        "site.bz_greyback",
+        "site.bz_forest_n",
+        "site.bz_moss",
+        "site.bz_verdant",
+        "site.bz_ridge",
+        "site.bz_kestrel",
+        "site.bz_argus",
+        "site.bz_dune",
+        "site.bz_salt",
+        "site.bz_slag",
+        "site.bz_cinder",
+        "site.bz_ironholm"
+      ],
+      "legalPlacement": "UNKNOWN__GAMEPLAY_OWNED"
+    },
+    "structural": {
+      "poiAssessed": 81,
+      "poiDistantAccess": 0,
+      "sitesWithHostOverlap": 18,
+      "roofsAssessed": 153,
+      "roofsOutsideBoundary": 0,
+      "autoShrinkApplied": 0,
+      "canonicalPoiChanges": 0
+    },
+    "traversal": {
+      "graphNodes": 1654,
+      "graphEdges": 1676,
+      "visibleSurfaceCells": 1654,
+      "edgeHistogram": {
+        "DRY_LAND_ROAD": 1397,
+        "FORD_PROPOSAL": 44,
+        "BRIDGE_DECK_PROPOSAL": 21,
+        "FERRY_ROUTE": 214
+      }
+    },
+    "compatibility": {
+      "economyArrayLength": 43750,
+      "roadsInHandoff": 84,
+      "ferryRoutesSeparate": 8,
+      "roadsWithWaterCells": 26,
+      "gameplayValidatorsExecuted": false
+    }
+  },
+  "revisionDigest": "1356735557a421f720e24c6e9dd54ae0812e5f75cc18a48c14ddfc69de9bd114",
+  "digestMethod": "sha256(JSON.stringify({version:3,pins,measured,components})) — deterministic, no wallclock, no network",
+  "v1Policy": "NO v1 tracked file is written by any v3 script.",
+  "v2Policy": "NO v2 tracked file is written by any v3 script.",
+  "reproduce": "node v3/src/build_v3.mjs twice; ./reproduce_v3.sh",
+  "cleanRoom": "./clean-room_v3.sh",
+  "unresolvedGameplayOwned": [
+    {
+      "id": "DR-06",
+      "subject": "ferry/boat rule for 8 authored ferry routes",
+      "status": "BLOCKED",
+      "owner": "GAMEPLAY"
+    },
+    {
+      "id": "DR-V3-01",
+      "subject": "bridge-deck proposal activation / collision permission",
+      "status": "UNKNOWN",
+      "owner": "GAMEPLAY"
+    },
+    {
+      "id": "DR-V3-02",
+      "subject": "ford depth/flow/permission rule",
+      "status": "UNKNOWN",
+      "owner": "GAMEPLAY"
+    },
+    {
+      "id": "DR-V3-03",
+      "subject": "physical units for elevation/slope (metres/degrees)",
+      "status": "UNRESOLVED",
+      "owner": "MAP+GAMEPLAY"
+    },
+    {
+      "id": "DR-V3-04",
+      "subject": "legal build placement / claims / occupancy",
+      "status": "UNKNOWN",
+      "owner": "GAMEPLAY"
+    },
+    {
+      "id": "DR-V3-05",
+      "subject": "roof-boundary canopy vs full-roof semantics",
+      "status": "PROPOSED",
+      "owner": "MAP+GAMEPLAY"
+    },
+    {
+      "id": "DR-V3-06",
+      "subject": "gameplay validateGeographicHandoff() acceptance of water-crossing road cells",
+      "status": "UNRESOLVED",
+      "owner": "GAMEPLAY"
+    },
+    {
+      "id": "DR-V3-07",
+      "subject": "cart / loaded-cart swept clearance and trailer sweep",
+      "status": "UNKNOWN",
+      "owner": "MAP+GAMEPLAY"
+    },
+    {
+      "id": "DR-V3-08",
+      "subject": "runtime ingestion, independent CI and visual acceptance",
+      "status": "UNRESOLVED",
+      "owner": "GAMEPLAY"
+    },
+    {
+      "id": "DR-V3-09",
+      "subject": "numeric climate/weather/damage/season rates",
+      "status": "UNKNOWN",
+      "owner": "GAMEPLAY"
+    },
+    {
+      "id": "DR-V3-10",
+      "subject": "Veyra production road/cliff/bridge/construction tilesets",
+      "status": "NOT_STARTED",
+      "owner": "CREATOR"
+    }
+  ],
+  "noClaims": [
+    "NO production tileset",
+    "NO new POI",
+    "NO Gameplay balance",
+    "NO playable Veyra",
+    "NO visual acceptance",
+    "NO WORLD_MASTER_SEALED",
+    "NO MERGE_READY",
+    "NO Gameplay validator PASS"
+  ]
+}

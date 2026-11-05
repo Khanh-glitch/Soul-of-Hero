@@ -1,0 +1,65 @@
+{
+  "schema": "soh.map.lr01.region.v1",
+  "kind": "spawn",
+  "corridor": {
+    "spawnId": "sp_west",
+    "walkableComponent": 0,
+    "componentCells": 9871,
+    "zonesReachable": 16,
+    "zonesTotal": 23,
+    "nearestReachableZone": {
+      "zoneId": "bz_westmouth",
+      "reachable": true,
+      "steps": 3,
+      "routeAuLowerBound": 24
+    },
+    "unreachableZones": [
+      "bz_ridge",
+      "bz_eastflats",
+      "bz_delta",
+      "bz_cinder",
+      "bz_salt",
+      "bz_ironholm",
+      "bz_slag"
+    ],
+    "status": "DERIVED",
+    "note": "4-neighbour BFS on GEO-01 walkableCandidate. Reachability is geometric only; no ferry, bridge deck, slope law, cart clearance or survival cost is applied."
+  },
+  "id": "sp_west",
+  "name": "Spawn: Westmouth Shore",
+  "region": "Bờ tây",
+  "atAu": [
+    372,
+    606
+  ],
+  "conf": "proposal",
+  "sourceRef": "project.spawns[] where id=sp_west",
+  "status": [
+    "SOURCE_AUTHORED",
+    "DERIVED"
+  ],
+  "cell": 18796,
+  "landId": "ld_veyra",
+  "walkableAtSpawn": true,
+  "walkableComponent": 0,
+  "seaDistanceCells": 6,
+  "freshwaterProximityCells": 9,
+  "clearanceCells": 6,
+  "nearestDock": {
+    "id": "dk_westmouth",
+    "d": 66.1885
+  },
+  "nearestPoi": {
+    "id": "po_evac_west",
+    "d": 39.6989
+  },
+  "nearestBuildableZone": {
+    "id": "bz_westmouth",
+    "d": 16.4754
+  },
+  "nearestCartRoad": {
+    "id": "rd_r",
+    "d": 22.6677
+  },
+  "statusNote": "Spawn accessibility is geometric only. Survival fairness, loot and creature exposure are Gameplay-owned."
+}

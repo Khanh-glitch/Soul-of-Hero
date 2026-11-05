@@ -1,0 +1,248 @@
+{
+  "schema": "soh.lw01.source_provenance.v1",
+  "generatedAt": "2026-11-05T01:20:06.802Z",
+  "mapHead": "f0c2182bd2ec5e067f5c59cf3985dcf71856cdb1",
+  "gameplayHead": "e11a9b4471a0832cd6d039b5510725b10ee0275c",
+  "mapAuthority": "veyra-world-master/CURRENT_WORLD_MASTER.json (WMP-04R1, v4/r1/manifest.r1.json)",
+  "gameplaySource": "git archive e11a9b4471a0832cd6d039b5510725b10ee0275c web",
+  "policy": "Verbatim source custody. No retired WMP-04 / WMP-03-standalone / raw GOLD runtime substitution. GOLD polygons are AUTHORING GEOMETRY, sampled at tile centres; candidate rasters never mint Gameplay permission.",
+  "files": [
+    {
+      "file": "CURRENT_WORLD_MASTER.json",
+      "bytes": 1376,
+      "sha1": "24e0349d42e51266561052eb3d93d72e9cbc6ca9",
+      "sha256": "6adfa7167937a5fed0af2c11348fcdff6cbe445daaba5bbfb1bfb208f1239679"
+    },
+    {
+      "file": "VEYRA_GOLD_MAP.sohmap.json",
+      "bytes": 332249,
+      "sha1": "084f3f71e134af7623a528434ae1d1c0eb7bbbbc",
+      "sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256"
+    },
+    {
+      "file": "activeCollisionPermission.v3.u8",
+      "bytes": 43750,
+      "sha1": "66e9656d67f6a9bc58fc98c68a67657354be7a0d",
+      "sha256": "c394fedefb360cfb0de08d9ec60bf75cd3ea0c5b3f657fda23b7909fdb3c774d"
+    },
+    {
+      "file": "biomeCode.u8",
+      "bytes": 43750,
+      "sha1": "e00341c24bbf0023ab82099f501ce0f7a79a059b",
+      "sha256": "232998e642e836f30129b3a689f7cd458f8c57526ecd2c1bad51449cbeff839d"
+    },
+    {
+      "file": "biomeEffective.r1.u8",
+      "bytes": 43750,
+      "sha1": "b9b2e535a79da96d02f995517c9b7e960bf55873",
+      "sha256": "43e700ef9b1d50e7a2e7d5342f0473df4e15a2a1f27a0097cc50dc7c2a46a87b"
+    },
+    {
+      "file": "biomeEffective.v4.u8",
+      "bytes": 43750,
+      "sha1": "802a55fbbea5cdd558a44aa6e91a63d7d35b9c90",
+      "sha256": "72295f5679c08bdf17c8f8a87d56fd8abbfdc6c85c0528916767ea9a96c391b6"
+    },
+    {
+      "file": "buildableCandidate.u8",
+      "bytes": 43750,
+      "sha1": "de86b06f900ebd6387cf0b9d07f1ba0c027b0ca6",
+      "sha256": "afc1067b5493e1cedbb8845718dd3a8263ae1c81b9e904ea912613276a1f641b"
+    },
+    {
+      "file": "cargoCandidate.u8",
+      "bytes": 43750,
+      "sha1": "523ff805bcd722b4ae4d97acd5beed8b73c8226d",
+      "sha256": "28b8a3060344cf998673f2c7163bf664563be477124e0bab376bd56645229adb"
+    },
+    {
+      "file": "clearanceCells.u8",
+      "bytes": 43750,
+      "sha1": "d3019f7c8328e22aedaa22a9ae4f8f2db529353b",
+      "sha256": "e8e00caa9ff1018f9b29230784aaf263745d47df100cd25dd4bd26039e50087c"
+    },
+    {
+      "file": "cliffCandidate.v3.u8",
+      "bytes": 43750,
+      "sha1": "35dd0614394de142eb32f56d0b20d157909ac2fb",
+      "sha256": "6b2897d74409b974d477e767291f1eac0b9614a1b794539aef827c1278682d2d"
+    },
+    {
+      "file": "cliffCandidate.wmp03.u8",
+      "bytes": 43750,
+      "sha1": "35dd0614394de142eb32f56d0b20d157909ac2fb",
+      "sha256": "6b2897d74409b974d477e767291f1eac0b9614a1b794539aef827c1278682d2d"
+    },
+    {
+      "file": "coast.u8",
+      "bytes": 43750,
+      "sha1": "7f48a3cf35911a471140f28c0eff890ffe5ea7b2",
+      "sha256": "44c0f13ead072f501351f458c9180a31e30f08a321848e10e8faea567067f5d5"
+    },
+    {
+      "file": "coldTransition.r1.u8",
+      "bytes": 43750,
+      "sha1": "144493e22d59a6a72227206d8f57b7ea79b11dc8",
+      "sha256": "e7849ccb37e2ef54e6bb55f709dc93ae1557a4c948235e0d1452ec1114d59971"
+    },
+    {
+      "file": "constructionSuitability.v3.u8",
+      "bytes": 43750,
+      "sha1": "170fb955f72a532988118a0685527bcc4c2c7d2a",
+      "sha256": "505acbcf578df18712a239ea9a88cba62fce560a23c8a33573cfd7819d792a20"
+    },
+    {
+      "file": "crossingCandidate.u8",
+      "bytes": 43750,
+      "sha1": "279b5a7960af5e9b618fffa48b7d1ac2c8eb9c9f",
+      "sha256": "f1c96bd9fdb04d66117811c941e4a02df7fb3111c1a8671060fccad42c29603b"
+    },
+    {
+      "file": "current.mjs",
+      "bytes": 4412,
+      "sha1": "940be8365fa5cafe2dec37dd73577d1d7389418d",
+      "sha256": "99a6093790d0b7bb968264aea3759d9ea583dbc23208e025b3a93c70d86ba04d"
+    },
+    {
+      "file": "elevation.u8",
+      "bytes": 43750,
+      "sha1": "3d43ee169d9961fe2f346d5cc80b8f72e24dba17",
+      "sha256": "54d7641cea57ebd20be1eb17a0ce919f352f2868f4ed123e968a2e59666c6d24"
+    },
+    {
+      "file": "freshwater.u8",
+      "bytes": 43750,
+      "sha1": "3842eec7af7748aae470dd5f4de24b996ea6746a",
+      "sha256": "9f9716b53e9bc553282860510b0ab1410574d8edf03eabb79fb3181f6d465aa4"
+    },
+    {
+      "file": "geography_design.r1.json",
+      "bytes": 3808,
+      "sha1": "aa2dfba6e276c5227de978c90238c9e10265d47d",
+      "sha256": "ae80b881c4d782ce90aa9d95d4007149d7e8f12a6ddfc7c790af958020521a1b"
+    },
+    {
+      "file": "heightClass.v3.u8",
+      "bytes": 43750,
+      "sha1": "8453c77422bce6e794ee81b51d38459ea72b5722",
+      "sha256": "ec800274e8af35f2e31caa18352f2c6643a4fe5da1f1235426037040a4823814"
+    },
+    {
+      "file": "lakeId.u8",
+      "bytes": 43750,
+      "sha1": "a3eee8369cb262999ceecd7380b017c1b9960da2",
+      "sha256": "1fcffe83cdac6f1292b374f8cab556f9b4e5bf032769b0413fcab40c6c3738b1"
+    },
+    {
+      "file": "landId.u8",
+      "bytes": 43750,
+      "sha1": "f5310c0ed0df35890ea0506a3758204f875a54ff",
+      "sha256": "3aaebb6a358ce04fc33eff56050321639ffc317fe1bb698114a621240c12e8a7"
+    },
+    {
+      "file": "manifest.r1.json",
+      "bytes": 1865,
+      "sha1": "361cc520f91541908f3456e3544cf09020508b96",
+      "sha256": "57195f7d842ce524d0bda566a140ffba67f2a6f8563830b8c1030bc583224f15"
+    },
+    {
+      "file": "manifest.v3.json",
+      "bytes": 10490,
+      "sha1": "bcaf4a4ceac8758b06f28ae95a266ccd3f38884e",
+      "sha256": "9043386cb9ba9a470a9d2764a5b9a7ec20fc3ecb433b23aaace212d8330f8004"
+    },
+    {
+      "file": "manifest.v4.json",
+      "bytes": 3044,
+      "sha1": "a777d82d7f7025eb654bf50dfb4e60e267c6e041",
+      "sha256": "f1a55db64d6e675c7d66a6056d61aa4969dda1bd330bbffc0e1788df1a5ba68d"
+    },
+    {
+      "file": "marineRegion.v4.u8",
+      "bytes": 43750,
+      "sha1": "394d0625d7c5b26d0fb891bf8cd1c69bd5aebba3",
+      "sha256": "615a5ce04f4c133edb2d95c91b48431bebc5f45c2048a6903e1b31afb01d8311"
+    },
+    {
+      "file": "marine_navigation.v4.json",
+      "bytes": 2887,
+      "sha1": "8d013b4e30e311230a8d411b3a0d5070496fd506",
+      "sha256": "d09362a767eee2315fdf367ad742acb15400b7ece250b4bb17ced6c0c6fb710b"
+    },
+    {
+      "file": "marine_sites.v4.json",
+      "bytes": 3197,
+      "sha1": "492d90414817dd3a0250a69c9672b6af4ca883a3",
+      "sha256": "d58d29956bb786333f506a81e68cf366905bc119fcc1dc4eb9df4b4328bbbb4f"
+    },
+    {
+      "file": "poiGeometryId.u8",
+      "bytes": 43750,
+      "sha1": "7bdb711d5f0c4e9da505f2f8eece2ae4399a5bc5",
+      "sha256": "94348636f05c83da80a5b9897bf30c4c0f6951f49a6c9875695454e7aa093881"
+    },
+    {
+      "file": "protectedGeometryCandidate.u8",
+      "bytes": 43750,
+      "sha1": "c858e40a628c8277865391372492fbdb223abf83",
+      "sha256": "9d500a17898dd9bc5e3368be0bc14d86c91ac361a1449c484c1b5322894d0b71"
+    },
+    {
+      "file": "riverId.u8",
+      "bytes": 43750,
+      "sha1": "eaac2c453544e4b33a4ac2569673d8ebe51f5750",
+      "sha256": "9dfe77adbf89d8c729f3487f585381d6014c27978839cd52bcce2169c6df3310"
+    },
+    {
+      "file": "roadClass.u8",
+      "bytes": 43750,
+      "sha1": "e82a1cd40570056b47c08d24fb2c3d0f9631f138",
+      "sha256": "d84fca5f129c9aa866a4960eaf7902a0fe923668cfdb2e41a9d864979cfe1f8b"
+    },
+    {
+      "file": "roadSurface.v3.u8",
+      "bytes": 43750,
+      "sha1": "d896cc9a2e7dd496abe4c1516b3811b93f2803a0",
+      "sha256": "8479bf0d122b165433a73c1c809f694bd75b6a105403535fb08fd9c9de138592"
+    },
+    {
+      "file": "seaDistanceCells.u8",
+      "bytes": 43750,
+      "sha1": "3ff5343faefa888ebd689082c60d7ae6040df685",
+      "sha256": "45ba677aa1dde0b2d662c83386667dee8427f846e75978fd18c0e08f57c70977"
+    },
+    {
+      "file": "slope.u8",
+      "bytes": 43750,
+      "sha1": "4d36d1a55adf7c9a640e4dd6f67e0f1447ae7e88",
+      "sha256": "6648158ad69cd9c136e249394a9aa7b21e31d08ca7ac48d700fa9511a918130e"
+    },
+    {
+      "file": "walkableCandidate.u8",
+      "bytes": 43750,
+      "sha1": "7c307da81c0d00c7a7cc6a7f5a7a327fb8d70678",
+      "sha256": "fcf691e68785e204634ce5bd05d5f2c500c65e61deea4e3b0c468d282ef0a8d7"
+    },
+    {
+      "file": "waterClass.u8",
+      "bytes": 43750,
+      "sha1": "9aab40eef05c74e17995f7ddff941f3fc3492f09",
+      "sha256": "f4c49bfc6279324051b31afaf3165ebde1734ad26d1c7e1bc52fe368748ad254"
+    },
+    {
+      "file": "waterTraversalClass.v3.u8",
+      "bytes": 43750,
+      "sha1": "d896cc9a2e7dd496abe4c1516b3811b93f2803a0",
+      "sha256": "8479bf0d122b165433a73c1c809f694bd75b6a105403535fb08fd9c9de138592"
+    },
+    {
+      "file": "zoneId.u8",
+      "bytes": 43750,
+      "sha1": "5b9c946a3475ae5a3e160f7db4eccc3db1e80eda",
+      "sha256": "e6ea74cd062935bad399002bf7d99e540b71f61ab5a83654db1cef1bdb2a374d"
+    }
+  ],
+  "fileCount": 39,
+  "totalBytes": 1675828,
+  "legacyWebFiles": 803
+}

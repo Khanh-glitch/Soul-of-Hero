@@ -1,0 +1,66 @@
+{
+  "schema": "soh.wmp.v4r1.manifest",
+  "worldId": "veyra",
+  "revision": "WMP-04R1",
+  "parent": "v4/manifest.v4.json",
+  "inputHead": "fbda339c10ce82bcc1f0d3e9574bbb57376774e3",
+  "status": "MAP_GEO_CORRECTED__GAMEPLAY_REVIEW_PENDING",
+  "activeConsumer": "api/current.mjs",
+  "generator": "v4/r1/src/rebalance_snow.mjs",
+  "target": {
+    "snowPercentOfDryLand": [
+      23,
+      25
+    ],
+    "maxSnowLatitudeAu": 600,
+    "sourceRockCode": 7,
+    "sourceRockCells": 510
+  },
+  "outputs": [
+    {
+      "path": "v4/r1/data/biomeEffective.r1.u8",
+      "bytes": 43750,
+      "gitBlobSha1": "33d3a847b41c6eda2cb51139c663c8130c0df5c5"
+    },
+    {
+      "path": "v4/r1/data/coldTransition.r1.u8",
+      "bytes": 43750,
+      "gitBlobSha1": "ecb28fd0c5cdf3de7dc00f524e34973a3ee7324e"
+    }
+  ],
+  "reusedMarine": "v4/data/marineRegion.v4.u8",
+  "reusedMarineSha": "d41065719d4696eb47764384c5ed9563ab6664a1",
+  "tests": "v4/r1/tests/run_r1.mjs",
+  "visual": "v4/r1/evidence/snow_and_rock_before_after.svg",
+  "source": [
+    "data/rasters/geo01/biomeCode.u8",
+    "data/rasters/geo01/landId.u8",
+    "data/rasters/geo01/waterClass.u8",
+    "data/rasters/geo01/elevation.u8",
+    "v4/data/biomeEffective.v4.u8"
+  ],
+  "observed": {
+    "dryLandCells": 14392,
+    "snowBefore": 3454,
+    "snowAfter": 3311,
+    "snowPercent": 23.0058,
+    "rockBefore": 27,
+    "rockAfter": 510,
+    "rockRestored": 483,
+    "inwardSnowTrimmed": 217,
+    "snowReallocatedNorth": 557,
+    "snowAtY610Plus": 0,
+    "originalSnowCells": 217,
+    "dryAreaRelativeGrowthPercent": 30.0152,
+    "changedSeaWaterCells": 0
+  },
+  "art": "REUSE_EXISTING_GAME_ART_FIRST__NO_NEW_ASSETS_FOR_PRESENT_FEATURES",
+  "doNotClaim": [
+    "Gameplay ingestion PASS",
+    "visual acceptance",
+    "new snow atlas required",
+    "new sprites made",
+    "world playable",
+    "thermal rates approved"
+  ]
+}

@@ -1,0 +1,33 @@
+=== web-large tsc ===
+TSC_OK
+=== web-large tests ===
+ [32m✓[39m tests/world-economy.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 255[2mms[22m[39m
+ [32m✓[39m tests/technology-semantics.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 8[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m35 passed[39m[22m[90m (35)[39m
+[2m      Tests [22m [1m[32m274 passed[39m[22m[90m (274)[39m
+[2m   Start at [22m 02:21:11
+[2m   Duration [22m 100.78s[2m (transform 2.75s, setup 0ms, import 16.21s, tests 79.76s, environment 4ms)[22m
+
+=== web-large build ===
+
+[plugin vite:singlefile] Inlining: index-Cs4IIBSq.js
+[plugin vite:singlefile] Inlining: style-BaKdExTF.css
+computing gzip size...
+dist/index.html  15,099.38 kB │ gzip: 10,012.20 kB
+✓ built in 5.19s
+=== web-legacy tsc ===
+TSC_OK
+=== web-legacy tests ===
+
+[2m Test Files [22m [1m[32m34 passed[39m[22m[90m (34)[39m
+[2m      Tests [22m [1m[32m257 passed[39m[22m[90m (257)[39m
+[2m   Start at [22m 02:23:06
+[2m   Duration [22m 98.58s[2m (transform 2.31s, setup 0ms, import 15.59s, tests 78.45s, environment 4ms)[22m
+
+=== web-legacy build ===
+[plugin vite:singlefile] Inlining: index-vgdv76Aj.js
+[plugin vite:singlefile] Inlining: style-B0HBe8ac.css
+computing gzip size...
+dist/index.html  16,668.30 kB │ gzip: 10,322.35 kB
+✓ built in 4.98s
