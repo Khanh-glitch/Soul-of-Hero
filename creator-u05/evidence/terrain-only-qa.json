@@ -1,6 +1,6 @@
 {
   "schema": "soh.u05.terrain-only-qa.v1",
-  "generatedAt": "2026-11-05T09:13:02.735Z",
+  "generatedAt": "2026-11-05T09:47:22.478Z",
   "file": "creator-u05/SoulOfHero_TerrainOnly_U05_x10.html",
   "fileUrl": "file:///home/user/Soul-of-Hero/creator-u05/SoulOfHero_TerrainOnly_U05_x10.html",
   "httpUrl": "http://localhost:5182/terrain-only.html",
@@ -92,11 +92,58 @@
     },
     "terrain": {
       "tile": 2,
+      "tileRendered": 2,
       "biome": "beach",
       "authoredLand": true,
       "water": false,
       "road": false,
       "poiId": "po_beacon"
+    },
+    "despeckle": {
+      "rule": "3 deterministic passes: a BIOME-DERIVED centre tile with 4 identical orthogonal biome neighbours and a different centre adopts the neighbour tile; passes read the UPDATED grid so cascades are resolved",
+      "replacements": 25,
+      "passesRun": 15,
+      "windowsBuilt": 10,
+      "windowsResident": 10,
+      "windowMax": 256,
+      "evictions": 0,
+      "windowTiles": [
+        34,
+        34
+      ],
+      "chunkTiles": [
+        32,
+        32
+      ],
+      "smoothableTiles": [
+        4,
+        3,
+        5,
+        6,
+        2,
+        7,
+        9,
+        10,
+        11
+      ],
+      "untouchedByTileCode": [
+        "ROAD",
+        "BRIDGE",
+        "RIVER",
+        "DEEP",
+        "SHALLOW",
+        "CLIFF",
+        "ICE",
+        "LAVA",
+        "FLOOR",
+        "PWALL",
+        "BURNT"
+      ],
+      "overviewUsesRawSampler": true,
+      "goldPolygonsUnchanged": true,
+      "analysisRasterUnchanged": true,
+      "verbatimPainterUnchanged": true,
+      "note": "Additive U=0.5 sampler output only. GOLD polygons, 8 AU analysis raster and the byte-identical live PAL/PRIO/texel painter are NOT edited."
     },
     "draw": {
       "terrainOnly": true,
@@ -177,7 +224,7 @@
       "displayEvictions": 0,
       "maxDisplayCanvases": 36,
       "displayChunkKeyExample": "creator-u05|render16|250:175",
-      "simMs": 67,
+      "simMs": 83,
       "movedPx": 0,
       "blockedSubsteps": 0,
       "spawnFixture": true
@@ -187,8 +234,8 @@
       "last": []
     },
     "frameMs": {
-      "p50": 16.599999999999966,
-      "p95": 16.599999999999966,
+      "p50": 33.30000000000001,
+      "p95": 33.30000000000001,
       "max": 50
     }
   },
@@ -200,7 +247,7 @@
         1304
       ],
       "afterTile": [
-        548,
+        549,
         1304
       ],
       "movedPx": 72,
@@ -210,7 +257,7 @@
       "inputCodes": [
         "KeyD"
       ],
-      "simMs": 1000
+      "simMs": 1017
     },
     "x10": {
       "mult": 10,
@@ -219,19 +266,19 @@
         1304
       ],
       "afterTile": [
-        589,
+        590,
         1304
       ],
-      "movedPx": 720,
-      "deltaPx": 720,
+      "movedPx": 732,
+      "deltaPx": 732,
       "speedPxPerSec": 720,
       "realKeyboardEvents": 2,
       "inputCodes": [
         "KeyD"
       ],
-      "simMs": 1016
+      "simMs": 1017
     },
-    "ratio": 10,
+    "ratio": 10.167,
     "keyboard": {
       "afterPlus": 2,
       "afterMinus": 1.5
@@ -252,13 +299,154 @@
       1328
     ],
     "modeBlocked": "NATURAL_TERRAIN_ONLY",
-    "blockedSubsteps": 50,
+    "blockedSubsteps": 52,
     "tileUnchangedWhenBlocked": true,
     "freeRoamMode": "FREE_ROAM__NO_COLLISION",
     "freeRoamMovedPx": 30,
     "shot": "terrain_only_natural_collision.png"
   },
   "hudHidden": true,
+  "despeckle": {
+    "windows": [
+      {
+        "centre": [
+          900,
+          900
+        ],
+        "window": [
+          60,
+          40
+        ],
+        "rawIsolated": 102,
+        "paintedIsolated": 0
+      },
+      {
+        "centre": [
+          2500,
+          1700
+        ],
+        "window": [
+          60,
+          40
+        ],
+        "rawIsolated": 59,
+        "paintedIsolated": 0
+      },
+      {
+        "centre": [
+          2222,
+          804
+        ],
+        "window": [
+          60,
+          40
+        ],
+        "rawIsolated": 25,
+        "paintedIsolated": 0
+      },
+      {
+        "centre": [
+          2100,
+          1900
+        ],
+        "window": [
+          60,
+          40
+        ],
+        "rawIsolated": 68,
+        "paintedIsolated": 0
+      },
+      {
+        "centre": [
+          3300,
+          1500
+        ],
+        "window": [
+          60,
+          40
+        ],
+        "rawIsolated": 65,
+        "paintedIsolated": 0
+      }
+    ],
+    "stats": {
+      "rule": "3 deterministic passes: a BIOME-DERIVED centre tile with 4 identical orthogonal biome neighbours and a different centre adopts the neighbour tile; passes read the UPDATED grid so cascades are resolved",
+      "replacements": 599,
+      "passesRun": 77,
+      "windowsBuilt": 44,
+      "windowsResident": 44,
+      "windowMax": 256,
+      "evictions": 0,
+      "windowTiles": [
+        34,
+        34
+      ],
+      "chunkTiles": [
+        32,
+        32
+      ],
+      "smoothableTiles": [
+        4,
+        3,
+        5,
+        6,
+        2,
+        7,
+        9,
+        10,
+        11
+      ],
+      "untouchedByTileCode": [
+        "ROAD",
+        "BRIDGE",
+        "RIVER",
+        "DEEP",
+        "SHALLOW",
+        "CLIFF",
+        "ICE",
+        "LAVA",
+        "FLOOR",
+        "PWALL",
+        "BURNT"
+      ],
+      "overviewUsesRawSampler": true,
+      "goldPolygonsUnchanged": true,
+      "analysisRasterUnchanged": true,
+      "verbatimPainterUnchanged": true,
+      "note": "Additive U=0.5 sampler output only. GOLD polygons, 8 AU analysis raster and the byte-identical live PAL/PRIO/texel painter are NOT edited."
+    },
+    "authoredGeometryTileCountsPreserved": {
+      "road": [
+        442,
+        442
+      ],
+      "river": [
+        0,
+        0
+      ],
+      "deep": [
+        9513,
+        9513
+      ],
+      "bridge": [
+        0,
+        0
+      ],
+      "cliff": [
+        0,
+        0
+      ],
+      "ice": [
+        0,
+        0
+      ],
+      "lava": [
+        0,
+        0
+      ]
+    },
+    "shot": "terrain_only_despeckled.png"
+  },
   "zoom": {
     "follow": {
       "before": {
@@ -345,7 +533,7 @@
         "strideTiles": 8,
         "tileSamples": 525000,
         "buildCalls": 59,
-        "buildMs": 3453,
+        "buildMs": 3288,
         "fullFrameAllocated": false,
         "addressableCells": 11200000,
         "note": "Sampled viewer preview of EXACT GOLD tile centres; NOT the 8 AU analysis raster upscaled, NOT authored runtime detail, NOT an 11.2M-cell array.",
@@ -421,7 +609,7 @@
       "draw": {
         "terrainOnly": true,
         "drawn": {
-          "terrainChunks": 9,
+          "terrainChunks": 12,
           "hero": 1,
           "overviewBitmap": 0
         },
@@ -445,7 +633,7 @@
         },
         "lens": {
           "hero": 1,
-          "terrainChunks": 1,
+          "terrainChunks": 2,
           "followCamera": true
         },
         "physicalLayerLoaded": false,
@@ -460,20 +648,20 @@
   },
   "longRun": {
     "player": {
-      "px": 10487.951999999996,
+      "px": 10511.927999999965,
       "py": 20872,
       "tile": [
-        655,
+        656,
         1304
       ],
       "au": [
-        327.75,
+        328.25,
         652.25
       ],
       "dir": 2
     },
     "camera": {
-      "x": 10168,
+      "x": 10192,
       "y": 20686,
       "anchorTile": [
         544,
@@ -493,26 +681,26 @@
       "TILE": 16,
       "addressableCells": 11200000,
       "materializedAllCells": false,
-      "residentChunks": 5,
-      "residentLoads": 5,
+      "residentChunks": 6,
+      "residentLoads": 6,
       "residentEvictions": 0,
       "maxResidentChunks": 36,
       "chunkKeyExample": "creator-u05|125:87",
       "legacyStrideKey": "NEVER_USED__cy*100+cx",
       "displayCanvases": 36,
       "displayBytes": 9437184,
-      "displayLoads": 37,
-      "displayEvictions": 1,
+      "displayLoads": 39,
+      "displayEvictions": 3,
       "maxDisplayCanvases": 36,
       "displayChunkKeyExample": "creator-u05|render16|250:175",
-      "simMs": 12533,
-      "movedPx": 1776,
+      "simMs": 13416,
+      "movedPx": 1800,
       "blockedSubsteps": 0,
       "spawnFixture": true
     },
     "frameMs": {
-      "p50": 16.699999999999818,
-      "p95": 50,
+      "p50": 16.69999999999891,
+      "p95": 16.799999999999272,
       "max": 50
     }
   },
@@ -601,9 +789,13 @@
   "pageErrors": [],
   "failedRequests": [],
   "shots": [
+    "speckle_after.png",
+    "speckle_before.png",
+    "swamp_regions_diagnostic.png",
     "terrain_only_beacon.png",
     "terrain_only_beacon_no_hud.png",
     "terrain_only_center_follow.png",
+    "terrain_only_despeckled.png",
     "terrain_only_http.png",
     "terrain_only_lens_1x.png",
     "terrain_only_natural_collision.png",
@@ -624,7 +816,7 @@
     },
     "T-G2": {
       "status": "PASS",
-      "reason": "real x1 -> x10 movement ratio 10.00"
+      "reason": "real x1 -> x10 movement ratio 10.17"
     },
     "T-G3": {
       "status": "PASS",
@@ -685,6 +877,22 @@
     "T-G19": {
       "status": "PASS",
       "reason": "separate HTML 192x144 native 1x follow camera always draws the hero; game canvas still has zero overlay layers"
+    },
+    "T-G20": {
+      "status": "PASS",
+      "reason": "isolated A-surrounded-by-4-B cells eliminated in every sampled window; GOLD + verbatim painter untouched"
+    },
+    "T-G21": {
+      "status": "PASS",
+      "reason": "ROAD / RIVER / DEEP / BRIDGE / CLIFF / ICE / LAVA tile counts around Beacon are byte-for-byte unchanged"
+    },
+    "T-G22": {
+      "status": "PASS",
+      "reason": "despeckle is bounded (<=256 chunk windows), overview stays cheap on the raw sampler"
+    },
+    "T-G23": {
+      "status": "PASS",
+      "reason": "before/after native 1x evidence shots of the same tile (900,900) exist"
     },
     "T-G15": {
       "status": "PASS",

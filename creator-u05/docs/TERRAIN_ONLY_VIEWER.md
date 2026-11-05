@@ -8,7 +8,7 @@
 ## File nhận được
 
 **`creator-u05/SoulOfHero_TerrainOnly_U05_x10.html`** — **1 file HTML duy nhất**,
-1.404.936 bytes, `sha256` trong `evidence/terrain-only-build.json`.
+1.407.498 bytes, `sha256` trong `evidence/terrain-only-build.json`.
 
 - Bấm đúp mở bằng trình duyệt (`file://`) — **không cần server, không cần mạng,
   không cần cài đặt, không nạp atlas mới**. Mọi module + 21 raster WMP-04R1
@@ -133,6 +133,43 @@ chuyển động hãy dùng **`F` → Center** hoặc nhìn khung **Camera 1×**
 Ảnh: `evidence/terrain-only-shots/terrain_only_whole_map.png`,
 `..._whole_map_guides.png`, `..._center_follow.png`, `..._lens_1x.png`.
 
+## Sửa lỗi "ô A bị 4 ô B vây quanh" (speckle)
+
+Creator báo: *"có khá nhiều và bất hợp lí các ô A được vây quanh 4 phía bởi ô B"*
+(ảnh `evidence/terrain-only-shots/speckle_before.png`, cùng toạ độ tile `900,900`).
+
+**Nguyên nhân thật:** `biomeCodeAt()` jitter **từng tile một cách độc lập** `±2.6 AU`
+trước khi đọc raster phân tích 8 AU. Ở ranh giới biome, một tile đơn lẻ rơi sang
+ô raster bên kia trong khi cả 4 hàng xóm trực giao rơi vào ô này → đốm `A` bị `B` vây
+4 phía. `renderChunk()` verbatim còn có PRIO edge-dither làm mỗi đốm đó nhiễu thêm
+theo pixel. Đây là lỗi của **bộ sampler cộng thêm U=0.5**, không phải GOLD, không
+phải raster 8 AU, không phải block vẽ terrain.
+
+**Cách sửa (`src/u05/world.ts` → `u05Tile()`):** cửa sổ `34×34` tile
+(chunk `32×32` + viền 1 tile), **3 lượt deterministic**: nếu tile trung tâm là biome
+(`MEADOW/GRASS/FOREST/MARSH/SAND/HILL/SNOW/ASH/TOXIC`) mà 4 hàng xóm trên/dưới/
+trái/phải **cùng một loại biome và khác tile trung tâm** → tile trung tâm nhận loại hàng xóm.
+Các lượt sau đọc **lưới đã cập nhật** nên giải được cả chuỗi cascade (hàng xóm đổi
+rồi mới cô lập tile trung tâm). Cache LRU **≤256 cửa sổ**, không bao giờ cấp phát
+11,2 triệu ô. Bản **toàn cảnh 500×350 vẫn dùng sampler RAW** (ở stride 8 tile một
+đốm đơn lẻ nhỏ hơn 1 pixel), nên thời gian build overview không đổi (~3,2 s).
+
+**Bảo vệ tuyệt đối:** chỉ tile có mã nằm trong danh sách biome mới bị sửa.
+`ROAD / BRIDGE / RIVER / DEEP / SHALLOW / CLIFF / ICE / LAVA / FLOOR / PWALL / BURNT`
+không nằm trong danh sách → **đường Beacon yêu thích của Creator, sông, hồ, biển,
+bờ, cầu, vách, băng, dung nham giữ nguyên từng tile**. QA đếm riêng quanh Beacon:
+`road 442→442`, `deep 9513→9513`, `river/bridge/cliff/ice/lava 0→0`. GOLD polygon,
+raster 8 AU và block `PAL/PRIO/texel` byte-identical **không bị sửa**.
+
+Kết quả 5 cửa sổ `60×40` tile: `102→0`, `59→0`, `25→0`, `68→0`, `65→0` ô cô lập;
+quét thô toàn khung (bước 200 tile) không còn cửa sổ nào có ô cô lập.
+Ảnh so sánh cùng toạ độ: `speckle_before.png` / `speckle_after.png` (tile `900,900`)
+và `speckle_busy_before.png` / `speckle_busy_after.png` (tile `1000,1800` — vùng
+nhiễu dày giống ảnh Creator gửi).
+
+Lưu ý: các cụm **2×2 tile trở lên** vẫn giữ nguyên — đó là đảo/bãi biome thật,
+không phải "ô đơn lẻ", nên không bị xoá nhầm.
+
 ## QA (`evidence/terrain-only-qa.json`)
 
 Playwright 640×360 DPR1, mở **cả `file://` lẫn HTTP**, phím thật:
@@ -159,11 +196,15 @@ Playwright 640×360 DPR1, mở **cả `file://` lẫn HTTP**, phím thật:
 | T-G17 `FIT_FOLLOW` camera trượt theo nhân vật mà cả khung map vẫn thấy | PASS |
 | T-G18 `F` → Center (marker luôn 320,180) / Lock / về Fit | PASS |
 | T-G19 khung `Camera 1×` 192×144 là canvas HTML riêng, hero luôn giữa, `overlays` vẫn 0 | PASS |
+| T-G20 ô cô lập `A vây 4 phía bởi B` = **0** ở mọi cửa sổ; GOLD + painter verbatim không đổi | PASS |
+| T-G21 đếm tile ROAD/RIVER/DEEP/BRIDGE/CLIFF/ICE/LAVA quanh Beacon **không đổi** | PASS |
+| T-G22 despeckle có giới hạn (≤256 cửa sổ), overview vẫn dùng sampler raw | PASS |
+| T-G23 ảnh before/after cùng toạ độ tồn tại | PASS |
 
-11 ảnh trong `evidence/terrain-only-shots/`: Beacon, Beacon không HUD, x10,
+15 ảnh trong `evidence/terrain-only-shots/`: Beacon, Beacon không HUD, x10,
 x10 chạy dài (bờ biển + cỏ), natural collision, HTTP, **toàn cảnh**,
 **toàn cảnh + khung nhìn**, **deep link `?zoom=fit`**, **Center follow**,
-**Camera 1× lens**.
+**Camera 1× lens**, **speckle before/after**, **vùng đã khử đốm**.
 
 ## Không khẳng định
 

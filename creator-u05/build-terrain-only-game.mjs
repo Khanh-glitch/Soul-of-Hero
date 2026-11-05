@@ -34,7 +34,7 @@ const externalScript = /<script[^>]+src=/i.test(html);
 const externalCss = /<link[^>]+rel=["']?stylesheet/i.test(html);
 const importFromUrl = /(?:from\s*|import\s*)["']https?:\/\//.test(html);
 if (externalScript || externalCss || importFromUrl) throw Error('U05_TERRAIN_ONLY_NOT_SELF_CONTAINED');
-for (const marker of ['speedRange', 'x10', 'TERRAIN_ONLY', 'render16', 'creator-u05', 'zoomRange', 'WHOLE_MAP_OVERVIEW', 'CENTER_FOLLOW', 'playerMarker', 'lens'])
+for (const marker of ['speedRange', 'x10', 'TERRAIN_ONLY', 'render16', 'creator-u05', 'zoomRange', 'WHOLE_MAP_OVERVIEW', 'CENTER_FOLLOW', 'playerMarker', 'lens', 'isolatedCells', 'despeckleStats'])
   if (!html.includes(marker)) throw Error('U05_TERRAIN_ONLY_MARKER_MISSING ' + marker);
 // Forbidden overlay code must not be bundled at all.
 for (const forbidden of ['PhysicalLayer', 'U05_SCENES', 'SITE_ENVELOPE', 'roofHiddenCount', 'wall.u05.'])
@@ -81,6 +81,16 @@ const record = {
       note: 'The native 1x camera NEVER stops following the player; zoom only changes the overview viewer layer.'
     },
     note: 'Zoom is a VIEWER control only, NOT a camera Gameplay law change.'
+  },
+  isolatedCellDespeckle: {
+    report: 'có khá nhiều và bất hợp lí các ô A được vây quanh 4 phía bởi ô B',
+    rootCause: 'biomeCodeAt() jitters EVERY tile independently by +/-2.6 AU against the 8 AU analysis raster; near a biome boundary a lone tile picks the other cell while all 4 orthogonal neighbours pick one cell. The verbatim renderChunk() PRIO edge dither then amplifies each speck.',
+    fix: '3 deterministic passes over a bounded 34x34 tile window (32x32 chunk + 1-tile border): an eligible BIOME centre whose 4 orthogonal neighbours are the SAME biome tile and differ from the centre adopts that neighbour tile. Later passes read the UPDATED grid, so cascades are resolved.',
+    eligible: 'authored land tile whose code is one of MEADOW/GRASS/FOREST/MARSH/SAND/HILL/SNOW/ASH/TOXIC',
+    preservedByTileCode: 'ROAD, BRIDGE, RIVER, DEEP, SHALLOW, CLIFF, ICE, LAVA, FLOOR, PWALL, BURNT are never smoothable, so the Creator-liked Beacon road and every authored water/shore/bridge/cliff tile are unchanged.',
+    bounded: '<=256 resident 34x34 windows LRU; whole 11.2M-cell frame never allocated; coarse whole-map overview keeps using the RAW sampler (specks are sub-pixel at 8-tile stride)',
+    goldPolygonsUnchanged: true, analysisRasterUnchanged: true, verbatimPainterUnchanged: true,
+    evidence: ['creator-u05/evidence/terrain-only-shots/speckle_before.png', 'creator-u05/evidence/terrain-only-shots/speckle_after.png']
   },
   collisionDefault: 'FREE_ROAM__NO_COLLISION', collisionOptional: 'NATURAL_TERRAIN_ONLY (water/cliff/river); no walls, no POI collision, no marine/boat/ferry permission',
   scope: 'STANDALONE TERRAIN VIEWER ONLY — NOT full Gameplay runtime integration, NOT visual acceptance, NOT production game.'

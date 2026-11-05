@@ -222,6 +222,12 @@ if (fs.existsSync(tBuildPath) && fs.existsSync(tQaPath)) {
   ok('T27 hero marker visible and moves', tq.zoom.fit.draw.viewerCursor.playerMarker === 1 && tq.zoom.follow.before.marker[0] !== tq.zoom.follow.after.marker[0]);
   ok('T28 center-follow centres the player', tq.zoom.follow.center.centered === true && tq.zoom.follow.center.afterMoveCentered === true && tq.zoom.follow.center.wholeMapVisible === false);
   ok('T29 lens + follow shots exist', tq.zoom.follow.shots.every(f => fs.existsSync(path.join(U, 'evidence/terrain-only-shots', f))));
+  ok('T30 despeckle metadata', tb.isolatedCellDespeckle.goldPolygonsUnchanged === true && tb.isolatedCellDespeckle.verbatimPainterUnchanged === true && tb.isolatedCellDespeckle.bounded.includes('256'));
+  ok('T31 despeckle markers bundled', ['isolatedCells','despeckleStats'].every(m => fs.readFileSync(tFile, 'utf8').includes(m)));
+  ok('T32 T-G20..T-G23 all PASS', ['T-G20','T-G21','T-G22','T-G23'].every(k => tq.gates[k]?.status === 'PASS'));
+  ok('T33 isolated cells eliminated', tq.despeckle.windows.every(w => w.paintedIsolated === 0) && tq.despeckle.windows.some(w => w.rawIsolated > 20));
+  ok('T34 authored geometry preserved', Object.values(tq.despeckle.authoredGeometryTileCountsPreserved).every(([a, b]) => a === b));
+  ok('T35 speckle before/after shots', ['speckle_before.png','speckle_after.png','terrain_only_despeckled.png'].every(f => fs.existsSync(path.join(U, 'evidence/terrain-only-shots', f))));
 }
 
 const result = {

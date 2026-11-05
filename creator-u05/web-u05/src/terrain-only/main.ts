@@ -23,7 +23,7 @@ import {
 } from '../u05/contract';
 import {
   sampleTile, u05Tile, terrainBlocked, touchGeometryChunk,
-  stats as worldStats, resetCaches
+  stats as worldStats, resetCaches, despeckleStats
 } from '../u05/world';
 import { getDisplayChunk, displayStats, resetDisplay } from '../u05/display';
 import { buildOverviewRows, getOverview, progress as overviewProgress, overviewSize } from './overview';
@@ -349,7 +349,8 @@ function state() {
     collision: S.collision ? 'NATURAL_TERRAIN_ONLY' : 'FREE_ROAM__NO_COLLISION',
     player: { px: S.x, py: S.y, tile: [tx, ty], au: tileToAuCentre(tx, ty), dir: S.dir },
     camera: { x: S.camX, y: S.camY, anchorTile: ANCHOR_TILE },
-    terrain: s ? { tile: s.tile, biome: s.biome, authoredLand: s.authoredLand, water: s.water, road: s.road, poiId: s.poiId } : null,
+    terrain: s ? { tile: s.tile, tileRendered: u05Tile(tx, ty), biome: s.biome, authoredLand: s.authoredLand, water: s.water, road: s.road, poiId: s.poiId } : null,
+    despeckle: despeckleStats(),
     draw: { ...JSON.parse(JSON.stringify(drawStats)), zoomMode: zoomMode() },
     overview: { ...overviewProgress(), bitmapSize: overviewSize(), guides: S.guides, followMode: S.followMode },
     stats: { ...worldStats(), ...displayStats(), simMs: Math.round(S.simMs), movedPx: Math.round(S.movedPx), blockedSubsteps: S.blockedSubsteps, spawnFixture: S.spawnFixture },
@@ -436,6 +437,18 @@ setInterval(() => {
   clearInputLog: () => { S.inputLog = []; },
   inputLog: () => S.inputLog.slice(),
   sampleTile, u05Tile, terrainBlocked, auToTile, tileToAuCentre,
+  despeckleStats,
+  /** Count isolated A-surrounded-by-4-B cells; raw = GOLD sampler, painted = despeckled. */
+  isolatedCells: (cx: number, cy: number, w = 60, h = 40) => {
+    let raw = 0, painted = 0;
+    for (let y = cy - (h >> 1); y < cy + (h >> 1); y++) for (let x = cx - (w >> 1); x < cx + (w >> 1); x++) {
+      const rc = sampleTile(x, y), rn = sampleTile(x, y - 1), rs = sampleTile(x, y + 1), re = sampleTile(x + 1, y), rw = sampleTile(x - 1, y);
+      if (rc && rn && rs && re && rw && rn.tile === rs.tile && rs.tile === re.tile && re.tile === rw.tile && rw.tile !== rc.tile) raw++;
+      const pc = u05Tile(x, y), pn = u05Tile(x, y - 1), ps = u05Tile(x, y + 1), pe = u05Tile(x + 1, y), pw = u05Tile(x - 1, y);
+      if (pn === ps && ps === pe && pe === pw && pw !== pc) painted++;
+    }
+    return { centre: [cx, cy], window: [w, h], rawIsolated: raw, paintedIsolated: painted };
+  },
   clearCaches: () => { resetCaches(); resetDisplay(); },
   stats: () => ({ ...worldStats(), ...displayStats() })
 };

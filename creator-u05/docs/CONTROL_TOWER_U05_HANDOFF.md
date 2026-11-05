@@ -276,3 +276,39 @@ thấy trọn map, **T-G18** Center giữ nhân vật giữa màn hình / Lock /
 Center** hoặc nhìn khung **Camera 1×**; không thể vừa "toàn bộ map gọn trong
 640×360" vừa "camera luôn center nhân vật" cùng lúc (hai điều kiện mâu thuẫn),
 nên đã tách thành 2 chế độ rõ ràng thay vì giả vờ làm cả hai.
+
+
+---
+
+## 12. SỬA LỖI — "ô A bị 4 ô B vây quanh" (speckle biome)
+
+Creator gửi ảnh màn hình lens 1× và báo: *"có khá nhiều và bất hợp lí các ô A
+được vây quanh 4 phía bởi ô B"*.
+
+**Root cause:** `biomeCodeAt()` jitter **độc lập từng tile** `±2.6 AU` khi đọc
+raster phân tích 8 AU. Tại ranh giới biome, một tile rơi sang ô raster kia trong
+khi 4 hàng xóm trực giao rơi vào ô này → đốm đơn lẻ; PRIO edge-dither của `renderChunk()`
+verbatim khuếch đại thêm nhiễu pixel. Lỗi thuộc **sampler cộng thêm U=0.5**, không
+phải GOLD / raster 8 AU / block vẽ terrain.
+
+**Fix (`src/u05/world.ts` → `u05Tile()`):** cửa sổ `34×34` (chunk 32×32 + viền 1),
+**3 pass deterministic** đọc lưới ĐÃ CẬP NHẬT: tile trung tâm thuộc nhóm biome mà 4 hàng
+xóm trên/dưới/trái/phải cùng một loại biome và khác tile trung tâm → nhận loại hàng xóm.
+Giải được cả cascade. LRU ≤256 cửa sổ, không cấp phát 11,2 triệu ô. Bản toàn cảnh
+500×350 tiếp tục dùng **sampler RAW** (đốm đơn lẻ nhỏ hơn 1 pixel ở stride 8).
+
+**Bảo vệ:** chỉ mã tile biome (`MEADOW/GRASS/FOREST/MARSH/SAND/HILL/SNOW/ASH/
+TOXIC`) được sửa. `ROAD/BRIDGE/RIVER/DEEP/SHALLOW/CLIFF/ICE/LAVA/FLOOR/PWALL/
+BURNT` không thuộc nhóm → **đường Beacon, sông, hồ, biển, bờ, cầu, vách, băng,
+dung nham giữ nguyên từng tile**. QA đếm quanh Beacon: `road 442→442`,
+`deep 9513→9513`, `river/bridge/cliff/ice/lava 0→0`. GOLD polygon, raster 8 AU và
+`PAL/PRIO/texel` byte-identical **không bị sửa**; vẫn `overlays=0`.
+
+Kết quả 5 cửa sổ 60×40: `102→0`, `59→0`, `25→0`, `68→0`, `65→0`; quét thô toàn
+khung không còn cửa sổ nào có ô cô lập. Cụm ≥2×2 tile vẫn giữ (đảo/bãi biome thật).
+
+QA **T-G20…T-G23 PASS**, tổng **T-G0…T-G23 = 24/24 PASS**, 15 ảnh, 0 lỗi,
+`P6-G3 PASS`. Ảnh: `speckle_before.png`, `speckle_after.png`,
+`terrain_only_despeckled.png`. File HTML build lại 1.407.498 bytes
+(`sha256 540f095e…`), ZIP 120.378 bytes. Các cổng `P5-G5/G6` vẫn FAIL,
+`P5-G7/G8` PARTIAL; không claim tích hợp Gameplay đầy đủ / chấp nhận thị giác.

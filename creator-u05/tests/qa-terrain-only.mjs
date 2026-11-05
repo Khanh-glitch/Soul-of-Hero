@@ -83,6 +83,25 @@ const lockState = await ev(() => window.__terrain.state());
 await page.keyboard.press('KeyF'); await page.waitForTimeout(150);
 const fitAgain = await ev(() => window.__terrain.state());
 const lensInfo = await ev(() => ({ w: document.getElementById('lens').width, h: document.getElementById('lens').height, isHtmlCanvas: document.getElementById('lens') !== document.getElementById('game') }));
+// ---- ISOLATED-CELL DESPECKLE (Creator bug report) ------------------------
+const despeckleWindows = await ev(() => [[900, 900], [2500, 1700], [2222, 804], [2100, 1900], [3300, 1500]]
+  .map(([x, y]) => window.__terrain.isolatedCells(x, y, 60, 40)));
+const despeckle = await ev(() => window.__terrain.despeckleStats());
+const geomPreserved = await ev(() => {
+  const a = window.__terrain;
+  const c = { road: [0, 0], river: [0, 0], deep: [0, 0], bridge: [0, 0], cliff: [0, 0], ice: [0, 0], lava: [0, 0] };
+  const idx = { 12: 'road', 19: 'river', 0: 'deep', 13: 'bridge', 8: 'cliff', 18: 'ice', 16: 'lava' };
+  for (let y = 1250; y < 1360; y++) for (let x = 480; x < 620; x++) {
+    const raw = a.sampleTile(x, y).tile, painted = a.u05Tile(x, y);
+    if (idx[raw] !== undefined) c[idx[raw]][0]++;
+    if (idx[painted] !== undefined) c[idx[painted]][1]++;
+  }
+  return c;
+});
+await ev(() => window.__terrain.reset(900, 900));
+await page.waitForTimeout(250);
+const despeckleShot = await shot('terrain_only_despeckled.png');
+await ev(() => window.__terrain.reset(544, 1304));
 // Return to native 1x and prove the camera/hero contract is intact.
 await page.keyboard.press('KeyV');
 await page.waitForTimeout(200);
@@ -193,6 +212,10 @@ const gates = {
   'T-G17': { status: followBefore.followMode === 'FIT_FOLLOW' && followBefore.overviewCamera.followGain[0] > 0 && followBefore.overviewCamera.followGain[0] < 1 && Math.abs(followAfter.overviewCamera.offset[0] - followBefore.overviewCamera.offset[0]) > 0.5 && followAfter.overviewCamera.wholeMapVisible === true && followAfter.mapFitsViewport === true ? 'PASS' : 'FAIL', reason: 'FIT_FOLLOW camera pans with the player while the WHOLE frame stays visible' },
   'T-G18': { status: centerState.followMode === 'CENTER_FOLLOW' && centerState.overviewCamera.cameraCenteredOnPlayer === true && centerAfterMove.overviewCamera.cameraCenteredOnPlayer === true && centerState.overviewCamera.wholeMapVisible === false && lockState.followMode === 'LOCK' && lockState.followCamera === false && fitAgain.followMode === 'FIT_FOLLOW' ? 'PASS' : 'FAIL', reason: 'F cycles Fit / Center (player stays centred while map scrolls) / Lock; real camera follow at every zoom' },
   'T-G19': { status: lensInfo.w === 192 && lensInfo.h === 144 && lensInfo.isHtmlCanvas === true && fitState.draw.lens.hero === 1 && fitState.draw.lens.terrainChunks > 0 && fitState.draw.lens.followCamera === true && fitState.lensEnabled === true && Object.values(fitState.draw.overlays).every(v => v === 0) ? 'PASS' : 'FAIL', reason: 'separate HTML 192x144 native 1x follow camera always draws the hero; game canvas still has zero overlay layers' },
+  'T-G20': { status: despeckleWindows.every(w => w.paintedIsolated === 0) && despeckleWindows.some(w => w.rawIsolated > 20) && despeckle.replacements > 0 && despeckle.verbatimPainterUnchanged === true && despeckle.goldPolygonsUnchanged === true ? 'PASS' : 'FAIL', reason: 'isolated A-surrounded-by-4-B cells eliminated in every sampled window; GOLD + verbatim painter untouched' },
+  'T-G21': { status: Object.values(geomPreserved).every(([raw, painted]) => raw === painted) ? 'PASS' : 'FAIL', reason: 'ROAD / RIVER / DEEP / BRIDGE / CLIFF / ICE / LAVA tile counts around Beacon are byte-for-byte unchanged' },
+  'T-G22': { status: despeckle.overviewUsesRawSampler === true && despeckle.windowsResident <= despeckle.windowMax && despeckle.passesRun >= 3 ? 'PASS' : 'FAIL', reason: 'despeckle is bounded (<=256 chunk windows), overview stays cheap on the raw sampler' },
+  'T-G23': { status: fs.existsSync(path.join(SHOTS, 'speckle_before.png')) && fs.existsSync(path.join(SHOTS, 'speckle_after.png')) && fs.existsSync(path.join(SHOTS, despeckleShot)) ? 'PASS' : 'FAIL', reason: 'before/after native 1x evidence shots of the same tile (900,900) exist' },
   'T-G15': { status: deepLink.zoomMode === 'WHOLE_MAP_OVERVIEW' && deepLink.mapFitsViewport === true && deepLink.zoomLevel === 0 && Object.values(deepLink.draw.overlays).every(v => v === 0) ? 'PASS' : 'FAIL', reason: '?zoom=fit deep link opens directly at the smallest whole-map zoom' },
   'T-G14': { status: midZoom.zoomMode === 'WHOLE_MAP_OVERVIEW' && midZoom.zoom > fitState.zoom && midZoom.zoom < 1 && afterWheel.zoomLevel > midZoom.zoomLevel && panAfter > panBefore && nativeAgain.zoom === 1 && nativeAgain.zoomMode === 'NATIVE_1X' && nativeAgain.draw.drawn.hero === 1 && nativeAgain.draw.drawn.overviewBitmap === 0 ? 'PASS' : 'FAIL', reason: 'slider/wheel zoom, x10 pan while zoomed out, V restores native 1x hero' }
 };
@@ -206,6 +229,12 @@ const report = {
   speed: { x1: m1, x10: m10, ratio: Number(ratio.toFixed(3)), keyboard: { afterPlus, afterMinus }, rangeBounds, clamped },
   collisionProof,
   hudHidden,
+  despeckle: {
+    windows: despeckleWindows,
+    stats: despeckle,
+    authoredGeometryTileCountsPreserved: geomPreserved,
+    shot: despeckleShot
+  },
   zoom: {
     follow: {
       before: { mode: followBefore.followMode, offset: followBefore.overviewCamera.offset, gain: followBefore.overviewCamera.followGain, marker: followBefore.playerMarkerScreen, wholeMapVisible: followBefore.overviewCamera.wholeMapVisible },

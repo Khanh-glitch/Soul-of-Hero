@@ -3,7 +3,10 @@
  * when the viewer is zoomed out below the native 1x camera.
  *
  *  - 500 x 350 pixels; one pixel = one 8x8-tile block sampled at EXACT tile
- *    centres by the SAME `u05Tile()` GOLD-polygon sampler as the native view.
+ *    centres by the RAW GOLD-polygon sampler `u05TileRaw()`. The paint-level
+ *    isolated-cell despeckle is deliberately NOT applied here: at an 8-tile
+ *    stride a single speck is sub-pixel, and using the raw sampler keeps this
+ *    whole-frame preview cheap (no 43,750 chunk-window rebuilds).
  *    That is 175,000 pixels / 525,000 tile samples — NOT an 11,200,000-cell
  *    array and NOT a full-frame allocation.
  *  - It is NOT the 8 AU WMP-04R1 analysis raster upscaled, and it is NOT
@@ -17,7 +20,7 @@
  *    freezes; rows appear top-to-bottom as they are measured.
  */
 import { T } from '../game/core';
-import { u05Tile, FRAME_W, FRAME_H } from '../u05/world';
+import { u05TileRaw, FRAME_W, FRAME_H } from '../u05/world';
 
 export const OV_W = 500;
 export const OV_H = 350;
@@ -73,7 +76,7 @@ export function buildOverviewRows(maxRows = 6) {
       let best = T.DEEP, bestPr = -1;
       // 3 deterministic exact tile centres inside the 8x8 block.
       for (const [ox, oy] of [[4, 4], [1, 1], [7, 7]] as [number, number][]) {
-        const t = u05Tile(tx0 + ox, ty0 + oy);
+        const t = u05TileRaw(tx0 + ox, ty0 + oy);
         samples++;
         const p = priority(t);
         if (p > bestPr) { bestPr = p; best = t; }

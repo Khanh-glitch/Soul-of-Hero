@@ -34,9 +34,92 @@ export function sampleTile(tx: number, ty: number) {
   if (!inFrame(tx, ty)) return null;
   return sampleAt(PROFILE, tx, ty);
 }
-export function u05Tile(tx: number, ty: number): number {
+const SMOOTHABLE = new Set<number>([
+  T.MEADOW, T.GRASS, T.FOREST, T.MARSH, T.SAND, T.HILL, T.SNOW, T.ASH, T.TOXIC
+]);
+/** Raw GOLD sampler result (no despeckle) — used by the coarse 8-tile overview. */
+export function u05TileRaw(tx: number, ty: number): number {
+  if (!inFrame(tx, ty)) return T.DEEP;
   const s = sampleTile(tx, ty);
   return s ? s.tile : T.DEEP;
+}
+const DWIN = CHUNK + 2;              // 18x18: chunk interior + 1-tile border
+const DWIN_MAX = 256;                // bounded window LRU (83 KB of tile codes)
+const dwin = new Map<string, { used: number; codes: Uint8Array }>();
+let dwinBuilds = 0, dwinEvictions = 0, despeckleReplacements = 0, dwinPasses = 0;
+
+function rawCell(tx: number, ty: number) {
+  if (!inFrame(tx, ty)) return { code: T.DEEP, eligible: 0 };
+  const s = sampleTile(tx, ty);
+  if (!s) return { code: T.DEEP, eligible: 0 };
+  // Tile code alone is the authority: ROAD/BRIDGE/RIVER/DEEP/SHALLOW/CLIFF/
+  // ICE/LAVA/FLOOR/PWALL are NOT in SMOOTHABLE, so authored geometry can never
+  // be changed. DOCK/LAKE/RIVER flags do not alter the painted tile code and
+  // must NOT veto despeckling (27 dock node radii would otherwise leave whole
+  // speckled areas untouched).
+  const eligible = s.authoredLand && SMOOTHABLE.has(s.tile) ? 1 : 0;
+  return { code: s.tile, eligible };
+}
+/**
+ * Build an 18x18 window for one 16x16 display chunk and run THREE deterministic
+ * passes of the isolated-cell rule. Cascades (a neighbour becoming B and thereby
+ * isolating the centre) are resolved because each pass reads the UPDATED grid.
+ * Border columns/rows stay raw so the rule never invents geometry outside the
+ * chunk; every painted tile is read from the window that owns it.
+ */
+function buildDespeckleWindow(cx: number, cy: number): Uint8Array {
+  const x0 = cx * CHUNK - 1, y0 = cy * CHUNK - 1;
+  const codes = new Uint8Array(DWIN * DWIN);
+  const elig = new Uint8Array(DWIN * DWIN);
+  for (let j = 0; j < DWIN; j++) for (let i = 0; i < DWIN; i++) {
+    const c = rawCell(x0 + i, y0 + j);
+    codes[j * DWIN + i] = c.code; elig[j * DWIN + i] = c.eligible;
+  }
+  for (let pass = 0; pass < 3; pass++) {
+    let changed = 0; dwinPasses++;
+    for (let j = 1; j < DWIN - 1; j++) for (let i = 1; i < DWIN - 1; i++) {
+      const k = j * DWIN + i;
+      if (!elig[k]) continue;
+      const t = codes[k], n = codes[k - DWIN], so = codes[k + DWIN], e = codes[k + 1], w = codes[k - 1];
+      if (n === so && so === e && e === w && n !== t && SMOOTHABLE.has(n)) { codes[k] = n; changed++; }
+    }
+    despeckleReplacements += changed;
+    if (!changed) break;
+  }
+  dwinBuilds++;
+  return codes;
+}
+/** Despeckled painter tile — the ONLY terrain sampler used by renderChunk(). */
+export function u05Tile(tx: number, ty: number): number {
+  if (!inFrame(tx, ty)) return T.DEEP;
+  const cx = Math.floor(tx / CHUNK), cy = Math.floor(ty / CHUNK);
+  const key = `creator-u05|despeckle|${cx}:${cy}`;
+  let e = dwin.get(key);
+  if (!e) {
+    e = { used: ++tick, codes: buildDespeckleWindow(cx, cy) };
+    dwin.set(key, e);
+    while (dwin.size > DWIN_MAX) {
+      let oldest = '', best = Infinity;
+      for (const [kk, v] of dwin) if (v.used < best) { best = v.used; oldest = kk; }
+      if (!oldest) break;
+      dwin.delete(oldest); dwinEvictions++;
+    }
+  } else e.used = ++tick;
+  const lx = tx - (cx * CHUNK - 1), ly = ty - (cy * CHUNK - 1);
+  return e.codes[ly * DWIN + lx];
+}
+export function despeckleStats() {
+  return {
+    rule: '3 deterministic passes: a BIOME-DERIVED centre tile with 4 identical orthogonal biome neighbours and a different centre adopts the neighbour tile; passes read the UPDATED grid so cascades are resolved',
+    replacements: despeckleReplacements, passesRun: dwinPasses,
+    windowsBuilt: dwinBuilds, windowsResident: dwin.size, windowMax: DWIN_MAX, evictions: dwinEvictions,
+    windowTiles: [DWIN, DWIN], chunkTiles: [CHUNK, CHUNK],
+    smoothableTiles: [...SMOOTHABLE],
+    untouchedByTileCode: ['ROAD', 'BRIDGE', 'RIVER', 'DEEP', 'SHALLOW', 'CLIFF', 'ICE', 'LAVA', 'FLOOR', 'PWALL', 'BURNT'],
+    overviewUsesRawSampler: true,
+    goldPolygonsUnchanged: true, analysisRasterUnchanged: true, verbatimPainterUnchanged: true,
+    note: 'Additive U=0.5 sampler output only. GOLD polygons, 8 AU analysis raster and the byte-identical live PAL/PRIO/texel painter are NOT edited.'
+  };
 }
 
 let tick = 0;

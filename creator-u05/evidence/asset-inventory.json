@@ -1,6 +1,6 @@
 {
   "schema": "soh.u05.asset-inventory.v1",
-  "generatedAt": "2026-11-05T09:13:10.085Z",
+  "generatedAt": "2026-11-05T09:50:18.136Z",
   "scope": "ISOLATED six-scene U05 Creator audition. Additive physical POI layer. NOT full Gameplay runtime integration, NOT visual acceptance, NOT art-complete.",
   "policy": "REUSE_EXISTING_SOH_GAME_ART_RENDERER_AND_SPRITES_FIRST; productionAtlas=NOT_AUTHORIZED; creatorVisualApproval=NOT_REQUESTED.",
   "noNewAtlas": true,
@@ -155,7 +155,7 @@
     },
     {
       "path": "terrain-only.html",
-      "sha256": "99c81390aa4e4418e26a53709244a4603df6900df8649b2b0b0be89a16376ba4"
+      "sha256": "597e70d8fd04add1c2ec9f1a32d0909f38d2ed39e306ce31ea4928a7713e7248"
     },
     {
       "path": "vite.terrain-only.config.mjs",
@@ -167,7 +167,7 @@
     },
     {
       "path": "src/u05/world.ts",
-      "sha256": "0cb54d4a35c1fa2b26322f3083632f7707f0dd787f96a058114d9a64acd09cc3"
+      "sha256": "78317efe40c18f7ed4bf7d3c129be4f423b6a7abaac7625e8f9938c73b2264fd"
     },
     {
       "path": "src/u05/display.ts",
@@ -191,13 +191,13 @@
     },
     {
       "path": "src/terrain-only/main.ts",
-      "sha256": "3ade2afeea3272940c72a68e51f194f74bb7a869df461d66559a4f3cf62be414"
+      "sha256": "ee0dd8d633a11c4d5d0369100aaa28416fa83cb97a4f4d76652b390ae072a615"
     }
   ],
   "standaloneTerrainOnlyGame": {
     "file": "creator-u05/SoulOfHero_TerrainOnly_U05_x10.html",
-    "bytes": 1404936,
-    "sha256": "f664761a5b0dddd96d067b06888436f88af4b35e20841b20c43b7929d7ca488e",
+    "bytes": 1407498,
+    "sha256": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0",
     "selfContained": true,
     "layersRemoved": 10,
     "speedMaxMultiplier": 10,

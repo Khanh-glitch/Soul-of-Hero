@@ -18,7 +18,7 @@ sông, hồ, biển, bờ biển + hero gốc 16×24. Tốc độ chỉnh **x1 �
 **`Z` zoom nhỏ nhất để nhìn toàn cảnh 4000×2800 tile** (slider / lăn chuột / `,` `.`,
 `V` về 1×), **`F`** Fit/Center/Khoá camera, **marker nhân vật luôn hiện + khung Camera 1×
 luôn bám nhân vật** (sửa lỗi mất follow khi zoom out), camera chơi bình thường vẫn
-640×360 1×, WASD/mũi tên thật. Hướng dẫn đầy đủ:
+640×360 1×, WASD/mũi tên thật. Đã **khử các ô đơn lẻ A bị 4 ô B vây quanh** (3 lượt lọc deterministic; đường/sông/cầu/vách/băng/dung nham giữ nguyên, GOLD + terrain painter verbatim không đổi). Hướng dẫn đầy đủ:
 `docs/TERRAIN_ONLY_VIEWER.md` · QA: `evidence/terrain-only-qa.json` ·
 ảnh: `evidence/terrain-only-shots/`.
 
