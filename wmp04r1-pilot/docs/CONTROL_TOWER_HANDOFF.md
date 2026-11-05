@@ -21,7 +21,7 @@ reviewable; four **named** blockers prevent a `PASS` on full Gameplay intake / i
 | Gameplay Web | `arena/d4bfcfff-soul-of-hero` @ pinned commit | `f8fcde910c330aa953dd5c65b80a51792945d35e` | verbatim vendored |
 | `main` | `main` | `5214788933b1a827f3a177d11ff486433dfe5e8a` | untouched |
 | PR #44 base | `arena/4795760e-soul-of-hero` | `8421b9c3335c7648488ce8ae5dab43eb5787977e` | untouched |
-| PR #44 live head | `arena/d4bfcfff-soul-of-hero` | `1b98e806dd000a5e115516ddd7f5ce31c92cfbcf` | **OPEN / DRAFT**, advanced during this work |
+| PR #44 live head | `arena/d4bfcfff-soul-of-hero` | `e11a9b4471a0832cd6d039b5510725b10ee0275c` | **OPEN / DRAFT**, advanced twice during this work |
 
 * `map-data/CURRENT_WORLD_MASTER.json`: `activeRevision = WMP-04R1`,
   `activeManifest = v4/r1/manifest.r1.json`, `basePhysicalRevision = WMP-03`,
@@ -39,12 +39,13 @@ reviewable; four **named** blockers prevent a `PASS` on full Gameplay intake / i
 
 ### Live-HEAD drift (material finding)
 
-After the pinned source was vendored, Gameplay / PR #44 advanced **10 commits** to
-`1b98e806…` (2026-11-05 00:27 UTC, "Implement provisional Mjolnir combat and finite
-acquisition"), changing `web/src/game/{engine,render,core,catalog,persist,sim}.ts` and
-`web/src/ui/Game.tsx`. `f8fcde91` **is** an ancestor, but the newer head is a different
-renderer/gameplay source. This pilot deliberately consumes the **exact pinned**
-`f8fcde91` as instructed and does **not** claim to be based on the newer head.
+After the pinned source was vendored, Gameplay / PR #44 advanced **continuously**:
+`f8fcde91` → `1b98e806…` (10 commits, 00:27 UTC, "Implement provisional Mjolnir combat
+and finite acquisition") → `e11a9b44…` (12 commits, 00:40 UTC, "Make Spirit beam visible
+during channel"), changing `web/src/game/{engine,render,core,catalog,persist,sim}.ts`
+and `web/src/ui/Game.tsx`. `f8fcde91` **is** an ancestor, but the newer head is a
+different renderer/gameplay source. This pilot deliberately consumes the **exact pinned**
+`f8fcde91` as instructed and does **not** claim to be based on any newer head.
 **Rebase owner: GAMEPLAY.**
 
 ### Branch isolation (platform constraint, declared)
@@ -237,7 +238,7 @@ Full inventory with exhaustive evidence: [`ASSET_INVENTORY.md`](ASSET_INVENTORY.
 
 | # | Blocker | Exact owner | Consequence |
 |---|---|---|---|
-| B1 | Gameplay live HEAD / PR #44 advanced to `1b98e806…` (10 commits changing `engine.ts`, `render.ts`, `core.ts`, `sim.ts`, `Game.tsx`) after the pinned `f8fcde91` was consumed | **GAMEPLAY** (PR #44 author) | Pilot is based on the exact pinned source, not the current live head. A rebase is required before any integration discussion. |
+| B1 | Gameplay live HEAD / PR #44 advanced twice to `e11a9b44…` (12 commits changing `engine.ts`, `render.ts`, `core.ts`, `sim.ts`, `Game.tsx`) after the pinned `f8fcde91` was consumed | **GAMEPLAY** (PR #44 author) | Pilot is based on the exact pinned source, not the current live head. A rebase is required before any integration discussion. |
 | B2 | `approvedTraversal.status = UNKNOWN`; `boatOrSwimPermission = UNRESOLVED_GAMEPLAY`; `activeCollisionPermission = false`; `candidateEconomyMap = CANDIDATE_ONLY__NEEDS_GAMEPLAY_REVIEW`; `validateGeographicHandoff()` / `validateEconomyMap()` / `compileEconomy()` / `diagnoseStarts()` not executed as Gameplay intake validators (WMP-03 `gameplayValidatorsExecuted=false`) | **GAMEPLAY** (intake review) | A **complete** Gameplay semantic validator cannot pass. The pilot did **not** weaken validation to hide this; it reports 26 independent technical checks and the 233/233 pinned Web suite instead. |
 | B3 | POI entrance/door/frontage collision is not instantiated in the existing Web Veyra projection (`statics=[]`, `buildings=[]`); `buildable` Map zone candidacy is consumed by `buildReason()` as a placement gate | **GAMEPLAY** (static architecture runtime ingestion + placement semantics) | Genuine sea/cliff collision is proven; POI entrance behaviour and road/cargo/buildable permission separation remain unverified. Not silently converted into permission by this pilot — the pre-existing behaviour was preserved unchanged. |
 | B4 | No legitimate helicopter/rotorcraft scene object exists in Gameplay `f8fcde91`; no production atlas or human art approval; Arena forbids creating a separate integration branch | **GAMEPLAY machines/vehicles + A0/A3/A8**; **Control Tower / creator**; **Arena platform** | Scene 5 reports `PROVEN MISSING` instead of fabricating. Work is isolated in `wmp04r1-pilot/` on the session branch rather than a new branch. |

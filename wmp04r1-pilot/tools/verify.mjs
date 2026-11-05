@@ -102,7 +102,7 @@ const out = {
   mapHead: MAP_HEAD, gameplayHead: GP_HEAD, activeRevision: meta.activeRevision,
   pilotStatus: status, checks, summary: { total: checks.length, passed: checks.length - failed.length, failed: failed.length },
   limitations: [
-    'Gameplay live HEAD / PR44 advanced to 1b98e806dd000a5e115516ddd7f5ce31c92cfbcf after the pinned f8fcde91 source was vendored; this pilot deliberately consumes the exact pinned SHA, NOT the newer head. Owner: GAMEPLAY.',
+    'Gameplay live HEAD / PR44 advanced continuously to e11a9b4471a0832cd6d039b5510725b10ee0275c (12 commits, observed 2026-11-05 00:40 UTC) after the pinned f8fcde91 source was vendored; this pilot deliberately consumes the exact pinned SHA, NOT the newer head. Owner: GAMEPLAY.',
     'Marine domains are STATIC geography only: no boat, swimming, Leviathan AI, helicopter flight, loot or weather damage was implemented or approved.',
     'Map road/cargo/buildable status remains a CANDIDATE; the existing Web buildReason() consumes buildable as a placement gate. Owner: GAMEPLAY.',
     'POI entrance/door behaviour is not instantiated in the existing Web Veyra projection (statics=[]); collision proof covers sea/cliff boundaries only. Owner: GAMEPLAY.',

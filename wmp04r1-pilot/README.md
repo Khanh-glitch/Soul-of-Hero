@@ -22,11 +22,13 @@ Active authority: `map-data/CURRENT_WORLD_MASTER.json` → `activeRevision = WMP
 `artDirection.selection = REUSE_EXISTING_SOH_GAME_ART_RENDERER_AND_SPRITES_FIRST`,
 `productionAtlas = NOT_AUTHORIZED`, `creatorVisualApproval = NOT_REQUESTED`.
 
-> **Live-HEAD drift (2026-11-05):** Gameplay / PR #44 head has advanced to
-> `1b98e806dd000a5e115516ddd7f5ce31c92cfbcf` (10 commits after `f8fcde91`, changing
-> `web/src/game/{engine,render,core,catalog,persist,sim}.ts` and `web/src/ui/Game.tsx`).
-> This pilot deliberately consumes the **exact pinned** `f8fcde91` as instructed; it does
-> **not** claim to be based on the newer head. Rebase owner: GAMEPLAY.
+> **Live-HEAD drift (2026-11-05):** Gameplay / PR #44 advanced continuously during this
+> work: `f8fcde91` → `1b98e806dd000a5e115516ddd7f5ce31c92cfbcf` (10 commits) →
+> `e11a9b4471a0832cd6d039b5510725b10ee0275c` (12 commits, final observation at
+> 00:40 UTC). Those commits change `web/src/game/{engine,render,core,catalog,persist,sim}.ts`
+> and `web/src/ui/Game.tsx`. This pilot deliberately consumes the **exact pinned**
+> `f8fcde91` as instructed; it does **not** claim to be based on any newer head.
+> Rebase owner: GAMEPLAY.
 
 ## Launch (real browser, 640×360)
 
