@@ -20,6 +20,9 @@
       .note { margin-top: 6px; color: #a89888; }
       .hidden { display: none; }
       #pure { color: #8ec08e; }
+      #lens { width: 192px; height: 144px; display: block; image-rendering: pixelated; border: 1px solid #4a4048; background: #0b1020; }
+      #lensrow { align-items: flex-start; }
+      #lenscap { max-width: 420px; color: #a89888; }
       kbd { background: #2a2230; border: 1px solid #6a5e66; padding: 0 4px; }
     </style>
   </head>
@@ -44,15 +47,21 @@
           <button data-speed="10">x10</button>
           <button id="fit">Toàn cảnh (Z)</button>
           <button id="native">1× (V)</button>
-          <button id="guides">Khung nhìn (B): TẮT</button>
+          <button id="guides">Khung nhìn (B): BẬT</button>
+          <button id="follow" class="on">Follow (F): Fit</button>
+          <button id="lensBtn">Camera 1× (L): BẬT</button>
           <button id="collision">Chặn địa hình: TẮT</button>
           <button id="hide">Ẩn bảng (H)</button>
           <button id="reset">Về Beacon (R)</button>
         </div>
+        <div class="row" id="lensrow">
+          <canvas id="lens" width="192" height="144"></canvas>
+          <span id="lenscap"><b>Camera 1× luôn đi theo nhân vật</b> — khung 192×144 cắt từ chính bản đồ nền, hero 16×24 luôn ở giữa. Dù zoom out tới mức nhỏ nhất, camera follow <b>không bao giờ tắt</b>. <kbd>L</kbd> bật/tắt. <kbd>F</kbd> đổi 3 chế độ: <b>Fit</b> (cả map luôn thấy + bản đồ trượt theo nhân vật), <b>Center</b> (nhân vật luôn giữa màn hình, map cuộn dưới chân), <b>Khoá</b> (đứng yên).</span>
+        </div>
         <pre id="status"></pre>
         <div class="note" id="pure">Chỉ nền: đường · sông · hồ · biển · biome · bờ biển · cầu. <b>Không</b> công trình, tường, cửa, mái, marker, label, POI overlay, hiệu ứng nổi.</div>
-        <div class="note">Di chuyển <kbd>WASD</kbd> / <kbd>↑↓←→</kbd> · tốc độ <kbd>+</kbd> <kbd>-</kbd> hoặc <kbd>[</kbd> <kbd>]</kbd> (1→10) · <b>zoom</b> <kbd>Z</kbd> toàn cảnh ↔ 1×, <kbd>,</kbd> <kbd>.</kbd> hoặc lăn chuột, <kbd>V</kbd> về 1×, <kbd>B</kbd> khung nhìn · <kbd>C</kbd> chặn địa hình · <kbd>H</kbd> ẩn bảng · <kbd>R</kbd> về Beacon.</div>
-        <div class="note">Chế độ <b>Toàn cảnh</b> thu nhỏ tới mức nhỏ nhất để <b>toàn bộ khung 4000×2800 tile nằm gọn trong 640×360</b>. Đây là bản xem mẫu (500×350 pixel, 1 pixel = 8×8 tile, lấy đúng tâm tile GOLD) — <b>không</b> cấp phát 11,2 triệu ô, <b>không</b> phải raster 8 AU phóng to, <b>không</b> đổi luật camera: chơi bình thường vẫn 640×360 1×, hero 16×24.</div>
+        <div class="note">Di chuyển <kbd>WASD</kbd> / <kbd>↑↓←→</kbd> · tốc độ <kbd>+</kbd> <kbd>-</kbd> hoặc <kbd>[</kbd> <kbd>]</kbd> (1→10) · <b>zoom</b> <kbd>Z</kbd> toàn cảnh ↔ 1×, <kbd>,</kbd> <kbd>.</kbd> hoặc lăn chuột, <kbd>V</kbd> về 1×, <kbd>F</kbd> Fit/Center/Khoá camera, <kbd>B</kbd> khung nhìn, <kbd>L</kbd> camera 1× · <kbd>C</kbd> chặn địa hình · <kbd>H</kbd> ẩn bảng · <kbd>R</kbd> về Beacon.</div>
+        <div class="note">Chế độ <b>Toàn cảnh</b> thu nhỏ tới mức nhỏ nhất để <b>toàn bộ khung 4000×2800 tile nằm gọn trong 640×360</b>. Đây là bản xem mẫu (500×350 pixel, 1 pixel = 8×8 tile, lấy đúng tâm tile GOLD) — <b>không</b> cấp phát 11,2 triệu ô, <b>không</b> phải raster 8 AU phóng to, <b>không</b> đổi luật camera: chơi bình thường vẫn 640×360 1×, hero 16×24. Ở chế độ này <b>marker nhân vật luôn hiện và đi theo WASD</b>, bản đồ trượt trong phần letterbox để vẫn thấy trọn khung map, và khung <b>Camera 1×</b> bên dưới luôn bám nhân vật.</div>
         <div class="note">Tốc độ gốc 72 px/s không đổi; hệ số là điều khiển <i>viewer</i>, không phải luật Gameplay. File chạy độc lập, không cần server, không nạp atlas mới.</div>
       </div>
     </div>

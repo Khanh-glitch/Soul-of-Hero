@@ -1,6 +1,6 @@
 {
   "schema": "soh.u05.terrain-only-qa.v1",
-  "generatedAt": "2026-11-05T09:00:25.166Z",
+  "generatedAt": "2026-11-05T09:13:02.735Z",
   "file": "creator-u05/SoulOfHero_TerrainOnly_U05_x10.html",
   "fileUrl": "file:///home/user/Soul-of-Hero/creator-u05/SoulOfHero_TerrainOnly_U05_x10.html",
   "httpUrl": "http://localhost:5182/terrain-only.html",
@@ -19,6 +19,34 @@
     "zoomLevel": 1,
     "zoomMode": "NATIVE_1X",
     "pxPerTile": 16,
+    "followCamera": true,
+    "followMode": "FIT_FOLLOW",
+    "cameraFollowsPlayer": true,
+    "lensEnabled": true,
+    "overviewCamera": {
+      "offset": [
+        0,
+        0
+      ],
+      "mapPx": [
+        0,
+        0
+      ],
+      "wholeMapVisible": true,
+      "cameraCenteredOnPlayer": false,
+      "anchorsOnPlayer": true,
+      "followGain": [
+        0,
+        0
+      ],
+      "followsPlayer": true,
+      "mode": "FIT_FOLLOW",
+      "nativeCameraStillFollows": true
+    },
+    "playerMarkerScreen": [
+      0,
+      0
+    ],
     "fitPxPerTile": 0.128571,
     "mapFitsViewport": false,
     "cameraTrick": false,
@@ -90,8 +118,15 @@
         "particles": 0
       },
       "viewerGuides": {
-        "viewportRect": 0,
-        "playerDot": 0
+        "viewportRect": 0
+      },
+      "viewerCursor": {
+        "playerMarker": 0
+      },
+      "lens": {
+        "hero": 1,
+        "terrainChunks": 2,
+        "followCamera": true
       },
       "physicalLayerLoaded": false,
       "sceneDataLoaded": false,
@@ -114,7 +149,8 @@
         500,
         350
       ],
-      "guides": false
+      "guides": true,
+      "followMode": "FIT_FOLLOW"
     },
     "stats": {
       "frameTiles": [
@@ -141,7 +177,7 @@
       "displayEvictions": 0,
       "maxDisplayCanvases": 36,
       "displayChunkKeyExample": "creator-u05|render16|250:175",
-      "simMs": 83,
+      "simMs": 67,
       "movedPx": 0,
       "blockedSubsteps": 0,
       "spawnFixture": true
@@ -151,8 +187,8 @@
       "last": []
     },
     "frameMs": {
-      "p50": 33.30000000000001,
-      "p95": 33.30000000000001,
+      "p50": 16.599999999999966,
+      "p95": 16.599999999999966,
       "max": 50
     }
   },
@@ -164,7 +200,7 @@
         1304
       ],
       "afterTile": [
-        549,
+        548,
         1304
       ],
       "movedPx": 72,
@@ -183,19 +219,19 @@
         1304
       ],
       "afterTile": [
-        587,
+        589,
         1304
       ],
-      "movedPx": 696,
-      "deltaPx": 696,
+      "movedPx": 720,
+      "deltaPx": 720,
       "speedPxPerSec": 720,
       "realKeyboardEvents": 2,
       "inputCodes": [
         "KeyD"
       ],
-      "simMs": 1033
+      "simMs": 1016
     },
-    "ratio": 9.667,
+    "ratio": 10,
     "keyboard": {
       "afterPlus": 2,
       "afterMinus": 1.5
@@ -224,6 +260,74 @@
   },
   "hudHidden": true,
   "zoom": {
+    "follow": {
+      "before": {
+        "mode": "FIT_FOLLOW",
+        "offset": [
+          108.6,
+          0
+        ],
+        "gain": [
+          0.2444,
+          0
+        ],
+        "marker": [
+          179,
+          168
+        ],
+        "wholeMapVisible": true
+      },
+      "after": {
+        "mode": "FIT_FOLLOW",
+        "offset": [
+          107.61,
+          0
+        ],
+        "gain": [
+          0.2444,
+          0
+        ],
+        "marker": [
+          182,
+          168
+        ],
+        "wholeMapVisible": true
+      },
+      "center": {
+        "mode": "CENTER_FOLLOW",
+        "centered": true,
+        "marker": [
+          320,
+          180
+        ],
+        "wholeMapVisible": false,
+        "afterMoveCentered": true,
+        "afterMoveOffset": [
+          243.05,
+          12.28
+        ]
+      },
+      "lock": {
+        "mode": "LOCK",
+        "followCamera": false,
+        "offset": [
+          62.86,
+          0
+        ]
+      },
+      "backToFit": "FIT_FOLLOW",
+      "lens": {
+        "w": 192,
+        "h": 144,
+        "isHtmlCanvas": true
+      },
+      "shots": [
+        "terrain_only_center_follow.png",
+        "terrain_only_lens_1x.png"
+      ]
+    },
+    "guidesDefault": 1,
+    "guidesOff": 0,
     "afterZ": {
       "zoom": 0.008036,
       "mode": "WHOLE_MAP_OVERVIEW"
@@ -241,7 +345,7 @@
         "strideTiles": 8,
         "tileSamples": 525000,
         "buildCalls": 59,
-        "buildMs": 3256,
+        "buildMs": 3453,
         "fullFrameAllocated": false,
         "addressableCells": 11200000,
         "note": "Sampled viewer preview of EXACT GOLD tile centres; NOT the 8 AU analysis raster upscaled, NOT authored runtime detail, NOT an 11.2M-cell array.",
@@ -249,7 +353,8 @@
           500,
           350
         ],
-        "guides": false
+        "guides": true,
+        "followMode": "FIT_FOLLOW"
       },
       "draw": {
         "terrainOnly": true,
@@ -271,8 +376,15 @@
           "particles": 0
         },
         "viewerGuides": {
-          "viewportRect": 0,
-          "playerDot": 0
+          "viewportRect": 1
+        },
+        "viewerCursor": {
+          "playerMarker": 1
+        },
+        "lens": {
+          "hero": 1,
+          "terrainChunks": 2,
+          "followCamera": true
         },
         "physicalLayerLoaded": false,
         "sceneDataLoaded": false,
@@ -281,8 +393,7 @@
     },
     "guides": {
       "viewerGuides": {
-        "viewportRect": 1,
-        "playerDot": 1
+        "viewportRect": 1
       },
       "enabled": true
     },
@@ -300,8 +411,8 @@
     },
     "panAtX10": {
       "beforePx": 8712,
-      "afterPx": 9072,
-      "deltaPx": 360
+      "afterPx": 9216,
+      "deltaPx": 504
     },
     "nativeAgain": {
       "zoom": 1,
@@ -327,8 +438,15 @@
           "particles": 0
         },
         "viewerGuides": {
-          "viewportRect": 0,
-          "playerDot": 0
+          "viewportRect": 0
+        },
+        "viewerCursor": {
+          "playerMarker": 0
+        },
+        "lens": {
+          "hero": 1,
+          "terrainChunks": 1,
+          "followCamera": true
         },
         "physicalLayerLoaded": false,
         "sceneDataLoaded": false,
@@ -342,20 +460,20 @@
   },
   "longRun": {
     "player": {
-      "px": 10475.927999999987,
+      "px": 10487.951999999996,
       "py": 20872,
       "tile": [
-        654,
+        655,
         1304
       ],
       "au": [
-        327.25,
+        327.75,
         652.25
       ],
       "dir": 2
     },
     "camera": {
-      "x": 10156,
+      "x": 10168,
       "y": 20686,
       "anchorTile": [
         544,
@@ -387,8 +505,8 @@
       "displayEvictions": 1,
       "maxDisplayCanvases": 36,
       "displayChunkKeyExample": "creator-u05|render16|250:175",
-      "simMs": 10816,
-      "movedPx": 1764,
+      "simMs": 12533,
+      "movedPx": 1776,
       "blockedSubsteps": 0,
       "spawnFixture": true
     },
@@ -424,8 +542,15 @@
         "particles": 0
       },
       "viewerGuides": {
-        "viewportRect": 0,
-        "playerDot": 0
+        "viewportRect": 0
+      },
+      "viewerCursor": {
+        "playerMarker": 0
+      },
+      "lens": {
+        "hero": 1,
+        "terrainChunks": 2,
+        "followCamera": true
       },
       "physicalLayerLoaded": false,
       "sceneDataLoaded": false,
@@ -456,8 +581,15 @@
         "particles": 0
       },
       "viewerGuides": {
-        "viewportRect": 0,
-        "playerDot": 0
+        "viewportRect": 1
+      },
+      "viewerCursor": {
+        "playerMarker": 1
+      },
+      "lens": {
+        "hero": 1,
+        "terrainChunks": 2,
+        "followCamera": true
       },
       "physicalLayerLoaded": false,
       "sceneDataLoaded": false,
@@ -471,7 +603,9 @@
   "shots": [
     "terrain_only_beacon.png",
     "terrain_only_beacon_no_hud.png",
+    "terrain_only_center_follow.png",
     "terrain_only_http.png",
+    "terrain_only_lens_1x.png",
     "terrain_only_natural_collision.png",
     "terrain_only_whole_map.png",
     "terrain_only_whole_map_guides.png",
@@ -490,7 +624,7 @@
     },
     "T-G2": {
       "status": "PASS",
-      "reason": "real x1 -> x10 movement ratio 9.67"
+      "reason": "real x1 -> x10 movement ratio 10.00"
     },
     "T-G3": {
       "status": "PASS",
@@ -534,7 +668,23 @@
     },
     "T-G13": {
       "status": "PASS",
-      "reason": "optional viewer guides (B) explicitly reported, not map layers"
+      "reason": "viewer guides (B) DEFAULT ON, toggle off/on, explicitly reported, not map layers"
+    },
+    "T-G16": {
+      "status": "PASS",
+      "reason": "hero marker ALWAYS drawn on the overview and MOVES with WASD (regression: first zoom attempt hid the character)"
+    },
+    "T-G17": {
+      "status": "PASS",
+      "reason": "FIT_FOLLOW camera pans with the player while the WHOLE frame stays visible"
+    },
+    "T-G18": {
+      "status": "PASS",
+      "reason": "F cycles Fit / Center (player stays centred while map scrolls) / Lock; real camera follow at every zoom"
+    },
+    "T-G19": {
+      "status": "PASS",
+      "reason": "separate HTML 192x144 native 1x follow camera always draws the hero; game canvas still has zero overlay layers"
     },
     "T-G15": {
       "status": "PASS",

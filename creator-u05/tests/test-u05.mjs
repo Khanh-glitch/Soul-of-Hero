@@ -216,6 +216,12 @@ if (fs.existsSync(tBuildPath) && fs.existsSync(tQaPath)) {
   ok('T21 overview shots exist', tq.zoom.shots.every(f => fs.existsSync(path.join(U, 'evidence/terrain-only-shots', f))));
   ok('T22 x10 pan while zoomed out', tq.zoom.panAtX10.deltaPx > 100);
   ok('T23 ?zoom=fit deep link', tq.deepLink?.zoomMode === 'WHOLE_MAP_OVERVIEW' && tq.deepLink.mapFitsViewport === true && tq.gates['T-G15']?.status === 'PASS');
+  ok('T24 follow camera metadata', tb.wholeMapZoom.followCamera.heroMarkerAlwaysDrawn === true && tb.wholeMapZoom.followCamera.default === 'FIT_FOLLOW' && tb.wholeMapZoom.followCamera.lens.canvas[0] === 192);
+  ok('T25 follow markers bundled', ['CENTER_FOLLOW','playerMarker','lens'].every(m => fs.readFileSync(tFile, 'utf8').includes(m)));
+  ok('T26 T-G16..T-G19 all PASS', ['T-G16','T-G17','T-G18','T-G19'].every(k => tq.gates[k]?.status === 'PASS'));
+  ok('T27 hero marker visible and moves', tq.zoom.fit.draw.viewerCursor.playerMarker === 1 && tq.zoom.follow.before.marker[0] !== tq.zoom.follow.after.marker[0]);
+  ok('T28 center-follow centres the player', tq.zoom.follow.center.centered === true && tq.zoom.follow.center.afterMoveCentered === true && tq.zoom.follow.center.wholeMapVisible === false);
+  ok('T29 lens + follow shots exist', tq.zoom.follow.shots.every(f => fs.existsSync(path.join(U, 'evidence/terrain-only-shots', f))));
 }
 
 const result = {

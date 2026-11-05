@@ -217,7 +217,7 @@ viewer nền, không nâng cấp thành tích hợp Gameplay hay chấp nhận t
 Creator: *"thêm chức năng zoom map nhỏ nhất có thể để nhìn toàn cảnh map dc k"*.
 
 **Có.** Đã thêm vào cùng file game `SoulOfHero_TerrainOnly_U05_x10.html`
-(build lại, HTML 1.400.483 bytes, `sha256 97fd8263…`, ZIP 117.643 bytes).
+(build lại, HTML 1.404.936 bytes, `sha256 f664761a…`, ZIP 119.118 bytes).
 
 - **Deep link** `?zoom=fit` mở ngay chế độ toàn cảnh (cả `file://` lẫn HTTP).
 - **`Z`** = mức zoom **nhỏ nhất có thể**: `0.128571 px/tile` = `0.8036%` (1:124)
@@ -232,9 +232,47 @@ Creator: *"thêm chức năng zoom map nhỏ nhất có thể để nhìn toàn 
 - **Camera chơi thường không đổi**: 640×360 1×, hero 16×24, U=0.5, nền 72 px/s.
   Zoom là viewer control, không phải luật Gameplay / không phải chấp nhận thị giác.
   Ở chế độ zoom vẫn đi WASD + x10 được (QA pan 360 px / 500 ms).
-- QA: **T-G0…T-G15 đều PASS**, 9 ảnh (thêm `terrain_only_whole_map.png`,
-  `terrain_only_whole_map_guides.png`, `terrain_only_zoom_fit_deeplink.png`),
-  0 lỗi. `P6-G0 / P6-G1 PASS`.
+- QA: **T-G0…T-G19 đều PASS**, 11 ảnh, 0 lỗi. `P6-G0 / P6-G1 / P6-G2 PASS`.
+  Xem §11 cho bản sửa lỗi follow camera.
 
 Các cổng `P5-G5/G6` vẫn FAIL, `P5-G7/G8` PARTIAL. Link tải không đổi:
 `https://5183-<sandboxId>.e2b.app/download` (ép tải) và GitHub raw / ZIP mirror.
+
+
+---
+
+## 11. SỬA LỖI — "zoom out cái mất follow camera theo nhân vật"
+
+Creator phản hồi bản zoom đầu: *"dở ghê á, zoom out cái mất follow camera theo
+nhân vật là sao"*. **Đúng là lỗi**, xin nhận.
+
+**Root cause:** `S.x/S.y` là world **pixel**, nhưng `drawOverview()` chiếu thẳng
+với `pxPerTile` (px/**tile**) → sai **16×**; `followX` vì thế luôn rơi ngoài biên
+clamp, camera đứng im. Cộng thêm việc bản đầu **không vẽ hero** ở tỉ lệ toàn cảnh
+→ màn hình không còn nhân vật nào để theo. Nghĩa là follow bị mất cả về toạ độ
+lẫn về hình ảnh.
+
+**Sửa:**
+
+- Chia `S.x/TILE` trước khi chiếu; offset / marker / khung viewport đều đúng.
+- **Marker nhân vật luôn vẽ** ở mọi mức zoom (`draw.viewerCursor.playerMarker=1`),
+  nằm gọn trong canvas và dịch theo WASD (`B` chỉ bật/tắt khung nhìn, mặc định bật).
+- **`F`** xoay `FIT_FOLLOW` → `CENTER_FOLLOW` → `LOCK`:
+  - Fit: `gain≈0.2444`, bản đồ trượt trong letterbox, **toàn khung map vẫn thấy**.
+  - Center: `gain=1`, marker **luôn (320,180)**, map cuộn dưới chân (có thể cắt).
+  - Lock: đứng yên để đối chiếu.
+- **Khung `Camera 1×`** 192×144 là **canvas HTML riêng** (không phải overlay trên
+  canvas game): luôn vẽ nền native 1× với hero 16×24 ở giữa → camera gốc **không
+  bao giờ tắt follow**. `L` bật/tắt, `H` ẩn cùng bảng điều khiển.
+- `draw.overlays` vẫn **toàn 0**; không có công trình / marker map / label nào
+  được thêm. Camera chơi thường vẫn 640×360 1×, hero 16×24, U=0.5, 72 px/s.
+
+QA mới: **T-G16** marker luôn hiện & di chuyển, **T-G17** Fit-follow pan mà vẫn
+thấy trọn map, **T-G18** Center giữ nhân vật giữa màn hình / Lock / quay về Fit,
+**T-G19** lens native 1× riêng biệt. Cùng 11 ảnh, 0 lỗi, `P6-G2 PASS`.
+
+**Giới hạn vật lý cần nói rõ:** ở mức fit, 4000 tile chỉ còn 514 px → x10 chạy
+45 tile/s cũng chỉ dịch ~5.8 px. Muốn thấy camera cuộn rõ rệt thì bấm **`F` →
+Center** hoặc nhìn khung **Camera 1×**; không thể vừa "toàn bộ map gọn trong
+640×360" vừa "camera luôn center nhân vật" cùng lúc (hai điều kiện mâu thuẫn),
+nên đã tách thành 2 chế độ rõ ràng thay vì giả vờ làm cả hai.

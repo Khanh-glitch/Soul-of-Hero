@@ -31,6 +31,9 @@ import { buildOverviewRows, getOverview, progress as overviewProgress, overviewS
 const canvas = document.getElementById('game') as HTMLCanvasElement;
 const g = canvas.getContext('2d', { alpha: false })!;
 g.imageSmoothingEnabled = false;
+const lensCanvas = document.getElementById('lens') as HTMLCanvasElement;
+const lg = lensCanvas.getContext('2d', { alpha: false })!;
+lg.imageSmoothingEnabled = false;
 const art: any = getArt();
 
 const ANCHOR_TILE: [number, number] = [544, 1304]; // Creator-liked Beacon road at U=0.5
@@ -38,7 +41,7 @@ const ANCHOR_TILE: [number, number] = [544, 1304]; // Creator-liked Beacon road 
 const FIT_PX_PER_TILE = Math.min(VIEW_W / FRAME_W, VIEW_H / FRAME_H); // 0.128571... px/tile
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 const MOVE_KEYS = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
-const CONTROL_KEYS = ['Equal', 'Minus', 'NumpadAdd', 'NumpadSubtract', 'BracketLeft', 'BracketRight', 'KeyC', 'KeyH', 'KeyR', 'KeyZ', 'KeyV', 'KeyB', 'Comma', 'Period'];
+const CONTROL_KEYS = ['Equal', 'Minus', 'NumpadAdd', 'NumpadSubtract', 'BracketLeft', 'BracketRight', 'KeyC', 'KeyH', 'KeyR', 'KeyZ', 'KeyV', 'KeyB', 'KeyF', 'KeyL', 'Comma', 'Period'];
 
 const S = {
   x: ANCHOR_TILE[0] * TILE + TILE / 2,
@@ -47,7 +50,10 @@ const S = {
   dir: 0,
   mult: 1,                  // 1..10 speed, VIEWER multiplier only
   zoomLevel: 1,             // 1 = native 1x, 0 = whole-map FIT
-  guides: false,            // optional viewport rectangle + player dot
+  followMode: 'FIT_FOLLOW' as 'FIT_FOLLOW' | 'CENTER_FOLLOW' | 'LOCK',
+  lens: true,               // native 1x follow camera in the HTML panel
+  guides: true,             // viewport rectangle (the player dot is ALWAYS drawn)
+  ovOffX: 0, ovOffY: 0, ovMapW: 0, ovMapH: 0, ovGainX: 0, ovGainY: 0, markerX: 0, markerY: 0,
   collision: false,         // false = free roam over the whole map (default)
   hudVisible: true,
   pressed: new Set<string>(),
@@ -65,7 +71,9 @@ const drawStats = {
   terrainOnly: true,
   drawn: { terrainChunks: 0, hero: 1, overviewBitmap: 0 },
   overlays: { buildings: 0, walls: 0, roofs: 0, doors: 0, props: 0, markers: 0, labels: 0, helipad: 0, hudOnCanvas: 0, particles: 0 },
-  viewerGuides: { viewportRect: 0, playerDot: 0 },
+  viewerGuides: { viewportRect: 0 },
+  viewerCursor: { playerMarker: 0 },
+  lens: { hero: 0, terrainChunks: 0, followCamera: true },
   physicalLayerLoaded: false,
   sceneDataLoaded: false,
   zoomMode: 'NATIVE_1X' as string
@@ -108,6 +116,11 @@ function zoomFit() { return setZoom(0); }
 function zoomNative() { return setZoom(1); }
 function toggleZoom() { return S.zoomLevel > 0.001 ? zoomFit() : zoomNative(); }
 function setGuides(on: boolean) { S.guides = !!on; syncUI(); return S.guides; }
+const FOLLOW_MODES = ['FIT_FOLLOW', 'CENTER_FOLLOW', 'LOCK'] as const;
+const FOLLOW_LABEL: Record<string, string> = { FIT_FOLLOW: 'Fit', CENTER_FOLLOW: 'Center', LOCK: 'Khoá' };
+function setFollowMode(m: string) { if ((FOLLOW_MODES as readonly string[]).includes(m)) S.followMode = m as any; syncUI(); return S.followMode; }
+function cycleFollow() { return setFollowMode(FOLLOW_MODES[(FOLLOW_MODES.indexOf(S.followMode as any) + 1) % FOLLOW_MODES.length]); }
+function setLens(on: boolean) { S.lens = !!on; syncUI(); return S.lens; }
 
 // ---- input -----------------------------------------------------------------
 function key(code: string, type: 'down' | 'up') {
@@ -122,6 +135,8 @@ function key(code: string, type: 'down' | 'up') {
     else if (code === 'KeyZ') toggleZoom();
     else if (code === 'KeyV') zoomNative();
     else if (code === 'KeyB') setGuides(!S.guides);
+    else if (code === 'KeyF') cycleFollow();
+    else if (code === 'KeyL') setLens(!S.lens);
     else if (code === 'Comma') setZoom(S.zoomLevel - 0.08);
     else if (code === 'Period') setZoom(S.zoomLevel + 0.08);
   }
@@ -184,11 +199,14 @@ const loop = (now: number) => {
 function draw(now: number) {
   drawStats.drawn.terrainChunks = 0; drawStats.drawn.overviewBitmap = 0;
   drawStats.drawn.hero = 0;
-  drawStats.viewerGuides.viewportRect = 0; drawStats.viewerGuides.playerDot = 0;
+  drawStats.viewerGuides.viewportRect = 0;
+  drawStats.viewerCursor.playerMarker = 0;
+  drawStats.lens.hero = 0; drawStats.lens.terrainChunks = 0;
   drawStats.zoomMode = zoomMode();
   g.fillStyle = '#0b1020'; g.fillRect(0, 0, VIEW_W, VIEW_H);
   if (zoomMode() === 'WHOLE_MAP_OVERVIEW') drawOverview();
   else drawNative(now);
+  drawLens(now);
 }
 
 function drawNative(now: number) {
@@ -209,37 +227,92 @@ function drawNative(now: number) {
   drawStats.drawn.hero = 1;
 }
 
-/** Whole-map FIT view. Sampled GOLD terrain only; no hero sprite at this scale. */
+/**
+ * Overview camera axis. `S.x/S.y` are WORLD PIXELS, `ppt` is px per TILE, so
+ * the player must be converted with `/ TILE` before projecting. When the map
+ * is smaller than the viewport (exact FIT) the whole frame must stay visible,
+ * so follow is a PROPORTIONAL slide within the letterbox margin; when it is
+ * larger, follow is a normal clamped camera centred on the player.
+ */
+function overviewAxis(playerPx: number, viewLen: number, ppt: number, frameLen: number) {
+  const mapLen = frameLen * ppt;
+  const tx = playerPx / TILE;
+  const want = viewLen / 2 - tx * ppt;              // player exactly centred
+  const center = (viewLen - mapLen) / 2;           // whole map exactly centred
+  if (mapLen > viewLen + 0.01) return { off: clamp(want, viewLen - mapLen, 0), gain: 1, whole: false };
+  const half = (viewLen - mapLen) / 2;
+  let gain = 0;
+  if (S.followMode === 'CENTER_FOLLOW') gain = 1;               // player exactly centred, map may clip
+  else if (S.followMode === 'FIT_FOLLOW') gain = Math.min(1, half > 0 ? half / (mapLen / 2) : 0); // whole map stays visible
+  const off = center + gain * (want - center);
+  const whole = off >= -0.01 && off + mapLen <= viewLen + 0.01;
+  return { off, gain, whole };
+}
+/** Whole-map FIT view with a REAL player-following camera. */
 function drawOverview() {
   const ppt = pxPerTile();
+  const ax = overviewAxis(S.x, VIEW_W, ppt, FRAME_W);
+  const ay = overviewAxis(S.y, VIEW_H, ppt, FRAME_H);
+  const offX = ax.off, offY = ay.off;
   const mapW = FRAME_W * ppt, mapH = FRAME_H * ppt;
-  const offX = mapW <= VIEW_W ? (VIEW_W - mapW) / 2 : clamp(VIEW_W / 2 - S.x * ppt, VIEW_W - mapW, 0);
-  const offY = mapH <= VIEW_H ? (VIEW_H - mapH) / 2 : clamp(VIEW_H / 2 - S.y * ppt, VIEW_H - mapH, 0);
+  S.ovOffX = offX; S.ovOffY = offY; S.ovMapW = mapW; S.ovMapH = mapH;
+  S.ovGainX = ax.gain; S.ovGainY = ay.gain;
   const ov = getOverview();
   if (ov) {
     g.imageSmoothingEnabled = false;
     g.drawImage(ov, Math.round(offX), Math.round(offY), Math.ceil(mapW), Math.ceil(mapH));
     drawStats.drawn.overviewBitmap = 1;
   }
+  const px = Math.round(offX + (S.x / TILE) * ppt), py = Math.round(offY + (S.y / TILE) * ppt);
+  S.markerX = px; S.markerY = py;
   if (S.guides) {
-    // Optional VIEWER guides (not map layers): the 640x360 native viewport + a dot.
-    g.save();
     const vw = (VIEW_W / TILE) * ppt, vh = (VIEW_H / TILE) * ppt;
-    const vx = Math.round(offX + (S.x - VIEW_W / 2) * ppt), vy = Math.round(offY + (S.y - VIEW_H / 2 - 6) * ppt);
-    // Dark outline first so the tiny rectangle stays legible on snow / sea.
+    const vx = Math.round(offX + (S.x / TILE - VIEW_W / (2 * TILE)) * ppt);
+    const vy = Math.round(offY + (S.y / TILE - VIEW_H / (2 * TILE)) * ppt);
+    g.save();
     g.strokeStyle = 'rgba(20,16,24,0.9)'; g.lineWidth = 3;
     g.strokeRect(vx, vy, Math.max(2, Math.round(vw)), Math.max(2, Math.round(vh)));
     g.strokeStyle = 'rgba(255,240,180,0.95)'; g.lineWidth = 1;
     g.strokeRect(vx, vy, Math.max(2, Math.round(vw)), Math.max(2, Math.round(vh)));
-    const px = Math.round(offX + S.x * ppt), py = Math.round(offY + S.y * ppt);
-    g.lineWidth = 3; g.strokeStyle = 'rgba(20,16,24,0.9)';
-    g.beginPath(); g.arc(px, py, 4, 0, Math.PI * 2); g.stroke();
-    g.lineWidth = 1; g.strokeStyle = '#fff2b0';
-    g.beginPath(); g.arc(px, py, 4, 0, Math.PI * 2); g.stroke();
-    g.fillStyle = '#fff2b0'; g.fillRect(px - 1, py - 1, 2, 2);
     g.restore();
-    drawStats.viewerGuides.viewportRect = 1; drawStats.viewerGuides.playerDot = 1;
+    drawStats.viewerGuides.viewportRect = 1;
   }
+  // HERO MARKER — ALWAYS drawn (missing in the first zoom attempt, which made
+  // it look like the camera stopped following the character).
+  g.save();
+  g.strokeStyle = 'rgba(12,16,28,0.95)'; g.lineWidth = 3;
+  g.beginPath(); g.arc(px, py, 5, 0, Math.PI * 2); g.stroke();
+  g.strokeStyle = '#ffe27a'; g.lineWidth = 1.5;
+  g.beginPath(); g.arc(px, py, 5, 0, Math.PI * 2); g.stroke();
+  g.fillStyle = '#fff6c8'; g.fillRect(px - 1, py - 1, 3, 3);
+  g.restore();
+  drawStats.viewerCursor.playerMarker = 1;
+}
+
+/**
+ * Native 1x FOLLOW CAMERA, drawn in its own HTML canvas (NOT an overlay layer
+ * on the game canvas). The hero is ALWAYS centred here at every zoom level,
+ * including the smallest whole-map zoom.
+ */
+function drawLens(now: number) {
+  if (!S.lens || !S.hudVisible) return;
+  const LW = lensCanvas.width, LH = lensCanvas.height;
+  const cx = Math.round(S.x - LW / 2), cy = Math.round(S.y - LH / 2);
+  lg.fillStyle = '#0b1020'; lg.fillRect(0, 0, LW, LH);
+  const c0 = Math.floor(cx / (RENDER_CHUNK * TILE)), c1 = Math.floor((cx + LW) / (RENDER_CHUNK * TILE));
+  const r0 = Math.floor(cy / (RENDER_CHUNK * TILE)), r1 = Math.floor((cy + LH) / (RENDER_CHUNK * TILE));
+  let chunks = 0;
+  for (let j = r0; j <= r1; j++) for (let i = c0; i <= c1; i++)
+    if (i >= 0 && j >= 0 && i < Math.ceil(FRAME_W / RENDER_CHUNK) && j < Math.ceil(FRAME_H / RENDER_CHUNK)) {
+      lg.drawImage(getDisplayChunk(i, j), Math.round(i * RENDER_CHUNK * TILE - cx), Math.round(j * RENDER_CHUNK * TILE - cy));
+      chunks++;
+    }
+  const moving = MOVE_KEYS.some(k => S.pressed.has(k));
+  const hero: any = art.hero.male;
+  const frames = hero[(moving ? 'walk' : 'idle') + S.dir] as HTMLCanvasElement[];
+  const spr = frames[Math.floor(now / (moving ? 120 : 600)) % frames.length];
+  lg.drawImage(spr, Math.round(LW / 2 - HERO_W / 2), Math.round(LH / 2 - 19));
+  drawStats.lens.terrainChunks = chunks; drawStats.lens.hero = 1;
 }
 
 // ---- state / API -----------------------------------------------------------
@@ -254,6 +327,20 @@ function state() {
     viewport: [VIEW_W, VIEW_H], dpr: window.devicePixelRatio || 1,
     zoom: Number(zoomScale().toFixed(6)), zoomLevel: S.zoomLevel,
     zoomMode: zoomMode(), pxPerTile: Number(pxPerTile().toFixed(6)),
+    followCamera: S.followMode !== 'LOCK', followMode: S.followMode,
+    cameraFollowsPlayer: S.followMode !== 'LOCK', lensEnabled: S.lens,
+    overviewCamera: {
+      offset: [Number(S.ovOffX.toFixed(2)), Number(S.ovOffY.toFixed(2))],
+      mapPx: [Number(S.ovMapW.toFixed(2)), Number(S.ovMapH.toFixed(2))],
+      wholeMapVisible: S.ovOffX >= -0.01 && S.ovOffY >= -0.01 && S.ovOffX + S.ovMapW <= VIEW_W + 0.01 && S.ovOffY + S.ovMapH <= VIEW_H + 0.01,
+      cameraCenteredOnPlayer: Math.abs(S.markerX - VIEW_W / 2) <= 1 && Math.abs(S.markerY - VIEW_H / 2) <= 1,
+      anchorsOnPlayer: S.followMode !== 'LOCK',
+      followGain: [Number(S.ovGainX.toFixed(4)), Number(S.ovGainY.toFixed(4))],
+      followsPlayer: S.followMode !== 'LOCK',
+      mode: S.followMode,
+      nativeCameraStillFollows: true
+    },
+    playerMarkerScreen: [S.markerX, S.markerY],
     fitPxPerTile: Number(FIT_PX_PER_TILE.toFixed(6)), mapFitsViewport: mapFitsViewport(),
     cameraTrick: false,
     U, TILE, frameTiles: [FRAME_W, FRAME_H], addressableCells: FRAME_W * FRAME_H,
@@ -264,7 +351,7 @@ function state() {
     camera: { x: S.camX, y: S.camY, anchorTile: ANCHOR_TILE },
     terrain: s ? { tile: s.tile, biome: s.biome, authoredLand: s.authoredLand, water: s.water, road: s.road, poiId: s.poiId } : null,
     draw: { ...JSON.parse(JSON.stringify(drawStats)), zoomMode: zoomMode() },
-    overview: { ...overviewProgress(), bitmapSize: overviewSize(), guides: S.guides },
+    overview: { ...overviewProgress(), bitmapSize: overviewSize(), guides: S.guides, followMode: S.followMode },
     stats: { ...worldStats(), ...displayStats(), simMs: Math.round(S.simMs), movedPx: Math.round(S.movedPx), blockedSubsteps: S.blockedSubsteps, spawnFixture: S.spawnFixture },
     input: { logLength: S.inputLog.length, last: S.inputLog.slice(-8) },
     frameMs: { p50: percentile(S.frameMs, .5), p95: percentile(S.frameMs, .95), max: Math.max(0, ...S.frameMs) }
@@ -286,6 +373,8 @@ const resetBtn = document.getElementById('reset') as HTMLButtonElement;
 const fitBtn = document.getElementById('fit') as HTMLButtonElement;
 const nativeBtn = document.getElementById('native') as HTMLButtonElement;
 const guidesBtn = document.getElementById('guides') as HTMLButtonElement;
+const followBtn = document.getElementById('follow') as HTMLButtonElement;
+const lensBtn = document.getElementById('lensBtn') as HTMLButtonElement;
 const statusEl = document.getElementById('status')!;
 range.oninput = () => setSpeed(Number(range.value));
 zoomRange.oninput = () => setZoom(Number(zoomRange.value));
@@ -296,6 +385,8 @@ resetBtn.onclick = () => reset();
 fitBtn.onclick = () => zoomFit();
 nativeBtn.onclick = () => zoomNative();
 guidesBtn.onclick = () => setGuides(!S.guides);
+followBtn.onclick = () => cycleFollow();
+lensBtn.onclick = () => setLens(!S.lens);
 function toggleHud() {
   S.hudVisible = !S.hudVisible;
   ui.classList.toggle('hidden', !S.hudVisible);
@@ -313,6 +404,10 @@ function syncUI() {
   nativeBtn.classList.toggle('on', S.zoomLevel === 1);
   guidesBtn.classList.toggle('on', S.guides);
   guidesBtn.textContent = `Khung nhìn (B): ${S.guides ? 'BẬT' : 'TẮT'}`;
+  followBtn.classList.toggle('on', S.followMode !== 'LOCK');
+  followBtn.textContent = `Follow (F): ${FOLLOW_LABEL[S.followMode]}`;
+  lensBtn.classList.toggle('on', S.lens);
+  lensBtn.textContent = `Camera 1× (L): ${S.lens ? 'BẬT' : 'TẮT'}`;
   for (const b of Array.from(document.querySelectorAll('#presets button[data-speed]'))) (b as HTMLButtonElement).classList.toggle('on', Number((b as HTMLButtonElement).dataset.speed) === S.mult);
   hideBtn.textContent = S.hudVisible ? 'Ẩn bảng (H)' : 'Hiện bảng (H)';
 }
@@ -323,16 +418,19 @@ setInterval(() => {
     `x${s.speedMultiplier} · ${s.speedPxPerSec} px/s  |  ${s.collision}  |  zoom=${s.zoomMode} ${s.zoomLevel === 0 ? 'FIT' : (s.zoom * 100).toFixed(1) + '%'}  |  U=${s.U} TILE=${s.TILE} hero=${s.heroSpritePx.join('x')} dpr=${s.dpr}\n` +
     `tile=${s.player.tile.join(',')}  AU=${s.player.au.map((v: number) => v.toFixed(2)).join(',')}  px=${s.player.px.toFixed(0)},${s.player.py.toFixed(0)}  cam=${s.camera.x},${s.camera.y}\n` +
     `biome=${s.terrain?.biome}  tileCode=${s.terrain?.tile}  road=${s.terrain?.road}  water=${s.terrain?.water}  land=${s.terrain?.authoredLand}\n` +
+    `overviewCam offset=${s.overviewCamera.offset.join(',')} mapPx=${s.overviewCamera.mapPx.join(',')} wholeMapVisible=${s.overviewCamera.wholeMapVisible} anchorsOnPlayer=${s.overviewCamera.anchorsOnPlayer}
+` +
     `frame=${s.frameTiles.join('x')} cells=${s.addressableCells} materializedAllCells=${s.stats.materializedAllCells}  chunks=${s.stats.residentChunks}/${s.stats.maxResidentChunks}  canvases=${s.stats.displayCanvases}/${s.stats.maxDisplayCanvases}\n` +
     `overview=${s.overview.rowsDone}/${s.overview.rowsTotal} rows, ${s.overview.pixels} px, stride=${s.overview.strideTiles} tiles, samples=${s.overview.tileSamples}, fullFrameAllocated=${s.overview.fullFrameAllocated}\n` +
-    `overlays=${JSON.stringify(s.draw.overlays)}  guides=${JSON.stringify(s.draw.viewerGuides)}  movedPx=${s.stats.movedPx}  frameMs p50/p95=${s.frameMs.p50.toFixed(1)}/${s.frameMs.p95.toFixed(1)}`;
+    `overlays=${JSON.stringify(s.draw.overlays)}  guides=${JSON.stringify(s.draw.viewerGuides)}  heroMarker=${s.draw.viewerCursor.playerMarker}  lens1x=${JSON.stringify(s.draw.lens)}  movedPx=${s.stats.movedPx}  frameMs p50/p95=${s.frameMs.p50.toFixed(1)}/${s.frameMs.p95.toFixed(1)}`;
 }, 250);
 
 (window as any).__terrain = {
   ready: true, state,
   setSpeed, setCollision, toggleHud,
-  setZoom, zoomFit, zoomNative, toggleZoom, setGuides,
+  setZoom, zoomFit, zoomNative, toggleZoom, setGuides, setFollow: setFollowMode, cycleFollow, setLens,
   pxPerTile: () => pxPerTile(), zoomScale, mapFitsViewport,
+  overviewCamera: () => ({ offset: [S.ovOffX, S.ovOffY], mapPx: [S.ovMapW, S.ovMapH], mode: S.followMode, gain: [S.ovGainX, S.ovGainY] }),
   overviewStats: () => ({ ...overviewProgress(), bitmapSize: overviewSize() }),
   reset: (tx?: number, ty?: number) => { reset(tx ?? ANCHOR_TILE[0], ty ?? ANCHOR_TILE[1]); return state(); },
   clearInputLog: () => { S.inputLog = []; },

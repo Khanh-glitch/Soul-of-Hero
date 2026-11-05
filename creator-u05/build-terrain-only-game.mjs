@@ -34,7 +34,7 @@ const externalScript = /<script[^>]+src=/i.test(html);
 const externalCss = /<link[^>]+rel=["']?stylesheet/i.test(html);
 const importFromUrl = /(?:from\s*|import\s*)["']https?:\/\//.test(html);
 if (externalScript || externalCss || importFromUrl) throw Error('U05_TERRAIN_ONLY_NOT_SELF_CONTAINED');
-for (const marker of ['speedRange', 'x10', 'TERRAIN_ONLY', 'render16', 'creator-u05', 'zoomRange', 'WHOLE_MAP_OVERVIEW'])
+for (const marker of ['speedRange', 'x10', 'TERRAIN_ONLY', 'render16', 'creator-u05', 'zoomRange', 'WHOLE_MAP_OVERVIEW', 'CENTER_FOLLOW', 'playerMarker', 'lens'])
   if (!html.includes(marker)) throw Error('U05_TERRAIN_ONLY_MARKER_MISSING ' + marker);
 // Forbidden overlay code must not be bundled at all.
 for (const forbidden of ['PhysicalLayer', 'U05_SCENES', 'SITE_ENVELOPE', 'roofHiddenCount', 'wall.u05.'])
@@ -70,6 +70,16 @@ const record = {
     class: 'SAMPLED_VIEWER_PREVIEW_OF_EXACT_GOLD_TILE_CENTRES__NOT_8AU_RASTER_UPSCALE__NOT_AUTHORED_DETAIL',
     fullFrameAllocated: false,
     nativeUnchanged: '640x360 @1x, hero 16x24, U=0.5, base 72 px/s',
+    followCamera: {
+      rootCauseFixed: 'S.x/S.y are WORLD PIXELS but were projected with px-per-TILE (16x too far), so the follow offset always clamped to an extreme and the hero marker was drawn off-screen. The hero sprite was also omitted at overview scale. Now the player is converted with /TILE and a hero marker is ALWAYS drawn.',
+      default: 'FIT_FOLLOW', modes: ['FIT_FOLLOW', 'CENTER_FOLLOW', 'LOCK'],
+      fitFollow: 'proportional camera slide inside the letterbox; whole 4000x2800 frame stays visible',
+      centerFollow: 'player exactly centred at viewport centre; map scrolls under it (may clip)',
+      lock: 'map frozen, centred',
+      heroMarkerAlwaysDrawn: true, guidesDefault: true,
+      lens: { canvas: [192, 144], htmlCanvasNotOverlay: true, native1xHeroCentred: true, alwaysFollows: true },
+      note: 'The native 1x camera NEVER stops following the player; zoom only changes the overview viewer layer.'
+    },
     note: 'Zoom is a VIEWER control only, NOT a camera Gameplay law change.'
   },
   collisionDefault: 'FREE_ROAM__NO_COLLISION', collisionOptional: 'NATURAL_TERRAIN_ONLY (water/cliff/river); no walls, no POI collision, no marine/boat/ferry permission',

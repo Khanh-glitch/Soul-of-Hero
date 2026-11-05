@@ -1,11 +1,11 @@
 {
   "schema": "soh.u05.terrain-only-build.v1",
-  "generatedAt": "2026-11-05T09:00:08.119Z",
+  "generatedAt": "2026-11-05T09:12:44.102Z",
   "file": "creator-u05/SoulOfHero_TerrainOnly_U05_x10.html",
   "zipMirror": "creator-u05/SoulOfHero_TerrainOnly_U05_x10.zip",
-  "zipBytes": 117643,
-  "bytes": 1400483,
-  "sha256": "97fd82630942e6dc916d3e60e8dafe0a015e89cd8d31d198265c69de79c0c4ab",
+  "zipBytes": 119118,
+  "bytes": 1404936,
+  "sha256": "f664761a5b0dddd96d067b06888436f88af4b35e20841b20c43b7929d7ca488e",
   "selfContained": {
     "externalScript": false,
     "externalCss": false,
@@ -87,6 +87,30 @@
     "class": "SAMPLED_VIEWER_PREVIEW_OF_EXACT_GOLD_TILE_CENTRES__NOT_8AU_RASTER_UPSCALE__NOT_AUTHORED_DETAIL",
     "fullFrameAllocated": false,
     "nativeUnchanged": "640x360 @1x, hero 16x24, U=0.5, base 72 px/s",
+    "followCamera": {
+      "rootCauseFixed": "S.x/S.y are WORLD PIXELS but were projected with px-per-TILE (16x too far), so the follow offset always clamped to an extreme and the hero marker was drawn off-screen. The hero sprite was also omitted at overview scale. Now the player is converted with /TILE and a hero marker is ALWAYS drawn.",
+      "default": "FIT_FOLLOW",
+      "modes": [
+        "FIT_FOLLOW",
+        "CENTER_FOLLOW",
+        "LOCK"
+      ],
+      "fitFollow": "proportional camera slide inside the letterbox; whole 4000x2800 frame stays visible",
+      "centerFollow": "player exactly centred at viewport centre; map scrolls under it (may clip)",
+      "lock": "map frozen, centred",
+      "heroMarkerAlwaysDrawn": true,
+      "guidesDefault": true,
+      "lens": {
+        "canvas": [
+          192,
+          144
+        ],
+        "htmlCanvasNotOverlay": true,
+        "native1xHeroCentred": true,
+        "alwaysFollows": true
+      },
+      "note": "The native 1x camera NEVER stops following the player; zoom only changes the overview viewer layer."
+    },
     "note": "Zoom is a VIEWER control only, NOT a camera Gameplay law change."
   },
   "collisionDefault": "FREE_ROAM__NO_COLLISION",

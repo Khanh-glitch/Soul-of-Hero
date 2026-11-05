@@ -1,6 +1,6 @@
 {
   "schema": "soh.u05.verification.v1",
-  "generatedAt": "2026-11-05T09:00:57.408Z",
+  "generatedAt": "2026-11-05T09:13:11.328Z",
   "program": "P1–P5 Creator-chosen U=0.5 additive physical POI program",
   "scope": "ISOLATED six-scene Creator selector / audition. Additive physical POI proof ONLY.",
   "status": "P5_ISOLATED_AUDITION_VERIFIED__FULL_GAMEPLAY_RUNTIME_INTEGRATION_NOT_YET_VALIDATED__VISUAL_ACCEPTANCE_NOT_GRANTED",
@@ -15,7 +15,7 @@
       "label": "static-suite",
       "command": "node /home/user/Soul-of-Hero/creator-u05/tests/test-u05.mjs",
       "ok": true,
-      "output": "U05_TESTS pass=260 fail=0 verdict=U05_STATIC_TESTS_PASS"
+      "output": "U05_TESTS pass=266 fail=0 verdict=U05_STATIC_TESTS_PASS"
     },
     {
       "label": "asset-inventory",
@@ -33,9 +33,9 @@
   "refs": {
     "arenaBranch": "arena/2e3cfbd2-soul-of-hero",
     "mapHeadBeforeU05": "b12d05866366de0d50e4d305ff7b72fcf36b4921",
-    "mapHeadAtVerification": "b74fc7d293d36317857b374dfb75d1ee12666e1b",
+    "mapHeadAtVerification": "818aba8715934c02408d29d0b2255f89bc538633",
     "mapHeadNote": "HEAD at the moment this verification packet was generated (i.e. before the U05 commit itself). The final U05 commit SHA is the tip of this branch in git log.",
-    "remoteMap": "b74fc7d293d36317857b374dfb75d1ee12666e1b\trefs/heads/arena/2e3cfbd2-soul-of-hero",
+    "remoteMap": "818aba8715934c02408d29d0b2255f89bc538633\trefs/heads/arena/2e3cfbd2-soul-of-hero",
     "main": "5214788933b1a827f3a177d11ff486433dfe5e8a\trefs/heads/main",
     "gameplayPin": "b5c8004ca4e77be62484fb3cd296fe296d7de4c9",
     "gameplayLiveHead": "5b3e683402bbc8540dea9404576164097e753f97",
@@ -89,30 +89,30 @@
       {
         "path": "docs/CONTROL_TOWER_U05_HANDOFF.md",
         "exists": true,
-        "bytes": 16318
+        "bytes": 18699
       },
       {
         "path": "docs/TERRAIN_ONLY_VIEWER.md",
         "exists": true,
-        "bytes": 8631
+        "bytes": 11249
       },
       {
         "path": "README.md",
         "exists": true,
-        "bytes": 6688
+        "bytes": 6840
       }
     ],
     "standaloneTerrainOnlyGame": {
       "file": "creator-u05/SoulOfHero_TerrainOnly_U05_x10.html",
-      "bytes": 1400483,
-      "sha256": "97fd82630942e6dc916d3e60e8dafe0a015e89cd8d31d198265c69de79c0c4ab",
+      "bytes": 1404936,
+      "sha256": "f664761a5b0dddd96d067b06888436f88af4b35e20841b20c43b7929d7ca488e",
       "selfContained": true,
-      "shots": 9
+      "shots": 11
     }
   },
   "measured": {
     "staticTests": {
-      "pass": 260,
+      "pass": 266,
       "fail": 0,
       "verdict": "U05_STATIC_TESTS_PASS"
     },
@@ -169,12 +169,14 @@
     "p4Errors": 0,
     "realKeyboardEvents": 1122,
     "driftCommitsAfterPin": 14,
-    "terrainOnlySpeedRatio": 9.667,
+    "terrainOnlySpeedRatio": 10,
     "terrainOnlyGatesPass": true,
     "terrainOnlyOverlaysAllZero": true,
     "terrainOnlyWholeMapFits": true,
     "terrainOnlyFitZoomScale": 0.008036,
     "terrainOnlyOverviewPixels": 175000,
+    "terrainOnlyHeroMarker": 1,
+    "terrainOnlyFollowMode": "FIT_FOLLOW",
     "u05RelevantBlocksIdentical": true
   },
   "gates": {
@@ -214,13 +216,17 @@
       "status": "PARTIAL",
       "scope": "Gameplay semantic validators, marine/boat/ferry/swim law, helicopter entity, economy/inventory/ownership/loot/keys/power/HP/boss/reward, §11.5 proof packet. Unresolved."
     },
+    "P6-G2": {
+      "status": "PASS",
+      "scope": "Follow-camera regression fixed: hero marker always visible, FIT_FOLLOW / CENTER_FOLLOW / LOCK, separate native 1x follow lens."
+    },
     "P6-G1": {
       "status": "PASS",
       "scope": "Whole-map smallest zoom: entire 4000x2800 frame fits 640x360, sampled 500x350 overview, no 11.2M-cell allocation, native 1x restored."
     },
     "P6-G0": {
       "status": "PASS",
-      "scope": "Standalone single-file terrain-only game: ZERO overlay layers, x1..x10 viewer speed (real x1→x10 ratio 9.667), runs from file:// and HTTP, T-G0..T-G9 PASS."
+      "scope": "Standalone single-file terrain-only game: ZERO overlay layers, x1..x10 viewer speed (real x1→x10 ratio 10), runs from file:// and HTTP, T-G0..T-G9 PASS."
     },
     "P5-G9": {
       "status": "PASS",

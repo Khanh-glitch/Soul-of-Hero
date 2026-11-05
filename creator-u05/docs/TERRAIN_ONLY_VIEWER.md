@@ -8,7 +8,7 @@
 ## File nhận được
 
 **`creator-u05/SoulOfHero_TerrainOnly_U05_x10.html`** — **1 file HTML duy nhất**,
-1.400.483 bytes, `sha256` trong `evidence/terrain-only-build.json`.
+1.404.936 bytes, `sha256` trong `evidence/terrain-only-build.json`.
 
 - Bấm đúp mở bằng trình duyệt (`file://`) — **không cần server, không cần mạng,
   không cần cài đặt, không nạp atlas mới**. Mọi module + 21 raster WMP-04R1
@@ -63,7 +63,9 @@ màn hình chỉ còn nền + hero (ảnh `evidence/terrain-only-shots/terrain_o
 | Di chuyển | `WASD` hoặc `↑ ↓ ← →` |
 | Tốc độ | slider **x1 → x10** (bước 0.5), preset `x1 x2 x5 x10`, phím `+` / `-` hoặc `[` / `]` |
 | **Zoom toàn cảnh** | **`Z`** = thu nhỏ tới mức nhỏ nhất (toàn bộ map gọn trong 640×360) ↔ 1×; slider *Zoom bản đồ*; `,` / `.` từng nấc; **lăn chuột**; `V` về 1× |
-| Khung nhìn (tuỳ chọn) | `B` bật khung 640×360 + dấu chấm vị trí (mặc định **TẮT** để canvas vẫn thuần nền) |
+| **Follow camera** | **`F`** xoay 3 chế độ: **Fit** (mặc định, cả map luôn thấy + bản đồ trượt theo nhân vật) → **Center** (nhân vật luôn giữa màn hình, map cuộn dưới chân) → **Khoá** (đứng yên) |
+| **Camera 1×** | **`L`** bật/tắt khung 192×144 dưới canvas: native 1×, hero 16×24 luôn ở giữa, **không bao giờ tắt follow** |
+| Khung nhìn | `B` bật/tắt khung 640×360 (mặc định **BẬT**); **marker nhân vật luôn hiện, không tắt được** |
 | `C` | bật/tắt **chặn địa hình tự nhiên** (nước / sông / cliff). Mặc định **TẮT = đi tự do toàn bản đồ** để xem hết map |
 | `H` | ẩn/hiện bảng điều khiển |
 | `R` | về điểm Beacon `[544,1304]` tile = `[272,652]` AU |
@@ -96,13 +98,40 @@ Bản toàn cảnh là **bản xem mẫu** (`src/terrain-only/overview.ts`):
 | Xây dựng | progressive 6 hàng/frame (~3,3 s tổng, không đơ UI), hiện dần từ trên xuống |
 | **Không** | **không** cấp phát 11.200.000 ô · **không** phải raster phân tích 8 AU phóng to · **không** quảng cáo là chi tiết authored · **không** vẽ công trình/marker/lên canvas |
 
-Ở chế độ này hero 16×24 **không** vẽ (sẽ sai tỉ lệ); `draw.overlays` vẫn toàn **0**.
-`B` nếu bật chỉ thêm khung nhìn + dấu chấm, được ghi riêng trong
-`draw.viewerGuides` (mặc định tắt). WASD/x10 vẫn chạy → **pan được cả bản đồ**
-(QA đo 360 px trong 500 ms ở x10). `V` hoặc `Z` lần nữa về **1× native**.
+Ở chế độ này hero 16×24 **không** vẽ trên canvas chính (sẽ sai tỉ lệ); thay vào đó
+**marker nhân vật luôn được vẽ** (`draw.viewerCursor.playerMarker=1`) và đi theo WASD.
+`draw.overlays` vẫn toàn **0**. `B` chỉ bật/tắt khung nhìn, ghi riêng trong
+`draw.viewerGuides` (mặc định **bật**). WASD/x10 vẫn chạy.
 
-Ảnh: `evidence/terrain-only-shots/terrain_only_whole_map.png` và
-`..._whole_map_guides.png`.
+## Sửa lỗi "zoom out xong mất follow camera"
+
+**Nguyên nhân (lỗi thật, đã sửa):** `S.x/S.y` là **world pixel** nhưng bị chiếu trực
+tiếp với `pxPerTile` (đơn vị **px/tile**) → lệch **16 lần**, nên `followX` luôn bị
+clamp ở một biên và camera đứng im. Thêm vào đó bản zoom đầu **không vẽ hero**
+(để tránh sai tỉ lệ) → trên màn hình **không còn nhân vật nào để theo**.
+
+**Đã sửa:**
+
+1. Chia `S.x/TILE` trước khi chiếu → offset, marker, khung nhìn đều đúng toạ độ.
+2. **Marker nhân vật luôn hiện** ở mọi mức zoom (vàng, viền tối, nằm gọn trong canvas).
+3. **`F`** = 3 chế độ follow:
+   - `FIT_FOLLOW` (mặc định): camera bám nhân vật bằng hệ số `gain ≈ 0.2444`
+     tại FIT → bản đồ **trượt trong phần letterbox** nhưng **toàn bộ khung map vẫn
+     nằm gọn trong 640×360** (`wholeMapVisible=true`).
+   - `CENTER_FOLLOW`: `gain=1` → marker **luôn ở đúng (320,180)**, map cuộn dưới
+     chân nhân vật (có thể bị cắt bớt, `wholeMapVisible=false`) — đây là camera
+     follow kiểu bình thường.
+   - `LOCK`: bản đồ đứng yên, để so sánh.
+4. **Khung `Camera 1×`** (canvas HTML riêng 192×144, **không** phải overlay trên
+   canvas game) luôn vẽ nền native 1× với hero 16×24 ở giữa → chứng minh camera
+   gốc **không bao giờ mất follow** ở bất kỳ mức zoom nào.
+
+Lưu ý vật lý: khi thu nhỏ tới mức **toàn bộ 4000×2800 tile = 514×360 px**, một bước
+x10 (720 px/s = 45 tile/s) chỉ dịch ~5.8 px trên bản toàn cảnh — nên để thấy rõ
+chuyển động hãy dùng **`F` → Center** hoặc nhìn khung **Camera 1×**.
+
+Ảnh: `evidence/terrain-only-shots/terrain_only_whole_map.png`,
+`..._whole_map_guides.png`, `..._center_follow.png`, `..._lens_1x.png`.
 
 ## QA (`evidence/terrain-only-qa.json`)
 
@@ -112,7 +141,7 @@ Playwright 640×360 DPR1, mở **cả `file://` lẫn HTTP**, phím thật:
 |---|---|
 | T-G0 boot từ `file://` | PASS |
 | T-G1 `overlays` toàn 0, `physicalLayerLoaded=false`, `sceneDataLoaded=false` | PASS |
-| T-G2 đi thật x1 → x10, **tỉ lệ ~9.4–9.7×** (dao động nhẹ theo khung hình; số chính xác trong `evidence/terrain-only-qa.json`) | PASS |
+| T-G2 đi thật x1 → x10, **tỉ lệ ~9.3–10.2×** (dao động theo khung hình; số chính xác trong `evidence/terrain-only-qa.json`) | PASS |
 | T-G3 slider + phím `+`/`-`, clamp `1..10` | PASS |
 | T-G4 chặn địa hình tự nhiên + toggle free-roam | PASS |
 | T-G5 ẩn HUD, `hudOnCanvas=0` | PASS |
@@ -126,10 +155,15 @@ Playwright 640×360 DPR1, mở **cả `file://` lẫn HTTP**, phím thật:
 | T-G13 `B` khung nhìn tuỳ chọn, ghi rõ không phải lớp map | PASS |
 | T-G14 slider/wheel zoom, pan x10 lúc zoom out, `V` về 1× native | PASS |
 | T-G15 deep link `?zoom=fit` mở ngay mức zoom nhỏ nhất | PASS |
+| T-G16 marker nhân vật luôn hiện, nằm trong canvas và **dịch theo WASD** | PASS |
+| T-G17 `FIT_FOLLOW` camera trượt theo nhân vật mà cả khung map vẫn thấy | PASS |
+| T-G18 `F` → Center (marker luôn 320,180) / Lock / về Fit | PASS |
+| T-G19 khung `Camera 1×` 192×144 là canvas HTML riêng, hero luôn giữa, `overlays` vẫn 0 | PASS |
 
-9 ảnh trong `evidence/terrain-only-shots/`: Beacon, Beacon không HUD, x10,
+11 ảnh trong `evidence/terrain-only-shots/`: Beacon, Beacon không HUD, x10,
 x10 chạy dài (bờ biển + cỏ), natural collision, HTTP, **toàn cảnh**,
-**toàn cảnh + khung nhìn**, **deep link `?zoom=fit`**.
+**toàn cảnh + khung nhìn**, **deep link `?zoom=fit`**, **Center follow**,
+**Camera 1× lens**.
 
 ## Không khẳng định
 

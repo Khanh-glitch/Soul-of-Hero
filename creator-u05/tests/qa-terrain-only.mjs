@@ -50,21 +50,39 @@ const zoomAfterZ = await ev(() => window.__terrain.state());
 await page.waitForFunction(() => window.__terrain.overviewStats().ready === true, { timeout: 30000 });
 const fitState = await ev(() => window.__terrain.state());
 const wholeMapShot = await shot('terrain_only_whole_map.png');
+const guidesDefault = await ev(() => window.__terrain.state());
+await page.keyboard.press('KeyB');
+await page.waitForTimeout(120);
+const guidesOff = await ev(() => window.__terrain.state());
 await page.keyboard.press('KeyB');
 await page.waitForTimeout(120);
 const guidesState = await ev(() => window.__terrain.state());
 const guidesShot = await shot('terrain_only_whole_map_guides.png');
-await page.keyboard.press('KeyB');
 // Mid zoom via API + mouse wheel (viewer controls).
 await ev(() => window.__terrain.setZoom(0.5));
 const midZoom = await ev(() => window.__terrain.state());
 await page.mouse.wheel(0, -120);
 const afterWheel = await ev(() => window.__terrain.state());
 // Movement still works while zoomed out (x10 pans the whole map).
-await ev(() => { window.__terrain.zoomFit(); window.__terrain.setSpeed(10); });
-const panBefore = await ev(() => window.__terrain.state().player.px);
+await ev(() => { window.__terrain.zoomFit(); window.__terrain.setSpeed(10); window.__terrain.setFollow('FIT_FOLLOW'); });
+await page.waitForTimeout(150);
+const followBefore = await ev(() => window.__terrain.state());
+await page.keyboard.down('KeyD'); await page.waitForTimeout(700); await page.keyboard.up('KeyD');
+const followAfter = await ev(() => window.__terrain.state());
+const panBefore = followBefore.player.px, panAfter = followAfter.player.px;
+// F cycles FIT_FOLLOW -> CENTER_FOLLOW (player exactly centred, map scrolls)
+// -> LOCK (map frozen). Then cycle back to FIT_FOLLOW.
+await page.keyboard.press('KeyF'); await page.waitForTimeout(150);
+const centerState = await ev(() => window.__terrain.state());
+const centerShot = await shot('terrain_only_center_follow.png');
 await page.keyboard.down('KeyD'); await page.waitForTimeout(500); await page.keyboard.up('KeyD');
-const panAfter = await ev(() => window.__terrain.state().player.px);
+const centerAfterMove = await ev(() => window.__terrain.state());
+const lensShot = await page.locator('#lens').screenshot({ path: path.join(SHOTS, 'terrain_only_lens_1x.png') }).then(() => 'terrain_only_lens_1x.png');
+await page.keyboard.press('KeyF'); await page.waitForTimeout(150);
+const lockState = await ev(() => window.__terrain.state());
+await page.keyboard.press('KeyF'); await page.waitForTimeout(150);
+const fitAgain = await ev(() => window.__terrain.state());
+const lensInfo = await ev(() => ({ w: document.getElementById('lens').width, h: document.getElementById('lens').height, isHtmlCanvas: document.getElementById('lens') !== document.getElementById('game') }));
 // Return to native 1x and prove the camera/hero contract is intact.
 await page.keyboard.press('KeyV');
 await page.waitForTimeout(200);
@@ -170,7 +188,11 @@ const gates = {
   'T-G10': { status: zoomAfterZ.zoomMode === 'WHOLE_MAP_OVERVIEW' && fitState.mapFitsViewport === true && fitState.zoom < 0.01 && Math.abs(fitState.pxPerTile - 0.128571) < 0.0001 ? 'PASS' : 'FAIL', reason: 'Z reaches the smallest zoom; whole 4000x2800 frame fits 640x360' },
   'T-G11': { status: fitState.overview.ready === true && fitState.overview.pixels === 175000 && fitState.overview.strideTiles === 8 && fitState.overview.tileSamples > 500000 && fitState.overview.fullFrameAllocated === false && fitState.stats.materializedAllCells === false ? 'PASS' : 'FAIL', reason: 'sampled 500x350 overview, no 11.2M-cell allocation, no 8AU raster upscale' },
   'T-G12': { status: Object.values(fitState.draw.overlays).every(v => v === 0) && fitState.draw.drawn.hero === 0 && fitState.draw.drawn.overviewBitmap === 1 && fitState.draw.terrainOnly === true ? 'PASS' : 'FAIL', reason: 'overview is pure terrain sample, no overlay layers' },
-  'T-G13': { status: guidesState.draw.viewerGuides.viewportRect === 1 && guidesState.draw.viewerGuides.playerDot === 1 && guidesState.overview.guides === true ? 'PASS' : 'FAIL', reason: 'optional viewer guides (B) explicitly reported, not map layers' },
+  'T-G13': { status: guidesDefault.draw.viewerGuides.viewportRect === 1 && guidesOff.draw.viewerGuides.viewportRect === 0 && guidesState.draw.viewerGuides.viewportRect === 1 && guidesState.overview.guides === true ? 'PASS' : 'FAIL', reason: 'viewer guides (B) DEFAULT ON, toggle off/on, explicitly reported, not map layers' },
+  'T-G16': { status: fitState.draw.viewerCursor.playerMarker === 1 && fitState.playerMarkerScreen[0] >= 0 && fitState.playerMarkerScreen[0] <= 640 && fitState.playerMarkerScreen[1] >= 0 && fitState.playerMarkerScreen[1] <= 360 && followAfter.playerMarkerScreen[0] !== followBefore.playerMarkerScreen[0] ? 'PASS' : 'FAIL', reason: 'hero marker ALWAYS drawn on the overview and MOVES with WASD (regression: first zoom attempt hid the character)' },
+  'T-G17': { status: followBefore.followMode === 'FIT_FOLLOW' && followBefore.overviewCamera.followGain[0] > 0 && followBefore.overviewCamera.followGain[0] < 1 && Math.abs(followAfter.overviewCamera.offset[0] - followBefore.overviewCamera.offset[0]) > 0.5 && followAfter.overviewCamera.wholeMapVisible === true && followAfter.mapFitsViewport === true ? 'PASS' : 'FAIL', reason: 'FIT_FOLLOW camera pans with the player while the WHOLE frame stays visible' },
+  'T-G18': { status: centerState.followMode === 'CENTER_FOLLOW' && centerState.overviewCamera.cameraCenteredOnPlayer === true && centerAfterMove.overviewCamera.cameraCenteredOnPlayer === true && centerState.overviewCamera.wholeMapVisible === false && lockState.followMode === 'LOCK' && lockState.followCamera === false && fitAgain.followMode === 'FIT_FOLLOW' ? 'PASS' : 'FAIL', reason: 'F cycles Fit / Center (player stays centred while map scrolls) / Lock; real camera follow at every zoom' },
+  'T-G19': { status: lensInfo.w === 192 && lensInfo.h === 144 && lensInfo.isHtmlCanvas === true && fitState.draw.lens.hero === 1 && fitState.draw.lens.terrainChunks > 0 && fitState.draw.lens.followCamera === true && fitState.lensEnabled === true && Object.values(fitState.draw.overlays).every(v => v === 0) ? 'PASS' : 'FAIL', reason: 'separate HTML 192x144 native 1x follow camera always draws the hero; game canvas still has zero overlay layers' },
   'T-G15': { status: deepLink.zoomMode === 'WHOLE_MAP_OVERVIEW' && deepLink.mapFitsViewport === true && deepLink.zoomLevel === 0 && Object.values(deepLink.draw.overlays).every(v => v === 0) ? 'PASS' : 'FAIL', reason: '?zoom=fit deep link opens directly at the smallest whole-map zoom' },
   'T-G14': { status: midZoom.zoomMode === 'WHOLE_MAP_OVERVIEW' && midZoom.zoom > fitState.zoom && midZoom.zoom < 1 && afterWheel.zoomLevel > midZoom.zoomLevel && panAfter > panBefore && nativeAgain.zoom === 1 && nativeAgain.zoomMode === 'NATIVE_1X' && nativeAgain.draw.drawn.hero === 1 && nativeAgain.draw.drawn.overviewBitmap === 0 ? 'PASS' : 'FAIL', reason: 'slider/wheel zoom, x10 pan while zoomed out, V restores native 1x hero' }
 };
@@ -185,6 +207,17 @@ const report = {
   collisionProof,
   hudHidden,
   zoom: {
+    follow: {
+      before: { mode: followBefore.followMode, offset: followBefore.overviewCamera.offset, gain: followBefore.overviewCamera.followGain, marker: followBefore.playerMarkerScreen, wholeMapVisible: followBefore.overviewCamera.wholeMapVisible },
+      after: { mode: followAfter.followMode, offset: followAfter.overviewCamera.offset, gain: followAfter.overviewCamera.followGain, marker: followAfter.playerMarkerScreen, wholeMapVisible: followAfter.overviewCamera.wholeMapVisible },
+      center: { mode: centerState.followMode, centered: centerState.overviewCamera.cameraCenteredOnPlayer, marker: centerState.playerMarkerScreen, wholeMapVisible: centerState.overviewCamera.wholeMapVisible, afterMoveCentered: centerAfterMove.overviewCamera.cameraCenteredOnPlayer, afterMoveOffset: centerAfterMove.overviewCamera.offset },
+      lock: { mode: lockState.followMode, followCamera: lockState.followCamera, offset: lockState.overviewCamera.offset },
+      backToFit: fitAgain.followMode,
+      lens: lensInfo,
+      shots: [centerShot, lensShot]
+    },
+    guidesDefault: guidesDefault.draw.viewerGuides.viewportRect,
+    guidesOff: guidesOff.draw.viewerGuides.viewportRect,
     afterZ: { zoom: zoomAfterZ.zoom, mode: zoomAfterZ.zoomMode },
     fit: { zoom: fitState.zoom, pxPerTile: fitState.pxPerTile, mapFitsViewport: fitState.mapFitsViewport, overview: fitState.overview, draw: fitState.draw },
     guides: { viewerGuides: guidesState.draw.viewerGuides, enabled: guidesState.overview.guides },
