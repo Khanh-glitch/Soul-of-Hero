@@ -1,6 +1,6 @@
 # SOH VFX test build
 
-Build: `cd web && VITE_FX_TEST=1 npm run build && mkdir -p releases && cp dist/index.html releases/SOH-VFX-TEST.html`. Open that HTML directly in a browser; internet is not required. The generated HTML is intentionally gitignored, not a production release.
+Build: `cd web && VITE_FX_TEST=1 npm run build && mkdir -p releases && cp dist/index.html releases/SOH-VFX-TEST.html`. Open that HTML directly in a browser; internet is not required. This generated HTML is tracked on the review branch so the user has a durable direct download. It is a test build, not a production release.
 
 Choose New run → Begin the 14 days. The test run has 10 physical instances of each of seven Creator Cores and four legacy Cores in its scrollable inventory, Creator Cores initially loaded with 40 Basic / 12 Refined / 4 Signature charges, legacy Cores at their normal full charge. Keys 1–7 select one of each; LMB, hold/release Q, and hold/release E use abilities. Spirit E requires selecting discovered legal ground on M map first. The QA build uses a separate IndexedDB and localStorage name, so it does not overwrite the normal game's save. This loadout is a testing fixture, not normal progression.
 
