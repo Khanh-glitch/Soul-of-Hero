@@ -1,3 +1,4 @@
+import { airdropBoundary, stepAirdrops } from './engine';
 import { advancePoiAccess, poiDoorLabel, poiGenLabel } from './poi-access';
 import { vehicleClear, vehicleExitPoint } from './motorbike';
 import { LOOT_CLASSES, lootClass } from './loot-ecology';
@@ -842,6 +843,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
   syncPoi(t); syncHome(t);
   resolveFires(gs, t, visual);
   stepLootRespawn(r, t);
+  stepAirdrops(r,t,report);
   stepNatureTrees(r,t);
   while (t < end) {
     // Commit already-finished jobs first; their next jobs determine the next boundary.
@@ -862,6 +864,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
       if (fuelled) dt = Math.min(dt, fuel);
       if (job && job.left > 0) dt = Math.min(dt, job.left / (powered.has(e.id) ? BAL.industrialPower.workSpeedMultiplier : 1));
     }
+    dt = airdropBoundary(r,t,dt);
     dt = basePowerBoundary(r, dt, visual);
     dt = territoryBoundary(r, dt);
     dt = tenderBoundary(r, isWet(weather), dt);
@@ -895,6 +898,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     let dirty = false; for (const k in r.terrain) { const m = r.terrain[k]; if (m.until && m.until <= r.clock.simMs) { delete r.terrain[k]; dirty = true; } } if (dirty) markDirty();
     resolveFires(gs, t, visual);
     stepLootRespawn(r, t);
+    stepAirdrops(r,t,report);
     stepNatureTrees(r,t);
   }
   stepTenders(gs, end);
@@ -1125,6 +1129,7 @@ export function findInteract(gs: GameState, now: number): Interact | null {
     if (e.kind === 'drop') continue; const d = dist(fx0, fy0, e.x, e.y); if (d > bd || !clearInteraction(r, e)) continue;
     let label = ''; let kind = e.kind as string;
     if (e.kind === 'bag') { if (!C(r,e.c!).slots.some(Boolean) && !e.legacyJobs?.queue.length) continue; label = `Open ${e.label || 'bag'}`; }
+    else if (e.kind === 'airdrop') { if(!e.airdrop || ['signal','descending'].includes(e.airdrop.phase))continue; label=e.airdrop.phase==='locked' ? `Airdrop locked · ${Math.ceil(Math.max(0,e.airdrop.unlockAt-now)/1000)}s` : 'Search airdrop'; }
     else if (e.kind === 'loot') { const site=r.lootEcology && getWorld(r.layoutId||'shipping').statics.find(s=>s.kind==='loot'&&s.tx===e.tx&&s.ty===e.ty);const cls=site && lootClass(site);label=C(r,e.c!).slots.some(Boolean) ? `Search ${cls ? LOOT_CLASSES[cls].name : 'crate'}` : 'Empty crate'; }
     else if (e.kind === 'cash') label = isRagnarok(r, now) ? (e.minted ? 'Ragnarok chest' : 'Break the Ragnarok seal') : 'Sealed Ragnarok chest';
     else if (e.kind === 'vendor') label = `Trade with ${e.label}`;

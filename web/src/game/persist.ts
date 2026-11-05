@@ -1,3 +1,4 @@
+import {supportsAirdrops, airdropTimes, airdropRewards, airdropStaticEligible} from './airdrop';
 import { recoveryPlan } from './recycler';
 import { poiContractDigest } from './poi-access';
 import { LOOT_ECOLOGY_VERSION, lootClass, lootRoll, lootSiteIndex } from './loot-ecology';
@@ -105,8 +106,21 @@ export function validate(raw: any): GameState | null {
   });
   for (const [id, e] of Object.entries(r.entities) as [string, any][]) {
     if (!obj(e) || e.id !== id || !beforeNext(id, /^(?:cart|[ebd])([a-z0-9]+)$/) || typeof e.kind !== 'string' || !finite(e.x) || !finite(e.y)) return null;
-    if (!['drop','struct','bag','cart','vehicle','loot','cash','vendor','evac','door','gen','recycler'].includes(e.kind)) return null;
+    if (!['drop','struct','bag','cart','vehicle','loot','cash','vendor','evac','door','gen','recycler','airdrop'].includes(e.kind)) return null;
     if (e.kind === 'struct' && !has(STRUCTS, e.type)) return null;
+    if(e.kind==='airdrop'){
+      const a=e.airdrop,d=r.airdrops;
+      if(!d||!obj(a)||!integer(a.index)||a.index>=d.nextIndex||!integer(e.tx)||!integer(e.ty)||e.x!==e.tx*TILE+8||e.y!==e.ty*TILE+8||!airdropStaticEligible(world,e.tx,e.ty)||e.type!==undefined||!e.c||r.custody[e.c]?.kind!=='loot'||r.custody[e.c].slots.length!==3)return null;
+      const times=airdropTimes(r,a.index);if(Object.entries(times).some(([k,v])=>a[k]!==v))return null;
+      const t=r.clock.lastSimAt,phase=t<a.descentAt?'signal':t<a.landAt?'descending':t<a.unlockAt?'locked':'open';
+      if(t<a.signalAt||t>=a.expiresAt||(a.phase!==phase&&!(phase==='open'&&a.phase==='partial')))return null;
+      const slots=r.custody[e.c].slots, permitted=Object.fromEntries(airdropRewards(r,a.index));
+      if((phase==='signal'||phase==='descending')&&slots.some(Boolean))return null;
+      if((phase==='locked'||phase==='open')&&!slots.some(Boolean))return null;
+      const sums:Record<string,number>={};for(const stack of slots)if(stack)sums[stack.key]=(sums[stack.key]||0)+stack.qty;
+      if(Object.entries(sums).some(([key,q])=>!permitted[key]||q>permitted[key]))return null;
+      const full=Object.entries(permitted).every(([key,q])=>sums[key]===q);if((phase==='locked'||a.phase==='open')&&!full||a.phase==='partial'&&full)return null;
+    }else if(e.airdrop!==undefined)return null;
     if(e.kind==='recycler'){const site=webRecyclerSite(world,r.layoutId);if(!site||e.tx!==site.tx||e.ty!==site.ty||e.x!==site.tx*16+8||e.y!==site.ty*16+8||e.poi!=='factory'||e.type!==undefined||!e.station||e.station.queue?.length>1)return null;}
     if (e.deployed !== undefined && (!stack(e.deployed) || e.deployed.qty !== 1 || (e.kind === 'cart' ? e.deployed.key !== 'cart_kit' : e.kind === 'vehicle' ? e.deployed.key !== 'motorbike_kit' : e.kind !== 'struct' || STRUCTS[e.type]?.item !== e.deployed.key))) return null;
     if (['drop','bag','cart','vehicle','loot','cash'].includes(e.kind) && (!e.c || r.custody[e.c]?.kind !== e.kind)) return null;
@@ -140,6 +154,8 @@ export function validate(raw: any): GameState | null {
     if (e.station && (!obj(e.station) || !(e.kind==='recycler' || STRUCTS[e.type]?.station) || !finite(e.station.burn) || e.station.burn < 0 || r.custody[e.station.fuelC]?.kind !== 'fuel' || r.custody[e.station.outC]?.kind !== 'out' || !jobs(e.station.queue, e.kind==='recycler'?'recycler':STRUCTS[e.type].station!))) return null;
     if (e.legacyJobs && (e.kind !== 'bag' || !STRUCTS[e.legacyJobs.stationType]?.station || !jobs(e.legacyJobs.queue, STRUCTS[e.legacyJobs.stationType].station!) || e.legacyJobs.queue.some((j: any) => j.reserved !== undefined))) return null;
   }
+  if(r.airdrops!==undefined && (!obj(r.airdrops)||r.airdrops.version!=='airdrop-v1'||!supportsAirdrops(r.layoutId)||r.sourceLayoutVersion!==3||r.airdrops.mapDigest!==r.sourceMap?.mapDigest||r.airdrops.mapDigest!==mapDigest(world)||r.airdrops.seed!==r.seed||r.airdrops.runId!==r.id||r.airdrops.startedAt!==r.startedAt||!integer(r.airdrops.nextIndex)||r.airdrops.nextIndex>BAL.airdropV1.maxEvents||r.airdrops.nextIndex!==Array.from({length:BAL.airdropV1.maxEvents},(_,i)=>airdropTimes(r,i).signalAt).filter(t=>t<=r.clock.lastSimAt).length))return null;
+  if((Object.values(r.entities) as any[]).filter(e=>e.kind==='airdrop').length>1)return null;
   if(r.player.vehicle!==undefined) {const e=r.entities[r.player.vehicle];if(typeof r.player.vehicle!=='string'||!e||e.kind!=='vehicle'||r.player.dead||r.player.pulling||r.spiritTransit||r.player.x!==e.x||r.player.y!==e.y)return null;}
   if((Object.values(r.entities) as any[]).filter(e=>e.kind==='recycler').length>1)return null;
   for(const [key,offer] of Object.entries(VENDOR_SPARES)){const stock=r.vendorStock[`spares:${key}`];if(stock!==undefined && (!integer(stock) || stock>offer.stock))return null;}

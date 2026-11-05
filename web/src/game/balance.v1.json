@@ -323,5 +323,21 @@
       "industrial_axe": {"base": [["scrap",1]], "mid": [["iron_ingot",1]], "high": [["mechanical_parts",1]]},
       "reinforced_spear": {"base": [["scrap",1]], "mid": [["iron_ingot",1]], "high": [["mechanical_parts",1]]}
     }
+  },
+  "airdropV1": {
+    "_status": "SOH_PROVISIONAL; ORIGINAL_UNKNOWN historical cadence, quantities, delays and weights",
+    "firstHours": 8,
+    "cadenceHours": 24,
+    "jitterMinutes": 20,
+    "maxEvents": 14,
+    "warningSeconds": 120,
+    "descentSeconds": 60,
+    "lockSeconds": 180,
+    "lifetimeSeconds": 5400,
+    "clearanceTiles": 1,
+    "maxSlope": 0.35,
+    "fixed": [["mechanical_parts",2],["fasteners",2]],
+    "weights": [1,1,1,1],
+    "options": [["fuel_can",1],["energy_refined",2],["iron_ingot",2],["iron_sword",1]]
   }
 }

@@ -69,7 +69,7 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
   const lootKind=lootSite ? lootClass(lootSite) : null;
   const poiId=e.poi==='factory_vault'?'factory':e.poi==='light_top'?'light':e.poi;
   const lootPlace=e.label || (lootSite && getWorld(r.layoutId||'shipping').places.find(p=>p.id===poiId)?.name) || e.poi || 'authored site';
-  const title = e.kind === 'recycler' ? 'Foundry Recycler' : e.kind === 'bag' ? (e.label || 'Bag') : e.kind === 'loot' ? (lootKind ? LOOT_CLASSES[lootKind].name : 'Crate') : e.kind === 'cash' ? 'Ragnarok Chest' : e.kind === 'vehicle' ? 'Utility Motorbike' : e.kind === 'cart' ? 'Cart Cargo' : STRUCTS[e.type!]?.name || 'Storage';
+  const title = e.kind === 'airdrop' ? 'Airdrop · take only' : e.kind === 'recycler' ? 'Foundry Recycler' : e.kind === 'bag' ? (e.label || 'Bag') : e.kind === 'loot' ? (lootKind ? LOOT_CLASSES[lootKind].name : 'Crate') : e.kind === 'cash' ? 'Ragnarok Chest' : e.kind === 'vehicle' ? 'Utility Motorbike' : e.kind === 'cart' ? 'Cart Cargo' : STRUCTS[e.type!]?.name || 'Storage';
   const takeAll = (cid: string) => { const c = C(r, cid); for (let i = 0; i < c.slots.length; i++) if (c.slots[i]) { const res = api.act('move', { from: cid, fs: i, to: 'inv' }); if (!res.ok) break; } };
   const quickTo = st ? (kind === 'research' || e.kind === 'recycler' ? undefined : st.fuelC) : e.c;
   const compact = !!e.farm || !!e.garden || !!e.basePower || !!e.turret || e.type==='claim';
@@ -78,6 +78,7 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
     <Panel title={title} style={{ left: 168, top: 54, width: 230, maxHeight: 286 }} onClose={() => api.open(null)} className="scroll">
       <div className="scroll" style={{ maxHeight: 250, overflowY: 'auto', overflowX: 'hidden' }}>
         {compact && <button className="btn" onClick={()=>{api.setSel(null);setInventoryOnly(true);}}>{e.type==='claim' ? 'Inventory / fill cabinet' : e.farm || e.basePower ? 'Inventory / fill fuel' : e.turret ? 'Inventory / load arrows' : 'Inventory'}</button>}
+        {e.kind === 'airdrop' && <div style={{fontSize:10,color:'#ffd98a'}}>Withdraw only · partial stock remains until expiry; no replenishment.</div>}
         {e.kind === 'loot' && <div style={{fontSize:10,color:'#ffd98a',marginBottom:4}}>
           {lootKind && <div>{LOOT_CLASSES[lootKind].description} · {lootPlace} ({e.tx},{e.ty})</div>}
           Withdraw only · {C(r,e.c!).slots.filter(Boolean).length} stacks remain. Partial stock stays. {lootKind ? `After empty: ordinary stock returns in ${LOOT_CLASSES[lootKind].hours}h; rare finds do not.` : 'Empty crates disappear.'}

@@ -1,3 +1,4 @@
+import { airdropArea } from '../game/airdrop';
 import SpiritVfxEditor from './SpiritVfxEditor';
 import * as pfx from '../game/pixelfx';
 import { pfxFromSimEvent } from '../game/pixelfxMap';
@@ -58,6 +59,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       case 'fire': act('douseTree', { tx: Math.floor(t.x/16), ty: Math.floor(t.y/16) }); return;
       case 'water': act('drink', { x: t.x, y: t.y }); sfx({ type: 'eat' }); return;
       case 'recycler': case 'bag': case 'loot': case 'cart': case 'vehicle': setPanel({ kind: 'container', eid: t.eid }); sfx({ type: 'ui' }); return;
+      case 'airdrop': { const res=act('openAirdrop',{eid:t.eid}); if(res.ok){setPanel({kind:'container',eid:t.eid});sfx({type:'ui'});} return; }
       case 'cash': { const res = act('openCash', { eid: t.eid }); if (res.ok) { setPanel({ kind: 'container', eid: t.eid }); sfx({ type: 'coin' }); } return; }
       case 'vendor': setPanel({ kind: 'vendor', eid: t.eid }); return;
       case 'door': act('door', { eid: t.eid }); return;
@@ -208,6 +210,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
         <div style={{ color: '#9ae0ff' }}>secured {gs.profile.securedCash}{heldCash ? <span style={{ color: '#ffe27a' }}> · carried {heldCash}</span> : null}</div>
         {ph === 'calm' && hrs > 230 && <div style={{ color: '#ff9a5a' }}>Ragnarok in {(264 - hrs).toFixed(1)}h</div>}
       </div>
+      {Object.values(r.entities).filter(e=>e.kind==='airdrop'&&e.airdrop).map(e=><div key={e.id} className="panel absolute" style={{left:165,top:5,padding:'2px 6px',fontSize:10,color:'#ffe27a',pointerEvents:'none'}}>Airdrop reported near {airdropArea(e.tx!,e.ty!)} · {e.airdrop!.phase==='signal'?'incoming':e.airdrop!.phase==='descending'?'descending':'landed'}</div>)}
       {nearbyUnfunded && !panel && <div className="panel absolute" style={{right:4,top:105,padding:'2px 5px',fontSize:10,color:'#ffae89',pointerEvents:'none'}}>Nearby building: no funded upkeep · decaying</div>}
       {engaged && (() => { const d = ELDERS[engaged.elder!.key]; return <div className="absolute" style={{ left: 170, top: 6, width: 300, textAlign: 'center' }}><div className="title-font" style={{ fontSize: 10, color: d.color, textShadow: '1px 1px 0 #000' }}>{d.name} <span style={{ color: '#cfc2dc', fontSize: 9 }}>— {engaged.elder!.awake ? 'awakened' : 'latent'}</span></div><div className="bar" style={{ width: 300, height: 6 }}><i style={{ width: `${(engaged.hp / engaged.maxHp) * 100}%`, background: `linear-gradient(${d.color}, #8a2a1a)` }} /></div></div>; })()}
       {banner && <div key={banner.id} className="absolute banner" style={{ left: 0, right: 0, top: 70, textAlign: 'center', pointerEvents: 'none' }} onAnimationEnd={() => setBanner(null)}><div className="title-font" style={{ fontSize: 22, color: '#ffe8b0', textShadow: '2px 2px 0 #2a1006, 0 0 8px #ff9a3a' }}>{banner.text}</div>{banner.sub && <div style={{ fontSize: 12, color: '#e0d0f0', textShadow: '1px 1px 0 #000' }}>{banner.sub}</div>}</div>}

@@ -1,3 +1,4 @@
+import { supportsAirdrops, airdropArea, airdropTimes, airdropRewards, chooseAirdropSite, airdropStaticEligible } from './airdrop';
 import { recoveryPlan, recoveryFits } from './recycler';
 import { poiDoorContract, poiGeneratorContract, poiGenerator, poiPowered, interiorRelease, doorwayOccupied, advancePoiAccess, poiContractDigest } from './poi-access';
 import { vehicleClear, vehicleExitPoint } from './motorbike';
@@ -97,6 +98,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
     clock: { lastSimAt: now, simMs: 0, respawnAcc: 0, weatherSlot: -1 }, rng: seed, nextId: 1, receipts: [], seenIntents: [], seq: 0,
     vendorStock: { escrow_chest: 4, ...Object.fromEntries(Object.entries(VENDOR_SECURED).map(([k, v]) => [k, v.stock])), ...Object.fromEntries(Object.entries(VENDOR_SPARES).map(([k,v]) => [`spares:${k}`,v.stock])) }, log: [],
   };
+  if (supportsAirdrops(r.layoutId!)) r.airdrops={version:'airdrop-v1',mapDigest:r.sourceMap!.mapDigest!,seed:r.seed,runId:r.id,startedAt:r.startedAt,nextIndex:0};
   r.poiAccessVersion='poi-access-v1';
   r.poiAccessDigest=poiContractDigest(w);
   if (getActiveLayout()==='shipping_fresh' || getActiveLayout()==='dev_delta_fresh') { r.creatorLootV1=true; r.lootEcology={version:LOOT_ECOLOGY_VERSION,cycles:{}}; }
@@ -213,6 +215,7 @@ export function blockGrid(r: RunState) {
     if (e.tx === undefined) continue; const i = e.ty! * WW + e.tx;
     if (e.kind === 'struct') { const d = STRUCTS[e.type!]; if (d.block && !(e.type!.startsWith('door') && e.open)) arr[i] = 3; }
     else if (e.kind === 'door') { if (!e.open) arr[i] = 3; else if (!r.terrain[i] && getWorld().tiles[i]===T.PWALL && getWorld().statics.some(s=>s.kind==='door'&&s.tx===e.tx&&s.ty===e.ty)) arr[i]=0; }
+    else if (e.kind === 'airdrop' && (e.airdrop?.phase==='locked'||e.airdrop?.phase==='open'||e.airdrop?.phase==='partial')) arr[i] = 3;
     else if (e.kind === 'loot' || e.kind === 'cash' || e.kind === 'vendor' || e.kind === 'gen' || e.kind === 'evac' || e.kind === 'recycler') arr[i] = 3;
   }
   blockCache = { run: r.id, layout, sourceVersion: r.sourceLayoutVersion ?? 1, arr }; blockDirty = false; return arr;
@@ -509,6 +512,39 @@ export function bagStation(r: RunState, e: Entity, now: number, label: string) {
 }
 function removeEntity(r: RunState, e: Entity) {  for(const other of Object.values(r.entities)) if(other.maintenance?.chestId===e.id) { delete other.maintenance.chestId; other.maintenance.enabled=false; } if(e.basePower)for(const other of Object.values(r.entities)){if(other.turret?.generatorId===e.id)delete other.turret.generatorId;if(other.industrial?.generatorId===e.id)delete other.industrial.generatorId;} delete r.entities[e.id]; for (const cid of [e.c, e.station?.fuelC, e.station?.outC]) if (cid) delete r.custody[cid]; if(e.type==='claim' || STRUCTS[e.type!]?.layer==='floor')refreshTerritoryLinks(r); markDirty(); }
 
+/** Chronological event authority shared by online and offline advancement. */
+export function airdropBoundary(r:RunState,t:number,dt:number):number {
+  if(!r.airdrops)return dt;
+  if(r.airdrops.nextIndex<BAL.airdropV1.maxEvents){const n=airdropTimes(r,r.airdrops.nextIndex).signalAt;if(n>t)dt=Math.min(dt,n-t);}
+  for(const e of Object.values(r.entities))if(e.kind==='airdrop'&&e.airdrop){const a=e.airdrop;for(const n of [a.descentAt,a.landAt,a.unlockAt,a.expiresAt])if(n>t)dt=Math.min(dt,n-t);}
+  return dt;
+}
+export function stepAirdrops(r:RunState,at:number,report?:string[]) {
+  const d=r.airdrops;if(!d)return;
+  const say=(msg:string)=>{pushLog(r,at,msg,'gold');if(report)report.push(msg);};
+  while(d.nextIndex<BAL.airdropV1.maxEvents && airdropTimes(r,d.nextIndex).signalAt<=at){
+    const index=d.nextIndex++, times=airdropTimes(r,index);markDirty();const site=chooseAirdropSite(r,index,blockGrid(r));
+    if(!site){receipt(r,at,'airdrop.skipped',String(index));say(`Airdrop ${index+1} skipped: no reachable legal landing site.`);continue;}
+    const c=mkContainer(r,'loot',3),e:Entity={id:uid(r,'e'),kind:'airdrop',tx:site.tx,ty:site.ty,x:site.tx*TILE+8,y:site.ty*TILE+8,c:c.id,airdrop:{index,phase:'signal',...times}};r.entities[e.id]=e;
+    const zone=airdropArea(site.tx,site.ty);
+    receipt(r,at,'airdrop.signal',`${index}:${zone}`);say(`Airdrop incoming near ${zone}; exact landing unknown.`);
+  }
+  for(const e of Object.values(r.entities)){if(e.kind!=='airdrop'||!e.airdrop)continue;const a=e.airdrop;
+    if(a.phase==='signal'&&at>=a.descentAt){a.phase='descending';receipt(r,at,'airdrop.descent',String(a.index));}
+    if(a.phase==='descending'&&at>=a.landAt){
+      markDirty();const grid=blockGrid(r),rad=BAL.airdropV1.clearanceTiles,tx=e.tx!,ty=e.ty!;
+      let clear=airdropStaticEligible(getWorld(r.layoutId||'shipping'),tx,ty);
+      for(let dy=-rad;dy<=rad&&clear;dy++)for(let dx=-rad;dx<=rad;dx++){const i=(ty+dy)*WW+tx+dx;if([1,2,3,5].includes(grid[i])||Object.values(r.entities).some(v=>v.id!==e.id&&Math.floor(v.x/TILE)===tx+dx&&Math.floor(v.y/TILE)===ty+dy)||r.natureTrees?.some(v=>v.tx===tx+dx&&v.ty===ty+dy)){clear=false;break;}}
+      if(!r.player.dead&&Math.abs(r.player.x-e.x)<(rad+1)*TILE&&Math.abs(r.player.y-e.y)<(rad+1)*TILE)clear=false;
+      if(r.creatures.some(m=>m.state!=='dead'&&Math.abs(m.x-e.x)<(rad+1)*TILE&&Math.abs(m.y-e.y)<(rad+1)*TILE))clear=false;
+      if(!clear){receipt(r,at,'airdrop.aborted',String(a.index));say(`Airdrop ${a.index+1} aborted: landing obstructed.`);removeEntity(r,e);continue;}
+      const c=C(r,e.c!);airdropRewards(r,a.index).forEach(([key,qty],i)=>c.slots[i]=mkStack(r,key,qty));a.phase='locked';markDirty();receipt(r,at,'airdrop.landed',String(a.index));
+    }
+    if(a.phase==='locked'&&at>=a.unlockAt){a.phase='open';receipt(r,at,'airdrop.accessible',String(a.index));}
+    if(at>=a.expiresAt){const missed=C(r,e.c!).slots.some(Boolean);receipt(r,at,'airdrop.expired',`${a.index}:${missed?'stock lost':'empty'}`);if(missed)say(`Airdrop ${a.index+1} expired with unclaimed stock.`);removeEntity(r,e);}
+  }
+}
+
 /** Versioned SOH-only renewable stock policy. Unique technology, credentials,
  * equipment, and damaged drives remain finite; cash is never a loot site. */
 export function renewableLoot(site: StaticEnt): [string, number][] {
@@ -719,7 +755,7 @@ export function dispatch(gs: GameState, it: Intent, now: number): Result {
     // Only a successful withdrawal/use/drop can empty a public crate. Its authored
     // site remains recorded even after the physical entity and container disappear.
     const source = it.type === 'move' ? it.from : (it.type === 'drop' || it.type === 'useItem') ? it.c : undefined;
-    if (typeof source === 'string') retireEmptyLoot(r, source, now);
+    if (typeof source === 'string') { retireEmptyLoot(r, source, now); const e=Object.values(r.entities).find(e=>e.kind==='airdrop'&&e.c===source);if(e){if(!C(r,source).slots.some(Boolean)){receipt(r,now,'airdrop.empty',String(e.airdrop!.index));removeEntity(r,e);}else if(e.airdrop!.phase==='open'){e.airdrop!.phase='partial';receipt(r,now,'airdrop.partial',String(e.airdrop!.index));}} }
     // The receipt ring is intentionally bounded for UI/history, but irreversible command
     // identity is durable run state and must never be evicted: an old replay is still a replay.
     r.seenIntents.push(it.id);
@@ -1166,6 +1202,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       removeItem(r, 'inv', 'fuel_can', 1); e.power=1;e.poiPower={version:'poi-access-v1',fueledAt:now,expiresAt:now+BAL.poiAccess.fuelRuntimeMs,budgetMs:BAL.poiAccess.fuelRuntimeMs,runAt:now,runMs:BAL.poiAccess.fuelRuntimeMs};
       return ok('poi.power.fuel',`${e.id}:fuel_can:${fuelUid}:until=${e.poiPower.expiresAt}`,`Generator running for ${BAL.poiAccess.fuelRuntimeMs/1000} seconds.`);
     }
+    case 'openAirdrop': { const e=r.entities[it.eid]; if(!e || e.kind!=='airdrop' || (e.airdrop?.phase!=='open' && e.airdrop?.phase!=='partial') || !e.c || !canAccess(r,e.c)) return fail('Airdrop is locked or out of reach.'); return ok('airdrop.open',String(e.airdrop.index)); }
     case 'openCash': { // C15: special finite POI chest mints physical cash ONCE, only during the final 72h
       const e = r.entities[it.eid]; if (!e || e.kind !== 'cash' || !near(r, e, 2.2) || !clearInteraction(r,e)) return fail('Out of reach.');
       if (!isRagnarok(r, now)) return fail('Sealed with a Ragnarok glyph. It will open only in the final 72 hours.');
@@ -1302,7 +1339,7 @@ function accepts(c: Container, slot: number, s: Stack) {
 }
 function canAccess(r: RunState, cid: string) {
   if (cid === 'inv' || cid === 'eq') return true;
-  for (const e of Object.values(r.entities)) if ((e.c === cid || e.station?.fuelC === cid || e.station?.outC === cid) && (owned(e) || e.kind==='recycler')) return dist(r.player.x, r.player.y, e.x, e.y) <= 2.8 * TILE && (e.kind==='recycler'?clearInteraction(r,e):clearWallLine(r,r.player,e));
+  for (const e of Object.values(r.entities)) if ((e.kind!=='airdrop'||e.airdrop?.phase==='open'||e.airdrop?.phase==='partial') && (e.c === cid || e.station?.fuelC === cid || e.station?.outC === cid) && (owned(e) || e.kind==='recycler')) return dist(r.player.x, r.player.y, e.x, e.y) <= 2.8 * TILE && (e.kind==='recycler'||e.kind==='airdrop'?clearInteraction(r,e):clearWallLine(r,r.player,e));
   return false;
 }
 export function homeComplete(r: RunState) {

@@ -81,7 +81,7 @@ export interface Creature {
 }
 
 export interface Entity {
-  id: string; kind: 'drop' | 'struct' | 'bag' | 'cart' | 'vehicle' | 'loot' | 'cash' | 'vendor' | 'evac' | 'door' | 'gen' | 'recycler';
+  id: string; kind: 'drop' | 'struct' | 'bag' | 'cart' | 'vehicle' | 'loot' | 'cash' | 'vendor' | 'evac' | 'door' | 'gen' | 'recycler' | 'airdrop';
   x: number; y: number; // px for drops/carts, tile*16+8 for structures
   tx?: number; ty?: number; type?: string; hp?: number; maxHp?: number;
   c?: string; // container id
@@ -101,6 +101,7 @@ export interface Entity {
   /** The original deployable instance, retained until reclaim or destruction. */
   deployed?: Stack;
   vehicle?: { fuel:number; angle:number; odometer:number; geometry:'vehicle-geometry-v1' };
+  airdrop?: { index:number; phase:'signal'|'descending'|'locked'|'open'|'partial'; signalAt:number; descentAt:number; landAt:number; unlockAt:number; expiresAt:number };
   poiPower?: {version:'poi-access-v1'; fueledAt:number; expiresAt:number; budgetMs:number; runAt:number; runMs:number; pausedMs?:number};
   poiDoor?: {version:'poi-access-v1'; closeAt:number; scans:number; lastCardUid?:string};
   /** Legacy jobs with unknowable paid inputs, preserved after station destruction. */
@@ -132,6 +133,7 @@ export interface RunState {
   /** Source map identity is mandatory for v3; older runs retain their own layout. */
   sourceMap?: { id: string; revision: number; seed: number; rules: 3; digest: string; mapDigest?: string; veyra?: {sourceCommit:string;sourceDigest:string;originAu:[number,number];unitsPerTile:1.6|2;frameAu:[number,number];projection:'cell-centre-v1'} };
   /** Additive, pinned when a run is created or first resumed/saved. */
+  airdrops?: {version:'airdrop-v1'; mapDigest:string; seed:number; runId:string; startedAt:number; nextIndex:number};
   wreckEconomy?: 'direct-v1' | 'recycler-v1';
   spawnChoice?: { x:number; y:number; contract:'seeded-geographic-v1' };
   spawnRegion: number; ended: null | string;
