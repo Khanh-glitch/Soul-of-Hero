@@ -10,13 +10,23 @@ const FILE = path.join(ROOT, 'SoulOfHero_TerrainOnly_U05_x10.html');
 const PORT = Number(process.env.U05_TERRAIN_PORT || 5183);
 if (!fs.existsSync(FILE)) throw Error('U05_TERRAIN_ONLY_FILE_MISSING ' + FILE);
 
+const NAME = 'SoulOfHero_TerrainOnly_U05_x10.html';
 http.createServer((req, res) => {
-  const p = new URL(req.url || '/', 'http://localhost').pathname;
-  if (p === '/' || p === '/index.html' || p === '/game' || p === '/SoulOfHero_TerrainOnly_U05_x10.html') {
+  const u = new URL(req.url || '/', 'http://localhost');
+  const p = u.pathname;
+  const isGame = p === '/' || p === '/index.html' || p === '/game' || p === '/' + NAME;
+  if (isGame || p === '/download' || p === '/download.html') {
     const html = fs.readFileSync(FILE);
-    res.writeHead(200, { 'content-type': 'text/html; charset=utf-8', 'content-length': html.length, 'cache-control': 'no-store' });
+    // /download forces a real file download (Content-Disposition: attachment).
+    const forceDownload = p === '/download' || p === '/download.html' || u.searchParams.has('download');
+    res.writeHead(200, {
+      'content-type': forceDownload ? 'application/octet-stream' : 'text/html; charset=utf-8',
+      'content-length': html.length,
+      'cache-control': 'no-store',
+      ...(forceDownload ? { 'content-disposition': `attachment; filename="${NAME}"` } : {})
+    });
     res.end(html);
   } else {
     res.writeHead(404, { 'content-type': 'text/plain' }); res.end('not found');
   }
-}).listen(PORT, '0.0.0.0', () => console.log(`U05_TERRAIN_ONLY_PREVIEW http://0.0.0.0:${PORT}/`));
+}).listen(PORT, '0.0.0.0', () => console.log(`U05_TERRAIN_ONLY_PREVIEW http://0.0.0.0:${PORT}/  |  DOWNLOAD /download`));

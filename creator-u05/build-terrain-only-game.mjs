@@ -12,6 +12,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
+import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)));
@@ -19,6 +20,7 @@ const WEB = path.join(ROOT, 'web-u05');
 const OUT_DIR = path.join(WEB, 'terrain-only-dist');
 const BUILT = path.join(OUT_DIR, 'terrain-only.html');
 const FILE = path.join(ROOT, 'SoulOfHero_TerrainOnly_U05_x10.html');
+const ZIP = path.join(ROOT, 'SoulOfHero_TerrainOnly_U05_x10.zip');
 const EVIDENCE = path.join(ROOT, 'evidence/terrain-only-build.json');
 
 execFileSync('npx', ['vite', 'build', '--config', 'vite.terrain-only.config.mjs'], {
@@ -39,11 +41,17 @@ for (const forbidden of ['PhysicalLayer', 'U05_SCENES', 'SITE_ENVELOPE', 'roofHi
   if (html.includes(forbidden)) throw Error('U05_TERRAIN_ONLY_OVERLAY_LEAK ' + forbidden);
 
 fs.writeFileSync(FILE, html);
+// A ZIP mirror gives a PERMANENT forced-download link from GitHub raw
+// (application/zip always downloads); the HTML itself stays the main file.
+const zipBuf = makeZip([{ name: 'SoulOfHero_TerrainOnly_U05_x10.html', data: Buffer.from(html) }]);
+fs.writeFileSync(ZIP, zipBuf);
 fs.mkdirSync(path.dirname(EVIDENCE), { recursive: true });
 const record = {
   schema: 'soh.u05.terrain-only-build.v1',
   generatedAt: new Date().toISOString(),
   file: 'creator-u05/SoulOfHero_TerrainOnly_U05_x10.html',
+  zipMirror: 'creator-u05/SoulOfHero_TerrainOnly_U05_x10.zip',
+  zipBytes: zipBuf.length,
   bytes,
   sha256: crypto.createHash('sha256').update(fs.readFileSync(FILE)).digest('hex'),
   selfContained: { externalScript, externalCss, importFromUrl, allFalse: !externalScript && !externalCss && !importFromUrl },
@@ -57,4 +65,45 @@ const record = {
   scope: 'STANDALONE TERRAIN VIEWER ONLY — NOT full Gameplay runtime integration, NOT visual acceptance, NOT production game.'
 };
 fs.writeFileSync(EVIDENCE, JSON.stringify(record, null, 2) + '\n');
-console.log(`U05_TERRAIN_ONLY_BUILD_OK file=${path.basename(FILE)} bytes=${bytes} sha256=${record.sha256.slice(0, 16)}…`);
+console.log(`U05_TERRAIN_ONLY_BUILD_OK file=${path.basename(FILE)} bytes=${bytes} zip=${zipBuf.length} sha256=${record.sha256.slice(0, 16)}…`);
+
+/** Minimal STORE/DEFLATE ZIP writer (single entry), no dependency. */
+function makeZip(entries) {
+  const chunks = [], central = [];
+  let offset = 0;
+  for (const e of entries) {
+    const name = Buffer.from(e.name, 'utf8');
+    const crc = crc32(e.data);
+    const payload = zlib.deflateRawSync(e.data, { level: 9 });
+    const local = Buffer.alloc(30);
+    local.writeUInt32LE(0x04034b50, 0); local.writeUInt16LE(20, 4); local.writeUInt16LE(0, 6);
+    local.writeUInt16LE(8, 8); local.writeUInt16LE(0, 10); local.writeUInt16LE(0, 12);
+    local.writeUInt32LE(crc, 14); local.writeUInt32LE(payload.length, 18); local.writeUInt32LE(e.data.length, 22);
+    local.writeUInt16LE(name.length, 26); local.writeUInt16LE(0, 28);
+    chunks.push(local, name, payload);
+    const cd = Buffer.alloc(46);
+    cd.writeUInt32LE(0x02014b50, 0); cd.writeUInt16LE(20, 4); cd.writeUInt16LE(20, 6);
+    cd.writeUInt16LE(0, 8); cd.writeUInt16LE(8, 10); cd.writeUInt16LE(0, 12); cd.writeUInt16LE(0, 14);
+    cd.writeUInt32LE(crc, 16); cd.writeUInt32LE(payload.length, 20); cd.writeUInt32LE(e.data.length, 24);
+    cd.writeUInt16LE(name.length, 28); cd.writeUInt16LE(0, 30); cd.writeUInt16LE(0, 32);
+    cd.writeUInt16LE(0, 34); cd.writeUInt16LE(0, 36); cd.writeUInt32LE(0, 38);
+    cd.writeUInt32LE(offset, 42);
+    central.push(Buffer.concat([cd, name]));
+    offset += local.length + name.length + payload.length;
+  }
+  const cdBuf = Buffer.concat(central);
+  const end = Buffer.alloc(22);
+  end.writeUInt32LE(0x06054b50, 0); end.writeUInt16LE(0, 4); end.writeUInt16LE(0, 6);
+  end.writeUInt16LE(entries.length, 8); end.writeUInt16LE(entries.length, 10);
+  end.writeUInt32LE(cdBuf.length, 12); end.writeUInt32LE(offset, 16); end.writeUInt16LE(0, 20);
+  return Buffer.concat([...chunks, cdBuf, end]);
+}
+function crc32(buf) {
+  let c, crc = 0xffffffff;
+  for (let n = 0; n < buf.length; n++) {
+    c = (crc ^ buf[n]) & 0xff;
+    for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+    crc = c ^ (crc >>> 8);
+  }
+  return (crc ^ 0xffffffff) >>> 0;
+}

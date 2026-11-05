@@ -200,7 +200,7 @@ Chi tiết: `docs/TERRAIN_ONLY_VIEWER.md`.
 - Camera 640×360 1×, U=0.5, LRU ≤36, không cấp phát 11.2M ô; chặn địa hình
   tự nhiên là tuỳ chọn (`C`), mặc định free-roam để xem toàn map.
 - QA `evidence/terrain-only-qa.json`: **T-G0…T-G9 đều PASS**, tỉ lệ đi thật
-  x1→x10 = **~9.4×** (9.37 lần chạy cuối; dao động nhẹ theo khung hình), 0 console/page/request errors, 6 ảnh trong
+  x1→x10 = **~9.4–9.7×** (dao động nhẹ theo khung hình), 0 console/page/request errors, 6 ảnh trong
   `evidence/terrain-only-shots/`, chạy được cả `file://` và HTTP 5182.
 - Gói P1–P5 đã commit **được giữ nguyên làm bằng chứng lịch sử**; file game mới
   không nạp dữ liệu cảnh/công trình nào. Nếu Creator muốn **xoá** hẳn các artifact

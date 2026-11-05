@@ -341,7 +341,7 @@
     }
   ],
   "verificationDrift": {
-    "checkedAt": "2026-11-05T08:08:10.107Z",
+    "checkedAt": "2026-11-05T08:35:08.336Z",
     "pinnedVerifiedGameplaySha": "b5c8004ca4e77be62484fb3cd296fe296d7de4c9",
     "liveBranch": "arena/d4bfcfff-soul-of-hero",
     "liveHeadSha": "63d0801013d3c2d68221333305407ed73ca9d4e2",

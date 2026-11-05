@@ -13,6 +13,14 @@
   không cần cài đặt, không nạp atlas mới**. Mọi module + 21 raster WMP-04R1
   (base64) đã được inline.
 - Hoặc mở live preview: `http://<preview-host>:5182/terrain-only.html`.
+- **Tải thẳng (ép `Content-Disposition: attachment`)**: `http://<preview-host>:5183/download`
+  (server `tools/serve-terrain-only.mjs`, bind `0.0.0.0:5183`); trên Arena preview là
+  `https://5183-<sandboxId>.e2b.app/download`.
+- **Link vĩnh viễn trên GitHub** (repo public, đã push):
+  - HTML: `https://github.com/Khanh-glitch/Soul-of-Hero/raw/refs/heads/arena/2e3cfbd2-soul-of-hero/creator-u05/SoulOfHero_TerrainOnly_U05_x10.html`
+  - ZIP mirror (115 KB, browser tự tải về, giải nén ra đúng HTML):
+    `https://github.com/Khanh-glitch/Soul-of-Hero/raw/refs/heads/arena/2e3cfbd2-soul-of-hero/creator-u05/SoulOfHero_TerrainOnly_U05_x10.zip`
+  - Blob + nút *Download raw file*: `https://github.com/Khanh-glitch/Soul-of-Hero/blob/arena/2e3cfbd2-soul-of-hero/creator-u05/SoulOfHero_TerrainOnly_U05_x10.html`
 - Nguồn để sửa: `web-u05/terrain-only.html` + `web-u05/src/terrain-only/main.ts`;
   build lại bằng `node creator-u05/build-terrain-only-game.mjs`.
 
@@ -72,7 +80,7 @@ Playwright 640×360 DPR1, mở **cả `file://` lẫn HTTP**, phím thật:
 |---|---|
 | T-G0 boot từ `file://` | PASS |
 | T-G1 `overlays` toàn 0, `physicalLayerLoaded=false`, `sceneDataLoaded=false` | PASS |
-| T-G2 đi thật x1 → x10, **tỉ lệ ~9.4×** (9.37 trong lần chạy cuối; dao động nhẹ theo khung hình) | PASS |
+| T-G2 đi thật x1 → x10, **tỉ lệ ~9.4–9.7×** (dao động nhẹ theo khung hình; số chính xác trong `evidence/terrain-only-qa.json`) | PASS |
 | T-G3 slider + phím `+`/`-`, clamp `1..10` | PASS |
 | T-G4 chặn địa hình tự nhiên + toggle free-roam | PASS |
 | T-G5 ẩn HUD, `hudOnCanvas=0` | PASS |

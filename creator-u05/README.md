@@ -10,6 +10,8 @@
 ## ⭐ FILE GAME MỚI (yêu cầu tiếp theo của Creator)
 
 **`SoulOfHero_TerrainOnly_U05_x10.html`** — bấm đúp là chạy, **không cần server**.
+Tải thẳng: `https://5183-<sandboxId>.e2b.app/download` (ép download) hoặc bản ZIP
+mirror `SoulOfHero_TerrainOnly_U05_x10.zip` trên GitHub raw (xem `docs/TERRAIN_ONLY_VIEWER.md`).
 
 Bỏ **toàn bộ công trình và mọi lớp nổi**; canvas chỉ còn nền: biome, đường, cầu,
 sông, hồ, biển, bờ biển + hero gốc 16×24. Tốc độ chỉnh **x1 → x10** (720 px/s),

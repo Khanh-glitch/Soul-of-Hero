@@ -1,6 +1,6 @@
 {
   "schema": "soh.u05.verification.v1",
-  "generatedAt": "2026-11-05T08:08:10.827Z",
+  "generatedAt": "2026-11-05T08:35:09.036Z",
   "program": "P1–P5 Creator-chosen U=0.5 additive physical POI program",
   "scope": "ISOLATED six-scene Creator selector / audition. Additive physical POI proof ONLY.",
   "status": "P5_ISOLATED_AUDITION_VERIFIED__FULL_GAMEPLAY_RUNTIME_INTEGRATION_NOT_YET_VALIDATED__VISUAL_ACCEPTANCE_NOT_GRANTED",
@@ -33,9 +33,9 @@
   "refs": {
     "arenaBranch": "arena/2e3cfbd2-soul-of-hero",
     "mapHeadBeforeU05": "b12d05866366de0d50e4d305ff7b72fcf36b4921",
-    "mapHeadAtVerification": "c303305432ee772bfb393528bbc556f0ec6c6fd7",
+    "mapHeadAtVerification": "aac229ec4e30ef318ebe989639784cfa97e91693",
     "mapHeadNote": "HEAD at the moment this verification packet was generated (i.e. before the U05 commit itself). The final U05 commit SHA is the tip of this branch in git log.",
-    "remoteMap": "c303305432ee772bfb393528bbc556f0ec6c6fd7\trefs/heads/arena/2e3cfbd2-soul-of-hero",
+    "remoteMap": "aac229ec4e30ef318ebe989639784cfa97e91693\trefs/heads/arena/2e3cfbd2-soul-of-hero",
     "main": "5214788933b1a827f3a177d11ff486433dfe5e8a\trefs/heads/main",
     "gameplayPin": "b5c8004ca4e77be62484fb3cd296fe296d7de4c9",
     "gameplayLiveHead": "63d0801013d3c2d68221333305407ed73ca9d4e2",
@@ -89,12 +89,12 @@
       {
         "path": "docs/CONTROL_TOWER_U05_HANDOFF.md",
         "exists": true,
-        "bytes": 14256
+        "bytes": 14319
       },
       {
         "path": "docs/TERRAIN_ONLY_VIEWER.md",
         "exists": true,
-        "bytes": 4738
+        "bytes": 5636
       },
       {
         "path": "README.md",
@@ -169,7 +169,7 @@
     "p4Errors": 0,
     "realKeyboardEvents": 1122,
     "driftCommitsAfterPin": 9,
-    "terrainOnlySpeedRatio": 9.37,
+    "terrainOnlySpeedRatio": 9.667,
     "terrainOnlyGatesPass": true,
     "terrainOnlyOverlaysAllZero": true,
     "u05RelevantBlocksIdentical": true
@@ -213,7 +213,7 @@
     },
     "P6-G0": {
       "status": "PASS",
-      "scope": "Standalone single-file terrain-only game: ZERO overlay layers, x1..x10 viewer speed (real x1→x10 ratio 9.37), runs from file:// and HTTP, T-G0..T-G9 PASS."
+      "scope": "Standalone single-file terrain-only game: ZERO overlay layers, x1..x10 viewer speed (real x1→x10 ratio 9.667), runs from file:// and HTTP, T-G0..T-G9 PASS."
     },
     "P5-G9": {
       "status": "PASS",
