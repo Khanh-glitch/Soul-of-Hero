@@ -8,6 +8,7 @@
   },
   "include": [
     "src/u05/**/*.ts",
+    "src/terrain-only/**/*.ts",
     "src/game/core.ts",
     "src/game/art.ts",
     "src/game/catalog.ts",

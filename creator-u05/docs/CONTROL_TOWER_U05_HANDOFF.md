@@ -178,3 +178,33 @@ Kế thừa LW-01: `LW-G0 PASS`, `LW-G1 PASS`, `LW-G2 PARTIAL`, `LW-G3 PARTIAL`,
 
 > Whitebox / reused sprite chỉ chứng minh **hình học, collision, cửa, roof occlusion, walkability**.
 > Chúng **KHÔNG** phải pixel art cuối cùng và **KHÔNG** phải sự chấp nhận thị giác của Creator.
+
+---
+
+## 9. PHỤ LỤC — Yêu cầu tiếp theo của Creator: file game terrain-only, x10
+
+Sau khi bàn giao P1–P5, Creator yêu cầu: *"bỏ toàn bộ công trình và các lớp nổi,
+chỉ giữ phần nền của đường, sông, biome,...và đưa tôi file game để di chuyển trên
+map đó với tốc độ nhanh tùy chỉnh lên x10"*.
+
+**Đã giao:** `creator-u05/SoulOfHero_TerrainOnly_U05_x10.html`
+(1 file HTML, 1,394,306 bytes, chạy từ `file://` không cần server).
+Chi tiết: `docs/TERRAIN_ONLY_VIEWER.md`.
+
+- Canvas **chỉ** có nền (biome / road / bridge / river / lake / sea / shoreline)
+  từ cùng terrain painter byte-identical `f29c1a68…` + hero gốc 16×24.
+  `draw.overlays` toàn **0**; không bundle `PhysicalLayer`, `U05_SCENES`,
+  `SITE_ENVELOPE`, `scenes.generated.ts`, không marker/label/roof/wall/door/HUD-on-canvas.
+- Tốc độ **x1…x10** (slider + preset + phím `+`/`-`), tối đa **720 px/s**;
+  `SPEED=72 px/s` gốc không đổi, hệ số là viewer control, không phải luật Gameplay.
+- Camera 640×360 1×, U=0.5, LRU ≤36, không cấp phát 11.2M ô; chặn địa hình
+  tự nhiên là tuỳ chọn (`C`), mặc định free-roam để xem toàn map.
+- QA `evidence/terrain-only-qa.json`: **T-G0…T-G9 đều PASS**, tỉ lệ đi thật
+  x1→x10 = **~9.4×** (9.37 lần chạy cuối; dao động nhẹ theo khung hình), 0 console/page/request errors, 6 ảnh trong
+  `evidence/terrain-only-shots/`, chạy được cả `file://` và HTTP 5182.
+- Gói P1–P5 đã commit **được giữ nguyên làm bằng chứng lịch sử**; file game mới
+  không nạp dữ liệu cảnh/công trình nào. Nếu Creator muốn **xoá** hẳn các artifact
+  P1–P5 khỏi repo, cần lệnh riêng — hiện không xoá để không mất bằng chứng.
+
+**Các cổng P5-G5 / G6 / G7 / G8 vẫn giữ nguyên FAIL / PARTIAL.** File game mới là
+viewer nền, không nâng cấp thành tích hợp Gameplay hay chấp nhận thị giác.

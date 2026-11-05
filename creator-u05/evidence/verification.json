@@ -1,6 +1,6 @@
 {
   "schema": "soh.u05.verification.v1",
-  "generatedAt": "2026-11-05T07:22:58.660Z",
+  "generatedAt": "2026-11-05T08:08:10.827Z",
   "program": "P1–P5 Creator-chosen U=0.5 additive physical POI program",
   "scope": "ISOLATED six-scene Creator selector / audition. Additive physical POI proof ONLY.",
   "status": "P5_ISOLATED_AUDITION_VERIFIED__FULL_GAMEPLAY_RUNTIME_INTEGRATION_NOT_YET_VALIDATED__VISUAL_ACCEPTANCE_NOT_GRANTED",
@@ -15,7 +15,7 @@
       "label": "static-suite",
       "command": "node /home/user/Soul-of-Hero/creator-u05/tests/test-u05.mjs",
       "ok": true,
-      "output": "U05_TESTS pass=237 fail=0 verdict=U05_STATIC_TESTS_PASS"
+      "output": "U05_TESTS pass=252 fail=0 verdict=U05_STATIC_TESTS_PASS"
     },
     {
       "label": "asset-inventory",
@@ -27,18 +27,18 @@
       "label": "drift-record",
       "command": "node /home/user/Soul-of-Hero/creator-u05/tools/record-drift-u05.mjs",
       "ok": true,
-      "output": "U05_DRIFT_OK live=291fee6fde9aaa0dec256c93f0c185493309dd44 commitsAfterPin=6 u05RelevantBlocksIdentical=true terrainIdentical=true"
+      "output": "U05_DRIFT_OK live=63d0801013d3c2d68221333305407ed73ca9d4e2 commitsAfterPin=9 u05RelevantBlocksIdentical=true terrainIdentical=true"
     }
   ],
   "refs": {
     "arenaBranch": "arena/2e3cfbd2-soul-of-hero",
     "mapHeadBeforeU05": "b12d05866366de0d50e4d305ff7b72fcf36b4921",
-    "mapHeadAtVerification": "b12d05866366de0d50e4d305ff7b72fcf36b4921",
+    "mapHeadAtVerification": "c303305432ee772bfb393528bbc556f0ec6c6fd7",
     "mapHeadNote": "HEAD at the moment this verification packet was generated (i.e. before the U05 commit itself). The final U05 commit SHA is the tip of this branch in git log.",
-    "remoteMap": "b12d05866366de0d50e4d305ff7b72fcf36b4921\trefs/heads/arena/2e3cfbd2-soul-of-hero",
+    "remoteMap": "c303305432ee772bfb393528bbc556f0ec6c6fd7\trefs/heads/arena/2e3cfbd2-soul-of-hero",
     "main": "5214788933b1a827f3a177d11ff486433dfe5e8a\trefs/heads/main",
     "gameplayPin": "b5c8004ca4e77be62484fb3cd296fe296d7de4c9",
-    "gameplayLiveHead": "291fee6fde9aaa0dec256c93f0c185493309dd44",
+    "gameplayLiveHead": "63d0801013d3c2d68221333305407ed73ca9d4e2",
     "pr44": {
       "number": 44,
       "state": "OPEN",
@@ -89,18 +89,30 @@
       {
         "path": "docs/CONTROL_TOWER_U05_HANDOFF.md",
         "exists": true,
-        "bytes": 12288
+        "bytes": 14256
+      },
+      {
+        "path": "docs/TERRAIN_ONLY_VIEWER.md",
+        "exists": true,
+        "bytes": 4738
       },
       {
         "path": "README.md",
         "exists": true,
-        "bytes": 4839
+        "bytes": 6355
       }
-    ]
+    ],
+    "standaloneTerrainOnlyGame": {
+      "file": "creator-u05/SoulOfHero_TerrainOnly_U05_x10.html",
+      "bytes": 1394306,
+      "sha256": "9933b44c835e76e06f30d77b5546946bc7628de633b393025595be6ac26dd8ac",
+      "selfContained": true,
+      "shots": 6
+    }
   },
   "measured": {
     "staticTests": {
-      "pass": 237,
+      "pass": 252,
       "fail": 0,
       "verdict": "U05_STATIC_TESTS_PASS"
     },
@@ -156,7 +168,10 @@
     },
     "p4Errors": 0,
     "realKeyboardEvents": 1122,
-    "driftCommitsAfterPin": 6,
+    "driftCommitsAfterPin": 9,
+    "terrainOnlySpeedRatio": 9.37,
+    "terrainOnlyGatesPass": true,
+    "terrainOnlyOverlaysAllZero": true,
     "u05RelevantBlocksIdentical": true
   },
   "gates": {
@@ -196,6 +211,10 @@
       "status": "PARTIAL",
       "scope": "Gameplay semantic validators, marine/boat/ferry/swim law, helicopter entity, economy/inventory/ownership/loot/keys/power/HP/boss/reward, §11.5 proof packet. Unresolved."
     },
+    "P6-G0": {
+      "status": "PASS",
+      "scope": "Standalone single-file terrain-only game: ZERO overlay layers, x1..x10 viewer speed (real x1→x10 ratio 9.37), runs from file:// and HTTP, T-G0..T-G9 PASS."
+    },
     "P5-G9": {
       "status": "PASS",
       "scope": "Creator-liked Beacon road preserved verbatim: no reauthor/redraw/widen/recolour; terrain painter byte-identical; GOLD polygons unchanged."
@@ -233,6 +252,8 @@
     "node creator-u05/tests/test-u05.mjs",
     "node creator-u05/tools/build-asset-inventory-u05.mjs",
     "node creator-u05/tools/record-drift-u05.mjs",
+    "node creator-u05/build-terrain-only-game.mjs",
+    "LD_LIBRARY_PATH=/tmp/al2023/lib node creator-u05/tests/qa-terrain-only.mjs",
     "node creator-u05/tools/verify-u05.mjs"
   ],
   "verdict": "U05_ISOLATED_PROGRAM_VERIFIED__INTEGRATION_AND_VISUAL_GATES_REMAIN_FAIL_OR_PARTIAL"

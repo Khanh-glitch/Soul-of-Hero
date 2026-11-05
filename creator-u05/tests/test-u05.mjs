@@ -186,6 +186,30 @@ if (fs.existsSync(qaPath)) {
   ok('Q12 QA scope explicitly isolated', /ISOLATED/.test(q.scope) && /not visual acceptance/.test(q.scope));
 }
 
+// ---- 10. Standalone TERRAIN-ONLY game (Creator follow-up request) ---------
+const tBuildPath = path.join(U, 'evidence/terrain-only-build.json');
+const tQaPath = path.join(U, 'evidence/terrain-only-qa.json');
+const tFile = path.join(U, 'SoulOfHero_TerrainOnly_U05_x10.html');
+if (fs.existsSync(tBuildPath) && fs.existsSync(tQaPath)) {
+  const tb = JSON.parse(fs.readFileSync(tBuildPath, 'utf8'));
+  const tq = JSON.parse(fs.readFileSync(tQaPath, 'utf8'));
+  ok('T01 standalone HTML exists', fs.existsSync(tFile));
+  ok('T02 single file is self-contained', tb.selfContained.allFalse === true);
+  ok('T03 HTML digest matches', sha(fs.readFileSync(tFile)) === tb.sha256);
+  ok('T04 no overlay layers drawn', Object.values(tq.initial.draw.overlays).every(v => v === 0) && tq.initial.draw.physicalLayerLoaded === false && tq.initial.draw.sceneDataLoaded === false);
+  ok('T05 physical POI data NOT bundled', !fs.readFileSync(tFile, 'utf8').includes('PhysicalLayer') && !fs.readFileSync(tFile, 'utf8').includes('U05_SCENES'));
+  eq('T06 speed range', [tb.speed.basePxPerSec, tb.speed.multiplierMin, tb.speed.multiplierMax, tb.speed.maxPxPerSec], [72, 1, 10, 720]);
+  ok('T07 x1->x10 real movement ratio', tq.speed.ratio > 7 && tq.speed.ratio < 13, String(tq.speed.ratio));
+  ok('T08 real keyboard events', tq.speed.x1.realKeyboardEvents >= 2 && tq.speed.x10.realKeyboardEvents >= 2);
+  ok('T09 all T gates PASS', Object.values(tq.gates).every(g => g.status === 'PASS'));
+  eq('T10 zero errors', [tq.consoleErrors.length, tq.pageErrors.length, tq.failedRequests.length], [0, 0, 0]);
+  ok('T11 native 640x360 1x / hero 16x24', tb.camera.viewport[0] === 640 && tb.camera.zoom === 1 && tb.camera.U === 0.5 && tq.initial.heroSpritePx[0] === 16 && tq.initial.heroSpritePx[1] === 24);
+  ok('T12 bounded caches / no eager frame', tq.longRun.stats.materializedAllCells === false && tq.longRun.stats.residentChunks <= 36 && tq.longRun.stats.displayCanvases <= 36);
+  ok('T13 file:// and HTTP both boot', tq.fileUrl.startsWith('file://') && tq.http.mode === 'TERRAIN_ONLY__NO_BUILDINGS__NO_OVERLAY_LAYERS');
+  ok('T14 no production/visual claims', tq.notClaims.includes('VISUAL_ACCEPTANCE') && tq.notClaims.includes('VEYRA_PLAYABLE'));
+  ok('T15 terrain-only docs present', fs.existsSync(path.join(U, 'docs/TERRAIN_ONLY_VIEWER.md')));
+}
+
 const result = {
   schema: 'soh.u05.test-results.v1', generatedAt: new Date().toISOString(),
   suite: 'creator-u05/tests/test-u05.mjs', pass, fail, failures,

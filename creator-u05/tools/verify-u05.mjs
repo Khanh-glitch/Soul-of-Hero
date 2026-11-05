@@ -40,6 +40,9 @@ const audit = j(U('map-data/U05_AUDIT.json'));
 const conflicts = j(U('map-data/U05_GEOMETRY_CONFLICTS.json'));
 const scenes = fs.readdirSync(U('scenes')).filter(f => f.endsWith('.u05.json')).sort().map(f => j(U('scenes/' + f)));
 const shots = fs.readdirSync(U('evidence/shots')).filter(f => f.endsWith('.png')).sort();
+const terrainBuild = j(U('evidence/terrain-only-build.json'));
+const terrainQa = j(U('evidence/terrain-only-qa.json'));
+const terrainGatesPass = Object.values(terrainQa.gates).every(g => g.status === 'PASS');
 
 const p4Pass = Object.values(qa.gates).every(g => g.status === 'PASS');
 const compileOk = checks.every(c => c.ok);
@@ -47,7 +50,7 @@ const proofAttached = scenes.length === 6 && scenes.every(s => s.physicalProof.r
 const zeroDelta = conflicts.amendedPolygons.length === 0 && conflicts.relocatedObjects.length === 0 &&
   conflicts.expandedEnvelopes.length === 0 && conflicts.recolouredRoads.length === 0 && conflicts.widenedRoads.length === 0 &&
   audit.noChanges.polygonAmendments === 0 && audit.noChanges.roadCentrelines === 0;
-const docs = ['docs/U05_GEOMETRY_CONFLICTS_DELTA.md', 'docs/ASSET_INVENTORY.md', 'docs/CONTROL_TOWER_U05_HANDOFF.md', 'README.md']
+const docs = ['docs/U05_GEOMETRY_CONFLICTS_DELTA.md', 'docs/ASSET_INVENTORY.md', 'docs/CONTROL_TOWER_U05_HANDOFF.md', 'docs/TERRAIN_ONLY_VIEWER.md', 'README.md']
   .map(p => ({ path: p, exists: fs.existsSync(U(p)), bytes: fs.existsSync(U(p)) ? fs.statSync(U(p)).size : 0 }));
 
 const refs = {
@@ -85,7 +88,8 @@ const verification = {
     testResults: 'evidence/test-results.json',
     assetInventory: 'evidence/asset-inventory.json',
     shots: { count: shots.length, bytes: shots.reduce((a, f) => a + fs.statSync(U('evidence/shots/' + f)).size, 0), allExist: qa.shots.every(f => shots.includes(f)) },
-    docs
+    docs,
+    standaloneTerrainOnlyGame: { file: terrainBuild.file, bytes: terrainBuild.bytes, sha256: terrainBuild.sha256, selfContained: terrainBuild.selfContained.allFalse, shots: terrainQa.shots.length }
   },
   measured: {
     staticTests: { pass: tests.pass, fail: tests.fail, verdict: tests.verdict },
@@ -108,6 +112,9 @@ const verification = {
     p4Errors: qa.consoleErrors.length + qa.pageErrors.length + qa.failedRequests.length,
     realKeyboardEvents: qa.scenes.reduce((a, s) => a + s.approach.realKeyboardEvents + s.reentry.realKeyboardEvents + (s.collision?.realKeyboardEvents || 0) + (s.roof.walkOut?.realKeyboardEvents || 0), 0),
     driftCommitsAfterPin: cust.verificationDrift?.commitsAfterPin?.length,
+    terrainOnlySpeedRatio: terrainQa.speed.ratio,
+    terrainOnlyGatesPass: terrainGatesPass,
+    terrainOnlyOverlaysAllZero: Object.values(terrainQa.initial.draw.overlays).every(v => v === 0),
     u05RelevantBlocksIdentical: cust.verificationDrift?.u05RelevantBlocksIdentical
   },
   gates: {
@@ -120,6 +127,7 @@ const verification = {
     'P5-G6': { status: 'FAIL', scope: 'Creator visual acceptance. NOT_REQUESTED_AND_NOT_GRANTED. No pixel-diff proof; whitebox only.' },
     'P5-G7': { status: 'PARTIAL', scope: 'All 81 POIs art-complete/interactive, full 4000x2800 streaming, sustained 60 FPS, exhaustive traversal. Only six scenes proven.' },
     'P5-G8': { status: 'PARTIAL', scope: 'Gameplay semantic validators, marine/boat/ferry/swim law, helicopter entity, economy/inventory/ownership/loot/keys/power/HP/boss/reward, §11.5 proof packet. Unresolved.' },
+    'P6-G0': { status: terrainBuild.selfContained.allFalse && fs.existsSync(U('SoulOfHero_TerrainOnly_U05_x10.html')) && terrainGatesPass && terrainQa.consoleErrors.length === 0 ? 'PASS' : 'FAIL', scope: 'Standalone single-file terrain-only game: ZERO overlay layers, x1..x10 viewer speed (real x1→x10 ratio ' + terrainQa.speed.ratio + '), runs from file:// and HTTP, T-G0..T-G9 PASS.' },
     'P5-G9': { status: zeroDelta ? 'PASS' : 'FAIL', scope: 'Creator-liked Beacon road preserved verbatim: no reauthor/redraw/widen/recolour; terrain painter byte-identical; GOLD polygons unchanged.' }
   },
   inheritedLw01Gates: { 'LW-G0': 'PASS', 'LW-G1': 'PASS', 'LW-G2': 'PARTIAL', 'LW-G3': 'PARTIAL', 'LW-G4': 'PASS', 'LW-G5': 'PASS', VEYRA_PLAYABLE: 'BLOCKED' },
@@ -140,6 +148,8 @@ const verification = {
     'node creator-u05/tests/test-u05.mjs',
     'node creator-u05/tools/build-asset-inventory-u05.mjs',
     'node creator-u05/tools/record-drift-u05.mjs',
+    'node creator-u05/build-terrain-only-game.mjs',
+    'LD_LIBRARY_PATH=/tmp/al2023/lib node creator-u05/tests/qa-terrain-only.mjs',
     'node creator-u05/tools/verify-u05.mjs'
   ]
 };

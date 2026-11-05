@@ -5,7 +5,30 @@
 > Đây **KHÔNG** là tích hợp Gameplay runtime sản xuất, **KHÔNG** là `VEYRA_PLAYABLE`,
 > **KHÔNG** là chấp nhận thị giác, **KHÔNG** là `MERGE_READY` / `WORLD_MASTER_SEALED`.
 
-## Chạy lại / xem audition
+---
+
+## ⭐ FILE GAME MỚI (yêu cầu tiếp theo của Creator)
+
+**`SoulOfHero_TerrainOnly_U05_x10.html`** — bấm đúp là chạy, **không cần server**.
+
+Bỏ **toàn bộ công trình và mọi lớp nổi**; canvas chỉ còn nền: biome, đường, cầu,
+sông, hồ, biển, bờ biển + hero gốc 16×24. Tốc độ chỉnh **x1 → x10** (720 px/s),
+camera 640×360 1×, WASD/mũi tên thật. Hướng dẫn đầy đủ:
+`docs/TERRAIN_ONLY_VIEWER.md` · QA: `evidence/terrain-only-qa.json` ·
+ảnh: `evidence/terrain-only-shots/`.
+
+```bash
+# Mở trực tiếp (file://) hoặc live preview /terrain-only.html trên cổng 5182
+node creator-u05/build-terrain-only-game.mjs      # build lại 1 file HTML
+LD_LIBRARY_PATH=/tmp/al2023/lib node creator-u05/tests/qa-terrain-only.mjs
+```
+
+Gói P1–P5 bên dưới vẫn được giữ làm bằng chứng lịch sử đã commit; file game mới
+**không nạp** scene/công trình nào của gói đó.
+
+---
+
+## Chạy lại / xem audition (P1–P5)
 
 ```bash
 cd /home/user/Soul-of-Hero
@@ -28,6 +51,10 @@ node creator-u05/tests/test-u05.mjs
 node creator-u05/tools/build-asset-inventory-u05.mjs
 node creator-u05/tools/record-drift-u05.mjs
 node creator-u05/tools/verify-u05.mjs
+
+# P6 — standalone terrain-only game (bỏ công trình / lớp nổi, tốc độ x1..x10)
+node creator-u05/build-terrain-only-game.mjs
+LD_LIBRARY_PATH=/tmp/al2023/lib node creator-u05/tests/qa-terrain-only.mjs
 ```
 
 `web-u05/node_modules` là symlink tới `large-world-01/web-large/node_modules` (bị `.gitignore` loại).
@@ -56,6 +83,10 @@ Vite server đã chạy tại cổng **5182** trong phiên làm việc này; LW-
 | `docs/U05_GEOMETRY_CONFLICTS_DELTA.md` | Báo cáo xung đột / delta đầy đủ |
 | `docs/ASSET_INVENTORY.md` | 12/68 sprite reuse, 0 atlas mới |
 | `docs/CONTROL_TOWER_U05_HANDOFF.md` | Bàn giao Control Tower |
+| `SoulOfHero_TerrainOnly_U05_x10.html` | **FILE GAME terrain-only**, chạy độc lập, x1–x10 |
+| `docs/TERRAIN_ONLY_VIEWER.md` | Hướng dẫn file game terrain-only |
+| `evidence/terrain-only-{build,qa}.json` | Build + QA của file game |
+| `evidence/terrain-only-shots/*.png` | 6 ảnh terrain-only |
 
 ## Điều KHÔNG làm
 

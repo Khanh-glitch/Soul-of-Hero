@@ -1,8 +1,8 @@
 {
   "schema": "soh.u05.test-results.v1",
-  "generatedAt": "2026-11-05T07:22:57.500Z",
+  "generatedAt": "2026-11-05T08:08:09.333Z",
   "suite": "creator-u05/tests/test-u05.mjs",
-  "pass": 237,
+  "pass": 252,
   "fail": 0,
   "failures": [],
   "verdict": "U05_STATIC_TESTS_PASS"

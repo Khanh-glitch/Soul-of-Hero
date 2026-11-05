@@ -341,10 +341,10 @@
     }
   ],
   "verificationDrift": {
-    "checkedAt": "2026-11-05T07:22:58.165Z",
+    "checkedAt": "2026-11-05T08:08:10.107Z",
     "pinnedVerifiedGameplaySha": "b5c8004ca4e77be62484fb3cd296fe296d7de4c9",
     "liveBranch": "arena/d4bfcfff-soul-of-hero",
-    "liveHeadSha": "291fee6fde9aaa0dec256c93f0c185493309dd44",
+    "liveHeadSha": "63d0801013d3c2d68221333305407ed73ca9d4e2",
     "pr44": {
       "number": 44,
       "state": "OPEN",
@@ -352,6 +352,9 @@
       "baseRefName": "arena/4795760e-soul-of-hero"
     },
     "commitsAfterPin": [
+      "63d08010 Add direct manipulation to Spirit VFX preview",
+      "1314a7c4 Keep VFX editor control inside game viewport",
+      "6c854ab0 Add Spirit VFX manual test editor",
       "291fee6f docs(bible): lock Creator quantitative Last Island baseline, source provenance and SOH comparison rules",
       "ae268550 Provide downloadable standalone VFX review game",
       "00c86c38 Merge remote-tracking branch 'origin/arena/d4bfcfff-soul-of-hero' into arena/d4bfcfff-soul-of-hero Co-authored-by: arena-agent <297053741+arena-agent@users.noreply.github.com>",

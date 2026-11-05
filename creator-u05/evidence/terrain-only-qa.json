@@ -1,0 +1,343 @@
+{
+  "schema": "soh.u05.terrain-only-qa.v1",
+  "generatedAt": "2026-11-05T08:08:02.830Z",
+  "file": "creator-u05/SoulOfHero_TerrainOnly_U05_x10.html",
+  "fileUrl": "file:///home/user/Soul-of-Hero/creator-u05/SoulOfHero_TerrainOnly_U05_x10.html",
+  "httpUrl": "http://localhost:5182/terrain-only.html",
+  "method": "Playwright real keyboard events; standalone file:// AND Vite HTTP entry; 640x360 DPR1.",
+  "initial": {
+    "ready": true,
+    "mode": "TERRAIN_ONLY__NO_BUILDINGS__NO_OVERLAY_LAYERS",
+    "contract": "CREATOR_CHOSEN_U05.v1",
+    "status": "STANDALONE_VIEWER__FULL_GAMEPLAY_RUNTIME_INTEGRATION_NOT_YET_VALIDATED__VISUAL_ACCEPTANCE_NOT_GRANTED",
+    "viewport": [
+      640,
+      360
+    ],
+    "dpr": 1,
+    "zoom": 1,
+    "cameraTrick": false,
+    "U": 0.5,
+    "TILE": 16,
+    "frameTiles": [
+      4000,
+      2800
+    ],
+    "addressableCells": 11200000,
+    "heroSpritePx": [
+      16,
+      24
+    ],
+    "speedBasePxPerSec": 72,
+    "speedMultiplier": 1,
+    "speedMultiplierRange": [
+      1,
+      10
+    ],
+    "speedPxPerSec": 72,
+    "collision": "FREE_ROAM__NO_COLLISION",
+    "player": {
+      "px": 8712,
+      "py": 20872,
+      "tile": [
+        544,
+        1304
+      ],
+      "au": [
+        272.25,
+        652.25
+      ],
+      "dir": 0
+    },
+    "camera": {
+      "x": 8392,
+      "y": 20686,
+      "anchorTile": [
+        544,
+        1304
+      ]
+    },
+    "terrain": {
+      "tile": 2,
+      "biome": "beach",
+      "authoredLand": true,
+      "water": false,
+      "road": false,
+      "poiId": "po_beacon"
+    },
+    "draw": {
+      "terrainOnly": true,
+      "drawn": {
+        "terrainChunks": 12,
+        "hero": 1
+      },
+      "overlays": {
+        "buildings": 0,
+        "walls": 0,
+        "roofs": 0,
+        "doors": 0,
+        "props": 0,
+        "markers": 0,
+        "labels": 0,
+        "helipad": 0,
+        "hudOnCanvas": 0,
+        "particles": 0
+      },
+      "physicalLayerLoaded": false,
+      "sceneDataLoaded": false
+    },
+    "stats": {
+      "frameTiles": [
+        4000,
+        2800
+      ],
+      "frameAu": [
+        2000,
+        1400
+      ],
+      "U": 0.5,
+      "TILE": 16,
+      "addressableCells": 11200000,
+      "materializedAllCells": false,
+      "residentChunks": 1,
+      "residentLoads": 1,
+      "residentEvictions": 0,
+      "maxResidentChunks": 36,
+      "chunkKeyExample": "creator-u05|125:87",
+      "legacyStrideKey": "NEVER_USED__cy*100+cx",
+      "displayCanvases": 12,
+      "displayBytes": 3145728,
+      "displayLoads": 12,
+      "displayEvictions": 0,
+      "maxDisplayCanvases": 36,
+      "displayChunkKeyExample": "creator-u05|render16|250:175",
+      "simMs": 50,
+      "movedPx": 0,
+      "blockedSubsteps": 0,
+      "spawnFixture": true
+    },
+    "input": {
+      "logLength": 0,
+      "last": []
+    },
+    "frameMs": {
+      "p50": 0,
+      "p95": 0,
+      "max": 50
+    }
+  },
+  "speed": {
+    "x1": {
+      "mult": 1,
+      "beforeTile": [
+        544,
+        1304
+      ],
+      "afterTile": [
+        549,
+        1304
+      ],
+      "movedPx": 73,
+      "deltaPx": 73,
+      "speedPxPerSec": 72,
+      "realKeyboardEvents": 2,
+      "inputCodes": [
+        "KeyD"
+      ],
+      "simMs": 1017
+    },
+    "x10": {
+      "mult": 10,
+      "beforeTile": [
+        544,
+        1304
+      ],
+      "afterTile": [
+        587,
+        1304
+      ],
+      "movedPx": 684,
+      "deltaPx": 684,
+      "speedPxPerSec": 720,
+      "realKeyboardEvents": 2,
+      "inputCodes": [
+        "KeyD"
+      ],
+      "simMs": 950
+    },
+    "ratio": 9.37,
+    "keyboard": {
+      "afterPlus": 2,
+      "afterMinus": 1.5
+    },
+    "rangeBounds": {
+      "min": "1",
+      "max": "10",
+      "step": "0.5"
+    },
+    "clamped": {
+      "over": 10,
+      "under": 1
+    }
+  },
+  "collisionProof": {
+    "waterTile": [
+      519,
+      1328
+    ],
+    "modeBlocked": "NATURAL_TERRAIN_ONLY",
+    "blockedSubsteps": 52,
+    "tileUnchangedWhenBlocked": true,
+    "freeRoamMode": "FREE_ROAM__NO_COLLISION",
+    "freeRoamMovedPx": 30,
+    "shot": "terrain_only_natural_collision.png"
+  },
+  "hudHidden": true,
+  "longRun": {
+    "player": {
+      "px": 10439.999999999998,
+      "py": 20872,
+      "tile": [
+        652,
+        1304
+      ],
+      "au": [
+        326.25,
+        652.25
+      ],
+      "dir": 2
+    },
+    "camera": {
+      "x": 10120,
+      "y": 20686,
+      "anchorTile": [
+        544,
+        1304
+      ]
+    },
+    "stats": {
+      "frameTiles": [
+        4000,
+        2800
+      ],
+      "frameAu": [
+        2000,
+        1400
+      ],
+      "U": 0.5,
+      "TILE": 16,
+      "addressableCells": 11200000,
+      "materializedAllCells": false,
+      "residentChunks": 5,
+      "residentLoads": 5,
+      "residentEvictions": 0,
+      "maxResidentChunks": 36,
+      "chunkKeyExample": "creator-u05|125:87",
+      "legacyStrideKey": "NEVER_USED__cy*100+cx",
+      "displayCanvases": 36,
+      "displayBytes": 9437184,
+      "displayLoads": 37,
+      "displayEvictions": 1,
+      "maxDisplayCanvases": 36,
+      "displayChunkKeyExample": "creator-u05|render16|250:175",
+      "simMs": 6800,
+      "movedPx": 1728,
+      "blockedSubsteps": 0,
+      "spawnFixture": true
+    },
+    "frameMs": {
+      "p50": 16.699999999999818,
+      "p95": 16.800000000000182,
+      "max": 50
+    }
+  },
+  "http": {
+    "mode": "TERRAIN_ONLY__NO_BUILDINGS__NO_OVERLAY_LAYERS",
+    "viewport": [
+      640,
+      360
+    ],
+    "draw": {
+      "terrainOnly": true,
+      "drawn": {
+        "terrainChunks": 12,
+        "hero": 1
+      },
+      "overlays": {
+        "buildings": 0,
+        "walls": 0,
+        "roofs": 0,
+        "doors": 0,
+        "props": 0,
+        "markers": 0,
+        "labels": 0,
+        "helipad": 0,
+        "hudOnCanvas": 0,
+        "particles": 0
+      },
+      "physicalLayerLoaded": false,
+      "sceneDataLoaded": false
+    }
+  },
+  "consoleErrors": [],
+  "pageErrors": [],
+  "failedRequests": [],
+  "shots": [
+    "terrain_only_beacon.png",
+    "terrain_only_beacon_no_hud.png",
+    "terrain_only_http.png",
+    "terrain_only_natural_collision.png",
+    "terrain_only_x10.png",
+    "terrain_only_x10_long_run.png"
+  ],
+  "gates": {
+    "T-G0": {
+      "status": "PASS",
+      "reason": "standalone file:// game boots"
+    },
+    "T-G1": {
+      "status": "PASS",
+      "reason": "zero overlay layers on canvas"
+    },
+    "T-G2": {
+      "status": "PASS",
+      "reason": "real x1 -> x10 movement ratio 9.37"
+    },
+    "T-G3": {
+      "status": "PASS",
+      "reason": "x1..x10 custom speed, keyboard and slider, clamped"
+    },
+    "T-G4": {
+      "status": "PASS",
+      "reason": "optional natural terrain collision + free roam toggle"
+    },
+    "T-G5": {
+      "status": "PASS",
+      "reason": "HUD hideable, nothing drawn on canvas"
+    },
+    "T-G6": {
+      "status": "PASS",
+      "reason": "bounded LRU over a long x10 run"
+    },
+    "T-G7": {
+      "status": "PASS",
+      "reason": "native 640x360 1x camera, unstretched 16x24 hero, base 72 px/s"
+    },
+    "T-G8": {
+      "status": "PASS",
+      "reason": "HTTP live preview entry also terrain-only"
+    },
+    "T-G9": {
+      "status": "PASS",
+      "reason": "zero console / page / request errors"
+    }
+  },
+  "notClaims": [
+    "FULL_GAMEPLAY_RUNTIME_INTEGRATION",
+    "VISUAL_ACCEPTANCE",
+    "VEYRA_PLAYABLE",
+    "MERGE_READY",
+    "PRODUCTION_GAME",
+    "NEW_ATLAS"
+  ]
+}

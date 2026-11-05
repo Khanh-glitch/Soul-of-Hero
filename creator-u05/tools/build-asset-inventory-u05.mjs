@@ -60,7 +60,11 @@ const inventory = {
   vendoredLiveGameplay: { files: 231, bytes: 2535968, custody: 'creator-u05/evidence/source-custody.json', verbatimMismatches: 0 },
   lockedVisualBenchmark: { file: 'large-world-01/evidence/shots/beacon_beacon_u05.png', sha256: shaFile(path.join(REPO, 'large-world-01/evidence/shots/beacon_beacon_u05.png')), usage: 'VISUAL PRESERVATION REFERENCE ONLY — no reauthor / redraw / widen / recolour' },
   evidenceShots: { count: shots.length, bytes: shots.reduce((a, f) => a + fs.statSync(U('evidence/shots/' + f)).size, 0), files: shots, note: 'P4 QA captures (before/after/approach/reentry/roof-in/roof-out/collision). Evidence, NOT game art assets.' },
-  additiveRuntimeFiles: ['u05.html', 'tsconfig.u05.json', 'src/u05/contract.ts', 'src/u05/world.ts', 'src/u05/display.ts', 'src/u05/physical.ts', 'src/u05/game.ts', 'src/u05/main.ts', 'src/u05/scenes.generated.ts'].map(p => ({ path: p, sha256: shaFile(U('web-u05/' + p)) })),
+  additiveRuntimeFiles: ['u05.html', 'tsconfig.u05.json', 'terrain-only.html', 'vite.terrain-only.config.mjs', 'src/u05/contract.ts', 'src/u05/world.ts', 'src/u05/display.ts', 'src/u05/physical.ts', 'src/u05/game.ts', 'src/u05/main.ts', 'src/u05/scenes.generated.ts', 'src/terrain-only/main.ts'].map(p => ({ path: p, sha256: shaFile(U('web-u05/' + p)) })),
+  standaloneTerrainOnlyGame: (() => {
+    const m = JSON.parse(fs.readFileSync(U('evidence/terrain-only-build.json'), 'utf8'));
+    return { file: m.file, bytes: m.bytes, sha256: m.sha256, selfContained: m.selfContained.allFalse, layersRemoved: m.layersRemoved.length, speedMaxMultiplier: m.speed.multiplierMax, note: 'Single-file HTML game, NO overlay layers; NOT loaded by the P1-P5 audition.' };
+  })(),
   notAssets: ['door lock/key state', 'power/HP', 'loot/ownership/cash', 'boss/reward', 'marine/boat/ferry permission', 'helicopter entity']
 };
 if (!inventory.reusedStructureSprites.allUsedExistInSource) throw Error('U05_ASSET_INVENTORY_UNKNOWN_SPRITE');

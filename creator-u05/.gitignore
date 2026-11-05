@@ -1,5 +1,9 @@
 # Local dependency symlink / build output only. Evidence shots are DELIBERATELY
-# tracked: they are the P4 before/after / walk / roof / collision proof.
+# tracked: they are the P4 before/after / walk / roof / collision proof AND the
+# P6 terrain-only screenshots.
+# The DELIVERABLE single-file game (SoulOfHero_TerrainOnly_U05_x10.html) is
+# intentionally TRACKED; only its intermediate vite outDir is ignored.
 web-u05/node_modules
 web-u05/dist
+web-u05/terrain-only-dist
 *.log

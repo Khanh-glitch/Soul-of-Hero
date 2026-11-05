@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Soul of Hero — U=0.5 Terrain Only (x10 speed)</title>
+    <style>
+      :root { color-scheme: dark; }
+      html, body { margin: 0; background: #141018; color: #e8e0d0; font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; }
+      #wrap { padding: 10px; display: inline-block; }
+      canvas#game { width: 640px; height: 360px; display: block; image-rendering: pixelated; border: 1px solid #4a4048; background: #0b1020; }
+      #ui { width: 640px; margin-top: 8px; box-sizing: border-box; }
+      .row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 6px; }
+      .row label { min-width: 92px; }
+      input[type=range] { flex: 1; min-width: 180px; accent-color: #e0c080; }
+      button { font: inherit; color: #e8e0d0; background: #2a2230; border: 1px solid #6a5e66; padding: 3px 8px; cursor: pointer; }
+      button.on { background: #6a5230; border-color: #e0c080; }
+      #speed { display: inline-block; min-width: 108px; color: #f0d890; font-weight: bold; }
+      #status { margin: 0; padding: 6px; background: #1e1822; border: 1px solid #3a3038; white-space: pre-wrap; }
+      .note { margin-top: 6px; color: #a89888; }
+      .hidden { display: none; }
+      #pure { color: #8ec08e; }
+      kbd { background: #2a2230; border: 1px solid #6a5e66; padding: 0 4px; }
+    </style>
+  </head>
+  <body>
+    <div id="wrap">
+      <canvas id="game" width="640" height="360"></canvas>
+      <div id="ui">
+        <div class="row">
+          <label for="speedRange">Tốc độ</label>
+          <input id="speedRange" type="range" min="1" max="10" step="0.5" value="1" />
+          <span id="speed">x1 · 72 px/s</span>
+        </div>
+        <div class="row" id="presets">
+          <button data-speed="1">x1</button>
+          <button data-speed="2">x2</button>
+          <button data-speed="5">x5</button>
+          <button data-speed="10">x10</button>
+          <button id="collision">Chặn địa hình: TẮT</button>
+          <button id="hide">Ẩn bảng (H)</button>
+          <button id="reset">Về Beacon (R)</button>
+        </div>
+        <pre id="status"></pre>
+        <div class="note" id="pure">Chỉ nền: đường · sông · hồ · biển · biome · bờ biển · cầu. <b>Không</b> công trình, tường, cửa, mái, marker, label, POI overlay, hiệu ứng nổi.</div>
+        <div class="note">Di chuyển <kbd>WASD</kbd> / <kbd>↑↓←→</kbd> · chỉnh tốc <kbd>+</kbd> <kbd>-</kbd> hoặc <kbd>[</kbd> <kbd>]</kbd> (1→10) · <kbd>C</kbd> chặn địa hình · <kbd>H</kbd> ẩn/hiện bảng · <kbd>R</kbd> về Beacon. Camera 640×360 1×, hero 16×24, U=0.5.</div>
+        <div class="note">Tốc độ gốc 72 px/s không đổi; hệ số là điều khiển <i>viewer</i>, không phải luật Gameplay. File chạy độc lập, không cần server, không nạp atlas mới.</div>
+      </div>
+    </div>
+    <script type="module" src="/src/terrain-only/main.ts"></script>
+  </body>
+</html>
