@@ -5,7 +5,7 @@ import { LOOT_CLASSES, lootClass } from './loot-ecology';
 import { BAL, TILE, WW, WH, HOUR, VIEW_W, VIEW_H, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity, type Proj, type Haz } from './core';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
 import { getWorld } from './world';
-import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
+import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
@@ -838,7 +838,8 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
   const r = gs.run!; let t = start; const slotMs = BAL.weather.slotMinutes * 60000;
   initializeCabinets(r);
   const syncPoi=(at:number)=>{const events=advancePoiAccess(r,at);if(events.closed.length)markDirty();for(const id of events.expired)receipt(r,at,'poi.power.expire',id);for(const id of events.closed)receipt(r,at,'poi.door.close',id);};
-  syncPoi(t);
+  const syncHome=(at:number)=>{for(const id of syncElectricDoors(r,at,visual))receipt(r,at,'circuit.door.close',id);};
+  syncPoi(t); syncHome(t);
   resolveFires(gs, t, visual);
   stepLootRespawn(r, t);
   stepNatureTrees(r,t);
@@ -865,7 +866,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     dt = territoryBoundary(r, dt);
     dt = tenderBoundary(r, isWet(weather), dt);
     for (const tree of r.natureTrees||[]) if(tree.until>r.clock.simMs)dt=Math.min(dt,tree.until-r.clock.simMs);
-    for(const e of Object.values(r.entities)){if(e.poiPower&&e.power===1&&e.poiPower.expiresAt>t)dt=Math.min(dt,e.poiPower.expiresAt-t);if(e.open&&e.poiDoor&&e.poiDoor.closeAt>t)dt=Math.min(dt,e.poiDoor.closeAt-t);}
+    for(const e of Object.values(r.entities)){if(e.poiPower&&e.power===1&&e.poiPower.expiresAt>t)dt=Math.min(dt,e.poiPower.expiresAt-t);if(e.open&&e.poiDoor&&e.poiDoor.closeAt>t)dt=Math.min(dt,e.poiDoor.closeAt-t);if(e.open&&e.electricDoor?.releaseUntil&&e.electricDoor.releaseUntil>t)dt=Math.min(dt,e.electricDoor.releaseUntil-t);}
     for (const due of Object.values(r.lootRespawnAt || {})) if (due > t) dt = Math.min(dt, due - t);
     for (const st of Object.values(r.sources)) { if (st.fire && st.fire > r.clock.simMs) dt = Math.min(dt, st.fire - r.clock.simMs); if(st.fireSpreadAt && st.fireSpreadAt > r.clock.simMs) dt = Math.min(dt, st.fireSpreadAt - r.clock.simMs); }
     for (const terrain of Object.values(r.terrain)) if (terrain.until && terrain.until > r.clock.simMs) dt = Math.min(dt, terrain.until - r.clock.simMs);
@@ -877,7 +878,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     decayTraces(r, dt, weather);
     if(stepTerritory(r,dt,t+dt,report)) offlineStructureChange++;
     r.clock.simMs += dt; t += dt;
-    syncPoi(t);
+    syncPoi(t); syncHome(t);
     // Offline time cannot confirm a fresh sighting or retain an expired mark.
     // Keep committed tells/attacks intact; they resume, not resolve speculatively.
     if (!visual) {
@@ -1133,7 +1134,7 @@ export function findInteract(gs: GameState, now: number): Interact | null {
     else if (e.kind === 'evac') label = 'Evacuation beacon';
     else if (e.kind === 'cart') label = 'Cart cargo  [Shift+F] pull';
     else if (e.kind === 'vehicle') label = r.player.vehicle===e.id ? 'Exit motorbike' : 'Motorbike cargo and controls';
-    else if (e.kind === 'struct') { const d2 = STRUCTS[e.type!]; kind = 'struct:' + e.type; if (e.type!.startsWith('door')) label = e.open ? 'Close door' : 'Open door'; else if (e.type === 'claim') label = 'Open Territory Cabinet'; else if (d2.station) label = `Use ${d2.name}`; else if (e.turret) label = `Turret: ${turretStatus(r,e)}${e.turret.tracking ? ' · target' : ''}`; else if (e.basePower) label = `Generator: ${e.basePower.enabled && e.basePower.energy>0 ? 'running' : e.basePower.enabled ? 'no fuel' : 'off'}`; else if (d2.slots) label = `Open ${d2.name}`; else if (e.type === 'escrow') label = 'Rương ký gửi'; else if (e.type === 'garden') label = 'Tend garden'; else if (e.type === 'barrel') label = `Rain barrel (${Math.floor(e.water || 0)})`; else continue; }
+    else if (e.kind === 'struct') { const d2 = STRUCTS[e.type!]; kind = 'struct:' + e.type; if (e.type!.startsWith('door')) label = e.electricDoor ? (e.open ? 'Close powered door' : electricDoorPowered(r,e) ? 'Open powered door' : electricInterior(r,e) ? 'Open interior release' : 'Powered door · no power') : e.open ? 'Close door' : 'Open door'; else if(e.wireSwitch) label=`Switch ${e.wireSwitch.on?'on':'off'} · toggle`; else if (e.type === 'claim') label = 'Open Territory Cabinet'; else if (d2.station) label = `Use ${d2.name}`; else if (e.turret) label = `Turret: ${turretStatus(r,e)}${e.turret.tracking ? ' · target' : ''}`; else if (e.basePower) label = `Generator: ${e.basePower.enabled && e.basePower.energy>0 ? 'running' : e.basePower.enabled ? 'no fuel' : 'off'}`; else if (d2.slots) label = `Open ${d2.name}`; else if (e.type === 'escrow') label = 'Rương ký gửi'; else if (e.type === 'garden') label = 'Tend garden'; else if (e.type === 'barrel') label = `Rain barrel (${Math.floor(e.water || 0)})`; else continue; }
     else continue;
     if((e.kind==='door'||e.kind==='gen') && (effTile(r,tileOf(p.x),tileOf(p.y))===T.TOXIC || (getWorld().zone[tileOf(p.y)*WW+tileOf(p.x)]===7 && effTile(r,tileOf(p.x),tileOf(p.y))===T.FLOOR)))label+=' · radiation exposure';
     bd = d; best = { kind, label, eid: e.id, x: e.x, y: e.y };

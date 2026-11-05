@@ -316,11 +316,17 @@ function drawEntity(g: CanvasRenderingContext2D, r: RunState, e: Entity, time: n
     case 'door': { g.drawImage(e.open ? A.st.poi_door_open : A.st.poi_door, X - 8, Y - 16); return; }
     case 'struct': {
       const d = STRUCTS[e.type!]; let spr = A.st[e.type!];
+      if (e.type==='power_cable'||e.type==='power_switch'||e.type==='pressure_switch') {
+        g.fillStyle='#302b2a';g.fillRect(X-7,Y+2,14,4);g.fillStyle='#d99a38';g.fillRect(X-7,Y+3,14,2);g.fillRect(X-1,Y-4,2,11);
+        if(e.type!=='power_cable'){g.fillStyle='#474750';g.fillRect(X-5,Y-5,10,8);g.fillStyle=e.wireSwitch?.on?'#79ed83':e.type==='pressure_switch'?'#e3c65a':'#d76760';g.fillRect(X-3,Y-3,6,3);}return;
+      }
+      if (e.type==='door_powered') spr=A.st[e.open?'door_iron_open':'door_iron'];
       if (e.type === 'farm_controller') spr = A.st.gen;
-      if (e.type!.startsWith('door') && e.open) spr = A.st[e.type + '_open'];
+      if (e.type!.startsWith('door') && e.type!=='door_powered' && e.open) spr = A.st[e.type + '_open'];
       if (e.type === 'furnace' && e.station && e.station.burn > 0 && e.station.queue.length) spr = A.st.furnace_lit;
       if (!spr) return; if (d.layer !== 'wall') shadow(g, X, Y + 5, 7);
       g.drawImage(spr, X - spr.width / 2, Y + 8 - spr.height);
+      if(e.electricDoor){g.fillStyle='#e2bf52';g.fillRect(X+3,Y-7,3,3);}
       if (e.basePower) { g.fillStyle=e.basePower.enabled && e.basePower.energy>0 ? '#9cf26b' : '#d96758'; g.fillRect(X+3,Y-5,2,2); }
       if (e.turret) { const a=e.turret.angle; g.strokeStyle=e.turret.cooldown>750?'#ffe36a':e.turret.enabled?'#e2d4a0':'#746d5f'; g.lineWidth=2; g.beginPath(); g.moveTo(X,Y-4); g.lineTo(Math.round(X+Math.cos(a)*8),Math.round(Y-4+Math.sin(a)*8)); g.stroke(); if(e.turret.tracking){ g.fillStyle='#ffd76a'; g.fillRect(X+6,Y-15,2,5); g.fillRect(X+6,Y-9,2,2); } }
       if (e.type === 'campfire' && e.station && e.station.burn > 0) drawFlame(g, X, Y - 1, time, 1);

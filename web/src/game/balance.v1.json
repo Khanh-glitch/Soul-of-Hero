@@ -294,5 +294,20 @@
     "cardUses": 3,
     "fuelRuntimeMs": 180000,
     "doorOpenMs": 15000
+  },
+  "homeCircuit": {
+    "_status": "SOH_PROVISIONAL wire-v1; ORIGINAL_UNKNOWN costs, capacity and timing",
+    "cableCost": [["iron_ingot", 1], ["fiber", 1]],
+    "switchCost": [["iron_ingot", 1], ["fasteners", 1], ["spares", 1]],
+    "plateCost": [["iron_ingot", 1], ["mechanical_parts", 1], ["fasteners", 1]],
+    "doorCost": [["iron_ingot", 4], ["mechanical_parts", 2], ["fasteners", 3], ["spares", 3]],
+    "cableHp": 60,
+    "switchHp": 100,
+    "plateHp": 100,
+    "doorHp": 350,
+    "plateRadius": 7,
+    "interiorDepthTiles": 0.35,
+    "interiorHalfWidthTiles": 0.75,
+    "emergencyReleaseMs": 4000
   }
 }

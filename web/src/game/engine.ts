@@ -334,8 +334,43 @@ export function roofRoom(r: RunState, px: number, py: number) {
 }
 export function isSheltered(r: RunState, px: number, py: number) { return roofRoom(r, px, py).enclosed; }
 
+/** Built wire-v1 nodes are physical tiles, not proximity links or POI circuits.
+ * Player-only pressure plates are evaluated from actual position, including the
+ * stationary saved player during offline settlement. No speculative AI movement. */
+function wireNodeOn(r:RunState,e:Entity):boolean {
+  if(e.kind!=='struct'||!['power_cable','power_switch','pressure_switch'].includes(e.type||'')||!owned(e)||(e.hp??0)<=0||e.tx===undefined||e.ty===undefined)return false;
+  const t=effTile(r,e.tx,e.ty),i=e.ty*WW+e.tx;if([T.DEEP,T.SHALLOW,T.RIVER,T.ICE,T.LAVA,T.CLIFF,T.PWALL].includes(t)||[1,2,3,4,5].includes(blockGrid(r)[i]))return false;
+  if(e.type==='power_switch')return !!e.wireSwitch?.on;
+  if(e.type==='pressure_switch')return !r.player.dead&&Math.hypot(r.player.x-e.x,r.player.y-e.y)<=BAL.homeCircuit.plateRadius;
+  return true;
+}
+export function wireReachable(r:RunState,g:Entity,e:Entity):boolean {
+  if(!g.basePower||g.basePower.network!=='wire-v1'||!owned(g)||!owned(e)||(g.hp??0)<=0||(e.hp??0)<=0||g.tx===undefined||g.ty===undefined||e.tx===undefined||e.ty===undefined)return false;
+  const nodes=Object.values(r.entities).filter(n=>wireNodeOn(r,n));const cells=new Map(nodes.map(n=>[`${n.tx},${n.ty}`,n]));
+  const q:Entity[]=[],seen=new Set<string>();for(const n of nodes)if(Math.abs(n.tx!-g.tx)+Math.abs(n.ty!-g.ty)===1){q.push(n);seen.add(n.id);}
+  for(let head=0;head<q.length;head++){const n=q[head];if(Math.abs(n.tx!-e.tx)+Math.abs(n.ty!-e.ty)===1)return true;
+    for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const next=cells.get(`${n.tx!+dx},${n.ty!+dy}`);if(next&&!seen.has(next.id)){seen.add(next.id);q.push(next);}}
+  }return false;
+}
+/** An electric door is assigned to the lowest stable connected generator ID. */
+export function electricDoorGenerator(r:RunState,e:Entity):Entity|undefined {
+  return Object.values(r.entities).filter(g=>g.basePower?.network==='wire-v1'&&wireReachable(r,g,e)).sort((a,b)=>a.id.localeCompare(b.id))[0];
+}
+export function electricDoorPowered(r:RunState,e:Entity,online=true):boolean {
+  const g=electricDoorGenerator(r,e);return !!g&&powerAllocation(r,g,online).includes(e);
+}
+export function electricInterior(r:RunState,e:Entity):boolean {
+  const v=e.electricDoor?.interior;if(!v)return false;const dx=r.player.x-e.x,dy=r.player.y-e.y;
+  return dx*v[0]+dy*v[1]>=TILE*BAL.homeCircuit.interiorDepthTiles&&Math.abs(dx*v[1]-dy*v[0])<TILE*BAL.homeCircuit.interiorHalfWidthTiles;
+}
+export function syncElectricDoors(r:RunState,now:number,online=true):string[] {
+  const closed:string[]=[];for(const e of Object.values(r.entities))if(e.electricDoor&&e.open&&!electricDoorPowered(r,e,online)&&(e.electricDoor.releaseUntil??0)<=now&&!doorwayOccupied(r,e)){e.open=false;closed.push(e.id);}
+  if(closed.length)markDirty();return closed;
+}
+
 /** Optional industrial power shares real capacity with existing turret loads. */
-function connectedPower(r:RunState,g:Entity,e:Entity) {
+export function connectedPower(r:RunState,g:Entity,e:Entity) {
+  if(g.basePower?.network==='wire-v1')return wireReachable(r,g,e);
   return owned(e) && (e.hp??1)>0 && dist(e.x,e.y,g.x,g.y)<=BAL.industrialPower.connectionTiles*TILE && clearPhysicalLine(r,e,g,true,true);
 }
 function hasPowerFuel(r:RunState,g:Entity) {
@@ -346,9 +381,10 @@ export function powerAllocation(r:RunState,g:Entity,online=true):Entity[] {
   if(!g.basePower?.enabled || !owned(g) || (g.hp??1)<=0 || !hasPowerFuel(r,g))return [];
   const choices=Object.values(r.entities).filter(e=>connectedPower(r,g,e) && (
     online && e.turret?.enabled && e.turret.generatorId===g.id && !!e.c && countItem(r,e.c,'arrow')>0 ||
-    e.type==='workbench' && e.industrial?.enabled && e.industrial.generatorId===g.id && !!e.station?.queue[0] && e.station.queue[0].left>0));
+    e.type==='workbench' && e.industrial?.enabled && e.industrial.generatorId===g.id && !!e.station?.queue[0] && e.station.queue[0].left>0 ||
+    !!e.electricDoor && electricDoorGenerator(r,e)?.id===g.id));
   const priority=g.basePower.priority??'defense';
-  choices.sort((a,b)=>{const rank=(e:Entity)=>priority==='defense' ? (e.turret?0:1) : (e.industrial?0:1);return rank(a)-rank(b)||a.id.localeCompare(b.id);});
+  choices.sort((a,b)=>{const rank=(e:Entity)=>priority==='defense' ? (e.turret?0:e.electricDoor?1:2) : (e.industrial?0:e.electricDoor?1:2);return rank(a)-rank(b)||a.id.localeCompare(b.id);});
   return choices.slice(0,g.basePower.capacity??1);
 }
 export function industrialStatus(r:RunState,e:Entity):string {
@@ -846,7 +882,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const e=r.entities[it.eid];if(!e?.industrial || e.type!=='workbench' || !owned(e) || !near(r,e,3))return fail('Use your upgraded workbench within reach.');
       if(it.field==='enabled' && typeof it.value==='boolean')e.industrial.enabled=it.value;
       else if(it.field==='generatorId' && typeof it.value==='string'){
-        if(it.value){const g=r.entities[it.value];if(!g?.basePower||g.type!=='base_generator'||!owned(g)||!connectedPower(r,g,e))return fail('Generator must be owned, within 3 tiles and unobstructed.');}
+        if(it.value){const g=r.entities[it.value];if(!g?.basePower||g.type!=='base_generator'||!owned(g)||!connectedPower(r,g,e))return fail('Generator must be connected by a clear valid power route.');}
         e.industrial.generatorId=it.value||undefined;
       } else return fail('Invalid industrial setting.');
       return ok('industrial.configure',`${e.id}:${it.field}`);
@@ -865,8 +901,8 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const e = r.entities[it.eid]; if (!e?.turret || e.type !== 'arrow_turret' || !owned(e) || !near(r,e,2.2)) return fail('Use your turret within reach.');
       if (it.field === 'enabled' && typeof it.value === 'boolean') e.turret.enabled = it.value;
       else if (it.field === 'generatorId' && typeof it.value === 'string') {
-        if (it.value) { const gen = r.entities[it.value]; if (!gen?.basePower || gen.type !== 'base_generator' || !owned(gen) || dist(e.x,e.y,gen.x,gen.y) > 3*TILE || !clearPhysicalLine(r,e,gen,true,true)) return fail('Generator must be owned, within 3 tiles and unobstructed.');
-          if (Object.values(r.entities).filter(o=>o.id!==e.id && o.turret?.generatorId===gen.id).length >= (gen.basePower.capacity??1)) return fail('Generator capacity is full.'); }
+        if (it.value) { const gen = r.entities[it.value]; if (!gen?.basePower || gen.type !== 'base_generator' || !owned(gen) || !connectedPower(r,gen,e)) return fail('Generator must be connected by a clear valid power route.');
+          if (gen.basePower.network!=='wire-v1' && Object.values(r.entities).filter(o=>o.id!==e.id && o.turret?.generatorId===gen.id).length >= (gen.basePower.capacity??1)) return fail('Generator capacity is full.'); }
         e.turret.generatorId = it.value || undefined;
       } else return fail('Invalid turret setting.');
       return ok('turret.configure', `${e.id}:${it.field}`);
@@ -965,7 +1001,9 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (d.station && d.station !== 'research') e.station = { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 3).id, outC: mkContainer(r, 'out', 6).id };
       if (d.station === 'research') e.station = { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 0).id, outC: mkContainer(r, 'out', 4).id };
       if (it.struct === 'claim') e.cabinet = {credit:{},legacy:false};
-      if (it.struct === 'base_generator') e.basePower = { enabled: false, energy: 0 };
+      if (it.struct === 'base_generator') e.basePower = { enabled: false, energy: 0, network:'wire-v1' };
+      if (it.struct === 'power_switch') e.wireSwitch={version:'wire-v1',on:false};
+      if (it.struct === 'door_powered') {const dx=p.x-e.x,dy=p.y-e.y;const outside:[number,number]=Math.abs(dx)>Math.abs(dy)?[Math.sign(dx)||1,0]:[0,Math.sign(dy)||1];e.electricDoor={version:'wire-v1',interior:[outside[0] ? -outside[0] : 0,outside[1] ? -outside[1] : 0]};}
       if (it.struct === 'arrow_turret') e.turret = { enabled: false, cooldown: 0, angle: 0 };
       if (it.struct === 'farm_controller') e.farm = { enabled:false, crop:'crop', energy:0 };
       if (it.struct === 'garden') e.garden = { crop: null, growth: 0, water: 0 };
@@ -1060,12 +1098,25 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       else for (const [k, q] of d.cost) { const back = Math.floor(q * BAL.economy.reclaimRefund); if (back > 0) giveOrDrop(r, k, back, now); }
       return ok('reclaim', `${e.type}${bag ? ' contents→' + bag.id : ''}`);
     }
+    case 'wireSwitch': {
+      const e=r.entities[it.eid];if(!e||e.type!=='power_switch'||!e.wireSwitch||!owned(e)||!near(r,e,2)||!clearInteraction(r,e))return fail('Switch out of reach.');
+      e.wireSwitch.on=!e.wireSwitch.on;return ok('circuit.switch',`${e.id}:${e.wireSwitch.on?'on':'off'}`,`Switch ${e.wireSwitch.on?'on':'off'}.`);
+    }
+    case 'wireGenerator': {
+      const e=r.entities[it.eid];if(!e?.basePower||e.type!=='base_generator'||!owned(e)||!near(r,e,2)||!clearInteraction(r,e))return fail('Generator out of reach.');
+      if(e.basePower.network==='wire-v1')return fail('Generator already uses cables.');
+      e.basePower.network='wire-v1';return ok('circuit.migrate',e.id,'Cable mode enabled; old direct links now need a physical wire route.');
+    }
     case 'door': {
       const e = r.entities[it.eid]; if (!e || !near(r, e, 2) || !clearInteraction(r,e)) return fail('Door is out of reach or blocked.');
       if(e.kind!=='door' && (e.kind!=='struct'||!e.type?.startsWith('door')))return fail('Not a door.');
       if(e.open) {
         if(doorwayOccupied(r,e))return fail('Doorway occupied. Step clear before closing.');
         e.open=false;markDirty();return ok('door',`${e.id}:closed`);
+      }
+      if(e.electricDoor){
+        const emergency=electricInterior(r,e);if(!emergency&&!electricDoorPowered(r,e))return fail('Powered door: no connected allocated power. Interior handle is on the other side.');
+        e.electricDoor.releaseUntil=emergency?now+BAL.homeCircuit.emergencyReleaseMs:undefined;e.open=true;markDirty();return ok('circuit.door',`${e.id}:${emergency?'interior-release':'powered'}`,emergency?'Interior handle opened the door.':'Powered door opened.');
       }
       const d=e.kind==='door'?poiDoorContract(r,e):undefined;
       // A prior save whose authored lock was already removed keeps its prior access.

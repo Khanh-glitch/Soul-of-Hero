@@ -294,7 +294,11 @@ export const STRUCTS: Record<string, StructDef> = {
   garden: { name: 'Garden Plot', cost: [['wood', 4], ['fiber', 4]], hp: 60, need: 'claim', block: false, layer: 'obj', desc: 'Plant seeds; grows only while watered (rain counts).' },
   farm_controller: { name: 'Garden Tender', cost: [['wood', 12], ['iron_ingot', 2], ['mechanical_parts', 3], ['fasteners', 3], ['spares', 2]], hp: 140, need: 'claim', block: true, layer: 'obj', slots: 3, desc: 'Optional fuelled garden machinery. Link one nearby plot, barrel and chest; needs an improved workbench to build.' },
   barrel: { name: 'Rain Barrel', cost: [['wood', 8], ['rope', 1]], hp: 80, need: 'claim', block: true, layer: 'obj', desc: 'Collects rainwater; refill flasks.' },
-  base_generator: { name: 'Field Generator', cost: [['iron_ingot', 3], ['mechanical_parts', 3], ['spares', 4], ['wood', 6]], hp: 180, need: 'claim', block: true, layer: 'obj', slots: 3, desc: 'Optional fueled power for one nearby turret; upgrade for two, with higher fuel use.' },
+  base_generator: { name: 'Field Generator', cost: [['iron_ingot', 3], ['mechanical_parts', 3], ['spares', 4], ['wood', 6]], hp: 180, need: 'claim', block: true, layer: 'obj', slots: 3, desc: 'Fuel one connected load; reinforce for two. New generators require paid physical cable.' },
+  power_cable: { name:'Power Cable', cost:BAL.homeCircuit.cableCost, hp:BAL.homeCircuit.cableHp, need:'claim', block:false, layer:'obj', desc:'One paid cable tile. Orthogonal connections only; dry ground, no walls.' },
+  power_switch: { name:'Power Switch', cost:BAL.homeCircuit.switchCost, hp:BAL.homeCircuit.switchHp, need:'claim', block:false, layer:'obj', desc:'E toggles this physical branch on or off.' },
+  pressure_switch: { name:'Pressure Switch', cost:BAL.homeCircuit.plateCost, hp:BAL.homeCircuit.plateHp, need:'claim', block:false, layer:'obj', desc:'Conducts only while the player stands on this plate.' },
+  door_powered: { name:'Powered Door', cost:BAL.homeCircuit.doorCost, hp:BAL.homeCircuit.doorHp, need:'claim', block:true, layer:'wall', desc:'Powered opening; place from the outside to set the interior emergency handle.' },
   arrow_turret: { name: 'Arrow Turret', cost: [['wood', 10], ['iron_ingot', 2], ['mechanical_parts', 2], ['fasteners', 2]], hp: 130, need: 'claim', block: true, layer: 'obj', slots: 3, desc: 'Linked power and real arrows; shoots visible hostile creatures.' },
   spikes: { name: 'Spike Trap', cost: [['wood', 6]], hp: 90, need: 'claim', block: false, layer: 'obj', desc: 'Hurts creatures that walk over it.' },
   barricade: { name: 'Barricade', cost: [['wood', 8]], hp: 220, need: 'claim', block: true, layer: 'obj', desc: 'Cheap blocking defense.' },
@@ -303,7 +307,7 @@ export const STRUCTS: Record<string, StructDef> = {
 };
 /** Full target materials are paid again; condition is preserved, never a free repair. */
 export const STRUCTURE_UPGRADES: Record<string, string> = { floor_wood: 'floor_stone', wall_wood: 'wall_stone', wall_stone: 'wall_brick', door_wood: 'door_iron', roof_thatch: 'roof_tile', chest_small: 'chest_large' };
-export const BUILD_ORDER = ['floor_wood', 'floor_stone', 'claim', 'wall_wood', 'wall_stone', 'wall_brick', 'door_wood', 'door_iron', 'roof_thatch', 'roof_tile', 'bed_straw', 'chest_small', 'chest_large', 'campfire', 'furnace', 'workbench', 'research', 'garden', 'barrel', 'farm_controller', 'base_generator', 'arrow_turret', 'spikes', 'barricade', 'torch_post', 'escrow'];
+export const BUILD_ORDER = ['floor_wood', 'floor_stone', 'claim', 'wall_wood', 'wall_stone', 'wall_brick', 'door_wood', 'door_iron', 'roof_thatch', 'roof_tile', 'bed_straw', 'chest_small', 'chest_large', 'campfire', 'furnace', 'workbench', 'research', 'garden', 'barrel', 'farm_controller', 'base_generator', 'power_cable', 'power_switch', 'pressure_switch', 'door_powered', 'arrow_turret', 'spikes', 'barricade', 'torch_post', 'escrow'];
 
 // Run-2 vendor stock purchasable with SECURED profile cash (PROPOSED prices) → run-local items
 export const SALVAGED_OIL_WRECK_CHANCE = 0.35; // SOH_NEW_TUNED v1 per finite wreck stock unit

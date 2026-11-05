@@ -89,7 +89,9 @@ export interface Entity {
   station?: { queue: Job[]; burn: number; fuelC: string; outC: string; level?: 1 | 2 | 3; upgrade?: 'kiln_lining' };
   garden?: { crop: string | null; growth: number; water: number; coldFrame?: boolean };
   farm?: { enabled: boolean; crop: 'crop' | 'herb'; energy: number; gardenId?: string; barrelId?: string; chestId?: string };
-  basePower?: { enabled: boolean; energy: number; capacity?: 2; priority?: 'defense' | 'production' };
+  basePower?: { enabled: boolean; energy: number; capacity?: 2; priority?: 'defense' | 'production'; network?: 'wire-v1' };
+  wireSwitch?: {version:'wire-v1'; on:boolean};
+  electricDoor?: {version:'wire-v1'; interior:[number,number]; releaseUntil?:number};
   cabinet?: { credit: Record<string, number>; legacy: boolean };
   maintenance?: { enabled: boolean; chestId?: string }; // opt-in claim reserve
   industrial?: { enabled: boolean; generatorId?: string }; // optional paid workbench module

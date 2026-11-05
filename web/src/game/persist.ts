@@ -114,7 +114,13 @@ export function validate(raw: any): GameState | null {
     if (e.kind === 'struct' && e.c && r.custody[e.c]?.kind !== 'chest') return null;
     const refs = [e.c, e.station?.fuelC, e.station?.outC].filter((v: any) => v !== undefined);
     for (const cid of refs) { if (typeof cid !== 'string' || !r.custody[cid] || ownedContainers.has(cid)) return null; ownedContainers.add(cid); }
-    if (e.basePower !== undefined && (!obj(e.basePower) || e.type !== 'base_generator' || typeof e.basePower.enabled !== 'boolean' || !finite(e.basePower.energy) || e.basePower.energy < 0 || (e.basePower.capacity !== undefined && e.basePower.capacity !== 2) || (e.basePower.priority !== undefined && !['defense','production'].includes(e.basePower.priority)) || !e.c)) return null;
+    if (e.basePower !== undefined && (!obj(e.basePower) || e.type !== 'base_generator' || typeof e.basePower.enabled !== 'boolean' || !finite(e.basePower.energy) || e.basePower.energy < 0 || (e.basePower.capacity !== undefined && e.basePower.capacity !== 2) || (e.basePower.priority !== undefined && !['defense','production'].includes(e.basePower.priority)) || (e.basePower.network !== undefined && e.basePower.network!=='wire-v1') || !e.c)) return null;
+    if(['power_cable','power_switch','pressure_switch','door_powered'].includes(e.type)) {
+      if(e.kind!=='struct'||!integer(e.tx)||!integer(e.ty)||e.tx<1||e.ty<1||e.tx>=WW-1||e.ty>=WH-1||e.x!==e.tx*TILE+8||e.y!==e.ty*TILE+8)return null;
+      if(e.type==='power_switch'&&(!obj(e.wireSwitch)||e.wireSwitch.version!=='wire-v1'||typeof e.wireSwitch.on!=='boolean'))return null;
+      if(e.type==='door_powered'&&(!obj(e.electricDoor)||e.electricDoor.version!=='wire-v1'||!Array.isArray(e.electricDoor.interior)||e.electricDoor.interior.length!==2||![[1,0],[-1,0],[0,1],[0,-1]].some(v=>v[0]===e.electricDoor.interior[0]&&v[1]===e.electricDoor.interior[1])||(e.electricDoor.releaseUntil!==undefined&&(!finite(e.electricDoor.releaseUntil)||e.electricDoor.releaseUntil<r.startedAt))))return null;
+    }
+    if(e.wireSwitch!==undefined&&e.type!=='power_switch'||e.electricDoor!==undefined&&e.type!=='door_powered')return null;
     if(e.cabinet !== undefined && (!obj(e.cabinet) || e.type!=='claim' || !e.c || r.custody[e.c]?.slots.length!==24 || typeof e.cabinet.legacy!=='boolean' || !obj(e.cabinet.credit) || Object.entries(e.cabinet.credit).some(([k,v]:[string,any])=>!BAL.territory.materials.includes(k)||!finite(v)||v<0||v>1+1e-8)))return null;
     if(e.maintenance !== undefined && (!obj(e.maintenance) || e.type!=='claim' || typeof e.maintenance.enabled!=='boolean' || (e.maintenance.chestId!==undefined && (typeof e.maintenance.chestId!=='string'||!e.maintenance.chestId))))return null;
     if(e.industrial !== undefined && (!obj(e.industrial) || e.type!=='workbench' || !e.station || typeof e.industrial.enabled!=='boolean' || (e.industrial.generatorId!==undefined && (typeof e.industrial.generatorId!=='string'||!e.industrial.generatorId))))return null;
@@ -131,7 +137,7 @@ export function validate(raw: any): GameState | null {
   if(r.player.vehicle!==undefined) {const e=r.entities[r.player.vehicle];if(typeof r.player.vehicle!=='string'||!e||e.kind!=='vehicle'||r.player.dead||r.player.pulling||r.spiritTransit||r.player.x!==e.x||r.player.y!==e.y)return null;}
   if((Object.values(r.entities) as any[]).filter(e=>e.kind==='recycler').length>1)return null;
   for(const [key,offer] of Object.entries(VENDOR_SPARES)){const stock=r.vendorStock[`spares:${key}`];if(stock!==undefined && (!integer(stock) || stock>offer.stock))return null;}
-  for(const g of Object.values(r.entities) as any[]) if(g.basePower){const links=(Object.values(r.entities) as any[]).filter(t=>t.turret?.generatorId===g.id).length;if(links>(g.basePower.capacity??1))return null;}
+  for(const g of Object.values(r.entities) as any[]) if(g.basePower&&g.basePower.network!=='wire-v1'){const links=(Object.values(r.entities) as any[]).filter(t=>t.turret?.generatorId===g.id).length;if(links>(g.basePower.capacity??1))return null;}
   if (r.wreckEconomy !== undefined && r.wreckEconomy !== 'direct-v1' && r.wreckEconomy !== 'recycler-v1') return null;
   if (r.wreckEconomy === 'recycler-v1' && !hasAuthorizedRecycler(r)) return null;
   // A retired site must be a real authored public loot site and cannot also
