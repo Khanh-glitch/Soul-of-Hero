@@ -9,7 +9,8 @@ import { mapDigest } from './map-package';
 import { sourceDigest } from './world-economy';
 import { hasAuthorizedRecycler, wreckEconomy } from './wreck-economy';
 
-const DB = 'soul-of-hero', STORE = 'kv', KEY = 'state', LS = 'soh.state.v' + SAVE_VERSION;
+const testMode = import.meta.env.VITE_FX_TEST === '1';
+const DB = testMode ? 'soul-of-hero-vfx-test' : 'soul-of-hero', STORE = 'kv', KEY = 'state', LS = (testMode ? 'soh.vfx-test.v' : 'soh.state.v') + SAVE_VERSION;
 const FORMAT = 'soh-snapshot-v1';
 let dbp: Promise<IDBDatabase | null> | null = null;
 let dbFailed = false;

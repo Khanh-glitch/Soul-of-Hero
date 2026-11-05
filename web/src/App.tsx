@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { GameState } from './game/core';
-import { dispatch, markDirty } from './game/engine';
+import { dispatch, markDirty, mkStack } from './game/engine';
 import { settle } from './game/sim';
 import { load, save } from './game/persist';
 import { getArt } from './game/art';
@@ -24,6 +24,6 @@ export default function App() {
   return screen === 'title'
     ? <Title gs={gs} note={note} summary={summary} clearSummary={() => setSummary(null)}
         onContinue={() => { initAudio(); const rep = settle(gs, Date.now()); save(gs); if (!gs.run) { setSummary(gs.profile.history[0]); return; } setReport(rep.length ? rep : null); enter(); }}
-        onStart={(c, region) => { initAudio(); const res = dispatch(gs, mkIntent('startRun', { character: c, region }), Date.now()); if (res.ok) { save(gs); setReport(null); enter(); } else setNote(res.reason); }} />
+        onStart={(c, region) => { initAudio(); const res = dispatch(gs, mkIntent('startRun', { character: c, region }), Date.now()); if (res.ok) { if(import.meta.env.VITE_FX_TEST === '1' && gs.run){const r=gs.run, inv=r.custody.inv;const keys=['core_blast','core_meteor','core_dragon','core_elsa','core_earthmother','core_mjolnir','core_demon'];const initial=inv.slots.filter(Boolean);inv.slots=Array(88).fill(null);let i=0;for(let n=0;n<10;n++)for(const key of keys){const core=mkStack(r,key,1);core.reserves={basic:40,refined:12,signature:4};inv.slots[i++]=core;}for(const item of initial)inv.slots[i++]=item;r.qaUsed=true;} save(gs); setReport(null); enter(); } else setNote(res.reason); }} />
     : <Game gs={gs} report={report} onExit={() => setScreen('title')} onRunEnd={() => { setSummary(gs.profile.history[0] || null); setScreen('title'); }} />;
 }

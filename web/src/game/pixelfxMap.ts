@@ -12,13 +12,20 @@ import { spawn } from './pixelfx';
 export function pfxFromSimEvent(e: any): boolean {
   switch (e.type) {
     case 'spiritDepart': case 'spiritArrive':
-      if (e.x !== undefined) spawn('arcane/arcane-orb', {x:e.x,y:e.y,family:'hover',scale:0.32,loop:false});
+      if (e.x !== undefined) spawn(e.type==='spiritDepart'?'arcane/blink-out':'arcane/blink-in', {x:e.x,y:e.y,family:'ground',scale:0.65,loop:false});
+      return true;
+    case 'lightning':
+      if(e.x!==undefined)spawn('lightning/lightning-strike',{x:e.x,y:e.y,family:'ground',scale:0.4,loop:false});
+      return true;
+    case 'spiritHit':
+      if(e.x!==undefined) spawn('arcane/mana-burst',{x:e.x,y:e.y,family:'ground',scale:0.22,loop:false});
       return true;
     case 'windup':
-      if (e.x !== undefined && e.core) spawn('arcane/spell-charge', { x: e.x, y: e.y, family: 'hover', loop: true, maxAgeMs: 560 });
+      if (e.x !== undefined && e.core && e.core !== 'spirit') spawn('arcane/spell-charge', { x: e.x, y: e.y, family: 'hover', loop: true, maxAgeMs: 560 });
       return true;
     case 'cast':
       if (e.core === 'fire' && e.x !== undefined) spawn('fire/fireball', { x: e.x, y: e.y, family: 'hover', angle: e.a ?? 0, loop: false, scale: 0.55 });
+      else if(e.core === 'frost' && e.x !== undefined) spawn('ice/snowflake-burst',{x:e.x,y:e.y,family:'ground',scale:0.34,loop:false});
       else if (e.core === 'storm' && e.x !== undefined) spawn('lightning/chain-lightning', { x: e.x, y: e.y, family: 'hover', angle: (e.a ?? 0) + Math.PI / 2, loop: false, scale: 0.45 });
       return true;
     case 'bolt': {

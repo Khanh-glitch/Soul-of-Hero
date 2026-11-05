@@ -48,7 +48,7 @@ export default function Title({ gs, onContinue, onStart, note, summary, clearSum
         <button className="btn gold" style={{ marginTop: 8 }} onClick={() => { click(); clearSummary(); }}>Return</button>
       </div> : <>
         <div className="absolute" style={{ left: 0, right: 0, top: 18, textAlign: 'center' }}>
-          <div className="title-font" style={{ fontSize: 44, fontWeight: 700, color: '#ffe8b0', letterSpacing: 3, textShadow: '0 3px 0 #6a2a0a, 0 5px 0 #2a0a04, 0 0 18px #ff7a2a' }}>SOUL OF HERO</div>
+          {import.meta.env.VITE_FX_TEST === '1' && <div style={{color:'#ffdf7b',fontSize:12}}>VFX TEST — 10 mỗi Core, đầy năng lượng · lưu riêng</div>}<div className="title-font" style={{ fontSize: 44, fontWeight: 700, color: '#ffe8b0', letterSpacing: 3, textShadow: '0 3px 0 #6a2a0a, 0 5px 0 #2a0a04, 0 0 18px #ff7a2a' }}>SOUL OF HERO</div>
           <div style={{ fontSize: 13, color: '#e0c8a8', marginTop: -2, textShadow: '1px 1px 0 #000' }}>fourteen days · one island · the end of the world</div>
         </div>
         {mode === 'menu' && <div className="absolute flex flex-col gap-2 items-center fadein" style={{ left: 0, right: 0, top: 150 }}>

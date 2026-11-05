@@ -18,6 +18,7 @@
 // a soft illumination falloff, not a drawn geometric decoration.
 // ============================================================================
 import { PILOT_MANIFEST } from './pixelfx/pilot';
+import { OWNER_VFX } from './pixelfx/owner-vfx';
 
 export interface PfxPage { path: string; first: number; count: number; columns: number; rows: number; dimensions: [number, number]; }
 export interface PfxEntry {
@@ -130,7 +131,7 @@ export function hasEntry(id: string) { return manifest.has(id); }
 export function ready(id:string){const e=manifest.get(id);return !!e && pageLoaded(e) && !isFailed(id);}
 
 export function initPfx(): Promise<boolean> {
-  const pilotList: PfxEntry[] = ((PILOT_MANIFEST as any).effects ?? PILOT_MANIFEST) as PfxEntry[];
+  const pilotList: PfxEntry[] = [...((PILOT_MANIFEST as any).effects ?? PILOT_MANIFEST), ...OWNER_VFX] as PfxEntry[];
   for (const e of pilotList) manifest.set(e.id, e);
   const q = typeof location !== 'undefined' ? new URLSearchParams(location.search).get('pfxbase') : null;
   if (q) base = q.endsWith('/') ? q : q + '/';
@@ -174,11 +175,11 @@ export function spawn(id: string, o: PfxOpts): PfxInst | null {
     warpCache: { cv: null, at: -1, x: 0, y: 0, r: 0 },
   };
   instances.push(inst);
-  const pilot = ((PILOT_MANIFEST as any).effects ?? PILOT_MANIFEST).some((p: any) => p.id === id);
+  const pilot = [...((PILOT_MANIFEST as any).effects ?? PILOT_MANIFEST),...OWNER_VFX].some((p: any) => p.id === id);
   for (const chan of ['combined', 'light'] as const) for (const p of entry.export.pages[chan]) loadImg(p.path, pilot);
   return inst;
 }
-export function clear() { instances.length = 0; seenHaz = new WeakSet(); }
+export function clear() { instances.length = 0; seenHaz = new WeakSet(); channelFx.clear(); projInst.clear(); }
 export function listInstances() { return instances.slice(); }
 export function setPaused(p: boolean) { paused = p; }
 export function isPaused() { return paused; }
@@ -414,22 +415,27 @@ export function drawPostNight(g: CanvasRenderingContext2D, cam: { x: number; y: 
 }
 
 // ---- gameplay hooks (presentation only) --------------------------------------------
+const channelFx = new Map<object,PfxInst>();
 export function syncHazards(hazards: any[], player: { x: number; y: number; aim: number }) {
   for (const h of hazards) {
     if (seenHaz.has(h)) continue;
     seenHaz.add(h);
-    if (h.effect === 'quake') spawn('nature/quake', { x: h.x, y: h.y, family: 'ground', angle: player.aim, delayMs: h.tell ?? 0, scale: 0.46 });
+    if(h.effect==='spiritBeam'){const inst=spawn('arcane/arcane-beam',{x:h.x,y:h.y+20,angle:h.angle,family:'hover',scale:0.55,stretch:Math.max(0.1,h.len/(238*0.55)),loop:true,maxAgeMs:h.dur});if(inst)channelFx.set(h,inst);}
+    else if(h.effect==='flameLine')spawn('fire/fire-breath',{x:h.x,y:h.y+15,family:'hover',scale:0.5,angle:h.angle,maxAgeMs:450});
+    else if(h.effect==='natureRoot')spawn('nature/leaf-storm',{x:h.x,y:h.y,family:'ground',scale:0.45,loop:true,maxAgeMs:h.dur});
+    else if (h.effect === 'quake') spawn('nature/quake', { x: h.x, y: h.y, family: 'ground', angle: player.aim, delayMs: h.tell ?? 0, scale: 0.46 });
     else if (h.style === 'frostnova') spawn('ice/frost-nova', { x: h.x, y: h.y, family: 'ground', delayMs: h.tell ?? 0 });
   }
+  for(const [haz,inst] of channelFx) if(!hazards.includes(haz)){const i=instances.indexOf(inst);if(i>=0)instances.splice(i,1);channelFx.delete(haz);}
 }
 // Fireball: one real instance following the actual projectile (single visual,
 // depth-sorted, night-safe via the shared post-night pass).
 const projInst = new Map<object, PfxInst>();
 export function syncProjFx(projs: any[], now: number) {
   for (const pr of projs) {
-    if (pr.kind !== 'fireball' && pr.kind !== 'spirit_ray') continue;
+    if (!['fireball','spirit_ray','fire_tornado','elsa_shard'].includes(pr.kind)) continue;
     let inst = projInst.get(pr);
-    if (!inst) { const id=pr.kind==='spirit_ray'?'arcane/arcane-orb':'fire/fireball'; const created=spawn(id, { x: pr.x, y: pr.y, family: 'proj', loop: true, follow: pr, scale: pr.kind==='spirit_ray'?0.18:SCALE['fire/fireball'] }); if(created){inst=created;projInst.set(pr,inst);} }
+    if (!inst) { const id=pr.kind==='spirit_ray'?'arcane/arcane-orb':pr.kind==='fire_tornado'?'fire/fire-tornado':pr.kind==='elsa_shard'?'ice/ice-lance':'fire/fireball'; const created=spawn(id, { x: pr.x, y: pr.y, family: 'proj', loop: true, follow: pr, scale: pr.kind==='spirit_ray'?0.18:pr.kind==='fire_tornado'?0.35:pr.kind==='elsa_shard'?0.25:SCALE['fire/fireball'] }); if(created){inst=created;projInst.set(pr,inst);} }
   }
   for (const [pr, inst] of [...projInst]) if (!projs.includes(pr) || !instances.includes(inst)) projInst.delete(pr);
   void now;
@@ -439,7 +445,7 @@ export function syncProjFx(projs: any[], now: number) {
 // Used by the QA harness to pick deliberate anticipation/peak/decay source frames.
 export async function frameLuma(id: string): Promise<number[]> {
   const e = manifest.get(id); if (!e || typeof document === 'undefined') return [];
-  const pilot = ((PILOT_MANIFEST as any).effects ?? PILOT_MANIFEST).some((p: any) => p.id === id);
+  const pilot = [...((PILOT_MANIFEST as any).effects ?? PILOT_MANIFEST),...OWNER_VFX].some((p: any) => p.id === id);
   for (const p of e.export.pages.combined) await loadImg(p.path, pilot); // ensure decoded before measuring
   const out: number[] = [];
   const cv = document.createElement('canvas'); cv.width = 16; cv.height = 16;

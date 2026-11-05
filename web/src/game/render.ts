@@ -222,7 +222,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   // temporary terrain sprites (ice pillars, root cages)
   for (const k in r.terrain) { const m: any = r.terrain[+k]; if (!m.until || m.t !== T.PWALL) continue; const i = +k; const X = (i % WW) * 16, Y = ((i / WW) | 0) * 16; if (X < cx - 20 || X > cx + VIEW_W || Y < cy - 30 || Y > cy + VIEW_H) continue; g.drawImage(m.by === 'grove' ? A.st.rootwall : A.st.icepillar, X, Y - 8); }
   // projectiles
-  for (const pr of PROJ) { if (pr.delay && pr.delay > 0) continue; const visual=pr.kind==='spirit_ray'?'arcane/arcane-orb':pr.kind==='fireball'?'fire/fireball':null; if(!visual || !pfx.ready(visual))drawProj(g, pr, time); }
+  for (const pr of PROJ) { if (pr.delay && pr.delay > 0) continue; const visual=pr.kind==='spirit_ray'?'arcane/arcane-orb':pr.kind==='fireball'?'fire/fireball':pr.kind==='fire_tornado'?'fire/fire-tornado':pr.kind==='elsa_shard'?'ice/ice-lance':null; if(!visual || !pfx.ready(visual))drawProj(g, pr, time); }
   // roofs
   const room = roofRoom(r, p.x, p.y);
   for (const b of w.buildings) { if ((b.x + b.w) * 16 < cx || b.x * 16 > cx + VIEW_W || (b.y + b.h) * 16 < cy - 16 || b.y * 16 > cy + VIEW_H) continue;
@@ -396,6 +396,7 @@ function drawProj(g: CanvasRenderingContext2D, pr: any, time: number) {
 }
 function drawHaz(g: CanvasRenderingContext2D, h: any, time: number) {
   const col = hazCol(h.style); const tell = h.t < h.tell; const f = tell ? h.t / h.tell : 1;
+  if(h.owner==='player' && h.effect==='spiritBeam' && !tell && pfx.ready('arcane/arcane-beam')) return;
   if(h.owner==='player' && h.effect==='spiritBeam' && !tell){const growth=Math.min(1,0.45+h.t/220),collapse=Math.min(1,Math.max(0,(h.tell+h.dur-h.t)/300)),width=Math.max(1,h.w*growth*collapse);g.save();g.translate(h.x,h.y);g.rotate(h.angle);g.fillStyle='rgba(143,57,213,0.65)';g.fillRect(0,-width/2,h.len,width);g.fillStyle='#f3d5ff';g.fillRect(0,-Math.max(1,width/6),h.len,Math.max(2,width/3));g.fillStyle='#b978fa';for(let x=5;x<h.len;x+=12)g.fillRect(x,Math.sin((x+time)/14)*width/4-1,4,2);g.restore();return;}
   if (h.owner === 'player' && h.style !== 'meteor' && h.style !== 'burn') { if (!tell && h.style === 'spike') { const X = Math.round(h.x), Y = Math.round(h.y); const k = Math.min(1, (h.t - h.tell) / 60); g.fillStyle = '#7a5a32'; g.fillRect(X - 3, Y - Math.round(10 * k), 2, Math.round(10 * k)); g.fillStyle = '#c9a070'; g.fillRect(X + 1, Y - Math.round(7 * k), 2, Math.round(7 * k)); g.fillStyle = '#e0d0b0'; g.fillRect(X - 3, Y - Math.round(10 * k), 1, 1); } if (h.kind === 'ring' && !tell) { const rr = h.r * Math.min(1, (h.t - h.tell) / h.dur); pixCircle(g, h.x, h.y, rr, '#e0ffff'); pixCircle(g, h.x, h.y, rr - 2, 'rgba(160,220,255,0.6)', 2); } return; }
   g.save(); g.globalAlpha = tell ? 0.18 + f * 0.25 : 0.55;

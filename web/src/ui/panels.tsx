@@ -21,7 +21,7 @@ function slotContext(api: Api, c: string, i: number, quickTo?: string) {
 }
 function Grid({ api, cid, cols = 8, quickTo, hotRow = false }: { api: Api; cid: string; cols?: number; quickTo?: string; hotRow?: boolean }) {
   const c = C(api.gs.run!, cid); if (!c) return null;
-  return <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 20px)`, gap: 2 }}>
+  return <div className={import.meta.env.VITE_FX_TEST === '1' && cid === 'inv' ? 'scroll' : undefined} style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 20px)`, gap: 2, ...(import.meta.env.VITE_FX_TEST === '1' && cid === 'inv' ? {maxHeight: 110, overflowY:'auto'} : {}) }}>
     {c.slots.map((s, i) => <Slot key={i} s={s} sel={api.sel?.c === cid && api.sel.slot === i} active={hotRow && i === api.gs.run!.player.active} hotkey={hotRow && i < 8 ? String(i + 1) : undefined} onClick={e => slotClick(api, cid, i, e, quickTo)} onContext={() => slotContext(api, cid, i, quickTo)} />)}
   </div>;
 }
@@ -47,7 +47,7 @@ export function InventoryPanel({ api, quickTo, x = 404, top = 54, onClose, backT
       {['head', 'body', 'back'].map((sl, i) => <div key={sl} className="flex flex-col items-center" style={{ fontSize: 8, color: '#8a7a9a' }}><Slot s={C(r, 'eq').slots[i]} sel={api.sel?.c === 'eq' && api.sel.slot === i} onClick={e => slotClick(api, 'eq', i, e)} onContext={() => slotContext(api, 'eq', i)} />{sl}</div>)}
       <div style={{ fontSize: 10, lineHeight: 1.1, marginLeft: 4 }}><div>Armor {Math.round(armor * 100)}% · Warmth +{warm}</div><div style={{ color: w > limit ? '#ff8a7a' : '#cfc2dc' }}>Load {w.toFixed(1)} / {limit} kg{w > limit ? ' (slowed)' : ''}</div><div style={{ color: '#ffe27a' }}>Carried cash {countItem(r, 'inv', 'rcash')} · Secured {api.gs.profile.securedCash}</div></div>
     </div>
-    <Grid api={api} cid="inv" quickTo={quickTo} hotRow />
+    {import.meta.env.VITE_FX_TEST === '1' && <div style={{fontSize:10,color:'#ffd98a'}}>VFX TEST · 10 mỗi Core · cuộn túi để xem</div>}<Grid api={api} cid="inv" quickTo={quickTo} hotRow />
     <div style={{ borderTop: '1px solid #3a2e46', marginTop: 4, paddingTop: 3 }}><ItemInfo s={sel} known={r.knowledge.recipes} /></div>
     {sel && api.sel?.c === 'inv' && ITEMS[sel.key].repair && sel.dur !== undefined && sel.dur < ITEMS[sel.key].dur! && <div style={{ fontSize: 10, marginTop: 3 }}>Field repair (+{BAL.player.fieldRepairDurability} durability): <button className="btn" disabled={!C(r, 'inv').slots.some(s => s?.key === 'field_repair_kit')} onClick={() => { const kitSlot = C(r, 'inv').slots.findIndex(s => s?.key === 'field_repair_kit'); const kit = C(r, 'inv').slots[kitSlot]; if (kit && api.sel) api.act('fieldRepair', { slot: api.sel.slot, uid: sel.uid, kitSlot, kitUid: kit.uid }); }}>Use one kit</button></div>}
     <div className="flex gap-1" style={{ marginTop: 3 }}>
