@@ -2,7 +2,7 @@ import { creatorLootV1 } from './creator-loot';
 // Local-first snapshots: one serialized profile + run + receipts per write.
 // Checksums detect accidental damage, not malicious edits or rollback of all copies.
 import { BAL, SAVE_VERSION, WW, TILE, type GameState, type Stack } from './core';
-import { ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS } from './catalog';
+import { ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, VENDOR_SPARES } from './catalog';
 import { newGame } from './engine';
 import { getWorld, hasLayout, webRecyclerSite } from './world';
 import { mapDigest } from './map-package';
@@ -103,7 +103,7 @@ export function validate(raw: any): GameState | null {
     if (e.kind === 'struct' && e.c && r.custody[e.c]?.kind !== 'chest') return null;
     const refs = [e.c, e.station?.fuelC, e.station?.outC].filter((v: any) => v !== undefined);
     for (const cid of refs) { if (typeof cid !== 'string' || !r.custody[cid] || ownedContainers.has(cid)) return null; ownedContainers.add(cid); }
-    if (e.basePower !== undefined && (!obj(e.basePower) || e.type !== 'base_generator' || typeof e.basePower.enabled !== 'boolean' || !finite(e.basePower.energy) || e.basePower.energy < 0 || !e.c)) return null;
+    if (e.basePower !== undefined && (!obj(e.basePower) || e.type !== 'base_generator' || typeof e.basePower.enabled !== 'boolean' || !finite(e.basePower.energy) || e.basePower.energy < 0 || (e.basePower.capacity !== undefined && e.basePower.capacity !== 2) || !e.c)) return null;
     if (e.turret !== undefined && (!obj(e.turret) || e.type !== 'arrow_turret' || typeof e.turret.enabled !== 'boolean' || !finite(e.turret.cooldown) || e.turret.cooldown < 0 || !finite(e.turret.angle) || (e.turret.tracking !== undefined && typeof e.turret.tracking !== 'boolean') || (e.turret.generatorId !== undefined && (typeof e.turret.generatorId !== 'string' || !e.turret.generatorId)) || !e.c)) return null;
     if (e.type === 'base_generator' && !e.basePower || e.type === 'arrow_turret' && !e.turret) return null;
     if(e.garden?.coldFrame !== undefined && (e.type !== 'garden' || e.garden.coldFrame !== true)) return null;
@@ -115,6 +115,8 @@ export function validate(raw: any): GameState | null {
     if (e.legacyJobs && (e.kind !== 'bag' || !STRUCTS[e.legacyJobs.stationType]?.station || !jobs(e.legacyJobs.queue, STRUCTS[e.legacyJobs.stationType].station!) || e.legacyJobs.queue.some((j: any) => j.reserved !== undefined))) return null;
   }
   if((Object.values(r.entities) as any[]).filter(e=>e.kind==='recycler').length>1)return null;
+  for(const [key,offer] of Object.entries(VENDOR_SPARES)){const stock=r.vendorStock[`spares:${key}`];if(stock!==undefined && (!integer(stock) || stock>offer.stock))return null;}
+  for(const g of Object.values(r.entities) as any[]) if(g.basePower){const links=(Object.values(r.entities) as any[]).filter(t=>t.turret?.generatorId===g.id).length;if(links>(g.basePower.capacity??1))return null;}
   if (r.wreckEconomy !== undefined && r.wreckEconomy !== 'direct-v1' && r.wreckEconomy !== 'recycler-v1') return null;
   if (r.wreckEconomy === 'recycler-v1' && !hasAuthorizedRecycler(r)) return null;
   // A retired site must be a real authored public loot site and cannot also

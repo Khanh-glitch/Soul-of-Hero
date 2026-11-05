@@ -3,7 +3,7 @@ import { creatorLootV1 } from './creator-loot';
 // Rule: validate EVERYTHING first, then commit. Failed preconditions never partially debit.
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
-import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
+import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
 import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, webRecyclerSite, type StaticEnt } from './world';
 import { sourceDigest } from './world-economy';
 import { wreckBonuses, wreckEconomy } from './wreck-economy';
@@ -91,7 +91,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
     player: null as any, creatures: [], sources: {}, terrain: {}, entities: {}, custody: {}, knowledge: { recipes: Object.keys(RECIPES).filter(k => RECIPES[k].base), studied: [] },
     traces: [], discovered: [], poiSeen: [], elderStones: [], achievements: [], score: 0, deposited: 0,
     clock: { lastSimAt: now, simMs: 0, respawnAcc: 0, weatherSlot: -1 }, rng: seed, nextId: 1, receipts: [], seenIntents: [], seq: 0,
-    vendorStock: { escrow_chest: 4, ...Object.fromEntries(Object.entries(VENDOR_SECURED).map(([k, v]) => [k, v.stock])) }, log: [],
+    vendorStock: { escrow_chest: 4, ...Object.fromEntries(Object.entries(VENDOR_SECURED).map(([k, v]) => [k, v.stock])), ...Object.fromEntries(Object.entries(VENDOR_SPARES).map(([k,v]) => [`spares:${k}`,v.stock])) }, log: [],
   };
   if (getActiveLayout()==='shipping_fresh' || getActiveLayout()==='dev_delta_fresh') r.creatorLootV1=true;
   const reg = 0; r.spawnRegion = reg; const sp = chooseLegalSpawn(r); if(!sp)return {ok:false,reason:'No safe, resource-accessible spawn in this region.'}; r.spawnChoice={x:sp.tx,y:sp.ty,contract:'seeded-geographic-v1'};
@@ -250,8 +250,10 @@ export function turretStatus(r: RunState, e: Entity): string {
 }
 /** Fuel is real, local and consumed while switched on, online or offline. */
 export function stepBasePower(r: RunState, dt: number, now: number) {
-  for (const e of Object.values(r.entities)) { const power=e.basePower; if (!power?.enabled || !e.c) continue; let left=dt;
-    while (left>1e-8) { if (power.energy<=1e-8) { const slot=C(r,e.c).slots.find(s=>s && ITEMS[s.key]?.fuel); if (!slot) {power.energy=0; break;} power.energy=ITEMS[slot.key].fuel!*1000; const key=slot.key; removeItem(r,e.c,key,1); receipt(r,now-left,'power.fuel',`${e.id}:${key}`); }
+  for (const e of Object.values(r.entities)) { const power=e.basePower; if (!power?.enabled || !e.c) continue;
+    // Two active, physically connected consumers draw twice the fuel per second.
+    const load=Math.max(1,Object.values(r.entities).filter(t=>t.turret?.enabled && t.turret.generatorId===e.id && owned(t) && dist(e.x,e.y,t.x,t.y)<=3*TILE && clearPhysicalLine(r,e,t,true,true)).length); let left=dt*load;
+    while (left>1e-8) { if (power.energy<=1e-8) { const slot=C(r,e.c).slots.find(s=>s && ITEMS[s.key]?.fuel); if (!slot) {power.energy=0; break;} power.energy=ITEMS[slot.key].fuel!*1000; const key=slot.key; removeItem(r,e.c,key,1); receipt(r,now-left/load,'power.fuel',`${e.id}:${key}`); }
       const used=Math.min(left,power.energy); power.energy-=used; left-=used;
     }
   }
@@ -430,6 +432,9 @@ export function harvestHit(gs: GameState, tx: number, ty: number, power: Partial
   for (let u = 0; u < units; u++) {
     st.stock--; for (const [k, q] of s.def.yields) { spawnDrop(r, k, q, cx + ox, cy + oy, now); got += q; }
     for (const [k, ch] of (s.key === 'wreck' ? wreckBonuses(r) : s.def.bonus || [])) if (rngNext(r) < ch) { const drop=spawnDrop(r, k, 1, cx + ox, cy + oy, now); if(k==='damaged_drive')receipt(r,now,'harvest.component',`${s.key}@${tx},${ty}:${C(r,drop.c!).slots[0]!.uid}`); }
+    // SOH_NEW_TUNED v1: only modern source layouts yield this additional,
+    // finite wreck salvage; never modify legacy tables or invent new Map cells.
+    if (s.key==='wreck' && r.sourceLayoutVersion===3 && rngNext(r)<SALVAGED_OIL_WRECK_CHANCE) spawnDrop(r,'salvaged_oil',1,cx+ox,cy+oy,now);
   }
   r.player.skills.gather += units;
   const depleted = st.stock <= 0;
@@ -683,6 +688,15 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (chest && next.slots) while (chest.slots.length < next.slots) chest.slots.push(null);
       markDirty(); return ok('structure.upgrade', `${e.id}:${old}->${target}`, `${next.name}: ${Math.round(e.hp)}/${e.maxHp} HP (condition preserved).`);
     }
+    case 'upgradeGenerator': {
+      const e=r.entities[it.eid], bench=r.entities[it.benchId];
+      if(!e || e.kind!=='struct' || e.type!=='base_generator' || !e.basePower || !owned(e) || !near(r,e,3)) return fail('Use your generator within reach.');
+      if(e.basePower.capacity===2) return fail('Generator is already reinforced.');
+      if(!bench || bench.kind!=='struct' || bench.type!=='workbench' || !bench.station || !owned(bench) || !near(r,bench,3) || dist(bench.x,bench.y,e.x,e.y)>3*TILE || (bench.station.level??1)<GENERATOR_CAPACITY_UPGRADE.benchLevel) return fail('A level 2 workbench must be within reach of you and the generator.');
+      if(!hasAll(r,'inv',GENERATOR_CAPACITY_UPGRADE.cost)) return fail('Missing generator upgrade materials.');
+      for(const [k,q] of GENERATOR_CAPACITY_UPGRADE.cost) removeItem(r,'inv',k,q);
+      e.basePower.capacity=2;return ok('power.upgrade',e.id,'Generator reinforced for two linked turrets. Two active loads burn fuel twice as fast.');
+    }
     case 'basePower': {
       const e = r.entities[it.eid]; if (!e?.basePower || e.type !== 'base_generator' || !owned(e) || !near(r,e,2.2)) return fail('Use your generator within reach.');
       if (typeof it.enabled !== 'boolean') return fail('Invalid power setting.');
@@ -693,7 +707,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (it.field === 'enabled' && typeof it.value === 'boolean') e.turret.enabled = it.value;
       else if (it.field === 'generatorId' && typeof it.value === 'string') {
         if (it.value) { const gen = r.entities[it.value]; if (!gen?.basePower || gen.type !== 'base_generator' || !owned(gen) || dist(e.x,e.y,gen.x,gen.y) > 3*TILE || !clearPhysicalLine(r,e,gen,true,true)) return fail('Generator must be owned, within 3 tiles and unobstructed.');
-          if (Object.values(r.entities).some(o=>o.id!==e.id && o.turret?.generatorId===gen.id)) return fail('Generator already connected to another turret.'); }
+          if (Object.values(r.entities).filter(o=>o.id!==e.id && o.turret?.generatorId===gen.id).length >= (gen.basePower.capacity??1)) return fail('Generator capacity is full.'); }
         e.turret.generatorId = it.value || undefined;
       } else return fail('Invalid turret setting.');
       return ok('turret.configure', `${e.id}:${it.field}`);
@@ -873,6 +887,16 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       gs.profile.profileReceipts.push(`dep:${r.id}:${it.id}:${n}`);
       award(gs, 'first_deposit', now);
       return ok('escrow.deposit', `${n}`, `Secured ${n} cash to your profile.`);
+    }
+    case 'buySpares': {
+      const e=r.entities[it.eid]; if(!e || e.kind!=='vendor' || !near(r,e,2.6) || !clearInteraction(r,e)) return fail('Walk up to the trader.');
+      const item=it.item; if(typeof item!=='string' || !Object.prototype.hasOwnProperty.call(VENDOR_SPARES,item)) return fail('Not sold for Spares.');
+      const offer=VENDOR_SPARES[item], stockKey=`spares:${item}`;
+      if((r.vendorStock[stockKey]??0)<=0) return fail('Out of stock this run.');
+      if(countItem(r,'inv','spares')<offer.price) return fail(`Needs ${offer.price} Spares.`);
+      // Physical overflow is dropped at the trader, never deleted. No sell path.
+      removeItem(r,'inv','spares',offer.price); r.vendorStock[stockKey]--; giveOrDrop(r,item,offer.qty,now);
+      return ok('vendor.spares',`${item}x${offer.qty} -${offer.price} spares`, `Bought ${offer.qty} ${ITEMS[item].name} for ${offer.price} Spares.`);
     }
     case 'buy': { // physical vendor
       const e = r.entities[it.eid]; if (!e || e.kind !== 'vendor' || !near(r, e, 2.6) || !clearInteraction(r,e)) return fail('Walk up to the trader.');

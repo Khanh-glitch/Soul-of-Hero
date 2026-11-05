@@ -1,0 +1,14 @@
+{
+  "method": "relocated to authored vendor; Spares injected; F and Buy via real input",
+  "result": {
+    "receipt": {
+      "id": "r2",
+      "seq": 2,
+      "at": 1793844600034,
+      "kind": "vendor.spares",
+      "detail": "iron_orex2 -3 spares"
+    },
+    "stock": 4
+  },
+  "errors": []
+}

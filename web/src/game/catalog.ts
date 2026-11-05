@@ -7,6 +7,7 @@ export interface RecipeDef { out: string; qty: number; ins: [string, number][]; 
 
 // TUNABLE: a capability upgrade, not a learned recipe. The cart itself remains physical.
 export const FURNACE_LINING: { cost: [string, number][]; benchLevel: number } = { cost: [['brick', 2], ['fasteners', 3], ['mechanical_parts', 1]], benchLevel: 2 };
+export const GENERATOR_CAPACITY_UPGRADE: { cost: [string, number][]; benchLevel: number } = { cost: [['mechanical_parts', 4], ['iron_ingot', 2], ['fasteners', 2], ['spares', 4]], benchLevel: 2 }; // SOH_NEW_TUNED v1
 export const CART_FREIGHT_UPGRADE: { cost: [string, number][]; benchLevel: number } = { cost: [['mechanical_parts', 4], ['iron_ingot', 2], ['spares', 3]], benchLevel: 2 };
 // Seed and plant input are consumed; produce remains physical in the inventory or a drop.
 export const GARDEN_FRAME_COST: [string,number][] = [['wood',4], ['fiber',4], ['glass',1], ['herb',1]];
@@ -39,6 +40,8 @@ export const ITEMS: Record<string, ItemDef> = {
   core_mjolnir: I({ name:'Mjolnir', cat:'core', icon:'core', c1:'#6689ad', c2:'#eefbff', w:0.3, max:1, desc:'Rare Nature Core: thunder punch, five lightning strikes and electrical attraction.', creatorCore:'mjolnir', essence:'nature' }),
   core_demon: I({ name:'Lõi quỷ', cat:'core', icon:'core', c1:'#593777', c2:'#ebc5ff', w:0.3, max:1, desc:'Rare Spirit Core: directed rays, a stationary beam and a map-selected teleport.', creatorCore:'demon', essence:'spirit' }),
   // All lifecycle and upgrade costs are provisional TUNABLE values.
+  // SOH_NEW_TUNED v1: physical salvage, not an oil well or approved Map resource.
+  salvaged_oil: I({ name:'Salvaged Oil', cat:'res', icon:'can', c1:'#3d3025', c2:'#9c8050', w:0.7, max:30, desc:'Recovered from car wrecks. Study a sample to learn furnace refining into generator canisters.', specimen:'refine_salvaged_oil' }),
   damaged_drive: I({ name: 'Damaged Drive', cat: 'res', icon: 'parts', c1: '#4b6570', c2: '#f0bd56', w: 3, max: 1, desc: 'Finite wreck salvage. At a workbench: 1 drive + 1 scrap → 1 Mechanical Parts. Or carry to the Foundry Recycler: 1 drive → 2 Spares. The same drive is spent either way.' }),
   mechanical_parts: I({ name: 'Mechanical Parts', cat: 'res', icon: 'parts', c1: '#707984', c2: '#c9d2d8', w: 0.5, max: 30, desc: 'Found in industrial wrecks or made at a bench. Improve tools or maintain equipment.' }),
   // Provisional, run-local cross-system materials and equipment.
@@ -188,6 +191,8 @@ export const requiredStationLevel = (recipe: RecipeDef): 1 | 2 | 3 => recipe.sta
 // ---------- Recipes (K4: one run-local authority) ----------
 export type Recipe = RecipeDef;
 export const RECIPES: Record<string, Recipe> = {
+  // SOH_NEW_TUNED v1. Furnace fuel is separate from consumed input.
+  refine_salvaged_oil: { out:'fuel_can', qty:1, ins:[['salvaged_oil',3],['glass',1]], station:'furnace', secs:18, tier:1 },
   energy_basic: { out:'energy_basic', qty:8, ins:[['stone',2],['fiber',2]], station:null, secs:2, base:true, tier:0 },
   energy_refined_industrial: { out:'energy_refined', qty:12, ins:[['crystal',2],['iron_ingot',2],['charcoal',2]], station:'workbench', stationLevel:3, secs:40, base:true, tier:2 },
   energy_refined: { out:'energy_refined', qty:4, ins:[['crystal',1],['iron_ingot',1]], station:'workbench', stationLevel:2, secs:16, base:true, tier:2 },
@@ -282,7 +287,7 @@ export const STRUCTS: Record<string, StructDef> = {
   garden: { name: 'Garden Plot', cost: [['wood', 4], ['fiber', 4]], hp: 60, need: 'claim', block: false, layer: 'obj', desc: 'Plant seeds; grows only while watered (rain counts).' },
   farm_controller: { name: 'Garden Tender', cost: [['wood', 12], ['iron_ingot', 2], ['mechanical_parts', 3], ['fasteners', 3], ['spares', 2]], hp: 140, need: 'claim', block: true, layer: 'obj', slots: 3, desc: 'Optional fuelled garden machinery. Link one nearby plot, barrel and chest; needs an improved workbench to build.' },
   barrel: { name: 'Rain Barrel', cost: [['wood', 8], ['rope', 1]], hp: 80, need: 'claim', block: true, layer: 'obj', desc: 'Collects rainwater; refill flasks.' },
-  base_generator: { name: 'Field Generator', cost: [['iron_ingot', 3], ['mechanical_parts', 3], ['spares', 4], ['wood', 6]], hp: 180, need: 'claim', block: true, layer: 'obj', slots: 3, desc: 'Optional fueled power for one linked nearby turret.' },
+  base_generator: { name: 'Field Generator', cost: [['iron_ingot', 3], ['mechanical_parts', 3], ['spares', 4], ['wood', 6]], hp: 180, need: 'claim', block: true, layer: 'obj', slots: 3, desc: 'Optional fueled power for one nearby turret; upgrade for two, with higher fuel use.' },
   arrow_turret: { name: 'Arrow Turret', cost: [['wood', 10], ['iron_ingot', 2], ['mechanical_parts', 2], ['fasteners', 2]], hp: 130, need: 'claim', block: true, layer: 'obj', slots: 3, desc: 'Linked power and real arrows; shoots visible hostile creatures.' },
   spikes: { name: 'Spike Trap', cost: [['wood', 6]], hp: 90, need: 'claim', block: false, layer: 'obj', desc: 'Hurts creatures that walk over it.' },
   barricade: { name: 'Barricade', cost: [['wood', 8]], hp: 220, need: 'claim', block: true, layer: 'obj', desc: 'Cheap blocking defense.' },
@@ -294,6 +299,11 @@ export const STRUCTURE_UPGRADES: Record<string, string> = { floor_wood: 'floor_s
 export const BUILD_ORDER = ['claim', 'floor_wood', 'floor_stone', 'wall_wood', 'wall_stone', 'wall_brick', 'door_wood', 'door_iron', 'roof_thatch', 'roof_tile', 'bed_straw', 'chest_small', 'chest_large', 'campfire', 'furnace', 'workbench', 'research', 'garden', 'barrel', 'farm_controller', 'base_generator', 'arrow_turret', 'spikes', 'barricade', 'torch_post', 'escrow'];
 
 // Run-2 vendor stock purchasable with SECURED profile cash (PROPOSED prices) → run-local items
+export const SALVAGED_OIL_WRECK_CHANCE = 0.35; // SOH_NEW_TUNED v1 per finite wreck stock unit
+// SOH_NEW_TUNED v1. One-way, finite run-local stock; no automatic restock or resale.
+export const VENDOR_SPARES: Record<string, {price:number; qty:number; stock:number}> = {
+  iron_ore:{price:3,qty:2,stock:5}, coal:{price:3,qty:2,stock:4}, glass:{price:4,qty:1,stock:3}, salvaged_oil:{price:5,qty:1,stock:4},
+};
 export const VENDOR_SECURED: Record<string, { price: number; stock: number }> = {
   iron_pick: { price: 12, stock: 1 }, iron_axe: { price: 12, stock: 1 }, medkit: { price: 4, stock: 4 },
   cart_kit: { price: 20, stock: 1 }, leather_armor: { price: 10, stock: 1 }, water_flask: { price: 3, stock: 2 },

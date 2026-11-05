@@ -1,13 +1,16 @@
 import type { StaticEnt } from './world';
 
-/** Gameplay-owned additions to existing Web loot sites, never new Map cells.
- * Each unique reward appears once only on new versioned runs. The renewable
- * ordinary-stock policy deliberately excludes it. */
+/** Versioned Gameplay-owned rewards in already-authored Shipping/Dev sites.
+ * `marker` identifies the existing crate, not a new Map coordinate. These
+ * are guaranteed unique physical items, not a probability table. */
+export const CREATOR_LOOT_V1 = [
+  { id:'factory_vault/core_fire', poi:'factory_vault', marker:'core_fire', core:'core_dragon' },
+  { id:'light_top/core_storm', poi:'light_top', marker:'core_storm', core:'core_meteor' },
+  { id:'factory_vault/blueprint:gas_mask', poi:'factory_vault', marker:'blueprint:gas_mask', core:'core_demon' },
+  { id:'watch/keycard', poi:'watch', marker:'keycard', core:'core_mjolnir' },
+  { id:'wreck/core_frost', poi:'wreck', marker:'core_frost', core:'core_elsa' },
+] as const;
 export function creatorLootV1(site: StaticEnt): string | undefined {
   if (site.kind !== 'loot') return;
-  if (site.poi === 'factory_vault' && site.loot?.some(([key]) => key === 'core_fire')) return 'core_dragon';
-  if (site.poi === 'light_top' && site.loot?.some(([key]) => key === 'core_storm')) return 'core_meteor';
-  if (site.poi === 'factory_vault' && site.loot?.some(([key]) => key === 'blueprint:gas_mask')) return 'core_demon';
-  if (site.poi === 'watch' && site.loot?.some(([key]) => key === 'keycard')) return 'core_mjolnir';
-  if (site.poi === 'wreck' && site.loot?.some(([key]) => key === 'core_frost')) return 'core_elsa';
+  return CREATOR_LOOT_V1.find(c => c.poi === site.poi && site.loot?.some(([key]) => key === c.marker))?.core;
 }
