@@ -1,0 +1,273 @@
+{
+  "log": [
+    {
+      "t": "2026-11-05T21:57:48.592Z",
+      "k": "FIXTURE",
+      "v": {
+        "site": {
+          "x": 122,
+          "y": 76
+        },
+        "bedId": "e8n",
+        "chestId": "e8o",
+        "fails": [],
+        "chestUids": [
+          {
+            "uid": "s8q",
+            "key": "cooked_meat",
+            "qty": 3,
+            "charge": null
+          },
+          {
+            "uid": "s8r",
+            "key": "meat",
+            "qty": 1,
+            "charge": null
+          },
+          {
+            "uid": "s8s",
+            "key": "water_flask",
+            "qty": 1,
+            "charge": 4
+          }
+        ],
+        "flaskUid": "s8s",
+        "meatUid": "s8q"
+      }
+    },
+    {
+      "t": "2026-11-05T21:57:49.810Z",
+      "k": "PANEL_OPEN",
+      "v": "Straw bed · rest visible after real KeyE"
+    },
+    {
+      "t": "2026-11-05T21:57:50.294Z",
+      "k": "BEFORE_START",
+      "v": {
+        "hunger": 39.94432000000025,
+        "thirst": 59.91648000000007,
+        "chest": [
+          {
+            "uid": "s8q",
+            "key": "cooked_meat",
+            "qty": 3,
+            "charge": null
+          },
+          {
+            "uid": "s8r",
+            "key": "meat",
+            "qty": 1,
+            "charge": null
+          },
+          {
+            "uid": "s8s",
+            "key": "water_flask",
+            "qty": 1,
+            "charge": 4
+          }
+        ],
+        "now": 1793934005616
+      }
+    },
+    {
+      "t": "2026-11-05T21:57:50.885Z",
+      "k": "STARTED",
+      "v": {
+        "rest": {
+          "version": "rest-v1",
+          "bedId": "e8n",
+          "chestId": "e8o",
+          "reserveId": "c8t",
+          "startedAt": 1793934005647,
+          "targetAt": 1793962805647,
+          "eatenHunger": 0,
+          "drunkThirst": 0
+        },
+        "reserve": [
+          {
+            "uid": "s8q",
+            "key": "cooked_meat",
+            "qty": 3,
+            "charge": null
+          },
+          {
+            "uid": "s8s",
+            "key": "water_flask",
+            "qty": 1,
+            "charge": 4
+          }
+        ],
+        "chestNow": 1
+      }
+    },
+    {
+      "t": "2026-11-05T21:57:51.350Z",
+      "k": "MID_REST_3H",
+      "v": {
+        "restActive": true,
+        "hunger": 27.44307935185239,
+        "thirst": 41.16461902777828,
+        "reserve": [
+          {
+            "uid": "s8q",
+            "key": "cooked_meat",
+            "qty": 3,
+            "charge": null
+          },
+          {
+            "uid": "s8s",
+            "key": "water_flask",
+            "qty": 1,
+            "charge": 4
+          }
+        ],
+        "receipts": [
+          [
+            "rest.start",
+            "e8n:e8o:8h:s8q,s8s"
+          ]
+        ]
+      }
+    },
+    {
+      "t": "2026-11-05T21:57:54.604Z",
+      "k": "REOPENED_MID_REST",
+      "v": {
+        "restActive": true,
+        "reserve": [
+          {
+            "uid": "s8q",
+            "key": "cooked_meat",
+            "qty": 3,
+            "charge": null
+          },
+          {
+            "uid": "s8s",
+            "key": "water_flask",
+            "qty": 1,
+            "charge": 4
+          }
+        ],
+        "now": 1793944810464
+      }
+    },
+    {
+      "t": "2026-11-05T21:57:55.297Z",
+      "k": "WOKE",
+      "v": {
+        "restActive": false,
+        "hunger": 36.41759930555675,
+        "thirst": 33.62639895833446,
+        "chest": [
+          {
+            "uid": "s8q",
+            "key": "cooked_meat",
+            "qty": 2,
+            "charge": null
+          },
+          {
+            "uid": "s8r",
+            "key": "meat",
+            "qty": 1,
+            "charge": null
+          },
+          {
+            "uid": "s8s",
+            "key": "water_flask",
+            "qty": 1,
+            "charge": 3
+          }
+        ],
+        "receipts": [
+          [
+            "rest.start",
+            1793934005647,
+            "e8n:e8o:8h:s8q,s8s"
+          ],
+          [
+            "rest.eat",
+            1793946962878,
+            "s8q:cooked_meat"
+          ],
+          [
+            "rest.drink",
+            1793954178092.56,
+            "s8s:charge=3"
+          ],
+          [
+            "rest.end",
+            1793962805647,
+            "rested; returned=2; bag=none"
+          ]
+        ],
+        "log": [
+          {
+            "t": 1793934005647,
+            "msg": "You lie down on the straw bed. 2 supply stacks set beside you.",
+            "tone": "gold"
+          },
+          {
+            "t": 1793962805647,
+            "msg": "You wake rested. Leftover supplies are back in the chest.",
+            "tone": "gold"
+          },
+          {
+            "t": 1793963148793,
+            "msg": "Airdrop incoming near central sector; exact landing unknown.",
+            "tone": "gold"
+          }
+        ]
+      }
+    },
+    {
+      "t": "2026-11-05T21:57:58.869Z",
+      "k": "REOPENED_AFTER_WAKE",
+      "v": {
+        "restActive": false,
+        "chest": [
+          {
+            "uid": "s8q",
+            "key": "cooked_meat",
+            "qty": 2,
+            "charge": null
+          },
+          {
+            "uid": "s8r",
+            "key": "meat",
+            "qty": 1,
+            "charge": null
+          },
+          {
+            "uid": "s8s",
+            "key": "water_flask",
+            "qty": 1,
+            "charge": 3
+          }
+        ],
+        "receipts": [
+          [
+            "rest.start",
+            1793934005647,
+            "e8n:e8o:8h:s8q,s8s"
+          ],
+          [
+            "rest.eat",
+            1793946962878,
+            "s8q:cooked_meat"
+          ],
+          [
+            "rest.drink",
+            1793954178092.56,
+            "s8s:charge=3"
+          ],
+          [
+            "rest.end",
+            1793962805647,
+            "rested; returned=2; bag=none"
+          ]
+        ]
+      }
+    }
+  ],
+  "errors": []
+}
