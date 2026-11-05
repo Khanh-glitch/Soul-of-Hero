@@ -1,0 +1,171 @@
+{
+  "snapshot": {
+    "repo": "Khanh-glitch/Soul-of-Hero",
+    "commit": "6c854ab0c6eafb79d93c711b6907cb2487d63b10",
+    "file_sha": "ba57bc0789512233ebad034e304931b0f5edd832",
+    "captured_on": "2026-11-05",
+    "note": "Static catalog recipe graph only: not execution, source authentication or gameplay proof"
+  },
+  "stats": {
+    "recipes": 4,
+    "source_types": 19,
+    "output_items": 4,
+    "unique_input_items": 7,
+    "terminal_output_count": 4
+  },
+  "source_types": [
+    "oak",
+    "pine",
+    "snowpine",
+    "palm",
+    "willow",
+    "deadtree",
+    "rock",
+    "iron",
+    "coalv",
+    "crystal",
+    "salt_shale",
+    "sulfur",
+    "bush",
+    "grass",
+    "reed",
+    "herb",
+    "mushroom",
+    "scrap",
+    "wreck"
+  ],
+  "recipes": [
+    {
+      "id": "refine_salvaged_oil",
+      "output": "fuel_can",
+      "count": 1,
+      "input": [
+        {
+          "item": "salvaged_oil",
+          "qty": 3
+        },
+        {
+          "item": "glass",
+          "qty": 1
+        }
+      ],
+      "station": "'furnace'",
+      "timeSeconds": 18,
+      "level": 1,
+      "base": false,
+      "tier": 1
+    },
+    {
+      "id": "energy_basic",
+      "output": "energy_basic",
+      "count": 8,
+      "input": [
+        {
+          "item": "stone",
+          "qty": 2
+        },
+        {
+          "item": "fiber",
+          "qty": 2
+        }
+      ],
+      "station": "null",
+      "timeSeconds": 2,
+      "level": 1,
+      "base": true,
+      "tier": 0
+    },
+    {
+      "id": "core_blast",
+      "output": "core_blast",
+      "count": 1,
+      "input": [
+        {
+          "item": "iron_ingot",
+          "qty": 2
+        },
+        {
+          "item": "spares",
+          "qty": 4
+        },
+        {
+          "item": "crystal",
+          "qty": 1
+        }
+      ],
+      "station": "'workbench'",
+      "timeSeconds": 30,
+      "level": 1,
+      "base": true,
+      "tier": 1
+    },
+    {
+      "id": "core_earthmother",
+      "output": "core_earthmother",
+      "count": 1,
+      "input": [
+        {
+          "item": "iron_ingot",
+          "qty": 2
+        },
+        {
+          "item": "spares",
+          "qty": 4
+        },
+        {
+          "item": "crystal",
+          "qty": 1
+        }
+      ],
+      "station": "'workbench'",
+      "timeSeconds": 30,
+      "level": 1,
+      "base": true,
+      "tier": 1
+    }
+  ],
+  "consumer_map": {
+    "salvaged_oil": [
+      "refine_salvaged_oil"
+    ],
+    "glass": [
+      "refine_salvaged_oil"
+    ],
+    "stone": [
+      "energy_basic"
+    ],
+    "fiber": [
+      "energy_basic"
+    ],
+    "iron_ingot": [
+      "core_blast",
+      "core_earthmother"
+    ],
+    "spares": [
+      "core_blast",
+      "core_earthmother"
+    ],
+    "crystal": [
+      "core_blast",
+      "core_earthmother"
+    ]
+  },
+  "terminal_recipe_outputs": [
+    {
+      "output": "fuel_can",
+      "recipe": "refine_salvaged_oil"
+    },
+    {
+      "output": "energy_basic",
+      "recipe": "energy_basic"
+    },
+    {
+      "output": "core_blast",
+      "recipe": "core_blast"
+    },
+    {
+      "output": "core_earthmother",
+      "recipe": "core_earthmother"
+    }
+  ]
+}
