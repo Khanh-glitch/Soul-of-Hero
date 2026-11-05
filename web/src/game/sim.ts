@@ -1,3 +1,4 @@
+import { vehicleClear, vehicleExitPoint } from './motorbike';
 import { LOOT_CLASSES, lootClass } from './loot-ecology';
 // Deterministic-ish real-time simulation layered on the engine authority. All state mutation goes through engine helpers.
 import { BAL, TILE, WW, WH, HOUR, VIEW_W, VIEW_H, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity, type Proj, type Haz } from './core';
@@ -34,6 +35,7 @@ const tileOf = (v: number) => Math.floor(v / TILE);
 function solidFor(r: RunState, x: number, y: number, who: 'player' | 'creature' | 'cart') {
   const tx = tileOf(x), ty = tileOf(y); if (tx < 0 || ty < 0 || tx >= WW || ty >= WH) return true;
   const b = blockGrid(r)[ty * WW + tx];
+  if((who==='cart'||(who==='player'&&!r.player.vehicle)) && Object.values(r.entities).some(e=>e.kind==='vehicle' && Math.hypot(e.x-x,e.y-y)<BAL.motorbike.radius))return true;
   // Authored cargo constraints are additional to live collision, not a
   // substitute for opening a physical door or clearing a physical object.
   const w = getWorld(); const i=ty*WW+tx;
@@ -42,6 +44,7 @@ function solidFor(r: RunState, x: number, y: number, who: 'player' | 'creature' 
   return b === 1 || b === 2 || b === 3 || b === 5;
 }
 function moveBody(r: RunState, o: { x: number; y: number }, dx: number, dy: number, rad: number, who: 'player' | 'creature' | 'cart') {
+  if(o===r.player && r.player.vehicle)return false;
   let hit = false;
   const nx = o.x + dx; if (!solidFor(r, nx + Math.sign(dx) * rad, o.y - rad + 1, who) && !solidFor(r, nx + Math.sign(dx) * rad, o.y + rad - 1, who)) o.x = nx; else if (dx) hit = true;
   const ny = o.y + dy; if (!solidFor(r, o.x - rad + 1, ny + Math.sign(dy) * rad, who) && !solidFor(r, o.x + rad - 1, ny + Math.sign(dy) * rad, who)) o.y = ny; else if (dy) hit = true;
@@ -297,21 +300,22 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   // start actions
   const selfFrozen=(p.iceUntil||0)>now || (p.channelUntil||0)>now || !!r.spiritTransit;
   if ((p.iceUntil||0)>now) { for(const m of r.creatures)if(m.state!=='dead'&&!m.elder?.submerged&&!m.atk?.burrow&&dist(p.x,p.y,m.x,m.y)<BAL.creatorCoreElsa.auraRadius&&los(r,p.x,p.y,m.x,m.y,true))m.frozenUntil=Math.max(m.frozenUntil||0,now+BAL.creatorCoreElsa.enemyMs); }
-  if (!selfFrozen && inp.roll && p.stamina >= B.rollCost && (!act || act.kind === 'hurt' || (act.kind === 'swing' && act.done))) {
+  if (!p.vehicle && !selfFrozen && inp.roll && p.stamina >= B.rollCost && (!act || act.kind === 'hurt' || (act.kind === 'swing' && act.done))) {
     p.stamina -= B.rollCost; p.action = { kind: 'roll', t: 0, dur: B.rollMs, angle: ml ? Math.atan2(my, mx) : p.aim }; p.invuln = Math.max(p.invuln, B.rollMs - 40); fx('roll', { x: p.x, y: p.y });
   } else if (inp.cancel && act?.kind === 'cast') { dispatch(gs, { id: 'cc' + now, type: 'castCancel' }, now); p.action = null; fx('fizzle', { x: p.x, y: p.y }); }
-  else if (!selfFrozen && inp.skill && !p.action) {
+  else if (!p.vehicle && !selfFrozen && inp.skill && !p.action) {
     const s = activeStack(r), mode=inp.skill, chosen=inp.skillAim;
     if (s && (!chosen || (chosen.uid===s.uid && chosen.slot===p.active)) && ITEMS[s.key]?.creatorCore && s.reserves && s.reserves[mode]>0) { const tx=chosen?.mx ?? inp.mx,ty=chosen?.my ?? inp.my; p.action={kind:'cast',t:0,dur:380,contact:300,angle:Math.atan2(ty-p.y,tx-p.x),slot:p.active,coreUid:s.uid,mode,targetX:tx,targetY:ty,viewX:chosen?.viewX ?? inp.viewX,viewY:chosen?.viewY ?? inp.viewY}; fx('windup',{x:p.x,y:p.y,core:ITEMS[s.key].essence==='water'?'frost':ITEMS[s.key].essence==='nature'?(ITEMS[s.key].creatorCore==='mjolnir'?'storm':'earth'):ITEMS[s.key].essence==='spirit'?'spirit':'fire'}); }
     else fx('toast',{text:'Creator Core reserve empty — reload with R.'});
   }
-  else if (!selfFrozen && (inp.attackPressed || inp.attack) && !p.action) {
+  else if (!p.vehicle && !selfFrozen && (inp.attackPressed || inp.attack) && !p.action) {
     const s = activeStack(r); const d = s ? ITEMS[s.key] : null;
     if (d?.repair && s?.dur !== undefined && s.dur <= 0) { if (inp.attackPressed) fx('toast', { text: `${d.name} is broken. Repair it at a workbench.` }); }
     else if (d?.creatorCore) { if (s!.reserves && s!.reserves.basic>0) { p.action={kind:'cast',t:0,dur:d.creatorCore==='meteor'?400:d.creatorCore==='dragon'?280:180,contact:d.creatorCore==='meteor'?300:d.creatorCore==='dragon'?170:100,angle:p.aim,slot:p.active,coreUid:s!.uid,mode:'basic'}; } else if(inp.attackPressed) fx('toast',{text:'Basic reserve empty — press R to reload.'}); }
     else if (d?.core) { if ((s!.charge ?? 0) > 0) { p.action = { kind: 'cast', t: 0, dur: 520, contact: 460, angle: p.aim, slot: p.active }; fx('windup', { x: p.x, y: p.y, core: d.core }); } else if (inp.attackPressed) fx('toast', { text: 'This Core is spent. Study it at a Research Table.' }); }
     else if (d && d.food && inp.attackPressed) { const res = dispatch(gs, { id: 'use' + now, type: 'useItem', slot: p.active }, now); fx(res.ok ? 'eat' : 'toast', { x: p.x, y: p.y, text: res.ok ? '' : (res as any).reason }); }
     else if (d && d.cat === 'bp' && inp.attackPressed) { const res = dispatch(gs, { id: 'use' + now, type: 'useItem', slot: p.active }, now); fx('toast', { text: res.ok ? res.msg : (res as any).reason }); }
+    else if (s?.key === 'motorbike_kit' && inp.attackPressed) { const res=dispatch(gs,{id:'bike'+now,type:'placeMotorbike',x:inp.mx,y:inp.my},now);fx('toast',{text:res.ok?'Motorbike deployed. Open with E.':(res as any).reason}); }
     else if (s?.key === 'cart_kit' && inp.attackPressed) { const res = dispatch(gs, { id: 'cart' + now, type: 'placeCart', x: inp.mx, y: inp.my }, now); fx('toast', { text: res.ok ? 'Cart unpacked. Press F next to it to pull.' : (res as any).reason }); }
     else if (d && (d.slot || d.cat === 'kit' || d.cat === 'res' || d.cat === 'cash' || d.cat === 'stone' || d.cat === 'misc') && !d.dmg) { if (inp.attackPressed) { const tool = FISTS; p.action = { kind: 'swing', t: 0, dur: tool.swing, contact: tool.swing * 0.45, angle: p.aim, slot: -1 }; } }
     else if (d?.ranged) { if (countItem(r, 'inv', 'arrow') > 0) p.action = { kind: 'swing', t: 0, dur: d.swing!, contact: d.swing! * 0.62, angle: p.aim, slot: p.active }; else if (inp.attackPressed) fx('toast', { text: 'No arrows.' }); }
@@ -337,7 +341,17 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   if (cart) { const ct = effTile(r, tileOf(cart.x), tileOf(cart.y)); const road = ct === T.ROAD || ct === T.BRIDGE || ct === T.FLOOR; const rough = ct === T.FOREST || ct === T.MARSH || ct === T.HILL || ct === T.SNOW;
     const base = road ? BAL.cart.speedOnRoad : rough ? BAL.cart.speedRough : BAL.cart.speedOffRoad; const cw = cartWeightOf(r, cart);
     sp = B.speed * speedMul * base * Math.max(0.25, 1 - cw / 100 * BAL.cart.weightPenaltyPer100) * (cw > cartLimit(cart) ? 0.4 : 1) * personalLoad * condition; }
-  if (p.action?.kind === 'roll') { const ra = p.action.angle; moveBody(r, p, Math.cos(ra) * B.rollSpeed * dt, Math.sin(ra) * B.rollSpeed * dt, 4, 'player'); }
+  const bike=p.vehicle ? r.entities[p.vehicle] : undefined;
+  if(bike?.kind==='vehicle' && bike.vehicle && bike.deployed) {
+    const V=BAL.motorbike, load=cartWeightOf(r,bike)/V.maxWeight, road=!!getWorld(r.layoutId||'shipping').vehicleGeometry?.road[tileOf(bike.y)*WW+tileOf(bike.x)], rough=[T.FOREST,T.MARSH,T.HILL,T.SNOW].includes(t);
+    sp=(road?V.roadSpeed:rough?V.roughSpeed:V.groundSpeed)*Math.max(.5,1-load*.35)*condition*speedMul;
+    const rate=V.fuelPerPixel*(rough?V.roughFuelMultiplier:1)*(1+load*V.loadFuelMultiplier), wear=V.wearPerPixel*(rough?1.5:1)*(1+load*.5);
+    let remaining=ml ? Math.min(sp*dt,bike.vehicle.fuel/rate,(bike.hp||0)/wear) : 0;
+    const ox=bike.x,oy=bike.y;
+    while(remaining>1e-8){const step=Math.min(remaining,3);const nx=bike.x+mx*step,ny=bike.y+my*step;if(!vehicleClear(r,nx,ny,bike.id)||!vehicleExitPoint(r,nx,ny,bike.id))break;bike.x=nx;bike.y=ny;remaining-=step;}
+    const travelled=dist(ox,oy,bike.x,bike.y);if(travelled>0){bike.vehicle.fuel=Math.max(0,bike.vehicle.fuel-travelled*rate);bike.vehicle.odometer+=travelled;bike.hp=Math.max(0,(bike.hp||0)-travelled*wear);bike.deployed.dur=bike.hp;bike.vehicle.angle=Math.atan2(my,mx);}
+    p.x=bike.x;p.y=bike.y; if(ml)p.aim=bike.vehicle.angle;
+  } else if (p.action?.kind === 'roll') { const ra = p.action.angle; moveBody(r, p, Math.cos(ra) * B.rollSpeed * dt, Math.sin(ra) * B.rollSpeed * dt, 4, 'player'); }
   else if (ml) { moveBody(r, p, mx * sp * dt, my * sp * dt, 4, 'player'); p.stepAcc += sp * dt; if (p.stepAcc > 13) { p.stepAcc = 0; fx('step', { x: p.x, y: p.y + 6, t }); } }
   const movedX = p.x, movedY = p.y;
   p.vx = ml ? mx * sp : 0; p.vy = ml ? my * sp : 0;
@@ -349,6 +363,8 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   }
   // stamina
   if (!p.action || p.action.kind === 'hurt') p.stamina = Math.min(B.maxStamina, p.stamina + B.staminaRegen * dt * (p.hunger > 10 ? 1 : 0.4));
+  // A motorbike does not create human footprints.
+  if(bike){delete r.traceWalk;return;}
   // One run-owned emission path: actual collision-resolved movement only.
   let walk = r.traceWalk;
   if (!walk || dist(startX, startY, walk.x, walk.y) > 0.01 || now < walk.at || now - walk.at > 1000) walk = { x: startX, y: startY, at: now, distance: 0 };
@@ -1111,6 +1127,7 @@ export function findInteract(gs: GameState, now: number): Interact | null {
     else if (e.kind === 'gen') label = e.power ? 'Generator (running)' : 'Fuel generator';
     else if (e.kind === 'evac') label = 'Evacuation beacon';
     else if (e.kind === 'cart') label = 'Cart cargo  [Shift+F] pull';
+    else if (e.kind === 'vehicle') label = r.player.vehicle===e.id ? 'Exit motorbike' : 'Motorbike cargo and controls';
     else if (e.kind === 'struct') { const d2 = STRUCTS[e.type!]; kind = 'struct:' + e.type; if (e.type!.startsWith('door')) label = e.open ? 'Close door' : 'Open door'; else if (e.type === 'claim') label = 'Open Territory Cabinet'; else if (d2.station) label = `Use ${d2.name}`; else if (e.turret) label = `Turret: ${turretStatus(r,e)}${e.turret.tracking ? ' · target' : ''}`; else if (e.basePower) label = `Generator: ${e.basePower.enabled && e.basePower.energy>0 ? 'running' : e.basePower.enabled ? 'no fuel' : 'off'}`; else if (d2.slots) label = `Open ${d2.name}`; else if (e.type === 'escrow') label = 'Rương ký gửi'; else if (e.type === 'garden') label = 'Tend garden'; else if (e.type === 'barrel') label = `Rain barrel (${Math.floor(e.water || 0)})`; else continue; }
     else continue;
     bd = d; best = { kind, label, eid: e.id, x: e.x, y: e.y };

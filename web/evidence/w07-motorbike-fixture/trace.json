@@ -1,0 +1,75 @@
+{
+  "method": "Controlled proximity and inventory fixture. All interactions after Continue are real browser input; no natural journey claim.",
+  "road": {
+    "x": 1928,
+    "y": 1752
+  },
+  "uid": "s7s",
+  "loaded": {
+    "fuel": 100,
+    "cargo": [
+      {
+        "uid": "s7u",
+        "key": "iron_ingot",
+        "qty": 3
+      }
+    ]
+  },
+  "before": 1928,
+  "driven": {
+    "x": 2008.195929687498,
+    "y": 1752,
+    "fuel": 95.91501983154308,
+    "hp": 199.83660079326197,
+    "uid": "s7s",
+    "mounted": "e7w"
+  },
+  "parked": {
+    "x": 2008.195929687498,
+    "y": 1752,
+    "fuel": 95.91501983154308,
+    "mounted": null,
+    "uid": "s7s",
+    "cargo": [
+      {
+        "uid": "s7u",
+        "key": "iron_ingot",
+        "qty": 3
+      }
+    ]
+  },
+  "unloaded": {
+    "cargo": [],
+    "inventory": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 300
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7u",
+        "key": "iron_ingot",
+        "qty": 3
+      }
+    ]
+  },
+  "reopened": {
+    "x": 2008.195929687498,
+    "y": 1752,
+    "fuel": 95.91501983154308,
+    "uid": "s7s"
+  },
+  "errors": []
+}

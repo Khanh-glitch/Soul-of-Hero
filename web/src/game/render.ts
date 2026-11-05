@@ -284,6 +284,13 @@ function drawEntity(g: CanvasRenderingContext2D, r: RunState, e: Entity, time: n
     case 'drop': { const s = C(r, e.c!)?.slots[0]; if (!s) return; const bob = Math.round(Math.sin(time / 250 + e.x) * 1.5); shadow(g, X, Y + 4, 4); const ic = A.icon[s.key]; g.drawImage(ic, X - 6, Y - 9 + bob, 12, 12); if (s.key === 'rcash' || ITEMS[s.key].cat === 'core' || ITEMS[s.key].cat === 'stone') if (hash2(Math.floor(time / 120), X, Y) > 0.7) { g.fillStyle = '#ffffff'; g.fillRect(X - 5 + (hash2(X, Y, Math.floor(time / 120)) * 10 | 0), Y - 8 + bob, 1, 1); } return; }
     case 'bag': { shadow(g, X, Y + 5, 5); g.drawImage(A.st.bag, X - 8, Y - 10); const a = 0.5 + Math.sin(time / 300) * 0.3; g.fillStyle = `rgba(255,226,122,${a})`; g.fillRect(X, Y - 18 - Math.round(Math.sin(time / 300) * 2), 1, 4); g.fillRect(X - 1, Y - 15 - Math.round(Math.sin(time / 300) * 2), 3, 1); return; }
     case 'cart': { shadow(g, X, Y + 6, 11); g.drawImage(A.st.cart, X - 14, Y - 14); if (C(r, e.c!).slots.some(Boolean)) g.drawImage(A.st.cargo, X - 14, Y - 16); if (r.player.pulling === e.id) { g.fillStyle = '#c8a060'; const p = r.player; const n = 8; for (let i = 0; i <= n; i++) { const t = i / n; g.fillRect(Math.round(X + 12 + (p.x - X - 12) * t), Math.round(Y - 4 + (p.y - Y + 2) * t + Math.sin(t * Math.PI) * 2), 1, 1); } } return; }
+    case 'vehicle': {
+      shadow(g,X,Y+6,10);g.save();g.translate(X,Y);g.rotate(e.vehicle?.angle||0);
+      g.fillStyle='#171923';g.fillRect(-11,-5,6,10);g.fillRect(5,-5,6,10);
+      g.fillStyle='#8da3a2';g.fillRect(-8,-2,16,4);g.fillStyle='#4e7280';g.fillRect(-4,-6,9,12);
+      g.fillStyle='#d2ac68';g.fillRect(-2,-3,5,6);g.fillStyle='#d8ddc6';g.fillRect(8,-2,3,4);
+      if(C(r,e.c!).slots.some(Boolean)){g.fillStyle='#97774b';g.fillRect(-10,-4,4,8);}g.restore();return;
+    }
     case 'loot': { const empty = !C(r, e.c!).slots.some(Boolean); shadow(g, X, Y + 5, 7); g.drawImage(empty ? A.st.loot_open : A.st.loot, X - 8, Y - 10); return; }
     case 'cash': { const rag = isRagnarok(r, now); shadow(g, X, Y + 5, 7); g.drawImage(e.minted && !C(r, e.c!).slots.some(Boolean) ? A.st.cash_open : A.st.cash, X - 8, Y - 10); if (rag && !e.minted) { const a = 0.4 + Math.sin(time / 200) * 0.3; g.fillStyle = `rgba(255,208,64,${a})`; g.fillRect(X - 7, Y - 12, 14, 1); if (Math.random() < 0.2) add({ x: X - 6 + Math.random() * 12, y: Y - 8, vx: 0, vy: -16, col: '#ffe27a', max: 700, s: 1, g: -4 }); } return; }
     case 'vendor': { shadow(g, X, Y + 6, 5); const bob = Math.floor(time / 600) % 2; g.drawImage(A.st.vendor, X - 8, Y - 18 + bob); return; }

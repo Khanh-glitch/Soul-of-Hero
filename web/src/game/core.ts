@@ -59,7 +59,7 @@ export interface Player {
   hp: number; stamina: number; hunger: number; thirst: number; warmth: number; rad: number;
   active: number; // quickbar index 0..7
   action: null | { kind: 'swing' | 'cast' | 'roll' | 'hurt'; t: number; dur: number; contact?: number; done?: boolean; angle: number; slot?: number; coreUid?: string; mode?: 'basic' | 'refined' | 'signature'; targetX?: number; targetY?: number; viewX?: number; viewY?: number };
-  invuln: number; iceUntil?: number; channelUntil?:number; dead: boolean; deadT: number; pulling: string | null;
+  invuln: number; iceUntil?: number; channelUntil?:number; dead: boolean; deadT: number; pulling: string | null; vehicle?: string;
   skills: Record<string, number>; // xp
   stepAcc: number; lastTraceX: number; lastTraceY: number;
   regionName: string; sheltered: boolean;
@@ -81,7 +81,7 @@ export interface Creature {
 }
 
 export interface Entity {
-  id: string; kind: 'drop' | 'struct' | 'bag' | 'cart' | 'loot' | 'cash' | 'vendor' | 'evac' | 'door' | 'gen' | 'recycler';
+  id: string; kind: 'drop' | 'struct' | 'bag' | 'cart' | 'vehicle' | 'loot' | 'cash' | 'vendor' | 'evac' | 'door' | 'gen' | 'recycler';
   x: number; y: number; // px for drops/carts, tile*16+8 for structures
   tx?: number; ty?: number; type?: string; hp?: number; maxHp?: number;
   c?: string; // container id
@@ -98,6 +98,7 @@ export interface Entity {
   power?: number; fire?: number;
   /** The original deployable instance, retained until reclaim or destruction. */
   deployed?: Stack;
+  vehicle?: { fuel:number; angle:number; odometer:number; geometry:'vehicle-geometry-v1' };
   /** Legacy jobs with unknowable paid inputs, preserved after station destruction. */
   legacyJobs?: { stationType: string; queue: Job[] };
 }

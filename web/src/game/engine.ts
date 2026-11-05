@@ -1,3 +1,4 @@
+import { vehicleClear, vehicleExitPoint } from './motorbike';
 import { LOOT_ECOLOGY_VERSION, LOOT_CLASSES, lootClass, lootRoll, lootSiteIndex, lootSourceId } from './loot-ecology';
 import { creatorLootV1 } from './creator-loot';
 // Authoritative game engine: GameState + dispatch(intent) → committed state + receipt | rejection.
@@ -585,7 +586,7 @@ export function killCreature(gs: GameState, m: Creature, now: number) {
 // ---------------- death & respawn (C10) ----------------
 export function killPlayer(gs: GameState, now: number, cause: string) {
   const r = gs.run!; const p = r.player; if (p.dead) return;
-  p.dead = true; p.deadT = 0; p.hp = 0; p.action = null; p.pulling = null;
+  p.dead = true; p.deadT = 0; p.hp = 0; p.action = null; p.pulling = null; delete p.vehicle;
   const bag = bagContainers(r, ['inv', 'eq'], p.x, p.y, now, 'Your bag', [], undefined, true);
   receipt(r, now, 'death', `${cause}; bag=${bag?.id ?? 'none'}`);
   pushLog(r, now, `You died (${cause}). Your belongings lie in a bag where you fell.`, 'red');
@@ -626,6 +627,8 @@ export function countStones(r: RunState) { const keys = Object.values(ELDERS).ma
 export function buildReason(gs: GameState, type: string, tx: number, ty: number): string | null {
   const r = gs.run!; if (typeof type !== 'string' || !Object.prototype.hasOwnProperty.call(STRUCTS, type)) return 'Unknown structure.'; const d = STRUCTS[type];
   const w = getWorld(); const p = r.player;
+  if(p.vehicle)return 'Exit the motorbike before building.';
+  if (Object.values(r.entities).some(e=>e.kind==='vehicle' && Math.abs(e.x-(tx*TILE+8))<TILE && Math.abs(e.y-(ty*TILE+8))<TILE)) return 'Move the motorbike away before building here.';
   if (type === 'farm_controller' && !Object.values(r.entities).some(e=>e.kind==='struct' && e.type==='workbench' && e.station && owned(e) && (e.station.level ?? 1)>=2 && near(r,e,3) && dist(e.x,e.y,tx*TILE+8,ty*TILE+8)<=3*TILE)) return 'Build near your level 2 workbench.';
   if (!Number.isInteger(tx) || !Number.isInteger(ty) || tx < 1 || ty < 1 || tx >= WW - 1 || ty >= WH - 1) return 'Out of bounds.';
   if (dist(p.x, p.y, tx * TILE + 8, ty * TILE + 8) > 4.6 * TILE) return 'Too far away.';
@@ -754,6 +757,8 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (it.qty !== undefined && (!Number.isSafeInteger(it.qty) || it.qty <= 0 || it.qty > s.qty)) return fail('Invalid quantity.');
       const qty = it.qty ?? s.qty;
       if (from === to && (it.ts === undefined || it.ts === it.fs)) return fail('Choose a different slot.');
+      if(to.kind==='vehicle' && from!==to) { const target=it.ts===undefined?null:to.slots[it.ts]; const swap=target && !mergeable(target,s) ? ITEMS[target.key].w*target.qty : 0; if(cartWeight(r,to.id)+ITEMS[s.key].w*qty-swap>BAL.motorbike.maxWeight+1e-9)return fail('Vehicle cargo exceeds weight capacity.'); }
+      if(from.kind==='vehicle' && from!==to && it.ts!==undefined) { const target=to.slots[it.ts]; if(target && !mergeable(target,s) && cartWeight(r,from.id)-ITEMS[s.key].w*qty+ITEMS[target.key].w*target.qty>BAL.motorbike.maxWeight+1e-9)return fail('Vehicle cargo exceeds weight capacity.'); }
       if (it.ts !== undefined) {
         const tgt = to.slots[it.ts];
         if (!accepts(to, it.ts, s)) return fail('Cannot store item there.');
@@ -967,7 +972,44 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if ((it.struct === 'bed_straw' || it.struct.startsWith('roof')) && homeComplete(r)) award(gs, 'first_home', now);
       return ok('build', `${it.struct}@${it.tx},${it.ty}`);
     }
+    case 'placeMotorbike': {
+      const inv=C(r,'inv'), idx=inv.slots[p.active]?.key==='motorbike_kit'?p.active:inv.slots.findIndex(v=>v?.key==='motorbike_kit');
+      if(idx<0 || p.vehicle || p.pulling) return fail('Need a packed motorbike and free hands.');
+      if(!Number.isFinite(it.x)||!Number.isFinite(it.y)||dist(p.x,p.y,it.x,it.y)>3*TILE || !clearPhysicalLine(r,p,{x:it.x,y:it.y},true))return fail('Choose reachable open ground.');
+      if(!getWorld(r.layoutId||'shipping').vehicleGeometry)return fail('This map has no eligible vehicle geometry.');
+      if(!vehicleClear(r,it.x,it.y,undefined,'parking')||!vehicleExitPoint(r,it.x,it.y))return fail('Motorbike needs clear dry ground and a safe exit.');
+      const deployed=inv.slots[idx]!;if(!Number.isFinite(deployed.dur)||deployed.dur!<=0||deployed.dur!>BAL.motorbike.maxHp)return fail('Packed motorbike condition is invalid or broken.');
+      const c=mkContainer(r,'vehicle',BAL.motorbike.slots);inv.slots[idx]=null;
+      const e:Entity={id:uid(r,'e'),kind:'vehicle',x:it.x,y:it.y,c:c.id,hp:deployed.dur,maxHp:BAL.motorbike.maxHp,deployed,vehicle:{fuel:0,angle:p.aim,odometer:0,geometry:'vehicle-geometry-v1'}};r.entities[e.id]=e;
+      return ok('vehicle.deploy',`${deployed.uid}:${e.id}@${Math.round(e.x)},${Math.round(e.y)}`,'Motorbike deployed. Add fuel and drive.');
+    }
+    case 'vehicleMount': {
+      const e=r.entities[it.eid];if(!e||e.kind!=='vehicle'||!e.vehicle||!owned(e)||!near(r,e,1.7)||!clearPhysicalLine(r,p,e,true))return fail('Motorbike out of reach.');
+      if(p.vehicle||p.pulling||p.action||p.dead||r.spiritTransit)return fail('Finish your action and release the cart first.');
+      if(!vehicleClear(r,e.x,e.y,e.id)||!vehicleExitPoint(r,e.x,e.y,e.id))return fail('Vehicle is obstructed or has no safe exit.');
+      p.vehicle=e.id;p.x=e.x;p.y=e.y;p.vx=p.vy=0;delete r.traceWalk;return ok('vehicle.mount',e.deployed!.uid,'WASD to drive; F to exit.');
+    }
+    case 'vehicleExit': {
+      const e=p.vehicle&&r.entities[p.vehicle];if(!e||e.kind!=='vehicle')return fail('Not driving.');
+      const spot=vehicleExitPoint(r,e.x,e.y,e.id);
+      if(!spot)return fail('No safe exit beside vehicle.');
+      delete p.vehicle;p.x=spot.x;p.y=spot.y;p.vx=p.vy=0;delete r.traceWalk;return ok('vehicle.exit',`${e.deployed!.uid}@${Math.round(e.x)},${Math.round(e.y)}:distance=${e.vehicle!.odometer.toFixed(1)}:fuel=${e.vehicle!.fuel.toFixed(2)}:hp=${e.hp!.toFixed(2)}`);
+    }
+    case 'vehicleRefuel': {
+      const e=r.entities[it.eid];if(!e||e.kind!=='vehicle'||!e.vehicle||!owned(e)||!near(r,e,2))return fail('Motorbike out of reach.');
+      if(e.vehicle.fuel+BAL.motorbike.canFuel>BAL.motorbike.tank)return fail('Not enough tank space for a whole Fuel Canister.');
+      if(countItem(r,'inv','fuel_can')<1)return fail('Need one physical Fuel Canister.');
+      removeItem(r,'inv','fuel_can',1);e.vehicle.fuel+=BAL.motorbike.canFuel;return ok('vehicle.refuel',`${e.deployed!.uid}:fuel_canx1:+${BAL.motorbike.canFuel}`);
+    }
+    case 'vehicleRepair': {
+      const e=r.entities[it.eid];if(!e||e.kind!=='vehicle'||!e.vehicle||!e.deployed||!owned(e)||!near(r,e,2)||p.vehicle)return fail('Dismount near your motorbike.');
+      if((e.hp??0)>=BAL.motorbike.maxHp)return fail('Motorbike is already sound.');
+      const cost:[string,number][]=[['mechanical_parts',1],['fasteners',1]];if(!hasAll(r,'inv',cost))return fail('Repair needs 1 Mechanical Part and 1 Fastener.');
+      for(const [key,qty] of cost)removeItem(r,'inv',key,qty);const before=e.hp||0;e.hp=Math.min(BAL.motorbike.maxHp,before+BAL.motorbike.repairHp);e.deployed.dur=e.hp;
+      return ok('vehicle.repair',`${e.deployed.uid}:${before.toFixed(2)}->${e.hp.toFixed(2)}:mechanical_partsx1,fastenersx1`);
+    }
     case 'placeCart': {
+      if(p.vehicle)return fail('Exit the vehicle first.');
       const slots = C(r, 'inv').slots; const idx = slots[p.active]?.key === 'cart_kit' ? p.active : slots.findIndex(s => s?.key === 'cart_kit'); if (idx < 0) return fail('No packed cart.');
       if (!Number.isFinite(it.x) || !Number.isFinite(it.y)) return fail('Invalid location.');
       const tx = Math.floor(it.x / TILE), ty = Math.floor(it.y / TILE); if (blockedAt(r, tx, ty) || [T.SHALLOW, T.RIVER].includes(effTile(r, tx, ty))) return fail('Cart needs open dry ground.');
@@ -1146,7 +1188,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const fi = C(r, 'inv').slots.findIndex(s => s && ITEMS[s.key].waterContainer && (s.charge ?? 0) > 0); if (fi < 0) return fail('Needs water (flask) — or wait for rain.');
       C(r, 'inv').slots[fi]!.charge! -= 1; g.water = Math.min(3, g.water + 1); return ok('garden.water', e.id);
     }
-    case 'grabCart': { const e = r.entities[it.eid]; if (!e || e.kind !== 'cart' || !owned(e) || !near(r, e, 2)) return fail('Out of reach.'); p.pulling = p.pulling === e.id ? null : e.id; return ok('cart.grab', `${e.id}:${!!p.pulling}`); }
+    case 'grabCart': { if(p.vehicle)return fail('Exit the vehicle first.'); const e = r.entities[it.eid]; if (!e || e.kind !== 'cart' || !owned(e) || !near(r, e, 2)) return fail('Out of reach.'); p.pulling = p.pulling === e.id ? null : e.id; return ok('cart.grab', `${e.id}:${!!p.pulling}`); }
     case 'evacuate': {
       const e = r.entities[it.eid]; if (!e || e.kind !== 'evac' || !near(r, e, 2.5)) return fail('You must be at the evacuation beacon.');
       return endRun(gs, 'evacuated', now);

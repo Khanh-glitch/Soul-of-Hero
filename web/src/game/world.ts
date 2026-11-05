@@ -16,10 +16,13 @@ export const SRC_KEYS = ['oak','pine','snowpine','palm','willow','deadtree','roc
 export interface Building { id: string; x: number; y: number; w: number; h: number; roof: string; name: string }
 export interface StaticEnt { kind: string; tx: number; ty: number; type?: string; poi?: string; locked?: string; loot?: [string, number][]; cash?: number; label?: string }
 export interface Place { id: string; name: string; tx: number; ty: number; kind: 'start' | 'poi' | 'elder' | 'evac' }
+/** Map-supplied vehicle capability; absence disables deployment. Arrays are world-sized masks. */
+export interface VehicleGeometry { version:'vehicle-geometry-v1'; mapId:string; mapRevision:number; width:number; height:number; tileSize:number; passable:ArrayLike<number>; road:ArrayLike<number>; slope:ArrayLike<number>; parking:ArrayLike<number>; exit:ArrayLike<number> }
 export interface World {
   tiles: Uint8Array; fresh: Uint8Array; src: Int8Array; sourceOverlayV2: Int8Array; zone: Uint8Array; seaDist: Uint8Array;
   wmp04r1?: { scene:Wmp04Scene; revision:string; marineRegion:Uint8Array; coldTransition:Uint8Array; effectiveBiome:Uint8Array; cliffCandidate:Uint8Array; heightClassSamples:Uint8Array; integrity:{ok:boolean;digests:Record<string,string>;revision:string}; note:string };
   buildings: Building[]; statics: StaticEnt[]; places: Place[]; starts: Place[]; elders: Place[];
+  vehicleGeometry?: VehicleGeometry;
   economyMap: EconomyMap; sourceV3: (string | null)[]; packageContract?: GeographicHandoff; accessCorridors?: AccessCorridors; veyra?: VeyraViewIdentity; enforceMasks?: boolean; zoneNames?: string[]; randomSpawn?: boolean; spawnEligible?: Uint8Array;
 }
 
@@ -346,7 +349,7 @@ function genWorld(layoutId: LayoutId, freshSpawn = false): World {
   if (freshSpawn) { economyMap.id = layoutId + '_fresh'; for (let y=20;y<WH-2;y+=40) for(let x=20;x<WW-2;x+=40) if(economyMap.walkable[y*WW+x]) economyMap.starts.push({id:`compiler_${x}_${y}`,x,y}); }
   const result = compileEconomy(economyMap);
   if (result.errors.length) throw new Error(`Invalid economy map ${layoutId}: ${result.errors.join('; ')}`);
-  return { tiles, fresh, src, sourceOverlayV2, sourceV3: result.sources, economyMap, zone, seaDist, buildings, statics, places: [...all, ...elders], starts: freshSpawn ? [] : starts, elders, ...(freshSpawn ? {randomSpawn:true} : {}) };
+  return { tiles, fresh, src, sourceOverlayV2, sourceV3: result.sources, economyMap, vehicleGeometry:{version:'vehicle-geometry-v1',mapId:economyMap.id,mapRevision:economyMap.revision,width:WW,height:WH,tileSize:TILE,passable:economyMap.cargoPassable,road:economyMap.road,slope:economyMap.slope,parking:economyMap.cargoPassable,exit:economyMap.walkable}, zone, seaDist, buildings, statics, places: [...all, ...elders], starts: freshSpawn ? [] : starts, elders, ...(freshSpawn ? {randomSpawn:true} : {}) };
 }
 
 export function tileAt(w: World, tx: number, ty: number) { if (tx < 0 || ty < 0 || tx >= WW || ty >= WH) return T.DEEP; return w.tiles[ty * WW + tx]; }

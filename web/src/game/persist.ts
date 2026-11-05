@@ -2,7 +2,7 @@ import { LOOT_ECOLOGY_VERSION, lootClass, lootRoll, lootSiteIndex } from './loot
 import { creatorLootV1 } from './creator-loot';
 // Local-first snapshots: one serialized profile + run + receipts per write.
 // Checksums detect accidental damage, not malicious edits or rollback of all copies.
-import { BAL, SAVE_VERSION, WW, TILE, type GameState, type Stack } from './core';
+import { BAL, SAVE_VERSION, WW, WH, TILE, type GameState, type Stack } from './core';
 import { ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, VENDOR_SPARES } from './catalog';
 import { newGame, renewableLoot } from './engine';
 import { getWorld, hasLayout, webRecyclerSite } from './world';
@@ -77,12 +77,13 @@ export function validate(raw: any): GameState | null {
   const stack = (s: any): s is Stack => {
     if (!obj(s) || typeof s.uid !== 'string' || !s.uid || !beforeNext(s.uid, /^s([a-z0-9]+)$/) || uids.has(s.uid) || typeof s.key !== 'string' || !has(ITEMS, s.key) || !integer(s.qty) || s.qty < 1 || s.qty > ITEMS[s.key].max) return false;
     if (s.upgrade !== undefined && (s.key !== 'cart_kit' || s.upgrade !== 'freight')) return false;
+    if(s.key==='motorbike_kit' && (!finite(s.dur)||s.dur<0||s.dur>BAL.motorbike.maxHp))return false;
     if (ITEMS[s.key].creatorCore ? (!obj(s.reserves) || Object.keys(s.reserves).sort().join(',') !== 'basic,refined,signature' || !['basic','refined','signature'].every(k => integer(s.reserves[k]) && s.reserves[k] >= 0 && s.reserves[k] <= ({basic:40,refined:12,signature:4} as any)[k])) : s.reserves !== undefined) return false;
     if ((s.dur !== undefined && (!finite(s.dur) || s.dur < 0)) || (s.charge !== undefined && (!finite(s.charge) || s.charge < 0)) || (s.meta !== undefined && typeof s.meta !== 'string') || (s.key === 'blueprint' && (!s.meta || !has(RECIPES, s.meta)))) return false;
     uids.add(s.uid); return true;
   };
   for (const [id, c] of Object.entries(r.custody) as [string, any][]) {
-    if (!obj(c) || c.id !== id || (id !== 'inv' && id !== 'eq' && !beforeNext(id, /^c([a-z0-9]+)$/)) || !['inv','eq','drop','bag','cart','loot','cash','chest','fuel','out'].includes(c.kind) || !Array.isArray(c.slots)) return null;
+    if (!obj(c) || c.id !== id || (id !== 'inv' && id !== 'eq' && !beforeNext(id, /^c([a-z0-9]+)$/)) || !['inv','eq','drop','bag','cart','vehicle','loot','cash','chest','fuel','out'].includes(c.kind) || !Array.isArray(c.slots)) return null;
     for (let i = 0; i < c.slots.length; i++) { const s = c.slots[i]; if (s !== null && (!stack(s) || (c.kind === 'eq' && ITEMS[s.key].slot !== ['head','body','back'][i]) || (c.kind === 'fuel' && !ITEMS[s.key].fuel))) return null; }
   }
   const jobIds = new Set<string>();
@@ -96,11 +97,15 @@ export function validate(raw: any): GameState | null {
   });
   for (const [id, e] of Object.entries(r.entities) as [string, any][]) {
     if (!obj(e) || e.id !== id || !beforeNext(id, /^(?:cart|[ebd])([a-z0-9]+)$/) || typeof e.kind !== 'string' || !finite(e.x) || !finite(e.y)) return null;
-    if (!['drop','struct','bag','cart','loot','cash','vendor','evac','door','gen','recycler'].includes(e.kind)) return null;
+    if (!['drop','struct','bag','cart','vehicle','loot','cash','vendor','evac','door','gen','recycler'].includes(e.kind)) return null;
     if (e.kind === 'struct' && !has(STRUCTS, e.type)) return null;
     if(e.kind==='recycler'){const site=webRecyclerSite(world,r.layoutId);if(!site||e.tx!==site.tx||e.ty!==site.ty||e.x!==site.tx*16+8||e.y!==site.ty*16+8||e.poi!=='factory'||e.type!==undefined||!e.station||e.station.queue?.length>1)return null;}
-    if (e.deployed !== undefined && (!stack(e.deployed) || e.deployed.qty !== 1 || (e.kind === 'cart' ? e.deployed.key !== 'cart_kit' : e.kind !== 'struct' || STRUCTS[e.type]?.item !== e.deployed.key))) return null;
-    if (['drop','bag','cart','loot','cash'].includes(e.kind) && (!e.c || r.custody[e.c]?.kind !== e.kind)) return null;
+    if (e.deployed !== undefined && (!stack(e.deployed) || e.deployed.qty !== 1 || (e.kind === 'cart' ? e.deployed.key !== 'cart_kit' : e.kind === 'vehicle' ? e.deployed.key !== 'motorbike_kit' : e.kind !== 'struct' || STRUCTS[e.type]?.item !== e.deployed.key))) return null;
+    if (['drop','bag','cart','vehicle','loot','cash'].includes(e.kind) && (!e.c || r.custody[e.c]?.kind !== e.kind)) return null;
+    if(e.kind==='vehicle') {
+      if(!e.deployed || !obj(e.vehicle) || e.vehicle.geometry!=='vehicle-geometry-v1' || !world.vehicleGeometry || !finite(e.vehicle.fuel) || e.vehicle.fuel<0 || e.vehicle.fuel>BAL.motorbike.tank || !finite(e.vehicle.angle) || !finite(e.vehicle.odometer) || e.vehicle.odometer<0 || e.x<BAL.motorbike.radius || e.y<BAL.motorbike.radius || e.x>=WW*TILE-BAL.motorbike.radius || e.y>=WH*TILE-BAL.motorbike.radius || !finite(e.hp) || e.hp<0 || e.hp>BAL.motorbike.maxHp || e.maxHp!==BAL.motorbike.maxHp || e.deployed.dur!==e.hp || r.custody[e.c]?.slots.length!==BAL.motorbike.slots)return null;
+      if(r.custody[e.c].slots.reduce((sum:number,s:any)=>sum+(s?ITEMS[s.key].w*s.qty:0),0)>BAL.motorbike.maxWeight+1e-8)return null;
+    } else if(e.vehicle!==undefined)return null;
     if (e.kind === 'cart' && e.deployed?.upgrade === 'freight' && r.custody[e.c].slots.length !== BAL.cart.freightSlots) return null;
     if (e.kind === 'struct' && e.c && r.custody[e.c]?.kind !== 'chest') return null;
     const refs = [e.c, e.station?.fuelC, e.station?.outC].filter((v: any) => v !== undefined);
@@ -119,6 +124,7 @@ export function validate(raw: any): GameState | null {
     if (e.station && (!obj(e.station) || !(e.kind==='recycler' || STRUCTS[e.type]?.station) || !finite(e.station.burn) || e.station.burn < 0 || r.custody[e.station.fuelC]?.kind !== 'fuel' || r.custody[e.station.outC]?.kind !== 'out' || !jobs(e.station.queue, e.kind==='recycler'?'recycler':STRUCTS[e.type].station!))) return null;
     if (e.legacyJobs && (e.kind !== 'bag' || !STRUCTS[e.legacyJobs.stationType]?.station || !jobs(e.legacyJobs.queue, STRUCTS[e.legacyJobs.stationType].station!) || e.legacyJobs.queue.some((j: any) => j.reserved !== undefined))) return null;
   }
+  if(r.player.vehicle!==undefined) {const e=r.entities[r.player.vehicle];if(typeof r.player.vehicle!=='string'||!e||e.kind!=='vehicle'||r.player.dead||r.player.pulling||r.spiritTransit||r.player.x!==e.x||r.player.y!==e.y)return null;}
   if((Object.values(r.entities) as any[]).filter(e=>e.kind==='recycler').length>1)return null;
   for(const [key,offer] of Object.entries(VENDOR_SPARES)){const stock=r.vendorStock[`spares:${key}`];if(stock!==undefined && (!integer(stock) || stock>offer.stock))return null;}
   for(const g of Object.values(r.entities) as any[]) if(g.basePower){const links=(Object.values(r.entities) as any[]).filter(t=>t.turret?.generatorId===g.id).length;if(links>(g.basePower.capacity??1))return null;}

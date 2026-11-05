@@ -123,10 +123,13 @@ export const ITEMS: Record<string, ItemDef> = {
   boar_tusk: I({ name: 'Boar Tusk (specimen)', cat: 'res', icon: 'fang', c1: '#c0a070', c2: '#fff0d0', w: 0.1, max: 10, desc: 'Study at a research table.', specimen: 'iron_sword' }),
   beetle_horn: I({ name: 'Beetle Horn (specimen)', cat: 'res', icon: 'fang', c1: '#5a2a1e', c2: '#e06a3a', w: 0.1, max: 10, desc: 'Study at a research table.', specimen: 'chitin_armor' }),
   keycard: I({ name: 'Vault Keycard', cat: 'misc', icon: 'card', c1: '#2a6a5a', c2: '#a0f0d0', w: 0.05, max: 5, desc: 'Opens a sealed industrial door. Consumed.' }),
-  fuel_can: I({ name: 'Fuel Canister', cat: 'misc', icon: 'can', c1: '#a03a1e', c2: '#f0c060', w: 1.5, max: 5, desc: 'Powers generators. Can be studied or burned instead.', fuel: 60, studyRecipe: 'fuel_can' }),
+  fuel_can: I({ name: 'Fuel Canister', cat: 'misc', icon: 'can', c1: '#a03a1e', c2: '#f0c060', w: 1.5, max: 5, desc: 'Fuels generators or motorbikes. Can be studied or burned instead.', fuel: 60, studyRecipe: 'fuel_can' }),
   // Ragnarok & profile
   rcash: I({ name: 'Ragnarok Cash', cat: 'cash', icon: 'coin', c1: '#b07a1e', c2: '#ffe27a', w: 0.01, max: 999, desc: 'Physical, unsecured. Can be lost. Deposit in an owned Rương ký gửi.' }),
   escrow_chest: I({ name: 'Rương ký gửi', cat: 'kit', icon: 'chest', c1: '#5a3a7a', c2: '#ffd040', w: 4, max: 1, desc: 'Escrow chest. Place on owned land, then deposit physical Ragnarok cash into your profile.', place: 'escrow' }),
+  vehicle_frame: I({ name:'Utility Frame', cat:'res', icon:'scrap', c1:'#706c5f', c2:'#c6bca0', w:4, max:5, desc:'Welded frame for the motorbike.' }),
+  vehicle_drive: I({ name:'Motor Drive', cat:'res', icon:'gear', c1:'#625e58', c2:'#c8bca1', w:3, max:5, desc:'Gear and plate drive assembly for the utility motorbike.' }),
+  motorbike_kit: I({ name:'Utility Motorbike (packed)', cat:'kit', icon:'cart', c1:'#4d7180', c2:'#e4c475', w:12, max:1, dur:200, desc:'Place on clear eligible ground; fuel and cargo are separate.', place:'motorbike' }),
   cart_kit: I({ name: 'Hand Cart (packed)', cat: 'kit', icon: 'cart', c1: '#7a5a32', c2: '#c0c8d0', w: 6, max: 1, desc: 'Place to unpack a cargo cart.', place: 'cart' }),
   // elder stones (unique per run)
   stone_frost: I({ name: 'Stone of Rime', cat: 'stone', icon: 'relic', c1: '#3a8ad0', c2: '#e0ffff', w: 1, max: 1, desc: 'Taken from the Glacier Matron.' }),
@@ -186,13 +189,16 @@ export const ELDERS: Record<string, ElderDef> = {
 // Knowledge and equipment are independent: tier never implies a station upgrade.
 export const permitsDirectedResearch = (recipe: RecipeDef) => recipe.tier < 3;
 // Recovery is a base recipe introduced after older run snapshots were saved.
-export const isRecipeKnown = (known: readonly string[], key: string) => ['recover_drive','energy_refined_industrial','energy_basic','energy_refined','essence_fire','essence_nature','essence_water','essence_spirit','core_blast','core_earthmother'].includes(key) || known.includes(key);
+export const isRecipeKnown = (known: readonly string[], key: string) => ['vehicle_frame','vehicle_drive','recover_drive','energy_refined_industrial','energy_basic','energy_refined','essence_fire','essence_nature','essence_water','essence_spirit','core_blast','core_earthmother'].includes(key) || known.includes(key);
 export const requiredStationLevel = (recipe: RecipeDef): 1 | 2 | 3 => recipe.stationLevel ?? 1;
 
 // ---------- Recipes (K4: one run-local authority) ----------
 export type Recipe = RecipeDef;
 export const RECIPES: Record<string, Recipe> = {
   // SOH_NEW_TUNED v1. Furnace fuel is separate from consumed input.
+  vehicle_frame: { out:'vehicle_frame', qty:1, ins:[['iron_ingot',3],['mechanical_parts',2],['spares',2]], station:'workbench', stationLevel:2, secs:25, base:true, tier:1 },
+  vehicle_drive: { out:'vehicle_drive', qty:1, ins:[['iron_ingot',2],['mechanical_parts',2],['fasteners',2],['spares',3]], station:'workbench', stationLevel:2, secs:25, base:true, tier:1 },
+  motorbike_kit: { out:'motorbike_kit', qty:1, ins:[['vehicle_frame',1],['vehicle_drive',1],['iron_ingot',2],['fasteners',2]], station:'workbench', stationLevel:3, secs:40, tier:2 },
   refine_salvaged_oil: { out:'fuel_can', qty:1, ins:[['salvaged_oil',3],['glass',1]], station:'furnace', secs:18, tier:1 },
   energy_basic: { out:'energy_basic', qty:8, ins:[['stone',2],['fiber',2]], station:null, secs:2, base:true, tier:0 },
   energy_refined_industrial: { out:'energy_refined', qty:12, ins:[['crystal',2],['iron_ingot',2],['charcoal',2]], station:'workbench', stationLevel:3, secs:40, base:true, tier:2 },

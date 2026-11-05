@@ -270,5 +270,23 @@
     "beamMs": 2000,
     "beamTickMs": 250,
     "teleportMs": 600
+  },
+  "motorbike": {
+    "_status": "SOH_PROVISIONAL v1; ORIGINAL_UNKNOWN handling/fuel/wear/capacity",
+    "slots": 12,
+    "maxWeight": 80,
+    "maxHp": 200,
+    "tank": 300,
+    "canFuel": 100,
+    "roadSpeed": 125,
+    "groundSpeed": 52,
+    "roughSpeed": 35,
+    "fuelPerPixel": 0.05,
+    "roughFuelMultiplier": 1.5,
+    "loadFuelMultiplier": 0.5,
+    "wearPerPixel": 0.002,
+    "maxSlope": 0.6,
+    "radius": 6,
+    "repairHp": 50
   }
 }

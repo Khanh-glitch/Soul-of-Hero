@@ -68,7 +68,7 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
   const lootKind=lootSite ? lootClass(lootSite) : null;
   const poiId=e.poi==='factory_vault'?'factory':e.poi==='light_top'?'light':e.poi;
   const lootPlace=e.label || (lootSite && getWorld(r.layoutId||'shipping').places.find(p=>p.id===poiId)?.name) || e.poi || 'authored site';
-  const title = e.kind === 'recycler' ? 'Foundry Recycler' : e.kind === 'bag' ? (e.label || 'Bag') : e.kind === 'loot' ? (lootKind ? LOOT_CLASSES[lootKind].name : 'Crate') : e.kind === 'cash' ? 'Ragnarok Chest' : e.kind === 'cart' ? 'Cart Cargo' : STRUCTS[e.type!]?.name || 'Storage';
+  const title = e.kind === 'recycler' ? 'Foundry Recycler' : e.kind === 'bag' ? (e.label || 'Bag') : e.kind === 'loot' ? (lootKind ? LOOT_CLASSES[lootKind].name : 'Crate') : e.kind === 'cash' ? 'Ragnarok Chest' : e.kind === 'vehicle' ? 'Utility Motorbike' : e.kind === 'cart' ? 'Cart Cargo' : STRUCTS[e.type!]?.name || 'Storage';
   const takeAll = (cid: string) => { const c = C(r, cid); for (let i = 0; i < c.slots.length; i++) if (c.slots[i]) { const res = api.act('move', { from: cid, fs: i, to: 'inv' }); if (!res.ok) break; } };
   const quickTo = st ? (kind === 'research' || e.kind === 'recycler' ? undefined : st.fuelC) : e.c;
   const compact = !!e.farm || !!e.garden || !!e.basePower || !!e.turret || e.type==='claim';
@@ -82,6 +82,15 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
           Withdraw only · {C(r,e.c!).slots.filter(Boolean).length} stacks remain. Partial stock stays. {lootKind ? `After empty: ordinary stock returns in ${LOOT_CLASSES[lootKind].hours}h; rare finds do not.` : 'Empty crates disappear.'}
         </div>}
         {e.c && <><Grid api={api} cid={e.c} cols={8} /><div className="flex gap-1" style={{ marginTop: 4 }}><button className="btn" onClick={() => takeAll(e.c!)}>Take all</button>{e.kind === 'cart' && <span style={{ fontSize: 10, color: '#cfc2dc' }}>Load {cartWeight(r, e.c).toFixed(0)}/{cartLimit(e)} kg · [F] pull</span>}{e.kind === 'cart' && <button className="btn ghost" onClick={() => api.act('reclaim', { eid })}>Pack up</button>}</div></>}
+        {e.kind === 'vehicle' && e.vehicle && <div style={{fontSize:10,marginTop:5}}>
+          <b>Fuel {e.vehicle.fuel.toFixed(1)}/{BAL.motorbike.tank} · condition {Math.ceil(e.hp||0)}/{BAL.motorbike.maxHp}</b><br />
+          Cargo {cartWeight(r,e.c!).toFixed(1)}/{BAL.motorbike.maxWeight} kg · {C(r,e.c!).slots.filter(Boolean).length}/{BAL.motorbike.slots} slots<br />
+          Approx. road range {(e.vehicle.fuel/BAL.motorbike.fuelPerPixel/TILE).toFixed(0)} tiles empty; load and rough ground reduce it.<br />
+          <button className="btn" onClick={()=>{const res=api.act(r.player.vehicle?'vehicleExit':'vehicleMount',{eid:e.id});if(res.ok)api.open(null);}}>{r.player.vehicle?'Exit':'Enter and drive'}</button>{' '}
+          <button className="btn" onClick={()=>api.act('vehicleRefuel',{eid:e.id})}>Add 1 Fuel Canister</button>{' '}
+          <button className="btn" onClick={()=>api.act('vehicleRepair',{eid:e.id})}>Repair: 1 Part + 1 Fastener</button>
+          <div>WASD drive · F exit. Fuel burns only on movement. Each can needs 100 tank space. No packing: vehicle and cargo stay parked here.</div>
+        </div>}
         {e.kind === 'cart' && <div style={{ fontSize: 10, marginTop: 6, borderTop: '1px solid #514155' }}>
           <b>{e.deployed?.upgrade === 'freight' ? 'Reinforced freight cart' : 'Hand cart'}</b> · {C(r, e.c!).slots.length} slots<br />
           {e.deployed?.upgrade !== 'freight' && <details><summary style={{ cursor: 'pointer', color: '#ffd98a' }}>Reinforce at level 2 workbench</summary>
