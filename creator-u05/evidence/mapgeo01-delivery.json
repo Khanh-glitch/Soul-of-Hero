@@ -1,0 +1,86 @@
+{
+  "schema": "soh.u05.mapgeo01-delivery.v1",
+  "pilot": "MAP-GEO-REJOIN-01 — Physical Terrain & Traversal Readiness",
+  "generatedAt": "2026-11-05",
+  "branch": "arena/2e3cfbd2-soul-of-hero",
+  "commit": "7fbf637c32176fdd55e69a569cb27b878bf15299",
+  "featureParent": "99a196f3b601155ae216ba8968d4f94ee2d0a157",
+  "mainHead": "5214788933b1a827f3a177d11ff486433dfe5e8a",
+  "gameplayRecipient": {
+    "branch": "arena/d4bfcfff-soul-of-hero",
+    "liveHead": "6e7d116b4400ea3c24373fe884b7fad258f4f7bc",
+    "pr44": "OPEN — NOT edited / NOT merged by Map",
+    "observedHeadInTask": "2f0836587b76a4a98fffedf8c202fb37cbb2a67c",
+    "creatorVerifiedHead": "5b3e683402bbc8540dea9404576164097e753f97",
+    "handoffDeliveredTo": "Gameplay owner via the pinned artifacts below; Map does not touch their branch"
+  },
+  "activeAuthority": {
+    "activeRevision": "WMP-04R1",
+    "activeManifest": "v4/r1/manifest.r1.json",
+    "status": "MAP_GEO_R1_CORRECTED__GAMEPLAY_INTAKE_PENDING",
+    "U": 0.5,
+    "TILE_PX": 16,
+    "viewport": [640, 360],
+    "frameTiles": [4000, 2800],
+    "goldSha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256"
+  },
+  "deliverables": {
+    "status": "creator-u05/docs/MAP_GEO_REJOIN_01_STATUS.md",
+    "gameplayHandoffDoc": "creator-u05/docs/MAPGEO01_GAMEPLAY_HANDOFF.md",
+    "gameplayHandoffJson": "creator-u05/evidence/mapgeo01-gameplay-handoff.json",
+    "preflight": "creator-u05/evidence/mapgeo01-preflight.json",
+    "physicalAudit": "creator-u05/evidence/mapgeo01-physical-audit.json",
+    "reconciledFindings": "creator-u05/map-data/MAPGEO01_FINDINGS_RECONCILED.json",
+    "reconciliationBrief": "creator-u05/evidence/mapgeo01-reconciliation.json",
+    "traversalEvidence": "creator-u05/evidence/mapgeo01-traversal.json",
+    "nativeShots": "creator-u05/evidence/mapgeo01-shots/ (16 PNG, each 640x360)",
+    "sourceCustody": "creator-u05/evidence/source-custody.json :: mapgeo01Disclosure",
+    "controlTowerHandoff": "creator-u05/docs/CONTROL_TOWER_U05_HANDOFF.md §15",
+    "readme": "creator-u05/README.md :: MAP-GEO-REJOIN-01"
+  },
+  "pinnedLinks": {
+    "status": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/7fbf637c32176fdd55e69a569cb27b878bf15299/creator-u05/docs/MAP_GEO_REJOIN_01_STATUS.md",
+    "gameplayHandoff": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/7fbf637c32176fdd55e69a569cb27b878bf15299/creator-u05/docs/MAPGEO01_GAMEPLAY_HANDOFF.md",
+    "handoffJson": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/7fbf637c32176fdd55e69a569cb27b878bf15299/creator-u05/evidence/mapgeo01-gameplay-handoff.json",
+    "physicalAudit": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/7fbf637c32176fdd55e69a569cb27b878bf15299/creator-u05/evidence/mapgeo01-physical-audit.json",
+    "reconciledFindings": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/7fbf637c32176fdd55e69a569cb27b878bf15299/creator-u05/map-data/MAPGEO01_FINDINGS_RECONCILED.json",
+    "traversal": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/7fbf637c32176fdd55e69a569cb27b878bf15299/creator-u05/evidence/mapgeo01-traversal.json",
+    "bridgeBeforeAfterAfter": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/7fbf637c32176fdd55e69a569cb27b878bf15299/creator-u05/evidence/mapgeo01-shots/T3_bridge_approach_crossing_after.png"
+  },
+  "results": {
+    "findings": { "total": 62, "mapGeometryDefectsCorrectable": 0, "intentionalOverlaps": 12, "gameplayA8": 46, "creator": 1, "missingEvidence": 3 },
+    "u05NativePolygonRemeasurements": 30,
+    "zonesWithDoubleCountedOriginalMeasurement": 7,
+    "physicalDefectsNamed": 10,
+    "bridges": { "count": 12, "physicallyCrossable": 0, "centresBlocked": 12 },
+    "roads": { "count": 92, "centrelineContinuous": 92, "waterOverrideRoads": 31 },
+    "docks": { "count": 27, "landApproach": 25, "roadAdjacency": 18 },
+    "spawns": { "count": 4, "allDryWalkable": true, "nearestRenderedRoadTiles": [29, 48, 57, 42] },
+    "cliffs": { "candidateCells": 305, "physicalCliffTiles": 0 },
+    "traversals": { "runs": 6, "pass": 4, "fail": 1, "partial": 1, "nativeShots": 16, "browserErrors": 0 },
+    "mapOwnedCorrections": ["C-01 U=0.5-native union remeasurement", "C-02 62-finding 5-category classification", "C-03 SHA-pinned provenance + 10-defect register"],
+    "goldGeometryAmendments": 0,
+    "newExecutables": 0,
+    "newAtlas": 0,
+    "newBuildingsOrDoorsOrProps": 0,
+    "staticTests": "130/130 PASS (test-mapgeo01.mjs); test-u05 272/0; test-nature01 31/31; test-nature02 54/54; tsc clean",
+    "protectedExecutables": {
+      "terrainOnly": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0",
+      "nature01": "ac4d54e310f0f3cf7e0e12d728bc5e9ad62f801994be37ce64f76b099af4a0a7",
+      "nature02": "6e1e897a0e365412f6bc92d65390dc10bf7b0352e6ad8ef4a1c38e57f4f30fa6"
+    }
+  },
+  "acceptance": {
+    "PAPER": "MEASURED",
+    "RUNTIME": "ISOLATED_VIEWER_PHYSICAL_PARTIAL",
+    "VISUAL": "NOT_REQUESTED_AND_NOT_GRANTED",
+    "GAMEPLAY": "NOT_REQUESTED_AND_NOT_GRANTED"
+  },
+  "recommendedNextAction": "Gameplay owner pins 6e7d116b4400ea3c24373fe884b7fad258f4f7bc, consumes the source-pinned handoff and decides MGP-D01 (bridge span/art + WorldTraversal collision contract) with the Creator. Map does not edit or merge PR44.",
+  "notClaims": [
+    "No VEYRA_PLAYABLE", "No VISUAL_ACCEPTED", "No MERGE_READY", "No production merge",
+    "No PR44 edit/merge", "No new atlas", "No new standalone map product or visual simulation",
+    "No mass POI production", "No resource scattering", "No walkable water",
+    "No approved cart/boat/loading capacity", "No POI doors or build rights", "No GOLD amendment"
+  ]
+}
