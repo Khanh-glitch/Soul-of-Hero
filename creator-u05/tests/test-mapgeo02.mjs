@@ -21,6 +21,9 @@ const pre = rj('evidence/mapgeo02-preflight.json');
 const build = rj('evidence/mapgeo02-build.json');
 const geom = rj('evidence/mapgeo02-bridge-geometry.json');
 const trav = rj('evidence/mapgeo02-traversal.json');
+const prov = rj('evidence/mapgeo02-shot-provenance.json');
+const refs = rj('evidence/mapgeo02a-refs.json');
+const vis = rj('evidence/mapgeo02a-visual-inspection.json');
 const road = rj('evidence/mapgeo02-road-water-classification.json');
 const audit01 = rj('evidence/mapgeo01-physical-audit.json');
 const GOLD = JSON.parse(fs.readFileSync(path.join(REPO, 'veyra-world-master/data/canon/VEYRA_GOLD_MAP.sohmap.json'), 'utf8')).project;
@@ -197,7 +200,7 @@ t('R14 classification source SHAs verified', road.sources.gold.sha256 === pre.go
 eq('T01 traversal schema', trav.schema, 'soh.mapgeo02.traversal.v1');
 eq('T02 executable SHA in traversal', trav.executable.sha256, build.deliverable.sha256);
 eq('T03 all checks pass', trav.summary.fails, 0);
-eq('T04 28 checks', trav.summary.checks, 28);
+eq('T04 31 checks (28 MAP-GEO-02 + 3 MAP-GEO-02A authenticity gates)', trav.summary.checks, 31);
 eq('T05 0 browser errors', trav.summary.browserErrors.length, 0);
 eq('T06 17 real-key runs', trav.matchingCoordinateRuns.length + trav.bridgeRuns.length + trav.cliffRuns.length, 17);
 t('T07 every run used real keys, no teleport/camera route', [...trav.matchingCoordinateRuns, ...trav.bridgeRuns, ...trav.cliffRuns]
@@ -244,7 +247,7 @@ t('T20 no permission leakage over 10086 sampled tiles', (() => {
     d.boatTrue === 0 && d.swimTrue === 0 && d.ferryFootTrue === 0 && d.buildTrue === 0;
 })());
 const shots = fs.readdirSync(path.join(ROOT, 'evidence/mapgeo02-shots')).filter(f => f.endsWith('.png'));
-eq('T21 52 native screenshots', shots.length, 52);
+eq('T21 84 native screenshots (52 original + 32 per-ID captures)', shots.length, 84);
 t('T22 every screenshot exactly 640x360', shots.every(f =>
   JSON.stringify(pngSize(path.join(ROOT, 'evidence/mapgeo02-shots', f))) === '[640,360]'));
 t('T23 before+after shots exist per run', [...trav.matchingCoordinateRuns, ...trav.bridgeRuns, ...trav.cliffRuns]
@@ -257,6 +260,107 @@ t('T25 no VEYRA_PLAYABLE / production merge / full-world visual acceptance',
   trav.acceptance.fullWorldVisualAcceptance === false);
 t('T26 noClaims explicit', ['NO production traversal permission', 'NO GOLD amendment', 'NO new atlas/art/world',
   'NO PR44 edit/merge', 'NO full-world visual acceptance', 'NO VEYRA_PLAYABLE'].every(x => trav.noClaims.includes(x)));
+
+/* ---- A: MAP-GEO-REJOIN-02A screenshot authenticity / evidence integrity ---- */
+eq('A01 provenance schema', prov.schema, 'soh.mapgeo02a.shot-provenance.v1');
+eq('A02 every capture logged', prov.captureLog.length, 84);
+eq('A03 traversal points at the same capture count', trav.shotProvenance.captureCount, prov.captureLog.length);
+eq('A04 all 12 per-ID fixtures', prov.perBridgeFixtures.length, 12);
+eq('A05 10 resolved + 2 unresolved fixtures', prov.perBridgeFixtures.filter(f => f.resolved).length, 10);
+eq('A06 40 bridge-labelled captures (8 fixture-local + 32 per-ID)', trav.shotProvenance.bridgeLabelledCaptures, 40);
+t('A07 every logged PNG hash matches the bytes on disk', prov.captureLog.every(c =>
+  sha(path.join(REPO, c.file)) === c.pngSha256));
+t('A08 every bridge-labelled capture logs id / tile / camera / candidate / mode / timestamp / frame identity',
+  prov.captureLog.filter(c => c.requestedBridgeId).every(c =>
+    c.requestedBridgeId && Array.isArray(c.actualPlayerTile) && Array.isArray(c.cameraCoordinate) &&
+    'candidateId' in c && ['PRODUCTION_NO_PERMISSION', 'QA_CANDIDATE_CROSSING'].includes(c.selectedMode) && c.capturedAt &&
+    c.frameIdentity?.serial > 0 && Number.isFinite(c.frameIdentity?.wallClockMs) &&
+    c.frameIdentity?.freshFrameAdvanced === true &&
+    JSON.stringify(c.size) === '[640,360]'));
+t('A09 all 40 real bridge-labelled captures ACCEPTED by the negative gate',
+  prov.negativeGate.realCaptures.length === 40 && prov.negativeGate.realCaptures.every(r => r.reasons.length === 0) &&
+  trav.shotProvenance.realCapturesRejected === 0);
+t('A10 five synthetic NEGATIVE cases all rejected with the expected reason',
+  prov.negativeGate.negativeCases.length === 5 &&
+  trav.shotProvenance.negativeGateAllRejected === true &&
+  prov.negativeGate.negativeCases.every(n => n.rejected && n.expectedReasonsFound) &&
+  ['MISLABELLED_FRAME_FROM_ANOTHER_BRIDGE_FIXTURE', 'STALE_CANVAS_NO_FRESH_RENDER_FRAME',
+    'REUSED_FRAME_IDENTITY_FROM_UNRELATED_FIXTURE', 'FAKE_DECK_STAMPED_AT_UNRESOLVED_SITE',
+    'UNDECLARED_SELECTED_MODE'].every(x => prov.negativeGate.negativeCases.some(n => n.case === x)));
+t('A11 control authentic capture is accepted', prov.negativeGate.control.accepted === true);
+t('A12 negative gate rejects a frame near a DIFFERENT bridge',
+  prov.negativeGate.negativeCases.find(n => n.case === 'MISLABELLED_FRAME_FROM_ANOTHER_BRIDGE_FIXTURE')
+    .actualReasons.includes('CAPTURED_NEAR_DIFFERENT_BRIDGE'));
+eq('A13 84 PNG files / 79 unique contents', `${trav.shotIntegrity.files}/${trav.shotIntegrity.uniqueContents}`, '84/79');
+eq('A14 zero reused-frame defect groups', trav.shotIntegrity.defectGroups, 0);
+t('A15 old 10-image identical group signature is GONE',
+  trav.shotIntegrity.oldDefectSignatureGone === true &&
+  trav.shotIntegrity.atBridgeShots === 8 && trav.shotIntegrity.atBridgeUniqueContents === 8 &&
+  prov.shotIntegrity.duplicateGroupsDetail.every(g => g.classification.startsWith('LEGITIMATE_')));
+t('A16 remaining duplicates are explicitly classified, not auto-failed',
+  trav.shotIntegrity.duplicateGroups === 5 &&
+  trav.shotIntegrity.duplicateGroupsDetail.every(g =>
+    g.classification === 'LEGITIMATE_IDENTICAL_STATE_CAPTURE' &&
+    new Set(g.frameSerials).size === g.frameSerials.length));
+t('A17 each of the 12 GOLD ids has its OWN screenshots',
+  prov.perBridgeFixtures.map(f => f.requestedBridgeId).join(',') === GOLD.bridges.map(b => b.id).join(',') &&
+  prov.perBridgeFixtures.every(f => f.captures.every(c => c.requestedBridgeId === f.requestedBridgeId)) &&
+  prov.perBridgeFixtures.every(f => f.realKeyTraversalClaimed === false));
+t('A18 resolved = deck + BOTH bank approaches, each with its own fresh frame',
+  prov.perBridgeFixtures.filter(f => f.resolved).every(f =>
+    f.captures.length === 3 &&
+    f.captures.map(c => c.requestedKind).join(',') === 'PER_ID_BANK_A,PER_ID_DECK,PER_ID_BANK_B' &&
+    new Set(f.captures.map(c => c.frameIdentity.serial)).size === 3 &&
+    f.captures.every(c => c.frameIdentity.freshFrameAdvanced)));
+t('A19 resolved deck shots really show THAT bridge deck',
+  prov.perBridgeFixtures.filter(f => f.resolved).every(f => {
+    const d = f.captures.find(c => c.requestedKind === 'PER_ID_DECK');
+    return d.candidateId === f.requestedBridgeId && d.visibleWindow?.bridgeTilesForId > 0;
+  }));
+t('A20 br_9 / br_b site shots have NO fake deck',
+  prov.perBridgeFixtures.filter(f => !f.resolved).map(f => f.requestedBridgeId).join(',') === 'br_9,br_b' &&
+  prov.perBridgeFixtures.filter(f => !f.resolved).every(f =>
+    f.captures.length === 1 && f.captures[0].requestedKind === 'PER_ID_SITE' &&
+    f.captures[0].candidateId === null && f.captures[0].visibleWindow.bridgeTilesAny === 0));
+t('A21 no cross-fixture reused frame identity', (() => {
+  const KINDS = new Set(['FIXTURE_LOCAL_AT_BRIDGE', 'PER_ID_BANK_A', 'PER_ID_DECK', 'PER_ID_BANK_B', 'PER_ID_SITE']);
+  const gate = prov.captureLog.filter(c => KINDS.has(c.requestedKind));
+  const serials = prov.captureLog.filter(c => c.requestedBridgeId).map(c => c.frameIdentity.serial);
+  return gate.length === 40 && new Set(gate.map(c => c.frameIdentity.serial)).size === 40 &&
+    new Set(serials).size === serials.length;
+})());
+t('A22 10 candidate + 2 unresolved + 31-road classification RETAINED',
+  geom.resolvedIds.length === 10 && JSON.stringify(geom.unresolvedIds) === '["br_9","br_b"]' &&
+  road.total === 31 && geom.deckTileCount === 596 && geom.cliffStats.candidateCells === 305);
+
+/* ---- A2: exact SHAs / drift / visual inspection ---- */
+eq('A23 02A pinned Map HEAD', refs.pinned.mapAt02aPin, 'accca454e7b8c651c7403a95e9efcb8999b550a2');
+eq('A24 Gameplay observed HEAD from the task', refs.pinned.gameplayObserved02a,
+  '897e28f2827119542bcf4217c27cf421f9cf4011');
+t('A25 observed HEAD verified live at task start; later drift recorded',
+  refs.gameplayObservedHeadVerification.wasLiveAtTaskStart === true &&
+  refs.gameplayObservedHeadVerification.stillLiveAtFinish === false &&
+  refs.live.pr44Head === refs.gameplayObservedHeadVerification.liveAtFinish);
+eq('A26 PR44 still OPEN', refs.pr44.state, 'OPEN');
+t('A27 all 13 ref checks pass', refs.checks.length === 13 && refs.checks.every(c => c.verdict === 'PASS'));
+t('A28 terrain palette unchanged at every recorded head; block-slice drift reported',
+  Object.values(refs.painter.heads).every(p => p.paletteOnlySha256 === refs.painter.paletteSha256) &&
+  refs.painter.heads.at02aFinish.blockSha256 !== refs.painter.blockShaAt02Delivery);
+t('A29 protected baselines + QA executable + GOLD unchanged; executable NOT rebuilt',
+  Object.values(refs.protectedExecutables).every(v => v.unchanged) &&
+  refs.qaExecutable.rebuilt === false &&
+  refs.qaExecutable.sha256 === build.deliverable.sha256 &&
+  refs.goldSha256 === pre.goldSha256);
+t('A30 visual inspection recorded, NO VISUAL_ACCEPTED, no new physical defect',
+  vis.summary.visualAccepted === false && vis.summary.visualAcceptance === 'NOT_REQUESTED_AND_NOT_GRANTED' &&
+  vis.summary.newlyConfirmedPhysicalDefects.length === 0 &&
+  vis.inspected.length >= 10 &&
+  vis.summary.newlyConfirmedEvidenceDefectsFixed.some(s => s.includes('MAPGEO02A-EVIDENCE-01')));
+t('A31 no affirmative VISUAL_ACCEPTED verdict in the new evidence',
+  prov.acceptance.visualAccepted === false && vis.summary.visualAccepted === false &&
+  !/"visualAccepted"\s*:\s*true|"VISUAL_ACCEPTED"\s*:\s*true|status\s*:\s*['"]?VISUAL_ACCEPTED/i
+    .test(JSON.stringify(prov) + JSON.stringify(vis)) &&
+  prov.noClaims.includes('NO VISUAL_ACCEPTED') && vis.summary.note.includes('does NOT grant VISUAL_ACCEPTED'));
 
 /* ---- N: forbidden strings in the delivered executable / docs ---- */
 t('N01 no VEYRA_PLAYABLE claim in HTML', !/VEYRA_PLAYABLE\s*=\s*true|status:\s*['"]?VEYRA_PLAYABLE/i.test(deliverable));

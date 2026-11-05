@@ -213,9 +213,10 @@ R&D lưu trữ, không phải hệ đặt tài nguyên production.
 | `SoulOfHero_MapGeo02_CorrectedProjection.html` | **QA verification executable** có nhãn riêng; cùng renderer `U=0.5` / `640×360` `1×` / hero `16×24`; 3 executable bảo vệ **không đổi** |
 | `web-u05/src/mapgeo02/corrected-world.ts` | Overlay additive: deck cầu có giới hạn từ GOLD `id/at/ang/load` + hai bờ + đường nối; vách nhị phân `>=1` + height/slope evidence; 2 mode quyền tách biệt |
 | `evidence/mapgeo02-{preflight,build,bridge-geometry,road-water-classification,traversal,gameplay-handoff}.json` | Ref sống, build SHA, bảng 12 cầu, 31 giao cắt nước, 17 lượt phím thật, bàn giao |
-| `evidence/mapgeo02-shots/*.png` | **52** ảnh native `640×360`, gồm 6 cặp đúng toạ độ MAP-GEO-01 |
+| `evidence/mapgeo02-shots/*.png` | **84** ảnh native `640×360`, gồm 6 cặp đúng toạ độ MAP-GEO-01 |
 | `build-mapgeo02.mjs`, `vite.mapgeo02.config.mjs`, `tools/{preflight-mapgeo02,classify-mapgeo02-crossings,build-mapgeo02-handoff}.mjs` | Build + tool chỉ-đọc / phân loại / bàn giao |
-| `tests/qa-mapgeo02-traversal.mjs`, `tests/test-mapgeo02.mjs` | QA browser phím thật + **125/125** static test |
+| `tests/qa-mapgeo02-traversal.mjs`, `tests/test-mapgeo02.mjs` | QA browser phím thật + **156/156** static test |
+| `evidence/mapgeo02-shot-provenance.json`, `evidence/mapgeo02a-{refs,visual-inspection}.json` | **02A**: provenance từng ảnh, negative gate, ref/drift, thị sát ảnh (xem §10 handoff) |
 
 **Đã sửa:** `MGP-D01` — thảm gỗ 888 tile trên đất / 0 tile trên nước tại `br_1`
 → **596** deck tile (**100% trên nước, 0 trên đất**), **10/12** cầu CANDIDATE,
@@ -226,7 +227,7 @@ wall**), QA candidate collision tách biệt. 31 đường nước: **8 ferry** 
 **9 authored bridge**, **8 ford**, **6 ambiguous**; Beacon road **0 tile đổi**.
 
 Production `PRODUCTION_NO_PERMISSION` **vẫn chặn** deck; `QA_CANDIDATE_CROSSING`
-chỉ đo geometry. **0 rò rỉ quyền / 10,086 tile**, 28/28 runtime check, 0 lỗi
+chỉ đo geometry. **0 rò rỉ quyền / 10,086 tile**, 31/31 runtime check, 0 lỗi
 browser. `PAPER=MEASURED` · `RUNTIME=ISOLATED_VIEWER_PHYSICAL_VERIFIED_QA_ONLY` ·
 `VISUAL=NOT_REQUESTED_AND_NOT_GRANTED` · `GAMEPLAY=NOT_REQUESTED_AND_NOT_GRANTED`.
 Không `VEYRA_PLAYABLE`, không merge, không GOLD amendment, không atlas/art mới.

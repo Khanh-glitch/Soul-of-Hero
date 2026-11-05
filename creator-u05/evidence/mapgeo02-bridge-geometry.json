@@ -1,7 +1,7 @@
 {
   "schema": "soh.mapgeo02.bridge-geometry.v1",
   "task": "SOH — MAP-GEO-REJOIN-02",
-  "generatedAt": "2026-11-05T14:20:24.907Z",
+  "generatedAt": "2026-11-05T15:41:49.760Z",
   "executableSha256": "41b2203bbbab47c0f4f215461e9e7571c2d1a46b0d982a7a2fbf177bbcac2339",
   "goldSha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
   "crossingRasterSha256": "f1c96bd9fdb04d66117811c941e4a02df7fb3111c1a8671060fccad42c29603b",

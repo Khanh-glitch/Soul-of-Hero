@@ -3,7 +3,7 @@
 > **Map physical geometry is measured and corrected in an isolated QA viewer.
 > Gameplay traversal permission is NOT granted.** Active authority remains
 > `WMP-04R1` / `U=0.5` / `CREATOR_CHOSEN_U05.v1`. Generated
-> 2026-11-05T14:20:24.992Z. Machine-readable packet:
+> 2026-11-05T15:43:47.897Z. Machine-readable packet:
 > `creator-u05/evidence/mapgeo02-gameplay-handoff.json`.
 
 ---
@@ -15,12 +15,13 @@
 | Map branch / pinned HEAD / live HEAD | `arena/2e3cfbd2-soul-of-hero` @ `3e02fde05a24f6d645ea00ed5ab78900655e1272` |
 | `main` | `5214788933b1a827f3a177d11ff486433dfe5e8a` |
 | Gameplay HEAD **observed/pinned in the task** | `6e7d116b4400ea3c24373fe884b7fad258f4f7bc` |
-| Gameplay / PR44 **live HEAD now** | `c2418b5405ff3325e0ac4806a5309785e816b093` (PR44 **OPEN**, NOT edited/merged/closed) |
-| Live drift during this task | **true** — both SHAs reported; Map did not touch PR44 |
+| Gameplay / PR44 **live HEAD at MAP-GEO-02 delivery** | `c2418b5405ff3325e0ac4806a5309785e816b093` (PR44 **OPEN**, NOT edited/merged/closed) |
+| Gameplay / PR44 **live HEAD at 02A finish** | `e79d9e7edc46693729b8c4732162dfbf7c9158d9` (PR44 **OPEN**; see §10 amendment) |
+| Live drift during MAP-GEO-02 | **true** — both SHAs reported; Map did not touch PR44 |
 | Creator-verified Gameplay HEAD | `5b3e683402bbc8540dea9404576164097e753f97` |
 | U05 source pin | `b5c8004ca4e77be62484fb3cd296fe296d7de4c9` |
 | GOLD SHA-256 | `88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256` (unchanged) |
-| Terrain painter block | `f29c1a68803505c2dbf82aaae3ed37ab7240cb71dff47937f964e753c8d0f803` — byte-identical at U05 pin / MAP-GEO-01 observed / MAP-GEO-02 pinned / new PR44 head |
+| Terrain painter block (at 02 delivery) | `f29c1a68803505c2dbf82aaae3ed37ab7240cb71dff47937f964e753c8d0f803` — byte-identical at U05 pin / MAP-GEO-01 observed / MAP-GEO-02 pinned / 02-delivery PR44 head; **02A drift in §10** |
 | QA executable | `creator-u05/SoulOfHero_MapGeo02_CorrectedProjection.html` — 1421388 B, SHA `41b2203bbbab47c0f4f215461e9e7571c2d1a46b0d982a7a2fbf177bbcac2339` |
 | Protected baselines | terrain-only `540f095e…`, NATURE-01 `ac4d54e3…`, NATURE-02 `6e1e897a…` — **all unchanged** |
 
@@ -131,9 +132,9 @@ show **0 changed tile codes** — no widening, recolouring or redrawing.
 * Executable: `creator-u05/SoulOfHero_MapGeo02_CorrectedProjection.html` (standalone, self-contained).
 * Renderer: existing SOH `U=0.5`, native `640×360` `1×`, hero `16×24`,
   base speed `72 px/s`, verbatim `terrain.ts` painter, x10 viewer multiplier.
-* **17** real-key runs, **52** native
+* **17** real-key runs, **84** native
   `640×360` PNGs, **0** browser errors,
-  **28/28** checks PASS.
+  **31/31** checks PASS.
 * Six MAP-GEO-01 runs were reproduced at **exactly the same coordinates and
   legs**, with exact-end-tile static shots and tile-code diff. `T3` shows
   656 old land `T.BRIDGE` tiles → 46 new water deck tiles (702 changed tiles);
@@ -169,7 +170,7 @@ Screenshots are **QA evidence, not visual or production acceptance**.
 
 ## 8. Gameplay `WorldTraversal` intake requirements
 
-1. Pin the exact Gameplay SHA (pinned observed 6e7d116b… OR live PR44 c2418b54… — drift reported) before consuming this packet.
+1. Pin the exact Gameplay SHA before consuming this packet: task pin 6e7d116b…, MAP-GEO-02 delivery live c2418b54…, 02A observed 897e28f2…, 02A live e79d9e7e… (drift chain in §10).
 2. Decide bearing/load class for each of the 10 resolved deck candidates from GOLD load + crossingCandidate code 1/2; do not infer cart clearance from foot/cart labels.
 3. Define walk/cart collision on deck tiles, seam tiles and both approaches; production default here is PRODUCTION_NO_PERMISSION (deck still blocked).
 4. Approve or reject the QA_CANDIDATE_CROSSING mode separately; it is geometry measurement ONLY and never a production permission.
@@ -189,3 +190,84 @@ Screenshots are **QA evidence, not visual or production acceptance**.
 PR44 edit/merge, GOLD amendment, new atlas, full-world visual acceptance or
 full Gameplay integration claim. PAPER / RUNTIME / VISUAL / GAMEPLAY stay
 separate. NATURE-01/02 remain archived R&D.
+
+## 10. AMENDMENT A — MAP-GEO-REJOIN-02A (evidence integrity corrective)
+
+**Verified defect.** The 02 QA script ran every `BRIDGE_RUNS` fixture first and only
+then captured all `_at_bridge` images. GitHub blob verification at pinned HEAD found
+**52 PNGs / 34 unique contents**, one **10-image identical group**; 8 differently-named
+`_at_bridge` files were the same stale final canvas frame.
+
+**Correction.** `creator-u05/tests/qa-mapgeo02-traversal.mjs` now forces at least two fresh
+render frames after every setup and reads the canvas **and** runtime state atomically in one
+frame callback. Every capture logs requested bridge id, actual player tile, camera coordinate,
+candidate id, selected mode, timestamp and frame identity. Each of the 8 bridge fixtures
+captures its own image **before the next fixture**. Twelve self-contained per-ID fixtures were
+added: deck + both measured bank approaches for the 10 resolved ids, the bare crossing site
+only for `br_9` / `br_b`. Full log: `creator-u05/evidence/mapgeo02-shot-provenance.json`.
+
+**Screenshot authenticity by bridge id** (all fresh frames, `PRODUCTION_NO_PERMISSION`, native `640×360`):
+
+| ID | Status | Per-ID screenshots | Candidate id on deck shot |
+|---|---|---|---|
+| `br_0` | CANDIDATE DECK | bankA, deck, bankB | br_0 |
+| `br_1` | CANDIDATE DECK | bankA, deck, bankB | br_1 |
+| `br_2` | CANDIDATE DECK | bankA, deck, bankB | br_2 |
+| `br_3` | CANDIDATE DECK | bankA, deck, bankB | br_3 |
+| `br_4` | CANDIDATE DECK | bankA, deck, bankB | br_4 |
+| `br_5` | CANDIDATE DECK | bankA, deck, bankB | br_5 |
+| `br_6` | CANDIDATE DECK | bankA, deck, bankB | br_6 |
+| `br_7` | CANDIDATE DECK | bankA, deck, bankB | br_7 |
+| `br_8` | CANDIDATE DECK | bankA, deck, bankB | br_8 |
+| `br_9` | UNRESOLVED | site | null — NO deck |
+| `br_a` | CANDIDATE DECK | bankA, deck, bankB | br_a |
+| `br_b` | UNRESOLVED | site | null — NO deck |
+
+**Negative gate (E08).** Five synthetic bad records — a frame from another bridge fixture
+relabelled, a stale canvas with no fresh render frame, a reused frame identity, a fake deck
+stamped at an unresolved site, and an undeclared mode — are **all rejected** with the expected
+reason; an unmodified authentic control is accepted; all **40** real bridge-labelled captures
+are accepted. Rule: ≤32 tiles from the requested `atTile`, nearest bridge centre must equal the
+requested id, fresh frame, declared mode, zero `T.BRIDGE` at an unresolved site, frame-serial
+owner must match the label.
+
+**Duplicate audit (E09).** **84** PNGs / **79** unique contents; **5** duplicate pairs, all
+classified `LEGITIMATE_IDENTICAL_STATE_CAPTURE` (same fixture/state at distinct frame
+identities) — duplicates are **not** auto-failed. **0** reused-frame defect groups; **8**
+`_at_bridge` shots have **8** distinct contents. The old 10-image group is gone.
+
+**Updated gates.** Runtime **31/31** (28 MAP-GEO-02 +
+E08/E09/E10), static **156/156**, MAP-GEO-01 **130/130**, `npx tsc --noEmit` clean,
+**17** real-key runs, **84** native shots, **0** browser errors, **0** permission leaks over
+10,086 tiles. QA executable **NOT rebuilt** (`41b2203b…`);
+native `640×360`, `U=0.5`, original painter and all three protected baselines unchanged.
+
+**Visual inspection** (`creator-u05/evidence/mapgeo02a-visual-inspection.json`). Deck
+silhouettes are bounded and water-only; `br_2` deck and both bank seams read cleanly; angled
+decks (`br_5`, `br_a`) show stepped tile-grid edges and `br_7` reads as planks on tan
+`shallow` terrain (all 28 deck tiles are water-classified) — targeted **art** rework, not a
+geometry defect. The cliff face is a thin jagged band (no filled slab, no production wall) but
+reads stylised; the cliff real-key run frames do not show the face clearly — an **evidence gap**.
+**No newly confirmed physical defect.** The 10 candidates, 2 unresolved ids and the 31-road
+classification are retained. **NO `VISUAL_ACCEPTED`**; targeted rework items are recorded and
+NOT granted.
+
+**Exact SHAs and drift** (`creator-u05/evidence/mapgeo02a-refs.json`, 13/13 ref checks).
+Map pin at 02A `accca454…`, at 02 delivery
+`3e02fde0…`, `main` `52147889…`.
+Gameplay chain: `6e7d116b… → c2418b54… → 897e28f2… → e79d9e7e…`
+(02A observed `897e28f2…` WAS live `refs/pull/44/head` at task start; PR44 then advanced
+**more than once** during the task — the definitive live SHA at the final gate run is
+`e79d9e7edc46693729b8c4732162dfbf7c9158d9`, recorded in `mapgeo02a-refs.json :: live.pr44Head`). PR44
+**OPEN**, NOT edited/merged/closed. Drift since 02 delivery:
+`42 files changed, 1059 insertions(+), 66 deletions(-)`;
+since the observed 02A head: `29 files changed, 672 insertions(+), 37 deletions(-)`. Terrain
+**palette** constants (2154 B) are byte-identical at every recorded head; the preflight
+painter-*block* slice grew `8276 → 8382 B` because a Gameplay POI-door render line inside
+`renderChunk()` changed — reported Gameplay-side drift, NOT a change to the original painter
+or to the QA viewer.
+
+**WorldTraversal readiness.**
+`READY_AS_MEASURED_QA_EVIDENCE_FOR_WORLDTRAVERSAL_INTAKE__NOT_READY_AS_PRODUCTION_TRAVERSAL_PERMISSION__NOT_VISUALLY_ACCEPTED`.
+The 10 deck candidates and 305 cliff faces remain geometry-only; `br_9`/`br_b` and the 6
+ambiguous road ids still need Creator/Gameplay decisions; the §8 intake list is unchanged.

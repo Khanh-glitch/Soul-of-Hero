@@ -2,7 +2,7 @@
   "schema": "soh.mapgeo02.traversal.v1",
   "task": "SOH — MAP-GEO-REJOIN-02",
   "status": "QA_VERIFICATION__NOT_PRODUCTION__NOT_VISUAL_ACCEPTANCE",
-  "generatedAt": "2026-11-05T14:20:24.908Z",
+  "generatedAt": "2026-11-05T15:41:49.794Z",
   "executable": {
     "file": "creator-u05/SoulOfHero_MapGeo02_CorrectedProjection.html",
     "sha256": "41b2203bbbab47c0f4f215461e9e7571c2d1a46b0d982a7a2fbf177bbcac2339"
@@ -13,9 +13,11 @@
   },
   "method": {
     "renderer": "existing SOH U=0.5 terrain renderer, verbatim terrain.ts painter, native 640x360 1x, hero 16x24",
-    "screenshots": "document.getElementById(\"game\").toDataURL(\"image/png\")",
+    "screenshots": "document.getElementById(\"game\").toDataURL(\"image/png\"), read atomically with runtime state after >=2 forced fresh animation frames",
+    "evidenceIntegrity": "MAP-GEO-REJOIN-02A corrective: every bridge image is captured inside its OWN fixture; full provenance + negative authenticity gate in evidence/mapgeo02-shot-provenance.json",
     "movement": "REAL held WASD / arrow keys with NATURAL_TERRAIN_ONLY collision ON; x10 viewer speed",
     "spawnControl": "window.__terrain.reset(tx,ty) ONCE per run; NOT a route or teleport claim",
+    "perIdFixtures": "12 self-contained static viewer spawn-control fixtures; NOT traversal claims",
     "modes": {
       "default": "PRODUCTION_NO_PERMISSION",
       "qaOnly": "QA_CANDIDATE_CROSSING"
@@ -107,8 +109,8 @@
             771,
             1185
           ],
-          "px": 12336,
-          "py": 18976,
+          "px": 12345,
+          "py": 18967,
           "visibleTile": 4,
           "candidate": {
             "deck": null,
@@ -118,8 +120,8 @@
         }
       ],
       "movement": {
-        "movedPx": 848,
-        "tilesTraversed": 53,
+        "movedPx": 865,
+        "tilesTraversed": 54.06,
         "blockedSubsteps": 0,
         "startTile": [
           744,
@@ -147,18 +149,88 @@
         "collisionDisabled": false
       },
       "before": {
+        "serial": 1,
         "file": "creator-u05/evidence/mapgeo02-shots/match_T1_spawn_to_route_before.png",
+        "name": "match_T1_spawn_to_route_before",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:05.600Z",
+        "pngSha256": "42ce7e447ce85b97f16e07b67f0e2c0b084955706739e1294b786ae07c5435cf",
+        "frameIdentity": {
+          "serial": 1,
+          "simMs": 650,
+          "wallClockMs": 1582.4,
+          "setupSimMs": 567,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": null,
+        "requestedKind": "RUN_BEFORE",
+        "actualPlayerTile": [
+          744,
+          1212
+        ],
+        "playerPx": [
+          11912,
+          19400
+        ],
+        "cameraCoordinate": [
+          11592,
+          19214
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 4,
+        "selectedMode": "PRODUCTION_NO_PERMISSION",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__BEFORE_LEGS"
       },
       "after": {
+        "serial": 2,
         "file": "creator-u05/evidence/mapgeo02-shots/match_T1_spawn_to_route_after.png",
+        "name": "match_T1_spawn_to_route_after",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:06.601Z",
+        "pngSha256": "163445be229986921f9ae123948d7f0ed4681ae51584df31e2b8a74233355f96",
+        "frameIdentity": {
+          "serial": 2,
+          "simMs": 1533,
+          "wallClockMs": 2582.8,
+          "setupSimMs": 567,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": null,
+        "requestedKind": "RUN_AFTER",
+        "actualPlayerTile": [
+          771,
+          1185
+        ],
+        "playerPx": [
+          12344.74935008624,
+          18967.25064991376
+        ],
+        "cameraCoordinate": [
+          12025,
+          18781
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 4,
+        "selectedMode": "PRODUCTION_NO_PERMISSION",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 865,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__AFTER_LEGS"
       },
       "feature": "exact MAP-GEO-01 coordinate/legs, PRODUCTION_NO_PERMISSION",
       "result": "MATCHING_COORDINATE_COMPARISON",
@@ -169,9 +241,9 @@
           640,
           360
         ],
-        "differingPixels": 165447,
+        "differingPixels": 159508,
         "totalPixels": 230400,
-        "meanAbsChannelDiff": 19.37
+        "meanAbsChannelDiff": 18.449
       },
       "exactCoordinate": {
         "tile": [
@@ -179,11 +251,46 @@
           1182
         ],
         "shot": {
+          "serial": 3,
           "file": "creator-u05/evidence/mapgeo02-shots/coord_T1_spawn_to_route.png",
+          "name": "coord_T1_spawn_to_route",
           "size": [
             640,
             360
-          ]
+          ],
+          "capturedAt": "2026-11-05T15:41:06.684Z",
+          "pngSha256": "86763f4f8454e8c8402378f315d185dfa6f558e1cfa87fc04c0257edf282be53",
+          "frameIdentity": {
+            "serial": 3,
+            "simMs": 1617,
+            "wallClockMs": 2666.7,
+            "setupSimMs": 1583,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": null,
+          "requestedKind": "STATIC_COORDINATE_SHOT",
+          "actualPlayerTile": [
+            774,
+            1182
+          ],
+          "playerPx": [
+            12392,
+            18920
+          ],
+          "cameraCoordinate": [
+            12072,
+            18734
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 12,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL"
         },
         "window": {
           "x0": 754,
@@ -196,9 +303,9 @@
             640,
             360
           ],
-          "differingPixels": 165447,
+          "differingPixels": 126691,
           "totalPixels": 230400,
-          "meanAbsChannelDiff": 19.37
+          "meanAbsChannelDiff": 13.099
         },
         "tileCodeComparison": {
           "tiles": 920,
@@ -300,18 +407,88 @@
         "collisionDisabled": false
       },
       "before": {
+        "serial": 4,
         "file": "creator-u05/evidence/mapgeo02-shots/match_T2_road_biome_transition_before.png",
+        "name": "match_T2_road_biome_transition_before",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:06.973Z",
+        "pngSha256": "bcac4b2906f85b640fb376e7a5d80a3254a279be4a772cb590d1fefce5349f25",
+        "frameIdentity": {
+          "serial": 4,
+          "simMs": 1833,
+          "wallClockMs": 2955.1,
+          "setupSimMs": 1767,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": null,
+        "requestedKind": "RUN_BEFORE",
+        "actualPlayerTile": [
+          2372,
+          2580
+        ],
+        "playerPx": [
+          37960,
+          41288
+        ],
+        "cameraCoordinate": [
+          37640,
+          41102
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 12,
+        "selectedMode": "PRODUCTION_NO_PERMISSION",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__BEFORE_LEGS"
       },
       "after": {
+        "serial": 5,
         "file": "creator-u05/evidence/mapgeo02-shots/match_T2_road_biome_transition_after.png",
+        "name": "match_T2_road_biome_transition_after",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:09.234Z",
+        "pngSha256": "c539ba875c80ebaa3bad101ea63a7706d9c1efe91b4baeab28c2b915be8ce064",
+        "frameIdentity": {
+          "serial": 5,
+          "simMs": 4100,
+          "wallClockMs": 5215.7,
+          "setupSimMs": 1767,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": null,
+        "requestedKind": "RUN_AFTER",
+        "actualPlayerTile": [
+          2471,
+          2580
+        ],
+        "playerPx": [
+          39543.92800000058,
+          41288
+        ],
+        "cameraCoordinate": [
+          39224,
+          41102
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 12,
+        "selectedMode": "PRODUCTION_NO_PERMISSION",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 1584,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__AFTER_LEGS"
       },
       "feature": "exact MAP-GEO-01 coordinate/legs, PRODUCTION_NO_PERMISSION",
       "result": "MATCHING_COORDINATE_COMPARISON",
@@ -332,11 +509,46 @@
           2580
         ],
         "shot": {
+          "serial": 6,
           "file": "creator-u05/evidence/mapgeo02-shots/coord_T2_road_biome_transition.png",
+          "name": "coord_T2_road_biome_transition",
           "size": [
             640,
             360
-          ]
+          ],
+          "capturedAt": "2026-11-05T15:41:09.316Z",
+          "pngSha256": "ec638cc9c19458fef41b8943cabf18f5bb82eb2fa9fef9a159b0ad63f54c9524",
+          "frameIdentity": {
+            "serial": 6,
+            "simMs": 4184,
+            "wallClockMs": 5299.2,
+            "setupSimMs": 4133,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": null,
+          "requestedKind": "STATIC_COORDINATE_SHOT",
+          "actualPlayerTile": [
+            2473,
+            2580
+          ],
+          "playerPx": [
+            39576,
+            41288
+          ],
+          "cameraCoordinate": [
+            39256,
+            41102
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 12,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL"
         },
         "window": {
           "x0": 2453,
@@ -349,9 +561,9 @@
             640,
             360
           ],
-          "differingPixels": 133440,
+          "differingPixels": 131160,
           "totalPixels": 230400,
-          "meanAbsChannelDiff": 13.216
+          "meanAbsChannelDiff": 12.606
         },
         "tileCodeComparison": {
           "tiles": 920,
@@ -420,13 +632,13 @@
             "deck": null,
             "face": null
           },
-          "blockedSubsteps": 120
+          "blockedSubsteps": 117
         }
       ],
       "movement": {
         "movedPx": 342,
         "tilesTraversed": 21.38,
-        "blockedSubsteps": 120,
+        "blockedSubsteps": 117,
         "startTile": [
           2020,
           907
@@ -453,18 +665,88 @@
         "collisionDisabled": false
       },
       "before": {
+        "serial": 7,
         "file": "creator-u05/evidence/mapgeo02-shots/match_T3_bridge_approach_crossing_before.png",
+        "name": "match_T3_bridge_approach_crossing_before",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:09.785Z",
+        "pngSha256": "b9dca59710f0e6685c3808d65e5c7324aa8bd0f4c2c5c10f3f040e734ba5e1cc",
+        "frameIdentity": {
+          "serial": 7,
+          "simMs": 4333,
+          "wallClockMs": 5767.7,
+          "setupSimMs": 4250,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": null,
+        "requestedKind": "RUN_BEFORE",
+        "actualPlayerTile": [
+          2020,
+          907
+        ],
+        "playerPx": [
+          32328,
+          14520
+        ],
+        "cameraCoordinate": [
+          32008,
+          14334
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 9,
+        "selectedMode": "PRODUCTION_NO_PERMISSION",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__BEFORE_LEGS"
       },
       "after": {
+        "serial": 8,
         "file": "creator-u05/evidence/mapgeo02-shots/match_T3_bridge_approach_crossing_after.png",
+        "name": "match_T3_bridge_approach_crossing_after",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:11.083Z",
+        "pngSha256": "235662d5ac267978a48ff5f441dc1d9f33c50de2080a7c96030bba9fd6748907",
+        "frameIdentity": {
+          "serial": 8,
+          "simMs": 5600,
+          "wallClockMs": 7066.3,
+          "setupSimMs": 4250,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": null,
+        "requestedKind": "RUN_AFTER",
+        "actualPlayerTile": [
+          2041,
+          907
+        ],
+        "playerPx": [
+          32670.000000000033,
+          14520
+        ],
+        "cameraCoordinate": [
+          32350,
+          14334
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 12,
+        "selectedMode": "PRODUCTION_NO_PERMISSION",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 342,
+        "blockedSubsteps": 117,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__AFTER_LEGS"
       },
       "feature": "exact MAP-GEO-01 coordinate/legs, PRODUCTION_NO_PERMISSION",
       "result": "MATCHING_COORDINATE_COMPARISON",
@@ -485,11 +767,46 @@
           907
         ],
         "shot": {
+          "serial": 9,
           "file": "creator-u05/evidence/mapgeo02-shots/coord_T3_bridge_approach_crossing.png",
+          "name": "coord_T3_bridge_approach_crossing",
           "size": [
             640,
             360
-          ]
+          ],
+          "capturedAt": "2026-11-05T15:41:11.188Z",
+          "pngSha256": "88c8f884b2d255414be12eb943641977c14fa1658b51441a43a7fac4fd8bc666",
+          "frameIdentity": {
+            "serial": 9,
+            "simMs": 5700,
+            "wallClockMs": 7168.7,
+            "setupSimMs": 5633,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": null,
+          "requestedKind": "STATIC_COORDINATE_SHOT",
+          "actualPlayerTile": [
+            2041,
+            907
+          ],
+          "playerPx": [
+            32664,
+            14520
+          ],
+          "cameraCoordinate": [
+            32344,
+            14334
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 12,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL"
         },
         "window": {
           "x0": 2021,
@@ -502,9 +819,9 @@
             640,
             360
           ],
-          "differingPixels": 178393,
+          "differingPixels": 197621,
           "totalPixels": 230400,
-          "meanAbsChannelDiff": 49.948
+          "meanAbsChannelDiff": 53.651
         },
         "tileCodeComparison": {
           "tiles": 920,
@@ -581,15 +898,15 @@
           ],
           "heldMs": 700,
           "tile": [
-            1228,
+            1231,
             1200
           ],
-          "px": 19652,
+          "px": 19712,
           "py": 19208,
-          "visibleTile": 7,
+          "visibleTile": 8,
           "candidate": {
             "deck": null,
-            "face": null
+            "face": "E"
           },
           "blockedSubsteps": 0
         },
@@ -600,10 +917,10 @@
           ],
           "heldMs": 600,
           "tile": [
-            1228,
+            1231,
             1221
           ],
-          "px": 19652,
+          "px": 19712,
           "py": 19544,
           "visibleTile": 5,
           "candidate": {
@@ -619,10 +936,10 @@
           ],
           "heldMs": 700,
           "tile": [
-            1196,
+            1199,
             1221
           ],
-          "px": 19148,
+          "px": 19196,
           "py": 19544,
           "visibleTile": 5,
           "candidate": {
@@ -638,10 +955,10 @@
           ],
           "heldMs": 600,
           "tile": [
-            1196,
+            1199,
             1195
           ],
-          "px": 19148,
+          "px": 19196,
           "py": 19124,
           "visibleTile": 7,
           "candidate": {
@@ -652,19 +969,19 @@
         }
       ],
       "movement": {
-        "movedPx": 1704,
-        "tilesTraversed": 106.5,
+        "movedPx": 1776,
+        "tilesTraversed": 111,
         "blockedSubsteps": 0,
         "startTile": [
           1200,
           1200
         ],
         "endTile": [
-          1196,
+          1199,
           1195
         ],
         "tileDelta": [
-          -4,
+          -1,
           -5
         ],
         "endVisibleTile": 7,
@@ -681,18 +998,88 @@
         "collisionDisabled": false
       },
       "before": {
+        "serial": 10,
         "file": "creator-u05/evidence/mapgeo02-shots/match_T4_highland_and_alternative_before.png",
+        "name": "match_T4_highland_and_alternative_before",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:11.686Z",
+        "pngSha256": "f46a48d0777d9a8e656c23e8b0a369477e8599b3613f5fd986065b34867a47ed",
+        "frameIdentity": {
+          "serial": 10,
+          "simMs": 5900,
+          "wallClockMs": 7667.6,
+          "setupSimMs": 5817,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": null,
+        "requestedKind": "RUN_BEFORE",
+        "actualPlayerTile": [
+          1200,
+          1200
+        ],
+        "playerPx": [
+          19208,
+          19208
+        ],
+        "cameraCoordinate": [
+          18888,
+          19022
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 5,
+        "selectedMode": "PRODUCTION_NO_PERMISSION",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__BEFORE_LEGS"
       },
       "after": {
+        "serial": 11,
         "file": "creator-u05/evidence/mapgeo02-shots/match_T4_highland_and_alternative_after.png",
+        "name": "match_T4_highland_and_alternative_after",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:14.469Z",
+        "pngSha256": "a5c2fcc6d7b19be8555995f8378fc3a5e2251c5490673b6b88e1dce5ce4bd992",
+        "frameIdentity": {
+          "serial": 11,
+          "simMs": 8516,
+          "wallClockMs": 10450.1,
+          "setupSimMs": 5817,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": null,
+        "requestedKind": "RUN_AFTER",
+        "actualPlayerTile": [
+          1199,
+          1195
+        ],
+        "playerPx": [
+          19195.9760000001,
+          19124.11999999999
+        ],
+        "cameraCoordinate": [
+          18876,
+          18938
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 7,
+        "selectedMode": "PRODUCTION_NO_PERMISSION",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 1776,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__AFTER_LEGS"
       },
       "feature": "exact MAP-GEO-01 coordinate/legs, PRODUCTION_NO_PERMISSION",
       "result": "MATCHING_COORDINATE_COMPARISON",
@@ -703,9 +1090,9 @@
           640,
           360
         ],
-        "differingPixels": 153233,
+        "differingPixels": 142510,
         "totalPixels": 230400,
-        "meanAbsChannelDiff": 26.4
+        "meanAbsChannelDiff": 22.731
       },
       "exactCoordinate": {
         "tile": [
@@ -713,11 +1100,46 @@
           1199
         ],
         "shot": {
+          "serial": 12,
           "file": "creator-u05/evidence/mapgeo02-shots/coord_T4_highland_and_alternative.png",
+          "name": "coord_T4_highland_and_alternative",
           "size": [
             640,
             360
-          ]
+          ],
+          "capturedAt": "2026-11-05T15:41:14.551Z",
+          "pngSha256": "36a8d954a85ef48ba7a41b6c8ca121721be4b820a0f41abe573a34516676b483",
+          "frameIdentity": {
+            "serial": 12,
+            "simMs": 8600,
+            "wallClockMs": 10533.3,
+            "setupSimMs": 8566,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": null,
+          "requestedKind": "STATIC_COORDINATE_SHOT",
+          "actualPlayerTile": [
+            1203,
+            1199
+          ],
+          "playerPx": [
+            19256,
+            19192
+          ],
+          "cameraCoordinate": [
+            18936,
+            19006
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 5,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL"
         },
         "window": {
           "x0": 1183,
@@ -730,9 +1152,9 @@
             640,
             360
           ],
-          "differingPixels": 153233,
+          "differingPixels": 113918,
           "totalPixels": 230400,
-          "meanAbsChannelDiff": 26.4
+          "meanAbsChannelDiff": 12.689
         },
         "tileCodeComparison": {
           "tiles": 920,
@@ -803,12 +1225,12 @@
           ],
           "heldMs": 600,
           "tile": [
-            3141,
+            3143,
             1769
           ],
-          "px": 50260,
+          "px": 50296,
           "py": 28312,
-          "visibleTile": 2,
+          "visibleTile": 12,
           "candidate": {
             "deck": null,
             "face": null
@@ -822,10 +1244,10 @@
           ],
           "heldMs": 250,
           "tile": [
-            3130,
+            3132,
             1769
           ],
-          "px": 50092,
+          "px": 50128,
           "py": 28312,
           "visibleTile": 12,
           "candidate": {
@@ -844,20 +1266,20 @@
             3130,
             1769
           ],
-          "px": 50084,
+          "px": 50082,
           "py": 28312,
           "visibleTile": 12,
           "candidate": {
             "deck": null,
             "face": null
           },
-          "blockedSubsteps": 11
+          "blockedSubsteps": 3
         }
       ],
       "movement": {
-        "movedPx": 644,
-        "tilesTraversed": 40.25,
-        "blockedSubsteps": 11,
+        "movedPx": 646,
+        "tilesTraversed": 40.38,
+        "blockedSubsteps": 3,
         "startTile": [
           3170,
           1769
@@ -884,18 +1306,88 @@
         "collisionDisabled": false
       },
       "before": {
+        "serial": 13,
         "file": "creator-u05/evidence/mapgeo02-shots/match_T5_coastal_dock_approach_before.png",
+        "name": "match_T5_coastal_dock_approach_before",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:14.894Z",
+        "pngSha256": "52930e6e7daa2c3a47873cf0b2724685b04756288c249d2103bba8e45c73c12b",
+        "frameIdentity": {
+          "serial": 13,
+          "simMs": 8783,
+          "wallClockMs": 10874.9,
+          "setupSimMs": 8716,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": null,
+        "requestedKind": "RUN_BEFORE",
+        "actualPlayerTile": [
+          3170,
+          1769
+        ],
+        "playerPx": [
+          50728,
+          28312
+        ],
+        "cameraCoordinate": [
+          50408,
+          28126
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 6,
+        "selectedMode": "PRODUCTION_NO_PERMISSION",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__BEFORE_LEGS"
       },
       "after": {
+        "serial": 14,
         "file": "creator-u05/evidence/mapgeo02-shots/match_T5_coastal_dock_approach_after.png",
+        "name": "match_T5_coastal_dock_approach_after",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:15.900Z",
+        "pngSha256": "b85969aa2c87fbed218f47bdfbf84b961da02d41b42a3e44693fddbb5ba1625e",
+        "frameIdentity": {
+          "serial": 14,
+          "simMs": 9783,
+          "wallClockMs": 11882.6,
+          "setupSimMs": 8716,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": null,
+        "requestedKind": "RUN_AFTER",
+        "actualPlayerTile": [
+          3130,
+          1769
+        ],
+        "playerPx": [
+          50081.89599999981,
+          28312
+        ],
+        "cameraCoordinate": [
+          49762,
+          28126
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 12,
+        "selectedMode": "PRODUCTION_NO_PERMISSION",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 646,
+        "blockedSubsteps": 3,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__AFTER_LEGS"
       },
       "feature": "exact MAP-GEO-01 coordinate/legs, PRODUCTION_NO_PERMISSION",
       "result": "MATCHING_COORDINATE_COMPARISON",
@@ -906,9 +1398,9 @@
           640,
           360
         ],
-        "differingPixels": 103,
+        "differingPixels": 94794,
         "totalPixels": 230400,
-        "meanAbsChannelDiff": 0.033
+        "meanAbsChannelDiff": 9.638
       },
       "exactCoordinate": {
         "tile": [
@@ -916,11 +1408,46 @@
           1769
         ],
         "shot": {
+          "serial": 15,
           "file": "creator-u05/evidence/mapgeo02-shots/coord_T5_coastal_dock_approach.png",
+          "name": "coord_T5_coastal_dock_approach",
           "size": [
             640,
             360
-          ]
+          ],
+          "capturedAt": "2026-11-05T15:41:15.982Z",
+          "pngSha256": "6b587ce7be1bc6ef4337e6efa38d737ae73e3542dc138220d06d877ceaabb99b",
+          "frameIdentity": {
+            "serial": 15,
+            "simMs": 9867,
+            "wallClockMs": 11966.2,
+            "setupSimMs": 9833,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": null,
+          "requestedKind": "STATIC_COORDINATE_SHOT",
+          "actualPlayerTile": [
+            3130,
+            1769
+          ],
+          "playerPx": [
+            50088,
+            28312
+          ],
+          "cameraCoordinate": [
+            49768,
+            28126
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 12,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL"
         },
         "window": {
           "x0": 3110,
@@ -933,9 +1460,9 @@
             640,
             360
           ],
-          "differingPixels": 103,
+          "differingPixels": 106073,
           "totalPixels": 230400,
-          "meanAbsChannelDiff": 0.033
+          "meanAbsChannelDiff": 11.314
         },
         "tileCodeComparison": {
           "tiles": 920,
@@ -1062,18 +1589,88 @@
         "collisionDisabled": false
       },
       "before": {
+        "serial": 16,
         "file": "creator-u05/evidence/mapgeo02-shots/match_T6_poi_exterior_return_before.png",
+        "name": "match_T6_poi_exterior_return_before",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:16.214Z",
+        "pngSha256": "b93e63dd9f104faeac7f725c95cf29af344eaa386d351a03219d2c7ecb338dc1",
+        "frameIdentity": {
+          "serial": 16,
+          "simMs": 10017,
+          "wallClockMs": 12193.5,
+          "setupSimMs": 9950,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": null,
+        "requestedKind": "RUN_BEFORE",
+        "actualPlayerTile": [
+          520,
+          1304
+        ],
+        "playerPx": [
+          8328,
+          20872
+        ],
+        "cameraCoordinate": [
+          8008,
+          20686
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 2,
+        "selectedMode": "PRODUCTION_NO_PERMISSION",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__BEFORE_LEGS"
       },
       "after": {
+        "serial": 17,
         "file": "creator-u05/evidence/mapgeo02-shots/match_T6_poi_exterior_return_after.png",
+        "name": "match_T6_poi_exterior_return_after",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:17.220Z",
+        "pngSha256": "431e7e809e46a7c1c6c3ebcb45a2fc9d4152b72bdbf99c498ca512dd1733eaf7",
+        "frameIdentity": {
+          "serial": 17,
+          "simMs": 11017,
+          "wallClockMs": 13202.5,
+          "setupSimMs": 9950,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": null,
+        "requestedKind": "RUN_AFTER",
+        "actualPlayerTile": [
+          519,
+          1304
+        ],
+        "playerPx": [
+          8315.975999999995,
+          20872
+        ],
+        "cameraCoordinate": [
+          7996,
+          20686
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 2,
+        "selectedMode": "PRODUCTION_NO_PERMISSION",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 636,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__AFTER_LEGS"
       },
       "feature": "exact MAP-GEO-01 coordinate/legs, PRODUCTION_NO_PERMISSION",
       "result": "MATCHING_COORDINATE_COMPARISON",
@@ -1094,11 +1691,46 @@
           1304
         ],
         "shot": {
+          "serial": 18,
           "file": "creator-u05/evidence/mapgeo02-shots/coord_T6_poi_exterior_return.png",
+          "name": "coord_T6_poi_exterior_return",
           "size": [
             640,
             360
-          ]
+          ],
+          "capturedAt": "2026-11-05T15:41:17.299Z",
+          "pngSha256": "fdd83f962265ef83cfc750776b37cbc2db1f83c080753b9a337a93143f68dddc",
+          "frameIdentity": {
+            "serial": 18,
+            "simMs": 11100,
+            "wallClockMs": 13282.6,
+            "setupSimMs": 11067,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": null,
+          "requestedKind": "STATIC_COORDINATE_SHOT",
+          "actualPlayerTile": [
+            519,
+            1304
+          ],
+          "playerPx": [
+            8312,
+            20872
+          ],
+          "cameraCoordinate": [
+            7992,
+            20686
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 2,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL"
         },
         "window": {
           "x0": 499,
@@ -1111,9 +1743,9 @@
             640,
             360
           ],
-          "differingPixels": 0,
+          "differingPixels": 119685,
           "totalPixels": 230400,
-          "meanAbsChannelDiff": 0
+          "meanAbsChannelDiff": 11.526
         },
         "tileCodeComparison": {
           "tiles": 920,
@@ -1177,20 +1809,20 @@
             2041,
             907
           ],
-          "px": 32668,
+          "px": 32670,
           "py": 14520,
           "visibleTile": 12,
           "candidate": {
             "deck": null,
             "face": null
           },
-          "blockedSubsteps": 131
+          "blockedSubsteps": 125
         }
       ],
       "movement": {
-        "movedPx": 340,
-        "tilesTraversed": 21.25,
-        "blockedSubsteps": 131,
+        "movedPx": 342,
+        "tilesTraversed": 21.38,
+        "blockedSubsteps": 125,
         "startTile": [
           2020,
           907
@@ -1217,29 +1849,181 @@
         "collisionDisabled": false
       },
       "before": {
+        "serial": 20,
         "file": "creator-u05/evidence/mapgeo02-shots/B_br1_T3_production_before.png",
+        "name": "B_br1_T3_production_before",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:20.600Z",
+        "pngSha256": "0a8f245664b4b683cdd96c6e97f707c30915b158f4e35d9a5a0adfd3e120579a",
+        "frameIdentity": {
+          "serial": 20,
+          "simMs": 11433,
+          "wallClockMs": 16583.2,
+          "setupSimMs": 11366,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": "br_1",
+        "requestedKind": "RUN_BEFORE",
+        "actualPlayerTile": [
+          2020,
+          907
+        ],
+        "playerPx": [
+          32328,
+          14520
+        ],
+        "cameraCoordinate": [
+          32008,
+          14334
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 9,
+        "selectedMode": "PRODUCTION_NO_PERMISSION",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__BEFORE_LEGS",
+        "visibleWindow": {
+          "tileWindow": [
+            2000,
+            895,
+            2039,
+            917
+          ],
+          "tiles": 920,
+          "bridgeTilesForId": 0,
+          "bridgeTilesAny": 0,
+          "roadTiles": 248,
+          "cliffTiles": 0,
+          "waterTiles": 23
+        }
       },
       "after": {
+        "serial": 21,
         "file": "creator-u05/evidence/mapgeo02-shots/B_br1_T3_production_after.png",
+        "name": "B_br1_T3_production_after",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:21.983Z",
+        "pngSha256": "235662d5ac267978a48ff5f441dc1d9f33c50de2080a7c96030bba9fd6748907",
+        "frameIdentity": {
+          "serial": 21,
+          "simMs": 12800,
+          "wallClockMs": 17966.2,
+          "setupSimMs": 11366,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": "br_1",
+        "requestedKind": "RUN_AFTER",
+        "actualPlayerTile": [
+          2041,
+          907
+        ],
+        "playerPx": [
+          32670.000000000036,
+          14520
+        ],
+        "cameraCoordinate": [
+          32350,
+          14334
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 12,
+        "selectedMode": "PRODUCTION_NO_PERMISSION",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 342,
+        "blockedSubsteps": 125,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__AFTER_LEGS",
+        "visibleWindow": {
+          "tileWindow": [
+            2021,
+            895,
+            2060,
+            917
+          ],
+          "tiles": 920,
+          "bridgeTilesForId": 46,
+          "bridgeTilesAny": 46,
+          "roadTiles": 337,
+          "cliffTiles": 0,
+          "waterTiles": 187
+        }
       },
       "feature": "br_1 at [2045,907]; production must NOT silently grant traversal",
       "result": "REAL_KEY_QA",
       "note": "",
+      "requestedBridgeId": "br_1",
       "bridgeCentreShot": {
+        "serial": 19,
         "file": "creator-u05/evidence/mapgeo02-shots/B_br1_T3_production_at_bridge.png",
+        "name": "B_br1_T3_production_at_bridge",
         "size": [
           640,
           360
-        ]
-      }
+        ],
+        "capturedAt": "2026-11-05T15:41:20.434Z",
+        "pngSha256": "a181038b441e3f109167d499a64d86378fe41aaf94e97feee2003da7a1895da8",
+        "frameIdentity": {
+          "serial": 19,
+          "simMs": 11283,
+          "wallClockMs": 16411.7,
+          "setupSimMs": 11217,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": "br_1",
+        "requestedKind": "FIXTURE_LOCAL_AT_BRIDGE",
+        "actualPlayerTile": [
+          2045,
+          906
+        ],
+        "playerPx": [
+          32728,
+          14504
+        ],
+        "cameraCoordinate": [
+          32408,
+          14318
+        ],
+        "candidateId": "br_1",
+        "cliffFaceSide": null,
+        "visibleTile": 13,
+        "selectedMode": "PRODUCTION_NO_PERMISSION",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "FIXTURE_LOCAL_CENTRE_CAPTURE__VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+        "visibleWindow": {
+          "tileWindow": [
+            2025,
+            894,
+            2064,
+            916
+          ],
+          "tiles": 920,
+          "bridgeTilesForId": 46,
+          "bridgeTilesAny": 46,
+          "roadTiles": 306,
+          "cliffTiles": 0,
+          "waterTiles": 186
+        }
+      },
+      "bridgeCentreTile": [
+        2045,
+        906
+      ]
     },
     {
       "id": "B_br1_T3_qa",
@@ -1296,13 +2080,13 @@
             "deck": "br_1",
             "face": null
           },
-          "blockedSubsteps": 97
+          "blockedSubsteps": 103
         }
       ],
       "movement": {
         "movedPx": 438,
         "tilesTraversed": 27.38,
-        "blockedSubsteps": 97,
+        "blockedSubsteps": 103,
         "startTile": [
           2020,
           907
@@ -1329,29 +2113,181 @@
         "collisionDisabled": false
       },
       "before": {
+        "serial": 23,
         "file": "creator-u05/evidence/mapgeo02-shots/B_br1_T3_qa_before.png",
+        "name": "B_br1_T3_qa_before",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:22.234Z",
+        "pngSha256": "3973267c8092e209d21bc6ff5019963a8b5ab133e9e09d872e8a1463dff4526d",
+        "frameIdentity": {
+          "serial": 23,
+          "simMs": 13016,
+          "wallClockMs": 18217.1,
+          "setupSimMs": 12983,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": "br_1",
+        "requestedKind": "RUN_BEFORE",
+        "actualPlayerTile": [
+          2020,
+          907
+        ],
+        "playerPx": [
+          32328,
+          14520
+        ],
+        "cameraCoordinate": [
+          32008,
+          14334
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 9,
+        "selectedMode": "QA_CANDIDATE_CROSSING",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__BEFORE_LEGS",
+        "visibleWindow": {
+          "tileWindow": [
+            2000,
+            895,
+            2039,
+            917
+          ],
+          "tiles": 920,
+          "bridgeTilesForId": 0,
+          "bridgeTilesAny": 0,
+          "roadTiles": 248,
+          "cliffTiles": 0,
+          "waterTiles": 23
+        }
       },
       "after": {
+        "serial": 24,
         "file": "creator-u05/evidence/mapgeo02-shots/B_br1_T3_qa_after.png",
+        "name": "B_br1_T3_qa_after",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:23.616Z",
+        "pngSha256": "0393a06cda916a34c5e03fa8af9746971d1d73d086de3642a95f7a0764287eba",
+        "frameIdentity": {
+          "serial": 24,
+          "simMs": 14383,
+          "wallClockMs": 19599.1,
+          "setupSimMs": 12983,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": "br_1",
+        "requestedKind": "RUN_AFTER",
+        "actualPlayerTile": [
+          2047,
+          907
+        ],
+        "playerPx": [
+          32766.048000000093,
+          14520
+        ],
+        "cameraCoordinate": [
+          32446,
+          14334
+        ],
+        "candidateId": "br_1",
+        "cliffFaceSide": null,
+        "visibleTile": 13,
+        "selectedMode": "QA_CANDIDATE_CROSSING",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 438,
+        "blockedSubsteps": 103,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__AFTER_LEGS",
+        "visibleWindow": {
+          "tileWindow": [
+            2027,
+            895,
+            2066,
+            917
+          ],
+          "tiles": 920,
+          "bridgeTilesForId": 46,
+          "bridgeTilesAny": 46,
+          "roadTiles": 299,
+          "cliffTiles": 0,
+          "waterTiles": 187
+        }
       },
       "feature": "br_1 bounded deck; QA candidate crossing geometry only",
       "result": "REAL_KEY_QA",
       "note": "",
+      "requestedBridgeId": "br_1",
       "bridgeCentreShot": {
+        "serial": 22,
         "file": "creator-u05/evidence/mapgeo02-shots/B_br1_T3_qa_at_bridge.png",
+        "name": "B_br1_T3_qa_at_bridge",
         "size": [
           640,
           360
-        ]
-      }
+        ],
+        "capturedAt": "2026-11-05T15:41:22.117Z",
+        "pngSha256": "b3f37c61d46022bb38281b45ace7f3e630ba1d128a1008feae32d15eef7625c5",
+        "frameIdentity": {
+          "serial": 22,
+          "simMs": 12916,
+          "wallClockMs": 18099.9,
+          "setupSimMs": 12883,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": "br_1",
+        "requestedKind": "FIXTURE_LOCAL_AT_BRIDGE",
+        "actualPlayerTile": [
+          2045,
+          906
+        ],
+        "playerPx": [
+          32728,
+          14504
+        ],
+        "cameraCoordinate": [
+          32408,
+          14318
+        ],
+        "candidateId": "br_1",
+        "cliffFaceSide": null,
+        "visibleTile": 13,
+        "selectedMode": "QA_CANDIDATE_CROSSING",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "FIXTURE_LOCAL_CENTRE_CAPTURE__VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+        "visibleWindow": {
+          "tileWindow": [
+            2025,
+            894,
+            2064,
+            916
+          ],
+          "tiles": 920,
+          "bridgeTilesForId": 46,
+          "bridgeTilesAny": 46,
+          "roadTiles": 306,
+          "cliffTiles": 0,
+          "waterTiles": 186
+        }
+      },
+      "bridgeCentreTile": [
+        2045,
+        906
+      ]
     },
     {
       "id": "B_br2_production",
@@ -1408,13 +2344,13 @@
             "deck": null,
             "face": null
           },
-          "blockedSubsteps": 84
+          "blockedSubsteps": 105
         }
       ],
       "movement": {
         "movedPx": 54,
         "tilesTraversed": 3.38,
-        "blockedSubsteps": 84,
+        "blockedSubsteps": 105,
         "startTile": [
           2579,
           1052
@@ -1441,29 +2377,181 @@
         "collisionDisabled": false
       },
       "before": {
+        "serial": 26,
         "file": "creator-u05/evidence/mapgeo02-shots/B_br2_production_before.png",
+        "name": "B_br2_production_before",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:24.134Z",
+        "pngSha256": "6b4cbc05b161e2cdd0139fe9aa5d1190b33dc0281daa386e9b457d847d4f825a",
+        "frameIdentity": {
+          "serial": 26,
+          "simMs": 14683,
+          "wallClockMs": 20116.3,
+          "setupSimMs": 14550,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": "br_2",
+        "requestedKind": "RUN_BEFORE",
+        "actualPlayerTile": [
+          2579,
+          1052
+        ],
+        "playerPx": [
+          41272,
+          16840
+        ],
+        "cameraCoordinate": [
+          40952,
+          16654
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 6,
+        "selectedMode": "PRODUCTION_NO_PERMISSION",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__BEFORE_LEGS",
+        "visibleWindow": {
+          "tileWindow": [
+            2559,
+            1040,
+            2598,
+            1062
+          ],
+          "tiles": 920,
+          "bridgeTilesForId": 51,
+          "bridgeTilesAny": 51,
+          "roadTiles": 175,
+          "cliffTiles": 0,
+          "waterTiles": 316
+        }
       },
       "after": {
+        "serial": 27,
         "file": "creator-u05/evidence/mapgeo02-shots/B_br2_production_after.png",
+        "name": "B_br2_production_after",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:24.949Z",
+        "pngSha256": "c1237f3883c612ce9986b07365c20e95212fcf4d99e367622e3caec1400ae65a",
+        "frameIdentity": {
+          "serial": 27,
+          "simMs": 15483,
+          "wallClockMs": 20932.3,
+          "setupSimMs": 14550,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": "br_2",
+        "requestedKind": "RUN_AFTER",
+        "actualPlayerTile": [
+          2579,
+          1049
+        ],
+        "playerPx": [
+          41272,
+          16785.999999999993
+        ],
+        "cameraCoordinate": [
+          40952,
+          16600
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 12,
+        "selectedMode": "PRODUCTION_NO_PERMISSION",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 54,
+        "blockedSubsteps": 105,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__AFTER_LEGS",
+        "visibleWindow": {
+          "tileWindow": [
+            2559,
+            1037,
+            2598,
+            1059
+          ],
+          "tiles": 920,
+          "bridgeTilesForId": 69,
+          "bridgeTilesAny": 69,
+          "roadTiles": 131,
+          "cliffTiles": 0,
+          "waterTiles": 397
+        }
       },
       "feature": "br_2, authored ang≈-1.535 (almost pure north crossing)",
       "result": "REAL_KEY_QA",
       "note": "",
+      "requestedBridgeId": "br_2",
       "bridgeCentreShot": {
+        "serial": 25,
         "file": "creator-u05/evidence/mapgeo02-shots/B_br2_production_at_bridge.png",
+        "name": "B_br2_production_at_bridge",
         "size": [
           640,
           360
-        ]
-      }
+        ],
+        "capturedAt": "2026-11-05T15:41:23.924Z",
+        "pngSha256": "e25100ff7066cf611201e9ae5ac71c0ecc83baab509ca4910131f46193215af7",
+        "frameIdentity": {
+          "serial": 25,
+          "simMs": 14516,
+          "wallClockMs": 19904.9,
+          "setupSimMs": 14450,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": "br_2",
+        "requestedKind": "FIXTURE_LOCAL_AT_BRIDGE",
+        "actualPlayerTile": [
+          2579,
+          1042
+        ],
+        "playerPx": [
+          41272,
+          16680
+        ],
+        "cameraCoordinate": [
+          40952,
+          16494
+        ],
+        "candidateId": "br_2",
+        "cliffFaceSide": null,
+        "visibleTile": 13,
+        "selectedMode": "PRODUCTION_NO_PERMISSION",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "FIXTURE_LOCAL_CENTRE_CAPTURE__VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+        "visibleWindow": {
+          "tileWindow": [
+            2559,
+            1030,
+            2598,
+            1052
+          ],
+          "tiles": 920,
+          "bridgeTilesForId": 77,
+          "bridgeTilesAny": 77,
+          "roadTiles": 113,
+          "cliffTiles": 0,
+          "waterTiles": 489
+        }
+      },
+      "bridgeCentreTile": [
+        2579,
+        1042
+      ]
     },
     {
       "id": "B_br2_qa_full_cross",
@@ -1511,11 +2599,11 @@
           "heldMs": 700,
           "tile": [
             2579,
-            1021
+            1022
           ],
           "px": 41272,
-          "py": 16348,
-          "visibleTile": 6,
+          "py": 16360,
+          "visibleTile": 12,
           "candidate": {
             "deck": null,
             "face": null
@@ -1524,8 +2612,8 @@
         }
       ],
       "movement": {
-        "movedPx": 492,
-        "tilesTraversed": 30.75,
+        "movedPx": 480,
+        "tilesTraversed": 30,
         "blockedSubsteps": 0,
         "startTile": [
           2579,
@@ -1533,13 +2621,13 @@
         ],
         "endTile": [
           2579,
-          1021
+          1022
         ],
         "tileDelta": [
           0,
-          -31
+          -30
         ],
-        "endVisibleTile": 6,
+        "endVisibleTile": 12,
         "endOnBridgeDeck": null,
         "endOnCliffFace": null,
         "endProductionBlocked": false,
@@ -1553,29 +2641,181 @@
         "collisionDisabled": false
       },
       "before": {
+        "serial": 29,
         "file": "creator-u05/evidence/mapgeo02-shots/B_br2_qa_full_cross_before.png",
+        "name": "B_br2_qa_full_cross_before",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:25.201Z",
+        "pngSha256": "b60fb182b659d0482b05570010f71afb96e58490b9beb28307986431a2da3d4f",
+        "frameIdentity": {
+          "serial": 29,
+          "simMs": 15700,
+          "wallClockMs": 21183.7,
+          "setupSimMs": 15666,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": "br_2",
+        "requestedKind": "RUN_BEFORE",
+        "actualPlayerTile": [
+          2579,
+          1052
+        ],
+        "playerPx": [
+          41272,
+          16840
+        ],
+        "cameraCoordinate": [
+          40952,
+          16654
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 6,
+        "selectedMode": "QA_CANDIDATE_CROSSING",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__BEFORE_LEGS",
+        "visibleWindow": {
+          "tileWindow": [
+            2559,
+            1040,
+            2598,
+            1062
+          ],
+          "tiles": 920,
+          "bridgeTilesForId": 51,
+          "bridgeTilesAny": 51,
+          "roadTiles": 175,
+          "cliffTiles": 0,
+          "waterTiles": 316
+        }
       },
       "after": {
+        "serial": 30,
         "file": "creator-u05/evidence/mapgeo02-shots/B_br2_qa_full_cross_after.png",
+        "name": "B_br2_qa_full_cross_after",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:26.017Z",
+        "pngSha256": "509e4bf7a9325e1652d37adaa8033497e583d936b49cdbc94467569dec39f6c5",
+        "frameIdentity": {
+          "serial": 30,
+          "simMs": 16466,
+          "wallClockMs": 21999.2,
+          "setupSimMs": 15666,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": "br_2",
+        "requestedKind": "RUN_AFTER",
+        "actualPlayerTile": [
+          2579,
+          1022
+        ],
+        "playerPx": [
+          41272,
+          16359.975999999959
+        ],
+        "cameraCoordinate": [
+          40952,
+          16174
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 12,
+        "selectedMode": "QA_CANDIDATE_CROSSING",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 480,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__AFTER_LEGS",
+        "visibleWindow": {
+          "tileWindow": [
+            2559,
+            1010,
+            2598,
+            1032
+          ],
+          "tiles": 920,
+          "bridgeTilesForId": 0,
+          "bridgeTilesAny": 0,
+          "roadTiles": 281,
+          "cliffTiles": 0,
+          "waterTiles": 52
+        }
       },
       "feature": "br_2 QA candidate crossing from bank A to bank B, 0 blocked substeps expected",
       "result": "REAL_KEY_QA",
       "note": "",
+      "requestedBridgeId": "br_2",
       "bridgeCentreShot": {
+        "serial": 28,
         "file": "creator-u05/evidence/mapgeo02-shots/B_br2_qa_full_cross_at_bridge.png",
+        "name": "B_br2_qa_full_cross_at_bridge",
         "size": [
           640,
           360
-        ]
-      }
+        ],
+        "capturedAt": "2026-11-05T15:41:25.072Z",
+        "pngSha256": "fc6ccaa973ae7dd6ca8970eba84f4c1de5327da8164a3c9b8600954be54580af",
+        "frameIdentity": {
+          "serial": 28,
+          "simMs": 15583,
+          "wallClockMs": 21052.2,
+          "setupSimMs": 15550,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": "br_2",
+        "requestedKind": "FIXTURE_LOCAL_AT_BRIDGE",
+        "actualPlayerTile": [
+          2579,
+          1042
+        ],
+        "playerPx": [
+          41272,
+          16680
+        ],
+        "cameraCoordinate": [
+          40952,
+          16494
+        ],
+        "candidateId": "br_2",
+        "cliffFaceSide": null,
+        "visibleTile": 13,
+        "selectedMode": "QA_CANDIDATE_CROSSING",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "FIXTURE_LOCAL_CENTRE_CAPTURE__VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+        "visibleWindow": {
+          "tileWindow": [
+            2559,
+            1030,
+            2598,
+            1052
+          ],
+          "tiles": 920,
+          "bridgeTilesForId": 77,
+          "bridgeTilesAny": 77,
+          "roadTiles": 113,
+          "cliffTiles": 0,
+          "waterTiles": 489
+        }
+      },
+      "bridgeCentreTile": [
+        2579,
+        1042
+      ]
     },
     {
       "id": "B_br7_production",
@@ -1632,14 +2872,14 @@
             3230,
             685
           ],
-          "px": 51692,
+          "px": 51694,
           "py": 10968,
           "visibleTile": 12,
           "candidate": {
             "deck": null,
             "face": null
           },
-          "blockedSubsteps": 61
+          "blockedSubsteps": 59
         },
         {
           "leg": 2,
@@ -1652,20 +2892,20 @@
             3230,
             685
           ],
-          "px": 51695,
-          "py": 10974,
+          "px": 51694,
+          "py": 10975,
           "visibleTile": 12,
           "candidate": {
             "deck": null,
             "face": null
           },
-          "blockedSubsteps": 154
+          "blockedSubsteps": 151
         }
       ],
       "movement": {
         "movedPx": 61,
         "tilesTraversed": 3.81,
-        "blockedSubsteps": 154,
+        "blockedSubsteps": 151,
         "startTile": [
           3227,
           685
@@ -1692,29 +2932,181 @@
         "collisionDisabled": false
       },
       "before": {
+        "serial": 32,
         "file": "creator-u05/evidence/mapgeo02-shots/B_br7_production_before.png",
+        "name": "B_br7_production_before",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:26.317Z",
+        "pngSha256": "d3e840be9d2d5f2dc5c8e886ac7b6fd25a9cb3c9d8b0e239067a42362b26433f",
+        "frameIdentity": {
+          "serial": 32,
+          "simMs": 16683,
+          "wallClockMs": 22299.6,
+          "setupSimMs": 16633,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": "br_7",
+        "requestedKind": "RUN_BEFORE",
+        "actualPlayerTile": [
+          3227,
+          685
+        ],
+        "playerPx": [
+          51640,
+          10968
+        ],
+        "cameraCoordinate": [
+          51320,
+          10782
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 12,
+        "selectedMode": "PRODUCTION_NO_PERMISSION",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__BEFORE_LEGS",
+        "visibleWindow": {
+          "tileWindow": [
+            3207,
+            673,
+            3246,
+            695
+          ],
+          "tiles": 920,
+          "bridgeTilesForId": 28,
+          "bridgeTilesAny": 28,
+          "roadTiles": 395,
+          "cliffTiles": 0,
+          "waterTiles": 142
+        }
       },
       "after": {
+        "serial": 33,
         "file": "creator-u05/evidence/mapgeo02-shots/B_br7_production_after.png",
+        "name": "B_br7_production_after",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:27.154Z",
+        "pngSha256": "302abda6d229f112c8a37901164bca58d0c1dc8d0e5f65911ee7f62ef704c94d",
+        "frameIdentity": {
+          "serial": 33,
+          "simMs": 17516,
+          "wallClockMs": 23136,
+          "setupSimMs": 16633,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": "br_7",
+        "requestedKind": "RUN_AFTER",
+        "actualPlayerTile": [
+          3230,
+          685
+        ],
+        "playerPx": [
+          51694.072000000015,
+          10975.059754103366
+        ],
+        "cameraCoordinate": [
+          51374,
+          10789
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 12,
+        "selectedMode": "PRODUCTION_NO_PERMISSION",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 61,
+        "blockedSubsteps": 151,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__AFTER_LEGS",
+        "visibleWindow": {
+          "tileWindow": [
+            3210,
+            674,
+            3249,
+            696
+          ],
+          "tiles": 920,
+          "bridgeTilesForId": 28,
+          "bridgeTilesAny": 28,
+          "roadTiles": 416,
+          "cliffTiles": 0,
+          "waterTiles": 142
+        }
       },
       "feature": "br_7, 2 AU water span, cart load",
       "result": "REAL_KEY_QA",
       "note": "",
+      "requestedBridgeId": "br_7",
       "bridgeCentreShot": {
+        "serial": 31,
         "file": "creator-u05/evidence/mapgeo02-shots/B_br7_production_at_bridge.png",
+        "name": "B_br7_production_at_bridge",
         "size": [
           640,
           360
-        ]
-      }
+        ],
+        "capturedAt": "2026-11-05T15:41:26.239Z",
+        "pngSha256": "25a3ced6bd96183f8b6c11afc74a23cfd2d21382d97d9f62854356b2eb5127de",
+        "frameIdentity": {
+          "serial": 31,
+          "simMs": 16600,
+          "wallClockMs": 22221.3,
+          "setupSimMs": 16533,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": "br_7",
+        "requestedKind": "FIXTURE_LOCAL_AT_BRIDGE",
+        "actualPlayerTile": [
+          3231,
+          687
+        ],
+        "playerPx": [
+          51704,
+          11000
+        ],
+        "cameraCoordinate": [
+          51384,
+          10814
+        ],
+        "candidateId": "br_7",
+        "cliffFaceSide": null,
+        "visibleTile": 13,
+        "selectedMode": "PRODUCTION_NO_PERMISSION",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "FIXTURE_LOCAL_CENTRE_CAPTURE__VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+        "visibleWindow": {
+          "tileWindow": [
+            3211,
+            675,
+            3250,
+            697
+          ],
+          "tiles": 920,
+          "bridgeTilesForId": 28,
+          "bridgeTilesAny": 28,
+          "roadTiles": 420,
+          "cliffTiles": 0,
+          "waterTiles": 142
+        }
+      },
+      "bridgeCentreTile": [
+        3231,
+        687
+      ]
     },
     {
       "id": "B_br7_qa_full_cross",
@@ -1771,14 +3163,14 @@
             3233,
             685
           ],
-          "px": 51744,
+          "px": 51742,
           "py": 10968,
           "visibleTile": 13,
           "candidate": {
             "deck": "br_7",
             "face": null
           },
-          "blockedSubsteps": 50
+          "blockedSubsteps": 49
         },
         {
           "leg": 2,
@@ -1788,33 +3180,33 @@
           ],
           "heldMs": 300,
           "tile": [
-            3241,
+            3242,
             695
           ],
-          "px": 51860,
-          "py": 11131,
+          "px": 51886,
+          "py": 11121,
           "visibleTile": 12,
           "candidate": {
             "deck": null,
             "face": null
           },
-          "blockedSubsteps": 56
+          "blockedSubsteps": 52
         }
       ],
       "movement": {
-        "movedPx": 383,
-        "tilesTraversed": 23.94,
-        "blockedSubsteps": 56,
+        "movedPx": 399,
+        "tilesTraversed": 24.94,
+        "blockedSubsteps": 52,
         "startTile": [
           3227,
           685
         ],
         "endTile": [
-          3241,
+          3242,
           695
         ],
         "tileDelta": [
-          14,
+          15,
           10
         ],
         "endVisibleTile": 12,
@@ -1831,29 +3223,181 @@
         "collisionDisabled": false
       },
       "before": {
+        "serial": 35,
         "file": "creator-u05/evidence/mapgeo02-shots/B_br7_qa_full_cross_before.png",
+        "name": "B_br7_qa_full_cross_before",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:27.300Z",
+        "pngSha256": "665b697d9f859600848fbe961a11114cd2c581618dc4a4ebc4eec592576bb82c",
+        "frameIdentity": {
+          "serial": 35,
+          "simMs": 17666,
+          "wallClockMs": 23282.6,
+          "setupSimMs": 17633,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": "br_7",
+        "requestedKind": "RUN_BEFORE",
+        "actualPlayerTile": [
+          3227,
+          685
+        ],
+        "playerPx": [
+          51640,
+          10968
+        ],
+        "cameraCoordinate": [
+          51320,
+          10782
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 12,
+        "selectedMode": "QA_CANDIDATE_CROSSING",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__BEFORE_LEGS",
+        "visibleWindow": {
+          "tileWindow": [
+            3207,
+            673,
+            3246,
+            695
+          ],
+          "tiles": 920,
+          "bridgeTilesForId": 28,
+          "bridgeTilesAny": 28,
+          "roadTiles": 395,
+          "cliffTiles": 0,
+          "waterTiles": 142
+        }
       },
       "after": {
+        "serial": 36,
         "file": "creator-u05/evidence/mapgeo02-shots/B_br7_qa_full_cross_after.png",
+        "name": "B_br7_qa_full_cross_after",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:28.134Z",
+        "pngSha256": "2cdbebd1538436aca5044406427b50e5385bcd9ea56e0b7a1568facdb3357d6a",
+        "frameIdentity": {
+          "serial": 36,
+          "simMs": 18500,
+          "wallClockMs": 24116.7,
+          "setupSimMs": 17633,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": "br_7",
+        "requestedKind": "RUN_AFTER",
+        "actualPlayerTile": [
+          3242,
+          695
+        ],
+        "playerPx": [
+          51886.256812799315,
+          11120.735064736296
+        ],
+        "cameraCoordinate": [
+          51566,
+          10935
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 12,
+        "selectedMode": "QA_CANDIDATE_CROSSING",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 399,
+        "blockedSubsteps": 52,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__AFTER_LEGS",
+        "visibleWindow": {
+          "tileWindow": [
+            3222,
+            683,
+            3261,
+            705
+          ],
+          "tiles": 920,
+          "bridgeTilesForId": 28,
+          "bridgeTilesAny": 28,
+          "roadTiles": 279,
+          "cliffTiles": 0,
+          "waterTiles": 115
+        }
       },
       "feature": "br_7 QA candidate crossing with real d / d+s held keys",
       "result": "REAL_KEY_QA",
       "note": "",
+      "requestedBridgeId": "br_7",
       "bridgeCentreShot": {
+        "serial": 34,
         "file": "creator-u05/evidence/mapgeo02-shots/B_br7_qa_full_cross_at_bridge.png",
+        "name": "B_br7_qa_full_cross_at_bridge",
         "size": [
           640,
           360
-        ]
-      }
+        ],
+        "capturedAt": "2026-11-05T15:41:27.234Z",
+        "pngSha256": "7fdc303d35ac08fa02ebc5250dc9d18e40d80f5942967ba9b20e6e7f7499ef59",
+        "frameIdentity": {
+          "serial": 34,
+          "simMs": 17600,
+          "wallClockMs": 23216.7,
+          "setupSimMs": 17566,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": "br_7",
+        "requestedKind": "FIXTURE_LOCAL_AT_BRIDGE",
+        "actualPlayerTile": [
+          3231,
+          687
+        ],
+        "playerPx": [
+          51704,
+          11000
+        ],
+        "cameraCoordinate": [
+          51384,
+          10814
+        ],
+        "candidateId": "br_7",
+        "cliffFaceSide": null,
+        "visibleTile": 13,
+        "selectedMode": "QA_CANDIDATE_CROSSING",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "FIXTURE_LOCAL_CENTRE_CAPTURE__VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+        "visibleWindow": {
+          "tileWindow": [
+            3211,
+            675,
+            3250,
+            697
+          ],
+          "tiles": 920,
+          "bridgeTilesForId": 28,
+          "bridgeTilesAny": 28,
+          "roadTiles": 420,
+          "cliffTiles": 0,
+          "waterTiles": 142
+        }
+      },
+      "bridgeCentreTile": [
+        3231,
+        687
+      ]
     },
     {
       "id": "B_br6_qa_deck",
@@ -1910,13 +3454,13 @@
             "deck": "br_6",
             "face": null
           },
-          "blockedSubsteps": 66
+          "blockedSubsteps": 64
         }
       ],
       "movement": {
         "movedPx": 136,
         "tilesTraversed": 8.5,
-        "blockedSubsteps": 66,
+        "blockedSubsteps": 64,
         "startTile": [
           2019,
           1465
@@ -1943,29 +3487,181 @@
         "collisionDisabled": false
       },
       "before": {
+        "serial": 38,
         "file": "creator-u05/evidence/mapgeo02-shots/B_br6_qa_deck_before.png",
+        "name": "B_br6_qa_deck_before",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:28.615Z",
+        "pngSha256": "da891414a7fd98ddfc0435df3cd6731734d2a407599c178f091ce96881a79e7e",
+        "frameIdentity": {
+          "serial": 38,
+          "simMs": 18716,
+          "wallClockMs": 24598.7,
+          "setupSimMs": 18683,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": "br_6",
+        "requestedKind": "RUN_BEFORE",
+        "actualPlayerTile": [
+          2019,
+          1465
+        ],
+        "playerPx": [
+          32312,
+          23448
+        ],
+        "cameraCoordinate": [
+          31992,
+          23262
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 12,
+        "selectedMode": "QA_CANDIDATE_CROSSING",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__BEFORE_LEGS",
+        "visibleWindow": {
+          "tileWindow": [
+            1999,
+            1453,
+            2038,
+            1475
+          ],
+          "tiles": 920,
+          "bridgeTilesForId": 49,
+          "bridgeTilesAny": 49,
+          "roadTiles": 338,
+          "cliffTiles": 0,
+          "waterTiles": 211
+        }
       },
       "after": {
+        "serial": 39,
         "file": "creator-u05/evidence/mapgeo02-shots/B_br6_qa_deck_after.png",
+        "name": "B_br6_qa_deck_after",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:29.336Z",
+        "pngSha256": "99c64c44063faa9c1ffd1b02e0d5e88d70fc196ec889094e2bb6bfee7b45af39",
+        "frameIdentity": {
+          "serial": 39,
+          "simMs": 19416,
+          "wallClockMs": 25317.6,
+          "setupSimMs": 18683,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": "br_6",
+        "requestedKind": "RUN_AFTER",
+        "actualPlayerTile": [
+          2011,
+          1465
+        ],
+        "playerPx": [
+          32176.01599999998,
+          23448
+        ],
+        "cameraCoordinate": [
+          31856,
+          23262
+        ],
+        "candidateId": "br_6",
+        "cliffFaceSide": null,
+        "visibleTile": 13,
+        "selectedMode": "QA_CANDIDATE_CROSSING",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 136,
+        "blockedSubsteps": 64,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__AFTER_LEGS",
+        "visibleWindow": {
+          "tileWindow": [
+            1991,
+            1453,
+            2030,
+            1475
+          ],
+          "tiles": 920,
+          "bridgeTilesForId": 49,
+          "bridgeTilesAny": 49,
+          "roadTiles": 366,
+          "cliffTiles": 0,
+          "waterTiles": 211
+        }
       },
       "feature": "br_6 foot bridge; QA reaches the measured deck (angled, partial straight-line crossing)",
       "result": "REAL_KEY_QA",
       "note": "",
+      "requestedBridgeId": "br_6",
       "bridgeCentreShot": {
+        "serial": 37,
         "file": "creator-u05/evidence/mapgeo02-shots/B_br6_qa_deck_at_bridge.png",
+        "name": "B_br6_qa_deck_at_bridge",
         "size": [
           640,
           360
-        ]
-      }
+        ],
+        "capturedAt": "2026-11-05T15:41:28.502Z",
+        "pngSha256": "65e5ae889f509d7e3e2367f802a64d6b3199cd3431de0aba5e780c4a0446f920",
+        "frameIdentity": {
+          "serial": 37,
+          "simMs": 18600,
+          "wallClockMs": 24480.2,
+          "setupSimMs": 18533,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": "br_6",
+        "requestedKind": "FIXTURE_LOCAL_AT_BRIDGE",
+        "actualPlayerTile": [
+          2013,
+          1463
+        ],
+        "playerPx": [
+          32216,
+          23416
+        ],
+        "cameraCoordinate": [
+          31896,
+          23230
+        ],
+        "candidateId": "br_6",
+        "cliffFaceSide": null,
+        "visibleTile": 13,
+        "selectedMode": "QA_CANDIDATE_CROSSING",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "FIXTURE_LOCAL_CENTRE_CAPTURE__VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+        "visibleWindow": {
+          "tileWindow": [
+            1993,
+            1451,
+            2032,
+            1473
+          ],
+          "tiles": 920,
+          "bridgeTilesForId": 49,
+          "bridgeTilesAny": 49,
+          "roadTiles": 335,
+          "cliffTiles": 0,
+          "waterTiles": 210
+        }
+      },
+      "bridgeCentreTile": [
+        2013,
+        1463
+      ]
     },
     {
       "id": "B_brb_unresolved",
@@ -2022,13 +3718,13 @@
             "deck": null,
             "face": null
           },
-          "blockedSubsteps": 192
+          "blockedSubsteps": 186
         }
       ],
       "movement": {
         "movedPx": 0,
         "tilesTraversed": 0,
-        "blockedSubsteps": 192,
+        "blockedSubsteps": 186,
         "startTile": [
           2052,
           1859
@@ -2055,29 +3751,181 @@
         "collisionDisabled": false
       },
       "before": {
+        "serial": 41,
         "file": "creator-u05/evidence/mapgeo02-shots/B_brb_unresolved_before.png",
+        "name": "B_brb_unresolved_before",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:29.782Z",
+        "pngSha256": "a72d2d79dded811305df6b0125a37b89b3adba17a97cf00bb03f375ff377162c",
+        "frameIdentity": {
+          "serial": 41,
+          "simMs": 19683,
+          "wallClockMs": 25766,
+          "setupSimMs": 19649,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": "br_b",
+        "requestedKind": "RUN_BEFORE",
+        "actualPlayerTile": [
+          2052,
+          1859
+        ],
+        "playerPx": [
+          32840,
+          29752
+        ],
+        "cameraCoordinate": [
+          32520,
+          29566
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 19,
+        "selectedMode": "QA_CANDIDATE_CROSSING",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": true,
+        "method": "REAL_KEY_RUN_FRAME__BEFORE_LEGS",
+        "visibleWindow": {
+          "tileWindow": [
+            2032,
+            1847,
+            2071,
+            1869
+          ],
+          "tiles": 920,
+          "bridgeTilesForId": 0,
+          "bridgeTilesAny": 0,
+          "roadTiles": 157,
+          "cliffTiles": 0,
+          "waterTiles": 531
+        }
       },
       "after": {
+        "serial": 42,
         "file": "creator-u05/evidence/mapgeo02-shots/B_brb_unresolved_after.png",
+        "name": "B_brb_unresolved_after",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:30.516Z",
+        "pngSha256": "848f7a202b413b4779cb41bbdba22ebf4c9291036208f9711e1bc9b108e516da",
+        "frameIdentity": {
+          "serial": 42,
+          "simMs": 20399,
+          "wallClockMs": 26499.1,
+          "setupSimMs": 19649,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": "br_b",
+        "requestedKind": "RUN_AFTER",
+        "actualPlayerTile": [
+          2052,
+          1859
+        ],
+        "playerPx": [
+          32840,
+          29752
+        ],
+        "cameraCoordinate": [
+          32520,
+          29566
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 19,
+        "selectedMode": "QA_CANDIDATE_CROSSING",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 186,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__AFTER_LEGS",
+        "visibleWindow": {
+          "tileWindow": [
+            2032,
+            1847,
+            2071,
+            1869
+          ],
+          "tiles": 920,
+          "bridgeTilesForId": 0,
+          "bridgeTilesAny": 0,
+          "roadTiles": 157,
+          "cliffTiles": 0,
+          "waterTiles": 531
+        }
       },
       "feature": "br_b UNRESOLVED (no verified second bank); NO deck art must be stamped here",
       "result": "REAL_KEY_QA",
       "note": "",
+      "requestedBridgeId": "br_b",
       "bridgeCentreShot": {
+        "serial": 40,
         "file": "creator-u05/evidence/mapgeo02-shots/B_brb_unresolved_at_bridge.png",
+        "name": "B_brb_unresolved_at_bridge",
         "size": [
           640,
           360
-        ]
-      }
+        ],
+        "capturedAt": "2026-11-05T15:41:29.662Z",
+        "pngSha256": "a72d2d79dded811305df6b0125a37b89b3adba17a97cf00bb03f375ff377162c",
+        "frameIdentity": {
+          "serial": 40,
+          "simMs": 19566,
+          "wallClockMs": 25645.8,
+          "setupSimMs": 19499,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": "br_b",
+        "requestedKind": "FIXTURE_LOCAL_AT_BRIDGE",
+        "actualPlayerTile": [
+          2052,
+          1859
+        ],
+        "playerPx": [
+          32840,
+          29752
+        ],
+        "cameraCoordinate": [
+          32520,
+          29566
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 19,
+        "selectedMode": "QA_CANDIDATE_CROSSING",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "FIXTURE_LOCAL_CENTRE_CAPTURE__VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+        "visibleWindow": {
+          "tileWindow": [
+            2032,
+            1847,
+            2071,
+            1869
+          ],
+          "tiles": 920,
+          "bridgeTilesForId": 0,
+          "bridgeTilesAny": 0,
+          "roadTiles": 157,
+          "cliffTiles": 0,
+          "waterTiles": 531
+        }
+      },
+      "bridgeCentreTile": [
+        2052,
+        1859
+      ]
     }
   ],
   "cliffRuns": [
@@ -2144,15 +3992,15 @@
           ],
           "heldMs": 700,
           "tile": [
-            1234,
+            1231,
             1200
           ],
-          "px": 19748,
+          "px": 19712,
           "py": 19208,
-          "visibleTile": 5,
+          "visibleTile": 8,
           "candidate": {
             "deck": null,
-            "face": null
+            "face": "E"
           },
           "blockedSubsteps": 0
         },
@@ -2163,11 +4011,11 @@
           ],
           "heldMs": 600,
           "tile": [
-            1234,
-            1223
+            1231,
+            1224
           ],
-          "px": 19748,
-          "py": 19580,
+          "px": 19712,
+          "py": 19592,
           "visibleTile": 5,
           "candidate": {
             "deck": null,
@@ -2182,11 +4030,11 @@
           ],
           "heldMs": 700,
           "tile": [
-            1203,
-            1223
+            1200,
+            1224
           ],
-          "px": 19256,
-          "py": 19580,
+          "px": 19208,
+          "py": 19592,
           "visibleTile": 5,
           "candidate": {
             "deck": null,
@@ -2201,12 +4049,12 @@
           ],
           "heldMs": 600,
           "tile": [
-            1203,
+            1200,
             1196
           ],
-          "px": 19256,
+          "px": 19208,
           "py": 19148,
-          "visibleTile": 7,
+          "visibleTile": 5,
           "candidate": {
             "deck": null,
             "face": null
@@ -2223,14 +4071,14 @@
           1200
         ],
         "endTile": [
-          1203,
+          1200,
           1196
         ],
         "tileDelta": [
-          3,
+          0,
           -4
         ],
-        "endVisibleTile": 7,
+        "endVisibleTile": 5,
         "endOnBridgeDeck": null,
         "endOnCliffFace": null,
         "endProductionBlocked": false,
@@ -2244,18 +4092,88 @@
         "collisionDisabled": false
       },
       "before": {
+        "serial": 75,
         "file": "creator-u05/evidence/mapgeo02-shots/C_cliff_production_before.png",
+        "name": "C_cliff_production_before",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:37.249Z",
+        "pngSha256": "02c5f62f950482160df3f5b585036a25b12a6388aa5e18d9a205df0db7386278",
+        "frameIdentity": {
+          "serial": 75,
+          "simMs": 24599,
+          "wallClockMs": 33232.3,
+          "setupSimMs": 24483,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": null,
+        "requestedKind": "RUN_BEFORE",
+        "actualPlayerTile": [
+          1200,
+          1200
+        ],
+        "playerPx": [
+          19208,
+          19208
+        ],
+        "cameraCoordinate": [
+          18888,
+          19022
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 5,
+        "selectedMode": "PRODUCTION_NO_PERMISSION",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__BEFORE_LEGS"
       },
       "after": {
+        "serial": 76,
         "file": "creator-u05/evidence/mapgeo02-shots/C_cliff_production_after.png",
+        "name": "C_cliff_production_after",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:39.915Z",
+        "pngSha256": "0e0deaeceb0b46e29fd5d4858b23e2b81fc44ab44edc0cd25beafc8dac975f2b",
+        "frameIdentity": {
+          "serial": 76,
+          "simMs": 27199,
+          "wallClockMs": 35898.2,
+          "setupSimMs": 24483,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": null,
+        "requestedKind": "RUN_AFTER",
+        "actualPlayerTile": [
+          1200,
+          1196
+        ],
+        "playerPx": [
+          19208.07199999996,
+          19148.16800000002
+        ],
+        "cameraCoordinate": [
+          18888,
+          18962
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 5,
+        "selectedMode": "PRODUCTION_NO_PERMISSION",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 1836,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__AFTER_LEGS"
       },
       "feature": "305 binary cliff candidates now visible; PRODUCTION has NO permanent cliff wall",
       "result": "REAL_KEY_QA",
@@ -2334,7 +4252,7 @@
             "deck": null,
             "face": null
           },
-          "blockedSubsteps": 8
+          "blockedSubsteps": 7
         },
         {
           "leg": 2,
@@ -2424,18 +4342,88 @@
         "collisionDisabled": false
       },
       "before": {
+        "serial": 77,
         "file": "creator-u05/evidence/mapgeo02-shots/C_cliff_qa_candidate_before.png",
+        "name": "C_cliff_qa_candidate_before",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:39.966Z",
+        "pngSha256": "138af44c651bb932bee1460a27dca231fa6bc3ace2b0680d4df8a797c34e3d6a",
+        "frameIdentity": {
+          "serial": 77,
+          "simMs": 27249,
+          "wallClockMs": 35948.8,
+          "setupSimMs": 27199,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": null,
+        "requestedKind": "RUN_BEFORE",
+        "actualPlayerTile": [
+          1200,
+          1200
+        ],
+        "playerPx": [
+          19208,
+          19208
+        ],
+        "cameraCoordinate": [
+          18888,
+          19022
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 5,
+        "selectedMode": "QA_CANDIDATE_CROSSING",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__BEFORE_LEGS"
       },
       "after": {
+        "serial": 78,
         "file": "creator-u05/evidence/mapgeo02-shots/C_cliff_qa_candidate_after.png",
+        "name": "C_cliff_qa_candidate_after",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:42.682Z",
+        "pngSha256": "6bf0ab06df66ad67d02091091e0e787a93e562e6b6d6836eb2b58ec390b9d084",
+        "frameIdentity": {
+          "serial": 78,
+          "simMs": 29849,
+          "wallClockMs": 38664.6,
+          "setupSimMs": 27199,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": null,
+        "requestedKind": "RUN_AFTER",
+        "actualPlayerTile": [
+          1198,
+          1179
+        ],
+        "playerPx": [
+          19176.00800000001,
+          18864.032000000043
+        ],
+        "cameraCoordinate": [
+          18856,
+          18678
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 7,
+        "selectedMode": "QA_CANDIDATE_CROSSING",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 1328,
+        "blockedSubsteps": 101,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__AFTER_LEGS"
       },
       "feature": "explicit QA candidate collision; real movement is measurably blocked by the face",
       "result": "REAL_KEY_QA",
@@ -2504,10 +4492,10 @@
           ],
           "heldMs": 400,
           "tile": [
-            1219,
+            1218,
             1200
           ],
-          "px": 19508,
+          "px": 19496,
           "py": 19208,
           "visibleTile": 5,
           "candidate": {
@@ -2523,12 +4511,12 @@
           ],
           "heldMs": 700,
           "tile": [
-            1219,
+            1218,
             1169
           ],
-          "px": 19508,
+          "px": 19496,
           "py": 18704,
-          "visibleTile": 5,
+          "visibleTile": 7,
           "candidate": {
             "deck": null,
             "face": null
@@ -2542,10 +4530,10 @@
           ],
           "heldMs": 400,
           "tile": [
-            1237,
+            1236,
             1169
           ],
-          "px": 19796,
+          "px": 19784,
           "py": 18704,
           "visibleTile": 5,
           "candidate": {
@@ -2561,11 +4549,11 @@
           ],
           "heldMs": 700,
           "tile": [
-            1237,
-            1199
+            1236,
+            1200
           ],
-          "px": 19796,
-          "py": 19196,
+          "px": 19784,
+          "py": 19208,
           "visibleTile": 5,
           "candidate": {
             "deck": null,
@@ -2583,12 +4571,12 @@
           1200
         ],
         "endTile": [
-          1237,
-          1199
+          1236,
+          1200
         ],
         "tileDelta": [
-          37,
-          -1
+          36,
+          0
         ],
         "endVisibleTile": 5,
         "endOnBridgeDeck": null,
@@ -2604,24 +4592,2319 @@
         "collisionDisabled": false
       },
       "before": {
+        "serial": 79,
         "file": "creator-u05/evidence/mapgeo02-shots/C_cliff_qa_alternative_before.png",
+        "name": "C_cliff_qa_alternative_before",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:42.732Z",
+        "pngSha256": "0619c671567a6fa8b2d469f9b5ec118990155f594d153997319a989f83dc839b",
+        "frameIdentity": {
+          "serial": 79,
+          "simMs": 29899,
+          "wallClockMs": 38715.3,
+          "setupSimMs": 29849,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": null,
+        "requestedKind": "RUN_BEFORE",
+        "actualPlayerTile": [
+          1200,
+          1200
+        ],
+        "playerPx": [
+          19208,
+          19208
+        ],
+        "cameraCoordinate": [
+          18888,
+          19022
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 5,
+        "selectedMode": "QA_CANDIDATE_CROSSING",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 0,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__BEFORE_LEGS"
       },
       "after": {
+        "serial": 80,
         "file": "creator-u05/evidence/mapgeo02-shots/C_cliff_qa_alternative_after.png",
+        "name": "C_cliff_qa_alternative_after",
         "size": [
           640,
           360
-        ]
+        ],
+        "capturedAt": "2026-11-05T15:41:45.000Z",
+        "pngSha256": "864602244260c3097d19a306762a2f7b74033feb0efa07ad2d2560374cbefedc",
+        "frameIdentity": {
+          "serial": 80,
+          "simMs": 32165,
+          "wallClockMs": 40981.4,
+          "setupSimMs": 29849,
+          "freshFrameAdvanced": true
+        },
+        "requestedBridgeId": null,
+        "requestedKind": "RUN_AFTER",
+        "actualPlayerTile": [
+          1236,
+          1200
+        ],
+        "playerPx": [
+          19783.927999999938,
+          19207.928000000007
+        ],
+        "cameraCoordinate": [
+          19464,
+          19022
+        ],
+        "candidateId": null,
+        "cliffFaceSide": null,
+        "visibleTile": 5,
+        "selectedMode": "QA_CANDIDATE_CROSSING",
+        "collision": "NATURAL_TERRAIN_ONLY",
+        "spawnFixture": true,
+        "movedPx": 1584,
+        "blockedSubsteps": 0,
+        "reusedImmediatelyPreviousPng": false,
+        "method": "REAL_KEY_RUN_FRAME__AFTER_LEGS"
       },
       "feature": "alternative highland route with real keys in QA mode; detour, not a teleport",
       "result": "REAL_KEY_QA",
       "note": ""
     }
   ],
+  "perBridgeFixtures": [
+    {
+      "fixtureIndex": 1,
+      "requestedBridgeId": "br_0",
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "resolved": true,
+      "atTile": [
+        1990,
+        1503
+      ],
+      "measuredDeckCentreTile": [
+        1990,
+        1502
+      ],
+      "measuredBankA": [
+        1992,
+        1507
+      ],
+      "measuredBankB": [
+        1987,
+        1498
+      ],
+      "runtimeDeckTileCount": 53,
+      "selectedMode": "PRODUCTION_NO_PERMISSION",
+      "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+      "realKeyTraversalClaimed": false,
+      "captures": [
+        {
+          "serial": 43,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_0_bankA.png",
+          "name": "bridge_br_0_bankA",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:30.768Z",
+          "pngSha256": "92ac316262199ed594ef2576e6b5dba76a6b381c679f5db3e39276e4906e86fc",
+          "frameIdentity": {
+            "serial": 43,
+            "simMs": 20533,
+            "wallClockMs": 26750.5,
+            "setupSimMs": 20466,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_0",
+          "requestedKind": "PER_ID_BANK_A",
+          "actualPlayerTile": [
+            1992,
+            1507
+          ],
+          "playerPx": [
+            31880,
+            24120
+          ],
+          "cameraCoordinate": [
+            31560,
+            23934
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 12,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              1972,
+              1495,
+              2011,
+              1517
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 53,
+            "bridgeTilesAny": 53,
+            "roadTiles": 166,
+            "cliffTiles": 0,
+            "waterTiles": 211
+          }
+        },
+        {
+          "serial": 44,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_0_deck.png",
+          "name": "bridge_br_0_deck",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:30.881Z",
+          "pngSha256": "68a13913e3520f35093605271c53156fa52b69f49030a37118ad1ff904aac3cb",
+          "frameIdentity": {
+            "serial": 44,
+            "simMs": 20633,
+            "wallClockMs": 26864.8,
+            "setupSimMs": 20550,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_0",
+          "requestedKind": "PER_ID_DECK",
+          "actualPlayerTile": [
+            1990,
+            1502
+          ],
+          "playerPx": [
+            31848,
+            24040
+          ],
+          "cameraCoordinate": [
+            31528,
+            23854
+          ],
+          "candidateId": "br_0",
+          "cliffFaceSide": null,
+          "visibleTile": 13,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              1970,
+              1490,
+              2009,
+              1512
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 53,
+            "bridgeTilesAny": 53,
+            "roadTiles": 119,
+            "cliffTiles": 0,
+            "waterTiles": 210
+          }
+        },
+        {
+          "serial": 45,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_0_bankB.png",
+          "name": "bridge_br_0_bankB",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:31.110Z",
+          "pngSha256": "337cbf3b1c2e719ce8297d7c0387843cb12894b6376499f2c755307931b605ac",
+          "frameIdentity": {
+            "serial": 45,
+            "simMs": 20766,
+            "wallClockMs": 27090.9,
+            "setupSimMs": 20700,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_0",
+          "requestedKind": "PER_ID_BANK_B",
+          "actualPlayerTile": [
+            1987,
+            1498
+          ],
+          "playerPx": [
+            31800,
+            23976
+          ],
+          "cameraCoordinate": [
+            31480,
+            23790
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 5,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              1967,
+              1486,
+              2006,
+              1508
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 53,
+            "bridgeTilesAny": 53,
+            "roadTiles": 108,
+            "cliffTiles": 0,
+            "waterTiles": 210
+          }
+        }
+      ]
+    },
+    {
+      "fixtureIndex": 2,
+      "requestedBridgeId": "br_1",
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "resolved": true,
+      "atTile": [
+        2044,
+        906
+      ],
+      "measuredDeckCentreTile": [
+        2045,
+        906
+      ],
+      "measuredBankA": [
+        2047,
+        902
+      ],
+      "measuredBankB": [
+        2042,
+        910
+      ],
+      "runtimeDeckTileCount": 46,
+      "selectedMode": "PRODUCTION_NO_PERMISSION",
+      "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+      "realKeyTraversalClaimed": false,
+      "captures": [
+        {
+          "serial": 46,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_1_bankA.png",
+          "name": "bridge_br_1_bankA",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:31.500Z",
+          "pngSha256": "556d178fdd4a3cd898fc8d061c2be2d3a2d2019999db55c4abd0b3d6b7270f01",
+          "frameIdentity": {
+            "serial": 46,
+            "simMs": 20933,
+            "wallClockMs": 27482.5,
+            "setupSimMs": 20850,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_1",
+          "requestedKind": "PER_ID_BANK_A",
+          "actualPlayerTile": [
+            2047,
+            902
+          ],
+          "playerPx": [
+            32760,
+            14440
+          ],
+          "cameraCoordinate": [
+            32440,
+            14254
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 12,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              2027,
+              890,
+              2066,
+              912
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 46,
+            "bridgeTilesAny": 46,
+            "roadTiles": 267,
+            "cliffTiles": 0,
+            "waterTiles": 187
+          }
+        },
+        {
+          "serial": 47,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_1_deck.png",
+          "name": "bridge_br_1_deck",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:31.616Z",
+          "pngSha256": "f90cf2f36d6a0db61d46f1517031cb345e503fe0bcef48c5660a73760f03ff91",
+          "frameIdentity": {
+            "serial": 47,
+            "simMs": 21033,
+            "wallClockMs": 27599.6,
+            "setupSimMs": 21000,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_1",
+          "requestedKind": "PER_ID_DECK",
+          "actualPlayerTile": [
+            2045,
+            906
+          ],
+          "playerPx": [
+            32728,
+            14504
+          ],
+          "cameraCoordinate": [
+            32408,
+            14318
+          ],
+          "candidateId": "br_1",
+          "cliffFaceSide": null,
+          "visibleTile": 13,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              2025,
+              894,
+              2064,
+              916
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 46,
+            "bridgeTilesAny": 46,
+            "roadTiles": 306,
+            "cliffTiles": 0,
+            "waterTiles": 186
+          }
+        },
+        {
+          "serial": 48,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_1_bankB.png",
+          "name": "bridge_br_1_bankB",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:31.732Z",
+          "pngSha256": "5651ff7800ae4f44e30924d825a7debbc0c7d159618922097f6ed2a556b1ca3b",
+          "frameIdentity": {
+            "serial": 48,
+            "simMs": 21133,
+            "wallClockMs": 27714.8,
+            "setupSimMs": 21100,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_1",
+          "requestedKind": "PER_ID_BANK_B",
+          "actualPlayerTile": [
+            2042,
+            910
+          ],
+          "playerPx": [
+            32680,
+            14568
+          ],
+          "cameraCoordinate": [
+            32360,
+            14382
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 12,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              2022,
+              898,
+              2061,
+              920
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 46,
+            "bridgeTilesAny": 46,
+            "roadTiles": 336,
+            "cliffTiles": 0,
+            "waterTiles": 187
+          }
+        }
+      ]
+    },
+    {
+      "fixtureIndex": 3,
+      "requestedBridgeId": "br_2",
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "resolved": true,
+      "atTile": [
+        2579,
+        1041
+      ],
+      "measuredDeckCentreTile": [
+        2579,
+        1042
+      ],
+      "measuredBankA": [
+        2579,
+        1049
+      ],
+      "measuredBankB": [
+        2579,
+        1034
+      ],
+      "runtimeDeckTileCount": 77,
+      "selectedMode": "PRODUCTION_NO_PERMISSION",
+      "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+      "realKeyTraversalClaimed": false,
+      "captures": [
+        {
+          "serial": 49,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_2_bankA.png",
+          "name": "bridge_br_2_bankA",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:32.130Z",
+          "pngSha256": "bc32db1a9a80c1f8db291b3137cbc6fc5422e0bf92bc51037a641ef2304ac930",
+          "frameIdentity": {
+            "serial": 49,
+            "simMs": 21266,
+            "wallClockMs": 28112.2,
+            "setupSimMs": 21199,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_2",
+          "requestedKind": "PER_ID_BANK_A",
+          "actualPlayerTile": [
+            2579,
+            1049
+          ],
+          "playerPx": [
+            41272,
+            16792
+          ],
+          "cameraCoordinate": [
+            40952,
+            16606
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 12,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              2559,
+              1037,
+              2598,
+              1059
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 69,
+            "bridgeTilesAny": 69,
+            "roadTiles": 131,
+            "cliffTiles": 0,
+            "waterTiles": 397
+          }
+        },
+        {
+          "serial": 50,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_2_deck.png",
+          "name": "bridge_br_2_deck",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:32.249Z",
+          "pngSha256": "e25100ff7066cf611201e9ae5ac71c0ecc83baab509ca4910131f46193215af7",
+          "frameIdentity": {
+            "serial": 50,
+            "simMs": 21399,
+            "wallClockMs": 28232,
+            "setupSimMs": 21349,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_2",
+          "requestedKind": "PER_ID_DECK",
+          "actualPlayerTile": [
+            2579,
+            1042
+          ],
+          "playerPx": [
+            41272,
+            16680
+          ],
+          "cameraCoordinate": [
+            40952,
+            16494
+          ],
+          "candidateId": "br_2",
+          "cliffFaceSide": null,
+          "visibleTile": 13,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              2559,
+              1030,
+              2598,
+              1052
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 77,
+            "bridgeTilesAny": 77,
+            "roadTiles": 113,
+            "cliffTiles": 0,
+            "waterTiles": 489
+          }
+        },
+        {
+          "serial": 51,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_2_bankB.png",
+          "name": "bridge_br_2_bankB",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:32.445Z",
+          "pngSha256": "dd3ac7eb44ca92ecf0accfb8de4eac56710fe79c6f9e44c43986a32bae8ae4d4",
+          "frameIdentity": {
+            "serial": 51,
+            "simMs": 21533,
+            "wallClockMs": 28424.5,
+            "setupSimMs": 21466,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_2",
+          "requestedKind": "PER_ID_BANK_B",
+          "actualPlayerTile": [
+            2579,
+            1034
+          ],
+          "playerPx": [
+            41272,
+            16552
+          ],
+          "cameraCoordinate": [
+            40952,
+            16366
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 12,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              2559,
+              1022,
+              2598,
+              1044
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 56,
+            "bridgeTilesAny": 56,
+            "roadTiles": 153,
+            "cliffTiles": 0,
+            "waterTiles": 356
+          }
+        }
+      ]
+    },
+    {
+      "fixtureIndex": 4,
+      "requestedBridgeId": "br_3",
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "resolved": true,
+      "atTile": [
+        1710,
+        1152
+      ],
+      "measuredDeckCentreTile": [
+        1709,
+        1153
+      ],
+      "measuredBankA": [
+        1702,
+        1156
+      ],
+      "measuredBankB": [
+        1715,
+        1149
+      ],
+      "runtimeDeckTileCount": 83,
+      "selectedMode": "PRODUCTION_NO_PERMISSION",
+      "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+      "realKeyTraversalClaimed": false,
+      "captures": [
+        {
+          "serial": 52,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_3_bankA.png",
+          "name": "bridge_br_3_bankA",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:32.696Z",
+          "pngSha256": "c5aa7b7041a3e29d90501d909818aeefbf59f84e49ff3804437f8c17094d9e96",
+          "frameIdentity": {
+            "serial": 52,
+            "simMs": 21699,
+            "wallClockMs": 28679.3,
+            "setupSimMs": 21616,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_3",
+          "requestedKind": "PER_ID_BANK_A",
+          "actualPlayerTile": [
+            1702,
+            1156
+          ],
+          "playerPx": [
+            27240,
+            18504
+          ],
+          "cameraCoordinate": [
+            26920,
+            18318
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 12,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              1682,
+              1144,
+              1721,
+              1166
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 83,
+            "bridgeTilesAny": 83,
+            "roadTiles": 290,
+            "cliffTiles": 0,
+            "waterTiles": 382
+          }
+        },
+        {
+          "serial": 53,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_3_deck.png",
+          "name": "bridge_br_3_deck",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:32.831Z",
+          "pngSha256": "647d4c638f637a0098d5942a1c1881d818658751315d9b74d797f4dc10947696",
+          "frameIdentity": {
+            "serial": 53,
+            "simMs": 21849,
+            "wallClockMs": 28815.2,
+            "setupSimMs": 21783,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_3",
+          "requestedKind": "PER_ID_DECK",
+          "actualPlayerTile": [
+            1709,
+            1153
+          ],
+          "playerPx": [
+            27352,
+            18456
+          ],
+          "cameraCoordinate": [
+            27032,
+            18270
+          ],
+          "candidateId": "br_3",
+          "cliffFaceSide": null,
+          "visibleTile": 13,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              1689,
+              1141,
+              1728,
+              1163
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 83,
+            "bridgeTilesAny": 83,
+            "roadTiles": 315,
+            "cliffTiles": 0,
+            "waterTiles": 436
+          }
+        },
+        {
+          "serial": 54,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_3_bankB.png",
+          "name": "bridge_br_3_bankB",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:32.949Z",
+          "pngSha256": "bf1c662174fbfcfd3090a3a772a352f2a8f1ee1a2d1dfc7a1f9438a4139866e6",
+          "frameIdentity": {
+            "serial": 54,
+            "simMs": 21949,
+            "wallClockMs": 28932.6,
+            "setupSimMs": 21916,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_3",
+          "requestedKind": "PER_ID_BANK_B",
+          "actualPlayerTile": [
+            1715,
+            1149
+          ],
+          "playerPx": [
+            27448,
+            18392
+          ],
+          "cameraCoordinate": [
+            27128,
+            18206
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 12,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              1695,
+              1137,
+              1734,
+              1159
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 83,
+            "bridgeTilesAny": 83,
+            "roadTiles": 331,
+            "cliffTiles": 0,
+            "waterTiles": 371
+          }
+        }
+      ]
+    },
+    {
+      "fixtureIndex": 5,
+      "requestedBridgeId": "br_4",
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "resolved": true,
+      "atTile": [
+        1464,
+        1299
+      ],
+      "measuredDeckCentreTile": [
+        1463,
+        1299
+      ],
+      "measuredBankA": [
+        1461,
+        1295
+      ],
+      "measuredBankB": [
+        1465,
+        1303
+      ],
+      "runtimeDeckTileCount": 46,
+      "selectedMode": "PRODUCTION_NO_PERMISSION",
+      "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+      "realKeyTraversalClaimed": false,
+      "captures": [
+        {
+          "serial": 55,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_4_bankA.png",
+          "name": "bridge_br_4_bankA",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:33.203Z",
+          "pngSha256": "d27543ac5a743252d06f0f07a348c81e5e5220dd1a839c2b980178024efa3cd9",
+          "frameIdentity": {
+            "serial": 55,
+            "simMs": 22083,
+            "wallClockMs": 29185.8,
+            "setupSimMs": 22016,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_4",
+          "requestedKind": "PER_ID_BANK_A",
+          "actualPlayerTile": [
+            1461,
+            1295
+          ],
+          "playerPx": [
+            23384,
+            20728
+          ],
+          "cameraCoordinate": [
+            23064,
+            20542
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 12,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              1441,
+              1283,
+              1480,
+              1305
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 46,
+            "bridgeTilesAny": 46,
+            "roadTiles": 149,
+            "cliffTiles": 0,
+            "waterTiles": 321
+          }
+        },
+        {
+          "serial": 56,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_4_deck.png",
+          "name": "bridge_br_4_deck",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:33.314Z",
+          "pngSha256": "54f2e1b30ade3744f8110f28495fe05f25ac46edb837a847ae7351d67c7abc11",
+          "frameIdentity": {
+            "serial": 56,
+            "simMs": 22199,
+            "wallClockMs": 29298.2,
+            "setupSimMs": 22116,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_4",
+          "requestedKind": "PER_ID_DECK",
+          "actualPlayerTile": [
+            1463,
+            1299
+          ],
+          "playerPx": [
+            23416,
+            20792
+          ],
+          "cameraCoordinate": [
+            23096,
+            20606
+          ],
+          "candidateId": "br_4",
+          "cliffFaceSide": null,
+          "visibleTile": 13,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              1443,
+              1287,
+              1482,
+              1309
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 46,
+            "bridgeTilesAny": 46,
+            "roadTiles": 168,
+            "cliffTiles": 0,
+            "waterTiles": 321
+          }
+        },
+        {
+          "serial": 57,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_4_bankB.png",
+          "name": "bridge_br_4_bankB",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:33.500Z",
+          "pngSha256": "3b03b932a68870900786d5d045f97a1a234c02a6ccd7483caa813263fd1f36fb",
+          "frameIdentity": {
+            "serial": 57,
+            "simMs": 22333,
+            "wallClockMs": 29483.4,
+            "setupSimMs": 22266,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_4",
+          "requestedKind": "PER_ID_BANK_B",
+          "actualPlayerTile": [
+            1465,
+            1303
+          ],
+          "playerPx": [
+            23448,
+            20856
+          ],
+          "cameraCoordinate": [
+            23128,
+            20670
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 12,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              1445,
+              1291,
+              1484,
+              1313
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 46,
+            "bridgeTilesAny": 46,
+            "roadTiles": 200,
+            "cliffTiles": 0,
+            "waterTiles": 321
+          }
+        }
+      ]
+    },
+    {
+      "fixtureIndex": 6,
+      "requestedBridgeId": "br_5",
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "resolved": true,
+      "atTile": [
+        1936,
+        1632
+      ],
+      "measuredDeckCentreTile": [
+        1936,
+        1632
+      ],
+      "measuredBankA": [
+        1930,
+        1636
+      ],
+      "measuredBankB": [
+        1942,
+        1627
+      ],
+      "runtimeDeckTileCount": 84,
+      "selectedMode": "PRODUCTION_NO_PERMISSION",
+      "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+      "realKeyTraversalClaimed": false,
+      "captures": [
+        {
+          "serial": 58,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_5_bankA.png",
+          "name": "bridge_br_5_bankA",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:33.744Z",
+          "pngSha256": "32f4442a5e904ca769638edde9568ab2fb0c148c5b829d2a612fe5768cff1f29",
+          "frameIdentity": {
+            "serial": 58,
+            "simMs": 22483,
+            "wallClockMs": 29727.3,
+            "setupSimMs": 22416,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_5",
+          "requestedKind": "PER_ID_BANK_A",
+          "actualPlayerTile": [
+            1930,
+            1636
+          ],
+          "playerPx": [
+            30888,
+            26184
+          ],
+          "cameraCoordinate": [
+            30568,
+            25998
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 12,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              1910,
+              1624,
+              1949,
+              1646
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 84,
+            "bridgeTilesAny": 84,
+            "roadTiles": 239,
+            "cliffTiles": 0,
+            "waterTiles": 367
+          }
+        },
+        {
+          "serial": 59,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_5_deck.png",
+          "name": "bridge_br_5_deck",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:33.904Z",
+          "pngSha256": "ca38e3f69c36c2353233de592e5193b4f60741b3b4bd965ac4b83955448334be",
+          "frameIdentity": {
+            "serial": 59,
+            "simMs": 22649,
+            "wallClockMs": 29885.5,
+            "setupSimMs": 22566,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_5",
+          "requestedKind": "PER_ID_DECK",
+          "actualPlayerTile": [
+            1936,
+            1632
+          ],
+          "playerPx": [
+            30984,
+            26120
+          ],
+          "cameraCoordinate": [
+            30664,
+            25934
+          ],
+          "candidateId": "br_5",
+          "cliffFaceSide": null,
+          "visibleTile": 13,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              1916,
+              1620,
+              1955,
+              1642
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 84,
+            "bridgeTilesAny": 84,
+            "roadTiles": 221,
+            "cliffTiles": 0,
+            "waterTiles": 378
+          }
+        },
+        {
+          "serial": 60,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_5_bankB.png",
+          "name": "bridge_br_5_bankB",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:34.130Z",
+          "pngSha256": "65c3ac6143a81ad96822634e57e39370a73288675617bdd9ceb67a8a8c5b6897",
+          "frameIdentity": {
+            "serial": 60,
+            "simMs": 22799,
+            "wallClockMs": 30107.3,
+            "setupSimMs": 22733,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_5",
+          "requestedKind": "PER_ID_BANK_B",
+          "actualPlayerTile": [
+            1942,
+            1627
+          ],
+          "playerPx": [
+            31080,
+            26040
+          ],
+          "cameraCoordinate": [
+            30760,
+            25854
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 12,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              1922,
+              1615,
+              1961,
+              1637
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 83,
+            "bridgeTilesAny": 83,
+            "roadTiles": 207,
+            "cliffTiles": 0,
+            "waterTiles": 364
+          }
+        }
+      ]
+    },
+    {
+      "fixtureIndex": 7,
+      "requestedBridgeId": "br_6",
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "resolved": true,
+      "atTile": [
+        2012,
+        1462
+      ],
+      "measuredDeckCentreTile": [
+        2013,
+        1463
+      ],
+      "measuredBankA": [
+        2017,
+        1464
+      ],
+      "measuredBankB": [
+        2008,
+        1461
+      ],
+      "runtimeDeckTileCount": 49,
+      "selectedMode": "PRODUCTION_NO_PERMISSION",
+      "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+      "realKeyTraversalClaimed": false,
+      "captures": [
+        {
+          "serial": 61,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_6_bankA.png",
+          "name": "bridge_br_6_bankA",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:34.515Z",
+          "pngSha256": "7c71a5fee70888faf72890223cf3072518c0133e090575aa0cbf1f19374c914d",
+          "frameIdentity": {
+            "serial": 61,
+            "simMs": 22966,
+            "wallClockMs": 30498.4,
+            "setupSimMs": 22883,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_6",
+          "requestedKind": "PER_ID_BANK_A",
+          "actualPlayerTile": [
+            2017,
+            1464
+          ],
+          "playerPx": [
+            32280,
+            23432
+          ],
+          "cameraCoordinate": [
+            31960,
+            23246
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 12,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              1997,
+              1452,
+              2036,
+              1474
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 49,
+            "bridgeTilesAny": 49,
+            "roadTiles": 342,
+            "cliffTiles": 0,
+            "waterTiles": 210
+          }
+        },
+        {
+          "serial": 62,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_6_deck.png",
+          "name": "bridge_br_6_deck",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:34.632Z",
+          "pngSha256": "f9b0d0a49428b5e6d314b28a0c281e6f5b978a1026038927f17ed223681a8178",
+          "frameIdentity": {
+            "serial": 62,
+            "simMs": 23083,
+            "wallClockMs": 30615.2,
+            "setupSimMs": 22999,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_6",
+          "requestedKind": "PER_ID_DECK",
+          "actualPlayerTile": [
+            2013,
+            1463
+          ],
+          "playerPx": [
+            32216,
+            23416
+          ],
+          "cameraCoordinate": [
+            31896,
+            23230
+          ],
+          "candidateId": "br_6",
+          "cliffFaceSide": null,
+          "visibleTile": 13,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              1993,
+              1451,
+              2032,
+              1473
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 49,
+            "bridgeTilesAny": 49,
+            "roadTiles": 335,
+            "cliffTiles": 0,
+            "waterTiles": 210
+          }
+        },
+        {
+          "serial": 63,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_6_bankB.png",
+          "name": "bridge_br_6_bankB",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:34.750Z",
+          "pngSha256": "4307e30d2e1a6a17dfd703e122661b0fbd3d4d3e89ba3c97144fe080b3057d60",
+          "frameIdentity": {
+            "serial": 63,
+            "simMs": 23183,
+            "wallClockMs": 30733,
+            "setupSimMs": 23149,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_6",
+          "requestedKind": "PER_ID_BANK_B",
+          "actualPlayerTile": [
+            2008,
+            1461
+          ],
+          "playerPx": [
+            32136,
+            23384
+          ],
+          "cameraCoordinate": [
+            31816,
+            23198
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 12,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              1988,
+              1449,
+              2027,
+              1471
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 49,
+            "bridgeTilesAny": 49,
+            "roadTiles": 270,
+            "cliffTiles": 0,
+            "waterTiles": 210
+          }
+        }
+      ]
+    },
+    {
+      "fixtureIndex": 8,
+      "requestedBridgeId": "br_7",
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "resolved": true,
+      "atTile": [
+        3231,
+        687
+      ],
+      "measuredDeckCentreTile": [
+        3231,
+        687
+      ],
+      "measuredBankA": [
+        3229,
+        686
+      ],
+      "measuredBankB": [
+        3234,
+        689
+      ],
+      "runtimeDeckTileCount": 28,
+      "selectedMode": "PRODUCTION_NO_PERMISSION",
+      "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+      "realKeyTraversalClaimed": false,
+      "captures": [
+        {
+          "serial": 64,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_7_bankA.png",
+          "name": "bridge_br_7_bankA",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:34.979Z",
+          "pngSha256": "97e68afc5b2af6384345b774fe668e2eb49880756cc1c6658756a3bac45ae80a",
+          "frameIdentity": {
+            "serial": 64,
+            "simMs": 23316,
+            "wallClockMs": 30948.8,
+            "setupSimMs": 23249,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_7",
+          "requestedKind": "PER_ID_BANK_A",
+          "actualPlayerTile": [
+            3229,
+            686
+          ],
+          "playerPx": [
+            51672,
+            10984
+          ],
+          "cameraCoordinate": [
+            51352,
+            10798
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 12,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              3209,
+              674,
+              3248,
+              696
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 28,
+            "bridgeTilesAny": 28,
+            "roadTiles": 411,
+            "cliffTiles": 0,
+            "waterTiles": 142
+          }
+        },
+        {
+          "serial": 65,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_7_deck.png",
+          "name": "bridge_br_7_deck",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:35.067Z",
+          "pngSha256": "9b10946cdff2fbd1eef1b37d59a82ce733dd06476424605aaa72a2c959f6f466",
+          "frameIdentity": {
+            "serial": 65,
+            "simMs": 23433,
+            "wallClockMs": 31049.9,
+            "setupSimMs": 23383,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_7",
+          "requestedKind": "PER_ID_DECK",
+          "actualPlayerTile": [
+            3231,
+            687
+          ],
+          "playerPx": [
+            51704,
+            11000
+          ],
+          "cameraCoordinate": [
+            51384,
+            10814
+          ],
+          "candidateId": "br_7",
+          "cliffFaceSide": null,
+          "visibleTile": 13,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              3211,
+              675,
+              3250,
+              697
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 28,
+            "bridgeTilesAny": 28,
+            "roadTiles": 420,
+            "cliffTiles": 0,
+            "waterTiles": 142
+          }
+        },
+        {
+          "serial": 66,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_7_bankB.png",
+          "name": "bridge_br_7_bankB",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:35.134Z",
+          "pngSha256": "b7bf89acb8b353b02b95779b5f6a1c1abaad09387791865580e435b56bd51c8b",
+          "frameIdentity": {
+            "serial": 66,
+            "simMs": 23499,
+            "wallClockMs": 31116.4,
+            "setupSimMs": 23466,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_7",
+          "requestedKind": "PER_ID_BANK_B",
+          "actualPlayerTile": [
+            3234,
+            689
+          ],
+          "playerPx": [
+            51752,
+            11032
+          ],
+          "cameraCoordinate": [
+            51432,
+            10846
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 12,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              3214,
+              677,
+              3253,
+              699
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 28,
+            "bridgeTilesAny": 28,
+            "roadTiles": 399,
+            "cliffTiles": 0,
+            "waterTiles": 142
+          }
+        }
+      ]
+    },
+    {
+      "fixtureIndex": 9,
+      "requestedBridgeId": "br_8",
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "resolved": true,
+      "atTile": [
+        2305,
+        914
+      ],
+      "measuredDeckCentreTile": [
+        2306,
+        914
+      ],
+      "measuredBankA": [
+        2302,
+        919
+      ],
+      "measuredBankB": [
+        2309,
+        908
+      ],
+      "runtimeDeckTileCount": 75,
+      "selectedMode": "PRODUCTION_NO_PERMISSION",
+      "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+      "realKeyTraversalClaimed": false,
+      "captures": [
+        {
+          "serial": 67,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_8_bankA.png",
+          "name": "bridge_br_8_bankA",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:35.533Z",
+          "pngSha256": "2eac38ec3187920846c586e870bae1d57f97d4684125e185c0250ffcb9a4275a",
+          "frameIdentity": {
+            "serial": 67,
+            "simMs": 23616,
+            "wallClockMs": 31515.8,
+            "setupSimMs": 23533,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_8",
+          "requestedKind": "PER_ID_BANK_A",
+          "actualPlayerTile": [
+            2302,
+            919
+          ],
+          "playerPx": [
+            36840,
+            14712
+          ],
+          "cameraCoordinate": [
+            36520,
+            14526
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 12,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              2282,
+              907,
+              2321,
+              929
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 75,
+            "bridgeTilesAny": 75,
+            "roadTiles": 250,
+            "cliffTiles": 0,
+            "waterTiles": 355
+          }
+        },
+        {
+          "serial": 68,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_8_deck.png",
+          "name": "bridge_br_8_deck",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:35.650Z",
+          "pngSha256": "7906bb028056ee086a214f077d2fa3a21c4409c56fea0171174b82658d550931",
+          "frameIdentity": {
+            "serial": 68,
+            "simMs": 23716,
+            "wallClockMs": 31632.7,
+            "setupSimMs": 23683,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_8",
+          "requestedKind": "PER_ID_DECK",
+          "actualPlayerTile": [
+            2306,
+            914
+          ],
+          "playerPx": [
+            36904,
+            14632
+          ],
+          "cameraCoordinate": [
+            36584,
+            14446
+          ],
+          "candidateId": "br_8",
+          "cliffFaceSide": null,
+          "visibleTile": 13,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              2286,
+              902,
+              2325,
+              924
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 75,
+            "bridgeTilesAny": 75,
+            "roadTiles": 205,
+            "cliffTiles": 0,
+            "waterTiles": 391
+          }
+        },
+        {
+          "serial": 69,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_8_bankB.png",
+          "name": "bridge_br_8_bankB",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:35.768Z",
+          "pngSha256": "bd3a5b1f781198ea7bd6a33b95a7c1b8df7fc200b6b604beb5aa30e001f27f65",
+          "frameIdentity": {
+            "serial": 69,
+            "simMs": 23816,
+            "wallClockMs": 31749.4,
+            "setupSimMs": 23783,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_8",
+          "requestedKind": "PER_ID_BANK_B",
+          "actualPlayerTile": [
+            2309,
+            908
+          ],
+          "playerPx": [
+            36952,
+            14536
+          ],
+          "cameraCoordinate": [
+            36632,
+            14350
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 12,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              2289,
+              896,
+              2328,
+              918
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 70,
+            "bridgeTilesAny": 70,
+            "roadTiles": 191,
+            "cliffTiles": 0,
+            "waterTiles": 346
+          }
+        }
+      ]
+    },
+    {
+      "fixtureIndex": 10,
+      "requestedBridgeId": "br_9",
+      "status": "UNRESOLVED__EXTERNAL_DECISION_REQUIRED",
+      "resolved": false,
+      "atTile": [
+        1555,
+        913
+      ],
+      "measuredDeckCentreTile": null,
+      "measuredBankA": [
+        1552,
+        920
+      ],
+      "measuredBankB": [
+        1557,
+        907
+      ],
+      "runtimeDeckTileCount": 0,
+      "selectedMode": "PRODUCTION_NO_PERMISSION",
+      "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+      "realKeyTraversalClaimed": false,
+      "captures": [
+        {
+          "serial": 70,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_9_site.png",
+          "name": "bridge_br_9_site",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:36.066Z",
+          "pngSha256": "0f953c0c121ec80306e89c470461aaca4fcf6c57ea61ab03bf30fad15ff21c78",
+          "frameIdentity": {
+            "serial": 70,
+            "simMs": 23966,
+            "wallClockMs": 32048.5,
+            "setupSimMs": 23883,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_9",
+          "requestedKind": "PER_ID_SITE",
+          "actualPlayerTile": [
+            1555,
+            913
+          ],
+          "playerPx": [
+            24888,
+            14616
+          ],
+          "cameraCoordinate": [
+            24568,
+            14430
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 19,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              1535,
+              901,
+              1574,
+              923
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 0,
+            "bridgeTilesAny": 0,
+            "roadTiles": 308,
+            "cliffTiles": 0,
+            "waterTiles": 225
+          }
+        }
+      ]
+    },
+    {
+      "fixtureIndex": 11,
+      "requestedBridgeId": "br_a",
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "resolved": true,
+      "atTile": [
+        1765,
+        1293
+      ],
+      "measuredDeckCentreTile": [
+        1766,
+        1295
+      ],
+      "measuredBankA": [
+        1764,
+        1290
+      ],
+      "measuredBankB": [
+        1768,
+        1300
+      ],
+      "runtimeDeckTileCount": 55,
+      "selectedMode": "PRODUCTION_NO_PERMISSION",
+      "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+      "realKeyTraversalClaimed": false,
+      "captures": [
+        {
+          "serial": 71,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_a_bankA.png",
+          "name": "bridge_br_a_bankA",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:36.408Z",
+          "pngSha256": "4f4fc4ce14a3e78be7eadce3f89ba2f4ecc54c8a6bc1c04f5ae53dd0ab8af6a7",
+          "frameIdentity": {
+            "serial": 71,
+            "simMs": 24099,
+            "wallClockMs": 32388.8,
+            "setupSimMs": 24033,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_a",
+          "requestedKind": "PER_ID_BANK_A",
+          "actualPlayerTile": [
+            1764,
+            1290
+          ],
+          "playerPx": [
+            28232,
+            20648
+          ],
+          "cameraCoordinate": [
+            27912,
+            20462
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 12,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              1744,
+              1278,
+              1783,
+              1300
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 55,
+            "bridgeTilesAny": 55,
+            "roadTiles": 150,
+            "cliffTiles": 0,
+            "waterTiles": 313
+          }
+        },
+        {
+          "serial": 72,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_a_deck.png",
+          "name": "bridge_br_a_deck",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:36.566Z",
+          "pngSha256": "ae2ccf1884bc4d0dc7ebf37efcfb3254591d37ff623acb87ee4e993f8fd14ea3",
+          "frameIdentity": {
+            "serial": 72,
+            "simMs": 24233,
+            "wallClockMs": 32549.5,
+            "setupSimMs": 24183,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_a",
+          "requestedKind": "PER_ID_DECK",
+          "actualPlayerTile": [
+            1766,
+            1295
+          ],
+          "playerPx": [
+            28264,
+            20728
+          ],
+          "cameraCoordinate": [
+            27944,
+            20542
+          ],
+          "candidateId": "br_a",
+          "cliffFaceSide": null,
+          "visibleTile": 13,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              1746,
+              1283,
+              1785,
+              1305
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 55,
+            "bridgeTilesAny": 55,
+            "roadTiles": 145,
+            "cliffTiles": 0,
+            "waterTiles": 329
+          }
+        },
+        {
+          "serial": 73,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_a_bankB.png",
+          "name": "bridge_br_a_bankB",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:36.682Z",
+          "pngSha256": "a66967553bcefe0d3b0b97c33b5f56e590f66ba6dc6003630e3a6f909a126cb4",
+          "frameIdentity": {
+            "serial": 73,
+            "simMs": 24333,
+            "wallClockMs": 32666,
+            "setupSimMs": 24299,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_a",
+          "requestedKind": "PER_ID_BANK_B",
+          "actualPlayerTile": [
+            1768,
+            1300
+          ],
+          "playerPx": [
+            28296,
+            20808
+          ],
+          "cameraCoordinate": [
+            27976,
+            20622
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 12,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              1748,
+              1288,
+              1787,
+              1310
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 55,
+            "bridgeTilesAny": 55,
+            "roadTiles": 144,
+            "cliffTiles": 0,
+            "waterTiles": 328
+          }
+        }
+      ]
+    },
+    {
+      "fixtureIndex": 12,
+      "requestedBridgeId": "br_b",
+      "status": "UNRESOLVED__EXTERNAL_DECISION_REQUIRED",
+      "resolved": false,
+      "atTile": [
+        2052,
+        1859
+      ],
+      "measuredDeckCentreTile": null,
+      "measuredBankA": null,
+      "measuredBankB": [
+        2056,
+        1860
+      ],
+      "runtimeDeckTileCount": 0,
+      "selectedMode": "PRODUCTION_NO_PERMISSION",
+      "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+      "realKeyTraversalClaimed": false,
+      "captures": [
+        {
+          "serial": 74,
+          "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_b_site.png",
+          "name": "bridge_br_b_site",
+          "size": [
+            640,
+            360
+          ],
+          "capturedAt": "2026-11-05T15:41:36.934Z",
+          "pngSha256": "848f7a202b413b4779cb41bbdba22ebf4c9291036208f9711e1bc9b108e516da",
+          "frameIdentity": {
+            "serial": 74,
+            "simMs": 24466,
+            "wallClockMs": 32916.4,
+            "setupSimMs": 24349,
+            "freshFrameAdvanced": true
+          },
+          "requestedBridgeId": "br_b",
+          "requestedKind": "PER_ID_SITE",
+          "actualPlayerTile": [
+            2052,
+            1859
+          ],
+          "playerPx": [
+            32840,
+            29752
+          ],
+          "cameraCoordinate": [
+            32520,
+            29566
+          ],
+          "candidateId": null,
+          "cliffFaceSide": null,
+          "visibleTile": 19,
+          "selectedMode": "PRODUCTION_NO_PERMISSION",
+          "collision": "NATURAL_TERRAIN_ONLY",
+          "spawnFixture": true,
+          "movedPx": 0,
+          "blockedSubsteps": 0,
+          "reusedImmediatelyPreviousPng": false,
+          "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+          "visibleWindow": {
+            "tileWindow": [
+              2032,
+              1847,
+              2071,
+              1869
+            ],
+            "tiles": 920,
+            "bridgeTilesForId": 0,
+            "bridgeTilesAny": 0,
+            "roadTiles": 157,
+            "cliffTiles": 0,
+            "waterTiles": 531
+          }
+        }
+      ]
+    }
+  ],
+  "shotProvenance": {
+    "file": "creator-u05/evidence/mapgeo02-shot-provenance.json",
+    "captureCount": 84,
+    "bridgeLabelledCaptures": 40,
+    "negativeGateCases": 5,
+    "negativeGateAllRejected": true,
+    "realCapturesRejected": 0
+  },
+  "shotIntegrity": {
+    "files": 84,
+    "uniqueContents": 79,
+    "duplicateGroups": 5,
+    "duplicateGroupsDetail": [
+      {
+        "sha256": "235662d5ac267978",
+        "files": [
+          "B_br1_T3_production_after.png",
+          "match_T3_bridge_approach_crossing_after.png"
+        ],
+        "requestedIds": [
+          "br_1"
+        ],
+        "frameSerials": [
+          21,
+          8
+        ],
+        "classification": "LEGITIMATE_IDENTICAL_STATE_CAPTURE",
+        "atBridgeFilesInGroup": 0,
+        "note": "Duplicate pixels at DIFFERENT frame identities are legitimate (identical terrain/state); only a reused frame identity is a defect."
+      },
+      {
+        "sha256": "e25100ff7066cf61",
+        "files": [
+          "B_br2_production_at_bridge.png",
+          "bridge_br_2_deck.png"
+        ],
+        "requestedIds": [
+          "br_2"
+        ],
+        "frameSerials": [
+          25,
+          50
+        ],
+        "classification": "LEGITIMATE_IDENTICAL_STATE_CAPTURE",
+        "atBridgeFilesInGroup": 1,
+        "note": "Duplicate pixels at DIFFERENT frame identities are legitimate (identical terrain/state); only a reused frame identity is a defect."
+      },
+      {
+        "sha256": "848f7a202b413b47",
+        "files": [
+          "B_brb_unresolved_after.png",
+          "bridge_br_b_site.png"
+        ],
+        "requestedIds": [
+          "br_b"
+        ],
+        "frameSerials": [
+          42,
+          74
+        ],
+        "classification": "LEGITIMATE_IDENTICAL_STATE_CAPTURE",
+        "atBridgeFilesInGroup": 0,
+        "note": "Duplicate pixels at DIFFERENT frame identities are legitimate (identical terrain/state); only a reused frame identity is a defect."
+      },
+      {
+        "sha256": "a72d2d79dded8113",
+        "files": [
+          "B_brb_unresolved_at_bridge.png",
+          "B_brb_unresolved_before.png"
+        ],
+        "requestedIds": [
+          "br_b"
+        ],
+        "frameSerials": [
+          40,
+          41
+        ],
+        "classification": "LEGITIMATE_IDENTICAL_STATE_CAPTURE",
+        "atBridgeFilesInGroup": 1,
+        "note": "Duplicate pixels at DIFFERENT frame identities are legitimate (identical terrain/state); only a reused frame identity is a defect."
+      },
+      {
+        "sha256": "066163ec6619a2f1",
+        "files": [
+          "br1_centre_production.png",
+          "br1_centre_qa.png"
+        ],
+        "requestedIds": [],
+        "frameSerials": [
+          82,
+          83
+        ],
+        "classification": "LEGITIMATE_IDENTICAL_STATE_CAPTURE",
+        "atBridgeFilesInGroup": 0,
+        "note": "Duplicate pixels at DIFFERENT frame identities are legitimate (identical terrain/state); only a reused frame identity is a defect."
+      }
+    ],
+    "defectGroups": 0,
+    "atBridgeShots": 8,
+    "atBridgeUniqueContents": 8,
+    "oldDefectSignature": "8 `_at_bridge` files shared one final-canvas frame (10-image identical group)",
+    "oldDefectSignatureGone": true,
+    "rule": "Duplicates are classified by provenance, NOT auto-failed; legitimate identical-state and identical-render-at-distinct-fixtures groups are recorded explicitly."
+  },
   "checks": [
     {
       "id": "D01_native_renderer",
@@ -3537,16 +7820,16 @@
           "TILE": 16,
           "addressableCells": 11200000,
           "materializedAllCells": false,
-          "residentChunks": 26,
-          "residentLoads": 26,
-          "residentEvictions": 0,
+          "residentChunks": 36,
+          "residentLoads": 37,
+          "residentEvictions": 1,
           "maxResidentChunks": 36,
           "chunkKeyExample": "creator-u05|125:87",
           "legacyStrideKey": "NEVER_USED__cy*100+cx",
           "displayCanvases": 36,
           "displayBytes": 9437184,
-          "displayLoads": 232,
-          "displayEvictions": 196,
+          "displayLoads": 353,
+          "displayEvictions": 317,
           "maxDisplayCanvases": 36,
           "displayChunkKeyExample": "creator-u05|render16|250:175"
         }
@@ -3602,7 +7885,7 @@
         "br2": {
           "movedPx": 54,
           "tilesTraversed": 3.38,
-          "blockedSubsteps": 84,
+          "blockedSubsteps": 105,
           "startTile": [
             2579,
             1052
@@ -3622,9 +7905,9 @@
           "endQaBlocked": false
         },
         "br1": {
-          "movedPx": 340,
-          "tilesTraversed": 21.25,
-          "blockedSubsteps": 131,
+          "movedPx": 342,
+          "tilesTraversed": 21.38,
+          "blockedSubsteps": 125,
           "startTile": [
             2020,
             907
@@ -3650,8 +7933,8 @@
       "verdict": "PASS",
       "detail": {
         "br2": {
-          "movedPx": 492,
-          "tilesTraversed": 30.75,
+          "movedPx": 480,
+          "tilesTraversed": 30,
           "blockedSubsteps": 0,
           "startTile": [
             2579,
@@ -3659,32 +7942,32 @@
           ],
           "endTile": [
             2579,
-            1021
+            1022
           ],
           "tileDelta": [
             0,
-            -31
+            -30
           ],
-          "endVisibleTile": 6,
+          "endVisibleTile": 12,
           "endOnBridgeDeck": null,
           "endOnCliffFace": null,
           "endProductionBlocked": false,
           "endQaBlocked": false
         },
         "br7": {
-          "movedPx": 383,
-          "tilesTraversed": 23.94,
-          "blockedSubsteps": 56,
+          "movedPx": 399,
+          "tilesTraversed": 24.94,
+          "blockedSubsteps": 52,
           "startTile": [
             3227,
             685
           ],
           "endTile": [
-            3241,
+            3242,
             695
           ],
           "tileDelta": [
-            14,
+            15,
             10
           ],
           "endVisibleTile": 12,
@@ -3696,7 +7979,7 @@
         "br1": {
           "movedPx": 438,
           "tilesTraversed": 27.38,
-          "blockedSubsteps": 97,
+          "blockedSubsteps": 103,
           "startTile": [
             2020,
             907
@@ -3730,14 +8013,14 @@
             1200
           ],
           "endTile": [
-            1203,
+            1200,
             1196
           ],
           "tileDelta": [
-            3,
+            0,
             -4
           ],
-          "endVisibleTile": 7,
+          "endVisibleTile": 5,
           "endOnBridgeDeck": null,
           "endOnCliffFace": null,
           "endProductionBlocked": false,
@@ -3774,12 +8057,12 @@
             1200
           ],
           "endTile": [
-            1237,
-            1199
+            1236,
+            1200
           ],
           "tileDelta": [
-            37,
-            -1
+            36,
+            0
           ],
           "endVisibleTile": 5,
           "endOnBridgeDeck": null,
@@ -3829,18 +8112,18 @@
               640,
               360
             ],
-            "differingPixels": 165447,
+            "differingPixels": 159508,
             "totalPixels": 230400,
-            "meanAbsChannelDiff": 19.37
+            "meanAbsChannelDiff": 18.449
           },
           "exactCoordinateDiff": {
             "size": [
               640,
               360
             ],
-            "differingPixels": 165447,
+            "differingPixels": 126691,
             "totalPixels": 230400,
-            "meanAbsChannelDiff": 19.37
+            "meanAbsChannelDiff": 13.099
           },
           "tileCodeComparison": {
             "tiles": 920,
@@ -3876,9 +8159,9 @@
               640,
               360
             ],
-            "differingPixels": 133440,
+            "differingPixels": 131160,
             "totalPixels": 230400,
-            "meanAbsChannelDiff": 13.216
+            "meanAbsChannelDiff": 12.606
           },
           "tileCodeComparison": {
             "tiles": 920,
@@ -3914,9 +8197,9 @@
               640,
               360
             ],
-            "differingPixels": 178393,
+            "differingPixels": 197621,
             "totalPixels": 230400,
-            "meanAbsChannelDiff": 49.948
+            "meanAbsChannelDiff": 53.651
           },
           "tileCodeComparison": {
             "tiles": 920,
@@ -3931,7 +8214,7 @@
         {
           "id": "match_T4_highland_and_alternative",
           "endTile": [
-            1196,
+            1199,
             1195
           ],
           "exactCoordinateTile": [
@@ -3943,18 +8226,18 @@
               640,
               360
             ],
-            "differingPixels": 153233,
+            "differingPixels": 142510,
             "totalPixels": 230400,
-            "meanAbsChannelDiff": 26.4
+            "meanAbsChannelDiff": 22.731
           },
           "exactCoordinateDiff": {
             "size": [
               640,
               360
             ],
-            "differingPixels": 153233,
+            "differingPixels": 113918,
             "totalPixels": 230400,
-            "meanAbsChannelDiff": 26.4
+            "meanAbsChannelDiff": 12.689
           },
           "tileCodeComparison": {
             "tiles": 920,
@@ -3981,18 +8264,18 @@
               640,
               360
             ],
-            "differingPixels": 103,
+            "differingPixels": 94794,
             "totalPixels": 230400,
-            "meanAbsChannelDiff": 0.033
+            "meanAbsChannelDiff": 9.638
           },
           "exactCoordinateDiff": {
             "size": [
               640,
               360
             ],
-            "differingPixels": 103,
+            "differingPixels": 106073,
             "totalPixels": 230400,
-            "meanAbsChannelDiff": 0.033
+            "meanAbsChannelDiff": 11.314
           },
           "tileCodeComparison": {
             "tiles": 920,
@@ -4028,9 +8311,9 @@
               640,
               360
             ],
-            "differingPixels": 0,
+            "differingPixels": 119685,
             "totalPixels": 230400,
-            "meanAbsChannelDiff": 0
+            "meanAbsChannelDiff": 11.526
           },
           "tileCodeComparison": {
             "tiles": 920,
@@ -4061,15 +8344,909 @@
           "unchanged": true
         }
       }
+    },
+    {
+      "id": "E08_negative_screenshot_authenticity_gate",
+      "verdict": "PASS",
+      "detail": {
+        "labelledCaptures": 40,
+        "realRejects": [],
+        "negativeCases": [
+          {
+            "case": "MISLABELLED_FRAME_FROM_ANOTHER_BRIDGE_FIXTURE",
+            "expectedReasons": [
+              "CAPTURED_NEAR_DIFFERENT_BRIDGE"
+            ],
+            "actualReasons": [
+              "CAPTURED_TOO_FAR_FROM_REQUESTED_BRIDGE",
+              "CAPTURED_NEAR_DIFFERENT_BRIDGE",
+              "PLAYER_NOT_ON_REQUESTED_DECK",
+              "REUSED_FRAME_FROM_UNRELATED_FIXTURE"
+            ],
+            "rejected": true,
+            "expectedReasonsFound": true
+          },
+          {
+            "case": "STALE_CANVAS_NO_FRESH_RENDER_FRAME",
+            "expectedReasons": [
+              "STALE_CANVAS__NO_FRESH_RENDER_FRAME"
+            ],
+            "actualReasons": [
+              "STALE_CANVAS__NO_FRESH_RENDER_FRAME"
+            ],
+            "rejected": true,
+            "expectedReasonsFound": true
+          },
+          {
+            "case": "REUSED_FRAME_IDENTITY_FROM_UNRELATED_FIXTURE",
+            "expectedReasons": [
+              "REUSED_FRAME_FROM_UNRELATED_FIXTURE"
+            ],
+            "actualReasons": [
+              "REUSED_FRAME_FROM_UNRELATED_FIXTURE"
+            ],
+            "rejected": true,
+            "expectedReasonsFound": true
+          },
+          {
+            "case": "FAKE_DECK_STAMPED_AT_UNRESOLVED_SITE",
+            "expectedReasons": [
+              "FAKE_DECK_AT_UNRESOLVED_SITE"
+            ],
+            "actualReasons": [
+              "FAKE_DECK_AT_UNRESOLVED_SITE"
+            ],
+            "rejected": true,
+            "expectedReasonsFound": true
+          },
+          {
+            "case": "UNDECLARED_SELECTED_MODE",
+            "expectedReasons": [
+              "INVALID_SELECTED_MODE"
+            ],
+            "actualReasons": [
+              "INVALID_SELECTED_MODE"
+            ],
+            "rejected": true,
+            "expectedReasonsFound": true
+          }
+        ],
+        "control": {
+          "case": "CONTROL_UNMODIFIED_AUTHENTIC_CAPTURE",
+          "accepted": true
+        },
+        "rule": "MAX_NEAR_TILES=32; nearest bridge centre must equal requested id; fresh render frame; declared mode; no fake deck at unresolved site; frame-serial owner must match requested id"
+      }
+    },
+    {
+      "id": "E09_shot_integrity_no_reused_frames",
+      "verdict": "PASS",
+      "detail": {
+        "files": 84,
+        "uniqueContents": 79,
+        "duplicateGroups": 5,
+        "duplicateGroupsDetail": [
+          {
+            "sha256": "235662d5ac267978",
+            "files": [
+              "B_br1_T3_production_after.png",
+              "match_T3_bridge_approach_crossing_after.png"
+            ],
+            "requestedIds": [
+              "br_1"
+            ],
+            "frameSerials": [
+              21,
+              8
+            ],
+            "classification": "LEGITIMATE_IDENTICAL_STATE_CAPTURE",
+            "atBridgeFilesInGroup": 0,
+            "note": "Duplicate pixels at DIFFERENT frame identities are legitimate (identical terrain/state); only a reused frame identity is a defect."
+          },
+          {
+            "sha256": "e25100ff7066cf61",
+            "files": [
+              "B_br2_production_at_bridge.png",
+              "bridge_br_2_deck.png"
+            ],
+            "requestedIds": [
+              "br_2"
+            ],
+            "frameSerials": [
+              25,
+              50
+            ],
+            "classification": "LEGITIMATE_IDENTICAL_STATE_CAPTURE",
+            "atBridgeFilesInGroup": 1,
+            "note": "Duplicate pixels at DIFFERENT frame identities are legitimate (identical terrain/state); only a reused frame identity is a defect."
+          },
+          {
+            "sha256": "848f7a202b413b47",
+            "files": [
+              "B_brb_unresolved_after.png",
+              "bridge_br_b_site.png"
+            ],
+            "requestedIds": [
+              "br_b"
+            ],
+            "frameSerials": [
+              42,
+              74
+            ],
+            "classification": "LEGITIMATE_IDENTICAL_STATE_CAPTURE",
+            "atBridgeFilesInGroup": 0,
+            "note": "Duplicate pixels at DIFFERENT frame identities are legitimate (identical terrain/state); only a reused frame identity is a defect."
+          },
+          {
+            "sha256": "a72d2d79dded8113",
+            "files": [
+              "B_brb_unresolved_at_bridge.png",
+              "B_brb_unresolved_before.png"
+            ],
+            "requestedIds": [
+              "br_b"
+            ],
+            "frameSerials": [
+              40,
+              41
+            ],
+            "classification": "LEGITIMATE_IDENTICAL_STATE_CAPTURE",
+            "atBridgeFilesInGroup": 1,
+            "note": "Duplicate pixels at DIFFERENT frame identities are legitimate (identical terrain/state); only a reused frame identity is a defect."
+          },
+          {
+            "sha256": "066163ec6619a2f1",
+            "files": [
+              "br1_centre_production.png",
+              "br1_centre_qa.png"
+            ],
+            "requestedIds": [],
+            "frameSerials": [
+              82,
+              83
+            ],
+            "classification": "LEGITIMATE_IDENTICAL_STATE_CAPTURE",
+            "atBridgeFilesInGroup": 0,
+            "note": "Duplicate pixels at DIFFERENT frame identities are legitimate (identical terrain/state); only a reused frame identity is a defect."
+          }
+        ],
+        "defectGroups": 0,
+        "atBridgeShots": 8,
+        "atBridgeUniqueContents": 8,
+        "oldDefectSignature": "8 `_at_bridge` files shared one final-canvas frame (10-image identical group)",
+        "oldDefectSignatureGone": true,
+        "rule": "Duplicates are classified by provenance, NOT auto-failed; legitimate identical-state and identical-render-at-distinct-fixtures groups are recorded explicitly."
+      }
+    },
+    {
+      "id": "E10_per_id_coverage_and_geometry",
+      "verdict": "PASS",
+      "detail": {
+        "method": "PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL",
+        "fixtures": [
+          {
+            "id": "br_0",
+            "resolved": true,
+            "shots": [
+              {
+                "kind": "PER_ID_BANK_A",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_0_bankA.png",
+                "playerTile": [
+                  1992,
+                  1507
+                ],
+                "camera": [
+                  31560,
+                  23934
+                ],
+                "candidateId": null,
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:30.768Z",
+                "frameSerial": 43,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 53,
+                "anyBridgeTilesInVisibleWindow": 53,
+                "pngSha256": "92ac316262199ed5"
+              },
+              {
+                "kind": "PER_ID_DECK",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_0_deck.png",
+                "playerTile": [
+                  1990,
+                  1502
+                ],
+                "camera": [
+                  31528,
+                  23854
+                ],
+                "candidateId": "br_0",
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:30.881Z",
+                "frameSerial": 44,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 53,
+                "anyBridgeTilesInVisibleWindow": 53,
+                "pngSha256": "68a13913e3520f35"
+              },
+              {
+                "kind": "PER_ID_BANK_B",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_0_bankB.png",
+                "playerTile": [
+                  1987,
+                  1498
+                ],
+                "camera": [
+                  31480,
+                  23790
+                ],
+                "candidateId": null,
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:31.110Z",
+                "frameSerial": 45,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 53,
+                "anyBridgeTilesInVisibleWindow": 53,
+                "pngSha256": "337cbf3b1c2e719c"
+              }
+            ]
+          },
+          {
+            "id": "br_1",
+            "resolved": true,
+            "shots": [
+              {
+                "kind": "PER_ID_BANK_A",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_1_bankA.png",
+                "playerTile": [
+                  2047,
+                  902
+                ],
+                "camera": [
+                  32440,
+                  14254
+                ],
+                "candidateId": null,
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:31.500Z",
+                "frameSerial": 46,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 46,
+                "anyBridgeTilesInVisibleWindow": 46,
+                "pngSha256": "556d178fdd4a3cd8"
+              },
+              {
+                "kind": "PER_ID_DECK",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_1_deck.png",
+                "playerTile": [
+                  2045,
+                  906
+                ],
+                "camera": [
+                  32408,
+                  14318
+                ],
+                "candidateId": "br_1",
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:31.616Z",
+                "frameSerial": 47,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 46,
+                "anyBridgeTilesInVisibleWindow": 46,
+                "pngSha256": "f90cf2f36d6a0db6"
+              },
+              {
+                "kind": "PER_ID_BANK_B",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_1_bankB.png",
+                "playerTile": [
+                  2042,
+                  910
+                ],
+                "camera": [
+                  32360,
+                  14382
+                ],
+                "candidateId": null,
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:31.732Z",
+                "frameSerial": 48,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 46,
+                "anyBridgeTilesInVisibleWindow": 46,
+                "pngSha256": "5651ff7800ae4f44"
+              }
+            ]
+          },
+          {
+            "id": "br_2",
+            "resolved": true,
+            "shots": [
+              {
+                "kind": "PER_ID_BANK_A",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_2_bankA.png",
+                "playerTile": [
+                  2579,
+                  1049
+                ],
+                "camera": [
+                  40952,
+                  16606
+                ],
+                "candidateId": null,
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:32.130Z",
+                "frameSerial": 49,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 69,
+                "anyBridgeTilesInVisibleWindow": 69,
+                "pngSha256": "bc32db1a9a80c1f8"
+              },
+              {
+                "kind": "PER_ID_DECK",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_2_deck.png",
+                "playerTile": [
+                  2579,
+                  1042
+                ],
+                "camera": [
+                  40952,
+                  16494
+                ],
+                "candidateId": "br_2",
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:32.249Z",
+                "frameSerial": 50,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 77,
+                "anyBridgeTilesInVisibleWindow": 77,
+                "pngSha256": "e25100ff7066cf61"
+              },
+              {
+                "kind": "PER_ID_BANK_B",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_2_bankB.png",
+                "playerTile": [
+                  2579,
+                  1034
+                ],
+                "camera": [
+                  40952,
+                  16366
+                ],
+                "candidateId": null,
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:32.445Z",
+                "frameSerial": 51,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 56,
+                "anyBridgeTilesInVisibleWindow": 56,
+                "pngSha256": "dd3ac7eb44ca92ec"
+              }
+            ]
+          },
+          {
+            "id": "br_3",
+            "resolved": true,
+            "shots": [
+              {
+                "kind": "PER_ID_BANK_A",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_3_bankA.png",
+                "playerTile": [
+                  1702,
+                  1156
+                ],
+                "camera": [
+                  26920,
+                  18318
+                ],
+                "candidateId": null,
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:32.696Z",
+                "frameSerial": 52,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 83,
+                "anyBridgeTilesInVisibleWindow": 83,
+                "pngSha256": "c5aa7b7041a3e29d"
+              },
+              {
+                "kind": "PER_ID_DECK",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_3_deck.png",
+                "playerTile": [
+                  1709,
+                  1153
+                ],
+                "camera": [
+                  27032,
+                  18270
+                ],
+                "candidateId": "br_3",
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:32.831Z",
+                "frameSerial": 53,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 83,
+                "anyBridgeTilesInVisibleWindow": 83,
+                "pngSha256": "647d4c638f637a00"
+              },
+              {
+                "kind": "PER_ID_BANK_B",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_3_bankB.png",
+                "playerTile": [
+                  1715,
+                  1149
+                ],
+                "camera": [
+                  27128,
+                  18206
+                ],
+                "candidateId": null,
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:32.949Z",
+                "frameSerial": 54,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 83,
+                "anyBridgeTilesInVisibleWindow": 83,
+                "pngSha256": "bf1c662174fbfcfd"
+              }
+            ]
+          },
+          {
+            "id": "br_4",
+            "resolved": true,
+            "shots": [
+              {
+                "kind": "PER_ID_BANK_A",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_4_bankA.png",
+                "playerTile": [
+                  1461,
+                  1295
+                ],
+                "camera": [
+                  23064,
+                  20542
+                ],
+                "candidateId": null,
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:33.203Z",
+                "frameSerial": 55,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 46,
+                "anyBridgeTilesInVisibleWindow": 46,
+                "pngSha256": "d27543ac5a743252"
+              },
+              {
+                "kind": "PER_ID_DECK",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_4_deck.png",
+                "playerTile": [
+                  1463,
+                  1299
+                ],
+                "camera": [
+                  23096,
+                  20606
+                ],
+                "candidateId": "br_4",
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:33.314Z",
+                "frameSerial": 56,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 46,
+                "anyBridgeTilesInVisibleWindow": 46,
+                "pngSha256": "54f2e1b30ade3744"
+              },
+              {
+                "kind": "PER_ID_BANK_B",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_4_bankB.png",
+                "playerTile": [
+                  1465,
+                  1303
+                ],
+                "camera": [
+                  23128,
+                  20670
+                ],
+                "candidateId": null,
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:33.500Z",
+                "frameSerial": 57,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 46,
+                "anyBridgeTilesInVisibleWindow": 46,
+                "pngSha256": "3b03b932a6887090"
+              }
+            ]
+          },
+          {
+            "id": "br_5",
+            "resolved": true,
+            "shots": [
+              {
+                "kind": "PER_ID_BANK_A",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_5_bankA.png",
+                "playerTile": [
+                  1930,
+                  1636
+                ],
+                "camera": [
+                  30568,
+                  25998
+                ],
+                "candidateId": null,
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:33.744Z",
+                "frameSerial": 58,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 84,
+                "anyBridgeTilesInVisibleWindow": 84,
+                "pngSha256": "32f4442a5e904ca7"
+              },
+              {
+                "kind": "PER_ID_DECK",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_5_deck.png",
+                "playerTile": [
+                  1936,
+                  1632
+                ],
+                "camera": [
+                  30664,
+                  25934
+                ],
+                "candidateId": "br_5",
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:33.904Z",
+                "frameSerial": 59,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 84,
+                "anyBridgeTilesInVisibleWindow": 84,
+                "pngSha256": "ca38e3f69c36c235"
+              },
+              {
+                "kind": "PER_ID_BANK_B",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_5_bankB.png",
+                "playerTile": [
+                  1942,
+                  1627
+                ],
+                "camera": [
+                  30760,
+                  25854
+                ],
+                "candidateId": null,
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:34.130Z",
+                "frameSerial": 60,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 83,
+                "anyBridgeTilesInVisibleWindow": 83,
+                "pngSha256": "65c3ac6143a81ad9"
+              }
+            ]
+          },
+          {
+            "id": "br_6",
+            "resolved": true,
+            "shots": [
+              {
+                "kind": "PER_ID_BANK_A",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_6_bankA.png",
+                "playerTile": [
+                  2017,
+                  1464
+                ],
+                "camera": [
+                  31960,
+                  23246
+                ],
+                "candidateId": null,
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:34.515Z",
+                "frameSerial": 61,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 49,
+                "anyBridgeTilesInVisibleWindow": 49,
+                "pngSha256": "7c71a5fee70888fa"
+              },
+              {
+                "kind": "PER_ID_DECK",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_6_deck.png",
+                "playerTile": [
+                  2013,
+                  1463
+                ],
+                "camera": [
+                  31896,
+                  23230
+                ],
+                "candidateId": "br_6",
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:34.632Z",
+                "frameSerial": 62,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 49,
+                "anyBridgeTilesInVisibleWindow": 49,
+                "pngSha256": "f9b0d0a49428b5e6"
+              },
+              {
+                "kind": "PER_ID_BANK_B",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_6_bankB.png",
+                "playerTile": [
+                  2008,
+                  1461
+                ],
+                "camera": [
+                  31816,
+                  23198
+                ],
+                "candidateId": null,
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:34.750Z",
+                "frameSerial": 63,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 49,
+                "anyBridgeTilesInVisibleWindow": 49,
+                "pngSha256": "4307e30d2e1a6a17"
+              }
+            ]
+          },
+          {
+            "id": "br_7",
+            "resolved": true,
+            "shots": [
+              {
+                "kind": "PER_ID_BANK_A",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_7_bankA.png",
+                "playerTile": [
+                  3229,
+                  686
+                ],
+                "camera": [
+                  51352,
+                  10798
+                ],
+                "candidateId": null,
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:34.979Z",
+                "frameSerial": 64,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 28,
+                "anyBridgeTilesInVisibleWindow": 28,
+                "pngSha256": "97e68afc5b2af638"
+              },
+              {
+                "kind": "PER_ID_DECK",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_7_deck.png",
+                "playerTile": [
+                  3231,
+                  687
+                ],
+                "camera": [
+                  51384,
+                  10814
+                ],
+                "candidateId": "br_7",
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:35.067Z",
+                "frameSerial": 65,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 28,
+                "anyBridgeTilesInVisibleWindow": 28,
+                "pngSha256": "9b10946cdff2fbd1"
+              },
+              {
+                "kind": "PER_ID_BANK_B",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_7_bankB.png",
+                "playerTile": [
+                  3234,
+                  689
+                ],
+                "camera": [
+                  51432,
+                  10846
+                ],
+                "candidateId": null,
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:35.134Z",
+                "frameSerial": 66,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 28,
+                "anyBridgeTilesInVisibleWindow": 28,
+                "pngSha256": "b7bf89acb8b353b0"
+              }
+            ]
+          },
+          {
+            "id": "br_8",
+            "resolved": true,
+            "shots": [
+              {
+                "kind": "PER_ID_BANK_A",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_8_bankA.png",
+                "playerTile": [
+                  2302,
+                  919
+                ],
+                "camera": [
+                  36520,
+                  14526
+                ],
+                "candidateId": null,
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:35.533Z",
+                "frameSerial": 67,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 75,
+                "anyBridgeTilesInVisibleWindow": 75,
+                "pngSha256": "2eac38ec31879208"
+              },
+              {
+                "kind": "PER_ID_DECK",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_8_deck.png",
+                "playerTile": [
+                  2306,
+                  914
+                ],
+                "camera": [
+                  36584,
+                  14446
+                ],
+                "candidateId": "br_8",
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:35.650Z",
+                "frameSerial": 68,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 75,
+                "anyBridgeTilesInVisibleWindow": 75,
+                "pngSha256": "7906bb028056ee08"
+              },
+              {
+                "kind": "PER_ID_BANK_B",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_8_bankB.png",
+                "playerTile": [
+                  2309,
+                  908
+                ],
+                "camera": [
+                  36632,
+                  14350
+                ],
+                "candidateId": null,
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:35.768Z",
+                "frameSerial": 69,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 70,
+                "anyBridgeTilesInVisibleWindow": 70,
+                "pngSha256": "bd3a5b1f781198ea"
+              }
+            ]
+          },
+          {
+            "id": "br_9",
+            "resolved": false,
+            "shots": [
+              {
+                "kind": "PER_ID_SITE",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_9_site.png",
+                "playerTile": [
+                  1555,
+                  913
+                ],
+                "camera": [
+                  24568,
+                  14430
+                ],
+                "candidateId": null,
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:36.066Z",
+                "frameSerial": 70,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 0,
+                "anyBridgeTilesInVisibleWindow": 0,
+                "pngSha256": "0f953c0c121ec803"
+              }
+            ]
+          },
+          {
+            "id": "br_a",
+            "resolved": true,
+            "shots": [
+              {
+                "kind": "PER_ID_BANK_A",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_a_bankA.png",
+                "playerTile": [
+                  1764,
+                  1290
+                ],
+                "camera": [
+                  27912,
+                  20462
+                ],
+                "candidateId": null,
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:36.408Z",
+                "frameSerial": 71,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 55,
+                "anyBridgeTilesInVisibleWindow": 55,
+                "pngSha256": "4f4fc4ce14a3e78b"
+              },
+              {
+                "kind": "PER_ID_DECK",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_a_deck.png",
+                "playerTile": [
+                  1766,
+                  1295
+                ],
+                "camera": [
+                  27944,
+                  20542
+                ],
+                "candidateId": "br_a",
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:36.566Z",
+                "frameSerial": 72,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 55,
+                "anyBridgeTilesInVisibleWindow": 55,
+                "pngSha256": "ae2ccf1884bc4d0d"
+              },
+              {
+                "kind": "PER_ID_BANK_B",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_a_bankB.png",
+                "playerTile": [
+                  1768,
+                  1300
+                ],
+                "camera": [
+                  27976,
+                  20622
+                ],
+                "candidateId": null,
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:36.682Z",
+                "frameSerial": 73,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 55,
+                "anyBridgeTilesInVisibleWindow": 55,
+                "pngSha256": "a66967553bcefe0d"
+              }
+            ]
+          },
+          {
+            "id": "br_b",
+            "resolved": false,
+            "shots": [
+              {
+                "kind": "PER_ID_SITE",
+                "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_b_site.png",
+                "playerTile": [
+                  2052,
+                  1859
+                ],
+                "camera": [
+                  32520,
+                  29566
+                ],
+                "candidateId": null,
+                "mode": "PRODUCTION_NO_PERMISSION",
+                "capturedAt": "2026-11-05T15:41:36.934Z",
+                "frameSerial": 74,
+                "freshFrame": true,
+                "bridgeTilesInVisibleWindow": 0,
+                "anyBridgeTilesInVisibleWindow": 0,
+                "pngSha256": "848f7a202b413b47"
+              }
+            ]
+          }
+        ]
+      }
     }
   ],
   "summary": {
-    "checks": 28,
-    "passes": 28,
+    "checks": 31,
+    "passes": 31,
     "fails": 0,
     "failedIds": [],
     "browserErrors": [],
-    "shots": 52
+    "shots": 84
   },
   "acceptance": {
     "PAPER": "MEASURED",

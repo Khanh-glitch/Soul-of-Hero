@@ -613,7 +613,7 @@
       "MGP-D10": "305 binary candidate cells -> thin broken downhill face band 2..4/16 tiles; 0 production walls"
     },
     "roadWaterCrossings": "31 reclassified: 8 FERRY_NAVIGATION_REFERENCE / 9 AUTHORED_BRIDGE / 8 UNBRIDGED_LAND_ROAD_CROSSING / 6 AMBIGUOUS_OWNER_REVIEW",
-    "runtime": "17 real-key runs, 52 native 640x360 shots, 28/28 checks, 125/125 static tests, 0 browser errors, 0 permission leaks over 10086 tiles",
+    "runtime": "17 real-key runs, 84 native 640x360 shots, 31/31 checks, 156/156 static tests, 0 browser errors, 0 permission leaks over 10086 tiles; 02A corrected per-ID capture provenance + negative authenticity gate",
     "defaultCandidateMode": "PRODUCTION_NO_PERMISSION",
     "qaCandidateMode": "QA_CANDIDATE_CROSSING (geometry measurement ONLY)",
     "acceptance": "PAPER=MEASURED / RUNTIME=ISOLATED_VIEWER_PHYSICAL_VERIFIED_QA_ONLY / VISUAL=NOT_REQUESTED_AND_NOT_GRANTED / GAMEPLAY=NOT_REQUESTED_AND_NOT_GRANTED",
@@ -627,6 +627,15 @@
       "NO new atlas/art",
       "NO full-world visual acceptance",
       "NO full Gameplay integration"
-    ]
+    ],
+    "amendment02a": {
+      "file": "creator-u05/docs/MAPGEO02_GAMEPLAY_HANDOFF.md#10-amendment-a--map-geo-rejoin-02a-evidence-integrity-corrective",
+      "evidence": [
+        "creator-u05/evidence/mapgeo02-shot-provenance.json",
+        "creator-u05/evidence/mapgeo02a-refs.json",
+        "creator-u05/evidence/mapgeo02a-visual-inspection.json"
+      ],
+      "note": "Corrected QA script, replacement per-ID screenshots, negative gate; NO VISUAL_ACCEPTED."
+    }
   }
 }

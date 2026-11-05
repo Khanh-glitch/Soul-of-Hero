@@ -59,8 +59,30 @@
     "newAtlasOrArt": false
   },
   "noClaims": [
-    "NO VEYRA_PLAYABLE", "NO VISUAL_ACCEPTED", "NO MERGE_READY", "NO production merge",
-    "NO PR44 edit/merge", "NO GOLD amendment", "NO new atlas/art/world",
-    "NO full-world visual acceptance", "NO full Gameplay integration"
-  ]
+    "NO VEYRA_PLAYABLE",
+    "NO VISUAL_ACCEPTED",
+    "NO MERGE_READY",
+    "NO production merge",
+    "NO PR44 edit/merge",
+    "NO GOLD amendment",
+    "NO new atlas/art/world",
+    "NO full-world visual acceptance",
+    "NO full Gameplay integration"
+  ],
+  "amendment02a": {
+    "task": "SOH — MAP-GEO-REJOIN-02A / Evidence Integrity Corrective & Final Map Intake",
+    "note": "This file records the MAP-GEO-02 delivery at commit d360e2a…; 02A is a corrective on top of it.",
+    "pinnedMapHeadAt02aStart": "accca454e7b8c651c7403a95e9efcb8999b550a2",
+    "gameplayObservedHead": "897e28f2827119542bcf4217c27cf421f9cf4011",
+    "gameplayLiveAt02aFinish": "SEE creator-u05/evidence/mapgeo02a-refs.json :: live.pr44Head (final gate run); PR44 advanced repeatedly during 02A",
+    "runtimeChecks": "31/31 PASS",
+    "staticTests": "156/156 PASS",
+    "nativeShots": 84,
+    "uniqueShotContents": 79,
+    "reusedFrameDefectGroups": 0,
+    "negativeGateCases": "5/5 rejected; control accepted; 40/40 real captures accepted",
+    "handoffAmendment": "creator-u05/docs/MAPGEO02_GAMEPLAY_HANDOFF.md §10",
+    "visualAccepted": false,
+    "driftNote": "Observed 897e28f2… was live refs/pull/44/head at task start; PR44 then moved twice more. Exact chain and diffstats are in mapgeo02a-refs.json :: drift.chain. PR44 OPEN, NOT edited/merged/closed."
+  }
 }

@@ -2,7 +2,7 @@
   "schema": "soh.mapgeo02.gameplay-handoff.v1",
   "task": "SOH — MAP-GEO-REJOIN-02",
   "status": "MAP_PHYSICAL_GEOMETRY_CORRECTED__GAMEPLAY_WORLDTRAVERSAL_INTAKE_PENDING",
-  "generatedAt": "2026-11-05T14:20:24.992Z",
+  "generatedAt": "2026-11-05T15:43:47.897Z",
   "exactRefs": {
     "mapBranch": "arena/2e3cfbd2-soul-of-hero",
     "mapPinnedAndLive": "3e02fde05a24f6d645ea00ed5ab78900655e1272",
@@ -1433,12 +1433,12 @@
   },
   "runtime": {
     "executableSha256": "41b2203bbbab47c0f4f215461e9e7571c2d1a46b0d982a7a2fbf177bbcac2339",
-    "checks": 28,
-    "passes": 28,
+    "checks": 31,
+    "passes": 31,
     "fails": 0,
     "browserErrors": 0,
     "runs": 17,
-    "nativeShots": 52,
+    "nativeShots": 84,
     "matchingCoordinateRuns": [
       {
         "id": "match_T1_spawn_to_route",
@@ -1638,7 +1638,7 @@
     }
   ],
   "worldTraversalIntake": [
-    "Pin the exact Gameplay SHA (pinned observed 6e7d116b… OR live PR44 c2418b54… — drift reported) before consuming this packet.",
+    "Pin the exact Gameplay SHA before consuming this packet: task pin 6e7d116b…, MAP-GEO-02 delivery live c2418b54…, 02A observed 897e28f2…, 02A live e79d9e7e… (drift chain in §10).",
     "Decide bearing/load class for each of the 10 resolved deck candidates from GOLD load + crossingCandidate code 1/2; do not infer cart clearance from foot/cart labels.",
     "Define walk/cart collision on deck tiles, seam tiles and both approaches; production default here is PRODUCTION_NO_PERMISSION (deck still blocked).",
     "Approve or reject the QA_CANDIDATE_CROSSING mode separately; it is geometry measurement ONLY and never a production permission.",
@@ -1649,6 +1649,599 @@
     "Keep activeCollisionPermission=false until WorldTraversal explicitly approves a cell; WMP-03 invariant forbids non-zero values.",
     "Preserve all 81 canonical POI/source IDs, the Creator-approved Beacon road (verified byte-identical tile codes), and the three protected standalone baselines."
   ],
+  "amendment02a": {
+    "task": "SOH — MAP-GEO-REJOIN-02A / Evidence Integrity Corrective & Final Map Intake",
+    "defect": {
+      "id": "MAPGEO02A-EVIDENCE-01",
+      "observed": "qa-mapgeo02-traversal.mjs executed ALL BRIDGE_RUNS then captured every _at_bridge image afterward; 8 differently-named files contained the identical final canvas frame.",
+      "githubBlobVerificationAtPinnedHead": {
+        "pngFiles": 52,
+        "uniqueContents": 34,
+        "largestIdenticalGroup": 10
+      },
+      "fixedBy": "fresh-render atomic capture; each bridge fixture captures its own evidence before the next fixture; 12 self-contained per-ID fixtures; negative authenticity gate"
+    },
+    "correctedQaScript": "creator-u05/tests/qa-mapgeo02-traversal.mjs",
+    "perBridgeAuthenticity": [
+      {
+        "id": "br_0",
+        "resolved": true,
+        "shots": [
+          "bridge_br_0_bankA",
+          "bridge_br_0_deck",
+          "bridge_br_0_bankB"
+        ],
+        "playerTiles": [
+          [
+            1992,
+            1507
+          ],
+          [
+            1990,
+            1502
+          ],
+          [
+            1987,
+            1498
+          ]
+        ],
+        "candidateIds": [
+          null,
+          "br_0",
+          null
+        ],
+        "freshFrames": [
+          true,
+          true,
+          true
+        ],
+        "frameSerials": [
+          43,
+          44,
+          45
+        ]
+      },
+      {
+        "id": "br_1",
+        "resolved": true,
+        "shots": [
+          "bridge_br_1_bankA",
+          "bridge_br_1_deck",
+          "bridge_br_1_bankB"
+        ],
+        "playerTiles": [
+          [
+            2047,
+            902
+          ],
+          [
+            2045,
+            906
+          ],
+          [
+            2042,
+            910
+          ]
+        ],
+        "candidateIds": [
+          null,
+          "br_1",
+          null
+        ],
+        "freshFrames": [
+          true,
+          true,
+          true
+        ],
+        "frameSerials": [
+          46,
+          47,
+          48
+        ]
+      },
+      {
+        "id": "br_2",
+        "resolved": true,
+        "shots": [
+          "bridge_br_2_bankA",
+          "bridge_br_2_deck",
+          "bridge_br_2_bankB"
+        ],
+        "playerTiles": [
+          [
+            2579,
+            1049
+          ],
+          [
+            2579,
+            1042
+          ],
+          [
+            2579,
+            1034
+          ]
+        ],
+        "candidateIds": [
+          null,
+          "br_2",
+          null
+        ],
+        "freshFrames": [
+          true,
+          true,
+          true
+        ],
+        "frameSerials": [
+          49,
+          50,
+          51
+        ]
+      },
+      {
+        "id": "br_3",
+        "resolved": true,
+        "shots": [
+          "bridge_br_3_bankA",
+          "bridge_br_3_deck",
+          "bridge_br_3_bankB"
+        ],
+        "playerTiles": [
+          [
+            1702,
+            1156
+          ],
+          [
+            1709,
+            1153
+          ],
+          [
+            1715,
+            1149
+          ]
+        ],
+        "candidateIds": [
+          null,
+          "br_3",
+          null
+        ],
+        "freshFrames": [
+          true,
+          true,
+          true
+        ],
+        "frameSerials": [
+          52,
+          53,
+          54
+        ]
+      },
+      {
+        "id": "br_4",
+        "resolved": true,
+        "shots": [
+          "bridge_br_4_bankA",
+          "bridge_br_4_deck",
+          "bridge_br_4_bankB"
+        ],
+        "playerTiles": [
+          [
+            1461,
+            1295
+          ],
+          [
+            1463,
+            1299
+          ],
+          [
+            1465,
+            1303
+          ]
+        ],
+        "candidateIds": [
+          null,
+          "br_4",
+          null
+        ],
+        "freshFrames": [
+          true,
+          true,
+          true
+        ],
+        "frameSerials": [
+          55,
+          56,
+          57
+        ]
+      },
+      {
+        "id": "br_5",
+        "resolved": true,
+        "shots": [
+          "bridge_br_5_bankA",
+          "bridge_br_5_deck",
+          "bridge_br_5_bankB"
+        ],
+        "playerTiles": [
+          [
+            1930,
+            1636
+          ],
+          [
+            1936,
+            1632
+          ],
+          [
+            1942,
+            1627
+          ]
+        ],
+        "candidateIds": [
+          null,
+          "br_5",
+          null
+        ],
+        "freshFrames": [
+          true,
+          true,
+          true
+        ],
+        "frameSerials": [
+          58,
+          59,
+          60
+        ]
+      },
+      {
+        "id": "br_6",
+        "resolved": true,
+        "shots": [
+          "bridge_br_6_bankA",
+          "bridge_br_6_deck",
+          "bridge_br_6_bankB"
+        ],
+        "playerTiles": [
+          [
+            2017,
+            1464
+          ],
+          [
+            2013,
+            1463
+          ],
+          [
+            2008,
+            1461
+          ]
+        ],
+        "candidateIds": [
+          null,
+          "br_6",
+          null
+        ],
+        "freshFrames": [
+          true,
+          true,
+          true
+        ],
+        "frameSerials": [
+          61,
+          62,
+          63
+        ]
+      },
+      {
+        "id": "br_7",
+        "resolved": true,
+        "shots": [
+          "bridge_br_7_bankA",
+          "bridge_br_7_deck",
+          "bridge_br_7_bankB"
+        ],
+        "playerTiles": [
+          [
+            3229,
+            686
+          ],
+          [
+            3231,
+            687
+          ],
+          [
+            3234,
+            689
+          ]
+        ],
+        "candidateIds": [
+          null,
+          "br_7",
+          null
+        ],
+        "freshFrames": [
+          true,
+          true,
+          true
+        ],
+        "frameSerials": [
+          64,
+          65,
+          66
+        ]
+      },
+      {
+        "id": "br_8",
+        "resolved": true,
+        "shots": [
+          "bridge_br_8_bankA",
+          "bridge_br_8_deck",
+          "bridge_br_8_bankB"
+        ],
+        "playerTiles": [
+          [
+            2302,
+            919
+          ],
+          [
+            2306,
+            914
+          ],
+          [
+            2309,
+            908
+          ]
+        ],
+        "candidateIds": [
+          null,
+          "br_8",
+          null
+        ],
+        "freshFrames": [
+          true,
+          true,
+          true
+        ],
+        "frameSerials": [
+          67,
+          68,
+          69
+        ]
+      },
+      {
+        "id": "br_9",
+        "resolved": false,
+        "shots": [
+          "bridge_br_9_site"
+        ],
+        "playerTiles": [
+          [
+            1555,
+            913
+          ]
+        ],
+        "candidateIds": [
+          null
+        ],
+        "freshFrames": [
+          true
+        ],
+        "frameSerials": [
+          70
+        ]
+      },
+      {
+        "id": "br_a",
+        "resolved": true,
+        "shots": [
+          "bridge_br_a_bankA",
+          "bridge_br_a_deck",
+          "bridge_br_a_bankB"
+        ],
+        "playerTiles": [
+          [
+            1764,
+            1290
+          ],
+          [
+            1766,
+            1295
+          ],
+          [
+            1768,
+            1300
+          ]
+        ],
+        "candidateIds": [
+          null,
+          "br_a",
+          null
+        ],
+        "freshFrames": [
+          true,
+          true,
+          true
+        ],
+        "frameSerials": [
+          71,
+          72,
+          73
+        ]
+      },
+      {
+        "id": "br_b",
+        "resolved": false,
+        "shots": [
+          "bridge_br_b_site"
+        ],
+        "playerTiles": [
+          [
+            2052,
+            1859
+          ]
+        ],
+        "candidateIds": [
+          null
+        ],
+        "freshFrames": [
+          true
+        ],
+        "frameSerials": [
+          74
+        ]
+      }
+    ],
+    "negativeGate": {
+      "cases": 5,
+      "allRejected": true,
+      "controlAccepted": true,
+      "realCapturesAccepted": true
+    },
+    "shotIntegrity": {
+      "files": 84,
+      "uniqueContents": 79,
+      "duplicateGroups": 5,
+      "duplicateGroupsDetail": [
+        {
+          "sha256": "235662d5ac267978",
+          "files": [
+            "B_br1_T3_production_after.png",
+            "match_T3_bridge_approach_crossing_after.png"
+          ],
+          "requestedIds": [
+            "br_1"
+          ],
+          "frameSerials": [
+            21,
+            8
+          ],
+          "classification": "LEGITIMATE_IDENTICAL_STATE_CAPTURE",
+          "atBridgeFilesInGroup": 0,
+          "note": "Duplicate pixels at DIFFERENT frame identities are legitimate (identical terrain/state); only a reused frame identity is a defect."
+        },
+        {
+          "sha256": "e25100ff7066cf61",
+          "files": [
+            "B_br2_production_at_bridge.png",
+            "bridge_br_2_deck.png"
+          ],
+          "requestedIds": [
+            "br_2"
+          ],
+          "frameSerials": [
+            25,
+            50
+          ],
+          "classification": "LEGITIMATE_IDENTICAL_STATE_CAPTURE",
+          "atBridgeFilesInGroup": 1,
+          "note": "Duplicate pixels at DIFFERENT frame identities are legitimate (identical terrain/state); only a reused frame identity is a defect."
+        },
+        {
+          "sha256": "848f7a202b413b47",
+          "files": [
+            "B_brb_unresolved_after.png",
+            "bridge_br_b_site.png"
+          ],
+          "requestedIds": [
+            "br_b"
+          ],
+          "frameSerials": [
+            42,
+            74
+          ],
+          "classification": "LEGITIMATE_IDENTICAL_STATE_CAPTURE",
+          "atBridgeFilesInGroup": 0,
+          "note": "Duplicate pixels at DIFFERENT frame identities are legitimate (identical terrain/state); only a reused frame identity is a defect."
+        },
+        {
+          "sha256": "a72d2d79dded8113",
+          "files": [
+            "B_brb_unresolved_at_bridge.png",
+            "B_brb_unresolved_before.png"
+          ],
+          "requestedIds": [
+            "br_b"
+          ],
+          "frameSerials": [
+            40,
+            41
+          ],
+          "classification": "LEGITIMATE_IDENTICAL_STATE_CAPTURE",
+          "atBridgeFilesInGroup": 1,
+          "note": "Duplicate pixels at DIFFERENT frame identities are legitimate (identical terrain/state); only a reused frame identity is a defect."
+        },
+        {
+          "sha256": "066163ec6619a2f1",
+          "files": [
+            "br1_centre_production.png",
+            "br1_centre_qa.png"
+          ],
+          "requestedIds": [],
+          "frameSerials": [
+            82,
+            83
+          ],
+          "classification": "LEGITIMATE_IDENTICAL_STATE_CAPTURE",
+          "atBridgeFilesInGroup": 0,
+          "note": "Duplicate pixels at DIFFERENT frame identities are legitimate (identical terrain/state); only a reused frame identity is a defect."
+        }
+      ],
+      "defectGroups": 0,
+      "atBridgeShots": 8,
+      "atBridgeUniqueContents": 8,
+      "oldDefectSignature": "8 `_at_bridge` files shared one final-canvas frame (10-image identical group)",
+      "oldDefectSignatureGone": true,
+      "rule": "Duplicates are classified by provenance, NOT auto-failed; legitimate identical-state and identical-render-at-distinct-fixtures groups are recorded explicitly."
+    },
+    "gates": {
+      "runtimeChecks": "31/31",
+      "staticTests": "156/156",
+      "mapgeo01Tests": "130/130",
+      "tscNoEmit": "clean",
+      "browserErrors": 0,
+      "nativeShots": 84,
+      "realKeyRuns": 17
+    },
+    "visualInspection": {
+      "file": "creator-u05/evidence/mapgeo02a-visual-inspection.json",
+      "deckSilhouettes": "Bounded and water-only for all 10 resolved candidates; straight-axis decks (br_2) read cleanly; angled decks (br_5, br_a) have stepped tile-grid edges with no rail/abutment treatment -> targeted art rework, not a geometry defect.",
+      "seams": "Both measured bank approaches are visually and tile-code connected for the inspected bridges; angled seams are geometrically closed but visually crude -> targeted art rework.",
+      "cliffFaces": "Thin jagged band confirmed, no filled slab and no permanent wall; naturalness needs targeted art rework. The dedicated measured-face shot is good evidence; the cliff real-key run frames do NOT show the face clearly -> evidence gap.",
+      "newlyConfirmedPhysicalDefects": [],
+      "targetedReworkNotGranted": [
+        "Angled deck edge/rail/abutment art treatment",
+        "br_7 shallow-water visual legibility (inherited original painter behaviour)",
+        "Cliff face surface naturalness",
+        "Add a fresh-frame QA-mode cliff capture at the measured face tile"
+      ],
+      "visualAccepted": false
+    },
+    "exactRefs": {
+      "mapPinned02a": "accca454e7b8c651c7403a95e9efcb8999b550a2",
+      "mapAt02Delivery": "3e02fde05a24f6d645ea00ed5ab78900655e1272",
+      "main": "5214788933b1a827f3a177d11ff486433dfe5e8a",
+      "gameplayTaskPin": "6e7d116b4400ea3c24373fe884b7fad258f4f7bc",
+      "gameplayAt02Delivery": "c2418b5405ff3325e0ac4806a5309785e816b093",
+      "gameplayObserved02a": "897e28f2827119542bcf4217c27cf421f9cf4011",
+      "gameplayLiveAt02aFinish": "e79d9e7edc46693729b8c4732162dfbf7c9158d9",
+      "pr44State": "OPEN",
+      "driftChain": [
+        "6e7d116b4400ea3c24373fe884b7fad258f4f7bc",
+        "c2418b5405ff3325e0ac4806a5309785e816b093",
+        "897e28f2827119542bcf4217c27cf421f9cf4011",
+        "e79d9e7edc46693729b8c4732162dfbf7c9158d9"
+      ],
+      "painterPaletteUnchanged": true,
+      "qaExecutableRebuilt": false
+    },
+    "readiness": "READY_AS_MEASURED_QA_EVIDENCE_FOR_WORLDTRAVERSAL_INTAKE__NOT_READY_AS_PRODUCTION_TRAVERSAL_PERMISSION__NOT_VISUALLY_ACCEPTED",
+    "retained": [
+      "10 candidate bridges",
+      "2 unresolved bridges (br_9, br_b)",
+      "31-road classification",
+      "596 deck tiles",
+      "305 cliff candidate cells",
+      "0 activeCollisionPermission",
+      "three protected standalone baselines"
+    ]
+  },
   "acceptance": {
     "PAPER": "MEASURED",
     "RUNTIME": "ISOLATED_VIEWER_PHYSICAL_VERIFIED_QA_ONLY",
@@ -1683,11 +2276,23 @@
     },
     {
       "path": "creator-u05/evidence/mapgeo02-bridge-geometry.json",
-      "sha256": "9dddd0cc865135bed41e221c8a028fe64ab423f230725c24b340bdc5994f4ce3"
+      "sha256": "9336c83df164f958c5133d80f2cf997320ab6910be783fde20fc0c97b76b2448"
     },
     {
       "path": "creator-u05/evidence/mapgeo02-traversal.json",
-      "sha256": "005324da8f34839f922858467cd0c7de303bdcf1a2702d740c2f8a653c2075a3"
+      "sha256": "34051dacbf4db897b6cad5b2fe94fef0eb19875e1901ed99c4d86750ba9eb5ec"
+    },
+    {
+      "path": "creator-u05/evidence/mapgeo02-shot-provenance.json",
+      "sha256": "275ab2b24265b6d47665aa05271277ac3302ed266a74cef130b7b73136b81263"
+    },
+    {
+      "path": "creator-u05/evidence/mapgeo02a-refs.json",
+      "sha256": "971a436d3a877f10c198bedb431647a7168d264255f1d3feae16d898c55c7a5f"
+    },
+    {
+      "path": "creator-u05/evidence/mapgeo02a-visual-inspection.json",
+      "sha256": "3fb4460546c19191aafb6511c7f74e24b2074e0e653a2822a53def984f7d6068"
     },
     {
       "path": "creator-u05/evidence/mapgeo02-road-water-classification.json",

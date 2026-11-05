@@ -1,7 +1,16 @@
 /**
- * SOH — MAP-GEO-REJOIN-02 — REAL RUNTIME / REAL-KEY PHYSICAL VERIFICATION.
+ * SOH — MAP-GEO-REJOIN-02 / 02A — REAL RUNTIME / REAL-KEY PHYSICAL VERIFICATION.
+ *
+ * 02A EVIDENCE INTEGRITY CORRECTIVE: the previous version captured all
+ * `_at_bridge` images AFTER all BRIDGE_RUNS, so 8 differently-named files were
+ * the identical stale final canvas frame (52 PNGs -> 34 unique contents). This
+ * version forces fresh render frames, reads canvas + state atomically, captures
+ * each bridge's evidence inside its OWN fixture, adds 12 self-contained per-ID
+ * fixtures (deck + both banks / unresolved site), writes full capture provenance
+ * and enforces a NEGATIVE authenticity gate (E08) plus duplicate audit (E09).
  *
  * Executable: creator-u05/SoulOfHero_MapGeo02_CorrectedProjection.html
+ *   NOT rebuilt by 02A (SHA 41b2203b… unchanged).
  *   (a NEW, explicitly labelled QA verification build; the THREE protected
  *    standalone baselines are NEVER modified).
  *
@@ -54,21 +63,114 @@ await oldPage.goto('file://' + OLD_VIEWER);
 await oldPage.waitForFunction(() => window.__terrain?.ready === true, { timeout: 60000 });
 
 const st = () => page.evaluate(() => window.__terrain.state());
-async function shot(name) {
-  const d = await page.evaluate(() => {
-    const c = document.getElementById('game');
-    return { png: c.toDataURL('image/png'), w: c.width, h: c.height };
-  });
-  fs.writeFileSync(path.join(SHOTS, name + '.png'), Buffer.from(d.png.split(',')[1], 'base64'));
-  return { file: `creator-u05/evidence/mapgeo02-shots/${name}.png`, size: [d.w, d.h] };
+
+/* ── MAP-GEO-REJOIN-02A — EVIDENCE INTEGRITY CAPTURE ─────────────────────
+ * DEFECT (independently verified): the old script ran ALL BRIDGE_RUNS first and
+ * only THEN captured every `_at_bridge` image, so 8 differently-named files
+ * contained the SAME final canvas frame. 52 PNGs -> 34 unique contents, one
+ * group of 10 identical images.
+ *
+ * FIX: every capture forces >= 2 fresh application animation frames AFTER the
+ * last setup/reset, then reads the canvas AND the runtime state ATOMICALLY in
+ * the same frame callback. Each capture is logged with requested bridge id,
+ * actual player tile, camera coordinate, candidate id, selected mode and a
+ * timestamp / frame identity. No capture can be taken from a stale canvas.
+ */
+let captureSerial = 0;
+let lastSetupSimMs = 0;
+let lastPngSha = null;
+const captureLog = [];
+
+async function shot(name, meta = {}) {
+  const d = await page.evaluate(() => new Promise(resolve => {
+    // Two nested rAFs: the application's own loop() draws at least once with
+    // the CURRENT state before we read the canvas. Canvas + state are read in
+    // the SAME callback, so they can never describe different frames.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const a = window.__terrain, s = a.state();
+      const c = document.getElementById('game');
+      resolve({
+        png: c.toDataURL('image/png'), w: c.width, h: c.height,
+        wallClockMs: performance.now(),
+        state: {
+          playerTile: s.player.tile, playerPx: [s.player.px, s.player.py],
+          camera: [s.camera.x, s.camera.y], mode: s.candidateMode,
+          collision: s.collision, visibleTile: s.terrain?.tileRendered ?? null,
+          candidateId: s.candidate?.bridgeDeckId ?? null,
+          cliffFaceSide: s.candidate?.cliffFace?.side ?? null,
+          simMs: s.stats.simMs, spawnFixture: s.stats.spawnFixture,
+          movedPx: s.stats.movedPx, blockedSubsteps: s.stats.blockedSubsteps
+        }
+      });
+    }));
+  }));
+  const buf = Buffer.from(d.png.split(',')[1], 'base64');
+  const pngSha = sha(buf);
+  fs.writeFileSync(path.join(SHOTS, name + '.png'), buf);
+  const serial = ++captureSerial;
+  const rec = {
+    serial,
+    file: `creator-u05/evidence/mapgeo02-shots/${name}.png`,
+    name, size: [d.w, d.h],
+    capturedAt: new Date().toISOString(),
+    pngSha256: pngSha,
+    frameIdentity: {
+      serial, simMs: d.state.simMs,
+      wallClockMs: +d.wallClockMs.toFixed(3),
+      setupSimMs: lastSetupSimMs,
+      freshFrameAdvanced: d.state.simMs > lastSetupSimMs
+    },
+    requestedBridgeId: meta.requestedBridgeId ?? null,
+    requestedKind: meta.kind ?? 'RUN_SHOT',
+    actualPlayerTile: d.state.playerTile,
+    playerPx: d.state.playerPx,
+    cameraCoordinate: d.state.camera,
+    candidateId: d.state.candidateId,
+    cliffFaceSide: d.state.cliffFaceSide,
+    visibleTile: d.state.visibleTile,
+    selectedMode: d.state.mode,
+    collision: d.state.collision,
+    spawnFixture: d.state.spawnFixture,
+    movedPx: d.state.movedPx,
+    blockedSubsteps: d.state.blockedSubsteps,
+    reusedImmediatelyPreviousPng: lastPngSha === pngSha,
+    method: meta.method ?? 'REAL_KEY_RUN_FRAME'
+  };
+  /* For a bridge-labelled capture, prove from the SAME frame's camera that the
+     requested bridge's deck tiles really are inside the visible 40x23 window. */
+  if (meta.requestedBridgeId) {
+    const x0 = Math.floor(d.state.camera[0] / 16), y0 = Math.floor(d.state.camera[1] / 16);
+    rec.visibleWindow = await page.evaluate(({ x0, y0, id }) => {
+      const a = window.__terrain;
+      const r = { tileWindow: [x0, y0, x0 + 39, y0 + 22], tiles: 0,
+        bridgeTilesForId: 0, bridgeTilesAny: 0, roadTiles: 0, cliffTiles: 0, waterTiles: 0 };
+      for (let y = y0; y < y0 + 23; y++) for (let x = x0; x < x0 + 40; x++) {
+        const t = a.u05Tile(x, y), c = a.candidateInfo(x, y), q = a.sampleTile(x, y);
+        r.tiles++;
+        if (t === 13) { r.bridgeTilesAny++; if (c.bridgeDeckId === id) r.bridgeTilesForId++; }
+        if (t === 12) r.roadTiles++;
+        if (t === 8) r.cliffTiles++;
+        if (q?.water) r.waterTiles++;
+      }
+      return r;
+    }, { x0, y0, id: meta.requestedBridgeId });
+  }
+  lastPngSha = pngSha;
+  captureLog.push(rec);
+  return rec;
 }
-const setup = (tx, ty, mode, collision = true) => page.evaluate(({ tx, ty, mode, collision }) => {
-  const a = window.__terrain;
-  a.zoomNative(); a.setGuides(false); a.setLens(false); a.setFollow('CENTER_FOLLOW');
-  a.setSpeed(10); a.setCollision(collision); a.setCandidateMode(mode);
-  a.reset(tx, ty); a.clearInputLog();
-  return a.state();
-}, { tx, ty, mode, collision });
+
+async function setup(tx, ty, mode, collision = true) {
+  const s = await page.evaluate(({ tx, ty, mode, collision }) => {
+    const a = window.__terrain;
+    a.zoomNative(); a.setGuides(false); a.setLens(false); a.setFollow('CENTER_FOLLOW');
+    a.setSpeed(10); a.setCollision(collision); a.setCandidateMode(mode);
+    a.reset(tx, ty); a.clearInputLog();
+    return a.state();
+  }, { tx, ty, mode, collision });
+  lastSetupSimMs = s.stats.simMs;
+  return s;
+}
 const PROD = 'PRODUCTION_NO_PERMISSION', QA = 'QA_CANDIDATE_CROSSING';
 
 /* Pixel comparison with the MAP-GEO-01 shot at the SAME coordinate. */
@@ -94,7 +196,10 @@ async function pixelDiff(oldFile, newFile) {
 /* ── Real-key run ─────────────────────────────────────────────────────── */
 async function walk(id, tile, legs, mode, extra = {}) {
   const s0 = await setup(tile[0], tile[1], mode, extra.collision ?? true);
-  const before = await shot(id + '_before');
+  const before = await shot(id + '_before', {
+    requestedBridgeId: extra.requestedBridgeId ?? null, kind: 'RUN_BEFORE',
+    method: 'REAL_KEY_RUN_FRAME__BEFORE_LEGS'
+  });
   const samples = [{ leg: 'start', tile: s0.player.tile, px: Math.round(s0.player.px), py: Math.round(s0.player.py),
     visibleTile: s0.terrain?.tileRendered, candidate: { deck: s0.candidate?.bridgeDeckId ?? null, face: s0.candidate?.cliffFace?.side ?? null } }];
   for (let i = 0; i < legs.length; i++) {
@@ -109,7 +214,10 @@ async function walk(id, tile, legs, mode, extra = {}) {
       blockedSubsteps: s.stats.blockedSubsteps });
   }
   const s1 = await st();
-  const after = await shot(id + '_after');
+  const after = await shot(id + '_after', {
+    requestedBridgeId: extra.requestedBridgeId ?? null, kind: 'RUN_AFTER',
+    method: 'REAL_KEY_RUN_FRAME__AFTER_LEGS'
+  });
   const inputLog = await page.evaluate(() => window.__terrain.inputLog());
   return {
     id, mode, collision: s1.collision,
@@ -162,7 +270,8 @@ for (const [id, tile, legs] of MATCHING) {
   const oldEnd = old01.traversals.find(t => t.id === id)?.measurement?.endTile;
   if (oldEnd) {
     await setup(oldEnd[0], oldEnd[1], PROD);
-    const cs = await shot('coord_' + id);
+    const cs = await shot('coord_' + id, { kind: 'STATIC_COORDINATE_SHOT',
+      method: 'STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL' });
     const win = { x0: oldEnd[0] - 20, x1: oldEnd[0] + 19, y0: oldEnd[1] - 11, y1: oldEnd[1] + 11 };
     const codes = async pg => pg.evaluate(w => {
       const a = window.__terrain, out = [];
@@ -189,30 +298,105 @@ for (const [id, tile, legs] of MATCHING) {
   matchingRuns.push(r);
 }
 
+/* ── B. Per-bridge capture plan measured FROM THE RUNNING VIEWER ───────── */
+/* Bank tiles are derived from the authored span axis + measured bank offsets;
+ * the deck tile is an ACTUAL runtime T.BRIDGE tile carrying this bridge id. */
+const bridgePlan = await page.evaluate(() => {
+  const a = window.__terrain;
+  return a.bridgeCandidates().map(b => {
+    const [ax, ay] = b.authoredSpanAxis, au = b.atAu;
+    const bankTile = off => off === null || off === undefined ? null : a.auToTile(au[0] + ax * off, au[1] + ay * off);
+    const [cx, cy] = b.atTile, decks = [];
+    for (let y = cy - 24; y <= cy + 24; y++) for (let x = cx - 24; x <= cx + 24; x++)
+      if (a.candidateInfo(x, y).bridgeDeckId === b.id) decks.push([x, y]);
+    let sx = 0, sy = 0; for (const [x, y] of decks) { sx += x; sy += y; }
+    const approx = decks.length ? [Math.round(sx / decks.length), Math.round(sy / decks.length)] : null;
+    let deckCentre = null, best = Infinity;
+    if (approx) for (const [x, y] of decks) {
+      const d = (x - approx[0]) ** 2 + (y - approx[1]) ** 2;
+      if (d < best) { best = d; deckCentre = [x, y]; }
+    }
+    return {
+      id: b.id, status: b.status, atTile: b.atTile,
+      bankA: bankTile(b.bankA.offsetAu), bankB: bankTile(b.bankB.offsetAu),
+      deckCentre, deckTileCountRuntime: decks.length,
+      resolved: b.status.startsWith('CANDIDATE_DECK'),
+      unresolvedReasons: b.unresolvedReasons
+    };
+  });
+});
+const planById = Object.fromEntries(bridgePlan.map(p => [p.id, p]));
+
 /* ── B. Representative bridge candidates, real WASD, both modes ───────── */
 const BRIDGE_RUNS = [
-  { id: 'B_br1_T3_production', tile: [2020, 907], legs: [{ keys: ['d'], ms: 1250 }], mode: PROD,
+  { id: 'B_br1_T3_production', bridgeId: 'br_1', tile: [2020, 907], legs: [{ keys: ['d'], ms: 1250 }], mode: PROD,
     feature: 'br_1 at [2045,907]; production must NOT silently grant traversal' },
-  { id: 'B_br1_T3_qa', tile: [2020, 907], legs: [{ keys: ['d'], ms: 1250 }], mode: QA,
+  { id: 'B_br1_T3_qa', bridgeId: 'br_1', tile: [2020, 907], legs: [{ keys: ['d'], ms: 1250 }], mode: QA,
     feature: 'br_1 bounded deck; QA candidate crossing geometry only' },
-  { id: 'B_br2_production', tile: [2579, 1052], legs: [{ keys: ['w'], ms: 700 }], mode: PROD,
+  { id: 'B_br2_production', bridgeId: 'br_2', tile: [2579, 1052], legs: [{ keys: ['w'], ms: 700 }], mode: PROD,
     feature: 'br_2, authored ang≈-1.535 (almost pure north crossing)' },
-  { id: 'B_br2_qa_full_cross', tile: [2579, 1052], legs: [{ keys: ['w'], ms: 700 }], mode: QA,
+  { id: 'B_br2_qa_full_cross', bridgeId: 'br_2', tile: [2579, 1052], legs: [{ keys: ['w'], ms: 700 }], mode: QA,
     feature: 'br_2 QA candidate crossing from bank A to bank B, 0 blocked substeps expected' },
-  { id: 'B_br7_production', tile: [3227, 685], legs: [{ keys: ['d'], ms: 450 }, { keys: ['d', 's'], ms: 300 }], mode: PROD,
+  { id: 'B_br7_production', bridgeId: 'br_7', tile: [3227, 685], legs: [{ keys: ['d'], ms: 450 }, { keys: ['d', 's'], ms: 300 }], mode: PROD,
     feature: 'br_7, 2 AU water span, cart load' },
-  { id: 'B_br7_qa_full_cross', tile: [3227, 685], legs: [{ keys: ['d'], ms: 450 }, { keys: ['d', 's'], ms: 300 }], mode: QA,
+  { id: 'B_br7_qa_full_cross', bridgeId: 'br_7', tile: [3227, 685], legs: [{ keys: ['d'], ms: 450 }, { keys: ['d', 's'], ms: 300 }], mode: QA,
     feature: 'br_7 QA candidate crossing with real d / d+s held keys' },
-  { id: 'B_br6_qa_deck', tile: [2019, 1465], legs: [{ keys: ['a'], ms: 600 }], mode: QA,
+  { id: 'B_br6_qa_deck', bridgeId: 'br_6', tile: [2019, 1465], legs: [{ keys: ['a'], ms: 600 }], mode: QA,
     feature: 'br_6 foot bridge; QA reaches the measured deck (angled, partial straight-line crossing)' },
-  { id: 'B_brb_unresolved', tile: [2052, 1859], legs: [{ keys: ['d'], ms: 600 }], mode: QA,
+  { id: 'B_brb_unresolved', bridgeId: 'br_b', tile: [2052, 1859], legs: [{ keys: ['d'], ms: 600 }], mode: QA,
     feature: 'br_b UNRESOLVED (no verified second bank); NO deck art must be stamped here' }
 ];
 const bridgeRuns = [];
-for (const r of BRIDGE_RUNS) bridgeRuns.push(await walk(r.id, r.tile, r.legs, r.mode, { feature: r.feature, result: 'REAL_KEY_QA' }));
-for (const r of bridgeRuns) {
-  const x = await shot(r.id + '_at_bridge');
-  r.bridgeCentreShot = x;
+for (const r of BRIDGE_RUNS) {
+  /* 02A FIX: this fixture's `_at_bridge` image is captured HERE, inside its
+     OWN fixture, from a freshly rendered frame at THIS bridge's own centre,
+     BEFORE the next fixture is set up. Previously all 8 were captured after
+     every run and were therefore the same stale final canvas. */
+  const p = planById[r.bridgeId];
+  const centre = p.deckCentre ?? p.atTile;
+  await setup(centre[0], centre[1], r.mode);
+  const atBridge = await shot(r.id + '_at_bridge', {
+    requestedBridgeId: r.bridgeId, kind: 'FIXTURE_LOCAL_AT_BRIDGE',
+    method: 'FIXTURE_LOCAL_CENTRE_CAPTURE__VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL'
+  });
+  const run = await walk(r.id, r.tile, r.legs, r.mode,
+    { feature: r.feature, result: 'REAL_KEY_QA', requestedBridgeId: r.bridgeId });
+  run.requestedBridgeId = r.bridgeId;
+  run.bridgeCentreShot = atBridge;
+  run.bridgeCentreTile = centre;
+  bridgeRuns.push(run);
+}
+
+/* ── B2. ONE self-contained fixture PER GOLD BRIDGE ID (all 12) ─────────── */
+/* Resolved: deck + BOTH measured bank approaches. Unresolved: the crossing
+   SITE only, with NO deck art. Every capture is forced to a fresh frame and
+   logged with id / tile / camera / candidate / mode / timestamp. Each fixture
+   finishes completely before the next bridge id is set up. */
+const perBridgeFixtures = [];
+for (const p of bridgePlan) {
+  const fx = {
+    fixtureIndex: perBridgeFixtures.length + 1,
+    requestedBridgeId: p.id, status: p.status, resolved: p.resolved,
+    atTile: p.atTile, measuredDeckCentreTile: p.deckCentre,
+    measuredBankA: p.bankA, measuredBankB: p.bankB,
+    runtimeDeckTileCount: p.deckTileCountRuntime,
+    selectedMode: PROD,
+    method: 'PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL',
+    realKeyTraversalClaimed: false,
+    captures: []
+  };
+  const common = { requestedBridgeId: p.id, method: fx.method };
+  if (p.resolved) {
+    for (const [kind, tile] of [['PER_ID_BANK_A', p.bankA], ['PER_ID_DECK', p.deckCentre], ['PER_ID_BANK_B', p.bankB]]) {
+      await setup(tile[0], tile[1], PROD);
+      fx.captures.push(await shot(`bridge_${p.id}_${kind === 'PER_ID_BANK_A' ? 'bankA' : kind === 'PER_ID_DECK' ? 'deck' : 'bankB'}`,
+        { ...common, kind }));
+    }
+  } else {
+    await setup(p.atTile[0], p.atTile[1], PROD);
+    fx.captures.push(await shot(`bridge_${p.id}_site`, { ...common, kind: 'PER_ID_SITE' }));
+  }
+  perBridgeFixtures.push(fx);
 }
 
 /* ── C. Highland cliff face + alternative, real WASD ──────────────────── */
@@ -237,10 +421,11 @@ const faceTile = await page.evaluate(() => {
     if (a.u05Tile(x, y) === 8) return [x, y];
   return null;
 });
-if (faceTile) { await setup(faceTile[0], faceTile[1], PROD); await shot('cliff_face_measured_production'); }
-await setup(2045, 907, PROD); await shot('br1_centre_production');
-await setup(2045, 907, QA); await shot('br1_centre_qa');
-await setup(2020, 907, PROD); await shot('br1_T3_matching_coordinate');
+const STATIC = 'STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL';
+if (faceTile) { await setup(faceTile[0], faceTile[1], PROD); await shot('cliff_face_measured_production', { kind: 'CLIFF_FACE', method: STATIC }); }
+await setup(2045, 907, PROD); await shot('br1_centre_production', { kind: 'STATIC_CENTRE', method: STATIC });
+await setup(2045, 907, QA); await shot('br1_centre_qa', { kind: 'STATIC_CENTRE', method: STATIC });
+await setup(2020, 907, PROD); await shot('br1_T3_matching_coordinate', { kind: 'STATIC_COORDINATE_SHOT', method: STATIC });
 
 /* ── D. Static / semantic checks ──────────────────────────────────────── */
 const checks = [];
@@ -573,6 +758,168 @@ fs.writeFileSync(path.join(ROOT, 'evidence/mapgeo02-bridge-geometry.json'), JSON
   noClaims: ['NO production traversal permission', 'NO bearing/load/cart clearance law', 'NO GOLD amendment']
 }, null, 2));
 
+/* ── F. MAP-GEO-REJOIN-02A — SCREENSHOT AUTHENTICITY GATES ─────────────── */
+const BRIDGE_KINDS = new Set(['FIXTURE_LOCAL_AT_BRIDGE', 'PER_ID_BANK_A', 'PER_ID_DECK', 'PER_ID_BANK_B', 'PER_ID_SITE']);
+const bridgeLabeled = captureLog.filter(c => BRIDGE_KINDS.has(c.requestedKind));
+const MAX_NEAR_TILES = 32;
+const tileDist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+const frameRegistry = new Map(bridgeLabeled.map(c => [c.frameIdentity.serial, c.requestedBridgeId]));
+
+/** NEGATIVE gate predicate: a capture labelled for bridge X must genuinely
+ *  belong to X's own fixture. Returns [] only for an authentic capture. */
+function validateCapture(c) {
+  const why = [];
+  const p = planById[c.requestedBridgeId];
+  if (!c.requestedBridgeId || !p) why.push('MISSING_OR_UNKNOWN_REQUESTED_BRIDGE_ID');
+  else {
+    const d = tileDist(c.actualPlayerTile, p.atTile);
+    const nearest = bridgePlan.reduce((best, q) => {
+      const qd = tileDist(c.actualPlayerTile, q.atTile);
+      return qd < best.d ? { id: q.id, d: qd } : best;
+    }, { id: null, d: Infinity });
+    if (d > MAX_NEAR_TILES) why.push('CAPTURED_TOO_FAR_FROM_REQUESTED_BRIDGE');
+    if (nearest.id !== p.id) why.push('CAPTURED_NEAR_DIFFERENT_BRIDGE');
+    const deckLike = c.requestedKind === 'PER_ID_DECK' || c.requestedKind === 'FIXTURE_LOCAL_AT_BRIDGE' || c.requestedKind === 'PER_ID_SITE';
+    const bankLike = c.requestedKind === 'PER_ID_BANK_A' || c.requestedKind === 'PER_ID_BANK_B';
+    if (p.resolved && deckLike && c.candidateId !== p.id) why.push('PLAYER_NOT_ON_REQUESTED_DECK');
+    if (p.resolved && deckLike && !(c.visibleWindow?.bridgeTilesForId > 0)) why.push('NO_REQUESTED_DECK_IN_VISIBLE_WINDOW');
+    if (p.resolved && bankLike && !(c.visibleWindow?.bridgeTilesForId > 0)) why.push('BRIDGE_NOT_VISIBLE_FROM_LABELLED_BANK');
+    if (!p.resolved && (c.candidateId !== null || (c.visibleWindow?.bridgeTilesAny ?? 0) > 0))
+      why.push('FAKE_DECK_AT_UNRESOLVED_SITE');
+  }
+  if (c.frameIdentity?.freshFrameAdvanced !== true) why.push('STALE_CANVAS__NO_FRESH_RENDER_FRAME');
+  if (![PROD, QA].includes(c.selectedMode)) why.push('INVALID_SELECTED_MODE');
+  if (!(c.capturedAt && c.frameIdentity?.serial > 0 && Number.isFinite(c.frameIdentity?.wallClockMs)))
+    why.push('MISSING_TIMESTAMP_OR_FRAME_IDENTITY');
+  if (c.size?.[0] !== 640 || c.size?.[1] !== 360) why.push('NOT_NATIVE_640x360');
+  const owner = frameRegistry.get(c.frameIdentity?.serial);
+  if (owner && owner !== c.requestedBridgeId) why.push('REUSED_FRAME_FROM_UNRELATED_FIXTURE');
+  return why;
+}
+const realVerdicts = bridgeLabeled.map(c => ({ name: c.name, id: c.requestedBridgeId, reasons: validateCapture(c) }));
+const realRejects = realVerdicts.filter(v => v.reasons.length);
+
+/* Synthetic NEGATIVE cases: prove the gate actually rejects bad evidence. */
+const pick = n => bridgeLabeled.find(c => c.name === n);
+const clone = o => JSON.parse(JSON.stringify(o));
+const neg = [];
+const c2 = clone(pick('bridge_br_2_deck'));
+c2.requestedBridgeId = 'br_7';
+neg.push({ case: 'MISLABELLED_FRAME_FROM_ANOTHER_BRIDGE_FIXTURE', expect: ['CAPTURED_NEAR_DIFFERENT_BRIDGE'], record: c2 });
+const stale = clone(pick('bridge_br_2_deck'));
+stale.frameIdentity.freshFrameAdvanced = false;
+neg.push({ case: 'STALE_CANVAS_NO_FRESH_RENDER_FRAME', expect: ['STALE_CANVAS__NO_FRESH_RENDER_FRAME'], record: stale });
+const reused = clone(pick('bridge_br_3_deck'));
+reused.frameIdentity.serial = pick('bridge_br_0_deck').frameIdentity.serial;
+neg.push({ case: 'REUSED_FRAME_IDENTITY_FROM_UNRELATED_FIXTURE', expect: ['REUSED_FRAME_FROM_UNRELATED_FIXTURE'], record: reused });
+const fake = clone(pick('bridge_br_9_site'));
+fake.candidateId = 'br_9'; fake.visibleWindow.bridgeTilesAny = 5;
+neg.push({ case: 'FAKE_DECK_STAMPED_AT_UNRESOLVED_SITE', expect: ['FAKE_DECK_AT_UNRESOLVED_SITE'], record: fake });
+const badMode = clone(pick('bridge_br_2_deck'));
+badMode.selectedMode = 'UNDECLARED_MODE';
+neg.push({ case: 'UNDECLARED_SELECTED_MODE', expect: ['INVALID_SELECTED_MODE'], record: badMode });
+const negResults = neg.map(n => ({ case: n.case, expectedReasons: n.expect,
+  actualReasons: validateCapture(n.record), rejected: validateCapture(n.record).length > 0,
+  expectedReasonsFound: n.expect.every(e => validateCapture(n.record).includes(e)) }));
+const control = { case: 'CONTROL_UNMODIFIED_AUTHENTIC_CAPTURE', accepted: validateCapture(pick('bridge_br_2_deck')).length === 0 };
+check('E08_negative_screenshot_authenticity_gate', realRejects.length === 0 &&
+  negResults.every(n => n.rejected && n.expectedReasonsFound) && control.accepted,
+  { labelledCaptures: bridgeLabeled.length, realRejects, negativeCases: negResults, control,
+    rule: 'MAX_NEAR_TILES=32; nearest bridge centre must equal requested id; fresh render frame; declared mode; no fake deck at unresolved site; frame-serial owner must match requested id' });
+
+/* Full directory audit: NOT every duplicate is a failure. */
+const allShotFiles = fs.readdirSync(SHOTS).filter(f => f.endsWith('.png')).sort();
+const byHash = new Map();
+for (const f of allShotFiles) {
+  const h = sha(fs.readFileSync(path.join(SHOTS, f)));
+  if (!byHash.has(h)) byHash.set(h, []);
+  byHash.get(h).push(f);
+}
+const duplicateGroups = [];
+for (const [h, files] of byHash) if (files.length > 1) {
+  const members = files.map(f => captureLog.find(c => c.file.endsWith('/' + f))).filter(Boolean);
+  const ids = [...new Set(members.map(m => m.requestedBridgeId).filter(Boolean))];
+  const serials = members.map(m => m.frameIdentity.serial);
+  const sameFrame = new Set(serials).size < serials.length;
+  const atBridgeNames = files.filter(f => f.endsWith('_at_bridge.png'));
+  const classification = sameFrame ? 'DEFECT_REUSED_FRAME'
+    : ids.length > 1 ? 'LEGITIMATE_IDENTICAL_RENDER_AT_DISTINCT_FIXTURES'
+      : 'LEGITIMATE_IDENTICAL_STATE_CAPTURE';
+  duplicateGroups.push({ sha256: h.slice(0, 16), files, requestedIds: ids,
+    frameSerials: serials, classification, atBridgeFilesInGroup: atBridgeNames.length,
+    note: 'Duplicate pixels at DIFFERENT frame identities are legitimate (identical terrain/state); only a reused frame identity is a defect.' });
+}
+const defectGroups = duplicateGroups.filter(g => g.classification === 'DEFECT_REUSED_FRAME');
+const atBridgeShots = allShotFiles.filter(f => f.endsWith('_at_bridge.png'));
+const atBridgeUnique = new Set(atBridgeShots.map(f => sha(fs.readFileSync(path.join(SHOTS, f))))).size;
+const shotIntegrity = {
+  files: allShotFiles.length, uniqueContents: byHash.size,
+  duplicateGroups: duplicateGroups.length, duplicateGroupsDetail: duplicateGroups,
+  defectGroups: defectGroups.length,
+  atBridgeShots: atBridgeShots.length, atBridgeUniqueContents: atBridgeUnique,
+  oldDefectSignature: '8 `_at_bridge` files shared one final-canvas frame (10-image identical group)',
+  oldDefectSignatureGone: atBridgeUnique === atBridgeShots.length && atBridgeShots.length > 1,
+  rule: 'Duplicates are classified by provenance, NOT auto-failed; legitimate identical-state and identical-render-at-distinct-fixtures groups are recorded explicitly.'
+};
+check('E09_shot_integrity_no_reused_frames', defectGroups.length === 0 && shotIntegrity.oldDefectSignatureGone &&
+  duplicateGroups.filter(g => g.classification === 'LEGITIMATE_IDENTICAL_RENDER_AT_DISTINCT_FIXTURES')
+    .every(g => new Set(g.frameSerials).size === g.frameSerials.length),
+  shotIntegrity);
+
+/* Per-ID coverage: all 12, deck + both banks for resolved, site only for unresolved. */
+const perIdSummary = perBridgeFixtures.map(fx => ({
+  id: fx.requestedBridgeId, resolved: fx.resolved,
+  shots: fx.captures.map(c => ({ kind: c.requestedKind, file: c.file,
+    playerTile: c.actualPlayerTile, camera: c.cameraCoordinate,
+    candidateId: c.candidateId, mode: c.selectedMode,
+    capturedAt: c.capturedAt, frameSerial: c.frameIdentity.serial,
+    freshFrame: c.frameIdentity.freshFrameAdvanced,
+    bridgeTilesInVisibleWindow: c.visibleWindow?.bridgeTilesForId ?? null,
+    anyBridgeTilesInVisibleWindow: c.visibleWindow?.bridgeTilesAny ?? null,
+    pngSha256: c.pngSha256.slice(0, 16) }))
+}));
+check('E10_per_id_coverage_and_geometry', perBridgeFixtures.length === 12 &&
+  perBridgeFixtures.every(fx => fx.resolved ? fx.captures.length === 3 : fx.captures.length === 1) &&
+  perBridgeFixtures.filter(f => f.resolved).length === 10 &&
+  perBridgeFixtures.filter(f => !f.resolved).length === 2 &&
+  perBridgeFixtures.every(fx => fx.captures.every(c => BRIDGE_KINDS.has(c.requestedKind) &&
+    c.requestedBridgeId === fx.requestedBridgeId && c.frameIdentity.freshFrameAdvanced &&
+    c.size[0] === 640 && c.size[1] === 360 && c.selectedMode === PROD)) &&
+  perBridgeFixtures.filter(f => f.resolved).every(fx =>
+    fx.captures.find(c => c.requestedKind === 'PER_ID_DECK').visibleWindow.bridgeTilesForId > 0 &&
+    fx.captures.find(c => c.requestedKind === 'PER_ID_DECK').candidateId === fx.requestedBridgeId) &&
+  perBridgeFixtures.filter(f => !f.resolved).every(fx =>
+    fx.captures[0].visibleWindow.bridgeTilesAny === 0 && fx.captures[0].candidateId === null),
+  { method: 'PER_ID_FIXTURE__STATIC_VIEWER_SPAWN_CONTROL__NOT_A_TRAVERSAL',
+    fixtures: perIdSummary });
+
+const SHOT_PROVENANCE_OUT = path.join(ROOT, 'evidence/mapgeo02-shot-provenance.json');
+fs.writeFileSync(SHOT_PROVENANCE_OUT, JSON.stringify({
+  schema: 'soh.mapgeo02a.shot-provenance.v1',
+  task: 'SOH — MAP-GEO-REJOIN-02A / Evidence Integrity Corrective',
+  status: 'QA_VERIFICATION__NOT_PRODUCTION__NOT_VISUAL_ACCEPTANCE',
+  generatedAt: new Date().toISOString(),
+  executable: { file: 'creator-u05/SoulOfHero_MapGeo02_CorrectedProjection.html', sha256: VIEWER_SHA },
+  defect: {
+    id: 'MAPGEO02A-EVIDENCE-01',
+    observed: 'qa-mapgeo02-traversal.mjs executed ALL BRIDGE_RUNS then captured every _at_bridge image afterward; 8 differently-named files contained the identical final canvas frame.',
+    githubBlobVerificationAtPinnedHead: { pngFiles: 52, uniqueContents: 34, largestIdenticalGroup: 10 },
+    fixedBy: 'fresh-render atomic capture; each bridge fixture captures its own evidence before the next fixture; 12 self-contained per-ID fixtures; negative authenticity gate'
+  },
+  captureMethod: 'two nested requestAnimationFrame callbacks after setup/reset, then canvas + runtime state read in the SAME frame callback',
+  captureLog, perBridgeFixtures,
+  negativeGate: { realCaptures: realVerdicts, negativeCases: negResults, control,
+    rule: 'MAX_NEAR_TILES=32; nearest bridge centre must equal requested id; fresh render frame; declared mode; no fake deck at unresolved site; frame-serial owner must match requested id' },
+  shotIntegrity,
+  acceptance: {
+    PAPER: 'MEASURED', RUNTIME: 'ISOLATED_VIEWER_PHYSICAL_VERIFIED_QA_ONLY',
+    VISUAL: 'NOT_REQUESTED_AND_NOT_GRANTED', GAMEPLAY: 'NOT_REQUESTED_AND_NOT_GRANTED',
+    visualAccepted: false
+  },
+  noClaims: ['NO VISUAL_ACCEPTED', 'NO production traversal permission', 'NO GOLD amendment',
+    'NO PR44 edit/merge', 'NO new atlas/art/world', 'NO VEYRA_PLAYABLE']
+}, null, 2));
+
 const passes = checks.filter(c => c.verdict === 'PASS').length;
 const fails = checks.filter(c => c.verdict === 'FAIL');
 const evidence = {
@@ -584,9 +931,11 @@ const evidence = {
   comparisonExecutable: { file: 'creator-u05/SoulOfHero_TerrainOnly_U05_x10.html', sha256: OLD_SHA },
   method: {
     renderer: 'existing SOH U=0.5 terrain renderer, verbatim terrain.ts painter, native 640x360 1x, hero 16x24',
-    screenshots: 'document.getElementById("game").toDataURL("image/png")',
+    screenshots: 'document.getElementById("game").toDataURL("image/png"), read atomically with runtime state after >=2 forced fresh animation frames',
+    evidenceIntegrity: 'MAP-GEO-REJOIN-02A corrective: every bridge image is captured inside its OWN fixture; full provenance + negative authenticity gate in evidence/mapgeo02-shot-provenance.json',
     movement: 'REAL held WASD / arrow keys with NATURAL_TERRAIN_ONLY collision ON; x10 viewer speed',
     spawnControl: 'window.__terrain.reset(tx,ty) ONCE per run; NOT a route or teleport claim',
+    perIdFixtures: '12 self-contained static viewer spawn-control fixtures; NOT traversal claims',
     modes: { default: PROD, qaOnly: QA },
     authority: 'QA candidate crossing/collision is EXPLICIT and NEVER grants production traversal'
   },
@@ -597,6 +946,16 @@ const evidence = {
       faceBand: cliff.faceBandTilesPerCellEdge, sideHistogram: cliff.sideHistogram }
   },
   matchingCoordinateRuns: matchingRuns, bridgeRuns, cliffRuns,
+  perBridgeFixtures,
+  shotProvenance: {
+    file: 'creator-u05/evidence/mapgeo02-shot-provenance.json',
+    captureCount: captureLog.length,
+    bridgeLabelledCaptures: bridgeLabeled.length,
+    negativeGateCases: negResults.length,
+    negativeGateAllRejected: negResults.every(n => n.rejected && n.expectedReasonsFound),
+    realCapturesRejected: realRejects.length
+  },
+  shotIntegrity,
   checks, summary: { checks: checks.length, passes, fails: fails.length,
     failedIds: fails.map(f => f.id), browserErrors: errors,
     shots: fs.readdirSync(SHOTS).length },

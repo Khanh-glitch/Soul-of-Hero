@@ -17,11 +17,12 @@
 | MAP-GEO-02 **audit commit** / final delivery commit | `d360e2a3283b0b2358b95da59fa738b72c8f9988` / commit ngay sau đó chứa `evidence/mapgeo02-delivery.json` (HEAD cuối của branch) |
 | `main` | `5214788933b1a827f3a177d11ff486433dfe5e8a` |
 | Gameplay HEAD **được pin trong yêu cầu** | `6e7d116b4400ea3c24373fe884b7fad258f4f7bc` |
-| Gameplay / PR44 **HEAD sống hiện tại** | `c2418b5405ff3325e0ac4806a5309785e816b093` — PR44 **OPEN**, **không** edit/merge/close |
-| Drift Gameplay trong lúc làm task | **CÓ** (`6e7d116b…` → `c2418b54…`, motorbike/loot/respawn); báo cả hai SHA |
+| Gameplay / PR44 **HEAD sống lúc giao MAP-GEO-02** | `c2418b5405ff3325e0ac4806a5309785e816b093` — PR44 **OPEN**, **không** edit/merge/close |
+| Gameplay / PR44 **HEAD sống lúc kết thúc 02A** | `897e28f2…` (observed, verify live lúc bắt đầu) → PR44 **tiếp tục nhảy nhiều lần** trong task; SHA sống cuối cùng ghi trong `creator-u05/evidence/mapgeo02a-refs.json :: live.pr44Head`. PR44 vẫn **OPEN** — xem §10 handoff |
+| Drift Gameplay trong lúc làm MAP-GEO-02 | **CÓ** (`6e7d116b…` → `c2418b54…`, motorbike/loot/respawn); báo cả hai SHA |
 | Creator-verified / U05 pin | `5b3e683402bbc8540dea9404576164097e753f97` / `b5c8004ca4e77be62484fb3cd296fe296d7de4c9` |
 | GOLD | `88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256` — **không đổi** |
-| Terrain painter block | `f29c1a68803505c2dbf82aaae3ed37ab7240cb71dff47937f964e753c8d0f803` — **byte-identical ở 4 head**; `art.ts` sống vẫn có `S.claim`, **không re-vendor** |
+| Terrain painter block (lúc giao 02) | `f29c1a68803505c2dbf82aaae3ed37ab7240cb71dff47937f964e753c8d0f803` — **byte-identical ở 4 head lúc đó**; `art.ts` sống vẫn có `S.claim`, **không re-vendor**. 02A: **palette constants (2154 B) vẫn identical ở mọi head**, nhưng preflight *block slice* đổi `8276 → 8382 B` do một dòng render cửa POI phía Gameplay — drift được báo ở §10, **không** đổi painter gốc |
 | 3 executable bảo vệ | `540f095e…` / `ac4d54e3…` / `6e1e897a…` — **đều không đổi** (verify ở preflight, build, QA) |
 | QA executable **mới, có nhãn riêng** | `creator-u05/SoulOfHero_MapGeo02_CorrectedProjection.html` — 1,421,388 B, SHA `41b2203bbbab47c0f4f215461e9e7571c2d1a46b0d982a7a2fbf177bbcac2339` |
 
@@ -109,7 +110,7 @@ cũ và bản sửa), không nới rộng / đổi màu / vẽ lại. T1/T2/T4/T
 
 * **17** lượt đi bằng **WASD / mũi tên thật**, `NATURAL_TERRAIN_ONLY` collision ON,
   x10 viewer speed; `reset(tx,ty)` **1 lần** mỗi lượt làm spawn control, **không**
-  phải route/teleport. **52** ảnh PNG **native 640×360** lấy bằng
+  phải route/teleport. **84** ảnh PNG **native 640×360** lấy bằng
   `document.getElementById('game').toDataURL('image/png')`. **0** lỗi browser.
 * Sáu lượt MAP-GEO-01 được lặp lại **đúng toạ độ + đúng legs**, kèm ảnh tĩnh tại
   đúng `endTile` cũ và so sánh tile-code từng ô (pixel diff thô còn lẫn offset
@@ -126,11 +127,16 @@ cũ và bản sửa), không nới rộng / đổi màu / vẽ lại. T1/T2/T4/T
   **0 rò rỉ quyền trên 10,086 tile** (`activeCollisionPermission`, `foot` trên nước,
   `boat/swim/ferryFoot/build` đều `false`, deck production vẫn blocked,
   cliff production không blocked).
-* **28/28** runtime check PASS; **125/125** static test PASS; `tsc --noEmit` sạch;
+* **31/31** runtime check PASS; **156/156** static test PASS; `tsc --noEmit` sạch;
   MAP-GEO-01 **130/130** vẫn PASS (chỉ cập nhật tối thiểu assertion `S07` để
   whitelist đúng một file QA executable có nhãn riêng; mọi gate khác giữ nguyên).
 
 Ảnh QA **không** phải visual acceptance hay production acceptance.
+
+> **02A:** sửa lỗi 8 ảnh `_at_bridge` từng là cùng một canvas cuối; 12 fixture per-ID,
+> 40 ảnh có provenance + negative gate, 84 PNG / 79 nội dung duy nhất, `0` reused frame.
+> Xem **§10** của `creator-u05/docs/MAPGEO02_GAMEPLAY_HANDOFF.md` và
+> `creator-u05/evidence/mapgeo02-shot-provenance.json`.
 
 ## 6. Ranh giới quyền (không vượt)
 
@@ -172,8 +178,8 @@ NATURE-01/02 vẫn là R&D lưu trữ, không phải production resource placeme
 | `creator-u05/evidence/mapgeo02-build.json` | Build deterministic, source SHA, 12 identity, self-contained |
 | `creator-u05/evidence/mapgeo02-bridge-geometry.json` | 12 cầu đo đầy đủ + cliff stats |
 | `creator-u05/evidence/mapgeo02-road-water-classification.json` | 31 route / 4 nhóm / 8 ferry / 6 ambiguous |
-| `creator-u05/evidence/mapgeo02-traversal.json` | 17 lượt phím thật, 28 check, 52 ảnh, 0 leak |
-| `creator-u05/evidence/mapgeo02-shots/*.png` | 52 ảnh native 640×360 |
+| `creator-u05/evidence/mapgeo02-traversal.json` | 17 lượt phím thật, 31 check, 84 ảnh, 0 leak |
+| `creator-u05/evidence/mapgeo02-shots/*.png` | 84 ảnh native 640×360 |
 | `creator-u05/evidence/mapgeo02-gameplay-handoff.json`, `creator-u05/docs/MAPGEO02_GAMEPLAY_HANDOFF.md` | Bàn giao Gameplay |
 | `creator-u05/evidence/mapgeo02-delivery.json` | Chốt commit, pinned links, ref Gameplay, gate, acceptance |
 | `creator-u05/build-mapgeo02.mjs`, `vite.mapgeo02.config.mjs`, `web-u05/src/mapgeo02/*` | Nguồn build + overlay (additive) |

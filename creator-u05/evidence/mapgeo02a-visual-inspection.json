@@ -1,0 +1,115 @@
+{
+  "schema": "soh.mapgeo02a.visual-inspection.v1",
+  "task": "SOH — MAP-GEO-REJOIN-02A / Evidence Integrity Corrective & Final Map Intake",
+  "generatedAt": "2026-11-05T15:20:00Z",
+  "status": "INSPECTED__QA_EVIDENCE_ONLY__NOT_VISUAL_ACCEPTANCE",
+  "method": "Corrected native 640x360 PNGs opened individually in the file viewer; every image cross-checked against its capture provenance in mapgeo02-shot-provenance.json and, where stated, against a live runtime tile-code probe. No image was graded as production visual acceptance.",
+  "executableSha256": "41b2203bbbab47c0f4f215461e9e7571c2d1a46b0d982a7a2fbf177bbcac2339",
+  "inspected": [
+    {
+      "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_2_deck.png",
+      "subject": "br_2 deck silhouette (7 AU, almost pure north)",
+      "observed": "A single bounded vertical wood-plank strip crossing blue water end to end; stepped plank ends at both banks; hero stands on the deck.",
+      "verdict": "SATISFACTORY_AS_QA_GEOMETRY_EVIDENCE"
+    },
+    {
+      "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_2_bankA.png",
+      "subject": "br_2 bank A seam",
+      "observed": "Deck bottom edge meets the tan road/dirt bank with no intervening blue-water gap; hero stands on the bank at the seam.",
+      "verdict": "SATISFACTORY_AS_QA_GEOMETRY_EVIDENCE"
+    },
+    {
+      "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_2_bankB.png",
+      "subject": "br_2 bank B seam",
+      "observed": "Deck top edge meets the tan bank; no water gap; the two-bank connection is visually continuous.",
+      "verdict": "SATISFACTORY_AS_QA_GEOMETRY_EVIDENCE"
+    },
+    {
+      "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_5_deck.png",
+      "subject": "br_5 angled deck silhouette (7 AU)",
+      "observed": "Diagonal wood band spanning the river with a staircase/jagged tile-grid edge; connects to the tan banks at top-right and bottom-left. No rails, abutments or plank-end treatment.",
+      "verdict": "TARGETED_REWORK_RECOMMENDED",
+      "note": "Geometry is bounded and connected; only the silhouette/edge finish is crude. Art treatment, not a physical geometry change."
+    },
+    {
+      "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_a_bankA.png",
+      "subject": "br_a angled bank A seam",
+      "observed": "Stepped deck edge meets the diagonal bank; a small blue-water notch sits beside the first plank row. Tile-code bankSeams.connected is true, but the wood/dirt boundary reads as a raw staircase.",
+      "verdict": "TARGETED_REWORK_RECOMMENDED"
+    },
+    {
+      "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_1_deck.png",
+      "subject": "br_1 deck at the former wood-carpet coordinate",
+      "observed": "Compact diagonal plank patch (46 deck tiles) over blue water, replacing the old 656-tile land wood carpet. A short dark plank stub to the left is a PRE-EXISTING GOLD-authored legacy bridge node (bridge:br_1@1022,453, raw T.BRIDGE converted to ROAD). A 35x33 live probe found 0 cliff tiles and 0 cliff/deck overlaps here.",
+      "verdict": "SATISFACTORY_AS_QA_GEOMETRY_EVIDENCE"
+    },
+    {
+      "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_7_deck.png",
+      "subject": "br_7 shortest span (2 AU, 28 deck tiles)",
+      "observed": "Small plank patch crossing a narrow blue channel, surrounded by tan/sand terrain. Live probe: all 28 deck tiles have candidateInfo.bridgeDeckId='br_7', sampleTile.water=true and raw tile 19 ('shallow'); 'shallow' is painted tan by the ORIGINAL painter, so the wood reads as sitting on dry ground instead of clearly spanning water.",
+      "verdict": "TARGETED_REWORK_RECOMMENDED",
+      "note": "Physical geometry is correct (28/28 on water). This is a visual-legibility issue inherited from the unchanged original painter, NOT a new geometry defect and NOT a permission change."
+    },
+    {
+      "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_9_site.png",
+      "subject": "br_9 UNRESOLVED crossing site",
+      "observed": "Blue river with NO deck art of any kind; 0 T.BRIDGE tiles in the visible 40x23 window and candidateInfo.bridgeDeckId=null. Hero appears in water because reset(tx,ty) is a VIEWER SPAWN CONTROL, not a walkability claim.",
+      "verdict": "SATISFACTORY_AS_QA_GEOMETRY_EVIDENCE"
+    },
+    {
+      "file": "creator-u05/evidence/mapgeo02-shots/bridge_br_b_site.png",
+      "subject": "br_b UNRESOLVED crossing site (32 AU unbounded water run)",
+      "observed": "Wide blue river, NO deck art; 0 T.BRIDGE tiles in the visible window. A small brown T-shaped stub at the top is the PRE-EXISTING GOLD-authored dock dk_gulfhead@1025,929 (tile code 2), not a bridge deck. Hero-in-water is a viewer spawn control, not a walkability claim.",
+      "verdict": "SATISFACTORY_AS_QA_GEOMETRY_EVIDENCE"
+    },
+    {
+      "file": "creator-u05/evidence/mapgeo02-shots/cliff_face_measured_production.png",
+      "subject": "MGP-D10 corrected cliff face band at a measured face tile",
+      "observed": "Thin jagged vertical grey stone band with short horizontal ledges on both sides, irregular stepped outline; NOT a filled slab; 0 production collision walls. Reads as a stylised stone wall rather than a natural rock face.",
+      "verdict": "TARGETED_REWORK_RECOMMENDED",
+      "note": "The 2..4/16-tile thin-band requirement is met; surface naturalness/edge treatment is the remaining art-level item."
+    },
+    {
+      "file": "creator-u05/evidence/mapgeo02-shots/C_cliff_qa_candidate_before.png",
+      "subject": "Cliff real-key QA run frame (before legs)",
+      "observed": "Meadow/grass and dirt only; no cliff face band is clearly visible in-frame (only tiny grey slivers at the lower viewport edge).",
+      "verdict": "EVIDENCE_GAP__TARGETED_REWORK_RECOMMENDED",
+      "note": "The cliff-collision claim rests on numeric blockedSubsteps and tile-code checks (D12/E03), not on visible imagery in this run frame. A fresh-frame QA-mode capture AT the measured face tile would close the gap."
+    },
+    {
+      "file": "creator-u05/evidence/mapgeo02-shots/C_cliff_qa_candidate_after.png",
+      "subject": "Cliff real-key QA run frame (after legs)",
+      "observed": "Dirt/biome transition with a few green patches; no cliff face band clearly visible in-frame.",
+      "verdict": "EVIDENCE_GAP__TARGETED_REWORK_RECOMMENDED"
+    },
+    {
+      "file": "creator-u05/evidence/mapgeo02-shots/B_br7_production_at_bridge.png",
+      "subject": "Regression check on the formerly duplicated _at_bridge family",
+      "observed": "Now shows br_7's OWN small wood deck over its narrow channel, not the final canvas of an unrelated fixture. All 8 _at_bridge PNGs have distinct content hashes.",
+      "verdict": "SATISFACTORY_AS_QA_GEOMETRY_EVIDENCE"
+    }
+  ],
+  "summary": {
+    "deckSilhouettes": "Bounded and water-only for all 10 resolved candidates; straight-axis decks (br_2) read cleanly; angled decks (br_5, br_a) have stepped tile-grid edges with no rail/abutment treatment -> targeted art rework, not a geometry defect.",
+    "seams": "Both measured bank approaches are visually and tile-code connected for the inspected bridges; angled seams are geometrically closed but visually crude -> targeted art rework.",
+    "cliffFaces": "Thin jagged band confirmed, no filled slab and no permanent wall; naturalness needs targeted art rework. The dedicated measured-face shot is good evidence; the cliff real-key run frames do NOT show the face clearly -> evidence gap.",
+    "newlyConfirmedPhysicalDefects": [],
+    "newlyConfirmedEvidenceDefectsFixed": [
+      "MAPGEO02A-EVIDENCE-01: 8 _at_bridge screenshots were the identical stale final canvas frame (52 PNG / 34 unique / one 10-image group). Fixed."
+    ],
+    "retainedUnchanged": [
+      "10 CANDIDATE_DECK bridges + 2 UNRESOLVED (br_9, br_b)",
+      "31-road water-crossing classification (8 ferry / 9 authored bridge / 8 ford / 6 ambiguous)",
+      "596 deck tiles, 305 cliff candidate cells, 0 activeCollisionPermission"
+    ],
+    "targetedReworkNotGranted": [
+      "Angled deck edge/rail/abutment art treatment",
+      "br_7 shallow-water visual legibility (inherited original painter behaviour)",
+      "Cliff face surface naturalness",
+      "Add a fresh-frame QA-mode cliff capture at the measured face tile"
+    ],
+    "visualAccepted": false,
+    "visualAcceptance": "NOT_REQUESTED_AND_NOT_GRANTED",
+    "note": "This inspection is QA evidence triage only. It does NOT grant VISUAL_ACCEPTED, full-world visual acceptance, VEYRA_PLAYABLE, MERGE_READY, production traversal permission or any new production art."
+  }
+}

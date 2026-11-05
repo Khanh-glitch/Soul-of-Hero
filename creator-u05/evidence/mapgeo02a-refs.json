@@ -1,0 +1,314 @@
+{
+  "schema": "soh.mapgeo02a.refs.v1",
+  "task": "SOH — MAP-GEO-REJOIN-02A / Evidence Integrity Corrective & Final Map Intake",
+  "generatedAt": "2026-11-05T15:43:47.843Z",
+  "status": "REFS_VERIFIED__NO_GAMEPLAY_EDITS__PR44_UNTOUCHED",
+  "pinned": {
+    "mapBranch": "arena/2e3cfbd2-soul-of-hero",
+    "mapAt02aPin": "accca454e7b8c651c7403a95e9efcb8999b550a2",
+    "mapAt02Delivery": "3e02fde05a24f6d645ea00ed5ab78900655e1272",
+    "main": "5214788933b1a827f3a177d11ff486433dfe5e8a",
+    "gameplayTaskPin": "6e7d116b4400ea3c24373fe884b7fad258f4f7bc",
+    "gameplayAt02Delivery": "c2418b5405ff3325e0ac4806a5309785e816b093",
+    "gameplayObserved02a": "897e28f2827119542bcf4217c27cf421f9cf4011",
+    "creatorVerified": "5b3e683402bbc8540dea9404576164097e753f97",
+    "u05Pin": "b5c8004ca4e77be62484fb3cd296fe296d7de4c9"
+  },
+  "live": {
+    "mapBranch": "accca454e7b8c651c7403a95e9efcb8999b550a2",
+    "main": "5214788933b1a827f3a177d11ff486433dfe5e8a",
+    "pr44Head": "e79d9e7edc46693729b8c4732162dfbf7c9158d9",
+    "localHead": "accca454e7b8c651c7403a95e9efcb8999b550a2",
+    "localBranch": "arena/2e3cfbd2-soul-of-hero"
+  },
+  "pr44": {
+    "baseRefName": "arena/4795760e-soul-of-hero",
+    "headRefName": "arena/d4bfcfff-soul-of-hero",
+    "headRefOid": "e79d9e7edc46693729b8c4732162dfbf7c9158d9",
+    "state": "OPEN",
+    "title": "Web: physical equipment and workstation progression slice",
+    "updatedAt": "2026-11-05T15:33:59Z"
+  },
+  "gameplayObservedHeadVerification": {
+    "observedShaFromTask": "897e28f2827119542bcf4217c27cf421f9cf4011",
+    "wasLiveAtTaskStart": true,
+    "stillLiveAtFinish": false,
+    "liveAtFinish": "e79d9e7edc46693729b8c4732162dfbf7c9158d9",
+    "note": "Verified live refs/pull/44/head at 02A task start. PR44 advanced during the task; both SHAs are recorded and PR44 was NOT touched."
+  },
+  "checks": [
+    {
+      "id": "R01 live Map branch == 02A pinned Map HEAD",
+      "verdict": "PASS"
+    },
+    {
+      "id": "R02 main unchanged",
+      "verdict": "PASS"
+    },
+    {
+      "id": "R03 observed Gameplay HEAD was verified live at 02A task start (real commit)",
+      "verdict": "PASS"
+    },
+    {
+      "id": "R03b Gameplay head moved AGAIN during 02A; both SHAs recorded",
+      "verdict": "PASS"
+    },
+    {
+      "id": "R04 PR44 still OPEN",
+      "verdict": "PASS"
+    },
+    {
+      "id": "R05 Gameplay moved since 02 delivery",
+      "verdict": "PASS"
+    },
+    {
+      "id": "R06 Gameplay moved since task pin",
+      "verdict": "PASS"
+    },
+    {
+      "id": "R07 worktree builds on 02A pinned Map HEAD",
+      "verdict": "PASS"
+    },
+    {
+      "id": "R08 terrain palette constants unchanged at every recorded Gameplay head",
+      "verdict": "PASS"
+    },
+    {
+      "id": "R09 painter-block slice drift is REPORTED (not silently ignored)",
+      "verdict": "PASS"
+    },
+    {
+      "id": "R10 three protected standalone baselines unchanged",
+      "verdict": "PASS"
+    },
+    {
+      "id": "R11 QA executable unchanged (NOT rebuilt by 02A)",
+      "verdict": "PASS"
+    },
+    {
+      "id": "R12 GOLD unchanged",
+      "verdict": "PASS"
+    }
+  ],
+  "drift": {
+    "taskPinTo02aObserved": {
+      "from": "6e7d116b4400ea3c24373fe884b7fad258f4f7bc",
+      "to": "897e28f2827119542bcf4217c27cf421f9cf4011",
+      "shortstat": "47 files changed, 1131 insertions(+), 69 deletions(-)",
+      "changedFiles": [
+        "docs/survival/gameplay-depth/S05_PHYSICAL_POI_ACCESS.md",
+        "docs/survival/gameplay-depth/W06_LOOT_ECOLOGY.md",
+        "docs/survival/gameplay-depth/W07_MOTORIZED_FREIGHT.md",
+        "web/e2e/s05-poi-fixture.mjs",
+        "web/e2e/w06-loot-fixture.mjs",
+        "web/e2e/w07-motorbike-fixture.mjs",
+        "web/evidence/s05-poi-fixture/card-after-640.png",
+        "web/evidence/s05-poi-fixture/card-before-640.png",
+        "web/evidence/s05-poi-fixture/generator-after-640.png",
+        "web/evidence/s05-poi-fixture/generator-before-640.png",
+        "web/evidence/s05-poi-fixture/trace.json",
+        "web/evidence/w06-loot-fixture/advanced-before-640.png",
+        "web/evidence/w06-loot-fixture/advanced-partial-640.png",
+        "web/evidence/w06-loot-fixture/military-before-640.png",
+        "web/evidence/w06-loot-fixture/military-partial-640.png",
+        "web/evidence/w06-loot-fixture/supply-before-640.png",
+        "web/evidence/w06-loot-fixture/supply-partial-640.png",
+        "web/evidence/w06-loot-fixture/toolbox-before-640.png",
+        "web/evidence/w06-loot-fixture/toolbox-partial-640.png",
+        "web/evidence/w06-loot-fixture/trace.json",
+        "web/evidence/w07-motorbike-fixture/cargo-refueled-640.png",
+        "web/evidence/w07-motorbike-fixture/driving-640.png",
+        "web/evidence/w07-motorbike-fixture/parked-640.png",
+        "web/evidence/w07-motorbike-fixture/parked-after-640.png",
+        "web/evidence/w07-motorbike-fixture/trace.json",
+        "web/evidence/w07-motorbike-fixture/unloaded-640.png",
+        "web/src/game/balance.v1.json",
+        "web/src/game/catalog.ts",
+        "web/src/game/core.ts",
+        "web/src/game/engine.ts",
+        "web/src/game/loot-ecology.ts",
+        "web/src/game/motorbike.ts",
+        "web/src/game/persist.ts",
+        "web/src/game/poi-access.ts",
+        "web/src/game/render.ts",
+        "web/src/game/sim.ts",
+        "web/src/game/world.ts",
+        "web/src/ui/Game.tsx",
+        "web/src/ui/panels.tsx",
+        "web/tests/loot-ecology.test.ts",
+        "web/tests/loot-respawn.test.ts",
+        "web/tests/motorbike.test.ts",
+        "web/tests/poi-access-s05.test.ts",
+        "web/tests/poi-route-physical.test.ts",
+        "web/tests/production-network.test.ts",
+        "web/tests/public-loot-lifecycle.test.ts",
+        "web/tests/v17-oil-chain.test.ts"
+      ]
+    },
+    "at02DeliveryTo02aLive": {
+      "from": "c2418b5405ff3325e0ac4806a5309785e816b093",
+      "to": "e79d9e7edc46693729b8c4732162dfbf7c9158d9",
+      "shortstat": "42 files changed, 1059 insertions(+), 66 deletions(-)",
+      "changedFiles": [
+        "docs/survival/gameplay-depth/S05_PHYSICAL_POI_ACCESS.md",
+        "docs/survival/gameplay-depth/S06_PHYSICAL_ELECTRICITY.md",
+        "docs/survival/gameplay-depth/SYS03_REAL_RECYCLER.md",
+        "web/e2e/s05-poi-fixture.mjs",
+        "web/e2e/s06-circuit-fixture.mjs",
+        "web/e2e/sys03-recycler-fixture.mjs",
+        "web/evidence/s05-poi-fixture/card-after-640.png",
+        "web/evidence/s05-poi-fixture/card-before-640.png",
+        "web/evidence/s05-poi-fixture/generator-after-640.png",
+        "web/evidence/s05-poi-fixture/generator-before-640.png",
+        "web/evidence/s05-poi-fixture/trace.json",
+        "web/evidence/s06-circuit-fixture/01-switch-off-640.png",
+        "web/evidence/s06-circuit-fixture/02-switch-on-640.png",
+        "web/evidence/s06-circuit-fixture/03-door-open-640.png",
+        "web/evidence/s06-circuit-fixture/04-outage-closed-640.png",
+        "web/evidence/s06-circuit-fixture/trace.json",
+        "web/evidence/sys03-recycler-fixture/01-preview-640.png",
+        "web/evidence/sys03-recycler-fixture/02-confirm-640.png",
+        "web/evidence/sys03-recycler-fixture/03-processing-640.png",
+        "web/evidence/sys03-recycler-fixture/04-output-640.png",
+        "web/evidence/sys03-recycler-fixture/trace.json",
+        "web/src/game/balance.v1.json",
+        "web/src/game/catalog.ts",
+        "web/src/game/core.ts",
+        "web/src/game/engine.ts",
+        "web/src/game/persist.ts",
+        "web/src/game/poi-access.ts",
+        "web/src/game/recycler.ts",
+        "web/src/game/render.ts",
+        "web/src/game/sim.ts",
+        "web/src/game/world.ts",
+        "web/src/ui/Game.tsx",
+        "web/src/ui/panels.tsx",
+        "web/tests/emergent-fire.test.ts",
+        "web/tests/home-ecology.test.ts",
+        "web/tests/home-production.test.ts",
+        "web/tests/poi-access-s05.test.ts",
+        "web/tests/poi-route-physical.test.ts",
+        "web/tests/production-network.test.ts",
+        "web/tests/s06-circuits.test.ts",
+        "web/tests/sys03-recycler.test.ts",
+        "web/tests/v17-oil-chain.test.ts"
+      ]
+    },
+    "observed02aTo02aFinish": {
+      "from": "897e28f2827119542bcf4217c27cf421f9cf4011",
+      "to": "e79d9e7edc46693729b8c4732162dfbf7c9158d9",
+      "shortstat": "29 files changed, 672 insertions(+), 37 deletions(-)",
+      "changedFiles": [
+        "docs/survival/gameplay-depth/S06_PHYSICAL_ELECTRICITY.md",
+        "docs/survival/gameplay-depth/SYS03_REAL_RECYCLER.md",
+        "web/e2e/s06-circuit-fixture.mjs",
+        "web/e2e/sys03-recycler-fixture.mjs",
+        "web/evidence/s06-circuit-fixture/01-switch-off-640.png",
+        "web/evidence/s06-circuit-fixture/02-switch-on-640.png",
+        "web/evidence/s06-circuit-fixture/03-door-open-640.png",
+        "web/evidence/s06-circuit-fixture/04-outage-closed-640.png",
+        "web/evidence/s06-circuit-fixture/trace.json",
+        "web/evidence/sys03-recycler-fixture/01-preview-640.png",
+        "web/evidence/sys03-recycler-fixture/02-confirm-640.png",
+        "web/evidence/sys03-recycler-fixture/03-processing-640.png",
+        "web/evidence/sys03-recycler-fixture/04-output-640.png",
+        "web/evidence/sys03-recycler-fixture/trace.json",
+        "web/src/game/balance.v1.json",
+        "web/src/game/catalog.ts",
+        "web/src/game/core.ts",
+        "web/src/game/engine.ts",
+        "web/src/game/persist.ts",
+        "web/src/game/recycler.ts",
+        "web/src/game/render.ts",
+        "web/src/game/sim.ts",
+        "web/src/ui/Game.tsx",
+        "web/src/ui/panels.tsx",
+        "web/tests/emergent-fire.test.ts",
+        "web/tests/home-ecology.test.ts",
+        "web/tests/home-production.test.ts",
+        "web/tests/s06-circuits.test.ts",
+        "web/tests/sys03-recycler.test.ts"
+      ]
+    },
+    "chain": [
+      "6e7d116b4400ea3c24373fe884b7fad258f4f7bc",
+      "c2418b5405ff3325e0ac4806a5309785e816b093",
+      "897e28f2827119542bcf4217c27cf421f9cf4011",
+      "e79d9e7edc46693729b8c4732162dfbf7c9158d9"
+    ],
+    "note": "Gameplay/PR44 drift is EXTERNAL to this task. The user-observed 897e28f2… WAS live refs/pull/44/head at 02A task start; PR44 then advanced to e79d9e7e… during the task. PR44 was NOT edited, merged or closed; no Gameplay permission, GOLD, POI, resource or Beacon-road change was made."
+  },
+  "painter": {
+    "heads": {
+      "u05Pin": {
+        "blockBytes": 8276,
+        "blockSha256": "f29c1a68803505c2dbf82aaae3ed37ab7240cb71dff47937f964e753c8d0f803",
+        "paletteOnlyBytes": 2154,
+        "paletteOnlySha256": "abcfe2ae06cb1a56e8c3b5ad760fa6867b50cfa848ea04c0e680892f37a67184"
+      },
+      "taskPin": {
+        "blockBytes": 8276,
+        "blockSha256": "f29c1a68803505c2dbf82aaae3ed37ab7240cb71dff47937f964e753c8d0f803",
+        "paletteOnlyBytes": 2154,
+        "paletteOnlySha256": "abcfe2ae06cb1a56e8c3b5ad760fa6867b50cfa848ea04c0e680892f37a67184"
+      },
+      "at02Delivery": {
+        "blockBytes": 8276,
+        "blockSha256": "f29c1a68803505c2dbf82aaae3ed37ab7240cb71dff47937f964e753c8d0f803",
+        "paletteOnlyBytes": 2154,
+        "paletteOnlySha256": "abcfe2ae06cb1a56e8c3b5ad760fa6867b50cfa848ea04c0e680892f37a67184"
+      },
+      "at02aObserved": {
+        "blockBytes": 8382,
+        "blockSha256": "2530c62e62a00082a4fdebc67b6b50c8c1536d35b3a246f1fd6e73cb87c77a8f",
+        "paletteOnlyBytes": 2154,
+        "paletteOnlySha256": "abcfe2ae06cb1a56e8c3b5ad760fa6867b50cfa848ea04c0e680892f37a67184"
+      },
+      "at02aFinish": {
+        "blockBytes": 8382,
+        "blockSha256": "2530c62e62a00082a4fdebc67b6b50c8c1536d35b3a246f1fd6e73cb87c77a8f",
+        "paletteOnlyBytes": 2154,
+        "paletteOnlySha256": "abcfe2ae06cb1a56e8c3b5ad760fa6867b50cfa848ea04c0e680892f37a67184"
+      }
+    },
+    "paletteSha256": "abcfe2ae06cb1a56e8c3b5ad760fa6867b50cfa848ea04c0e680892f37a67184",
+    "blockShaAt02Delivery": "f29c1a68803505c2dbf82aaae3ed37ab7240cb71dff47937f964e753c8d0f803",
+    "note": "Terrain PALETTE constants (2154 B, abcfe2ae06cb…) are byte-identical at every recorded head. The preflight painter-BLOCK slice grew 8276 -> 8382 B because 897e28f2 added a Gameplay POI-door render line inside renderChunk(); this is a reported Gameplay-side drift, NOT a change to the original painter or to the QA viewer."
+  },
+  "protectedExecutables": {
+    "terrainOnly": {
+      "file": "creator-u05/SoulOfHero_TerrainOnly_U05_x10.html",
+      "expected": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0",
+      "sha256": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0",
+      "unchanged": true
+    },
+    "nature01": {
+      "file": "creator-u05/SoulOfHero_Nature01_U05.html",
+      "expected": "ac4d54e310f0f3cf7e0e12d728bc5e9ad62f801994be37ce64f76b099af4a0a7",
+      "sha256": "ac4d54e310f0f3cf7e0e12d728bc5e9ad62f801994be37ce64f76b099af4a0a7",
+      "unchanged": true
+    },
+    "nature02": {
+      "file": "creator-u05/SoulOfHero_Nature02_ForestSlice.html",
+      "expected": "6e1e897a0e365412f6bc92d65390dc10bf7b0352e6ad8ef4a1c38e57f4f30fa6",
+      "sha256": "6e1e897a0e365412f6bc92d65390dc10bf7b0352e6ad8ef4a1c38e57f4f30fa6",
+      "unchanged": true
+    }
+  },
+  "qaExecutable": {
+    "file": "creator-u05/SoulOfHero_MapGeo02_CorrectedProjection.html",
+    "sha256": "41b2203bbbab47c0f4f215461e9e7571c2d1a46b0d982a7a2fbf177bbcac2339",
+    "bytes": 1421388,
+    "rebuilt": false
+  },
+  "goldSha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+  "noClaims": [
+    "NO PR44 edit/merge/close",
+    "NO Gameplay permission change",
+    "NO GOLD amendment",
+    "NO POI/resource/Beacon-road change",
+    "NO new atlas/art/world",
+    "NO VEYRA_PLAYABLE",
+    "NO VISUAL_ACCEPTED"
+  ]
+}

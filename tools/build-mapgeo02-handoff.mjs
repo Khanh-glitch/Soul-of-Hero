@@ -15,6 +15,9 @@ const pre = j('evidence/mapgeo02-preflight.json');
 const build = j('evidence/mapgeo02-build.json');
 const geom = j('evidence/mapgeo02-bridge-geometry.json');
 const trav = j('evidence/mapgeo02-traversal.json');
+const prov = j('evidence/mapgeo02-shot-provenance.json');
+const refs = j('evidence/mapgeo02a-refs.json');
+const vis = j('evidence/mapgeo02a-visual-inspection.json');
 const road = j('evidence/mapgeo02-road-water-classification.json');
 const audit01 = j('evidence/mapgeo01-physical-audit.json');
 
@@ -23,6 +26,9 @@ const sources = [
   'creator-u05/evidence/mapgeo02-build.json',
   'creator-u05/evidence/mapgeo02-bridge-geometry.json',
   'creator-u05/evidence/mapgeo02-traversal.json',
+  'creator-u05/evidence/mapgeo02-shot-provenance.json',
+  'creator-u05/evidence/mapgeo02a-refs.json',
+  'creator-u05/evidence/mapgeo02a-visual-inspection.json',
   'creator-u05/evidence/mapgeo02-road-water-classification.json',
   'creator-u05/evidence/mapgeo01-physical-audit.json',
   'veyra-world-master/data/canon/VEYRA_GOLD_MAP.sohmap.json',
@@ -114,7 +120,7 @@ const packet = {
       id: r.id, owner: r.owner, reasons: [r.status, r.reason], note: 'NO geometry guessed.' }))
   ],
   worldTraversalIntake: [
-    'Pin the exact Gameplay SHA (pinned observed 6e7d116b… OR live PR44 c2418b54… — drift reported) before consuming this packet.',
+    `Pin the exact Gameplay SHA before consuming this packet: task pin 6e7d116b…, MAP-GEO-02 delivery live c2418b54…, 02A observed 897e28f2…, 02A live ${refs.live.pr44Head.slice(0, 8)}… (drift chain in §10).`,
     'Decide bearing/load class for each of the 10 resolved deck candidates from GOLD load + crossingCandidate code 1/2; do not infer cart clearance from foot/cart labels.',
     'Define walk/cart collision on deck tiles, seam tiles and both approaches; production default here is PRODUCTION_NO_PERMISSION (deck still blocked).',
     'Approve or reject the QA_CANDIDATE_CROSSING mode separately; it is geometry measurement ONLY and never a production permission.',
@@ -125,6 +131,48 @@ const packet = {
     'Keep activeCollisionPermission=false until WorldTraversal explicitly approves a cell; WMP-03 invariant forbids non-zero values.',
     'Preserve all 81 canonical POI/source IDs, the Creator-approved Beacon road (verified byte-identical tile codes), and the three protected standalone baselines.'
   ],
+  amendment02a: {
+    task: 'SOH — MAP-GEO-REJOIN-02A / Evidence Integrity Corrective & Final Map Intake',
+    defect: prov.defect,
+    correctedQaScript: 'creator-u05/tests/qa-mapgeo02-traversal.mjs',
+    perBridgeAuthenticity: prov.perBridgeFixtures.map(f => ({
+      id: f.requestedBridgeId, resolved: f.resolved,
+      shots: f.captures.map(c => c.name),
+      playerTiles: f.captures.map(c => c.actualPlayerTile),
+      candidateIds: f.captures.map(c => c.candidateId),
+      freshFrames: f.captures.map(c => c.frameIdentity.freshFrameAdvanced),
+      frameSerials: f.captures.map(c => c.frameIdentity.serial)
+    })),
+    negativeGate: { cases: prov.negativeGate.negativeCases.length,
+      allRejected: prov.negativeGate.negativeCases.every(n => n.rejected && n.expectedReasonsFound),
+      controlAccepted: prov.negativeGate.control.accepted,
+      realCapturesAccepted: prov.negativeGate.realCaptures.every(r => r.reasons.length === 0) },
+    shotIntegrity: trav.shotIntegrity,
+    gates: { runtimeChecks: `${trav.summary.passes}/${trav.summary.checks}`,
+      staticTests: '156/156', mapgeo01Tests: '130/130', tscNoEmit: 'clean',
+      browserErrors: trav.summary.browserErrors.length,
+      nativeShots: trav.summary.shots,
+      realKeyRuns: trav.matchingCoordinateRuns.length + trav.bridgeRuns.length + trav.cliffRuns.length },
+    visualInspection: {
+      file: 'creator-u05/evidence/mapgeo02a-visual-inspection.json',
+      deckSilhouettes: vis.summary.deckSilhouettes, seams: vis.summary.seams,
+      cliffFaces: vis.summary.cliffFaces,
+      newlyConfirmedPhysicalDefects: vis.summary.newlyConfirmedPhysicalDefects,
+      targetedReworkNotGranted: vis.summary.targetedReworkNotGranted,
+      visualAccepted: false },
+    exactRefs: { mapPinned02a: refs.pinned.mapAt02aPin, mapAt02Delivery: refs.pinned.mapAt02Delivery,
+      main: refs.pinned.main, gameplayTaskPin: refs.pinned.gameplayTaskPin,
+      gameplayAt02Delivery: refs.pinned.gameplayAt02Delivery,
+      gameplayObserved02a: refs.pinned.gameplayObserved02a,
+      gameplayLiveAt02aFinish: refs.live.pr44Head,
+      pr44State: refs.pr44.state, driftChain: refs.drift.chain,
+      painterPaletteUnchanged: Object.values(refs.painter.heads).every(p => p.paletteOnlySha256 === refs.painter.paletteSha256),
+      qaExecutableRebuilt: refs.qaExecutable.rebuilt },
+    readiness: 'READY_AS_MEASURED_QA_EVIDENCE_FOR_WORLDTRAVERSAL_INTAKE__NOT_READY_AS_PRODUCTION_TRAVERSAL_PERMISSION__NOT_VISUALLY_ACCEPTED',
+    retained: ['10 candidate bridges', '2 unresolved bridges (br_9, br_b)',
+      '31-road classification', '596 deck tiles', '305 cliff candidate cells',
+      '0 activeCollisionPermission', 'three protected standalone baselines']
+  },
   acceptance: {
     PAPER: 'MEASURED', RUNTIME: 'ISOLATED_VIEWER_PHYSICAL_VERIFIED_QA_ONLY',
     VISUAL: 'NOT_REQUESTED_AND_NOT_GRANTED', GAMEPLAY: 'NOT_REQUESTED_AND_NOT_GRANTED',
@@ -146,6 +194,11 @@ const bridgeTable = bridgeRows.map(b =>
   `${b.status.startsWith('CANDIDATE_DECK') ? '**CANDIDATE DECK**' : '**UNRESOLVED** — ' + b.unresolvedReasons.join('; ')} |`
 ).join('\n');
 const roadTable = Object.entries(road.counts).map(([k, v]) => `| ${k} | ${v} |`).join('\n');
+const perIdTable = prov.perBridgeFixtures.map(f =>
+  `| \`${f.requestedBridgeId}\` | ${f.resolved ? 'CANDIDATE DECK' : 'UNRESOLVED'} | ` +
+  `${f.captures.map(c => c.name.replace('bridge_' + f.requestedBridgeId + '_', '')).join(', ')} | ` +
+  `${f.resolved ? f.captures.find(c => c.requestedKind === 'PER_ID_DECK').candidateId : 'null — NO deck'} |`
+).join('\n');
 const md = `# MAP-GEO-REJOIN-02 — Gameplay Handoff (Correct Real Bridge & Cliff Projection)
 
 > **Map physical geometry is measured and corrected in an isolated QA viewer.
@@ -163,12 +216,13 @@ const md = `# MAP-GEO-REJOIN-02 — Gameplay Handoff (Correct Real Bridge & Clif
 | Map branch / pinned HEAD / live HEAD | \`arena/2e3cfbd2-soul-of-hero\` @ \`${packet.exactRefs.mapPinnedAndLive}\` |
 | \`main\` | \`${packet.exactRefs.main}\` |
 | Gameplay HEAD **observed/pinned in the task** | \`${packet.exactRefs.gameplayPinnedObserved}\` |
-| Gameplay / PR44 **live HEAD now** | \`${packet.exactRefs.gameplayLivePR44}\` (PR44 **${packet.exactRefs.pr44State}**, NOT edited/merged/closed) |
-| Live drift during this task | **${packet.exactRefs.gameplayDriftDuringTask}** — both SHAs reported; Map did not touch PR44 |
+| Gameplay / PR44 **live HEAD at MAP-GEO-02 delivery** | \`${packet.exactRefs.gameplayLivePR44}\` (PR44 **${packet.exactRefs.pr44State}**, NOT edited/merged/closed) |
+| Gameplay / PR44 **live HEAD at 02A finish** | \`${refs.live.pr44Head}\` (PR44 **${refs.pr44.state}**; see §10 amendment) |
+| Live drift during MAP-GEO-02 | **${packet.exactRefs.gameplayDriftDuringTask}** — both SHAs reported; Map did not touch PR44 |
 | Creator-verified Gameplay HEAD | \`${packet.exactRefs.creatorVerified}\` |
 | U05 source pin | \`${packet.exactRefs.u05SourcePin}\` |
 | GOLD SHA-256 | \`${pre.goldSha256}\` (unchanged) |
-| Terrain painter block | \`${packet.exactRefs.painterBlockSha256}\` — byte-identical at U05 pin / MAP-GEO-01 observed / MAP-GEO-02 pinned / new PR44 head |
+| Terrain painter block (at 02 delivery) | \`${packet.exactRefs.painterBlockSha256}\` — byte-identical at U05 pin / MAP-GEO-01 observed / MAP-GEO-02 pinned / 02-delivery PR44 head; **02A drift in §10** |
 | QA executable | \`${build.deliverable.file}\` — ${build.deliverable.bytes} B, SHA \`${build.deliverable.sha256}\` |
 | Protected baselines | terrain-only \`540f095e…\`, NATURE-01 \`ac4d54e3…\`, NATURE-02 \`6e1e897a…\` — **all unchanged** |
 
@@ -307,6 +361,76 @@ ${packet.worldTraversalIntake.map((x, i) => `${i + 1}. ${x}`).join('\n')}
 PR44 edit/merge, GOLD amendment, new atlas, full-world visual acceptance or
 full Gameplay integration claim. PAPER / RUNTIME / VISUAL / GAMEPLAY stay
 separate. NATURE-01/02 remain archived R&D.
+
+## 10. AMENDMENT A — MAP-GEO-REJOIN-02A (evidence integrity corrective)
+
+**Verified defect.** The 02 QA script ran every \`BRIDGE_RUNS\` fixture first and only
+then captured all \`_at_bridge\` images. GitHub blob verification at pinned HEAD found
+**52 PNGs / 34 unique contents**, one **10-image identical group**; 8 differently-named
+\`_at_bridge\` files were the same stale final canvas frame.
+
+**Correction.** \`creator-u05/tests/qa-mapgeo02-traversal.mjs\` now forces at least two fresh
+render frames after every setup and reads the canvas **and** runtime state atomically in one
+frame callback. Every capture logs requested bridge id, actual player tile, camera coordinate,
+candidate id, selected mode, timestamp and frame identity. Each of the 8 bridge fixtures
+captures its own image **before the next fixture**. Twelve self-contained per-ID fixtures were
+added: deck + both measured bank approaches for the 10 resolved ids, the bare crossing site
+only for \`br_9\` / \`br_b\`. Full log: \`creator-u05/evidence/mapgeo02-shot-provenance.json\`.
+
+**Screenshot authenticity by bridge id** (all fresh frames, \`PRODUCTION_NO_PERMISSION\`, native \`640×360\`):
+
+| ID | Status | Per-ID screenshots | Candidate id on deck shot |
+|---|---|---|---|
+${perIdTable}
+
+**Negative gate (E08).** Five synthetic bad records — a frame from another bridge fixture
+relabelled, a stale canvas with no fresh render frame, a reused frame identity, a fake deck
+stamped at an unresolved site, and an undeclared mode — are **all rejected** with the expected
+reason; an unmodified authentic control is accepted; all **40** real bridge-labelled captures
+are accepted. Rule: ≤32 tiles from the requested \`atTile\`, nearest bridge centre must equal the
+requested id, fresh frame, declared mode, zero \`T.BRIDGE\` at an unresolved site, frame-serial
+owner must match the label.
+
+**Duplicate audit (E09).** **84** PNGs / **79** unique contents; **5** duplicate pairs, all
+classified \`LEGITIMATE_IDENTICAL_STATE_CAPTURE\` (same fixture/state at distinct frame
+identities) — duplicates are **not** auto-failed. **0** reused-frame defect groups; **8**
+\`_at_bridge\` shots have **8** distinct contents. The old 10-image group is gone.
+
+**Updated gates.** Runtime **${trav.summary.passes}/${trav.summary.checks}** (28 MAP-GEO-02 +
+E08/E09/E10), static **156/156**, MAP-GEO-01 **130/130**, \`npx tsc --noEmit\` clean,
+**17** real-key runs, **84** native shots, **0** browser errors, **0** permission leaks over
+10,086 tiles. QA executable **NOT rebuilt** (\`${trav.executable.sha256.slice(0, 8)}…\`);
+native \`640×360\`, \`U=0.5\`, original painter and all three protected baselines unchanged.
+
+**Visual inspection** (\`creator-u05/evidence/mapgeo02a-visual-inspection.json\`). Deck
+silhouettes are bounded and water-only; \`br_2\` deck and both bank seams read cleanly; angled
+decks (\`br_5\`, \`br_a\`) show stepped tile-grid edges and \`br_7\` reads as planks on tan
+\`shallow\` terrain (all 28 deck tiles are water-classified) — targeted **art** rework, not a
+geometry defect. The cliff face is a thin jagged band (no filled slab, no production wall) but
+reads stylised; the cliff real-key run frames do not show the face clearly — an **evidence gap**.
+**No newly confirmed physical defect.** The 10 candidates, 2 unresolved ids and the 31-road
+classification are retained. **NO \`VISUAL_ACCEPTED\`**; targeted rework items are recorded and
+NOT granted.
+
+**Exact SHAs and drift** (\`creator-u05/evidence/mapgeo02a-refs.json\`, 13/13 ref checks).
+Map pin at 02A \`${refs.pinned.mapAt02aPin.slice(0, 8)}…\`, at 02 delivery
+\`${refs.pinned.mapAt02Delivery.slice(0, 8)}…\`, \`main\` \`${refs.pinned.main.slice(0, 8)}…\`.
+Gameplay chain: \`${refs.drift.chain.map(s => s.slice(0, 8) + '…').join(' → ')}\`
+(02A observed \`897e28f2…\` WAS live \`refs/pull/44/head\` at task start; PR44 then advanced
+**more than once** during the task — the definitive live SHA at the final gate run is
+\`${refs.live.pr44Head}\`, recorded in \`mapgeo02a-refs.json :: live.pr44Head\`). PR44
+**${refs.pr44.state}**, NOT edited/merged/closed. Drift since 02 delivery:
+\`${refs.drift.at02DeliveryTo02aLive.shortstat}\`;
+since the observed 02A head: \`${refs.drift.observed02aTo02aFinish.shortstat}\`. Terrain
+**palette** constants (2154 B) are byte-identical at every recorded head; the preflight
+painter-*block* slice grew \`8276 → 8382 B\` because a Gameplay POI-door render line inside
+\`renderChunk()\` changed — reported Gameplay-side drift, NOT a change to the original painter
+or to the QA viewer.
+
+**WorldTraversal readiness.**
+\`READY_AS_MEASURED_QA_EVIDENCE_FOR_WORLDTRAVERSAL_INTAKE__NOT_READY_AS_PRODUCTION_TRAVERSAL_PERMISSION__NOT_VISUALLY_ACCEPTED\`.
+The 10 deck candidates and 305 cliff faces remain geometry-only; \`br_9\`/\`br_b\` and the 6
+ambiguous road ids still need Creator/Gameplay decisions; the §8 intake list is unchanged.
 `;
 fs.writeFileSync(path.join(ROOT, 'docs/MAPGEO02_GAMEPLAY_HANDOFF.md'), md);
 console.log(`U05_MAPGEO02_HANDOFF_OK sources=${sources.length} missing=0 bridges=${bridgeRows.length} unresolved=${unresolved.length} roadRows=${road.rows.length}`);
