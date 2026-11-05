@@ -1,0 +1,749 @@
+{
+  "schema": "soh.map.lr01.poi_example.v1",
+  "reason": "deep vault geometry with NO loot authored",
+  "layout": {
+    "schema": "soh.map.lr01.poi_layout.v1",
+    "poiId": "po_rc_meridian",
+    "name": "Meridian Archive Cache",
+    "arche": "ragnarok_cache",
+    "atAu": [
+      1138,
+      668
+    ],
+    "rot": 0.2803774233907461,
+    "scale": 1,
+    "sourceRef": "project.pois[] where id=po_rc_meridian",
+    "status": "PROPOSED_INTERIOR_AND_CIRCULATION__CANONICAL_FOOTPRINT_ONLY",
+    "ownership": "MAP owns static layout / portals / sockets; GAMEPLAY owns dynamic door states, destruction, construction, devices, locks, power, loot, recipes, quests and machines.",
+    "enclosureClass": "ENCLOSED_SINGLE",
+    "enclosureClassificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+    "canonical": {
+      "footPolygonAu": [
+        [
+          1129.3681,
+          657.5014
+        ],
+        [
+          1150.8934,
+          663.6999
+        ],
+        [
+          1146.6319,
+          678.4986
+        ],
+        [
+          1125.1066,
+          672.3001
+        ]
+      ],
+      "footAreaAu2": 344.96,
+      "minEdgeAu": 15.4,
+      "deepPolygonAu": null,
+      "gate": "none",
+      "links": [],
+      "accessText": "Đường bộ; không qua Elder",
+      "conf": "proposal"
+    },
+    "template": {
+      "archetype": "ragnarok_cache",
+      "family": "enclosed",
+      "grid": [
+        1,
+        2
+      ],
+      "roof": 1,
+      "sockets": 5,
+      "pattern": "antechamber_and_vault",
+      "note": "deep cache vault; NO loot authored",
+      "instantiatedRows": 1,
+      "instantiatedCols": 2
+    },
+    "context": {
+      "landId": "ld_veyra",
+      "biomeCode": 0,
+      "zoneId": null,
+      "elderGeometryId": null,
+      "seaDistanceCells": 30,
+      "clearanceCells": 11,
+      "nearestRoad": {
+        "id": "rd_3",
+        "kind": "cart",
+        "distanceAu": 3.9204
+      },
+      "nearestDock": {
+        "id": "dk_moss",
+        "d": 144.7056
+      },
+      "status": "DERIVED"
+    },
+    "contextModifiers": [
+      {
+        "id": "MOD-CART-FRONTAGE",
+        "effect": "Entrance edge chosen toward a cart-road centreline; NO cart clearance claim",
+        "status": "DERIVED"
+      }
+    ],
+    "levels": [
+      {
+        "id": "level.po_rc_meridian.0",
+        "parentPoiId": "po_rc_meridian",
+        "index": 0,
+        "name": "GROUND",
+        "polygonAu": [
+          [
+            1129.3681,
+            657.5014
+          ],
+          [
+            1150.8934,
+            663.6999
+          ],
+          [
+            1146.6319,
+            678.4986
+          ],
+          [
+            1125.1066,
+            672.3001
+          ]
+        ],
+        "areaAu2": 344.96,
+        "status": [
+          "SOURCE_AUTHORED",
+          "DERIVED"
+        ]
+      }
+    ],
+    "footprint": {
+      "obb": {
+        "centre": [
+          1138,
+          668
+        ],
+        "ux": [
+          0.961,
+          0.2767
+        ],
+        "uy": [
+          -0.2767,
+          0.961
+        ],
+        "wAu": 22.4,
+        "hAu": 15.4,
+        "angleRad": 0.2804,
+        "edgeLengthsAu": [
+          22.4,
+          15.4,
+          22.4,
+          15.4
+        ],
+        "quadEdge2Au": 15.4
+      },
+      "widthAu": 22.4014,
+      "heightAu": 15.4013,
+      "wallThicknessAu": 1.232,
+      "wallThicknessStatus": "PROPOSED"
+    },
+    "walls": [
+      {
+        "id": "wall.po_rc_meridian.1",
+        "parentPoiId": "po_rc_meridian",
+        "kind": "EXTERIOR",
+        "aAu": [
+          1129.3681,
+          657.5014
+        ],
+        "bAu": [
+          1150.8934,
+          663.6999
+        ],
+        "lengthAu": 22.4,
+        "thicknessAu": 1.232,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_rc_meridian :: foot edge 1 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_rc_meridian.2",
+        "parentPoiId": "po_rc_meridian",
+        "kind": "EXTERIOR",
+        "aAu": [
+          1150.8934,
+          663.6999
+        ],
+        "bAu": [
+          1146.6319,
+          678.4986
+        ],
+        "lengthAu": 15.4,
+        "thicknessAu": 1.232,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_rc_meridian :: foot edge 2 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_rc_meridian.3",
+        "parentPoiId": "po_rc_meridian",
+        "kind": "EXTERIOR",
+        "aAu": [
+          1146.6319,
+          678.4986
+        ],
+        "bAu": [
+          1125.1066,
+          672.3001
+        ],
+        "lengthAu": 22.4,
+        "thicknessAu": 1.232,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_rc_meridian :: foot edge 3 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_rc_meridian.4",
+        "parentPoiId": "po_rc_meridian",
+        "kind": "EXTERIOR",
+        "aAu": [
+          1125.1066,
+          672.3001
+        ],
+        "bAu": [
+          1129.3681,
+          657.5014
+        ],
+        "lengthAu": 15.4,
+        "thicknessAu": 1.232,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_rc_meridian :: foot edge 4 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_rc_meridian.split.v.1",
+        "parentPoiId": "po_rc_meridian",
+        "kind": "INTERIOR_PARTITION",
+        "aAu": [
+          1140.1308,
+          660.5997
+        ],
+        "bAu": [
+          1135.8692,
+          675.4003
+        ],
+        "thicknessAu": 1.232,
+        "status": "PROPOSED",
+        "opaqueSight": true
+      }
+    ],
+    "rooms": [
+      {
+        "id": "room.po_rc_meridian.1.1",
+        "parentPoiId": "po_rc_meridian",
+        "levelId": "level.po_rc_meridian.0",
+        "row": 1,
+        "col": 1,
+        "pattern": "antechamber_and_vault",
+        "enclosureClass": "ENCLOSED_SINGLE",
+        "polygonAu": [
+          [
+            1129.7884,
+            658.2628
+          ],
+          [
+            1139.3684,
+            661.0212
+          ],
+          [
+            1135.4477,
+            674.6379
+          ],
+          [
+            1125.8677,
+            671.8796
+          ]
+        ],
+        "centroidAu": [
+          1132.618,
+          666.4504
+        ],
+        "areaAu2": 141.2631,
+        "bboxAu": [
+          1125.8677,
+          658.2628,
+          1139.3684,
+          674.6379
+        ],
+        "floor": {
+          "polygonAu": [
+            [
+              1129.7884,
+              658.2628
+            ],
+            [
+              1139.3684,
+              661.0212
+            ],
+            [
+              1135.4477,
+              674.6379
+            ],
+            [
+              1125.8677,
+              671.8796
+            ]
+          ],
+          "status": "PROPOSED",
+          "floorLevelId": "floor.po_rc_meridian.1.1"
+        },
+        "roof": {
+          "covered": true,
+          "coverageFractionOfRoom": 1,
+          "canopyOnly": false,
+          "status": "PROPOSED",
+          "note": "Full roof over an enclosed room."
+        },
+        "surface": "ENCLOSURE_INTERIOR",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "room.po_rc_meridian.1.2",
+        "parentPoiId": "po_rc_meridian",
+        "levelId": "level.po_rc_meridian.0",
+        "row": 1,
+        "col": 2,
+        "pattern": "antechamber_and_vault",
+        "enclosureClass": "ENCLOSED_SINGLE",
+        "polygonAu": [
+          [
+            1140.5523,
+            661.3621
+          ],
+          [
+            1150.1323,
+            664.1204
+          ],
+          [
+            1146.2116,
+            677.7372
+          ],
+          [
+            1136.6316,
+            674.9788
+          ]
+        ],
+        "centroidAu": [
+          1143.382,
+          669.5496
+        ],
+        "areaAu2": 141.2631,
+        "bboxAu": [
+          1136.6316,
+          661.3621,
+          1150.1323,
+          677.7372
+        ],
+        "floor": {
+          "polygonAu": [
+            [
+              1140.5523,
+              661.3621
+            ],
+            [
+              1150.1323,
+              664.1204
+            ],
+            [
+              1146.2116,
+              677.7372
+            ],
+            [
+              1136.6316,
+              674.9788
+            ]
+          ],
+          "status": "PROPOSED",
+          "floorLevelId": "floor.po_rc_meridian.1.2"
+        },
+        "roof": {
+          "covered": true,
+          "coverageFractionOfRoom": 1,
+          "canopyOnly": false,
+          "status": "PROPOSED",
+          "note": "Full roof over an enclosed room."
+        },
+        "surface": "ENCLOSURE_INTERIOR",
+        "status": "PROPOSED"
+      }
+    ],
+    "floors": [
+      {
+        "polygonAu": [
+          [
+            1129.7884,
+            658.2628
+          ],
+          [
+            1139.3684,
+            661.0212
+          ],
+          [
+            1135.4477,
+            674.6379
+          ],
+          [
+            1125.8677,
+            671.8796
+          ]
+        ],
+        "status": "PROPOSED",
+        "floorLevelId": "floor.po_rc_meridian.1.1"
+      },
+      {
+        "polygonAu": [
+          [
+            1140.5523,
+            661.3621
+          ],
+          [
+            1150.1323,
+            664.1204
+          ],
+          [
+            1146.2116,
+            677.7372
+          ],
+          [
+            1136.6316,
+            674.9788
+          ]
+        ],
+        "status": "PROPOSED",
+        "floorLevelId": "floor.po_rc_meridian.1.2"
+      }
+    ],
+    "entrance": {
+      "id": "entrance.po_rc_meridian.1",
+      "parentPoiId": "po_rc_meridian",
+      "kind": "PRIMARY_ENTRANCE",
+      "onWallId": "wall.po_rc_meridian.1",
+      "atAu": [
+        1140.1307,
+        660.6007
+      ],
+      "openingAu": 6,
+      "openingStatus": "PROPOSED",
+      "sourceRef": "project.pois[] where id=po_rc_meridian :: no authored entrance; edge 1 chosen by nearest road",
+      "capacityUpperBoundAu": 22.4,
+      "doorStateOwner": "GAMEPLAY",
+      "lockedState": "UNKNOWN",
+      "powerRequirement": "UNKNOWN",
+      "note": "STATIC opening geometry only. No lock, key, power, quest or device rule is authored."
+    },
+    "portals": [
+      {
+        "id": "portal.po_rc_meridian.entrance",
+        "parentPoiId": "po_rc_meridian",
+        "kind": "EXTERIOR_PORTAL",
+        "fromRoomId": null,
+        "toRoomId": "room.po_rc_meridian.1.2",
+        "atAu": [
+          1140.1307,
+          660.6007
+        ],
+        "openingAu": 6,
+        "openingStatus": "PROPOSED",
+        "status": "PROPOSED",
+        "doorStateOwner": "GAMEPLAY",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "note": "Static entrance portal. NO door rule, lock, key or power requirement."
+      },
+      {
+        "id": "portal.po_rc_meridian.h.1.1",
+        "parentPoiId": "po_rc_meridian",
+        "kind": "INTERIOR_DOORWAY",
+        "fromRoomId": "room.po_rc_meridian.1.1",
+        "toRoomId": "room.po_rc_meridian.1.2",
+        "atAu": [
+          1138,
+          668
+        ],
+        "openingAu": 3.85,
+        "status": "PROPOSED",
+        "openingStatus": "PROPOSED",
+        "doorStateOwner": "GAMEPLAY",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "note": "Static portal geometry. Gameplay owns dynamic door state, destruction and devices."
+      }
+    ],
+    "circulation": {
+      "entranceRoomId": "room.po_rc_meridian.1.2",
+      "reachableRooms": 2,
+      "totalRooms": 2,
+      "maxDepth": 1,
+      "depthByRoomId": {
+        "room.po_rc_meridian.1.2": 0,
+        "room.po_rc_meridian.1.1": 1
+      },
+      "interiorDepthAu": 9.5215,
+      "status": "DERIVED"
+    },
+    "retreat": {
+      "status": "UNRESOLVED",
+      "pathAu": null,
+      "lengthAu": null,
+      "exitAtAu": null,
+      "note": "No authored retreat polyline. An exit is NOT invented; Gameplay may route through static portals."
+    },
+    "sockets": [
+      {
+        "id": "socket.po_rc_meridian.1",
+        "parentPoiId": "po_rc_meridian",
+        "parentRoomId": "room.po_rc_meridian.1.1",
+        "levelId": "level.po_rc_meridian.0",
+        "atAu": [
+          1131.3529,
+          664.1628
+        ],
+        "fitEnvelopeAu": {
+          "w": 5.6003,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_rc_meridian.2",
+        "parentPoiId": "po_rc_meridian",
+        "parentRoomId": "room.po_rc_meridian.1.2",
+        "levelId": "level.po_rc_meridian.0",
+        "atAu": [
+          1144.6471,
+          671.8372
+        ],
+        "fitEnvelopeAu": {
+          "w": 5.6003,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_rc_meridian.3",
+        "parentPoiId": "po_rc_meridian",
+        "parentRoomId": "room.po_rc_meridian.1.1",
+        "levelId": "level.po_rc_meridian.0",
+        "atAu": [
+          1130.3301,
+          667.715
+        ],
+        "fitEnvelopeAu": {
+          "w": 5.6003,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_rc_meridian.4",
+        "parentPoiId": "po_rc_meridian",
+        "parentRoomId": "room.po_rc_meridian.1.2",
+        "levelId": "level.po_rc_meridian.0",
+        "atAu": [
+          1145.6699,
+          668.285
+        ],
+        "fitEnvelopeAu": {
+          "w": 5.6003,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_rc_meridian.5",
+        "parentPoiId": "po_rc_meridian",
+        "parentRoomId": "room.po_rc_meridian.1.1",
+        "levelId": "level.po_rc_meridian.0",
+        "atAu": [
+          1130.3301,
+          667.715
+        ],
+        "fitEnvelopeAu": {
+          "w": 5.6003,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      }
+    ],
+    "roofCoverage": {
+      "coveredRoomCount": 2,
+      "totalRoomCount": 2,
+      "roofAreaAu2": 282.5263,
+      "footAreaAu2": 344.96,
+      "roofAreaToFootAreaRatioAcrossLevels": 0.819,
+      "fractionOfFoot": 0.819,
+      "status": "DERIVED",
+      "note": "Measured over PROPOSED room/canopy polygons weighted by coverageFractionOfRoom. The across-levels ratio can exceed 1 when a DEEP level adds roofed area; it is NOT a single-plane coverage fraction."
+    },
+    "geometryAdapters": {
+      "collision": {
+        "staticWalls": [
+          "wall.po_rc_meridian.1",
+          "wall.po_rc_meridian.2",
+          "wall.po_rc_meridian.3",
+          "wall.po_rc_meridian.4",
+          "wall.po_rc_meridian.split.v.1"
+        ],
+        "staticWallCount": 5,
+        "wallThicknessAu": 1.232,
+        "thicknessStatus": "PROPOSED",
+        "dynamicCollisionOwner": "GAMEPLAY",
+        "destructionOwner": "GAMEPLAY",
+        "status": "PROPOSED_STATIC_COLLISION_GEOMETRY__NOT_RUNTIME_COLLISION_DATA"
+      },
+      "enclosure": {
+        "enclosedAreaAu2": 282.5262,
+        "footAreaAu2": 344.96,
+        "enclosureFraction": 0.819,
+        "enclosureClass": "ENCLOSED_SINGLE",
+        "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+        "status": "DERIVED"
+      },
+      "reach": {
+        "maxInteriorDistanceAu": 9.5215,
+        "nearestRoadAu": 3.9204,
+        "approachLengthAu": 6.7183,
+        "minPortalOpeningAu": 3.85,
+        "status": "DERIVED",
+        "note": "Geometric reach only. Interaction radius / Gameplay reach rules are NOT asserted."
+      },
+      "lineOfSight": {
+        "opaqueWallIds": [
+          "wall.po_rc_meridian.1",
+          "wall.po_rc_meridian.2",
+          "wall.po_rc_meridian.3",
+          "wall.po_rc_meridian.4",
+          "wall.po_rc_meridian.split.v.1"
+        ],
+        "transparentPortalIds": [
+          "portal.po_rc_meridian.entrance",
+          "portal.po_rc_meridian.h.1.1"
+        ],
+        "portalSightOwner": "GAMEPLAY",
+        "status": "PROPOSED",
+        "note": "Static opaque walls + portal gaps. Dynamic door opacity is Gameplay-owned."
+      },
+      "roofCoverage": {
+        "coveredRoomCount": 2,
+        "totalRoomCount": 2,
+        "roofAreaAu2": 282.5263,
+        "footAreaAu2": 344.96,
+        "roofAreaToFootAreaRatioAcrossLevels": 0.819,
+        "fractionOfFoot": 0.819,
+        "status": "DERIVED",
+        "note": "Measured over PROPOSED room/canopy polygons weighted by coverageFractionOfRoom. The across-levels ratio can exceed 1 when a DEEP level adds roofed area; it is NOT a single-plane coverage fraction."
+      },
+      "portalPassability": {
+        "portals": [
+          {
+            "id": "portal.po_rc_meridian.entrance",
+            "openingAu": 6,
+            "kind": "EXTERIOR_PORTAL"
+          },
+          {
+            "id": "portal.po_rc_meridian.h.1.1",
+            "openingAu": 3.85,
+            "kind": "INTERIOR_DOORWAY"
+          }
+        ],
+        "passabilityRuleOwner": "GAMEPLAY",
+        "status": "UNKNOWN__DYNAMIC_DOOR_STATE_DESTRUCTION_AND_DEVICES_OWNED_BY_GAMEPLAY",
+        "note": "Map asserts only that a geometric opening exists. No lock, power, key, weight or vehicle rule."
+      }
+    },
+    "stableIds": {
+      "rooms": [
+        "room.po_rc_meridian.1.1",
+        "room.po_rc_meridian.1.2"
+      ],
+      "walls": [
+        "wall.po_rc_meridian.1",
+        "wall.po_rc_meridian.2",
+        "wall.po_rc_meridian.3",
+        "wall.po_rc_meridian.4",
+        "wall.po_rc_meridian.split.v.1"
+      ],
+      "entrances": [
+        "entrance.po_rc_meridian.1"
+      ],
+      "portals": [
+        "portal.po_rc_meridian.entrance",
+        "portal.po_rc_meridian.h.1.1"
+      ],
+      "sockets": [
+        "socket.po_rc_meridian.1",
+        "socket.po_rc_meridian.2",
+        "socket.po_rc_meridian.3",
+        "socket.po_rc_meridian.4",
+        "socket.po_rc_meridian.5"
+      ],
+      "levels": [
+        "level.po_rc_meridian.0"
+      ],
+      "floors": [
+        "floor.po_rc_meridian.1.1",
+        "floor.po_rc_meridian.1.2"
+      ]
+    },
+    "noClaims": [
+      "NO loot, loot table, chest contents or reward",
+      "NO locked-door rule, key, card or power requirement",
+      "NO generator, machine, recipe, quest, vendor inventory or economy",
+      "NO dynamic door state or destruction",
+      "NO authored entrance in source (all openings PROPOSED)",
+      "NO approved vertical unit or stair geometry",
+      "NO runtime collision data (static geometry only)",
+      "NO playable survival acceptance"
+    ]
+  }
+}

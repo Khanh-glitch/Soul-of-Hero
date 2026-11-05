@@ -1,0 +1,1001 @@
+{
+  "gameplayHead": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+  "files": 142,
+  "bytes": 8752709,
+  "records": [
+    {
+      "file": "geography/veyra-lr01/.gitattributes",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 12,
+      "sha1": "6c5ed99ca5bf64d2e6c353e8fd56155c80b70802",
+      "sha256": "193a4d3dce119131c0b9758c4064b81d001fe6a921b2718363db333d4dbbd733"
+    },
+    {
+      "file": "geography/veyra-lr01/README.md",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 1518,
+      "sha1": "aa846fc1429e8b401575ae5c5a1bf3e0cd09fec3",
+      "sha256": "aa8455263c78b674fb1f06f8fa9139c1d8ff6612e1cc06aeac46f81e0148cf94"
+    },
+    {
+      "file": "geography/veyra-lr01/map_tower/veyra_gold/VEYRA_GOLD_MAP.sohmap.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 332249,
+      "sha1": "2337c0be5898efcc208ed00d96e3177039a2bc5e",
+      "sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/geo01/output/rasters/biomeCode.u8",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 43750,
+      "sha1": "b4ec0b008f3cbc8787b993b615e96e1cf88ced66",
+      "sha256": "232998e642e836f30129b3a689f7cd458f8c57526ecd2c1bad51449cbeff839d"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/geo01/output/rasters/buildableCandidate.u8",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 43750,
+      "sha1": "b0cff2bfe65837fe1e560a8b48ac45629e0df078",
+      "sha256": "afc1067b5493e1cedbb8845718dd3a8263ae1c81b9e904ea912613276a1f641b"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/geo01/output/rasters/cargoCandidate.u8",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 43750,
+      "sha1": "1f45573427ebb01ab2e1d629fb9cc8b83bec4335",
+      "sha256": "28b8a3060344cf998673f2c7163bf664563be477124e0bab376bd56645229adb"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/geo01/output/rasters/clearanceCells.u8",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 43750,
+      "sha1": "b0c83e63082510e7ba68d83759c3fa7d53173235",
+      "sha256": "e8e00caa9ff1018f9b29230784aaf263745d47df100cd25dd4bd26039e50087c"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/geo01/output/rasters/coast.u8",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 43750,
+      "sha1": "39283308f7bef02e99796681c394c9403ee3451f",
+      "sha256": "44c0f13ead072f501351f458c9180a31e30f08a321848e10e8faea567067f5d5"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/geo01/output/rasters/crossingCandidate.u8",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 43750,
+      "sha1": "e4f74719a95cc70da7a152f87caabe97c49b349e",
+      "sha256": "f1c96bd9fdb04d66117811c941e4a02df7fb3111c1a8671060fccad42c29603b"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/geo01/output/rasters/elderGeometryId.u8",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 43750,
+      "sha1": "0c6f3db4fed3244c097188d47899e687626ca6ac",
+      "sha256": "e924b646fc53b0886869b5332ef4413345d161d84c3abb76376b555af549eca8"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/geo01/output/rasters/elevation.u8",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 43750,
+      "sha1": "825c1735529355a3e3ef98af134d8747ddc20d92",
+      "sha256": "54d7641cea57ebd20be1eb17a0ce919f352f2868f4ed123e968a2e59666c6d24"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/geo01/output/rasters/freshwater.u8",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 43750,
+      "sha1": "5dfad729a669876ef49a8238143637d4bb28e992",
+      "sha256": "9f9716b53e9bc553282860510b0ab1410574d8edf03eabb79fb3181f6d465aa4"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/geo01/output/rasters/freshwaterProximityCells.u8",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 43750,
+      "sha1": "3397195e00002d2e47e2277c00479ae21cd355be",
+      "sha256": "27244a6693b885fe81de03c8e429bc225f5d848de60db76f22e19dffadc247ea"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/geo01/output/rasters/lakeId.u8",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 43750,
+      "sha1": "cae5972a391b68c58fc37946abe416abc6f595a5",
+      "sha256": "1fcffe83cdac6f1292b374f8cab556f9b4e5bf032769b0413fcab40c6c3738b1"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/geo01/output/rasters/landId.u8",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 43750,
+      "sha1": "80cbd35bdc20ffd43967d83f4f7e04311a55a674",
+      "sha256": "3aaebb6a358ce04fc33eff56050321639ffc317fe1bb698114a621240c12e8a7"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/geo01/output/rasters/poiGeometryId.u8",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 43750,
+      "sha1": "d57a9e0d2594b9bb873b0c2ed4d0284e4bcb313f",
+      "sha256": "94348636f05c83da80a5b9897bf30c4c0f6951f49a6c9875695454e7aa093881"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/geo01/output/rasters/protectedGeometryCandidate.u8",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 43750,
+      "sha1": "40be6c61643616607868776d44ebdd787b5845a4",
+      "sha256": "9d500a17898dd9bc5e3368be0bc14d86c91ac361a1449c484c1b5322894d0b71"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/geo01/output/rasters/riverId.u8",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 43750,
+      "sha1": "d9f6c6eb31e6fce1858796d9dcdcc61500445661",
+      "sha256": "9dfe77adbf89d8c729f3487f585381d6014c27978839cd52bcce2169c6df3310"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/geo01/output/rasters/roadClass.u8",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 43750,
+      "sha1": "a1a2c4f674096bf49897cf5eb588b2ee35e211d7",
+      "sha256": "d84fca5f129c9aa866a4960eaf7902a0fe923668cfdb2e41a9d864979cfe1f8b"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/geo01/output/rasters/seaDistanceCells.u8",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 43750,
+      "sha1": "c0565c5a95e4dc45ed48dc5c624026ec35a7e18c",
+      "sha256": "45ba677aa1dde0b2d662c83386667dee8427f846e75978fd18c0e08f57c70977"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/geo01/output/rasters/slope.u8",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 43750,
+      "sha1": "8a5f6616c0cb4759cbbf683e3fa544170847d1f8",
+      "sha256": "6648158ad69cd9c136e249394a9aa7b21e31d08ca7ac48d700fa9511a918130e"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/geo01/output/rasters/walkableCandidate.u8",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 43750,
+      "sha1": "6364ef5b82a1b725c1ddbe7a2da4ac53097a1552",
+      "sha256": "fcf691e68785e204634ce5bd05d5f2c500c65e61deea4e3b0c468d282ef0a8d7"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/geo01/output/rasters/waterClass.u8",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 43750,
+      "sha1": "3d853e49308b334664951f11e4716cd1d96276b4",
+      "sha256": "f4c49bfc6279324051b31afaf3165ebde1734ad26d1c7e1bc52fe368748ad254"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/geo01/output/rasters/zoneId.u8",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 43750,
+      "sha1": "d84133bfb037396b658b8b95099b2a684fac585e",
+      "sha256": "e6ea74cd062935bad399002bf7d99e540b71f61ab5a83654db1cef1bdb2a374d"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/art_manifest.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 18380,
+      "sha1": "e60de97944bb8d01c263e1433453c663709e0d16",
+      "sha256": "a113bdc9f05e582545c862f576208d7d381b145480429f444965d70c51b902e1"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/build_sites.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 76508,
+      "sha1": "16f360aec5392c8f8b86e57a155e6e62bec2b948",
+      "sha256": "6f5522d00420c872489e318f87c615f1597fe8813a13f49911e6cf2e4f79bd5e"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/feature_status.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 265880,
+      "sha1": "eb07240f4c1dde58ac27cd473a8fdbaa90e0ae1f",
+      "sha256": "9c1169d10d653698e157c54d7ac70686bb2a6a765d8d41f173ce1057ddf930e0"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/geography.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 537768,
+      "sha1": "1c9bdafc9722dda7d1da97a67a47fa24e0283462",
+      "sha256": "5e3639e0d95bfe7219c819516ea09e16fb0d150e432ceab489a4d3d908438eb6"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/geography_package.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 1969292,
+      "sha1": "7f932aadb50a2f6a68e758d3f1669e20d7f7f9b9",
+      "sha256": "b4cc77228caf847d1ad0d8a680457ca65731202513a047826e8bd973662e19ad"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/poi_examples/po_academy.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 31911,
+      "sha1": "7ebb0732c8449c8baed121ce4e46535709929bf0",
+      "sha256": "e84db17bd797c058fd1145e170f1b79bc416e42e49c9f34f6fe66baa87d0b513"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/poi_examples/po_fracquarry.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 17221,
+      "sha1": "4194863f8bcbe98f45a0ab584f5f90ad75bac782",
+      "sha256": "43b84994ad55f9c7956ad500c67f055546dfcdafad54602c9ce721668f2e7116"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/poi_examples/po_hall_eyes.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 23363,
+      "sha1": "17ecbe133f9db6e202381afe5c3632637b8ec35b",
+      "sha256": "1b4c2dc7e1b2a98204506f1a5a589e003c23709349799fbebb46a0f0782cdc3e"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/poi_examples/po_kilns.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 27850,
+      "sha1": "fb00ad5558437d76b6d1f706d3bbd15cf58a9701",
+      "sha256": "9f41d113b26ec2f670a52c48e54e876219c10e9750f3e53d60ddd3cc6177b3ee"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/poi_examples/po_mere.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 15890,
+      "sha1": "8c595a6880e1a0fbc21b626dc5bbaf6a412e5672",
+      "sha256": "4dd6d246c11edd62221a6144a165f76324bab1a2dcffc9e78c5756acb3c26348"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/poi_examples/po_rc_meridian.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 20855,
+      "sha1": "b0cd7b0932cabcc81b85c7ce4efd6cc374f28c9b",
+      "sha256": "278beebf251ec36803cff99d94ca5213a0bad68dfca1bb2f6c210c18d0e130f5"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/poi_examples/po_siloc.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 26367,
+      "sha1": "9bbdb681d0b9255dfe6b9b5417cefca0a6c701c2",
+      "sha256": "6bbe45f6a20625e0a5e97cbf934a5875a8ed2cd30e4ac1f32222d30e03c7fa50"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/poi_examples/po_strait.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 21875,
+      "sha1": "840b729e0f99c719778032d8679ada694ced8c12",
+      "sha256": "265c544fac799db9478128729c13d00779b2d549e936fd98705794ccac8a3604"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/poi_geometry.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 179039,
+      "sha1": "c7adaa3988de6f7b282029b9bf522c2af92b219d",
+      "sha256": "758fa5d03d3a826ee2b1e6689358b3389b489b2b9104ac99f26b6701a4d978aa"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/poi_layouts.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 2067441,
+      "sha1": "0d55104d6c0a808f9c702bfd37bb8f490f477e69",
+      "sha256": "65a6a107a474a465b935d6a9e72de326523c3fc3d4e94ef36aba8a8496d24f34"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/poi_summary.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 65289,
+      "sha1": "ce0270aca5ac6d09681645ab2e9d6efa20393f26",
+      "sha256": "81b7933a11abe07b9fc4a9cd713bb2a608761062b45a32d88a7424d7fd867388"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/elder_el_aion.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 12128,
+      "sha1": "0324f427e799d9297d3053dfb48bc71790d8c05f",
+      "sha256": "33bef706405dac4bedb52bb25837ad3e69253f9a4a896eb82219b441dc4e668c"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/elder_el_anubis.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 12192,
+      "sha1": "cdcbb13f239ced2eb771d2a64e1da54c2030b592",
+      "sha256": "d8bd39a374271100144213ba21ba420d390511f7d1070469c9b36696961c2700"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/elder_el_argus.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 12184,
+      "sha1": "ca2c28a65498e15a066cbb1435d16c850643afd8",
+      "sha256": "b5fcdde6e8421ebdcba4cd20880d52e059efe5c2ac75c5c4bb804504d1f1487b"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/elder_el_atlas.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 12102,
+      "sha1": "6d6269154436982fd4cd7095fb3647cdc5434d89",
+      "sha256": "786eb74370880942c5d091216f7c57dfdd3f146d3cb81674707a4cfd70ea0f99"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/elder_el_surtur.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 12221,
+      "sha1": "5fb1ff63ae895705be086d50f73628d43e0b156b",
+      "sha256": "fad35f4fa59aa8d8e74d95e18dc67f02cd99cda0f8ee72084ae7c93671fc9b64"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/elder_el_typhon.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 12102,
+      "sha1": "e7c7838cb2445ebbd56c7ed4899d4a298f1694c7",
+      "sha256": "ad779c876cce89e80dac3b24cdd56add3c6331fba865e356d91a5c874b362a1b"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/land_ld_beacon.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 3616,
+      "sha1": "81fbd9397bf60cce6aff6867d1fe8a586c59a768",
+      "sha256": "c3921c07213d280255212ac160520c3bd0baaa56b287ccc976cd1cd122445b4d"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/land_ld_cinder.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 10200,
+      "sha1": "af86a70f28c192f66796fc5e615e4b4c84643640",
+      "sha256": "6469bfc5b98f092cf01bb1968cdea8a05df6b8f37ef357109c9dce8e5d9252b5"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/land_ld_gull.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4973,
+      "sha1": "9db8cf818ba01deda48561eefe96c3ffb57bbb9d",
+      "sha256": "c011c12005971999814a90369e31aae3837e24e241532062405e66c4d42d9467"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/land_ld_ironholm.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 8130,
+      "sha1": "35b2931a57e7bff3e7b2a012dd3d4929e55199c8",
+      "sha256": "5f27721452875cfb156bf7e028bd11f6611037894056faf826732b1261a959c6"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/land_ld_saltwick.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 8981,
+      "sha1": "60f142295cf554258f1c696ac0cf13a317c5e1e0",
+      "sha256": "8a504b21a2fcb0aaf1158417d23a96399827c9562f3184c8dd6d1ccfbea48143"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/land_ld_threshold.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 6255,
+      "sha1": "4458acb79e0d01266f9214437bced03883e7b8a9",
+      "sha256": "e87d2963cc31b5c0f3cd8c7f071b6c637eca8778e1f7bb36e2ea2f0277ef713a"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/land_ld_veyra.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 35158,
+      "sha1": "3d192d44a8159e699efa69410e2093301a21406b",
+      "sha256": "780571d360357e008ee1a312382b917d181597547f3d99d02daa7b8dc81f5541"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/land_ld_wreck.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 5705,
+      "sha1": "aa1420b11d2cade8ea5a106f99696822e235b199",
+      "sha256": "3ed0af9611806aa4e5548698394238dbf19ffbcaae01c70eeb37c389ad295f10"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/spawn_sp_gulf.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 1525,
+      "sha1": "fbab21b887c4996ba1a0adfba3f7f1a5624341cf",
+      "sha256": "5cfeb1c2e07ef140bb07156089fae6b260ed9e7d41a13ae70ddc2df1e709b1b3"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/spawn_sp_hook.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 1504,
+      "sha1": "98c7440dd6b60a24a9712e46593506e4e0a4c4c2",
+      "sha256": "c3ff101351edb81ce932c83877730bf7bb80ff8957cf39c4f9a98143cd8d1f7b"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/spawn_sp_lake.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 1536,
+      "sha1": "0b0b43b25cea0121eec4eca88182bd3e1ed3ffad",
+      "sha256": "79d852bd31068b7bb51dcc920993511539fbdc7a271c5358210afee94f4405e4"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/spawn_sp_west.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 1526,
+      "sha1": "9ccaa96c76868cd0757a8253bed90d2d38f6b797",
+      "sha256": "346f839007151de15095269544f063dab019ad12daacbc2466a01b392cada59c"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/zone_bz_argus.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4135,
+      "sha1": "f7e23410f7ad5ac85c02a50a4377c5c90227f1ec",
+      "sha256": "da2b231065f46e54fef25139aa1dfdd56e87bff5b3ee8aa9cd37846e7e186b36"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/zone_bz_cinder.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4101,
+      "sha1": "9210309aecf8e377b084e94e0e8807cee3701193",
+      "sha256": "1197139d239771111cfd0a8ff44caa35642cc204b0b775d27ea3468c3b3e35dd"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/zone_bz_delta.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4181,
+      "sha1": "c85d9fd2dd860447467913afc7e51ec287d5d640",
+      "sha256": "113a5c5b351ef789e9745932a2e285f8a00060c92cabacc8a7708e321ca22abd"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/zone_bz_dune.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4018,
+      "sha1": "004a93f7e91276958b79c7208f2c4d1918878c3f",
+      "sha256": "5ff94fe54a53e63b709111ee27bb86572d71f6cbc5f6c09cd153c442ae6caa41"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/zone_bz_eastflats.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4209,
+      "sha1": "8970e06a3c9d67bae94a191afdfdda159fc39c87",
+      "sha256": "abf06bf703182102e0edd4bfa5b8484da3492a0c722ec0bb1962678fe4c935a1"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/zone_bz_elder_clear.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4144,
+      "sha1": "c25ec51e4b510f12d9a879345cb7b560b25c82d6",
+      "sha256": "d330f4797769d011eb0cd7d863e0dfc469c99407d2999f406b7422851897a10b"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/zone_bz_forest_n.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4127,
+      "sha1": "76b0aa6f9e52fe22342d8a22c34de5101750a4ec",
+      "sha256": "91adb0072f0328ac87c6477968bbcec4266e8187938090b87360c36f025b401a"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/zone_bz_greyback.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4122,
+      "sha1": "5388e2e8a0897d47789dfda7939e7b143e2f7001",
+      "sha256": "f84f32284a21f922e0d8038ee1a4332a72894d759fc8019c2f4e793bb55036d3"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/zone_bz_greywater.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4160,
+      "sha1": "99f58c15d958cc95b05cd466d07acdd96f424091",
+      "sha256": "b5ad8030cb56e9bb55e019892a3cf22ce5a1a1dbc8dab755a7413d76377d832c"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/zone_bz_gulfwest.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4159,
+      "sha1": "b6887c60a958c044db3ba7079b71bda56610d94b",
+      "sha256": "b936784c085bc4d12f4855a27349f680debfa6f2d789a3feea883b9a2db5beed"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/zone_bz_hook.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4165,
+      "sha1": "00fd1945461f8646ba14606dc608f1b6f92f9ce5",
+      "sha256": "87c8ac108f33c109aa8e5680894132218ecc25f242e6052cb3e598e6b306f126"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/zone_bz_ironholm.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4181,
+      "sha1": "d2dc5b0390acdaded5ef278590c0847a2c3a4633",
+      "sha256": "1a14ca7137e7d0da9b0b1501a79b0396fee0486d339453fdccbbef2f5ac3aeb0"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/zone_bz_kestrel.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4064,
+      "sha1": "2ebff73c17d95a517fd572593faf34d22a75cff9",
+      "sha256": "7de71ea2b95bc1087b107e1e0cda8ea75c5ee5e05e05da99250346183ef6ae9a"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/zone_bz_moss.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4128,
+      "sha1": "9a40699f146c660b09b0a60cade4905acbe70bde",
+      "sha256": "dfe91946678d1ff0fd61d2312cc4626498e1e6f07a0b7c41bea74b9b225e4c76"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/zone_bz_oasis.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4124,
+      "sha1": "215a4f8256c28a0ba08ad306f07aa6efc8788b19",
+      "sha256": "9f0458036b217dfffc69f59fe779ac31e5eaa5e396543fd3fa0fa3878a012f95"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/zone_bz_ridge.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4158,
+      "sha1": "e669a3b38c1862ceedac057076f67c3a38957365",
+      "sha256": "11c30db525e5f0b980d42627618ba6d4188813cc84d84f872230c227ddc742b8"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/zone_bz_salt.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4155,
+      "sha1": "cc8ddd057dbff087cc77bf9db005150818a1e81d",
+      "sha256": "d3fc74a911cfd7e1434e7d73bfe89e4362f7e419d2ae01a3a068590e23967def"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/zone_bz_silver.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4126,
+      "sha1": "4b28f1aa00489d6bc0d3be3d92bf7f0d49a7aa87",
+      "sha256": "20d5be8619fa19194356dc14854c4ea3e399ec0d02909e45352327b5cbb06d60"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/zone_bz_slag.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4192,
+      "sha1": "2f9fa08c348f31dd67b2abd1734171a19f193dd0",
+      "sha256": "41ac3b8334db459b45a3d7f9427c56a0a6a65858bcad4b51389dbcb433d7a719"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/zone_bz_typhon_t.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4185,
+      "sha1": "bca857c0bb06699dcf1822676c3ce8313cc92073",
+      "sha256": "ffe98417a49793e5451a1690cf2ba4e801c2ff1b29d28172f2c6bad0bf877954"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/zone_bz_verdant.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4186,
+      "sha1": "1555e25369a1a9156b725faa788df6420e0f8226",
+      "sha256": "b162bd51910bb5d1e14ab607dc0aa7f4479a87f685b14b5db8e7fed069688217"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/zone_bz_westmouth.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4130,
+      "sha1": "a7a31109eea2489b977e59ea336cb87f21725c45",
+      "sha256": "44e0b9e8925b1683b6f779e69532e84e730269088800ff1cc51c139ac66faa7e"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/regions/zone_bz_westwood.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4142,
+      "sha1": "e15d749237ef2555936279c80aab0a2381142584",
+      "sha256": "e8992ad52ea9c7c817d113c051e75e3e26ab89f507d423621312569fed93b9bf"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/route_graph.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 345031,
+      "sha1": "89bad5fd4908db0d9ade0e3b780ead4c3f95a4ba",
+      "sha256": "ff63f1acfa00149213c91906948d92a0a3f7d619c517668f0b7172d093351a05"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/scale_corrected.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 127521,
+      "sha1": "d1ae105005dc6cb6785dcac548d6d2265e62bdbf",
+      "sha256": "91e10cd6235aa92d46d127b3efa7c01becb1aff3c5cdde1a3391404c8fba884b"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/transport.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 282942,
+      "sha1": "0529c9974c307887f3e4909b607b2ae20e9483f9",
+      "sha256": "24cf621b8d23753cbf28cb2be2d9ffb0bd33a1cee1d272e542ddb5238ee46f79"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/transport_failures.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 5529,
+      "sha1": "e7daf7ff972b4ea55b786ebfa1d3173e99e02443",
+      "sha256": "e7ede045cee795c5a83072f9de81b7a6324ce0fdca50210e5c83fa5f410858ce"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/views/elder_el_typhon_after_640x360.png",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 22917,
+      "sha1": "0cd549914e44b2164e43cfabe3694f73937679e2",
+      "sha256": "84c5e9e4ad463243bef5dbabf65ed66c6cb5755b6e25fb756ee9bafd7315b8ca"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/views/elder_el_typhon_after_ui_640x360.png",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 29536,
+      "sha1": "9d5cbf98d2d8498b3f69f2fb5d5a30190ce2326b",
+      "sha256": "d0452d52d00680078682b08619da9b4f2cd87bdc5cbd7a7644a04f15ea27d64b"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/views/elder_el_typhon_before_640x360.png",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 14411,
+      "sha1": "c67c8e70b62fe4e35d9583b86628d6bb97eec94d",
+      "sha256": "9a07a734dfeb814ddef6c2e17254047a5a4a5f3b46ebe4301f1a0ffefd72d964"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/views/land_ld_ironholm_after_640x360.png",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 15188,
+      "sha1": "bdfdd7e802f7d1131ac7268c55b1968498f97fa4",
+      "sha256": "bd8c7b85e9fa2097bc97874973eaab1ecf7413d36780a3ce1a4a4065f30182c2"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/views/land_ld_ironholm_after_ui_640x360.png",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 20886,
+      "sha1": "929376a0250098f176f41bc20d62a8a219504f40",
+      "sha256": "b7d58cf615dc5ceb72d9b328c381705ed09c08dc8b6efa6f782d9426763d98ce"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/views/land_ld_ironholm_before_640x360.png",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 9689,
+      "sha1": "22f6ae51e3551befd8b1a66b730c8ca908392bc5",
+      "sha256": "ba1b205ecbaed27147803c3db2e0cddff37ac442e6dabde0a08b7f1932b3c9bc"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/views/zone_bz_delta_after_640x360.png",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 18104,
+      "sha1": "4377da34f56f25972e8667f14295a280b3b82617",
+      "sha256": "b6e3d3697d111ce3b90dadd6043e93a0bcb5a9ad1b38db3083ae6579059e2ef9"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/views/zone_bz_delta_after_ui_640x360.png",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 24541,
+      "sha1": "6cb4904fd6e96a236cd2b408f7b9ecdf0f40fc77",
+      "sha256": "a07abc8107ab285a9bf51fb56d7ffd9c16f5135b7815a210a62a862ef62eb9a3"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/views/zone_bz_delta_before_640x360.png",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 11858,
+      "sha1": "31757a2c2d1c8a31dc5b65506f9c5e7755304404",
+      "sha256": "92a18b7007ca872104f11470ceed2b94127e37613efe200f1f7d8fa504c97900"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/views/zone_bz_greywater_after_640x360.png",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 18427,
+      "sha1": "6b47c4d560819eb65af4782edba95bcd2a62ac52",
+      "sha256": "3c202bedfad0a6022e394406e8d9105365bb5946552c675eb8f2d50264c3193a"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/views/zone_bz_greywater_after_ui_640x360.png",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 25095,
+      "sha1": "1132797145c5ee8f3e564a2b22ed646cdc366ca2",
+      "sha256": "b1a73dffde72fc2b37f5aa609bc169e2fe52bde9b0718035c95cae1057aa8e4f"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/views/zone_bz_greywater_before_640x360.png",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 11748,
+      "sha1": "58db5b7f2641aa00416b8959f4c9494675ccb579",
+      "sha256": "786b5bfd2d1852c20fa6de709c12e7d77c4cd49df9249ef17090725559e2ebe9"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/views/zone_bz_hook_after_640x360.png",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 16965,
+      "sha1": "f7a4102feb265b93514b053ec10cb637048ca0b8",
+      "sha256": "8c3ffa2edefedba3d0832a15fc771ccd567b528edf89f1f943da5e82d63ff7fd"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/views/zone_bz_hook_after_ui_640x360.png",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 23584,
+      "sha1": "7440f0f45c0bf0523bf771d583d3c0acf30e1fce",
+      "sha256": "9860c296457c0fcd8ee071daad3c008934bb79394a456a25713442b50bf9fc5c"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/views/zone_bz_hook_before_640x360.png",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 10943,
+      "sha1": "210b5511d9b9b71e840851e5fdfd862a504aa1c7",
+      "sha256": "8ef9d8c94fee0ec14c3509a04cb9edee700e510fd2451f0e6c9c7b6c36a56c94"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/views/zone_bz_silver_after_640x360.png",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 15148,
+      "sha1": "53d9cd6a99d7b9878e4829901808238806252db8",
+      "sha256": "eaaf83a6815eb9df76d1f1a416cabf4d3e9d78278a641dd36d4d4971a7e3963c"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/views/zone_bz_silver_after_ui_640x360.png",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 21687,
+      "sha1": "fd65bb0c14678a7317c507dfb6c04548d9d73cc1",
+      "sha256": "3f3d2f9d70c790219179a7f287c4689b46c937fec793bdca3e90d8f8a5c3bd41"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/views/zone_bz_silver_before_640x360.png",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 9772,
+      "sha1": "0e1ba807dfbffec798f92508eb8bdde562fa5816",
+      "sha256": "b1b9aa34a7bf340fb6f44f817b9bb239a3594a4613868279feaef77c834a1c22"
+    },
+    {
+      "file": "geography/veyra-lr01/world_lab/lr01/output/views_index.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 25609,
+      "sha1": "dd618ed9f3fc486a80c1732f15a32d1f4fb7eb60",
+      "sha256": "57cd3f9a3527b963f0cb9f9628a7068ed9d8bf30af4ab75637662a73f0c712dc"
+    },
+    {
+      "file": "geography/veyra-lr02/GAMEPLAY_HANDOFF.md",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 7253,
+      "sha1": "dfd2763f55600572fa4fd3106d191bf77e068ced",
+      "sha256": "1a317c782f4182e0b01b8f4931086dc5a13c2bc103ab60967fea8c77c7e36f20"
+    },
+    {
+      "file": "geography/veyra-lr02/README.md",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 1489,
+      "sha1": "cc7e4009a03929534121e6312f8734dcb0b74669",
+      "sha256": "3c33f16f16628c68e520f8a8c94538824b7b75c779081753e78963ee70d75d27"
+    },
+    {
+      "file": "geography/veyra-lr02/greywater_spatial_patch.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 139590,
+      "sha1": "9ea4e9430843acc9e50cd836114e4447ff663e8a",
+      "sha256": "2a9cfcc4360cd62088c4e938fa04f53a99aae6c0a8f2749580453869c502be78"
+    },
+    {
+      "file": "geography/veyra-lr02/spawn_eligibility.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 194525,
+      "sha1": "a3740d5fbbad15ffb5b9d0980204742e45cf1c01",
+      "sha256": "377d5452579d638711bb41fbedcab5dafc98af2c17327a90ec954b8c277a19b9"
+    },
+    {
+      "file": "tests/b1-integrity.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 16832,
+      "sha1": "df28813fa1d75d5d62e0d8e80d509796cd9dd375",
+      "sha256": "29cbc73200322f2391422f70c48b8c92c27009c9927b12695d481811f294f529"
+    },
+    {
+      "file": "tests/b1-storage.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 9502,
+      "sha1": "f97734c61b835e93a94049cbbbe5b7859a287731",
+      "sha256": "c08b72fb6237d1d9769bf1aa21ffd85284a035f4a6b6f64b6b795214e01d269d"
+    },
+    {
+      "file": "tests/b2-chronology.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 17715,
+      "sha1": "83b3bcaad4db01486d256bbdb19aa24f103c3e0f",
+      "sha256": "65fbb1bcbaee1ccaa486a0efa0ccc23aa711ed38f6ef3575e414169d7aa406ac"
+    },
+    {
+      "file": "tests/b2-perception.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 29193,
+      "sha1": "5eaa199997fbf5c29fcdf59d87aeec568c386c61",
+      "sha256": "95841d854282e97d647983b5dbca79ee97046cdc7dd68d4b0dbb03e026f4a705"
+    },
+    {
+      "file": "tests/economy-network.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 10253,
+      "sha1": "d5bb5436bf41a8ffbe31979b1cb2aba31b3725b3",
+      "sha256": "69a30cc12b0899c0f2a9a4b375aa7dd0551fe681bef3192cf5c36d2e4b2342f8"
+    },
+    {
+      "file": "tests/emergent-fire.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 8066,
+      "sha1": "7231b6b40582d658c717c13fe6d82dd835317d90",
+      "sha256": "0085ed741d25340b7a136e5fedddaba358c13f70206ec4ecdbdc355f92e2191d"
+    },
+    {
+      "file": "tests/escrow-route-physical.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4384,
+      "sha1": "d2581250c3e710df0940781c1b75a6cb315640ab",
+      "sha256": "e7b0d6beab60cab35b3fc2888686da45699bcb6d46ff48d9b4b3796a86a1b16d"
+    },
+    {
+      "file": "tests/fixtures/3b37ae9-legacy-pair.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 88026,
+      "sha1": "77e3452e6d129b831b078b3a0693cfc613edad79",
+      "sha256": "b24e53d0bca5fd9e298768f86452aca2ceb6169f4ff742fbd85d6bd37ecc62a2"
+    },
+    {
+      "file": "tests/fixtures/7b9805b2-shipping-v3.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 43572,
+      "sha1": "a7fd3b4f049e99ae4e51fe9fc7df2b344292de4c",
+      "sha256": "509e1ef30b787b82067d5e96b6a45b4793105f4c1c9e41fe9d86d9a77324ac0b"
+    },
+    {
+      "file": "tests/fixtures/7b9805b2-veyra-v3.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 35120,
+      "sha1": "1c1fa74260297a3695ffbc907fc2f812a67cca3c",
+      "sha256": "b48f60e714746f91067ff1ed1b904fc0974074cea6aa7f2f046526637145c80e"
+    },
+    {
+      "file": "tests/fixtures/README.md",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 1591,
+      "sha1": "57ea1a0fdb51f15e801c57aa65ffa801d0dcbbaf",
+      "sha256": "c5614fee6ef21148c97132bce408a60ab13e281f7c362ccd95010fbaa040c716"
+    },
+    {
+      "file": "tests/fixtures/isthmus.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 1248,
+      "sha1": "51653daa3593cfa60739e5f4c517037da45c60c8",
+      "sha256": "31bd641246488b09507a0d80439de0ed6a2fe9edbebca26161382cadebeaa2fa"
+    },
+    {
+      "file": "tests/fixtures/runtime-map.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 2130,
+      "sha1": "c07fa7b1e7f2bb01fe7bdaf681b5fa064f0f1378",
+      "sha256": "ec181b7fea6aac0e4358006a58d6d9ade0401d4418e4515df3c3f4222f250a34"
+    },
+    {
+      "file": "tests/home-ecology.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4174,
+      "sha1": "3e2de3747b482ceec8e630791dfccb571bf74483",
+      "sha256": "a76073ba294898b3fe744855de17ba8cd06a21ee737e29c3d0d6d79c8864e6a2"
+    },
+    {
+      "file": "tests/home-production.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 12221,
+      "sha1": "965abcf776ea568e6726c804106d8ff4647c8889",
+      "sha256": "c5620eca17fa657f0cdc216c75b3207b5790b0d5c2f7cf1ecf44a765ec33da35"
+    },
+    {
+      "file": "tests/home-sites-physical.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 2920,
+      "sha1": "976254fd3890f16ada42b1afbc2d8bcab9b43f0e",
+      "sha256": "0ba09a6245c878326474957829e54c0bc01704bf279979ce036d9d88bdf07043"
+    },
+    {
+      "file": "tests/k6-power.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4788,
+      "sha1": "ccd5600f504c2fde2e8ebf2df847f83501dedafa",
+      "sha256": "b315a2cf65ea0f5ece6119da5b26bc714f9529880e022b46d5763ed8a47f567c"
+    },
+    {
+      "file": "tests/k6-spatial.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 5551,
+      "sha1": "b1fcd386b56e83084a58cfb31ec036a862329ce7",
+      "sha256": "f552491ac936cdb0c4b3adc7c8f376b35e48247113b8a8f23c45bff81542c4e6"
+    },
+    {
+      "file": "tests/logistics-garden.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 13649,
+      "sha1": "5b52718788b94a1315ddf670869dcd70b4a9d29c",
+      "sha256": "db48c9bfbe5dcaf3dc3139418d6026df257c4df6409ff79d900577ed0d42d83a"
+    },
+    {
+      "file": "tests/lr02-shipping-access.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 5522,
+      "sha1": "4afeee5f070e91d4fdaa9bec46ba07228444e01e",
+      "sha256": "50ac330c5d1e2d7e484e3407b7fa5918e5f68fc42d300e33a1695cde0086bb2a"
+    },
+    {
+      "file": "tests/m-core-03.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 8847,
+      "sha1": "3f53f4d35454fe2b5d82500cfb591b2c402743c5",
+      "sha256": "19ec9b1f6062fc5dbb5a0626a7cdad6ad0d380eb7595aa444acace7eff1d7d25"
+    },
+    {
+      "file": "tests/m-core-03r-economy.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 7773,
+      "sha1": "9fe6c903414bc0b4f4d24805bf5480457f4c8d77",
+      "sha256": "3b6a95c9e6d60d76a269487e6ff1be6a07497ff73ea11833d071a68fbf48323f"
+    },
+    {
+      "file": "tests/map-package.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 5451,
+      "sha1": "269ff0ac2700ae411c9cdd99a924032755ee6567",
+      "sha256": "e172e20c6dca5edb2c8e05f3bad06b033fbfcc1576b500a0d202b14e355c99e7"
+    },
+    {
+      "file": "tests/poi-route-physical.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4842,
+      "sha1": "750908b976462bfbfb7d3251def5c97e3e71dbbe",
+      "sha256": "1d81b98f2223069d58653612b0b5412bfd59e7aee0b21c44cf87c056d79f6d59"
+    },
+    {
+      "file": "tests/production-network.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 13228,
+      "sha1": "c7d9b452dafc244b34240c93c6d90875ac76f4bb",
+      "sha256": "a366670755b27165e4b843b78d70dd52ab2e14af2a2867cf352db6611aeaaf84"
+    },
+    {
+      "file": "tests/progression.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 10439,
+      "sha1": "88f555b4f1c7a8edb890d55aa99e264fc41b90c8",
+      "sha256": "977093becd34483c38812c5529eebea6fbda2f0aa174b82d3971afa3cdeac39a"
+    },
+    {
+      "file": "tests/public-loot-lifecycle.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 6620,
+      "sha1": "edfc914b9291ffe7ddabc3c25cbb68845b9b64cf",
+      "sha256": "eb17f631e28f17104f3b3d997695d84127521a8e732e729b0b6c4b1be0fb3baa"
+    },
+    {
+      "file": "tests/soh.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 31333,
+      "sha1": "61a617a952d1cb8282fac4c2ee53e2409da7b333",
+      "sha256": "2b911fe57d5ea5786bc34e9cd6b046000dff41e7c07c1029c74e2a57b94db93d"
+    },
+    {
+      "file": "tests/technology-semantics.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 1204,
+      "sha1": "bac9a3850a07c7056a7aa3ef7fec78edfc521f42",
+      "sha256": "9548f0dbd18c22e31a235ecb9c6976a378de408b2a6fa49960e8035d3616ea0b"
+    },
+    {
+      "file": "tests/veyra-intake.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 1586,
+      "sha1": "752edf5fbd84c4974e167bdad43b352d3a20b1ce",
+      "sha256": "30314401bef1e0679c354cf797299b71bfab90dbcd612f509b3e189b4f894626"
+    },
+    {
+      "file": "tests/veyra-lr02-patch.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 6371,
+      "sha1": "333e3e5cea46233b1d45acdbac7266a3ae48d868",
+      "sha256": "681eb3b773dc4aa0fa002757c78ebb4387fe20b4dde1efc14b4d45ca10834b75"
+    },
+    {
+      "file": "tests/veyra-runtime.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4038,
+      "sha1": "4700943ab83e76da417cd8dae717e652096b3fcb",
+      "sha256": "3daaf0a7e1418b08b7ed2e47656351debfd1accd646753271bbe940e408bd1c6"
+    },
+    {
+      "file": "tests/world-economy-runtime.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 5705,
+      "sha1": "7423130d6928ef31362067e25eb7ae0d0dde5bd4",
+      "sha256": "5be87d046460ca9b06ab47af81f401b208bd81219031777ea29e6b2019892fd2"
+    },
+    {
+      "file": "tests/world-economy.test.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "bytes": 4039,
+      "sha1": "a9d02548d4b262545e22237828630a8b6751d1f7",
+      "sha256": "0b0dc110a7fc07546d9fa96a33c03ab2bc4c1b8ebc18c2f40b1d1d6b1da59878"
+    }
+  ]
+}

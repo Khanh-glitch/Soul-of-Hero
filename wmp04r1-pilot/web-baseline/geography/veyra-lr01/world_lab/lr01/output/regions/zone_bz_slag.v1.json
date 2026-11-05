@@ -1,0 +1,202 @@
+{
+  "schema": "soh.map.lr01.region.v1",
+  "kind": "construction_zone",
+  "id": "bz_slag",
+  "name": "Slag Flats Pad (đất độc — viability thấp)",
+  "soil": "xỉ",
+  "water": "ô nhiễm",
+  "slope": "phẳng",
+  "tags": [
+    "gần đường vận tải"
+  ],
+  "notes": "Cố ý đặt ở vùng bất lợi để so tradeoff.",
+  "conf": "proposal",
+  "sourceRef": "project.zones[] where id=bz_slag",
+  "status": [
+    "SOURCE_AUTHORED",
+    "DERIVED",
+    "PROPOSED"
+  ],
+  "geometry": {
+    "ringAu": [
+      [
+        1202.2991271944156,
+        990.204594667066
+      ],
+      [
+        1203.0790600051919,
+        983.4015315556886
+      ],
+      [
+        1204.8503500054355,
+        977.4564134540499
+      ],
+      [
+        1207.6129971951473,
+        972.3692403621496
+      ],
+      [
+        1212.1499560574089,
+        968.069132654734
+      ],
+      [
+        1218.4612265922203,
+        964.5560903318028
+      ],
+      [
+        1226.361724840867,
+        961.664326796157
+      ],
+      [
+        1234.6811606426793,
+        963.5150736382373
+      ],
+      [
+        1239.1819560236593,
+        967.580315382497
+      ],
+      [
+        1241.1860691413617,
+        972.4559508522096
+      ],
+      [
+        1243.2486421418475,
+        975.2388500939867
+      ],
+      [
+        1243.5332838203842,
+        978.4129500313289
+      ],
+      [
+        1247.1975051979325,
+        982.1198698628696
+      ],
+      [
+        1247.403503944666,
+        986.3596095886089
+      ],
+      [
+        1248.2372459123403,
+        991.6938198313453
+      ],
+      [
+        1243.6818493024239,
+        997.353451081675
+      ],
+      [
+        1234.6705483472597,
+        998.499329003254
+      ],
+      [
+        1225.7626545249332,
+        998.0549085539187
+      ],
+      [
+        1216.4588209075844,
+        996.776055302627
+      ],
+      [
+        1206.7590474952133,
+        994.6627692493788
+      ]
+    ],
+    "ringCount": 1,
+    "areaAu2": 1266.7701,
+    "perimeterAu": 132.9858,
+    "bboxAu": [
+      1202.2991,
+      961.6643,
+      1248.2372,
+      998.4993
+    ],
+    "centroidAu": [
+      1225.5309,
+      981.9419
+    ],
+    "outerVertexCount": 20,
+    "holeCount": 0
+  },
+  "rasterCells": {
+    "cells": 21,
+    "areaAu2": 1344,
+    "elevationRawByte": {
+      "min": 23,
+      "max": 27,
+      "mean": 25.3333,
+      "p25": 24,
+      "p50": 25,
+      "p75": 26,
+      "p95": 27,
+      "unit": "UNKNOWN_SOURCE_BYTE__NO_APPROVED_PHYSICAL_SCALE"
+    },
+    "slopeRawDelta": {
+      "min": 0,
+      "max": 14,
+      "mean": 2.3333,
+      "p50": 1,
+      "p95": 13,
+      "unit": "RAW_BYTE_DELTA_PER_8au_CELL__NOT_A_GAMEPLAY_THRESHOLD"
+    },
+    "seaDistanceCellsMean": 3.2857,
+    "freshwaterProximityCellsMean": 31.0952,
+    "clearanceCellsMean": 3.2857,
+    "biomeHistogram": {
+      "10": 21
+    },
+    "roadClassHistogram": {
+      "0": 21
+    },
+    "coastCells": 2,
+    "coastBandLengthAuApprox": 16,
+    "buildableCells": 21,
+    "walkableCells": 21,
+    "waterCells": 0,
+    "cargoCells": 0,
+    "crossingCells": 0
+  },
+  "buildSuitability": {
+    "buildableCells": 21,
+    "buildableFraction": 1,
+    "meanSlopeRaw": 2.3333,
+    "meanFreshwaterProximityCells": 31.0952,
+    "status": "DERIVED",
+    "note": "Geometric suitability only. A0 occupancy, claim legality and Gameplay building rules are NOT asserted."
+  },
+  "loadingSpace": {
+    "cells": 4,
+    "areaAu2": 256,
+    "bboxAu": [
+      1204,
+      972,
+      1212,
+      988
+    ],
+    "status": "PROPOSED",
+    "note": "PROPOSED spatial candidate: buildable cells within 3 grid cells (24 au) of a cart-road/cart-bridge/dock cargo candidate. NOT a loading platform or a Gameplay placement grant."
+  },
+  "naturalChokepoints": {
+    "clusterIds": [],
+    "status": "DERIVED",
+    "note": "clearanceCells <= 2 (<=16 au from blocked geometry); geometric narrowness, not a combat chokepoint claim."
+  },
+  "nearestRoads": [
+    {
+      "id": "rd_u",
+      "kind": "cart",
+      "d": 37.1201
+    },
+    {
+      "id": "rd_6",
+      "kind": "cart",
+      "d": 58.0784
+    },
+    {
+      "id": "rd_2i",
+      "kind": "ferry",
+      "d": 118.7045
+    }
+  ],
+  "walkableComponentIds": [
+    3
+  ]
+}

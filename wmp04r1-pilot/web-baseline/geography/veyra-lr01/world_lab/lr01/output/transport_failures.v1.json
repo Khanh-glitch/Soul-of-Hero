@@ -1,0 +1,151 @@
+{
+  "schema": "soh.map.lr01.transport_failures.v1",
+  "sourceSha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+  "count": 7,
+  "failures": [
+    {
+      "id": "F-C-01",
+      "featureIds": [
+        "junction_tolerance"
+      ],
+      "unit": "authoring_unit",
+      "coordinate": null,
+      "sourceFile": "world_lab/geo02/source_excerpt/graph.ts; world_lab/geo01/output/geography.v1.json",
+      "sourceSha": "13ae97272edc47b0",
+      "expected": "Derived graph uses the Editor SNAP_TOL=7.",
+      "actual": "GEO-01 used joinToleranceAu=8; at tol=8 the 1318 road samples merge into 822 nodes and 596 foot edges self-drop, versus 81 at tol=7.",
+      "owner": "MAP",
+      "status": "VALIDATED",
+      "proposal": "Use tol=7 for all transport conclusions; retain tol=8 only as a documented regression."
+    },
+    {
+      "id": "F-C-02",
+      "featureIds": [
+        "po_kilns",
+        "rd_n",
+        "rd_16"
+      ],
+      "unit": "authoring_unit",
+      "coordinate": [
+        905,
+        785
+      ],
+      "sourceFile": "world_lab/geo02/output/corridor_audit.v1.json :: poiAccess",
+      "sourceSha": "7377b97ad2cfe33d",
+      "expected": "A POI with cart logistics is within Editor ACCESS_R=48 au of a cart road.",
+      "actual": "nearest cart road rd_n at 56.8792 au; nearest foot/trail rd_16 at 0 au.",
+      "owner": "MAP",
+      "status": "PROPOSED",
+      "proposal": "PROPOSED cart connector centreline + measurable surface width, OR retain po_kilns as foot-access-only. Both preserved as alternatives; macro geography unchanged."
+    },
+    {
+      "id": "F-C-03",
+      "featureIds": [
+        "br_a",
+        "rd_b"
+      ],
+      "unit": "authoring_unit",
+      "coordinate": [
+        882.9743849116596,
+        646.9030885831578
+      ],
+      "sourceFile": "world_lab/geo02/output/corridor_audit.v1.json :: bridgeCrossings",
+      "sourceSha": "7377b97ad2cfe33d",
+      "expected": "A cart-classified road crosses on a cart-load bridge with measured deck and clearance.",
+      "actual": "br_a load=foot; foot-only bridge blocks the cart edge. Road width, deck span and swept clearance are UNDEFINED.",
+      "owner": "MAP",
+      "status": "UNRESOLVED",
+      "proposal": "Author PROPOSED deck polygon from the measured raster chord; keep cartPassable=false until swept clearance is evidenced."
+    },
+    {
+      "id": "F-C-04",
+      "featureIds": [
+        "br_4",
+        "rd_b",
+        "rv_grey_low"
+      ],
+      "unit": "grid cell / authoring_unit",
+      "coordinate": [
+        732,
+        652
+      ],
+      "sourceFile": "world_lab/geo02/output/corridor_audit.v1.json :: zeroClearance",
+      "sourceSha": "7377b97ad2cfe33d",
+      "expected": "A bridge approach has a measured swept-clearance envelope.",
+      "actual": "clearanceCells=0 at cell 20341 / [732,652]; road width, channel width, deck span and cart footprint UNDEFINED.",
+      "owner": "MAP",
+      "status": "BLOCKED",
+      "proposal": "Author PROPOSED deck span/width and road/river physical widths, then validate. Until then clearance stays UNKNOWN; no cart-passable RT-1 claim."
+    },
+    {
+      "id": "F-C-05",
+      "featureIds": [
+        "rd_2c",
+        "rd_2d",
+        "rd_2e",
+        "rd_2f",
+        "rd_2g",
+        "rd_2h",
+        "rd_2i",
+        "rd_2j"
+      ],
+      "unit": "authoring_unit",
+      "coordinate": null,
+      "sourceFile": "project.roads[] where kind=ferry; PR44 issue comment 6606283007",
+      "sourceSha": "88780f78b9e80278",
+      "expected": "A ferry has an approved Gameplay boat rule and physical loading geometry.",
+      "actual": "8 authored ferry centrelines; PR44 HEAD has NO ferry/boat rule; docks have no berth geometry. 0 ferries lack a dock pair within 34 au.",
+      "owner": "GAMEPLAY",
+      "status": "BLOCKED",
+      "proposal": "Map supplies dock approach/loading space; traversal stays BLOCKED until Gameplay owns the rule. Do not fabricate a boat."
+    },
+    {
+      "id": "F-C-06",
+      "featureIds": [
+        "rd_13",
+        "rd_1w",
+        "rd_16"
+      ],
+      "unit": "authoring_unit",
+      "coordinate": null,
+      "sourceFile": "world_lab/scale01a/output/benchmark.v1.json :: RT-1",
+      "sourceSha": "88780f78b9e80278",
+      "expected": "A cart route is continuous on cart-classified roads.",
+      "actual": "RT-1 includes kind=trail segments; trail is never cart-passable without a Gameplay rule and physical clearance.",
+      "owner": "GAMEPLAY+MAP",
+      "status": "UNRESOLVED",
+      "proposal": "Retain as foot corridor. Any cart scenario stays MODELLED_SCENARIO_ON_FOOT_ROUTE__NOT_CART_PASSABLE."
+    },
+    {
+      "id": "F-C-07",
+      "featureIds": [
+        "rv_grey_up",
+        "rv_grey_low",
+        "rv_silver",
+        "rv_canal",
+        "rv_moss",
+        "rv_argus",
+        "rv_east",
+        "rv_d1",
+        "rv_d2",
+        "rv_d3",
+        "rv_amber_up",
+        "rv_amber_low",
+        "rv_west",
+        "rv_hook",
+        "rv_ash",
+        "rv_salt",
+        "rv_slag"
+      ],
+      "unit": "UNKNOWN_UNIT",
+      "coordinate": null,
+      "sourceFile": "project.rivers[].width",
+      "sourceSha": "88780f78b9e80278",
+      "expected": "River width is a physical channel dimension usable for deck span fit.",
+      "actual": "width values 2.5–7 have NO unit; GEO-01 rasterizes a centreline only.",
+      "owner": "MAP",
+      "status": "UNRESOLVED",
+      "proposal": "Keep authored number; physicalChannelWidthAu=null until a creator-approved unit and transform exist."
+    }
+  ]
+}

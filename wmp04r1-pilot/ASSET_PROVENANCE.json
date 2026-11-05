@@ -1,0 +1,764 @@
+{
+  "schema": "soh.wmp04r1.pilot.asset_provenance.v1",
+  "status": "PINNED_SOURCE_COPIES__DIGEST_VERIFIED",
+  "generatedBy": "wmp04r1-pilot/tools/vendor.mjs",
+  "gameplayHead": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+  "mapHead": "caccf21613aa57a55491ec44f687cc44c569f79e",
+  "policy": "Verbatim copies only. No GOLD import, no owner-branch edit, no runtime fs in the browser.",
+  "fileCount": 94,
+  "totalBytes": 7062739,
+  "files": [
+    {
+      "file": "web-baseline/package.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/package.json",
+      "bytes": 837,
+      "sha1": "b9cb691407b291fdcab0f04afc63bdbef87b6f89",
+      "sha256": "12f5d879300cd0c217196191396108e2389b66b0bc53856a6a1968a1d7bf2537"
+    },
+    {
+      "file": "web-baseline/package-lock.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/package-lock.json",
+      "bytes": 101625,
+      "sha1": "41f8efcf881e5b71e87f9e53241564266b3a2228",
+      "sha256": "031c9026f9cb036800df3210f05e146485b012d07a5d905e13caf94c5a41afde"
+    },
+    {
+      "file": "web-baseline/index.html",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/index.html",
+      "bytes": 299,
+      "sha1": "56ccee433f10c643c4e62e21600dc4fb2056a7bb",
+      "sha256": "55aef96080f242dc4040421df0085a6cc590a3e42d7827318c20e75dae4b53b0"
+    },
+    {
+      "file": "web-baseline/vite.config.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/vite.config.ts",
+      "bytes": 589,
+      "sha1": "0ba61c5b0d470da78716899b7a882f1f06daec2d",
+      "sha256": "cc7c4d4aff645a4267a02c5e1903b297c2b6be21876eeca90dce78c6ace0e0e8"
+    },
+    {
+      "file": "web-baseline/tsconfig.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/tsconfig.json",
+      "bytes": 683,
+      "sha1": "39a5a32abd6ecdf1c01ca1d0796e7e0ca8f4368f",
+      "sha256": "a8db83809b8b83a8c271e18b35b593adc52596d0a97c1e9ef7996bd108fefc84"
+    },
+    {
+      "file": "web-baseline/src/App.tsx",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/App.tsx",
+      "bytes": 2759,
+      "sha1": "8bb1b61b342ec91e5a3a80a8cd36b1a9d9ff5a6b",
+      "sha256": "941d09205982cb5884fc2b81c6b3e54dcdde67aed3719ab3a7b8a43b3ff34374"
+    },
+    {
+      "file": "web-baseline/src/index.css",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/index.css",
+      "bytes": 3382,
+      "sha1": "2e97a67e1c4547a93437e61adb7670e34816fbc6",
+      "sha256": "d3d65405e3e63c6d70e3c6ab26859e35b10f571e10eed6376e19ce06e53262ce"
+    },
+    {
+      "file": "web-baseline/src/main.tsx",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/main.tsx",
+      "bytes": 230,
+      "sha1": "12fa35b9813dddf7047f8fb1059b9cac5f601bd2",
+      "sha256": "f268dc44f71240012de0cfb1569d8ac906265cccd45eb3a99059c1a663d2f830"
+    },
+    {
+      "file": "web-baseline/src/utils/cn.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/utils/cn.ts",
+      "bytes": 169,
+      "sha1": "a5ef193506d07d0459fec4f187af08283094d7c8",
+      "sha256": "d1f1e0d62cb8d8d1e04c26e14de842d8a151f75812d81b046c65b5d1fe8e4b27"
+    },
+    {
+      "file": "web-baseline/src/game/access-corridors.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/access-corridors.ts",
+      "bytes": 1471,
+      "sha1": "32bfa3507909cddf85006050989786d5cce460a8",
+      "sha256": "3e1a2f15d82d61da5c049ef5a6c4f57fcbc16ebc348677a1e66ebcb2be87f718"
+    },
+    {
+      "file": "web-baseline/src/game/art.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/art.ts",
+      "bytes": 42172,
+      "sha1": "9312b4c4a82238953508286a07d1a9a67b9ab155",
+      "sha256": "896aa51abfac516b4228994ae7a20a67c4644a587028146b5c79336103a1ec20"
+    },
+    {
+      "file": "web-baseline/src/game/audio.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/audio.ts",
+      "bytes": 6025,
+      "sha1": "b79a59d1848c237dec67185492fc88563e3a2e43",
+      "sha256": "569344df9f5b5ea5532fe0f8743d64a71108997c585883239fa297a0dd21d09a"
+    },
+    {
+      "file": "web-baseline/src/game/balance.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/balance.v1.json",
+      "bytes": 3486,
+      "sha1": "0b5ecbc27cde9fbeb469c57f7028b7fc6d932474",
+      "sha256": "cd12286c267f39abef6b44727f22f38f0374cfcdcf66f2c7f3d1de03d3fd0b62"
+    },
+    {
+      "file": "web-baseline/src/game/catalog.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/catalog.ts",
+      "bytes": 44279,
+      "sha1": "7ada13f463eee53a6f4fe83990aeded201fc1b1f",
+      "sha256": "3bf47355f2e998919cb28b9f8c87e06a6d533098b6d79ccfb6d409b41c82ee68"
+    },
+    {
+      "file": "web-baseline/src/game/content.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/content.ts",
+      "bytes": 8759,
+      "sha1": "8b7f174225d0166226b245a06cf2eb9b952cacd3",
+      "sha256": "479cfd328c5aa24e68a464e81bb64ffe40c587862a121f019b37a666f3b9f554"
+    },
+    {
+      "file": "web-baseline/src/game/core.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/core.ts",
+      "bytes": 9496,
+      "sha1": "df7f071da40e3cb6e3865937e7801f9de07401ae",
+      "sha256": "1d6748a201c3c31a9b83dac70315dbd79112dce11bf81af30a83edfc050d95a9"
+    },
+    {
+      "file": "web-baseline/src/game/economy-adapter.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/economy-adapter.ts",
+      "bytes": 3470,
+      "sha1": "50aa2801fd3e035fd9bfcf564bd7215d2cb57829",
+      "sha256": "dae3b5f590e86ca29c8912305907dd80895987af9a9a3659ff9b32067ac97279"
+    },
+    {
+      "file": "web-baseline/src/game/engine.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/engine.ts",
+      "bytes": 97905,
+      "sha1": "83d4d73e408bc388928ba5adf5c5767ee5e612a4",
+      "sha256": "1bcc5e9db60d7eebadb59a35eb0ec876fdd162033f69c6dd17f71a24f3d928dd"
+    },
+    {
+      "file": "web-baseline/src/game/geography-contract.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/geography-contract.ts",
+      "bytes": 5226,
+      "sha1": "7cca84075037c5afd1f228a7e430a00e917c974a",
+      "sha256": "2dad5ff6d1ff7616ede7913b62b00b41566a4c5d2769c9180d89f432ecef34e3"
+    },
+    {
+      "file": "web-baseline/src/game/map-package.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/map-package.ts",
+      "bytes": 8014,
+      "sha1": "92e1f6e192ebd918969528c61bf7907fd8a41f81",
+      "sha256": "35ba945c990fec71517766f0e55275fd364de9b5d55935964ab23145734b6741"
+    },
+    {
+      "file": "web-baseline/src/game/persist.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/persist.ts",
+      "bytes": 23964,
+      "sha1": "29a396145640a482939a3c67ac6733cc13c729c1",
+      "sha256": "aece7e18de029244e2f1e5ee317bb54102c09ada19a87163b4c1245aad40d649"
+    },
+    {
+      "file": "web-baseline/src/game/render.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/render.ts",
+      "bytes": 57269,
+      "sha1": "2d61bc7180d0d0c7d5fcead2100b960e87504f78",
+      "sha256": "9ecdf48b90547c617e418e99d6c1fe174f234914348beeacb239618690600266"
+    },
+    {
+      "file": "web-baseline/src/game/sim.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/sim.ts",
+      "bytes": 81252,
+      "sha1": "a299d2f3b95241cb89f9d63f1f42463bdf84ef66",
+      "sha256": "6f4e4f71ed1fc24fe7eaf1ed783ed6eab3c19e9f7a5ff789700d28b44e95012d"
+    },
+    {
+      "file": "web-baseline/src/game/world-economy.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/world-economy.ts",
+      "bytes": 9924,
+      "sha1": "59caf2519c2a85d3b700f3be634e8d8e8360aead",
+      "sha256": "bcc87d4aef1c226229ccdfff77a896e95bd929f3ac4000c639bd62f5cd5c6fa7"
+    },
+    {
+      "file": "web-baseline/src/game/world.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/world.ts",
+      "bytes": 31092,
+      "sha1": "d9d941d7f4f363f4455f3a54ac4c7ac16de8d520",
+      "sha256": "de6698720b0f5971df47c5fa066b86eadfaec163b54898f3073188940085beed"
+    },
+    {
+      "file": "web-baseline/src/game/wreck-economy.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/wreck-economy.ts",
+      "bytes": 1347,
+      "sha1": "e8d06d404e8f618a58f205d2c6f3e178de1f479d",
+      "sha256": "146a750be5282fb7df14e8ac89a29a6503974832e228dc3ff7143bd7d8f3e331"
+    },
+    {
+      "file": "web-baseline/src/game/veyra/eligibility.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/veyra/eligibility.ts",
+      "bytes": 2406,
+      "sha1": "3c0ef66244524ebcf1c9c9d36dee90fcf0eb596b",
+      "sha256": "013d45b83f430dc918d550bc5e7737b48f574e1b455a94744affd5cfdbb1ce2d"
+    },
+    {
+      "file": "web-baseline/src/game/veyra/intake.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/veyra/intake.ts",
+      "bytes": 8435,
+      "sha1": "a44e4507d5c582d2c840cb8d2219b8cdb86a87e4",
+      "sha256": "2db779fa5cfbdbbd88dcc96f2873addcd4a5b5a9e0c78aa49caaf7d82a04152c"
+    },
+    {
+      "file": "web-baseline/src/game/veyra/lr02.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/veyra/lr02.ts",
+      "bytes": 3523,
+      "sha1": "00c2ba1aeed3a718617e4989827e64cd0f7e06e9",
+      "sha256": "e09efece36afdc4d4f0bd8a94c0fc62fd8ad6085e3bfce7be26e93de57a0b809"
+    },
+    {
+      "file": "web-baseline/src/game/veyra/projection.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/veyra/projection.ts",
+      "bytes": 10198,
+      "sha1": "f7fcdffa7b71720760ea9eb90c0fed81a4a630f9",
+      "sha256": "6a4b4fd2cae67160bd2574e753309e7d462ce879ffa64bc8deee03afbc560764"
+    },
+    {
+      "file": "web-baseline/src/map-packages/README.md",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/map-packages/README.md",
+      "bytes": 1316,
+      "sha1": "444db8ff42a33f03701500672502fda102abc523",
+      "sha256": "adebe8e82e535478a3884f253a975bf83277c875d6cc7215e0b83ea4151ef9ac"
+    },
+    {
+      "file": "web-baseline/src/ui/Game.tsx",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/ui/Game.tsx",
+      "bytes": 28407,
+      "sha1": "0e429f73983b2394afd82ef0f58d73b573f81684",
+      "sha256": "aaf8da7f7f35e39c08cfd1539623159fe7cc022d3da5597398f8a7af338a60d3"
+    },
+    {
+      "file": "web-baseline/src/ui/Title.tsx",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/ui/Title.tsx",
+      "bytes": 11724,
+      "sha1": "afb5d2e80c5beea4f80ece232bc36ee256f9ef57",
+      "sha256": "1c988917178e5839d71d0bd41bc2f080289ef4026888c5bbf80e0d3c0094238a"
+    },
+    {
+      "file": "web-baseline/src/ui/common.tsx",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/ui/common.tsx",
+      "bytes": 4343,
+      "sha1": "db1af090ba3ca0951c249f649dd2db24ecdbe905",
+      "sha256": "d2a86bfc2b3aa787309c24da7fdd505fa6d4a0ed67496e3ee5b1dd99c4b6986e"
+    },
+    {
+      "file": "web-baseline/src/ui/panels.tsx",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/ui/panels.tsx",
+      "bytes": 52799,
+      "sha1": "75f2048d3263bf8e3e57561b6a75d24ad886082a",
+      "sha256": "eb796d2590c05edce64d4a0d0154ad3010c32d238b661426f22675694899e5ca"
+    },
+    {
+      "file": "web-baseline/geography/veyra-lr01/world_lab/lr01/output/geography_package.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/geography/veyra-lr01/world_lab/lr01/output/geography_package.v1.json",
+      "bytes": 1969292,
+      "sha1": "7f932aadb50a2f6a68e758d3f1669e20d7f7f9b9",
+      "sha256": "b4cc77228caf847d1ad0d8a680457ca65731202513a047826e8bd973662e19ad"
+    },
+    {
+      "file": "web-baseline/geography/veyra-lr01/map_tower/veyra_gold/VEYRA_GOLD_MAP.sohmap.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/geography/veyra-lr01/map_tower/veyra_gold/VEYRA_GOLD_MAP.sohmap.json",
+      "bytes": 332249,
+      "sha1": "2337c0be5898efcc208ed00d96e3177039a2bc5e",
+      "sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256"
+    },
+    {
+      "file": "web-baseline/geography/veyra-lr02/spawn_eligibility.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/geography/veyra-lr02/spawn_eligibility.v1.json",
+      "bytes": 194525,
+      "sha1": "a3740d5fbbad15ffb5b9d0980204742e45cf1c01",
+      "sha256": "377d5452579d638711bb41fbedcab5dafc98af2c17327a90ec954b8c277a19b9"
+    },
+    {
+      "file": "web-baseline/geography/veyra-lr02/greywater_spatial_patch.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/geography/veyra-lr02/greywater_spatial_patch.v1.json",
+      "bytes": 139590,
+      "sha1": "9ea4e9430843acc9e50cd836114e4447ff663e8a",
+      "sha256": "2a9cfcc4360cd62088c4e938fa04f53a99aae6c0a8f2749580453869c502be78"
+    },
+    {
+      "file": "web-pilot/package.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/package.json",
+      "bytes": 837,
+      "sha1": "b9cb691407b291fdcab0f04afc63bdbef87b6f89",
+      "sha256": "12f5d879300cd0c217196191396108e2389b66b0bc53856a6a1968a1d7bf2537"
+    },
+    {
+      "file": "web-pilot/package-lock.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/package-lock.json",
+      "bytes": 101625,
+      "sha1": "41f8efcf881e5b71e87f9e53241564266b3a2228",
+      "sha256": "031c9026f9cb036800df3210f05e146485b012d07a5d905e13caf94c5a41afde"
+    },
+    {
+      "file": "web-pilot/index.html",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/index.html",
+      "bytes": 299,
+      "sha1": "56ccee433f10c643c4e62e21600dc4fb2056a7bb",
+      "sha256": "55aef96080f242dc4040421df0085a6cc590a3e42d7827318c20e75dae4b53b0"
+    },
+    {
+      "file": "web-pilot/vite.config.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/vite.config.ts",
+      "bytes": 589,
+      "sha1": "0ba61c5b0d470da78716899b7a882f1f06daec2d",
+      "sha256": "cc7c4d4aff645a4267a02c5e1903b297c2b6be21876eeca90dce78c6ace0e0e8"
+    },
+    {
+      "file": "web-pilot/tsconfig.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/tsconfig.json",
+      "bytes": 683,
+      "sha1": "39a5a32abd6ecdf1c01ca1d0796e7e0ca8f4368f",
+      "sha256": "a8db83809b8b83a8c271e18b35b593adc52596d0a97c1e9ef7996bd108fefc84"
+    },
+    {
+      "file": "web-pilot/src/App.tsx",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/App.tsx",
+      "bytes": 2759,
+      "sha1": "8bb1b61b342ec91e5a3a80a8cd36b1a9d9ff5a6b",
+      "sha256": "941d09205982cb5884fc2b81c6b3e54dcdde67aed3719ab3a7b8a43b3ff34374"
+    },
+    {
+      "file": "web-pilot/src/index.css",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/index.css",
+      "bytes": 3382,
+      "sha1": "2e97a67e1c4547a93437e61adb7670e34816fbc6",
+      "sha256": "d3d65405e3e63c6d70e3c6ab26859e35b10f571e10eed6376e19ce06e53262ce"
+    },
+    {
+      "file": "web-pilot/src/main.tsx",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/main.tsx",
+      "bytes": 230,
+      "sha1": "12fa35b9813dddf7047f8fb1059b9cac5f601bd2",
+      "sha256": "f268dc44f71240012de0cfb1569d8ac906265cccd45eb3a99059c1a663d2f830"
+    },
+    {
+      "file": "web-pilot/src/utils/cn.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/utils/cn.ts",
+      "bytes": 169,
+      "sha1": "a5ef193506d07d0459fec4f187af08283094d7c8",
+      "sha256": "d1f1e0d62cb8d8d1e04c26e14de842d8a151f75812d81b046c65b5d1fe8e4b27"
+    },
+    {
+      "file": "web-pilot/src/game/access-corridors.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/access-corridors.ts",
+      "bytes": 1471,
+      "sha1": "32bfa3507909cddf85006050989786d5cce460a8",
+      "sha256": "3e1a2f15d82d61da5c049ef5a6c4f57fcbc16ebc348677a1e66ebcb2be87f718"
+    },
+    {
+      "file": "web-pilot/src/game/art.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/art.ts",
+      "bytes": 42172,
+      "sha1": "9312b4c4a82238953508286a07d1a9a67b9ab155",
+      "sha256": "896aa51abfac516b4228994ae7a20a67c4644a587028146b5c79336103a1ec20"
+    },
+    {
+      "file": "web-pilot/src/game/audio.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/audio.ts",
+      "bytes": 6025,
+      "sha1": "b79a59d1848c237dec67185492fc88563e3a2e43",
+      "sha256": "569344df9f5b5ea5532fe0f8743d64a71108997c585883239fa297a0dd21d09a"
+    },
+    {
+      "file": "web-pilot/src/game/balance.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/balance.v1.json",
+      "bytes": 3486,
+      "sha1": "0b5ecbc27cde9fbeb469c57f7028b7fc6d932474",
+      "sha256": "cd12286c267f39abef6b44727f22f38f0374cfcdcf66f2c7f3d1de03d3fd0b62"
+    },
+    {
+      "file": "web-pilot/src/game/catalog.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/catalog.ts",
+      "bytes": 44279,
+      "sha1": "7ada13f463eee53a6f4fe83990aeded201fc1b1f",
+      "sha256": "3bf47355f2e998919cb28b9f8c87e06a6d533098b6d79ccfb6d409b41c82ee68"
+    },
+    {
+      "file": "web-pilot/src/game/content.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/content.ts",
+      "bytes": 8759,
+      "sha1": "8b7f174225d0166226b245a06cf2eb9b952cacd3",
+      "sha256": "479cfd328c5aa24e68a464e81bb64ffe40c587862a121f019b37a666f3b9f554"
+    },
+    {
+      "file": "web-pilot/src/game/core.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/core.ts",
+      "bytes": 9496,
+      "sha1": "df7f071da40e3cb6e3865937e7801f9de07401ae",
+      "sha256": "1d6748a201c3c31a9b83dac70315dbd79112dce11bf81af30a83edfc050d95a9"
+    },
+    {
+      "file": "web-pilot/src/game/economy-adapter.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/economy-adapter.ts",
+      "bytes": 3470,
+      "sha1": "50aa2801fd3e035fd9bfcf564bd7215d2cb57829",
+      "sha256": "dae3b5f590e86ca29c8912305907dd80895987af9a9a3659ff9b32067ac97279"
+    },
+    {
+      "file": "web-pilot/src/game/engine.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/engine.ts",
+      "bytes": 97905,
+      "sha1": "83d4d73e408bc388928ba5adf5c5767ee5e612a4",
+      "sha256": "1bcc5e9db60d7eebadb59a35eb0ec876fdd162033f69c6dd17f71a24f3d928dd"
+    },
+    {
+      "file": "web-pilot/src/game/geography-contract.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/geography-contract.ts",
+      "bytes": 5226,
+      "sha1": "7cca84075037c5afd1f228a7e430a00e917c974a",
+      "sha256": "2dad5ff6d1ff7616ede7913b62b00b41566a4c5d2769c9180d89f432ecef34e3"
+    },
+    {
+      "file": "web-pilot/src/game/map-package.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/map-package.ts",
+      "bytes": 8014,
+      "sha1": "92e1f6e192ebd918969528c61bf7907fd8a41f81",
+      "sha256": "35ba945c990fec71517766f0e55275fd364de9b5d55935964ab23145734b6741"
+    },
+    {
+      "file": "web-pilot/src/game/persist.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/persist.ts",
+      "bytes": 23964,
+      "sha1": "29a396145640a482939a3c67ac6733cc13c729c1",
+      "sha256": "aece7e18de029244e2f1e5ee317bb54102c09ada19a87163b4c1245aad40d649"
+    },
+    {
+      "file": "web-pilot/src/game/render.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/render.ts",
+      "bytes": 57269,
+      "sha1": "2d61bc7180d0d0c7d5fcead2100b960e87504f78",
+      "sha256": "9ecdf48b90547c617e418e99d6c1fe174f234914348beeacb239618690600266"
+    },
+    {
+      "file": "web-pilot/src/game/sim.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/sim.ts",
+      "bytes": 81252,
+      "sha1": "a299d2f3b95241cb89f9d63f1f42463bdf84ef66",
+      "sha256": "6f4e4f71ed1fc24fe7eaf1ed783ed6eab3c19e9f7a5ff789700d28b44e95012d"
+    },
+    {
+      "file": "web-pilot/src/game/world-economy.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/world-economy.ts",
+      "bytes": 9924,
+      "sha1": "59caf2519c2a85d3b700f3be634e8d8e8360aead",
+      "sha256": "bcc87d4aef1c226229ccdfff77a896e95bd929f3ac4000c639bd62f5cd5c6fa7"
+    },
+    {
+      "file": "web-pilot/src/game/world.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/world.ts",
+      "bytes": 31092,
+      "sha1": "d9d941d7f4f363f4455f3a54ac4c7ac16de8d520",
+      "sha256": "de6698720b0f5971df47c5fa066b86eadfaec163b54898f3073188940085beed"
+    },
+    {
+      "file": "web-pilot/src/game/wreck-economy.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/wreck-economy.ts",
+      "bytes": 1347,
+      "sha1": "e8d06d404e8f618a58f205d2c6f3e178de1f479d",
+      "sha256": "146a750be5282fb7df14e8ac89a29a6503974832e228dc3ff7143bd7d8f3e331"
+    },
+    {
+      "file": "web-pilot/src/game/veyra/eligibility.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/veyra/eligibility.ts",
+      "bytes": 2406,
+      "sha1": "3c0ef66244524ebcf1c9c9d36dee90fcf0eb596b",
+      "sha256": "013d45b83f430dc918d550bc5e7737b48f574e1b455a94744affd5cfdbb1ce2d"
+    },
+    {
+      "file": "web-pilot/src/game/veyra/intake.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/veyra/intake.ts",
+      "bytes": 8435,
+      "sha1": "a44e4507d5c582d2c840cb8d2219b8cdb86a87e4",
+      "sha256": "2db779fa5cfbdbbd88dcc96f2873addcd4a5b5a9e0c78aa49caaf7d82a04152c"
+    },
+    {
+      "file": "web-pilot/src/game/veyra/lr02.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/veyra/lr02.ts",
+      "bytes": 3523,
+      "sha1": "00c2ba1aeed3a718617e4989827e64cd0f7e06e9",
+      "sha256": "e09efece36afdc4d4f0bd8a94c0fc62fd8ad6085e3bfce7be26e93de57a0b809"
+    },
+    {
+      "file": "web-pilot/src/game/veyra/projection.ts",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/game/veyra/projection.ts",
+      "bytes": 10198,
+      "sha1": "f7fcdffa7b71720760ea9eb90c0fed81a4a630f9",
+      "sha256": "6a4b4fd2cae67160bd2574e753309e7d462ce879ffa64bc8deee03afbc560764"
+    },
+    {
+      "file": "web-pilot/src/map-packages/README.md",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/map-packages/README.md",
+      "bytes": 1316,
+      "sha1": "444db8ff42a33f03701500672502fda102abc523",
+      "sha256": "adebe8e82e535478a3884f253a975bf83277c875d6cc7215e0b83ea4151ef9ac"
+    },
+    {
+      "file": "web-pilot/src/ui/Game.tsx",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/ui/Game.tsx",
+      "bytes": 28407,
+      "sha1": "0e429f73983b2394afd82ef0f58d73b573f81684",
+      "sha256": "aaf8da7f7f35e39c08cfd1539623159fe7cc022d3da5597398f8a7af338a60d3"
+    },
+    {
+      "file": "web-pilot/src/ui/Title.tsx",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/ui/Title.tsx",
+      "bytes": 11724,
+      "sha1": "afb5d2e80c5beea4f80ece232bc36ee256f9ef57",
+      "sha256": "1c988917178e5839d71d0bd41bc2f080289ef4026888c5bbf80e0d3c0094238a"
+    },
+    {
+      "file": "web-pilot/src/ui/common.tsx",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/ui/common.tsx",
+      "bytes": 4343,
+      "sha1": "db1af090ba3ca0951c249f649dd2db24ecdbe905",
+      "sha256": "d2a86bfc2b3aa787309c24da7fdd505fa6d4a0ed67496e3ee5b1dd99c4b6986e"
+    },
+    {
+      "file": "web-pilot/src/ui/panels.tsx",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/src/ui/panels.tsx",
+      "bytes": 52799,
+      "sha1": "75f2048d3263bf8e3e57561b6a75d24ad886082a",
+      "sha256": "eb796d2590c05edce64d4a0d0154ad3010c32d238b661426f22675694899e5ca"
+    },
+    {
+      "file": "web-pilot/geography/veyra-lr01/world_lab/lr01/output/geography_package.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/geography/veyra-lr01/world_lab/lr01/output/geography_package.v1.json",
+      "bytes": 1969292,
+      "sha1": "7f932aadb50a2f6a68e758d3f1669e20d7f7f9b9",
+      "sha256": "b4cc77228caf847d1ad0d8a680457ca65731202513a047826e8bd973662e19ad"
+    },
+    {
+      "file": "web-pilot/geography/veyra-lr01/map_tower/veyra_gold/VEYRA_GOLD_MAP.sohmap.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/geography/veyra-lr01/map_tower/veyra_gold/VEYRA_GOLD_MAP.sohmap.json",
+      "bytes": 332249,
+      "sha1": "2337c0be5898efcc208ed00d96e3177039a2bc5e",
+      "sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256"
+    },
+    {
+      "file": "web-pilot/geography/veyra-lr02/spawn_eligibility.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/geography/veyra-lr02/spawn_eligibility.v1.json",
+      "bytes": 194525,
+      "sha1": "a3740d5fbbad15ffb5b9d0980204742e45cf1c01",
+      "sha256": "377d5452579d638711bb41fbedcab5dafc98af2c17327a90ec954b8c277a19b9"
+    },
+    {
+      "file": "web-pilot/geography/veyra-lr02/greywater_spatial_patch.v1.json",
+      "sourceCommit": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+      "sourcePath": "web/geography/veyra-lr02/greywater_spatial_patch.v1.json",
+      "bytes": 139590,
+      "sha1": "9ea4e9430843acc9e50cd836114e4447ff663e8a",
+      "sha256": "2a9cfcc4360cd62088c4e938fa04f53a99aae6c0a8f2749580453869c502be78"
+    },
+    {
+      "file": "map-data/CURRENT_WORLD_MASTER.json",
+      "sourceCommit": "caccf21613aa57a55491ec44f687cc44c569f79e",
+      "sourcePath": "veyra-world-master/CURRENT_WORLD_MASTER.json",
+      "bytes": 1376,
+      "sha1": "03e1da19f0f8968da4c6dff971440637f3bdad4a",
+      "sha256": "6adfa7167937a5fed0af2c11348fcdff6cbe445daaba5bbfb1bfb208f1239679"
+    },
+    {
+      "file": "map-data/manifest.v4.json",
+      "sourceCommit": "caccf21613aa57a55491ec44f687cc44c569f79e",
+      "sourcePath": "veyra-world-master/v4/manifest.v4.json",
+      "bytes": 3044,
+      "sha1": "e325b927e5ac9d6f6f16f7eff2f1595e52a777db",
+      "sha256": "f1a55db64d6e675c7d66a6056d61aa4969dda1bd330bbffc0e1788df1a5ba68d"
+    },
+    {
+      "file": "map-data/manifest.r1.json",
+      "sourceCommit": "caccf21613aa57a55491ec44f687cc44c569f79e",
+      "sourcePath": "veyra-world-master/v4/r1/manifest.r1.json",
+      "bytes": 1865,
+      "sha1": "41b37fcc0837d9cdf9d6ce6e71c182dd5c17c7a9",
+      "sha256": "57195f7d842ce524d0bda566a140ffba67f2a6f8563830b8c1030bc583224f15"
+    },
+    {
+      "file": "map-data/geography_design.r1.json",
+      "sourceCommit": "caccf21613aa57a55491ec44f687cc44c569f79e",
+      "sourcePath": "veyra-world-master/v4/r1/layers/geography_design.r1.json",
+      "bytes": 3808,
+      "sha1": "f52fa80f7a53cfc44a7f8aa58d5cdb7f451bf3f4",
+      "sha256": "ae80b881c4d782ce90aa9d95d4007149d7e8f12a6ddfc7c790af958020521a1b"
+    },
+    {
+      "file": "map-data/marine_sites.v4.json",
+      "sourceCommit": "caccf21613aa57a55491ec44f687cc44c569f79e",
+      "sourcePath": "veyra-world-master/v4/layers/marine_sites.v4.json",
+      "bytes": 3197,
+      "sha1": "19a6f6ec3ee8bb0b7073a8baa86d18305936968a",
+      "sha256": "d58d29956bb786333f506a81e68cf366905bc119fcc1dc4eb9df4b4328bbbb4f"
+    },
+    {
+      "file": "map-data/marine_navigation.v4.json",
+      "sourceCommit": "caccf21613aa57a55491ec44f687cc44c569f79e",
+      "sourcePath": "veyra-world-master/v4/layers/marine_navigation.v4.json",
+      "bytes": 2887,
+      "sha1": "355873ba1713253731a9c643077c71d110e7ef91",
+      "sha256": "d09362a767eee2315fdf367ad742acb15400b7ece250b4bb17ced6c0c6fb710b"
+    },
+    {
+      "file": "map-data/biomeEffective.r1.u8",
+      "sourceCommit": "caccf21613aa57a55491ec44f687cc44c569f79e",
+      "sourcePath": "veyra-world-master/v4/r1/data/biomeEffective.r1.u8",
+      "bytes": 43750,
+      "sha1": "33d3a847b41c6eda2cb51139c663c8130c0df5c5",
+      "sha256": "43e700ef9b1d50e7a2e7d5342f0473df4e15a2a1f27a0097cc50dc7c2a46a87b"
+    },
+    {
+      "file": "map-data/coldTransition.r1.u8",
+      "sourceCommit": "caccf21613aa57a55491ec44f687cc44c569f79e",
+      "sourcePath": "veyra-world-master/v4/r1/data/coldTransition.r1.u8",
+      "bytes": 43750,
+      "sha1": "ecb28fd0c5cdf3de7dc00f524e34973a3ee7324e",
+      "sha256": "e7849ccb37e2ef54e6bb55f709dc93ae1557a4c948235e0d1452ec1114d59971"
+    },
+    {
+      "file": "map-data/marineRegion.v4.u8",
+      "sourceCommit": "caccf21613aa57a55491ec44f687cc44c569f79e",
+      "sourcePath": "veyra-world-master/v4/data/marineRegion.v4.u8",
+      "bytes": 43750,
+      "sha1": "d41065719d4696eb47764384c5ed9563ab6664a1",
+      "sha256": "615a5ce04f4c133edb2d95c91b48431bebc5f45c2048a6903e1b31afb01d8311"
+    },
+    {
+      "file": "map-data/cliffCandidate.v3.u8",
+      "sourceCommit": "caccf21613aa57a55491ec44f687cc44c569f79e",
+      "sourcePath": "veyra-world-master/v3/rasters/cliffCandidate.v3.u8",
+      "bytes": 43750,
+      "sha1": "576e2eb131d54734b95088275c345c7cb3a7446b",
+      "sha256": "6b2897d74409b974d477e767291f1eac0b9614a1b794539aef827c1278682d2d"
+    },
+    {
+      "file": "map-data/heightClass.v3.u8",
+      "sourceCommit": "caccf21613aa57a55491ec44f687cc44c569f79e",
+      "sourcePath": "veyra-world-master/v3/rasters/heightClass.v3.u8",
+      "bytes": 43750,
+      "sha1": "40b44c55ac561055796f4199b696f7ba455855ce",
+      "sha256": "ec800274e8af35f2e31caa18352f2c6643a4fe5da1f1235426037040a4823814"
+    },
+    {
+      "file": "map-data/biomeCode.u8",
+      "sourceCommit": "caccf21613aa57a55491ec44f687cc44c569f79e",
+      "sourcePath": "veyra-world-master/data/rasters/geo01/biomeCode.u8",
+      "bytes": 43750,
+      "sha1": "b4ec0b008f3cbc8787b993b615e96e1cf88ced66",
+      "sha256": "232998e642e836f30129b3a689f7cd458f8c57526ecd2c1bad51449cbeff839d"
+    },
+    {
+      "file": "map-data/landId.u8",
+      "sourceCommit": "caccf21613aa57a55491ec44f687cc44c569f79e",
+      "sourcePath": "veyra-world-master/data/rasters/geo01/landId.u8",
+      "bytes": 43750,
+      "sha1": "80cbd35bdc20ffd43967d83f4f7e04311a55a674",
+      "sha256": "3aaebb6a358ce04fc33eff56050321639ffc317fe1bb698114a621240c12e8a7"
+    },
+    {
+      "file": "map-data/waterClass.u8",
+      "sourceCommit": "caccf21613aa57a55491ec44f687cc44c569f79e",
+      "sourcePath": "veyra-world-master/data/rasters/geo01/waterClass.u8",
+      "bytes": 43750,
+      "sha1": "3d853e49308b334664951f11e4716cd1d96276b4",
+      "sha256": "f4c49bfc6279324051b31afaf3165ebde1734ad26d1c7e1bc52fe368748ad254"
+    },
+    {
+      "file": "map-data/elevation.u8",
+      "sourceCommit": "caccf21613aa57a55491ec44f687cc44c569f79e",
+      "sourcePath": "veyra-world-master/data/rasters/geo01/elevation.u8",
+      "bytes": 43750,
+      "sha1": "825c1735529355a3e3ef98af134d8747ddc20d92",
+      "sha256": "54d7641cea57ebd20be1eb17a0ce919f352f2868f4ed123e968a2e59666c6d24"
+    },
+    {
+      "file": "map-data/slope.u8",
+      "sourceCommit": "caccf21613aa57a55491ec44f687cc44c569f79e",
+      "sourcePath": "veyra-world-master/data/rasters/geo01/slope.u8",
+      "bytes": 43750,
+      "sha1": "8a5f6616c0cb4759cbbf683e3fa544170847d1f8",
+      "sha256": "6648158ad69cd9c136e249394a9aa7b21e31d08ca7ac48d700fa9511a918130e"
+    }
+  ]
+}

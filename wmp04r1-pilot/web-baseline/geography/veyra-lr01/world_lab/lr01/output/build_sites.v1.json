@@ -1,0 +1,3362 @@
+{
+  "schema": "soh.map.lr01.build_sites.v1",
+  "status": "DERIVED_GEOMETRY_PLUS_PROPOSED_ENVELOPES__GAMEPLAY_OWNS_PLACEMENT",
+  "sourceSha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+  "count": 23,
+  "sites": [
+    {
+      "siteId": "site.bz_greywater",
+      "parentZoneId": "bz_greywater",
+      "parentZoneName": "Greywater Lakeshore Terrace",
+      "sourceRef": "project.zones[] where id=bz_greywater",
+      "status": "DERIVED",
+      "footprintAu": [
+        [
+          705.3769565929802,
+          608.2379445943548
+        ],
+        [
+          710.7625068351123,
+          600.7138337830645
+        ],
+        [
+          726.140544792265,
+          595.3416074166121
+        ],
+        [
+          751.5110704644383,
+          592.1212654949975
+        ],
+        [
+          777.0156785637323,
+          590.579789371794
+        ],
+        [
+          802.6543690901469,
+          590.7171790470018
+        ],
+        [
+          828.639878702264,
+          592.2490243742513
+        ],
+        [
+          854.9722074000836,
+          595.175325353543
+        ],
+        [
+          867.9678471396824,
+          600.4788568823917
+        ],
+        [
+          867.6267979210602,
+          608.1596189607973
+        ],
+        [
+          867.6800631680195,
+          615.850852659734
+        ],
+        [
+          868.1276428805604,
+          623.552557979202
+        ],
+        [
+          855.4201655127404,
+          629.0960667964754
+        ],
+        [
+          829.5576310645595,
+          632.4813791115541
+        ],
+        [
+          804.3193975430004,
+          633.3360740348371
+        ],
+        [
+          779.705464948063,
+          631.660151566324
+        ],
+        [
+          756.8075221531014,
+          629.3095928063116
+        ],
+        [
+          735.6255691581158,
+          626.2843977547998
+        ],
+        [
+          719.4469898634458,
+          621.5788501717828
+        ],
+        [
+          708.2717842690913,
+          615.192950057261
+        ]
+      ],
+      "footprintBboxAu": [
+        705.377,
+        590.5798,
+        868.1276,
+        633.3361
+      ],
+      "footprintAreaAu2": 5707.4164,
+      "buildableCells": 87,
+      "buildableFraction": 1,
+      "proposedBuildEnvelopeAu": [
+        708,
+        596,
+        860,
+        628
+      ],
+      "proposedBuildEnvelopeStatus": "PROPOSED",
+      "loadingEnvelopeAu": [
+        724,
+        596,
+        852,
+        628
+      ],
+      "loadingCells": 59,
+      "loadingEnvelopeStatus": "PROPOSED",
+      "naturalChokeClusterIds": [],
+      "nearestRoads": [
+        {
+          "id": "rd_b",
+          "kind": "cart",
+          "d": 17.2748
+        },
+        {
+          "id": "rd_9",
+          "kind": "cart",
+          "d": 28.2466
+        },
+        {
+          "id": "rd_d",
+          "kind": "cart",
+          "d": 35.3867
+        }
+      ],
+      "nearestSpawn": {
+        "id": "sp_lake",
+        "d": 10.7652
+      },
+      "poiCount": 1,
+      "elderTerritoriesWithin200Au": [
+        "el_typhon",
+        "el_aion"
+      ],
+      "priorityScore": 437.9348,
+      "priorityRank": 1,
+      "occupancyStatus": "UNKNOWN",
+      "claimLegalityStatus": "GAMEPLAY_OWNED",
+      "sweptClearanceAu": null,
+      "sweptClearanceStatus": "UNKNOWN",
+      "owner": "MAP_SUPPLIES_PHYSICAL_SPACE_AND_CONSTRAINTS__GAMEPLAY_OWNS_BUILDING_RULES_AND_PLACEMENT",
+      "note": "A build site is a geometric envelope, NOT a permission to build, NOT a house, NOT a claim radius. A0 occupancy and Gameplay rules are not asserted."
+    },
+    {
+      "siteId": "site.bz_gulfwest",
+      "parentZoneId": "bz_gulfwest",
+      "parentZoneName": "Gulf West Bank Flats",
+      "sourceRef": "project.zones[] where id=bz_gulfwest",
+      "status": "DERIVED",
+      "footprintAu": [
+        [
+          827.6134109927847,
+          924.456690227628
+        ],
+        [
+          828.8520330305757,
+          916.0832567243199
+        ],
+        [
+          838.9909682023113,
+          908.2497701729596
+        ],
+        [
+          848.645560033852,
+          900.12511625085
+        ],
+        [
+          857.8158085251982,
+          891.7092949579912
+        ],
+        [
+          870.8758027853055,
+          888.1009114019062
+        ],
+        [
+          887.8255428141738,
+          889.299965582595
+        ],
+        [
+          902.9151761256942,
+          892.7646339242872
+        ],
+        [
+          916.1447027198665,
+          898.4949164269826
+        ],
+        [
+          925.171373319562,
+          906.0200432587478
+        ],
+        [
+          929.995187924781,
+          915.3400144195825
+        ],
+        [
+          929.6114925693673,
+          924.4927229843137
+        ],
+        [
+          924.020287253321,
+          933.4781689529411
+        ],
+        [
+          914.4773252760518,
+          940.0499069008199
+        ],
+        [
+          900.9826066375597,
+          944.2079368279501
+        ],
+        [
+          886.2500595617549,
+          947.8890044355261
+        ],
+        [
+          870.2796840486376,
+          951.0931097235477
+        ],
+        [
+          856.497359128313,
+          948.9780620032969
+        ],
+        [
+          844.903084800781,
+          941.5438612747737
+        ],
+        [
+          835.2751020889383,
+          933.370070682884
+        ]
+      ],
+      "footprintBboxAu": [
+        827.6134,
+        888.1009,
+        929.9952,
+        951.0931
+      ],
+      "footprintAreaAu2": 4647.5514,
+      "buildableCells": 75,
+      "buildableFraction": 1,
+      "proposedBuildEnvelopeAu": [
+        828,
+        892,
+        924,
+        948
+      ],
+      "proposedBuildEnvelopeStatus": "PROPOSED",
+      "loadingEnvelopeAu": [
+        860,
+        892,
+        924,
+        948
+      ],
+      "loadingCells": 39,
+      "loadingEnvelopeStatus": "PROPOSED",
+      "naturalChokeClusterIds": [],
+      "nearestRoads": [
+        {
+          "id": "rd_n",
+          "kind": "cart",
+          "d": 28.9594
+        },
+        {
+          "id": "rd_m",
+          "kind": "cart",
+          "d": 33.997
+        },
+        {
+          "id": "rd_p",
+          "kind": "cart",
+          "d": 63.1304
+        }
+      ],
+      "nearestSpawn": {
+        "id": "sp_gulf",
+        "d": 12.9926
+      },
+      "poiCount": 1,
+      "elderTerritoriesWithin200Au": [
+        "el_aion",
+        "el_anubis"
+      ],
+      "priorityScore": 434.5074,
+      "priorityRank": 2,
+      "occupancyStatus": "UNKNOWN",
+      "claimLegalityStatus": "GAMEPLAY_OWNED",
+      "sweptClearanceAu": null,
+      "sweptClearanceStatus": "UNKNOWN",
+      "owner": "MAP_SUPPLIES_PHYSICAL_SPACE_AND_CONSTRAINTS__GAMEPLAY_OWNS_BUILDING_RULES_AND_PLACEMENT",
+      "note": "A build site is a geometric envelope, NOT a permission to build, NOT a house, NOT a claim radius. A0 occupancy and Gameplay rules are not asserted."
+    },
+    {
+      "siteId": "site.bz_westmouth",
+      "parentZoneId": "bz_westmouth",
+      "parentZoneName": "Westmouth Coastal Terrace",
+      "sourceRef": "project.zones[] where id=bz_westmouth",
+      "status": "DERIVED",
+      "footprintAu": [
+        [
+          362.04116180000034,
+          617.0272250640966
+        ],
+        [
+          362.1449246678661,
+          603.0090750213656
+        ],
+        [
+          363.1011676385072,
+          590.1074893835438
+        ],
+        [
+          364.9098907119236,
+          578.3224681506315
+        ],
+        [
+          368.98859577561495,
+          569.0625753585078
+        ],
+        [
+          375.3372828295813,
+          562.327811007173
+        ],
+        [
+          382.3469138844282,
+          558.5098194936885
+        ],
+        [
+          390.01748894015583,
+          557.6086008180544
+        ],
+        [
+          398.14559086558705,
+          559.5636175079273
+        ],
+        [
+          406.7312196607218,
+          564.3748695633071
+        ],
+        [
+          411.1665514062617,
+          574.0853716932479
+        ],
+        [
+          411.45158610220665,
+          588.6951238977492
+        ],
+        [
+          410.15457305865044,
+          601.790408920163
+        ],
+        [
+          407.2755122755932,
+          613.371226760489
+        ],
+        [
+          403.30207270290146,
+          625.3663755738088
+        ],
+        [
+          398.23425434057526,
+          637.7758553601225
+        ],
+        [
+          391.1074128544335,
+          642.7082135697716
+        ],
+        [
+          381.9215482444761,
+          640.1634502027563
+        ],
+        [
+          373.49378204614,
+          635.177376410802
+        ],
+        [
+          365.82411425942496,
+          627.7499921939087
+        ]
+      ],
+      "footprintBboxAu": [
+        362.0412,
+        557.6086,
+        411.4516,
+        642.7082
+      ],
+      "footprintAreaAu2": 3323.49,
+      "buildableCells": 51,
+      "buildableFraction": 1,
+      "proposedBuildEnvelopeAu": [
+        364,
+        564,
+        404,
+        636
+      ],
+      "proposedBuildEnvelopeStatus": "PROPOSED",
+      "loadingEnvelopeAu": [
+        364,
+        564,
+        404,
+        636
+      ],
+      "loadingCells": 45,
+      "loadingEnvelopeStatus": "PROPOSED",
+      "naturalChokeClusterIds": [],
+      "nearestRoads": [
+        {
+          "id": "rd_r",
+          "kind": "cart",
+          "d": 7.1307
+        },
+        {
+          "id": "rd_s",
+          "kind": "cart",
+          "d": 40.6784
+        },
+        {
+          "id": "rd_2c",
+          "kind": "ferry",
+          "d": 72.6278
+        }
+      ],
+      "nearestSpawn": {
+        "id": "sp_west",
+        "d": 16.4754
+      },
+      "poiCount": 0,
+      "elderTerritoriesWithin200Au": [
+        "el_typhon",
+        "el_atlas"
+      ],
+      "priorityScore": 408.6246,
+      "priorityRank": 3,
+      "occupancyStatus": "UNKNOWN",
+      "claimLegalityStatus": "GAMEPLAY_OWNED",
+      "sweptClearanceAu": null,
+      "sweptClearanceStatus": "UNKNOWN",
+      "owner": "MAP_SUPPLIES_PHYSICAL_SPACE_AND_CONSTRAINTS__GAMEPLAY_OWNS_BUILDING_RULES_AND_PLACEMENT",
+      "note": "A build site is a geometric envelope, NOT a permission to build, NOT a house, NOT a claim radius. A0 occupancy and Gameplay rules are not asserted."
+    },
+    {
+      "siteId": "site.bz_hook",
+      "parentZoneId": "bz_hook",
+      "parentZoneName": "Hook Meadow",
+      "sourceRef": "project.zones[] where id=bz_hook",
+      "status": "DERIVED",
+      "footprintAu": [
+        [
+          1222.7990597684584,
+          387.93167846850855
+        ],
+        [
+          1229.41557660085,
+          379.7950354055257
+        ],
+        [
+          1241.1618111924179,
+          374.3656308265379
+        ],
+        [
+          1258.0377635431616,
+          371.643464731545
+        ],
+        [
+          1274.9992663951318,
+          369.2172282369148
+        ],
+        [
+          1292.0463197483286,
+          367.08692134264726
+        ],
+        [
+          1306.0320125957237,
+          369.1793069172371
+        ],
+        [
+          1316.9563449373177,
+          375.49438496068444
+        ],
+        [
+          1327.7203096286798,
+          381.9889429868061
+        ],
+        [
+          1338.3239066698102,
+          388.662980995602
+        ],
+        [
+          1338.5405751908604,
+          395.40857304759027
+        ],
+        [
+          1328.3703151918305,
+          402.22571914277086
+        ],
+        [
+          1317.6655667375928,
+          408.8031175498613
+        ],
+        [
+          1306.4263298281476,
+          415.1407682688617
+        ],
+        [
+          1291.958455889887,
+          417.5330378298195
+        ],
+        [
+          1274.2619449228116,
+          415.9799262327347
+        ],
+        [
+          1259.4982845408992,
+          412.72546338487535
+        ],
+        [
+          1247.66747474415,
+          407.76964928624136
+        ],
+        [
+          1236.1867527223972,
+          401.96880667769324
+        ],
+        [
+          1225.0561184756407,
+          395.3229355592311
+        ]
+      ],
+      "footprintBboxAu": [
+        1222.7991,
+        367.0869,
+        1338.5406,
+        417.533
+      ],
+      "footprintAreaAu2": 4079.5653,
+      "buildableCells": 57,
+      "buildableFraction": 0.8769,
+      "proposedBuildEnvelopeAu": [
+        1228,
+        372,
+        1332,
+        412
+      ],
+      "proposedBuildEnvelopeStatus": "PROPOSED",
+      "loadingEnvelopeAu": [
+        1228,
+        388,
+        1244,
+        404
+      ],
+      "loadingCells": 4,
+      "loadingEnvelopeStatus": "PROPOSED",
+      "naturalChokeClusterIds": [],
+      "nearestRoads": [
+        {
+          "id": "rd_1n",
+          "kind": "trail",
+          "d": 29.8592
+        },
+        {
+          "id": "rd_8",
+          "kind": "cart",
+          "d": 52.1657
+        },
+        {
+          "id": "rd_1k",
+          "kind": "trail",
+          "d": 56.6589
+        }
+      ],
+      "nearestSpawn": {
+        "id": "sp_hook",
+        "d": 0.7839
+      },
+      "poiCount": 0,
+      "elderTerritoriesWithin200Au": [],
+      "priorityScore": 404.9161,
+      "priorityRank": 4,
+      "occupancyStatus": "UNKNOWN",
+      "claimLegalityStatus": "GAMEPLAY_OWNED",
+      "sweptClearanceAu": null,
+      "sweptClearanceStatus": "UNKNOWN",
+      "owner": "MAP_SUPPLIES_PHYSICAL_SPACE_AND_CONSTRAINTS__GAMEPLAY_OWNS_BUILDING_RULES_AND_PLACEMENT",
+      "note": "A build site is a geometric envelope, NOT a permission to build, NOT a house, NOT a claim radius. A0 occupancy and Gameplay rules are not asserted."
+    },
+    {
+      "siteId": "site.bz_silver",
+      "parentZoneId": "bz_silver",
+      "parentZoneName": "Silverrun Meadow Bank",
+      "sourceRef": "project.zones[] where id=bz_silver",
+      "status": "DERIVED",
+      "footprintAu": [
+        [
+          634.4593770169047,
+          670.620820804134
+        ],
+        [
+          636.3034941420017,
+          665.7007382801874
+        ],
+        [
+          643.6049173630947,
+          661.1022148405623
+        ],
+        [
+          655.2830582922173,
+          657.2917987916817
+        ],
+        [
+          671.3379169293696,
+          654.2694901335458
+        ],
+        [
+          689.58515409484,
+          652.8303676550034
+        ],
+        [
+          710.0247697886286,
+          652.9744313560547
+        ],
+        [
+          728.0174679776329,
+          654.5469741123368
+        ],
+        [
+          743.5632486618526,
+          657.5479959238498
+        ],
+        [
+          754.3798736221382,
+          661.2863801222047
+        ],
+        [
+          760.4673428584897,
+          665.7621267074016
+        ],
+        [
+          760.5389616029266,
+          670.250361467871
+        ],
+        [
+          754.5947298554491,
+          674.751084403613
+        ],
+        [
+          744.9939716784489,
+          679.3875613657237
+        ],
+        [
+          731.7366870719261,
+          684.1597923542032
+        ],
+        [
+          712.778557310756,
+          686.3800564612649
+        ],
+        [
+          688.1195823949387,
+          686.0483536869089
+        ],
+        [
+          666.8123613210857,
+          684.0326975289322
+        ],
+        [
+          648.8568940891973,
+          680.3330879873348
+        ],
+        [
+          638.0725659878035,
+          675.8624624124021
+        ]
+      ],
+      "footprintBboxAu": [
+        634.4594,
+        652.8304,
+        760.539,
+        686.3801
+      ],
+      "footprintAreaAu2": 3285.1819,
+      "buildableCells": 52,
+      "buildableFraction": 1,
+      "proposedBuildEnvelopeAu": [
+        636,
+        660,
+        756,
+        684
+      ],
+      "proposedBuildEnvelopeStatus": "PROPOSED",
+      "loadingEnvelopeAu": [
+        708,
+        660,
+        756,
+        684
+      ],
+      "loadingCells": 17,
+      "loadingEnvelopeStatus": "PROPOSED",
+      "naturalChokeClusterIds": [],
+      "nearestRoads": [
+        {
+          "id": "rd_c",
+          "kind": "cart",
+          "d": 37.2348
+        },
+        {
+          "id": "rd_b",
+          "kind": "cart",
+          "d": 39.473
+        },
+        {
+          "id": "rd_13",
+          "kind": "trail",
+          "d": 50.3998
+        }
+      ],
+      "nearestSpawn": {
+        "id": "sp_lake",
+        "d": 103.8557
+      },
+      "poiCount": 1,
+      "elderTerritoriesWithin200Au": [
+        "el_typhon",
+        "el_aion"
+      ],
+      "priorityScore": 341.3443,
+      "priorityRank": 5,
+      "occupancyStatus": "UNKNOWN",
+      "claimLegalityStatus": "GAMEPLAY_OWNED",
+      "sweptClearanceAu": null,
+      "sweptClearanceStatus": "UNKNOWN",
+      "owner": "MAP_SUPPLIES_PHYSICAL_SPACE_AND_CONSTRAINTS__GAMEPLAY_OWNS_BUILDING_RULES_AND_PLACEMENT",
+      "note": "A build site is a geometric envelope, NOT a permission to build, NOT a house, NOT a claim radius. A0 occupancy and Gameplay rules are not asserted."
+    },
+    {
+      "siteId": "site.bz_eastflats",
+      "parentZoneId": "bz_eastflats",
+      "parentZoneName": "Eastwater Estuary Flats",
+      "sourceRef": "project.zones[] where id=bz_eastflats",
+      "status": "DERIVED",
+      "footprintAu": [
+        [
+          1202.7389900625622,
+          508.4773130459448
+        ],
+        [
+          1203.16192475456,
+          502.95249980258876
+        ],
+        [
+          1205.2172435282769,
+          497.5437701300146
+        ],
+        [
+          1213.0787994816192,
+          494.03353476479265
+        ],
+        [
+          1226.7465926145876,
+          492.4217937069228
+        ],
+        [
+          1239.9002043230885,
+          491.2885846798147
+        ],
+        [
+          1252.5396346071216,
+          490.63390768346824
+        ],
+        [
+          1265.98507133217,
+          491.2824063896398
+        ],
+        [
+          1280.2365144982336,
+          493.23408079832933
+        ],
+        [
+          1289.8586679279492,
+          497.0716546617245
+        ],
+        [
+          1294.8515316213166,
+          502.7951279798254
+        ],
+        [
+          1294.8908928594374,
+          508.52940484078505
+        ],
+        [
+          1289.9767516423121,
+          514.2744852446035
+        ],
+        [
+          1280.4211653551324,
+          518.1894554230629
+        ],
+        [
+          1266.2241339978987,
+          520.2743153761633
+        ],
+        [
+          1252.5966975727983,
+          521.077853490207
+        ],
+        [
+          1239.5388560798317,
+          520.600069765194
+        ],
+        [
+          1225.8957425367973,
+          519.5055479938037
+        ],
+        [
+          1211.6673569436953,
+          517.7942881760357
+        ],
+        [
+          1203.9484394522838,
+          514.1182098600829
+        ]
+      ],
+      "footprintBboxAu": [
+        1202.739,
+        490.6339,
+        1294.8909,
+        521.0779
+      ],
+      "footprintAreaAu2": 2336.5906,
+      "buildableCells": 29,
+      "buildableFraction": 0.7632,
+      "proposedBuildEnvelopeAu": [
+        1204,
+        492,
+        1292,
+        516
+      ],
+      "proposedBuildEnvelopeStatus": "PROPOSED",
+      "loadingEnvelopeAu": [
+        1244,
+        492,
+        1292,
+        508
+      ],
+      "loadingCells": 13,
+      "loadingEnvelopeStatus": "PROPOSED",
+      "naturalChokeClusterIds": [],
+      "nearestRoads": [
+        {
+          "id": "rd_21",
+          "kind": "riverside",
+          "d": 14.358
+        },
+        {
+          "id": "rd_5",
+          "kind": "cart",
+          "d": 25.3264
+        },
+        {
+          "id": "rd_8",
+          "kind": "cart",
+          "d": 25.3264
+        }
+      ],
+      "nearestSpawn": {
+        "id": "sp_hook",
+        "d": 118.7878
+      },
+      "poiCount": 1,
+      "elderTerritoriesWithin200Au": [],
+      "priorityScore": 304.1122,
+      "priorityRank": 6,
+      "occupancyStatus": "UNKNOWN",
+      "claimLegalityStatus": "GAMEPLAY_OWNED",
+      "sweptClearanceAu": null,
+      "sweptClearanceStatus": "UNKNOWN",
+      "owner": "MAP_SUPPLIES_PHYSICAL_SPACE_AND_CONSTRAINTS__GAMEPLAY_OWNS_BUILDING_RULES_AND_PLACEMENT",
+      "note": "A build site is a geometric envelope, NOT a permission to build, NOT a house, NOT a claim radius. A0 occupancy and Gameplay rules are not asserted."
+    },
+    {
+      "siteId": "site.bz_elder_clear",
+      "parentZoneId": "bz_elder_clear",
+      "parentZoneName": "Hollow Oaks Clearing",
+      "sourceRef": "project.zones[] where id=bz_elder_clear",
+      "status": "DERIVED",
+      "footprintAu": [
+        [
+          768.4277420677747,
+          794.4480241427802
+        ],
+        [
+          769.8868997808783,
+          786.3849431050772
+        ],
+        [
+          773.0750792425838,
+          779.1548293152316
+        ],
+        [
+          777.9470695421048,
+          771.7677559074925
+        ],
+        [
+          784.5028706794412,
+          764.2237228818598
+        ],
+        [
+          793.320078897499,
+          761.8308106446198
+        ],
+        [
+          804.3986941962781,
+          764.5890191957726
+        ],
+        [
+          813.818584311686,
+          768.342554185534
+        ],
+        [
+          821.5797492437223,
+          773.0914156139041
+        ],
+        [
+          827.999310267201,
+          779.0993847460669
+        ],
+        [
+          833.077267382122,
+          786.3664615820223
+        ],
+        [
+          833.0491383719353,
+          793.6174808362716
+        ],
+        [
+          827.9149232366412,
+          800.852442508815
+        ],
+        [
+          821.7861313946239,
+          807.5635438375434
+        ],
+        [
+          814.6627628458834,
+          813.7507848224568
+        ],
+        [
+          805.2349901174421,
+          817.6074599781564
+        ],
+        [
+          793.5028132092998,
+          819.1335693046422
+        ],
+        [
+          782.9356780966771,
+          816.8704921186941
+        ],
+        [
+          773.5335847795739,
+          810.8182284203122
+        ],
+        [
+          768.6976061032731,
+          803.3440724283408
+        ]
+      ],
+      "footprintBboxAu": [
+        768.4277,
+        761.8308,
+        833.0773,
+        819.1336
+      ],
+      "footprintAreaAu2": 2721.074,
+      "buildableCells": 42,
+      "buildableFraction": 1,
+      "proposedBuildEnvelopeAu": [
+        772,
+        764,
+        828,
+        812
+      ],
+      "proposedBuildEnvelopeStatus": "PROPOSED",
+      "loadingEnvelopeAu": null,
+      "loadingCells": 0,
+      "loadingEnvelopeStatus": "PROPOSED",
+      "naturalChokeClusterIds": [],
+      "nearestRoads": [
+        {
+          "id": "rd_1x",
+          "kind": "trail",
+          "d": 22.9811
+        },
+        {
+          "id": "rd_16",
+          "kind": "trail",
+          "d": 24.2662
+        },
+        {
+          "id": "rd_13",
+          "kind": "trail",
+          "d": 31.2857
+        }
+      ],
+      "nearestSpawn": {
+        "id": "sp_gulf",
+        "d": 156.7752
+      },
+      "poiCount": 0,
+      "elderTerritoriesWithin200Au": [
+        "el_aion",
+        "el_anubis"
+      ],
+      "priorityScore": 267.4248,
+      "priorityRank": 7,
+      "occupancyStatus": "UNKNOWN",
+      "claimLegalityStatus": "GAMEPLAY_OWNED",
+      "sweptClearanceAu": null,
+      "sweptClearanceStatus": "UNKNOWN",
+      "owner": "MAP_SUPPLIES_PHYSICAL_SPACE_AND_CONSTRAINTS__GAMEPLAY_OWNS_BUILDING_RULES_AND_PLACEMENT",
+      "note": "A build site is a geometric envelope, NOT a permission to build, NOT a house, NOT a claim radius. A0 occupancy and Gameplay rules are not asserted."
+    },
+    {
+      "siteId": "site.bz_westwood",
+      "parentZoneId": "bz_westwood",
+      "parentZoneName": "West Woods Shelf",
+      "sourceRef": "project.zones[] where id=bz_westwood",
+      "status": "DERIVED",
+      "footprintAu": [
+        [
+          408.0669707356237,
+          791.8801097857322
+        ],
+        [
+          408.96642234490423,
+          775.5151818897882
+        ],
+        [
+          411.24776858451054,
+          760.2633241400662
+        ],
+        [
+          414.9110094544426,
+          746.124536536566
+        ],
+        [
+          420.73466530293035,
+          736.5326482827305
+        ],
+        [
+          428.7187361299736,
+          731.4876593785598
+        ],
+        [
+          436.97425966934134,
+          727.2561773281653
+        ],
+        [
+          445.5012359210335,
+          723.8382021315473
+        ],
+        [
+          451.73545616689796,
+          728.364696491297
+        ],
+        [
+          455.6769204069347,
+          740.8356604074141
+        ],
+        [
+          458.86648279485536,
+          753.4686502387904
+        ],
+        [
+          461.30414333066,
+          766.2636659854254
+        ],
+        [
+          460.8472676212095,
+          779.9581787191025
+        ],
+        [
+          457.4958556665038,
+          794.5521884398217
+        ],
+        [
+          451.769474584362,
+          805.1692850663088
+        ],
+        [
+          443.668124374784,
+          811.8094685985634
+        ],
+        [
+          435.79121392004856,
+          814.0088238323577
+        ],
+        [
+          428.13874322015573,
+          811.7673507676917
+        ],
+        [
+          420.13869213540283,
+          808.000604109945
+        ],
+        [
+          411.7910606657899,
+          802.7085838591179
+        ]
+      ],
+      "footprintBboxAu": [
+        408.067,
+        723.8382,
+        461.3041,
+        814.0088
+      ],
+      "footprintAreaAu2": 3657.7089,
+      "buildableCells": 58,
+      "buildableFraction": 1,
+      "proposedBuildEnvelopeAu": [
+        412,
+        732,
+        460,
+        812
+      ],
+      "proposedBuildEnvelopeStatus": "PROPOSED",
+      "loadingEnvelopeAu": [
+        420,
+        732,
+        452,
+        764
+      ],
+      "loadingCells": 17,
+      "loadingEnvelopeStatus": "PROPOSED",
+      "naturalChokeClusterIds": [],
+      "nearestRoads": [
+        {
+          "id": "rd_1p",
+          "kind": "foot",
+          "d": 28.0045
+        },
+        {
+          "id": "rd_r",
+          "kind": "cart",
+          "d": 31.0546
+        },
+        {
+          "id": "rd_2d",
+          "kind": "ferry",
+          "d": 125.6224
+        }
+      ],
+      "nearestSpawn": {
+        "id": "sp_west",
+        "d": 176.6562
+      },
+      "poiCount": 1,
+      "elderTerritoriesWithin200Au": [
+        "el_anubis"
+      ],
+      "priorityScore": 259.1438,
+      "priorityRank": 8,
+      "occupancyStatus": "UNKNOWN",
+      "claimLegalityStatus": "GAMEPLAY_OWNED",
+      "sweptClearanceAu": null,
+      "sweptClearanceStatus": "UNKNOWN",
+      "owner": "MAP_SUPPLIES_PHYSICAL_SPACE_AND_CONSTRAINTS__GAMEPLAY_OWNS_BUILDING_RULES_AND_PLACEMENT",
+      "note": "A build site is a geometric envelope, NOT a permission to build, NOT a house, NOT a claim radius. A0 occupancy and Gameplay rules are not asserted."
+    },
+    {
+      "siteId": "site.bz_typhon_t",
+      "parentZoneId": "bz_typhon_t",
+      "parentZoneName": "Typhon Terrace",
+      "sourceRef": "project.zones[] where id=bz_typhon_t",
+      "status": "DERIVED",
+      "footprintAu": [
+        [
+          667.6213022949851,
+          488.20438317640776
+        ],
+        [
+          668.4078399482719,
+          481.4014610588026
+        ],
+        [
+          670.2604616677763,
+          475.3676866369268
+        ],
+        [
+          673.1791674534984,
+          470.1030599107803
+        ],
+        [
+          678.3577548535307,
+          465.49333117450107
+        ],
+        [
+          685.796223867873,
+          461.53850042808904
+        ],
+        [
+          694.6913135550642,
+          459.6778886540984
+        ],
+        [
+          705.043023915104,
+          459.9114958525291
+        ],
+        [
+          715.1566895805954,
+          461.4105720884004
+        ],
+        [
+          725.0323105515383,
+          464.1751173617122
+        ],
+        [
+          729.9571985238555,
+          468.6680424987761
+        ],
+        [
+          729.931353497547,
+          474.8893474995921
+        ],
+        [
+          730.6335713538688,
+          481.40219029271793
+        ],
+        [
+          732.0638520928205,
+          488.20657087815385
+        ],
+        [
+          727.0315063927012,
+          492.51051265533255
+        ],
+        [
+          715.5365342535106,
+          494.31401562425407
+        ],
+        [
+          704.7193632759959,
+          495.5238182856542
+        ],
+        [
+          694.5799934601569,
+          496.1399206395329
+        ],
+        [
+          683.9397397812636,
+          495.2374399211568
+        ],
+        [
+          672.7986022393156,
+          492.8163761305258
+        ]
+      ],
+      "footprintBboxAu": [
+        667.6213,
+        459.6779,
+        732.0639,
+        496.1399
+      ],
+      "footprintAreaAu2": 1920.3132,
+      "buildableCells": 29,
+      "buildableFraction": 1,
+      "proposedBuildEnvelopeAu": [
+        676,
+        460,
+        724,
+        492
+      ],
+      "proposedBuildEnvelopeStatus": "PROPOSED",
+      "loadingEnvelopeAu": [
+        676,
+        460,
+        724,
+        492
+      ],
+      "loadingCells": 29,
+      "loadingEnvelopeStatus": "PROPOSED",
+      "naturalChokeClusterIds": [],
+      "nearestRoads": [
+        {
+          "id": "rd_d",
+          "kind": "cart",
+          "d": 1.4145
+        },
+        {
+          "id": "rd_f",
+          "kind": "cart",
+          "d": 19.0678
+        },
+        {
+          "id": "rd_g",
+          "kind": "foot",
+          "d": 21.3944
+        }
+      ],
+      "nearestSpawn": {
+        "id": "sp_lake",
+        "d": 169.1057
+      },
+      "poiCount": 0,
+      "elderTerritoriesWithin200Au": [
+        "el_typhon",
+        "el_aion"
+      ],
+      "priorityScore": 253.7943,
+      "priorityRank": 9,
+      "occupancyStatus": "UNKNOWN",
+      "claimLegalityStatus": "GAMEPLAY_OWNED",
+      "sweptClearanceAu": null,
+      "sweptClearanceStatus": "UNKNOWN",
+      "owner": "MAP_SUPPLIES_PHYSICAL_SPACE_AND_CONSTRAINTS__GAMEPLAY_OWNS_BUILDING_RULES_AND_PLACEMENT",
+      "note": "A build site is a geometric envelope, NOT a permission to build, NOT a house, NOT a claim radius. A0 occupancy and Gameplay rules are not asserted."
+    },
+    {
+      "siteId": "site.bz_oasis",
+      "parentZoneId": "bz_oasis",
+      "parentZoneName": "Mirage Oasis Terrace",
+      "sourceRef": "project.zones[] where id=bz_oasis",
+      "status": "DERIVED",
+      "footprintAu": [
+        [
+          613.9112489272912,
+          971.9077903392281
+        ],
+        [
+          614.4638987537808,
+          965.3025967797428
+        ],
+        [
+          614.6401629451304,
+          958.7614349358473
+        ],
+        [
+          614.4400415013401,
+          952.2843048075417
+        ],
+        [
+          619.9348780748967,
+          947.1751846954337
+        ],
+        [
+          631.1246726657998,
+          943.4340745995235
+        ],
+        [
+          643.5491687209551,
+          941.272087941658
+        ],
+        [
+          657.2083662403622,
+          940.6892247218377
+        ],
+        [
+          667.7735628550845,
+          943.1664121569474
+        ],
+        [
+          675.244758565122,
+          948.7036502469874
+        ],
+        [
+          682.6484220140138,
+          954.1042019690055
+        ],
+        [
+          689.9845532017601,
+          959.3680673230018
+        ],
+        [
+          691.2921177763053,
+          965.1069333127583
+        ],
+        [
+          686.5711157376492,
+          971.320799938275
+        ],
+        [
+          679.0303293239474,
+          976.510341114611
+        ],
+        [
+          668.6697585351999,
+          980.6755568417665
+        ],
+        [
+          657.1365144319559,
+          982.1552805679942
+        ],
+        [
+          644.4305970142156,
+          980.9495122932939
+        ],
+        [
+          631.9669597325205,
+          979.0625678967006
+        ],
+        [
+          619.7456025868712,
+          976.4944473782141
+        ]
+      ],
+      "footprintBboxAu": [
+        613.9112,
+        940.6892,
+        691.2921,
+        982.1553
+      ],
+      "footprintAreaAu2": 2481.2417,
+      "buildableCells": 38,
+      "buildableFraction": 1,
+      "proposedBuildEnvelopeAu": [
+        620,
+        948,
+        684,
+        980
+      ],
+      "proposedBuildEnvelopeStatus": "PROPOSED",
+      "loadingEnvelopeAu": [
+        652,
+        964,
+        684,
+        980
+      ],
+      "loadingCells": 10,
+      "loadingEnvelopeStatus": "PROPOSED",
+      "naturalChokeClusterIds": [],
+      "nearestRoads": [
+        {
+          "id": "rd_1f",
+          "kind": "trail",
+          "d": 6.282
+        },
+        {
+          "id": "rd_k",
+          "kind": "cart",
+          "d": 28.3196
+        },
+        {
+          "id": "rd_1l",
+          "kind": "trail",
+          "d": 38.2248
+        }
+      ],
+      "nearestSpawn": {
+        "id": "sp_gulf",
+        "d": 223.9145
+      },
+      "poiCount": 0,
+      "elderTerritoriesWithin200Au": [
+        "el_aion",
+        "el_anubis"
+      ],
+      "priorityScore": 199.8855,
+      "priorityRank": 10,
+      "occupancyStatus": "UNKNOWN",
+      "claimLegalityStatus": "GAMEPLAY_OWNED",
+      "sweptClearanceAu": null,
+      "sweptClearanceStatus": "UNKNOWN",
+      "owner": "MAP_SUPPLIES_PHYSICAL_SPACE_AND_CONSTRAINTS__GAMEPLAY_OWNS_BUILDING_RULES_AND_PLACEMENT",
+      "note": "A build site is a geometric envelope, NOT a permission to build, NOT a house, NOT a claim radius. A0 occupancy and Gameplay rules are not asserted."
+    },
+    {
+      "siteId": "site.bz_greyback",
+      "parentZoneId": "bz_greyback",
+      "parentZoneName": "Greyback Foothill Shelf",
+      "sourceRef": "project.zones[] where id=bz_greyback",
+      "status": "DERIVED",
+      "footprintAu": [
+        [
+          526.9346509100232,
+          758.856656184869
+        ],
+        [
+          527.7578867439096,
+          746.7710954324712
+        ],
+        [
+          530.6253231521545,
+          735.730689102152
+        ],
+        [
+          535.536960134758,
+          725.7354371939116
+        ],
+        [
+          541.8869913934842,
+          717.4183995989829
+        ],
+        [
+          549.675416928333,
+          710.7795763173661
+        ],
+        [
+          557.8275390985729,
+          708.5332284305309
+        ],
+        [
+          566.3433579042036,
+          710.6793559384771
+        ],
+        [
+          572.4882420551568,
+          716.4635315207956
+        ],
+        [
+          576.2621915514325,
+          725.8857551774863
+        ],
+        [
+          578.4769831190393,
+          735.7290255239308
+        ],
+        [
+          579.1326167579776,
+          745.9933425601289
+        ],
+        [
+          577.2490236692431,
+          755.8595708996195
+        ],
+        [
+          572.8262038528361,
+          765.3277105424025
+        ],
+        [
+          567.0110355315595,
+          775.3790955367575
+        ],
+        [
+          559.8035187054135,
+          786.0137258826843
+        ],
+        [
+          551.5377060315882,
+          789.38824900663
+        ],
+        [
+          542.2135975100834,
+          785.5026649085945
+        ],
+        [
+          534.7944156852684,
+          778.8947637849495
+        ],
+        [
+          529.2801605571427,
+          769.5645456356951
+        ]
+      ],
+      "footprintBboxAu": [
+        526.9347,
+        708.5332,
+        579.1326,
+        789.3882
+      ],
+      "footprintAreaAu2": 3086.3132,
+      "buildableCells": 45,
+      "buildableFraction": 1,
+      "proposedBuildEnvelopeAu": [
+        532,
+        716,
+        572,
+        780
+      ],
+      "proposedBuildEnvelopeStatus": "PROPOSED",
+      "loadingEnvelopeAu": null,
+      "loadingCells": 0,
+      "loadingEnvelopeStatus": "PROPOSED",
+      "naturalChokeClusterIds": [],
+      "nearestRoads": [
+        {
+          "id": "rd_d",
+          "kind": "cart",
+          "d": 85.5622
+        },
+        {
+          "id": "rd_t",
+          "kind": "cart",
+          "d": 95.4662
+        },
+        {
+          "id": "rd_r",
+          "kind": "cart",
+          "d": 129.333
+        }
+      ],
+      "nearestSpawn": {
+        "id": "sp_west",
+        "d": 230.3741
+      },
+      "poiCount": 0,
+      "elderTerritoriesWithin200Au": [
+        "el_aion",
+        "el_anubis"
+      ],
+      "priorityScore": 194.1259,
+      "priorityRank": 11,
+      "occupancyStatus": "UNKNOWN",
+      "claimLegalityStatus": "GAMEPLAY_OWNED",
+      "sweptClearanceAu": null,
+      "sweptClearanceStatus": "UNKNOWN",
+      "owner": "MAP_SUPPLIES_PHYSICAL_SPACE_AND_CONSTRAINTS__GAMEPLAY_OWNS_BUILDING_RULES_AND_PLACEMENT",
+      "note": "A build site is a geometric envelope, NOT a permission to build, NOT a house, NOT a claim radius. A0 occupancy and Gameplay rules are not asserted."
+    },
+    {
+      "siteId": "site.bz_forest_n",
+      "parentZoneId": "bz_forest_n",
+      "parentZoneName": "North Woods Hollow",
+      "sourceRef": "project.zones[] where id=bz_forest_n",
+      "status": "DERIVED",
+      "footprintAu": [
+        [
+          854.2428727318983,
+          388.9912211396128
+        ],
+        [
+          856.0764063694,
+          382.9736634188384
+        ],
+        [
+          860.683779806976,
+          378.40640548469617
+        ],
+        [
+          868.064993044626,
+          375.2894473371861
+        ],
+        [
+          875.4540028769018,
+          374.6700735593265
+        ],
+        [
+          882.8508093038035,
+          376.5482841511173
+        ],
+        [
+          890.5142544945306,
+          378.1848958621793
+        ],
+        [
+          898.4443384490833,
+          379.57990869251256
+        ],
+        [
+          902.4959627248179,
+          383.2080613307594
+        ],
+        [
+          902.6691273217343,
+          389.0693537769198
+        ],
+        [
+          901.4458454965294,
+          394.29073450886204
+        ],
+        [
+          898.8261172492029,
+          398.87220352658613
+        ],
+        [
+          894.9879077324083,
+          402.97326878976247
+        ],
+        [
+          889.9312169461456,
+          406.59393029839106
+        ],
+        [
+          883.8444070442024,
+          408.0874464245553
+        ],
+        [
+          876.7274780265789,
+          407.45381716825534
+        ],
+        [
+          869.4116348907297,
+          406.21161696262186
+        ],
+        [
+          861.8968776366552,
+          404.360845807655
+        ],
+        [
+          856.9361507355003,
+          400.57659517262863
+        ],
+        [
+          854.529454187265,
+          394.85886505754286
+        ]
+      ],
+      "footprintBboxAu": [
+        854.2429,
+        374.6701,
+        902.6691,
+        408.0874
+      ],
+      "footprintAreaAu2": 1272.2819,
+      "buildableCells": 21,
+      "buildableFraction": 1,
+      "proposedBuildEnvelopeAu": [
+        860,
+        380,
+        900,
+        404
+      ],
+      "proposedBuildEnvelopeStatus": "PROPOSED",
+      "loadingEnvelopeAu": [
+        868,
+        380,
+        900,
+        404
+      ],
+      "loadingCells": 18,
+      "loadingEnvelopeStatus": "PROPOSED",
+      "naturalChokeClusterIds": [],
+      "nearestRoads": [
+        {
+          "id": "rd_h",
+          "kind": "cart",
+          "d": 14.4009
+        },
+        {
+          "id": "rd_1e",
+          "kind": "trail",
+          "d": 65.7426
+        },
+        {
+          "id": "rd_1y",
+          "kind": "foot",
+          "d": 98.0991
+        }
+      ],
+      "nearestSpawn": {
+        "id": "sp_lake",
+        "d": 247.0263
+      },
+      "poiCount": 0,
+      "elderTerritoriesWithin200Au": [
+        "el_typhon",
+        "el_aion",
+        "el_argus"
+      ],
+      "priorityScore": 185.0737,
+      "priorityRank": 12,
+      "occupancyStatus": "UNKNOWN",
+      "claimLegalityStatus": "GAMEPLAY_OWNED",
+      "sweptClearanceAu": null,
+      "sweptClearanceStatus": "UNKNOWN",
+      "owner": "MAP_SUPPLIES_PHYSICAL_SPACE_AND_CONSTRAINTS__GAMEPLAY_OWNS_BUILDING_RULES_AND_PLACEMENT",
+      "note": "A build site is a geometric envelope, NOT a permission to build, NOT a house, NOT a claim radius. A0 occupancy and Gameplay rules are not asserted."
+    },
+    {
+      "siteId": "site.bz_delta",
+      "parentZoneId": "bz_delta",
+      "parentZoneName": "Delta Levee",
+      "sourceRef": "project.zones[] where id=bz_delta",
+      "status": "DERIVED",
+      "footprintAu": [
+        [
+          1067.9549192548805,
+          832.4918209755662
+        ],
+        [
+          1068.833361399476,
+          825.4754629266984
+        ],
+        [
+          1073.859849428995,
+          819.4888475844459
+        ],
+        [
+          1083.0343833434372,
+          814.5319749488086
+        ],
+        [
+          1093.4547220951063,
+          812.7424356376514
+        ],
+        [
+          1105.1208656840017,
+          814.1202296509746
+        ],
+        [
+          1116.4243096482164,
+          816.3579925815873
+        ],
+        [
+          1127.3650539877506,
+          819.4557244294899
+        ],
+        [
+          1133.9115643721473,
+          824.753442765081
+        ],
+        [
+          1136.0638408014063,
+          832.2511475883603
+        ],
+        [
+          1134.3466843524245,
+          838.9646547509733
+        ],
+        [
+          1128.760095025202,
+          844.8939642529197
+        ],
+        [
+          1122.313007777309,
+          850.3840210144963
+        ],
+        [
+          1115.0054226087457,
+          855.4348250357032
+        ],
+        [
+          1105.4127396685271,
+          858.4691578576171
+        ],
+        [
+          1093.534958956653,
+          859.4870194802379
+        ],
+        [
+          1083.1662113710327,
+          857.4361759462636
+        ],
+        [
+          1074.3064969116658,
+          852.3166272556939
+        ],
+        [
+          1069.2864043071324,
+          846.3176396828068
+        ],
+        [
+          1068.1059335574325,
+          839.4392132276023
+        ]
+      ],
+      "footprintBboxAu": [
+        1067.9549,
+        812.7424,
+        1136.0638,
+        859.487
+      ],
+      "footprintAreaAu2": 2464.4506,
+      "buildableCells": 36,
+      "buildableFraction": 1,
+      "proposedBuildEnvelopeAu": [
+        1076,
+        820,
+        1132,
+        852
+      ],
+      "proposedBuildEnvelopeStatus": "PROPOSED",
+      "loadingEnvelopeAu": [
+        1076,
+        820,
+        1132,
+        852
+      ],
+      "loadingCells": 26,
+      "loadingEnvelopeStatus": "PROPOSED",
+      "naturalChokeClusterIds": [],
+      "nearestRoads": [
+        {
+          "id": "rd_0",
+          "kind": "cart",
+          "d": 32.1317
+        },
+        {
+          "id": "rd_2",
+          "kind": "cart",
+          "d": 33.6331
+        },
+        {
+          "id": "rd_6",
+          "kind": "cart",
+          "d": 40.8618
+        }
+      ],
+      "nearestSpawn": {
+        "id": "sp_gulf",
+        "d": 246.8209
+      },
+      "poiCount": 0,
+      "elderTerritoriesWithin200Au": [
+        "el_aion"
+      ],
+      "priorityScore": 166.7791,
+      "priorityRank": 13,
+      "occupancyStatus": "UNKNOWN",
+      "claimLegalityStatus": "GAMEPLAY_OWNED",
+      "sweptClearanceAu": null,
+      "sweptClearanceStatus": "UNKNOWN",
+      "owner": "MAP_SUPPLIES_PHYSICAL_SPACE_AND_CONSTRAINTS__GAMEPLAY_OWNS_BUILDING_RULES_AND_PLACEMENT",
+      "note": "A build site is a geometric envelope, NOT a permission to build, NOT a house, NOT a claim radius. A0 occupancy and Gameplay rules are not asserted."
+    },
+    {
+      "siteId": "site.bz_moss",
+      "parentZoneId": "bz_moss",
+      "parentZoneName": "Mossbrook Valley Floor",
+      "sourceRef": "project.zones[] where id=bz_moss",
+      "status": "DERIVED",
+      "footprintAu": [
+        [
+          1005.4853282147269,
+          708.7934528133736
+        ],
+        [
+          1006.4723470009167,
+          685.6546333449959
+        ],
+        [
+          1007.8338078838647,
+          664.4435613855322
+        ],
+        [
+          1009.5697108635704,
+          645.1602369349829
+        ],
+        [
+          1015.1414150054316,
+          626.9845296358029
+        ],
+        [
+          1024.5489203094494,
+          609.9164394879923
+        ],
+        [
+          1035.2978155651758,
+          592.3325909435724
+        ],
+        [
+          1047.3881007726113,
+          574.232984002543
+        ],
+        [
+          1058.5338888931387,
+          568.3925052623764
+        ],
+        [
+          1068.7351799267572,
+          574.8111547230723
+        ],
+        [
+          1074.3939735319418,
+          587.4901716431003
+        ],
+        [
+          1075.5102697086927,
+          606.4295560224604
+        ],
+        [
+          1076.7380228709271,
+          626.086705895795
+        ],
+        [
+          1078.0772330186446,
+          646.4616212631048
+        ],
+        [
+          1073.323849307827,
+          667.8539610007837
+        ],
+        [
+          1062.4778717384756,
+          690.2637251088316
+        ],
+        [
+          1050.3589874615482,
+          705.8361444753926
+        ],
+        [
+          1036.967196477045,
+          714.5712191004667
+        ],
+        [
+          1023.9514304440031,
+          719.2947829466435
+        ],
+        [
+          1011.3116893624219,
+          720.0068360139229
+        ]
+      ],
+      "footprintBboxAu": [
+        1005.4853,
+        568.3925,
+        1078.0772,
+        720.0068
+      ],
+      "footprintAreaAu2": 7667.2685,
+      "buildableCells": 101,
+      "buildableFraction": 0.8417,
+      "proposedBuildEnvelopeAu": [
+        1012,
+        572,
+        1076,
+        716
+      ],
+      "proposedBuildEnvelopeStatus": "PROPOSED",
+      "loadingEnvelopeAu": null,
+      "loadingCells": 0,
+      "loadingEnvelopeStatus": "PROPOSED",
+      "naturalChokeClusterIds": [],
+      "nearestRoads": [
+        {
+          "id": "rd_1",
+          "kind": "cart",
+          "d": 73.3888
+        },
+        {
+          "id": "rd_3",
+          "kind": "cart",
+          "d": 81.8415
+        },
+        {
+          "id": "rd_15",
+          "kind": "trail",
+          "d": 83.0211
+        }
+      ],
+      "nearestSpawn": {
+        "id": "sp_lake",
+        "d": 253.9704
+      },
+      "poiCount": 0,
+      "elderTerritoriesWithin200Au": [
+        "el_aion"
+      ],
+      "priorityScore": 166.1296,
+      "priorityRank": 14,
+      "occupancyStatus": "UNKNOWN",
+      "claimLegalityStatus": "GAMEPLAY_OWNED",
+      "sweptClearanceAu": null,
+      "sweptClearanceStatus": "UNKNOWN",
+      "owner": "MAP_SUPPLIES_PHYSICAL_SPACE_AND_CONSTRAINTS__GAMEPLAY_OWNS_BUILDING_RULES_AND_PLACEMENT",
+      "note": "A build site is a geometric envelope, NOT a permission to build, NOT a house, NOT a claim radius. A0 occupancy and Gameplay rules are not asserted."
+    },
+    {
+      "siteId": "site.bz_verdant",
+      "parentZoneId": "bz_verdant",
+      "parentZoneName": "Lake Verdant South Meadow",
+      "sourceRef": "project.zones[] where id=bz_verdant",
+      "status": "DERIVED",
+      "footprintAu": [
+        [
+          944.1496174117209,
+          493.7052185772443
+        ],
+        [
+          946.0297260745625,
+          487.2350728590814
+        ],
+        [
+          948.6859677994604,
+          481.2795598283321
+        ],
+        [
+          952.1183425864145,
+          475.83867948499625
+        ],
+        [
+          962.116227640508,
+          471.11162853574086
+        ],
+        [
+          978.6796229617406,
+          467.0984069805659
+        ],
+        [
+          997.9857895444972,
+          465.49794436608363
+        ],
+        [
+          1020.0347273887776,
+          466.3102406922939
+        ],
+        [
+          1042.1829756602488,
+          467.86209185466646
+        ],
+        [
+          1064.4305343589108,
+          470.15349785320126
+        ],
+        [
+          1075.87377387203,
+          474.4744006393515
+        ],
+        [
+          1076.512694199606,
+          480.82480021311716
+        ],
+        [
+          1075.2112134794095,
+          486.9230448288557
+        ],
+        [
+          1071.969331711441,
+          492.7691344865672
+        ],
+        [
+          1060.7336943653577,
+          497.2604196118553
+        ],
+        [
+          1041.504301441159,
+          500.39690020471994
+        ],
+        [
+          1020.7539658375899,
+          502.12176312034296
+        ],
+        [
+          998.4826875546506,
+          502.4350083587242
+        ],
+        [
+          976.3126770799607,
+          501.17879609251753
+        ],
+        [
+          954.2439344135203,
+          498.35312632172304
+        ]
+      ],
+      "footprintBboxAu": [
+        944.1496,
+        465.4979,
+        1076.5127,
+        502.435
+      ],
+      "footprintAreaAu2": 4001.5029,
+      "buildableCells": 59,
+      "buildableFraction": 0.9077,
+      "proposedBuildEnvelopeAu": [
+        948,
+        468,
+        1076,
+        500
+      ],
+      "proposedBuildEnvelopeStatus": "PROPOSED",
+      "loadingEnvelopeAu": [
+        948,
+        468,
+        1076,
+        500
+      ],
+      "loadingCells": 56,
+      "loadingEnvelopeStatus": "PROPOSED",
+      "naturalChokeClusterIds": [],
+      "nearestRoads": [
+        {
+          "id": "rd_a",
+          "kind": "cart",
+          "d": 6.4104
+        },
+        {
+          "id": "rd_h",
+          "kind": "cart",
+          "d": 16.1376
+        },
+        {
+          "id": "rd_1",
+          "kind": "cart",
+          "d": 32.3223
+        }
+      ],
+      "nearestSpawn": {
+        "id": "sp_lake",
+        "d": 260.1142
+      },
+      "poiCount": 0,
+      "elderTerritoriesWithin200Au": [
+        "el_aion",
+        "el_argus"
+      ],
+      "priorityScore": 165.7858,
+      "priorityRank": 15,
+      "occupancyStatus": "UNKNOWN",
+      "claimLegalityStatus": "GAMEPLAY_OWNED",
+      "sweptClearanceAu": null,
+      "sweptClearanceStatus": "UNKNOWN",
+      "owner": "MAP_SUPPLIES_PHYSICAL_SPACE_AND_CONSTRAINTS__GAMEPLAY_OWNS_BUILDING_RULES_AND_PLACEMENT",
+      "note": "A build site is a geometric envelope, NOT a permission to build, NOT a house, NOT a claim radius. A0 occupancy and Gameplay rules are not asserted."
+    },
+    {
+      "siteId": "site.bz_ridge",
+      "parentZoneId": "bz_ridge",
+      "parentZoneName": "Ironvein Ridge Ledge",
+      "sourceRef": "project.zones[] where id=bz_ridge",
+      "status": "DERIVED",
+      "footprintAu": [
+        [
+          1135.902169056681,
+          645.9422536368373
+        ],
+        [
+          1136.4719351940648,
+          634.7776756324265
+        ],
+        [
+          1141.1358453730631,
+          624.3330268972796
+        ],
+        [
+          1145.576957615572,
+          613.5001550011335
+        ],
+        [
+          1149.7952719215912,
+          602.2790599439883
+        ],
+        [
+          1155.8028692812406,
+          597.4678818692082
+        ],
+        [
+          1163.59974969452,
+          599.0666207767933
+        ],
+        [
+          1170.5409810178194,
+          603.6861785657163
+        ],
+        [
+          1176.6265632511386,
+          611.3265552359769
+        ],
+        [
+          1180.7788317269985,
+          621.3600576783303
+        ],
+        [
+          1182.9977864453992,
+          633.7866858927769
+        ],
+        [
+          1182.821286581909,
+          645.9902973124183
+        ],
+        [
+          1180.2493321365278,
+          657.9708919372548
+        ],
+        [
+          1175.8595696269838,
+          666.7332092010932
+        ],
+        [
+          1169.6519990532775,
+          672.2772491039335
+        ],
+        [
+          1162.8750273984074,
+          677.1853392473681
+        ],
+        [
+          1155.5286546623734,
+          681.4574796313971
+        ],
+        [
+          1149.188785199024,
+          678.637416004396
+        ],
+        [
+          1143.8554190083591,
+          668.7251483663649
+        ],
+        [
+          1139.4265469609115,
+          657.826760910512
+        ]
+      ],
+      "footprintBboxAu": [
+        1135.9022,
+        597.4679,
+        1182.9978,
+        681.4575
+      ],
+      "footprintAreaAu2": 2850.4982,
+      "buildableCells": 46,
+      "buildableFraction": 1,
+      "proposedBuildEnvelopeAu": [
+        1140,
+        604,
+        1180,
+        676
+      ],
+      "proposedBuildEnvelopeStatus": "PROPOSED",
+      "loadingEnvelopeAu": [
+        1140,
+        620,
+        1180,
+        676
+      ],
+      "loadingCells": 35,
+      "loadingEnvelopeStatus": "PROPOSED",
+      "naturalChokeClusterIds": [],
+      "nearestRoads": [
+        {
+          "id": "rd_3",
+          "kind": "cart",
+          "d": 12.2321
+        },
+        {
+          "id": "rd_1",
+          "kind": "cart",
+          "d": 43.9107
+        },
+        {
+          "id": "rd_4",
+          "kind": "cart",
+          "d": 47.6839
+        }
+      ],
+      "nearestSpawn": {
+        "id": "sp_hook",
+        "d": 275.9614
+      },
+      "poiCount": 0,
+      "elderTerritoriesWithin200Au": [
+        "el_aion"
+      ],
+      "priorityScore": 138.6386,
+      "priorityRank": 16,
+      "occupancyStatus": "UNKNOWN",
+      "claimLegalityStatus": "GAMEPLAY_OWNED",
+      "sweptClearanceAu": null,
+      "sweptClearanceStatus": "UNKNOWN",
+      "owner": "MAP_SUPPLIES_PHYSICAL_SPACE_AND_CONSTRAINTS__GAMEPLAY_OWNS_BUILDING_RULES_AND_PLACEMENT",
+      "note": "A build site is a geometric envelope, NOT a permission to build, NOT a house, NOT a claim radius. A0 occupancy and Gameplay rules are not asserted."
+    },
+    {
+      "siteId": "site.bz_kestrel",
+      "parentZoneId": "bz_kestrel",
+      "parentZoneName": "Kestrel Ridge Shelf",
+      "sourceRef": "project.zones[] where id=bz_kestrel",
+      "status": "DERIVED",
+      "footprintAu": [
+        [
+          696.749309598201,
+          355.92759627264365
+        ],
+        [
+          696.9045848882176,
+          349.30919875754785
+        ],
+        [
+          698.4218371503671,
+          343.42570010522803
+        ],
+        [
+          701.3010663846492,
+          338.27710031568415
+        ],
+        [
+          705.7851968430975,
+          333.6188951559334
+        ],
+        [
+          711.8742285257119,
+          329.4510846259757
+        ],
+        [
+          719.6290805417793,
+          327.01897361408504
+        ],
+        [
+          729.0497528912995,
+          326.32256212026147
+        ],
+        [
+          737.0167442244665,
+          328.22151500165637
+        ],
+        [
+          743.5300545412806,
+          332.71583225826976
+        ],
+        [
+          748.8932785679826,
+          337.72224316493237
+        ],
+        [
+          753.1064163045727,
+          343.24074772164414
+        ],
+        [
+          752.991340975077,
+          348.70351419782065
+        ],
+        [
+          748.5480525794956,
+          354.11054259346196
+        ],
+        [
+          742.7780218610884,
+          358.2822719948756
+        ],
+        [
+          735.6812488198557,
+          361.2187024020616
+        ],
+        [
+          728.1308023649577,
+          362.554841452512
+        ],
+        [
+          720.1266824963944,
+          362.29068914622684
+        ],
+        [
+          711.2613849098827,
+          361.42815850236104
+        ],
+        [
+          701.5349096054227,
+          359.9672495209147
+        ]
+      ],
+      "footprintBboxAu": [
+        696.7493,
+        326.3226,
+        753.1064,
+        362.5548
+      ],
+      "footprintAreaAu2": 1570.2595,
+      "buildableCells": 23,
+      "buildableFraction": 1,
+      "proposedBuildEnvelopeAu": [
+        700,
+        332,
+        748,
+        356
+      ],
+      "proposedBuildEnvelopeStatus": "PROPOSED",
+      "loadingEnvelopeAu": null,
+      "loadingCells": 0,
+      "loadingEnvelopeStatus": "PROPOSED",
+      "naturalChokeClusterIds": [],
+      "nearestRoads": [
+        {
+          "id": "rd_1e",
+          "kind": "trail",
+          "d": 31.1665
+        },
+        {
+          "id": "rd_1y",
+          "kind": "foot",
+          "d": 47.3462
+        },
+        {
+          "id": "rd_f",
+          "kind": "cart",
+          "d": 92.5952
+        }
+      ],
+      "nearestSpawn": {
+        "id": "sp_lake",
+        "d": 284.2577
+      },
+      "poiCount": 0,
+      "elderTerritoriesWithin200Au": [
+        "el_typhon",
+        "el_argus"
+      ],
+      "priorityScore": 138.0423,
+      "priorityRank": 17,
+      "occupancyStatus": "UNKNOWN",
+      "claimLegalityStatus": "GAMEPLAY_OWNED",
+      "sweptClearanceAu": null,
+      "sweptClearanceStatus": "UNKNOWN",
+      "owner": "MAP_SUPPLIES_PHYSICAL_SPACE_AND_CONSTRAINTS__GAMEPLAY_OWNS_BUILDING_RULES_AND_PLACEMENT",
+      "note": "A build site is a geometric envelope, NOT a permission to build, NOT a house, NOT a claim radius. A0 occupancy and Gameplay rules are not asserted."
+    },
+    {
+      "siteId": "site.bz_argus",
+      "parentZoneId": "bz_argus",
+      "parentZoneName": "Argus Valley Pasture",
+      "sourceRef": "project.zones[] where id=bz_argus",
+      "status": "DERIVED",
+      "footprintAu": [
+        [
+          848.2451514116588,
+          309.1108636821583
+        ],
+        [
+          849.7130698681442,
+          303.25756538219315
+        ],
+        [
+          854.100137895515,
+          297.7726961465795
+        ],
+        [
+          863.6013306364214,
+          293.92505774063204
+        ],
+        [
+          878.2166480908636,
+          291.7146501643508
+        ],
+        [
+          893.5220421933925,
+          289.80153279744854
+        ],
+        [
+          909.5175129440081,
+          288.1857056399251
+        ],
+        [
+          922.5897764443445,
+          289.66067458914335
+        ],
+        [
+          932.7388326944015,
+          294.22643964510326
+        ],
+        [
+          941.4500909776135,
+          298.88199162981243
+        ],
+        [
+          948.7235512939804,
+          303.6273305432708
+        ],
+        [
+          950.5161127899783,
+          308.8225798395881
+        ],
+        [
+          946.8277754656069,
+          314.46773951876423
+        ],
+        [
+          937.717748327447,
+          318.69932054965125
+        ],
+        [
+          923.1860313754985,
+          321.51732293224904
+        ],
+        [
+          908.222123302228,
+          322.64772660295915
+        ],
+        [
+          892.8260241076357,
+          322.0905315617816
+        ],
+        [
+          876.4514804035693,
+          320.96981421305287
+        ],
+        [
+          859.098492190029,
+          319.28557455677316
+        ],
+        [
+          849.6963825260589,
+          315.332591046475
+        ]
+      ],
+      "footprintBboxAu": [
+        848.2452,
+        288.1857,
+        950.5161,
+        322.6477
+      ],
+      "footprintAreaAu2": 2730.2184,
+      "buildableCells": 42,
+      "buildableFraction": 1,
+      "proposedBuildEnvelopeAu": [
+        852,
+        292,
+        948,
+        316
+      ],
+      "proposedBuildEnvelopeStatus": "PROPOSED",
+      "loadingEnvelopeAu": [
+        884,
+        292,
+        940,
+        316
+      ],
+      "loadingCells": 26,
+      "loadingEnvelopeStatus": "PROPOSED",
+      "naturalChokeClusterIds": [],
+      "nearestRoads": [
+        {
+          "id": "rd_h",
+          "kind": "cart",
+          "d": 12.0394
+        },
+        {
+          "id": "rd_1e",
+          "kind": "trail",
+          "d": 19.5707
+        },
+        {
+          "id": "rd_i",
+          "kind": "cart",
+          "d": 57.9167
+        }
+      ],
+      "nearestSpawn": {
+        "id": "sp_lake",
+        "d": 333.8428
+      },
+      "poiCount": 0,
+      "elderTerritoriesWithin200Au": [
+        "el_typhon",
+        "el_argus"
+      ],
+      "priorityScore": 90.3572,
+      "priorityRank": 18,
+      "occupancyStatus": "UNKNOWN",
+      "claimLegalityStatus": "GAMEPLAY_OWNED",
+      "sweptClearanceAu": null,
+      "sweptClearanceStatus": "UNKNOWN",
+      "owner": "MAP_SUPPLIES_PHYSICAL_SPACE_AND_CONSTRAINTS__GAMEPLAY_OWNS_BUILDING_RULES_AND_PLACEMENT",
+      "note": "A build site is a geometric envelope, NOT a permission to build, NOT a house, NOT a claim radius. A0 occupancy and Gameplay rules are not asserted."
+    },
+    {
+      "siteId": "site.bz_dune",
+      "parentZoneId": "bz_dune",
+      "parentZoneName": "Dune Rock Outcrop",
+      "sourceRef": "project.zones[] where id=bz_dune",
+      "status": "DERIVED",
+      "footprintAu": [
+        [
+          526.0453307807446,
+          962.5720461840889
+        ],
+        [
+          526.2231043929083,
+          957.5312818875864
+        ],
+        [
+          529.4147048754164,
+          952.5938456627589
+        ],
+        [
+          533.5308057595879,
+          948.3415381592409
+        ],
+        [
+          538.5714070454227,
+          944.7743593770324
+        ],
+        [
+          544.5739402778047,
+          942.9216170623956
+        ],
+        [
+          551.5384054567342,
+          942.7833112153307
+        ],
+        [
+          558.1978406454414,
+          944.1687620492384
+        ],
+        [
+          564.5522458439267,
+          947.0779695641186
+        ],
+        [
+          568.553685392171,
+          951.399429991169
+        ],
+        [
+          570.2021592901747,
+          957.1331433303897
+        ],
+        [
+          569.7279522562487,
+          962.5912314078291
+        ],
+        [
+          567.1310642903935,
+          967.7736942234876
+        ],
+        [
+          563.1646032404042,
+          972.1812768491258
+        ],
+        [
+          557.8285691062806,
+          975.8139792847435
+        ],
+        [
+          551.1757633710401,
+          978.6263000378173
+        ],
+        [
+          543.2061860346826,
+          980.6182391083468
+        ],
+        [
+          536.9909006918818,
+          978.7827026667975
+        ],
+        [
+          532.5299073426378,
+          973.1196907131697
+        ],
+        [
+          528.8813840389254,
+          967.7161385522668
+        ]
+      ],
+      "footprintBboxAu": [
+        526.0453,
+        942.7833,
+        570.2022,
+        980.6182
+      ],
+      "footprintAreaAu2": 1237.8299,
+      "buildableCells": 18,
+      "buildableFraction": 1,
+      "proposedBuildEnvelopeAu": [
+        532,
+        948,
+        564,
+        972
+      ],
+      "proposedBuildEnvelopeStatus": "PROPOSED",
+      "loadingEnvelopeAu": null,
+      "loadingCells": 0,
+      "loadingEnvelopeStatus": "PROPOSED",
+      "naturalChokeClusterIds": [],
+      "nearestRoads": [
+        {
+          "id": "rd_1g",
+          "kind": "trail",
+          "d": 19.2072
+        },
+        {
+          "id": "rd_1m",
+          "kind": "trail",
+          "d": 41.4849
+        },
+        {
+          "id": "rd_1f",
+          "kind": "trail",
+          "d": 50.3473
+        }
+      ],
+      "nearestSpawn": {
+        "id": "sp_gulf",
+        "d": 325.2895
+      },
+      "poiCount": 0,
+      "elderTerritoriesWithin200Au": [
+        "el_anubis"
+      ],
+      "priorityScore": 86.5105,
+      "priorityRank": 19,
+      "occupancyStatus": "UNKNOWN",
+      "claimLegalityStatus": "GAMEPLAY_OWNED",
+      "sweptClearanceAu": null,
+      "sweptClearanceStatus": "UNKNOWN",
+      "owner": "MAP_SUPPLIES_PHYSICAL_SPACE_AND_CONSTRAINTS__GAMEPLAY_OWNS_BUILDING_RULES_AND_PLACEMENT",
+      "note": "A build site is a geometric envelope, NOT a permission to build, NOT a house, NOT a claim radius. A0 occupancy and Gameplay rules are not asserted."
+    },
+    {
+      "siteId": "site.bz_salt",
+      "parentZoneId": "bz_salt",
+      "parentZoneName": "Saltwick Flats",
+      "sourceRef": "project.zones[] where id=bz_salt",
+      "status": "DERIVED",
+      "footprintAu": [
+        [
+          1565.331026171825,
+          333.0016459844862
+        ],
+        [
+          1566.2644736697723,
+          327.00493795345847
+        ],
+        [
+          1572.9305206351219,
+          321.9355285249999
+        ],
+        [
+          1585.3291670678739,
+          317.7934176991104
+        ],
+        [
+          1598.8933020529191,
+          316.7945571691517
+        ],
+        [
+          1613.6229255902576,
+          318.93894693512374
+        ],
+        [
+          1626.2649545982276,
+          321.5310929086499
+        ],
+        [
+          1636.819389076829,
+          324.5709950897301
+        ],
+        [
+          1645.7124793823514,
+          328.56820963520266
+        ],
+        [
+          1652.9442255147944,
+          333.5227365450676
+        ],
+        [
+          1654.554820040052,
+          338.94532962212133
+        ],
+        [
+          1650.544262958124,
+          344.83598886636395
+        ],
+        [
+          1642.6838849046267,
+          350.10454801051526
+        ],
+        [
+          1630.9736858795607,
+          354.7510070545753
+        ],
+        [
+          1616.559320082227,
+          357.0742034623146
+        ],
+        [
+          1599.4407875126258,
+          357.07413723373315
+        ],
+        [
+          1585.9356681882446,
+          354.48665740206405
+        ],
+        [
+          1576.0439621090825,
+          349.3117639673073
+        ],
+        [
+          1569.539657407839,
+          344.0432379374467
+        ],
+        [
+          1566.422754084514,
+          338.6810793124822
+        ]
+      ],
+      "footprintBboxAu": [
+        1565.331,
+        316.7946,
+        1654.5548,
+        357.0742
+      ],
+      "footprintAreaAu2": 2722.9709,
+      "buildableCells": 35,
+      "buildableFraction": 0.8333,
+      "proposedBuildEnvelopeAu": [
+        1572,
+        324,
+        1652,
+        356
+      ],
+      "proposedBuildEnvelopeStatus": "PROPOSED",
+      "loadingEnvelopeAu": [
+        1572,
+        324,
+        1652,
+        356
+      ],
+      "loadingCells": 35,
+      "loadingEnvelopeStatus": "PROPOSED",
+      "naturalChokeClusterIds": [],
+      "nearestRoads": [
+        {
+          "id": "rd_z",
+          "kind": "cart",
+          "d": 2.7743
+        },
+        {
+          "id": "rd_10",
+          "kind": "cart",
+          "d": 19.6363
+        },
+        {
+          "id": "rd_2g",
+          "kind": "ferry",
+          "d": 81.0371
+        }
+      ],
+      "nearestSpawn": {
+        "id": "sp_hook",
+        "d": 330.3758
+      },
+      "poiCount": 0,
+      "elderTerritoriesWithin200Au": [],
+      "priorityScore": 73.1242,
+      "priorityRank": 20,
+      "occupancyStatus": "UNKNOWN",
+      "claimLegalityStatus": "GAMEPLAY_OWNED",
+      "sweptClearanceAu": null,
+      "sweptClearanceStatus": "UNKNOWN",
+      "owner": "MAP_SUPPLIES_PHYSICAL_SPACE_AND_CONSTRAINTS__GAMEPLAY_OWNS_BUILDING_RULES_AND_PLACEMENT",
+      "note": "A build site is a geometric envelope, NOT a permission to build, NOT a house, NOT a claim radius. A0 occupancy and Gameplay rules are not asserted."
+    },
+    {
+      "siteId": "site.bz_slag",
+      "parentZoneId": "bz_slag",
+      "parentZoneName": "Slag Flats Pad (đất độc — viability thấp)",
+      "sourceRef": "project.zones[] where id=bz_slag",
+      "status": "DERIVED",
+      "footprintAu": [
+        [
+          1202.2991271944156,
+          990.204594667066
+        ],
+        [
+          1203.0790600051919,
+          983.4015315556886
+        ],
+        [
+          1204.8503500054355,
+          977.4564134540499
+        ],
+        [
+          1207.6129971951473,
+          972.3692403621496
+        ],
+        [
+          1212.1499560574089,
+          968.069132654734
+        ],
+        [
+          1218.4612265922203,
+          964.5560903318028
+        ],
+        [
+          1226.361724840867,
+          961.664326796157
+        ],
+        [
+          1234.6811606426793,
+          963.5150736382373
+        ],
+        [
+          1239.1819560236593,
+          967.580315382497
+        ],
+        [
+          1241.1860691413617,
+          972.4559508522096
+        ],
+        [
+          1243.2486421418475,
+          975.2388500939867
+        ],
+        [
+          1243.5332838203842,
+          978.4129500313289
+        ],
+        [
+          1247.1975051979325,
+          982.1198698628696
+        ],
+        [
+          1247.403503944666,
+          986.3596095886089
+        ],
+        [
+          1248.2372459123403,
+          991.6938198313453
+        ],
+        [
+          1243.6818493024239,
+          997.353451081675
+        ],
+        [
+          1234.6705483472597,
+          998.499329003254
+        ],
+        [
+          1225.7626545249332,
+          998.0549085539187
+        ],
+        [
+          1216.4588209075844,
+          996.776055302627
+        ],
+        [
+          1206.7590474952133,
+          994.6627692493788
+        ]
+      ],
+      "footprintBboxAu": [
+        1202.2991,
+        961.6643,
+        1248.2372,
+        998.4993
+      ],
+      "footprintAreaAu2": 1266.7701,
+      "buildableCells": 21,
+      "buildableFraction": 1,
+      "proposedBuildEnvelopeAu": [
+        1204,
+        964,
+        1244,
+        996
+      ],
+      "proposedBuildEnvelopeStatus": "PROPOSED",
+      "loadingEnvelopeAu": [
+        1204,
+        972,
+        1212,
+        988
+      ],
+      "loadingCells": 4,
+      "loadingEnvelopeStatus": "PROPOSED",
+      "naturalChokeClusterIds": [],
+      "nearestRoads": [
+        {
+          "id": "rd_u",
+          "kind": "cart",
+          "d": 37.1201
+        },
+        {
+          "id": "rd_6",
+          "kind": "cart",
+          "d": 58.0784
+        },
+        {
+          "id": "rd_2i",
+          "kind": "ferry",
+          "d": 118.7045
+        }
+      ],
+      "nearestSpawn": {
+        "id": "sp_gulf",
+        "d": 357.3263
+      },
+      "poiCount": 0,
+      "elderTerritoriesWithin200Au": [],
+      "priorityScore": 44.7737,
+      "priorityRank": 21,
+      "occupancyStatus": "UNKNOWN",
+      "claimLegalityStatus": "GAMEPLAY_OWNED",
+      "sweptClearanceAu": null,
+      "sweptClearanceStatus": "UNKNOWN",
+      "owner": "MAP_SUPPLIES_PHYSICAL_SPACE_AND_CONSTRAINTS__GAMEPLAY_OWNS_BUILDING_RULES_AND_PLACEMENT",
+      "note": "A build site is a geometric envelope, NOT a permission to build, NOT a house, NOT a claim radius. A0 occupancy and Gameplay rules are not asserted."
+    },
+    {
+      "siteId": "site.bz_cinder",
+      "parentZoneId": "bz_cinder",
+      "parentZoneName": "Cinder Landing Shelf",
+      "sourceRef": "project.zones[] where id=bz_cinder",
+      "status": "DERIVED",
+      "footprintAu": [
+        [
+          1564.2539016370213,
+          875.0277876949231
+        ],
+        [
+          1564.888172688481,
+          870.7148433939414
+        ],
+        [
+          1564.7001124405137,
+          865.7031538288363
+        ],
+        [
+          1569.5438955507095,
+          861.0860141643835
+        ],
+        [
+          1578.4964690048398,
+          859.0480324698464
+        ],
+        [
+          1587.2761528675712,
+          856.7189322410803
+        ],
+        [
+          1594.7677727509513,
+          858.0756257600287
+        ],
+        [
+          1600.97132865498,
+          863.1181130266918
+        ],
+        [
+          1604.9297876092842,
+          868.525582456371
+        ],
+        [
+          1606.6431496138637,
+          874.2980340490661
+        ],
+        [
+          1607.4774898639198,
+          880.5034739806846
+        ],
+        [
+          1607.4328083594526,
+          887.1419022512262
+        ],
+        [
+          1603.0499012691978,
+          891.6162880806195
+        ],
+        [
+          1594.328768593155,
+          893.9266314688649
+        ],
+        [
+          1585.7337258584344,
+          895.4418731432576
+        ],
+        [
+          1577.2647730650351,
+          896.1620131037976
+        ],
+        [
+          1569.1502051389214,
+          894.842495700184
+        ],
+        [
+          1568.7472737167252,
+          886.3356589410957
+        ],
+        [
+          1565.682202881248,
+          883.2416072229111
+        ],
+        [
+          1564.5185783679435,
+          879.2033756379129
+        ]
+      ],
+      "footprintBboxAu": [
+        1564.2539,
+        856.7189,
+        1607.4775,
+        896.162
+      ],
+      "footprintAreaAu2": 1376.1661,
+      "buildableCells": 22,
+      "buildableFraction": 1,
+      "proposedBuildEnvelopeAu": [
+        1572,
+        860,
+        1604,
+        892
+      ],
+      "proposedBuildEnvelopeStatus": "PROPOSED",
+      "loadingEnvelopeAu": null,
+      "loadingCells": 0,
+      "loadingEnvelopeStatus": "PROPOSED",
+      "naturalChokeClusterIds": [],
+      "nearestRoads": [
+        {
+          "id": "rd_w",
+          "kind": "foot",
+          "d": 0.3983
+        },
+        {
+          "id": "rd_x",
+          "kind": "foot",
+          "d": 13.1599
+        },
+        {
+          "id": "rd_2f",
+          "kind": "ferry",
+          "d": 22.015
+        }
+      ],
+      "nearestSpawn": {
+        "id": "sp_hook",
+        "d": 572.0969
+      },
+      "poiCount": 1,
+      "elderTerritoriesWithin200Au": [
+        "el_surtur"
+      ],
+      "priorityScore": 32.2,
+      "priorityRank": 22,
+      "occupancyStatus": "UNKNOWN",
+      "claimLegalityStatus": "GAMEPLAY_OWNED",
+      "sweptClearanceAu": null,
+      "sweptClearanceStatus": "UNKNOWN",
+      "owner": "MAP_SUPPLIES_PHYSICAL_SPACE_AND_CONSTRAINTS__GAMEPLAY_OWNS_BUILDING_RULES_AND_PLACEMENT",
+      "note": "A build site is a geometric envelope, NOT a permission to build, NOT a house, NOT a claim radius. A0 occupancy and Gameplay rules are not asserted."
+    },
+    {
+      "siteId": "site.bz_ironholm",
+      "parentZoneId": "bz_ironholm",
+      "parentZoneName": "Ironholm Terrace",
+      "sourceRef": "project.zones[] where id=bz_ironholm",
+      "status": "DERIVED",
+      "footprintAu": [
+        [
+          1106.5614654151452,
+          1282.9745479128392
+        ],
+        [
+          1107.0400436100285,
+          1277.224142036623
+        ],
+        [
+          1111.183691201932,
+          1271.6724261098689
+        ],
+        [
+          1117.2626443696668,
+          1266.9609465661874
+        ],
+        [
+          1125.2769031132327,
+          1263.089703405578
+        ],
+        [
+          1135.022865991336,
+          1260.4842903954986
+        ],
+        [
+          1146.5005330039764,
+          1259.1447075359495
+        ],
+        [
+          1155.858538235891,
+          1261.0832800818068
+        ],
+        [
+          1163.0968816870795,
+          1266.3000080330705
+        ],
+        [
+          1168.9170819627627,
+          1271.681279006527
+        ],
+        [
+          1173.3191390629406,
+          1277.2270930021757
+        ],
+        [
+          1174.1992624828576,
+          1283.1383053375175
+        ],
+        [
+          1171.5574522225138,
+          1289.414916012553
+        ],
+        [
+          1165.3725689693842,
+          1294.1548276740239
+        ],
+        [
+          1155.644612723469,
+          1297.3580403219303
+        ],
+        [
+          1145.4686009213196,
+          1298.8219710962958
+        ],
+        [
+          1134.8445335629362,
+          1298.5466199971197
+        ],
+        [
+          1124.9846754673958,
+          1296.781256248488
+        ],
+        [
+          1115.8890266346984,
+          1293.5258798504005
+        ],
+        [
+          1109.7479566172817,
+          1288.9236437385177
+        ]
+      ],
+      "footprintBboxAu": [
+        1106.5615,
+        1259.1447,
+        1174.1993,
+        1298.822
+      ],
+      "footprintAreaAu2": 2034.7836,
+      "buildableCells": 34,
+      "buildableFraction": 1,
+      "proposedBuildEnvelopeAu": [
+        1108,
+        1260,
+        1172,
+        1292
+      ],
+      "proposedBuildEnvelopeStatus": "PROPOSED",
+      "loadingEnvelopeAu": [
+        1108,
+        1260,
+        1172,
+        1292
+      ],
+      "loadingCells": 34,
+      "loadingEnvelopeStatus": "PROPOSED",
+      "naturalChokeClusterIds": [],
+      "nearestRoads": [
+        {
+          "id": "rd_11",
+          "kind": "cart",
+          "d": 5.2445
+        },
+        {
+          "id": "rd_25",
+          "kind": "trail",
+          "d": 35.851
+        },
+        {
+          "id": "rd_12",
+          "kind": "cart",
+          "d": 46.42
+        }
+      ],
+      "nearestSpawn": {
+        "id": "sp_gulf",
+        "d": 441.1402
+      },
+      "poiCount": 0,
+      "elderTerritoriesWithin200Au": [],
+      "priorityScore": 3.4,
+      "priorityRank": 23,
+      "occupancyStatus": "UNKNOWN",
+      "claimLegalityStatus": "GAMEPLAY_OWNED",
+      "sweptClearanceAu": null,
+      "sweptClearanceStatus": "UNKNOWN",
+      "owner": "MAP_SUPPLIES_PHYSICAL_SPACE_AND_CONSTRAINTS__GAMEPLAY_OWNS_BUILDING_RULES_AND_PLACEMENT",
+      "note": "A build site is a geometric envelope, NOT a permission to build, NOT a house, NOT a claim radius. A0 occupancy and Gameplay rules are not asserted."
+    }
+  ]
+}

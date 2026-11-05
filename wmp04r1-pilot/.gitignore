@@ -1,0 +1,7 @@
+node_modules/
+dist/
+qa-shots/
+*.log
+# Regression logs are evidence, not scratch output.
+!evidence/tests-baseline.log
+!evidence/tests-pilot.log

@@ -1,0 +1,342 @@
+{
+  "schema": "soh.wmp04r1.pilot_verify.v1",
+  "generatedAt": "2026-11-05T00:44:13.507Z",
+  "mapHead": "caccf21613aa57a55491ec44f687cc44c569f79e",
+  "gameplayHead": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+  "activeRevision": "WMP-04R1",
+  "pilotStatus": "PASS",
+  "checks": [
+    {
+      "id": "SOURCE_MAP_SHA",
+      "status": "PASS",
+      "detail": {
+        "mapHead": "caccf21613aa57a55491ec44f687cc44c569f79e"
+      }
+    },
+    {
+      "id": "SOURCE_GAMEPLAY_SHA",
+      "status": "PASS",
+      "detail": {
+        "gameplayHead": "f8fcde910c330aa953dd5c65b80a51792945d35e"
+      }
+    },
+    {
+      "id": "ACTIVE_REVISION",
+      "status": "PASS",
+      "detail": {
+        "activeRevision": "WMP-04R1",
+        "activeManifest": "v4/r1/manifest.r1.json"
+      }
+    },
+    {
+      "id": "BASE_PHYSICAL_REVISION",
+      "status": "PASS",
+      "detail": {
+        "basePhysicalRevision": "WMP-03"
+      }
+    },
+    {
+      "id": "VENDOR_DIGESTS",
+      "status": "PASS",
+      "detail": {
+        "checked": 373,
+        "mismatches": 0,
+        "provenanceFiles": 94,
+        "testFiles": 142,
+        "intentionalPilotEdits": [
+          "src/App.tsx",
+          "src/game/veyra/projection.ts",
+          "src/game/world.ts",
+          "src/ui/Game.tsx",
+          "src/ui/Title.tsx"
+        ]
+      }
+    },
+    {
+      "id": "RASTER_SIZES",
+      "status": "PASS",
+      "detail": {
+        "biomeEffective": 43750,
+        "coldTransition": 43750,
+        "marineRegion": 43750,
+        "cliffCandidate": 43750,
+        "heightClass": 43750,
+        "waterClass": 43750,
+        "sourceBiomeCode": 43750
+      }
+    },
+    {
+      "id": "CHANGED_SEA_CELLS_ZERO",
+      "status": "PASS",
+      "detail": {
+        "scenes": 10
+      }
+    },
+    {
+      "id": "NO_LOWRES_GEOMETRY_REPLACEMENT",
+      "status": "PASS",
+      "detail": {
+        "layouts": 10
+      }
+    },
+    {
+      "id": "FIVE_CREATOR_SCENES",
+      "status": "PASS",
+      "detail": {
+        "scenes": [
+          "wmp04r1-baseline-forest",
+          "wmp04r1-snow-highlands",
+          "wmp04r1-oasis-corridor",
+          "wmp04r1-cinder-shore",
+          "wmp04r1-deathwater-beacon"
+        ]
+      }
+    },
+    {
+      "id": "U2_DIAGNOT_APPROVED",
+      "status": "PASS",
+      "detail": {
+        "sourceGrid": {
+          "gw": 250,
+          "gh": 175,
+          "cellAu": 8,
+          "unitsPerTileDiagnostic": 2
+        }
+      }
+    },
+    {
+      "id": "BROWSER_ERRORS_ZERO",
+      "status": "PASS",
+      "detail": {
+        "errors": []
+      }
+    },
+    {
+      "id": "REAL_CAPTURES",
+      "status": "PASS",
+      "detail": {
+        "scenes": 16,
+        "comparisons": 6
+      }
+    },
+    {
+      "id": "SAME_CAMERA_EXACT",
+      "status": "PASS",
+      "detail": [
+        {
+          "id": "wmp04r1-snow-highlands",
+          "delta": 0
+        },
+        {
+          "id": "wmp04r1-oasis-corridor",
+          "delta": 0
+        },
+        {
+          "id": "wmp04r1-cinder-shore",
+          "delta": 0
+        },
+        {
+          "id": "wmp04r1-deathwater-beacon",
+          "delta": 0
+        },
+        {
+          "id": "wmp04r1-dry-transition",
+          "delta": 0
+        },
+        {
+          "id": "wmp04r1-baseline-forest",
+          "delta": 0
+        }
+      ]
+    },
+    {
+      "id": "BROWSER_INTEGRITY",
+      "status": "PASS",
+      "detail": {
+        "checked": 14,
+        "digests": 7
+      }
+    },
+    {
+      "id": "NO_WALK_ON_SEA",
+      "status": "PASS",
+      "detail": {
+        "scenes": 14
+      }
+    },
+    {
+      "id": "NO_FIXED_SPAWN_REWARD_OR_STRUCTURE",
+      "status": "PASS",
+      "detail": {
+        "scenes": 14
+      }
+    },
+    {
+      "id": "MARINE_DOMAINS_PRESENT",
+      "status": "PASS",
+      "detail": {
+        "cinder": 10695,
+        "deathwater": 12264
+      }
+    },
+    {
+      "id": "COLD_TRANSITION_PRESENT",
+      "status": "PASS",
+      "detail": {
+        "cold3": 27618
+      }
+    },
+    {
+      "id": "REAL_INPUT_JOURNEY",
+      "status": "PASS",
+      "detail": {
+        "samples": 108,
+        "durationMs": 4291,
+        "start": {
+          "x": 488,
+          "y": 2598.129872,
+          "t": 1793838268249
+        },
+        "end": {
+          "x": 452.4338720000008,
+          "y": 2585.965616,
+          "t": 1793838272540
+        },
+        "pathPx": 144.5,
+        "maxDisplacementPx": 44.7,
+        "nonWalkableSamples": 0,
+        "seaSamples": 0,
+        "keysUsed": [
+          "KeyW",
+          "KeyD",
+          "KeyS",
+          "KeyA",
+          "KeyW"
+        ],
+        "claim": "Real keydown/keyup input through the original SOH input handler. No teleports during this journey."
+      }
+    },
+    {
+      "id": "CAMERA_FOLLOWS_AFTER_INPUT",
+      "status": "PASS",
+      "detail": {
+        "samples": 69,
+        "key": "KeyD held 2600ms",
+        "start": {
+          "x": 1114.3976,
+          "y": 1560
+        },
+        "end": {
+          "x": 1299.1855999999955,
+          "y": 1560
+        },
+        "displacementPx": 184.8,
+        "pathPx": 184.8,
+        "cameraDeltaPx": 185.7,
+        "cameraFollowedPlayer": true,
+        "camLockReleased": true,
+        "nonWalkableSamples": 0,
+        "seaSamples": 0,
+        "claim": "Real sustained keydown; camera lock released by the first movement key; original camera follows the player."
+      }
+    },
+    {
+      "id": "SEA_COLLISION_GENUINE",
+      "status": "PASS",
+      "detail": {
+        "ok": true,
+        "tx": 165,
+        "ty": 100,
+        "i": 20165,
+        "landTile": 2,
+        "seaTile": 0,
+        "seaTileOffset": 4,
+        "note": "Diagnostic setup only: player placed on dry land adjacent to deep water; NOT a walked path.",
+        "samples": 54,
+        "seaSamples": 0,
+        "startX": 2651.168,
+        "endX": 2699.652224000004,
+        "maxX": 2699.652224000004,
+        "minX": 2651.168,
+        "walkedPx": 48.5,
+        "seaBoundaryX": 2704,
+        "stoppedBeforeSea": true,
+        "blockedAtSea": true
+      }
+    },
+    {
+      "id": "INGAME_SELECTOR",
+      "status": "PASS",
+      "detail": {
+        "openedWithKeyP": true,
+        "sceneButtons": 5,
+        "closedWithKeyP": true
+      }
+    },
+    {
+      "id": "SAVE_SOURCE_IDENTITY",
+      "status": "PASS",
+      "detail": {
+        "recoveryScreenShown": false,
+        "continueOffered": true,
+        "runResumed": true,
+        "layoutPreserved": true,
+        "mapDigestPreserved": true
+      }
+    },
+    {
+      "id": "DAY_AND_NIGHT_SUPPORTED",
+      "status": "PASS",
+      "detail": {
+        "night": 5,
+        "day": 5
+      }
+    },
+    {
+      "id": "GAMEPLAY_VITEST_REGRESSION",
+      "status": "PASS",
+      "detail": {
+        "baseline": {
+          "files": "28",
+          "tests": "233"
+        },
+        "pilot": {
+          "files": "28",
+          "tests": "233"
+        }
+      }
+    },
+    {
+      "id": "BASELINE_SOURCE_UNCHANGED",
+      "status": "PASS",
+      "detail": {
+        "identical": 172,
+        "changed": [
+          "src/App.tsx",
+          "src/game/veyra/projection.ts",
+          "src/game/world.ts",
+          "src/ui/Game.tsx",
+          "src/ui/Title.tsx"
+        ],
+        "added": [
+          "src/game/veyra/wmp04r1.generated.ts",
+          "src/game/veyra/wmp04r1.ts"
+        ],
+        "missing": []
+      }
+    }
+  ],
+  "summary": {
+    "total": 26,
+    "passed": 26,
+    "failed": 0
+  },
+  "limitations": [
+    "Gameplay live HEAD / PR44 advanced to 1b98e806dd000a5e115516ddd7f5ce31c92cfbcf after the pinned f8fcde91 source was vendored; this pilot deliberately consumes the exact pinned SHA, NOT the newer head. Owner: GAMEPLAY.",
+    "Marine domains are STATIC geography only: no boat, swimming, Leviathan AI, helicopter flight, loot or weather damage was implemented or approved.",
+    "Map road/cargo/buildable status remains a CANDIDATE; the existing Web buildReason() consumes buildable as a placement gate. Owner: GAMEPLAY.",
+    "POI entrance/door behaviour is not instantiated in the existing Web Veyra projection (statics=[]); collision proof covers sea/cliff boundaries only. Owner: GAMEPLAY.",
+    "U=2 and 8 AU analytical cells are DIAGNOSTIC, never an approved world scale.",
+    "No production integration, no world-master sealing, no visual/art approval, no full Veyra playability."
+  ]
+}

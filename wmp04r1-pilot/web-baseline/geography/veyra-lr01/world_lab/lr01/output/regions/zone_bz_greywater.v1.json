@@ -1,0 +1,206 @@
+{
+  "schema": "soh.map.lr01.region.v1",
+  "kind": "construction_zone",
+  "id": "bz_greywater",
+  "name": "Greywater Lakeshore Terrace",
+  "soil": "đất bồi pha cát",
+  "water": "hồ sát bờ",
+  "slope": "thoải",
+  "tags": [
+    "bờ hồ",
+    "bình nguyên"
+  ],
+  "notes": "",
+  "conf": "proposal",
+  "sourceRef": "project.zones[] where id=bz_greywater",
+  "status": [
+    "SOURCE_AUTHORED",
+    "DERIVED",
+    "PROPOSED"
+  ],
+  "geometry": {
+    "ringAu": [
+      [
+        705.3769565929802,
+        608.2379445943548
+      ],
+      [
+        710.7625068351123,
+        600.7138337830645
+      ],
+      [
+        726.140544792265,
+        595.3416074166121
+      ],
+      [
+        751.5110704644383,
+        592.1212654949975
+      ],
+      [
+        777.0156785637323,
+        590.579789371794
+      ],
+      [
+        802.6543690901469,
+        590.7171790470018
+      ],
+      [
+        828.639878702264,
+        592.2490243742513
+      ],
+      [
+        854.9722074000836,
+        595.175325353543
+      ],
+      [
+        867.9678471396824,
+        600.4788568823917
+      ],
+      [
+        867.6267979210602,
+        608.1596189607973
+      ],
+      [
+        867.6800631680195,
+        615.850852659734
+      ],
+      [
+        868.1276428805604,
+        623.552557979202
+      ],
+      [
+        855.4201655127404,
+        629.0960667964754
+      ],
+      [
+        829.5576310645595,
+        632.4813791115541
+      ],
+      [
+        804.3193975430004,
+        633.3360740348371
+      ],
+      [
+        779.705464948063,
+        631.660151566324
+      ],
+      [
+        756.8075221531014,
+        629.3095928063116
+      ],
+      [
+        735.6255691581158,
+        626.2843977547998
+      ],
+      [
+        719.4469898634458,
+        621.5788501717828
+      ],
+      [
+        708.2717842690913,
+        615.192950057261
+      ]
+    ],
+    "ringCount": 1,
+    "areaAu2": 5707.4164,
+    "perimeterAu": 363.5017,
+    "bboxAu": [
+      705.377,
+      590.5798,
+      868.1276,
+      633.3361
+    ],
+    "centroidAu": [
+      791.3998,
+      611.3262
+    ],
+    "outerVertexCount": 20,
+    "holeCount": 0
+  },
+  "rasterCells": {
+    "cells": 87,
+    "areaAu2": 5568,
+    "elevationRawByte": {
+      "min": 57,
+      "max": 71,
+      "mean": 63.4828,
+      "p25": 60,
+      "p50": 63,
+      "p75": 67,
+      "p95": 70,
+      "unit": "UNKNOWN_SOURCE_BYTE__NO_APPROVED_PHYSICAL_SCALE"
+    },
+    "slopeRawDelta": {
+      "min": 1,
+      "max": 5,
+      "mean": 1.8276,
+      "p50": 2,
+      "p95": 4,
+      "unit": "RAW_BYTE_DELTA_PER_8au_CELL__NOT_A_GAMEPLAY_THRESHOLD"
+    },
+    "seaDistanceCellsMean": 53.1494,
+    "freshwaterProximityCellsMean": 3.7586,
+    "clearanceCellsMean": 3.7586,
+    "biomeHistogram": {
+      "0": 21,
+      "2": 66
+    },
+    "roadClassHistogram": {
+      "0": 70,
+      "1": 12,
+      "4": 5
+    },
+    "coastCells": 0,
+    "coastBandLengthAuApprox": 0,
+    "buildableCells": 87,
+    "walkableCells": 87,
+    "waterCells": 0,
+    "cargoCells": 12,
+    "crossingCells": 0
+  },
+  "buildSuitability": {
+    "buildableCells": 87,
+    "buildableFraction": 1,
+    "meanSlopeRaw": 1.8276,
+    "meanFreshwaterProximityCells": 3.7586,
+    "status": "DERIVED",
+    "note": "Geometric suitability only. A0 occupancy, claim legality and Gameplay building rules are NOT asserted."
+  },
+  "loadingSpace": {
+    "cells": 59,
+    "areaAu2": 3776,
+    "bboxAu": [
+      724,
+      596,
+      852,
+      628
+    ],
+    "status": "PROPOSED",
+    "note": "PROPOSED spatial candidate: buildable cells within 3 grid cells (24 au) of a cart-road/cart-bridge/dock cargo candidate. NOT a loading platform or a Gameplay placement grant."
+  },
+  "naturalChokepoints": {
+    "clusterIds": [],
+    "status": "DERIVED",
+    "note": "clearanceCells <= 2 (<=16 au from blocked geometry); geometric narrowness, not a combat chokepoint claim."
+  },
+  "nearestRoads": [
+    {
+      "id": "rd_b",
+      "kind": "cart",
+      "d": 17.2748
+    },
+    {
+      "id": "rd_9",
+      "kind": "cart",
+      "d": 28.2466
+    },
+    {
+      "id": "rd_d",
+      "kind": "cart",
+      "d": 35.3867
+    }
+  ],
+  "walkableComponentIds": [
+    0
+  ]
+}

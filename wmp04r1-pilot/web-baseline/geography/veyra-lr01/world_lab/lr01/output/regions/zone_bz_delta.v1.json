@@ -1,0 +1,203 @@
+{
+  "schema": "soh.map.lr01.region.v1",
+  "kind": "construction_zone",
+  "id": "bz_delta",
+  "name": "Delta Levee",
+  "soil": "bồi tích (ngập mùa mưa)",
+  "water": "nhiều nhánh",
+  "slope": "phẳng",
+  "tags": [
+    "ven sông",
+    "gần đường vận tải"
+  ],
+  "notes": "Dễ ngập — đánh đổi thật.",
+  "conf": "proposal",
+  "sourceRef": "project.zones[] where id=bz_delta",
+  "status": [
+    "SOURCE_AUTHORED",
+    "DERIVED",
+    "PROPOSED"
+  ],
+  "geometry": {
+    "ringAu": [
+      [
+        1067.9549192548805,
+        832.4918209755662
+      ],
+      [
+        1068.833361399476,
+        825.4754629266984
+      ],
+      [
+        1073.859849428995,
+        819.4888475844459
+      ],
+      [
+        1083.0343833434372,
+        814.5319749488086
+      ],
+      [
+        1093.4547220951063,
+        812.7424356376514
+      ],
+      [
+        1105.1208656840017,
+        814.1202296509746
+      ],
+      [
+        1116.4243096482164,
+        816.3579925815873
+      ],
+      [
+        1127.3650539877506,
+        819.4557244294899
+      ],
+      [
+        1133.9115643721473,
+        824.753442765081
+      ],
+      [
+        1136.0638408014063,
+        832.2511475883603
+      ],
+      [
+        1134.3466843524245,
+        838.9646547509733
+      ],
+      [
+        1128.760095025202,
+        844.8939642529197
+      ],
+      [
+        1122.313007777309,
+        850.3840210144963
+      ],
+      [
+        1115.0054226087457,
+        855.4348250357032
+      ],
+      [
+        1105.4127396685271,
+        858.4691578576171
+      ],
+      [
+        1093.534958956653,
+        859.4870194802379
+      ],
+      [
+        1083.1662113710327,
+        857.4361759462636
+      ],
+      [
+        1074.3064969116658,
+        852.3166272556939
+      ],
+      [
+        1069.2864043071324,
+        846.3176396828068
+      ],
+      [
+        1068.1059335574325,
+        839.4392132276023
+      ]
+    ],
+    "ringCount": 1,
+    "areaAu2": 2464.4506,
+    "perimeterAu": 183.7142,
+    "bboxAu": [
+      1067.9549,
+      812.7424,
+      1136.0638,
+      859.487
+    ],
+    "centroidAu": [
+      1100.031,
+      835.5414
+    ],
+    "outerVertexCount": 20,
+    "holeCount": 0
+  },
+  "rasterCells": {
+    "cells": 36,
+    "areaAu2": 2304,
+    "elevationRawByte": {
+      "min": 29,
+      "max": 42,
+      "mean": 35.1111,
+      "p25": 32,
+      "p50": 35,
+      "p75": 37,
+      "p95": 40,
+      "unit": "UNKNOWN_SOURCE_BYTE__NO_APPROVED_PHYSICAL_SCALE"
+    },
+    "slopeRawDelta": {
+      "min": 1,
+      "max": 3,
+      "mean": 2.2222,
+      "p50": 2,
+      "p95": 3,
+      "unit": "RAW_BYTE_DELTA_PER_8au_CELL__NOT_A_GAMEPLAY_THRESHOLD"
+    },
+    "seaDistanceCellsMean": 19.2778,
+    "freshwaterProximityCellsMean": 14.9722,
+    "clearanceCellsMean": 14.8889,
+    "biomeHistogram": {
+      "0": 36
+    },
+    "roadClassHistogram": {
+      "0": 36
+    },
+    "coastCells": 0,
+    "coastBandLengthAuApprox": 0,
+    "buildableCells": 36,
+    "walkableCells": 36,
+    "waterCells": 0,
+    "cargoCells": 0,
+    "crossingCells": 0
+  },
+  "buildSuitability": {
+    "buildableCells": 36,
+    "buildableFraction": 1,
+    "meanSlopeRaw": 2.2222,
+    "meanFreshwaterProximityCells": 14.9722,
+    "status": "DERIVED",
+    "note": "Geometric suitability only. A0 occupancy, claim legality and Gameplay building rules are NOT asserted."
+  },
+  "loadingSpace": {
+    "cells": 26,
+    "areaAu2": 1664,
+    "bboxAu": [
+      1076,
+      820,
+      1132,
+      852
+    ],
+    "status": "PROPOSED",
+    "note": "PROPOSED spatial candidate: buildable cells within 3 grid cells (24 au) of a cart-road/cart-bridge/dock cargo candidate. NOT a loading platform or a Gameplay placement grant."
+  },
+  "naturalChokepoints": {
+    "clusterIds": [],
+    "status": "DERIVED",
+    "note": "clearanceCells <= 2 (<=16 au from blocked geometry); geometric narrowness, not a combat chokepoint claim."
+  },
+  "nearestRoads": [
+    {
+      "id": "rd_0",
+      "kind": "cart",
+      "d": 32.1317
+    },
+    {
+      "id": "rd_2",
+      "kind": "cart",
+      "d": 33.6331
+    },
+    {
+      "id": "rd_6",
+      "kind": "cart",
+      "d": 40.8618
+    }
+  ],
+  "walkableComponentIds": [
+    3
+  ]
+}

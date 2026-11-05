@@ -1,0 +1,283 @@
+{
+  "schema": "soh.map.lr01.region.v1",
+  "kind": "satellite",
+  "id": "ld_wreck",
+  "name": "Wreck Isle",
+  "sourceRef": "project.land[] where id=ld_wreck",
+  "status": [
+    "SOURCE_AUTHORED",
+    "DERIVED"
+  ],
+  "conf": "proposal",
+  "geometry": {
+    "ringsAu": [
+      [
+        [
+          141.95344610553533,
+          820.9891805368949
+        ],
+        [
+          150.79042977274338,
+          818.8396122225178
+        ],
+        [
+          159.5792151853063,
+          816.754398468677
+        ],
+        [
+          168.61056350109834,
+          815.6556203083854
+        ],
+        [
+          177.7317826294751,
+          815.0703138972042
+        ],
+        [
+          186.46048990990886,
+          818.0831079943381
+        ],
+        [
+          194.52780658330417,
+          822.0936431765202
+        ],
+        [
+          201.67317530184116,
+          827.4137147011271
+        ],
+        [
+          208.8512130342137,
+          832.3918346038712
+        ],
+        [
+          214.83493858307216,
+          838.7175574247046
+        ],
+        [
+          220.73988565824266,
+          844.9578904745503
+        ],
+        [
+          225.79915442858515,
+          852.0323099943496
+        ],
+        [
+          228.12339454910554,
+          860.4200664604342
+        ],
+        [
+          230.9514570949807,
+          868.8750928213282
+        ],
+        [
+          230.88693748819634,
+          877.8572249525992
+        ],
+        [
+          229.51632965470748,
+          886.7590037995726
+        ],
+        [
+          225.26626897305053,
+          894.6973334974583
+        ],
+        [
+          219.90605252185716,
+          902.0188943362102
+        ],
+        [
+          213.44420187617936,
+          908.6553499515145
+        ],
+        [
+          205.29146634505932,
+          912.9271177725263
+        ],
+        [
+          195.78427025760712,
+          913.3501233972631
+        ],
+        [
+          186.981246838814,
+          914.3559773763606
+        ],
+        [
+          178.4609015829561,
+          916.4474978904129
+        ],
+        [
+          169.54415858697294,
+          917.034172112896
+        ],
+        [
+          160.4814515895176,
+          916.2327473456144
+        ],
+        [
+          151.54918771803978,
+          913.5195211509613
+        ],
+        [
+          144.80411737115182,
+          907.0043106238074
+        ],
+        [
+          137.21139637356205,
+          901.9184309037096
+        ],
+        [
+          131.20844272361012,
+          894.8604435393183
+        ],
+        [
+          126.9251002574364,
+          886.666331640506
+        ],
+        [
+          123.90847187472974,
+          878.1007578387204
+        ],
+        [
+          123.29283174419085,
+          868.9628490816575
+        ],
+        [
+          122.94339330409636,
+          860.0765121919015
+        ],
+        [
+          121.71516196929802,
+          851.1486553858034
+        ],
+        [
+          122.80231239765739,
+          841.9400800446723
+        ],
+        [
+          127.06284896366509,
+          833.7076987533786
+        ],
+        [
+          132.83734700866012,
+          826.3766632066718
+        ],
+        [
+          140.70104966609452,
+          821.4689071689528
+        ]
+      ]
+    ],
+    "ringCount": 1,
+    "areaAu2": 8764.6646,
+    "perimeterAu": 336.5796,
+    "bboxAu": [
+      121.7152,
+      815.0703,
+      230.9515,
+      917.0342
+    ],
+    "centroidAu": [
+      174.861,
+      866.8913
+    ],
+    "outerVertexCount": 38,
+    "holeCount": 0
+  },
+  "rasterCells": {
+    "cells": 141,
+    "areaAu2": 9024,
+    "elevationRawByte": {
+      "min": 12,
+      "max": 42,
+      "mean": 22.7376,
+      "p25": 17,
+      "p50": 21,
+      "p75": 29,
+      "p95": 38,
+      "unit": "UNKNOWN_SOURCE_BYTE__NO_APPROVED_PHYSICAL_SCALE"
+    },
+    "slopeRawDelta": {
+      "min": 1,
+      "max": 13,
+      "mean": 6.1418,
+      "p50": 5,
+      "p95": 12,
+      "unit": "RAW_BYTE_DELTA_PER_8au_CELL__NOT_A_GAMEPLAY_THRESHOLD"
+    },
+    "seaDistanceCellsMean": 2.8652,
+    "freshwaterProximityCellsMean": 44.383,
+    "clearanceCellsMean": 2.8652,
+    "biomeHistogram": {
+      "0": 89,
+      "11": 52
+    },
+    "roadClassHistogram": {
+      "0": 127,
+      "2": 6,
+      "3": 8
+    },
+    "coastCells": 37,
+    "coastBandLengthAuApprox": 296,
+    "buildableCells": 0,
+    "walkableCells": 141,
+    "waterCells": 0,
+    "cargoCells": 1,
+    "crossingCells": 0
+  },
+  "biomeNames": {
+    "0": {
+      "name": "Bình nguyên / canh tác",
+      "cells": 89
+    },
+    "11": {
+      "name": "Bãi cát ven biển",
+      "cells": 52
+    }
+  },
+  "roadNames": {
+    "0": {
+      "cls": "none",
+      "cells": 127
+    },
+    "2": {
+      "cls": "trail",
+      "cells": 6
+    },
+    "3": {
+      "cls": "foot",
+      "cells": 8
+    }
+  },
+  "coastline": {
+    "coastCells": 37,
+    "approximateLengthAu": 296,
+    "beachBandCells": 68,
+    "beachBandAu2": 4352,
+    "status": "DERIVED",
+    "note": "beachBand = land cells within 2 grid cells (16 au) of sea; derived, not an authored beach polygon."
+  },
+  "wetlands": {
+    "cells": 0,
+    "areaAu2": 0,
+    "status": "DERIVED",
+    "note": "biomeCode 4 (marsh) OR within 1 cell (8 au) of authored freshwater geometry; approximation only."
+  },
+  "relief": {
+    "highlandCells": 0,
+    "steepCells": 0,
+    "status": "DERIVED",
+    "note": "highland = raw elevation byte >= 100, steep = raw slope delta >= 40. Raw byte thresholds are descriptive, NOT approved gameplay slope laws."
+  },
+  "contains": {
+    "rivers": [],
+    "lakes": [],
+    "zones": [],
+    "elders": [],
+    "pois": [
+      "po_netcamp",
+      "po_wreck"
+    ]
+  },
+  "walkableComponents": [
+    7
+  ]
+}

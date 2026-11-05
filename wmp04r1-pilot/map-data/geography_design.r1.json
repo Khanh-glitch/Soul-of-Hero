@@ -1,0 +1,134 @@
+{
+  "schema": "soh.wmp.v4r1.geography_design",
+  "worldId": "veyra",
+  "sourceRasters": [
+    "data/rasters/geo01/biomeCode.u8",
+    "data/rasters/geo01/landId.u8",
+    "data/rasters/geo01/waterClass.u8",
+    "data/rasters/geo01/elevation.u8"
+  ],
+  "revision": "WMP-04R1",
+  "authoritative": "v4/r1/data/biomeEffective.r1.u8",
+  "parentBiomesPreserved": true,
+  "biomeCodes": {
+    "0": "meadow",
+    "1": "forest",
+    "2": "ancient",
+    "3": "conifer",
+    "4": "marsh",
+    "5": "desert",
+    "6": "scrub_dry_steppe",
+    "7": "rock",
+    "8": "snow",
+    "9": "volcanic",
+    "10": "toxic",
+    "11": "beach"
+  },
+  "snow": {
+    "target": "23-25% dry land retained",
+    "achievedPercent": 23.0058,
+    "sourceCells": 217,
+    "afterCells": 3311,
+    "retainedAllOriginalSnow": true,
+    "expansion": "Northern highland ring concentrated Typhon/Argus; central tongue recessed, rock corridors and quarry relief exposed",
+    "corePOIs": [
+      "po_academy",
+      "po_observatory",
+      "po_archive",
+      "po_hall_eyes",
+      "po_lanternstn",
+      "po_typhon",
+      "po_kestrel",
+      "po_viaduct",
+      "po_freightyard",
+      "po_fracquarry",
+      "po_falls",
+      "po_pumphouse",
+      "po_strait"
+    ],
+    "snowCoverSemantics": "permanent cold biome potential; dynamic weather/ice/snow accumulation owned by Gameplay",
+    "fadeMasks": "coldTransition 0..3; no instant ice-weather effects",
+    "southernLimit": "no snow cells with AU y>=610",
+    "rockExclusion": "Every canonical rock code 7 remains rock, including exposed mountain outcrops",
+    "trimmedInlandSnowCells": 217,
+    "rebalancedToNorthernFringeCells": 557,
+    "netSnowDifferenceVsWMP04": -143
+  },
+  "dry": {
+    "interpretation": "about 30% INCREASE RELATIVE TO baseline combined desert + scrub dry steppe, not 30 percentage points",
+    "sourceCells": 2632,
+    "afterCells": 3422,
+    "relativeIncreasePercent": 30.0152,
+    "expansion": "east / southeast from original arid belt, convert eligible low meadow into code 6; preserve original code5 dunes and code6 scrub",
+    "excluded": [
+      "water",
+      "coast beach",
+      "snow",
+      "wetland",
+      "volcanic",
+      "toxic",
+      "forest",
+      "islands outside primary land"
+    ],
+    "poiExamples": [
+      "po_westbank",
+      "po_oldpump",
+      "po_ember",
+      "po_necropolis",
+      "po_tombs",
+      "po_oasis",
+      "po_sandgate"
+    ]
+  },
+  "preservation": [
+    "all landmass/coastline/rivers/lakes",
+    "all authored POI positions/footprints",
+    "all 92 roads and 27 docks",
+    "base terrain elevation and slope",
+    "all canonical 579 feature IDs",
+    "original GOLD and WMP-01/02/03",
+    "All 510 source rock raster cells",
+    "WMP-04 open sea, hazard and landmark contracts",
+    "Existing native SOH art, tiles and sprite catalog"
+  ],
+  "compatibility": {
+    "type": "versioned overlay rather than rewriting pinned parents",
+    "mapReader": "api/current.mjs",
+    "noHistoricalWrite": true,
+    "notCanonicalRates": [
+      "snow physical temperature in C",
+      "dry season duration",
+      "heat damage",
+      "radiation/venom damage"
+    ],
+    "activeRevision": "WMP-04R1",
+    "parentRevision": "WMP-04",
+    "baseGeometry": "WMP-03"
+  },
+  "assetPolicy": {
+    "source": "SOH Web actual code",
+    "rule": "REUSE_EXISTING_FIRST__NO_NEW_ASSET_WITHOUT_PROVEN_GAP",
+    "existing": [
+      "T.SNOW",
+      "T.ICE",
+      "T.HILL",
+      "T.CLIFF",
+      "T.SAND",
+      "T.DEEP",
+      "T.SHALLOW",
+      "T.RIVER",
+      "S.snowpine",
+      "S.rock",
+      "S.iron",
+      "S.coal",
+      "S.crystal",
+      "S.sulfur"
+    ],
+    "evidence": [
+      "web/src/game/render.ts",
+      "web/src/game/art.ts",
+      "web/src/game/world.ts"
+    ],
+    "gameplayHead": "d73aa63f9f7f98aa1f6c6a42211693c7710cf3c4"
+  }
+}

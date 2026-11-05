@@ -1,0 +1,2705 @@
+{
+  "schema": "soh.map.lr01.poi_summary.v1",
+  "sourceSha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+  "counts": {
+    "pois": 81,
+    "archetypes": 24,
+    "rooms": 210,
+    "walls": 410,
+    "portals": 235,
+    "entrances": 81,
+    "sockets": 456,
+    "levels": 99,
+    "deepLevels": 18,
+    "stableIds": 1701,
+    "duplicateStableIds": 0
+  },
+  "archetypeCoverage": [
+    {
+      "arche": "chest_vendor",
+      "poiCount": 2,
+      "patterns": [
+        "counter_cell"
+      ],
+      "template": {
+        "family": "enclosed",
+        "grid": [
+          1,
+          1
+        ],
+        "roof": 0.8,
+        "sockets": 4,
+        "pattern": "counter_cell",
+        "note": "single counter cell; NO vendor/economy authored"
+      },
+      "totalLevels": 2,
+      "totalRooms": 2,
+      "totalSockets": 8,
+      "meanRoofFraction": 0.8695
+    },
+    {
+      "arche": "elder_site",
+      "poiCount": 5,
+      "patterns": [
+        "arena_ring"
+      ],
+      "template": {
+        "family": "open",
+        "grid": [
+          1,
+          1
+        ],
+        "roof": 0.2,
+        "sockets": 8,
+        "pattern": "arena_ring",
+        "note": "open arena ring with radial approach sockets"
+      },
+      "totalLevels": 10,
+      "totalRooms": 10,
+      "totalSockets": 40,
+      "meanRoofFraction": 0.2144
+    },
+    {
+      "arche": "evac",
+      "poiCount": 3,
+      "patterns": [
+        "mustering_yard"
+      ],
+      "template": {
+        "family": "open",
+        "grid": [
+          1,
+          1
+        ],
+        "roof": 0.2,
+        "sockets": 4,
+        "pattern": "mustering_yard",
+        "note": "open mustering yard with two exits"
+      },
+      "totalLevels": 3,
+      "totalRooms": 3,
+      "totalSockets": 12,
+      "meanRoofFraction": 0
+    },
+    {
+      "arche": "facility",
+      "poiCount": 3,
+      "patterns": [
+        "service_corridor"
+      ],
+      "template": {
+        "family": "enclosed",
+        "grid": [
+          2,
+          2
+        ],
+        "roof": 0.95,
+        "sockets": 6,
+        "pattern": "service_corridor",
+        "note": "central corridor with service cells"
+      },
+      "totalLevels": 6,
+      "totalRooms": 15,
+      "totalSockets": 18,
+      "meanRoofFraction": 1
+    },
+    {
+      "arche": "filter",
+      "poiCount": 2,
+      "patterns": [
+        "basin_pair"
+      ],
+      "template": {
+        "family": "open",
+        "grid": [
+          1,
+          2
+        ],
+        "roof": 0.35,
+        "sockets": 4,
+        "pattern": "basin_pair",
+        "note": "two open basins with a walkway"
+      },
+      "totalLevels": 2,
+      "totalRooms": 4,
+      "totalSockets": 8,
+      "meanRoofFraction": 0
+    },
+    {
+      "arche": "gate",
+      "poiCount": 1,
+      "patterns": [
+        "threshold"
+      ],
+      "template": {
+        "family": "mixed",
+        "grid": [
+          1,
+          1
+        ],
+        "roof": 0.2,
+        "sockets": 3,
+        "pattern": "threshold",
+        "note": "single threshold passage"
+      },
+      "totalLevels": 2,
+      "totalRooms": 2,
+      "totalSockets": 3,
+      "meanRoofFraction": 1
+    },
+    {
+      "arche": "grove",
+      "poiCount": 3,
+      "patterns": [
+        "clearing"
+      ],
+      "template": {
+        "family": "open",
+        "grid": [
+          1,
+          1
+        ],
+        "roof": 0,
+        "sockets": 4,
+        "pattern": "clearing",
+        "note": "unroofed clearing; habitat geometry only"
+      },
+      "totalLevels": 3,
+      "totalRooms": 3,
+      "totalSockets": 12,
+      "meanRoofFraction": 0
+    },
+    {
+      "arche": "hamlet",
+      "poiCount": 6,
+      "patterns": [
+        "dwelling_cluster"
+      ],
+      "template": {
+        "family": "mixed",
+        "grid": [
+          2,
+          2
+        ],
+        "roof": 0.65,
+        "sockets": 7,
+        "pattern": "dwelling_cluster",
+        "note": "small dwelling cells around a shared yard"
+      },
+      "totalLevels": 6,
+      "totalRooms": 12,
+      "totalSockets": 42,
+      "meanRoofFraction": 0.4094
+    },
+    {
+      "arche": "mill",
+      "poiCount": 1,
+      "patterns": [
+        "wheel_bay_and_loft"
+      ],
+      "template": {
+        "family": "enclosed",
+        "grid": [
+          2,
+          2
+        ],
+        "roof": 0.9,
+        "sockets": 5,
+        "pattern": "wheel_bay_and_loft",
+        "note": "ground bay plus loft relationship"
+      },
+      "totalLevels": 1,
+      "totalRooms": 4,
+      "totalSockets": 5,
+      "meanRoofFraction": 0.7475
+    },
+    {
+      "arche": "mine",
+      "poiCount": 3,
+      "patterns": [
+        "adit_and_vault"
+      ],
+      "template": {
+        "family": "enclosed",
+        "grid": [
+          1,
+          2
+        ],
+        "roof": 0.45,
+        "sockets": 5,
+        "pattern": "adit_and_vault",
+        "note": "adit mouth plus deep vault"
+      },
+      "totalLevels": 6,
+      "totalRooms": 9,
+      "totalSockets": 15,
+      "meanRoofFraction": 0.1891
+    },
+    {
+      "arche": "observatory",
+      "poiCount": 5,
+      "patterns": [
+        "tower_base_and_dome"
+      ],
+      "template": {
+        "family": "enclosed",
+        "grid": [
+          1,
+          2
+        ],
+        "roof": 0.85,
+        "sockets": 4,
+        "pattern": "tower_base_and_dome",
+        "note": "instrument base + open observation half"
+      },
+      "totalLevels": 5,
+      "totalRooms": 10,
+      "totalSockets": 20,
+      "meanRoofFraction": 0.819
+    },
+    {
+      "arche": "pier",
+      "poiCount": 4,
+      "patterns": [
+        "linear_deck"
+      ],
+      "template": {
+        "family": "open",
+        "grid": [
+          1,
+          1
+        ],
+        "roof": 0.1,
+        "sockets": 4,
+        "pattern": "linear_deck",
+        "note": "linear deck with berth-side sockets"
+      },
+      "totalLevels": 4,
+      "totalRooms": 4,
+      "totalSockets": 16,
+      "meanRoofFraction": 0
+    },
+    {
+      "arche": "port",
+      "poiCount": 8,
+      "patterns": [
+        "dockside_loading"
+      ],
+      "template": {
+        "family": "mixed",
+        "grid": [
+          1,
+          2
+        ],
+        "roof": 0.3,
+        "sockets": 7,
+        "pattern": "dockside_loading",
+        "note": "dock-side loading strip + shed"
+      },
+      "totalLevels": 8,
+      "totalRooms": 16,
+      "totalSockets": 56,
+      "meanRoofFraction": 0.2079
+    },
+    {
+      "arche": "powerplant",
+      "poiCount": 2,
+      "patterns": [
+        "hall_and_bays"
+      ],
+      "template": {
+        "family": "enclosed",
+        "grid": [
+          2,
+          2
+        ],
+        "roof": 0.9,
+        "sockets": 6,
+        "pattern": "hall_and_bays",
+        "note": "main hall plus machinery-scale bays (NO machines authored)"
+      },
+      "totalLevels": 4,
+      "totalRooms": 10,
+      "totalSockets": 12,
+      "meanRoofFraction": 0.9222
+    },
+    {
+      "arche": "quarry",
+      "poiCount": 4,
+      "patterns": [
+        "terraced_pit"
+      ],
+      "template": {
+        "family": "open",
+        "grid": [
+          1,
+          1
+        ],
+        "roof": 0,
+        "sockets": 5,
+        "pattern": "terraced_pit",
+        "note": "open pit with terrace levels, no roof"
+      },
+      "totalLevels": 4,
+      "totalRooms": 4,
+      "totalSockets": 20,
+      "meanRoofFraction": 0
+    },
+    {
+      "arche": "ragnarok_cache",
+      "poiCount": 6,
+      "patterns": [
+        "antechamber_and_vault"
+      ],
+      "template": {
+        "family": "enclosed",
+        "grid": [
+          1,
+          2
+        ],
+        "roof": 1,
+        "sockets": 5,
+        "pattern": "antechamber_and_vault",
+        "note": "deep cache vault; NO loot authored"
+      },
+      "totalLevels": 6,
+      "totalRooms": 12,
+      "totalSockets": 30,
+      "meanRoofFraction": 0.8189
+    },
+    {
+      "arche": "research",
+      "poiCount": 2,
+      "patterns": [
+        "cells_and_core"
+      ],
+      "template": {
+        "family": "enclosed",
+        "grid": [
+          2,
+          2
+        ],
+        "roof": 1,
+        "sockets": 6,
+        "pattern": "cells_and_core",
+        "note": "study cells around a core hall"
+      },
+      "totalLevels": 4,
+      "totalRooms": 10,
+      "totalSockets": 12,
+      "meanRoofFraction": 0.9408
+    },
+    {
+      "arche": "roadstop",
+      "poiCount": 5,
+      "patterns": [
+        "shelter_and_yard"
+      ],
+      "template": {
+        "family": "mixed",
+        "grid": [
+          1,
+          2
+        ],
+        "roof": 0.55,
+        "sockets": 4,
+        "pattern": "shelter_and_yard",
+        "note": "shelter beside a loading yard"
+      },
+      "totalLevels": 5,
+      "totalRooms": 10,
+      "totalSockets": 20,
+      "meanRoofFraction": 0.4094
+    },
+    {
+      "arche": "ruins",
+      "poiCount": 5,
+      "patterns": [
+        "broken_cells"
+      ],
+      "template": {
+        "family": "open",
+        "grid": [
+          2,
+          2
+        ],
+        "roof": 0.15,
+        "sockets": 5,
+        "pattern": "broken_cells",
+        "note": "partial walls, broken room cells"
+      },
+      "totalLevels": 6,
+      "totalRooms": 21,
+      "totalSockets": 25,
+      "meanRoofFraction": 0.0361
+    },
+    {
+      "arche": "sawmill",
+      "poiCount": 2,
+      "patterns": [
+        "covered_bay_and_yard"
+      ],
+      "template": {
+        "family": "mixed",
+        "grid": [
+          2,
+          2
+        ],
+        "roof": 0.6,
+        "sockets": 6,
+        "pattern": "covered_bay_and_yard",
+        "note": "covered work bay opening onto a timber yard"
+      },
+      "totalLevels": 2,
+      "totalRooms": 8,
+      "totalSockets": 12,
+      "meanRoofFraction": 0.7477
+    },
+    {
+      "arche": "smelter",
+      "poiCount": 2,
+      "patterns": [
+        "hot_bay_and_yard"
+      ],
+      "template": {
+        "family": "enclosed",
+        "grid": [
+          2,
+          2
+        ],
+        "roof": 0.85,
+        "sockets": 6,
+        "pattern": "hot_bay_and_yard",
+        "note": "enclosed hot bay with external yard"
+      },
+      "totalLevels": 2,
+      "totalRooms": 8,
+      "totalSockets": 12,
+      "meanRoofFraction": 0.754
+    },
+    {
+      "arche": "tomb",
+      "poiCount": 1,
+      "patterns": [
+        "antechamber_and_vault"
+      ],
+      "template": {
+        "family": "enclosed",
+        "grid": [
+          1,
+          2
+        ],
+        "roof": 1,
+        "sockets": 4,
+        "pattern": "antechamber_and_vault",
+        "note": "antechamber -> sealed-depth vault geometry"
+      },
+      "totalLevels": 2,
+      "totalRooms": 3,
+      "totalSockets": 4,
+      "meanRoofFraction": 0.9933
+    },
+    {
+      "arche": "village",
+      "poiCount": 4,
+      "patterns": [
+        "dwelling_cluster"
+      ],
+      "template": {
+        "family": "mixed",
+        "grid": [
+          2,
+          3
+        ],
+        "roof": 0.7,
+        "sockets": 9,
+        "pattern": "dwelling_cluster",
+        "note": "cluster of small cells with lanes"
+      },
+      "totalLevels": 4,
+      "totalRooms": 24,
+      "totalSockets": 36,
+      "meanRoofFraction": 0.368
+    },
+    {
+      "arche": "warehouse",
+      "poiCount": 2,
+      "patterns": [
+        "long_aisle"
+      ],
+      "template": {
+        "family": "enclosed",
+        "grid": [
+          1,
+          3
+        ],
+        "roof": 1,
+        "sockets": 9,
+        "pattern": "long_aisle",
+        "note": "long roofed aisle with repeated bays"
+      },
+      "totalLevels": 2,
+      "totalRooms": 6,
+      "totalSockets": 18,
+      "meanRoofFraction": 0.7682
+    }
+  ],
+  "representativeExamples": [
+    {
+      "poiId": "po_kilns",
+      "arche": "smelter",
+      "reason": "GEO-02 PROPOSED 3.696 au west opening (po_kilns); enclosed multi-bay with yard",
+      "file": "output/poi_examples/po_kilns.v1.json"
+    },
+    {
+      "poiId": "po_academy",
+      "arche": "research",
+      "reason": "enclosed 2x2 study cells; deep level present",
+      "file": "output/poi_examples/po_academy.v1.json"
+    },
+    {
+      "poiId": "po_fracquarry",
+      "arche": "quarry",
+      "reason": "fully open-air terrace/pit; no roof, no enclosed-room claim",
+      "file": "output/poi_examples/po_fracquarry.v1.json"
+    },
+    {
+      "poiId": "po_strait",
+      "arche": "port",
+      "reason": "coastal dockside loading strip; mixed shelter + yard",
+      "file": "output/poi_examples/po_strait.v1.json"
+    },
+    {
+      "poiId": "po_rc_meridian",
+      "arche": "ragnarok_cache",
+      "reason": "deep vault geometry with NO loot authored",
+      "file": "output/poi_examples/po_rc_meridian.v1.json"
+    },
+    {
+      "poiId": "po_hall_eyes",
+      "arche": "elder_site",
+      "reason": "open arena ring, radial sockets, source-authored approach",
+      "file": "output/poi_examples/po_hall_eyes.v1.json"
+    },
+    {
+      "poiId": "po_siloc",
+      "arche": "warehouse",
+      "reason": "long roofed aisle with repeated bays, highest roof coverage",
+      "file": "output/poi_examples/po_siloc.v1.json"
+    },
+    {
+      "poiId": "po_mere",
+      "arche": "pier",
+      "reason": "linear open deck with berth-side fit sockets",
+      "file": "output/poi_examples/po_mere.v1.json"
+    }
+  ],
+  "summary": [
+    {
+      "poiId": "po_academy",
+      "arche": "research",
+      "enclosureClass": "ENCLOSED_MULTI_LAYER",
+      "template": "cells_and_core",
+      "rows": 2,
+      "cols": 2,
+      "levels": 2,
+      "rooms": 5,
+      "walls": 6,
+      "portals": 6,
+      "entrances": 1,
+      "sockets": 6,
+      "roofFraction": 0.9408,
+      "enclosureFraction": 0.9408,
+      "interiorDepthAu": 22.0055,
+      "maxCirculationDepth": 2,
+      "retreatStatus": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 1,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_observatory",
+      "arche": "observatory",
+      "enclosureClass": "ENCLOSED_SINGLE",
+      "template": "tower_base_and_dome",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 4,
+      "roofFraction": 0.819,
+      "enclosureFraction": 0.819,
+      "interiorDepthAu": 9.5215,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 0,
+        "nearestRoadKind": "trail"
+      }
+    },
+    {
+      "poiId": "po_archive",
+      "arche": "facility",
+      "enclosureClass": "ENCLOSED_MULTI_LAYER",
+      "template": "service_corridor",
+      "rows": 2,
+      "cols": 2,
+      "levels": 2,
+      "rooms": 5,
+      "walls": 6,
+      "portals": 6,
+      "entrances": 1,
+      "sockets": 6,
+      "roofFraction": 1,
+      "enclosureFraction": 1.009,
+      "interiorDepthAu": 36.9348,
+      "maxCirculationDepth": 2,
+      "retreatStatus": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 3,
+        "nearestRoadKind": "trail"
+      }
+    },
+    {
+      "poiId": "po_hall_eyes",
+      "arche": "elder_site",
+      "enclosureClass": "ENCLOSED_MULTI_LAYER",
+      "template": "arena_ring",
+      "rows": 1,
+      "cols": 1,
+      "levels": 2,
+      "rooms": 2,
+      "walls": 4,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 8,
+      "roofFraction": 0.2144,
+      "enclosureFraction": 1.1261,
+      "interiorDepthAu": 27.2,
+      "maxCirculationDepth": 0,
+      "retreatStatus": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 3,
+        "nearestRoadKind": "trail"
+      }
+    },
+    {
+      "poiId": "po_lantern",
+      "arche": "observatory",
+      "enclosureClass": "ENCLOSED_SINGLE",
+      "template": "tower_base_and_dome",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 4,
+      "roofFraction": 0.8189,
+      "enclosureFraction": 0.8189,
+      "interiorDepthAu": 16.8001,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 4.312,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 11,
+        "nearestRoadKind": "trail"
+      }
+    },
+    {
+      "poiId": "po_lanternstn",
+      "arche": "roadstop",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "shelter_and_yard",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 4,
+      "roofFraction": 0.4093,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 14.3997,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 3.696,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 1,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_kestrel",
+      "arche": "facility",
+      "enclosureClass": "ENCLOSED_MULTI_LAYER",
+      "template": "service_corridor",
+      "rows": 2,
+      "cols": 2,
+      "levels": 2,
+      "rooms": 5,
+      "walls": 6,
+      "portals": 6,
+      "entrances": 1,
+      "sockets": 6,
+      "roofFraction": 1,
+      "enclosureFraction": 1.0089,
+      "interiorDepthAu": 36.9332,
+      "maxCirculationDepth": 2,
+      "retreatStatus": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 0,
+        "nearestRoadKind": "trail"
+      }
+    },
+    {
+      "poiId": "po_typhon",
+      "arche": "elder_site",
+      "enclosureClass": "ENCLOSED_MULTI_LAYER",
+      "template": "arena_ring",
+      "rows": 1,
+      "cols": 1,
+      "levels": 2,
+      "rooms": 2,
+      "walls": 4,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 8,
+      "roofFraction": 0.2144,
+      "enclosureFraction": 1.1261,
+      "interiorDepthAu": 18.7,
+      "maxCirculationDepth": 0,
+      "retreatStatus": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 8,
+        "nearestRoadKind": "trail"
+      }
+    },
+    {
+      "poiId": "po_viaduct",
+      "arche": "ruins",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "broken_cells",
+      "rows": 2,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 4,
+      "walls": 6,
+      "portals": 5,
+      "entrances": 1,
+      "sockets": 5,
+      "roofFraction": 0,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 29.5473,
+      "maxCirculationDepth": 2,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 3,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_freightyard",
+      "arche": "ruins",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "broken_cells",
+      "rows": 2,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 4,
+      "walls": 6,
+      "portals": 5,
+      "entrances": 1,
+      "sockets": 5,
+      "roofFraction": 0,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 29.547,
+      "maxCirculationDepth": 2,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 0,
+        "nearestRoadKind": "foot"
+      }
+    },
+    {
+      "poiId": "po_fracquarry",
+      "arche": "quarry",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "terraced_pit",
+      "rows": 1,
+      "cols": 1,
+      "levels": 1,
+      "rooms": 1,
+      "walls": 4,
+      "portals": 1,
+      "entrances": 1,
+      "sockets": 5,
+      "roofFraction": 0,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 22.4,
+      "maxCirculationDepth": 0,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 3,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_falls",
+      "arche": "powerplant",
+      "enclosureClass": "ENCLOSED_MULTI_LAYER",
+      "template": "hall_and_bays",
+      "rows": 2,
+      "cols": 2,
+      "levels": 2,
+      "rooms": 5,
+      "walls": 6,
+      "portals": 6,
+      "entrances": 1,
+      "sockets": 6,
+      "roofFraction": 0.9221,
+      "enclosureFraction": 0.9221,
+      "interiorDepthAu": 20.1713,
+      "maxCirculationDepth": 2,
+      "retreatStatus": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 3,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_greywater",
+      "arche": "village",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "dwelling_cluster",
+      "rows": 2,
+      "cols": 3,
+      "levels": 1,
+      "rooms": 6,
+      "walls": 7,
+      "portals": 8,
+      "entrances": 1,
+      "sockets": 9,
+      "roofFraction": 0.3681,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 25.5438,
+      "maxCirculationDepth": 2,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": "bz_greywater",
+        "biomeCode": 2,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_pumphouse",
+      "arche": "filter",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "basin_pair",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 4,
+      "roofFraction": 0,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 10.8818,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 1,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_confluence",
+      "arche": "roadstop",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "shelter_and_yard",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 4,
+      "roofFraction": 0.4094,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 8.161,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 5.376,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 2,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_sawaion",
+      "arche": "sawmill",
+      "enclosureClass": "ENCLOSED_SINGLE",
+      "template": "covered_bay_and_yard",
+      "rows": 2,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 4,
+      "walls": 6,
+      "portals": 5,
+      "entrances": 1,
+      "sockets": 6,
+      "roofFraction": 0.7478,
+      "enclosureFraction": 0.7478,
+      "interiorDepthAu": 20.1719,
+      "maxCirculationDepth": 2,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": "bz_silver",
+        "biomeCode": 2,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_mill",
+      "arche": "mill",
+      "enclosureClass": "ENCLOSED_SINGLE",
+      "template": "wheel_bay_and_loft",
+      "rows": 2,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 4,
+      "walls": 6,
+      "portals": 5,
+      "entrances": 1,
+      "sockets": 5,
+      "roofFraction": 0.7475,
+      "enclosureFraction": 0.7475,
+      "interiorDepthAu": 14.6692,
+      "maxCirculationDepth": 2,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 2,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_kilns",
+      "arche": "smelter",
+      "enclosureClass": "ENCLOSED_SINGLE",
+      "template": "hot_bay_and_yard",
+      "rows": 2,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 4,
+      "walls": 6,
+      "portals": 5,
+      "entrances": 1,
+      "sockets": 6,
+      "roofFraction": 0.7478,
+      "enclosureFraction": 0.7478,
+      "interiorDepthAu": 20.6835,
+      "maxCirculationDepth": 2,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 3.696,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 2,
+        "nearestRoadKind": "trail"
+      }
+    },
+    {
+      "poiId": "po_ranger",
+      "arche": "hamlet",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "dwelling_cluster",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 7,
+      "roofFraction": 0.4094,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 9.5213,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 2,
+        "nearestRoadKind": "trail"
+      }
+    },
+    {
+      "poiId": "po_glade",
+      "arche": "grove",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "clearing",
+      "rows": 1,
+      "cols": 1,
+      "levels": 1,
+      "rooms": 1,
+      "walls": 4,
+      "portals": 1,
+      "entrances": 1,
+      "sockets": 4,
+      "roofFraction": 0,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 8.8,
+      "maxCirculationDepth": 0,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 2,
+        "nearestRoadKind": "trail"
+      }
+    },
+    {
+      "poiId": "po_sapgrove",
+      "arche": "grove",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "clearing",
+      "rows": 1,
+      "cols": 1,
+      "levels": 1,
+      "rooms": 1,
+      "walls": 4,
+      "portals": 1,
+      "entrances": 1,
+      "sockets": 4,
+      "roofFraction": 0,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 12.8,
+      "maxCirculationDepth": 0,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 4.928,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 2,
+        "nearestRoadKind": "trail"
+      }
+    },
+    {
+      "poiId": "po_elderwood",
+      "arche": "elder_site",
+      "enclosureClass": "ENCLOSED_MULTI_LAYER",
+      "template": "arena_ring",
+      "rows": 1,
+      "cols": 1,
+      "levels": 2,
+      "rooms": 2,
+      "walls": 4,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 8,
+      "roofFraction": 0.2144,
+      "enclosureFraction": 1.1261,
+      "interiorDepthAu": 27.2,
+      "maxCirculationDepth": 0,
+      "retreatStatus": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 2,
+        "nearestRoadKind": "trail"
+      }
+    },
+    {
+      "poiId": "po_siloc",
+      "arche": "warehouse",
+      "enclosureClass": "ENCLOSED_SINGLE",
+      "template": "long_aisle",
+      "rows": 1,
+      "cols": 3,
+      "levels": 1,
+      "rooms": 3,
+      "walls": 6,
+      "portals": 3,
+      "entrances": 1,
+      "sockets": 9,
+      "roofFraction": 0.7682,
+      "enclosureFraction": 0.7682,
+      "interiorDepthAu": 15.3226,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 0,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_meridian",
+      "arche": "research",
+      "enclosureClass": "ENCLOSED_MULTI_LAYER",
+      "template": "cells_and_core",
+      "rows": 2,
+      "cols": 2,
+      "levels": 2,
+      "rooms": 5,
+      "walls": 6,
+      "portals": 6,
+      "entrances": 1,
+      "sockets": 6,
+      "roofFraction": 0.9408,
+      "enclosureFraction": 0.9408,
+      "interiorDepthAu": 22.0058,
+      "maxCirculationDepth": 2,
+      "retreatStatus": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 0,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_oldpump",
+      "arche": "facility",
+      "enclosureClass": "ENCLOSED_MULTI_LAYER",
+      "template": "service_corridor",
+      "rows": 2,
+      "cols": 2,
+      "levels": 2,
+      "rooms": 5,
+      "walls": 6,
+      "portals": 6,
+      "entrances": 1,
+      "sockets": 6,
+      "roofFraction": 1,
+      "enclosureFraction": 1.0088,
+      "interiorDepthAu": 27.5055,
+      "maxCirculationDepth": 2,
+      "retreatStatus": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 6,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_strait",
+      "arche": "port",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "dockside_loading",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 7,
+      "roofFraction": 0.207,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 16.3221,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": "bz_eastflats",
+        "biomeCode": 0,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_ironvein",
+      "arche": "mine",
+      "enclosureClass": "ENCLOSED_MULTI_LAYER",
+      "template": "adit_and_vault",
+      "rows": 1,
+      "cols": 2,
+      "levels": 2,
+      "rooms": 3,
+      "walls": 5,
+      "portals": 3,
+      "entrances": 1,
+      "sockets": 5,
+      "roofFraction": 0.1891,
+      "enclosureFraction": 1.03,
+      "interiorDepthAu": 17.6829,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 0,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_ridgestop",
+      "arche": "roadstop",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "shelter_and_yard",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 4,
+      "roofFraction": 0.4095,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 14.4004,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 3.696,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 3,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_rapids",
+      "arche": "roadstop",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "shelter_and_yard",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 4,
+      "roofFraction": 0.4095,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 14.4001,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 3.696,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 4,
+        "nearestRoadKind": "trail"
+      }
+    },
+    {
+      "poiId": "po_hook",
+      "arche": "village",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "dwelling_cluster",
+      "rows": 2,
+      "cols": 3,
+      "levels": 1,
+      "rooms": 6,
+      "walls": 7,
+      "portals": 8,
+      "entrances": 1,
+      "sockets": 9,
+      "roofFraction": 0.368,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 25.5422,
+      "maxCirculationDepth": 2,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 1,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_mere",
+      "arche": "pier",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "linear_deck",
+      "rows": 1,
+      "cols": 1,
+      "levels": 1,
+      "rooms": 1,
+      "walls": 4,
+      "portals": 1,
+      "entrances": 1,
+      "sockets": 4,
+      "roofFraction": 0,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 5.5,
+      "maxCirculationDepth": 0,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 4.48,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 4,
+        "nearestRoadKind": "trail"
+      }
+    },
+    {
+      "poiId": "po_timberyard",
+      "arche": "sawmill",
+      "enclosureClass": "ENCLOSED_SINGLE",
+      "template": "covered_bay_and_yard",
+      "rows": 2,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 4,
+      "walls": 6,
+      "portals": 5,
+      "entrances": 1,
+      "sockets": 6,
+      "roofFraction": 0.7476,
+      "enclosureFraction": 0.7476,
+      "interiorDepthAu": 20.1709,
+      "maxCirculationDepth": 2,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 0,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_ember",
+      "arche": "port",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "dockside_loading",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 7,
+      "roofFraction": 0.207,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 28.7999,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 0,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_slag",
+      "arche": "smelter",
+      "enclosureClass": "ENCLOSED_SINGLE",
+      "template": "hot_bay_and_yard",
+      "rows": 2,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 4,
+      "walls": 6,
+      "portals": 5,
+      "entrances": 1,
+      "sockets": 6,
+      "roofFraction": 0.7603,
+      "enclosureFraction": 0.7603,
+      "interiorDepthAu": 22.0056,
+      "maxCirculationDepth": 2,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 10,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_southfoot",
+      "arche": "port",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "dockside_loading",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 7,
+      "roofFraction": 0.207,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 16.3221,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 6,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_gulfhead",
+      "arche": "port",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "dockside_loading",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 7,
+      "roofFraction": 0.2139,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 19.5861,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 4,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_filter",
+      "arche": "filter",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "basin_pair",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 4,
+      "roofFraction": 0,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 19.2004,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 4.928,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 4,
+        "nearestRoadKind": "foot"
+      }
+    },
+    {
+      "poiId": "po_westbank",
+      "arche": "pier",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "linear_deck",
+      "rows": 1,
+      "cols": 1,
+      "levels": 1,
+      "rooms": 1,
+      "walls": 4,
+      "portals": 1,
+      "entrances": 1,
+      "sockets": 4,
+      "roofFraction": 0,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 5.5,
+      "maxCirculationDepth": 0,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 4.48,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": "bz_gulfwest",
+        "biomeCode": 0,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_westmouth",
+      "arche": "port",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "dockside_loading",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 7,
+      "roofFraction": 0.207,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 16.3224,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 0,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_greyquarry",
+      "arche": "quarry",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "terraced_pit",
+      "rows": 1,
+      "cols": 1,
+      "levels": 1,
+      "rooms": 1,
+      "walls": 4,
+      "portals": 1,
+      "entrances": 1,
+      "sockets": 5,
+      "roofFraction": 0,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 22.4,
+      "maxCirculationDepth": 0,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 3,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_westwood",
+      "arche": "hamlet",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "dwelling_cluster",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 7,
+      "roofFraction": 0.4095,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 9.5213,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": "bz_westwood",
+        "biomeCode": 1,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_fishcamp",
+      "arche": "hamlet",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "dwelling_cluster",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 7,
+      "roofFraction": 0.4094,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 9.5211,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 1,
+        "nearestRoadKind": "foot"
+      }
+    },
+    {
+      "poiId": "po_necropolis",
+      "arche": "elder_site",
+      "enclosureClass": "ENCLOSED_MULTI_LAYER",
+      "template": "arena_ring",
+      "rows": 1,
+      "cols": 1,
+      "levels": 2,
+      "rooms": 2,
+      "walls": 4,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 8,
+      "roofFraction": 0.2144,
+      "enclosureFraction": 1.1261,
+      "interiorDepthAu": 18.7,
+      "maxCirculationDepth": 0,
+      "retreatStatus": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 5,
+        "nearestRoadKind": "trail"
+      }
+    },
+    {
+      "poiId": "po_tombs",
+      "arche": "tomb",
+      "enclosureClass": "ENCLOSED_MULTI_LAYER",
+      "template": "antechamber_and_vault",
+      "rows": 1,
+      "cols": 2,
+      "levels": 2,
+      "rooms": 3,
+      "walls": 5,
+      "portals": 3,
+      "entrances": 1,
+      "sockets": 4,
+      "roofFraction": 0.9933,
+      "enclosureFraction": 0.9933,
+      "interiorDepthAu": 26.4005,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 5,
+        "nearestRoadKind": "trail"
+      }
+    },
+    {
+      "poiId": "po_cairns",
+      "arche": "ruins",
+      "enclosureClass": "ENCLOSED_MULTI_LAYER",
+      "template": "broken_cells",
+      "rows": 2,
+      "cols": 2,
+      "levels": 2,
+      "rooms": 5,
+      "walls": 6,
+      "portals": 6,
+      "entrances": 1,
+      "sockets": 5,
+      "roofFraction": 0.1806,
+      "enclosureFraction": 0.9408,
+      "interiorDepthAu": 22.0059,
+      "maxCirculationDepth": 2,
+      "retreatStatus": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 5,
+        "nearestRoadKind": "trail"
+      }
+    },
+    {
+      "poiId": "po_oasis",
+      "arche": "village",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "dwelling_cluster",
+      "rows": 2,
+      "cols": 3,
+      "levels": 1,
+      "rooms": 6,
+      "walls": 7,
+      "portals": 8,
+      "entrances": 1,
+      "sockets": 9,
+      "roofFraction": 0.368,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 35.3962,
+      "maxCirculationDepth": 3,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 5,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_bonestop",
+      "arche": "roadstop",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "shelter_and_yard",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 4,
+      "roofFraction": 0.4095,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 14.4003,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 3.696,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 5,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_sandgate",
+      "arche": "port",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "dockside_loading",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 7,
+      "roofFraction": 0.2071,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 16.3227,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 5,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_gate",
+      "arche": "gate",
+      "enclosureClass": "ENCLOSED_MULTI_LAYER",
+      "template": "threshold",
+      "rows": 1,
+      "cols": 1,
+      "levels": 2,
+      "rooms": 2,
+      "walls": 4,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 3,
+      "roofFraction": 1,
+      "enclosureFraction": 1.0439,
+      "interiorDepthAu": 12.1,
+      "maxCirculationDepth": 0,
+      "retreatStatus": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_threshold",
+        "zoneId": null,
+        "biomeCode": 0,
+        "nearestRoadKind": "foot"
+      }
+    },
+    {
+      "poiId": "po_dpier",
+      "arche": "pier",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "linear_deck",
+      "rows": 1,
+      "cols": 1,
+      "levels": 1,
+      "rooms": 1,
+      "walls": 4,
+      "portals": 1,
+      "entrances": 1,
+      "sockets": 4,
+      "roofFraction": 0,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 8,
+      "maxCirculationDepth": 0,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 3.08,
+      "context": {
+        "landId": "ld_threshold",
+        "zoneId": null,
+        "biomeCode": 11,
+        "nearestRoadKind": "foot"
+      }
+    },
+    {
+      "poiId": "po_beacon",
+      "arche": "observatory",
+      "enclosureClass": "ENCLOSED_SINGLE",
+      "template": "tower_base_and_dome",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 4,
+      "roofFraction": 0.819,
+      "enclosureFraction": 0.819,
+      "interiorDepthAu": 9.5215,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_beacon",
+        "zoneId": null,
+        "biomeCode": 11,
+        "nearestRoadKind": "trail"
+      }
+    },
+    {
+      "poiId": "po_wreck",
+      "arche": "ruins",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "broken_cells",
+      "rows": 2,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 4,
+      "walls": 6,
+      "portals": 5,
+      "entrances": 1,
+      "sockets": 5,
+      "roofFraction": 0,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 29.5456,
+      "maxCirculationDepth": 2,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_wreck",
+        "zoneId": null,
+        "biomeCode": 0,
+        "nearestRoadKind": "foot"
+      }
+    },
+    {
+      "poiId": "po_tidecamp",
+      "arche": "hamlet",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "dwelling_cluster",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 7,
+      "roofFraction": 0.4094,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 9.5212,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_threshold",
+        "zoneId": null,
+        "biomeCode": 0,
+        "nearestRoadKind": "foot"
+      }
+    },
+    {
+      "poiId": "po_gullnest",
+      "arche": "grove",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "clearing",
+      "rows": 1,
+      "cols": 1,
+      "levels": 1,
+      "rooms": 1,
+      "walls": 4,
+      "portals": 1,
+      "entrances": 1,
+      "sockets": 4,
+      "roofFraction": 0,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 8.7999,
+      "maxCirculationDepth": 0,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_gull",
+        "zoneId": null,
+        "biomeCode": 6,
+        "nearestRoadKind": "trail"
+      }
+    },
+    {
+      "poiId": "po_gullpier",
+      "arche": "pier",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "linear_deck",
+      "rows": 1,
+      "cols": 1,
+      "levels": 1,
+      "rooms": 1,
+      "walls": 4,
+      "portals": 1,
+      "entrances": 1,
+      "sockets": 4,
+      "roofFraction": 0,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 5.5,
+      "maxCirculationDepth": 0,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 4.48,
+      "context": {
+        "landId": "ld_gull",
+        "zoneId": null,
+        "biomeCode": 11,
+        "nearestRoadKind": "trail"
+      }
+    },
+    {
+      "poiId": "po_netcamp",
+      "arche": "hamlet",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "dwelling_cluster",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 7,
+      "roofFraction": 0.4095,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 9.5214,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_wreck",
+        "zoneId": null,
+        "biomeCode": 0,
+        "nearestRoadKind": "foot"
+      }
+    },
+    {
+      "poiId": "po_cindercamp",
+      "arche": "village",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "dwelling_cluster",
+      "rows": 2,
+      "cols": 3,
+      "levels": 1,
+      "rooms": 6,
+      "walls": 7,
+      "portals": 8,
+      "entrances": 1,
+      "sockets": 9,
+      "roofFraction": 0.3681,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 35.3966,
+      "maxCirculationDepth": 3,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_cinder",
+        "zoneId": "bz_cinder",
+        "biomeCode": 1,
+        "nearestRoadKind": "foot"
+      }
+    },
+    {
+      "poiId": "po_obsq",
+      "arche": "quarry",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "terraced_pit",
+      "rows": 1,
+      "cols": 1,
+      "levels": 1,
+      "rooms": 1,
+      "walls": 4,
+      "portals": 1,
+      "entrances": 1,
+      "sockets": 5,
+      "roofFraction": 0,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 22.4,
+      "maxCirculationDepth": 0,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_cinder",
+        "zoneId": null,
+        "biomeCode": 9,
+        "nearestRoadKind": "foot"
+      }
+    },
+    {
+      "poiId": "po_sulfur",
+      "arche": "mine",
+      "enclosureClass": "ENCLOSED_MULTI_LAYER",
+      "template": "adit_and_vault",
+      "rows": 1,
+      "cols": 2,
+      "levels": 2,
+      "rooms": 3,
+      "walls": 5,
+      "portals": 3,
+      "entrances": 1,
+      "sockets": 5,
+      "roofFraction": 0.1891,
+      "enclosureFraction": 1.0299,
+      "interiorDepthAu": 17.6826,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_cinder",
+        "zoneId": null,
+        "biomeCode": 10,
+        "nearestRoadKind": "foot"
+      }
+    },
+    {
+      "poiId": "po_geo",
+      "arche": "powerplant",
+      "enclosureClass": "ENCLOSED_MULTI_LAYER",
+      "template": "hall_and_bays",
+      "rows": 2,
+      "cols": 2,
+      "levels": 2,
+      "rooms": 5,
+      "walls": 6,
+      "portals": 6,
+      "entrances": 1,
+      "sockets": 6,
+      "roofFraction": 0.9222,
+      "enclosureFraction": 0.9222,
+      "interiorDepthAu": 20.1721,
+      "maxCirculationDepth": 2,
+      "retreatStatus": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_cinder",
+        "zoneId": null,
+        "biomeCode": 10,
+        "nearestRoadKind": "foot"
+      }
+    },
+    {
+      "poiId": "po_emberwatch",
+      "arche": "observatory",
+      "enclosureClass": "ENCLOSED_SINGLE",
+      "template": "tower_base_and_dome",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 4,
+      "roofFraction": 0.819,
+      "enclosureFraction": 0.819,
+      "interiorDepthAu": 9.5215,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_cinder",
+        "zoneId": null,
+        "biomeCode": 0,
+        "nearestRoadKind": "trail"
+      }
+    },
+    {
+      "poiId": "po_surtur",
+      "arche": "elder_site",
+      "enclosureClass": "ENCLOSED_MULTI_LAYER",
+      "template": "arena_ring",
+      "rows": 1,
+      "cols": 1,
+      "levels": 2,
+      "rooms": 2,
+      "walls": 4,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 8,
+      "roofFraction": 0.2144,
+      "enclosureFraction": 1.126,
+      "interiorDepthAu": 18.7,
+      "maxCirculationDepth": 0,
+      "retreatStatus": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_cinder",
+        "zoneId": null,
+        "biomeCode": 9,
+        "nearestRoadKind": "trail"
+      }
+    },
+    {
+      "poiId": "po_saltharbor",
+      "arche": "port",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "dockside_loading",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 7,
+      "roofFraction": 0.207,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 28.8003,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_saltwick",
+        "zoneId": null,
+        "biomeCode": 1,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_saltpans",
+      "arche": "quarry",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "terraced_pit",
+      "rows": 1,
+      "cols": 1,
+      "levels": 1,
+      "rooms": 1,
+      "walls": 4,
+      "portals": 1,
+      "entrances": 1,
+      "sockets": 5,
+      "roofFraction": 0,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 15.4,
+      "maxCirculationDepth": 0,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_saltwick",
+        "zoneId": null,
+        "biomeCode": 6,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_saltlight",
+      "arche": "observatory",
+      "enclosureClass": "ENCLOSED_SINGLE",
+      "template": "tower_base_and_dome",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 4,
+      "roofFraction": 0.8189,
+      "enclosureFraction": 0.8189,
+      "interiorDepthAu": 9.5214,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_saltwick",
+        "zoneId": null,
+        "biomeCode": 0,
+        "nearestRoadKind": "trail"
+      }
+    },
+    {
+      "poiId": "po_racks",
+      "arche": "hamlet",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "dwelling_cluster",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 7,
+      "roofFraction": 0.4094,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 9.5212,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_saltwick",
+        "zoneId": null,
+        "biomeCode": 6,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_gullwreck",
+      "arche": "ruins",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "broken_cells",
+      "rows": 2,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 4,
+      "walls": 6,
+      "portals": 5,
+      "entrances": 1,
+      "sockets": 5,
+      "roofFraction": 0,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 29.5471,
+      "maxCirculationDepth": 2,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_gull",
+        "zoneId": null,
+        "biomeCode": 0,
+        "nearestRoadKind": "trail"
+      }
+    },
+    {
+      "poiId": "po_ironharbor",
+      "arche": "port",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "dockside_loading",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 7,
+      "roofFraction": 0.207,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 28.7996,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_ironholm",
+        "zoneId": null,
+        "biomeCode": 0,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_ironmine",
+      "arche": "mine",
+      "enclosureClass": "ENCLOSED_MULTI_LAYER",
+      "template": "adit_and_vault",
+      "rows": 1,
+      "cols": 2,
+      "levels": 2,
+      "rooms": 3,
+      "walls": 5,
+      "portals": 3,
+      "entrances": 1,
+      "sockets": 5,
+      "roofFraction": 0.1891,
+      "enclosureFraction": 1.03,
+      "interiorDepthAu": 31.2011,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_ironholm",
+        "zoneId": null,
+        "biomeCode": 1,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_ironwh",
+      "arche": "warehouse",
+      "enclosureClass": "ENCLOSED_SINGLE",
+      "template": "long_aisle",
+      "rows": 1,
+      "cols": 3,
+      "levels": 1,
+      "rooms": 3,
+      "walls": 6,
+      "portals": 3,
+      "entrances": 1,
+      "sockets": 9,
+      "roofFraction": 0.7682,
+      "enclosureFraction": 0.7682,
+      "interiorDepthAu": 26.6667,
+      "maxCirculationDepth": 2,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_ironholm",
+        "zoneId": null,
+        "biomeCode": 0,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_rc_meridian",
+      "arche": "ragnarok_cache",
+      "enclosureClass": "ENCLOSED_SINGLE",
+      "template": "antechamber_and_vault",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 5,
+      "roofFraction": 0.819,
+      "enclosureFraction": 0.819,
+      "interiorDepthAu": 9.5215,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 0,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_rc_ironvein",
+      "arche": "ragnarok_cache",
+      "enclosureClass": "ENCLOSED_SINGLE",
+      "template": "antechamber_and_vault",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 5,
+      "roofFraction": 0.819,
+      "enclosureFraction": 0.819,
+      "interiorDepthAu": 9.5214,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 3,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_rc_kestrel",
+      "arche": "ragnarok_cache",
+      "enclosureClass": "ENCLOSED_SINGLE",
+      "template": "antechamber_and_vault",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 5,
+      "roofFraction": 0.8189,
+      "enclosureFraction": 0.8189,
+      "interiorDepthAu": 16.8003,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 4.312,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 0,
+        "nearestRoadKind": "trail"
+      }
+    },
+    {
+      "poiId": "po_rc_dam",
+      "arche": "ragnarok_cache",
+      "enclosureClass": "ENCLOSED_SINGLE",
+      "template": "antechamber_and_vault",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 5,
+      "roofFraction": 0.8188,
+      "enclosureFraction": 0.8188,
+      "interiorDepthAu": 9.5211,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 1,
+        "nearestRoadKind": "foot"
+      }
+    },
+    {
+      "poiId": "po_rc_sandgate",
+      "arche": "ragnarok_cache",
+      "enclosureClass": "ENCLOSED_SINGLE",
+      "template": "antechamber_and_vault",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 5,
+      "roofFraction": 0.8187,
+      "enclosureFraction": 0.8187,
+      "interiorDepthAu": 16.7998,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 4.312,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 5,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_rc_salt",
+      "arche": "ragnarok_cache",
+      "enclosureClass": "ENCLOSED_SINGLE",
+      "template": "antechamber_and_vault",
+      "rows": 1,
+      "cols": 2,
+      "levels": 1,
+      "rooms": 2,
+      "walls": 5,
+      "portals": 2,
+      "entrances": 1,
+      "sockets": 5,
+      "roofFraction": 0.8188,
+      "enclosureFraction": 0.8188,
+      "interiorDepthAu": 9.521,
+      "maxCirculationDepth": 1,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 6,
+      "context": {
+        "landId": "ld_saltwick",
+        "zoneId": null,
+        "biomeCode": 1,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_vend_gulf",
+      "arche": "chest_vendor",
+      "enclosureClass": "ENCLOSED_SINGLE",
+      "template": "counter_cell",
+      "rows": 1,
+      "cols": 1,
+      "levels": 1,
+      "rooms": 1,
+      "walls": 4,
+      "portals": 1,
+      "entrances": 1,
+      "sockets": 4,
+      "roofFraction": 0.8695,
+      "enclosureFraction": 0.8695,
+      "interiorDepthAu": 11.2,
+      "maxCirculationDepth": 0,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 4.312,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 1,
+        "nearestRoadKind": "trail"
+      }
+    },
+    {
+      "poiId": "po_vend_strait",
+      "arche": "chest_vendor",
+      "enclosureClass": "ENCLOSED_SINGLE",
+      "template": "counter_cell",
+      "rows": 1,
+      "cols": 1,
+      "levels": 1,
+      "rooms": 1,
+      "walls": 4,
+      "portals": 1,
+      "entrances": 1,
+      "sockets": 4,
+      "roofFraction": 0.8694,
+      "enclosureFraction": 0.8694,
+      "interiorDepthAu": 11.2001,
+      "maxCirculationDepth": 0,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 4.312,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": "bz_eastflats",
+        "biomeCode": 0,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_evac_west",
+      "arche": "evac",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "mustering_yard",
+      "rows": 1,
+      "cols": 1,
+      "levels": 1,
+      "rooms": 1,
+      "walls": 4,
+      "portals": 1,
+      "entrances": 1,
+      "sockets": 4,
+      "roofFraction": 0,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 12.8,
+      "maxCirculationDepth": 0,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 4.928,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 11,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_evac_south",
+      "arche": "evac",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "mustering_yard",
+      "rows": 1,
+      "cols": 1,
+      "levels": 1,
+      "rooms": 1,
+      "walls": 4,
+      "portals": 1,
+      "entrances": 1,
+      "sockets": 4,
+      "roofFraction": 0,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 12.8,
+      "maxCirculationDepth": 0,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 4.928,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 11,
+        "nearestRoadKind": "cart"
+      }
+    },
+    {
+      "poiId": "po_evac_hook",
+      "arche": "evac",
+      "enclosureClass": "OPEN_AIR_YARD",
+      "template": "mustering_yard",
+      "rows": 1,
+      "cols": 1,
+      "levels": 1,
+      "rooms": 1,
+      "walls": 4,
+      "portals": 1,
+      "entrances": 1,
+      "sockets": 4,
+      "roofFraction": 0,
+      "enclosureFraction": 0,
+      "interiorDepthAu": 12.8,
+      "maxCirculationDepth": 0,
+      "retreatStatus": "UNRESOLVED",
+      "entranceOpeningAu": 4.928,
+      "context": {
+        "landId": "ld_veyra",
+        "zoneId": null,
+        "biomeCode": 1,
+        "nearestRoadKind": "trail"
+      }
+    }
+  ]
+}

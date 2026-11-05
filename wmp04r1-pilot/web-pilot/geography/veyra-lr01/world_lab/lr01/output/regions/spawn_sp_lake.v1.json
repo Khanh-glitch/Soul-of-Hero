@@ -1,0 +1,65 @@
+{
+  "schema": "soh.map.lr01.region.v1",
+  "kind": "spawn",
+  "corridor": {
+    "spawnId": "sp_lake",
+    "walkableComponent": 0,
+    "componentCells": 9871,
+    "zonesReachable": 16,
+    "zonesTotal": 23,
+    "nearestReachableZone": {
+      "zoneId": "bz_greywater",
+      "reachable": true,
+      "steps": 1,
+      "routeAuLowerBound": 8
+    },
+    "unreachableZones": [
+      "bz_ridge",
+      "bz_eastflats",
+      "bz_delta",
+      "bz_cinder",
+      "bz_salt",
+      "bz_ironholm",
+      "bz_slag"
+    ],
+    "status": "DERIVED",
+    "note": "4-neighbour BFS on GEO-01 walkableCandidate. Reachability is geometric only; no ferry, bridge deck, slope law, cart clearance or survival cost is applied."
+  },
+  "id": "sp_lake",
+  "name": "Spawn: Greywater South Shore",
+  "region": "Thung lũng hồ",
+  "atAu": [
+    790,
+    622
+  ],
+  "conf": "proposal",
+  "sourceRef": "project.spawns[] where id=sp_lake",
+  "status": [
+    "SOURCE_AUTHORED",
+    "DERIVED"
+  ],
+  "cell": 19348,
+  "landId": "ld_veyra",
+  "walkableAtSpawn": true,
+  "walkableComponent": 0,
+  "seaDistanceCells": 57,
+  "freshwaterProximityCells": 3,
+  "clearanceCells": 3,
+  "nearestDock": {
+    "id": "dk_grey_s",
+    "d": 57.7659
+  },
+  "nearestPoi": {
+    "id": "po_greywater",
+    "d": 37.2022
+  },
+  "nearestBuildableZone": {
+    "id": "bz_greywater",
+    "d": 10.7652
+  },
+  "nearestCartRoad": {
+    "id": "rd_b",
+    "d": 27.7666
+  },
+  "statusNote": "Spawn accessibility is geometric only. Survival fairness, loot and creature exposure are Gameplay-owned."
+}

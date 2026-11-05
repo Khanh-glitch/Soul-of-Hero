@@ -1,0 +1,107 @@
+
+> react-vite-tailwind@0.0.0 test
+> vitest run --testTimeout=120000
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.12 [39m[90m/home/user/Soul-of-Hero/wmp04r1-pilot/web-pilot[39m
+
+ [32m✓[39m tests/b1-storage.test.ts [2m([22m[2m10 tests[22m[2m)[22m[33m 9251[2mms[22m[39m
+   [33m[2m✓[22m[39m selects latest local snapshot after an interrupted IDB write, quarantines corrupt bytes, and reports dual-write failure [33m 1014[2mms[22m[39m
+   [33m[2m✓[22m[39m continues an actual original save with its profile, inventory and queued job intact through autosave and catch-up [33m 1039[2mms[22m[39m
+   [33m[2m✓[22m[39m continues a real same-revision legacy pair, preserving the alternative (later is local: true) [33m 1024[2mms[22m[39m
+   [33m[2m✓[22m[39m continues a real same-revision legacy pair, preserving the alternative (later is local: false) [33m 1008[2mms[22m[39m
+   [33m[2m✓[22m[39m uses readable local fallback if IDB read fails, without writing the unreadable store [33m 1056[2mms[22m[39m
+   [33m[2m✓[22m[39m continues from local storage when IndexedDB cannot open, leaving its contents untouched [33m 1002[2mms[22m[39m
+   [33m[2m✓[22m[39m uses readable IDB if local storage cannot be read, without touching local storage [33m 1027[2mms[22m[39m
+   [33m[2m✓[22m[39m leaves genuinely ambiguous same-time copies untouched and starts new only when both stores are empty [33m 973[2mms[22m[39m
+   [33m[2m✓[22m[39m does not overwrite the alternate legacy copy when preservation fails [33m 1055[2mms[22m[39m
+[90mstdout[2m | tests/m-core-03r-economy.test.ts[2m > [22m[2mrun-pinned wreck economy[2m > [22m[2mVeyra keeps old direct policy whether or not a projected window has wrecks
+[22m[39mveyra-greywater-lr02-u16 actual wreck sources [33m24[39m
+veyra-greywater-lr02-u16 controlled finite harvest {"units":240,"spares":166,"drives":0,"scrap":240}
+veyra-greywater-lr02-u20 actual wreck sources [33m19[39m
+veyra-greywater-lr02-u20 controlled finite harvest {"units":240,"spares":166,"drives":0,"scrap":240}
+veyra-oasis-lr02-u20 actual wreck sources [33m14[39m
+veyra-oasis-lr02-u20 controlled finite harvest {"units":240,"spares":166,"drives":0,"scrap":240}
+
+[90mstdout[2m | tests/m-core-03r-economy.test.ts[2m > [22m[2mrun-pinned wreck economy[2m > [22m[2mmeasures real harvest rolls on independent cloned finite scenarios without duplicate yields
+[22m[39mcontrolled 400 fresh finite scenarios {"split":{"units":3200,"spares":980,"drives":645,"scrap":3200},"direct":{"units":3200,"spares":2229,"drives":0,"scrap":3200}}
+
+ [32m✓[39m tests/m-core-03r-economy.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 5264[2mms[22m[39m
+     [33m[2m✓[22m[39m pins split only for actual authorized accessible fresh shipping and dev machines [33m 1888[2mms[22m[39m
+     [33m[2m✓[22m[39m pins actual historical shipping and Veyra saves to direct without changing their physical history [33m 1201[2mms[22m[39m
+     [33m[2m✓[22m[39m Veyra keeps old direct policy whether or not a projected window has wrecks [33m 1589[2mms[22m[39m
+     [33m[2m✓[22m[39m measures real harvest rolls on independent cloned finite scenarios without duplicate yields [33m 516[2mms[22m[39m
+ [32m✓[39m tests/home-production.test.ts [2m([22m[2m12 tests[22m[2m)[22m[33m 4590[2mms[22m[39m
+     [33m[2m✓[22m[39m pays real build and upgrade materials and consumes connected inputs into an atomic harvest/replant [33m 1080[2mms[22m[39m
+     [33m[2m✓[22m[39m offline matches many online intervals, preserves saved progress and does not repeat at same time [33m 1295[2mms[22m[39m
+     [33m[2m✓[22m[39m expires with the run and does not promote machine stock to profile [33m 1311[2mms[22m[39m
+ [32m✓[39m tests/lr02-shipping-access.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 4365[2mms[22m[39m
+     [33m[2m✓[22m[39m preserves actual historical shipping snapshot and geometry, while new shipping/dev runs have no fixed starters [33m 3701[2mms[22m[39m
+     [33m[2m✓[22m[39m uses a paid owned bed without spawning inside an adjacent wall; death custody remains singular [33m 582[2mms[22m[39m
+ [32m✓[39m tests/soh.test.ts [2m([22m[2m21 tests[22m[2m)[22m[33m 4466[2mms[22m[39m
+     [33m[2m✓[22m[39m island is 200x200 with four distinct safe, mutually reachable starts and six elder sites [33m 1966[2mms[22m[39m
+     [33m[2m✓[22m[39m validates both authored layouts, stable geography, and the shared multi-stage relay [33m 1432[2mms[22m[39m
+     [33m[2m✓[22m[39m the starting knife can bootstrap finite stone without yielding ore or duplicating stock [33m 334[2mms[22m[39m
+ [32m✓[39m tests/map-package.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 3907[2mms[22m[39m
+     [33m[2m✓[22m[39m rejects malformed or unsupported inputs with diagnostics [33m 1160[2mms[22m[39m
+     [33m[2m✓[22m[39m installs a valid descriptor, instantiates it in the game, and pins geometry and source custody [33m 975[2mms[22m[39m
+     [33m[2m✓[22m[39m retains separate immutable revisions under the same map id [33m 1028[2mms[22m[39m
+     [33m[2m✓[22m[39m honors an authored cargo restriction during real loaded-cart collision [33m 668[2mms[22m[39m
+ [32m✓[39m tests/b2-perception.test.ts [2m([22m[2m36 tests[22m[2m)[22m[33m 3517[2mms[22m[39m
+     [33m[2m✓[22m[39m emits only after collision-resolved movement, including rolls, not repeated wall-running [33m 1092[2mms[22m[39m
+     [33m[2m✓[22m[39m survives serialization with ids and resumes without fabricating links for old saves [33m 853[2mms[22m[39m
+ [32m✓[39m tests/veyra-runtime.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 2923[2mms[22m[39m
+     [33m[2m✓[22m[39m veyra-greywater-lr02-u16: source projection, diverse deterministic seeded spawns and save identity [33m 900[2mms[22m[39m
+     [33m[2m✓[22m[39m veyra-greywater-lr02-u20: source projection, diverse deterministic seeded spawns and save identity [33m 825[2mms[22m[39m
+     [33m[2m✓[22m[39m retains its own pinned origin, biome diversity and save identity [33m 1150[2mms[22m[39m
+ [32m✓[39m tests/logistics-garden.test.ts [2m([22m[2m9 tests[22m[2m)[22m[33m 3072[2mms[22m[39m
+     [33m[2m✓[22m[39m pays for one upgrade at an owned level-2 bench; preserves cargo, UID and upgrade through pack, save and redeploy [33m 1128[2mms[22m[39m
+     [33m[2m✓[22m[39m adds palms only to previously empty tiles on run-pinned v2; legacy source depletion and burns are unchanged [33m 1641[2mms[22m[39m
+ [32m✓[39m tests/veyra-lr02-patch.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 2541[2mms[22m[39m
+     [33m[2m✓[22m[39m veyra-greywater-lr02-u16: authentic area membership, physical collision entry and save identity [33m 856[2mms[22m[39m
+     [33m[2m✓[22m[39m veyra-greywater-lr02-u20: authentic area membership, physical collision entry and save identity [33m 734[2mms[22m[39m
+     [33m[2m✓[22m[39m routes newly started runs from historic active layouts into LR02 while retaining old snapshot validation [33m 516[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps both prior LR01 runtime fingerprints unchanged for saved runs [33m 424[2mms[22m[39m
+ [32m✓[39m tests/b2-chronology.test.ts [2m([22m[2m24 tests[22m[2m)[22m[33m 2268[2mms[22m[39m
+     [33m[2m✓[22m[39m limits dry crop growth to the time covered by available water [33m 1006[2mms[22m[39m
+     [33m[2m✓[22m[39m rejects an engine transaction at expiry before the next settlement frame [33m 660[2mms[22m[39m
+ [32m✓[39m tests/world-economy-runtime.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 2211[2mms[22m[39m
+     [33m[2m✓[22m[39m compiles shipping deterministically, with accessible starts and no protected or inaccessible placement [33m 2104[2mms[22m[39m
+ [32m✓[39m tests/economy-network.test.ts [2m([22m[2m10 tests[22m[2m)[22m[33m 2189[2mms[22m[39m
+     [33m[2m✓[22m[39m adds finite physical found parts and shore shell furnace alternative without a boss prerequisite [33m 997[2mms[22m[39m
+     [33m[2m✓[22m[39m wrecks produce rare physical parts only while finite source stock is harvested [33m 902[2mms[22m[39m
+ [32m✓[39m tests/progression.test.ts [2m([22m[2m9 tests[22m[2m)[22m[33m 2005[2mms[22m[39m
+     [33m[2m✓[22m[39m definitions, source placement and bounded supply connect the proposed chain [33m 911[2mms[22m[39m
+     [33m[2m✓[22m[39m repair keeps the physical UID, consumes exactly its typed cost and rejects replay/full repair [33m 872[2mms[22m[39m
+ [32m✓[39m tests/public-loot-lifecycle.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 2192[2mms[22m[39m
+     [33m[2m✓[22m[39m rejects deposit, auto-merge and swap without mutation; partial withdrawal persists with remaining original UIDs [33m 1148[2mms[22m[39m
+     [33m[2m✓[22m[39m preserves a real historical Shipping save with and without the old map digest while retiring its own authored starter crate [33m 894[2mms[22m[39m
+ [32m✓[39m tests/emergent-fire.test.ts [2m([22m[2m9 tests[22m[2m)[22m[33m 1278[2mms[22m[39m
+     [33m[2m✓[22m[39m spreads to an adjacent living tree at the same causal time offline and across online intervals [33m 1052[2mms[22m[39m
+ [32m✓[39m tests/b1-integrity.test.ts [2m([22m[2m16 tests[22m[2m)[22m[33m 1481[2mms[22m[39m
+     [33m[2m✓[22m[39m reclaim preserves paid inputs and filled output exactly without partial-refund duplication [33m 1032[2mms[22m[39m
+ [32m✓[39m tests/production-network.test.ts [2m([22m[2m10 tests[22m[2m)[22m[33m 1290[2mms[22m[39m
+     [33m[2m✓[22m[39m learns fasteners from an actually consumed specimen, then produces a paid multi-use batch [33m 1031[2mms[22m[39m
+ [32m✓[39m tests/m-core-03.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 1184[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps stock finite, budget bounded, and no recipe may manufacture the input [33m 999[2mms[22m[39m
+ [32m✓[39m tests/k6-power.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 1156[2mms[22m[39m
+     [33m[2m✓[22m[39m consumes fuel and ammunition for a visible real creature; survives save/reload [33m 1027[2mms[22m[39m
+ [32m✓[39m tests/poi-route-physical.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 1194[2mms[22m[39m
+     [33m[2m✓[22m[39m rejects vault transfers through a closed wall even when within interaction radius [33m 992[2mms[22m[39m
+ [32m✓[39m tests/k6-spatial.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 1166[2mms[22m[39m
+     [33m[2m✓[22m[39m recognizes a rectangular room larger than 90 cells and changes with an opening [33m 1008[2mms[22m[39m
+ [32m✓[39m tests/home-sites-physical.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 1111[2mms[22m[39m
+     [33m[2m✓[22m[39m reaches and claims three distinct clear sites, then places owned storage [33m 1110[2mms[22m[39m
+ [32m✓[39m tests/home-ecology.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 1088[2mms[22m[39m
+     [33m[2m✓[22m[39m distinguishes actual snowy and temperate cells without modifying source geography [33m 1015[2mms[22m[39m
+ [32m✓[39m tests/escrow-route-physical.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 1073[2mms[22m[39m
+     [33m[2m✓[22m[39m walks using collision-resolved ticks, opens any unlocked doors, purchases, builds and deposits [33m 1071[2mms[22m[39m
+ [32m✓[39m tests/veyra-intake.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 230[2mms[22m[39m
+ [32m✓[39m tests/world-economy.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 197[2mms[22m[39m
+ [32m✓[39m tests/technology-semantics.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 5[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m28 passed[39m[22m[90m (28)[39m
+[2m      Tests [22m [1m[32m233 passed[39m[22m[90m (233)[39m
+[2m   Start at [22m 00:17:49
+[2m   Duration [22m 82.64s[2m (transform 2.08s, setup 0ms, import 12.00s, tests 67.21s, environment 3ms)[22m
+

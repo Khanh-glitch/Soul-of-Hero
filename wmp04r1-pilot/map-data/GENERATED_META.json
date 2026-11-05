@@ -1,0 +1,1050 @@
+{
+  "schema": "soh.wmp04r1.browser_geography.v1",
+  "activeRevision": "WMP-04R1",
+  "activeManifest": "v4/r1/manifest.r1.json",
+  "basePhysicalRevision": "WMP-03",
+  "mapHead": "caccf21613aa57a55491ec44f687cc44c569f79e",
+  "gameplayHead": "f8fcde910c330aa953dd5c65b80a51792945d35e",
+  "sourceGrid": {
+    "gw": 250,
+    "gh": 175,
+    "cellAu": 8,
+    "unitsPerTileDiagnostic": 2
+  },
+  "policy": "Do not import original GOLD at runtime. Do not treat marine open water as approved swimming/boat collision. Human POI and source IDs unchanged.",
+  "authority": "WMP-04R1 active biome and original-rock restoration, with WMP-04 unchanged ocean semantics; WMP-03 physical geometry preserved",
+  "artDirection": {
+    "selection": "REUSE_EXISTING_SOH_GAME_ART_RENDERER_AND_SPRITES_FIRST",
+    "stage": "BASE_GAME_ART_PRESERVED__NO_NEW_TILESET_SELECTED",
+    "creatorVisualApproval": "NOT_REQUESTED",
+    "productionAtlas": "NOT_AUTHORIZED",
+    "assetRequestPolicy": "Only request a proven missing component after checking the existing SOH renderer and sprites in actual gameplay."
+  },
+  "digests": {
+    "biomeEffective": "43e700ef9b1d50e7a2e7d5342f0473df4e15a2a1f27a0097cc50dc7c2a46a87b",
+    "coldTransition": "e7849ccb37e2ef54e6bb55f709dc93ae1557a4c948235e0d1452ec1114d59971",
+    "marineRegion": "615a5ce04f4c133edb2d95c91b48431bebc5f45c2048a6903e1b31afb01d8311",
+    "cliffCandidate": "6b2897d74409b974d477e767291f1eac0b9614a1b794539aef827c1278682d2d",
+    "heightClass": "ec800274e8af35f2e31caa18352f2c6643a4fe5da1f1235426037040a4823814",
+    "waterClass": "f4c49bfc6279324051b31afaf3165ebde1734ad26d1c7e1bc52fe368748ad254",
+    "sourceBiomeCode": "232998e642e836f30129b3a689f7cd458f8c57526ecd2c1bad51449cbeff839d"
+  },
+  "sizes": {
+    "biomeEffective": 43750,
+    "coldTransition": 43750,
+    "marineRegion": 43750,
+    "cliffCandidate": 43750,
+    "heightClass": 43750,
+    "waterClass": 43750,
+    "sourceBiomeCode": 43750
+  },
+  "biomeCodes": [
+    "meadow",
+    "forest",
+    "ancient",
+    "conifer",
+    "marsh",
+    "desert",
+    "scrub_dry_steppe",
+    "rock",
+    "snow",
+    "volcanic",
+    "toxic",
+    "beach"
+  ],
+  "coldCodes": [
+    "unrelated",
+    "outer_fringe",
+    "frost_boundary",
+    "snow_biome_core"
+  ],
+  "marineCodes": [
+    "ordinary",
+    "marine_west_deadly_depths",
+    "marine_cinder_geothermal_strait"
+  ],
+  "marineRegions": [
+    {
+      "id": "marine_west_deadly_depths",
+      "kind": "abyssal_predator_sea",
+      "name": "Western Deathwater",
+      "rasterCode": 1,
+      "waterType": "open ocean",
+      "environmentTags": [
+        "deep_water",
+        "predator_hunting_ground",
+        "low_visibility",
+        "dangerous_swell"
+      ],
+      "riskFactors": [
+        "sound_and_wake",
+        "weather",
+        "visibility",
+        "monster_proximity"
+      ],
+      "ambientSignals": [
+        "low-frequency underwater calls",
+        "unusual wakes",
+        "displaced fish",
+        "deep-water disturbance"
+      ],
+      "monsterUniqueId": "creature.western_abyss_leviathan",
+      "staticHabitatOnly": true
+    },
+    {
+      "id": "marine_cinder_geothermal_strait",
+      "kind": "geothermal_sea",
+      "name": "Strait of Embers",
+      "rasterCode": 2,
+      "waterType": "open ocean",
+      "environmentTags": [
+        "heated_water",
+        "geothermal_vent_field",
+        "steam_and_bubbles",
+        "variable_hot_currents"
+      ],
+      "ambientSignals": [
+        "steam",
+        "bubbles",
+        "hot current shimmer"
+      ],
+      "riskFactors": [
+        "distance_to_vents",
+        "equipment_exposure",
+        "current_direction",
+        "weather"
+      ],
+      "numericTemperature": "UNRESOLVED_GAMEPLAY",
+      "staticGeography": true
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "poi_beacon_engine_out_helicopter",
+      "kind": "stranded_helicopter",
+      "name": "Beacon Rock Emergency Landing",
+      "atAu": [
+        272,
+        652
+      ],
+      "landId": "ld_beacon",
+      "physicalState": "GROUND_STATIONARY__ENGINE_FAILED",
+      "worldUnique": true,
+      "spatialSite": "small island close to mainland in the western three-island cluster",
+      "interactionCandidate": [
+        "inspect wreck/engine",
+        "recover flight log",
+        "salvage some components if explicitly granted by Economy"
+      ],
+      "noStartingLootGrant": true,
+      "repairFlightStatus": "NOT_APPROVED",
+      "gameplayOwnership": "Map location; A0/A3 unique-item custody; A8 interaction; Gameplay machines/vehicles"
+    },
+    {
+      "id": "creature.western_abyss_leviathan",
+      "kind": "unique_world_creature_spawn_domain",
+      "name": "Western Depths Leviathan",
+      "atAu": [
+        223,
+        714
+      ],
+      "marineRegionId": "marine_west_deadly_depths",
+      "spawnKind": "ONE_UNIQUE_WORLD_ENTITY_REQUESTED",
+      "fixedPosition": false,
+      "roamingDomain": true,
+      "notBoundToFerryRoute": true,
+      "spawnAndAiOwner": "GAMEPLAY",
+      "respawnAndUniqueCustodyOwner": "A0/GAMEPLAY",
+      "warningBeforeLethalContact": true,
+      "autoInstantDeath": false,
+      "lootRewards": "UNDECIDED"
+    }
+  ],
+  "navigationStatic": {
+    "portsAndDocks": "preserve 27 canonical docking coordinates and harbor interactions; coast can expose separate landing candidates after collision review",
+    "openWater": "free choice of heading anywhere in connected physically navigable water; no mandatory ferry corridor, teleport edge, rail path or predetermined A→B voyage",
+    "currentAuthoredFerries": "8 inherited ferries are optional navigational suggestions/story routes, NOT physical permissions and NOT the only water connections",
+    "boatCollision": "open-water candidate only; depth, draft, obstacles, current and mode to be signed off before actual movement",
+    "footOnSea": "FORBIDDEN; cargoPassable on sea likewise false",
+    "moveGraph": "cells adjacent over actual water, with continuous spatial movement and no ferry-only route constraints; later renderer uses continuous world positions not 8AU snaps",
+    "shoreline": "solid coast except validated docks/landings; cannot dock automatically just because a water cell neighbors dry land",
+    "optionalRoutePlanner": "createCurrentWorld().optionalMarineRoute({fromAu,toAu,riskPolicy})",
+    "pathChoice": "any sea water start and destination; returns an optional geometric route and hazards, never moves the player automatically",
+    "riskPolicies": [
+      "min_distance",
+      "avoid_hazards"
+    ]
+  },
+  "scenes": [
+    {
+      "id": "wmp04r1-baseline-forest",
+      "beforeId": null,
+      "layoutId": "shipping_fresh",
+      "title": "Original SOH forest/coast",
+      "short": "BASELINE",
+      "originAu": null,
+      "unitsPerTile": null,
+      "description": "Untouched original Shipping Island; baseline for visual regression.",
+      "expected": [
+        "forest",
+        "coast",
+        "meadow"
+      ],
+      "marineRegion": null,
+      "landmark": null
+    },
+    {
+      "id": "wmp04r1-snow-highlands",
+      "beforeId": "wmp04r1-before-snow-highlands",
+      "title": "Typhon–Argus snow highlands",
+      "short": "SNOW",
+      "originAu": [
+        600,
+        220
+      ],
+      "unitsPerTile": 2,
+      "description": "WMP-04R1 snow biome, restored rock outcrops and cold-transition fringe.",
+      "viewAnchorTile": [
+        30,
+        162
+      ],
+      "expected": [
+        "snow",
+        "rock",
+        "forest",
+        "cliff"
+      ],
+      "marineRegion": null,
+      "landmark": null
+    },
+    {
+      "id": "wmp04r1-oasis-corridor",
+      "beforeId": "wmp04r1-before-oasis-corridor",
+      "title": "Oasis dry road/resource corridor",
+      "short": "OASIS",
+      "originAu": [
+        400,
+        840
+      ],
+      "unitsPerTile": 2,
+      "description": "WMP-04R1 arid desert + scrub dry-steppe transitions with authored road centrelines.",
+      "viewAnchorTile": [
+        176,
+        58
+      ],
+      "expected": [
+        "desert",
+        "scrub_dry_steppe",
+        "road",
+        "beach"
+      ],
+      "marineRegion": null,
+      "landmark": null
+    },
+    {
+      "id": "wmp04r1-cinder-shore",
+      "beforeId": "wmp04r1-before-cinder-shore",
+      "title": "Cinder geothermal shoreline",
+      "short": "CINDER",
+      "originAu": [
+        1380,
+        760
+      ],
+      "unitsPerTile": 2,
+      "description": "WMP-04R1 volcanic shore and the marine_cinder_geothermal_strait static domain.",
+      "viewAnchorTile": [
+        100,
+        48
+      ],
+      "expected": [
+        "volcanic",
+        "coast",
+        "deep_water"
+      ],
+      "marineRegion": 2,
+      "landmark": null
+    },
+    {
+      "id": "wmp04r1-deathwater-beacon",
+      "beforeId": "wmp04r1-before-deathwater-beacon",
+      "title": "Western Deathwater / Beacon Rock shore",
+      "short": "DEATHWATER",
+      "originAu": [
+        160,
+        560
+      ],
+      "unitsPerTile": 2,
+      "description": "WMP-04R1 western Deathwater marine domain and Beacon Rock landmark coordinates.",
+      "viewAnchorTile": [
+        56,
+        46
+      ],
+      "expected": [
+        "forest",
+        "coast",
+        "deep_water",
+        "beach"
+      ],
+      "marineRegion": 1,
+      "landmark": {
+        "id": "poi_beacon_engine_out_helicopter",
+        "atAu": [
+          272,
+          652
+        ],
+        "status": "PROVEN_MISSING_SCENE_OBJECT"
+      }
+    }
+  ],
+  "beforeScenes": [
+    {
+      "id": "wmp04r1-before-snow-highlands",
+      "beforeId": null,
+      "title": "[QA BEFORE] Typhon–Argus snow highlands",
+      "short": "BEFORE-SNOW",
+      "originAu": [
+        600,
+        220
+      ],
+      "unitsPerTile": 2,
+      "description": "Same camera as wmp04r1-snow-highlands, but pre-WMP-04R1 LR01 biome codes. QA comparison only.",
+      "viewAnchorTile": [
+        30,
+        162
+      ],
+      "expected": [
+        "snow",
+        "rock",
+        "forest",
+        "cliff"
+      ],
+      "marineRegion": null,
+      "landmark": null,
+      "isBefore": true,
+      "afterId": "wmp04r1-snow-highlands"
+    },
+    {
+      "id": "wmp04r1-before-oasis-corridor",
+      "beforeId": null,
+      "title": "[QA BEFORE] Oasis dry road/resource corridor",
+      "short": "BEFORE-OASIS",
+      "originAu": [
+        400,
+        840
+      ],
+      "unitsPerTile": 2,
+      "description": "Same camera as wmp04r1-oasis-corridor, but pre-WMP-04R1 LR01 biome codes. QA comparison only.",
+      "viewAnchorTile": [
+        176,
+        58
+      ],
+      "expected": [
+        "desert",
+        "scrub_dry_steppe",
+        "road",
+        "beach"
+      ],
+      "marineRegion": null,
+      "landmark": null,
+      "isBefore": true,
+      "afterId": "wmp04r1-oasis-corridor"
+    },
+    {
+      "id": "wmp04r1-before-cinder-shore",
+      "beforeId": null,
+      "title": "[QA BEFORE] Cinder geothermal shoreline",
+      "short": "BEFORE-CINDER",
+      "originAu": [
+        1380,
+        760
+      ],
+      "unitsPerTile": 2,
+      "description": "Same camera as wmp04r1-cinder-shore, but pre-WMP-04R1 LR01 biome codes. QA comparison only.",
+      "viewAnchorTile": [
+        100,
+        48
+      ],
+      "expected": [
+        "volcanic",
+        "coast",
+        "deep_water"
+      ],
+      "marineRegion": null,
+      "landmark": null,
+      "isBefore": true,
+      "afterId": "wmp04r1-cinder-shore"
+    },
+    {
+      "id": "wmp04r1-before-deathwater-beacon",
+      "beforeId": null,
+      "title": "[QA BEFORE] Western Deathwater / Beacon Rock shore",
+      "short": "BEFORE-DEATHWATER",
+      "originAu": [
+        160,
+        560
+      ],
+      "unitsPerTile": 2,
+      "description": "Same camera as wmp04r1-deathwater-beacon, but pre-WMP-04R1 LR01 biome codes. QA comparison only.",
+      "viewAnchorTile": [
+        56,
+        46
+      ],
+      "expected": [
+        "forest",
+        "coast",
+        "deep_water",
+        "beach"
+      ],
+      "marineRegion": null,
+      "landmark": null,
+      "isBefore": true,
+      "afterId": "wmp04r1-deathwater-beacon"
+    }
+  ],
+  "diagnosticScenes": [
+    {
+      "id": "wmp04r1-dry-transition",
+      "beforeId": "wmp04r1-before-dry-transition",
+      "title": "[QA] WMP-04R1 dry-steppe expansion",
+      "short": "DRY-DELTA",
+      "originAu": [
+        1000,
+        600
+      ],
+      "unitsPerTile": 2,
+      "viewAnchorTile": [
+        69,
+        97
+      ],
+      "description": "QA diagnostic: the actual WMP-04 meadow→scrub dry-steppe expansion with authored roads; not one of the five creator scenes.",
+      "expected": [
+        "scrub_dry_steppe",
+        "road",
+        "beach",
+        "meadow"
+      ],
+      "marineRegion": null,
+      "landmark": null,
+      "diagnostic": true
+    },
+    {
+      "id": "wmp04r1-before-dry-transition",
+      "beforeId": null,
+      "title": "[QA BEFORE] dry-steppe expansion",
+      "short": "BEFORE-DRY-DELTA",
+      "originAu": [
+        1000,
+        600
+      ],
+      "unitsPerTile": 2,
+      "viewAnchorTile": [
+        69,
+        97
+      ],
+      "description": "Same camera as wmp04r1-dry-transition, pre-WMP-04R1 LR01 biome codes. QA comparison only.",
+      "expected": [
+        "meadow",
+        "road",
+        "beach"
+      ],
+      "marineRegion": null,
+      "landmark": null,
+      "isBefore": true,
+      "afterId": "wmp04r1-dry-transition",
+      "diagnostic": true
+    }
+  ],
+  "allLayouts": [
+    {
+      "id": "wmp04r1-baseline-forest",
+      "beforeId": null,
+      "layoutId": "shipping_fresh",
+      "title": "Original SOH forest/coast",
+      "short": "BASELINE",
+      "originAu": null,
+      "unitsPerTile": null,
+      "description": "Untouched original Shipping Island; baseline for visual regression.",
+      "expected": [
+        "forest",
+        "coast",
+        "meadow"
+      ],
+      "marineRegion": null,
+      "landmark": null
+    },
+    {
+      "id": "wmp04r1-snow-highlands",
+      "beforeId": "wmp04r1-before-snow-highlands",
+      "title": "Typhon–Argus snow highlands",
+      "short": "SNOW",
+      "originAu": [
+        600,
+        220
+      ],
+      "unitsPerTile": 2,
+      "description": "WMP-04R1 snow biome, restored rock outcrops and cold-transition fringe.",
+      "viewAnchorTile": [
+        30,
+        162
+      ],
+      "expected": [
+        "snow",
+        "rock",
+        "forest",
+        "cliff"
+      ],
+      "marineRegion": null,
+      "landmark": null
+    },
+    {
+      "id": "wmp04r1-oasis-corridor",
+      "beforeId": "wmp04r1-before-oasis-corridor",
+      "title": "Oasis dry road/resource corridor",
+      "short": "OASIS",
+      "originAu": [
+        400,
+        840
+      ],
+      "unitsPerTile": 2,
+      "description": "WMP-04R1 arid desert + scrub dry-steppe transitions with authored road centrelines.",
+      "viewAnchorTile": [
+        176,
+        58
+      ],
+      "expected": [
+        "desert",
+        "scrub_dry_steppe",
+        "road",
+        "beach"
+      ],
+      "marineRegion": null,
+      "landmark": null
+    },
+    {
+      "id": "wmp04r1-cinder-shore",
+      "beforeId": "wmp04r1-before-cinder-shore",
+      "title": "Cinder geothermal shoreline",
+      "short": "CINDER",
+      "originAu": [
+        1380,
+        760
+      ],
+      "unitsPerTile": 2,
+      "description": "WMP-04R1 volcanic shore and the marine_cinder_geothermal_strait static domain.",
+      "viewAnchorTile": [
+        100,
+        48
+      ],
+      "expected": [
+        "volcanic",
+        "coast",
+        "deep_water"
+      ],
+      "marineRegion": 2,
+      "landmark": null
+    },
+    {
+      "id": "wmp04r1-deathwater-beacon",
+      "beforeId": "wmp04r1-before-deathwater-beacon",
+      "title": "Western Deathwater / Beacon Rock shore",
+      "short": "DEATHWATER",
+      "originAu": [
+        160,
+        560
+      ],
+      "unitsPerTile": 2,
+      "description": "WMP-04R1 western Deathwater marine domain and Beacon Rock landmark coordinates.",
+      "viewAnchorTile": [
+        56,
+        46
+      ],
+      "expected": [
+        "forest",
+        "coast",
+        "deep_water",
+        "beach"
+      ],
+      "marineRegion": 1,
+      "landmark": {
+        "id": "poi_beacon_engine_out_helicopter",
+        "atAu": [
+          272,
+          652
+        ],
+        "status": "PROVEN_MISSING_SCENE_OBJECT"
+      }
+    },
+    {
+      "id": "wmp04r1-before-snow-highlands",
+      "beforeId": null,
+      "title": "[QA BEFORE] Typhon–Argus snow highlands",
+      "short": "BEFORE-SNOW",
+      "originAu": [
+        600,
+        220
+      ],
+      "unitsPerTile": 2,
+      "description": "Same camera as wmp04r1-snow-highlands, but pre-WMP-04R1 LR01 biome codes. QA comparison only.",
+      "viewAnchorTile": [
+        30,
+        162
+      ],
+      "expected": [
+        "snow",
+        "rock",
+        "forest",
+        "cliff"
+      ],
+      "marineRegion": null,
+      "landmark": null,
+      "isBefore": true,
+      "afterId": "wmp04r1-snow-highlands"
+    },
+    {
+      "id": "wmp04r1-before-oasis-corridor",
+      "beforeId": null,
+      "title": "[QA BEFORE] Oasis dry road/resource corridor",
+      "short": "BEFORE-OASIS",
+      "originAu": [
+        400,
+        840
+      ],
+      "unitsPerTile": 2,
+      "description": "Same camera as wmp04r1-oasis-corridor, but pre-WMP-04R1 LR01 biome codes. QA comparison only.",
+      "viewAnchorTile": [
+        176,
+        58
+      ],
+      "expected": [
+        "desert",
+        "scrub_dry_steppe",
+        "road",
+        "beach"
+      ],
+      "marineRegion": null,
+      "landmark": null,
+      "isBefore": true,
+      "afterId": "wmp04r1-oasis-corridor"
+    },
+    {
+      "id": "wmp04r1-before-cinder-shore",
+      "beforeId": null,
+      "title": "[QA BEFORE] Cinder geothermal shoreline",
+      "short": "BEFORE-CINDER",
+      "originAu": [
+        1380,
+        760
+      ],
+      "unitsPerTile": 2,
+      "description": "Same camera as wmp04r1-cinder-shore, but pre-WMP-04R1 LR01 biome codes. QA comparison only.",
+      "viewAnchorTile": [
+        100,
+        48
+      ],
+      "expected": [
+        "volcanic",
+        "coast",
+        "deep_water"
+      ],
+      "marineRegion": null,
+      "landmark": null,
+      "isBefore": true,
+      "afterId": "wmp04r1-cinder-shore"
+    },
+    {
+      "id": "wmp04r1-before-deathwater-beacon",
+      "beforeId": null,
+      "title": "[QA BEFORE] Western Deathwater / Beacon Rock shore",
+      "short": "BEFORE-DEATHWATER",
+      "originAu": [
+        160,
+        560
+      ],
+      "unitsPerTile": 2,
+      "description": "Same camera as wmp04r1-deathwater-beacon, but pre-WMP-04R1 LR01 biome codes. QA comparison only.",
+      "viewAnchorTile": [
+        56,
+        46
+      ],
+      "expected": [
+        "forest",
+        "coast",
+        "deep_water",
+        "beach"
+      ],
+      "marineRegion": null,
+      "landmark": null,
+      "isBefore": true,
+      "afterId": "wmp04r1-deathwater-beacon"
+    },
+    {
+      "id": "wmp04r1-dry-transition",
+      "beforeId": "wmp04r1-before-dry-transition",
+      "title": "[QA] WMP-04R1 dry-steppe expansion",
+      "short": "DRY-DELTA",
+      "originAu": [
+        1000,
+        600
+      ],
+      "unitsPerTile": 2,
+      "viewAnchorTile": [
+        69,
+        97
+      ],
+      "description": "QA diagnostic: the actual WMP-04 meadow→scrub dry-steppe expansion with authored roads; not one of the five creator scenes.",
+      "expected": [
+        "scrub_dry_steppe",
+        "road",
+        "beach",
+        "meadow"
+      ],
+      "marineRegion": null,
+      "landmark": null,
+      "diagnostic": true
+    },
+    {
+      "id": "wmp04r1-before-dry-transition",
+      "beforeId": null,
+      "title": "[QA BEFORE] dry-steppe expansion",
+      "short": "BEFORE-DRY-DELTA",
+      "originAu": [
+        1000,
+        600
+      ],
+      "unitsPerTile": 2,
+      "viewAnchorTile": [
+        69,
+        97
+      ],
+      "description": "Same camera as wmp04r1-dry-transition, pre-WMP-04R1 LR01 biome codes. QA comparison only.",
+      "expected": [
+        "meadow",
+        "road",
+        "beach"
+      ],
+      "marineRegion": null,
+      "landmark": null,
+      "isBefore": true,
+      "afterId": "wmp04r1-dry-transition",
+      "diagnostic": true
+    }
+  ],
+  "sceneStats": [
+    {
+      "id": "wmp04r1-snow-highlands",
+      "originAu": [
+        600,
+        220
+      ],
+      "unitsPerTile": 2,
+      "isBefore": false,
+      "counts": {
+        "tiles": 40000,
+        "dryTiles": 36048,
+        "waterTiles": 3952
+      },
+      "biomeTileCounts": {
+        "snow": 28080,
+        "forest": 2960,
+        "rock": 3056,
+        "marsh": 1824,
+        "conifer": 864,
+        "meadow": 1640,
+        "ancient": 1576
+      },
+      "coldTransitionTileCounts": {
+        "0": 8248,
+        "1": 1736,
+        "2": 1936,
+        "3": 28080
+      },
+      "marineRegionTileCounts": {
+        "0": 40000
+      }
+    },
+    {
+      "id": "wmp04r1-oasis-corridor",
+      "originAu": [
+        400,
+        840
+      ],
+      "unitsPerTile": 2,
+      "isBefore": false,
+      "counts": {
+        "tiles": 40000,
+        "dryTiles": 28720,
+        "waterTiles": 11280
+      },
+      "biomeTileCounts": {
+        "forest": 480,
+        "meadow": 10336,
+        "conifer": 880,
+        "scrub_dry_steppe": 7120,
+        "rock": 144,
+        "desert": 20480,
+        "beach": 560
+      },
+      "coldTransitionTileCounts": {
+        "0": 40000
+      },
+      "marineRegionTileCounts": {
+        "0": 40000
+      }
+    },
+    {
+      "id": "wmp04r1-cinder-shore",
+      "originAu": [
+        1380,
+        760
+      ],
+      "unitsPerTile": 2,
+      "isBefore": false,
+      "counts": {
+        "tiles": 40000,
+        "dryTiles": 9880,
+        "waterTiles": 30120
+      },
+      "biomeTileCounts": {
+        "meadow": 31064,
+        "volcanic": 6208,
+        "beach": 768,
+        "forest": 848,
+        "toxic": 568,
+        "marsh": 288,
+        "conifer": 48,
+        "rock": 208
+      },
+      "coldTransitionTileCounts": {
+        "0": 40000
+      },
+      "marineRegionTileCounts": {
+        "0": 29080,
+        "2": 10920
+      }
+    },
+    {
+      "id": "wmp04r1-deathwater-beacon",
+      "originAu": [
+        160,
+        560
+      ],
+      "unitsPerTile": 2,
+      "isBefore": false,
+      "counts": {
+        "tiles": 40000,
+        "dryTiles": 23904,
+        "waterTiles": 16096
+      },
+      "biomeTileCounts": {
+        "meadow": 22496,
+        "beach": 1824,
+        "marsh": 32,
+        "forest": 7008,
+        "conifer": 3040,
+        "rock": 1168,
+        "scrub_dry_steppe": 3024,
+        "desert": 1408
+      },
+      "coldTransitionTileCounts": {
+        "0": 40000
+      },
+      "marineRegionTileCounts": {
+        "0": 27552,
+        "1": 12448
+      }
+    },
+    {
+      "id": "wmp04r1-before-snow-highlands",
+      "originAu": [
+        600,
+        220
+      ],
+      "unitsPerTile": 2,
+      "isBefore": true,
+      "counts": {
+        "tiles": 40000,
+        "dryTiles": 36048,
+        "waterTiles": 3952
+      },
+      "biomeTileCounts": {
+        "meadow": 14920,
+        "conifer": 4480,
+        "forest": 12688,
+        "rock": 3056,
+        "snow": 944,
+        "marsh": 1824,
+        "ancient": 2088
+      },
+      "coldTransitionTileCounts": {
+        "0": 8248,
+        "1": 1736,
+        "2": 1936,
+        "3": 28080
+      },
+      "marineRegionTileCounts": {
+        "0": 40000
+      }
+    },
+    {
+      "id": "wmp04r1-before-oasis-corridor",
+      "originAu": [
+        400,
+        840
+      ],
+      "unitsPerTile": 2,
+      "isBefore": true,
+      "counts": {
+        "tiles": 40000,
+        "dryTiles": 28720,
+        "waterTiles": 11280
+      },
+      "biomeTileCounts": {
+        "forest": 480,
+        "meadow": 10336,
+        "conifer": 880,
+        "scrub_dry_steppe": 7120,
+        "rock": 144,
+        "desert": 20480,
+        "beach": 560
+      },
+      "coldTransitionTileCounts": {
+        "0": 40000
+      },
+      "marineRegionTileCounts": {
+        "0": 40000
+      }
+    },
+    {
+      "id": "wmp04r1-before-cinder-shore",
+      "originAu": [
+        1380,
+        760
+      ],
+      "unitsPerTile": 2,
+      "isBefore": true,
+      "counts": {
+        "tiles": 40000,
+        "dryTiles": 9880,
+        "waterTiles": 30120
+      },
+      "biomeTileCounts": {
+        "meadow": 31064,
+        "volcanic": 6208,
+        "beach": 768,
+        "forest": 848,
+        "toxic": 568,
+        "marsh": 288,
+        "conifer": 48,
+        "rock": 208
+      },
+      "coldTransitionTileCounts": {
+        "0": 40000
+      },
+      "marineRegionTileCounts": {
+        "0": 29080,
+        "2": 10920
+      }
+    },
+    {
+      "id": "wmp04r1-before-deathwater-beacon",
+      "originAu": [
+        160,
+        560
+      ],
+      "unitsPerTile": 2,
+      "isBefore": true,
+      "counts": {
+        "tiles": 40000,
+        "dryTiles": 23904,
+        "waterTiles": 16096
+      },
+      "biomeTileCounts": {
+        "meadow": 22496,
+        "beach": 1824,
+        "marsh": 32,
+        "forest": 7008,
+        "conifer": 3040,
+        "rock": 1168,
+        "scrub_dry_steppe": 3024,
+        "desert": 1408
+      },
+      "coldTransitionTileCounts": {
+        "0": 40000
+      },
+      "marineRegionTileCounts": {
+        "0": 27552,
+        "1": 12448
+      }
+    },
+    {
+      "id": "wmp04r1-dry-transition",
+      "originAu": [
+        1000,
+        600
+      ],
+      "unitsPerTile": 2,
+      "isBefore": false,
+      "counts": {
+        "tiles": 40000,
+        "dryTiles": 29456,
+        "waterTiles": 10544
+      },
+      "biomeTileCounts": {
+        "meadow": 17696,
+        "forest": 2816,
+        "conifer": 1456,
+        "scrub_dry_steppe": 11856,
+        "beach": 1168,
+        "ancient": 1824,
+        "marsh": 1408,
+        "toxic": 1776
+      },
+      "coldTransitionTileCounts": {
+        "0": 39984,
+        "1": 16
+      },
+      "marineRegionTileCounts": {
+        "0": 34640,
+        "2": 5360
+      }
+    },
+    {
+      "id": "wmp04r1-before-dry-transition",
+      "originAu": [
+        1000,
+        600
+      ],
+      "unitsPerTile": 2,
+      "isBefore": true,
+      "counts": {
+        "tiles": 40000,
+        "dryTiles": 29456,
+        "waterTiles": 10544
+      },
+      "biomeTileCounts": {
+        "meadow": 28416,
+        "forest": 2816,
+        "conifer": 1456,
+        "beach": 1168,
+        "ancient": 1824,
+        "marsh": 1408,
+        "scrub_dry_steppe": 1136,
+        "toxic": 1776
+      },
+      "coldTransitionTileCounts": {
+        "0": 39984,
+        "1": 16
+      },
+      "marineRegionTileCounts": {
+        "0": 34640,
+        "2": 5360
+      }
+    }
+  ],
+  "provenance": {
+    "currentWorldMasterSha256": "6adfa7167937a5fed0af2c11348fcdff6cbe445daaba5bbfb1bfb208f1239679",
+    "manifestV4Sha256": "f1a55db64d6e675c7d66a6056d61aa4969dda1bd330bbffc0e1788df1a5ba68d",
+    "manifestR1Sha256": "57195f7d842ce524d0bda566a140ffba67f2a6f8563830b8c1030bc583224f15"
+  },
+  "note": "Generated by tools/build-adapter.mjs from pinned Map bytes. 8 AU analytical cells are NOT gameplay tiles; U=2 is diagnostic and NOT an approved world scale."
+}
