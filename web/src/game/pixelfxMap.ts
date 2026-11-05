@@ -8,17 +8,18 @@
 //   Rime  'frost' -> ice/frost-nova on the nova hazard (render.ts syncHazards)
 // ============================================================================
 import { spawn } from './pixelfx';
+import { tunedSpirit,recordSpiritEvent } from './spirit-vfx-editor';
 
 export function pfxFromSimEvent(e: any): boolean {
   switch (e.type) {
     case 'spiritDepart': case 'spiritArrive':
-      if (e.x !== undefined) spawn(e.type==='spiritDepart'?'arcane/blink-out':'arcane/blink-in', {x:e.x,y:e.y,family:'ground',scale:0.65,loop:false});
+      if (e.x !== undefined) { const departure=e.type==='spiritDepart';recordSpiritEvent(departure?'E · rời đi':'E · đến nơi',e.x,e.y);spawn(departure?'arcane/blink-out':'arcane/blink-in', {...(import.meta.env.VITE_FX_TEST==='1'?tunedSpirit(departure?'e.depart':'e.arrive',e.x,e.y):{x:e.x,y:e.y,scale:0.65}),family:'ground',loop:import.meta.env.VITE_FX_TEST==='1'}); }
       return true;
     case 'lightning':
       if(e.x!==undefined)spawn('lightning/lightning-strike',{x:e.x,y:e.y,family:'ground',scale:0.4,loop:false});
       return true;
     case 'spiritHit':
-      if(e.x!==undefined) spawn('arcane/mana-burst',{x:e.x,y:e.y,family:'ground',scale:0.22,loop:false});
+      if(e.x!==undefined){recordSpiritEvent('Q · quái trúng',e.x,e.y);spawn('arcane/mana-burst',{...(import.meta.env.VITE_FX_TEST==='1'?tunedSpirit('q.hit',e.x,e.y):{x:e.x,y:e.y,scale:0.22}),family:'ground',loop:import.meta.env.VITE_FX_TEST==='1'});}
       return true;
     case 'windup':
       if (e.x !== undefined && e.core && e.core !== 'spirit') spawn('arcane/spell-charge', { x: e.x, y: e.y, family: 'hover', loop: true, maxAgeMs: 560 });

@@ -19,6 +19,7 @@
 // ============================================================================
 import { PILOT_MANIFEST } from './pixelfx/pilot';
 import { OWNER_VFX } from './pixelfx/owner-vfx';
+import { tunedSpirit,recordSpiritEvent } from './spirit-vfx-editor';
 
 export interface PfxPage { path: string; first: number; count: number; columns: number; rows: number; dimensions: [number, number]; }
 export interface PfxEntry {
@@ -42,6 +43,7 @@ export interface PfxInst {
   angle: number; loop: boolean; t: number; dur: number; maxAgeMs: number; lift: number;
   body: { x: number; y: number } | null; follow: PfxOpts['follow'] | null; born: number; warp: boolean;
   warpCache: { cv: HTMLCanvasElement | null; at: number; x: number; y: number; r: number };
+  previewRate?: number;
 }
 
 // ---- declarative presentation data (not per-effect renderers) --------------
@@ -181,13 +183,14 @@ export function spawn(id: string, o: PfxOpts): PfxInst | null {
 }
 export function clear() { instances.length = 0; seenHaz = new WeakSet(); channelFx.clear(); projInst.clear(); }
 export function listInstances() { return instances.slice(); }
+export function removePreview(inst:PfxInst|null){if(!inst)return;const i=instances.indexOf(inst);if(i>=0)instances.splice(i,1);}
 export function setPaused(p: boolean) { paused = p; }
 export function isPaused() { return paused; }
 export function scrub(ms: number) { for (const i of instances) i.t += ms; }
 
 export function update(dtMs: number, now: number) {
   nowMs = now;
-  if (!paused) for (const inst of instances) inst.t += dtMs;
+  if (!paused) for (const inst of instances) inst.t += dtMs * (inst.previewRate ?? 1);
   for (let i = instances.length - 1; i >= 0; i--) {
     const inst = instances[i];
     if (inst.follow) { inst.x = inst.follow.x; inst.y = inst.follow.y; if (inst.follow.vx !== undefined) inst.angle = Math.atan2(inst.follow.vy ?? 0, inst.follow.vx); }
@@ -415,18 +418,18 @@ export function drawPostNight(g: CanvasRenderingContext2D, cam: { x: number; y: 
 }
 
 // ---- gameplay hooks (presentation only) --------------------------------------------
-const channelFx = new Map<object,PfxInst>();
+const channelFx = new Map<{x:number;y:number},PfxInst>();
 export function syncHazards(hazards: any[], player: { x: number; y: number; aim: number }) {
   for (const h of hazards) {
     if (seenHaz.has(h)) continue;
     seenHaz.add(h);
-    if(h.effect==='spiritBeam'){const inst=spawn('arcane/arcane-beam',{x:h.x,y:h.y+20,angle:h.angle,family:'hover',scale:0.55,stretch:Math.max(0.1,h.len/(238*0.55)),loop:true,maxAgeMs:h.dur});if(inst)channelFx.set(h,inst);}
+    if(h.effect==='spiritBeam'){const opt=import.meta.env.VITE_FX_TEST==='1'?tunedSpirit('q.beam',h.x,h.y,h.angle,h.len):{x:h.x,y:h.y+20,angle:h.angle,scale:0.55,stretch:Math.max(0.1,h.len/(238*0.55)),maxAgeMs:h.dur};const inst=spawn('arcane/arcane-beam',{...opt,family:'hover',loop:true,maxAgeMs:Math.min(h.dur,opt.maxAgeMs)});if(inst)channelFx.set(h,inst);recordSpiritEvent('Q · tia bắt đầu',h.x,h.y,`Chiều dài thực ${Math.round(h.len)} px`);}
     else if(h.effect==='flameLine')spawn('fire/fire-breath',{x:h.x,y:h.y+15,family:'hover',scale:0.5,angle:h.angle,maxAgeMs:450});
     else if(h.effect==='natureRoot')spawn('nature/leaf-storm',{x:h.x,y:h.y,family:'ground',scale:0.45,loop:true,maxAgeMs:h.dur});
     else if (h.effect === 'quake') spawn('nature/quake', { x: h.x, y: h.y, family: 'ground', angle: player.aim, delayMs: h.tell ?? 0, scale: 0.46 });
     else if (h.style === 'frostnova') spawn('ice/frost-nova', { x: h.x, y: h.y, family: 'ground', delayMs: h.tell ?? 0 });
   }
-  for(const [haz,inst] of channelFx) if(!hazards.includes(haz)){const i=instances.indexOf(inst);if(i>=0)instances.splice(i,1);channelFx.delete(haz);}
+  for(const [haz,inst] of channelFx) if(!hazards.includes(haz)){recordSpiritEvent('Q · tia kết thúc',haz.x,haz.y,'Kênh kết thúc hoặc bị ngắt');const i=instances.indexOf(inst);if(i>=0)instances.splice(i,1);channelFx.delete(haz);}
 }
 // Fireball: one real instance following the actual projectile (single visual,
 // depth-sorted, night-safe via the shared post-night pass).
