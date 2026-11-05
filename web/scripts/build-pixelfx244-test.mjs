@@ -23,15 +23,16 @@ const web = join(here, '..');
 const argv = process.argv.slice(2);
 const flag = (n, d) => { const i = argv.indexOf(n); return i < 0 ? d : argv[i + 1]; };
 const packDir = resolve(web, flag('--pack', 'pixelfx-assets'));
-const K = Number(flag('--k', '0.25'));
-const Q = Number(flag('--q', '0.85'));
+const K = Number(flag('--k', '0.5'));
+const Q = Number(flag('--q', '0.95'));
+const CHANNELS = flag('--channels', 'combined,light').split(',');
 
 const manifest = JSON.parse(readFileSync(join(packDir, 'index.json'), 'utf8'));
 if (!manifest.effects || manifest.effects.length !== 244) throw new Error(`pack must have 244 effects, got ${manifest.effects?.length}`);
 
-// collect unique page paths
+// collect unique page paths (only the channels we embed)
 const pagePaths = new Set();
-for (const e of manifest.effects) for (const ch of ['combined', 'light']) for (const p of e.export.pages[ch]) pagePaths.add(p.path);
+for (const e of manifest.effects) for (const ch of CHANNELS) for (const p of e.export.pages[ch] ?? []) pagePaths.add(p.path);
 const paths = [...pagePaths];
 console.log(`pack: ${manifest.effects.length} effects, ${paths.length} atlas pages, k=${K} q=${Q}`);
 
@@ -81,13 +82,14 @@ await browser.close();
 srv.close();
 
 // rewrite manifest: data URLs + scaled page dimensions
+const scalePage = (p) => ({ ...p, path: dataUrl.get(p.path) ?? p.path, dimensions: [Math.max(1, Math.round(p.dimensions[0] * K)), Math.max(1, Math.round(p.dimensions[1] * K))] });
 const out = { effects: manifest.effects.map(e => ({
   ...e,
   export: {
     ...e.export,
     pages: {
-      combined: e.export.pages.combined.map(p => ({ ...p, path: dataUrl.get(p.path), dimensions: [Math.max(1, Math.round(p.dimensions[0] * K)), Math.max(1, Math.round(p.dimensions[1] * K))] })),
-      light: e.export.pages.light.map(p => ({ ...p, path: dataUrl.get(p.path), dimensions: [Math.max(1, Math.round(p.dimensions[0] * K)), Math.max(1, Math.round(p.dimensions[1] * K))] })),
+      combined: (e.export.pages.combined ?? []).map(scalePage),
+      light: CHANNELS.includes('light') ? (e.export.pages.light ?? []).map(scalePage) : [],
     },
   },
 })) };
