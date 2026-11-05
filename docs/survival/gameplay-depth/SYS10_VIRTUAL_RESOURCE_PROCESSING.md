@@ -20,7 +20,7 @@ Oil is not created by this feature. Salvaged Oil remains sourced only from the e
 | `refinery_lubricant` | 2 Salvaged Oil | 1 Machine Lubricant | 12 s | tier 1 base recipe |
 
 - Build cost: iron ingot ×4, mechanical parts ×3, spares ×5, brick ×6, glass ×2. Hit points 280.
-- Build gate: an owned Workbench at level 2 or higher within 3 tiles, plus claim territory (`need: 'claim'`).
+- Build gate (Bible K6, 2026-11-05): an owned level-2 Workbench within 3 tiles, valid terrain, collision and materials. **No Territory Cabinet is required**; `need` is `'any'`.
 - Fuel: burns fuel like the furnace (`needsFuel` includes `refinery`).
 - Lubricant on the motorbike: consumes one Lubricant to set `vehicle.lube` to `lubricantDistancePx` (12000 px), capped at 1.5× that. While `lube > 0`, wear is multiplied by `1 - lubricantWearReduction` (0.5). Lube decrements with distance travelled.
 
@@ -39,7 +39,7 @@ Balance values live in `web/src/game/balance.v1.json` (`oilRefineryV1`, `motorbi
 
 Focused tests: `web/tests/s10-oil-refinery.test.ts`, 7 tests, all passing:
 
-1. Refinery build requires a level-2 workbench within 3 tiles and claim territory.
+1. Refinery build requires a level-2 workbench within 3 tiles and does not require a claim cabinet.
 2. Single, batch and lubricant jobs convert oil with exact inputs and outputs.
 3. Refinery fuel refuels the motorbike; lubricant reduces measured wear versus a control bike on the same road (driven left to avoid fixtures).
 4. No recipe creates Salvaged Oil; oil count only falls.
@@ -59,3 +59,17 @@ Results:
 - The vehicle lubricate action is a direct dispatch; no physical animation or UI timing beyond the existing station patterns.
 - No balance tuning against playtests yet.
 - Generator/base-power consumption of Fuel Canisters is not part of this change.
+
+## SYS10-R1 corrective update
+
+- **Industrial co-product batch** `refinery_industrial`: 6 oil + 1 glass, 26 s, outputs 2 Fuel Canisters + 1 Lubricant as one committed job. Preflight at queue time and at completion; if the bundle does not fit, nothing is committed and inputs stay reserved. Compare: batch fuel + separate lubricant = 7 oil for the same outputs.
+- **Single balance authority**: `balance.v1.json` `oilRefineryV1` (cost, HP, need, recipes, lubricant values). `catalog.ts` derives recipes from it. Old motorbike duplicate keys removed.
+- **Wear boundary**: each movement step is charged at protected or full rate according to remaining lubricant distance.
+- **Validation**: refinery jobs must match canonical recipe time and reserved inputs; refinery entities must be structures with valid HP; retyping a refinery now fails validation. Legacy jobs without reservations still load.
+- **Tests**: 13 SYS10 tests in `web/tests/s10-oil-refinery.test.ts`; full suite 52 files / 377 tests pass; `tsc` passes; production build passes at `NODE_OPTIONS=--max-old-space-size=768`.
+
+### Not done in R1 (honest status)
+- No measured three-strategy economy comparison (furnace vs refinery vs buying/scavenging).
+- Browser capture `evidence/sys10-r1/refinery-640x360.png` shows the title screen only; refinery interaction, output collection and fuel use in the browser are **not** captured.
+- Territory cabinet/upkeep coverage is a separate Bible decision and is not modeled here.
+- Generic `validate()` gaps outside refinery queues remain.

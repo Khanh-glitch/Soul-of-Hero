@@ -1,12 +1,14 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { BAL, TILE, WW, type Entity, type GameState } from '../src/game/core';
-import { addItem, C, countItem, dispatch, markDirty, mkContainer, newGame, stepStations, harvestHit } from '../src/game/engine';
+import { addItem, C, countItem, dispatch, markDirty, mkContainer, newGame, stepStations } from '../src/game/engine';
 import { getWorld, setActiveLayout } from '../src/game/world';
 import { vehicleClear } from '../src/game/motorbike';
 import { serializeSnapshot, validate } from '../src/game/persist';
-import { tick, type Input } from '../src/game/sim';
-import { RECIPES } from '../src/game/catalog';
+import { tick, settle, type Input } from '../src/game/sim';
+import { ITEMS, RECIPES } from '../src/game/catalog';
 
+// SYS10-R1 fixtures. Stations, injected stock and the motorbike kit are CONTROLLED FIXTURES
+// placed by the test; they are not natural-player acquisition evidence.
 const T = Date.UTC(2026, 10, 6);
 let serial = 0;
 const act = (g: GameState, type: string, p: object = {}, id = `s10-${++serial}`, now = T + 1) => dispatch(g, { id, type, ...p }, now);
@@ -38,244 +40,252 @@ function deployBike(g: GameState) {
   const e = Object.values(r.entities).find(e => e.kind === 'vehicle')!;
   return { r, e, q };
 }
-function drive(g: GameState, frames: number, start = T + 200) {
-  for (let i = 0; i < frames; i++) tick(g, inp, 50, start + i * 50);
-}
-function stationNearPlayer(g: GameState, type: string, level?: number): Entity {
+/** Controlled fixture: a station with fuel/out containers placed beside the player. */
+function fixtureStation(g: GameState, type: string, level?: number): Entity {
   const r = g.run!, p = r.player;
   const f = mkContainer(r, 'fuel', 3), o = mkContainer(r, 'out', 6);
-  const e: Entity = { id: `fixture-${type}-${++serial}`, kind: 'struct', type, x: p.x + 8, y: p.y, tx: Math.floor(p.x / TILE), ty: Math.floor(p.y / TILE), hp: 280, maxHp: 280, station: { fuelC: f.id, outC: o.id, burn: 0, queue: [], ...(level ? { level: level as any } : {}) } };
+  const e: Entity = { id: `fixture-${type}-${++serial}`, kind: 'struct', type, x: p.x + 8, y: p.y, tx: Math.floor(p.x / TILE), ty: Math.floor(p.y / TILE), hp: STRUCT_HP(type), maxHp: STRUCT_HP(type), station: { fuelC: f.id, outC: o.id, burn: 0, queue: [], ...(level ? { level: level as any } : {}) } };
   r.entities[e.id] = e;
   return e;
 }
+const STRUCT_HP = (type: string) => (type === 'refinery' ? BAL.oilRefineryV1.hp : 160);
+const fuelQty = (c: { slots: any[] }) => c.slots.filter(s => s?.key === 'fuel_can').reduce((a, s) => a + s.qty, 0);
+const lubeQty = (c: { slots: any[] }) => c.slots.filter(s => s?.key === 'lubricant').reduce((a, s) => a + s.qty, 0);
+const bindRefinery = (g: GameState) => { const e = fixtureStation(g, 'refinery'); addItem(g.run!, e.station!.fuelC, 'wood', 3); return e; };
 afterEach(() => setActiveLayout('shipping'));
 
-describe('SYS10 oil refinery — physical fuel & lubricant economy', () => {
-  it('requires an owned level-2 workbench within three tiles to build the refinery', () => {
+describe('SYS10-R1 oil refinery — canonical balance, industrial co-products, validation', () => {
+  it('derives every refinery recipe and cost from the single balance authority', () => {
+    const R = BAL.oilRefineryV1.recipes;
+    expect(RECIPES.refinery_fuel.ins).toEqual(R.single.ins);
+    expect(RECIPES.refinery_fuel_batch.ins).toEqual(R.batch.ins);
+    expect(RECIPES.refinery_industrial.ins).toEqual(R.industrial.ins);
+    expect(RECIPES.refinery_industrial.outs).toEqual(R.industrial.outs);
+    expect(RECIPES.refinery_industrial.secs).toBe(R.industrial.secs);
+    expect(RECIPES.refinery_lubricant.outs ?? [[RECIPES.refinery_lubricant.out, RECIPES.refinery_lubricant.qty]]).toEqual(R.lube.outs);
+    expect(BAL.motorbike).not.toHaveProperty('lubricantWearReduction');
+    expect(BAL.oilRefineryV1.need).toBe('any');
+  });
+
+  it('builds the refinery on valid terrain with a level-2 Workbench and NO territory cabinet (K6)', () => {
     const g = setup(), r = g.run!;
     for (const [k, q] of BAL.oilRefineryV1.cost as [string, number][]) addItem(r, 'inv', k, q);
-    const claimTx = Math.floor(r.player.x / TILE), claimTy = Math.floor(r.player.y / TILE);
-    const tx = claimTx + 2, ty = claimTy;
+    const p = r.player, tx = Math.floor(p.x / TILE) + 1, ty = Math.floor(p.y / TILE);
+    // Without any workbench: refused.
     expect(act(g, 'build', { struct: 'refinery', tx, ty }).ok).toBe(false);
-    const far = stationNearPlayer(g, 'workbench', 2);
-    far.x = r.player.x + 10 * TILE; far.y = r.player.y + 10 * TILE; far.tx = Math.floor(far.x / TILE); far.ty = Math.floor(far.y / TILE);
-    markDirty();
+    // A level-1 workbench is not enough.
+    const bench1 = fixtureStation(g, 'workbench', 1); bench1.x = p.x - TILE; bench1.tx = Math.floor(bench1.x / TILE);
     expect(act(g, 'build', { struct: 'refinery', tx, ty }).ok).toBe(false);
-    far.x = r.player.x + TILE; far.y = r.player.y; far.tx = claimTx + 1; far.ty = claimTy; far.type = 'workbench';
-    far.tx = claimTx + 1; far.ty = claimTy; far.x = far.tx * TILE + 8; far.y = far.ty * TILE + 8;
-    markDirty();
-    for (const [cx, cy] of [[claimTx, claimTy], [tx, ty], [claimTx + 1, claimTy]]) {
-      if (!Object.values(r.entities).some(e => e.tx === cx && e.ty === cy)) {
-        const fl: Entity = { id: `floor-${cx}-${cy}`, kind: 'struct', type: 'floor_wood', tx: cx, ty: cy, x: cx * TILE + 8, y: cy * TILE + 8, hp: 120, maxHp: 120 };
-        r.entities[fl.id] = fl;
-      }
-    }
-    const cabinet: Entity = { id: 'cabinet-test', kind: 'struct', type: 'claim', tx: claimTx, ty: claimTy, x: claimTx * TILE + 8, y: claimTy * TILE + 8, hp: 200, maxHp: 200, c: mkContainer(r, 'chest', 24).id, cabinet: { credit: {}, legacy: false } };
-    r.entities[cabinet.id] = cabinet;
+    bench1.station!.level = 2 as any; bench1.type = 'workbench';
     markDirty();
     expect(act(g, 'build', { struct: 'refinery', tx, ty }).ok).toBe(true);
-    const ref = Object.values(g.run!.entities).find(e => e.type === 'refinery')!;
-    expect(ref.station).toBeTruthy();
-    expect(ref.station!.fuelC).toBeTruthy();
+    const ref = Object.values(r.entities).find(e => e.type === 'refinery')!;
+    expect(ref.station?.fuelC).toBeTruthy();
+    expect(ref.hp).toBe(BAL.oilRefineryV1.hp);
+    expect(Object.values(r.entities).some(e => e.type === 'claim')).toBe(false);
     expect(validate(snapshot(g))).toBeTruthy();
   });
 
-  it('converts finite salvaged oil into fuel canisters and lubricant via fuelled station jobs', () => {
-    const g = setup(), r = g.run!;
-    const refinery = stationNearPlayer(g, 'refinery');
-    const furnace = stationNearPlayer(g, 'furnace');
-    // stock fuel for both — need enough for 14+22+12=48s => 3 wood (60s)
-    addItem(r, furnace.station!.fuelC, 'wood', 3);
-    addItem(r, refinery.station!.fuelC, 'wood', 3);
-    addItem(r, 'inv', 'salvaged_oil', 10);
-    addItem(r, 'inv', 'glass', 3);
-    expect(countItem(r, 'inv', 'salvaged_oil')).toBe(10);
-    // queue single fuel at refinery
-    expect(act(g, 'craft', { recipe: 'refinery_fuel', eid: refinery.id }).ok).toBe(true);
-    expect(countItem(r, 'inv', 'salvaged_oil')).toBe(7);
-    expect(countItem(r, 'inv', 'glass')).toBe(2);
-    stepStations(g, 14000, T + 20000);
-    let out = C(r, refinery.station!.outC);
-    expect(out.slots.some(s => s?.key === 'fuel_can')).toBe(true);
-    expect(act(g, 'move', { from: out.id, fs: out.slots.findIndex(s => s?.key === 'fuel_can'), to: 'inv' }).ok).toBe(true);
-    expect(countItem(r, 'inv', 'fuel_can')).toBe(1);
-    // queue batch: 5 oil +1 glass ->2 fuel, more efficient (2.5 oil/fuel vs 3)
-    expect(act(g, 'craft', { recipe: 'refinery_fuel_batch', eid: refinery.id }).ok).toBe(true);
-    expect(countItem(r, 'inv', 'salvaged_oil')).toBe(2);
-    stepStations(g, 22000, T + 50000);
-    out = C(r, refinery.station!.outC);
-    const fuels = out.slots.filter(s => s?.key === 'fuel_can').reduce((a, s) => a + s!.qty, 0);
-    expect(fuels).toBe(2);
-    for (let i = 0; i < out.slots.length; i++) if (out.slots[i]?.key === 'fuel_can') expect(act(g, 'move', { from: out.id, fs: i, to: 'inv' }).ok).toBe(true);
-    expect(countItem(r, 'inv', 'fuel_can')).toBe(3);
-    // lubricant: 2 oil ->1 lubricant
-    expect(act(g, 'craft', { recipe: 'refinery_lubricant', eid: refinery.id }).ok).toBe(true);
+  it('commits the industrial batch as one paid job: 2 Fuel Canisters + 1 Lubricant, atomically, on one timeline', () => {
+    const g = setup(), r = g.run!, ref = bindRefinery(g);
+    addItem(r, 'inv', 'salvaged_oil', 6); addItem(r, 'inv', 'glass', 1);
+    expect(act(g, 'craft', { recipe: 'refinery_industrial', eid: ref.id }).ok).toBe(true);
     expect(countItem(r, 'inv', 'salvaged_oil')).toBe(0);
-    stepStations(g, 12000, T + 80000);
-    out = C(r, refinery.station!.outC);
-    expect(out.slots.some(s => s?.key === 'lubricant')).toBe(true);
-    expect(validate(snapshot(g))).toBeTruthy();
-    // no oil remains, cannot queue another
-    expect(act(g, 'craft', { recipe: 'refinery_fuel', eid: refinery.id }).ok).toBe(false);
-  });
-
-  it('refinery fuel canister refuels the motorbike and its lubricant halves measured wear', () => {
-    const g = setup(), r = g.run!;
-    const refinery = stationNearPlayer(g, 'refinery');
-    addItem(r, refinery.station!.fuelC, 'wood', 2);
-    addItem(r, 'inv', 'salvaged_oil', 5);
-    addItem(r, 'inv', 'glass', 2);
-    // one fuel can, then one lubricant
-    expect(act(g, 'craft', { recipe: 'refinery_fuel', eid: refinery.id }).ok).toBe(true);
-    stepStations(g, 14000, T + 20000);
-    let out = C(r, refinery.station!.outC);
-    expect(act(g, 'move', { from: out.id, fs: out.slots.findIndex(s => s?.key === 'fuel_can'), to: 'inv' }).ok).toBe(true);
-    expect(act(g, 'craft', { recipe: 'refinery_lubricant', eid: refinery.id }).ok).toBe(true);
-    stepStations(g, 12000, T + 40000);
-    out = C(r, refinery.station!.outC);
-    expect(act(g, 'move', { from: out.id, fs: out.slots.findIndex(s => s?.key === 'lubricant'), to: 'inv' }).ok).toBe(true);
-    expect(countItem(r, 'inv', 'fuel_can')).toBe(1);
-    expect(countItem(r, 'inv', 'lubricant')).toBe(1);
-    // deploy the bike
-    const { e: bike } = deployBike(g);
-    // refuel the bike from the refinery output
-    expect(act(g, 'vehicleRefuel', { eid: bike.id }).ok).toBe(true);
-    expect(bike.vehicle!.fuel).toBe(100);
-    expect(countItem(r, 'inv', 'fuel_can')).toBe(0);
-    // second refinery fuel run for the same bike
-    addItem(r, 'inv', 'salvaged_oil', 3); addItem(r, 'inv', 'glass', 1);
-    r.player.x = refinery.x; r.player.y = refinery.y; markDirty();
-    expect(act(g, 'craft', { recipe: 'refinery_fuel', eid: refinery.id }).ok).toBe(true);
-    stepStations(g, 14000, T + 60000);
-    out = C(r, refinery.station!.outC);
-    expect(act(g, 'move', { from: out.id, fs: out.slots.findIndex(s => s?.key === 'fuel_can'), to: 'inv' }).ok).toBe(true);
-    addItem(r, 'inv', 'fuel_can', 1);
-    expect(act(g, 'vehicleExit', {}, 'exit1', T + 70000).ok).toBe(false); // not mounted
-    r.player.x = bike.x; r.player.y = bike.y;
-    // lubricate bike
-    expect(act(g, 'vehicleLubricate', { eid: bike.id }).ok).toBe(true);
-    expect(bike.vehicle!.lube).toBe(BAL.oilRefineryV1.lubricantDistancePx);
-    expect(countItem(r, 'inv', 'lubricant')).toBe(0);
-    // wear test: drive with and without lube on same road
-    const baseBike = structuredClone(snapshot(g));
-    const plain = structuredClone(snapshot(g));
-    // remove lube from plain
-    const plainBike = Object.values(plain.run!.entities).find(e => e.kind === 'vehicle')!;
-    plainBike.vehicle!.lube = 0;
-    plain.run!.entities[plainBike.id] = plainBike;
-    // both start with same hp
-    const hp0 = 200;
-    baseBike.run!.entities[bike.id].hp = hp0; baseBike.run!.entities[bike.id].deployed!.dur = hp0;
-    plain.run!.entities[plainBike.id].hp = hp0; plain.run!.entities[plainBike.id].deployed!.dur = hp0;
-    // give both fuel
-    for (const snap of [baseBike, plain]) {
-      const b = Object.values(snap.run!.entities).find(e => e.kind === 'vehicle')!;
-      b.vehicle!.fuel = 100;
-      snap.run!.player.x = b.x; snap.run!.player.y = b.y;
-      expect(act(snap, 'vehicleMount', { eid: b.id }, 'mount', T + 1).ok).toBe(true);
-      // fixtures sit to the right of the player; drive left so the test measures wear, not blocked movement
-      const leftInp: Input = { ...inp, right: false, left: true };
-      for (let i = 0; i < 20; i++) tick(snap, leftInp, 50, T + 100 + i * 50);
-      expect(b.vehicle!.odometer).toBeGreaterThan(0);
-      expect(act(snap, 'vehicleExit', {}, 'exit', T + 5000).ok).toBe(true);
-    }
-    const lubedHp = baseBike.run!.entities[bike.id].hp!;
-    const plainHp = plain.run!.entities[plainBike.id].hp!;
-    expect(lubedHp).toBeGreaterThan(plainHp);
-    // wear reduction approx 50%
-    const plainWear = hp0 - plainHp, lubedWear = hp0 - lubedHp;
-    expect(lubedWear).toBeLessThan(plainWear * 0.75);
-    // lube distance consumed
-    expect(baseBike.run!.entities[bike.id].vehicle!.lube).toBeLessThan(BAL.oilRefineryV1.lubricantDistancePx);
+    expect(countItem(r, 'inv', 'glass')).toBe(0);
+    expect(ref.station!.queue).toHaveLength(1);
+    expect(ref.station!.queue[0].total).toBe(BAL.oilRefineryV1.recipes.industrial.secs * 1000);
+    stepStations(g, 25000, T + 20000);
+    const out = C(r, ref.station!.outC);
+    expect(ref.station!.queue).toHaveLength(1);                    // not finished at 25 s
+    stepStations(g, 2000, T + 30000);
+    expect(ref.station!.queue).toHaveLength(0);
+    expect(fuelQty(out)).toBe(2);
+    expect(lubeQty(out)).toBe(1);
     expect(validate(snapshot(g))).toBeTruthy();
   });
 
-  it('finite salvaged oil cannot be created from fuel or lubricant — no arbitrage loop', () => {
-    const g = setup(), r = g.run!;
-    const refinery = stationNearPlayer(g, 'refinery');
-    addItem(r, refinery.station!.fuelC, 'wood', 5);
-    // start with 10 oil, produce fuel and lubricant, then verify oil count never increases except via finite sources
-    addItem(r, 'inv', 'salvaged_oil', 10); addItem(r, 'inv', 'glass', 5);
-    const oil0 = countItem(r, 'inv', 'salvaged_oil');
-    expect(act(g, 'craft', { recipe: 'refinery_fuel_batch', eid: refinery.id }).ok).toBe(true);
-    expect(act(g, 'craft', { recipe: 'refinery_lubricant', eid: refinery.id }).ok).toBe(true);
-    stepStations(g, 40000, T + 50000);
-    const out = C(r, refinery.station!.outC);
-    expect(out.slots.filter(s => s?.key === 'fuel_can').reduce((a, s) => a + s!.qty, 0)).toBe(2);
-    expect(out.slots.filter(s => s?.key === 'lubricant').reduce((a, s) => a + s!.qty, 0)).toBe(1);
-    // total oil consumed 7, no oil returned
-    expect(countItem(r, 'inv', 'salvaged_oil')).toBe(3);
-    // verify no recipe converts fuel_can or lubricant back into salvaged_oil
-    const oilProducers = Object.entries(RECIPES).filter(([, rc]) => rc.out === 'salvaged_oil');
-    expect(oilProducers.length).toBe(0);
-    // finite source authority stays in wreck-economy / VENDOR_SPARES; this refinery adds no oil source.
+  it('preflights the whole bundle: when only one product fits, neither is committed and inputs stay reserved', () => {
+    const g = setup(), r = g.run!, ref = bindRefinery(g);
+    const out = C(r, ref.station!.outC);
+    addItem(r, 'inv', 'salvaged_oil', 6); addItem(r, 'inv', 'glass', 1);
+    expect(act(g, 'craft', { recipe: 'refinery_industrial', eid: ref.id }).ok).toBe(true);
+    // Output space is taken by other stock while the batch runs: five of six slots hold stone,
+    // leaving one slot that fits 2 fuel but not 2 fuel + 1 lubricant.
+    for (let i = 0; i < 5; i++) out.slots[i] = { uid: `pad${i}`, key: 'stone', qty: ITEMS.stone.max };
+    stepStations(g, 26000, T + 30000);
+    expect(fuelQty(out)).toBe(0);
+    expect(lubeQty(out)).toBe(0);
+    expect(ref.station!.queue).toHaveLength(1);
+    expect(ref.station!.queue[0].left).toBe(0);                    // finished, held, not partially committed
+    // Free two slots: the complete bundle lands on the next settlement.
+    out.slots[0] = null; out.slots[1] = null;
+    stepStations(g, 1000, T + 31000);
+    expect(ref.station!.queue).toHaveLength(0);
+    expect(fuelQty(out)).toBe(2);
+    expect(lubeQty(out)).toBe(1);
+    expect(validate(snapshot(g))).toBeTruthy();
   });
 
-  it('refinery jobs settle at exact chronological boundaries and survive save/reload', () => {
-    const g = setup(), r = g.run!;
-    const refinery = stationNearPlayer(g, 'refinery');
-    addItem(r, refinery.station!.fuelC, 'wood', 2);
-    addItem(r, 'inv', 'salvaged_oil', 3); addItem(r, 'inv', 'glass', 1);
-    expect(act(g, 'craft', { recipe: 'refinery_fuel', eid: refinery.id }, 'job1', T + 1000).ok).toBe(true);
-    expect(act(g, 'craft', { recipe: 'refinery_fuel', eid: refinery.id }, 'job1', T + 1001).ok).toBe(false); // dup
-    // settle exactly at completion
-    stepStations(g, 14000, T + 15000);
-    let out = C(r, refinery.station!.outC);
-    expect(out.slots.some(s => s?.key === 'fuel_can')).toBe(true);
-    const snap = snapshot(g);
-    expect(validate(snap)).toBeTruthy();
-    // reload and verify queue empty and output persists
-    const reloaded = snapshot(snap);
-    const reRef = Object.values(reloaded.run!.entities).find(e => e.type === 'refinery')!;
-    expect(reRef.station!.queue.length).toBe(0);
-    expect(C(reloaded.run!, reRef.station!.outC).slots.some(s => s?.key === 'fuel_can')).toBe(true);
-    // output is physical: moving to inventory succeeds
-    const out2 = C(reloaded.run!, reRef.station!.outC);
-    expect(act(reloaded, 'move', { from: out2.id, fs: out2.slots.findIndex(s => s?.key === 'fuel_can'), to: 'inv' }).ok).toBe(true);
-    expect(countItem(reloaded.run!, 'inv', 'fuel_can')).toBe(1);
+  it('refuses to queue an industrial batch that cannot land, reserving no inputs', () => {
+    const g = setup(), r = g.run!, ref = bindRefinery(g);
+    const out = C(r, ref.station!.outC);
+    for (let i = 0; i < 6; i++) out.slots[i] = { uid: `pad${i}`, key: 'stone', qty: ITEMS.stone.max };
+    addItem(r, 'inv', 'salvaged_oil', 6); addItem(r, 'inv', 'glass', 1);
+    expect(act(g, 'craft', { recipe: 'refinery_industrial', eid: ref.id }).ok).toBe(false);
+    expect(countItem(r, 'inv', 'salvaged_oil')).toBe(6);
+    expect(ref.station!.queue).toHaveLength(0);
   });
 
-  it('rejects forged refinery, lubricant and vehicle lube state', () => {
-    const g = setup(), r = g.run!;
-    const refinery = stationNearPlayer(g, 'refinery');
+  it('starves without fuel, keeps progress, and resumes when fuel arrives', () => {
+    const g = setup(), r = g.run!, ref = fixtureStation(g, 'refinery');
     addItem(r, 'inv', 'salvaged_oil', 2);
-    addItem(r, refinery.station!.fuelC, 'wood', 1);
-    expect(act(g, 'craft', { recipe: 'refinery_lubricant', eid: refinery.id }).ok).toBe(true);
-    stepStations(g, 12000, T + 20000);
+    expect(act(g, 'craft', { recipe: 'refinery_lubricant', eid: ref.id }).ok).toBe(true);
+    stepStations(g, 5000, T + 5000);
+    expect(ref.station!.queue[0].left).toBe(12000);                // no fuel yet: nothing advances
+    stepStations(g, 60000, T + 65000);
+    expect(ref.station!.queue[0].left).toBe(12000);
+    addItem(r, ref.station!.fuelC, 'wood', 1);
+    stepStations(g, 4000, T + 69000);
+    const partial = ref.station!.queue[0].left;
+    expect(partial).toBeLessThan(12000);                           // progress kept once fuel arrives
+    stepStations(g, 1000, T + 70000);
+    expect(ref.station!.queue[0].left).toBeLessThan(partial);      // the burning fuel keeps the job moving
+    addItem(r, ref.station!.fuelC, 'wood', 3);
+    stepStations(g, 60000, T + 130000);
+    expect(ref.station!.queue).toHaveLength(0);
+    addItem(r, ref.station!.fuelC, 'wood', 3);
+    stepStations(g, 60000, T + 125000);
+    expect(ref.station!.queue).toHaveLength(0);
+    expect(lubeQty(C(r, ref.station!.outC))).toBe(1);
+  });
+
+  it('cancelling a queued industrial batch refunds every reserved input exactly', () => {
+    const g = setup(), r = g.run!, ref = bindRefinery(g);
+    addItem(r, 'inv', 'salvaged_oil', 6); addItem(r, 'inv', 'glass', 1);
+    expect(act(g, 'craft', { recipe: 'refinery_industrial', eid: ref.id }).ok).toBe(true);
+    const jobId = ref.station!.queue[0].id;
+    expect(act(g, 'cancelJob', { eid: ref.id, jobId }).ok).toBe(true);
+    expect(countItem(r, 'inv', 'salvaged_oil')).toBe(6);
+    expect(countItem(r, 'inv', 'glass')).toBe(1);
+    expect(ref.station!.queue).toHaveLength(0);
+    expect(validate(snapshot(g))).toBeTruthy();
+  });
+
+  it('offline settlement matches chronological stepping and produces no duplicate output', () => {
+    const run = (chunks: number[]) => {
+      const g = setup(), r = g.run!, ref = bindRefinery(g);
+      addItem(r, 'inv', 'salvaged_oil', 8); addItem(r, 'inv', 'glass', 2);
+      act(g, 'craft', { recipe: 'refinery_industrial', eid: ref.id }, 'a', T + 1);
+      let now = T + 1;
+      for (const c of chunks) { now += c; settle(g, now, true); }
+      const out = C(r, ref.station!.outC);
+      return { fuel: fuelQty(out), lube: lubeQty(out), queue: ref.station!.queue.length, oil: countItem(r, 'inv', 'salvaged_oil') };
+    };
+    const once = run([60000]);
+    const chunked = run([5000, 5000, 5000, 5000, 5000, 35000]);
+    expect(chunked).toEqual(once);
+    expect(once).toEqual({ fuel: 2, lube: 1, queue: 0, oil: 2 });
+  });
+
+  it('wear split: only the protected distance is charged at the reduced rate, on the same bike UID', () => {
+    const g = setup(), { r, e, q } = deployBike(g);
+    addItem(r, 'inv', 'fuel_can', 1); expect(act(g, 'vehicleRefuel', { eid: e.id }).ok).toBe(true);
+    expect(act(g, 'vehicleMount', { eid: e.id }).ok).toBe(true);
+    const uid = e.deployed!.uid, base = snapshot(g);
+    const lubeBike = structuredClone(base), plainBike = structuredClone(base);
+    const lb = Object.values(lubeBike.run!.entities).find(v => v.kind === 'vehicle')!;
+    const pb = Object.values(plainBike.run!.entities).find(v => v.kind === 'vehicle')!;
+    lb.vehicle!.lube = 40; pb.vehicle!.lube = 0;
+    const hp0 = lb.hp!, o0 = lb.vehicle!.odometer;
+    for (const b of [lubeBike, plainBike]) {
+      const x0 = b.run!.player.vehicle; expect(x0).toBe(e.id);
+      for (let i = 0; i < 10; i++) tick(b, { ...inp, right: true }, 50, T + 100 + i * 50);
+    }
+    const travelled = lb.vehicle!.odometer - o0;
+    expect(travelled).toBeGreaterThan(40);                         // protection expires mid-run
+    const base1 = BAL.motorbike.wearPerPixel;                      // flat road, no load => base wear per px
+    const lubeLoss = hp0 - lb.hp!;
+    const expectedLoss = 40 * base1 * (1 - BAL.oilRefineryV1.lubricantWearReduction) + (travelled - 40) * base1;
+    expect(lubeLoss).toBeCloseTo(expectedLoss, 6);
+    expect(lb.hp! > hp0 - travelled * base1).toBe(true);           // reduced wear was actually applied
+    expect(lb.vehicle!.lube).toBe(0);
+    expect(lubeBike.run!.entities[e.id].deployed!.uid).toBe(uid);
+    expect(q).toBeTruthy();
+  });
+
+  it('service: exact distance boundary, cap, inventory debit, same UID, no free HP', () => {
+    const g = setup(), { r, e } = deployBike(g);
+    const hpBefore = e.hp;
+    for (let i = 0; i < 2; i++) addItem(r, 'inv', 'lubricant', 1);
+    expect(act(g, 'vehicleLubricate', { eid: e.id }, 'l1').ok).toBe(true);
+    expect(e.vehicle!.lube).toBe(BAL.oilRefineryV1.lubricantDistancePx);
+    // Already covered by a full interval: a further service is refused, with no debit.
+    expect(act(g, 'vehicleLubricate', { eid: e.id }, 'l2').ok).toBe(false);
+    expect(countItem(r, 'inv', 'lubricant')).toBe(1);
+    // Partial protection tops up but is capped at 1.5 service intervals.
+    e.vehicle!.lube = 6000;
+    expect(act(g, 'vehicleLubricate', { eid: e.id }, 'l3').ok).toBe(true);
+    expect(e.vehicle!.lube).toBe(BAL.oilRefineryV1.lubricantDistancePx * 1.5);
+    expect(countItem(r, 'inv', 'lubricant')).toBe(0);
+    expect(e.hp).toBe(hpBefore);                                   // servicing never restores HP
+    expect(e.deployed!.uid).toBeTruthy();
+    expect(validate(snapshot(g))).toBeTruthy();
+  });
+
+  it('strict validation rejects forged refinery and vehicle states (fail-first assertions)', () => {
+    const g = setup(), r = g.run!, ref = bindRefinery(g);
+    addItem(r, 'inv', 'salvaged_oil', 6); addItem(r, 'inv', 'glass', 1);
+    expect(act(g, 'craft', { recipe: 'refinery_industrial', eid: ref.id }).ok).toBe(true);
     const good = snapshot(g);
     expect(validate(good)).toBeTruthy();
-    // forged lube amount beyond max
-    const badLube = snapshot(g);
-    const v = Object.values(badLube.run!.entities).find(e => e.kind === 'vehicle');
-    if (v) { v.vehicle!.lube = 999999; expect(validate(badLube)).toBeNull(); }
-    // forged lubricant count exceeds max stack
-    const badStack = snapshot(g);
-    addItem(badStack.run!, 'inv', 'lubricant', 100);
-    // addItem will split into multiple stacks if needed, but we can forge directly
-    const inv = C(badStack.run!, 'inv');
-    inv.slots[0] = { uid: 's9', key: 'lubricant', qty: 999 };
-    expect(validate(badStack)).toBeNull();
-    // forged refinery station kind
-    const badStation = snapshot(g);
-    const ref = Object.values(badStation.run!.entities).find(e => e.type === 'refinery')!;
-    ref.type = 'furnace';
-    // forged unknown recipe
-    const badRecipe = snapshot(g);
-    const ref2 = Object.values(badRecipe.run!.entities).find(e => e.type === 'refinery')!;
+
+    const forgedTime = snapshot(g); const fj = Object.values(forgedTime.run!.entities).find(e => e.type === 'refinery')!.station!.queue[0];
+    fj.total = 1000; fj.left = 1000;
+    expect(validate(forgedTime)).toBeNull();
+
+    const forgedInputs = snapshot(g); const fi = Object.values(forgedInputs.run!.entities).find(e => e.type === 'refinery')!.station!.queue[0];
+    fi.reserved![0].qty += 5;
+    expect(validate(forgedInputs)).toBeNull();
+
+    const forgedRecipe = snapshot(g); const fr = Object.values(forgedRecipe.run!.entities).find(e => e.type === 'refinery')!.station!.queue[0];
+    fr.recipe = 'refinery_fuel_batch';                             // a different refinery recipe with the wrong inputs
+    fr.total = RECIPES.refinery_fuel_batch.secs * 1000;
+    expect(validate(forgedRecipe)).toBeNull();
+
+    const badHp = snapshot(g); Object.values(badHp.run!.entities).find(e => e.type === 'refinery')!.hp = BAL.oilRefineryV1.hp * 10;
+    expect(validate(badHp)).toBeNull();
+
+    const retyped = snapshot(g); Object.values(retyped.run!.entities).find(e => e.type === 'refinery')!.type = 'furnace';
+    expect(validate(retyped)).toBeNull();
+
+    const badStation = snapshot(g); const bs = Object.values(badStation.run!.entities).find(e => e.type === 'refinery')!; bs.station!.fuelC = 'cdoesnotexist';
+    expect(validate(badStation)).toBeNull();
   });
 
-  it('preserves 336-hour run clock and works offline via existing boundaries', () => {
+  it('strict validation rejects forged motorbike lubricant state', () => {
+    const g = setup(), { e } = deployBike(g);
+    const good = snapshot(g);
+    expect(validate(good)).toBeTruthy();
+    const over = snapshot(g); Object.values(over.run!.entities).find(v => v.kind === 'vehicle')!.vehicle!.lube = BAL.oilRefineryV1.lubricantDistancePx * 1.5 + 1000;
+    expect(validate(over)).toBeNull();
+    const neg = snapshot(g); Object.values(neg.run!.entities).find(v => v.kind === 'vehicle')!.vehicle!.lube = -1;
+    expect(validate(neg)).toBeNull();
+    expect(e.kind).toBe('vehicle');
+  });
+
+  it('legacy single-output recipes and queued jobs without reservations still validate', () => {
     const g = setup(), r = g.run!;
-    expect(BAL.run.maxRunHours).toBe(336);
-    const refinery = stationNearPlayer(g, 'refinery');
-    addItem(r, refinery.station!.fuelC, 'wood', 2);
+    const furnace = fixtureStation(g, 'furnace');
+    addItem(r, furnace.station!.fuelC, 'wood', 2);
     addItem(r, 'inv', 'salvaged_oil', 3); addItem(r, 'inv', 'glass', 1);
-    expect(act(g, 'craft', { recipe: 'refinery_fuel', eid: refinery.id }).ok).toBe(true);
-    // simulate offline via advanceWorld style: stepStations with large dt should produce fuel without extra grants
-    const before = countItem(r, 'inv', 'fuel_can');
-    stepStations(g, 100000, T + 100000);
-    const after = C(r, refinery.station!.outC).slots.filter(s => s?.key === 'fuel_can').length;
-    expect(after).toBe(1);
-    expect(countItem(r, 'inv', 'fuel_can')).toBe(before);
+    r.knowledge.recipes.push('refine_salvaged_oil');
+    expect(act(g, 'craft', { recipe: 'refine_salvaged_oil', eid: furnace.id }).ok).toBe(true);
+    stepStations(g, 19000, T + 30000);
+    expect(countItem(r, 'inv', 'fuel_can') + fuelQty(C(r, furnace.station!.outC))).toBeGreaterThanOrEqual(1);
+    expect(validate(snapshot(g))).toBeTruthy();
+    // A pre-reservation refinery job (no reserved array) is still accepted.
+    const ref = fixtureStation(g, 'refinery');
+    ref.station!.queue.push({ id: 'j1', recipe: 'refinery_lubricant', left: 12000, total: 12000 } as any);
+    expect(validate(snapshot(g))).toBeTruthy();
   });
 });

@@ -3,7 +3,7 @@ import { BAL } from './core';
 export type Mat = 'wood' | 'stone' | 'ore' | 'plant' | 'scrap';
 export interface SourcePlacementRule { terrain: 'sand' | 'marsh' | 'ash' | 'snow' | 'hill'; chance: number }
 /** `tier` governs discovery; `stationLevel` alone specifies physical workbench capability. */
-export interface RecipeDef { out: string; qty: number; ins: [string, number][]; station: null | 'campfire' | 'furnace' | 'workbench' | 'refinery'; secs: number; base?: boolean; tier: number; stationLevel?: 1 | 2 | 3 }
+export interface RecipeDef { out: string; qty: number; /** Optional co-products committed atomically with the job (industrial batches). Absent = single output `out`×`qty`. */ outs?: [string, number][]; ins: [string, number][]; station: null | 'campfire' | 'furnace' | 'workbench' | 'refinery'; secs: number; base?: boolean; tier: number; stationLevel?: 1 | 2 | 3 }
 
 // TUNABLE: a capability upgrade, not a learned recipe. The cart itself remains physical.
 export const INDUSTRIAL_MODULE: { cost: [string, number][]; benchLevel: number } = { cost: [['mechanical_parts', 3], ['fasteners', 3], ['spares', 4], ['iron_ingot', 2]], benchLevel: 2 }; // SOH_NEW_TUNED provisional; no equivalent LI numerical table established
@@ -196,6 +196,12 @@ export const requiredStationLevel = (recipe: RecipeDef): 1 | 2 | 3 => recipe.sta
 
 // ---------- Recipes (K4: one run-local authority) ----------
 export type Recipe = RecipeDef;
+function refineryRecipe(key: 'single' | 'batch' | 'industrial' | 'lube'): RecipeDef {
+  const R = BAL.oilRefineryV1.recipes[key];
+  const outs = R.outs as [string, number][];
+  const [out, qty] = outs[0];
+  return { out, qty, ...(outs.length > 1 ? { outs } : {}), ins: R.ins as [string, number][], station: 'refinery', secs: R.secs, base: true, tier: 1 };
+}
 export const RECIPES: Record<string, Recipe> = {
   // SOH_NEW_TUNED v1. Furnace fuel is separate from consumed input.
   vehicle_frame: { out:'vehicle_frame', qty:1, ins:[['iron_ingot',3],['mechanical_parts',2],['spares',2]], station:'workbench', stationLevel:2, secs:25, base:true, tier:1 },
@@ -203,9 +209,11 @@ export const RECIPES: Record<string, Recipe> = {
   motorbike_kit: { out:'motorbike_kit', qty:1, ins:[['vehicle_frame',1],['vehicle_drive',1],['iron_ingot',2],['fasteners',2]], station:'workbench', stationLevel:3, secs:40, tier:2 },
   refine_salvaged_oil: { out:'fuel_can', qty:1, ins:[['salvaged_oil',3],['glass',1]], station:'furnace', secs:18, tier:1 },
   // SOH_PROVISIONAL v1 Oil Refinery: batch-efficient fuel + dedicated lubricant, distinct from furnace single-pot.
-  refinery_fuel: { out:'fuel_can', qty:1, ins:[['salvaged_oil',3],['glass',1]], station:'refinery', secs:14, base:true, tier:1 },
-  refinery_fuel_batch: { out:'fuel_can', qty:2, ins:[['salvaged_oil',5],['glass',1]], station:'refinery', secs:22, base:true, tier:1 },
-  refinery_lubricant: { out:'lubricant', qty:1, ins:[['salvaged_oil',2]], station:'refinery', secs:12, base:true, tier:1 },
+  // Refinery recipes are derived from BAL.oilRefineryV1 (single runtime authority).
+  refinery_fuel: refineryRecipe('single'),
+  refinery_fuel_batch: refineryRecipe('batch'),
+  refinery_industrial: refineryRecipe('industrial'),
+  refinery_lubricant: refineryRecipe('lube'),
   energy_basic: { out:'energy_basic', qty:8, ins:[['stone',2],['fiber',2]], station:null, secs:2, base:true, tier:0 },
   energy_refined_industrial: { out:'energy_refined', qty:12, ins:[['crystal',2],['iron_ingot',2],['charcoal',2]], station:'workbench', stationLevel:3, secs:40, base:true, tier:2 },
   energy_refined: { out:'energy_refined', qty:4, ins:[['crystal',1],['iron_ingot',1]], station:'workbench', stationLevel:2, secs:16, base:true, tier:2 },
@@ -295,7 +303,7 @@ export const STRUCTS: Record<string, StructDef> = {
   chest_large: { name: 'Iron-bound Chest', cost: [['wood', 12], ['iron_ingot', 2]], hp: 220, need: 'claim', block: true, layer: 'obj', slots: 24, desc: '24-slot storage.' },
   campfire: { name: 'Campfire', cost: [['wood', 5], ['stone', 3]], hp: 60, need: 'any', block: true, layer: 'obj', station: 'campfire', light: 90, warmth: 1, desc: 'Cooks with fuel. Warmth + light while burning.' },
   furnace: { name: 'Furnace', cost: [['stone', 18], ['wood', 4]], hp: 300, need: 'claim', block: true, layer: 'obj', station: 'furnace', light: 50, warmth: 1, desc: 'Smelts with fuel. Output waits in its slots.' },
-  refinery: { name: 'Oil Refinery', cost: [['iron_ingot', 4], ['mechanical_parts', 3], ['spares', 5], ['brick', 6], ['glass', 2]], hp: 280, need: 'claim', block: true, layer: 'obj', station: 'refinery', light: 40, desc: 'Converts finite Salvaged Oil into Fuel Canisters and Machine Lubricant. Requires fuel to operate; batch recipe is more oil-efficient.' },
+  refinery: { name: 'Oil Refinery', cost: BAL.oilRefineryV1.cost as [string, number][], hp: BAL.oilRefineryV1.hp, need: 'any', block: true, layer: 'obj', station: 'refinery', light: 40, desc: 'Converts finite Salvaged Oil into Fuel Canisters and Machine Lubricant. Needs a level-2 Workbench nearby and fuel to run. The industrial batch yields fuel and lubricant together.' },
   workbench: { name: 'Workbench', cost: [['wood', 14], ['stone', 4]], hp: 160, need: 'claim', block: true, layer: 'obj', station: 'workbench', desc: 'Timed crafting for tools, armor and parts.' },
   research: { name: 'Research Table', cost: [['wood', 10], ['spares', 6], ['iron_ingot', 1]], hp: 160, need: 'claim', block: true, layer: 'obj', station: 'research', desc: 'Spend Spares or study specimens to unlock recipes.' },
   garden: { name: 'Garden Plot', cost: [['wood', 4], ['fiber', 4]], hp: 60, need: 'claim', block: false, layer: 'obj', desc: 'Plant seeds; grows only while watered (rain counts).' },
@@ -373,6 +381,7 @@ export function validateGameplayCatalog(catalog: GameplayCatalogData = { items: 
     for (const [item, qty] of recipe.ins) if (!items[item] || !Number.isInteger(qty) || qty <= 0) errors.push(`recipe ${id}: invalid input ${item} x${qty}`);
     if (recipe.stationLevel !== undefined && (recipe.station !== 'workbench' || ![1, 2, 3].includes(recipe.stationLevel))) errors.push(`recipe ${id}: invalid station level`);
     if (recipe.station && (!structures[recipe.station] || structures[recipe.station].station !== recipe.station)) errors.push(`recipe ${id}: missing station ${recipe.station}`);
+    if (recipe.outs !== undefined && (recipe.outs.length < 1 || recipe.outs[0][0] !== recipe.out || recipe.outs[0][1] !== recipe.qty || recipe.outs.some(([k, q]) => !items[k] || !Number.isSafeInteger(q) || q <= 0) || new Set(recipe.outs.map(([k]) => k)).size !== recipe.outs.length)) errors.push(`recipe ${id}: invalid output list`);
   }
   if (errors.length) throw new Error(`Invalid gameplay catalog:\n${errors.join('\n')}`);
   return true;

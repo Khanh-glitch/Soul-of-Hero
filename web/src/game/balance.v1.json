@@ -1,7 +1,7 @@
 {
   "_meta": {
     "version": 1,
-    "status_legend": "LOCKED_CANON = Bible [CHỐT] law; TUNABLE_BALANCE = editable number; PROPOSED_MECHANISM = reversible design choice ([ĐỀ XUẤT])",
+    "status_legend": "LOCKED_CANON = Bible [CH\u1ed0T] law; TUNABLE_BALANCE = editable number; PROPOSED_MECHANISM = reversible design choice ([\u0110\u1ec0 XU\u1ea4T])",
     "note": "All numbers here are TUNABLE_BALANCE unless marked. Edit and rebuild."
   },
   "run": {
@@ -144,7 +144,19 @@
     "unprotectedCollapseHours": 2,
     "unfundedCollapseHours": 2,
     "upkeepFractionPerDay": 0.25,
-    "materials": ["wood", "stone", "fiber", "rope", "brick", "iron_ingot", "scrap", "glass", "spares", "mechanical_parts", "fasteners"]
+    "materials": [
+      "wood",
+      "stone",
+      "fiber",
+      "rope",
+      "brick",
+      "iron_ingot",
+      "scrap",
+      "glass",
+      "spares",
+      "mechanical_parts",
+      "fasteners"
+    ]
   },
   "research": {
     "_status": "TUNABLE_BALANCE",
@@ -285,29 +297,120 @@
     "roughFuelMultiplier": 1.5,
     "loadFuelMultiplier": 0.5,
     "wearPerPixel": 0.002,
-    "lubricantWearReduction": 0.5,
-    "lubricantDistancePx": 12000,
     "maxSlope": 0.6,
     "radius": 6,
     "repairHp": 50
   },
   "oilRefineryV1": {
-    "_status": "SOH_PROVISIONAL v1; ORIGINAL_UNKNOWN refinery rates and lubricant effect",
+    "_status": "SOH_PROVISIONAL oil-refinery-v1. LI version/mode-specific refinery rates, cost, batch ratio and lubricant effect are ORIGINAL_UNKNOWN; see docs/survival/gameplay-depth/SYS10_VIRTUAL_RESOURCE_PROCESSING.md",
+    "version": "oil-refinery-v1",
     "hp": 280,
+    "need": "any",
+    "cost": [
+      [
+        "iron_ingot",
+        4
+      ],
+      [
+        "mechanical_parts",
+        3
+      ],
+      [
+        "spares",
+        5
+      ],
+      [
+        "brick",
+        6
+      ],
+      [
+        "glass",
+        2
+      ]
+    ],
+    "requiresWorkbenchLevel": 2,
     "fuelBurnSecondsPerFuel": 60,
+    "recipes": {
+      "single": {
+        "ins": [
+          [
+            "salvaged_oil",
+            3
+          ],
+          [
+            "glass",
+            1
+          ]
+        ],
+        "outs": [
+          [
+            "fuel_can",
+            1
+          ]
+        ],
+        "secs": 14
+      },
+      "batch": {
+        "ins": [
+          [
+            "salvaged_oil",
+            5
+          ],
+          [
+            "glass",
+            1
+          ]
+        ],
+        "outs": [
+          [
+            "fuel_can",
+            2
+          ]
+        ],
+        "secs": 22
+      },
+      "industrial": {
+        "ins": [
+          [
+            "salvaged_oil",
+            6
+          ],
+          [
+            "glass",
+            1
+          ]
+        ],
+        "outs": [
+          [
+            "fuel_can",
+            2
+          ],
+          [
+            "lubricant",
+            1
+          ]
+        ],
+        "secs": 26
+      },
+      "lube": {
+        "ins": [
+          [
+            "salvaged_oil",
+            2
+          ]
+        ],
+        "outs": [
+          [
+            "lubricant",
+            1
+          ]
+        ],
+        "secs": 12
+      }
+    },
     "lubricantWearReduction": 0.5,
     "lubricantDistancePx": 12000,
-    "cost": [["iron_ingot", 4], ["mechanical_parts", 3], ["spares", 5], ["brick", 6], ["glass", 2]],
-    "requiresWorkbenchLevel": 2,
-    "singleOil": 3,
-    "singleGlass": 1,
-    "singleSecs": 14,
-    "batchOil": 5,
-    "batchGlass": 1,
-    "batchFuel": 2,
-    "batchSecs": 22,
-    "lubeOil": 2,
-    "lubeSecs": 12
+    "lubricantOverCapFactor": 1.5
   },
   "poiAccess": {
     "_status": "SOH_PROVISIONAL v1; ORIGINAL_UNKNOWN card uses and POI fuel runtime",
@@ -317,10 +420,62 @@
   },
   "homeCircuit": {
     "_status": "SOH_PROVISIONAL wire-v1; ORIGINAL_UNKNOWN costs, capacity and timing",
-    "cableCost": [["iron_ingot", 1], ["fiber", 1]],
-    "switchCost": [["iron_ingot", 1], ["fasteners", 1], ["spares", 1]],
-    "plateCost": [["iron_ingot", 1], ["mechanical_parts", 1], ["fasteners", 1]],
-    "doorCost": [["iron_ingot", 4], ["mechanical_parts", 2], ["fasteners", 3], ["spares", 3]],
+    "cableCost": [
+      [
+        "iron_ingot",
+        1
+      ],
+      [
+        "fiber",
+        1
+      ]
+    ],
+    "switchCost": [
+      [
+        "iron_ingot",
+        1
+      ],
+      [
+        "fasteners",
+        1
+      ],
+      [
+        "spares",
+        1
+      ]
+    ],
+    "plateCost": [
+      [
+        "iron_ingot",
+        1
+      ],
+      [
+        "mechanical_parts",
+        1
+      ],
+      [
+        "fasteners",
+        1
+      ]
+    ],
+    "doorCost": [
+      [
+        "iron_ingot",
+        4
+      ],
+      [
+        "mechanical_parts",
+        2
+      ],
+      [
+        "fasteners",
+        3
+      ],
+      [
+        "spares",
+        3
+      ]
+    ],
     "cableHp": 60,
     "switchHp": 100,
     "plateHp": 100,
@@ -336,12 +491,126 @@
     "highCondition": 0.75,
     "seconds": 15,
     "rules": {
-      "iron_pick": {"base": [["scrap",1]], "mid": [["iron_ingot",1]], "high": [["wood",1]]},
-      "iron_axe": {"base": [["scrap",1]], "mid": [["iron_ingot",1]], "high": [["wood",1]]},
-      "iron_sword": {"base": [["scrap",1]], "mid": [["iron_ingot",1]], "high": [["leather",1]]},
-      "industrial_pick": {"base": [["scrap",1]], "mid": [["iron_ingot",1]], "high": [["mechanical_parts",1]]},
-      "industrial_axe": {"base": [["scrap",1]], "mid": [["iron_ingot",1]], "high": [["mechanical_parts",1]]},
-      "reinforced_spear": {"base": [["scrap",1]], "mid": [["iron_ingot",1]], "high": [["mechanical_parts",1]]}
+      "iron_pick": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "wood",
+            1
+          ]
+        ]
+      },
+      "iron_axe": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "wood",
+            1
+          ]
+        ]
+      },
+      "iron_sword": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "leather",
+            1
+          ]
+        ]
+      },
+      "industrial_pick": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "mechanical_parts",
+            1
+          ]
+        ]
+      },
+      "industrial_axe": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "mechanical_parts",
+            1
+          ]
+        ]
+      },
+      "reinforced_spear": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "mechanical_parts",
+            1
+          ]
+        ]
+      }
     }
   },
   "airdropV1": {
@@ -356,9 +625,40 @@
     "lifetimeSeconds": 5400,
     "clearanceTiles": 1,
     "maxSlope": 0.35,
-    "fixed": [["mechanical_parts",2],["fasteners",2]],
-    "weights": [1,1,1,1],
-    "options": [["fuel_can",1],["energy_refined",2],["iron_ingot",2],["iron_sword",1]]
+    "fixed": [
+      [
+        "mechanical_parts",
+        2
+      ],
+      [
+        "fasteners",
+        2
+      ]
+    ],
+    "weights": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "options": [
+      [
+        "fuel_can",
+        1
+      ],
+      [
+        "energy_refined",
+        2
+      ],
+      [
+        "iron_ingot",
+        2
+      ],
+      [
+        "iron_sword",
+        1
+      ]
+    ]
   },
   "worldStimulusV1": {
     "_status": "SOH_PROVISIONAL; ORIGINAL_UNKNOWN sensory ranges, duration and species sensitivity",
@@ -368,6 +668,13 @@
     "homeExclusionTiles": 8,
     "arrivalPixels": 10,
     "speedMultiplier": 0.7,
-    "hearing": {"wolf": 1, "crawler": 0.8, "toad": 0.55, "beetle": 0.7, "boar": 0, "crab": 0}
+    "hearing": {
+      "wolf": 1,
+      "crawler": 0.8,
+      "toad": 0.55,
+      "beetle": 0.7,
+      "boar": 0,
+      "crab": 0
+    }
   }
 }

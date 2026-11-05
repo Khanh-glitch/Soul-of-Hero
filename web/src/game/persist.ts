@@ -117,6 +117,17 @@ export function validate(raw: any): GameState | null {
     if(recycler){if(station!=='recycler'||!finite(j.left)||!finite(j.total)||j.total!==12000||j.left<0||j.left>j.total||!Array.isArray(j.reserved)||j.reserved.length!==1||j.reserved[0]?.key!=='damaged_drive'||j.reserved[0]?.qty!==1||!j.reserved.every(stack))return false;jobIds.add(j.id);return true;}
     const research = j.recipe.startsWith('R:'), recipe = research ? j.recipe.slice(2) : j.recipe;
     if (!has(RECIPES, recipe) || (station === 'research' ? !research : research || RECIPES[recipe].station !== station) || !finite(j.left) || !finite(j.total) || j.total <= 0 || j.left < 0 || j.left > j.total || (j.reserved !== undefined && (!Array.isArray(j.reserved) || !j.reserved.every(stack)))) return false;
+    // Refinery jobs: the recipe is canonical. Time must be the recipe time and any recorded reservation must equal the recipe inputs exactly.
+    if (station === 'refinery') {
+      const canon = RECIPES[recipe];
+      if (j.total !== canon.secs * 1000) return false;
+      if (j.reserved !== undefined) {
+        const want = new Map(canon.ins.map(([k, q]) => [k, q] as [string, number]));
+        const got = new Map<string, number>();
+        for (const st of j.reserved) got.set(st.key, (got.get(st.key) ?? 0) + st.qty);
+        if (got.size !== want.size || [...want].some(([k, q]) => got.get(k) !== q)) return false;
+      }
+    }
     jobIds.add(j.id); return true;
   });
   for (const [id, e] of Object.entries(r.entities) as [string, any][]) {
@@ -165,6 +176,7 @@ export function validate(raw: any): GameState | null {
     if(e.farm !== undefined && (!obj(e.farm) || e.kind!=='struct' || e.type!=='farm_controller' || !e.c || r.custody[e.c]?.slots.length!==3 || typeof e.farm.enabled!=='boolean' || !['crop','herb'].includes(e.farm.crop) || !finite(e.farm.energy) || e.farm.energy<0 || e.farm.energy>90000 || ['gardenId','barrelId','chestId'].some(k=>e.farm[k]!==undefined && (typeof e.farm[k]!=='string'||!e.farm[k]))))return null;
     if(e.type==='farm_controller' && !e.farm)return null;
     if (e.station?.upgrade !== undefined && (e.type !== 'furnace' || e.station.upgrade !== 'kiln_lining')) return null;
+    if (e.type === 'refinery' && (e.kind !== 'struct' || !finite(e.hp) || e.hp < 0 || e.hp > STRUCTS.refinery.hp || (e.station !== undefined && e.station.level !== undefined))) return null;
     if (e.station?.level !== undefined && (e.type !== 'workbench' || ![1, 2, 3].includes(e.station.level))) return null;
     if (e.station && (!obj(e.station) || !(e.kind==='recycler' || STRUCTS[e.type]?.station) || !finite(e.station.burn) || e.station.burn < 0 || r.custody[e.station.fuelC]?.kind !== 'fuel' || r.custody[e.station.outC]?.kind !== 'out' || !jobs(e.station.queue, e.kind==='recycler'?'recycler':STRUCTS[e.type].station!))) return null;
     if (e.legacyJobs && (e.kind !== 'bag' || !STRUCTS[e.legacyJobs.stationType]?.station || !jobs(e.legacyJobs.queue, STRUCTS[e.legacyJobs.stationType].station!) || e.legacyJobs.queue.some((j: any) => j.reserved !== undefined))) return null;

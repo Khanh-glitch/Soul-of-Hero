@@ -452,6 +452,10 @@ function portion(r: RunState, s: Stack, qty: number): Stack {
   return { ...s, uid: uid(r, 's'), qty };
 }
 /** Reserve exactly the paid physical stacks; split only when part of a stack is paid. */
+/** Every output a recipe commits together (single-output recipes return one entry). */
+export function recipeOutputs(rc: { out: string; qty: number; outs?: [string, number][] }): [string, number][] {
+  return rc.outs ?? [[rc.out, rc.qty]];
+}
 function reserveInputs(r: RunState, ins: [string, number][]): Stack[] {
   const c = C(r, 'inv'); const reserved: Stack[] = [];
   for (const [key, amount] of ins) {
@@ -1396,6 +1400,8 @@ function craft(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: stri
   if (it.recipe === 'recover_drive' && !clearInteraction(r, st)) return fail('A wall blocks access to the workbench.');
   if ((st.station!.level ?? 1) < requiredStationLevel(rc)) return fail(`Requires workbench level ${rc.stationLevel}.`);
   if (st.station!.queue.length >= 6) return fail('Station queue is full.');
+  // Multi-output bundles are preflighted at queue time too, so no paid inputs are reserved for a batch that cannot land.
+  if (rc.outs && !recoveryFits(C(r, st.station!.outC), rc.outs)) return fail('Refinery output cannot hold the whole batch; collect items first.');
   const reserved = reserveInputs(r, ins);
   st.station!.queue.push({ id: uid(r, 'j'), recipe: it.recipe, left: rc.secs * 1000, total: rc.secs * 1000, reserved });
   return ok('job.queue', `${it.recipe}@${st.id}`, `${ITEMS[rc.out].name} queued at ${STRUCTS[st.type!].name}.`);
@@ -1460,9 +1466,13 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
           if (addItem(r, st.outC, 'blueprint', 1, { meta: k }) > 0) { blocked = true; note('Research table: output slots full.'); continue; }
           note(`Research table: blueprint for ${ITEMS[RECIPES[k].out].name} is ready.`); award(gs, 'first_research', at);
         } else {
-          const rc = RECIPES[job.recipe];
-          if (spaceFor(r, st.outC, rc.out) < rc.qty) { blocked = true; note(`${STRUCTS[e.type!].name}: output slots full.`); continue; }
-          addItem(r, st.outC, rc.out, rc.qty); if (rc.out === 'iron_ingot') award(gs, 'first_ingot', at); note(`${STRUCTS[e.type!].name} finished ${ITEMS[rc.out].name}.`);
+          const rc = RECIPES[job.recipe]; const outs = recipeOutputs(rc);
+          // Single-output recipes keep their original capacity rule. Multi-output bundles are
+          // preflighted as a whole: either every co-product is committed or none is.
+          if (rc.outs ? !recoveryFits(C(r, st.outC), outs) : spaceFor(r, st.outC, rc.out) < rc.qty) { blocked = true; note(`${STRUCTS[e.type!].name}: output slots full.`); continue; }
+          for (const [key, qty] of outs) addItem(r, st.outC, key, qty);
+          if (outs.some(([key]) => key === 'iron_ingot')) award(gs, 'first_ingot', at);
+          note(`${STRUCTS[e.type!].name} finished ${outs.map(([key, qty]) => `${qty} ${ITEMS[key].name}`).join(', ')}.`);
         }
         receipt(r, at, 'job.done', job.recipe); st.queue.shift(); continue;
       }
