@@ -196,12 +196,18 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
     g.fillStyle = col; const px = Math.round(tr.x + Math.cos(tr.a + Math.PI / 2) * 1.5 * ((tr.t / 100) % 2 > 1 ? 1 : -1)), py = Math.round(tr.y); g.fillRect(px, py, 4, 2); g.fillRect(px + 1, py - 2, 2, 2); }
   // ground layer structures
   const ents = Object.values(r.entities);
+  // Coverage is world geometry, not part of the culled cabinet sprite. Canvas clips it to the viewport.
+  if (o.buildType || o.reclaim) {
+    const R=BAL.economy.claimRadius*TILE;
+    for(const e of ents) if(e.kind==='struct' && e.type==='claim' && e.x+R>=cx && e.x-R<=cx+VIEW_W && e.y+R>=cy && e.y-R<=cy+VIEW_H) {
+      g.save(); g.strokeStyle='rgba(255,208,64,0.8)';g.lineWidth=1;g.setLineDash([5,4]);g.beginPath();g.arc(e.x,e.y,R,0,Math.PI*2);g.fillStyle='rgba(255,208,64,0.06)';g.fill();g.stroke();g.restore();
+    }
+  }
   for (const e of ents) { if (e.kind !== 'struct') continue; if (e.x < cx - 32 || e.x > cx + VIEW_W + 32 || e.y < cy - 32 || e.y > cy + VIEW_H + 48) continue; const d = STRUCTS[e.type!];
     if (d.layer === 'floor') g.drawImage(A.st[e.type!], e.x - 8, e.y - 8);
     if (e.type === 'garden') { g.drawImage(A.st.garden, e.x - 8, e.y - 8); const gd = e.garden!; if (gd.water > 0) { g.fillStyle = 'rgba(40,60,90,0.35)'; g.fillRect(e.x - 7, e.y - 5, 14, 11); } if (gd.crop) { const st = gd.growth; for (let k = 0; k < 3; k++) { const X = e.x - 5 + k * 5, Y = e.y + 3; const hgt = 1 + Math.round(st * 5); g.fillStyle = '#4a9a3a'; g.fillRect(X, Y - hgt, 1, hgt); if (st > 0.4) { g.fillStyle = '#6ac04a'; g.fillRect(X - 1, Y - hgt, 3, 1); } if (st >= 1) { g.fillStyle = gd.crop === 'herb' ? '#7ad08a' : '#f0b050'; g.fillRect(X - 1, Y - 1, 3, 2); } } } }
     if (e.type === 'garden' && e.garden?.coldFrame) { g.strokeStyle='#c5e5df';g.lineWidth=1;g.strokeRect(e.x-7.5,e.y-7.5,15,13);g.fillStyle='rgba(156,211,203,.24)';g.fillRect(e.x-7,e.y-7,14,12); }
     if (e.type === 'spikes') g.drawImage(A.st.spikes, e.x - 8, e.y - 8);
-    if (e.type === 'claim') { const R = BAL.economy.claimRadius * TILE; g.fillStyle = 'rgba(255,208,64,0.5)'; for (let k = 0; k < 64; k++) { const a = k / 64 * Math.PI * 2 + time / 4000; g.fillRect(Math.round(e.x + Math.cos(a) * R), Math.round(e.y + Math.sin(a) * R), 2, 1); } }
   }
   pfx.syncHazards(HAZ,p);pfx.syncProjFx(PROJ,now);
   // hazard telegraphs (ground)

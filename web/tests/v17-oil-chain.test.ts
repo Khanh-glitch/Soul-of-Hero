@@ -5,7 +5,7 @@ import {getWorld,setActiveLayout} from '../src/game/world';
 import {serializeSnapshot,validate} from '../src/game/persist';
 import {settle} from '../src/game/sim';
 const T=Date.UTC(2026,10,5);let seq=0;
-const act=(g:GameState,type:string,data:object={},now=T+10)=>dispatch(g,{id:`oil-${++seq}`,type,...data},now);
+const act=(g:GameState,type:string,data:object={},now=T+10)=>dispatch(g,{id:`oil-${++seq}`,type,...data},Math.max(now,g.run?.clock.lastSimAt??now));
 function station(g:GameState,type:'furnace'|'research'){const r=g.run!,p=r.player,f=mkContainer(r,'fuel',3),o=mkContainer(r,'out',6),e:Entity={id:`oil-machine-${++seq}`,kind:'struct',type,x:p.x+16,y:p.y,tx:Math.floor(p.x/TILE)+1,ty:Math.floor(p.y/TILE),hp:160,maxHp:160,station:{fuelC:f.id,outC:o.id,burn:0,queue:[]}};r.entities[e.id]=e;markDirty();return e;}
 const snap=(g:GameState)=>JSON.parse(JSON.parse(serializeSnapshot(g)).payload) as GameState;
 afterEach(()=>setActiveLayout('shipping'));

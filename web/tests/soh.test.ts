@@ -125,28 +125,28 @@ describe('new salt-shale → salted roast content chain', () => {
     for (let hit = 0; hit < 6 && !Object.values(r.entities).some(e => e.kind === 'drop' && e.c && C(r, e.c).slots[0]?.key === 'raw_salt'); hit++) swing(T0 + 1000 * (hit + 1));
     expect(Object.values(r.entities).some(e => e.kind === 'drop' && e.c && C(r, e.c).slots[0]?.key === 'raw_salt')).toBe(true);
     const drop = Object.values(r.entities).find(e => e.kind === 'drop' && C(r, e.c!).slots[0]?.key === 'raw_salt')!;
-    tp(gs, drop.x, drop.y);
-    expect(dispatch(gs, { id: id(), type: 'pickup', eid: drop.id }, T0 + 1).ok).toBe(true);
+    tp(gs, drop.x, drop.y); const afterHarvest=r.clock.lastSimAt;
+    expect(dispatch(gs, { id: id(), type: 'pickup', eid: drop.id }, afterHarvest + 1).ok).toBe(true);
     expect(countItem(r, 'inv', 'raw_salt')).toBe(1);
 
     const { tx: bx, ty: by } = buildSpot(gs); tp(gs, bx * TILE + 8, (by + 2) * TILE + 8);
     addItem(r, 'inv', 'wood', 8); addItem(r, 'inv', 'stone', 4); addItem(r, 'inv', 'meat', 1);
-    expect(dispatch(gs, { id: id(), type: 'build', struct: 'campfire', tx: bx, ty: by }, T0 + 2).ok).toBe(true);
+    expect(dispatch(gs, { id: id(), type: 'build', struct: 'campfire', tx: bx, ty: by }, afterHarvest + 2).ok).toBe(true);
     const fire = Object.values(r.entities).find(e => e.type === 'campfire')!;
-    expect(dispatch(gs, { id: id(), type: 'craft', recipe: 'salted_meat', eid: fire.id }, T0 + 3).ok).toBe(true);
+    expect(dispatch(gs, { id: id(), type: 'craft', recipe: 'salted_meat', eid: fire.id }, afterHarvest + 3).ok).toBe(true);
     expect(countItem(r, 'inv', 'raw_salt')).toBe(0); expect(countItem(r, 'inv', 'meat')).toBe(0);
-    expect(dispatch(gs, { id: id(), type: 'move', from: 'inv', fs: C(r, 'inv').slots.findIndex(s => s?.key === 'wood'), to: fire.station!.fuelC }, T0 + 4).ok).toBe(true);
-    stepStations(gs, 11_000, T0 + 11_004);
+    expect(dispatch(gs, { id: id(), type: 'move', from: 'inv', fs: C(r, 'inv').slots.findIndex(s => s?.key === 'wood'), to: fire.station!.fuelC }, afterHarvest + 4).ok).toBe(true);
+    stepStations(gs, 11_000, afterHarvest + 11_004);
     const output = C(r, fire.station!.outC); const slot = output.slots.findIndex(s => s?.key === 'salted_meat');
     expect(slot).toBeGreaterThanOrEqual(0); // physically waiting in station output
-    expect(dispatch(gs, { id: id(), type: 'move', from: fire.station!.outC, fs: slot, to: 'inv' }, T0 + 11_005).ok).toBe(true);
+    expect(dispatch(gs, { id: id(), type: 'move', from: fire.station!.outC, fs: slot, to: 'inv' }, afterHarvest + 11_005).ok).toBe(true);
     expect(countItem(r, 'inv', 'salted_meat')).toBe(1);
     const restored = JSON.parse(JSON.stringify(gs)) as GameState;
     expect(restored.version).toBe(SAVE_VERSION); // additive content needs no destructive save migration
     expect(totalItems(restored, 'salted_meat')).toBe(1);
     expect(restored.run!.sources[ty * WW + tx].stock).toBe(sourceAt(r, tx, ty)?.stock);
     r.player.hunger = 40; const mealSlot = C(r, 'inv').slots.findIndex(s => s?.key === 'salted_meat');
-    expect(dispatch(gs, { id: id(), type: 'useItem', slot: mealSlot }, T0 + 11_006).ok).toBe(true);
+    expect(dispatch(gs, { id: id(), type: 'useItem', slot: mealSlot }, afterHarvest + 11_006).ok).toBe(true);
     expect(r.player.hunger).toBe(82); expect(countItem(r, 'inv', 'salted_meat')).toBe(0);
   });
 });
@@ -161,6 +161,13 @@ describe('C01/C05 harvesting & shared hit rules', () => {
     const drops = Object.values(r.entities).filter(e => e.kind === 'drop'); expect(Object.keys(r.entities).length - before).toBe(drops.length);
     expect(drops.reduce((a, e) => a + (C(r, e.c!).slots[0]?.key === 'stone' ? C(r, e.c!).slots[0]!.qty : 0), 0)).toBe(6);
     expect(harvestHit(gs, tx, ty, { stone: 9 }, T0, 0, 0).result).toBe('empty');
+  });
+  it('a depleted plant beneath the player cannot intercept swings at a live tree',()=>{
+    setActiveLayout('shipping_fresh'); const gs=fresh(),r=gs.run!; r.creatures=[];
+    const tx=83,ty=95; expect(sourceAt(r,tx,ty)?.key).toBe('oak'); expect(sourceAt(r,tx+1,ty)?.key).toBe('grass');
+    r.player.x=(tx+1)*TILE+8; r.player.y=ty*TILE+8; r.sources[ty*WW+tx+1]={stock:0,hp:0,regrowAt:T0+300000}; markDirty();
+    const aim=idle(tx*TILE+8,ty*TILE+8);tick(gs,{...aim,attackPressed:true},16,T0+1);for(let i=1;i<=24;i++)tick(gs,aim,16,T0+1+i*16);
+    expect(sourceAt(r,tx,ty)?.hp).toBe(17);expect(r.sources[ty*WW+tx+1].stock).toBe(0);setActiveLayout('shipping');
   });
   it('the starting knife can bootstrap finite stone without yielding ore or duplicating stock', () => {
     const gs=fresh(),r=gs.run!,w=getWorld();r.creatures=[];const i=w.sourceV3.findIndex((key,j)=>key==='rock'&&[[-1,0],[1,0],[0,-1],[0,1]].some(([dx,dy])=>!blockedAt(r,j%WW+dx,Math.floor(j/WW)+dy)));
@@ -296,10 +303,10 @@ describe('C04 research', () => {
     expect(dispatch(gs, { id: id(), type: 'research', mode: 'specimen', slot: si, eid: tbl.id }, T0).ok).toBe(true);
     settle(gs, T0 + 60000); const out = C(r, tbl.station!.outC); const bpI = out.slots.findIndex(s => s?.key === 'blueprint'); expect(out.slots[bpI]!.meta).toBe('fur_cloak');
     expect(dispatch(gs, { id: id(), type: 'move', from: tbl.station!.outC, fs: bpI, to: 'inv' }, T0 + 60000).ok).toBe(true);
-    const ii = C(r, 'inv').slots.findIndex(s => s?.key === 'blueprint'); expect(dispatch(gs, { id: id(), type: 'useItem', slot: ii }, T0).ok).toBe(true);
+    const ii = C(r, 'inv').slots.findIndex(s => s?.key === 'blueprint'); expect(dispatch(gs, { id: id(), type: 'useItem', slot: ii }, T0 + 60000).ok).toBe(true);
     expect(r.knowledge.recipes.filter(k => k === 'fur_cloak').length).toBe(1);
     addItem(r, 'inv', 'blueprint', 1, { meta: 'fur_cloak' }); const j = C(r, 'inv').slots.findIndex(s => s?.key === 'blueprint');
-    expect(dispatch(gs, { id: id(), type: 'useItem', slot: j }, T0).ok).toBe(false); expect(C(r, 'inv').slots[j]?.key).toBe('blueprint');
+    expect(dispatch(gs, { id: id(), type: 'useItem', slot: j }, T0 + 60000).ok).toBe(false); expect(C(r, 'inv').slots[j]?.key).toBe('blueprint');
   });
 });
 

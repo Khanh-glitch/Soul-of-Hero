@@ -645,9 +645,10 @@ export function dispatch(gs: GameState, it: Intent, now: number): Result {
     const res = startRun(gs, it.character, now, it.region ?? null, it.seed); if (res.ok) gs.profile.profileReceipts.push(`intent:${it.id}`); return res;
   }
   if (!r) return { ok: false, reason: 'No active run.' };
+  if (r.seenIntents.includes(it.id)) return { ok: false, reason: 'Duplicate request ignored.', dup: true };
+  if (now < r.clock.lastSimAt) return { ok: false, reason: 'Command predates the committed world clock.' };
   // No command can transact after the run boundary while the caller awaits settlement.
   if (phaseOf(r, now) === 'expired') return { ok: false, reason: 'Run has expired.' };
-  if (r.seenIntents.includes(it.id)) return { ok: false, reason: 'Duplicate request ignored.', dup: true };
   const res = apply(gs, r, it, now);
   if (res.ok) {
     // Only a successful withdrawal/use/drop can empty a public crate. Its authored

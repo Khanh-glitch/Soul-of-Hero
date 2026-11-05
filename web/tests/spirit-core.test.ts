@@ -4,7 +4,7 @@ import {addItem,blockGrid,C,dispatch,markDirty,mkCreature,newGame,killPlayer} fr
 import {spiritDestination,tick,settle,hurtPlayer,type Input} from '../src/game/sim';
 import {getWorld,setActiveLayout} from '../src/game/world';
 import {serializeSnapshot,validate} from '../src/game/persist';
-const T=Date.UTC(2026,10,4);let n=0;const cmd=(g:GameState,type:string,p:object={})=>dispatch(g,{id:`sp-${++n}`,type,...p},T+1);
+const T=Date.UTC(2026,10,4);let n=0;const cmd=(g:GameState,type:string,p:object={})=>dispatch(g,{id:`sp-${++n}`,type,...p},Math.max(T+1,g.run?.clock.lastSimAt??T+1));
 const snapshot=(g:GameState)=>JSON.parse(JSON.parse(serializeSnapshot(g)).payload) as GameState;
 function setup(){setActiveLayout('shipping_fresh');const g=newGame();expect(cmd(g,'startRun',{character:'female',seed:77}).ok).toBe(true);const r=g.run!;r.creatures=[];addItem(r,'inv','core_demon',1);addItem(r,'inv','energy_refined',4);addItem(r,'inv','essence_spirit',1);const slot=C(r,'inv').slots.findIndex(s=>s?.key==='core_demon'),core=C(r,'inv').slots[slot]!;r.player.active=slot;cmd(g,'loadCore',{slot,uid:core.uid,mode:'signature'});cmd(g,'loadCore',{slot,uid:core.uid,mode:'refined'});const grid=blockGrid(r),w=getWorld();let p=0;outer:for(let y=20;y<170;y++)for(let x=20;x<170;x++)if([0,1,2,3,4,5,6].every(dx=>grid[y*WW+x+dx]===0&&!w.economyMap.protected[y*WW+x+dx])){p=y*WW+x;break outer;}expect(p).toBeGreaterThan(0);r.player.x=p%WW*TILE+8;r.player.y=Math.floor(p/WW)*TILE+8;r.discovered=Array(2500).fill(1);return {g,r,core};}
 const input=(g:GameState,x:number,y:number):Input=>({up:false,down:false,left:false,right:false,mx:x,my:y,attack:false,attackPressed:false,roll:false,cancel:false});

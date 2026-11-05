@@ -2,7 +2,7 @@
 import { BAL, TILE, WW, WH, HOUR, VIEW_W, VIEW_H, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity, type Proj, type Haz } from './core';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
 import { getWorld } from './world';
-import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, stepTerritory, spawnDrop } from './engine';
+import { dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
@@ -398,14 +398,15 @@ function resolveSwing(gs: GameState, now: number, slot: number, a: number) {
     if (damageCreature(gs, m, d.dmg, a, now)) hitAny = true;
   }
   // structures (spikes etc. not hittable); sources — one per swing, nearest in arc
-  let best: { tx: number; ty: number; d: number } | null = null;
+  let best: { tx: number; ty: number; d: number } | null = null, exhausted: { tx: number; ty: number; d: number } | null = null;
   for (let rr = 6; rr <= R + 4; rr += 5) for (let k = -2; k <= 2; k++) {
     const ang = a + (A / 2) * (k / 2); const x = p.x + Math.cos(ang) * rr, y = p.y + Math.sin(ang) * rr; const tx = tileOf(x), ty = tileOf(y);
     const src = sourceAt(r, tx, ty, now); if (!src) continue;
     const targetBlock = blockGrid(r)[ty * WW + tx];
     if (targetBlock === 1 || targetBlock === 3 || targetBlock === 5 || !clearInteraction(r, { x: tx * TILE + 8, y: ty * TILE + 8 })) continue;
-    const dd = dist(p.x, p.y, tx * TILE + 8, ty * TILE + 8); if (!best || dd < best.d) best = { tx, ty, d: dd };
+    const dd = dist(p.x, p.y, tx * TILE + 8, ty * TILE + 8); if(src.stock<=0){if(!exhausted||dd<exhausted.d)exhausted={tx,ty,d:dd};continue;} if (!best || dd < best.d) best = { tx, ty, d: dd };
   }
+  best ||= exhausted;
   if (best) {
     const res = harvestHit(gs, best.tx, best.ty, d.power || {}, now, p.x, p.y);
     const x = best.tx * TILE + 8, y = best.ty * TILE + 8;
@@ -1065,7 +1066,12 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
     if (p.hp <= 1e-8) { killPlayer(gs, t, 'exposure while offline'); if (!silent) report.push('You did not survive the time away. Your bag lies where you rested.'); }
   }
   if (!silent) for(const [id,before] of territoryBefore) { const e=r.entities[id]; if(e && e.hp!==undefined && e.hp<before.hp-0.01) report.push(`${before.name}: ${Math.round(before.hp)} → ${Math.round(e.hp)} HP while away (upkeep decay or actual impact).`); }
-  if (!silent) for(const c of Object.values(r.entities)) if(c.type==='claim' && c.c && c.cabinet) { const amounts=BAL.territory.materials.map((k:string)=>[k,countItem(r,c.c!,k)] as const).filter(([,q]:readonly [string,number])=>q>0); report.push(`Cabinet ${c.tx},${c.ty} remaining: ${amounts.map(([k,q]:readonly [string,number])=>`${q} ${ITEMS[k].name}`).join(', ') || 'no upkeep materials'}.`); }
+  if (!silent) for(const c of Object.values(r.entities)) if(c.type==='claim' && c.c && c.cabinet) {
+    const amounts=BAL.territory.materials.map((k:string)=>[k,countItem(r,c.c!,k)] as const).filter(([,q]:readonly [string,number])=>q>0);
+    const credit=Object.entries(c.cabinet.credit).filter(([,q])=>q>1e-9).map(([k,q])=>`${q.toFixed(2)} ${ITEMS[k].name}`).join(', ');
+    const f=territoryForecast(r,c), remaining=f.funded?(Number.isFinite(f.hours)?`${f.hours.toFixed(1)} h`:'unlimited'):'unfunded';
+    report.push(`Cabinet ${c.tx},${c.ty} physical stock: ${amounts.map(([k,q]:readonly [string,number])=>`${q} ${ITEMS[k].name}`).join(', ') || 'none'}; prepaid credit: ${credit || 'none'}; upkeep ${remaining}.`);
+  }
   if (now >= expiry) {
     if (!silent) for (const impact of impacts.values()) report.push(impact.destroyed ? `${impact.name} was destroyed while away.` : `${impact.name}: ${Math.round(impact.before)} → ${Math.round(impact.after)} HP while away.`);
     endRun(gs, 'expired', expiry); if (!silent) report.push('The run reached its 336-hour end while you were away.'); return report;
@@ -1104,7 +1110,7 @@ export function findInteract(gs: GameState, now: number): Interact | null {
     else if (e.kind === 'gen') label = e.power ? 'Generator (running)' : 'Fuel generator';
     else if (e.kind === 'evac') label = 'Evacuation beacon';
     else if (e.kind === 'cart') label = 'Cart cargo  [Shift+F] pull';
-    else if (e.kind === 'struct') { const d2 = STRUCTS[e.type!]; kind = 'struct:' + e.type; if (e.type!.startsWith('door')) label = e.open ? 'Close door' : 'Open door'; else if (e.type === 'claim') label = 'Configure claim repair reserve'; else if (d2.station) label = `Use ${d2.name}`; else if (e.turret) label = `Turret: ${turretStatus(r,e)}${e.turret.tracking ? ' · target' : ''}`; else if (e.basePower) label = `Generator: ${e.basePower.enabled && e.basePower.energy>0 ? 'running' : e.basePower.enabled ? 'no fuel' : 'off'}`; else if (d2.slots) label = `Open ${d2.name}`; else if (e.type === 'escrow') label = 'Rương ký gửi'; else if (e.type === 'garden') label = 'Tend garden'; else if (e.type === 'barrel') label = `Rain barrel (${Math.floor(e.water || 0)})`; else continue; }
+    else if (e.kind === 'struct') { const d2 = STRUCTS[e.type!]; kind = 'struct:' + e.type; if (e.type!.startsWith('door')) label = e.open ? 'Close door' : 'Open door'; else if (e.type === 'claim') label = 'Open Territory Cabinet'; else if (d2.station) label = `Use ${d2.name}`; else if (e.turret) label = `Turret: ${turretStatus(r,e)}${e.turret.tracking ? ' · target' : ''}`; else if (e.basePower) label = `Generator: ${e.basePower.enabled && e.basePower.energy>0 ? 'running' : e.basePower.enabled ? 'no fuel' : 'off'}`; else if (d2.slots) label = `Open ${d2.name}`; else if (e.type === 'escrow') label = 'Rương ký gửi'; else if (e.type === 'garden') label = 'Tend garden'; else if (e.type === 'barrel') label = `Rain barrel (${Math.floor(e.water || 0)})`; else continue; }
     else continue;
     bd = d; best = { kind, label, eid: e.id, x: e.x, y: e.y };
   }

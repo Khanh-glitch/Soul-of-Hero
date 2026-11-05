@@ -6,7 +6,7 @@ import { getWorld } from '../src/game/world';
 import { tick, settle, type Input } from '../src/game/sim';
 import { serializeSnapshot, validate } from '../src/game/persist';
 const T=Date.UTC(2026,10,1);let n=0;
-const act=(g:GameState,type:string,p:object={},id=`prod-${++n}`,now=T+1)=>dispatch(g,{id,type,...p},now);
+const act=(g:GameState,type:string,p:object={},id=`prod-${++n}`,now=T+1)=>dispatch(g,{id,type,...p},Math.max(now,g.run?.clock.lastSimAt??now));
 function fresh(){const g=newGame();expect(act(g,'startRun',{character:'female',region:0,seed:91}).ok).toBe(true);g.run!.creatures=[];return g;}
 function give(g:GameState,key:string,q=1){expect(addItem(g.run!,'inv',key,q)).toBe(0);}
 function station(g:GameState,type:'workbench'|'campfire'|'furnace'|'research',level:1|2=1){const r=g.run!,p=r.player,f=mkContainer(r,'fuel',3),o=mkContainer(r,'out',6),e:Entity={id:`fixture-${++n}`,kind:'struct',type,x:p.x+16,y:p.y,tx:Math.floor(p.x/TILE)+1,ty:Math.floor(p.y/TILE),hp:160,maxHp:160,station:{fuelC:f.id,outC:o.id,burn:0,queue:[],...(type==='workbench'?{level}:{})}};r.entities[e.id]=e;markDirty();return e;}

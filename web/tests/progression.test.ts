@@ -7,7 +7,7 @@ import { settle } from '../src/game/sim';
 import { serializeSnapshot, validate } from '../src/game/persist';
 
 const T0 = Date.UTC(2026, 10, 1); let seq = 0;
-const act = (gs: GameState, type: string, p: object = {}, id = `p${++seq}`, now = T0 + 10) => dispatch(gs, {id,type,...p}, now);
+const act = (gs: GameState, type: string, p: object = {}, id = `p${++seq}`, now = T0 + 10) => dispatch(gs, {id,type,...p}, Math.max(now,gs.run?.clock.lastSimAt??now));
 function fresh() { const gs=newGame(); expect(act(gs,'startRun',{character:'female',region:0,seed:10}).ok).toBe(true); return gs; }
 function station(gs:GameState,type:'workbench'|'research'|'campfire') {
   const r=gs.run!, p=r.player, fuel=mkContainer(r,'fuel',3), out=mkContainer(r,'out',6);
