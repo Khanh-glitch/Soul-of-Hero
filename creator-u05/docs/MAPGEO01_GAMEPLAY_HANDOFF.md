@@ -109,3 +109,20 @@ That is the smallest decision that removes the only FAIL traversal and lets all 
 water-overridden road segments be evaluated as real alternatives. No other action
 should be started before that decision; no `VEYRA_PLAYABLE`, `VISUAL_ACCEPTED`,
 `MERGE_READY` or production-merge claim is made here.
+
+---
+
+## 8. Follow-up note (MAP-GEO-REJOIN-02, 2026-11-05)
+
+This MAP-GEO-01 packet remains the authoritative **measurement** of the 10 named
+defects and its `PAPER/RUNTIME/VISUAL/GAMEPLAY` separation is unchanged. The two
+Map-derived display/geometry defects it flagged — `MGP-D01` (12/12 bridge centres
+blocked) and `MGP-D10` (305 cliff candidates / 0 visible cliffs) — were later
+addressed in a **separate, explicitly labelled QA verification build** by
+`SOH — MAP-GEO-REJOIN-02`, without amending GOLD and without granting any
+Gameplay permission. See `docs/MAP_GEO_REJOIN_02_STATUS.md` and
+`docs/MAPGEO02_GAMEPLAY_HANDOFF.md`.
+
+Gameplay/PR44 also moved from the `6e7d116b…` pinned here to
+`c2418b5405ff3325e0ac4806a5309785e816b093` while MAP-GEO-02 ran; PR44 remains
+OPEN and was NOT edited, merged or closed. Pin the SHA you actually integrate.

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Soul of Hero — MAP-GEO-REJOIN-02 corrected bridge/cliff projection (QA verification only)</title>
+    <style>
+      :root { color-scheme: dark; }
+      html, body { margin: 0; background: #141018; color: #e8e0d0; font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; }
+      #wrap { padding: 10px; display: inline-block; }
+      canvas#game { width: 640px; height: 360px; display: block; image-rendering: pixelated; border: 1px solid #4a4048; background: #0b1020; }
+      #ui { width: 640px; margin-top: 8px; box-sizing: border-box; }
+      .row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 6px; }
+      .row label { min-width: 92px; }
+      input[type=range] { flex: 1; min-width: 180px; accent-color: #e0c080; }
+      button { font: inherit; color: #e8e0d0; background: #2a2230; border: 1px solid #6a5e66; padding: 3px 8px; cursor: pointer; }
+      button.on { background: #6a5230; border-color: #e0c080; }
+      #speed { display: inline-block; min-width: 108px; color: #f0d890; font-weight: bold; }
+      #status { margin: 0; padding: 6px; background: #1e1822; border: 1px solid #3a3038; white-space: pre-wrap; }
+      .note { margin-top: 6px; color: #a89888; }
+      .hidden { display: none; }
+      #pure { color: #8ec08e; }
+      #lens { width: 192px; height: 144px; display: block; image-rendering: pixelated; border: 1px solid #4a4048; background: #0b1020; }
+      #lensrow { align-items: flex-start; }
+      #lenscap { max-width: 420px; color: #a89888; }
+      kbd { background: #2a2230; border: 1px solid #6a5e66; padding: 0 4px; }
+    </style>
+  </head>
+  <body>
+    <div id="wrap">
+      <canvas id="game" width="640" height="360"></canvas>
+      <div id="ui">
+        <div class="row">
+          <label for="speedRange">Tốc độ</label>
+          <input id="speedRange" type="range" min="1" max="10" step="0.5" value="1" />
+          <span id="speed">x1 · 72 px/s</span>
+        </div>
+        <div class="row">
+          <label for="zoomRange">Zoom bản đồ</label>
+          <input id="zoomRange" type="range" min="0" max="1" step="0.01" value="1" />
+          <span id="zoomLabel">1× (native)</span>
+        </div>
+        <div class="row" id="presets">
+          <button data-speed="1">x1</button>
+          <button data-speed="2">x2</button>
+          <button data-speed="5">x5</button>
+          <button data-speed="10">x10</button>
+          <button id="fit">Toàn cảnh (Z)</button>
+          <button id="native">1× (V)</button>
+          <button id="guides">Khung nhìn (B): BẬT</button>
+          <button id="follow" class="on">Follow (F): Fit</button>
+          <button id="lensBtn">Camera 1× (L): BẬT</button>
+          <button id="collision">Chặn địa hình: TẮT</button>
+          <button id="qMode">QA candidate (Q): OFF</button>
+          <button id="hide">Ẩn bảng (H)</button>
+          <button id="reset">Về Beacon (R)</button>
+        </div>
+        <div class="row" id="lensrow">
+          <canvas id="lens" width="192" height="144"></canvas>
+          <span id="lenscap"><b>Camera 1× luôn đi theo nhân vật</b> — khung 192×144 cắt từ chính bản đồ nền, hero 16×24 luôn ở giữa. Dù zoom out tới mức nhỏ nhất, camera follow <b>không bao giờ tắt</b>. <kbd>L</kbd> bật/tắt. <kbd>F</kbd> đổi 3 chế độ: <b>Fit</b> (cả map luôn thấy + bản đồ trượt theo nhân vật), <b>Center</b> (nhân vật luôn giữa màn hình, map cuộn dưới chân), <b>Khoá</b> (đứng yên).</span>
+        </div>
+        <pre id="status"></pre>
+        <div class="note" id="pure">Chỉ nền: đường · sông · hồ · biển · biome · bờ biển · cầu. <b>Không</b> công trình, tường, cửa, mái, marker, label, POI overlay, hiệu ứng nổi. Đã <b>khử ô đơn lẻ</b> (ô A bị 4 ô B vây quanh) bằng 3 lượt lọc có điều kiện, 3 pass deterministic; đường/sông/cầu/vách/băng/dung nham <b>giữ nguyên</b>.</div>
+        <div class="note">Di chuyển <kbd>WASD</kbd> / <kbd>↑↓←→</kbd> · tốc độ <kbd>+</kbd> <kbd>-</kbd> hoặc <kbd>[</kbd> <kbd>]</kbd> (1→10) · <b>zoom</b> <kbd>Z</kbd> toàn cảnh ↔ 1×, <kbd>,</kbd> <kbd>.</kbd> hoặc lăn chuột, <kbd>V</kbd> về 1×, <kbd>F</kbd> Fit/Center/Khoá camera, <kbd>B</kbd> khung nhìn, <kbd>L</kbd> camera 1× · <kbd>C</kbd> chặn địa hình · <kbd>H</kbd> ẩn bảng · <kbd>R</kbd> về Beacon.</div>
+        <div class="note">Chế độ <b>Toàn cảnh</b> thu nhỏ tới mức nhỏ nhất để <b>toàn bộ khung 4000×2800 tile nằm gọn trong 640×360</b>. Đây là bản xem mẫu (500×350 pixel, 1 pixel = 8×8 tile, lấy đúng tâm tile GOLD) — <b>không</b> cấp phát 11,2 triệu ô, <b>không</b> phải raster 8 AU phóng to, <b>không</b> đổi luật camera: chơi bình thường vẫn 640×360 1×, hero 16×24. Ở chế độ này <b>marker nhân vật luôn hiện và đi theo WASD</b>, bản đồ trượt trong phần letterbox để vẫn thấy trọn khung map, và khung <b>Camera 1×</b> bên dưới luôn bám nhân vật.</div>
+        <div class="note"><b>MAP-GEO-REJOIN-02 · CHỈ XÁC MINH</b>: cầu là deck có giới hạn đo từ GOLD id/at/ang/load + hai bờ sông + đường nối (KHÔNG dùng bán kính marker 12 AU); vách là dải mặt dốc mỏng từ raster cliffCandidate nhị phân. Mặc định <b>PRODUCTION_NO_PERMISSION</b>: deck vẫn chặn, vách KHÔNG phải tường. <kbd>Q</kbd> bật <b>QA_CANDIDATE_CROSSING</b> chỉ để đo hình học bằng WASD thật; không cấp quyền đi lại, xe, tải trọng hay va chạm Gameplay. Không có atlas/art/world mới, không chấp nhận visual toàn cục, không VEYRA_PLAYABLE.</div>
+        <div class="note">Tốc độ gốc 72 px/s không đổi; hệ số là điều khiển <i>viewer</i>, không phải luật Gameplay. File chạy độc lập, không cần server, không nạp atlas mới.</div>
+      </div>
+    </div>
+    <script type="module" src="/src/mapgeo02/main.generated.ts"></script>
+  </body>
+</html>

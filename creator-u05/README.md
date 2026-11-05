@@ -198,3 +198,35 @@ công trình/atlas mới.
 `VISUAL=NOT_REQUESTED_AND_NOT_GRANTED` · `GAMEPLAY=NOT_REQUESTED_AND_NOT_GRANTED`.
 Không `VEYRA_PLAYABLE`, không `VISUAL_ACCEPTED`, không merge. NATURE-01/02 vẫn là
 R&D lưu trữ, không phải hệ đặt tài nguyên production.
+
+---
+
+## MAP-GEO-REJOIN-02 — Sửa chiếu cầu & vách thật (KHÔNG tạo địa lý mới)
+
+> Tiếp MAP-GEO-REJOIN-01. Map pinned `3e02fde05a24f6d645ea00ed5ab78900655e1272`;
+> Gameplay pinned `6e7d116b…`, **PR44 sống đã drift** sang `c2418b54…` (OPEN,
+> không đụng). Báo cáo: `docs/MAP_GEO_REJOIN_02_STATUS.md`; bàn giao:
+> `docs/MAPGEO02_GAMEPLAY_HANDOFF.md`.
+
+| File | Nội dung |
+|---|---|
+| `SoulOfHero_MapGeo02_CorrectedProjection.html` | **QA verification executable** có nhãn riêng; cùng renderer `U=0.5` / `640×360` `1×` / hero `16×24`; 3 executable bảo vệ **không đổi** |
+| `web-u05/src/mapgeo02/corrected-world.ts` | Overlay additive: deck cầu có giới hạn từ GOLD `id/at/ang/load` + hai bờ + đường nối; vách nhị phân `>=1` + height/slope evidence; 2 mode quyền tách biệt |
+| `evidence/mapgeo02-{preflight,build,bridge-geometry,road-water-classification,traversal,gameplay-handoff}.json` | Ref sống, build SHA, bảng 12 cầu, 31 giao cắt nước, 17 lượt phím thật, bàn giao |
+| `evidence/mapgeo02-shots/*.png` | **52** ảnh native `640×360`, gồm 6 cặp đúng toạ độ MAP-GEO-01 |
+| `build-mapgeo02.mjs`, `vite.mapgeo02.config.mjs`, `tools/{preflight-mapgeo02,classify-mapgeo02-crossings,build-mapgeo02-handoff}.mjs` | Build + tool chỉ-đọc / phân loại / bàn giao |
+| `tests/qa-mapgeo02-traversal.mjs`, `tests/test-mapgeo02.mjs` | QA browser phím thật + **125/125** static test |
+
+**Đã sửa:** `MGP-D01` — thảm gỗ 888 tile trên đất / 0 tile trên nước tại `br_1`
+→ **596** deck tile (**100% trên nước, 0 trên đất**), **10/12** cầu CANDIDATE,
+**2/12** để nguyên chưa giải quyết (`br_9` bearing, `br_b` thiếu bờ; **không ép
+12 PASS**, không stamp). `MGP-D10` — 305 cell nhị phân / **0** `T.CLIFF` →
+**187** tile vách dải mỏng gãy ở cửa sổ cao địa (**0 slab đầy**, **0 production
+wall**), QA candidate collision tách biệt. 31 đường nước: **8 ferry** (vẫn là nước),
+**9 authored bridge**, **8 ford**, **6 ambiguous**; Beacon road **0 tile đổi**.
+
+Production `PRODUCTION_NO_PERMISSION` **vẫn chặn** deck; `QA_CANDIDATE_CROSSING`
+chỉ đo geometry. **0 rò rỉ quyền / 10,086 tile**, 28/28 runtime check, 0 lỗi
+browser. `PAPER=MEASURED` · `RUNTIME=ISOLATED_VIEWER_PHYSICAL_VERIFIED_QA_ONLY` ·
+`VISUAL=NOT_REQUESTED_AND_NOT_GRANTED` · `GAMEPLAY=NOT_REQUESTED_AND_NOT_GRANTED`.
+Không `VEYRA_PLAYABLE`, không merge, không GOLD amendment, không atlas/art mới.

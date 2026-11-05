@@ -1,0 +1,4092 @@
+{
+  "schema": "soh.mapgeo02.traversal.v1",
+  "task": "SOH — MAP-GEO-REJOIN-02",
+  "status": "QA_VERIFICATION__NOT_PRODUCTION__NOT_VISUAL_ACCEPTANCE",
+  "generatedAt": "2026-11-05T14:20:24.908Z",
+  "executable": {
+    "file": "creator-u05/SoulOfHero_MapGeo02_CorrectedProjection.html",
+    "sha256": "41b2203bbbab47c0f4f215461e9e7571c2d1a46b0d982a7a2fbf177bbcac2339"
+  },
+  "comparisonExecutable": {
+    "file": "creator-u05/SoulOfHero_TerrainOnly_U05_x10.html",
+    "sha256": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0"
+  },
+  "method": {
+    "renderer": "existing SOH U=0.5 terrain renderer, verbatim terrain.ts painter, native 640x360 1x, hero 16x24",
+    "screenshots": "document.getElementById(\"game\").toDataURL(\"image/png\")",
+    "movement": "REAL held WASD / arrow keys with NATURAL_TERRAIN_ONLY collision ON; x10 viewer speed",
+    "spawnControl": "window.__terrain.reset(tx,ty) ONCE per run; NOT a route or teleport claim",
+    "modes": {
+      "default": "PRODUCTION_NO_PERMISSION",
+      "qaOnly": "QA_CANDIDATE_CROSSING"
+    },
+    "authority": "QA candidate crossing/collision is EXPLICIT and NEVER grants production traversal"
+  },
+  "source": {
+    "bridgeCount": 12,
+    "resolved": [
+      "br_0",
+      "br_1",
+      "br_2",
+      "br_3",
+      "br_4",
+      "br_5",
+      "br_6",
+      "br_7",
+      "br_8",
+      "br_a"
+    ],
+    "unresolved": [
+      "br_9",
+      "br_b"
+    ],
+    "deckTileCount": 596,
+    "cliff": {
+      "candidateCells": 305,
+      "qualifiedCells": 305,
+      "faceBand": [
+        2,
+        4
+      ],
+      "sideHistogram": {
+        "N": 105,
+        "S": 62,
+        "W": 64,
+        "E": 74
+      }
+    }
+  },
+  "matchingCoordinateRuns": [
+    {
+      "id": "match_T1_spawn_to_route",
+      "mode": "PRODUCTION_NO_PERMISSION",
+      "collision": "NATURAL_TERRAIN_ONLY",
+      "spawn": {
+        "tile": [
+          744,
+          1212
+        ],
+        "au": [
+          372.25,
+          606.25
+        ],
+        "method": "window.__terrain.reset(tx,ty) VIEWER SPAWN CONTROL (one per run)"
+      },
+      "legs": [
+        {
+          "keys": [
+            "w",
+            "d"
+          ],
+          "ms": 950
+        }
+      ],
+      "samples": [
+        {
+          "leg": "start",
+          "tile": [
+            744,
+            1212
+          ],
+          "px": 11912,
+          "py": 19400,
+          "visibleTile": 4,
+          "candidate": {
+            "deck": null,
+            "face": null
+          }
+        },
+        {
+          "leg": 1,
+          "keys": [
+            "w",
+            "d"
+          ],
+          "heldMs": 950,
+          "tile": [
+            771,
+            1185
+          ],
+          "px": 12336,
+          "py": 18976,
+          "visibleTile": 4,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 0
+        }
+      ],
+      "movement": {
+        "movedPx": 848,
+        "tilesTraversed": 53,
+        "blockedSubsteps": 0,
+        "startTile": [
+          744,
+          1212
+        ],
+        "endTile": [
+          771,
+          1185
+        ],
+        "tileDelta": [
+          27,
+          -27
+        ],
+        "endVisibleTile": 4,
+        "endOnBridgeDeck": null,
+        "endOnCliffFace": null,
+        "endProductionBlocked": false,
+        "endQaBlocked": false
+      },
+      "realKeys": {
+        "held": 950,
+        "inputLogEntries": 4,
+        "teleportUsed": false,
+        "camUsedAsRoute": false,
+        "collisionDisabled": false
+      },
+      "before": {
+        "file": "creator-u05/evidence/mapgeo02-shots/match_T1_spawn_to_route_before.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "after": {
+        "file": "creator-u05/evidence/mapgeo02-shots/match_T1_spawn_to_route_after.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "feature": "exact MAP-GEO-01 coordinate/legs, PRODUCTION_NO_PERMISSION",
+      "result": "MATCHING_COORDINATE_COMPARISON",
+      "note": "",
+      "comparedTo": "creator-u05/evidence/mapgeo01-shots/T1_spawn_to_route_after.png",
+      "pixelDiff": {
+        "size": [
+          640,
+          360
+        ],
+        "differingPixels": 165447,
+        "totalPixels": 230400,
+        "meanAbsChannelDiff": 19.37
+      },
+      "exactCoordinate": {
+        "tile": [
+          774,
+          1182
+        ],
+        "shot": {
+          "file": "creator-u05/evidence/mapgeo02-shots/coord_T1_spawn_to_route.png",
+          "size": [
+            640,
+            360
+          ]
+        },
+        "window": {
+          "x0": 754,
+          "x1": 793,
+          "y0": 1171,
+          "y1": 1193
+        },
+        "pixelDiff": {
+          "size": [
+            640,
+            360
+          ],
+          "differingPixels": 165447,
+          "totalPixels": 230400,
+          "meanAbsChannelDiff": 19.37
+        },
+        "tileCodeComparison": {
+          "tiles": 920,
+          "changedTiles": 0,
+          "oldBridgeTiles": 0,
+          "newBridgeTiles": 0,
+          "oldCliffTiles": 0,
+          "newCliffTiles": 0,
+          "note": "exact world-coordinate tile-code comparison; independent of viewer sub-pixel camera offset"
+        },
+        "pixelDiffCaveat": "Raw pixel diff also includes a small viewer camera offset between independently timed runs; the tile-code comparison is the authoritative same-coordinate geometry check."
+      }
+    },
+    {
+      "id": "match_T2_road_biome_transition",
+      "mode": "PRODUCTION_NO_PERMISSION",
+      "collision": "NATURAL_TERRAIN_ONLY",
+      "spawn": {
+        "tile": [
+          2372,
+          2580
+        ],
+        "au": [
+          1186.25,
+          1290.25
+        ],
+        "method": "window.__terrain.reset(tx,ty) VIEWER SPAWN CONTROL (one per run)"
+      },
+      "legs": [
+        {
+          "keys": [
+            "d"
+          ],
+          "ms": 2200
+        }
+      ],
+      "samples": [
+        {
+          "leg": "start",
+          "tile": [
+            2372,
+            2580
+          ],
+          "px": 37960,
+          "py": 41288,
+          "visibleTile": 12,
+          "candidate": {
+            "deck": null,
+            "face": null
+          }
+        },
+        {
+          "leg": 1,
+          "keys": [
+            "d"
+          ],
+          "heldMs": 2200,
+          "tile": [
+            2471,
+            2580
+          ],
+          "px": 39544,
+          "py": 41288,
+          "visibleTile": 12,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 0
+        }
+      ],
+      "movement": {
+        "movedPx": 1584,
+        "tilesTraversed": 99,
+        "blockedSubsteps": 0,
+        "startTile": [
+          2372,
+          2580
+        ],
+        "endTile": [
+          2471,
+          2580
+        ],
+        "tileDelta": [
+          99,
+          0
+        ],
+        "endVisibleTile": 12,
+        "endOnBridgeDeck": null,
+        "endOnCliffFace": null,
+        "endProductionBlocked": false,
+        "endQaBlocked": false
+      },
+      "realKeys": {
+        "held": 2200,
+        "inputLogEntries": 2,
+        "teleportUsed": false,
+        "camUsedAsRoute": false,
+        "collisionDisabled": false
+      },
+      "before": {
+        "file": "creator-u05/evidence/mapgeo02-shots/match_T2_road_biome_transition_before.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "after": {
+        "file": "creator-u05/evidence/mapgeo02-shots/match_T2_road_biome_transition_after.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "feature": "exact MAP-GEO-01 coordinate/legs, PRODUCTION_NO_PERMISSION",
+      "result": "MATCHING_COORDINATE_COMPARISON",
+      "note": "",
+      "comparedTo": "creator-u05/evidence/mapgeo01-shots/T2_road_biome_transition_after.png",
+      "pixelDiff": {
+        "size": [
+          640,
+          360
+        ],
+        "differingPixels": 133440,
+        "totalPixels": 230400,
+        "meanAbsChannelDiff": 13.216
+      },
+      "exactCoordinate": {
+        "tile": [
+          2473,
+          2580
+        ],
+        "shot": {
+          "file": "creator-u05/evidence/mapgeo02-shots/coord_T2_road_biome_transition.png",
+          "size": [
+            640,
+            360
+          ]
+        },
+        "window": {
+          "x0": 2453,
+          "x1": 2492,
+          "y0": 2569,
+          "y1": 2591
+        },
+        "pixelDiff": {
+          "size": [
+            640,
+            360
+          ],
+          "differingPixels": 133440,
+          "totalPixels": 230400,
+          "meanAbsChannelDiff": 13.216
+        },
+        "tileCodeComparison": {
+          "tiles": 920,
+          "changedTiles": 0,
+          "oldBridgeTiles": 0,
+          "newBridgeTiles": 0,
+          "oldCliffTiles": 0,
+          "newCliffTiles": 0,
+          "note": "exact world-coordinate tile-code comparison; independent of viewer sub-pixel camera offset"
+        },
+        "pixelDiffCaveat": "Raw pixel diff also includes a small viewer camera offset between independently timed runs; the tile-code comparison is the authoritative same-coordinate geometry check."
+      }
+    },
+    {
+      "id": "match_T3_bridge_approach_crossing",
+      "mode": "PRODUCTION_NO_PERMISSION",
+      "collision": "NATURAL_TERRAIN_ONLY",
+      "spawn": {
+        "tile": [
+          2020,
+          907
+        ],
+        "au": [
+          1010.25,
+          453.75
+        ],
+        "method": "window.__terrain.reset(tx,ty) VIEWER SPAWN CONTROL (one per run)"
+      },
+      "legs": [
+        {
+          "keys": [
+            "d"
+          ],
+          "ms": 1250
+        }
+      ],
+      "samples": [
+        {
+          "leg": "start",
+          "tile": [
+            2020,
+            907
+          ],
+          "px": 32328,
+          "py": 14520,
+          "visibleTile": 9,
+          "candidate": {
+            "deck": null,
+            "face": null
+          }
+        },
+        {
+          "leg": 1,
+          "keys": [
+            "d"
+          ],
+          "heldMs": 1250,
+          "tile": [
+            2041,
+            907
+          ],
+          "px": 32670,
+          "py": 14520,
+          "visibleTile": 12,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 120
+        }
+      ],
+      "movement": {
+        "movedPx": 342,
+        "tilesTraversed": 21.38,
+        "blockedSubsteps": 120,
+        "startTile": [
+          2020,
+          907
+        ],
+        "endTile": [
+          2041,
+          907
+        ],
+        "tileDelta": [
+          21,
+          0
+        ],
+        "endVisibleTile": 12,
+        "endOnBridgeDeck": null,
+        "endOnCliffFace": null,
+        "endProductionBlocked": false,
+        "endQaBlocked": false
+      },
+      "realKeys": {
+        "held": 1250,
+        "inputLogEntries": 2,
+        "teleportUsed": false,
+        "camUsedAsRoute": false,
+        "collisionDisabled": false
+      },
+      "before": {
+        "file": "creator-u05/evidence/mapgeo02-shots/match_T3_bridge_approach_crossing_before.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "after": {
+        "file": "creator-u05/evidence/mapgeo02-shots/match_T3_bridge_approach_crossing_after.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "feature": "exact MAP-GEO-01 coordinate/legs, PRODUCTION_NO_PERMISSION",
+      "result": "MATCHING_COORDINATE_COMPARISON",
+      "note": "",
+      "comparedTo": "creator-u05/evidence/mapgeo01-shots/T3_bridge_approach_crossing_after.png",
+      "pixelDiff": {
+        "size": [
+          640,
+          360
+        ],
+        "differingPixels": 178393,
+        "totalPixels": 230400,
+        "meanAbsChannelDiff": 49.948
+      },
+      "exactCoordinate": {
+        "tile": [
+          2041,
+          907
+        ],
+        "shot": {
+          "file": "creator-u05/evidence/mapgeo02-shots/coord_T3_bridge_approach_crossing.png",
+          "size": [
+            640,
+            360
+          ]
+        },
+        "window": {
+          "x0": 2021,
+          "x1": 2060,
+          "y0": 896,
+          "y1": 918
+        },
+        "pixelDiff": {
+          "size": [
+            640,
+            360
+          ],
+          "differingPixels": 178393,
+          "totalPixels": 230400,
+          "meanAbsChannelDiff": 49.948
+        },
+        "tileCodeComparison": {
+          "tiles": 920,
+          "changedTiles": 702,
+          "oldBridgeTiles": 656,
+          "newBridgeTiles": 46,
+          "oldCliffTiles": 0,
+          "newCliffTiles": 0,
+          "note": "exact world-coordinate tile-code comparison; independent of viewer sub-pixel camera offset"
+        },
+        "pixelDiffCaveat": "Raw pixel diff also includes a small viewer camera offset between independently timed runs; the tile-code comparison is the authoritative same-coordinate geometry check."
+      }
+    },
+    {
+      "id": "match_T4_highland_and_alternative",
+      "mode": "PRODUCTION_NO_PERMISSION",
+      "collision": "NATURAL_TERRAIN_ONLY",
+      "spawn": {
+        "tile": [
+          1200,
+          1200
+        ],
+        "au": [
+          600.25,
+          600.25
+        ],
+        "method": "window.__terrain.reset(tx,ty) VIEWER SPAWN CONTROL (one per run)"
+      },
+      "legs": [
+        {
+          "keys": [
+            "d"
+          ],
+          "ms": 700
+        },
+        {
+          "keys": [
+            "s"
+          ],
+          "ms": 600
+        },
+        {
+          "keys": [
+            "a"
+          ],
+          "ms": 700
+        },
+        {
+          "keys": [
+            "w"
+          ],
+          "ms": 600
+        }
+      ],
+      "samples": [
+        {
+          "leg": "start",
+          "tile": [
+            1200,
+            1200
+          ],
+          "px": 19208,
+          "py": 19208,
+          "visibleTile": 5,
+          "candidate": {
+            "deck": null,
+            "face": null
+          }
+        },
+        {
+          "leg": 1,
+          "keys": [
+            "d"
+          ],
+          "heldMs": 700,
+          "tile": [
+            1228,
+            1200
+          ],
+          "px": 19652,
+          "py": 19208,
+          "visibleTile": 7,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 0
+        },
+        {
+          "leg": 2,
+          "keys": [
+            "s"
+          ],
+          "heldMs": 600,
+          "tile": [
+            1228,
+            1221
+          ],
+          "px": 19652,
+          "py": 19544,
+          "visibleTile": 5,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 0
+        },
+        {
+          "leg": 3,
+          "keys": [
+            "a"
+          ],
+          "heldMs": 700,
+          "tile": [
+            1196,
+            1221
+          ],
+          "px": 19148,
+          "py": 19544,
+          "visibleTile": 5,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 0
+        },
+        {
+          "leg": 4,
+          "keys": [
+            "w"
+          ],
+          "heldMs": 600,
+          "tile": [
+            1196,
+            1195
+          ],
+          "px": 19148,
+          "py": 19124,
+          "visibleTile": 7,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 0
+        }
+      ],
+      "movement": {
+        "movedPx": 1704,
+        "tilesTraversed": 106.5,
+        "blockedSubsteps": 0,
+        "startTile": [
+          1200,
+          1200
+        ],
+        "endTile": [
+          1196,
+          1195
+        ],
+        "tileDelta": [
+          -4,
+          -5
+        ],
+        "endVisibleTile": 7,
+        "endOnBridgeDeck": null,
+        "endOnCliffFace": null,
+        "endProductionBlocked": false,
+        "endQaBlocked": false
+      },
+      "realKeys": {
+        "held": 2600,
+        "inputLogEntries": 8,
+        "teleportUsed": false,
+        "camUsedAsRoute": false,
+        "collisionDisabled": false
+      },
+      "before": {
+        "file": "creator-u05/evidence/mapgeo02-shots/match_T4_highland_and_alternative_before.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "after": {
+        "file": "creator-u05/evidence/mapgeo02-shots/match_T4_highland_and_alternative_after.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "feature": "exact MAP-GEO-01 coordinate/legs, PRODUCTION_NO_PERMISSION",
+      "result": "MATCHING_COORDINATE_COMPARISON",
+      "note": "",
+      "comparedTo": "creator-u05/evidence/mapgeo01-shots/T4_highland_and_alternative_after.png",
+      "pixelDiff": {
+        "size": [
+          640,
+          360
+        ],
+        "differingPixels": 153233,
+        "totalPixels": 230400,
+        "meanAbsChannelDiff": 26.4
+      },
+      "exactCoordinate": {
+        "tile": [
+          1203,
+          1199
+        ],
+        "shot": {
+          "file": "creator-u05/evidence/mapgeo02-shots/coord_T4_highland_and_alternative.png",
+          "size": [
+            640,
+            360
+          ]
+        },
+        "window": {
+          "x0": 1183,
+          "x1": 1222,
+          "y0": 1188,
+          "y1": 1210
+        },
+        "pixelDiff": {
+          "size": [
+            640,
+            360
+          ],
+          "differingPixels": 153233,
+          "totalPixels": 230400,
+          "meanAbsChannelDiff": 26.4
+        },
+        "tileCodeComparison": {
+          "tiles": 920,
+          "changedTiles": 0,
+          "oldBridgeTiles": 0,
+          "newBridgeTiles": 0,
+          "oldCliffTiles": 0,
+          "newCliffTiles": 0,
+          "note": "exact world-coordinate tile-code comparison; independent of viewer sub-pixel camera offset"
+        },
+        "pixelDiffCaveat": "Raw pixel diff also includes a small viewer camera offset between independently timed runs; the tile-code comparison is the authoritative same-coordinate geometry check."
+      }
+    },
+    {
+      "id": "match_T5_coastal_dock_approach",
+      "mode": "PRODUCTION_NO_PERMISSION",
+      "collision": "NATURAL_TERRAIN_ONLY",
+      "spawn": {
+        "tile": [
+          3170,
+          1769
+        ],
+        "au": [
+          1585.25,
+          884.75
+        ],
+        "method": "window.__terrain.reset(tx,ty) VIEWER SPAWN CONTROL (one per run)"
+      },
+      "legs": [
+        {
+          "keys": [
+            "a"
+          ],
+          "ms": 600
+        },
+        {
+          "keys": [
+            "a"
+          ],
+          "ms": 250
+        },
+        {
+          "keys": [
+            "a"
+          ],
+          "ms": 90
+        }
+      ],
+      "samples": [
+        {
+          "leg": "start",
+          "tile": [
+            3170,
+            1769
+          ],
+          "px": 50728,
+          "py": 28312,
+          "visibleTile": 6,
+          "candidate": {
+            "deck": null,
+            "face": null
+          }
+        },
+        {
+          "leg": 1,
+          "keys": [
+            "a"
+          ],
+          "heldMs": 600,
+          "tile": [
+            3141,
+            1769
+          ],
+          "px": 50260,
+          "py": 28312,
+          "visibleTile": 2,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 0
+        },
+        {
+          "leg": 2,
+          "keys": [
+            "a"
+          ],
+          "heldMs": 250,
+          "tile": [
+            3130,
+            1769
+          ],
+          "px": 50092,
+          "py": 28312,
+          "visibleTile": 12,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 0
+        },
+        {
+          "leg": 3,
+          "keys": [
+            "a"
+          ],
+          "heldMs": 90,
+          "tile": [
+            3130,
+            1769
+          ],
+          "px": 50084,
+          "py": 28312,
+          "visibleTile": 12,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 11
+        }
+      ],
+      "movement": {
+        "movedPx": 644,
+        "tilesTraversed": 40.25,
+        "blockedSubsteps": 11,
+        "startTile": [
+          3170,
+          1769
+        ],
+        "endTile": [
+          3130,
+          1769
+        ],
+        "tileDelta": [
+          -40,
+          0
+        ],
+        "endVisibleTile": 12,
+        "endOnBridgeDeck": null,
+        "endOnCliffFace": null,
+        "endProductionBlocked": false,
+        "endQaBlocked": false
+      },
+      "realKeys": {
+        "held": 940,
+        "inputLogEntries": 6,
+        "teleportUsed": false,
+        "camUsedAsRoute": false,
+        "collisionDisabled": false
+      },
+      "before": {
+        "file": "creator-u05/evidence/mapgeo02-shots/match_T5_coastal_dock_approach_before.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "after": {
+        "file": "creator-u05/evidence/mapgeo02-shots/match_T5_coastal_dock_approach_after.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "feature": "exact MAP-GEO-01 coordinate/legs, PRODUCTION_NO_PERMISSION",
+      "result": "MATCHING_COORDINATE_COMPARISON",
+      "note": "",
+      "comparedTo": "creator-u05/evidence/mapgeo01-shots/T5_coastal_dock_approach_after.png",
+      "pixelDiff": {
+        "size": [
+          640,
+          360
+        ],
+        "differingPixels": 103,
+        "totalPixels": 230400,
+        "meanAbsChannelDiff": 0.033
+      },
+      "exactCoordinate": {
+        "tile": [
+          3130,
+          1769
+        ],
+        "shot": {
+          "file": "creator-u05/evidence/mapgeo02-shots/coord_T5_coastal_dock_approach.png",
+          "size": [
+            640,
+            360
+          ]
+        },
+        "window": {
+          "x0": 3110,
+          "x1": 3149,
+          "y0": 1758,
+          "y1": 1780
+        },
+        "pixelDiff": {
+          "size": [
+            640,
+            360
+          ],
+          "differingPixels": 103,
+          "totalPixels": 230400,
+          "meanAbsChannelDiff": 0.033
+        },
+        "tileCodeComparison": {
+          "tiles": 920,
+          "changedTiles": 0,
+          "oldBridgeTiles": 0,
+          "newBridgeTiles": 0,
+          "oldCliffTiles": 0,
+          "newCliffTiles": 0,
+          "note": "exact world-coordinate tile-code comparison; independent of viewer sub-pixel camera offset"
+        },
+        "pixelDiffCaveat": "Raw pixel diff also includes a small viewer camera offset between independently timed runs; the tile-code comparison is the authoritative same-coordinate geometry check."
+      }
+    },
+    {
+      "id": "match_T6_poi_exterior_return",
+      "mode": "PRODUCTION_NO_PERMISSION",
+      "collision": "NATURAL_TERRAIN_ONLY",
+      "spawn": {
+        "tile": [
+          520,
+          1304
+        ],
+        "au": [
+          260.25,
+          652.25
+        ],
+        "method": "window.__terrain.reset(tx,ty) VIEWER SPAWN CONTROL (one per run)"
+      },
+      "legs": [
+        {
+          "keys": [
+            "d"
+          ],
+          "ms": 450
+        },
+        {
+          "keys": [
+            "a"
+          ],
+          "ms": 450
+        }
+      ],
+      "samples": [
+        {
+          "leg": "start",
+          "tile": [
+            520,
+            1304
+          ],
+          "px": 8328,
+          "py": 20872,
+          "visibleTile": 2,
+          "candidate": {
+            "deck": null,
+            "face": null
+          }
+        },
+        {
+          "leg": 1,
+          "keys": [
+            "d"
+          ],
+          "heldMs": 450,
+          "tile": [
+            539,
+            1304
+          ],
+          "px": 8640,
+          "py": 20872,
+          "visibleTile": 12,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 0
+        },
+        {
+          "leg": 2,
+          "keys": [
+            "a"
+          ],
+          "heldMs": 450,
+          "tile": [
+            519,
+            1304
+          ],
+          "px": 8316,
+          "py": 20872,
+          "visibleTile": 2,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 0
+        }
+      ],
+      "movement": {
+        "movedPx": 636,
+        "tilesTraversed": 39.75,
+        "blockedSubsteps": 0,
+        "startTile": [
+          520,
+          1304
+        ],
+        "endTile": [
+          519,
+          1304
+        ],
+        "tileDelta": [
+          -1,
+          0
+        ],
+        "endVisibleTile": 2,
+        "endOnBridgeDeck": null,
+        "endOnCliffFace": null,
+        "endProductionBlocked": false,
+        "endQaBlocked": false
+      },
+      "realKeys": {
+        "held": 900,
+        "inputLogEntries": 4,
+        "teleportUsed": false,
+        "camUsedAsRoute": false,
+        "collisionDisabled": false
+      },
+      "before": {
+        "file": "creator-u05/evidence/mapgeo02-shots/match_T6_poi_exterior_return_before.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "after": {
+        "file": "creator-u05/evidence/mapgeo02-shots/match_T6_poi_exterior_return_after.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "feature": "exact MAP-GEO-01 coordinate/legs, PRODUCTION_NO_PERMISSION",
+      "result": "MATCHING_COORDINATE_COMPARISON",
+      "note": "",
+      "comparedTo": "creator-u05/evidence/mapgeo01-shots/T6_poi_exterior_return_after.png",
+      "pixelDiff": {
+        "size": [
+          640,
+          360
+        ],
+        "differingPixels": 0,
+        "totalPixels": 230400,
+        "meanAbsChannelDiff": 0
+      },
+      "exactCoordinate": {
+        "tile": [
+          519,
+          1304
+        ],
+        "shot": {
+          "file": "creator-u05/evidence/mapgeo02-shots/coord_T6_poi_exterior_return.png",
+          "size": [
+            640,
+            360
+          ]
+        },
+        "window": {
+          "x0": 499,
+          "x1": 538,
+          "y0": 1293,
+          "y1": 1315
+        },
+        "pixelDiff": {
+          "size": [
+            640,
+            360
+          ],
+          "differingPixels": 0,
+          "totalPixels": 230400,
+          "meanAbsChannelDiff": 0
+        },
+        "tileCodeComparison": {
+          "tiles": 920,
+          "changedTiles": 0,
+          "oldBridgeTiles": 0,
+          "newBridgeTiles": 0,
+          "oldCliffTiles": 0,
+          "newCliffTiles": 0,
+          "note": "exact world-coordinate tile-code comparison; independent of viewer sub-pixel camera offset"
+        },
+        "pixelDiffCaveat": "Raw pixel diff also includes a small viewer camera offset between independently timed runs; the tile-code comparison is the authoritative same-coordinate geometry check."
+      }
+    }
+  ],
+  "bridgeRuns": [
+    {
+      "id": "B_br1_T3_production",
+      "mode": "PRODUCTION_NO_PERMISSION",
+      "collision": "NATURAL_TERRAIN_ONLY",
+      "spawn": {
+        "tile": [
+          2020,
+          907
+        ],
+        "au": [
+          1010.25,
+          453.75
+        ],
+        "method": "window.__terrain.reset(tx,ty) VIEWER SPAWN CONTROL (one per run)"
+      },
+      "legs": [
+        {
+          "keys": [
+            "d"
+          ],
+          "ms": 1250
+        }
+      ],
+      "samples": [
+        {
+          "leg": "start",
+          "tile": [
+            2020,
+            907
+          ],
+          "px": 32328,
+          "py": 14520,
+          "visibleTile": 9,
+          "candidate": {
+            "deck": null,
+            "face": null
+          }
+        },
+        {
+          "leg": 1,
+          "keys": [
+            "d"
+          ],
+          "heldMs": 1250,
+          "tile": [
+            2041,
+            907
+          ],
+          "px": 32668,
+          "py": 14520,
+          "visibleTile": 12,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 131
+        }
+      ],
+      "movement": {
+        "movedPx": 340,
+        "tilesTraversed": 21.25,
+        "blockedSubsteps": 131,
+        "startTile": [
+          2020,
+          907
+        ],
+        "endTile": [
+          2041,
+          907
+        ],
+        "tileDelta": [
+          21,
+          0
+        ],
+        "endVisibleTile": 12,
+        "endOnBridgeDeck": null,
+        "endOnCliffFace": null,
+        "endProductionBlocked": false,
+        "endQaBlocked": false
+      },
+      "realKeys": {
+        "held": 1250,
+        "inputLogEntries": 2,
+        "teleportUsed": false,
+        "camUsedAsRoute": false,
+        "collisionDisabled": false
+      },
+      "before": {
+        "file": "creator-u05/evidence/mapgeo02-shots/B_br1_T3_production_before.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "after": {
+        "file": "creator-u05/evidence/mapgeo02-shots/B_br1_T3_production_after.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "feature": "br_1 at [2045,907]; production must NOT silently grant traversal",
+      "result": "REAL_KEY_QA",
+      "note": "",
+      "bridgeCentreShot": {
+        "file": "creator-u05/evidence/mapgeo02-shots/B_br1_T3_production_at_bridge.png",
+        "size": [
+          640,
+          360
+        ]
+      }
+    },
+    {
+      "id": "B_br1_T3_qa",
+      "mode": "QA_CANDIDATE_CROSSING",
+      "collision": "NATURAL_TERRAIN_ONLY",
+      "spawn": {
+        "tile": [
+          2020,
+          907
+        ],
+        "au": [
+          1010.25,
+          453.75
+        ],
+        "method": "window.__terrain.reset(tx,ty) VIEWER SPAWN CONTROL (one per run)"
+      },
+      "legs": [
+        {
+          "keys": [
+            "d"
+          ],
+          "ms": 1250
+        }
+      ],
+      "samples": [
+        {
+          "leg": "start",
+          "tile": [
+            2020,
+            907
+          ],
+          "px": 32328,
+          "py": 14520,
+          "visibleTile": 9,
+          "candidate": {
+            "deck": null,
+            "face": null
+          }
+        },
+        {
+          "leg": 1,
+          "keys": [
+            "d"
+          ],
+          "heldMs": 1250,
+          "tile": [
+            2047,
+            907
+          ],
+          "px": 32766,
+          "py": 14520,
+          "visibleTile": 13,
+          "candidate": {
+            "deck": "br_1",
+            "face": null
+          },
+          "blockedSubsteps": 97
+        }
+      ],
+      "movement": {
+        "movedPx": 438,
+        "tilesTraversed": 27.38,
+        "blockedSubsteps": 97,
+        "startTile": [
+          2020,
+          907
+        ],
+        "endTile": [
+          2047,
+          907
+        ],
+        "tileDelta": [
+          27,
+          0
+        ],
+        "endVisibleTile": 13,
+        "endOnBridgeDeck": "br_1",
+        "endOnCliffFace": null,
+        "endProductionBlocked": true,
+        "endQaBlocked": false
+      },
+      "realKeys": {
+        "held": 1250,
+        "inputLogEntries": 2,
+        "teleportUsed": false,
+        "camUsedAsRoute": false,
+        "collisionDisabled": false
+      },
+      "before": {
+        "file": "creator-u05/evidence/mapgeo02-shots/B_br1_T3_qa_before.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "after": {
+        "file": "creator-u05/evidence/mapgeo02-shots/B_br1_T3_qa_after.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "feature": "br_1 bounded deck; QA candidate crossing geometry only",
+      "result": "REAL_KEY_QA",
+      "note": "",
+      "bridgeCentreShot": {
+        "file": "creator-u05/evidence/mapgeo02-shots/B_br1_T3_qa_at_bridge.png",
+        "size": [
+          640,
+          360
+        ]
+      }
+    },
+    {
+      "id": "B_br2_production",
+      "mode": "PRODUCTION_NO_PERMISSION",
+      "collision": "NATURAL_TERRAIN_ONLY",
+      "spawn": {
+        "tile": [
+          2579,
+          1052
+        ],
+        "au": [
+          1289.75,
+          526.25
+        ],
+        "method": "window.__terrain.reset(tx,ty) VIEWER SPAWN CONTROL (one per run)"
+      },
+      "legs": [
+        {
+          "keys": [
+            "w"
+          ],
+          "ms": 700
+        }
+      ],
+      "samples": [
+        {
+          "leg": "start",
+          "tile": [
+            2579,
+            1052
+          ],
+          "px": 41272,
+          "py": 16840,
+          "visibleTile": 6,
+          "candidate": {
+            "deck": null,
+            "face": null
+          }
+        },
+        {
+          "leg": 1,
+          "keys": [
+            "w"
+          ],
+          "heldMs": 700,
+          "tile": [
+            2579,
+            1049
+          ],
+          "px": 41272,
+          "py": 16786,
+          "visibleTile": 12,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 84
+        }
+      ],
+      "movement": {
+        "movedPx": 54,
+        "tilesTraversed": 3.38,
+        "blockedSubsteps": 84,
+        "startTile": [
+          2579,
+          1052
+        ],
+        "endTile": [
+          2579,
+          1049
+        ],
+        "tileDelta": [
+          0,
+          -3
+        ],
+        "endVisibleTile": 12,
+        "endOnBridgeDeck": null,
+        "endOnCliffFace": null,
+        "endProductionBlocked": false,
+        "endQaBlocked": false
+      },
+      "realKeys": {
+        "held": 700,
+        "inputLogEntries": 2,
+        "teleportUsed": false,
+        "camUsedAsRoute": false,
+        "collisionDisabled": false
+      },
+      "before": {
+        "file": "creator-u05/evidence/mapgeo02-shots/B_br2_production_before.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "after": {
+        "file": "creator-u05/evidence/mapgeo02-shots/B_br2_production_after.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "feature": "br_2, authored ang≈-1.535 (almost pure north crossing)",
+      "result": "REAL_KEY_QA",
+      "note": "",
+      "bridgeCentreShot": {
+        "file": "creator-u05/evidence/mapgeo02-shots/B_br2_production_at_bridge.png",
+        "size": [
+          640,
+          360
+        ]
+      }
+    },
+    {
+      "id": "B_br2_qa_full_cross",
+      "mode": "QA_CANDIDATE_CROSSING",
+      "collision": "NATURAL_TERRAIN_ONLY",
+      "spawn": {
+        "tile": [
+          2579,
+          1052
+        ],
+        "au": [
+          1289.75,
+          526.25
+        ],
+        "method": "window.__terrain.reset(tx,ty) VIEWER SPAWN CONTROL (one per run)"
+      },
+      "legs": [
+        {
+          "keys": [
+            "w"
+          ],
+          "ms": 700
+        }
+      ],
+      "samples": [
+        {
+          "leg": "start",
+          "tile": [
+            2579,
+            1052
+          ],
+          "px": 41272,
+          "py": 16840,
+          "visibleTile": 6,
+          "candidate": {
+            "deck": null,
+            "face": null
+          }
+        },
+        {
+          "leg": 1,
+          "keys": [
+            "w"
+          ],
+          "heldMs": 700,
+          "tile": [
+            2579,
+            1021
+          ],
+          "px": 41272,
+          "py": 16348,
+          "visibleTile": 6,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 0
+        }
+      ],
+      "movement": {
+        "movedPx": 492,
+        "tilesTraversed": 30.75,
+        "blockedSubsteps": 0,
+        "startTile": [
+          2579,
+          1052
+        ],
+        "endTile": [
+          2579,
+          1021
+        ],
+        "tileDelta": [
+          0,
+          -31
+        ],
+        "endVisibleTile": 6,
+        "endOnBridgeDeck": null,
+        "endOnCliffFace": null,
+        "endProductionBlocked": false,
+        "endQaBlocked": false
+      },
+      "realKeys": {
+        "held": 700,
+        "inputLogEntries": 2,
+        "teleportUsed": false,
+        "camUsedAsRoute": false,
+        "collisionDisabled": false
+      },
+      "before": {
+        "file": "creator-u05/evidence/mapgeo02-shots/B_br2_qa_full_cross_before.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "after": {
+        "file": "creator-u05/evidence/mapgeo02-shots/B_br2_qa_full_cross_after.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "feature": "br_2 QA candidate crossing from bank A to bank B, 0 blocked substeps expected",
+      "result": "REAL_KEY_QA",
+      "note": "",
+      "bridgeCentreShot": {
+        "file": "creator-u05/evidence/mapgeo02-shots/B_br2_qa_full_cross_at_bridge.png",
+        "size": [
+          640,
+          360
+        ]
+      }
+    },
+    {
+      "id": "B_br7_production",
+      "mode": "PRODUCTION_NO_PERMISSION",
+      "collision": "NATURAL_TERRAIN_ONLY",
+      "spawn": {
+        "tile": [
+          3227,
+          685
+        ],
+        "au": [
+          1613.75,
+          342.75
+        ],
+        "method": "window.__terrain.reset(tx,ty) VIEWER SPAWN CONTROL (one per run)"
+      },
+      "legs": [
+        {
+          "keys": [
+            "d"
+          ],
+          "ms": 450
+        },
+        {
+          "keys": [
+            "d",
+            "s"
+          ],
+          "ms": 300
+        }
+      ],
+      "samples": [
+        {
+          "leg": "start",
+          "tile": [
+            3227,
+            685
+          ],
+          "px": 51640,
+          "py": 10968,
+          "visibleTile": 12,
+          "candidate": {
+            "deck": null,
+            "face": null
+          }
+        },
+        {
+          "leg": 1,
+          "keys": [
+            "d"
+          ],
+          "heldMs": 450,
+          "tile": [
+            3230,
+            685
+          ],
+          "px": 51692,
+          "py": 10968,
+          "visibleTile": 12,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 61
+        },
+        {
+          "leg": 2,
+          "keys": [
+            "d",
+            "s"
+          ],
+          "heldMs": 300,
+          "tile": [
+            3230,
+            685
+          ],
+          "px": 51695,
+          "py": 10974,
+          "visibleTile": 12,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 154
+        }
+      ],
+      "movement": {
+        "movedPx": 61,
+        "tilesTraversed": 3.81,
+        "blockedSubsteps": 154,
+        "startTile": [
+          3227,
+          685
+        ],
+        "endTile": [
+          3230,
+          685
+        ],
+        "tileDelta": [
+          3,
+          0
+        ],
+        "endVisibleTile": 12,
+        "endOnBridgeDeck": null,
+        "endOnCliffFace": null,
+        "endProductionBlocked": false,
+        "endQaBlocked": false
+      },
+      "realKeys": {
+        "held": 750,
+        "inputLogEntries": 6,
+        "teleportUsed": false,
+        "camUsedAsRoute": false,
+        "collisionDisabled": false
+      },
+      "before": {
+        "file": "creator-u05/evidence/mapgeo02-shots/B_br7_production_before.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "after": {
+        "file": "creator-u05/evidence/mapgeo02-shots/B_br7_production_after.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "feature": "br_7, 2 AU water span, cart load",
+      "result": "REAL_KEY_QA",
+      "note": "",
+      "bridgeCentreShot": {
+        "file": "creator-u05/evidence/mapgeo02-shots/B_br7_production_at_bridge.png",
+        "size": [
+          640,
+          360
+        ]
+      }
+    },
+    {
+      "id": "B_br7_qa_full_cross",
+      "mode": "QA_CANDIDATE_CROSSING",
+      "collision": "NATURAL_TERRAIN_ONLY",
+      "spawn": {
+        "tile": [
+          3227,
+          685
+        ],
+        "au": [
+          1613.75,
+          342.75
+        ],
+        "method": "window.__terrain.reset(tx,ty) VIEWER SPAWN CONTROL (one per run)"
+      },
+      "legs": [
+        {
+          "keys": [
+            "d"
+          ],
+          "ms": 450
+        },
+        {
+          "keys": [
+            "d",
+            "s"
+          ],
+          "ms": 300
+        }
+      ],
+      "samples": [
+        {
+          "leg": "start",
+          "tile": [
+            3227,
+            685
+          ],
+          "px": 51640,
+          "py": 10968,
+          "visibleTile": 12,
+          "candidate": {
+            "deck": null,
+            "face": null
+          }
+        },
+        {
+          "leg": 1,
+          "keys": [
+            "d"
+          ],
+          "heldMs": 450,
+          "tile": [
+            3233,
+            685
+          ],
+          "px": 51744,
+          "py": 10968,
+          "visibleTile": 13,
+          "candidate": {
+            "deck": "br_7",
+            "face": null
+          },
+          "blockedSubsteps": 50
+        },
+        {
+          "leg": 2,
+          "keys": [
+            "d",
+            "s"
+          ],
+          "heldMs": 300,
+          "tile": [
+            3241,
+            695
+          ],
+          "px": 51860,
+          "py": 11131,
+          "visibleTile": 12,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 56
+        }
+      ],
+      "movement": {
+        "movedPx": 383,
+        "tilesTraversed": 23.94,
+        "blockedSubsteps": 56,
+        "startTile": [
+          3227,
+          685
+        ],
+        "endTile": [
+          3241,
+          695
+        ],
+        "tileDelta": [
+          14,
+          10
+        ],
+        "endVisibleTile": 12,
+        "endOnBridgeDeck": null,
+        "endOnCliffFace": null,
+        "endProductionBlocked": false,
+        "endQaBlocked": false
+      },
+      "realKeys": {
+        "held": 750,
+        "inputLogEntries": 6,
+        "teleportUsed": false,
+        "camUsedAsRoute": false,
+        "collisionDisabled": false
+      },
+      "before": {
+        "file": "creator-u05/evidence/mapgeo02-shots/B_br7_qa_full_cross_before.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "after": {
+        "file": "creator-u05/evidence/mapgeo02-shots/B_br7_qa_full_cross_after.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "feature": "br_7 QA candidate crossing with real d / d+s held keys",
+      "result": "REAL_KEY_QA",
+      "note": "",
+      "bridgeCentreShot": {
+        "file": "creator-u05/evidence/mapgeo02-shots/B_br7_qa_full_cross_at_bridge.png",
+        "size": [
+          640,
+          360
+        ]
+      }
+    },
+    {
+      "id": "B_br6_qa_deck",
+      "mode": "QA_CANDIDATE_CROSSING",
+      "collision": "NATURAL_TERRAIN_ONLY",
+      "spawn": {
+        "tile": [
+          2019,
+          1465
+        ],
+        "au": [
+          1009.75,
+          732.75
+        ],
+        "method": "window.__terrain.reset(tx,ty) VIEWER SPAWN CONTROL (one per run)"
+      },
+      "legs": [
+        {
+          "keys": [
+            "a"
+          ],
+          "ms": 600
+        }
+      ],
+      "samples": [
+        {
+          "leg": "start",
+          "tile": [
+            2019,
+            1465
+          ],
+          "px": 32312,
+          "py": 23448,
+          "visibleTile": 12,
+          "candidate": {
+            "deck": null,
+            "face": null
+          }
+        },
+        {
+          "leg": 1,
+          "keys": [
+            "a"
+          ],
+          "heldMs": 600,
+          "tile": [
+            2011,
+            1465
+          ],
+          "px": 32176,
+          "py": 23448,
+          "visibleTile": 13,
+          "candidate": {
+            "deck": "br_6",
+            "face": null
+          },
+          "blockedSubsteps": 66
+        }
+      ],
+      "movement": {
+        "movedPx": 136,
+        "tilesTraversed": 8.5,
+        "blockedSubsteps": 66,
+        "startTile": [
+          2019,
+          1465
+        ],
+        "endTile": [
+          2011,
+          1465
+        ],
+        "tileDelta": [
+          -8,
+          0
+        ],
+        "endVisibleTile": 13,
+        "endOnBridgeDeck": "br_6",
+        "endOnCliffFace": null,
+        "endProductionBlocked": true,
+        "endQaBlocked": false
+      },
+      "realKeys": {
+        "held": 600,
+        "inputLogEntries": 2,
+        "teleportUsed": false,
+        "camUsedAsRoute": false,
+        "collisionDisabled": false
+      },
+      "before": {
+        "file": "creator-u05/evidence/mapgeo02-shots/B_br6_qa_deck_before.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "after": {
+        "file": "creator-u05/evidence/mapgeo02-shots/B_br6_qa_deck_after.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "feature": "br_6 foot bridge; QA reaches the measured deck (angled, partial straight-line crossing)",
+      "result": "REAL_KEY_QA",
+      "note": "",
+      "bridgeCentreShot": {
+        "file": "creator-u05/evidence/mapgeo02-shots/B_br6_qa_deck_at_bridge.png",
+        "size": [
+          640,
+          360
+        ]
+      }
+    },
+    {
+      "id": "B_brb_unresolved",
+      "mode": "QA_CANDIDATE_CROSSING",
+      "collision": "NATURAL_TERRAIN_ONLY",
+      "spawn": {
+        "tile": [
+          2052,
+          1859
+        ],
+        "au": [
+          1026.25,
+          929.75
+        ],
+        "method": "window.__terrain.reset(tx,ty) VIEWER SPAWN CONTROL (one per run)"
+      },
+      "legs": [
+        {
+          "keys": [
+            "d"
+          ],
+          "ms": 600
+        }
+      ],
+      "samples": [
+        {
+          "leg": "start",
+          "tile": [
+            2052,
+            1859
+          ],
+          "px": 32840,
+          "py": 29752,
+          "visibleTile": 19,
+          "candidate": {
+            "deck": null,
+            "face": null
+          }
+        },
+        {
+          "leg": 1,
+          "keys": [
+            "d"
+          ],
+          "heldMs": 600,
+          "tile": [
+            2052,
+            1859
+          ],
+          "px": 32840,
+          "py": 29752,
+          "visibleTile": 19,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 192
+        }
+      ],
+      "movement": {
+        "movedPx": 0,
+        "tilesTraversed": 0,
+        "blockedSubsteps": 192,
+        "startTile": [
+          2052,
+          1859
+        ],
+        "endTile": [
+          2052,
+          1859
+        ],
+        "tileDelta": [
+          0,
+          0
+        ],
+        "endVisibleTile": 19,
+        "endOnBridgeDeck": null,
+        "endOnCliffFace": null,
+        "endProductionBlocked": true,
+        "endQaBlocked": true
+      },
+      "realKeys": {
+        "held": 600,
+        "inputLogEntries": 2,
+        "teleportUsed": false,
+        "camUsedAsRoute": false,
+        "collisionDisabled": false
+      },
+      "before": {
+        "file": "creator-u05/evidence/mapgeo02-shots/B_brb_unresolved_before.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "after": {
+        "file": "creator-u05/evidence/mapgeo02-shots/B_brb_unresolved_after.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "feature": "br_b UNRESOLVED (no verified second bank); NO deck art must be stamped here",
+      "result": "REAL_KEY_QA",
+      "note": "",
+      "bridgeCentreShot": {
+        "file": "creator-u05/evidence/mapgeo02-shots/B_brb_unresolved_at_bridge.png",
+        "size": [
+          640,
+          360
+        ]
+      }
+    }
+  ],
+  "cliffRuns": [
+    {
+      "id": "C_cliff_production",
+      "mode": "PRODUCTION_NO_PERMISSION",
+      "collision": "NATURAL_TERRAIN_ONLY",
+      "spawn": {
+        "tile": [
+          1200,
+          1200
+        ],
+        "au": [
+          600.25,
+          600.25
+        ],
+        "method": "window.__terrain.reset(tx,ty) VIEWER SPAWN CONTROL (one per run)"
+      },
+      "legs": [
+        {
+          "keys": [
+            "d"
+          ],
+          "ms": 700
+        },
+        {
+          "keys": [
+            "s"
+          ],
+          "ms": 600
+        },
+        {
+          "keys": [
+            "a"
+          ],
+          "ms": 700
+        },
+        {
+          "keys": [
+            "w"
+          ],
+          "ms": 600
+        }
+      ],
+      "samples": [
+        {
+          "leg": "start",
+          "tile": [
+            1200,
+            1200
+          ],
+          "px": 19208,
+          "py": 19208,
+          "visibleTile": 5,
+          "candidate": {
+            "deck": null,
+            "face": null
+          }
+        },
+        {
+          "leg": 1,
+          "keys": [
+            "d"
+          ],
+          "heldMs": 700,
+          "tile": [
+            1234,
+            1200
+          ],
+          "px": 19748,
+          "py": 19208,
+          "visibleTile": 5,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 0
+        },
+        {
+          "leg": 2,
+          "keys": [
+            "s"
+          ],
+          "heldMs": 600,
+          "tile": [
+            1234,
+            1223
+          ],
+          "px": 19748,
+          "py": 19580,
+          "visibleTile": 5,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 0
+        },
+        {
+          "leg": 3,
+          "keys": [
+            "a"
+          ],
+          "heldMs": 700,
+          "tile": [
+            1203,
+            1223
+          ],
+          "px": 19256,
+          "py": 19580,
+          "visibleTile": 5,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 0
+        },
+        {
+          "leg": 4,
+          "keys": [
+            "w"
+          ],
+          "heldMs": 600,
+          "tile": [
+            1203,
+            1196
+          ],
+          "px": 19256,
+          "py": 19148,
+          "visibleTile": 7,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 0
+        }
+      ],
+      "movement": {
+        "movedPx": 1836,
+        "tilesTraversed": 114.75,
+        "blockedSubsteps": 0,
+        "startTile": [
+          1200,
+          1200
+        ],
+        "endTile": [
+          1203,
+          1196
+        ],
+        "tileDelta": [
+          3,
+          -4
+        ],
+        "endVisibleTile": 7,
+        "endOnBridgeDeck": null,
+        "endOnCliffFace": null,
+        "endProductionBlocked": false,
+        "endQaBlocked": false
+      },
+      "realKeys": {
+        "held": 2600,
+        "inputLogEntries": 8,
+        "teleportUsed": false,
+        "camUsedAsRoute": false,
+        "collisionDisabled": false
+      },
+      "before": {
+        "file": "creator-u05/evidence/mapgeo02-shots/C_cliff_production_before.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "after": {
+        "file": "creator-u05/evidence/mapgeo02-shots/C_cliff_production_after.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "feature": "305 binary cliff candidates now visible; PRODUCTION has NO permanent cliff wall",
+      "result": "REAL_KEY_QA",
+      "note": ""
+    },
+    {
+      "id": "C_cliff_qa_candidate",
+      "mode": "QA_CANDIDATE_CROSSING",
+      "collision": "NATURAL_TERRAIN_ONLY",
+      "spawn": {
+        "tile": [
+          1200,
+          1200
+        ],
+        "au": [
+          600.25,
+          600.25
+        ],
+        "method": "window.__terrain.reset(tx,ty) VIEWER SPAWN CONTROL (one per run)"
+      },
+      "legs": [
+        {
+          "keys": [
+            "d"
+          ],
+          "ms": 700
+        },
+        {
+          "keys": [
+            "s"
+          ],
+          "ms": 600
+        },
+        {
+          "keys": [
+            "a"
+          ],
+          "ms": 700
+        },
+        {
+          "keys": [
+            "w"
+          ],
+          "ms": 600
+        }
+      ],
+      "samples": [
+        {
+          "leg": "start",
+          "tile": [
+            1200,
+            1200
+          ],
+          "px": 19208,
+          "py": 19208,
+          "visibleTile": 5,
+          "candidate": {
+            "deck": null,
+            "face": null
+          }
+        },
+        {
+          "leg": 1,
+          "keys": [
+            "d"
+          ],
+          "heldMs": 700,
+          "tile": [
+            1229,
+            1200
+          ],
+          "px": 19680,
+          "py": 19208,
+          "visibleTile": 7,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 8
+        },
+        {
+          "leg": 2,
+          "keys": [
+            "s"
+          ],
+          "heldMs": 600,
+          "tile": [
+            1229,
+            1200
+          ],
+          "px": 19680,
+          "py": 19212,
+          "visibleTile": 7,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 101
+        },
+        {
+          "leg": 3,
+          "keys": [
+            "a"
+          ],
+          "heldMs": 700,
+          "tile": [
+            1198,
+            1200
+          ],
+          "px": 19176,
+          "py": 19212,
+          "visibleTile": 5,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 101
+        },
+        {
+          "leg": 4,
+          "keys": [
+            "w"
+          ],
+          "heldMs": 600,
+          "tile": [
+            1198,
+            1179
+          ],
+          "px": 19176,
+          "py": 18864,
+          "visibleTile": 7,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 101
+        }
+      ],
+      "movement": {
+        "movedPx": 1328,
+        "tilesTraversed": 83,
+        "blockedSubsteps": 101,
+        "startTile": [
+          1200,
+          1200
+        ],
+        "endTile": [
+          1198,
+          1179
+        ],
+        "tileDelta": [
+          -2,
+          -21
+        ],
+        "endVisibleTile": 7,
+        "endOnBridgeDeck": null,
+        "endOnCliffFace": null,
+        "endProductionBlocked": false,
+        "endQaBlocked": false
+      },
+      "realKeys": {
+        "held": 2600,
+        "inputLogEntries": 8,
+        "teleportUsed": false,
+        "camUsedAsRoute": false,
+        "collisionDisabled": false
+      },
+      "before": {
+        "file": "creator-u05/evidence/mapgeo02-shots/C_cliff_qa_candidate_before.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "after": {
+        "file": "creator-u05/evidence/mapgeo02-shots/C_cliff_qa_candidate_after.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "feature": "explicit QA candidate collision; real movement is measurably blocked by the face",
+      "result": "REAL_KEY_QA",
+      "note": ""
+    },
+    {
+      "id": "C_cliff_qa_alternative",
+      "mode": "QA_CANDIDATE_CROSSING",
+      "collision": "NATURAL_TERRAIN_ONLY",
+      "spawn": {
+        "tile": [
+          1200,
+          1200
+        ],
+        "au": [
+          600.25,
+          600.25
+        ],
+        "method": "window.__terrain.reset(tx,ty) VIEWER SPAWN CONTROL (one per run)"
+      },
+      "legs": [
+        {
+          "keys": [
+            "d"
+          ],
+          "ms": 400
+        },
+        {
+          "keys": [
+            "w"
+          ],
+          "ms": 700
+        },
+        {
+          "keys": [
+            "d"
+          ],
+          "ms": 400
+        },
+        {
+          "keys": [
+            "s"
+          ],
+          "ms": 700
+        }
+      ],
+      "samples": [
+        {
+          "leg": "start",
+          "tile": [
+            1200,
+            1200
+          ],
+          "px": 19208,
+          "py": 19208,
+          "visibleTile": 5,
+          "candidate": {
+            "deck": null,
+            "face": null
+          }
+        },
+        {
+          "leg": 1,
+          "keys": [
+            "d"
+          ],
+          "heldMs": 400,
+          "tile": [
+            1219,
+            1200
+          ],
+          "px": 19508,
+          "py": 19208,
+          "visibleTile": 5,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 0
+        },
+        {
+          "leg": 2,
+          "keys": [
+            "w"
+          ],
+          "heldMs": 700,
+          "tile": [
+            1219,
+            1169
+          ],
+          "px": 19508,
+          "py": 18704,
+          "visibleTile": 5,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 0
+        },
+        {
+          "leg": 3,
+          "keys": [
+            "d"
+          ],
+          "heldMs": 400,
+          "tile": [
+            1237,
+            1169
+          ],
+          "px": 19796,
+          "py": 18704,
+          "visibleTile": 5,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 0
+        },
+        {
+          "leg": 4,
+          "keys": [
+            "s"
+          ],
+          "heldMs": 700,
+          "tile": [
+            1237,
+            1199
+          ],
+          "px": 19796,
+          "py": 19196,
+          "visibleTile": 5,
+          "candidate": {
+            "deck": null,
+            "face": null
+          },
+          "blockedSubsteps": 0
+        }
+      ],
+      "movement": {
+        "movedPx": 1584,
+        "tilesTraversed": 99,
+        "blockedSubsteps": 0,
+        "startTile": [
+          1200,
+          1200
+        ],
+        "endTile": [
+          1237,
+          1199
+        ],
+        "tileDelta": [
+          37,
+          -1
+        ],
+        "endVisibleTile": 5,
+        "endOnBridgeDeck": null,
+        "endOnCliffFace": null,
+        "endProductionBlocked": false,
+        "endQaBlocked": false
+      },
+      "realKeys": {
+        "held": 2200,
+        "inputLogEntries": 8,
+        "teleportUsed": false,
+        "camUsedAsRoute": false,
+        "collisionDisabled": false
+      },
+      "before": {
+        "file": "creator-u05/evidence/mapgeo02-shots/C_cliff_qa_alternative_before.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "after": {
+        "file": "creator-u05/evidence/mapgeo02-shots/C_cliff_qa_alternative_after.png",
+        "size": [
+          640,
+          360
+        ]
+      },
+      "feature": "alternative highland route with real keys in QA mode; detour, not a teleport",
+      "result": "REAL_KEY_QA",
+      "note": ""
+    }
+  ],
+  "checks": [
+    {
+      "id": "D01_native_renderer",
+      "verdict": "PASS",
+      "detail": {
+        "viewport": [
+          640,
+          360
+        ],
+        "dpr": 1,
+        "hero": [
+          16,
+          24
+        ],
+        "U": 0.5,
+        "TILE": 16,
+        "frameTiles": [
+          4000,
+          2800
+        ],
+        "nativeCanvas": [
+          640,
+          360
+        ]
+      }
+    },
+    {
+      "id": "D02_gold_source_sha",
+      "verdict": "PASS",
+      "detail": {
+        "runtime": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+        "file": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256"
+      }
+    },
+    {
+      "id": "D03_crossing_raster_sha",
+      "verdict": "PASS",
+      "detail": {
+        "runtime": "f1c96bd9fdb04d66117811c941e4a02df7fb3111c1a8671060fccad42c29603b",
+        "file": "f1c96bd9fdb04d66117811c941e4a02df7fb3111c1a8671060fccad42c29603b"
+      }
+    },
+    {
+      "id": "D04_all_12_ids",
+      "verdict": "PASS",
+      "detail": {
+        "ids": [
+          "br_0",
+          "br_1",
+          "br_2",
+          "br_3",
+          "br_4",
+          "br_5",
+          "br_6",
+          "br_7",
+          "br_8",
+          "br_9",
+          "br_a",
+          "br_b"
+        ]
+      }
+    },
+    {
+      "id": "D05_not_forced_12_pass",
+      "verdict": "PASS",
+      "detail": {
+        "resolved": [
+          "br_0",
+          "br_1",
+          "br_2",
+          "br_3",
+          "br_4",
+          "br_5",
+          "br_6",
+          "br_7",
+          "br_8",
+          "br_a"
+        ],
+        "unresolved": [
+          "br_9",
+          "br_b"
+        ]
+      }
+    },
+    {
+      "id": "D06_unresolved_ids_exact",
+      "verdict": "PASS",
+      "detail": {
+        "unresolved": [
+          "br_9",
+          "br_b"
+        ],
+        "reasons": [
+          {
+            "id": "br_9",
+            "reasons": [
+              "MULTIPLE_BOUNDED_CROSSING_AXES__OWNER_BEARING_REVIEW"
+            ]
+          },
+          {
+            "id": "br_b",
+            "reasons": [
+              "NO_VERIFIED_BOTH_BANKS",
+              "WATER_RUN_UNBOUNDED_AT_30_AU_SEARCH",
+              "WATER_SPAN_EXCEEDS_BOUNDED_CANDIDATE_GUARD",
+              "ROAD_OR_FOOTPATH_APPROACH_MISSING",
+              "BANK_SEAMS_NOT_CONNECTED",
+              "SOURCE_EVIDENCE_INSUFFICIENT"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "D07_resolved_evidence",
+      "verdict": "PASS",
+      "detail": [
+        {
+          "id": "br_0",
+          "spanAu": 5,
+          "deckTiles": 53,
+          "footprintAu": {
+            "length": 5.5,
+            "width": 3,
+            "notMarkerRadius": true
+          },
+          "spanCoverage": 1,
+          "banks": [
+            true,
+            true
+          ],
+          "roads": [
+            true,
+            true
+          ],
+          "seams": {
+            "a": 8,
+            "b": 8,
+            "connected": true
+          },
+          "continuity": true
+        },
+        {
+          "id": "br_1",
+          "spanAu": 4,
+          "deckTiles": 46,
+          "footprintAu": {
+            "length": 4.5,
+            "width": 3,
+            "notMarkerRadius": true
+          },
+          "spanCoverage": 1,
+          "banks": [
+            true,
+            true
+          ],
+          "roads": [
+            true,
+            true
+          ],
+          "seams": {
+            "a": 12,
+            "b": 15,
+            "connected": true
+          },
+          "continuity": true
+        },
+        {
+          "id": "br_2",
+          "spanAu": 7,
+          "deckTiles": 77,
+          "footprintAu": {
+            "length": 7.5,
+            "width": 3,
+            "notMarkerRadius": true
+          },
+          "spanCoverage": 0.9375,
+          "banks": [
+            true,
+            true
+          ],
+          "roads": [
+            true,
+            true
+          ],
+          "seams": {
+            "a": 10,
+            "b": 15,
+            "connected": true
+          },
+          "continuity": true
+        },
+        {
+          "id": "br_3",
+          "spanAu": 7,
+          "deckTiles": 83,
+          "footprintAu": {
+            "length": 7.5,
+            "width": 3,
+            "notMarkerRadius": true
+          },
+          "spanCoverage": 1,
+          "banks": [
+            true,
+            true
+          ],
+          "roads": [
+            true,
+            true
+          ],
+          "seams": {
+            "a": 18,
+            "b": 14,
+            "connected": true
+          },
+          "continuity": true
+        },
+        {
+          "id": "br_4",
+          "spanAu": 4,
+          "deckTiles": 46,
+          "footprintAu": {
+            "length": 4.5,
+            "width": 3,
+            "notMarkerRadius": true
+          },
+          "spanCoverage": 1,
+          "banks": [
+            true,
+            true
+          ],
+          "roads": [
+            true,
+            true
+          ],
+          "seams": {
+            "a": 19,
+            "b": 12,
+            "connected": true
+          },
+          "continuity": true
+        },
+        {
+          "id": "br_5",
+          "spanAu": 7,
+          "deckTiles": 84,
+          "footprintAu": {
+            "length": 7.5,
+            "width": 3,
+            "notMarkerRadius": true
+          },
+          "spanCoverage": 1,
+          "banks": [
+            true,
+            true
+          ],
+          "roads": [
+            true,
+            true
+          ],
+          "seams": {
+            "a": 18,
+            "b": 18,
+            "connected": true
+          },
+          "continuity": true
+        },
+        {
+          "id": "br_6",
+          "spanAu": 4,
+          "deckTiles": 49,
+          "footprintAu": {
+            "length": 4.5,
+            "width": 3,
+            "notMarkerRadius": true
+          },
+          "spanCoverage": 1,
+          "banks": [
+            true,
+            true
+          ],
+          "roads": [
+            true,
+            true
+          ],
+          "seams": {
+            "a": 19,
+            "b": 17,
+            "connected": true
+          },
+          "continuity": true
+        },
+        {
+          "id": "br_7",
+          "spanAu": 2,
+          "deckTiles": 28,
+          "footprintAu": {
+            "length": 2.5,
+            "width": 3,
+            "notMarkerRadius": true
+          },
+          "spanCoverage": 1,
+          "banks": [
+            true,
+            true
+          ],
+          "roads": [
+            true,
+            true
+          ],
+          "seams": {
+            "a": 15,
+            "b": 12,
+            "connected": true
+          },
+          "continuity": true
+        },
+        {
+          "id": "br_8",
+          "spanAu": 6,
+          "deckTiles": 75,
+          "footprintAu": {
+            "length": 6.5,
+            "width": 3,
+            "notMarkerRadius": true
+          },
+          "spanCoverage": 1,
+          "banks": [
+            true,
+            true
+          ],
+          "roads": [
+            true,
+            true
+          ],
+          "seams": {
+            "a": 17,
+            "b": 19,
+            "connected": true
+          },
+          "continuity": true
+        },
+        {
+          "id": "br_a",
+          "spanAu": 5,
+          "deckTiles": 55,
+          "footprintAu": {
+            "length": 5.5,
+            "width": 3,
+            "notMarkerRadius": true
+          },
+          "spanCoverage": 0.9167,
+          "banks": [
+            true,
+            true
+          ],
+          "roads": [
+            true,
+            true
+          ],
+          "seams": {
+            "a": 9,
+            "b": 12,
+            "connected": true
+          },
+          "continuity": true
+        }
+      ]
+    },
+    {
+      "id": "D08_crossing_codes",
+      "verdict": "PASS",
+      "detail": [
+        {
+          "id": "br_0",
+          "load": "cart",
+          "code": 2
+        },
+        {
+          "id": "br_1",
+          "load": "cart",
+          "code": 2
+        },
+        {
+          "id": "br_2",
+          "load": "cart",
+          "code": 2
+        },
+        {
+          "id": "br_3",
+          "load": "cart",
+          "code": 2
+        },
+        {
+          "id": "br_4",
+          "load": "cart",
+          "code": 2
+        },
+        {
+          "id": "br_5",
+          "load": "cart",
+          "code": 2
+        },
+        {
+          "id": "br_6",
+          "load": "foot",
+          "code": 1
+        },
+        {
+          "id": "br_7",
+          "load": "cart",
+          "code": 2
+        },
+        {
+          "id": "br_8",
+          "load": "foot",
+          "code": 1
+        },
+        {
+          "id": "br_9",
+          "load": "foot",
+          "code": 1
+        },
+        {
+          "id": "br_a",
+          "load": "foot",
+          "code": 1
+        },
+        {
+          "id": "br_b",
+          "load": "foot",
+          "code": 1
+        }
+      ]
+    },
+    {
+      "id": "D09_deck_ok",
+      "verdict": "PASS",
+      "detail": {
+        "total": 596,
+        "onWater": 596,
+        "onLand": 0,
+        "permissionLeaks": 0,
+        "sourceIdMissing": 0,
+        "ids": {
+          "br_0": 53,
+          "br_1": 46,
+          "br_2": 77,
+          "br_3": 83,
+          "br_4": 46,
+          "br_5": 84,
+          "br_6": 49,
+          "br_7": 28,
+          "br_8": 75,
+          "br_a": 55
+        }
+      }
+    },
+    {
+      "id": "D10_cliff_candidate_contract",
+      "verdict": "PASS",
+      "detail": {
+        "file": {
+          "candidateCells": 305,
+          "heightClassAtLeast4": 305,
+          "slopeAtLeast20": 305,
+          "slopeClassAtLeast3": 305,
+          "activeCollisionPermissionNonZero": 0
+        },
+        "runtime": {
+          "candidateCells": 305,
+          "qualifiedCells": 305,
+          "repairedPredicate": "cliffCandidate >= 1 AND heightClass >= 4 AND slopeRaw >= 20 AND 4-neighbour downhill drop >= 12",
+          "faceBand": [
+            2,
+            4
+          ],
+          "sideHistogram": {
+            "N": 105,
+            "S": 62,
+            "W": 64,
+            "E": 74
+          }
+        }
+      }
+    },
+    {
+      "id": "D11_no_active_collision_permission",
+      "verdict": "PASS",
+      "detail": {
+        "candidateCells": 305,
+        "heightClassAtLeast4": 305,
+        "slopeAtLeast20": 305,
+        "slopeClassAtLeast3": 305,
+        "activeCollisionPermissionNonZero": 0
+      }
+    },
+    {
+      "id": "D12_cliff_visible_not_slabs",
+      "verdict": "PASS",
+      "detail": [
+        {
+          "id": "highland_T4",
+          "cx": 1200,
+          "cy": 1200,
+          "w": 40,
+          "h": 40,
+          "cliffTiles": 187,
+          "prodWall": 0,
+          "qaWall": 187,
+          "waterWalkable": 0,
+          "permissionLeaks": 0,
+          "maxCliffTilesInOne16x16Cell": 50,
+          "filled16x16Slabs": 0
+        },
+        {
+          "id": "northeast",
+          "cx": 1976,
+          "cy": 344,
+          "w": 40,
+          "h": 40,
+          "cliffTiles": 194,
+          "prodWall": 0,
+          "qaWall": 194,
+          "waterWalkable": 0,
+          "permissionLeaks": 0,
+          "maxCliffTilesInOne16x16Cell": 52,
+          "filled16x16Slabs": 0
+        },
+        {
+          "id": "cinder",
+          "cx": 3231,
+          "cy": 688,
+          "w": 40,
+          "h": 40,
+          "cliffTiles": 0,
+          "prodWall": 0,
+          "qaWall": 0,
+          "waterWalkable": 0,
+          "permissionLeaks": 0,
+          "maxCliffTilesInOne16x16Cell": 0,
+          "filled16x16Slabs": 0
+        }
+      ]
+    },
+    {
+      "id": "D13_old_had_zero_cliffs",
+      "verdict": "PASS",
+      "detail": {
+        "oldCliffTilesInT4Window": 0
+      }
+    },
+    {
+      "id": "D13b_cliff_exact_coordinate",
+      "verdict": "PASS",
+      "detail": {
+        "coordinateTile": [
+          1228,
+          1190
+        ],
+        "window": {
+          "x0": 1208,
+          "x1": 1247,
+          "y0": 1179,
+          "y1": 1201
+        },
+        "old": {
+          "cliff": 0,
+          "bridge": 0,
+          "road": 0,
+          "tiles": 920
+        },
+        "corrected": {
+          "cliff": 106,
+          "bridge": 0,
+          "road": 0,
+          "tiles": 920
+        }
+      }
+    },
+    {
+      "id": "D14_wood_carpet_removed",
+      "verdict": "PASS",
+      "detail": {
+        "old": {
+          "land": 957,
+          "water": 0,
+          "total": 957
+        },
+        "corrected": {
+          "land": 0,
+          "water": 46,
+          "total": 46
+        }
+      }
+    },
+    {
+      "id": "D15_ferries_not_dry_land_roads",
+      "verdict": "PASS",
+      "detail": [
+        {
+          "id": "rd_2g",
+          "cellIndex": 10935,
+          "tile": [
+            2968,
+            696
+          ],
+          "au": [
+            1484,
+            348
+          ],
+          "visibleTile": 0,
+          "water": true,
+          "waterTraversalClass": 2,
+          "foot": false,
+          "boat": false,
+          "swim": false,
+          "ferryFoot": false,
+          "activeCollisionPermission": false,
+          "productionBlocked": true,
+          "qaBlocked": true
+        },
+        {
+          "id": "rd_2h",
+          "cellIndex": 12225,
+          "tile": [
+            3608,
+            776
+          ],
+          "au": [
+            1804,
+            388
+          ],
+          "visibleTile": 0,
+          "water": true,
+          "waterTraversalClass": 2,
+          "foot": false,
+          "boat": false,
+          "swim": false,
+          "ferryFoot": false,
+          "activeCollisionPermission": false,
+          "productionBlocked": true,
+          "qaBlocked": true
+        },
+        {
+          "id": "rd_2c",
+          "cellIndex": 16785,
+          "tile": [
+            568,
+            1080
+          ],
+          "au": [
+            284,
+            540
+          ],
+          "visibleTile": 0,
+          "water": true,
+          "waterTraversalClass": 2,
+          "foot": false,
+          "boat": false,
+          "swim": false,
+          "ferryFoot": false,
+          "activeCollisionPermission": false,
+          "productionBlocked": true,
+          "qaBlocked": true
+        },
+        {
+          "id": "rd_2e",
+          "cellIndex": 18031,
+          "tile": [
+            504,
+            1160
+          ],
+          "au": [
+            252,
+            580
+          ],
+          "visibleTile": 0,
+          "water": true,
+          "waterTraversalClass": 2,
+          "foot": false,
+          "boat": false,
+          "swim": false,
+          "ferryFoot": false,
+          "activeCollisionPermission": false,
+          "productionBlocked": true,
+          "qaBlocked": true
+        },
+        {
+          "id": "rd_2d",
+          "cellIndex": 26782,
+          "tile": [
+            520,
+            1720
+          ],
+          "au": [
+            260,
+            860
+          ],
+          "visibleTile": 0,
+          "water": true,
+          "waterTraversalClass": 2,
+          "foot": false,
+          "boat": false,
+          "swim": false,
+          "ferryFoot": false,
+          "activeCollisionPermission": false,
+          "productionBlocked": true,
+          "qaBlocked": true
+        },
+        {
+          "id": "rd_2f",
+          "cellIndex": 27426,
+          "tile": [
+            2824,
+            1752
+          ],
+          "au": [
+            1412,
+            876
+          ],
+          "visibleTile": 0,
+          "water": true,
+          "waterTraversalClass": 2,
+          "foot": false,
+          "boat": false,
+          "swim": false,
+          "ferryFoot": false,
+          "activeCollisionPermission": false,
+          "productionBlocked": true,
+          "qaBlocked": true
+        },
+        {
+          "id": "rd_2j",
+          "cellIndex": 34377,
+          "tile": [
+            2040,
+            2200
+          ],
+          "au": [
+            1020,
+            1100
+          ],
+          "visibleTile": 0,
+          "water": true,
+          "waterTraversalClass": 2,
+          "foot": false,
+          "boat": false,
+          "swim": false,
+          "ferryFoot": false,
+          "activeCollisionPermission": false,
+          "productionBlocked": true,
+          "qaBlocked": true
+        },
+        {
+          "id": "rd_2i",
+          "cellIndex": 36395,
+          "tile": [
+            2328,
+            2328
+          ],
+          "au": [
+            1164,
+            1164
+          ],
+          "visibleTile": 0,
+          "water": true,
+          "waterTraversalClass": 2,
+          "foot": false,
+          "boat": false,
+          "swim": false,
+          "ferryFoot": false,
+          "activeCollisionPermission": false,
+          "productionBlocked": true,
+          "qaBlocked": true
+        }
+      ]
+    },
+    {
+      "id": "D16_beacon_road_unchanged",
+      "verdict": "PASS",
+      "detail": {
+        "old": {
+          "road": 340,
+          "bridge": 0,
+          "cliff": 0,
+          "other": 2981
+        },
+        "corrected": {
+          "road": 340,
+          "bridge": 0,
+          "cliff": 0,
+          "other": 2981
+        }
+      }
+    },
+    {
+      "id": "D17_nearby_chunks_bounded",
+      "verdict": "PASS",
+      "detail": {
+        "windows": [
+          {
+            "id": "br_0",
+            "centreTile": [
+              1990,
+              1503
+            ],
+            "windowTiles": 4761,
+            "cliffTiles": 0,
+            "deckTiles": 53
+          },
+          {
+            "id": "br_1",
+            "centreTile": [
+              2044,
+              906
+            ],
+            "windowTiles": 4761,
+            "cliffTiles": 0,
+            "deckTiles": 46
+          },
+          {
+            "id": "br_2",
+            "centreTile": [
+              2579,
+              1041
+            ],
+            "windowTiles": 4761,
+            "cliffTiles": 0,
+            "deckTiles": 77
+          },
+          {
+            "id": "br_3",
+            "centreTile": [
+              1710,
+              1152
+            ],
+            "windowTiles": 4761,
+            "cliffTiles": 0,
+            "deckTiles": 83
+          },
+          {
+            "id": "br_4",
+            "centreTile": [
+              1464,
+              1299
+            ],
+            "windowTiles": 4761,
+            "cliffTiles": 0,
+            "deckTiles": 46
+          },
+          {
+            "id": "br_5",
+            "centreTile": [
+              1936,
+              1632
+            ],
+            "windowTiles": 4761,
+            "cliffTiles": 0,
+            "deckTiles": 84
+          },
+          {
+            "id": "br_6",
+            "centreTile": [
+              2012,
+              1462
+            ],
+            "windowTiles": 4761,
+            "cliffTiles": 0,
+            "deckTiles": 49
+          },
+          {
+            "id": "br_7",
+            "centreTile": [
+              3231,
+              687
+            ],
+            "windowTiles": 4761,
+            "cliffTiles": 0,
+            "deckTiles": 28
+          },
+          {
+            "id": "br_8",
+            "centreTile": [
+              2305,
+              914
+            ],
+            "windowTiles": 4761,
+            "cliffTiles": 0,
+            "deckTiles": 75
+          },
+          {
+            "id": "br_a",
+            "centreTile": [
+              1765,
+              1293
+            ],
+            "windowTiles": 4761,
+            "cliffTiles": 0,
+            "deckTiles": 55
+          }
+        ],
+        "stats": {
+          "frameTiles": [
+            4000,
+            2800
+          ],
+          "frameAu": [
+            2000,
+            1400
+          ],
+          "U": 0.5,
+          "TILE": 16,
+          "addressableCells": 11200000,
+          "materializedAllCells": false,
+          "residentChunks": 26,
+          "residentLoads": 26,
+          "residentEvictions": 0,
+          "maxResidentChunks": 36,
+          "chunkKeyExample": "creator-u05|125:87",
+          "legacyStrideKey": "NEVER_USED__cy*100+cx",
+          "displayCanvases": 36,
+          "displayBytes": 9437184,
+          "displayLoads": 232,
+          "displayEvictions": 196,
+          "maxDisplayCanvases": 36,
+          "displayChunkKeyExample": "creator-u05|render16|250:175"
+        }
+      }
+    },
+    {
+      "id": "D18_deterministic",
+      "verdict": "PASS",
+      "detail": {
+        "reloadIdentical": true
+      }
+    },
+    {
+      "id": "D19_source_ids_and_coords",
+      "verdict": "PASS",
+      "detail": {
+        "sourceIds": [
+          "br_0",
+          "br_1",
+          "br_2",
+          "br_3",
+          "br_4",
+          "br_5",
+          "br_6",
+          "br_7",
+          "br_8",
+          "br_9",
+          "br_a",
+          "br_b"
+        ],
+        "saveCoordinatesUnchanged": true
+      }
+    },
+    {
+      "id": "D20_no_permission_leakage",
+      "verdict": "PASS",
+      "detail": {
+        "samples": 10086,
+        "activePermissionTrue": 0,
+        "waterFootTrue": 0,
+        "boatTrue": 0,
+        "swimTrue": 0,
+        "ferryFootTrue": 0,
+        "buildTrue": 0,
+        "deckProductionUnblocked": 0,
+        "cliffProductionBlocked": 0
+      }
+    },
+    {
+      "id": "E01_production_still_blocked",
+      "verdict": "PASS",
+      "detail": {
+        "br2": {
+          "movedPx": 54,
+          "tilesTraversed": 3.38,
+          "blockedSubsteps": 84,
+          "startTile": [
+            2579,
+            1052
+          ],
+          "endTile": [
+            2579,
+            1049
+          ],
+          "tileDelta": [
+            0,
+            -3
+          ],
+          "endVisibleTile": 12,
+          "endOnBridgeDeck": null,
+          "endOnCliffFace": null,
+          "endProductionBlocked": false,
+          "endQaBlocked": false
+        },
+        "br1": {
+          "movedPx": 340,
+          "tilesTraversed": 21.25,
+          "blockedSubsteps": 131,
+          "startTile": [
+            2020,
+            907
+          ],
+          "endTile": [
+            2041,
+            907
+          ],
+          "tileDelta": [
+            21,
+            0
+          ],
+          "endVisibleTile": 12,
+          "endOnBridgeDeck": null,
+          "endOnCliffFace": null,
+          "endProductionBlocked": false,
+          "endQaBlocked": false
+        }
+      }
+    },
+    {
+      "id": "E02_qa_candidate_geometry_crossable",
+      "verdict": "PASS",
+      "detail": {
+        "br2": {
+          "movedPx": 492,
+          "tilesTraversed": 30.75,
+          "blockedSubsteps": 0,
+          "startTile": [
+            2579,
+            1052
+          ],
+          "endTile": [
+            2579,
+            1021
+          ],
+          "tileDelta": [
+            0,
+            -31
+          ],
+          "endVisibleTile": 6,
+          "endOnBridgeDeck": null,
+          "endOnCliffFace": null,
+          "endProductionBlocked": false,
+          "endQaBlocked": false
+        },
+        "br7": {
+          "movedPx": 383,
+          "tilesTraversed": 23.94,
+          "blockedSubsteps": 56,
+          "startTile": [
+            3227,
+            685
+          ],
+          "endTile": [
+            3241,
+            695
+          ],
+          "tileDelta": [
+            14,
+            10
+          ],
+          "endVisibleTile": 12,
+          "endOnBridgeDeck": null,
+          "endOnCliffFace": null,
+          "endProductionBlocked": false,
+          "endQaBlocked": false
+        },
+        "br1": {
+          "movedPx": 438,
+          "tilesTraversed": 27.38,
+          "blockedSubsteps": 97,
+          "startTile": [
+            2020,
+            907
+          ],
+          "endTile": [
+            2047,
+            907
+          ],
+          "tileDelta": [
+            27,
+            0
+          ],
+          "endVisibleTile": 13,
+          "endOnBridgeDeck": "br_1",
+          "endOnCliffFace": null,
+          "endProductionBlocked": true,
+          "endQaBlocked": false
+        }
+      }
+    },
+    {
+      "id": "E03_qa_cliff_collision_explicit",
+      "verdict": "PASS",
+      "detail": {
+        "production": {
+          "movedPx": 1836,
+          "tilesTraversed": 114.75,
+          "blockedSubsteps": 0,
+          "startTile": [
+            1200,
+            1200
+          ],
+          "endTile": [
+            1203,
+            1196
+          ],
+          "tileDelta": [
+            3,
+            -4
+          ],
+          "endVisibleTile": 7,
+          "endOnBridgeDeck": null,
+          "endOnCliffFace": null,
+          "endProductionBlocked": false,
+          "endQaBlocked": false
+        },
+        "qa": {
+          "movedPx": 1328,
+          "tilesTraversed": 83,
+          "blockedSubsteps": 101,
+          "startTile": [
+            1200,
+            1200
+          ],
+          "endTile": [
+            1198,
+            1179
+          ],
+          "tileDelta": [
+            -2,
+            -21
+          ],
+          "endVisibleTile": 7,
+          "endOnBridgeDeck": null,
+          "endOnCliffFace": null,
+          "endProductionBlocked": false,
+          "endQaBlocked": false
+        },
+        "alternative": {
+          "movedPx": 1584,
+          "tilesTraversed": 99,
+          "blockedSubsteps": 0,
+          "startTile": [
+            1200,
+            1200
+          ],
+          "endTile": [
+            1237,
+            1199
+          ],
+          "tileDelta": [
+            37,
+            -1
+          ],
+          "endVisibleTile": 5,
+          "endOnBridgeDeck": null,
+          "endOnCliffFace": null,
+          "endProductionBlocked": false,
+          "endQaBlocked": false
+        }
+      }
+    },
+    {
+      "id": "E04_unresolved_brb_no_deck",
+      "verdict": "PASS",
+      "detail": {
+        "brb": [
+          "NO_VERIFIED_BOTH_BANKS",
+          "WATER_RUN_UNBOUNDED_AT_30_AU_SEARCH",
+          "WATER_SPAN_EXCEEDS_BOUNDED_CANDIDATE_GUARD",
+          "ROAD_OR_FOOTPATH_APPROACH_MISSING",
+          "BANK_SEAMS_NOT_CONNECTED",
+          "SOURCE_EVIDENCE_INSUFFICIENT"
+        ]
+      }
+    },
+    {
+      "id": "E05_real_keys_only",
+      "verdict": "PASS",
+      "detail": {
+        "runs": 17
+      }
+    },
+    {
+      "id": "E06_matching_coordinate_shots",
+      "verdict": "PASS",
+      "detail": [
+        {
+          "id": "match_T1_spawn_to_route",
+          "endTile": [
+            771,
+            1185
+          ],
+          "exactCoordinateTile": [
+            774,
+            1182
+          ],
+          "dynamicDiff": {
+            "size": [
+              640,
+              360
+            ],
+            "differingPixels": 165447,
+            "totalPixels": 230400,
+            "meanAbsChannelDiff": 19.37
+          },
+          "exactCoordinateDiff": {
+            "size": [
+              640,
+              360
+            ],
+            "differingPixels": 165447,
+            "totalPixels": 230400,
+            "meanAbsChannelDiff": 19.37
+          },
+          "tileCodeComparison": {
+            "tiles": 920,
+            "changedTiles": 0,
+            "oldBridgeTiles": 0,
+            "newBridgeTiles": 0,
+            "oldCliffTiles": 0,
+            "newCliffTiles": 0,
+            "note": "exact world-coordinate tile-code comparison; independent of viewer sub-pixel camera offset"
+          }
+        },
+        {
+          "id": "match_T2_road_biome_transition",
+          "endTile": [
+            2471,
+            2580
+          ],
+          "exactCoordinateTile": [
+            2473,
+            2580
+          ],
+          "dynamicDiff": {
+            "size": [
+              640,
+              360
+            ],
+            "differingPixels": 133440,
+            "totalPixels": 230400,
+            "meanAbsChannelDiff": 13.216
+          },
+          "exactCoordinateDiff": {
+            "size": [
+              640,
+              360
+            ],
+            "differingPixels": 133440,
+            "totalPixels": 230400,
+            "meanAbsChannelDiff": 13.216
+          },
+          "tileCodeComparison": {
+            "tiles": 920,
+            "changedTiles": 0,
+            "oldBridgeTiles": 0,
+            "newBridgeTiles": 0,
+            "oldCliffTiles": 0,
+            "newCliffTiles": 0,
+            "note": "exact world-coordinate tile-code comparison; independent of viewer sub-pixel camera offset"
+          }
+        },
+        {
+          "id": "match_T3_bridge_approach_crossing",
+          "endTile": [
+            2041,
+            907
+          ],
+          "exactCoordinateTile": [
+            2041,
+            907
+          ],
+          "dynamicDiff": {
+            "size": [
+              640,
+              360
+            ],
+            "differingPixels": 178393,
+            "totalPixels": 230400,
+            "meanAbsChannelDiff": 49.948
+          },
+          "exactCoordinateDiff": {
+            "size": [
+              640,
+              360
+            ],
+            "differingPixels": 178393,
+            "totalPixels": 230400,
+            "meanAbsChannelDiff": 49.948
+          },
+          "tileCodeComparison": {
+            "tiles": 920,
+            "changedTiles": 702,
+            "oldBridgeTiles": 656,
+            "newBridgeTiles": 46,
+            "oldCliffTiles": 0,
+            "newCliffTiles": 0,
+            "note": "exact world-coordinate tile-code comparison; independent of viewer sub-pixel camera offset"
+          }
+        },
+        {
+          "id": "match_T4_highland_and_alternative",
+          "endTile": [
+            1196,
+            1195
+          ],
+          "exactCoordinateTile": [
+            1203,
+            1199
+          ],
+          "dynamicDiff": {
+            "size": [
+              640,
+              360
+            ],
+            "differingPixels": 153233,
+            "totalPixels": 230400,
+            "meanAbsChannelDiff": 26.4
+          },
+          "exactCoordinateDiff": {
+            "size": [
+              640,
+              360
+            ],
+            "differingPixels": 153233,
+            "totalPixels": 230400,
+            "meanAbsChannelDiff": 26.4
+          },
+          "tileCodeComparison": {
+            "tiles": 920,
+            "changedTiles": 0,
+            "oldBridgeTiles": 0,
+            "newBridgeTiles": 0,
+            "oldCliffTiles": 0,
+            "newCliffTiles": 0,
+            "note": "exact world-coordinate tile-code comparison; independent of viewer sub-pixel camera offset"
+          }
+        },
+        {
+          "id": "match_T5_coastal_dock_approach",
+          "endTile": [
+            3130,
+            1769
+          ],
+          "exactCoordinateTile": [
+            3130,
+            1769
+          ],
+          "dynamicDiff": {
+            "size": [
+              640,
+              360
+            ],
+            "differingPixels": 103,
+            "totalPixels": 230400,
+            "meanAbsChannelDiff": 0.033
+          },
+          "exactCoordinateDiff": {
+            "size": [
+              640,
+              360
+            ],
+            "differingPixels": 103,
+            "totalPixels": 230400,
+            "meanAbsChannelDiff": 0.033
+          },
+          "tileCodeComparison": {
+            "tiles": 920,
+            "changedTiles": 0,
+            "oldBridgeTiles": 0,
+            "newBridgeTiles": 0,
+            "oldCliffTiles": 0,
+            "newCliffTiles": 0,
+            "note": "exact world-coordinate tile-code comparison; independent of viewer sub-pixel camera offset"
+          }
+        },
+        {
+          "id": "match_T6_poi_exterior_return",
+          "endTile": [
+            519,
+            1304
+          ],
+          "exactCoordinateTile": [
+            519,
+            1304
+          ],
+          "dynamicDiff": {
+            "size": [
+              640,
+              360
+            ],
+            "differingPixels": 0,
+            "totalPixels": 230400,
+            "meanAbsChannelDiff": 0
+          },
+          "exactCoordinateDiff": {
+            "size": [
+              640,
+              360
+            ],
+            "differingPixels": 0,
+            "totalPixels": 230400,
+            "meanAbsChannelDiff": 0
+          },
+          "tileCodeComparison": {
+            "tiles": 920,
+            "changedTiles": 0,
+            "oldBridgeTiles": 0,
+            "newBridgeTiles": 0,
+            "oldCliffTiles": 0,
+            "newCliffTiles": 0,
+            "note": "exact world-coordinate tile-code comparison; independent of viewer sub-pixel camera offset"
+          }
+        }
+      ]
+    },
+    {
+      "id": "E07_protected_baselines",
+      "verdict": "PASS",
+      "detail": {
+        "SoulOfHero_TerrainOnly_U05_x10.html": {
+          "sha256": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0",
+          "unchanged": true
+        },
+        "SoulOfHero_Nature01_U05.html": {
+          "sha256": "ac4d54e310f0f3cf7e0e12d728bc5e9ad62f801994be37ce64f76b099af4a0a7",
+          "unchanged": true
+        },
+        "SoulOfHero_Nature02_ForestSlice.html": {
+          "sha256": "6e1e897a0e365412f6bc92d65390dc10bf7b0352e6ad8ef4a1c38e57f4f30fa6",
+          "unchanged": true
+        }
+      }
+    }
+  ],
+  "summary": {
+    "checks": 28,
+    "passes": 28,
+    "fails": 0,
+    "failedIds": [],
+    "browserErrors": [],
+    "shots": 52
+  },
+  "acceptance": {
+    "PAPER": "MEASURED",
+    "RUNTIME": "ISOLATED_VIEWER_PHYSICAL_VERIFIED_QA_ONLY",
+    "VISUAL": "NOT_REQUESTED_AND_NOT_GRANTED",
+    "GAMEPLAY": "NOT_REQUESTED_AND_NOT_GRANTED",
+    "veyraPlayable": false,
+    "productionMerge": false,
+    "fullWorldVisualAcceptance": false
+  },
+  "noClaims": [
+    "NO production traversal permission",
+    "NO Gameplay collision/load/cart/climb law",
+    "NO GOLD amendment",
+    "NO new atlas/art/world",
+    "NO PR44 edit/merge",
+    "NO full-world visual acceptance",
+    "NO VEYRA_PLAYABLE"
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "schema": "soh.mapgeo02.preflight.v1",
+  "task": "SOH — MAP-GEO-REJOIN-02",
+  "generatedAt": "2026-11-05T14:15:44.780Z",
+  "pinnedHeads": {
+    "map": "3e02fde05a24f6d645ea00ed5ab78900655e1272",
+    "gameplayObserved": "6e7d116b4400ea3c24373fe884b7fad258f4f7bc",
+    "main": "5214788933b1a827f3a177d11ff486433dfe5e8a",
+    "creatorVerified": "5b3e683402bbc8540dea9404576164097e753f97",
+    "u05Pin": "b5c8004ca4e77be62484fb3cd296fe296d7de4c9",
+    "mapgeo01ObservedGameplay": "2f0836587b76a4a98fffedf8c202fb37cbb2a67c"
+  },
+  "liveRefs": {
+    "map": "3e02fde05a24f6d645ea00ed5ab78900655e1272",
+    "gameplayBranch": "c2418b5405ff3325e0ac4806a5309785e816b093",
+    "main": "5214788933b1a827f3a177d11ff486433dfe5e8a",
+    "pr44Head": "c2418b5405ff3325e0ac4806a5309785e816b093"
+  },
+  "gameplayDrift": {
+    "pinnedObserved": "6e7d116b4400ea3c24373fe884b7fad258f4f7bc",
+    "liveNow": "c2418b5405ff3325e0ac4806a5309785e816b093",
+    "movedDuringTask": true,
+    "note": "Gameplay/PR44 moved AFTER the MAP-GEO-02 request pinned 6e7d116b…; both SHAs are reported. PR44 was NOT edited, merged or closed.",
+    "changedFilesCount": 35
+  },
+  "pr44": {
+    "headRefName": "arena/d4bfcfff-soul-of-hero",
+    "headRefOid": "c2418b5405ff3325e0ac4806a5309785e816b093",
+    "state": "OPEN",
+    "updatedAt": "2026-11-05T14:04:01Z"
+  },
+  "local": {
+    "head": "3e02fde05a24f6d645ea00ed5ab78900655e1272",
+    "branch": "arena/2e3cfbd2-soul-of-hero",
+    "headMatchesPinned": true,
+    "note": "Worktree file list is intentionally NOT frozen here (it is a live snapshot); immutable custody is proven by the three protected baseline SHAs and the GOLD/painter digests below."
+  },
+  "protectedExecutables": {
+    "terrainOnly": {
+      "file": "creator-u05/SoulOfHero_TerrainOnly_U05_x10.html",
+      "expected": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0",
+      "sha256": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0",
+      "unchanged": true
+    },
+    "nature01": {
+      "file": "creator-u05/SoulOfHero_Nature01_U05.html",
+      "expected": "ac4d54e310f0f3cf7e0e12d728bc5e9ad62f801994be37ce64f76b099af4a0a7",
+      "sha256": "ac4d54e310f0f3cf7e0e12d728bc5e9ad62f801994be37ce64f76b099af4a0a7",
+      "unchanged": true
+    },
+    "nature02": {
+      "file": "creator-u05/SoulOfHero_Nature02_ForestSlice.html",
+      "expected": "6e1e897a0e365412f6bc92d65390dc10bf7b0352e6ad8ef4a1c38e57f4f30fa6",
+      "sha256": "6e1e897a0e365412f6bc92d65390dc10bf7b0352e6ad8ef4a1c38e57f4f30fa6",
+      "unchanged": true
+    }
+  },
+  "activeAuthority": {
+    "activeRevision": "WMP-04R1",
+    "activeManifest": "v4/r1/manifest.r1.json",
+    "status": "MAP_GEO_R1_CORRECTED__GAMEPLAY_INTAKE_PENDING",
+    "activeRuntimeReader": "api/current.mjs",
+    "basePhysicalRevision": "WMP-03",
+    "productionAtlas": "NOT_AUTHORIZED",
+    "creatorVisualApproval": "NOT_REQUESTED",
+    "artDirection": {
+      "selection": "REUSE_EXISTING_SOH_GAME_ART_RENDERER_AND_SPRITES_FIRST",
+      "stage": "BASE_GAME_ART_PRESERVED__NO_NEW_TILESET_SELECTED",
+      "creatorVisualApproval": "NOT_REQUESTED",
+      "productionAtlas": "NOT_AUTHORIZED",
+      "assetRequestPolicy": "Only request a proven missing component after checking the existing SOH renderer and sprites in actual gameplay."
+    }
+  },
+  "goldSha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+  "gameplaySourceProvenance": {
+    "painterExpectedSha256": "f29c1a68803505c2dbf82aaae3ed37ab7240cb71dff47937f964e753c8d0f803",
+    "painterHeads": {
+      "u05Pin": {
+        "bytes": 8276,
+        "sha256": "f29c1a68803505c2dbf82aaae3ed37ab7240cb71dff47937f964e753c8d0f803"
+      },
+      "mapgeo01Observed": {
+        "bytes": 8276,
+        "sha256": "f29c1a68803505c2dbf82aaae3ed37ab7240cb71dff47937f964e753c8d0f803"
+      },
+      "mapgeo02Pinned": {
+        "bytes": 8276,
+        "sha256": "f29c1a68803505c2dbf82aaae3ed37ab7240cb71dff47937f964e753c8d0f803"
+      },
+      "pr44LiveNow": {
+        "bytes": 8276,
+        "sha256": "f29c1a68803505c2dbf82aaae3ed37ab7240cb71dff47937f964e753c8d0f803"
+      }
+    },
+    "painterIdenticalAcrossAllHeads": true,
+    "note": "Painter block byte-identical at U05 pin / MAP-GEO-01 observed / MAP-GEO-02 pinned / new PR44 head. NO re-vendoring.",
+    "artTs": {
+      "u05Pin": "9312b4c4a82238953508286a07d1a9a67b9ab155",
+      "mapgeo01Observed": "a1a0c77c24dd7063c6aa2916aae6cd5f55439082",
+      "mapgeo02Pinned": "a1a0c77c24dd7063c6aa2916aae6cd5f55439082",
+      "pr44LiveNow": "a1a0c77c24dd7063c6aa2916aae6cd5f55439082",
+      "vendoredBlob": "9312b4c4a82238953508286a07d1a9a67b9ab155",
+      "note": "Live art.ts added S.claim; vendored U05 art.ts stays at the U05 pin. Do NOT silently re-vendor."
+    },
+    "bible": {
+      "u05Pin": {
+        "blob": "f07e5d8448866d226c9c3ed2fae7ec76183fda0e",
+        "fileSha256": "8aa2ac6eee210a823c197e66ec8e12f93f149a9e7671e22889ffa3a5b08b4340"
+      },
+      "mapgeo02Pinned": {
+        "blob": "19145e0474109f6275c50c4a2408d5b4ddd2eb68",
+        "fileSha256": "9851ad25a1389029dd83f448dc77b6670c1b3548e962e951ba9e34f4f5e0bed3"
+      },
+      "pr44LiveNow": {
+        "blob": "19145e0474109f6275c50c4a2408d5b4ddd2eb68",
+        "fileSha256": "9851ad25a1389029dd83f448dc77b6670c1b3548e962e951ba9e34f4f5e0bed3"
+      },
+      "worktreePathPresent": false,
+      "vendoredCopySha256": "8aa2ac6eee210a823c197e66ec8e12f93f149a9e7671e22889ffa3a5b08b4340",
+      "vendoredDiffersFromLive": true
+    }
+  },
+  "scope": {
+    "task": "Correct MGP-D01 (bridge projection) and MGP-D10 (cliff projection); no new geography",
+    "not": [
+      "another world",
+      "geography viewer",
+      "POI audition",
+      "nature system",
+      "product roadmap",
+      "GOLD amendment",
+      "resource placement",
+      "POI architecture",
+      "production gameplay",
+      "PR44 edit/merge"
+    ]
+  }
+}

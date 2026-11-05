@@ -1,0 +1,891 @@
+{
+  "schema": "soh.mapgeo02.bridge-geometry.v1",
+  "task": "SOH — MAP-GEO-REJOIN-02",
+  "generatedAt": "2026-11-05T14:20:24.907Z",
+  "executableSha256": "41b2203bbbab47c0f4f215461e9e7571c2d1a46b0d982a7a2fbf177bbcac2339",
+  "goldSha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256",
+  "crossingRasterSha256": "f1c96bd9fdb04d66117811c941e4a02df7fb3111c1a8671060fccad42c29603b",
+  "method": "runtime derivation from GOLD id/at/ang/load + authored river banks + road approaches + crossingCandidate code; NO 12 AU marker radius",
+  "bridges": [
+    {
+      "id": "br_0",
+      "name": "Cầu Mossbrook",
+      "atAu": [
+        995.173818,
+        751.713374
+      ],
+      "atTile": [
+        1990,
+        1503
+      ],
+      "authoredAngRad": -2.054318994,
+      "authoredLoad": "cart",
+      "crossingCandidateCode": 2,
+      "crossingCellIndex": 23374,
+      "authoredSpanAxis": [
+        -0.464901,
+        -0.885363
+      ],
+      "channelKind": "RIVER",
+      "waterSpanAu": 5,
+      "waterRunFromAu": -2,
+      "waterRunToAu": 2.5,
+      "perpendicularWaterSpanAu": 7.5,
+      "orientation": "AUTHORED_ANG_IS_CROSSING_AXIS",
+      "bankA": {
+        "offsetAu": -2.5,
+        "dryLand": true,
+        "road": true,
+        "roadDistanceAu": 0
+      },
+      "bankB": {
+        "offsetAu": 3,
+        "dryLand": true,
+        "road": true,
+        "roadDistanceAu": 0
+      },
+      "deckFootprintAu": {
+        "length": 5.5,
+        "width": 3,
+        "notMarkerRadius": true
+      },
+      "deckTileCount": 53,
+      "deckTiles8NeighbourConnected": true,
+      "spanCoverage": 1,
+      "centrelineContinuous": true,
+      "bankSeams": {
+        "a": 8,
+        "b": 8,
+        "connected": true
+      },
+      "continuity": true,
+      "roadApproaches": true,
+      "sourceEvidence": {
+        "goldBridgeId": true,
+        "goldAuthoredAt": true,
+        "goldAuthoredAng": true,
+        "goldAuthoredLoad": true,
+        "crossingCandidateCode": true,
+        "authoredRiverBanksMeasured": true,
+        "authoredRoadConnectionsMeasured": true,
+        "boundedChannelSpanMeasured": true
+      },
+      "unresolvedReasons": [],
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "owner": "MAP geometry + GAMEPLAY WorldTraversal",
+      "gameplayIntake": "WorldTraversal must decide bearing/load/cart clearance/walk collision; NOT granted here"
+    },
+    {
+      "id": "br_1",
+      "name": "Cầu Timber Cut Canal",
+      "atAu": [
+        1022.333803,
+        453.484609
+      ],
+      "atTile": [
+        2044,
+        906
+      ],
+      "authoredAngRad": 2.14553071,
+      "authoredLoad": "cart",
+      "crossingCandidateCode": 2,
+      "crossingCellIndex": 14127,
+      "authoredSpanAxis": [
+        -0.543612,
+        0.839337
+      ],
+      "channelKind": "RIVER",
+      "waterSpanAu": 4,
+      "waterRunFromAu": -2,
+      "waterRunToAu": 1.5,
+      "perpendicularWaterSpanAu": 7,
+      "orientation": "AUTHORED_ANG_IS_CROSSING_AXIS",
+      "bankA": {
+        "offsetAu": -2.5,
+        "dryLand": true,
+        "road": true,
+        "roadDistanceAu": 0
+      },
+      "bankB": {
+        "offsetAu": 2,
+        "dryLand": true,
+        "road": true,
+        "roadDistanceAu": 0
+      },
+      "deckFootprintAu": {
+        "length": 4.5,
+        "width": 3,
+        "notMarkerRadius": true
+      },
+      "deckTileCount": 46,
+      "deckTiles8NeighbourConnected": true,
+      "spanCoverage": 1,
+      "centrelineContinuous": true,
+      "bankSeams": {
+        "a": 12,
+        "b": 15,
+        "connected": true
+      },
+      "continuity": true,
+      "roadApproaches": true,
+      "sourceEvidence": {
+        "goldBridgeId": true,
+        "goldAuthoredAt": true,
+        "goldAuthoredAng": true,
+        "goldAuthoredLoad": true,
+        "crossingCandidateCode": true,
+        "authoredRiverBanksMeasured": true,
+        "authoredRoadConnectionsMeasured": true,
+        "boundedChannelSpanMeasured": true
+      },
+      "unresolvedReasons": [],
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "owner": "MAP geometry + GAMEPLAY WorldTraversal",
+      "gameplayIntake": "WorldTraversal must decide bearing/load/cart clearance/walk collision; NOT granted here"
+    },
+    {
+      "id": "br_2",
+      "name": "Cầu Eastwater River",
+      "atAu": [
+        1289.789636,
+        520.954909
+      ],
+      "atTile": [
+        2579,
+        1041
+      ],
+      "authoredAngRad": -1.535484924,
+      "authoredLoad": "cart",
+      "crossingCandidateCode": 2,
+      "crossingCellIndex": 16411,
+      "authoredSpanAxis": [
+        0.035304,
+        -0.999377
+      ],
+      "channelKind": "RIVER",
+      "waterSpanAu": 7,
+      "waterRunFromAu": -3.5,
+      "waterRunToAu": 3,
+      "perpendicularWaterSpanAu": 15.5,
+      "orientation": "AUTHORED_ANG_IS_CROSSING_AXIS",
+      "bankA": {
+        "offsetAu": -4,
+        "dryLand": true,
+        "road": true,
+        "roadDistanceAu": 0
+      },
+      "bankB": {
+        "offsetAu": 3.5,
+        "dryLand": true,
+        "road": true,
+        "roadDistanceAu": 0
+      },
+      "deckFootprintAu": {
+        "length": 7.5,
+        "width": 3,
+        "notMarkerRadius": true
+      },
+      "deckTileCount": 77,
+      "deckTiles8NeighbourConnected": true,
+      "spanCoverage": 0.9375,
+      "centrelineContinuous": true,
+      "bankSeams": {
+        "a": 10,
+        "b": 15,
+        "connected": true
+      },
+      "continuity": true,
+      "roadApproaches": true,
+      "sourceEvidence": {
+        "goldBridgeId": true,
+        "goldAuthoredAt": true,
+        "goldAuthoredAng": true,
+        "goldAuthoredLoad": true,
+        "crossingCandidateCode": true,
+        "authoredRiverBanksMeasured": true,
+        "authoredRoadConnectionsMeasured": true,
+        "boundedChannelSpanMeasured": true
+      },
+      "unresolvedReasons": [],
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "owner": "MAP geometry + GAMEPLAY WorldTraversal",
+      "gameplayIntake": "WorldTraversal must decide bearing/load/cart clearance/walk collision; NOT granted here"
+    },
+    {
+      "id": "br_3",
+      "name": "Cầu Greywater River",
+      "atAu": [
+        855.277462,
+        576.127164
+      ],
+      "atTile": [
+        1710,
+        1152
+      ],
+      "authoredAngRad": -0.519146114,
+      "authoredLoad": "cart",
+      "crossingCandidateCode": 2,
+      "crossingCellIndex": 18106,
+      "authoredSpanAxis": [
+        0.868243,
+        -0.496139
+      ],
+      "channelKind": "RIVER",
+      "waterSpanAu": 7,
+      "waterRunFromAu": -4,
+      "waterRunToAu": 2.5,
+      "perpendicularWaterSpanAu": 24.5,
+      "orientation": "AUTHORED_ANG_IS_CROSSING_AXIS",
+      "bankA": {
+        "offsetAu": -4.5,
+        "dryLand": true,
+        "road": true,
+        "roadDistanceAu": 0
+      },
+      "bankB": {
+        "offsetAu": 3,
+        "dryLand": true,
+        "road": true,
+        "roadDistanceAu": 0
+      },
+      "deckFootprintAu": {
+        "length": 7.5,
+        "width": 3,
+        "notMarkerRadius": true
+      },
+      "deckTileCount": 83,
+      "deckTiles8NeighbourConnected": true,
+      "spanCoverage": 1,
+      "centrelineContinuous": true,
+      "bankSeams": {
+        "a": 18,
+        "b": 14,
+        "connected": true
+      },
+      "continuity": true,
+      "roadApproaches": true,
+      "sourceEvidence": {
+        "goldBridgeId": true,
+        "goldAuthoredAt": true,
+        "goldAuthoredAng": true,
+        "goldAuthoredLoad": true,
+        "crossingCandidateCode": true,
+        "authoredRiverBanksMeasured": true,
+        "authoredRoadConnectionsMeasured": true,
+        "boundedChannelSpanMeasured": true
+      },
+      "unresolvedReasons": [],
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "owner": "MAP geometry + GAMEPLAY WorldTraversal",
+      "gameplayIntake": "WorldTraversal must decide bearing/load/cart clearance/walk collision; NOT granted here"
+    },
+    {
+      "id": "br_4",
+      "name": "Cầu Silverrun",
+      "atAu": [
+        732.006968,
+        649.817052
+      ],
+      "atTile": [
+        1464,
+        1299
+      ],
+      "authoredAngRad": 1.132195671,
+      "authoredLoad": "cart",
+      "crossingCandidateCode": 2,
+      "crossingCellIndex": 20341,
+      "authoredSpanAxis": [
+        0.424673,
+        0.905347
+      ],
+      "channelKind": "RIVER",
+      "waterSpanAu": 4,
+      "waterRunFromAu": -2,
+      "waterRunToAu": 1.5,
+      "perpendicularWaterSpanAu": 13,
+      "orientation": "AUTHORED_ANG_IS_CROSSING_AXIS",
+      "bankA": {
+        "offsetAu": -2.5,
+        "dryLand": true,
+        "road": true,
+        "roadDistanceAu": 0
+      },
+      "bankB": {
+        "offsetAu": 2,
+        "dryLand": true,
+        "road": true,
+        "roadDistanceAu": 0
+      },
+      "deckFootprintAu": {
+        "length": 4.5,
+        "width": 3,
+        "notMarkerRadius": true
+      },
+      "deckTileCount": 46,
+      "deckTiles8NeighbourConnected": true,
+      "spanCoverage": 1,
+      "centrelineContinuous": true,
+      "bankSeams": {
+        "a": 19,
+        "b": 12,
+        "connected": true
+      },
+      "continuity": true,
+      "roadApproaches": true,
+      "sourceEvidence": {
+        "goldBridgeId": true,
+        "goldAuthoredAt": true,
+        "goldAuthoredAng": true,
+        "goldAuthoredLoad": true,
+        "crossingCandidateCode": true,
+        "authoredRiverBanksMeasured": true,
+        "authoredRoadConnectionsMeasured": true,
+        "boundedChannelSpanMeasured": true
+      },
+      "unresolvedReasons": [],
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "owner": "MAP geometry + GAMEPLAY WorldTraversal",
+      "gameplayIntake": "WorldTraversal must decide bearing/load/cart clearance/walk collision; NOT granted here"
+    },
+    {
+      "id": "br_5",
+      "name": "Cầu Greywater River",
+      "atAu": [
+        968.009949,
+        816.183405
+      ],
+      "atTile": [
+        1936,
+        1632
+      ],
+      "authoredAngRad": -0.67993326,
+      "authoredLoad": "cart",
+      "crossingCandidateCode": 2,
+      "crossingCellIndex": 25621,
+      "authoredSpanAxis": [
+        0.777615,
+        -0.628741
+      ],
+      "channelKind": "RIVER",
+      "waterSpanAu": 7,
+      "waterRunFromAu": -3,
+      "waterRunToAu": 3.5,
+      "perpendicularWaterSpanAu": 47.5,
+      "orientation": "AUTHORED_ANG_IS_CROSSING_AXIS",
+      "bankA": {
+        "offsetAu": -3.5,
+        "dryLand": true,
+        "road": true,
+        "roadDistanceAu": 0
+      },
+      "bankB": {
+        "offsetAu": 4,
+        "dryLand": true,
+        "road": true,
+        "roadDistanceAu": 0
+      },
+      "deckFootprintAu": {
+        "length": 7.5,
+        "width": 3,
+        "notMarkerRadius": true
+      },
+      "deckTileCount": 84,
+      "deckTiles8NeighbourConnected": true,
+      "spanCoverage": 1,
+      "centrelineContinuous": true,
+      "bankSeams": {
+        "a": 18,
+        "b": 18,
+        "connected": true
+      },
+      "continuity": true,
+      "roadApproaches": true,
+      "sourceEvidence": {
+        "goldBridgeId": true,
+        "goldAuthoredAt": true,
+        "goldAuthoredAng": true,
+        "goldAuthoredLoad": true,
+        "crossingCandidateCode": true,
+        "authoredRiverBanksMeasured": true,
+        "authoredRoadConnectionsMeasured": true,
+        "boundedChannelSpanMeasured": true
+      },
+      "unresolvedReasons": [],
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "owner": "MAP geometry + GAMEPLAY WorldTraversal",
+      "gameplayIntake": "WorldTraversal must decide bearing/load/cart clearance/walk collision; NOT granted here"
+    },
+    {
+      "id": "br_6",
+      "name": "Cầu Mossbrook",
+      "atAu": [
+        1006.214539,
+        731.440522
+      ],
+      "atTile": [
+        2012,
+        1462
+      ],
+      "authoredAngRad": -2.812243112,
+      "authoredLoad": "foot",
+      "crossingCandidateCode": 1,
+      "crossingCellIndex": 22875,
+      "authoredSpanAxis": [
+        -0.946253,
+        -0.323428
+      ],
+      "channelKind": "RIVER",
+      "waterSpanAu": 4,
+      "waterRunFromAu": -2,
+      "waterRunToAu": 1.5,
+      "perpendicularWaterSpanAu": 20.5,
+      "orientation": "AUTHORED_ANG_IS_CROSSING_AXIS",
+      "bankA": {
+        "offsetAu": -2.5,
+        "dryLand": true,
+        "road": true,
+        "roadDistanceAu": 0
+      },
+      "bankB": {
+        "offsetAu": 2,
+        "dryLand": true,
+        "road": true,
+        "roadDistanceAu": 0
+      },
+      "deckFootprintAu": {
+        "length": 4.5,
+        "width": 3,
+        "notMarkerRadius": true
+      },
+      "deckTileCount": 49,
+      "deckTiles8NeighbourConnected": true,
+      "spanCoverage": 1,
+      "centrelineContinuous": true,
+      "bankSeams": {
+        "a": 19,
+        "b": 17,
+        "connected": true
+      },
+      "continuity": true,
+      "roadApproaches": true,
+      "sourceEvidence": {
+        "goldBridgeId": true,
+        "goldAuthoredAt": true,
+        "goldAuthoredAng": true,
+        "goldAuthoredLoad": true,
+        "crossingCandidateCode": true,
+        "authoredRiverBanksMeasured": true,
+        "authoredRoadConnectionsMeasured": true,
+        "boundedChannelSpanMeasured": true
+      },
+      "unresolvedReasons": [],
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "owner": "MAP geometry + GAMEPLAY WorldTraversal",
+      "gameplayIntake": "WorldTraversal must decide bearing/load/cart clearance/walk collision; NOT granted here"
+    },
+    {
+      "id": "br_7",
+      "name": "Cầu Salt Brook",
+      "atAu": [
+        1615.696626,
+        343.796512
+      ],
+      "atTile": [
+        3231,
+        687
+      ],
+      "authoredAngRad": 0.515747657,
+      "authoredLoad": "cart",
+      "crossingCandidateCode": 2,
+      "crossingCellIndex": 10701,
+      "authoredSpanAxis": [
+        0.869924,
+        0.493185
+      ],
+      "channelKind": "RIVER",
+      "waterSpanAu": 2,
+      "waterRunFromAu": -0.5,
+      "waterRunToAu": 1,
+      "perpendicularWaterSpanAu": 20.5,
+      "orientation": "AUTHORED_ANG_IS_CROSSING_AXIS",
+      "bankA": {
+        "offsetAu": -1,
+        "dryLand": true,
+        "road": true,
+        "roadDistanceAu": 0
+      },
+      "bankB": {
+        "offsetAu": 1.5,
+        "dryLand": true,
+        "road": true,
+        "roadDistanceAu": 0
+      },
+      "deckFootprintAu": {
+        "length": 2.5,
+        "width": 3,
+        "notMarkerRadius": true
+      },
+      "deckTileCount": 28,
+      "deckTiles8NeighbourConnected": true,
+      "spanCoverage": 1,
+      "centrelineContinuous": true,
+      "bankSeams": {
+        "a": 15,
+        "b": 12,
+        "connected": true
+      },
+      "continuity": true,
+      "roadApproaches": true,
+      "sourceEvidence": {
+        "goldBridgeId": true,
+        "goldAuthoredAt": true,
+        "goldAuthoredAng": true,
+        "goldAuthoredLoad": true,
+        "crossingCandidateCode": true,
+        "authoredRiverBanksMeasured": true,
+        "authoredRoadConnectionsMeasured": true,
+        "boundedChannelSpanMeasured": true
+      },
+      "unresolvedReasons": [],
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "owner": "MAP geometry + GAMEPLAY WorldTraversal",
+      "gameplayIntake": "WorldTraversal must decide bearing/load/cart clearance/walk collision; NOT granted here"
+    },
+    {
+      "id": "br_8",
+      "name": "Cầu Eastwater River",
+      "atAu": [
+        1152.976074,
+        457.332974
+      ],
+      "atTile": [
+        2305,
+        914
+      ],
+      "authoredAngRad": -1.003129902,
+      "authoredLoad": "foot",
+      "crossingCandidateCode": 1,
+      "crossingCellIndex": 14394,
+      "authoredSpanAxis": [
+        0.537666,
+        -0.843158
+      ],
+      "channelKind": "RIVER",
+      "waterSpanAu": 6,
+      "waterRunFromAu": -2.5,
+      "waterRunToAu": 3,
+      "perpendicularWaterSpanAu": 27,
+      "orientation": "AUTHORED_ANG_IS_CROSSING_AXIS",
+      "bankA": {
+        "offsetAu": -3,
+        "dryLand": true,
+        "road": true,
+        "roadDistanceAu": 0
+      },
+      "bankB": {
+        "offsetAu": 3.5,
+        "dryLand": true,
+        "road": true,
+        "roadDistanceAu": 0
+      },
+      "deckFootprintAu": {
+        "length": 6.5,
+        "width": 3,
+        "notMarkerRadius": true
+      },
+      "deckTileCount": 75,
+      "deckTiles8NeighbourConnected": true,
+      "spanCoverage": 1,
+      "centrelineContinuous": true,
+      "bankSeams": {
+        "a": 17,
+        "b": 19,
+        "connected": true
+      },
+      "continuity": true,
+      "roadApproaches": true,
+      "sourceEvidence": {
+        "goldBridgeId": true,
+        "goldAuthoredAt": true,
+        "goldAuthoredAng": true,
+        "goldAuthoredLoad": true,
+        "crossingCandidateCode": true,
+        "authoredRiverBanksMeasured": true,
+        "authoredRoadConnectionsMeasured": true,
+        "boundedChannelSpanMeasured": true
+      },
+      "unresolvedReasons": [],
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "owner": "MAP geometry + GAMEPLAY WorldTraversal",
+      "gameplayIntake": "WorldTraversal must decide bearing/load/cart clearance/walk collision; NOT granted here"
+    },
+    {
+      "id": "br_9",
+      "name": "Cầu Greywater River (thượng lưu)",
+      "atAu": [
+        777.597113,
+        456.582831
+      ],
+      "atTile": [
+        1555,
+        913
+      ],
+      "authoredAngRad": -1.2639214,
+      "authoredLoad": "foot",
+      "crossingCandidateCode": 1,
+      "crossingCellIndex": 14347,
+      "authoredSpanAxis": [
+        0.302081,
+        -0.953282
+      ],
+      "channelKind": "RIVER",
+      "waterSpanAu": 6.5,
+      "waterRunFromAu": -3.5,
+      "waterRunToAu": 2.5,
+      "perpendicularWaterSpanAu": 5,
+      "orientation": "AUTHORED_ANG_LONGER_THAN_PERPENDICULAR__CHANNEL_NARROW_BOTH_AXES",
+      "bankA": {
+        "offsetAu": -4,
+        "dryLand": true,
+        "road": true,
+        "roadDistanceAu": 0
+      },
+      "bankB": {
+        "offsetAu": 3,
+        "dryLand": true,
+        "road": true,
+        "roadDistanceAu": 0
+      },
+      "deckFootprintAu": {
+        "length": 7,
+        "width": 3,
+        "notMarkerRadius": true
+      },
+      "deckTileCount": 66,
+      "deckTiles8NeighbourConnected": true,
+      "spanCoverage": 0.9333,
+      "centrelineContinuous": true,
+      "bankSeams": {
+        "a": 6,
+        "b": 7,
+        "connected": true
+      },
+      "continuity": true,
+      "roadApproaches": true,
+      "sourceEvidence": {
+        "goldBridgeId": true,
+        "goldAuthoredAt": true,
+        "goldAuthoredAng": true,
+        "goldAuthoredLoad": true,
+        "crossingCandidateCode": true,
+        "authoredRiverBanksMeasured": true,
+        "authoredRoadConnectionsMeasured": true,
+        "boundedChannelSpanMeasured": true
+      },
+      "unresolvedReasons": [
+        "MULTIPLE_BOUNDED_CROSSING_AXES__OWNER_BEARING_REVIEW"
+      ],
+      "status": "UNRESOLVED__EXTERNAL_DECISION_REQUIRED",
+      "owner": "CREATOR/GAMEPLAY (exact id reported)",
+      "gameplayIntake": "WorldTraversal must decide bearing/load/cart clearance/walk collision; NOT granted here"
+    },
+    {
+      "id": "br_a",
+      "name": "Cầu Silverrun",
+      "atAu": [
+        882.974385,
+        646.903089
+      ],
+      "atTile": [
+        1765,
+        1293
+      ],
+      "authoredAngRad": 1.184497952,
+      "authoredLoad": "foot",
+      "crossingCandidateCode": 1,
+      "crossingCellIndex": 20110,
+      "authoredSpanAxis": [
+        0.376762,
+        0.92631
+      ],
+      "channelKind": "RIVER",
+      "waterSpanAu": 5,
+      "waterRunFromAu": -1.5,
+      "waterRunToAu": 3,
+      "perpendicularWaterSpanAu": 7,
+      "orientation": "AUTHORED_ANG_IS_CROSSING_AXIS",
+      "bankA": {
+        "offsetAu": -2,
+        "dryLand": true,
+        "road": true,
+        "roadDistanceAu": 0
+      },
+      "bankB": {
+        "offsetAu": 3.5,
+        "dryLand": true,
+        "road": true,
+        "roadDistanceAu": 0
+      },
+      "deckFootprintAu": {
+        "length": 5.5,
+        "width": 3,
+        "notMarkerRadius": true
+      },
+      "deckTileCount": 55,
+      "deckTiles8NeighbourConnected": true,
+      "spanCoverage": 0.9167,
+      "centrelineContinuous": true,
+      "bankSeams": {
+        "a": 9,
+        "b": 12,
+        "connected": true
+      },
+      "continuity": true,
+      "roadApproaches": true,
+      "sourceEvidence": {
+        "goldBridgeId": true,
+        "goldAuthoredAt": true,
+        "goldAuthoredAng": true,
+        "goldAuthoredLoad": true,
+        "crossingCandidateCode": true,
+        "authoredRiverBanksMeasured": true,
+        "authoredRoadConnectionsMeasured": true,
+        "boundedChannelSpanMeasured": true
+      },
+      "unresolvedReasons": [],
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "owner": "MAP geometry + GAMEPLAY WorldTraversal",
+      "gameplayIntake": "WorldTraversal must decide bearing/load/cart clearance/walk collision; NOT granted here"
+    },
+    {
+      "id": "br_b",
+      "name": "Cầu Delta East Channel",
+      "atAu": [
+        1026.24147,
+        929.687055
+      ],
+      "atTile": [
+        2052,
+        1859
+      ],
+      "authoredAngRad": 0.397618875,
+      "authoredLoad": "foot",
+      "crossingCandidateCode": 1,
+      "crossingCellIndex": 29128,
+      "authoredSpanAxis": [
+        0.921986,
+        0.387224
+      ],
+      "channelKind": "RIVER",
+      "waterSpanAu": 32,
+      "waterRunFromAu": -30,
+      "waterRunToAu": 1.5,
+      "perpendicularWaterSpanAu": 37.5,
+      "orientation": "AUTHORED_ANG_IS_CROSSING_AXIS",
+      "bankA": {
+        "offsetAu": null,
+        "dryLand": false,
+        "road": false,
+        "roadDistanceAu": null
+      },
+      "bankB": {
+        "offsetAu": 2,
+        "dryLand": true,
+        "road": true,
+        "roadDistanceAu": 0
+      },
+      "deckFootprintAu": {
+        "length": 32.5,
+        "width": 3,
+        "notMarkerRadius": true
+      },
+      "deckTileCount": 385,
+      "deckTiles8NeighbourConnected": true,
+      "spanCoverage": 1,
+      "centrelineContinuous": true,
+      "bankSeams": {
+        "a": 0,
+        "b": 15,
+        "connected": false
+      },
+      "continuity": false,
+      "roadApproaches": false,
+      "sourceEvidence": {
+        "goldBridgeId": true,
+        "goldAuthoredAt": true,
+        "goldAuthoredAng": true,
+        "goldAuthoredLoad": true,
+        "crossingCandidateCode": true,
+        "authoredRiverBanksMeasured": false,
+        "authoredRoadConnectionsMeasured": false,
+        "boundedChannelSpanMeasured": false
+      },
+      "unresolvedReasons": [
+        "NO_VERIFIED_BOTH_BANKS",
+        "WATER_RUN_UNBOUNDED_AT_30_AU_SEARCH",
+        "WATER_SPAN_EXCEEDS_BOUNDED_CANDIDATE_GUARD",
+        "ROAD_OR_FOOTPATH_APPROACH_MISSING",
+        "BANK_SEAMS_NOT_CONNECTED",
+        "SOURCE_EVIDENCE_INSUFFICIENT"
+      ],
+      "status": "UNRESOLVED__EXTERNAL_DECISION_REQUIRED",
+      "owner": "CREATOR/GAMEPLAY (exact id reported)",
+      "gameplayIntake": "WorldTraversal must decide bearing/load/cart clearance/walk collision; NOT granted here"
+    }
+  ],
+  "cliffStats": {
+    "rasterContract": "cliffCandidate.v3.u8 = BINARY connected steep FACE (0/1); PROPOSED; no metres/degrees/climb/collision law",
+    "consumerDefect": "cliff >= 2 can never match a 0/1 raster (MGP-D10)",
+    "repairedPredicate": "cliffCandidate >= 1 AND heightClass >= 4 AND slopeRaw >= 20 AND 4-neighbour downhill drop >= 12",
+    "independentChecks": [
+      "heightClass.v3.u8",
+      "slope.u8 (raw source byte)",
+      "elevation.u8 4-neighbour downhill drop",
+      "slopeClass.v3.u8 (QA file-level check)",
+      "activeCollisionPermission.v3.u8 (all zero)"
+    ],
+    "candidateCells": 305,
+    "qualifiedCells": 305,
+    "sideHistogram": {
+      "N": 105,
+      "S": 62,
+      "W": 64,
+      "E": 74
+    },
+    "faceBandTilesPerCellEdge": [
+      2,
+      4
+    ],
+    "faceEdge": "deterministic hash2 jitter + ~6% holes + sparse one-tile rock teeth; NEVER a filled 16x16 slab",
+    "tilesPerAnalysisCell": 256,
+    "projectedFractionOfCell": 0.1875,
+    "filledSlabsProhibited": true,
+    "permanentImpassableWallsProhibited": true,
+    "mode": "PRODUCTION_NO_PERMISSION",
+    "productionCollisionCells": 0,
+    "note": "QA candidate collision is explicit and separate; Gameplay-approved collision is NOT granted."
+  },
+  "deckTileCount": 596,
+  "resolvedIds": [
+    "br_0",
+    "br_1",
+    "br_2",
+    "br_3",
+    "br_4",
+    "br_5",
+    "br_6",
+    "br_7",
+    "br_8",
+    "br_a"
+  ],
+  "unresolvedIds": [
+    "br_9",
+    "br_b"
+  ],
+  "authority": "MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_WORLDTRAVERSAL_PERMISSION_REQUIRED",
+  "noClaims": [
+    "NO production traversal permission",
+    "NO bearing/load/cart clearance law",
+    "NO GOLD amendment"
+  ]
+}

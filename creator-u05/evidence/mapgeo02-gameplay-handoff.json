@@ -1,0 +1,1709 @@
+{
+  "schema": "soh.mapgeo02.gameplay-handoff.v1",
+  "task": "SOH — MAP-GEO-REJOIN-02",
+  "status": "MAP_PHYSICAL_GEOMETRY_CORRECTED__GAMEPLAY_WORLDTRAVERSAL_INTAKE_PENDING",
+  "generatedAt": "2026-11-05T14:20:24.992Z",
+  "exactRefs": {
+    "mapBranch": "arena/2e3cfbd2-soul-of-hero",
+    "mapPinnedAndLive": "3e02fde05a24f6d645ea00ed5ab78900655e1272",
+    "main": "5214788933b1a827f3a177d11ff486433dfe5e8a",
+    "gameplayPinnedObserved": "6e7d116b4400ea3c24373fe884b7fad258f4f7bc",
+    "gameplayLivePR44": "c2418b5405ff3325e0ac4806a5309785e816b093",
+    "gameplayDriftDuringTask": true,
+    "pr44State": "OPEN",
+    "creatorVerified": "5b3e683402bbc8540dea9404576164097e753f97",
+    "u05SourcePin": "b5c8004ca4e77be62484fb3cd296fe296d7de4c9",
+    "painterBlockSha256": "f29c1a68803505c2dbf82aaae3ed37ab7240cb71dff47937f964e753c8d0f803",
+    "painterIdenticalAcrossAllHeads": true
+  },
+  "deliverable": {
+    "file": "creator-u05/SoulOfHero_MapGeo02_CorrectedProjection.html",
+    "bytes": 1421388,
+    "sha256": "41b2203bbbab47c0f4f215461e9e7571c2d1a46b0d982a7a2fbf177bbcac2339",
+    "zip": {
+      "file": "creator-u05/SoulOfHero_MapGeo02_CorrectedProjection.zip",
+      "bytes": 125745,
+      "sha256": "1379c722a27be8aa9c5d0b9b88531f2fde64c0357f9080c0729adfbf8d1f6db1",
+      "note": "gzip of the exact HTML bytes, not a new executable"
+    }
+  },
+  "protectedBaselines": {
+    "SoulOfHero_TerrainOnly_U05_x10.html": {
+      "sha256": "540f095e1a29a228a989ae017eb888a54861f2a5a077b2686e9a5697c81c6ab0",
+      "unchanged": true
+    },
+    "SoulOfHero_Nature01_U05.html": {
+      "sha256": "ac4d54e310f0f3cf7e0e12d728bc5e9ad62f801994be37ce64f76b099af4a0a7",
+      "unchanged": true
+    },
+    "SoulOfHero_Nature02_ForestSlice.html": {
+      "sha256": "6e1e897a0e365412f6bc92d65390dc10bf7b0352e6ad8ef4a1c38e57f4f30fa6",
+      "unchanged": true
+    }
+  },
+  "defects": {
+    "MGP-D01": {
+      "before": "12/12 bridge centres RIVER/blocked, 0 crossable; 888 BRIDGE tiles on land at br_1, 0 on water",
+      "after": "10/12 bounded deck candidates measured and rendered; 596 deck tiles, 100% on water, 0 on land; 2 exact unresolved ids",
+      "status": "MAP_GEOMETRY_CORRECTED__GAMEPLAY_TRAVERSAL_PERMISSION_STILL_REQUIRED"
+    },
+    "MGP-D10": {
+      "before": "305 binary cliffCandidate cells, 0 visible/physical T.CLIFF (consumer used cliff>=2)",
+      "after": "305 candidate cells + 305 independently qualified; thin broken downhill face band 2..4/16 tiles; 0 production walls",
+      "status": "MAP_DISPLAY_CORRECTED__GAMEPLAY_COLLISION_AND_CLIMB_LAW_STILL_REQUIRED"
+    }
+  },
+  "bridges": [
+    {
+      "id": "br_0",
+      "load": "cart",
+      "crossingCode": 2,
+      "atAu": [
+        995.173818,
+        751.713374
+      ],
+      "atTile": [
+        1990,
+        1503
+      ],
+      "angRad": -2.054318994,
+      "channelKind": "RIVER",
+      "waterSpanAu": 5,
+      "perpendicularWaterSpanAu": 7.5,
+      "orientation": "AUTHORED_ANG_IS_CROSSING_AXIS",
+      "footprintAu": {
+        "length": 5.5,
+        "width": 3,
+        "notMarkerRadius": true
+      },
+      "deckTilesMeasured": 53,
+      "deckTilesRendered": 53,
+      "spanCoverage": 1,
+      "banks": {
+        "a": {
+          "offsetAu": -2.5,
+          "dryLand": true,
+          "road": true,
+          "roadDistanceAu": 0
+        },
+        "b": {
+          "offsetAu": 3,
+          "dryLand": true,
+          "road": true,
+          "roadDistanceAu": 0
+        }
+      },
+      "seams": {
+        "a": 8,
+        "b": 8,
+        "connected": true
+      },
+      "continuity": true,
+      "roadApproaches": true,
+      "sourceEvidence": {
+        "goldBridgeId": true,
+        "goldAuthoredAt": true,
+        "goldAuthoredAng": true,
+        "goldAuthoredLoad": true,
+        "crossingCandidateCode": true,
+        "authoredRiverBanksMeasured": true,
+        "authoredRoadConnectionsMeasured": true,
+        "boundedChannelSpanMeasured": true
+      },
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "unresolvedReasons": [],
+      "owner": "MAP geometry + GAMEPLAY WorldTraversal"
+    },
+    {
+      "id": "br_1",
+      "load": "cart",
+      "crossingCode": 2,
+      "atAu": [
+        1022.333803,
+        453.484609
+      ],
+      "atTile": [
+        2044,
+        906
+      ],
+      "angRad": 2.14553071,
+      "channelKind": "RIVER",
+      "waterSpanAu": 4,
+      "perpendicularWaterSpanAu": 7,
+      "orientation": "AUTHORED_ANG_IS_CROSSING_AXIS",
+      "footprintAu": {
+        "length": 4.5,
+        "width": 3,
+        "notMarkerRadius": true
+      },
+      "deckTilesMeasured": 46,
+      "deckTilesRendered": 46,
+      "spanCoverage": 1,
+      "banks": {
+        "a": {
+          "offsetAu": -2.5,
+          "dryLand": true,
+          "road": true,
+          "roadDistanceAu": 0
+        },
+        "b": {
+          "offsetAu": 2,
+          "dryLand": true,
+          "road": true,
+          "roadDistanceAu": 0
+        }
+      },
+      "seams": {
+        "a": 12,
+        "b": 15,
+        "connected": true
+      },
+      "continuity": true,
+      "roadApproaches": true,
+      "sourceEvidence": {
+        "goldBridgeId": true,
+        "goldAuthoredAt": true,
+        "goldAuthoredAng": true,
+        "goldAuthoredLoad": true,
+        "crossingCandidateCode": true,
+        "authoredRiverBanksMeasured": true,
+        "authoredRoadConnectionsMeasured": true,
+        "boundedChannelSpanMeasured": true
+      },
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "unresolvedReasons": [],
+      "owner": "MAP geometry + GAMEPLAY WorldTraversal"
+    },
+    {
+      "id": "br_2",
+      "load": "cart",
+      "crossingCode": 2,
+      "atAu": [
+        1289.789636,
+        520.954909
+      ],
+      "atTile": [
+        2579,
+        1041
+      ],
+      "angRad": -1.535484924,
+      "channelKind": "RIVER",
+      "waterSpanAu": 7,
+      "perpendicularWaterSpanAu": 15.5,
+      "orientation": "AUTHORED_ANG_IS_CROSSING_AXIS",
+      "footprintAu": {
+        "length": 7.5,
+        "width": 3,
+        "notMarkerRadius": true
+      },
+      "deckTilesMeasured": 77,
+      "deckTilesRendered": 77,
+      "spanCoverage": 0.9375,
+      "banks": {
+        "a": {
+          "offsetAu": -4,
+          "dryLand": true,
+          "road": true,
+          "roadDistanceAu": 0
+        },
+        "b": {
+          "offsetAu": 3.5,
+          "dryLand": true,
+          "road": true,
+          "roadDistanceAu": 0
+        }
+      },
+      "seams": {
+        "a": 10,
+        "b": 15,
+        "connected": true
+      },
+      "continuity": true,
+      "roadApproaches": true,
+      "sourceEvidence": {
+        "goldBridgeId": true,
+        "goldAuthoredAt": true,
+        "goldAuthoredAng": true,
+        "goldAuthoredLoad": true,
+        "crossingCandidateCode": true,
+        "authoredRiverBanksMeasured": true,
+        "authoredRoadConnectionsMeasured": true,
+        "boundedChannelSpanMeasured": true
+      },
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "unresolvedReasons": [],
+      "owner": "MAP geometry + GAMEPLAY WorldTraversal"
+    },
+    {
+      "id": "br_3",
+      "load": "cart",
+      "crossingCode": 2,
+      "atAu": [
+        855.277462,
+        576.127164
+      ],
+      "atTile": [
+        1710,
+        1152
+      ],
+      "angRad": -0.519146114,
+      "channelKind": "RIVER",
+      "waterSpanAu": 7,
+      "perpendicularWaterSpanAu": 24.5,
+      "orientation": "AUTHORED_ANG_IS_CROSSING_AXIS",
+      "footprintAu": {
+        "length": 7.5,
+        "width": 3,
+        "notMarkerRadius": true
+      },
+      "deckTilesMeasured": 83,
+      "deckTilesRendered": 83,
+      "spanCoverage": 1,
+      "banks": {
+        "a": {
+          "offsetAu": -4.5,
+          "dryLand": true,
+          "road": true,
+          "roadDistanceAu": 0
+        },
+        "b": {
+          "offsetAu": 3,
+          "dryLand": true,
+          "road": true,
+          "roadDistanceAu": 0
+        }
+      },
+      "seams": {
+        "a": 18,
+        "b": 14,
+        "connected": true
+      },
+      "continuity": true,
+      "roadApproaches": true,
+      "sourceEvidence": {
+        "goldBridgeId": true,
+        "goldAuthoredAt": true,
+        "goldAuthoredAng": true,
+        "goldAuthoredLoad": true,
+        "crossingCandidateCode": true,
+        "authoredRiverBanksMeasured": true,
+        "authoredRoadConnectionsMeasured": true,
+        "boundedChannelSpanMeasured": true
+      },
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "unresolvedReasons": [],
+      "owner": "MAP geometry + GAMEPLAY WorldTraversal"
+    },
+    {
+      "id": "br_4",
+      "load": "cart",
+      "crossingCode": 2,
+      "atAu": [
+        732.006968,
+        649.817052
+      ],
+      "atTile": [
+        1464,
+        1299
+      ],
+      "angRad": 1.132195671,
+      "channelKind": "RIVER",
+      "waterSpanAu": 4,
+      "perpendicularWaterSpanAu": 13,
+      "orientation": "AUTHORED_ANG_IS_CROSSING_AXIS",
+      "footprintAu": {
+        "length": 4.5,
+        "width": 3,
+        "notMarkerRadius": true
+      },
+      "deckTilesMeasured": 46,
+      "deckTilesRendered": 46,
+      "spanCoverage": 1,
+      "banks": {
+        "a": {
+          "offsetAu": -2.5,
+          "dryLand": true,
+          "road": true,
+          "roadDistanceAu": 0
+        },
+        "b": {
+          "offsetAu": 2,
+          "dryLand": true,
+          "road": true,
+          "roadDistanceAu": 0
+        }
+      },
+      "seams": {
+        "a": 19,
+        "b": 12,
+        "connected": true
+      },
+      "continuity": true,
+      "roadApproaches": true,
+      "sourceEvidence": {
+        "goldBridgeId": true,
+        "goldAuthoredAt": true,
+        "goldAuthoredAng": true,
+        "goldAuthoredLoad": true,
+        "crossingCandidateCode": true,
+        "authoredRiverBanksMeasured": true,
+        "authoredRoadConnectionsMeasured": true,
+        "boundedChannelSpanMeasured": true
+      },
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "unresolvedReasons": [],
+      "owner": "MAP geometry + GAMEPLAY WorldTraversal"
+    },
+    {
+      "id": "br_5",
+      "load": "cart",
+      "crossingCode": 2,
+      "atAu": [
+        968.009949,
+        816.183405
+      ],
+      "atTile": [
+        1936,
+        1632
+      ],
+      "angRad": -0.67993326,
+      "channelKind": "RIVER",
+      "waterSpanAu": 7,
+      "perpendicularWaterSpanAu": 47.5,
+      "orientation": "AUTHORED_ANG_IS_CROSSING_AXIS",
+      "footprintAu": {
+        "length": 7.5,
+        "width": 3,
+        "notMarkerRadius": true
+      },
+      "deckTilesMeasured": 84,
+      "deckTilesRendered": 84,
+      "spanCoverage": 1,
+      "banks": {
+        "a": {
+          "offsetAu": -3.5,
+          "dryLand": true,
+          "road": true,
+          "roadDistanceAu": 0
+        },
+        "b": {
+          "offsetAu": 4,
+          "dryLand": true,
+          "road": true,
+          "roadDistanceAu": 0
+        }
+      },
+      "seams": {
+        "a": 18,
+        "b": 18,
+        "connected": true
+      },
+      "continuity": true,
+      "roadApproaches": true,
+      "sourceEvidence": {
+        "goldBridgeId": true,
+        "goldAuthoredAt": true,
+        "goldAuthoredAng": true,
+        "goldAuthoredLoad": true,
+        "crossingCandidateCode": true,
+        "authoredRiverBanksMeasured": true,
+        "authoredRoadConnectionsMeasured": true,
+        "boundedChannelSpanMeasured": true
+      },
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "unresolvedReasons": [],
+      "owner": "MAP geometry + GAMEPLAY WorldTraversal"
+    },
+    {
+      "id": "br_6",
+      "load": "foot",
+      "crossingCode": 1,
+      "atAu": [
+        1006.214539,
+        731.440522
+      ],
+      "atTile": [
+        2012,
+        1462
+      ],
+      "angRad": -2.812243112,
+      "channelKind": "RIVER",
+      "waterSpanAu": 4,
+      "perpendicularWaterSpanAu": 20.5,
+      "orientation": "AUTHORED_ANG_IS_CROSSING_AXIS",
+      "footprintAu": {
+        "length": 4.5,
+        "width": 3,
+        "notMarkerRadius": true
+      },
+      "deckTilesMeasured": 49,
+      "deckTilesRendered": 49,
+      "spanCoverage": 1,
+      "banks": {
+        "a": {
+          "offsetAu": -2.5,
+          "dryLand": true,
+          "road": true,
+          "roadDistanceAu": 0
+        },
+        "b": {
+          "offsetAu": 2,
+          "dryLand": true,
+          "road": true,
+          "roadDistanceAu": 0
+        }
+      },
+      "seams": {
+        "a": 19,
+        "b": 17,
+        "connected": true
+      },
+      "continuity": true,
+      "roadApproaches": true,
+      "sourceEvidence": {
+        "goldBridgeId": true,
+        "goldAuthoredAt": true,
+        "goldAuthoredAng": true,
+        "goldAuthoredLoad": true,
+        "crossingCandidateCode": true,
+        "authoredRiverBanksMeasured": true,
+        "authoredRoadConnectionsMeasured": true,
+        "boundedChannelSpanMeasured": true
+      },
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "unresolvedReasons": [],
+      "owner": "MAP geometry + GAMEPLAY WorldTraversal"
+    },
+    {
+      "id": "br_7",
+      "load": "cart",
+      "crossingCode": 2,
+      "atAu": [
+        1615.696626,
+        343.796512
+      ],
+      "atTile": [
+        3231,
+        687
+      ],
+      "angRad": 0.515747657,
+      "channelKind": "RIVER",
+      "waterSpanAu": 2,
+      "perpendicularWaterSpanAu": 20.5,
+      "orientation": "AUTHORED_ANG_IS_CROSSING_AXIS",
+      "footprintAu": {
+        "length": 2.5,
+        "width": 3,
+        "notMarkerRadius": true
+      },
+      "deckTilesMeasured": 28,
+      "deckTilesRendered": 28,
+      "spanCoverage": 1,
+      "banks": {
+        "a": {
+          "offsetAu": -1,
+          "dryLand": true,
+          "road": true,
+          "roadDistanceAu": 0
+        },
+        "b": {
+          "offsetAu": 1.5,
+          "dryLand": true,
+          "road": true,
+          "roadDistanceAu": 0
+        }
+      },
+      "seams": {
+        "a": 15,
+        "b": 12,
+        "connected": true
+      },
+      "continuity": true,
+      "roadApproaches": true,
+      "sourceEvidence": {
+        "goldBridgeId": true,
+        "goldAuthoredAt": true,
+        "goldAuthoredAng": true,
+        "goldAuthoredLoad": true,
+        "crossingCandidateCode": true,
+        "authoredRiverBanksMeasured": true,
+        "authoredRoadConnectionsMeasured": true,
+        "boundedChannelSpanMeasured": true
+      },
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "unresolvedReasons": [],
+      "owner": "MAP geometry + GAMEPLAY WorldTraversal"
+    },
+    {
+      "id": "br_8",
+      "load": "foot",
+      "crossingCode": 1,
+      "atAu": [
+        1152.976074,
+        457.332974
+      ],
+      "atTile": [
+        2305,
+        914
+      ],
+      "angRad": -1.003129902,
+      "channelKind": "RIVER",
+      "waterSpanAu": 6,
+      "perpendicularWaterSpanAu": 27,
+      "orientation": "AUTHORED_ANG_IS_CROSSING_AXIS",
+      "footprintAu": {
+        "length": 6.5,
+        "width": 3,
+        "notMarkerRadius": true
+      },
+      "deckTilesMeasured": 75,
+      "deckTilesRendered": 75,
+      "spanCoverage": 1,
+      "banks": {
+        "a": {
+          "offsetAu": -3,
+          "dryLand": true,
+          "road": true,
+          "roadDistanceAu": 0
+        },
+        "b": {
+          "offsetAu": 3.5,
+          "dryLand": true,
+          "road": true,
+          "roadDistanceAu": 0
+        }
+      },
+      "seams": {
+        "a": 17,
+        "b": 19,
+        "connected": true
+      },
+      "continuity": true,
+      "roadApproaches": true,
+      "sourceEvidence": {
+        "goldBridgeId": true,
+        "goldAuthoredAt": true,
+        "goldAuthoredAng": true,
+        "goldAuthoredLoad": true,
+        "crossingCandidateCode": true,
+        "authoredRiverBanksMeasured": true,
+        "authoredRoadConnectionsMeasured": true,
+        "boundedChannelSpanMeasured": true
+      },
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "unresolvedReasons": [],
+      "owner": "MAP geometry + GAMEPLAY WorldTraversal"
+    },
+    {
+      "id": "br_9",
+      "load": "foot",
+      "crossingCode": 1,
+      "atAu": [
+        777.597113,
+        456.582831
+      ],
+      "atTile": [
+        1555,
+        913
+      ],
+      "angRad": -1.2639214,
+      "channelKind": "RIVER",
+      "waterSpanAu": 6.5,
+      "perpendicularWaterSpanAu": 5,
+      "orientation": "AUTHORED_ANG_LONGER_THAN_PERPENDICULAR__CHANNEL_NARROW_BOTH_AXES",
+      "footprintAu": {
+        "length": 7,
+        "width": 3,
+        "notMarkerRadius": true
+      },
+      "deckTilesMeasured": 66,
+      "deckTilesRendered": 0,
+      "spanCoverage": 0.9333,
+      "banks": {
+        "a": {
+          "offsetAu": -4,
+          "dryLand": true,
+          "road": true,
+          "roadDistanceAu": 0
+        },
+        "b": {
+          "offsetAu": 3,
+          "dryLand": true,
+          "road": true,
+          "roadDistanceAu": 0
+        }
+      },
+      "seams": {
+        "a": 6,
+        "b": 7,
+        "connected": true
+      },
+      "continuity": true,
+      "roadApproaches": true,
+      "sourceEvidence": {
+        "goldBridgeId": true,
+        "goldAuthoredAt": true,
+        "goldAuthoredAng": true,
+        "goldAuthoredLoad": true,
+        "crossingCandidateCode": true,
+        "authoredRiverBanksMeasured": true,
+        "authoredRoadConnectionsMeasured": true,
+        "boundedChannelSpanMeasured": true
+      },
+      "status": "UNRESOLVED__EXTERNAL_DECISION_REQUIRED",
+      "unresolvedReasons": [
+        "MULTIPLE_BOUNDED_CROSSING_AXES__OWNER_BEARING_REVIEW"
+      ],
+      "owner": "CREATOR/GAMEPLAY (exact id reported)"
+    },
+    {
+      "id": "br_a",
+      "load": "foot",
+      "crossingCode": 1,
+      "atAu": [
+        882.974385,
+        646.903089
+      ],
+      "atTile": [
+        1765,
+        1293
+      ],
+      "angRad": 1.184497952,
+      "channelKind": "RIVER",
+      "waterSpanAu": 5,
+      "perpendicularWaterSpanAu": 7,
+      "orientation": "AUTHORED_ANG_IS_CROSSING_AXIS",
+      "footprintAu": {
+        "length": 5.5,
+        "width": 3,
+        "notMarkerRadius": true
+      },
+      "deckTilesMeasured": 55,
+      "deckTilesRendered": 55,
+      "spanCoverage": 0.9167,
+      "banks": {
+        "a": {
+          "offsetAu": -2,
+          "dryLand": true,
+          "road": true,
+          "roadDistanceAu": 0
+        },
+        "b": {
+          "offsetAu": 3.5,
+          "dryLand": true,
+          "road": true,
+          "roadDistanceAu": 0
+        }
+      },
+      "seams": {
+        "a": 9,
+        "b": 12,
+        "connected": true
+      },
+      "continuity": true,
+      "roadApproaches": true,
+      "sourceEvidence": {
+        "goldBridgeId": true,
+        "goldAuthoredAt": true,
+        "goldAuthoredAng": true,
+        "goldAuthoredLoad": true,
+        "crossingCandidateCode": true,
+        "authoredRiverBanksMeasured": true,
+        "authoredRoadConnectionsMeasured": true,
+        "boundedChannelSpanMeasured": true
+      },
+      "status": "CANDIDATE_DECK__MAP_PHYSICAL_GEOMETRY_ONLY__GAMEPLAY_PERMISSION_REQUIRED",
+      "unresolvedReasons": [],
+      "owner": "MAP geometry + GAMEPLAY WorldTraversal"
+    },
+    {
+      "id": "br_b",
+      "load": "foot",
+      "crossingCode": 1,
+      "atAu": [
+        1026.24147,
+        929.687055
+      ],
+      "atTile": [
+        2052,
+        1859
+      ],
+      "angRad": 0.397618875,
+      "channelKind": "RIVER",
+      "waterSpanAu": 32,
+      "perpendicularWaterSpanAu": 37.5,
+      "orientation": "AUTHORED_ANG_IS_CROSSING_AXIS",
+      "footprintAu": {
+        "length": 32.5,
+        "width": 3,
+        "notMarkerRadius": true
+      },
+      "deckTilesMeasured": 385,
+      "deckTilesRendered": 0,
+      "spanCoverage": 1,
+      "banks": {
+        "a": {
+          "offsetAu": null,
+          "dryLand": false,
+          "road": false,
+          "roadDistanceAu": null
+        },
+        "b": {
+          "offsetAu": 2,
+          "dryLand": true,
+          "road": true,
+          "roadDistanceAu": 0
+        }
+      },
+      "seams": {
+        "a": 0,
+        "b": 15,
+        "connected": false
+      },
+      "continuity": false,
+      "roadApproaches": false,
+      "sourceEvidence": {
+        "goldBridgeId": true,
+        "goldAuthoredAt": true,
+        "goldAuthoredAng": true,
+        "goldAuthoredLoad": true,
+        "crossingCandidateCode": true,
+        "authoredRiverBanksMeasured": false,
+        "authoredRoadConnectionsMeasured": false,
+        "boundedChannelSpanMeasured": false
+      },
+      "status": "UNRESOLVED__EXTERNAL_DECISION_REQUIRED",
+      "unresolvedReasons": [
+        "NO_VERIFIED_BOTH_BANKS",
+        "WATER_RUN_UNBOUNDED_AT_30_AU_SEARCH",
+        "WATER_SPAN_EXCEEDS_BOUNDED_CANDIDATE_GUARD",
+        "ROAD_OR_FOOTPATH_APPROACH_MISSING",
+        "BANK_SEAMS_NOT_CONNECTED",
+        "SOURCE_EVIDENCE_INSUFFICIENT"
+      ],
+      "owner": "CREATOR/GAMEPLAY (exact id reported)"
+    }
+  ],
+  "bridgeSummary": {
+    "total": 12,
+    "resolved": [
+      "br_0",
+      "br_1",
+      "br_2",
+      "br_3",
+      "br_4",
+      "br_5",
+      "br_6",
+      "br_7",
+      "br_8",
+      "br_a"
+    ],
+    "unresolved": [
+      "br_9",
+      "br_b"
+    ],
+    "resolvedIds": [
+      "br_0",
+      "br_1",
+      "br_2",
+      "br_3",
+      "br_4",
+      "br_5",
+      "br_6",
+      "br_7",
+      "br_8",
+      "br_a"
+    ],
+    "unresolvedIds": [
+      "br_9",
+      "br_b"
+    ],
+    "deckTilesRendered": 596,
+    "forced12Pass": false
+  },
+  "cliffs": {
+    "candidateCells": 305,
+    "qualifiedCells": 305,
+    "repairedPredicate": "cliffCandidate >= 1 AND heightClass >= 4 AND slopeRaw >= 20 AND 4-neighbour downhill drop >= 12",
+    "independentChecks": [
+      "heightClass.v3.u8",
+      "slope.u8 (raw source byte)",
+      "elevation.u8 4-neighbour downhill drop",
+      "slopeClass.v3.u8 (QA file-level check)",
+      "activeCollisionPermission.v3.u8 (all zero)"
+    ],
+    "sideHistogram": {
+      "N": 105,
+      "S": 62,
+      "W": 64,
+      "E": 74
+    },
+    "faceBandTiles": [
+      2,
+      4
+    ],
+    "projectedFractionOfCell": 0.1875,
+    "runtimeVisibleCliffTilesHighlandWindow": 187,
+    "oldVisibleCliffTilesHighlandWindow": 0,
+    "qaCandidateCollisionCells": 187,
+    "productionCollisionCells": 0,
+    "filledSlabsProhibited": true
+  },
+  "roadWater": {
+    "total": 31,
+    "counts": {
+      "AUTHORED_BRIDGE": 9,
+      "AMBIGUOUS_OWNER_REVIEW": 6,
+      "UNBRIDGED_LAND_ROAD_CROSSING": 8,
+      "FERRY_NAVIGATION_REFERENCE": 8
+    },
+    "ferryRouteIds": [
+      "rd_2c",
+      "rd_2d",
+      "rd_2e",
+      "rd_2f",
+      "rd_2g",
+      "rd_2h",
+      "rd_2i",
+      "rd_2j"
+    ],
+    "ambiguousIds": [
+      "rd_a",
+      "rd_1g",
+      "rd_22",
+      "rd_23",
+      "rd_26",
+      "rd_28"
+    ],
+    "rows": [
+      {
+        "id": "rd_0",
+        "name": "Gulf–Mossbrook Freight Trunk (1)",
+        "kind": "cart",
+        "mapgeo01WaterOverrideSamples": 7,
+        "blockedCentrelineSamples": 7,
+        "category": "AUTHORED_BRIDGE",
+        "owner": "MAP geometry + GAMEPLAY WorldTraversal",
+        "status": "BRIDGE_DECK_PROPOSAL__GEOMETRY_ONLY__NO_COLLISION_PERMISSION",
+        "reason": "WMP-03 BRIDGE_DECK_PROPOSAL cell(s) at this road crossing; any extra FORD cells are recorded, not promoted.",
+        "wmp03WaterRoadCells": 3,
+        "wmp03SurfaceKinds": {
+          "BRIDGE_DECK_PROPOSAL": 2,
+          "FORD_PROPOSAL": 1
+        },
+        "ferry": false,
+        "mixedBridgeAndFordCells": true,
+        "note": "NO_NEW_GEOMETRY__NO_RECOLOUR__NO_WIDTH_CHANGE"
+      },
+      {
+        "id": "rd_1",
+        "name": "Gulf–Mossbrook Freight Trunk (2)",
+        "kind": "cart",
+        "mapgeo01WaterOverrideSamples": 3,
+        "blockedCentrelineSamples": 3,
+        "category": "AUTHORED_BRIDGE",
+        "owner": "MAP geometry + GAMEPLAY WorldTraversal",
+        "status": "BRIDGE_DECK_PROPOSAL__GEOMETRY_ONLY__NO_COLLISION_PERMISSION",
+        "reason": "WMP-03 BRIDGE_DECK_PROPOSAL cell(s) at this road crossing; any extra FORD cells are recorded, not promoted.",
+        "wmp03WaterRoadCells": 1,
+        "wmp03SurfaceKinds": {
+          "BRIDGE_DECK_PROPOSAL": 1
+        },
+        "ferry": false,
+        "mixedBridgeAndFordCells": false,
+        "note": "NO_NEW_GEOMETRY__NO_RECOLOUR__NO_WIDTH_CHANGE"
+      },
+      {
+        "id": "rd_5",
+        "name": "East Ore Freight (3)",
+        "kind": "cart",
+        "mapgeo01WaterOverrideSamples": 6,
+        "blockedCentrelineSamples": 6,
+        "category": "AUTHORED_BRIDGE",
+        "owner": "MAP geometry + GAMEPLAY WorldTraversal",
+        "status": "BRIDGE_DECK_PROPOSAL__GEOMETRY_ONLY__NO_COLLISION_PERMISSION",
+        "reason": "WMP-03 BRIDGE_DECK_PROPOSAL cell(s) at this road crossing; any extra FORD cells are recorded, not promoted.",
+        "wmp03WaterRoadCells": 2,
+        "wmp03SurfaceKinds": {
+          "FORD_PROPOSAL": 1,
+          "BRIDGE_DECK_PROPOSAL": 1
+        },
+        "ferry": false,
+        "mixedBridgeAndFordCells": true,
+        "note": "NO_NEW_GEOMETRY__NO_RECOLOUR__NO_WIDTH_CHANGE"
+      },
+      {
+        "id": "rd_9",
+        "name": "Greywater Cross Freight (1)",
+        "kind": "cart",
+        "mapgeo01WaterOverrideSamples": 7,
+        "blockedCentrelineSamples": 7,
+        "category": "AUTHORED_BRIDGE",
+        "owner": "MAP geometry + GAMEPLAY WorldTraversal",
+        "status": "BRIDGE_DECK_PROPOSAL__GEOMETRY_ONLY__NO_COLLISION_PERMISSION",
+        "reason": "WMP-03 BRIDGE_DECK_PROPOSAL cell(s) at this road crossing; any extra FORD cells are recorded, not promoted.",
+        "wmp03WaterRoadCells": 3,
+        "wmp03SurfaceKinds": {
+          "FORD_PROPOSAL": 2,
+          "BRIDGE_DECK_PROPOSAL": 1
+        },
+        "ferry": false,
+        "mixedBridgeAndFordCells": true,
+        "note": "NO_NEW_GEOMETRY__NO_RECOLOUR__NO_WIDTH_CHANGE"
+      },
+      {
+        "id": "rd_a",
+        "name": "Greywater Cross Freight (2)",
+        "kind": "cart",
+        "mapgeo01WaterOverrideSamples": 4,
+        "blockedCentrelineSamples": 4,
+        "category": "AMBIGUOUS_OWNER_REVIEW",
+        "owner": "CREATOR / GAMEPLAY owner",
+        "status": "UNRESOLVED__NO_SOURCE_BACKED_CROSSING_EVIDENCE",
+        "reason": "Water override measured at U=0.5 tile centres but NO WMP-03 water-road cell classification exists for this road at 8 AU analysis resolution. Exact id reported; no geometry guessed.",
+        "wmp03WaterRoadCells": 0,
+        "wmp03SurfaceKinds": {},
+        "ferry": false,
+        "mixedBridgeAndFordCells": false,
+        "note": "NO_NEW_GEOMETRY__NO_RECOLOUR__NO_WIDTH_CHANGE"
+      },
+      {
+        "id": "rd_b",
+        "name": "West Forest Freight (1)",
+        "kind": "cart",
+        "mapgeo01WaterOverrideSamples": 5,
+        "blockedCentrelineSamples": 5,
+        "category": "AUTHORED_BRIDGE",
+        "owner": "MAP geometry + GAMEPLAY WorldTraversal",
+        "status": "BRIDGE_DECK_PROPOSAL__GEOMETRY_ONLY__NO_COLLISION_PERMISSION",
+        "reason": "WMP-03 BRIDGE_DECK_PROPOSAL cell(s) at this road crossing; any extra FORD cells are recorded, not promoted.",
+        "wmp03WaterRoadCells": 2,
+        "wmp03SurfaceKinds": {
+          "BRIDGE_DECK_PROPOSAL": 1,
+          "FORD_PROPOSAL": 1
+        },
+        "ferry": false,
+        "mixedBridgeAndFordCells": true,
+        "note": "NO_NEW_GEOMETRY__NO_RECOLOUR__NO_WIDTH_CHANGE"
+      },
+      {
+        "id": "rd_n",
+        "name": "Bone Road (1)",
+        "kind": "cart",
+        "mapgeo01WaterOverrideSamples": 8,
+        "blockedCentrelineSamples": 8,
+        "category": "AUTHORED_BRIDGE",
+        "owner": "MAP geometry + GAMEPLAY WorldTraversal",
+        "status": "BRIDGE_DECK_PROPOSAL__GEOMETRY_ONLY__NO_COLLISION_PERMISSION",
+        "reason": "WMP-03 BRIDGE_DECK_PROPOSAL cell(s) at this road crossing; any extra FORD cells are recorded, not promoted.",
+        "wmp03WaterRoadCells": 2,
+        "wmp03SurfaceKinds": {
+          "FORD_PROPOSAL": 1,
+          "BRIDGE_DECK_PROPOSAL": 1
+        },
+        "ferry": false,
+        "mixedBridgeAndFordCells": true,
+        "note": "NO_NEW_GEOMETRY__NO_RECOLOUR__NO_WIDTH_CHANGE"
+      },
+      {
+        "id": "rd_v",
+        "name": "Silo Link",
+        "kind": "foot",
+        "mapgeo01WaterOverrideSamples": 4,
+        "blockedCentrelineSamples": 4,
+        "category": "UNBRIDGED_LAND_ROAD_CROSSING",
+        "owner": "MAP+GAMEPLAY (depth/flow UNKNOWN)",
+        "status": "FORD_PROPOSAL__DEPTH_AND_FLOW_UNKNOWN",
+        "reason": "WMP-03 FORD_PROPOSAL / crossingCandidate=3. Road centreline crosses water with NO authored bridge deck; no dry-land road or bridge is invented.",
+        "wmp03WaterRoadCells": 1,
+        "wmp03SurfaceKinds": {
+          "FORD_PROPOSAL": 1
+        },
+        "ferry": false,
+        "mixedBridgeAndFordCells": false,
+        "note": "NO_NEW_GEOMETRY__NO_RECOLOUR__NO_WIDTH_CHANGE"
+      },
+      {
+        "id": "rd_x",
+        "name": "Cinder Freight (2)",
+        "kind": "foot",
+        "mapgeo01WaterOverrideSamples": 3,
+        "blockedCentrelineSamples": 3,
+        "category": "UNBRIDGED_LAND_ROAD_CROSSING",
+        "owner": "MAP+GAMEPLAY (depth/flow UNKNOWN)",
+        "status": "FORD_PROPOSAL__DEPTH_AND_FLOW_UNKNOWN",
+        "reason": "WMP-03 FORD_PROPOSAL / crossingCandidate=3. Road centreline crosses water with NO authored bridge deck; no dry-land road or bridge is invented.",
+        "wmp03WaterRoadCells": 1,
+        "wmp03SurfaceKinds": {
+          "FORD_PROPOSAL": 1
+        },
+        "ferry": false,
+        "mixedBridgeAndFordCells": false,
+        "note": "NO_NEW_GEOMETRY__NO_RECOLOUR__NO_WIDTH_CHANGE"
+      },
+      {
+        "id": "rd_z",
+        "name": "Saltwick Freight (1)",
+        "kind": "cart",
+        "mapgeo01WaterOverrideSamples": 3,
+        "blockedCentrelineSamples": 3,
+        "category": "UNBRIDGED_LAND_ROAD_CROSSING",
+        "owner": "MAP+GAMEPLAY (depth/flow UNKNOWN)",
+        "status": "FORD_PROPOSAL__DEPTH_AND_FLOW_UNKNOWN",
+        "reason": "WMP-03 FORD_PROPOSAL / crossingCandidate=3. Road centreline crosses water with NO authored bridge deck; no dry-land road or bridge is invented.",
+        "wmp03WaterRoadCells": 3,
+        "wmp03SurfaceKinds": {
+          "FORD_PROPOSAL": 3
+        },
+        "ferry": false,
+        "mixedBridgeAndFordCells": false,
+        "note": "NO_NEW_GEOMETRY__NO_RECOLOUR__NO_WIDTH_CHANGE"
+      },
+      {
+        "id": "rd_1f",
+        "name": "Dune Rim Trail (1)",
+        "kind": "trail",
+        "mapgeo01WaterOverrideSamples": 3,
+        "blockedCentrelineSamples": 3,
+        "category": "UNBRIDGED_LAND_ROAD_CROSSING",
+        "owner": "MAP+GAMEPLAY (depth/flow UNKNOWN)",
+        "status": "FORD_PROPOSAL__DEPTH_AND_FLOW_UNKNOWN",
+        "reason": "WMP-03 FORD_PROPOSAL / crossingCandidate=3. Road centreline crosses water with NO authored bridge deck; no dry-land road or bridge is invented.",
+        "wmp03WaterRoadCells": 1,
+        "wmp03SurfaceKinds": {
+          "FORD_PROPOSAL": 1
+        },
+        "ferry": false,
+        "mixedBridgeAndFordCells": false,
+        "note": "NO_NEW_GEOMETRY__NO_RECOLOUR__NO_WIDTH_CHANGE"
+      },
+      {
+        "id": "rd_1g",
+        "name": "Dune Rim Trail (2)",
+        "kind": "trail",
+        "mapgeo01WaterOverrideSamples": 1,
+        "blockedCentrelineSamples": 1,
+        "category": "AMBIGUOUS_OWNER_REVIEW",
+        "owner": "CREATOR / GAMEPLAY owner",
+        "status": "UNRESOLVED__NO_SOURCE_BACKED_CROSSING_EVIDENCE",
+        "reason": "Water override measured at U=0.5 tile centres but NO WMP-03 water-road cell classification exists for this road at 8 AU analysis resolution. Exact id reported; no geometry guessed.",
+        "wmp03WaterRoadCells": 0,
+        "wmp03SurfaceKinds": {},
+        "ferry": false,
+        "mixedBridgeAndFordCells": false,
+        "note": "NO_NEW_GEOMETRY__NO_RECOLOUR__NO_WIDTH_CHANGE"
+      },
+      {
+        "id": "rd_1k",
+        "name": "Rapids Portage Trail (2)",
+        "kind": "trail",
+        "mapgeo01WaterOverrideSamples": 7,
+        "blockedCentrelineSamples": 7,
+        "category": "AUTHORED_BRIDGE",
+        "owner": "MAP geometry + GAMEPLAY WorldTraversal",
+        "status": "BRIDGE_DECK_PROPOSAL__GEOMETRY_ONLY__NO_COLLISION_PERMISSION",
+        "reason": "WMP-03 BRIDGE_DECK_PROPOSAL cell(s) at this road crossing; any extra FORD cells are recorded, not promoted.",
+        "wmp03WaterRoadCells": 1,
+        "wmp03SurfaceKinds": {
+          "BRIDGE_DECK_PROPOSAL": 1
+        },
+        "ferry": false,
+        "mixedBridgeAndFordCells": false,
+        "note": "NO_NEW_GEOMETRY__NO_RECOLOUR__NO_WIDTH_CHANGE"
+      },
+      {
+        "id": "rd_1l",
+        "name": "Dune Trail",
+        "kind": "trail",
+        "mapgeo01WaterOverrideSamples": 3,
+        "blockedCentrelineSamples": 3,
+        "category": "UNBRIDGED_LAND_ROAD_CROSSING",
+        "owner": "MAP+GAMEPLAY (depth/flow UNKNOWN)",
+        "status": "FORD_PROPOSAL__DEPTH_AND_FLOW_UNKNOWN",
+        "reason": "WMP-03 FORD_PROPOSAL / crossingCandidate=3. Road centreline crosses water with NO authored bridge deck; no dry-land road or bridge is invented.",
+        "wmp03WaterRoadCells": 2,
+        "wmp03SurfaceKinds": {
+          "FORD_PROPOSAL": 2
+        },
+        "ferry": false,
+        "mixedBridgeAndFordCells": false,
+        "note": "NO_NEW_GEOMETRY__NO_RECOLOUR__NO_WIDTH_CHANGE"
+      },
+      {
+        "id": "rd_1y",
+        "name": "Falls–Kestrel Ridge Detour",
+        "kind": "foot",
+        "mapgeo01WaterOverrideSamples": 4,
+        "blockedCentrelineSamples": 4,
+        "category": "UNBRIDGED_LAND_ROAD_CROSSING",
+        "owner": "MAP+GAMEPLAY (depth/flow UNKNOWN)",
+        "status": "FORD_PROPOSAL__DEPTH_AND_FLOW_UNKNOWN",
+        "reason": "WMP-03 FORD_PROPOSAL / crossingCandidate=3. Road centreline crosses water with NO authored bridge deck; no dry-land road or bridge is invented.",
+        "wmp03WaterRoadCells": 2,
+        "wmp03SurfaceKinds": {
+          "FORD_PROPOSAL": 2
+        },
+        "ferry": false,
+        "mixedBridgeAndFordCells": false,
+        "note": "NO_NEW_GEOMETRY__NO_RECOLOUR__NO_WIDTH_CHANGE"
+      },
+      {
+        "id": "rd_20",
+        "name": "Greywater West Bank Path",
+        "kind": "riverside",
+        "mapgeo01WaterOverrideSamples": 5,
+        "blockedCentrelineSamples": 5,
+        "category": "AUTHORED_BRIDGE",
+        "owner": "MAP geometry + GAMEPLAY WorldTraversal",
+        "status": "BRIDGE_DECK_PROPOSAL__GEOMETRY_ONLY__NO_COLLISION_PERMISSION",
+        "reason": "WMP-03 BRIDGE_DECK_PROPOSAL cell(s) at this road crossing; any extra FORD cells are recorded, not promoted.",
+        "wmp03WaterRoadCells": 3,
+        "wmp03SurfaceKinds": {
+          "FORD_PROPOSAL": 2,
+          "BRIDGE_DECK_PROPOSAL": 1
+        },
+        "ferry": false,
+        "mixedBridgeAndFordCells": true,
+        "note": "NO_NEW_GEOMETRY__NO_RECOLOUR__NO_WIDTH_CHANGE"
+      },
+      {
+        "id": "rd_22",
+        "name": "Lối ra bến Hook Quay",
+        "kind": "trail",
+        "mapgeo01WaterOverrideSamples": 1,
+        "blockedCentrelineSamples": 1,
+        "category": "AMBIGUOUS_OWNER_REVIEW",
+        "owner": "CREATOR / GAMEPLAY owner",
+        "status": "UNRESOLVED__NO_SOURCE_BACKED_CROSSING_EVIDENCE",
+        "reason": "Water override measured at U=0.5 tile centres but NO WMP-03 water-road cell classification exists for this road at 8 AU analysis resolution. Exact id reported; no geometry guessed.",
+        "wmp03WaterRoadCells": 0,
+        "wmp03SurfaceKinds": {},
+        "ferry": false,
+        "mixedBridgeAndFordCells": false,
+        "note": "NO_NEW_GEOMETRY__NO_RECOLOUR__NO_WIDTH_CHANGE"
+      },
+      {
+        "id": "rd_23",
+        "name": "Lối ra bến Saltwick East Landing",
+        "kind": "trail",
+        "mapgeo01WaterOverrideSamples": 1,
+        "blockedCentrelineSamples": 1,
+        "category": "AMBIGUOUS_OWNER_REVIEW",
+        "owner": "CREATOR / GAMEPLAY owner",
+        "status": "UNRESOLVED__NO_SOURCE_BACKED_CROSSING_EVIDENCE",
+        "reason": "Water override measured at U=0.5 tile centres but NO WMP-03 water-road cell classification exists for this road at 8 AU analysis resolution. Exact id reported; no geometry guessed.",
+        "wmp03WaterRoadCells": 0,
+        "wmp03SurfaceKinds": {},
+        "ferry": false,
+        "mixedBridgeAndFordCells": false,
+        "note": "NO_NEW_GEOMETRY__NO_RECOLOUR__NO_WIDTH_CHANGE"
+      },
+      {
+        "id": "rd_26",
+        "name": "Lối ra bến Wreck Isle Dock",
+        "kind": "trail",
+        "mapgeo01WaterOverrideSamples": 1,
+        "blockedCentrelineSamples": 1,
+        "category": "AMBIGUOUS_OWNER_REVIEW",
+        "owner": "CREATOR / GAMEPLAY owner",
+        "status": "UNRESOLVED__NO_SOURCE_BACKED_CROSSING_EVIDENCE",
+        "reason": "Water override measured at U=0.5 tile centres but NO WMP-03 water-road cell classification exists for this road at 8 AU analysis resolution. Exact id reported; no geometry guessed.",
+        "wmp03WaterRoadCells": 0,
+        "wmp03SurfaceKinds": {},
+        "ferry": false,
+        "mixedBridgeAndFordCells": false,
+        "note": "NO_NEW_GEOMETRY__NO_RECOLOUR__NO_WIDTH_CHANGE"
+      },
+      {
+        "id": "rd_28",
+        "name": "Lối ra bến Gulfhead Quay",
+        "kind": "trail",
+        "mapgeo01WaterOverrideSamples": 4,
+        "blockedCentrelineSamples": 4,
+        "category": "AMBIGUOUS_OWNER_REVIEW",
+        "owner": "CREATOR / GAMEPLAY owner",
+        "status": "UNRESOLVED__NO_SOURCE_BACKED_CROSSING_EVIDENCE",
+        "reason": "Water override measured at U=0.5 tile centres but NO WMP-03 water-road cell classification exists for this road at 8 AU analysis resolution. Exact id reported; no geometry guessed.",
+        "wmp03WaterRoadCells": 0,
+        "wmp03SurfaceKinds": {},
+        "ferry": false,
+        "mixedBridgeAndFordCells": false,
+        "note": "NO_NEW_GEOMETRY__NO_RECOLOUR__NO_WIDTH_CHANGE"
+      },
+      {
+        "id": "rd_29",
+        "name": "Lối ra bến Greywater North Landing",
+        "kind": "trail",
+        "mapgeo01WaterOverrideSamples": 6,
+        "blockedCentrelineSamples": 6,
+        "category": "AUTHORED_BRIDGE",
+        "owner": "MAP geometry + GAMEPLAY WorldTraversal",
+        "status": "BRIDGE_DECK_PROPOSAL__GEOMETRY_ONLY__NO_COLLISION_PERMISSION",
+        "reason": "WMP-03 BRIDGE_DECK_PROPOSAL cell(s) at this road crossing; any extra FORD cells are recorded, not promoted.",
+        "wmp03WaterRoadCells": 2,
+        "wmp03SurfaceKinds": {
+          "BRIDGE_DECK_PROPOSAL": 1,
+          "FORD_PROPOSAL": 1
+        },
+        "ferry": false,
+        "mixedBridgeAndFordCells": true,
+        "note": "NO_NEW_GEOMETRY__NO_RECOLOUR__NO_WIDTH_CHANGE"
+      },
+      {
+        "id": "rd_2a",
+        "name": "Lối ra bến Verdant North Landing",
+        "kind": "trail",
+        "mapgeo01WaterOverrideSamples": 4,
+        "blockedCentrelineSamples": 4,
+        "category": "UNBRIDGED_LAND_ROAD_CROSSING",
+        "owner": "MAP+GAMEPLAY (depth/flow UNKNOWN)",
+        "status": "FORD_PROPOSAL__DEPTH_AND_FLOW_UNKNOWN",
+        "reason": "WMP-03 FORD_PROPOSAL / crossingCandidate=3. Road centreline crosses water with NO authored bridge deck; no dry-land road or bridge is invented.",
+        "wmp03WaterRoadCells": 1,
+        "wmp03SurfaceKinds": {
+          "FORD_PROPOSAL": 1
+        },
+        "ferry": false,
+        "mixedBridgeAndFordCells": false,
+        "note": "NO_NEW_GEOMETRY__NO_RECOLOUR__NO_WIDTH_CHANGE"
+      },
+      {
+        "id": "rd_2b",
+        "name": "Lối ra bến Delta Sluice Dock",
+        "kind": "trail",
+        "mapgeo01WaterOverrideSamples": 4,
+        "blockedCentrelineSamples": 4,
+        "category": "UNBRIDGED_LAND_ROAD_CROSSING",
+        "owner": "MAP+GAMEPLAY (depth/flow UNKNOWN)",
+        "status": "FORD_PROPOSAL__DEPTH_AND_FLOW_UNKNOWN",
+        "reason": "WMP-03 FORD_PROPOSAL / crossingCandidate=3. Road centreline crosses water with NO authored bridge deck; no dry-land road or bridge is invented.",
+        "wmp03WaterRoadCells": 1,
+        "wmp03SurfaceKinds": {
+          "FORD_PROPOSAL": 1
+        },
+        "ferry": false,
+        "mixedBridgeAndFordCells": false,
+        "note": "NO_NEW_GEOMETRY__NO_RECOLOUR__NO_WIDTH_CHANGE"
+      },
+      {
+        "id": "rd_2c",
+        "name": "Westmouth ↔ Threshold ferry",
+        "kind": "ferry",
+        "mapgeo01WaterOverrideSamples": 100,
+        "blockedCentrelineSamples": 100,
+        "category": "FERRY_NAVIGATION_REFERENCE",
+        "owner": "GAMEPLAY (boat/ferry mechanic)",
+        "status": "SOURCE_AUTHORED_GEOMETRY__NOT_A_LAND_ROAD",
+        "reason": "GOLD kind=ferry; WMP-03 FERRY_ROUTE cells, landWalkable=false, activeCollisionPermission=false. Must NEVER become a dry-land road.",
+        "wmp03WaterRoadCells": 16,
+        "wmp03SurfaceKinds": {
+          "FERRY_ROUTE": 16
+        },
+        "ferry": true,
+        "mixedBridgeAndFordCells": false,
+        "note": "NOT_A_DRY_LAND_ROAD"
+      },
+      {
+        "id": "rd_2d",
+        "name": "Fish Camp ↔ Wreck Isle ferry",
+        "kind": "ferry",
+        "mapgeo01WaterOverrideSamples": 107,
+        "blockedCentrelineSamples": 107,
+        "category": "FERRY_NAVIGATION_REFERENCE",
+        "owner": "GAMEPLAY (boat/ferry mechanic)",
+        "status": "SOURCE_AUTHORED_GEOMETRY__NOT_A_LAND_ROAD",
+        "reason": "GOLD kind=ferry; WMP-03 FERRY_ROUTE cells, landWalkable=false, activeCollisionPermission=false. Must NEVER become a dry-land road.",
+        "wmp03WaterRoadCells": 16,
+        "wmp03SurfaceKinds": {
+          "FERRY_ROUTE": 16
+        },
+        "ferry": true,
+        "mixedBridgeAndFordCells": false,
+        "note": "NOT_A_DRY_LAND_ROAD"
+      },
+      {
+        "id": "rd_2e",
+        "name": "Drowned Pier ↔ Beacon Rock ferry",
+        "kind": "ferry",
+        "mapgeo01WaterOverrideSamples": 122,
+        "blockedCentrelineSamples": 122,
+        "category": "FERRY_NAVIGATION_REFERENCE",
+        "owner": "GAMEPLAY (boat/ferry mechanic)",
+        "status": "SOURCE_AUTHORED_GEOMETRY__NOT_A_LAND_ROAD",
+        "reason": "GOLD kind=ferry; WMP-03 FERRY_ROUTE cells, landWalkable=false, activeCollisionPermission=false. Must NEVER become a dry-land road.",
+        "wmp03WaterRoadCells": 17,
+        "wmp03SurfaceKinds": {
+          "FERRY_ROUTE": 17
+        },
+        "ferry": true,
+        "mixedBridgeAndFordCells": false,
+        "note": "NOT_A_DRY_LAND_ROAD"
+      },
+      {
+        "id": "rd_2f",
+        "name": "Emberport ↔ Cinder ferry",
+        "kind": "ferry",
+        "mapgeo01WaterOverrideSamples": 306,
+        "blockedCentrelineSamples": 306,
+        "category": "FERRY_NAVIGATION_REFERENCE",
+        "owner": "GAMEPLAY (boat/ferry mechanic)",
+        "status": "SOURCE_AUTHORED_GEOMETRY__NOT_A_LAND_ROAD",
+        "reason": "GOLD kind=ferry; WMP-03 FERRY_ROUTE cells, landWalkable=false, activeCollisionPermission=false. Must NEVER become a dry-land road.",
+        "wmp03WaterRoadCells": 42,
+        "wmp03SurfaceKinds": {
+          "FERRY_ROUTE": 42
+        },
+        "ferry": true,
+        "mixedBridgeAndFordCells": false,
+        "note": "NOT_A_DRY_LAND_ROAD"
+      },
+      {
+        "id": "rd_2g",
+        "name": "Hook ↔ Saltwick ferry",
+        "kind": "ferry",
+        "mapgeo01WaterOverrideSamples": 127,
+        "blockedCentrelineSamples": 127,
+        "category": "FERRY_NAVIGATION_REFERENCE",
+        "owner": "GAMEPLAY (boat/ferry mechanic)",
+        "status": "SOURCE_AUTHORED_GEOMETRY__NOT_A_LAND_ROAD",
+        "reason": "GOLD kind=ferry; WMP-03 FERRY_ROUTE cells, landWalkable=false, activeCollisionPermission=false. Must NEVER become a dry-land road.",
+        "wmp03WaterRoadCells": 21,
+        "wmp03SurfaceKinds": {
+          "FERRY_ROUTE": 21
+        },
+        "ferry": true,
+        "mixedBridgeAndFordCells": false,
+        "note": "NOT_A_DRY_LAND_ROAD"
+      },
+      {
+        "id": "rd_2h",
+        "name": "Saltwick ↔ Gull Isle ferry",
+        "kind": "ferry",
+        "mapgeo01WaterOverrideSamples": 134,
+        "blockedCentrelineSamples": 134,
+        "category": "FERRY_NAVIGATION_REFERENCE",
+        "owner": "GAMEPLAY (boat/ferry mechanic)",
+        "status": "SOURCE_AUTHORED_GEOMETRY__NOT_A_LAND_ROAD",
+        "reason": "GOLD kind=ferry; WMP-03 FERRY_ROUTE cells, landWalkable=false, activeCollisionPermission=false. Must NEVER become a dry-land road.",
+        "wmp03WaterRoadCells": 22,
+        "wmp03SurfaceKinds": {
+          "FERRY_ROUTE": 22
+        },
+        "ferry": true,
+        "mixedBridgeAndFordCells": false,
+        "note": "NOT_A_DRY_LAND_ROAD"
+      },
+      {
+        "id": "rd_2i",
+        "name": "Southfoot ↔ Ironholm ferry",
+        "kind": "ferry",
+        "mapgeo01WaterOverrideSamples": 148,
+        "blockedCentrelineSamples": 148,
+        "category": "FERRY_NAVIGATION_REFERENCE",
+        "owner": "GAMEPLAY (boat/ferry mechanic)",
+        "status": "SOURCE_AUTHORED_GEOMETRY__NOT_A_LAND_ROAD",
+        "reason": "GOLD kind=ferry; WMP-03 FERRY_ROUTE cells, landWalkable=false, activeCollisionPermission=false. Must NEVER become a dry-land road.",
+        "wmp03WaterRoadCells": 24,
+        "wmp03SurfaceKinds": {
+          "FERRY_ROUTE": 24
+        },
+        "ferry": true,
+        "mixedBridgeAndFordCells": false,
+        "note": "NOT_A_DRY_LAND_ROAD"
+      },
+      {
+        "id": "rd_2j",
+        "name": "Gulf ferry (Gulfhead ↔ Ironholm)",
+        "kind": "ferry",
+        "mapgeo01WaterOverrideSamples": 343,
+        "blockedCentrelineSamples": 343,
+        "category": "FERRY_NAVIGATION_REFERENCE",
+        "owner": "GAMEPLAY (boat/ferry mechanic)",
+        "status": "SOURCE_AUTHORED_GEOMETRY__NOT_A_LAND_ROAD",
+        "reason": "GOLD kind=ferry; WMP-03 FERRY_ROUTE cells, landWalkable=false, activeCollisionPermission=false. Must NEVER become a dry-land road.",
+        "wmp03WaterRoadCells": 53,
+        "wmp03SurfaceKinds": {
+          "FERRY_ROUTE": 53
+        },
+        "ferry": true,
+        "mixedBridgeAndFordCells": false,
+        "note": "NOT_A_DRY_LAND_ROAD"
+      }
+    ]
+  },
+  "runtime": {
+    "executableSha256": "41b2203bbbab47c0f4f215461e9e7571c2d1a46b0d982a7a2fbf177bbcac2339",
+    "checks": 28,
+    "passes": 28,
+    "fails": 0,
+    "browserErrors": 0,
+    "runs": 17,
+    "nativeShots": 52,
+    "matchingCoordinateRuns": [
+      {
+        "id": "match_T1_spawn_to_route",
+        "exactTile": [
+          774,
+          1182
+        ],
+        "tileCodeComparison": {
+          "tiles": 920,
+          "changedTiles": 0,
+          "oldBridgeTiles": 0,
+          "newBridgeTiles": 0,
+          "oldCliffTiles": 0,
+          "newCliffTiles": 0,
+          "note": "exact world-coordinate tile-code comparison; independent of viewer sub-pixel camera offset"
+        }
+      },
+      {
+        "id": "match_T2_road_biome_transition",
+        "exactTile": [
+          2473,
+          2580
+        ],
+        "tileCodeComparison": {
+          "tiles": 920,
+          "changedTiles": 0,
+          "oldBridgeTiles": 0,
+          "newBridgeTiles": 0,
+          "oldCliffTiles": 0,
+          "newCliffTiles": 0,
+          "note": "exact world-coordinate tile-code comparison; independent of viewer sub-pixel camera offset"
+        }
+      },
+      {
+        "id": "match_T3_bridge_approach_crossing",
+        "exactTile": [
+          2041,
+          907
+        ],
+        "tileCodeComparison": {
+          "tiles": 920,
+          "changedTiles": 702,
+          "oldBridgeTiles": 656,
+          "newBridgeTiles": 46,
+          "oldCliffTiles": 0,
+          "newCliffTiles": 0,
+          "note": "exact world-coordinate tile-code comparison; independent of viewer sub-pixel camera offset"
+        }
+      },
+      {
+        "id": "match_T4_highland_and_alternative",
+        "exactTile": [
+          1203,
+          1199
+        ],
+        "tileCodeComparison": {
+          "tiles": 920,
+          "changedTiles": 0,
+          "oldBridgeTiles": 0,
+          "newBridgeTiles": 0,
+          "oldCliffTiles": 0,
+          "newCliffTiles": 0,
+          "note": "exact world-coordinate tile-code comparison; independent of viewer sub-pixel camera offset"
+        }
+      },
+      {
+        "id": "match_T5_coastal_dock_approach",
+        "exactTile": [
+          3130,
+          1769
+        ],
+        "tileCodeComparison": {
+          "tiles": 920,
+          "changedTiles": 0,
+          "oldBridgeTiles": 0,
+          "newBridgeTiles": 0,
+          "oldCliffTiles": 0,
+          "newCliffTiles": 0,
+          "note": "exact world-coordinate tile-code comparison; independent of viewer sub-pixel camera offset"
+        }
+      },
+      {
+        "id": "match_T6_poi_exterior_return",
+        "exactTile": [
+          519,
+          1304
+        ],
+        "tileCodeComparison": {
+          "tiles": 920,
+          "changedTiles": 0,
+          "oldBridgeTiles": 0,
+          "newBridgeTiles": 0,
+          "oldCliffTiles": 0,
+          "newCliffTiles": 0,
+          "note": "exact world-coordinate tile-code comparison; independent of viewer sub-pixel camera offset"
+        }
+      }
+    ],
+    "productionStillBlocked": "PASS",
+    "qaCandidateCrossing": "PASS",
+    "qaCliffCollision": "PASS",
+    "noPermissionLeakage": {
+      "samples": 10086,
+      "activePermissionTrue": 0,
+      "waterFootTrue": 0,
+      "boatTrue": 0,
+      "swimTrue": 0,
+      "ferryFootTrue": 0,
+      "buildTrue": 0,
+      "deckProductionUnblocked": 0,
+      "cliffProductionBlocked": 0
+    }
+  },
+  "unresolvedGeometry": [
+    {
+      "kind": "BRIDGE",
+      "id": "br_9",
+      "owner": "CREATOR/GAMEPLAY (exact id reported)",
+      "reasons": [
+        "MULTIPLE_BOUNDED_CROSSING_AXES__OWNER_BEARING_REVIEW"
+      ],
+      "note": "NO deck art stamped; needs Creator/Gameplay bearing or bank decision."
+    },
+    {
+      "kind": "BRIDGE",
+      "id": "br_b",
+      "owner": "CREATOR/GAMEPLAY (exact id reported)",
+      "reasons": [
+        "NO_VERIFIED_BOTH_BANKS",
+        "WATER_RUN_UNBOUNDED_AT_30_AU_SEARCH",
+        "WATER_SPAN_EXCEEDS_BOUNDED_CANDIDATE_GUARD",
+        "ROAD_OR_FOOTPATH_APPROACH_MISSING",
+        "BANK_SEAMS_NOT_CONNECTED",
+        "SOURCE_EVIDENCE_INSUFFICIENT"
+      ],
+      "note": "NO deck art stamped; needs Creator/Gameplay bearing or bank decision."
+    },
+    {
+      "kind": "ROAD_WATER_CROSSING",
+      "id": "rd_a",
+      "owner": "CREATOR / GAMEPLAY owner",
+      "reasons": [
+        "UNRESOLVED__NO_SOURCE_BACKED_CROSSING_EVIDENCE",
+        "Water override measured at U=0.5 tile centres but NO WMP-03 water-road cell classification exists for this road at 8 AU analysis resolution. Exact id reported; no geometry guessed."
+      ],
+      "note": "NO geometry guessed."
+    },
+    {
+      "kind": "ROAD_WATER_CROSSING",
+      "id": "rd_1g",
+      "owner": "CREATOR / GAMEPLAY owner",
+      "reasons": [
+        "UNRESOLVED__NO_SOURCE_BACKED_CROSSING_EVIDENCE",
+        "Water override measured at U=0.5 tile centres but NO WMP-03 water-road cell classification exists for this road at 8 AU analysis resolution. Exact id reported; no geometry guessed."
+      ],
+      "note": "NO geometry guessed."
+    },
+    {
+      "kind": "ROAD_WATER_CROSSING",
+      "id": "rd_22",
+      "owner": "CREATOR / GAMEPLAY owner",
+      "reasons": [
+        "UNRESOLVED__NO_SOURCE_BACKED_CROSSING_EVIDENCE",
+        "Water override measured at U=0.5 tile centres but NO WMP-03 water-road cell classification exists for this road at 8 AU analysis resolution. Exact id reported; no geometry guessed."
+      ],
+      "note": "NO geometry guessed."
+    },
+    {
+      "kind": "ROAD_WATER_CROSSING",
+      "id": "rd_23",
+      "owner": "CREATOR / GAMEPLAY owner",
+      "reasons": [
+        "UNRESOLVED__NO_SOURCE_BACKED_CROSSING_EVIDENCE",
+        "Water override measured at U=0.5 tile centres but NO WMP-03 water-road cell classification exists for this road at 8 AU analysis resolution. Exact id reported; no geometry guessed."
+      ],
+      "note": "NO geometry guessed."
+    },
+    {
+      "kind": "ROAD_WATER_CROSSING",
+      "id": "rd_26",
+      "owner": "CREATOR / GAMEPLAY owner",
+      "reasons": [
+        "UNRESOLVED__NO_SOURCE_BACKED_CROSSING_EVIDENCE",
+        "Water override measured at U=0.5 tile centres but NO WMP-03 water-road cell classification exists for this road at 8 AU analysis resolution. Exact id reported; no geometry guessed."
+      ],
+      "note": "NO geometry guessed."
+    },
+    {
+      "kind": "ROAD_WATER_CROSSING",
+      "id": "rd_28",
+      "owner": "CREATOR / GAMEPLAY owner",
+      "reasons": [
+        "UNRESOLVED__NO_SOURCE_BACKED_CROSSING_EVIDENCE",
+        "Water override measured at U=0.5 tile centres but NO WMP-03 water-road cell classification exists for this road at 8 AU analysis resolution. Exact id reported; no geometry guessed."
+      ],
+      "note": "NO geometry guessed."
+    }
+  ],
+  "worldTraversalIntake": [
+    "Pin the exact Gameplay SHA (pinned observed 6e7d116b… OR live PR44 c2418b54… — drift reported) before consuming this packet.",
+    "Decide bearing/load class for each of the 10 resolved deck candidates from GOLD load + crossingCandidate code 1/2; do not infer cart clearance from foot/cart labels.",
+    "Define walk/cart collision on deck tiles, seam tiles and both approaches; production default here is PRODUCTION_NO_PERMISSION (deck still blocked).",
+    "Approve or reject the QA_CANDIDATE_CROSSING mode separately; it is geometry measurement ONLY and never a production permission.",
+    "Define a cliff climb/collision law; the current display is a visible PROPOSED face band with ZERO production collision cells.",
+    "Resolve br_9 bearing ambiguity (two bounded crossing axes) and br_b missing second bank / unbounded 32 AU water run with the Creator; do not stamp either.",
+    "Resolve the 6 ambiguous water-overridden road ids with the owner: rd_a, rd_1g, rd_22, rd_23, rd_26, rd_28.",
+    "Keep the 8 inherited ferry routes as navigation references (waterTraversalClass=2, foot=false); boat/swim/ferryFoot remain GAMEPLAY-owned and unapproved.",
+    "Keep activeCollisionPermission=false until WorldTraversal explicitly approves a cell; WMP-03 invariant forbids non-zero values.",
+    "Preserve all 81 canonical POI/source IDs, the Creator-approved Beacon road (verified byte-identical tile codes), and the three protected standalone baselines."
+  ],
+  "acceptance": {
+    "PAPER": "MEASURED",
+    "RUNTIME": "ISOLATED_VIEWER_PHYSICAL_VERIFIED_QA_ONLY",
+    "VISUAL": "NOT_REQUESTED_AND_NOT_GRANTED",
+    "GAMEPLAY": "NOT_REQUESTED_AND_NOT_GRANTED",
+    "fullWorldVisualAcceptance": false,
+    "veyraPlayable": false,
+    "productionMerge": false,
+    "pr44EditedOrMerged": false,
+    "goldAmended": false,
+    "newAtlasOrArt": false
+  },
+  "noClaims": [
+    "NO production traversal permission",
+    "NO Gameplay collision/load/cart/climb law",
+    "NO GOLD amendment",
+    "NO new atlas/art/world",
+    "NO PR44 edit/merge",
+    "NO full-world visual acceptance",
+    "NO VEYRA_PLAYABLE",
+    "NO VISUAL_ACCEPTED",
+    "NO MERGE_READY"
+  ],
+  "sources": [
+    {
+      "path": "creator-u05/evidence/mapgeo02-preflight.json",
+      "sha256": "7aed207ad0118b6a1ff759aa598c871dad85e7ea0aa2eb583aeeb72a7ae3f0a1"
+    },
+    {
+      "path": "creator-u05/evidence/mapgeo02-build.json",
+      "sha256": "dc7c5d16ab05ecd9d47762d62616aabe7e7dc60a98a456f661f754125eeb535f"
+    },
+    {
+      "path": "creator-u05/evidence/mapgeo02-bridge-geometry.json",
+      "sha256": "9dddd0cc865135bed41e221c8a028fe64ab423f230725c24b340bdc5994f4ce3"
+    },
+    {
+      "path": "creator-u05/evidence/mapgeo02-traversal.json",
+      "sha256": "005324da8f34839f922858467cd0c7de303bdcf1a2702d740c2f8a653c2075a3"
+    },
+    {
+      "path": "creator-u05/evidence/mapgeo02-road-water-classification.json",
+      "sha256": "d4e02fc8a50a40c59a9745ce503a49782c86c8ef00a97902b8c80a3cdbb604df"
+    },
+    {
+      "path": "creator-u05/evidence/mapgeo01-physical-audit.json",
+      "sha256": "402c16ec0f301b7df380c9d60c2b2d922148107d95963f18e5399be2a8b92f8f"
+    },
+    {
+      "path": "veyra-world-master/data/canon/VEYRA_GOLD_MAP.sohmap.json",
+      "sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256"
+    },
+    {
+      "path": "world_lab/src/gold/REAL_MAP_CONVERSION_CONTRACT.md",
+      "sha256": "a16deb29f27ad33a7e1788d52aa5bd7e27d36c0c4ecdcee9a4b76ee990e688d1"
+    }
+  ]
+}

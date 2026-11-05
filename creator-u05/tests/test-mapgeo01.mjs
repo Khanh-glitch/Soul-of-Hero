@@ -171,7 +171,14 @@ eq('S03 geometry.ts SHA unchanged', sha(path.join(ROOT, 'web-u05/src/u05/lw/geom
 eq('S04 art.ts SHA unchanged', sha(path.join(ROOT, 'web-u05/src/game/art.ts')), '896aa51abfac516b4228994ae7a20a67c4644a587028146b5c79336103a1ec20');
 eq('S05 GOLD SHA unchanged', sha(path.join(REPO, 'veyra-world-master/data/canon/VEYRA_GOLD_MAP.sohmap.json')), '88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256');
 eq('S06 original findings SHA unchanged', sha(path.join(ROOT, 'map-data/U05_GEOMETRY_CONFLICTS.json')), '2ac08fd0881a7a584ab321b303e9dd71b54296c02ab5cb89a4a890edd83b4abc');
-t('S07 no new HTML executable produced', !fs.readdirSync(ROOT).some(f => f.toLowerCase().includes('mapgeo') && f.endsWith('.html')));
+/* MAP-GEO-REJOIN-02 produced ONE explicitly labelled, separate QA verification
+ * executable (same U=0.5 renderer + corrected projection overlay). It is NOT a
+ * new world / geography viewer / product. Whitelist exactly that file so the
+ * MAP-GEO-01 "no new standalone product" gate stays strict for everything else. */
+const M02_QA_HTML = 'soulofhero_mapgeo02_correctedprojection.html';
+t('S07 no new HTML executable produced (except the one MAP-GEO-02 QA verification build)',
+  !fs.readdirSync(ROOT).some(f => f.toLowerCase().includes('mapgeo') && f.endsWith('.html')
+    && f.toLowerCase() !== M02_QA_HTML));
 
 console.log(`U05_MAPGEO01_TESTS ${n - failed}/${n} PASS` + (failed ? ` (${failed} FAIL)` : ''));
 process.exit(failed ? 1 : 0);

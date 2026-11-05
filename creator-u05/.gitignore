@@ -13,3 +13,6 @@ web-u05/nature01-dist
 
 # NATURE-02 standalone build output
 web-u05/nature02-dist
+
+# MAP-GEO-REJOIN-02 standalone verification build (deliverable HTML/ZIP are TRACKED)
+web-u05/mapgeo02-dist
