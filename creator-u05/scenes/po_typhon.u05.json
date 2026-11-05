@@ -1,0 +1,1209 @@
+{
+  "schema": "soh.u05.deep-physical-scene.v1",
+  "id": "po_typhon",
+  "name": "Typhon's Fracture",
+  "contract": "CREATOR_CHOSEN_U05.v1",
+  "generatedAt": "2026-11-05T06:49:44.309Z",
+  "status": "P3_DEEP_PHYSICAL_DESIGN__ART_INCOMPLETE_WHITEBOX__REQUIRES_RUNTIME_WALK_PROOF",
+  "intent": "Grand multi-scene Elder territory with terrain/slope constraints and explicit ingress/egress. Open arena ring, reserved deep vault, three physical sub-scenes. NO invented combat rewards, boss state or score.",
+  "sourceCustody": {
+    "goldPoiIdSha256": "385a8c0623dca8e0dfdfb3327d844b03fde25ffba6f10dac876a6d5efccf1371",
+    "architecturePoiSha256": "b4b2e1094123c08da9bac9a4109ced9cf4fba7d24dc4e16d9d41b4c8ca9473d4",
+    "masterplanEntrySha256": "0030d406178b79fb81c8ca44f901fdad3ff623f31a12482b910256e4c5789794",
+    "liveGameplaySha": "b5c8004ca4e77be62484fb3cd296fe296d7de4c9",
+    "noGOLDFileModified": true,
+    "noRoadRedraw": true,
+    "noAtlasAdded": true
+  },
+  "camera": {
+    "viewport": [
+      640,
+      360
+    ],
+    "dpr": 1,
+    "zoom": 1,
+    "cameraTrick": false,
+    "anchorAu": [
+      556,
+      352
+    ],
+    "anchorTile": [
+      1112,
+      704
+    ],
+    "U": 0.5,
+    "TILE": 16,
+    "heroSpritePx": [
+      16,
+      24
+    ],
+    "speedPxPerSec": 72
+  },
+  "states": {
+    "exterior": "THREE_TERRAIN_APPROACHES_FREE",
+    "interior": "OPEN_ARENA_RING",
+    "inaccessible": "DEEP_VAULT_RESERVATION_ONLY"
+  },
+  "beforeAfter": {
+    "globalCoordsAu": [
+      556,
+      352
+    ],
+    "cameraTile": [
+      1112,
+      704
+    ],
+    "beforePhysicalLayer": false,
+    "afterPhysicalLayer": true,
+    "sameCamera": true,
+    "sameGlobalCoordinates": true,
+    "note": "Before = live-SHA terrain + GOLD roads, physical layer OFF. After = identical camera/global coords, physical layer ON."
+  },
+  "SITE_ENVELOPE": {
+    "class": "reprojected",
+    "source": "GOLD poi.foot",
+    "markerOnly": true,
+    "certifiedBuilding": false,
+    "polygonAu": [
+      [
+        526.1151455757009,
+        337.984812664882
+      ],
+      [
+        579.7872713242492,
+        329.11560088299115
+      ],
+      [
+        585.8848544242991,
+        366.015187335118
+      ],
+      [
+        532.2127286757508,
+        374.88439911700885
+      ]
+    ],
+    "polygonTiles": [
+      [
+        1052.2303,
+        675.9696
+      ],
+      [
+        1159.5745,
+        658.2312
+      ],
+      [
+        1171.7697,
+        732.0304
+      ],
+      [
+        1064.4255,
+        749.7688
+      ]
+    ],
+    "polygonTilesSnapped": [
+      [
+        1052,
+        675
+      ],
+      [
+        1159,
+        658
+      ],
+      [
+        1171,
+        732
+      ],
+      [
+        1064,
+        749
+      ]
+    ],
+    "bboxTiles": [
+      1052.2303,
+      658.2312,
+      1171.7697,
+      749.7688
+    ],
+    "areaAu2": 2034.56,
+    "areaTile2": 8138.24,
+    "chunkRange": {
+      "x0": 32,
+      "y0": 20,
+      "x1": 36,
+      "y1": 23
+    },
+    "chunkIdentity": "creator-u05|32:20",
+    "obb": {
+      "centre": [
+        556,
+        352
+      ],
+      "ux": [
+        0.9866,
+        -0.163
+      ],
+      "uy": [
+        0.163,
+        0.9866
+      ],
+      "wAu": 54.4,
+      "hAu": 37.4,
+      "angleRad": -0.1638,
+      "wTiles": 108.8,
+      "hTiles": 74.8
+    },
+    "noPolygonAmendment": true,
+    "noShrinkRelocateExpand": true
+  },
+  "BUILDING_COMPOSITION": {
+    "class": "proposed",
+    "separateStructureCount": 1,
+    "deepReservationCount": 1,
+    "buildings": [
+      {
+        "id": "room.po_typhon.1.1",
+        "role": "Grand multi-scene Elder territory with terrain/slope constraints and explicit ingress/egress / structure 1 of 1",
+        "pattern": "arena_ring",
+        "status": "PROPOSED__WHITEBOX_PHYSICAL_PROOF__NOT_FINAL_PIXEL_ART",
+        "polygonAu": [
+          [
+            527.266,
+            338.8073
+          ],
+          [
+            578.9637,
+            330.2662
+          ],
+          [
+            584.734,
+            365.1927
+          ],
+          [
+            533.0363,
+            373.7338
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1054.532,
+            677.6146
+          ],
+          [
+            1157.9274,
+            660.5324
+          ],
+          [
+            1169.468,
+            730.3854
+          ],
+          [
+            1066.0726,
+            747.4676
+          ]
+        ],
+        "bboxTiles": [
+          1054.532,
+          660.5324,
+          1169.468,
+          747.4676
+        ],
+        "sourceRoomPolygonTiles": [
+          [
+            1054.532,
+            677.6146
+          ],
+          [
+            1157.9274,
+            660.5324
+          ],
+          [
+            1169.468,
+            730.3854
+          ],
+          [
+            1066.0726,
+            747.4676
+          ]
+        ],
+        "sourceRoomAreaTile2": 7419.6176,
+        "sourceRoof": {
+          "covered": false,
+          "canopyOnly": false,
+          "coverageFractionOfRoom": 0
+        },
+        "footprintTiles": [
+          [
+            1054.532,
+            677.6146
+          ],
+          [
+            1157.9274,
+            660.5324
+          ],
+          [
+            1169.468,
+            730.3854
+          ],
+          [
+            1066.0726,
+            747.4676
+          ]
+        ],
+        "footprintBboxTiles": [
+          1054.532,
+          660.5324,
+          1169.468,
+          747.4676
+        ],
+        "insetFactor": 1,
+        "footprintAreaTile2": 7419.6177,
+        "areaAu2": 1854.9044,
+        "areaTile2": 7419.6176,
+        "centroidTile": [
+          1112,
+          704
+        ],
+        "wallSprite": "wall_stone",
+        "floorSprite": "none",
+        "roofSprite": "roof_tin",
+        "roofMode": "source",
+        "note": "Inset footprint is PROPOSED physical composition INSIDE the unchanged GOLD poi.foot. Source room polygon and source roof descriptor are preserved verbatim."
+      }
+    ],
+    "deepReservations": [
+      {
+        "id": "room.po_typhon.deep.1",
+        "polygonTiles": [
+          [
+            1093.2822,
+            698.9562
+          ],
+          [
+            1145.7702,
+            690.2826
+          ],
+          [
+            1151.1178,
+            722.6438
+          ],
+          [
+            1098.6298,
+            731.3174
+          ]
+        ],
+        "areaTile2": 1744.9576,
+        "status": "SPATIAL_RESERVATION_ONLY__NO_VERTICAL_SEPARATION_VALUE"
+      }
+    ],
+    "spatialProgrammeAreas": [
+      {
+        "id": "arena_ring",
+        "kind": "OPEN_SPACE",
+        "role": "large open ring; deliberately NOT one huge roof",
+        "status": "proposed",
+        "obbRectNormalised": [
+          -0.44,
+          -0.42,
+          0.44,
+          0.42
+        ],
+        "polygonAu": [
+          [
+            529.8243,
+            340.4041
+          ],
+          [
+            577.0549,
+            332.6009
+          ],
+          [
+            582.1757,
+            363.5959
+          ],
+          [
+            534.9451,
+            371.3991
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1059.6487,
+            680.8081
+          ],
+          [
+            1154.1097,
+            665.2018
+          ],
+          [
+            1164.3513,
+            727.1919
+          ],
+          [
+            1069.8903,
+            742.7982
+          ]
+        ],
+        "bboxTiles": [
+          1059.6487,
+          665.2018,
+          1164.3513,
+          742.7982
+        ],
+        "areaAu2": 1503.8694,
+        "areaTile2": 6015.4776,
+        "art": "floor_stone",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      },
+      {
+        "id": "slope_ingress_north",
+        "kind": "CIRCULATION",
+        "role": "north terrain ingress",
+        "status": "proposed",
+        "obbRectNormalised": [
+          -0.12,
+          -0.49,
+          0.12,
+          -0.38
+        ],
+        "polygonAu": [
+          [
+            546.5723,
+            334.9836
+          ],
+          [
+            559.4534,
+            332.8555
+          ],
+          [
+            560.124,
+            336.9144
+          ],
+          [
+            547.2429,
+            339.0425
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1093.1447,
+            669.9673
+          ],
+          [
+            1118.9068,
+            665.711
+          ],
+          [
+            1120.2479,
+            673.8288
+          ],
+          [
+            1094.4858,
+            678.085
+          ]
+        ],
+        "bboxTiles": [
+          1093.1447,
+          665.711,
+          1120.2479,
+          678.085
+        ],
+        "areaAu2": 53.7096,
+        "areaTile2": 214.8385,
+        "art": "none",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      },
+      {
+        "id": "slope_ingress_south",
+        "kind": "CIRCULATION",
+        "role": "south terrain ingress",
+        "status": "proposed",
+        "obbRectNormalised": [
+          -0.12,
+          0.38,
+          0.12,
+          0.49
+        ],
+        "polygonAu": [
+          [
+            551.876,
+            367.0856
+          ],
+          [
+            564.7571,
+            364.9575
+          ],
+          [
+            565.4277,
+            369.0164
+          ],
+          [
+            552.5466,
+            371.1445
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1103.7521,
+            734.1712
+          ],
+          [
+            1129.5142,
+            729.915
+          ],
+          [
+            1130.8553,
+            738.0327
+          ],
+          [
+            1105.0932,
+            742.289
+          ]
+        ],
+        "bboxTiles": [
+          1103.7521,
+          729.915,
+          1130.8553,
+          742.289
+        ],
+        "areaAu2": 53.7096,
+        "areaTile2": 214.8385,
+        "art": "none",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      },
+      {
+        "id": "egress_west",
+        "kind": "NAV_RETREAT",
+        "role": "west egress back to rd_18",
+        "status": "proposed",
+        "obbRectNormalised": [
+          -0.49,
+          -0.1,
+          -0.38,
+          0.1
+        ],
+        "polygonAu": [
+          [
+            529.0916,
+            352.655
+          ],
+          [
+            534.9954,
+            351.6797
+          ],
+          [
+            536.2146,
+            359.0594
+          ],
+          [
+            530.3108,
+            360.0348
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1058.1831,
+            705.3101
+          ],
+          [
+            1069.9908,
+            703.3593
+          ],
+          [
+            1072.4292,
+            718.1188
+          ],
+          [
+            1060.6216,
+            720.0696
+          ]
+        ],
+        "bboxTiles": [
+          1058.1831,
+          703.3593,
+          1072.4292,
+          720.0696
+        ],
+        "areaAu2": 44.758,
+        "areaTile2": 179.0321,
+        "art": "none",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      },
+      {
+        "id": "deep_vault_reservation",
+        "kind": "RESERVATION",
+        "role": "deep polygon reservation; no vertical separation value",
+        "status": "proposed",
+        "obbRectNormalised": [
+          -0.18,
+          -0.16,
+          0.18,
+          0.16
+        ],
+        "polygonAu": [
+          [
+            545.3638,
+            347.6923
+          ],
+          [
+            564.6854,
+            344.5001
+          ],
+          [
+            566.6362,
+            356.3077
+          ],
+          [
+            547.3146,
+            359.4999
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1090.7276,
+            695.3846
+          ],
+          [
+            1129.3708,
+            689.0002
+          ],
+          [
+            1133.2724,
+            712.6154
+          ],
+          [
+            1094.6292,
+            718.9998
+          ]
+        ],
+        "bboxTiles": [
+          1090.7276,
+          689.0002,
+          1133.2724,
+          718.9998
+        ],
+        "areaAu2": 234.3693,
+        "areaTile2": 937.477,
+        "art": "none",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      },
+      {
+        "id": "terrain_scarp",
+        "kind": "TERRAIN_CONSTRAINT",
+        "role": "WMP-03 cliff/slope candidate constrains circulation; no slope law",
+        "status": "proposed",
+        "obbRectNormalised": [
+          0.34,
+          -0.49,
+          0.49,
+          -0.2
+        ],
+        "polygonAu": [
+          [
+            571.261,
+            330.9047
+          ],
+          [
+            579.3117,
+            329.5746
+          ],
+          [
+            581.0796,
+            340.2753
+          ],
+          [
+            573.0289,
+            341.6054
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1142.522,
+            661.8094
+          ],
+          [
+            1158.6233,
+            659.1493
+          ],
+          [
+            1162.1591,
+            680.5506
+          ],
+          [
+            1146.0578,
+            683.2108
+          ]
+        ],
+        "bboxTiles": [
+          1142.522,
+          659.1493,
+          1162.1591,
+          683.2108
+        ],
+        "areaAu2": 88.4988,
+        "areaTile2": 353.9952,
+        "art": "none",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      }
+    ],
+    "sightlines": [
+      "north ingress -> arena centre -> west egress",
+      "south ingress -> arena centre"
+    ],
+    "roofHierarchy": "1 roof polygons over 1 separate structures",
+    "compositionBeforeAfter": {
+      "sourceRoomPolygonCount": 1,
+      "sourceRoomCoverageFractionOfEnvelope": 0.9117,
+      "proposedSeparateStructures": 1,
+      "proposedRoofPolygons": 1,
+      "proposedFootprintCoverageFractionOfEnvelope": 0.9117,
+      "drawnRoofCoverageFractionOfEnvelope": 0.0649,
+      "drawnCoverageFractionOfEnvelope": 0.0649,
+      "openSpaceFractionAfter": 0.9351,
+      "openTerrainArena": true,
+      "goldEnvelopeChanged": false,
+      "goldPolygonAmended": false,
+      "reason": "Arena ring stays OPEN TERRAIN; only the deep vault roof polygon is reserved. No boss/reward state.",
+      "overrideNote": "Arena floor is open terrain; no roof over the ring, no invented boss/reward state.",
+      "note": "Before = WMP-03 PROPOSED full rooms/roof descriptors. After = U05 PROPOSED inset footprints and roof hierarchy. Both are DESIGN states, NOT GOLD canon changes; measured incompatibility and before/after comparison are explicit."
+    },
+    "coherentGrounds": true,
+    "oneHugeRectangularRoof": false,
+    "emptyInflatedRectangle": false,
+    "randomProps": 0
+  },
+  "DOORS_ROOMS": {
+    "class": "proposed",
+    "roomCount": 2,
+    "hall": "ENCLOSED_MULTI_LAYER",
+    "exteriorEntrance": {
+      "status": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "noDoorInvented": true,
+      "owner": "MAP_U05 / GAMEPLAY A8"
+    },
+    "openings": [
+      {
+        "id": "portal.u05.po_typhon.arena.entrance",
+        "kind": "EXTERIOR_ENTRANCE",
+        "centreTile": [
+          1106.2297,
+          669.0735
+        ],
+        "openingTiles": 8,
+        "effectiveClearWidthTiles": 8,
+        "traversable": true,
+        "staticHole": true,
+        "doorSprite": "poi_door",
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNRESOLVED_GAMEPLAY",
+        "status": "PROPOSED_ARENA_ENTRANCE_GAP__NOT_SOURCE_AUTHORED"
+      }
+    ],
+    "thresholds": [
+      {
+        "id": "portal.u05.po_typhon.arena.entrance",
+        "minClearWidthTiles": 8,
+        "heroWidthPx": 16,
+        "heroWidthTiles": 1,
+        "passable": true,
+        "note": "Physically meaningful clear width; player 16x24 px is NOT stretched."
+      }
+    ],
+    "namedPlaceholders": []
+  },
+  "ROOF_OCCLUSION": {
+    "class": "proposed",
+    "roofPolygonCount": 1,
+    "sourceRoofPolygonCount": 1,
+    "roofs": [
+      {
+        "id": "roof.room.po_typhon.deep.1",
+        "parentRoomId": "room.po_typhon.deep.1",
+        "polygonAu": [
+          [
+            546.6411,
+            349.4781
+          ],
+          [
+            572.8851,
+            345.1413
+          ],
+          [
+            575.5589,
+            361.3219
+          ],
+          [
+            549.3149,
+            365.6587
+          ]
+        ],
+        "sourcePolygonTiles": [
+          [
+            1093.2822,
+            698.9562
+          ],
+          [
+            1145.7702,
+            690.2826
+          ],
+          [
+            1151.1178,
+            722.6438
+          ],
+          [
+            1098.6298,
+            731.3174
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1106.2952,
+            704.2859
+          ],
+          [
+            1135.1636,
+            699.5154
+          ],
+          [
+            1138.1048,
+            717.3141
+          ],
+          [
+            1109.2364,
+            722.0846
+          ]
+        ],
+        "status": "DEEP_RESERVATION_ROOF__NOT_A_GROUND_ROOF",
+        "sprite": "roof_tin",
+        "insetFactor": 0.55,
+        "note": "Deep-level spatial reservation only; NO invented vertical separation value."
+      }
+    ],
+    "rule": "Runtime draws a roof ABOVE the player, then HIDES it when the player centre is inside that roof polygon. This is real occlusion, not a POI text label.",
+    "whiteboxNote": "Reused SOH roof sprites are physical proof, NOT final pixel art / art-complete."
+  },
+  "SOLID_COLLISION": {
+    "class": "proposed",
+    "mesh": "line-segment spans split BY static openings; thickness in U=0.5 tiles",
+    "solidCount": 5,
+    "solids": [
+      {
+        "id": "wall.u05.po_typhon.arena.1.span.1",
+        "aTile": [
+          1054.532,
+          677.6146
+        ],
+        "bTile": [
+          1094.8562,
+          670.9525
+        ],
+        "thicknessTiles": 2,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_stone",
+        "status": "PROPOSED_ARENA_PERIMETER_BARRIER__NOT_SOURCE_AUTHORED",
+        "provenance": "U05 physical composition proposal inside the unchanged GOLD poi.foot"
+      },
+      {
+        "id": "wall.u05.po_typhon.arena.1.span.2",
+        "aTile": [
+          1117.6032,
+          667.1945
+        ],
+        "bTile": [
+          1157.9274,
+          660.5324
+        ],
+        "thicknessTiles": 2,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_stone",
+        "status": "PROPOSED_ARENA_PERIMETER_BARRIER__NOT_SOURCE_AUTHORED",
+        "provenance": "U05 physical composition proposal inside the unchanged GOLD poi.foot"
+      },
+      {
+        "id": "wall.u05.po_typhon.arena.2.span.1",
+        "aTile": [
+          1157.9274,
+          660.5324
+        ],
+        "bTile": [
+          1169.468,
+          730.3854
+        ],
+        "thicknessTiles": 2,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_stone",
+        "status": "PROPOSED_ARENA_PERIMETER_BARRIER__NOT_SOURCE_AUTHORED",
+        "provenance": "U05 physical composition proposal inside the unchanged GOLD poi.foot"
+      },
+      {
+        "id": "wall.u05.po_typhon.arena.3.span.1",
+        "aTile": [
+          1169.468,
+          730.3854
+        ],
+        "bTile": [
+          1066.0726,
+          747.4676
+        ],
+        "thicknessTiles": 2,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_stone",
+        "status": "PROPOSED_ARENA_PERIMETER_BARRIER__NOT_SOURCE_AUTHORED",
+        "provenance": "U05 physical composition proposal inside the unchanged GOLD poi.foot"
+      },
+      {
+        "id": "wall.u05.po_typhon.arena.4.span.1",
+        "aTile": [
+          1066.0726,
+          747.4676
+        ],
+        "bTile": [
+          1054.532,
+          677.6146
+        ],
+        "thicknessTiles": 2,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_stone",
+        "status": "PROPOSED_ARENA_PERIMETER_BARRIER__NOT_SOURCE_AUTHORED",
+        "provenance": "U05 physical composition proposal inside the unchanged GOLD poi.foot"
+      }
+    ],
+    "sourceSolidCount": 0,
+    "proposedSolidCount": 5,
+    "proposedSolidsNote": "Typhon source has ZERO static solids/openings (open-air arena). U05 PROPOSES a perimeter barrier with one entrance gap for SOLID_COLLISION proof. NOT GOLD canon, NOT a Gameplay law.",
+    "openingsBypassSolids": true,
+    "idMapping": [
+      {
+        "oldId": "wall.po_typhon.1",
+        "newIds": [
+          "wall.po_typhon.1"
+        ],
+        "kind": "UNCHANGED_NON_SOLID_BOUNDARY",
+        "openingCount": 0
+      },
+      {
+        "oldId": "wall.po_typhon.2",
+        "newIds": [
+          "wall.po_typhon.2"
+        ],
+        "kind": "UNCHANGED_NON_SOLID_BOUNDARY",
+        "openingCount": 0
+      },
+      {
+        "oldId": "wall.po_typhon.3",
+        "newIds": [
+          "wall.po_typhon.3"
+        ],
+        "kind": "UNCHANGED_NON_SOLID_BOUNDARY",
+        "openingCount": 0
+      },
+      {
+        "oldId": "wall.po_typhon.4",
+        "newIds": [
+          "wall.po_typhon.4"
+        ],
+        "kind": "UNCHANGED_NON_SOLID_BOUNDARY",
+        "openingCount": 0
+      }
+    ],
+    "terrainCollision": "GOLD land/water/cliff candidates from LW-01 sampleAt(); NO artificial marine permission",
+    "walkabilitySample": {
+      "boundsTiles": [
+        1040,
+        646,
+        1184,
+        762
+      ],
+      "method": "runtime BFS using the SAME collision function as real WASD input",
+      "status": "TO_BE_MEASURED_IN_BROWSER"
+    }
+  },
+  "NAV_RETREAT": {
+    "class": "proposed",
+    "circulation": {
+      "lr01Graph": {
+        "entranceRoomId": "room.po_typhon.1.1",
+        "reachableRooms": 1,
+        "totalRooms": 1,
+        "maxDepth": 0,
+        "depthByRoomId": {
+          "room.po_typhon.1.1": 0
+        },
+        "interiorDepthAu": 18.7,
+        "status": "DERIVED"
+      },
+      "roomGraphStart": "room.po_typhon.1.1",
+      "physicalRoomReach": {
+        "room.po_typhon.1.1": true
+      },
+      "graphReachableRooms": [
+        "room.po_typhon.1.1"
+      ],
+      "graphOnlyRooms": [],
+      "physicalOnlyRooms": [],
+      "diagonalOnlyReachableRooms": [],
+      "physicallyReachableRoomCount": 1,
+      "groundRoomCount": 1,
+      "note": "Graph BFS is NOT substituted for physical clearance: both are computed and compared."
+    },
+    "architectureRetreat": {
+      "status": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+      "waypointCount": 1,
+      "pathAu": [
+        [
+          556,
+          352
+        ],
+        [
+          509.1123,
+          410.2802
+        ]
+      ],
+      "lengthAu": 74.8,
+      "exitAtAu": [
+        509.1123,
+        410.2802
+      ],
+      "note": "Canonical retreat is a set of waypoints (often one). The segment from the POI anchor is DERIVED; no full retreat corridor is invented."
+    },
+    "goldRetreatPoints": [
+      {
+        "au": [
+          509.1123284310935,
+          410.2802389738268
+        ],
+        "tile": [
+          1018,
+          820
+        ]
+      }
+    ],
+    "roadApproach": {
+      "roadId": "rd_18",
+      "roadSegmentAu": [
+        [
+          542,
+          395
+        ],
+        [
+          556,
+          352
+        ]
+      ],
+      "schematicCentrePointAu": [
+        556,
+        352
+      ],
+      "startAu": [
+        563.4301,
+        329.1791
+      ],
+      "startTile": [
+        1126,
+        658
+      ],
+      "centrelineChanged": false
+    },
+    "approachPathAu": [
+      [
+        563.4301,
+        329.1791
+      ],
+      [
+        556,
+        352
+      ]
+    ],
+    "approachPathTiles": [
+      [
+        1126,
+        658
+      ],
+      [
+        1112,
+        704
+      ]
+    ],
+    "reentryPathAu": [
+      [
+        556,
+        352
+      ],
+      [
+        563.4301,
+        329.1791
+      ],
+      [
+        556,
+        352
+      ]
+    ],
+    "walkTest": {
+      "method": "Browser BFS on runtime collision -> REAL keyboard WASD/arrow events at 72 px/s -> measured global pixel positions",
+      "teleportUsed": false,
+      "camUsedAsRoute": false,
+      "status": "TO_BE_PROVEN_IN_BROWSER"
+    },
+    "meaningfulRetreat": {
+      "status": "GOLD_RETREAT_POINT_RECORDED",
+      "goldRetreatPoints": [
+        {
+          "au": [
+            509.1123284310935,
+            410.2802389738268
+          ],
+          "tile": [
+            1018,
+            820
+          ]
+        }
+      ],
+      "architectureRetreat": {
+        "status": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+        "waypointCount": 1,
+        "pathAu": [
+          [
+            556,
+            352
+          ],
+          [
+            509.1123,
+            410.2802
+          ]
+        ],
+        "lengthAu": 74.8,
+        "exitAtAu": [
+          509.1123,
+          410.2802
+        ],
+        "note": "Canonical retreat is a set of waypoints (often one). The segment from the POI anchor is DERIVED; no full retreat corridor is invented."
+      },
+      "circulation": {
+        "physicallyReachableRoomCount": 1,
+        "groundRoomCount": 1,
+        "graphOnlyRooms": []
+      },
+      "note": "A retreat point or a room graph is a paper design record, NOT a physically demonstrated exit. Runtime walk proof exists only for the six P3 pilot scenes."
+    }
+  },
+  "GAMEPLAY_SOCKETS": {
+    "class": "runtime-owned",
+    "gate": "elder",
+    "power": "GAMEPLAY",
+    "locks": "GAMEPLAY",
+    "hp": "GAMEPLAY",
+    "ownership": "GAMEPLAY",
+    "loot": "GAMEPLAY",
+    "enemyPlacement": "GAMEPLAY",
+    "fabricatedLoot": false,
+    "fabricatedOwnershipOrCash": false,
+    "bossState": false,
+    "combatRewards": false,
+    "vendorEconomics": false,
+    "boatGameplay": false,
+    "marinePermission": "UNRESOLVED_GAMEPLAY",
+    "buildPermission": "UNKNOWN__GAMEPLAY",
+    "cargoApproval": false
+  },
+  "terrainConstraints": {
+    "shoreline": "n/a",
+    "cliff": "WMP-03 cliff/slope candidate",
+    "slope": "no Gameplay slope law",
+    "ingress": [
+      "north",
+      "south"
+    ],
+    "egress": [
+      "west"
+    ],
+    "seaLandWalk": false,
+    "boatGameplay": false,
+    "bossState": "NOT_CREATED",
+    "rewards": "NOT_CREATED"
+  },
+  "markers": [
+    {
+      "id": "NO_EXTERIOR_ENTRANCE_RECORD",
+      "kind": "UNRESOLVED",
+      "status": "MISSING_EXTERIOR_ENTRANCE_RECORD__NO_DOOR_INVENTED",
+      "owner": "MAP_U05 / GAMEPLAY A8"
+    },
+    {
+      "id": "NO_BOSS_OR_REWARD_STATE",
+      "kind": "NO_CLAIM",
+      "status": "NOT_CREATED",
+      "owner": "GAMEPLAY"
+    }
+  ],
+  "subScenes": [
+    {
+      "id": "typhon_north_approach",
+      "role": "terrain ingress view",
+      "atAu": "GOLD road rd_18 + north ingress rect"
+    },
+    {
+      "id": "typhon_arena_floor",
+      "role": "open arena floor view",
+      "atAu": "OBB centre"
+    },
+    {
+      "id": "typhon_deep_threshold",
+      "role": "deep reservation boundary view (no vertical law)",
+      "atAu": "deep polygon centroid"
+    }
+  ],
+  "physicalProof": {
+    "artComplete": false,
+    "whiteboxPhysicalProof": true,
+    "runtimeWalkProof": "PROVEN_BY_P4_QA",
+    "distinguish": "Grey boxes / reused SOH sprites prove geometry, collision, doors, roof occlusion and walkability. They are NOT final pixel art and NOT visual acceptance.",
+    "captureRequirement": [
+      "before",
+      "after",
+      "approach",
+      "reentry",
+      "roof_occlusion"
+    ],
+    "runtimeWalkEvidence": {
+      "report": "creator-u05/evidence/qa-report.json",
+      "sceneId": "po_typhon",
+      "realKeyboardApproachEvents": 132,
+      "realKeyboardReentryEvents": 132,
+      "approachArrived": true,
+      "reentryArrived": true,
+      "wallCollisionBlocked": true,
+      "roofHiddenInside": 1,
+      "roofHiddenOutside": 0,
+      "roofTransitionProven": true,
+      "shots": [
+        "before_po_typhon.png",
+        "after_po_typhon.png",
+        "approach_po_typhon_start.png",
+        "approach_po_typhon_goal.png",
+        "reentry_po_typhon_back.png",
+        "roof_po_typhon_inside.png",
+        "roof_po_typhon_outside.png",
+        "collision_po_typhon_blocked.png"
+      ],
+      "spawnFixtureDisclosed": true,
+      "note": "Runtime WALK / collision / roof-occlusion proof for the ISOLATED six-scene Creator audition ONLY. NOT full Gameplay runtime integration, NOT visual acceptance, NOT art-complete."
+    }
+  },
+  "conflicts": [
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8"
+    }
+  ]
+}

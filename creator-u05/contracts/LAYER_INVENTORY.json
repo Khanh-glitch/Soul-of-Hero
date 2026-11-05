@@ -1,0 +1,241 @@
+{
+  "schema": "soh.u05.layer-inventory.v1",
+  "contract": "CREATOR_CHOSEN_U05.v1",
+  "vocabulary": {
+    "source-authored": "Byte-for-byte present in active WMP-04R1 / GOLD / Bible authority. Untouched by U05.",
+    "reprojected": "Derived deterministically from source-authored geometry by the locked U=0.5 transform; no new authored content.",
+    "proposed": "A physical/spatial design candidate authored by Map for U05. Requires Gameplay/Creator decision before it becomes canon or law.",
+    "runtime-owned": "Behaviour owned by the Gameplay runtime (input, collision resolution, door state, roof occlusion, camera, clock).",
+    "unresolved": "No direct evidence / no approval in live authority. Must stay visible as a blocker with an owner."
+  },
+  "layers": [
+    {
+      "id": "L01_WORLD_MASTER_POINTER",
+      "file": "veyra-world-master/CURRENT_WORLD_MASTER.json",
+      "role": "ACTIVE revision pointer + policy",
+      "fields": [
+        {"name": "activeRevision=WMP-04R1", "class": "source-authored"},
+        {"name": "activeManifest=v4/r1/manifest.r1.json", "class": "source-authored"},
+        {"name": "activeRuntimeReader=api/current.mjs", "class": "source-authored"},
+        {"name": "activeBiomeRaster=v4/r1/data/biomeEffective.r1.u8", "class": "source-authored"},
+        {"name": "status=MAP_GEO_R1_CORRECTED__GAMEPLAY_INTAKE_PENDING", "class": "source-authored"},
+        {"name": "policy.noRawGOLDRuntimeImport / noMarineSwimBoatCollision / humanIdsUnchanged", "class": "source-authored"},
+        {"name": "art=REUSE_EXISTING_SOH_GAME_ART_RENDERER_AND_SPRITES_FIRST", "class": "source-authored"},
+        {"name": "productionAtlas=NOT_AUTHORIZED", "class": "source-authored"},
+        {"name": "creatorVisualApproval=NOT_REQUESTED", "class": "source-authored"}
+      ]
+    },
+    {
+      "id": "L02_MANIFEST_R1",
+      "file": "veyra-world-master/v4/r1/manifest.r1.json",
+      "role": "WMP-04R1 observed geography correction",
+      "fields": [
+        {"name": "dryLandCells=14392 / snowAfter=3311 / rockAfter=510 / rockRestored=483", "class": "source-authored"},
+        {"name": "dryAreaRelativeGrowthPercent=30.0152", "class": "source-authored"},
+        {"name": "changedSeaWaterCells=0", "class": "source-authored"},
+        {"name": "target.snowPercentOfDryLand[23,25]", "class": "source-authored"},
+        {"name": "art=REUSE_EXISTING_GAME_ART_FIRST__NO_NEW_ASSETS_FOR_PRESENT_FEATURES", "class": "source-authored"},
+        {"name": "doNotClaim.GameplayIngestion", "class": "unresolved"}
+      ]
+    },
+    {
+      "id": "L03_ACTIVE_RUNTIME_READER",
+      "file": "veyra-world-master/api/current.mjs",
+      "role": "Analysis-grid authority (250x175 cells of 8 AU) and typed permission boundary",
+      "fields": [
+        {"name": "coords.widthAu=2000 / heightAu=1400 / cellAu=8", "class": "source-authored"},
+        {"name": "rasters.biomeEffective (WMP-04R1)", "class": "source-authored"},
+        {"name": "source.S landId/waterClass/slope/elevation/roadClass/zoneId", "class": "source-authored"},
+        {"name": "source.S walkableCandidate/buildableCandidate/cargoCandidate", "class": "source-authored", "note": "MAP CANDIDATES only; never legal placement"},
+        {"name": "marineAt.footPassableOnSea=false", "class": "source-authored"},
+        {"name": "marineAt.boatOrSwimPermission=UNRESOLVED_GAMEPLAY", "class": "unresolved"},
+        {"name": "marineAt.activeCollisionPermission=false", "class": "source-authored"},
+        {"name": "candidateEconomyMap().status=CANDIDATE_ONLY__NEEDS_GAMEPLAY_REVIEW", "class": "unresolved"},
+        {"name": "U=0.5 runtime tile interpretation", "class": "proposed", "note": "Added by CREATOR_CHOSEN_U05; the reader itself remains an 8 AU analysis grid"}
+      ]
+    },
+    {
+      "id": "L04_GOLD_CANON",
+      "file": "veyra-world-master/data/canon/VEYRA_GOLD_MAP.sohmap.json",
+      "role": "Canonical authored geometry (81 POIs, 92 roads, 27 docks, 23 zones, 280 resources, 8 land, 6 elders)",
+      "fields": [
+        {"name": "land[].rings / lakes[].ring / rivers[].points+width / roads[].points+kind / bridges / docks", "class": "source-authored"},
+        {"name": "pois[].id/name/at/arche/rot/scale/foot/deep/depth/role/opp/access/resources/gate/retreat/links/conf/elder/notes", "class": "source-authored"},
+        {"name": "zones[].ring+soil+water+slope+tags", "class": "source-authored"},
+        {"name": "elders[].outer/core/arenas/approach/pois/ragnarok", "class": "source-authored"},
+        {"name": "poi.foot semantics = SITE_ENVELOPE / MARKER", "class": "source-authored", "note": "NOT a certified building; WMP-03/v3 audit"},
+        {"name": "poi.foot vertex * 2 (tile-space polygon)", "class": "reprojected"},
+        {"name": "poi.foot area AU2 -> tile2 (x4) / -> px2 (x1024)", "class": "reprojected"},
+        {"name": "road centreline 3.0 AU width at U=0.5 (6 tiles / 96 px)", "class": "reprojected"},
+        {"name": "any polygon amendment / relocation / expansion", "class": "proposed", "note": "NONE applied in U05; blocked without measured before/after + owner"}
+      ]
+    },
+    {
+      "id": "L05_RASTERS_GEO01",
+      "file": "veyra-world-master/data/rasters/geo01/*.u8 (21 files)",
+      "role": "WMP-03 physical candidate layers at 8 AU analysis cells",
+      "fields": [
+        {"name": "biomeCode / landId / waterClass / freshwater / elevation / slope / coast", "class": "source-authored"},
+        {"name": "walkableCandidate / cargoCandidate / buildableCandidate / clearanceCells / protectedGeometryCandidate", "class": "source-authored", "note": "CANDIDATES; do not mint Gameplay legality"},
+        {"name": "poiGeometryId / elderGeometryId / zoneId / roadClass / lakeId / riverId / seaDistanceCells", "class": "source-authored"},
+        {"name": "tile-centre sampling via deterministic 1 AU dither (LW-01 geometry.ts)", "class": "reprojected"},
+        {"name": "8 AU nearest-neighbour square land outline", "class": "unresolved", "note": "PROHIBITED as an authored-detail claim; never used"}
+      ]
+    },
+    {
+      "id": "L06_RASTERS_R1",
+      "file": "veyra-world-master/v4/r1/data/*.u8 + v4/data/marineRegion.v4.u8",
+      "role": "WMP-04R1 effective biome / cold transition / marine region",
+      "fields": [
+        {"name": "biomeEffective.r1.u8 (43750 bytes)", "class": "source-authored"},
+        {"name": "coldTransition.r1.u8 (43750 bytes)", "class": "source-authored"},
+        {"name": "marineRegion.v4.u8", "class": "source-authored"},
+        {"name": "BIOME_TILE mapping to existing SOH art tiles", "class": "reprojected"}
+      ]
+    },
+    {
+      "id": "L07_ARCHITECTURE_V1",
+      "file": "veyra-world-master/layers/architecture.v1.json",
+      "role": "WMP-03 physical architecture candidates for all 81 POIs (210 rooms, 153 roof polygons, 18 vertical links, static solids/openings, circulation, retreat, LOS)",
+      "fields": [
+        {"name": "pois[].poiId/name/arche/atAu/footAu/deepAu", "class": "source-authored"},
+        {"name": "levels[].polygonAu + areaAu2", "class": "source-authored", "note": "Derived from GOLD foot/deep"},
+        {"name": "rooms[].polygonAu / centroidAu / areaAu2 / bboxAu / pattern", "class": "proposed", "note": "Status PROPOSED in source"},
+        {"name": "rooms[].floor.status=PROPOSED", "class": "proposed"},
+        {"name": "roofDescriptor / roofPolygons / roofCoverage", "class": "proposed"},
+        {"name": "staticSolids[].aAu/bAu/thicknessAu/blocksMovement/blocksSight", "class": "proposed"},
+        {"name": "staticOpenings[].kind=EXTERIOR_ENTRANCE|INTERIOR_DOORWAY / effectiveClearWidthAu", "class": "proposed"},
+        {"name": "staticOpenings[].dynamicDoorOwner=GAMEPLAY / doorState=UNKNOWN", "class": "runtime-owned"},
+        {"name": "circulation / physicalRoomReach / graphReachableRooms", "class": "proposed"},
+        {"name": "retreat.status=UNRESOLVED / pathAu=null", "class": "unresolved"},
+        {"name": "loadingAccess.nearestRoad / nearestDock / sweptClearance=UNKNOWN", "class": "unresolved"},
+        {"name": "los[].directLos=...BLOCKED_BY_STATIC_SOLID", "class": "proposed"},
+        {"name": "dynamicOwnership locks/power/hp/ownership/loot/enemyPlacement", "class": "runtime-owned"},
+        {"name": "all AU polygons * 2 -> U=0.5 tile polygons", "class": "reprojected"},
+        {"name": "verdict=VERIFIED (paper-level only)", "class": "source-authored", "note": "NOT runtime proof"}
+      ]
+    },
+    {
+      "id": "L08_MARINE_SITES",
+      "file": "veyra-world-master/v4/layers/marine_sites.v4.json",
+      "role": "Unique physical landmarks",
+      "fields": [
+        {"name": "poi_beacon_engine_out_helicopter.atAu=[272,652]", "class": "source-authored"},
+        {"name": "physicalState=GROUND_STATIONARY__ENGINE_FAILED", "class": "source-authored"},
+        {"name": "repairFlightStatus=NOT_APPROVED / noStartingLootGrant=true", "class": "source-authored"},
+        {"name": "helicopter sprite / entity in live Gameplay", "class": "unresolved", "note": "PROVEN_MISSING at b5c8004c; no substitute wreck/ship hull"},
+        {"name": "helipad / lighthouse collision-plan conflict", "class": "proposed", "note": "Grounded reservation only; no relocation"}
+      ]
+    },
+    {
+      "id": "L09_V3_INTAKE",
+      "file": "veyra-world-master/v3/docs/INTAKE_CONTRACT_V3.md + v3/evidence/tests/test_results.v3.json",
+      "role": "Prior measured counts and boundary decisions",
+      "fields": [
+        {"name": "55/81 POIs have EXTERIOR_ENTRANCE; 26 have none", "class": "source-authored", "note": "Re-measured live in U05 audit"},
+        {"name": "18 of 23 surveyed build sites overlap POI/Elder", "class": "source-authored", "note": "Re-measured live in U05 audit"},
+        {"name": "legalPlacement=UNKNOWN / GAMEPLAY", "class": "unresolved"},
+        {"name": "cargoPassable zeroed / approvedTraversal=UNKNOWN", "class": "unresolved"}
+      ]
+    },
+    {
+      "id": "L10_BIBLE",
+      "file": "web/ref/bible.md @ b5c8004ca4e77be62484fb3cd296fe296d7de4c9",
+      "role": "Canonical K/J/C/§V/§11.3/§11.5 authority",
+      "fields": [
+        {"name": "K2 Environment / K3 Sources / K6 Building-POI / K7 Travel-freight", "class": "source-authored"},
+        {"name": "J05-J08 / J14", "class": "source-authored"},
+        {"name": "§V 640x360 1x pixel legibility", "class": "source-authored"},
+        {"name": "§11.3 C07 physical instance lifecycle (build/deploy/reclaim)", "class": "source-authored"},
+        {"name": "§11.3 C11 POI exterior->gate->deeper loot->retreat/revisit", "class": "source-authored"},
+        {"name": "§11.3 C24 multiple safe spawns + physical routes", "class": "source-authored"},
+        {"name": "§11.5 Map Lead receives inputs, never authors gameplay prices/quests", "class": "source-authored"},
+        {"name": "§11.5 POIs: approachable exterior, optional multi-room interiors, meaningful retreat", "class": "source-authored"},
+        {"name": "Any U05 gameplay law derived from these", "class": "proposed", "note": "NONE created"}
+      ]
+    },
+    {
+      "id": "L11_LIVE_GAMEPLAY_SOURCE",
+      "file": "b5c8004ca4e77be62484fb3cd296fe296d7de4c9:web/src/game/*",
+      "role": "Verified latest Gameplay renderer/art/constants for the isolated audition",
+      "fields": [
+        {"name": "core.ts TILE=16 / VIEW_W=640 / VIEW_H=360 / T / hash2", "class": "source-authored"},
+        {"name": "art.ts buildHero 16x24, buildStructs walls/doors/roofs/floors/props", "class": "source-authored"},
+        {"name": "render.ts PAL/PRIO/texel/renderChunk terrain material language", "class": "source-authored"},
+        {"name": "veyra/wmp04r1.generated.ts rasters + integrity", "class": "source-authored"},
+        {"name": "render.ts terrain block bound to u05Tile() at U=0.5", "class": "reprojected"},
+        {"name": "Game/title/panels/engine drift (4 commits)", "class": "runtime-owned", "note": "Not invoked by U05 entry; integration blocker"}
+      ]
+    },
+    {
+      "id": "L12_LW01_CHUNK_METHOD",
+      "file": "large-world-01/web-large/src/game/large/{geometry,coords,profile,sources.generated}.ts @ 38d13514d20b089b6fcbf0fa78d605086c50385c",
+      "role": "Explicitly permitted reuse of LW-01 lazy chunk/geometry method",
+      "fields": [
+        {"name": "sampleAt() GOLD polygon sampling at exact tile centres + 1 AU dither", "class": "reprojected"},
+        {"name": "chunkKey(profileId,cx,cy) / index(p,x,y) / auToTile / tileToAu", "class": "reprojected"},
+        {"name": "beacon-u05 4000x2800 U=0.5 profile (dimensions)", "class": "source-authored"},
+        {"name": "creator-u05 profile id + bounded LRU (this deliverable)", "class": "proposed"},
+        {"name": "full-frame streaming / 60 FPS / production acceptance", "class": "unresolved"}
+      ]
+    },
+    {
+      "id": "L13_U05_CONTRACT",
+      "file": "creator-u05/contracts/CREATOR_CHOSEN_U05.v1.json",
+      "role": "Versioned additive scale contract",
+      "fields": [
+        {"name": "creatorDecision.U / TILE / frame / addressableCells", "class": "source-authored", "note": "Creator-locked"},
+        {"name": "transform / snapRules / chunkCoordinates", "class": "reprojected"},
+        {"name": "hardInvariants H01-H12", "class": "proposed"},
+        {"name": "acceptanceSeparation.fullGameplayRuntimeIntegration", "class": "unresolved"}
+      ]
+    },
+    {
+      "id": "L14_U05_MASTERPLAN",
+      "file": "creator-u05/map-data/U05_POI_MASTERPLAN.v1.json",
+      "role": "81/81 physical masterplan keyed to canonical POI IDs",
+      "fields": [
+        {"name": "id / gold.* / siteEnvelope polygon / measuredArea", "class": "reprojected"},
+        {"name": "landmass / portions / zoning / roadFrontage / entranceStatus", "class": "reprojected"},
+        {"name": "SITE_ENVELOPE / BUILDING_COMPOSITION / DOORS_ROOMS / ROOF_OCCLUSION / SOLID_COLLISION / NAV_RETREAT / GAMEPLAY_SOCKETS", "class": "proposed"},
+        {"name": "parentChild / classification / phase / owner / confidence", "class": "proposed"},
+        {"name": "requiredArt / missingAssets", "class": "proposed"},
+        {"name": "door/lock/power/HP/loot/enemy/ownership state", "class": "runtime-owned"}
+      ]
+    },
+    {
+      "id": "L15_U05_SCENES",
+      "file": "creator-u05/scenes/*.u05.json",
+      "role": "Six deep physical scene designs at true U=0.5",
+      "fields": [
+        {"name": "siteEnvelopeTiles / building polygons / walls / openings / roofs", "class": "reprojected"},
+        {"name": "spatialProgramme / grounds / circulation / sightlines / utilityYard / placeholders", "class": "proposed"},
+        {"name": "collision meshes / roof occlusion / door threshold / walk sample / approach path", "class": "runtime-owned"},
+        {"name": "helicopter entity, boat gameplay, cart clearance, boss state, rewards", "class": "unresolved"}
+      ]
+    },
+    {
+      "id": "L16_U05_RENDERER",
+      "file": "creator-u05/web-u05/src/u05/*",
+      "role": "Isolated audition runtime",
+      "fields": [
+        {"name": "camera / input / speed / clock / pixel snap", "class": "runtime-owned"},
+        {"name": "lazy chunk cache / resident set / display canvas LRU", "class": "runtime-owned"},
+        {"name": "physical layer on/off (before/after)", "class": "proposed"},
+        {"name": "road widening / recolour / redraw / sprite stretching", "class": "unresolved", "note": "PROHIBITED; negative-tested"}
+      ]
+    },
+    {
+      "id": "L17_U05_EVIDENCE",
+      "file": "creator-u05/evidence/*",
+      "role": "Source custody, QA, captures, verification",
+      "fields": [
+        {"name": "source-custody.json digests / drift", "class": "source-authored"},
+        {"name": "qa-report.json browser/input/collision measurements", "class": "runtime-owned"},
+        {"name": "shots/*.png 640x360 captures", "class": "runtime-owned"},
+        {"name": "verification.json gate verdicts", "class": "proposed"},
+        {"name": "visual acceptance / gameplay acceptance", "class": "unresolved"}
+      ]
+    }
+  ]
+}

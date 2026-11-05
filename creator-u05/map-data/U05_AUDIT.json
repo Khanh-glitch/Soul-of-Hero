@@ -1,0 +1,514 @@
+{
+  "poiCount": 81,
+  "uniqueIds": 81,
+  "duplicatedIds": 0,
+  "lostIds": 0,
+  "footprintArea": {
+    "au2": {
+      "min": 176,
+      "median": 851.84,
+      "max": 2034.56
+    },
+    "tile2": {
+      "min": 704,
+      "median": 3407.36,
+      "max": 8138.24
+    },
+    "note": "SITE-ENVELOPE area only, not usable room area."
+  },
+  "missingExteriorEntrance": {
+    "count": 26,
+    "ids": [
+      "po_hall_eyes",
+      "po_typhon",
+      "po_viaduct",
+      "po_freightyard",
+      "po_fracquarry",
+      "po_pumphouse",
+      "po_glade",
+      "po_sapgrove",
+      "po_elderwood",
+      "po_mere",
+      "po_filter",
+      "po_westbank",
+      "po_greyquarry",
+      "po_necropolis",
+      "po_cairns",
+      "po_dpier",
+      "po_wreck",
+      "po_gullnest",
+      "po_gullpier",
+      "po_obsq",
+      "po_surtur",
+      "po_saltpans",
+      "po_gullwreck",
+      "po_evac_west",
+      "po_evac_south",
+      "po_evac_hook"
+    ],
+    "method": "Direct count of POIs with zero staticOpenings[].kind===EXTERIOR_ENTRANCE in live veyra-world-master/layers/architecture.v1.json",
+    "formerAuditReported": 26,
+    "verdict": "LIVE_REPRODUCED",
+    "note": "A missing RECORD is not a missing physical door; none is invented."
+  },
+  "poiOverlapPairs": {
+    "count": 11,
+    "pairs": [
+      {
+        "a": "po_archive",
+        "b": "po_hall_eyes",
+        "overlapAu2": 560.0523,
+        "overlapTile2": 2240.2092
+      },
+      {
+        "a": "po_gulfhead",
+        "b": "po_vend_gulf",
+        "overlapAu2": 156.6744,
+        "overlapTile2": 626.6976
+      },
+      {
+        "a": "po_strait",
+        "b": "po_vend_strait",
+        "overlapAu2": 136.8639,
+        "overlapTile2": 547.4557
+      },
+      {
+        "a": "po_gullnest",
+        "b": "po_gullwreck",
+        "overlapAu2": 115.2011,
+        "overlapTile2": 460.8042
+      },
+      {
+        "a": "po_kestrel",
+        "b": "po_rc_kestrel",
+        "overlapAu2": 102.5458,
+        "overlapTile2": 410.1832
+      },
+      {
+        "a": "po_saltharbor",
+        "b": "po_rc_salt",
+        "overlapAu2": 102.3998,
+        "overlapTile2": 409.599
+      },
+      {
+        "a": "po_sandgate",
+        "b": "po_rc_sandgate",
+        "overlapAu2": 96.4658,
+        "overlapTile2": 385.8632
+      },
+      {
+        "a": "po_southfoot",
+        "b": "po_evac_south",
+        "overlapAu2": 50.6646,
+        "overlapTile2": 202.6585
+      },
+      {
+        "a": "po_ironvein",
+        "b": "po_rc_ironvein",
+        "overlapAu2": 37.6444,
+        "overlapTile2": 150.5775
+      },
+      {
+        "a": "po_westmouth",
+        "b": "po_evac_west",
+        "overlapAu2": 7.549,
+        "overlapTile2": 30.1961
+      },
+      {
+        "a": "po_meridian",
+        "b": "po_rc_meridian",
+        "overlapAu2": 0.9559,
+        "overlapTile2": 3.8236
+      }
+    ],
+    "method": "Exact convex-polygon intersection area > 0 AU2 for all 81*80/2 GOLD poi.foot pairs (Sutherland-Hodgman)",
+    "formerAuditReported": 11,
+    "verdict": "LIVE_REPRODUCED",
+    "note": "All pairs are host/subsite or boundary-coincident candidates. May be intentional; none auto-resolved, no shrink/relocate/expand."
+  },
+  "roadCentrelineCrossings": {
+    "formerAuditReported": 73,
+    "measurements": {
+      "distinctPoiEnvelopesCrossedByARoadCentreline": 73,
+      "distinctRoadsCrossingAnyPoiEnvelope": 78,
+      "roadPoiEnvelopePairs": 122,
+      "poiCentresWithin1AuOfARoadCentreline": 61
+    },
+    "verdict": "FORMER_73_IS_THE_DISTINCT_POI_ENVELOPE_COUNT__PAIR_COUNT_IS_HIGHER",
+    "method": "Segment-polygon intersection of every GOLD rd_* centreline segment against every GOLD poi.foot; no widening, no redraw",
+    "note": "73 is reproduced as the number of distinct POI site envelopes a schematic road centreline enters. It is NOT 73 roads and NOT an authored exterior entrance. 122 distinct road×POI pairs are counted separately with exact IDs below.",
+    "exactRoadPoiPairs": [
+      "rd_0|po_gulfhead",
+      "rd_0|po_mill",
+      "rd_10|po_racks",
+      "rd_10|po_saltpans",
+      "rd_11|po_ironharbor",
+      "rd_11|po_ironmine",
+      "rd_12|po_ironmine",
+      "rd_12|po_ironwh",
+      "rd_13|po_glade",
+      "rd_13|po_ranger",
+      "rd_13|po_sawaion",
+      "rd_14|po_elderwood",
+      "rd_15|po_sapgrove",
+      "rd_16|po_kilns",
+      "rd_16|po_ranger",
+      "rd_17|po_kilns",
+      "rd_18|po_typhon",
+      "rd_19|po_academy",
+      "rd_1a|po_academy",
+      "rd_1a|po_observatory",
+      "rd_1b|po_academy",
+      "rd_1c|po_archive",
+      "rd_1c|po_hall_eyes",
+      "rd_1d|po_lantern",
+      "rd_1d|po_observatory",
+      "rd_1e|po_kestrel",
+      "rd_1f|po_oasis",
+      "rd_1g|po_cairns",
+      "rd_1h|po_cairns",
+      "rd_1i|po_tombs",
+      "rd_1j|po_rapids",
+      "rd_1k|po_rapids",
+      "rd_1l|po_necropolis",
+      "rd_1n|po_mere",
+      "rd_1o|po_filter",
+      "rd_1p|po_fishcamp",
+      "rd_1p|po_westwood",
+      "rd_1q|po_netcamp",
+      "rd_1q|po_wreck",
+      "rd_1r|po_dpier",
+      "rd_1r|po_gate",
+      "rd_1s|po_emberwatch",
+      "rd_1t|po_emberwatch",
+      "rd_1t|po_obsq",
+      "rd_1u|po_obsq",
+      "rd_1u|po_surtur",
+      "rd_1v|po_racks",
+      "rd_1v|po_saltlight",
+      "rd_1w|po_glade",
+      "rd_1w|po_ranger",
+      "rd_1x|po_ranger",
+      "rd_1y|po_rc_dam",
+      "rd_1z|po_filter",
+      "rd_1|po_meridian",
+      "rd_1|po_siloc",
+      "rd_1|po_timberyard",
+      "rd_20|po_greywater",
+      "rd_22|po_hook",
+      "rd_24|po_gullnest",
+      "rd_24|po_gullwreck",
+      "rd_25|po_ironharbor",
+      "rd_26|po_wreck",
+      "rd_27|po_beacon",
+      "rd_28|po_gulfhead",
+      "rd_28|po_vend_gulf",
+      "rd_2f|po_ember",
+      "rd_2i|po_evac_south",
+      "rd_2|po_ember",
+      "rd_2|po_siloc",
+      "rd_3|po_ironvein",
+      "rd_3|po_meridian",
+      "rd_3|po_rc_meridian",
+      "rd_4|po_ironvein",
+      "rd_4|po_ridgestop",
+      "rd_5|po_ember",
+      "rd_5|po_strait",
+      "rd_5|po_vend_strait",
+      "rd_6|po_gulfhead",
+      "rd_6|po_slag",
+      "rd_8|po_hook",
+      "rd_8|po_strait",
+      "rd_9|po_confluence",
+      "rd_9|po_greywater",
+      "rd_a|po_timberyard",
+      "rd_b|po_greywater",
+      "rd_b|po_sawaion",
+      "rd_c|po_sawaion",
+      "rd_d|po_fracquarry",
+      "rd_d|po_greyquarry",
+      "rd_d|po_viaduct",
+      "rd_e|po_pumphouse",
+      "rd_f|po_falls",
+      "rd_f|po_rc_dam",
+      "rd_g|po_freightyard",
+      "rd_h|po_academy",
+      "rd_i|po_academy",
+      "rd_i|po_lanternstn",
+      "rd_j|po_lanternstn",
+      "rd_k|po_oasis",
+      "rd_k|po_sandgate",
+      "rd_l|po_bonestop",
+      "rd_l|po_oasis",
+      "rd_m|po_bonestop",
+      "rd_m|po_oldpump",
+      "rd_m|po_westbank",
+      "rd_n|po_westbank",
+      "rd_o|po_gulfhead",
+      "rd_p|po_oldpump",
+      "rd_q|po_bonestop",
+      "rd_r|po_westmouth",
+      "rd_r|po_westwood",
+      "rd_t|po_greyquarry",
+      "rd_u|po_slag",
+      "rd_u|po_southfoot",
+      "rd_v|po_mill",
+      "rd_w|po_cindercamp",
+      "rd_w|po_obsq",
+      "rd_x|po_cindercamp",
+      "rd_x|po_sulfur",
+      "rd_y|po_geo",
+      "rd_z|po_saltharbor",
+      "rd_z|po_saltpans"
+    ]
+  },
+  "buildableSiteOverlap": {
+    "count": 19,
+    "of": 23,
+    "zones": [
+      {
+        "zoneId": "bz_greywater",
+        "poiCells": {
+          "po_greywater": 617
+        },
+        "elderCells": {
+          "el_aion": 3855
+        },
+        "totalCells": 4472
+      },
+      {
+        "zoneId": "bz_silver",
+        "poiCells": {
+          "po_sawaion": 566
+        },
+        "elderCells": {
+          "el_aion": 907
+        },
+        "totalCells": 1473
+      },
+      {
+        "zoneId": "bz_moss",
+        "poiCells": {},
+        "elderCells": {
+          "el_aion": 2735
+        },
+        "totalCells": 2735
+      },
+      {
+        "zoneId": "bz_verdant",
+        "poiCells": {
+          "po_timberyard": 30
+        },
+        "elderCells": {},
+        "totalCells": 30
+      },
+      {
+        "zoneId": "bz_elder_clear",
+        "poiCells": {
+          "po_ranger": 87
+        },
+        "elderCells": {
+          "el_aion": 2684
+        },
+        "totalCells": 2771
+      },
+      {
+        "zoneId": "bz_typhon_t",
+        "poiCells": {
+          "po_freightyard": 312
+        },
+        "elderCells": {
+          "el_typhon": 83
+        },
+        "totalCells": 395
+      },
+      {
+        "zoneId": "bz_ridge",
+        "poiCells": {
+          "po_rc_meridian": 70
+        },
+        "elderCells": {},
+        "totalCells": 70
+      },
+      {
+        "zoneId": "bz_eastflats",
+        "poiCells": {
+          "po_strait": 427,
+          "po_vend_strait": 236
+        },
+        "elderCells": {},
+        "totalCells": 663
+      },
+      {
+        "zoneId": "bz_hook",
+        "poiCells": {
+          "po_mere": 8
+        },
+        "elderCells": {},
+        "totalCells": 8
+      },
+      {
+        "zoneId": "bz_westmouth",
+        "poiCells": {
+          "po_westmouth": 1
+        },
+        "elderCells": {},
+        "totalCells": 1
+      },
+      {
+        "zoneId": "bz_westwood",
+        "poiCells": {
+          "po_westwood": 285
+        },
+        "elderCells": {},
+        "totalCells": 285
+      },
+      {
+        "zoneId": "bz_gulfwest",
+        "poiCells": {
+          "po_westbank": 164
+        },
+        "elderCells": {},
+        "totalCells": 164
+      },
+      {
+        "zoneId": "bz_oasis",
+        "poiCells": {
+          "po_oasis": 381
+        },
+        "elderCells": {
+          "el_anubis": 2480
+        },
+        "totalCells": 2861
+      },
+      {
+        "zoneId": "bz_dune",
+        "poiCells": {},
+        "elderCells": {
+          "el_anubis": 1239
+        },
+        "totalCells": 1239
+      },
+      {
+        "zoneId": "bz_cinder",
+        "poiCells": {
+          "po_cindercamp": 758
+        },
+        "elderCells": {
+          "el_surtur": 1373
+        },
+        "totalCells": 2131
+      },
+      {
+        "zoneId": "bz_salt",
+        "poiCells": {
+          "po_saltharbor": 12,
+          "po_saltpans": 451,
+          "po_rc_salt": 22
+        },
+        "elderCells": {},
+        "totalCells": 485
+      },
+      {
+        "zoneId": "bz_ironholm",
+        "poiCells": {
+          "po_ironharbor": 209,
+          "po_ironmine": 123
+        },
+        "elderCells": {},
+        "totalCells": 332
+      },
+      {
+        "zoneId": "bz_argus",
+        "poiCells": {},
+        "elderCells": {
+          "el_argus": 2337
+        },
+        "totalCells": 2337
+      },
+      {
+        "zoneId": "bz_kestrel",
+        "poiCells": {},
+        "elderCells": {
+          "el_typhon": 672
+        },
+        "totalCells": 672
+      }
+    ],
+    "method": "1 AU rasterised overlap of each of the 23 GOLD surveyed zone rings against all 81 poi.foot polygons and all 6 Elder outer rings",
+    "formerAuditReported": "18/23",
+    "verdict": "LIVE_CORRECTED_WITH_EVIDENCE",
+    "correction": {
+      "formerSiteIds": [
+        "bz_greywater",
+        "bz_gulfwest",
+        "bz_westmouth",
+        "bz_hook",
+        "bz_silver",
+        "bz_eastflats",
+        "bz_elder_clear",
+        "bz_westwood",
+        "bz_typhon_t",
+        "bz_oasis",
+        "bz_moss",
+        "bz_ridge",
+        "bz_kestrel",
+        "bz_argus",
+        "bz_dune",
+        "bz_salt",
+        "bz_cinder",
+        "bz_ironholm"
+      ],
+      "extraZoneIds": [
+        "bz_verdant"
+      ],
+      "detail": [
+        {
+          "zoneId": "bz_verdant",
+          "hosts": [
+            "po_timberyard"
+          ],
+          "overlapCells1Au": 30
+        }
+      ],
+      "reason": "v3 STRUCTURAL S-03 measured host/subsite overlap on 8 AU analysis cells and reported 18/23 sites. A 1 AU re-measure of the SAME unchanged GOLD rings finds one extra site whose overlap is smaller than a single 8 AU analysis cell, so it was not represented in the 8 AU sample. No boundary was changed; legalPlacement remains UNKNOWN/GAMEPLAY."
+    },
+    "note": "No zone, POI or Elder boundary was changed. Overlap is reported, never auto-resolved; legalPlacement remains UNKNOWN/GAMEPLAY."
+  },
+  "helicopterConflict": {
+    "poiId": "po_beacon",
+    "lighthouseAtAu": [
+      268,
+      656
+    ],
+    "helicopterAtAu": [
+      272,
+      652
+    ],
+    "helicopterAtTile": [
+      544,
+      1304
+    ],
+    "landId": "ld_beacon",
+    "physicalState": "GROUND_STATIONARY__ENGINE_FAILED",
+    "separationAu": 5.6569,
+    "separationTiles": 11.3137,
+    "spriteEntityStatus": "PROVEN_MISSING",
+    "repairFlightStatus": "NOT_APPROVED",
+    "resolution": "UNRESOLVED__HELIPAD_COLLISION_PLAN_ONLY__NO_RELOCATION__NO_SUBSTITUTE",
+    "owner": "CREATOR / GAMEPLAY A8"
+  },
+  "noChanges": {
+    "islands": 0,
+    "pois": 0,
+    "roadCentrelines": 0,
+    "coastline": 0,
+    "lakes": 0,
+    "riverNetwork": 0,
+    "docks": 0,
+    "poiAnchors": 0,
+    "resourceAuthoring": 0,
+    "helicopterRelocations": 0,
+    "polygonAmendments": 0
+  }
+}

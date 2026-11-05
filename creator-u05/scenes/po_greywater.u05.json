@@ -1,0 +1,2379 @@
+{
+  "schema": "soh.u05.deep-physical-scene.v1",
+  "id": "po_greywater",
+  "name": "Greywater Hamlet",
+  "contract": "CREATOR_CHOSEN_U05.v1",
+  "generatedAt": "2026-11-05T06:49:44.301Z",
+  "status": "P3_DEEP_PHYSICAL_DESIGN__ART_INCOMPLETE_WHITEBOX__REQUIRES_RUNTIME_WALK_PROOF",
+  "intent": "Multiple meaningful dwellings with independent roofs and doors, a real village/road interface, and courtyard movement between separate structures — not one giant rectangular roof.",
+  "sourceCustody": {
+    "goldPoiIdSha256": "243b8752363ef6b11c088a3852dd7ddb24af4119576d6aa58d5870ef6b3d8f78",
+    "architecturePoiSha256": "8aae99e761949004a5fb01ec4012b827eb8457f8b8adbecaefb940493da1d271",
+    "masterplanEntrySha256": "74c2ecb59af5609e04c1cbf1908bb479a1096beb581676cc1728a0a0abccd313",
+    "liveGameplaySha": "b5c8004ca4e77be62484fb3cd296fe296d7de4c9",
+    "noGOLDFileModified": true,
+    "noRoadRedraw": true,
+    "noAtlasAdded": true
+  },
+  "camera": {
+    "viewport": [
+      640,
+      360
+    ],
+    "dpr": 1,
+    "zoom": 1,
+    "cameraTrick": false,
+    "anchorAu": [
+      812,
+      592
+    ],
+    "anchorTile": [
+      1624,
+      1184
+    ],
+    "U": 0.5,
+    "TILE": 16,
+    "heroSpritePx": [
+      16,
+      24
+    ],
+    "speedPxPerSec": 72
+  },
+  "states": {
+    "exterior": "VILLAGE_ROAD_AND_COURTYARD_FREE",
+    "interior": "SIX_DWELLING_ROOMS_WITH_THRESHOLDS",
+    "inaccessible": "DEEP_NONE"
+  },
+  "beforeAfter": {
+    "globalCoordsAu": [
+      812,
+      592
+    ],
+    "cameraTile": [
+      1624,
+      1184
+    ],
+    "beforePhysicalLayer": false,
+    "afterPhysicalLayer": true,
+    "sameCamera": true,
+    "sameGlobalCoordinates": true,
+    "note": "Before = live-SHA terrain + GOLD roads, physical layer OFF. After = identical camera/global coords, physical layer ON."
+  },
+  "SITE_ENVELOPE": {
+    "class": "reprojected",
+    "source": "GOLD poi.foot",
+    "markerOnly": true,
+    "certifiedBuilding": false,
+    "polygonAu": [
+      [
+        797.3655319998907,
+        571.4339516106331
+      ],
+      [
+        836.4427114405089,
+        585.7004875239418
+      ],
+      [
+        826.6344680001093,
+        612.5660483893669
+      ],
+      [
+        787.5572885594911,
+        598.2995124760582
+      ]
+    ],
+    "polygonTiles": [
+      [
+        1594.7311,
+        1142.8679
+      ],
+      [
+        1672.8854,
+        1171.401
+      ],
+      [
+        1653.2689,
+        1225.1321
+      ],
+      [
+        1575.1146,
+        1196.599
+      ]
+    ],
+    "polygonTilesSnapped": [
+      [
+        1594,
+        1142
+      ],
+      [
+        1672,
+        1171
+      ],
+      [
+        1653,
+        1225
+      ],
+      [
+        1575,
+        1196
+      ]
+    ],
+    "bboxTiles": [
+      1575.1146,
+      1142.8679,
+      1672.8854,
+      1225.1321
+    ],
+    "areaAu2": 1189.76,
+    "areaTile2": 4759.04,
+    "chunkRange": {
+      "x0": 49,
+      "y0": 35,
+      "x1": 52,
+      "y1": 38
+    },
+    "chunkIdentity": "creator-u05|49:35",
+    "obb": {
+      "centre": [
+        812,
+        592
+      ],
+      "ux": [
+        0.9394,
+        0.3429
+      ],
+      "uy": [
+        -0.3429,
+        0.9394
+      ],
+      "wAu": 41.6,
+      "hAu": 28.6,
+      "angleRad": 0.3501,
+      "wTiles": 83.2,
+      "hTiles": 57.2
+    },
+    "noPolygonAmendment": true,
+    "noShrinkRelocateExpand": true
+  },
+  "BUILDING_COMPOSITION": {
+    "class": "proposed",
+    "separateStructureCount": 6,
+    "deepReservationCount": 0,
+    "buildings": [
+      {
+        "id": "room.po_greywater.1.1",
+        "role": "Multiple meaningful dwellings with independent roofs and doors, a real village/road interface, and courtyard movement between separate structures — not one giant rectangular roof / structure 1 of 6",
+        "pattern": "dwelling_cluster",
+        "status": "PROPOSED__WHITEBOX_PHYSICAL_PROOF__NOT_FINAL_PIXEL_ART",
+        "polygonAu": [
+          [
+            797.9597,
+            572.7146
+          ],
+          [
+            809.1081,
+            576.784
+          ],
+          [
+            804.8899,
+            588.3401
+          ],
+          [
+            793.7415,
+            584.2707
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1595.9194,
+            1145.4292
+          ],
+          [
+            1618.2162,
+            1153.568
+          ],
+          [
+            1609.7798,
+            1176.6802
+          ],
+          [
+            1587.483,
+            1168.5414
+          ]
+        ],
+        "bboxTiles": [
+          1587.483,
+          1145.4292,
+          1618.2162,
+          1176.6802
+        ],
+        "sourceRoomPolygonTiles": [
+          [
+            1595.9194,
+            1145.4292
+          ],
+          [
+            1618.2162,
+            1153.568
+          ],
+          [
+            1609.7798,
+            1176.6802
+          ],
+          [
+            1587.483,
+            1168.5414
+          ]
+        ],
+        "sourceRoomAreaTile2": 583.9904,
+        "sourceRoof": {
+          "covered": true,
+          "canopyOnly": true,
+          "coverageFractionOfRoom": 0.5
+        },
+        "footprintTiles": [
+          [
+            1598.9687,
+            1152.3044
+          ],
+          [
+            1611.4549,
+            1156.8621
+          ],
+          [
+            1606.7305,
+            1169.805
+          ],
+          [
+            1594.2443,
+            1165.2473
+          ]
+        ],
+        "footprintBboxTiles": [
+          1594.2443,
+          1152.3044,
+          1611.4549,
+          1169.805
+        ],
+        "insetFactor": 0.56,
+        "footprintAreaTile2": 183.14,
+        "areaAu2": 145.9976,
+        "areaTile2": 583.9904,
+        "centroidTile": [
+          1602.8496,
+          1161.0546
+        ],
+        "wallSprite": "wall_wood",
+        "floorSprite": "floor_wood",
+        "roofSprite": "roof_thatch",
+        "roofMode": "full",
+        "note": "Inset footprint is PROPOSED physical composition INSIDE the unchanged GOLD poi.foot. Source room polygon and source roof descriptor are preserved verbatim."
+      },
+      {
+        "id": "room.po_greywater.1.2",
+        "role": "Multiple meaningful dwellings with independent roofs and doors, a real village/road interface, and courtyard movement between separate structures — not one giant rectangular roof / structure 2 of 6",
+        "pattern": "dwelling_cluster",
+        "status": "PROPOSED__WHITEBOX_PHYSICAL_PROOF__NOT_FINAL_PIXEL_ART",
+        "polygonAu": [
+          [
+            810.9869,
+            577.4698
+          ],
+          [
+            822.1353,
+            581.5392
+          ],
+          [
+            817.9171,
+            593.0953
+          ],
+          [
+            806.7687,
+            589.0259
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1621.9738,
+            1154.9396
+          ],
+          [
+            1644.2706,
+            1163.0784
+          ],
+          [
+            1635.8342,
+            1186.1906
+          ],
+          [
+            1613.5374,
+            1178.0518
+          ]
+        ],
+        "bboxTiles": [
+          1613.5374,
+          1154.9396,
+          1644.2706,
+          1186.1906
+        ],
+        "sourceRoomPolygonTiles": [
+          [
+            1621.9738,
+            1154.9396
+          ],
+          [
+            1644.2706,
+            1163.0784
+          ],
+          [
+            1635.8342,
+            1186.1906
+          ],
+          [
+            1613.5374,
+            1178.0518
+          ]
+        ],
+        "sourceRoomAreaTile2": 583.9904,
+        "sourceRoof": {
+          "covered": true,
+          "canopyOnly": true,
+          "coverageFractionOfRoom": 0.5
+        },
+        "footprintTiles": [
+          [
+            1625.0231,
+            1161.8148
+          ],
+          [
+            1637.5093,
+            1166.3725
+          ],
+          [
+            1632.7849,
+            1179.3154
+          ],
+          [
+            1620.2987,
+            1174.7577
+          ]
+        ],
+        "footprintBboxTiles": [
+          1620.2987,
+          1161.8148,
+          1637.5093,
+          1179.3154
+        ],
+        "insetFactor": 0.56,
+        "footprintAreaTile2": 183.14,
+        "areaAu2": 145.9976,
+        "areaTile2": 583.9904,
+        "centroidTile": [
+          1628.904,
+          1170.565
+        ],
+        "wallSprite": "wall_wood",
+        "floorSprite": "floor_wood",
+        "roofSprite": "roof_tile",
+        "roofMode": "full",
+        "note": "Inset footprint is PROPOSED physical composition INSIDE the unchanged GOLD poi.foot. Source room polygon and source roof descriptor are preserved verbatim."
+      },
+      {
+        "id": "room.po_greywater.1.3",
+        "role": "Multiple meaningful dwellings with independent roofs and doors, a real village/road interface, and courtyard movement between separate structures — not one giant rectangular roof / structure 3 of 6",
+        "pattern": "dwelling_cluster",
+        "status": "PROPOSED__WHITEBOX_PHYSICAL_PROOF__NOT_FINAL_PIXEL_ART",
+        "polygonAu": [
+          [
+            824.0141,
+            582.225
+          ],
+          [
+            835.1625,
+            586.2944
+          ],
+          [
+            830.9443,
+            597.8505
+          ],
+          [
+            819.7959,
+            593.7811
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1648.0282,
+            1164.45
+          ],
+          [
+            1670.325,
+            1172.5888
+          ],
+          [
+            1661.8886,
+            1195.701
+          ],
+          [
+            1639.5918,
+            1187.5622
+          ]
+        ],
+        "bboxTiles": [
+          1639.5918,
+          1164.45,
+          1670.325,
+          1195.701
+        ],
+        "sourceRoomPolygonTiles": [
+          [
+            1648.0282,
+            1164.45
+          ],
+          [
+            1670.325,
+            1172.5888
+          ],
+          [
+            1661.8886,
+            1195.701
+          ],
+          [
+            1639.5918,
+            1187.5622
+          ]
+        ],
+        "sourceRoomAreaTile2": 583.9904,
+        "sourceRoof": {
+          "covered": true,
+          "canopyOnly": true,
+          "coverageFractionOfRoom": 0.5
+        },
+        "footprintTiles": [
+          [
+            1651.0775,
+            1171.3252
+          ],
+          [
+            1663.5637,
+            1175.8829
+          ],
+          [
+            1658.8393,
+            1188.8258
+          ],
+          [
+            1646.3531,
+            1184.2681
+          ]
+        ],
+        "footprintBboxTiles": [
+          1646.3531,
+          1171.3252,
+          1663.5637,
+          1188.8258
+        ],
+        "insetFactor": 0.56,
+        "footprintAreaTile2": 183.14,
+        "areaAu2": 145.9976,
+        "areaTile2": 583.9904,
+        "centroidTile": [
+          1654.9584,
+          1180.0754
+        ],
+        "wallSprite": "wall_wood",
+        "floorSprite": "floor_wood",
+        "roofSprite": "roof_tin",
+        "roofMode": "full",
+        "note": "Inset footprint is PROPOSED physical composition INSIDE the unchanged GOLD poi.foot. Source room polygon and source roof descriptor are preserved verbatim."
+      },
+      {
+        "id": "room.po_greywater.2.1",
+        "role": "Multiple meaningful dwellings with independent roofs and doors, a real village/road interface, and courtyard movement between separate structures — not one giant rectangular roof / structure 4 of 6",
+        "pattern": "dwelling_cluster",
+        "status": "PROPOSED__WHITEBOX_PHYSICAL_PROOF__NOT_FINAL_PIXEL_ART",
+        "polygonAu": [
+          [
+            793.0557,
+            586.1495
+          ],
+          [
+            804.2041,
+            590.2189
+          ],
+          [
+            799.9859,
+            601.775
+          ],
+          [
+            788.8375,
+            597.7056
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1586.1114,
+            1172.299
+          ],
+          [
+            1608.4082,
+            1180.4378
+          ],
+          [
+            1599.9718,
+            1203.55
+          ],
+          [
+            1577.675,
+            1195.4112
+          ]
+        ],
+        "bboxTiles": [
+          1577.675,
+          1172.299,
+          1608.4082,
+          1203.55
+        ],
+        "sourceRoomPolygonTiles": [
+          [
+            1586.1114,
+            1172.299
+          ],
+          [
+            1608.4082,
+            1180.4378
+          ],
+          [
+            1599.9718,
+            1203.55
+          ],
+          [
+            1577.675,
+            1195.4112
+          ]
+        ],
+        "sourceRoomAreaTile2": 583.9904,
+        "sourceRoof": {
+          "covered": true,
+          "canopyOnly": true,
+          "coverageFractionOfRoom": 0.5
+        },
+        "footprintTiles": [
+          [
+            1589.1607,
+            1179.1742
+          ],
+          [
+            1601.6469,
+            1183.7319
+          ],
+          [
+            1596.9225,
+            1196.6748
+          ],
+          [
+            1584.4363,
+            1192.1171
+          ]
+        ],
+        "footprintBboxTiles": [
+          1584.4363,
+          1179.1742,
+          1601.6469,
+          1196.6748
+        ],
+        "insetFactor": 0.56,
+        "footprintAreaTile2": 183.14,
+        "areaAu2": 145.9976,
+        "areaTile2": 583.9904,
+        "centroidTile": [
+          1593.0416,
+          1187.9246
+        ],
+        "wallSprite": "wall_wood",
+        "floorSprite": "floor_wood",
+        "roofSprite": "roof_wood",
+        "roofMode": "full",
+        "note": "Inset footprint is PROPOSED physical composition INSIDE the unchanged GOLD poi.foot. Source room polygon and source roof descriptor are preserved verbatim."
+      },
+      {
+        "id": "room.po_greywater.2.2",
+        "role": "Multiple meaningful dwellings with independent roofs and doors, a real village/road interface, and courtyard movement between separate structures — not one giant rectangular roof / structure 5 of 6",
+        "pattern": "dwelling_cluster",
+        "status": "PROPOSED__WHITEBOX_PHYSICAL_PROOF__NOT_FINAL_PIXEL_ART",
+        "polygonAu": [
+          [
+            806.0829,
+            590.9047
+          ],
+          [
+            817.2313,
+            594.9741
+          ],
+          [
+            813.0131,
+            606.5302
+          ],
+          [
+            801.8647,
+            602.4608
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1612.1658,
+            1181.8094
+          ],
+          [
+            1634.4626,
+            1189.9482
+          ],
+          [
+            1626.0262,
+            1213.0604
+          ],
+          [
+            1603.7294,
+            1204.9216
+          ]
+        ],
+        "bboxTiles": [
+          1603.7294,
+          1181.8094,
+          1634.4626,
+          1213.0604
+        ],
+        "sourceRoomPolygonTiles": [
+          [
+            1612.1658,
+            1181.8094
+          ],
+          [
+            1634.4626,
+            1189.9482
+          ],
+          [
+            1626.0262,
+            1213.0604
+          ],
+          [
+            1603.7294,
+            1204.9216
+          ]
+        ],
+        "sourceRoomAreaTile2": 583.9904,
+        "sourceRoof": {
+          "covered": true,
+          "canopyOnly": true,
+          "coverageFractionOfRoom": 0.5
+        },
+        "footprintTiles": [
+          [
+            1615.2151,
+            1188.6846
+          ],
+          [
+            1627.7013,
+            1193.2423
+          ],
+          [
+            1622.9769,
+            1206.1852
+          ],
+          [
+            1610.4907,
+            1201.6275
+          ]
+        ],
+        "footprintBboxTiles": [
+          1610.4907,
+          1188.6846,
+          1627.7013,
+          1206.1852
+        ],
+        "insetFactor": 0.56,
+        "footprintAreaTile2": 183.14,
+        "areaAu2": 145.9976,
+        "areaTile2": 583.9904,
+        "centroidTile": [
+          1619.096,
+          1197.4348
+        ],
+        "wallSprite": "wall_wood",
+        "floorSprite": "floor_wood",
+        "roofSprite": "roof_thatch",
+        "roofMode": "full",
+        "note": "Inset footprint is PROPOSED physical composition INSIDE the unchanged GOLD poi.foot. Source room polygon and source roof descriptor are preserved verbatim."
+      },
+      {
+        "id": "room.po_greywater.2.3",
+        "role": "Multiple meaningful dwellings with independent roofs and doors, a real village/road interface, and courtyard movement between separate structures — not one giant rectangular roof / structure 6 of 6",
+        "pattern": "dwelling_cluster",
+        "status": "PROPOSED__WHITEBOX_PHYSICAL_PROOF__NOT_FINAL_PIXEL_ART",
+        "polygonAu": [
+          [
+            819.1101,
+            595.6599
+          ],
+          [
+            830.2585,
+            599.7293
+          ],
+          [
+            826.0403,
+            611.2854
+          ],
+          [
+            814.8919,
+            607.216
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1638.2202,
+            1191.3198
+          ],
+          [
+            1660.517,
+            1199.4586
+          ],
+          [
+            1652.0806,
+            1222.5708
+          ],
+          [
+            1629.7838,
+            1214.432
+          ]
+        ],
+        "bboxTiles": [
+          1629.7838,
+          1191.3198,
+          1660.517,
+          1222.5708
+        ],
+        "sourceRoomPolygonTiles": [
+          [
+            1638.2202,
+            1191.3198
+          ],
+          [
+            1660.517,
+            1199.4586
+          ],
+          [
+            1652.0806,
+            1222.5708
+          ],
+          [
+            1629.7838,
+            1214.432
+          ]
+        ],
+        "sourceRoomAreaTile2": 583.9904,
+        "sourceRoof": {
+          "covered": true,
+          "canopyOnly": true,
+          "coverageFractionOfRoom": 0.5
+        },
+        "footprintTiles": [
+          [
+            1641.2695,
+            1198.195
+          ],
+          [
+            1653.7557,
+            1202.7527
+          ],
+          [
+            1649.0313,
+            1215.6956
+          ],
+          [
+            1636.5451,
+            1211.1379
+          ]
+        ],
+        "footprintBboxTiles": [
+          1636.5451,
+          1198.195,
+          1653.7557,
+          1215.6956
+        ],
+        "insetFactor": 0.56,
+        "footprintAreaTile2": 183.14,
+        "areaAu2": 145.9976,
+        "areaTile2": 583.9904,
+        "centroidTile": [
+          1645.1504,
+          1206.9452
+        ],
+        "wallSprite": "wall_wood",
+        "floorSprite": "floor_wood",
+        "roofSprite": "roof_tile",
+        "roofMode": "full",
+        "note": "Inset footprint is PROPOSED physical composition INSIDE the unchanged GOLD poi.foot. Source room polygon and source roof descriptor are preserved verbatim."
+      }
+    ],
+    "deepReservations": [],
+    "spatialProgrammeAreas": [
+      {
+        "id": "road_interface",
+        "kind": "CIRCULATION",
+        "role": "GOLD rd_9 village frontage — UNCHANGED",
+        "status": "source-authored",
+        "obbRectNormalised": [
+          -0.49,
+          -0.49,
+          0.49,
+          -0.4
+        ],
+        "polygonAu": [
+          [
+            797.6567,
+            571.8456
+          ],
+          [
+            835.9541,
+            585.8249
+          ],
+          [
+            835.0715,
+            588.2429
+          ],
+          [
+            796.774,
+            574.2636
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1595.3133,
+            1143.6911
+          ],
+          [
+            1671.9083,
+            1171.6498
+          ],
+          [
+            1670.143,
+            1176.4859
+          ],
+          [
+            1593.5481,
+            1148.5272
+          ]
+        ],
+        "bboxTiles": [
+          1593.5481,
+          1143.6911,
+          1671.9083,
+          1176.4859
+        ],
+        "areaAu2": 104.9424,
+        "areaTile2": 419.7695,
+        "art": "none",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      },
+      {
+        "id": "village_courtyard",
+        "kind": "OPEN_SPACE",
+        "role": "shared courtyard between dwellings",
+        "status": "proposed",
+        "obbRectNormalised": [
+          -0.26,
+          -0.1,
+          0.26,
+          0.36
+        ],
+        "polygonAu": [
+          [
+            802.8201,
+            585.6045
+          ],
+          [
+            823.1412,
+            593.0221
+          ],
+          [
+            818.6301,
+            605.3809
+          ],
+          [
+            798.309,
+            597.9633
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1605.6403,
+            1171.209
+          ],
+          [
+            1646.2825,
+            1186.0442
+          ],
+          [
+            1637.2601,
+            1210.7617
+          ],
+          [
+            1596.6179,
+            1195.9265
+          ]
+        ],
+        "bboxTiles": [
+          1596.6179,
+          1171.209,
+          1646.2825,
+          1210.7617
+        ],
+        "areaAu2": 284.6056,
+        "areaTile2": 1138.4224,
+        "art": "none",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      },
+      {
+        "id": "circulation_spine",
+        "kind": "CIRCULATION",
+        "role": "north-south courtyard movement",
+        "status": "proposed",
+        "obbRectNormalised": [
+          -0.06,
+          -0.4,
+          0.06,
+          0.4
+        ],
+        "polygonAu": [
+          [
+            813.578,
+            580.3974
+          ],
+          [
+            818.2675,
+            582.1091
+          ],
+          [
+            810.422,
+            603.6026
+          ],
+          [
+            805.7325,
+            601.8909
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1627.1561,
+            1160.7948
+          ],
+          [
+            1636.535,
+            1164.2183
+          ],
+          [
+            1620.8439,
+            1207.2052
+          ],
+          [
+            1611.465,
+            1203.7817
+          ]
+        ],
+        "bboxTiles": [
+          1611.465,
+          1160.7948,
+          1636.535,
+          1207.2052
+        ],
+        "areaAu2": 114.223,
+        "areaTile2": 456.8919,
+        "art": "floor_wood",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      },
+      {
+        "id": "retreat_lane",
+        "kind": "NAV_RETREAT",
+        "role": "physical way back to the road",
+        "status": "proposed",
+        "obbRectNormalised": [
+          0.34,
+          -0.4,
+          0.49,
+          0.4
+        ],
+        "polygonAu": [
+          [
+            829.2096,
+            586.1032
+          ],
+          [
+            835.0715,
+            588.2429
+          ],
+          [
+            827.226,
+            609.7364
+          ],
+          [
+            821.3641,
+            607.5967
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1658.4193,
+            1172.2065
+          ],
+          [
+            1670.143,
+            1176.4859
+          ],
+          [
+            1654.4519,
+            1219.4728
+          ],
+          [
+            1642.7282,
+            1215.1934
+          ]
+        ],
+        "bboxTiles": [
+          1642.7282,
+          1172.2065,
+          1670.143,
+          1219.4728
+        ],
+        "areaAu2": 142.7787,
+        "areaTile2": 571.1149,
+        "art": "none",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      }
+    ],
+    "sightlines": [
+      "road -> courtyard -> dwelling thresholds"
+    ],
+    "roofHierarchy": "6 roof polygons over 6 separate structures",
+    "compositionBeforeAfter": {
+      "sourceRoomPolygonCount": 6,
+      "sourceRoomCoverageFractionOfEnvelope": 0.7363,
+      "proposedSeparateStructures": 6,
+      "proposedRoofPolygons": 6,
+      "proposedFootprintCoverageFractionOfEnvelope": 0.2309,
+      "drawnRoofCoverageFractionOfEnvelope": 0.1131,
+      "drawnCoverageFractionOfEnvelope": 0.2309,
+      "openSpaceFractionAfter": 0.7691,
+      "openTerrainArena": false,
+      "goldEnvelopeChanged": false,
+      "goldPolygonAmended": false,
+      "reason": "Six separate inset dwellings with a shared courtyard; not one giant roof.",
+      "overrideNote": "WMP-03 marked these six cells canopy-only open yard cells (NOT enclosed rooms). U05 PROPOSES six enclosed dwellings with full roofs to satisfy the requested village physical programme; before/after recorded, GOLD unchanged.",
+      "note": "Before = WMP-03 PROPOSED full rooms/roof descriptors. After = U05 PROPOSED inset footprints and roof hierarchy. Both are DESIGN states, NOT GOLD canon changes; measured incompatibility and before/after comparison are explicit."
+    },
+    "coherentGrounds": true,
+    "oneHugeRectangularRoof": false,
+    "emptyInflatedRectangle": false,
+    "randomProps": 0
+  },
+  "DOORS_ROOMS": {
+    "class": "proposed",
+    "roomCount": 6,
+    "hall": "OPEN_AIR_YARD",
+    "exteriorEntrance": {
+      "id": "portal.po_greywater.entrance",
+      "centreAu": [
+        816.9041,
+        578.5672
+      ],
+      "centreTile": [
+        1633.8082,
+        1157.1344
+      ],
+      "openingTiles": 12,
+      "effectiveClearWidthTiles": 8,
+      "staticHole": true,
+      "dynamicDoorOwner": "GAMEPLAY",
+      "doorState": "UNKNOWN"
+    },
+    "openings": [
+      {
+        "id": "portal.po_greywater.entrance",
+        "kind": "EXTERIOR_ENTRANCE",
+        "centreTile": [
+          1633.8082,
+          1157.1344
+        ],
+        "aTile": [
+          1628.172,
+          1155.0768
+        ],
+        "bTile": [
+          1639.4444,
+          1159.1922
+        ],
+        "openingTiles": 12,
+        "effectiveClearWidthTiles": 8,
+        "traversable": true,
+        "doorSprite": "poi_door",
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "portal.po_greywater.h.1.1",
+        "kind": "INTERIOR_DOORWAY",
+        "centreTile": [
+          1615.8768,
+          1165.8098
+        ],
+        "aTile": [
+          1617.9342,
+          1160.1736
+        ],
+        "bTile": [
+          1613.8194,
+          1171.4462
+        ],
+        "openingTiles": 12,
+        "effectiveClearWidthTiles": 8,
+        "traversable": true,
+        "doorSprite": "poi_door_open",
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "portal.po_greywater.h.2.1",
+        "kind": "INTERIOR_DOORWAY",
+        "centreTile": [
+          1606.0688,
+          1192.6798
+        ],
+        "aTile": [
+          1608.1262,
+          1187.0434
+        ],
+        "bTile": [
+          1604.0114,
+          1198.316
+        ],
+        "openingTiles": 12,
+        "effectiveClearWidthTiles": 8,
+        "traversable": true,
+        "doorSprite": "poi_door_open",
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "portal.po_greywater.v.1.1",
+        "kind": "INTERIOR_DOORWAY",
+        "centreTile": [
+          1597.9456,
+          1174.4896
+        ],
+        "aTile": [
+          1592.3094,
+          1172.4322
+        ],
+        "bTile": [
+          1603.5818,
+          1176.547
+        ],
+        "openingTiles": 12,
+        "effectiveClearWidthTiles": 8,
+        "traversable": true,
+        "doorSprite": "poi_door_open",
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "portal.po_greywater.v.1.2",
+        "kind": "INTERIOR_DOORWAY",
+        "centreTile": [
+          1624,
+          1184
+        ],
+        "aTile": [
+          1618.3638,
+          1181.9426
+        ],
+        "bTile": [
+          1629.6362,
+          1186.0574
+        ],
+        "openingTiles": 12,
+        "effectiveClearWidthTiles": 8,
+        "traversable": true,
+        "doorSprite": "poi_door_open",
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "portal.po_greywater.v.1.3",
+        "kind": "INTERIOR_DOORWAY",
+        "centreTile": [
+          1650.0544,
+          1193.5104
+        ],
+        "aTile": [
+          1644.4182,
+          1191.453
+        ],
+        "bTile": [
+          1655.6906,
+          1195.5678
+        ],
+        "openingTiles": 12,
+        "effectiveClearWidthTiles": 8,
+        "traversable": true,
+        "doorSprite": "poi_door_open",
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "portal.po_greywater.h.1.2",
+        "kind": "INTERIOR_DOORWAY",
+        "centreTile": [
+          1641.9312,
+          1175.3202
+        ],
+        "aTile": [
+          1643.9886,
+          1169.684
+        ],
+        "bTile": [
+          1639.8738,
+          1180.9566
+        ],
+        "openingTiles": 12,
+        "effectiveClearWidthTiles": 8,
+        "traversable": true,
+        "doorSprite": "poi_door_open",
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "portal.po_greywater.h.2.2",
+        "kind": "INTERIOR_DOORWAY",
+        "centreTile": [
+          1632.1232,
+          1202.1902
+        ],
+        "aTile": [
+          1634.1806,
+          1196.5538
+        ],
+        "bTile": [
+          1630.0658,
+          1207.8264
+        ],
+        "openingTiles": 12,
+        "effectiveClearWidthTiles": 8,
+        "traversable": true,
+        "doorSprite": "poi_door_open",
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "status": "SOURCE_AUTHORED"
+      }
+    ],
+    "thresholds": [
+      {
+        "id": "portal.po_greywater.entrance",
+        "minClearWidthTiles": 8,
+        "heroWidthPx": 16,
+        "heroWidthTiles": 1,
+        "passable": true,
+        "note": "Physically meaningful clear width; player 16x24 px is NOT stretched."
+      },
+      {
+        "id": "portal.po_greywater.h.1.1",
+        "minClearWidthTiles": 8,
+        "heroWidthPx": 16,
+        "heroWidthTiles": 1,
+        "passable": true,
+        "note": "Physically meaningful clear width; player 16x24 px is NOT stretched."
+      },
+      {
+        "id": "portal.po_greywater.h.2.1",
+        "minClearWidthTiles": 8,
+        "heroWidthPx": 16,
+        "heroWidthTiles": 1,
+        "passable": true,
+        "note": "Physically meaningful clear width; player 16x24 px is NOT stretched."
+      },
+      {
+        "id": "portal.po_greywater.v.1.1",
+        "minClearWidthTiles": 8,
+        "heroWidthPx": 16,
+        "heroWidthTiles": 1,
+        "passable": true,
+        "note": "Physically meaningful clear width; player 16x24 px is NOT stretched."
+      },
+      {
+        "id": "portal.po_greywater.v.1.2",
+        "minClearWidthTiles": 8,
+        "heroWidthPx": 16,
+        "heroWidthTiles": 1,
+        "passable": true,
+        "note": "Physically meaningful clear width; player 16x24 px is NOT stretched."
+      },
+      {
+        "id": "portal.po_greywater.v.1.3",
+        "minClearWidthTiles": 8,
+        "heroWidthPx": 16,
+        "heroWidthTiles": 1,
+        "passable": true,
+        "note": "Physically meaningful clear width; player 16x24 px is NOT stretched."
+      },
+      {
+        "id": "portal.po_greywater.h.1.2",
+        "minClearWidthTiles": 8,
+        "heroWidthPx": 16,
+        "heroWidthTiles": 1,
+        "passable": true,
+        "note": "Physically meaningful clear width; player 16x24 px is NOT stretched."
+      },
+      {
+        "id": "portal.po_greywater.h.2.2",
+        "minClearWidthTiles": 8,
+        "heroWidthPx": 16,
+        "heroWidthTiles": 1,
+        "passable": true,
+        "note": "Physically meaningful clear width; player 16x24 px is NOT stretched."
+      }
+    ],
+    "namedPlaceholders": []
+  },
+  "ROOF_OCCLUSION": {
+    "class": "proposed",
+    "roofPolygonCount": 6,
+    "sourceRoofPolygonCount": 6,
+    "roofs": [
+      {
+        "id": "roof.u05.po_greywater.1",
+        "parentRoomId": "room.po_greywater.1.1",
+        "polygonAu": [
+          [
+            797.9597,
+            572.7146
+          ],
+          [
+            809.1081,
+            576.784
+          ],
+          [
+            804.8899,
+            588.3401
+          ],
+          [
+            793.7415,
+            584.2707
+          ]
+        ],
+        "sourcePolygonTiles": [
+          [
+            1595.9194,
+            1145.4292
+          ],
+          [
+            1618.2162,
+            1153.568
+          ],
+          [
+            1609.7798,
+            1176.6802
+          ],
+          [
+            1587.483,
+            1168.5414
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1600.133,
+            1154.9295
+          ],
+          [
+            1608.8733,
+            1158.1199
+          ],
+          [
+            1605.5662,
+            1167.1799
+          ],
+          [
+            1596.8259,
+            1163.9895
+          ]
+        ],
+        "footprintTiles": [
+          [
+            1598.9687,
+            1152.3044
+          ],
+          [
+            1611.4549,
+            1156.8621
+          ],
+          [
+            1606.7305,
+            1169.805
+          ],
+          [
+            1594.2443,
+            1165.2473
+          ]
+        ],
+        "status": "PROPOSED_FULL_ROOF_OVER_INSET_FOOTPRINT",
+        "sprite": "roof_thatch",
+        "insetFactor": 0.392,
+        "roofInnerInset": 0.7,
+        "overrideNote": "WMP-03 marked these six cells canopy-only open yard cells (NOT enclosed rooms). U05 PROPOSES six enclosed dwellings with full roofs to satisfy the requested village physical programme; before/after recorded, GOLD unchanged."
+      },
+      {
+        "id": "roof.u05.po_greywater.2",
+        "parentRoomId": "room.po_greywater.1.2",
+        "polygonAu": [
+          [
+            810.9869,
+            577.4698
+          ],
+          [
+            822.1353,
+            581.5392
+          ],
+          [
+            817.9171,
+            593.0953
+          ],
+          [
+            806.7687,
+            589.0259
+          ]
+        ],
+        "sourcePolygonTiles": [
+          [
+            1621.9738,
+            1154.9396
+          ],
+          [
+            1644.2706,
+            1163.0784
+          ],
+          [
+            1635.8342,
+            1186.1906
+          ],
+          [
+            1613.5374,
+            1178.0518
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1626.1874,
+            1164.4399
+          ],
+          [
+            1634.9277,
+            1167.6303
+          ],
+          [
+            1631.6206,
+            1176.6903
+          ],
+          [
+            1622.8803,
+            1173.4999
+          ]
+        ],
+        "footprintTiles": [
+          [
+            1625.0231,
+            1161.8148
+          ],
+          [
+            1637.5093,
+            1166.3725
+          ],
+          [
+            1632.7849,
+            1179.3154
+          ],
+          [
+            1620.2987,
+            1174.7577
+          ]
+        ],
+        "status": "PROPOSED_FULL_ROOF_OVER_INSET_FOOTPRINT",
+        "sprite": "roof_tile",
+        "insetFactor": 0.392,
+        "roofInnerInset": 0.7,
+        "overrideNote": "WMP-03 marked these six cells canopy-only open yard cells (NOT enclosed rooms). U05 PROPOSES six enclosed dwellings with full roofs to satisfy the requested village physical programme; before/after recorded, GOLD unchanged."
+      },
+      {
+        "id": "roof.u05.po_greywater.3",
+        "parentRoomId": "room.po_greywater.1.3",
+        "polygonAu": [
+          [
+            824.0141,
+            582.225
+          ],
+          [
+            835.1625,
+            586.2944
+          ],
+          [
+            830.9443,
+            597.8505
+          ],
+          [
+            819.7959,
+            593.7811
+          ]
+        ],
+        "sourcePolygonTiles": [
+          [
+            1648.0282,
+            1164.45
+          ],
+          [
+            1670.325,
+            1172.5888
+          ],
+          [
+            1661.8886,
+            1195.701
+          ],
+          [
+            1639.5918,
+            1187.5622
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1652.2418,
+            1173.9503
+          ],
+          [
+            1660.9821,
+            1177.1407
+          ],
+          [
+            1657.675,
+            1186.2007
+          ],
+          [
+            1648.9347,
+            1183.0103
+          ]
+        ],
+        "footprintTiles": [
+          [
+            1651.0775,
+            1171.3252
+          ],
+          [
+            1663.5637,
+            1175.8829
+          ],
+          [
+            1658.8393,
+            1188.8258
+          ],
+          [
+            1646.3531,
+            1184.2681
+          ]
+        ],
+        "status": "PROPOSED_FULL_ROOF_OVER_INSET_FOOTPRINT",
+        "sprite": "roof_tin",
+        "insetFactor": 0.392,
+        "roofInnerInset": 0.7,
+        "overrideNote": "WMP-03 marked these six cells canopy-only open yard cells (NOT enclosed rooms). U05 PROPOSES six enclosed dwellings with full roofs to satisfy the requested village physical programme; before/after recorded, GOLD unchanged."
+      },
+      {
+        "id": "roof.u05.po_greywater.4",
+        "parentRoomId": "room.po_greywater.2.1",
+        "polygonAu": [
+          [
+            793.0557,
+            586.1495
+          ],
+          [
+            804.2041,
+            590.2189
+          ],
+          [
+            799.9859,
+            601.775
+          ],
+          [
+            788.8375,
+            597.7056
+          ]
+        ],
+        "sourcePolygonTiles": [
+          [
+            1586.1114,
+            1172.299
+          ],
+          [
+            1608.4082,
+            1180.4378
+          ],
+          [
+            1599.9718,
+            1203.55
+          ],
+          [
+            1577.675,
+            1195.4112
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1590.325,
+            1181.7993
+          ],
+          [
+            1599.0653,
+            1184.9897
+          ],
+          [
+            1595.7582,
+            1194.0497
+          ],
+          [
+            1587.0179,
+            1190.8593
+          ]
+        ],
+        "footprintTiles": [
+          [
+            1589.1607,
+            1179.1742
+          ],
+          [
+            1601.6469,
+            1183.7319
+          ],
+          [
+            1596.9225,
+            1196.6748
+          ],
+          [
+            1584.4363,
+            1192.1171
+          ]
+        ],
+        "status": "PROPOSED_FULL_ROOF_OVER_INSET_FOOTPRINT",
+        "sprite": "roof_wood",
+        "insetFactor": 0.392,
+        "roofInnerInset": 0.7,
+        "overrideNote": "WMP-03 marked these six cells canopy-only open yard cells (NOT enclosed rooms). U05 PROPOSES six enclosed dwellings with full roofs to satisfy the requested village physical programme; before/after recorded, GOLD unchanged."
+      },
+      {
+        "id": "roof.u05.po_greywater.5",
+        "parentRoomId": "room.po_greywater.2.2",
+        "polygonAu": [
+          [
+            806.0829,
+            590.9047
+          ],
+          [
+            817.2313,
+            594.9741
+          ],
+          [
+            813.0131,
+            606.5302
+          ],
+          [
+            801.8647,
+            602.4608
+          ]
+        ],
+        "sourcePolygonTiles": [
+          [
+            1612.1658,
+            1181.8094
+          ],
+          [
+            1634.4626,
+            1189.9482
+          ],
+          [
+            1626.0262,
+            1213.0604
+          ],
+          [
+            1603.7294,
+            1204.9216
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1616.3794,
+            1191.3097
+          ],
+          [
+            1625.1197,
+            1194.5001
+          ],
+          [
+            1621.8126,
+            1203.5601
+          ],
+          [
+            1613.0723,
+            1200.3697
+          ]
+        ],
+        "footprintTiles": [
+          [
+            1615.2151,
+            1188.6846
+          ],
+          [
+            1627.7013,
+            1193.2423
+          ],
+          [
+            1622.9769,
+            1206.1852
+          ],
+          [
+            1610.4907,
+            1201.6275
+          ]
+        ],
+        "status": "PROPOSED_FULL_ROOF_OVER_INSET_FOOTPRINT",
+        "sprite": "roof_thatch",
+        "insetFactor": 0.392,
+        "roofInnerInset": 0.7,
+        "overrideNote": "WMP-03 marked these six cells canopy-only open yard cells (NOT enclosed rooms). U05 PROPOSES six enclosed dwellings with full roofs to satisfy the requested village physical programme; before/after recorded, GOLD unchanged."
+      },
+      {
+        "id": "roof.u05.po_greywater.6",
+        "parentRoomId": "room.po_greywater.2.3",
+        "polygonAu": [
+          [
+            819.1101,
+            595.6599
+          ],
+          [
+            830.2585,
+            599.7293
+          ],
+          [
+            826.0403,
+            611.2854
+          ],
+          [
+            814.8919,
+            607.216
+          ]
+        ],
+        "sourcePolygonTiles": [
+          [
+            1638.2202,
+            1191.3198
+          ],
+          [
+            1660.517,
+            1199.4586
+          ],
+          [
+            1652.0806,
+            1222.5708
+          ],
+          [
+            1629.7838,
+            1214.432
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1642.4338,
+            1200.8201
+          ],
+          [
+            1651.1741,
+            1204.0105
+          ],
+          [
+            1647.867,
+            1213.0705
+          ],
+          [
+            1639.1267,
+            1209.8801
+          ]
+        ],
+        "footprintTiles": [
+          [
+            1641.2695,
+            1198.195
+          ],
+          [
+            1653.7557,
+            1202.7527
+          ],
+          [
+            1649.0313,
+            1215.6956
+          ],
+          [
+            1636.5451,
+            1211.1379
+          ]
+        ],
+        "status": "PROPOSED_FULL_ROOF_OVER_INSET_FOOTPRINT",
+        "sprite": "roof_tile",
+        "insetFactor": 0.392,
+        "roofInnerInset": 0.7,
+        "overrideNote": "WMP-03 marked these six cells canopy-only open yard cells (NOT enclosed rooms). U05 PROPOSES six enclosed dwellings with full roofs to satisfy the requested village physical programme; before/after recorded, GOLD unchanged."
+      }
+    ],
+    "rule": "Runtime draws a roof ABOVE the player, then HIDES it when the player centre is inside that roof polygon. This is real occlusion, not a POI text label.",
+    "whiteboxNote": "Reused SOH roof sprites are physical proof, NOT final pixel art / art-complete."
+  },
+  "SOLID_COLLISION": {
+    "class": "proposed",
+    "mesh": "line-segment spans split BY static openings; thickness in U=0.5 tiles",
+    "solidCount": 15,
+    "solids": [
+      {
+        "id": "wall.po_greywater.1.span.1",
+        "aTile": [
+          1594.731,
+          1142.868
+        ],
+        "bTile": [
+          1628.172,
+          1155.0768
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_wood",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_greywater.1.span.2",
+        "aTile": [
+          1639.4444,
+          1159.1922
+        ],
+        "bTile": [
+          1672.8854,
+          1171.401
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_wood",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_greywater.2",
+        "aTile": [
+          1672.8854,
+          1171.401
+        ],
+        "bTile": [
+          1653.269,
+          1225.132
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_wood",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_greywater.3",
+        "aTile": [
+          1653.269,
+          1225.132
+        ],
+        "bTile": [
+          1575.1146,
+          1196.599
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_wood",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_greywater.4",
+        "aTile": [
+          1575.1146,
+          1196.599
+        ],
+        "bTile": [
+          1594.731,
+          1142.868
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_wood",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_greywater.split.v.1.span.1",
+        "aTile": [
+          1620.7808,
+          1152.375
+        ],
+        "bTile": [
+          1617.9342,
+          1160.1736
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_wood",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_greywater.split.v.1.span.2",
+        "aTile": [
+          1613.8194,
+          1171.4462
+        ],
+        "bTile": [
+          1608.1262,
+          1187.0434
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_wood",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_greywater.split.v.1.span.3",
+        "aTile": [
+          1604.0114,
+          1198.316
+        ],
+        "bTile": [
+          1601.1648,
+          1206.1146
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_wood",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_greywater.split.v.2.span.1",
+        "aTile": [
+          1646.8352,
+          1161.8854
+        ],
+        "bTile": [
+          1643.9886,
+          1169.684
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_wood",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_greywater.split.v.2.span.2",
+        "aTile": [
+          1639.8738,
+          1180.9566
+        ],
+        "bTile": [
+          1634.1806,
+          1196.5538
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_wood",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_greywater.split.v.2.span.3",
+        "aTile": [
+          1630.0658,
+          1207.8264
+        ],
+        "bTile": [
+          1627.2192,
+          1215.625
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_wood",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_greywater.split.h.1.span.1",
+        "aTile": [
+          1584.9184,
+          1169.7344
+        ],
+        "bTile": [
+          1592.3094,
+          1172.4322
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_wood",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_greywater.split.h.1.span.2",
+        "aTile": [
+          1603.5818,
+          1176.547
+        ],
+        "bTile": [
+          1618.3638,
+          1181.9426
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_wood",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_greywater.split.h.1.span.3",
+        "aTile": [
+          1629.6362,
+          1186.0574
+        ],
+        "bTile": [
+          1644.4182,
+          1191.453
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_wood",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_greywater.split.h.1.span.4",
+        "aTile": [
+          1655.6906,
+          1195.5678
+        ],
+        "bTile": [
+          1663.0816,
+          1198.2656
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_wood",
+        "status": "SOURCE_AUTHORED"
+      }
+    ],
+    "sourceSolidCount": 15,
+    "proposedSolidCount": 0,
+    "proposedSolidsNote": "None.",
+    "openingsBypassSolids": true,
+    "idMapping": [
+      {
+        "oldId": "wall.po_greywater.1",
+        "newIds": [
+          "wall.po_greywater.1.span.1",
+          "wall.po_greywater.1.span.2"
+        ],
+        "kind": "SPLIT_BY_OPENINGS",
+        "openingCount": 1
+      },
+      {
+        "oldId": "wall.po_greywater.2",
+        "newIds": [
+          "wall.po_greywater.2"
+        ],
+        "kind": "UNCHANGED",
+        "openingCount": 0
+      },
+      {
+        "oldId": "wall.po_greywater.3",
+        "newIds": [
+          "wall.po_greywater.3"
+        ],
+        "kind": "UNCHANGED",
+        "openingCount": 0
+      },
+      {
+        "oldId": "wall.po_greywater.4",
+        "newIds": [
+          "wall.po_greywater.4"
+        ],
+        "kind": "UNCHANGED",
+        "openingCount": 0
+      },
+      {
+        "oldId": "wall.po_greywater.split.v.1",
+        "newIds": [
+          "wall.po_greywater.split.v.1.span.1",
+          "wall.po_greywater.split.v.1.span.2",
+          "wall.po_greywater.split.v.1.span.3"
+        ],
+        "kind": "SPLIT_BY_OPENINGS",
+        "openingCount": 2
+      },
+      {
+        "oldId": "wall.po_greywater.split.v.2",
+        "newIds": [
+          "wall.po_greywater.split.v.2.span.1",
+          "wall.po_greywater.split.v.2.span.2",
+          "wall.po_greywater.split.v.2.span.3"
+        ],
+        "kind": "SPLIT_BY_OPENINGS",
+        "openingCount": 2
+      },
+      {
+        "oldId": "wall.po_greywater.split.h.1",
+        "newIds": [
+          "wall.po_greywater.split.h.1.span.1",
+          "wall.po_greywater.split.h.1.span.2",
+          "wall.po_greywater.split.h.1.span.3",
+          "wall.po_greywater.split.h.1.span.4"
+        ],
+        "kind": "SPLIT_BY_OPENINGS",
+        "openingCount": 3
+      }
+    ],
+    "terrainCollision": "GOLD land/water/cliff candidates from LW-01 sampleAt(); NO artificial marine permission",
+    "walkabilitySample": {
+      "boundsTiles": [
+        1563,
+        1130,
+        1685,
+        1238
+      ],
+      "method": "runtime BFS using the SAME collision function as real WASD input",
+      "status": "TO_BE_MEASURED_IN_BROWSER"
+    }
+  },
+  "NAV_RETREAT": {
+    "class": "proposed",
+    "circulation": {
+      "lr01Graph": {
+        "entranceRoomId": "room.po_greywater.1.2",
+        "reachableRooms": 6,
+        "totalRooms": 6,
+        "maxDepth": 2,
+        "depthByRoomId": {
+          "room.po_greywater.1.2": 0,
+          "room.po_greywater.1.1": 1,
+          "room.po_greywater.1.3": 1,
+          "room.po_greywater.2.2": 1,
+          "room.po_greywater.2.1": 2,
+          "room.po_greywater.2.3": 2
+        },
+        "interiorDepthAu": 25.5438,
+        "status": "DERIVED"
+      },
+      "roomGraphStart": "room.po_greywater.1.2",
+      "physicalRoomReach": {
+        "room.po_greywater.1.1": true,
+        "room.po_greywater.1.2": true,
+        "room.po_greywater.1.3": true,
+        "room.po_greywater.2.1": true,
+        "room.po_greywater.2.2": true,
+        "room.po_greywater.2.3": true
+      },
+      "graphReachableRooms": [
+        "room.po_greywater.1.2",
+        "room.po_greywater.1.1",
+        "room.po_greywater.2.2",
+        "room.po_greywater.1.3",
+        "room.po_greywater.2.1",
+        "room.po_greywater.2.3"
+      ],
+      "graphOnlyRooms": [],
+      "physicalOnlyRooms": [],
+      "diagonalOnlyReachableRooms": [],
+      "physicallyReachableRoomCount": 6,
+      "groundRoomCount": 6,
+      "note": "Graph BFS is NOT substituted for physical clearance: both are computed and compared."
+    },
+    "architectureRetreat": {
+      "status": "UNRESOLVED",
+      "pathAu": null,
+      "lengthAu": null,
+      "exitAtAu": null,
+      "note": "No authored retreat polyline. An exit is NOT invented; Gameplay may route through static portals."
+    },
+    "goldRetreatPoints": [],
+    "roadApproach": {
+      "roadId": "rd_9",
+      "roadSegmentAu": [
+        [
+          812,
+          592
+        ],
+        [
+          821,
+          580.5
+        ]
+      ],
+      "schematicCentrePointAu": [
+        812,
+        592
+      ],
+      "startAu": [
+        826.7914,
+        573.0999
+      ],
+      "startTile": [
+        1653,
+        1146
+      ],
+      "centrelineChanged": false
+    },
+    "approachPathAu": [
+      [
+        826.7914,
+        573.0999
+      ],
+      [
+        816.9041,
+        578.5672
+      ]
+    ],
+    "approachPathTiles": [
+      [
+        1653,
+        1146
+      ],
+      [
+        1633,
+        1157
+      ]
+    ],
+    "reentryPathAu": [
+      [
+        816.9041,
+        578.5672
+      ],
+      [
+        826.7914,
+        573.0999
+      ],
+      [
+        816.9041,
+        578.5672
+      ]
+    ],
+    "walkTest": {
+      "method": "Browser BFS on runtime collision -> REAL keyboard WASD/arrow events at 72 px/s -> measured global pixel positions",
+      "teleportUsed": false,
+      "camUsedAsRoute": false,
+      "status": "TO_BE_PROVEN_IN_BROWSER"
+    },
+    "meaningfulRetreat": {
+      "status": "UNRESOLVED",
+      "goldRetreatPoints": [],
+      "architectureRetreat": {
+        "status": "UNRESOLVED",
+        "pathAu": null,
+        "lengthAu": null,
+        "exitAtAu": null,
+        "note": "No authored retreat polyline. An exit is NOT invented; Gameplay may route through static portals."
+      },
+      "circulation": {
+        "physicallyReachableRoomCount": 6,
+        "groundRoomCount": 6,
+        "graphOnlyRooms": []
+      },
+      "note": "A retreat point or a room graph is a paper design record, NOT a physically demonstrated exit. Runtime walk proof exists only for the six P3 pilot scenes."
+    }
+  },
+  "GAMEPLAY_SOCKETS": {
+    "class": "runtime-owned",
+    "gate": "none",
+    "power": "GAMEPLAY",
+    "locks": "GAMEPLAY",
+    "hp": "GAMEPLAY",
+    "ownership": "GAMEPLAY",
+    "loot": "GAMEPLAY",
+    "enemyPlacement": "GAMEPLAY",
+    "fabricatedLoot": false,
+    "fabricatedOwnershipOrCash": false,
+    "bossState": false,
+    "combatRewards": false,
+    "vendorEconomics": false,
+    "boatGameplay": false,
+    "marinePermission": "UNRESOLVED_GAMEPLAY",
+    "buildPermission": "UNKNOWN__GAMEPLAY",
+    "cargoApproval": false
+  },
+  "terrainConstraints": {
+    "shoreline": "n/a",
+    "cliff": "candidate only",
+    "seaLandWalk": false,
+    "boatGameplay": false
+  },
+  "markers": [],
+  "subScenes": [],
+  "physicalProof": {
+    "artComplete": false,
+    "whiteboxPhysicalProof": true,
+    "runtimeWalkProof": "PROVEN_BY_P4_QA",
+    "distinguish": "Grey boxes / reused SOH sprites prove geometry, collision, doors, roof occlusion and walkability. They are NOT final pixel art and NOT visual acceptance.",
+    "captureRequirement": [
+      "before",
+      "after",
+      "approach",
+      "reentry",
+      "roof_occlusion"
+    ],
+    "runtimeWalkEvidence": {
+      "report": "creator-u05/evidence/qa-report.json",
+      "sceneId": "po_greywater",
+      "realKeyboardApproachEvents": 86,
+      "realKeyboardReentryEvents": 86,
+      "approachArrived": true,
+      "reentryArrived": true,
+      "wallCollisionBlocked": true,
+      "roofHiddenInside": 1,
+      "roofHiddenOutside": 0,
+      "roofTransitionProven": true,
+      "shots": [
+        "before_po_greywater.png",
+        "after_po_greywater.png",
+        "approach_po_greywater_start.png",
+        "approach_po_greywater_goal.png",
+        "reentry_po_greywater_back.png",
+        "roof_po_greywater_inside.png",
+        "roof_po_greywater_outside.png",
+        "collision_po_greywater_blocked.png"
+      ],
+      "spawnFixtureDisclosed": true,
+      "note": "Runtime WALK / collision / roof-occlusion proof for the ISOLATED six-scene Creator audition ONLY. NOT full Gameplay runtime integration, NOT visual acceptance, NOT art-complete."
+    }
+  },
+  "conflicts": []
+}

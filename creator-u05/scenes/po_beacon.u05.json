@@ -1,0 +1,1112 @@
+{
+  "schema": "soh.u05.deep-physical-scene.v1",
+  "id": "po_beacon",
+  "name": "Beacon Rock Light",
+  "contract": "CREATOR_CHOSEN_U05.v1",
+  "generatedAt": "2026-11-05T06:49:44.297Z",
+  "status": "P3_DEEP_PHYSICAL_DESIGN__ART_INCOMPLETE_WHITEBOX__REQUIRES_RUNTIME_WALK_PROOF",
+  "intent": "Preserve the Creator-liked Beacon road, shoreline and arrival. Lighthouse site plus a grounded helicopter/helipad collision-plan conflict at AU [272,652]. Open rock yard, minimal necessary objects.",
+  "sourceCustody": {
+    "goldPoiIdSha256": "ab6ad7dac103b19c8eb9520e066177e58191f8efb5468cf39effae6baac60d34",
+    "architecturePoiSha256": "a43f49bf2f40f05ea4e6a16064351fb525340b3e0834d55be61ff9109d741aaf",
+    "masterplanEntrySha256": "a20e3ff6985dad75a66ca436de16ad5e8fbc069e3e7cc7fec3d61cf40edbb11d",
+    "liveGameplaySha": "b5c8004ca4e77be62484fb3cd296fe296d7de4c9",
+    "noGOLDFileModified": true,
+    "noRoadRedraw": true,
+    "noAtlasAdded": true
+  },
+  "camera": {
+    "viewport": [
+      640,
+      360
+    ],
+    "dpr": 1,
+    "zoom": 1,
+    "cameraTrick": false,
+    "anchorAu": [
+      272,
+      652
+    ],
+    "anchorTile": [
+      544,
+      1304
+    ],
+    "U": 0.5,
+    "TILE": 16,
+    "heroSpritePx": [
+      16,
+      24
+    ],
+    "speedPxPerSec": 72
+  },
+  "states": {
+    "exterior": "ARRIVAL_APRON_AND_ROAD_FREE",
+    "interior": "TWO_TOWER_ROOMS_WITH_THRESHOLDS",
+    "inaccessible": "DEEP_NONE"
+  },
+  "beforeAfter": {
+    "globalCoordsAu": [
+      272,
+      652
+    ],
+    "cameraTile": [
+      544,
+      1304
+    ],
+    "beforePhysicalLayer": false,
+    "afterPhysicalLayer": true,
+    "sameCamera": true,
+    "sameGlobalCoordinates": true,
+    "note": "Before = live-SHA terrain + GOLD roads, physical layer OFF. After = identical camera/global coords, physical layer ON."
+  },
+  "SITE_ENVELOPE": {
+    "class": "reprojected",
+    "source": "GOLD poi.foot",
+    "markerOnly": true,
+    "certifiedBuilding": false,
+    "polygonAu": [
+      [
+        258.0075446265436,
+        646.7869204057773
+      ],
+      [
+        280.18033287157294,
+        649.969287675765
+      ],
+      [
+        277.9924553734564,
+        665.2130795942227
+      ],
+      [
+        255.81966712842708,
+        662.030712324235
+      ]
+    ],
+    "polygonTiles": [
+      [
+        516.0151,
+        1293.5738
+      ],
+      [
+        560.3607,
+        1299.9386
+      ],
+      [
+        555.9849,
+        1330.4262
+      ],
+      [
+        511.6393,
+        1324.0614
+      ]
+    ],
+    "polygonTilesSnapped": [
+      [
+        516,
+        1293
+      ],
+      [
+        560,
+        1299
+      ],
+      [
+        555,
+        1330
+      ],
+      [
+        511,
+        1324
+      ]
+    ],
+    "bboxTiles": [
+      511.6393,
+      1293.5738,
+      560.3607,
+      1330.4262
+    ],
+    "areaAu2": 344.96,
+    "areaTile2": 1379.84,
+    "chunkRange": {
+      "x0": 15,
+      "y0": 40,
+      "x1": 17,
+      "y1": 41
+    },
+    "chunkIdentity": "creator-u05|15:40",
+    "obb": {
+      "centre": [
+        268,
+        656
+      ],
+      "ux": [
+        0.9899,
+        0.1421
+      ],
+      "uy": [
+        -0.1421,
+        0.9899
+      ],
+      "wAu": 22.4,
+      "hAu": 15.4,
+      "angleRad": 0.1426,
+      "wTiles": 44.8,
+      "hTiles": 30.8
+    },
+    "noPolygonAmendment": true,
+    "noShrinkRelocateExpand": true
+  },
+  "BUILDING_COMPOSITION": {
+    "class": "proposed",
+    "separateStructureCount": 1,
+    "deepReservationCount": 0,
+    "buildings": [
+      {
+        "id": "room.po_beacon.1.1",
+        "role": "Preserve the Creator-liked Beacon road, shoreline and arrival / structure 1 of 1",
+        "pattern": "tower_base_and_dome",
+        "status": "PROPOSED__WHITEBOX_PHYSICAL_PROOF__NOT_FINAL_PIXEL_ART",
+        "polygonAu": [
+          [
+            258.5289,
+            647.4828
+          ],
+          [
+            268.397,
+            648.8993
+          ],
+          [
+            266.3835,
+            662.9256
+          ],
+          [
+            256.5155,
+            661.509
+          ]
+        ],
+        "polygonTiles": [
+          [
+            517.0578,
+            1294.9656
+          ],
+          [
+            536.794,
+            1297.7986
+          ],
+          [
+            532.767,
+            1325.8512
+          ],
+          [
+            513.031,
+            1323.018
+          ]
+        ],
+        "bboxTiles": [
+          513.031,
+          1294.9656,
+          536.794,
+          1325.8512
+        ],
+        "sourceRoomPolygonTiles": [
+          [
+            517.0578,
+            1294.9656
+          ],
+          [
+            536.794,
+            1297.7986
+          ],
+          [
+            532.767,
+            1325.8512
+          ],
+          [
+            513.031,
+            1323.018
+          ]
+        ],
+        "sourceRoomAreaTile2": 565.0556,
+        "sourceRoof": {
+          "covered": true,
+          "canopyOnly": false,
+          "coverageFractionOfRoom": 1
+        },
+        "footprintTiles": [
+          [
+            521.3779,
+            1303.4591
+          ],
+          [
+            530.2591,
+            1304.734
+          ],
+          [
+            528.447,
+            1317.3576
+          ],
+          [
+            519.5658,
+            1316.0827
+          ]
+        ],
+        "footprintBboxTiles": [
+          519.5658,
+          1303.4591,
+          530.2591,
+          1317.3576
+        ],
+        "insetFactor": 0.45,
+        "footprintAreaTile2": 114.423,
+        "areaAu2": 141.2639,
+        "areaTile2": 565.0556,
+        "centroidTile": [
+          524.9124,
+          1310.4084
+        ],
+        "wallSprite": "wall_stone",
+        "floorSprite": "floor_stone",
+        "roofSprite": "roof_tile",
+        "roofMode": "full",
+        "note": "Inset footprint is PROPOSED physical composition INSIDE the unchanged GOLD poi.foot. Source room polygon and source roof descriptor are preserved verbatim."
+      }
+    ],
+    "deepReservations": [],
+    "spatialProgrammeAreas": [
+      {
+        "id": "shore_arrival_apron",
+        "kind": "OPEN_SPACE",
+        "role": "shoreline arrival, no new props",
+        "status": "proposed",
+        "obbRectNormalised": [
+          -0.49,
+          0.18,
+          -0.1,
+          0.49
+        ],
+        "polygonAu": [
+          [
+            256.741,
+            657.1843
+          ],
+          [
+            265.3887,
+            658.4257
+          ],
+          [
+            264.7103,
+            663.1515
+          ],
+          [
+            256.0626,
+            661.9101
+          ]
+        ],
+        "polygonTiles": [
+          [
+            513.4819,
+            1314.3686
+          ],
+          [
+            530.7774,
+            1316.8514
+          ],
+          [
+            529.4207,
+            1326.303
+          ],
+          [
+            512.1251,
+            1323.8202
+          ]
+        ],
+        "bboxTiles": [
+          512.1251,
+          1314.3686,
+          530.7774,
+          1326.303
+        ],
+        "areaAu2": 41.7096,
+        "areaTile2": 166.8384,
+        "art": "none",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      },
+      {
+        "id": "preserved_road_frontage",
+        "kind": "CIRCULATION",
+        "role": "GOLD rd_27 centreline — UNCHANGED, no widening/recolour/redraw",
+        "status": "source-authored",
+        "obbRectNormalised": [
+          -0.49,
+          -0.49,
+          0.49,
+          -0.34
+        ],
+        "polygonAu": [
+          [
+            258.2071,
+            646.9705
+          ],
+          [
+            279.9374,
+            650.0899
+          ],
+          [
+            279.6092,
+            652.3766
+          ],
+          [
+            257.8789,
+            649.2572
+          ]
+        ],
+        "polygonTiles": [
+          [
+            516.4143,
+            1293.9411
+          ],
+          [
+            559.8749,
+            1300.1798
+          ],
+          [
+            559.2184,
+            1304.7531
+          ],
+          [
+            515.7578,
+            1298.5144
+          ]
+        ],
+        "bboxTiles": [
+          515.7578,
+          1293.9411,
+          559.8749,
+          1304.7531
+        ],
+        "areaAu2": 50.7139,
+        "areaTile2": 202.8556,
+        "art": "none",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      },
+      {
+        "id": "open_rock_yard",
+        "kind": "OPEN_SPACE",
+        "role": "spacious open rock; deliberately empty",
+        "status": "proposed",
+        "obbRectNormalised": [
+          0.12,
+          -0.3,
+          0.49,
+          0.3
+        ],
+        "polygonAu": [
+          [
+            271.3174,
+            651.8086
+          ],
+          [
+            279.5216,
+            652.9864
+          ],
+          [
+            278.2086,
+            662.133
+          ],
+          [
+            270.0043,
+            660.9553
+          ]
+        ],
+        "polygonTiles": [
+          [
+            542.6347,
+            1303.6173
+          ],
+          [
+            559.0433,
+            1305.9727
+          ],
+          [
+            556.4173,
+            1324.2661
+          ],
+          [
+            540.0087,
+            1321.9106
+          ]
+        ],
+        "bboxTiles": [
+          540.0087,
+          1303.6173,
+          559.0433,
+          1324.2661
+        ],
+        "areaAu2": 76.5884,
+        "areaTile2": 306.3534,
+        "art": "none",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      },
+      {
+        "id": "lighthouse_court",
+        "kind": "CIRCULATION",
+        "role": "short approach to the tower threshold",
+        "status": "proposed",
+        "obbRectNormalised": [
+          -0.1,
+          0,
+          0.12,
+          0.18
+        ],
+        "polygonAu": [
+          [
+            265.7826,
+            655.6817
+          ],
+          [
+            270.6609,
+            656.382
+          ],
+          [
+            270.267,
+            659.126
+          ],
+          [
+            265.3887,
+            658.4257
+          ]
+        ],
+        "polygonTiles": [
+          [
+            531.5652,
+            1311.3634
+          ],
+          [
+            541.3217,
+            1312.7639
+          ],
+          [
+            540.5339,
+            1318.2519
+          ],
+          [
+            530.7774,
+            1316.8514
+          ]
+        ],
+        "bboxTiles": [
+          530.7774,
+          1311.3634,
+          541.3217,
+          1318.2519
+        ],
+        "areaAu2": 13.6617,
+        "areaTile2": 54.6468,
+        "art": "floor_stone",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      }
+    ],
+    "sightlines": [
+      "road -> lighthouse threshold",
+      "helipad reservation -> open rock yard"
+    ],
+    "roofHierarchy": "1 roof polygons over 1 separate structures",
+    "compositionBeforeAfter": {
+      "sourceRoomPolygonCount": 2,
+      "sourceRoomCoverageFractionOfEnvelope": 0.819,
+      "proposedSeparateStructures": 1,
+      "proposedRoofPolygons": 1,
+      "proposedFootprintCoverageFractionOfEnvelope": 0.0829,
+      "drawnRoofCoverageFractionOfEnvelope": 0.0406,
+      "drawnCoverageFractionOfEnvelope": 0.0829,
+      "openSpaceFractionAfter": 0.9171,
+      "openTerrainArena": false,
+      "goldEnvelopeChanged": false,
+      "goldPolygonAmended": false,
+      "reason": "WMP-03 two rooms cover ~82% of the small Beacon envelope; Creator requires open space / minimal necessary objects. One reduced lighthouse tower + open rock yard is PROPOSED.",
+      "overrideNote": "One of two WMP-03 enclosed rooms is left as open rock yard; GOLD poi.foot unchanged.",
+      "note": "Before = WMP-03 PROPOSED full rooms/roof descriptors. After = U05 PROPOSED inset footprints and roof hierarchy. Both are DESIGN states, NOT GOLD canon changes; measured incompatibility and before/after comparison are explicit."
+    },
+    "coherentGrounds": true,
+    "oneHugeRectangularRoof": false,
+    "emptyInflatedRectangle": false,
+    "randomProps": 0
+  },
+  "DOORS_ROOMS": {
+    "class": "proposed",
+    "roomCount": 2,
+    "hall": "ENCLOSED_SINGLE",
+    "exteriorEntrance": {
+      "id": "portal.po_beacon.entrance",
+      "centreAu": [
+        269.0939,
+        648.3781
+      ],
+      "centreTile": [
+        538.1878,
+        1296.7562
+      ],
+      "openingTiles": 12,
+      "effectiveClearWidthTiles": 9.536,
+      "staticHole": true,
+      "dynamicDoorOwner": "GAMEPLAY",
+      "doorState": "UNKNOWN"
+    },
+    "openings": [
+      {
+        "id": "portal.po_beacon.entrance",
+        "kind": "EXTERIOR_ENTRANCE",
+        "centreTile": [
+          538.1878,
+          1296.7562
+        ],
+        "aTile": [
+          532.2486,
+          1295.9038
+        ],
+        "bTile": [
+          544.127,
+          1297.6086
+        ],
+        "openingTiles": 12,
+        "effectiveClearWidthTiles": 9.536,
+        "traversable": true,
+        "doorSprite": "poi_door",
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "portal.po_beacon.h.1.1",
+        "kind": "INTERIOR_DOORWAY",
+        "centreTile": [
+          536,
+          1312
+        ],
+        "aTile": [
+          536.547,
+          1308.189
+        ],
+        "bTile": [
+          535.453,
+          1315.811
+        ],
+        "openingTiles": 7.7,
+        "effectiveClearWidthTiles": 5.236,
+        "traversable": true,
+        "doorSprite": "poi_door_open",
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "status": "SOURCE_AUTHORED"
+      }
+    ],
+    "thresholds": [
+      {
+        "id": "portal.po_beacon.entrance",
+        "minClearWidthTiles": 9.536,
+        "heroWidthPx": 16,
+        "heroWidthTiles": 1,
+        "passable": true,
+        "note": "Physically meaningful clear width; player 16x24 px is NOT stretched."
+      },
+      {
+        "id": "portal.po_beacon.h.1.1",
+        "minClearWidthTiles": 5.236,
+        "heroWidthPx": 16,
+        "heroWidthTiles": 1,
+        "passable": true,
+        "note": "Physically meaningful clear width; player 16x24 px is NOT stretched."
+      }
+    ],
+    "namedPlaceholders": []
+  },
+  "ROOF_OCCLUSION": {
+    "class": "proposed",
+    "roofPolygonCount": 1,
+    "sourceRoofPolygonCount": 2,
+    "roofs": [
+      {
+        "id": "roof.u05.po_beacon.1",
+        "parentRoomId": "room.po_beacon.1.1",
+        "polygonAu": [
+          [
+            258.5289,
+            647.4828
+          ],
+          [
+            268.397,
+            648.8993
+          ],
+          [
+            266.3835,
+            662.9256
+          ],
+          [
+            256.5155,
+            661.509
+          ]
+        ],
+        "sourcePolygonTiles": [
+          [
+            517.0578,
+            1294.9656
+          ],
+          [
+            536.794,
+            1297.7986
+          ],
+          [
+            532.767,
+            1325.8512
+          ],
+          [
+            513.031,
+            1323.018
+          ]
+        ],
+        "polygonTiles": [
+          [
+            522.4383,
+            1305.5439
+          ],
+          [
+            528.6551,
+            1306.4363
+          ],
+          [
+            527.3866,
+            1315.2728
+          ],
+          [
+            521.1698,
+            1314.3804
+          ]
+        ],
+        "footprintTiles": [
+          [
+            521.3779,
+            1303.4591
+          ],
+          [
+            530.2591,
+            1304.734
+          ],
+          [
+            528.447,
+            1317.3576
+          ],
+          [
+            519.5658,
+            1316.0827
+          ]
+        ],
+        "status": "PROPOSED_FULL_ROOF_OVER_INSET_FOOTPRINT",
+        "sprite": "roof_tile",
+        "insetFactor": 0.315,
+        "roofInnerInset": 0.7,
+        "overrideNote": "One of two WMP-03 enclosed rooms is left as open rock yard; GOLD poi.foot unchanged."
+      }
+    ],
+    "rule": "Runtime draws a roof ABOVE the player, then HIDES it when the player centre is inside that roof polygon. This is real occlusion, not a POI text label.",
+    "whiteboxNote": "Reused SOH roof sprites are physical proof, NOT final pixel art / art-complete."
+  },
+  "SOLID_COLLISION": {
+    "class": "proposed",
+    "mesh": "line-segment spans split BY static openings; thickness in U=0.5 tiles",
+    "solidCount": 7,
+    "solids": [
+      {
+        "id": "wall.po_beacon.1.span.1",
+        "aTile": [
+          516.015,
+          1293.5738
+        ],
+        "bTile": [
+          532.2486,
+          1295.9038
+        ],
+        "thicknessTiles": 2.464,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_stone",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_beacon.1.span.2",
+        "aTile": [
+          544.127,
+          1297.6086
+        ],
+        "bTile": [
+          560.3606,
+          1299.9386
+        ],
+        "thicknessTiles": 2.464,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_stone",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_beacon.2",
+        "aTile": [
+          560.3606,
+          1299.9386
+        ],
+        "bTile": [
+          555.985,
+          1330.4262
+        ],
+        "thicknessTiles": 2.464,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_stone",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_beacon.3",
+        "aTile": [
+          555.985,
+          1330.4262
+        ],
+        "bTile": [
+          511.6394,
+          1324.0614
+        ],
+        "thicknessTiles": 2.464,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_stone",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_beacon.4",
+        "aTile": [
+          511.6394,
+          1324.0614
+        ],
+        "bTile": [
+          516.015,
+          1293.5738
+        ],
+        "thicknessTiles": 2.464,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_stone",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_beacon.split.v.1.span.1",
+        "aTile": [
+          538.1886,
+          1296.7542
+        ],
+        "bTile": [
+          536.547,
+          1308.189
+        ],
+        "thicknessTiles": 2.464,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_stone",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_beacon.split.v.1.span.2",
+        "aTile": [
+          535.453,
+          1315.811
+        ],
+        "bTile": [
+          533.8114,
+          1327.2458
+        ],
+        "thicknessTiles": 2.464,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_stone",
+        "status": "SOURCE_AUTHORED"
+      }
+    ],
+    "sourceSolidCount": 7,
+    "proposedSolidCount": 0,
+    "proposedSolidsNote": "None.",
+    "openingsBypassSolids": true,
+    "idMapping": [
+      {
+        "oldId": "wall.po_beacon.1",
+        "newIds": [
+          "wall.po_beacon.1.span.1",
+          "wall.po_beacon.1.span.2"
+        ],
+        "kind": "SPLIT_BY_OPENINGS",
+        "openingCount": 1
+      },
+      {
+        "oldId": "wall.po_beacon.2",
+        "newIds": [
+          "wall.po_beacon.2"
+        ],
+        "kind": "UNCHANGED",
+        "openingCount": 0
+      },
+      {
+        "oldId": "wall.po_beacon.3",
+        "newIds": [
+          "wall.po_beacon.3"
+        ],
+        "kind": "UNCHANGED",
+        "openingCount": 0
+      },
+      {
+        "oldId": "wall.po_beacon.4",
+        "newIds": [
+          "wall.po_beacon.4"
+        ],
+        "kind": "UNCHANGED",
+        "openingCount": 0
+      },
+      {
+        "oldId": "wall.po_beacon.split.v.1",
+        "newIds": [
+          "wall.po_beacon.split.v.1.span.1",
+          "wall.po_beacon.split.v.1.span.2"
+        ],
+        "kind": "SPLIT_BY_OPENINGS",
+        "openingCount": 1
+      }
+    ],
+    "terrainCollision": "GOLD land/water/cliff candidates from LW-01 sampleAt(); NO artificial marine permission",
+    "walkabilitySample": {
+      "boundsTiles": [
+        499,
+        1281,
+        573,
+        1343
+      ],
+      "method": "runtime BFS using the SAME collision function as real WASD input",
+      "status": "TO_BE_MEASURED_IN_BROWSER"
+    }
+  },
+  "NAV_RETREAT": {
+    "class": "proposed",
+    "circulation": {
+      "lr01Graph": {
+        "entranceRoomId": "room.po_beacon.1.1",
+        "reachableRooms": 2,
+        "totalRooms": 2,
+        "maxDepth": 1,
+        "depthByRoomId": {
+          "room.po_beacon.1.1": 0,
+          "room.po_beacon.1.2": 1
+        },
+        "interiorDepthAu": 9.5215,
+        "status": "DERIVED"
+      },
+      "roomGraphStart": "room.po_beacon.1.1",
+      "physicalRoomReach": {
+        "room.po_beacon.1.1": true,
+        "room.po_beacon.1.2": true
+      },
+      "graphReachableRooms": [
+        "room.po_beacon.1.1",
+        "room.po_beacon.1.2"
+      ],
+      "graphOnlyRooms": [],
+      "physicalOnlyRooms": [],
+      "diagonalOnlyReachableRooms": [],
+      "physicallyReachableRoomCount": 2,
+      "groundRoomCount": 2,
+      "note": "Graph BFS is NOT substituted for physical clearance: both are computed and compared."
+    },
+    "architectureRetreat": {
+      "status": "UNRESOLVED",
+      "pathAu": null,
+      "lengthAu": null,
+      "exitAtAu": null,
+      "note": "No authored retreat polyline. An exit is NOT invented; Gameplay may route through static portals."
+    },
+    "goldRetreatPoints": [],
+    "roadApproach": {
+      "roadId": "rd_27",
+      "roadSegmentAu": [
+        [
+          267.47715077662906,
+          645.156235125316
+        ],
+        [
+          268,
+          656
+        ]
+      ],
+      "schematicCentrePointAu": [
+        268,
+        656
+      ],
+      "startAu": [
+        269.1559,
+        679.9722
+      ],
+      "startTile": [
+        538,
+        1359
+      ],
+      "centrelineChanged": false
+    },
+    "approachPathAu": [
+      [
+        269.1559,
+        679.9722
+      ],
+      [
+        269.0939,
+        648.3781
+      ]
+    ],
+    "approachPathTiles": [
+      [
+        538,
+        1359
+      ],
+      [
+        538,
+        1296
+      ]
+    ],
+    "reentryPathAu": [
+      [
+        269.0939,
+        648.3781
+      ],
+      [
+        269.1559,
+        679.9722
+      ],
+      [
+        269.0939,
+        648.3781
+      ]
+    ],
+    "walkTest": {
+      "method": "Browser BFS on runtime collision -> REAL keyboard WASD/arrow events at 72 px/s -> measured global pixel positions",
+      "teleportUsed": false,
+      "camUsedAsRoute": false,
+      "status": "TO_BE_PROVEN_IN_BROWSER"
+    },
+    "meaningfulRetreat": {
+      "status": "UNRESOLVED",
+      "goldRetreatPoints": [],
+      "architectureRetreat": {
+        "status": "UNRESOLVED",
+        "pathAu": null,
+        "lengthAu": null,
+        "exitAtAu": null,
+        "note": "No authored retreat polyline. An exit is NOT invented; Gameplay may route through static portals."
+      },
+      "circulation": {
+        "physicallyReachableRoomCount": 2,
+        "groundRoomCount": 2,
+        "graphOnlyRooms": []
+      },
+      "note": "A retreat point or a room graph is a paper design record, NOT a physically demonstrated exit. Runtime walk proof exists only for the six P3 pilot scenes."
+    }
+  },
+  "GAMEPLAY_SOCKETS": {
+    "class": "runtime-owned",
+    "gate": "none",
+    "power": "GAMEPLAY",
+    "locks": "GAMEPLAY",
+    "hp": "GAMEPLAY",
+    "ownership": "GAMEPLAY",
+    "loot": "GAMEPLAY",
+    "enemyPlacement": "GAMEPLAY",
+    "fabricatedLoot": false,
+    "fabricatedOwnershipOrCash": false,
+    "bossState": false,
+    "combatRewards": false,
+    "vendorEconomics": false,
+    "boatGameplay": false,
+    "marinePermission": "UNRESOLVED_GAMEPLAY",
+    "buildPermission": "UNKNOWN__GAMEPLAY",
+    "cargoApproval": false
+  },
+  "terrainConstraints": {
+    "shoreline": "GOLD coast preserved",
+    "cliff": "candidate only",
+    "seaLandWalk": false,
+    "boatGameplay": false
+  },
+  "markers": [
+    {
+      "id": "poi_beacon_engine_out_helicopter",
+      "kind": "PROVEN_MISSING",
+      "atAu": [
+        272,
+        652
+      ],
+      "atTile": [
+        544,
+        1304
+      ],
+      "reason": "Ground-stationary helicopter landmark has NO sprite/entity in verified live Gameplay; no car-wreck or ship-hull substitute; NOT relocated"
+    },
+    {
+      "id": "lighthouse_vs_helicopter_conflict",
+      "kind": "GEOMETRY_CONFLICT",
+      "status": "UNRESOLVED",
+      "owner": "CREATOR / GAMEPLAY A8"
+    }
+  ],
+  "subScenes": [],
+  "physicalProof": {
+    "artComplete": false,
+    "whiteboxPhysicalProof": true,
+    "runtimeWalkProof": "PROVEN_BY_P4_QA",
+    "distinguish": "Grey boxes / reused SOH sprites prove geometry, collision, doors, roof occlusion and walkability. They are NOT final pixel art and NOT visual acceptance.",
+    "captureRequirement": [
+      "before",
+      "after",
+      "approach",
+      "reentry",
+      "roof_occlusion"
+    ],
+    "runtimeWalkEvidence": {
+      "report": "creator-u05/evidence/qa-report.json",
+      "sceneId": "po_beacon",
+      "realKeyboardApproachEvents": 24,
+      "realKeyboardReentryEvents": 24,
+      "approachArrived": true,
+      "reentryArrived": true,
+      "wallCollisionBlocked": true,
+      "roofHiddenInside": 1,
+      "roofHiddenOutside": 0,
+      "roofTransitionProven": true,
+      "shots": [
+        "before_po_beacon.png",
+        "after_po_beacon.png",
+        "approach_po_beacon_start.png",
+        "approach_po_beacon_goal.png",
+        "reentry_po_beacon_back.png",
+        "roof_po_beacon_inside.png",
+        "roof_po_beacon_outside.png",
+        "collision_po_beacon_blocked.png"
+      ],
+      "spawnFixtureDisclosed": true,
+      "note": "Runtime WALK / collision / roof-occlusion proof for the ISOLATED six-scene Creator audition ONLY. NOT full Gameplay runtime integration, NOT visual acceptance, NOT art-complete."
+    }
+  },
+  "conflicts": [
+    {
+      "kind": "HELICOPTER_PROVEN_MISSING",
+      "atAu": [
+        272,
+        652
+      ],
+      "status": "PROVEN_MISSING__NO_SUBSTITUTE__NO_RELOCATION",
+      "owner": "CREATOR / GAMEPLAY A8"
+    }
+  ]
+}

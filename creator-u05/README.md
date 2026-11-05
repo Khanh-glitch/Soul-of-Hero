@@ -1,0 +1,75 @@
+# `creator-u05/` — Creator-chosen U=0.5 additive physical POI program
+
+> **Trạng thái:** `CREATOR_SCALE_INTENT_APPROVED__FULL_GAMEPLAY_RUNTIME_INTEGRATION_NOT_YET_VALIDATED`.
+> Creator đã khoá **U = 0.5 AU / runtime tile** cho **ý định thiết kế tỉ lệ**.
+> Đây **KHÔNG** là tích hợp Gameplay runtime sản xuất, **KHÔNG** là `VEYRA_PLAYABLE`,
+> **KHÔNG** là chấp nhận thị giác, **KHÔNG** là `MERGE_READY` / `WORLD_MASTER_SEALED`.
+
+## Chạy lại / xem audition
+
+```bash
+cd /home/user/Soul-of-Hero
+# 1. Nguồn (vendor verbatim từ live Gameplay head đã pin)
+node creator-u05/tools/vendor-u05.mjs
+# 2. 81-POI masterplan / audit / geometry conflicts / benchmark
+node creator-u05/tools/build-u05.mjs
+# 3. Sáu cảnh vật lý sâu + module sinh
+node creator-u05/tools/build-scenes-u05.mjs
+# 4. Compile
+cd creator-u05/web-u05 && npx tsc --noEmit -p tsconfig.u05.json && cd ../..
+# 5. Server audition (0.0.0.0:5182)
+cd creator-u05/web-u05 && npx vite --host 0.0.0.0 --port 5182
+#    mở /u05.html — selector 6 cảnh, native 640×360 @1×, WASD / mũi tên thật
+# 6. QA P4 (Playwright, Chromium /tmp/chromium, LD_LIBRARY_PATH=/tmp/al2023/lib)
+LD_LIBRARY_PATH=/tmp/al2023/lib node creator-u05/tests/qa-u05.mjs
+# 7. Gắn bằng chứng vào scene JSON, tests, inventory, drift, verification
+node creator-u05/tools/attach-proof-u05.mjs
+node creator-u05/tests/test-u05.mjs
+node creator-u05/tools/build-asset-inventory-u05.mjs
+node creator-u05/tools/record-drift-u05.mjs
+node creator-u05/tools/verify-u05.mjs
+```
+
+`web-u05/node_modules` là symlink tới `large-world-01/web-large/node_modules` (bị `.gitignore` loại).
+Vite server đã chạy tại cổng **5182** trong phiên làm việc này; LW-01 servers 5180/5181 vẫn sống.
+
+## Cấu trúc
+
+| Đường dẫn | Nội dung |
+|---|---|
+| `contracts/CREATOR_CHOSEN_U05.v1.json` | Hợp đồng tỉ lệ, chunk identity, hard invariants, benchmark khoá |
+| `contracts/LAYER_INVENTORY.json` | 17 tầng + vocabulary `source-authored / reprojected / proposed / runtime-owned / unresolved` |
+| `evidence/source-custody.json` | WMP-04R1/GOLD digests, live `b5c8004c` custody, 231 file digests, drift 6 commit |
+| `map-data/U05_POI_MASTERPLAN.v1.json` | 81 POI, phân lớp, không sửa GOLD |
+| `map-data/U05_AUDIT.json` | 11 overlap, 26 thiếu entrance, 122 road×POI, 19/23 zone + reconciliation v3 18/23 |
+| `map-data/U05_GEOMETRY_CONFLICTS.json` | 62 conflict có đo lường + owner; **0** amendment / relocation / widen / recolour |
+| `map-data/U05_BENCHMARK.json` | Tham chiếu bảo tồn đường Beacon U=0.5 (không tái vẽ) |
+| `scenes/po_*.u05.json` | 6 cảnh: Beacon, Greywater, Academy, Ironmine, Westmouth, Typhon |
+| `web-u05/src/game/**` | 231 file Gameplay live **verbatim** (không sửa) |
+| `web-u05/src/u05/**` | Runtime additive: contract / world / display / physical / game / main / terrain / lw / scenes.generated |
+| `web-u05/u05.html` | Entry cô lập, selector 6 cảnh, toggle physical layer |
+| `tests/qa-u05.mjs` | P4 QA: phím thật, before/after, approach/reentry, roof, collision, bounded caches |
+| `tests/test-u05.mjs` | 237 static assertions |
+| `tools/*.mjs` | vendor, build, scenes, attach-proof, asset-inventory, drift, verify |
+| `evidence/shots/*.png` | 48 ảnh bằng chứng P4 |
+| `evidence/{qa-report,test-results,asset-inventory,verification}.json` | Gói xác minh |
+| `docs/U05_GEOMETRY_CONFLICTS_DELTA.md` | Báo cáo xung đột / delta đầy đủ |
+| `docs/ASSET_INVENTORY.md` | 12/68 sprite reuse, 0 atlas mới |
+| `docs/CONTROL_TOWER_U05_HANDOFF.md` | Bàn giao Control Tower |
+
+## Điều KHÔNG làm
+
+- Không sửa `VEYRA_GOLD_MAP.sohmap.json`, coastline, islands, lakes, rivers, roads, docks, POI anchors, resource authoring.
+- Không nới / tô lại / vẽ lại / đổi màu đường Beacon Creator thích.
+- Không kéo giãn hero 16×24, không zoom camera, không dùng camera làm route, không teleport thay walk.
+- Không cấp phát mảng 11.2M ô; không tạo vuông 4000×4000; không nearest-neighbour 8 AU staircase giả làm chi tiết author.
+- Không bịa helicopter entity / car wreck / ship hull / luật marine-boat-ferry-swim.
+- Không bịa gate/key/power/HP/loot/ownership/cash/boss/reward/vendor/vehicle.
+- Không tuyên bố 81 POI art-complete/interactive; whitebox chỉ chứng minh hình học, collision, cửa, roof occlusion, walkability.
+- Không khẳng định pixel-equality với benchmark (không có PIL/cv2/matplotlib; benchmark có HUD, ảnh `physical=0` không có HUD).
+
+## P5 gates
+
+`P5-G0…G4`, `P5-G9` = **PASS** trong phạm vi **audition cô lập**.
+`P5-G5` (full Gameplay runtime) = **FAIL**, `P5-G6` (visual acceptance) = **FAIL**,
+`P5-G7`, `P5-G8` = **PARTIAL**. Chi tiết: `evidence/verification.json`.

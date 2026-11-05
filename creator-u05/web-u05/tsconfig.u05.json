@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true,
+    "types": ["vite/client", "node"],
+    "allowJs": false
+  },
+  "include": [
+    "src/u05/**/*.ts",
+    "src/game/core.ts",
+    "src/game/art.ts",
+    "src/game/catalog.ts",
+    "src/game/balance.v1.json",
+    "src/game/veyra/wmp04r1.generated.ts"
+  ]
+}

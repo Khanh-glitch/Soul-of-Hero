@@ -1,0 +1,3825 @@
+{
+  "schema": "soh.u05.qa-report.v1",
+  "generatedAt": "2026-11-05T07:02:32.732Z",
+  "url": "http://localhost:5182/u05.html",
+  "browser": {
+    "executablePath": "/tmp/chromium",
+    "viewport": [
+      640,
+      360
+    ],
+    "deviceScaleFactor": 1,
+    "flags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-gpu"
+    ]
+  },
+  "method": "REAL Playwright keyboard keydown/keyup events for every tile step; BFS only selects the legal path against the SAME runtime collision predicate. No camera-as-route, no teleport-as-route, no zoom, no stretched sprites.",
+  "scope": "ISOLATED U05 CREATOR SELECTOR / AUDITION ONLY — not full Gameplay runtime integration, not visual acceptance, not 81 POI production art.",
+  "consoleErrors": [],
+  "pageErrors": [],
+  "failedRequests": [],
+  "scenes": [
+    {
+      "id": "po_beacon",
+      "name": "Beacon Rock Light",
+      "contract": "CREATOR_CHOSEN_U05.v1",
+      "status": "CREATOR_SCALE_INTENT_APPROVED__FULL_GAMEPLAY_RUNTIME_INTEGRATION_NOT_YET_VALIDATED",
+      "native": {
+        "viewport": [
+          640,
+          360
+        ],
+        "dpr": 1,
+        "zoom": 1,
+        "cameraTrick": false,
+        "U": 0.5,
+        "TILE": 16,
+        "frameTiles": [
+          4000,
+          2800
+        ],
+        "addressableCells": 11200000,
+        "heroSpritePx": [
+          16,
+          24
+        ],
+        "speedPxPerSec": 72
+      },
+      "geometry": {
+        "buildings": 1,
+        "walls": 7,
+        "doors": 2,
+        "roofs": 1,
+        "envelope": {
+          "class": "reprojected",
+          "source": "GOLD poi.foot",
+          "markerOnly": true,
+          "certifiedBuilding": false,
+          "polygonAu": [
+            [
+              258.0075446265436,
+              646.7869204057773
+            ],
+            [
+              280.18033287157294,
+              649.969287675765
+            ],
+            [
+              277.9924553734564,
+              665.2130795942227
+            ],
+            [
+              255.81966712842708,
+              662.030712324235
+            ]
+          ],
+          "polygonTiles": [
+            [
+              516.0151,
+              1293.5738
+            ],
+            [
+              560.3607,
+              1299.9386
+            ],
+            [
+              555.9849,
+              1330.4262
+            ],
+            [
+              511.6393,
+              1324.0614
+            ]
+          ],
+          "polygonTilesSnapped": [
+            [
+              516,
+              1293
+            ],
+            [
+              560,
+              1299
+            ],
+            [
+              555,
+              1330
+            ],
+            [
+              511,
+              1324
+            ]
+          ],
+          "bboxTiles": [
+            511.6393,
+            1293.5738,
+            560.3607,
+            1330.4262
+          ],
+          "areaAu2": 344.96,
+          "areaTile2": 1379.84,
+          "chunkRange": {
+            "x0": 15,
+            "y0": 40,
+            "x1": 17,
+            "y1": 41
+          },
+          "chunkIdentity": "creator-u05|15:40",
+          "obb": {
+            "centre": [
+              268,
+              656
+            ],
+            "ux": [
+              0.9899,
+              0.1421
+            ],
+            "uy": [
+              -0.1421,
+              0.9899
+            ],
+            "wAu": 22.4,
+            "hAu": 15.4,
+            "angleRad": 0.1426,
+            "wTiles": 44.8,
+            "hTiles": 30.8
+          },
+          "noPolygonAmendment": true,
+          "noShrinkRelocateExpand": true
+        }
+      },
+      "approachPlan": {
+        "roadId": "rd_27",
+        "designed": [
+          [
+            538,
+            1359
+          ],
+          [
+            538,
+            1296
+          ]
+        ],
+        "resolved": {
+          "start": [
+            534,
+            1288
+          ],
+          "goal": [
+            539,
+            1295
+          ]
+        },
+        "adjusted": true,
+        "roadCentrelineChanged": false,
+        "pathFound": true,
+        "pathSteps": 12,
+        "visited": 308,
+        "note": "Legal tile resolution uses the SAME runtime collision predicate as real WASD input. It is path SELECTION, not a teleport, not a camera route and not a Gameplay law."
+      },
+      "beforeAfter": {
+        "beforeShot": "before_po_beacon.png",
+        "afterShot": "after_po_beacon.png",
+        "cameraIdentical": true,
+        "physicalBefore": false,
+        "physicalAfter": true,
+        "drawBefore": {
+          "roofDrawn": 0,
+          "roofHiddenCount": 0,
+          "wallsDrawn": 0,
+          "doorsDrawn": 0,
+          "floorsDrawn": 0,
+          "propsDrawn": 0
+        },
+        "drawAfter": {
+          "roofDrawn": 1,
+          "roofHiddenCount": 0,
+          "wallsDrawn": 7,
+          "doorsDrawn": 2,
+          "floorsDrawn": 1,
+          "propsDrawn": 0
+        },
+        "note": "Same 640x360 1x camera, same player tile, physical layer toggled OFF then ON. GOLD terrain/road untouched."
+      },
+      "spawnFixture": {
+        "used": true,
+        "tile": [
+          534,
+          1288
+        ],
+        "recorded": true,
+        "teleportUsedAsRoute": false,
+        "cameraUsedAsRoute": false
+      },
+      "approach": {
+        "startShot": "approach_po_beacon_start.png",
+        "goalShot": "approach_po_beacon_goal.png",
+        "label": "approach_po_beacon",
+        "startTile": [
+          534,
+          1288
+        ],
+        "goal": [
+          539,
+          1295
+        ],
+        "plannedLen": 12,
+        "plannedCodes": [
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS"
+        ],
+        "stepsWalked": 12,
+        "resyncs": 0,
+        "failures": 0,
+        "arrived": true,
+        "finalTile": [
+          539,
+          1295
+        ],
+        "realKeyboardEvents": 24,
+        "inputCodes": [
+          "KeyD",
+          "KeyS"
+        ],
+        "movedPx": 178,
+        "blockedAttemptsDelta": 0,
+        "spawnFixtureUsed": false,
+        "teleportUsedAsRoute": false,
+        "cameraUsedAsRoute": false,
+        "atDoor": {
+          "tile": [
+            539,
+            1295
+          ],
+          "wallBlockedHere": false,
+          "walkableHere": true
+        }
+      },
+      "reentry": {
+        "shot": "reentry_po_beacon_back.png",
+        "label": "reentry_po_beacon",
+        "startTile": [
+          539,
+          1295
+        ],
+        "goal": [
+          534,
+          1288
+        ],
+        "plannedLen": 12,
+        "plannedCodes": [
+          "KeyW",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW"
+        ],
+        "stepsWalked": 12,
+        "resyncs": 0,
+        "failures": 0,
+        "arrived": true,
+        "finalTile": [
+          534,
+          1288
+        ],
+        "realKeyboardEvents": 24,
+        "inputCodes": [
+          "KeyA",
+          "KeyW"
+        ],
+        "movedPx": 163,
+        "blockedAttemptsDelta": 0,
+        "spawnFixtureUsed": false,
+        "teleportUsedAsRoute": false,
+        "cameraUsedAsRoute": false,
+        "finalState": {
+          "tile": [
+            534,
+            1288
+          ],
+          "movedPx": 341
+        }
+      },
+      "roof": {
+        "roofCentroid": [
+          524,
+          1310
+        ],
+        "legalGoal": [
+          524,
+          1310
+        ],
+        "enter": {
+          "label": "roof_enter_po_beacon",
+          "startTile": [
+            534,
+            1288
+          ],
+          "goal": [
+            524,
+            1310
+          ],
+          "plannedLen": 32,
+          "plannedCodes": [
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS"
+          ],
+          "stepsWalked": 32,
+          "resyncs": 0,
+          "failures": 0,
+          "arrived": true,
+          "finalTile": [
+            524,
+            1310
+          ],
+          "realKeyboardEvents": 64,
+          "inputCodes": [
+            "KeyA",
+            "KeyS"
+          ],
+          "movedPx": 497,
+          "blockedAttemptsDelta": 0,
+          "spawnFixtureUsed": false,
+          "teleportUsedAsRoute": false,
+          "cameraUsedAsRoute": false
+        },
+        "exit": {
+          "label": "roof_exit_po_beacon",
+          "startTile": [
+            529,
+            1310
+          ],
+          "goal": [
+            534,
+            1288
+          ],
+          "plannedLen": 27,
+          "plannedCodes": [
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW"
+          ],
+          "stepsWalked": 27,
+          "resyncs": 0,
+          "failures": 0,
+          "arrived": true,
+          "finalTile": [
+            534,
+            1288
+          ],
+          "realKeyboardEvents": 54,
+          "inputCodes": [
+            "KeyD",
+            "KeyW"
+          ],
+          "movedPx": 418,
+          "blockedAttemptsDelta": 0,
+          "spawnFixtureUsed": false,
+          "teleportUsedAsRoute": false,
+          "cameraUsedAsRoute": false
+        },
+        "insideShot": "roof_po_beacon_inside.png",
+        "outsideShot": "roof_po_beacon_outside.png",
+        "roofHiddenInside": 1,
+        "roofHiddenOutside": 0,
+        "walkOut": {
+          "steps": 5,
+          "codes": [
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD"
+          ],
+          "realKeyboardEvents": 10,
+          "note": "Real keyboard steps out of the roof until the runtime reports roofHiddenCount()==0; roof is therefore visible in the capture."
+        },
+        "transitionProven": true
+      },
+      "collision": {
+        "probeTile": [
+          515,
+          1291
+        ],
+        "probeCode": "KeyS",
+        "wallIds": [
+          "wall.po_beacon.1.span.1",
+          "wall.po_beacon.4"
+        ],
+        "wallBlockedNeighbour": true,
+        "spawnFixtureUsed": true,
+        "spawnFixtureNote": "QA fixture positions the player at the wall-adjacent probe tile ONLY; the blocking attempt itself is real keyboard input.",
+        "playerTileBefore": [
+          515,
+          1291
+        ],
+        "playerTileAfter": [
+          515,
+          1291
+        ],
+        "blockedAttemptsBefore": 0,
+        "blockedAttemptsAfter": 26,
+        "realKeyboardEvents": 2,
+        "inputCodes": [
+          "KeyS"
+        ],
+        "blocked": true
+      },
+      "collisionShot": "collision_po_beacon_blocked.png",
+      "final": {
+        "draw": {
+          "roofDrawn": 1,
+          "roofHiddenCount": 0,
+          "wallsDrawn": 7,
+          "doorsDrawn": 2,
+          "floorsDrawn": 1,
+          "propsDrawn": 0
+        },
+        "chunkAudit": {
+          "totalChunks": 11000,
+          "uniqueKeys": 11000,
+          "collisions": 0,
+          "legacyKeyCollisions": 2175
+        },
+        "stats": {
+          "frameTiles": [
+            4000,
+            2800
+          ],
+          "frameAu": [
+            2000,
+            1400
+          ],
+          "U": 0.5,
+          "TILE": 16,
+          "addressableCells": 11200000,
+          "materializedAllCells": false,
+          "residentChunks": 2,
+          "residentLoads": 2,
+          "residentEvictions": 0,
+          "maxResidentChunks": 36,
+          "chunkKeyExample": "creator-u05|125:87",
+          "legacyStrideKey": "NEVER_USED__cy*100+cx",
+          "displayCanvases": 22,
+          "displayBytes": 5767168,
+          "displayLoads": 22,
+          "displayEvictions": 0,
+          "maxDisplayCanvases": 36,
+          "displayChunkKeyExample": "creator-u05|render16|250:175",
+          "simMs": 21899,
+          "movedPx": 7,
+          "blockedAttempts": 26,
+          "spawnFixture": true
+        },
+        "frameMs": {
+          "p50": 16.69999999999891,
+          "p95": 16.799999999999272,
+          "max": 50
+        },
+        "materializedAllCells": false,
+        "maxResidentChunks": 36,
+        "maxDisplayCanvases": 36
+      }
+    },
+    {
+      "id": "po_greywater",
+      "name": "Greywater Hamlet",
+      "contract": "CREATOR_CHOSEN_U05.v1",
+      "status": "CREATOR_SCALE_INTENT_APPROVED__FULL_GAMEPLAY_RUNTIME_INTEGRATION_NOT_YET_VALIDATED",
+      "native": {
+        "viewport": [
+          640,
+          360
+        ],
+        "dpr": 1,
+        "zoom": 1,
+        "cameraTrick": false,
+        "U": 0.5,
+        "TILE": 16,
+        "frameTiles": [
+          4000,
+          2800
+        ],
+        "addressableCells": 11200000,
+        "heroSpritePx": [
+          16,
+          24
+        ],
+        "speedPxPerSec": 72
+      },
+      "geometry": {
+        "buildings": 6,
+        "walls": 15,
+        "doors": 8,
+        "roofs": 6,
+        "envelope": {
+          "class": "reprojected",
+          "source": "GOLD poi.foot",
+          "markerOnly": true,
+          "certifiedBuilding": false,
+          "polygonAu": [
+            [
+              797.3655319998907,
+              571.4339516106331
+            ],
+            [
+              836.4427114405089,
+              585.7004875239418
+            ],
+            [
+              826.6344680001093,
+              612.5660483893669
+            ],
+            [
+              787.5572885594911,
+              598.2995124760582
+            ]
+          ],
+          "polygonTiles": [
+            [
+              1594.7311,
+              1142.8679
+            ],
+            [
+              1672.8854,
+              1171.401
+            ],
+            [
+              1653.2689,
+              1225.1321
+            ],
+            [
+              1575.1146,
+              1196.599
+            ]
+          ],
+          "polygonTilesSnapped": [
+            [
+              1594,
+              1142
+            ],
+            [
+              1672,
+              1171
+            ],
+            [
+              1653,
+              1225
+            ],
+            [
+              1575,
+              1196
+            ]
+          ],
+          "bboxTiles": [
+            1575.1146,
+            1142.8679,
+            1672.8854,
+            1225.1321
+          ],
+          "areaAu2": 1189.76,
+          "areaTile2": 4759.04,
+          "chunkRange": {
+            "x0": 49,
+            "y0": 35,
+            "x1": 52,
+            "y1": 38
+          },
+          "chunkIdentity": "creator-u05|49:35",
+          "obb": {
+            "centre": [
+              812,
+              592
+            ],
+            "ux": [
+              0.9394,
+              0.3429
+            ],
+            "uy": [
+              -0.3429,
+              0.9394
+            ],
+            "wAu": 41.6,
+            "hAu": 28.6,
+            "angleRad": 0.3501,
+            "wTiles": 83.2,
+            "hTiles": 57.2
+          },
+          "noPolygonAmendment": true,
+          "noShrinkRelocateExpand": true
+        }
+      },
+      "approachPlan": {
+        "roadId": "rd_9",
+        "designed": [
+          [
+            1653,
+            1146
+          ],
+          [
+            1633,
+            1157
+          ]
+        ],
+        "resolved": {
+          "start": [
+            1658,
+            1139
+          ],
+          "goal": [
+            1633,
+            1157
+          ]
+        },
+        "adjusted": true,
+        "roadCentrelineChanged": false,
+        "pathFound": true,
+        "pathSteps": 43,
+        "visited": 2066,
+        "note": "Legal tile resolution uses the SAME runtime collision predicate as real WASD input. It is path SELECTION, not a teleport, not a camera route and not a Gameplay law."
+      },
+      "beforeAfter": {
+        "beforeShot": "before_po_greywater.png",
+        "afterShot": "after_po_greywater.png",
+        "cameraIdentical": true,
+        "physicalBefore": false,
+        "physicalAfter": true,
+        "drawBefore": {
+          "roofDrawn": 0,
+          "roofHiddenCount": 0,
+          "wallsDrawn": 0,
+          "doorsDrawn": 0,
+          "floorsDrawn": 0,
+          "propsDrawn": 0
+        },
+        "drawAfter": {
+          "roofDrawn": 6,
+          "roofHiddenCount": 0,
+          "wallsDrawn": 15,
+          "doorsDrawn": 8,
+          "floorsDrawn": 6,
+          "propsDrawn": 0
+        },
+        "note": "Same 640x360 1x camera, same player tile, physical layer toggled OFF then ON. GOLD terrain/road untouched."
+      },
+      "spawnFixture": {
+        "used": true,
+        "tile": [
+          1658,
+          1139
+        ],
+        "recorded": true,
+        "teleportUsedAsRoute": false,
+        "cameraUsedAsRoute": false
+      },
+      "approach": {
+        "startShot": "approach_po_greywater_start.png",
+        "goalShot": "approach_po_greywater_goal.png",
+        "label": "approach_po_greywater",
+        "startTile": [
+          1658,
+          1139
+        ],
+        "goal": [
+          1633,
+          1157
+        ],
+        "plannedLen": 43,
+        "plannedCodes": [
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS"
+        ],
+        "stepsWalked": 43,
+        "resyncs": 0,
+        "failures": 0,
+        "arrived": true,
+        "finalTile": [
+          1633,
+          1157
+        ],
+        "realKeyboardEvents": 86,
+        "inputCodes": [
+          "KeyA",
+          "KeyS"
+        ],
+        "movedPx": 673,
+        "blockedAttemptsDelta": 0,
+        "spawnFixtureUsed": false,
+        "teleportUsedAsRoute": false,
+        "cameraUsedAsRoute": false,
+        "atDoor": {
+          "tile": [
+            1633,
+            1157
+          ],
+          "wallBlockedHere": false,
+          "walkableHere": true
+        }
+      },
+      "reentry": {
+        "shot": "reentry_po_greywater_back.png",
+        "label": "reentry_po_greywater",
+        "startTile": [
+          1633,
+          1157
+        ],
+        "goal": [
+          1658,
+          1139
+        ],
+        "plannedLen": 43,
+        "plannedCodes": [
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyW",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW"
+        ],
+        "stepsWalked": 43,
+        "resyncs": 0,
+        "failures": 0,
+        "arrived": true,
+        "finalTile": [
+          1658,
+          1139
+        ],
+        "realKeyboardEvents": 86,
+        "inputCodes": [
+          "KeyD",
+          "KeyW"
+        ],
+        "movedPx": 660,
+        "blockedAttemptsDelta": 0,
+        "spawnFixtureUsed": false,
+        "teleportUsedAsRoute": false,
+        "cameraUsedAsRoute": false,
+        "finalState": {
+          "tile": [
+            1658,
+            1139
+          ],
+          "movedPx": 1333
+        }
+      },
+      "roof": {
+        "roofCentroid": [
+          1602,
+          1161
+        ],
+        "legalGoal": [
+          1602,
+          1161
+        ],
+        "enter": {
+          "label": "roof_enter_po_greywater",
+          "startTile": [
+            1658,
+            1139
+          ],
+          "goal": [
+            1602,
+            1161
+          ],
+          "plannedLen": 80,
+          "plannedCodes": [
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyA",
+            "KeyS",
+            "KeyS",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyW"
+          ],
+          "stepsWalked": 80,
+          "resyncs": 0,
+          "failures": 0,
+          "arrived": true,
+          "finalTile": [
+            1602,
+            1161
+          ],
+          "realKeyboardEvents": 160,
+          "inputCodes": [
+            "KeyA",
+            "KeyS",
+            "KeyW"
+          ],
+          "movedPx": 1242,
+          "blockedAttemptsDelta": 0,
+          "spawnFixtureUsed": false,
+          "teleportUsedAsRoute": false,
+          "cameraUsedAsRoute": false
+        },
+        "exit": {
+          "label": "roof_exit_po_greywater",
+          "startTile": [
+            1608,
+            1161
+          ],
+          "goal": [
+            1658,
+            1139
+          ],
+          "plannedLen": 74,
+          "plannedCodes": [
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyS",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyD",
+            "KeyW",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW"
+          ],
+          "stepsWalked": 74,
+          "resyncs": 0,
+          "failures": 0,
+          "arrived": true,
+          "finalTile": [
+            1658,
+            1139
+          ],
+          "realKeyboardEvents": 148,
+          "inputCodes": [
+            "KeyD",
+            "KeyS",
+            "KeyW"
+          ],
+          "movedPx": 1157,
+          "blockedAttemptsDelta": 0,
+          "spawnFixtureUsed": false,
+          "teleportUsedAsRoute": false,
+          "cameraUsedAsRoute": false
+        },
+        "insideShot": "roof_po_greywater_inside.png",
+        "outsideShot": "roof_po_greywater_outside.png",
+        "roofHiddenInside": 1,
+        "roofHiddenOutside": 0,
+        "walkOut": {
+          "steps": 6,
+          "codes": [
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD"
+          ],
+          "realKeyboardEvents": 12,
+          "note": "Real keyboard steps out of the roof until the runtime reports roofHiddenCount()==0; roof is therefore visible in the capture."
+        },
+        "transitionProven": true
+      },
+      "collision": {
+        "probeTile": [
+          1593,
+          1140
+        ],
+        "probeCode": "KeyS",
+        "wallIds": [
+          "wall.po_greywater.1.span.1",
+          "wall.po_greywater.4"
+        ],
+        "wallBlockedNeighbour": true,
+        "spawnFixtureUsed": true,
+        "spawnFixtureNote": "QA fixture positions the player at the wall-adjacent probe tile ONLY; the blocking attempt itself is real keyboard input.",
+        "playerTileBefore": [
+          1593,
+          1140
+        ],
+        "playerTileAfter": [
+          1593,
+          1140
+        ],
+        "blockedAttemptsBefore": 0,
+        "blockedAttemptsAfter": 28,
+        "realKeyboardEvents": 2,
+        "inputCodes": [
+          "KeyS"
+        ],
+        "blocked": true
+      },
+      "collisionShot": "collision_po_greywater_blocked.png",
+      "final": {
+        "draw": {
+          "roofDrawn": 6,
+          "roofHiddenCount": 0,
+          "wallsDrawn": 15,
+          "doorsDrawn": 8,
+          "floorsDrawn": 6,
+          "propsDrawn": 0
+        },
+        "chunkAudit": {
+          "totalChunks": 11000,
+          "uniqueKeys": 11000,
+          "collisions": 0,
+          "legacyKeyCollisions": 2175
+        },
+        "stats": {
+          "frameTiles": [
+            4000,
+            2800
+          ],
+          "frameAu": [
+            2000,
+            1400
+          ],
+          "U": 0.5,
+          "TILE": 16,
+          "addressableCells": 11200000,
+          "materializedAllCells": false,
+          "residentChunks": 6,
+          "residentLoads": 6,
+          "residentEvictions": 0,
+          "maxResidentChunks": 36,
+          "chunkKeyExample": "creator-u05|125:87",
+          "legacyStrideKey": "NEVER_USED__cy*100+cx",
+          "displayCanvases": 30,
+          "displayBytes": 7864320,
+          "displayLoads": 30,
+          "displayEvictions": 0,
+          "maxDisplayCanvases": 36,
+          "displayChunkKeyExample": "creator-u05|render16|250:175",
+          "simMs": 79063,
+          "movedPx": 7,
+          "blockedAttempts": 28,
+          "spawnFixture": true
+        },
+        "frameMs": {
+          "p50": 16.69999999999709,
+          "p95": 16.70000000001164,
+          "max": 50
+        },
+        "materializedAllCells": false,
+        "maxResidentChunks": 36,
+        "maxDisplayCanvases": 36
+      }
+    },
+    {
+      "id": "po_academy",
+      "name": "Argus Academy",
+      "contract": "CREATOR_CHOSEN_U05.v1",
+      "status": "CREATOR_SCALE_INTENT_APPROVED__FULL_GAMEPLAY_RUNTIME_INTEGRATION_NOT_YET_VALIDATED",
+      "native": {
+        "viewport": [
+          640,
+          360
+        ],
+        "dpr": 1,
+        "zoom": 1,
+        "cameraTrick": false,
+        "U": 0.5,
+        "TILE": 16,
+        "frameTiles": [
+          4000,
+          2800
+        ],
+        "addressableCells": 11200000,
+        "heroSpritePx": [
+          16,
+          24
+        ],
+        "speedPxPerSec": 72
+      },
+      "geometry": {
+        "buildings": 4,
+        "walls": 11,
+        "doors": 5,
+        "roofs": 5,
+        "envelope": {
+          "class": "reprojected",
+          "source": "GOLD poi.foot",
+          "markerOnly": true,
+          "certifiedBuilding": false,
+          "polygonAu": [
+            [
+              917.9168067042876,
+              247.30720856236275
+            ],
+            [
+              956.1938824428898,
+              250.3773018673483
+            ],
+            [
+              954.0831932957124,
+              276.69279143763725
+            ],
+            [
+              915.8061175571102,
+              273.6226981326517
+            ]
+          ],
+          "polygonTiles": [
+            [
+              1835.8336,
+              494.6144
+            ],
+            [
+              1912.3878,
+              500.7546
+            ],
+            [
+              1908.1664,
+              553.3856
+            ],
+            [
+              1831.6122,
+              547.2454
+            ]
+          ],
+          "polygonTilesSnapped": [
+            [
+              1835,
+              494
+            ],
+            [
+              1912,
+              500
+            ],
+            [
+              1908,
+              553
+            ],
+            [
+              1831,
+              547
+            ]
+          ],
+          "bboxTiles": [
+            1831.6122,
+            494.6144,
+            1912.3878,
+            553.3856
+          ],
+          "areaAu2": 1013.76,
+          "areaTile2": 4055.04,
+          "chunkRange": {
+            "x0": 57,
+            "y0": 15,
+            "x1": 59,
+            "y1": 17
+          },
+          "chunkIdentity": "creator-u05|57:15",
+          "obb": {
+            "centre": [
+              936,
+              262
+            ],
+            "ux": [
+              0.9968,
+              0.08
+            ],
+            "uy": [
+              -0.08,
+              0.9968
+            ],
+            "wAu": 38.4,
+            "hAu": 26.4,
+            "angleRad": 0.08,
+            "wTiles": 76.8,
+            "hTiles": 52.8
+          },
+          "noPolygonAmendment": true,
+          "noShrinkRelocateExpand": true
+        }
+      },
+      "approachPlan": {
+        "roadId": "rd_h",
+        "designed": [
+          [
+            1864,
+            476
+          ],
+          [
+            1869,
+            550
+          ]
+        ],
+        "resolved": {
+          "start": [
+            1877,
+            559
+          ],
+          "goal": [
+            1867,
+            548
+          ]
+        },
+        "adjusted": true,
+        "roadCentrelineChanged": false,
+        "pathFound": true,
+        "pathSteps": 21,
+        "visited": 790,
+        "note": "Legal tile resolution uses the SAME runtime collision predicate as real WASD input. It is path SELECTION, not a teleport, not a camera route and not a Gameplay law."
+      },
+      "beforeAfter": {
+        "beforeShot": "before_po_academy.png",
+        "afterShot": "after_po_academy.png",
+        "cameraIdentical": true,
+        "physicalBefore": false,
+        "physicalAfter": true,
+        "drawBefore": {
+          "roofDrawn": 0,
+          "roofHiddenCount": 0,
+          "wallsDrawn": 0,
+          "doorsDrawn": 0,
+          "floorsDrawn": 0,
+          "propsDrawn": 0
+        },
+        "drawAfter": {
+          "roofDrawn": 4,
+          "roofHiddenCount": 1,
+          "wallsDrawn": 11,
+          "doorsDrawn": 5,
+          "floorsDrawn": 4,
+          "propsDrawn": 0
+        },
+        "note": "Same 640x360 1x camera, same player tile, physical layer toggled OFF then ON. GOLD terrain/road untouched."
+      },
+      "spawnFixture": {
+        "used": true,
+        "tile": [
+          1877,
+          559
+        ],
+        "recorded": true,
+        "teleportUsedAsRoute": false,
+        "cameraUsedAsRoute": false
+      },
+      "approach": {
+        "startShot": "approach_po_academy_start.png",
+        "goalShot": "approach_po_academy_goal.png",
+        "label": "approach_po_academy",
+        "startTile": [
+          1877,
+          559
+        ],
+        "goal": [
+          1867,
+          548
+        ],
+        "plannedLen": 21,
+        "plannedCodes": [
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW"
+        ],
+        "stepsWalked": 21,
+        "resyncs": 0,
+        "failures": 0,
+        "arrived": true,
+        "finalTile": [
+          1867,
+          548
+        ],
+        "realKeyboardEvents": 42,
+        "inputCodes": [
+          "KeyA",
+          "KeyW"
+        ],
+        "movedPx": 322,
+        "blockedAttemptsDelta": 0,
+        "spawnFixtureUsed": false,
+        "teleportUsedAsRoute": false,
+        "cameraUsedAsRoute": false,
+        "atDoor": {
+          "tile": [
+            1867,
+            548
+          ],
+          "wallBlockedHere": false,
+          "walkableHere": true
+        }
+      },
+      "reentry": {
+        "shot": "reentry_po_academy_back.png",
+        "label": "reentry_po_academy",
+        "startTile": [
+          1867,
+          548
+        ],
+        "goal": [
+          1877,
+          559
+        ],
+        "plannedLen": 21,
+        "plannedCodes": [
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyD",
+          "KeyS",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS"
+        ],
+        "stepsWalked": 21,
+        "resyncs": 0,
+        "failures": 0,
+        "arrived": true,
+        "finalTile": [
+          1877,
+          559
+        ],
+        "realKeyboardEvents": 42,
+        "inputCodes": [
+          "KeyD",
+          "KeyS"
+        ],
+        "movedPx": 307,
+        "blockedAttemptsDelta": 0,
+        "spawnFixtureUsed": false,
+        "teleportUsedAsRoute": false,
+        "cameraUsedAsRoute": false,
+        "finalState": {
+          "tile": [
+            1877,
+            559
+          ],
+          "movedPx": 629
+        }
+      },
+      "roof": {
+        "roofCentroid": [
+          1853,
+          509
+        ],
+        "legalGoal": [
+          1853,
+          509
+        ],
+        "enter": {
+          "label": "roof_enter_po_academy",
+          "startTile": [
+            1877,
+            559
+          ],
+          "goal": [
+            1853,
+            509
+          ],
+          "plannedLen": 74,
+          "plannedCodes": [
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyW",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW"
+          ],
+          "stepsWalked": 74,
+          "resyncs": 0,
+          "failures": 0,
+          "arrived": true,
+          "finalTile": [
+            1853,
+            509
+          ],
+          "realKeyboardEvents": 148,
+          "inputCodes": [
+            "KeyA",
+            "KeyW"
+          ],
+          "movedPx": 1157,
+          "blockedAttemptsDelta": 0,
+          "spawnFixtureUsed": false,
+          "teleportUsedAsRoute": false,
+          "cameraUsedAsRoute": false
+        },
+        "exit": {
+          "label": "roof_exit_po_academy",
+          "startTile": [
+            1856,
+            517
+          ],
+          "goal": [
+            1877,
+            559
+          ],
+          "plannedLen": 63,
+          "plannedCodes": [
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyS",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyD",
+            "KeyS",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS"
+          ],
+          "stepsWalked": 63,
+          "resyncs": 0,
+          "failures": 0,
+          "arrived": true,
+          "finalTile": [
+            1877,
+            559
+          ],
+          "realKeyboardEvents": 126,
+          "inputCodes": [
+            "KeyD",
+            "KeyS"
+          ],
+          "movedPx": 1006,
+          "blockedAttemptsDelta": 0,
+          "spawnFixtureUsed": false,
+          "teleportUsedAsRoute": false,
+          "cameraUsedAsRoute": false
+        },
+        "insideShot": "roof_po_academy_inside.png",
+        "outsideShot": "roof_po_academy_outside.png",
+        "roofHiddenInside": 1,
+        "roofHiddenOutside": 0,
+        "walkOut": {
+          "steps": 11,
+          "codes": [
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS"
+          ],
+          "realKeyboardEvents": 22,
+          "note": "Real keyboard steps out of the roof until the runtime reports roofHiddenCount()==0; roof is therefore visible in the capture."
+        },
+        "transitionProven": true
+      },
+      "collision": {
+        "probeTile": [
+          1835,
+          491
+        ],
+        "probeCode": "KeyS",
+        "wallIds": [
+          "wall.po_academy.1",
+          "wall.po_academy.4"
+        ],
+        "wallBlockedNeighbour": true,
+        "spawnFixtureUsed": true,
+        "spawnFixtureNote": "QA fixture positions the player at the wall-adjacent probe tile ONLY; the blocking attempt itself is real keyboard input.",
+        "playerTileBefore": [
+          1835,
+          491
+        ],
+        "playerTileAfter": [
+          1835,
+          491
+        ],
+        "blockedAttemptsBefore": 0,
+        "blockedAttemptsAfter": 28,
+        "realKeyboardEvents": 2,
+        "inputCodes": [
+          "KeyS"
+        ],
+        "blocked": true
+      },
+      "collisionShot": "collision_po_academy_blocked.png",
+      "final": {
+        "draw": {
+          "roofDrawn": 5,
+          "roofHiddenCount": 0,
+          "wallsDrawn": 11,
+          "doorsDrawn": 5,
+          "floorsDrawn": 4,
+          "propsDrawn": 0
+        },
+        "chunkAudit": {
+          "totalChunks": 11000,
+          "uniqueKeys": 11000,
+          "collisions": 0,
+          "legacyKeyCollisions": 2175
+        },
+        "stats": {
+          "frameTiles": [
+            4000,
+            2800
+          ],
+          "frameAu": [
+            2000,
+            1400
+          ],
+          "U": 0.5,
+          "TILE": 16,
+          "addressableCells": 11200000,
+          "materializedAllCells": false,
+          "residentChunks": 6,
+          "residentLoads": 6,
+          "residentEvictions": 0,
+          "maxResidentChunks": 36,
+          "chunkKeyExample": "creator-u05|125:87",
+          "legacyStrideKey": "NEVER_USED__cy*100+cx",
+          "displayCanvases": 30,
+          "displayBytes": 7864320,
+          "displayLoads": 30,
+          "displayEvictions": 0,
+          "maxDisplayCanvases": 36,
+          "displayChunkKeyExample": "creator-u05|render16|250:175",
+          "simMs": 123728,
+          "movedPx": 7,
+          "blockedAttempts": 28,
+          "spawnFixture": true
+        },
+        "frameMs": {
+          "p50": 16.69999999999709,
+          "p95": 16.79999999998836,
+          "max": 50
+        },
+        "materializedAllCells": false,
+        "maxResidentChunks": 36,
+        "maxDisplayCanvases": 36
+      }
+    },
+    {
+      "id": "po_ironmine",
+      "name": "Ironholm Mine",
+      "contract": "CREATOR_CHOSEN_U05.v1",
+      "status": "CREATOR_SCALE_INTENT_APPROVED__FULL_GAMEPLAY_RUNTIME_INTEGRATION_NOT_YET_VALIDATED",
+      "native": {
+        "viewport": [
+          640,
+          360
+        ],
+        "dpr": 1,
+        "zoom": 1,
+        "cameraTrick": false,
+        "U": 0.5,
+        "TILE": 16,
+        "frameTiles": [
+          4000,
+          2800
+        ],
+        "addressableCells": 11200000,
+        "heroSpritePx": [
+          16,
+          24
+        ],
+        "speedPxPerSec": 72
+      },
+      "geometry": {
+        "buildings": 2,
+        "walls": 7,
+        "doors": 2,
+        "roofs": 1,
+        "envelope": {
+          "class": "reprojected",
+          "source": "GOLD poi.foot",
+          "markerOnly": true,
+          "certifiedBuilding": false,
+          "polygonAu": [
+            [
+              1169.8184967327636,
+              1270.6276239967208
+            ],
+            [
+              1209.882173194247,
+              1281.8285984360093
+            ],
+            [
+              1202.1815032672364,
+              1309.3723760032792
+            ],
+            [
+              1162.117826805753,
+              1298.1714015639907
+            ]
+          ],
+          "polygonTiles": [
+            [
+              2339.637,
+              2541.2552
+            ],
+            [
+              2419.7643,
+              2563.6572
+            ],
+            [
+              2404.363,
+              2618.7448
+            ],
+            [
+              2324.2357,
+              2596.3428
+            ]
+          ],
+          "polygonTilesSnapped": [
+            [
+              2339,
+              2541
+            ],
+            [
+              2419,
+              2563
+            ],
+            [
+              2404,
+              2618
+            ],
+            [
+              2324,
+              2596
+            ]
+          ],
+          "bboxTiles": [
+            2324.2357,
+            2541.2552,
+            2419.7643,
+            2618.7448
+          ],
+          "areaAu2": 1189.76,
+          "areaTile2": 4759.04,
+          "chunkRange": {
+            "x0": 72,
+            "y0": 79,
+            "x1": 75,
+            "y1": 81
+          },
+          "chunkIdentity": "creator-u05|72:79",
+          "obb": {
+            "centre": [
+              1186,
+              1290
+            ],
+            "ux": [
+              0.9631,
+              0.2693
+            ],
+            "uy": [
+              -0.2693,
+              0.9631
+            ],
+            "wAu": 41.6,
+            "hAu": 28.6,
+            "angleRad": 0.2726,
+            "wTiles": 83.2,
+            "hTiles": 57.2
+          },
+          "noPolygonAmendment": true,
+          "noShrinkRelocateExpand": true
+        }
+      },
+      "approachPlan": {
+        "roadId": "rd_11",
+        "designed": [
+          [
+            2390,
+            2624
+          ],
+          [
+            2331,
+            2568
+          ]
+        ],
+        "resolved": {
+          "start": [
+            2353,
+            2535
+          ],
+          "goal": [
+            2331,
+            2568
+          ]
+        },
+        "adjusted": true,
+        "roadCentrelineChanged": false,
+        "pathFound": true,
+        "pathSteps": 57,
+        "visited": 3929,
+        "note": "Legal tile resolution uses the SAME runtime collision predicate as real WASD input. It is path SELECTION, not a teleport, not a camera route and not a Gameplay law."
+      },
+      "beforeAfter": {
+        "beforeShot": "before_po_ironmine.png",
+        "afterShot": "after_po_ironmine.png",
+        "cameraIdentical": true,
+        "physicalBefore": false,
+        "physicalAfter": true,
+        "drawBefore": {
+          "roofDrawn": 0,
+          "roofHiddenCount": 0,
+          "wallsDrawn": 0,
+          "doorsDrawn": 0,
+          "floorsDrawn": 0,
+          "propsDrawn": 0
+        },
+        "drawAfter": {
+          "roofDrawn": 0,
+          "roofHiddenCount": 1,
+          "wallsDrawn": 7,
+          "doorsDrawn": 2,
+          "floorsDrawn": 0,
+          "propsDrawn": 1
+        },
+        "note": "Same 640x360 1x camera, same player tile, physical layer toggled OFF then ON. GOLD terrain/road untouched."
+      },
+      "spawnFixture": {
+        "used": true,
+        "tile": [
+          2353,
+          2535
+        ],
+        "recorded": true,
+        "teleportUsedAsRoute": false,
+        "cameraUsedAsRoute": false
+      },
+      "approach": {
+        "startShot": "approach_po_ironmine_start.png",
+        "goalShot": "approach_po_ironmine_goal.png",
+        "label": "approach_po_ironmine",
+        "startTile": [
+          2353,
+          2535
+        ],
+        "goal": [
+          2331,
+          2568
+        ],
+        "plannedLen": 57,
+        "plannedCodes": [
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyD",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS"
+        ],
+        "stepsWalked": 57,
+        "resyncs": 0,
+        "failures": 0,
+        "arrived": true,
+        "finalTile": [
+          2331,
+          2568
+        ],
+        "realKeyboardEvents": 114,
+        "inputCodes": [
+          "KeyA",
+          "KeyD",
+          "KeyS"
+        ],
+        "movedPx": 886,
+        "blockedAttemptsDelta": 0,
+        "spawnFixtureUsed": false,
+        "teleportUsedAsRoute": false,
+        "cameraUsedAsRoute": false,
+        "atDoor": {
+          "tile": [
+            2331,
+            2568
+          ],
+          "wallBlockedHere": false,
+          "walkableHere": true
+        }
+      },
+      "reentry": {
+        "shot": "reentry_po_ironmine_back.png",
+        "label": "reentry_po_ironmine",
+        "startTile": [
+          2331,
+          2568
+        ],
+        "goal": [
+          2353,
+          2535
+        ],
+        "plannedLen": 57,
+        "plannedCodes": [
+          "KeyA",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyD",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyD",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyD",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyD",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyD",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyD",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyD",
+          "KeyW",
+          "KeyW",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyW",
+          "KeyW",
+          "KeyW"
+        ],
+        "stepsWalked": 57,
+        "resyncs": 0,
+        "failures": 0,
+        "arrived": true,
+        "finalTile": [
+          2353,
+          2535
+        ],
+        "realKeyboardEvents": 114,
+        "inputCodes": [
+          "KeyA",
+          "KeyD",
+          "KeyW"
+        ],
+        "movedPx": 868,
+        "blockedAttemptsDelta": 0,
+        "spawnFixtureUsed": false,
+        "teleportUsedAsRoute": false,
+        "cameraUsedAsRoute": false,
+        "finalState": {
+          "tile": [
+            2353,
+            2535
+          ],
+          "movedPx": 1754
+        }
+      },
+      "roof": {
+        "roofCentroid": [
+          2379,
+          2585
+        ],
+        "legalGoal": [
+          2379,
+          2585
+        ],
+        "enter": {
+          "label": "roof_enter_po_ironmine",
+          "startTile": [
+            2353,
+            2535
+          ],
+          "goal": [
+            2379,
+            2585
+          ],
+          "plannedLen": 122,
+          "plannedCodes": "122 codes",
+          "stepsWalked": 122,
+          "resyncs": 0,
+          "failures": 0,
+          "arrived": true,
+          "finalTile": [
+            2379,
+            2585
+          ],
+          "realKeyboardEvents": 244,
+          "inputCodes": [
+            "KeyA",
+            "KeyD",
+            "KeyS"
+          ],
+          "movedPx": 1911,
+          "blockedAttemptsDelta": 0,
+          "spawnFixtureUsed": false,
+          "teleportUsedAsRoute": false,
+          "cameraUsedAsRoute": false
+        },
+        "exit": {
+          "label": "roof_exit_po_ironmine",
+          "startTile": [
+            2368,
+            2583
+          ],
+          "goal": [
+            2353,
+            2535
+          ],
+          "plannedLen": 109,
+          "plannedCodes": "109 codes",
+          "stepsWalked": 109,
+          "resyncs": 0,
+          "failures": 0,
+          "arrived": true,
+          "finalTile": [
+            2353,
+            2535
+          ],
+          "realKeyboardEvents": 218,
+          "inputCodes": [
+            "KeyA",
+            "KeyD",
+            "KeyW"
+          ],
+          "movedPx": 1729,
+          "blockedAttemptsDelta": 0,
+          "spawnFixtureUsed": false,
+          "teleportUsedAsRoute": false,
+          "cameraUsedAsRoute": false
+        },
+        "insideShot": "roof_po_ironmine_inside.png",
+        "outsideShot": "roof_po_ironmine_outside.png",
+        "roofHiddenInside": 1,
+        "roofHiddenOutside": 0,
+        "walkOut": {
+          "steps": 13,
+          "codes": [
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyW",
+            "KeyA",
+            "KeyW",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA"
+          ],
+          "realKeyboardEvents": 26,
+          "note": "Real keyboard steps out of the roof until the runtime reports roofHiddenCount()==0; roof is therefore visible in the capture."
+        },
+        "transitionProven": true
+      },
+      "collision": {
+        "probeTile": [
+          2338,
+          2538
+        ],
+        "probeCode": "KeyS",
+        "wallIds": [
+          "wall.po_ironmine.1",
+          "wall.po_ironmine.4.span.2"
+        ],
+        "wallBlockedNeighbour": true,
+        "spawnFixtureUsed": true,
+        "spawnFixtureNote": "QA fixture positions the player at the wall-adjacent probe tile ONLY; the blocking attempt itself is real keyboard input.",
+        "playerTileBefore": [
+          2338,
+          2538
+        ],
+        "playerTileAfter": [
+          2338,
+          2538
+        ],
+        "blockedAttemptsBefore": 0,
+        "blockedAttemptsAfter": 26,
+        "realKeyboardEvents": 2,
+        "inputCodes": [
+          "KeyS"
+        ],
+        "blocked": true
+      },
+      "collisionShot": "collision_po_ironmine_blocked.png",
+      "final": {
+        "draw": {
+          "roofDrawn": 1,
+          "roofHiddenCount": 0,
+          "wallsDrawn": 7,
+          "doorsDrawn": 2,
+          "floorsDrawn": 0,
+          "propsDrawn": 1
+        },
+        "chunkAudit": {
+          "totalChunks": 11000,
+          "uniqueKeys": 11000,
+          "collisions": 0,
+          "legacyKeyCollisions": 2175
+        },
+        "stats": {
+          "frameTiles": [
+            4000,
+            2800
+          ],
+          "frameAu": [
+            2000,
+            1400
+          ],
+          "U": 0.5,
+          "TILE": 16,
+          "addressableCells": 11200000,
+          "materializedAllCells": false,
+          "residentChunks": 5,
+          "residentLoads": 5,
+          "residentEvictions": 0,
+          "maxResidentChunks": 36,
+          "chunkKeyExample": "creator-u05|125:87",
+          "legacyStrideKey": "NEVER_USED__cy*100+cx",
+          "displayCanvases": 32,
+          "displayBytes": 8388608,
+          "displayLoads": 32,
+          "displayEvictions": 0,
+          "maxDisplayCanvases": 36,
+          "displayChunkKeyExample": "creator-u05|render16|250:175",
+          "simMs": 205309,
+          "movedPx": 7,
+          "blockedAttempts": 26,
+          "spawnFixture": true
+        },
+        "frameMs": {
+          "p50": 16.699999999982538,
+          "p95": 16.70000000001164,
+          "max": 16.800000000017462
+        },
+        "materializedAllCells": false,
+        "maxResidentChunks": 36,
+        "maxDisplayCanvases": 36
+      }
+    },
+    {
+      "id": "po_westmouth",
+      "name": "Westmouth",
+      "contract": "CREATOR_CHOSEN_U05.v1",
+      "status": "CREATOR_SCALE_INTENT_APPROVED__FULL_GAMEPLAY_RUNTIME_INTEGRATION_NOT_YET_VALIDATED",
+      "native": {
+        "viewport": [
+          640,
+          360
+        ],
+        "dpr": 1,
+        "zoom": 1,
+        "cameraTrick": false,
+        "U": 0.5,
+        "TILE": 16,
+        "frameTiles": [
+          4000,
+          2800
+        ],
+        "addressableCells": 11200000,
+        "heroSpritePx": [
+          16,
+          24
+        ],
+        "speedPxPerSec": 72
+      },
+      "geometry": {
+        "buildings": 2,
+        "walls": 7,
+        "doors": 2,
+        "roofs": 2,
+        "envelope": {
+          "class": "reprojected",
+          "source": "GOLD poi.foot",
+          "markerOnly": true,
+          "certifiedBuilding": false,
+          "polygonAu": [
+            [
+              330.36930942921447,
+              547.3401371009161
+            ],
+            [
+              367.8313394364286,
+              538.9047172691241
+            ],
+            [
+              373.63069057078553,
+              564.6598628990839
+            ],
+            [
+              336.1686605635714,
+              573.0952827308759
+            ]
+          ],
+          "polygonTiles": [
+            [
+              660.7386,
+              1094.6803
+            ],
+            [
+              735.6627,
+              1077.8094
+            ],
+            [
+              747.2614,
+              1129.3197
+            ],
+            [
+              672.3373,
+              1146.1906
+            ]
+          ],
+          "polygonTilesSnapped": [
+            [
+              660,
+              1094
+            ],
+            [
+              735,
+              1077
+            ],
+            [
+              747,
+              1129
+            ],
+            [
+              672,
+              1146
+            ]
+          ],
+          "bboxTiles": [
+            660.7386,
+            1077.8094,
+            747.2614,
+            1146.1906
+          ],
+          "areaAu2": 1013.76,
+          "areaTile2": 4055.04,
+          "chunkRange": {
+            "x0": 20,
+            "y0": 33,
+            "x1": 23,
+            "y1": 35
+          },
+          "chunkIdentity": "creator-u05|20:33",
+          "obb": {
+            "centre": [
+              352,
+              556
+            ],
+            "ux": [
+              0.9756,
+              -0.2197
+            ],
+            "uy": [
+              0.2197,
+              0.9756
+            ],
+            "wAu": 38.4,
+            "hAu": 26.4,
+            "angleRad": -0.2215,
+            "wTiles": 76.8,
+            "hTiles": 52.8
+          },
+          "noPolygonAmendment": true,
+          "noShrinkRelocateExpand": true
+        }
+      },
+      "approachPlan": {
+        "roadId": "rd_r",
+        "designed": [
+          [
+            738,
+            1144
+          ],
+          [
+            709,
+            1137
+          ]
+        ],
+        "resolved": {
+          "start": [
+            744,
+            1150
+          ],
+          "goal": [
+            707,
+            1138
+          ]
+        },
+        "adjusted": true,
+        "roadCentrelineChanged": false,
+        "pathFound": true,
+        "pathSteps": 49,
+        "visited": 3359,
+        "note": "Legal tile resolution uses the SAME runtime collision predicate as real WASD input. It is path SELECTION, not a teleport, not a camera route and not a Gameplay law."
+      },
+      "beforeAfter": {
+        "beforeShot": "before_po_westmouth.png",
+        "afterShot": "after_po_westmouth.png",
+        "cameraIdentical": true,
+        "physicalBefore": false,
+        "physicalAfter": true,
+        "drawBefore": {
+          "roofDrawn": 0,
+          "roofHiddenCount": 0,
+          "wallsDrawn": 0,
+          "doorsDrawn": 0,
+          "floorsDrawn": 0,
+          "propsDrawn": 0
+        },
+        "drawAfter": {
+          "roofDrawn": 2,
+          "roofHiddenCount": 0,
+          "wallsDrawn": 7,
+          "doorsDrawn": 2,
+          "floorsDrawn": 2,
+          "propsDrawn": 0
+        },
+        "note": "Same 640x360 1x camera, same player tile, physical layer toggled OFF then ON. GOLD terrain/road untouched."
+      },
+      "spawnFixture": {
+        "used": true,
+        "tile": [
+          744,
+          1150
+        ],
+        "recorded": true,
+        "teleportUsedAsRoute": false,
+        "cameraUsedAsRoute": false
+      },
+      "approach": {
+        "startShot": "approach_po_westmouth_start.png",
+        "goalShot": "approach_po_westmouth_goal.png",
+        "label": "approach_po_westmouth",
+        "startTile": [
+          744,
+          1150
+        ],
+        "goal": [
+          707,
+          1138
+        ],
+        "plannedLen": 49,
+        "plannedCodes": [
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW"
+        ],
+        "stepsWalked": 49,
+        "resyncs": 0,
+        "failures": 0,
+        "arrived": true,
+        "finalTile": [
+          707,
+          1138
+        ],
+        "realKeyboardEvents": 98,
+        "inputCodes": [
+          "KeyA",
+          "KeyW"
+        ],
+        "movedPx": 770,
+        "blockedAttemptsDelta": 0,
+        "spawnFixtureUsed": false,
+        "teleportUsedAsRoute": false,
+        "cameraUsedAsRoute": false,
+        "atDoor": {
+          "tile": [
+            707,
+            1138
+          ],
+          "wallBlockedHere": false,
+          "walkableHere": true
+        }
+      },
+      "reentry": {
+        "shot": "reentry_po_westmouth_back.png",
+        "label": "reentry_po_westmouth",
+        "startTile": [
+          707,
+          1138
+        ],
+        "goal": [
+          744,
+          1150
+        ],
+        "plannedLen": 49,
+        "plannedCodes": [
+          "KeyS",
+          "KeyS",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS"
+        ],
+        "stepsWalked": 49,
+        "resyncs": 0,
+        "failures": 0,
+        "arrived": true,
+        "finalTile": [
+          744,
+          1150
+        ],
+        "realKeyboardEvents": 98,
+        "inputCodes": [
+          "KeyD",
+          "KeyS"
+        ],
+        "movedPx": 756,
+        "blockedAttemptsDelta": 0,
+        "spawnFixtureUsed": false,
+        "teleportUsedAsRoute": false,
+        "cameraUsedAsRoute": false,
+        "finalState": {
+          "tile": [
+            744,
+            1150
+          ],
+          "movedPx": 1526
+        }
+      },
+      "roof": {
+        "roofCentroid": [
+          685,
+          1116
+        ],
+        "legalGoal": [
+          685,
+          1116
+        ],
+        "enter": {
+          "label": "roof_enter_po_westmouth",
+          "startTile": [
+            744,
+            1150
+          ],
+          "goal": [
+            685,
+            1116
+          ],
+          "plannedLen": 93,
+          "plannedCodes": "93 codes",
+          "stepsWalked": 93,
+          "resyncs": 0,
+          "failures": 0,
+          "arrived": true,
+          "finalTile": [
+            685,
+            1116
+          ],
+          "realKeyboardEvents": 186,
+          "inputCodes": [
+            "KeyA",
+            "KeyW"
+          ],
+          "movedPx": 1460,
+          "blockedAttemptsDelta": 0,
+          "spawnFixtureUsed": false,
+          "teleportUsedAsRoute": false,
+          "cameraUsedAsRoute": false
+        },
+        "exit": {
+          "label": "roof_exit_po_westmouth",
+          "startTile": [
+            693,
+            1116
+          ],
+          "goal": [
+            744,
+            1150
+          ],
+          "plannedLen": 85,
+          "plannedCodes": "85 codes",
+          "stepsWalked": 85,
+          "resyncs": 0,
+          "failures": 0,
+          "arrived": true,
+          "finalTile": [
+            744,
+            1150
+          ],
+          "realKeyboardEvents": 170,
+          "inputCodes": [
+            "KeyD",
+            "KeyS"
+          ],
+          "movedPx": 1345,
+          "blockedAttemptsDelta": 0,
+          "spawnFixtureUsed": false,
+          "teleportUsedAsRoute": false,
+          "cameraUsedAsRoute": false
+        },
+        "insideShot": "roof_po_westmouth_inside.png",
+        "outsideShot": "roof_po_westmouth_outside.png",
+        "roofHiddenInside": 1,
+        "roofHiddenOutside": 0,
+        "walkOut": {
+          "steps": 8,
+          "codes": [
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD"
+          ],
+          "realKeyboardEvents": 16,
+          "note": "Real keyboard steps out of the roof until the runtime reports roofHiddenCount()==0; roof is therefore visible in the capture."
+        },
+        "transitionProven": true
+      },
+      "collision": {
+        "probeTile": [
+          731,
+          1075
+        ],
+        "probeCode": "KeyS",
+        "wallIds": [
+          "wall.po_westmouth.1"
+        ],
+        "wallBlockedNeighbour": true,
+        "spawnFixtureUsed": true,
+        "spawnFixtureNote": "QA fixture positions the player at the wall-adjacent probe tile ONLY; the blocking attempt itself is real keyboard input.",
+        "playerTileBefore": [
+          731,
+          1075
+        ],
+        "playerTileAfter": [
+          731,
+          1075
+        ],
+        "blockedAttemptsBefore": 0,
+        "blockedAttemptsAfter": 28,
+        "realKeyboardEvents": 2,
+        "inputCodes": [
+          "KeyS"
+        ],
+        "blocked": true
+      },
+      "collisionShot": "collision_po_westmouth_blocked.png",
+      "final": {
+        "draw": {
+          "roofDrawn": 2,
+          "roofHiddenCount": 0,
+          "wallsDrawn": 7,
+          "doorsDrawn": 2,
+          "floorsDrawn": 2,
+          "propsDrawn": 0
+        },
+        "chunkAudit": {
+          "totalChunks": 11000,
+          "uniqueKeys": 11000,
+          "collisions": 0,
+          "legacyKeyCollisions": 2175
+        },
+        "stats": {
+          "frameTiles": [
+            4000,
+            2800
+          ],
+          "frameAu": [
+            2000,
+            1400
+          ],
+          "U": 0.5,
+          "TILE": 16,
+          "addressableCells": 11200000,
+          "materializedAllCells": false,
+          "residentChunks": 6,
+          "residentLoads": 6,
+          "residentEvictions": 0,
+          "maxResidentChunks": 36,
+          "chunkKeyExample": "creator-u05|125:87",
+          "legacyStrideKey": "NEVER_USED__cy*100+cx",
+          "displayCanvases": 35,
+          "displayBytes": 9175040,
+          "displayLoads": 35,
+          "displayEvictions": 0,
+          "maxDisplayCanvases": 36,
+          "displayChunkKeyExample": "creator-u05|render16|250:175",
+          "simMs": 271006,
+          "movedPx": 7,
+          "blockedAttempts": 28,
+          "spawnFixture": true
+        },
+        "frameMs": {
+          "p50": 16.699999999953434,
+          "p95": 16.79999999998836,
+          "max": 50
+        },
+        "materializedAllCells": false,
+        "maxResidentChunks": 36,
+        "maxDisplayCanvases": 36
+      }
+    },
+    {
+      "id": "po_typhon",
+      "name": "Typhon's Fracture",
+      "contract": "CREATOR_CHOSEN_U05.v1",
+      "status": "CREATOR_SCALE_INTENT_APPROVED__FULL_GAMEPLAY_RUNTIME_INTEGRATION_NOT_YET_VALIDATED",
+      "native": {
+        "viewport": [
+          640,
+          360
+        ],
+        "dpr": 1,
+        "zoom": 1,
+        "cameraTrick": false,
+        "U": 0.5,
+        "TILE": 16,
+        "frameTiles": [
+          4000,
+          2800
+        ],
+        "addressableCells": 11200000,
+        "heroSpritePx": [
+          16,
+          24
+        ],
+        "speedPxPerSec": 72
+      },
+      "geometry": {
+        "buildings": 1,
+        "walls": 5,
+        "doors": 1,
+        "roofs": 1,
+        "envelope": {
+          "class": "reprojected",
+          "source": "GOLD poi.foot",
+          "markerOnly": true,
+          "certifiedBuilding": false,
+          "polygonAu": [
+            [
+              526.1151455757009,
+              337.984812664882
+            ],
+            [
+              579.7872713242492,
+              329.11560088299115
+            ],
+            [
+              585.8848544242991,
+              366.015187335118
+            ],
+            [
+              532.2127286757508,
+              374.88439911700885
+            ]
+          ],
+          "polygonTiles": [
+            [
+              1052.2303,
+              675.9696
+            ],
+            [
+              1159.5745,
+              658.2312
+            ],
+            [
+              1171.7697,
+              732.0304
+            ],
+            [
+              1064.4255,
+              749.7688
+            ]
+          ],
+          "polygonTilesSnapped": [
+            [
+              1052,
+              675
+            ],
+            [
+              1159,
+              658
+            ],
+            [
+              1171,
+              732
+            ],
+            [
+              1064,
+              749
+            ]
+          ],
+          "bboxTiles": [
+            1052.2303,
+            658.2312,
+            1171.7697,
+            749.7688
+          ],
+          "areaAu2": 2034.56,
+          "areaTile2": 8138.24,
+          "chunkRange": {
+            "x0": 32,
+            "y0": 20,
+            "x1": 36,
+            "y1": 23
+          },
+          "chunkIdentity": "creator-u05|32:20",
+          "obb": {
+            "centre": [
+              556,
+              352
+            ],
+            "ux": [
+              0.9866,
+              -0.163
+            ],
+            "uy": [
+              0.163,
+              0.9866
+            ],
+            "wAu": 54.4,
+            "hAu": 37.4,
+            "angleRad": -0.1638,
+            "wTiles": 108.8,
+            "hTiles": 74.8
+          },
+          "noPolygonAmendment": true,
+          "noShrinkRelocateExpand": true
+        }
+      },
+      "approachPlan": {
+        "roadId": "rd_18",
+        "designed": [
+          [
+            1126,
+            658
+          ],
+          [
+            1112,
+            704
+          ]
+        ],
+        "resolved": {
+          "start": [
+            1128,
+            654
+          ],
+          "goal": [
+            1112,
+            704
+          ]
+        },
+        "adjusted": true,
+        "roadCentrelineChanged": false,
+        "pathFound": true,
+        "pathSteps": 66,
+        "visited": 6168,
+        "note": "Legal tile resolution uses the SAME runtime collision predicate as real WASD input. It is path SELECTION, not a teleport, not a camera route and not a Gameplay law."
+      },
+      "beforeAfter": {
+        "beforeShot": "before_po_typhon.png",
+        "afterShot": "after_po_typhon.png",
+        "cameraIdentical": true,
+        "physicalBefore": false,
+        "physicalAfter": true,
+        "drawBefore": {
+          "roofDrawn": 0,
+          "roofHiddenCount": 0,
+          "wallsDrawn": 0,
+          "doorsDrawn": 0,
+          "floorsDrawn": 0,
+          "propsDrawn": 0
+        },
+        "drawAfter": {
+          "roofDrawn": 0,
+          "roofHiddenCount": 1,
+          "wallsDrawn": 5,
+          "doorsDrawn": 1,
+          "floorsDrawn": 0,
+          "propsDrawn": 0
+        },
+        "note": "Same 640x360 1x camera, same player tile, physical layer toggled OFF then ON. GOLD terrain/road untouched."
+      },
+      "spawnFixture": {
+        "used": true,
+        "tile": [
+          1128,
+          654
+        ],
+        "recorded": true,
+        "teleportUsedAsRoute": false,
+        "cameraUsedAsRoute": false
+      },
+      "approach": {
+        "startShot": "approach_po_typhon_start.png",
+        "goalShot": "approach_po_typhon_goal.png",
+        "label": "approach_po_typhon",
+        "startTile": [
+          1128,
+          654
+        ],
+        "goal": [
+          1112,
+          704
+        ],
+        "plannedLen": 66,
+        "plannedCodes": [
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyA",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS",
+          "KeyS"
+        ],
+        "stepsWalked": 66,
+        "resyncs": 0,
+        "failures": 0,
+        "arrived": true,
+        "finalTile": [
+          1112,
+          704
+        ],
+        "realKeyboardEvents": 132,
+        "inputCodes": [
+          "KeyA",
+          "KeyS"
+        ],
+        "movedPx": 1043,
+        "blockedAttemptsDelta": 0,
+        "spawnFixtureUsed": false,
+        "teleportUsedAsRoute": false,
+        "cameraUsedAsRoute": false,
+        "atDoor": {
+          "tile": [
+            1112,
+            704
+          ],
+          "wallBlockedHere": false,
+          "walkableHere": true
+        }
+      },
+      "reentry": {
+        "shot": "reentry_po_typhon_back.png",
+        "label": "reentry_po_typhon",
+        "startTile": [
+          1112,
+          704
+        ],
+        "goal": [
+          1128,
+          654
+        ],
+        "plannedLen": 66,
+        "plannedCodes": [
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyD",
+          "KeyW",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyW",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyW",
+          "KeyD",
+          "KeyD",
+          "KeyD",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW",
+          "KeyW"
+        ],
+        "stepsWalked": 66,
+        "resyncs": 0,
+        "failures": 0,
+        "arrived": true,
+        "finalTile": [
+          1128,
+          654
+        ],
+        "realKeyboardEvents": 132,
+        "inputCodes": [
+          "KeyD",
+          "KeyW"
+        ],
+        "movedPx": 1031,
+        "blockedAttemptsDelta": 0,
+        "spawnFixtureUsed": false,
+        "teleportUsedAsRoute": false,
+        "cameraUsedAsRoute": false,
+        "finalState": {
+          "tile": [
+            1128,
+            654
+          ],
+          "movedPx": 2074
+        }
+      },
+      "roof": {
+        "roofCentroid": [
+          1122,
+          710
+        ],
+        "legalGoal": [
+          1122,
+          710
+        ],
+        "enter": {
+          "label": "roof_enter_po_typhon",
+          "startTile": [
+            1128,
+            654
+          ],
+          "goal": [
+            1122,
+            710
+          ],
+          "plannedLen": 76,
+          "plannedCodes": [
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS",
+            "KeyS"
+          ],
+          "stepsWalked": 76,
+          "resyncs": 0,
+          "failures": 0,
+          "arrived": true,
+          "finalTile": [
+            1122,
+            710
+          ],
+          "realKeyboardEvents": 152,
+          "inputCodes": [
+            "KeyA",
+            "KeyD",
+            "KeyS"
+          ],
+          "movedPx": 1177,
+          "blockedAttemptsDelta": 0,
+          "spawnFixtureUsed": false,
+          "teleportUsedAsRoute": false,
+          "cameraUsedAsRoute": false
+        },
+        "exit": {
+          "label": "roof_exit_po_typhon",
+          "startTile": [
+            1115,
+            701
+          ],
+          "goal": [
+            1128,
+            654
+          ],
+          "plannedLen": 60,
+          "plannedCodes": [
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyD",
+            "KeyW",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyW",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyW",
+            "KeyD",
+            "KeyD",
+            "KeyD",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW"
+          ],
+          "stepsWalked": 60,
+          "resyncs": 0,
+          "failures": 0,
+          "arrived": true,
+          "finalTile": [
+            1128,
+            654
+          ],
+          "realKeyboardEvents": 120,
+          "inputCodes": [
+            "KeyD",
+            "KeyW"
+          ],
+          "movedPx": 948,
+          "blockedAttemptsDelta": 0,
+          "spawnFixtureUsed": false,
+          "teleportUsedAsRoute": false,
+          "cameraUsedAsRoute": false
+        },
+        "insideShot": "roof_po_typhon_inside.png",
+        "outsideShot": "roof_po_typhon_outside.png",
+        "roofHiddenInside": 1,
+        "roofHiddenOutside": 0,
+        "walkOut": {
+          "steps": 16,
+          "codes": [
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyA",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW",
+            "KeyW"
+          ],
+          "realKeyboardEvents": 32,
+          "note": "Real keyboard steps out of the roof until the runtime reports roofHiddenCount()==0; roof is therefore visible in the capture."
+        },
+        "transitionProven": true
+      },
+      "collision": {
+        "probeTile": [
+          1157,
+          658
+        ],
+        "probeCode": "KeyS",
+        "wallIds": [
+          "wall.u05.po_typhon.arena.1.span.2",
+          "wall.u05.po_typhon.arena.2.span.1"
+        ],
+        "wallBlockedNeighbour": true,
+        "spawnFixtureUsed": true,
+        "spawnFixtureNote": "QA fixture positions the player at the wall-adjacent probe tile ONLY; the blocking attempt itself is real keyboard input.",
+        "playerTileBefore": [
+          1157,
+          658
+        ],
+        "playerTileAfter": [
+          1157,
+          658
+        ],
+        "blockedAttemptsBefore": 0,
+        "blockedAttemptsAfter": 23,
+        "realKeyboardEvents": 2,
+        "inputCodes": [
+          "KeyS"
+        ],
+        "blocked": true
+      },
+      "collisionShot": "collision_po_typhon_blocked.png",
+      "final": {
+        "draw": {
+          "roofDrawn": 1,
+          "roofHiddenCount": 0,
+          "wallsDrawn": 5,
+          "doorsDrawn": 1,
+          "floorsDrawn": 0,
+          "propsDrawn": 0
+        },
+        "chunkAudit": {
+          "totalChunks": 11000,
+          "uniqueKeys": 11000,
+          "collisions": 0,
+          "legacyKeyCollisions": 2175
+        },
+        "stats": {
+          "frameTiles": [
+            4000,
+            2800
+          ],
+          "frameAu": [
+            2000,
+            1400
+          ],
+          "U": 0.5,
+          "TILE": 16,
+          "addressableCells": 11200000,
+          "materializedAllCells": false,
+          "residentChunks": 7,
+          "residentLoads": 7,
+          "residentEvictions": 0,
+          "maxResidentChunks": 36,
+          "chunkKeyExample": "creator-u05|125:87",
+          "legacyStrideKey": "NEVER_USED__cy*100+cx",
+          "displayCanvases": 28,
+          "displayBytes": 7340032,
+          "displayLoads": 28,
+          "displayEvictions": 0,
+          "maxDisplayCanvases": 36,
+          "displayChunkKeyExample": "creator-u05|render16|250:175",
+          "simMs": 336753,
+          "movedPx": 7,
+          "blockedAttempts": 23,
+          "spawnFixture": true
+        },
+        "frameMs": {
+          "p50": 16.70000000001164,
+          "p95": 16.70000000001164,
+          "max": 50
+        },
+        "materializedAllCells": false,
+        "maxResidentChunks": 36,
+        "maxDisplayCanvases": 36
+      }
+    }
+  ],
+  "shots": [
+    "after_po_academy.png",
+    "after_po_beacon.png",
+    "after_po_greywater.png",
+    "after_po_ironmine.png",
+    "after_po_typhon.png",
+    "after_po_westmouth.png",
+    "approach_po_academy_goal.png",
+    "approach_po_academy_start.png",
+    "approach_po_beacon_goal.png",
+    "approach_po_beacon_start.png",
+    "approach_po_greywater_goal.png",
+    "approach_po_greywater_start.png",
+    "approach_po_ironmine_goal.png",
+    "approach_po_ironmine_start.png",
+    "approach_po_typhon_goal.png",
+    "approach_po_typhon_start.png",
+    "approach_po_westmouth_goal.png",
+    "approach_po_westmouth_start.png",
+    "before_po_academy.png",
+    "before_po_beacon.png",
+    "before_po_greywater.png",
+    "before_po_ironmine.png",
+    "before_po_typhon.png",
+    "before_po_westmouth.png",
+    "collision_po_academy_blocked.png",
+    "collision_po_beacon_blocked.png",
+    "collision_po_greywater_blocked.png",
+    "collision_po_ironmine_blocked.png",
+    "collision_po_typhon_blocked.png",
+    "collision_po_westmouth_blocked.png",
+    "reentry_po_academy_back.png",
+    "reentry_po_beacon_back.png",
+    "reentry_po_greywater_back.png",
+    "reentry_po_ironmine_back.png",
+    "reentry_po_typhon_back.png",
+    "reentry_po_westmouth_back.png",
+    "roof_po_academy_inside.png",
+    "roof_po_academy_outside.png",
+    "roof_po_beacon_inside.png",
+    "roof_po_beacon_outside.png",
+    "roof_po_greywater_inside.png",
+    "roof_po_greywater_outside.png",
+    "roof_po_ironmine_inside.png",
+    "roof_po_ironmine_outside.png",
+    "roof_po_typhon_inside.png",
+    "roof_po_typhon_outside.png",
+    "roof_po_westmouth_inside.png",
+    "roof_po_westmouth_outside.png"
+  ],
+  "gates": {
+    "P4-G0": {
+      "status": "PASS",
+      "reason": "six Creator-selected deep scenes auditioned"
+    },
+    "P4-G1": {
+      "status": "PASS",
+      "reason": "genuine before/after at identical native camera"
+    },
+    "P4-G2": {
+      "status": "PASS",
+      "reason": "real-input approach and reentry arrive at their legal tiles"
+    },
+    "P4-G3": {
+      "status": "PASS",
+      "reason": "real-input solid wall collision blocked"
+    },
+    "P4-G4": {
+      "status": "PASS",
+      "reason": "roof hidden/visible transition along real walks"
+    },
+    "P4-G5": {
+      "status": "PASS",
+      "reason": "zero console/page/request errors"
+    },
+    "P4-G6": {
+      "status": "PASS",
+      "reason": "bounded LRU chunks/canvases, unique chunk keys, no eager 11.2M cell allocation"
+    },
+    "P4-G7": {
+      "status": "PASS",
+      "reason": "native 640x360 1x camera, U=0.5, unstretched 16x24 hero"
+    }
+  },
+  "notProven": [
+    "Full Gameplay runtime integration (VEYRA_PLAYABLE)",
+    "Creator visual acceptance",
+    "All 81 POIs art-complete/interactive",
+    "Production inventory/transactions/traces/monsters/ownership/loot/keys/power/HP law",
+    "Marine/boat/ferry/swim law, helicopter object, car wreck/ship hull substitute",
+    "Full 4000x2800 streaming / sustained 60 FPS production acceptance",
+    "Any change to the Creator-liked Beacon road (preserved verbatim)"
+  ]
+}

@@ -1,0 +1,1309 @@
+{
+  "schema": "soh.u05.deep-physical-scene.v1",
+  "id": "po_ironmine",
+  "name": "Ironholm Mine",
+  "contract": "CREATOR_CHOSEN_U05.v1",
+  "generatedAt": "2026-11-05T06:49:44.306Z",
+  "status": "P3_DEEP_PHYSICAL_DESIGN__ART_INCOMPLETE_WHITEBOX__REQUIRES_RUNTIME_WALK_PROOF",
+  "intent": "Exterior material handling, a real adit entrance and a reserved shaft/multi-layer spatial programme. Road/cart clearance stays UNRESOLVED unless approved — no cart law created.",
+  "sourceCustody": {
+    "goldPoiIdSha256": "8088ba0449f73f9de334d3a84ccbddc9246a33013cd9a88ce3c58bceb64b1ba1",
+    "architecturePoiSha256": "e92245ee0e15d4c4833bc559f4ea26d6b3807a09de00cf794dcda59d660451d7",
+    "masterplanEntrySha256": "e581521da84d7fd04de4ba499252d0cbcafe9f849135cd21aa4f78d80b9e7c80",
+    "liveGameplaySha": "b5c8004ca4e77be62484fb3cd296fe296d7de4c9",
+    "noGOLDFileModified": true,
+    "noRoadRedraw": true,
+    "noAtlasAdded": true
+  },
+  "camera": {
+    "viewport": [
+      640,
+      360
+    ],
+    "dpr": 1,
+    "zoom": 1,
+    "cameraTrick": false,
+    "anchorAu": [
+      1186,
+      1290
+    ],
+    "anchorTile": [
+      2372,
+      2580
+    ],
+    "U": 0.5,
+    "TILE": 16,
+    "heroSpritePx": [
+      16,
+      24
+    ],
+    "speedPxPerSec": 72
+  },
+  "states": {
+    "exterior": "MATERIAL_HANDLING_YARD_AND_ROAD_FREE",
+    "interior": "ADIT_HEADHOUSE_WITH_THRESHOLD",
+    "inaccessible": "DEEP_SHAFT_RESERVATION_ONLY"
+  },
+  "beforeAfter": {
+    "globalCoordsAu": [
+      1186,
+      1290
+    ],
+    "cameraTile": [
+      2372,
+      2580
+    ],
+    "beforePhysicalLayer": false,
+    "afterPhysicalLayer": true,
+    "sameCamera": true,
+    "sameGlobalCoordinates": true,
+    "note": "Before = live-SHA terrain + GOLD roads, physical layer OFF. After = identical camera/global coords, physical layer ON."
+  },
+  "SITE_ENVELOPE": {
+    "class": "reprojected",
+    "source": "GOLD poi.foot",
+    "markerOnly": true,
+    "certifiedBuilding": false,
+    "polygonAu": [
+      [
+        1169.8184967327636,
+        1270.6276239967208
+      ],
+      [
+        1209.882173194247,
+        1281.8285984360093
+      ],
+      [
+        1202.1815032672364,
+        1309.3723760032792
+      ],
+      [
+        1162.117826805753,
+        1298.1714015639907
+      ]
+    ],
+    "polygonTiles": [
+      [
+        2339.637,
+        2541.2552
+      ],
+      [
+        2419.7643,
+        2563.6572
+      ],
+      [
+        2404.363,
+        2618.7448
+      ],
+      [
+        2324.2357,
+        2596.3428
+      ]
+    ],
+    "polygonTilesSnapped": [
+      [
+        2339,
+        2541
+      ],
+      [
+        2419,
+        2563
+      ],
+      [
+        2404,
+        2618
+      ],
+      [
+        2324,
+        2596
+      ]
+    ],
+    "bboxTiles": [
+      2324.2357,
+      2541.2552,
+      2419.7643,
+      2618.7448
+    ],
+    "areaAu2": 1189.76,
+    "areaTile2": 4759.04,
+    "chunkRange": {
+      "x0": 72,
+      "y0": 79,
+      "x1": 75,
+      "y1": 81
+    },
+    "chunkIdentity": "creator-u05|72:79",
+    "obb": {
+      "centre": [
+        1186,
+        1290
+      ],
+      "ux": [
+        0.9631,
+        0.2693
+      ],
+      "uy": [
+        -0.2693,
+        0.9631
+      ],
+      "wAu": 41.6,
+      "hAu": 28.6,
+      "angleRad": 0.2726,
+      "wTiles": 83.2,
+      "hTiles": 57.2
+    },
+    "noPolygonAmendment": true,
+    "noShrinkRelocateExpand": true
+  },
+  "BUILDING_COMPOSITION": {
+    "class": "proposed",
+    "separateStructureCount": 2,
+    "deepReservationCount": 1,
+    "buildings": [
+      {
+        "id": "room.po_ironmine.1.1",
+        "role": "Exterior material handling, a real adit entrance and a reserved shaft/multi-layer spatial programme / structure 1 of 2",
+        "pattern": "adit_and_vault",
+        "status": "PROPOSED__WHITEBOX_PHYSICAL_PROOF__NOT_FINAL_PIXEL_ART",
+        "polygonAu": [
+          [
+            1170.5113,
+            1271.8569
+          ],
+          [
+            1188.619,
+            1276.9202
+          ],
+          [
+            1181.4548,
+            1302.5413
+          ],
+          [
+            1163.3471,
+            1297.478
+          ]
+        ],
+        "polygonTiles": [
+          [
+            2341.0226,
+            2543.7138
+          ],
+          [
+            2377.238,
+            2553.8404
+          ],
+          [
+            2362.9096,
+            2605.0826
+          ],
+          [
+            2326.6942,
+            2594.956
+          ]
+        ],
+        "bboxTiles": [
+          2326.6942,
+          2543.7138,
+          2377.238,
+          2605.0826
+        ],
+        "sourceRoomPolygonTiles": [
+          [
+            2341.0226,
+            2543.7138
+          ],
+          [
+            2377.238,
+            2553.8404
+          ],
+          [
+            2362.9096,
+            2605.0826
+          ],
+          [
+            2326.6942,
+            2594.956
+          ]
+        ],
+        "sourceRoomAreaTile2": 2000.8548,
+        "sourceRoof": {
+          "covered": false,
+          "canopyOnly": false,
+          "coverageFractionOfRoom": 0
+        },
+        "footprintTiles": [
+          [
+            2345.9472,
+            2557.5218
+          ],
+          [
+            2365.8656,
+            2563.0914
+          ],
+          [
+            2357.985,
+            2591.2746
+          ],
+          [
+            2338.0666,
+            2585.705
+          ]
+        ],
+        "footprintBboxTiles": [
+          2338.0666,
+          2557.5218,
+          2365.8656,
+          2591.2746
+        ],
+        "insetFactor": 0.55,
+        "footprintAreaTile2": 605.256,
+        "areaAu2": 500.2137,
+        "areaTile2": 2000.8548,
+        "centroidTile": [
+          2351.966,
+          2574.3982
+        ],
+        "wallSprite": "wall_brick",
+        "floorSprite": "none",
+        "roofSprite": "roof_tin",
+        "roofMode": "source",
+        "note": "Inset footprint is PROPOSED physical composition INSIDE the unchanged GOLD poi.foot. Source room polygon and source roof descriptor are preserved verbatim."
+      },
+      {
+        "id": "room.po_ironmine.1.2",
+        "role": "Exterior material handling, a real adit entrance and a reserved shaft/multi-layer spatial programme / structure 2 of 2",
+        "pattern": "adit_and_vault",
+        "status": "PROPOSED__WHITEBOX_PHYSICAL_PROOF__NOT_FINAL_PIXEL_ART",
+        "polygonAu": [
+          [
+            1190.5452,
+            1277.4587
+          ],
+          [
+            1208.6529,
+            1282.522
+          ],
+          [
+            1201.4887,
+            1308.1431
+          ],
+          [
+            1183.381,
+            1303.0798
+          ]
+        ],
+        "polygonTiles": [
+          [
+            2381.0904,
+            2554.9174
+          ],
+          [
+            2417.3058,
+            2565.044
+          ],
+          [
+            2402.9774,
+            2616.2862
+          ],
+          [
+            2366.762,
+            2606.1596
+          ]
+        ],
+        "bboxTiles": [
+          2366.762,
+          2554.9174,
+          2417.3058,
+          2616.2862
+        ],
+        "sourceRoomPolygonTiles": [
+          [
+            2381.0904,
+            2554.9174
+          ],
+          [
+            2417.3058,
+            2565.044
+          ],
+          [
+            2402.9774,
+            2616.2862
+          ],
+          [
+            2366.762,
+            2606.1596
+          ]
+        ],
+        "sourceRoomAreaTile2": 2000.8548,
+        "sourceRoof": {
+          "covered": false,
+          "canopyOnly": false,
+          "coverageFractionOfRoom": 0
+        },
+        "footprintTiles": [
+          [
+            2386.015,
+            2568.7254
+          ],
+          [
+            2405.9334,
+            2574.295
+          ],
+          [
+            2398.0528,
+            2602.4782
+          ],
+          [
+            2378.1344,
+            2596.9086
+          ]
+        ],
+        "footprintBboxTiles": [
+          2378.1344,
+          2568.7254,
+          2405.9334,
+          2602.4782
+        ],
+        "insetFactor": 0.55,
+        "footprintAreaTile2": 605.256,
+        "areaAu2": 500.2137,
+        "areaTile2": 2000.8548,
+        "centroidTile": [
+          2392.0338,
+          2585.6018
+        ],
+        "wallSprite": "wall_brick",
+        "floorSprite": "none",
+        "roofSprite": "roof_tin",
+        "roofMode": "source",
+        "note": "Inset footprint is PROPOSED physical composition INSIDE the unchanged GOLD poi.foot. Source room polygon and source roof descriptor are preserved verbatim."
+      }
+    ],
+    "deepReservations": [
+      {
+        "id": "room.po_ironmine.deep.1",
+        "polygonTiles": [
+          [
+            2364.2398,
+            2568.8048
+          ],
+          [
+            2401.6068,
+            2579.252
+          ],
+          [
+            2395.3602,
+            2601.5952
+          ],
+          [
+            2357.9932,
+            2591.148
+          ]
+        ],
+        "areaTile2": 900.158,
+        "status": "SPATIAL_RESERVATION_ONLY__NO_VERTICAL_SEPARATION_VALUE"
+      }
+    ],
+    "spatialProgrammeAreas": [
+      {
+        "id": "ore_stockpile_yard",
+        "kind": "UTILITY_YARD",
+        "role": "exterior material handling; existing barrel/cargo/cart art only",
+        "status": "proposed",
+        "obbRectNormalised": [
+          -0.49,
+          -0.2,
+          -0.12,
+          0.38
+        ],
+        "polygonAu": [
+          [
+            1167.9086,
+            1279.0017
+          ],
+          [
+            1182.7326,
+            1283.1467
+          ],
+          [
+            1178.2655,
+            1299.1226
+          ],
+          [
+            1163.4414,
+            1294.9776
+          ]
+        ],
+        "polygonTiles": [
+          [
+            2335.8171,
+            2558.0033
+          ],
+          [
+            2365.4652,
+            2566.2934
+          ],
+          [
+            2356.5309,
+            2598.2453
+          ],
+          [
+            2326.8828,
+            2589.9551
+          ]
+        ],
+        "bboxTiles": [
+          2326.8828,
+          2558.0033,
+          2365.4652,
+          2598.2453
+        ],
+        "areaAu2": 255.344,
+        "areaTile2": 1021.3759,
+        "art": "barrel",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      },
+      {
+        "id": "cart_approach",
+        "kind": "CIRCULATION",
+        "role": "GOLD rd_11 approach — UNCHANGED",
+        "status": "source-authored",
+        "obbRectNormalised": [
+          -0.49,
+          -0.49,
+          0.49,
+          -0.38
+        ],
+        "polygonAu": [
+          [
+            1170.1421,
+            1271.0137
+          ],
+          [
+            1209.4058,
+            1281.9925
+          ],
+          [
+            1208.5586,
+            1285.0224
+          ],
+          [
+            1169.2949,
+            1274.0436
+          ]
+        ],
+        "polygonTiles": [
+          [
+            2340.2843,
+            2542.0274
+          ],
+          [
+            2418.8116,
+            2563.9851
+          ],
+          [
+            2417.1172,
+            2570.0449
+          ],
+          [
+            2338.5898,
+            2548.0872
+          ]
+        ],
+        "bboxTiles": [
+          2338.5898,
+          2542.0274,
+          2418.8116,
+          2570.0449
+        ],
+        "areaAu2": 128.2669,
+        "areaTile2": 513.0677,
+        "art": "none",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      },
+      {
+        "id": "adit_apron",
+        "kind": "OPEN_SPACE",
+        "role": "threshold apron before the shaft headhouse",
+        "status": "proposed",
+        "obbRectNormalised": [
+          -0.12,
+          0.1,
+          0.22,
+          0.42
+        ],
+        "polygonAu": [
+          [
+            1180.422,
+            1291.4101
+          ],
+          [
+            1194.0441,
+            1295.2191
+          ],
+          [
+            1191.5795,
+            1304.0334
+          ],
+          [
+            1177.9574,
+            1300.2244
+          ]
+        ],
+        "polygonTiles": [
+          [
+            2360.844,
+            2582.8202
+          ],
+          [
+            2388.0882,
+            2590.4382
+          ],
+          [
+            2383.1589,
+            2608.0668
+          ],
+          [
+            2355.9147,
+            2600.4488
+          ]
+        ],
+        "bboxTiles": [
+          2355.9147,
+          2582.8202,
+          2388.0882,
+          2608.0668
+        ],
+        "areaAu2": 129.4568,
+        "areaTile2": 517.8271,
+        "art": "floor_stone",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      },
+      {
+        "id": "shaft_reservation",
+        "kind": "RESERVATION",
+        "role": "multi-layer spatial reservation; NO invented vertical separation value",
+        "status": "proposed",
+        "obbRectNormalised": [
+          0.22,
+          -0.3,
+          0.49,
+          0.3
+        ],
+        "polygonAu": [
+          [
+            1197.1249,
+            1284.2012
+          ],
+          [
+            1207.9424,
+            1287.226
+          ],
+          [
+            1203.3212,
+            1303.7528
+          ],
+          [
+            1192.5037,
+            1300.728
+          ]
+        ],
+        "polygonTiles": [
+          [
+            2394.2498,
+            2568.4025
+          ],
+          [
+            2415.8848,
+            2574.452
+          ],
+          [
+            2406.6425,
+            2607.5056
+          ],
+          [
+            2385.0074,
+            2601.4561
+          ]
+        ],
+        "bboxTiles": [
+          2385.0074,
+          2568.4025,
+          2415.8848,
+          2607.5056
+        ],
+        "areaAu2": 192.7573,
+        "areaTile2": 771.0293,
+        "art": "none",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      },
+      {
+        "id": "cart_clearance",
+        "kind": "UNRESOLVED",
+        "role": "swept cart clearance has no approved number",
+        "status": "proposed",
+        "obbRectNormalised": [
+          -0.12,
+          -0.38,
+          0.22,
+          -0.2
+        ],
+        "polygonAu": [
+          [
+            1184.119,
+            1278.1887
+          ],
+          [
+            1197.741,
+            1281.9977
+          ],
+          [
+            1196.3547,
+            1286.9557
+          ],
+          [
+            1182.7326,
+            1283.1467
+          ]
+        ],
+        "polygonTiles": [
+          [
+            2368.2379,
+            2556.3774
+          ],
+          [
+            2395.4821,
+            2563.9953
+          ],
+          [
+            2392.7094,
+            2573.9114
+          ],
+          [
+            2365.4652,
+            2566.2934
+          ]
+        ],
+        "bboxTiles": [
+          2365.4652,
+          2556.3774,
+          2395.4821,
+          2573.9114
+        ],
+        "areaAu2": 72.8194,
+        "areaTile2": 291.2777,
+        "art": "none",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05 / GAMEPLAY"
+      }
+    ],
+    "sightlines": [
+      "road -> stockpile yard -> adit threshold"
+    ],
+    "roofHierarchy": "1 roof polygons over 2 separate structures",
+    "compositionBeforeAfter": {
+      "sourceRoomPolygonCount": 2,
+      "sourceRoomCoverageFractionOfEnvelope": 0.8409,
+      "proposedSeparateStructures": 2,
+      "proposedRoofPolygons": 1,
+      "proposedFootprintCoverageFractionOfEnvelope": 0.2544,
+      "drawnRoofCoverageFractionOfEnvelope": 0.0572,
+      "drawnCoverageFractionOfEnvelope": 0.0572,
+      "openSpaceFractionAfter": 0.9428,
+      "openTerrainArena": true,
+      "goldEnvelopeChanged": false,
+      "goldPolygonAmended": false,
+      "reason": "Ground is OPEN-AIR material handling (WMP-03 covered=false); only the deep vault roof is a reservation. No invented ground roof.",
+      "overrideNote": "Ground floors/roofs are NOT drawn because source rooms are uncovered open yards; the deep vault roof remains a RESERVATION only.",
+      "note": "Before = WMP-03 PROPOSED full rooms/roof descriptors. After = U05 PROPOSED inset footprints and roof hierarchy. Both are DESIGN states, NOT GOLD canon changes; measured incompatibility and before/after comparison are explicit."
+    },
+    "coherentGrounds": true,
+    "oneHugeRectangularRoof": false,
+    "emptyInflatedRectangle": false,
+    "randomProps": 0
+  },
+  "DOORS_ROOMS": {
+    "class": "proposed",
+    "roomCount": 3,
+    "hall": "ENCLOSED_MULTI_LAYER",
+    "exteriorEntrance": {
+      "id": "portal.po_ironmine.entrance",
+      "centreAu": [
+        1165.9682,
+        1284.3995
+      ],
+      "centreTile": [
+        2331.9364,
+        2568.799
+      ],
+      "openingTiles": 12,
+      "effectiveClearWidthTiles": 8,
+      "staticHole": true,
+      "dynamicDoorOwner": "GAMEPLAY",
+      "doorState": "UNKNOWN"
+    },
+    "openings": [
+      {
+        "id": "portal.po_ironmine.entrance",
+        "kind": "EXTERIOR_ENTRANCE",
+        "centreTile": [
+          2331.9364,
+          2568.799
+        ],
+        "aTile": [
+          2330.3208,
+          2574.5774
+        ],
+        "bTile": [
+          2333.5518,
+          2563.0206
+        ],
+        "openingTiles": 12,
+        "effectiveClearWidthTiles": 8,
+        "traversable": true,
+        "doorSprite": "poi_door",
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "portal.po_ironmine.h.1.1",
+        "kind": "INTERIOR_DOORWAY",
+        "centreTile": [
+          2372,
+          2580
+        ],
+        "aTile": [
+          2373.6158,
+          2574.2216
+        ],
+        "bTile": [
+          2370.3842,
+          2585.7784
+        ],
+        "openingTiles": 12,
+        "effectiveClearWidthTiles": 8,
+        "traversable": true,
+        "doorSprite": "poi_door_open",
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "status": "SOURCE_AUTHORED"
+      }
+    ],
+    "thresholds": [
+      {
+        "id": "portal.po_ironmine.entrance",
+        "minClearWidthTiles": 8,
+        "heroWidthPx": 16,
+        "heroWidthTiles": 1,
+        "passable": true,
+        "note": "Physically meaningful clear width; player 16x24 px is NOT stretched."
+      },
+      {
+        "id": "portal.po_ironmine.h.1.1",
+        "minClearWidthTiles": 8,
+        "heroWidthPx": 16,
+        "heroWidthTiles": 1,
+        "passable": true,
+        "note": "Physically meaningful clear width; player 16x24 px is NOT stretched."
+      }
+    ],
+    "namedPlaceholders": []
+  },
+  "ROOF_OCCLUSION": {
+    "class": "proposed",
+    "roofPolygonCount": 1,
+    "sourceRoofPolygonCount": 1,
+    "roofs": [
+      {
+        "id": "roof.room.po_ironmine.deep.1",
+        "parentRoomId": "room.po_ironmine.deep.1",
+        "polygonAu": [
+          [
+            1182.1199,
+            1284.4024
+          ],
+          [
+            1200.8034,
+            1289.626
+          ],
+          [
+            1197.6801,
+            1300.7976
+          ],
+          [
+            1178.9966,
+            1295.574
+          ]
+        ],
+        "sourcePolygonTiles": [
+          [
+            2364.2398,
+            2568.8048
+          ],
+          [
+            2401.6068,
+            2579.252
+          ],
+          [
+            2395.3602,
+            2601.5952
+          ],
+          [
+            2357.9932,
+            2591.148
+          ]
+        ],
+        "polygonTiles": [
+          [
+            2371.2419,
+            2576.1826
+          ],
+          [
+            2391.7937,
+            2581.9286
+          ],
+          [
+            2388.3581,
+            2594.2174
+          ],
+          [
+            2367.8063,
+            2588.4714
+          ]
+        ],
+        "status": "DEEP_RESERVATION_ROOF__NOT_A_GROUND_ROOF",
+        "sprite": "roof_tin",
+        "insetFactor": 0.55,
+        "note": "Deep-level spatial reservation only; NO invented vertical separation value."
+      }
+    ],
+    "rule": "Runtime draws a roof ABOVE the player, then HIDES it when the player centre is inside that roof polygon. This is real occlusion, not a POI text label.",
+    "whiteboxNote": "Reused SOH roof sprites are physical proof, NOT final pixel art / art-complete."
+  },
+  "SOLID_COLLISION": {
+    "class": "proposed",
+    "mesh": "line-segment spans split BY static openings; thickness in U=0.5 tiles",
+    "solidCount": 7,
+    "solids": [
+      {
+        "id": "wall.po_ironmine.1",
+        "aTile": [
+          2339.637,
+          2541.2552
+        ],
+        "bTile": [
+          2419.7644,
+          2563.6572
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_brick",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_ironmine.2",
+        "aTile": [
+          2419.7644,
+          2563.6572
+        ],
+        "bTile": [
+          2404.363,
+          2618.7448
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_brick",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_ironmine.3",
+        "aTile": [
+          2404.363,
+          2618.7448
+        ],
+        "bTile": [
+          2324.2356,
+          2596.3428
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_brick",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_ironmine.4.span.1",
+        "aTile": [
+          2324.2356,
+          2596.3428
+        ],
+        "bTile": [
+          2330.3208,
+          2574.5774
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_brick",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_ironmine.4.span.2",
+        "aTile": [
+          2333.5518,
+          2563.0206
+        ],
+        "bTile": [
+          2339.637,
+          2541.2552
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_brick",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_ironmine.split.v.1.span.1",
+        "aTile": [
+          2379.7028,
+          2552.4528
+        ],
+        "bTile": [
+          2373.6158,
+          2574.2216
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_brick",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_ironmine.split.v.1.span.2",
+        "aTile": [
+          2370.3842,
+          2585.7784
+        ],
+        "bTile": [
+          2364.2972,
+          2607.5472
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_brick",
+        "status": "SOURCE_AUTHORED"
+      }
+    ],
+    "sourceSolidCount": 7,
+    "proposedSolidCount": 0,
+    "proposedSolidsNote": "None.",
+    "openingsBypassSolids": true,
+    "idMapping": [
+      {
+        "oldId": "wall.po_ironmine.1",
+        "newIds": [
+          "wall.po_ironmine.1"
+        ],
+        "kind": "UNCHANGED",
+        "openingCount": 0
+      },
+      {
+        "oldId": "wall.po_ironmine.2",
+        "newIds": [
+          "wall.po_ironmine.2"
+        ],
+        "kind": "UNCHANGED",
+        "openingCount": 0
+      },
+      {
+        "oldId": "wall.po_ironmine.3",
+        "newIds": [
+          "wall.po_ironmine.3"
+        ],
+        "kind": "UNCHANGED",
+        "openingCount": 0
+      },
+      {
+        "oldId": "wall.po_ironmine.4",
+        "newIds": [
+          "wall.po_ironmine.4.span.1",
+          "wall.po_ironmine.4.span.2"
+        ],
+        "kind": "SPLIT_BY_OPENINGS",
+        "openingCount": 1
+      },
+      {
+        "oldId": "wall.po_ironmine.split.v.1",
+        "newIds": [
+          "wall.po_ironmine.split.v.1.span.1",
+          "wall.po_ironmine.split.v.1.span.2"
+        ],
+        "kind": "SPLIT_BY_OPENINGS",
+        "openingCount": 1
+      }
+    ],
+    "terrainCollision": "GOLD land/water/cliff candidates from LW-01 sampleAt(); NO artificial marine permission",
+    "walkabilitySample": {
+      "boundsTiles": [
+        2312,
+        2529,
+        2432,
+        2631
+      ],
+      "method": "runtime BFS using the SAME collision function as real WASD input",
+      "status": "TO_BE_MEASURED_IN_BROWSER"
+    }
+  },
+  "NAV_RETREAT": {
+    "class": "proposed",
+    "circulation": {
+      "lr01Graph": {
+        "entranceRoomId": "room.po_ironmine.1.1",
+        "reachableRooms": 2,
+        "totalRooms": 2,
+        "maxDepth": 1,
+        "depthByRoomId": {
+          "room.po_ironmine.1.1": 0,
+          "room.po_ironmine.1.2": 1
+        },
+        "interiorDepthAu": 31.2011,
+        "status": "DERIVED"
+      },
+      "roomGraphStart": "room.po_ironmine.1.1",
+      "physicalRoomReach": {
+        "room.po_ironmine.1.1": true,
+        "room.po_ironmine.1.2": true
+      },
+      "graphReachableRooms": [
+        "room.po_ironmine.1.1",
+        "room.po_ironmine.1.2"
+      ],
+      "graphOnlyRooms": [],
+      "physicalOnlyRooms": [],
+      "diagonalOnlyReachableRooms": [],
+      "physicallyReachableRoomCount": 2,
+      "groundRoomCount": 2,
+      "note": "Graph BFS is NOT substituted for physical clearance: both are computed and compared."
+    },
+    "architectureRetreat": {
+      "status": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+      "waypointCount": 1,
+      "pathAu": [
+        [
+          1186,
+          1290
+        ],
+        [
+          1202.5806,
+          1344.7442
+        ]
+      ],
+      "lengthAu": 57.2,
+      "exitAtAu": [
+        1202.5806,
+        1344.7442
+      ],
+      "note": "Canonical retreat is a set of waypoints (often one). The segment from the POI anchor is DERIVED; no full retreat corridor is invented."
+    },
+    "goldRetreatPoints": [
+      {
+        "au": [
+          1202.5805509757422,
+          1344.7441807806165
+        ],
+        "tile": [
+          2405,
+          2689
+        ]
+      }
+    ],
+    "roadApproach": {
+      "roadId": "rd_11",
+      "roadSegmentAu": [
+        [
+          1181,
+          1278
+        ],
+        [
+          1186,
+          1290
+        ]
+      ],
+      "schematicCentrePointAu": [
+        1186,
+        1290
+      ],
+      "startAu": [
+        1195.2308,
+        1312.1538
+      ],
+      "startTile": [
+        2390,
+        2624
+      ],
+      "centrelineChanged": false
+    },
+    "approachPathAu": [
+      [
+        1195.2308,
+        1312.1538
+      ],
+      [
+        1165.9682,
+        1284.3995
+      ]
+    ],
+    "approachPathTiles": [
+      [
+        2390,
+        2624
+      ],
+      [
+        2331,
+        2568
+      ]
+    ],
+    "reentryPathAu": [
+      [
+        1165.9682,
+        1284.3995
+      ],
+      [
+        1195.2308,
+        1312.1538
+      ],
+      [
+        1165.9682,
+        1284.3995
+      ]
+    ],
+    "walkTest": {
+      "method": "Browser BFS on runtime collision -> REAL keyboard WASD/arrow events at 72 px/s -> measured global pixel positions",
+      "teleportUsed": false,
+      "camUsedAsRoute": false,
+      "status": "TO_BE_PROVEN_IN_BROWSER"
+    },
+    "meaningfulRetreat": {
+      "status": "GOLD_RETREAT_POINT_RECORDED",
+      "goldRetreatPoints": [
+        {
+          "au": [
+            1202.5805509757422,
+            1344.7441807806165
+          ],
+          "tile": [
+            2405,
+            2689
+          ]
+        }
+      ],
+      "architectureRetreat": {
+        "status": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+        "waypointCount": 1,
+        "pathAu": [
+          [
+            1186,
+            1290
+          ],
+          [
+            1202.5806,
+            1344.7442
+          ]
+        ],
+        "lengthAu": 57.2,
+        "exitAtAu": [
+          1202.5806,
+          1344.7442
+        ],
+        "note": "Canonical retreat is a set of waypoints (often one). The segment from the POI anchor is DERIVED; no full retreat corridor is invented."
+      },
+      "circulation": {
+        "physicallyReachableRoomCount": 2,
+        "groundRoomCount": 2,
+        "graphOnlyRooms": []
+      },
+      "note": "A retreat point or a room graph is a paper design record, NOT a physically demonstrated exit. Runtime walk proof exists only for the six P3 pilot scenes."
+    }
+  },
+  "GAMEPLAY_SOCKETS": {
+    "class": "runtime-owned",
+    "gate": "none",
+    "power": "GAMEPLAY",
+    "locks": "GAMEPLAY",
+    "hp": "GAMEPLAY",
+    "ownership": "GAMEPLAY",
+    "loot": "GAMEPLAY",
+    "enemyPlacement": "GAMEPLAY",
+    "fabricatedLoot": false,
+    "fabricatedOwnershipOrCash": false,
+    "bossState": false,
+    "combatRewards": false,
+    "vendorEconomics": false,
+    "boatGameplay": false,
+    "marinePermission": "UNRESOLVED_GAMEPLAY",
+    "buildPermission": "UNKNOWN__GAMEPLAY",
+    "cargoApproval": false
+  },
+  "terrainConstraints": {
+    "shoreline": "n/a",
+    "cliff": "WMP-03 cliff candidate, no gameplay slope law",
+    "seaLandWalk": false,
+    "boatGameplay": false,
+    "cartClearance": "UNRESOLVED"
+  },
+  "markers": [],
+  "subScenes": [],
+  "physicalProof": {
+    "artComplete": false,
+    "whiteboxPhysicalProof": true,
+    "runtimeWalkProof": "PROVEN_BY_P4_QA",
+    "distinguish": "Grey boxes / reused SOH sprites prove geometry, collision, doors, roof occlusion and walkability. They are NOT final pixel art and NOT visual acceptance.",
+    "captureRequirement": [
+      "before",
+      "after",
+      "approach",
+      "reentry",
+      "roof_occlusion"
+    ],
+    "runtimeWalkEvidence": {
+      "report": "creator-u05/evidence/qa-report.json",
+      "sceneId": "po_ironmine",
+      "realKeyboardApproachEvents": 114,
+      "realKeyboardReentryEvents": 114,
+      "approachArrived": true,
+      "reentryArrived": true,
+      "wallCollisionBlocked": true,
+      "roofHiddenInside": 1,
+      "roofHiddenOutside": 0,
+      "roofTransitionProven": true,
+      "shots": [
+        "before_po_ironmine.png",
+        "after_po_ironmine.png",
+        "approach_po_ironmine_start.png",
+        "approach_po_ironmine_goal.png",
+        "reentry_po_ironmine_back.png",
+        "roof_po_ironmine_inside.png",
+        "roof_po_ironmine_outside.png",
+        "collision_po_ironmine_blocked.png"
+      ],
+      "spawnFixtureDisclosed": true,
+      "note": "Runtime WALK / collision / roof-occlusion proof for the ISOLATED six-scene Creator audition ONLY. NOT full Gameplay runtime integration, NOT visual acceptance, NOT art-complete."
+    }
+  },
+  "conflicts": [
+    {
+      "kind": "CART_SWEPT_CLEARANCE",
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY"
+    }
+  ]
+}

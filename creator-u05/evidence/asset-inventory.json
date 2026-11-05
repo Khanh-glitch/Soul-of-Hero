@@ -1,0 +1,193 @@
+{
+  "schema": "soh.u05.asset-inventory.v1",
+  "generatedAt": "2026-11-05T07:22:57.548Z",
+  "scope": "ISOLATED six-scene U05 Creator audition. Additive physical POI layer. NOT full Gameplay runtime integration, NOT visual acceptance, NOT art-complete.",
+  "policy": "REUSE_EXISTING_SOH_GAME_ART_RENDERER_AND_SPRITES_FIRST; productionAtlas=NOT_AUTHORIZED; creatorVisualApproval=NOT_REQUESTED.",
+  "noNewAtlas": true,
+  "newPngArtFiles": [],
+  "reusedStructureSprites": {
+    "source": "b5c8004ca4e77be62484fb3cd296fe296d7de4c9:web/src/game/art.ts buildStructs()",
+    "availableCount": 68,
+    "usedCount": 12,
+    "used": [
+      "barrel",
+      "floor_stone",
+      "floor_wood",
+      "poi_door",
+      "poi_door_open",
+      "roof_thatch",
+      "roof_tile",
+      "roof_tin",
+      "roof_wood",
+      "wall_brick",
+      "wall_stone",
+      "wall_wood"
+    ],
+    "allUsedExistInSource": true,
+    "unusedButDeliberatelyNotUsedAsSubstitute": [
+      "wreck",
+      "roof_hull",
+      "cart",
+      "cargo"
+    ],
+    "note": "The live art.ts \"wreck\" sprite exists but is NOT used as a car wreck / ship hull / helicopter substitute. Beacon helicopter remains PROVEN_MISSING and is drawn ONLY as a dashed helipad reservation outline."
+  },
+  "hero": {
+    "source": "buildHero() in live art.ts",
+    "sizePx": [
+      16,
+      24
+    ],
+    "stretched": false,
+    "hud": "NOT recreated in the isolated audition"
+  },
+  "terrainPainter": {
+    "source": "b5c8004ca4e77be62484fb3cd296fe296d7de4c9:web/src/game/render.ts PAL/PRIO/texel",
+    "sha256": "f29c1a68803505c2dbf82aaae3ed37ab7240cb71dff47937f964e753c8d0f803",
+    "byteIdenticalToLw01Benchmark": true,
+    "generatedModule": "creator-u05/web-u05/src/u05/terrain.ts",
+    "generatedModuleSha256": "3d3fa1605a121ba2bcd8b26e0333cbf8a7ada71adfca67ce7e8e3ee3ca225bc4",
+    "documentedSubstitutions": 7
+  },
+  "rasters": {
+    "count": 21,
+    "names": [
+      "activeCollisionPermission",
+      "biomeCode",
+      "biomeEffective",
+      "buildableCandidate",
+      "cargoCandidate",
+      "clearanceCells",
+      "cliffCandidate",
+      "coast",
+      "coldTransition",
+      "elevation",
+      "freshwater",
+      "heightClass",
+      "landId",
+      "marineRegion",
+      "roadClass",
+      "roadSurface",
+      "slope",
+      "walkableCandidate",
+      "waterClass",
+      "waterTraversalClass",
+      "zoneId"
+    ],
+    "class": "WMP-04R1 ANALYSIS DATA — 8 AU sampled with LW-01 deterministic 1 AU dither; NEVER upscaled as authored 8 AU square land detail",
+    "module": "creator-u05/web-u05/src/u05/lw/sources.generated.ts",
+    "moduleSha256": "5a3249189c984028472ce29163ddd5be1a5326111c4cb8256d5c077e74d5ba19"
+  },
+  "vendoredLiveGameplay": {
+    "files": 231,
+    "bytes": 2535968,
+    "custody": "creator-u05/evidence/source-custody.json",
+    "verbatimMismatches": 0
+  },
+  "lockedVisualBenchmark": {
+    "file": "large-world-01/evidence/shots/beacon_beacon_u05.png",
+    "sha256": "e9ee8e4db7eed1a3e9bbae4c261cf334263ff8afac9f5db477f0283c3f38e510",
+    "usage": "VISUAL PRESERVATION REFERENCE ONLY — no reauthor / redraw / widen / recolour"
+  },
+  "evidenceShots": {
+    "count": 48,
+    "bytes": 6724090,
+    "files": [
+      "after_po_academy.png",
+      "after_po_beacon.png",
+      "after_po_greywater.png",
+      "after_po_ironmine.png",
+      "after_po_typhon.png",
+      "after_po_westmouth.png",
+      "approach_po_academy_goal.png",
+      "approach_po_academy_start.png",
+      "approach_po_beacon_goal.png",
+      "approach_po_beacon_start.png",
+      "approach_po_greywater_goal.png",
+      "approach_po_greywater_start.png",
+      "approach_po_ironmine_goal.png",
+      "approach_po_ironmine_start.png",
+      "approach_po_typhon_goal.png",
+      "approach_po_typhon_start.png",
+      "approach_po_westmouth_goal.png",
+      "approach_po_westmouth_start.png",
+      "before_po_academy.png",
+      "before_po_beacon.png",
+      "before_po_greywater.png",
+      "before_po_ironmine.png",
+      "before_po_typhon.png",
+      "before_po_westmouth.png",
+      "collision_po_academy_blocked.png",
+      "collision_po_beacon_blocked.png",
+      "collision_po_greywater_blocked.png",
+      "collision_po_ironmine_blocked.png",
+      "collision_po_typhon_blocked.png",
+      "collision_po_westmouth_blocked.png",
+      "reentry_po_academy_back.png",
+      "reentry_po_beacon_back.png",
+      "reentry_po_greywater_back.png",
+      "reentry_po_ironmine_back.png",
+      "reentry_po_typhon_back.png",
+      "reentry_po_westmouth_back.png",
+      "roof_po_academy_inside.png",
+      "roof_po_academy_outside.png",
+      "roof_po_beacon_inside.png",
+      "roof_po_beacon_outside.png",
+      "roof_po_greywater_inside.png",
+      "roof_po_greywater_outside.png",
+      "roof_po_ironmine_inside.png",
+      "roof_po_ironmine_outside.png",
+      "roof_po_typhon_inside.png",
+      "roof_po_typhon_outside.png",
+      "roof_po_westmouth_inside.png",
+      "roof_po_westmouth_outside.png"
+    ],
+    "note": "P4 QA captures (before/after/approach/reentry/roof-in/roof-out/collision). Evidence, NOT game art assets."
+  },
+  "additiveRuntimeFiles": [
+    {
+      "path": "u05.html",
+      "sha256": "ee444108ef9818711e313c36656b342ad87784b50d2642f36e219ed7a4069f20"
+    },
+    {
+      "path": "tsconfig.u05.json",
+      "sha256": "bde91670a93bae3911c7878640fc17addaf92371d31443bbb69ff65db9ac84fd"
+    },
+    {
+      "path": "src/u05/contract.ts",
+      "sha256": "f79585dbc38f7380fdf5050fdad10d2fba8d3b7412aadb1295fde5a353510fff"
+    },
+    {
+      "path": "src/u05/world.ts",
+      "sha256": "0cb54d4a35c1fa2b26322f3083632f7707f0dd787f96a058114d9a64acd09cc3"
+    },
+    {
+      "path": "src/u05/display.ts",
+      "sha256": "ec07db4bbe7e5788832a060382f9699f9b010fbb6a90fa37bc887b202600e0a8"
+    },
+    {
+      "path": "src/u05/physical.ts",
+      "sha256": "71a93d9262e2cff4f8d7e476f3401c745ecc94d77af0e2b7913b90194c3e8b1b"
+    },
+    {
+      "path": "src/u05/game.ts",
+      "sha256": "a562e1109d1b9c60403170cd3ab3847c3054c5fbbf8fe639204b7eb0ae28ee98"
+    },
+    {
+      "path": "src/u05/main.ts",
+      "sha256": "00da30d65ac02fac3032c962f0a0734c4957427e1cbd647061278cc14c4c7135"
+    },
+    {
+      "path": "src/u05/scenes.generated.ts",
+      "sha256": "73ec27319ce154b472572eb59e200bd01cf8a5cdcff62a6c9a651c721f3f9e61"
+    }
+  ],
+  "notAssets": [
+    "door lock/key state",
+    "power/HP",
+    "loot/ownership/cash",
+    "boss/reward",
+    "marine/boat/ferry permission",
+    "helicopter entity"
+  ]
+}

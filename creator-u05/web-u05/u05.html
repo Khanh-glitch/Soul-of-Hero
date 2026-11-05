@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Soul of Hero — CREATOR_CHOSEN_U05 physical POI audition</title>
+    <style>
+      html, body { margin: 0; background: #141018; color: #e8e0d0; font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; }
+      #wrap { padding: 10px; }
+      canvas#u05 { width: 640px; height: 360px; display: block; image-rendering: pixelated; border: 1px solid #4a4048; background: #0b1020; }
+      #ui { width: 640px; margin-top: 8px; }
+      .row { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
+      button { font: inherit; color: #e8e0d0; background: #2a2230; border: 1px solid #6a5e66; padding: 3px 7px; cursor: pointer; }
+      button.on { background: #6a5230; border-color: #e0c080; }
+      #status { margin: 0; padding: 6px; background: #1e1822; border: 1px solid #3a3038; white-space: pre-wrap; }
+      .note { margin-top: 6px; color: #a89888; }
+    </style>
+  </head>
+  <body>
+    <div id="wrap">
+      <canvas id="u05" width="640" height="360"></canvas>
+      <div id="ui"></div>
+    </div>
+    <script type="module" src="/src/u05/main.ts"></script>
+  </body>
+</html>

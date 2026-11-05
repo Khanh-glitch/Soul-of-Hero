@@ -1,0 +1,1288 @@
+{
+  "schema": "soh.u05.deep-physical-scene.v1",
+  "id": "po_westmouth",
+  "name": "Westmouth",
+  "contract": "CREATOR_CHOSEN_U05.v1",
+  "generatedAt": "2026-11-05T06:49:44.307Z",
+  "status": "P3_DEEP_PHYSICAL_DESIGN__ART_INCOMPLETE_WHITEBOX__REQUIRES_RUNTIME_WALK_PROOF",
+  "intent": "Preserve the shoreline and GOLD dock, keep a real freight route, and place harbour buildings without fabricated boat gameplay or bogus sea land-walk.",
+  "sourceCustody": {
+    "goldPoiIdSha256": "0c721f3ba759523aef8b3f837a9f883bf07e50d2ef428c4f7e093064666541e9",
+    "architecturePoiSha256": "c0f273d7ca2b1308ced6581e203f33f19f1a0a665b6eda77a45e9b622fc50998",
+    "masterplanEntrySha256": "9ef58ee82158e84bc25dc86eb1eae5030ce51285d82ed066a0db948f73f2f57f",
+    "liveGameplaySha": "b5c8004ca4e77be62484fb3cd296fe296d7de4c9",
+    "noGOLDFileModified": true,
+    "noRoadRedraw": true,
+    "noAtlasAdded": true
+  },
+  "camera": {
+    "viewport": [
+      640,
+      360
+    ],
+    "dpr": 1,
+    "zoom": 1,
+    "cameraTrick": false,
+    "anchorAu": [
+      352,
+      556
+    ],
+    "anchorTile": [
+      704,
+      1112
+    ],
+    "U": 0.5,
+    "TILE": 16,
+    "heroSpritePx": [
+      16,
+      24
+    ],
+    "speedPxPerSec": 72
+  },
+  "states": {
+    "exterior": "HARBOUR_APRON_AND_FREIGHT_ROUTE_FREE",
+    "interior": "DOCKSIDE_CANOPY_AND_FREIGHT_SHED",
+    "inaccessible": "SEA_IS_NOT_LAND_WALKABLE"
+  },
+  "beforeAfter": {
+    "globalCoordsAu": [
+      352,
+      556
+    ],
+    "cameraTile": [
+      704,
+      1112
+    ],
+    "beforePhysicalLayer": false,
+    "afterPhysicalLayer": true,
+    "sameCamera": true,
+    "sameGlobalCoordinates": true,
+    "note": "Before = live-SHA terrain + GOLD roads, physical layer OFF. After = identical camera/global coords, physical layer ON."
+  },
+  "SITE_ENVELOPE": {
+    "class": "reprojected",
+    "source": "GOLD poi.foot",
+    "markerOnly": true,
+    "certifiedBuilding": false,
+    "polygonAu": [
+      [
+        330.36930942921447,
+        547.3401371009161
+      ],
+      [
+        367.8313394364286,
+        538.9047172691241
+      ],
+      [
+        373.63069057078553,
+        564.6598628990839
+      ],
+      [
+        336.1686605635714,
+        573.0952827308759
+      ]
+    ],
+    "polygonTiles": [
+      [
+        660.7386,
+        1094.6803
+      ],
+      [
+        735.6627,
+        1077.8094
+      ],
+      [
+        747.2614,
+        1129.3197
+      ],
+      [
+        672.3373,
+        1146.1906
+      ]
+    ],
+    "polygonTilesSnapped": [
+      [
+        660,
+        1094
+      ],
+      [
+        735,
+        1077
+      ],
+      [
+        747,
+        1129
+      ],
+      [
+        672,
+        1146
+      ]
+    ],
+    "bboxTiles": [
+      660.7386,
+      1077.8094,
+      747.2614,
+      1146.1906
+    ],
+    "areaAu2": 1013.76,
+    "areaTile2": 4055.04,
+    "chunkRange": {
+      "x0": 20,
+      "y0": 33,
+      "x1": 23,
+      "y1": 35
+    },
+    "chunkIdentity": "creator-u05|20:33",
+    "obb": {
+      "centre": [
+        352,
+        556
+      ],
+      "ux": [
+        0.9756,
+        -0.2197
+      ],
+      "uy": [
+        0.2197,
+        0.9756
+      ],
+      "wAu": 38.4,
+      "hAu": 26.4,
+      "angleRad": -0.2215,
+      "wTiles": 76.8,
+      "hTiles": 52.8
+    },
+    "noPolygonAmendment": true,
+    "noShrinkRelocateExpand": true
+  },
+  "BUILDING_COMPOSITION": {
+    "class": "proposed",
+    "separateStructureCount": 2,
+    "deepReservationCount": 0,
+    "buildings": [
+      {
+        "id": "room.po_westmouth.1.1",
+        "role": "Preserve the shoreline and GOLD dock, keep a real freight route, and place harbour buildings without fabricated boat gameplay or bogus sea land-walk / structure 1 of 2",
+        "pattern": "dockside_loading",
+        "status": "PROPOSED__WHITEBOX_PHYSICAL_PROOF__NOT_FINAL_PIXEL_ART",
+        "polygonAu": [
+          [
+            331.5627,
+            548.0956
+          ],
+          [
+            348.3439,
+            544.3166
+          ],
+          [
+            353.7049,
+            568.1228
+          ],
+          [
+            336.9237,
+            571.9019
+          ]
+        ],
+        "polygonTiles": [
+          [
+            663.1254,
+            1096.1912
+          ],
+          [
+            696.6878,
+            1088.6332
+          ],
+          [
+            707.4098,
+            1136.2456
+          ],
+          [
+            673.8474,
+            1143.8038
+          ]
+        ],
+        "bboxTiles": [
+          663.1254,
+          1088.6332,
+          707.4098,
+          1143.8038
+        ],
+        "sourceRoomPolygonTiles": [
+          [
+            663.1254,
+            1096.1912
+          ],
+          [
+            696.6878,
+            1088.6332
+          ],
+          [
+            707.4098,
+            1136.2456
+          ],
+          [
+            673.8474,
+            1143.8038
+          ]
+        ],
+        "sourceRoomAreaTile2": 1679.0276,
+        "sourceRoof": {
+          "covered": true,
+          "canopyOnly": true,
+          "coverageFractionOfRoom": 0.5
+        },
+        "footprintTiles": [
+          [
+            672.868,
+            1105.0032
+          ],
+          [
+            691.6629,
+            1100.7707
+          ],
+          [
+            697.6672,
+            1127.4337
+          ],
+          [
+            678.8723,
+            1131.6662
+          ]
+        ],
+        "footprintBboxTiles": [
+          672.868,
+          1100.7707,
+          697.6672,
+          1131.6662
+        ],
+        "insetFactor": 0.56,
+        "footprintAreaTile2": 526.5416,
+        "areaAu2": 419.7569,
+        "areaTile2": 1679.0276,
+        "centroidTile": [
+          685.2676,
+          1116.2184
+        ],
+        "wallSprite": "wall_wood",
+        "floorSprite": "floor_wood",
+        "roofSprite": "roof_wood",
+        "roofMode": "full",
+        "note": "Inset footprint is PROPOSED physical composition INSIDE the unchanged GOLD poi.foot. Source room polygon and source roof descriptor are preserved verbatim."
+      },
+      {
+        "id": "room.po_westmouth.1.2",
+        "role": "Preserve the shoreline and GOLD dock, keep a real freight route, and place harbour buildings without fabricated boat gameplay or bogus sea land-walk / structure 2 of 2",
+        "pattern": "dockside_loading",
+        "status": "PROPOSED__WHITEBOX_PHYSICAL_PROOF__NOT_FINAL_PIXEL_ART",
+        "polygonAu": [
+          [
+            350.2951,
+            543.8772
+          ],
+          [
+            367.0763,
+            540.0981
+          ],
+          [
+            372.4373,
+            563.9044
+          ],
+          [
+            355.6561,
+            567.6834
+          ]
+        ],
+        "polygonTiles": [
+          [
+            700.5902,
+            1087.7544
+          ],
+          [
+            734.1526,
+            1080.1962
+          ],
+          [
+            744.8746,
+            1127.8088
+          ],
+          [
+            711.3122,
+            1135.3668
+          ]
+        ],
+        "bboxTiles": [
+          700.5902,
+          1080.1962,
+          744.8746,
+          1135.3668
+        ],
+        "sourceRoomPolygonTiles": [
+          [
+            700.5902,
+            1087.7544
+          ],
+          [
+            734.1526,
+            1080.1962
+          ],
+          [
+            744.8746,
+            1127.8088
+          ],
+          [
+            711.3122,
+            1135.3668
+          ]
+        ],
+        "sourceRoomAreaTile2": 1679.0276,
+        "sourceRoof": {
+          "covered": false,
+          "canopyOnly": true,
+          "coverageFractionOfRoom": 0
+        },
+        "footprintTiles": [
+          [
+            710.3328,
+            1096.5663
+          ],
+          [
+            729.1277,
+            1092.3338
+          ],
+          [
+            735.132,
+            1118.9968
+          ],
+          [
+            716.3371,
+            1123.2293
+          ]
+        ],
+        "footprintBboxTiles": [
+          710.3328,
+          1092.3338,
+          735.132,
+          1123.2293
+        ],
+        "insetFactor": 0.56,
+        "footprintAreaTile2": 526.5416,
+        "areaAu2": 419.7569,
+        "areaTile2": 1679.0276,
+        "centroidTile": [
+          722.7324,
+          1107.7816
+        ],
+        "wallSprite": "wall_wood",
+        "floorSprite": "floor_wood",
+        "roofSprite": "roof_tin",
+        "roofMode": "full",
+        "note": "Inset footprint is PROPOSED physical composition INSIDE the unchanged GOLD poi.foot. Source room polygon and source roof descriptor are preserved verbatim."
+      }
+    ],
+    "deepReservations": [],
+    "spatialProgrammeAreas": [
+      {
+        "id": "harbour_apron",
+        "kind": "OPEN_SPACE",
+        "role": "open apron between shed, canopy and dock",
+        "status": "proposed",
+        "obbRectNormalised": [
+          -0.3,
+          -0.2,
+          0.3,
+          0.3
+        ],
+        "polygonAu": [
+          [
+            339.6011,
+            553.3798
+          ],
+          [
+            362.0789,
+            548.3179
+          ],
+          [
+            364.9789,
+            561.1958
+          ],
+          [
+            342.5011,
+            566.2577
+          ]
+        ],
+        "polygonTiles": [
+          [
+            679.2021,
+            1106.7596
+          ],
+          [
+            724.1578,
+            1096.6358
+          ],
+          [
+            729.9579,
+            1122.3916
+          ],
+          [
+            685.0022,
+            1132.5154
+          ]
+        ],
+        "bboxTiles": [
+          679.2021,
+          1096.6358,
+          729.9579,
+          1132.5154
+        ],
+        "areaAu2": 304.1473,
+        "areaTile2": 1216.5892,
+        "art": "none",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      },
+      {
+        "id": "freight_route",
+        "kind": "CIRCULATION",
+        "role": "road -> apron -> preserved dock; no cargo approval",
+        "status": "proposed",
+        "obbRectNormalised": [
+          -0.49,
+          0.28,
+          0.49,
+          0.49
+        ],
+        "polygonAu": [
+          [
+            335.2671,
+            567.3455
+          ],
+          [
+            371.9809,
+            559.0778
+          ],
+          [
+            373.1989,
+            564.4865
+          ],
+          [
+            336.4851,
+            572.7542
+          ]
+        ],
+        "polygonTiles": [
+          [
+            670.5343,
+            1134.691
+          ],
+          [
+            743.9618,
+            1118.1555
+          ],
+          [
+            746.3979,
+            1128.973
+          ],
+          [
+            672.9703,
+            1145.5085
+          ]
+        ],
+        "bboxTiles": [
+          670.5343,
+          1118.1555,
+          746.3979,
+          1145.5085
+        ],
+        "areaAu2": 208.645,
+        "areaTile2": 834.5802,
+        "art": "floor_wood",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      },
+      {
+        "id": "shoreline_preserved",
+        "kind": "SOURCE_AUTHORED",
+        "role": "GOLD coast unchanged; no sea land-walk",
+        "status": "source-authored",
+        "obbRectNormalised": [
+          -0.49,
+          -0.49,
+          0.49,
+          -0.38
+        ],
+        "polygonAu": [
+          [
+            330.8011,
+            547.5135
+          ],
+          [
+            367.5149,
+            539.2458
+          ],
+          [
+            368.1529,
+            542.0789
+          ],
+          [
+            331.4391,
+            550.3467
+          ]
+        ],
+        "polygonTiles": [
+          [
+            661.6021,
+            1095.027
+          ],
+          [
+            735.0297,
+            1078.4915
+          ],
+          [
+            736.3057,
+            1084.1578
+          ],
+          [
+            662.8782,
+            1100.6933
+          ]
+        ],
+        "bboxTiles": [
+          661.6021,
+          1078.4915,
+          736.3057,
+          1100.6933
+        ],
+        "areaAu2": 109.2903,
+        "areaTile2": 437.161,
+        "art": "none",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      },
+      {
+        "id": "sea_boundary",
+        "kind": "UNRESOLVED",
+        "role": "footPassableOnSea=false; boat/swim permission UNRESOLVED_GAMEPLAY",
+        "status": "proposed",
+        "obbRectNormalised": [
+          -0.49,
+          0.42,
+          -0.3,
+          0.49
+        ],
+        "polygonAu": [
+          [
+            336.0791,
+            570.9513
+          ],
+          [
+            343.1971,
+            569.3484
+          ],
+          [
+            343.6031,
+            571.1513
+          ],
+          [
+            336.4851,
+            572.7542
+          ]
+        ],
+        "polygonTiles": [
+          [
+            672.1583,
+            1141.9027
+          ],
+          [
+            686.3942,
+            1138.6968
+          ],
+          [
+            687.2063,
+            1142.3026
+          ],
+          [
+            672.9703,
+            1145.5085
+          ]
+        ],
+        "bboxTiles": [
+          672.1583,
+          1138.6968,
+          687.2063,
+          1145.5085
+        ],
+        "areaAu2": 13.4839,
+        "areaTile2": 53.9355,
+        "art": "none",
+        "insideExistingEnvelope": true,
+        "owner": "GAMEPLAY / CREATOR"
+      }
+    ],
+    "sightlines": [
+      "road -> apron -> dock"
+    ],
+    "roofHierarchy": "2 roof polygons over 2 separate structures",
+    "compositionBeforeAfter": {
+      "sourceRoomPolygonCount": 2,
+      "sourceRoomCoverageFractionOfEnvelope": 0.8281,
+      "proposedSeparateStructures": 2,
+      "proposedRoofPolygons": 2,
+      "proposedFootprintCoverageFractionOfEnvelope": 0.2597,
+      "drawnRoofCoverageFractionOfEnvelope": 0.1273,
+      "drawnCoverageFractionOfEnvelope": 0.2597,
+      "openSpaceFractionAfter": 0.7403,
+      "openTerrainArena": false,
+      "goldEnvelopeChanged": false,
+      "goldPolygonAmended": false,
+      "reason": "Two separate dockside structures with an open harbour apron; no fabricated boat gameplay.",
+      "overrideNote": "Source room 2 was uncovered; U05 PROPOSES a second enclosed freight shed. GOLD unchanged.",
+      "note": "Before = WMP-03 PROPOSED full rooms/roof descriptors. After = U05 PROPOSED inset footprints and roof hierarchy. Both are DESIGN states, NOT GOLD canon changes; measured incompatibility and before/after comparison are explicit."
+    },
+    "coherentGrounds": true,
+    "oneHugeRectangularRoof": false,
+    "emptyInflatedRectangle": false,
+    "randomProps": 0
+  },
+  "DOORS_ROOMS": {
+    "class": "proposed",
+    "roomCount": 2,
+    "hall": "OPEN_AIR_YARD",
+    "exteriorEntrance": {
+      "id": "portal.po_westmouth.entrance",
+      "centreAu": [
+        354.8997,
+        568.8776
+      ],
+      "centreTile": [
+        709.7994,
+        1137.7552
+      ],
+      "openingTiles": 12,
+      "effectiveClearWidthTiles": 8,
+      "staticHole": true,
+      "dynamicDoorOwner": "GAMEPLAY",
+      "doorState": "UNKNOWN"
+    },
+    "openings": [
+      {
+        "id": "portal.po_westmouth.entrance",
+        "kind": "EXTERIOR_ENTRANCE",
+        "centreTile": [
+          709.7994,
+          1137.7552
+        ],
+        "aTile": [
+          715.6528,
+          1136.4372
+        ],
+        "bTile": [
+          703.946,
+          1139.0732
+        ],
+        "openingTiles": 12,
+        "effectiveClearWidthTiles": 8,
+        "traversable": true,
+        "doorSprite": "poi_door",
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "portal.po_westmouth.h.1.1",
+        "kind": "INTERIOR_DOORWAY",
+        "centreTile": [
+          704,
+          1112
+        ],
+        "aTile": [
+          702.6818,
+          1106.1466
+        ],
+        "bTile": [
+          705.3182,
+          1117.8534
+        ],
+        "openingTiles": 12,
+        "effectiveClearWidthTiles": 8,
+        "traversable": true,
+        "doorSprite": "poi_door_open",
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "status": "SOURCE_AUTHORED"
+      }
+    ],
+    "thresholds": [
+      {
+        "id": "portal.po_westmouth.entrance",
+        "minClearWidthTiles": 8,
+        "heroWidthPx": 16,
+        "heroWidthTiles": 1,
+        "passable": true,
+        "note": "Physically meaningful clear width; player 16x24 px is NOT stretched."
+      },
+      {
+        "id": "portal.po_westmouth.h.1.1",
+        "minClearWidthTiles": 8,
+        "heroWidthPx": 16,
+        "heroWidthTiles": 1,
+        "passable": true,
+        "note": "Physically meaningful clear width; player 16x24 px is NOT stretched."
+      }
+    ],
+    "namedPlaceholders": []
+  },
+  "ROOF_OCCLUSION": {
+    "class": "proposed",
+    "roofPolygonCount": 2,
+    "sourceRoofPolygonCount": 1,
+    "roofs": [
+      {
+        "id": "roof.u05.po_westmouth.1",
+        "parentRoomId": "room.po_westmouth.1.1",
+        "polygonAu": [
+          [
+            331.5627,
+            548.0956
+          ],
+          [
+            348.3439,
+            544.3166
+          ],
+          [
+            353.7049,
+            568.1228
+          ],
+          [
+            336.9237,
+            571.9019
+          ]
+        ],
+        "sourcePolygonTiles": [
+          [
+            663.1254,
+            1096.1912
+          ],
+          [
+            696.6878,
+            1088.6332
+          ],
+          [
+            707.4098,
+            1136.2456
+          ],
+          [
+            673.8474,
+            1143.8038
+          ]
+        ],
+        "polygonTiles": [
+          [
+            676.5879,
+            1108.3678
+          ],
+          [
+            689.7443,
+            1105.405
+          ],
+          [
+            693.9473,
+            1124.0691
+          ],
+          [
+            680.7909,
+            1127.0319
+          ]
+        ],
+        "footprintTiles": [
+          [
+            672.868,
+            1105.0032
+          ],
+          [
+            691.6629,
+            1100.7707
+          ],
+          [
+            697.6672,
+            1127.4337
+          ],
+          [
+            678.8723,
+            1131.6662
+          ]
+        ],
+        "status": "PROPOSED_FULL_ROOF_OVER_INSET_FOOTPRINT",
+        "sprite": "roof_wood",
+        "insetFactor": 0.392,
+        "roofInnerInset": 0.7,
+        "overrideNote": "Source room 2 was uncovered; U05 PROPOSES a second enclosed freight shed. GOLD unchanged."
+      },
+      {
+        "id": "roof.u05.po_westmouth.2",
+        "parentRoomId": "room.po_westmouth.1.2",
+        "polygonAu": [
+          [
+            350.2951,
+            543.8772
+          ],
+          [
+            367.0763,
+            540.0981
+          ],
+          [
+            372.4373,
+            563.9044
+          ],
+          [
+            355.6561,
+            567.6834
+          ]
+        ],
+        "sourcePolygonTiles": [
+          [
+            700.5902,
+            1087.7544
+          ],
+          [
+            734.1526,
+            1080.1962
+          ],
+          [
+            744.8746,
+            1127.8088
+          ],
+          [
+            711.3122,
+            1135.3668
+          ]
+        ],
+        "polygonTiles": [
+          [
+            714.0527,
+            1099.9309
+          ],
+          [
+            727.2091,
+            1096.9681
+          ],
+          [
+            731.4121,
+            1115.6322
+          ],
+          [
+            718.2557,
+            1118.595
+          ]
+        ],
+        "footprintTiles": [
+          [
+            710.3328,
+            1096.5663
+          ],
+          [
+            729.1277,
+            1092.3338
+          ],
+          [
+            735.132,
+            1118.9968
+          ],
+          [
+            716.3371,
+            1123.2293
+          ]
+        ],
+        "status": "PROPOSED_FULL_ROOF_OVER_INSET_FOOTPRINT",
+        "sprite": "roof_tin",
+        "insetFactor": 0.392,
+        "roofInnerInset": 0.7,
+        "overrideNote": "Source room 2 was uncovered; U05 PROPOSES a second enclosed freight shed. GOLD unchanged."
+      }
+    ],
+    "rule": "Runtime draws a roof ABOVE the player, then HIDES it when the player centre is inside that roof polygon. This is real occlusion, not a POI text label.",
+    "whiteboxNote": "Reused SOH roof sprites are physical proof, NOT final pixel art / art-complete."
+  },
+  "SOLID_COLLISION": {
+    "class": "proposed",
+    "mesh": "line-segment spans split BY static openings; thickness in U=0.5 tiles",
+    "solidCount": 7,
+    "solids": [
+      {
+        "id": "wall.po_westmouth.1",
+        "aTile": [
+          660.7386,
+          1094.6802
+        ],
+        "bTile": [
+          735.6626,
+          1077.8094
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_wood",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_westmouth.2",
+        "aTile": [
+          735.6626,
+          1077.8094
+        ],
+        "bTile": [
+          747.2614,
+          1129.3198
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_wood",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_westmouth.3.span.1",
+        "aTile": [
+          747.2614,
+          1129.3198
+        ],
+        "bTile": [
+          715.6528,
+          1136.4372
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_wood",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_westmouth.3.span.2",
+        "aTile": [
+          703.946,
+          1139.0732
+        ],
+        "bTile": [
+          672.3374,
+          1146.1906
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_wood",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_westmouth.4",
+        "aTile": [
+          672.3374,
+          1146.1906
+        ],
+        "bTile": [
+          660.7386,
+          1094.6802
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_wood",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_westmouth.split.v.1.span.1",
+        "aTile": [
+          698.1996,
+          1086.2426
+        ],
+        "bTile": [
+          702.6818,
+          1106.1466
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_wood",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_westmouth.split.v.1.span.2",
+        "aTile": [
+          705.3182,
+          1117.8534
+        ],
+        "bTile": [
+          709.8004,
+          1137.7574
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_wood",
+        "status": "SOURCE_AUTHORED"
+      }
+    ],
+    "sourceSolidCount": 7,
+    "proposedSolidCount": 0,
+    "proposedSolidsNote": "None.",
+    "openingsBypassSolids": true,
+    "idMapping": [
+      {
+        "oldId": "wall.po_westmouth.1",
+        "newIds": [
+          "wall.po_westmouth.1"
+        ],
+        "kind": "UNCHANGED",
+        "openingCount": 0
+      },
+      {
+        "oldId": "wall.po_westmouth.2",
+        "newIds": [
+          "wall.po_westmouth.2"
+        ],
+        "kind": "UNCHANGED",
+        "openingCount": 0
+      },
+      {
+        "oldId": "wall.po_westmouth.3",
+        "newIds": [
+          "wall.po_westmouth.3.span.1",
+          "wall.po_westmouth.3.span.2"
+        ],
+        "kind": "SPLIT_BY_OPENINGS",
+        "openingCount": 1
+      },
+      {
+        "oldId": "wall.po_westmouth.4",
+        "newIds": [
+          "wall.po_westmouth.4"
+        ],
+        "kind": "UNCHANGED",
+        "openingCount": 0
+      },
+      {
+        "oldId": "wall.po_westmouth.split.v.1",
+        "newIds": [
+          "wall.po_westmouth.split.v.1.span.1",
+          "wall.po_westmouth.split.v.1.span.2"
+        ],
+        "kind": "SPLIT_BY_OPENINGS",
+        "openingCount": 1
+      }
+    ],
+    "terrainCollision": "GOLD land/water/cliff candidates from LW-01 sampleAt(); NO artificial marine permission",
+    "walkabilitySample": {
+      "boundsTiles": [
+        648,
+        1065,
+        760,
+        1159
+      ],
+      "method": "runtime BFS using the SAME collision function as real WASD input",
+      "status": "TO_BE_MEASURED_IN_BROWSER"
+    }
+  },
+  "NAV_RETREAT": {
+    "class": "proposed",
+    "circulation": {
+      "lr01Graph": {
+        "entranceRoomId": "room.po_westmouth.1.1",
+        "reachableRooms": 2,
+        "totalRooms": 2,
+        "maxDepth": 1,
+        "depthByRoomId": {
+          "room.po_westmouth.1.1": 0,
+          "room.po_westmouth.1.2": 1
+        },
+        "interiorDepthAu": 16.3224,
+        "status": "DERIVED"
+      },
+      "roomGraphStart": "room.po_westmouth.1.1",
+      "physicalRoomReach": {
+        "room.po_westmouth.1.1": true,
+        "room.po_westmouth.1.2": true
+      },
+      "graphReachableRooms": [
+        "room.po_westmouth.1.1",
+        "room.po_westmouth.1.2"
+      ],
+      "graphOnlyRooms": [],
+      "physicalOnlyRooms": [],
+      "diagonalOnlyReachableRooms": [],
+      "physicallyReachableRoomCount": 2,
+      "groundRoomCount": 2,
+      "note": "Graph BFS is NOT substituted for physical clearance: both are computed and compared."
+    },
+    "architectureRetreat": {
+      "status": "UNRESOLVED",
+      "pathAu": null,
+      "lengthAu": null,
+      "exitAtAu": null,
+      "note": "No authored retreat polyline. An exit is NOT invented; Gameplay may route through static portals."
+    },
+    "goldRetreatPoints": [],
+    "roadApproach": {
+      "roadId": "rd_r",
+      "roadSegmentAu": [
+        [
+          352,
+          556
+        ],
+        [
+          395.5,
+          597
+        ]
+      ],
+      "schematicCentrePointAu": [
+        352,
+        556
+      ],
+      "startAu": [
+        369.465,
+        572.4613
+      ],
+      "startTile": [
+        738,
+        1144
+      ],
+      "centrelineChanged": false
+    },
+    "approachPathAu": [
+      [
+        369.465,
+        572.4613
+      ],
+      [
+        354.8997,
+        568.8776
+      ]
+    ],
+    "approachPathTiles": [
+      [
+        738,
+        1144
+      ],
+      [
+        709,
+        1137
+      ]
+    ],
+    "reentryPathAu": [
+      [
+        354.8997,
+        568.8776
+      ],
+      [
+        369.465,
+        572.4613
+      ],
+      [
+        354.8997,
+        568.8776
+      ]
+    ],
+    "walkTest": {
+      "method": "Browser BFS on runtime collision -> REAL keyboard WASD/arrow events at 72 px/s -> measured global pixel positions",
+      "teleportUsed": false,
+      "camUsedAsRoute": false,
+      "status": "TO_BE_PROVEN_IN_BROWSER"
+    },
+    "meaningfulRetreat": {
+      "status": "UNRESOLVED",
+      "goldRetreatPoints": [],
+      "architectureRetreat": {
+        "status": "UNRESOLVED",
+        "pathAu": null,
+        "lengthAu": null,
+        "exitAtAu": null,
+        "note": "No authored retreat polyline. An exit is NOT invented; Gameplay may route through static portals."
+      },
+      "circulation": {
+        "physicallyReachableRoomCount": 2,
+        "groundRoomCount": 2,
+        "graphOnlyRooms": []
+      },
+      "note": "A retreat point or a room graph is a paper design record, NOT a physically demonstrated exit. Runtime walk proof exists only for the six P3 pilot scenes."
+    }
+  },
+  "GAMEPLAY_SOCKETS": {
+    "class": "runtime-owned",
+    "gate": "none",
+    "power": "GAMEPLAY",
+    "locks": "GAMEPLAY",
+    "hp": "GAMEPLAY",
+    "ownership": "GAMEPLAY",
+    "loot": "GAMEPLAY",
+    "enemyPlacement": "GAMEPLAY",
+    "fabricatedLoot": false,
+    "fabricatedOwnershipOrCash": false,
+    "bossState": false,
+    "combatRewards": false,
+    "vendorEconomics": false,
+    "boatGameplay": false,
+    "marinePermission": "UNRESOLVED_GAMEPLAY",
+    "buildPermission": "UNKNOWN__GAMEPLAY",
+    "cargoApproval": false
+  },
+  "terrainConstraints": {
+    "shoreline": "GOLD coast preserved",
+    "cliff": "candidate only",
+    "seaLandWalk": false,
+    "boatGameplay": false,
+    "cargoPermission": false
+  },
+  "markers": [
+    {
+      "id": "dk_westmouth",
+      "kind": "PRESERVED_DOCK",
+      "atAu": [
+        326.1488124105668,
+        558.2654930431864
+      ],
+      "sourceAuthored": true
+    }
+  ],
+  "subScenes": [],
+  "physicalProof": {
+    "artComplete": false,
+    "whiteboxPhysicalProof": true,
+    "runtimeWalkProof": "PROVEN_BY_P4_QA",
+    "distinguish": "Grey boxes / reused SOH sprites prove geometry, collision, doors, roof occlusion and walkability. They are NOT final pixel art and NOT visual acceptance.",
+    "captureRequirement": [
+      "before",
+      "after",
+      "approach",
+      "reentry",
+      "roof_occlusion"
+    ],
+    "runtimeWalkEvidence": {
+      "report": "creator-u05/evidence/qa-report.json",
+      "sceneId": "po_westmouth",
+      "realKeyboardApproachEvents": 98,
+      "realKeyboardReentryEvents": 98,
+      "approachArrived": true,
+      "reentryArrived": true,
+      "wallCollisionBlocked": true,
+      "roofHiddenInside": 1,
+      "roofHiddenOutside": 0,
+      "roofTransitionProven": true,
+      "shots": [
+        "before_po_westmouth.png",
+        "after_po_westmouth.png",
+        "approach_po_westmouth_start.png",
+        "approach_po_westmouth_goal.png",
+        "reentry_po_westmouth_back.png",
+        "roof_po_westmouth_inside.png",
+        "roof_po_westmouth_outside.png",
+        "collision_po_westmouth_blocked.png"
+      ],
+      "spawnFixtureDisclosed": true,
+      "note": "Runtime WALK / collision / roof-occlusion proof for the ISOLATED six-scene Creator audition ONLY. NOT full Gameplay runtime integration, NOT visual acceptance, NOT art-complete."
+    }
+  },
+  "conflicts": [
+    {
+      "kind": "MARINE_FOOT_PERMISSION",
+      "status": "UNRESOLVED_GAMEPLAY",
+      "owner": "GAMEPLAY / CREATOR"
+    }
+  ]
+}

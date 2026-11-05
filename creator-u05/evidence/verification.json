@@ -1,0 +1,239 @@
+{
+  "schema": "soh.u05.verification.v1",
+  "generatedAt": "2026-11-05T07:22:58.660Z",
+  "program": "P1–P5 Creator-chosen U=0.5 additive physical POI program",
+  "scope": "ISOLATED six-scene Creator selector / audition. Additive physical POI proof ONLY.",
+  "status": "P5_ISOLATED_AUDITION_VERIFIED__FULL_GAMEPLAY_RUNTIME_INTEGRATION_NOT_YET_VALIDATED__VISUAL_ACCEPTANCE_NOT_GRANTED",
+  "checks": [
+    {
+      "label": "typescript",
+      "command": "npx tsc --noEmit -p tsconfig.u05.json",
+      "ok": true,
+      "output": ""
+    },
+    {
+      "label": "static-suite",
+      "command": "node /home/user/Soul-of-Hero/creator-u05/tests/test-u05.mjs",
+      "ok": true,
+      "output": "U05_TESTS pass=237 fail=0 verdict=U05_STATIC_TESTS_PASS"
+    },
+    {
+      "label": "asset-inventory",
+      "command": "node /home/user/Soul-of-Hero/creator-u05/tools/build-asset-inventory-u05.mjs",
+      "ok": true,
+      "output": "U05_ASSET_INVENTORY_OK sprites=12/68 rasters=21 shots=48 newPngArt=0"
+    },
+    {
+      "label": "drift-record",
+      "command": "node /home/user/Soul-of-Hero/creator-u05/tools/record-drift-u05.mjs",
+      "ok": true,
+      "output": "U05_DRIFT_OK live=291fee6fde9aaa0dec256c93f0c185493309dd44 commitsAfterPin=6 u05RelevantBlocksIdentical=true terrainIdentical=true"
+    }
+  ],
+  "refs": {
+    "arenaBranch": "arena/2e3cfbd2-soul-of-hero",
+    "mapHeadBeforeU05": "b12d05866366de0d50e4d305ff7b72fcf36b4921",
+    "mapHeadAtVerification": "b12d05866366de0d50e4d305ff7b72fcf36b4921",
+    "mapHeadNote": "HEAD at the moment this verification packet was generated (i.e. before the U05 commit itself). The final U05 commit SHA is the tip of this branch in git log.",
+    "remoteMap": "b12d05866366de0d50e4d305ff7b72fcf36b4921\trefs/heads/arena/2e3cfbd2-soul-of-hero",
+    "main": "5214788933b1a827f3a177d11ff486433dfe5e8a\trefs/heads/main",
+    "gameplayPin": "b5c8004ca4e77be62484fb3cd296fe296d7de4c9",
+    "gameplayLiveHead": "291fee6fde9aaa0dec256c93f0c185493309dd44",
+    "pr44": {
+      "number": 44,
+      "state": "OPEN",
+      "isDraft": true,
+      "baseRefName": "arena/4795760e-soul-of-hero"
+    },
+    "lw01Code": "38d13514d20b089b6fcbf0fa78d605086c50385c",
+    "lw01VendoredGameplay": "e11a9b4471a0832cd6d039b5510725b10ee0275c",
+    "disclosure": "ARENA_BRANCH_PINNED__NO_ISOLATED_BRANCH_CREATED"
+  },
+  "evidence": {
+    "contracts": [
+      "contracts/CREATOR_CHOSEN_U05.v1.json",
+      "contracts/LAYER_INVENTORY.json"
+    ],
+    "sourceCustody": "evidence/source-custody.json",
+    "masterplan": "map-data/U05_POI_MASTERPLAN.v1.json",
+    "audit": "map-data/U05_AUDIT.json",
+    "geometryConflicts": "map-data/U05_GEOMETRY_CONFLICTS.json",
+    "benchmark": "map-data/U05_BENCHMARK.json",
+    "scenes": [
+      "scenes/po_academy.u05.json",
+      "scenes/po_beacon.u05.json",
+      "scenes/po_greywater.u05.json",
+      "scenes/po_ironmine.u05.json",
+      "scenes/po_typhon.u05.json",
+      "scenes/po_westmouth.u05.json"
+    ],
+    "qaReport": "evidence/qa-report.json",
+    "testResults": "evidence/test-results.json",
+    "assetInventory": "evidence/asset-inventory.json",
+    "shots": {
+      "count": 48,
+      "bytes": 6724090,
+      "allExist": true
+    },
+    "docs": [
+      {
+        "path": "docs/U05_GEOMETRY_CONFLICTS_DELTA.md",
+        "exists": true,
+        "bytes": 14037
+      },
+      {
+        "path": "docs/ASSET_INVENTORY.md",
+        "exists": true,
+        "bytes": 2806
+      },
+      {
+        "path": "docs/CONTROL_TOWER_U05_HANDOFF.md",
+        "exists": true,
+        "bytes": 12288
+      },
+      {
+        "path": "README.md",
+        "exists": true,
+        "bytes": 4839
+      }
+    ]
+  },
+  "measured": {
+    "staticTests": {
+      "pass": 237,
+      "fail": 0,
+      "verdict": "U05_STATIC_TESTS_PASS"
+    },
+    "compileClean": true,
+    "pois": 81,
+    "uniquePois": 81,
+    "conflictItems": 62,
+    "zoneOverlap": "19/23",
+    "overlapPairs": 11,
+    "missingEntrances": 26,
+    "roadPoiPairs": 122,
+    "scenes": 6,
+    "reusedSprites": 12,
+    "availableSprites": 68,
+    "newPngArt": 0,
+    "rasters": 21,
+    "vendoredFiles": 231,
+    "vendoredBytes": 2535968,
+    "verbatimMismatches": 0,
+    "p4Gates": {
+      "P4-G0": {
+        "status": "PASS",
+        "reason": "six Creator-selected deep scenes auditioned"
+      },
+      "P4-G1": {
+        "status": "PASS",
+        "reason": "genuine before/after at identical native camera"
+      },
+      "P4-G2": {
+        "status": "PASS",
+        "reason": "real-input approach and reentry arrive at their legal tiles"
+      },
+      "P4-G3": {
+        "status": "PASS",
+        "reason": "real-input solid wall collision blocked"
+      },
+      "P4-G4": {
+        "status": "PASS",
+        "reason": "roof hidden/visible transition along real walks"
+      },
+      "P4-G5": {
+        "status": "PASS",
+        "reason": "zero console/page/request errors"
+      },
+      "P4-G6": {
+        "status": "PASS",
+        "reason": "bounded LRU chunks/canvases, unique chunk keys, no eager 11.2M cell allocation"
+      },
+      "P4-G7": {
+        "status": "PASS",
+        "reason": "native 640x360 1x camera, U=0.5, unstretched 16x24 hero"
+      }
+    },
+    "p4Errors": 0,
+    "realKeyboardEvents": 1122,
+    "driftCommitsAfterPin": 6,
+    "u05RelevantBlocksIdentical": true
+  },
+  "gates": {
+    "P5-G0": {
+      "status": "PASS",
+      "scope": "Contracts, layer inventory, WMP-04R1/GOLD + live Gameplay source custody, TypeScript compile, static suite, drift disclosure."
+    },
+    "P5-G1": {
+      "status": "PASS",
+      "scope": "81-POI masterplan / audit / 62 measured geometry conflicts with ZERO amendments, relocations, expanded envelopes, recoloured or widened roads."
+    },
+    "P5-G2": {
+      "status": "PASS",
+      "scope": "Six separated-layer deep scenes with attached runtime-walk proof, delta/asset/handoff docs."
+    },
+    "P5-G3": {
+      "status": "PASS",
+      "scope": "ISOLATED audition ONLY: real WASD/arrow approach+reentry, wall collision, roof hidden/visible, genuine before/after, native 640x360 1x, bounded caches."
+    },
+    "P5-G4": {
+      "status": "PASS",
+      "scope": "Asset inventory: 12/68 reused live sprites, 0 new PNG/atlas, 21 analysis rasters, GOLD geometry/road delta = 0."
+    },
+    "P5-G5": {
+      "status": "FAIL",
+      "scope": "FULL Gameplay runtime integration (VEYRA_PLAYABLE). NO runtime proof; NOT_YET_VALIDATED."
+    },
+    "P5-G6": {
+      "status": "FAIL",
+      "scope": "Creator visual acceptance. NOT_REQUESTED_AND_NOT_GRANTED. No pixel-diff proof; whitebox only."
+    },
+    "P5-G7": {
+      "status": "PARTIAL",
+      "scope": "All 81 POIs art-complete/interactive, full 4000x2800 streaming, sustained 60 FPS, exhaustive traversal. Only six scenes proven."
+    },
+    "P5-G8": {
+      "status": "PARTIAL",
+      "scope": "Gameplay semantic validators, marine/boat/ferry/swim law, helicopter entity, economy/inventory/ownership/loot/keys/power/HP/boss/reward, §11.5 proof packet. Unresolved."
+    },
+    "P5-G9": {
+      "status": "PASS",
+      "scope": "Creator-liked Beacon road preserved verbatim: no reauthor/redraw/widen/recolour; terrain painter byte-identical; GOLD polygons unchanged."
+    }
+  },
+  "inheritedLw01Gates": {
+    "LW-G0": "PASS",
+    "LW-G1": "PASS",
+    "LW-G2": "PARTIAL",
+    "LW-G3": "PARTIAL",
+    "LW-G4": "PASS",
+    "LW-G5": "PASS",
+    "VEYRA_PLAYABLE": "BLOCKED"
+  },
+  "notClaims": [
+    "VEYRA_PLAYABLE",
+    "MERGE_READY",
+    "WORLD_MASTER_SEALED",
+    "VISUAL_ACCEPTED",
+    "WORLD_MASTER_U_APPROVED_AS_PRODUCTION",
+    "ALL_81_POI_ART_COMPLETE",
+    "HELICOPTER_OBJECT_IMPLEMENTED",
+    "MARINE_BOAT_FERRY_LAW_RESOLVED",
+    "PIXEL_EQUALITY_WITH_BENCHMARK",
+    "PRODUCTION_ATLAS_AUTHORIZED"
+  ],
+  "reproductionOrder": [
+    "node creator-u05/tools/vendor-u05.mjs",
+    "node creator-u05/tools/build-u05.mjs",
+    "node creator-u05/tools/build-scenes-u05.mjs",
+    "npx tsc --noEmit -p creator-u05/web-u05/tsconfig.u05.json",
+    "npx vite --host 0.0.0.0 --port 5182 (cwd creator-u05/web-u05)",
+    "LD_LIBRARY_PATH=/tmp/al2023/lib node creator-u05/tests/qa-u05.mjs",
+    "node creator-u05/tools/attach-proof-u05.mjs",
+    "node creator-u05/tests/test-u05.mjs",
+    "node creator-u05/tools/build-asset-inventory-u05.mjs",
+    "node creator-u05/tools/record-drift-u05.mjs",
+    "node creator-u05/tools/verify-u05.mjs"
+  ],
+  "verdict": "U05_ISOLATED_PROGRAM_VERIFIED__INTEGRATION_AND_VISUAL_GATES_REMAIN_FAIL_OR_PARTIAL"
+}

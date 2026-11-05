@@ -1,0 +1,5 @@
+# Local dependency symlink / build output only. Evidence shots are DELIBERATELY
+# tracked: they are the P4 before/after / walk / roof / collision proof.
+web-u05/node_modules
+web-u05/dist
+*.log

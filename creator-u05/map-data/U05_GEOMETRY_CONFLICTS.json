@@ -1,0 +1,638 @@
+{
+  "schema": "soh.u05.geometry-conflicts.v1",
+  "generatedAt": "2026-11-05T06:14:18.582Z",
+  "policy": "Reported with measured evidence and an owner. NO automatic shrink / relocate / expand / redraw. Polygon amendments only with measured incompatibility + before/after comparison.",
+  "items": [
+    {
+      "kind": "POI_ENVELOPE_OVERLAP",
+      "a": "po_archive",
+      "b": "po_hall_eyes",
+      "measureAu2": 560.0523,
+      "measureTile2": 2240.2092,
+      "status": "HOST_SUBSITE_OR_INTENTIONAL__UNRESOLVED",
+      "owner": "MAP_U05 / CREATOR",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "POI_ENVELOPE_OVERLAP",
+      "a": "po_gulfhead",
+      "b": "po_vend_gulf",
+      "measureAu2": 156.6744,
+      "measureTile2": 626.6976,
+      "status": "HOST_SUBSITE_OR_INTENTIONAL__UNRESOLVED",
+      "owner": "MAP_U05 / CREATOR",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "POI_ENVELOPE_OVERLAP",
+      "a": "po_strait",
+      "b": "po_vend_strait",
+      "measureAu2": 136.8639,
+      "measureTile2": 547.4557,
+      "status": "HOST_SUBSITE_OR_INTENTIONAL__UNRESOLVED",
+      "owner": "MAP_U05 / CREATOR",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "POI_ENVELOPE_OVERLAP",
+      "a": "po_gullnest",
+      "b": "po_gullwreck",
+      "measureAu2": 115.2011,
+      "measureTile2": 460.8042,
+      "status": "HOST_SUBSITE_OR_INTENTIONAL__UNRESOLVED",
+      "owner": "MAP_U05 / CREATOR",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "POI_ENVELOPE_OVERLAP",
+      "a": "po_kestrel",
+      "b": "po_rc_kestrel",
+      "measureAu2": 102.5458,
+      "measureTile2": 410.1832,
+      "status": "HOST_SUBSITE_OR_INTENTIONAL__UNRESOLVED",
+      "owner": "MAP_U05 / CREATOR",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "POI_ENVELOPE_OVERLAP",
+      "a": "po_saltharbor",
+      "b": "po_rc_salt",
+      "measureAu2": 102.3998,
+      "measureTile2": 409.599,
+      "status": "HOST_SUBSITE_OR_INTENTIONAL__UNRESOLVED",
+      "owner": "MAP_U05 / CREATOR",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "POI_ENVELOPE_OVERLAP",
+      "a": "po_sandgate",
+      "b": "po_rc_sandgate",
+      "measureAu2": 96.4658,
+      "measureTile2": 385.8632,
+      "status": "HOST_SUBSITE_OR_INTENTIONAL__UNRESOLVED",
+      "owner": "MAP_U05 / CREATOR",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "POI_ENVELOPE_OVERLAP",
+      "a": "po_southfoot",
+      "b": "po_evac_south",
+      "measureAu2": 50.6646,
+      "measureTile2": 202.6585,
+      "status": "HOST_SUBSITE_OR_INTENTIONAL__UNRESOLVED",
+      "owner": "MAP_U05 / CREATOR",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "POI_ENVELOPE_OVERLAP",
+      "a": "po_ironvein",
+      "b": "po_rc_ironvein",
+      "measureAu2": 37.6444,
+      "measureTile2": 150.5775,
+      "status": "HOST_SUBSITE_OR_INTENTIONAL__UNRESOLVED",
+      "owner": "MAP_U05 / CREATOR",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "POI_ENVELOPE_OVERLAP",
+      "a": "po_westmouth",
+      "b": "po_evac_west",
+      "measureAu2": 7.549,
+      "measureTile2": 30.1961,
+      "status": "HOST_SUBSITE_OR_INTENTIONAL__UNRESOLVED",
+      "owner": "MAP_U05 / CREATOR",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "POI_ENVELOPE_OVERLAP",
+      "a": "po_meridian",
+      "b": "po_rc_meridian",
+      "measureAu2": 0.9559,
+      "measureTile2": 3.8236,
+      "status": "HOST_SUBSITE_OR_INTENTIONAL__UNRESOLVED",
+      "owner": "MAP_U05 / CREATOR",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_hall_eyes",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_typhon",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_viaduct",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_freightyard",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_fracquarry",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_pumphouse",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_glade",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_sapgrove",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_elderwood",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_mere",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_filter",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_westbank",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_greyquarry",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_necropolis",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_cairns",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_dpier",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_wreck",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_gullnest",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_gullpier",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_obsq",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_surtur",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_saltpans",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_gullwreck",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_evac_west",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_evac_south",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "MISSING_EXTERIOR_ENTRANCE_RECORD",
+      "poiId": "po_evac_hook",
+      "measure": 1,
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY A8",
+      "resolution": "NO_DOOR_INVENTED"
+    },
+    {
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "zoneId": "bz_greywater",
+      "poiCells": {
+        "po_greywater": 617
+      },
+      "elderCells": {
+        "el_aion": 3855
+      },
+      "measureCells1Au": 4472,
+      "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+      "owner": "MAP_U05 / GAMEPLAY",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "zoneId": "bz_silver",
+      "poiCells": {
+        "po_sawaion": 566
+      },
+      "elderCells": {
+        "el_aion": 907
+      },
+      "measureCells1Au": 1473,
+      "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+      "owner": "MAP_U05 / GAMEPLAY",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "zoneId": "bz_moss",
+      "poiCells": {},
+      "elderCells": {
+        "el_aion": 2735
+      },
+      "measureCells1Au": 2735,
+      "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+      "owner": "MAP_U05 / GAMEPLAY",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "zoneId": "bz_verdant",
+      "poiCells": {
+        "po_timberyard": 30
+      },
+      "elderCells": {},
+      "measureCells1Au": 30,
+      "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+      "owner": "MAP_U05 / GAMEPLAY",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "zoneId": "bz_elder_clear",
+      "poiCells": {
+        "po_ranger": 87
+      },
+      "elderCells": {
+        "el_aion": 2684
+      },
+      "measureCells1Au": 2771,
+      "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+      "owner": "MAP_U05 / GAMEPLAY",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "zoneId": "bz_typhon_t",
+      "poiCells": {
+        "po_freightyard": 312
+      },
+      "elderCells": {
+        "el_typhon": 83
+      },
+      "measureCells1Au": 395,
+      "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+      "owner": "MAP_U05 / GAMEPLAY",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "zoneId": "bz_ridge",
+      "poiCells": {
+        "po_rc_meridian": 70
+      },
+      "elderCells": {},
+      "measureCells1Au": 70,
+      "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+      "owner": "MAP_U05 / GAMEPLAY",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "zoneId": "bz_eastflats",
+      "poiCells": {
+        "po_strait": 427,
+        "po_vend_strait": 236
+      },
+      "elderCells": {},
+      "measureCells1Au": 663,
+      "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+      "owner": "MAP_U05 / GAMEPLAY",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "zoneId": "bz_hook",
+      "poiCells": {
+        "po_mere": 8
+      },
+      "elderCells": {},
+      "measureCells1Au": 8,
+      "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+      "owner": "MAP_U05 / GAMEPLAY",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "zoneId": "bz_westmouth",
+      "poiCells": {
+        "po_westmouth": 1
+      },
+      "elderCells": {},
+      "measureCells1Au": 1,
+      "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+      "owner": "MAP_U05 / GAMEPLAY",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "zoneId": "bz_westwood",
+      "poiCells": {
+        "po_westwood": 285
+      },
+      "elderCells": {},
+      "measureCells1Au": 285,
+      "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+      "owner": "MAP_U05 / GAMEPLAY",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "zoneId": "bz_gulfwest",
+      "poiCells": {
+        "po_westbank": 164
+      },
+      "elderCells": {},
+      "measureCells1Au": 164,
+      "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+      "owner": "MAP_U05 / GAMEPLAY",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "zoneId": "bz_oasis",
+      "poiCells": {
+        "po_oasis": 381
+      },
+      "elderCells": {
+        "el_anubis": 2480
+      },
+      "measureCells1Au": 2861,
+      "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+      "owner": "MAP_U05 / GAMEPLAY",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "zoneId": "bz_dune",
+      "poiCells": {},
+      "elderCells": {
+        "el_anubis": 1239
+      },
+      "measureCells1Au": 1239,
+      "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+      "owner": "MAP_U05 / GAMEPLAY",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "zoneId": "bz_cinder",
+      "poiCells": {
+        "po_cindercamp": 758
+      },
+      "elderCells": {
+        "el_surtur": 1373
+      },
+      "measureCells1Au": 2131,
+      "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+      "owner": "MAP_U05 / GAMEPLAY",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "zoneId": "bz_salt",
+      "poiCells": {
+        "po_saltharbor": 12,
+        "po_saltpans": 451,
+        "po_rc_salt": 22
+      },
+      "elderCells": {},
+      "measureCells1Au": 485,
+      "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+      "owner": "MAP_U05 / GAMEPLAY",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "zoneId": "bz_ironholm",
+      "poiCells": {
+        "po_ironharbor": 209,
+        "po_ironmine": 123
+      },
+      "elderCells": {},
+      "measureCells1Au": 332,
+      "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+      "owner": "MAP_U05 / GAMEPLAY",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "zoneId": "bz_argus",
+      "poiCells": {},
+      "elderCells": {
+        "el_argus": 2337
+      },
+      "measureCells1Au": 2337,
+      "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+      "owner": "MAP_U05 / GAMEPLAY",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "BUILDABLE_SITE_OVERLAPS_POI_OR_ELDER",
+      "zoneId": "bz_kestrel",
+      "poiCells": {},
+      "elderCells": {
+        "el_typhon": 672
+      },
+      "measureCells1Au": 672,
+      "status": "UNRESOLVED__LEGAL_PLACEMENT_GAMEPLAY_ONLY",
+      "owner": "MAP_U05 / GAMEPLAY",
+      "resolution": "NONE_APPLIED"
+    },
+    {
+      "kind": "HELICOPTER_VS_LIGHTHOUSE",
+      "poiId": "po_beacon",
+      "helicopterAtAu": [
+        272,
+        652
+      ],
+      "lighthouseAtAu": [
+        268,
+        656
+      ],
+      "measureAu": 5.6569,
+      "status": "UNRESOLVED__HELIPAD_COLLISION_PLAN_ONLY__NO_RELOCATION__NO_SUBSTITUTE",
+      "owner": "CREATOR / GAMEPLAY A8",
+      "resolution": "PROVEN_MISSING_SPRITE__NO_SUBSTITUTE__NO_RELOCATION"
+    },
+    {
+      "kind": "ROAD_CENTRELINE_ENTERS_POI_ENVELOPE",
+      "distinctPois": 73,
+      "pairs": 122,
+      "status": "SCHEMATIC_CONNECTOR__NOT_AN_AUTHORED_ENTRANCE",
+      "owner": "MAP_U05 / GAMEPLAY",
+      "resolution": "NO_ROAD_CHANGE"
+    },
+    {
+      "kind": "VERTICAL_LINK_NAMED_BLOCKERS",
+      "count": 8,
+      "ids": [
+        "blocker.portal.po_archive.vertical",
+        "blocker.portal.po_meridian.vertical",
+        "blocker.portal.po_oldpump.vertical",
+        "blocker.portal.po_ironvein.vertical",
+        "blocker.portal.po_tombs.vertical",
+        "blocker.portal.po_sulfur.vertical",
+        "blocker.portal.po_geo.vertical",
+        "blocker.portal.po_ironmine.vertical"
+      ],
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY",
+      "resolution": "NO_INVENTED_VERTICAL_SEPARATION"
+    },
+    {
+      "kind": "POI_RETREAT_POLYLINE",
+      "count": 63,
+      "status": "UNRESOLVED",
+      "owner": "GAMEPLAY",
+      "resolution": "NO_EXIT_INVENTED"
+    },
+    {
+      "kind": "CART_SWEPT_CLEARANCE",
+      "poiIds": [
+        "po_ironmine",
+        "po_westmouth"
+      ],
+      "status": "UNRESOLVED",
+      "owner": "MAP_U05 / GAMEPLAY",
+      "resolution": "NO_CART_LAW_CREATED"
+    },
+    {
+      "kind": "MARINE_FOOT_PERMISSION",
+      "status": "UNRESOLVED_GAMEPLAY__FOOT_PASSABLE_ON_SEA_FALSE",
+      "owner": "GAMEPLAY / CREATOR",
+      "resolution": "NO_BOAT_OR_SWIM_PERMISSION"
+    }
+  ],
+  "amendedPolygons": [],
+  "relocatedObjects": [],
+  "expandedEnvelopes": [],
+  "recolouredRoads": [],
+  "widenedRoads": []
+}

@@ -1,0 +1,1956 @@
+{
+  "schema": "soh.u05.deep-physical-scene.v1",
+  "id": "po_academy",
+  "name": "Argus Academy",
+  "contract": "CREATOR_CHOSEN_U05.v1",
+  "generatedAt": "2026-11-05T06:49:44.304Z",
+  "status": "P3_DEEP_PHYSICAL_DESIGN__ART_INCOMPLETE_WHITEBOX__REQUIRES_RUNTIME_WALK_PROOF",
+  "intent": "Believable research compound: safe, useful exterior/lecture perimeter versus a gated interior core. Physical retreat to the road. Named placeholders ONLY — no key item, power, loot or ownership law.",
+  "sourceCustody": {
+    "goldPoiIdSha256": "8a9aa9127e6e903f2ff60641a60e6e8a24d6ee17a7fa888295746d9f83ca15dd",
+    "architecturePoiSha256": "ac734439954f769429a43fb59896246f329013895d09f931ec589e4c68395590",
+    "masterplanEntrySha256": "bec30da421fe3c16455f51f7889585a75aade0dd819e0ee2875a0527f3c0c974",
+    "liveGameplaySha": "b5c8004ca4e77be62484fb3cd296fe296d7de4c9",
+    "noGOLDFileModified": true,
+    "noRoadRedraw": true,
+    "noAtlasAdded": true
+  },
+  "camera": {
+    "viewport": [
+      640,
+      360
+    ],
+    "dpr": 1,
+    "zoom": 1,
+    "cameraTrick": false,
+    "anchorAu": [
+      936,
+      262
+    ],
+    "anchorTile": [
+      1872,
+      524
+    ],
+    "U": 0.5,
+    "TILE": 16,
+    "heroSpritePx": [
+      16,
+      24
+    ],
+    "speedPxPerSec": 72
+  },
+  "states": {
+    "exterior": "SAFE_COMPOUND_GROUNDS_AND_LECTURE_PERIMETER",
+    "interior": "GATED_RESEARCH_CORE__ACCESS_UNRESOLVED",
+    "inaccessible": "DEEP_LEVEL_RESERVATION_ONLY"
+  },
+  "beforeAfter": {
+    "globalCoordsAu": [
+      936,
+      262
+    ],
+    "cameraTile": [
+      1872,
+      524
+    ],
+    "beforePhysicalLayer": false,
+    "afterPhysicalLayer": true,
+    "sameCamera": true,
+    "sameGlobalCoordinates": true,
+    "note": "Before = live-SHA terrain + GOLD roads, physical layer OFF. After = identical camera/global coords, physical layer ON."
+  },
+  "SITE_ENVELOPE": {
+    "class": "reprojected",
+    "source": "GOLD poi.foot",
+    "markerOnly": true,
+    "certifiedBuilding": false,
+    "polygonAu": [
+      [
+        917.9168067042876,
+        247.30720856236275
+      ],
+      [
+        956.1938824428898,
+        250.3773018673483
+      ],
+      [
+        954.0831932957124,
+        276.69279143763725
+      ],
+      [
+        915.8061175571102,
+        273.6226981326517
+      ]
+    ],
+    "polygonTiles": [
+      [
+        1835.8336,
+        494.6144
+      ],
+      [
+        1912.3878,
+        500.7546
+      ],
+      [
+        1908.1664,
+        553.3856
+      ],
+      [
+        1831.6122,
+        547.2454
+      ]
+    ],
+    "polygonTilesSnapped": [
+      [
+        1835,
+        494
+      ],
+      [
+        1912,
+        500
+      ],
+      [
+        1908,
+        553
+      ],
+      [
+        1831,
+        547
+      ]
+    ],
+    "bboxTiles": [
+      1831.6122,
+      494.6144,
+      1912.3878,
+      553.3856
+    ],
+    "areaAu2": 1013.76,
+    "areaTile2": 4055.04,
+    "chunkRange": {
+      "x0": 57,
+      "y0": 15,
+      "x1": 59,
+      "y1": 17
+    },
+    "chunkIdentity": "creator-u05|57:15",
+    "obb": {
+      "centre": [
+        936,
+        262
+      ],
+      "ux": [
+        0.9968,
+        0.08
+      ],
+      "uy": [
+        -0.08,
+        0.9968
+      ],
+      "wAu": 38.4,
+      "hAu": 26.4,
+      "angleRad": 0.08,
+      "wTiles": 76.8,
+      "hTiles": 52.8
+    },
+    "noPolygonAmendment": true,
+    "noShrinkRelocateExpand": true
+  },
+  "BUILDING_COMPOSITION": {
+    "class": "proposed",
+    "separateStructureCount": 4,
+    "deepReservationCount": 1,
+    "buildings": [
+      {
+        "id": "room.po_academy.1.1",
+        "role": "Believable research compound: safe, useful exterior/lecture perimeter versus a gated interior core / structure 1 of 4",
+        "pattern": "cells_and_core",
+        "status": "PROPOSED__WHITEBOX_PHYSICAL_PROOF__NOT_FINAL_PIXEL_ART",
+        "polygonAu": [
+          [
+            918.8336,
+            248.382
+          ],
+          [
+            935.9793,
+            249.758
+          ],
+          [
+            935.0832,
+            260.9232
+          ],
+          [
+            917.9375,
+            259.5471
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1837.6672,
+            496.764
+          ],
+          [
+            1871.9586,
+            499.516
+          ],
+          [
+            1870.1664,
+            521.8464
+          ],
+          [
+            1835.875,
+            519.0942
+          ]
+        ],
+        "bboxTiles": [
+          1835.875,
+          496.764,
+          1871.9586,
+          521.8464
+        ],
+        "sourceRoomPolygonTiles": [
+          [
+            1837.6672,
+            496.764
+          ],
+          [
+            1871.9586,
+            499.516
+          ],
+          [
+            1870.1664,
+            521.8464
+          ],
+          [
+            1835.875,
+            519.0942
+          ]
+        ],
+        "sourceRoomAreaTile2": 770.6696,
+        "sourceRoof": {
+          "covered": true,
+          "canopyOnly": false,
+          "coverageFractionOfRoom": 1
+        },
+        "footprintTiles": [
+          [
+            1844.167,
+            501.7805
+          ],
+          [
+            1864.7419,
+            503.4317
+          ],
+          [
+            1863.6666,
+            516.8299
+          ],
+          [
+            1843.0917,
+            515.1786
+          ]
+        ],
+        "footprintBboxTiles": [
+          1843.0917,
+          501.7805,
+          1864.7419,
+          516.8299
+        ],
+        "insetFactor": 0.6,
+        "footprintAreaTile2": 277.4412,
+        "areaAu2": 192.6674,
+        "areaTile2": 770.6696,
+        "centroidTile": [
+          1853.9168,
+          509.3052
+        ],
+        "wallSprite": "wall_stone",
+        "floorSprite": "floor_stone",
+        "roofSprite": "roof_tile",
+        "roofMode": "source",
+        "note": "Inset footprint is PROPOSED physical composition INSIDE the unchanged GOLD poi.foot. Source room polygon and source roof descriptor are preserved verbatim."
+      },
+      {
+        "id": "room.po_academy.1.2",
+        "role": "Believable research compound: safe, useful exterior/lecture perimeter versus a gated interior core / structure 2 of 4",
+        "pattern": "cells_and_core",
+        "status": "PROPOSED__WHITEBOX_PHYSICAL_PROOF__NOT_FINAL_PIXEL_ART",
+        "polygonAu": [
+          [
+            937.9729,
+            249.918
+          ],
+          [
+            955.1186,
+            251.2941
+          ],
+          [
+            954.2225,
+            262.4593
+          ],
+          [
+            937.0768,
+            261.0832
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1875.9458,
+            499.836
+          ],
+          [
+            1910.2372,
+            502.5882
+          ],
+          [
+            1908.445,
+            524.9186
+          ],
+          [
+            1874.1536,
+            522.1664
+          ]
+        ],
+        "bboxTiles": [
+          1874.1536,
+          499.836,
+          1910.2372,
+          524.9186
+        ],
+        "sourceRoomPolygonTiles": [
+          [
+            1875.9458,
+            499.836
+          ],
+          [
+            1910.2372,
+            502.5882
+          ],
+          [
+            1908.445,
+            524.9186
+          ],
+          [
+            1874.1536,
+            522.1664
+          ]
+        ],
+        "sourceRoomAreaTile2": 770.6732,
+        "sourceRoof": {
+          "covered": true,
+          "canopyOnly": false,
+          "coverageFractionOfRoom": 1
+        },
+        "footprintTiles": [
+          [
+            1882.4456,
+            504.8525
+          ],
+          [
+            1903.0205,
+            506.5038
+          ],
+          [
+            1901.9452,
+            519.9021
+          ],
+          [
+            1881.3703,
+            518.2508
+          ]
+        ],
+        "footprintBboxTiles": [
+          1881.3703,
+          504.8525,
+          1903.0205,
+          519.9021
+        ],
+        "insetFactor": 0.6,
+        "footprintAreaTile2": 277.4443,
+        "areaAu2": 192.6683,
+        "areaTile2": 770.6732,
+        "centroidTile": [
+          1892.1954,
+          512.3774
+        ],
+        "wallSprite": "wall_stone",
+        "floorSprite": "floor_stone",
+        "roofSprite": "roof_tin",
+        "roofMode": "source",
+        "note": "Inset footprint is PROPOSED physical composition INSIDE the unchanged GOLD poi.foot. Source room polygon and source roof descriptor are preserved verbatim."
+      },
+      {
+        "id": "room.po_academy.2.1",
+        "role": "Believable research compound: safe, useful exterior/lecture perimeter versus a gated interior core / structure 3 of 4",
+        "pattern": "cells_and_core",
+        "status": "PROPOSED__WHITEBOX_PHYSICAL_PROOF__NOT_FINAL_PIXEL_ART",
+        "polygonAu": [
+          [
+            917.7775,
+            261.5407
+          ],
+          [
+            934.9232,
+            262.9168
+          ],
+          [
+            934.0271,
+            274.082
+          ],
+          [
+            916.8814,
+            272.7059
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1835.555,
+            523.0814
+          ],
+          [
+            1869.8464,
+            525.8336
+          ],
+          [
+            1868.0542,
+            548.164
+          ],
+          [
+            1833.7628,
+            545.4118
+          ]
+        ],
+        "bboxTiles": [
+          1833.7628,
+          523.0814,
+          1869.8464,
+          548.164
+        ],
+        "sourceRoomPolygonTiles": [
+          [
+            1835.555,
+            523.0814
+          ],
+          [
+            1869.8464,
+            525.8336
+          ],
+          [
+            1868.0542,
+            548.164
+          ],
+          [
+            1833.7628,
+            545.4118
+          ]
+        ],
+        "sourceRoomAreaTile2": 770.6732,
+        "sourceRoof": {
+          "covered": true,
+          "canopyOnly": false,
+          "coverageFractionOfRoom": 1
+        },
+        "footprintTiles": [
+          [
+            1842.0548,
+            528.0979
+          ],
+          [
+            1862.6297,
+            529.7492
+          ],
+          [
+            1861.5544,
+            543.1475
+          ],
+          [
+            1840.9795,
+            541.4962
+          ]
+        ],
+        "footprintBboxTiles": [
+          1840.9795,
+          528.0979,
+          1862.6297,
+          543.1475
+        ],
+        "insetFactor": 0.6,
+        "footprintAreaTile2": 277.4443,
+        "areaAu2": 192.6683,
+        "areaTile2": 770.6732,
+        "centroidTile": [
+          1851.8046,
+          535.6228
+        ],
+        "wallSprite": "wall_stone",
+        "floorSprite": "floor_stone",
+        "roofSprite": "roof_tile",
+        "roofMode": "source",
+        "note": "Inset footprint is PROPOSED physical composition INSIDE the unchanged GOLD poi.foot. Source room polygon and source roof descriptor are preserved verbatim."
+      },
+      {
+        "id": "room.po_academy.2.2",
+        "role": "Believable research compound: safe, useful exterior/lecture perimeter versus a gated interior core / structure 4 of 4",
+        "pattern": "cells_and_core",
+        "status": "PROPOSED__WHITEBOX_PHYSICAL_PROOF__NOT_FINAL_PIXEL_ART",
+        "polygonAu": [
+          [
+            936.9168,
+            263.0768
+          ],
+          [
+            954.0625,
+            264.4529
+          ],
+          [
+            953.1664,
+            275.618
+          ],
+          [
+            936.0207,
+            274.242
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1873.8336,
+            526.1536
+          ],
+          [
+            1908.125,
+            528.9058
+          ],
+          [
+            1906.3328,
+            551.236
+          ],
+          [
+            1872.0414,
+            548.484
+          ]
+        ],
+        "bboxTiles": [
+          1872.0414,
+          526.1536,
+          1908.125,
+          551.236
+        ],
+        "sourceRoomPolygonTiles": [
+          [
+            1873.8336,
+            526.1536
+          ],
+          [
+            1908.125,
+            528.9058
+          ],
+          [
+            1906.3328,
+            551.236
+          ],
+          [
+            1872.0414,
+            548.484
+          ]
+        ],
+        "sourceRoomAreaTile2": 770.6696,
+        "sourceRoof": {
+          "covered": true,
+          "canopyOnly": false,
+          "coverageFractionOfRoom": 1
+        },
+        "footprintTiles": [
+          [
+            1880.3334,
+            531.1701
+          ],
+          [
+            1900.9083,
+            532.8214
+          ],
+          [
+            1899.833,
+            546.2195
+          ],
+          [
+            1879.2581,
+            544.5683
+          ]
+        ],
+        "footprintBboxTiles": [
+          1879.2581,
+          531.1701,
+          1900.9083,
+          546.2195
+        ],
+        "insetFactor": 0.6,
+        "footprintAreaTile2": 277.4412,
+        "areaAu2": 192.6674,
+        "areaTile2": 770.6696,
+        "centroidTile": [
+          1890.0832,
+          538.6948
+        ],
+        "wallSprite": "wall_stone",
+        "floorSprite": "floor_stone",
+        "roofSprite": "roof_tin",
+        "roofMode": "source",
+        "note": "Inset footprint is PROPOSED physical composition INSIDE the unchanged GOLD poi.foot. Source room polygon and source roof descriptor are preserved verbatim."
+      }
+    ],
+    "deepReservations": [
+      {
+        "id": "room.po_academy.deep.1",
+        "polygonTiles": [
+          [
+            1862.4878,
+            517.0262
+          ],
+          [
+            1897.5752,
+            519.8404
+          ],
+          [
+            1895.9122,
+            540.5738
+          ],
+          [
+            1860.8248,
+            537.7596
+          ]
+        ],
+        "areaTile2": 732.1612,
+        "status": "SPATIAL_RESERVATION_ONLY__NO_VERTICAL_SEPARATION_VALUE"
+      }
+    ],
+    "spatialProgrammeAreas": [
+      {
+        "id": "compound_grounds",
+        "kind": "OPEN_SPACE",
+        "role": "coherent grounds between separate wings",
+        "status": "proposed",
+        "obbRectNormalised": [
+          -0.48,
+          -0.3,
+          0.48,
+          0.3
+        ],
+        "polygonAu": [
+          [
+            918.2606,
+            252.6308
+          ],
+          [
+            955.0066,
+            255.5799
+          ],
+          [
+            953.7394,
+            271.3692
+          ],
+          [
+            916.9934,
+            268.4201
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1836.5212,
+            505.2616
+          ],
+          [
+            1910.0132,
+            511.1598
+          ],
+          [
+            1907.4788,
+            542.7384
+          ],
+          [
+            1833.9868,
+            536.8402
+          ]
+        ],
+        "bboxTiles": [
+          1833.9868,
+          505.2616,
+          1910.0132,
+          542.7384
+        ],
+        "areaAu2": 583.9317,
+        "areaTile2": 2335.727,
+        "art": "none",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      },
+      {
+        "id": "gate_threshold",
+        "kind": "DOORS_ROOMS",
+        "role": "exterior threshold to the gated core; no lock state created",
+        "status": "proposed",
+        "obbRectNormalised": [
+          -0.1,
+          0.34,
+          0.1,
+          0.49
+        ],
+        "polygonAu": [
+          [
+            931.4542,
+            270.6401
+          ],
+          [
+            939.1096,
+            271.2545
+          ],
+          [
+            938.7928,
+            275.2018
+          ],
+          [
+            931.1374,
+            274.5874
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1862.9084,
+            541.2802
+          ],
+          [
+            1878.2193,
+            542.509
+          ],
+          [
+            1877.5857,
+            550.4036
+          ],
+          [
+            1862.2748,
+            549.1748
+          ]
+        ],
+        "bboxTiles": [
+          1862.2748,
+          541.2802,
+          1878.2193,
+          550.4036
+        ],
+        "areaAu2": 30.4131,
+        "areaTile2": 121.6524,
+        "art": "floor_stone",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      },
+      {
+        "id": "utility_yard",
+        "kind": "UTILITY_YARD",
+        "role": "service yard with sightline hierarchy",
+        "status": "proposed",
+        "obbRectNormalised": [
+          0.28,
+          -0.48,
+          0.49,
+          -0.2
+        ],
+        "polygonAu": [
+          [
+            947.7314,
+            250.2287
+          ],
+          [
+            955.7695,
+            250.8738
+          ],
+          [
+            955.1782,
+            258.2422
+          ],
+          [
+            947.14,
+            257.5971
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1895.4627,
+            500.4574
+          ],
+          [
+            1911.5391,
+            501.7477
+          ],
+          [
+            1910.3564,
+            516.4844
+          ],
+          [
+            1894.28,
+            515.1941
+          ]
+        ],
+        "bboxTiles": [
+          1894.28,
+          500.4574,
+          1911.5391,
+          516.4844
+        ],
+        "areaAu2": 59.6097,
+        "areaTile2": 238.4388,
+        "art": "none",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      },
+      {
+        "id": "sightline_axis",
+        "kind": "CIRCULATION",
+        "role": "main compound axis",
+        "status": "proposed",
+        "obbRectNormalised": [
+          -0.05,
+          -0.48,
+          0.05,
+          0.48
+        ],
+        "polygonAu": [
+          [
+            935.0999,
+            249.215
+          ],
+          [
+            938.9276,
+            249.5222
+          ],
+          [
+            936.9001,
+            274.785
+          ],
+          [
+            933.0724,
+            274.4778
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1870.1998,
+            498.4299
+          ],
+          [
+            1877.8552,
+            499.0443
+          ],
+          [
+            1873.8002,
+            549.5701
+          ],
+          [
+            1866.1448,
+            548.9557
+          ]
+        ],
+        "bboxTiles": [
+          1866.1448,
+          498.4299,
+          1877.8552,
+          549.5701
+        ],
+        "areaAu2": 97.322,
+        "areaTile2": 389.2878,
+        "art": "floor_stone",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      },
+      {
+        "id": "retreat_path",
+        "kind": "NAV_RETREAT",
+        "role": "gate -> grounds -> road",
+        "status": "proposed",
+        "obbRectNormalised": [
+          -0.49,
+          0.28,
+          -0.3,
+          0.49
+        ],
+        "polygonAu": [
+          [
+            916.6529,
+            267.8631
+          ],
+          [
+            923.9255,
+            268.4467
+          ],
+          [
+            923.482,
+            273.973
+          ],
+          [
+            916.2093,
+            273.3893
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1833.3057,
+            535.7261
+          ],
+          [
+            1847.851,
+            536.8935
+          ],
+          [
+            1846.964,
+            547.946
+          ],
+          [
+            1832.4187,
+            546.7786
+          ]
+        ],
+        "bboxTiles": [
+          1832.4187,
+          535.7261,
+          1847.851,
+          547.946
+        ],
+        "areaAu2": 40.4494,
+        "areaTile2": 161.7978,
+        "art": "none",
+        "insideExistingEnvelope": true,
+        "owner": "MAP_U05"
+      }
+    ],
+    "sightlines": [
+      "road -> gate threshold",
+      "lecture perimeter -> utility yard",
+      "core roof above side wings"
+    ],
+    "roofHierarchy": "5 roof polygons over 4 separate structures",
+    "compositionBeforeAfter": {
+      "sourceRoomPolygonCount": 4,
+      "sourceRoomCoverageFractionOfEnvelope": 0.7602,
+      "proposedSeparateStructures": 4,
+      "proposedRoofPolygons": 5,
+      "proposedFootprintCoverageFractionOfEnvelope": 0.2737,
+      "drawnRoofCoverageFractionOfEnvelope": 0.3283,
+      "drawnCoverageFractionOfEnvelope": 0.3283,
+      "openSpaceFractionAfter": 0.6717,
+      "openTerrainArena": false,
+      "goldEnvelopeChanged": false,
+      "goldPolygonAmended": false,
+      "reason": "Four separate compound wings + grounds + utility yard + retreat path.",
+      "overrideNote": "Source enclosed rooms retained, inset only.",
+      "note": "Before = WMP-03 PROPOSED full rooms/roof descriptors. After = U05 PROPOSED inset footprints and roof hierarchy. Both are DESIGN states, NOT GOLD canon changes; measured incompatibility and before/after comparison are explicit."
+    },
+    "coherentGrounds": true,
+    "oneHugeRectangularRoof": false,
+    "emptyInflatedRectangle": false,
+    "randomProps": 0
+  },
+  "DOORS_ROOMS": {
+    "class": "proposed",
+    "roomCount": 5,
+    "hall": "ENCLOSED_MULTI_LAYER",
+    "exteriorEntrance": {
+      "id": "portal.po_academy.entrance",
+      "centreAu": [
+        934.9447,
+        275.1578
+      ],
+      "centreTile": [
+        1869.8894,
+        550.3156
+      ],
+      "openingTiles": 12,
+      "effectiveClearWidthTiles": 8,
+      "staticHole": true,
+      "dynamicDoorOwner": "GAMEPLAY",
+      "doorState": "UNKNOWN"
+    },
+    "openings": [
+      {
+        "id": "portal.po_academy.entrance",
+        "kind": "EXTERIOR_ENTRANCE",
+        "centreTile": [
+          1869.8894,
+          550.3156
+        ],
+        "aTile": [
+          1875.8702,
+          550.7952
+        ],
+        "bTile": [
+          1863.9086,
+          549.8358
+        ],
+        "openingTiles": 12,
+        "effectiveClearWidthTiles": 8,
+        "traversable": true,
+        "doorSprite": "poi_door",
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "portal.po_academy.h.1.1",
+        "kind": "INTERIOR_DOORWAY",
+        "centreTile": [
+          1873.0562,
+          510.8412
+        ],
+        "aTile": [
+          1873.5362,
+          504.8604
+        ],
+        "bTile": [
+          1872.576,
+          516.822
+        ],
+        "openingTiles": 12,
+        "effectiveClearWidthTiles": 8,
+        "traversable": true,
+        "doorSprite": "poi_door_open",
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "portal.po_academy.h.2.1",
+        "kind": "INTERIOR_DOORWAY",
+        "centreTile": [
+          1870.9438,
+          537.1588
+        ],
+        "aTile": [
+          1871.424,
+          531.178
+        ],
+        "bTile": [
+          1870.4638,
+          543.1396
+        ],
+        "openingTiles": 12,
+        "effectiveClearWidthTiles": 8,
+        "traversable": true,
+        "doorSprite": "poi_door_open",
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "portal.po_academy.v.1.1",
+        "kind": "INTERIOR_DOORWAY",
+        "centreTile": [
+          1852.8606,
+          522.4638
+        ],
+        "aTile": [
+          1846.88,
+          521.9838
+        ],
+        "bTile": [
+          1858.8414,
+          522.944
+        ],
+        "openingTiles": 12,
+        "effectiveClearWidthTiles": 8,
+        "traversable": true,
+        "doorSprite": "poi_door_open",
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "portal.po_academy.v.1.2",
+        "kind": "INTERIOR_DOORWAY",
+        "centreTile": [
+          1891.1392,
+          525.5362
+        ],
+        "aTile": [
+          1885.1586,
+          525.056
+        ],
+        "bTile": [
+          1897.12,
+          526.0162
+        ],
+        "openingTiles": 12,
+        "effectiveClearWidthTiles": 8,
+        "traversable": true,
+        "doorSprite": "poi_door_open",
+        "dynamicDoorOwner": "GAMEPLAY",
+        "doorState": "UNKNOWN",
+        "status": "SOURCE_AUTHORED"
+      }
+    ],
+    "thresholds": [
+      {
+        "id": "portal.po_academy.entrance",
+        "minClearWidthTiles": 8,
+        "heroWidthPx": 16,
+        "heroWidthTiles": 1,
+        "passable": true,
+        "note": "Physically meaningful clear width; player 16x24 px is NOT stretched."
+      },
+      {
+        "id": "portal.po_academy.h.1.1",
+        "minClearWidthTiles": 8,
+        "heroWidthPx": 16,
+        "heroWidthTiles": 1,
+        "passable": true,
+        "note": "Physically meaningful clear width; player 16x24 px is NOT stretched."
+      },
+      {
+        "id": "portal.po_academy.h.2.1",
+        "minClearWidthTiles": 8,
+        "heroWidthPx": 16,
+        "heroWidthTiles": 1,
+        "passable": true,
+        "note": "Physically meaningful clear width; player 16x24 px is NOT stretched."
+      },
+      {
+        "id": "portal.po_academy.v.1.1",
+        "minClearWidthTiles": 8,
+        "heroWidthPx": 16,
+        "heroWidthTiles": 1,
+        "passable": true,
+        "note": "Physically meaningful clear width; player 16x24 px is NOT stretched."
+      },
+      {
+        "id": "portal.po_academy.v.1.2",
+        "minClearWidthTiles": 8,
+        "heroWidthPx": 16,
+        "heroWidthTiles": 1,
+        "passable": true,
+        "note": "Physically meaningful clear width; player 16x24 px is NOT stretched."
+      }
+    ],
+    "namedPlaceholders": [
+      "KEY_CARD_PLACEHOLDER",
+      "POWER_PLACEHOLDER"
+    ]
+  },
+  "ROOF_OCCLUSION": {
+    "class": "proposed",
+    "roofPolygonCount": 5,
+    "sourceRoofPolygonCount": 5,
+    "roofs": [
+      {
+        "id": "roof.room.po_academy.1.1",
+        "parentRoomId": "room.po_academy.1.1",
+        "polygonAu": [
+          [
+            918.8336,
+            248.382
+          ],
+          [
+            935.9793,
+            249.758
+          ],
+          [
+            935.0832,
+            260.9232
+          ],
+          [
+            917.9375,
+            259.5471
+          ]
+        ],
+        "sourcePolygonTiles": [
+          [
+            1837.6672,
+            496.764
+          ],
+          [
+            1871.9586,
+            499.516
+          ],
+          [
+            1870.1664,
+            521.8464
+          ],
+          [
+            1835.875,
+            519.0942
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1844.167,
+            501.7805
+          ],
+          [
+            1864.7419,
+            503.4317
+          ],
+          [
+            1863.6666,
+            516.8299
+          ],
+          [
+            1843.0917,
+            515.1786
+          ]
+        ],
+        "status": "PROPOSED",
+        "sprite": "roof_tile",
+        "insetFactor": 0.6
+      },
+      {
+        "id": "roof.room.po_academy.1.2",
+        "parentRoomId": "room.po_academy.1.2",
+        "polygonAu": [
+          [
+            937.9729,
+            249.918
+          ],
+          [
+            955.1186,
+            251.2941
+          ],
+          [
+            954.2225,
+            262.4593
+          ],
+          [
+            937.0768,
+            261.0832
+          ]
+        ],
+        "sourcePolygonTiles": [
+          [
+            1875.9458,
+            499.836
+          ],
+          [
+            1910.2372,
+            502.5882
+          ],
+          [
+            1908.445,
+            524.9186
+          ],
+          [
+            1874.1536,
+            522.1664
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1882.4456,
+            504.8525
+          ],
+          [
+            1903.0205,
+            506.5038
+          ],
+          [
+            1901.9452,
+            519.9021
+          ],
+          [
+            1881.3703,
+            518.2508
+          ]
+        ],
+        "status": "PROPOSED",
+        "sprite": "roof_tin",
+        "insetFactor": 0.6
+      },
+      {
+        "id": "roof.room.po_academy.2.1",
+        "parentRoomId": "room.po_academy.2.1",
+        "polygonAu": [
+          [
+            917.7775,
+            261.5407
+          ],
+          [
+            934.9232,
+            262.9168
+          ],
+          [
+            934.0271,
+            274.082
+          ],
+          [
+            916.8814,
+            272.7059
+          ]
+        ],
+        "sourcePolygonTiles": [
+          [
+            1835.555,
+            523.0814
+          ],
+          [
+            1869.8464,
+            525.8336
+          ],
+          [
+            1868.0542,
+            548.164
+          ],
+          [
+            1833.7628,
+            545.4118
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1842.0548,
+            528.0979
+          ],
+          [
+            1862.6297,
+            529.7492
+          ],
+          [
+            1861.5544,
+            543.1475
+          ],
+          [
+            1840.9795,
+            541.4962
+          ]
+        ],
+        "status": "PROPOSED",
+        "sprite": "roof_tile",
+        "insetFactor": 0.6
+      },
+      {
+        "id": "roof.room.po_academy.2.2",
+        "parentRoomId": "room.po_academy.2.2",
+        "polygonAu": [
+          [
+            936.9168,
+            263.0768
+          ],
+          [
+            954.0625,
+            264.4529
+          ],
+          [
+            953.1664,
+            275.618
+          ],
+          [
+            936.0207,
+            274.242
+          ]
+        ],
+        "sourcePolygonTiles": [
+          [
+            1873.8336,
+            526.1536
+          ],
+          [
+            1908.125,
+            528.9058
+          ],
+          [
+            1906.3328,
+            551.236
+          ],
+          [
+            1872.0414,
+            548.484
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1880.3334,
+            531.1701
+          ],
+          [
+            1900.9083,
+            532.8214
+          ],
+          [
+            1899.833,
+            546.2195
+          ],
+          [
+            1879.2581,
+            544.5683
+          ]
+        ],
+        "status": "PROPOSED",
+        "sprite": "roof_tin",
+        "insetFactor": 0.6
+      },
+      {
+        "id": "roof.room.po_academy.deep.1",
+        "parentRoomId": "room.po_academy.deep.1",
+        "polygonAu": [
+          [
+            931.2439,
+            258.5131
+          ],
+          [
+            948.7876,
+            259.9202
+          ],
+          [
+            947.9561,
+            270.2869
+          ],
+          [
+            930.4124,
+            268.8798
+          ]
+        ],
+        "sourcePolygonTiles": [
+          [
+            1862.4878,
+            517.0262
+          ],
+          [
+            1897.5752,
+            519.8404
+          ],
+          [
+            1895.9122,
+            540.5738
+          ],
+          [
+            1860.8248,
+            537.7596
+          ]
+        ],
+        "polygonTiles": [
+          [
+            1870.0083,
+            522.3244
+          ],
+          [
+            1889.3064,
+            523.8722
+          ],
+          [
+            1888.3917,
+            535.2756
+          ],
+          [
+            1869.0936,
+            533.7278
+          ]
+        ],
+        "status": "DEEP_RESERVATION_ROOF__NOT_A_GROUND_ROOF",
+        "sprite": "roof_tile",
+        "insetFactor": 0.55,
+        "note": "Deep-level spatial reservation only; NO invented vertical separation value."
+      }
+    ],
+    "rule": "Runtime draws a roof ABOVE the player, then HIDES it when the player centre is inside that roof polygon. This is real occlusion, not a POI text label.",
+    "whiteboxNote": "Reused SOH roof sprites are physical proof, NOT final pixel art / art-complete."
+  },
+  "SOLID_COLLISION": {
+    "class": "proposed",
+    "mesh": "line-segment spans split BY static openings; thickness in U=0.5 tiles",
+    "solidCount": 11,
+    "solids": [
+      {
+        "id": "wall.po_academy.1",
+        "aTile": [
+          1835.8336,
+          494.6144
+        ],
+        "bTile": [
+          1912.3878,
+          500.7546
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_stone",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_academy.2",
+        "aTile": [
+          1912.3878,
+          500.7546
+        ],
+        "bTile": [
+          1908.1664,
+          553.3856
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_stone",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_academy.3.span.1",
+        "aTile": [
+          1908.1664,
+          553.3856
+        ],
+        "bTile": [
+          1875.8702,
+          550.7952
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_stone",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_academy.3.span.2",
+        "aTile": [
+          1863.9086,
+          549.8358
+        ],
+        "bTile": [
+          1831.6122,
+          547.2454
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_stone",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_academy.4",
+        "aTile": [
+          1831.6122,
+          547.2454
+        ],
+        "bTile": [
+          1835.8336,
+          494.6144
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_stone",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_academy.split.v.1.span.1",
+        "aTile": [
+          1874.1122,
+          497.6824
+        ],
+        "bTile": [
+          1873.5362,
+          504.8604
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_stone",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_academy.split.v.1.span.2",
+        "aTile": [
+          1872.576,
+          516.822
+        ],
+        "bTile": [
+          1871.424,
+          531.178
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_stone",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_academy.split.v.1.span.3",
+        "aTile": [
+          1870.4638,
+          543.1396
+        ],
+        "bTile": [
+          1869.8878,
+          550.3176
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_stone",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_academy.split.h.1.span.1",
+        "aTile": [
+          1833.7214,
+          520.9278
+        ],
+        "bTile": [
+          1846.88,
+          521.9838
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_stone",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_academy.split.h.1.span.2",
+        "aTile": [
+          1858.8414,
+          522.944
+        ],
+        "bTile": [
+          1885.1586,
+          525.056
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_stone",
+        "status": "SOURCE_AUTHORED"
+      },
+      {
+        "id": "wall.po_academy.split.h.1.span.3",
+        "aTile": [
+          1897.12,
+          526.0162
+        ],
+        "bTile": [
+          1910.2786,
+          527.0722
+        ],
+        "thicknessTiles": 4,
+        "blocksMovement": true,
+        "blocksSight": true,
+        "sprite": "wall_stone",
+        "status": "SOURCE_AUTHORED"
+      }
+    ],
+    "sourceSolidCount": 11,
+    "proposedSolidCount": 0,
+    "proposedSolidsNote": "None.",
+    "openingsBypassSolids": true,
+    "idMapping": [
+      {
+        "oldId": "wall.po_academy.1",
+        "newIds": [
+          "wall.po_academy.1"
+        ],
+        "kind": "UNCHANGED",
+        "openingCount": 0
+      },
+      {
+        "oldId": "wall.po_academy.2",
+        "newIds": [
+          "wall.po_academy.2"
+        ],
+        "kind": "UNCHANGED",
+        "openingCount": 0
+      },
+      {
+        "oldId": "wall.po_academy.3",
+        "newIds": [
+          "wall.po_academy.3.span.1",
+          "wall.po_academy.3.span.2"
+        ],
+        "kind": "SPLIT_BY_OPENINGS",
+        "openingCount": 1
+      },
+      {
+        "oldId": "wall.po_academy.4",
+        "newIds": [
+          "wall.po_academy.4"
+        ],
+        "kind": "UNCHANGED",
+        "openingCount": 0
+      },
+      {
+        "oldId": "wall.po_academy.split.v.1",
+        "newIds": [
+          "wall.po_academy.split.v.1.span.1",
+          "wall.po_academy.split.v.1.span.2",
+          "wall.po_academy.split.v.1.span.3"
+        ],
+        "kind": "SPLIT_BY_OPENINGS",
+        "openingCount": 2
+      },
+      {
+        "oldId": "wall.po_academy.split.h.1",
+        "newIds": [
+          "wall.po_academy.split.h.1.span.1",
+          "wall.po_academy.split.h.1.span.2",
+          "wall.po_academy.split.h.1.span.3"
+        ],
+        "kind": "SPLIT_BY_OPENINGS",
+        "openingCount": 2
+      }
+    ],
+    "terrainCollision": "GOLD land/water/cliff candidates from LW-01 sampleAt(); NO artificial marine permission",
+    "walkabilitySample": {
+      "boundsTiles": [
+        1819,
+        482,
+        1925,
+        566
+      ],
+      "method": "runtime BFS using the SAME collision function as real WASD input",
+      "status": "TO_BE_MEASURED_IN_BROWSER"
+    }
+  },
+  "NAV_RETREAT": {
+    "class": "proposed",
+    "circulation": {
+      "lr01Graph": {
+        "entranceRoomId": "room.po_academy.2.2",
+        "reachableRooms": 4,
+        "totalRooms": 4,
+        "maxDepth": 2,
+        "depthByRoomId": {
+          "room.po_academy.2.2": 0,
+          "room.po_academy.1.2": 1,
+          "room.po_academy.2.1": 1,
+          "room.po_academy.1.1": 2
+        },
+        "interiorDepthAu": 22.0055,
+        "status": "DERIVED"
+      },
+      "roomGraphStart": "room.po_academy.2.2",
+      "physicalRoomReach": {
+        "room.po_academy.1.1": true,
+        "room.po_academy.1.2": true,
+        "room.po_academy.2.1": true,
+        "room.po_academy.2.2": true
+      },
+      "graphReachableRooms": [
+        "room.po_academy.2.2",
+        "room.po_academy.2.1",
+        "room.po_academy.1.2",
+        "room.po_academy.1.1"
+      ],
+      "graphOnlyRooms": [],
+      "physicalOnlyRooms": [],
+      "diagonalOnlyReachableRooms": [],
+      "physicallyReachableRoomCount": 4,
+      "groundRoomCount": 4,
+      "note": "Graph BFS is NOT substituted for physical clearance: both are computed and compared."
+    },
+    "architectureRetreat": {
+      "status": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+      "waypointCount": 1,
+      "pathAu": [
+        [
+          936,
+          262
+        ],
+        [
+          985.386,
+          243.3221
+        ]
+      ],
+      "lengthAu": 52.8,
+      "exitAtAu": [
+        985.386,
+        243.3221
+      ],
+      "note": "Canonical retreat is a set of waypoints (often one). The segment from the POI anchor is DERIVED; no full retreat corridor is invented."
+    },
+    "goldRetreatPoints": [
+      {
+        "au": [
+          985.385980782419,
+          243.32207446854602
+        ],
+        "tile": [
+          1970,
+          486
+        ]
+      }
+    ],
+    "roadApproach": {
+      "roadId": "rd_h",
+      "roadSegmentAu": [
+        [
+          938.5,
+          277
+        ],
+        [
+          936,
+          262
+        ]
+      ],
+      "schematicCentrePointAu": [
+        936,
+        262
+      ],
+      "startAu": [
+        932.0544,
+        238.3265
+      ],
+      "startTile": [
+        1864,
+        476
+      ],
+      "centrelineChanged": false
+    },
+    "approachPathAu": [
+      [
+        932.0544,
+        238.3265
+      ],
+      [
+        934.9447,
+        275.1578
+      ]
+    ],
+    "approachPathTiles": [
+      [
+        1864,
+        476
+      ],
+      [
+        1869,
+        550
+      ]
+    ],
+    "reentryPathAu": [
+      [
+        934.9447,
+        275.1578
+      ],
+      [
+        932.0544,
+        238.3265
+      ],
+      [
+        934.9447,
+        275.1578
+      ]
+    ],
+    "walkTest": {
+      "method": "Browser BFS on runtime collision -> REAL keyboard WASD/arrow events at 72 px/s -> measured global pixel positions",
+      "teleportUsed": false,
+      "camUsedAsRoute": false,
+      "status": "TO_BE_PROVEN_IN_BROWSER"
+    },
+    "meaningfulRetreat": {
+      "status": "GOLD_RETREAT_POINT_RECORDED",
+      "goldRetreatPoints": [
+        {
+          "au": [
+            985.385980782419,
+            243.32207446854602
+          ],
+          "tile": [
+            1970,
+            486
+          ]
+        }
+      ],
+      "architectureRetreat": {
+        "status": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+        "waypointCount": 1,
+        "pathAu": [
+          [
+            936,
+            262
+          ],
+          [
+            985.386,
+            243.3221
+          ]
+        ],
+        "lengthAu": 52.8,
+        "exitAtAu": [
+          985.386,
+          243.3221
+        ],
+        "note": "Canonical retreat is a set of waypoints (often one). The segment from the POI anchor is DERIVED; no full retreat corridor is invented."
+      },
+      "circulation": {
+        "physicallyReachableRoomCount": 4,
+        "groundRoomCount": 4,
+        "graphOnlyRooms": []
+      },
+      "note": "A retreat point or a room graph is a paper design record, NOT a physically demonstrated exit. Runtime walk proof exists only for the six P3 pilot scenes."
+    }
+  },
+  "GAMEPLAY_SOCKETS": {
+    "class": "runtime-owned",
+    "gate": "key",
+    "power": "GAMEPLAY",
+    "locks": "GAMEPLAY",
+    "hp": "GAMEPLAY",
+    "ownership": "GAMEPLAY",
+    "loot": "GAMEPLAY",
+    "enemyPlacement": "GAMEPLAY",
+    "fabricatedLoot": false,
+    "fabricatedOwnershipOrCash": false,
+    "bossState": false,
+    "combatRewards": false,
+    "vendorEconomics": false,
+    "boatGameplay": false,
+    "marinePermission": "UNRESOLVED_GAMEPLAY",
+    "buildPermission": "UNKNOWN__GAMEPLAY",
+    "cargoApproval": false
+  },
+  "terrainConstraints": {
+    "shoreline": "n/a",
+    "cliff": "candidate only",
+    "seaLandWalk": false,
+    "boatGameplay": false
+  },
+  "markers": [
+    {
+      "id": "KEY_CARD_PLACEHOLDER",
+      "kind": "NAMED_PLACEHOLDER",
+      "status": "UNRESOLVED__GAMEPLAY_OWNED",
+      "owner": "GAMEPLAY A8"
+    },
+    {
+      "id": "POWER_PLACEHOLDER",
+      "kind": "NAMED_PLACEHOLDER",
+      "status": "UNRESOLVED__GAMEPLAY_OWNED",
+      "owner": "GAMEPLAY A8"
+    }
+  ],
+  "subScenes": [],
+  "physicalProof": {
+    "artComplete": false,
+    "whiteboxPhysicalProof": true,
+    "runtimeWalkProof": "PROVEN_BY_P4_QA",
+    "distinguish": "Grey boxes / reused SOH sprites prove geometry, collision, doors, roof occlusion and walkability. They are NOT final pixel art and NOT visual acceptance.",
+    "captureRequirement": [
+      "before",
+      "after",
+      "approach",
+      "reentry",
+      "roof_occlusion"
+    ],
+    "runtimeWalkEvidence": {
+      "report": "creator-u05/evidence/qa-report.json",
+      "sceneId": "po_academy",
+      "realKeyboardApproachEvents": 42,
+      "realKeyboardReentryEvents": 42,
+      "approachArrived": true,
+      "reentryArrived": true,
+      "wallCollisionBlocked": true,
+      "roofHiddenInside": 1,
+      "roofHiddenOutside": 0,
+      "roofTransitionProven": true,
+      "shots": [
+        "before_po_academy.png",
+        "after_po_academy.png",
+        "approach_po_academy_start.png",
+        "approach_po_academy_goal.png",
+        "reentry_po_academy_back.png",
+        "roof_po_academy_inside.png",
+        "roof_po_academy_outside.png",
+        "collision_po_academy_blocked.png"
+      ],
+      "spawnFixtureDisclosed": true,
+      "note": "Runtime WALK / collision / roof-occlusion proof for the ISOLATED six-scene Creator audition ONLY. NOT full Gameplay runtime integration, NOT visual acceptance, NOT art-complete."
+    }
+  },
+  "conflicts": []
+}

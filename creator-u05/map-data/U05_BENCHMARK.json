@@ -1,0 +1,48 @@
+{
+  "schema": "soh.u05.visual-benchmark.v1",
+  "contract": "CREATOR_CHOSEN_U05.v1",
+  "status": "LOCKED_VISUAL_PRESERVATION_REFERENCE__NOT_VISUAL_ACCEPTANCE__NOT_REAUTHORIZATION",
+  "origin": "large-world-01/evidence/shots/beacon_beacon_u05.png",
+  "viewport": [
+    640,
+    360
+  ],
+  "dpr": 1,
+  "U": 0.5,
+  "TILE": 16,
+  "cameraAnchorAu": [
+    272,
+    652
+  ],
+  "cameraAnchorTile": [
+    544,
+    1304
+  ],
+  "physicalLayer": "OFF",
+  "profile": "creator-u05",
+  "locked": [
+    "road shape",
+    "road edge rule",
+    "road palette",
+    "road spaciousness",
+    "shoreline",
+    "hero 16x24",
+    "native 640x360",
+    "72 px/s"
+  ],
+  "terrainSource": "b5c8004ca4e77be62484fb3cd296fe296d7de4c9:web/src/game/render.ts PAL/PRIO/texel (byte-identical to LW-01 e11a9b44)",
+  "roadGeometry": "GOLD rd_* centrelines, 3.0 AU half-width rule unchanged; at U=0.5 => 6 runtime tiles / 96 px by scale transform ONLY",
+  "forbidden": [
+    "road widening beyond the transform",
+    "recolour",
+    "redraw",
+    "stretched player/sprites",
+    "camera zoom / camera as route",
+    "nearest-neighbour 8 AU staircase as authored detail"
+  ],
+  "checks": [
+    "U05-VB1",
+    "U05-VB2",
+    "U05-VB3"
+  ]
+}
