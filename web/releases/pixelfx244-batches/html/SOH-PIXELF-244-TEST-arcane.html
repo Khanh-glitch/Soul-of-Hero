@@ -10,15 +10,28 @@
     //    "Save recovery required", clear stale save copies once per tab and reload.
     // 2) auto-start a new run (Meadow Bay), inject the embedded 244-effect manifest
     //    via the QA-only __pfx.injectManifest hook, open the FX Lab (F9).
-    // 3) CRISP RENDER: force imageSmoothingEnabled=false on every 2d context so atlas
-    //    cells are drawn nearest-neighbor (like the original pixelfx 1:1 render).
-    //    Without this, the light/warp draw paths bilinear-blur the effect edges.
+    // 3) ADAPTIVE RESAMPLE (test build): wrap drawImage so atlas cells are drawn
+    //    nearest-neighbor when upscaling (crisp, like the original pixelfx 1:1 render)
+    //    and high-quality bilinear when downscaling (keeps thin detail such as rune
+    //    strokes that nearest-neighbor would drop at small display sizes).
     (function () {
       try {
-        var d = Object.getOwnPropertyDescriptor(CanvasRenderingContext2D.prototype, 'imageSmoothingEnabled');
-        if (d && d.set && d.get) Object.defineProperty(CanvasRenderingContext2D.prototype, 'imageSmoothingEnabled', {
-          configurable: true, get: d.get, set: function () { d.set.call(this, false); }
-        });
+        var proto = CanvasRenderingContext2D.prototype;
+        var sd = Object.getOwnPropertyDescriptor(proto, 'imageSmoothingEnabled');
+        var qd = Object.getOwnPropertyDescriptor(proto, 'imageSmoothingQuality');
+        var origDraw = proto.drawImage;
+        proto.drawImage = function (img) {
+          var a = arguments, sw = 0, dw = 0;
+          if (a.length >= 9) { sw = a[3]; dw = a[7]; }
+          else if (a.length >= 5) { sw = img.width || 1; dw = a[3]; }
+          else { sw = img.width || 1; dw = a[1]; }
+          if (sd && sd.set && sw > 0 && dw > 0) {
+            var up = dw >= sw;
+            sd.set.call(this, !up);
+            if (qd && qd.set) qd.set.call(this, 'high');
+          }
+          return origDraw.apply(this, a);
+        };
       } catch (e) {}
     })();
     (function () {
