@@ -89,3 +89,35 @@ describe('B03-C typed return report (receipt-derived, no invented rewards)', () 
     expect(Array.isArray(lines)).toBe(true);
   });
 });
+
+import {mkContainer,addItem as addItemR} from '../src/game/engine';
+describe('B03-C return privacy: ownership and visibility of stationary state', () => {
+  it('an unseen, non-owned POI station with stock never appears; the owned workbench with the same kind of stock does', () => {
+    const o=setup(), {g,r}=o;
+    // A world-owned POI station: no owner, POI tag, kind recycler. The player has never observed it.
+    const fakeOut=mkContainer(r,'out',6); addItemR(r,fakeOut.id,'scrap',3);
+    const fakeFuel=mkContainer(r,'fuel',3);
+    const fx=(o.x+40)*TILE+8, fy=(o.y+40)*TILE+8;
+    r.entities['poi-hidden']={id:'poi-hidden',kind:'recycler',poi:'factory',label:'Hidden site',x:fx,y:fy,tx:o.x+40,ty:o.y+40,station:{queue:[],burn:0,fuelC:fakeFuel.id,outC:fakeOut.id}} as any;
+    // A player-owned workbench (built by intent in setup) holds real output.
+    const bench=Object.values(r.entities).find(e=>e.type==='workbench')!;
+    expect(bench.owner===undefined||bench.owner==='player').toBe(true);
+    addItemR(r,bench.station!.outC!,'iron_ingot',2);
+    const {report}=settleWithReturn(g,T+3600000);
+    const everything=JSON.stringify(report!.sections);
+    expect(everything).not.toMatch(/Hidden site/);
+    expect(everything).not.toMatch(new RegExp(`${o.x+40},${o.y+40}`));
+    expect(everything).not.toMatch(/Scrap/);
+    const benchRows=report!.sections.production.filter(x=>x.where?.name==='Workbench');
+    expect(benchRows.length).toBeGreaterThan(0);
+    expect(benchRows.some(x=>x.text.includes('Iron Ingot'))).toBe(true);
+  });
+  it('a surviving Tender station reads state only from its own owned farm; a fabricated unowned farm controller is ignored', () => {
+    const o=setup(),{g,r}=o;
+    const fakeChest=mkContainer(r,'chest',3); addItemR(r,fakeChest.id,'cart_kit',1);
+    r.entities['farm-hidden']={id:'farm-hidden',kind:'recycler',poi:'factory',label:'Hidden farm',x:(o.x+50)*TILE+8,y:(o.y+50)*TILE+8,tx:o.x+50,ty:o.y+50,farm:{enabled:true,crop:'crop',energy:0},c:fakeChest.id} as any;
+    const {report}=settleWithReturn(g,T+3600000);
+    expect(JSON.stringify(report!.sections)).not.toMatch(/Hidden farm/);
+    expect(report!.sections.production.some(x=>x.where?.name==='Garden Tender'&&x.where.tx===o.x+50)).toBe(false);
+  });
+});

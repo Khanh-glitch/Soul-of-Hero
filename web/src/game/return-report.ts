@@ -4,7 +4,7 @@
 // and never reveals enemy positions. Ephemeral: not persisted; rebuilt from receipts on each Continue.
 import { BAL, HOUR, type GameState, type RunState } from './core';
 import { ITEMS, STRUCTS, RECIPES } from './catalog';
-import { C, countItem, territoryForecast, tenderState, weatherAt, beginReceiptSink, endReceiptSink } from './engine';
+import { C, countItem, territoryForecast, tenderState, weatherAt, beginReceiptSink, endReceiptSink, owned } from './engine';
 import { settle } from './sim';
 
 export type ReturnTone = 'ok' | 'gold' | 'warn' | 'bad' | 'muted';
@@ -16,6 +16,8 @@ export interface ReturnRow {
   where?: { tx: number; ty: number; name: string };
   /** Committed receipt ids that support this row (empty for live-state rows). */
   receipts: string[];
+  /** 'event' = backed by a committed, timed receipt; 'state' = read-only reading of the world at Continue. */
+  source: 'event' | 'state';
 }
 export type ReturnSectionId = 'body' | 'home' | 'production' | 'loss' | 'world';
 export interface OfflineReturnV1 {
@@ -44,6 +46,11 @@ const stackList = (r: RunState, cid?: string) => {
   for (const s of C(r, cid).slots) if (s) { const n = ITEMS[s.key]?.name ?? s.key; totals.set(n, (totals.get(n) ?? 0) + s.qty); }
   return [...totals].map(([n, q]) => `${n} ×${q}`);
 };
+/** A real surviving container at a tile (dropped bag or drop), with its verified stack names. Null when none exists. */
+const wreckageAt = (r: RunState, tx: number, ty: number): string[] | null => {
+  const e = Object.values(r.entities).find(x => (x.kind === 'bag' || x.kind === 'drop') && x.tx === tx && x.ty === ty && x.c);
+  return e && e.c ? stackList(r, e.c) : null;
+};
 const r1 = (n: number) => (Math.round(n * 10) / 10).toString();
 
 /** Captures the physical state a player can observe on return. Reads only; never mutates. */
@@ -56,10 +63,11 @@ export function captureReturnSnapshot(gs: GameState): Snap | null {
     structs: {}, stations: {}, tenders: {}, cabinets: {},
   };
   for (const e of Object.values(r.entities)) {
-    if (e.kind === 'struct' && e.hp !== undefined && e.maxHp !== undefined && (e.owner === undefined || e.owner === 'player'))
+    const playerStruct = e.kind === 'struct' && !e.poi && owned(e);
+    if (playerStruct && e.hp !== undefined && e.maxHp !== undefined)
       snap.structs[e.id] = { name: nm(e.type), tx: e.tx ?? 0, ty: e.ty ?? 0, hp: e.hp, maxHp: e.maxHp };
-    if (e.station && e.type) snap.stations[e.id] = { name: nm(e.type), tx: e.tx ?? 0, ty: e.ty ?? 0, state: e.station.stateCode ?? (e.type === 'campfire' ? (stackList(r, e.station.fuelC).length ? 'fueled' : 'fuel_out') : undefined), out: stackList(r, e.station.outC), queue: e.station.queue.map(j => (RECIPES[j.recipe.replace(/^R:/, '')]?.out ? ITEMS[RECIPES[j.recipe.replace(/^R:/, '')].out].name : j.recipe)) };
-    if (e.farm && e.type === 'farm_controller') {
+    if (playerStruct && e.station && e.type) snap.stations[e.id] = { name: nm(e.type), tx: e.tx ?? 0, ty: e.ty ?? 0, state: e.station.stateCode ?? (e.type === 'campfire' ? (stackList(r, e.station.fuelC).length ? 'fueled' : 'fuel_out') : undefined), out: stackList(r, e.station.outC), queue: e.station.queue.map(j => (RECIPES[j.recipe.replace(/^R:/, '')]?.out ? ITEMS[RECIPES[j.recipe.replace(/^R:/, '')].out].name : j.recipe)) };
+    if (playerStruct && e.farm && e.type === 'farm_controller') {
       const st = tenderState(r, e);
       const gardenE = e.farm.gardenId ? r.entities[e.farm.gardenId] : undefined;
       const chestE = e.farm.chestId ? r.entities[e.farm.chestId] : undefined;
@@ -67,7 +75,7 @@ export function captureReturnSnapshot(gs: GameState): Snap | null {
     }
   }
   for (const c of Object.values(r.entities)) {
-    if (c.type !== 'claim' || !c.c || !c.cabinet) continue;
+    if (c.type !== 'claim' || !c.c || !c.cabinet || !(c.kind === 'struct' && !c.poi && owned(c))) continue;
     const stock: Record<string, number> = {};
     for (const k of BAL.territory.materials as string[]) stock[k] = countItem(r, c.c, k);
     const f = territoryForecast(r, c);
@@ -76,7 +84,7 @@ export function captureReturnSnapshot(gs: GameState): Snap | null {
   return snap;
 }
 
-function receiptRows(gs: GameState, receipts: { id: string; at: number; kind: string; detail: string }[], start: number, out: Record<ReturnSectionId, ReturnRow[]>) {
+function receiptRows(gs: GameState, receipts: { id: string; at: number; kind: string; detail: string }[], start: number, out: Record<ReturnSectionId, Omit<ReturnRow, "source">[]>) {
   const r = gs.run!; const seen = new Set<string>();
   const rel = (at: number) => { const m = Math.max(0, Math.round((at - start) / 60000)); return m >= 60 ? `${Math.floor(m / 60)} h ${m % 60} min` : `${m} min`; };
   const structAt = (id: string) => { const e = r.entities[id]; return e ? { tx: e.tx ?? 0, ty: e.ty ?? 0, name: e.kind === 'bag' ? 'your bag' : nm(e.type) } : undefined; };
@@ -103,8 +111,8 @@ function receiptRows(gs: GameState, receipts: { id: string; at: number; kind: st
       case 'heat.shelter_lost': out.home.push({ id, tone: 'bad', text: `${rel(x.at)} in: you lost your enclosed shelter (roof or wall lost); shelter warmth stopped.`, receipts: [id] }); break;
       case 'territory.upkeep': break; // summarized from cabinet stock deltas
       case 'territory.collapse': { const [sid, name, reason] = x.detail.split(':'); out.loss.push({ id, tone: 'bad', text: `${rel(x.at)} in: ${name} collapsed (${reason}).`, where: structAt(sid), receipts: [id] }); break; }
-      case 'struct.destroyed': out.loss.push({ id, tone: 'bad', text: `${rel(x.at)} in: a structure was destroyed (${x.detail}). Materials it held are in the wreckage where it stood.`, receipts: [id] }); break;
-      case 'death': { const bag = x.detail.match(/bag=([^;]+)/)?.[1]; const b = bag && bag !== 'none' ? structAt(bag) : undefined; out.body.push({ id, tone: 'bad', text: `${rel(x.at)} in: you died (${x.detail.split(';')[0]}). Your belongings are in a bag where you fell.`, where: b, receipts: [id] }); break; }
+      case 'struct.destroyed': out.loss.push({ id, tone: 'bad', text: `${rel(x.at)} in: a structure was destroyed (${x.detail}). Its contents are not promised; check the site for any surviving bag.`, receipts: [id] }); break;
+      case 'death': { const bag = x.detail.match(/bag=([^;]+)/)?.[1]; const b = bag && bag !== 'none' ? structAt(bag) : undefined; out.body.push({ id, tone: 'bad', text: `${rel(x.at)} in: you died (${x.detail.split(';')[0]}). ${bag && bag !== 'none' ? 'Your belongings are in a bag where you fell.' : 'No surviving bag is recorded for this death.'}`, where: b, receipts: [id] }); break; }
       case 'rest.end': out.body.push({ id, tone: 'ok', text: `${rel(x.at)} in: rest ended; you are awake.`, receipts: [id] }); break;
       case 'rest.eat': case 'rest.drink': case 'rest.drink.food': out.body.push({ id, tone: 'gold', text: `${rel(x.at)} in: rest consumed provisions (${x.detail}).`, receipts: [id] }); break;
       case 'airdrop.signal': case 'airdrop.descent': case 'airdrop.accessible': out.world.push({ id, tone: 'gold', text: `${rel(x.at)} in: public airdrop signal — ${x.kind.replace('airdrop.', '')}.`, receipts: [id] }); break;
@@ -115,7 +123,7 @@ function receiptRows(gs: GameState, receipts: { id: string; at: number; kind: st
 
 /** Build OfflineReturnV1 from the window's receipts and the before/after snapshots. */
 export function buildOfflineReturn(gs: GameState, before: Snap | null, receipts: { id: string; at: number; kind: string; detail: string }[], start: number, end: number, expired: boolean): OfflineReturnV1 {
-  const out: Record<ReturnSectionId, ReturnRow[]> = { body: [], home: [], production: [], loss: [], world: [] };
+  const out: Record<ReturnSectionId, Omit<ReturnRow, "source">[]> = { body: [], home: [], production: [], loss: [], world: [] };
   const r = gs.run; const after = captureReturnSnapshot(gs);
   const gapMs = Math.max(0, end - start);
   const quiet = !!before && !!after && receipts.length === 0 && gapMs < 4000;
@@ -138,10 +146,10 @@ export function buildOfflineReturn(gs: GameState, before: Snap | null, receipts:
       if (s.hp < s.maxHp * 0.5 && s.hp > 0) out.home.push({ id: `rep:${id}`, tone: 'warn', text: `${s.name} ${s.tx},${s.ty} needs repair (${Math.round(s.hp)}/${s.maxHp} HP).`, where: { tx: s.tx, ty: s.ty, name: s.name }, receipts: [] });
       if (!b && s.hp <= 0) out.loss.push({ id: `gone:${id}`, tone: 'bad', text: `${s.name} at ${s.tx},${s.ty} is gone.`, receipts: [] });
     }
-    for (const [id, b] of Object.entries(before.structs)) if (!after.structs[id] && !out.loss.some(x => x.id === `gone:${id}`)) out.loss.push({ id: `lost:${id}`, tone: 'bad', text: `${b.name} at ${b.tx},${b.ty} was lost (see its wreckage where it stood).`, where: { tx: b.tx, ty: b.ty, name: b.name }, receipts: [] });
+    for (const [id, b] of Object.entries(before.structs)) if (!after.structs[id] && !out.loss.some(x => x.id === `gone:${id}`)) { const w = wreckageAt(r!, b.tx, b.ty); out.loss.push({ id: `lost:${id}`, tone: 'bad', text: `${b.name} at ${b.tx},${b.ty} was lost. ${w ? `Recoverable wreckage here: ${w.join(', ') || 'empty bag'}.` : 'No recoverable bag or container is recorded here, so no items are promised.'}`, where: { tx: b.tx, ty: b.ty, name: b.name }, receipts: [] }); }
     for (const [id, s] of Object.entries(after.stations)) {
       const detail = s.out.length ? `output container: ${s.out.join(', ')}` : 'output container empty';
-      out.production.push({ id: `st:${id}`, tone: s.state === 'output_full' || s.state === 'fuel_out' ? 'warn' : 'muted', text: `${s.name} ${s.tx},${s.ty}: ${s.state ?? 'idle'}; ${s.queue.length ? `queue ${s.queue.join(', ')}` : 'no job'}; ${detail}.`, where: { tx: s.tx, ty: s.ty, name: s.name }, receipts: [] });
+      out.production.push({ id: `st:${id}`, tone: s.state === 'output_full' || s.state === 'fuel_out' ? 'warn' : 'muted', text: `${s.name} ${s.tx},${s.ty}: ${(s.state ?? 'idle').replace(/_/g, ' ')}; ${s.queue.length ? `queue ${s.queue.join(', ')}` : 'no job'}; ${detail}.`, where: { tx: s.tx, ty: s.ty, name: s.name }, receipts: [] });
     }
     for (const [id, t] of Object.entries(after.tenders)) {
       out.production.push({ id: `tn:${id}`, tone: t.paused ? 'warn' : 'ok', text: `Garden Tender ${t.tx},${t.ty}: ${t.label}${t.crop ? ` · plot ${t.crop} ${Math.round(t.growth * 100)}%` : ''} · chest: ${t.chest.join(', ') || 'empty'}.`, where: { tx: t.tx, ty: t.ty, name: 'Garden Tender' }, receipts: [] });
@@ -160,8 +168,10 @@ export function buildOfflineReturn(gs: GameState, before: Snap | null, receipts:
   }
   for (const row of out.production) if (row.tone === 'warn' && row.where && !next.includes(`Go to ${row.where.name} ${row.where.tx},${row.where.ty}.`)) next.push(`Walk to ${row.where.name} ${row.where.tx},${row.where.ty} and clear the pause.`);
   if (before && after) for (const [id, c] of Object.entries(after.cabinets)) if (!c.funded) next.push(`Fund Cabinet ${c.tx},${c.ty} with materials on hand.`);
-  const summary = expired ? 'The 336-hour run ended while you were away.' : quiet ? `No changes since your last visit (${gapMs >= 60000 ? Math.round(gapMs / 60000) + ' min' : 'a few seconds'} away). Nothing new was produced or lost.` : `Away ${gapMs >= HOUR ? (gapMs / HOUR).toFixed(1) + ' h' : Math.round(gapMs / 60000) + ' min'}. ${receipts.length} recorded event${receipts.length === 1 ? '' : 's'}.`;
-  return { version: 'offline-return-v1', away: { fromAt: start, toAt: end, gapMs, expired, quiet }, summary, sections: out, next: next.slice(0, 6), receiptCount: receipts.length };
+  // Tag provenance: rows with receipts are events; rows derived from the read-only snapshot are current state.
+  for (const k of Object.keys(out) as ReturnSectionId[]) out[k] = out[k].map(row => ({ ...row, source: row.receipts.length ? 'event' : 'state' }));
+  const summary = expired ? 'The 336-hour run ended while you were away.' : quiet ? `No changes since your last visit (${gapMs >= 60000 ? Math.round(gapMs / 60000) + ' min' : 'a few seconds'} away). Nothing new was produced or lost.` : `Away ${gapMs >= HOUR ? (gapMs / HOUR).toFixed(1) + ' h' : Math.round(gapMs / 60000) + ' min'}. ${receipts.length} timed event${receipts.length === 1 ? '' : 's'} recorded; the rest of the rows are current readings.`;
+  return { version: 'offline-return-v1', away: { fromAt: start, toAt: end, gapMs, expired, quiet }, summary, sections: out as Record<ReturnSectionId, ReturnRow[]>, next: next.slice(0, 6), receiptCount: receipts.length };
 }
 
 /** Continue route: runs the same settle() and returns both the legacy strings and the typed report. */

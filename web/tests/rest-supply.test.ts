@@ -1,7 +1,7 @@
 import {describe,it,expect} from 'vitest';
-import {BAL,HOUR,TILE,WW,type GameState,type RunState} from '../src/game/core';
+import {BAL,HOUR,TILE,WW,T,type GameState,type RunState} from '../src/game/core';
 import {getWorld} from '../src/game/world';
-import {newGame,dispatch,addItem,countItem,C,blockGrid,destroyStructure,killPlayer,restForecast,restEligible,homeStatus,markDirty} from '../src/game/engine';
+import {newGame,dispatch,addItem,countItem,C,blockGrid,destroyStructure,killPlayer,restForecast,restEligible,homeStatus,markDirty,weatherAt,isWet,darkness} from '../src/game/engine';
 import {settle} from '../src/game/sim';
 import {serializeSnapshot,validate} from '../src/game/persist';
 
@@ -13,19 +13,27 @@ const copy=(g:GameState)=>JSON.parse(JSON.parse(serializeSnapshot(g)).payload) a
 const why=(res:any)=>res.ok?'':res.reason;
 const uids=(r:RunState)=>Object.values(r.custody).flatMap(c=>c.slots.filter(Boolean).map(s=>s!.uid)).sort();
 
-function site(g:GameState){
+// Real world conditions only (no heat grant): a candidate tile is a TEMPERATE rest site when the game's own shared thermal
+// authority, with NO heat source and NO insulation, keeps a sheltered sleeper's target >= 50 at every 30-minute sample of the 12 h
+// window (zone, weather slots and night are all the real ones). The frigid negative case uses the same authority, not a special rule.
+import {thermalEnv,thermalEvaluate} from '../src/game/thermal';
+const TEMPERATE_MIN_TARGET=50;
+const HALF_HOUR=30*60000;
+const climateTargets=(r:RunState,xx:number,yy:number,hours:number)=>{const zone=getWorld().zone[yy*WW+xx];const out:number[]=[];for(let t=T;t<=T+hours*HOUR;t+=HALF_HOUR)out.push(thermalEvaluate(r,thermalEnv(r,{x:xx*TILE+8,y:yy*TILE+8,zone,tileType:T.FLOOR,wet:isWet(weatherAt(r,t)),dark:darkness(r,t)>0.45,sheltered:true})).target);return out;};
+const isTemperate=(r:RunState,xx:number,yy:number)=>Math.min(...climateTargets(r,xx,yy,12))>=TEMPERATE_MIN_TARGET;
+function site(g:GameState,pred:(r:RunState,x:number,y:number)=>boolean=isTemperate){
   const r=g.run!,w=getWorld(),grid=blockGrid(r);
   for(let yy=20;yy<180;yy++)for(let xx=20;xx<180;xx++){
     const cells=[];for(let dy=-1;dy<=2;dy++)for(let dx=-1;dx<=2;dx++)cells.push([dx,dy]);
-    if(cells.every(([dx,dy])=>{const i=(yy+dy)*WW+xx+dx;return grid[i]===0&&!w.sourceV3[i]&&w.economyMap.buildable[i]&&!w.economyMap.protected[i]&&!w.accessCorridors?.mask[i];}))return {x:xx,y:yy};
+    if(cells.every(([dx,dy])=>{const i=(yy+dy)*WW+xx+dx;return grid[i]===0&&!w.sourceV3[i]&&w.economyMap.buildable[i]&&!w.economyMap.protected[i]&&!w.accessCorridors?.mask[i];}) && pred(r,xx,yy))return {x:xx,y:yy};
   }
   throw new Error('no open site');
 }
 // Builds a real 2x2 wooden shelter (floor, roof, walls) with a Cabinet-free bed and chest inside.
-function shelter(seed:number){
+function shelter(seed:number,pred?:(r:RunState,x:number,y:number)=>boolean){
   const g=newGame();expect(act(g,'startRun',{character:'female',region:0,seed}).ok).toBe(true);
   const r=g.run!;r.creatures=[];
-  const {x,y}=site(g);
+  const {x,y}=site(g,pred);
   r.player.x=x*TILE+8;r.player.y=(y+1)*TILE+8;
   addItem(r,'inv','wood',400);addItem(r,'inv','fiber',200);addItem(r,'inv','stone',60);
   const build=(struct:string,tx:number,ty:number)=>{const res=act(g,"build",{struct,tx,ty});expect({s:struct,tx,ty,why:res.ok?"":(res as any).reason}).toEqual({s:struct,tx,ty,why:""});};
@@ -230,5 +238,29 @@ describe('homeStatus external coverage (audit fix)',()=>{
     expect(why(act(g,'build',{struct:'claim',tx:x,ty:y}))).toBe('');
     const cab=Object.values(r.entities).find(e=>e.type==='claim')!;
     expect(homeStatus(r).cabinets.find(c=>c.id===cab.id)!.state).toBe('idle');
+  });
+});
+
+// Hostile-climate NEGATIVE case (creator law: an unheated shelter in cold weather may kill a sleeper; a bed is not cold immunity).
+// The site is chosen by the same shared thermal authority: the sheltered, unheated target falls below the cold gate (8) somewhere in the window.
+describe('rest V1 in a frigid unheated shelter (lawful exposure death, exact custody)', () => {
+  const frigid = (r: RunState, x: number, y: number) => Math.min(...climateTargets(r, x, y, 12)) < 8;
+  it('an 8 h unheated rest in a frigid site ends in exposure death at a real time, with every reserve UID restored', () => {
+    const { g, r, bed, chest, flask } = shelter(503, frigid);
+    r.player.hunger = 40; r.player.thirst = 60;
+    const meat = meatUid(r, chest.c!);
+    const before = uids(r);
+    expect(act(g, 'restStart', { eid: bed.id, chestId: chest.id, items: [meat, flask.uid], hours: 8 }).ok).toBe(true);
+    settle(g, T + 8 * HOUR, true);
+    expect(r.player.dead).toBe(true);
+    const death = r.receipts.find(x => x.kind === 'death')!;
+    expect(death.detail).toMatch(/exposure/);
+    expect(death.at).toBeGreaterThan(T);
+    expect(death.at).toBeLessThanOrEqual(T + 8 * HOUR);
+    const end = r.receipts.find(x => x.kind === 'rest.end')!;
+    expect(end.detail).toMatch(/^death;/);
+    expect(end.at).toBe(death.at);
+    expect(uids(r)).toEqual(before); // no duplication, no loss: reserve UIDs go to bag/custody
+    expect(new Set(uids(r)).size).toBe(uids(r).length);
   });
 });

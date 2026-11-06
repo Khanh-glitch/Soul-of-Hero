@@ -379,36 +379,34 @@ export function EvacPanel({ api, eid }: { api: Api; eid: string }) {
   </Panel>;
 }
 const RETURN_TABS: { id: ReturnSectionId; label: string }[] = [
-  { id: 'body', label: 'Body & Rest' }, { id: 'home', label: 'Home & Cabinet' }, { id: 'production', label: 'Production' }, { id: 'loss', label: 'Loss' }, { id: 'world', label: 'Known world' },
+  { id: 'body', label: 'Body' }, { id: 'home', label: 'Home' }, { id: 'production', label: 'Work' }, { id: 'loss', label: 'Loss' }, { id: 'world', label: 'World' },
 ];
-const RETURN_TONE: Record<ReturnTone, string> = { ok: '#9be38a', gold: '#ffd98a', warn: '#ffb36b', bad: '#ff8a7a', muted: '#cfc2dc' };
-/** B03-C: grouped 640x360 return report (typed OfflineReturnV1). Falls back to the legacy line list. */
+const RETURN_TONE: Record<ReturnTone, string> = { ok: '#9be38a', gold: '#ffd98a', warn: '#ffb36b', bad: '#ff8a7a', muted: '#d8cce4' };
+/** B03-C: grouped 640x360 return report (typed OfflineReturnV1). Legible type, EVENT vs NOW provenance, scroll for detail. */
 export function ReportPanel({ api, lines, report }: { api: Api; lines: string[]; report?: OfflineReturnV1 | null }) {
   const [tab, setTab] = useState<ReturnSectionId>('body');
-  if (!report) return <Panel title="While you were away" style={{ left: 170, top: 80, width: 300 }} onClose={() => api.open(null)}>
-    <div className="scroll" style={{ maxHeight: 150, overflowY: 'auto' }}>{lines.map((l, i) => <div key={i} style={{ fontSize: 11, color: i ? '#cfc2dc' : '#ffd98a' }}>• {l}</div>)}</div>
-    <div style={{ fontSize: 10, color: '#b2a5bd', marginTop: 3 }}>Only evidenced tracks and physical impacts are resolved; other encounters remain unresolved. The world is live behind this report.</div>
-    <button className="btn gold" style={{ marginTop: 4 }} onClick={() => api.open(null)}>Continue</button>
+  if (!report) return <Panel title="While you were away" style={{ left: 120, top: 40, width: 400, boxSizing: 'border-box' }} onClose={() => api.open(null)}>
+    <div className="scroll" style={{ maxHeight: 220, overflowY: 'auto' }}>{lines.map((l, i) => <div key={i} style={{ fontSize: 13, lineHeight: 1.3, color: i ? '#d8cce4' : '#ffd98a', marginBottom: 4 }}>• {l}</div>)}</div>
+    <button className="btn gold" style={{ marginTop: 6, fontSize: 13 }} onClick={() => api.open(null)}>Continue</button>
   </Panel>;
   const rows = report.sections[tab];
   const counts = Object.fromEntries(RETURN_TABS.map(t => [t.id, report.sections[t.id].length])) as Record<ReturnSectionId, number>;
-  return <Panel title="While you were away" className="return-report" style={{ left: 0, top: 0, width: 640, height: 360, boxSizing: 'border-box', padding: 8, display: 'flex', flexDirection: 'column', gap: 4, overflow: 'hidden' }} onClose={() => api.open(null)}>
-    <div style={{ fontSize: 11, color: '#ffd98a', lineHeight: 1.25, minHeight: 28 }}>{report.summary}</div>
-    <div style={{ display: 'flex', gap: 3, flexWrap: 'nowrap' }}>
-      {RETURN_TABS.map(t => <button key={t.id} className={`btn ${tab === t.id ? 'gold' : 'ghost'}`} style={{ fontSize: 10, padding: '2px 5px', flex: 1 }} onClick={() => setTab(t.id)}>{t.label} ({counts[t.id]})</button>)}
+  return <Panel title="While you were away" className="return-report" style={{ left: 0, top: 0, width: 640, height: 360, boxSizing: 'border-box', padding: '8px 10px', display: 'flex', flexDirection: 'column', gap: 6, overflow: 'hidden' }} onClose={() => api.open(null)}>
+    <div style={{ fontSize: 14, color: '#ffd98a', lineHeight: 1.25, maxHeight: 36, overflow: 'hidden' }}>{report.summary}</div>
+    <div style={{ display: 'flex', gap: 4 }}>
+      {RETURN_TABS.map(t => <button key={t.id} className={`btn ${tab === t.id ? 'gold' : 'ghost'}`} style={{ fontSize: 13, padding: '4px 0', flex: 1, whiteSpace: 'nowrap' }} onClick={() => setTab(t.id)}>{t.label} {counts[t.id]}</button>)}
     </div>
-    <div className="scroll" style={{ flex: 1, minHeight: 0, overflowY: 'auto', border: '1px solid #3a2f4a', padding: 4 }}>
-      {rows.length === 0 && <div style={{ fontSize: 11, color: '#b2a5bd' }}>Nothing recorded in this group.</div>}
-      {rows.map(row => <div key={row.id} style={{ fontSize: 11, color: RETURN_TONE[row.tone], marginBottom: 3, lineHeight: 1.25 }}>
-        • {row.text}
-        {row.where && <span style={{ color: '#b2a5bd' }}> — at {row.where.tx},{row.where.ty}</span>}
-        {row.receipts.length > 0 && <span style={{ color: '#7f7390', fontSize: 9 }}> [{row.receipts.join(',')}]</span>}
+    <div className="scroll" style={{ flex: 1, minHeight: 0, overflowY: 'auto', background: '#120e1a', border: '1px solid #3a2f4a', padding: '6px 8px' }}>
+      {rows.length === 0 && <div style={{ fontSize: 13, color: '#b2a5bd' }}>Nothing to report in this group.</div>}
+      {rows.map(row => <div key={row.id} style={{ display: 'flex', gap: 6, alignItems: 'flex-start', marginBottom: 6, fontSize: 13, lineHeight: 1.3, color: RETURN_TONE[row.tone] }}>
+        <span title={row.source === 'event' ? 'Timed event from this absence' : 'Current state read at Continue'} style={{ flex: '0 0 auto', fontSize: 10, letterSpacing: 0.5, padding: '1px 4px', marginTop: 1, border: '1px solid currentColor', color: row.source === 'event' ? '#ffd98a' : '#9fc7e8' }}>{row.source === 'event' ? 'EVENT' : 'NOW'}</span>
+        <span>{row.text}{row.where && !row.text.includes(`${row.where.tx},${row.where.ty}`) && <span style={{ color: '#b2a5bd' }}> · {row.where.name} {row.where.tx},{row.where.ty}</span>}</span>
       </div>)}
     </div>
-    <div style={{ fontSize: 10, color: '#cfc2dc', minHeight: 26, lineHeight: 1.2 }}>{report.next.length ? <>Next: {report.next.slice(0, 3).join(' ')}</> : 'No physical action is required right now.'}</div>
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <span style={{ fontSize: 9, color: '#7f7390' }}>Forecasts are not guaranteed. Only physical receipts appear here; you must walk to a structure to act on it.</span>
-      <button className="btn gold" style={{ fontSize: 11 }} onClick={() => api.open(null)}>Close</button>
+    <div style={{ fontSize: 12, color: '#e6dcc9', minHeight: 30, lineHeight: 1.3 }}>{report.next.length ? <>Next: {report.next.slice(0, 2).join(' ')}</> : 'Nothing needs you right now.'}</div>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+      <span style={{ fontSize: 11, color: '#9b8fa8', lineHeight: 1.25 }}>EVENT = timed receipt. NOW = reading at Continue. Go to a site to act; nothing is collected remotely.</span>
+      <button className="btn gold" style={{ fontSize: 13, flex: '0 0 auto' }} onClick={() => api.open(null)}>Close</button>
     </div>
   </Panel>;
 }

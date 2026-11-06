@@ -40,7 +40,7 @@ try {
   await panel.waitFor({ timeout: 15000 });
   await page.waitForTimeout(400);
   await page.screenshot({ path: `${out}/report-body-640x360.png` });
-  for (const [name, file] of [['Production', 'report-production-640x360.png'], ['Home & Cabinet', 'report-home-640x360.png'], ['Loss', 'report-loss-640x360.png']]) {
+  for (const [name, file] of [['Work', 'report-production-640x360.png'], ['Home', 'report-home-640x360.png'], ['Loss', 'report-loss-640x360.png']]) {
     await panel.getByRole('button', { name: new RegExp(name) }).click();
     await page.waitForTimeout(200);
     await page.screenshot({ path: `${out}/${file}` });
