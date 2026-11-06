@@ -198,7 +198,8 @@ export function sourceAt(r: RunState, tx: number, ty: number, now?: number) {
   return { i, key, def, stock, hp, st, fire: (st as any)?.fire as number | undefined };
 }
 // collision cache — rebuilt when structures/sources/terrain change
-let blockCache: { run: string; layout: string; sourceVersion: number; arr: Uint8Array } | null = null; let blockDirty = true;
+// B04-P4: keyed by the RunState object itself (not run.id), like entsAt: a copied run with the same id must never reuse another copy's collision grid.
+let blockCache: { run: RunState; layout: string; sourceVersion: number; arr: Uint8Array } | null = null; let blockDirty = true;
 export function markDirty() { blockDirty = true; tileIndex = null; roomCache = null; }
 /** 0 free, 1 terrain wall, 2 source, 3 structure, 4 shallow/river (wade), 5 lava */
 let baseGrid: Uint8Array | null = null; let baseGridLayout = '';
@@ -211,7 +212,7 @@ function cellClass(r: RunState | null, tx: number, ty: number) {
 }
 export function blockGrid(r: RunState) {
   const layout = getActiveLayout();
-  if (blockCache && blockCache.run === r.id && blockCache.layout === layout && blockCache.sourceVersion === (r.sourceLayoutVersion ?? 1) && !blockDirty) return blockCache.arr;
+  if (blockCache && blockCache.run === r && blockCache.layout === layout && blockCache.sourceVersion === (r.sourceLayoutVersion ?? 1) && !blockDirty) return blockCache.arr;
   if (!baseGrid || baseGridLayout !== layout) { baseGrid = new Uint8Array(WW * WH); for (let i = 0; i < WW * WH; i++) baseGrid[i] = cellClass(null, i % WW, (i / WW) | 0); baseGridLayout = layout; }
   const arr = r.sourceLayoutVersion === 3 ? new Uint8Array(WW * WH) : baseGrid.slice();
   if (r.sourceLayoutVersion === 3) { for (let i = 0; i < arr.length; i++) arr[i] = cellClass(r, i % WW, (i / WW) | 0); }
@@ -226,7 +227,7 @@ export function blockGrid(r: RunState) {
     else if (e.kind === 'airdrop' && (e.airdrop?.phase==='locked'||e.airdrop?.phase==='open'||e.airdrop?.phase==='partial')) arr[i] = 3;
     else if (e.kind === 'loot' || e.kind === 'cash' || e.kind === 'vendor' || e.kind === 'gen' || e.kind === 'evac' || e.kind === 'recycler') arr[i] = 3;
   }
-  blockCache = { run: r.id, layout, sourceVersion: r.sourceLayoutVersion ?? 1, arr }; blockDirty = false; return arr;
+  blockCache = { run: r, layout, sourceVersion: r.sourceLayoutVersion ?? 1, arr }; blockDirty = false; return arr;
 }
 export function blockedAt(r: RunState, tx: number, ty: number) { if (tx < 0 || ty < 0 || tx >= WW || ty >= WH) return true; const b = blockGrid(r)[ty * WW + tx]; return b === 1 || b === 2 || b === 3 || b === 5; }
 let tileIndex: Map<number, Entity[]> | null = null; let tileIndexRun: RunState | null = null;
@@ -444,9 +445,18 @@ export function irSensorStatus(r:RunState,e:Entity):string {
   const v=irSensorSees(r,e);return v.visible?'Target in clear line: conducting':v.blockedInRange?'Blocked by wall: not conducting':'Watching: clear';
 }
 /** B04-P3 downstream readout for the sensor prompt: only real powered doors on the same wire-v1 network, and only while conducting. */
+/** B04-P4 sprite state for the sensor: same branches as irSensorStatus, returned as a key. */
+export function irSensorVisual(r:RunState,e:Entity):'off'|'unpowered'|'ready'|'detect'|'blocked' {
+  if(!e.irSensor||!e.irSensor.enabled)return 'off';
+  const g=sensorGenerator(r,e);
+  if(!g||!g.basePower?.enabled||!hasPowerFuel(r,g)||!sensorClaims(r,g).some(x=>x.id===e.id))return 'unpowered';
+  const v=irSensorSees(r,e);return v.visible?'detect':v.blockedInRange?'blocked':'ready';
+}
 export function irSensorDownstream(r:RunState,e:Entity):string {
   if(!irSensorConducts(r,e))return '';
-  const doors=Object.values(r.entities).filter(d=>d.type==='door_powered'&&owned(d)&&(d.hp??0)>0&&electricDoorPowered(r,d)).length;
+  // B04-P4: count only doors fed by THIS sensor's generator network (not any powered door in the run).
+  const g=sensorGenerator(r,e);
+  const doors=Object.values(r.entities).filter(d=>d.type==='door_powered'&&owned(d)&&(d.hp??0)>0&&electricDoorGenerator(r,d)?.id===g?.id&&electricDoorPowered(r,d)).length;
   return doors?`, powers ${doors} door${doors>1?'s':''}`:', no powered door on this network';
 }
 export function wireReachable(r:RunState,g:Entity,e:Entity):boolean {

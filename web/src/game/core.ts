@@ -95,7 +95,7 @@ export interface Entity {
   garden?: { crop: string | null; growth: number; water: number; coldFrame?: boolean };
   farm?: { enabled: boolean; crop: 'crop' | 'herb'; energy: number; gardenId?: string; barrelId?: string; chestId?: string; lastCode?: string };
   irSensor?: { version: 'ir-v1'; enabled: boolean };
-  bearTrap?: { version: 'trap-v1'; state: 'unarmed' | 'armed' | 'spent' | 'worn'; uses: number };
+  bearTrap?: { version: 'trap-v1'; state: 'unarmed' | 'armed' | 'spent' | 'worn'; uses: number; snapAt?: number };
   basePower?: { enabled: boolean; energy: number; capacity?: 2; priority?: 'defense' | 'production'; network?: 'wire-v1' };
   wireSwitch?: {version:'wire-v1'; on:boolean};
   electricDoor?: {version:'wire-v1'; interior:[number,number]; releaseUntil?:number};

@@ -170,7 +170,7 @@ describe('B04-P3 B02 bear trap: paid transitions, invariants, offline vs live', 
     expect((snap.run!.receipts ?? []).slice(before).some((x: any) => x.kind === 'trap.trigger')).toBe(false);
     // Live contact: exactly one paid hit.
     triggerBearTrap(o.g, m, T0);
-    expect(m.hp).toBeLessThan(hpBefore); expect(t.bearTrap).toEqual({ version: 'trap-v1', state: 'spent', uses: 2 });
+    expect(m.hp).toBeLessThan(hpBefore); expect(t.bearTrap).toMatchObject({ version: 'trap-v1', state: 'spent', uses: 2 });
     expect(countItem(o.r, 'inv', 'iron_plate')).toBe(plateBefore);
     triggerBearTrap(o.g, m, T0); expect(t.bearTrap!.uses).toBe(2); // spent: a second contact does nothing
   });

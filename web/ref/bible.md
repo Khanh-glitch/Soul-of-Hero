@@ -693,6 +693,7 @@ Only tests defined, not executed. Native proof needs real input, source/receipt,
 - **01/11/2026 sáng:** nghiên cứu Last Island 820 dòng về nước/đường/nguồn/POI và thử World Layout A/B/C chỉ là bài paper; các K1–K8, U1–U6 được bàn sâu.
 - **01/11/2026 chiều:** U1 rủi ro nhà do vận tải + dấu chân + quái thật; U2 người chơi kiểm soát tương lai trước khi thoát bằng forecast/chuẩn bị; U3 vật phẩm đa tác dụng và chiêu có thể tác động môi trường; U4 Rương ký gửi chỉ tiền Ragnarok xuyên mùa, bỏ máy cố định/vault item; U5 bảng điểm online tùy chọn, late-run tập trung Elder và nonboss; U6 tích lũy tiền + hiểu biết qua run, không items/recipe.
 - **01/11/2026 hợp nhất:** chuyển các luật ở trên thành bộ K1–K8 chi tiết, 20 journey và hàng chục ràng buộc K/M/C/J + Map + nguồn lịch sử/QA trong **chính file này**, không khởi tạo gameplay bible thứ hai. Tài liệu cũ được lưu nguyên bản trong archive hoặc theo hồ sơ review/owner có chỉ dẫn tra cứu.
+- **06/11/2026 — [IMPLEMENTATION POLICY] Creator: mechanics first; cơ chế và pixel UX ship cùng vòng (§8.8, không đổi luật gameplay).**
 - **03/11/2026 — [CHỐT B] tự động hóa vườn có điều kiện:** khởi đầu làm vườn thủ công; về sau được chủ động xây/cấp nguồn cho thiết bị tự động thu hoạch và tái trồng, có giống thật, nước, năng lượng, kho hữu hạn, timeline offline có nhân quả. Impact: K1 custody/output, K2 đất/nước/thời tiết, K3 nguồn giống, K4 sản xuất, K6 công trình/ownership, K7 tiếp tế, K8 offline/run wipe; cạnh C06/C07, J09/J11, UI phản hồi trạng thái, lưu/tải/save migration và QA gian lận output. Không đổi Gold, tiền Ragnarok hay bảng điểm; chưa viết code và chưa chốt giá/recipe/năng suất. Chỉ cập nhật luật trong Bible duy nhất.
 
 
@@ -700,6 +701,15 @@ Only tests defined, not executed. Native proof needs real input, source/receipt,
 ### 8.7. Canonical correction changelog — 2026-11-01 (plus BUILD-0 integration baseline)
 
 In-place correction: one authoritative §11.3 C registry with K/authority/proof, universal C07 transaction for build/deploy/reclaim, C04 unified research state, C24 multiple safe spawn. The duplicate §11.3b C registry and short J trace were **removed**, leaving one §11.4a J→C mapping. Replaced 108 generic Atlas rows with individual source-line traces, specific C/J, adaptation/exclusion and proof seeds. Split proposal vs law for 24h forecast and first chest vendor; Map candidate geometry is distinct from A0/A3 committed receipts. Added §0.3 BUILD-0A..D to begin actual native gameplay construction without waiting final S5. **No gameplay code, final executable build, numeric tuning, merge, Gold change or production acceptance was performed in this docs change.**
+
+### 8.8. [IMPLEMENTATION POLICY — CREATOR 2026-11-06] Quy trình triển khai (không sửa luật gameplay)
+
+> Mục này là **chính sách quy trình** cho agent/owner, không thay đổi K1–K8, M/C/J, thông số hay Map contract. Các luật gameplay ở §0–§VII giữ nguyên.
+
+1. **Cơ chế trước (Mechanics first).** Không dùng survival bot, không ép hành trình New Game → chiến đấu → về nhà, không đo “độ vui” bằng automation. Kiểm chứng bằng test ngắn, có mục tiêu: an toàn giao dịch, thời gian, lưu/tải, va chạm, chống nhân bản UID, lỗi tiềm ẩn. Không lấy kết quả scripted làm bằng chứng trải nghiệm người chơi.
+2. **Cơ chế và UX pixel ship cùng một vòng.** Mỗi vật phẩm, máy, thùng chứa hoặc tương tác thế giới mới phải có pixel art riêng và UI ngữ cảnh ngay trong cùng vòng. Cấm: placeholder đổi màu, icon không liên quan tái dùng, vật thể vô hình, trạng thái chỉ có chữ.
+
+Áp dụng: B04-P4 (bẫy gấu, cảm biến hồng ngoại, thùng airdrop, icon Metal Pipe/Iron Plate/Metal Blade/Mechanical Gear/Refined Iron Ingot). Ledger ghi tại `docs/survival/gameplay-depth/CAPABILITY_LEDGER_W00.md` (mục B04-P4).
 
 ## PHỤ LỤC KỸ THUẬT A — 24 MỐI NỐI, 20 HÀNH TRÌNH, BÀI KIỂM TRA VÀ DỮ LIỆU THAM CHIẾU
 

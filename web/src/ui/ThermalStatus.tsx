@@ -13,8 +13,10 @@ export function thermalEnvNow(r: RunState, now: number) {
 }
 
 function heaterLine(h: HeaterRow): { text: string; tone: string } {
-  const name = h.kind === 'campfire' ? 'Campfire' : 'Furnace', id = h.id.slice(-4), mins = Math.floor(h.paidMs / 60000);
-  if (h.status === 'burning') return { text: `${name} …${id} · burning · ${mins} min paid · +${h.contributes}`, tone: '#9ae0a0' };
+  const name = h.kind === 'campfire' ? 'Campfire' : 'Furnace', id = h.id.slice(-4);
+  // B04-P4: never show a positive burn as 0 min; below one minute show seconds.
+  const paid = h.paidMs >= 60000 ? `${Math.floor(h.paidMs / 60000)} min` : `${Math.max(1, Math.ceil(h.paidMs / 1000))} s`;
+  if (h.status === 'burning') return { text: `${name} …${id} · burning · ${paid} paid · +${h.contributes}`, tone: '#9ae0a0' };
   if (h.status === 'out_of_fuel') return { text: `${name} …${id} · out of fuel (burned out) · 0`, tone: '#ff9a8a' };
   if (h.status === 'idle_furnace') return { text: `${name} …${id} · idle, no job · 0`, tone: '#d8c890' };
   return { text: `${name} …${id} · blocked by wall · 0`, tone: '#ff9a8a' };

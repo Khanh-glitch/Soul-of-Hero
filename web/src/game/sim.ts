@@ -501,7 +501,7 @@ export function triggerBearTrap(gs: GameState, m: Creature, now: number) {
   if (!trap || !trap.bearTrap) return;
   const b = BAL.bearTrapV1;
   damageCreature(gs, m, b.damage, 0, now, 0); m.cd = b.stunMs;
-  trap.bearTrap.uses -= 1; trap.bearTrap.state = trap.bearTrap.uses > 0 ? 'spent' : 'worn';
+  trap.bearTrap.uses -= 1; trap.bearTrap.state = trap.bearTrap.uses > 0 ? 'spent' : 'worn'; trap.bearTrap.snapAt = now;
   trap.hp = Math.max(0, (trap.hp ?? 0) - b.wearPerTrigger);
   receipt(r, now, 'trap.trigger', `${trap.id}:${m.id}:uses${trap.bearTrap.uses}`);
   if (trap.hp <= 0) { destroyStructure(r, trap, now); receipt(r, now, 'struct.destroyed', 'bear_trap by use'); }

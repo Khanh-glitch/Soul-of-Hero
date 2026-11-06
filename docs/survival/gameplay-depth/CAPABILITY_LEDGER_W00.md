@@ -325,3 +325,18 @@ Evidence pointers: `web/src/game/catalog.ts`, `web/src/game/engine.ts`, `docs/su
 | SYS18-10 | currency isolation from Ragnarok Cash | PARTIAL |
 | SYS18-11 | intermediates with multiple sinks | PARTIAL |
 | SYS18-12 | readable trading UI | PARTIAL |
+
+## B04-P4 round notes (2026-11-06) — provisional, no status promoted without evidence
+
+Creator policy applied: `web/ref/bible.md` §8.8 (mechanics first; mechanics and pixel UX ship together). Evidence: `web/tests/b04-p4-world.test.ts`, sprite keys in `web/src/game/art.ts`.
+
+| ID | B04-P4 change | Evidence | Status after round |
+|---|---|---|---|
+| SYS02-02 | Metal Pipe gained a workbench recycle option (`pipe_recycle`, 1 pipe → 1 Refined Iron Ingot, net loss; SOH_PROVISIONAL, no LI source) alongside craft into Iron Plate / Utility Frame | `pipe_recycle` test in b04-p4-world | PARTIAL (unchanged label; one more source-authenticated alternative) |
+| SYS12-02 / SYS12-04 | Dedicated airdrop crate sprites (locked/open); the drop is physically visible in camera | render `case 'airdrop'`; `airdrop_locked` / `airdrop_open` sprites | PARTIAL — screenshots pending in this round |
+| SYS12-08 | none | — | unchanged |
+| B02 IR sensor | Five physical sprite states (off, unpowered, ready, detect, blocked) from `irSensorVisual`; F1 fix: downstream count limited to the sensor's own generator network | `irSensorVisual` + F1 tests | PARTIAL |
+| B02 bear trap | Four physical states plus a 0.4 s live snap frame from `bearTrap.snapAt`; live contact through `tick()` | live-contact test | PARTIAL |
+| Map/LI parity | LI Metal Pipe = 5 refined ingot + 30 LI parts (ATLAS_v4 / atlas.json, `s_pipe`); SOH recipe is 2 ingot + 1 SOH Mechanical Parts (SOH_PROVISIONAL). No 1:1 claim. | Atlas restored and checksummed (`8b4fdeda…`) | PARTIAL |
+
+Not in this ledger round: Map-owned loot sources, AVFX, native, and Gold work remain outside the branch.

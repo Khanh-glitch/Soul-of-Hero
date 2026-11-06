@@ -4,7 +4,7 @@ import * as comp from './compositor';
 import { BAL, TILE, WW, WH, VIEW_W, VIEW_H, T, hash2, clamp, type GameState, type RunState, type Creature, type Entity } from './core';
 import { STRUCTS, ELDERS, CREATURES, ITEMS } from './catalog';
 import { getWorld, SRC_KEYS, fbm } from './world';
-import { effTile, sourceAt, darkness, weatherAt, isRagnarok, entsAt, buildReason, C, roofRoom, clearPhysicalLine } from './engine';
+import { effTile, sourceAt, darkness, weatherAt, isRagnarok, entsAt, buildReason, C, roofRoom, clearPhysicalLine, irSensorVisual } from './engine';
 import { airdropView } from './airdrop';
 import { FX, PROJ, HAZ, activeStack } from './sim';
 import { getArt, pixelText, mk, type Sprite } from './art';
@@ -296,7 +296,7 @@ function drawEntity(g: CanvasRenderingContext2D, r: RunState, e: Entity, time: n
     }
     case 'airdrop': { const a=e.airdrop;if(!a||a.phase==='signal')return;let lift=0;if(a.phase==='descending')lift=Math.max(0,Math.min(1,(a.landAt-now)/(a.landAt-a.descentAt)))*75;
       const stacks=C(r,e.c!).slots.filter(Boolean).length, v=airdropView(a,e.tx!,e.ty!,now,stacks);
-      shadow(g,X,Y+5,7);g.drawImage(A.st.loot,X-8,Y-10-lift);
+      shadow(g,X,Y+5,7);g.drawImage(A.st[now>=a.unlockAt?'airdrop_open':'airdrop_locked'],X-8,Y-10-lift); // padlock until the lock time, then the lid is open
       if(lift>0){g.strokeStyle='#f0d7a0';g.beginPath();g.moveTo(X-6,Y-10-lift);g.lineTo(X-13,Y-27-lift);g.moveTo(X+6,Y-10-lift);g.lineTo(X+13,Y-27-lift);g.stroke();g.fillStyle='#d77948';g.beginPath();g.ellipse(X,Y-27-lift,15,5,0,Math.PI,0);g.fill();return;}
       // Landing puff: brief local dust for 1.2 s after touchdown; no terrain or entity damage.
       const since=now-a.landAt; if(since>=0&&since<1200){const k=since/1200;g.fillStyle=`rgba(214,196,160,${(1-k)*0.6})`;for(const [dx,dy] of [[-9,2],[9,2],[0,-2]]){g.beginPath();g.arc(X+dx*(0.6+k),Y+dy+4-k*3,2+k*3,0,Math.PI*2);g.fill();}}
@@ -338,6 +338,10 @@ function drawEntity(g: CanvasRenderingContext2D, r: RunState, e: Entity, time: n
       }
       if (e.type==='door_powered') spr=A.st[e.open?'door_iron_open':'door_iron'];
       if (e.type === 'farm_controller') spr = A.st.gen;
+      // B04-P4: physical states of the bear trap (and a 0.4 s spring-snap frame after a live hit)
+      if (e.type === 'bear_trap') { const b = e.bearTrap; const snapping = b?.snapAt !== undefined && now - b.snapAt >= 0 && now - b.snapAt < 400; spr = A.st['bear_trap_' + (snapping ? 'snap' : b?.state ?? 'unarmed')] ?? A.st.bear_trap; }
+      // B04-P4: IR sensor lens/cable state from the same rule as the prompt readout
+      if (e.type === 'ir_sensor') spr = A.st['ir_sensor_' + (({ off: 'off', unpowered: 'unpowered', ready: 'ready', detect: 'detect', blocked: 'blocked' } as const)[irSensorVisual(r, e)])];
       if (e.type!.startsWith('door') && e.type!=='door_powered' && e.open) spr = A.st[e.type + '_open'];
       if (e.type === 'furnace' && e.station && e.station.burn > 0 && e.station.queue.length) spr = A.st.furnace_lit;
       if (!spr) return; if (d.layer !== 'wall') shadow(g, X, Y + 5, 7);
