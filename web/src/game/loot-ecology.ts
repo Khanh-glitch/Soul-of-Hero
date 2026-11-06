@@ -38,46 +38,45 @@ function w06LootRoll(r:RunState,site:StaticEnt,cycle:number):[string,number][] {
   const pick=def.options[h%def.options.length];return [[...def.fixed],[pick[0],pick[1]]];
 }
 
-/** B01 family × grade grammar (SOH_PROVISIONAL). Applies ONLY to runs whose lootEcology.grammar === 'b01-v1',
- * i.e. fresh runs created after B01. Saves without the field keep exact W06 rolls (no reroll).
- * Food and Medical are separate families; Toolbox/Military/Supply keep their W06 picks above.
- * Grades come from the existing four classes; no card-room POI is invented.
- * Historical reference only, NOT copied into SOH: 2022-11-09 container announcement (Green 6 / Blue 6 / Purple 7 items
- * with category guarantees; see LI_2022_CONTAINER_CONTRACT). Category guarantees ≠ individual item odds. */
+/** B01-R1 source-specific material roles (SOH_PROVISIONAL). Applies ONLY to runs whose lootEcology.grammar === 'b01-v1'.
+ * Each W06 class receives EXACTLY ONE grammar role. There is no universal Food+Medical overlay.
+ *   supply   (12 h, low)  -> food role: one food stack from {berries, mushroom, herb}
+ *   military (24 h, mid)  -> medical role: one medical stack from {bandage, herb}
+ *   toolbox  (24 h, mid)  -> metal role: one refined iron ingot (feeds Metal Pipe and Iron Plate)
+ *   advanced (48 h, high) -> medkit role + two refined iron ingots
+ * Old saves (no grammar field) keep exact W06 rolls. Historical LI counts are NOT copied (see LI_2022_CONTAINER_CONTRACT). */
 export const LOOT_GRAMMAR_VERSION = 'b01-v1' as const;
-export type LootFamily = 'toolbox' | 'supply' | 'military' | 'food' | 'medical';
+export type LootRole = 'food' | 'medical' | 'metal' | 'medical_high';
 export type LootGrade = 'low' | 'mid' | 'high';
-export const LOOT_B01_FAMILIES: Record<'food' | 'medical', { name: string; options: readonly (readonly [string, number])[] }> = {
-  food: { name: 'Food', options: [['berries', 2], ['mushroom', 2], ['herb', 2]] },
-  medical: { name: 'Medical', options: [['bandage', 1], ['herb', 1]] },
+export const LOOT_B01_ROLES: Record<LootClass, { role: LootRole; grade: LootGrade; fixed: readonly (readonly [string, number])[]; pool: readonly (readonly [string, number])[] }> = {
+  supply:   { role: 'food',        grade: 'low',  fixed: [], pool: [['berries', 1], ['mushroom', 1], ['herb', 1]] },
+  military: { role: 'medical',     grade: 'mid',  fixed: [], pool: [['bandage', 1], ['herb', 1]] },
+  toolbox:  { role: 'metal',       grade: 'mid',  fixed: [['refined_iron_ingot', 1]], pool: [] },
+  advanced: { role: 'medical_high', grade: 'high', fixed: [['medkit', 1], ['refined_iron_ingot', 2]], pool: [] },
 };
-/** Container slots: pre-B01 runs stay at 8 (saves unchanged); B01 runs need room for authored + W06 + grammar stacks. */
-export function lootSlots(r:RunState):number { return r.lootEcology?.grammar===LOOT_GRAMMAR_VERSION ? 12 : 8; }
-export const LOOT_B01_MEDKIT_HIGH: readonly [string, number] = ['medkit', 1];
 /** Historical v2022 reference only (original counts; SOH does not copy them). */
 export const LI_2022_CONTAINER_CONTRACT = { green: 6, blue: 6, purple: 7 } as const;
+/** Container slots: pre-B01 runs stay at 8 (saves unchanged); B01 runs need room for authored + W06 + grammar stacks. */
+export function lootSlots(r:RunState):number { return r.lootEcology?.grammar===LOOT_GRAMMAR_VERSION ? 12 : 8; }
 export function lootGrade(site: StaticEnt): LootGrade | null {
-  const kind = lootClass(site); if (!kind) return null;
-  return kind === 'advanced' ? 'high' : kind === 'supply' ? 'low' : 'mid';
+  const kind = lootClass(site); return kind ? LOOT_B01_ROLES[kind].grade : null;
+}
+export function lootRole(site: StaticEnt): LootRole | null {
+  const kind = lootClass(site); return kind ? LOOT_B01_ROLES[kind].role : null;
 }
 function hashPick(input: string): number {
   let h = 2166136261; for (let i = 0; i < input.length; i++) h = Math.imul(h ^ input.charCodeAt(i), 16777619) >>> 0;
   h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b); h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35); return (h ^ (h >>> 16)) >>> 0;
 }
-/** Deterministic per run/source/cycle. Food/medical picks are independent of the W06 roll. Only eligible
- * consumable foods are emitted (checked against the catalog), never guns, cash, blueprints or unique items. */
+/** Items a grammar role may never emit: cash, blueprints, keycards, unique tools and fuel/energy cores. */
+const LOOT_B01_FORBIDDEN = new Set(['rcash', 'blueprint', 'keycard', 'damaged_drive', 'energy_basic', 'energy_refined', 'core_blast', 'core_earthmother', 'iron_pick', 'iron_axe', 'iron_sword']);
+/** Deterministic per run/source/cycle. Each class receives only its own role; no cross-role overlay. */
 export function lootGrammarRoll(r: RunState, site: StaticEnt, cycle: number): [string, number][] {
   if (r.lootEcology?.grammar !== LOOT_GRAMMAR_VERSION) return [];
-  const grade = lootGrade(site); if (!grade) return [];
-  const base = `${LOOT_GRAMMAR_VERSION}|${r.seed}|${lootSourceId(r, site)}|${cycle}`;
-  const pickFrom = (fam: 'food' | 'medical', slot: string) => {
-    const opts = LOOT_B01_FAMILIES[fam].options.filter(([k]) => ITEMS[k]?.cat === 'food');
-    return opts[hashPick(`${base}|${slot}`) % opts.length];
-  };
-  const food = pickFrom('food', 'food'), medical = pickFrom('medical', 'medical');
-  const out: [string, number][] = [];
-  if (grade === 'low') out.push([food[0], food[1]], [medical[0], medical[1]]);
-  if (grade === 'mid') out.push([food[0], food[1]], [medical[0], medical[1]]);
-  if (grade === 'high') out.push([food[0], food[1] * 2], [medical[0], medical[1]], [...LOOT_B01_MEDKIT_HIGH]);
-  return out.filter(([k]) => !!ITEMS[k]);
+  const kind = lootClass(site); if (!kind) return [];
+  const def = LOOT_B01_ROLES[kind];
+  const base = `${LOOT_GRAMMAR_VERSION}|${r.seed}|${lootSourceId(r, site)}|${cycle}|${def.role}`;
+  const out: [string, number][] = def.fixed.map(([k, q]) => [k, q]);
+  if (def.pool.length) { const [k, q] = def.pool[hashPick(base) % def.pool.length]; out.push([k, q]); }
+  return out.filter(([k]) => !!ITEMS[k] && !LOOT_B01_FORBIDDEN.has(k));
 }

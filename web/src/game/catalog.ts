@@ -136,7 +136,7 @@ export const ITEMS: Record<string, ItemDef> = {
   metal_pipe: I({ name:'Metal Pipe', cat:'res', icon:'scrap', c1:'#5f6a74', c2:'#b8c4cc', w:1.2, max:20, desc:'Pipe section for utility frames and iron plate. Stackable; not recyclable.' }),
   metal_blade: I({ name:'Metal Blade', cat:'res', icon:'fang', c1:'#7d8a96', c2:'#eef4f8', w:0.8, max:20, desc:'Cut blade stock for sword refits.' }),
   mechanical_gear: I({ name:'Mechanical Gear', cat:'res', icon:'gear', c1:'#6b6f76', c2:'#d6c27a', w:0.8, max:20, desc:'Precision gear for motor drives and powered mechanisms.' }),
-  iron_plate: I({ name:'Iron Plate', cat:'res', icon:'scrap', c1:'#4f5a63', c2:'#c9d1d8', w:1.5, max:20, desc:'Reinforcing plate. Restores a wall or door fully when applied at the structure.' }),
+  iron_plate: I({ name:'Iron Plate', cat:'res', icon:'scrap', c1:'#4f5a63', c2:'#c9d1d8', w:1.5, max:20, desc:'Plate patch for a damaged wall or door (Shift+click when repairing): restores up to 25% of its max HP per plate. Not a permanent reinforcement.' }),
   motorbike_kit: I({ name:'Utility Motorbike (packed)', cat:'kit', icon:'cart', c1:'#4d7180', c2:'#e4c475', w:12, max:1, dur:200, desc:'Place on clear eligible ground; fuel and cargo are separate.', place:'motorbike' }),
   cart_kit: I({ name: 'Hand Cart (packed)', cat: 'kit', icon: 'cart', c1: '#7a5a32', c2: '#c0c8d0', w: 6, max: 1, desc: 'Place to unpack a cargo cart.', place: 'cart' }),
   // elder stones (unique per run)

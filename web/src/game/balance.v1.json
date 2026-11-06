@@ -617,10 +617,110 @@
     "_status": "SOH_PROVISIONAL B01. v2 supersedes v1 only for NEW jobs (recipe X:recover-v2). Queued X:recover-v1 jobs keep v1 outputs forever. Thresholds reuse recyclerV1 midCondition/highCondition. Historical LI Pipe salvage (v4): parts+refined iron, exact per-item yield and condition curve ORIGINAL_UNKNOWN.",
     "seconds": 15,
     "rules": {
-      "iron_sword": { "base": [["scrap", 1]], "mid": [["iron_ingot", 1], ["metal_blade", 1]], "high": [["leather", 1], ["metal_blade", 1]] },
-      "iron_pick": { "base": [["scrap", 1]], "mid": [["iron_ingot", 1]], "high": [["metal_pipe", 1], ["iron_ingot", 1]] },
-      "iron_axe": { "base": [["scrap", 1]], "mid": [["iron_ingot", 1]], "high": [["iron_plate", 1], ["mechanical_parts", 1]] },
-      "industrial_axe": { "base": [["scrap", 1]], "mid": [["mechanical_parts", 1], ["iron_ingot", 1]], "high": [["mechanical_gear", 1], ["mechanical_parts", 1]] }
+      "iron_sword": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "iron_ingot",
+            1
+          ],
+          [
+            "metal_blade",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "leather",
+            1
+          ],
+          [
+            "metal_blade",
+            1
+          ]
+        ]
+      },
+      "iron_pick": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "metal_pipe",
+            1
+          ],
+          [
+            "iron_ingot",
+            1
+          ]
+        ]
+      },
+      "iron_axe": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "iron_plate",
+            1
+          ],
+          [
+            "mechanical_parts",
+            1
+          ]
+        ]
+      },
+      "industrial_axe": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "mechanical_parts",
+            1
+          ],
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "mechanical_gear",
+            1
+          ],
+          [
+            "mechanical_parts",
+            1
+          ]
+        ]
+      }
     }
   },
   "airdropV1": {
@@ -698,5 +798,9 @@
     "reserveSlots": 12,
     "bedChestRadiusTiles": 3,
     "wakeRadiusTiles": 4
+  },
+  "ironPlatePatchV1": {
+    "_status": "SOH_PROVISIONAL B01-R1. One paid Iron Plate patches at most ceil(maxHp*fraction) HP on an eligible damaged wall-layer structure (walls and doors), capped at maxHp. Matches the normal repair rate of 25% per action. Not a permanent max-HP reinforcement. LI historical iron_plate: ORIGINAL_UNKNOWN for repair value.",
+    "fraction": 0.25
   }
 }

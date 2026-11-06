@@ -1125,12 +1125,12 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (!def || def.item || !Number.isFinite(e.hp) || !Number.isFinite(e.maxHp) || e.hp! <= 0 || e.hp! >= e.maxHp!) return fail('This structure cannot be repaired.');
       // B01: one Iron Plate fully restores a wall-layer structure (reinforcement role, distinct from wood patching).
       if (it.material === 'iron_plate') {
-        if (def.layer !== 'wall') return fail('Iron plate reinforces wall or door structures only.');
+        if (def.layer !== 'wall') return fail('Iron plate patches wall or door structures only.');
         if (countItem(r, 'inv', 'iron_plate') < 1) return fail('Missing repair materials: Iron Plate 0/1.');
         removeItem(r, 'inv', 'iron_plate', 1);
-        const beforePlate = e.hp!; e.hp = e.maxHp!;
-        return ok('structure.repair.plate', `${e.id}:${beforePlate}->${e.hp}:iron_platex1`, `${def.name} reinforced with Iron Plate to ${Math.round(e.hp)}/${e.maxHp} HP.`);
-      }
+        const beforePlate = e.hp!; const patch = Math.min(e.maxHp! - beforePlate, Math.ceil(e.maxHp! * BAL.ironPlatePatchV1.fraction));
+        e.hp = beforePlate + patch;
+        return ok('structure.repair.plate', `${e.id}:${beforePlate}->${e.hp}:iron_platex1`, `${def.name} plate-patched: +${Math.round(patch)} HP, now ${Math.round(e.hp)}/${e.maxHp}. One plate is spent per patch (up to 25% of max HP).`);      }
       const cost = structureRepairCost(e);
       if (!hasAll(r, 'inv', cost)) return fail('Missing repair materials: ' + cost.filter(([key, qty]) => countItem(r, 'inv', key) < qty).map(([key, qty]) => `${ITEMS[key].name} ${countItem(r, 'inv', key)}/${qty}`).join(', '));
       for (const [key, qty] of cost) removeItem(r, 'inv', key, qty);
