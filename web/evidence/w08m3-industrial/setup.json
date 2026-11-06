@@ -1,0 +1,33 @@
+{
+  "labelled": "CONTROLLED FIXTURE: material grants + real build/upgrade/place intents; refinery fuel (3 wood) pre-loaded; creatures cleared at setup",
+  "uid": "s7s",
+  "bikeId": "e7u",
+  "bike": {
+    "x": 2296,
+    "y": 1752,
+    "fuel": 0,
+    "odometer": 0,
+    "lube": 0,
+    "wear": 200
+  },
+  "refineryId": "e8a",
+  "refinery": {
+    "tx": 150,
+    "ty": 115,
+    "fuelC": "c8b",
+    "outC": "c8c"
+  },
+  "benchId": "e87",
+  "grants": {
+    "salvaged_oil": 6,
+    "glass": 6,
+    "wood_fuel": 3,
+    "motorbike_kit": 1
+  },
+  "intents": [
+    "placeMotorbike",
+    "build workbench",
+    "upgradeStation L2",
+    "build refinery"
+  ]
+}
