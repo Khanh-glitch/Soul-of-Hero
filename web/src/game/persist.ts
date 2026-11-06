@@ -33,6 +33,16 @@ const stringArray = (x: any) => Array.isArray(x) && x.every((v: any) => typeof v
 const has = (catalog: object, key: unknown) => typeof key === 'string' && Object.prototype.hasOwnProperty.call(catalog, key);
 
 /** Fail closed on broken references and duplicate physical/reserved identities. */
+/** B04-P3 trap-v1 reachable pairs (build=unarmed/3; arm/rearm spend a plate; each hit: 3->2 spent, 2->1 spent, 1->0 worn).
+ * unarmed:3 · armed:1..3 · spent:1..2 · worn:0. Any other pairing is a forged or corrupt save. */
+export function bearTrapStateValid(state:any, uses:any):boolean {
+  if(!Number.isInteger(uses))return false;
+  if(state==='unarmed')return uses===3;
+  if(state==='armed')return uses>=1&&uses<=3;
+  if(state==='spent')return uses>=1&&uses<=2;
+  if(state==='worn')return uses===0;
+  return false;
+}
 export function validate(raw: any): GameState | null {
   if (!obj(raw) || !integer(raw.version) || raw.version > SAVE_VERSION || !integer(raw.revision)) return null;
   const p = raw.profile;
@@ -170,7 +180,7 @@ export function validate(raw: any): GameState | null {
       if(e.type==='power_switch'&&(!obj(e.wireSwitch)||e.wireSwitch.version!=='wire-v1'||typeof e.wireSwitch.on!=='boolean'))return null;
       if(e.type==='door_powered'&&(!obj(e.electricDoor)||e.electricDoor.version!=='wire-v1'||!Array.isArray(e.electricDoor.interior)||e.electricDoor.interior.length!==2||![[1,0],[-1,0],[0,1],[0,-1]].some(v=>v[0]===e.electricDoor.interior[0]&&v[1]===e.electricDoor.interior[1])||(e.electricDoor.releaseUntil!==undefined&&(!finite(e.electricDoor.releaseUntil)||e.electricDoor.releaseUntil<r.startedAt))))return null;
     }
-    if(e.bearTrap!==undefined&&(e.type!=='bear_trap'||!obj(e.bearTrap)||e.bearTrap.version!=='trap-v1'||!['unarmed','armed','spent','worn'].includes(e.bearTrap.state)||!Number.isInteger(e.bearTrap.uses)||e.bearTrap.uses<0||e.bearTrap.uses>3))return null;
+    if(e.bearTrap!==undefined&&(e.type!=='bear_trap'||!obj(e.bearTrap)||e.bearTrap.version!=='trap-v1'||!bearTrapStateValid(e.bearTrap.state,e.bearTrap.uses)))return null;
     if(e.type==='bear_trap'&&e.bearTrap===undefined)return null;
     if(e.irSensor!==undefined&&(e.type!=='ir_sensor'||!obj(e.irSensor)||e.irSensor.version!=='ir-v1'||typeof e.irSensor.enabled!=='boolean'))return null;
     if(e.type==='ir_sensor'&&e.irSensor===undefined)return null;

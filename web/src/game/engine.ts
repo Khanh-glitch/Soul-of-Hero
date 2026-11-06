@@ -229,9 +229,9 @@ export function blockGrid(r: RunState) {
   blockCache = { run: r.id, layout, sourceVersion: r.sourceLayoutVersion ?? 1, arr }; blockDirty = false; return arr;
 }
 export function blockedAt(r: RunState, tx: number, ty: number) { if (tx < 0 || ty < 0 || tx >= WW || ty >= WH) return true; const b = blockGrid(r)[ty * WW + tx]; return b === 1 || b === 2 || b === 3 || b === 5; }
-let tileIndex: Map<number, Entity[]> | null = null; let tileIndexRun = '';
+let tileIndex: Map<number, Entity[]> | null = null; let tileIndexRun: RunState | null = null;
 export function entsAt(r: RunState, tx: number, ty: number): Entity[] {
-  if (!tileIndex || tileIndexRun !== r.id) { tileIndex = new Map(); tileIndexRun = r.id; for (const e of Object.values(r.entities)) if (e.tx !== undefined && e.kind !== 'drop' && e.kind !== 'bag' && e.kind !== 'cart') { const i = e.ty! * WW + e.tx; const l = tileIndex.get(i); if (l) l.push(e); else tileIndex.set(i, [e]); } }
+  if (!tileIndex || tileIndexRun !== r) { tileIndex = new Map(); tileIndexRun = r; /* keyed by run object: a copied run with the same id must never reuse another copy's entities */ for (const e of Object.values(r.entities)) if (e.tx !== undefined && e.kind !== 'drop' && e.kind !== 'bag' && e.kind !== 'cart') { const i = e.ty! * WW + e.tx; const l = tileIndex.get(i); if (l) l.push(e); else tileIndex.set(i, [e]); } }
   return tileIndex.get(ty * WW + tx) || [];
 }
 /** Authoritative SOH coverage: nearest valid owned cabinet, stable ID tie-break. */
@@ -442,6 +442,12 @@ export function irSensorStatus(r:RunState,e:Entity):string {
   if(!g.basePower?.enabled)return 'Generator off';if(!hasPowerFuel(r,g))return 'No fuel';
   if(!sensorClaims(r,g).some(x=>x.id===e.id))return 'Capacity full';
   const v=irSensorSees(r,e);return v.visible?'Target in clear line: conducting':v.blockedInRange?'Blocked by wall: not conducting':'Watching: clear';
+}
+/** B04-P3 downstream readout for the sensor prompt: only real powered doors on the same wire-v1 network, and only while conducting. */
+export function irSensorDownstream(r:RunState,e:Entity):string {
+  if(!irSensorConducts(r,e))return '';
+  const doors=Object.values(r.entities).filter(d=>d.type==='door_powered'&&owned(d)&&(d.hp??0)>0&&electricDoorPowered(r,d)).length;
+  return doors?`, powers ${doors} door${doors>1?'s':''}`:', no powered door on this network';
 }
 export function wireReachable(r:RunState,g:Entity,e:Entity):boolean {
   if(!g.basePower||g.basePower.network!=='wire-v1'||!owned(g)||!owned(e)||(g.hp??0)<=0||(e.hp??0)<=0||g.tx===undefined||g.ty===undefined||e.tx===undefined||e.ty===undefined)return false;
@@ -1115,7 +1121,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const order = ['tool', 'weapon', 'core', 'armor', 'food', 'res', 'kit', 'bp', 'misc', 'stone', 'cash'];
       rest.sort((a, b) => order.indexOf(ITEMS[a.key].cat) - order.indexOf(ITEMS[b.key].cat) || a.key.localeCompare(b.key));
       const out = it.c === 'inv' ? [...keep.map(s => (s && s.qty > 0 ? s : null))] : []; while (out.length < c.slots.length) out.push(rest.shift() || null); c.slots = out; return ok('sort', c.id); }
-    case 'drop': { const c = C(r, it.c); const s = c && validSlot(c, it.slot) ? c.slots[it.slot] : null; if (!s || !canAccess(r, it.c)) return fail('Nothing to drop.'); c.slots[it.slot] = null; if (p.pulling && s.key === 'x') p.pulling = null; dropStackEntity(r, s, p.x + Math.cos(p.aim) * 12, p.y + Math.sin(p.aim) * 12, now); return ok('drop', `${s.key}x${s.qty}`); }
+    case 'drop': { const c = C(r, it.c); const s = c && validSlot(c, it.slot) ? c.slots[it.slot] : null; if (!s || !canAccess(r, it.c)) return fail('Nothing to drop.'); c.slots[it.slot] = null; if (p.pulling && s.key === 'x') p.pulling = null; dropStackEntity(r, s, p.x + Math.cos(p.aim) * 12, p.y + Math.sin(p.aim) * 12, now); pruneEmptyBag(r, it.c); return ok('drop', `${s.key}x${s.qty}`); }
     case 'upgradeStructure': {
       const e = r.entities[it.eid];
       if (!e || e.kind !== 'struct' || !owned(e) || !near(r, e, 3)) return fail('Use your structure within reach.');
@@ -1369,7 +1375,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       else { const cont=mkContainer(r,'bag',Math.max(8,picks.length)); bag={id:uid(r,'b'),kind:'bag',x:spot.x,y:spot.y,c:cont.id,label:'Motorbike cargo',born:now,vehicleSource:src}; r.entities[bag.id]=bag; }
       const bc=C(r,bag.c!); const moved:string[]=[];
       for(const i of picks){ const stack=cargo.slots[i]!; cargo.slots[i]=null; const slot=bc.slots.findIndex(sl=>!sl); bc.slots[slot]=stack; moved.push(stack.uid); }
-      return ok('vehicle.unload',`${e.deployed.uid}:${bag.id}:${moved.join(',')}`,`Unloaded ${moved.length} stack${moved.length===1?'':'s'} into a ground bag beside the motorbike. Nothing was copied or created.`);
+      return ok('vehicle.unload',`${e.deployed.uid}:${bag.id}:${moved.join(',')}`,`Moved ${moved.length} stack${moved.length===1?'':'s'} from the motorbike into a ground bag beside it.`);
     }
     case 'vehicleLubricate': {
       const e=r.entities[it.eid];if(!e||e.kind!=='vehicle'||!e.vehicle||!e.deployed||!owned(e)||!near(r,e,2)||p.vehicle)return fail('Dismount near your motorbike.');
@@ -1500,7 +1506,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       removeItem(r, 'inv', 'fuel_can', 1); e.power=1;e.poiPower={version:'poi-access-v1',fueledAt:now,expiresAt:now+BAL.poiAccess.fuelRuntimeMs,budgetMs:BAL.poiAccess.fuelRuntimeMs,runAt:now,runMs:BAL.poiAccess.fuelRuntimeMs};
       return ok('poi.power.fuel',`${e.id}:fuel_can:${fuelUid}:until=${e.poiPower.expiresAt}`,`Generator running for ${BAL.poiAccess.fuelRuntimeMs/1000} seconds.`);
     }
-    case 'openAirdrop': { const e=r.entities[it.eid]; if(!e || e.kind!=='airdrop' || (e.airdrop?.phase!=='open' && e.airdrop?.phase!=='partial') || !e.c || !canAccess(r,e.c)) return fail('Airdrop is locked or out of reach.'); return ok('airdrop.open',String(e.airdrop.index)); }
+    case 'openAirdrop': { const e=r.entities[it.eid]; if(!e || e.kind!=='airdrop' || !e.airdrop) return fail('No airdrop here.'); const a=e.airdrop; if(a.phase==='signal'||a.phase==='descending') return fail('Airdrop is still in the air.'); if(a.phase==='locked') return fail(`Airdrop locked: opens to all in ${Math.max(0,Math.ceil((a.unlockAt-now)/1000))}s.`); if(!e.c || !canAccess(r,e.c)) return fail('Airdrop out of reach: walk up to it.'); return ok('airdrop.open',String(a.index)); }
     case 'openCash': { // C15: special finite POI chest mints physical cash ONCE, only during the final 72h
       const e = r.entities[it.eid]; if (!e || e.kind !== 'cash' || !near(r, e, 2.2) || !clearInteraction(r,e)) return fail('Out of reach.');
       if (!isRagnarok(r, now)) return fail('Sealed with a Ragnarok glyph. It will open only in the final 72 hours.');

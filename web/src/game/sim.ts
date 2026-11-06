@@ -1,5 +1,6 @@
 import { stimulusNearHome } from './stimulus';
 import { airdropBoundary, stepAirdrops } from './engine';
+import { airdropView } from './airdrop';
 import { advancePoiAccess, poiDoorLabel, poiGenLabel } from './poi-access';
 import { vehicleClear, vehicleExitPoint } from './motorbike';
 import { LOOT_CLASSES, lootClass } from './loot-ecology';
@@ -8,7 +9,7 @@ import { BAL, TILE, WW, WH, HOUR, VIEW_W, VIEW_H, T, rngNext, uid, dist, clamp, 
 import { thermalEnv, thermalEvaluate, thermalStep, thermalBoundaryMs, heatersInReach, coldDamageActive } from './thermal';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
 import { getWorld } from './world';
-import { irSensorStatus, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
+import { irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
@@ -1190,6 +1191,16 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
 
 // ---------- interaction finder (for E prompts) ----------
 export interface Interact { kind: string; label: string; eid?: string; x: number; y: number }
+/** B04-P3 bear trap readout. Costs come from balance; the states mirror persist.ts trap-v1 invariants. */
+export function bearTrapPrompt(r: RunState, e: Entity): string {
+  const t = e.bearTrap; if (!t) return 'Bear trap: not installed';
+  const plate = ITEMS[BAL.bearTrapV1.armCost[0][0] as string].name;
+  if ((e.hp ?? 0) <= 0) return 'Bear trap: destroyed';
+  if (t.state === 'armed') return `Bear trap ARMED · ${t.uses} hit${t.uses === 1 ? '' : 's'} left · live contact fires it`;
+  if (t.state === 'spent') return `Bear trap SPENT · ${t.uses} hit${t.uses === 1 ? '' : 's'} left · E re-arms for 1 ${plate}`;
+  if (t.state === 'worn') return 'Bear trap WORN OUT · reclaim to recover materials';
+  return `Bear trap unarmed · ${t.uses} hits · E arms for 1 ${plate}`;
+}
 export function findInteract(gs: GameState, now: number): Interact | null {
   const r = gs.run!; const p = r.player; if (p.dead) return null; let best: Interact | null = null; let bd = 30;
   const fx0 = p.x + Math.cos(p.aim) * 6, fy0 = p.y + Math.sin(p.aim) * 6;
@@ -1197,15 +1208,15 @@ export function findInteract(gs: GameState, now: number): Interact | null {
     if (e.kind === 'drop') continue; const d = dist(fx0, fy0, e.x, e.y); if (d > bd || !clearInteraction(r, e)) continue;
     let label = ''; let kind = e.kind as string;
     if (e.kind === 'bag') { if (!C(r,e.c!).slots.some(Boolean) && !e.legacyJobs?.queue.length) continue; label = `Open ${e.label || 'bag'}`; }
-    else if (e.kind === 'airdrop') { if(!e.airdrop || ['signal','descending'].includes(e.airdrop.phase))continue; label=e.airdrop.phase==='locked' ? `Airdrop locked · ${Math.ceil(Math.max(0,e.airdrop.unlockAt-now)/1000)}s` : 'Search airdrop'; }
+    else if (e.kind === 'airdrop') { if(!e.airdrop || ['signal','descending'].includes(e.airdrop.phase))continue; const v=airdropView(e.airdrop,e.tx!,e.ty!,now,C(r,e.c!).slots.filter(Boolean).length); label = v.key==='locked' ? `Airdrop locked · opens in ${v.lockedRemainS}s` : v.key==='emptied' ? 'Airdrop empty' : v.key==='partial' ? 'Airdrop partly claimed · take only' : v.key==='expiring' ? `Airdrop expiring · take only` : 'Search airdrop · take only'; }
     else if (e.kind === 'loot') { const site=r.lootEcology && getWorld(r.layoutId||'shipping').statics.find(s=>s.kind==='loot'&&s.tx===e.tx&&s.ty===e.ty);const cls=site && lootClass(site);label=C(r,e.c!).slots.some(Boolean) ? `Search ${cls ? LOOT_CLASSES[cls].name : 'crate'}` : 'Empty crate'; }
     else if (e.kind === 'cash') label = isRagnarok(r, now) ? (e.minted ? 'Ragnarok chest' : 'Break the Ragnarok seal') : 'Sealed Ragnarok chest';
     else if (e.kind === 'vendor') label = `Trade with ${e.label}`;
     else if (e.kind === 'door') label = e.locked || e.poiDoor ? poiDoorLabel(r,e,now) : e.open ? 'Close door' : 'Open door';
     else if (e.kind === 'recycler') label = 'Use Foundry Recycler';
     else if (e.kind === 'gen') label = poiGenLabel(r,e,now);
-    else if (e.type === 'ir_sensor') label = 'Infrared sensor: ' + irSensorStatus(r, e) + ' (E toggles)';
-    else if (e.type === 'bear_trap') label = `Bear trap: ${e.bearTrap?.state ?? 'unarmed'}, ${e.bearTrap?.uses ?? 0} hits left (E arms or re-arms)`;
+    else if (e.type === 'ir_sensor') label = `Infrared sensor ${e.irSensor?.enabled ? 'ON' : 'OFF'}: ${irSensorStatus(r, e)}${irSensorDownstream(r, e)} (E toggles)`;
+    else if (e.type === 'bear_trap') label = bearTrapPrompt(r, e);
     else if (e.kind === 'evac') label = 'Evacuation beacon';
     else if (e.kind === 'cart') label = 'Cart cargo  [Shift+F] pull';
     else if (e.kind === 'vehicle') label = r.player.vehicle===e.id ? 'Exit motorbike' : 'Motorbike cargo and controls';

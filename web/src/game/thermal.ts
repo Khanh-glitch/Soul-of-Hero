@@ -161,3 +161,37 @@ export function thermalBoundaryMs(r: RunState, env: ThermalEnv, warmth: number, 
 /** Warmth-driven cold damage gate (online and offline use this exact predicate). */
 export function coldDamageActive(warmth: number): boolean { return warmth < K().coldThreshold; }
 
+
+/** B04-P3 local heat readout. Read-only: every field comes from the same evaluator and station custody the sim uses. */
+export interface HeaterRow { id: string; kind: HeaterKind; status: 'burning' | 'out_of_fuel' | 'idle_furnace' | 'blocked_by_wall'; paidMs: number; contributes: number }
+export interface ThermalStatusView {
+  warmth: number; target: number; cold: boolean; coldThreshold: number;
+  exposures: { id: string; label: string; value: number }[];
+  insulation: number; sheltered: boolean; torch: boolean; zone6: boolean;
+  heaters: HeaterRow[];
+}
+/** Heaters within the same radius the evaluator uses, including the ones a wall blocks (shown, never counted). */
+export function heaterRows(r: RunState, env: { x: number; y: number }): HeaterRow[] {
+  const rows: HeaterRow[] = [];
+  for (const e of Object.values(r.entities)) {
+    if (e.kind !== 'struct' || !e.station || !e.type || !STRUCTS[e.type]?.warmth) continue;
+    if (!owned(e) || (e.hp ?? 0) <= 0) continue;
+    if (dist(e.x, e.y, env.x, env.y) >= K().sources.campfireBurning.radiusPx) continue;
+    const st = heaterStatus(r, e); if (!st) continue;
+    const pts = st.kind === 'campfire' ? K().sources.campfireBurning.score : K().sources.furnaceBurning.score;
+    if (!clearSegment(r, env, e)) { rows.push({ id: e.id, kind: st.kind, status: 'blocked_by_wall', paidMs: st.paidMs, contributes: 0 }); continue; }
+    if (!st.active) rows.push({ id: e.id, kind: st.kind, status: st.code === 'idle' ? 'idle_furnace' : 'out_of_fuel', paidMs: st.paidMs, contributes: 0 });
+    else rows.push({ id: e.id, kind: st.kind, status: 'burning', paidMs: st.paidMs, contributes: pts });
+  }
+  return rows.sort((a, b) => a.id.localeCompare(b.id));
+}
+/** Single authority for the card: target is thermalEvaluate's own value, not a second formula. */
+export function thermalStatusView(r: RunState, env: ThermalEnv, warmth: number): ThermalStatusView {
+  const ev = thermalEvaluate(r, env);
+  return {
+    warmth, target: ev.target, cold: coldDamageActive(warmth), coldThreshold: K().coldThreshold,
+    exposures: ev.coldParts.map(p => ({ id: p.id, label: p.id.replace(/_/g, ' '), value: p.value })),
+    insulation: ev.insulation, sheltered: env.sheltered, torch: ev.torch, zone6: ev.zone6,
+    heaters: heaterRows(r, env),
+  };
+}

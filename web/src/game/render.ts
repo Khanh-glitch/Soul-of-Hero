@@ -5,6 +5,7 @@ import { BAL, TILE, WW, WH, VIEW_W, VIEW_H, T, hash2, clamp, type GameState, typ
 import { STRUCTS, ELDERS, CREATURES, ITEMS } from './catalog';
 import { getWorld, SRC_KEYS, fbm } from './world';
 import { effTile, sourceAt, darkness, weatherAt, isRagnarok, entsAt, buildReason, C, roofRoom, clearPhysicalLine } from './engine';
+import { airdropView } from './airdrop';
 import { FX, PROJ, HAZ, activeStack } from './sim';
 import { getArt, pixelText, mk, type Sprite } from './art';
 
@@ -293,7 +294,19 @@ function drawEntity(g: CanvasRenderingContext2D, r: RunState, e: Entity, time: n
       g.fillStyle='#d2ac68';g.fillRect(-2,-3,5,6);g.fillStyle='#d8ddc6';g.fillRect(8,-2,3,4);
       if(C(r,e.c!).slots.some(Boolean)){g.fillStyle='#97774b';g.fillRect(-10,-4,4,8);}g.restore();return;
     }
-    case 'airdrop': { const a=e.airdrop;if(!a||a.phase==='signal')return;let lift=0;if(a.phase==='descending')lift=Math.max(0,Math.min(1,(a.landAt-now)/(a.landAt-a.descentAt)))*75;shadow(g,X,Y+5,7);g.drawImage(A.st.loot,X-8,Y-10-lift);if(lift>0){g.strokeStyle='#f0d7a0';g.beginPath();g.moveTo(X-6,Y-10-lift);g.lineTo(X-13,Y-27-lift);g.moveTo(X+6,Y-10-lift);g.lineTo(X+13,Y-27-lift);g.stroke();g.fillStyle='#d77948';g.beginPath();g.ellipse(X,Y-27-lift,15,5,0,Math.PI,0);g.fill();}else {g.fillStyle=a.phase==='locked'?'#ffb750':'#9fffaa';g.fillRect(X-1,Y-16,3,4);}return; }
+    case 'airdrop': { const a=e.airdrop;if(!a||a.phase==='signal')return;let lift=0;if(a.phase==='descending')lift=Math.max(0,Math.min(1,(a.landAt-now)/(a.landAt-a.descentAt)))*75;
+      const stacks=C(r,e.c!).slots.filter(Boolean).length, v=airdropView(a,e.tx!,e.ty!,now,stacks);
+      shadow(g,X,Y+5,7);g.drawImage(A.st.loot,X-8,Y-10-lift);
+      if(lift>0){g.strokeStyle='#f0d7a0';g.beginPath();g.moveTo(X-6,Y-10-lift);g.lineTo(X-13,Y-27-lift);g.moveTo(X+6,Y-10-lift);g.lineTo(X+13,Y-27-lift);g.stroke();g.fillStyle='#d77948';g.beginPath();g.ellipse(X,Y-27-lift,15,5,0,Math.PI,0);g.fill();return;}
+      // Landing puff: brief local dust for 1.2 s after touchdown; no terrain or entity damage.
+      const since=now-a.landAt; if(since>=0&&since<1200){const k=since/1200;g.fillStyle=`rgba(214,196,160,${(1-k)*0.6})`;for(const [dx,dy] of [[-9,2],[9,2],[0,-2]]){g.beginPath();g.arc(X+dx*(0.6+k),Y+dy+4-k*3,2+k*3,0,Math.PI*2);g.fill();}}
+      // Physical status marks on the crate (pixel-snapped, no text).
+      const lampCol=v.key==='locked'?'#ff5a4a':v.key==='accessible'?'#7dff8a':v.key==='expiring'?'#ffd040':v.key==='partial'?'#ffb84a':'#c0c0c0';
+      if(v.key==='accessible'||v.key==='expiring'){const pulse=0.35+0.25*Math.sin(now/220);g.strokeStyle=`rgba(125,255,138,${pulse})`;g.beginPath();g.ellipse(X,Y+5,10,4,0,0,Math.PI*2);g.stroke();}
+      if(v.key==='locked'){g.fillStyle='#1a1020';g.fillRect(X-2,Y-19,5,4);g.fillStyle='#ffb750';g.fillRect(X-1,Y-18,3,2);g.fillStyle='#2a1a1a';g.fillRect(X-3,Y-15,7,6);g.fillStyle='#ff5a4a';g.fillRect(X-1,Y-13,3,2);}
+      for(let k=0;k<3;k++){g.fillStyle=k<stacks?'#f0d060':'#3a2a2a';g.fillRect(X-5+k*4,Y+3,2,2);}
+      g.fillStyle=lampCol;g.fillRect(X+5,Y-16,3,3);g.fillStyle='#120c18';g.fillRect(X+5,Y-16,3,1);
+      return; }
     case 'loot': { const empty = !C(r, e.c!).slots.some(Boolean); shadow(g, X, Y + 5, 7); g.drawImage(empty ? A.st.loot_open : A.st.loot, X - 8, Y - 10); return; }
     case 'cash': { const rag = isRagnarok(r, now); shadow(g, X, Y + 5, 7); g.drawImage(e.minted && !C(r, e.c!).slots.some(Boolean) ? A.st.cash_open : A.st.cash, X - 8, Y - 10); if (rag && !e.minted) { const a = 0.4 + Math.sin(time / 200) * 0.3; g.fillStyle = `rgba(255,208,64,${a})`; g.fillRect(X - 7, Y - 12, 14, 1); if (Math.random() < 0.2) add({ x: X - 6 + Math.random() * 12, y: Y - 8, vx: 0, vy: -16, col: '#ffe27a', max: 700, s: 1, g: -4 }); } return; }
     case 'vendor': { shadow(g, X, Y + 6, 5); const bob = Math.floor(time / 600) % 2; g.drawImage(A.st.vendor, X - 8, Y - 18 + bob); return; }

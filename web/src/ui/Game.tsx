@@ -1,4 +1,4 @@
-import { airdropArea } from '../game/airdrop';
+import { airdropView } from '../game/airdrop';
 import SpiritVfxEditor from './SpiritVfxEditor';
 import * as pfx from '../game/pixelfx';
 import { pfxFromSimEvent } from '../game/pixelfxMap';
@@ -13,6 +13,7 @@ import { sfx, setAmbience, initAudio } from '../game/audio';
 import { save, saveSync } from '../game/persist';
 import { Slot, Bar, Icon, mkIntent, type Api, type PanelState } from './common';
 import { HomeStatusCard } from './HomeStatus';
+import { ThermalStatusCard } from './ThermalStatus';
 import type { OfflineReturnV1 } from '../game/return-report';
 import { RestPanel } from './RestPanel';
 import { InventoryPanel, ContainerPanel, CraftPanel, BuildPanel, MapPanel, SkillsPanel, MenuPanel, VendorPanel, EscrowPanel, EvacPanel, ReportPanel } from './panels';
@@ -34,7 +35,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
   const panelRef = useRef(panel); panelRef.current = panel; const buildRef = useRef(buildType); buildRef.current = buildType; const reclaimRef = useRef(reclaim); reclaimRef.current = reclaim; const repairRef = useRef(repairMode); repairRef.current = repairMode; const upgradeRef = useRef(upgradeMode); upgradeRef.current = upgradeMode;
   const saveT = useRef<any>(null); const toastKeys = useRef<Record<string, number>>({});
   const scheduleSave = () => { clearTimeout(saveT.current); saveT.current = setTimeout(() => { void save(gs).then(ok => { if (!ok) toast('Save failed. Changes are not confirmed on disk.', 'bad'); }); }, 250); };
-  const toast = useCallback((text: string, tone?: string) => { if (!text) return; const k = text; const n = Date.now(); if (toastKeys.current[k] && n - toastKeys.current[k] < 2500) return; toastKeys.current[k] = n; setToasts(t => [...t.slice(-3), { id: n + Math.random(), text, tone, t: n }]); }, []);
+  const toast = useCallback((text: string, tone?: string) => { if (!text) return; const k = text; const n = Date.now(); if (toastKeys.current[k] && n - toastKeys.current[k] < 2500) return; toastKeys.current[k] = n; const id = n + Math.random(); setToasts(t => [...t.slice(-3), { id, text, tone, t: n }]); setTimeout(() => setToasts(t => t.filter(v => v.id !== id)), 3300); }, []);
   const act = useCallback((type: string, payload: Record<string, any> = {}) => {
     const now = Date.now();
     // An input arriving before a frame must not precede elapsed world events.
@@ -216,8 +217,9 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
         <div style={{ color: '#9ae0ff' }}>secured {gs.profile.securedCash}{heldCash ? <span style={{ color: '#ffe27a' }}> · carried {heldCash}</span> : null}</div>
         {ph === 'calm' && hrs > 230 && <div style={{ color: '#ff9a5a' }}>Ragnarok in {(264 - hrs).toFixed(1)}h</div>}
       </div>
-      {Object.values(r.entities).filter(e=>e.kind==='airdrop'&&e.airdrop).map(e=><div key={e.id} className="panel absolute" style={{left:165,top:5,padding:'2px 6px',fontSize:10,color:'#ffe27a',pointerEvents:'none'}}>Airdrop reported near {airdropArea(e.tx!,e.ty!)} · {e.airdrop!.phase==='signal'?'incoming':e.airdrop!.phase==='descending'?'descending':'landed'}</div>)}
+      {Object.values(r.entities).filter(e=>e.kind==='airdrop'&&e.airdrop).map(e=>{ const v=airdropView(e.airdrop!,e.tx!,e.ty!,now,C(r,e.c!).slots.filter(Boolean).length); const col=v.key==='locked'?'#ffb0a0':v.takeable?'#9ae0a0':'#ffd98a'; return <div key={e.id} data-testid="airdrop-banner" data-phase={v.key} className="panel absolute" style={{left:165,top:5,padding:'2px 6px',fontSize:11,lineHeight:1.1,color:col,pointerEvents:'none',maxWidth:340}}><b>{v.label}</b> <span style={{color:'#d8cce4'}}>· {v.detail}</span></div>; })}
       {!panel && <HomeStatusCard r={r} px={p.x} py={p.y} />}
+      <ThermalStatusCard r={r} now={now} hidden={!!panel} />
       {engaged && (() => { const d = ELDERS[engaged.elder!.key]; return <div className="absolute" style={{ left: 170, top: 6, width: 300, textAlign: 'center' }}><div className="title-font" style={{ fontSize: 10, color: d.color, textShadow: '1px 1px 0 #000' }}>{d.name} <span style={{ color: '#cfc2dc', fontSize: 9 }}>— {engaged.elder!.awake ? 'awakened' : 'latent'}</span></div><div className="bar" style={{ width: 300, height: 6 }}><i style={{ width: `${(engaged.hp / engaged.maxHp) * 100}%`, background: `linear-gradient(${d.color}, #8a2a1a)` }} /></div></div>; })()}
       {banner && <div key={banner.id} className="absolute banner" style={{ left: 0, right: 0, top: 70, textAlign: 'center', pointerEvents: 'none' }} onAnimationEnd={() => setBanner(null)}><div className="title-font" style={{ fontSize: 22, color: '#ffe8b0', textShadow: '2px 2px 0 #2a1006, 0 0 8px #ff9a3a' }}>{banner.text}</div>{banner.sub && <div style={{ fontSize: 12, color: '#e0d0f0', textShadow: '1px 1px 0 #000' }}>{banner.sub}</div>}</div>}
       {coreAim && ['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'') && coreAim.mode==='signature' && <svg className="absolute" width={VIEW_W} height={VIEW_H} style={{left:0,top:0,pointerEvents:'none'}}><rect x="2" y="2" width={VIEW_W-4} height={VIEW_H-4} fill="none" stroke="#ffd98a" strokeDasharray="4 3"/></svg>}

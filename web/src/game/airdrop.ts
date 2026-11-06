@@ -31,3 +31,26 @@ export function chooseAirdropSite(r:RunState,index:number,grid:Uint8Array):{tx:n
   for(let y=2;y<WH-2;y++)for(let x=2;x<WW-2;x++){const i=y*WW+x;if(!seen[i]||!airdropStaticEligible(w,x,y))continue;let ok=true;for(let dy=-radius;dy<=radius&&ok;dy++)for(let dx=-radius;dx<=radius;dx++){const j=(y+dy)*WW+x+dx;if(blocked(j)||occupied.has(j)){ok=false;break;}}if(!ok)continue;const h=hash2(x,y,salt);if(h<score){best=i;score=h;}}
   return best<0?null:{tx:best%WW,ty:Math.floor(best/WW)};
 }
+
+/** B04-P3: one read-only phase projection for HUD, E prompt and the crate marker.
+ * Derived only from the real event entity, the real clock and the real stock count.
+ * Exact landing coordinates are never part of the broadcast: the sector label is the only location. */
+export type AirdropPhaseKey = 'incoming' | 'descending' | 'locked' | 'accessible' | 'partial' | 'expiring' | 'emptied';
+export interface AirdropView { key: AirdropPhaseKey; label: string; detail: string; takeable: boolean; stacks: number; lockedRemainS: number | null; expiresInS: number | null; zone: string }
+const EXPIRING_WINDOW_MS = 15 * 60000;
+export function airdropView(a: { phase: string; descentAt: number; landAt: number; unlockAt: number; expiresAt: number }, tx: number, ty: number, now: number, stacks: number): AirdropView {
+  const zone = airdropArea(tx, ty), s = (ms: number) => Math.max(0, Math.ceil(ms / 1000));
+  // The clock decides the pre-touchdown and lock phases, so the projection never lags a tick behind.
+  // Partial/open come from the stored custody phase; the engine remains the only writer.
+  const phase = now < a.descentAt ? 'signal' : now < a.landAt ? 'descending' : now < a.unlockAt ? 'locked' : (a.phase === 'partial' ? 'partial' : 'open');
+  a = { ...a, phase };
+  const base = { stacks, zone, takeable: false, lockedRemainS: null as number | null, expiresInS: null as number | null };
+  if (a.phase === 'signal') return { ...base, key: 'incoming', label: 'AIRDROP INCOMING', detail: `signal over ${zone} · exact landing unknown · touchdown in ${s(a.landAt - now)}s` };
+  if (a.phase === 'descending') return { ...base, key: 'descending', label: 'AIRDROP DESCENDING', detail: `chute over ${zone} · lands in ${s(a.landAt - now)}s` };
+  if (a.phase === 'locked') return { ...base, key: 'locked', label: 'LANDED · LOCKED', detail: `${zone} · open to all in ${s(a.unlockAt - now)}s`, lockedRemainS: s(a.unlockAt - now) };
+  if (stacks <= 0) return { ...base, key: 'emptied', label: 'EMPTIED', detail: `${zone} · no stock left` };
+  const left = a.expiresAt - now, expiring = left <= EXPIRING_WINDOW_MS;
+  const key: AirdropPhaseKey = expiring ? 'expiring' : a.phase === 'partial' ? 'partial' : 'accessible';
+  const label = key === 'expiring' ? 'EXPIRING · TAKE ONLY' : key === 'partial' ? 'PARTIALLY CLAIMED · TAKE ONLY' : 'ACCESSIBLE · TAKE ONLY';
+  return { ...base, key, label, takeable: true, expiresInS: s(left), detail: `${zone} · ${stacks} stack${stacks === 1 ? '' : 's'} left · expires in ${s(left)}s` };
+}
