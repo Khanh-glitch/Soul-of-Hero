@@ -289,6 +289,11 @@ export function buildStructs() {
   // B04-P4 airdrop crate: dedicated sprite for the drop (locked = padlocked, open = lid propped, contents visible).
   S.airdrop_locked = mk(16, 16, g => airdropCrateArt(g, false), null);
   S.airdrop_open = mk(16, 16, g => airdropCrateArt(g, true), null);
+  // B04-P4 cache families: four physically distinct containers (not one chest with a different label).
+  S.loot_toolbox = mk(16, 16, g => { R(g, 2, 7, 12, 7, '#5a6068'); R(g, 2, 7, 12, 2, '#b03a2a'); R(g, 6, 3, 1, 4, '#9aa0a8'); R(g, 9, 3, 1, 4, '#9aa0a8'); R(g, 6, 3, 4, 1, '#9aa0a8'); R(g, 2, 11, 12, 1, '#3a3e46'); R(g, 7, 9, 2, 2, '#d0d4da'); P(g, 3, 12, '#9aa0a8'); P(g, 12, 12, '#9aa0a8'); }, null);
+  S.loot_supply = mk(16, 16, g => { R(g, 2, 8, 12, 6, '#b8864a'); for (let y = 8; y < 14; y += 2) R(g, 2, y, 12, 1, '#8a5e30'); for (let x = 3; x < 14; x += 3) R(g, x, 8, 1, 6, '#8a5e30'); R(g, 2, 6, 12, 2, '#e8e0c8'); P(g, 5, 4, '#3f7a32'); P(g, 9, 3, '#3f7a32'); P(g, 7, 5, '#c03a2a'); P(g, 11, 5, '#c03a2a'); }, null);
+  S.loot_military = mk(16, 16, g => { R(g, 2, 6, 12, 8, '#5a6a3a'); R(g, 2, 6, 12, 1, '#7a8a52'); R(g, 2, 11, 12, 1, '#2e3a22'); R(g, 5, 8, 6, 2, '#e8e0c8'); P(g, 5, 8, '#2e3a22'); P(g, 10, 8, '#2e3a22'); R(g, 2, 13, 12, 1, '#c03a2a'); R(g, 7, 6, 2, 1, '#d0a040'); P(g, 3, 7, '#2e3a22'); P(g, 12, 7, '#2e3a22'); }, null);
+  S.loot_advanced = mk(16, 16, g => { R(g, 2, 6, 12, 8, '#2a3038'); R(g, 2, 6, 12, 1, '#5a6a7a'); R(g, 2, 13, 12, 1, '#16191e'); R(g, 6, 8, 4, 3, '#1a2a3a'); R(g, 7, 9, 2, 1, '#4fc3ff'); P(g, 7, 8, '#bff0ff'); R(g, 3, 4, 10, 1, '#8a9aaa'); P(g, 3, 9, '#9aa0a8'); P(g, 12, 9, '#9aa0a8'); }, null);
   return S;
 }
 
@@ -318,7 +323,8 @@ function irSensorArt(g: G, lens: string, cable: boolean, cue: 'none' | 'beam' | 
   if (cable) R(g, 1, 13, 14, 1, '#d99a38');                        // copper run to the generator network
   else { R(g, 1, 13, 3, 1, '#d99a38'); P(g, 4, 13, '#8a8a90'); P(g, 11, 13, '#8a8a90'); }   // cut/unplugged: no path
   if (cue === 'beam') { P(g, 12, 3, '#ff8a6a'); P(g, 14, 4, '#ff8a6a'); P(g, 14, 2, '#ff8a6a'); P(g, 13, 1, '#ff8a6a'); }
-  if (cue === 'wall') { R(g, 12, 6, 4, 8, '#8a8a90'); R(g, 12, 6, 4, 1, '#a8a8b0'); R(g, 12, 10, 4, 1, '#5e5e66'); P(g, 14, 8, '#ff3a2a'); }
+  if (cue === 'wall') { R(g, 11, 4, 5, 10, '#8a8a90'); R(g, 11, 4, 5, 1, '#c0c0c8'); R(g, 11, 9, 5, 1, '#5e5e66'); R(g, 11, 13, 5, 1, '#5e5e66'); R(g, 12, 6, 3, 1, '#4a4e56'); P(g, 13, 7, '#ff3a2a'); P(g, 14, 12, '#ff3a2a'); }
+  if (cue === 'none' && lens === '#57d07a') { R(g, 8, 0, 1, 3, '#8a9099'); P(g, 8, 0, '#57d07a'); }   // ready: lit antenna mast, no obstacle
 }
 
 function airdropCrateArt(g: G, open: boolean) {

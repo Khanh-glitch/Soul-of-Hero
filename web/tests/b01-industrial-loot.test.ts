@@ -17,8 +17,8 @@ afterAll(()=>setActiveLayout('shipping'));
 
 describe('B01-R1 A: source-specific loot roles (no universal Food/Medical overlay)',()=>{
   const FOOD=['berries','mushroom','herb'], MED=['bandage','herb'];
-  it('fresh runs carry the B01 grammar; pre-B01 saves (no field) keep only the W06 pair',()=>{
-    const {r}=fresh();expect(r.lootEcology?.grammar).toBe(LOOT_GRAMMAR_VERSION);
+  it('fresh runs carry the current (B04) grammar; pre-B01 saves (no field) keep only the W06 pair',()=>{
+    const {r}=fresh();expect(r.lootEcology?.grammar).toBe('b04-v1');   // B04-P4: new runs use b04-v1; b01-v1 saves keep their pools
     const sites=getWorld('shipping_fresh').statics.filter(s=>lootClass(s));expect(sites.length).toBeGreaterThan(0);
     const saved=r.lootEcology;r.lootEcology={...saved!,grammar:undefined} as any;
     for(const s of sites) expect(lootRoll(r,s,0).length).toBeLessThanOrEqual(2);
@@ -40,6 +40,7 @@ describe('B01-R1 A: source-specific loot roles (no universal Food/Medical overla
   });
   it('a real distribution over 300 seeds: every pool option appears, and only pool options appear',()=>{
     const {r}=fresh(71);const sites=getWorld('shipping_fresh').statics.filter(s=>lootClass(s));
+    r.lootEcology={...r.lootEcology!,grammar:'b01-v1'} as any;   // this distribution is the B01 pool (save-compatible); b04-v1 pools are tested in b04-p4-loot
     const supply=sites.find(s=>lootClass(s)==='supply')!, military=sites.find(s=>lootClass(s)==='military')!;
     const seenSupply=new Set<string>(), seenMil=new Set<string>();
     for(let seed=1;seed<=300;seed++){

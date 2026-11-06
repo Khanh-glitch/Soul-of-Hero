@@ -340,3 +340,15 @@ Creator policy applied: `web/ref/bible.md` §8.8 (mechanics first; mechanics and
 | Map/LI parity | LI Metal Pipe = 5 refined ingot + 30 LI parts (ATLAS_v4 / atlas.json, `s_pipe`); SOH recipe is 2 ingot + 1 SOH Mechanical Parts (SOH_PROVISIONAL). No 1:1 claim. | Atlas restored and checksummed (`8b4fdeda…`) | PARTIAL |
 
 Not in this ledger round: Map-owned loot sources, AVFX, native, and Gold work remain outside the branch.
+
+### B04-P4 continuation (same session, PARTIAL — not DONE)
+
+| ID | Continuation change | Evidence | Status after round |
+|---|---|---|---|
+| B04 airdrop lifecycle | Browser drive uses the real lifecycle (signal → descent → landing → locked → open → partial take via `move`), advanced through `tick()` + `stepAirdrops`; no hand-set phase. Browser-read phases: locked / open / partial. | `e2e/b04-p4-world.mjs` run, `results.json` (`airLocked/airOpen/airPartial.browserPhase`) | PARTIAL |
+| B04 bear trap snap | `bearTrap.snapAt` validated (safe non-negative integer; absent stays valid). Spring-snap frame is a labelled frozen-clock fixture; live hit only proven by `tick()` test. | `persist.ts`, `b04-p4-world.test.ts`, `trapSnap` frame | PARTIAL |
+| B02 IR sensor | Ready (antenna mast) and blocked (stone block with red marks) are distinct from detect at 640×360; driver asserts five distinct states off/unpowered/ready/detect/blocked. | `results.json` `irVisual`, `irBlocked` frame | PARTIAL |
+| C Recycler | Metal Pipe → `X:pipe-v1` (SOH_PROVISIONAL): one carried pipe → one Refined Iron Ingot after 10 s. Stack qty>1 refused ("Split one Metal Pipe off the stack first"). Cancel returns the same UID. Workbench `pipe_recycle` removed. Driven through the real UI: select pipe → Recycle item… → Confirm recycle → output. | `b04-p4-world.test.ts` (Recycler), `recycler-*` frames, `results.recycler.640x360` = 1 refined_iron_ingot, 0 pipes left | PARTIAL |
+| D P3 loot | New runs use grammar `b04-v1` (SOH_PROVISIONAL pools: toolbox metal, supply food, military med + arrow, advanced medical_high + ingot). `b01-v1` saves keep the B01 pools. Family sprites `loot_toolbox/supply/military/advanced`; container shows family · grade · role. No new Map POIs; no LI 2022 6/6/7 import. | `b04-p4-loot.test.ts`, `cache-*` frames | PARTIAL |
+
+Full Vitest 68 files / 535 tests pass; `tsc --noEmit` exit 0; HTTP build exit 0. LI per-item recycler yield remains ORIGINAL_UNKNOWN; no LI Parts 1:1 claim. Unresolved: B04-P4 is not DONE until the owner reviews the frames and the Recycler/loot balance (SOH_PROVISIONAL) is accepted.

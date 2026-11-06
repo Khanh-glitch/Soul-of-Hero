@@ -6,6 +6,15 @@ import { STRUCTS, ELDERS, CREATURES, ITEMS } from './catalog';
 import { getWorld, SRC_KEYS, fbm } from './world';
 import { effTile, sourceAt, darkness, weatherAt, isRagnarok, entsAt, buildReason, C, roofRoom, clearPhysicalLine, irSensorVisual } from './engine';
 import { airdropView } from './airdrop';
+import { lootSpriteKey } from './loot-ecology';
+const lootFamilyCache = new WeakMap<object, string | null>();
+/** B04-P4: the physical family sprite of a classed cache (memoised per entity; unclassed crates keep the generic art). */
+function lootFamilySprite(r: RunState, e: Entity): string | null {
+  if (!r.lootEcology) return null;
+  if (lootFamilyCache.has(e)) return lootFamilyCache.get(e)!;
+  const site = getWorld(r.layoutId || 'shipping').statics.find(s => s.kind === 'loot' && s.tx === e.tx && s.ty === e.ty);
+  const key = lootSpriteKey(site); lootFamilyCache.set(e, key); return key;
+}
 import { FX, PROJ, HAZ, activeStack } from './sim';
 import { getArt, pixelText, mk, type Sprite } from './art';
 
@@ -307,7 +316,7 @@ function drawEntity(g: CanvasRenderingContext2D, r: RunState, e: Entity, time: n
       for(let k=0;k<3;k++){g.fillStyle=k<stacks?'#f0d060':'#3a2a2a';g.fillRect(X-5+k*4,Y+3,2,2);}
       g.fillStyle=lampCol;g.fillRect(X+5,Y-16,3,3);g.fillStyle='#120c18';g.fillRect(X+5,Y-16,3,1);
       return; }
-    case 'loot': { const empty = !C(r, e.c!).slots.some(Boolean); shadow(g, X, Y + 5, 7); g.drawImage(empty ? A.st.loot_open : A.st.loot, X - 8, Y - 10); return; }
+    case 'loot': { const empty = !C(r, e.c!).slots.some(Boolean); const fam = lootFamilySprite(r, e); shadow(g, X, Y + 5, 7); g.drawImage(fam ? A.st[fam] : (empty ? A.st.loot_open : A.st.loot), X - 8, Y - 10); return; }
     case 'cash': { const rag = isRagnarok(r, now); shadow(g, X, Y + 5, 7); g.drawImage(e.minted && !C(r, e.c!).slots.some(Boolean) ? A.st.cash_open : A.st.cash, X - 8, Y - 10); if (rag && !e.minted) { const a = 0.4 + Math.sin(time / 200) * 0.3; g.fillStyle = `rgba(255,208,64,${a})`; g.fillRect(X - 7, Y - 12, 14, 1); if (Math.random() < 0.2) add({ x: X - 6 + Math.random() * 12, y: Y - 8, vx: 0, vy: -16, col: '#ffe27a', max: 700, s: 1, g: -4 }); } return; }
     case 'vendor': { shadow(g, X, Y + 6, 5); const bob = Math.floor(time / 600) % 2; g.drawImage(A.st.vendor, X - 8, Y - 18 + bob); return; }
     case 'recycler': {

@@ -1,7 +1,7 @@
 import {supportsAirdrops, airdropTimes, airdropRewards, airdropStaticEligible} from './airdrop';
 import { recoveryPlanFor } from './recycler';
 import { poiContractDigest } from './poi-access';
-import { LOOT_ECOLOGY_VERSION, LOOT_GRAMMAR_VERSION, lootClass, lootRoll, lootSiteIndex } from './loot-ecology';
+import { LOOT_ECOLOGY_VERSION, isKnownLootGrammar, lootClass, lootRoll, lootSiteIndex } from './loot-ecology';
 import { creatorLootV1 } from './creator-loot';
 // Local-first snapshots: one serialized profile + run + receipts per write.
 // Checksums detect accidental damage, not malicious edits or rollback of all copies.
@@ -119,7 +119,7 @@ export function validate(raw: any): GameState | null {
   const jobIds = new Set<string>();
   const jobs = (queue: any, station: string): boolean => Array.isArray(queue) && queue.every((j: any) => {
     if (!obj(j) || typeof j.id !== 'string' || !j.id || jobIds.has(j.id) || !beforeNext(j.id, /^j([a-z0-9]+)$/) || typeof j.recipe !== 'string') return false;
-    if(j.recipe==='X:recover-v1'||j.recipe==='X:recover-v2'){
+    if(j.recipe==='X:recover-v1'||j.recipe==='X:recover-v2'||j.recipe==='X:pipe-v1'){
       if(station!=='recycler'||!finite(j.left)||!finite(j.total)||j.left<0||j.left>j.total||!Array.isArray(j.reserved)||j.reserved.length!==1)return false;
       const plan=recoveryPlanFor(j.reserved[0],j.recipe);if(!plan||plan.recipe!==j.recipe||j.total!==plan.total||!j.reserved.every(stack))return false;
       jobIds.add(j.id);return true;
@@ -180,7 +180,7 @@ export function validate(raw: any): GameState | null {
       if(e.type==='power_switch'&&(!obj(e.wireSwitch)||e.wireSwitch.version!=='wire-v1'||typeof e.wireSwitch.on!=='boolean'))return null;
       if(e.type==='door_powered'&&(!obj(e.electricDoor)||e.electricDoor.version!=='wire-v1'||!Array.isArray(e.electricDoor.interior)||e.electricDoor.interior.length!==2||![[1,0],[-1,0],[0,1],[0,-1]].some(v=>v[0]===e.electricDoor.interior[0]&&v[1]===e.electricDoor.interior[1])||(e.electricDoor.releaseUntil!==undefined&&(!finite(e.electricDoor.releaseUntil)||e.electricDoor.releaseUntil<r.startedAt))))return null;
     }
-    if(e.bearTrap!==undefined&&(e.type!=='bear_trap'||!obj(e.bearTrap)||e.bearTrap.version!=='trap-v1'||!bearTrapStateValid(e.bearTrap.state,e.bearTrap.uses)))return null;
+    if(e.bearTrap!==undefined&&(e.type!=='bear_trap'||!obj(e.bearTrap)||e.bearTrap.version!=='trap-v1'||!bearTrapStateValid(e.bearTrap.state,e.bearTrap.uses)||(e.bearTrap.snapAt!==undefined&&!(Number.isSafeInteger(e.bearTrap.snapAt)&&e.bearTrap.snapAt>=0))))return null;
     if(e.type==='bear_trap'&&e.bearTrap===undefined)return null;
     if(e.irSensor!==undefined&&(e.type!=='ir_sensor'||!obj(e.irSensor)||e.irSensor.version!=='ir-v1'||typeof e.irSensor.enabled!=='boolean'))return null;
     if(e.type==='ir_sensor'&&e.irSensor===undefined)return null;
@@ -223,7 +223,7 @@ export function validate(raw: any): GameState | null {
   if(r.poiAccessVersion==='poi-access-v1'&&world.poiAccess){for(const d of world.poiAccess.doors){const doors=(Object.values(r.entities) as any[]).filter(e=>e.kind==='door'&&e.tx===d.tx&&e.ty===d.ty);if(doors.length!==1||doors[0].locked!==d.requirement)return null;if(d.generator&&(Object.values(r.entities) as any[]).filter(e=>e.kind==='gen'&&e.tx===d.generator!.tx&&e.ty===d.generator!.ty).length!==1)return null;}}
   if (r.lootEcology !== undefined) {
     const policy=r.lootEcology;
-    if(!obj(policy) || policy.version!==LOOT_ECOLOGY_VERSION || !obj(policy.cycles) || (policy.grammar!==undefined && policy.grammar!==LOOT_GRAMMAR_VERSION) || !r.creatorLootV1 || !['shipping_fresh','dev_delta_fresh'].includes(r.layoutId))return null;
+    if(!obj(policy) || policy.version!==LOOT_ECOLOGY_VERSION || !obj(policy.cycles) || (policy.grammar!==undefined && !isKnownLootGrammar(policy.grammar)) || !r.creatorLootV1 || !['shipping_fresh','dev_delta_fresh'].includes(r.layoutId))return null;
     for(const [key,value] of Object.entries(policy.cycles)) {
       if(!/^(0|[1-9][0-9]*)$/.test(key) || !Number.isSafeInteger(value) || (value as number)<1) return null;
       const site=world.statics.find(s=>s.kind==='loot' && lootSiteIndex(s)===Number(key));

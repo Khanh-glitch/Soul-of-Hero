@@ -124,22 +124,71 @@ describe('B04-P4 IR sensor visual state mirrors the prompt rule (sprite key sour
 });
 
 import { RECIPES, ITEMS } from '../src/game/catalog';
-describe('B04-P4 P3 Metal Pipe alternatives: craft into a plate, or recycle for a net loss', () => {
-  it('a pipe recycles into exactly one refined ingot at a workbench, one unit consumed, no loop back', () => {
+describe('B04-P4 Metal Pipe at the physical Foundry Recycler (X:pipe-v1)', () => {
+  function recyclerRun() {
     const g = newGame(); expect(act(g, 'startRun', { character: 'female', seed: 97 }, T0).ok).toBe(true);
     const r = g.run!, tx = 80, ty = 80;
-    r.player.x = (tx + 1) * TILE; r.player.y = (ty + 1) * TILE; markDirty();
-    const id = 'p4-bench'; const fuel = mkContainer(r, 'fuel', 0), out = mkContainer(r, 'out', 4);
-    r.entities[id] = { id, kind: 'struct', type: 'workbench', tx, ty: ty + 1, x: tx * TILE, y: (ty + 1) * TILE, hp: 160, maxHp: 160, station: { fuelC: fuel.id, outC: out.id, burn: 0, queue: [], level: 2 } } as any;
-    markDirty();
-    expect(ITEMS.metal_pipe.desc).toContain('SOH_PROVISIONAL');
-    expect(RECIPES.pipe_recycle.ins).toEqual([['metal_pipe', 1]]);
+    const fuel = mkContainer(r, 'fuel', 0), out = mkContainer(r, 'out', 4);
+    const id = 'p4-recycler';
+    r.entities[id] = { id, kind: 'recycler', x: tx * TILE + 8, y: ty * TILE + 8, tx, ty, station: { queue: [], burn: 0, fuelC: fuel.id, outC: out.id } } as any;
+    r.player.x = tx * TILE + 8; r.player.y = ty * TILE + 8; markDirty();
+    return { g, r, id, out };
+  }
+  it('one carried pipe is consumed at the Recycler, returns one ingot after real time, and a split stack is refused', () => {
+    const { g, r, id, out } = recyclerRun();
+    expect(RECIPES.pipe_recycle).toBeUndefined();                  // the workbench duplicate route is removed
+    addItem(r, 'inv', 'metal_pipe', 2);
+    const slot = r.custody.inv.slots.findIndex(s => s?.key === 'metal_pipe'); const uid = r.custody.inv.slots[slot]!.uid;
+    const stacked = dispatch(g, { id: 'p4-rc-stack-' + ++n, type: 'recycleItem', eid: id, slot, uid }, T0);
+    expect(stacked.ok).toBe(false); expect(stacked.reason).toContain('Split one Metal Pipe');
+    expect(countItem(r, 'inv', 'metal_pipe')).toBe(2);             // refusal consumes nothing
+    expect(dispatch(g, { id: 'p4-split-' + ++n, type: 'split', c: 'inv', slot }, T0).ok).toBe(true);   // the real Split: 2 -> 1 + 1
+    const one = r.custody.inv.slots.findIndex(s => s?.key === 'metal_pipe' && s.qty === 1);
+    const ok = dispatch(g, { id: 'p4-rc-' + ++n, type: 'recycleItem', eid: id, slot: one, uid: r.custody.inv.slots[one]!.uid }, T0);
+    expect(ok.ok, JSON.stringify(ok)).toBe(true);
+    expect(countItem(r, 'inv', 'metal_pipe')).toBe(1);             // exactly one pipe left the carried inventory (2 -> 1)
+    const job = r.entities[id].station!.queue[0];
+    expect(job.recipe).toBe('X:pipe-v1'); expect(job.reserved?.length).toBe(1);
+    stepStations(g, 9000, T0 + 9000);
+    expect(countItem(r, out.id, 'refined_iron_ingot')).toBe(0);    // not finished before the real 10 s
+    stepStations(g, 1000, T0 + 10000);
+    expect(countItem(r, out.id, 'refined_iron_ingot')).toBe(1);    // one ingot out: a net loss against the 2 ingots + parts that made the pipe
+    expect(r.entities[id].station!.queue.length).toBe(0);
+  });
+  it('a full output blocks the job without losing the reserved pipe; cancel returns that same UID', () => {
+    const { g, r, id, out } = recyclerRun();
     addItem(r, 'inv', 'metal_pipe', 1);
-    const cr = dispatch(g, { id: 'p4-rec-' + ++n, type: 'craft', eid: id, recipe: 'pipe_recycle' }, T0);
-    expect(cr.ok, JSON.stringify(cr)).toBe(true);
-    expect(countItem(r, 'inv', 'metal_pipe')).toBe(0);            // the pipe is consumed once, not duplicated
-    stepStations(g, 10000, T0 + 10000);
-    expect(countItem(r, out.id, 'refined_iron_ingot')).toBe(1);       // one ingot out, a net loss against the 2 ingots that made the pipe
-    expect(countItem(r, out.id, 'metal_pipe')).toBe(0);
+    const slot = r.custody.inv.slots.findIndex(s => s?.key === 'metal_pipe'); const uid = r.custody.inv.slots[slot]!.uid;
+    expect(dispatch(g, { id: 'p4-rc2-' + ++n, type: 'recycleItem', eid: id, slot, uid }, T0).ok).toBe(true);
+    const job = r.entities[id].station!.queue[0];
+    const jobId = job.id;
+    const c = dispatch(g, { id: 'p4-rc2c-' + ++n, type: 'cancelJob', eid: id, jobId }, T0 + 1000);
+    expect(c.ok, JSON.stringify(c)).toBe(true);
+    expect(r.entities[id].station!.queue.length).toBe(0);
+    const back = r.custody.inv.slots.filter(s => s?.key === 'metal_pipe');
+    expect(back.length).toBe(1); expect(back[0]!.uid).toBe(uid);  // the same physical pipe, not a second copy
+    expect(countItem(r, out.id, 'refined_iron_ingot')).toBe(0);
+  });
+});
+
+import { validate as validateSave } from '../src/game/persist';
+describe('B04-P4 snapAt persistence: optional and bounded (older saves stay valid)', () => {
+  it('a trap without snapAt validates; a malformed snapAt is rejected at save-validation time', () => {
+    const g = newGame(); expect(act(g, 'startRun', { character: 'female', seed: 97 }, T0).ok).toBe(true);
+    const r = g.run!, x = 80, y = 80, w = getWorld();
+    for (let yy = y - 2; yy <= y + 2; yy++) for (let xx = x - 2; xx <= x + 12; xx++) { const i = yy * WW + xx; r.terrain[i] = { t: T.GRASS }; if (w.sourceV3[i]) r.sources[i] = { stock: 0, hp: 0 }; }
+    markDirty();
+    r.player.x = (x + 1) * TILE + 8; r.player.y = (y + 1) * TILE + 8; markDirty();
+    for (const [k, q] of STRUCTS.bear_trap.cost) addItem(r, 'inv', k, q);
+    expect(act(g, 'build', { struct: 'bear_trap', tx: x + 2, ty: y }).ok).toBe(true);
+    const t = Object.values(r.entities).find(e => e.type === 'bear_trap')!;
+    t.bearTrap = { version: 'trap-v1', state: 'unarmed', uses: 3 } as any;
+    expect(validateSave(JSON.parse(JSON.stringify(g)))).not.toBeNull();                       // older shape, no snapAt
+    (t.bearTrap as any).snapAt = 1.5;
+    expect(validateSave(JSON.parse(JSON.stringify(g)))).toBeNull();                           // non-integer timestamp refused
+    (t.bearTrap as any).snapAt = -4;
+    expect(validateSave(JSON.parse(JSON.stringify(g)))).toBeNull();                           // negative refused
+    (t.bearTrap as any).snapAt = T0;
+    expect(validateSave(JSON.parse(JSON.stringify(g)))).not.toBeNull();                       // a whole, non-negative stamp is kept
   });
 });

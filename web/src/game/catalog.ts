@@ -133,7 +133,7 @@ export const ITEMS: Record<string, ItemDef> = {
   vehicle_drive: I({ name:'Motor Drive', cat:'res', icon:'gear', c1:'#625e58', c2:'#c8bca1', w:3, max:5, desc:'Gear and plate drive assembly for the utility motorbike.' }),
   // B01 industrial intermediates (SOH_PROVISIONAL; historical v5 ratios are documented in B01 ledger, not copied).
   refined_iron_ingot: I({ name:'Refined Iron Ingot', cat:'res', icon:'rfingot', c1:'#8f9fb3', c2:'#f2f8ff', w:1, max:40, desc:'Furnace-refined iron. Needed for pipe and plate.' }),
-  metal_pipe: I({ name:'Metal Pipe', cat:'res', icon:'pipe', c1:'#5f6a74', c2:'#b8c4cc', w:1.2, max:20, desc:'Pipe section for utility frames and iron plate. Workbench option: recycle one back into 1 Refined Iron Ingot (a net loss of 1 ingot and 1 parts, so it cannot loop). SOH_PROVISIONAL.' }),
+  metal_pipe: I({ name:'Metal Pipe', cat:'res', icon:'pipe', c1:'#5f6a74', c2:'#b8c4cc', w:1.2, max:20, desc:'Pipe section for utility frames and iron plate. Recyclable at the Foundry Recycler: one pipe back into 1 Refined Iron Ingot (net loss, cannot loop). SOH_PROVISIONAL.' }),
   metal_blade: I({ name:'Metal Blade', cat:'res', icon:'blade', c1:'#7d8a96', c2:'#eef4f8', w:0.8, max:20, desc:'Cut blade stock for sword refits.' }),
   mechanical_gear: I({ name:'Mechanical Gear', cat:'res', icon:'mgear', c1:'#6b6f76', c2:'#d6c27a', w:0.8, max:20, desc:'Precision gear for motor drives and powered mechanisms.' }),
   iron_plate: I({ name:'Iron Plate', cat:'res', icon:'plate', c1:'#4f5a63', c2:'#c9d1d8', w:1.5, max:20, desc:'Plate patch for a damaged wall or door (Shift+click when repairing): restores up to 25% of its max HP per plate. Not a permanent reinforcement.' }),
@@ -199,7 +199,7 @@ export const permitsDirectedResearch = (recipe: RecipeDef) => recipe.tier < 3;
 // Recovery is a base recipe introduced after older run snapshots were saved.
 /** B01-D: the ONLY recipe-knowledge authority is the run-local knowledge.recipes list. These keys are seeded
  * into new runs and migrated into existing saves (persist.validate); no static 'always known' path remains. */
-export const ALWAYS_KNOWN_RECIPES: readonly string[] = ['pipe_recycle','vehicle_frame','vehicle_drive','recover_drive','energy_refined_industrial','energy_basic','energy_refined','essence_fire','essence_nature','essence_water','essence_spirit','core_blast','core_earthmother'];
+export const ALWAYS_KNOWN_RECIPES: readonly string[] = ['vehicle_frame','vehicle_drive','recover_drive','energy_refined_industrial','energy_basic','energy_refined','essence_fire','essence_nature','essence_water','essence_spirit','core_blast','core_earthmother'];
 export const isRecipeKnown = (known: readonly string[], key: string) => known.includes(key);
 export const requiredStationLevel = (recipe: RecipeDef): 1 | 2 | 3 => recipe.stationLevel ?? 1;
 
@@ -252,7 +252,6 @@ export const RECIPES: Record<string, Recipe> = {
   metal_pipe: { out: 'metal_pipe', qty: 1, ins: [['refined_iron_ingot', 2], ['mechanical_parts', 1]], station: 'workbench', stationLevel: 2, secs: 18, base: true, tier: 2 },
   metal_blade: { out: 'metal_blade', qty: 1, ins: [['iron_ingot', 4], ['mechanical_parts', 1]], station: 'workbench', stationLevel: 2, secs: 16, base: true, tier: 2 },
   mechanical_gear: { out: 'mechanical_gear', qty: 1, ins: [['iron_ingot', 2], ['mechanical_parts', 2], ['fasteners', 1]], station: 'workbench', stationLevel: 2, secs: 20, base: true, tier: 2 },
-  pipe_recycle: { out: 'refined_iron_ingot', qty: 1, ins: [['metal_pipe', 1]], station: 'workbench', stationLevel: 2, secs: 10, base: true, tier: 2 },
   iron_plate: { out: 'iron_plate', qty: 2, ins: [['refined_iron_ingot', 2], ['metal_pipe', 1], ['mechanical_parts', 1]], station: 'workbench', stationLevel: 2, secs: 18, base: true, tier: 2 },
   iron_sword_blade: { out: 'iron_sword', qty: 1, alias: 'Iron Sword (blade refit)', ins: [['metal_blade', 1], ['iron_ingot', 2], ['leather', 1]], station: 'workbench', stationLevel: 2, secs: 14, base: true, tier: 2 },
   vehicle_frame_piped: { out: 'vehicle_frame', qty: 1, alias: 'Utility Frame (piped)', ins: [['metal_pipe', 1], ['iron_ingot', 2], ['mechanical_parts', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 22, base: true, tier: 2 },
