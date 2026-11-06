@@ -1101,8 +1101,10 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
         }
         if (s.qty === 0) from.slots[it.fs] = null;
         if (to.kind === 'cart' && cartWeight(r, to.id) > cartLimit(Object.values(r.entities).find(e => e.kind === 'cart' && e.c === to.id))) pushLog(r, now, 'The cart is overloaded — it will crawl.', 'red');
+        pruneEmptyBag(r, from.id);
         return ok('move', `${s.key}x${moved} ${from.id}->${to.id}`);
       }
+      pruneEmptyBag(r, from.id);
       return ok('move', `${s.key} ${from.id}->${to.id}`);
     }
     case 'split': { const c = C(r, it.c); if (!c || !canAccess(r, it.c) || !validSlot(c, it.slot)) return fail('Invalid or out of reach container.');
@@ -1342,7 +1344,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const e=r.entities[it.eid];
       if(!e||e.kind!=='vehicle'||!e.vehicle||!e.deployed||!owned(e)) return fail('That motorbike is not yours.');
       if(p.vehicle===e.id) return fail('Dismount before unloading cargo.');
-      if(!near(r,e,2)) return fail('Motorbike out of reach.');
+      if(!near(r,e,2)||!clearPhysicalLine(r,p,e,true)) return fail('Motorbike out of reach or no clear line to it.');
       const broken=(e.hp??0)<=0, dry=(e.vehicle.fuel??0)<=0;
       if(!broken&&!dry) return fail('The motorbike can still run. Unload only when it is broken or out of fuel.');
       const cargo=C(r,e.c!);
@@ -1350,13 +1352,21 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if(Array.isArray(it.uids)&&it.uids.length){ for(const u of it.uids){ const i=cargo.slots.findIndex(sl=>sl?.uid===u); if(i<0) return fail('That cargo is not in this motorbike.'); if(!picks.includes(i)) picks.push(i); } }
       else cargo.slots.forEach((sl,i)=>{ if(sl) picks.push(i); });
       if(!picks.length) return fail('Nothing in the motorbike to unload.');
-      const tx=Math.floor(e.x/TILE), ty=Math.floor(e.y/TILE), gi=ty*WW+tx;
-      if(blockGrid(r)[gi]!==0 || [T.DEEP,T.SHALLOW,T.RIVER].includes(effTile(r,tx,ty))) return fail('The ground here cannot hold a bag. Move the motorbike to open ground; nothing was moved.');
-      const existing=Object.values(r.entities).find(x=>x.kind==='bag'&&x.c&&Math.floor(x.x/TILE)===tx&&Math.floor(x.y/TILE)===ty);
-      if(existing){ const free=C(r,existing.c!).slots.filter(sl=>!sl).length; if(free<picks.length) return fail('The bag at this spot is full. Take items out first; nothing was moved.'); }
+      // The bag sits on a clear cell beside the bike (never under it), so the player can stand next to the bag and E-open it.
+      const spot=vehicleExitPoint(r,e.x,e.y,e.id);
+      if(!spot) return fail('No clear ground beside the motorbike. Nothing was moved.');
+      const tx=Math.floor(spot.x/TILE), ty=Math.floor(spot.y/TILE), gi=ty*WW+tx;
+      if(blockGrid(r)[gi]!==0 || [T.DEEP,T.SHALLOW,T.RIVER].includes(effTile(r,tx,ty))) return fail('The ground beside the motorbike cannot hold a bag. Nothing was moved.');
+      // Source provenance: only a bag created by THIS motorbike (same entity and UID) may take its cargo. Other bags are never mixed in.
+      const src={vehicleId:e.id,vehicleUid:e.deployed.uid};
+      const sameSrc=(b:Entity)=>b.vehicleSource?.vehicleId===src.vehicleId&&b.vehicleSource?.vehicleUid===src.vehicleUid;
+      const onSpot=Object.values(r.entities).filter(x=>x.kind==='bag'&&x.c&&Math.floor(x.x/TILE)===tx&&Math.floor(x.y/TILE)===ty);
+      if(onSpot.some(b=>!sameSrc(b))) return fail('Another bag is on the ground beside the motorbike. Nothing was moved.');
+      const existing=onSpot.find(sameSrc);
+      if(existing){ const free=C(r,existing.c!).slots.filter(sl=>!sl).length; if(free<picks.length) return fail('This motorbike bag is full. Take items out first; nothing was moved.'); }
       let bag:Entity;
       if(existing) bag=existing;
-      else { const cont=mkContainer(r,'bag',Math.max(8,picks.length)); bag={id:uid(r,'b'),kind:'bag',x:e.x,y:e.y,c:cont.id,label:'Motorbike cargo',born:now}; r.entities[bag.id]=bag; }
+      else { const cont=mkContainer(r,'bag',Math.max(8,picks.length)); bag={id:uid(r,'b'),kind:'bag',x:spot.x,y:spot.y,c:cont.id,label:'Motorbike cargo',born:now,vehicleSource:src}; r.entities[bag.id]=bag; }
       const bc=C(r,bag.c!); const moved:string[]=[];
       for(const i of picks){ const stack=cargo.slots[i]!; cargo.slots[i]=null; const slot=bc.slots.findIndex(sl=>!sl); bc.slots[slot]=stack; moved.push(stack.uid); }
       return ok('vehicle.unload',`${e.deployed.uid}:${bag.id}:${moved.join(',')}`,`Unloaded ${moved.length} stack${moved.length===1?'':'s'} into a ground bag beside the motorbike. Nothing was copied or created.`);
@@ -1624,6 +1634,12 @@ function accepts(c: Container, slot: number, s: Stack) {
   if (c.kind === 'fuel') return !!ITEMS[s.key]?.fuel;
   if (c.kind === 'eq') return ITEMS[s.key]?.slot === ['head', 'body', 'back'][slot];
   return true;
+}
+/** B04: a bag emptied by a legal physical withdrawal disappears (no ghost). A bag with pending legacy recovery jobs is kept. */
+function pruneEmptyBag(r: RunState, cid: string) {
+  const bag = Object.values(r.entities).find(e => e.kind === 'bag' && e.c === cid);
+  if (!bag || bag.legacyJobs?.queue.length || C(r, cid).slots.some(Boolean)) return;
+  delete r.entities[bag.id]; delete r.custody[cid]; markDirty();
 }
 function canAccess(r: RunState, cid: string) {
   if (cid === 'inv' || cid === 'eq') return true;

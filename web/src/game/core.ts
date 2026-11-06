@@ -84,6 +84,8 @@ export interface Creature {
 }
 
 export interface Entity {
+  /** B04: provenance of an emergency motorbike cargo bag (optional; absent on all older saves and other bags). */
+  vehicleSource?: { vehicleId: string; vehicleUid: string };
   id: string; kind: 'drop' | 'struct' | 'bag' | 'cart' | 'vehicle' | 'loot' | 'cash' | 'vendor' | 'evac' | 'door' | 'gen' | 'recycler' | 'airdrop';
   x: number; y: number; // px for drops/carts, tile*16+8 for structures
   tx?: number; ty?: number; type?: string; hp?: number; maxHp?: number;
