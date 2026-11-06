@@ -7,7 +7,7 @@ import { LOOT_CLASSES, lootClass } from './loot-ecology';
 import { BAL, TILE, WW, WH, HOUR, VIEW_W, VIEW_H, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity, type Proj, type Haz } from './core';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
 import { getWorld } from './world';
-import { restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
+import { irSensorStatus, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
@@ -492,6 +492,19 @@ function triggerSpikes(gs: GameState, m: Creature, now: number) {
   if (trap.hp <= 0) { if (offlineImpacts) offlineStructureChange++; destroyStructure(r, trap, now); receipt(r, now, 'struct.destroyed', `${trap.type} by contact`); }
 }
 
+/** B02-P1-B bear trap: live only (never during offline settlement), one paid hit per arming, then spent or worn. */
+export function triggerBearTrap(gs: GameState, m: Creature, now: number) {
+  if (offlineImpacts || m.state === 'dead' || m.state === 'sleep' || m.cd > 0) return;
+  const r = gs.run!, trap = entsAt(r, tileOf(m.x), tileOf(m.y)).find(e => e.type === 'bear_trap' && e.bearTrap?.state === 'armed' && (e.hp ?? 0) > 0);
+  if (!trap || !trap.bearTrap) return;
+  const b = BAL.bearTrapV1;
+  damageCreature(gs, m, b.damage, 0, now, 0); m.cd = b.stunMs;
+  trap.bearTrap.uses -= 1; trap.bearTrap.state = trap.bearTrap.uses > 0 ? 'spent' : 'worn';
+  trap.hp = Math.max(0, (trap.hp ?? 0) - b.wearPerTrigger);
+  receipt(r, now, 'trap.trigger', `${trap.id}:${m.id}:uses${trap.bearTrap.uses}`);
+  if (trap.hp <= 0) { destroyStructure(r, trap, now); receipt(r, now, 'struct.destroyed', 'bear_trap by use'); }
+}
+
 /** A footprint's direction can lead to a physically adjacent blocking structure.
  * This never inspects unseen successors or a home location. */
 function traceBarrier(r: RunState, m: Creature) {
@@ -577,7 +590,7 @@ function traceOnly(gs: GameState, m: Creature, dtMs: number, now: number): 'adva
   const tr = m.knows?.kind === 'trace' ? null : encounteredTrace(r, m, now);
   if (!m.knows && !tr) return 'done';
   m.cd = Math.max(0, m.cd - dtMs); m.t += dtMs; if (m.slow) m.slow = Math.max(0, m.slow - dtMs);
-  triggerSpikes(gs, m, now); if (m.state === 'dead') return 'done';
+  triggerSpikes(gs, m, now); triggerBearTrap(gs, m, now); if (m.state === 'dead') return 'done';
   const aggro = d.aggro || isRagnarok(r, now) || (m as any).prov || (darkness(r, now) > 0.45 && m.type === 'boar');
   if (!m.knows && tr && aggro) { m.knows = { kind: 'trace', x: tr.x, y: tr.y, at: tr.t, traceId: tr.id, chainId: tr.chainId }; m.state = 'track'; }
   if (m.knows?.kind === 'trace') trackEvidence(gs, m, d.speed * (isRagnarok(r, now) ? 1.2 : 1) * (m.slow ? 0.45 : 1), dtMs / 1000, now);
@@ -600,7 +613,7 @@ function tickCreatures(gs: GameState, dtMs: number, now: number) {
     if (m.elder) { tickElder(gs, m, dtMs, now, dp); continue; }
     const d = CREATURES[m.type]; const spd = d.speed * (rag ? 1.2 : 1) * (m.slow ? 0.45 : 1);
     // spike traps
-    triggerSpikes(gs, m, now); if (m.hp <= 0) continue;
+    triggerSpikes(gs, m, now); triggerBearTrap(gs, m, now); if (m.hp <= 0) continue;
     // in water? creatures avoid deep water — stuck ones wade
     const aggro = d.aggro || rag || (m as any).prov || (night && m.type === 'boar');
     // sensing
@@ -1175,6 +1188,8 @@ export function findInteract(gs: GameState, now: number): Interact | null {
     else if (e.kind === 'door') label = e.locked || e.poiDoor ? poiDoorLabel(r,e,now) : e.open ? 'Close door' : 'Open door';
     else if (e.kind === 'recycler') label = 'Use Foundry Recycler';
     else if (e.kind === 'gen') label = poiGenLabel(r,e,now);
+    else if (e.type === 'ir_sensor') label = 'Infrared sensor: ' + irSensorStatus(r, e) + ' (E toggles)';
+    else if (e.type === 'bear_trap') label = `Bear trap: ${e.bearTrap?.state ?? 'unarmed'}, ${e.bearTrap?.uses ?? 0} hits left (E arms or re-arms)`;
     else if (e.kind === 'evac') label = 'Evacuation beacon';
     else if (e.kind === 'cart') label = 'Cart cargo  [Shift+F] pull';
     else if (e.kind === 'vehicle') label = r.player.vehicle===e.id ? 'Exit motorbike' : 'Motorbike cargo and controls';

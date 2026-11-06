@@ -169,6 +169,10 @@ export function validate(raw: any): GameState | null {
       if(e.type==='power_switch'&&(!obj(e.wireSwitch)||e.wireSwitch.version!=='wire-v1'||typeof e.wireSwitch.on!=='boolean'))return null;
       if(e.type==='door_powered'&&(!obj(e.electricDoor)||e.electricDoor.version!=='wire-v1'||!Array.isArray(e.electricDoor.interior)||e.electricDoor.interior.length!==2||![[1,0],[-1,0],[0,1],[0,-1]].some(v=>v[0]===e.electricDoor.interior[0]&&v[1]===e.electricDoor.interior[1])||(e.electricDoor.releaseUntil!==undefined&&(!finite(e.electricDoor.releaseUntil)||e.electricDoor.releaseUntil<r.startedAt))))return null;
     }
+    if(e.bearTrap!==undefined&&(e.type!=='bear_trap'||!obj(e.bearTrap)||e.bearTrap.version!=='trap-v1'||!['unarmed','armed','spent','worn'].includes(e.bearTrap.state)||!Number.isInteger(e.bearTrap.uses)||e.bearTrap.uses<0||e.bearTrap.uses>3))return null;
+    if(e.type==='bear_trap'&&e.bearTrap===undefined)return null;
+    if(e.irSensor!==undefined&&(e.type!=='ir_sensor'||!obj(e.irSensor)||e.irSensor.version!=='ir-v1'||typeof e.irSensor.enabled!=='boolean'))return null;
+    if(e.type==='ir_sensor'&&e.irSensor===undefined)return null;
     if(e.wireSwitch!==undefined&&e.type!=='power_switch'||e.electricDoor!==undefined&&e.type!=='door_powered')return null;
     if(e.cabinet !== undefined && (!obj(e.cabinet) || e.type!=='claim' || !e.c || r.custody[e.c]?.slots.length!==24 || typeof e.cabinet.legacy!=='boolean' || !obj(e.cabinet.credit) || Object.entries(e.cabinet.credit).some(([k,v]:[string,any])=>!BAL.territory.materials.includes(k)||!finite(v)||v<0||v>1+1e-8)))return null;
     if(e.maintenance !== undefined && (!obj(e.maintenance) || e.type!=='claim' || typeof e.maintenance.enabled!=='boolean' || (e.maintenance.chestId!==undefined && (typeof e.maintenance.chestId!=='string'||!e.maintenance.chestId))))return null;

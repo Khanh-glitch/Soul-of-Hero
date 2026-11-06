@@ -267,7 +267,7 @@ export function BuildPanel({ api }: { api: Api }) {
     Shell:['claim','floor_wood','floor_stone','wall_wood','wall_stone','wall_brick','door_wood','door_iron','roof_thatch','roof_tile'],
     Home:['bed_straw','chest_small','chest_large','escrow'],
     Work:['campfire','furnace','refinery','workbench','research','garden','barrel','farm_controller'],
-    Defense:['base_generator','power_cable','power_switch','pressure_switch','door_powered','arrow_turret','spikes','barricade','torch_post'],
+    Defense:['base_generator','power_cable','power_switch','pressure_switch','ir_sensor','bear_trap','door_powered','arrow_turret','spikes','barricade','torch_post'],
   };
   const keys=BUILD_ORDER.filter(k=>query.trim() ? STRUCTS[k].name.toLowerCase().includes(query.trim().toLowerCase()) : groups[category].includes(k));
   return <Panel title="Build · choose a structure" style={{ left: 20, top: 30, width: 390, maxHeight: 300 }} onClose={() => api.open(null)}>

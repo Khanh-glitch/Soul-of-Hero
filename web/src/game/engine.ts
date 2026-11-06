@@ -383,11 +383,58 @@ export function isSheltered(r: RunState, px: number, py: number) { return roofRo
  * Player-only pressure plates are evaluated from actual position, including the
  * stationary saved player during offline settlement. No speculative AI movement. */
 function wireNodeOn(r:RunState,e:Entity):boolean {
-  if(e.kind!=='struct'||!['power_cable','power_switch','pressure_switch'].includes(e.type||'')||!owned(e)||(e.hp??0)<=0||e.tx===undefined||e.ty===undefined)return false;
+  if(e.kind!=='struct'||!['power_cable','power_switch','pressure_switch','ir_sensor'].includes(e.type||'')||!owned(e)||(e.hp??0)<=0||e.tx===undefined||e.ty===undefined)return false;
   const t=effTile(r,e.tx,e.ty),i=e.ty*WW+e.tx;if([T.DEEP,T.SHALLOW,T.RIVER,T.ICE,T.LAVA,T.CLIFF,T.PWALL].includes(t)||[1,2,3,4,5].includes(blockGrid(r)[i]))return false;
+  if(e.type==='ir_sensor')return irSensorConducts(r,e);
   if(e.type==='power_switch')return !!e.wireSwitch?.on;
   if(e.type==='pressure_switch')return !r.player.dead&&Math.hypot(r.player.x-e.x,r.player.y-e.y)<=BAL.homeCircuit.plateRadius;
   return true;
+}
+/** B02-P1 infrared sensor (ir-v1). Cable-only relay BFS: sensors never relay for each other, so claim, path and
+ * conduction never depend on each other (no recursion). Values are SOH_PROVISIONAL in balance irSensorV1. */
+function wireRelayOn(r:RunState,n:Entity):boolean { return n.type!=='ir_sensor' && wireNodeOn(r,n); }
+function generatorTouching(r:RunState,n:Entity):Entity[] {
+  return Object.values(r.entities).filter(g=>g.basePower?.network==='wire-v1'&&owned(g)&&(g.hp??0)>0&&g.tx!==undefined&&g.ty!==undefined&&Math.abs(g.tx!-n.tx!)+Math.abs(g.ty!-n.ty!)===1).sort((a,b)=>a.id.localeCompare(b.id));
+}
+/** The generator whose cable path reaches this sensor (ignores sensor conduction). Prefers a fuelled, enabled one. */
+export function sensorGenerator(r:RunState,sensor:Entity):Entity|undefined {
+  if(sensor.tx===undefined||sensor.ty===undefined)return undefined;
+  const relays=Object.values(r.entities).filter(n=>n.kind==='struct'&&n.tx!==undefined&&wireRelayOn(r,n));
+  const cells=new Map(relays.map(n=>[`${n.tx},${n.ty}`,n]));
+  const found:Entity[]=[];const q:Entity[]=[],seen=new Set<string>();
+  for(const g of generatorTouching(r,sensor))found.push(g);
+  for(const n of relays)if(Math.abs(n.tx!-sensor.tx)+Math.abs(n.ty!-sensor.ty)===1){q.push(n);seen.add(n.id);}
+  for(let h=0;h<q.length;h++){const n=q[h];found.push(...generatorTouching(r,n));
+    for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=cells.get(`${n.tx!+dx},${n.ty!+dy}`);if(nx&&!seen.has(nx.id)){seen.add(nx.id);q.push(nx);}}}
+  const uniq=[...new Map(found.map(g=>[g.id,g])).values()].sort((a,b)=>a.id.localeCompare(b.id));
+  return uniq.find(g=>g.basePower?.enabled&&hasPowerFuel(r,g))??uniq[0];
+}
+/** Enabled sensors on this generator claim capacity in ID order, up to the generator's capacity. Fuel-gated. */
+export function sensorClaims(r:RunState,g:Entity):Entity[] {
+  if(!g.basePower?.enabled||!owned(g)||(g.hp??1)<=0||!hasPowerFuel(r,g))return [];
+  return Object.values(r.entities).filter(e=>e.type==='ir_sensor'&&e.irSensor?.enabled&&owned(e)&&(e.hp??0)>0&&sensorGenerator(r,e)?.id===g.id)
+    .sort((a,b)=>a.id.localeCompare(b.id)).slice(0,Math.floor((g.basePower.capacity??1)/BAL.irSensorV1.capacitySlots));
+}
+/** Line of sight and range only: walls and solid blocks stop it; sleeping and offline-unresolved monsters are never sensed. */
+export function irSensorSees(r:RunState,e:Entity):{ visible:boolean; blockedInRange:boolean } {
+  const range=BAL.irSensorV1.rangeTiles*TILE;let visible=false,blockedInRange=false;
+  const check=(p:{x:number;y:number})=>{ if(dist(e.x,e.y,p.x,p.y)>range)return; if(clearPhysicalLine(r,e,p,true,true))visible=true; else blockedInRange=true; };
+  if(!r.player.dead)check(r.player);
+  for(const m of r.creatures) if(m.state!=='dead'&&m.state!=='sleep'&&m.offlineUnresolvedAt===undefined&&(CREATURES[m.type]?.aggro||(m as any).prov)) check(m);
+  return { visible, blockedInRange };
+}
+export function irSensorConducts(r:RunState,e:Entity):boolean {
+  if(!e.irSensor?.enabled)return false;
+  const g=sensorGenerator(r,e);if(!g)return false;
+  if(!sensorClaims(r,g).some(x=>x.id===e.id))return false;
+  return irSensorSees(r,e).visible;
+}
+export function irSensorStatus(r:RunState,e:Entity):string {
+  if(!e.irSensor)return 'Not installed';if(!e.irSensor.enabled)return 'Off';
+  const g=sensorGenerator(r,e);if(!g)return 'No cable to a generator';
+  if(!g.basePower?.enabled)return 'Generator off';if(!hasPowerFuel(r,g))return 'No fuel';
+  if(!sensorClaims(r,g).some(x=>x.id===e.id))return 'Capacity full';
+  const v=irSensorSees(r,e);return v.visible?'Target in clear line: conducting':v.blockedInRange?'Blocked by wall: not conducting':'Watching: clear';
 }
 export function wireReachable(r:RunState,g:Entity,e:Entity):boolean {
   if(!g.basePower||g.basePower.network!=='wire-v1'||!owned(g)||!owned(e)||(g.hp??0)<=0||(e.hp??0)<=0||g.tx===undefined||g.ty===undefined||e.tx===undefined||e.ty===undefined)return false;
@@ -424,13 +471,14 @@ function hasPowerFuel(r:RunState,g:Entity) {
 /** Stable allocation order; priority is a player choice, not a magic extra load. */
 export function powerAllocation(r:RunState,g:Entity,online=true):Entity[] {
   if(!g.basePower?.enabled || !owned(g) || (g.hp??1)<=0 || !hasPowerFuel(r,g))return [];
-  const choices=Object.values(r.entities).filter(e=>connectedPower(r,g,e) && (
+  const sensors=sensorClaims(r,g);const freeCapacity=(g.basePower.capacity??1)-sensors.length;
+  const choices=Object.values(r.entities).filter(e=>e.type!=='ir_sensor'&&connectedPower(r,g,e) && (
     online && e.turret?.enabled && e.turret.generatorId===g.id && !!e.c && countItem(r,e.c,'arrow')>0 ||
     e.type==='workbench' && e.industrial?.enabled && e.industrial.generatorId===g.id && !!e.station?.queue[0] && e.station.queue[0].left>0 ||
     !!e.electricDoor && electricDoorGenerator(r,e)?.id===g.id));
   const priority=g.basePower.priority??'defense';
   choices.sort((a,b)=>{const rank=(e:Entity)=>priority==='defense' ? (e.turret?0:e.electricDoor?1:2) : (e.industrial?0:e.electricDoor?1:2);return rank(a)-rank(b)||a.id.localeCompare(b.id);});
-  return choices.slice(0,g.basePower.capacity??1);
+  return [...sensors, ...choices.slice(0,Math.max(0,freeCapacity))];
 }
 export function industrialStatus(r:RunState,e:Entity):string {
   if(!e.industrial)return 'Not installed';if(!e.industrial.enabled)return 'Off';
@@ -1232,6 +1280,8 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (it.struct === 'claim') e.cabinet = {credit:{},legacy:false};
       if (it.struct === 'base_generator') e.basePower = { enabled: false, energy: 0, network:'wire-v1' };
       if (it.struct === 'power_switch') e.wireSwitch={version:'wire-v1',on:false};
+      if (it.struct === 'ir_sensor') e.irSensor={version:'ir-v1',enabled:false};
+      if (it.struct === 'bear_trap') e.bearTrap={version:'trap-v1',state:'unarmed',uses:BAL.bearTrapV1.uses};
       if (it.struct === 'door_powered') {const dx=p.x-e.x,dy=p.y-e.y;const outside:[number,number]=Math.abs(dx)>Math.abs(dy)?[Math.sign(dx)||1,0]:[0,Math.sign(dy)||1];e.electricDoor={version:'wire-v1',interior:[outside[0] ? -outside[0] : 0,outside[1] ? -outside[1] : 0]};}
       if (it.struct === 'arrow_turret') e.turret = { enabled: false, cooldown: 0, angle: 0 };
       if (it.struct === 'farm_controller') e.farm = { enabled:false, crop:'crop', energy:0 };
@@ -1339,6 +1389,21 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const e=r.entities[it.eid];if(!e||e.type!=='power_switch'||!e.wireSwitch||!owned(e)||!near(r,e,2)||!clearInteraction(r,e))return fail('Switch out of reach.');
       e.wireSwitch.on=!e.wireSwitch.on;return ok('circuit.switch',`${e.id}:${e.wireSwitch.on?'on':'off'}`,`Switch ${e.wireSwitch.on?'on':'off'}.`);
     }
+    case 'bearTrapSet': {
+      const e=r.entities[it.eid];if(!e||e.type!=='bear_trap'||!e.bearTrap||!owned(e)||!near(r,e,2))return fail('Trap out of reach.');
+      if((e.hp??0)<=0)return fail('This trap is destroyed.');
+      const st=e.bearTrap.state;
+      if(st==='armed')return fail('Trap is already armed.');
+      if(st==='worn')return fail('Trap is worn out: reclaim it to recover what it still returns.');
+      const cost=st==='unarmed'?BAL.bearTrapV1.armCost:BAL.bearTrapV1.rearmCost;
+      if(!hasAll(r,'inv',cost as [string,number][]))return fail('Missing: '+(cost as [string,number][]).filter(([k,q])=>countItem(r,'inv',k)<q).map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(', '));
+      for(const [k,q] of cost as [string,number][])removeItem(r,'inv',k,q);
+      e.bearTrap.state='armed';return ok(st==='unarmed'?'trap.arm':'trap.rearm',`${e.id}:${e.bearTrap.uses}`,`Bear trap armed (${e.bearTrap.uses} hits left).`);
+    }
+    case 'irSensorToggle': {
+      const e=r.entities[it.eid];if(!e||e.type!=='ir_sensor'||!e.irSensor||!owned(e)||!near(r,e,2)||!clearInteraction(r,e))return fail('Sensor out of reach.');
+      e.irSensor.enabled=!e.irSensor.enabled;return ok('circuit.irSensor',`${e.id}:${e.irSensor.enabled?'on':'off'}`,`Infrared sensor ${e.irSensor.enabled?'armed':'off'}: ${irSensorStatus(r,e)}.`);
+    }
     case 'wireGenerator': {
       const e=r.entities[it.eid];if(!e?.basePower||e.type!=='base_generator'||!owned(e)||!near(r,e,2)||!clearInteraction(r,e))return fail('Generator out of reach.');
       if(e.basePower.network==='wire-v1')return fail('Generator already uses cables.');
@@ -1377,7 +1442,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
         r.poiAccessDigest=poiContractDigest(getWorld(r.layoutId||'shipping'));
         e.poiDoor={version:'poi-access-v1',closeAt:now+BAL.poiAccess.doorOpenMs,scans:(e.poiDoor?.scans||0)+(cardUid?1:0),...(cardUid?{lastCardUid:cardUid}:e.poiDoor?.lastCardUid?{lastCardUid:e.poiDoor.lastCardUid}:{})};
         e.open=true;markDirty();
-        return ok(cardUid?'poi.card.scan':'poi.door.open',`${e.id}:${exit?'interior-release':cardUid?`${cardUid}:remaining=${remaining}`:'powered'}`,cardUid?`Vault card scanned; ${remaining} uses remain.`:exit?'Interior release opened the door.':'Powered gate opened.');
+        return ok(cardUid?'poi.card.scan':'poi.door.open',`${e.id}:${exit?'interior-release':cardUid?`${cardUid}:remaining=${remaining}`:'powered'}`,cardUid?`${(d.cardClass??'vault')[0].toUpperCase()+(d.cardClass??'vault').slice(1)} card scanned; ${remaining} uses remain.`:exit?'Interior release opened the door.':'Powered gate opened.');
       }
       e.open=true;markDirty();return ok('door',`${e.id}:open`);
     }

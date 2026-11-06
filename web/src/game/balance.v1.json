@@ -802,5 +802,66 @@
   "ironPlatePatchV1": {
     "_status": "SOH_PROVISIONAL B01-R1. One paid Iron Plate patches at most ceil(maxHp*fraction) HP on an eligible damaged wall-layer structure (walls and doors), capped at maxHp. Matches the normal repair rate of 25% per action. Not a permanent max-HP reinforcement. LI historical iron_plate: ORIGINAL_UNKNOWN for repair value.",
     "fraction": 0.25
+  },
+  "irSensorV1": {
+    "_status": "SOH_PROVISIONAL B02-P1. Version ir-v1. ORIGINAL_UNKNOWN for historical LI detector radius, power draw and cost. Single source of numbers for the infrared sensor.",
+    "rangeTiles": 6,
+    "hp": 90,
+    "capacitySlots": 1,
+    "targets": [
+      "player",
+      "hostile-aggro-awake"
+    ],
+    "offlineCreatures": "excluded (no synthetic offline detection)",
+    "lineOfSight": "clearPhysicalLine, walls and solid blocks stop detection",
+    "cost": [
+      [
+        "mechanical_gear",
+        1
+      ],
+      [
+        "iron_ingot",
+        1
+      ],
+      [
+        "fasteners",
+        2
+      ]
+    ]
+  },
+  "bearTrapV1": {
+    "_status": "SOH_PROVISIONAL B02-P1-B (trap-v1). ORIGINAL_UNKNOWN for historical LI bear trap damage, durability and cost; the LI-v5 example (50 iron ingot + 1 gear) is historical context only, not an SOH default.",
+    "cost": [
+      [
+        "mechanical_gear",
+        1
+      ],
+      [
+        "iron_ingot",
+        2
+      ],
+      [
+        "fasteners",
+        2
+      ]
+    ],
+    "armCost": [
+      [
+        "iron_plate",
+        1
+      ]
+    ],
+    "rearmCost": [
+      [
+        "iron_plate",
+        1
+      ]
+    ],
+    "damage": 16,
+    "stunMs": 1500,
+    "uses": 3,
+    "wearPerTrigger": 10,
+    "hp": 60,
+    "offline": "never triggers during offline settlement"
   }
 }

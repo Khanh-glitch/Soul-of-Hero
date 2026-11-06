@@ -72,6 +72,8 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       const d = STRUCTS[e.type!];
       if (e.type!.startsWith('door')) act('door', { eid: e.id });
       else if (e.type === 'power_switch') act('wireSwitch', { eid: e.id });
+      else if (e.type === 'ir_sensor') act('irSensorToggle', { eid: e.id });
+      else if (e.type === 'bear_trap') act('bearTrapSet', { eid: e.id });
       else if (e.type === 'escrow') setPanel({ kind: 'escrow', eid: e.id });
       else if (e.type === 'bed_straw' && (e.hp ?? 0) > 0) setPanel({ kind: 'rest', eid: e.id });
       else if (e.type === 'claim') setPanel({ kind: 'container', eid: e.id });
