@@ -109,26 +109,29 @@ export function pumpStateKey(burn: number | undefined, queueLength: number, sour
   if (!sourceStock || sourceStock <= 0) return 'dry';
   return (burn ?? 0) > 0 && queueLength > 0 ? 'run' : 'idle';
 }
-/** Pump jack, 16×24. frame 0/1 nods the walking beam while running; dry shows a red lamp and no sheen. */
+/** Pump jack, 20×24: A-frame on a pad, walking beam pivoting on top, horse head at the left end, counterweight at the right.
+ *  Running = the beam seesaws one pixel between frames; dry = red lamp and a rust-dulled head; idle = amber lamp, still beam. */
 export function drawOilPump(g: G, state: 'idle' | 'run' | 'dry', frame: 0 | 1 = 0) {
   const run = state === 'run', dry = state === 'dry';
-  R(g, 1, 21, 14, 3, '#4a5258');                                     // concrete pad
-  R(g, 3, 17, 2, 4, '#5b636b'); R(g, 11, 17, 2, 4, '#5b636b');       // legs
-  R(g, 6, 12, 1, 10, '#7a828a'); R(g, 9, 12, 1, 10, '#7a828a');      // A-frame
-  R(g, 5, 11, 6, 1, '#7a828a');                                      // frame cross-bar
-  ell(g, 8, 11, 1.5, 1.5, '#2a2f35');                                // pivot
-  // walking beam: pivots on the A-frame; while running the head nods one pixel between frames
-  const nod = run && frame === 1 ? 1 : 0;
-  R(g, 1, 6 + nod, 14, 2, '#9aa3ad');                                // beam
-  R(g, 1, 5 + nod, 3, 3, dry ? '#5a2a20' : '#c8502e');               // horse head
-  P(g, 2, 6 + nod, '#f08a5a');
-  R(g, 12, 8 - nod, 2, 3, '#7a828a');                                // counterweight rod
-  R(g, 11, 10 - nod, 3, 2, '#3a3f4a');                               // counterweight
-  R(g, 8, 13, 5, 1, '#9aa3ad'); R(g, 12, 13, 1, 6, '#9aa3ad');     // outlet pipe down to output
-  R(g, 13, 18, 2, 2, '#2a2f35');                                     // output valve
-  // status lamp: amber idle, green running, red dry (state, not text)
-  R(g, 6, 2, 3, 3, dry ? '#ff5a4a' : run ? '#8fd19b' : '#d8a040');
-  P(g, 7, 3, dry ? '#ffd0c8' : '#f4ffe8');
+  const steel = '#7a828a', dark = '#3a3f4a', head = dry ? '#6a3a2a' : '#c8502e';
+  R(g, 1, 21, 18, 3, '#4a5258'); R(g, 2, 20, 16, 1, '#5b636b');                 // pad
+  R(g, 4, 16, 2, 5, '#5b636b'); R(g, 14, 16, 2, 5, '#5b636b');                  // feet
+  // A-frame: two legs meeting at the apex (x 9-10, y 9)
+  for (let k = 0; k < 8; k++) { R(g, 5 + k, 16 - k, 1, 2, steel); R(g, 14 - k, 16 - k, 1, 2, steel); }
+  R(g, 9, 8, 2, 2, steel); R(g, 8, 9, 4, 1, '#2a2f35');                          // apex + pivot bearing
+  // walking beam: rocks about the pivot. Frame 1 lowers the head end by one pixel and raises the counterweight.
+  const dy = run ? (frame === 0 ? 0 : 1) : 0;
+  R(g, 2, 7 + dy, 16, 2, '#9aa3ad');                                             // beam
+  R(g, 0, 5 + dy, 4, 6, head); P(g, 1, 6 + dy, dry ? '#8a5040' : '#f08a5a');   // horse head (left)
+  R(g, 16, 9 - dy, 3, 3, dark);                                                  // counterweight (right)
+  R(g, 17, 12 - dy, 1, 4, dark);                                                 // counterweight rod
+  // polished rod + wellhead down to the output valve
+  R(g, 6, 10 + dy, 1, 8, '#9aa3ad');
+  R(g, 5, 18, 5, 2, '#2a2f35'); R(g, 10, 18, 1, 3, '#9aa3ad'); R(g, 10, 19, 4, 1, '#9aa3ad');  // outlet
+  R(g, 12, 17, 2, 3, '#2a2f35');                                                 // output valve
+  // status lamp on the apex: amber idle, green running, red dry (from state, not text)
+  R(g, 9, 4, 2, 3, dry ? '#ff5a4a' : run ? '#8fd19b' : '#d8a040');
+  P(g, 9, 4, dry ? '#ffd0c8' : '#f4ffe8');
 }
 /** Crude drum: dark steel barrel with two bands and a tap, distinct from the can used by oil and canisters. */
 export function drawCrudeDrum(g: G, c1: string, c2: string) {

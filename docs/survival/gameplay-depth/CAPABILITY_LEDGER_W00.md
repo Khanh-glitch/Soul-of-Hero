@@ -383,3 +383,26 @@ Not delivered in this round and why:
 - Full physical-power integration (refinery as a load on the cable network) and a natural player journey through the refinery are not claimed.
 
 Validation at the code SHA of this round: `tsc --noEmit` exit 0; full Vitest 69 files / 541 tests pass; HTTP build exit 0; browser proof `web/e2e/b05-industrial-visual.mjs` at 640×360 and 1280×720, no page errors (visual fixtures labelled in `results.json`). Owner review of art quality is still required; the side-view bike is small at 640 and reads close to a small car.
+
+## B05-R round (Packages A–D) — partial, PR #44 remains DRAFT/HOLD/UNMERGED
+
+Status: **Package A (oil pump/refinery) implemented to test + visual level; Packages B, C, D NOT done in this round.** Nothing is marked DONE. Owner acceptance is not claimed.
+
+Implemented (A):
+- `oil_pump` structure: pump jack, requires a level-2 workbench within 3 tiles and an **authorized oil source**. Production placement is refused (no production source exists; Map placement pending). Authority is the labelled `test-fixture-v1` only.
+- `crude_petroleum` (drum icon, distinct from Salvaged Oil): produced only by `pump_crude` (no inputs, 12 s, fuelled with wood/fuel), one unit per cycle, source stock decremented in the same commit, output-fit checked first, nothing granted when the source is empty, output full, or fuel out.
+- `refinery_crude`: 4 crude + 1 glass → 1 Fuel Canister, 16 s, on the existing refinery. Consumed by the existing generator/motorbike fuel paths.
+- Validation: pump entities, pump jobs (canonical total, no reserved inputs), `oilSources` (key format, integer stock, only test authority).
+- Pump states from real inputs (`pumpStateKey`): idle / run (two beam frames) / dry (source empty). Station UI shows the authorized source stock.
+
+Tests: `web/tests/b05-oil-pump.test.ts` (13): authority refusal, no production source, conservation, fuel-out pause, output-full block, depletion after queueing, empty-source refusal, save/reload with a single grant, refinery crude path, and validation rejections.
+
+Validation at SHA of the checkpoint: tsc exit 0; full Vitest 70 files / 554 tests pass. Visual: `web/e2e/b05r-pump-visual.mjs` (in-page fixture, disclosed), evidence `web/evidence/b05r-pump/` at 640×360 and 1280×720 (idle, run-a, run-b, dry, inventory). Inspected at native size: pump jack silhouette, head and lamp read at 640×360.
+
+LI provenance (A): crude-to-fuel ratios, pump cycle time and fuel burn are **SOH_PROVISIONAL**; no LI value is claimed as confirmed. Recipe/timing values are in `balance.v1.json` under `oilPumpV1` and `oilRefineryV1.recipes.crude`.
+
+Not done (next actions):
+- B (motorbike/freight coherence): not changed this round. Next: compare vehicle vs hand cart vs walking traversal and carry limits in `motorbike.ts`, add a test for cargo UID/unload with crude.
+- C (POI access, loot→industry audit, icon/UI audit at 640×360 for all new items): not done. Map placement for oil sources is a dependency.
+- D (LI→SOH numeric parity table for industrial/freight mechanics): not done.
+- Standalone build: not run this round.

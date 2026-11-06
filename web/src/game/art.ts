@@ -306,10 +306,10 @@ export function buildStructs() {
   }
   S.vehicle_crate = mk(7, 5, g => drawVehicleCrate(g));
   // B05-R oil pump: idle, dry (empty source), and two frames of the running beam.
-  S.oil_pump_idle = mk(16, 24, g => drawOilPump(g, 'idle'));
-  S.oil_pump_dry = mk(16, 24, g => drawOilPump(g, 'dry'));
-  S.oil_pump_run_0 = mk(16, 24, g => drawOilPump(g, 'run', 0));
-  S.oil_pump_run_1 = mk(16, 24, g => drawOilPump(g, 'run', 1));
+  S.oil_pump_idle = mk(20, 24, g => drawOilPump(g, 'idle'));
+  S.oil_pump_dry = mk(20, 24, g => drawOilPump(g, 'dry'));
+  S.oil_pump_run_0 = mk(20, 24, g => drawOilPump(g, 'run', 0));
+  S.oil_pump_run_1 = mk(20, 24, g => drawOilPump(g, 'run', 1));
   return S;
 }
 
