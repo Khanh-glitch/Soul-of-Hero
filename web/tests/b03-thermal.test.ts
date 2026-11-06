@@ -1,7 +1,7 @@
 // B03 Deliverable A: shared physical thermal rules (online tick and offline settle).
 import { describe, it, expect } from 'vitest';
 import { BAL, TILE, WW, T, type GameState, type RunState } from '../src/game/core';
-import { newGame, dispatch, addItem, countItem, blockGrid, effTile, destroyStructure, markDirty } from '../src/game/engine';
+import { newGame, dispatch, addItem, countItem, blockGrid, effTile, destroyStructure, markDirty, roofRoom } from '../src/game/engine';
 import { settle, tick } from '../src/game/sim';
 import { thermalEvaluate, thermalEnv, thermalStep, thermalBoundaryMs, heaterStatus } from '../src/game/thermal';
 import { getWorld } from '../src/game/world';
@@ -153,3 +153,73 @@ describe('B03-A offline chronology and save custody', () => {
     expect(r.player.warmth).toBeCloseTo(32.5 - 22.5 * Math.exp(-1.6 * 40 / 60), 1);
   });
 });
+
+// Shelter fixture (same enclosure geometry as rest-supply): a 2x2 roofed, walled room.
+function site(g:GameState){
+  const r=g.run!,w=getWorld(),grid=blockGrid(r);
+  for(let yy=20;yy<180;yy++)for(let xx=20;xx<180;xx++){
+    const cells=[];for(let dy=-1;dy<=2;dy++)for(let dx=-1;dx<=2;dx++)cells.push([dx,dy]);
+    if(cells.every(([dx,dy])=>{const i=(yy+dy)*WW+xx+dx;return grid[i]===0&&!w.sourceV3[i]&&w.economyMap.buildable[i]&&!w.economyMap.protected[i]&&!w.accessCorridors?.mask[i];}))return {x:xx,y:yy};
+  }
+  throw new Error('no open site');
+}
+// Builds a real 2x2 wooden shelter (floor, roof, walls) with a Cabinet-free bed and chest inside.
+function shelter(seed:number){
+  const g=newGame();expect(act(g,'startRun',{character:'female',region:0,seed}).ok).toBe(true);
+  const r=g.run!;r.creatures=[];
+  const {x,y}=site(g);
+  r.player.x=x*TILE+8;r.player.y=(y+1)*TILE+8;
+  addItem(r,'inv','wood',400);addItem(r,'inv','fiber',200);addItem(r,'inv','stone',60);
+  const build=(struct:string,tx:number,ty:number)=>{const res=act(g,"build",{struct,tx,ty});expect({s:struct,tx,ty,why:res.ok?"":(res as any).reason}).toEqual({s:struct,tx,ty,why:""});};
+  for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('floor_wood',x+dx,y+dy);
+  for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('roof_thatch',x+dx,y+dy);
+  // Walls are placed from just outside each ring tile (line of sight from inside would cross the ring).
+  for(let dx=-1;dx<=2;dx++)for(let dy=-1;dy<=2;dy++){
+    if(dx>=0&&dx<=1&&dy>=0&&dy<=1)continue;
+    const ox=dx<0?-1:dx>1?1:0, oy=dy<0?-1:dy>1?1:0;
+    r.player.x=(x+dx+ox)*TILE+8;r.player.y=(y+dy+oy)*TILE+8;
+    build('wall_wood',x+dx,y+dy);
+  }
+  r.player.x=x*TILE+8;r.player.y=(y+1)*TILE+8;
+  build('bed_straw',x,y);build('chest_small',x+1,y+1);
+  const bed=Object.values(r.entities).find(e=>e.type==='bed_straw')!;
+  const chest=Object.values(r.entities).find(e=>e.type==='chest_small')!;
+  r.player.x=x*TILE+8;r.player.y=(y+1)*TILE+8;
+  // Provisions: real safe food, real charged flask, and a raw meat that must be refused.
+  addItem(r,chest.c!,'cooked_meat',3);addItem(r,chest.c!,'meat',1);addItem(r,chest.c!,'water_flask',1);
+  const flask=C(r,chest.c!).slots.find(s=>s?.key==='water_flask')!;flask.charge=4;
+  return {g,r,bed,chest,flask};
+}
+
+describe('B03-A shelter collapse ends the shelter contribution', () => {
+  it('a roofed enclosure gives +8 comfort; destroying one roof tile removes it from the physical target', () => {
+    const g = newGame(); expect(act(g, 'startRun', { character: 'female', region: 0, seed: 313 }).ok).toBe(true);
+    const r = g.run!; r.creatures = [];
+    const { x, y } = site(g);
+    r.player.x = x * TILE + 8; r.player.y = (y + 1) * TILE + 8;
+    addItem(r, 'inv', 'wood', 400); addItem(r, 'inv', 'fiber', 200); addItem(r, 'inv', 'stone', 60);
+    const build = (struct: string, tx: number, ty: number) => { const res = act(g, 'build', { struct, tx, ty }); expect({ s: struct, tx, ty, why: res.ok ? '' : (res as any).reason }).toEqual({ s: struct, tx, ty, why: '' }); };
+    for (let dx = 0; dx < 2; dx++) for (let dy = 0; dy < 2; dy++) build('floor_wood', x + dx, y + dy);
+    for (let dx = 0; dx < 2; dx++) for (let dy = 0; dy < 2; dy++) build('roof_thatch', x + dx, y + dy);
+    for (let dx = -1; dx <= 2; dx++) for (let dy = -1; dy <= 2; dy++) {
+      if (dx >= 0 && dx <= 1 && dy >= 0 && dy <= 1) continue;
+      const ox = dx < 0 ? -1 : dx > 1 ? 1 : 0, oy = dy < 0 ? -1 : dy > 1 ? 1 : 0;
+      r.player.x = (x + dx + ox) * TILE + 8; r.player.y = (y + dy + oy) * TILE + 8;
+      build('wall_wood', x + dx, y + dy);
+    }
+    r.player.x = (x + 0) * TILE + 8; r.player.y = (y + 1) * TILE + 8; markDirty();
+    expect(roofRoom(r, r.player.x, r.player.y).enclosed).toBe(true);
+    const env = (sh: boolean) => thermalEnv(r, { x: r.player.x, y: r.player.y, zone: 0, tileType: T.GRASS, wet: false, dark: false, sheltered: sh, torch: false });
+    expect(thermalEvaluate(r, env(true)).shelterPoints).toBe(8);
+    expect(thermalEvaluate(r, env(true)).target).toBeCloseTo(100, 6);
+    // Grass with no cold: base 100 hides the shelter term, so compare the cold snow tile instead.
+    const cold = (sh: boolean) => ({ ...env(sh), tileType: T.SNOW, zone: 5 });
+    expect(thermalEvaluate(r, cold(true)).target).toBeCloseTo(19 + 6, 6);
+    const roof = Object.values(r.entities).find(e => e.type === 'roof_thatch' && e.tx === x && e.ty === y + 1)!;
+    destroyStructure(r, roof, T0 + 10);
+    expect(roomEnclosed(r, r.player.x, r.player.y)).toBe(false);
+    expect(thermalEvaluate(r, cold(false)).target).toBeCloseTo(19, 6);
+  });
+});
+
+function roomEnclosed(r: RunState, x: number, y: number) { return roofRoom(r, x, y).enclosed; }

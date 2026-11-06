@@ -13,13 +13,14 @@ import { sfx, setAmbience, initAudio } from '../game/audio';
 import { save, saveSync } from '../game/persist';
 import { Slot, Bar, Icon, mkIntent, type Api, type PanelState } from './common';
 import { HomeStatusCard } from './HomeStatus';
+import type { OfflineReturnV1 } from '../game/return-report';
 import { RestPanel } from './RestPanel';
 import { InventoryPanel, ContainerPanel, CraftPanel, BuildPanel, MapPanel, SkillsPanel, MenuPanel, VendorPanel, EscrowPanel, EvacPanel, ReportPanel } from './panels';
 
-export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; report: string[] | null; onExit: () => void; onRunEnd: () => void }) {
+export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; report: { lines: string[]; report: OfflineReturnV1 | null } | null; onExit: () => void; onRunEnd: () => void }) {
   const cvRef = useRef<HTMLCanvasElement>(null); const stageRef = useRef<HTMLDivElement>(null);
   const [, setFrame] = useState(0); const rerender = useCallback(() => setFrame(f => f + 1), []);
-  const [panel, setPanel] = useState<PanelState | null>(report && report.length ? { kind: 'report', lines: report } : null);
+  const [panel, setPanel] = useState<PanelState | null>(report && (report.lines.length || (report.report && !report.report.away.quiet)) ? { kind: 'report', lines: report.lines, report: report.report } : null);
   const [sel, setSel] = useState<{ c: string; slot: number } | null>(null);
   const [buildType, setBuildType] = useState<string | null>(null); const [reclaim, setReclaim] = useState(false); const [repairMode, setRepairMode] = useState(false); const [upgradeMode, setUpgradeMode] = useState(false);
   const [editLayer, setEditLayer] = useState('auto');
@@ -250,7 +251,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       {panel?.kind === 'escrow' && panel.eid && <EscrowPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'rest' && panel.eid && <RestPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'evac' && panel.eid && <EvacPanel api={api} eid={panel.eid} />}
-      {panel?.kind === 'report' && <ReportPanel api={api} lines={panel.lines || []} />}
+      {panel?.kind === 'report' && <ReportPanel api={api} lines={panel.lines || []} report={panel.report ?? null} />}
       {p.dead && <div className="absolute inset-0 flex flex-col items-center justify-center fadein" style={{ background: 'radial-gradient(#3a0a0aa0, #000c)' }} onMouseDown={e => e.stopPropagation()}>
         <div className="title-font" style={{ fontSize: 26, color: '#ff8a6a', textShadow: '2px 2px 0 #000' }}>You have fallen</div>
         <div style={{ fontSize: 12, color: '#e0d0c0', maxWidth: 320, textAlign: 'center' }}>Death does not end the run. Everything you carried lies in a bag where you fell — go back for it. {Object.values(r.entities).some(e => e.type === 'bed_straw') ? 'You will wake at your bed.' : 'With no bed, you wake at a landing site.'}</div>

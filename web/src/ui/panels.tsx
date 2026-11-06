@@ -3,6 +3,7 @@ import { LOOT_CLASSES, lootClass } from '../game/loot-ecology';
 import { useEffect, useRef, useState } from 'react';
 import { ITEMS, RECIPES, permitsDirectedResearch, isRecipeKnown, STRUCTS, BUILD_ORDER, VENDOR_SECURED, VENDOR_SPARES, ACHIEVEMENTS, ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING } from '../game/catalog';
 import { BAL, TILE, WW, type Stack } from '../game/core';
+import type { OfflineReturnV1, ReturnSectionId, ReturnTone } from '../game/return-report';
 import { CabinetReadout } from './HomeStatus';
 import { C, countItem, invWeight, isRagnarok, runHours, cartWeight, cartLimit, carryLimit, spaceFor, phaseOf, tenderStatus, gardenEnvironment, weatherAt, isWet, isSheltered, wetOutlook, turretStatus, industrialStatus, powerAllocation, connectedPower, offlineSurvivalEstimate, territoryForecast, claimAt, structureRepairCost } from '../game/engine';
 import { getWorld, ZONES } from '../game/world';
@@ -377,10 +378,37 @@ export function EvacPanel({ api, eid }: { api: Api; eid: string }) {
     <div className="flex gap-1" style={{ marginTop: 5 }}>{!sure ? <button className="btn gold" onClick={() => setSure(true)}>Light the beacon…</button> : <button className="btn danger" onClick={() => api.act('evacuate', { eid })}>Confirm evacuation</button>}<button className="btn ghost" onClick={() => api.open(null)}>Stay</button></div>
   </Panel>;
 }
-export function ReportPanel({ api, lines }: { api: Api; lines: string[] }) {
-  return <Panel title="While you were away" style={{ left: 170, top: 80, width: 300 }} onClose={() => api.open(null)}>
+const RETURN_TABS: { id: ReturnSectionId; label: string }[] = [
+  { id: 'body', label: 'Body & Rest' }, { id: 'home', label: 'Home & Cabinet' }, { id: 'production', label: 'Production' }, { id: 'loss', label: 'Loss' }, { id: 'world', label: 'Known world' },
+];
+const RETURN_TONE: Record<ReturnTone, string> = { ok: '#9be38a', gold: '#ffd98a', warn: '#ffb36b', bad: '#ff8a7a', muted: '#cfc2dc' };
+/** B03-C: grouped 640x360 return report (typed OfflineReturnV1). Falls back to the legacy line list. */
+export function ReportPanel({ api, lines, report }: { api: Api; lines: string[]; report?: OfflineReturnV1 | null }) {
+  const [tab, setTab] = useState<ReturnSectionId>('body');
+  if (!report) return <Panel title="While you were away" style={{ left: 170, top: 80, width: 300 }} onClose={() => api.open(null)}>
     <div className="scroll" style={{ maxHeight: 150, overflowY: 'auto' }}>{lines.map((l, i) => <div key={i} style={{ fontSize: 11, color: i ? '#cfc2dc' : '#ffd98a' }}>• {l}</div>)}</div>
     <div style={{ fontSize: 10, color: '#b2a5bd', marginTop: 3 }}>Only evidenced tracks and physical impacts are resolved; other encounters remain unresolved. The world is live behind this report.</div>
     <button className="btn gold" style={{ marginTop: 4 }} onClick={() => api.open(null)}>Continue</button>
+  </Panel>;
+  const rows = report.sections[tab];
+  const counts = Object.fromEntries(RETURN_TABS.map(t => [t.id, report.sections[t.id].length])) as Record<ReturnSectionId, number>;
+  return <Panel title="While you were away" className="return-report" style={{ left: 0, top: 0, width: 640, height: 360, boxSizing: 'border-box', padding: 8, display: 'flex', flexDirection: 'column', gap: 4, overflow: 'hidden' }} onClose={() => api.open(null)}>
+    <div style={{ fontSize: 11, color: '#ffd98a', lineHeight: 1.25, minHeight: 28 }}>{report.summary}</div>
+    <div style={{ display: 'flex', gap: 3, flexWrap: 'nowrap' }}>
+      {RETURN_TABS.map(t => <button key={t.id} className={`btn ${tab === t.id ? 'gold' : 'ghost'}`} style={{ fontSize: 10, padding: '2px 5px', flex: 1 }} onClick={() => setTab(t.id)}>{t.label} ({counts[t.id]})</button>)}
+    </div>
+    <div className="scroll" style={{ flex: 1, minHeight: 0, overflowY: 'auto', border: '1px solid #3a2f4a', padding: 4 }}>
+      {rows.length === 0 && <div style={{ fontSize: 11, color: '#b2a5bd' }}>Nothing recorded in this group.</div>}
+      {rows.map(row => <div key={row.id} style={{ fontSize: 11, color: RETURN_TONE[row.tone], marginBottom: 3, lineHeight: 1.25 }}>
+        • {row.text}
+        {row.where && <span style={{ color: '#b2a5bd' }}> — at {row.where.tx},{row.where.ty}</span>}
+        {row.receipts.length > 0 && <span style={{ color: '#7f7390', fontSize: 9 }}> [{row.receipts.join(',')}]</span>}
+      </div>)}
+    </div>
+    <div style={{ fontSize: 10, color: '#cfc2dc', minHeight: 26, lineHeight: 1.2 }}>{report.next.length ? <>Next: {report.next.slice(0, 3).join(' ')}</> : 'No physical action is required right now.'}</div>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <span style={{ fontSize: 9, color: '#7f7390' }}>Forecasts are not guaranteed. Only physical receipts appear here; you must walk to a structure to act on it.</span>
+      <button className="btn gold" style={{ fontSize: 11 }} onClick={() => api.open(null)}>Close</button>
+    </div>
   </Panel>;
 }
