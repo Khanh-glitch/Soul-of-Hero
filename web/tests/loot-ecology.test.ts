@@ -3,7 +3,7 @@ import { ITEMS } from '../src/game/catalog';
 import {afterEach,describe,expect,it} from 'vitest';
 import {HOUR,TILE,WW,type GameState,type Entity} from '../src/game/core';
 import {C,dispatch,newGame,lootCooldown,renewableStock,stepLootRespawn,countItem,harvestHit,sourceAt,mkContainer,stepStations} from '../src/game/engine';
-import {LOOT_CLASSES,lootClass,lootRoll,lootSiteIndex,type LootClass} from '../src/game/loot-ecology';
+import {LOOT_CLASSES,lootClass,lootRoll,lootSiteIndex,lootSlots,type LootClass} from '../src/game/loot-ecology';
 import {getWorld,setActiveLayout} from '../src/game/world';
 import {serializeSnapshot,validate} from '../src/game/persist';
 const T=Date.UTC(2026,10,4);let seq=0;
@@ -16,7 +16,7 @@ afterEach(()=>setActiveLayout('shipping'));
 describe('W06 pinned authored cache ecology',()=>{
  it('classifies only authored sites, preserves authored/unique stock, and bounds all generated slots in both fresh layouts',()=>{
   for(const layout of ['shipping_fresh','dev_delta_fresh']){const g=start(layout),r=g.run!,world=getWorld(layout);expect(r.lootEcology?.version).toBe('w06-v1');
-   for(const s of world.statics.filter(s=>lootClass(s))){const e=Object.values(r.entities).find(x=>x.kind==='loot'&&x.tx===s.tx&&x.ty===s.ty)!;const items=C(r,e.c!).slots.filter(Boolean);expect(items.length).toBeLessThanOrEqual(8);for(const [key,qty] of s.loot!){const [k,meta]=key.split(':');expect(items.some(x=>x!.key===k&&(!meta||x!.meta===meta)&&x!.qty===qty)).toBe(true);}expect(lootRoll(r,s,0)).toHaveLength(2);}
+   for(const s of world.statics.filter(s=>lootClass(s))){const e=Object.values(r.entities).find(x=>x.kind==='loot'&&x.tx===s.tx&&x.ty===s.ty)!;const items=C(r,e.c!).slots.filter(Boolean);expect(items.length).toBeLessThanOrEqual(lootSlots(r));for(const [key,qty] of s.loot!){const [k,meta]=key.split(':');expect(items.some(x=>x!.key===k&&(!meta||x!.meta===meta)&&x!.qty===qty)).toBe(true);}const roll=lootRoll(r,s,0);expect(roll.length).toBeGreaterThanOrEqual(2);expect(roll.length).toBeLessThanOrEqual(2+3); /* B01 adds <=3 grammar stacks on fresh runs; the W06 pair is unchanged */}
    for(const kind of ['toolbox','supply','military','advanced'] as const)expect(world.statics.some(s=>lootClass(s)===kind)).toBe(true);
    expect(validate(snap(g))).toBeTruthy();
   }

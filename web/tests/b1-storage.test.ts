@@ -4,7 +4,10 @@ import { settle } from '../src/game/sim';
 import legacyPair from './fixtures/3b37ae9-legacy-pair.json';
 
 // Loading a pre-policy save pins its compatible fallback without changing the raw fixture.
-const laterWithPolicy = { ...legacyPair.later, run: { ...legacyPair.later.run, wreckEconomy: 'direct-v1' } };
+// B01-D: loading a pre-B01 save migrates the always-known recipe keys into run.knowledge.recipes (same visible behaviour as the old static path).
+import { ALWAYS_KNOWN_RECIPES } from '../src/game/catalog';
+const migratedRecipes = [...legacyPair.later.run.knowledge.recipes, ...ALWAYS_KNOWN_RECIPES.filter(k => !legacyPair.later.run.knowledge.recipes.includes(k))];
+const laterWithPolicy = { ...legacyPair.later, run: { ...legacyPair.later.run, wreckEconomy: 'direct-v1', knowledge: { ...legacyPair.later.run.knowledge, recipes: migratedRecipes } } };
 
 function fakeStorage() {
   const map = new Map<string, string>(); let failWrites = false, failReads = false;

@@ -1,15 +1,15 @@
 import { landingStimulus } from './stimulus';
 import { supportsAirdrops, airdropArea, airdropTimes, airdropRewards, chooseAirdropSite, airdropStaticEligible } from './airdrop';
-import { recoveryPlan, recoveryFits } from './recycler';
+import { recoveryPlan, recoveryPlanFor, recoveryFits } from './recycler';
 import { poiDoorContract, poiGeneratorContract, poiGenerator, poiPowered, interiorRelease, doorwayOccupied, advancePoiAccess, poiContractDigest } from './poi-access';
 import { vehicleClear, vehicleExitPoint } from './motorbike';
-import { LOOT_ECOLOGY_VERSION, LOOT_CLASSES, lootClass, lootRoll, lootSiteIndex, lootSourceId } from './loot-ecology';
+import { LOOT_ECOLOGY_VERSION, LOOT_GRAMMAR_VERSION, lootSlots, LOOT_CLASSES, lootClass, lootRoll, lootSiteIndex, lootSourceId } from './loot-ecology';
 import { creatorLootV1 } from './creator-loot';
 // Authoritative game engine: GameState + dispatch(intent) → committed state + receipt | rejection.
 // Rule: validate EVERYTHING first, then commit. Failed preconditions never partially debit.
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
-import { ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
+import { ALWAYS_KNOWN_RECIPES, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
 import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, webRecyclerSite, type StaticEnt } from './world';
 import { sourceDigest } from './world-economy';
 import { wreckBonuses, wreckEconomy } from './wreck-economy';
@@ -94,7 +94,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   const seed = seedOverride ?? ((now ^ 0x9e3779b9) >>> 0);
   const r: RunState = {
     id: 'run_' + seed.toString(36), seed, character, startedAt: now, qaOffset: 0, qaUsed: false, layoutId: getActiveLayout(), sourceLayoutVersion: 3, sourceMap: { id: w.economyMap.id, revision: w.economyMap.revision, seed: w.economyMap.seed, rules: 3, digest: sourceDigest(w.sourceV3), mapDigest: mapDigest(w), ...(w.veyra ? {veyra:w.veyra} : {}) }, spawnRegion: 0, ended: null,
-    player: null as any, creatures: [], sources: {}, terrain: {}, entities: {}, custody: {}, knowledge: { recipes: Object.keys(RECIPES).filter(k => RECIPES[k].base), studied: [] },
+    player: null as any, creatures: [], sources: {}, terrain: {}, entities: {}, custody: {}, knowledge: { recipes: Array.from(new Set([...Object.keys(RECIPES).filter(k => RECIPES[k].base), ...ALWAYS_KNOWN_RECIPES])), studied: [] },
     traces: [], discovered: [], poiSeen: [], elderStones: [], achievements: [], score: 0, deposited: 0,
     clock: { lastSimAt: now, simMs: 0, respawnAcc: 0, weatherSlot: -1 }, rng: seed, nextId: 1, receipts: [], seenIntents: [], seq: 0,
     vendorStock: { escrow_chest: 4, ...Object.fromEntries(Object.entries(VENDOR_SECURED).map(([k, v]) => [k, v.stock])), ...Object.fromEntries(Object.entries(VENDOR_SPARES).map(([k,v]) => [`spares:${k}`,v.stock])) }, log: [],
@@ -102,7 +102,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   if (supportsAirdrops(r.layoutId!)) r.airdrops={version:'airdrop-v1',mapDigest:r.sourceMap!.mapDigest!,seed:r.seed,runId:r.id,startedAt:r.startedAt,nextIndex:0};
   r.poiAccessVersion='poi-access-v1';
   r.poiAccessDigest=poiContractDigest(w);
-  if (getActiveLayout()==='shipping_fresh' || getActiveLayout()==='dev_delta_fresh') { r.creatorLootV1=true; r.lootEcology={version:LOOT_ECOLOGY_VERSION,cycles:{}}; }
+  if (getActiveLayout()==='shipping_fresh' || getActiveLayout()==='dev_delta_fresh') { r.creatorLootV1=true; r.lootEcology={version:LOOT_ECOLOGY_VERSION,cycles:{},grammar:LOOT_GRAMMAR_VERSION}; }
   const reg = 0; r.spawnRegion = reg; const sp = chooseLegalSpawn(r); if(!sp)return {ok:false,reason:'No safe, resource-accessible spawn in this region.'}; r.spawnChoice={x:sp.tx,y:sp.ty,contract:'seeded-geographic-v1'};
   r.custody.inv = { id: 'inv', kind: 'inv', slots: Array(24).fill(null) };
   r.custody.eq = { id: 'eq', kind: 'eq', slots: [null, null, null] };
@@ -114,7 +114,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   for (const s of w.statics) {
     const e: Entity = { id: uid(r, 'e'), kind: s.kind as any, x: s.tx * TILE + 8, y: s.ty * TILE + 8, tx: s.tx, ty: s.ty, poi: s.poi, label: s.label };
     if (s.kind === 'loot') {
-      const c = mkContainer(r, 'loot', 8);
+      const c = mkContainer(r, 'loot', lootSlots(r));
       s.loot!.forEach(([k, q], i) => {
         if (k.startsWith('blueprint:')) c.slots[i] = mkStack(r, 'blueprint', 1, k.slice(10));
         else { const stack=mkStack(r,k,q); if (['meteor','dragon','elsa'].includes(ITEMS[k]?.creatorCore || '') && stack.reserves) stack.reserves.signature=3; c.slots[i]=stack; }
@@ -647,7 +647,7 @@ export function stepLootRespawn(r: RunState, now: number) {
     // Never spawn on a newly built physical object; retry at later settlement.
     if (Object.values(r.entities).some(e => e.tx === site.tx && e.ty === site.ty && ['loot','struct','door','gen','recycler'].includes(e.kind))) continue;
     const e: Entity = { id: uid(r, 'e'), kind: 'loot', x: site.tx * TILE + 8, y: site.ty * TILE + 8, tx: site.tx, ty: site.ty, poi: site.poi, label: site.label };
-    const c = mkContainer(r, 'loot', 8); e.c = c.id;
+    const c = mkContainer(r, 'loot', lootSlots(r)); e.c = c.id;
     stock.forEach(([key, qty], i) => { c.slots[i] = mkStack(r, key, qty); if(r.lootEcology && lootClass(site)) receipt(r,now,'loot.roll',`${lootSourceId(r,site)}:${LOOT_ECOLOGY_VERSION}:cycle${cycle}:slot${i}:${key}x${qty}:${c.slots[i]!.uid}`); });
     if(r.lootEcology && lootClass(site))r.lootEcology.cycles[lootSiteIndex(site)]=cycle;
     r.entities[e.id] = e; delete timers[index];
@@ -1123,6 +1123,14 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (!e || e.kind !== 'struct' || !owned(e) || !near(r, e, 3)) return fail('Use your structure within reach.');
       const def = STRUCTS[e.type!];
       if (!def || def.item || !Number.isFinite(e.hp) || !Number.isFinite(e.maxHp) || e.hp! <= 0 || e.hp! >= e.maxHp!) return fail('This structure cannot be repaired.');
+      // B01: one Iron Plate fully restores a wall-layer structure (reinforcement role, distinct from wood patching).
+      if (it.material === 'iron_plate') {
+        if (def.layer !== 'wall') return fail('Iron plate reinforces wall or door structures only.');
+        if (countItem(r, 'inv', 'iron_plate') < 1) return fail('Missing repair materials: Iron Plate 0/1.');
+        removeItem(r, 'inv', 'iron_plate', 1);
+        const beforePlate = e.hp!; e.hp = e.maxHp!;
+        return ok('structure.repair.plate', `${e.id}:${beforePlate}->${e.hp}:iron_platex1`, `${def.name} reinforced with Iron Plate to ${Math.round(e.hp)}/${e.maxHp} HP.`);
+      }
       const cost = structureRepairCost(e);
       if (!hasAll(r, 'inv', cost)) return fail('Missing repair materials: ' + cost.filter(([key, qty]) => countItem(r, 'inv', key) < qty).map(([key, qty]) => `${ITEMS[key].name} ${countItem(r, 'inv', key)}/${qty}`).join(', '));
       for (const [key, qty] of cost) removeItem(r, 'inv', key, qty);
@@ -1575,7 +1583,7 @@ function craft(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: stri
 function research(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: string, d: string, m?: string) => Result): Result {
   const st = stationNear(r, 'research', it.eid); if (!st) return fail('Requires a Research Table within reach.');
   if (st.station!.queue.length >= 3) return fail('Research queue is full.');
-  const known = new Set(r.knowledge.recipes); for(const k of Object.keys(RECIPES)) if(isRecipeKnown(r.knowledge.recipes,k)) known.add(k); const pending = new Set(st.station!.queue.map(j => j.recipe.split(':')[1]));
+  const known = new Set(r.knowledge.recipes); const pending = new Set(st.station!.queue.map(j => j.recipe.split(':')[1]));
   const unknown = Object.keys(RECIPES).filter(k => !known.has(k) && !pending.has(k));
   const B = BAL.research;
   if (it.mode === 'random') {
@@ -1619,12 +1627,13 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
       // A finished job is committed at its event time without requiring extra work or fuel.
       if (job && job.left <= 0) {
         const at = now - t;
-        if (job.recipe==='X:drive'||job.recipe==='X:recover-v1') {
-          const plan=job.reserved?.length===1?recoveryPlan(job.reserved[0]):null;
+        if (job.recipe==='X:drive'||job.recipe==='X:recover-v1'||job.recipe==='X:recover-v2') {
+          // Outputs are fixed by the job's stored recipe version (v1 jobs never change when v2 is added).
+          const plan=job.reserved?.length===1?recoveryPlanFor(job.reserved[0],job.recipe):null;
           if(e.kind!=='recycler'||!plan||plan.recipe!==job.recipe||!recoveryFits(C(r,st.outC),plan.outputs)){blocked=true;note('Recycler: output full or invalid reservation.');continue;}
           // Capacity was checked for the whole set before any output is committed.
           for(const [key,qty] of plan.outputs)addItem(r,st.outC,key,qty);
-          if(job.recipe==='X:recover-v1')receipt(r,at,'recycle.finish',`${job.reserved![0].uid}:${job.reserved![0].key}:${plan.outputs.map(([key,qty])=>`${key}x${qty}`).join(',')}`);
+          if(job.recipe!=='X:drive')receipt(r,at,'recycle.finish',`${job.reserved![0].uid}:${job.reserved![0].key}:${plan.outputs.map(([key,qty])=>`${key}x${qty}`).join(',')}`);
           note(`Recycler finished: ${plan.outputs.map(([key,qty])=>`${qty} ${ITEMS[key].name}`).join(', ')} in output.`);
         } else if (job.recipe.startsWith('R:')) {
           const k = job.recipe.slice(2);

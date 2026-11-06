@@ -158,6 +158,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
 
   const onMouseMove = (e: React.MouseEvent) => { const s = scaleRef.current; mouse.current = { x: (e.clientX - offRef.current.x) / s, y: (e.clientY - offRef.current.y) / s }; };
   const onMouseDown = (e: React.MouseEvent) => {
+    const shiftHeld = e.shiftKey; // B01: Shift+click in repair mode reinforces a wall/door with one Iron Plate
     initAudio(); const r = gs.run; if (!r) return; onMouseMove(e);
     if (e.button === 2) { coreAimRef.current=null;setCoreAim(null);inp.current.skill=undefined;inp.current.cancel = true; setBuildType(null); setReclaim(false); setRepairMode(false); setUpgradeMode(false); return; }
     if (e.button !== 0) return;
@@ -168,7 +169,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       const order = ['wall', 'obj', 'roof', 'floor'];
       const ents = entsAt(r, tx, ty).filter(x => x.kind === 'struct' && (editLayer === 'auto' || STRUCTS[x.type!].layer === editLayer) && (!upgradeMode || !!STRUCTURE_UPGRADES[x.type!]));
       ents.sort((a,b)=>order.indexOf(STRUCTS[a.type!].layer)-order.indexOf(STRUCTS[b.type!].layer));
-      if (ents[0]) act(upgradeMode ? 'upgradeStructure' : repairMode ? 'repairStructure' : 'reclaim', { eid: ents[0].id });
+      if (ents[0]) act(upgradeMode ? 'upgradeStructure' : repairMode ? 'repairStructure' : 'reclaim', repairMode ? { eid: ents[0].id, material: shiftHeld ? 'iron_plate' : undefined } : { eid: ents[0].id });
       else if (reclaim && editLayer === 'auto') { const cart=Object.values(r.entities).find(x=>x.kind==='cart'&&Math.hypot(x.x-wx,x.y-wy)<12); if(cart) act('reclaim',{eid:cart.id}); else toast('No matching structure there.'); }
       else toast('No matching structure there. Use G to change layer.'); return;
     }

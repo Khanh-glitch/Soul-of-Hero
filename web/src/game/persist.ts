@@ -1,12 +1,12 @@
 import {supportsAirdrops, airdropTimes, airdropRewards, airdropStaticEligible} from './airdrop';
-import { recoveryPlan } from './recycler';
+import { recoveryPlanFor } from './recycler';
 import { poiContractDigest } from './poi-access';
-import { LOOT_ECOLOGY_VERSION, lootClass, lootRoll, lootSiteIndex } from './loot-ecology';
+import { LOOT_ECOLOGY_VERSION, LOOT_GRAMMAR_VERSION, lootClass, lootRoll, lootSiteIndex } from './loot-ecology';
 import { creatorLootV1 } from './creator-loot';
 // Local-first snapshots: one serialized profile + run + receipts per write.
 // Checksums detect accidental damage, not malicious edits or rollback of all copies.
 import { BAL, SAVE_VERSION, WW, WH, TILE, type GameState, type Stack } from './core';
-import { ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, VENDOR_SPARES } from './catalog';
+import { ALWAYS_KNOWN_RECIPES, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, VENDOR_SPARES } from './catalog';
 import { newGame, renewableLoot } from './engine';
 import { getWorld, hasLayout, webRecyclerSite } from './world';
 import { mapDigest } from './map-package';
@@ -55,6 +55,7 @@ export function validate(raw: any): GameState | null {
   } else if (baseline[layout] !== fingerprint) return null;
   if (r.sourceLayoutVersion !== 3 && r.sourceMap !== undefined) return null;
   if ((r.player.iceUntil !== undefined && !finite(r.player.iceUntil)) || (r.player.channelUntil !== undefined && !finite(r.player.channelUntil)) || !['x','y','hp','stamina','hunger','thirst','warmth','rad','active'].every(k => finite(r.player[k])) || !obj(r.player.skills) || typeof r.player.dead !== 'boolean' || !finite(r.clock.lastSimAt) || !finite(r.clock.simMs) || !finite(r.clock.respawnAcc) || !finite(r.clock.weatherSlot)) return null;
+  if (obj(r.knowledge) && stringArray(r.knowledge.recipes)) for (const k of ALWAYS_KNOWN_RECIPES) if (!r.knowledge.recipes.includes(k)) r.knowledge.recipes.push(k); // B01-D: single knowledge authority migration (idempotent)
   if (!Array.isArray(r.creatures) || !obj(r.sources) || !obj(r.terrain) || !obj(r.knowledge) || !stringArray(r.knowledge.recipes) || !stringArray(r.knowledge.studied) || !r.knowledge.recipes.every((k: string) => has(RECIPES, k)) || !Array.isArray(r.traces) || !Array.isArray(r.discovered) || !stringArray(r.poiSeen) || !stringArray(r.elderStones) || !stringArray(r.achievements) || !Array.isArray(r.receipts) || !stringArray(r.seenIntents) || !obj(r.vendorStock) || !Object.values(r.vendorStock).every(integer) || !integer(r.score) || !integer(r.deposited) || !Array.isArray(r.log)) return null;
   // Old saves have no combat record. New records preserve committed effects,
   // but malformed effects must not become executable hazards on load.
@@ -108,9 +109,9 @@ export function validate(raw: any): GameState | null {
   const jobIds = new Set<string>();
   const jobs = (queue: any, station: string): boolean => Array.isArray(queue) && queue.every((j: any) => {
     if (!obj(j) || typeof j.id !== 'string' || !j.id || jobIds.has(j.id) || !beforeNext(j.id, /^j([a-z0-9]+)$/) || typeof j.recipe !== 'string') return false;
-    if(j.recipe==='X:recover-v1'){
+    if(j.recipe==='X:recover-v1'||j.recipe==='X:recover-v2'){
       if(station!=='recycler'||!finite(j.left)||!finite(j.total)||j.left<0||j.left>j.total||!Array.isArray(j.reserved)||j.reserved.length!==1)return false;
-      const plan=recoveryPlan(j.reserved[0]);if(!plan||plan.recipe!==j.recipe||j.total!==plan.total||!j.reserved.every(stack))return false;
+      const plan=recoveryPlanFor(j.reserved[0],j.recipe);if(!plan||plan.recipe!==j.recipe||j.total!==plan.total||!j.reserved.every(stack))return false;
       jobIds.add(j.id);return true;
     }
     const recycler = j.recipe==='X:drive';
@@ -206,7 +207,7 @@ export function validate(raw: any): GameState | null {
   if(r.poiAccessVersion==='poi-access-v1'&&world.poiAccess){for(const d of world.poiAccess.doors){const doors=(Object.values(r.entities) as any[]).filter(e=>e.kind==='door'&&e.tx===d.tx&&e.ty===d.ty);if(doors.length!==1||doors[0].locked!==d.requirement)return null;if(d.generator&&(Object.values(r.entities) as any[]).filter(e=>e.kind==='gen'&&e.tx===d.generator!.tx&&e.ty===d.generator!.ty).length!==1)return null;}}
   if (r.lootEcology !== undefined) {
     const policy=r.lootEcology;
-    if(!obj(policy) || policy.version!==LOOT_ECOLOGY_VERSION || !obj(policy.cycles) || !r.creatorLootV1 || !['shipping_fresh','dev_delta_fresh'].includes(r.layoutId))return null;
+    if(!obj(policy) || policy.version!==LOOT_ECOLOGY_VERSION || !obj(policy.cycles) || (policy.grammar!==undefined && policy.grammar!==LOOT_GRAMMAR_VERSION) || !r.creatorLootV1 || !['shipping_fresh','dev_delta_fresh'].includes(r.layoutId))return null;
     for(const [key,value] of Object.entries(policy.cycles)) {
       if(!/^(0|[1-9][0-9]*)$/.test(key) || !Number.isSafeInteger(value) || (value as number)<1) return null;
       const site=world.statics.find(s=>s.kind==='loot' && lootSiteIndex(s)===Number(key));

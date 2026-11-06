@@ -2,18 +2,32 @@ import { BAL, type Container, type Stack } from './core';
 import { ITEMS } from './catalog';
 
 type Output = [string, number];
-export type RecoveryPlan = { recipe:'X:drive'|'X:recover-v1'; total:number; outputs:Output[]; condition:number|null };
-/** Explicit v1 whitelist. A reserved instance and version determine all outputs.
- * Do not change v1 tuning in place when revising rules: old queued jobs use it. */
+/** B01: X:recover-v1 jobs keep the v1 table forever; X:recover-v2 jobs use recyclerV2 (new physical outputs). */
+export type RecoveryRecipe = 'X:drive'|'X:recover-v1'|'X:recover-v2';
+export type RecoveryPlan = { recipe:RecoveryRecipe; total:number; outputs:Output[]; condition:number|null };
+type RuleTable = Record<string,{base:Output[];mid:Output[];high:Output[]}>;
+function planFromTable(s:Stack, table:RuleTable, recipe:'X:recover-v1'|'X:recover-v2', seconds:number):RecoveryPlan|null {
+  if(!Object.prototype.hasOwnProperty.call(table,s.key))return null;
+  const max=ITEMS[s.key]?.dur;
+  if(!max||!Number.isFinite(s.dur)||s.dur!<0||s.dur!>max)return null;
+  const condition=s.dur!/max,rule=table[s.key];
+  return {recipe,total:seconds*1000,condition,outputs:[...rule.base,...(condition>=BAL.recyclerV1.midCondition?rule.mid:[]),...(condition>=BAL.recyclerV1.highCondition?rule.high:[])].map(([k,q])=>[k,q])};
+}
+/** Plan a NEW job. v2 supersedes v1 for keys it lists; every other v1 key stays on v1. */
 export function recoveryPlan(s:Stack):RecoveryPlan|null {
   if(!s||typeof s!=="object"||s.qty!==1)return null;
   if(s.key==='damaged_drive')return {recipe:'X:drive',total:12000,outputs:[['spares',2]],condition:null};
-  const rules=BAL.recyclerV1.rules as Record<string,{base:Output[];mid:Output[];high:Output[]}>;
-  if(!Object.prototype.hasOwnProperty.call(rules,s.key))return null;
-  const max=ITEMS[s.key]?.dur;
-  if(!max||!Number.isFinite(s.dur)||s.dur!<0||s.dur!>max)return null;
-  const condition=s.dur!/max,rule=rules[s.key];
-  return {recipe:'X:recover-v1',total:BAL.recyclerV1.seconds*1000,condition,outputs:[...rule.base,...(condition>=BAL.recyclerV1.midCondition?rule.mid:[]),...(condition>=BAL.recyclerV1.highCondition?rule.high:[])].map(([k,q])=>[k,q])};
+  const v2=BAL.recyclerV2.rules as RuleTable;
+  if(Object.prototype.hasOwnProperty.call(v2,s.key))return planFromTable(s,v2,'X:recover-v2',BAL.recyclerV2.seconds);
+  return planFromTable(s,BAL.recyclerV1.rules as RuleTable,'X:recover-v1',BAL.recyclerV1.seconds);
+}
+/** Plan for an EXISTING job, keyed by its stored recipe version. Never falls back to the other table. */
+export function recoveryPlanFor(s:Stack, recipe:string):RecoveryPlan|null {
+  if(!s||typeof s!=="object"||s.qty!==1)return null;
+  if(recipe==='X:drive')return s.key==='damaged_drive'?{recipe:'X:drive',total:12000,outputs:[['spares',2]],condition:null}:null;
+  if(recipe==='X:recover-v1')return planFromTable(s,BAL.recyclerV1.rules as RuleTable,'X:recover-v1',BAL.recyclerV1.seconds);
+  if(recipe==='X:recover-v2')return planFromTable(s,BAL.recyclerV2.rules as RuleTable,'X:recover-v2',BAL.recyclerV2.seconds);
+  return null;
 }
 /** Simulates all outputs together: a single empty slot cannot fit several kinds. */
 export function recoveryFits(container:Container,outputs:Output[]):boolean {

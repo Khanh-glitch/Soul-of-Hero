@@ -3,7 +3,7 @@ import { BAL } from './core';
 export type Mat = 'wood' | 'stone' | 'ore' | 'plant' | 'scrap';
 export interface SourcePlacementRule { terrain: 'sand' | 'marsh' | 'ash' | 'snow' | 'hill'; chance: number }
 /** `tier` governs discovery; `stationLevel` alone specifies physical workbench capability. */
-export interface RecipeDef { out: string; qty: number; /** Optional co-products committed atomically with the job (industrial batches). Absent = single output `out`×`qty`. */ outs?: [string, number][]; ins: [string, number][]; station: null | 'campfire' | 'furnace' | 'workbench' | 'refinery'; secs: number; base?: boolean; tier: number; stationLevel?: 1 | 2 | 3 }
+export interface RecipeDef { out: string; qty: number; /** Optional co-products committed atomically with the job (industrial batches). Absent = single output `out`×`qty`. */ outs?: [string, number][]; ins: [string, number][]; station: null | 'campfire' | 'furnace' | 'workbench' | 'refinery'; secs: number; base?: boolean; tier: number; stationLevel?: 1 | 2 | 3; /** B01: distinct display name for an alternate recipe whose output item is shared with another recipe. */ alias?: string }
 
 // TUNABLE: a capability upgrade, not a learned recipe. The cart itself remains physical.
 export const INDUSTRIAL_MODULE: { cost: [string, number][]; benchLevel: number } = { cost: [['mechanical_parts', 3], ['fasteners', 3], ['spares', 4], ['iron_ingot', 2]], benchLevel: 2 }; // SOH_NEW_TUNED provisional; no equivalent LI numerical table established
@@ -131,6 +131,12 @@ export const ITEMS: Record<string, ItemDef> = {
   escrow_chest: I({ name: 'Rương ký gửi', cat: 'kit', icon: 'chest', c1: '#5a3a7a', c2: '#ffd040', w: 4, max: 1, desc: 'Escrow chest. Place on owned land, then deposit physical Ragnarok cash into your profile.', place: 'escrow' }),
   vehicle_frame: I({ name:'Utility Frame', cat:'res', icon:'scrap', c1:'#706c5f', c2:'#c6bca0', w:4, max:5, desc:'Welded frame for the motorbike.' }),
   vehicle_drive: I({ name:'Motor Drive', cat:'res', icon:'gear', c1:'#625e58', c2:'#c8bca1', w:3, max:5, desc:'Gear and plate drive assembly for the utility motorbike.' }),
+  // B01 industrial intermediates (SOH_PROVISIONAL; historical v5 ratios are documented in B01 ledger, not copied).
+  refined_iron_ingot: I({ name:'Refined Iron Ingot', cat:'res', icon:'ingot', c1:'#8f9fb3', c2:'#f2f8ff', w:1, max:40, desc:'Furnace-refined iron. Needed for pipe and plate.' }),
+  metal_pipe: I({ name:'Metal Pipe', cat:'res', icon:'scrap', c1:'#5f6a74', c2:'#b8c4cc', w:1.2, max:20, desc:'Pipe section for utility frames. Salvage returns parts and refined iron.' }),
+  metal_blade: I({ name:'Metal Blade', cat:'res', icon:'fang', c1:'#7d8a96', c2:'#eef4f8', w:0.8, max:20, desc:'Cut blade stock for sword refits.' }),
+  mechanical_gear: I({ name:'Mechanical Gear', cat:'res', icon:'gear', c1:'#6b6f76', c2:'#d6c27a', w:0.8, max:20, desc:'Precision gear for motor drives and powered mechanisms.' }),
+  iron_plate: I({ name:'Iron Plate', cat:'res', icon:'scrap', c1:'#4f5a63', c2:'#c9d1d8', w:1.5, max:20, desc:'Reinforcing plate. Restores a wall or door fully when applied at the structure.' }),
   motorbike_kit: I({ name:'Utility Motorbike (packed)', cat:'kit', icon:'cart', c1:'#4d7180', c2:'#e4c475', w:12, max:1, dur:200, desc:'Place on clear eligible ground; fuel and cargo are separate.', place:'motorbike' }),
   cart_kit: I({ name: 'Hand Cart (packed)', cat: 'kit', icon: 'cart', c1: '#7a5a32', c2: '#c0c8d0', w: 6, max: 1, desc: 'Place to unpack a cargo cart.', place: 'cart' }),
   // elder stones (unique per run)
@@ -191,7 +197,10 @@ export const ELDERS: Record<string, ElderDef> = {
 // Knowledge and equipment are independent: tier never implies a station upgrade.
 export const permitsDirectedResearch = (recipe: RecipeDef) => recipe.tier < 3;
 // Recovery is a base recipe introduced after older run snapshots were saved.
-export const isRecipeKnown = (known: readonly string[], key: string) => ['vehicle_frame','vehicle_drive','recover_drive','energy_refined_industrial','energy_basic','energy_refined','essence_fire','essence_nature','essence_water','essence_spirit','core_blast','core_earthmother'].includes(key) || known.includes(key);
+/** B01-D: the ONLY recipe-knowledge authority is the run-local knowledge.recipes list. These keys are seeded
+ * into new runs and migrated into existing saves (persist.validate); no static 'always known' path remains. */
+export const ALWAYS_KNOWN_RECIPES: readonly string[] = ['vehicle_frame','vehicle_drive','recover_drive','energy_refined_industrial','energy_basic','energy_refined','essence_fire','essence_nature','essence_water','essence_spirit','core_blast','core_earthmother'];
+export const isRecipeKnown = (known: readonly string[], key: string) => known.includes(key);
 export const requiredStationLevel = (recipe: RecipeDef): 1 | 2 | 3 => recipe.stationLevel ?? 1;
 
 // ---------- Recipes (K4: one run-local authority) ----------
@@ -240,6 +249,15 @@ export const RECIPES: Record<string, Recipe> = {
   industrial_pick: { out: 'industrial_pick', qty: 1, ins: [['iron_pick', 1], ['mechanical_parts', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 25, tier: 2 },
   industrial_axe: { out: 'industrial_axe', qty: 1, ins: [['iron_axe', 1], ['mechanical_parts', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 25, tier: 2 },
   reinforced_spear: { out: 'reinforced_spear', qty: 1, ins: [['iron_ingot', 2], ['mechanical_parts', 1], ['wood', 2]], station: 'workbench', stationLevel: 2, secs: 20, tier: 2 },
+  metal_pipe: { out: 'metal_pipe', qty: 1, ins: [['refined_iron_ingot', 2], ['mechanical_parts', 1]], station: 'workbench', stationLevel: 2, secs: 18, base: true, tier: 2 },
+  metal_blade: { out: 'metal_blade', qty: 1, ins: [['iron_ingot', 4], ['mechanical_parts', 1]], station: 'workbench', stationLevel: 2, secs: 16, base: true, tier: 2 },
+  mechanical_gear: { out: 'mechanical_gear', qty: 1, ins: [['iron_ingot', 2], ['mechanical_parts', 2], ['fasteners', 1]], station: 'workbench', stationLevel: 2, secs: 20, base: true, tier: 2 },
+  iron_plate: { out: 'iron_plate', qty: 2, ins: [['refined_iron_ingot', 2], ['metal_pipe', 1], ['mechanical_parts', 1]], station: 'workbench', stationLevel: 2, secs: 18, base: true, tier: 2 },
+  iron_sword_blade: { out: 'iron_sword', qty: 1, alias: 'Iron Sword (blade refit)', ins: [['metal_blade', 1], ['iron_ingot', 2], ['leather', 1]], station: 'workbench', stationLevel: 2, secs: 14, base: true, tier: 2 },
+  vehicle_frame_piped: { out: 'vehicle_frame', qty: 1, alias: 'Utility Frame (piped)', ins: [['metal_pipe', 1], ['iron_ingot', 2], ['mechanical_parts', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 22, base: true, tier: 2 },
+  reinforced_spear_blade: { out: 'reinforced_spear', qty: 1, alias: 'Reinforced Spear (blade)', ins: [['metal_blade', 1], ['iron_ingot', 1], ['wood', 2]], station: 'workbench', stationLevel: 2, secs: 16, base: true, tier: 2 },
+  industrial_pick_geared: { out: 'industrial_pick', qty: 1, alias: 'Salvager Pick (geared)', ins: [['iron_pick', 1], ['mechanical_gear', 1], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 25, base: true, tier: 2 },
+  vehicle_drive_geared: { out: 'vehicle_drive', qty: 1, alias: 'Motor Drive (geared)', ins: [['mechanical_gear', 1], ['iron_ingot', 1], ['fasteners', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 22, base: true, tier: 2 },
   rope: { out: 'rope', qty: 1, ins: [['fiber', 3]], station: null, secs: 1, base: true, tier: 0 },
   torch: { out: 'torch', qty: 1, ins: [['wood', 1], ['fiber', 2]], station: null, secs: 1, base: true, tier: 0 },
   stone_axe: { out: 'stone_axe', qty: 1, ins: [['wood', 3], ['stone', 3], ['rope', 1]], station: null, secs: 2, base: true, tier: 0 },
@@ -254,6 +272,7 @@ export const RECIPES: Record<string, Recipe> = {
   charcoal: { out: 'charcoal', qty: 1, ins: [['wood', 2]], station: 'campfire', secs: 12, base: true, tier: 0 },
   stew: { out: 'stew', qty: 1, ins: [['crop', 2], ['meat', 1], ['herb', 1]], station: 'campfire', secs: 14, tier: 1 },
   iron_ingot: { out: 'iron_ingot', qty: 1, ins: [['iron_ore', 1]], station: 'furnace', secs: 10, base: true, tier: 0 },
+  refined_iron_ingot: { out: 'refined_iron_ingot', qty: 2, ins: [['iron_ingot', 3], ['coal', 1]], station: 'furnace', secs: 20, base: true, tier: 1 },
   scrap_ingot: { out: 'iron_ingot', qty: 1, ins: [['scrap', 3]], station: 'furnace', secs: 12, base: true, tier: 0 },
   brick: { out: 'brick', qty: 2, ins: [['stone', 3]], station: 'furnace', secs: 10, tier: 1 },
   shell_glass: { out: 'glass', qty: 1, ins: [['stone', 2], ['shell', 2]], station: 'furnace', secs: 16, base: true, tier: 1 },
