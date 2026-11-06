@@ -7,6 +7,7 @@ import { getWorld, SRC_KEYS, fbm } from './world';
 import { effTile, sourceAt, darkness, weatherAt, isRagnarok, entsAt, buildReason, C, roofRoom, clearPhysicalLine, irSensorVisual } from './engine';
 import { airdropView } from './airdrop';
 import { lootSpriteKey } from './loot-ecology';
+import { vehicleView, vehicleStateKey, refineryStateKey } from './industrial-art';
 const lootFamilyCache = new WeakMap<object, string | null>();
 /** B04-P4: the physical family sprite of a classed cache (memoised per entity; unclassed crates keep the generic art). */
 function lootFamilySprite(r: RunState, e: Entity): string | null {
@@ -297,11 +298,20 @@ function drawEntity(g: CanvasRenderingContext2D, r: RunState, e: Entity, time: n
     case 'bag': { shadow(g, X, Y + 5, 5); g.drawImage(A.st.bag, X - 8, Y - 10); const a = 0.5 + Math.sin(time / 300) * 0.3; g.fillStyle = `rgba(255,226,122,${a})`; g.fillRect(X, Y - 18 - Math.round(Math.sin(time / 300) * 2), 1, 4); g.fillRect(X - 1, Y - 15 - Math.round(Math.sin(time / 300) * 2), 3, 1); return; }
     case 'cart': { shadow(g, X, Y + 6, 11); g.drawImage(A.st.cart, X - 14, Y - 14); if (C(r, e.c!).slots.some(Boolean)) g.drawImage(A.st.cargo, X - 14, Y - 16); if (r.player.pulling === e.id) { g.fillStyle = '#c8a060'; const p = r.player; const n = 8; for (let i = 0; i <= n; i++) { const t = i / n; g.fillRect(Math.round(X + 12 + (p.x - X - 12) * t), Math.round(Y - 4 + (p.y - Y + 2) * t + Math.sin(t * Math.PI) * 2), 1, 1); } } return; }
     case 'vehicle': {
-      shadow(g,X,Y+6,10);g.save();g.translate(X,Y);g.rotate(e.vehicle?.angle||0);
-      g.fillStyle='#171923';g.fillRect(-11,-5,6,10);g.fillRect(5,-5,6,10);
-      g.fillStyle='#8da3a2';g.fillRect(-8,-2,16,4);g.fillStyle='#4e7280';g.fillRect(-4,-6,9,12);
-      g.fillStyle='#d2ac68';g.fillRect(-2,-3,5,6);g.fillStyle='#d8ddc6';g.fillRect(8,-2,3,4);
-      if(C(r,e.c!).slots.some(Boolean)){g.fillStyle='#97774b';g.fillRect(-10,-4,4,8);}g.restore();return;
+      // B05: real facing sprite (side mirrored for left, head-on for up/down), lamp/tank state from fuel and HP, strapped crate when loaded, fuel gauge.
+      const v = e.vehicle; const { view, mirror } = vehicleView(v?.angle || 0); const st = vehicleStateKey(v?.fuel ?? 0, e.hp ?? 0);
+      const spr = A.st[`vehicle_${view}_${st}`]; const half = view === 'side' ? [-12, -8] : [-6, -11];
+      shadow(g, X, Y + (view === 'side' ? 5 : 8), view === 'side' ? 10 : 7);
+      g.save(); g.translate(X, Y); if (mirror) g.scale(-1, 1);
+      g.drawImage(spr, half[0], half[1]);
+      if (C(r, e.c!).slots.some(Boolean)) { const at = view === 'side' ? [-10, -7] : view === 'front' ? [-3, -11] : [-3, 4]; g.drawImage(A.st.vehicle_crate, at[0], at[1]); }
+      g.restore();
+      // fuel gauge: tank fraction as a 12-px bar above the bike (pixel-snapped; no text)
+      const frac = Math.max(0, Math.min(1, (v?.fuel ?? 0) / BAL.motorbike.tank)); const by = Y + half[1] - 3;
+      g.fillStyle = '#140c14'; g.fillRect(X - 6, by, 12, 2);
+      g.fillStyle = frac > 0.25 ? '#9cf26b' : '#ff7a3a'; g.fillRect(X - 6, by, Math.round(12 * frac), 2);
+      if (st === 'dead' && (v?.fuel ?? 0) <= 0 && Math.floor(time / 500) % 2) { g.fillStyle = 'rgba(200,200,205,0.6)'; g.fillRect(X + (mirror ? -6 : 5), Y + half[1] - 2, 2, 2); }
+      return;
     }
     case 'airdrop': { const a=e.airdrop;if(!a||a.phase==='signal')return;let lift=0;if(a.phase==='descending')lift=Math.max(0,Math.min(1,(a.landAt-now)/(a.landAt-a.descentAt)))*75;
       const stacks=C(r,e.c!).slots.filter(Boolean).length, v=airdropView(a,e.tx!,e.ty!,now,stacks);
@@ -347,6 +357,8 @@ function drawEntity(g: CanvasRenderingContext2D, r: RunState, e: Entity, time: n
       }
       if (e.type==='door_powered') spr=A.st[e.open?'door_iron_open':'door_iron'];
       if (e.type === 'farm_controller') spr = A.st.gen;
+      // B05: oil refinery sprite follows real burn state (lit only while fuelled and processing); it was previously unregistered and invisible.
+      if (e.type === 'refinery') spr = A.st[refineryStateKey(e.station?.burn, e.station?.queue.length ?? 0) === 'lit' ? 'refinery_lit' : 'refinery'];
       // B04-P4: physical states of the bear trap (and a 0.4 s spring-snap frame after a live hit)
       if (e.type === 'bear_trap') { const b = e.bearTrap; const snapping = b?.snapAt !== undefined && now - b.snapAt >= 0 && now - b.snapAt < 400; spr = A.st['bear_trap_' + (snapping ? 'snap' : b?.state ?? 'unarmed')] ?? A.st.bear_trap; }
       // B04-P4: IR sensor lens/cable state from the same rule as the prompt readout

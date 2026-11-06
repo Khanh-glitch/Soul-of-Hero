@@ -1,0 +1,68 @@
+{
+ "fixtures": [],
+ "shots": [
+  "evidence/b05-industrial/refinery-idle-640x360.png",
+  "evidence/b05-industrial/refinery-lit-640x360.png",
+  "evidence/b05-industrial/bike-right-ok-640x360.png",
+  "evidence/b05-industrial/bike-left-ok-640x360.png",
+  "evidence/b05-industrial/bike-down-ok-640x360.png",
+  "evidence/b05-industrial/bike-up-ok-cargo-640x360.png",
+  "evidence/b05-industrial/bike-right-dead-cargo-640x360.png",
+  "evidence/b05-industrial/inventory-lubricant-640x360.png",
+  "evidence/b05-industrial/refinery-idle-1280x720.png",
+  "evidence/b05-industrial/refinery-lit-1280x720.png",
+  "evidence/b05-industrial/bike-right-ok-1280x720.png",
+  "evidence/b05-industrial/bike-left-ok-1280x720.png",
+  "evidence/b05-industrial/bike-down-ok-1280x720.png",
+  "evidence/b05-industrial/bike-up-ok-cargo-1280x720.png",
+  "evidence/b05-industrial/bike-right-dead-cargo-1280x720.png",
+  "evidence/b05-industrial/inventory-lubricant-1280x720.png"
+ ],
+ "errors": [],
+ "initial.640x360": {
+  "bike": {
+   "x": 2296,
+   "y": 1752,
+   "fuel": 0,
+   "hp": 200
+  },
+  "refinery": {
+   "tx": 150,
+   "ty": 115,
+   "burn": 0,
+   "queue": 0
+  },
+  "player": {
+   "x": 2392,
+   "y": 1864
+  }
+ },
+ "bike.640x360": {
+  "fuel": 0,
+  "angle": 0,
+  "cargoSlots": 2
+ },
+ "initial.1280x720": {
+  "bike": {
+   "x": 2296,
+   "y": 1752,
+   "fuel": 0,
+   "hp": 200
+  },
+  "refinery": {
+   "tx": 150,
+   "ty": 115,
+   "burn": 0,
+   "queue": 0
+  },
+  "player": {
+   "x": 2392,
+   "y": 1864
+  }
+ },
+ "bike.1280x720": {
+  "fuel": 0,
+  "angle": 0,
+  "cargoSlots": 2
+ }
+}

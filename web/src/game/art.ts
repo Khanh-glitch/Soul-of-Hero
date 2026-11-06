@@ -1,4 +1,5 @@
 // Original pixel art for Soul of Hero, painted pixel-by-pixel into offscreen canvases at boot.
+import { drawVehicleSide, drawVehicleFront, drawVehicleBack, drawVehicleCrate, drawRefinery, drawLubricantJug } from './industrial-art';
 // (GOLD_SOURCE_NOT_AVAILABLE — these are original replacements; no third-party sprites used.)
 import { hash2 } from './core';
 import { ITEMS } from './catalog';
@@ -294,6 +295,16 @@ export function buildStructs() {
   S.loot_supply = mk(16, 16, g => { R(g, 2, 8, 12, 6, '#b8864a'); for (let y = 8; y < 14; y += 2) R(g, 2, y, 12, 1, '#8a5e30'); for (let x = 3; x < 14; x += 3) R(g, x, 8, 1, 6, '#8a5e30'); R(g, 2, 6, 12, 2, '#e8e0c8'); P(g, 5, 4, '#3f7a32'); P(g, 9, 3, '#3f7a32'); P(g, 7, 5, '#c03a2a'); P(g, 11, 5, '#c03a2a'); }, null);
   S.loot_military = mk(16, 16, g => { R(g, 2, 6, 12, 8, '#5a6a3a'); R(g, 2, 6, 12, 1, '#7a8a52'); R(g, 2, 11, 12, 1, '#2e3a22'); R(g, 5, 8, 6, 2, '#e8e0c8'); P(g, 5, 8, '#2e3a22'); P(g, 10, 8, '#2e3a22'); R(g, 2, 13, 12, 1, '#c03a2a'); R(g, 7, 6, 2, 1, '#d0a040'); P(g, 3, 7, '#2e3a22'); P(g, 12, 7, '#2e3a22'); }, null);
   S.loot_advanced = mk(16, 16, g => { R(g, 2, 6, 12, 8, '#2a3038'); R(g, 2, 6, 12, 1, '#5a6a7a'); R(g, 2, 13, 12, 1, '#16191e'); R(g, 6, 8, 4, 3, '#1a2a3a'); R(g, 7, 9, 2, 1, '#4fc3ff'); P(g, 7, 8, '#bff0ff'); R(g, 3, 4, 10, 1, '#8a9aaa'); P(g, 3, 9, '#9aa0a8'); P(g, 12, 9, '#9aa0a8'); }, null);
+  // B05 oil refinery: idle column, and lit (burning fuel for a queued job). Previously unregistered → invisible station.
+  S.refinery = mk(16, 24, g => drawRefinery(g, 'idle'));
+  S.refinery_lit = mk(16, 24, g => drawRefinery(g, 'lit'));
+  // B05 motorbike: three views × ok/dead (lamp, tank, rust), plus the strapped cargo crate. Left-facing uses a mirrored side sprite.
+  for (const st of ['ok', 'dead'] as const) {
+    S[`vehicle_side_${st}`] = mk(24, 16, g => drawVehicleSide(g, st));
+    S[`vehicle_front_${st}`] = mk(12, 22, g => drawVehicleFront(g, st));
+    S[`vehicle_back_${st}`] = mk(12, 22, g => drawVehicleBack(g, st));
+  }
+  S.vehicle_crate = mk(7, 5, g => drawVehicleCrate(g));
   return S;
 }
 
@@ -390,6 +401,7 @@ function icon(g: G, kind: string, c1: string, c2: string) {
     case 'scroll': R(g, 3, 4, 10, 8, '#e8e0c8'); R(g, 2, 3, 2, 10, c1); R(g, 12, 3, 2, 10, c1); for (let y = 6; y < 11; y += 2) R(g, 5, y, 6, 1, c1); break;
     case 'fang': for (let y = 0; y < 10; y++) R(g, 6 + y * 0.2, 3 + y, 4 - y * 0.35, 1, y < 2 ? c2 : c1); break;
     case 'card': R(g, 3, 4, 10, 8, c1); R(g, 3, 6, 10, 2, '#1a1a20'); R(g, 4, 9, 4, 2, c2); break;
+    case 'jug': drawLubricantJug(g, c1, c2); break;
     case 'can': R(g, 4, 3, 8, 11, c1); R(g, 5, 4, 2, 9, c2); R(g, 9, 1, 3, 3, '#4a4e56'); break;
     case 'coin': ell(g, 8, 8, 5, 5, c1); ell(g, 8, 8, 3.5, 3.5, c2); R(g, 7, 6, 2, 4, c1); break;
     case 'chest': R(g, 2, 5, 12, 8, c1); R(g, 2, 5, 12, 2, c2); R(g, 7, 7, 2, 3, c2); break;

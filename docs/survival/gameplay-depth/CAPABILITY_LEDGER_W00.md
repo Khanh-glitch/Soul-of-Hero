@@ -352,3 +352,34 @@ Not in this ledger round: Map-owned loot sources, AVFX, native, and Gold work re
 | D P3 loot | New runs use grammar `b04-v1` (SOH_PROVISIONAL pools: toolbox metal, supply food, military med + arrow, advanced medical_high + ingot). `b01-v1` saves keep the B01 pools. Family sprites `loot_toolbox/supply/military/advanced`; container shows family · grade · role. No new Map POIs; no LI 2022 6/6/7 import. | `b04-p4-loot.test.ts`, `cache-*` frames | PARTIAL |
 
 Full Vitest 68 files / 535 tests pass; `tsc --noEmit` exit 0; HTTP build exit 0. LI per-item recycler yield remains ORIGINAL_UNKNOWN; no LI Parts 1:1 claim. Unresolved: B04-P4 is not DONE until the owner reviews the frames and the Recycler/loot balance (SOH_PROVISIONAL) is accepted.
+
+### B05 industrial + freight round (PARTIAL — not DONE; PR #44 draft/hold)
+
+Scope actually delivered this round (visual/presentation gaps found by inspecting the existing chain; mechanics were already present and are not re-claimed as new):
+
+| ID | Change | Evidence | Status |
+|---|---|---|---|
+| S04/S10 refinery visibility | Oil Refinery had **no sprite** (`A.st.refinery` unregistered → `render` returned early: an invisible station). Added idle + lit column sprites; lit only when `burn>0` and a job is queued (`refineryStateKey`). | `industrial-art.ts`, `art.ts`, `render.ts`; `evidence/b05-industrial/refinery-{idle,lit}-*.png` | PARTIAL |
+| S10 lubricant identity | Machine Lubricant shared the oil/canister `can` icon; now a distinct `jug` icon. | `catalog.ts`, `b05-industrial-art.test.ts`; `inventory-lubricant-*.png` | PARTIAL |
+| S09 vehicle facing/state (B4) | Bike was a rectangle cluster. Now three pixel views (side, mirrored for left; head-on down; tail up), ok/dead variants (dark lamp, dulled tank, rust), strapped cargo crate when loaded, 12-px fuel gauge. Facing already came from real travel (`atan2` in `sim.ts`); this round only changed presentation. | `drawVehicle*` in `industrial-art.ts`, `render.ts` vehicle case; `e2e/b05-industrial-visual.mjs`; `evidence/b05-industrial/bike-*` | PARTIAL |
+
+Already present before this round and **not re-proven here** (see W07 / S10 / V17 handoffs): finite wreck salvage of Salvaged Oil, study→blueprint, furnace refining and the 3-oil + glass recipe, Oil Refinery single/batch/industrial/lube recipes (`balance.v1.json` `oilRefineryV1`), fuel canister into a motorbike tank (100 units per whole can, 300 tank), lubricant service halving wear for 12,000 px, cargo custody by UID, emergency bag unload.
+
+Parity rows (numeric; SOH_PROVISIONAL unless stated; LI values ORIGINAL_UNKNOWN for this round — the Atlas v1–v11 transport/fuel numbers were not re-extracted in this round and no LI value is claimed):
+
+| LI game/mode/version | LI mechanism | LI value / confidence | SOH equivalent | Locked constraint / adaptation | Current value | Delta | Consumer |
+|---|---|---|---|---|---|---|---|
+| Last Island 2019 standard (oil/fuel) | wreck → oil stock | ORIGINAL_UNKNOWN | wreck stock 8 × 35% oil | SOH_NEW_TUNED v1 | expected 2.8 oil / wreck | unknown | study → canister |
+| LI (fuel recipe) | refine | ORIGINAL_UNKNOWN | furnace 3 oil + glass, 18 s + 18 fuel-s | SOH_PROVISIONAL | 1 canister | unknown | generator, motorbike |
+| LI (refinery) | batch / lubricant | ORIGINAL_UNKNOWN | oil-refinery-v1 single 3 oil+glass 14 s; batch 5 oil+glass → 2 canisters 22 s; industrial 6 oil+glass → 2 canisters + lubricant 26 s; lube 2 oil → 1 lubricant 12 s | SOH_PROVISIONAL | as listed | unknown | motorbike wear, generator |
+| LI (vehicle) | motorbike fuel/wear/capacity | ORIGINAL_UNKNOWN | tank 300, can +100, 0.05 fuel/px, rough ×1.5, load ×0.5; wear 0.002 HP/px; lube halves wear for 12,000 px; 12 slots / 80 kg | SOH_PROVISIONAL | as listed | unknown | movement, cargo |
+| SOH locked | 336 h / 72 h, PvE, offline, reset, cash | locked | unchanged | Bible §0.2 / §8.8 | — | none | — |
+
+S-status after B05 (program names from V17): S02 metallurgy PARTIAL; S04 workbenches/production PARTIAL (refinery now visible; no power-network graph); S09 transport PARTIAL (vehicle presentation and fuel relationship exist; no certified Map road/bridge geometry; powered freight economics not measured); S10 oil PARTIAL — **salvage → study → furnace/refinery → canister → generator/motorbike is connected; oil extraction is NOT implemented**.
+
+Not delivered in this round and why:
+- **A1 oil extraction source adapter**: not built. No authorized oil node exists in the Map contract; the adapter would be a test-only fixture and was deprioritised behind the invisible-refinery defect. Next step: implement the pump/source adapter against a labelled temporary test source and ask the Map owner for authorized oil sites.
+- **X:pipe-v1 and loot pool credibility (C4)**: not re-assessed in this round; both remain SOH_PROVISIONAL.
+- Full physical-power integration (refinery as a load on the cable network) and a natural player journey through the refinery are not claimed.
+
+Validation at the code SHA of this round: `tsc --noEmit` exit 0; full Vitest 69 files / 541 tests pass; HTTP build exit 0; browser proof `web/e2e/b05-industrial-visual.mjs` at 640×360 and 1280×720, no page errors (visual fixtures labelled in `results.json`). Owner review of art quality is still required; the side-view bike is small at 640 and reads close to a small car.

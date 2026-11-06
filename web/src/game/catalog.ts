@@ -44,7 +44,7 @@ export const ITEMS: Record<string, ItemDef> = {
   // SOH_NEW_TUNED v1: physical salvage, not an oil well or approved Map resource.
   salvaged_oil: I({ name:'Salvaged Oil', cat:'res', icon:'can', c1:'#3d3025', c2:'#9c8050', w:0.7, max:30, desc:'Recovered from car wrecks. Study a sample to learn furnace refining into generator canisters.', specimen:'refine_salvaged_oil' }),
   // SOH_PROVISIONAL v1: Oil Refinery output; motorbike wear mitigator, not a LI-verified lubricant grade.
-  lubricant: I({ name:'Machine Lubricant', cat:'res', icon:'can', c1:'#2b4a3a', c2:'#8fd19b', w:0.6, max:20, desc:'Refined from Salvaged Oil at an Oil Refinery. Service a motorbike within reach to halve wear for a limited distance.' }),
+  lubricant: I({ name:'Machine Lubricant', cat:'res', icon:'jug', c1:'#2b4a3a', c2:'#8fd19b', w:0.6, max:20, desc:'Refined from Salvaged Oil at an Oil Refinery. Service a motorbike within reach to halve wear for a limited distance.' }),
   damaged_drive: I({ name: 'Damaged Drive', cat: 'res', icon: 'parts', c1: '#4b6570', c2: '#f0bd56', w: 3, max: 1, desc: 'Finite wreck salvage. At a workbench: 1 drive + 1 scrap → 1 Mechanical Parts. Or carry to the Foundry Recycler: 1 drive → 2 Spares. The same drive is spent either way.' }),
   mechanical_parts: I({ name: 'Mechanical Parts', cat: 'res', icon: 'parts', c1: '#707984', c2: '#c9d2d8', w: 0.5, max: 30, desc: 'Found in industrial wrecks or made at a bench. Improve tools or maintain equipment.' }),
   // Provisional, run-local cross-system materials and equipment.
