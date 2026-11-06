@@ -82,6 +82,15 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
   return <>
     <Panel title={title} style={{ left: 168, top: 54, width: 230, maxHeight: 286 }} onClose={() => api.open(null)} className="scroll">
       <div className="scroll" style={{ maxHeight: 250, overflowY: 'auto', overflowX: 'hidden' }}>
+        {e.kind === 'vehicle' && e.vehicle && (() => { const broken = (e.hp ?? 0) <= 0, dry = (e.vehicle.fuel ?? 0) <= 0, cargoN = C(r, e.c!).slots.filter(Boolean).length;
+            const status = broken ? 'Breakdown: condition 0. Repair on foot (1 Part + 1 Fastener).' : dry ? 'Out of fuel. Add 1 Fuel Canister on foot.' : 'Running.';
+            return <div style={{ marginTop: 3, color: broken || dry ? '#ffb36b' : '#cfc2dc' }}>
+              <b>{status}</b>
+              {(broken || dry) && cargoN > 0 && <div>
+                <button className="btn" style={{ fontSize: 10, marginTop: 2 }} onClick={() => api.act('vehicleUnloadBag', { eid: e.id })}>Unload all {cargoN} cargo stacks into a ground bag here</button>
+                <div style={{ color: '#cfc2dc' }}>Cargo keeps its exact items, charges and durability. The bag stays in the world at this spot; you can take from it there later. Nothing is copied or collected remotely.</div>
+              </div>}
+            </div>; })()}
         {compact && <button className="btn" onClick={()=>{api.setSel(null);setInventoryOnly(true);}}>{e.type==='claim' ? 'Inventory / fill cabinet' : e.farm || e.basePower ? 'Inventory / fill fuel' : e.turret ? 'Inventory / load arrows' : 'Inventory'}</button>}
         {e.kind === 'airdrop' && <div style={{fontSize:10,color:'#ffd98a'}}>Withdraw only · partial stock remains until expiry; no replenishment.</div>}
         {e.kind === 'loot' && <div style={{fontSize:10,color:'#ffd98a',marginBottom:4}}>

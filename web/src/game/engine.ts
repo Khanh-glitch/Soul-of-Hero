@@ -1336,6 +1336,31 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       for(const [key,qty] of cost)removeItem(r,'inv',key,qty);const before=e.hp||0;e.hp=Math.min(BAL.motorbike.maxHp,before+BAL.motorbike.repairHp);e.deployed.dur=e.hp;
       return ok('vehicle.repair',`${e.deployed.uid}:${before.toFixed(2)}->${e.hp.toFixed(2)}:mechanical_partsx1,fastenersx1`);
     }
+    case 'vehicleUnloadBag': {
+      // B04: a broken or out-of-fuel motorbike keeps its UID and cargo; the player moves its real cargo stacks (same objects,
+      // same UIDs, charges and durability) into ONE physical ground bag at the motorbike's tile. No copy, no reward, no remote access.
+      const e=r.entities[it.eid];
+      if(!e||e.kind!=='vehicle'||!e.vehicle||!e.deployed||!owned(e)) return fail('That motorbike is not yours.');
+      if(p.vehicle===e.id) return fail('Dismount before unloading cargo.');
+      if(!near(r,e,2)) return fail('Motorbike out of reach.');
+      const broken=(e.hp??0)<=0, dry=(e.vehicle.fuel??0)<=0;
+      if(!broken&&!dry) return fail('The motorbike can still run. Unload only when it is broken or out of fuel.');
+      const cargo=C(r,e.c!);
+      const picks:number[]=[];
+      if(Array.isArray(it.uids)&&it.uids.length){ for(const u of it.uids){ const i=cargo.slots.findIndex(sl=>sl?.uid===u); if(i<0) return fail('That cargo is not in this motorbike.'); if(!picks.includes(i)) picks.push(i); } }
+      else cargo.slots.forEach((sl,i)=>{ if(sl) picks.push(i); });
+      if(!picks.length) return fail('Nothing in the motorbike to unload.');
+      const tx=Math.floor(e.x/TILE), ty=Math.floor(e.y/TILE), gi=ty*WW+tx;
+      if(blockGrid(r)[gi]!==0 || [T.DEEP,T.SHALLOW,T.RIVER].includes(effTile(r,tx,ty))) return fail('The ground here cannot hold a bag. Move the motorbike to open ground; nothing was moved.');
+      const existing=Object.values(r.entities).find(x=>x.kind==='bag'&&x.c&&Math.floor(x.x/TILE)===tx&&Math.floor(x.y/TILE)===ty);
+      if(existing){ const free=C(r,existing.c!).slots.filter(sl=>!sl).length; if(free<picks.length) return fail('The bag at this spot is full. Take items out first; nothing was moved.'); }
+      let bag:Entity;
+      if(existing) bag=existing;
+      else { const cont=mkContainer(r,'bag',Math.max(8,picks.length)); bag={id:uid(r,'b'),kind:'bag',x:e.x,y:e.y,c:cont.id,label:'Motorbike cargo',born:now}; r.entities[bag.id]=bag; }
+      const bc=C(r,bag.c!); const moved:string[]=[];
+      for(const i of picks){ const stack=cargo.slots[i]!; cargo.slots[i]=null; const slot=bc.slots.findIndex(sl=>!sl); bc.slots[slot]=stack; moved.push(stack.uid); }
+      return ok('vehicle.unload',`${e.deployed.uid}:${bag.id}:${moved.join(',')}`,`Unloaded ${moved.length} stack${moved.length===1?'':'s'} into a ground bag beside the motorbike. Nothing was copied or created.`);
+    }
     case 'vehicleLubricate': {
       const e=r.entities[it.eid];if(!e||e.kind!=='vehicle'||!e.vehicle||!e.deployed||!owned(e)||!near(r,e,2)||p.vehicle)return fail('Dismount near your motorbike.');
       if(!Number.isFinite(e.vehicle.lube)) e.vehicle.lube=0;
@@ -1726,7 +1751,7 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
           if (outs.some(([key]) => key === 'iron_ingot')) award(gs, 'first_ingot', at);
           note(`${STRUCTS[e.type!].name} finished ${outs.map(([key, qty]) => `${qty} ${ITEMS[key].name}`).join(', ')}.`);
         }
-        receipt(r, at, 'job.done', job.recipe); st.queue.shift(); continue;
+        receipt(r, at, 'job.done', `${e.id}:${job.recipe}`); st.queue.shift(); continue;
       }
       if (blocked && kind !== 'campfire') break;
       if (!job && kind !== 'campfire') stationState(r,e,'idle',now-t);

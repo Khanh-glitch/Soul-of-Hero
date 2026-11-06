@@ -2,7 +2,7 @@
 // Built only from (a) receipts committed during this settle window and (b) before/after snapshots of
 // real player, structure, station, tender and cabinet state. It never grants loot, never collects items,
 // and never reveals enemy positions. Ephemeral: not persisted; rebuilt from receipts on each Continue.
-import { BAL, HOUR, type GameState, type RunState } from './core';
+import { BAL, HOUR, TILE, type GameState, type RunState } from './core';
 import { ITEMS, STRUCTS, RECIPES } from './catalog';
 import { C, countItem, territoryForecast, tenderState, weatherAt, beginReceiptSink, endReceiptSink, owned } from './engine';
 import { settle } from './sim';
@@ -48,7 +48,7 @@ const stackList = (r: RunState, cid?: string) => {
 };
 /** A real surviving container at a tile (dropped bag or drop), with its verified stack names. Null when none exists. */
 const wreckageAt = (r: RunState, tx: number, ty: number): string[] | null => {
-  const e = Object.values(r.entities).find(x => (x.kind === 'bag' || x.kind === 'drop') && x.tx === tx && x.ty === ty && x.c);
+  const e = Object.values(r.entities).find(x => (x.kind === 'bag' || x.kind === 'drop') && x.c && Math.floor(x.x / TILE) === tx && Math.floor(x.y / TILE) === ty);
   return e && e.c ? stackList(r, e.c) : null;
 };
 const r1 = (n: number) => (Math.round(n * 10) / 10).toString();
@@ -88,11 +88,20 @@ function receiptRows(gs: GameState, receipts: { id: string; at: number; kind: st
   const r = gs.run!; const seen = new Set<string>();
   const rel = (at: number) => { const m = Math.max(0, Math.round((at - start) / 60000)); return m >= 60 ? `${Math.floor(m / 60)} h ${m % 60} min` : `${m} min`; };
   const structAt = (id: string) => { const e = r.entities[id]; return e ? { tx: e.tx ?? 0, ty: e.ty ?? 0, name: e.kind === 'bag' ? 'your bag' : nm(e.type) } : undefined; };
+  const LOCATED = ['station.state', 'tender.state', 'tender.harvest', 'tender.plant', 'heat.out', 'territory.collapse', 'job.done'];
+  // R3: a receipt that names an existing entity is shown only if that entity is a player-owned, non-POI structure.
+  const hiddenSource = (x: { kind: string; detail: string }) => {
+    if (!LOCATED.includes(x.kind)) return false;
+    const e = r.entities[x.detail.split(':')[0]];
+    return !!e && !(e.kind === 'struct' && !e.poi && owned(e));
+  };
   for (const x of receipts) {
+    if (hiddenSource(x)) continue;
     const key = `${x.kind}|${x.detail}|${x.at}`; if (seen.has(key)) continue; seen.add(key);
     const id = x.id;
     switch (x.kind) {
-      case 'job.done': { out.production.push({ id, tone: 'ok', text: `${rel(x.at)} in: a workshop job finished (${x.detail}); output waits in its container.`, receipts: [id] }); break; }
+      case 'job.done': { const recipe = x.detail.slice(x.detail.indexOf(':') + 1); out.production.push({ id, tone: 'ok', text: `${rel(x.at)} in: a workshop job finished (${recipe}); output waits in its container.`, receipts: [id] }); break; }
+      case 'vehicle.unload': { const [vuid, bagId, list] = x.detail.split(':'); const n = (list || '').split(',').filter(Boolean).length; out.loss.push({ id, tone: 'warn', text: `${rel(x.at)} in: motorbike ${vuid} cargo (${n} stack${n === 1 ? '' : 's'}) was unloaded into a ground bag beside it. Walk to the bag to take it back; nothing was copied.`, where: structAt(bagId), receipts: [id] }); break; }
       case 'station.state': {
         const [sid, change] = x.detail.split(':'); const [from, to] = (change || '').split('>');
         const e = r.entities[sid]; const w = e ? { tx: e.tx ?? 0, ty: e.ty ?? 0, name: nm(e.type) } : undefined;
@@ -131,7 +140,10 @@ export function buildOfflineReturn(gs: GameState, before: Snap | null, receipts:
     const bp = before.player, ap = after.player;
     out.body.push({ id: 'vitals', tone: ap.dead ? 'bad' : 'muted', text: `Hunger ${r1(bp.hunger)} → ${r1(ap.hunger)} · Thirst ${r1(bp.thirst)} → ${r1(ap.thirst)} · HP ${r1(bp.hp)} → ${r1(ap.hp)} · Warmth ${r1(bp.warmth)} → ${r1(ap.warmth)}`, receipts: [] });
     out.body.push({ id: 'shelter', tone: ap.sheltered ? 'ok' : 'warn', text: ap.sheltered ? 'Sheltered now (roofed, enclosed).' : 'Not sheltered now.', receipts: [] });
-    if (ap.dead) out.body.push({ id: 'dead', tone: 'bad', text: 'You are dead. Respawn to continue; your bag keeps your belongings.', receipts: [] });
+    if (ap.dead) {
+      const deadBag = r && Object.values(r.entities).find(x => x.kind === 'bag' && x.c && Math.floor(x.x / TILE) === Math.floor(r.player.x / TILE) && Math.floor(x.y / TILE) === Math.floor(r.player.y / TILE));
+      out.body.push({ id: 'dead', tone: 'bad', text: deadBag ? `You are dead. A bag (${deadBag.id}) is on the ground where you fell.` : 'You are dead. No surviving bag is confirmed at your death tile.', receipts: [] });
+    }
     if (bp.food !== ap.food) out.body.push({ id: 'food', tone: 'gold', text: `Food items ${bp.food} → ${ap.food} (physical stacks only).`, receipts: [] });
     for (const [id, c] of Object.entries(after.cabinets)) {
       const b = before.cabinets[id];
@@ -146,7 +158,7 @@ export function buildOfflineReturn(gs: GameState, before: Snap | null, receipts:
       if (s.hp < s.maxHp * 0.5 && s.hp > 0) out.home.push({ id: `rep:${id}`, tone: 'warn', text: `${s.name} ${s.tx},${s.ty} needs repair (${Math.round(s.hp)}/${s.maxHp} HP).`, where: { tx: s.tx, ty: s.ty, name: s.name }, receipts: [] });
       if (!b && s.hp <= 0) out.loss.push({ id: `gone:${id}`, tone: 'bad', text: `${s.name} at ${s.tx},${s.ty} is gone.`, receipts: [] });
     }
-    for (const [id, b] of Object.entries(before.structs)) if (!after.structs[id] && !out.loss.some(x => x.id === `gone:${id}`)) { const w = wreckageAt(r!, b.tx, b.ty); out.loss.push({ id: `lost:${id}`, tone: 'bad', text: `${b.name} at ${b.tx},${b.ty} was lost. ${w ? `Recoverable wreckage here: ${w.join(', ') || 'empty bag'}.` : 'No recoverable bag or container is recorded here, so no items are promised.'}`, where: { tx: b.tx, ty: b.ty, name: b.name }, receipts: [] }); }
+    for (const [id, b] of Object.entries(before.structs)) if (!after.structs[id] && !out.loss.some(x => x.id === `gone:${id}`)) { const w = wreckageAt(r!, b.tx, b.ty); out.loss.push({ id: `lost:${id}`, tone: 'bad', text: `${b.name} at ${b.tx},${b.ty} was lost. ${w ? `Items physically present at this tile (origin not verified): ${w.join(', ') || 'empty bag'}.` : 'No container is recorded at this tile, so no items are promised.'}`, where: { tx: b.tx, ty: b.ty, name: b.name }, receipts: [] }); }
     for (const [id, s] of Object.entries(after.stations)) {
       const detail = s.out.length ? `output container: ${s.out.join(', ')}` : 'output container empty';
       out.production.push({ id: `st:${id}`, tone: s.state === 'output_full' || s.state === 'fuel_out' ? 'warn' : 'muted', text: `${s.name} ${s.tx},${s.ty}: ${(s.state ?? 'idle').replace(/_/g, ' ')}; ${s.queue.length ? `queue ${s.queue.join(', ')}` : 'no job'}; ${detail}.`, where: { tx: s.tx, ty: s.ty, name: s.name }, receipts: [] });
