@@ -133,7 +133,7 @@ export const ITEMS: Record<string, ItemDef> = {
   vehicle_drive: I({ name:'Motor Drive', cat:'res', icon:'gear', c1:'#625e58', c2:'#c8bca1', w:3, max:5, desc:'Gear and plate drive assembly for the utility motorbike.' }),
   // B01 industrial intermediates (SOH_PROVISIONAL; historical v5 ratios are documented in B01 ledger, not copied).
   refined_iron_ingot: I({ name:'Refined Iron Ingot', cat:'res', icon:'ingot', c1:'#8f9fb3', c2:'#f2f8ff', w:1, max:40, desc:'Furnace-refined iron. Needed for pipe and plate.' }),
-  metal_pipe: I({ name:'Metal Pipe', cat:'res', icon:'scrap', c1:'#5f6a74', c2:'#b8c4cc', w:1.2, max:20, desc:'Pipe section for utility frames. Salvage returns parts and refined iron.' }),
+  metal_pipe: I({ name:'Metal Pipe', cat:'res', icon:'scrap', c1:'#5f6a74', c2:'#b8c4cc', w:1.2, max:20, desc:'Pipe section for utility frames and iron plate. Stackable; not recyclable.' }),
   metal_blade: I({ name:'Metal Blade', cat:'res', icon:'fang', c1:'#7d8a96', c2:'#eef4f8', w:0.8, max:20, desc:'Cut blade stock for sword refits.' }),
   mechanical_gear: I({ name:'Mechanical Gear', cat:'res', icon:'gear', c1:'#6b6f76', c2:'#d6c27a', w:0.8, max:20, desc:'Precision gear for motor drives and powered mechanisms.' }),
   iron_plate: I({ name:'Iron Plate', cat:'res', icon:'scrap', c1:'#4f5a63', c2:'#c9d1d8', w:1.5, max:20, desc:'Reinforcing plate. Restores a wall or door fully when applied at the structure.' }),
