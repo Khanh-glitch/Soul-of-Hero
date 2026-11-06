@@ -860,7 +860,9 @@ function tickSurvival(gs: GameState, dtMs: number, now: number) {
   shelterAcc += dtMs; if (shelterAcc > 400) { shelterAcc = 0; p.sheltered = isSheltered(r, p.x, p.y); }
   p.hunger = Math.max(0, p.hunger - B.hungerDrainPerMin * min);
   p.thirst = Math.max(0, p.thirst - B.thirstDrainPerMin * min * (zone === 6 ? 1.9 : 1));
-  if ((p.iceUntil||0)<=now && (p.hunger <= 0 || p.thirst <= 0)) { p.hp -= B.starveDamagePerMin * min; if (p.hp <= 0) { killPlayer(gs, now, p.hunger <= 0 ? 'starvation' : 'thirst'); return; } }
+  // K5/K8 (Bible): a sheltered player is never killed by hunger ALONE (1 HP floor). Thirst and any other cause still kill.
+  const thirstyNow = p.thirst <= 0, hungryNow = p.hunger <= 0, hungerOnlyShelter = hungryNow && !thirstyNow && p.sheltered;
+  if ((p.iceUntil||0)<=now && (thirstyNow || hungryNow)) { if (hungerOnlyShelter) p.hp = Math.max(1, p.hp - B.starveDamagePerMin * min); else { p.hp -= B.starveDamagePerMin * min; if (p.hp <= 0) { killPlayer(gs, now, hungryNow ? 'starvation' : 'thirst'); return; } } }
   // warmth
   let cold = 0; if (zone === 5 || t === T.SNOW) cold += 9; if (darkness(r, now) > 0.45) cold += 2.5; if (isWet(weather)) cold += 3; if (t === T.SHALLOW || t === T.RIVER) cold += 4;
   let insul = 0; for (const s of C(r, 'eq').slots) if (s) insul += ITEMS[s.key].cold || 0;
