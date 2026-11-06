@@ -7,7 +7,7 @@ import { getWorld, SRC_KEYS, fbm } from './world';
 import { effTile, sourceAt, darkness, weatherAt, isRagnarok, entsAt, buildReason, C, roofRoom, clearPhysicalLine, irSensorVisual } from './engine';
 import { airdropView } from './airdrop';
 import { lootSpriteKey } from './loot-ecology';
-import { vehicleView, vehicleStateKey, refineryStateKey } from './industrial-art';
+import { vehicleView, vehicleStateKey, refineryStateKey, pumpStateKey } from './industrial-art';
 const lootFamilyCache = new WeakMap<object, string | null>();
 /** B04-P4: the physical family sprite of a classed cache (memoised per entity; unclassed crates keep the generic art). */
 function lootFamilySprite(r: RunState, e: Entity): string | null {
@@ -358,6 +358,8 @@ function drawEntity(g: CanvasRenderingContext2D, r: RunState, e: Entity, time: n
       if (e.type==='door_powered') spr=A.st[e.open?'door_iron_open':'door_iron'];
       if (e.type === 'farm_controller') spr = A.st.gen;
       // B05: oil refinery sprite follows real burn state (lit only while fuelled and processing); it was previously unregistered and invisible.
+      // B05-R oil pump: state from the real burn, queue and source stock; running beam alternates frames.
+      if (e.type === 'oil_pump') { const src = e.tx !== undefined && e.ty !== undefined ? r.oilSources?.[`oil:${e.tx}:${e.ty}`] : undefined; const ps = pumpStateKey(e.station?.burn, e.station?.queue.length ?? 0, src?.stock); spr = ps === 'run' ? A.st[`oil_pump_run_${Math.floor(time / 400) % 2}`] : A.st[`oil_pump_${ps}`]; }
       if (e.type === 'refinery') spr = A.st[refineryStateKey(e.station?.burn, e.station?.queue.length ?? 0) === 'lit' ? 'refinery_lit' : 'refinery'];
       // B04-P4: physical states of the bear trap (and a 0.4 s spring-snap frame after a live hit)
       if (e.type === 'bear_trap') { const b = e.bearTrap; const snapping = b?.snapAt !== undefined && now - b.snapAt >= 0 && now - b.snapAt < 400; spr = A.st['bear_trap_' + (snapping ? 'snap' : b?.state ?? 'unarmed')] ?? A.st.bear_trap; }

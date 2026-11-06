@@ -167,7 +167,10 @@ function RecyclerBody({api,eid}:{api:Api;eid:string}) {
 function StationBody({ api, eid }: { api: Api; eid: string }) {
   const r = api.gs.run!; const e = r.entities[eid]; const st = e.station!; const kind = STRUCTS[e.type!].station!;
   const recipes = Object.entries(RECIPES).filter(([, rc]) => rc.station === kind); const known = recipes.filter(([k]) => isRecipeKnown(r.knowledge.recipes, k));
-  const fuelled = kind === 'campfire' || kind === 'furnace' || kind === 'refinery';
+  const fuelled = kind === 'campfire' || kind === 'furnace' || kind === 'refinery' || kind === 'oil_pump';
+  // B05-R: the pump's source is a real stock on the run; show it so the operator sees what the cycle will draw.
+  const oilSrc = e.type === 'oil_pump' && e.tx !== undefined && e.ty !== undefined ? r.oilSources?.[`oil:${e.tx}:${e.ty}`] : undefined;
+  {oilSrc && <div style={{fontSize:10,color:oilSrc.stock>0?'#d6ffc0':'#ffb8a0'}}>Source (authorized test site): {oilSrc.stock} Crude Petroleum left{oilSrc.stock<=0?' — dry':''}</div>}
   const level = st.level ?? 1;
   const [confirmSalvage, setConfirmSalvage] = useState<string | null>(null);
   const maintenance = C(r, 'inv').slots.map((s, i) => [s, i] as const).filter(([s]) => s && (ITEMS[s.key].repair || ITEMS[s.key].salvage));

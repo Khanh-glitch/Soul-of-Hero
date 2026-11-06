@@ -1,5 +1,5 @@
 // Original pixel art for Soul of Hero, painted pixel-by-pixel into offscreen canvases at boot.
-import { drawVehicleSide, drawVehicleFront, drawVehicleBack, drawVehicleCrate, drawRefinery, drawLubricantJug } from './industrial-art';
+import { drawVehicleSide, drawVehicleFront, drawVehicleBack, drawVehicleCrate, drawRefinery, drawLubricantJug, drawOilPump, drawCrudeDrum } from './industrial-art';
 // (GOLD_SOURCE_NOT_AVAILABLE — these are original replacements; no third-party sprites used.)
 import { hash2 } from './core';
 import { ITEMS } from './catalog';
@@ -305,6 +305,11 @@ export function buildStructs() {
     S[`vehicle_back_${st}`] = mk(12, 22, g => drawVehicleBack(g, st));
   }
   S.vehicle_crate = mk(7, 5, g => drawVehicleCrate(g));
+  // B05-R oil pump: idle, dry (empty source), and two frames of the running beam.
+  S.oil_pump_idle = mk(16, 24, g => drawOilPump(g, 'idle'));
+  S.oil_pump_dry = mk(16, 24, g => drawOilPump(g, 'dry'));
+  S.oil_pump_run_0 = mk(16, 24, g => drawOilPump(g, 'run', 0));
+  S.oil_pump_run_1 = mk(16, 24, g => drawOilPump(g, 'run', 1));
   return S;
 }
 
@@ -402,6 +407,7 @@ function icon(g: G, kind: string, c1: string, c2: string) {
     case 'fang': for (let y = 0; y < 10; y++) R(g, 6 + y * 0.2, 3 + y, 4 - y * 0.35, 1, y < 2 ? c2 : c1); break;
     case 'card': R(g, 3, 4, 10, 8, c1); R(g, 3, 6, 10, 2, '#1a1a20'); R(g, 4, 9, 4, 2, c2); break;
     case 'jug': drawLubricantJug(g, c1, c2); break;
+    case 'drum': drawCrudeDrum(g, c1, c2); break;
     case 'can': R(g, 4, 3, 8, 11, c1); R(g, 5, 4, 2, 9, c2); R(g, 9, 1, 3, 3, '#4a4e56'); break;
     case 'coin': ell(g, 8, 8, 5, 5, c1); ell(g, 8, 8, 3.5, 3.5, c2); R(g, 7, 6, 2, 4, c1); break;
     case 'chest': R(g, 2, 5, 12, 8, c1); R(g, 2, 5, 12, 2, c2); R(g, 7, 7, 2, 3, c2); break;

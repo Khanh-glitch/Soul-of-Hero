@@ -942,12 +942,30 @@ export function endRun(gs: GameState, ending: 'evacuated' | 'abandoned' | 'expir
 export function countStones(r: RunState) { const keys = Object.values(ELDERS).map(e => e.stone); let n = 0; for (const c of Object.values(r.custody)) for (const s of c.slots) if (s && keys.includes(s.key)) n++; return n; }
 
 // ---------------- build validation (C07) ----------------
+
+// ---------------- B05-R oil pump source adapter ----------------
+/** Source key for the oil site on a tile. */
+export const oilSourceKey = (tx: number, ty: number) => `oil:${tx}:${ty}`;
+/** The authorized, non-empty oil source under a pump tile. Production placement has no authority (Map owner pending). */
+export function authorizedOilSource(r: RunState, tx: number, ty: number) {
+  const src = r.oilSources?.[oilSourceKey(tx, ty)];
+  return src && src.authority === 'test-fixture-v1' && src.tx === tx && src.ty === ty && src.stock > 0 ? src : null;
+}
+/** TEST-ONLY FIXTURE: registers a labelled temporary oil source. Never called by any shipping action or map loader. */
+export function registerTestOilSource(r: RunState, tx: number, ty: number, stock: number) {
+  if (!Number.isInteger(stock) || stock < 0 || stock > BAL.oilPumpV1.maxSourceStock) throw new Error('bad fixture stock');
+  r.oilSources = r.oilSources ?? {};
+  r.oilSources[oilSourceKey(tx, ty)] = { tx, ty, stock, authority: 'test-fixture-v1' };
+}
+
 export function buildReason(gs: GameState, type: string, tx: number, ty: number): string | null {
   const r = gs.run!; if (typeof type !== 'string' || !Object.prototype.hasOwnProperty.call(STRUCTS, type)) return 'Unknown structure.'; const d = STRUCTS[type];
   const w = getWorld(); const p = r.player;
   if(p.vehicle)return 'Exit the motorbike before building.';
   if (Object.values(r.entities).some(e=>e.kind==='vehicle' && Math.abs(e.x-(tx*TILE+8))<TILE && Math.abs(e.y-(ty*TILE+8))<TILE)) return 'Move the motorbike away before building here.';
   if (type === 'farm_controller' && !Object.values(r.entities).some(e=>e.kind==='struct' && e.type==='workbench' && e.station && owned(e) && (e.station.level ?? 1)>=2 && near(r,e,3) && dist(e.x,e.y,tx*TILE+8,ty*TILE+8)<=3*TILE)) return 'Build near your level 2 workbench.';
+  if (type === 'oil_pump' && !authorizedOilSource(r, tx, ty)) return 'No authorized oil site here. Oil pumps need Map-authorized placement.';
+  if (type === 'oil_pump' && !Object.values(r.entities).some(e=>e.kind==='struct' && e.type==='workbench' && e.station && owned(e) && (e.station.level ?? 1)>=BAL.oilPumpV1.requiresWorkbenchLevel && near(r,e,3) && dist(e.x,e.y,tx*TILE+8,ty*TILE+8)<=3*TILE)) return 'Build near your level 2 workbench.';
   if (type === 'refinery' && !Object.values(r.entities).some(e=>e.kind==='struct' && e.type==='workbench' && e.station && owned(e) && (e.station.level ?? 1)>=BAL.oilRefineryV1.requiresWorkbenchLevel && near(r,e,3) && dist(e.x,e.y,tx*TILE+8,ty*TILE+8)<=3*TILE)) return 'Build near your level 2 workbench.';
   if (!Number.isInteger(tx) || !Number.isInteger(ty) || tx < 1 || ty < 1 || tx >= WW - 1 || ty >= WH - 1) return 'Out of bounds.';
   if (dist(p.x, p.y, tx * TILE + 8, ty * TILE + 8) > 4.6 * TILE) return 'Too far away.';
@@ -1702,6 +1720,7 @@ function craft(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: stri
   const st = stationNear(r, rc.station, it.eid); if (!st) return fail(`Requires a ${STRUCTS[rc.station].name} within reach.`);
   if (it.recipe === 'recover_drive' && !clearInteraction(r, st)) return fail('A wall blocks access to the workbench.');
   if ((st.station!.level ?? 1) < requiredStationLevel(rc)) return fail(`Requires workbench level ${rc.stationLevel}.`);
+  if (rc.station === 'oil_pump' && !authorizedOilSource(r, st.tx!, st.ty!)) return fail('This pump has no oil left in its source (or no authorized source).');
   if (st.station!.queue.length >= 6) return fail('Station queue is full.');
   // Multi-output bundles are preflighted at queue time too, so no paid inputs are reserved for a batch that cannot land.
   if (rc.outs && !recoveryFits(C(r, st.station!.outC), rc.outs)) return fail('Refinery output cannot hold the whole batch; collect items first.');
@@ -1756,7 +1775,7 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
   const note = (message: string) => { if (report && !report.includes(message)) report.push(message); };
   for (const e of Object.values(r.entities)) {
     const st = e.station; if (!st) continue; const kind = e.kind==='recycler'?'recycler':STRUCTS[e.type!].station!;
-    const needsFuel = kind === 'campfire' || kind === 'furnace' || kind === 'refinery';
+    const needsFuel = kind === 'campfire' || kind === 'furnace' || kind === 'refinery' || kind === 'oil_pump';
     let t = dtMs, blocked = false;
     while (t > 0 || (!blocked && !!st.queue[0] && st.queue[0].left <= 0)) {
       const job = blocked ? undefined : st.queue[0];
@@ -1771,6 +1790,14 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
           for(const [key,qty] of plan.outputs)addItem(r,st.outC,key,qty);
           if(job.recipe!=='X:drive')receipt(r,at,'recycle.finish',`${job.reserved![0].uid}:${job.reserved![0].key}:${plan.outputs.map(([key,qty])=>`${key}x${qty}`).join(',')}`);
           note(`Recycler finished: ${plan.outputs.map(([key,qty])=>`${qty} ${ITEMS[key].name}`).join(', ')} in output.`);
+        } else if (job.recipe === 'pump_crude') {
+          // B05-R: a pump cycle is committed only if its own source still has stock and the output has room. Stock and output change together.
+          const src = e.kind==='struct' && e.type==='oil_pump' && e.tx!==undefined && e.ty!==undefined ? authorizedOilSource(r, e.tx, e.ty) : null;
+          if (!src) { blocked = true; note('Oil pump: the source is empty or not authorized.'); stationState(r,e,'source_empty',at); continue; }
+          if (spaceFor(r, st.outC, 'crude_petroleum') < 1) { blocked = true; note('Oil pump: output full.'); stationState(r,e,'output_full',at); continue; }
+          src.stock -= 1; addItem(r, st.outC, 'crude_petroleum', 1);
+          receipt(r, at, 'pump.extract', `${oilSourceKey(src.tx, src.ty)}:crude_petroleum x1 stock=${src.stock}`);
+          note('Oil pump: 1 Crude Petroleum in output.');
         } else if (job.recipe.startsWith('R:')) {
           const k = job.recipe.slice(2);
           if (addItem(r, st.outC, 'blueprint', 1, { meta: k }) > 0) { blocked = true; note('Research table: output slots full.'); stationState(r,e,'output_full',at); continue; }

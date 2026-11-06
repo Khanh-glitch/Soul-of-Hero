@@ -3,7 +3,7 @@ import { BAL } from './core';
 export type Mat = 'wood' | 'stone' | 'ore' | 'plant' | 'scrap';
 export interface SourcePlacementRule { terrain: 'sand' | 'marsh' | 'ash' | 'snow' | 'hill'; chance: number }
 /** `tier` governs discovery; `stationLevel` alone specifies physical workbench capability. */
-export interface RecipeDef { out: string; qty: number; /** Optional co-products committed atomically with the job (industrial batches). Absent = single output `out`×`qty`. */ outs?: [string, number][]; ins: [string, number][]; station: null | 'campfire' | 'furnace' | 'workbench' | 'refinery'; secs: number; base?: boolean; tier: number; stationLevel?: 1 | 2 | 3; /** B01: distinct display name for an alternate recipe whose output item is shared with another recipe. */ alias?: string }
+export interface RecipeDef { out: string; qty: number; /** Optional co-products committed atomically with the job (industrial batches). Absent = single output `out`×`qty`. */ outs?: [string, number][]; ins: [string, number][]; station: null | 'campfire' | 'furnace' | 'workbench' | 'refinery' | 'oil_pump'; secs: number; base?: boolean; tier: number; stationLevel?: 1 | 2 | 3; /** B01: distinct display name for an alternate recipe whose output item is shared with another recipe. */ alias?: string }
 
 // TUNABLE: a capability upgrade, not a learned recipe. The cart itself remains physical.
 export const INDUSTRIAL_MODULE: { cost: [string, number][]; benchLevel: number } = { cost: [['mechanical_parts', 3], ['fasteners', 3], ['spares', 4], ['iron_ingot', 2]], benchLevel: 2 }; // SOH_NEW_TUNED provisional; no equivalent LI numerical table established
@@ -41,6 +41,8 @@ export const ITEMS: Record<string, ItemDef> = {
   core_mjolnir: I({ name:'Mjolnir', cat:'core', icon:'core', c1:'#6689ad', c2:'#eefbff', w:0.3, max:1, desc:'Rare Nature Core: thunder punch, five lightning strikes and electrical attraction.', creatorCore:'mjolnir', essence:'nature' }),
   core_demon: I({ name:'Lõi quỷ', cat:'core', icon:'core', c1:'#593777', c2:'#ebc5ff', w:0.3, max:1, desc:'Rare Spirit Core: directed rays, a stationary beam and a map-selected teleport.', creatorCore:'demon', essence:'spirit' }),
   // All lifecycle and upgrade costs are provisional TUNABLE values.
+  // B05-R (provisional): crude petroleum is a DIFFERENT material from Salvaged Oil. It comes only from an authorized oil pump; it is never created from wrecks.
+  crude_petroleum: I({ name:'Crude Petroleum', cat:'res', icon:'drum', c1:'#1e1a16', c2:'#5a4a3a', w:0.8, max:30, desc:'Raw petroleum drawn from an authorized oil source. Refine at an Oil Refinery (4 crude + glass).' }),
   // SOH_NEW_TUNED v1: physical salvage, not an oil well or approved Map resource.
   salvaged_oil: I({ name:'Salvaged Oil', cat:'res', icon:'can', c1:'#3d3025', c2:'#9c8050', w:0.7, max:30, desc:'Recovered from car wrecks. Study a sample to learn furnace refining into generator canisters.', specimen:'refine_salvaged_oil' }),
   // SOH_PROVISIONAL v1: Oil Refinery output; motorbike wear mitigator, not a LI-verified lubricant grade.
@@ -199,13 +201,13 @@ export const permitsDirectedResearch = (recipe: RecipeDef) => recipe.tier < 3;
 // Recovery is a base recipe introduced after older run snapshots were saved.
 /** B01-D: the ONLY recipe-knowledge authority is the run-local knowledge.recipes list. These keys are seeded
  * into new runs and migrated into existing saves (persist.validate); no static 'always known' path remains. */
-export const ALWAYS_KNOWN_RECIPES: readonly string[] = ['vehicle_frame','vehicle_drive','recover_drive','energy_refined_industrial','energy_basic','energy_refined','essence_fire','essence_nature','essence_water','essence_spirit','core_blast','core_earthmother'];
+export const ALWAYS_KNOWN_RECIPES: readonly string[] = ['pump_crude','refinery_crude','vehicle_frame','vehicle_drive','recover_drive','energy_refined_industrial','energy_basic','energy_refined','essence_fire','essence_nature','essence_water','essence_spirit','core_blast','core_earthmother'];
 export const isRecipeKnown = (known: readonly string[], key: string) => known.includes(key);
 export const requiredStationLevel = (recipe: RecipeDef): 1 | 2 | 3 => recipe.stationLevel ?? 1;
 
 // ---------- Recipes (K4: one run-local authority) ----------
 export type Recipe = RecipeDef;
-function refineryRecipe(key: 'single' | 'batch' | 'industrial' | 'lube'): RecipeDef {
+function refineryRecipe(key: 'single' | 'batch' | 'industrial' | 'lube' | 'crude'): RecipeDef {
   const R = BAL.oilRefineryV1.recipes[key];
   const outs = R.outs as [string, number][];
   const [out, qty] = outs[0];
@@ -223,6 +225,10 @@ export const RECIPES: Record<string, Recipe> = {
   refinery_fuel_batch: refineryRecipe('batch'),
   refinery_industrial: refineryRecipe('industrial'),
   refinery_lubricant: refineryRecipe('lube'),
+  // B05-R: crude petroleum → fuel canister in the existing refinery (SOH_PROVISIONAL).
+  refinery_crude: refineryRecipe('crude'),
+  // B05-R: the pump's extraction cycle. No inputs; the source stock is checked and decremented at completion.
+  pump_crude: { out: 'crude_petroleum', qty: 1, ins: [], station: 'oil_pump', secs: BAL.oilPumpV1.secs, base: true, tier: 1 },
   energy_basic: { out:'energy_basic', qty:8, ins:[['stone',2],['fiber',2]], station:null, secs:2, base:true, tier:0 },
   energy_refined_industrial: { out:'energy_refined', qty:12, ins:[['crystal',2],['iron_ingot',2],['charcoal',2]], station:'workbench', stationLevel:3, secs:40, base:true, tier:2 },
   energy_refined: { out:'energy_refined', qty:4, ins:[['crystal',1],['iron_ingot',1]], station:'workbench', stationLevel:2, secs:16, base:true, tier:2 },
@@ -305,7 +311,7 @@ export const WORKBENCH_UPGRADE_III: { toLevel: 3; cost: [string, number][] } = {
 export const CORE_STUDY: Record<string, string> = { core_fire: 'core_fire', core_earth: 'core_earth', core_storm: 'core_storm', core_frost: 'core_frost', core_meteor: 'core_meteor', core_dragon: 'core_dragon', core_elsa: 'core_elsa', core_mjolnir: 'core_mjolnir', core_demon: 'core_demon' };
 
 // ---------- Structures (K6) ----------
-export interface StructDef { name: string; cost: [string, number][]; hp: number; need: 'claim' | 'any' | 'free'; block: boolean; layer: 'floor' | 'wall' | 'obj' | 'roof'; slots?: number; station?: 'campfire' | 'furnace' | 'workbench' | 'research' | 'refinery'; light?: number; desc: string; item?: string; shelter?: boolean; warmth?: number }
+export interface StructDef { name: string; cost: [string, number][]; hp: number; need: 'claim' | 'any' | 'free'; block: boolean; layer: 'floor' | 'wall' | 'obj' | 'roof'; slots?: number; station?: 'campfire' | 'furnace' | 'workbench' | 'research' | 'refinery' | 'oil_pump'; light?: number; desc: string; item?: string; shelter?: boolean; warmth?: number }
 export const STRUCTS: Record<string, StructDef> = {
   claim: { name: 'Territory Cabinet', cost: [['wood', 10], ['stone', 5]], hp: 200, need: 'free', block: true, layer: 'obj', slots: 24, desc: 'Place on your foundation. 24 physical slots fund upkeep within 25 SOH tiles.' },
   floor_wood: { name: 'Wood Floor', cost: [['wood', 4]], hp: 120, need: 'any', block: false, layer: 'floor', desc: 'Foundation tile. Roofs need it.' },
@@ -322,6 +328,7 @@ export const STRUCTS: Record<string, StructDef> = {
   chest_large: { name: 'Iron-bound Chest', cost: [['wood', 12], ['iron_ingot', 2]], hp: 220, need: 'any', block: true, layer: 'obj', slots: 24, desc: '24-slot storage.' },
   campfire: { name: 'Campfire', cost: [['wood', 5], ['stone', 3]], hp: 60, need: 'any', block: true, layer: 'obj', station: 'campfire', light: 90, warmth: 1, desc: 'Cooks with fuel. Warmth + light while burning.' },
   furnace: { name: 'Furnace', cost: [['stone', 18], ['wood', 4]], hp: 300, need: 'any', block: true, layer: 'obj', station: 'furnace', light: 50, warmth: 1, desc: 'Smelts with fuel. Output waits in its slots.' },
+  oil_pump: { name: 'Oil Pump', cost: BAL.oilPumpV1.cost as [string, number][], hp: BAL.oilPumpV1.hp, need: 'any', block: true, layer: 'obj', station: 'oil_pump', light: 0, desc: 'Draws Crude Petroleum from an authorized oil site. Needs fuel to run; output waits in its slots. Placement needs an authorized source.' },
   refinery: { name: 'Oil Refinery', cost: BAL.oilRefineryV1.cost as [string, number][], hp: BAL.oilRefineryV1.hp, need: BAL.oilRefineryV1.need as 'any', block: true, layer: 'obj', station: 'refinery', light: 40, desc: 'Converts finite Salvaged Oil into Fuel Canisters and Machine Lubricant. Needs a level-2 Workbench nearby and fuel to run. The industrial batch yields fuel and lubricant together.' },
   workbench: { name: 'Workbench', cost: [['wood', 14], ['stone', 4]], hp: 160, need: 'any', block: true, layer: 'obj', station: 'workbench', desc: 'Timed crafting for tools, armor and parts.' },
   research: { name: 'Research Table', cost: [['wood', 10], ['spares', 6], ['iron_ingot', 1]], hp: 160, need: 'any', block: true, layer: 'obj', station: 'research', desc: 'Spend Spares or study specimens to unlock recipes.' },

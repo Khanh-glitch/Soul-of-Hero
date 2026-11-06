@@ -126,9 +126,23 @@
     "warmthRatePerMin": 1.6,
     "coldThreshold": 8,
     "sources": {
-      "campfireBurning": { "score": 18, "radiusPx": 52, "requires": "alive, owned, paid burn or fuel present, LOS or same room", "provenance": "SOH_PROVISIONAL" },
-      "furnaceBurning": { "score": 12, "radiusPx": 52, "requires": "alive, owned, job running and paid burn or fuel present, LOS or same room", "provenance": "SOH_PROVISIONAL" },
-      "enclosedShelter": { "score": 8, "requires": "roofed and enclosed room at the player tile", "provenance": "SOH_PROVISIONAL" }
+      "campfireBurning": {
+        "score": 18,
+        "radiusPx": 52,
+        "requires": "alive, owned, paid burn or fuel present, LOS or same room",
+        "provenance": "SOH_PROVISIONAL"
+      },
+      "furnaceBurning": {
+        "score": 12,
+        "radiusPx": 52,
+        "requires": "alive, owned, job running and paid burn or fuel present, LOS or same room",
+        "provenance": "SOH_PROVISIONAL"
+      },
+      "enclosedShelter": {
+        "score": 8,
+        "requires": "roofed and enclosed room at the player tile",
+        "provenance": "SOH_PROVISIONAL"
+      }
     }
   },
   "garden": {
@@ -422,6 +436,25 @@
           ]
         ],
         "secs": 12
+      },
+      "crude": {
+        "ins": [
+          [
+            "crude_petroleum",
+            4
+          ],
+          [
+            "glass",
+            1
+          ]
+        ],
+        "outs": [
+          [
+            "fuel_can",
+            1
+          ]
+        ],
+        "secs": 16
       }
     },
     "lubricantWearReduction": 0.5,
@@ -879,5 +912,33 @@
     "wearPerTrigger": 10,
     "hp": 60,
     "offline": "never triggers during offline settlement"
+  },
+  "oilPumpV1": {
+    "_status": "SOH_PROVISIONAL oil-pump-v1. Physical extraction adapter. LI pump rate, power and crude yield are ORIGINAL_UNKNOWN. Production placement is DISABLED: a pump needs an authorized oil site (Map owner); the only accepted source authority today is the labelled test fixture.",
+    "version": "oil-pump-v1",
+    "hp": 160,
+    "need": "any",
+    "cost": [
+      [
+        "iron_ingot",
+        3
+      ],
+      [
+        "mechanical_parts",
+        2
+      ],
+      [
+        "spares",
+        2
+      ],
+      [
+        "brick",
+        2
+      ]
+    ],
+    "requiresWorkbenchLevel": 2,
+    "secs": 12,
+    "fixtureAuthority": "test-fixture-v1",
+    "maxSourceStock": 200
   }
 }

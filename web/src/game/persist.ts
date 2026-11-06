@@ -128,6 +128,8 @@ export function validate(raw: any): GameState | null {
     if(recycler){if(station!=='recycler'||!finite(j.left)||!finite(j.total)||j.total!==12000||j.left<0||j.left>j.total||!Array.isArray(j.reserved)||j.reserved.length!==1||j.reserved[0]?.key!=='damaged_drive'||j.reserved[0]?.qty!==1||!j.reserved.every(stack))return false;jobIds.add(j.id);return true;}
     const research = j.recipe.startsWith('R:'), recipe = research ? j.recipe.slice(2) : j.recipe;
     if (!has(RECIPES, recipe) || (station === 'research' ? !research : research || RECIPES[recipe].station !== station) || !finite(j.left) || !finite(j.total) || j.total <= 0 || j.left < 0 || j.left > j.total || (j.reserved !== undefined && (!Array.isArray(j.reserved) || !j.reserved.every(stack)))) return false;
+    // B05-R pump jobs: only the canonical extraction cycle, no inputs held, canonical time.
+    if (station === 'oil_pump') { if (recipe !== 'pump_crude' || j.total !== BAL.oilPumpV1.secs * 1000 || (j.reserved !== undefined && j.reserved.length !== 0)) return false; }
     // Refinery jobs: the recipe is canonical. Time must be the recipe time and any recorded reservation must equal the recipe inputs exactly.
     if (station === 'refinery') {
       const canon = RECIPES[recipe];
@@ -196,6 +198,8 @@ export function validate(raw: any): GameState | null {
     if(e.type==='farm_controller' && !e.farm)return null;
     if (e.station?.upgrade !== undefined && (e.type !== 'furnace' || e.station.upgrade !== 'kiln_lining')) return null;
     if (e.type === 'refinery' && (e.kind !== 'struct' || !finite(e.hp) || e.hp < 0 || e.hp > STRUCTS.refinery.hp || !e.station || e.station.level !== undefined)) return null;
+    // B05-R oil pump: a pump must stand on a registered test-fixture oil source at its own tile; stock may be 0 (depleted) but never negative.
+    if (e.type === 'oil_pump') { const src = r.oilSources?.[`oil:${e.tx}:${e.ty}`]; if (e.kind !== 'struct' || !e.station || !finite(e.hp) || e.hp < 0 || e.hp > STRUCTS.oil_pump.hp || !src || src.authority !== 'test-fixture-v1' || src.tx !== e.tx || src.ty !== e.ty || !integer(src.stock) || src.stock < 0 || src.stock > BAL.oilPumpV1.maxSourceStock) return null; }
     // Identity binds the station type: a refinery cannot be emptied and relabeled, and a non-refinery cannot claim refinery identity.
     if ((e.identity !== undefined && e.identity !== 'refinery-v1') || (e.identity === 'refinery-v1' && e.type !== 'refinery') || (e.type === 'refinery' && e.identity !== 'refinery-v1')) return null;
     if (e.station?.level !== undefined && (e.type !== 'workbench' || ![1, 2, 3].includes(e.station.level))) return null;
@@ -208,6 +212,8 @@ export function validate(raw: any): GameState | null {
   if((Object.values(r.entities) as any[]).filter(e=>e.kind==='recycler').length>1)return null;
   for(const [key,offer] of Object.entries(VENDOR_SPARES)){const stock=r.vendorStock[`spares:${key}`];if(stock!==undefined && (!integer(stock) || stock>offer.stock))return null;}
   for(const g of Object.values(r.entities) as any[]) if(g.basePower&&g.basePower.network!=='wire-v1'){const links=(Object.values(r.entities) as any[]).filter(t=>t.turret?.generatorId===g.id).length;if(links>(g.basePower.capacity??1))return null;}
+  // B05-R oil sources: registry keyed by tile; only the labelled test-fixture authority is accepted (production oil sites are not authorized).
+  if (r.oilSources !== undefined) { if (!obj(r.oilSources)) return null; for (const [key, src] of Object.entries(r.oilSources) as any[]) { if (key !== `oil:${src?.tx}:${src?.ty}` || !integer(src?.tx) || !integer(src?.ty) || src?.authority !== 'test-fixture-v1' || !integer(src?.stock) || src.stock < 0 || src.stock > BAL.oilPumpV1.maxSourceStock) return null; } }
   if (r.wreckEconomy !== undefined && r.wreckEconomy !== 'direct-v1' && r.wreckEconomy !== 'recycler-v1') return null;
   if (r.wreckEconomy === 'recycler-v1' && !hasAuthorizedRecycler(r)) return null;
   // A retired site must be a real authored public loot site and cannot also

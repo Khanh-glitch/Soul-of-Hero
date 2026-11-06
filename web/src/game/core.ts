@@ -152,6 +152,8 @@ export interface RunState {
   spawnChoice?: { x:number; y:number; contract:'seeded-geographic-v1' };
   spawnRegion: number; ended: null | string;
   player: Player; creatures: Creature[];
+  /** B05-R: oil sources keyed `oil:tx:ty`. Only a labelled test fixture authority exists today; production Map oil sites are NOT authorized (see balance oilPumpV1). */
+  oilSources?: Record<string, { tx: number; ty: number; stock: number; authority: 'test-fixture-v1' }>;
   sources: Record<number, { stock: number; hp: number; regrowAt?: number; burnt?: boolean; fire?: number; fireSpreadAt?: number; fireDepth?: number }>; // K3 deltas over base world
   /** Authored public loot sites emptied in this run (tile index). Absent on older saves. */
   depletedLootSites?: number[];
