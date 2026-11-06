@@ -5,9 +5,10 @@ import { vehicleClear, vehicleExitPoint } from './motorbike';
 import { LOOT_CLASSES, lootClass } from './loot-ecology';
 // Deterministic-ish real-time simulation layered on the engine authority. All state mutation goes through engine helpers.
 import { BAL, TILE, WW, WH, HOUR, VIEW_W, VIEW_H, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity, type Proj, type Haz } from './core';
+import { thermalEnv, thermalEvaluate, thermalStep, thermalBoundaryMs, heatersInReach, coldDamageActive } from './thermal';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
 import { getWorld } from './world';
-import { irSensorStatus, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
+import { irSensorStatus, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
@@ -863,14 +864,10 @@ function tickSurvival(gs: GameState, dtMs: number, now: number) {
   // K5/K8 (Bible): a sheltered player is never killed by hunger ALONE (1 HP floor). Thirst and any other cause still kill.
   const thirstyNow = p.thirst <= 0, hungryNow = p.hunger <= 0, hungerOnlyShelter = hungryNow && !thirstyNow && p.sheltered;
   if ((p.iceUntil||0)<=now && (thirstyNow || hungryNow)) { if (hungerOnlyShelter) p.hp = Math.max(1, p.hp - B.starveDamagePerMin * min); else { p.hp -= B.starveDamagePerMin * min; if (p.hp <= 0) { killPlayer(gs, now, hungryNow ? 'starvation' : 'thirst'); return; } } }
-  // warmth
-  let cold = 0; if (zone === 5 || t === T.SNOW) cold += 9; if (darkness(r, now) > 0.45) cold += 2.5; if (isWet(weather)) cold += 3; if (t === T.SHALLOW || t === T.RIVER) cold += 4;
-  let insul = 0; for (const s of C(r, 'eq').slots) if (s) insul += ITEMS[s.key].cold || 0;
-  const fireNear = Object.values(r.entities).some(e => e.kind === 'struct' && STRUCTS[e.type!].warmth && e.station && e.station.burn > 0 && dist(e.x, e.y, p.x, p.y) < 52);
-  const torch = activeStack(r)?.key === 'torch';
-  let target = 100 - Math.max(0, cold - insul / 3) * 9; if (fireNear) target = 100; if (p.sheltered) target = Math.max(target, 80); if (torch) target = Math.max(target, Math.min(100, target + 20)); if (zone === 6) target = 100;
-  p.warmth += (target - p.warmth) * Math.min(1, min * 1.6);
-  if ((p.iceUntil||0)<=now && p.warmth < 8) { p.hp -= B.coldDamagePerMin * min; if (p.hp <= 0) { killPlayer(gs, now, 'cold'); return; } }
+  // warmth: shared physical evaluator (B03-A). Same target and integrator as offline settle.
+  const thermal = thermalEvaluate(r, thermalEnv(r, { x: p.x, y: p.y, zone, tileType: t, wet: isWet(weather), dark: darkness(r, now) > 0.45, sheltered: p.sheltered }));
+  p.warmth = thermalStep(p.warmth, thermal.target, min);
+  if ((p.iceUntil||0)<=now && coldDamageActive(p.warmth)) { p.hp -= B.coldDamagePerMin * min; if (p.hp <= 0) { killPlayer(gs, now, 'cold'); return; } }
   // radiation
   const mask = C(r, 'eq').slots.some(s => s && ITEMS[s.key].mask);
   if (t === T.TOXIC || (zone === 7 && t === T.FLOOR)) p.rad = Math.min(100, p.rad + (mask ? 0.8 : 7) * min); else p.rad = Math.max(0, p.rad - 1.5 * min);
@@ -898,6 +895,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     // Commit already-finished jobs first; their next jobs determine the next boundary.
     stepStations(gs, 0, t, report);
     stepTenders(gs, t);
+    stepTenderStates(r, t);
     const weather = weatherAt(r, t);
     const slot = Math.floor((t - r.startedAt + r.qaOffset) / slotMs);
     const nextWeather = r.startedAt - r.qaOffset + (slot + 1) * slotMs;
@@ -951,6 +949,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     stepNatureTrees(r,t);
   }
   stepTenders(gs, end);
+  stepTenderStates(r, end);
 }
 
 /** Bring the single run clock forward before a frame or an input transaction. */
@@ -1076,6 +1075,10 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   let frames = 0, structureEpoch = offlineStructureChange;
 
   let t = start, wetMs = 0; const zone = getWorld().zone[tileOf(p.y) * WW + tileOf(p.x)];
+  // B03-A: heat/shelter transitions observed chronologically (receipts are written at the exact boundary).
+  const thermalEnvAt = (at: number, sh: boolean) => thermalEnv(r, { x: p.x, y: p.y, zone, tileType: effTile(r, tileOf(p.x), tileOf(p.y)), wet: isWet(weatherAt(r, at)), dark: darkness(r, at) > 0.45, sheltered: sh });
+  let heatPrev = new Map(heatersInReach(r, { x: p.x, y: p.y }).map(h => [h.e.id, h.st.active] as const));
+  let shelterPrev = sheltered;
   const startHp = p.hp, startHunger = p.hunger, startThirst = p.thirst;
   const territoryBefore = new Map(Object.values(r.entities).filter(e=>e.kind==='struct' && (e.owner===undefined||e.owner==='player') && e.hp!==undefined).map(e=>[e.id,{name:STRUCTS[e.type!]?.name||e.type||'Structure',hp:e.hp!}]));
   // Minute-sized survival integration, not frame replay; world helper splits further at weather/fire boundaries.
@@ -1115,18 +1118,28 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
       const thirsty = p.thirst <= 0, hungry = p.hunger <= 0;
       if (thirsty || (hungry && (!sheltered || p.hp > 1 + 1e-9))) damageRate += B.starveDamagePerMin * unit;
       damageRate += fireRate;
-      if (zone === 5 && !sheltered) damageRate += B.coldDamagePerMin * unit;
+      if ((p.iceUntil||0)<=t && coldDamageActive(p.warmth)) damageRate += B.coldDamagePerMin * unit;
       if (zone === 7 && p.rad >= 50 - 1e-9) damageRate += B.radDamagePerMinOver50 * unit;
       if (damageRate > 0) {
         if (sheltered && hungry && !thirsty && p.hp > 1 + 1e-9) dtMs = Math.min(dtMs, (p.hp - 1) / damageRate);
         else dtMs = Math.min(dtMs, Math.max(0, p.hp) / damageRate);
       }
     }
+    // B03-A: the thermal target is constant inside a slice; heater exhaustion and cold crossings end it.
+    const thermalNow = thermalEvaluate(r, thermalEnvAt(t, sheltered));
+    if (!p.dead) dtMs = Math.min(dtMs, thermalBoundaryMs(r, thermalEnvAt(t, sheltered), p.warmth, thermalNow.target));
     // Date.now has finite precision; avoid a non-advancing sub-millisecond loop.
     const until = Math.min(end, nextWeather, t + Math.max(dtMs, 0.001)); dtMs = until - t;
     if (isWet(weatherAt(r, t))) wetMs += dtMs;
     advanceWorld(gs, t, until, silent ? undefined : report, false);
     if (r.rest) restStep(r, until);
+    if (!p.dead) p.warmth = thermalStep(p.warmth, thermalNow.target, dtMs / 60000);
+    for (const { e, st } of heatersInReach(r, { x: p.x, y: p.y })) {
+      const was = heatPrev.get(e.id);
+      if (was && !st.active) receipt(r, until, 'heat.out', `${e.id}:${st.kind}:${st.code}`);
+      heatPrev.set(e.id, st.active);
+    }
+    if (shelterPrev && !isSheltered(r, p.x, p.y)) receipt(r, until, 'heat.shelter_lost', `${p.x.toFixed(0)},${p.y.toFixed(0)}`);
     if (pending.length && frames < 2400) {
       frames++; offlineImpacts = impacts; offlineQuiet = true;
       try {
@@ -1139,6 +1152,7 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
     }
     t = until; r.clock.lastSimAt = t;
     if (structureEpoch !== offlineStructureChange) { structureEpoch = offlineStructureChange; sheltered = isSheltered(r, p.x, p.y); p.sheltered = sheltered; }
+    shelterPrev = sheltered;
     if (p.dead) continue;
     p.hunger = Math.max(0, p.hunger - hungerRate * dtMs); p.thirst = Math.max(0, p.thirst - thirstRate * dtMs);
     if (radRate) p.rad = Math.min(100, p.rad + radRate * dtMs);

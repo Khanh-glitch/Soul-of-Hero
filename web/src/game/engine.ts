@@ -169,8 +169,15 @@ export function trySpawnCreature(r: RunState, _now: number, avoidX: number, avoi
 }
 
 // ---------------- receipts, log, idempotency ----------------
+/** Ephemeral read-model sink: while a settle window is open, every committed receipt is
+ * also appended here (not persisted). The 250-entry receipt log can drop old entries; this cannot. */
+let receiptSink: { id: string; at: number; kind: string; detail: string }[] | null = null;
+export function beginReceiptSink(): void { receiptSink = []; }
+export function endReceiptSink(): { id: string; at: number; kind: string; detail: string }[] { const out = receiptSink ?? []; receiptSink = null; return out; }
 export function receipt(r: RunState, now: number, kind: string, detail: string) {
-  const id = `r${++r.seq}`; r.receipts.push({ id, seq: r.seq, at: now, kind, detail }); if (r.receipts.length > 250) r.receipts.splice(0, r.receipts.length - 250); return id;
+  const id = `r${++r.seq}`; r.receipts.push({ id, seq: r.seq, at: now, kind, detail }); if (r.receipts.length > 250) r.receipts.splice(0, r.receipts.length - 250);
+  if (receiptSink) receiptSink.push({ id, at: now, kind, detail });
+  return id;
 }
 export function pushLog(r: RunState, now: number, msg: string, tone?: string) { r.log.push({ t: now, msg, tone }); if (r.log.length > 40) r.log.shift(); }
 
@@ -253,7 +260,7 @@ export function initializeCabinets(r: RunState) {
   }
 }
 type TerritoryPlan = { structures:Entity[]; cabinets:Entity[]; assigned:Map<string,Entity|null>; forecast:Map<string,{rates:Record<string,number>;hours:number;funded:boolean;count:number}> };
-function planTerritory(r:RunState):TerritoryPlan {
+export function planTerritory(r:RunState):TerritoryPlan {
   const all=Object.values(r.entities), structures=all.filter(e=>e.kind==='struct'&&owned(e)&&(e.hp??0)>0&&(e.maxHp??0)>0&&e.tx!==undefined&&e.ty!==undefined);
   const cabinets=structures.filter(e=>cabinetSupported(r,e)), assigned=new Map<string,Entity|null>();
   const forecast=new Map<string,{rates:Record<string,number>;hours:number;funded:boolean;count:number}>();
@@ -1011,7 +1018,7 @@ export function clearPhysicalLine(r: RunState, p: { x: number; y: number }, e: {
   }
   return true;
 }
-function clearSegment(r: RunState, p: { x: number; y: number }, e: { x: number; y: number }) {
+export function clearSegment(r: RunState, p: { x: number; y: number }, e: { x: number; y: number }) {
   return clearPhysicalLine(r, p, e, true, true);
 }
 export function clearWallLine(r: RunState, p: {x:number;y:number}, e: {x:number;y:number}) { return clearPhysicalLine(r, p, e, false, true, true); }
@@ -1680,6 +1687,12 @@ function research(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: s
 }
 
 // ---------------- station work (C06) — shared by online tick and offline settle ----------------
+/** Workshop state transitions (B03-B): one receipt per real change; first observation is silent. */
+function stationState(r: RunState, e: Entity, code: string, at: number) {
+  const st = e.station!; if (st.stateCode === code) return;
+  const prev = st.stateCode; st.stateCode = code;
+  if (prev !== undefined) receipt(r, at, 'station.state', `${e.id}:${prev}>${code}`);
+}
 export function stepStations(gs: GameState, dtMs: number, now: number, report?: string[], powered:ReadonlySet<string>=new Set()) {
   const r = gs.run!;
   const note = (message: string) => { if (report && !report.includes(message)) report.push(message); };
@@ -1695,20 +1708,20 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
         if (job.recipe==='X:drive'||job.recipe==='X:recover-v1'||job.recipe==='X:recover-v2') {
           // Outputs are fixed by the job's stored recipe version (v1 jobs never change when v2 is added).
           const plan=job.reserved?.length===1?recoveryPlanFor(job.reserved[0],job.recipe):null;
-          if(e.kind!=='recycler'||!plan||plan.recipe!==job.recipe||!recoveryFits(C(r,st.outC),plan.outputs)){blocked=true;note('Recycler: output full or invalid reservation.');continue;}
+          if(e.kind!=='recycler'||!plan||plan.recipe!==job.recipe||!recoveryFits(C(r,st.outC),plan.outputs)){blocked=true;note('Recycler: output full or invalid reservation.');stationState(r,e,'output_full',at);continue;}
           // Capacity was checked for the whole set before any output is committed.
           for(const [key,qty] of plan.outputs)addItem(r,st.outC,key,qty);
           if(job.recipe!=='X:drive')receipt(r,at,'recycle.finish',`${job.reserved![0].uid}:${job.reserved![0].key}:${plan.outputs.map(([key,qty])=>`${key}x${qty}`).join(',')}`);
           note(`Recycler finished: ${plan.outputs.map(([key,qty])=>`${qty} ${ITEMS[key].name}`).join(', ')} in output.`);
         } else if (job.recipe.startsWith('R:')) {
           const k = job.recipe.slice(2);
-          if (addItem(r, st.outC, 'blueprint', 1, { meta: k }) > 0) { blocked = true; note('Research table: output slots full.'); continue; }
+          if (addItem(r, st.outC, 'blueprint', 1, { meta: k }) > 0) { blocked = true; note('Research table: output slots full.'); stationState(r,e,'output_full',at); continue; }
           note(`Research table: blueprint for ${ITEMS[RECIPES[k].out].name} is ready.`); award(gs, 'first_research', at);
         } else {
           const rc = RECIPES[job.recipe]; const outs = recipeOutputs(rc);
           // Single-output recipes keep their original capacity rule. Multi-output bundles are
           // preflighted as a whole: either every co-product is committed or none is.
-          if (rc.outs ? !recoveryFits(C(r, st.outC), outs) : spaceFor(r, st.outC, rc.out) < rc.qty) { blocked = true; note(`${STRUCTS[e.type!].name}: output slots full.`); continue; }
+          if (rc.outs ? !recoveryFits(C(r, st.outC), outs) : spaceFor(r, st.outC, rc.out) < rc.qty) { blocked = true; note(`${STRUCTS[e.type!].name}: output slots full.`); stationState(r,e,'output_full',at); continue; }
           for (const [key, qty] of outs) addItem(r, st.outC, key, qty);
           if (outs.some(([key]) => key === 'iron_ingot')) award(gs, 'first_ingot', at);
           note(`${STRUCTS[e.type!].name} finished ${outs.map(([key, qty]) => `${qty} ${ITEMS[key].name}`).join(', ')}.`);
@@ -1716,15 +1729,17 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
         receipt(r, at, 'job.done', job.recipe); st.queue.shift(); continue;
       }
       if (blocked && kind !== 'campfire') break;
+      if (!job && kind !== 'campfire') stationState(r,e,'idle',now-t);
       if (needsFuel) {
         const burning = kind === 'campfire' || !!job;
         if (!burning) break;
         if (st.burn <= 0) {
           const fc = C(r, st.fuelC); const fi = fc.slots.findIndex(s => s && ITEMS[s.key].fuel);
-          if (fi < 0) { if (job) { const key = job.recipe.startsWith('R:') ? job.recipe.slice(2) : job.recipe; note(`${STRUCTS[e.type!].name}: fuel ran out — ${ITEMS[RECIPES[key].out].name} paused.`); } break; }
+          if (fi < 0) { if (job) { const key = job.recipe.startsWith('R:') ? job.recipe.slice(2) : job.recipe; note(`${STRUCTS[e.type!].name}: fuel ran out — ${ITEMS[RECIPES[key].out].name} paused.`); stationState(r,e,'fuel_out',now-t); } break; }
           const s = fc.slots[fi]!; st.burn += ITEMS[s.key].fuel! * 1000; s.qty--; if (s.qty <= 0) fc.slots[fi] = null;
         }
       }
+      if (job && kind !== 'campfire') stationState(r,e,'running',now-t);
       const fuelRate = kind === 'furnace' && st.upgrade === 'kiln_lining' ? BAL.fuel.linedFurnaceFuelMultiplier : 1;
       const speed=kind==='workbench' && powered.has(e.id) ? BAL.industrialPower.workSpeedMultiplier : 1;
       let step = needsFuel ? Math.min(t, st.burn / fuelRate) : t; if (job) step = Math.min(step, job.left / speed);
@@ -1786,16 +1801,43 @@ function tenderFits(r:RunState,cid:string,output:[string,number][]) {
   for(const [key,amount] of output){let n=amount;const d=ITEMS[key];for(const s of slots)if(s&&s.key===key&&s.meta===undefined&&s.dur===undefined&&s.charge===undefined){const take=Math.min(n,d.max-s.qty);s.qty+=take;n-=take;}for(let i=0;i<slots.length&&n>0;i++)if(!slots[i]){const take=Math.min(n,d.max);slots[i]={uid:'preview',key,qty:take};n-=take;}if(n>0)return false;}
   return true;
 }
-export function tenderStatus(r:RunState,e:Entity):string {
-  const f=e.farm;if(!f)return 'Not a tender';if(!f.enabled)return 'Stopped';const links=tenderLinks(r,e);if(!links)return 'Missing, blocked or out-of-range link';
+/** Coded tender state (B03-B). `paused` = a real condition blocks the next operation. */
+export type TenderCode = 'stopped' | 'unlinked' | 'unsupported' | 'structure_decayed' | 'storage_full' | 'fuel_harvest' | 'ready_harvest' | 'seed_missing' | 'barrel_dry' | 'fuel_plant' | 'ready_plant' | 'dry' | 'fuel_pump' | 'growing' | 'slow';
+export interface TenderState { code: TenderCode; label: string; paused: boolean }
+const TENDER_LABEL: Record<TenderCode, string> = {
+  stopped: 'Stopped', unlinked: 'Missing, blocked or out-of-range link', unsupported: 'Unsupported crop', structure_decayed: 'Linked structure decayed or unfunded',
+  storage_full: 'Storage full — ripe crop waiting', fuel_harvest: 'Fuel needed to harvest', ready_harvest: 'Ready to harvest',
+  seed_missing: 'Planting material needed in linked chest', barrel_dry: 'Barrel needs water', fuel_plant: 'Fuel needed to plant', ready_plant: 'Ready to plant',
+  dry: 'Waiting for water (rain may grow crop)', fuel_pump: 'Fuel needed to pump (rain may grow crop)', growing: 'Growing', slow: 'Slow growth — inspect climate and soil',
+};
+const TENDER_PAUSED = new Set<TenderCode>(['stopped', 'unlinked', 'unsupported', 'structure_decayed', 'storage_full', 'fuel_harvest', 'seed_missing', 'barrel_dry', 'fuel_plant', 'dry', 'fuel_pump']);
+export function tenderState(r:RunState,e:Entity):TenderState {
+  const code = tenderCode(r, e); return { code, label: TENDER_LABEL[code], paused: TENDER_PAUSED.has(code) };
+}
+export function tenderStatus(r:RunState,e:Entity):string { return tenderState(r,e).label; }
+function tenderCode(r:RunState,e:Entity):TenderCode {
+  const f=e.farm;if(!f)return 'stopped';if(!f.enabled)return 'stopped';const links=tenderLinks(r,e);if(!links)return 'unlinked';
   const {garden,barrel,chest}=links, g=garden.garden!;
-  if(g.crop && !GARDEN_CROPS[g.crop as 'crop'|'herb'])return 'Unsupported crop';
-  if(g.crop&&g.growth>=1){if(!tenderFits(r,chest.c!,GARDEN_CROPS[g.crop as 'crop'|'herb'].output))return 'Storage full — ripe crop waiting';if(tenderEnergyAvailable(r,e)<BAL.garden.tenderHarvestEnergySeconds*1000)return 'Fuel needed to harvest';return 'Ready to harvest';}
-  if(!g.crop){if(!hasAll(r,chest.c!,GARDEN_CROPS[f.crop].inputs))return 'Planting material needed in linked chest';if(g.water<1 && (barrel.water||0)<1)return 'Barrel needs water';if(tenderEnergyAvailable(r,e)<BAL.garden.tenderPlantEnergySeconds*1000)return 'Fuel needed to plant';return 'Ready to plant';}
-  if(g.water<=1e-10 && (barrel.water||0)<1)return 'Waiting for water (rain may grow crop)';
-  if(g.water<=1e-10 && tenderEnergyAvailable(r,e)<BAL.garden.tenderPumpEnergySeconds*1000)return 'Fuel needed to pump (rain may grow crop)';
-  if(g.crop&&gardenEnvironment(r,garden,isWet(weatherAt(r,r.clock.lastSimAt)),g.crop as 'crop'|'herb').rate<0.7)return 'Slow growth — inspect climate and soil';
-  return 'Growing';
+  if(g.crop && !GARDEN_CROPS[g.crop as 'crop'|'herb'])return 'unsupported';
+  // Upkeep-decayed structure: an unfunded linked structure that has already lost HP.
+  const plan=planTerritory(r);
+  const decayed=[garden,barrel,chest,e].some(o=>o.hp!==undefined&&o.maxHp!==undefined&&o.hp<o.maxHp&&!(plan.assigned.get(o.id)&&plan.forecast.get(plan.assigned.get(o.id)!.id)?.funded));
+  if(decayed)return 'structure_decayed';
+  if(g.crop&&g.growth>=1){if(!tenderFits(r,chest.c!,GARDEN_CROPS[g.crop as 'crop'|'herb'].output))return 'storage_full';if(tenderEnergyAvailable(r,e)<BAL.garden.tenderHarvestEnergySeconds*1000)return 'fuel_harvest';return 'ready_harvest';}
+  if(!g.crop){if(!hasAll(r,chest.c!,GARDEN_CROPS[f.crop].inputs))return 'seed_missing';if(g.water<1 && (barrel.water||0)<1)return 'barrel_dry';if(tenderEnergyAvailable(r,e)<BAL.garden.tenderPlantEnergySeconds*1000)return 'fuel_plant';return 'ready_plant';}
+  if(g.water<=1e-10 && (barrel.water||0)<1)return 'dry';
+  if(g.water<=1e-10 && tenderEnergyAvailable(r,e)<BAL.garden.tenderPumpEnergySeconds*1000)return 'fuel_pump';
+  if(g.crop&&gardenEnvironment(r,garden,isWet(weatherAt(r,r.clock.lastSimAt)),g.crop as 'crop'|'herb').rate<0.7)return 'slow';
+  return 'growing';
+}
+/** Transition receipts only on a real state change (never per tick). The last coded state is persisted on the
+ * tender, so a reload or a repeated Continue cannot repeat it. The first observation of a tender is silent. */
+export function stepTenderStates(r:RunState,now:number) {
+  for(const e of Object.values(r.entities)){ if(!e.farm) continue;
+    const st=tenderState(r,e), prev=e.farm.lastCode;
+    if(prev===undefined){ e.farm.lastCode=st.code; continue; }
+    if(prev!==st.code){ e.farm.lastCode=st.code; receipt(r,now,'tender.state',`${e.id}:${prev}>${st.code}:${st.paused?'paused':'running'}`); }
+  }
 }
 /** Instantaneous events at the current world timestamp; order is harvest,
  * planting, then irrigation. Fuel is only consumed on an actual operation. */

@@ -115,6 +115,22 @@
     "maxSpreadDepth": 2,
     "spreadChancePercent": 55
   },
+  "comfortV1": {
+    "_status": "SOH_PROVISIONAL physical thermal rules. LI historical comfort (2020-01-08) stacks to 40 points in ITS OWN score units; liHistoricalCap is recorded for provenance only and is NOT 40 SOH Warmth units. No fictional season multiplier.",
+    "liHistoricalCap": 40,
+    "liHistoricalProvenance": "LI 2020-01-08 comfort stacking, original mode (score units)",
+    "scoreCap": 40,
+    "scoreCapProvenance": "Equals liHistoricalCap numerically; SOH cap on stacked heat score (SOH_PROVISIONAL)",
+    "targetPerScore": 0.75,
+    "targetMaxBonus": 30,
+    "warmthRatePerMin": 1.6,
+    "coldThreshold": 8,
+    "sources": {
+      "campfireBurning": { "score": 18, "radiusPx": 52, "requires": "alive, owned, paid burn or fuel present, LOS or same room", "provenance": "SOH_PROVISIONAL" },
+      "furnaceBurning": { "score": 12, "radiusPx": 52, "requires": "alive, owned, job running and paid burn or fuel present, LOS or same room", "provenance": "SOH_PROVISIONAL" },
+      "enclosedShelter": { "score": 8, "requires": "roofed and enclosed room at the player tile", "provenance": "SOH_PROVISIONAL" }
+    }
+  },
   "garden": {
     "_status": "TUNABLE_BALANCE",
     "growSeconds": 300,
