@@ -448,3 +448,51 @@ Scope: fix the two verified Package A UI defects, then B (freight), C (loot/recy
 ### Unfinished
 - C3 POI depth, the full C1 loot audit, C4 visual audit, D1 LI→SOH table at full scope, standalone build.
 - First next executable task: add the `map-site-v1` production authority shape as a refusal-only type with a Map request, then the C3 causal feedback on an existing authored site.
+
+## B05-R final continuation (review 6700650523 of 893b9d9d) — PARTIAL, PR #44 DRAFT/HOLD/UNMERGED
+
+### P0 fuel consistency (done)
+- One policy: `stationBurnable(key)` in `catalog.ts`. A station burns any fuel item except `fuel_can`. Used by `stepStations` (burn), `move` via `isStationFuel` (deposit refusal with reason), `CraftPanel` readiness and `StationBody` legend.
+- Old saves holding canisters in a station fuel input load unchanged. The canisters are not burned or converted and can be taken out to the pack. Generator and motorbike canister use is unchanged.
+- Tests: `tests/b05-station-fuel-policy.test.ts` (6).
+
+### C1 loot → industry (audited; one defect class fixed in tests)
+- Evidence: `web/evidence/b05-loot/matrix.json`, test `tests/b05-loot-matrix.test.ts` (5).
+- Matrix from live rolls (`lootRoll`) and real consumers (recipes, build costs, direct engine actions):
+  - Metal Pipe: consumers 2 recipes (vehicle_frame_piped, iron_plate); sources toolbox pool, advanced pool, craft.
+  - Iron Plate: consumer is the wall/door repair action (`repairStructure`), not a recipe. Source: toolbox pool, craft.
+  - Mechanical Gear: 4 consumers; sources toolbox and advanced pools.
+  - Refined Iron Ingot: 2 recipe consumers; fixed toolbox 1, advanced 2, furnace.
+  - Mechanical Parts: 18 consumers; advanced W06 option only, plus craft from scrap.
+  - Spares: 26 consumers; toolbox fixed 2, military option, vendor, wrecks.
+  - Salvaged Oil: 5 consumers; wreck and vendor only, never a container.
+  - Crude Petroleum: pump only; consumer refinery_crude.
+  - Fuel Canister: consumers are generators and motorbikes (physical use), refinery output. Never a container reward.
+- No orphan loot item after counting direct consumers (repair, field repair kit, bow ammunition, eat, Creator Core energy). A first test run flagged iron_plate, field_repair_kit, arrow, berries and energy_basic as orphans. Each was a false positive from recipe-only counting, and each has a real consumer in code (references in the test).
+- Findings, retained (no source-supported change): the toolbox B04 pool hands out finished Metal Pipe, Mechanical Gear and Iron Plate (finite, 24 h per site). This removes some manufacturing and is kept as B04 design, SOH_PROVISIONAL. Recycling a pipe returns 1 ingot, less than the pipe costs to craft (2 ingots + 1 Mechanical Parts), so there is no free-resource loop. Containers never emit Fuel Canister, crude, cash or blueprints.
+
+### C3 POI access feedback (done for the powered gate)
+- `poiPowerMissingReason` in `poi-access.ts`: OFF with N s banked → "use E on the generator to resume; no can needed"; ran out → "add 1 physical Fuel Canister"; empty → same add-can instruction. Used by the Lighthouse door refusal. Refusals consume nothing (checked).
+- Tests: `tests/c3-poi-power-feedback.test.ts` (3, including empty, resume, and depleted negative cases). Existing S05 suites pass (`poi-access-s05`, `poi-route-physical`).
+- Not done: a combined card-plus-power reader (not authored on any map, per S05 limitations); new POIs or geometry (Map-owned).
+
+### C4 pixel/UX (partial, honest)
+- Inspected at native size: Oil Pump idle/dry (`evidence/b05r-pump/`, 640×360 and 1280×720). The pump silhouette and lamp state read at 640×360.
+- NOT confirmed: Crude Petroleum inventory icon at 1280×720. The crop shows item slots but the crude slot could not be identified reliably. Also the crop shows a test-fixture overload warning ("Load 267.5/60 kg, slowed") from the fixture, not a shipping state. Owner review required; this is an open defect in evidence, not a claimed pass.
+- Not inspected in this round: refinery working state, motorbike vs cart silhouettes in the world, recycler operating frames, POI access frames.
+
+### D1 parity (NOT completed)
+- Atlas v10/v11 and surviving v1–v6 reference material was not read in this session, so no LI row was written. No historical value was taken from memory. Remaining obligation: build the source-scoped table (LI year/mode/source → rule → confidence → SOH value → adaptation → code → gap) from `docs/reference/last-island-atlas/` on the reference branch, marking unavailable values ORIGINAL_UNKNOWN.
+
+### D verification at final SHA
+- `tsc --noEmit`: exit 0.
+- HTTP build (`vite.http.config.ts`): exit 0.
+- Full Vitest: 77 files, 583 tests passed in one run.
+- Standalone build: not repeated after the earlier OOM (exit 137, 3 GB heap). Blocker: sandbox memory; not solved in this round.
+- Flakiness: an earlier full run on 029db4a0-series showed 4 timeout failures under load that passed in isolation; this final run passed. Treat as load-sensitive, not reproducible here.
+
+### Status
+- S03: not changed this round. S04: partial (fuel policy, canister consumers). S05: powered-gate feedback added; card and gate remain as in S05 doc. S06: unchanged. S09: partial (B1 chain, B2 measurements from earlier). S10: partial (refinery crude; no production source). S11: not touched. S14: not touched. Nothing marked DONE.
+
+### Next executable action
+- Read Atlas v10/v11 (reference branch) and write the D1 source table into this ledger; then inspect the crude inventory icon at 1280×720 with a close crop and redraw the drum if it is not distinct.
