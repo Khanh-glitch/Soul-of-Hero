@@ -9,10 +9,19 @@ import type { RunState } from '../src/game/core';
 
 const MATERIALS = ['metal_pipe', 'iron_plate', 'mechanical_gear', 'refined_iron_ingot', 'mechanical_parts', 'spares', 'salvaged_oil', 'crude_petroleum', 'fuel_can', 'metal_blade', 'fasteners'];
 /** Non-recipe consumers that the engine reads directly (engine.ts repairStructure: material 'iron_plate' patches walls and doors). */
-const DIRECT_CONSUMERS: Record<string, string[]> = { iron_plate: ['action:repairStructure material=iron_plate (engine.ts)'] };
+const DIRECT_CONSUMERS: Record<string, string[]> = {
+  iron_plate: ['action:repairStructure material=iron_plate (engine.ts)'],
+  field_repair_kit: ['action:fieldRepair kit consumed on a carried repairable item (engine.ts)'],
+  arrow: ['ammunition:bow shots (engine.ts arrow use)'],
+  energy_basic: ['action:Creator Core energy load, basic mode (engine.ts:1080)'],
+  energy_refined: ['action:Creator Core energy load, refined mode (engine.ts:1080)'],
+};
+/** Food items are consumed by the eat action (catalog food field); counted as consumers. */
+function eaten(item: string): boolean { return !!(ITEMS[item] as any)?.food; }
 /** Real consumers: recipe inputs, structure build costs, and direct engine actions. */
 function consumers(item: string): string[] {
   const out: string[] = [...(DIRECT_CONSUMERS[item] ?? [])];
+  if (eaten(item)) out.push('action:eat (catalog food)');
   for (const [id, r] of Object.entries(RECIPES)) if ((r.ins as [string, number][]).some(([k]) => k === item)) out.push('recipe:' + id);
   for (const [id, s] of Object.entries(STRUCTS)) if ((s.cost as [string, number][]).some(([k]) => k === item)) out.push('build:' + id);
   return out;
