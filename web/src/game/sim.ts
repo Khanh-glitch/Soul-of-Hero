@@ -1082,6 +1082,8 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   let heatPrev = new Map(heatersInReach(r, { x: p.x, y: p.y }).map(h => [h.e.id, h.st.active] as const));
   let shelterPrev = sheltered;
   const startHp = p.hp, startHunger = p.hunger, startThirst = p.thirst;
+  // W07-R: turrets that were armed, supplied and wired when the player left (evaluated at the start, not at return).
+  const standbyTurrets = Object.values(r.entities).filter(t => t.turret?.enabled && t.c && countItem(r, t.c, 'arrow') > 0).filter(t => Object.values(r.entities).some(g => g.basePower && powerAllocation(r, g, false).includes(t)));
   const territoryBefore = new Map(Object.values(r.entities).filter(e=>e.kind==='struct' && (e.owner===undefined||e.owner==='player') && e.hp!==undefined).map(e=>[e.id,{name:STRUCTS[e.type!]?.name||e.type||'Structure',hp:e.hp!}]));
   // Minute-sized survival integration, not frame replay; world helper splits further at weather/fire boundaries.
   while (t < end) {
@@ -1177,6 +1179,7 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   const hrs = gap / 3600000;
   report.unshift(`Away for ${hrs >= 1 ? hrs.toFixed(1) + ' h' : gap >= 60000 ? Math.round(gap / 60000) + ' min' : Math.round(gap / 1000) + ' sec'}.`);
   report.push('Nearby evidenced trails may be followed while away; other encounters remain unresolved.');
+  for (const t of standbyTurrets) report.push(`Turret ${t.tx},${t.ty} was armed on a generator with fuel when you left: it reserved power while fuel lasted, and turrets do not fire while away.`);
   for (const impact of impacts.values()) report.push(impact.destroyed ? `${impact.name} was destroyed while away.` : `${impact.name}: ${Math.round(impact.before)} → ${Math.round(impact.after)} HP while away.`);
   if (!p.dead) {
     const nearby = r.traces.filter(tr => dist(p.x, p.y, tr.x, tr.y) <= 64 && los(r, p.x, p.y, tr.x, tr.y, true)).length;

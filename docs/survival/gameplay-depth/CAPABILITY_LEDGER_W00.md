@@ -573,3 +573,25 @@ Full detail: `docs/survival/gameplay-depth/B06_WORLD_BOUNDARY_CUES_FEASIBILITY.m
 - Superseded encodings updated with W07 notes: `s06-circuits` (armed turret offline now keeps the door unpowered), `k6-power` (5 s × 2 active loads drains 10 s of fuel).
 - Atlas IDs (mapped from the PR44 correction's listed network, CSV row text not re-read this round): SYS06 power/SYS04 workbench/SYS17 offline; XEDGE-030 (shared fuel consumers), XEDGE-032 (production vs defense allocation), XEDGE-034 boundary (already present), XEDGE-096 (single chronology) — partial.
 - Status: ENGINE_IMPLEMENTED, connected through `advanceWorld` (online and offline paths share it), tested by focused and regression tests. NOT verified: browser/human experience; refinery/pump offline interaction with generator is unchanged (refinery burns non-canister fuel inside `stepStations`, not audited against Atlas XEDGE-018/019 this round).
+
+
+## W07-R — offline defense value (PARTIAL; corrects the W07 accounting)
+
+Corrections to the W07 entry above (the earlier wording overstated closure):
+- XEDGE-030 (shared fuel consumers) is generator/vehicle shared fuel and was already present before W07; W07 did NOT newly complete it.
+- XEDGE-032 (production vs defense allocation) gained OFFLINE ALLOCATION PARITY only. It is not total closure.
+- XEDGE-034 (outage/chronological job pause) is NOT proven complete by W07.
+- XEDGE-096 (unified chronology) is broader than the 25-second allocation comparison; only the power-allocation and station-fuel boundary parts are covered.
+- No full v11 edge is marked CLOSED here: the CSV row text was not re-validated in this round.
+
+Offline turret combat — BLOCKED (not implemented, no fabrication):
+- Technical limit: `tickTurrets` requires live creature positions (`offlineUnresolvedAt===undefined`, live `dist` to the player and the turret) and `tickProj` requires live projectile sweeps with `clearPhysicalLine`. The offline path (`settle`) resolves only trace-based playback for at most 24 creatures; combat, sight and knockback checkpoints are marked unresolved, not simulated.
+- Gameplay limit: no offline projectile hit can be established from evidence, so offline firing would invent kills. Bible K5/K6/K8 and C08/C09 require physical causes; C09 allows an optional powered turret to influence offline outcomes only through real, evidenced contact.
+- Consequence kept honest: an armed, supplied, wired turret with arrows reserves generator capacity and fuel while the player is away, and does NOT fire. Disarming it stops that draw. The return report now says so (`settle` line, derived from the allocation at settlement start).
+
+Refinery / pump chronology (W07-R proof, `tests/w07r-refinery-chronology.test.ts`):
+- Same funded `refinery_industrial` job (3 wood fuel, 6 salvaged oil, 1 glass, level-2 bench): online 1 s steps and one offline settlement produce identical fuel, burn, job, output and receipts at 40 s (job completes: 2 Fuel Canisters + 1 Lubricant; salvaged oil consumed once).
+- Fuel exhaustion (1 wood = 20 s, job needs 26 s): both paths pause at the same boundary (`fuel_out`), output stays empty, and the job completes after a real refill online.
+- Finding: refinery chronology is ALREADY CORRECT for these cases; no production change was required.
+
+Atlas status for this round: ALREADY_PRESENT (refinery chronology, XEDGE-019 fueled refinery cycle, for the tested cases); NEWLY_IMPLEMENTED (truthful standby report line; panel text correction); PARTIAL (XEDGE-032, XEDGE-096); CAUSAL_CHAIN_CLOSED: none; CREATOR_DECISION_PENDING: whether an idle armed turret should draw standby power offline at all (current rule = online rule, kept for consistency).

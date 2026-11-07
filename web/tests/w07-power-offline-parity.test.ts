@@ -64,3 +64,21 @@ describe('W07 station fuel boundary: Fuel Canisters are never station fuel (offl
     expect(countItem(r, out.id, 'iron_ingot')).toBe(0);
   });
 });
+
+describe('W07-R truthful return report for standby turret draw', () => {
+  it('an armed wired turret with arrows is reported as reserving power while away and not firing', () => {
+    const o = scenario();
+    const report = settle(o.g, T0 + 25000, false);
+    expect(report.some(l => l.includes('was armed on a generator with fuel when you left') && l.includes('turrets do not fire while away'))).toBe(true);
+    expect(o.g.run!.receipts.some(q => q.kind === 'turret.fire')).toBe(false);
+  });
+  it('a disarmed turret produces no standby line and no draw', () => {
+    const o = scenario();
+    o.pos(o.x + 2, o.y + 1);
+    expect(o.act('turretConfigure', { eid: o.turret.id, field: 'enabled', value: false }).ok).toBe(true);
+    o.pos(o.x + 1, o.y); expect(o.act('turretConfigure', { eid: o.turret2.id, field: 'enabled', value: false }).ok).toBe(true);
+    const report = settle(o.g, T0 + 25000, false);
+    expect(report.some(l => l.includes('was armed on a generator'))).toBe(false);
+    expect(o.g.run!.entities[o.gen.id].basePower!.energy).toBe(Math.max(0, 40000 - 25000));
+  });
+});
