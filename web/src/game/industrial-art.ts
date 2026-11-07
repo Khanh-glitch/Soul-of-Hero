@@ -133,17 +133,20 @@ export function drawOilPump(g: G, state: 'idle' | 'run' | 'dry', frame: 0 | 1 = 
   R(g, 9, 4, 2, 3, dry ? '#ff5a4a' : run ? '#8fd19b' : '#d8a040');
   P(g, 9, 4, dry ? '#ffd0c8' : '#f4ffe8');
 }
-/** Crude drum (16×16): a round-bellied steel drum with light rims, a dark-crude sheen and a tap, so it reads as a drum,
- *  not a book or box, and stands out from the dark background. Distinct from the Fuel Canister (red can). */
+/** Crude drum (16×16): a cylindrical steel drum. Rounded ends, a bulged body, four light hoops, cylinder shading
+ *  (lit left, shaded right), and a crude-coloured body with a gold sheen. Not a box: no label, no latch. */
 export function drawCrudeDrum(g: G, c1: string, c2: string) {
-  const outline = '#0c0a08', rim = '#b8c2cc';
-  R(g, 4, 1, 8, 1, outline); R(g, 3, 2, 10, 1, outline);                 // top curve
-  R(g, 2, 3, 1, 9, outline); R(g, 13, 3, 1, 9, outline);                 // bulged sides
-  R(g, 3, 12, 10, 1, outline); R(g, 4, 13, 8, 1, outline);               // bottom curve
-  R(g, 3, 3, 10, 9, c1);                                                 // body fill
-  R(g, 3, 3, 10, 1, rim); R(g, 3, 9, 10, 1, rim);                        // light rims
-  R(g, 3, 5, 10, 1, '#5b6470'); R(g, 3, 11, 10, 1, '#5b6470');           // inner shade bands
-  R(g, 5, 6, 6, 3, '#1a1612'); R(g, 6, 7, 4, 1, c2);                     // dark label with crude sheen
-  P(g, 7, 7, '#e8c070');                                                 // specular on the sheen
-  R(g, 7, 13, 2, 2, rim);                                                // tap
+  const outline = '#0c0a08', hoop = '#c4ccd4', hoopDk = '#6b7480', lit = '#9a7f5e';
+  R(g, 5, 1, 6, 1, outline);                       // top cap curve
+  R(g, 3, 2, 10, 1, outline);
+  R(g, 2, 3, 1, 9, outline); R(g, 13, 3, 1, 9, outline); // bulged sides
+  R(g, 3, 12, 10, 1, outline);                     // bottom curve
+  R(g, 5, 13, 6, 1, outline);
+  R(g, 3, 3, 10, 9, c2);                           // body
+  R(g, 11, 3, 2, 9, c1);                           // shaded cylinder side
+  R(g, 3, 4, 1, 7, lit);                           // lit cylinder edge
+  R(g, 3, 3, 10, 1, hoop); R(g, 3, 6, 10, 1, hoop); R(g, 3, 9, 10, 1, hoop); R(g, 3, 11, 10, 1, hoop); // four hoops
+  R(g, 3, 7, 10, 1, hoopDk); R(g, 3, 10, 10, 1, hoopDk);
+  P(g, 5, 4, '#e8c070'); P(g, 6, 4, '#e8c070');     // gold crude sheen on the lit side
+  R(g, 7, 13, 2, 2, hoop);                         // tap
 }
