@@ -1,5 +1,5 @@
 // Original pixel art for Soul of Hero, painted pixel-by-pixel into offscreen canvases at boot.
-import { drawVehicleSide, drawVehicleFront, drawVehicleBack, drawVehicleCrate, drawRefinery, drawLubricantJug, drawOilPump, drawCrudeDrum } from './industrial-art';
+import { drawParcel, drawVehicleSide, drawVehicleFront, drawVehicleBack, drawVehicleCrate, drawRefinery, drawLubricantJug, drawOilPump, drawCrudeDrum } from './industrial-art';
 // (GOLD_SOURCE_NOT_AVAILABLE — these are original replacements; no third-party sprites used.)
 import { hash2 } from './core';
 import { ITEMS } from './catalog';
@@ -272,6 +272,7 @@ export function buildStructs() {
   S.arrow_turret = mk(16, 16, g => { R(g,3,12,10,3,'#59412f'); R(g,5,10,6,3,'#8d6944'); R(g,3,6,10,4,'#727d79'); R(g,5,5,6,2,'#bcc2a6'); R(g,2,7,2,2,'#3a4743'); R(g,12,7,2,2,'#3a4743'); });
   S.gen = mk(16, 16, g => { R(g, 1, 5, 14, 9, '#6a7a3a'); R(g, 1, 5, 14, 2, '#8a9a4a'); R(g, 3, 8, 4, 4, '#2a2e34'); R(g, 9, 8, 4, 2, '#c0a040'); R(g, 12, 2, 2, 4, '#4a4e56'); });
   S.evac = mk(16, 40, g => { R(g, 7, 6, 2, 34, '#8a8a90'); for (let y = 10; y < 38; y += 6) { R(g, 5, y, 6, 1, '#6a6a72'); } R(g, 4, 2, 8, 5, '#c03a2a'); R(g, 5, 3, 6, 3, '#ffd0a0'); R(g, 3, 37, 10, 3, '#5a5a62'); });
+  S.parcel = mk(16, 16, g => drawParcel(g));
   S.bag = mk(16, 16, g => { ell(g, 8, 10, 5, 4.5, shade('#8a5a32', '#b07a4a', '#5a3a22', 80)); R(g, 6, 4, 4, 3, '#7a4a2a'); R(g, 5, 6, 6, 1, '#d0a050'); });
   S.cart = mk(28, 22, g => { R(g, 3, 4, 20, 10, '#8a5a32'); R(g, 3, 4, 20, 2, '#b07a4a'); for (let x = 5; x < 23; x += 4) R(g, x, 6, 1, 8, '#5a3a22'); ell(g, 7, 16, 4, 4, '#4a2e1a'); ell(g, 7, 16, 2, 2, '#8a8a90'); ell(g, 19, 16, 4, 4, '#4a2e1a'); ell(g, 19, 16, 2, 2, '#8a8a90'); R(g, 23, 8, 5, 1, '#6a4426'); });
   S.cargo = mk(28, 22, g => { R(g, 5, 0, 7, 5, '#a07040'); R(g, 12, 1, 6, 4, '#7d8088'); R(g, 17, 0, 5, 5, '#c9935a'); P(g, 8, 2, '#5a3a22'); }, null);

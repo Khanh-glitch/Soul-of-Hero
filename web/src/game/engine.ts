@@ -1578,6 +1578,17 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
         removeItem(r, 'inv', 'rcash', price); r.vendorStock[item]--; giveOrDrop(r, 'escrow_chest', 1, now); return ok('vendor.buy', `escrow_chest -${price} cash`);
       }
       const v = VENDOR_SECURED[item]; if (!v) return fail('Not sold here.');
+      if (it.freight === true) {
+        // B05-R freight: same price, stock and secured-cash debit as a pack purchase, but the good lands as a physical parcel at the trader.
+        // It never needs pack room, so a full inventory cannot destroy or refuse a paid item.
+        if (typeof it.id !== 'string' || !it.id) return fail('Purchase needs an id.');
+        const receipt = `spend:${r.id}:${it.id}:${v.price}`;
+        if (gs.profile.profileReceipts.includes(receipt) || Object.values(r.entities).some(x => x.parcel?.purchaseId === it.id)) return fail('This purchase was already paid.');
+        if (gs.profile.securedCash < v.price) return fail(`Needs ${v.price} secured cash (you have ${gs.profile.securedCash}).`);
+        gs.profile.securedCash -= v.price; r.vendorStock[item]--; gs.profile.profileReceipts.push(receipt);
+        spawnParcel(r, e.x, e.y, now, item, it.id);
+        return ok('vendor.parcel', `${item} -${v.price} secured`, `Paid ${v.price} secured cash. ${ITEMS[item].name} is waiting in a parcel at the trader: collect it, or load it into a cart in reach.`);
+      }
       if (gs.profile.securedCash < v.price) return fail(`Needs ${v.price} secured cash (you have ${gs.profile.securedCash}).`);
       if (spaceFor(r, 'inv', item) < 1) return fail('Inventory full.');
       gs.profile.securedCash -= v.price; r.vendorStock[item]--; addItem(r, 'inv', item, 1); gs.profile.profileReceipts.push(`spend:${r.id}:${it.id}:${v.price}`);
@@ -1681,6 +1692,12 @@ function accepts(c: Container, slot: number, s: Stack) {
   return true;
 }
 /** B04: a bag emptied by a legal physical withdrawal disappears (no ghost). A bag with pending legacy recovery jobs is kept. */
+/** B05-R freight: one paid parcel = a ground bag holding exactly one real stack (UID) of the purchased good, placed beside the trader. */
+function spawnParcel(r: RunState, x: number, y: number, now: number, item: string, purchaseId: string): Entity {
+  const bag = mkContainer(r, 'bag', 1); bag.slots[0] = mkStack(r, item, 1);
+  const e: Entity = { id: uid(r, 'b'), kind: 'bag', x: x + 14, y: y + 14, c: bag.id, label: `Parcel · ${ITEMS[item].name}`, born: now, parcel: { purchaseId, item } };
+  r.entities[e.id] = e; return e;
+}
 function pruneEmptyBag(r: RunState, cid: string) {
   const bag = Object.values(r.entities).find(e => e.kind === 'bag' && e.c === cid);
   if (!bag || bag.legacyJobs?.queue.length || C(r, cid).slots.some(Boolean)) return;

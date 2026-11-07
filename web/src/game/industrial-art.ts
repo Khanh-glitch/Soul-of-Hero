@@ -151,3 +151,15 @@ export function drawCrudeDrum(g: G, c1: string, c2: string) {
   P(g, 5, 4, '#e8c070'); P(g, 6, 4, '#e8c070');     // gold crude sheen on the lit side
   R(g, 7, 13, 2, 2, hoop);                         // tap
 }
+
+/** Paid parcel (16×16): a rectangular cardboard crate with a pale tape strip and a shipping label. Distinct from the round loot bag. */
+export function drawParcel(g: G) {
+  const edge = '#3a2212', card = '#b98452', light = '#d8a870', shade = '#7a5230';
+  R(g, 2, 4, 12, 10, edge);                       // outline
+  R(g, 3, 5, 10, 8, card);                        // body
+  R(g, 3, 5, 10, 2, light);                       // top flap highlight
+  R(g, 3, 11, 10, 2, shade);                      // lower shade
+  R(g, 7, 5, 2, 8, '#e8d8a0');                    // pale tape strip, down the middle
+  R(g, 4, 8, 3, 2, '#f4eedb'); P(g, 5, 9, '#3a3a40'); // shipping label
+  P(g, 10, 9, '#f4eedb');                         // corner tab
+}

@@ -537,3 +537,10 @@ Result: no LI number was promoted to canon. Rows 1–7 and 10 are the only ones 
   - `hero.yingxiong.com/info/2019/0805/7010.html` (player guide 情兽, hosted on the official site, 2019-08-05). Supports the following qualitatively, with no numbers: an electric resistor door opens only when **both** its power switch and its resistor wire are present; resistor wire is scarce; a timer shows how long the door stays open; a green room always yields a blue card; a blue room yields a purple card only sometimes. Rows 12 and 13 of the table are consistent with this, but the guide provides **no numeric card-use count or timer length**. Those stay ORIGINAL_UNKNOWN.
 - Revised tier labels: the 2019 player guide is `LI_OFFICIAL_HOSTED_COMMUNITY_GUIDE` (qualitative only). The 2020 notice is `LI_OFFICIAL_VERSIONED` for its own statements, with no recipe numbers.
 - No D1 row was promoted above SECONDARY_LOW_CONFIDENCE. No LI number was copied into SOH.
+
+## B05-R PRIORITY 1 — Vendor freight (Mirela parcel)
+- Mechanic: a Profile-secured vendor good (`VENDOR_SECURED`) bought with `buy {freight:true, id}` debits secured cash and vendor stock exactly once, then spawns a physical parcel (kind `bag`, `parcel:{purchaseId,item}`) beside the trader holding one UID stack. Pack room is never needed, so a full pack cannot refuse or destroy a paid item.
+- Reused custody: `move` (reach 2.8 tiles, slot rules, motorbike weight cap), `grabCart`, `placeCart`, `useItem`, `pruneEmptyBag`. Cart weight is the existing soft overload (slows, warns), unchanged.
+- Negatives covered: replay or duplicate purchase id, insufficient secured cash, out-of-stock good, full pack, out-of-reach load, save/reload, and a crafted save with a duplicate purchase id (rejected by `validate`).
+- Tests: `web/tests/b05-vendor-freight.test.ts` (6). Fixture: secured cash granted for affordability only.
+- Visual: parcel sprite `drawParcel` (16×16 crate). **Not yet inspected at native size; the browser click proof did not complete** (interaction target did not resolve in driver run). Status: PARTIAL.

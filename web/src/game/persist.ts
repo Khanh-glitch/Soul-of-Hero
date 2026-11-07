@@ -6,7 +6,7 @@ import { creatorLootV1 } from './creator-loot';
 // Local-first snapshots: one serialized profile + run + receipts per write.
 // Checksums detect accidental damage, not malicious edits or rollback of all copies.
 import { BAL, SAVE_VERSION, WW, WH, TILE, type GameState, type Stack } from './core';
-import { ALWAYS_KNOWN_RECIPES, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, VENDOR_SPARES } from './catalog';
+import { ALWAYS_KNOWN_RECIPES, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, VENDOR_SPARES, VENDOR_SECURED } from './catalog';
 import { newGame, renewableLoot } from './engine';
 import { getWorld, hasLayout, webRecyclerSite } from './world';
 import { mapDigest } from './map-package';
@@ -145,8 +145,10 @@ export function validate(raw: any): GameState | null {
     }
     jobIds.add(j.id); return true;
   });
+  const parcelIds = new Set<string>();
   for (const [id, e] of Object.entries(r.entities) as [string, any][]) {
     if (!obj(e) || e.id !== id || !beforeNext(id, /^(?:cart|[ebd])([a-z0-9]+)$/) || typeof e.kind !== 'string' || !finite(e.x) || !finite(e.y)) return null;
+    if (e.parcel !== undefined) { if (e.kind !== 'bag' || !obj(e.parcel) || typeof e.parcel.purchaseId !== 'string' || !e.parcel.purchaseId || typeof e.parcel.item !== 'string' || !VENDOR_SECURED[e.parcel.item] || parcelIds.has(e.parcel.purchaseId)) return null; parcelIds.add(e.parcel.purchaseId); }
     if (!['drop','struct','bag','cart','vehicle','loot','cash','vendor','evac','door','gen','recycler','airdrop'].includes(e.kind)) return null;
     if (e.kind === 'struct' && !has(STRUCTS, e.type)) return null;
     if(e.kind==='airdrop'){
