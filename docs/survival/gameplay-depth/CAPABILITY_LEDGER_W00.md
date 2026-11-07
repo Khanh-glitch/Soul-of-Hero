@@ -552,3 +552,14 @@ Result: no LI number was promoted to canon. Rows 1–7 and 10 are the only ones 
 - Open: a "Save failed" toast appeared in the headless browser after the purchase. localStorage and IndexedDB both wrote in the same browser; the serialize path passes in Vitest. Cause not isolated. Save/reopen is NOT claimed as browser-proven.
 - Parcel sprite revised (light kraft box, white tape and label). Native frames inspected at 1280×720 and 640×360: distinct from the brown loot bag. Still small at 640×360.
 - Not done in this round: C4 motorbike, refinery, Oil Pump, recycler, Lighthouse visuals; D1 LI 8968/7010 rows beyond the qualitative note above.
+
+
+## B06 Gameplay Tower round — world boundary, presentation cues, feasibility (PARTIAL — not DONE)
+
+Full detail: `docs/survival/gameplay-depth/B06_WORLD_BOUNDARY_CUES_FEASIBILITY.md`.
+
+- System-level reconciliation of the 18 SYS sections against code: done. The 214-capability / 104-edge v11 audit is NOT complete.
+- Large-world seam (pure, not wired into runtime): `web/src/game/world-window.ts`, 8/8 tests. Two live windows and traversal are NOT implemented.
+- Presentation cue contract from committed receipts: `web/src/game/presentation-cues.ts`, 4/4 tests; 18 receipt kinds mapped; station/motorbike/door/cart cues still need new authoritative state.
+- Persistent-world feasibility (A/B/C): design comparison only; canon 336h/72h unchanged; creator decision pending.
+- Not done this round: Core 21-action effect audit, offline chronology audit, POI reusable mechanisms, full Vitest, HTTP build, browser proof.
