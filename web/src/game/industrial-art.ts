@@ -133,10 +133,17 @@ export function drawOilPump(g: G, state: 'idle' | 'run' | 'dry', frame: 0 | 1 = 
   R(g, 9, 4, 2, 3, dry ? '#ff5a4a' : run ? '#8fd19b' : '#d8a040');
   P(g, 9, 4, dry ? '#ffd0c8' : '#f4ffe8');
 }
-/** Crude drum: dark steel barrel with two bands and a tap, distinct from the can used by oil and canisters. */
+/** Crude drum (16×16): a round-bellied steel drum with light rims, a dark-crude sheen and a tap, so it reads as a drum,
+ *  not a book or box, and stands out from the dark background. Distinct from the Fuel Canister (red can). */
 export function drawCrudeDrum(g: G, c1: string, c2: string) {
-  R(g, 4, 2, 8, 12, c1); R(g, 4, 2, 1, 12, c2); R(g, 11, 2, 1, 12, '#0c0a08');   // body
-  R(g, 4, 4, 8, 1, '#7a6a58'); R(g, 4, 10, 8, 1, '#7a6a58');                      // bands
-  R(g, 6, 6, 4, 3, '#2a2420'); P(g, 7, 7, '#7a6a58');                              // label, dark crude
-  R(g, 5, 14, 6, 1, '#2a2420'); R(g, 7, 14, 2, 1, '#9aa3ad');                     // base + tap
+  const outline = '#0c0a08', rim = '#b8c2cc';
+  R(g, 4, 1, 8, 1, outline); R(g, 3, 2, 10, 1, outline);                 // top curve
+  R(g, 2, 3, 1, 9, outline); R(g, 13, 3, 1, 9, outline);                 // bulged sides
+  R(g, 3, 12, 10, 1, outline); R(g, 4, 13, 8, 1, outline);               // bottom curve
+  R(g, 3, 3, 10, 9, c1);                                                 // body fill
+  R(g, 3, 3, 10, 1, rim); R(g, 3, 9, 10, 1, rim);                        // light rims
+  R(g, 3, 5, 10, 1, '#5b6470'); R(g, 3, 11, 10, 1, '#5b6470');           // inner shade bands
+  R(g, 5, 6, 6, 3, '#1a1612'); R(g, 6, 7, 4, 1, c2);                     // dark label with crude sheen
+  P(g, 7, 7, '#e8c070');                                                 // specular on the sheen
+  R(g, 7, 13, 2, 2, rim);                                                // tap
 }

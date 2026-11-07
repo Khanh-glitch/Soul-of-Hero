@@ -496,3 +496,37 @@ Scope: fix the two verified Package A UI defects, then B (freight), C (loot/recy
 
 ### Next executable action
 - Read Atlas v10/v11 (reference branch) and write the D1 source table into this ledger; then inspect the crude inventory icon at 1280×720 with a close crop and redraw the drum if it is not distinct.
+
+## D1 — LI → SOH parity table (B05-R next step)
+
+Source read this round: Atlas on `docs/gameplay-mechanics-first-policy-20261105` (commit `5f4e6c44`; read via git object, branch not checked out). Files: `extracted/atlas.json`, `extracted/BAO_CAO_CO_CHE_CHUYEN_SAU_v4.md`, `extracted/v11/07_SOURCE_AND_RECOVERY_LEDGER.csv`, `extracted/v11/02_FULL_DEPTH_CAPABILITY_LEDGER.csv`.
+
+Source tiers, as recorded in v11 ledger: SRC08 (LI official 2019 loot/airdrop), SRC10 (2019 POI card-electric gate), SRC12 (2020 heat/refinery/vehicles), SRC13 (2020 Operation Base/trade) are `LI_OFFICIAL_VERSIONED`, `CROSS_CHECKED`, `SOURCE_READ`. The text of those official pages is not in the repo, so no official number is quoted here. Numbers in `atlas.json` come from community wiki pages with no mode or version scope, so they are `SECONDARY_LOW_CONFIDENCE`. v4 explicitly marks yields, furnace capacity and per-item probability as `[CHƯA BIẾT]` (ORIGINAL_UNKNOWN).
+
+Row format: LI source/version/mode → original rule/value → confidence → SOH current value → deliberate adaptation → code → remaining gap.
+
+| # | Mechanic | LI source / mode | LI original rule / value | Confidence | SOH current value | Adaptation | Code | Gap |
+|---|---|---|---|---|---|---|---|---|
+| 1 | Vehicle Frame | atlas `s_frame`, bench 3, unscoped wiki | 100 Iron + 30 Refined Iron + 50 Parts | SECONDARY_LOW_CONFIDENCE | 3 iron ingot + 2 mechanical parts + 2 spares, workbench L2, 25 s (SOH_PROVISIONAL) | SOH uses its own part economy, not LI counts | `catalog.ts` `vehicle_frame` | LI counts unverified; not copied |
+| 2 | Motorcycle | atlas `s_motor`, bench 3, unscoped wiki | 200 Refined Iron + Frame + 30 Gears + 30 Plates | SECONDARY_LOW_CONFIDENCE | motorbike_kit: frame + drive + 2 iron + 2 fasteners, workbench L3, 40 s (SOH_PROVISIONAL) | Drive component added; gear and plate not in kit | `catalog.ts` `motorbike_kit` | Vehicle structure differs; no LI number is a SOH target |
+| 3 | Iron Plate | atlas `s_plate`, mid workbench | 5 Refined Iron + 30 Parts | SECONDARY_LOW_CONFIDENCE | 2 refined ingot + 1 metal pipe + 1 parts → 2 plates, L2, 18 s | SOH chains plates from pipe | `catalog.ts` `iron_plate` | Conflicts with row 4 source |
+| 4 | Metal Pipe | `s_pipe` (2023, rocket-launcher context) vs v4 TapTap 04/08/2022 | 5 Refined Iron + 30 Parts (2023); Medium Workbench, 3 s (2022) | ORIGINAL_UNKNOWN (sources conflict by year) | 2 refined ingot + 1 parts, L2, 18 s; Recycler `X:pipe-v1` returns 1 ingot in 10 s | No single LI value can be selected | `catalog.ts` `metal_pipe`, `recycler.ts` | Year and mode conflict; keep ORIGINAL_UNKNOWN |
+| 5 | Oil Refinery | `s_refinery`, unscoped wiki | iron 500 + wood 200 + Low Quality Fuel 250 | SECONDARY_LOW_CONFIDENCE (scale unexplained) | iron 4 + parts 3 + spares 5 + brick 6 + glass 2 | Different economy scale; no copy | `catalog.ts` `refinery` | LI scale unverified |
+| 6 | Refinery process | `s_fuel` | Low Quality Fuel = 3 animal fat + 1 cloth | SECONDARY_LOW_CONFIDENCE | 3 Salvaged Oil + 1 glass → 1 Fuel Canister, 14 s (`refinery_fuel`); 4 crude + glass → 1 can, 16 s (`refinery_crude`) | SOH oil from wreck, vendor and authorized pump; no animal-fat route | `catalog.ts`, `engine.ts` `stepStations` | Animal fat not in SOH; no LI rate |
+| 7 | Fuel Generator | `s_door`, bench 3 | 20 Refined + 100 Iron + 30 Electronic Parts + 100 Parts | SECONDARY_LOW_CONFIDENCE | base_generator: 3 iron + 3 parts + 4 spares + 6 wood | No electronic_parts item in SOH | `catalog.ts` `base_generator` | Electronic parts absent |
+| 8 | Loot classes and per-item odds | SRC08 official 2019 + v4 | Guarantee categories described; per-item percentage `[CHƯA BIẾT]` | ORIGINAL_UNKNOWN | W06 fixed + option rolls; b04-v1 role pools (SOH_PROVISIONAL) | SOH rolls are deterministic and sourced; no LI odds | `loot-ecology.ts` | Per-item LI odds unknown |
+| 9 | Recycler output | v4 `[CHƯA BIẾT]`; PvE 2020 (4399) says Gear, Pipe, Blade disassemble to Parts | yield per item unknown; disassembly to Parts confirmed in the guide | ORIGINAL_UNKNOWN for count; ORIGINAL_CONFIRMED_IN_GUIDE for the route | pipe → 1 refined ingot, 10 s (`X:pipe-v1`, SOH_PROVISIONAL) | SOH returns refined iron, not Parts; deliberate adaptation to keep one physical sink | `recycler.ts` | Count unknown; route differs |
+| 10 | Oil source | LI red barrel (crude + low fuel), oil_base POI "open fuel resource zone", SRC12 | Red barrels roadside; base is open zone | SECONDARY_LOW_CONFIDENCE for placement | No production oil source; crude only from authorized test fixture | Map placement not invented; POI-level source pending Map | `engine.ts` `authorizedOilSource` | Map site + revision needed |
+| 11 | Pump rate | none in repo | ORIGINAL_UNKNOWN | ORIGINAL_UNKNOWN | 12 s per crude, wood fuel, `maxSourceStock` 200 (SOH_PROVISIONAL) | — | `balance.v1.json` `oilPumpV1` | No LI value |
+| 12 | Powered gate / card | SRC10 (2019) green/blue/purple; card uses `[CHƯA BIẾT]` | card tiers and uses not in repo | ORIGINAL_UNKNOWN for uses | 3 uses (SOH_PROVISIONAL); powered window 180 s; door 15 s (SOH_PROVISIONAL) | colored tiers not authored in Map; combined reader not implemented | `balance.v1.json` `poiAccess`, `poi-access.ts` | LI uses and window unknown |
+| 13 | Vehicle speed, fuel, cargo | v11 SYS09 rows NOT_RUN; no LI numbers in repo | ORIGINAL_UNKNOWN | ORIGINAL_UNKNOWN | road 125, ground 52 px/s; 0.05 fuel/px; tank 300; cargo 80 (SOH_PROVISIONAL) | measured in `b05-freight-compare` | `balance.v1.json` `motorbike`, `sim.ts` | No LI numbers to compare |
+| 14 | Cart | none | ORIGINAL_UNKNOWN | ORIGINAL_UNKNOWN | road ×1.36 without terrainSpeed table; 240 weight | observed quirk, not changed | `sim.ts:347` | Owner decision |
+| 15 | Furnace capacity / refined ore rate | v4 `[CHƯA BIẾT]` | ORIGINAL_UNKNOWN | ORIGINAL_UNKNOWN | smelt 10 s / 20 s (SOH_PROVISIONAL) | — | `catalog.ts` | No LI value |
+
+Locked SOH rules not changed by this table: 336 h / 72 h, PvE, offline and reset, Creator Core, K1–K8.
+
+Result: no LI number was promoted to canon. Rows 1–7 and 10 are the only ones with a non-ORIGINAL_UNKNOWN LI value, and all are SECONDARY_LOW_CONFIDENCE or conflicting by year. SOH values stay SOH_PROVISIONAL. Remaining obligation: obtain versioned LI text for SRC08/10/12/13 (outside this sandbox) before any row can be promoted above SECONDARY.
+
+### Crude icon (C4 follow-up)
+- Redrawn the crude drum (`drawCrudeDrum`): rounded silhouette, light rims, dark label with sheen, tap. Tests pass (`b05-industrial-art`, `b05-oil-pump`, 25/25).
+- Inspected at 1280×720 native, zoomed ×4: the slot now shows a banded dark object with a tap. It is still box-like at 16 px. The round belly and the crude sheen are not clearly readable. **Not accepted**; remains an open C4 defect.
