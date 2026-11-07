@@ -32,65 +32,67 @@ export function vehicleVisualKey(fuel: number, hp: number): 'ok' | 'empty' | 'br
 export type VehicleVariant = 'ok' | 'empty' | 'broken';
 const BODY: Record<VehicleVariant, [string, string]> = { ok: ['#d0462a', '#ffa070'], empty: ['#6e7684', '#9aa2b0'], broken: ['#7a3424', '#a0503a'] };
 
-/** Side view, 24×16, heading right. Two separated wheels with light rims (readable on grass, road and night),
- *  rear rack for cargo, tank, seat, down-tube, angled fork and a T-bar. Rider only when mounted. */
+/** Side view, 24×16, heading right. Motorcycle silhouette: two wheels with light rims, a raked fork and T-bar,
+ *  a tank over the frame, a seat, an engine with an exhaust, and a rear rack. Rider only when mounted (seated, arms to the bar). */
 export function drawVehicleSide(g: G, variant: VehicleVariant = 'ok', rider = false) {
-  const [tank, hi] = BODY[variant];
-  const tyre = '#15171d', rim = '#c4ccd8', hub = '#8a929e';
-  // rear wheel (5,11) and front wheel (19,11): light rim ring, dark tyre, spoke, hub
-  ell(g, 5, 11, 4, 4, '#0c0d11'); ell(g, 5, 11, 3.4, 3.4, rim); ell(g, 5, 11, 2.4, 2.4, tyre); P(g, 5, 9, rim); ell(g, 5, 11, 0.9, 0.9, hub);
-  ell(g, 19, 11, 4, 4, '#0c0d11'); ell(g, 19, 11, 3.4, 3.4, rim); ell(g, 19, 11, 2.4, 2.4, tyre); P(g, 19, 9, rim); ell(g, 19, 11, 0.9, 0.9, hub);
-  // rear rack, seat, engine block, down-tube and frame
-  R(g, 2, 5, 6, 1, '#b4bcc8'); P(g, 2, 6, '#8a929e');               // cargo rack (lit top edge)
-  R(g, 8, 6, 4, 2, '#23232b');                                       // seat
-  R(g, 9, 9, 5, 3, '#3a3f4a');                                       // engine block
-  R(g, 8, 8, 2, 1, '#2a2d36');                                       // down-tube join
-  R(g, 5, 8, 12, 1, '#7ea4b4');                                      // frame top line
-  R(g, 13, 9, 1, 2, '#4e7280');                                      // frame rear
-  // tank (rounded, lit on top) — empty tank is pale and dim, broken tank has rust
-  R(g, 10, 3, 7, 4, tank); R(g, 11, 2, 5, 1, tank); R(g, 11, 3, 5, 1, hi);
-  if (variant === 'broken') { P(g, 12, 4, '#4a2418'); P(g, 15, 5, '#4a2418'); P(g, 13, 6, '#4a2418'); }
-  if (variant === 'empty') { P(g, 14, 4, '#c8d0dc'); }              // fuel-cap glint on an empty tank
-  // rider: only while actually mounted (helmet, torso on the seat)
-  if (rider) { R(g, 9, 0, 3, 2, '#2e5aa0'); P(g, 10, 1, '#e8b890'); R(g, 8, 2, 3, 3, '#2a4f86'); }
-  // fork (angled, front wheel) and T-bar
-  P(g, 17, 6, '#b4bcc8'); P(g, 18, 7, '#b4bcc8'); P(g, 18, 8, '#b4bcc8'); P(g, 19, 9, '#b4bcc8'); P(g, 19, 10, '#b4bcc8');
-  R(g, 17, 2, 1, 4, '#c4ccd8'); R(g, 15, 2, 3, 1, '#c4ccd8');        // handlebar post and bar
-  if (variant === 'broken') { P(g, 15, 2, '#7a3424'); P(g, 14, 3, '#7a3424'); }  // bent bar
-  // headlamp: lit on ready, dark glass otherwise; no lamp on broken
-  if (variant === 'ok') { R(g, 20, 5, 2, 2, '#ffe27a'); P(g, 21, 5, '#fff8d0'); }
-  else if (variant === 'empty') R(g, 20, 5, 2, 2, '#3a3a42');
-  if (variant === 'broken') { P(g, 1, 3, '#8a8f98'); P(g, 2, 2, '#8a8f98'); }  // smoke wisp
+  const [tank, hi] = BODY[variant]; const shade = '#00000055';
+  const rim = '#c8d0dc', tyre = '#1a1c22', tyreEdge = '#0c0d11', hub = '#8a929e', metal = '#9aa3ad';
+  // wheels: dark outline, light rim ring (separates from grass, road and night), dark tyre, hub
+  ell(g, 5, 11, 4, 4, tyreEdge); ell(g, 5, 11, 3.2, 3.2, rim); ell(g, 5, 11, 2.2, 2.2, tyre); P(g, 5, 11, hub); P(g, 5, 9, rim);
+  ell(g, 19, 11, 4, 4, tyreEdge); ell(g, 19, 11, 3.2, 3.2, rim); ell(g, 19, 11, 2.2, 2.2, tyre); P(g, 19, 11, hub); P(g, 19, 9, rim);
+  // rear rack (cargo sits on it) and exhaust
+  R(g, 1, 5, 4, 1, '#c4ccd8'); P(g, 1, 6, metal); P(g, 4, 6, metal);
+  R(g, 4, 12, 4, 1, '#5a5f68'); P(g, 8, 12, '#3a3f4a');
+  // engine and frame
+  R(g, 9, 9, 5, 3, '#4a4f5a'); P(g, 9, 9, '#7a808c'); P(g, 13, 11, '#2a2d36');
+  R(g, 7, 8, 10, 1, '#7ea4b4'); R(g, 13, 9, 1, 3, '#4e7280');
+  // seat
+  R(g, 6, 5, 4, 2, '#1d1d24'); P(g, 6, 5, '#3a3a46');
+  // tank: rounded top, lit highlight, shaded lower side (empty tank is pale; broken tank is rust-dented)
+  R(g, 10, 3, 6, 4, tank); R(g, 11, 2, 4, 1, tank); R(g, 10, 3, 6, 1, hi); R(g, 10, 6, 6, 1, shade);
+  if (variant === 'empty') { P(g, 14, 3, '#c8d0dc'); P(g, 13, 2, '#c8d0dc'); }      // fuel cap glint on a dry tank
+  if (variant === 'broken') { P(g, 12, 4, '#4a2418'); P(g, 14, 5, '#4a2418'); P(g, 11, 5, '#4a2418'); }
+  // head tube, raked fork to the front hub, T-bar
+  R(g, 16, 3, 1, 3, metal);
+  P(g, 16, 6, metal); P(g, 17, 7, metal); P(g, 17, 8, metal); P(g, 18, 9, metal); P(g, 18, 10, metal);
+  if (variant === 'broken') { R(g, 13, 2, 4, 1, metal); P(g, 13, 1, '#2a2a30'); }   // bar bent down-back
+  else { R(g, 14, 2, 3, 1, metal); P(g, 14, 2, '#2a2a30'); }
+  // headlamp: lit when ready; dark glass when out of fuel; missing with a cracked socket when broken
+  if (variant === 'ok') { R(g, 19, 4, 2, 2, '#ffe27a'); P(g, 20, 4, '#fff8d0'); }
+  else if (variant === 'empty') R(g, 19, 4, 2, 2, '#3a3a42');
+  else { R(g, 19, 4, 2, 2, '#2a2220'); P(g, 20, 5, '#7a6a50'); }
+  if (variant === 'broken') { P(g, 11, 0, '#8a8f98'); P(g, 12, 0, '#8a8f98'); P(g, 10, 1, '#8a8f98'); }   // smoke wisp
+  // rider only while mounted: helmet with visor, torso on the seat, arm reaching to the bar
+  if (rider) { R(g, 8, 0, 3, 2, '#2e5aa0'); P(g, 10, 1, '#9ad0ff'); R(g, 7, 2, 3, 3, '#2a4f86'); R(g, 10, 2, 3, 1, '#2a4f86'); R(g, 6, 4, 2, 1, '#2a4f86'); }
 }
-/** Head-on view (heading down, toward the viewer), 12×22. Headlamp at the bottom end. */
+/** Head-on view, 12×22 (heading toward the viewer). Wide T-bar with grips, tank, headlamp at the nose, two fork legs, front wheel at the bottom, rear wheel peeking above. */
 export function drawVehicleFront(g: G, variant: VehicleVariant = 'ok', rider = false) {
-  const dead = variant !== 'ok'; const [tankCol] = BODY[variant];
-  const tyre = '#1b1d24', hub = '#7a808c';
-  ell(g, 6, 4, 3, 2.5, tyre); ell(g, 6, 4, 1.2, 1.2, hub);          // rear wheel (far, top)
-  R(g, 5, 6, 2, 7, '#4e7280'); R(g, 5, 6, 1, 7, '#7ea4b4');          // frame
-  R(g, 4, 6, 4, 2, '#23232b');                                      // seat
-  R(g, 3, 8, 6, 4, tankCol);                                          // tank
-  if (rider) { R(g, 4, 3, 4, 3, '#2e5aa0'); P(g, 5, 4, '#e8b890'); }
-  R(g, 4, 12, 4, 1, '#9aa3ad');                                     // bar
-  R(g, 5, 13, 2, 2, '#3a3f4a');                                     // engine
-  ell(g, 6, 18, 3, 2.5, tyre); ell(g, 6, 18, 1.2, 1.2, hub);        // front wheel
-  R(g, 4, 14, 4, 2, dead ? '#3a3a42' : '#ffe27a');                   // headlamp at the nose
-  if (!dead) P(g, 5, 14, '#fff8d0');
+  const [tank, hi] = BODY[variant];
+  const rim = '#c8d0dc', tyre = '#1a1c22', tyreEdge = '#0c0d11', metal = '#9aa3ad';
+  ell(g, 6, 3, 3.5, 2.5, tyreEdge); ell(g, 6, 3, 2.6, 1.6, rim); ell(g, 6, 3, 1.5, 0.9, tyre);          // rear wheel behind
+  R(g, 4, 5, 4, 1, '#1d1d24');                                                                          // seat
+  R(g, 3, 6, 6, 4, tank); R(g, 3, 6, 6, 1, hi); R(g, 3, 9, 6, 1, '#00000055');                          // tank
+  if (rider) { R(g, 4, 2, 4, 3, '#2e5aa0'); P(g, 5, 3, '#9ad0ff'); R(g, 4, 4, 4, 2, '#2a4f86'); }      // rider head and torso
+  R(g, 1, 8, 10, 1, '#c4ccd8'); P(g, 1, 8, '#2a2a30'); P(g, 10, 8, '#2a2a30'); P(g, 4, 7, metal); P(g, 7, 7, metal);  // T-bar + grips
+  if (variant === 'ok') { R(g, 4, 11, 4, 2, '#ffe27a'); P(g, 5, 11, '#fff8d0'); }
+  else if (variant === 'empty') R(g, 4, 11, 4, 2, '#3a3a42');
+  else { R(g, 4, 11, 4, 2, '#2a2220'); P(g, 5, 12, '#7a6a50'); }
+  R(g, 4, 13, 4, 2, '#3a3f4a');                                                                         // engine nose
+  P(g, 4, 15, metal); P(g, 4, 16, metal); P(g, 3, 17, metal); P(g, 7, 15, metal); P(g, 7, 16, metal); P(g, 8, 17, metal);  // fork legs
+  ell(g, 6, 19, 3.5, 2.5, tyreEdge); ell(g, 6, 19, 2.6, 1.6, rim); ell(g, 6, 19, 1.5, 0.9, tyre);       // front wheel
 }
-/** Tail view (heading up, away from the viewer): same silhouette, red taillight at the far end. */
+/** Rear view, 12×22 (heading away). Rear rack and cargo position, taillight, exhaust, near rear wheel at the bottom. */
 export function drawVehicleBack(g: G, variant: VehicleVariant = 'ok', rider = false) {
-  const dead = variant !== 'ok'; const [tankCol, tankHi] = BODY[variant];
-  const tyre = '#15171d', hub = '#8a929e';
-  ell(g, 6, 18, 3, 2.5, tyre); ell(g, 6, 18, 1.2, 1.2, hub);        // rear wheel (near, bottom)
-  R(g, 5, 9, 2, 7, '#4e7280'); R(g, 5, 9, 1, 7, '#7ea4b4');
-  R(g, 4, 14, 4, 2, '#23232b');
-  R(g, 3, 10, 6, 4, tankCol);
-  R(g, 3, 13, 6, 1, tankHi);
-  if (rider) { R(g, 4, 6, 4, 3, '#2e5aa0'); P(g, 5, 7, '#e8b890'); }
-  R(g, 4, 8, 4, 1, '#9aa3ad');
-  R(g, 5, 6, 2, 2, '#3a3f4a');
-  ell(g, 6, 4, 3, 2.5, tyre); ell(g, 6, 4, 1.2, 1.2, hub);          // front wheel (far, top)
-  R(g, 4, 6, 4, 2, dead ? '#3a1a1a' : '#d03a2a');                    // taillight
+  const [tank, hi] = BODY[variant];
+  const rim = '#c8d0dc', tyre = '#1a1c22', tyreEdge = '#0c0d11', metal = '#9aa3ad';
+  ell(g, 6, 3, 3.5, 2.5, tyreEdge); ell(g, 6, 3, 2.6, 1.6, rim); ell(g, 6, 3, 1.5, 0.9, tyre);          // front wheel far, top
+  R(g, 4, 5, 4, 1, '#1d1d24');                                                                          // seat
+  if (rider) { R(g, 4, 2, 4, 3, '#2e5aa0'); P(g, 5, 3, '#9ad0ff'); R(g, 4, 4, 4, 2, '#2a4f86'); }
+  R(g, 3, 6, 6, 4, tank); R(g, 3, 6, 6, 1, hi);                                                          // tank
+  R(g, 2, 11, 8, 1, '#c4ccd8'); P(g, 2, 12, metal); P(g, 9, 12, metal);                                  // rear rack (cargo sits on it)
+  if (variant === 'broken') { R(g, 4, 13, 4, 1, '#5a2a20'); } else { R(g, 4, 13, 4, 1, variant === 'ok' ? '#d03a2a' : '#5a2a2a'); }  // taillight
+  R(g, 5, 14, 2, 2, '#5a5f68');                                                                          // exhaust
+  ell(g, 6, 19, 3.5, 2.5, tyreEdge); ell(g, 6, 19, 2.6, 1.6, rim); ell(g, 6, 19, 1.5, 0.9, tyre);       // near rear wheel
 }
 /** Cargo crate strapped to the rack: 7×5, wooden, pixel-straps. Drawn over the bike when it carries cargo. */
 export function drawVehicleCrate(g: G) {

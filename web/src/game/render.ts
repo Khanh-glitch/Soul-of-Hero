@@ -233,7 +233,8 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   for (const e of ents) { if (e.x < cx - 40 || e.x > cx + VIEW_W + 40 || e.y < cy - 20 || e.y > cy + VIEW_H + 60) continue; if (e.kind === 'struct' && ['floor', 'roof'].includes(STRUCTS[e.type!].layer)) continue; if (e.type === 'garden' || e.type === 'spikes') continue; list.push({ y: e.y + (e.kind === 'drop' ? -2 : 6), f: () => drawEntity(g, r, e, time, now) }); }
   for(const q of r.natureTrees||[]){const x=q.tx*TILE,y=q.ty*TILE;if(x>=cx-32&&x<cx+VIEW_W+32&&y>=cy-32&&y<cy+VIEW_H+32)list.push({y:y+14,f:()=>g.drawImage(A.src.oak[(q.tx+q.ty)%A.src.oak.length],x-4,y-16)});}
   for (const m of r.creatures) { if (m.x < cx - 40 || m.x > cx + VIEW_W + 40 || m.y < cy - 40 || m.y > cy + VIEW_H + 60) continue; list.push({ y: m.y + 4, f: () => drawCreature(g, r, m, time, now) }); }
-  if(!r.spiritTransit)list.push({ y: p.y + 4, f: () => drawPlayer(g, gs, time) });
+  // While mounted the rider is composited onto the bike sprite (vehicle case); skip the standalone player to avoid a double draw.
+  if(!r.spiritTransit && r.player.vehicle == null)list.push({ y: p.y + 4, f: () => drawPlayer(g, gs, time) });
   const dragon=r.dragonDive;if(dragon?.phase && dragon.dragonX!==undefined && dragon.dragonY!==undefined) list.push({y:dragon.dragonY+4,f:()=>{const x=dragon.dragonX!,y=dragon.dragonY!;g.save();g.translate(x,y);g.fillStyle='#70241e';g.beginPath();g.moveTo(-19,-12);g.lineTo(-7,-22);g.lineTo(0,-14);g.lineTo(10,-21);g.lineTo(18,-10);g.lineTo(7,-12);g.lineTo(3,-3);g.lineTo(-5,-3);g.lineTo(-9,-11);g.closePath();g.fill();g.fillStyle='#ff8c2b';g.fillRect(-7,-14,14,6);g.fillStyle='#ffe6a0';g.fillRect(3,-13,2,2);g.restore();}});
   for(const item of comp.depthItems(g))list.push(item);
   // POI terrain walls need y-sorting vs player? They are flat tiles; fine.

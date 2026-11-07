@@ -1,0 +1,742 @@
+{
+ "base": "http://127.0.0.1:4430",
+ "shots": [
+  {
+   "path": "evidence/c4-motorbike-matrix/ready-right-1280x720.png",
+   "viewport": "1280x720",
+   "state": "ready",
+   "angle": "right",
+   "radians": 0,
+   "expectedView": {
+    "view": "side",
+    "mirror": false
+   },
+   "mounted": false,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 120,
+    "hp": 200,
+    "angle": 0,
+    "mounted": false
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/ready-toward-1280x720.png",
+   "viewport": "1280x720",
+   "state": "ready",
+   "angle": "toward",
+   "radians": 1.5707963267948966,
+   "expectedView": {
+    "view": "front",
+    "mirror": false
+   },
+   "mounted": false,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 120,
+    "hp": 200,
+    "angle": 1.5707963267948966,
+    "mounted": false
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/ready-left-1280x720.png",
+   "viewport": "1280x720",
+   "state": "ready",
+   "angle": "left",
+   "radians": 3.141592653589793,
+   "expectedView": {
+    "view": "side",
+    "mirror": true
+   },
+   "mounted": false,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 120,
+    "hp": 200,
+    "angle": 3.141592653589793,
+    "mounted": false
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/ready-away-1280x720.png",
+   "viewport": "1280x720",
+   "state": "ready",
+   "angle": "away",
+   "radians": -1.5707963267948966,
+   "expectedView": {
+    "view": "back",
+    "mirror": false
+   },
+   "mounted": false,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 120,
+    "hp": 200,
+    "angle": -1.5707963267948966,
+    "mounted": false
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/empty-right-1280x720.png",
+   "viewport": "1280x720",
+   "state": "empty",
+   "angle": "right",
+   "radians": 0,
+   "expectedView": {
+    "view": "side",
+    "mirror": false
+   },
+   "mounted": false,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 0,
+    "hp": 200,
+    "angle": 0,
+    "mounted": false
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/empty-toward-1280x720.png",
+   "viewport": "1280x720",
+   "state": "empty",
+   "angle": "toward",
+   "radians": 1.5707963267948966,
+   "expectedView": {
+    "view": "front",
+    "mirror": false
+   },
+   "mounted": false,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 0,
+    "hp": 200,
+    "angle": 1.5707963267948966,
+    "mounted": false
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/empty-left-1280x720.png",
+   "viewport": "1280x720",
+   "state": "empty",
+   "angle": "left",
+   "radians": 3.141592653589793,
+   "expectedView": {
+    "view": "side",
+    "mirror": true
+   },
+   "mounted": false,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 0,
+    "hp": 200,
+    "angle": 3.141592653589793,
+    "mounted": false
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/empty-away-1280x720.png",
+   "viewport": "1280x720",
+   "state": "empty",
+   "angle": "away",
+   "radians": -1.5707963267948966,
+   "expectedView": {
+    "view": "back",
+    "mirror": false
+   },
+   "mounted": false,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 0,
+    "hp": 200,
+    "angle": -1.5707963267948966,
+    "mounted": false
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/broken-right-1280x720.png",
+   "viewport": "1280x720",
+   "state": "broken",
+   "angle": "right",
+   "radians": 0,
+   "expectedView": {
+    "view": "side",
+    "mirror": false
+   },
+   "mounted": false,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 0,
+    "hp": 0,
+    "angle": 0,
+    "mounted": false
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/broken-toward-1280x720.png",
+   "viewport": "1280x720",
+   "state": "broken",
+   "angle": "toward",
+   "radians": 1.5707963267948966,
+   "expectedView": {
+    "view": "front",
+    "mirror": false
+   },
+   "mounted": false,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 0,
+    "hp": 0,
+    "angle": 1.5707963267948966,
+    "mounted": false
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/broken-left-1280x720.png",
+   "viewport": "1280x720",
+   "state": "broken",
+   "angle": "left",
+   "radians": 3.141592653589793,
+   "expectedView": {
+    "view": "side",
+    "mirror": true
+   },
+   "mounted": false,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 0,
+    "hp": 0,
+    "angle": 3.141592653589793,
+    "mounted": false
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/broken-away-1280x720.png",
+   "viewport": "1280x720",
+   "state": "broken",
+   "angle": "away",
+   "radians": -1.5707963267948966,
+   "expectedView": {
+    "view": "back",
+    "mirror": false
+   },
+   "mounted": false,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 0,
+    "hp": 0,
+    "angle": -1.5707963267948966,
+    "mounted": false
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/ready-mounted-right-1280x720.png",
+   "viewport": "1280x720",
+   "state": "ready-mounted",
+   "angle": "right",
+   "radians": 0,
+   "expectedView": {
+    "view": "side",
+    "mirror": false
+   },
+   "mounted": true,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 120,
+    "hp": 200,
+    "angle": 0,
+    "mounted": true
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/ready-mounted-toward-1280x720.png",
+   "viewport": "1280x720",
+   "state": "ready-mounted",
+   "angle": "toward",
+   "radians": 1.5707963267948966,
+   "expectedView": {
+    "view": "front",
+    "mirror": false
+   },
+   "mounted": true,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 120,
+    "hp": 200,
+    "angle": 1.5707963267948966,
+    "mounted": true
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/ready-mounted-left-1280x720.png",
+   "viewport": "1280x720",
+   "state": "ready-mounted",
+   "angle": "left",
+   "radians": 3.141592653589793,
+   "expectedView": {
+    "view": "side",
+    "mirror": true
+   },
+   "mounted": true,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 120,
+    "hp": 200,
+    "angle": 3.141592653589793,
+    "mounted": true
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/ready-mounted-away-1280x720.png",
+   "viewport": "1280x720",
+   "state": "ready-mounted",
+   "angle": "away",
+   "radians": -1.5707963267948966,
+   "expectedView": {
+    "view": "back",
+    "mirror": false
+   },
+   "mounted": true,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 120,
+    "hp": 200,
+    "angle": -1.5707963267948966,
+    "mounted": true
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/ready-right-640x360.png",
+   "viewport": "640x360",
+   "state": "ready",
+   "angle": "right",
+   "radians": 0,
+   "expectedView": {
+    "view": "side",
+    "mirror": false
+   },
+   "mounted": false,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 120,
+    "hp": 200,
+    "angle": 0,
+    "mounted": false
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/ready-toward-640x360.png",
+   "viewport": "640x360",
+   "state": "ready",
+   "angle": "toward",
+   "radians": 1.5707963267948966,
+   "expectedView": {
+    "view": "front",
+    "mirror": false
+   },
+   "mounted": false,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 120,
+    "hp": 200,
+    "angle": 1.5707963267948966,
+    "mounted": false
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/ready-left-640x360.png",
+   "viewport": "640x360",
+   "state": "ready",
+   "angle": "left",
+   "radians": 3.141592653589793,
+   "expectedView": {
+    "view": "side",
+    "mirror": true
+   },
+   "mounted": false,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 120,
+    "hp": 200,
+    "angle": 3.141592653589793,
+    "mounted": false
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/ready-away-640x360.png",
+   "viewport": "640x360",
+   "state": "ready",
+   "angle": "away",
+   "radians": -1.5707963267948966,
+   "expectedView": {
+    "view": "back",
+    "mirror": false
+   },
+   "mounted": false,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 120,
+    "hp": 200,
+    "angle": -1.5707963267948966,
+    "mounted": false
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/empty-right-640x360.png",
+   "viewport": "640x360",
+   "state": "empty",
+   "angle": "right",
+   "radians": 0,
+   "expectedView": {
+    "view": "side",
+    "mirror": false
+   },
+   "mounted": false,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 0,
+    "hp": 200,
+    "angle": 0,
+    "mounted": false
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/empty-toward-640x360.png",
+   "viewport": "640x360",
+   "state": "empty",
+   "angle": "toward",
+   "radians": 1.5707963267948966,
+   "expectedView": {
+    "view": "front",
+    "mirror": false
+   },
+   "mounted": false,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 0,
+    "hp": 200,
+    "angle": 1.5707963267948966,
+    "mounted": false
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/empty-left-640x360.png",
+   "viewport": "640x360",
+   "state": "empty",
+   "angle": "left",
+   "radians": 3.141592653589793,
+   "expectedView": {
+    "view": "side",
+    "mirror": true
+   },
+   "mounted": false,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 0,
+    "hp": 200,
+    "angle": 3.141592653589793,
+    "mounted": false
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/empty-away-640x360.png",
+   "viewport": "640x360",
+   "state": "empty",
+   "angle": "away",
+   "radians": -1.5707963267948966,
+   "expectedView": {
+    "view": "back",
+    "mirror": false
+   },
+   "mounted": false,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 0,
+    "hp": 200,
+    "angle": -1.5707963267948966,
+    "mounted": false
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/broken-right-640x360.png",
+   "viewport": "640x360",
+   "state": "broken",
+   "angle": "right",
+   "radians": 0,
+   "expectedView": {
+    "view": "side",
+    "mirror": false
+   },
+   "mounted": false,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 0,
+    "hp": 0,
+    "angle": 0,
+    "mounted": false
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/broken-toward-640x360.png",
+   "viewport": "640x360",
+   "state": "broken",
+   "angle": "toward",
+   "radians": 1.5707963267948966,
+   "expectedView": {
+    "view": "front",
+    "mirror": false
+   },
+   "mounted": false,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 0,
+    "hp": 0,
+    "angle": 1.5707963267948966,
+    "mounted": false
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/broken-left-640x360.png",
+   "viewport": "640x360",
+   "state": "broken",
+   "angle": "left",
+   "radians": 3.141592653589793,
+   "expectedView": {
+    "view": "side",
+    "mirror": true
+   },
+   "mounted": false,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 0,
+    "hp": 0,
+    "angle": 3.141592653589793,
+    "mounted": false
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/broken-away-640x360.png",
+   "viewport": "640x360",
+   "state": "broken",
+   "angle": "away",
+   "radians": -1.5707963267948966,
+   "expectedView": {
+    "view": "back",
+    "mirror": false
+   },
+   "mounted": false,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 0,
+    "hp": 0,
+    "angle": -1.5707963267948966,
+    "mounted": false
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/ready-mounted-right-640x360.png",
+   "viewport": "640x360",
+   "state": "ready-mounted",
+   "angle": "right",
+   "radians": 0,
+   "expectedView": {
+    "view": "side",
+    "mirror": false
+   },
+   "mounted": true,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 120,
+    "hp": 200,
+    "angle": 0,
+    "mounted": true
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/ready-mounted-toward-640x360.png",
+   "viewport": "640x360",
+   "state": "ready-mounted",
+   "angle": "toward",
+   "radians": 1.5707963267948966,
+   "expectedView": {
+    "view": "front",
+    "mirror": false
+   },
+   "mounted": true,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 120,
+    "hp": 200,
+    "angle": 1.5707963267948966,
+    "mounted": true
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/ready-mounted-left-640x360.png",
+   "viewport": "640x360",
+   "state": "ready-mounted",
+   "angle": "left",
+   "radians": 3.141592653589793,
+   "expectedView": {
+    "view": "side",
+    "mirror": true
+   },
+   "mounted": true,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 120,
+    "hp": 200,
+    "angle": 3.141592653589793,
+    "mounted": true
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike-matrix/ready-mounted-away-640x360.png",
+   "viewport": "640x360",
+   "state": "ready-mounted",
+   "angle": "away",
+   "radians": -1.5707963267948966,
+   "expectedView": {
+    "view": "back",
+    "mirror": false
+   },
+   "mounted": true,
+   "bike": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "after": {
+    "fuel": 120,
+    "hp": 200,
+    "angle": -1.5707963267948966,
+    "mounted": true
+   }
+  }
+ ],
+ "errors": []
+}
