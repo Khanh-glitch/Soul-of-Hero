@@ -7,7 +7,7 @@ import { getWorld, SRC_KEYS, fbm } from './world';
 import { effTile, sourceAt, darkness, weatherAt, isRagnarok, entsAt, buildReason, C, roofRoom, clearPhysicalLine, irSensorVisual } from './engine';
 import { airdropView } from './airdrop';
 import { lootSpriteKey } from './loot-ecology';
-import { vehicleView, vehicleStateKey, refineryStateKey, pumpStateKey } from './industrial-art';
+import { vehicleView, vehicleVisualKey, refineryStateKey, pumpStateKey } from './industrial-art';
 const lootFamilyCache = new WeakMap<object, string | null>();
 /** B04-P4: the physical family sprite of a classed cache (memoised per entity; unclassed crates keep the generic art). */
 function lootFamilySprite(r: RunState, e: Entity): string | null {
@@ -299,8 +299,8 @@ function drawEntity(g: CanvasRenderingContext2D, r: RunState, e: Entity, time: n
     case 'cart': { shadow(g, X, Y + 6, 11); g.drawImage(A.st.cart, X - 14, Y - 14); if (C(r, e.c!).slots.some(Boolean)) g.drawImage(A.st.cargo, X - 14, Y - 16); if (r.player.pulling === e.id) { g.fillStyle = '#c8a060'; const p = r.player; const n = 8; for (let i = 0; i <= n; i++) { const t = i / n; g.fillRect(Math.round(X + 12 + (p.x - X - 12) * t), Math.round(Y - 4 + (p.y - Y + 2) * t + Math.sin(t * Math.PI) * 2), 1, 1); } } return; }
     case 'vehicle': {
       // B05: real facing sprite (side mirrored for left, head-on for up/down), lamp/tank state from fuel and HP, strapped crate when loaded, fuel gauge.
-      const v = e.vehicle; const { view, mirror } = vehicleView(v?.angle || 0); const st = vehicleStateKey(v?.fuel ?? 0, e.hp ?? 0);
-      const spr = A.st[`vehicle_${view}_${st}`]; const half = view === 'side' ? [-12, -8] : [-6, -11];
+      const v = e.vehicle; const { view, mirror } = vehicleView(v?.angle || 0); const variant = vehicleVisualKey(v?.fuel ?? 0, e.hp ?? 0); const rider = r.player.vehicle === e.id;
+      const spr = A.st[`vehicle_${view}_${variant}${rider ? '_rider' : ''}`]; const half = view === 'side' ? [-12, -8] : [-6, -11];
       shadow(g, X, Y + (view === 'side' ? 5 : 8), view === 'side' ? 10 : 7);
       g.save(); g.translate(X, Y); if (mirror) g.scale(-1, 1);
       g.drawImage(spr, half[0], half[1]);
@@ -310,7 +310,7 @@ function drawEntity(g: CanvasRenderingContext2D, r: RunState, e: Entity, time: n
       const frac = Math.max(0, Math.min(1, (v?.fuel ?? 0) / BAL.motorbike.tank)); const by = Y + half[1] - 3;
       g.fillStyle = '#140c14'; g.fillRect(X - 6, by, 12, 2);
       g.fillStyle = frac > 0.25 ? '#9cf26b' : '#ff7a3a'; g.fillRect(X - 6, by, Math.round(12 * frac), 2);
-      if (st === 'dead' && (v?.fuel ?? 0) <= 0 && Math.floor(time / 500) % 2) { g.fillStyle = 'rgba(200,200,205,0.6)'; g.fillRect(X + (mirror ? -6 : 5), Y + half[1] - 2, 2, 2); }
+      if ((v?.fuel ?? 0) <= 0 && Math.floor(time / 500) % 2) { g.fillStyle = 'rgba(200,200,205,0.6)'; g.fillRect(X + (mirror ? -6 : 5), Y + half[1] - 2, 2, 2); }
       return;
     }
     case 'airdrop': { const a=e.airdrop;if(!a||a.phase==='signal')return;let lift=0;if(a.phase==='descending')lift=Math.max(0,Math.min(1,(a.landAt-now)/(a.landAt-a.descentAt)))*75;

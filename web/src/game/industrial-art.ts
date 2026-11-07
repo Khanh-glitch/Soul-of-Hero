@@ -24,34 +24,53 @@ export function refineryStateKey(burn: number | undefined, queueLength: number):
 }
 
 // ---- Vehicle sprites ----------------------------------------------------------------------------------
-/** Side view, 24×16, heading right. Rider space above the seat; cargo rack behind the seat. */
-export function drawVehicleSide(g: G, state: 'ok' | 'dead') {
-  const dead = state === 'dead';
-  const tyre = '#1b1d24', hub = '#7a808c';
-  // wheels: light rim ring so the tyres separate from dark grass and night overlay; tread highlight; hub
-  ell(g, 6, 11, 3.8, 3.8, '#59606e'); ell(g, 6, 11, 3.0, 3.0, tyre); P(g, 4, 9, '#8a92a0'); ell(g, 6, 11, 1.4, 1.4, hub);
-  ell(g, 18, 11, 3.8, 3.8, '#59606e'); ell(g, 18, 11, 3.0, 3.0, tyre); P(g, 16, 9, '#8a92a0'); ell(g, 18, 11, 1.4, 1.4, hub);
-  R(g, 9, 9, 6, 3, '#3a3f4a');                                  // engine block
-  R(g, 2, 9, 5, 1, '#5a5f68'); P(g, 1, 10, '#3a3a40');           // exhaust
-  R(g, 6, 8, 12, 2, '#4e7280'); R(g, 6, 8, 12, 1, '#7ea4b4');    // frame
-  R(g, 4, 5, 5, 1, '#8a8f98');                                  // cargo rack
-  R(g, 8, 6, 5, 2, '#23232b');                                  // seat
-  R(g, 9, 3, 7, 3, dead ? '#6a3a2c' : '#c8502e');                // tank
-  R(g, 9, 3, 7, 1, dead ? '#8a5040' : '#f08a5a');
-  if (dead) { P(g, 12, 4, '#5a3020'); P(g, 14, 5, '#5a3020'); }  // rust
-  R(g, 18, 4, 1, 5, '#9aa3ad'); R(g, 17, 3, 3, 1, '#9aa3ad');    // fork + bar
-  R(g, 19, 6, 2, 2, dead ? '#3a3a42' : '#ffe27a');                 // headlamp
-  if (!dead) P(g, 20, 6, '#fff8d0');
+/** Sprite-selection only (does NOT change vehicleStateKey or any mechanic): READY / OUT OF FUEL / BROKEN.
+ *  broken = hp 0 (takes precedence); empty = has hp but no fuel; ok = fuelled and running. */
+export function vehicleVisualKey(fuel: number, hp: number): 'ok' | 'empty' | 'broken' {
+  return hp <= 0 ? 'broken' : fuel <= 0 ? 'empty' : 'ok';
+}
+export type VehicleVariant = 'ok' | 'empty' | 'broken';
+const BODY: Record<VehicleVariant, [string, string]> = { ok: ['#d0462a', '#ffa070'], empty: ['#6e7684', '#9aa2b0'], broken: ['#7a3424', '#a0503a'] };
+
+/** Side view, 24×16, heading right. Two separated wheels with light rims (readable on grass, road and night),
+ *  rear rack for cargo, tank, seat, down-tube, angled fork and a T-bar. Rider only when mounted. */
+export function drawVehicleSide(g: G, variant: VehicleVariant = 'ok', rider = false) {
+  const [tank, hi] = BODY[variant];
+  const tyre = '#15171d', rim = '#c4ccd8', hub = '#8a929e';
+  // rear wheel (5,11) and front wheel (19,11): light rim ring, dark tyre, spoke, hub
+  ell(g, 5, 11, 4, 4, '#0c0d11'); ell(g, 5, 11, 3.4, 3.4, rim); ell(g, 5, 11, 2.4, 2.4, tyre); P(g, 5, 9, rim); ell(g, 5, 11, 0.9, 0.9, hub);
+  ell(g, 19, 11, 4, 4, '#0c0d11'); ell(g, 19, 11, 3.4, 3.4, rim); ell(g, 19, 11, 2.4, 2.4, tyre); P(g, 19, 9, rim); ell(g, 19, 11, 0.9, 0.9, hub);
+  // rear rack, seat, engine block, down-tube and frame
+  R(g, 2, 5, 6, 1, '#b4bcc8'); P(g, 2, 6, '#8a929e');               // cargo rack (lit top edge)
+  R(g, 8, 6, 4, 2, '#23232b');                                       // seat
+  R(g, 9, 9, 5, 3, '#3a3f4a');                                       // engine block
+  R(g, 8, 8, 2, 1, '#2a2d36');                                       // down-tube join
+  R(g, 5, 8, 12, 1, '#7ea4b4');                                      // frame top line
+  R(g, 13, 9, 1, 2, '#4e7280');                                      // frame rear
+  // tank (rounded, lit on top) — empty tank is pale and dim, broken tank has rust
+  R(g, 10, 3, 7, 4, tank); R(g, 11, 2, 5, 1, tank); R(g, 11, 3, 5, 1, hi);
+  if (variant === 'broken') { P(g, 12, 4, '#4a2418'); P(g, 15, 5, '#4a2418'); P(g, 13, 6, '#4a2418'); }
+  if (variant === 'empty') { P(g, 14, 4, '#c8d0dc'); }              // fuel-cap glint on an empty tank
+  // rider: only while actually mounted (helmet, torso on the seat)
+  if (rider) { R(g, 9, 0, 3, 2, '#2e5aa0'); P(g, 10, 1, '#e8b890'); R(g, 8, 2, 3, 3, '#2a4f86'); }
+  // fork (angled, front wheel) and T-bar
+  P(g, 17, 6, '#b4bcc8'); P(g, 18, 7, '#b4bcc8'); P(g, 18, 8, '#b4bcc8'); P(g, 19, 9, '#b4bcc8'); P(g, 19, 10, '#b4bcc8');
+  R(g, 17, 2, 1, 4, '#c4ccd8'); R(g, 15, 2, 3, 1, '#c4ccd8');        // handlebar post and bar
+  if (variant === 'broken') { P(g, 15, 2, '#7a3424'); P(g, 14, 3, '#7a3424'); }  // bent bar
+  // headlamp: lit on ready, dark glass otherwise; no lamp on broken
+  if (variant === 'ok') { R(g, 20, 5, 2, 2, '#ffe27a'); P(g, 21, 5, '#fff8d0'); }
+  else if (variant === 'empty') R(g, 20, 5, 2, 2, '#3a3a42');
+  if (variant === 'broken') { P(g, 1, 3, '#8a8f98'); P(g, 2, 2, '#8a8f98'); }  // smoke wisp
 }
 /** Head-on view (heading down, toward the viewer), 12×22. Headlamp at the bottom end. */
-export function drawVehicleFront(g: G, state: 'ok' | 'dead') {
-  const dead = state === 'dead';
+export function drawVehicleFront(g: G, variant: VehicleVariant = 'ok', rider = false) {
+  const dead = variant !== 'ok'; const [tankCol] = BODY[variant];
   const tyre = '#1b1d24', hub = '#7a808c';
   ell(g, 6, 4, 3, 2.5, tyre); ell(g, 6, 4, 1.2, 1.2, hub);          // rear wheel (far, top)
   R(g, 5, 6, 2, 7, '#4e7280'); R(g, 5, 6, 1, 7, '#7ea4b4');          // frame
   R(g, 4, 6, 4, 2, '#23232b');                                      // seat
-  R(g, 3, 8, 6, 4, dead ? '#6a3a2c' : '#c8502e');                    // tank
-  R(g, 3, 8, 6, 1, dead ? '#8a5040' : '#f08a5a');
+  R(g, 3, 8, 6, 4, tankCol);                                          // tank
+  if (rider) { R(g, 4, 3, 4, 3, '#2e5aa0'); P(g, 5, 4, '#e8b890'); }
   R(g, 4, 12, 4, 1, '#9aa3ad');                                     // bar
   R(g, 5, 13, 2, 2, '#3a3f4a');                                     // engine
   ell(g, 6, 18, 3, 2.5, tyre); ell(g, 6, 18, 1.2, 1.2, hub);        // front wheel
@@ -59,14 +78,15 @@ export function drawVehicleFront(g: G, state: 'ok' | 'dead') {
   if (!dead) P(g, 5, 14, '#fff8d0');
 }
 /** Tail view (heading up, away from the viewer): same silhouette, red taillight at the far end. */
-export function drawVehicleBack(g: G, state: 'ok' | 'dead') {
-  const dead = state === 'dead';
-  const tyre = '#1b1d24', hub = '#7a808c';
+export function drawVehicleBack(g: G, variant: VehicleVariant = 'ok', rider = false) {
+  const dead = variant !== 'ok'; const [tankCol, tankHi] = BODY[variant];
+  const tyre = '#15171d', hub = '#8a929e';
   ell(g, 6, 18, 3, 2.5, tyre); ell(g, 6, 18, 1.2, 1.2, hub);        // rear wheel (near, bottom)
   R(g, 5, 9, 2, 7, '#4e7280'); R(g, 5, 9, 1, 7, '#7ea4b4');
   R(g, 4, 14, 4, 2, '#23232b');
-  R(g, 3, 10, 6, 4, dead ? '#6a3a2c' : '#c8502e');
-  R(g, 3, 13, 6, 1, dead ? '#8a5040' : '#f08a5a');
+  R(g, 3, 10, 6, 4, tankCol);
+  R(g, 3, 13, 6, 1, tankHi);
+  if (rider) { R(g, 4, 6, 4, 3, '#2e5aa0'); P(g, 5, 7, '#e8b890'); }
   R(g, 4, 8, 4, 1, '#9aa3ad');
   R(g, 5, 6, 2, 2, '#3a3f4a');
   ell(g, 6, 4, 3, 2.5, tyre); ell(g, 6, 4, 1.2, 1.2, hub);          // front wheel (far, top)

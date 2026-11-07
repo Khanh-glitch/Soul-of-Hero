@@ -301,9 +301,12 @@ export function buildStructs() {
   S.refinery_lit = mk(16, 24, g => drawRefinery(g, 'lit'));
   // B05 motorbike: three views × ok/dead (lamp, tank, rust), plus the strapped cargo crate. Left-facing uses a mirrored side sprite.
   for (const st of ['ok', 'dead'] as const) {
-    S[`vehicle_side_${st}`] = mk(24, 16, g => drawVehicleSide(g, st));
-    S[`vehicle_front_${st}`] = mk(12, 22, g => drawVehicleFront(g, st));
-    S[`vehicle_back_${st}`] = mk(12, 22, g => drawVehicleBack(g, st));
+    for (const v of ['ok', 'empty', 'broken'] as const) for (const rider of [false, true]) {
+      const k = `${v}${rider ? '_rider' : ''}`;
+      S[`vehicle_side_${k}`] = mk(24, 16, g => drawVehicleSide(g, v, rider));
+      S[`vehicle_front_${k}`] = mk(12, 22, g => drawVehicleFront(g, v, rider));
+      S[`vehicle_back_${k}`] = mk(12, 22, g => drawVehicleBack(g, v, rider));
+    }
   }
   S.vehicle_crate = mk(7, 5, g => drawVehicleCrate(g));
   // B05-R oil pump: idle, dry (empty source), and two frames of the running beam.
