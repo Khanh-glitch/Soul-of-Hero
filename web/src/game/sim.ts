@@ -7,7 +7,7 @@ import { LOOT_CLASSES, lootClass } from './loot-ecology';
 // Deterministic-ish real-time simulation layered on the engine authority. All state mutation goes through engine helpers.
 import { BAL, TILE, WW, WH, HOUR, VIEW_W, VIEW_H, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity, type Proj, type Haz } from './core';
 import { thermalEnv, thermalEvaluate, thermalStep, thermalBoundaryMs, heatersInReach, coldDamageActive } from './thermal';
-import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES } from './catalog';
+import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES, stationBurnable } from './catalog';
 import { getWorld } from './world';
 import { irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
@@ -908,7 +908,8 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
       if (kind === 'furnace' && (!job || job.left <= 0)) continue;
       if (!job && kind !== 'campfire') continue;
       let fuel = st.burn;
-      if (fuelled && fuel <= 0) { const next = C(r, st.fuelC).slots.find(s => s && ITEMS[s.key].fuel); if (!next) continue; fuel = ITEMS[next.key].fuel! * 1000; }
+      // W07: boundary uses the same burnable rule as stepStations (canisters are never station fuel).
+      if (fuelled && fuel <= 0) { const next = C(r, st.fuelC).slots.find(s => s && stationBurnable(s.key)); if (!next) continue; fuel = ITEMS[next.key].fuel! * 1000; }
       if (fuelled) dt = Math.min(dt, fuel);
       if (job && job.left > 0) dt = Math.min(dt, job.left / (powered.has(e.id) ? BAL.industrialPower.workSpeedMultiplier : 1));
     }

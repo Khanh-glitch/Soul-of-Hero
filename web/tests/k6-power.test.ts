@@ -19,7 +19,7 @@ describe('funded local defense',()=>{
   for(const [k,q] of [['mechanical_parts',4],['iron_ingot',2],['fasteners',2],['spares',4]] as const)addItem(o.r,'inv',k,q);
   expect(o.action('upgradeGenerator',{eid:o.gen.id,benchId:id}).ok).toBe(true);expect(o.gen.basePower!.capacity).toBe(2);expect(o.action('upgradeGenerator',{eid:o.gen.id,benchId:id}).ok).toBe(false);
   expect(o.action('turretConfigure',{eid:second.id,field:'generatorId',value:o.gen.id}).ok).toBe(true);expect(o.action('turretConfigure',{eid:second.id,field:'enabled',value:true}).ok).toBe(true);addItem(o.r,second.c,'arrow',1);const third=makeTurret(o.x+1,o.y+1);markDirty();expect(o.action('turretConfigure',{eid:third.id,field:'generatorId',value:o.gen.id}).ok).toBe(false);
-  stepBasePower(o.r,5000,T0+5000);expect(o.gen.basePower!.energy).toBe(10000);const saved=selectSnapshots([serializeSnapshot(o.g),null]).gs!;expect(saved.run!.entities[o.gen.id].basePower!.capacity).toBe(2);settle(saved,T0+5000,true);expect(saved.run!.entities[o.gen.id].basePower!.energy).toBe(5000);expect(saved.run!.receipts.some(q=>q.kind==='turret.fire')).toBe(false);
+  stepBasePower(o.r,5000,T0+5000);expect(o.gen.basePower!.energy).toBe(10000);const saved=selectSnapshots([serializeSnapshot(o.g),null]).gs!;expect(saved.run!.entities[o.gen.id].basePower!.capacity).toBe(2);settle(saved,T0+5000,true);/* W07: both armed turrets are active loads offline too, so 5 s x 2 loads drains the 10 s left. */expect(saved.run!.entities[o.gen.id].basePower!.energy).toBe(0);expect(saved.run!.receipts.some(q=>q.kind==='turret.fire')).toBe(false);
  });
 
 });

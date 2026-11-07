@@ -563,3 +563,13 @@ Full detail: `docs/survival/gameplay-depth/B06_WORLD_BOUNDARY_CUES_FEASIBILITY.m
 - Presentation cue contract from committed receipts: `web/src/game/presentation-cues.ts`, 4/4 tests; 18 receipt kinds mapped; station/motorbike/door/cart cues still need new authoritative state.
 - Persistent-world feasibility (A/B/C): design comparison only; canon 336h/72h unchanged; creator decision pending.
 - Not done this round: Core 21-action effect audit, offline chronology audit, POI reusable mechanisms, full Vitest, HTTP build, browser proof.
+
+
+## W07 Network A — offline power allocation parity (IMPLEMENTED, PARTIAL network)
+
+- Source evidence: `engine.ts powerAllocation()` excluded armed turrets when `online=false`, so `stepBasePower`, `basePowerBoundary` and `powered` (shared `advanceWorld`) diverged from online for the same state. Proof: `tests/w07-power-offline-parity.test.ts` (2 active armed turrets, capacity 2, 25 s): online energy 13750 ms vs offline 15000 ms before the fix.
+- Fix: one allocation rule online and offline (armed, supplied, wired turret reserves capacity whether or not the player is online). Firing stays online-only (`tickTurrets`). Offline defense now costs generator fuel and can unpower a workbench or door, the same trade-off online.
+- Also fixed: `advanceWorld` fuel boundary used any fuel item (including Fuel Canisters) while `stepStations` refuses canisters. Now both use `stationBurnable`. Pinned by a canister-only furnace test (no burn, job intact).
+- Superseded encodings updated with W07 notes: `s06-circuits` (armed turret offline now keeps the door unpowered), `k6-power` (5 s × 2 active loads drains 10 s of fuel).
+- Atlas IDs (mapped from the PR44 correction's listed network, CSV row text not re-read this round): SYS06 power/SYS04 workbench/SYS17 offline; XEDGE-030 (shared fuel consumers), XEDGE-032 (production vs defense allocation), XEDGE-034 boundary (already present), XEDGE-096 (single chronology) — partial.
+- Status: ENGINE_IMPLEMENTED, connected through `advanceWorld` (online and offline paths share it), tested by focused and regression tests. NOT verified: browser/human experience; refinery/pump offline interaction with generator is unchanged (refinery burns non-canister fuel inside `stepStations`, not audited against Atlas XEDGE-018/019 this round).

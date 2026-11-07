@@ -492,11 +492,13 @@ function hasPowerFuel(r:RunState,g:Entity) {
   return !!g.basePower && !!g.c && (g.basePower.energy>1e-8 || C(r,g.c).slots.some(s=>s&&!!ITEMS[s.key]?.fuel));
 }
 /** Stable allocation order; priority is a player choice, not a magic extra load. */
-export function powerAllocation(r:RunState,g:Entity,online=true):Entity[] {
+export function powerAllocation(r:RunState,g:Entity,_online=true):Entity[] {
   if(!g.basePower?.enabled || !owned(g) || (g.hp??1)<=0 || !hasPowerFuel(r,g))return [];
   const sensors=sensorClaims(r,g);const freeCapacity=(g.basePower.capacity??1)-sensors.length;
+  // W07 Network A: an armed, supplied, wired turret reserves capacity and burns fuel whether or not the player is online.
+  // Firing stays online-only (tickTurrets), but the draw must not vanish when the player leaves: offline and online share one allocation.
   const choices=Object.values(r.entities).filter(e=>e.type!=='ir_sensor'&&connectedPower(r,g,e) && (
-    online && e.turret?.enabled && e.turret.generatorId===g.id && !!e.c && countItem(r,e.c,'arrow')>0 ||
+    e.turret?.enabled && e.turret.generatorId===g.id && !!e.c && countItem(r,e.c,'arrow')>0 ||
     e.type==='workbench' && e.industrial?.enabled && e.industrial.generatorId===g.id && !!e.station?.queue[0] && e.station.queue[0].left>0 ||
     !!e.electricDoor && electricDoorGenerator(r,e)?.id===g.id));
   const priority=g.basePower.priority??'defense';
