@@ -201,3 +201,28 @@ describe('B05-R authority domain separation: fixture sources cannot enter a run 
     expect(authorizedOilSource(r, 4, 4)).not.toBeNull();
   });
 });
+
+describe('B05-R B3 free-energy guard: a station never burns the refined product it makes', () => {
+  it('a pump holding only Fuel Canisters does not run and grants no crude', () => {
+    const g = setup(), r = g.run!; const pump = fixturePump(g, 4);
+    addItem(r, pump.station!.fuelC, 'fuel_can', 1);
+    expect(act(g, 'craft', { recipe: 'pump_crude', eid: pump.id }).ok).toBe(true);
+    stepStations(g, 60_000, T + 60_000);
+    expect(crude(C(r, pump.station!.outC))).toBe(0);
+    expect(r.oilSources!['oil:' + pump.tx + ':' + pump.ty].stock).toBe(4);
+    expect(countItem(r, pump.station!.fuelC, 'fuel_can')).toBe(1);        // the canister is still there, unburned
+  });
+  it('a refinery holding only Fuel Canisters does not run (no oil-to-canister self-feeding)', () => {
+    const g = setup(), r = g.run!;
+    const ref: Entity = { id: 'b3-ref', kind: 'struct', type: 'refinery', x: r.player.x + 8, y: r.player.y, tx: 0, ty: 0, hp: 100, maxHp: 100, identity: 'refinery-v1', station: { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 3).id, outC: mkContainer(r, 'out', 6).id } as any };
+    r.entities[ref.id] = ref;
+    addItem(r, ref.station!.fuelC, 'fuel_can', 2);
+    addItem(r, 'inv', 'salvaged_oil', 3); addItem(r, 'inv', 'glass', 1);
+    const bench: Entity = { id: 'b3-bench', kind: 'struct', type: 'workbench', x: ref.x, y: ref.y, tx: 0, ty: 0, hp: 160, maxHp: 160, station: { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 0).id, outC: mkContainer(r, 'out', 4).id, level: 2 } as any };
+    r.entities[bench.id] = bench;
+    expect(act(g, 'craft', { recipe: 'refinery_fuel', eid: ref.id }).ok).toBe(true);
+    stepStations(g, 60_000, T + 60_000);
+    expect(countItem(r, ref.station!.outC, 'fuel_can')).toBe(0);
+    expect(countItem(r, ref.station!.fuelC, 'fuel_can')).toBe(2);
+  });
+});

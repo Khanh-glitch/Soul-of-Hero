@@ -1824,7 +1824,9 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
         const burning = kind === 'campfire' || !!job;
         if (!burning) break;
         if (st.burn <= 0) {
-          const fc = C(r, st.fuelC); const fi = fc.slots.findIndex(s => s && ITEMS[s.key].fuel);
+          // B05-R free-energy guard: a station never burns Fuel Canisters. Canisters are the refinery/furnace product, worth 60 s of
+          // burn per 12–26 s cycle; burning them lets a station pay for its own output (a self-feeding loop). Generators and motorbikes still use them.
+          const fc = C(r, st.fuelC); const fi = fc.slots.findIndex(s => s && ITEMS[s.key].fuel && s.key !== 'fuel_can');
           if (fi < 0) { if (job) { const key = job.recipe.startsWith('R:') ? job.recipe.slice(2) : job.recipe; note(`${STRUCTS[e.type!].name}: fuel ran out — ${ITEMS[RECIPES[key].out].name} paused.`); stationState(r,e,'fuel_out',now-t); } break; }
           const s = fc.slots[fi]!; st.burn += ITEMS[s.key].fuel! * 1000; s.qty--; if (s.qty <= 0) fc.slots[fi] = null;
         }

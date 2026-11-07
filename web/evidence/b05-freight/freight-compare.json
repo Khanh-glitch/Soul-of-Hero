@@ -1,0 +1,59 @@
+{
+ "note": "SOH_PROVISIONAL balance readings; same road segment; 12 s simulated per row",
+ "rows": {
+  "walk": {
+   "seconds": 12,
+   "pixelsPath": 1106,
+   "pxPerSec": 92.2,
+   "fuelUsed": 0,
+   "wearHp": 0,
+   "carrying": false
+  },
+  "cart_empty": {
+   "seconds": 12,
+   "pixelsPath": 1175,
+   "pxPerSec": 97.9,
+   "fuelUsed": 0,
+   "wearHp": 0,
+   "carrying": false,
+   "cartWeight": 0,
+   "cartLimit": 240,
+   "slots": 24
+  },
+  "cart_loaded": {
+   "seconds": 12,
+   "pixelsPath": 1167,
+   "pxPerSec": 97.2,
+   "fuelUsed": 0,
+   "wearHp": 0,
+   "carrying": true,
+   "cartWeight": 4,
+   "cartLimit": 240,
+   "slots": 24
+  },
+  "bike_empty": {
+   "seconds": 12,
+   "pixelsPath": 1500,
+   "pxPerSec": 125,
+   "fuelUsed": 75,
+   "wearHp": 3,
+   "carrying": false,
+   "cargoWeight": 0,
+   "cargoLimit": 80,
+   "slots": 12,
+   "tank": 300
+  },
+  "bike_loaded": {
+   "seconds": 12,
+   "pixelsPath": 1474,
+   "pxPerSec": 122.8,
+   "fuelUsed": 75.53,
+   "wearHp": 3.02,
+   "carrying": true,
+   "cargoWeight": 4,
+   "cargoLimit": 80,
+   "slots": 12,
+   "tank": 300
+  }
+ }
+}
