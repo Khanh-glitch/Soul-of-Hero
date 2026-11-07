@@ -154,6 +154,9 @@ export interface RunState {
   player: Player; creatures: Creature[];
   /** B05-R: oil sources keyed `oil:tx:ty`. Only a labelled test fixture authority exists today; production Map oil sites are NOT authorized (see balance oilPumpV1). */
   oilSources?: Record<string, { tx: number; ty: number; stock: number; authority: 'test-fixture-v1' }>;
+  /** Domain marker: set ONLY by the test-only fixture registrar. A run without it cannot hold or validate oil sources.
+   *  Future production sources must bind to a versioned Map site + map revision (authority not yet defined). */
+  oilTestFixture?: true;
   sources: Record<number, { stock: number; hp: number; regrowAt?: number; burnt?: boolean; fire?: number; fireSpreadAt?: number; fireDepth?: number }>; // K3 deltas over base world
   /** Authored public loot sites emptied in this run (tile index). Absent on older saves. */
   depletedLootSites?: number[];

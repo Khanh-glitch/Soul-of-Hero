@@ -947,14 +947,19 @@ export function countStones(r: RunState) { const keys = Object.values(ELDERS).ma
 /** Source key for the oil site on a tile. */
 export const oilSourceKey = (tx: number, ty: number) => `oil:${tx}:${ty}`;
 /** The authorized, non-empty oil source under a pump tile. Production placement has no authority (Map owner pending). */
+/** Any run-local authorized (test-fixture) source with stock. Production Map sources will be added here only via a versioned Map site. */
+export function anyAuthorizedOilSource(r: RunState): boolean {
+  return r.oilTestFixture === true && Object.values(r.oilSources ?? {}).some(src => src.authority === 'test-fixture-v1' && src.stock > 0);
+}
 export function authorizedOilSource(r: RunState, tx: number, ty: number) {
   const src = r.oilSources?.[oilSourceKey(tx, ty)];
-  return src && src.authority === 'test-fixture-v1' && src.tx === tx && src.ty === ty && src.stock > 0 ? src : null;
+  return r.oilTestFixture === true && src && src.authority === 'test-fixture-v1' && src.tx === tx && src.ty === ty && src.stock > 0 ? src : null;
 }
 /** TEST-ONLY FIXTURE: registers a labelled temporary oil source. Never called by any shipping action or map loader. */
 export function registerTestOilSource(r: RunState, tx: number, ty: number, stock: number) {
   if (!Number.isInteger(stock) || stock < 0 || stock > BAL.oilPumpV1.maxSourceStock) throw new Error('bad fixture stock');
   r.oilSources = r.oilSources ?? {};
+  r.oilTestFixture = true;
   r.oilSources[oilSourceKey(tx, ty)] = { tx, ty, stock, authority: 'test-fixture-v1' };
 }
 

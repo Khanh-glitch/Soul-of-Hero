@@ -1,6 +1,8 @@
 import { recoveryPlan, recoveryFits } from '../game/recycler';
 import { LOOT_CLASSES, LOOT_B04_ROLES, lootClass } from '../game/loot-ecology';
 import { useEffect, useRef, useState } from 'react';
+import type { RunState } from '../game/core';
+import { anyAuthorizedOilSource } from '../game/engine';
 import { ITEMS, RECIPES, permitsDirectedResearch, isRecipeKnown, STRUCTS, BUILD_ORDER, VENDOR_SECURED, VENDOR_SPARES, ACHIEVEMENTS, ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING } from '../game/catalog';
 import { BAL, TILE, WW, type Stack } from '../game/core';
 import type { OfflineReturnV1, ReturnSectionId, ReturnTone } from '../game/return-report';
@@ -164,17 +166,17 @@ function RecyclerBody({api,eid}:{api:Api;eid:string}) {
   <div style={{marginTop:4,color:'#ffd98a'}}>Output · {output.slots.filter(Boolean).length}/{output.slots.length} slots occupied</div><Grid api={api} cid={st.outC} cols={4}/><button className="btn" onClick={()=>{for(let i=0;i<output.slots.length;i++)if(output.slots[i])api.act('move',{from:st.outC,fs:i,to:'inv'});}}>Take output</button>
  </div>;
 }
-function StationBody({ api, eid }: { api: Api; eid: string }) {
+export function StationBody({ api, eid }: { api: Api; eid: string }) {
   const r = api.gs.run!; const e = r.entities[eid]; const st = e.station!; const kind = STRUCTS[e.type!].station!;
   const recipes = Object.entries(RECIPES).filter(([, rc]) => rc.station === kind); const known = recipes.filter(([k]) => isRecipeKnown(r.knowledge.recipes, k));
   const fuelled = kind === 'campfire' || kind === 'furnace' || kind === 'refinery' || kind === 'oil_pump';
   // B05-R: the pump's source is a real stock on the run; show it so the operator sees what the cycle will draw.
   const oilSrc = e.type === 'oil_pump' && e.tx !== undefined && e.ty !== undefined ? r.oilSources?.[`oil:${e.tx}:${e.ty}`] : undefined;
-  {oilSrc && <div style={{fontSize:10,color:oilSrc.stock>0?'#d6ffc0':'#ffb8a0'}}>Source (authorized test site): {oilSrc.stock} Crude Petroleum left{oilSrc.stock<=0?' — dry':''}</div>}
   const level = st.level ?? 1;
   const [confirmSalvage, setConfirmSalvage] = useState<string | null>(null);
   const maintenance = C(r, 'inv').slots.map((s, i) => [s, i] as const).filter(([s]) => s && (ITEMS[s.key].repair || ITEMS[s.key].salvage));
   return <div>
+    {e.type === 'oil_pump' && (oilSrc ? <div data-testid="oil-source-stock" style={{fontSize:10,color:oilSrc.stock>0?'#d6ffc0':'#ffb8a0'}}>Authorized source (test fixture): {oilSrc.stock} Crude Petroleum left{oilSrc.stock<=0?' — dry, cycles blocked':''}</div> : <div style={{fontSize:10,color:'#ffb8a0'}}>No authorized oil source here. Pump cannot run.</div>)}
     {kind === 'refinery' && <div style={{fontSize:10,marginBottom:4,color:'#8fd19b'}}><b>Industrial batch:</b> 6 Salvaged Oil + 1 Glass → 2 Fuel Canister + 1 Machine Lubricant, {BAL.oilRefineryV1.recipes.industrial.secs}s, one job. Needs fuel to run; both products wait in Output until there is room for the whole batch. Lubricant halves motorbike wear for {Math.round(BAL.oilRefineryV1.lubricantDistancePx/TILE)} tiles.</div>}
     {kind === 'workbench' && <details style={{ fontSize: 10, marginBottom: 5, borderBottom: '1px solid #514155', paddingBottom: 4 }}>
       <summary style={{ color: '#ffd98a', cursor: 'pointer' }}>Equipment maintenance &amp; upgrades</summary>
@@ -274,22 +276,25 @@ export function CraftPanel({ api }: { api: Api }) {
   </Panel>;
 }
 
+export const BUILD_GROUPS: Record<string,string[]> = {
+  Shell:['claim','floor_wood','floor_stone','wall_wood','wall_stone','wall_brick','door_wood','door_iron','roof_thatch','roof_tile'],
+  Home:['bed_straw','chest_small','chest_large','escrow'],
+  Work:['campfire','furnace','refinery','oil_pump','workbench','research','garden','barrel','farm_controller'],
+  Defense:['base_generator','power_cable','power_switch','pressure_switch','ir_sensor','bear_trap','door_powered','arrow_turret','spikes','barricade','torch_post'],
+};
+/** Oil Pump is locked until the run holds an authorized source with stock; the reason is shown on the entry. */
+export const buildLocked = (r: RunState, k: string) => k === 'oil_pump' && !anyAuthorizedOilSource(r);
 export function BuildPanel({ api }: { api: Api }) {
   const r = api.gs.run!; const owned = Object.values(r.entities).some(e => e.type === 'claim');
   const [category,setCategory]=useState('Shell'); const [query,setQuery]=useState('');
-  const groups: Record<string,string[]> = {
-    Shell:['claim','floor_wood','floor_stone','wall_wood','wall_stone','wall_brick','door_wood','door_iron','roof_thatch','roof_tile'],
-    Home:['bed_straw','chest_small','chest_large','escrow'],
-    Work:['campfire','furnace','refinery','workbench','research','garden','barrel','farm_controller'],
-    Defense:['base_generator','power_cable','power_switch','pressure_switch','ir_sensor','bear_trap','door_powered','arrow_turret','spikes','barricade','torch_post'],
-  };
+  const groups = BUILD_GROUPS;
   const keys=BUILD_ORDER.filter(k=>query.trim() ? STRUCTS[k].name.toLowerCase().includes(query.trim().toLowerCase()) : groups[category].includes(k));
   return <Panel title="Build · choose a structure" style={{ left: 20, top: 30, width: 390, maxHeight: 300 }} onClose={() => api.open(null)}>
     {!owned && <div style={{ fontSize: 11, color: '#ffd98a' }}>Build anywhere legal; unfunded structures decay. Place a cabinet on your foundation to maintain them.</div>}
     <div className="flex gap-1" style={{marginBottom:4}}>{Object.keys(groups).map(k=><button key={k} className={`btn ${category===k&&!query?'gold':''}`} onClick={()=>{setCategory(k);setQuery('')}}>{k}</button>)}</div>
     <label style={{fontSize:11}}>Find <input aria-label="Find structure" value={query} onChange={e=>setQuery(e.target.value)} style={{width:135,color:'#fff',background:'#21182a',border:'1px solid #6c5770'}} /></label>
     <div className="scroll" style={{maxHeight:152,overflowY:'auto',display:'grid',gridTemplateColumns:'1fr 1fr',gap:3,marginTop:4}}>
-      {keys.map(k => { const d=STRUCTS[k], ok=d.cost.every(([i,q])=>countItem(r,'inv',i)>=q); return <button key={k} className="btn ghost" style={{textAlign:'left',padding:4,opacity:ok?1:.75}} title={d.desc} onClick={()=>{api.setBuild(k);api.setReclaim(false);api.setRepairMode(false);api.setUpgradeMode(false);api.open(null)}}><div className="flex items-center gap-1"><img className="px" src={iconUrlSt(k)} style={{width:18,height:18,objectFit:'contain'}} alt=""/><b style={{fontSize:11}}>{d.name}</b></div><div style={{fontSize:10,lineHeight:1.1,color:ok?'#bfe8a8':'#ffad9d'}}>{d.cost.map(([id,q])=>`${ITEMS[id].name} ${countItem(r,'inv',id)}/${q}`).join(' · ')}</div></button>; })}
+      {keys.map(k => { const d=STRUCTS[k], ok=d.cost.every(([i,q])=>countItem(r,'inv',i)>=q); const locked = buildLocked(r, k); return <button key={k} className="btn ghost" disabled={locked} data-testid={k==='oil_pump'?'build-oil-pump':undefined} style={{textAlign:'left',padding:4,opacity:ok&&!locked?1:.75}} title={locked ? 'Needs an authorized oil source. None exists on this map yet (Map placement pending).' : d.desc} onClick={()=>{api.setBuild(k);api.setReclaim(false);api.setRepairMode(false);api.setUpgradeMode(false);api.open(null)}}><div className="flex items-center gap-1"><img className="px" src={iconUrlSt(k)} style={{width:18,height:18,objectFit:'contain'}} alt=""/><b style={{fontSize:11}}>{d.name}</b></div>{locked && <div style={{fontSize:10,color:'#ffad9d'}}>Locked: no authorized oil source (Map pending)</div>}<div style={{fontSize:10,lineHeight:1.1,color:ok?'#bfe8a8':'#ffad9d'}}>{d.cost.map(([id,q])=>`${ITEMS[id].name} ${countItem(r,'inv',id)}/${q}`).join(' · ')}</div></button>; })}
       {!keys.length && <div>No matching structures.</div>}
     </div>
     <div className="flex gap-1" style={{marginTop:5}}><button className="btn" onClick={()=>{api.setReclaim(true);api.setBuild(null);api.setRepairMode(false);api.setUpgradeMode(false);api.open(null)}}>Dismantle [X]</button><button className="btn" onClick={()=>{api.setRepairMode(true);api.setBuild(null);api.setReclaim(false);api.setUpgradeMode(false);api.open(null)}}>Repair [V]</button><button className="btn" onClick={()=>{api.setUpgradeMode(true);api.setBuild(null);api.setReclaim(false);api.setRepairMode(false);api.open(null)}}>Upgrade [U]</button></div>

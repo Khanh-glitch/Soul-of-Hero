@@ -2,7 +2,7 @@
 // CONTROLLED FIXTURES (disclosed): the test-only source registry entry, a level-2 workbench fixture for reach, and fuel loaded into the pump.
 import { describe, it, expect, afterEach } from 'vitest';
 import { BAL, TILE, type Entity, type GameState } from '../src/game/core';
-import { addItem, C, countItem, dispatch, mkContainer, newGame, stepStations, registerTestOilSource, authorizedOilSource } from '../src/game/engine';
+import { addItem, C, countItem, dispatch, mkContainer, newGame, stepStations, registerTestOilSource, authorizedOilSource, anyAuthorizedOilSource } from '../src/game/engine';
 import { setActiveLayout } from '../src/game/world';
 import { serializeSnapshot, validate } from '../src/game/persist';
 import { ITEMS, RECIPES } from '../src/game/catalog';
@@ -172,5 +172,32 @@ describe('B05-R persistence rejects invalid pump and source states', () => {
     bad.run.entities[pump.id].station.queue[0].total = BAL.oilPumpV1.secs * 1000;
     bad.run.entities[pump.id].station.queue[0].reserved = [{ key: 'wood', qty: 1, uid: 'x' }];
     expect(validate(bad)).toBeNull();
+  });
+});
+
+describe('B05-R authority domain separation: fixture sources cannot enter a run without the fixture marker', () => {
+  it('a run carrying oilSources without the test-fixture marker is refused by save validation', () => {
+    const g = setup(); fixturePump(g, 4);
+    const forged = reloaded(g) as any;
+    delete forged.run.oilTestFixture;                       // what a shipping run looks like
+    expect(validate(forged)).toBeNull();
+  });
+  it('a fixture-marked run with a forged production authority is refused', () => {
+    const g = setup(); fixturePump(g, 4);
+    const forged = reloaded(g) as any;
+    forged.run.oilSources[Object.keys(forged.run.oilSources)[0]].authority = 'map-site-v1';
+    expect(validate(forged)).toBeNull();
+  });
+  it('the authorization gate ignores sources in a run without the fixture marker', () => {
+    const g = setup(), r = g.run!;
+    r.oilSources = { 'oil:3:3': { tx: 3, ty: 3, stock: 5, authority: 'test-fixture-v1' } };
+    expect(authorizedOilSource(r, 3, 3)).toBeNull();
+    expect(anyAuthorizedOilSource(r)).toBe(false);
+  });
+  it('registering a fixture sets the marker; the fixture then authorizes normally', () => {
+    const g = setup(), r = g.run!;
+    registerTestOilSource(r, 4, 4, 5);
+    expect(r.oilTestFixture).toBe(true);
+    expect(authorizedOilSource(r, 4, 4)).not.toBeNull();
   });
 });
