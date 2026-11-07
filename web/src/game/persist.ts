@@ -148,7 +148,16 @@ export function validate(raw: any): GameState | null {
   const parcelIds = new Set<string>();
   for (const [id, e] of Object.entries(r.entities) as [string, any][]) {
     if (!obj(e) || e.id !== id || !beforeNext(id, /^(?:cart|[ebd])([a-z0-9]+)$/) || typeof e.kind !== 'string' || !finite(e.x) || !finite(e.y)) return null;
-    if (e.parcel !== undefined) { if (e.kind !== 'bag' || !obj(e.parcel) || typeof e.parcel.purchaseId !== 'string' || !e.parcel.purchaseId || typeof e.parcel.item !== 'string' || !VENDOR_SECURED[e.parcel.item] || parcelIds.has(e.parcel.purchaseId)) return null; parcelIds.add(e.parcel.purchaseId); }
+    if (e.parcel !== undefined) {
+      // B05-R P0-C: an outstanding parcel must be one paid purchase of one secured good, held as exactly one UID stack of that good.
+      if (e.kind !== 'bag' || !obj(e.parcel) || typeof e.parcel.purchaseId !== 'string' || !e.parcel.purchaseId || typeof e.parcel.item !== 'string' || !VENDOR_SECURED[e.parcel.item] || parcelIds.has(e.parcel.purchaseId)) return null;
+      parcelIds.add(e.parcel.purchaseId);
+      const pc = r.custody[e.c]; const filled = pc?.slots?.filter(Boolean) ?? [];
+      if (!pc || pc.slots.length !== 1 || filled.length !== 1 || filled[0].key !== e.parcel.item || filled[0].qty !== 1 || typeof filled[0].uid !== 'string' || !filled[0].uid) return null;
+      const uidCount = Object.values(r.custody).reduce((n: number, c: any) => n + (c?.slots ?? []).filter((x: any) => x?.uid === filled[0].uid).length, 0);
+      if (uidCount !== 1) return null;
+      if (!raw.profile.profileReceipts.includes(`spend:${r.id}:${e.parcel.purchaseId}:${VENDOR_SECURED[e.parcel.item].price}`)) return null;
+    }
     if (!['drop','struct','bag','cart','vehicle','loot','cash','vendor','evac','door','gen','recycler','airdrop'].includes(e.kind)) return null;
     if (e.kind === 'struct' && !has(STRUCTS, e.type)) return null;
     if(e.kind==='airdrop'){

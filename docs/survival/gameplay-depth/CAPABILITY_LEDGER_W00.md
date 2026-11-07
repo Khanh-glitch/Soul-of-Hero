@@ -544,3 +544,11 @@ Result: no LI number was promoted to canon. Rows 1–7 and 10 are the only ones 
 - Negatives covered: replay or duplicate purchase id, insufficient secured cash, out-of-stock good, full pack, out-of-reach load, save/reload, and a crafted save with a duplicate purchase id (rejected by `validate`).
 - Tests: `web/tests/b05-vendor-freight.test.ts` (6). Fixture: secured cash granted for affordability only.
 - Visual: parcel sprite `drawParcel` (16×16 crate). **Not yet inspected at native size; the browser click proof did not complete** (interaction target did not resolve in driver run). Status: PARTIAL.
+
+## B05-R Vendor Freight — product closure (UI + persistence + parcel art)
+- Real browser path (headless, `web/e2e/b05-vendor-freight-visual.mjs`): stand tile beside Mirela → real mouse aim → real `Trade with Mirela` prompt → real E → VendorPanel → real Parcel click (cash 20→16 once, stock 4→3, no pack medkit) → real prompt `Open Parcel · Field Medkit` → real E → ParcelPanel → real `Load into this cart` → cargo in cart with the same UID, parcel removed, pack still full (24/24). Passed at 1280×720 and 640×360.
+- Fixtures disclosed in results.json: stand tile (accepted only on real prompt), secured cash grant, pack filled with stone, cart deployed via real `placeCart`.
+- Persistence invariants (`persist.validate`): one stack of the purchased good, qty 1, unique UID across custody, matching `spend:` receipt with the exact price, unique purchase id. Tests: `b05-parcel-persistence.test.ts` (7).
+- Open: a "Save failed" toast appeared in the headless browser after the purchase. localStorage and IndexedDB both wrote in the same browser; the serialize path passes in Vitest. Cause not isolated. Save/reopen is NOT claimed as browser-proven.
+- Parcel sprite revised (light kraft box, white tape and label). Native frames inspected at 1280×720 and 640×360: distinct from the brown loot bag. Still small at 640×360.
+- Not done in this round: C4 motorbike, refinery, Oil Pump, recycler, Lighthouse visuals; D1 LI 8968/7010 rows beyond the qualitative note above.

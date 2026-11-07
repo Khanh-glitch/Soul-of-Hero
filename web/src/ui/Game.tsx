@@ -183,6 +183,10 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
   const onMouseUp = () => { inp.current.attack = false; };
 
   (window as any).__soh = gs; // QA-only inspection hook (browser automation); no gameplay authority
+  // QA read-only view: camera + stage transform + current interaction target (lets a driver aim the real mouse). No authority.
+  (window as any).__sohView = () => ({ cam: { x: cam.x, y: cam.y }, scale: scaleRef.current, off: offRef.current, target: target.current ? { kind: target.current.kind, label: target.current.label, eid: target.current.eid ?? null } : null });
+  // QA fixture passthrough: used ONLY by disclosed browser fixtures (pack filling, cart placement). Gameplay still goes through dispatch.
+  (window as any).__sohAct = (type: string, payload: Record<string, any> = {}) => act(type, payload);
   const r = gs.run; if (!r) return <div className="stage" />;
   const p = r.player; const now = Date.now(); const ph = phaseOf(r, now); const hrs = runHours(r, now); const day = Math.floor(hrs / 24) + 1;
   const dtm = dayTime(r, now); const clock = `${String(Math.floor(dtm * 24)).padStart(2, '0')}:${String(Math.floor((dtm * 24 % 1) * 60)).padStart(2, '0')}`;

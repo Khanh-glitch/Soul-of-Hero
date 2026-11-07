@@ -2,9 +2,9 @@ import { recoveryPlan, recoveryFits } from '../game/recycler';
 import { LOOT_CLASSES, LOOT_B04_ROLES, lootClass } from '../game/loot-ecology';
 import { useEffect, useRef, useState } from 'react';
 import type { RunState } from '../game/core';
-import { anyAuthorizedOilSource } from '../game/engine';
+import { anyAuthorizedOilSource, owned, clearInteraction } from '../game/engine';
 import { stationBurnable, ITEMS, RECIPES, permitsDirectedResearch, isRecipeKnown, STRUCTS, BUILD_ORDER, VENDOR_SECURED, VENDOR_SPARES, ACHIEVEMENTS, ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING } from '../game/catalog';
-import { BAL, TILE, WW, type Stack } from '../game/core';
+import { BAL, TILE, WW, type Stack, type Entity } from '../game/core';
 import type { OfflineReturnV1, ReturnSectionId, ReturnTone } from '../game/return-report';
 import { CabinetReadout } from './HomeStatus';
 import { C, countItem, invWeight, isRagnarok, runHours, cartWeight, cartLimit, carryLimit, spaceFor, phaseOf, tenderStatus, gardenEnvironment, weatherAt, isWet, isSheltered, wetOutlook, turretStatus, industrialStatus, powerAllocation, connectedPower, offlineSurvivalEstimate, territoryForecast, claimAt, structureRepairCost } from '../game/engine';
@@ -68,9 +68,47 @@ export function InventoryPanel({ api, quickTo, x = 404, top = 54, onClose, backT
   </Panel>;
 }
 
+/** B05-R freight: inspect a paid parcel. Every action is the EXISTING engine `move` between real containers, gated by the player's own reach. No remote teleport, no second cargo authority. */
+export function ParcelPanel({ api, eid }: { api: Api; eid: string }) {
+  const [note, setNote] = useState<string | null>(null);
+  const r = api.gs.run!; const e = r.entities[eid]; if (!e || !e.parcel) return null;
+  const s = C(r, e.c!).slots[0] ?? null; const p = r.player;
+  const reach = (x: Entity) => Math.hypot(x.x - p.x, x.y - p.y) <= 2.8 * TILE;
+  const carts = Object.values(r.entities).filter(x => x.kind === 'cart' && owned(x) && reach(x));
+  const freeSlot = (cid: string) => C(r, cid).slots.findIndex(x => !x);
+  const run = (type: string, payload: Record<string, any>) => { const res = api.act(type, payload); setNote(res.ok ? null : res.reason); if (res.ok) api.open(null); };
+  const parcelClear = clearInteraction(r, e);
+  return <Panel title={`Paid parcel · ${ITEMS[e.parcel.item].name}`} style={{ left: 180, top: 70, width: 300 }} onClose={() => api.open(null)}>
+    <div style={{ fontSize: 10, color: '#cfc2dc' }}>Already paid for at Mirela. Purchase <span style={{ color: '#8a7a9a' }}>{e.parcel.purchaseId}</span>. The good stays in this parcel until you load it into a cart or take it into your pack.</div>
+    {s && <div className="flex items-center gap-1" style={{ marginTop: 4, fontSize: 11 }}><Icon k={s.key} size={14} />{ITEMS[s.key].name} ×{s.qty} <span style={{ color: '#8a7a9a', fontSize: 9 }}>uid {s.uid}</span></div>}
+    {!parcelClear && <div style={{ fontSize: 10, color: '#ff9a7a', marginTop: 3 }}>Obstructed: no clear line to this parcel.</div>}
+    <div style={{ fontSize: 11, color: '#ffd98a', marginTop: 6 }}>Load into a nearby cart</div>
+    {carts.length === 0 && <div style={{ fontSize: 10, color: '#8a7a9a' }}>No deployed cart in reach. Stand within 2.8 tiles of the parcel and of a cart.</div>}
+    {carts.map(cart => {
+      const free = freeSlot(cart.c!); const w = cartWeight(r, cart.c!); const lim = cartLimit(cart);
+      const clear = clearInteraction(r, cart); const itemW = s ? ITEMS[s.key].w * s.qty : 0;
+      const blocked = !s || !parcelClear || !clear || free < 0;
+      return <div key={cart.id} style={{ marginTop: 3, fontSize: 10 }}>
+        <div className="flex items-center gap-1">Cart {cart.id} · {C(r, cart.c!).slots.filter(Boolean).length}/{C(r, cart.c!).slots.length} slots · weight {w.toFixed(1)}/{lim}
+          <button className="btn gold" style={{ marginLeft: 'auto', padding: '1px 5px' }} disabled={blocked} onClick={() => run('move', { from: e.c, fs: 0, to: cart.c, ts: free })}>Load into this cart</button></div>
+        {!clear && <div style={{ color: '#ff9a7a' }}>Obstructed: no clear line to this cart.</div>}
+        {clear && free < 0 && <div style={{ color: '#ff9a7a' }}>Cart full: no free slot.</div>}
+        {clear && free >= 0 && w + itemW > lim && <div style={{ color: '#ffd98a' }}>Overloaded: the cart will crawl (existing soft limit).</div>}
+      </div>;
+    })}
+    <div className="flex gap-1" style={{ marginTop: 6 }}>
+      <button className="btn" disabled={!s || !parcelClear} onClick={() => run('move', { from: e.c, fs: 0, to: 'inv' })}>Take into pack</button>
+      <button className="btn ghost" onClick={() => api.open(null)}>Leave it</button>
+    </div>
+    {note && <div style={{ fontSize: 10, color: '#ff9a7a', marginTop: 4 }}>{note}</div>}
+    <div style={{ fontSize: 9, color: '#8a7a9a', marginTop: 3 }}>A failed load leaves the goods in the parcel. The parcel disappears only when it is empty.</div>
+  </Panel>;
+}
+
 export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
   const [inventoryOnly, setInventoryOnly] = useState(false); useEffect(()=>setInventoryOnly(false),[eid]);
   const r = api.gs.run!; const e = r.entities[eid]; if (!e) return null;
+  if (e.parcel) return <ParcelPanel api={api} eid={eid} />;
   const st = e.station; const kind = e.type ? STRUCTS[e.type]?.station : null;
   const lootSite=e.kind==='loot' && r.lootEcology ? getWorld(r.layoutId||'shipping').statics.find(s=>s.kind==='loot' && s.tx===e.tx && s.ty===e.ty) : undefined;
   const lootKind=lootSite ? lootClass(lootSite) : null;

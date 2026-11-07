@@ -152,14 +152,15 @@ export function drawCrudeDrum(g: G, c1: string, c2: string) {
   R(g, 7, 13, 2, 2, hoop);                         // tap
 }
 
-/** Paid parcel (16×16): a rectangular cardboard crate with a pale tape strip and a shipping label. Distinct from the round loot bag. */
+/** Paid parcel (16×16): a light kraft shipping box with a dark outline, a darker top flap, a white tape strip and a white address label.
+ *  Lighter and taller than the round brown loot bag, so it stands out on the brown building floor and on grass. */
 export function drawParcel(g: G) {
-  const edge = '#3a2212', card = '#b98452', light = '#d8a870', shade = '#7a5230';
-  R(g, 2, 4, 12, 10, edge);                       // outline
-  R(g, 3, 5, 10, 8, card);                        // body
-  R(g, 3, 5, 10, 2, light);                       // top flap highlight
-  R(g, 3, 11, 10, 2, shade);                      // lower shade
-  R(g, 7, 5, 2, 8, '#e8d8a0');                    // pale tape strip, down the middle
-  R(g, 4, 8, 3, 2, '#f4eedb'); P(g, 5, 9, '#3a3a40'); // shipping label
-  P(g, 10, 9, '#f4eedb');                         // corner tab
+  const edge = '#2a1a10', kraft = '#e8bf7e', flap = '#c48a4c', shade = '#a46a36', tape = '#f6f0d8', label = '#fffdf2', ink = '#2e5a8a';
+  R(g, 1, 3, 14, 12, edge);                      // dark outline
+  R(g, 2, 4, 12, 10, kraft);                     // box body (light kraft)
+  R(g, 2, 4, 12, 3, flap);                       // top flap, darker band
+  R(g, 7, 4, 2, 10, tape);                       // white tape strip down the centre
+  R(g, 2, 12, 12, 2, shade);                     // bottom shade
+  R(g, 3, 8, 4, 3, label); P(g, 4, 9, ink); P(g, 5, 9, ink); P(g, 4, 10, ink); // address label with ink
+  R(g, 10, 8, 3, 3, label);                      // second label stub
 }

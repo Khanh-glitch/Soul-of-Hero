@@ -1,0 +1,409 @@
+{
+ "fixtures": [
+  {
+   "viewport": "1280x720",
+   "F2": "profile secured cash set to 20 (affordability only)"
+  },
+  {
+   "viewport": "1280x720",
+   "F1": "stand tile beside Mirela; accepted only when the real prompt resolves to the trader",
+   "tried": [
+    {
+     "dx": 14,
+     "dy": 30,
+     "target": null,
+     "label": null,
+     "pos": {
+      "x": 1622,
+      "y": 1878
+     }
+    },
+    {
+     "dx": -14,
+     "dy": 30,
+     "target": null,
+     "label": null,
+     "pos": {
+      "x": 1594,
+      "y": 1878
+     }
+    },
+    {
+     "dx": 30,
+     "dy": 0,
+     "target": null,
+     "label": null,
+     "pos": {
+      "x": 1638,
+      "y": 1848
+     }
+    },
+    {
+     "dx": -30,
+     "dy": 0,
+     "target": null,
+     "label": null,
+     "pos": {
+      "x": 1578,
+      "y": 1848
+     }
+    },
+    {
+     "dx": 0,
+     "dy": 36,
+     "target": null,
+     "label": null,
+     "pos": {
+      "x": 1608,
+      "y": 1884
+     }
+    },
+    {
+     "dx": 24,
+     "dy": 24,
+     "target": "vendor",
+     "label": "Trade with Mirela the Trader",
+     "pos": {
+      "x": 1632,
+      "y": 1872
+     }
+    }
+   ],
+   "stand": {
+    "dx": 24,
+    "dy": 24
+   }
+  },
+  {
+   "viewport": "1280x720",
+   "F4": "cart deployed by real placeCart dispatch",
+   "placed": {
+    "ok": true,
+    "dx": 26,
+    "dy": 0
+   }
+  },
+  {
+   "viewport": "1280x720",
+   "F3": "pack filled with stone (fixture); placeCart consumed the cart_kit; freed slot refilled so the pack is full before loading",
+   "packSlotsFilled": {
+    "filled": 24,
+    "total": 24
+   }
+  },
+  {
+   "viewport": "640x360",
+   "F2": "profile secured cash set to 20 (affordability only)"
+  },
+  {
+   "viewport": "640x360",
+   "F1": "stand tile beside Mirela; accepted only when the real prompt resolves to the trader",
+   "tried": [
+    {
+     "dx": 14,
+     "dy": 30,
+     "target": null,
+     "label": null,
+     "pos": {
+      "x": 1622,
+      "y": 1878
+     }
+    },
+    {
+     "dx": -14,
+     "dy": 30,
+     "target": null,
+     "label": null,
+     "pos": {
+      "x": 1594,
+      "y": 1878
+     }
+    },
+    {
+     "dx": 30,
+     "dy": 0,
+     "target": null,
+     "label": null,
+     "pos": {
+      "x": 1638,
+      "y": 1848
+     }
+    },
+    {
+     "dx": -30,
+     "dy": 0,
+     "target": null,
+     "label": null,
+     "pos": {
+      "x": 1578,
+      "y": 1848
+     }
+    },
+    {
+     "dx": 0,
+     "dy": 36,
+     "target": null,
+     "label": null,
+     "pos": {
+      "x": 1608,
+      "y": 1884
+     }
+    },
+    {
+     "dx": 24,
+     "dy": 24,
+     "target": "vendor",
+     "label": "Trade with Mirela the Trader",
+     "pos": {
+      "x": 1632,
+      "y": 1872
+     }
+    }
+   ],
+   "stand": {
+    "dx": 24,
+    "dy": 24
+   }
+  },
+  {
+   "viewport": "640x360",
+   "F4": "cart deployed by real placeCart dispatch",
+   "placed": {
+    "ok": true,
+    "dx": 26,
+    "dy": 0
+   }
+  },
+  {
+   "viewport": "640x360",
+   "F3": "pack filled with stone (fixture); placeCart consumed the cart_kit; freed slot refilled so the pack is full before loading",
+   "packSlotsFilled": {
+    "filled": 24,
+    "total": 24
+   }
+  }
+ ],
+ "steps": [
+  {
+   "viewport": "1280x720",
+   "step": "real prompt before E",
+   "target": {
+    "kind": "vendor",
+    "label": "Trade with Mirela the Trader",
+    "eid": "e4"
+   },
+   "player": {
+    "x": 1632,
+    "y": 1872
+   },
+   "vendor": {
+    "id": "e4",
+    "x": 1608,
+    "y": 1848
+   }
+  },
+  {
+   "viewport": "1280x720",
+   "step": "press E",
+   "vendorPanelVisible": true
+  },
+  {
+   "viewport": "1280x720",
+   "step": "click Parcel (Field Medkit)",
+   "before": {
+    "securedCash": 20,
+    "medkitStock": 4,
+    "parcels": 0,
+    "packMedkit": 0
+   },
+   "afterBuy": {
+    "securedCash": 16,
+    "medkitStock": 3,
+    "parcels": [
+     {
+      "id": "b9a",
+      "label": "Parcel · Field Medkit",
+      "purchaseId": "parcel-1794029248030-medkit",
+      "x": 1622,
+      "y": 1862,
+      "uid": "s99",
+      "key": "medkit"
+     }
+    ],
+    "packMedkit": 0
+   },
+   "debitedOnce": true
+  },
+  {
+   "viewport": "1280x720",
+   "step": "aim at parcel (real mouse)",
+   "target": {
+    "kind": "bag",
+    "label": "Open Parcel · Field Medkit",
+    "eid": "b9a"
+   }
+  },
+  {
+   "viewport": "1280x720",
+   "step": "press E on parcel",
+   "parcelPanelVisible": true
+  },
+  {
+   "viewport": "1280x720",
+   "step": "click Load into this cart",
+   "after": {
+    "parcelsLeft": 0,
+    "cartCargo": [
+     {
+      "key": "medkit",
+      "qty": 1,
+      "uid": "s99"
+     }
+    ],
+    "packMedkit": 0,
+    "packSlotsFilled": 24,
+    "securedCash": 16
+   },
+   "uidPreserved": true,
+   "packUnchanged": true,
+   "packWasFull": true
+  },
+  {
+   "viewport": "640x360",
+   "step": "real prompt before E",
+   "target": {
+    "kind": "vendor",
+    "label": "Trade with Mirela the Trader",
+    "eid": "e4"
+   },
+   "player": {
+    "x": 1632,
+    "y": 1872
+   },
+   "vendor": {
+    "id": "e4",
+    "x": 1608,
+    "y": 1848
+   }
+  },
+  {
+   "viewport": "640x360",
+   "step": "press E",
+   "vendorPanelVisible": true
+  },
+  {
+   "viewport": "640x360",
+   "step": "click Parcel (Field Medkit)",
+   "before": {
+    "securedCash": 20,
+    "medkitStock": 4,
+    "parcels": 0,
+    "packMedkit": 0
+   },
+   "afterBuy": {
+    "securedCash": 16,
+    "medkitStock": 3,
+    "parcels": [
+     {
+      "id": "b9a",
+      "label": "Parcel · Field Medkit",
+      "purchaseId": "parcel-1794029257479-medkit",
+      "x": 1622,
+      "y": 1862,
+      "uid": "s99",
+      "key": "medkit"
+     }
+    ],
+    "packMedkit": 0
+   },
+   "debitedOnce": true
+  },
+  {
+   "viewport": "640x360",
+   "step": "aim at parcel (real mouse)",
+   "target": {
+    "kind": "bag",
+    "label": "Open Parcel · Field Medkit",
+    "eid": "b9a"
+   }
+  },
+  {
+   "viewport": "640x360",
+   "step": "press E on parcel",
+   "parcelPanelVisible": true
+  },
+  {
+   "viewport": "640x360",
+   "step": "click Load into this cart",
+   "after": {
+    "parcelsLeft": 0,
+    "cartCargo": [
+     {
+      "key": "medkit",
+      "qty": 1,
+      "uid": "s99"
+     }
+    ],
+    "packMedkit": 0,
+    "packSlotsFilled": 24,
+    "securedCash": 16
+   },
+   "uidPreserved": true,
+   "packUnchanged": true,
+   "packWasFull": true
+  }
+ ],
+ "shots": [
+  {
+   "path": "evidence/b05-vendor-freight/trader-prompt-1280x720.png",
+   "viewport": "1280x720",
+   "what": "Mirela prompt visible in world (real mouse aim)"
+  },
+  {
+   "path": "evidence/b05-vendor-freight/vendor-panel-1280x720.png",
+   "viewport": "1280x720",
+   "what": "VendorPanel opened by real E"
+  },
+  {
+   "path": "evidence/b05-vendor-freight/parcel-at-trader-1280x720.png",
+   "viewport": "1280x720",
+   "what": "purchased parcel beside Mirela (world)"
+  },
+  {
+   "path": "evidence/b05-vendor-freight/parcel-panel-1280x720.png",
+   "viewport": "1280x720",
+   "what": "Paid parcel panel with Load into nearby cart"
+  },
+  {
+   "path": "evidence/b05-vendor-freight/cart-with-cargo-1280x720.png",
+   "viewport": "1280x720",
+   "what": "cart after parcel load; pack still full"
+  },
+  {
+   "path": "evidence/b05-vendor-freight/trader-prompt-640x360.png",
+   "viewport": "640x360",
+   "what": "Mirela prompt visible in world (real mouse aim)"
+  },
+  {
+   "path": "evidence/b05-vendor-freight/vendor-panel-640x360.png",
+   "viewport": "640x360",
+   "what": "VendorPanel opened by real E"
+  },
+  {
+   "path": "evidence/b05-vendor-freight/parcel-at-trader-640x360.png",
+   "viewport": "640x360",
+   "what": "purchased parcel beside Mirela (world)"
+  },
+  {
+   "path": "evidence/b05-vendor-freight/parcel-panel-640x360.png",
+   "viewport": "640x360",
+   "what": "Paid parcel panel with Load into nearby cart"
+  },
+  {
+   "path": "evidence/b05-vendor-freight/cart-with-cargo-640x360.png",
+   "viewport": "640x360",
+   "what": "cart after parcel load; pack still full"
+  }
+ ],
+ "errors": []
+}
