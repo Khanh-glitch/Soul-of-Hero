@@ -28,8 +28,9 @@ export function refineryStateKey(burn: number | undefined, queueLength: number):
 export function drawVehicleSide(g: G, state: 'ok' | 'dead') {
   const dead = state === 'dead';
   const tyre = '#1b1d24', hub = '#7a808c';
-  ell(g, 6, 11, 3.2, 3.2, tyre); ell(g, 6, 11, 1.4, 1.4, hub);
-  ell(g, 18, 11, 3.2, 3.2, tyre); ell(g, 18, 11, 1.4, 1.4, hub);
+  // wheels: light rim ring so the tyres separate from dark grass and night overlay; tread highlight; hub
+  ell(g, 6, 11, 3.8, 3.8, '#59606e'); ell(g, 6, 11, 3.0, 3.0, tyre); P(g, 4, 9, '#8a92a0'); ell(g, 6, 11, 1.4, 1.4, hub);
+  ell(g, 18, 11, 3.8, 3.8, '#59606e'); ell(g, 18, 11, 3.0, 3.0, tyre); P(g, 16, 9, '#8a92a0'); ell(g, 18, 11, 1.4, 1.4, hub);
   R(g, 9, 9, 6, 3, '#3a3f4a');                                  // engine block
   R(g, 2, 9, 5, 1, '#5a5f68'); P(g, 1, 10, '#3a3a40');           // exhaust
   R(g, 6, 8, 12, 2, '#4e7280'); R(g, 6, 8, 12, 1, '#7ea4b4');    // frame
