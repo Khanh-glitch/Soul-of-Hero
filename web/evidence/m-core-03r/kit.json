@@ -1,0 +1,476 @@
+{
+  "method": "Normal input continuation of assisted run; disclosed previous death/save rollback.",
+  "clothOutput": {
+    "out": [
+      {
+        "uid": "su9",
+        "key": "cloth",
+        "qty": 1
+      }
+    ],
+    "queue": [],
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 78
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7k",
+        "key": "wood",
+        "qty": 4
+      },
+      {
+        "uid": "s7l",
+        "key": "seed",
+        "qty": 4
+      },
+      {
+        "uid": "s88",
+        "key": "scrap",
+        "qty": 23
+      },
+      {
+        "uid": "s8f",
+        "key": "fasteners",
+        "qty": 4
+      },
+      {
+        "uid": "sew",
+        "key": "meat",
+        "qty": 1
+      },
+      {
+        "uid": "sex",
+        "key": "fur",
+        "qty": 2
+      },
+      {
+        "uid": "sid",
+        "key": "stone",
+        "qty": 3
+      },
+      {
+        "uid": "smr",
+        "key": "field_repair_kit",
+        "qty": 2
+      },
+      {
+        "uid": "smm",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "smw",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "snj",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "srh",
+        "key": "mechanical_parts",
+        "qty": 1
+      }
+    ],
+    "player": {
+      "x": 2506.7608635578604,
+      "y": 1702.3561835820456,
+      "vx": 0,
+      "vy": 0,
+      "dir": 1,
+      "aim": 2.848413524046012,
+      "hp": 7.0453360000000345,
+      "stamina": 100,
+      "hunger": 66.33051319997465,
+      "thirst": 56.99576979999335,
+      "warmth": 78.81281405924305,
+      "rad": 23.965772500001805,
+      "active": 0,
+      "action": null,
+      "invuln": 86.70000000000027,
+      "dead": false,
+      "deadT": 2633.2,
+      "pulling": null,
+      "skills": {
+        "gather": 73,
+        "combat": 2,
+        "craft": 0,
+        "survival": 0
+      },
+      "stepAcc": 0,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Dead Foundry",
+      "sheltered": false
+    },
+    "receipts": [
+      {
+        "id": "r262",
+        "seq": 262,
+        "at": 1793770306607,
+        "kind": "move",
+        "detail": "damaged_drivex1 crk->inv"
+      },
+      {
+        "id": "r263",
+        "seq": 263,
+        "at": 1793770331694,
+        "kind": "offline.settle",
+        "detail": "25s"
+      },
+      {
+        "id": "r264",
+        "seq": 264,
+        "at": 1793770333855,
+        "kind": "move",
+        "detail": "mechanical_partsx1 cr9->inv"
+      },
+      {
+        "id": "r265",
+        "seq": 265,
+        "at": 1793770333955,
+        "kind": "job.queue",
+        "detail": "cloth@er7"
+      },
+      {
+        "id": "r266",
+        "seq": 266,
+        "at": 1793770341955,
+        "kind": "job.done",
+        "detail": "cloth"
+      },
+      {
+        "id": "r267",
+        "seq": 267,
+        "at": 1793770351675,
+        "kind": "offline.settle",
+        "detail": "17s"
+      },
+      {
+        "id": "r268",
+        "seq": 268,
+        "at": 1793770368392,
+        "kind": "offline.settle",
+        "detail": "11s"
+      },
+      {
+        "id": "r269",
+        "seq": 269,
+        "at": 1793770389707,
+        "kind": "offline.settle",
+        "detail": "21s"
+      }
+    ]
+  },
+  "preExistingUsed": {
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 278
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7k",
+        "key": "wood",
+        "qty": 4
+      },
+      {
+        "uid": "s7l",
+        "key": "seed",
+        "qty": 4
+      },
+      {
+        "uid": "s88",
+        "key": "scrap",
+        "qty": 23
+      },
+      {
+        "uid": "s8f",
+        "key": "fasteners",
+        "qty": 4
+      },
+      {
+        "uid": "su9",
+        "key": "cloth",
+        "qty": 1
+      },
+      {
+        "uid": "sew",
+        "key": "meat",
+        "qty": 1
+      },
+      {
+        "uid": "sex",
+        "key": "fur",
+        "qty": 2
+      },
+      {
+        "uid": "sid",
+        "key": "stone",
+        "qty": 3
+      },
+      {
+        "uid": "smm",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "smw",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "snj",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "srh",
+        "key": "mechanical_parts",
+        "qty": 1
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r265",
+        "seq": 265,
+        "at": 1793770333955,
+        "kind": "job.queue",
+        "detail": "cloth@er7"
+      },
+      {
+        "id": "r266",
+        "seq": 266,
+        "at": 1793770341955,
+        "kind": "job.done",
+        "detail": "cloth"
+      },
+      {
+        "id": "r267",
+        "seq": 267,
+        "at": 1793770351675,
+        "kind": "offline.settle",
+        "detail": "17s"
+      },
+      {
+        "id": "r268",
+        "seq": 268,
+        "at": 1793770368392,
+        "kind": "offline.settle",
+        "detail": "11s"
+      },
+      {
+        "id": "r269",
+        "seq": 269,
+        "at": 1793770389707,
+        "kind": "offline.settle",
+        "detail": "21s"
+      },
+      {
+        "id": "r270",
+        "seq": 270,
+        "at": 1793770391923,
+        "kind": "move",
+        "detail": "clothx1 cr9->inv"
+      },
+      {
+        "id": "r271",
+        "seq": 271,
+        "at": 1793770392202,
+        "kind": "item.fieldRepair",
+        "detail": "s1:78->178"
+      },
+      {
+        "id": "r272",
+        "seq": 272,
+        "at": 1793770392453,
+        "kind": "item.fieldRepair",
+        "detail": "s1:178->278"
+      }
+    ]
+  },
+  "queued": {
+    "bench": "er7",
+    "queue": [
+      {
+        "id": "jud",
+        "recipe": "field_repair_kit",
+        "left": 11675,
+        "total": 12000,
+        "reserved": [
+          {
+            "uid": "suc",
+            "key": "fasteners",
+            "qty": 2
+          },
+          {
+            "uid": "su9",
+            "key": "cloth",
+            "qty": 1
+          }
+        ]
+      }
+    ],
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 278
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7k",
+        "key": "wood",
+        "qty": 4
+      },
+      {
+        "uid": "s7l",
+        "key": "seed",
+        "qty": 4
+      },
+      {
+        "uid": "s88",
+        "key": "scrap",
+        "qty": 23
+      },
+      {
+        "uid": "s8f",
+        "key": "fasteners",
+        "qty": 2
+      },
+      {
+        "uid": "sew",
+        "key": "meat",
+        "qty": 1
+      },
+      {
+        "uid": "sex",
+        "key": "fur",
+        "qty": 2
+      },
+      {
+        "uid": "sid",
+        "key": "stone",
+        "qty": 3
+      },
+      {
+        "uid": "smm",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "smw",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "snj",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "srh",
+        "key": "mechanical_parts",
+        "qty": 1
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r266",
+        "seq": 266,
+        "at": 1793770341955,
+        "kind": "job.done",
+        "detail": "cloth"
+      },
+      {
+        "id": "r267",
+        "seq": 267,
+        "at": 1793770351675,
+        "kind": "offline.settle",
+        "detail": "17s"
+      },
+      {
+        "id": "r268",
+        "seq": 268,
+        "at": 1793770368392,
+        "kind": "offline.settle",
+        "detail": "11s"
+      },
+      {
+        "id": "r269",
+        "seq": 269,
+        "at": 1793770389707,
+        "kind": "offline.settle",
+        "detail": "21s"
+      },
+      {
+        "id": "r270",
+        "seq": 270,
+        "at": 1793770391923,
+        "kind": "move",
+        "detail": "clothx1 cr9->inv"
+      },
+      {
+        "id": "r271",
+        "seq": 271,
+        "at": 1793770392202,
+        "kind": "item.fieldRepair",
+        "detail": "s1:78->178"
+      },
+      {
+        "id": "r272",
+        "seq": 272,
+        "at": 1793770392453,
+        "kind": "item.fieldRepair",
+        "detail": "s1:178->278"
+      },
+      {
+        "id": "r273",
+        "seq": 273,
+        "at": 1793770392769,
+        "kind": "job.queue",
+        "detail": "field_repair_kit@er7"
+      }
+    ]
+  },
+  "failure": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for getByRole('button', { name: 'Save & quit to title' })\n    - locator resolved to <button class=\"btn\">Save & quit to title</button>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is not stable\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is not stable\n    - retrying click action\n      - waiting 100ms\n    56 × waiting for element to be visible, enabled and stable\n       - element is visible, enabled and stable\n       - scrolling into view if needed\n       - done scrolling\n       - <div class=\"absolute inset-0 flex flex-col items-center justify-center fadein\">…</div> intercepts pointer events\n     - retrying click action\n       - waiting 500ms\n"
+}

@@ -1,0 +1,32 @@
+{
+  "labelled": "CONTROLLED FIXTURE — shelter/bed/chest/provisions placed through game intents; hunger 40 / thirst 60 set for the test",
+  "site": {
+    "x": 122,
+    "y": 76
+  },
+  "bedId": "e8n",
+  "chestId": "e8o",
+  "fails": [],
+  "chestUids": [
+    {
+      "uid": "s8q",
+      "key": "cooked_meat",
+      "qty": 3,
+      "charge": null
+    },
+    {
+      "uid": "s8r",
+      "key": "meat",
+      "qty": 1,
+      "charge": null
+    },
+    {
+      "uid": "s8s",
+      "key": "water_flask",
+      "qty": 1,
+      "charge": 4
+    }
+  ],
+  "flaskUid": "s8s",
+  "meatUid": "s8q"
+}

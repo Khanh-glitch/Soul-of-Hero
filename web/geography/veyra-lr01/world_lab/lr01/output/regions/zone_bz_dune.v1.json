@@ -1,0 +1,197 @@
+{
+  "schema": "soh.map.lr01.region.v1",
+  "kind": "construction_zone",
+  "id": "bz_dune",
+  "name": "Dune Rock Outcrop",
+  "soil": "đá nổi",
+  "water": "xa nước",
+  "slope": "dốc nhẹ",
+  "tags": [
+    "nền đá cao"
+  ],
+  "notes": "",
+  "conf": "proposal",
+  "sourceRef": "project.zones[] where id=bz_dune",
+  "status": [
+    "SOURCE_AUTHORED",
+    "DERIVED",
+    "PROPOSED"
+  ],
+  "geometry": {
+    "ringAu": [
+      [
+        526.0453307807446,
+        962.5720461840889
+      ],
+      [
+        526.2231043929083,
+        957.5312818875864
+      ],
+      [
+        529.4147048754164,
+        952.5938456627589
+      ],
+      [
+        533.5308057595879,
+        948.3415381592409
+      ],
+      [
+        538.5714070454227,
+        944.7743593770324
+      ],
+      [
+        544.5739402778047,
+        942.9216170623956
+      ],
+      [
+        551.5384054567342,
+        942.7833112153307
+      ],
+      [
+        558.1978406454414,
+        944.1687620492384
+      ],
+      [
+        564.5522458439267,
+        947.0779695641186
+      ],
+      [
+        568.553685392171,
+        951.399429991169
+      ],
+      [
+        570.2021592901747,
+        957.1331433303897
+      ],
+      [
+        569.7279522562487,
+        962.5912314078291
+      ],
+      [
+        567.1310642903935,
+        967.7736942234876
+      ],
+      [
+        563.1646032404042,
+        972.1812768491258
+      ],
+      [
+        557.8285691062806,
+        975.8139792847435
+      ],
+      [
+        551.1757633710401,
+        978.6263000378173
+      ],
+      [
+        543.2061860346826,
+        980.6182391083468
+      ],
+      [
+        536.9909006918818,
+        978.7827026667975
+      ],
+      [
+        532.5299073426378,
+        973.1196907131697
+      ],
+      [
+        528.8813840389254,
+        967.7161385522668
+      ]
+    ],
+    "ringCount": 1,
+    "areaAu2": 1237.8299,
+    "perimeterAu": 127.0918,
+    "bboxAu": [
+      526.0453,
+      942.7833,
+      570.2022,
+      980.6182
+    ],
+    "centroidAu": [
+      548.1712,
+      960.7928
+    ],
+    "outerVertexCount": 20,
+    "holeCount": 0
+  },
+  "rasterCells": {
+    "cells": 18,
+    "areaAu2": 1152,
+    "elevationRawByte": {
+      "min": 55,
+      "max": 68,
+      "mean": 61.8889,
+      "p25": 58,
+      "p50": 62,
+      "p75": 65,
+      "p95": 68,
+      "unit": "UNKNOWN_SOURCE_BYTE__NO_APPROVED_PHYSICAL_SCALE"
+    },
+    "slopeRawDelta": {
+      "min": 1,
+      "max": 4,
+      "mean": 3.0556,
+      "p50": 3,
+      "p95": 4,
+      "unit": "RAW_BYTE_DELTA_PER_8au_CELL__NOT_A_GAMEPLAY_THRESHOLD"
+    },
+    "seaDistanceCellsMean": 22,
+    "freshwaterProximityCellsMean": 4.5,
+    "clearanceCellsMean": 4.5,
+    "biomeHistogram": {
+      "5": 18
+    },
+    "roadClassHistogram": {
+      "0": 18
+    },
+    "coastCells": 0,
+    "coastBandLengthAuApprox": 0,
+    "buildableCells": 18,
+    "walkableCells": 18,
+    "waterCells": 0,
+    "cargoCells": 0,
+    "crossingCells": 0
+  },
+  "buildSuitability": {
+    "buildableCells": 18,
+    "buildableFraction": 1,
+    "meanSlopeRaw": 3.0556,
+    "meanFreshwaterProximityCells": 4.5,
+    "status": "DERIVED",
+    "note": "Geometric suitability only. A0 occupancy, claim legality and Gameplay building rules are NOT asserted."
+  },
+  "loadingSpace": {
+    "cells": 0,
+    "areaAu2": 0,
+    "bboxAu": null,
+    "status": "PROPOSED",
+    "note": "PROPOSED spatial candidate: buildable cells within 3 grid cells (24 au) of a cart-road/cart-bridge/dock cargo candidate. NOT a loading platform or a Gameplay placement grant."
+  },
+  "naturalChokepoints": {
+    "clusterIds": [],
+    "status": "DERIVED",
+    "note": "clearanceCells <= 2 (<=16 au from blocked geometry); geometric narrowness, not a combat chokepoint claim."
+  },
+  "nearestRoads": [
+    {
+      "id": "rd_1g",
+      "kind": "trail",
+      "d": 19.2072
+    },
+    {
+      "id": "rd_1m",
+      "kind": "trail",
+      "d": 41.4849
+    },
+    {
+      "id": "rd_1f",
+      "kind": "trail",
+      "d": 50.3473
+    }
+  ],
+  "walkableComponentIds": [
+    0
+  ]
+}

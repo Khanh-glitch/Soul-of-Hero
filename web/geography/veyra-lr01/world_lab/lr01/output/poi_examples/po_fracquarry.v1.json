@@ -1,0 +1,611 @@
+{
+  "schema": "soh.map.lr01.poi_example.v1",
+  "reason": "fully open-air terrace/pit; no roof, no enclosed-room claim",
+  "layout": {
+    "schema": "soh.map.lr01.poi_layout.v1",
+    "poiId": "po_fracquarry",
+    "name": "Fracture Quarry",
+    "arche": "quarry",
+    "atAu": [
+      600,
+      525
+    ],
+    "rot": 0.34346690829843285,
+    "scale": 1,
+    "sourceRef": "project.pois[] where id=po_fracquarry",
+    "status": "PROPOSED_INTERIOR_AND_CIRCULATION__CANONICAL_FOOTPRINT_ONLY",
+    "ownership": "MAP owns static layout / portals / sockets; GAMEPLAY owns dynamic door states, destruction, construction, devices, locks, power, loot, recipes, quests and machines.",
+    "enclosureClass": "OPEN_AIR_YARD",
+    "enclosureClassificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+    "canonical": {
+      "footPolygonAu": [
+        [
+          584.0943,
+          502.9562
+        ],
+        [
+          626.2777,
+          518.0427
+        ],
+        [
+          615.9057,
+          547.0438
+        ],
+        [
+          573.7223,
+          531.9573
+        ]
+      ],
+      "footAreaAu2": 1379.84,
+      "minEdgeAu": 30.8,
+      "deepPolygonAu": null,
+      "gate": "none",
+      "links": [],
+      "accessText": "Đường xe tải hàng",
+      "conf": "proposal"
+    },
+    "template": {
+      "archetype": "quarry",
+      "family": "open",
+      "grid": [
+        1,
+        1
+      ],
+      "roof": 0,
+      "sockets": 5,
+      "pattern": "terraced_pit",
+      "note": "open pit with terrace levels, no roof",
+      "instantiatedRows": 1,
+      "instantiatedCols": 1
+    },
+    "context": {
+      "landId": "ld_veyra",
+      "biomeCode": 3,
+      "zoneId": null,
+      "elderGeometryId": null,
+      "seaDistanceCells": 36,
+      "clearanceCells": 14,
+      "nearestRoad": {
+        "id": "rd_d",
+        "kind": "cart",
+        "distanceAu": 21.4501
+      },
+      "nearestDock": {
+        "id": "dk_grey_n",
+        "d": 201.9853
+      },
+      "status": "DERIVED"
+    },
+    "contextModifiers": [
+      {
+        "id": "MOD-CART-FRONTAGE",
+        "effect": "Entrance edge chosen toward a cart-road centreline; NO cart clearance claim",
+        "status": "DERIVED"
+      }
+    ],
+    "levels": [
+      {
+        "id": "level.po_fracquarry.0",
+        "parentPoiId": "po_fracquarry",
+        "index": 0,
+        "name": "GROUND",
+        "polygonAu": [
+          [
+            584.0943,
+            502.9562
+          ],
+          [
+            626.2777,
+            518.0427
+          ],
+          [
+            615.9057,
+            547.0438
+          ],
+          [
+            573.7223,
+            531.9573
+          ]
+        ],
+        "areaAu2": 1379.84,
+        "status": [
+          "SOURCE_AUTHORED",
+          "DERIVED"
+        ]
+      }
+    ],
+    "footprint": {
+      "obb": {
+        "centre": [
+          600,
+          525
+        ],
+        "ux": [
+          0.9416,
+          0.3368
+        ],
+        "uy": [
+          -0.3368,
+          0.9416
+        ],
+        "wAu": 44.8,
+        "hAu": 30.8,
+        "angleRad": 0.3435,
+        "edgeLengthsAu": [
+          44.8,
+          30.8,
+          44.8,
+          30.8
+        ],
+        "quadEdge2Au": 30.8
+      },
+      "widthAu": 44.8023,
+      "heightAu": 30.8025,
+      "wallThicknessAu": 2,
+      "wallThicknessStatus": "PROPOSED"
+    },
+    "walls": [
+      {
+        "id": "wall.po_fracquarry.1",
+        "parentPoiId": "po_fracquarry",
+        "kind": "EXTERIOR",
+        "aAu": [
+          584.0943,
+          502.9562
+        ],
+        "bAu": [
+          626.2777,
+          518.0427
+        ],
+        "lengthAu": 44.8,
+        "thicknessAu": 2,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_fracquarry :: foot edge 1 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_fracquarry.2",
+        "parentPoiId": "po_fracquarry",
+        "kind": "EXTERIOR",
+        "aAu": [
+          626.2777,
+          518.0427
+        ],
+        "bAu": [
+          615.9057,
+          547.0438
+        ],
+        "lengthAu": 30.8,
+        "thicknessAu": 2,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_fracquarry :: foot edge 2 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_fracquarry.3",
+        "parentPoiId": "po_fracquarry",
+        "kind": "EXTERIOR",
+        "aAu": [
+          615.9057,
+          547.0438
+        ],
+        "bAu": [
+          573.7223,
+          531.9573
+        ],
+        "lengthAu": 44.8,
+        "thicknessAu": 2,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_fracquarry :: foot edge 3 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_fracquarry.4",
+        "parentPoiId": "po_fracquarry",
+        "kind": "EXTERIOR",
+        "aAu": [
+          573.7223,
+          531.9573
+        ],
+        "bAu": [
+          584.0943,
+          502.9562
+        ],
+        "lengthAu": 30.8,
+        "thicknessAu": 2,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_fracquarry :: foot edge 4 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      }
+    ],
+    "rooms": [
+      {
+        "id": "room.po_fracquarry.1.1",
+        "parentPoiId": "po_fracquarry",
+        "levelId": "level.po_fracquarry.0",
+        "row": 1,
+        "col": 1,
+        "pattern": "terraced_pit",
+        "enclosureClass": "OPEN_AIR_YARD",
+        "polygonAu": [
+          [
+            584.699,
+            504.2319
+          ],
+          [
+            625.0017,
+            518.6477
+          ],
+          [
+            615.301,
+            545.7681
+          ],
+          [
+            574.9983,
+            531.3523
+          ]
+        ],
+        "centroidAu": [
+          600,
+          525
+        ],
+        "areaAu2": 1232.8687,
+        "bboxAu": [
+          574.9983,
+          504.2319,
+          625.0017,
+          545.7681
+        ],
+        "floor": {
+          "polygonAu": [
+            [
+              584.699,
+              504.2319
+            ],
+            [
+              625.0017,
+              518.6477
+            ],
+            [
+              615.301,
+              545.7681
+            ],
+            [
+              574.9983,
+              531.3523
+            ]
+          ],
+          "status": "PROPOSED",
+          "floorLevelId": "floor.po_fracquarry.1.1"
+        },
+        "roof": {
+          "covered": false,
+          "coverageFractionOfRoom": 0,
+          "canopyOnly": true,
+          "status": "PROPOSED",
+          "note": "Partial canopy over an open yard cell; NOT an enclosed room."
+        },
+        "surface": "YARD_OR_OPEN_CELL",
+        "status": "PROPOSED"
+      }
+    ],
+    "floors": [
+      {
+        "polygonAu": [
+          [
+            584.699,
+            504.2319
+          ],
+          [
+            625.0017,
+            518.6477
+          ],
+          [
+            615.301,
+            545.7681
+          ],
+          [
+            574.9983,
+            531.3523
+          ]
+        ],
+        "status": "PROPOSED",
+        "floorLevelId": "floor.po_fracquarry.1.1"
+      }
+    ],
+    "entrance": {
+      "id": "entrance.po_fracquarry.1",
+      "parentPoiId": "po_fracquarry",
+      "kind": "PRIMARY_ENTRANCE",
+      "onWallId": "wall.po_fracquarry.2",
+      "atAu": [
+        621.0917,
+        532.5433
+      ],
+      "openingAu": 6,
+      "openingStatus": "PROPOSED",
+      "sourceRef": "project.pois[] where id=po_fracquarry :: no authored entrance; edge 2 chosen by nearest road",
+      "capacityUpperBoundAu": 30.8,
+      "doorStateOwner": "GAMEPLAY",
+      "lockedState": "UNKNOWN",
+      "powerRequirement": "UNKNOWN",
+      "note": "STATIC opening geometry only. No lock, key, power, quest or device rule is authored."
+    },
+    "portals": [
+      {
+        "id": "portal.po_fracquarry.entrance",
+        "parentPoiId": "po_fracquarry",
+        "kind": "EXTERIOR_PORTAL",
+        "fromRoomId": null,
+        "toRoomId": "room.po_fracquarry.1.1",
+        "atAu": [
+          621.0917,
+          532.5433
+        ],
+        "openingAu": 6,
+        "openingStatus": "PROPOSED",
+        "status": "PROPOSED",
+        "doorStateOwner": "GAMEPLAY",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "note": "Static entrance portal. NO door rule, lock, key or power requirement."
+      }
+    ],
+    "circulation": {
+      "entranceRoomId": "room.po_fracquarry.1.1",
+      "reachableRooms": 1,
+      "totalRooms": 1,
+      "maxDepth": 0,
+      "depthByRoomId": {
+        "room.po_fracquarry.1.1": 0
+      },
+      "interiorDepthAu": 22.4,
+      "status": "DERIVED"
+    },
+    "retreat": {
+      "status": "UNRESOLVED",
+      "pathAu": null,
+      "lengthAu": null,
+      "exitAtAu": null,
+      "note": "No authored retreat polyline. An exit is NOT invented; Gameplay may route through static portals."
+    },
+    "sockets": [
+      {
+        "id": "socket.po_fracquarry.1",
+        "parentPoiId": "po_fracquarry",
+        "parentRoomId": "room.po_fracquarry.1.1",
+        "levelId": "level.po_fracquarry.0",
+        "atAu": [
+          597.7645,
+          520.2747
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "YARD_OR_DECK",
+        "kind": "OPEN_YARD_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_fracquarry.2",
+        "parentPoiId": "po_fracquarry",
+        "parentRoomId": "room.po_fracquarry.1.1",
+        "levelId": "level.po_fracquarry.0",
+        "atAu": [
+          602.2355,
+          529.7253
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "YARD_OR_DECK",
+        "kind": "OPEN_YARD_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_fracquarry.3",
+        "parentPoiId": "po_fracquarry",
+        "parentRoomId": "room.po_fracquarry.1.1",
+        "levelId": "level.po_fracquarry.0",
+        "atAu": [
+          595.2747,
+          527.2355
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "YARD_OR_DECK",
+        "kind": "OPEN_YARD_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_fracquarry.4",
+        "parentPoiId": "po_fracquarry",
+        "parentRoomId": "room.po_fracquarry.1.1",
+        "levelId": "level.po_fracquarry.0",
+        "atAu": [
+          604.7253,
+          522.7645
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "YARD_OR_DECK",
+        "kind": "OPEN_YARD_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_fracquarry.5",
+        "parentPoiId": "po_fracquarry",
+        "parentRoomId": "room.po_fracquarry.1.1",
+        "levelId": "level.po_fracquarry.0",
+        "atAu": [
+          595.2747,
+          527.2355
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "YARD_OR_DECK",
+        "kind": "OPEN_YARD_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      }
+    ],
+    "roofCoverage": {
+      "coveredRoomCount": 0,
+      "totalRoomCount": 1,
+      "roofAreaAu2": 0,
+      "footAreaAu2": 1379.84,
+      "roofAreaToFootAreaRatioAcrossLevels": 0,
+      "fractionOfFoot": 0,
+      "status": "DERIVED",
+      "note": "Measured over PROPOSED room/canopy polygons weighted by coverageFractionOfRoom. The across-levels ratio can exceed 1 when a DEEP level adds roofed area; it is NOT a single-plane coverage fraction."
+    },
+    "geometryAdapters": {
+      "collision": {
+        "staticWalls": [
+          "wall.po_fracquarry.1",
+          "wall.po_fracquarry.2",
+          "wall.po_fracquarry.3",
+          "wall.po_fracquarry.4"
+        ],
+        "staticWallCount": 4,
+        "wallThicknessAu": 2,
+        "thicknessStatus": "PROPOSED",
+        "dynamicCollisionOwner": "GAMEPLAY",
+        "destructionOwner": "GAMEPLAY",
+        "status": "PROPOSED_STATIC_COLLISION_GEOMETRY__NOT_RUNTIME_COLLISION_DATA"
+      },
+      "enclosure": {
+        "enclosedAreaAu2": 0,
+        "footAreaAu2": 1379.84,
+        "enclosureFraction": 0,
+        "enclosureClass": "OPEN_AIR_YARD",
+        "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+        "status": "DERIVED"
+      },
+      "reach": {
+        "maxInteriorDistanceAu": 22.4,
+        "nearestRoadAu": 21.4501,
+        "approachLengthAu": 5.2143,
+        "minPortalOpeningAu": 6,
+        "status": "DERIVED",
+        "note": "Geometric reach only. Interaction radius / Gameplay reach rules are NOT asserted."
+      },
+      "lineOfSight": {
+        "opaqueWallIds": [
+          "wall.po_fracquarry.1",
+          "wall.po_fracquarry.2",
+          "wall.po_fracquarry.3",
+          "wall.po_fracquarry.4"
+        ],
+        "transparentPortalIds": [
+          "portal.po_fracquarry.entrance"
+        ],
+        "portalSightOwner": "GAMEPLAY",
+        "status": "PROPOSED",
+        "note": "Static opaque walls + portal gaps. Dynamic door opacity is Gameplay-owned."
+      },
+      "roofCoverage": {
+        "coveredRoomCount": 0,
+        "totalRoomCount": 1,
+        "roofAreaAu2": 0,
+        "footAreaAu2": 1379.84,
+        "roofAreaToFootAreaRatioAcrossLevels": 0,
+        "fractionOfFoot": 0,
+        "status": "DERIVED",
+        "note": "Measured over PROPOSED room/canopy polygons weighted by coverageFractionOfRoom. The across-levels ratio can exceed 1 when a DEEP level adds roofed area; it is NOT a single-plane coverage fraction."
+      },
+      "portalPassability": {
+        "portals": [
+          {
+            "id": "portal.po_fracquarry.entrance",
+            "openingAu": 6,
+            "kind": "EXTERIOR_PORTAL"
+          }
+        ],
+        "passabilityRuleOwner": "GAMEPLAY",
+        "status": "UNKNOWN__DYNAMIC_DOOR_STATE_DESTRUCTION_AND_DEVICES_OWNED_BY_GAMEPLAY",
+        "note": "Map asserts only that a geometric opening exists. No lock, power, key, weight or vehicle rule."
+      }
+    },
+    "stableIds": {
+      "rooms": [
+        "room.po_fracquarry.1.1"
+      ],
+      "walls": [
+        "wall.po_fracquarry.1",
+        "wall.po_fracquarry.2",
+        "wall.po_fracquarry.3",
+        "wall.po_fracquarry.4"
+      ],
+      "entrances": [
+        "entrance.po_fracquarry.1"
+      ],
+      "portals": [
+        "portal.po_fracquarry.entrance"
+      ],
+      "sockets": [
+        "socket.po_fracquarry.1",
+        "socket.po_fracquarry.2",
+        "socket.po_fracquarry.3",
+        "socket.po_fracquarry.4",
+        "socket.po_fracquarry.5"
+      ],
+      "levels": [
+        "level.po_fracquarry.0"
+      ],
+      "floors": [
+        "floor.po_fracquarry.1.1"
+      ]
+    },
+    "noClaims": [
+      "NO loot, loot table, chest contents or reward",
+      "NO locked-door rule, key, card or power requirement",
+      "NO generator, machine, recipe, quest, vendor inventory or economy",
+      "NO dynamic door state or destruction",
+      "NO authored entrance in source (all openings PROPOSED)",
+      "NO approved vertical unit or stair geometry",
+      "NO runtime collision data (static geometry only)",
+      "NO playable survival acceptance"
+    ]
+  }
+}

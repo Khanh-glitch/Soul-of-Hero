@@ -1,0 +1,190 @@
+{
+  "note": "Controlled real-raster fixture; same weather seed 313, no resupply or interaction for 8 hours. Initial planted crop and water injected. One 8-hour result is not a natural survival run; 42-fold comparisons assume full collection/resupply and recurring same weather, which is not guaranteed.",
+  "investment": {
+    "tender": {
+      "wood": 12,
+      "iron_ingot": 2,
+      "mechanical_parts": 3,
+      "fasteners": 3,
+      "spares": 2
+    },
+    "benchUpgrade": {
+      "iron_ingot": 1,
+      "mechanical_parts": 2
+    },
+    "frame": {
+      "wood": 4,
+      "fiber": 4,
+      "glass": 1,
+      "herb": 1
+    },
+    "existingGardenBarrelChestAndWorkbench": "additional separately paid infrastructure"
+  },
+  "scenarios": [
+    {
+      "location": {
+        "x": 64,
+        "y": 67,
+        "biome": "grass",
+        "temperature": 0.402,
+        "dryRate": 0.997,
+        "wetRate": 0.997
+      },
+      "frame": false,
+      "automated": false,
+      "initial": {
+        "plantedSeed": 1,
+        "soilWater": 3,
+        "barrelWater": 0,
+        "fuelWood": 0,
+        "chestSlots": 0
+      },
+      "after8h": {
+        "harvestedToChest": 0,
+        "ripeUncollected": 3,
+        "seedInChest": 0,
+        "woodRemaining": 0,
+        "energyRemainingSeconds": 0,
+        "barrelWater": null,
+        "soilWater": 3,
+        "cropProgress": 1,
+        "status": "ripe; manual harvest needed",
+        "pumps": 0,
+        "plants": 0,
+        "harvests": 0
+      }
+    },
+    {
+      "location": {
+        "x": 64,
+        "y": 67,
+        "biome": "grass",
+        "temperature": 0.402,
+        "dryRate": 0.997,
+        "wetRate": 0.997
+      },
+      "frame": false,
+      "automated": true,
+      "initial": {
+        "plantedSeed": 1,
+        "soilWater": 3,
+        "barrelWater": 12,
+        "fuelWood": 40,
+        "chestSlots": 12
+      },
+      "after8h": {
+        "harvestedToChest": 147,
+        "ripeUncollected": 0,
+        "seedInChest": 50,
+        "woodRemaining": 0,
+        "energyRemainingSeconds": 0,
+        "barrelWater": 12,
+        "soilWater": 3,
+        "cropProgress": 0,
+        "status": "Fuel needed to plant",
+        "pumps": 6,
+        "plants": 48,
+        "harvests": 49
+      }
+    },
+    {
+      "location": {
+        "x": 159,
+        "y": 17,
+        "biome": "snow",
+        "temperature": 0.1,
+        "dryRate": 0.338,
+        "wetRate": 0.234
+      },
+      "frame": false,
+      "automated": false,
+      "initial": {
+        "plantedSeed": 1,
+        "soilWater": 3,
+        "barrelWater": 0,
+        "fuelWood": 0,
+        "chestSlots": 0
+      },
+      "after8h": {
+        "harvestedToChest": 0,
+        "ripeUncollected": 3,
+        "seedInChest": 0,
+        "woodRemaining": 0,
+        "energyRemainingSeconds": 0,
+        "barrelWater": null,
+        "soilWater": 3,
+        "cropProgress": 1,
+        "status": "ripe; manual harvest needed",
+        "pumps": 0,
+        "plants": 0,
+        "harvests": 0
+      }
+    },
+    {
+      "location": {
+        "x": 159,
+        "y": 17,
+        "biome": "snow",
+        "temperature": 0.1,
+        "dryRate": 0.338,
+        "wetRate": 0.234
+      },
+      "frame": false,
+      "automated": true,
+      "initial": {
+        "plantedSeed": 1,
+        "soilWater": 3,
+        "barrelWater": 12,
+        "fuelWood": 40,
+        "chestSlots": 12
+      },
+      "after8h": {
+        "harvestedToChest": 78,
+        "ripeUncollected": 0,
+        "seedInChest": 26,
+        "woodRemaining": 10,
+        "energyRemainingSeconds": 8,
+        "barrelWater": 12,
+        "soilWater": 2.75,
+        "cropProgress": 0.9944,
+        "status": "Slow growth — inspect climate and soil",
+        "pumps": 44,
+        "plants": 26,
+        "harvests": 26
+      }
+    },
+    {
+      "location": {
+        "x": 159,
+        "y": 17,
+        "biome": "snow",
+        "temperature": 0.34,
+        "dryRate": 0.85,
+        "wetRate": 0.85
+      },
+      "frame": true,
+      "automated": true,
+      "initial": {
+        "plantedSeed": 1,
+        "soilWater": 3,
+        "barrelWater": 12,
+        "fuelWood": 40,
+        "chestSlots": 12
+      },
+      "after8h": {
+        "harvestedToChest": 135,
+        "ripeUncollected": 0,
+        "seedInChest": 46,
+        "woodRemaining": 0,
+        "energyRemainingSeconds": 4,
+        "barrelWater": 12,
+        "soilWater": 0.824,
+        "cropProgress": 0,
+        "status": "Fuel needed to plant",
+        "pumps": 21,
+        "plants": 44,
+        "harvests": 45
+      }
+    }
+  ]
+}

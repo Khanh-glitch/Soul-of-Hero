@@ -1,0 +1,138 @@
+{
+  "player": {
+    "x": 2295.200000000008,
+    "y": 775.2071999999996,
+    "vx": 0,
+    "vy": 0,
+    "dir": 3,
+    "aim": -1.6030058305564077,
+    "hp": 100,
+    "stamina": 100,
+    "hunger": 82.91628999999932,
+    "thirst": 81.87443499999998,
+    "warmth": 100,
+    "rad": 0,
+    "active": 0,
+    "action": null,
+    "invuln": 0,
+    "dead": false,
+    "deadT": 0,
+    "pulling": null,
+    "skills": {
+      "gather": 0,
+      "combat": 0,
+      "craft": 0,
+      "survival": 0
+    },
+    "stepAcc": 11.995199999999961,
+    "lastTraceX": 0,
+    "lastTraceY": 0,
+    "regionName": "Harbor Reach",
+    "sheltered": false
+  },
+  "layout": "shipping_fresh",
+  "inventory": [
+    {
+      "uid": "s1",
+      "key": "knife",
+      "qty": 1,
+      "dur": 300
+    },
+    {
+      "uid": "s2",
+      "key": "water_flask",
+      "qty": 1,
+      "charge": 2
+    },
+    {
+      "uid": "s3",
+      "key": "berries",
+      "qty": 3
+    },
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+  ],
+  "nearbyCreatures": [
+    {
+      "id": "m3y",
+      "type": "boar",
+      "x": 2348.1284086002997,
+      "y": 1061.210354322731,
+      "hp": 40,
+      "maxHp": 40,
+      "homeX": 2376,
+      "homeY": 1064,
+      "state": "wander",
+      "t": 1333.2999999999993,
+      "tx": 2358.8549616602522,
+      "ty": 1074.7275105537997,
+      "angle": 0.9000000809277581,
+      "dir": 0,
+      "knows": null,
+      "path": null,
+      "pathT": 0,
+      "cd": 0,
+      "kbx": 0,
+      "kby": 0,
+      "flash": 0
+    },
+    {
+      "id": "m5c",
+      "type": "boar",
+      "x": 2588.1593007477386,
+      "y": 749.1725017015533,
+      "hp": 40,
+      "maxHp": 40,
+      "homeX": 2536,
+      "homeY": 728,
+      "state": "wander",
+      "t": 783.2999999999993,
+      "tx": 2599.7285269056056,
+      "ty": 733.0118274842031,
+      "angle": -0.9494869411266577,
+      "dir": 3,
+      "knows": null,
+      "path": null,
+      "pathT": 0,
+      "cd": 0,
+      "kbx": 0,
+      "kby": 0,
+      "flash": 0
+    }
+  ],
+  "receipts": [
+    {
+      "id": "r1",
+      "seq": 1,
+      "at": 1793772518220,
+      "kind": "run.start",
+      "detail": "female@the island"
+    },
+    {
+      "id": "r2",
+      "seq": 2,
+      "at": 1793772658987,
+      "kind": "offline.settle",
+      "detail": "136s"
+    }
+  ]
+}

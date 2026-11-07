@@ -1,0 +1,19 @@
+{
+ "irOff": "off",
+ "irUnpowered": "unpowered",
+ "irReady": "ready",
+ "irDetect": "detect",
+ "irBlocked": "blocked",
+ "recyclerSite": {
+  "tx": 151,
+  "ty": 103
+ },
+ "airdropPartialPhase": "partial",
+ "airdropStacksRemaining": 2,
+ "cacheClasses": [
+  "toolbox",
+  "supply",
+  "advanced",
+  "military"
+ ]
+}

@@ -1,0 +1,5264 @@
+{
+  "method": "Previously blind-obtained drives; subsequent route is read-only grid-assisted, normal input, real time.",
+  "errors": [],
+  "before": {
+    "player": {
+      "x": 2473.023382445597,
+      "y": 1717.6206439139262,
+      "vx": 0,
+      "vy": 0,
+      "dir": 1,
+      "aim": 2.843192633627864,
+      "hp": 45.52526400000181,
+      "stamina": 100,
+      "hunger": 72.61431719997032,
+      "thirst": 66.42147579999884,
+      "warmth": 86.62764312448708,
+      "rad": 10.128178666666422,
+      "active": 0,
+      "action": null,
+      "invuln": 0,
+      "dead": false,
+      "deadT": 31282.100000000002,
+      "pulling": null,
+      "skills": {
+        "gather": 72,
+        "combat": 2,
+        "craft": 0,
+        "survival": 0
+      },
+      "stepAcc": 3.42,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Dead Foundry",
+      "sheltered": false
+    },
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 78
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7k",
+        "key": "wood",
+        "qty": 38
+      },
+      {
+        "uid": "s7l",
+        "key": "seed",
+        "qty": 4
+      },
+      {
+        "uid": "s88",
+        "key": "scrap",
+        "qty": 24
+      },
+      {
+        "uid": "s8f",
+        "key": "fasteners",
+        "qty": 4
+      },
+      {
+        "uid": "s8s",
+        "key": "spares",
+        "qty": 13
+      },
+      {
+        "uid": "sf",
+        "key": "iron_ingot",
+        "qty": 1
+      },
+      {
+        "uid": "s90",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "sep",
+        "key": "fiber",
+        "qty": 6
+      },
+      {
+        "uid": "sew",
+        "key": "meat",
+        "qty": 1
+      },
+      {
+        "uid": "sex",
+        "key": "fur",
+        "qty": 2
+      },
+      {
+        "uid": "sid",
+        "key": "stone",
+        "qty": 12
+      },
+      {
+        "uid": "smr",
+        "key": "field_repair_kit",
+        "qty": 2
+      },
+      {
+        "uid": "smm",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "smw",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "snj",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "so4",
+        "key": "damaged_drive",
+        "qty": 1
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r1",
+        "seq": 1,
+        "at": 1793769440558,
+        "kind": "run.start",
+        "detail": "female@the island"
+      },
+      {
+        "id": "r2",
+        "seq": 2,
+        "at": 1793769455944,
+        "kind": "offline.settle",
+        "detail": "12s"
+      },
+      {
+        "id": "r3",
+        "seq": 3,
+        "at": 1793769469541,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r4",
+        "seq": 4,
+        "at": 1793769481860,
+        "kind": "offline.settle",
+        "detail": "8s"
+      },
+      {
+        "id": "r5",
+        "seq": 5,
+        "at": 1793769497075,
+        "kind": "offline.settle",
+        "detail": "12s"
+      },
+      {
+        "id": "r6",
+        "seq": 6,
+        "at": 1793769499113,
+        "kind": "harvest",
+        "detail": "oak@116,107 -1"
+      },
+      {
+        "id": "r7",
+        "seq": 7,
+        "at": 1793769499497,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r8",
+        "seq": 8,
+        "at": 1793769499514,
+        "kind": "pickup",
+        "detail": "seedx1"
+      },
+      {
+        "id": "r9",
+        "seq": 9,
+        "at": 1793769500047,
+        "kind": "harvest",
+        "detail": "oak@116,107 -1"
+      },
+      {
+        "id": "r10",
+        "seq": 10,
+        "at": 1793769500430,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r11",
+        "seq": 11,
+        "at": 1793769500947,
+        "kind": "harvest",
+        "detail": "oak@116,107 -1"
+      },
+      {
+        "id": "r12",
+        "seq": 12,
+        "at": 1793769501330,
+        "kind": "pickup",
+        "detail": "seedx1"
+      },
+      {
+        "id": "r13",
+        "seq": 13,
+        "at": 1793769501380,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r14",
+        "seq": 14,
+        "at": 1793769501863,
+        "kind": "harvest",
+        "detail": "oak@116,107 -1"
+      },
+      {
+        "id": "r15",
+        "seq": 15,
+        "at": 1793769502313,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r16",
+        "seq": 16,
+        "at": 1793769502780,
+        "kind": "harvest",
+        "detail": "oak@116,107 -1"
+      },
+      {
+        "id": "r17",
+        "seq": 17,
+        "at": 1793769503213,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r18",
+        "seq": 18,
+        "at": 1793769503697,
+        "kind": "harvest",
+        "detail": "oak@116,107 -1"
+      },
+      {
+        "id": "r19",
+        "seq": 19,
+        "at": 1793769504130,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r20",
+        "seq": 20,
+        "at": 1793769530776,
+        "kind": "offline.settle",
+        "detail": "16s"
+      },
+      {
+        "id": "r21",
+        "seq": 21,
+        "at": 1793769542855,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r22",
+        "seq": 22,
+        "at": 1793769545162,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r23",
+        "seq": 23,
+        "at": 1793769545628,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r24",
+        "seq": 24,
+        "at": 1793769546378,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r25",
+        "seq": 25,
+        "at": 1793769546812,
+        "kind": "pickup",
+        "detail": "fastenersx1"
+      },
+      {
+        "id": "r26",
+        "seq": 26,
+        "at": 1793769546845,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r27",
+        "seq": 27,
+        "at": 1793769547595,
+        "kind": "harvest.component",
+        "detail": "wreck@117,108:s8n"
+      },
+      {
+        "id": "r28",
+        "seq": 28,
+        "at": 1793769547595,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r29",
+        "seq": 29,
+        "at": 1793769547978,
+        "kind": "pickup",
+        "detail": "fastenersx1"
+      },
+      {
+        "id": "r30",
+        "seq": 30,
+        "at": 1793769548045,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r31",
+        "seq": 31,
+        "at": 1793769548045,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r32",
+        "seq": 32,
+        "at": 1793769548045,
+        "kind": "pickup",
+        "detail": "damaged_drivex1"
+      },
+      {
+        "id": "r33",
+        "seq": 33,
+        "at": 1793769548529,
+        "kind": "harvest.component",
+        "detail": "wreck@117,108:s90"
+      },
+      {
+        "id": "r34",
+        "seq": 34,
+        "at": 1793769548529,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r35",
+        "seq": 35,
+        "at": 1793769548911,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r36",
+        "seq": 36,
+        "at": 1793769548945,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r37",
+        "seq": 37,
+        "at": 1793769548978,
+        "kind": "pickup",
+        "detail": "damaged_drivex1"
+      },
+      {
+        "id": "r38",
+        "seq": 38,
+        "at": 1793769549745,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r39",
+        "seq": 39,
+        "at": 1793769550212,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r40",
+        "seq": 40,
+        "at": 1793769550945,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r41",
+        "seq": 41,
+        "at": 1793769551345,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r42",
+        "seq": 42,
+        "at": 1793769552161,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r43",
+        "seq": 43,
+        "at": 1793769552595,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r44",
+        "seq": 44,
+        "at": 1793769553095,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r45",
+        "seq": 45,
+        "at": 1793769553528,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r46",
+        "seq": 46,
+        "at": 1793769570819,
+        "kind": "offline.settle",
+        "detail": "12s"
+      },
+      {
+        "id": "r47",
+        "seq": 47,
+        "at": 1793769600340,
+        "kind": "offline.settle",
+        "detail": "27s"
+      },
+      {
+        "id": "r48",
+        "seq": 48,
+        "at": 1793769612758,
+        "kind": "recycle.start",
+        "detail": "s8n@e2g"
+      },
+      {
+        "id": "r49",
+        "seq": 49,
+        "at": 1793769624758,
+        "kind": "job.done",
+        "detail": "X:drive"
+      },
+      {
+        "id": "r50",
+        "seq": 50,
+        "at": 1793769632035,
+        "kind": "offline.settle",
+        "detail": "18s"
+      },
+      {
+        "id": "r51",
+        "seq": 51,
+        "at": 1793769633871,
+        "kind": "move",
+        "detail": "sparesx2 c2i->inv"
+      },
+      {
+        "id": "r52",
+        "seq": 52,
+        "at": 1793769644786,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r53",
+        "seq": 53,
+        "at": 1793769659551,
+        "kind": "offline.settle",
+        "detail": "15s"
+      },
+      {
+        "id": "r54",
+        "seq": 54,
+        "at": 1793769684968,
+        "kind": "offline.settle",
+        "detail": "25s"
+      },
+      {
+        "id": "r55",
+        "seq": 55,
+        "at": 1793769687615,
+        "kind": "move",
+        "detail": "sparesx3 c14->inv"
+      },
+      {
+        "id": "r56",
+        "seq": 56,
+        "at": 1793769705355,
+        "kind": "move",
+        "detail": "iron_ingotx1 cd->inv"
+      },
+      {
+        "id": "r57",
+        "seq": 57,
+        "at": 1793769705432,
+        "kind": "move",
+        "detail": "woodx8 cd->inv"
+      },
+      {
+        "id": "r58",
+        "seq": 58,
+        "at": 1793769723999,
+        "kind": "offline.settle",
+        "detail": "18s"
+      },
+      {
+        "id": "r59",
+        "seq": 59,
+        "at": 1793769727104,
+        "kind": "harvest",
+        "detail": "grass@108,116 -2"
+      },
+      {
+        "id": "r60",
+        "seq": 60,
+        "at": 1793769727504,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r61",
+        "seq": 61,
+        "at": 1793769727504,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r62",
+        "seq": 62,
+        "at": 1793769734471,
+        "kind": "pickup",
+        "detail": "meatx1"
+      },
+      {
+        "id": "r63",
+        "seq": 63,
+        "at": 1793769734471,
+        "kind": "pickup",
+        "detail": "furx2"
+      },
+      {
+        "id": "r64",
+        "seq": 64,
+        "at": 1793769734754,
+        "kind": "harvest",
+        "detail": "oak@107,115 -1"
+      },
+      {
+        "id": "r65",
+        "seq": 65,
+        "at": 1793769735204,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r66",
+        "seq": 66,
+        "at": 1793769735671,
+        "kind": "harvest",
+        "detail": "oak@107,115 -1"
+      },
+      {
+        "id": "r67",
+        "seq": 67,
+        "at": 1793769736137,
+        "kind": "pickup",
+        "detail": "seedx1"
+      },
+      {
+        "id": "r68",
+        "seq": 68,
+        "at": 1793769736154,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r69",
+        "seq": 69,
+        "at": 1793769736604,
+        "kind": "harvest",
+        "detail": "oak@107,115 -1"
+      },
+      {
+        "id": "r70",
+        "seq": 70,
+        "at": 1793769737071,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r71",
+        "seq": 71,
+        "at": 1793769738687,
+        "kind": "harvest",
+        "detail": "oak@107,115 -1"
+      },
+      {
+        "id": "r72",
+        "seq": 72,
+        "at": 1793769739137,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r73",
+        "seq": 73,
+        "at": 1793769739587,
+        "kind": "harvest",
+        "detail": "oak@107,115 -1"
+      },
+      {
+        "id": "r74",
+        "seq": 74,
+        "at": 1793769740020,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r75",
+        "seq": 75,
+        "at": 1793769740520,
+        "kind": "harvest",
+        "detail": "oak@107,115 -1"
+      },
+      {
+        "id": "r76",
+        "seq": 76,
+        "at": 1793769740970,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r77",
+        "seq": 77,
+        "at": 1793769744373,
+        "kind": "harvest",
+        "detail": "oak@114,120 -1"
+      },
+      {
+        "id": "r78",
+        "seq": 78,
+        "at": 1793769744754,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r79",
+        "seq": 79,
+        "at": 1793769745270,
+        "kind": "harvest",
+        "detail": "oak@114,120 -1"
+      },
+      {
+        "id": "r80",
+        "seq": 80,
+        "at": 1793769745670,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r81",
+        "seq": 81,
+        "at": 1793769746187,
+        "kind": "harvest",
+        "detail": "oak@114,120 -1"
+      },
+      {
+        "id": "r82",
+        "seq": 82,
+        "at": 1793769746570,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r83",
+        "seq": 83,
+        "at": 1793769747087,
+        "kind": "harvest",
+        "detail": "oak@114,120 -1"
+      },
+      {
+        "id": "r84",
+        "seq": 84,
+        "at": 1793769747553,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r85",
+        "seq": 85,
+        "at": 1793769747987,
+        "kind": "harvest",
+        "detail": "oak@114,120 -1"
+      },
+      {
+        "id": "r86",
+        "seq": 86,
+        "at": 1793769748453,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r87",
+        "seq": 87,
+        "at": 1793769748904,
+        "kind": "harvest",
+        "detail": "oak@114,120 -1"
+      },
+      {
+        "id": "r88",
+        "seq": 88,
+        "at": 1793769749337,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r89",
+        "seq": 89,
+        "at": 1793769749337,
+        "kind": "pickup",
+        "detail": "seedx1"
+      },
+      {
+        "id": "r90",
+        "seq": 90,
+        "at": 1793769752837,
+        "kind": "harvest",
+        "detail": "oak@115,112 -1"
+      },
+      {
+        "id": "r91",
+        "seq": 91,
+        "at": 1793769753270,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r92",
+        "seq": 92,
+        "at": 1793769753770,
+        "kind": "harvest",
+        "detail": "oak@115,112 -1"
+      },
+      {
+        "id": "r93",
+        "seq": 93,
+        "at": 1793769754220,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r94",
+        "seq": 94,
+        "at": 1793769754686,
+        "kind": "harvest",
+        "detail": "oak@115,112 -1"
+      },
+      {
+        "id": "r95",
+        "seq": 95,
+        "at": 1793769755070,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r96",
+        "seq": 96,
+        "at": 1793769755620,
+        "kind": "harvest",
+        "detail": "oak@115,112 -1"
+      },
+      {
+        "id": "r97",
+        "seq": 97,
+        "at": 1793769756039,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r98",
+        "seq": 98,
+        "at": 1793769756520,
+        "kind": "harvest",
+        "detail": "oak@115,112 -1"
+      },
+      {
+        "id": "r99",
+        "seq": 99,
+        "at": 1793769756903,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r100",
+        "seq": 100,
+        "at": 1793769757453,
+        "kind": "harvest",
+        "detail": "oak@115,112 -1"
+      },
+      {
+        "id": "r101",
+        "seq": 101,
+        "at": 1793769757886,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r102",
+        "seq": 102,
+        "at": 1793769760203,
+        "kind": "harvest",
+        "detail": "oak@120,113 -1"
+      },
+      {
+        "id": "r103",
+        "seq": 103,
+        "at": 1793769760586,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r104",
+        "seq": 104,
+        "at": 1793769761120,
+        "kind": "harvest",
+        "detail": "oak@120,113 -1"
+      },
+      {
+        "id": "r105",
+        "seq": 105,
+        "at": 1793769761570,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r106",
+        "seq": 106,
+        "at": 1793769762036,
+        "kind": "harvest",
+        "detail": "oak@120,113 -1"
+      },
+      {
+        "id": "r107",
+        "seq": 107,
+        "at": 1793769762436,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r108",
+        "seq": 108,
+        "at": 1793769762953,
+        "kind": "harvest",
+        "detail": "oak@120,113 -1"
+      },
+      {
+        "id": "r109",
+        "seq": 109,
+        "at": 1793769763369,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r110",
+        "seq": 110,
+        "at": 1793769763870,
+        "kind": "harvest",
+        "detail": "oak@120,113 -1"
+      },
+      {
+        "id": "r111",
+        "seq": 111,
+        "at": 1793769764320,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r112",
+        "seq": 112,
+        "at": 1793769764786,
+        "kind": "harvest",
+        "detail": "oak@120,113 -1"
+      },
+      {
+        "id": "r113",
+        "seq": 113,
+        "at": 1793769765236,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r114",
+        "seq": 114,
+        "at": 1793769767519,
+        "kind": "harvest",
+        "detail": "rock@122,115 -1"
+      },
+      {
+        "id": "r115",
+        "seq": 115,
+        "at": 1793769767953,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r116",
+        "seq": 116,
+        "at": 1793769768436,
+        "kind": "harvest",
+        "detail": "rock@122,115 -1"
+      },
+      {
+        "id": "r117",
+        "seq": 117,
+        "at": 1793769768819,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r118",
+        "seq": 118,
+        "at": 1793769769352,
+        "kind": "harvest",
+        "detail": "rock@122,115 -1"
+      },
+      {
+        "id": "r119",
+        "seq": 119,
+        "at": 1793769769736,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r120",
+        "seq": 120,
+        "at": 1793769770269,
+        "kind": "harvest",
+        "detail": "rock@122,115 -1"
+      },
+      {
+        "id": "r121",
+        "seq": 121,
+        "at": 1793769770719,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r122",
+        "seq": 122,
+        "at": 1793769771186,
+        "kind": "harvest",
+        "detail": "rock@122,115 -1"
+      },
+      {
+        "id": "r123",
+        "seq": 123,
+        "at": 1793769771569,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r124",
+        "seq": 124,
+        "at": 1793769772086,
+        "kind": "harvest",
+        "detail": "rock@122,115 -1"
+      },
+      {
+        "id": "r125",
+        "seq": 125,
+        "at": 1793769772536,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r126",
+        "seq": 126,
+        "at": 1793769775902,
+        "kind": "harvest",
+        "detail": "rock@122,123 -1"
+      },
+      {
+        "id": "r127",
+        "seq": 127,
+        "at": 1793769776352,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r128",
+        "seq": 128,
+        "at": 1793769776835,
+        "kind": "harvest",
+        "detail": "rock@122,123 -1"
+      },
+      {
+        "id": "r129",
+        "seq": 129,
+        "at": 1793769777286,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r130",
+        "seq": 130,
+        "at": 1793769777735,
+        "kind": "harvest",
+        "detail": "rock@122,123 -1"
+      },
+      {
+        "id": "r131",
+        "seq": 131,
+        "at": 1793769778186,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r132",
+        "seq": 132,
+        "at": 1793769778652,
+        "kind": "harvest",
+        "detail": "rock@122,123 -1"
+      },
+      {
+        "id": "r133",
+        "seq": 133,
+        "at": 1793769779102,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r134",
+        "seq": 134,
+        "at": 1793769779569,
+        "kind": "harvest",
+        "detail": "rock@122,123 -1"
+      },
+      {
+        "id": "r135",
+        "seq": 135,
+        "at": 1793769780002,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r136",
+        "seq": 136,
+        "at": 1793769780469,
+        "kind": "harvest",
+        "detail": "rock@122,123 -1"
+      },
+      {
+        "id": "r137",
+        "seq": 137,
+        "at": 1793769780902,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r138",
+        "seq": 138,
+        "at": 1793769781769,
+        "kind": "harvest",
+        "detail": "grass@123,122 -2"
+      },
+      {
+        "id": "r139",
+        "seq": 139,
+        "at": 1793769782152,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r140",
+        "seq": 140,
+        "at": 1793769782219,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r141",
+        "seq": 141,
+        "at": 1793769783502,
+        "kind": "harvest",
+        "detail": "grass@120,121 -2"
+      },
+      {
+        "id": "r142",
+        "seq": 142,
+        "at": 1793769783935,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r143",
+        "seq": 143,
+        "at": 1793769783935,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r144",
+        "seq": 144,
+        "at": 1793769797968,
+        "kind": "harvest",
+        "detail": "wreck@152,109 -1"
+      },
+      {
+        "id": "r145",
+        "seq": 145,
+        "at": 1793769798351,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r146",
+        "seq": 146,
+        "at": 1793769798401,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r147",
+        "seq": 147,
+        "at": 1793769799185,
+        "kind": "harvest",
+        "detail": "wreck@152,109 -1"
+      },
+      {
+        "id": "r148",
+        "seq": 148,
+        "at": 1793769799568,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r149",
+        "seq": 149,
+        "at": 1793769800435,
+        "kind": "harvest",
+        "detail": "wreck@152,109 -1"
+      },
+      {
+        "id": "r150",
+        "seq": 150,
+        "at": 1793769800851,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r151",
+        "seq": 151,
+        "at": 1793769801351,
+        "kind": "harvest",
+        "detail": "wreck@152,109 -1"
+      },
+      {
+        "id": "r152",
+        "seq": 152,
+        "at": 1793769801752,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r153",
+        "seq": 153,
+        "at": 1793769802585,
+        "kind": "harvest",
+        "detail": "wreck@152,109 -1"
+      },
+      {
+        "id": "r154",
+        "seq": 154,
+        "at": 1793769803018,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r155",
+        "seq": 155,
+        "at": 1793769803801,
+        "kind": "harvest.component",
+        "detail": "wreck@152,109:smm"
+      },
+      {
+        "id": "r156",
+        "seq": 156,
+        "at": 1793769803801,
+        "kind": "harvest",
+        "detail": "wreck@152,109 -1"
+      },
+      {
+        "id": "r157",
+        "seq": 157,
+        "at": 1793769804185,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r158",
+        "seq": 158,
+        "at": 1793769804185,
+        "kind": "pickup",
+        "detail": "field_repair_kitx1"
+      },
+      {
+        "id": "r159",
+        "seq": 159,
+        "at": 1793769804218,
+        "kind": "pickup",
+        "detail": "damaged_drivex1"
+      },
+      {
+        "id": "r160",
+        "seq": 160,
+        "at": 1793769804251,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r161",
+        "seq": 161,
+        "at": 1793769805001,
+        "kind": "harvest.component",
+        "detail": "wreck@152,109:smw"
+      },
+      {
+        "id": "r162",
+        "seq": 162,
+        "at": 1793769805001,
+        "kind": "harvest",
+        "detail": "wreck@152,109 -1"
+      },
+      {
+        "id": "r163",
+        "seq": 163,
+        "at": 1793769805401,
+        "kind": "pickup",
+        "detail": "damaged_drivex1"
+      },
+      {
+        "id": "r164",
+        "seq": 164,
+        "at": 1793769805451,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r165",
+        "seq": 165,
+        "at": 1793769805935,
+        "kind": "harvest",
+        "detail": "wreck@152,109 -1"
+      },
+      {
+        "id": "r166",
+        "seq": 166,
+        "at": 1793769806318,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r167",
+        "seq": 167,
+        "at": 1793769806401,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r168",
+        "seq": 168,
+        "at": 1793769810218,
+        "kind": "harvest",
+        "detail": "wreck@155,107 -1"
+      },
+      {
+        "id": "r169",
+        "seq": 169,
+        "at": 1793769810634,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r170",
+        "seq": 170,
+        "at": 1793769811584,
+        "kind": "harvest.component",
+        "detail": "wreck@155,107:snj"
+      },
+      {
+        "id": "r171",
+        "seq": 171,
+        "at": 1793769811584,
+        "kind": "harvest",
+        "detail": "wreck@155,107 -1"
+      },
+      {
+        "id": "r172",
+        "seq": 172,
+        "at": 1793769811968,
+        "kind": "pickup",
+        "detail": "damaged_drivex1"
+      },
+      {
+        "id": "r173",
+        "seq": 173,
+        "at": 1793769811984,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r174",
+        "seq": 174,
+        "at": 1793769812801,
+        "kind": "harvest",
+        "detail": "wreck@155,107 -1"
+      },
+      {
+        "id": "r175",
+        "seq": 175,
+        "at": 1793769813184,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r176",
+        "seq": 176,
+        "at": 1793769813934,
+        "kind": "harvest",
+        "detail": "wreck@155,107 -1"
+      },
+      {
+        "id": "r177",
+        "seq": 177,
+        "at": 1793769814318,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r178",
+        "seq": 178,
+        "at": 1793769814318,
+        "kind": "pickup",
+        "detail": "fastenersx1"
+      },
+      {
+        "id": "r179",
+        "seq": 179,
+        "at": 1793769815434,
+        "kind": "harvest",
+        "detail": "wreck@155,107 -1"
+      },
+      {
+        "id": "r180",
+        "seq": 180,
+        "at": 1793769815834,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r181",
+        "seq": 181,
+        "at": 1793769816634,
+        "kind": "harvest.component",
+        "detail": "wreck@155,107:so4"
+      },
+      {
+        "id": "r182",
+        "seq": 182,
+        "at": 1793769816634,
+        "kind": "harvest",
+        "detail": "wreck@155,107 -1"
+      },
+      {
+        "id": "r183",
+        "seq": 183,
+        "at": 1793769817034,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r184",
+        "seq": 184,
+        "at": 1793769817051,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r185",
+        "seq": 185,
+        "at": 1793769817068,
+        "kind": "pickup",
+        "detail": "damaged_drivex1"
+      },
+      {
+        "id": "r186",
+        "seq": 186,
+        "at": 1793769818151,
+        "kind": "harvest",
+        "detail": "wreck@155,107 -1"
+      },
+      {
+        "id": "r187",
+        "seq": 187,
+        "at": 1793769818534,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r188",
+        "seq": 188,
+        "at": 1793769818534,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r189",
+        "seq": 189,
+        "at": 1793769819067,
+        "kind": "harvest",
+        "detail": "wreck@155,107 -1"
+      },
+      {
+        "id": "r190",
+        "seq": 190,
+        "at": 1793769819451,
+        "kind": "pickup",
+        "detail": "field_repair_kitx1"
+      },
+      {
+        "id": "r191",
+        "seq": 191,
+        "at": 1793769819467,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r192",
+        "seq": 192,
+        "at": 1793769819484,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r193",
+        "seq": 193,
+        "at": 1793769819484,
+        "kind": "pickup",
+        "detail": "fastenersx1"
+      },
+      {
+        "id": "r194",
+        "seq": 194,
+        "at": 1793769830825,
+        "kind": "offline.settle",
+        "detail": "11s"
+      },
+      {
+        "id": "r195",
+        "seq": 195,
+        "at": 1793769888726,
+        "kind": "offline.settle",
+        "detail": "58s"
+      },
+      {
+        "id": "r196",
+        "seq": 196,
+        "at": 1793769891598,
+        "kind": "death",
+        "detail": "projectile; bag=bop"
+      },
+      {
+        "id": "r197",
+        "seq": 197,
+        "at": 1793769905033,
+        "kind": "offline.settle",
+        "detail": "13s"
+      },
+      {
+        "id": "r198",
+        "seq": 198,
+        "at": 1793769940191,
+        "kind": "offline.settle",
+        "detail": "35s"
+      },
+      {
+        "id": "r199",
+        "seq": 199,
+        "at": 1793769980180,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r200",
+        "seq": 200,
+        "at": 1793769981543,
+        "kind": "respawn",
+        "detail": "2552,1288"
+      },
+      {
+        "id": "r201",
+        "seq": 201,
+        "at": 1793769995305,
+        "kind": "move",
+        "detail": "knifex1 coo->inv"
+      },
+      {
+        "id": "r202",
+        "seq": 202,
+        "at": 1793770013190,
+        "kind": "offline.settle",
+        "detail": "18s"
+      },
+      {
+        "id": "r203",
+        "seq": 203,
+        "at": 1793770014668,
+        "kind": "move",
+        "detail": "water_flaskx1 coo->inv"
+      },
+      {
+        "id": "r204",
+        "seq": 204,
+        "at": 1793770014788,
+        "kind": "move",
+        "detail": "berriesx3 coo->inv"
+      },
+      {
+        "id": "r205",
+        "seq": 205,
+        "at": 1793770014920,
+        "kind": "move",
+        "detail": "woodx38 coo->inv"
+      },
+      {
+        "id": "r206",
+        "seq": 206,
+        "at": 1793770015035,
+        "kind": "move",
+        "detail": "seedx4 coo->inv"
+      },
+      {
+        "id": "r207",
+        "seq": 207,
+        "at": 1793770015135,
+        "kind": "move",
+        "detail": "scrapx24 coo->inv"
+      },
+      {
+        "id": "r208",
+        "seq": 208,
+        "at": 1793770015253,
+        "kind": "move",
+        "detail": "fastenersx4 coo->inv"
+      },
+      {
+        "id": "r209",
+        "seq": 209,
+        "at": 1793770015373,
+        "kind": "move",
+        "detail": "sparesx13 coo->inv"
+      },
+      {
+        "id": "r210",
+        "seq": 210,
+        "at": 1793770015500,
+        "kind": "move",
+        "detail": "iron_ingotx1 coo->inv"
+      },
+      {
+        "id": "r211",
+        "seq": 211,
+        "at": 1793770015616,
+        "kind": "move",
+        "detail": "damaged_drivex1 coo->inv"
+      },
+      {
+        "id": "r212",
+        "seq": 212,
+        "at": 1793770015735,
+        "kind": "move",
+        "detail": "fiberx6 coo->inv"
+      },
+      {
+        "id": "r213",
+        "seq": 213,
+        "at": 1793770015850,
+        "kind": "move",
+        "detail": "meatx1 coo->inv"
+      },
+      {
+        "id": "r214",
+        "seq": 214,
+        "at": 1793770015937,
+        "kind": "move",
+        "detail": "furx2 coo->inv"
+      },
+      {
+        "id": "r215",
+        "seq": 215,
+        "at": 1793770016053,
+        "kind": "move",
+        "detail": "stonex12 coo->inv"
+      },
+      {
+        "id": "r216",
+        "seq": 216,
+        "at": 1793770016201,
+        "kind": "move",
+        "detail": "field_repair_kitx2 coo->inv"
+      },
+      {
+        "id": "r217",
+        "seq": 217,
+        "at": 1793770016334,
+        "kind": "move",
+        "detail": "damaged_drivex1 coo->inv"
+      },
+      {
+        "id": "r218",
+        "seq": 218,
+        "at": 1793770016450,
+        "kind": "move",
+        "detail": "damaged_drivex1 coo->inv"
+      },
+      {
+        "id": "r219",
+        "seq": 219,
+        "at": 1793770016552,
+        "kind": "move",
+        "detail": "damaged_drivex1 coo->inv"
+      },
+      {
+        "id": "r220",
+        "seq": 220,
+        "at": 1793770016684,
+        "kind": "move",
+        "detail": "damaged_drivex1 coo->inv"
+      },
+      {
+        "id": "r221",
+        "seq": 221,
+        "at": 1793770034768,
+        "kind": "offline.settle",
+        "detail": "17s"
+      }
+    ]
+  },
+  "route": {
+    "steps": 11,
+    "tile": [
+      151,
+      103
+    ],
+    "travelMs": 6035
+  },
+  "queued": {
+    "now": 1793770043773,
+    "queue": [
+      {
+        "id": "jqt",
+        "recipe": "X:drive",
+        "left": 11561,
+        "total": 12000,
+        "reserved": [
+          {
+            "uid": "s90",
+            "key": "damaged_drive",
+            "qty": 1
+          }
+        ]
+      }
+    ],
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 78
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7k",
+        "key": "wood",
+        "qty": 38
+      },
+      {
+        "uid": "s7l",
+        "key": "seed",
+        "qty": 4
+      },
+      {
+        "uid": "s88",
+        "key": "scrap",
+        "qty": 24
+      },
+      {
+        "uid": "s8f",
+        "key": "fasteners",
+        "qty": 4
+      },
+      {
+        "uid": "s8s",
+        "key": "spares",
+        "qty": 13
+      },
+      {
+        "uid": "sf",
+        "key": "iron_ingot",
+        "qty": 1
+      },
+      {
+        "uid": "sep",
+        "key": "fiber",
+        "qty": 6
+      },
+      {
+        "uid": "sew",
+        "key": "meat",
+        "qty": 1
+      },
+      {
+        "uid": "sex",
+        "key": "fur",
+        "qty": 2
+      },
+      {
+        "uid": "sid",
+        "key": "stone",
+        "qty": 12
+      },
+      {
+        "uid": "smr",
+        "key": "field_repair_kit",
+        "qty": 2
+      },
+      {
+        "uid": "smm",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "smw",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "snj",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "so4",
+        "key": "damaged_drive",
+        "qty": 1
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r208",
+        "seq": 208,
+        "at": 1793770015253,
+        "kind": "move",
+        "detail": "fastenersx4 coo->inv"
+      },
+      {
+        "id": "r209",
+        "seq": 209,
+        "at": 1793770015373,
+        "kind": "move",
+        "detail": "sparesx13 coo->inv"
+      },
+      {
+        "id": "r210",
+        "seq": 210,
+        "at": 1793770015500,
+        "kind": "move",
+        "detail": "iron_ingotx1 coo->inv"
+      },
+      {
+        "id": "r211",
+        "seq": 211,
+        "at": 1793770015616,
+        "kind": "move",
+        "detail": "damaged_drivex1 coo->inv"
+      },
+      {
+        "id": "r212",
+        "seq": 212,
+        "at": 1793770015735,
+        "kind": "move",
+        "detail": "fiberx6 coo->inv"
+      },
+      {
+        "id": "r213",
+        "seq": 213,
+        "at": 1793770015850,
+        "kind": "move",
+        "detail": "meatx1 coo->inv"
+      },
+      {
+        "id": "r214",
+        "seq": 214,
+        "at": 1793770015937,
+        "kind": "move",
+        "detail": "furx2 coo->inv"
+      },
+      {
+        "id": "r215",
+        "seq": 215,
+        "at": 1793770016053,
+        "kind": "move",
+        "detail": "stonex12 coo->inv"
+      },
+      {
+        "id": "r216",
+        "seq": 216,
+        "at": 1793770016201,
+        "kind": "move",
+        "detail": "field_repair_kitx2 coo->inv"
+      },
+      {
+        "id": "r217",
+        "seq": 217,
+        "at": 1793770016334,
+        "kind": "move",
+        "detail": "damaged_drivex1 coo->inv"
+      },
+      {
+        "id": "r218",
+        "seq": 218,
+        "at": 1793770016450,
+        "kind": "move",
+        "detail": "damaged_drivex1 coo->inv"
+      },
+      {
+        "id": "r219",
+        "seq": 219,
+        "at": 1793770016552,
+        "kind": "move",
+        "detail": "damaged_drivex1 coo->inv"
+      },
+      {
+        "id": "r220",
+        "seq": 220,
+        "at": 1793770016684,
+        "kind": "move",
+        "detail": "damaged_drivex1 coo->inv"
+      },
+      {
+        "id": "r221",
+        "seq": 221,
+        "at": 1793770034768,
+        "kind": "offline.settle",
+        "detail": "17s"
+      },
+      {
+        "id": "r222",
+        "seq": 222,
+        "at": 1793770043320,
+        "kind": "recycle.start",
+        "detail": "s90@e2g"
+      }
+    ]
+  },
+  "closedAt": 1793770044107,
+  "machine": "e2g",
+  "afterOffline": {
+    "now": 1793770062729,
+    "queue": [],
+    "out": [
+      {
+        "uid": "squ",
+        "key": "spares",
+        "qty": 2
+      }
+    ],
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 78
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7k",
+        "key": "wood",
+        "qty": 38
+      },
+      {
+        "uid": "s7l",
+        "key": "seed",
+        "qty": 4
+      },
+      {
+        "uid": "s88",
+        "key": "scrap",
+        "qty": 24
+      },
+      {
+        "uid": "s8f",
+        "key": "fasteners",
+        "qty": 4
+      },
+      {
+        "uid": "s8s",
+        "key": "spares",
+        "qty": 13
+      },
+      {
+        "uid": "sf",
+        "key": "iron_ingot",
+        "qty": 1
+      },
+      {
+        "uid": "sep",
+        "key": "fiber",
+        "qty": 6
+      },
+      {
+        "uid": "sew",
+        "key": "meat",
+        "qty": 1
+      },
+      {
+        "uid": "sex",
+        "key": "fur",
+        "qty": 2
+      },
+      {
+        "uid": "sid",
+        "key": "stone",
+        "qty": 12
+      },
+      {
+        "uid": "smr",
+        "key": "field_repair_kit",
+        "qty": 2
+      },
+      {
+        "uid": "smm",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "smw",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "snj",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "so4",
+        "key": "damaged_drive",
+        "qty": 1
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r1",
+        "seq": 1,
+        "at": 1793769440558,
+        "kind": "run.start",
+        "detail": "female@the island"
+      },
+      {
+        "id": "r2",
+        "seq": 2,
+        "at": 1793769455944,
+        "kind": "offline.settle",
+        "detail": "12s"
+      },
+      {
+        "id": "r3",
+        "seq": 3,
+        "at": 1793769469541,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r4",
+        "seq": 4,
+        "at": 1793769481860,
+        "kind": "offline.settle",
+        "detail": "8s"
+      },
+      {
+        "id": "r5",
+        "seq": 5,
+        "at": 1793769497075,
+        "kind": "offline.settle",
+        "detail": "12s"
+      },
+      {
+        "id": "r6",
+        "seq": 6,
+        "at": 1793769499113,
+        "kind": "harvest",
+        "detail": "oak@116,107 -1"
+      },
+      {
+        "id": "r7",
+        "seq": 7,
+        "at": 1793769499497,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r8",
+        "seq": 8,
+        "at": 1793769499514,
+        "kind": "pickup",
+        "detail": "seedx1"
+      },
+      {
+        "id": "r9",
+        "seq": 9,
+        "at": 1793769500047,
+        "kind": "harvest",
+        "detail": "oak@116,107 -1"
+      },
+      {
+        "id": "r10",
+        "seq": 10,
+        "at": 1793769500430,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r11",
+        "seq": 11,
+        "at": 1793769500947,
+        "kind": "harvest",
+        "detail": "oak@116,107 -1"
+      },
+      {
+        "id": "r12",
+        "seq": 12,
+        "at": 1793769501330,
+        "kind": "pickup",
+        "detail": "seedx1"
+      },
+      {
+        "id": "r13",
+        "seq": 13,
+        "at": 1793769501380,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r14",
+        "seq": 14,
+        "at": 1793769501863,
+        "kind": "harvest",
+        "detail": "oak@116,107 -1"
+      },
+      {
+        "id": "r15",
+        "seq": 15,
+        "at": 1793769502313,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r16",
+        "seq": 16,
+        "at": 1793769502780,
+        "kind": "harvest",
+        "detail": "oak@116,107 -1"
+      },
+      {
+        "id": "r17",
+        "seq": 17,
+        "at": 1793769503213,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r18",
+        "seq": 18,
+        "at": 1793769503697,
+        "kind": "harvest",
+        "detail": "oak@116,107 -1"
+      },
+      {
+        "id": "r19",
+        "seq": 19,
+        "at": 1793769504130,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r20",
+        "seq": 20,
+        "at": 1793769530776,
+        "kind": "offline.settle",
+        "detail": "16s"
+      },
+      {
+        "id": "r21",
+        "seq": 21,
+        "at": 1793769542855,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r22",
+        "seq": 22,
+        "at": 1793769545162,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r23",
+        "seq": 23,
+        "at": 1793769545628,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r24",
+        "seq": 24,
+        "at": 1793769546378,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r25",
+        "seq": 25,
+        "at": 1793769546812,
+        "kind": "pickup",
+        "detail": "fastenersx1"
+      },
+      {
+        "id": "r26",
+        "seq": 26,
+        "at": 1793769546845,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r27",
+        "seq": 27,
+        "at": 1793769547595,
+        "kind": "harvest.component",
+        "detail": "wreck@117,108:s8n"
+      },
+      {
+        "id": "r28",
+        "seq": 28,
+        "at": 1793769547595,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r29",
+        "seq": 29,
+        "at": 1793769547978,
+        "kind": "pickup",
+        "detail": "fastenersx1"
+      },
+      {
+        "id": "r30",
+        "seq": 30,
+        "at": 1793769548045,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r31",
+        "seq": 31,
+        "at": 1793769548045,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r32",
+        "seq": 32,
+        "at": 1793769548045,
+        "kind": "pickup",
+        "detail": "damaged_drivex1"
+      },
+      {
+        "id": "r33",
+        "seq": 33,
+        "at": 1793769548529,
+        "kind": "harvest.component",
+        "detail": "wreck@117,108:s90"
+      },
+      {
+        "id": "r34",
+        "seq": 34,
+        "at": 1793769548529,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r35",
+        "seq": 35,
+        "at": 1793769548911,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r36",
+        "seq": 36,
+        "at": 1793769548945,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r37",
+        "seq": 37,
+        "at": 1793769548978,
+        "kind": "pickup",
+        "detail": "damaged_drivex1"
+      },
+      {
+        "id": "r38",
+        "seq": 38,
+        "at": 1793769549745,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r39",
+        "seq": 39,
+        "at": 1793769550212,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r40",
+        "seq": 40,
+        "at": 1793769550945,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r41",
+        "seq": 41,
+        "at": 1793769551345,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r42",
+        "seq": 42,
+        "at": 1793769552161,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r43",
+        "seq": 43,
+        "at": 1793769552595,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r44",
+        "seq": 44,
+        "at": 1793769553095,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r45",
+        "seq": 45,
+        "at": 1793769553528,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r46",
+        "seq": 46,
+        "at": 1793769570819,
+        "kind": "offline.settle",
+        "detail": "12s"
+      },
+      {
+        "id": "r47",
+        "seq": 47,
+        "at": 1793769600340,
+        "kind": "offline.settle",
+        "detail": "27s"
+      },
+      {
+        "id": "r48",
+        "seq": 48,
+        "at": 1793769612758,
+        "kind": "recycle.start",
+        "detail": "s8n@e2g"
+      },
+      {
+        "id": "r49",
+        "seq": 49,
+        "at": 1793769624758,
+        "kind": "job.done",
+        "detail": "X:drive"
+      },
+      {
+        "id": "r50",
+        "seq": 50,
+        "at": 1793769632035,
+        "kind": "offline.settle",
+        "detail": "18s"
+      },
+      {
+        "id": "r51",
+        "seq": 51,
+        "at": 1793769633871,
+        "kind": "move",
+        "detail": "sparesx2 c2i->inv"
+      },
+      {
+        "id": "r52",
+        "seq": 52,
+        "at": 1793769644786,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r53",
+        "seq": 53,
+        "at": 1793769659551,
+        "kind": "offline.settle",
+        "detail": "15s"
+      },
+      {
+        "id": "r54",
+        "seq": 54,
+        "at": 1793769684968,
+        "kind": "offline.settle",
+        "detail": "25s"
+      },
+      {
+        "id": "r55",
+        "seq": 55,
+        "at": 1793769687615,
+        "kind": "move",
+        "detail": "sparesx3 c14->inv"
+      },
+      {
+        "id": "r56",
+        "seq": 56,
+        "at": 1793769705355,
+        "kind": "move",
+        "detail": "iron_ingotx1 cd->inv"
+      },
+      {
+        "id": "r57",
+        "seq": 57,
+        "at": 1793769705432,
+        "kind": "move",
+        "detail": "woodx8 cd->inv"
+      },
+      {
+        "id": "r58",
+        "seq": 58,
+        "at": 1793769723999,
+        "kind": "offline.settle",
+        "detail": "18s"
+      },
+      {
+        "id": "r59",
+        "seq": 59,
+        "at": 1793769727104,
+        "kind": "harvest",
+        "detail": "grass@108,116 -2"
+      },
+      {
+        "id": "r60",
+        "seq": 60,
+        "at": 1793769727504,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r61",
+        "seq": 61,
+        "at": 1793769727504,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r62",
+        "seq": 62,
+        "at": 1793769734471,
+        "kind": "pickup",
+        "detail": "meatx1"
+      },
+      {
+        "id": "r63",
+        "seq": 63,
+        "at": 1793769734471,
+        "kind": "pickup",
+        "detail": "furx2"
+      },
+      {
+        "id": "r64",
+        "seq": 64,
+        "at": 1793769734754,
+        "kind": "harvest",
+        "detail": "oak@107,115 -1"
+      },
+      {
+        "id": "r65",
+        "seq": 65,
+        "at": 1793769735204,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r66",
+        "seq": 66,
+        "at": 1793769735671,
+        "kind": "harvest",
+        "detail": "oak@107,115 -1"
+      },
+      {
+        "id": "r67",
+        "seq": 67,
+        "at": 1793769736137,
+        "kind": "pickup",
+        "detail": "seedx1"
+      },
+      {
+        "id": "r68",
+        "seq": 68,
+        "at": 1793769736154,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r69",
+        "seq": 69,
+        "at": 1793769736604,
+        "kind": "harvest",
+        "detail": "oak@107,115 -1"
+      },
+      {
+        "id": "r70",
+        "seq": 70,
+        "at": 1793769737071,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r71",
+        "seq": 71,
+        "at": 1793769738687,
+        "kind": "harvest",
+        "detail": "oak@107,115 -1"
+      },
+      {
+        "id": "r72",
+        "seq": 72,
+        "at": 1793769739137,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r73",
+        "seq": 73,
+        "at": 1793769739587,
+        "kind": "harvest",
+        "detail": "oak@107,115 -1"
+      },
+      {
+        "id": "r74",
+        "seq": 74,
+        "at": 1793769740020,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r75",
+        "seq": 75,
+        "at": 1793769740520,
+        "kind": "harvest",
+        "detail": "oak@107,115 -1"
+      },
+      {
+        "id": "r76",
+        "seq": 76,
+        "at": 1793769740970,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r77",
+        "seq": 77,
+        "at": 1793769744373,
+        "kind": "harvest",
+        "detail": "oak@114,120 -1"
+      },
+      {
+        "id": "r78",
+        "seq": 78,
+        "at": 1793769744754,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r79",
+        "seq": 79,
+        "at": 1793769745270,
+        "kind": "harvest",
+        "detail": "oak@114,120 -1"
+      },
+      {
+        "id": "r80",
+        "seq": 80,
+        "at": 1793769745670,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r81",
+        "seq": 81,
+        "at": 1793769746187,
+        "kind": "harvest",
+        "detail": "oak@114,120 -1"
+      },
+      {
+        "id": "r82",
+        "seq": 82,
+        "at": 1793769746570,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r83",
+        "seq": 83,
+        "at": 1793769747087,
+        "kind": "harvest",
+        "detail": "oak@114,120 -1"
+      },
+      {
+        "id": "r84",
+        "seq": 84,
+        "at": 1793769747553,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r85",
+        "seq": 85,
+        "at": 1793769747987,
+        "kind": "harvest",
+        "detail": "oak@114,120 -1"
+      },
+      {
+        "id": "r86",
+        "seq": 86,
+        "at": 1793769748453,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r87",
+        "seq": 87,
+        "at": 1793769748904,
+        "kind": "harvest",
+        "detail": "oak@114,120 -1"
+      },
+      {
+        "id": "r88",
+        "seq": 88,
+        "at": 1793769749337,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r89",
+        "seq": 89,
+        "at": 1793769749337,
+        "kind": "pickup",
+        "detail": "seedx1"
+      },
+      {
+        "id": "r90",
+        "seq": 90,
+        "at": 1793769752837,
+        "kind": "harvest",
+        "detail": "oak@115,112 -1"
+      },
+      {
+        "id": "r91",
+        "seq": 91,
+        "at": 1793769753270,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r92",
+        "seq": 92,
+        "at": 1793769753770,
+        "kind": "harvest",
+        "detail": "oak@115,112 -1"
+      },
+      {
+        "id": "r93",
+        "seq": 93,
+        "at": 1793769754220,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r94",
+        "seq": 94,
+        "at": 1793769754686,
+        "kind": "harvest",
+        "detail": "oak@115,112 -1"
+      },
+      {
+        "id": "r95",
+        "seq": 95,
+        "at": 1793769755070,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r96",
+        "seq": 96,
+        "at": 1793769755620,
+        "kind": "harvest",
+        "detail": "oak@115,112 -1"
+      },
+      {
+        "id": "r97",
+        "seq": 97,
+        "at": 1793769756039,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r98",
+        "seq": 98,
+        "at": 1793769756520,
+        "kind": "harvest",
+        "detail": "oak@115,112 -1"
+      },
+      {
+        "id": "r99",
+        "seq": 99,
+        "at": 1793769756903,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r100",
+        "seq": 100,
+        "at": 1793769757453,
+        "kind": "harvest",
+        "detail": "oak@115,112 -1"
+      },
+      {
+        "id": "r101",
+        "seq": 101,
+        "at": 1793769757886,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r102",
+        "seq": 102,
+        "at": 1793769760203,
+        "kind": "harvest",
+        "detail": "oak@120,113 -1"
+      },
+      {
+        "id": "r103",
+        "seq": 103,
+        "at": 1793769760586,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r104",
+        "seq": 104,
+        "at": 1793769761120,
+        "kind": "harvest",
+        "detail": "oak@120,113 -1"
+      },
+      {
+        "id": "r105",
+        "seq": 105,
+        "at": 1793769761570,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r106",
+        "seq": 106,
+        "at": 1793769762036,
+        "kind": "harvest",
+        "detail": "oak@120,113 -1"
+      },
+      {
+        "id": "r107",
+        "seq": 107,
+        "at": 1793769762436,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r108",
+        "seq": 108,
+        "at": 1793769762953,
+        "kind": "harvest",
+        "detail": "oak@120,113 -1"
+      },
+      {
+        "id": "r109",
+        "seq": 109,
+        "at": 1793769763369,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r110",
+        "seq": 110,
+        "at": 1793769763870,
+        "kind": "harvest",
+        "detail": "oak@120,113 -1"
+      },
+      {
+        "id": "r111",
+        "seq": 111,
+        "at": 1793769764320,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r112",
+        "seq": 112,
+        "at": 1793769764786,
+        "kind": "harvest",
+        "detail": "oak@120,113 -1"
+      },
+      {
+        "id": "r113",
+        "seq": 113,
+        "at": 1793769765236,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r114",
+        "seq": 114,
+        "at": 1793769767519,
+        "kind": "harvest",
+        "detail": "rock@122,115 -1"
+      },
+      {
+        "id": "r115",
+        "seq": 115,
+        "at": 1793769767953,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r116",
+        "seq": 116,
+        "at": 1793769768436,
+        "kind": "harvest",
+        "detail": "rock@122,115 -1"
+      },
+      {
+        "id": "r117",
+        "seq": 117,
+        "at": 1793769768819,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r118",
+        "seq": 118,
+        "at": 1793769769352,
+        "kind": "harvest",
+        "detail": "rock@122,115 -1"
+      },
+      {
+        "id": "r119",
+        "seq": 119,
+        "at": 1793769769736,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r120",
+        "seq": 120,
+        "at": 1793769770269,
+        "kind": "harvest",
+        "detail": "rock@122,115 -1"
+      },
+      {
+        "id": "r121",
+        "seq": 121,
+        "at": 1793769770719,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r122",
+        "seq": 122,
+        "at": 1793769771186,
+        "kind": "harvest",
+        "detail": "rock@122,115 -1"
+      },
+      {
+        "id": "r123",
+        "seq": 123,
+        "at": 1793769771569,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r124",
+        "seq": 124,
+        "at": 1793769772086,
+        "kind": "harvest",
+        "detail": "rock@122,115 -1"
+      },
+      {
+        "id": "r125",
+        "seq": 125,
+        "at": 1793769772536,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r126",
+        "seq": 126,
+        "at": 1793769775902,
+        "kind": "harvest",
+        "detail": "rock@122,123 -1"
+      },
+      {
+        "id": "r127",
+        "seq": 127,
+        "at": 1793769776352,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r128",
+        "seq": 128,
+        "at": 1793769776835,
+        "kind": "harvest",
+        "detail": "rock@122,123 -1"
+      },
+      {
+        "id": "r129",
+        "seq": 129,
+        "at": 1793769777286,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r130",
+        "seq": 130,
+        "at": 1793769777735,
+        "kind": "harvest",
+        "detail": "rock@122,123 -1"
+      },
+      {
+        "id": "r131",
+        "seq": 131,
+        "at": 1793769778186,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r132",
+        "seq": 132,
+        "at": 1793769778652,
+        "kind": "harvest",
+        "detail": "rock@122,123 -1"
+      },
+      {
+        "id": "r133",
+        "seq": 133,
+        "at": 1793769779102,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r134",
+        "seq": 134,
+        "at": 1793769779569,
+        "kind": "harvest",
+        "detail": "rock@122,123 -1"
+      },
+      {
+        "id": "r135",
+        "seq": 135,
+        "at": 1793769780002,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r136",
+        "seq": 136,
+        "at": 1793769780469,
+        "kind": "harvest",
+        "detail": "rock@122,123 -1"
+      },
+      {
+        "id": "r137",
+        "seq": 137,
+        "at": 1793769780902,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r138",
+        "seq": 138,
+        "at": 1793769781769,
+        "kind": "harvest",
+        "detail": "grass@123,122 -2"
+      },
+      {
+        "id": "r139",
+        "seq": 139,
+        "at": 1793769782152,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r140",
+        "seq": 140,
+        "at": 1793769782219,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r141",
+        "seq": 141,
+        "at": 1793769783502,
+        "kind": "harvest",
+        "detail": "grass@120,121 -2"
+      },
+      {
+        "id": "r142",
+        "seq": 142,
+        "at": 1793769783935,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r143",
+        "seq": 143,
+        "at": 1793769783935,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r144",
+        "seq": 144,
+        "at": 1793769797968,
+        "kind": "harvest",
+        "detail": "wreck@152,109 -1"
+      },
+      {
+        "id": "r145",
+        "seq": 145,
+        "at": 1793769798351,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r146",
+        "seq": 146,
+        "at": 1793769798401,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r147",
+        "seq": 147,
+        "at": 1793769799185,
+        "kind": "harvest",
+        "detail": "wreck@152,109 -1"
+      },
+      {
+        "id": "r148",
+        "seq": 148,
+        "at": 1793769799568,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r149",
+        "seq": 149,
+        "at": 1793769800435,
+        "kind": "harvest",
+        "detail": "wreck@152,109 -1"
+      },
+      {
+        "id": "r150",
+        "seq": 150,
+        "at": 1793769800851,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r151",
+        "seq": 151,
+        "at": 1793769801351,
+        "kind": "harvest",
+        "detail": "wreck@152,109 -1"
+      },
+      {
+        "id": "r152",
+        "seq": 152,
+        "at": 1793769801752,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r153",
+        "seq": 153,
+        "at": 1793769802585,
+        "kind": "harvest",
+        "detail": "wreck@152,109 -1"
+      },
+      {
+        "id": "r154",
+        "seq": 154,
+        "at": 1793769803018,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r155",
+        "seq": 155,
+        "at": 1793769803801,
+        "kind": "harvest.component",
+        "detail": "wreck@152,109:smm"
+      },
+      {
+        "id": "r156",
+        "seq": 156,
+        "at": 1793769803801,
+        "kind": "harvest",
+        "detail": "wreck@152,109 -1"
+      },
+      {
+        "id": "r157",
+        "seq": 157,
+        "at": 1793769804185,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r158",
+        "seq": 158,
+        "at": 1793769804185,
+        "kind": "pickup",
+        "detail": "field_repair_kitx1"
+      },
+      {
+        "id": "r159",
+        "seq": 159,
+        "at": 1793769804218,
+        "kind": "pickup",
+        "detail": "damaged_drivex1"
+      },
+      {
+        "id": "r160",
+        "seq": 160,
+        "at": 1793769804251,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r161",
+        "seq": 161,
+        "at": 1793769805001,
+        "kind": "harvest.component",
+        "detail": "wreck@152,109:smw"
+      },
+      {
+        "id": "r162",
+        "seq": 162,
+        "at": 1793769805001,
+        "kind": "harvest",
+        "detail": "wreck@152,109 -1"
+      },
+      {
+        "id": "r163",
+        "seq": 163,
+        "at": 1793769805401,
+        "kind": "pickup",
+        "detail": "damaged_drivex1"
+      },
+      {
+        "id": "r164",
+        "seq": 164,
+        "at": 1793769805451,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r165",
+        "seq": 165,
+        "at": 1793769805935,
+        "kind": "harvest",
+        "detail": "wreck@152,109 -1"
+      },
+      {
+        "id": "r166",
+        "seq": 166,
+        "at": 1793769806318,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r167",
+        "seq": 167,
+        "at": 1793769806401,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r168",
+        "seq": 168,
+        "at": 1793769810218,
+        "kind": "harvest",
+        "detail": "wreck@155,107 -1"
+      },
+      {
+        "id": "r169",
+        "seq": 169,
+        "at": 1793769810634,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r170",
+        "seq": 170,
+        "at": 1793769811584,
+        "kind": "harvest.component",
+        "detail": "wreck@155,107:snj"
+      },
+      {
+        "id": "r171",
+        "seq": 171,
+        "at": 1793769811584,
+        "kind": "harvest",
+        "detail": "wreck@155,107 -1"
+      },
+      {
+        "id": "r172",
+        "seq": 172,
+        "at": 1793769811968,
+        "kind": "pickup",
+        "detail": "damaged_drivex1"
+      },
+      {
+        "id": "r173",
+        "seq": 173,
+        "at": 1793769811984,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r174",
+        "seq": 174,
+        "at": 1793769812801,
+        "kind": "harvest",
+        "detail": "wreck@155,107 -1"
+      },
+      {
+        "id": "r175",
+        "seq": 175,
+        "at": 1793769813184,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r176",
+        "seq": 176,
+        "at": 1793769813934,
+        "kind": "harvest",
+        "detail": "wreck@155,107 -1"
+      },
+      {
+        "id": "r177",
+        "seq": 177,
+        "at": 1793769814318,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r178",
+        "seq": 178,
+        "at": 1793769814318,
+        "kind": "pickup",
+        "detail": "fastenersx1"
+      },
+      {
+        "id": "r179",
+        "seq": 179,
+        "at": 1793769815434,
+        "kind": "harvest",
+        "detail": "wreck@155,107 -1"
+      },
+      {
+        "id": "r180",
+        "seq": 180,
+        "at": 1793769815834,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r181",
+        "seq": 181,
+        "at": 1793769816634,
+        "kind": "harvest.component",
+        "detail": "wreck@155,107:so4"
+      },
+      {
+        "id": "r182",
+        "seq": 182,
+        "at": 1793769816634,
+        "kind": "harvest",
+        "detail": "wreck@155,107 -1"
+      },
+      {
+        "id": "r183",
+        "seq": 183,
+        "at": 1793769817034,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r184",
+        "seq": 184,
+        "at": 1793769817051,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r185",
+        "seq": 185,
+        "at": 1793769817068,
+        "kind": "pickup",
+        "detail": "damaged_drivex1"
+      },
+      {
+        "id": "r186",
+        "seq": 186,
+        "at": 1793769818151,
+        "kind": "harvest",
+        "detail": "wreck@155,107 -1"
+      },
+      {
+        "id": "r187",
+        "seq": 187,
+        "at": 1793769818534,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r188",
+        "seq": 188,
+        "at": 1793769818534,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r189",
+        "seq": 189,
+        "at": 1793769819067,
+        "kind": "harvest",
+        "detail": "wreck@155,107 -1"
+      },
+      {
+        "id": "r190",
+        "seq": 190,
+        "at": 1793769819451,
+        "kind": "pickup",
+        "detail": "field_repair_kitx1"
+      },
+      {
+        "id": "r191",
+        "seq": 191,
+        "at": 1793769819467,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r192",
+        "seq": 192,
+        "at": 1793769819484,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r193",
+        "seq": 193,
+        "at": 1793769819484,
+        "kind": "pickup",
+        "detail": "fastenersx1"
+      },
+      {
+        "id": "r194",
+        "seq": 194,
+        "at": 1793769830825,
+        "kind": "offline.settle",
+        "detail": "11s"
+      },
+      {
+        "id": "r195",
+        "seq": 195,
+        "at": 1793769888726,
+        "kind": "offline.settle",
+        "detail": "58s"
+      },
+      {
+        "id": "r196",
+        "seq": 196,
+        "at": 1793769891598,
+        "kind": "death",
+        "detail": "projectile; bag=bop"
+      },
+      {
+        "id": "r197",
+        "seq": 197,
+        "at": 1793769905033,
+        "kind": "offline.settle",
+        "detail": "13s"
+      },
+      {
+        "id": "r198",
+        "seq": 198,
+        "at": 1793769940191,
+        "kind": "offline.settle",
+        "detail": "35s"
+      },
+      {
+        "id": "r199",
+        "seq": 199,
+        "at": 1793769980180,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r200",
+        "seq": 200,
+        "at": 1793769981543,
+        "kind": "respawn",
+        "detail": "2552,1288"
+      },
+      {
+        "id": "r201",
+        "seq": 201,
+        "at": 1793769995305,
+        "kind": "move",
+        "detail": "knifex1 coo->inv"
+      },
+      {
+        "id": "r202",
+        "seq": 202,
+        "at": 1793770013190,
+        "kind": "offline.settle",
+        "detail": "18s"
+      },
+      {
+        "id": "r203",
+        "seq": 203,
+        "at": 1793770014668,
+        "kind": "move",
+        "detail": "water_flaskx1 coo->inv"
+      },
+      {
+        "id": "r204",
+        "seq": 204,
+        "at": 1793770014788,
+        "kind": "move",
+        "detail": "berriesx3 coo->inv"
+      },
+      {
+        "id": "r205",
+        "seq": 205,
+        "at": 1793770014920,
+        "kind": "move",
+        "detail": "woodx38 coo->inv"
+      },
+      {
+        "id": "r206",
+        "seq": 206,
+        "at": 1793770015035,
+        "kind": "move",
+        "detail": "seedx4 coo->inv"
+      },
+      {
+        "id": "r207",
+        "seq": 207,
+        "at": 1793770015135,
+        "kind": "move",
+        "detail": "scrapx24 coo->inv"
+      },
+      {
+        "id": "r208",
+        "seq": 208,
+        "at": 1793770015253,
+        "kind": "move",
+        "detail": "fastenersx4 coo->inv"
+      },
+      {
+        "id": "r209",
+        "seq": 209,
+        "at": 1793770015373,
+        "kind": "move",
+        "detail": "sparesx13 coo->inv"
+      },
+      {
+        "id": "r210",
+        "seq": 210,
+        "at": 1793770015500,
+        "kind": "move",
+        "detail": "iron_ingotx1 coo->inv"
+      },
+      {
+        "id": "r211",
+        "seq": 211,
+        "at": 1793770015616,
+        "kind": "move",
+        "detail": "damaged_drivex1 coo->inv"
+      },
+      {
+        "id": "r212",
+        "seq": 212,
+        "at": 1793770015735,
+        "kind": "move",
+        "detail": "fiberx6 coo->inv"
+      },
+      {
+        "id": "r213",
+        "seq": 213,
+        "at": 1793770015850,
+        "kind": "move",
+        "detail": "meatx1 coo->inv"
+      },
+      {
+        "id": "r214",
+        "seq": 214,
+        "at": 1793770015937,
+        "kind": "move",
+        "detail": "furx2 coo->inv"
+      },
+      {
+        "id": "r215",
+        "seq": 215,
+        "at": 1793770016053,
+        "kind": "move",
+        "detail": "stonex12 coo->inv"
+      },
+      {
+        "id": "r216",
+        "seq": 216,
+        "at": 1793770016201,
+        "kind": "move",
+        "detail": "field_repair_kitx2 coo->inv"
+      },
+      {
+        "id": "r217",
+        "seq": 217,
+        "at": 1793770016334,
+        "kind": "move",
+        "detail": "damaged_drivex1 coo->inv"
+      },
+      {
+        "id": "r218",
+        "seq": 218,
+        "at": 1793770016450,
+        "kind": "move",
+        "detail": "damaged_drivex1 coo->inv"
+      },
+      {
+        "id": "r219",
+        "seq": 219,
+        "at": 1793770016552,
+        "kind": "move",
+        "detail": "damaged_drivex1 coo->inv"
+      },
+      {
+        "id": "r220",
+        "seq": 220,
+        "at": 1793770016684,
+        "kind": "move",
+        "detail": "damaged_drivex1 coo->inv"
+      },
+      {
+        "id": "r221",
+        "seq": 221,
+        "at": 1793770034768,
+        "kind": "offline.settle",
+        "detail": "17s"
+      },
+      {
+        "id": "r222",
+        "seq": 222,
+        "at": 1793770043320,
+        "kind": "recycle.start",
+        "detail": "s90@e2g"
+      },
+      {
+        "id": "r223",
+        "seq": 223,
+        "at": 1793770055320,
+        "kind": "job.done",
+        "detail": "X:drive"
+      },
+      {
+        "id": "r224",
+        "seq": 224,
+        "at": 1793770061733,
+        "kind": "offline.settle",
+        "detail": "18s"
+      }
+    ]
+  },
+  "collected": {
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 78
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7k",
+        "key": "wood",
+        "qty": 38
+      },
+      {
+        "uid": "s7l",
+        "key": "seed",
+        "qty": 4
+      },
+      {
+        "uid": "s88",
+        "key": "scrap",
+        "qty": 24
+      },
+      {
+        "uid": "s8f",
+        "key": "fasteners",
+        "qty": 4
+      },
+      {
+        "uid": "s8s",
+        "key": "spares",
+        "qty": 15
+      },
+      {
+        "uid": "sf",
+        "key": "iron_ingot",
+        "qty": 1
+      },
+      {
+        "uid": "sep",
+        "key": "fiber",
+        "qty": 6
+      },
+      {
+        "uid": "sew",
+        "key": "meat",
+        "qty": 1
+      },
+      {
+        "uid": "sex",
+        "key": "fur",
+        "qty": 2
+      },
+      {
+        "uid": "sid",
+        "key": "stone",
+        "qty": 12
+      },
+      {
+        "uid": "smr",
+        "key": "field_repair_kit",
+        "qty": 2
+      },
+      {
+        "uid": "smm",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "smw",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "snj",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "so4",
+        "key": "damaged_drive",
+        "qty": 1
+      }
+    ],
+    "out": [],
+    "receipts": [
+      {
+        "id": "r1",
+        "seq": 1,
+        "at": 1793769440558,
+        "kind": "run.start",
+        "detail": "female@the island"
+      },
+      {
+        "id": "r2",
+        "seq": 2,
+        "at": 1793769455944,
+        "kind": "offline.settle",
+        "detail": "12s"
+      },
+      {
+        "id": "r3",
+        "seq": 3,
+        "at": 1793769469541,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r4",
+        "seq": 4,
+        "at": 1793769481860,
+        "kind": "offline.settle",
+        "detail": "8s"
+      },
+      {
+        "id": "r5",
+        "seq": 5,
+        "at": 1793769497075,
+        "kind": "offline.settle",
+        "detail": "12s"
+      },
+      {
+        "id": "r6",
+        "seq": 6,
+        "at": 1793769499113,
+        "kind": "harvest",
+        "detail": "oak@116,107 -1"
+      },
+      {
+        "id": "r7",
+        "seq": 7,
+        "at": 1793769499497,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r8",
+        "seq": 8,
+        "at": 1793769499514,
+        "kind": "pickup",
+        "detail": "seedx1"
+      },
+      {
+        "id": "r9",
+        "seq": 9,
+        "at": 1793769500047,
+        "kind": "harvest",
+        "detail": "oak@116,107 -1"
+      },
+      {
+        "id": "r10",
+        "seq": 10,
+        "at": 1793769500430,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r11",
+        "seq": 11,
+        "at": 1793769500947,
+        "kind": "harvest",
+        "detail": "oak@116,107 -1"
+      },
+      {
+        "id": "r12",
+        "seq": 12,
+        "at": 1793769501330,
+        "kind": "pickup",
+        "detail": "seedx1"
+      },
+      {
+        "id": "r13",
+        "seq": 13,
+        "at": 1793769501380,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r14",
+        "seq": 14,
+        "at": 1793769501863,
+        "kind": "harvest",
+        "detail": "oak@116,107 -1"
+      },
+      {
+        "id": "r15",
+        "seq": 15,
+        "at": 1793769502313,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r16",
+        "seq": 16,
+        "at": 1793769502780,
+        "kind": "harvest",
+        "detail": "oak@116,107 -1"
+      },
+      {
+        "id": "r17",
+        "seq": 17,
+        "at": 1793769503213,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r18",
+        "seq": 18,
+        "at": 1793769503697,
+        "kind": "harvest",
+        "detail": "oak@116,107 -1"
+      },
+      {
+        "id": "r19",
+        "seq": 19,
+        "at": 1793769504130,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r20",
+        "seq": 20,
+        "at": 1793769530776,
+        "kind": "offline.settle",
+        "detail": "16s"
+      },
+      {
+        "id": "r21",
+        "seq": 21,
+        "at": 1793769542855,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r22",
+        "seq": 22,
+        "at": 1793769545162,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r23",
+        "seq": 23,
+        "at": 1793769545628,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r24",
+        "seq": 24,
+        "at": 1793769546378,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r25",
+        "seq": 25,
+        "at": 1793769546812,
+        "kind": "pickup",
+        "detail": "fastenersx1"
+      },
+      {
+        "id": "r26",
+        "seq": 26,
+        "at": 1793769546845,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r27",
+        "seq": 27,
+        "at": 1793769547595,
+        "kind": "harvest.component",
+        "detail": "wreck@117,108:s8n"
+      },
+      {
+        "id": "r28",
+        "seq": 28,
+        "at": 1793769547595,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r29",
+        "seq": 29,
+        "at": 1793769547978,
+        "kind": "pickup",
+        "detail": "fastenersx1"
+      },
+      {
+        "id": "r30",
+        "seq": 30,
+        "at": 1793769548045,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r31",
+        "seq": 31,
+        "at": 1793769548045,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r32",
+        "seq": 32,
+        "at": 1793769548045,
+        "kind": "pickup",
+        "detail": "damaged_drivex1"
+      },
+      {
+        "id": "r33",
+        "seq": 33,
+        "at": 1793769548529,
+        "kind": "harvest.component",
+        "detail": "wreck@117,108:s90"
+      },
+      {
+        "id": "r34",
+        "seq": 34,
+        "at": 1793769548529,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r35",
+        "seq": 35,
+        "at": 1793769548911,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r36",
+        "seq": 36,
+        "at": 1793769548945,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r37",
+        "seq": 37,
+        "at": 1793769548978,
+        "kind": "pickup",
+        "detail": "damaged_drivex1"
+      },
+      {
+        "id": "r38",
+        "seq": 38,
+        "at": 1793769549745,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r39",
+        "seq": 39,
+        "at": 1793769550212,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r40",
+        "seq": 40,
+        "at": 1793769550945,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r41",
+        "seq": 41,
+        "at": 1793769551345,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r42",
+        "seq": 42,
+        "at": 1793769552161,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r43",
+        "seq": 43,
+        "at": 1793769552595,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r44",
+        "seq": 44,
+        "at": 1793769553095,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r45",
+        "seq": 45,
+        "at": 1793769553528,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r46",
+        "seq": 46,
+        "at": 1793769570819,
+        "kind": "offline.settle",
+        "detail": "12s"
+      },
+      {
+        "id": "r47",
+        "seq": 47,
+        "at": 1793769600340,
+        "kind": "offline.settle",
+        "detail": "27s"
+      },
+      {
+        "id": "r48",
+        "seq": 48,
+        "at": 1793769612758,
+        "kind": "recycle.start",
+        "detail": "s8n@e2g"
+      },
+      {
+        "id": "r49",
+        "seq": 49,
+        "at": 1793769624758,
+        "kind": "job.done",
+        "detail": "X:drive"
+      },
+      {
+        "id": "r50",
+        "seq": 50,
+        "at": 1793769632035,
+        "kind": "offline.settle",
+        "detail": "18s"
+      },
+      {
+        "id": "r51",
+        "seq": 51,
+        "at": 1793769633871,
+        "kind": "move",
+        "detail": "sparesx2 c2i->inv"
+      },
+      {
+        "id": "r52",
+        "seq": 52,
+        "at": 1793769644786,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r53",
+        "seq": 53,
+        "at": 1793769659551,
+        "kind": "offline.settle",
+        "detail": "15s"
+      },
+      {
+        "id": "r54",
+        "seq": 54,
+        "at": 1793769684968,
+        "kind": "offline.settle",
+        "detail": "25s"
+      },
+      {
+        "id": "r55",
+        "seq": 55,
+        "at": 1793769687615,
+        "kind": "move",
+        "detail": "sparesx3 c14->inv"
+      },
+      {
+        "id": "r56",
+        "seq": 56,
+        "at": 1793769705355,
+        "kind": "move",
+        "detail": "iron_ingotx1 cd->inv"
+      },
+      {
+        "id": "r57",
+        "seq": 57,
+        "at": 1793769705432,
+        "kind": "move",
+        "detail": "woodx8 cd->inv"
+      },
+      {
+        "id": "r58",
+        "seq": 58,
+        "at": 1793769723999,
+        "kind": "offline.settle",
+        "detail": "18s"
+      },
+      {
+        "id": "r59",
+        "seq": 59,
+        "at": 1793769727104,
+        "kind": "harvest",
+        "detail": "grass@108,116 -2"
+      },
+      {
+        "id": "r60",
+        "seq": 60,
+        "at": 1793769727504,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r61",
+        "seq": 61,
+        "at": 1793769727504,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r62",
+        "seq": 62,
+        "at": 1793769734471,
+        "kind": "pickup",
+        "detail": "meatx1"
+      },
+      {
+        "id": "r63",
+        "seq": 63,
+        "at": 1793769734471,
+        "kind": "pickup",
+        "detail": "furx2"
+      },
+      {
+        "id": "r64",
+        "seq": 64,
+        "at": 1793769734754,
+        "kind": "harvest",
+        "detail": "oak@107,115 -1"
+      },
+      {
+        "id": "r65",
+        "seq": 65,
+        "at": 1793769735204,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r66",
+        "seq": 66,
+        "at": 1793769735671,
+        "kind": "harvest",
+        "detail": "oak@107,115 -1"
+      },
+      {
+        "id": "r67",
+        "seq": 67,
+        "at": 1793769736137,
+        "kind": "pickup",
+        "detail": "seedx1"
+      },
+      {
+        "id": "r68",
+        "seq": 68,
+        "at": 1793769736154,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r69",
+        "seq": 69,
+        "at": 1793769736604,
+        "kind": "harvest",
+        "detail": "oak@107,115 -1"
+      },
+      {
+        "id": "r70",
+        "seq": 70,
+        "at": 1793769737071,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r71",
+        "seq": 71,
+        "at": 1793769738687,
+        "kind": "harvest",
+        "detail": "oak@107,115 -1"
+      },
+      {
+        "id": "r72",
+        "seq": 72,
+        "at": 1793769739137,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r73",
+        "seq": 73,
+        "at": 1793769739587,
+        "kind": "harvest",
+        "detail": "oak@107,115 -1"
+      },
+      {
+        "id": "r74",
+        "seq": 74,
+        "at": 1793769740020,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r75",
+        "seq": 75,
+        "at": 1793769740520,
+        "kind": "harvest",
+        "detail": "oak@107,115 -1"
+      },
+      {
+        "id": "r76",
+        "seq": 76,
+        "at": 1793769740970,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r77",
+        "seq": 77,
+        "at": 1793769744373,
+        "kind": "harvest",
+        "detail": "oak@114,120 -1"
+      },
+      {
+        "id": "r78",
+        "seq": 78,
+        "at": 1793769744754,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r79",
+        "seq": 79,
+        "at": 1793769745270,
+        "kind": "harvest",
+        "detail": "oak@114,120 -1"
+      },
+      {
+        "id": "r80",
+        "seq": 80,
+        "at": 1793769745670,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r81",
+        "seq": 81,
+        "at": 1793769746187,
+        "kind": "harvest",
+        "detail": "oak@114,120 -1"
+      },
+      {
+        "id": "r82",
+        "seq": 82,
+        "at": 1793769746570,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r83",
+        "seq": 83,
+        "at": 1793769747087,
+        "kind": "harvest",
+        "detail": "oak@114,120 -1"
+      },
+      {
+        "id": "r84",
+        "seq": 84,
+        "at": 1793769747553,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r85",
+        "seq": 85,
+        "at": 1793769747987,
+        "kind": "harvest",
+        "detail": "oak@114,120 -1"
+      },
+      {
+        "id": "r86",
+        "seq": 86,
+        "at": 1793769748453,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r87",
+        "seq": 87,
+        "at": 1793769748904,
+        "kind": "harvest",
+        "detail": "oak@114,120 -1"
+      },
+      {
+        "id": "r88",
+        "seq": 88,
+        "at": 1793769749337,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r89",
+        "seq": 89,
+        "at": 1793769749337,
+        "kind": "pickup",
+        "detail": "seedx1"
+      },
+      {
+        "id": "r90",
+        "seq": 90,
+        "at": 1793769752837,
+        "kind": "harvest",
+        "detail": "oak@115,112 -1"
+      },
+      {
+        "id": "r91",
+        "seq": 91,
+        "at": 1793769753270,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r92",
+        "seq": 92,
+        "at": 1793769753770,
+        "kind": "harvest",
+        "detail": "oak@115,112 -1"
+      },
+      {
+        "id": "r93",
+        "seq": 93,
+        "at": 1793769754220,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r94",
+        "seq": 94,
+        "at": 1793769754686,
+        "kind": "harvest",
+        "detail": "oak@115,112 -1"
+      },
+      {
+        "id": "r95",
+        "seq": 95,
+        "at": 1793769755070,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r96",
+        "seq": 96,
+        "at": 1793769755620,
+        "kind": "harvest",
+        "detail": "oak@115,112 -1"
+      },
+      {
+        "id": "r97",
+        "seq": 97,
+        "at": 1793769756039,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r98",
+        "seq": 98,
+        "at": 1793769756520,
+        "kind": "harvest",
+        "detail": "oak@115,112 -1"
+      },
+      {
+        "id": "r99",
+        "seq": 99,
+        "at": 1793769756903,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r100",
+        "seq": 100,
+        "at": 1793769757453,
+        "kind": "harvest",
+        "detail": "oak@115,112 -1"
+      },
+      {
+        "id": "r101",
+        "seq": 101,
+        "at": 1793769757886,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r102",
+        "seq": 102,
+        "at": 1793769760203,
+        "kind": "harvest",
+        "detail": "oak@120,113 -1"
+      },
+      {
+        "id": "r103",
+        "seq": 103,
+        "at": 1793769760586,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r104",
+        "seq": 104,
+        "at": 1793769761120,
+        "kind": "harvest",
+        "detail": "oak@120,113 -1"
+      },
+      {
+        "id": "r105",
+        "seq": 105,
+        "at": 1793769761570,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r106",
+        "seq": 106,
+        "at": 1793769762036,
+        "kind": "harvest",
+        "detail": "oak@120,113 -1"
+      },
+      {
+        "id": "r107",
+        "seq": 107,
+        "at": 1793769762436,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r108",
+        "seq": 108,
+        "at": 1793769762953,
+        "kind": "harvest",
+        "detail": "oak@120,113 -1"
+      },
+      {
+        "id": "r109",
+        "seq": 109,
+        "at": 1793769763369,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r110",
+        "seq": 110,
+        "at": 1793769763870,
+        "kind": "harvest",
+        "detail": "oak@120,113 -1"
+      },
+      {
+        "id": "r111",
+        "seq": 111,
+        "at": 1793769764320,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r112",
+        "seq": 112,
+        "at": 1793769764786,
+        "kind": "harvest",
+        "detail": "oak@120,113 -1"
+      },
+      {
+        "id": "r113",
+        "seq": 113,
+        "at": 1793769765236,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r114",
+        "seq": 114,
+        "at": 1793769767519,
+        "kind": "harvest",
+        "detail": "rock@122,115 -1"
+      },
+      {
+        "id": "r115",
+        "seq": 115,
+        "at": 1793769767953,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r116",
+        "seq": 116,
+        "at": 1793769768436,
+        "kind": "harvest",
+        "detail": "rock@122,115 -1"
+      },
+      {
+        "id": "r117",
+        "seq": 117,
+        "at": 1793769768819,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r118",
+        "seq": 118,
+        "at": 1793769769352,
+        "kind": "harvest",
+        "detail": "rock@122,115 -1"
+      },
+      {
+        "id": "r119",
+        "seq": 119,
+        "at": 1793769769736,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r120",
+        "seq": 120,
+        "at": 1793769770269,
+        "kind": "harvest",
+        "detail": "rock@122,115 -1"
+      },
+      {
+        "id": "r121",
+        "seq": 121,
+        "at": 1793769770719,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r122",
+        "seq": 122,
+        "at": 1793769771186,
+        "kind": "harvest",
+        "detail": "rock@122,115 -1"
+      },
+      {
+        "id": "r123",
+        "seq": 123,
+        "at": 1793769771569,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r124",
+        "seq": 124,
+        "at": 1793769772086,
+        "kind": "harvest",
+        "detail": "rock@122,115 -1"
+      },
+      {
+        "id": "r125",
+        "seq": 125,
+        "at": 1793769772536,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r126",
+        "seq": 126,
+        "at": 1793769775902,
+        "kind": "harvest",
+        "detail": "rock@122,123 -1"
+      },
+      {
+        "id": "r127",
+        "seq": 127,
+        "at": 1793769776352,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r128",
+        "seq": 128,
+        "at": 1793769776835,
+        "kind": "harvest",
+        "detail": "rock@122,123 -1"
+      },
+      {
+        "id": "r129",
+        "seq": 129,
+        "at": 1793769777286,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r130",
+        "seq": 130,
+        "at": 1793769777735,
+        "kind": "harvest",
+        "detail": "rock@122,123 -1"
+      },
+      {
+        "id": "r131",
+        "seq": 131,
+        "at": 1793769778186,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r132",
+        "seq": 132,
+        "at": 1793769778652,
+        "kind": "harvest",
+        "detail": "rock@122,123 -1"
+      },
+      {
+        "id": "r133",
+        "seq": 133,
+        "at": 1793769779102,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r134",
+        "seq": 134,
+        "at": 1793769779569,
+        "kind": "harvest",
+        "detail": "rock@122,123 -1"
+      },
+      {
+        "id": "r135",
+        "seq": 135,
+        "at": 1793769780002,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r136",
+        "seq": 136,
+        "at": 1793769780469,
+        "kind": "harvest",
+        "detail": "rock@122,123 -1"
+      },
+      {
+        "id": "r137",
+        "seq": 137,
+        "at": 1793769780902,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r138",
+        "seq": 138,
+        "at": 1793769781769,
+        "kind": "harvest",
+        "detail": "grass@123,122 -2"
+      },
+      {
+        "id": "r139",
+        "seq": 139,
+        "at": 1793769782152,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r140",
+        "seq": 140,
+        "at": 1793769782219,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r141",
+        "seq": 141,
+        "at": 1793769783502,
+        "kind": "harvest",
+        "detail": "grass@120,121 -2"
+      },
+      {
+        "id": "r142",
+        "seq": 142,
+        "at": 1793769783935,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r143",
+        "seq": 143,
+        "at": 1793769783935,
+        "kind": "pickup",
+        "detail": "fiberx1"
+      },
+      {
+        "id": "r144",
+        "seq": 144,
+        "at": 1793769797968,
+        "kind": "harvest",
+        "detail": "wreck@152,109 -1"
+      },
+      {
+        "id": "r145",
+        "seq": 145,
+        "at": 1793769798351,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r146",
+        "seq": 146,
+        "at": 1793769798401,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r147",
+        "seq": 147,
+        "at": 1793769799185,
+        "kind": "harvest",
+        "detail": "wreck@152,109 -1"
+      },
+      {
+        "id": "r148",
+        "seq": 148,
+        "at": 1793769799568,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r149",
+        "seq": 149,
+        "at": 1793769800435,
+        "kind": "harvest",
+        "detail": "wreck@152,109 -1"
+      },
+      {
+        "id": "r150",
+        "seq": 150,
+        "at": 1793769800851,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r151",
+        "seq": 151,
+        "at": 1793769801351,
+        "kind": "harvest",
+        "detail": "wreck@152,109 -1"
+      },
+      {
+        "id": "r152",
+        "seq": 152,
+        "at": 1793769801752,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r153",
+        "seq": 153,
+        "at": 1793769802585,
+        "kind": "harvest",
+        "detail": "wreck@152,109 -1"
+      },
+      {
+        "id": "r154",
+        "seq": 154,
+        "at": 1793769803018,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r155",
+        "seq": 155,
+        "at": 1793769803801,
+        "kind": "harvest.component",
+        "detail": "wreck@152,109:smm"
+      },
+      {
+        "id": "r156",
+        "seq": 156,
+        "at": 1793769803801,
+        "kind": "harvest",
+        "detail": "wreck@152,109 -1"
+      },
+      {
+        "id": "r157",
+        "seq": 157,
+        "at": 1793769804185,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r158",
+        "seq": 158,
+        "at": 1793769804185,
+        "kind": "pickup",
+        "detail": "field_repair_kitx1"
+      },
+      {
+        "id": "r159",
+        "seq": 159,
+        "at": 1793769804218,
+        "kind": "pickup",
+        "detail": "damaged_drivex1"
+      },
+      {
+        "id": "r160",
+        "seq": 160,
+        "at": 1793769804251,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r161",
+        "seq": 161,
+        "at": 1793769805001,
+        "kind": "harvest.component",
+        "detail": "wreck@152,109:smw"
+      },
+      {
+        "id": "r162",
+        "seq": 162,
+        "at": 1793769805001,
+        "kind": "harvest",
+        "detail": "wreck@152,109 -1"
+      },
+      {
+        "id": "r163",
+        "seq": 163,
+        "at": 1793769805401,
+        "kind": "pickup",
+        "detail": "damaged_drivex1"
+      },
+      {
+        "id": "r164",
+        "seq": 164,
+        "at": 1793769805451,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r165",
+        "seq": 165,
+        "at": 1793769805935,
+        "kind": "harvest",
+        "detail": "wreck@152,109 -1"
+      },
+      {
+        "id": "r166",
+        "seq": 166,
+        "at": 1793769806318,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r167",
+        "seq": 167,
+        "at": 1793769806401,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r168",
+        "seq": 168,
+        "at": 1793769810218,
+        "kind": "harvest",
+        "detail": "wreck@155,107 -1"
+      },
+      {
+        "id": "r169",
+        "seq": 169,
+        "at": 1793769810634,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r170",
+        "seq": 170,
+        "at": 1793769811584,
+        "kind": "harvest.component",
+        "detail": "wreck@155,107:snj"
+      },
+      {
+        "id": "r171",
+        "seq": 171,
+        "at": 1793769811584,
+        "kind": "harvest",
+        "detail": "wreck@155,107 -1"
+      },
+      {
+        "id": "r172",
+        "seq": 172,
+        "at": 1793769811968,
+        "kind": "pickup",
+        "detail": "damaged_drivex1"
+      },
+      {
+        "id": "r173",
+        "seq": 173,
+        "at": 1793769811984,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r174",
+        "seq": 174,
+        "at": 1793769812801,
+        "kind": "harvest",
+        "detail": "wreck@155,107 -1"
+      },
+      {
+        "id": "r175",
+        "seq": 175,
+        "at": 1793769813184,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r176",
+        "seq": 176,
+        "at": 1793769813934,
+        "kind": "harvest",
+        "detail": "wreck@155,107 -1"
+      },
+      {
+        "id": "r177",
+        "seq": 177,
+        "at": 1793769814318,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r178",
+        "seq": 178,
+        "at": 1793769814318,
+        "kind": "pickup",
+        "detail": "fastenersx1"
+      },
+      {
+        "id": "r179",
+        "seq": 179,
+        "at": 1793769815434,
+        "kind": "harvest",
+        "detail": "wreck@155,107 -1"
+      },
+      {
+        "id": "r180",
+        "seq": 180,
+        "at": 1793769815834,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r181",
+        "seq": 181,
+        "at": 1793769816634,
+        "kind": "harvest.component",
+        "detail": "wreck@155,107:so4"
+      },
+      {
+        "id": "r182",
+        "seq": 182,
+        "at": 1793769816634,
+        "kind": "harvest",
+        "detail": "wreck@155,107 -1"
+      },
+      {
+        "id": "r183",
+        "seq": 183,
+        "at": 1793769817034,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r184",
+        "seq": 184,
+        "at": 1793769817051,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r185",
+        "seq": 185,
+        "at": 1793769817068,
+        "kind": "pickup",
+        "detail": "damaged_drivex1"
+      },
+      {
+        "id": "r186",
+        "seq": 186,
+        "at": 1793769818151,
+        "kind": "harvest",
+        "detail": "wreck@155,107 -1"
+      },
+      {
+        "id": "r187",
+        "seq": 187,
+        "at": 1793769818534,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r188",
+        "seq": 188,
+        "at": 1793769818534,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r189",
+        "seq": 189,
+        "at": 1793769819067,
+        "kind": "harvest",
+        "detail": "wreck@155,107 -1"
+      },
+      {
+        "id": "r190",
+        "seq": 190,
+        "at": 1793769819451,
+        "kind": "pickup",
+        "detail": "field_repair_kitx1"
+      },
+      {
+        "id": "r191",
+        "seq": 191,
+        "at": 1793769819467,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r192",
+        "seq": 192,
+        "at": 1793769819484,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r193",
+        "seq": 193,
+        "at": 1793769819484,
+        "kind": "pickup",
+        "detail": "fastenersx1"
+      },
+      {
+        "id": "r194",
+        "seq": 194,
+        "at": 1793769830825,
+        "kind": "offline.settle",
+        "detail": "11s"
+      },
+      {
+        "id": "r195",
+        "seq": 195,
+        "at": 1793769888726,
+        "kind": "offline.settle",
+        "detail": "58s"
+      },
+      {
+        "id": "r196",
+        "seq": 196,
+        "at": 1793769891598,
+        "kind": "death",
+        "detail": "projectile; bag=bop"
+      },
+      {
+        "id": "r197",
+        "seq": 197,
+        "at": 1793769905033,
+        "kind": "offline.settle",
+        "detail": "13s"
+      },
+      {
+        "id": "r198",
+        "seq": 198,
+        "at": 1793769940191,
+        "kind": "offline.settle",
+        "detail": "35s"
+      },
+      {
+        "id": "r199",
+        "seq": 199,
+        "at": 1793769980180,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r200",
+        "seq": 200,
+        "at": 1793769981543,
+        "kind": "respawn",
+        "detail": "2552,1288"
+      },
+      {
+        "id": "r201",
+        "seq": 201,
+        "at": 1793769995305,
+        "kind": "move",
+        "detail": "knifex1 coo->inv"
+      },
+      {
+        "id": "r202",
+        "seq": 202,
+        "at": 1793770013190,
+        "kind": "offline.settle",
+        "detail": "18s"
+      },
+      {
+        "id": "r203",
+        "seq": 203,
+        "at": 1793770014668,
+        "kind": "move",
+        "detail": "water_flaskx1 coo->inv"
+      },
+      {
+        "id": "r204",
+        "seq": 204,
+        "at": 1793770014788,
+        "kind": "move",
+        "detail": "berriesx3 coo->inv"
+      },
+      {
+        "id": "r205",
+        "seq": 205,
+        "at": 1793770014920,
+        "kind": "move",
+        "detail": "woodx38 coo->inv"
+      },
+      {
+        "id": "r206",
+        "seq": 206,
+        "at": 1793770015035,
+        "kind": "move",
+        "detail": "seedx4 coo->inv"
+      },
+      {
+        "id": "r207",
+        "seq": 207,
+        "at": 1793770015135,
+        "kind": "move",
+        "detail": "scrapx24 coo->inv"
+      },
+      {
+        "id": "r208",
+        "seq": 208,
+        "at": 1793770015253,
+        "kind": "move",
+        "detail": "fastenersx4 coo->inv"
+      },
+      {
+        "id": "r209",
+        "seq": 209,
+        "at": 1793770015373,
+        "kind": "move",
+        "detail": "sparesx13 coo->inv"
+      },
+      {
+        "id": "r210",
+        "seq": 210,
+        "at": 1793770015500,
+        "kind": "move",
+        "detail": "iron_ingotx1 coo->inv"
+      },
+      {
+        "id": "r211",
+        "seq": 211,
+        "at": 1793770015616,
+        "kind": "move",
+        "detail": "damaged_drivex1 coo->inv"
+      },
+      {
+        "id": "r212",
+        "seq": 212,
+        "at": 1793770015735,
+        "kind": "move",
+        "detail": "fiberx6 coo->inv"
+      },
+      {
+        "id": "r213",
+        "seq": 213,
+        "at": 1793770015850,
+        "kind": "move",
+        "detail": "meatx1 coo->inv"
+      },
+      {
+        "id": "r214",
+        "seq": 214,
+        "at": 1793770015937,
+        "kind": "move",
+        "detail": "furx2 coo->inv"
+      },
+      {
+        "id": "r215",
+        "seq": 215,
+        "at": 1793770016053,
+        "kind": "move",
+        "detail": "stonex12 coo->inv"
+      },
+      {
+        "id": "r216",
+        "seq": 216,
+        "at": 1793770016201,
+        "kind": "move",
+        "detail": "field_repair_kitx2 coo->inv"
+      },
+      {
+        "id": "r217",
+        "seq": 217,
+        "at": 1793770016334,
+        "kind": "move",
+        "detail": "damaged_drivex1 coo->inv"
+      },
+      {
+        "id": "r218",
+        "seq": 218,
+        "at": 1793770016450,
+        "kind": "move",
+        "detail": "damaged_drivex1 coo->inv"
+      },
+      {
+        "id": "r219",
+        "seq": 219,
+        "at": 1793770016552,
+        "kind": "move",
+        "detail": "damaged_drivex1 coo->inv"
+      },
+      {
+        "id": "r220",
+        "seq": 220,
+        "at": 1793770016684,
+        "kind": "move",
+        "detail": "damaged_drivex1 coo->inv"
+      },
+      {
+        "id": "r221",
+        "seq": 221,
+        "at": 1793770034768,
+        "kind": "offline.settle",
+        "detail": "17s"
+      },
+      {
+        "id": "r222",
+        "seq": 222,
+        "at": 1793770043320,
+        "kind": "recycle.start",
+        "detail": "s90@e2g"
+      },
+      {
+        "id": "r223",
+        "seq": 223,
+        "at": 1793770055320,
+        "kind": "job.done",
+        "detail": "X:drive"
+      },
+      {
+        "id": "r224",
+        "seq": 224,
+        "at": 1793770061733,
+        "kind": "offline.settle",
+        "detail": "18s"
+      },
+      {
+        "id": "r225",
+        "seq": 225,
+        "at": 1793770063604,
+        "kind": "move",
+        "detail": "sparesx2 c2i->inv"
+      }
+    ]
+  },
+  "collectedClosedAt": 1793770064106
+}

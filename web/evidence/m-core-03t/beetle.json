@@ -1,0 +1,4189 @@
+{
+  "method": "Assisted, live Cinder Beetle encounter; knife and movement via mouse/keyboard, AI and damage unchanged.",
+  "frames": [
+    {
+      "time": 1793778648018,
+      "p": {
+        "x": 1952.9754399999958,
+        "y": 2681.766736000071,
+        "hp": 51,
+        "dead": false,
+        "action": null
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1927.5265980262946,
+        "y": 2673.4193313282035,
+        "hp": 52,
+        "state": "recover",
+        "atk": {
+          "target": {
+            "x": 1944.5754399999958,
+            "y": 2681.766736000071
+          },
+          "burrow": false,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [
+        {
+          "id": "m4m",
+          "type": "boar",
+          "state": "wander"
+        }
+      ],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 3
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r346",
+          "seq": 346,
+          "at": 1793778470125,
+          "kind": "offline.settle",
+          "detail": "25s"
+        },
+        {
+          "id": "r347",
+          "seq": 347,
+          "at": 1793778483041,
+          "kind": "offline.settle",
+          "detail": "9s"
+        },
+        {
+          "id": "r348",
+          "seq": 348,
+          "at": 1793778486045,
+          "kind": "build",
+          "detail": "workbench@122,168"
+        },
+        {
+          "id": "r349",
+          "seq": 349,
+          "at": 1793778525261,
+          "kind": "offline.settle",
+          "detail": "38s"
+        },
+        {
+          "id": "r350",
+          "seq": 350,
+          "at": 1793778647285,
+          "kind": "offline.settle",
+          "detail": "120s"
+        }
+      ]
+    },
+    {
+      "time": 1793778648389,
+      "p": {
+        "x": 1940.3569359999963,
+        "y": 2681.766736000071,
+        "hp": 51,
+        "dead": false,
+        "action": {
+          "kind": "swing",
+          "t": 171.93600000000035,
+          "dur": 280,
+          "contact": 126,
+          "angle": -2.6031182651872604,
+          "slot": -1,
+          "done": true
+        }
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1928.3033234812533,
+        "y": 2673.9378123302467,
+        "hp": 48,
+        "state": "chase",
+        "atk": {
+          "target": {
+            "x": 1944.5754399999958,
+            "y": 2681.766736000071
+          },
+          "burrow": false,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [
+        {
+          "id": "m4m",
+          "type": "boar",
+          "state": "wander"
+        }
+      ],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 3
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r346",
+          "seq": 346,
+          "at": 1793778470125,
+          "kind": "offline.settle",
+          "detail": "25s"
+        },
+        {
+          "id": "r347",
+          "seq": 347,
+          "at": 1793778483041,
+          "kind": "offline.settle",
+          "detail": "9s"
+        },
+        {
+          "id": "r348",
+          "seq": 348,
+          "at": 1793778486045,
+          "kind": "build",
+          "detail": "workbench@122,168"
+        },
+        {
+          "id": "r349",
+          "seq": 349,
+          "at": 1793778525261,
+          "kind": "offline.settle",
+          "detail": "38s"
+        },
+        {
+          "id": "r350",
+          "seq": 350,
+          "at": 1793778647285,
+          "kind": "offline.settle",
+          "detail": "120s"
+        }
+      ]
+    },
+    {
+      "time": 1793778648638,
+      "p": {
+        "x": 1940.3569359999963,
+        "y": 2681.766736000071,
+        "hp": 51,
+        "dead": false,
+        "action": {
+          "kind": "swing",
+          "t": 133.4000000000001,
+          "dur": 280,
+          "contact": 126,
+          "angle": -2.4842047414098944,
+          "slot": -1,
+          "done": true
+        }
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1931.709895653544,
+        "y": 2676.023145445631,
+        "hp": 44,
+        "state": "chase",
+        "atk": {
+          "target": {
+            "x": 1944.5754399999958,
+            "y": 2681.766736000071
+          },
+          "burrow": false,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [
+        {
+          "id": "m4m",
+          "type": "boar",
+          "state": "wander"
+        }
+      ],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 3
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r347",
+          "seq": 347,
+          "at": 1793778483041,
+          "kind": "offline.settle",
+          "detail": "9s"
+        },
+        {
+          "id": "r348",
+          "seq": 348,
+          "at": 1793778486045,
+          "kind": "build",
+          "detail": "workbench@122,168"
+        },
+        {
+          "id": "r349",
+          "seq": 349,
+          "at": 1793778525261,
+          "kind": "offline.settle",
+          "detail": "38s"
+        },
+        {
+          "id": "r350",
+          "seq": 350,
+          "at": 1793778647285,
+          "kind": "offline.settle",
+          "detail": "120s"
+        },
+        {
+          "id": "r351",
+          "seq": 351,
+          "at": 1793778648625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        }
+      ]
+    },
+    {
+      "time": 1793778648773,
+      "p": {
+        "x": 1940.3569359999963,
+        "y": 2681.766736000071,
+        "hp": 51,
+        "dead": false,
+        "action": {
+          "kind": "swing",
+          "t": 205.32800000000003,
+          "dur": 280,
+          "contact": 126,
+          "angle": -2.4842047414098944,
+          "slot": -1,
+          "done": true
+        }
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1931.5361578942666,
+        "y": 2675.700678119609,
+        "hp": 44,
+        "state": "chase",
+        "atk": {
+          "target": {
+            "x": 1944.5754399999958,
+            "y": 2681.766736000071
+          },
+          "burrow": false,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [
+        {
+          "id": "m4m",
+          "type": "boar",
+          "state": "wander"
+        }
+      ],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 3
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r347",
+          "seq": 347,
+          "at": 1793778483041,
+          "kind": "offline.settle",
+          "detail": "9s"
+        },
+        {
+          "id": "r348",
+          "seq": 348,
+          "at": 1793778486045,
+          "kind": "build",
+          "detail": "workbench@122,168"
+        },
+        {
+          "id": "r349",
+          "seq": 349,
+          "at": 1793778525261,
+          "kind": "offline.settle",
+          "detail": "38s"
+        },
+        {
+          "id": "r350",
+          "seq": 350,
+          "at": 1793778647285,
+          "kind": "offline.settle",
+          "detail": "120s"
+        },
+        {
+          "id": "r351",
+          "seq": 351,
+          "at": 1793778648625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        }
+      ]
+    },
+    {
+      "time": 1793778649017,
+      "p": {
+        "x": 1940.3569359999963,
+        "y": 2681.766736000071,
+        "hp": 51,
+        "dead": false,
+        "action": {
+          "kind": "swing",
+          "t": 136.0640000000001,
+          "dur": 280,
+          "contact": 126,
+          "angle": -2.515479357715528,
+          "slot": -1,
+          "done": true
+        }
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1934.5393067140928,
+        "y": 2677.6433496357768,
+        "hp": 40,
+        "state": "chase",
+        "atk": {
+          "target": {
+            "x": 1944.5754399999958,
+            "y": 2681.766736000071
+          },
+          "burrow": false,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [
+        {
+          "id": "m4m",
+          "type": "boar",
+          "state": "wander"
+        }
+      ],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 4
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r348",
+          "seq": 348,
+          "at": 1793778486045,
+          "kind": "build",
+          "detail": "workbench@122,168"
+        },
+        {
+          "id": "r349",
+          "seq": 349,
+          "at": 1793778525261,
+          "kind": "offline.settle",
+          "detail": "38s"
+        },
+        {
+          "id": "r350",
+          "seq": 350,
+          "at": 1793778647285,
+          "kind": "offline.settle",
+          "detail": "120s"
+        },
+        {
+          "id": "r351",
+          "seq": 351,
+          "at": 1793778648625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r352",
+          "seq": 352,
+          "at": 1793778649009,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        }
+      ]
+    },
+    {
+      "time": 1793778649135,
+      "p": {
+        "x": 1940.3569359999963,
+        "y": 2681.766736000071,
+        "hp": 51,
+        "dead": false,
+        "action": {
+          "kind": "swing",
+          "t": 222.12800000000018,
+          "dur": 280,
+          "contact": 126,
+          "angle": -2.515479357715528,
+          "slot": -1,
+          "done": true
+        }
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1934.608146970925,
+        "y": 2677.6638475067266,
+        "hp": 40,
+        "state": "chase",
+        "atk": {
+          "target": {
+            "x": 1944.5754399999958,
+            "y": 2681.766736000071
+          },
+          "burrow": false,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [
+        {
+          "id": "m4m",
+          "type": "boar",
+          "state": "wander"
+        }
+      ],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 4
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r348",
+          "seq": 348,
+          "at": 1793778486045,
+          "kind": "build",
+          "detail": "workbench@122,168"
+        },
+        {
+          "id": "r349",
+          "seq": 349,
+          "at": 1793778525261,
+          "kind": "offline.settle",
+          "detail": "38s"
+        },
+        {
+          "id": "r350",
+          "seq": 350,
+          "at": 1793778647285,
+          "kind": "offline.settle",
+          "detail": "120s"
+        },
+        {
+          "id": "r351",
+          "seq": 351,
+          "at": 1793778648625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r352",
+          "seq": 352,
+          "at": 1793778649009,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        }
+      ]
+    },
+    {
+      "time": 1793778649498,
+      "p": {
+        "x": 1944.258255999996,
+        "y": 2686.0888960000707,
+        "hp": 51,
+        "dead": false,
+        "action": null
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1934.756601865289,
+        "y": 2677.7575147052275,
+        "hp": 40,
+        "state": "tell",
+        "atk": {
+          "target": {
+            "x": 1940.3569359999963,
+            "y": 2681.766736000071
+          },
+          "burrow": true,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [
+        {
+          "id": "m4m",
+          "type": "boar",
+          "state": "wander"
+        }
+      ],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 4
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r349",
+          "seq": 349,
+          "at": 1793778525261,
+          "kind": "offline.settle",
+          "detail": "38s"
+        },
+        {
+          "id": "r350",
+          "seq": 350,
+          "at": 1793778647285,
+          "kind": "offline.settle",
+          "detail": "120s"
+        },
+        {
+          "id": "r351",
+          "seq": 351,
+          "at": 1793778648625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r352",
+          "seq": 352,
+          "at": 1793778649009,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r353",
+          "seq": 353,
+          "at": 1793778649325,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        }
+      ]
+    },
+    {
+      "time": 1793778649846,
+      "p": {
+        "x": 1947.858255999996,
+        "y": 2694.4840960000715,
+        "hp": 51,
+        "dead": false,
+        "action": null
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1934.756601865289,
+        "y": 2677.7575147052275,
+        "hp": 40,
+        "state": "tell",
+        "atk": {
+          "target": {
+            "x": 1940.3569359999963,
+            "y": 2681.766736000071
+          },
+          "burrow": true,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [
+        {
+          "id": "m4m",
+          "type": "boar",
+          "state": "wander"
+        }
+      ],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 5
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r350",
+          "seq": 350,
+          "at": 1793778647285,
+          "kind": "offline.settle",
+          "detail": "120s"
+        },
+        {
+          "id": "r351",
+          "seq": 351,
+          "at": 1793778648625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r352",
+          "seq": 352,
+          "at": 1793778649009,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r353",
+          "seq": 353,
+          "at": 1793778649325,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r354",
+          "seq": 354,
+          "at": 1793778649775,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        }
+      ]
+    },
+    {
+      "time": 1793778650200,
+      "p": {
+        "x": 1947.858255999996,
+        "y": 2694.4840960000715,
+        "hp": 51,
+        "dead": false,
+        "action": null
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1939.6304201563914,
+        "y": 2681.2466308204225,
+        "hp": 40,
+        "state": "attack",
+        "atk": {
+          "target": {
+            "x": 1940.3569359999963,
+            "y": 2681.766736000071
+          },
+          "burrow": true,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [
+        {
+          "id": "m4m",
+          "type": "boar",
+          "state": "wander"
+        }
+      ],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 5
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r350",
+          "seq": 350,
+          "at": 1793778647285,
+          "kind": "offline.settle",
+          "detail": "120s"
+        },
+        {
+          "id": "r351",
+          "seq": 351,
+          "at": 1793778648625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r352",
+          "seq": 352,
+          "at": 1793778649009,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r353",
+          "seq": 353,
+          "at": 1793778649325,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r354",
+          "seq": 354,
+          "at": 1793778649775,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        }
+      ]
+    },
+    {
+      "time": 1793778650547,
+      "p": {
+        "x": 1947.858255999996,
+        "y": 2694.4840960000715,
+        "hp": 51,
+        "dead": false,
+        "action": null
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1939.6304201563914,
+        "y": 2681.2466308204225,
+        "hp": 40,
+        "state": "attack",
+        "atk": {
+          "target": {
+            "x": 1940.3569359999963,
+            "y": 2681.766736000071
+          },
+          "burrow": true,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [
+        {
+          "id": "m4m",
+          "type": "boar",
+          "state": "wander"
+        }
+      ],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 5
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r350",
+          "seq": 350,
+          "at": 1793778647285,
+          "kind": "offline.settle",
+          "detail": "120s"
+        },
+        {
+          "id": "r351",
+          "seq": 351,
+          "at": 1793778648625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r352",
+          "seq": 352,
+          "at": 1793778649009,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r353",
+          "seq": 353,
+          "at": 1793778649325,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r354",
+          "seq": 354,
+          "at": 1793778649775,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        }
+      ]
+    },
+    {
+      "time": 1793778650898,
+      "p": {
+        "x": 1947.858255999996,
+        "y": 2701.7192363745075,
+        "hp": 36,
+        "dead": false,
+        "action": {
+          "kind": "hurt",
+          "t": 0,
+          "dur": 220,
+          "angle": 1.0378743547745477
+        }
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1939.6304201563914,
+        "y": 2681.2466308204225,
+        "hp": 40,
+        "state": "attack",
+        "atk": {
+          "target": {
+            "x": 1940.3569359999963,
+            "y": 2681.766736000071
+          },
+          "burrow": true,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [
+        {
+          "id": "m4m",
+          "type": "boar",
+          "state": "wander"
+        }
+      ],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 5
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r350",
+          "seq": 350,
+          "at": 1793778647285,
+          "kind": "offline.settle",
+          "detail": "120s"
+        },
+        {
+          "id": "r351",
+          "seq": 351,
+          "at": 1793778648625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r352",
+          "seq": 352,
+          "at": 1793778649009,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r353",
+          "seq": 353,
+          "at": 1793778649325,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r354",
+          "seq": 354,
+          "at": 1793778649775,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        }
+      ]
+    },
+    {
+      "time": 1793778651249,
+      "p": {
+        "x": 1947.858255999996,
+        "y": 2698.4792363745078,
+        "hp": 36,
+        "dead": false,
+        "action": {
+          "kind": "swing",
+          "t": 100,
+          "dur": 280,
+          "contact": 126,
+          "angle": -1.958054157519647,
+          "slot": -1
+        }
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1939.6304201563914,
+        "y": 2681.2466308204225,
+        "hp": 40,
+        "state": "recover",
+        "atk": {
+          "target": {
+            "x": 1940.3569359999963,
+            "y": 2681.766736000071
+          },
+          "burrow": false,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [
+        {
+          "id": "m4m",
+          "type": "boar",
+          "state": "wander"
+        }
+      ],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 5
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r350",
+          "seq": 350,
+          "at": 1793778647285,
+          "kind": "offline.settle",
+          "detail": "120s"
+        },
+        {
+          "id": "r351",
+          "seq": 351,
+          "at": 1793778648625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r352",
+          "seq": 352,
+          "at": 1793778649009,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r353",
+          "seq": 353,
+          "at": 1793778649325,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r354",
+          "seq": 354,
+          "at": 1793778649775,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        }
+      ]
+    },
+    {
+      "time": 1793778651364,
+      "p": {
+        "x": 1947.858255999996,
+        "y": 2697.938156374508,
+        "hp": 36,
+        "dead": false,
+        "action": {
+          "kind": "swing",
+          "t": 155.23600000000053,
+          "dur": 280,
+          "contact": 126,
+          "angle": -1.958054157519647,
+          "slot": -1,
+          "done": true
+        }
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1938.3366391571146,
+        "y": 2678.0971619097722,
+        "hp": 36,
+        "state": "recover",
+        "atk": {
+          "target": {
+            "x": 1940.3569359999963,
+            "y": 2681.766736000071
+          },
+          "burrow": false,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [
+        {
+          "id": "m4m",
+          "type": "boar",
+          "state": "wander"
+        }
+      ],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 5
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r350",
+          "seq": 350,
+          "at": 1793778647285,
+          "kind": "offline.settle",
+          "detail": "120s"
+        },
+        {
+          "id": "r351",
+          "seq": 351,
+          "at": 1793778648625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r352",
+          "seq": 352,
+          "at": 1793778649009,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r353",
+          "seq": 353,
+          "at": 1793778649325,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r354",
+          "seq": 354,
+          "at": 1793778649775,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        }
+      ]
+    },
+    {
+      "time": 1793778651598,
+      "p": {
+        "x": 1947.858255999996,
+        "y": 2690.9203163745083,
+        "hp": 36,
+        "dead": false,
+        "action": {
+          "kind": "swing",
+          "t": 100,
+          "dur": 280,
+          "contact": 126,
+          "angle": -2.109678506709333,
+          "slot": -1
+        }
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1937.0261147402261,
+        "y": 2674.9069342669604,
+        "hp": 36,
+        "state": "recover",
+        "atk": {
+          "target": {
+            "x": 1940.3569359999963,
+            "y": 2681.766736000071
+          },
+          "burrow": false,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [
+        {
+          "id": "m4m",
+          "type": "boar",
+          "state": "wander"
+        }
+      ],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 5
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r350",
+          "seq": 350,
+          "at": 1793778647285,
+          "kind": "offline.settle",
+          "detail": "120s"
+        },
+        {
+          "id": "r351",
+          "seq": 351,
+          "at": 1793778648625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r352",
+          "seq": 352,
+          "at": 1793778649009,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r353",
+          "seq": 353,
+          "at": 1793778649325,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r354",
+          "seq": 354,
+          "at": 1793778649775,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        }
+      ]
+    },
+    {
+      "time": 1793778651715,
+      "p": {
+        "x": 1947.858255999996,
+        "y": 2690.3824763745083,
+        "hp": 36,
+        "dead": false,
+        "action": {
+          "kind": "swing",
+          "t": 155.5199999999998,
+          "dur": 280,
+          "contact": 126,
+          "angle": -2.109678506709333,
+          "slot": -1,
+          "done": true
+        }
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1935.2325382493543,
+        "y": 2671.879924272705,
+        "hp": 32,
+        "state": "recover",
+        "atk": {
+          "target": {
+            "x": 1940.3569359999963,
+            "y": 2681.766736000071
+          },
+          "burrow": false,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [
+        {
+          "id": "m4m",
+          "type": "boar",
+          "state": "wander"
+        }
+      ],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 5
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r351",
+          "seq": 351,
+          "at": 1793778648625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r352",
+          "seq": 352,
+          "at": 1793778649009,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r353",
+          "seq": 353,
+          "at": 1793778649325,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r354",
+          "seq": 354,
+          "at": 1793778649775,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r355",
+          "seq": 355,
+          "at": 1793778651625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        }
+      ]
+    },
+    {
+      "time": 1793778651947,
+      "p": {
+        "x": 1947.858255999996,
+        "y": 2683.361396374509,
+        "hp": 36,
+        "dead": false,
+        "action": {
+          "kind": "swing",
+          "t": 100,
+          "dur": 280,
+          "contact": 126,
+          "angle": -2.3318017962393243,
+          "slot": -1
+        }
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1935.8886631942414,
+        "y": 2671.5343690972827,
+        "hp": 32,
+        "state": "chase",
+        "atk": {
+          "target": {
+            "x": 1940.3569359999963,
+            "y": 2681.766736000071
+          },
+          "burrow": false,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 5
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r351",
+          "seq": 351,
+          "at": 1793778648625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r352",
+          "seq": 352,
+          "at": 1793778649009,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r353",
+          "seq": 353,
+          "at": 1793778649325,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r354",
+          "seq": 354,
+          "at": 1793778649775,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r355",
+          "seq": 355,
+          "at": 1793778651625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        }
+      ]
+    },
+    {
+      "time": 1793778652064,
+      "p": {
+        "x": 1947.858255999996,
+        "y": 2682.823556374509,
+        "hp": 36,
+        "dead": false,
+        "action": {
+          "kind": "swing",
+          "t": 155.23600000000053,
+          "dur": 280,
+          "contact": 126,
+          "angle": -2.3318017962393243,
+          "slot": -1,
+          "done": true
+        }
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1934.9301619537566,
+        "y": 2670.3616439075945,
+        "hp": 28,
+        "state": "chase",
+        "atk": {
+          "target": {
+            "x": 1940.3569359999963,
+            "y": 2681.766736000071
+          },
+          "burrow": false,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 6
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r352",
+          "seq": 352,
+          "at": 1793778649009,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r353",
+          "seq": 353,
+          "at": 1793778649325,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r354",
+          "seq": 354,
+          "at": 1793778649775,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r355",
+          "seq": 355,
+          "at": 1793778651625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r356",
+          "seq": 356,
+          "at": 1793778652008,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        }
+      ]
+    },
+    {
+      "time": 1793778652297,
+      "p": {
+        "x": 1947.858255999996,
+        "y": 2682.823556374509,
+        "hp": 36,
+        "dead": false,
+        "action": {
+          "kind": "swing",
+          "t": 100.10000000000036,
+          "dur": 280,
+          "contact": 126,
+          "angle": -2.3576597328057773,
+          "slot": -1
+        }
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1938.5481385922242,
+        "y": 2673.6976273622377,
+        "hp": 28,
+        "state": "chase",
+        "atk": {
+          "target": {
+            "x": 1940.3569359999963,
+            "y": 2681.766736000071
+          },
+          "burrow": false,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 6
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r352",
+          "seq": 352,
+          "at": 1793778649009,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r353",
+          "seq": 353,
+          "at": 1793778649325,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r354",
+          "seq": 354,
+          "at": 1793778649775,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r355",
+          "seq": 355,
+          "at": 1793778651625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r356",
+          "seq": 356,
+          "at": 1793778652008,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        }
+      ]
+    },
+    {
+      "time": 1793778652415,
+      "p": {
+        "x": 1947.858255999996,
+        "y": 2682.823556374509,
+        "hp": 36,
+        "dead": false,
+        "action": {
+          "kind": "swing",
+          "t": 155.43600000000035,
+          "dur": 280,
+          "contact": 126,
+          "angle": -2.3576597328057773,
+          "slot": -1,
+          "done": true
+        }
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1937.4899115075011,
+        "y": 2672.6181114242695,
+        "hp": 24,
+        "state": "chase",
+        "atk": {
+          "target": {
+            "x": 1940.3569359999963,
+            "y": 2681.766736000071
+          },
+          "burrow": false,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 6
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r352",
+          "seq": 352,
+          "at": 1793778649009,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r353",
+          "seq": 353,
+          "at": 1793778649325,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r354",
+          "seq": 354,
+          "at": 1793778649775,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r355",
+          "seq": 355,
+          "at": 1793778651625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r356",
+          "seq": 356,
+          "at": 1793778652008,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        }
+      ]
+    },
+    {
+      "time": 1793778652647,
+      "p": {
+        "x": 1947.858255999996,
+        "y": 2682.823556374509,
+        "hp": 36,
+        "dead": false,
+        "action": {
+          "kind": "swing",
+          "t": 100,
+          "dur": 280,
+          "contact": 126,
+          "angle": -2.3579575183563612,
+          "slot": -1
+        }
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1941.00081398796,
+        "y": 2676.053294697623,
+        "hp": 24,
+        "state": "chase",
+        "atk": {
+          "target": {
+            "x": 1940.3569359999963,
+            "y": 2681.766736000071
+          },
+          "burrow": false,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 6
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r352",
+          "seq": 352,
+          "at": 1793778649009,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r353",
+          "seq": 353,
+          "at": 1793778649325,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r354",
+          "seq": 354,
+          "at": 1793778649775,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r355",
+          "seq": 355,
+          "at": 1793778651625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r356",
+          "seq": 356,
+          "at": 1793778652008,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        }
+      ]
+    },
+    {
+      "time": 1793778652765,
+      "p": {
+        "x": 1947.858255999996,
+        "y": 2682.823556374509,
+        "hp": 36,
+        "dead": false,
+        "action": {
+          "kind": "swing",
+          "t": 155.52800000000067,
+          "dur": 280,
+          "contact": 126,
+          "angle": -2.3579575183563612,
+          "slot": -1,
+          "done": true
+        }
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1939.9372316122287,
+        "y": 2674.9824923999136,
+        "hp": 20,
+        "state": "chase",
+        "atk": {
+          "target": {
+            "x": 1940.3569359999963,
+            "y": 2681.766736000071
+          },
+          "burrow": false,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 6
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r352",
+          "seq": 352,
+          "at": 1793778649009,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r353",
+          "seq": 353,
+          "at": 1793778649325,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r354",
+          "seq": 354,
+          "at": 1793778649775,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r355",
+          "seq": 355,
+          "at": 1793778651625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r356",
+          "seq": 356,
+          "at": 1793778652008,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        }
+      ]
+    },
+    {
+      "time": 1793778652999,
+      "p": {
+        "x": 1947.858255999996,
+        "y": 2690.0307563745096,
+        "hp": 36,
+        "dead": false,
+        "action": null
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1939.598463039908,
+        "y": 2674.6326649047473,
+        "hp": 20,
+        "state": "tell",
+        "atk": {
+          "target": {
+            "x": 1947.858255999996,
+            "y": 2682.823556374509
+          },
+          "burrow": true,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [
+        {
+          "id": "m4m",
+          "type": "boar",
+          "state": "wander"
+        }
+      ],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 6
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r352",
+          "seq": 352,
+          "at": 1793778649009,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r353",
+          "seq": 353,
+          "at": 1793778649325,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r354",
+          "seq": 354,
+          "at": 1793778649775,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r355",
+          "seq": 355,
+          "at": 1793778651625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r356",
+          "seq": 356,
+          "at": 1793778652008,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        }
+      ]
+    },
+    {
+      "time": 1793778653345,
+      "p": {
+        "x": 1947.858255999996,
+        "y": 2691.2259563745097,
+        "hp": 36,
+        "dead": false,
+        "action": null
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1939.475750760247,
+        "y": 2674.5103817071868,
+        "hp": 20,
+        "state": "tell",
+        "atk": {
+          "target": {
+            "x": 1947.858255999996,
+            "y": 2682.823556374509
+          },
+          "burrow": true,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [
+        {
+          "id": "m4m",
+          "type": "boar",
+          "state": "wander"
+        }
+      ],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 6
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r352",
+          "seq": 352,
+          "at": 1793778649009,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r353",
+          "seq": 353,
+          "at": 1793778649325,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r354",
+          "seq": 354,
+          "at": 1793778649775,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r355",
+          "seq": 355,
+          "at": 1793778651625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r356",
+          "seq": 356,
+          "at": 1793778652008,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        }
+      ]
+    },
+    {
+      "time": 1793778653695,
+      "p": {
+        "x": 1947.858255999996,
+        "y": 2691.2259563745097,
+        "hp": 36,
+        "dead": false,
+        "action": null
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1939.475750760247,
+        "y": 2674.5103817071868,
+        "hp": 20,
+        "state": "tell",
+        "atk": {
+          "target": {
+            "x": 1947.858255999996,
+            "y": 2682.823556374509
+          },
+          "burrow": true,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [
+        {
+          "id": "m4m",
+          "type": "boar",
+          "state": "wander"
+        }
+      ],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 6
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r352",
+          "seq": 352,
+          "at": 1793778649009,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r353",
+          "seq": 353,
+          "at": 1793778649325,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r354",
+          "seq": 354,
+          "at": 1793778649775,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r355",
+          "seq": 355,
+          "at": 1793778651625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r356",
+          "seq": 356,
+          "at": 1793778652008,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        }
+      ]
+    },
+    {
+      "time": 1793778654046,
+      "p": {
+        "x": 1947.858255999996,
+        "y": 2691.2259563745097,
+        "hp": 36,
+        "dead": false,
+        "action": null
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1946.926878983099,
+        "y": 2681.8998826515412,
+        "hp": 20,
+        "state": "attack",
+        "atk": {
+          "target": {
+            "x": 1947.858255999996,
+            "y": 2682.823556374509
+          },
+          "burrow": true,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [
+        {
+          "id": "m4m",
+          "type": "boar",
+          "state": "wander"
+        }
+      ],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 6
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r352",
+          "seq": 352,
+          "at": 1793778649009,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r353",
+          "seq": 353,
+          "at": 1793778649325,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r354",
+          "seq": 354,
+          "at": 1793778649775,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r355",
+          "seq": 355,
+          "at": 1793778651625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r356",
+          "seq": 356,
+          "at": 1793778652008,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        }
+      ]
+    },
+    {
+      "time": 1793778654396,
+      "p": {
+        "x": 1947.858255999996,
+        "y": 2691.2259563745097,
+        "hp": 36,
+        "dead": false,
+        "action": null
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1946.926878983099,
+        "y": 2681.8998826515412,
+        "hp": 20,
+        "state": "attack",
+        "atk": {
+          "target": {
+            "x": 1947.858255999996,
+            "y": 2682.823556374509
+          },
+          "burrow": true,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [
+        {
+          "id": "m4m",
+          "type": "boar",
+          "state": "wander"
+        }
+      ],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 6
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r352",
+          "seq": 352,
+          "at": 1793778649009,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r353",
+          "seq": 353,
+          "at": 1793778649325,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r354",
+          "seq": 354,
+          "at": 1793778649775,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r355",
+          "seq": 355,
+          "at": 1793778651625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r356",
+          "seq": 356,
+          "at": 1793778652008,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        }
+      ]
+    },
+    {
+      "time": 1793778654634,
+      "p": {
+        "x": 1947.858255999996,
+        "y": 2699.6259563745098,
+        "hp": 21,
+        "dead": false,
+        "action": {
+          "kind": "hurt",
+          "t": 66.60000000000036,
+          "dur": 220,
+          "angle": 1.5707963267948966
+        }
+      },
+      "m": {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1946.926878983099,
+        "y": 2681.8998826515412,
+        "hp": 20,
+        "state": "attack",
+        "atk": {
+          "target": {
+            "x": 1947.858255999996,
+            "y": 2682.823556374509
+          },
+          "burrow": true,
+          "bt": 0,
+          "hit": false
+        }
+      },
+      "others": [
+        {
+          "id": "m4m",
+          "type": "boar",
+          "state": "wander"
+        }
+      ],
+      "inv": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 89
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 6
+        },
+        {
+          "uid": "s7c",
+          "key": "wood",
+          "qty": 5
+        },
+        {
+          "uid": "s81",
+          "key": "stone",
+          "qty": 1
+        },
+        {
+          "uid": "s8o",
+          "key": "fiber",
+          "qty": 1
+        },
+        {
+          "uid": "s9t",
+          "key": "crystal",
+          "qty": 3
+        },
+        {
+          "uid": "s8x",
+          "key": "stone_pick",
+          "qty": 1,
+          "dur": 170
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 1
+        },
+        {
+          "uid": "sj5",
+          "key": "seed",
+          "qty": 12
+        },
+        {
+          "uid": "sls",
+          "key": "charcoal",
+          "qty": 3
+        },
+        {
+          "uid": "sm8",
+          "key": "chitin",
+          "qty": 2
+        },
+        {
+          "uid": "sm9",
+          "key": "sulfur",
+          "qty": 1
+        }
+      ],
+      "receipts": [
+        {
+          "id": "r352",
+          "seq": 352,
+          "at": 1793778649009,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r353",
+          "seq": 353,
+          "at": 1793778649325,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r354",
+          "seq": 354,
+          "at": 1793778649775,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        },
+        {
+          "id": "r355",
+          "seq": 355,
+          "at": 1793778651625,
+          "kind": "harvest",
+          "detail": "bush@121,167 -1"
+        },
+        {
+          "id": "r356",
+          "seq": 356,
+          "at": 1793778652008,
+          "kind": "pickup",
+          "detail": "berriesx1"
+        }
+      ]
+    }
+  ],
+  "start": {
+    "time": 1793778648010,
+    "p": {
+      "x": 1952.9754399999958,
+      "y": 2681.766736000071,
+      "hp": 51,
+      "dead": false,
+      "action": null
+    },
+    "m": {
+      "id": "m40",
+      "type": "beetle",
+      "x": 1927.5265980262946,
+      "y": 2673.4193313282035,
+      "hp": 52,
+      "state": "recover",
+      "atk": {
+        "target": {
+          "x": 1944.5754399999958,
+          "y": 2681.766736000071
+        },
+        "burrow": false,
+        "bt": 0,
+        "hit": false
+      }
+    },
+    "others": [
+      {
+        "id": "m4m",
+        "type": "boar",
+        "state": "wander"
+      }
+    ],
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 89
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7c",
+        "key": "wood",
+        "qty": 5
+      },
+      {
+        "uid": "s81",
+        "key": "stone",
+        "qty": 1
+      },
+      {
+        "uid": "s8o",
+        "key": "fiber",
+        "qty": 1
+      },
+      {
+        "uid": "s9t",
+        "key": "crystal",
+        "qty": 3
+      },
+      {
+        "uid": "s8x",
+        "key": "stone_pick",
+        "qty": 1,
+        "dur": 170
+      },
+      {
+        "uid": "s1t",
+        "key": "spares",
+        "qty": 1
+      },
+      {
+        "uid": "sj5",
+        "key": "seed",
+        "qty": 12
+      },
+      {
+        "uid": "sls",
+        "key": "charcoal",
+        "qty": 3
+      },
+      {
+        "uid": "sm8",
+        "key": "chitin",
+        "qty": 2
+      },
+      {
+        "uid": "sm9",
+        "key": "sulfur",
+        "qty": 1
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r346",
+        "seq": 346,
+        "at": 1793778470125,
+        "kind": "offline.settle",
+        "detail": "25s"
+      },
+      {
+        "id": "r347",
+        "seq": 347,
+        "at": 1793778483041,
+        "kind": "offline.settle",
+        "detail": "9s"
+      },
+      {
+        "id": "r348",
+        "seq": 348,
+        "at": 1793778486045,
+        "kind": "build",
+        "detail": "workbench@122,168"
+      },
+      {
+        "id": "r349",
+        "seq": 349,
+        "at": 1793778525261,
+        "kind": "offline.settle",
+        "detail": "38s"
+      },
+      {
+        "id": "r350",
+        "seq": 350,
+        "at": 1793778647285,
+        "kind": "offline.settle",
+        "detail": "120s"
+      }
+    ]
+  },
+  "failure": "Error: Stopping combat at or below 30 HP",
+  "last": {
+    "time": 1793778654639,
+    "p": {
+      "x": 1947.858255999996,
+      "y": 2699.6259563745098,
+      "hp": 21,
+      "dead": false,
+      "action": {
+        "kind": "hurt",
+        "t": 66.60000000000036,
+        "dur": 220,
+        "angle": 1.5707963267948966
+      }
+    },
+    "m": {
+      "id": "m40",
+      "type": "beetle",
+      "x": 1946.926878983099,
+      "y": 2681.8998826515412,
+      "hp": 20,
+      "state": "attack",
+      "atk": {
+        "target": {
+          "x": 1947.858255999996,
+          "y": 2682.823556374509
+        },
+        "burrow": true,
+        "bt": 0,
+        "hit": false
+      }
+    },
+    "others": [
+      {
+        "id": "m4m",
+        "type": "boar",
+        "state": "wander"
+      }
+    ],
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 89
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 6
+      },
+      {
+        "uid": "s7c",
+        "key": "wood",
+        "qty": 5
+      },
+      {
+        "uid": "s81",
+        "key": "stone",
+        "qty": 1
+      },
+      {
+        "uid": "s8o",
+        "key": "fiber",
+        "qty": 1
+      },
+      {
+        "uid": "s9t",
+        "key": "crystal",
+        "qty": 3
+      },
+      {
+        "uid": "s8x",
+        "key": "stone_pick",
+        "qty": 1,
+        "dur": 170
+      },
+      {
+        "uid": "s1t",
+        "key": "spares",
+        "qty": 1
+      },
+      {
+        "uid": "sj5",
+        "key": "seed",
+        "qty": 12
+      },
+      {
+        "uid": "sls",
+        "key": "charcoal",
+        "qty": 3
+      },
+      {
+        "uid": "sm8",
+        "key": "chitin",
+        "qty": 2
+      },
+      {
+        "uid": "sm9",
+        "key": "sulfur",
+        "qty": 1
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r352",
+        "seq": 352,
+        "at": 1793778649009,
+        "kind": "pickup",
+        "detail": "berriesx1"
+      },
+      {
+        "id": "r353",
+        "seq": 353,
+        "at": 1793778649325,
+        "kind": "harvest",
+        "detail": "bush@121,167 -1"
+      },
+      {
+        "id": "r354",
+        "seq": 354,
+        "at": 1793778649775,
+        "kind": "pickup",
+        "detail": "berriesx1"
+      },
+      {
+        "id": "r355",
+        "seq": 355,
+        "at": 1793778651625,
+        "kind": "harvest",
+        "detail": "bush@121,167 -1"
+      },
+      {
+        "id": "r356",
+        "seq": 356,
+        "at": 1793778652008,
+        "kind": "pickup",
+        "detail": "berriesx1"
+      }
+    ]
+  }
+}

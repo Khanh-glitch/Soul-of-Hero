@@ -1,0 +1,167 @@
+{
+  "method": "03T continuation of original profile; live offline settlement, normal input, read-only terrain-assisted route; no injection or rollback.",
+  "errors": [],
+  "settled": {
+    "p": {
+      "x": 2104,
+      "y": 2072,
+      "vx": 0,
+      "vy": 0,
+      "dir": 3,
+      "aim": -1.5707963267948966,
+      "hp": 6.60993055338545,
+      "stamina": 75.25160000000005,
+      "hunger": 0.7494545599646824,
+      "thirst": 0,
+      "warmth": 80.56100475535109,
+      "rad": 0,
+      "active": 0,
+      "action": null,
+      "invuln": 933.4000000000003,
+      "dead": false,
+      "deadT": 1383.3,
+      "pulling": null,
+      "skills": {
+        "gather": 76,
+        "combat": 2,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 10.312992000000005,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Caldera Wastes",
+      "sheltered": false
+    },
+    "receipts": [
+      {
+        "id": "r281",
+        "seq": 281,
+        "at": 1793773602338,
+        "kind": "move",
+        "detail": "sulfurx1 c1ey->inv"
+      },
+      {
+        "id": "r282",
+        "seq": 282,
+        "at": 1793773625262,
+        "kind": "offline.settle",
+        "detail": "21s"
+      },
+      {
+        "id": "r283",
+        "seq": 283,
+        "at": 1793773627134,
+        "kind": "death",
+        "detail": "Greyfang Wolf; bag=b1i0"
+      },
+      {
+        "id": "r284",
+        "seq": 284,
+        "at": 1793773774224,
+        "kind": "offline.settle",
+        "detail": "147s"
+      },
+      {
+        "id": "r285",
+        "seq": 285,
+        "at": 1793773789557,
+        "kind": "offline.settle",
+        "detail": "15s"
+      },
+      {
+        "id": "r286",
+        "seq": 286,
+        "at": 1793773791272,
+        "kind": "respawn",
+        "detail": "2104,2072"
+      },
+      {
+        "id": "r287",
+        "seq": 287,
+        "at": 1793773810502,
+        "kind": "offline.settle",
+        "detail": "19s"
+      },
+      {
+        "id": "r288",
+        "seq": 288,
+        "at": 1793778157370,
+        "kind": "offline.settle",
+        "detail": "4347s"
+      }
+    ]
+  },
+  "respawn": {
+    "p": {
+      "x": 2104,
+      "y": 2072,
+      "vx": 0,
+      "vy": 0,
+      "dir": 1,
+      "aim": 2.420918771607937,
+      "hp": 6.553263886718774,
+      "stamina": 84.09160000000023,
+      "hunger": 0.7154545599646823,
+      "thirst": 0,
+      "warmth": 80.99676158572447,
+      "rad": 0,
+      "active": 0,
+      "action": null,
+      "invuln": 83.40000000000032,
+      "dead": false,
+      "deadT": 1383.3,
+      "pulling": null,
+      "skills": {
+        "gather": 76,
+        "combat": 2,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 10.312992000000005,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Caldera Wastes",
+      "sheltered": false
+    },
+    "receipts": [
+      {
+        "id": "r284",
+        "seq": 284,
+        "at": 1793773774224,
+        "kind": "offline.settle",
+        "detail": "147s"
+      },
+      {
+        "id": "r285",
+        "seq": 285,
+        "at": 1793773789557,
+        "kind": "offline.settle",
+        "detail": "15s"
+      },
+      {
+        "id": "r286",
+        "seq": 286,
+        "at": 1793773791272,
+        "kind": "respawn",
+        "detail": "2104,2072"
+      },
+      {
+        "id": "r287",
+        "seq": 287,
+        "at": 1793773810502,
+        "kind": "offline.settle",
+        "detail": "19s"
+      },
+      {
+        "id": "r288",
+        "seq": 288,
+        "at": 1793778157370,
+        "kind": "offline.settle",
+        "detail": "4347s"
+      }
+    ]
+  },
+  "routeSteps": 65,
+  "failure": "AssertionError [ERR_ASSERTION]: survive return"
+}

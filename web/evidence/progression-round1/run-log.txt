@@ -1,0 +1,25 @@
+New run Pinewatch seed=1042230819
+harvest grass -> fiber: 0 -> 2 near source (79,73)
+harvest grass -> fiber: 2 -> 2 near source (80,72)
+harvest grass -> fiber: 2 -> 4 near source (82,73)
+harvest pine -> wood: 0 -> 0 near source (82,65)
+harvest pine -> wood: 0 -> 3 near source (84,64)
+selected stone_pick in hotbar 5; active=4
+harvest rock -> stone: 0 -> 6 near source (77,64)
+harvest rock -> stone: 6 -> 10 near source (80,58)
+selected knife in hotbar 1; active=0
+harvest pine -> wood: 0 -> 5 near source (79,61)
+harvest pine -> wood: 5 -> 5 near source (79,62)
+harvest pine -> wood: 5 -> 5 near source (80,63)
+harvest pine -> wood: 5 -> 10 near source (82,65)
+harvest pine -> wood: 10 -> 12 near source (84,64)
+harvest pine -> wood: 12 -> 17 near source (85,63)
+harvest pine -> wood: 17 -> 22 near source (86,64)
+harvest pine -> wood: 22 -> 24 near source (88,64)
+harvest scrap -> scrap: 0 -> 0 near source (75,69)
+harvest scrap -> scrap: 0 -> 0 near source (74,67)
+harvest scrap -> scrap: 0 -> 2 near source (73,92)
+Paid starting inventory: wood=24, stone=10, scrap=2, fiber=7
+Paid claim at 72,90
+Repaired real starter knife 201->300 at paid workbench; consumed scrap and fiber.
+Reload + Continue preserved the repaired physical knife.

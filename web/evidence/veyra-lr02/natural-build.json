@@ -1,0 +1,582 @@
+{
+  "method": "No state injection; read-only path planning and normal keyboard/mouse with NPCs/weather enabled.",
+  "events": [
+    {
+      "mat": "wood",
+      "plan": {
+        "path": [
+          17447,
+          17446,
+          17445
+        ],
+        "target": 17645,
+        "key": "oak"
+      },
+      "before": 6,
+      "after": 0,
+      "inventory": {
+        "wood": 6,
+        "stone": 0,
+        "fiber": 0
+      },
+      "receipts": [
+        {
+          "id": "r2",
+          "seq": 2,
+          "at": 1793757831197,
+          "kind": "harvest",
+          "detail": "oak@45,88 -1"
+        },
+        {
+          "id": "r4",
+          "seq": 4,
+          "at": 1793757832131,
+          "kind": "harvest",
+          "detail": "oak@45,88 -1"
+        },
+        {
+          "id": "r6",
+          "seq": 6,
+          "at": 1793757833047,
+          "kind": "harvest",
+          "detail": "oak@45,88 -1"
+        },
+        {
+          "id": "r8",
+          "seq": 8,
+          "at": 1793757833964,
+          "kind": "harvest",
+          "detail": "oak@45,88 -1"
+        },
+        {
+          "id": "r10",
+          "seq": 10,
+          "at": 1793757834897,
+          "kind": "harvest",
+          "detail": "oak@45,88 -1"
+        },
+        {
+          "id": "r12",
+          "seq": 12,
+          "at": 1793757835797,
+          "kind": "harvest",
+          "detail": "oak@45,88 -1"
+        }
+      ]
+    },
+    {
+      "mat": "wood",
+      "plan": {
+        "path": [
+          17445,
+          17446,
+          17447,
+          17647,
+          17847,
+          18047
+        ],
+        "target": 18247,
+        "key": "oak"
+      },
+      "before": 6,
+      "after": 0,
+      "inventory": {
+        "wood": 12,
+        "stone": 0,
+        "fiber": 0
+      },
+      "receipts": [
+        {
+          "id": "r10",
+          "seq": 10,
+          "at": 1793757834897,
+          "kind": "harvest",
+          "detail": "oak@45,88 -1"
+        },
+        {
+          "id": "r12",
+          "seq": 12,
+          "at": 1793757835797,
+          "kind": "harvest",
+          "detail": "oak@45,88 -1"
+        },
+        {
+          "id": "r14",
+          "seq": 14,
+          "at": 1793757838814,
+          "kind": "harvest",
+          "detail": "oak@47,91 -1"
+        },
+        {
+          "id": "r16",
+          "seq": 16,
+          "at": 1793757839714,
+          "kind": "harvest",
+          "detail": "oak@47,91 -1"
+        },
+        {
+          "id": "r18",
+          "seq": 18,
+          "at": 1793757840630,
+          "kind": "harvest",
+          "detail": "oak@47,91 -1"
+        },
+        {
+          "id": "r20",
+          "seq": 20,
+          "at": 1793757841530,
+          "kind": "harvest",
+          "detail": "oak@47,91 -1"
+        },
+        {
+          "id": "r22",
+          "seq": 22,
+          "at": 1793757842447,
+          "kind": "harvest",
+          "detail": "oak@47,91 -1"
+        },
+        {
+          "id": "r25",
+          "seq": 25,
+          "at": 1793757843363,
+          "kind": "harvest",
+          "detail": "oak@47,91 -1"
+        }
+      ]
+    },
+    {
+      "mat": "stone",
+      "plan": {
+        "path": [
+          18047,
+          17847,
+          17647,
+          17447,
+          17247,
+          17047
+        ],
+        "target": 17046,
+        "key": "rock"
+      },
+      "before": 6,
+      "after": 0,
+      "inventory": {
+        "wood": 12,
+        "stone": 6,
+        "fiber": 0
+      },
+      "receipts": [
+        {
+          "id": "r22",
+          "seq": 22,
+          "at": 1793757842447,
+          "kind": "harvest",
+          "detail": "oak@47,91 -1"
+        },
+        {
+          "id": "r25",
+          "seq": 25,
+          "at": 1793757843363,
+          "kind": "harvest",
+          "detail": "oak@47,91 -1"
+        },
+        {
+          "id": "r27",
+          "seq": 27,
+          "at": 1793757846463,
+          "kind": "harvest",
+          "detail": "rock@46,85 -1"
+        },
+        {
+          "id": "r29",
+          "seq": 29,
+          "at": 1793757847380,
+          "kind": "harvest",
+          "detail": "rock@46,85 -1"
+        },
+        {
+          "id": "r31",
+          "seq": 31,
+          "at": 1793757848296,
+          "kind": "harvest",
+          "detail": "rock@46,85 -1"
+        },
+        {
+          "id": "r33",
+          "seq": 33,
+          "at": 1793757849213,
+          "kind": "harvest",
+          "detail": "rock@46,85 -1"
+        },
+        {
+          "id": "r35",
+          "seq": 35,
+          "at": 1793757850113,
+          "kind": "harvest",
+          "detail": "rock@46,85 -1"
+        },
+        {
+          "id": "r37",
+          "seq": 37,
+          "at": 1793757851030,
+          "kind": "harvest",
+          "detail": "rock@46,85 -1"
+        }
+      ]
+    }
+  ],
+  "site": {
+    "x": 45,
+    "y": 81
+  },
+  "result": {
+    "entities": [
+      {
+        "id": "e6e",
+        "kind": "struct",
+        "type": "claim",
+        "tx": 45,
+        "ty": 81,
+        "x": 728,
+        "y": 1304,
+        "hp": 200,
+        "maxHp": 200,
+        "born": 1793757852182
+      }
+    ],
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 246
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s4f",
+        "key": "wood",
+        "qty": 2
+      },
+      {
+        "uid": "s5k",
+        "key": "seed",
+        "qty": 1
+      },
+      {
+        "uid": "s5y",
+        "key": "stone",
+        "qty": 1
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r39",
+        "seq": 39,
+        "at": 1793757852182,
+        "kind": "build",
+        "detail": "claim@45,81"
+      }
+    ]
+  },
+  "saved": {
+    "claim": [
+      {
+        "id": "e6e",
+        "kind": "struct",
+        "type": "claim",
+        "tx": 45,
+        "ty": 81,
+        "x": 728,
+        "y": 1304,
+        "hp": 200,
+        "maxHp": 200,
+        "born": 1793757852182
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r1",
+        "seq": 1,
+        "at": 1793757828191,
+        "kind": "run.start",
+        "detail": "female@Veyra · Greywater region"
+      },
+      {
+        "id": "r2",
+        "seq": 2,
+        "at": 1793757831197,
+        "kind": "harvest",
+        "detail": "oak@45,88 -1"
+      },
+      {
+        "id": "r3",
+        "seq": 3,
+        "at": 1793757831581,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r4",
+        "seq": 4,
+        "at": 1793757832131,
+        "kind": "harvest",
+        "detail": "oak@45,88 -1"
+      },
+      {
+        "id": "r5",
+        "seq": 5,
+        "at": 1793757832531,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r6",
+        "seq": 6,
+        "at": 1793757833047,
+        "kind": "harvest",
+        "detail": "oak@45,88 -1"
+      },
+      {
+        "id": "r7",
+        "seq": 7,
+        "at": 1793757833497,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r8",
+        "seq": 8,
+        "at": 1793757833964,
+        "kind": "harvest",
+        "detail": "oak@45,88 -1"
+      },
+      {
+        "id": "r9",
+        "seq": 9,
+        "at": 1793757834347,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r10",
+        "seq": 10,
+        "at": 1793757834897,
+        "kind": "harvest",
+        "detail": "oak@45,88 -1"
+      },
+      {
+        "id": "r11",
+        "seq": 11,
+        "at": 1793757835297,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r12",
+        "seq": 12,
+        "at": 1793757835797,
+        "kind": "harvest",
+        "detail": "oak@45,88 -1"
+      },
+      {
+        "id": "r13",
+        "seq": 13,
+        "at": 1793757836180,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r14",
+        "seq": 14,
+        "at": 1793757838814,
+        "kind": "harvest",
+        "detail": "oak@47,91 -1"
+      },
+      {
+        "id": "r15",
+        "seq": 15,
+        "at": 1793757839230,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r16",
+        "seq": 16,
+        "at": 1793757839714,
+        "kind": "harvest",
+        "detail": "oak@47,91 -1"
+      },
+      {
+        "id": "r17",
+        "seq": 17,
+        "at": 1793757840164,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r18",
+        "seq": 18,
+        "at": 1793757840630,
+        "kind": "harvest",
+        "detail": "oak@47,91 -1"
+      },
+      {
+        "id": "r19",
+        "seq": 19,
+        "at": 1793757841097,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r20",
+        "seq": 20,
+        "at": 1793757841530,
+        "kind": "harvest",
+        "detail": "oak@47,91 -1"
+      },
+      {
+        "id": "r21",
+        "seq": 21,
+        "at": 1793757841980,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r22",
+        "seq": 22,
+        "at": 1793757842447,
+        "kind": "harvest",
+        "detail": "oak@47,91 -1"
+      },
+      {
+        "id": "r23",
+        "seq": 23,
+        "at": 1793757842897,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r24",
+        "seq": 24,
+        "at": 1793757842897,
+        "kind": "pickup",
+        "detail": "seedx1"
+      },
+      {
+        "id": "r25",
+        "seq": 25,
+        "at": 1793757843363,
+        "kind": "harvest",
+        "detail": "oak@47,91 -1"
+      },
+      {
+        "id": "r26",
+        "seq": 26,
+        "at": 1793757843813,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r27",
+        "seq": 27,
+        "at": 1793757846463,
+        "kind": "harvest",
+        "detail": "rock@46,85 -1"
+      },
+      {
+        "id": "r28",
+        "seq": 28,
+        "at": 1793757846847,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r29",
+        "seq": 29,
+        "at": 1793757847380,
+        "kind": "harvest",
+        "detail": "rock@46,85 -1"
+      },
+      {
+        "id": "r30",
+        "seq": 30,
+        "at": 1793757847796,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r31",
+        "seq": 31,
+        "at": 1793757848296,
+        "kind": "harvest",
+        "detail": "rock@46,85 -1"
+      },
+      {
+        "id": "r32",
+        "seq": 32,
+        "at": 1793757848680,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r33",
+        "seq": 33,
+        "at": 1793757849213,
+        "kind": "harvest",
+        "detail": "rock@46,85 -1"
+      },
+      {
+        "id": "r34",
+        "seq": 34,
+        "at": 1793757849646,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r35",
+        "seq": 35,
+        "at": 1793757850113,
+        "kind": "harvest",
+        "detail": "rock@46,85 -1"
+      },
+      {
+        "id": "r36",
+        "seq": 36,
+        "at": 1793757850546,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r37",
+        "seq": 37,
+        "at": 1793757851030,
+        "kind": "harvest",
+        "detail": "rock@46,85 -1"
+      },
+      {
+        "id": "r38",
+        "seq": 38,
+        "at": 1793757851413,
+        "kind": "pickup",
+        "detail": "stonex1"
+      },
+      {
+        "id": "r39",
+        "seq": 39,
+        "at": 1793757852182,
+        "kind": "build",
+        "detail": "claim@45,81"
+      }
+    ]
+  }
+}

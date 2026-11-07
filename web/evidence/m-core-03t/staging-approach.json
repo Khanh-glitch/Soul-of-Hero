@@ -1,0 +1,860 @@
+{
+  "method": "Different recovery strategy after death: respawn at Old Mill; replan around live hostile sight-radius buffers and lava, rather than repeat the 03S/low-HP path.",
+  "steps": [
+    {
+      "round": 0,
+      "pathLength": 97
+    },
+    {
+      "round": 1,
+      "pathLength": 93
+    },
+    {
+      "round": 2,
+      "pathLength": 89
+    },
+    {
+      "round": 3,
+      "pathLength": 85
+    },
+    {
+      "round": 4,
+      "pathLength": 81
+    },
+    {
+      "round": 5,
+      "pathLength": 77
+    },
+    {
+      "round": 6,
+      "pathLength": 73
+    },
+    {
+      "round": 7,
+      "pathLength": 69
+    },
+    {
+      "round": 8,
+      "pathLength": 65
+    },
+    {
+      "round": 9,
+      "pathLength": 61
+    },
+    {
+      "round": 10,
+      "pathLength": 57
+    },
+    {
+      "round": 11,
+      "pathLength": 53
+    },
+    {
+      "round": 12,
+      "pathLength": 49
+    },
+    {
+      "round": 13,
+      "pathLength": 45
+    },
+    {
+      "round": 14,
+      "pathLength": 41
+    },
+    {
+      "round": 15,
+      "pathLength": 37
+    },
+    {
+      "round": 16,
+      "pathLength": 34
+    },
+    {
+      "round": 17,
+      "pathLength": 30
+    },
+    {
+      "round": 18,
+      "pathLength": 24
+    },
+    {
+      "round": 19,
+      "pathLength": 20
+    },
+    {
+      "round": 20,
+      "pathLength": 16
+    },
+    {
+      "round": 21,
+      "pathLength": 12
+    },
+    {
+      "round": 22,
+      "pathLength": 7
+    },
+    {
+      "round": 23,
+      "pathLength": 3
+    },
+    {
+      "round": 24,
+      "pathLength": 1
+    }
+  ],
+  "errors": [],
+  "start": {
+    "player": {
+      "x": 1946.800719999992,
+      "y": 1367.1916000000067,
+      "vx": 0,
+      "vy": 0,
+      "dir": 1,
+      "aim": 2.608067771921758,
+      "hp": 72,
+      "stamina": 100,
+      "hunger": 38.099930000001166,
+      "thirst": 37.149894999999944,
+      "warmth": 76.76639283914787,
+      "rad": 0,
+      "active": 0,
+      "action": null,
+      "invuln": 0,
+      "dead": false,
+      "deadT": 1549.9,
+      "pulling": null,
+      "skills": {
+        "gather": 82,
+        "combat": 2,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 2.404799999999974,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Old Mill",
+      "sheltered": false
+    },
+    "inventory": [
+      {
+        "uid": "s1ku",
+        "key": "herb",
+        "qty": 4
+      }
+    ],
+    "bags": [
+      {
+        "id": "bz3",
+        "x": 2006.8701972397444,
+        "y": 2708.7696136610325,
+        "slots": []
+      },
+      {
+        "id": "b13r",
+        "x": 2154.956680980587,
+        "y": 2381.126381729679,
+        "slots": []
+      },
+      {
+        "id": "b18n",
+        "x": 1999.7612330519382,
+        "y": 2703.2641603580023,
+        "slots": []
+      },
+      {
+        "id": "b1ez",
+        "x": 2010.574687166422,
+        "y": 2713.9117626095003,
+        "slots": []
+      },
+      {
+        "id": "b1i0",
+        "x": 1982.5970257395963,
+        "y": 2720.0323843938204,
+        "slots": [
+          {
+            "uid": "s1",
+            "key": "knife",
+            "qty": 1,
+            "dur": 107
+          },
+          {
+            "uid": "s2",
+            "key": "water_flask",
+            "qty": 1,
+            "charge": 2
+          },
+          {
+            "uid": "s3",
+            "key": "berries",
+            "qty": 3
+          },
+          {
+            "uid": "s7c",
+            "key": "wood",
+            "qty": 13
+          },
+          {
+            "uid": "s81",
+            "key": "stone",
+            "qty": 5
+          },
+          {
+            "uid": "s8o",
+            "key": "fiber",
+            "qty": 1
+          },
+          {
+            "uid": "s9t",
+            "key": "crystal",
+            "qty": 3
+          },
+          {
+            "uid": "s8x",
+            "key": "stone_pick",
+            "qty": 1,
+            "dur": 170
+          },
+          {
+            "uid": "s1t",
+            "key": "spares",
+            "qty": 1
+          },
+          {
+            "uid": "sj5",
+            "key": "seed",
+            "qty": 9
+          },
+          {
+            "uid": "sls",
+            "key": "charcoal",
+            "qty": 3
+          },
+          {
+            "uid": "sm8",
+            "key": "chitin",
+            "qty": 2
+          },
+          {
+            "uid": "sm9",
+            "key": "sulfur",
+            "qty": 1
+          }
+        ]
+      },
+      {
+        "id": "b1k6",
+        "x": 1892.3015060688144,
+        "y": 2588.3826301587133,
+        "slots": []
+      }
+    ],
+    "threats": [
+      {
+        "id": "m32",
+        "type": "boar",
+        "x": 1914.0817601626834,
+        "y": 1292.9311282017798,
+        "state": "wander"
+      },
+      {
+        "id": "m46",
+        "type": "boar",
+        "x": 2094.0446599957463,
+        "y": 1303.0400659093536,
+        "state": "wander"
+      },
+      {
+        "id": "m48",
+        "type": "boar",
+        "x": 1861.9323309032857,
+        "y": 1487.2384209518398,
+        "state": "wander"
+      },
+      {
+        "id": "m53",
+        "type": "boar",
+        "x": 2114.992427444004,
+        "y": 1294.9162466313815,
+        "state": "wander"
+      },
+      {
+        "id": "m5v",
+        "type": "boar",
+        "x": 1799.3930189303346,
+        "y": 1280.4096160776612,
+        "state": "wander"
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r299",
+        "seq": 299,
+        "at": 1793778297672,
+        "kind": "harvest",
+        "detail": "herb@129,81 -1"
+      },
+      {
+        "id": "r300",
+        "seq": 300,
+        "at": 1793778297955,
+        "kind": "harvest",
+        "detail": "herb@129,81 -1"
+      },
+      {
+        "id": "r301",
+        "seq": 301,
+        "at": 1793778298072,
+        "kind": "pickup",
+        "detail": "herbx1"
+      },
+      {
+        "id": "r302",
+        "seq": 302,
+        "at": 1793778298355,
+        "kind": "pickup",
+        "detail": "herbx1"
+      },
+      {
+        "id": "r303",
+        "seq": 303,
+        "at": 1793778301839,
+        "kind": "consume",
+        "detail": "herb"
+      },
+      {
+        "id": "r304",
+        "seq": 304,
+        "at": 1793778302255,
+        "kind": "harvest",
+        "detail": "herb@120,85 -1"
+      },
+      {
+        "id": "r305",
+        "seq": 305,
+        "at": 1793778302539,
+        "kind": "harvest",
+        "detail": "herb@120,85 -1"
+      },
+      {
+        "id": "r306",
+        "seq": 306,
+        "at": 1793778302672,
+        "kind": "pickup",
+        "detail": "herbx1"
+      },
+      {
+        "id": "r307",
+        "seq": 307,
+        "at": 1793778302972,
+        "kind": "pickup",
+        "detail": "herbx1"
+      },
+      {
+        "id": "r308",
+        "seq": 308,
+        "at": 1793778312081,
+        "kind": "offline.settle",
+        "detail": "9s"
+      }
+    ]
+  },
+  "arrived": {
+    "player": {
+      "x": 1799.2590399999997,
+      "y": 2565.347920000067,
+      "vx": 0,
+      "vy": 72,
+      "dir": 1,
+      "aim": 2.642388284201258,
+      "hp": 72,
+      "stamina": 100,
+      "hunger": 37.012586000003054,
+      "thirst": 35.51887899999987,
+      "warmth": 65.44950003168226,
+      "rad": 0,
+      "active": 0,
+      "action": null,
+      "invuln": 0,
+      "dead": false,
+      "deadT": 1549.9,
+      "pulling": null,
+      "skills": {
+        "gather": 82,
+        "combat": 2,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 10.8,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Wreck Coast",
+      "sheltered": false
+    },
+    "inventory": [
+      {
+        "uid": "s1ku",
+        "key": "herb",
+        "qty": 4
+      }
+    ],
+    "bags": [
+      {
+        "id": "bz3",
+        "x": 2006.8701972397444,
+        "y": 2708.7696136610325,
+        "slots": []
+      },
+      {
+        "id": "b13r",
+        "x": 2154.956680980587,
+        "y": 2381.126381729679,
+        "slots": []
+      },
+      {
+        "id": "b18n",
+        "x": 1999.7612330519382,
+        "y": 2703.2641603580023,
+        "slots": []
+      },
+      {
+        "id": "b1ez",
+        "x": 2010.574687166422,
+        "y": 2713.9117626095003,
+        "slots": []
+      },
+      {
+        "id": "b1i0",
+        "x": 1982.5970257395963,
+        "y": 2720.0323843938204,
+        "slots": [
+          {
+            "uid": "s1",
+            "key": "knife",
+            "qty": 1,
+            "dur": 107
+          },
+          {
+            "uid": "s2",
+            "key": "water_flask",
+            "qty": 1,
+            "charge": 2
+          },
+          {
+            "uid": "s3",
+            "key": "berries",
+            "qty": 3
+          },
+          {
+            "uid": "s7c",
+            "key": "wood",
+            "qty": 13
+          },
+          {
+            "uid": "s81",
+            "key": "stone",
+            "qty": 5
+          },
+          {
+            "uid": "s8o",
+            "key": "fiber",
+            "qty": 1
+          },
+          {
+            "uid": "s9t",
+            "key": "crystal",
+            "qty": 3
+          },
+          {
+            "uid": "s8x",
+            "key": "stone_pick",
+            "qty": 1,
+            "dur": 170
+          },
+          {
+            "uid": "s1t",
+            "key": "spares",
+            "qty": 1
+          },
+          {
+            "uid": "sj5",
+            "key": "seed",
+            "qty": 9
+          },
+          {
+            "uid": "sls",
+            "key": "charcoal",
+            "qty": 3
+          },
+          {
+            "uid": "sm8",
+            "key": "chitin",
+            "qty": 2
+          },
+          {
+            "uid": "sm9",
+            "key": "sulfur",
+            "qty": 1
+          }
+        ]
+      },
+      {
+        "id": "b1k6",
+        "x": 1892.3015060688144,
+        "y": 2588.3826301587133,
+        "slots": []
+      }
+    ],
+    "threats": [
+      {
+        "id": "m2z",
+        "type": "beetle",
+        "x": 1943.7719914248771,
+        "y": 2515.841840991183,
+        "state": "wander"
+      },
+      {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1940.6754922581952,
+        "y": 2512.96666788634,
+        "state": "wander"
+      },
+      {
+        "id": "m4c",
+        "type": "boar",
+        "x": 1895.9999973980578,
+        "y": 2436.7574071883287,
+        "state": "wander"
+      },
+      {
+        "id": "m68",
+        "type": "boar",
+        "x": 1896.000000001184,
+        "y": 2443.644028456384,
+        "state": "wander"
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r299",
+        "seq": 299,
+        "at": 1793778297672,
+        "kind": "harvest",
+        "detail": "herb@129,81 -1"
+      },
+      {
+        "id": "r300",
+        "seq": 300,
+        "at": 1793778297955,
+        "kind": "harvest",
+        "detail": "herb@129,81 -1"
+      },
+      {
+        "id": "r301",
+        "seq": 301,
+        "at": 1793778298072,
+        "kind": "pickup",
+        "detail": "herbx1"
+      },
+      {
+        "id": "r302",
+        "seq": 302,
+        "at": 1793778298355,
+        "kind": "pickup",
+        "detail": "herbx1"
+      },
+      {
+        "id": "r303",
+        "seq": 303,
+        "at": 1793778301839,
+        "kind": "consume",
+        "detail": "herb"
+      },
+      {
+        "id": "r304",
+        "seq": 304,
+        "at": 1793778302255,
+        "kind": "harvest",
+        "detail": "herb@120,85 -1"
+      },
+      {
+        "id": "r305",
+        "seq": 305,
+        "at": 1793778302539,
+        "kind": "harvest",
+        "detail": "herb@120,85 -1"
+      },
+      {
+        "id": "r306",
+        "seq": 306,
+        "at": 1793778302672,
+        "kind": "pickup",
+        "detail": "herbx1"
+      },
+      {
+        "id": "r307",
+        "seq": 307,
+        "at": 1793778302972,
+        "kind": "pickup",
+        "detail": "herbx1"
+      },
+      {
+        "id": "r308",
+        "seq": 308,
+        "at": 1793778312081,
+        "kind": "offline.settle",
+        "detail": "9s"
+      }
+    ]
+  },
+  "end": {
+    "player": {
+      "x": 1799.2590399999997,
+      "y": 2565.347920000067,
+      "vx": 0,
+      "vy": 0,
+      "dir": 1,
+      "aim": 2.61729632518723,
+      "hp": 72,
+      "stamina": 100,
+      "hunger": 37.00725000000307,
+      "thirst": 35.51087499999987,
+      "warmth": 65.47631791153765,
+      "rad": 0,
+      "active": 0,
+      "action": null,
+      "invuln": 0,
+      "dead": false,
+      "deadT": 1549.9,
+      "pulling": null,
+      "skills": {
+        "gather": 82,
+        "combat": 2,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 10.8,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Wreck Coast",
+      "sheltered": false
+    },
+    "inventory": [
+      {
+        "uid": "s1ku",
+        "key": "herb",
+        "qty": 4
+      }
+    ],
+    "bags": [
+      {
+        "id": "bz3",
+        "x": 2006.8701972397444,
+        "y": 2708.7696136610325,
+        "slots": []
+      },
+      {
+        "id": "b13r",
+        "x": 2154.956680980587,
+        "y": 2381.126381729679,
+        "slots": []
+      },
+      {
+        "id": "b18n",
+        "x": 1999.7612330519382,
+        "y": 2703.2641603580023,
+        "slots": []
+      },
+      {
+        "id": "b1ez",
+        "x": 2010.574687166422,
+        "y": 2713.9117626095003,
+        "slots": []
+      },
+      {
+        "id": "b1i0",
+        "x": 1982.5970257395963,
+        "y": 2720.0323843938204,
+        "slots": [
+          {
+            "uid": "s1",
+            "key": "knife",
+            "qty": 1,
+            "dur": 107
+          },
+          {
+            "uid": "s2",
+            "key": "water_flask",
+            "qty": 1,
+            "charge": 2
+          },
+          {
+            "uid": "s3",
+            "key": "berries",
+            "qty": 3
+          },
+          {
+            "uid": "s7c",
+            "key": "wood",
+            "qty": 13
+          },
+          {
+            "uid": "s81",
+            "key": "stone",
+            "qty": 5
+          },
+          {
+            "uid": "s8o",
+            "key": "fiber",
+            "qty": 1
+          },
+          {
+            "uid": "s9t",
+            "key": "crystal",
+            "qty": 3
+          },
+          {
+            "uid": "s8x",
+            "key": "stone_pick",
+            "qty": 1,
+            "dur": 170
+          },
+          {
+            "uid": "s1t",
+            "key": "spares",
+            "qty": 1
+          },
+          {
+            "uid": "sj5",
+            "key": "seed",
+            "qty": 9
+          },
+          {
+            "uid": "sls",
+            "key": "charcoal",
+            "qty": 3
+          },
+          {
+            "uid": "sm8",
+            "key": "chitin",
+            "qty": 2
+          },
+          {
+            "uid": "sm9",
+            "key": "sulfur",
+            "qty": 1
+          }
+        ]
+      },
+      {
+        "id": "b1k6",
+        "x": 1892.3015060688144,
+        "y": 2588.3826301587133,
+        "slots": []
+      }
+    ],
+    "threats": [
+      {
+        "id": "m2z",
+        "type": "beetle",
+        "x": 1943.8043491395304,
+        "y": 2514.161312477916,
+        "state": "wander"
+      },
+      {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1941.640667079582,
+        "y": 2511.590564449181,
+        "state": "wander"
+      },
+      {
+        "id": "m4c",
+        "type": "boar",
+        "x": 1895.9999978361013,
+        "y": 2434.6096671883292,
+        "state": "wander"
+      },
+      {
+        "id": "m68",
+        "type": "boar",
+        "x": 1896.0000000010548,
+        "y": 2441.4962884563847,
+        "state": "wander"
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r299",
+        "seq": 299,
+        "at": 1793778297672,
+        "kind": "harvest",
+        "detail": "herb@129,81 -1"
+      },
+      {
+        "id": "r300",
+        "seq": 300,
+        "at": 1793778297955,
+        "kind": "harvest",
+        "detail": "herb@129,81 -1"
+      },
+      {
+        "id": "r301",
+        "seq": 301,
+        "at": 1793778298072,
+        "kind": "pickup",
+        "detail": "herbx1"
+      },
+      {
+        "id": "r302",
+        "seq": 302,
+        "at": 1793778298355,
+        "kind": "pickup",
+        "detail": "herbx1"
+      },
+      {
+        "id": "r303",
+        "seq": 303,
+        "at": 1793778301839,
+        "kind": "consume",
+        "detail": "herb"
+      },
+      {
+        "id": "r304",
+        "seq": 304,
+        "at": 1793778302255,
+        "kind": "harvest",
+        "detail": "herb@120,85 -1"
+      },
+      {
+        "id": "r305",
+        "seq": 305,
+        "at": 1793778302539,
+        "kind": "harvest",
+        "detail": "herb@120,85 -1"
+      },
+      {
+        "id": "r306",
+        "seq": 306,
+        "at": 1793778302672,
+        "kind": "pickup",
+        "detail": "herbx1"
+      },
+      {
+        "id": "r307",
+        "seq": 307,
+        "at": 1793778302972,
+        "kind": "pickup",
+        "detail": "herbx1"
+      },
+      {
+        "id": "r308",
+        "seq": 308,
+        "at": 1793778312081,
+        "kind": "offline.settle",
+        "detail": "9s"
+      }
+    ]
+  }
+}

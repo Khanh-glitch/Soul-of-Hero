@@ -1,0 +1,255 @@
+{
+  "method": "Normal input after assisted return and two deaths; actual table outputs from paid, timed specimen study.",
+  "before": {
+    "p": {
+      "x": 1999.7612330519382,
+      "y": 2703.2641603580023,
+      "vx": 0,
+      "vy": 0,
+      "dir": 1,
+      "aim": 2.8482506765636444,
+      "hp": 0,
+      "stamina": 100,
+      "hunger": 65.10189055996695,
+      "thirst": 49.91842489599864,
+      "warmth": 80.40132502047784,
+      "rad": 0,
+      "active": 0,
+      "action": null,
+      "invuln": 520,
+      "dead": true,
+      "deadT": 216.60000000000036,
+      "pulling": null,
+      "skills": {
+        "gather": 76,
+        "combat": 2,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 6.6240000000000006,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Caldera Wastes",
+      "sheltered": false
+    },
+    "queue": [],
+    "out": [
+      {
+        "uid": "sz4",
+        "key": "blueprint",
+        "qty": 1,
+        "meta": "chitin_armor"
+      },
+      {
+        "uid": "sz5",
+        "key": "blueprint",
+        "qty": 1,
+        "meta": "core_frost"
+      },
+      null,
+      null
+    ],
+    "inv": [],
+    "known": [
+      "recover_drive",
+      "mechanical_parts",
+      "rope",
+      "torch",
+      "stone_axe",
+      "stone_pick",
+      "wood_spear",
+      "bandage",
+      "water_flask",
+      "root_broth",
+      "herb_roast",
+      "cooked_meat",
+      "salted_meat",
+      "charcoal",
+      "iron_ingot",
+      "scrap_ingot",
+      "shell_glass",
+      "leather",
+      "cloth",
+      "iron_axe",
+      "iron_pick"
+    ],
+    "receipts": [
+      {
+        "id": "r207",
+        "seq": 207,
+        "at": 1793773280089,
+        "kind": "offline.settle",
+        "detail": "9s"
+      },
+      {
+        "id": "r208",
+        "seq": 208,
+        "at": 1793773281629,
+        "kind": "respawn",
+        "detail": "2232,760"
+      },
+      {
+        "id": "r209",
+        "seq": 209,
+        "at": 1793773312030,
+        "kind": "death",
+        "detail": "lava; bag=b13r"
+      },
+      {
+        "id": "r210",
+        "seq": 210,
+        "at": 1793773320088,
+        "kind": "offline.settle",
+        "detail": "8s"
+      },
+      {
+        "id": "r211",
+        "seq": 211,
+        "at": 1793773336487,
+        "kind": "offline.settle",
+        "detail": "16s"
+      },
+      {
+        "id": "r212",
+        "seq": 212,
+        "at": 1793773338073,
+        "kind": "respawn",
+        "detail": "984,1512"
+      },
+      {
+        "id": "r213",
+        "seq": 213,
+        "at": 1793773377177,
+        "kind": "move",
+        "detail": "knifex1 cz2->inv"
+      },
+      {
+        "id": "r214",
+        "seq": 214,
+        "at": 1793773377311,
+        "kind": "move",
+        "detail": "water_flaskx1 cz2->inv"
+      },
+      {
+        "id": "r215",
+        "seq": 215,
+        "at": 1793773377412,
+        "kind": "move",
+        "detail": "berriesx3 cz2->inv"
+      },
+      {
+        "id": "r216",
+        "seq": 216,
+        "at": 1793773377545,
+        "kind": "move",
+        "detail": "woodx13 cz2->inv"
+      },
+      {
+        "id": "r217",
+        "seq": 217,
+        "at": 1793773377638,
+        "kind": "move",
+        "detail": "stonex5 cz2->inv"
+      },
+      {
+        "id": "r218",
+        "seq": 218,
+        "at": 1793773377743,
+        "kind": "move",
+        "detail": "fiberx1 cz2->inv"
+      },
+      {
+        "id": "r219",
+        "seq": 219,
+        "at": 1793773377823,
+        "kind": "move",
+        "detail": "crystalx3 cz2->inv"
+      },
+      {
+        "id": "r220",
+        "seq": 220,
+        "at": 1793773377921,
+        "kind": "move",
+        "detail": "stone_pickx1 cz2->inv"
+      },
+      {
+        "id": "r221",
+        "seq": 221,
+        "at": 1793773378021,
+        "kind": "move",
+        "detail": "sparesx1 cz2->inv"
+      },
+      {
+        "id": "r222",
+        "seq": 222,
+        "at": 1793773378092,
+        "kind": "move",
+        "detail": "seedx9 cz2->inv"
+      },
+      {
+        "id": "r223",
+        "seq": 223,
+        "at": 1793773378172,
+        "kind": "move",
+        "detail": "charcoalx3 cz2->inv"
+      },
+      {
+        "id": "r224",
+        "seq": 224,
+        "at": 1793773378271,
+        "kind": "move",
+        "detail": "chitinx2 cz2->inv"
+      },
+      {
+        "id": "r225",
+        "seq": 225,
+        "at": 1793773378372,
+        "kind": "move",
+        "detail": "sulfurx1 cz2->inv"
+      },
+      {
+        "id": "r226",
+        "seq": 226,
+        "at": 1793773395619,
+        "kind": "offline.settle",
+        "detail": "16s"
+      },
+      {
+        "id": "r227",
+        "seq": 227,
+        "at": 1793773396594,
+        "kind": "struct.hit",
+        "detail": "eq3:boar:13"
+      },
+      {
+        "id": "r228",
+        "seq": 228,
+        "at": 1793773396710,
+        "kind": "struct.hit",
+        "detail": "eq3:boar:13"
+      },
+      {
+        "id": "r229",
+        "seq": 229,
+        "at": 1793773396967,
+        "kind": "struct.hit",
+        "detail": "eq3:boar:13"
+      },
+      {
+        "id": "r230",
+        "seq": 230,
+        "at": 1793773397005,
+        "kind": "struct.hit",
+        "detail": "eq3:boar:13"
+      },
+      {
+        "id": "r231",
+        "seq": 231,
+        "at": 1793773397160,
+        "kind": "death",
+        "detail": "Greyfang Wolf; bag=b18n"
+      }
+    ]
+  },
+  "failure": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator('.panel').filter({ hasText: 'Directed study' }).first().locator('.slot[title=\"Blueprint — chitin_armor\"]')\n    - locator resolved to <div class=\"slot  \" title=\"Blueprint — chitin_armor\">…</div>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <div class=\"absolute inset-0 flex flex-col items-center justify-center fadein\">…</div> intercepts pointer events\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <div class=\"absolute inset-0 flex flex-col items-center justify-center fadein\">…</div> intercepts pointer events\n    - retrying click action\n      - waiting 100ms\n    54 × waiting for element to be visible, enabled and stable\n       - element is visible, enabled and stable\n       - scrolling into view if needed\n       - done scrolling\n       - <div class=\"absolute inset-0 flex flex-col items-center justify-center fadein\">…</div> intercepts pointer events\n     - retrying click action\n       - waiting 500ms\n"
+}

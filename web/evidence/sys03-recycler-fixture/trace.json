@@ -1,0 +1,87 @@
+{
+  "method": "Relocated next to authored Foundry machine, suppressed creatures and granted one 300/350 iron sword. E, selection and confirmation are real browser input; no natural acquisition or gate-route claim.",
+  "machine": "e3d",
+  "input": {
+    "uid": "s7s",
+    "key": "iron_sword",
+    "qty": 1,
+    "dur": 300
+  },
+  "result": {
+    "queue": [],
+    "output": [
+      {
+        "uid": "s7u",
+        "key": "scrap",
+        "qty": 1
+      },
+      {
+        "uid": "s7v",
+        "key": "iron_ingot",
+        "qty": 1
+      },
+      {
+        "uid": "s7w",
+        "key": "leather",
+        "qty": 1
+      }
+    ],
+    "inventory": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 300
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r71",
+        "seq": 71,
+        "at": 1793891748163,
+        "kind": "run.start",
+        "detail": "female@the island"
+      },
+      {
+        "id": "r72",
+        "seq": 72,
+        "at": 1793891752695,
+        "kind": "offline.settle",
+        "detail": "5s"
+      },
+      {
+        "id": "r73",
+        "seq": 73,
+        "at": 1793891759971,
+        "kind": "recycle.start",
+        "detail": "s7s:iron_sword@e3d"
+      },
+      {
+        "id": "r74",
+        "seq": 74,
+        "at": 1793891774971,
+        "kind": "recycle.finish",
+        "detail": "s7s:iron_sword:scrapx1,iron_ingotx1,leatherx1"
+      },
+      {
+        "id": "r75",
+        "seq": 75,
+        "at": 1793891774971,
+        "kind": "job.done",
+        "detail": "X:recover-v1"
+      }
+    ]
+  },
+  "errors": []
+}

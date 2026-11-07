@@ -1,0 +1,16 @@
+{
+ "fixture": "TEST-FIXTURE oil source (test-fixture-v1) + pump entity injected in page; not a Map site",
+ "shots": [
+  "evidence/b05r-pump/pump-idle-640x360.png",
+  "evidence/b05r-pump/pump-run-a-640x360.png",
+  "evidence/b05r-pump/pump-run-b-640x360.png",
+  "evidence/b05r-pump/pump-dry-640x360.png",
+  "evidence/b05r-pump/inventory-crude-640x360.png",
+  "evidence/b05r-pump/pump-idle-1280x720.png",
+  "evidence/b05r-pump/pump-run-a-1280x720.png",
+  "evidence/b05r-pump/pump-run-b-1280x720.png",
+  "evidence/b05r-pump/pump-dry-1280x720.png",
+  "evidence/b05r-pump/inventory-crude-1280x720.png"
+ ],
+ "errors": []
+}

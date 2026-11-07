@@ -1,0 +1,7 @@
+# Verified read-only Map source — LR01
+
+Exact source commit: `74062a5baf2731451fad9638c4243c7459ce8e24`, package `world_lab/lr01/output/geography_package.v1.json` (Git blob `7f932aadb50a2f6a68e758d3f1669e20d7f7f9b9`). Canon source is Map GOLD `19d8c6ec820f324a6ac12733165e43b5e2c6eab2`. These are Map-owned, immutable source artifacts; do not alter or treat them as Gameplay-owned population.
+
+The exact package file SHA-256 is `b4cc77228caf847d1ad0d8a680457ca65731202513a047826e8bd973662e19ad`. The independently recomputed canonical `JSON.stringify(body)` digest is `e3259eb30016f93ab0883c6dc3656f0ec1b9d47a85dc78fd90a56e0185765e63`. The validator also pins canonical `JSON.stringify(package)` SHA-256 `ac9317ae385d47327f02765e4b2e8ca8465c504f3c7146737ab3ff9b91952eb4`, protecting metadata and payload references, and verifies all 79 listed payloads, 21 referenced rasters and the canonical GOLD source. This directory materializes those required integrity inputs, not a new map design.
+
+`src/game/veyra/intake.ts` is separate from the mixed Gameplay `GeographicHandoff`; `tests/veyra-intake.test.ts` verifies pinned identity, content, IDs, POI references, frame and compact rasters, and rejects corruption/missing bytes/unknown revisions. The input preserves 2000×1400 authoring units, source statuses, raw altitude units, IDs and proposals. This validation does **not** approve the Map proposals or prove gameplay passability. Greywater LR01 still has metadata-only portals intersecting continuous solid walls.

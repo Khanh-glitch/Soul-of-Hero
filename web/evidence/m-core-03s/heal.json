@@ -1,0 +1,292 @@
+{
+  "before": {
+    "p": {
+      "x": 1750.0808535353046,
+      "y": 2649.458285987877,
+      "vx": 0,
+      "vy": 0,
+      "dir": 1,
+      "aim": 2.849996689128422,
+      "hp": 32.68427488000082,
+      "stamina": 100,
+      "hunger": 75.87344855998731,
+      "thirst": 70.12014049599827,
+      "warmth": 89.45848884716203,
+      "rad": 0,
+      "active": 0,
+      "action": null,
+      "invuln": 0,
+      "dead": false,
+      "deadT": 0,
+      "pulling": null,
+      "skills": {
+        "gather": 25,
+        "combat": 0,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 10.796399999999926,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Wreck Coast",
+      "sheltered": false
+    },
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 259
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7c",
+        "key": "wood",
+        "qty": 3
+      },
+      {
+        "uid": "s81",
+        "key": "stone",
+        "qty": 2
+      },
+      {
+        "uid": "s8o",
+        "key": "fiber",
+        "qty": 1
+      },
+      {
+        "uid": "s1s",
+        "key": "core_frost",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s9t",
+        "key": "crystal",
+        "qty": 3
+      },
+      {
+        "uid": "s8x",
+        "key": "stone_pick",
+        "qty": 1,
+        "dur": 170
+      },
+      {
+        "uid": "s1t",
+        "key": "spares",
+        "qty": 4
+      },
+      {
+        "uid": "shz",
+        "key": "herb",
+        "qty": 6
+      }
+    ]
+  },
+  "after": {
+    "p": {
+      "x": 1750.0808535353046,
+      "y": 2649.458285987877,
+      "vx": 0,
+      "vy": 0,
+      "dir": 2,
+      "aim": -0.17389795611930622,
+      "hp": 68.74560288000089,
+      "stamina": 100,
+      "hunger": 75.84278455998722,
+      "thirst": 70.07414449599827,
+      "warmth": 88.94321962786739,
+      "rad": 0,
+      "active": 0,
+      "action": null,
+      "invuln": 0,
+      "dead": false,
+      "deadT": 0,
+      "pulling": null,
+      "skills": {
+        "gather": 25,
+        "combat": 0,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 10.796399999999926,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Wreck Coast",
+      "sheltered": false
+    },
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 259
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7c",
+        "key": "wood",
+        "qty": 3
+      },
+      {
+        "uid": "s81",
+        "key": "stone",
+        "qty": 2
+      },
+      {
+        "uid": "s8o",
+        "key": "fiber",
+        "qty": 1
+      },
+      {
+        "uid": "s1s",
+        "key": "core_frost",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s9t",
+        "key": "crystal",
+        "qty": 3
+      },
+      {
+        "uid": "s8x",
+        "key": "stone_pick",
+        "qty": 1,
+        "dur": 170
+      },
+      {
+        "uid": "s1t",
+        "key": "spares",
+        "qty": 4
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r58",
+        "seq": 58,
+        "at": 1793772939846,
+        "kind": "pickup",
+        "detail": "herbx1"
+      },
+      {
+        "id": "r59",
+        "seq": 59,
+        "at": 1793772939880,
+        "kind": "pickup",
+        "detail": "herbx1"
+      },
+      {
+        "id": "r60",
+        "seq": 60,
+        "at": 1793772942845,
+        "kind": "harvest",
+        "detail": "herb@108,169 -2"
+      },
+      {
+        "id": "r61",
+        "seq": 61,
+        "at": 1793772943262,
+        "kind": "pickup",
+        "detail": "herbx1"
+      },
+      {
+        "id": "r62",
+        "seq": 62,
+        "at": 1793772943262,
+        "kind": "pickup",
+        "detail": "herbx1"
+      },
+      {
+        "id": "r63",
+        "seq": 63,
+        "at": 1793772946895,
+        "kind": "harvest",
+        "detail": "herb@108,165 -2"
+      },
+      {
+        "id": "r64",
+        "seq": 64,
+        "at": 1793772947295,
+        "kind": "pickup",
+        "detail": "herbx1"
+      },
+      {
+        "id": "r65",
+        "seq": 65,
+        "at": 1793772947328,
+        "kind": "pickup",
+        "detail": "herbx1"
+      },
+      {
+        "id": "r66",
+        "seq": 66,
+        "at": 1793772959112,
+        "kind": "offline.settle",
+        "detail": "11s"
+      },
+      {
+        "id": "r67",
+        "seq": 67,
+        "at": 1793772960587,
+        "kind": "consume",
+        "detail": "herb"
+      },
+      {
+        "id": "r68",
+        "seq": 68,
+        "at": 1793772960670,
+        "kind": "consume",
+        "detail": "herb"
+      },
+      {
+        "id": "r69",
+        "seq": 69,
+        "at": 1793772960754,
+        "kind": "consume",
+        "detail": "herb"
+      },
+      {
+        "id": "r70",
+        "seq": 70,
+        "at": 1793772960837,
+        "kind": "consume",
+        "detail": "herb"
+      },
+      {
+        "id": "r71",
+        "seq": 71,
+        "at": 1793772960920,
+        "kind": "consume",
+        "detail": "herb"
+      },
+      {
+        "id": "r72",
+        "seq": 72,
+        "at": 1793772960990,
+        "kind": "consume",
+        "detail": "herb"
+      }
+    ]
+  }
+}

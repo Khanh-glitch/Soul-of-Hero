@@ -1,0 +1,51 @@
+{
+  "method": "Read-only BFS, normal keyboard movement and E interaction, no injected state",
+  "steps": 33,
+  "before": {
+    "target": {
+      "kind": "water",
+      "label": "Drink fresh water",
+      "x": 984,
+      "y": 1032
+    },
+    "thirst": 84.38305299999998,
+    "receipts": [
+      {
+        "id": "r1",
+        "seq": 1,
+        "at": 1793758030145,
+        "kind": "run.start",
+        "detail": "female@Veyra · Greywater region"
+      }
+    ]
+  },
+  "after": {
+    "thirst": 99.977002,
+    "receipts": [
+      {
+        "id": "r1",
+        "seq": 1,
+        "at": 1793758030145,
+        "kind": "run.start",
+        "detail": "female@Veyra · Greywater region"
+      },
+      {
+        "id": "r2",
+        "seq": 2,
+        "at": 1793758041009,
+        "kind": "drink",
+        "detail": "61,64"
+      }
+    ]
+  },
+  "restored": {
+    "thirst": 99.89811099999999,
+    "receipt": {
+      "id": "r2",
+      "seq": 2,
+      "at": 1793758041009,
+      "kind": "drink",
+      "detail": "61,64"
+    }
+  }
+}

@@ -1,0 +1,1234 @@
+{
+  "schema": "soh.map.lr01.poi_example.v1",
+  "reason": "enclosed 2x2 study cells; deep level present",
+  "layout": {
+    "schema": "soh.map.lr01.poi_layout.v1",
+    "poiId": "po_academy",
+    "name": "Argus Academy",
+    "arche": "research",
+    "atAu": [
+      936,
+      262
+    ],
+    "rot": 0.08003576695919035,
+    "scale": 1,
+    "sourceRef": "project.pois[] where id=po_academy",
+    "status": "PROPOSED_INTERIOR_AND_CIRCULATION__CANONICAL_FOOTPRINT_ONLY",
+    "ownership": "MAP owns static layout / portals / sockets; GAMEPLAY owns dynamic door states, destruction, construction, devices, locks, power, loot, recipes, quests and machines.",
+    "enclosureClass": "ENCLOSED_MULTI_LAYER",
+    "enclosureClassificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+    "canonical": {
+      "footPolygonAu": [
+        [
+          917.9168,
+          247.3072
+        ],
+        [
+          956.1939,
+          250.3773
+        ],
+        [
+          954.0832,
+          276.6928
+        ],
+        [
+          915.8061,
+          273.6227
+        ]
+      ],
+      "footAreaAu2": 1013.76,
+      "minEdgeAu": 26.4,
+      "deepPolygonAu": [
+        [
+          929.4102,
+          256.3596
+        ],
+        [
+          950.9411,
+          258.0865
+        ],
+        [
+          949.7898,
+          272.4404
+        ],
+        [
+          928.2589,
+          270.7135
+        ]
+      ],
+      "gate": "key",
+      "links": [],
+      "accessText": "Đường nhỏ + lối rút",
+      "conf": "proposal"
+    },
+    "template": {
+      "archetype": "research",
+      "family": "enclosed",
+      "grid": [
+        2,
+        2
+      ],
+      "roof": 1,
+      "sockets": 6,
+      "pattern": "cells_and_core",
+      "note": "study cells around a core hall",
+      "instantiatedRows": 2,
+      "instantiatedCols": 2
+    },
+    "context": {
+      "landId": "ld_veyra",
+      "biomeCode": 1,
+      "zoneId": null,
+      "elderGeometryId": "el_argus",
+      "seaDistanceCells": 16,
+      "clearanceCells": 2,
+      "nearestRoad": {
+        "id": "rd_h",
+        "kind": "cart",
+        "distanceAu": 0
+      },
+      "nearestDock": {
+        "id": "dk_verdant_n",
+        "d": 107.4841
+      },
+      "status": "DERIVED"
+    },
+    "contextModifiers": [
+      {
+        "id": "MOD-ELDER",
+        "effect": "Arena ring radial sockets retained; approach kept source-authored",
+        "status": "DERIVED"
+      },
+      {
+        "id": "MOD-CART-FRONTAGE",
+        "effect": "Entrance edge chosen toward a cart-road centreline; NO cart clearance claim",
+        "status": "DERIVED"
+      }
+    ],
+    "levels": [
+      {
+        "id": "level.po_academy.0",
+        "parentPoiId": "po_academy",
+        "index": 0,
+        "name": "GROUND",
+        "polygonAu": [
+          [
+            917.9168,
+            247.3072
+          ],
+          [
+            956.1939,
+            250.3773
+          ],
+          [
+            954.0832,
+            276.6928
+          ],
+          [
+            915.8061,
+            273.6227
+          ]
+        ],
+        "areaAu2": 1013.76,
+        "status": [
+          "SOURCE_AUTHORED",
+          "DERIVED"
+        ]
+      },
+      {
+        "id": "level.po_academy.-1",
+        "parentPoiId": "po_academy",
+        "index": -1,
+        "name": "DEEP",
+        "polygonAu": [
+          [
+            929.4102,
+            256.3596
+          ],
+          [
+            950.9411,
+            258.0865
+          ],
+          [
+            949.7898,
+            272.4404
+          ],
+          [
+            928.2589,
+            270.7135
+          ]
+        ],
+        "areaAu2": 311.04,
+        "status": [
+          "SOURCE_AUTHORED",
+          "DERIVED"
+        ]
+      }
+    ],
+    "footprint": {
+      "obb": {
+        "centre": [
+          936,
+          262
+        ],
+        "ux": [
+          0.9968,
+          0.08
+        ],
+        "uy": [
+          -0.08,
+          0.9968
+        ],
+        "wAu": 38.4,
+        "hAu": 26.4,
+        "angleRad": 0.08,
+        "edgeLengthsAu": [
+          38.4,
+          26.4,
+          38.4,
+          26.4
+        ],
+        "quadEdge2Au": 26.4
+      },
+      "widthAu": 38.4015,
+      "heightAu": 26.402,
+      "wallThicknessAu": 2,
+      "wallThicknessStatus": "PROPOSED"
+    },
+    "walls": [
+      {
+        "id": "wall.po_academy.1",
+        "parentPoiId": "po_academy",
+        "kind": "EXTERIOR",
+        "aAu": [
+          917.9168,
+          247.3072
+        ],
+        "bAu": [
+          956.1939,
+          250.3773
+        ],
+        "lengthAu": 38.4,
+        "thicknessAu": 2,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_academy :: foot edge 1 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_academy.2",
+        "parentPoiId": "po_academy",
+        "kind": "EXTERIOR",
+        "aAu": [
+          956.1939,
+          250.3773
+        ],
+        "bAu": [
+          954.0832,
+          276.6928
+        ],
+        "lengthAu": 26.4,
+        "thicknessAu": 2,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_academy :: foot edge 2 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_academy.3",
+        "parentPoiId": "po_academy",
+        "kind": "EXTERIOR",
+        "aAu": [
+          954.0832,
+          276.6928
+        ],
+        "bAu": [
+          915.8061,
+          273.6227
+        ],
+        "lengthAu": 38.4,
+        "thicknessAu": 2,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_academy :: foot edge 3 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_academy.4",
+        "parentPoiId": "po_academy",
+        "kind": "EXTERIOR",
+        "aAu": [
+          915.8061,
+          273.6227
+        ],
+        "bAu": [
+          917.9168,
+          247.3072
+        ],
+        "lengthAu": 26.4,
+        "thicknessAu": 2,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_academy :: foot edge 4 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_academy.split.v.1",
+        "parentPoiId": "po_academy",
+        "kind": "INTERIOR_PARTITION",
+        "aAu": [
+          937.0561,
+          248.8412
+        ],
+        "bAu": [
+          934.9439,
+          275.1588
+        ],
+        "thicknessAu": 2,
+        "status": "PROPOSED",
+        "opaqueSight": true
+      },
+      {
+        "id": "wall.po_academy.split.h.1",
+        "parentPoiId": "po_academy",
+        "kind": "INTERIOR_PARTITION",
+        "aAu": [
+          916.8607,
+          260.4639
+        ],
+        "bAu": [
+          955.1393,
+          263.5361
+        ],
+        "thicknessAu": 2,
+        "status": "PROPOSED",
+        "opaqueSight": true
+      }
+    ],
+    "rooms": [
+      {
+        "id": "room.po_academy.1.1",
+        "parentPoiId": "po_academy",
+        "levelId": "level.po_academy.0",
+        "row": 1,
+        "col": 1,
+        "pattern": "cells_and_core",
+        "enclosureClass": "ENCLOSED_MULTI_LAYER",
+        "polygonAu": [
+          [
+            918.8336,
+            248.382
+          ],
+          [
+            935.9793,
+            249.758
+          ],
+          [
+            935.0832,
+            260.9232
+          ],
+          [
+            917.9375,
+            259.5471
+          ]
+        ],
+        "centroidAu": [
+          926.9584,
+          254.6526
+        ],
+        "areaAu2": 192.6674,
+        "bboxAu": [
+          917.9375,
+          248.382,
+          935.9793,
+          260.9232
+        ],
+        "floor": {
+          "polygonAu": [
+            [
+              918.8336,
+              248.382
+            ],
+            [
+              935.9793,
+              249.758
+            ],
+            [
+              935.0832,
+              260.9232
+            ],
+            [
+              917.9375,
+              259.5471
+            ]
+          ],
+          "status": "PROPOSED",
+          "floorLevelId": "floor.po_academy.1.1"
+        },
+        "roof": {
+          "covered": true,
+          "coverageFractionOfRoom": 1,
+          "canopyOnly": false,
+          "status": "PROPOSED",
+          "note": "Full roof over an enclosed room."
+        },
+        "surface": "ENCLOSURE_INTERIOR",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "room.po_academy.1.2",
+        "parentPoiId": "po_academy",
+        "levelId": "level.po_academy.0",
+        "row": 1,
+        "col": 2,
+        "pattern": "cells_and_core",
+        "enclosureClass": "ENCLOSED_MULTI_LAYER",
+        "polygonAu": [
+          [
+            937.9729,
+            249.918
+          ],
+          [
+            955.1186,
+            251.2941
+          ],
+          [
+            954.2225,
+            262.4593
+          ],
+          [
+            937.0768,
+            261.0832
+          ]
+        ],
+        "centroidAu": [
+          946.0977,
+          256.1887
+        ],
+        "areaAu2": 192.6683,
+        "bboxAu": [
+          937.0768,
+          249.918,
+          955.1186,
+          262.4593
+        ],
+        "floor": {
+          "polygonAu": [
+            [
+              937.9729,
+              249.918
+            ],
+            [
+              955.1186,
+              251.2941
+            ],
+            [
+              954.2225,
+              262.4593
+            ],
+            [
+              937.0768,
+              261.0832
+            ]
+          ],
+          "status": "PROPOSED",
+          "floorLevelId": "floor.po_academy.1.2"
+        },
+        "roof": {
+          "covered": true,
+          "coverageFractionOfRoom": 1,
+          "canopyOnly": false,
+          "status": "PROPOSED",
+          "note": "Full roof over an enclosed room."
+        },
+        "surface": "ENCLOSURE_INTERIOR",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "room.po_academy.2.1",
+        "parentPoiId": "po_academy",
+        "levelId": "level.po_academy.0",
+        "row": 2,
+        "col": 1,
+        "pattern": "cells_and_core",
+        "enclosureClass": "ENCLOSED_MULTI_LAYER",
+        "polygonAu": [
+          [
+            917.7775,
+            261.5407
+          ],
+          [
+            934.9232,
+            262.9168
+          ],
+          [
+            934.0271,
+            274.082
+          ],
+          [
+            916.8814,
+            272.7059
+          ]
+        ],
+        "centroidAu": [
+          925.9023,
+          267.8114
+        ],
+        "areaAu2": 192.6683,
+        "bboxAu": [
+          916.8814,
+          261.5407,
+          934.9232,
+          274.082
+        ],
+        "floor": {
+          "polygonAu": [
+            [
+              917.7775,
+              261.5407
+            ],
+            [
+              934.9232,
+              262.9168
+            ],
+            [
+              934.0271,
+              274.082
+            ],
+            [
+              916.8814,
+              272.7059
+            ]
+          ],
+          "status": "PROPOSED",
+          "floorLevelId": "floor.po_academy.2.1"
+        },
+        "roof": {
+          "covered": true,
+          "coverageFractionOfRoom": 1,
+          "canopyOnly": false,
+          "status": "PROPOSED",
+          "note": "Full roof over an enclosed room."
+        },
+        "surface": "ENCLOSURE_INTERIOR",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "room.po_academy.2.2",
+        "parentPoiId": "po_academy",
+        "levelId": "level.po_academy.0",
+        "row": 2,
+        "col": 2,
+        "pattern": "cells_and_core",
+        "enclosureClass": "ENCLOSED_MULTI_LAYER",
+        "polygonAu": [
+          [
+            936.9168,
+            263.0768
+          ],
+          [
+            954.0625,
+            264.4529
+          ],
+          [
+            953.1664,
+            275.618
+          ],
+          [
+            936.0207,
+            274.242
+          ]
+        ],
+        "centroidAu": [
+          945.0416,
+          269.3474
+        ],
+        "areaAu2": 192.6674,
+        "bboxAu": [
+          936.0207,
+          263.0768,
+          954.0625,
+          275.618
+        ],
+        "floor": {
+          "polygonAu": [
+            [
+              936.9168,
+              263.0768
+            ],
+            [
+              954.0625,
+              264.4529
+            ],
+            [
+              953.1664,
+              275.618
+            ],
+            [
+              936.0207,
+              274.242
+            ]
+          ],
+          "status": "PROPOSED",
+          "floorLevelId": "floor.po_academy.2.2"
+        },
+        "roof": {
+          "covered": true,
+          "coverageFractionOfRoom": 1,
+          "canopyOnly": false,
+          "status": "PROPOSED",
+          "note": "Full roof over an enclosed room."
+        },
+        "surface": "ENCLOSURE_INTERIOR",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "room.po_academy.deep.1",
+        "parentPoiId": "po_academy",
+        "levelId": "level.po_academy.-1",
+        "row": 1,
+        "col": 1,
+        "pattern": "DEEP_VAULT",
+        "enclosureClass": "ENCLOSED_MULTI_LAYER",
+        "polygonAu": [
+          [
+            931.2439,
+            258.5131
+          ],
+          [
+            948.7876,
+            259.9202
+          ],
+          [
+            947.9561,
+            270.2869
+          ],
+          [
+            930.4124,
+            268.8798
+          ]
+        ],
+        "centroidAu": [
+          939.6,
+          264.4
+        ],
+        "areaAu2": 183.0403,
+        "bboxAu": [
+          930.4124,
+          258.5131,
+          948.7876,
+          270.2869
+        ],
+        "floor": {
+          "polygonAu": [
+            [
+              931.2439,
+              258.5131
+            ],
+            [
+              948.7876,
+              259.9202
+            ],
+            [
+              947.9561,
+              270.2869
+            ],
+            [
+              930.4124,
+              268.8798
+            ]
+          ],
+          "status": "PROPOSED",
+          "floorLevelId": "floor.po_academy.deep.1"
+        },
+        "roof": {
+          "covered": true,
+          "coverageFractionOfRoom": 1,
+          "status": "PROPOSED"
+        },
+        "surface": "DEEP_INTERIOR",
+        "status": "PROPOSED"
+      }
+    ],
+    "floors": [
+      {
+        "polygonAu": [
+          [
+            918.8336,
+            248.382
+          ],
+          [
+            935.9793,
+            249.758
+          ],
+          [
+            935.0832,
+            260.9232
+          ],
+          [
+            917.9375,
+            259.5471
+          ]
+        ],
+        "status": "PROPOSED",
+        "floorLevelId": "floor.po_academy.1.1"
+      },
+      {
+        "polygonAu": [
+          [
+            937.9729,
+            249.918
+          ],
+          [
+            955.1186,
+            251.2941
+          ],
+          [
+            954.2225,
+            262.4593
+          ],
+          [
+            937.0768,
+            261.0832
+          ]
+        ],
+        "status": "PROPOSED",
+        "floorLevelId": "floor.po_academy.1.2"
+      },
+      {
+        "polygonAu": [
+          [
+            917.7775,
+            261.5407
+          ],
+          [
+            934.9232,
+            262.9168
+          ],
+          [
+            934.0271,
+            274.082
+          ],
+          [
+            916.8814,
+            272.7059
+          ]
+        ],
+        "status": "PROPOSED",
+        "floorLevelId": "floor.po_academy.2.1"
+      },
+      {
+        "polygonAu": [
+          [
+            936.9168,
+            263.0768
+          ],
+          [
+            954.0625,
+            264.4529
+          ],
+          [
+            953.1664,
+            275.618
+          ],
+          [
+            936.0207,
+            274.242
+          ]
+        ],
+        "status": "PROPOSED",
+        "floorLevelId": "floor.po_academy.2.2"
+      },
+      {
+        "polygonAu": [
+          [
+            931.2439,
+            258.5131
+          ],
+          [
+            948.7876,
+            259.9202
+          ],
+          [
+            947.9561,
+            270.2869
+          ],
+          [
+            930.4124,
+            268.8798
+          ]
+        ],
+        "status": "PROPOSED",
+        "floorLevelId": "floor.po_academy.deep.1"
+      }
+    ],
+    "entrance": {
+      "id": "entrance.po_academy.1",
+      "parentPoiId": "po_academy",
+      "kind": "PRIMARY_ENTRANCE",
+      "onWallId": "wall.po_academy.3",
+      "atAu": [
+        934.9447,
+        275.1577
+      ],
+      "openingAu": 6,
+      "openingStatus": "PROPOSED",
+      "sourceRef": "project.pois[] where id=po_academy :: no authored entrance; edge 3 chosen by nearest road",
+      "capacityUpperBoundAu": 38.4,
+      "doorStateOwner": "GAMEPLAY",
+      "lockedState": "UNKNOWN",
+      "powerRequirement": "UNKNOWN",
+      "note": "STATIC opening geometry only. No lock, key, power, quest or device rule is authored."
+    },
+    "portals": [
+      {
+        "id": "portal.po_academy.entrance",
+        "parentPoiId": "po_academy",
+        "kind": "EXTERIOR_PORTAL",
+        "fromRoomId": null,
+        "toRoomId": "room.po_academy.2.2",
+        "atAu": [
+          934.9447,
+          275.1577
+        ],
+        "openingAu": 6,
+        "openingStatus": "PROPOSED",
+        "status": "PROPOSED",
+        "doorStateOwner": "GAMEPLAY",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "note": "Static entrance portal. NO door rule, lock, key or power requirement."
+      },
+      {
+        "id": "portal.po_academy.h.1.1",
+        "parentPoiId": "po_academy",
+        "kind": "INTERIOR_DOORWAY",
+        "fromRoomId": "room.po_academy.1.1",
+        "toRoomId": "room.po_academy.1.2",
+        "atAu": [
+          936.5281,
+          255.4206
+        ],
+        "openingAu": 6,
+        "status": "PROPOSED",
+        "openingStatus": "PROPOSED",
+        "doorStateOwner": "GAMEPLAY",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "note": "Static portal geometry. Gameplay owns dynamic door state, destruction and devices."
+      },
+      {
+        "id": "portal.po_academy.v.1.1",
+        "parentPoiId": "po_academy",
+        "kind": "INTERIOR_DOORWAY",
+        "fromRoomId": "room.po_academy.1.1",
+        "toRoomId": "room.po_academy.2.1",
+        "atAu": [
+          926.4303,
+          261.232
+        ],
+        "openingAu": 6,
+        "status": "PROPOSED",
+        "openingStatus": "PROPOSED",
+        "doorStateOwner": "GAMEPLAY",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "note": "Static portal geometry. Gameplay owns dynamic door state, destruction and devices."
+      },
+      {
+        "id": "portal.po_academy.v.1.2",
+        "parentPoiId": "po_academy",
+        "kind": "INTERIOR_DOORWAY",
+        "fromRoomId": "room.po_academy.1.2",
+        "toRoomId": "room.po_academy.2.2",
+        "atAu": [
+          945.5697,
+          262.7681
+        ],
+        "openingAu": 6,
+        "status": "PROPOSED",
+        "openingStatus": "PROPOSED",
+        "doorStateOwner": "GAMEPLAY",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "note": "Static portal geometry. Gameplay owns dynamic door state, destruction and devices."
+      },
+      {
+        "id": "portal.po_academy.h.2.1",
+        "parentPoiId": "po_academy",
+        "kind": "INTERIOR_DOORWAY",
+        "fromRoomId": "room.po_academy.2.1",
+        "toRoomId": "room.po_academy.2.2",
+        "atAu": [
+          935.4719,
+          268.5794
+        ],
+        "openingAu": 6,
+        "status": "PROPOSED",
+        "openingStatus": "PROPOSED",
+        "doorStateOwner": "GAMEPLAY",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "note": "Static portal geometry. Gameplay owns dynamic door state, destruction and devices."
+      },
+      {
+        "id": "portal.po_academy.vertical",
+        "parentPoiId": "po_academy",
+        "kind": "VERTICAL_LINK",
+        "fromRoomId": "room.po_academy.2.2",
+        "toRoomId": "room.po_academy.deep.1",
+        "atAu": [
+          939.6,
+          264.4
+        ],
+        "verticalSeparationAu": null,
+        "verticalSeparationStatus": "UNRESOLVED",
+        "status": "PROPOSED",
+        "doorStateOwner": "GAMEPLAY",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "note": "Canonical deep polygon exists, but NO approved vertical unit / stair / ladder geometry is authored. Vertical separation stays UNKNOWN."
+      }
+    ],
+    "circulation": {
+      "entranceRoomId": "room.po_academy.2.2",
+      "reachableRooms": 4,
+      "totalRooms": 4,
+      "maxDepth": 2,
+      "depthByRoomId": {
+        "room.po_academy.2.2": 0,
+        "room.po_academy.1.2": 1,
+        "room.po_academy.2.1": 1,
+        "room.po_academy.1.1": 2
+      },
+      "interiorDepthAu": 22.0055,
+      "status": "DERIVED"
+    },
+    "retreat": {
+      "status": "SOURCE_AUTHORED_WAYPOINTS_PLUS_DERIVED_ANCHOR_PREFIX",
+      "waypointCount": 1,
+      "pathAu": [
+        [
+          936,
+          262
+        ],
+        [
+          985.386,
+          243.3221
+        ]
+      ],
+      "lengthAu": 52.8,
+      "exitAtAu": [
+        985.386,
+        243.3221
+      ],
+      "note": "Canonical retreat is a set of waypoints (often one). The segment from the POI anchor is DERIVED; no full retreat corridor is invented."
+    },
+    "sockets": [
+      {
+        "id": "socket.po_academy.1",
+        "parentPoiId": "po_academy",
+        "parentRoomId": "room.po_academy.1.1",
+        "levelId": "level.po_academy.0",
+        "atAu": [
+          924.0537,
+          251.241
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_academy.2",
+        "parentPoiId": "po_academy",
+        "parentRoomId": "room.po_academy.1.2",
+        "levelId": "level.po_academy.0",
+        "atAu": [
+          949.0024,
+          259.6002
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_academy.3",
+        "parentPoiId": "po_academy",
+        "parentRoomId": "room.po_academy.2.1",
+        "levelId": "level.po_academy.0",
+        "atAu": [
+          922.4906,
+          270.7161
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_academy.4",
+        "parentPoiId": "po_academy",
+        "parentRoomId": "room.po_academy.2.2",
+        "levelId": "level.po_academy.0",
+        "atAu": [
+          948.4533,
+          266.4428
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_academy.5",
+        "parentPoiId": "po_academy",
+        "parentRoomId": "room.po_academy.1.1",
+        "levelId": "level.po_academy.0",
+        "atAu": [
+          923.5467,
+          257.5572
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_academy.6",
+        "parentPoiId": "po_academy",
+        "parentRoomId": "room.po_academy.1.2",
+        "levelId": "level.po_academy.0",
+        "atAu": [
+          949.0024,
+          259.6002
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 6,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "INTERIOR_FLOOR_OR_WALL",
+        "kind": "INTERIOR_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      }
+    ],
+    "roofCoverage": {
+      "coveredRoomCount": 5,
+      "totalRoomCount": 5,
+      "roofAreaAu2": 953.7116,
+      "footAreaAu2": 1013.76,
+      "roofAreaToFootAreaRatioAcrossLevels": 0.9408,
+      "fractionOfFoot": 0.9408,
+      "status": "DERIVED",
+      "note": "Measured over PROPOSED room/canopy polygons weighted by coverageFractionOfRoom. The across-levels ratio can exceed 1 when a DEEP level adds roofed area; it is NOT a single-plane coverage fraction."
+    },
+    "geometryAdapters": {
+      "collision": {
+        "staticWalls": [
+          "wall.po_academy.1",
+          "wall.po_academy.2",
+          "wall.po_academy.3",
+          "wall.po_academy.4",
+          "wall.po_academy.split.v.1",
+          "wall.po_academy.split.h.1"
+        ],
+        "staticWallCount": 6,
+        "wallThicknessAu": 2,
+        "thicknessStatus": "PROPOSED",
+        "dynamicCollisionOwner": "GAMEPLAY",
+        "destructionOwner": "GAMEPLAY",
+        "status": "PROPOSED_STATIC_COLLISION_GEOMETRY__NOT_RUNTIME_COLLISION_DATA"
+      },
+      "enclosure": {
+        "enclosedAreaAu2": 953.7117,
+        "footAreaAu2": 1013.76,
+        "enclosureFraction": 0.9408,
+        "enclosureClass": "ENCLOSED_MULTI_LAYER",
+        "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+        "status": "DERIVED"
+      },
+      "reach": {
+        "maxInteriorDistanceAu": 22.0055,
+        "nearestRoadAu": 0,
+        "approachLengthAu": 13.2,
+        "minPortalOpeningAu": null,
+        "status": "DERIVED",
+        "note": "Geometric reach only. Interaction radius / Gameplay reach rules are NOT asserted."
+      },
+      "lineOfSight": {
+        "opaqueWallIds": [
+          "wall.po_academy.1",
+          "wall.po_academy.2",
+          "wall.po_academy.3",
+          "wall.po_academy.4",
+          "wall.po_academy.split.v.1",
+          "wall.po_academy.split.h.1"
+        ],
+        "transparentPortalIds": [
+          "portal.po_academy.entrance",
+          "portal.po_academy.h.1.1",
+          "portal.po_academy.v.1.1",
+          "portal.po_academy.v.1.2",
+          "portal.po_academy.h.2.1",
+          "portal.po_academy.vertical"
+        ],
+        "portalSightOwner": "GAMEPLAY",
+        "status": "PROPOSED",
+        "note": "Static opaque walls + portal gaps. Dynamic door opacity is Gameplay-owned."
+      },
+      "roofCoverage": {
+        "coveredRoomCount": 5,
+        "totalRoomCount": 5,
+        "roofAreaAu2": 953.7116,
+        "footAreaAu2": 1013.76,
+        "roofAreaToFootAreaRatioAcrossLevels": 0.9408,
+        "fractionOfFoot": 0.9408,
+        "status": "DERIVED",
+        "note": "Measured over PROPOSED room/canopy polygons weighted by coverageFractionOfRoom. The across-levels ratio can exceed 1 when a DEEP level adds roofed area; it is NOT a single-plane coverage fraction."
+      },
+      "portalPassability": {
+        "portals": [
+          {
+            "id": "portal.po_academy.entrance",
+            "openingAu": 6,
+            "kind": "EXTERIOR_PORTAL"
+          },
+          {
+            "id": "portal.po_academy.h.1.1",
+            "openingAu": 6,
+            "kind": "INTERIOR_DOORWAY"
+          },
+          {
+            "id": "portal.po_academy.v.1.1",
+            "openingAu": 6,
+            "kind": "INTERIOR_DOORWAY"
+          },
+          {
+            "id": "portal.po_academy.v.1.2",
+            "openingAu": 6,
+            "kind": "INTERIOR_DOORWAY"
+          },
+          {
+            "id": "portal.po_academy.h.2.1",
+            "openingAu": 6,
+            "kind": "INTERIOR_DOORWAY"
+          },
+          {
+            "id": "portal.po_academy.vertical",
+            "kind": "VERTICAL_LINK"
+          }
+        ],
+        "passabilityRuleOwner": "GAMEPLAY",
+        "status": "UNKNOWN__DYNAMIC_DOOR_STATE_DESTRUCTION_AND_DEVICES_OWNED_BY_GAMEPLAY",
+        "note": "Map asserts only that a geometric opening exists. No lock, power, key, weight or vehicle rule."
+      }
+    },
+    "stableIds": {
+      "rooms": [
+        "room.po_academy.1.1",
+        "room.po_academy.1.2",
+        "room.po_academy.2.1",
+        "room.po_academy.2.2",
+        "room.po_academy.deep.1"
+      ],
+      "walls": [
+        "wall.po_academy.1",
+        "wall.po_academy.2",
+        "wall.po_academy.3",
+        "wall.po_academy.4",
+        "wall.po_academy.split.v.1",
+        "wall.po_academy.split.h.1"
+      ],
+      "entrances": [
+        "entrance.po_academy.1"
+      ],
+      "portals": [
+        "portal.po_academy.entrance",
+        "portal.po_academy.h.1.1",
+        "portal.po_academy.v.1.1",
+        "portal.po_academy.v.1.2",
+        "portal.po_academy.h.2.1",
+        "portal.po_academy.vertical"
+      ],
+      "sockets": [
+        "socket.po_academy.1",
+        "socket.po_academy.2",
+        "socket.po_academy.3",
+        "socket.po_academy.4",
+        "socket.po_academy.5",
+        "socket.po_academy.6"
+      ],
+      "levels": [
+        "level.po_academy.0",
+        "level.po_academy.-1"
+      ],
+      "floors": [
+        "floor.po_academy.1.1",
+        "floor.po_academy.1.2",
+        "floor.po_academy.2.1",
+        "floor.po_academy.2.2",
+        "floor.po_academy.deep.1"
+      ]
+    },
+    "noClaims": [
+      "NO loot, loot table, chest contents or reward",
+      "NO locked-door rule, key, card or power requirement",
+      "NO generator, machine, recipe, quest, vendor inventory or economy",
+      "NO dynamic door state or destruction",
+      "NO authored entrance in source (all openings PROPOSED)",
+      "NO approved vertical unit or stair geometry",
+      "NO runtime collision data (static geometry only)",
+      "NO playable survival acceptance"
+    ]
+  }
+}

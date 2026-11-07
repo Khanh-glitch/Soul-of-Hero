@@ -1,0 +1,166 @@
+{
+  "method": "Normal input on the previously documented assisted run; continued after a second genuine death and bag recovery.",
+  "target": {
+    "kind": "struct:workbench",
+    "label": "Use Workbench",
+    "eid": "er7",
+    "x": 2536,
+    "y": 1720
+  },
+  "queued": {
+    "bench": "er7",
+    "queue": [
+      {
+        "id": "ju8",
+        "recipe": "cloth",
+        "left": 7958,
+        "total": 8000,
+        "reserved": [
+          {
+            "uid": "sep",
+            "key": "fiber",
+            "qty": 6
+          }
+        ]
+      }
+    ],
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 78
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7k",
+        "key": "wood",
+        "qty": 4
+      },
+      {
+        "uid": "s7l",
+        "key": "seed",
+        "qty": 4
+      },
+      {
+        "uid": "s88",
+        "key": "scrap",
+        "qty": 23
+      },
+      {
+        "uid": "s8f",
+        "key": "fasteners",
+        "qty": 4
+      },
+      {
+        "uid": "sew",
+        "key": "meat",
+        "qty": 1
+      },
+      {
+        "uid": "sex",
+        "key": "fur",
+        "qty": 2
+      },
+      {
+        "uid": "sid",
+        "key": "stone",
+        "qty": 3
+      },
+      {
+        "uid": "smr",
+        "key": "field_repair_kit",
+        "qty": 2
+      },
+      {
+        "uid": "smm",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "smw",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "snj",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "srh",
+        "key": "mechanical_parts",
+        "qty": 1
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r258",
+        "seq": 258,
+        "at": 1793770306255,
+        "kind": "move",
+        "detail": "stonex3 crk->inv"
+      },
+      {
+        "id": "r259",
+        "seq": 259,
+        "at": 1793770306338,
+        "kind": "move",
+        "detail": "field_repair_kitx2 crk->inv"
+      },
+      {
+        "id": "r260",
+        "seq": 260,
+        "at": 1793770306425,
+        "kind": "move",
+        "detail": "damaged_drivex1 crk->inv"
+      },
+      {
+        "id": "r261",
+        "seq": 261,
+        "at": 1793770306534,
+        "kind": "move",
+        "detail": "damaged_drivex1 crk->inv"
+      },
+      {
+        "id": "r262",
+        "seq": 262,
+        "at": 1793770306607,
+        "kind": "move",
+        "detail": "damaged_drivex1 crk->inv"
+      },
+      {
+        "id": "r263",
+        "seq": 263,
+        "at": 1793770331694,
+        "kind": "offline.settle",
+        "detail": "25s"
+      },
+      {
+        "id": "r264",
+        "seq": 264,
+        "at": 1793770333855,
+        "kind": "move",
+        "detail": "mechanical_partsx1 cr9->inv"
+      },
+      {
+        "id": "r265",
+        "seq": 265,
+        "at": 1793770333955,
+        "kind": "job.queue",
+        "detail": "cloth@er7"
+      }
+    ]
+  },
+  "closedAt": 1793770334343
+}

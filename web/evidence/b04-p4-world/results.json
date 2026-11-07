@@ -1,0 +1,84 @@
+{
+ "results": {
+  "irOff": "off",
+  "irUnpowered": "unpowered",
+  "irReady": "ready",
+  "irDetect": "detect",
+  "irBlocked": "blocked",
+  "recyclerSite": {
+   "tx": 151,
+   "ty": 103
+  },
+  "airdropPartialPhase": "partial",
+  "airdropStacksRemaining": 2,
+  "cacheClasses": [
+   "toolbox",
+   "supply",
+   "advanced",
+   "military"
+  ],
+  "trapSnapStamp": 1793836860000,
+  "airLocked.browserPhase": "locked",
+  "airOpen.browserPhase": "open",
+  "airPartial.browserPhase": "partial",
+  "recycler.640x360": {
+   "output": [
+    "1 refined_iron_ingot"
+   ],
+   "pipesLeftInInventory": 0
+  },
+  "cache_toolbox.browserEntity": true,
+  "cache_supply.browserEntity": true,
+  "cache_military.browserEntity": true,
+  "cache_advanced.browserEntity": true,
+  "recycler.1280x720": {
+   "output": [
+    "1 refined_iron_ingot"
+   ],
+   "pipesLeftInInventory": 0
+  }
+ },
+ "shots": [
+  "traps-640x360.png",
+  "trapSnap-640x360.png",
+  "irOff-640x360.png",
+  "irUnpowered-640x360.png",
+  "irReady-640x360.png",
+  "irDetect-640x360.png",
+  "irBlocked-640x360.png",
+  "airLocked-640x360.png",
+  "airOpen-640x360.png",
+  "airPartial-640x360.png",
+  "recycler-open-640x360.png",
+  "recycler-processing-640x360.png",
+  "recycler-done-640x360.png",
+  "cache-toolbox-640x360.png",
+  "cache-supply-640x360.png",
+  "cache-military-640x360.png",
+  "cache-advanced-640x360.png",
+  "industrial-inventory-640x360.png",
+  "traps-1280x720.png",
+  "trapSnap-1280x720.png",
+  "irOff-1280x720.png",
+  "irUnpowered-1280x720.png",
+  "irReady-1280x720.png",
+  "irDetect-1280x720.png",
+  "irBlocked-1280x720.png",
+  "airLocked-1280x720.png",
+  "airOpen-1280x720.png",
+  "airPartial-1280x720.png",
+  "recycler-open-1280x720.png",
+  "recycler-processing-1280x720.png",
+  "recycler-done-1280x720.png",
+  "cache-advanced-1280x720.png",
+  "industrial-inventory-1280x720.png"
+ ],
+ "errors": [],
+ "irVisual": {
+  "irOff": "off",
+  "irUnpowered": "unpowered",
+  "irReady": "ready",
+  "irDetect": "detect",
+  "irBlocked": "blocked"
+ }
+}

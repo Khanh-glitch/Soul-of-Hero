@@ -1,0 +1,280 @@
+{
+  "method": "Continued natural run; keyboard/mouse only, read-only state inspection. See recovery-gather-log.txt for previous processes.",
+  "queued": {
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 172
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7h",
+        "key": "scrap",
+        "qty": 3
+      },
+      {
+        "uid": "s7i",
+        "key": "fasteners",
+        "qty": 1
+      },
+      {
+        "uid": "s9n",
+        "key": "spares",
+        "qty": 3
+      },
+      {
+        "uid": "sar",
+        "key": "seed",
+        "qty": 7
+      },
+      {
+        "uid": "sd0",
+        "key": "stone",
+        "qty": 3
+      }
+    ],
+    "queue": [
+      {
+        "id": "jff",
+        "recipe": "recover_drive",
+        "left": 11641,
+        "total": 12000,
+        "reserved": [
+          {
+            "uid": "sf3",
+            "key": "damaged_drive",
+            "qty": 1
+          },
+          {
+            "uid": "sfe",
+            "key": "scrap",
+            "qty": 1
+          }
+        ]
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r99",
+        "seq": 99,
+        "at": 1793767309022,
+        "kind": "harvest.component",
+        "detail": "wreck@141,91:sf3"
+      },
+      {
+        "id": "r100",
+        "seq": 100,
+        "at": 1793767309022,
+        "kind": "harvest",
+        "detail": "wreck@141,91 -1"
+      },
+      {
+        "id": "r101",
+        "seq": 101,
+        "at": 1793767309454,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r102",
+        "seq": 102,
+        "at": 1793767309454,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r103",
+        "seq": 103,
+        "at": 1793767309474,
+        "kind": "pickup",
+        "detail": "damaged_drivex1"
+      },
+      {
+        "id": "r104",
+        "seq": 104,
+        "at": 1793767310495,
+        "kind": "build",
+        "detail": "claim@139,86"
+      },
+      {
+        "id": "r105",
+        "seq": 105,
+        "at": 1793767416426,
+        "kind": "offline.settle",
+        "detail": "79s"
+      },
+      {
+        "id": "r106",
+        "seq": 106,
+        "at": 1793767418551,
+        "kind": "build",
+        "detail": "workbench@140,86"
+      },
+      {
+        "id": "r107",
+        "seq": 107,
+        "at": 1793767468009,
+        "kind": "offline.settle",
+        "detail": "21s"
+      },
+      {
+        "id": "r108",
+        "seq": 108,
+        "at": 1793767470039,
+        "kind": "job.queue",
+        "detail": "recover_drive@ef6"
+      }
+    ]
+  },
+  "completed": {
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 172
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7h",
+        "key": "scrap",
+        "qty": 3
+      },
+      {
+        "uid": "s7i",
+        "key": "fasteners",
+        "qty": 1
+      },
+      {
+        "uid": "s9n",
+        "key": "spares",
+        "qty": 3
+      },
+      {
+        "uid": "sar",
+        "key": "seed",
+        "qty": 7
+      },
+      {
+        "uid": "sd0",
+        "key": "stone",
+        "qty": 3
+      }
+    ],
+    "out": [
+      {
+        "uid": "sfg",
+        "key": "mechanical_parts",
+        "qty": 1
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r98",
+        "seq": 98,
+        "at": 1793767308259,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r99",
+        "seq": 99,
+        "at": 1793767309022,
+        "kind": "harvest.component",
+        "detail": "wreck@141,91:sf3"
+      },
+      {
+        "id": "r100",
+        "seq": 100,
+        "at": 1793767309022,
+        "kind": "harvest",
+        "detail": "wreck@141,91 -1"
+      },
+      {
+        "id": "r101",
+        "seq": 101,
+        "at": 1793767309454,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r102",
+        "seq": 102,
+        "at": 1793767309454,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r103",
+        "seq": 103,
+        "at": 1793767309474,
+        "kind": "pickup",
+        "detail": "damaged_drivex1"
+      },
+      {
+        "id": "r104",
+        "seq": 104,
+        "at": 1793767310495,
+        "kind": "build",
+        "detail": "claim@139,86"
+      },
+      {
+        "id": "r105",
+        "seq": 105,
+        "at": 1793767416426,
+        "kind": "offline.settle",
+        "detail": "79s"
+      },
+      {
+        "id": "r106",
+        "seq": 106,
+        "at": 1793767418551,
+        "kind": "build",
+        "detail": "workbench@140,86"
+      },
+      {
+        "id": "r107",
+        "seq": 107,
+        "at": 1793767468009,
+        "kind": "offline.settle",
+        "detail": "21s"
+      },
+      {
+        "id": "r108",
+        "seq": 108,
+        "at": 1793767470039,
+        "kind": "job.queue",
+        "detail": "recover_drive@ef6"
+      },
+      {
+        "id": "r109",
+        "seq": 109,
+        "at": 1793767482039,
+        "kind": "job.done",
+        "detail": "recover_drive"
+      }
+    ]
+  }
+}

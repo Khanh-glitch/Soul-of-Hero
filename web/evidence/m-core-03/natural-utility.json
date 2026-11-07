@@ -1,0 +1,381 @@
+{
+  "method": "Normal keyboard/mouse, continued run; read-only planning inspects crate inventories, so route is assisted and not blind human discovery.",
+  "continued": {
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 172
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7h",
+        "key": "scrap",
+        "qty": 3
+      },
+      {
+        "uid": "s7i",
+        "key": "fasteners",
+        "qty": 1
+      },
+      {
+        "uid": "s9n",
+        "key": "spares",
+        "qty": 3
+      },
+      {
+        "uid": "sfg",
+        "key": "mechanical_parts",
+        "qty": 3
+      },
+      {
+        "uid": "sar",
+        "key": "seed",
+        "qty": 7
+      },
+      {
+        "uid": "sd0",
+        "key": "stone",
+        "qty": 3
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r108",
+        "seq": 108,
+        "at": 1793767470039,
+        "kind": "job.queue",
+        "detail": "recover_drive@ef6"
+      },
+      {
+        "id": "r109",
+        "seq": 109,
+        "at": 1793767482039,
+        "kind": "job.done",
+        "detail": "recover_drive"
+      },
+      {
+        "id": "r110",
+        "seq": 110,
+        "at": 1793767503241,
+        "kind": "offline.settle",
+        "detail": "25s"
+      },
+      {
+        "id": "r111",
+        "seq": 111,
+        "at": 1793767512839,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r112",
+        "seq": 112,
+        "at": 1793767560854,
+        "kind": "offline.settle",
+        "detail": "48s"
+      },
+      {
+        "id": "r113",
+        "seq": 113,
+        "at": 1793767562419,
+        "kind": "move",
+        "detail": "mechanical_partsx1 cf8->inv"
+      },
+      {
+        "id": "r114",
+        "seq": 114,
+        "at": 1793767571800,
+        "kind": "move",
+        "detail": "mechanical_partsx2 c14->inv"
+      },
+      {
+        "id": "r115",
+        "seq": 115,
+        "at": 1793767589457,
+        "kind": "offline.settle",
+        "detail": "17s"
+      }
+    ]
+  },
+  "routes": [
+    {
+      "item": "iron_ingot",
+      "id": "ec",
+      "steps": 68,
+      "tile": [
+        107,
+        121
+      ]
+    }
+  ],
+  "returnSteps": 67,
+  "upgraded": {
+    "bench": {
+      "queue": [],
+      "burn": 0,
+      "fuelC": "cf7",
+      "outC": "cf8",
+      "level": 2
+    },
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 172
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7h",
+        "key": "scrap",
+        "qty": 3
+      },
+      {
+        "uid": "s7i",
+        "key": "fasteners",
+        "qty": 1
+      },
+      {
+        "uid": "s9n",
+        "key": "spares",
+        "qty": 3
+      },
+      {
+        "uid": "sfg",
+        "key": "mechanical_parts",
+        "qty": 1
+      },
+      {
+        "uid": "sar",
+        "key": "seed",
+        "qty": 7
+      },
+      {
+        "uid": "sd0",
+        "key": "stone",
+        "qty": 3
+      },
+      {
+        "uid": "sh9",
+        "key": "wood",
+        "qty": 1
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r105",
+        "seq": 105,
+        "at": 1793767416426,
+        "kind": "offline.settle",
+        "detail": "79s"
+      },
+      {
+        "id": "r106",
+        "seq": 106,
+        "at": 1793767418551,
+        "kind": "build",
+        "detail": "workbench@140,86"
+      },
+      {
+        "id": "r107",
+        "seq": 107,
+        "at": 1793767468009,
+        "kind": "offline.settle",
+        "detail": "21s"
+      },
+      {
+        "id": "r108",
+        "seq": 108,
+        "at": 1793767470039,
+        "kind": "job.queue",
+        "detail": "recover_drive@ef6"
+      },
+      {
+        "id": "r109",
+        "seq": 109,
+        "at": 1793767482039,
+        "kind": "job.done",
+        "detail": "recover_drive"
+      },
+      {
+        "id": "r110",
+        "seq": 110,
+        "at": 1793767503241,
+        "kind": "offline.settle",
+        "detail": "25s"
+      },
+      {
+        "id": "r111",
+        "seq": 111,
+        "at": 1793767512839,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r112",
+        "seq": 112,
+        "at": 1793767560854,
+        "kind": "offline.settle",
+        "detail": "48s"
+      },
+      {
+        "id": "r113",
+        "seq": 113,
+        "at": 1793767562419,
+        "kind": "move",
+        "detail": "mechanical_partsx1 cf8->inv"
+      },
+      {
+        "id": "r114",
+        "seq": 114,
+        "at": 1793767571800,
+        "kind": "move",
+        "detail": "mechanical_partsx2 c14->inv"
+      },
+      {
+        "id": "r115",
+        "seq": 115,
+        "at": 1793767589457,
+        "kind": "offline.settle",
+        "detail": "17s"
+      },
+      {
+        "id": "r116",
+        "seq": 116,
+        "at": 1793767594009,
+        "kind": "harvest",
+        "detail": "oak@139,99 -1"
+      },
+      {
+        "id": "r117",
+        "seq": 117,
+        "at": 1793767594493,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r118",
+        "seq": 118,
+        "at": 1793767607671,
+        "kind": "move",
+        "detail": "iron_ingotx1 cd->inv"
+      },
+      {
+        "id": "r119",
+        "seq": 119,
+        "at": 1793767624384,
+        "kind": "station.upgrade",
+        "detail": "ef6:2"
+      }
+    ]
+  },
+  "relaunched": {
+    "bench": {
+      "queue": [],
+      "burn": 0,
+      "fuelC": "cf7",
+      "outC": "cf8",
+      "level": 2
+    },
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 172
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7h",
+        "key": "scrap",
+        "qty": 3
+      },
+      {
+        "uid": "s7i",
+        "key": "fasteners",
+        "qty": 1
+      },
+      {
+        "uid": "s9n",
+        "key": "spares",
+        "qty": 3
+      },
+      {
+        "uid": "sfg",
+        "key": "mechanical_parts",
+        "qty": 1
+      },
+      {
+        "uid": "sar",
+        "key": "seed",
+        "qty": 7
+      },
+      {
+        "uid": "sd0",
+        "key": "stone",
+        "qty": 3
+      },
+      {
+        "uid": "sh9",
+        "key": "wood",
+        "qty": 1
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r10",
+        "seq": 10,
+        "at": 1793766914320,
+        "kind": "job.done",
+        "detail": "X:drive"
+      },
+      {
+        "id": "r109",
+        "seq": 109,
+        "at": 1793767482039,
+        "kind": "job.done",
+        "detail": "recover_drive"
+      },
+      {
+        "id": "r119",
+        "seq": 119,
+        "at": 1793767624384,
+        "kind": "station.upgrade",
+        "detail": "ef6:2"
+      }
+    ]
+  },
+  "relaunchMethod": "Separate Node and Chromium process after explicit Save & quit."
+}

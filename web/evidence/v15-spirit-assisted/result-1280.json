@@ -1,0 +1,99 @@
+{
+  "method": "new run, injected core/supplies; browser input for map and cast",
+  "fixture": {
+    "res": {
+      "ok": true,
+      "receipt": "r2"
+    },
+    "dest": {
+      "x": 106,
+      "y": 98,
+      "wx": 1704,
+      "wy": 1576
+    },
+    "slot": 3,
+    "uid": "s70",
+    "start": {
+      "x": 1688,
+      "y": 1704
+    }
+  },
+  "end": {
+    "player": {
+      "x": 1704,
+      "y": 1608,
+      "vx": 0,
+      "vy": 0,
+      "dir": 1,
+      "aim": -3.105245032570773,
+      "hp": 100,
+      "stamina": 100,
+      "hunger": 84.80075599999934,
+      "thirst": 84.70113399999998,
+      "warmth": 100,
+      "rad": 0,
+      "active": 3,
+      "action": null,
+      "invuln": 0,
+      "dead": false,
+      "deadT": 0,
+      "pulling": null,
+      "skills": {
+        "gather": 0,
+        "combat": 0,
+        "craft": 0,
+        "survival": 0
+      },
+      "stepAcc": 0,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Heartland",
+      "sheltered": false
+    },
+    "receipts": [
+      {
+        "id": "r1",
+        "seq": 1,
+        "at": 1793838989589,
+        "kind": "run.start",
+        "detail": "female@the island"
+      },
+      {
+        "id": "r2",
+        "seq": 2,
+        "at": 1793838990608,
+        "kind": "core.load",
+        "detail": "s70:signature+1"
+      },
+      {
+        "id": "r3",
+        "seq": 3,
+        "at": 1793838991948,
+        "kind": "core.commit",
+        "detail": "s70:signature:0"
+      },
+      {
+        "id": "r4",
+        "seq": 4,
+        "at": 1793838991948,
+        "kind": "achievement",
+        "detail": "first_core"
+      },
+      {
+        "id": "r5",
+        "seq": 5,
+        "at": 1793838991948,
+        "kind": "core.spirit.depart",
+        "detail": "s70"
+      },
+      {
+        "id": "r6",
+        "seq": 6,
+        "at": 1793838992565,
+        "kind": "core.spirit.arrive",
+        "detail": "s70"
+      }
+    ]
+  },
+  "errors": []
+}

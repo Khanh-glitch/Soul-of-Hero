@@ -1,0 +1,339 @@
+{
+  "method": "Normal-input respawn and recovery after lava death on a first assisted recovery attempt. Read-only route now avoids ash except near destination and buffers lava.",
+  "errors": [],
+  "respawn": {
+    "p": {
+      "x": 1958.3427664242936,
+      "y": 2704.6179970838502,
+      "vx": 0,
+      "vy": 0,
+      "dir": 1,
+      "aim": 2.84394993234152,
+      "hp": 25,
+      "stamina": 100,
+      "hunger": 63.24985855996313,
+      "thirst": 46.5770002959978,
+      "warmth": 83.04730116944631,
+      "rad": 0,
+      "active": 0,
+      "action": null,
+      "invuln": 0,
+      "dead": false,
+      "deadT": 30265.399999999994,
+      "pulling": null,
+      "skills": {
+        "gather": 76,
+        "combat": 2,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 6.624000000000001,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Caldera Wastes",
+      "sheltered": false
+    },
+    "receipts": [
+      {
+        "id": "r234",
+        "seq": 234,
+        "at": 1793773546632,
+        "kind": "move",
+        "detail": "blueprintx1 cyz->inv"
+      },
+      {
+        "id": "r235",
+        "seq": 235,
+        "at": 1793773546751,
+        "kind": "learn.blueprint",
+        "detail": "chitin_armor"
+      },
+      {
+        "id": "r236",
+        "seq": 236,
+        "at": 1793773546936,
+        "kind": "move",
+        "detail": "blueprintx1 cyz->inv"
+      },
+      {
+        "id": "r237",
+        "seq": 237,
+        "at": 1793773547052,
+        "kind": "learn.blueprint",
+        "detail": "core_frost"
+      },
+      {
+        "id": "r238",
+        "seq": 238,
+        "at": 1793773559526,
+        "kind": "offline.settle",
+        "detail": "12s"
+      }
+    ]
+  },
+  "routeSteps": 3,
+  "after": {
+    "p": {
+      "x": 2010.574687166422,
+      "y": 2713.9117626095003,
+      "vx": 0,
+      "vy": 0,
+      "dir": 3,
+      "aim": -2.1441696672120405,
+      "hp": 0,
+      "stamina": 100,
+      "hunger": 63.0978665599634,
+      "thirst": 46.14382309599749,
+      "warmth": 84.68129333492625,
+      "rad": 0,
+      "active": 0,
+      "action": null,
+      "invuln": 520,
+      "dead": true,
+      "deadT": 0,
+      "pulling": null,
+      "skills": {
+        "gather": 76,
+        "combat": 2,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 8.395200000000026,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Caldera Wastes",
+      "sheltered": false
+    },
+    "inv": [],
+    "bags": [
+      {
+        "id": "bz3",
+        "slots": []
+      },
+      {
+        "id": "b13r",
+        "slots": []
+      },
+      {
+        "id": "b18n",
+        "slots": []
+      },
+      {
+        "id": "b1ez",
+        "slots": [
+          {
+            "uid": "s1",
+            "key": "knife",
+            "qty": 1,
+            "dur": 107
+          },
+          {
+            "uid": "s2",
+            "key": "water_flask",
+            "qty": 1,
+            "charge": 2
+          },
+          {
+            "uid": "s3",
+            "key": "berries",
+            "qty": 3
+          },
+          {
+            "uid": "s7c",
+            "key": "wood",
+            "qty": 13
+          },
+          {
+            "uid": "s81",
+            "key": "stone",
+            "qty": 5
+          },
+          {
+            "uid": "s8o",
+            "key": "fiber",
+            "qty": 1
+          },
+          {
+            "uid": "s9t",
+            "key": "crystal",
+            "qty": 3
+          },
+          {
+            "uid": "s8x",
+            "key": "stone_pick",
+            "qty": 1,
+            "dur": 170
+          },
+          {
+            "uid": "s1t",
+            "key": "spares",
+            "qty": 1
+          },
+          {
+            "uid": "sj5",
+            "key": "seed",
+            "qty": 9
+          },
+          {
+            "uid": "sls",
+            "key": "charcoal",
+            "qty": 3
+          },
+          {
+            "uid": "sm8",
+            "key": "chitin",
+            "qty": 2
+          },
+          {
+            "uid": "sm9",
+            "key": "sulfur",
+            "qty": 1
+          }
+        ]
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r233",
+        "seq": 233,
+        "at": 1793773507622,
+        "kind": "respawn",
+        "detail": "2232,824"
+      },
+      {
+        "id": "r234",
+        "seq": 234,
+        "at": 1793773546632,
+        "kind": "move",
+        "detail": "blueprintx1 cyz->inv"
+      },
+      {
+        "id": "r235",
+        "seq": 235,
+        "at": 1793773546751,
+        "kind": "learn.blueprint",
+        "detail": "chitin_armor"
+      },
+      {
+        "id": "r236",
+        "seq": 236,
+        "at": 1793773546936,
+        "kind": "move",
+        "detail": "blueprintx1 cyz->inv"
+      },
+      {
+        "id": "r237",
+        "seq": 237,
+        "at": 1793773547052,
+        "kind": "learn.blueprint",
+        "detail": "core_frost"
+      },
+      {
+        "id": "r238",
+        "seq": 238,
+        "at": 1793773559526,
+        "kind": "offline.settle",
+        "detail": "12s"
+      },
+      {
+        "id": "r239",
+        "seq": 239,
+        "at": 1793773563930,
+        "kind": "move",
+        "detail": "knifex1 c18m->inv"
+      },
+      {
+        "id": "r240",
+        "seq": 240,
+        "at": 1793773564036,
+        "kind": "move",
+        "detail": "water_flaskx1 c18m->inv"
+      },
+      {
+        "id": "r241",
+        "seq": 241,
+        "at": 1793773564169,
+        "kind": "move",
+        "detail": "berriesx3 c18m->inv"
+      },
+      {
+        "id": "r242",
+        "seq": 242,
+        "at": 1793773564299,
+        "kind": "move",
+        "detail": "woodx13 c18m->inv"
+      },
+      {
+        "id": "r243",
+        "seq": 243,
+        "at": 1793773564433,
+        "kind": "move",
+        "detail": "stonex5 c18m->inv"
+      },
+      {
+        "id": "r244",
+        "seq": 244,
+        "at": 1793773564534,
+        "kind": "move",
+        "detail": "fiberx1 c18m->inv"
+      },
+      {
+        "id": "r245",
+        "seq": 245,
+        "at": 1793773564650,
+        "kind": "move",
+        "detail": "crystalx3 c18m->inv"
+      },
+      {
+        "id": "r246",
+        "seq": 246,
+        "at": 1793773564766,
+        "kind": "move",
+        "detail": "stone_pickx1 c18m->inv"
+      },
+      {
+        "id": "r247",
+        "seq": 247,
+        "at": 1793773564866,
+        "kind": "move",
+        "detail": "sparesx1 c18m->inv"
+      },
+      {
+        "id": "r248",
+        "seq": 248,
+        "at": 1793773564967,
+        "kind": "move",
+        "detail": "seedx9 c18m->inv"
+      },
+      {
+        "id": "r249",
+        "seq": 249,
+        "at": 1793773565063,
+        "kind": "move",
+        "detail": "charcoalx3 c18m->inv"
+      },
+      {
+        "id": "r250",
+        "seq": 250,
+        "at": 1793773565207,
+        "kind": "move",
+        "detail": "chitinx2 c18m->inv"
+      },
+      {
+        "id": "r251",
+        "seq": 251,
+        "at": 1793773565316,
+        "kind": "move",
+        "detail": "sulfurx1 c18m->inv"
+      },
+      {
+        "id": "r252",
+        "seq": 252,
+        "at": 1793773565843,
+        "kind": "death",
+        "detail": "Greyfang Wolf; bag=b1ez"
+      }
+    ]
+  },
+  "failure": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert(rec.after.inv.some(s=>s.key==='knife'))\n"
+}

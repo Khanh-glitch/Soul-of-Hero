@@ -1,0 +1,320 @@
+{
+  "before": {
+    "p": {
+      "x": 1872.5634399999974,
+      "y": 2568.5717920000648,
+      "vx": 0,
+      "vy": 0,
+      "dir": 1,
+      "aim": 2.6031642525624807,
+      "hp": 57,
+      "stamina": 100,
+      "hunger": 35.44702600000341,
+      "thirst": 57.392069599998976,
+      "warmth": 76.96499794779685,
+      "rad": 0,
+      "active": 1,
+      "action": null,
+      "invuln": 0,
+      "dead": false,
+      "deadT": 1549.9,
+      "pulling": null,
+      "skills": {
+        "gather": 88,
+        "combat": 2,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 1.1951999999999607,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Caldera Wastes",
+      "sheltered": false
+    },
+    "inv": [
+      {
+        "uid": "s1ku",
+        "key": "herb",
+        "qty": 4
+      },
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 89
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7c",
+        "key": "wood",
+        "qty": 19
+      },
+      {
+        "uid": "s81",
+        "key": "stone",
+        "qty": 5
+      },
+      {
+        "uid": "s8o",
+        "key": "fiber",
+        "qty": 1
+      },
+      {
+        "uid": "s9t",
+        "key": "crystal",
+        "qty": 3
+      },
+      {
+        "uid": "s8x",
+        "key": "stone_pick",
+        "qty": 1,
+        "dur": 170
+      },
+      {
+        "uid": "s1t",
+        "key": "spares",
+        "qty": 1
+      },
+      {
+        "uid": "sj5",
+        "key": "seed",
+        "qty": 12
+      },
+      {
+        "uid": "sls",
+        "key": "charcoal",
+        "qty": 3
+      },
+      {
+        "uid": "sm8",
+        "key": "chitin",
+        "qty": 2
+      },
+      {
+        "uid": "sm9",
+        "key": "sulfur",
+        "qty": 1
+      }
+    ]
+  },
+  "after": {
+    "p": {
+      "x": 1872.5634399999974,
+      "y": 2568.5717920000648,
+      "vx": 0,
+      "vy": 0,
+      "dir": 2,
+      "aim": -0.43041412826914877,
+      "hp": 81,
+      "stamina": 100,
+      "hunger": 35.425022000003466,
+      "thirst": 57.32935819999893,
+      "warmth": 77.30051373554886,
+      "rad": 0,
+      "active": 1,
+      "action": null,
+      "invuln": 0,
+      "dead": false,
+      "deadT": 1549.9,
+      "pulling": null,
+      "skills": {
+        "gather": 88,
+        "combat": 2,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 1.1951999999999607,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Caldera Wastes",
+      "sheltered": false
+    },
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 89
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7c",
+        "key": "wood",
+        "qty": 19
+      },
+      {
+        "uid": "s81",
+        "key": "stone",
+        "qty": 5
+      },
+      {
+        "uid": "s8o",
+        "key": "fiber",
+        "qty": 1
+      },
+      {
+        "uid": "s9t",
+        "key": "crystal",
+        "qty": 3
+      },
+      {
+        "uid": "s8x",
+        "key": "stone_pick",
+        "qty": 1,
+        "dur": 170
+      },
+      {
+        "uid": "s1t",
+        "key": "spares",
+        "qty": 1
+      },
+      {
+        "uid": "sj5",
+        "key": "seed",
+        "qty": 12
+      },
+      {
+        "uid": "sls",
+        "key": "charcoal",
+        "qty": 3
+      },
+      {
+        "uid": "sm8",
+        "key": "chitin",
+        "qty": 2
+      },
+      {
+        "uid": "sm9",
+        "key": "sulfur",
+        "qty": 1
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r330",
+        "seq": 330,
+        "at": 1793778396002,
+        "kind": "harvest",
+        "detail": "oak@116,159 -1"
+      },
+      {
+        "id": "r331",
+        "seq": 331,
+        "at": 1793778396386,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r332",
+        "seq": 332,
+        "at": 1793778396386,
+        "kind": "pickup",
+        "detail": "seedx1"
+      },
+      {
+        "id": "r333",
+        "seq": 333,
+        "at": 1793778396918,
+        "kind": "harvest",
+        "detail": "oak@116,159 -1"
+      },
+      {
+        "id": "r334",
+        "seq": 334,
+        "at": 1793778397352,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r335",
+        "seq": 335,
+        "at": 1793778397835,
+        "kind": "harvest",
+        "detail": "oak@116,159 -1"
+      },
+      {
+        "id": "r336",
+        "seq": 336,
+        "at": 1793778398268,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r337",
+        "seq": 337,
+        "at": 1793778398901,
+        "kind": "harvest",
+        "detail": "oak@116,159 -1"
+      },
+      {
+        "id": "r338",
+        "seq": 338,
+        "at": 1793778399318,
+        "kind": "pickup",
+        "detail": "seedx1"
+      },
+      {
+        "id": "r339",
+        "seq": 339,
+        "at": 1793778399335,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r340",
+        "seq": 340,
+        "at": 1793778414459,
+        "kind": "offline.settle",
+        "detail": "15s"
+      },
+      {
+        "id": "r341",
+        "seq": 341,
+        "at": 1793778415709,
+        "kind": "consume",
+        "detail": "herb"
+      },
+      {
+        "id": "r342",
+        "seq": 342,
+        "at": 1793778415791,
+        "kind": "consume",
+        "detail": "herb"
+      },
+      {
+        "id": "r343",
+        "seq": 343,
+        "at": 1793778415842,
+        "kind": "consume",
+        "detail": "herb"
+      },
+      {
+        "id": "r344",
+        "seq": 344,
+        "at": 1793778415927,
+        "kind": "consume",
+        "detail": "herb"
+      }
+    ]
+  }
+}

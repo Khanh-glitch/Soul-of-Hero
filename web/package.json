@@ -12,6 +12,7 @@
   "dependencies": {
     "@fontsource/pixelify-sans": "^5.2.5",
     "@fontsource/vt323": "^5.2.5",
+    "@noble/hashes": "^1.8.0",
     "clsx": "2.1.1",
     "react": "19.2.6",
     "react-dom": "19.2.6",
@@ -23,11 +24,11 @@
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "5.1.1",
-    "playwright": "^1.49.1",
+    "playwright": "1.55.1",
     "tailwindcss": "4.1.17",
     "typescript": "5.9.3",
-    "vite": "7.3.2",
+    "vite": "7.3.7",
     "vite-plugin-singlefile": "2.3.0",
-    "vitest": "^3.2.4"
+    "vitest": "4.1.12"
   }
 }

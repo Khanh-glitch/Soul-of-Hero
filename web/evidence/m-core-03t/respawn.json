@@ -1,0 +1,372 @@
+{
+  "before": {
+    "p": {
+      "x": 1892.3015060688144,
+      "y": 2588.3826301587133,
+      "vx": 72,
+      "vy": 0,
+      "dir": 1,
+      "aim": 2.442772232276484,
+      "hp": 0,
+      "stamina": 100,
+      "hunger": 0.25010055996468833,
+      "thirst": 0,
+      "warmth": 79.66748668725974,
+      "rad": 0,
+      "active": 0,
+      "action": null,
+      "invuln": 520,
+      "dead": true,
+      "deadT": 616.7000000000003,
+      "pulling": null,
+      "skills": {
+        "gather": 76,
+        "combat": 2,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 0,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Caldera Wastes",
+      "sheltered": false
+    },
+    "receipts": [
+      {
+        "id": "r285",
+        "seq": 285,
+        "at": 1793773789557,
+        "kind": "offline.settle",
+        "detail": "15s"
+      },
+      {
+        "id": "r286",
+        "seq": 286,
+        "at": 1793773791272,
+        "kind": "respawn",
+        "detail": "2104,2072"
+      },
+      {
+        "id": "r287",
+        "seq": 287,
+        "at": 1793773810502,
+        "kind": "offline.settle",
+        "detail": "19s"
+      },
+      {
+        "id": "r288",
+        "seq": 288,
+        "at": 1793778157370,
+        "kind": "offline.settle",
+        "detail": "4347s"
+      },
+      {
+        "id": "r289",
+        "seq": 289,
+        "at": 1793778170827,
+        "kind": "death",
+        "detail": "Greyfang Wolf; bag=b1k6"
+      },
+      {
+        "id": "r290",
+        "seq": 290,
+        "at": 1793778207703,
+        "kind": "offline.settle",
+        "detail": "37s"
+      }
+    ]
+  },
+  "after": {
+    "p": {
+      "x": 2008,
+      "y": 1096,
+      "vx": 0,
+      "vy": 0,
+      "dir": 1,
+      "aim": 2.71693237104002,
+      "hp": 60,
+      "stamina": 75.60259999999998,
+      "hunger": 39.97480600000002,
+      "thirst": 39.962209,
+      "warmth": 79.53151210490708,
+      "rad": 0,
+      "active": 0,
+      "action": null,
+      "invuln": 1399.9,
+      "dead": false,
+      "deadT": 1549.9,
+      "pulling": null,
+      "skills": {
+        "gather": 76,
+        "combat": 2,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 0,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Old Mill",
+      "sheltered": false
+    },
+    "creatures": [
+      {
+        "id": "m2w",
+        "type": "boar",
+        "x": 2594.6205095052346,
+        "y": 1227.602282168104,
+        "hp": 40,
+        "state": "wander"
+      },
+      {
+        "id": "m30",
+        "type": "boar",
+        "x": 1987.2729517183236,
+        "y": 1765.4596892648624,
+        "hp": 40,
+        "state": "wander"
+      },
+      {
+        "id": "m32",
+        "type": "boar",
+        "x": 1869.6430667643858,
+        "y": 1284.052953307146,
+        "hp": 40,
+        "state": "wander"
+      },
+      {
+        "id": "m3d",
+        "type": "boar",
+        "x": 1320,
+        "y": 1032,
+        "hp": 40,
+        "state": "wander"
+      },
+      {
+        "id": "m3r",
+        "type": "boar",
+        "x": 1536.5301769620135,
+        "y": 1088.4318648379653,
+        "hp": 40,
+        "state": "wander"
+      },
+      {
+        "id": "m3s",
+        "type": "boar",
+        "x": 1326.3482855566656,
+        "y": 1227.8589723226903,
+        "hp": 40,
+        "state": "wander"
+      },
+      {
+        "id": "m3y",
+        "type": "boar",
+        "x": 2374.5629171197593,
+        "y": 1075.4003728351618,
+        "hp": 40,
+        "state": "wander"
+      },
+      {
+        "id": "m46",
+        "type": "boar",
+        "x": 2109.685386023481,
+        "y": 1311.4080728511885,
+        "hp": 40,
+        "state": "wander"
+      },
+      {
+        "id": "m48",
+        "type": "boar",
+        "x": 1879.0295094599946,
+        "y": 1519.302119686106,
+        "hp": 40,
+        "state": "wander"
+      },
+      {
+        "id": "m49",
+        "type": "wolf",
+        "x": 1562.116345908337,
+        "y": 951.6329146203905,
+        "hp": 30,
+        "state": "wander"
+      },
+      {
+        "id": "m4a",
+        "type": "boar",
+        "x": 1839.336490596331,
+        "y": 1684.1967793774834,
+        "hp": 40,
+        "state": "wander"
+      },
+      {
+        "id": "m4b",
+        "type": "boar",
+        "x": 1600.664411535442,
+        "y": 1068.090802362553,
+        "hp": 40,
+        "state": "wander"
+      },
+      {
+        "id": "m4e",
+        "type": "boar",
+        "x": 2084.2246655937465,
+        "y": 1696.4354830609302,
+        "hp": 40,
+        "state": "wander"
+      },
+      {
+        "id": "m4r",
+        "type": "wolf",
+        "x": 1831.790962184352,
+        "y": 935.4749870199439,
+        "hp": 30,
+        "state": "wander"
+      },
+      {
+        "id": "m4y",
+        "type": "wolf",
+        "x": 1909.2086968431008,
+        "y": 664.1311290373171,
+        "hp": 30,
+        "state": "wander"
+      },
+      {
+        "id": "m50",
+        "type": "boar",
+        "x": 2286.313507345421,
+        "y": 1170.9899565664007,
+        "hp": 40,
+        "state": "wander"
+      },
+      {
+        "id": "m53",
+        "type": "boar",
+        "x": 2173.0409205414876,
+        "y": 1280.2199293839078,
+        "hp": 40,
+        "state": "wander"
+      },
+      {
+        "id": "m5c",
+        "type": "boar",
+        "x": 2531.7389312087475,
+        "y": 735.774672963754,
+        "hp": 40,
+        "state": "wander"
+      },
+      {
+        "id": "m5h",
+        "type": "wolf",
+        "x": 2150.561037522702,
+        "y": 1670.9973773075735,
+        "hp": 30,
+        "state": "wander"
+      },
+      {
+        "id": "m5j",
+        "type": "boar",
+        "x": 2609.5862202973312,
+        "y": 875.2545200943797,
+        "hp": 40,
+        "state": "wander"
+      },
+      {
+        "id": "m5k",
+        "type": "boar",
+        "x": 1637.001544731156,
+        "y": 1404.3630927841111,
+        "hp": 40,
+        "state": "wander"
+      },
+      {
+        "id": "m5r",
+        "type": "boar",
+        "x": 1820.5294411041007,
+        "y": 1103.9732091172307,
+        "hp": 40,
+        "state": "wander"
+      },
+      {
+        "id": "m5v",
+        "type": "boar",
+        "x": 1785.6873456276257,
+        "y": 1311.9368420302953,
+        "hp": 40,
+        "state": "wander"
+      },
+      {
+        "id": "m61",
+        "type": "boar",
+        "x": 1604.0614135081814,
+        "y": 1168.0754849489683,
+        "hp": 40,
+        "state": "wander"
+      },
+      {
+        "id": "m6h",
+        "type": "boar",
+        "x": 2199.875308193667,
+        "y": 1407.6908575888142,
+        "hp": 40,
+        "state": "wander"
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r284",
+        "seq": 284,
+        "at": 1793773774224,
+        "kind": "offline.settle",
+        "detail": "147s"
+      },
+      {
+        "id": "r285",
+        "seq": 285,
+        "at": 1793773789557,
+        "kind": "offline.settle",
+        "detail": "15s"
+      },
+      {
+        "id": "r286",
+        "seq": 286,
+        "at": 1793773791272,
+        "kind": "respawn",
+        "detail": "2104,2072"
+      },
+      {
+        "id": "r287",
+        "seq": 287,
+        "at": 1793773810502,
+        "kind": "offline.settle",
+        "detail": "19s"
+      },
+      {
+        "id": "r288",
+        "seq": 288,
+        "at": 1793778157370,
+        "kind": "offline.settle",
+        "detail": "4347s"
+      },
+      {
+        "id": "r289",
+        "seq": 289,
+        "at": 1793778170827,
+        "kind": "death",
+        "detail": "Greyfang Wolf; bag=b1k6"
+      },
+      {
+        "id": "r290",
+        "seq": 290,
+        "at": 1793778207703,
+        "kind": "offline.settle",
+        "detail": "37s"
+      },
+      {
+        "id": "r291",
+        "seq": 291,
+        "at": 1793778209487,
+        "kind": "respawn",
+        "detail": "2008,1096"
+      }
+    ]
+  }
+}

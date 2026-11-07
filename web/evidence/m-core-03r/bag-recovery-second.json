@@ -1,0 +1,340 @@
+{
+  "method": "Normal-input respawn and recovery after a genuine later death; prior process had rolled back one unpersisted earlier death. Route uses read-only grid.",
+  "errors": [],
+  "respawn": {
+    "p": {
+      "x": 1624,
+      "y": 1736,
+      "vx": 0,
+      "vy": 0,
+      "dir": 1,
+      "aim": 2.9863306596826833,
+      "hp": 60.045336000000034,
+      "stamina": 82.96579999999997,
+      "hunger": 68.32114719997018,
+      "thirst": 59.9817207999924,
+      "warmth": 79.9417862508531,
+      "rad": 19.977917499999975,
+      "active": 0,
+      "action": null,
+      "invuln": 1116.6999999999998,
+      "dead": false,
+      "deadT": 2633.2,
+      "pulling": null,
+      "skills": {
+        "gather": 72,
+        "combat": 2,
+        "craft": 0,
+        "survival": 0
+      },
+      "stepAcc": 3.42,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Heartland",
+      "sheltered": false
+    },
+    "receipts": [
+      {
+        "id": "r242",
+        "seq": 242,
+        "at": 1793770267608,
+        "kind": "offline.settle",
+        "detail": "22s"
+      },
+      {
+        "id": "r243",
+        "seq": 243,
+        "at": 1793770271432,
+        "kind": "death",
+        "detail": "projectile; bag=brl"
+      },
+      {
+        "id": "r244",
+        "seq": 244,
+        "at": 1793770279277,
+        "kind": "offline.settle",
+        "detail": "6s"
+      },
+      {
+        "id": "r245",
+        "seq": 245,
+        "at": 1793770289497,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r246",
+        "seq": 246,
+        "at": 1793770290928,
+        "kind": "respawn",
+        "detail": "1624,1736"
+      }
+    ]
+  },
+  "routeSteps": 62,
+  "after": {
+    "p": {
+      "x": 2530.554422752299,
+      "y": 1705.4968199110315,
+      "vx": 0,
+      "vy": 0,
+      "dir": 3,
+      "aim": -1.6055378974244707,
+      "hp": 39.045336000000034,
+      "stamina": 100,
+      "hunger": 67.70850319996806,
+      "thirst": 59.06275479999236,
+      "warmth": 79.1228916448344,
+      "rad": 20.38830583333303,
+      "active": 0,
+      "action": null,
+      "invuln": 0,
+      "dead": false,
+      "deadT": 2633.2,
+      "pulling": null,
+      "skills": {
+        "gather": 73,
+        "combat": 2,
+        "craft": 0,
+        "survival": 0
+      },
+      "stepAcc": 0,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Dead Foundry",
+      "sheltered": false
+    },
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 78
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7k",
+        "key": "wood",
+        "qty": 4
+      },
+      {
+        "uid": "s7l",
+        "key": "seed",
+        "qty": 4
+      },
+      {
+        "uid": "s88",
+        "key": "scrap",
+        "qty": 23
+      },
+      {
+        "uid": "s8f",
+        "key": "fasteners",
+        "qty": 4
+      },
+      {
+        "uid": "sep",
+        "key": "fiber",
+        "qty": 6
+      },
+      {
+        "uid": "sew",
+        "key": "meat",
+        "qty": 1
+      },
+      {
+        "uid": "sex",
+        "key": "fur",
+        "qty": 2
+      },
+      {
+        "uid": "sid",
+        "key": "stone",
+        "qty": 3
+      },
+      {
+        "uid": "smr",
+        "key": "field_repair_kit",
+        "qty": 2
+      },
+      {
+        "uid": "smm",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "smw",
+        "key": "damaged_drive",
+        "qty": 1
+      },
+      {
+        "uid": "snj",
+        "key": "damaged_drive",
+        "qty": 1
+      }
+    ],
+    "bags": [
+      {
+        "id": "bop",
+        "slots": []
+      },
+      {
+        "id": "brl",
+        "slots": []
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r243",
+        "seq": 243,
+        "at": 1793770271432,
+        "kind": "death",
+        "detail": "projectile; bag=brl"
+      },
+      {
+        "id": "r244",
+        "seq": 244,
+        "at": 1793770279277,
+        "kind": "offline.settle",
+        "detail": "6s"
+      },
+      {
+        "id": "r245",
+        "seq": 245,
+        "at": 1793770289497,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r246",
+        "seq": 246,
+        "at": 1793770290928,
+        "kind": "respawn",
+        "detail": "1624,1736"
+      },
+      {
+        "id": "r247",
+        "seq": 247,
+        "at": 1793770302298,
+        "kind": "harvest",
+        "detail": "oak@144,106 -1"
+      },
+      {
+        "id": "r248",
+        "seq": 248,
+        "at": 1793770305507,
+        "kind": "move",
+        "detail": "knifex1 crk->inv"
+      },
+      {
+        "id": "r249",
+        "seq": 249,
+        "at": 1793770305590,
+        "kind": "move",
+        "detail": "water_flaskx1 crk->inv"
+      },
+      {
+        "id": "r250",
+        "seq": 250,
+        "at": 1793770305671,
+        "kind": "move",
+        "detail": "berriesx3 crk->inv"
+      },
+      {
+        "id": "r251",
+        "seq": 251,
+        "at": 1793770305741,
+        "kind": "move",
+        "detail": "woodx4 crk->inv"
+      },
+      {
+        "id": "r252",
+        "seq": 252,
+        "at": 1793770305805,
+        "kind": "move",
+        "detail": "seedx4 crk->inv"
+      },
+      {
+        "id": "r253",
+        "seq": 253,
+        "at": 1793770305873,
+        "kind": "move",
+        "detail": "scrapx23 crk->inv"
+      },
+      {
+        "id": "r254",
+        "seq": 254,
+        "at": 1793770305943,
+        "kind": "move",
+        "detail": "fastenersx4 crk->inv"
+      },
+      {
+        "id": "r255",
+        "seq": 255,
+        "at": 1793770306039,
+        "kind": "move",
+        "detail": "fiberx6 crk->inv"
+      },
+      {
+        "id": "r256",
+        "seq": 256,
+        "at": 1793770306122,
+        "kind": "move",
+        "detail": "meatx1 crk->inv"
+      },
+      {
+        "id": "r257",
+        "seq": 257,
+        "at": 1793770306190,
+        "kind": "move",
+        "detail": "furx2 crk->inv"
+      },
+      {
+        "id": "r258",
+        "seq": 258,
+        "at": 1793770306255,
+        "kind": "move",
+        "detail": "stonex3 crk->inv"
+      },
+      {
+        "id": "r259",
+        "seq": 259,
+        "at": 1793770306338,
+        "kind": "move",
+        "detail": "field_repair_kitx2 crk->inv"
+      },
+      {
+        "id": "r260",
+        "seq": 260,
+        "at": 1793770306425,
+        "kind": "move",
+        "detail": "damaged_drivex1 crk->inv"
+      },
+      {
+        "id": "r261",
+        "seq": 261,
+        "at": 1793770306534,
+        "kind": "move",
+        "detail": "damaged_drivex1 crk->inv"
+      },
+      {
+        "id": "r262",
+        "seq": 262,
+        "at": 1793770306607,
+        "kind": "move",
+        "detail": "damaged_drivex1 crk->inv"
+      }
+    ]
+  },
+  "failure": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert(rec.after.inv.some(s=>s.key==='spares'))\n"
+}

@@ -1,0 +1,65 @@
+{
+  "method": "injected Core/ammo and nearby wolf; real mouse attack",
+  "fixture": {
+    "ok": true,
+    "id": "m72",
+    "angle": 0,
+    "x": 783,
+    "y": 2744,
+    "camX": 408,
+    "camY": 2558,
+    "hp": 100
+  },
+  "result": {
+    "hp": 84,
+    "state": "chase",
+    "knows": {
+      "kind": "sight",
+      "x": 728,
+      "y": 2744,
+      "at": 1793842439554
+    },
+    "receipts": [
+      {
+        "id": "r1",
+        "seq": 1,
+        "at": 1793842436121,
+        "kind": "run.start",
+        "detail": "female@the island"
+      },
+      {
+        "id": "r2",
+        "seq": 2,
+        "at": 1793842436975,
+        "kind": "core.load",
+        "detail": "s70:basic+5"
+      },
+      {
+        "id": "r3",
+        "seq": 3,
+        "at": 1793842437097,
+        "kind": "core.commit",
+        "detail": "s70:basic:4"
+      },
+      {
+        "id": "r4",
+        "seq": 4,
+        "at": 1793842437097,
+        "kind": "achievement",
+        "detail": "first_core"
+      }
+    ],
+    "pfx": {
+      "failed": false,
+      "entry": {
+        "id": "arcane/arcane-orb",
+        "name": "Arcane orb",
+        "category": "arcane",
+        "state": "PARITY_PASS",
+        "loaded": true,
+        "pilot": true
+      }
+    }
+  },
+  "errors": []
+}
