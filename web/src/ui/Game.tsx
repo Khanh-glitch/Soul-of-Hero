@@ -8,9 +8,18 @@ import { ITEMS, STRUCTS, ELDERS, CREATURES, STRUCTURE_UPGRADES } from '../game/c
 import { dispatch, phaseOf, runHours, dayTime, weatherAt, weatherSlot, countItem, C, entsAt, cartWeight, cartLimit, effTile, isRagnarok, buildReason, clearWallLine, claimAt, territoryForecast } from '../game/engine';
 import { tick, syncWorld, findInteract, activeStack, SPEED_KEY, rayLen, spiritDestination, type Input, type Interact } from '../game/sim';
 import { draw, consumeFX, cam } from '../game/render';
+import { qaFillPack, qaPrepareFullPack, qaSetSecuredCash } from '../game/qa-fixtures';
+const SAVE_TOAST: Record<string, string> = {
+  'invalid-state': 'Save refused: the game state failed an integrity check. Your last good save is kept.',
+  'serialize-error': 'Save failed: the snapshot could not be prepared. Your last good save is kept.',
+  'local-write': 'This browser refused the save write (storage full or blocked). Your last good save is kept.',
+  'readback-conflict': 'Save could not be confirmed on readback. Do not close the tab yet.',
+  'idb-init': 'Save database unavailable; the local copy was written.',
+  'idb-transaction': 'Save database write failed; the local copy was written.',
+};
 import { getWorld, ZONES } from '../game/world';
 import { sfx, setAmbience, initAudio } from '../game/audio';
-import { save, saveSync } from '../game/persist';
+import { save, saveSync, saveDetailed, lastSaveOutcome } from '../game/persist';
 import { Slot, Bar, Icon, mkIntent, type Api, type PanelState } from './common';
 import { HomeStatusCard } from './HomeStatus';
 import { ThermalStatusCard } from './ThermalStatus';
@@ -34,7 +43,11 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
   const mouse = useRef({ x: 320, y: 180 }); const target = useRef<Interact | null>(null); const hitstop = useRef(0);
   const panelRef = useRef(panel); panelRef.current = panel; const buildRef = useRef(buildType); buildRef.current = buildType; const reclaimRef = useRef(reclaim); reclaimRef.current = reclaim; const repairRef = useRef(repairMode); repairRef.current = repairMode; const upgradeRef = useRef(upgradeMode); upgradeRef.current = upgradeMode;
   const saveT = useRef<any>(null); const toastKeys = useRef<Record<string, number>>({});
-  const scheduleSave = () => { clearTimeout(saveT.current); saveT.current = setTimeout(() => { void save(gs).then(ok => { if (!ok) toast('Save failed. Changes are not confirmed on disk.', 'bad'); }); }, 250); };
+  const scheduleSave = () => { clearTimeout(saveT.current); saveT.current = setTimeout(() => { void saveDetailed(gs).then(reportSave); }, 250); };
+  const reportSave = (o: { ok: boolean; category: string; idbStatus: string }) => {
+    const text = !o.ok ? SAVE_TOAST[o.category] ?? SAVE_TOAST['serialize-error'] : o.idbStatus === 'idb-init' || o.idbStatus === 'idb-transaction' ? 'Saved to this browser; the backup database write failed.' : '';
+    if (text) toast(text, 'bad');
+  };
   const toast = useCallback((text: string, tone?: string) => { if (!text) return; const k = text; const n = Date.now(); if (toastKeys.current[k] && n - toastKeys.current[k] < 2500) return; toastKeys.current[k] = n; const id = n + Math.random(); setToasts(t => [...t.slice(-3), { id, text, tone, t: n }]); setTimeout(() => setToasts(t => t.filter(v => v.id !== id)), 3300); }, []);
   const act = useCallback((type: string, payload: Record<string, any> = {}) => {
     const now = Date.now();
@@ -154,7 +167,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       // close container panels when walking away
       const P = panelRef.current; if (P?.eid && gs.run.entities[P.eid]) { const e = gs.run.entities[P.eid]; if ((Math.hypot(e.x - gs.run.player.x, e.y - gs.run.player.y) > 3.4 * TILE || (e.kind === 'struct' && !clearWallLine(gs.run, gs.run.player, e)))) setPanel(null); } else if (P?.eid && !gs.run.entities[P.eid]) setPanel(null);
       uiAcc += dt; if (uiAcc > 100) { uiAcc = 0; rerender(); }
-      saveAcc += dt; if (saveAcc > 5000) { saveAcc = 0; void save(gs).then(ok => { if (!ok) toast('Save failed. Changes are not confirmed on disk.', 'bad'); }); }
+      saveAcc += dt; if (saveAcc > 5000) { saveAcc = 0; void saveDetailed(gs).then(reportSave); }
       ambAcc += dt; if (ambAcc > 1000) { ambAcc = 0; const w = weatherAt(gs.run, now); const z = getWorld().zone[Math.floor(gs.run.player.y / 16) * WW + Math.floor(gs.run.player.x / 16)]; setAmbience(w === 'storm' ? 1 : w === 'rain' ? 0.6 : 0, (z === 5 ? 0.9 : 0.25) + (w === 'storm' ? 0.6 : 0)); }
     };
     raf = requestAnimationFrame(loop); return () => cancelAnimationFrame(raf);
@@ -182,11 +195,14 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
   };
   const onMouseUp = () => { inp.current.attack = false; };
 
-  (window as any).__soh = gs; // QA-only inspection hook (browser automation); no gameplay authority
+  if (import.meta.env.VITE_SOH_QA === '1') (window as any).__soh = gs; // QA builds only: mutable state reference for drivers
   // QA read-only view: camera + stage transform + current interaction target (lets a driver aim the real mouse). No authority.
-  (window as any).__sohView = () => ({ cam: { x: cam.x, y: cam.y }, scale: scaleRef.current, off: offRef.current, target: target.current ? { kind: target.current.kind, label: target.current.label, eid: target.current.eid ?? null } : null });
+  (window as any).__sohView = () => ({ lastSave: lastSaveOutcome(), cam: { x: cam.x, y: cam.y }, scale: scaleRef.current, off: offRef.current, target: target.current ? { kind: target.current.kind, label: target.current.label, eid: target.current.eid ?? null } : null });
   // QA fixture passthrough: used ONLY by disclosed browser fixtures (pack filling, cart placement). Gameplay still goes through dispatch.
-  (window as any).__sohAct = (type: string, payload: Record<string, any> = {}) => act(type, payload);
+  if (import.meta.env.VITE_SOH_QA === '1') (window as any).__sohQA = { // QA builds only: fixture helpers (all mutations via engine rules)
+    act: (type: string, payload: Record<string, any> = {}) => act(type, payload),
+    preparePack: () => qaPrepareFullPack(gs.run!), fillPack: () => qaFillPack(gs.run!), setSecuredCash: (n: number) => qaSetSecuredCash(gs, n),
+  };
   const r = gs.run; if (!r) return <div className="stage" />;
   const p = r.player; const now = Date.now(); const ph = phaseOf(r, now); const hrs = runHours(r, now); const day = Math.floor(hrs / 24) + 1;
   const dtm = dayTime(r, now); const clock = `${String(Math.floor(dtm * 24)).padStart(2, '0')}:${String(Math.floor((dtm * 24 % 1) * 60)).padStart(2, '0')}`;

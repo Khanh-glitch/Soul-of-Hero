@@ -355,15 +355,62 @@ export async function load(): Promise<LoadResult> {
   return { gs: m.gs, note: notes.join(' ') || undefined };
 }
 let writeTail: Promise<unknown> = Promise.resolve();
-export async function save(gs: GameState): Promise<boolean> {
-  let text: string; try { text = serializeSnapshot(gs); } catch { return false; }
-  let local = false; try { if (localReadable) { localStorage.setItem(LS, text); local = true; } } catch { /* quota */ }
-  const write = async () => {
-    if (!idbReadable) return false; const d = await db(); if (!d) return false;
-    return await new Promise<boolean>(res => { try { const tx = d.transaction(STORE, 'readwrite'); tx.objectStore(STORE).put(text, KEY); tx.oncomplete = () => res(true); tx.onerror = () => res(false); tx.onabort = () => res(false); } catch { res(false); } });
-  };
-  const result = writeTail.then(write, write); writeTail = result;
-  return local || await result;
+export type SaveCategory = 'ok' | 'invalid-state' | 'serialize-error' | 'local-write' | 'readback-conflict' | 'idb-init' | 'idb-transaction';
+export interface SaveOutcome {
+  ok: boolean; category: SaveCategory; revision: number | null;
+  localStatus: 'ok' | 'skipped' | 'local-write' | 'readback-conflict';
+  idbStatus: 'ok' | 'skipped' | 'idb-init' | 'idb-transaction';
+  /** Bounded invariant class only (e.g. "over-max:stone"). Never a payload, quantity list or inventory dump. */
+  invariant?: string;
 }
+let lastOutcome: SaveOutcome | null = null; const warnedSave = new Set<string>();
+export function lastSaveOutcome(): SaveOutcome | null { return lastOutcome; }
+/** Bounded classification of why a game state is not a valid save. Returns a class name, never values from the save. */
+export function diagnoseInvalidState(gs: GameState): string {
+  const r = gs.run; if (!r) return 'no-run';
+  const seen = new Set<string>();
+  for (const c of Object.values(r.custody) as any[]) for (const s of (c?.slots ?? []) as any[]) {
+    if (!s) continue;
+    if (!ITEMS[s.key]) return 'unknown-item';
+    if (!Number.isInteger(s.qty) || s.qty < 1) return 'bad-qty';
+    if (s.qty > ITEMS[s.key].max) return `over-max:${s.key}`;
+    if (seen.has(s.uid)) return 'duplicate-uid'; seen.add(s.uid);
+  }
+  return 'other';
+}
+/**
+ * Local-first save with bounded diagnostics. Validation happens BEFORE any write, so an invalid new state never
+ * overwrites the last valid snapshot. localStorage and IndexedDB are both written; the save succeeds if either holds the snapshot.
+ */
+export async function saveDetailed(gs: GameState): Promise<SaveOutcome> {
+  const record = (o: SaveOutcome): SaveOutcome => {
+    lastOutcome = o;
+    const key = o.ok ? (o.idbStatus === 'ok' || o.idbStatus === 'skipped' ? '' : `ok:${o.idbStatus}`) : o.category;
+    if (key && !warnedSave.has(key)) { warnedSave.add(key); console.warn(`[save] ${key}`); }   // category only; no payload
+    return o;
+  };
+  if (!validate(gs)) return record({ ok: false, category: 'invalid-state', revision: null, localStatus: 'skipped', idbStatus: 'skipped', invariant: diagnoseInvalidState(gs) });
+  let text: string;
+  try { text = serializeSnapshot(gs); }
+  catch { return record({ ok: false, category: 'serialize-error', revision: null, localStatus: 'skipped', idbStatus: 'skipped' }); }
+  const revision = gs.revision;
+  let localStatus: SaveOutcome['localStatus'] = 'skipped';
+  if (localReadable) {
+    try { localStorage.setItem(LS, text); localStatus = localStorage.getItem(LS) === text ? 'ok' : 'readback-conflict'; }
+    catch { localStatus = 'local-write'; }
+  }
+  const write = async (): Promise<SaveOutcome['idbStatus']> => {
+    if (!idbReadable) return 'idb-init';
+    const d = await db(); if (!d) return 'idb-init';
+    return await new Promise<SaveOutcome['idbStatus']>(res => { try { const tx = d.transaction(STORE, 'readwrite'); tx.objectStore(STORE).put(text, KEY); tx.oncomplete = () => res('ok'); tx.onerror = () => res('idb-transaction'); tx.onabort = () => res('idb-transaction'); } catch { res('idb-transaction'); } });
+  };
+  const result = writeTail.then(write, write) as Promise<SaveOutcome['idbStatus']>; writeTail = result;
+  const idbStatus: SaveOutcome['idbStatus'] = await result;
+  const ok = localStatus === 'ok' || idbStatus === 'ok';
+  if (ok) return record({ ok: true, category: 'ok', revision, localStatus, idbStatus });
+  const category: SaveCategory = idbStatus === 'idb-init' || idbStatus === 'idb-transaction' ? idbStatus : localStatus === 'local-write' ? 'local-write' : 'readback-conflict';
+  return record({ ok: false, category, revision: null, localStatus, idbStatus });
+}
+export async function save(gs: GameState): Promise<boolean> { return (await saveDetailed(gs)).ok; }
 export function saveSync(gs: GameState): boolean { try { if (!localReadable) return false; localStorage.setItem(LS, serializeSnapshot(gs)); return true; } catch { return false; } }
 export async function wipeAll() { try { localStorage.removeItem(LS); } catch { /* */ } const d = await db(); if (d) await new Promise<void>(res => { const tx = d.transaction(STORE, 'readwrite'); tx.objectStore(STORE).delete(KEY); tx.oncomplete = () => res(); tx.onerror = () => res(); }); }
