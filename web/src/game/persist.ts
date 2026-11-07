@@ -87,14 +87,20 @@ export function validate(raw: any): GameState | null {
   // Only the supported landing impulse may introduce new non-player knowledge.
   const stimulusId=(id:any,index:any)=>typeof id==='string'&&integer(index)&&index<(r.airdrops?.nextIndex??0)&&new RegExp(`^airdrop:${index}:e[0-9a-z]+$`).test(id)&&beforeNext(id.split(':')[2],/^e([a-z0-9]+)$/);
   const stimulusCoordinates=(x:any,y:any)=>finite(x)&&finite(y)&&Number.isInteger((x-8)/TILE)&&Number.isInteger((y-8)/TILE)&&airdropStaticEligible(world,(x-8)/TILE,(y-8)/TILE);
-  if(r.worldStimuli!==undefined&&(!Array.isArray(r.worldStimuli)||r.worldStimuli.length>1||r.worldStimuli.some((s:any)=>{
+  // W08 combat sound: a committed weapon release at a real release point. Identity is the receipt sequence; it must be an already-committed event.
+  const combatId=(id:any,index:any)=>typeof id==='string'&&integer(index)&&index>=1&&index<=r.seq&&id===`combat:${index}`;
+  const combatSignal=(s:any)=>obj(s)&&s.version==='world-stimulus-v1'&&s.kind==='combat-sound'&&s.modality==='sound'&&(s.eligibility==='audible-ranged-v1'||s.eligibility==='audible-melee-v1')&&combatId(s.sourceId,s.eventIndex)&&s.id===`${s.sourceId}:sound`&&finite(s.x)&&finite(s.y)&&s.x>=0&&s.y>=0&&s.x<WW*TILE&&s.y<WH*TILE&&finite(s.at)&&s.at>=0&&s.expiresAt===s.at+BAL.worldStimulusV1.signalMs&&s.range===BAL.worldStimulusV1.combatSoundRanges[s.eligibility==='audible-ranged-v1'?'ranged':'melee']&&s.strength===1&&r.clock.lastSimAt>=s.at&&r.clock.lastSimAt<s.expiresAt;
+  const combatKnowledge=(k:any)=>obj(k)&&combatId(k.sourceId,k.eventIndex)&&finite(k.x)&&finite(k.y)&&k.x>=0&&k.y>=0&&k.x<WW*TILE&&k.y<WH*TILE&&finite(k.at)&&k.at>=0&&k.expiresAt===k.at+BAL.worldStimulusV1.memoryMs&&r.clock.lastSimAt>=k.at&&r.clock.lastSimAt<k.expiresAt&&finite(k.goalX)&&finite(k.goalY);
+  if(r.worldStimuli!==undefined&&(!Array.isArray(r.worldStimuli)||r.worldStimuli.length>1+BAL.worldStimulusV1.combatSignalCap||new Set(r.worldStimuli.map((s:any)=>s?.sourceId)).size!==r.worldStimuli.length||r.worldStimuli.some((s:any)=>{
+    if(obj(s)&&s.kind==='combat-sound')return !combatSignal(s);
     if(!obj(s)||s.version!=='world-stimulus-v1'||s.kind!=='airdrop-landing'||s.modality!=='sound'||s.eligibility!=='audible-landing-v1'||!stimulusId(s.sourceId,s.eventIndex)||s.id!==s.sourceId+':landing'||!stimulusCoordinates(s.x,s.y)||s.at!==airdropTimes(r,s.eventIndex).landAt||s.expiresAt!==s.at+BAL.worldStimulusV1.signalMs||s.range!==BAL.worldStimulusV1.landingSoundRange||s.strength!==1||r.clock.lastSimAt<s.at||r.clock.lastSimAt>=s.expiresAt)return true;
     const source=r.entities[s.sourceId.split(':')[2]];return !!source&&(source.kind!=='airdrop'||source.airdrop?.index!==s.eventIndex||source.x!==s.x||source.y!==s.y||!['locked','open','partial'].includes(source.airdrop?.phase));
   })))return null;
   for(const m of r.creatures){
-    if(m.stimulusIgnore!==undefined){const parts=typeof m.stimulusIgnore==='string'?m.stimulusIgnore.split(':'):[];if(parts.length!==3||!stimulusId(m.stimulusIgnore,Number(parts[1])))return null;}
+    if(m.stimulusIgnore!==undefined){const parts=typeof m.stimulusIgnore==='string'?m.stimulusIgnore.split(':'):[];const combat=parts.length===2&&combatId(m.stimulusIgnore,Number(parts[1]));if(!combat&&(parts.length!==3||!stimulusId(m.stimulusIgnore,Number(parts[1]))))return null;}
     if(m.stimulusRouteAt!==undefined&&!finite(m.stimulusRouteAt))return null;
-    const k=m.knows;if(k?.kind==='stimulus'){
+    const k=m.knows;if(k?.kind==='stimulus'&&typeof k.sourceId==='string'&&k.sourceId.startsWith('combat:')){if(m.elder||!combatKnowledge(k)||m.stimulusIgnore!==k.sourceId)return null;}
+    else if(k?.kind==='stimulus'){
       if(!r.airdrops||m.elder||!obj(k)||!stimulusId(k.sourceId,k.eventIndex)||m.stimulusIgnore!==k.sourceId||!stimulusCoordinates(k.x,k.y)||k.at!==airdropTimes(r,k.eventIndex).landAt||k.expiresAt!==k.at+BAL.worldStimulusV1.memoryMs||r.clock.lastSimAt<k.at||r.clock.lastSimAt>=k.expiresAt||!finite(k.goalX)||!finite(k.goalY)||![[TILE,0],[-TILE,0],[0,TILE],[0,-TILE]].some(([x,y])=>k.goalX===k.x+x&&k.goalY===k.y+y))return null;
       const source=r.entities[k.sourceId.split(':')[2]];if(source&&(source.kind!=='airdrop'||source.airdrop?.index!==k.eventIndex||source.x!==k.x||source.y!==k.y))return null;
     }

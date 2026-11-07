@@ -820,7 +820,7 @@
     ]
   },
   "worldStimulusV1": {
-    "_status": "SOH_PROVISIONAL; ORIGINAL_UNKNOWN sensory ranges, duration and species sensitivity",
+    "_status": "SOH_PROVISIONAL; ORIGINAL_UNKNOWN sensory ranges, duration and species sensitivity; W08 combatSoundRanges/combatSignalCap SOH_PROVISIONAL (no Last Island numeric value)",
     "landingSoundRange": 160,
     "signalMs": 4000,
     "memoryMs": 24000,
@@ -834,7 +834,12 @@
       "beetle": 0.7,
       "boar": 0,
       "crab": 0
-    }
+    },
+    "combatSoundRanges": {
+      "ranged": 150,
+      "melee": 36
+    },
+    "combatSignalCap": 32
   },
   "restV1": {
     "_status": "SOH_PROVISIONAL_REVERSIBLE: physically supplied bed rest. No LI parity claim. Rates reuse player.offlineHungerPerHour / offlineThirstPerHour.",

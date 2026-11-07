@@ -121,7 +121,7 @@ export interface Entity {
 /** Undefined reserved means an older save whose paid inputs cannot be reconstructed safely. */
 export interface Job { id: string; recipe: string; left: number; total: number; reserved?: Stack[] }
 
-export interface WorldStimulus { version:'world-stimulus-v1'; id:string; sourceId:string; eventIndex:number; kind:'airdrop-landing'; modality:'sound'; eligibility:'audible-landing-v1'; x:number; y:number; at:number; expiresAt:number; range:number; strength:number }
+export interface WorldStimulus { version:'world-stimulus-v1'; id:string; sourceId:string; eventIndex:number; kind:'airdrop-landing'|'combat-sound'; modality:'sound'; eligibility:'audible-landing-v1'|'audible-ranged-v1'|'audible-melee-v1'; x:number; y:number; at:number; expiresAt:number; range:number; strength:number }
 
 export interface Trace { x: number; y: number; t: number; life: number; a: number; s: number; id?: string; chainId?: string; prevId?: string }
 /** Run-local movement continuity; absent in legacy saves. */

@@ -80,9 +80,9 @@ Single 336 h run clock is preserved; S12 reward/custody unchanged.
 Implementing this branch is **not** completion of SYS08. Provisional ledger update for this PR only:
 
 - SYS08-C01 physically legitimate trace-based threat — PARTIAL (stimulus path added; weather-decay of non-player traces still follows existing SYS08-C02 path only).
-- SYS08-C03 creature sight and auditory perception — PARTIAL (sight unchanged; single airdrop sound stimulus with provisional range/species table, geometry and timing).
+- SYS08-C03 creature sight and auditory perception — PARTIAL (sight unchanged; airdrop sound plus committed bow-release and melee sound, with provisional range/species table, geometry and timing; W08).
 - SYS08-C04 physical doors, walls and collision — PARTIAL (investigation uses same live grid; arrival cell logic preserves collision).
-- SYS08-C09 appropriate creature response — PARTIAL (distinct investigation lifecycle with expiry/arrival/blocked; no auto-ambush).
+- SYS08-C09 appropriate creature response — PARTIAL (distinct investigation lifecycle with expiry/arrival/blocked, now also for committed combat sound; no auto-ambush).
 - SYS08-C10 defensible offline simulation — PARTIAL (no invented notices/movement/combat; expiry honoured; otherwise deferred to live).
 - SYS08-C02 weather-dependent trace decay — unchanged (still governs real footprints, not a separate stimulus decay).
 - SYS08-C07/C08/C11, SYS10/12 full system — still MISSING/OWNER-BLOCKED for general threat/defense beyond this airdrop branch.

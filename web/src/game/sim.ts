@@ -1,4 +1,4 @@
-import { stimulusNearHome } from './stimulus';
+import { stimulusNearHome, combatStimulus, pushCombatStimulus, combatSourceId } from './stimulus';
 import { airdropBoundary, stepAirdrops } from './engine';
 import { airdropView } from './airdrop';
 import { advancePoiAccess, poiDoorLabel, poiGenLabel } from './poi-access';
@@ -405,15 +405,21 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
 }
 function cartWeightOf(r: RunState, e: Entity) { return C(r, e.c!).slots.reduce((a, s) => a + (s ? ITEMS[s.key].w * s.qty : 0), 0); }
 
+/** W08: a committed weapon release is a finite, source-identified sound at the release point. Quiet melee uses a short range. */
+function emitCombatSound(r: RunState, now: number, kind: 'ranged' | 'melee', x: number, y: number) {
+  receipt(r, now, 'stimulus.emit', `${kind}:${combatSourceId(r.seq)}`);
+  pushCombatStimulus(r, combatStimulus(r.seq, kind, x, y, now));
+}
 function resolveSwing(gs: GameState, now: number, slot: number, a: number) {
   const r = gs.run!; const p = r.player; const s = slot >= 0 ? C(r, 'inv').slots[slot] : null; const d = s ? ITEMS[s.key] : FISTS;
   if (s?.dur !== undefined && s.dur <= 0 && d.repair) return; // stale action cannot use a broken physical item
   if (d.ranged) { // bow: arrow consumed at release
-    if (countItem(r, 'inv', 'arrow') < 1) return; removeItem(r, 'inv', 'arrow', 1);
+    if (countItem(r, 'inv', 'arrow') < 1) return; removeItem(r, 'inv', 'arrow', 1); emitCombatSound(r, now, 'ranged', p.x, p.y);
     PROJ.push({ x: p.x + Math.cos(a) * 8, y: p.y + Math.sin(a) * 8, vx: Math.cos(a) * 260, vy: Math.sin(a) * 260, life: 0.85, dmg: d.dmg, from: 'player', kind: 'arrow', r: 3 }); fx('bowshot', { x: p.x, y: p.y, a });
     wearTool(gs, slot, now); return;
   }
   const R = d.reach, A = d.arc; let hitAny = false;
+  emitCombatSound(r, now, 'melee', p.x, p.y);
   fx('slash', { x: p.x, y: p.y - 2, a, reach: R, arc: A, key: s?.key || 'fists' });
   for (const m of r.creatures) {
     if (m.state === 'dead') continue; const dd = dist(p.x, p.y, m.x, m.y) - (m.elder ? ELDERS[m.elder.key].r : CREATURES[m.type]?.r || 6);
