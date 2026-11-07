@@ -406,3 +406,45 @@ Not done (next actions):
 - C (POI access, loot→industry audit, icon/UI audit at 640×360 for all new items): not done. Map placement for oil sources is a dependency.
 - D (LI→SOH numeric parity table for industrial/freight mechanics): not done.
 - Standalone build: not run this round.
+
+## B05-R continuation (SOH gameplay tower review of 6b427c34) — PARTIAL, PR #44 DRAFT/HOLD/UNMERGED
+
+Scope: fix the two verified Package A UI defects, then B (freight), C (loot/recycler), D (verification/handoff). Nothing marked DONE. No Map, AVFX, Godot or owner-branch edits. No Map POIs, roads or oil sites were invented.
+
+### P0 fixes (done)
+- Oil Pump is in `BUILD_ORDER` and the Work group (`BUILD_GROUPS`). It is shown **locked** with the reason "no authorized oil source (Map pending)" until a run holds an authorized source with stock (`buildLocked`, `anyAuthorizedOilSource`). Test: `tests/b05r-oil-ui.test.tsx`.
+- `StationBody`: the source-stock line moved into the returned JSX (`data-testid="oil-source-stock"`). It reads "N Crude Petroleum left" and changes to "0 … — dry, cycles blocked" at zero stock. A pump with no authorized source says so. Tests assert the rendered text.
+- Authority domain: `RunState.oilTestFixture` is set only by the test-only registrar. Without it, persist refuses any `oilSources` and the authorization gate ignores them. Production sources must later bind to a versioned Map site and map revision; that authority is not defined yet, so it is refused.
+
+### B — freight (done in part)
+- B1 integration (`tests/b05-freight-crude.test.ts`): authorized fixture → 4 pump cycles → crude UID stacks → inventory → motorbike cargo (existing `move`) → real motion under `tick()` until the bike's own fuel burn empties the tank → `vehicleUnloadBag` into a ground bag → bag → inventory → `refinery_crude` → 1 Fuel Canister. Crude is conserved at every checkpoint (4 → 0 consumed by the job) and the original UID survives to the refinery. Existing custody, movement and unload authorities were used; nothing was rebuilt.
+- B2 measured comparison (`tests/b05-freight-compare.test.ts`, evidence `web/evidence/b05-freight/freight-compare.json`, SOH_PROVISIONAL balance readings, same Shipping road segment, path length not net displacement):
+  - walk ≈ 92 px/s, no vehicle fuel or wear
+  - hand cart empty ≈ 98 px/s, loaded ≈ 97 px/s, cart cap 240 weight / 24 slots
+  - motorbike empty / loaded ≈ 125 px/s on road, ~75 fuel and ~3 HP per 12 s on road, cargo cap 80 weight / 12 slots
+  - Tradeoff, not a universal winner: the bike is fastest and uses fuel and wear; the cart is nearly walking speed with no fuel; walking has no carrying limit beyond personal load.
+- Defect/observation (not changed, owner decision): `sim.ts` applies the cart's road factor (1.36 × base speed) without the `terrainSpeed` table that walking uses. A pulled cart on road is therefore only marginally faster than walking. Bike tank (300) lasts about 48 s of road driving at this rate. Both are noted as SOH_PROVISIONAL; balance was not changed arbitrarily.
+
+### B3 — economy and loops
+- **Defect fixed (free energy):** stations burned any item with a fuel value, including Fuel Canister (60 s). Since pump, refinery and furnace all produce canisters, a station could pay for its own output (for example a refinery burning one canister for about 4 cycles of canisters). Fix: stations never burn `fuel_can`; generators and motorbikes still use it. Tests: pump and refinery holding only canisters do not run.
+- Per-canister cost (from balance): refinery 3 salvaged oil + 1 glass; batch 5 oil → 2 cans; industrial 6 oil → 2 cans + 1 lubricant (co-product, design intent, kept); pumped crude 4 crude + 1 glass per can, with 4 × 12 s of wood-fuelled pump time (≈2.4 wood). Trader oil costs 5 Spares per unit (stock 4). Wrecks yield salvaged oil at 35 % per stock unit in sourceLayoutVersion 3. No recipe creates oil or Spares from nothing; the pump is the only zero-input recipe and it requires an authorized source.
+
+### C — loot, recycler, POI (partial)
+- C2 done: `tests/b05-recycler-reload.test.ts`. An in-flight X:pipe-v1 job survives save/reload, completes exactly once, keeps the reserved pipe UID, and a second recycler or an off-site recycler is refused by validation (Map authority).
+- C1 audit only: crude petroleum is never in loot or wreck tables; it is granted only by the authorized pump. No new loot was added. The W06/B04 pool-to-industry audit is NOT finished.
+- C3 NOT done: POI access depth was not implemented. Reason: the authored POIs are Map-owned and the review asked for no new locations. Next executable task: compare `poiAccess` (balance) with v11 SYS05/SYS06 edges on the existing Lighthouse/Foundry/Delta Relay sites and add one causal feedback case only where an authored site supports it.
+- C4 partial: pump sprite (idle/run two frames/dry, 20×24), drum icon, station source line, build-menu lock. The inventory crude slot was inspected at 640×360 but the icon is small; a close-up review is still required.
+
+### D — verification (final SHA of this checkpoint)
+- `tsc --noEmit`: exit 0.
+- Full Vitest: 74 files, 569 tests passed (second run). The first full run failed 4 files (`b03-return`, `home-production`, `lr02-shipping-access`, `s12-airdrop`) on timeouts under load; all four pass in isolation (35/35) and in the second full run. Treated as load flakiness, not a logic regression, and still worth a CI check.
+- HTTP build (`vite.http.config.ts`): exit 0.
+- Standalone build (`vite build` singlefile, `NODE_OPTIONS=--max-old-space-size=3072`): **blocked**. Killed with exit 137 (out of memory) inside the sandbox; not run to completion.
+- Visual: `web/evidence/b05r-pump/` (640×360 and 1280×720). Inspected: pump jack silhouette, head and lamp readable at native 640×360; the Crude slot in the inventory is present with a distinct item name, but its icon is small and needs owner review. Not inspected: cart and motorbike readability in new states, cargo transfer frames, Foundry Recycler UI, POI access feedback.
+
+### Map requests (not blocking the mechanics)
+- Authorized oil source sites with a versioned Map site id and map revision. Until these exist, the pump stays locked in production and is exercised only by the test fixture.
+
+### Unfinished
+- C3 POI depth, the full C1 loot audit, C4 visual audit, D1 LI→SOH table at full scope, standalone build.
+- First next executable task: add the `map-site-v1` production authority shape as a refusal-only type with a Map request, then the C3 causal feedback on an existing authored site.
