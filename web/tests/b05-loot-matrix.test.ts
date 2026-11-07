@@ -2,7 +2,8 @@
 // Writes evidence/b05-loot/matrix.json. Asserts: deterministic rolls, legacy b01 saves keep their grammar, every item the
 // loot can emit has at least one real consumer (no orphan), and no Fuel Canister / crude / cash comes from a container.
 import { describe, it, expect } from 'vitest';
-import { writeFileSync, mkdirSync } from 'node:fs';
+import { writeFileSync, mkdirSync, readFileSync } from 'node:fs';
+import { stationBurnable } from '../src/game/catalog';
 import { RECIPES, STRUCTS, ITEMS } from '../src/game/catalog';
 import { LOOT_CLASSES, LOOT_B04_ROLES, LOOT_B01_ROLES, LOOT_GRAMMAR_CURRENT, LOOT_GRAMMAR_VERSION, lootClass, lootGrammarRoll, lootRoll } from '../src/game/loot-ecology';
 import type { RunState } from '../src/game/core';
@@ -16,11 +17,21 @@ const DIRECT_CONSUMERS: Record<string, string[]> = {
   energy_basic: ['action:Creator Core energy load, basic mode (engine.ts:1080)'],
   energy_refined: ['action:Creator Core energy load, refined mode (engine.ts:1080)'],
 };
+/** Physical consumers implemented through engine actions (not recipes). Each entry is verified against engine.ts source below. */
+const ENGINE_CONSUMERS: Record<string, { label: string; pattern: RegExp }[]> = {
+  fuel_can: [
+    { label: 'action:vehicle.refuel motorbike tank (engine.ts ~1373)', pattern: /removeItem\(r,'inv','fuel_can',1\);e\.vehicle\.fuel\+=BAL\.motorbike\.canFuel/ },
+    { label: 'action:base generator burns a fuel item from its container, incl. Fuel Canister (engine.ts ~533, advanceWorld)', pattern: /ITEMS\[s\.key\]\?\.fuel\)[\s\S]{0,160}removeItem\(r,e\.c,key,1\)/ },
+    { label: 'action:authorized POI generator fuelled by one canister (engine.ts ~1541)', pattern: /removeItem\(r, 'inv', 'fuel_can', 1\); e\.power=1;e\.poiPower/ },
+  ],
+};
+/** Producer stations are the one place Fuel Canisters are intentionally NOT consumed (P0). Not counted as a consumer. */
+const FORBIDDEN_STATION_FUEL = 'fuel_can';
 /** Food items are consumed by the eat action (catalog food field); counted as consumers. */
 function eaten(item: string): boolean { return !!(ITEMS[item] as any)?.food; }
 /** Real consumers: recipe inputs, structure build costs, and direct engine actions. */
 function consumers(item: string): string[] {
-  const out: string[] = [...(DIRECT_CONSUMERS[item] ?? [])];
+  const out: string[] = [...(DIRECT_CONSUMERS[item] ?? []), ...(ENGINE_CONSUMERS[item] ?? []).map(c => c.label)];
   if (eaten(item)) out.push('action:eat (catalog food)');
   for (const [id, r] of Object.entries(RECIPES)) if ((r.ins as [string, number][]).some(([k]) => k === item)) out.push('recipe:' + id);
   for (const [id, s] of Object.entries(STRUCTS)) if ((s.cost as [string, number][]).some(([k]) => k === item)) out.push('build:' + id);
@@ -41,7 +52,7 @@ describe('B05-R C1 loot → industry matrix (real rolls, real consumers)', () =>
     }
     const mats = MATERIALS.map(m => ({ item: m, name: ITEMS[m]?.name, consumers: consumers(m), lootSources: rows.filter(r => r.emittedB04Over64Cycles.includes(m)).map(r => r.cls) }));
     mkdirSync('evidence/b05-loot', { recursive: true });
-    writeFileSync('evidence/b05-loot/matrix.json', JSON.stringify({ note: 'SOH_PROVISIONAL. Rolls from lootRoll (w06 fixed/option + b04-v1 role pool). Consumers from catalog recipe inputs and structure costs.', classes: rows, materials: mats }, null, 1));
+    writeFileSync('evidence/b05-loot/matrix.json', JSON.stringify({ note: 'SOH_PROVISIONAL. BOUNDED SYNTHETIC SAMPLE: 64 cycles x 4 synthetic site classes from lootRoll (w06 fixed/option + b04-v1 role pool). This is NOT whole-map drop-rate proof. Consumers: recipe inputs, structure costs, direct engine actions (verified against engine.ts source in the test).', classes: rows, materials: mats }, null, 1));
     expect(rows.length).toBe(4);
   });
   it('rolls are deterministic per seed, source and cycle, and never consume world RNG', () => {
@@ -57,6 +68,14 @@ describe('B05-R C1 loot → industry matrix (real rolls, real consumers)', () =>
     const emitted = new Set<string>();
     for (const [, st] of classes) for (let c = 0; c < 64; c++) for (const [k] of lootRoll(run(LOOT_GRAMMAR_CURRENT), st, c)) emitted.add(k);
     for (const item of emitted) expect(consumers(item).length, `orphan loot item: ${item}`).toBeGreaterThan(0);
+  });
+  it('important-item consumer coverage is asserted directly, not only for items the loot roll emits', () => {
+    for (const item of MATERIALS) expect(consumers(item).length, `no consumer: ${item}`).toBeGreaterThan(0);
+  });
+  it('every engine-action consumer of Fuel Canister exists in engine.ts source; producer stations never burn it', () => {
+    const src = readFileSync('src/game/engine.ts', 'utf8');
+    for (const c of ENGINE_CONSUMERS.fuel_can) expect(src, c.label).toMatch(c.pattern);
+    expect(stationBurnable(FORBIDDEN_STATION_FUEL)).toBe(false);
   });
   it('containers never emit Fuel Canister, crude petroleum, cash or blueprints', () => {
     for (const [, st] of classes) for (let c = 0; c < 64; c++) for (const [k] of lootRoll(run(LOOT_GRAMMAR_CURRENT), st, c)) expect(['fuel_can', 'crude_petroleum', 'rcash', 'blueprint']).not.toContain(k);

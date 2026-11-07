@@ -1,5 +1,5 @@
 {
- "note": "SOH_PROVISIONAL. Rolls from lootRoll (w06 fixed/option + b04-v1 role pool). Consumers from catalog recipe inputs and structure costs.",
+ "note": "SOH_PROVISIONAL. BOUNDED SYNTHETIC SAMPLE: 64 cycles x 4 synthetic site classes from lootRoll (w06 fixed/option + b04-v1 role pool). This is NOT whole-map drop-rate proof. Consumers: recipe inputs, structure costs, direct engine actions (verified against engine.ts source in the test).",
  "classes": [
   {
    "cls": "toolbox",
@@ -358,7 +358,11 @@
   {
    "item": "fuel_can",
    "name": "Fuel Canister",
-   "consumers": [],
+   "consumers": [
+    "action:vehicle.refuel motorbike tank (engine.ts ~1373)",
+    "action:base generator burns a fuel item from its container, incl. Fuel Canister (engine.ts ~533, advanceWorld)",
+    "action:authorized POI generator fuelled by one canister (engine.ts ~1541)"
+   ],
    "lootSources": []
   },
   {
