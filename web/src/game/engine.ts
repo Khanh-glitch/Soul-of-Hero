@@ -9,7 +9,7 @@ import { creatorLootV1 } from './creator-loot';
 // Rule: validate EVERYTHING first, then commit. Failed preconditions never partially debit.
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
-import { ALWAYS_KNOWN_RECIPES, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
+import { ALWAYS_KNOWN_RECIPES, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
 import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, webRecyclerSite, type StaticEnt } from './world';
 import { sourceDigest } from './world-economy';
 import { wreckBonuses, wreckEconomy } from './wreck-economy';
@@ -1099,6 +1099,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (!from || !to || !canAccess(r, it.from) || !canAccess(r, it.to)) return fail('Invalid or out of reach container.');
       if (!validSlot(from, it.fs) || (it.ts !== undefined && !validSlot(to, it.ts))) return fail('Invalid slot.');
       const s = from.slots[it.fs]; if (!s) return fail('Empty slot.');
+      if (isStationFuel(r, to.id) && !stationBurnable(s.key)) return fail(s.key === 'fuel_can' ? 'Fuel Canisters are not station fuel: the station never burns them. Carry them to a generator or motorbike.' : 'That is not station fuel.');
       if (it.qty !== undefined && (!Number.isSafeInteger(it.qty) || it.qty <= 0 || it.qty > s.qty)) return fail('Invalid quantity.');
       const qty = it.qty ?? s.qty;
       if (from === to && (it.ts === undefined || it.ts === it.fs)) return fail('Choose a different slot.');
@@ -1669,6 +1670,10 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
 
 export function owned(e: Entity) { return e.owner === undefined || e.owner === 'player'; }
 function validSlot(c: Container, slot: unknown): slot is number { return Number.isInteger(slot) && (slot as number) >= 0 && (slot as number) < c.slots.length; }
+/** True when a container is some station's fuel input (not a generator's). Stations and generators share the 'fuel' kind. */
+export function isStationFuel(r: RunState, cid: string): boolean {
+  return Object.values(r.entities).some(e => e.station?.fuelC === cid && !e.basePower);
+}
 function accepts(c: Container, slot: number, s: Stack) {
   if (['loot', 'cash', 'out'].includes(c.kind)) return false;
   if (c.kind === 'fuel') return !!ITEMS[s.key]?.fuel;
@@ -1824,9 +1829,9 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
         const burning = kind === 'campfire' || !!job;
         if (!burning) break;
         if (st.burn <= 0) {
-          // B05-R free-energy guard: a station never burns Fuel Canisters. Canisters are the refinery/furnace product, worth 60 s of
+          // B05-R free-energy guard (policy: stationBurnable): a station never burns Fuel Canisters. Canisters are the refinery/furnace product, worth 60 s of
           // burn per 12–26 s cycle; burning them lets a station pay for its own output (a self-feeding loop). Generators and motorbikes still use them.
-          const fc = C(r, st.fuelC); const fi = fc.slots.findIndex(s => s && ITEMS[s.key].fuel && s.key !== 'fuel_can');
+          const fc = C(r, st.fuelC); const fi = fc.slots.findIndex(s => s && stationBurnable(s.key));
           if (fi < 0) { if (job) { const key = job.recipe.startsWith('R:') ? job.recipe.slice(2) : job.recipe; note(`${STRUCTS[e.type!].name}: fuel ran out — ${ITEMS[RECIPES[key].out].name} paused.`); stationState(r,e,'fuel_out',now-t); } break; }
           const s = fc.slots[fi]!; st.burn += ITEMS[s.key].fuel! * 1000; s.qty--; if (s.qty <= 0) fc.slots[fi] = null;
         }

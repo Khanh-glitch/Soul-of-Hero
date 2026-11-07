@@ -415,3 +415,11 @@ export function validateGameplayCatalog(catalog: GameplayCatalogData = { items: 
   return true;
 }
 validateGameplayCatalog();
+
+/** B05-R one station fuel policy, used by engine (burn + deposit) and UI (readiness + legend).
+ *  A station burns any item with a fuel value EXCEPT the Fuel Canister: canisters are refinery/furnace/pump output
+ *  (60 s of burn per 12–26 s cycle), so a station burning them would pay for its own output. Canisters remain valid for
+ *  generators and motorbikes; those consumers do not use this policy. */
+export function stationBurnable(key: string | undefined | null): boolean {
+  return !!key && !!ITEMS[key]?.fuel && key !== 'fuel_can';
+}
