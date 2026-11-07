@@ -57,3 +57,11 @@ export function poiGenLabel(r:RunState,e:Entity,now:number):string {
   if(e.poiPower?.pausedMs)return `Generator OFF · ${Math.ceil(e.poiPower.pausedMs/1000)}s · resume`;
   return 'Generator empty · 1 Fuel Canister';
 }
+
+/** C3: causal reason a powered gate is shut. Names the exact state and the single action that fixes it. Never consumes anything. */
+export function poiPowerMissingReason(g: { poiPower?: { pausedMs?: number; expiresAt: number } } | undefined, now: number): string {
+  if (!g) return 'Gate unpowered: no authorized generator is connected.';
+  if (g.poiPower?.pausedMs) return `Gate unpowered: generator is OFF with ${Math.ceil(g.poiPower.pausedMs / 1000)}s banked. Use E on the generator to resume; no can needed.`;
+  if (g.poiPower && g.poiPower.expiresAt <= now) return 'Gate unpowered: the generator has run out. Add 1 physical Fuel Canister to it.';
+  return 'Gate unpowered: the generator is empty. Add 1 physical Fuel Canister to it.';
+}

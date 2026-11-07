@@ -1,7 +1,7 @@
 import { landingStimulus } from './stimulus';
 import { supportsAirdrops, airdropArea, airdropTimes, airdropRewards, chooseAirdropSite, airdropStaticEligible } from './airdrop';
 import { recoveryPlan, recoveryPlanFor, recoveryFits } from './recycler';
-import { poiDoorContract, poiGeneratorContract, poiGenerator, poiPowered, interiorRelease, doorwayOccupied, advancePoiAccess, poiContractDigest } from './poi-access';
+import { poiPowerMissingReason, poiDoorContract, poiGeneratorContract, poiGenerator, poiPowered, interiorRelease, doorwayOccupied, advancePoiAccess, poiContractDigest } from './poi-access';
 import { vehicleClear, vehicleExitPoint } from './motorbike';
 import { LOOT_ECOLOGY_VERSION, LOOT_GRAMMAR_CURRENT, lootSlots, LOOT_CLASSES, lootClass, lootRoll, lootSiteIndex, lootSourceId } from './loot-ecology';
 import { creatorLootV1 } from './creator-loot';
@@ -1511,7 +1511,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
         const exit=interiorRelease(r,e,d);
         if(!exit && d.requirement==='power') {
           if(!poiGenerator(r,d))return fail('Circuit has no authorized generator.');
-          if(!poiPowered(r,d,now))return fail('Gate unpowered. Fuel its connected generator.');
+          if(!poiPowered(r,d,now))return fail(poiPowerMissingReason(poiGenerator(r,d),now));
         }
         let cardUid:string|undefined, remaining=0;
         if(!exit && d.requirement==='keycard') {
