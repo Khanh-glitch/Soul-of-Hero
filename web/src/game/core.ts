@@ -187,6 +187,8 @@ export interface RunState {
   traceWalk?: TraceWalk;
   discovered: number[]; // 4x4-tile cells
   poiSeen: string[];
+  /** Additive: physically observed expedition facts; absent in old saves. See expedition-intel.ts. */
+  intel?: string[];
   elderStones: string[];
   achievements: string[]; score: number; deposited: number;
   clock: { lastSimAt: number; simMs: number; respawnAcc: number; weatherSlot: number };

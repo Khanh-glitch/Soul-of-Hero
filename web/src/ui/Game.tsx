@@ -75,7 +75,8 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
     switch (t.kind) {
       case 'fire': act('douseTree', { tx: Math.floor(t.x/16), ty: Math.floor(t.y/16) }); return;
       case 'water': act('drink', { x: t.x, y: t.y }); sfx({ type: 'eat' }); return;
-      case 'recycler': case 'bag': case 'loot': case 'cart': case 'vehicle': setPanel({ kind: 'container', eid: t.eid }); sfx({ type: 'ui' }); return;
+      case 'loot': act('observeLoot', { eid: t.eid }); setPanel({ kind: 'container', eid: t.eid }); sfx({ type: 'ui' }); return;
+      case 'recycler': case 'bag': case 'cart': case 'vehicle': setPanel({ kind: 'container', eid: t.eid }); sfx({ type: 'ui' }); return;
       case 'airdrop': { const res=act('openAirdrop',{eid:t.eid}); if(res.ok){setPanel({kind:'container',eid:t.eid});sfx({type:'ui'});} return; }
       case 'cash': { const res = act('openCash', { eid: t.eid }); if (res.ok) { setPanel({ kind: 'container', eid: t.eid }); sfx({ type: 'coin' }); } return; }
       case 'vendor': setPanel({ kind: 'vendor', eid: t.eid }); return;

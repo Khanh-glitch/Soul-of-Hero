@@ -10,6 +10,7 @@ import { CabinetReadout } from './HomeStatus';
 import { C, countItem, invWeight, isRagnarok, runHours, cartWeight, cartLimit, carryLimit, spaceFor, phaseOf, tenderStatus, gardenEnvironment, weatherAt, isWet, isSheltered, wetOutlook, turretStatus, industrialStatus, powerAllocation, connectedPower, offlineSurvivalEstimate, territoryForecast, claimAt, structureRepairCost } from '../game/engine';
 import { getWorld, ZONES } from '../game/world';
 import { recipeOutputs } from '../game/engine';
+import { expeditionNotes } from '../game/expedition-intel';
 /** Every product a recipe commits together, e.g. "2 Fuel Canister + 1 Machine Lubricant". */
 const bundleLabel = (rc: { out: string; qty: number; outs?: [string, number][] }) => recipeOutputs(rc).map(([k, q]) => `${q} ${ITEMS[k].name}`).join(' + ');
 import { getMapCanvas } from '../game/render';
@@ -358,6 +359,17 @@ export function MapPanel({ api, onTeleportSelect, teleportTarget }: { api: Api; 
       <div style={{ fontSize: 10, lineHeight: 1.15, width: 125 }}>
         {onTeleportSelect && <div style={{color:'#e2bfff',fontSize:11,lineHeight:1.2,marginBottom:5}}>Lõi quỷ<br/>Click explored safe ground.<br/>Close map; hold and release E.<br/>Purple marks destination. Cart stays behind.</div>}<div style={{ color: '#ffd98a' }}>Discovered</div>{w.places.filter(pl => r.poiSeen.includes(pl.id)).map(pl => <div key={pl.id} style={{ color: pl.kind === 'elder' ? '#ff8a7a' : pl.kind === 'evac' ? '#5af0ff' : '#e0d0b0' }}>• {pl.name}</div>)}
         {r.poiSeen.length === 0 && <div style={{ color: '#8a7a9a' }}>Nothing yet — explore.</div>}
+        {expeditionNotes(r).length > 0 && <div style={{ marginTop: 4 }}><div style={{ color: '#ffd98a' }}>Expedition notes · seen</div>
+          {expeditionNotes(r).map(n => <div key={n.place} style={{ marginBottom: 3, borderLeft: '2px solid #5a4a6a', paddingLeft: 3 }}>
+            <div style={{ color: '#e6d9bc' }}>{n.name}</div>
+            {n.gates.map((g, i) => <div key={i} className="flex items-center gap-1" style={{ flexWrap: 'wrap' }}>
+              <Icon k={g.item} size={10} /><span style={{ color: '#cfc2dc' }}>{g.requirement === 'power' ? 'Generator gate' : 'Vault gate'} · needs {ITEMS[g.item].name}</span>
+              <span style={{ color: g.carried ? '#a0e070' : '#ff9a7a' }}>{g.carried ? 'Carried' : 'Not carried'}</span>
+              <span style={{ color: '#8a7a9a' }}>{g.sources.length ? `· seen in ${g.sources.map(id => w.places.find(p => p.id === id)?.name ?? id).join(', ')}` : g.craft ? `· craft at ${g.craft}` : '· no source seen yet'}</span>
+            </div>)}
+            {n.blueprints.map(b => <div key={b.recipe} style={{ color: b.learned ? '#8a7a9a' : '#ffd98a' }}>Blueprint seen: {b.name}{b.learned ? ' (known)' : ' · study it'}</div>)}
+          </div>)}
+        </div>}
         <div style={{ color: '#ffd98a', marginTop: 4 }}>Legend</div><div><span style={{ color: '#ffd040' }}>■</span> landmark <span style={{ color: '#ff4a3a' }}>■</span> elder</div><div><span style={{ color: '#ff9a3a' }}>■</span> your claim <span style={{ color: '#fff' }}>■</span> bag</div><div><span style={{ color: '#5af0ff' }}>■</span> evacuation</div>
         <div style={{ color: '#8a7a9a', marginTop: 4 }}>Run hour {h.toFixed(1)} / {BAL.run.maxRunHours} · {phaseOf(r, api.now()).toUpperCase()}</div>
       </div></div></Panel>;

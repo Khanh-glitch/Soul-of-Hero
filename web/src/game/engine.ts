@@ -1,6 +1,7 @@
 import { landingStimulus } from './stimulus';
 import { supportsAirdrops, airdropArea, airdropTimes, airdropRewards, chooseAirdropSite, airdropStaticEligible } from './airdrop';
 import { recoveryPlan, recoveryPlanFor, recoveryFits } from './recycler';
+import { recordIntel, gateKey, placeOfPoi } from './expedition-intel';
 import { poiPowerMissingReason, poiDoorContract, poiGeneratorContract, poiGenerator, poiPowered, interiorRelease, doorwayOccupied, advancePoiAccess, poiContractDigest } from './poi-access';
 import { vehicleClear, vehicleExitPoint } from './motorbike';
 import { LOOT_ECOLOGY_VERSION, LOOT_GRAMMAR_CURRENT, lootSlots, LOOT_CLASSES, lootClass, lootRoll, lootSiteIndex, lootSourceId } from './loot-ecology';
@@ -95,7 +96,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   const r: RunState = {
     id: 'run_' + seed.toString(36), seed, character, startedAt: now, qaOffset: 0, qaUsed: false, layoutId: getActiveLayout(), sourceLayoutVersion: 3, sourceMap: { id: w.economyMap.id, revision: w.economyMap.revision, seed: w.economyMap.seed, rules: 3, digest: sourceDigest(w.sourceV3), mapDigest: mapDigest(w), ...(w.veyra ? {veyra:w.veyra} : {}) }, spawnRegion: 0, ended: null,
     player: null as any, creatures: [], sources: {}, terrain: {}, entities: {}, custody: {}, knowledge: { recipes: Array.from(new Set([...Object.keys(RECIPES).filter(k => RECIPES[k].base), ...ALWAYS_KNOWN_RECIPES])), studied: [] },
-    traces: [], discovered: [], poiSeen: [], elderStones: [], achievements: [], score: 0, deposited: 0,
+    traces: [], discovered: [], poiSeen: [], intel: [], elderStones: [], achievements: [], score: 0, deposited: 0,
     clock: { lastSimAt: now, simMs: 0, respawnAcc: 0, weatherSlot: -1 }, rng: seed, nextId: 1, receipts: [], seenIntents: [], seq: 0,
     vendorStock: { escrow_chest: 4, ...Object.fromEntries(Object.entries(VENDOR_SECURED).map(([k, v]) => [k, v.stock])), ...Object.fromEntries(Object.entries(VENDOR_SPARES).map(([k,v]) => [`spares:${k}`,v.stock])) }, log: [],
   };
@@ -1510,6 +1511,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       // Locked imported gates require explicit spatial metadata, never POI-name inference.
       if(e.kind==='door' && e.locked) {
         if(!d||d.requirement!==e.locked)return fail('Access disabled: this gate lacks an authorized exit/circuit contract.');
+        { const place=placeOfPoi(r,e.poi); if(place && recordIntel(r,[gateKey(place,d.requirement,d.cardClass)])) markDirty(); }
         const exit=interiorRelease(r,e,d);
         if(!exit && d.requirement==='power') {
           if(!poiGenerator(r,d))return fail('Circuit has no authorized generator.');
@@ -1534,6 +1536,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
     case 'generator': {
       const e = r.entities[it.eid]; if (!e || e.kind !== 'gen' || !near(r, e, 2.2) || !clearInteraction(r,e)) return fail('Generator out of reach or blocked.');
       if(!poiGeneratorContract(r,e))return fail('No authorized local circuit for this generator.');
+      { const place=placeOfPoi(r,e.poi); if(place && recordIntel(r,[`gen:${place}`])) markDirty(); }
       if(e.power===1&&!e.poiPower&&getWorld(r.layoutId||'shipping').poiAccess?.doors.some(d=>d.generator?.tx===e.tx&&d.generator?.ty===e.ty&&Object.values(r.entities).some(o=>o.kind==='door'&&o.tx===d.tx&&o.ty===d.ty&&!o.locked)))return fail('Legacy circuit already unlocked; existing access is preserved.');
       if(e.poiPower && e.power===1 && e.poiPower.expiresAt>now){e.poiPower.pausedMs=e.poiPower.expiresAt-now;e.power=0;const change=advancePoiAccess(r,now);if(change.closed.length)markDirty();for(const id of change.closed)receipt(r,now,'poi.door.close',id);return ok('poi.power.pause',`${e.id}:remaining=${e.poiPower.pausedMs}`,`Generator off; ${Math.ceil(e.poiPower.pausedMs/1000)} seconds reserved.`);}
       if(e.poiPower?.pausedMs){e.poiPower.runAt=now;e.poiPower.runMs=e.poiPower.pausedMs;e.poiPower.expiresAt=now+e.poiPower.pausedMs;delete e.poiPower.pausedMs;e.power=1;return ok('poi.power.resume',`${e.id}:until=${e.poiPower.expiresAt}`,'Generator resumed without another canister.');}
@@ -1544,6 +1547,14 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       return ok('poi.power.fuel',`${e.id}:fuel_can:${fuelUid}:until=${e.poiPower.expiresAt}`,`Generator running for ${BAL.poiAccess.fuelRuntimeMs/1000} seconds.`);
     }
     case 'openAirdrop': { const e=r.entities[it.eid]; if(!e || e.kind!=='airdrop' || !e.airdrop) return fail('No airdrop here.'); const a=e.airdrop; if(a.phase==='signal'||a.phase==='descending') return fail('Airdrop is still in the air.'); if(a.phase==='locked') return fail(`Airdrop locked: opens to all in ${Math.max(0,Math.ceil((a.unlockAt-now)/1000))}s.`); if(!e.c || !canAccess(r,e.c)) return fail('Airdrop out of reach: walk up to it.'); return ok('airdrop.open',String(a.index)); }
+    case 'observeLoot': { // Opening a container records only what the player can now see in it.
+      const e = r.entities[it.eid]; if (!e || e.kind !== 'loot' || !e.c || !near(r, e, 2.2)) return fail('Container out of reach.');
+      const place = placeOfPoi(r, e.poi); if (!place) return ok('intel.none', it.eid);
+      const keys = [`opened:${place}`];
+      for (const s of C(r, e.c)?.slots ?? []) if (s) keys.push(`loot:${place}:${s.key === 'blueprint' ? `bp_${s.meta}` : s.key}`);
+      if (recordIntel(r, keys)) markDirty();
+      return ok('intel.observe', `${e.id}:${place}`);
+    }
     case 'openCash': { // C15: special finite POI chest mints physical cash ONCE, only during the final 72h
       const e = r.entities[it.eid]; if (!e || e.kind !== 'cash' || !near(r, e, 2.2) || !clearInteraction(r,e)) return fail('Out of reach.');
       if (!isRagnarok(r, now)) return fail('Sealed with a Ragnarok glyph. It will open only in the final 72 hours.');
