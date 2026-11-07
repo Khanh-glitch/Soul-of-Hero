@@ -14,9 +14,12 @@ export function combatStimulus(seq:number,kind:'ranged'|'melee',x:number,y:numbe
   const sourceId=combatSourceId(seq);
   return {version:'world-stimulus-v1',id:`${sourceId}:sound`,sourceId,eventIndex:seq,kind:'combat-sound',modality:'sound',eligibility:kind==='ranged'?'audible-ranged-v1':'audible-melee-v1',x,y,at,expiresAt:at+BAL.worldStimulusV1.signalMs,range:BAL.worldStimulusV1.combatSoundRanges[kind],strength:1};
 }
-/** Adds a combat signal and keeps only the newest bounded set; older unexpired entries are dropped, never replayed. */
+/** Adds a combat signal. Overflow evicts only the oldest combat entries; a still-valid airdrop is never displaced by combat noise. */
 export function pushCombatStimulus(r:RunState,s:WorldStimulus) {
-  const list=(r.worldStimuli||[]).concat(s).sort((a,b)=>a.at-b.at||a.eventIndex-b.eventIndex);
+  const all=r.worldStimuli||[];
+  const others=all.filter(w=>w.kind!=='combat-sound');
+  const combat=all.filter(w=>w.kind==='combat-sound').concat(s).sort((a,b)=>a.at-b.at||a.eventIndex-b.eventIndex);
   const cap=BAL.worldStimulusV1.combatSignalCap;
-  r.worldStimuli=list.length>cap?list.slice(list.length-cap):list;
+  const kept=combat.length>cap?combat.slice(combat.length-cap):combat;
+  r.worldStimuli=others.concat(kept).sort((a,b)=>a.at-b.at||a.eventIndex-b.eventIndex);
 }

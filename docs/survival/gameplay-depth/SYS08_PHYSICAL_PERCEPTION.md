@@ -80,12 +80,12 @@ Single 336 h run clock is preserved; S12 reward/custody unchanged.
 Implementing this branch is **not** completion of SYS08. Provisional ledger update for this PR only:
 
 - SYS08-C01 physically legitimate trace-based threat — PARTIAL (stimulus path added; weather-decay of non-player traces still follows existing SYS08-C02 path only).
-- SYS08-C03 creature sight and auditory perception — PARTIAL (sight unchanged; airdrop sound plus committed bow-release and melee sound, with provisional range/species table, geometry and timing; W08).
+- SYS08-C03 creature sight and auditory perception — PARTIAL (sight unchanged; airdrop sound plus committed bow-release and melee sound, with provisional range/species table, geometry, timing, receipt-bound provenance and the inherited home exclusion; W08/W08-R). Sight through built walls is a separate pre-existing gap.
 - SYS08-C04 physical doors, walls and collision — PARTIAL (investigation uses same live grid; arrival cell logic preserves collision).
-- SYS08-C09 appropriate creature response — PARTIAL (distinct investigation lifecycle with expiry/arrival/blocked, now also for committed combat sound; no auto-ambush).
-- SYS08-C10 defensible offline simulation — PARTIAL (no invented notices/movement/combat; expiry honoured; otherwise deferred to live).
+- SYS08-C09 appropriate creature response — PARTIAL (distinct investigation lifecycle with expiry/arrival/blocked, now also for committed combat sound, with a 4 s detection window and 24 s investigation memory; no auto-ambush).
+- SYS08-C10 defensible offline simulation — PARTIAL (no sound-caused notices, movement or hits offline; existing offline survival, upkeep and decay rules still apply and are not changed here).
 - SYS08-C02 weather-dependent trace decay — unchanged (still governs real footprints, not a separate stimulus decay).
-- SYS08-C07/C08/C11, SYS10/12 full system — still MISSING/OWNER-BLOCKED for general threat/defense beyond this airdrop branch.
+- SYS08-C07/C08/C11, SYS10/12 full system — still MISSING/OWNER-BLOCKED for general threat/defense beyond the airdrop and committed weapon-sound branches.
 
 No Map/AVFX certification or native acceptance is claimed. Imported Veyra/package maps remain disabled for the same reasons as S12: they require a certified `airdrop-landing-v1` (or equivalent) landing/perception adapter.
 

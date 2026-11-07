@@ -1,4 +1,4 @@
-import { stimulusNearHome, combatStimulus, pushCombatStimulus, combatSourceId } from './stimulus';
+import { stimulusNearHome, combatStimulus, pushCombatStimulus } from './stimulus';
 import { airdropBoundary, stepAirdrops } from './engine';
 import { airdropView } from './airdrop';
 import { advancePoiAccess, poiDoorLabel, poiGenLabel } from './poi-access';
@@ -407,8 +407,10 @@ function cartWeightOf(r: RunState, e: Entity) { return C(r, e.c!).slots.reduce((
 
 /** W08: a committed weapon release is a finite, source-identified sound at the release point. Quiet melee uses a short range. */
 function emitCombatSound(r: RunState, now: number, kind: 'ranged' | 'melee', x: number, y: number) {
-  receipt(r, now, 'stimulus.emit', `${kind}:${combatSourceId(r.seq)}`);
-  pushCombatStimulus(r, combatStimulus(r.seq, kind, x, y, now));
+  // The receipt sequence is the event identity: read it after receipt() advances it, never predict it.
+  receipt(r, now, 'stimulus.emit', `${kind}:${x},${y}`);
+  const seq = r.seq;
+  pushCombatStimulus(r, combatStimulus(seq, kind, x, y, now));
 }
 function resolveSwing(gs: GameState, now: number, slot: number, a: number) {
   const r = gs.run!; const p = r.player; const s = slot >= 0 ? C(r, 'inv').slots[slot] : null; const d = s ? ITEMS[s.key] : FISTS;
