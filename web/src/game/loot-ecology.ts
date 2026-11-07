@@ -1,6 +1,6 @@
 import { WW, type RunState } from './core';
-import { getWorld, type StaticEnt } from './world';
-import { resolveLootSource, type SpecGrade } from './loot-source-spec';
+import { type StaticEnt } from './world';
+import { specForSite, validLootSourceContract, type SpecGrade } from './loot-source-spec';
 import { ITEMS } from './catalog';
 
 /** W06 SOH_NEW_TUNED v1, not historical LI percentages or timer parity.
@@ -96,14 +96,18 @@ export function lootGrammarRoll(r: RunState, site: StaticEnt, cycle: number): [s
   const g = r.lootEcology?.grammar; if (!isKnownLootGrammar(g)) return [];
   const kind = lootClass(site); if (!kind) return [];
   if (g === LOOT_GRAMMAR_CURRENT) {
-    const src = resolveLootSource(site, getWorld(r.layoutId || 'shipping'));
-    if (src && src.access === 'unproven') return [];      // authored access not proven: fail closed, no rolls
-    if (src && src.spec.role === kind && kind === 'toolbox') {
-      const tbl = LOOT_B05_TOOLBOX_GRADE[src.spec.grade];
-      const base = `${g}|${r.seed}|${lootSourceId(r, site)}|${cycle}|${src.spec.id}|${src.spec.grade}`;
+    const spec = specForSite(site);
+    if (spec) {
+      // Fail closed: the run must carry a valid, digest-pinned contract and this source must be physically open.
+      const c = r.lootEcology?.sourceContract;
+      if (!c || !validLootSourceContract(c) || c.sites[spec.sourceId]?.access !== 'open') return [];
+      if (spec.role !== 'toolbox') return [];                 // no source-authorized pool for this role yet: optional rolls stay off
+      if (spec.stock === 'finite' && cycle > 0) return [];    // finite stock is not renewed
+      const tbl = LOOT_B05_TOOLBOX_GRADE[spec.grade];
+      const base = `${g}|${r.seed}|${lootSourceId(r, site)}|${cycle}|${spec.id}|${spec.grade}`;
       const out: [string, number][] = tbl.fixed.map(([k, q]) => [k, q]);
       if (tbl.pool.length) { const [k, q] = tbl.pool[hashPick(base) % tbl.pool.length]; out.push([k, q]); }
-      return out.filter(([k]) => !!ITEMS[k] && !LOOT_B01_FORBIDDEN.has(k));
+      return out.filter(([k]) => !!ITEMS[k] && !LOOT_B01_FORBIDDEN.has(k)).slice(0, spec.capacity);
     }
   }
   const def = (g === LOOT_GRAMMAR_B04 || g === LOOT_GRAMMAR_CURRENT ? LOOT_B04_ROLES : LOOT_B01_ROLES)[kind];

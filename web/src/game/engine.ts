@@ -5,6 +5,7 @@ import { recordIntel, gateKey, placeOfPoi } from './expedition-intel';
 import { poiPowerMissingReason, poiDoorContract, poiGeneratorContract, poiGenerator, poiPowered, interiorRelease, doorwayOccupied, advancePoiAccess, poiContractDigest } from './poi-access';
 import { vehicleClear, vehicleExitPoint } from './motorbike';
 import { LOOT_ECOLOGY_VERSION, LOOT_GRAMMAR_CURRENT, lootSlots, LOOT_CLASSES, lootClass, lootRoll, lootSiteIndex, lootSourceId } from './loot-ecology';
+import { buildLootSourceContract, specForSite, type PhysicalAccess } from './loot-source-spec';
 import { creatorLootV1 } from './creator-loot';
 // Authoritative game engine: GameState + dispatch(intent) → committed state + receipt | rejection.
 // Rule: validate EVERYTHING first, then commit. Failed preconditions never partially debit.
@@ -112,6 +113,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   r.custody.inv.slots[2] = mkStack(r, 'berries', 3);
   r.player = { x: sp.tx * TILE + 8, y: sp.ty * TILE + 8, vx: 0, vy: 0, dir: 0, aim: Math.PI / 2, hp: BAL.player.maxHp, stamina: BAL.player.maxStamina, hunger: 85, thirst: 85, warmth: 100, rad: 0, active: 0, action: null, invuln: 0, dead: false, deadT: 0, pulling: null, skills: { gather: 0, combat: 0, craft: 0, survival: 0 }, stepAcc: 0, lastTraceX: 0, lastTraceY: 0, regionName: sp.name, sheltered: false };
   // statics → physical entities with real finite loot
+  const pendingRolls: [StaticEnt, Container][] = [];
   for (const s of w.statics) {
     const e: Entity = { id: uid(r, 'e'), kind: s.kind as any, x: s.tx * TILE + 8, y: s.ty * TILE + 8, tx: s.tx, ty: s.ty, poi: s.poi, label: s.label };
     if (s.kind === 'loot') {
@@ -122,13 +124,8 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
       });
       const unique=r.creatorLootV1 && creatorLootV1(s);
       if(unique){const free=c.slots.findIndex(x=>!x);if(free>=0){const stack=mkStack(r,unique,1);stack.reserves!.signature=3;c.slots[free]=stack;}}
-      for(const [key,qty] of lootRoll(r,s,0)) {
-        const i=c.slots.findIndex(v=>!v); if(i<0)throw new Error('Loot ecology exceeded authored container capacity');
-        c.slots[i]=mkStack(r,key,qty);
-      }
-      if(r.lootEcology && lootClass(s)) c.slots.forEach((stack,i)=>{
-        if(stack)receipt(r,now,'loot.roll',`${lootSourceId(r,s)}:${LOOT_ECOLOGY_VERSION}:cycle0:slot${i}:${stack.key}${stack.meta?':'+stack.meta:''}x${stack.qty}:${stack.uid}`);
-      });
+      // Initial rolls are deferred until the physical source contract is measured (B05 needs it).
+      pendingRolls.push([s,c]);
       e.c = c.id;
     }
     if (s.kind === 'cash') { e.c = mkContainer(r, 'cash', 2).id; e.minted = false; e.stock = { cash: s.cash! }; }
@@ -140,6 +137,17 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   // placement is inferred; old runs without this adapter remain unchanged.
   const site=webRecyclerSite(w,getActiveLayout());
   if(site){const e:Entity={id:uid(r,'e'),kind:'recycler',x:site.tx*TILE+8,y:site.ty*TILE+8,tx:site.tx,ty:site.ty,poi:'factory',label:'Foundry Recycler',station:{queue:[],burn:0,fuelC:mkContainer(r,'fuel',0).id,outC:mkContainer(r,'out',4).id}};r.entities[e.id]=e;}
+  // B05 (loot-source-v2): measure physical access once from the real collision grid, record it, then roll initial stock.
+  if (r.lootEcology?.grammar === LOOT_GRAMMAR_CURRENT) r.lootEcology.sourceContract = buildLootSourceContract(w, site => lootSiteAccess(r, site));
+  for (const [s, c] of pendingRolls) {
+    for (const [key,qty] of lootRoll(r,s,0)) {
+      const i=c.slots.findIndex(v=>!v); if(i<0)throw new Error('Loot ecology exceeded authored container capacity');
+      c.slots[i]=mkStack(r,key,qty);
+    }
+    if(r.lootEcology && lootClass(s)) c.slots.forEach((stack,i)=>{
+      if(stack)receipt(r,now,'loot.roll',`${lootSourceId(r,s)}:${LOOT_ECOLOGY_VERSION}:cycle0:slot${i}:${stack.key}${stack.meta?':'+stack.meta:''}x${stack.qty}:${stack.uid}`);
+    });
+  }
   r.wreckEconomy = wreckEconomy(r);
   // creatures (deterministic per run seed) + elders
   for (let k = 0; k < 900 && r.creatures.length < 150; k++) trySpawnCreature(r, now, sp.tx * TILE, sp.ty * TILE, 16);
@@ -673,7 +681,33 @@ export function stepAirdrops(r:RunState,at:number,report?:string[]) {
 export function renewableLoot(site: StaticEnt): [string, number][] {
   return (site.loot || []).filter(([k]) => k !== 'damaged_drive' && !!ITEMS[k] && ['res', 'food'].includes(ITEMS[k].cat));
 }
+/** Physical access to a static cache from the run spawn, using the real collision grid (blockedAt: terrain, buildings, closed doors).
+ * 'open': a tile within interaction range is reachable with no door opened. 'door-required': only reachable if every door is opened.
+ * 'unreachable': not reachable even then. Never grants access: this only measures geometry. */
+export function lootSiteAccess(r: RunState, site: StaticEnt): PhysicalAccess {
+  const doorTiles = new Set(Object.values(r.entities).filter(e => e.kind === 'door' && e.tx !== undefined && e.ty !== undefined).map(e => e.ty! * WW + e.tx!));
+  const start = Math.floor(r.player.y / TILE) * WW + Math.floor(r.player.x / TILE);
+  const near = (i: number) => { const x = i % WW, y = (i / WW) | 0; return Math.hypot(x - site.tx, y - site.ty) <= 2.2; };
+  const reach = (allowDoors: boolean): boolean => {
+    const seen = new Uint8Array(WW * WH); const q: number[] = [start]; seen[start] = 1;
+    for (let h = 0; h < q.length; h++) {
+      const i = q[h]; if (near(i)) return true;
+      const x = i % WW, y = (i / WW) | 0;
+      for (const [dx, dy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
+        const nx = x + dx, ny = y + dy; if (nx < 0 || ny < 0 || nx >= WW || ny >= WH) continue;
+        const j = ny * WW + nx; if (seen[j]) continue;
+        if (blockedAt(r, nx, ny) && !(allowDoors && doorTiles.has(j))) continue;
+        seen[j] = 1; q.push(j);
+      }
+    }
+    return false;
+  };
+  if (reach(false)) return 'open';
+  if (reach(true)) return 'door-required';
+  return 'unreachable';
+}
 export function lootCooldown(site: StaticEnt, r?:RunState): number {
+  const spec = r?.lootEcology?.grammar === LOOT_GRAMMAR_CURRENT ? specForSite(site) : null; if (spec) return spec.cooldownHours*HOUR;
   const kind=r?.lootEcology && lootClass(site); if(kind)return LOOT_CLASSES[kind].hours*HOUR;
   const stock = renewableLoot(site);
   const industrial = stock.some(([k]) => ['spares', 'scrap', 'iron_ore', 'iron_ingot', 'coal', 'mechanical_parts', 'fasteners'].includes(k));
@@ -681,6 +715,7 @@ export function lootCooldown(site: StaticEnt, r?:RunState): number {
   return (industrial ? BAL.lootRespawn.industrialHours : food ? BAL.lootRespawn.supplyHours : BAL.lootRespawn.otherHours) * HOUR;
 }
 /** Ordinary replenishment is the old authored renewable stock plus a bounded W06 roll. */
+/** W06 class renewal is pinned and unchanged. B05 'finite' stock governs only the grammar pool (see lootGrammarRoll). */
 export function renewableStock(r:RunState,site:StaticEnt,cycle:number):[string,number][] {return [...renewableLoot(site),...lootRoll(r,site,cycle)];}
 /** Retire an authored public loot instance only after an actual final withdrawal. */
 function retireEmptyLoot(r: RunState, cid: string, now: number) {
@@ -1834,7 +1869,7 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
       // A finished job is committed at its event time without requiring extra work or fuel.
       if (job && job.left <= 0) {
         const at = now - t;
-        if (job.recipe==='X:drive'||job.recipe==='X:recover-v1'||job.recipe==='X:recover-v2'||job.recipe==='X:pipe-v1') {
+        if (job.recipe==='X:drive'||job.recipe==='X:recover-v1'||job.recipe==='X:recover-v2'||job.recipe==='X:recover-v3'||job.recipe==='X:pipe-v1') {
           // Outputs are fixed by the job's stored recipe version (v1 jobs never change when v2 is added).
           const plan=job.reserved?.length===1?recoveryPlanFor(job.reserved[0],job.recipe):null;
           if(e.kind!=='recycler'||!plan||plan.recipe!==job.recipe||!recoveryFits(C(r,st.outC),plan.outputs)){blocked=true;note('Recycler: output full or invalid reservation.');stationState(r,e,'output_full',at);continue;}

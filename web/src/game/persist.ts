@@ -2,7 +2,8 @@ import {supportsAirdrops, airdropTimes, airdropRewards, airdropStaticEligible} f
 import { recoveryPlanFor } from './recycler';
 import { combatKindOf } from './stimulus';
 import { poiContractDigest } from './poi-access';
-import { LOOT_ECOLOGY_VERSION, isKnownLootGrammar, lootClass, lootRoll, lootSiteIndex } from './loot-ecology';
+import { LOOT_ECOLOGY_VERSION, LOOT_GRAMMAR_CURRENT, isKnownLootGrammar, lootClass, lootRoll, lootSiteIndex } from './loot-ecology';
+import { validLootSourceContract } from './loot-source-spec';
 import { creatorLootV1 } from './creator-loot';
 import { validIntel } from './expedition-intel';
 // Local-first snapshots: one serialized profile + run + receipts per write.
@@ -139,7 +140,7 @@ export function validate(raw: any): GameState | null {
   const jobIds = new Set<string>();
   const jobs = (queue: any, station: string): boolean => Array.isArray(queue) && queue.every((j: any) => {
     if (!obj(j) || typeof j.id !== 'string' || !j.id || jobIds.has(j.id) || !beforeNext(j.id, /^j([a-z0-9]+)$/) || typeof j.recipe !== 'string') return false;
-    if(j.recipe==='X:recover-v1'||j.recipe==='X:recover-v2'||j.recipe==='X:pipe-v1'){
+    if(j.recipe==='X:recover-v1'||j.recipe==='X:recover-v2'||j.recipe==='X:recover-v3'||j.recipe==='X:pipe-v1'){
       if(station!=='recycler'||!finite(j.left)||!finite(j.total)||j.left<0||j.left>j.total||!Array.isArray(j.reserved)||j.reserved.length!==1)return false;
       const plan=recoveryPlanFor(j.reserved[0],j.recipe);if(!plan||plan.recipe!==j.recipe||j.total!==plan.total||!j.reserved.every(stack))return false;
       jobIds.add(j.id);return true;
@@ -262,6 +263,8 @@ export function validate(raw: any): GameState | null {
   if (r.lootEcology !== undefined) {
     const policy=r.lootEcology;
     if(!obj(policy) || policy.version!==LOOT_ECOLOGY_VERSION || !obj(policy.cycles) || (policy.grammar!==undefined && !isKnownLootGrammar(policy.grammar)) || !r.creatorLootV1 || !['shipping_fresh','dev_delta_fresh'].includes(r.layoutId))return null;
+    // B05: the recorded physical source contract must match the current versioned spec (digest + every access). Other grammars carry none.
+    if (policy.grammar===LOOT_GRAMMAR_CURRENT ? !validLootSourceContract(policy.sourceContract) : policy.sourceContract!==undefined) return null;
     for(const [key,value] of Object.entries(policy.cycles)) {
       if(!/^(0|[1-9][0-9]*)$/.test(key) || !Number.isSafeInteger(value) || (value as number)<1) return null;
       const site=world.statics.find(s=>s.kind==='loot' && lootSiteIndex(s)===Number(key));

@@ -1,0 +1,1250 @@
+{
+  "version": "mec01-five-chain-benchmark-v1",
+  "numeraire": "1 iron_ingot = 1 iron_ore (furnace) = 3 scrap (scrap_ingot); other atoms compared per material",
+  "salvageOnly": [
+    "damaged_drive"
+  ],
+  "recyclerVersions": {
+    "v1": "immutable saved-job table",
+    "v2": "pinned saved-job table (four keys over-returned)",
+    "v3": "new jobs, corrected four keys"
+  },
+  "structuresNote": "workbench Workbench level 2 for the chain recipes; motorbike_kit needs level 3",
+  "furnace": {
+    "iron_ingot": {
+      "fromOre": {
+        "secs": 10,
+        "ins": [
+          [
+            "iron_ore",
+            1
+          ]
+        ],
+        "outQty": 1
+      }
+    },
+    "scrap_ingot": {
+      "fromScrap": {
+        "secs": 12,
+        "ins": [
+          [
+            "scrap",
+            3
+          ]
+        ],
+        "outQty": 1
+      }
+    },
+    "refined_iron_ingot": {
+      "secs": 20,
+      "ins": [
+        [
+          "iron_ingot",
+          3
+        ],
+        [
+          "coal",
+          1
+        ]
+      ],
+      "outQty": 2
+    }
+  },
+  "chains": [
+    {
+      "id": "metal_blade",
+      "label": "Metal Blade",
+      "item": {
+        "weight": 0.8,
+        "max": 20,
+        "durability": null
+      },
+      "cheapestCraft": {
+        "route": "metal_blade",
+        "atomsPerUnit": {
+          "iron_ingot": 4.5,
+          "scrap": 1
+        },
+        "ingotEqPerUnit": 4.833,
+        "treeSeconds": 22
+      },
+      "routes": [
+        {
+          "recipe": "metal_blade",
+          "alias": null,
+          "outQty": 1,
+          "station": "workbench",
+          "stationLevel": 2,
+          "secs": 16,
+          "ins": [
+            [
+              "iron_ingot",
+              4
+            ],
+            [
+              "mechanical_parts",
+              1
+            ]
+          ],
+          "salvageDependent": false,
+          "rawPerOutputUnit": {
+            "atoms": {
+              "iron_ingot": 4.5,
+              "scrap": 1
+            },
+            "ingotEq": 4.833,
+            "treeSeconds": 22
+          },
+          "chosenByCheapestRule": true
+        }
+      ],
+      "researchCost": "base (known at start, no research)",
+      "sourceHits": [],
+      "consumers": [
+        "iron_sword_blade (Iron Sword (blade refit))",
+        "reinforced_spear_blade (Reinforced Spear (blade))"
+      ],
+      "recycler": {
+        "source": "iron_sword",
+        "note": "blade is a high-tier output of recycling an Iron Sword",
+        "rows": {
+          "v1": [
+            {
+              "tier": "base",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 0.333,
+              "ingotEqCraft": 5,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "mid",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 1.333,
+              "ingotEqCraft": 5,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "high",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "leather",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 1.333,
+              "ingotEqCraft": 5,
+              "minted": [],
+              "verdict": "OK"
+            }
+          ],
+          "v2": [
+            {
+              "tier": "base",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 0.333,
+              "ingotEqCraft": 5,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "mid",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "metal_blade",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 6.167,
+              "ingotEqCraft": 5,
+              "minted": [],
+              "verdict": "OVER_RETURN"
+            },
+            {
+              "tier": "high",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "metal_blade",
+                  1
+                ],
+                [
+                  "leather",
+                  1
+                ],
+                [
+                  "metal_blade",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 11,
+              "ingotEqCraft": 5,
+              "minted": [],
+              "verdict": "OVER_RETURN"
+            }
+          ],
+          "v3": [
+            {
+              "tier": "base",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 0.333,
+              "ingotEqCraft": 5,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "mid",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 1.333,
+              "ingotEqCraft": 5,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "high",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "leather",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 2.333,
+              "ingotEqCraft": 5,
+              "minted": [],
+              "verdict": "OK"
+            }
+          ]
+        }
+      },
+      "furnaceFuel": "UNKNOWN (per-second burn of furnace not quantified in this benchmark)",
+      "travel": "UNKNOWN (no travel-cost model in shipping Web)",
+      "li": {
+        "version": "LI master v5 §5",
+        "mode": "leaf-BOM, one-product output assumed",
+        "confidence": "ASSUMED",
+        "partsIsSohMechanicalParts": false,
+        "station": "L2",
+        "leaf": "30×iron_ingot, 15×LI Parts",
+        "unit": "LI",
+        "comparability": "context only; LI yield and SOH yield are not the same unit or scale; never a balance input"
+      }
+    },
+    {
+      "id": "metal_pipe",
+      "label": "Metal Pipe",
+      "item": {
+        "weight": 1.2,
+        "max": 20,
+        "durability": null
+      },
+      "cheapestCraft": {
+        "route": "metal_pipe",
+        "atomsPerUnit": {
+          "iron_ingot": 3.5,
+          "coal": 1,
+          "scrap": 1
+        },
+        "ingotEqPerUnit": 3.833,
+        "treeSeconds": 44
+      },
+      "routes": [
+        {
+          "recipe": "metal_pipe",
+          "alias": null,
+          "outQty": 1,
+          "station": "workbench",
+          "stationLevel": 2,
+          "secs": 18,
+          "ins": [
+            [
+              "refined_iron_ingot",
+              2
+            ],
+            [
+              "mechanical_parts",
+              1
+            ]
+          ],
+          "salvageDependent": false,
+          "rawPerOutputUnit": {
+            "atoms": {
+              "iron_ingot": 3.5,
+              "coal": 1,
+              "scrap": 1
+            },
+            "ingotEq": 3.833,
+            "treeSeconds": 44
+          },
+          "chosenByCheapestRule": true
+        }
+      ],
+      "researchCost": "base (known at start, no research)",
+      "sourceHits": [],
+      "consumers": [
+        "iron_plate",
+        "vehicle_frame_piped (Utility Frame (piped))"
+      ],
+      "recycler": {
+        "source": "iron_pick",
+        "note": "pipe is a high-tier output of recycling an Iron Pickaxe (v2 only; pinned)",
+        "rows": {
+          "v1": [
+            {
+              "tier": "base",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 0.333,
+              "ingotEqCraft": 3,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "mid",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 1.333,
+              "ingotEqCraft": 3,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "high",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "wood",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 1.333,
+              "ingotEqCraft": 3,
+              "minted": [],
+              "verdict": "OK"
+            }
+          ],
+          "v2": [
+            {
+              "tier": "base",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 0.333,
+              "ingotEqCraft": 3,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "mid",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 1.333,
+              "ingotEqCraft": 3,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "high",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "metal_pipe",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 6.167,
+              "ingotEqCraft": 3,
+              "minted": [
+                "coal:+1"
+              ],
+              "verdict": "OVER_RETURN"
+            }
+          ],
+          "v3": [
+            {
+              "tier": "base",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 0.333,
+              "ingotEqCraft": 3,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "mid",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 1.333,
+              "ingotEqCraft": 3,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "high",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 2.333,
+              "ingotEqCraft": 3,
+              "minted": [],
+              "verdict": "OK"
+            }
+          ]
+        }
+      },
+      "furnaceFuel": "UNKNOWN (per-second burn of furnace not quantified in this benchmark)",
+      "travel": "UNKNOWN (no travel-cost model in shipping Web)",
+      "li": {
+        "version": "LI master v5 §5",
+        "mode": "leaf-BOM, one-product output assumed",
+        "confidence": "ASSUMED",
+        "partsIsSohMechanicalParts": false,
+        "station": "L2",
+        "leaf": "30×LI Parts, 5×refined_iron_ingot",
+        "unit": "LI",
+        "comparability": "context only; LI yield and SOH yield are not the same unit or scale; never a balance input"
+      }
+    },
+    {
+      "id": "mechanical_gear",
+      "label": "Mechanical Gear",
+      "item": {
+        "weight": 0.8,
+        "max": 20,
+        "durability": null
+      },
+      "cheapestCraft": {
+        "route": "mechanical_gear",
+        "atomsPerUnit": {
+          "iron_ingot": 3.333,
+          "scrap": 2.333
+        },
+        "ingotEqPerUnit": 4.111,
+        "treeSeconds": 35.333
+      },
+      "routes": [
+        {
+          "recipe": "mechanical_gear",
+          "alias": null,
+          "outQty": 1,
+          "station": "workbench",
+          "stationLevel": 2,
+          "secs": 20,
+          "ins": [
+            [
+              "iron_ingot",
+              2
+            ],
+            [
+              "mechanical_parts",
+              2
+            ],
+            [
+              "fasteners",
+              1
+            ]
+          ],
+          "salvageDependent": false,
+          "rawPerOutputUnit": {
+            "atoms": {
+              "iron_ingot": 3.333,
+              "scrap": 2.333
+            },
+            "ingotEq": 4.111,
+            "treeSeconds": 35.333
+          },
+          "chosenByCheapestRule": true
+        }
+      ],
+      "researchCost": "base (known at start, no research)",
+      "sourceHits": [],
+      "consumers": [
+        "industrial_pick_geared (Salvager Pick (geared))",
+        "vehicle_drive_geared (Motor Drive (geared))"
+      ],
+      "recycler": {
+        "source": "industrial_axe",
+        "note": "gear is a high-tier output of recycling a Salvager Axe",
+        "rows": {
+          "v1": [
+            {
+              "tier": "base",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 0.333,
+              "ingotEqCraft": 4.667,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "mid",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 1.333,
+              "ingotEqCraft": 4.667,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "high",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "mechanical_parts",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 2.167,
+              "ingotEqCraft": 4.667,
+              "minted": [],
+              "verdict": "OK"
+            }
+          ],
+          "v2": [
+            {
+              "tier": "base",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 0.333,
+              "ingotEqCraft": 4.667,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "mid",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "mechanical_parts",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 2.167,
+              "ingotEqCraft": 4.667,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "high",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "mechanical_parts",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "mechanical_gear",
+                  1
+                ],
+                [
+                  "mechanical_parts",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 7.111,
+              "ingotEqCraft": 4.667,
+              "minted": [],
+              "verdict": "OVER_RETURN"
+            }
+          ],
+          "v3": [
+            {
+              "tier": "base",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 0.333,
+              "ingotEqCraft": 4.667,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "mid",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "mechanical_parts",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 2.167,
+              "ingotEqCraft": 4.667,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "high",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "mechanical_parts",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "mechanical_parts",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 3,
+              "ingotEqCraft": 4.667,
+              "minted": [],
+              "verdict": "OK"
+            }
+          ]
+        }
+      },
+      "furnaceFuel": "UNKNOWN (per-second burn of furnace not quantified in this benchmark)",
+      "travel": "UNKNOWN (no travel-cost model in shipping Web)",
+      "li": {
+        "version": "LI master v5 §5",
+        "mode": "leaf-BOM, one-product output assumed",
+        "confidence": "ASSUMED",
+        "partsIsSohMechanicalParts": false,
+        "station": "L2",
+        "leaf": "50×iron_ingot, 65×LI Parts",
+        "unit": "LI",
+        "comparability": "context only; LI yield and SOH yield are not the same unit or scale; never a balance input"
+      }
+    },
+    {
+      "id": "iron_plate",
+      "label": "Iron Plate",
+      "item": {
+        "weight": 1.5,
+        "max": 20,
+        "durability": null
+      },
+      "cheapestCraft": {
+        "route": "iron_plate",
+        "atomsPerUnit": {
+          "iron_ingot": 3.5,
+          "coal": 1,
+          "scrap": 1
+        },
+        "ingotEqPerUnit": 3.833,
+        "treeSeconds": 44
+      },
+      "routes": [
+        {
+          "recipe": "iron_plate",
+          "alias": null,
+          "outQty": 2,
+          "station": "workbench",
+          "stationLevel": 2,
+          "secs": 18,
+          "ins": [
+            [
+              "refined_iron_ingot",
+              2
+            ],
+            [
+              "metal_pipe",
+              1
+            ],
+            [
+              "mechanical_parts",
+              1
+            ]
+          ],
+          "salvageDependent": false,
+          "rawPerOutputUnit": {
+            "atoms": {
+              "iron_ingot": 3.5,
+              "coal": 1,
+              "scrap": 1
+            },
+            "ingotEq": 3.833,
+            "treeSeconds": 44
+          },
+          "chosenByCheapestRule": true
+        }
+      ],
+      "researchCost": "base (known at start, no research)",
+      "sourceHits": [],
+      "consumers": [],
+      "recycler": {
+        "source": "iron_axe",
+        "note": "plate is a high-tier output of recycling an Iron Axe (v2 only; pinned)",
+        "rows": {
+          "v1": [
+            {
+              "tier": "base",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 0.333,
+              "ingotEqCraft": 3,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "mid",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 1.333,
+              "ingotEqCraft": 3,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "high",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "wood",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 1.333,
+              "ingotEqCraft": 3,
+              "minted": [],
+              "verdict": "OK"
+            }
+          ],
+          "v2": [
+            {
+              "tier": "base",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 0.333,
+              "ingotEqCraft": 3,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "mid",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 1.333,
+              "ingotEqCraft": 3,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "high",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "iron_plate",
+                  1
+                ],
+                [
+                  "mechanical_parts",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 6,
+              "ingotEqCraft": 3,
+              "minted": [
+                "coal:+1"
+              ],
+              "verdict": "OVER_RETURN"
+            }
+          ],
+          "v3": [
+            {
+              "tier": "base",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 0.333,
+              "ingotEqCraft": 3,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "mid",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 1.333,
+              "ingotEqCraft": 3,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "high",
+              "outputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "mechanical_parts",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 2.167,
+              "ingotEqCraft": 3,
+              "minted": [],
+              "verdict": "OK"
+            }
+          ]
+        }
+      },
+      "furnaceFuel": "UNKNOWN (per-second burn of furnace not quantified in this benchmark)",
+      "travel": "UNKNOWN (no travel-cost model in shipping Web)",
+      "li": {
+        "version": "LI master v5 §5",
+        "mode": "leaf-BOM, one-product output assumed",
+        "confidence": "ASSUMED",
+        "partsIsSohMechanicalParts": false,
+        "station": "L2",
+        "leaf": "30×LI Parts, 5×refined_iron_ingot",
+        "unit": "LI",
+        "comparability": "context only; LI yield and SOH yield are not the same unit or scale; never a balance input"
+      }
+    },
+    {
+      "id": "vehicle_frame",
+      "label": "Utility Frame → Motorbike Kit",
+      "item": {
+        "weight": 4,
+        "max": 5,
+        "durability": null
+      },
+      "cheapestCraft": {
+        "route": "vehicle_frame",
+        "atomsPerUnit": {
+          "iron_ingot": 4,
+          "scrap": 2,
+          "spares": 2
+        },
+        "ingotEqPerUnit": 4.667,
+        "treeSeconds": 37
+      },
+      "routes": [
+        {
+          "recipe": "vehicle_frame",
+          "alias": null,
+          "outQty": 1,
+          "station": "workbench",
+          "stationLevel": 2,
+          "secs": 25,
+          "ins": [
+            [
+              "iron_ingot",
+              3
+            ],
+            [
+              "mechanical_parts",
+              2
+            ],
+            [
+              "spares",
+              2
+            ]
+          ],
+          "salvageDependent": false,
+          "rawPerOutputUnit": {
+            "atoms": {
+              "iron_ingot": 4,
+              "scrap": 2,
+              "spares": 2
+            },
+            "ingotEq": 4.667,
+            "treeSeconds": 37
+          },
+          "chosenByCheapestRule": true
+        },
+        {
+          "recipe": "vehicle_frame_piped",
+          "alias": "Utility Frame (piped)",
+          "outQty": 1,
+          "station": "workbench",
+          "stationLevel": 2,
+          "secs": 22,
+          "ins": [
+            [
+              "metal_pipe",
+              1
+            ],
+            [
+              "iron_ingot",
+              2
+            ],
+            [
+              "mechanical_parts",
+              2
+            ],
+            [
+              "spares",
+              2
+            ]
+          ],
+          "salvageDependent": false,
+          "rawPerOutputUnit": {
+            "atoms": {
+              "iron_ingot": 6.5,
+              "coal": 1,
+              "scrap": 3,
+              "spares": 2
+            },
+            "ingotEq": 7.5,
+            "treeSeconds": 78
+          },
+          "chosenByCheapestRule": false
+        }
+      ],
+      "researchCost": "base (known at start, no research)",
+      "sourceHits": [],
+      "consumers": [
+        "motorbike_kit"
+      ],
+      "recycler": "no recovery table for this chain item (not recycled)",
+      "furnaceFuel": "UNKNOWN (per-second burn of furnace not quantified in this benchmark)",
+      "travel": "UNKNOWN (no travel-cost model in shipping Web)",
+      "finalConsumer": {
+        "motorbike_kit": {
+          "route": "motorbike_kit",
+          "atomsPerKit": {
+            "iron_ingot": 10.333,
+            "scrap": 5.333,
+            "spares": 5
+          },
+          "ingotEqPerKit": 12.111,
+          "treeSeconds": 127.333,
+          "stationLevel": 3,
+          "weightKg": 12
+        }
+      },
+      "li": {
+        "version": "LI master v5 §5",
+        "mode": "leaf-BOM, one-product output assumed",
+        "confidence": "ASSUMED",
+        "partsIsSohMechanicalParts": false,
+        "station": "L3",
+        "leaf": "100×iron_ingot, 50×LI Parts, 30×refined_iron_ingot",
+        "unit": "LI",
+        "comparability": "context only; LI yield and SOH yield are not the same unit or scale; never a balance input"
+      }
+    }
+  ],
+  "li_context_only": true,
+  "proofClasses": [
+    {
+      "tool": "iron_sword",
+      "v2_pinned": {
+        "resourceOverReturn": true,
+        "netIngotEqPerLoop": 6,
+        "mintedNonNumeraire": []
+      },
+      "repeatableLoop": {
+        "netIngotEqPerLoop": 6,
+        "consumesRepeatableInputsOnly": "UNKNOWN (wood/leather sources not verified in this benchmark)",
+        "realizable": "UNKNOWN",
+        "note": "craft is at full durability, so high-tier recovery is always reachable for a fresh tool"
+      },
+      "salvageWindfall": "none",
+      "v3_new": {
+        "resourceOverReturn": false
+      }
+    },
+    {
+      "tool": "iron_pick",
+      "v2_pinned": {
+        "resourceOverReturn": true,
+        "netIngotEqPerLoop": 3.167,
+        "mintedNonNumeraire": [
+          "coal:+1"
+        ]
+      },
+      "repeatableLoop": {
+        "netIngotEqPerLoop": 3.167,
+        "consumesRepeatableInputsOnly": "UNKNOWN (wood/leather sources not verified in this benchmark)",
+        "realizable": "UNKNOWN",
+        "note": "craft is at full durability, so high-tier recovery is always reachable for a fresh tool"
+      },
+      "salvageWindfall": "none",
+      "v3_new": {
+        "resourceOverReturn": false
+      }
+    },
+    {
+      "tool": "iron_axe",
+      "v2_pinned": {
+        "resourceOverReturn": true,
+        "netIngotEqPerLoop": 3,
+        "mintedNonNumeraire": [
+          "coal:+1"
+        ]
+      },
+      "repeatableLoop": {
+        "netIngotEqPerLoop": 3,
+        "consumesRepeatableInputsOnly": "UNKNOWN (wood/leather sources not verified in this benchmark)",
+        "realizable": "UNKNOWN",
+        "note": "craft is at full durability, so high-tier recovery is always reachable for a fresh tool"
+      },
+      "salvageWindfall": "none",
+      "v3_new": {
+        "resourceOverReturn": false
+      }
+    },
+    {
+      "tool": "industrial_axe",
+      "v2_pinned": {
+        "resourceOverReturn": true,
+        "netIngotEqPerLoop": 2.444,
+        "mintedNonNumeraire": []
+      },
+      "repeatableLoop": {
+        "netIngotEqPerLoop": 2.444,
+        "consumesRepeatableInputsOnly": "UNKNOWN (wood/leather sources not verified in this benchmark)",
+        "realizable": "UNKNOWN",
+        "note": "craft is at full durability, so high-tier recovery is always reachable for a fresh tool"
+      },
+      "salvageWindfall": "none in table (damaged_drive is a wreck-only input, not consumed by these tools)",
+      "v3_new": {
+        "resourceOverReturn": false
+      }
+    },
+    {
+      "tool": "mechanical_parts (recover_drive route)",
+      "salvageWindfall": "damaged_drive is wreck-only (non-repeatable); excluded from craft cost; its recovery is a salvage windfall, not a loop",
+      "resourceOverReturn": "not evaluated: no recycler table row"
+    }
+  ],
+  "unknowns": [
+    "ore-to-ingot fuel burn",
+    "travel/route cost",
+    "per-source drop rate for Metal Blade/Frame",
+    "LI per-item yields (ASSUMED only)"
+  ]
+}

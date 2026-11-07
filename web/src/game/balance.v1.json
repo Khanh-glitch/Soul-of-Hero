@@ -772,6 +772,100 @@
       }
     }
   },
+  "recyclerV3": {
+    "_status": "SOH_PROVISIONAL MEC-01 P1: recyclerV3 supersedes recyclerV2 ONLY for NEW jobs (X:recover-v3) and ONLY for the four keys listed (each v2 entry over-returned vs its craft under the cumulative-tier recovery proof, see web/src/game/industrial-proof.ts). Queued/saved X:recover-v2 jobs keep v2 outputs forever. Other v2 keys stay on v2 (proved OK). Thresholds reuse recyclerV1 midCondition/highCondition.",
+    "seconds": 15,
+    "rules": {
+      "iron_sword": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "iron_ingot",
+            1
+          ],
+          [
+            "leather",
+            1
+          ]
+        ]
+      },
+      "iron_pick": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ]
+      },
+      "iron_axe": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "mechanical_parts",
+            1
+          ]
+        ]
+      },
+      "industrial_axe": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "mechanical_parts",
+            1
+          ],
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "mechanical_parts",
+            1
+          ]
+        ]
+      }
+    }
+  },
   "airdropV1": {
     "_status": "SOH_PROVISIONAL; ORIGINAL_UNKNOWN historical cadence, quantities, delays and weights",
     "firstHours": 8,

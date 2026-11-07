@@ -113,16 +113,18 @@ describe('B01 B: intermediates have real producers and consumers',()=>{
 
 describe('B01 C: recycler v2 versioning and multi-output',()=>{
   const sword=(dur:number)=>({uid:'u-sword',key:'iron_sword',qty:1,dur});
-  it('new jobs use X:recover-v2 for tools listed in v2 and keep v1 for the rest',()=>{
-    expect(recoveryPlan(sword(300) as any)?.recipe).toBe('X:recover-v2');
-    expect(recoveryPlan(sword(300) as any)?.outputs).toEqual([['scrap',1],['iron_ingot',1],['metal_blade',1],['leather',1],['metal_blade',1]]);
-    expect(recoveryPlan({uid:'u-pick',key:'iron_pick',qty:1,dur:400} as any)?.recipe).toBe('X:recover-v2');
+  it('new jobs use the current version for tools listed in it (MEC-01 P1: v3 for the four over-returning keys) and keep v1 for the rest',()=>{
+    // MEC-01 P1: recyclerV2 over-returned for these keys; new jobs now use recyclerV3. Saved v2 jobs stay on v2 (next test).
+    expect(recoveryPlan(sword(300) as any)?.recipe).toBe('X:recover-v3');
+    expect(recoveryPlan(sword(300) as any)?.outputs).toEqual([['scrap',1],['iron_ingot',1],['iron_ingot',1],['leather',1]]);
+    expect(recoveryPlan({uid:'u-pick',key:'iron_pick',qty:1,dur:400} as any)?.recipe).toBe('X:recover-v3');
     expect(recoveryPlan({uid:'u-spear',key:'reinforced_spear',qty:1,dur:200} as any)?.recipe).toBe('X:recover-v1');
   });
   it('a queued v1 job keeps v1 outputs after v2 exists, identical to the pre-B01 table',()=>{
     expect(recoveryPlanFor(sword(300) as any,'X:recover-v1')?.outputs).toEqual([['scrap',1],['iron_ingot',1],['leather',1]]);
     expect(recoveryPlanFor({uid:'u-pick',key:'iron_pick',qty:1,dur:400} as any,'X:recover-v1')?.outputs).toEqual([['scrap',1],['iron_ingot',1],['wood',1]]);
     expect(recoveryPlanFor(sword(300) as any,'X:recover-v2')?.recipe).toBe('X:recover-v2');
+    expect(recoveryPlanFor(sword(300) as any,'X:recover-v2')?.outputs).toEqual([['scrap',1],['iron_ingot',1],['metal_blade',1],['leather',1],['metal_blade',1]]); // pinned saved v2 outputs unchanged
     expect(recoveryPlanFor(sword(300) as any,'X:bogus')).toBeNull();
   });
   it('the same selected UID cannot be used by a v2 recycle and a craft at once (reservation removes it)',()=>{
@@ -230,9 +232,10 @@ describe('B01-R1 C: recycler v2 condition, cancel, capacity, offline and UID inv
   const copyG=(g:GameState)=>selectSnapshots([serializeSnapshot(g),null]).gs!;
   it('v2 condition tiers: low condition yields scrap only; mid and high add the listed v2 outputs',()=>{
     const max=ITEMS.iron_sword.dur!;
-    const lo=recoveryPlan({uid:'a',key:'iron_sword',qty:1,dur:Math.floor(max*0.1)} as any)!;
-    const mid=recoveryPlan({uid:'b',key:'iron_sword',qty:1,dur:Math.floor(max*0.5)} as any)!;
-    const hi=recoveryPlan({uid:'c',key:'iron_sword',qty:1,dur:Math.floor(max*0.95)} as any)!;
+    // Pinned v2 tier mechanics (saved X:recover-v2 jobs). New jobs for this key use v3 (MEC-01 P1).
+    const lo=recoveryPlanFor({uid:'a',key:'iron_sword',qty:1,dur:Math.floor(max*0.1)} as any,'X:recover-v2')!;
+    const mid=recoveryPlanFor({uid:'b',key:'iron_sword',qty:1,dur:Math.floor(max*0.5)} as any,'X:recover-v2')!;
+    const hi=recoveryPlanFor({uid:'c',key:'iron_sword',qty:1,dur:Math.floor(max*0.95)} as any,'X:recover-v2')!;
     expect(lo.outputs).toEqual([['scrap',1]]);
     expect(mid.outputs).toEqual([['scrap',1],['iron_ingot',1],['metal_blade',1]]);
     expect(hi.outputs).toEqual([['scrap',1],['iron_ingot',1],['metal_blade',1],['leather',1],['metal_blade',1]]);
@@ -241,7 +244,7 @@ describe('B01-R1 C: recycler v2 condition, cancel, capacity, offline and UID inv
     const {g,r,m}=rig();const max=ITEMS.iron_sword.dur!;addItem(r,'inv','iron_sword',1,{dur:Math.floor(max*0.1)});
     const i=C(r,'inv').slots.findIndex((x:any)=>x?.key==='iron_sword');const st=C(r,'inv').slots[i]!;const before=st.dur;
     expect(dispatch(g,{id:'v2-rec-'+ ++n,type:'recycleItem',eid:m.id,slot:i,uid:st.uid},T).ok).toBe(true);
-    const job=m.station.queue[0];expect(job.recipe).toBe('X:recover-v2');expect(job.reserved[0].dur).toBe(before);
+    const job=m.station.queue[0];expect(job.recipe).toBe('X:recover-v3');expect(job.reserved[0].dur).toBe(before);
     expect(job.reserved[0].uid).toBe(st.uid);
   });
   it('cancel of a v2 job returns the same UID and no outputs',()=>{
@@ -282,7 +285,7 @@ describe('B01-R1 C: recycler v2 condition, cancel, capacity, offline and UID inv
     expect(countItem(r,'inv','iron_sword')).toBe(0);
     expect(dispatch(g,{id:'v2-rec-'+ ++n,type:'recycleItem',eid:m.id,slot:i,uid},T).ok).toBe(false);
     settle(g,T+60000,true);
-    expect(countItem(r,m.station.outC,'iron_ingot')).toBe(1);expect(countItem(r,m.station.outC,'metal_blade')).toBe(1);
+    expect(countItem(r,m.station.outC,'iron_ingot')).toBe(1);expect(countItem(r,m.station.outC,'metal_blade')).toBe(0); // v3 mid: no blade
     expect(countItem(r,'inv','iron_sword')).toBe(0);
   });
 });

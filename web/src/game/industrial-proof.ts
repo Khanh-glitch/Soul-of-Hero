@@ -1,0 +1,69 @@
+// MEC-01 P1: recycler economic proof. Pure functions over the live recipe registry and the pinned recovery plans.
+// Numeraire (authored, not invented): 1 iron_ingot = 1 iron_ore (furnace iron_ingot) = 3 scrap (furnace scrap_ingot).
+// Atoms without an authored conversion (coal, wood, leather, stone, crystal, spares) are compared per material and never
+// converted. damaged_drive is salvage-only (non-repeatable): any route through it is excluded from craft cost.
+import { RECIPES, ITEMS } from './catalog';
+import { recoveryPlanFor, type RecoveryPlan } from './recycler';
+import BAL from './balance.v1.json';
+
+export type Vec = Record<string, number>;
+const add = (a: Vec, b: Vec, m = 1) => { for (const [k, q] of Object.entries(b)) a[k] = (a[k] ?? 0) + q * m; return a; };
+export const SALVAGE_ONLY = new Set(['damaged_drive']);
+/** Atoms: expansion stops here. iron_ingot/iron_ore/scrap are the numeraire; the rest are compared per material. */
+const ATOMS = new Set(['iron_ingot', 'iron_ore', 'scrap', 'coal', 'wood', 'stone', 'leather', 'spares', 'crystal', 'damaged_drive']);
+const INGOT_PER: Record<string, number> = { iron_ingot: 1, iron_ore: 1, scrap: 1 / 3 };
+
+export type Route = { recipe: string; out: string; qty: number; secs: number; ins: [string, number][]; alias?: string };
+export function routesFor(item: string): Route[] {
+  return Object.entries(RECIPES).filter(([, r]) => r.out === item).map(([id, r]) => ({ recipe: id, out: r.out, qty: r.qty, secs: r.secs, ins: r.ins as [string, number][], alias: (r as any).alias }))
+    // Mechanical parts' recover_drive route: a salvage input, so it is listed but excluded from craft cost below.
+    ;
+}
+/** Expand one unit-quantity of `item` to atoms along the cheapest non-salvage route. Returns null if no acyclic route. */
+export function expand(item: string, qty = 1, depth = 0, seen = new Set<string>()): { vec: Vec; route?: string; secs: number; salvageDependent: boolean } | null {
+  if (ATOMS.has(item)) return { vec: { [item]: qty }, secs: 0, salvageDependent: SALVAGE_ONLY.has(item) };
+  if (depth > 12 || seen.has(item)) return null;
+  const nextSeen = new Set(seen).add(item);
+  let best: { vec: Vec; route: string; secs: number } | null = null; let bestIe = Infinity; let anyRoute = false;
+  for (const rt of routesFor(item)) {
+    if (rt.ins.some(([k]) => SALVAGE_ONLY.has(k))) continue;   // salvage-dependent route: not a repeatable craft route
+    anyRoute = true;
+    const v: Vec = {}; let ok = true; let secs = rt.secs * (qty / rt.qty);
+    for (const [i, q] of rt.ins) { const e = expand(i, (q * qty) / rt.qty, depth + 1, nextSeen); if (!e) { ok = false; break; } add(v, e.vec); secs += e.secs; }
+    if (!ok) continue;
+    const ie = ieValue(v);
+    if (ie < bestIe) { bestIe = ie; best = { vec: v, route: rt.recipe, secs }; }
+  }
+  if (!best) return anyRoute ? null : { vec: { [item]: qty }, secs: 0, salvageDependent: false }; // raw material with no craft route
+  return { vec: best.vec, route: best.route, secs: best.secs, salvageDependent: false };
+}
+/** Iron-ingot-equivalent of an atom vector (only numeraire atoms). */
+export function ieValue(v: Vec): number { return Object.entries(v).reduce((n, [k, q]) => n + (INGOT_PER[k] ?? 0) * q, 0); }
+
+/** Recovery vector of one recycle at a given condition tier, through the pinned recovery plan of that version. */
+export function recoveryAtTier(item: string, recipe: 'X:recover-v1' | 'X:recover-v2' | 'X:recover-v3', tier: 'base' | 'mid' | 'high'): { plan: RecoveryPlan | null; vec: Vec | null; repeatable: boolean } {
+  const max = ITEMS[item]?.dur ?? 1;
+  const cond = tier === 'base' ? 0 : tier === 'mid' ? BAL.recyclerV1.midCondition : BAL.recyclerV1.highCondition;
+  const s: any = { uid: 'proof', key: item, qty: 1, dur: Math.round(max * Math.max(cond, tier === 'high' ? 1 : cond)) };
+  const plan = recoveryPlanFor(s, recipe);
+  if (!plan) return { plan: null, vec: null, repeatable: false };
+  const vec: Vec = {};
+  for (const [k, q] of plan.outputs) { const e = expand(k, q); if (!e) return { plan, vec: null, repeatable: false }; add(vec, e.vec); }
+  return { plan, vec, repeatable: true };
+}
+
+export type Verdict = 'OK' | 'OVER_RETURN' | 'UNKNOWN';
+export function proveItem(item: string, recipe: 'X:recover-v1' | 'X:recover-v2' | 'X:recover-v3') {
+  const craft = expand(item, 1);
+  const rows: any[] = [];
+  for (const tier of ['base', 'mid', 'high'] as const) {
+    const rec = recoveryAtTier(item, recipe, tier);
+    if (!rec.vec || !craft) { rows.push({ tier, verdict: 'UNKNOWN' }); continue; }
+    const ieRec = ieValue(rec.vec), ieCraft = ieValue(craft.vec);
+    const mintedOther = Object.keys(rec.vec).filter(k => !INGOT_PER[k] && !SALVAGE_ONLY.has(k) && (rec.vec![k] > (craft.vec[k] ?? 0) + 1e-9)).map(k => `${k}:+${Math.round((rec.vec![k] - (craft.vec[k] ?? 0)) * 100) / 100}`);
+    const over = ieRec > ieCraft + 1e-9 || mintedOther.length > 0;
+    rows.push({ tier, cumulativeOutputs: rec.plan!.outputs, ieRecovered: round(ieRec), ieCraft: round(ieCraft), mintedNonNumeraire: mintedOther, verdict: over ? 'OVER_RETURN' : 'OK' });
+  }
+  return { item, recipe, craftRoute: craft?.route, craftSeconds: craft ? routesFor(item).find(r => r.recipe === craft.route)?.secs : undefined, craftVec: craft?.vec, rows };
+}
+const round = (n: number) => Math.round(n * 1000) / 1000;

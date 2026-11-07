@@ -3,7 +3,7 @@ import { ITEMS } from './catalog';
 
 type Output = [string, number];
 /** B01: X:recover-v1 jobs keep the v1 table forever; X:recover-v2 jobs use recyclerV2 (new physical outputs). */
-export type RecoveryRecipe = 'X:drive'|'X:recover-v1'|'X:recover-v2'|'X:pipe-v1';
+export type RecoveryRecipe = 'X:drive'|'X:recover-v1'|'X:recover-v2'|'X:recover-v3'|'X:pipe-v1';
 /** B04-P4 (SOH_PROVISIONAL): one carried Metal Pipe at the physical Foundry Recycler -> one Refined Iron Ingot. Net loss vs. the pipe's inputs (no loop). LI per-item yield: ORIGINAL_UNKNOWN. */
 const PIPE_V1={seconds:10,outputs:[['refined_iron_ingot',1]] as Output[]};
 function pipePlan(s:Stack):RecoveryPlan|null{
@@ -12,7 +12,7 @@ function pipePlan(s:Stack):RecoveryPlan|null{
 }
 export type RecoveryPlan = { recipe:RecoveryRecipe; total:number; outputs:Output[]; condition:number|null };
 type RuleTable = Record<string,{base:Output[];mid:Output[];high:Output[]}>;
-function planFromTable(s:Stack, table:RuleTable, recipe:'X:recover-v1'|'X:recover-v2', seconds:number):RecoveryPlan|null {
+function planFromTable(s:Stack, table:RuleTable, recipe:'X:recover-v1'|'X:recover-v2'|'X:recover-v3', seconds:number):RecoveryPlan|null {
   if(!Object.prototype.hasOwnProperty.call(table,s.key))return null;
   const max=ITEMS[s.key]?.dur;
   if(!max||!Number.isFinite(s.dur)||s.dur!<0||s.dur!>max)return null;
@@ -24,6 +24,9 @@ export function recoveryPlan(s:Stack):RecoveryPlan|null {
   if(!s||typeof s!=="object"||s.qty!==1)return null;
   if(s.key==='damaged_drive')return {recipe:'X:drive',total:12000,outputs:[['spares',2]],condition:null};
   if(s.key==='metal_pipe')return pipePlan(s);
+  // MEC-01 P1: v3 supersedes v2 for the four keys it lists (v2 over-returned); new jobs only.
+  const v3=BAL.recyclerV3.rules as RuleTable;
+  if(Object.prototype.hasOwnProperty.call(v3,s.key))return planFromTable(s,v3,'X:recover-v3',BAL.recyclerV3.seconds);
   const v2=BAL.recyclerV2.rules as RuleTable;
   if(Object.prototype.hasOwnProperty.call(v2,s.key))return planFromTable(s,v2,'X:recover-v2',BAL.recyclerV2.seconds);
   return planFromTable(s,BAL.recyclerV1.rules as RuleTable,'X:recover-v1',BAL.recyclerV1.seconds);
@@ -34,6 +37,7 @@ export function recoveryPlanFor(s:Stack, recipe:string):RecoveryPlan|null {
   if(recipe==='X:drive')return s.key==='damaged_drive'?{recipe:'X:drive',total:12000,outputs:[['spares',2]],condition:null}:null;
   if(recipe==='X:recover-v1')return planFromTable(s,BAL.recyclerV1.rules as RuleTable,'X:recover-v1',BAL.recyclerV1.seconds);
   if(recipe==='X:recover-v2')return planFromTable(s,BAL.recyclerV2.rules as RuleTable,'X:recover-v2',BAL.recyclerV2.seconds);
+  if(recipe==='X:recover-v3')return planFromTable(s,BAL.recyclerV3.rules as RuleTable,'X:recover-v3',BAL.recyclerV3.seconds);
   if(recipe==='X:pipe-v1')return pipePlan(s);
   return null;
 }
