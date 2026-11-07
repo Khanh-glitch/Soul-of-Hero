@@ -1,12 +1,28 @@
-// MEC-01 (partial): anchors the five SOH industrial benchmark chains to the live recipe registry, and asserts that no
-// recycler rule returns more units than the craft that produced its item consumed (no profitable recycle→recraft loop).
+// MEC-01 B: anchors the five SOH industrial benchmark chains to the live recipe registry, and checks PER-MATERIAL raw
+// conservation: every recycler rule's outputs, fully expanded to raw materials, must not exceed the raw expansion of the
+// craft that produced the item. Unit counts are not compared (they mix unlike materials).
 // LI historical figures are reference only (see PR handoff); they are not balance inputs here.
 import {describe,it,expect} from 'vitest';
 import {RECIPES} from '../src/game/catalog';
 import BAL from '../src/game/balance.v1.json';
 
 const ins=(k:string)=>Object.fromEntries((RECIPES[k].ins as [string,number][]).map(([i,q])=>[i,q]));
-const units=(a:[string,number][]|undefined|null)=>(a??[]).reduce((n,[,q])=>n+q,0);
+type Vec=Record<string,number>;
+const addTo=(a:Vec,b:Vec,m:number)=>{for(const[k,q]of Object.entries(b))a[k]=(a[k]??0)+q*m;return a;};
+/** Recursive raw expansion. Items with no craft recipe are raw. Returns null on a cycle (fails the test). */
+function rawOf(item:string,qty:number,depth=0):Vec|null{
+  if(depth>12)return null;
+  const rc=Object.values(RECIPES).find(x=>x.out===item&&!(x as any).alias) as any;
+  if(!rc)return {[item]:qty};
+  const v:Vec={};
+  for(const[i,q]of rc.ins as [string,number][]){const r=rawOf(i,qty*q/rc.qty,depth+1);if(!r)return null;addTo(v,r,1);}
+  return v;
+}
+// Salvage-only materials: produced by recycler rules but consumed by no craft in the registry. Designed salvage, not a loop.
+const fmt=(n:number)=>String(Math.round(n*100)/100);
+const SALVAGE_ONLY=new Set(['scrap','coal','damaged_drive']);
+// Pinned open findings (balance owner, not changed here): non-salvage raw overflows that already exist in the tables.
+const PINNED_OVERFLOWS=['recyclerV2.iron_pick.high.iron_ore:4>3'];
 
 describe('MEC-01 five-chain SOH benchmark is anchored to the registry', () => {
   it('metal blade: 4 iron + 1 mechanical part at bench II', () => {
@@ -26,16 +42,26 @@ describe('MEC-01 five-chain SOH benchmark is anchored to the registry', () => {
   });
 });
 
-describe('no profitable recycle→recraft loop in the recycler tables', () => {
-  for (const ver of ['recyclerV1','recyclerV2'] as const) {
-    it(`${ver}: every recovered output set is no larger than the craft input that produced the item`, () => {
-      const rules=(BAL as any)[ver].rules as Record<string,{base?:[string,number][];mid?:[string,number][];high?:[string,number][]}>;
+describe('per-material raw conservation of recycler rules (no profitable recycle→recraft loop)', () => {
+  it('every recycler output expands to raw materials that do not exceed the craft raw expansion, except salvage-only and pinned findings', () => {
+    const found:string[]=[];
+    for (const ver of ['recyclerV1','recyclerV2'] as const) {
+      const rules=(BAL as any)[ver].rules as Record<string,Record<string,[string,number][]|undefined>>;
       for (const [item,rule] of Object.entries(rules)) {
-        const rc=Object.values(RECIPES).find(x=>x.out===item&&!x.alias) as any;
-        if (!rc) continue;                       // unrecoverable-by-craft items (e.g. drive) are covered by their own rule
-        const cost=units(rc.ins)*1;
-        for (const tier of ['base','mid','high'] as const) expect(units(rule[tier]), `${item}.${tier}`).toBeLessThanOrEqual(cost);
+        const base=rawOf(item,1);
+        expect(base,`${item} craft expansion must be acyclic`).not.toBeNull();
+        if (!Object.values(RECIPES).find(x=>x.out===item&&!(x as any).alias)) continue; // unrecoverable-by-craft (e.g. drive) covered by its own rule
+        for (const tier of ['base','mid','high'] as const) {
+          if (!rule[tier]) continue;
+          const rec:Vec={};
+          for (const [o,q] of rule[tier]!) { const r=rawOf(o,q); expect(r,`${item}.${tier} output ${o} acyclic`).not.toBeNull(); addTo(rec,r!,1); }
+          for (const [m,q] of Object.entries(rec)) {
+            if (SALVAGE_ONLY.has(m)) continue;
+            if (q > (base![m]??0)+1e-9) found.push(`${ver}.${item}.${tier}.${m}:${fmt(q)}>${fmt(base![m]??0)}`);
+          }
+        }
       }
-    });
-  }
+    }
+    expect(found.sort()).toEqual([...PINNED_OVERFLOWS].sort());
+  });
 });

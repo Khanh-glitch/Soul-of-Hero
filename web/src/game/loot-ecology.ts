@@ -1,5 +1,6 @@
 import { WW, type RunState } from './core';
-import type { StaticEnt } from './world';
+import { getWorld, type StaticEnt } from './world';
+import { resolveLootSource, type SpecGrade } from './loot-source-spec';
 import { ITEMS } from './catalog';
 
 /** W06 SOH_NEW_TUNED v1, not historical LI percentages or timer parity.
@@ -48,8 +49,16 @@ function w06LootRoll(r:RunState,site:StaticEnt,cycle:number):[string,number][] {
 export const LOOT_GRAMMAR_VERSION = 'b01-v1' as const;
 /** B04-P4 (SOH_PROVISIONAL): new runs use b04-v1, which widens the same four roles with physical sinks the source role can plausibly hold.
  * Old saves keep b01-v1 exactly. Pools are chosen deterministically per run/source/cycle; fixed stacks are unchanged. */
-export const LOOT_GRAMMAR_CURRENT = 'b04-v1' as const;
-export function isKnownLootGrammar(v: unknown): v is 'b01-v1' | 'b04-v1' { return v === LOOT_GRAMMAR_VERSION || v === LOOT_GRAMMAR_CURRENT; }
+export const LOOT_GRAMMAR_B04 = 'b04-v1' as const;
+/** B05 (loot-source-v2, SOH_PROVISIONAL): new runs only. Specified sites roll by authored grade; unspecified sites keep B04. */
+export const LOOT_GRAMMAR_CURRENT = 'b05-v1' as const;
+export function isKnownLootGrammar(v: unknown): v is 'b01-v1' | 'b04-v1' | 'b05-v1' { return v === LOOT_GRAMMAR_VERSION || v === LOOT_GRAMMAR_B04 || v === LOOT_GRAMMAR_CURRENT; }
+/** Toolbox grade pools for B05. Mid keeps the B04 toolbox pool; high is an industrial intermediate cache. */
+export const LOOT_B05_TOOLBOX_GRADE: Record<SpecGrade, { fixed: readonly (readonly [string, number])[]; pool: readonly (readonly [string, number])[] }> = {
+  low:  { fixed: [], pool: [['fasteners', 1], ['scrap', 1]] },
+  mid:  { fixed: [['refined_iron_ingot', 1]], pool: [['mechanical_gear', 1], ['metal_pipe', 1], ['iron_plate', 1]] },
+  high: { fixed: [['refined_iron_ingot', 1], ['mechanical_gear', 1]], pool: [['metal_blade', 1], ['metal_pipe', 1], ['iron_plate', 1]] },
+};
 export type LootRole = 'food' | 'medical' | 'metal' | 'medical_high';
 export type LootGrade = 'low' | 'mid' | 'high';
 export const LOOT_B01_ROLES: Record<LootClass, { role: LootRole; grade: LootGrade; fixed: readonly (readonly [string, number])[]; pool: readonly (readonly [string, number])[] }> = {
@@ -86,7 +95,18 @@ const LOOT_B01_FORBIDDEN = new Set(['rcash', 'blueprint', 'keycard', 'damaged_dr
 export function lootGrammarRoll(r: RunState, site: StaticEnt, cycle: number): [string, number][] {
   const g = r.lootEcology?.grammar; if (!isKnownLootGrammar(g)) return [];
   const kind = lootClass(site); if (!kind) return [];
-  const def = (g === LOOT_GRAMMAR_CURRENT ? LOOT_B04_ROLES : LOOT_B01_ROLES)[kind];
+  if (g === LOOT_GRAMMAR_CURRENT) {
+    const src = resolveLootSource(site, getWorld(r.layoutId || 'shipping'));
+    if (src && src.access === 'unproven') return [];      // authored access not proven: fail closed, no rolls
+    if (src && src.spec.role === kind && kind === 'toolbox') {
+      const tbl = LOOT_B05_TOOLBOX_GRADE[src.spec.grade];
+      const base = `${g}|${r.seed}|${lootSourceId(r, site)}|${cycle}|${src.spec.id}|${src.spec.grade}`;
+      const out: [string, number][] = tbl.fixed.map(([k, q]) => [k, q]);
+      if (tbl.pool.length) { const [k, q] = tbl.pool[hashPick(base) % tbl.pool.length]; out.push([k, q]); }
+      return out.filter(([k]) => !!ITEMS[k] && !LOOT_B01_FORBIDDEN.has(k));
+    }
+  }
+  const def = (g === LOOT_GRAMMAR_B04 || g === LOOT_GRAMMAR_CURRENT ? LOOT_B04_ROLES : LOOT_B01_ROLES)[kind];
   const base = `${g}|${r.seed}|${lootSourceId(r, site)}|${cycle}|${def.role}`;
   const out: [string, number][] = def.fixed.map(([k, q]) => [k, q]);
   if (def.pool.length) { const [k, q] = def.pool[hashPick(base) % def.pool.length]; out.push([k, q]); }
