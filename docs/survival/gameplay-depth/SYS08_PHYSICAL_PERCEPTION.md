@@ -31,7 +31,7 @@ Source-local landing cue is also provided as a faint expanding ring rendered onl
 
 - Only living, non-elder, eligible species may react. Provisional hearing multipliers in `balance.v1.json`: wolf 1, crawler 0.8, beetle 0.7, toad 0.55, boar/crab 0.
 - Evaluated per stimulus: distance ≤ `range * hearing`, species capability, time since occurrence (`now` within `[at, expiresAt)`), existing knowledge/state, and `clearPhysicalLine` sound attenuation/occlusion from actual terrain and structures.
-- `stimulusNearHome` (`web/src/game/stimulus.ts`) prevents the impulse from becoming an implicit home-raid order: if any player-owned structure is within `homeExclusionTiles * 16` of the source, no creature notices. No generator/workshop noise or general home-raid system is added.
+- **W09 (Creator-approved): the blanket home-proximity sound exclusion is REMOVED.** A physically audible airdrop or combat sound near a player-built structure is heard by an eligible creature with a clear line. The creature investigates the recorded origin only. Sound never reveals ownership, never authorises attacks on walls, and sight/encountered-footprint rules still govern any later pursuit. Walls and closed doors obstruct sound through the same `blockGrid` geometry as sight (`clearPhysicalLine`). `homeExclusionTiles` is removed from `balance.v1.json`. No raid, GPS, teleport or immunity aura is added.
 - `stimulusApproach` selects a reachable cardinal adjacent cell to the physical crate via A* on the live `blockGrid`; the solid crate tile itself is never a goal. If no adjacent cell is reachable, perception fails.
 
 A stimulus is never proof the creature has seen the player.
@@ -101,7 +101,7 @@ Remaining holds: Map-certified landing/perception contract for imported worlds; 
 
 ## Files
 
-- `web/src/game/stimulus.ts` (new) — stimulus constructor and home-exclusion rule.
+- `web/src/game/stimulus.ts` (new) — stimulus constructors, combat kind table (ranged, melee, signature) and bounded combat list. The home-exclusion rule was removed in W09.
 - `web/src/game/core.ts` — `WorldStimulus`, `Creature.knows.kind='stimulus'` plus `stimulusIgnore`/`stimulusRouteAt`, `RunState.worldStimuli`.
 - `web/src/game/balance.v1.json` — `worldStimulusV1` provisional tuning.
 - `web/src/game/engine.ts` — landing emission, stimulus/knowledge expiry boundaries, receipt logging.
@@ -111,3 +111,14 @@ Remaining holds: Map-certified landing/perception contract for imported worlds; 
 - `web/src/game/audio.ts` — landing impact sound.
 - `web/tests/s08-world-stimulus.test.ts` — focused invariants (10).
 - `web/e2e/s08-stimulus-fixture.mjs` and `web/evidence/s08-stimulus-fixture/` — controlled production browser evidence.
+
+## W09 — player-playable PvE sound and the Mjolnir Signature (status, not DONE)
+
+- Removed: the blanket 8-tile home-sound exclusion (`stimulusNearHome`, `homeExclusionTiles`). Airdrop and combat sounds near player structures are now physically audible.
+- Added: a third committed combat kind, `signature` (`audible-signature-v1`, range 320 px, SOH_PROVISIONAL). Source: `commitCreatorCore` in `sim.ts`, Mjolnir Signature only. Position: the pull point (aim point, clamped to `targetRange`) at commit time. The pull field genuinely exists at commit. The later burst (2 s) is NOT claimed to occur at commit and emits no second sound in this round.
+- Range basis: `BAL.ai.activeRadiusTiles` is 30 tiles. `tickCreatures` only processes creatures inside that radius. The 320 px range is well below it, so every hearing creature in range is processed by the existing consumer.
+- Cost and identity: one committed Signature consumes one reserve charge (already the rule) and emits one receipt-bound `combat:<seq>` source. No extra debit. Failed, cancelled, empty-reserve and wrong-UID actions emit nothing.
+- Obstruction proof: a closed `door_wood` between the pull point and a wolf blocks the sound. Opening the door restores it. The structure is not struck.
+- Atlas/Bible: SYS08-C03 and SYS08-C09 remain PARTIAL. Other SYS08 rows and XEDGE-042/043/044/047 are not closed by W09. XEDGE-072 (airdrop sound) is not newly claimed complete.
+- Not done: other Creator Cores are not made louder. The Mjolnir burst is not a sound event. Audio playback remains Visual Arena-owned.
+

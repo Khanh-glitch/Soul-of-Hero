@@ -820,11 +820,10 @@
     ]
   },
   "worldStimulusV1": {
-    "_status": "SOH_PROVISIONAL; ORIGINAL_UNKNOWN sensory ranges, duration and species sensitivity; W08 combatSoundRanges/combatSignalCap SOH_PROVISIONAL (no Last Island numeric value)",
+    "_status": "SOH_PROVISIONAL; ORIGINAL_UNKNOWN sensory ranges, duration and species sensitivity. W09: no home-proximity exclusion (Creator-approved). signature 320 px (10 tiles) is provisional and stays well inside BAL.ai.activeRadiusTiles (30 tiles) so the creature consumer can process it.",
     "landingSoundRange": 160,
     "signalMs": 4000,
     "memoryMs": 24000,
-    "homeExclusionTiles": 8,
     "arrivalPixels": 10,
     "speedMultiplier": 0.7,
     "hearing": {
@@ -837,7 +836,8 @@
     },
     "combatSoundRanges": {
       "ranged": 150,
-      "melee": 36
+      "melee": 36,
+      "signature": 320
     },
     "combatSignalCap": 32
   },

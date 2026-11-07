@@ -1,5 +1,6 @@
 import {supportsAirdrops, airdropTimes, airdropRewards, airdropStaticEligible} from './airdrop';
 import { recoveryPlanFor } from './recycler';
+import { combatKindOf } from './stimulus';
 import { poiContractDigest } from './poi-access';
 import { LOOT_ECOLOGY_VERSION, isKnownLootGrammar, lootClass, lootRoll, lootSiteIndex } from './loot-ecology';
 import { creatorLootV1 } from './creator-loot';
@@ -93,11 +94,11 @@ export function validate(raw: any): GameState | null {
   // Evicted receipts are not treated as forgery; their live signal/knowledge is still bound by the rules below.
   const receiptAt=(seq:any)=>r.receipts.find((x:any)=>x.seq===seq);
   const emitMatches=(seq:any,at:any,detail:string[])=>{const rc=receiptAt(seq);return !rc||(rc.id===`r${seq}`&&rc.kind==='stimulus.emit'&&rc.at===at&&detail.includes(rc.detail));};
-  const combatSignal=(s:any)=>obj(s)&&s.version==='world-stimulus-v1'&&s.kind==='combat-sound'&&s.modality==='sound'&&(s.eligibility==='audible-ranged-v1'||s.eligibility==='audible-melee-v1')&&combatId(s.sourceId,s.eventIndex)&&s.id===`${s.sourceId}:sound`&&finite(s.x)&&finite(s.y)&&s.x>=0&&s.y>=0&&s.x<WW*TILE&&s.y<WH*TILE&&finite(s.at)&&s.at>=0&&s.expiresAt===s.at+BAL.worldStimulusV1.signalMs&&s.range===BAL.worldStimulusV1.combatSoundRanges[s.eligibility==='audible-ranged-v1'?'ranged':'melee']&&s.strength===1&&r.clock.lastSimAt>=s.at&&r.clock.lastSimAt<s.expiresAt&&emitMatches(s.eventIndex,s.at,[`${s.eligibility==='audible-ranged-v1'?'ranged':'melee'}:${s.x},${s.y}`]);
+  const combatSignal=(s:any)=>obj(s)&&s.version==='world-stimulus-v1'&&s.kind==='combat-sound'&&s.modality==='sound'&&combatKindOf(s.eligibility)!==undefined&&combatId(s.sourceId,s.eventIndex)&&s.id===`${s.sourceId}:sound`&&finite(s.x)&&finite(s.y)&&s.x>=0&&s.y>=0&&s.x<WW*TILE&&s.y<WH*TILE&&finite(s.at)&&s.at>=0&&s.expiresAt===s.at+BAL.worldStimulusV1.signalMs&&s.range===BAL.worldStimulusV1.combatSoundRanges[combatKindOf(s.eligibility)!]&&s.strength===1&&r.clock.lastSimAt>=s.at&&r.clock.lastSimAt<s.expiresAt&&emitMatches(s.eventIndex,s.at,[`${combatKindOf(s.eligibility)}:${s.x},${s.y}`]);
   // Knowledge must name a committed emission at its own coordinates, and its approach goal must be a tile-centred 4-neighbour of the source tile.
   const combatKnowledge=(k:any)=>{
     if(!(obj(k)&&combatId(k.sourceId,k.eventIndex)&&finite(k.x)&&finite(k.y)&&k.x>=0&&k.y>=0&&k.x<WW*TILE&&k.y<WH*TILE&&finite(k.at)&&k.at>=0&&k.expiresAt===k.at+BAL.worldStimulusV1.memoryMs&&r.clock.lastSimAt>=k.at&&r.clock.lastSimAt<k.expiresAt&&finite(k.goalX)&&finite(k.goalY)))return false;
-    if(!emitMatches(k.eventIndex,k.at,[`ranged:${k.x},${k.y}`,`melee:${k.x},${k.y}`]))return false;
+    if(!emitMatches(k.eventIndex,k.at,(['ranged','melee','signature'] as const).map(c=>`${c}:${k.x},${k.y}`)))return false;
     const live=(r.worldStimuli||[]).find((w:any)=>w?.sourceId===k.sourceId);if(live&&(live.at!==k.at||live.x!==k.x||live.y!==k.y))return false;
     const gx=Math.floor(k.goalX/TILE),gy=Math.floor(k.goalY/TILE),sx=Math.floor(k.x/TILE),sy=Math.floor(k.y/TILE);
     return k.goalX===gx*TILE+8&&k.goalY===gy*TILE+8&&Math.abs(gx-sx)+Math.abs(gy-sy)===1;

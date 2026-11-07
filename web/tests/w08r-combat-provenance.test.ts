@@ -84,12 +84,12 @@ describe('W08-R save provenance (P0)', () => {
 
 describe('W08-R home acoustics (P1)', () => {
   function playerStruct(r:RunState,tx:number,ty:number){const id=uid(r,'e');r.entities[id]={id,kind:'struct',owner:'player',type:'wall_wood',tx,ty,x:tx*TILE+8,y:ty*TILE+8,hp:100,maxHp:100} as any;markDirty();return r.entities[id];}
-  it('a shot within eight tiles of a player structure is ignored by creatures, even with a clear line', () => {
+  it('W09: a shot within eight tiles of a player structure is heard (blanket exclusion removed), origin-only, struct not struck', () => {
     const {g,r}=run();bowIn(r,1);const sx=Math.floor(r.player.x/TILE),sy=Math.floor(r.player.y/TILE);
     const s=playerStruct(r,sx,sy+3);const hp=s.hp;const m=wolfAt(r,r.player.x+140,r.player.y);
     expect(clearPhysicalLine(r,m,r.player,false,true)).toBe(true);
     const t=shoot(g,r,START+1000);frame(g,t+60);
-    expect(m.knows?.kind).not.toBe('stimulus');expect(s.hp).toBeGreaterThan(hp-1);
+    expect(m.knows).toMatchObject({kind:'stimulus',x:r.player.x,y:r.player.y});expect(s.hp).toBeGreaterThan(hp-1);
   });
   it('a shot in open terrain beyond eight tiles from any player structure is heard by the same creature', () => {
     const {g,r}=run();bowIn(r,1);const sx=Math.floor(r.player.x/TILE),sy=Math.floor(r.player.y/TILE);

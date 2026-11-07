@@ -1,4 +1,4 @@
-import { stimulusNearHome, combatStimulus, pushCombatStimulus } from './stimulus';
+import { combatStimulus, pushCombatStimulus, type CombatKind } from './stimulus';
 import { airdropBoundary, stepAirdrops } from './engine';
 import { airdropView } from './airdrop';
 import { advancePoiAccess, poiDoorLabel, poiGenLabel } from './poi-access';
@@ -242,7 +242,7 @@ function commitCreatorCore(gs: GameState, now: number, slot: number, uid0: strin
     if(mode==='basic') {let from={x:p.x,y:p.y};const hit=new Set<string>();for(let j=0;j<3;j++){const candidates=r.creatures.filter(m=>m.state!=='dead'&&!m.elder?.submerged&&!m.atk?.burrow&&!hit.has(m.id)&&dist(from.x,from.y,m.x,m.y)<(j?e.chainRange:e.punchRange)&&(j||Math.abs(angDiff(Math.atan2(m.y-p.y,m.x-p.x),a))<0.8)&&clearPhysicalLine(r,from,m,true)).sort((u,v)=>dist(from.x,from.y,u.x,u.y)-dist(from.x,from.y,v.x,v.y));const m=candidates[0];if(!m)break;hit.add(m.id);const wet=isWet(weatherAt(r,now))||[T.SHALLOW,T.RIVER].includes(effTile(r,tileOf(m.x),tileOf(m.y)));fx('bolt',{x0:from.x,y0:from.y,x1:m.x,y1:m.y});damageCreature(gs,m,(j?e.chainDamage:e.punchDamage)*(wet?e.wetMultiplier:1),a,now,j?25:130);from={x:m.x,y:m.y};} }
     if(mode==='refined'||mode==='signature'){const len=Math.min(e.targetRange,dist(p.x,p.y,aim.mx,aim.my),rayLen(r,p.x,p.y,a,e.targetRange)),x=p.x+Math.cos(a)*len,y=p.y+Math.sin(a)*len;
       if(mode==='refined')for(let i=0;i<e.strikeCount;i++)HAZ.push({kind:'circle',x,y,r:e.strikeRadius,t:0,tell:250+i*e.strikeIntervalMs,dur:100,dmg:e.strikeDamage,style:'lightning',effect:'mjolnirStrike',owner:'player'});
-      else {HAZ.push({kind:'pool',x,y,r:e.attractRadius,t:0,tell:0,dur:e.attractMs,dmg:0,style:'lightning',effect:'mjolnirPull',owner:'player',expiresSimMs:r.clock.simMs+e.attractMs});HAZ.push({kind:'circle',x,y,r:e.attractRadius,t:0,tell:e.attractMs,dur:150,dmg:e.burstDamage,style:'lightning',effect:'mjolnirStrike',owner:'player',expiresSimMs:r.clock.simMs+e.attractMs+150});}
+      else {emitCombatSound(r, now, 'signature', x, y); HAZ.push({kind:'pool',x,y,r:e.attractRadius,t:0,tell:0,dur:e.attractMs,dmg:0,style:'lightning',effect:'mjolnirPull',owner:'player',expiresSimMs:r.clock.simMs+e.attractMs});HAZ.push({kind:'circle',x,y,r:e.attractRadius,t:0,tell:e.attractMs,dur:150,dmg:e.burstDamage,style:'lightning',effect:'mjolnirStrike',owner:'player',expiresSimMs:r.clock.simMs+e.attractMs+150});}
     }return;
   }
   if(ITEMS[s.key].creatorCore==='earthmother') {
@@ -406,7 +406,7 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
 function cartWeightOf(r: RunState, e: Entity) { return C(r, e.c!).slots.reduce((a, s) => a + (s ? ITEMS[s.key].w * s.qty : 0), 0); }
 
 /** W08: a committed weapon release is a finite, source-identified sound at the release point. Quiet melee uses a short range. */
-function emitCombatSound(r: RunState, now: number, kind: 'ranged' | 'melee', x: number, y: number) {
+function emitCombatSound(r: RunState, now: number, kind: CombatKind, x: number, y: number) {
   // The receipt sequence is the event identity: read it after receipt() advances it, never predict it.
   receipt(r, now, 'stimulus.emit', `${kind}:${x},${y}`);
   const seq = r.seq;
@@ -570,7 +570,7 @@ function endInvestigation(r:RunState,m:Creature,now:number,reason:string){const 
 function noticeStimulus(r:RunState,m:Creature,now:number) {
   if(m.elder||m.knows||m.state==='sleep'||!['idle','wander','track','chase'].includes(m.state)||m.hp<=0)return;
   const hearing=(BAL.worldStimulusV1.hearing as Record<string,number>)[m.type]||0;if(!hearing)return;
-  for(const s of r.worldStimuli||[]){if(now<s.at||now>=s.expiresAt||m.stimulusIgnore===s.sourceId||dist(m.x,m.y,s.x,s.y)>s.range*hearing||stimulusNearHome(r,s)||!clearPhysicalLine(r,m,s,false,true))continue;
+  for(const s of r.worldStimuli||[]){if(now<s.at||now>=s.expiresAt||m.stimulusIgnore===s.sourceId||dist(m.x,m.y,s.x,s.y)>s.range*hearing||!clearPhysicalLine(r,m,s,false,true))continue;
     const goal=stimulusApproach(r,m,s.x,s.y);if(!goal)continue;
     m.stimulusIgnore=s.sourceId;m.knows={kind:'stimulus',x:s.x,y:s.y,at:s.at,sourceId:s.sourceId,eventIndex:s.eventIndex,expiresAt:s.at+BAL.worldStimulusV1.memoryMs,goalX:goal.x,goalY:goal.y};m.state='track';m.path=null;m.t=0;
     receipt(r,now,'stimulus.notice',`${m.id}:${s.id}`);return;

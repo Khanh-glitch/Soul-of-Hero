@@ -601,7 +601,7 @@ Atlas status for this round: ALREADY_PRESENT (refinery chronology, XEDGE-019 fue
 - Causal chain: a committed bow release (`sim.ts resolveSwing`, the point where the arrow is removed and the projectile is created) emits one `combat-sound` `WorldStimulus` at the player's release position and tick time. Melee swings in the same commit path emit a quieter `audible-melee-v1` source. Empty bows and aborted actions emit nothing.
 - Identity (corrected in W08-R): `sourceId = combat:<seq>`, where `seq` is read from the `stimulus.emit` receipt AFTER `receipt()` advances the sequence. The receipt detail is `ranged:<x>,<y>` or `melee:<x>,<y>`. `eventIndex` equals the receipt sequence. The earlier W08 code predicted the sequence before the increment; the W08-R test pins the exact agreement.
 - Ranges (`balance.v1.json worldStimulusV1.combatSoundRanges`, SOH_PROVISIONAL, ORIGINAL_UNKNOWN, no Last Island numeric claim): ranged 150 px, melee 36 px. Lifetime `signalMs` 4 s; knowledge `memoryMs` 24 s; bounded list `combatSignalCap` 32 (oldest unexpired entries dropped, never replayed).
-- Creature response, existing path only: `noticeStimulus` (species hearing table: wolf 1, crawler 0.8, beetle 0.7, toad 0.55, boar and crab deaf), `clearPhysicalLine` obstruction, `stimulusNearHome` exclusion (sounds within 8 tiles of player-owned structures are ignored, as before), `investigateStimulus` moving to the sound point using `astar`, arrival/expiry/blocked/unreachable endings through `endInvestigation`.
+- Creature response, existing path only: `noticeStimulus` (species hearing table: wolf 1, crawler 0.8, beetle 0.7, toad 0.55, boar and crab deaf), `clearPhysicalLine` obstruction, `stimulusNearHome` exclusion (SUPERSEDED in W09: removed; see W09 section), `investigateStimulus` moving to the sound point using `astar`, arrival/expiry/blocked/unreachable endings through `endInvestigation`.
 - Hearing without sight: a wolf's day sight is about 132 px (110 × 120%); its sound range is 150 px. A wolf at 140 px hears the shot and cannot see the player; the test pins this.
 - Player choice: the creature learns only the sound point. Moving away does not update it. Sight (`observePlayer`) and encountered trace (`trackEvidence`) rules override it normally when they actually occur.
 - Persistence (W08-R): versioned `combat-sound` branch in `persist.ts`. The airdrop branch is unchanged, and at most one airdrop entry is allowed. Combat sources must match `combat:<index>` with `1 <= index <= r.seq`, exact range and lifetime, in-bounds coordinates, and a live timestamp window. When the receipt for that sequence is still in the bounded log it must be exactly that `stimulus.emit` (kind, time and `ranged|melee:x,y` detail). Knowledge must also match any live signal at its own coordinates and time, and its approach goal must be a tile-centred 4-neighbour of the source tile. Known limit: once a receipt has been evicted from the 250-entry log, the save can only be checked for internal consistency. A hand-edited save can still fabricate a self-consistent expired source. Cryptographic authentication of saves is outside this round and needs a Creator/architecture decision.
@@ -619,7 +619,7 @@ Corrections found by the review and fixed in code, not just described:
 - P0 provenance: the W08 validator accepted any `combat:N` with N <= r.seq and any coordinates. Now: a present receipt for N must be exactly that emission; live signal and knowledge must agree; the goal must be an adjacent tile-centre; N beyond the committed sequence is refused. Adversarial tests: unrelated receipt sequence, forged knowledge coordinates, forged live coordinates, fake goal, wrong eligibility, sequence beyond committed. Legit knowledge still loads after its receipts are evicted (test).
 - P1 cap eviction: the W08 cap sliced the combined list and could evict a still-valid airdrop. Fixed: overflow evicts only the oldest combat entries, never an airdrop. Regression test: an airdrop stays present through 40 combat pushes; combat stays at the cap of 32.
 - P1 timing: the 4 s signal window (`signalMs`) bounds detection; the 24 s investigation memory (`memoryMs`) starts at the emission time and outlives the signal. Test: no notice is possible after the signal expires; a notice made in the window keeps memory until emission + 24 s.
-- P1 home acoustics (findings, no new Creator rule made): `stimulusNearHome` is the inherited blanket 8-tile exclusion from the airdrop landing rule and applies to combat sound. Tested cases:
+- P1 home acoustics (SUPERSEDED in W09: the exclusion was removed by Creator decision; the statements below describe W08-R only). Tested cases:
   - Shot within 8 tiles of a player-owned structure, unobstructed wolf at 140 px: no notice, structure not struck.
   - Shot in open terrain, structure 12 tiles away: heard; investigation goes to the emission point; structure not struck.
   - Creature learns only the emission point, not the player's later position.
@@ -640,3 +640,28 @@ Atlas (cited IDs; CSV not present in this checkout; repo SYS08 document as sourc
 - No SYS08 or XEDGE is marked DONE.
 
 Verification at this checkpoint: see the W08-R handoff for the exact SHA and gate results.
+
+## W09 — player-playable PvE sound and the Mjolnir Signature (PARTIAL; not DONE)
+
+Corrections to earlier sections:
+- The blanket 8-tile home exclusion (W08, W08-R) is REMOVED by Creator decision. Physically audible sound near player structures is heard. Sound still reveals no ownership and authorises no wall attacks. `homeExclusionTiles` is removed.
+- Obstruction: sight and sound share `blockGrid` (walls and closed doors). Test: closed door blocks, open door does not (`w09-core-signature-sound.test.ts`). Sight through built walls was not reproduced as a failure; the earlier concern is not re-claimed.
+
+Implemented:
+- Mjolnir Signature sound (`commitCreatorCore`, `mode==='signature'`): one `signature` combat source at the pull point at commit time. Range 320 px SOH_PROVISIONAL, stays inside the 30-tile creature activation radius. One reserve charge, no extra debit. Receipt detail `signature:x,y`, sourceId `combat:<seq>`.
+- Save validation: the `signature` kind goes through the same persist table (`combatKindOf`) as ranged and melee.
+
+Tests: `w09-core-signature-sound.test.ts` (5: commit once and one charge, empty/wrong-UID/cancel no sound, save/reload no duplicate, persisted in the bounded list, closed-door obstruction and open-door control). `s08-world-stimulus.test.ts` home case flipped to heard. `w08r-combat-provenance.test.ts` near-home case flipped to heard.
+
+Atlas (cited; CSV not in this checkout; repo SYS08 document used):
+- SYS08-C03 PARTIAL. SYS08-C09 PARTIAL. SYS08-C10 PARTIAL (no sound-caused offline events; existing offline rules unchanged). SYS08-C01 PARTIAL.
+- XEDGE-042/043/044/047 NOT closed. XEDGE-072 NOT newly claimed complete.
+- Core-related XEDGE-078/080 (cost contracts): NOT verified in this checkout; the Signature debit path is unchanged.
+
+Ordinary survival route audit (see the W09 handoff for the sourced detail):
+- Starting kit: knife, water flask, berries (existing). Knife melee emits a short-range melee sound (W08).
+- Bow: NO natural acquisition. `RECIPES.bow` is not base; the item `bow` is in no loot site, crate, vendor or specimen table; `arrow` is not base. It appears only in the B04 military-class pool (`LOOT_B04_ROLES`, `loot-ecology.ts`); whether that pool is active in the shipping run was NOT verified in this round. BLOCKED on a Creator/economy decision: which legitimate source carries a bow (crate, specimen like the existing boar-tusk→iron-sword route, or blueprint). No free bow, no invented vendor stock, no loot-rarity change was made.
+- Mjolnir Core: natural source exists. The watch crate keycard maps to `core_mjolnir` (`creator-loot.ts`, `world.ts`). Reserve charge: one Refined Energy plus one Nature Essence per charge (`loadCore`).
+
+Not done: no browser-observed creature response in this round (see the handoff for the evidence status); no other Core made louder; Mjolnir burst is not a sound event; no pixel art added; no bow acquisition.
+
