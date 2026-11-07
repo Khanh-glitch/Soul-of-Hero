@@ -11,20 +11,20 @@
       "id": "cap-build",
       "ok": true,
       "reason": null,
-      "receipt": "r72"
+      "receipt": "r95"
     },
     {
       "intent": "craft",
       "id": "cap-craft",
       "ok": true,
       "reason": null,
-      "receipt": "r73"
+      "receipt": "r96"
     }
   ],
   "output": {
     "fuel_can": 2,
     "lubricant": 1
   },
-  "refineryId": "e80",
+  "refineryId": "e8n",
   "jobTotalMs": 26000
 }

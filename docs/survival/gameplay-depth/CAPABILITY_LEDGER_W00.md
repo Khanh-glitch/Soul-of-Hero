@@ -530,3 +530,10 @@ Result: no LI number was promoted to canon. Rows 1–7 and 10 are the only ones 
 ### Crude icon (C4 follow-up)
 - Redrawn the crude drum (`drawCrudeDrum`): rounded silhouette, light rims, dark label with sheen, tap. Tests pass (`b05-industrial-art`, `b05-oil-pump`, 25/25).
 - Inspected at 1280×720 native, zoomed ×4: the slot now shows a banded dark object with a tap. It is still box-like at 16 px. The round belly and the crude sheen are not clearly readable. **Not accepted**; remains an open C4 defect.
+
+### D1 update: official text read (this round)
+- Read the two official-site pages directly (fetch, not the sandbox network):
+  - `hero.yingxiong.com/info/2020/0108/8968.html` (official 2020-01-08 update notice). It mentions 炼油机 (refinery) and 燃油发电机 (fuel generator) as heat sources (heat value up to 40, needs a territory cabinet). It gives **no recipe, cost, input count or rate** for the refinery, the fuel generator or Low Quality Fuel. Therefore atlas numbers for rows 5–7 are **not** supported by this official page. They stay SECONDARY_LOW_CONFIDENCE and unscoped.
+  - `hero.yingxiong.com/info/2019/0805/7010.html` (player guide 情兽, hosted on the official site, 2019-08-05). Supports the following qualitatively, with no numbers: an electric resistor door opens only when **both** its power switch and its resistor wire are present; resistor wire is scarce; a timer shows how long the door stays open; a green room always yields a blue card; a blue room yields a purple card only sometimes. Rows 12 and 13 of the table are consistent with this, but the guide provides **no numeric card-use count or timer length**. Those stay ORIGINAL_UNKNOWN.
+- Revised tier labels: the 2019 player guide is `LI_OFFICIAL_HOSTED_COMMUNITY_GUIDE` (qualitative only). The 2020 notice is `LI_OFFICIAL_VERSIONED` for its own statements, with no recipe numbers.
+- No D1 row was promoted above SECONDARY_LOW_CONFIDENCE. No LI number was copied into SOH.
