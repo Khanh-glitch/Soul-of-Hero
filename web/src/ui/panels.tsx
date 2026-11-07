@@ -279,8 +279,9 @@ function RecipeTree({ recipe, known, ancestors = [] }: { recipe: string; known: 
   })}</div>;
 }
 
-export function CraftPanel({ api }: { api: Api }) {
-  const [search, setSearch] = useState(''); const [selectedRecipe, setSelectedRecipe] = useState<string | null>(null);
+export function CraftPanel({ api, focusRecipe }: { api: Api; focusRecipe?: string }) {
+  const [search, setSearch] = useState(''); const [selectedRecipe, setSelectedRecipe] = useState<string | null>(focusRecipe && RECIPES[focusRecipe] ? focusRecipe : null);
+  useEffect(() => { if (focusRecipe && RECIPES[focusRecipe]) setSelectedRecipe(focusRecipe); }, [focusRecipe]);
   const [category, setCategory] = useState<string>('Hand'); const [inventory, setInventory] = useState(false);
   const r = api.gs.run!;
   const groups: [string, string | null][] = [['Hand', null], ['Campfire', 'campfire'], ['Furnace', 'furnace'], ['Refinery', 'refinery'], ['Workbench', 'workbench']];
@@ -344,6 +345,32 @@ export function BuildPanel({ api }: { api: Api }) {
 import { iconUrl } from './common';
 const iconUrlSt = (k: string) => iconUrl('st:' + (k === 'escrow' ? 'escrow' : k));
 
+/** Compact Intel for the map: one selected place, essential facts only. Observed facts; stock is never implied. */
+function ExpeditionIntel({ api, r }: { api: Api; r: RunState }) {
+  const notes = expeditionNotes(r); const [focus, setFocus] = useState<string | null>(null);
+  if (!notes.length) return null;
+  const n = notes.find(x => x.place === focus) ?? notes[0]; const w = getWorld();
+  const names = (ids: string[]) => ids.map(id => w.places.find(p => p.id === id)?.name ?? id).join(', ');
+  return <div style={{ marginTop: 4 }}>
+    <div style={{ color: '#ffd98a' }}>Intel · observed</div>
+    <div className="flex gap-1" style={{ flexWrap: 'wrap', margin: '2px 0 3px' }}>{notes.map(x => <button key={x.place} className="btn ghost" style={{ fontSize: 9, padding: '0 4px', borderColor: x.place === n.place ? '#ffd98a' : undefined, color: x.place === n.place ? '#ffd98a' : undefined }} onClick={() => setFocus(x.place)}>{x.name}</button>)}</div>
+    <div style={{ borderLeft: '2px solid #5a4a6a', paddingLeft: 4, lineHeight: 1.25 }}>
+      <div style={{ color: '#e6d9bc' }}>{n.name}</div>
+      {n.gates.map((g, i) => <div key={i} style={{ marginBottom: 3 }}>
+        <div className="flex items-center gap-1"><Icon k={g.item} size={12} /><span style={{ color: g.carried ? '#a0e070' : '#ff9a7a' }}>{g.requirement === 'power' ? 'Generator gate' : 'Vault gate'} · {ITEMS[g.item].name} {g.have}/{g.need}</span></div>
+        {g.carried && <div style={{ color: '#a0e070' }}>Carried. Ready at the gate.</div>}
+        {!g.carried && g.craft && <div style={{ color: '#cfc2dc' }}>Craft at {g.craft.stationName} L{g.craft.level}: {g.craft.ingredients.map(x => `${x.name} ${x.have}/${x.need}`).join(' · ')}
+          <div><button className="btn ghost" style={{ fontSize: 9, padding: '0 4px', marginTop: 2 }} onClick={() => api.open({ kind: 'craft', recipe: g.craft!.recipe })}>Open recipe</button></div></div>}
+        {!g.carried && !g.craft && <div style={{ color: '#ff9a7a' }}>{g.requirement === 'keycard' ? 'Cannot be crafted. Find a card.' : 'No known recipe.'}</div>}
+        {!g.carried && g.seenIn.length > 0 && <div style={{ color: '#8a7a9a' }}>Seen earlier in {names(g.seenIn)} · may be gone</div>}
+        {!g.carried && g.seenIn.length === 0 && g.requirement === 'keycard' && <div style={{ color: '#8a7a9a' }}>No card seen yet.</div>}
+      </div>)}
+      {n.blueprints.map(b => <div key={b.recipe} style={{ color: b.state === 'learned' ? '#8a7a9a' : b.state === 'owned' ? '#ffd98a' : '#cfc2dc' }}>
+        {b.state === 'learned' ? 'Learned' : b.state === 'owned' ? 'In pack, not learned' : 'Blueprint seen, not owned'}: {b.name}</div>)}
+    </div>
+  </div>;
+}
+
 export function MapPanel({ api, onTeleportSelect, teleportTarget }: { api: Api; onTeleportSelect?: (x:number,y:number)=>void; teleportTarget?: {x:number;y:number} | null }) {
   const ref = useRef<HTMLCanvasElement>(null); const r = api.gs.run!; const w = getWorld();
   useEffect(() => { const c = ref.current!; const g = c.getContext('2d')!; g.imageSmoothingEnabled = false; g.drawImage(getMapCanvas(r), 0, 0);
@@ -354,22 +381,12 @@ export function MapPanel({ api, onTeleportSelect, teleportTarget }: { api: Api; 
     const p = r.player; dot(p.x / 16, p.y / 16, Math.floor(Date.now() / 300) % 2 ? '#ffffff' : '#ff4a8a', 3);if(teleportTarget)dot(teleportTarget.x/TILE,teleportTarget.y/TILE,'#d79cff',5);
   });
   const p = r.player; const h = runHours(r, api.now());
-  return <Panel title={`${w.veyra ? 'Map · bounded view' : 'Map of the island'} — ${(w.zoneNames || ZONES)[w.zone[Math.floor(p.y / 16) * WW + Math.floor(p.x / 16)]]}`} style={{ left: 120, top: 26, width: 400 }} onClose={() => api.open(null)}>
+  return <Panel title={`${w.veyra ? 'Map · bounded view' : 'Map of the island'} — ${(w.zoneNames || ZONES)[w.zone[Math.floor(p.y / 16) * WW + Math.floor(p.x / 16)]]}`} style={{ left: 120, top: 26, width: 440 }} onClose={() => api.open(null)}>
     <div className="flex gap-2"><canvas ref={ref} width={200} height={200} style={{ width: 260, height: 260, border: '1px solid #3a2e46', cursor:onTeleportSelect?'crosshair':'default' }} onClick={onTeleportSelect ? e=>{const rect=e.currentTarget.getBoundingClientRect(),x=Math.floor((e.clientX-rect.left)/rect.width*200),y=Math.floor((e.clientY-rect.top)/rect.height*200);onTeleportSelect(x*TILE+8,y*TILE+8);} : undefined} />
-      <div style={{ fontSize: 10, lineHeight: 1.15, width: 125 }}>
+      <div style={{ fontSize: 10, lineHeight: 1.15, width: 165 }}>
         {onTeleportSelect && <div style={{color:'#e2bfff',fontSize:11,lineHeight:1.2,marginBottom:5}}>Lõi quỷ<br/>Click explored safe ground.<br/>Close map; hold and release E.<br/>Purple marks destination. Cart stays behind.</div>}<div style={{ color: '#ffd98a' }}>Discovered</div>{w.places.filter(pl => r.poiSeen.includes(pl.id)).map(pl => <div key={pl.id} style={{ color: pl.kind === 'elder' ? '#ff8a7a' : pl.kind === 'evac' ? '#5af0ff' : '#e0d0b0' }}>• {pl.name}</div>)}
         {r.poiSeen.length === 0 && <div style={{ color: '#8a7a9a' }}>Nothing yet — explore.</div>}
-        {expeditionNotes(r).length > 0 && <div style={{ marginTop: 4 }}><div style={{ color: '#ffd98a' }}>Expedition notes · seen</div>
-          {expeditionNotes(r).map(n => <div key={n.place} style={{ marginBottom: 3, borderLeft: '2px solid #5a4a6a', paddingLeft: 3 }}>
-            <div style={{ color: '#e6d9bc' }}>{n.name}</div>
-            {n.gates.map((g, i) => <div key={i} className="flex items-center gap-1" style={{ flexWrap: 'wrap' }}>
-              <Icon k={g.item} size={10} /><span style={{ color: '#cfc2dc' }}>{g.requirement === 'power' ? 'Generator gate' : 'Vault gate'} · needs {ITEMS[g.item].name}</span>
-              <span style={{ color: g.carried ? '#a0e070' : '#ff9a7a' }}>{g.carried ? 'Carried' : 'Not carried'}</span>
-              <span style={{ color: '#8a7a9a' }}>{g.sources.length ? `· seen in ${g.sources.map(id => w.places.find(p => p.id === id)?.name ?? id).join(', ')}` : g.craft ? `· craft at ${g.craft}` : '· no source seen yet'}</span>
-            </div>)}
-            {n.blueprints.map(b => <div key={b.recipe} style={{ color: b.learned ? '#8a7a9a' : '#ffd98a' }}>Blueprint seen: {b.name}{b.learned ? ' (known)' : ' · study it'}</div>)}
-          </div>)}
-        </div>}
+        <ExpeditionIntel api={api} r={r} />
         <div style={{ color: '#ffd98a', marginTop: 4 }}>Legend</div><div><span style={{ color: '#ffd040' }}>■</span> landmark <span style={{ color: '#ff4a3a' }}>■</span> elder</div><div><span style={{ color: '#ff9a3a' }}>■</span> your claim <span style={{ color: '#fff' }}>■</span> bag</div><div><span style={{ color: '#5af0ff' }}>■</span> evacuation</div>
         <div style={{ color: '#8a7a9a', marginTop: 4 }}>Run hour {h.toFixed(1)} / {BAL.run.maxRunHours} · {phaseOf(r, api.now()).toUpperCase()}</div>
       </div></div></Panel>;

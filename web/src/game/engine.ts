@@ -1511,7 +1511,6 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       // Locked imported gates require explicit spatial metadata, never POI-name inference.
       if(e.kind==='door' && e.locked) {
         if(!d||d.requirement!==e.locked)return fail('Access disabled: this gate lacks an authorized exit/circuit contract.');
-        { const place=placeOfPoi(r,e.poi); if(place && recordIntel(r,[gateKey(place,d.requirement,d.cardClass)])) markDirty(); }
         const exit=interiorRelease(r,e,d);
         if(!exit && d.requirement==='power') {
           if(!poiGenerator(r,d))return fail('Circuit has no authorized generator.');
@@ -1536,7 +1535,6 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
     case 'generator': {
       const e = r.entities[it.eid]; if (!e || e.kind !== 'gen' || !near(r, e, 2.2) || !clearInteraction(r,e)) return fail('Generator out of reach or blocked.');
       if(!poiGeneratorContract(r,e))return fail('No authorized local circuit for this generator.');
-      { const place=placeOfPoi(r,e.poi); if(place && recordIntel(r,[`gen:${place}`])) markDirty(); }
       if(e.power===1&&!e.poiPower&&getWorld(r.layoutId||'shipping').poiAccess?.doors.some(d=>d.generator?.tx===e.tx&&d.generator?.ty===e.ty&&Object.values(r.entities).some(o=>o.kind==='door'&&o.tx===d.tx&&o.ty===d.ty&&!o.locked)))return fail('Legacy circuit already unlocked; existing access is preserved.');
       if(e.poiPower && e.power===1 && e.poiPower.expiresAt>now){e.poiPower.pausedMs=e.poiPower.expiresAt-now;e.power=0;const change=advancePoiAccess(r,now);if(change.closed.length)markDirty();for(const id of change.closed)receipt(r,now,'poi.door.close',id);return ok('poi.power.pause',`${e.id}:remaining=${e.poiPower.pausedMs}`,`Generator off; ${Math.ceil(e.poiPower.pausedMs/1000)} seconds reserved.`);}
       if(e.poiPower?.pausedMs){e.poiPower.runAt=now;e.poiPower.runMs=e.poiPower.pausedMs;e.poiPower.expiresAt=now+e.poiPower.pausedMs;delete e.poiPower.pausedMs;e.power=1;return ok('poi.power.resume',`${e.id}:until=${e.poiPower.expiresAt}`,'Generator resumed without another canister.');}
@@ -1547,13 +1545,27 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       return ok('poi.power.fuel',`${e.id}:fuel_can:${fuelUid}:until=${e.poiPower.expiresAt}`,`Generator running for ${BAL.poiAccess.fuelRuntimeMs/1000} seconds.`);
     }
     case 'openAirdrop': { const e=r.entities[it.eid]; if(!e || e.kind!=='airdrop' || !e.airdrop) return fail('No airdrop here.'); const a=e.airdrop; if(a.phase==='signal'||a.phase==='descending') return fail('Airdrop is still in the air.'); if(a.phase==='locked') return fail(`Airdrop locked: opens to all in ${Math.max(0,Math.ceil((a.unlockAt-now)/1000))}s.`); if(!e.c || !canAccess(r,e.c)) return fail('Airdrop out of reach: walk up to it.'); return ok('airdrop.open',String(a.index)); }
-    case 'observeLoot': { // Opening a container records only what the player can now see in it.
-      const e = r.entities[it.eid]; if (!e || e.kind !== 'loot' || !e.c || !near(r, e, 2.2)) return fail('Container out of reach.');
-      const place = placeOfPoi(r, e.poi); if (!place) return ok('intel.none', it.eid);
+    // Separate, committed observations. They never change the outcome of the gate, generator or container intent.
+    case 'observeGate': {
+      const e = r.entities[it.eid];
+      if (!e || (e.kind !== 'door' && e.kind !== 'gen')) return fail('Not a gate or generator.');
+      if (!near(r, e, e.kind === 'door' ? 2 : 2.2) || !clearInteraction(r, e)) return fail('Out of reach.');
+      const place = placeOfPoi(r, e.poi); if (!place) return { ok: true, receipt: 'intel.none' };
+      let key: string | undefined;
+      if (e.kind === 'door') { const d = poiDoorContract(r, e); if (d && e.locked && d.requirement === e.locked) key = gateKey(place, d.requirement, d.cardClass); }
+      else if (poiGeneratorContract(r, e)) key = `gen:${place}`;
+      if (!key || !recordIntel(r, [key])) return { ok: true, receipt: 'intel.none' };
+      markDirty();
+      return ok('intel.gate', `${e.id}:${key}`, 'Noted in Map · Intel.');
+    }
+    case 'observeLoot': { // Same reach rule as normal container interaction (near + clear line).
+      const e = r.entities[it.eid]; if (!e || e.kind !== 'loot' || !e.c || !near(r, e, 2.2) || !clearInteraction(r, e)) return fail('Container out of reach.');
+      const place = placeOfPoi(r, e.poi); if (!place) return { ok: true, receipt: 'intel.none' };
       const keys = [`opened:${place}`];
       for (const s of C(r, e.c)?.slots ?? []) if (s) keys.push(`loot:${place}:${s.key === 'blueprint' ? `bp_${s.meta}` : s.key}`);
-      if (recordIntel(r, keys)) markDirty();
-      return ok('intel.observe', `${e.id}:${place}`);
+      if (!recordIntel(r, keys)) return { ok: true, receipt: 'intel.none' };
+      markDirty();
+      return ok('intel.loot', `${e.id}:${place}`);
     }
     case 'openCash': { // C15: special finite POI chest mints physical cash ONCE, only during the final 72h
       const e = r.entities[it.eid]; if (!e || e.kind !== 'cash' || !near(r, e, 2.2) || !clearInteraction(r,e)) return fail('Out of reach.');

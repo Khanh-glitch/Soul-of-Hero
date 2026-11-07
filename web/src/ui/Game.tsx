@@ -80,8 +80,9 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       case 'airdrop': { const res=act('openAirdrop',{eid:t.eid}); if(res.ok){setPanel({kind:'container',eid:t.eid});sfx({type:'ui'});} return; }
       case 'cash': { const res = act('openCash', { eid: t.eid }); if (res.ok) { setPanel({ kind: 'container', eid: t.eid }); sfx({ type: 'coin' }); } return; }
       case 'vendor': setPanel({ kind: 'vendor', eid: t.eid }); return;
-      case 'door': act('door', { eid: t.eid }); return;
-      case 'gen': act('generator', { eid: t.eid }); return;
+      // A denied or successful attempt both reveal the requirement; the observation is a separate committed intent.
+      case 'door': act('door', { eid: t.eid }); act('observeGate', { eid: t.eid }); return;
+      case 'gen': act('generator', { eid: t.eid }); act('observeGate', { eid: t.eid }); return;
       case 'evac': setPanel({ kind: 'evac', eid: t.eid }); return;
     }
     if (e && e.kind === 'struct') {
@@ -265,7 +266,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       {/* panels */}
       {panel?.kind === 'inv' && <InventoryPanel api={api} />}
       {panel?.kind === 'container' && panel.eid && <ContainerPanel api={api} eid={panel.eid} />}
-      {panel?.kind === 'craft' && <CraftPanel api={api} />}
+      {panel?.kind === 'craft' && <CraftPanel api={api} focusRecipe={panel.recipe} />}
       {panel?.kind === 'build' && <BuildPanel api={api} />}
       {panel?.kind === 'map' && <MapPanel api={api} teleportTarget={spiritTarget.current?.uid===activeStack(r)?.uid?spiritTarget.current:null} onTeleportSelect={activeStack(r)?.key==='core_demon' ? (x,y)=>{const reason=spiritDestination(r,x,y);if(reason){toast(reason,'bad');return;}spiritTarget.current={uid:activeStack(r)!.uid,x,y};toast('Destination set. Close the map, then hold and release E.','ok');} : undefined} />}
       {panel?.kind === 'skills' && <SkillsPanel api={api} />}
