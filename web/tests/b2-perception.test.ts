@@ -11,7 +11,7 @@ let n = 0;
 const idle = (): Input => ({ up: false, down: false, left: false, right: false, mx: 0, my: 0, attack: false, attackPressed: false, roll: false, cancel: false });
 function fresh() {
   const gs = newGame(); markDirty(); expect(dispatch(gs, { id: `start-b2-${++n}`, type: 'startRun', character: 'female', region: 0, seed: 456 + n }, T0).ok).toBe(true);
-  gs.run!.creatures = []; PROJ.length = 0; HAZ.length = 0; return gs;
+  gs.run!.creatures = []; bindCombat(gs.run!); return gs;   // binding detaches the previous run and splices the globals to this run's (empty) combat
 }
 function clearing(gs: GameState) {
   const r = gs.run!, w = getWorld();
@@ -244,18 +244,22 @@ describe('trace-grounded home safety', () => {
     expect(last.hours).toBe(2); expect(last.wetHours).toBeLessThanOrEqual(2);
     expect(wetOutlook(r, T0 + 336 * 3600000)).toEqual({ hours: 0, wetHours: 0 });
   });
-  it('persists committed projectiles and hazards without advancing or leaking them between runs', () => {
+  it('persists the player’s committed instruments without advancing them; discards hostile ones at the boundary', () => {
     const gs = fresh(), r = gs.run!, spot = clearing(gs), x = spot.x * TILE + 8, y = spot.y * TILE + 8;
     r.player.x = x + 100; r.player.y = y; bindCombat(r);
     PROJ.push({ x, y, vx: 30, vy: 0, life: 1, dmg: 10, from: 'enemy', kind: 'bolt', r: 3 });
-    HAZ.push({ kind: 'circle', x, y, r: 10, t: 40, tell: 800, dur: 120, dmg: 8, style: 'erupt', owner: 'enemy' });
+    HAZ.push({ kind: 'circle', x, y, r: 10, t: 40, tell: 800, dur: 120, dmg: 8, style: 'erupt', owner: 'player' });
     const loaded = selectSnapshots([serializeSnapshot(gs), null]).gs!;
     const hp = loaded.run!.player.hp; settle(loaded, T0 + 10000, true);
-    expect(loaded.run!.combat!.projectiles[0].x).toBe(x); expect(loaded.run!.combat!.hazards[0].t).toBe(40); expect(loaded.run!.player.hp).toBe(hp);
+    // R5.1 P1-D: hostile instruments in flight at logout are discarded at the settlement boundary (receipt + report) — never stepped, never fired at the absent player.
+    expect(loaded.run!.combat!.projectiles).toHaveLength(0);
+    expect(loaded.run!.receipts.some((q: any) => q.kind === 'offline.projectiles_cleared' && q.detail === '1')).toBe(true);
+    // The player's own committed hazard persists, not advanced by offline time.
+    expect(loaded.run!.combat!.hazards).toHaveLength(1); expect(loaded.run!.combat!.hazards[0].t).toBe(40); expect(loaded.run!.player.hp).toBe(hp);
     const other = fresh(); bindCombat(other.run!); expect(PROJ).toHaveLength(0); expect(HAZ).toHaveLength(0);
-    bindCombat(loaded.run!); expect(PROJ).toHaveLength(1); expect(HAZ).toHaveLength(1);
-    tick(loaded, idle(), 50, T0 + 10050); expect(PROJ[0].x).toBeGreaterThan(x); expect(HAZ[0].t).toBe(90);
-    const bad = structuredClone(loaded); bad.run!.combat!.projectiles[0].vx = NaN; expect(validate(bad)).toBeNull();
+    bindCombat(loaded.run!); expect(PROJ).toHaveLength(0); expect(HAZ).toHaveLength(1);
+    tick(loaded, idle(), 50, T0 + 10050); expect(HAZ[0].t).toBe(90);
+    const bad = structuredClone(loaded); bad.run!.combat!.hazards[0].dmg = NaN; expect(validate(bad)).toBeNull();
   });
   it('prevents torch and axe source hits through a wall but permits them when unobstructed', () => {
     for (const tool of ['torch', 'stone_axe']) {
@@ -365,10 +369,15 @@ describe('bounded offline trace consequences', () => {
     settle(loaded, T0 + 4000, true); expect(loaded.run!.creatures[24].x).toBe(x - 8); expect(loaded.run!.creatures[25].x).toBe(x - 10);
     const invalid = structuredClone(loaded); invalid.run!.creatures[24].offlineUnresolvedAt = NaN; expect(validate(invalid)).toBeNull();
   });
-  it('expired evidence cannot produce a later impact and a pending combat encounter stays unresolved', () => {
+  it('expired evidence cannot produce a later impact and hostile instruments at the boundary are discarded', () => {
     const a = setupTrail(); for (const tr of a.r.traces) tr.life = 250; settle(a.gs, T0 + 4000); expect(a.r.entities[a.doorId].hp).toBeCloseTo(140,0);
-    const b = setupTrail(); b.r.combat = { projectiles: [{ x: b.x, y: b.y, vx: 0, vy: 0, life: 1, dmg: 5, from: 'enemy', kind: 'bolt', r: 3 }], hazards: [] };
-    const startX = b.m.x; settle(b.gs, T0 + 4000); expect(b.m.x).toBe(startX); expect(b.r.entities[b.doorId].hp).toBeCloseTo(140,0); expect(b.r.combat.projectiles[0].life).toBe(1); expect(b.m.offlineUnresolvedAt).toBeDefined();
-    b.r.combat = { projectiles: [], hazards: [] }; settle(b.gs, T0 + 8000); expect(b.m.x).toBe(startX); expect(b.r.entities[b.doorId].hp).toBeCloseTo(140,0);
+    // A committed hostile bolt in the live combat arrays (the run is bound) — discarded at the boundary, receipt + report.
+    const b = setupTrail(); PROJ.push({ x: b.x, y: b.y, vx: 0, vy: 0, life: 1, dmg: 5, from: 'enemy', kind: 'bolt', r: 3 } as any);
+    const startX = b.m.x; settle(b.gs, T0 + 4000);
+    // R5.1 P1-D: the hostile instrument is discarded at the boundary with a receipt — the dead encounter cannot hold the world hostage; lawful playback resumes.
+    expect(b.r.combat!.projectiles).toHaveLength(0);
+    expect(b.r.receipts.some((q: any) => q.kind === 'offline.projectiles_cleared' && q.detail === '1')).toBe(true);
+    expect(b.m.x).toBeGreaterThan(startX);
+    PROJ.length = 0; HAZ.length = 0; settle(b.gs, T0 + 8000); expect(b.m.x).toBeGreaterThanOrEqual(startX);
   });
 });

@@ -124,6 +124,21 @@ function receiptRows(gs: GameState, receipts: { id: string; at: number; kind: st
       case 'death': { const bag = x.detail.match(/bag=([^;]+)/)?.[1]; const b = bag && bag !== 'none' ? structAt(bag) : undefined; out.body.push({ id, tone: 'bad', text: `${rel(x.at)} in: you died (${x.detail.split(';')[0]}). ${bag && bag !== 'none' ? 'Your belongings are in a bag where you fell.' : 'No surviving bag is recorded for this death.'}`, where: b, receipts: [id] }); break; }
       case 'rest.end': out.body.push({ id, tone: 'ok', text: `${rel(x.at)} in: rest ended; you are awake.`, receipts: [id] }); break;
       case 'rest.eat': case 'rest.drink': case 'rest.drink.food': out.body.push({ id, tone: 'gold', text: `${rel(x.at)} in: rest consumed provisions (${x.detail}).`, receipts: [id] }); break;
+      case 'offline.creature_death': {
+        const n = parseInt(x.detail, 10) || 0;
+        out.world.push({ id, tone: 'warn', text: `${rel(x.at)} in: ${n} creature${n === 1 ? '' : 's'} died while you were away (instrument not proven by this record). Anything they dropped lies where they fell — walk there to look.`, receipts: [id] });
+        break;
+      }
+      case 'offline.hazards_cleared': {
+        const n = parseInt(x.detail, 10) || 0;
+        out.world.push({ id, tone: 'muted', text: `${rel(x.at)} in: ${n} hostile hazard${n === 1 ? '' : 's'} in flight at logout dissipated while you were away; none can strike you after return.`, receipts: [id] });
+        break;
+      }
+      case 'offline.projectiles_cleared': {
+        const n = parseInt(x.detail, 10) || 0;
+        out.world.push({ id, tone: 'muted', text: `${rel(x.at)} in: ${n} hostile projectile${n === 1 ? '' : 's'} in flight at logout lost effect while you were away; none can strike you after return.`, receipts: [id] });
+        break;
+      }
       case 'airdrop.signal': case 'airdrop.descent': case 'airdrop.accessible': out.world.push({ id, tone: 'gold', text: `${rel(x.at)} in: public airdrop signal — ${x.kind.replace('airdrop.', '')}.`, receipts: [id] }); break;
       default: break;
     }

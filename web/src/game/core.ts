@@ -191,7 +191,7 @@ export interface RunState {
   intel?: string[];
   elderStones: string[];
   achievements: string[]; score: number; deposited: number;
-  clock: { lastSimAt: number; simMs: number; respawnAcc: number; weatherSlot: number };
+  clock: { lastSimAt: number; simMs: number; respawnAcc: number; weatherSlot: number; defenseFrames?: number };
   rng: number; nextId: number;
   receipts: Receipt[]; seenIntents: string[]; seq: number;
   vendorStock: Record<string, number>;

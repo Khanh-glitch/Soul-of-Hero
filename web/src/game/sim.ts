@@ -597,6 +597,8 @@ function investigateStimulus(gs:GameState,m:Creature,speed:number,dt:number,now:
 function traceOnly(gs: GameState, m: Creature, dtMs: number, now: number): 'advanced' | 'defer' | 'done' {
   const r = gs.run!, p = r.player, d = CREATURES[m.type];
   if ((m.frozenUntil||0)>now || (m.rootedUntil||0)>now) return 'done';
+  // A stop beats everything: a corpse or a headless definition never advances — before any impulse branch.
+  if (m.state === 'dead' || m.hp <= 0 || !d || m.elder) return 'done';
   // A knockback impulse is an impulse, not a state: live play integrates it in place
   // (moveBody + 0.82/tick decay). Offline must do the same, or any hit taken — e.g. a
   // turret arrow — would otherwise freeze the creature out of the world forever.
@@ -605,7 +607,7 @@ function traceOnly(gs: GameState, m: Creature, dtMs: number, now: number): 'adva
     m.kbx *= 0.82; m.kby *= 0.82;
     return 'advanced';
   }
-  if (!d || m.elder || !['idle', 'wander', 'track', 'chase'].includes(m.state) || (m.knows && m.knows.kind !== 'trace')) return 'defer';
+  if (!['idle', 'wander', 'track', 'chase'].includes(m.state) || (m.knows && m.knows.kind !== 'trace')) return 'defer';
   // Player combat and in-flight effects require the full actor simulation, not a guess.
   const sight = (darkness(r, now) > 0.45 ? BAL.ai.sightNight : BAL.ai.sightDay) * (d.sight / 100) * (weatherAt(r, now) === 'fog' ? 0.6 : 1) * (p.sheltered ? 0.5 : 1);
   if (!p.dead && dist(m.x, m.y, p.x, p.y) < sight && los(r, m.x, m.y, p.x, p.y)) return 'defer';
@@ -614,7 +616,7 @@ function traceOnly(gs: GameState, m: Creature, dtMs: number, now: number): 'adva
   const tr = m.knows?.kind === 'trace' ? null : encounteredTrace(r, m, now);
   if (!m.knows && !tr) return 'done';
   m.cd = Math.max(0, m.cd - dtMs); m.t += dtMs; if (m.slow) m.slow = Math.max(0, m.slow - dtMs);
-  triggerSpikes(gs, m, now); triggerBearTrap(gs, m, now); if (m.state === 'dead') return 'done';
+  triggerSpikes(gs, m, now); triggerBearTrap(gs, m, now); if ((m.state as string) === 'dead') return 'done';   // spikes can kill during playback
   const aggro = d.aggro || isRagnarok(r, now) || (m as any).prov || (darkness(r, now) > 0.45 && m.type === 'boar');
   if (!m.knows && tr && aggro) { m.knows = { kind: 'trace', x: tr.x, y: tr.y, at: tr.t, traceId: tr.id, chainId: tr.chainId }; m.state = 'track'; }
   if (m.knows?.kind === 'trace') trackEvidence(gs, m, d.speed * (isRagnarok(r, now) ? 1.2 : 1) * (m.slow ? 0.45 : 1), dtMs / 1000, now);
@@ -802,19 +804,43 @@ function blockedAtTurret(r: RunState,x:number,y:number) { const b=blockGrid(r)[t
 
 // ---------- projectiles & hazards ----------
 function impactRock(gs:GameState,pr:Proj,now:number){if((pr as any).exploded)return;(pr as any).exploded=true;const r=gs.run!;for(const m of r.creatures)if(m.state!=='dead'&&dist(m.x,m.y,pr.x,pr.y)<BAL.creatorCoreEarthmother.rockRadius&&clearPhysicalLine(r,pr,m,true))damageCreature(gs,m,pr.dmg,Math.atan2(m.y-pr.y,m.x-pr.x),now,190);fx('chip',{x:pr.x,y:pr.y,mat:'stone'});}
-function tickProj(gs: GameState, dtMs: number, now: number) {
+function tickProj(gs: GameState, dtMs: number, now: number, opts?: { inertEnemy?: boolean }) {
   const r = gs.run!; const p = r.player; const dt = dtMs / 1000; const g = blockGrid(r);
   for (let i = PROJ.length - 1; i >= 0; i--) {
     const pr = PROJ[i];
+    // R5.1 P1-D committed-projectile policy: hostile projectiles aimed at the absent player are
+    // aged (their own committed life/delay) but never moved, never detonate and never reach
+    // hurtPlayer(). Player-origin projectiles still run the full online law.
+    if (opts?.inertEnemy && pr.from === 'enemy') {
+      if (pr.delay && pr.delay > 0) pr.delay -= dtMs;
+      pr.life -= dt; if (pr.life <= 0) PROJ.splice(i, 1); continue;
+    }
     if (pr.delay && pr.delay > 0) { pr.delay -= dtMs; continue; }
     if (pr.homing && !p.dead && los(r, pr.x, pr.y, p.x, p.y, true)) { const a = Math.atan2(p.y - pr.y, p.x - pr.x); const sp = Math.hypot(pr.vx, pr.vy); pr.vx += (Math.cos(a) * sp - pr.vx) * dt * 1.5; pr.vy += (Math.sin(a) * sp - pr.vy) * dt * 1.5; }
-    // Sweep the projectile: a fast shot cannot skip a one-cell wall in one frame.
+    // Sweep the projectile: a fast shot cannot skip a one-cell wall in one frame — nor a creature's body.
+    // The same 2 px substeps are tested against bodies for player projectiles: a hit lands on the crossing
+    // substep, with the identical damage law as live play (offline 50 ms slices at 260 px/s used to step
+    // straight over small targets; this closes that artifact without a new damage function).
     const ox = pr.x, oy = pr.y, nx = ox + pr.vx * dt, ny = oy + pr.vy * dt;
-    const steps = Math.max(1, Math.ceil(dist(ox, oy, nx, ny) / 2)); let blocked = false, b = 0;
+    const steps = Math.max(1, Math.ceil(dist(ox, oy, nx, ny) / 2)); let blocked = false, b = 0, dead = false;
     for (let j = 1; j <= steps; j++) {
       const x = ox + (nx - ox) * j / steps, y = oy + (ny - oy) * j / steps;
       b = g[tileOf(y) * WW + tileOf(x)];
       if (b === 1 || b === 2 || b === 3 || b === 5 || !clearPhysicalLine(r, pr, { x, y }, true)) { blocked = true; break; }
+      if (pr.from === 'player' && pr.kind !== 'blast_bomb' && pr.kind !== 'fire_tornado') {
+        for (const m of r.creatures) {
+          if (m.state === 'dead') continue;
+          const rr = m.elder ? ELDERS[m.elder.key].r : 6;
+          if (Math.hypot(x - m.x, y - m.y) < rr + pr.r) {
+            dead = true;
+            if (pr.kind === 'nature_rock') impactRock(gs, pr, now);
+            else if (pr.kind === 'fireball' || pr.kind === 'blast_signature') explode(gs, pr, now);
+            else { damageCreature(gs, m, pr.dmg, Math.atan2(pr.vy, pr.vx), now, 80); if (pr.kind === 'elsa_shard' && m.hp > 0 && rngNext(r) < BAL.creatorCoreElsa.freezeChance) m.frozenUntil = now + BAL.creatorCoreElsa.enemyMs; }
+            break;
+          }
+        }
+        if (dead) break;
+      }
       pr.x = x; pr.y = y;
     }
     if(pr.kind==='fire_tornado') { for(const m of r.creatures){if(m.state==='dead'||m.elder?.submerged||m.atk?.burrow||dist(m.x,m.y,pr.x,pr.y)>BAL.creatorCoreDragon.tornadoRadius||!los(r,m.x,m.y,pr.x,pr.y,true))continue;const a=Math.atan2(pr.y-m.y,pr.x-m.x);moveBody(r,m,Math.cos(a)*20*dt,Math.sin(a)*20*dt,5,'creature');if(now>=(m.tornadoNext||0)){m.tornadoNext=now+500;damageCreature(gs,m,pr.dmg,a,now,0);}}ignite(gs,tileOf(pr.x),tileOf(pr.y),now); }
@@ -822,11 +848,11 @@ function tickProj(gs: GameState, dtMs: number, now: number) {
       const trailSteps=Math.max(1,Math.ceil(dist(ox,oy,pr.x,pr.y)/12));
       for(let k=1;k<=trailSteps;k++){const x=ox+(pr.x-ox)*k/trailSteps,y=oy+(pr.y-oy)*k/trailSteps;ignite(gs,tileOf(x),tileOf(y),now);HAZ.push({kind:'pool',x,y,r:8,t:0,tell:0,dur:BAL.creatorCoreBlast.signatureBurnMs,dmg:BAL.creatorCoreBlast.signatureBurnDamage,style:'burn',owner:'player'});}
     }
-    pr.life -= dt; let dead = pr.life <= 0;
+    pr.life -= dt; dead = dead || pr.life <= 0;
     if (pr.kind === 'blast_bomb' && blocked && !dead) { pr.vx=0; pr.vy=0; blocked=false; }
     if (blocked) { dead = true; if(pr.kind==='nature_rock')impactRock(gs,pr,now); else if (pr.kind === 'fireball' || pr.kind === 'blast_signature') explode(gs, pr, now); else fx('ping', { x: pr.x, y: pr.y, kind: pr.kind }); }
     else if (pr.from === 'enemy' && dist(pr.x, pr.y, p.x, p.y) < pr.r + 4) { dead = true; if (pr.kind === 'mine') { fx('boom', { x: pr.x, y: pr.y, small: true }); } hurtPlayer(gs, pr.dmg, pr.x - pr.vx, pr.y - pr.vy, 'projectile', now, 100); }
-    else if (pr.from === 'player' && pr.kind !== 'blast_bomb' && pr.kind !== 'fire_tornado') { for (const m of r.creatures) { if (m.state === 'dead') continue; const rr = m.elder ? ELDERS[m.elder.key].r : 6; if (dist(pr.x, pr.y, m.x, m.y) < rr + pr.r) { dead = true; if(pr.kind==='nature_rock')impactRock(gs,pr,now); else if (pr.kind === 'fireball' || pr.kind === 'blast_signature') explode(gs, pr, now); else { damageCreature(gs, m, pr.dmg, Math.atan2(pr.vy, pr.vx), now, 80); if(pr.kind==='elsa_shard' && m.hp>0 && rngNext(r)<BAL.creatorCoreElsa.freezeChance)m.frozenUntil=now+BAL.creatorCoreElsa.enemyMs; } break; } } }
+    // player projectiles vs creatures are resolved inside the substep sweep above (R5.1 coarse-slice fix).
     if (dead && (pr.kind === 'fireball' || pr.kind === 'blast_signature') && pr.life <= 0) explode(gs, pr, now);
     if (dead && pr.kind === 'nature_rock') impactRock(gs,pr,now);
     if (dead && pr.kind === 'elsa_shard') {freezeAround(r,pr.x,pr.y,BAL.creatorCoreElsa.terrainMs);fx('cast',{x:pr.x,y:pr.y,core:'frost',a:0});}
@@ -1033,6 +1059,7 @@ function tickDragonDive(gs: GameState, dtMs: number, now: number) {
 export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   const r = gs.run; if (!r || r.ended) return;
   bindCombat(r);
+  r.clock.defenseFrames = 0;   // the fine-defense budget is per absence window; presence online refreshes it
   dtMs = Math.max(0, Math.min(dtMs, 50));
   if (!syncWorld(gs, now)) { if (!gs.run) fx('banner', { text: 'The run has ended', sub: 'Ragnarok consumed the island.' }); return; }
   // Resting hands the online clock to the same chronological settlement used offline (no online drain while asleep).
@@ -1080,14 +1107,35 @@ function discover(gs: GameState, now: number) {
   void countStones;
 }
 
+/** Fine defense-contact slices per absence window (persisted via r.clock.defenseFrames). */
+const DEFENSE_FRAME_BUDGET = 14400;
 // ---------- offline settlement (C09) ----------
 export function settle(gs: GameState, now: number, silent = false, interruptTransit = true): string[] {
   const r = gs.run; if (!r) return [];
+  // R5.1 P0-A: the offline boundary binds the run's combat arrays exactly like tick() does.
+  // Without this, a fresh process (Continue) steps zero persisted projectiles offline, and the
+  // post-settle tick() binding discards offline-fired shots — losing them (and their arrow debits).
+  bindCombat(r);
   const expiry = r.startedAt - r.qaOffset + BAL.run.maxRunHours * HOUR;
   if (now < r.clock.lastSimAt || (now === r.clock.lastSimAt && now < expiry)) return []; // never replay time
   // A corrupt/legacy pre-run checkpoint cannot cause more than one run's duration of replay.
   const start = Math.max(r.clock.lastSimAt, expiry - BAL.run.maxRunHours * HOUR);
   const end = Math.min(now, expiry), gap = Math.max(0, end - start);
+  // R5.1 P1-D committed-projectile policy: hostile instruments aimed at the absent player cannot resolve
+  // during settlement, offline or after return. Hostile hazards and hostile in-flight projectiles are
+  // discarded (never stepped, never re-armed); the player's own committed instruments persist for online law.
+  const clearedHazards = HAZ.reduce((n, h) => (h.owner === 'player' ? n : n + 1), 0);
+  if (clearedHazards) {
+    const kept = HAZ.filter(h => h.owner === 'player');
+    HAZ.splice(0, HAZ.length, ...kept);
+    receipt(r, start, 'offline.hazards_cleared', String(clearedHazards));
+  }
+  const clearedProjectiles = PROJ.reduce((n, pr) => (pr.from === 'enemy' ? n + 1 : n), 0);
+  if (clearedProjectiles) {
+    const kept = PROJ.filter(pr => pr.from === 'player');
+    PROJ.splice(0, PROJ.length, ...kept);
+    receipt(r, start, 'offline.projectiles_cleared', String(clearedProjectiles));
+  }
   migrateLootRespawn(r, end);
   if (start > r.clock.lastSimAt && now >= start) r.clock.lastSimAt = start;
   const report: string[] = []; const B = BAL.player; const p = r.player;
@@ -1099,13 +1147,21 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   // Bounded, deterministic playback starts only at saved positions with actual
   // local evidence. Other roaming/combat remains unresolved, not fabricated.
   const eligible = r.creatures.filter(m => m.offlineUnresolvedAt === undefined && !m.elder && ['idle', 'wander', 'track', 'chase'].includes(m.state) && (!m.knows || m.knows.kind === 'trace') && (m.knows?.kind === 'trace' || !!encounteredTrace(r, m, start)));
-  // Combat/last-sight checkpoints cannot be reconstructed by trace-only playback.
-  for (const m of r.creatures) if (m.state !== 'dead' && m.offlineUnresolvedAt === undefined && (m.knows?.kind === 'sight' || m.knows?.kind === 'stimulus' || ['tell', 'attack', 'recover'].includes(m.state) || Math.abs(m.kbx) + Math.abs(m.kby) > 1)) m.offlineUnresolvedAt = start;
+  // R5.1 P0-C: one authority rule — a creature selected into `pending` is playback-eligible at the
+  // start of the absence, knockback included (it is an impulse, not a state). The unresolved marker is
+  // stamped only on creatures NOT selected into playback. Membership and marker agree.
   const pending = eligible.slice(0, 24);
+  const inPending = new Set(pending.map(m => m.id));
+  // Combat/last-sight checkpoints cannot be reconstructed by trace-only playback.
+  for (const m of r.creatures) if (m.state !== 'dead' && m.offlineUnresolvedAt === undefined && !inPending.has(m.id) && (m.knows?.kind === 'sight' || m.knows?.kind === 'stimulus' || ['tell', 'attack', 'recover'].includes(m.state) || Math.abs(m.kbx) + Math.abs(m.kby) > 1)) m.offlineUnresolvedAt = start;
   for (const m of eligible.slice(24)) m.offlineUnresolvedAt = start;
+  // R5.1 P1-D/R6: only deaths that actually occur during this settle window are reportable afterwards.
+  const aliveAtStart = new Set(r.creatures.filter(m => m.state !== 'dead').map(m => m.id));
   const impacts = new Map<string, { name: string; before: number; after: number; destroyed: boolean }>();
   let frames = 0, structureEpoch = offlineStructureChange;
-  let defenseFrames = 0;   // R5: fine slices spent resolving a live defense contact (bounded work)
+  // R5.1 P1-E: the fine-defense budget persists across saves and time partitions inside one absence
+  // (reset when the player is present online), so continuous == split == reload at the cap.
+  let defenseFrames = r.clock.defenseFrames ?? 0;
 
   let t = start, wetMs = 0; const zone = getWorld().zone[tileOf(p.y) * WW + tileOf(p.x)];
   // B03-A: heat/shelter transitions observed chronologically (receipts are written at the exact boundary).
@@ -1123,10 +1179,11 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
     let dtMs = Math.min(60000, end - t, nextWeather - t);
     if (pending.length && frames < 2400) dtMs = Math.min(dtMs, 50);
     // R5-SIM2: bounded defense contact window — a ready, supplied turret that can legally see a target,
-    // or arrows already in flight, force fine-grained slices so offline defense uses the identical online law.
-    const inFlight = PROJ.some(pr => pr.from === 'player' && !(pr.delay && pr.delay > 0));
+    // or any player arrow committed at logout (including a declared spell projectile still counting down),
+    // force fine-grained slices so offline defense uses the identical online law.
+    const inFlight = PROJ.some(pr => pr.from === 'player');
     const contact = inFlight || turretContactWindow(r, t);
-    if (contact && defenseFrames < 14400) dtMs = Math.min(dtMs, 50);
+    if (contact && defenseFrames < DEFENSE_FRAME_BUDGET) dtMs = Math.min(dtMs, 50);
     dtMs = territoryBoundary(r,dtMs);
     // Integrate the existing offline drains at their actual depletion/death boundaries.
     // Hunger follows the sourced 24h baseline; thirst is an explicit provisional SOH assumption.
@@ -1172,12 +1229,15 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
     const until = Math.min(end, nextWeather, t + Math.max(dtMs, 0.001)); dtMs = until - t;
     if (isWet(weatherAt(r, t))) wetMs += dtMs;
     advanceWorld(gs, t, until, silent ? undefined : report, false);
-    if (dtMs <= 50 && defenseFrames < 14400 && (PROJ.some(pr => pr.from === 'player') || turretContactWindow(r, until))) {
+    // R5.1 P0-B/P0-C: the online law runs in full on contact slices; EVERY other chronological slice
+    // advances each turret cooldown by exactly its own span — one authority, no freeze, no double count.
+    const committedInFlight = PROJ.some(pr => pr.from === 'player');
+    if (dtMs <= 50 && defenseFrames < DEFENSE_FRAME_BUDGET && (committedInFlight || turretContactWindow(r, until))) {
       // Turret resolution shares the exact online functions: same range, same LOS, same cooldown, same ammo cost (1 arrow per shot).
       tickTurrets(gs, dtMs, until);
-      tickProj(gs, dtMs, until);
-      defenseFrames++;
-    } else if (dtMs > 50) {
+      tickProj(gs, dtMs, until, { inertEnemy: true });
+      defenseFrames++; r.clock.defenseFrames = defenseFrames;
+    } else {
       for (const e of Object.values(r.entities)) { const tc = e.turret; if (tc) tc.cooldown = Math.max(0, tc.cooldown - dtMs); }
     }
     if (r.rest) restStep(r, until);
@@ -1208,6 +1268,15 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
     if (Math.abs(p.hp - 1) < 1e-8) p.hp = 1;
     if (p.hp <= 1e-8) { killPlayer(gs, t, 'exposure while offline'); if (!silent) report.push('You did not survive the time away. Your bag lies where you rested.'); }
   }
+  // R5.1 P1-D/R6: deaths that occurred during this window are committed to the record as-is.
+  // Cause is deliberately not attributed — the lethal instrument is not provable from a state delta.
+  const diedDuring = r.creatures.filter(m => m.state === 'dead' && aliveAtStart.has(m.id));
+  if (diedDuring.length) {
+    receipt(r, end, 'offline.creature_death', String(diedDuring.length));
+    if (!silent) report.push(`${diedDuring.length} creature${diedDuring.length > 1 ? 's' : ''} died while you were away; anything they dropped lies where they fell.`);
+  }
+  if (clearedHazards && !silent) report.push(`${clearedHazards} hostile hazard${clearedHazards > 1 ? 's' : ''} in flight at logout dissipated while you were away — none of them can strike you after return.`);
+  if (clearedProjectiles && !silent) report.push(`${clearedProjectiles} hostile projectile${clearedProjectiles > 1 ? 's' : ''} in flight at logout lost effect while you were away — they cannot strike you after return.`);
   if (!silent) for(const [id,before] of territoryBefore) { const e=r.entities[id]; if(e && e.hp!==undefined && e.hp<before.hp-0.01) report.push(`${before.name}: ${Math.round(before.hp)} → ${Math.round(e.hp)} HP while away (upkeep decay or actual impact).`); }
   if (!silent) for(const c of Object.values(r.entities)) if(c.type==='claim' && c.c && c.cabinet) {
     const amounts=BAL.territory.materials.map((k:string)=>[k,countItem(r,c.c!,k)] as const).filter(([,q]:readonly [string,number])=>q>0);
