@@ -60,7 +60,10 @@ describe('B01-R1 A: source-specific loot roles (no universal Food/Medical overla
   });
   it('negative: cash, blueprints, keycards, unique tools and energy cores are never emitted',()=>{
     const {r}=fresh(71);const sites=getWorld('shipping_fresh').statics.filter(s=>lootClass(s));const bad=['rcash','blueprint','keycard','damaged_drive','energy_basic','core_blast','iron_pick'];
-    for(let seed=1;seed<=60;seed++){r.seed=seed;for(const s of sites)for(const c of [0,1,2,3])for(const [k] of lootGrammarRoll(r,s,c))expect(bad).not.toContain(k);}
+    expect(sites.length).toBeGreaterThan(0);                                        // precondition: at least one industrial site exists in the fixture
+    let rolled=0;
+    for(let seed=1;seed<=60;seed++){r.seed=seed;for(const s of sites)for(const c of [0,1,2,3])for(const [k] of lootGrammarRoll(r,s,c)){rolled++;expect(bad).not.toContain(k);}}
+    expect(rolled).toBeGreaterThan(0);                                            // precondition: emissions happened across the seed sweep
   });
   it('bounds every authored and generated slot inside the B01 container size',()=>{
     const {r}=fresh();const world=getWorld('shipping_fresh');

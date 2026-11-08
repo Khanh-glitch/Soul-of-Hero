@@ -78,6 +78,8 @@ describe('B03-C typed return report (receipt-derived, no invented rewards)', () 
     const o=setup(),{g}=o;fill(o);
     const {report}=settleWithReturn(g,T+7200000);
     const text=Object.values(report!.sections).flat().map(x=>x.text).join(' | ');
+    expect(report!.sections.world.length).toBeGreaterThan(0);                    // precondition: the public-world rows exist, so the privacy negative has force
+    expect(text.length).toBeGreaterThan(0);
     expect(text).not.toMatch(/wolf|boar|bear|creature|monster|enemy|elder/i);
     for(const row of report!.sections.world) expect(row.where).toBeUndefined();
   });
@@ -117,6 +119,7 @@ describe('B03-C return privacy: ownership and visibility of stationary state', (
     const fakeChest=mkContainer(r,'chest',3); addItemR(r,fakeChest.id,'cart_kit',1);
     r.entities['farm-hidden']={id:'farm-hidden',kind:'recycler',poi:'factory',label:'Hidden farm',x:(o.x+50)*TILE+8,y:(o.y+50)*TILE+8,tx:o.x+50,ty:o.y+50,farm:{enabled:true,crop:'crop',energy:0},c:fakeChest.id} as any;
     const {report}=settleWithReturn(g,T+3600000);
+    expect(Object.keys(report!.sections).length).toBeGreaterThan(0);
     expect(JSON.stringify(report!.sections)).not.toMatch(/Hidden farm/);
     expect(report!.sections.production.some(x=>x.where?.name==='Garden Tender'&&x.where.tx===o.x+50)).toBe(false);
   });

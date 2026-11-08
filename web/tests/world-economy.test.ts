@@ -24,7 +24,7 @@ describe('distinct topology: authored contract fixture',()=>{
   const handoff={economy:m,roads:[{id:'crossing',cells:road,surface:'road',widthTiles:1,bridgeCells:road.filter(i=>i%n>=33&&i%n<=35),cargoPassable:true}],
     pois:[{id:'works',kind:'industrial' as const,footprint:poi,entrances:[poi[0]],rooms:[[poi[1]]],doors:[poi[0]],powerNodes:[poi[1]],hazardCells:[],exteriorLootSites:[19*n+58],interiorLootSites:[poi[1]],retreatPaths:[[poi[0],21*n+58,22*n+58,23*n+58,24*n+58]]}],
     criticalPaths:[road],buildSites:[{id:'west-plot',cells:[22*n+10,22*n+11],loadingCells:[24*n+10]}],nonbossCashSites:[23*n+20],vendorSites:[23*n+15],evacuationSites:[23*n+65]};
-  expect(validateGeographicHandoff(handoff)).toEqual([]);const result=compileEconomy(m);expect(result.errors).toEqual([]);expect(result.sources).not.toContain('iron');expect(result.sources).not.toContain('sulfur');
+  expect(validateGeographicHandoff(handoff)).toEqual([]);const result=compileEconomy(m);expect(result.errors).toEqual([]);expect(result.sources.filter(Boolean).length).toBeGreaterThan(0);expect(result.sources).not.toContain('iron');expect(result.sources).not.toContain('sulfur');
  });
 });
 

@@ -83,6 +83,7 @@ describe('P0-C bounded save diagnostics', () => {
     const g = run(); qaPrepareFullPack(g.run!);
     await saveDetailed(g);
     const out = JSON.stringify(lastSaveOutcome());
+    const sj = lastSaveOutcome(); expect(sj).toBeTruthy(); expect(typeof sj!.category).toBe('string'); expect(out.length).toBeGreaterThan(0); // precondition: a real outcome was serialized
     expect(out).not.toContain(g.run!.id);
     expect(out).not.toMatch(/"uid"/);
   });

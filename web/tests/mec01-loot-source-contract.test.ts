@@ -148,6 +148,6 @@ describe('old-save compatibility: a b04-v1 run loads through the real save valid
     expect(back.run!.lootEcology!.grammar).toBe('b04-v1');
     expect(back.run!.lootEcology!.sourceContract).toBeUndefined();
     const factory=world().statics.find(s=>s.kind==='loot'&&s.poi==='factory'&&s.loot?.some(([k])=>k==='iron_sword'))!;
-    for (let c=0;c<40;c++) expect(lootGrammarRoll(back.run!,factory,c).map(([k])=>k)).not.toContain('metal_blade');
+    let rolled=0; for (let c=0;c<40;c++) { const drops = lootGrammarRoll(back.run!,factory,c).map(([k])=>k); rolled += drops.length; expect(drops).not.toContain('metal_blade'); } expect(rolled).toBeGreaterThan(0);               // precondition: rolls emitted; a silently-empty roll table proves nothing
   });
 });

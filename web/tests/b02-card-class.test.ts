@@ -16,7 +16,7 @@ describe('B02-P1-C reader class enforcement',()=>{
     const g=start(),r=g.run!,door=doorOf(g);move(g,door.x,door.y+16);
     addItem(r,'inv','keycard',1);const card=C(r,'inv').slots.find(s=>s?.key==='keycard')!;card.meta='green';
     const bad=act(g,'door',{eid:door.id});expect(bad.ok).toBe(false);expect((bad as any).reason).toMatch(/Sealed/);expect(card.charge).toBe(3);
-    card.meta='vault';const ok=act(g,'door',{eid:door.id},T+2);expect(ok.ok).toBe(true);expect((ok as any).reason ?? (ok as any).message ?? '').not.toContain('Green');
+    card.meta='vault';const ok=act(g,'door',{eid:door.id},T+2);expect(ok.ok).toBe(true);const okMsg=(ok as any).msg ?? '';expect(okMsg).toMatch(/Vault card scanned/);expect(okMsg).not.toContain('Green');
     expect(card.charge).toBe(2);
   });
   it('fixture: a green door reports "Green card scanned" and refuses a vault card; restored afterwards',()=>{

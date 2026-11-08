@@ -319,7 +319,7 @@ describe('bounded offline trace consequences', () => {
     r.entities[hi]={id:hi,kind:'struct',type:'chest_small',tx:spot.x+5,ty:spot.y+2,x:x+80,y:y+32,hp:100,maxHp:100,c:chest.id,claim:ci};
     r.entities[doorId].claim=ci; addItem(r,chest.id,'wood',10); addItem(r,chest.id,'rope',3); markDirty();
     const report=settle(gs,T0+4000); expect(r.receipts.some(q=>q.kind==='struct.hit')).toBe(true); expect(r.receipts.some(q=>q.kind==='struct.maintenance')).toBe(false);
-    expect(countItem(r,chest.id,'wood')).toBe(10); expect(report.join(' ')).not.toContain('Claim reserve spent:');
+    expect(countItem(r,chest.id,'wood')).toBe(10); expect(report.length).toBeGreaterThan(0); expect(report.join(' ')).not.toContain('Claim reserve spent:');
   });
   it('a real impact can destroy a door and is reported as such', () => {
     const { gs, r, doorId } = setupTrail(); r.entities[doorId].hp = 26;

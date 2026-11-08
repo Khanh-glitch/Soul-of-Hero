@@ -78,6 +78,9 @@ describe('B05-R C1 loot → industry matrix (real rolls, real consumers)', () =>
     expect(stationBurnable(FORBIDDEN_STATION_FUEL)).toBe(false);
   });
   it('containers never emit Fuel Canister, crude petroleum, cash or blueprints', () => {
-    for (const [, st] of classes) for (let c = 0; c < 64; c++) for (const [k] of lootRoll(run(LOOT_GRAMMAR_CURRENT), st, c)) expect(['fuel_can', 'crude_petroleum', 'rcash', 'blueprint']).not.toContain(k);
+    expect(classes.length).toBeGreaterThan(0);
+    let rolled = 0;
+    for (const [, st] of classes) for (let c = 0; c < 64; c++) for (const [k] of lootRoll(run(LOOT_GRAMMAR_CURRENT), st, c)) { rolled++; expect(['fuel_can', 'crude_petroleum', 'rcash', 'blueprint']).not.toContain(k); }
+    expect(rolled).toBeGreaterThan(0);                                          // precondition: emissions actually happened across the roll window
   });
 });
