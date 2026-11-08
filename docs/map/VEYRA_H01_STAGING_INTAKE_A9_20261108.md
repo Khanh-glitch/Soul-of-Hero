@@ -1,5 +1,8 @@
 # VEYRA H01 → Gameplay Web staging: correct base intake
 
+> **GITHUB-ONLY SOURCE BLOCKER (2026-11-08):** This staging branch does **not** contain `web/src/veyra05/**`, `web/src/game/veyra/**`, H01 `arch/f01.ts`, or the approved VEYRA map source. The original approved ZIP is still outside GitHub. **Do not ask the Gameplay agent for a chat attachment, claim H01 has been imported, or start the integration until the complete approved map source is committed to a dedicated GitHub map-source branch and pinned by immutable commit SHA.** The source archive filename/checksum below are custody references only; they are not proof of a GitHub-uploaded file. Current PR #45 contains only intake documentation and the New Run Start footer fix.
+
+
 **Status: staged for integration; no map source has been ported and no integrated runtime/visual acceptance is claimed.**
 
 ## Pinned source custody
