@@ -140,7 +140,7 @@ export function validate(raw: any): GameState | null {
   const jobIds = new Set<string>();
   const jobs = (queue: any, station: string): boolean => Array.isArray(queue) && queue.every((j: any) => {
     if (!obj(j) || typeof j.id !== 'string' || !j.id || jobIds.has(j.id) || !beforeNext(j.id, /^j([a-z0-9]+)$/) || typeof j.recipe !== 'string') return false;
-    if(j.recipe==='X:recover-v1'||j.recipe==='X:recover-v2'||j.recipe==='X:recover-v3'||j.recipe==='X:pipe-v1'){
+    if(j.recipe==='X:recover-v1'||j.recipe==='X:recover-v2'||j.recipe==='X:recover-v3'||j.recipe==='X:pipe-v1'||j.recipe==='X:gear-v1'){
       if(station!=='recycler'||!finite(j.left)||!finite(j.total)||j.left<0||j.left>j.total||!Array.isArray(j.reserved)||j.reserved.length!==1)return false;
       const plan=recoveryPlanFor(j.reserved[0],j.recipe);if(!plan||plan.recipe!==j.recipe||j.total!==plan.total||!j.reserved.every(stack))return false;
       jobIds.add(j.id);return true;

@@ -866,6 +866,24 @@
       }
     }
   },
+  "recyclerV4": {
+    "_status": "SOH_PROVISIONAL MEC-01 R2 (A1): one carried Mechanical Gear at the physical Foundry Recycler -> 2 Mechanical Parts + 1 Iron Ingot. NEW jobs only (X:gear-v1); queued/saved jobs keep their stored recipe. Gear craft = 2 ingot + 2 MP + 1 fastener = ~4.11 ingot-eq (scrap=1/3 ingot, MP=0.833, fastener=0.444); return = 2.67 ingot-eq, net loss ~1.44 per cycle (no loop). Gear has no durability, so no condition tiers. LI per-item yield: ORIGINAL_UNKNOWN.",
+    "seconds": 15,
+    "components": {
+      "mechanical_gear": {
+        "outputs": [
+          [
+            "mechanical_parts",
+            2
+          ],
+          [
+            "iron_ingot",
+            1
+          ]
+        ]
+      }
+    }
+  },
   "airdropV1": {
     "_status": "SOH_PROVISIONAL; ORIGINAL_UNKNOWN historical cadence, quantities, delays and weights",
     "firstHours": 8,

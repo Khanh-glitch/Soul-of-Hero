@@ -1,3 +1,5 @@
+import { SHIPPING_LOOT_SOURCES } from '../src/game/loot-source-spec';
+import { LOOT_B05_TOOLBOX_GRADE } from '../src/game/loot-ecology';
 // MEC-01 P4: reproducible five-chain industrial benchmark. Regenerate: npx vitest run tests/mec01-five-chain-benchmark.test.ts
 // Every SOH number is computed from the live registry (RECIPES, ITEMS, SOURCES), the authored shipping caches, the pinned recovery
 // plans (recycler v1/v2/v3 with cumulative tiers) and balance.v1.json. LI figures are CONTEXT ONLY, labelled by version/mode/confidence.
@@ -39,8 +41,14 @@ const RECYCLE_SOURCE:Record<string,{tool:string;note:string}|null>={
 const vecOut=(v:Vec)=>Object.fromEntries(Object.entries(v).map(([k,q])=>[k,round(q)]));
 
 function sourcesFor(item:string){
-  const hits:{kind:string;where:string;qty?:number}[]=[];
+  const hits:{kind:string;where:string;qty?:number;frequency?:string;stock?:string;cooldownHours?:number}[]=[];
   for(const s of getWorld('shipping_fresh').statics) if(s.kind==='loot'&&s.loot) for(const [k,q] of s.loot) if(k===item) hits.push({kind:'authored-cache',where:`${s.poi}:${s.tx},${s.ty}`,qty:q});
+  // MEC-01 R2 D: B05 toolbox grammar rolls (LOOT_B05_TOOLBOX_GRADE) for every shipping toolbox spec. Declared stock, cooldown and per-roll frequency; not authored loot.
+  for(const spec of SHIPPING_LOOT_SOURCES) if(spec.role==='toolbox'){
+    const tbl=LOOT_B05_TOOLBOX_GRADE[spec.grade];
+    for(const [k,q] of tbl.fixed) if(k===item) hits.push({kind:'b05-grammar-fixed',where:spec.sourceId,qty:q,frequency:'every roll (fixed)',stock:spec.stock,cooldownHours:spec.cooldownHours});
+    if(tbl.pool.some(([k])=>k===item)) hits.push({kind:'b05-grammar-pool',where:spec.sourceId,qty:1,frequency:`1 of ${tbl.pool.length} pool stacks (uniform), one pool stack per roll`,stock:spec.stock,cooldownHours:spec.cooldownHours});
+  }
   for(const [id,src] of Object.entries(SOURCES as Record<string,any>)){
     for(const y of src.yields??[]) if(y[0]===item) hits.push({kind:'source-yield',where:id,qty:y[1]});
     for(const b of src.bonus??[]) if(b[0]===item) hits.push({kind:'source-bonus-chance',where:id,qty:b[1]});
@@ -114,10 +122,18 @@ describe('MEC-01 P4: five-chain industrial benchmark (reproducible)', () => {
     });
     // Fuel/time receipts for the ore-to-ingot leg, from the authored furnace recipes.
     const furnace={iron_ingot:{fromOre:{secs:RECIPES.iron_ingot.secs,ins:RECIPES.iron_ingot.ins,outQty:RECIPES.iron_ingot.qty}},scrap_ingot:{fromScrap:{secs:RECIPES.scrap_ingot.secs,ins:RECIPES.scrap_ingot.ins,outQty:RECIPES.scrap_ingot.qty}},refined_iron_ingot:{secs:RECIPES.refined_iron_ingot.secs,ins:RECIPES.refined_iron_ingot.ins,outQty:RECIPES.refined_iron_ingot.qty}};
+    // MEC-01 R2 A1: Gear as a carried INPUT at the Foundry Recycler (X:gear-v1). Same ingot-equivalent basis as the chains above.
+    const ieScrap=1/RECIPES.scrap_ingot.ins[0][1]*RECIPES.scrap_ingot.qty;   // ingot per scrap
+    const ieMP=(RECIPES.mechanical_parts.ins as [string,number][]).reduce((a,[k,q])=>a+q*(k==='iron_ingot'?1:k==='scrap'?ieScrap:0),0)/RECIPES.mechanical_parts.qty;
+    const ieFast=(RECIPES.fasteners.ins as [string,number][]).reduce((a,[k,q])=>a+q*(k==='iron_ingot'?1:k==='scrap'?ieScrap:0),0)/RECIPES.fasteners.qty;
+    const ieGearCraft=(RECIPES.mechanical_gear.ins as [string,number][]).reduce((a,[k,q])=>a+q*(k==='iron_ingot'?1:k==='mechanical_parts'?ieMP:k==='fasteners'?ieFast:0),0);
+    const gearOut=BAL.recyclerV4.components.mechanical_gear.outputs as [string,number][];
+    const ieGearRet=gearOut.reduce((a,[k,q])=>a+q*(k==='iron_ingot'?1:k==='mechanical_parts'?ieMP:0),0);
+    const gearRecycleV4={recipe:'X:gear-v1',seconds:BAL.recyclerV4.seconds,outputs:gearOut,craftIngotEq:round(ieGearCraft),returnIngotEq:round(ieGearRet),netLossIngotEq:round(ieGearCraft-ieGearRet),basis:'1 ingot = 1 ore; scrap = 1/3 ingot (scrap_ingot); MP and fastener from their authored recipes; no durability so no condition tiers',sourceStatus:'SOH_PROVISIONAL (recyclerV4); LI per-item yield ORIGINAL_UNKNOWN',consumersOfGear:['vehicle_drive_geared','industrial_pick_geared']};
     const report={version:'mec01-five-chain-benchmark-v1',numeraire:'1 iron_ingot = 1 iron_ore (furnace) = 3 scrap (scrap_ingot); other atoms compared per material',
       salvageOnly:['damaged_drive'],recyclerVersions:{v1:'immutable saved-job table',v2:'pinned saved-job table (four keys over-returned)',v3:'new jobs, corrected four keys'},
       structuresNote:`workbench ${STRUCTS.workbench.name} level 2 for the chain recipes; motorbike_kit needs level 3`,
-      furnace,chains,li_context_only:true,
+      furnace,gearRecycleV4,chains,li_context_only:true,
       proofClasses: proofClasses(),
       unknowns:['ore-to-ingot fuel burn','travel/route cost','per-source drop rate for Metal Blade/Frame','LI per-item yields (ASSUMED only)'] };
     const dir=join(process.cwd(),'reports');

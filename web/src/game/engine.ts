@@ -1869,7 +1869,7 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
       // A finished job is committed at its event time without requiring extra work or fuel.
       if (job && job.left <= 0) {
         const at = now - t;
-        if (job.recipe==='X:drive'||job.recipe==='X:recover-v1'||job.recipe==='X:recover-v2'||job.recipe==='X:recover-v3'||job.recipe==='X:pipe-v1') {
+        if (job.recipe==='X:drive'||job.recipe==='X:recover-v1'||job.recipe==='X:recover-v2'||job.recipe==='X:recover-v3'||job.recipe==='X:pipe-v1'||job.recipe==='X:gear-v1') {
           // Outputs are fixed by the job's stored recipe version (v1 jobs never change when v2 is added).
           const plan=job.reserved?.length===1?recoveryPlanFor(job.reserved[0],job.recipe):null;
           if(e.kind!=='recycler'||!plan||plan.recipe!==job.recipe||!recoveryFits(C(r,st.outC),plan.outputs)){blocked=true;note('Recycler: output full or invalid reservation.');stationState(r,e,'output_full',at);continue;}

@@ -50,6 +50,29 @@
       "outQty": 2
     }
   },
+  "gearRecycleV4": {
+    "recipe": "X:gear-v1",
+    "seconds": 15,
+    "outputs": [
+      [
+        "mechanical_parts",
+        2
+      ],
+      [
+        "iron_ingot",
+        1
+      ]
+    ],
+    "craftIngotEq": 4.111,
+    "returnIngotEq": 2.667,
+    "netLossIngotEq": 1.444,
+    "basis": "1 ingot = 1 ore; scrap = 1/3 ingot (scrap_ingot); MP and fastener from their authored recipes; no durability so no condition tiers",
+    "sourceStatus": "SOH_PROVISIONAL (recyclerV4); LI per-item yield ORIGINAL_UNKNOWN",
+    "consumersOfGear": [
+      "vehicle_drive_geared",
+      "industrial_pick_geared"
+    ]
+  },
   "chains": [
     {
       "id": "metal_blade",
@@ -99,7 +122,16 @@
         }
       ],
       "researchCost": "base (known at start, no research)",
-      "sourceHits": [],
+      "sourceHits": [
+        {
+          "kind": "b05-grammar-pool",
+          "where": "shipping.factory.exterior.industrial-toolbox",
+          "qty": 1,
+          "frequency": "1 of 3 pool stacks (uniform), one pool stack per roll",
+          "stock": "renewable",
+          "cooldownHours": 24
+        }
+      ],
       "consumers": [
         "iron_sword_blade (Iron Sword (blade refit))",
         "reinforced_spear_blade (Reinforced Spear (blade))"
@@ -348,7 +380,24 @@
         }
       ],
       "researchCost": "base (known at start, no research)",
-      "sourceHits": [],
+      "sourceHits": [
+        {
+          "kind": "b05-grammar-pool",
+          "where": "shipping.factory.exterior.industrial-toolbox",
+          "qty": 1,
+          "frequency": "1 of 3 pool stacks (uniform), one pool stack per roll",
+          "stock": "renewable",
+          "cooldownHours": 24
+        },
+        {
+          "kind": "b05-grammar-pool",
+          "where": "shipping.tp.bow-cache.standard-toolbox",
+          "qty": 1,
+          "frequency": "1 of 3 pool stacks (uniform), one pool stack per roll",
+          "stock": "renewable",
+          "cooldownHours": 24
+        }
+      ],
       "consumers": [
         "iron_plate",
         "vehicle_frame_piped (Utility Frame (piped))"
@@ -589,7 +638,24 @@
         }
       ],
       "researchCost": "base (known at start, no research)",
-      "sourceHits": [],
+      "sourceHits": [
+        {
+          "kind": "b05-grammar-fixed",
+          "where": "shipping.factory.exterior.industrial-toolbox",
+          "qty": 1,
+          "frequency": "every roll (fixed)",
+          "stock": "renewable",
+          "cooldownHours": 24
+        },
+        {
+          "kind": "b05-grammar-pool",
+          "where": "shipping.tp.bow-cache.standard-toolbox",
+          "qty": 1,
+          "frequency": "1 of 3 pool stacks (uniform), one pool stack per roll",
+          "stock": "renewable",
+          "cooldownHours": 24
+        }
+      ],
       "consumers": [
         "industrial_pick_geared (Salvager Pick (geared))",
         "vehicle_drive_geared (Motor Drive (geared))"
@@ -846,7 +912,24 @@
         }
       ],
       "researchCost": "base (known at start, no research)",
-      "sourceHits": [],
+      "sourceHits": [
+        {
+          "kind": "b05-grammar-pool",
+          "where": "shipping.factory.exterior.industrial-toolbox",
+          "qty": 1,
+          "frequency": "1 of 3 pool stacks (uniform), one pool stack per roll",
+          "stock": "renewable",
+          "cooldownHours": 24
+        },
+        {
+          "kind": "b05-grammar-pool",
+          "where": "shipping.tp.bow-cache.standard-toolbox",
+          "qty": 1,
+          "frequency": "1 of 3 pool stacks (uniform), one pool stack per roll",
+          "stock": "renewable",
+          "cooldownHours": 24
+        }
+      ],
       "consumers": [],
       "recycler": {
         "source": "iron_axe",
