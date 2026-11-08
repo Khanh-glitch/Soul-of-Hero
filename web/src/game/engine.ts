@@ -16,7 +16,7 @@ import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, webRecycl
 import { wreckBonuses, wreckEconomy } from './wreck-economy';
 import { mapDigest } from './map-package';
 // CAL-01: one authoritative two-year/eight-season calendar (pure; engine-free module).
-import { CALENDAR_VERSION, runClockMs, calendarAt, climateAt, climateAtPx, cropSeasonFactor, normalizeCalendarLedger, phaseBoundaryAt, phaseMs, seasonTransitionsBetween, seasonWeatherWeights, seasonLabel, calendarView, seasonOfPhase, type Season, type CalendarLedgerV1 } from './calendar';
+import { CALENDAR_VERSION, runClockMs, calendarAt, climateAt, climateAtPx, cropSeasonFactor, normalizeCalendarLedger, phaseBoundaryAt, phaseMs, phaseCount, seasonTransitionsBetween, seasonWeatherWeights, seasonLabel, calendarView, seasonOfPhase, type Season, type CalendarLedgerV1 } from './calendar';
 
 export type Intent = { id: string; type: string; [k: string]: any };
 export type Result = { ok: true; receipt: string; msg?: string } | { ok: false; reason: string; dup?: boolean };
@@ -370,16 +370,51 @@ export function stepTerritory(r:RunState,dt:number,now:number,report?:string[]) 
 export function structureRepairCost(e: Entity): [string, number][] {
   return (STRUCTS[e.type!]?.cost || []).map(([k,q]) => [k, Math.max(1, Math.ceil(q * 0.25))]);
 }
-/** Rough neutral-exposure forecast; not a safety guarantee or a simulation of combat/environment. */
+/** Rough neutral-exposure forecast; not a safety guarantee or a simulation of combat/environment.
+ *
+ * CAL-01 / CAL-01.1: thirst is drained at the SAME season-dependent rate the offline settle
+ * loop applies — `BAL.player.offlineThirstPerHour x climateAt(player tile).thirstMultiplier` —
+ * and the forecast walks that rate across every calendar phase boundary inside the predicted
+ * window. Before this correction the menu reported the neutral-season drain, so a warm-summer
+ * logout at multiplier 1.25 advertised ~16 h for a thirst that actually empties in ~12.8 h.
+ * The estimate is still APPROXIMATE and still ignores what it always ignored: combat, fire,
+ * cold/radiation damage, supplies eaten or drunk, weather-driven local events and a run that
+ * can end before the predicted hour. Only the fixed run expiry is honoured, because settlement
+ * itself never advances past it. */
 export function offlineSurvivalEstimate(r: RunState) {
   const p=r.player, sheltered=isSheltered(r,p.x,p.y), b=BAL.player;
-  const hungerHours=Math.max(0,p.hunger)/b.offlineHungerPerHour;
-  const thirstHours=Math.max(0,p.thirst)/b.offlineThirstPerHour;
+  const tx=Math.floor(p.x/TILE), ty=Math.floor(p.y/TILE);
+  // Time the run still has; settlement stops here, so no forecast may outlive it.
+  const expiry=r.startedAt-r.qaOffset+BAL.run.maxRunHours*HOUR;
+  let leftHours=Math.max(0,(expiry-r.clock.lastSimAt)/HOUR);
+  const hungerHours=Math.min(Math.max(0,p.hunger)/b.offlineHungerPerHour,leftHours);
+  // One bounded segment per remaining season phase: the rate changes exactly at a boundary.
+  const logoutMultiplier=climateAt(r,tx,ty,r.clock.lastSimAt,'clear').thirstMultiplier;
+  let thirst=Math.max(0,p.thirst), at=r.clock.lastSimAt, thirstHours=0, multiplier=logoutMultiplier, worstMultiplier=logoutMultiplier;
+  for (let guard=0; guard<phaseCount()+2 && thirst>1e-9 && leftHours>1e-9; guard++) {
+    multiplier=climateAt(r,tx,ty,at,'clear').thirstMultiplier;
+    if (multiplier>worstMultiplier) worstMultiplier=multiplier;
+    const rate=b.offlineThirstPerHour*multiplier;           // points per hour, this phase
+    if (!(rate>0)) break;
+    const boundaryAt=phaseBoundaryAt(r,calendarAt(r,at).phaseIndex+1);
+    const hoursHere=Math.min(leftHours, boundaryAt>at ? (boundaryAt-at)/HOUR : leftHours, thirst/rate);
+    thirst-=rate*hoursHere; leftHours-=hoursHere; thirstHours+=hoursHere; at+=hoursHere*HOUR;
+    if (hoursHere<=0) break;
+  }
   const damagePerHour=b.starveDamagePerMin*b.offlineDrainFactor*60;
   let survivalHours: number;
   if (!sheltered) survivalHours=Math.min(hungerHours,thirstHours)+Math.max(0,p.hp)/damagePerHour;
   else { const hpAtThirst=hungerHours<thirstHours ? Math.max(1,p.hp-(thirstHours-hungerHours)*damagePerHour) : p.hp; survivalHours=thirstHours+Math.max(0,hpAtThirst)/damagePerHour; }
-  return {hungerHours,thirstHours,survivalHours:p.dead?0:survivalHours,sheltered};
+  const runHoursLeft=Math.max(0,(expiry-r.clock.lastSimAt)/HOUR);
+  return {hungerHours,thirstHours,survivalHours:p.dead?0:Math.min(survivalHours,runHoursLeft),sheltered,
+    /** Local seasonal water demand at logout (1 = neutral season, >=1 in a hot season). */
+    thirstMultiplier:logoutMultiplier,
+    /** Highest local water demand anywhere in the forecast window (1 when no boundary is crossed). */
+    thirstMultiplierHorizon:worstMultiplier,
+    /** Hours of run clock that remain at logout (the forecast never outlives it). */
+    runHoursLeft,
+    /** Explicit scope note for UI/owner handoff; this estimate models thirst and hunger only. */
+    scope:'thirst+hunger only; ignores combat, fire, cold/radiation, supplies and season events beyond thirst' as const};
 }
 /** Both adapters supply roof coverage to the same room traversal. */
 export function roofAt(r: RunState, x: number, y: number) {

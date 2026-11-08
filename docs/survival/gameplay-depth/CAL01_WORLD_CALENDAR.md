@@ -148,6 +148,27 @@ calendar record is left byte-identical.
 Both use real source/cost/receipt paths (`STRUCTS`, `GARDEN_FRAME_COST`, `GARDEN_CROPS`,
 `stepGardensBarrels`, `stepTenders`) — no fixture-only shortcut, no free output.
 
+## 7.1 CAL-01.1 corrective — forecast truth (C2)
+
+`offlineSurvivalEstimate()` divided thirst by the **neutral** baseline while `settle()` multiplied
+by `climateAt(player tile).thirstMultiplier`, so the pre-logout menu overstated a warm-summer logout:
+100 thirst on a warm cell (multiplier 1.227) was advertised as `100 / 6.25 = 16.0 h` while it really
+empties in `16.0 / 1.227 = 13.04 h`. The forecast now integrates the **same** law segment by segment
+across every phase boundary inside the prediction window, so it matches settlement in both directions
+and still models thirst/hunger only.
+
+| Case (warm sand cell, full 100 thirst) | Old forecast | Corrected forecast | Settlement check |
+|---|---|---|---|
+| Spring, multiplier 1.000 | 16.00 h | **16.00 h** (unchanged) | thirst 0 after 16.0 h |
+| Summer, multiplier 1.227 | 16.00 h ❌ | **13.04 h** | thirst 0 after 13.04 h |
+| Spring h36 → summer h42 crossing (6 h spring + summer) | 16.00 h ❌ | **14.15 h** | thirst 0, one `season.begin` |
+
+The returned read model keeps `hungerHours/thirstHours/survivalHours/sheltered` and adds
+`thirstMultiplier` (rate at logout), `thirstMultiplierHorizon` (worst rate ahead), `runHoursLeft`
+and an explicit `scope` string. `survivalHours` is clamped to the remaining 336 h run clock. The
+existing approximate warning text in the menu panel is untouched (no UI redesign); the numbers it
+prints are now truthful.
+
 ## 8. Verification
 
 | Command | Result |
@@ -155,6 +176,7 @@ Both use real source/cost/receipt paths (`STRUCTS`, `GARDEN_FRAME_COST`, `GARDEN
 | `npx tsc --noEmit -p .` | clean |
 | `npx tsc --noEmit -p tsconfig.test.json` | clean |
 | `npx vitest run tests/cal01-world-calendar.test.ts` | **29 passed** |
+| `npx vitest run tests/cal011-forecast.test.ts` | **4 passed** (CAL-01.1 forecast truth) |
 | `npx vitest run --testTimeout=120000` (full) | **107 files / 804 tests passed, 1 skipped, exit 0** (~315 s) |
 | `npx vite build` | built, `dist/index.html` single file |
 | `node scripts/cal01-season-report.mjs` | `web/evidence/cal01-seasons/season-report.json` |
@@ -171,6 +193,8 @@ Both use real source/cost/receipt paths (`STRUCTS`, `GARDEN_FRAME_COST`, `GARDEN
 | `web/src/game/sim.ts` | slice clipping at season boundaries, `commitSeasonBoundaries`, seasonal thirst + trace decay, seasonal tender/garden stepping |
 | `web/src/game/persist.ts` | one calendar policy in `validate()`; byte-identical for records that never had one |
 | `web/tests/cal01-world-calendar.test.ts` | **new** — 29 boundary/persistence/consequence/no-exploit tests |
+| `web/tests/cal011-forecast.test.ts` | **new (CAL-01.1)** — season-dependent offline forecast, before/after + boundary crossing |
+| `web/src/game/engine.ts` (CAL-01.1) | `offlineSurvivalEstimate()` uses the settlement thirst law and walks phase boundaries |
 | `web/scripts/cal01-season-report.mjs` | **new** — reproducible evidence generator |
 | `web/evidence/cal01-seasons/season-report.json` | **new** — the output above |
 | `docs/survival/gameplay-depth/CAPABILITY_LEDGER_W00.md` | SYS15-C06 row: `MISSING_NEW_SEASONAL_CLOCK` → `CALENDAR_PRESENT` (mechanics) with its open items kept |

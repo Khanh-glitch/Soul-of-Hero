@@ -1,0 +1,39 @@
+{
+  "schema": "cal01.1-forecast-truth-v1",
+  "finding": "C2 — offlineSurvivalEstimate() used the neutral thirst baseline while sim.ts settle() applied climateAt().thirstMultiplier",
+  "cell": "warm sand Map cell (economyMap.temperature > 0.65), seed 313, full 100 thirst, 100 hunger, 100 HP",
+  "cases": [
+    {
+      "case": "spring",
+      "runHours": 10,
+      "seasonMultiplier": 1.0,
+      "before_forecastThirstHours": 16.0,
+      "after_forecastThirstHours": 16.0,
+      "settleCheck": "thirst 0 after 16.0 h",
+      "verdict": "unchanged (neutral season preserved)"
+    },
+    {
+      "case": "summer",
+      "runHours": 50,
+      "seasonMultiplier": 1.227,
+      "before_forecastThirstHours": 16.0,
+      "after_forecastThirstHours": 13.0399,
+      "settleCheck": "thirst 0 after 13.04 h; alive, damage only",
+      "verdict": "overstatement removed"
+    },
+    {
+      "case": "spring->summer boundary crossing",
+      "runHours": 36,
+      "seasonMultiplierAtLogout": 1.0,
+      "seasonMultiplierHorizon": 1.227,
+      "before_forecastThirstHours": 16.0,
+      "after_forecastThirstHours": 14.15,
+      "settleCheck": "thirst 0 after 14.15 h, exactly one season.begin receipt",
+      "verdict": "segmented integral matches settlement"
+    }
+  ],
+  "scope": "thirst+hunger only; no combat, fire, cold/radiation, supplies, rainfall or creature behaviour is predicted; survivalHours is clamped to the remaining 336 h run clock",
+  "tests": [
+    "web/tests/cal011-forecast.test.ts (4 tests)"
+  ]
+}
