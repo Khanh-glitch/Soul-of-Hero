@@ -100,15 +100,45 @@ describe('CAL-01.1 — offline survival forecast matches the seasonal thirst law
     expect(r.receipts.filter(x => x.kind === 'season.begin').length).toBe(1);
   });
 
-  it('never predicts past the fixed 336 h run expiry and keeps its approximate scope', () => {
-    const r0 = parked(T0).r;
-    const expiry = r0.startedAt - r0.qaOffset + BAL.run.maxRunHours * HOUR;
-    const { r } = parked(expiry - 2 * HOUR);
+  it('C3 NEGATIVE: near expiry the run ends without either meter emptying, and no field claims depletion at expiry', () => {
+    // 2 h of run clock left, both meters full. The pre-C3 correction capped hungerHours and
+    // thirstHours to 2 h, so the menu asserted "hunger empty ~2h; thirst empty ~2h" — false.
+    const expiry = phaseBoundaryAt(parked(T0).r, 8);
+    const { g, r } = parked(expiry - 2 * HOUR);
     const forecast = offlineSurvivalEstimate(r);
     expect(forecast.runHoursLeft).toBeCloseTo(2, 6);
+    // The depletion fields keep their original meaning: time until THAT meter is empty.
+    expect(forecast.hungerHours).toBeCloseTo(100 / BAL.player.offlineHungerPerHour, 6);   // 24 h
+    expect(forecast.thirstHours).toBeCloseTo(100 / BAL.player.offlineThirstPerHour, 6);   // 16 h
+    expect(forecast.hungerHours).not.toBeCloseTo(2, 3);
+    expect(forecast.thirstHours).not.toBeCloseTo(2, 3);
+    // ... and the contract says so explicitly instead of lying.
+    expect(forecast.hungerEmptiesBeforeRunEnd).toBe(false);
+    expect(forecast.thirstEmptiesBeforeRunEnd).toBe(false);
+    expect(forecast.depletionBeyondRunEnd).toBe(true);
+    // Only survival is bounded by the run clock, because settlement itself stops at expiry.
+    expect(forecast.survivalHours).toBeCloseTo(2, 6);
+    // The counterfactual tail used the FINAL phase's rate — no imaginary ninth season exists.
+    expect(calendarAt(r, expiry - 1).phaseIndex).toBe(7);
+    // And the real settlement run ends without either meter reaching zero.
+    settle(g, expiry + H(10));
+    expect(g.run).toBeNull();
+    expect(r.player.hunger).toBeGreaterThan(0);
+    expect(r.player.thirst).toBeGreaterThan(0);
+    expect(offlineSurvivalEstimate(r).scope).toContain('thirst+hunger only');
+  });
+
+  it('C3: a meter that really empties before expiry still reports that honestly', () => {
+    const { r } = parked(T0 + H(315));           // 21 h of run clock left, spring year 2
+    r.player.thirst = 6; r.player.hunger = 100;
+    const forecast = offlineSurvivalEstimate(r);
+    expect(forecast.runHoursLeft).toBeCloseTo(21, 6);
+    expect(forecast.thirstHours).toBeLessThan(1);
+    expect(forecast.thirstEmptiesBeforeRunEnd).toBe(true);      // really empties while away
+    expect(forecast.hungerHours).toBeCloseTo(24, 6);            // uncapped, beyond the run
+    expect(forecast.hungerEmptiesBeforeRunEnd).toBe(false);
+    // At least one meter empties inside the run, so this is not a "both survive expiry" case.
+    expect(forecast.depletionBeyondRunEnd).toBe(false);
     expect(forecast.survivalHours).toBeLessThanOrEqual(forecast.runHoursLeft + 1e-9);
-    expect(forecast.scope).toContain('thirst+hunger only');
-    // Hunger is capped by the same horizon instead of promising an unreachable full 24 h.
-    expect(forecast.hungerHours).toBeLessThanOrEqual(2 + 1e-9);
   });
 });

@@ -35,5 +35,40 @@
   "scope": "thirst+hunger only; no combat, fire, cold/radiation, supplies, rainfall or creature behaviour is predicted; survivalHours is clamped to the remaining 336 h run clock",
   "tests": [
     "web/tests/cal011-forecast.test.ts (4 tests)"
-  ]
+  ],
+  "c3_corrective": {
+    "finding": "C3 — hungerHours/thirstHours had been capped to the remaining run clock, so a h334 logout with full meters claimed 'hunger empty ~2h; thirst empty ~2h'",
+    "rule": "hungerHours/thirstHours = hours until THAT meter empties (may exceed the run); survivalHours <= runHoursLeft; near-expiry cases are flagged, not capped; counterfactual tail uses the final phase rate (no ninth season)",
+    "cases": [
+      {
+        "logout": "h334, hunger 100, thirst 100",
+        "runHoursLeft": 2.0,
+        "hungerHours": 24.0,
+        "thirstHours": 16.0,
+        "survivalHours": 2.0,
+        "hungerEmptiesBeforeRunEnd": false,
+        "thirstEmptiesBeforeRunEnd": false,
+        "depletionBeyondRunEnd": true,
+        "settleCheck": "run ends at h336, run null, hunger and thirst both > 0"
+      },
+      {
+        "logout": "h315, thirst 6",
+        "runHoursLeft": 21.0,
+        "hungerHours": 24.0,
+        "thirstHours": 0.96,
+        "survivalHours": "<=21",
+        "thirstEmptiesBeforeRunEnd": true,
+        "hungerEmptiesBeforeRunEnd": false,
+        "depletionBeyondRunEnd": false
+      }
+    ],
+    "unchanged_in_run_cases": {
+      "spring_h10": 16.0,
+      "summer_h50": 13.0399,
+      "cross_boundary_h36": 14.15
+    },
+    "tests": [
+      "web/tests/cal011-forecast.test.ts (5 tests, incl. the C3 negative case)"
+    ]
+  }
 }

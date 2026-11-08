@@ -169,6 +169,24 @@ and an explicit `scope` string. `survivalHours` is clamped to the remaining 336 
 existing approximate warning text in the menu panel is untouched (no UI redesign); the numbers it
 prints are now truthful.
 
+## 7.2 CAL-01 C3 corrective — depletion time is not run time
+
+The first forecast correction capped `hungerHours`/`thirstHours` at the remaining run clock, so a
+logout at h334 with full meters advertised *"hunger empty ~2 h; thirst empty ~2 h"* although
+neither meter would empty — the run simply expires. The two depletion fields now keep their
+original meaning (hours until that meter would empty, possibly counterfactual past the run end);
+only `survivalHours` is bounded by `runHoursLeft`. If the meter cannot empty before expiry the
+counterfactual tail uses the **final phase's own rate** (the calendar clamps at phase 7, so no
+ninth season is extrapolated), and the contract says so explicitly.
+
+| logout | hunger | thirst | `runHoursLeft` | `survivalHours` | flags |
+|---|---|---|---|---|---|
+| h334, both 100 | 24.00 h | 16.00 h | 2.00 h | **2.00 h** | `hungerEmptiesBeforeRunEnd:false`, `thirstEmptiesBeforeRunEnd:false`, `depletionBeyondRunEnd:true` |
+| h315, thirst 6 | 24.00 h | 0.96 h | 21.00 h | ≤ 21 h | thirst empties, hunger does not |
+
+The accepted in-run cases are unchanged: spring h10 **16.00 h**, summer h50 **13.04 h**,
+spring→summer crossing h36 **14.15 h**.
+
 ## 8. Verification
 
 | Command | Result |
@@ -176,7 +194,7 @@ prints are now truthful.
 | `npx tsc --noEmit -p .` | clean |
 | `npx tsc --noEmit -p tsconfig.test.json` | clean |
 | `npx vitest run tests/cal01-world-calendar.test.ts` | **29 passed** |
-| `npx vitest run tests/cal011-forecast.test.ts` | **4 passed** (CAL-01.1 forecast truth) |
+| `npx vitest run tests/cal011-forecast.test.ts` | **5 passed** (CAL-01.1 forecast truth + CAL-01 C3 near-expiry negative test) |
 | `npx vitest run --testTimeout=120000` (full) | **107 files / 804 tests passed, 1 skipped, exit 0** (~315 s) |
 | `npx vite build` | built, `dist/index.html` single file |
 | `node scripts/cal01-season-report.mjs` | `web/evidence/cal01-seasons/season-report.json` |
@@ -193,8 +211,8 @@ prints are now truthful.
 | `web/src/game/sim.ts` | slice clipping at season boundaries, `commitSeasonBoundaries`, seasonal thirst + trace decay, seasonal tender/garden stepping |
 | `web/src/game/persist.ts` | one calendar policy in `validate()`; byte-identical for records that never had one |
 | `web/tests/cal01-world-calendar.test.ts` | **new** — 29 boundary/persistence/consequence/no-exploit tests |
-| `web/tests/cal011-forecast.test.ts` | **new (CAL-01.1)** — season-dependent offline forecast, before/after + boundary crossing |
-| `web/src/game/engine.ts` (CAL-01.1) | `offlineSurvivalEstimate()` uses the settlement thirst law and walks phase boundaries |
+| `web/tests/cal011-forecast.test.ts` | **new (CAL-01.1/C3)** — season-dependent offline forecast, before/after, boundary crossing, near-expiry negative case |
+| `web/src/game/engine.ts` (CAL-01.1/C3) | `offlineSurvivalEstimate()` uses the settlement thirst law, walks phase boundaries, keeps depletion time separate from run time |
 | `web/scripts/cal01-season-report.mjs` | **new** — reproducible evidence generator |
 | `web/evidence/cal01-seasons/season-report.json` | **new** — the output above |
 | `docs/survival/gameplay-depth/CAPABILITY_LEDGER_W00.md` | SYS15-C06 row: `MISSING_NEW_SEASONAL_CLOCK` → `CALENDAR_PRESENT` (mechanics) with its open items kept |
