@@ -11,6 +11,7 @@ import { validIntel } from './expedition-intel';
 import { BAL, SAVE_VERSION, WW, WH, TILE, type GameState, type Stack } from './core';
 import { ALWAYS_KNOWN_RECIPES, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, VENDOR_SPARES, VENDOR_SECURED } from './catalog';
 import { newGame, renewableLoot } from './engine';
+import { normalizeCalendarLedger, CALENDAR_VERSION } from './calendar';
 import { getWorld, hasLayout, webRecyclerSite } from './world';
 import { mapDigest } from './map-package';
 import { sourceDigest } from './world-economy';
@@ -301,6 +302,18 @@ export function validate(raw: any): GameState | null {
     }
   }
   if (Object.keys(r.custody).some(id => !ownedContainers.has(id))) return null;
+  // CAL-01 world_calendar_v1 persistence policy — ONE explicit rule for every stored record:
+  //   absent (pre-season save) -> reconstructed from the run clock, nothing granted;
+  //   well formed and not ahead of the clock -> kept verbatim;
+  //   malformed / wrong version / ahead of the run clock -> re-anchored from the clock.
+  // A corrupt season field therefore never resets the run, never grants anything and never
+  // skips a future boundary. The record is derived, so this is safe to run on every load.
+  //   (a save that never carried a calendar record is left byte-identical: nothing is added)
+  if (r.calendar !== undefined) {
+    const cal = normalizeCalendarLedger(r.calendar, r, Math.max(r.clock.lastSimAt, r.startedAt));
+    if (cal.changed) r.calendar = cal.ledger;
+    if (r.calendar.version !== CALENDAR_VERSION) return null;
+  }
   return raw as GameState;
 }
 

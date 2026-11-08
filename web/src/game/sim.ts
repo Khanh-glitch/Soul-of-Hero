@@ -7,6 +7,7 @@ import { LOOT_CLASSES, lootClass } from './loot-ecology';
 // Deterministic-ish real-time simulation layered on the engine authority. All state mutation goes through engine helpers.
 import { BAL, TILE, WW, WH, HOUR, VIEW_W, VIEW_H, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity, type Proj, type Haz } from './core';
 import { thermalEnv, thermalEvaluate, thermalStep, thermalBoundaryMs, heatersInReach, coldDamageActive } from './thermal';
+import { calendarAt, climateAt, calendarEventV1, phaseBoundaryAt, seasonTransitionsBetween, normalizeCalendarLedger, type Season, type PrecipWeather } from './calendar';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES, stationBurnable } from './catalog';
 import { getWorld } from './world';
 import { irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
@@ -151,12 +152,22 @@ function stepFires(gs: GameState, now: number, dtMs: number) {
 // ---------- traces (K2/K5) ----------
 function surfaceLife(t: number) { const k = SURF[t]; return k ? (BAL.traces[k] ?? 120) * 1000 : 0; }
 function traceMult(w: string, surf: number) { let m = 1; if (w === 'rain') m = BAL.traces.rainDecayMult; if (w === 'storm') m = BAL.traces.stormDecayMult; if (surf === T.FLOOR || surf === T.BRIDGE) m = Math.min(m, 2); return m; }
-export function decayTraces(r: RunState, dtMs: number, weather: string) {
-  for (const tr of r.traces) tr.life -= dtMs * traceMult(weather, tr.s);
+/** CAL-01: footprints respond to what actually falls where they are. The seasonal
+ * authority (calendar.climateAt) turns a freezing Map cell's rain slot into snowfall,
+ * which buries a bare print but preserves one cut into snow/ice. When `at` is omitted
+ * the legacy rain/storm rule is used unchanged (older unit fixtures keep their meaning). */
+export function decayTraces(r: RunState, dtMs: number, weather: string, at?: number) {
+  for (const tr of r.traces) {
+    let m = traceMult(weather, tr.s);
+    if (at !== undefined) {
+      m = climateAt(r, Math.floor(tr.x / TILE), Math.floor(tr.y / TILE), at, weather as PrecipWeather, tr.s).traceDecayMultiplier;
+      if (tr.s === T.FLOOR || tr.s === T.BRIDGE) m = Math.min(m, 2);
+    }
+    tr.life -= dtMs * m;
+  }
   if (r.traces.some(t => t.life <= 0)) r.traces = r.traces.filter(t => t.life > 0);
 }
 
-/** A successor is valid only while the sensed predecessor itself still exists. */
 export function nextContiguousTrace(traces: RunState['traces'], known: { traceId?: string; chainId?: string }) {
   if (!known.traceId || !known.chainId) return undefined;
   const previous = traces.find(t => t.id === known.traceId && t.chainId === known.chainId && t.life > 0);
@@ -916,13 +927,16 @@ function tickSurvival(gs: GameState, dtMs: number, now: number) {
   const r = gs.run!; const p = r.player; if (p.dead) return; const B = BAL.player; const min = dtMs / 60000; const w = getWorld();
   const tx = tileOf(p.x), ty = tileOf(p.y); const t = effTile(r, tx, ty); const zone = w.zone[ty * WW + tx]; const weather = weatherAt(r, now);
   shelterAcc += dtMs; if (shelterAcc > 400) { shelterAcc = 0; p.sheltered = isSheltered(r, p.x, p.y); }
+  // CAL-01: seasonal heat/dryness at this Map cell multiplies water demand; zone 6
+  // (the volcanic zone) keeps its existing measured multiplier.
+  const localClimate = climateAt(r, tx, ty, now, weather);
   p.hunger = Math.max(0, p.hunger - B.hungerDrainPerMin * min);
-  p.thirst = Math.max(0, p.thirst - B.thirstDrainPerMin * min * (zone === 6 ? 1.9 : 1));
+  p.thirst = Math.max(0, p.thirst - B.thirstDrainPerMin * min * (zone === 6 ? 1.9 : 1) * localClimate.thirstMultiplier);
   // K5/K8 (Bible): a sheltered player is never killed by hunger ALONE (1 HP floor). Thirst and any other cause still kill.
   const thirstyNow = p.thirst <= 0, hungryNow = p.hunger <= 0, hungerOnlyShelter = hungryNow && !thirstyNow && p.sheltered;
   if ((p.iceUntil||0)<=now && (thirstyNow || hungryNow)) { if (hungerOnlyShelter) p.hp = Math.max(1, p.hp - B.starveDamagePerMin * min); else { p.hp -= B.starveDamagePerMin * min; if (p.hp <= 0) { killPlayer(gs, now, hungryNow ? 'starvation' : 'thirst'); return; } } }
   // warmth: shared physical evaluator (B03-A). Same target and integrator as offline settle.
-  const thermal = thermalEvaluate(r, thermalEnv(r, { x: p.x, y: p.y, zone, tileType: t, wet: isWet(weather), dark: darkness(r, now) > 0.45, sheltered: p.sheltered }));
+  const thermal = thermalEvaluate(r, thermalEnv(r, { x: p.x, y: p.y, zone, tileType: t, wet: isWet(weather), dark: darkness(r, now) > 0.45, sheltered: p.sheltered, at: now }));
   p.warmth = thermalStep(p.warmth, thermal.target, min);
   if ((p.iceUntil||0)<=now && coldDamageActive(p.warmth)) { p.hp -= B.coldDamagePerMin * min; if (p.hp <= 0) { killPlayer(gs, now, 'cold'); return; } }
   // radiation
@@ -935,6 +949,30 @@ function tickSurvival(gs: GameState, dtMs: number, now: number) {
   if (p.hunger > 60 && p.thirst > 60 && p.rad < 30 && p.warmth > 30) p.hp = Math.min(B.maxHp, p.hp + 1.2 * min * 10 / 10 * 4);
 }
 
+/** CAL-01: ms from `t` to the next eight-season calendar boundary (Infinity inside no run). */
+function seasonBoundaryAt(r: RunState, t: number): number {
+  const cal = calendarAt(r, t);
+  const nextAt = phaseBoundaryAt(r, cal.phaseIndex + 1);
+  return nextAt > t ? nextAt - t : Infinity;
+}
+/** Announce genuine season boundaries in `(from, to]` exactly once, in chronological order,
+ * and persist the derived observation ledger. This is the only season event source, so a
+ * settlement partition, a reload or a repeated Continue cannot repeat or skip an event and
+ * nothing is ever granted here. An event alone never teaches a creature anything. */
+export function commitSeasonBoundaries(r: RunState, from: number, to: number): number {
+  const norm = normalizeCalendarLedger(r.calendar, r, from);
+  r.calendar = norm.ledger;
+  let n = 0;
+  for (const tr of seasonTransitionsBetween(r, from, to)) {
+    if (tr.phaseIndex <= r.calendar.observedPhase) continue;
+    const ev = calendarEventV1(r, tr);
+    r.calendar.observedPhase = ev.phaseIndex; r.calendar.observedAt = ev.at;
+    receipt(r, ev.at, 'season.begin', `${ev.year}:${ev.season}:${ev.phaseIndex}`);
+    pushLog(r, ev.at, `Year ${ev.year} — ${ev.season} begins.`, 'gold');
+    n++;
+  }
+  return n;
+}
 /** Advance existing autonomous helpers at weather and finite fire/terrain boundaries.
  * Physical actors, spread, damage, lightning and player input are deliberately not replayed. */
 function advanceWorld(gs: GameState, start: number, end: number, report?: string[], visual = true) {
@@ -944,6 +982,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
   const syncHome=(at:number)=>{for(const id of syncElectricDoors(r,at,visual))receipt(r,at,'circuit.door.close',id);};
   const syncDrops=(at:number)=>{const before=new Set((r.worldStimuli||[]).map(s=>s.id));stepAirdrops(r,at,report);if(visual)for(const s of r.worldStimuli||[])if(!before.has(s.id)&&dist(r.player.x,r.player.y,s.x,s.y)<=s.range&&clearPhysicalLine(r,r.player,s,false,true))fx('airdropImpact',{x:s.x,y:s.y});};
   syncPoi(t); syncHome(t);
+  commitSeasonBoundaries(r, t, t);
   resolveFires(gs, t, visual);
   stepLootRespawn(r, t);
   syncDrops(t);
@@ -956,7 +995,10 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     const weather = weatherAt(r, t);
     const slot = Math.floor((t - r.startedAt + r.qaOffset) / slotMs);
     const nextWeather = r.startedAt - r.qaOffset + (slot + 1) * slotMs;
-    let dt = Math.min(end - t, nextWeather - t);
+    // CAL-01: a season boundary is a real chronological boundary — the weather family,
+    // the local climate and every seasonal multiplier change exactly here, so the slice
+    // must end on it rather than interpolate across it.
+    let dt = Math.min(end - t, nextWeather - t, seasonBoundaryAt(r, t));
     const powered=new Set(Object.values(r.entities).filter(e=>e.basePower).flatMap(g=>powerAllocation(r,g,visual).filter(e=>e.industrial).map(e=>e.id)));
     for (const e of Object.values(r.entities)) {
       const st = e.station; if (!st) continue; const kind = e.kind==='recycler'?'recycler':STRUCTS[e.type!].station; const job = st.queue[0];
@@ -972,7 +1014,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     dt = airdropBoundary(r,t,dt);
     dt = basePowerBoundary(r, dt, visual);
     dt = territoryBoundary(r, dt);
-    dt = tenderBoundary(r, isWet(weather), dt);
+    dt = tenderBoundary(r, isWet(weather), dt, t);
     for (const tree of r.natureTrees||[]) if(tree.until>r.clock.simMs)dt=Math.min(dt,tree.until-r.clock.simMs);
     for(const e of Object.values(r.entities)){if(e.poiPower&&e.power===1&&e.poiPower.expiresAt>t)dt=Math.min(dt,e.poiPower.expiresAt-t);if(e.open&&e.poiDoor&&e.poiDoor.closeAt>t)dt=Math.min(dt,e.poiDoor.closeAt-t);if(e.open&&e.electricDoor?.releaseUntil&&e.electricDoor.releaseUntil>t)dt=Math.min(dt,e.electricDoor.releaseUntil-t);}
     for (const due of Object.values(r.lootRespawnAt || {})) if (due > t) dt = Math.min(dt, due - t);
@@ -982,11 +1024,12 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     dt = Math.min(end - t, Math.max(dt, 0.001)); // avoid sub-millisecond timestamp stalls
     stepBasePower(r, dt, t + dt, visual);
     stepStations(gs, dt, t + dt, report, powered);
-    stepGardensBarrels(gs, dt, isWet(weather));
-    decayTraces(r, dt, weather);
+    stepGardensBarrels(gs, dt, isWet(weather), t);
+    decayTraces(r, dt, weather, t);
     if(stepTerritory(r,dt,t+dt,report)) offlineStructureChange++;
     r.clock.simMs += dt; t += dt;
     syncPoi(t); syncHome(t);
+    commitSeasonBoundaries(r, t - dt, t);
     // Offline time cannot confirm a fresh sighting or retain an expired mark.
     // Keep committed tells/attacks intact; they resume, not resolve speculatively.
     if (!visual) {
@@ -1165,7 +1208,9 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
 
   let t = start, wetMs = 0; const zone = getWorld().zone[tileOf(p.y) * WW + tileOf(p.x)];
   // B03-A: heat/shelter transitions observed chronologically (receipts are written at the exact boundary).
-  const thermalEnvAt = (at: number, sh: boolean) => thermalEnv(r, { x: p.x, y: p.y, zone, tileType: effTile(r, tileOf(p.x), tileOf(p.y)), wet: isWet(weatherAt(r, at)), dark: darkness(r, at) > 0.45, sheltered: sh });
+  // CAL-01: the seasonal cold component of the target is resolved at the slice instant `at`,
+  // so a settlement that crosses a season boundary never carries the old season's exposure.
+  const thermalEnvAt = (at: number, sh: boolean) => thermalEnv(r, { x: p.x, y: p.y, zone, tileType: effTile(r, tileOf(p.x), tileOf(p.y)), wet: isWet(weatherAt(r, at)), dark: darkness(r, at) > 0.45, sheltered: sh, at });
   let heatPrev = new Map(heatersInReach(r, { x: p.x, y: p.y }).map(h => [h.e.id, h.st.active] as const));
   let shelterPrev = sheltered;
   const startHp = p.hp, startHunger = p.hunger, startThirst = p.thirst;
@@ -1176,7 +1221,7 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   while (t < end) {
     const slotMs = BAL.weather.slotMinutes * 60000;
     const nextWeather = r.startedAt - r.qaOffset + (Math.floor((t - r.startedAt + r.qaOffset) / slotMs) + 1) * slotMs;
-    let dtMs = Math.min(60000, end - t, nextWeather - t);
+    let dtMs = Math.min(60000, end - t, nextWeather - t, seasonBoundaryAt(r, t));
     if (pending.length && frames < 2400) dtMs = Math.min(dtMs, 50);
     // R5-SIM2: bounded defense contact window — a ready, supplied turret that can legally see a target,
     // or any player arrow committed at logout (including a declared spell projectile still counting down),
@@ -1200,7 +1245,11 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
     const armor = C(r,'eq').slots.reduce((n,s)=>n+(s ? ITEMS[s.key].armor||0 : 0),0);
     const fireRate = activeFire && (p.iceUntil||0)<=t ? Math.max(1,Math.round(B.offlineFireHitDamage*(1-Math.min(0.6,armor))))/B.offlineFireHitMs : 0;
     const unit = B.offlineDrainFactor / 60000;
-    const hungerRate = B.offlineHungerPerHour / HOUR, thirstRate = B.offlineThirstPerHour / HOUR;
+    const hungerRate = B.offlineHungerPerHour / HOUR;
+    // CAL-01: summer heat/dryness at THIS Map cell raises water demand, exactly as the
+    // online tick does (same climateAt authority, same bounded multiplier).
+    const seasonClimate = climateAt(r, tileOf(p.x), tileOf(p.y), t, weatherAt(r, t));
+    const thirstRate = B.offlineThirstPerHour / HOUR * seasonClimate.thirstMultiplier;
     // The same equipped protection used online also applies during chronological offline exposure.
     const protectedByMask = C(r, 'eq').slots.some(s => s && ITEMS[s.key].mask);
     const radRate = zone === 7 ? 6 * (protectedByMask ? 0.8 / 7 : 1) * unit : 0;
@@ -1227,8 +1276,14 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
     if (!p.dead) dtMs = Math.min(dtMs, thermalBoundaryMs(r, thermalEnvAt(t, sheltered), p.warmth, thermalNow.target));
     // Date.now has finite precision; avoid a non-advancing sub-millisecond loop.
     const until = Math.min(end, nextWeather, t + Math.max(dtMs, 0.001)); dtMs = until - t;
-    if (isWet(weatherAt(r, t))) wetMs += dtMs;
+    if (seasonClimate.wet) wetMs += dtMs;
     advanceWorld(gs, t, until, silent ? undefined : report, false);
+    // CAL-01: the season event for this slice was committed inside advanceWorld at its
+    // exact boundary instant; the return report only reads it back.
+    if (!silent && seasonTransitionsBetween(r, t, until).some(x => x.at === until)) {
+      const cal = calendarAt(r, until);
+      report.push(`The season turned: Year ${cal.year} — ${cal.season}.`);
+    }
     // R5.1 P0-B/P0-C: the online law runs in full on contact slices; EVERY other chronological slice
     // advances each turret cooldown by exactly its own span — one authority, no freeze, no double count.
     const committedInFlight = PROJ.some(pr => pr.from === 'player');

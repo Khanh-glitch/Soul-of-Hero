@@ -12,16 +12,19 @@ import { creatorLootV1 } from './creator-loot';
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
 import { ALWAYS_KNOWN_RECIPES, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
-import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, webRecyclerSite, type StaticEnt } from './world';
-import { sourceDigest } from './world-economy';
+import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, webRecyclerSite, type StaticEnt } from './world';import { sourceDigest } from './world-economy';
 import { wreckBonuses, wreckEconomy } from './wreck-economy';
 import { mapDigest } from './map-package';
+// CAL-01: one authoritative two-year/eight-season calendar (pure; engine-free module).
+import { CALENDAR_VERSION, runClockMs, calendarAt, climateAt, climateAtPx, cropSeasonFactor, normalizeCalendarLedger, phaseBoundaryAt, phaseMs, seasonTransitionsBetween, seasonWeatherWeights, seasonLabel, calendarView, seasonOfPhase, type Season, type CalendarLedgerV1 } from './calendar';
 
 export type Intent = { id: string; type: string; [k: string]: any };
 export type Result = { ok: true; receipt: string; msg?: string } | { ok: false; reason: string; dup?: boolean };
 
-// ---------------- time & phases (K8) ----------------
-export const runElapsedMs = (r: RunState, now: number) => now - r.startedAt + r.qaOffset;
+// ---------------- time & phases (K8, CAL-01) ----------------
+// CAL-01: the run clock formula itself lives in calendar.ts (`runClockMs`) so that
+// the two-year/eight-season calendar and the fixed run clock can never disagree.
+export const runElapsedMs = (r: RunState, now: number) => runClockMs(r, now);
 export const runHours = (r: RunState, now: number) => runElapsedMs(r, now) / HOUR;
 export function phaseOf(r: RunState, now: number): 'calm' | 'danger' | 'awakening' | 'expired' {
   const h = runHours(r, now); const max = BAL.run.maxRunHours;
@@ -35,12 +38,18 @@ export const isRagnarok = (r: RunState, now: number) => { const p = phaseOf(r, n
 export function dayTime(r: RunState, now: number) { const len = BAL.dayNight.dayLengthMinutes * 60000; return (((runElapsedMs(r, now) + len * 0.3) % len) + len) % len / len; }
 export function darkness(r: RunState, now: number) { const t = dayTime(r, now); const s = Math.cos((t - 0.5) * Math.PI * 2); return clamp(0.5 - s * 0.85, 0, 0.78); }
 export type Weather = 'clear' | 'cloudy' | 'rain' | 'storm' | 'fog';
+/** CAL-01: the weather family for a run-clock instant is chosen with the CURRENT
+ * SEASON's weights (SOH_PROVISIONAL, spring == the legacy flat weights). The slot
+ * index, the seed mixing and the five families are unchanged, so this stays one
+ * weather authority anchored to the one run clock.
+ * `season` is passed explicitly by chronological callers (settle/advanceWorld) so a
+ * long settlement cannot sample the wrong season's distribution mid-slice. */
 export function weatherAt(r: RunState, at: number): Weather {
   const slot = Math.floor(runElapsedMs(r, at) / (BAL.weather.slotMinutes * 60000));
-  return weatherSlot(r.seed, slot);
+  return weatherSlot(r.seed, slot, calendarAt(r, at).season);
 }
-export function weatherSlot(seed: number, slot: number): Weather {
-  const w = BAL.weather.weights; const keys = Object.keys(w) as Weather[]; const tot = keys.reduce((a, k) => a + w[k], 0);
+export function weatherSlot(seed: number, slot: number, season: Season = 'spring'): Weather {
+  const w = seasonWeatherWeights(season); const keys = Object.keys(w) as Weather[]; const tot = keys.reduce((a, k) => a + w[k], 0);
   let h = ((slot * 2654435761) ^ seed) >>> 0; h = Math.imul(h ^ (h >>> 15), 2246822519) >>> 0; let x = (h % 10000) / 10000 * tot;
   for (const k of keys) { x -= w[k]; if (x < 0) return k; } return 'clear';
 }
@@ -55,6 +64,17 @@ export function wetOutlook(r: RunState, now: number) {
     if (isWet(weatherAt(r, t))) wet += next - t; t = next;
   }
   return { hours: Math.max(0, end - now) / HOUR, wetHours: wet / HOUR };
+}
+
+// ---------------- CAL-01 calendar read model for other owners ----------------
+/** Typed, read-only calendar view (season/year/progress + local climate). Grants nothing. */
+export function calendarViewForRun(r: RunState, at: number, tile?: { tx: number; ty: number }) {
+  return calendarView(r, at, tile ?? { tx: Math.floor(r.player.x / TILE), ty: Math.floor(r.player.y / TILE) }, weatherAt(r, at));
+}
+/** Minimal season read model used by panels/reports; the same single authority. */
+export function seasonInfo(r: RunState, at: number) {
+  const c = calendarAt(r, at);
+  return { season: c.season, year: c.year, phaseIndex: c.phaseIndex, phaseRemainingMs: c.phaseRemainingMs, ragnarok: c.ragnarok };
 }
 
 // ---------------- creation ----------------
@@ -1931,14 +1951,17 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
     }
   }
 }
-export function stepGardensBarrels(gs: GameState, dtMs: number, wet: boolean) {
+export function stepGardensBarrels(gs: GameState, dtMs: number, wet: boolean, at: number = gs.run!.clock.lastSimAt) {
   const r = gs.run!; const G = BAL.garden;
   for (const e of Object.values(r.entities)) {
     if (!e.garden && e.type !== 'barrel') continue;
-    const rain = wet && !isRoofed(r, e) && !e.garden?.coldFrame;
+    const env = gardenEnvironment(r, e, wet, e.garden?.crop === 'herb' ? 'herb' : 'crop', at);
+    // CAL-01: only LIQUID precipitation is caught; snow lands on top of the plot and
+    // does not water it. A cold frame (or a roof) keeps its cover either way.
+    const rain = wet && !isRoofed(r, e) && !e.garden?.coldFrame && env.catch > 0;
     if (e.garden) {
-      const g = e.garden; const growSeconds = g.crop === 'herb' ? GARDEN_CROPS.herb.seconds : GARDEN_CROPS.crop.seconds; const rate = g.crop === 'crop' || g.crop === 'herb' ? gardenEnvironment(r,e,wet,g.crop).rate : 1;
-      const incoming = rain ? 1 / 60000 : 0; const use = 1 / (G.waterSecondsPerUnit * 1000);
+      const g = e.garden; const growSeconds = g.crop === 'herb' ? GARDEN_CROPS.herb.seconds : GARDEN_CROPS.crop.seconds; const rate = g.crop === 'crop' || g.crop === 'herb' ? env.rate : 1;
+      const incoming = rain ? env.catch / 60000 : 0; const use = env.evaporation / (G.waterSecondsPerUnit * 1000);
       let growing = g.crop && g.growth < 1 && rate>0 ? Math.min(dtMs, (1 - g.growth) * growSeconds * 1000 / rate) : 0;
       if (use > incoming) growing = Math.min(growing, g.water / (use - incoming));
       if (growing > 0) { g.growth = Math.min(1, g.growth + growing * rate / (growSeconds * 1000)); if (g.growth >= 1 - 1e-12) g.growth = 1; g.water = Math.min(3, Math.max(0, g.water + (incoming - use) * growing)); }
@@ -1947,18 +1970,27 @@ export function stepGardensBarrels(gs: GameState, dtMs: number, wet: boolean) {
     if (e.type === 'barrel' && rain) e.water = Math.min(12, (e.water || 0) + dtMs / 20000);
   }
 }
-/** Local normalized climate/soil inputs are Map-owned; no terrain mutation or
- * invented season clock. Wet weather cools uncovered plots at slot boundaries. */
-export function gardenEnvironment(r:RunState,e:Entity,wet:boolean,crop:'crop'|'herb' = e.garden?.crop==='herb'?'herb':'crop') {
+/** Local normalized climate/soil inputs are Map-owned. CAL-01 adds the seasonal
+ * DEVIATION to the Map's own temperature/moisture (`climateAt`), never new terrain:
+ * a cold frame stays a real paid structure that protects against the seasonal cold
+ * and against rain/snow water, and an exposed plot in a cold/dry season really
+ * grows slower. Wet weather still cools uncovered plots at slot boundaries. */
+export function gardenEnvironment(r:RunState,e:Entity,wet:boolean,crop:'crop'|'herb' = e.garden?.crop==='herb'?'herb':'crop', at:number = r.clock.lastSimAt) {
   const m=getWorld().economyMap, x=e.tx??Math.floor(e.x/TILE), y=e.ty??Math.floor(e.y/TILE), i=y*WW+x;
-  const biome=m.biome[i], moisture=m.moisture[i], slope=m.slope[i], frame=!!e.garden?.coldFrame;
-  const temperature=Math.min(1,Math.max(0,m.temperature[i]+(frame&&m.temperature[i]<0.4?BAL.garden.coldFrameWarming:0)-(wet&&!frame&&!isRoofed(r,e)?BAL.garden.wetCooling:0)));
+  const biome=m.biome[i], mapMoisture=m.moisture[i], slope=m.slope[i], frame=!!e.garden?.coldFrame;
+  const local=climateAt(r,x,y,at,isWet(weatherAt(r,at))?'rain':'clear');
+  // The cold frame warms a plot whose local (Map + season) temperature is cold.
+  const seasonTemperature=local.temperature;
+  const temperature=Math.min(1,Math.max(0,seasonTemperature+(frame&&seasonTemperature<0.4?BAL.garden.coldFrameWarming:0)-(wet&&!frame&&!isRoofed(r,e)?BAL.garden.wetCooling:0)));
   const low=crop==='herb'?0.34:0.22,high=crop==='herb'?0.78:0.82;
   const climate=Math.max(0.15,Math.min(1,temperature<low?1-(low-temperature)*4:temperature>high?1-(temperature-high)*3:1));
   const ground:Record<string,number>={snow:0.65,sand:0.8,ash:0.55,toxic:0.4,hill:0.8,marsh:0.8};
-  const fertility=Math.min(1,Math.max(0.3,(ground[biome]??1)+(frame?BAL.garden.coldFrameSoilBonus:0)-(moisture<0.3||moisture>0.75?0.1:0)-Math.min(0.2,slope*0.3)));
+  const fertility=Math.min(1,Math.max(0.3,(ground[biome]??1)+(frame?BAL.garden.coldFrameSoilBonus:0)-(mapMoisture<0.3||mapMoisture>0.75?0.1:0)-Math.min(0.2,slope*0.3)));
   const scorched=effTile(r,x,y)===T.BURNT;
-  return {rate:climate*fertility*(scorched?BAL.garden.scorchedSoilMultiplier:1),temperature,moisture,biome,frame,scorched,covered:frame||isRoofed(r,e),climate:temperature<low?'cold':temperature>high?'hot':'suitable'};
+  // Per-crop seasonal suitability: the same plot is a better Sunroot or Bitterleaf
+  // investment depending on the season (competing outputs, SYS15-C10).
+  const seasonal=cropSeasonFactor(local.season,crop);
+  return {rate:climate*fertility*seasonal*(scorched?BAL.garden.scorchedSoilMultiplier:1),temperature,moisture:mapMoisture,biome,frame,scorched,covered:frame||isRoofed(r,e),climate:temperature<low?'cold':temperature>high?'hot':'suitable',season:local.season,seasonal,evaporation:local.evaporationMultiplier,catch:local.catchMultiplier,snowing:local.snowing};
 }
 function isRoofed(r: RunState, e: Entity) { return entsAt(r, e.tx!, e.ty!).some(o => o.kind === 'struct' && STRUCTS[o.type!].shelter); }
 
@@ -2032,11 +2064,17 @@ export function stepTenders(gs:GameState,now:number) {
     if(g.crop&&g.growth<1&&g.water<=1e-10&&(barrel.water||0)>=1&&tenderSpend(r,e,BAL.garden.tenderPumpEnergySeconds*1000)){barrel.water!-=1;g.water+=1;receipt(r,now,'tender.water',e.id);}
   }
 }
-/** Earliest maturity, dry-out or rain-fed barrel refill for a linked plot. */
-export function tenderBoundary(r:RunState,wet:boolean,limit:number):number {
-  let dt=limit;for(const e of Object.values(r.entities)){if(!e.farm?.enabled)continue;const l=tenderLinks(r,e);if(!l)continue;const g=l.garden.garden!, incoming=wet&&!isRoofed(r,l.garden)&&!g.coldFrame?1/60000:0,use=1/(BAL.garden.waterSecondsPerUnit*1000);
+/** Earliest maturity, dry-out or rain-fed barrel refill for a linked plot.
+ * CAL-01: the slice limits use the SAME seasonal evaporation and liquid-precipitation
+ * catch as stepGardensBarrels/gardenEnvironment, so a seasonal boundary can never
+ * make an offline slice overshoot maturity or under-count water loss. */
+export function tenderBoundary(r:RunState,wet:boolean,limit:number,at:number = r.clock.lastSimAt):number {
+  let dt=limit;for(const e of Object.values(r.entities)){if(!e.farm?.enabled)continue;const l=tenderLinks(r,e);if(!l)continue;
+    const g=l.garden.garden!;
+    const env=gardenEnvironment(r,l.garden,wet,g.crop==='herb'?'herb':'crop',at);
+    const incoming=wet&&!isRoofed(r,l.garden)&&!g.coldFrame?env.catch/60000:0, use=env.evaporation/(BAL.garden.waterSecondsPerUnit*1000);
     if(g.crop && !GARDEN_CROPS[g.crop as 'crop'|'herb'])continue;
-    if(g.crop&&g.growth<1&&(g.water>1e-10||incoming>=use)){dt=Math.min(dt,(1-g.growth)*GARDEN_CROPS[g.crop as 'crop'|'herb'].seconds*1000/gardenEnvironment(r,l.garden,wet,g.crop as 'crop'|'herb').rate);if(use>incoming&&g.water>1e-10)dt=Math.min(dt,g.water/(use-incoming));}
-    if(wet&&!isRoofed(r,l.barrel)&&(l.barrel.water||0)<1)dt=Math.min(dt,(1-(l.barrel.water||0))*20000);
+    if(g.crop&&g.growth<1&&(g.water>1e-10||incoming>=use)){dt=Math.min(dt,(1-g.growth)*GARDEN_CROPS[g.crop as 'crop'|'herb'].seconds*1000/env.rate);if(use>incoming&&g.water>1e-10)dt=Math.min(dt,g.water/(use-incoming));}
+    if(wet&&!isRoofed(r,l.barrel)&&(l.barrel.water||0)<1&&env.catch>0)dt=Math.min(dt,(1-(l.barrel.water||0))*20000);
   }return dt;
 }

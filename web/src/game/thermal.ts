@@ -5,6 +5,7 @@
 import { BAL, T, dist, type Entity, type RunState } from './core';
 import { ITEMS, STRUCTS } from './catalog';
 import { C, owned, clearSegment } from './engine';
+import { climateAt, type Season } from './calendar';
 
 export type HeaterKind = 'campfire' | 'furnace';
 
@@ -27,6 +28,10 @@ export interface ThermalEnv {
   sheltered: boolean;
   torch: boolean;
   tileCold: boolean; // snow tile or zone 5 or water: legacy ambient cold tile test
+  /** CAL-01: bounded seasonal exposure for THIS Map cell (0 in the neutral season).
+   * Always produced by calendar.climateAt from Map-owned temperature/moisture; it is
+   * never a hardcoded per-zone number and it never replaces the legacy cold parts. */
+  seasonCold?: { points: number; season: Season; reason: string };
 }
 
 export interface ThermalEval {
@@ -80,10 +85,15 @@ export function heatersInReach(r: RunState, env: { x: number; y: number }): { e:
   return out;
 }
 
-export function thermalEnv(r: RunState, env: Omit<ThermalEnv, 'torch' | 'tileCold'> & { torch?: boolean }): ThermalEnv {
+/** Every caller gets the seasonal exposure automatically: it is derived from the
+ * same run clock, the same Map cell and the same weather family the caller passes. */
+export function thermalEnv(r: RunState, env: Omit<ThermalEnv, 'torch' | 'tileCold' | 'seasonCold'> & { torch?: boolean; at?: number }): ThermalEnv {
   const torch = env.torch ?? (C(r, 'inv').slots[r.player.active]?.key === 'torch');
   const tileCold = env.zone === 5 || env.tileType === SNOW_TILE || env.tileType === SHALLOW_TILE || env.tileType === RIVER_TILE;
-  return { ...env, torch, tileCold };
+  const at = env.at ?? r.clock.lastSimAt;
+  const local = climateAt(r, Math.floor(env.x / 16), Math.floor(env.y / 16), at, env.wet ? 'rain' : 'clear');
+  const seasonCold = local.coldPoints > 0 && local.coldReason ? { points: local.coldPoints, season: local.season, reason: local.coldReason } : undefined;
+  return { ...env, torch, tileCold, seasonCold };
 }
 const SNOW_TILE = T.SNOW, SHALLOW_TILE = T.SHALLOW, RIVER_TILE = T.RIVER;
 
@@ -95,6 +105,9 @@ export function thermalEvaluate(r: RunState, env: ThermalEnv): ThermalEval {
   if (env.dark) coldParts.push({ id: 'darkness', value: 2.5 });
   if (env.wet) coldParts.push({ id: 'wet_weather', value: 3 });
   if (env.tileType === SHALLOW_TILE || env.tileType === RIVER_TILE) coldParts.push({ id: 'water', value: 4 });
+  // CAL-01: seasonal exposure is additive to the legacy tile/light/water parts and
+  // bounded by balance.seasonClimateV1.cold.maxPoints.
+  if (env.seasonCold && env.seasonCold.points > 0) coldParts.push({ id: env.seasonCold.reason, value: env.seasonCold.points });
   const cold = coldParts.reduce((v, p) => v + p.value, 0);
   // Worn cold-protection gear (legacy insulation/3 multiplier, unchanged).
   let insulation = 0; for (const s of C(r, 'eq').slots) if (s) insulation += ITEMS[s.key].cold || 0;
