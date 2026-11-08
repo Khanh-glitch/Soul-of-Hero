@@ -37,6 +37,52 @@ export function expand(item: string, qty = 1, depth = 0, seen = new Set<string>(
   if (!best) return anyRoute ? null : { vec: { [item]: qty }, secs: 0, salvageDependent: false }; // raw material with no craft route
   return { vec: best.vec, route: best.route, secs: best.secs, salvageDependent: false };
 }
+/** MEC-01 R2 D: stock class of an input source. Only a renewable source may underwrite a REPEATABLE craft route;
+ *  a finite source (vault) is a non-repeatable windfall, never a loop input. World-node sources carry units of
+ *  stock but their respawn clock is not modelled in Web — tagged 'world-node' with an unknown clock, not assumed infinite. */
+export type StockClass = 'renewable' | 'finite' | 'world-node' | 'unknown';
+export function stockClassOf(stock: string | undefined | null): StockClass {
+  return stock === 'renewable' ? 'renewable' : stock === 'finite' ? 'finite' : 'unknown';
+}
+/** Eligibility rule, exported so the benchmark and its tests assert one shared rule (no per-file reinterpretation). */
+export const B05_REPEATABLE_RULE = 'a source may underwrite a REPEATABLE craft route only when its stock class is renewable; a finite source (vault) is a non-repeatable windfall, never a loop input; world-node sources are renewable in count but their respawn clock is ORIGINAL_UNKNOWN in Web';
+/** Integer batch accounting for a single craft route at an ask of `qty` units: whole crafts only, exact authored
+ *  inputs consumed for the whole batch, surplus output reported. Alternative to the amortized per-unit model. */
+export function integerBatch(route: Route, qty = 1): { rule: string; crafts: number; outputs: number; consumed: Vec; seconds: number; surplusOutputs: number } {
+  const crafts = Math.max(1, Math.ceil(qty / route.qty));
+  const outputs = crafts * route.qty;
+  const consumed: Vec = {};
+  for (const [i, q] of route.ins) consumed[i] = (consumed[i] ?? 0) + q * crafts;
+  return { rule: 'integer craft batches (whole crafts only; overshoot is surplus output, never fractional crafts)', crafts, outputs, consumed, seconds: route.secs * crafts, surplusOutputs: outputs - qty };
+}
+/** Integer-batch recursive tree for `item` at ask `qty`: cheapest acyclic non-salvage route at every node, whole crafts only.
+ *  Unlike expand() (amortized per-unit), atom totals are exact craft-batch multiples. Salvage routes are never eligible. */
+export function integerTree(item: string, qty = 1, depth = 0, seen = new Set<string>()): { vec: Vec; secs: number; crafts: Record<string, number> } | null {
+  if (ATOMS.has(item)) return { vec: { [item]: qty }, secs: 0, crafts: {} };
+  if (depth > 12 || seen.has(item)) return null;
+  const nextSeen = new Set(seen).add(item);
+  let best: { vec: Vec; secs: number; crafts: Record<string, number>; ie: number } | null = null;
+  let anyRoute = false;
+  for (const rt of routesFor(item)) {
+    if (rt.ins.some(([k]) => SALVAGE_ONLY.has(k))) continue;   // salvage-dependent route: not a repeatable craft route
+    anyRoute = true;
+    const crafts = Math.max(1, Math.ceil(qty / rt.qty));
+    const v: Vec = {}; const craftAgg: Record<string, number> = { [rt.recipe]: crafts };
+    let secs = rt.secs * crafts, ok = true;
+    for (const [i, q] of rt.ins) {
+      const e = integerTree(i, q * crafts, depth + 1, nextSeen);
+      if (!e) { ok = false; break; }
+      for (const [k, n] of Object.entries(e.vec)) v[k] = (v[k] ?? 0) + n;
+      secs += e.secs;
+      for (const [k, n] of Object.entries(e.crafts)) craftAgg[k] = (craftAgg[k] ?? 0) + n;
+    }
+    if (!ok) continue;
+    const ie = ieValue(v);
+    if (!best || ie < best.ie) best = { vec: v, secs, crafts: craftAgg, ie };
+  }
+  if (!best) return anyRoute ? null : { vec: { [item]: qty }, secs: 0, crafts: {} };   // matches expand(): unpriced leaf, or null when priced routes exist but failed
+  return { vec: best.vec, secs: best.secs, crafts: best.crafts };
+}
 /** Iron-ingot-equivalent of an atom vector (only numeraire atoms). */
 export function ieValue(v: Vec): number { return Object.entries(v).reduce((n, [k, q]) => n + (INGOT_PER[k] ?? 0) * q, 0); }
 

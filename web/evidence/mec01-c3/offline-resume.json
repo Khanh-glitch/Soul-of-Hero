@@ -1,0 +1,40 @@
+{
+  "note": "C3: funded furnace+workbench, real inputs, 5 s of the jobs elapsed, save, SEPARATE OS process resumes (settle of 5 min simulated clock), outputs retrieved with real moves. SIM_FIXTURE_MEASUREMENT; not wall-clock, not browser.",
+  "seed": 9099,
+  "queued": [
+    "refined_iron_ingot",
+    "mechanical_gear"
+  ],
+  "childProcess": "npx vitest run tests/mec01-c3-offline-child.test.ts (fresh node OS process; reads only the save file)",
+  "outputs": {
+    "refined_iron_ingot": {
+      "qty": 2,
+      "uid": "s8v",
+      "outC": "c8l"
+    },
+    "mechanical_gear": {
+      "qty": 1,
+      "uid": "s8w",
+      "outC": "c8o"
+    }
+  },
+  "uidsUniqueAcrossState": true,
+  "queuesDrained": true,
+  "validatorTruthyOnChildResume": true,
+  "validatorNote": "validate() returns a truthy validator report object, not literal true; the child process asserted the same via toBeTruthy() on the settled state and passed. The parent re-validates the child-written report state here.",
+  "ironConservedOnThisPath": true,
+  "labels": {
+    "fixture": [
+      "player placement",
+      "raw material grants",
+      "creatures cleared"
+    ],
+    "natural": [
+      "station builds",
+      "L2 upgrade",
+      "fuel feed",
+      "job queues and completion",
+      "retrieval moves"
+    ]
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "version": "mec01-five-chain-benchmark-v1",
+  "version": "mec01-five-chain-benchmark-v2",
   "numeraire": "1 iron_ingot = 1 iron_ore (furnace) = 3 scrap (scrap_ingot); other atoms compared per material",
   "salvageOnly": [
     "damaged_drive"
@@ -80,7 +80,7 @@
       "item": {
         "weight": 0.8,
         "max": 20,
-        "durability": null
+        "durability": "ORIGINAL_UNKNOWN"
       },
       "cheapestCraft": {
         "route": "metal_blade",
@@ -89,7 +89,21 @@
           "scrap": 1
         },
         "ingotEqPerUnit": 4.833,
-        "treeSeconds": 22
+        "treeSeconds": 22,
+        "model": "amortized per output unit"
+      },
+      "integerTreePerUnit": {
+        "atoms": {
+          "iron_ingot": 5,
+          "scrap": 2
+        },
+        "ingotEq": 5.667,
+        "treeSeconds": 28,
+        "crafts": {
+          "metal_blade": 1,
+          "mechanical_parts": 1
+        },
+        "rule": "whole craft batches at every node; overshoot is surplus, never fractional crafts; alternative to the amortized cheapestCraft model"
       },
       "routes": [
         {
@@ -116,7 +130,19 @@
               "scrap": 1
             },
             "ingotEq": 4.833,
-            "treeSeconds": 22
+            "treeSeconds": 22,
+            "model": "amortized per output unit"
+          },
+          "integerBatch": {
+            "rule": "integer craft batches (whole crafts only; overshoot is surplus output, never fractional crafts)",
+            "crafts": 1,
+            "outputs": 1,
+            "consumed": {
+              "iron_ingot": 4,
+              "mechanical_parts": 1
+            },
+            "seconds": 16,
+            "surplusOutputs": 0
           },
           "chosenByCheapestRule": true
         }
@@ -128,10 +154,23 @@
           "where": "shipping.factory.exterior.industrial-toolbox",
           "qty": 1,
           "frequency": "1 of 3 pool stacks (uniform), one pool stack per roll",
+          "probabilityPerRoll": 0.333,
           "stock": "renewable",
-          "cooldownHours": 24
+          "stockClass": "renewable",
+          "eligibleForRepeatableLoop": true,
+          "cooldownHours": 24,
+          "stockClock": "24h cooldown (authored spec)"
         }
       ],
+      "lootCacheStock": {
+        "finite": [],
+        "renewable": [
+          "shipping.factory.exterior.industrial-toolbox"
+        ],
+        "worldNode": 0,
+        "unknown": 0
+      },
+      "finiteCacheCanSupply": false,
       "consumers": [
         "iron_sword_blade (Iron Sword (blade refit))",
         "reinforced_spear_blade (Reinforced Spear (blade))"
@@ -317,8 +356,8 @@
           ]
         }
       },
-      "furnaceFuel": "UNKNOWN (per-second burn of furnace not quantified in this benchmark)",
-      "travel": "UNKNOWN (no travel-cost model in shipping Web)",
+      "furnaceFuel": "ORIGINAL_UNKNOWN (per-second burn of furnace not quantified in this benchmark)",
+      "travel": "ORIGINAL_UNKNOWN (no travel-cost model in shipping Web)",
       "li": {
         "version": "LI master v5 §5",
         "mode": "leaf-BOM, one-product output assumed",
@@ -336,7 +375,7 @@
       "item": {
         "weight": 1.2,
         "max": 20,
-        "durability": null
+        "durability": "ORIGINAL_UNKNOWN"
       },
       "cheapestCraft": {
         "route": "metal_pipe",
@@ -346,7 +385,23 @@
           "scrap": 1
         },
         "ingotEqPerUnit": 3.833,
-        "treeSeconds": 44
+        "treeSeconds": 44,
+        "model": "amortized per output unit"
+      },
+      "integerTreePerUnit": {
+        "atoms": {
+          "iron_ingot": 4,
+          "coal": 1,
+          "scrap": 2
+        },
+        "ingotEq": 4.667,
+        "treeSeconds": 50,
+        "crafts": {
+          "metal_pipe": 1,
+          "refined_iron_ingot": 1,
+          "mechanical_parts": 1
+        },
+        "rule": "whole craft batches at every node; overshoot is surplus, never fractional crafts; alternative to the amortized cheapestCraft model"
       },
       "routes": [
         {
@@ -374,7 +429,19 @@
               "scrap": 1
             },
             "ingotEq": 3.833,
-            "treeSeconds": 44
+            "treeSeconds": 44,
+            "model": "amortized per output unit"
+          },
+          "integerBatch": {
+            "rule": "integer craft batches (whole crafts only; overshoot is surplus output, never fractional crafts)",
+            "crafts": 1,
+            "outputs": 1,
+            "consumed": {
+              "refined_iron_ingot": 2,
+              "mechanical_parts": 1
+            },
+            "seconds": 18,
+            "surplusOutputs": 0
           },
           "chosenByCheapestRule": true
         }
@@ -386,18 +453,36 @@
           "where": "shipping.factory.exterior.industrial-toolbox",
           "qty": 1,
           "frequency": "1 of 3 pool stacks (uniform), one pool stack per roll",
+          "probabilityPerRoll": 0.333,
           "stock": "renewable",
-          "cooldownHours": 24
+          "stockClass": "renewable",
+          "eligibleForRepeatableLoop": true,
+          "cooldownHours": 24,
+          "stockClock": "24h cooldown (authored spec)"
         },
         {
           "kind": "b05-grammar-pool",
           "where": "shipping.tp.bow-cache.standard-toolbox",
           "qty": 1,
           "frequency": "1 of 3 pool stacks (uniform), one pool stack per roll",
+          "probabilityPerRoll": 0.333,
           "stock": "renewable",
-          "cooldownHours": 24
+          "stockClass": "renewable",
+          "eligibleForRepeatableLoop": true,
+          "cooldownHours": 24,
+          "stockClock": "24h cooldown (authored spec)"
         }
       ],
+      "lootCacheStock": {
+        "finite": [],
+        "renewable": [
+          "shipping.factory.exterior.industrial-toolbox",
+          "shipping.tp.bow-cache.standard-toolbox"
+        ],
+        "worldNode": 0,
+        "unknown": 0
+      },
+      "finiteCacheCanSupply": false,
       "consumers": [
         "iron_plate",
         "vehicle_frame_piped (Utility Frame (piped))"
@@ -573,8 +658,8 @@
           ]
         }
       },
-      "furnaceFuel": "UNKNOWN (per-second burn of furnace not quantified in this benchmark)",
-      "travel": "UNKNOWN (no travel-cost model in shipping Web)",
+      "furnaceFuel": "ORIGINAL_UNKNOWN (per-second burn of furnace not quantified in this benchmark)",
+      "travel": "ORIGINAL_UNKNOWN (no travel-cost model in shipping Web)",
       "li": {
         "version": "LI master v5 §5",
         "mode": "leaf-BOM, one-product output assumed",
@@ -592,7 +677,7 @@
       "item": {
         "weight": 0.8,
         "max": 20,
-        "durability": null
+        "durability": "ORIGINAL_UNKNOWN"
       },
       "cheapestCraft": {
         "route": "mechanical_gear",
@@ -601,7 +686,22 @@
           "scrap": 2.333
         },
         "ingotEqPerUnit": 4.111,
-        "treeSeconds": 35.333
+        "treeSeconds": 35.333,
+        "model": "amortized per output unit"
+      },
+      "integerTreePerUnit": {
+        "atoms": {
+          "iron_ingot": 4,
+          "scrap": 3
+        },
+        "ingotEq": 5,
+        "treeSeconds": 42,
+        "crafts": {
+          "mechanical_gear": 1,
+          "mechanical_parts": 1,
+          "fasteners": 1
+        },
+        "rule": "whole craft batches at every node; overshoot is surplus, never fractional crafts; alternative to the amortized cheapestCraft model"
       },
       "routes": [
         {
@@ -632,7 +732,20 @@
               "scrap": 2.333
             },
             "ingotEq": 4.111,
-            "treeSeconds": 35.333
+            "treeSeconds": 35.333,
+            "model": "amortized per output unit"
+          },
+          "integerBatch": {
+            "rule": "integer craft batches (whole crafts only; overshoot is surplus output, never fractional crafts)",
+            "crafts": 1,
+            "outputs": 1,
+            "consumed": {
+              "iron_ingot": 2,
+              "mechanical_parts": 2,
+              "fasteners": 1
+            },
+            "seconds": 20,
+            "surplusOutputs": 0
           },
           "chosenByCheapestRule": true
         }
@@ -644,18 +757,36 @@
           "where": "shipping.factory.exterior.industrial-toolbox",
           "qty": 1,
           "frequency": "every roll (fixed)",
+          "probabilityPerRoll": 1,
           "stock": "renewable",
-          "cooldownHours": 24
+          "stockClass": "renewable",
+          "eligibleForRepeatableLoop": true,
+          "cooldownHours": 24,
+          "stockClock": "24h cooldown (authored spec)"
         },
         {
           "kind": "b05-grammar-pool",
           "where": "shipping.tp.bow-cache.standard-toolbox",
           "qty": 1,
           "frequency": "1 of 3 pool stacks (uniform), one pool stack per roll",
+          "probabilityPerRoll": 0.333,
           "stock": "renewable",
-          "cooldownHours": 24
+          "stockClass": "renewable",
+          "eligibleForRepeatableLoop": true,
+          "cooldownHours": 24,
+          "stockClock": "24h cooldown (authored spec)"
         }
       ],
+      "lootCacheStock": {
+        "finite": [],
+        "renewable": [
+          "shipping.factory.exterior.industrial-toolbox",
+          "shipping.tp.bow-cache.standard-toolbox"
+        ],
+        "worldNode": 0,
+        "unknown": 0
+      },
+      "finiteCacheCanSupply": false,
       "consumers": [
         "industrial_pick_geared (Salvager Pick (geared))",
         "vehicle_drive_geared (Motor Drive (geared))"
@@ -845,8 +976,8 @@
           ]
         }
       },
-      "furnaceFuel": "UNKNOWN (per-second burn of furnace not quantified in this benchmark)",
-      "travel": "UNKNOWN (no travel-cost model in shipping Web)",
+      "furnaceFuel": "ORIGINAL_UNKNOWN (per-second burn of furnace not quantified in this benchmark)",
+      "travel": "ORIGINAL_UNKNOWN (no travel-cost model in shipping Web)",
       "li": {
         "version": "LI master v5 §5",
         "mode": "leaf-BOM, one-product output assumed",
@@ -864,7 +995,7 @@
       "item": {
         "weight": 1.5,
         "max": 20,
-        "durability": null
+        "durability": "ORIGINAL_UNKNOWN"
       },
       "cheapestCraft": {
         "route": "iron_plate",
@@ -874,7 +1005,24 @@
           "scrap": 1
         },
         "ingotEqPerUnit": 3.833,
-        "treeSeconds": 44
+        "treeSeconds": 44,
+        "model": "amortized per output unit"
+      },
+      "integerTreePerUnit": {
+        "atoms": {
+          "iron_ingot": 8,
+          "coal": 2,
+          "scrap": 4
+        },
+        "ingotEq": 9.333,
+        "treeSeconds": 100,
+        "crafts": {
+          "iron_plate": 1,
+          "refined_iron_ingot": 2,
+          "metal_pipe": 1,
+          "mechanical_parts": 2
+        },
+        "rule": "whole craft batches at every node; overshoot is surplus, never fractional crafts; alternative to the amortized cheapestCraft model"
       },
       "routes": [
         {
@@ -906,7 +1054,20 @@
               "scrap": 1
             },
             "ingotEq": 3.833,
-            "treeSeconds": 44
+            "treeSeconds": 44,
+            "model": "amortized per output unit"
+          },
+          "integerBatch": {
+            "rule": "integer craft batches (whole crafts only; overshoot is surplus output, never fractional crafts)",
+            "crafts": 1,
+            "outputs": 2,
+            "consumed": {
+              "refined_iron_ingot": 2,
+              "metal_pipe": 1,
+              "mechanical_parts": 1
+            },
+            "seconds": 18,
+            "surplusOutputs": 1
           },
           "chosenByCheapestRule": true
         }
@@ -918,18 +1079,36 @@
           "where": "shipping.factory.exterior.industrial-toolbox",
           "qty": 1,
           "frequency": "1 of 3 pool stacks (uniform), one pool stack per roll",
+          "probabilityPerRoll": 0.333,
           "stock": "renewable",
-          "cooldownHours": 24
+          "stockClass": "renewable",
+          "eligibleForRepeatableLoop": true,
+          "cooldownHours": 24,
+          "stockClock": "24h cooldown (authored spec)"
         },
         {
           "kind": "b05-grammar-pool",
           "where": "shipping.tp.bow-cache.standard-toolbox",
           "qty": 1,
           "frequency": "1 of 3 pool stacks (uniform), one pool stack per roll",
+          "probabilityPerRoll": 0.333,
           "stock": "renewable",
-          "cooldownHours": 24
+          "stockClass": "renewable",
+          "eligibleForRepeatableLoop": true,
+          "cooldownHours": 24,
+          "stockClock": "24h cooldown (authored spec)"
         }
       ],
+      "lootCacheStock": {
+        "finite": [],
+        "renewable": [
+          "shipping.factory.exterior.industrial-toolbox",
+          "shipping.tp.bow-cache.standard-toolbox"
+        ],
+        "worldNode": 0,
+        "unknown": 0
+      },
+      "finiteCacheCanSupply": false,
       "consumers": [],
       "recycler": {
         "source": "iron_axe",
@@ -1102,8 +1281,8 @@
           ]
         }
       },
-      "furnaceFuel": "UNKNOWN (per-second burn of furnace not quantified in this benchmark)",
-      "travel": "UNKNOWN (no travel-cost model in shipping Web)",
+      "furnaceFuel": "ORIGINAL_UNKNOWN (per-second burn of furnace not quantified in this benchmark)",
+      "travel": "ORIGINAL_UNKNOWN (no travel-cost model in shipping Web)",
       "li": {
         "version": "LI master v5 §5",
         "mode": "leaf-BOM, one-product output assumed",
@@ -1121,7 +1300,7 @@
       "item": {
         "weight": 4,
         "max": 5,
-        "durability": null
+        "durability": "ORIGINAL_UNKNOWN"
       },
       "cheapestCraft": {
         "route": "vehicle_frame",
@@ -1131,7 +1310,22 @@
           "spares": 2
         },
         "ingotEqPerUnit": 4.667,
-        "treeSeconds": 37
+        "treeSeconds": 37,
+        "model": "amortized per output unit"
+      },
+      "integerTreePerUnit": {
+        "atoms": {
+          "iron_ingot": 4,
+          "scrap": 2,
+          "spares": 2
+        },
+        "ingotEq": 4.667,
+        "treeSeconds": 37,
+        "crafts": {
+          "vehicle_frame": 1,
+          "mechanical_parts": 1
+        },
+        "rule": "whole craft batches at every node; overshoot is surplus, never fractional crafts; alternative to the amortized cheapestCraft model"
       },
       "routes": [
         {
@@ -1163,7 +1357,20 @@
               "spares": 2
             },
             "ingotEq": 4.667,
-            "treeSeconds": 37
+            "treeSeconds": 37,
+            "model": "amortized per output unit"
+          },
+          "integerBatch": {
+            "rule": "integer craft batches (whole crafts only; overshoot is surplus output, never fractional crafts)",
+            "crafts": 1,
+            "outputs": 1,
+            "consumed": {
+              "iron_ingot": 3,
+              "mechanical_parts": 2,
+              "spares": 2
+            },
+            "seconds": 25,
+            "surplusOutputs": 0
           },
           "chosenByCheapestRule": true
         },
@@ -1201,19 +1408,40 @@
               "spares": 2
             },
             "ingotEq": 7.5,
-            "treeSeconds": 78
+            "treeSeconds": 78,
+            "model": "amortized per output unit"
+          },
+          "integerBatch": {
+            "rule": "integer craft batches (whole crafts only; overshoot is surplus output, never fractional crafts)",
+            "crafts": 1,
+            "outputs": 1,
+            "consumed": {
+              "metal_pipe": 1,
+              "iron_ingot": 2,
+              "mechanical_parts": 2,
+              "spares": 2
+            },
+            "seconds": 22,
+            "surplusOutputs": 0
           },
           "chosenByCheapestRule": false
         }
       ],
       "researchCost": "base (known at start, no research)",
       "sourceHits": [],
+      "lootCacheStock": {
+        "finite": [],
+        "renewable": [],
+        "worldNode": 0,
+        "unknown": 0
+      },
+      "finiteCacheCanSupply": false,
       "consumers": [
         "motorbike_kit"
       ],
       "recycler": "no recovery table for this chain item (not recycled)",
-      "furnaceFuel": "UNKNOWN (per-second burn of furnace not quantified in this benchmark)",
-      "travel": "UNKNOWN (no travel-cost model in shipping Web)",
+      "furnaceFuel": "ORIGINAL_UNKNOWN (per-second burn of furnace not quantified in this benchmark)",
+      "travel": "ORIGINAL_UNKNOWN (no travel-cost model in shipping Web)",
       "finalConsumer": {
         "motorbike_kit": {
           "route": "motorbike_kit",
@@ -1224,6 +1452,22 @@
           },
           "ingotEqPerKit": 12.111,
           "treeSeconds": 127.333,
+          "integerTreePerKit": {
+            "atoms": {
+              "iron_ingot": 11,
+              "scrap": 6,
+              "spares": 5
+            },
+            "ingotEq": 13,
+            "treeSeconds": 134,
+            "crafts": {
+              "motorbike_kit": 1,
+              "vehicle_frame": 1,
+              "mechanical_parts": 2,
+              "vehicle_drive": 1,
+              "fasteners": 2
+            }
+          },
           "stationLevel": 3,
           "weightKg": 12
         }
@@ -1241,6 +1485,37 @@
     }
   ],
   "li_context_only": true,
+  "b05Eligibility": {
+    "rule": "a source may underwrite a REPEATABLE craft route only when its stock class is renewable; a finite source (vault) is a non-repeatable windfall, never a loop input; world-node sources are renewable in count but their respawn clock is ORIGINAL_UNKNOWN in Web",
+    "renewable": [
+      "shipping.factory.exterior.industrial-toolbox",
+      "shipping.tp.bow-cache.standard-toolbox"
+    ],
+    "finite": [
+      "shipping.factory.vault.advanced-keycard"
+    ],
+    "salvageExcluded": [
+      "damaged_drive (non-repeatable wreck input; never a craft-cost input — SALVAGE_ONLY)"
+    ],
+    "note": "authored-cache hits are spec-matched via specForSite and tagged per hit; toolbox grammar hits carry the authored spec stock class; vault (finite) can never underwrite a repeatable route claim"
+  },
+  "unpricedAtoms": {
+    "atoms": [
+      "coal",
+      "wood",
+      "stone",
+      "leather",
+      "spares",
+      "crystal"
+    ],
+    "mode": "per-material comparison only; no numeraire conversion is invented for these; only iron_ingot/iron_ore/scrap carry one"
+  },
+  "separateChannels": {
+    "sourceProbability": "probabilityPerRoll per hit (grammar fixed = 1; grammar pool = 1/pool.length; bonus chance as authored)",
+    "stockClocks": "stockClass + stockClock + cooldownHours per hit (authored specs); world-node respawn clocks are ORIGINAL_UNKNOWN",
+    "playerTravel": "ORIGINAL_UNKNOWN (no travel-cost model in shipping Web)",
+    "liHistory": "context only; version/mode/confidence per LI row; never a balance input"
+  },
   "proofClasses": [
     {
       "tool": "iron_sword",
@@ -1251,8 +1526,8 @@
       },
       "repeatableLoop": {
         "netIngotEqPerLoop": 6,
-        "consumesRepeatableInputsOnly": "UNKNOWN (wood/leather sources not verified in this benchmark)",
-        "realizable": "UNKNOWN",
+        "consumesRepeatableInputsOnly": "ORIGINAL_UNKNOWN (wood/leather source stock unverified — no renewable proof in this benchmark)",
+        "realizable": "ORIGINAL_UNKNOWN (no renewable-input proof for wood/leather)",
         "note": "craft is at full durability, so high-tier recovery is always reachable for a fresh tool"
       },
       "salvageWindfall": "none",
@@ -1271,8 +1546,8 @@
       },
       "repeatableLoop": {
         "netIngotEqPerLoop": 3.167,
-        "consumesRepeatableInputsOnly": "UNKNOWN (wood/leather sources not verified in this benchmark)",
-        "realizable": "UNKNOWN",
+        "consumesRepeatableInputsOnly": "ORIGINAL_UNKNOWN (wood/leather source stock unverified — no renewable proof in this benchmark)",
+        "realizable": "ORIGINAL_UNKNOWN (no renewable-input proof for wood/leather)",
         "note": "craft is at full durability, so high-tier recovery is always reachable for a fresh tool"
       },
       "salvageWindfall": "none",
@@ -1291,8 +1566,8 @@
       },
       "repeatableLoop": {
         "netIngotEqPerLoop": 3,
-        "consumesRepeatableInputsOnly": "UNKNOWN (wood/leather sources not verified in this benchmark)",
-        "realizable": "UNKNOWN",
+        "consumesRepeatableInputsOnly": "ORIGINAL_UNKNOWN (wood/leather source stock unverified — no renewable proof in this benchmark)",
+        "realizable": "ORIGINAL_UNKNOWN (no renewable-input proof for wood/leather)",
         "note": "craft is at full durability, so high-tier recovery is always reachable for a fresh tool"
       },
       "salvageWindfall": "none",
@@ -1309,8 +1584,8 @@
       },
       "repeatableLoop": {
         "netIngotEqPerLoop": 2.444,
-        "consumesRepeatableInputsOnly": "UNKNOWN (wood/leather sources not verified in this benchmark)",
-        "realizable": "UNKNOWN",
+        "consumesRepeatableInputsOnly": "ORIGINAL_UNKNOWN (wood/leather source stock unverified — no renewable proof in this benchmark)",
+        "realizable": "ORIGINAL_UNKNOWN (no renewable-input proof for wood/leather)",
         "note": "craft is at full durability, so high-tier recovery is always reachable for a fresh tool"
       },
       "salvageWindfall": "none in table (damaged_drive is a wreck-only input, not consumed by these tools)",
@@ -1325,9 +1600,9 @@
     }
   ],
   "unknowns": [
-    "ore-to-ingot fuel burn",
-    "travel/route cost",
-    "per-source drop rate for Metal Blade/Frame",
-    "LI per-item yields (ASSUMED only)"
+    "ORIGINAL_UNKNOWN: ore-to-ingot fuel burn",
+    "ORIGINAL_UNKNOWN: travel/route cost",
+    "ORIGINAL_UNKNOWN: per-source drop rate for Metal Blade/Frame authored caches",
+    "ORIGINAL_UNKNOWN: LI per-item yields (ASSUMED only)"
   ]
 }

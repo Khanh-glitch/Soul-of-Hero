@@ -2,7 +2,8 @@
 // FIXTURE (labelled): player position beside the bench/recycler tile (position only); refined/MP/iron/wood/spares granted
 //   for the bench and crafts. The Pipe/Blade themselves are CRAFTED through the real L2 bench (except blade-recycle and
 //   old-save tests, which grant one part and say so). Creatures are disabled on the start.
-// NATURAL: none is claimed here. Walking evidence is in tests/mec01-gear-decision-network.test.ts (labelled FIXTURE_INTENT).
+// NATURAL: none is claimed here. Scope: bounded transactions on a bench/recycler fixture; not a delivery or expedition proof.
+// The claim boundary is the direct craft/recycle vector only (one cycle); it is NOT a multi-route arbitrage proof. Walking evidence is in tests/mec01-gear-decision-network.test.ts (labelled FIXTURE_INTENT).
 // Economics (ingot-eq; scrap=1/3, MP=0.833, fastener=0.444, refined>=1.5 because its coal input is unpriced):
 //   pipe craft 2 refined + 1 MP >= 3.833 ; X:pipe-v2 return 1 refined + 1 MP >= 2.333  (loss >= 1.5)
 //   blade craft 4 ingot + 1 MP = 4.833      ; X:blade-v1 return 2 ingot + 1 MP = 2.833  (loss 2.0)

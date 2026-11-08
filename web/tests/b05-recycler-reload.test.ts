@@ -1,4 +1,6 @@
-// B05-R C2: an in-flight X:pipe-v1 job survives save/reload, completes exactly once, and keeps the reserved pipe UID.
+// B05-R C2: an in-flight pipe recycle job survives save/reload, completes exactly once, and keeps the reserved pipe UID.
+// MEC-01 R2 note: the pinned recipe checked here is X:pipe-v2 (new jobs): 1 Refined Iron Ingot + 1 Mechanical Part / 12 s.
+// X:pipe-v1 (old saved jobs) stays 1 Refined Iron Ingot / 10 s forever; the v1 rule is unchanged by the v2 addition.
 import { describe, it, expect } from 'vitest';
 import type { GameState } from '../src/game/core';
 import { TILE } from '../src/game/core';

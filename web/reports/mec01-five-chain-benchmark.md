@@ -1,6 +1,9 @@
 # MEC-01 five-chain industrial benchmark (generated)
 
 Numeraire: 1 iron_ingot = 1 iron_ore (furnace) = 3 scrap (scrap_ingot); other atoms compared per material. Salvage-only: damaged_drive. LI figures are context only (LI master v5 §5; mode leaf-BOM, one-product output assumed; confidence ASSUMED; LI Parts are not SOH Mechanical Parts).
+B05 eligibility: a source may underwrite a REPEATABLE craft route only when its stock class is renewable; a finite source (vault) is a non-repeatable windfall, never a loop input; world-node sources are renewable in count but their respawn clock is ORIGINAL_UNKNOWN in Web Renewable: shipping.factory.exterior.industrial-toolbox, shipping.tp.bow-cache.standard-toolbox. Finite (never repeatable): shipping.factory.vault.advanced-keycard.
+
+Models: amortized per-unit (cheapestCraft) AND integer craft batches (integerTreePerUnit / route integerBatch) are both reported. Player travel is not modelled. Unpriced atoms compared per material: coal, wood, stone, leather, spares, crystal.
 
 | Chain | Cheapest route | ingot-eq / unit | craft tree s | recycler v2 high (pinned) | recycler v3 high (new) | LI leaf BOM (context) |
 |---|---|---|---|---|---|---|
@@ -10,4 +13,4 @@ Numeraire: 1 iron_ingot = 1 iron_ore (furnace) = 3 scrap (scrap_ingot); other at
 | Iron Plate | iron_plate | 3.833 | 44 | iron_axe: OVER_RETURN (6 vs 3) | iron_axe: OK (2.167 vs 3) | 30×LI Parts, 5×refined_iron_ingot |
 | Utility Frame → Motorbike Kit | vehicle_frame | 4.667 | 37 | none: n/a | none: n/a | 100×iron_ingot, 50×LI Parts, 30×refined_iron_ingot |
 
-Unknowns: ore-to-ingot fuel burn; travel/route cost; per-source drop rate for Metal Blade/Frame; LI per-item yields (ASSUMED only).
+Unknowns: ORIGINAL_UNKNOWN: ore-to-ingot fuel burn; ORIGINAL_UNKNOWN: travel/route cost; ORIGINAL_UNKNOWN: per-source drop rate for Metal Blade/Frame authored caches; ORIGINAL_UNKNOWN: LI per-item yields (ASSUMED only).

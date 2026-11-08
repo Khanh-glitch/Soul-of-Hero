@@ -1,0 +1,69 @@
+{
+  "note": "B: two real consumer choices executed for the crafted gear (vehicle_drive_geared / industrial_pick_geared); pipe covered in the sibling tests (vehicle_frame_piped / iron_plate). One stack, one outcome — UIDs never duplicated.",
+  "seed": 4242,
+  "sourcesRead": [
+    {
+      "id": "factory-exterior-industrial",
+      "sourceId": "shipping.factory.exterior.industrial-toolbox",
+      "role": "toolbox",
+      "grade": "high",
+      "access": {
+        "kind": "open"
+      },
+      "stock": "renewable",
+      "cooldownHours": 24,
+      "capacity": 3
+    },
+    {
+      "id": "tp-bow-cache-standard",
+      "sourceId": "shipping.tp.bow-cache.standard-toolbox",
+      "role": "toolbox",
+      "grade": "mid",
+      "access": {
+        "kind": "open"
+      },
+      "stock": "renewable",
+      "cooldownHours": 24,
+      "capacity": 2
+    },
+    {
+      "id": "factory-vault-advanced",
+      "sourceId": "shipping.factory.vault.advanced-keycard",
+      "role": "advanced",
+      "grade": "high",
+      "access": {
+        "kind": "poi-door",
+        "poi": "factory",
+        "requirement": "keycard"
+      },
+      "stock": "finite",
+      "cooldownHours": 48,
+      "capacity": 2
+    }
+  ],
+  "gearConsumersProven": [
+    "vehicle_drive_geared",
+    "industrial_pick_geared"
+  ],
+  "pipeConsumersProvenInSiblingTests": [
+    "vehicle_frame_piped",
+    "iron_plate"
+  ],
+  "uiDs": {
+    "gear": "s8o",
+    "industrialPick": "s8q"
+  },
+  "contractValid": true,
+  "b01GrammarStillResolves": true,
+  "labels": {
+    "fixture": [
+      "player placement",
+      "raw-material grants",
+      "creatures cleared"
+    ],
+    "natural": [
+      "bench build/upgrade",
+      "real craft queues and consumption"
+    ]
+  }
+}
