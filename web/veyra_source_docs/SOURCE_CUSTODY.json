@@ -1,0 +1,21 @@
+{
+  "recordedAt": "2026-11-06T12:50:09Z",
+  "repository": "https://github.com/Khanh-glitch/Soul-of-Hero",
+  "gameplay": {
+    "branch": "arena/d4bfcfff-soul-of-hero", "pr": 44,
+    "observedInTask": "27e8513b7c52d3d3d9a30d9b73e35f78ba00b2ed",
+    "liveRemoteHead": "3bd9b0efe2f64e199c52870aff748e22292e445d",
+    "driftNote": "27e8513 is the direct parent of the live head; one commit (B04-P2 motorbike cargo bag provenance, 505/505 tests) landed after the task observation. The live head was used.",
+    "vendoredPaths": ["web/src/** -> src/**", "web/geography/** -> geography/**", "web/tests/** -> tests/**", "web/ref/bible.md -> ref/bible.md"],
+    "custody": "READ-ONLY integration reference. Gameplay files are not re-authored; every hunk touched is listed in docs/INTEGRATION_PATCH.md."
+  },
+  "map": {
+    "branch": "arena/2e3cfbd2-soul-of-hero",
+    "observedInTask": "bd672b6904f7817c38a6d776d2136d3f7a1274b8",
+    "liveRemoteHead": "bd672b6904f7817c38a6d776d2136d3f7a1274b8",
+    "driftNote": "no drift",
+    "reusedMethods": ["creator-u05/web-u05/src/u05/lw/coords.ts (chunk key / aliasing math)", "creator-u05/web-u05/src/u05/lw/geometry.ts (GOLD polygon + dithered raster sampler)", "creator-u05/web-u05/src/u05/world.ts (despeckle rule, bounded LRU)", "MAP_GEO_REJOIN_01/02 defect register MGP-D01..D10"]
+  },
+  "main": "5214788933b1a827f3a177d11ff486433dfe5e8a",
+  "goldCanon": { "file": "geography/veyra-lr01/map_tower/veyra_gold/VEYRA_GOLD_MAP.sohmap.json", "sha256": "88780f78b9e80278792c85c5fba7b09b43a5d22b891fb5fc4bb47245b1a3a256", "counts": {"land":8,"lakes":5,"rivers":17,"roads":92,"bridges":12,"docks":27,"pois":81,"zones":23,"resources":280,"spawns":4,"elders":6,"labels":24} }
+}

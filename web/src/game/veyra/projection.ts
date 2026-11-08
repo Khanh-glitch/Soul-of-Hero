@@ -25,7 +25,7 @@ import {
 
 export interface VeyraViewIdentity {
   sourceCommit: string; sourceDigest: string; originAu: [number, number];
-  unitsPerTile: 1.6 | 2; frameAu: [number, number]; projection: 'cell-centre-v1';
+  unitsPerTile: 0.5 | 1.6 | 2; frameAu: [number, number]; projection: 'cell-centre-v1'; // VEYRA05: 0.5 added additively (U=0.5 windows); 1.6|2 views unchanged
   patchSourceCommit?: string; patchDigest?: string;
   // WMP-04R1 extension. All fields are pure static geography metadata.
   worldRevision?: string; sceneId?: string; beforeLayoutId?: string | null;
