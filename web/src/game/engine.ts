@@ -560,10 +560,18 @@ export function addItem(r: RunState, cid: string, key: string, qty: number, tmpl
   for (let i = 0; i < c.slots.length && qty > 0; i++) if (!c.slots[i]) { const m = Math.min(qty, key==='keycard'&&r.poiAccessVersion==='poi-access-v1'?1:d.max); const s = mkStack(r, key, m, tmpl?.meta); if (tmpl?.charge !== undefined) s.charge = tmpl.charge; if (tmpl?.dur !== undefined) s.dur = tmpl.dur; c.slots[i] = s; qty -= m; }
   return qty;
 }
+/** K1 custody law: a whole stack moved into an EMPTY slot keeps its UID — the move is one custody
+ * transfer, never a re-mint of the item. Only when no empty slot exists may a stackable stack merge
+ * into receivers (receivers keep their UIDs; the source stack lineage retires entirely, never duplicated).
+ * Sole caller: the pickup path (engine.ts, case 'pickup'). */
 export function addStack(r: RunState, cid: string, s: Stack): boolean {
   const c = C(r, cid); const d = ITEMS[s.key];
+  const i = c.slots.indexOf(null);
+  if (i >= 0) { c.slots[i] = s; return true; }
+  // No empty slot: legitimate merge-lineage for stackable stacks (exact material conservation;
+  // the source stack is consumed by the caller after this returns true).
   if (s.key!=='keycard' && d.max > 1 && s.meta === undefined && s.dur === undefined && s.charge === undefined) { const room = spaceFor(r, cid, s.key); if (room >= s.qty) { addItem(r, cid, s.key, s.qty); return true; } }
-  const i = c.slots.indexOf(null); if (i < 0) return false; c.slots[i] = s; return true;
+  return false;
 }
 // Unique or stateful stacks must never be merged into a different instance.
 function mergeable(a: Stack, b: Stack) {

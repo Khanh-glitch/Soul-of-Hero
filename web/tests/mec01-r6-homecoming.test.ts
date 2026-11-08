@@ -1,13 +1,15 @@
 // R6 — THE PLAYER CONSEQUENCE CLOSURE (Control Tower order 6721750194, step 2)
+// R6.1 — closure repairs (order 6722812147): K1 UID custody on whole-stack pickup, accounted fixture fuel
+//        (real 3-slot capacity, zero leftover), post-pickup save → independent module registry → Continue.
 //
 //   offline turret kill → creature drops as physical ground entities
-//   → save → a SEPARATE browser process Continues
+//   → save → an ISOLATED MODULE REGISTRY Continues (vi.resetModules + fresh imports — not an OS/browser restart)
 //   → real player movement + pickup → correct inventory and loot custody, exactly once
 //   → the return report states only what the record can prove
 //
-// NATURAL = real tick() movement only (shipping_fresh geometry) — never natural map play.
-// FIXTURE = placement-only injection, always declared. PROCESS = an independent JS module
-// registry plays the part of a fresh browser process (Continue).
+// NATURAL = real tick() movement only (shipping_fresh geometry) — REAL_MOVEMENT_ON_FIXTURE_GEOMETRY, never natural map play.
+// FIXTURE = placement-only injection, always declared. PROCESS = an isolated JS module
+// registry (vi.resetModules + fresh imports) — NOT a separate OS/browser process.
 // Shipping_fresh is used unmodified (placing structures in tests is a fixture, not a Map edit).
 import { describe, it, expect, beforeAll, vi } from 'vitest';
 import { TILE, T, uid, type GameState } from '../src/game/core';
@@ -15,6 +17,7 @@ import { newGame, dispatch, addItem, markDirty, mkCreature, mkContainer, C, coun
 import { settle, tick, PROJ, HAZ, bindCombat, type Input } from '../src/game/sim';
 import { getWorld, setActiveLayout } from '../src/game/world';
 import { serializeSnapshot, selectSnapshots, validate } from '../src/game/persist';
+import { ITEMS } from '../src/game/catalog';
 
 const T0 = Date.UTC(2026, 10, 8, 12);
 let serial = 0;
@@ -89,10 +92,18 @@ function poweredTurret(gs: GameState, tx: number, ty: number, opts: { arrows?: n
   });
   r.entities[gen.id] = gen;
   turret.turret!.generatorId = gen.id;
+  // Fixture grants are PAID stock at real container capacity — never more than the chest holds.
+  const fixtureGrant = (cid: string, key: string, qty: number) => {
+    const leftover = addItem(r, cid, key, qty);
+    expect(leftover, `${key} fixture grant exceeded the chest's real capacity`).toBe(0);   // every input accounted for
+    expect(countItem(r, cid, key)).toBe(qty);                                              // the chest really holds it
+  };
+  const woodCapacity = 3 * ITEMS.wood.max;     // 3-slot fuel chest · 60 wood per slot = 180
+  const arrowCapacity = 3 * ITEMS.arrow.max;   // 3-slot arrow chest · 60 arrows per slot = 180
   const fuel = opts.fuel ?? 40;
-  if (fuel > 0) { let left = fuel; while (left > 0) { const room = Math.min(60, left); addItem(r, fuelBox, 'wood', room); left -= room; } }
+  if (fuel > 0) { expect(fuel).toBeLessThanOrEqual(woodCapacity); fixtureGrant(fuelBox, 'wood', fuel); }
   const arrows = opts.arrows ?? 8;
-  if (arrows > 0) { let left = arrows; while (left > 0) { const room = Math.min(60, left); addItem(r, arrowBox, 'arrow', room); left -= room; } }
+  if (arrows > 0) { expect(arrows).toBeLessThanOrEqual(arrowCapacity); fixtureGrant(arrowBox, 'arrow', arrows); }
   markDirty();
   return { turret, gen, arrowBox, fuelBox };
 }
@@ -104,7 +115,7 @@ function walkHome(gs: GameState, steps = 170) {
   return t;
 }
 
-/** Independent module registry — the closest thing vitest has to a fresh browser process. */
+/** ISOLATED MODULE REGISTRY — vi.resetModules() + fresh imports; NOT a separate OS/browser process. */
 async function freshProcess() {
   vi.resetModules();
   const sim = await import('../src/game/sim');
@@ -117,9 +128,9 @@ async function freshProcess() {
 }
 
 const dropEntities = (r: any) => (Object.values(r.entities) as any[]).filter(e => e.kind === 'drop');
-const dropContents = (r: any) => dropEntities(r).map(e => ({ id: e.id, key: C(r, e.c!).slots[0]?.key, qty: C(r, e.c!).slots[0]?.qty ?? 0, x: e.x, y: e.y }));
+const dropContents = (r: any) => dropEntities(r).map(e => ({ id: e.id, cid: e.c, uid: C(r, e.c!).slots[0]?.uid, key: C(r, e.c!).slots[0]?.key, qty: C(r, e.c!).slots[0]?.qty ?? 0, x: e.x, y: e.y }));
 
-describe('R6 — the offline kill’s consequence reaches the player’s hands, exactly once', () => {
+describe('R6/R6.1 — the offline kill’s consequence reaches the player’s hands, exactly once', () => {
   it('offline turret kill → physical drops → new process Continue → real movement + pickup → exactly-once custody', { timeout: 120_000 }, async () => {
     // ---------- ACT 1 — the absence (fixture geometry, real movement to the homestead) ----------
     PROJ.length = 0; HAZ.length = 0;
@@ -131,12 +142,12 @@ describe('R6 — the offline kill’s consequence reaches the player’s hands, 
     const door = homestead(gs, px, py);
     const walkEnd = walkHome(gs);
     expect(act(gs, 'door', { eid: door.id }, walkEnd).ok).toBe(true);       // closed — the bash must commit
-    poweredTurret(gs, px + 5, py - 1, { arrows: 8, fuel: 4000, energy: 0 });
+    const homeFix = poweredTurret(gs, px + 5, py - 1, { arrows: 8, fuel: 180, energy: 0 });   // full 3-slot paid fuel stock, accounted
     const boar = mkCreature(r, 'boar', (px - 1) * TILE + 8, py * TILE + 8, 40); boar.state = 'wander';
     r.creatures.push(boar);
     // The logout save — the state the player carries into the absence.
     const logout = serializeSnapshot(gs);
-    // ---------- ACT 2 — a separate browser process: load → Continue ----------
+    // ---------- ACT 2 — ISOLATED MODULE REGISTRY Continue: load → Continue (not an OS/browser restart) ----------
     const proc = await freshProcess();
     const restored = proc.persist.selectSnapshots([logout, null]).gs!;
     expect(proc.persist.validate(restored)).toBeTruthy();
@@ -153,6 +164,10 @@ describe('R6 — the offline kill’s consequence reaches the player’s hands, 
     expect(report?.summary).not.toContain('owes');                          // no invented obligation
     const fireCountAfterContinue = fireCount(rr);
     expect(fireCountAfterContinue).toBeGreaterThanOrEqual(3);               // 16 dmg × 3 ≥ 40 hp — the lawful lethal sequence
+    const woodBurned = 180 - countItem(rr, homeFix.fuelBox, 'wood');        // genuine fuel expenditure, not the 4,000-unit fiction
+    const woodBurnReceipts = rr.receipts.filter((q: any) => q.kind === 'power.fuel' && /:wood$/.test(String(q.detail))).length;
+    expect(woodBurned).toBeGreaterThan(0);                                  // the absence drew real paid fuel
+    expect(woodBurned).toBe(woodBurnReceipts);                              // every unit debited from the chest has its power.fuel receipt
     // The dead boar is gone to its drops; the drops are physical ground entities with UIDs.
     const deadBoar = rr.creatures.find((m: any) => m.type === 'boar');
     expect(deadBoar?.state).toBe('dead');
@@ -163,6 +178,8 @@ describe('R6 — the offline kill’s consequence reaches the player’s hands, 
     expect(meatAtReturn).toBe(2);
     expect(hideAtReturn).toBe(1);
     const dropIdsAtReturn = new Set(dropsAtReturn.map(d => d.id));
+    const meatDropKeep = dropsAtReturn.find(d => d.key === 'meat')!;
+    const hideDropKeep = dropsAtReturn.find(d => d.key === 'hide')!;
     const custodyAtReturn = { meat: custodyTotal(restored, 'meat'), hide: custodyTotal(restored, 'hide') };
     // ---------- ACT 3 — real movement: open the door, walk out, collect ----------
     let t = continueAt;
@@ -202,6 +219,17 @@ describe('R6 — the offline kill’s consequence reaches the player’s hands, 
     expect(custodyTotal(restored, 'meat')).toBe(custodyAtReturn.meat);      // 2 in → 2 out, nothing minted
     expect(custodyTotal(restored, 'hide')).toBe(custodyAtReturn.hide);
     expect(Object.values(rr.custody as Record<string, any>).every((c: any) => c.kind !== 'drop')).toBe(true);   // consumed drops are struck from the ledger
+    // K1 custody — whole stacks moved with their identity, never re-minted into new lineage.
+    const meatDrop = dropsAtReturn.find(d => d.key === 'meat')!;
+    const hideDrop = dropsAtReturn.find(d => d.key === 'hide')!;
+    const invMeatStack = C(rr, 'inv').slots.find((st: any) => st && st.key === 'meat')!;
+    const invHideStack = C(rr, 'inv').slots.find((st: any) => st && st.key === 'hide')!;
+    expect(invMeatStack.uid).toBe(meatDrop.uid);                              // the source stack UID survived the ground→inventory custody transfer
+    expect(invHideStack.uid).toBe(hideDrop.uid);
+    const liveUids = (Object.values(rr.custody as Record<string, any>) as any[]).flatMap((c: any) => c.slots.filter(Boolean).map((st: any) => st.uid));
+    expect(new Set(liveUids).size).toBe(liveUids.length);                     // no duplicate live UID anywhere in custody
+    expect(liveUids.filter(u => u === meatDrop.uid)).toHaveLength(1);         // exactly one live occurrence — no replay, no mint
+    expect(liveUids.filter(u => u === hideDrop.uid)).toHaveLength(1);
     // ---------- ACT 5 — a second Continue mints and replays nothing ----------
     const again = proc.returnReport.settleWithReturn(restored, t + 5000);
     expect(dropEntities(rr).length).toBe(0);
@@ -210,5 +238,31 @@ describe('R6 — the offline kill’s consequence reaches the player’s hands, 
     const replays = rr.receipts.filter((q: any) => q.kind === 'pickup').length;
     expect(replays).toBe(dropsAtReturn.length);                             // no pickup receipt appears twice
     expect(again.report?.sections.world.some((q: any) => /creature.*died while you were away/.test(q.text)) ?? false).toBe(false);   // the death is not re-reported for a window without deaths
+    // ---------- ACT 6 — save AFTER the pickups → a SECOND isolated registry → Continue ----------
+    // The post-pickup state crosses the boundary too: no mint, no replay, no re-materialized drop,
+    // and the inventory the player earned is exactly what the save carries.
+    const postPickup = serializeSnapshot(restored);
+    const proc2 = await freshProcess();
+    const restored2 = proc2.persist.selectSnapshots([postPickup, null]).gs!;
+    expect(proc2.persist.validate(restored2)).toBeTruthy();
+    const rr2 = restored2.run!;
+    const continue2At = t + 60000;
+    const again2 = proc2.returnReport.settleWithReturn(restored2, continue2At);
+    expect(dropEntities(rr2)).toHaveLength(0);                              // no drop re-minted by the independent reload
+    expect(countItem(rr2, C(rr2, 'inv').id, 'meat')).toBe(invMeatBefore + 2);
+    expect(countItem(rr2, C(rr2, 'inv').id, 'hide')).toBe(invHideBefore + 1);
+    expect(rr2.receipts.filter((q: any) => q.kind === 'pickup')).toHaveLength(dropsAtReturnCount);   // zero pickup replay across the boundary
+    const live2 = (Object.values(rr2.custody as Record<string, any>) as any[]).flatMap((c: any) => c.slots.filter(Boolean).map((st: any) => st.uid));
+    expect(new Set(live2).size).toBe(live2.length);                         // unique live UIDs after an independent reload
+    expect(live2.filter(u => u === meatDropKeep.uid).concat(live2.filter(u => u === hideDropKeep.uid))).toHaveLength(2);
+    // one more real walk on the reloaded run — nothing is re-granted
+    let t2 = continue2At;
+    const step2 = (inp: Partial<Input>, ms = 50) => { t2 += ms; proc2.sim.tick(restored2, { ...idle(), ...inp }, ms, t2); };
+    for (let i = 0; i < 60; i++) step2({ left: true });
+    for (let i = 0; i < 60; i++) step2({ right: true });
+    expect(countItem(rr2, C(rr2, 'inv').id, 'meat')).toBe(invMeatBefore + 2);
+    expect(countItem(rr2, C(rr2, 'inv').id, 'hide')).toBe(invHideBefore + 1);
+    expect(rr2.receipts.filter((q: any) => q.kind === 'pickup')).toHaveLength(dropsAtReturnCount);
+    expect(again2.report?.sections.world.some((q: any) => /creature.*died while you were away/.test(q.text)) ?? false).toBe(false);   // death still not re-reported
   });
 });

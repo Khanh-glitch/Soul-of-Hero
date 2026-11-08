@@ -5,7 +5,7 @@
 // Labbelling: NATURAL = real movement only, knowledge comes from shipped laws;
 //             FIXTURE = placement-only fixtures (injected impulses/projectiles are marked);
 //             CONTROL = one lawful prerequisite removed or one hostile category substituted;
-//             PROCESS = an independent JS module registry plays the part of a fresh browser process.
+//             PROCESS = an isolated JS module registry (vi.resetModules + fresh imports); NOT a separate OS/browser process.
 // shipping_fresh is used unmodified (placing structures in tests is a fixture, not a Map edit).
 import { describe, it, expect, beforeAll, vi } from 'vitest';
 import { TILE, T, uid, type GameState } from '../src/game/core';
@@ -13,6 +13,7 @@ import { newGame, dispatch, addItem, markDirty, mkCreature, mkContainer, C, coun
 import { settle, tick, PROJ, HAZ, bindCombat, type Input } from '../src/game/sim';
 import { getWorld, setActiveLayout } from '../src/game/world';
 import { serializeSnapshot, selectSnapshots, validate } from '../src/game/persist';
+import { ITEMS } from '../src/game/catalog';
 
 const T0 = Date.UTC(2026, 10, 8, 12);
 let serial = 0;
@@ -97,12 +98,18 @@ function poweredTurret(gs: GameState, tx: number, ty: number, opts: { arrows?: n
   });
   r.entities[gen.id] = gen;
   turret.turret!.generatorId = gen.id;
-  if ((opts.fuel ?? 40) > 0) addItem(r, fuelBox, 'wood', opts.fuel ?? 40);
-  if ((opts.arrows ?? 8) > 0) {
-    // multiple slots when stack is capped at 60 for the arrow cap test fixture
-    let left = opts.arrows ?? 8;
-    while (left > 0) { const room = Math.min(60, left); addItem(r, arrowBox, 'arrow', room); left -= room; }
-  }
+  // Fixture grants are PAID stock at real container capacity — never more than the chest holds.
+  const fixtureGrant = (cid: string, key: string, qty: number) => {
+    const leftover = addItem(r, cid, key, qty);
+    expect(leftover, `${key} fixture grant exceeded the chest's real capacity`).toBe(0);   // every input accounted for
+    expect(countItem(r, cid, key)).toBe(qty);                                              // the chest really holds it
+  };
+  const woodCapacity = 3 * ITEMS.wood.max;     // 3-slot fuel chest · 60 wood per slot = 180
+  const arrowCapacity = 3 * ITEMS.arrow.max;   // 3-slot arrow chest · 60 arrows per slot = 180
+  const fuel = opts.fuel ?? 40;
+  if (fuel > 0) { expect(fuel).toBeLessThanOrEqual(woodCapacity); fixtureGrant(fuelBox, 'wood', fuel); }
+  const arrows = opts.arrows ?? 8;
+  if (arrows > 0) { expect(arrows).toBeLessThanOrEqual(arrowCapacity); fixtureGrant(arrowBox, 'arrow', arrows); }
   markDirty();
   return { turret, gen, arrowBox, fuelBox };
 }
@@ -117,7 +124,7 @@ function walkHome(gs: GameState, steps = 170) {
 const doorHits = (r: any, doorId: string) =>
   r.receipts.filter((q: any) => q.kind === 'struct.hit' && String(q.detail).startsWith(doorId));
 
-/** Independent module registry — the closest thing vitest has to a fresh browser process. */
+/** ISOLATED MODULE REGISTRY — vi.resetModules() + fresh imports; NOT a separate OS/browser process. */
 async function freshProcess() {
   vi.resetModules();
   const sim = await import('../src/game/sim');
@@ -354,7 +361,7 @@ describe('R5.1 P1-E — the fine-defense budget persists across partitions and r
   const PARTITION_GAP = 20 * 60000;
   function siege(seed: number) {
     const { gs, px, py } = freshRun(seed); const r = gs.run!;
-    poweredTurret(gs, px + 2, py, { arrows: 180, fuel: 4000, energy: 0 });
+    poweredTurret(gs, px + 2, py, { arrows: 180, fuel: 180, energy: 0 });   // racks FULL: 3×60 arrows, 3×60 wood — real paid capacity, asserted by the helper
     const wolf = mkCreature(r, 'wolf', (px + 4) * TILE + 8, py * TILE + 8, 10_000_000); wolf.state = 'wander';
     r.creatures.push(wolf);
     bindCombat(r);   // the game always binds the run's combat before any projectile exists there
