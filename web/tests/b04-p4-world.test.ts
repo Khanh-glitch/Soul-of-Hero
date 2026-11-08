@@ -148,11 +148,12 @@ describe('B04-P4 Metal Pipe at the physical Foundry Recycler (X:pipe-v1)', () =>
     expect(ok.ok, JSON.stringify(ok)).toBe(true);
     expect(countItem(r, 'inv', 'metal_pipe')).toBe(1);             // exactly one pipe left the carried inventory (2 -> 1)
     const job = r.entities[id].station!.queue[0];
-    expect(job.recipe).toBe('X:pipe-v1'); expect(job.reserved?.length).toBe(1);
-    stepStations(g, 9000, T0 + 9000);
-    expect(countItem(r, out.id, 'refined_iron_ingot')).toBe(0);    // not finished before the real 10 s
-    stepStations(g, 1000, T0 + 10000);
-    expect(countItem(r, out.id, 'refined_iron_ingot')).toBe(1);    // one ingot out: a net loss against the 2 ingots + parts that made the pipe
+    expect(job.recipe).toBe('X:pipe-v2'); expect(job.reserved?.length).toBe(1);   // MEC-01 A2: NEW pipe jobs use v2 (1 ingot + 1 MP, 12 s); X:pipe-v1 is kept for stored jobs
+    stepStations(g, 11000, T0 + 11000);
+    expect(countItem(r, out.id, 'refined_iron_ingot')).toBe(0);    // not finished before the real 12 s
+    stepStations(g, 1000, T0 + 12000);
+    expect(countItem(r, out.id, 'refined_iron_ingot')).toBe(1);    // one ingot + one Mechanical Part out: a net loss against the 2 ingots + parts that made the pipe
+    expect(countItem(r, out.id, 'mechanical_parts')).toBe(1);
     expect(r.entities[id].station!.queue.length).toBe(0);
   });
   it('a full output blocks the job without losing the reserved pipe; cancel returns that same UID', () => {

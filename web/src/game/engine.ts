@@ -1,6 +1,6 @@
 import { landingStimulus } from './stimulus';
 import { supportsAirdrops, airdropArea, airdropTimes, airdropRewards, chooseAirdropSite, airdropStaticEligible } from './airdrop';
-import { recoveryPlan, recoveryPlanFor, recoveryFits } from './recycler';
+import { recoveryPlan, recoveryPlanFor, recoveryFits, COMPONENT_RECIPES } from './recycler';
 import { recordIntel, gateKey, placeOfPoi } from './expedition-intel';
 import { poiPowerMissingReason, poiDoorContract, poiGeneratorContract, poiGenerator, poiPowered, interiorRelease, doorwayOccupied, advancePoiAccess, poiContractDigest } from './poi-access';
 import { vehicleClear, vehicleExitPoint } from './motorbike';
@@ -1336,7 +1336,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const e=r.entities[it.eid];if(!e||e.kind!=='recycler'||!e.station||!near(r,e,2.8)||!clearInteraction(r,e))return fail('Stand at the Foundry Recycler with a clear path.');
       const inv=C(r,'inv');if(!validSlot(inv,it.slot))return fail('Choose a carried recyclable item.');const s=inv.slots[it.slot];
       if(!s||s.uid!==it.uid)return fail('That item is no longer carried.');
-      const plan=recoveryPlan(s);if(!plan&&s.key==='metal_pipe'&&s.qty!==1)return fail('Split one Metal Pipe off the stack first (Split in the inventory), then recycle that single pipe.');
+      const plan=recoveryPlan(s);if(!plan&&(s.key==='metal_pipe'||s.key==='metal_blade'||s.key==='mechanical_gear')&&s.qty!==1)return fail(`Split one ${ITEMS[s.key].name} off the stack first (Split in the inventory), then recycle that single part.`);
       if(!plan||(it.type==='recycleDrive'&&s.key!=='damaged_drive'))return fail('This item is not an eligible Recycler input.');
       if(p.action?.slot===it.slot)return fail('Finish your current action.');if(e.station.queue.length>=1)return fail('Recycler is already processing an item.');
       if(!recoveryFits(C(r,e.station.outC),plan.outputs))return fail('Recycler output cannot hold all results; collect items first.');
@@ -1869,7 +1869,7 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
       // A finished job is committed at its event time without requiring extra work or fuel.
       if (job && job.left <= 0) {
         const at = now - t;
-        if (job.recipe==='X:drive'||job.recipe==='X:recover-v1'||job.recipe==='X:recover-v2'||job.recipe==='X:recover-v3'||job.recipe==='X:pipe-v1'||job.recipe==='X:gear-v1') {
+        if (job.recipe==='X:drive'||job.recipe==='X:recover-v1'||job.recipe==='X:recover-v2'||job.recipe==='X:recover-v3'||COMPONENT_RECIPES.includes(job.recipe)) {
           // Outputs are fixed by the job's stored recipe version (v1 jobs never change when v2 is added).
           const plan=job.reserved?.length===1?recoveryPlanFor(job.reserved[0],job.recipe):null;
           if(e.kind!=='recycler'||!plan||plan.recipe!==job.recipe||!recoveryFits(C(r,st.outC),plan.outputs)){blocked=true;note('Recycler: output full or invalid reservation.');stationState(r,e,'output_full',at);continue;}

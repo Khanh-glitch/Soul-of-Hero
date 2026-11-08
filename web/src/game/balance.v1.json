@@ -867,10 +867,12 @@
     }
   },
   "recyclerV4": {
-    "_status": "SOH_PROVISIONAL MEC-01 R2 (A1): one carried Mechanical Gear at the physical Foundry Recycler -> 2 Mechanical Parts + 1 Iron Ingot. NEW jobs only (X:gear-v1); queued/saved jobs keep their stored recipe. Gear craft = 2 ingot + 2 MP + 1 fastener = ~4.11 ingot-eq (scrap=1/3 ingot, MP=0.833, fastener=0.444); return = 2.67 ingot-eq, net loss ~1.44 per cycle (no loop). Gear has no durability, so no condition tiers. LI per-item yield: ORIGINAL_UNKNOWN.",
+    "_status": "SOH_PROVISIONAL MEC-01 R2 A1/A2 DOCUMENTATION MIRROR. Runtime rules are immutable constants in recycler.ts (COMPONENT_RULES); a test asserts equality. New jobs only: X:gear-v1 (gear->2 MP+1 ingot, 15s), X:pipe-v2 (pipe->1 refined+1 MP, 12s), X:blade-v1 (blade->2 ingot+1 MP, 14s). X:pipe-v1 (pipe->1 refined, 10s) stays in code for stored jobs. Returns are below craft cost (no loop). LI per-item yields: ORIGINAL_UNKNOWN.",
     "seconds": 15,
     "components": {
       "mechanical_gear": {
+        "recipe": "X:gear-v1",
+        "seconds": 15,
         "outputs": [
           [
             "mechanical_parts",
@@ -878,6 +880,34 @@
           ],
           [
             "iron_ingot",
+            1
+          ]
+        ]
+      },
+      "metal_pipe": {
+        "recipe": "X:pipe-v2",
+        "seconds": 12,
+        "outputs": [
+          [
+            "refined_iron_ingot",
+            1
+          ],
+          [
+            "mechanical_parts",
+            1
+          ]
+        ]
+      },
+      "metal_blade": {
+        "recipe": "X:blade-v1",
+        "seconds": 14,
+        "outputs": [
+          [
+            "iron_ingot",
+            2
+          ],
+          [
+            "mechanical_parts",
             1
           ]
         ]

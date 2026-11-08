@@ -35,12 +35,13 @@ describe('B05-R C2 Recycler in-flight pipe job across save/reload', () => {
     // a second recycler is refused as well
     const twice = reloaded(g) as any; twice.run.entities['eX'] = { ...twice.run.entities[id], id: 'eX' }; expect(validate(twice)).toBeNull();
     const job = snap.run!.entities[id].station!.queue[0];
-    expect(job.recipe).toBe('X:pipe-v1');
+    expect(job.recipe).toBe('X:pipe-v2');   // MEC-01 A2 new-job version
     expect(job.reserved?.[0]?.uid).toBe(uid);                           // the same pipe UID is still reserved
-    stepStations(snap, 6000, T0 + 10_000);                              // finish after reload
+    stepStations(snap, 60_000, T0 + 70_000);                            // finish after reload (12 s job)
     expect(countItem(snap.run!, snap.run!.entities[id].station!.outC, 'refined_iron_ingot')).toBe(1);
+    expect(countItem(snap.run!, snap.run!.entities[id].station!.outC, 'mechanical_parts')).toBe(1);
     expect(snap.run!.entities[id].station!.queue.length).toBe(0);
-    stepStations(snap, 60_000, T0 + 70_000);                            // more time: no second grant
+    stepStations(snap, 60_000, T0 + 130_000);                           // more time: no second grant
     expect(countItem(snap.run!, snap.run!.entities[id].station!.outC, 'refined_iron_ingot')).toBe(1);
     expect(countItem(snap.run!, 'inv', 'metal_pipe')).toBe(0);          // the pipe is consumed exactly once
     void C;

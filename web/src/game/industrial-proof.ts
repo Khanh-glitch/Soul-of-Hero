@@ -3,7 +3,7 @@
 // Atoms without an authored conversion (coal, wood, leather, stone, crystal, spares) are compared per material and never
 // converted. damaged_drive is salvage-only (non-repeatable): any route through it is excluded from craft cost.
 import { RECIPES, ITEMS } from './catalog';
-import { recoveryPlanFor, type RecoveryPlan } from './recycler';
+import { recoveryPlanFor, COMPONENT_RECIPES, type RecoveryPlan } from './recycler';
 import BAL from './balance.v1.json';
 
 export type Vec = Record<string, number>;
@@ -41,10 +41,13 @@ export function expand(item: string, qty = 1, depth = 0, seen = new Set<string>(
 export function ieValue(v: Vec): number { return Object.entries(v).reduce((n, [k, q]) => n + (INGOT_PER[k] ?? 0) * q, 0); }
 
 /** Recovery vector of one recycle at a given condition tier, through the pinned recovery plan of that version. */
-export function recoveryAtTier(item: string, recipe: 'X:recover-v1' | 'X:recover-v2' | 'X:recover-v3', tier: 'base' | 'mid' | 'high'): { plan: RecoveryPlan | null; vec: Vec | null; repeatable: boolean } {
+export function recoveryAtTier(item: string, recipe: string, tier: 'base' | 'mid' | 'high' | 'single'): { plan: RecoveryPlan | null; vec: Vec | null; repeatable: boolean } {
+  // Component recipes (gear/pipe/blade) carry no durability: one unconditioned stack, tier 'single'.
+  const component = COMPONENT_RECIPES.includes(recipe);
+  if (component !== (tier === 'single')) return { plan: null, vec: null, repeatable: false };
   const max = ITEMS[item]?.dur ?? 1;
-  const cond = tier === 'base' ? 0 : tier === 'mid' ? BAL.recyclerV1.midCondition : BAL.recyclerV1.highCondition;
-  const s: any = { uid: 'proof', key: item, qty: 1, dur: Math.round(max * Math.max(cond, tier === 'high' ? 1 : cond)) };
+  const cond = tier === 'base' || tier === 'single' ? 0 : tier === 'mid' ? BAL.recyclerV1.midCondition : BAL.recyclerV1.highCondition;
+  const s: any = component ? { uid: 'proof', key: item, qty: 1 } : { uid: 'proof', key: item, qty: 1, dur: Math.round(max * Math.max(cond, tier === 'high' ? 1 : cond)) };
   const plan = recoveryPlanFor(s, recipe);
   if (!plan) return { plan: null, vec: null, repeatable: false };
   const vec: Vec = {};
@@ -52,17 +55,22 @@ export function recoveryAtTier(item: string, recipe: 'X:recover-v1' | 'X:recover
   return { plan, vec, repeatable: true };
 }
 
-export type Verdict = 'OK' | 'OVER_RETURN' | 'UNKNOWN';
-export function proveItem(item: string, recipe: 'X:recover-v1' | 'X:recover-v2' | 'X:recover-v3') {
+/** Verdicts: NO_RECOVERY_ROUTE = the item has no applicable recovery route for this recipe (not a numeric claim);
+ *  UNPROVEN = a route exists but its craft or output cannot be expanded to priced atoms (unknown evidence, never zero);
+ *  OVER_RETURN / OK = both priced. Scope: a DIRECT_CRAFT_RECYCLE comparison at atom level, NOT a global anti-arbitrage proof. */
+export type Verdict = 'OK' | 'OVER_RETURN' | 'UNPROVEN' | 'NO_RECOVERY_ROUTE';
+export function proveItem(item: string, recipe: string) {
   const craft = expand(item, 1);
+  const tiers = COMPONENT_RECIPES.includes(recipe) ? (['single'] as const) : (['base', 'mid', 'high'] as const);
   const rows: any[] = [];
-  for (const tier of ['base', 'mid', 'high'] as const) {
+  for (const tier of tiers) {
     const rec = recoveryAtTier(item, recipe, tier);
-    if (!rec.vec || !craft) { rows.push({ tier, verdict: 'UNKNOWN' }); continue; }
+    if (!rec.plan) { rows.push({ tier, verdict: 'NO_RECOVERY_ROUTE' as Verdict }); continue; }
+    if (!rec.vec || !craft) { rows.push({ tier, cumulativeOutputs: rec.plan.outputs, verdict: 'UNPROVEN' as Verdict, reason: !craft ? 'no acyclic craft route priced to atoms' : 'an output has no priced route' }); continue; }
     const ieRec = ieValue(rec.vec), ieCraft = ieValue(craft.vec);
     const mintedOther = Object.keys(rec.vec).filter(k => !INGOT_PER[k] && !SALVAGE_ONLY.has(k) && (rec.vec![k] > (craft.vec[k] ?? 0) + 1e-9)).map(k => `${k}:+${Math.round((rec.vec![k] - (craft.vec[k] ?? 0)) * 100) / 100}`);
     const over = ieRec > ieCraft + 1e-9 || mintedOther.length > 0;
-    rows.push({ tier, cumulativeOutputs: rec.plan!.outputs, ieRecovered: round(ieRec), ieCraft: round(ieCraft), mintedNonNumeraire: mintedOther, verdict: over ? 'OVER_RETURN' : 'OK' });
+    rows.push({ tier, cumulativeOutputs: rec.plan.outputs, ieRecovered: round(ieRec), ieCraft: round(ieCraft), mintedNonNumeraire: mintedOther, verdict: (over ? 'OVER_RETURN' : 'OK') as Verdict, claim: 'DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)' });
   }
   return { item, recipe, craftRoute: craft?.route, craftSeconds: craft ? routesFor(item).find(r => r.recipe === craft.route)?.secs : undefined, craftVec: craft?.vec, rows };
 }
