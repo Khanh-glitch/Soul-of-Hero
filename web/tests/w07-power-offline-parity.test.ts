@@ -69,7 +69,7 @@ describe('W07-R truthful return report for standby turret draw', () => {
   it('an armed wired turret with arrows is reported as reserving power while away and not firing', () => {
     const o = scenario();
     const report = settle(o.g, T0 + 25000, false);
-    expect(report.some(l => l.includes('was armed on a generator with fuel when you left') && l.includes('turrets do not fire while away'))).toBe(true);
+    expect(report.some(l => l.includes('was armed on a generator with fuel when you left') && l.includes('engages lawful targets'))).toBe(true);
     expect(o.g.run!.receipts.some(q => q.kind === 'turret.fire')).toBe(false);
   });
   it('a disarmed turret produces no standby line and no draw', () => {

@@ -489,6 +489,7 @@ function bashAhead(gs: GameState, m: Creature, a: number, now: number) {
   const e = entsAt(r, tx, ty).find(e => e.kind === 'struct' && (STRUCTS[e.type!].block)); if (!e) return;
   const dmg = m.elder ? ELDERS[m.elder.key].dmg * 2 : CREATURES[m.type].dmg; const before = e.hp!; e.hp! = Math.max(0, before - dmg); m.cd = 900;
   if (offlineImpacts && (e.owner === undefined || e.owner === 'player')) { const prior = offlineImpacts.get(e.id); offlineImpacts.set(e.id, { name: STRUCTS[e.type!].name, before: prior?.before ?? before, after: e.hp!, destroyed: e.hp! <= 0 }); }
+  (m as any).prov = true; // R5 law: battering a structure is hostility to the home — same eligibility source as being damaged.
   receipt(r, now, 'struct.hit', `${e.id}:${m.type}:${before - e.hp!}`); fx('structhit', { x: e.x, y: e.y, n: before - e.hp! });
   if (e.hp! <= 0) { if (offlineImpacts) offlineStructureChange++; destroyStructure(r, e, now); receipt(r, now, 'struct.destroyed', `${e.type} by ${m.type}`); pushLog(r, now, `${STRUCTS[e.type!].name} was smashed by a ${CREATURES[m.type]?.name || 'beast'}!`, 'red'); fx('structbreak', { x: e.x, y: e.y }); }
 }
@@ -522,7 +523,9 @@ function traceBarrier(r: RunState, m: Creature) {
   const tr = r.traces.find(t => t.id === k.traceId && t.chainId === k.chainId && t.life > 0);
   if (!tr || !Number.isFinite(tr.a)) return null;
   const dx = Math.cos(tr.a), dy = Math.sin(tr.a), grid = blockGrid(r);
-  for (let d = 2; d <= 18; d += 2) {
+  // R5-SIM1: bounded forward scan — the first blocking cell along the evidence ray, up to 64px (4 tiles).
+  // The old 18px window could never find a wall sitting behind a natural gap between footprint and obstacle.
+  for (let d = 2; d <= 64; d += 2) {
     const x = tr.x + dx * d, y = tr.y + dy * d, tx = tileOf(x), ty = tileOf(y), b = grid[ty * WW + tx];
     if (!b || b === 4) continue;
     if (b !== 3) return null;
@@ -542,14 +545,17 @@ function trackEvidence(gs: GameState, m: Creature, speed: number, dt: number, no
   if (nxt && nxt.t <= now && dist(m.x, m.y, nxt.x, nxt.y) <= BAL.ai.traceSenseRadius && los(r, m.x, m.y, nxt.x, nxt.y, true)) {
     m.knows = { kind: 'trace', x: nxt.x, y: nxt.y, at: nxt.t, traceId: nxt.id, chainId: nxt.chainId }; return;
   }
-  // Close on the already-sensed mark before deciding it is lost.
-  if (dist(m.x, m.y, k.x, k.y) >= 2) { steer(gs, m, k.x, k.y, speed * 0.8, dt, now); return; }
+  // The terminal footprint may point at a real obstacle. Resolve the barrier first and close on it;
+  // a committed contact stops the advance and resolves as a bash. The old order let the creature
+  // ping-pong forever at dist ~2-3 from the anchor without ever registering the wall.
   const barrier = traceBarrier(r, m);
   if (barrier) {
     const a = Math.atan2(barrier.y - m.y, barrier.x - m.x); m.angle = a; m.dir = dirFromAngle(a);
     if (moveBody(r, m, Math.cos(a) * speed * 0.8 * dt, Math.sin(a) * speed * 0.8 * dt, 4, 'creature')) bashAhead(gs, m, a, now);
     return;
   }
+  // Close on the already-sensed mark before deciding it is lost.
+  if (dist(m.x, m.y, k.x, k.y) >= 2) { steer(gs, m, k.x, k.y, speed * 0.8, dt, now); return; }
   m.traceIgnore = k.chainId; m.knows = null; m.path = null; m.state = 'wander'; fx('lost', { x: m.x, y: m.y - 10 });
 }
 function encounteredTrace(r: RunState, m: Creature, now: number) {
@@ -591,7 +597,15 @@ function investigateStimulus(gs:GameState,m:Creature,speed:number,dt:number,now:
 function traceOnly(gs: GameState, m: Creature, dtMs: number, now: number): 'advanced' | 'defer' | 'done' {
   const r = gs.run!, p = r.player, d = CREATURES[m.type];
   if ((m.frozenUntil||0)>now || (m.rootedUntil||0)>now) return 'done';
-  if (!d || m.elder || !['idle', 'wander', 'track', 'chase'].includes(m.state) || (m.knows && m.knows.kind !== 'trace') || Math.abs(m.kbx) + Math.abs(m.kby) > 1) return 'defer';
+  // A knockback impulse is an impulse, not a state: live play integrates it in place
+  // (moveBody + 0.82/tick decay). Offline must do the same, or any hit taken — e.g. a
+  // turret arrow — would otherwise freeze the creature out of the world forever.
+  if (Math.abs(m.kbx) + Math.abs(m.kby) > 1) {
+    moveBody(r, m, (m.kbx * dtMs) / 1000, (m.kby * dtMs) / 1000, 4, 'creature');
+    m.kbx *= 0.82; m.kby *= 0.82;
+    return 'advanced';
+  }
+  if (!d || m.elder || !['idle', 'wander', 'track', 'chase'].includes(m.state) || (m.knows && m.knows.kind !== 'trace')) return 'defer';
   // Player combat and in-flight effects require the full actor simulation, not a guess.
   const sight = (darkness(r, now) > 0.45 ? BAL.ai.sightNight : BAL.ai.sightDay) * (d.sight / 100) * (weatherAt(r, now) === 'fog' ? 0.6 : 1) * (p.sheltered ? 0.5 : 1);
   if (!p.dead && dist(m.x, m.y, p.x, p.y) < sight && los(r, m.x, m.y, p.x, p.y)) return 'defer';
@@ -763,13 +777,21 @@ function castPattern(gs: GameState, m: Creature, pat: string, now: number) {
 }
 function setTimeoutHaz(gs: GameState, m: Creature, dmg: number) { const p = gs.run!.player; HAZ.push({ kind: 'circle', x: p.x, y: p.y, r: 30, t: 0, tell: 1300, dur: 140, dmg, style: m.elder!.key, owner: m.id, effect: 'emergeAt' }); }
 
-/** Live-only: no speculative targeting or ammunition expenditure during offline catch-up. */
+/** One shared targeting law for online frames and offline settlement — never a divergent copy. */
+function turretTargets(r: RunState, e: Entity, now: number, active: number, range: number): Creature[] {
+  const targets=r.creatures.filter(m=>m.state!=='dead' && m.state!=='sleep' && m.offlineUnresolvedAt===undefined && dist(m.x,m.y,r.player.x,r.player.y)<=active && dist(e.x,e.y,m.x,m.y)<=range && (CREATURES[m.type]?.aggro || (m as any).prov || isRagnarok(r,now)) && clearPhysicalLine(r,e,m,true,true));
+  targets.sort((a,b)=>dist(e.x,e.y,a.x,a.y)-dist(e.x,e.y,b.x,b.y)); return targets;
+}
+function turretContactWindow(r: RunState, now: number): boolean {
+  const active=BAL.ai.activeRadiusTiles*TILE; const range = weatherAt(r,now)==='fog' ? 60 : weatherAt(r,now)==='storm' ? 72 : 96;
+  for (const e of Object.values(r.entities)) { if (!e.turret) continue; if (turretStatus(r,e)!=='Ready') continue; if (turretTargets(r,e,now,active,range).length) return true; }
+  return false;
+}
 function tickTurrets(gs: GameState, dtMs: number, now: number) {
   const r=gs.run!, active=BAL.ai.activeRadiusTiles*TILE;
   for (const e of Object.values(r.entities)) { const t=e.turret; if (!t) continue; t.cooldown=Math.max(0,t.cooldown-dtMs); t.tracking=false; if (turretStatus(r,e)!=='Ready') continue;
     const range = weatherAt(r,now)==='fog' ? 60 : weatherAt(r,now)==='storm' ? 72 : 96;
-    const targets=r.creatures.filter(m=>m.state!=='dead' && m.state!=='sleep' && m.offlineUnresolvedAt===undefined && dist(m.x,m.y,r.player.x,r.player.y)<=active && dist(e.x,e.y,m.x,m.y)<=range && (CREATURES[m.type]?.aggro || (m as any).prov || isRagnarok(r,now)) && clearPhysicalLine(r,e,m,true,true));
-    targets.sort((a,b)=>dist(e.x,e.y,a.x,a.y)-dist(e.x,e.y,b.x,b.y)); const m=targets[0]; if (!m) continue; t.tracking=true;
+    const targets=turretTargets(r,e,now,active,range); const m=targets[0]; if (!m) continue; t.tracking=true;
     const a=Math.atan2(m.y-e.y,m.x-e.x); t.angle=a; if (t.cooldown>0) continue;
     const sx=e.x+Math.cos(a)*12, sy=e.y+Math.sin(a)*12; if (blockedAtTurret(r,sx,sy)) continue;
     removeItem(r,e.c!,'arrow',1); t.cooldown=1000; PROJ.push({x:sx,y:sy,vx:Math.cos(a)*260,vy:Math.sin(a)*260,life:.5,dmg:16,from:'player',kind:'arrow',r:3});
@@ -1083,6 +1105,7 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   for (const m of eligible.slice(24)) m.offlineUnresolvedAt = start;
   const impacts = new Map<string, { name: string; before: number; after: number; destroyed: boolean }>();
   let frames = 0, structureEpoch = offlineStructureChange;
+  let defenseFrames = 0;   // R5: fine slices spent resolving a live defense contact (bounded work)
 
   let t = start, wetMs = 0; const zone = getWorld().zone[tileOf(p.y) * WW + tileOf(p.x)];
   // B03-A: heat/shelter transitions observed chronologically (receipts are written at the exact boundary).
@@ -1099,6 +1122,11 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
     const nextWeather = r.startedAt - r.qaOffset + (Math.floor((t - r.startedAt + r.qaOffset) / slotMs) + 1) * slotMs;
     let dtMs = Math.min(60000, end - t, nextWeather - t);
     if (pending.length && frames < 2400) dtMs = Math.min(dtMs, 50);
+    // R5-SIM2: bounded defense contact window — a ready, supplied turret that can legally see a target,
+    // or arrows already in flight, force fine-grained slices so offline defense uses the identical online law.
+    const inFlight = PROJ.some(pr => pr.from === 'player' && !(pr.delay && pr.delay > 0));
+    const contact = inFlight || turretContactWindow(r, t);
+    if (contact && defenseFrames < 14400) dtMs = Math.min(dtMs, 50);
     dtMs = territoryBoundary(r,dtMs);
     // Integrate the existing offline drains at their actual depletion/death boundaries.
     // Hunger follows the sourced 24h baseline; thirst is an explicit provisional SOH assumption.
@@ -1144,6 +1172,14 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
     const until = Math.min(end, nextWeather, t + Math.max(dtMs, 0.001)); dtMs = until - t;
     if (isWet(weatherAt(r, t))) wetMs += dtMs;
     advanceWorld(gs, t, until, silent ? undefined : report, false);
+    if (dtMs <= 50 && defenseFrames < 14400 && (PROJ.some(pr => pr.from === 'player') || turretContactWindow(r, until))) {
+      // Turret resolution shares the exact online functions: same range, same LOS, same cooldown, same ammo cost (1 arrow per shot).
+      tickTurrets(gs, dtMs, until);
+      tickProj(gs, dtMs, until);
+      defenseFrames++;
+    } else if (dtMs > 50) {
+      for (const e of Object.values(r.entities)) { const tc = e.turret; if (tc) tc.cooldown = Math.max(0, tc.cooldown - dtMs); }
+    }
     if (r.rest) restStep(r, until);
     if (!p.dead) p.warmth = thermalStep(p.warmth, thermalNow.target, dtMs / 60000);
     for (const { e, st } of heatersInReach(r, { x: p.x, y: p.y })) {
@@ -1187,7 +1223,7 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   const hrs = gap / 3600000;
   report.unshift(`Away for ${hrs >= 1 ? hrs.toFixed(1) + ' h' : gap >= 60000 ? Math.round(gap / 60000) + ' min' : Math.round(gap / 1000) + ' sec'}.`);
   report.push('Nearby evidenced trails may be followed while away; other encounters remain unresolved.');
-  for (const t of standbyTurrets) report.push(`Turret ${t.tx},${t.ty} was armed on a generator with fuel when you left: it reserved power while fuel lasted, and turrets do not fire while away.`);
+  for (const t of standbyTurrets) report.push(`Turret ${t.tx},${t.ty} was armed on a generator with fuel when you left: it kept its power reservation while fuel lasted. While away it engages lawful targets — same sight, range, cooldown and arrow cost as while you play.`);
   for (const impact of impacts.values()) report.push(impact.destroyed ? `${impact.name} was destroyed while away.` : `${impact.name}: ${Math.round(impact.before)} → ${Math.round(impact.after)} HP while away.`);
   if (!p.dead) {
     const nearby = r.traces.filter(tr => dist(p.x, p.y, tr.x, tr.y) <= 64 && los(r, p.x, p.y, tr.x, tr.y, true)).length;
