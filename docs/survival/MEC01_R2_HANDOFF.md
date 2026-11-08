@@ -124,3 +124,17 @@ python3 -m http.server 41730 --bind 0.0.0.0 --directory dist-http   # live previ
 ## Verdict
 
 R2's remaining work items B, C3 and D are materially closed with real code/results; C1 and C2 are delivered with labelled fixtures and real custody. The single open verification gap is browser rendering evidence (runner-bound); the single-file build remains a known packaging blocker. **HOLD MERGE.** Reviewer should: (1) re-run `npm test`, (2) regenerate the benchmark and diff `web/reports/`, (3) inspect `evidence/mec01-*`, (4) decide the browser-evidence path, (5) keep v2 pinned tables untouched.
+
+---
+
+## Addendum (2026-11-08) — MEC-01 R3 mechanics & causal-integrity round
+
+R3 ran on `arena/a9d7aa20-soul-of-hero` (not the PR branch) with its own documents:
+
+- Audit + coverage matrix (K1–K8, C01–C24, Atlas roll-up with the provisional/no-v11-CSV caveat): `docs/survival/MEC01_R3_AUDIT.md`
+- Handoff with P4 deliverable index: `docs/survival/MEC01_R3_HANDOFF.md`
+- P0: strict `web/tsconfig.test.json` added; whole `tests/` tree compiles strict (134→0 errors); `npm run typecheck[:tests]` scripts added; duplicate `node:fs` import removed; **b03-return false-pass harness defect fixed (vacuous hidden-POI assertions now real; 9/9)**.
+- P2: three new public-API adversarial probes (`web/tests/mec01-r3-causal-integrity.test.ts`): two-bench gear race, recycler-holds-UID refuses craft, one canister → one vehicle refuel. Zero new engine defects found at the prioritised boundaries; existing coverage reused elsewhere by name in the audit.
+- Verified results: `npm run typecheck` = 0 errors; `npm run typecheck:tests` = 0 errors; `npm test` at `df11d2f` = **722 passed | 1 skipped (identical to R2 base)**; after P2 additions = **725 passed | 1 skipped**.
+- Standing rule from R3 (do not drop): `typecheck` AND `typecheck:tests` must stay green in every PR; engine fixes require a real defect found by a named boundary probe; Atlas items are never mandatory features without creator lock; `shipping_fresh` findings are never tuned into final-map conclusions.
+- PR #44 remains OPEN / DRAFT / UNMERGED; R3 commits deliberately do NOT reach the PR branch.
