@@ -32,8 +32,8 @@ describe('P0-A legal full-pack fixture', () => {
     const fill = qaPrepareFullPack(r);
     expect(fill).toEqual({ filled: 24, total: 24 });
     const stacks = C(r, 'inv').slots.filter(Boolean)!;
-    for (const s of stacks) expect(s.qty).toBeLessThanOrEqual(ITEMS[s.key].max);
-    expect(new Set(stacks.map(s => s.uid)).size).toBe(stacks.length);
+    for (const s of stacks) expect(s!.qty).toBeLessThanOrEqual(ITEMS[s!.key].max);
+    expect(new Set(stacks.map(s => s!.uid)).size).toBe(stacks.length);
     expect(validate(g)).not.toBeNull();
     expect(() => serializeSnapshot(g)).not.toThrow();
   });

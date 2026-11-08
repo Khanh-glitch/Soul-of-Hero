@@ -49,7 +49,7 @@ describe('B04-P3 SYS12 airdrop phase projection', () => {
     // Locked refusal returns the real countdown reason; unlock is not early.
     r.player.x = e.x + TILE; r.player.y = e.y; markDirty();
     const early = act(g, 'openAirdrop', { eid: e.id }, t.unlockAt - 1000);
-    expect(early.ok).toBe(false); expect(early.reason).toMatch(/locked: opens to all in \d+s/);
+    expect(early.ok).toBe(false); expect((early as any).reason).toMatch(/locked: opens to all in \d+s/);
     step(g, t.unlockAt);
     expect(act(g, 'openAirdrop', { eid: e.id }, t.unlockAt).ok).toBe(true);
     // Physical withdrawal moves one real UID to inventory; the stock count decreases and the phase becomes partial.

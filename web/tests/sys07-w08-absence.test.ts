@@ -3,7 +3,7 @@
 // Writes evidence/sys07-w08/absence-benchmark.json when SOH_WRITE_EVIDENCE=1.
 import {describe,it,expect} from 'vitest';
 import {TILE,T,WW,HOUR,BAL} from '../src/game/core';
-import {newGame,dispatch,addItem,countItem,markDirty,claimAt,territoryForecast,STRUCTS} from '../src/game/engine';
+import {newGame,dispatch,addItem,countItem,markDirty,claimAt,territoryForecast} from '../src/game/engine';
 import {getWorld} from '../src/game/world';
 import {settle} from '../src/game/sim';
 import {writeFileSync,mkdirSync} from 'node:fs';

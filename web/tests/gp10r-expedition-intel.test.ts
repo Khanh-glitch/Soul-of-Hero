@@ -22,10 +22,10 @@ describe('GP11 expedition intel invariants', () => {
   it('observeGate is a separate committed observation: a denied door does not unlock and records nothing itself', () => {
     const {g,r}=fresh();
     const door=Object.values(r.entities).find(e=>e.kind==='door'&&e.poi==='light'&&e.locked==='power')!;
-    placeAt(r,door.tx,door.ty+12);
+    placeAt(r,door.tx!,door.ty!+12);
     expect(dispatch(g,{id:id('far'),type:'observeGate',eid:door.id},START+5).ok).toBe(false);
     expect(r.intel??[]).toEqual([]);
-    placeAt(r,door.tx,door.ty+1);
+    placeAt(r,door.tx!,door.ty!+1);
     const denied=dispatch(g,{id:id('door'),type:'door',eid:door.id},START+6);
     expect(denied.ok).toBe(false);                       // unpowered: still denied
     expect(door.open).toBeFalsy();
@@ -42,10 +42,10 @@ describe('GP11 expedition intel invariants', () => {
   it('observeLoot honours reach and records a container once; historical items are labelled as seen, not as stock', () => {
     const {g,r}=fresh();
     const crate=Object.values(r.entities).find(e=>e.kind==='loot'&&e.poi==='light'&&e.c)!;
-    placeAt(r,crate.tx,crate.ty+12);
+    placeAt(r,crate.tx!,crate.ty!+12);
     expect(dispatch(g,{id:id('loot-far'),type:'observeLoot',eid:crate.id},START+5).ok).toBe(false);
     expect(r.intel??[]).toEqual([]);
-    placeAt(r,crate.tx,crate.ty+1);
+    placeAt(r,crate.tx!,crate.ty!+1);
     expect(dispatch(g,{id:id('loot'),type:'observeLoot',eid:crate.id},START+6).ok).toBe(true);
     expect(r.intel).toContain('loot:light:fuel_can');
     expect(r.intel!.some(k=>k.includes('keycard'))).toBe(false);

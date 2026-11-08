@@ -19,7 +19,7 @@ function run(){
   const grid=blockGrid(r);let spot:{tx:number;ty:number}|undefined;
   search:for(let ty=6;ty<WH-6;ty++)for(let tx=6;tx<WW-20;tx++){let ok=true;for(let dy=-2;dy<=2&&ok;dy++)for(let dx=0;dx<=14&&ok;dx++)if(grid[(ty+dy)*WW+tx+dx]!==0)ok=false;if(ok){spot={tx,ty};break search;}}
   expect(spot).toBeTruthy();
-  r.player.x=spot!.tx*TILE+8;r.player.y=spot!.ty*TILE+8;r.player.hp=r.player.maxHp??r.player.hp;
+  r.player.x=spot!.tx*TILE+8;r.player.y=spot!.ty*TILE+8;r.player.hp=(r.player as any).maxHp??r.player.hp;
   r.clock.lastSimAt=START;
   return {g,r};
 }
@@ -112,7 +112,7 @@ describe('W08 combat sound source', () => {
     frame(g,t+120);
     expect(m.knows).toBeNull();
     expect(r.receipts.filter(x=>x.kind==='stimulus.lost').some(x=>x.detail.endsWith(':blocked')||x.detail.endsWith(':unreachable'))).toBe(true);
-    expect(Object.values(r.entities).filter(e=>e.kind==='struct'&&e.owner==='not-player'&&e.hp<100)).toHaveLength(0);
+    expect(Object.values(r.entities).filter(e=>e.kind==='struct'&&e.owner==='not-player'&&e.hp!<100)).toHaveLength(0);
   });
 
   it('save/reload neither duplicates emission nor resets knowledge; forged combat sources are rejected', () => {

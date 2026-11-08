@@ -15,8 +15,8 @@ describe('B02-P1-C reader class enforcement',()=>{
   it('the real vault door: a green-tagged card is refused, the vault card opens and reports its real class',()=>{
     const g=start(),r=g.run!,door=doorOf(g);move(g,door.x,door.y+16);
     addItem(r,'inv','keycard',1);const card=C(r,'inv').slots.find(s=>s?.key==='keycard')!;card.meta='green';
-    const bad=act(g,'door',{eid:door.id});expect(bad.ok).toBe(false);expect(bad.reason).toMatch(/Sealed/);expect(card.charge).toBe(3);
-    card.meta='vault';const ok=act(g,'door',{eid:door.id},T+2);expect(ok.ok).toBe(true);expect(ok.reason ?? ok.message ?? '').not.toContain('Green');
+    const bad=act(g,'door',{eid:door.id});expect(bad.ok).toBe(false);expect((bad as any).reason).toMatch(/Sealed/);expect(card.charge).toBe(3);
+    card.meta='vault';const ok=act(g,'door',{eid:door.id},T+2);expect(ok.ok).toBe(true);expect((ok as any).reason ?? (ok as any).message ?? '').not.toContain('Green');
     expect(card.charge).toBe(2);
   });
   it('fixture: a green door reports "Green card scanned" and refuses a vault card; restored afterwards',()=>{
@@ -28,7 +28,7 @@ describe('B02-P1-C reader class enforcement',()=>{
       addItem(r,'inv','keycard',1);const card=C(r,'inv').slots.find(s=>s?.key==='keycard')!;
       const vault=act(g,'door',{eid:door.id});expect(vault.ok).toBe(false);expect(card.charge).toBe(3);
       card.meta='green';const res=act(g,'door',{eid:door.id},T+2);expect(res.ok).toBe(true);
-      expect(String(res.message??res.reason??'')+JSON.stringify(res)).toContain('Green card scanned');
+      expect(String((res as any).message??(res as any).reason??'')+JSON.stringify(res)).toContain('Green card scanned');
       expect(countItem(r,'inv','keycard')).toBe(1);
     } finally { contract.cardClass=saved; }
     expect(contract.cardClass).toBe(saved);

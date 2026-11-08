@@ -32,7 +32,7 @@ function fixturePump(g: GameState, stock = 4): Entity {
 const pumpedJob = (g: GameState, pump: Entity, wood = 2) => {
   addItem(g.run!, pump.station!.fuelC, 'wood', wood);
   const res = act(g, 'craft', { recipe: 'pump_crude', eid: pump.id });
-  expect(res.ok, res.reason).toBe(true);
+  expect(res.ok, (res as any).reason).toBe(true);
 };
 
 describe('B05-R oil source authority: production placement is refused', () => {
@@ -42,7 +42,7 @@ describe('B05-R oil source authority: production placement is refused', () => {
     const p = r.player, tx = Math.floor(p.x / TILE) + 1, ty = Math.floor(p.y / TILE);
     const res = act(g, 'build', { struct: 'oil_pump', tx, ty });
     expect(res.ok).toBe(false);
-    expect(res.reason).toMatch(/authorized oil site/);
+    expect((res as any).reason).toMatch(/authorized oil site/);
     expect(Object.values(r.entities).some(e => e.type === 'oil_pump')).toBe(false);
   });
   it('the test authority is not a production source: none is registered by default', () => {
@@ -100,7 +100,7 @@ describe('B05-R pump extraction: one physical crude per cycle, source stock decr
     addItem(r, pump.station!.fuelC, 'wood', 2);
     const res = act(g, 'craft', { recipe: 'pump_crude', eid: pump.id });
     expect(res.ok).toBe(false);
-    expect(res.reason).toMatch(/no oil left/);
+    expect((res as any).reason).toMatch(/no oil left/);
   });
 });
 
@@ -138,7 +138,7 @@ describe('B05-R refinery turns crude into the existing fuel canister', () => {
     const bench: Entity = { id: `fixture-bench-${++serial}`, kind: 'struct', type: 'workbench', x: ref.x, y: ref.y, tx: ref.tx, ty: ref.ty, hp: 160, maxHp: 160, station: { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 0).id, outC: mkContainer(r, 'out', 4).id, level: 2 } };
     r.entities[bench.id] = bench;
     const res = act(g, 'craft', { recipe: 'refinery_crude', eid: ref.id });
-    expect(res.ok, res.reason).toBe(true);
+    expect(res.ok, (res as any).reason).toBe(true);
     expect(countItem(r, 'inv', 'crude_petroleum')).toBe(0);  // paid up front, reserved in the job
     stepStations(g, RECIPES.refinery_crude.secs * 1000, T + 90_000);
     expect(countItem(r, ref.station!.outC, 'fuel_can')).toBe(1);

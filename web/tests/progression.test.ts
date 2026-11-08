@@ -38,7 +38,7 @@ describe('physical progression',()=>{
     expect(item.dur).toBe(ITEMS.iron_sword.dur);expect(item.uid).toBe(uid);expect(countItem(r,'inv','iron_ingot')).toBe(0);expect(countItem(r,'inv','mechanical_parts')).toBe(0);
     expect(act(gs,'maintainItem',cmd,'repair-once')).toMatchObject({ok:false,dup:true});
     expect(act(gs,'maintainItem',cmd).ok).toBe(false);expect(validate(gs)).toBeTruthy();
-    const restored=JSON.parse(JSON.parse(serializeSnapshot(gs)).payload);expect(validate(restored)).toBeTruthy();expect(C(restored.run,'inv').slots[i].uid).toBe(uid);
+    const restored=JSON.parse(JSON.parse(serializeSnapshot(gs)).payload);expect(validate(restored)).toBeTruthy();expect(C(restored.run!,'inv').slots[i]!.uid).toBe(uid);
   });
   it('rejects repair when target, distance, owner, type, action or costs are invalid without mutation',()=>{
     const gs=fresh(),r=gs.run!,bench=station(gs,'workbench');give(gs,'iron_sword');const i=slot(gs,'iron_sword'),item=C(r,'inv').slots[i]!;item.dur=15;

@@ -17,9 +17,10 @@ const run = !!SAVE && existsSync(SAVE);
 (run ? describe : describe.skip)('MEC-01 C3 child (separate process resume)', () => {
   it('settles the offline clock from the on-disk save and reports exact output UIDs', () => {
     const text = readFileSync(SAVE, 'utf8');
-    const { gs, bad } = selectSnapshots([text, null]);
-    expect(gs, 'parent save must load through the game-own loader').toBeTruthy();
-    expect(bad).toEqual([]);
+    const loaded = selectSnapshots([text, null]);
+    expect(loaded.gs, 'parent save must load through the game-own loader').toBeTruthy();
+    expect(loaded.bad).toEqual([]);
+    const gs = loaded.gs!;
     const startedAt = gs.run!.startedAt;
     // Walk away: settle five minutes of offline clock — enough to finish both queued jobs (simulated clock, not wall clock).
     settle(gs, startedAt + 5 * 60_000, true);

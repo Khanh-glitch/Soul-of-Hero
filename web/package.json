@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest run --testTimeout=120000"
+    "test": "vitest run --testTimeout=120000",
+    "typecheck": "tsc --noEmit -p .",
+    "typecheck:tests": "tsc --noEmit -p tsconfig.test.json"
   },
   "dependencies": {
     "@fontsource/pixelify-sans": "^5.2.5",

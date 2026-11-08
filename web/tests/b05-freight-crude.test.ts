@@ -99,14 +99,14 @@ describe('B05-R B1: crude petroleum conserved through pump → inventory → mot
     const spotNear = { x: bike.x, y: bike.y };
     r.player.x = spotNear.x + TILE; r.player.y = spotNear.y;
     const bagRes = act(g, 'vehicleUnloadBag', { eid: bike.id }, t + 2);
-    expect(bagRes.ok, bagRes.reason).toBe(true);
+    expect(bagRes.ok, (bagRes as any).reason).toBe(true);
     const bag = Object.values(r.entities).find(e => e.kind === 'bag' && e.vehicleSource?.vehicleId === bike.id)!;
     expect(bag).toBeDefined();
     expect(crudeTotal(g)).toBe(4);
     // 4) bag → inventory → refinery input (craft reserves inputs from inventory)
     const bc = C(r, bag.c!);
     const bfs = bc.slots.findIndex(s => s?.key === 'crude_petroleum');
-    const mv = act(g, 'move', { from: bag.c, to: 'inv', fs: bfs }); expect(mv.ok, mv.reason + ' fs=' + bfs + ' bagC=' + bag.c).toBe(true);
+    const mv = act(g, 'move', { from: bag.c, to: 'inv', fs: bfs }); expect(mv.ok, (mv as any).reason + ' fs=' + bfs + ' bagC=' + bag.c).toBe(true);
     expect(countItem(r, 'inv', 'crude_petroleum')).toBe(4);
     expect(crudeStacks(g).some(s => s.uid === uidBefore)).toBe(true);    // the original UID survived the whole chain
     // 5) refinery fixture (reach via a level-2 workbench fixture), 4 crude + glass → Fuel Canister

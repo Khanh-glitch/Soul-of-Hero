@@ -269,7 +269,7 @@ describe('transaction replay integrity', () => {
     }
     expect(r.seenIntents.length).toBeGreaterThan(400);
     const reloaded = JSON.parse(JSON.stringify(gs)) as GameState;
-    expect(dispatch(reloaded, { id: original, type: 'move', from: 'inv', fs: 0, to: chest.id }, T0 + 999).dup).toBe(true);
+    expect((dispatch(reloaded, { id: original, type: 'move', from: 'inv', fs: 0, to: chest.id }, T0 + 999) as any).dup).toBe(true);
     expect(totalItems(reloaded, 'wood')).toBe(woodBefore);
   });
 });

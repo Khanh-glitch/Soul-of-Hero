@@ -12,7 +12,7 @@ function setup(){const g=newGame();expect(dispatch(g,{id:'bt-start'+ ++n,type:'s
   for(let yy=y-6;yy<=y+6;yy++)for(let xx=x-6;xx<=x+8;xx++){const i=yy*WW+xx;r.terrain[i]={t:T.GRASS};if(getWorld().sourceV3[i])r.sources[i]={stock:0,hp:0};}
   markDirty();const pos=(tx:number,ty:number)=>{r.player.x=tx*TILE+8;r.player.y=ty*TILE+8;markDirty();};
   const act=(type:string,args:object={},now=T0)=>dispatch(g,{id:'bt-'+ ++n,type,...args},now);
-  const build=(type:string,tx:number,ty:number,px=tx,py=ty+1)=>{pos(px,py);for(const [k,q] of STRUCTS[type].cost)addItem(r,'inv',k,q);const res=act('build',{struct:type,tx,ty});expect(res.ok,`${type}: ${res.reason}`).toBe(true);return Object.values(r.entities).find(e=>e.kind==='struct'&&e.tx===tx&&e.ty===ty&&e.type===type)!;};
+  const build=(type:string,tx:number,ty:number,px=tx,py=ty+1)=>{pos(px,py);for(const [k,q] of STRUCTS[type].cost)addItem(r,'inv',k,q);const res=act('build',{struct:type,tx,ty});expect(res.ok,`${type}: ${(res as any).reason}`).toBe(true);return Object.values(r.entities).find(e=>e.kind==='struct'&&e.tx===tx&&e.ty===ty&&e.type===type)!;};
   return {g,r,x,y,pos,act,build};}
 const stepOn=(o:ReturnType<typeof setup>,tx:number,ty:number,state='chase')=>{const m=mkCreature(o.r,'wolf',tx*TILE+8,ty*TILE+8,40);m.state=state as any;m.cd=0;o.r.creatures.push(m);return m;};
 describe('B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn',()=>{

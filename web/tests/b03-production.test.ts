@@ -1,7 +1,7 @@
 import {describe,it,expect} from 'vitest';
 import {BAL,TILE,WW,type GameState} from '../src/game/core';
 import {getWorld} from '../src/game/world';
-import {newGame,dispatch,addItem,removeItem,countItem,C,blockGrid,stepTenders,stepStations,tenderStatus,destroyStructure,markDirty,weatherAt,isWet,gardenEnvironment} from '../src/game/engine';
+import {newGame,dispatch,addItem,removeItem,countItem,C,blockGrid,stepTenders,stepStations,destroyStructure,markDirty,weatherAt,isWet,gardenEnvironment} from '../src/game/engine';
 import {settle,syncWorld,tick} from '../src/game/sim';
 import {serializeSnapshot,validate} from '../src/game/persist';
 const T=Date.UTC(2026,0,1);let seq=0;

@@ -18,7 +18,7 @@ describe('C3 powered gate feedback: the reason names the exact missing state and
     const before = countItem(r, 'inv', 'fuel_can');
     const res = act(g, 'door', { eid: door.id });
     expect(res.ok).toBe(false);
-    expect(res.reason).toMatch(/generator is empty\. Add 1 physical Fuel Canister/);
+    expect((res as any).reason).toMatch(/generator is empty\. Add 1 physical Fuel Canister/);
     expect(door.open).toBeFalsy();
     expect(countItem(r, 'inv', 'fuel_can')).toBe(before);             // nothing consumed by a refused access
   });
@@ -30,7 +30,7 @@ describe('C3 powered gate feedback: the reason names the exact missing state and
     move_(g, door.x, door.y + 16);
     const res = act(g, 'door', { eid: door.id }, T + 1020);
     expect(res.ok).toBe(false);
-    expect(res.reason).toMatch(/generator is OFF with \d+s banked\. Use E on the generator to resume; no can needed\./);
+    expect((res as any).reason).toMatch(/generator is OFF with \d+s banked\. Use E on the generator to resume; no can needed\./);
     move_(g, gen.x, gen.y + 16);                                              // back at the generator (reach is required)
     expect(act(g, 'generator', { eid: gen.id }, T + 1030).ok).toBe(true);    // resume without a can
     expect(gen.power).toBe(1);
@@ -42,6 +42,6 @@ describe('C3 powered gate feedback: the reason names the exact missing state and
     move_(g, door.x, door.y + 16);
     const res = act(g, 'door', { eid: door.id }, T + 1 + BAL.poiAccess.fuelRuntimeMs + 5000);
     expect(res.ok).toBe(false);
-    expect(res.reason).toMatch(/has run out/);
+    expect((res as any).reason).toMatch(/has run out/);
   });
 });

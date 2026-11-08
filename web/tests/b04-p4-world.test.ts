@@ -52,7 +52,7 @@ describe('B04-P4 F1 IR downstream is scoped to the sensor own generator network'
     for (let yy = y - 6; yy <= y + 6; yy++) for (let xx = x - 6; xx <= x + 8; xx++) { const i = yy * WW + xx; r.terrain[i] = { t: T.GRASS }; if (getWorld().sourceV3[i]) r.sources[i] = { stock: 0, hp: 0 }; }
     markDirty();
     const pos = (tx: number, ty: number) => { r.player.x = tx * TILE + 8; r.player.y = ty * TILE + 8; markDirty(); };
-    const build = (type: string, tx: number, ty: number, px = tx, py = ty + 1) => { pos(px, py); for (const [k, q] of STRUCTS[type].cost) addItem(r, 'inv', k, q); const res = act(g, 'build', { struct: type, tx, ty }); expect(res.ok, `${type}: ${res.reason}`).toBe(true); return Object.values(r.entities).find(e => e.kind === 'struct' && e.tx === tx && e.ty === ty && e.type === type)!; };
+    const build = (type: string, tx: number, ty: number, px = tx, py = ty + 1) => { pos(px, py); for (const [k, q] of STRUCTS[type].cost) addItem(r, 'inv', k, q); const res = act(g, 'build', { struct: type, tx, ty }); expect(res.ok, `${type}: ${(res as any).reason}`).toBe(true); return Object.values(r.entities).find(e => e.kind === 'struct' && e.tx === tx && e.ty === ty && e.type === type)!; };
     // network A: generator -> cable -> sensor -> door
     const genA = build('base_generator', x, y), cableA = build('power_cable', x + 1, y), sensor = build('ir_sensor', x + 2, y), doorA = build('door_powered', x + 3, y, x + 4, y);
     genA.basePower!.capacity = 2; addItem(r, genA.c!, 'wood', 2); pos(x, y + 1); expect(act(g, 'basePower', { eid: genA.id, enabled: true }).ok).toBe(true);
@@ -140,7 +140,7 @@ describe('B04-P4 Metal Pipe at the physical Foundry Recycler (X:pipe-v1)', () =>
     addItem(r, 'inv', 'metal_pipe', 2);
     const slot = r.custody.inv.slots.findIndex(s => s?.key === 'metal_pipe'); const uid = r.custody.inv.slots[slot]!.uid;
     const stacked = dispatch(g, { id: 'p4-rc-stack-' + ++n, type: 'recycleItem', eid: id, slot, uid }, T0);
-    expect(stacked.ok).toBe(false); expect(stacked.reason).toContain('Split one Metal Pipe');
+    expect(stacked.ok).toBe(false); expect((stacked as any).reason).toContain('Split one Metal Pipe');
     expect(countItem(r, 'inv', 'metal_pipe')).toBe(2);             // refusal consumes nothing
     expect(dispatch(g, { id: 'p4-split-' + ++n, type: 'split', c: 'inv', slot }, T0).ok).toBe(true);   // the real Split: 2 -> 1 + 1
     const one = r.custody.inv.slots.findIndex(s => s?.key === 'metal_pipe' && s.qty === 1);

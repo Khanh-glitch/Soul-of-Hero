@@ -18,7 +18,6 @@ import { RECIPES } from '../src/game/catalog';
 import { addItem, countItem, dispatch, markDirty, newGame, stepStations, buildReason, blockGrid, C } from '../src/game/engine';
 import { setActiveLayout, getWorld } from '../src/game/world';
 import { serializeSnapshot, selectSnapshots, validate } from '../src/game/persist';
-import { writeFileSync as _wfs, mkdirSync } from 'node:fs';
 
 const START = Date.UTC(2026, 10, 8, 8, 0, 0);
 const SEED = 9099;
@@ -135,7 +134,7 @@ describe('MEC-01 R2 C3: funded furnace+workbench offline -> separate-process res
     expect(scopedIron('inv') + scopedIron(furnaceOutId) + scopedIron(benchOutId)).toBe(beforeInvIngot);
     // Evidence: exact UIDs retrieved after the process boundary, labels honest.
     mkdirSync('evidence/mec01-c3', { recursive: true });
-    _wfs('evidence/mec01-c3/offline-resume.json', JSON.stringify({
+    writeFileSync('evidence/mec01-c3/offline-resume.json', JSON.stringify({
       note: 'C3: funded furnace+workbench, real inputs, 5 s of the jobs elapsed, save, SEPARATE OS process resumes (settle of 5 min simulated clock), outputs retrieved with real moves. SIM_FIXTURE_MEASUREMENT; not wall-clock, not browser.',
       seed: SEED,
       queued: queuedBefore,

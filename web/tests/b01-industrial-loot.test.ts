@@ -94,7 +94,7 @@ describe('B01 B: intermediates have real producers and consumers',()=>{
   });
   it('a real station craft pays time and yields a physical metal blade into the output container',()=>{
     const {g,r}=fresh();const id='b01-bench-'+(++n);const fuel=mkContainer(r,'fuel',0),out=mkContainer(r,'out',4);
-    const tx=r.player.tx??0,ty=r.player.ty??0;
+    const tx=Math.floor(r.player.x/TILE),ty=Math.floor(r.player.y/TILE);
     r.entities[id]={id,kind:'struct',type:'workbench',tx:tx+1,ty:ty+1,x:(tx+1)*TILE,y:(ty+1)*TILE,hp:160,maxHp:160,station:{fuelC:fuel.id,outC:out.id,burn:0,queue:[],level:2}} as any;
     markDirty();r.player.x=(tx+1)*TILE;r.player.y=(ty+1)*TILE;
     for(const [k,q] of RECIPES.metal_blade.ins)addItem(r,'inv',k,q);
@@ -104,7 +104,7 @@ describe('B01 B: intermediates have real producers and consumers',()=>{
     stepStations(g,16000,T+17000);expect(countItem(r,out.id,'metal_blade')).toBe(1);
   });
   it('an unpaid or underpowered workbench craft is refused without consuming inputs',()=>{
-    const {g,r}=fresh();const tx=r.player.tx??0,ty=r.player.ty??0;const id='b01-nobench';
+    const {g,r}=fresh();const tx=Math.floor(r.player.x/TILE),ty=Math.floor(r.player.y/TILE);const id='b01-nobench';
     addItem(r,'inv','iron_ingot',4);addItem(r,'inv','mechanical_parts',1);
     expect(dispatch(g,{id:'b01-nb-'+ ++n,type:'craft',eid:id,recipe:'metal_blade'},T).ok).toBe(false);
     expect(countItem(r,'inv','iron_ingot')).toBe(4);void tx;void ty;
@@ -145,7 +145,7 @@ describe('B01 C: recycler v2 versioning and multi-output',()=>{
 
 describe('B01-R1 C2: iron plate is a paid bounded patch (25% max HP per plate)',()=>{
   function rig(type:string,hp:number,x=1){
-    const {g,r}=fresh();const id='b01-s-'+type+'-'+hp;const tx=r.player.tx??0,ty=r.player.ty??0;
+    const {g,r}=fresh();const id='b01-s-'+type+'-'+hp;const tx=Math.floor(r.player.x/TILE),ty=Math.floor(r.player.y/TILE);
     r.entities[id]={id,kind:'struct',type,tx:tx+x,ty,x:(tx+x)*TILE+8,y:ty*TILE+8,hp,maxHp:STRUCTS[type].hp} as any;
     r.player.x=(tx+x)*TILE-4;r.player.y=ty*TILE+8;markDirty();
     return {g,r,id};

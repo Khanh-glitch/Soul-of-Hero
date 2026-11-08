@@ -19,7 +19,7 @@ describe('B05-R C2 Recycler in-flight pipe job across save/reload', () => {
     const g = newGame(); expect(act(g, { type: 'startRun', character: 'female', seed: 101 }, T0).ok).toBe(true);
     const r = g.run!;
     // The recycler must sit on the authored Foundry site (Map-owned). A recycler anywhere else is refused by validate().
-    const site = webRecyclerSite(getWorld(r.layoutId), r.layoutId); expect(site).not.toBeNull();
+    const site = webRecyclerSite(getWorld(r.layoutId), r.layoutId!); expect(site).not.toBeNull();
     const tx = site!.tx, ty = site!.ty;
     // The Foundry Recycler is created by the engine at run start on the authored site (persist allows exactly one).
     const rc = Object.values(r.entities).find(e => e.kind === 'recycler')!; expect(rc).toBeDefined();

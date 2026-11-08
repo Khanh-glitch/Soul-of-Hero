@@ -46,7 +46,7 @@ describe('MEC-01 R2 A1: one found Mechanical Gear, three competing actions', () 
   it('Workstream A1 static contract: recycling is a loss vs craft; the recovery is versioned and gear-only', () => {
     const ingot=1, scrap=1/3, mp=0.5*ingot+1*scrap, fast=1/3*ingot+1/3*scrap;
     const gearCraft=2*ingot+2*mp+fast;
-    const ret=BAL.recyclerV4.components.mechanical_gear.outputs.reduce((a,[k,q])=>a+q*(k==='mechanical_parts'?mp:k==='iron_ingot'?ingot:0),0);
+    const ret=BAL.recyclerV4.components.mechanical_gear.outputs.reduce((a:number,[k,q]:any)=>a+q*(k==='mechanical_parts'?mp:k==='iron_ingot'?ingot:0),0);
     expect(ret).toBeLessThan(gearCraft);                                // no loop: ~2.67 < ~4.11 ingot-eq
     expect(gearCraft-ret).toBeGreaterThan(1);
     const plan=recoveryPlan({uid:'x',key:'mechanical_gear',qty:1} as any);
@@ -94,7 +94,7 @@ describe('MEC-01 R2 A1: one found Mechanical Gear, three competing actions', () 
     expect(afterA.mechanical_gear).toBe(0);expect(beforeA.spares-afterA.spares).toBe(2);expect(beforeA.fasteners-afterA.fasteners).toBe(2);
     // ---- B: geared Salvager Pick (needs an Iron Pickaxe first, then the upgrade)
     const gB=copy(base);const rB=gB.run!;const beforeB=invSnapshot(rB);const benchB=runBench(gB);
-    const ipr=dispatch(gB,{id:'a1-ip-'+(++n),type:'craft',eid:benchB.id,recipe:'iron_pick'},START+22);expect(ipr.reason??'ok').toBe('ok');
+    const ipr=dispatch(gB,{id:'a1-ip-'+(++n),type:'craft',eid:benchB.id,recipe:'iron_pick'},START+22);expect((ipr as any).reason??'ok').toBe('ok');
     stepStations(gB,RECIPES.iron_pick.secs*1000+500,START+30000);
     expect(countItem(rB,benchB.station!.outC!,'iron_pick')).toBe(1);
     const fsP=rB.custody[benchB.station!.outC!].slots.findIndex(s=>s?.key==='iron_pick');
@@ -104,7 +104,7 @@ describe('MEC-01 R2 A1: one found Mechanical Gear, three competing actions', () 
     expect(countItem(rB,benchB.station!.outC!,'industrial_pick')).toBe(1);
     const afterB=invSnapshot(rB);
     expect(afterB.mechanical_gear).toBe(0);expect(beforeB.spares-afterB.spares).toBe(2);expect(afterB.iron_pick).toBe(0);
-    expect(ITEMS.industrial_pick.power!.ore).toBeGreaterThan(ITEMS.iron_pick.power!.ore);
+    expect(ITEMS.industrial_pick.power!.ore).toBeGreaterThan(ITEMS.iron_pick.power!.ore!);
     // A yields a drive (a vehicle component, no pick); B yields a pick and consumes the old iron pick UID.
     expect(afterA.vehicle_drive).toBe(0);                 // the drive sits in the bench output, not the pack
     expect(countItem(rA,outA,'vehicle_drive')).toBe(1);

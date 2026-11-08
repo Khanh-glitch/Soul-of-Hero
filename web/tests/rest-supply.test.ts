@@ -1,5 +1,5 @@
 import {describe,it,expect} from 'vitest';
-import {BAL,HOUR,TILE,WW,T,type GameState,type RunState} from '../src/game/core';
+import {BAL,HOUR,TILE,WW,T as TILE_T,type GameState,type RunState} from '../src/game/core';
 import {getWorld} from '../src/game/world';
 import {newGame,dispatch,addItem,countItem,C,blockGrid,destroyStructure,killPlayer,restForecast,restEligible,homeStatus,markDirty,weatherAt,isWet,darkness} from '../src/game/engine';
 import {settle} from '../src/game/sim';
@@ -19,7 +19,7 @@ const uids=(r:RunState)=>Object.values(r.custody).flatMap(c=>c.slots.filter(Bool
 import {thermalEnv,thermalEvaluate} from '../src/game/thermal';
 const TEMPERATE_MIN_TARGET=50;
 const HALF_HOUR=30*60000;
-const climateTargets=(r:RunState,xx:number,yy:number,hours:number)=>{const zone=getWorld().zone[yy*WW+xx];const out:number[]=[];for(let t=T;t<=T+hours*HOUR;t+=HALF_HOUR)out.push(thermalEvaluate(r,thermalEnv(r,{x:xx*TILE+8,y:yy*TILE+8,zone,tileType:T.FLOOR,wet:isWet(weatherAt(r,t)),dark:darkness(r,t)>0.45,sheltered:true})).target);return out;};
+const climateTargets=(r:RunState,xx:number,yy:number,hours:number)=>{const zone=getWorld().zone[yy*WW+xx];const out:number[]=[];for(let t=T;t<=T+hours*HOUR;t+=HALF_HOUR)out.push(thermalEvaluate(r,thermalEnv(r,{x:xx*TILE+8,y:yy*TILE+8,zone,tileType:TILE_T.FLOOR,wet:isWet(weatherAt(r,t)),dark:darkness(r,t)>0.45,sheltered:true})).target);return out;};
 const isTemperate=(r:RunState,xx:number,yy:number)=>Math.min(...climateTargets(r,xx,yy,12))>=TEMPERATE_MIN_TARGET;
 function site(g:GameState,pred:(r:RunState,x:number,y:number)=>boolean=isTemperate){
   const r=g.run!,w=getWorld(),grid=blockGrid(r);

@@ -12,7 +12,7 @@ function setup(){const g=newGame();expect(dispatch(g,{id:'ir-start'+ ++n,type:'s
   markDirty();
   const pos=(tx:number,ty:number)=>{r.player.x=tx*TILE+8;r.player.y=ty*TILE+8;markDirty();};
   const act=(type:string,args:object={},now=T0)=>dispatch(g,{id:'ir-'+ ++n,type,...args},now);
-  const build=(type:string,tx:number,ty:number,px=tx,py=ty+1)=>{pos(px,py);for(const [k,q] of STRUCTS[type].cost)addItem(r,'inv',k,q);const res=act('build',{struct:type,tx,ty});expect(res.ok,`${type}: ${res.reason}`).toBe(true);return Object.values(r.entities).find(e=>e.kind==='struct'&&e.tx===tx&&e.ty===ty&&e.type===type)!;};
+  const build=(type:string,tx:number,ty:number,px=tx,py=ty+1)=>{pos(px,py);for(const [k,q] of STRUCTS[type].cost)addItem(r,'inv',k,q);const res=act('build',{struct:type,tx,ty});expect(res.ok,`${type}: ${(res as any).reason}`).toBe(true);return Object.values(r.entities).find(e=>e.kind==='struct'&&e.tx===tx&&e.ty===ty&&e.type===type)!;};
   return {g,r,x,y,pos,act,build};}
 /** generator (fuelled, capacity 2 like a reinforced generator) -> cable -> sensor -> door */
 function rig(on=true){const o=setup(),{x,y,build,act,pos,r}=o;const gen=build('base_generator',x,y),cable=build('power_cable',x+1,y),sensor=build('ir_sensor',x+2,y),door=build('door_powered',x+3,y,x+4,y);
@@ -53,7 +53,7 @@ describe('B02-P1-A infrared sensor: physical, paid, wired, bounded',()=>{
     gen.basePower!.enabled=false;expect(irSensorStatus(r,sensor)).toBe('Generator off');
   });
   it('capacity: a single-slot generator is consumed by the sensor, so the door is starved until reinforced',()=>{
-    const o=rig(),{r,x,y,gen,sensor,door,pos}=o;gen.basePower!.capacity=1;pos(x+2,y+2);
+    const o=rig(),{r,x,y,gen,sensor,door,pos}=o;(gen.basePower as any).capacity=1;pos(x+2,y+2);
     expect(irSensorConducts(r,sensor)).toBe(true);expect(powerAllocation(r,gen)).toEqual([sensor]);
     expect(electricDoorPowered(r,door)).toBe(false);
     gen.basePower!.capacity=2;expect(electricDoorPowered(r,door)).toBe(true);

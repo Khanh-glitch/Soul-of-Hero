@@ -1,7 +1,7 @@
 // B03 Deliverable A: shared physical thermal rules (online tick and offline settle).
 import { describe, it, expect } from 'vitest';
 import { BAL, TILE, WW, T, type GameState, type RunState } from '../src/game/core';
-import { newGame, dispatch, addItem, countItem, blockGrid, effTile, destroyStructure, markDirty, roofRoom } from '../src/game/engine';
+import { newGame, dispatch, addItem, countItem, blockGrid, effTile, destroyStructure, markDirty, roofRoom, C } from '../src/game/engine';
 import { settle, tick } from '../src/game/sim';
 import { thermalEvaluate, thermalEnv, thermalStep, thermalBoundaryMs, heaterStatus } from '../src/game/thermal';
 import { getWorld } from '../src/game/world';

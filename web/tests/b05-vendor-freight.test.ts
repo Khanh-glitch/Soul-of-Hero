@@ -2,7 +2,7 @@
 // Fixture disclosed: profile secured cash is granted (securedCash = 20) so the purchase is affordable. Everything else is real state.
 import { describe, it, expect, afterEach } from 'vitest';
 import { TILE, type GameState, type Entity } from '../src/game/core';
-import { addItem, C, dispatch, newGame, cartWeight, useItem } from '../src/game/engine';
+import { addItem, C, dispatch, newGame, cartWeight } from '../src/game/engine';
 import { setActiveLayout } from '../src/game/world';
 import { serializeSnapshot, validate } from '../src/game/persist';
 import { tick, type Input } from '../src/game/sim';

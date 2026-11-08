@@ -52,7 +52,7 @@ describe('B04 stranded motorbike: emergency unload into a physical ground bag', 
   it('a running motorbike (hp and fuel present) refuses; cargo stays in the bike', () => {
     const g=setup(),{r,e}=deploy(g);const cargo=loadCargo(g,e);e.vehicle!.fuel=50;e.hp=100;e.deployed!.dur=100;
     const res=act(g,'vehicleUnloadBag',{eid:e.id},'u5',T+100);
-    expect(res.ok).toBe(false);expect(res.reason).toMatch(/can still run/);
+    expect(res.ok).toBe(false);expect((res as any).reason).toMatch(/can still run/);
     expect(C(r,e.c!).slots.filter(Boolean).map(s=>s!.uid).sort()).toEqual([...cargo].sort());
     expect(bagsAt(r,e).length).toBe(0);
   });

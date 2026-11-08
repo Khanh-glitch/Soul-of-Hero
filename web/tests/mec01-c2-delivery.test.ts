@@ -316,8 +316,7 @@ function haul(mode: 'walk' | 'cart' | 'bike', far = false): ModeResult {
   if (cp < cps.length) {
     const tail = cps.slice(Math.max(0, cp - 2), cp + 4).map(p => ({ x: +p.x.toFixed(1), y: +p.y.toFixed(1), tx: Math.floor(p.x / TILE), ty: Math.floor(p.y / TILE) }));
     const bikeNow = (r.player.vehicle ? r.entities[r.player.vehicle] : undefined) as any;
-    const hazers = (g.run!.haz ?? []).length;
-    console.warn(`[C2 stall] mode=${mode} far=${far} cp=${cp}/${cps.length} pos=${posOf().x.toFixed(1)},${posOf().y.toFixed(1)} tile=${Math.floor(posOf().x / TILE)},${Math.floor(posOf().y / TILE)} dead=${r.player.dead} php=${r.player.hp} mounted=${!!r.player.vehicle} bikeFuel=${bikeNow?.vehicle?.fuel} odometer=${bikeNow?.vehicle?.odometer} bikeHp=${bikeNow?.hp} action=${r.player.action?.kind ?? 'none'} haz=${hazers} startFuel=${bikeStartFuel} ticks=${ticks} nextLegs=${JSON.stringify(tail)}`);
+    console.warn(`[C2 stall] mode=${mode} far=${far} cp=${cp}/${cps.length} pos=${posOf().x.toFixed(1)},${posOf().y.toFixed(1)} tile=${Math.floor(posOf().x / TILE)},${Math.floor(posOf().y / TILE)} dead=${r.player.dead} php=${r.player.hp} mounted=${!!r.player.vehicle} bikeFuel=${bikeNow?.vehicle?.fuel} odometer=${bikeNow?.vehicle?.odometer} bikeHp=${bikeNow?.hp} action=${r.player.action?.kind ?? 'none'} startFuel=${bikeStartFuel} ticks=${ticks} nextLegs=${JSON.stringify(tail)}`);
   }
   expect(cp >= cps.length, `haul completed (stalled at cp ${cp}/${cps.length}, pos ${posOf().x.toFixed(0)},${posOf().y.toFixed(0)})`).toBe(true);
   expect(r.player.dead).toBe(false);

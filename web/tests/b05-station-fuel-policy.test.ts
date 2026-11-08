@@ -40,7 +40,7 @@ describe('B05-R station fuel policy: one rule for burn, deposit and display', ()
     const i = C(r, 'inv').slots.findIndex(s => s?.key === 'fuel_can');
     const res = act(g, 'move', { from: 'inv', fs: i, to: ref.station!.fuelC });
     expect(res.ok).toBe(false);
-    expect(res.reason).toMatch(/not station fuel/);
+    expect((res as any).reason).toMatch(/not station fuel/);
     expect(countItem(r, 'inv', 'fuel_can')).toBe(1);
     expect(countItem(r, ref.station!.fuelC, 'fuel_can')).toBe(0);
   });
