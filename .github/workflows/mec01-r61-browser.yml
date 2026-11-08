@@ -1,0 +1,69 @@
+name: MEC-01 R6.1 browser smoke (NOT turret defense acceptance)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/d4bfcfff-soul-of-hero]
+    paths:
+      - 'web/scripts/e2e-r61-browser.mjs'
+      - 'web/src/**'
+      - 'web/public/**'
+      - 'web/index.html'
+      - 'web/package.json'
+      - 'web/package-lock.json'
+      - 'web/vite.http.config.ts'
+      - '.github/workflows/mec01-r61-browser.yml'
+
+permissions:
+  contents: read
+
+env:
+  CI: true
+
+jobs:
+  browser-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install exact locked dependencies
+        working-directory: web
+        run: npm ci
+      - name: Install actual Chromium and system dependencies
+        working-directory: web
+        run: npx playwright install --with-deps chromium
+      - name: Build current SHA HTTP distribution, not a previous preview
+        working-directory: web
+        run: npx vite build --config vite.http.config.ts
+      - name: Start CURRENT build preview
+        working-directory: web
+        run: |
+          npx vite preview --config vite.http.config.ts --host 127.0.0.1 --port 4173 --strictPort > /tmp/mec01-browser-preview.log 2>&1 &
+          for attempt in $(seq 1 90); do
+            if curl -fsS http://127.0.0.1:4173/ > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/mec01-browser-preview.log
+          exit 1
+      - name: Real browser player smoke, 1280x720 and 640x360
+        working-directory: web
+        env:
+          GAME_URL: http://127.0.0.1:4173/
+          BUILD_SHA: ${{ github.sha }}
+        run: node scripts/e2e-r61-browser.mjs
+      - name: Upload exact SHA browser screenshots and verdict manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mec01-r61-browser-${{ github.sha }}-${{ github.run_attempt }}
+          path: web/evidence/mec01-r61-browser/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Print preview logs on failure
+        if: failure()
+        run: cat /tmp/mec01-browser-preview.log || true
