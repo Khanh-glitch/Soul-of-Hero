@@ -468,7 +468,7 @@ describe('R5.1 P1-E — traceBarrier at the 64 px ray and lawful site access', (
     expect(r.traces).toHaveLength(0);
     settle(gs, T0 + 10 * 60000, true);                        // aggro species: presence is the lawful trigger
     expect(fireCount(r)).toBeGreaterThanOrEqual(1);
-    expect(wolf.state === 'dead' || wolf.hp! < 30).toBe(true);
+    expect((wolf.state as string) === 'dead' || wolf.hp! < 30).toBe(true);
     expect(r.receipts.some((q: any) => q.kind === 'struct.hit')).toBe(false);  // no trail — nothing is battered
   });
 });
