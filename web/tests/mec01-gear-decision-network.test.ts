@@ -1,6 +1,7 @@
 // MEC-01 R2 (Workstream A1): one legitimately found Mechanical Gear -> three different useful actions, through real intents.
-// NATURAL: walk out of the authored Foundry exterior cache (real move, reach measured by lootSiteAccess) and take the gear.
-// FIXTURE (labelled): the player is placed beside the bench/recycler tile (position only), and wood 20, stone 4, leather 1,
+// FIXTURE_INTENT (not NATURAL_INPUT): the 'move' intent transfers the gear out of the authored Foundry cache custody; the player's
+//   actor is NOT walked from spawn. Reach is a grid BFS classifier (lootSiteAccess), not an input or LOS trace. SNAPSHOT_SAME_PROCESS for saves.
+// FIXTURE (labelled): the player actor is placed beside the bench/recycler tile (position only), and wood 20, stone 4, leather 1,
 //   iron ingot 5 are granted. The gear itself is NOT granted. Each branch starts from the same save point (snapshot clone).
 // Branches (same carried gear, UID-tracked):
 //   A  Geared Motor Drive (workbench L2 craft, paid queue)     -> vehicle_drive; spends 2 spares + 2 fasteners + 1 ingot.
@@ -60,7 +61,7 @@ describe('MEC-01 R2 A1: one found Mechanical Gear, three competing actions', () 
     expect(BAL.recyclerV1.rules).not.toHaveProperty('mechanical_gear');
   });
 
-  it('branch C (recycle) is real: one gear UID is consumed, the recycler works for real time, and two parts + one ingot come out', () => {
+  it('branch C (recycle) is real (FIXTURE_INTENT): one gear UID is consumed, the recycler works for real time, and two parts + one ingot come out', () => {
     const {g:base}=savePoint();const g=copy(base);const r=g.run!;
     const rc=recyclerOf(r);const uid=gearUid(r);const before=invSnapshot(r);
     place(r,rc.tx!-1,rc.ty!);                    // FIXTURE position beside the Foundry Recycler (site access measured below; the walk itself is not claimed as natural)
@@ -110,7 +111,7 @@ describe('MEC-01 R2 A1: one found Mechanical Gear, three competing actions', () 
     expect(beforeB.iron_pick).toBe(0);expect(afterB.industrial_pick).toBe(0);
   });
 
-  it('save/reload while the recycler job is in flight: the reserved gear UID completes exactly once', () => {
+  it('save/reload while the recycler job is in flight (SNAPSHOT_SAME_PROCESS, not a separate-process reload): the reserved gear UID completes exactly once', () => {
     const {g:base}=savePoint();const g=copy(base);const r=g.run!;
     const rc=recyclerOf(r);const uid=gearUid(r);
     place(r,rc.tx!-1,rc.ty!);
