@@ -1,57 +1,44 @@
-# VEYRA — R5 world exploration preview (81 canonical POI IDs)
+# VEYRA — CURRENT ONE GAME / 81 POIs / SIX ELDER SANCTUARIES
 
-## Quick start
+**This is the authoritative entry point for map refinement on branch `game/veyra-81-poi-art-battle-20261109`.**
 
-Open `PLAY_VEYRA_WORLD_R5_81_POI_SIX_ELDERS.html` directly in desktop Chrome/Chromium. No local web server required. Select **New run → Creator Inspect → World Map**, choose a POI, then **Inspect & Play**. Use keyboard/mouse controls shown in game; press **E** at an actual stair/hatch. The creator inspector is a QA fixture, not production world progression.
+## Only one game to open
 
-The game includes Arena's newer pixel-art source integrated into the existing VEYRA browser gameplay engine, six distinct Elder exploration layouts, and three **explicitly provisional** C03 landing plans.
+The current playable map is **not** the historical R4/R5 standalone `PLAY_VEYRA_WORLD_R5_81_POI_SIX_ELDERS.html`. That old release and its `R5_RELEASE_MANIFEST.json` remain historical provenance, not a current game or source to refine.
 
-## Six boss-area landmarks (architectural only)
+The current and only player-facing new-run game is the **existing Soul of Heroes Web app**:
+- Entry: `web/src/main.tsx` → `web/src/App.tsx` → `web/src/ui/Title.tsx` → `web/src/ui/Game.tsx`.
+- Default and only listed new-run layout: `veyra05-world`; old layouts are internal read-compatibility for legacy saves, **not alternative new-run games**.
+- Its world loader: `web/src/game/world.ts` → `web/src/veyra05/window.ts` → `web/src/veyra05/poi-kit.ts` / `floors.ts`.
+- Canonical 81 authored POIs: `web/src/veyra05/arch/sites.ts` = 33 individually authored entries + 48 `REST48_IDS` from `web/src/veyra05/arch/rest48.ts`.
+- The latest SIX Elder lairs are authored in that same `rest48.ts`: `po_elderwood` (Aion), `po_typhon` (Typhon), `po_gate` (Atlas), `po_surtur` (Surtur), `po_necropolis` (Anubis), `po_hall_eyes` (Argus).
+- Physical geography authority: `web/geography/veyra-lr01/map_tower/veyra_gold/VEYRA_GOLD_MAP.sohmap.json` plus source-verified WMP rasters. Do not invent an isolated island or use `web/src/game/world.ts`'s retained shipping generator as the VEYRA map.
 
-| Elder | Canonical POI ID | Exploration premise |
-|---|---|---|
-| Aion | `po_elderwood` | Root sanctuary, under-root hollow, bough walk, crown overlook |
-| Anubis | `po_necropolis` | Processional tomb avenue, ossuary, guardian terrace, solar parapet |
-| Argus | `po_hall_eyes` | Observation hall, archive below, watchers' gallery, third eye |
-| Atlas | `po_gate` | Giant grounded gate, anchor vault, upper arch span, keystone |
-| Surtur | `po_surtur` | Volcanic forge shrine, undercroft, chimney rim, crown |
-| Typhon | `po_typhon` | Fracture canyon, under-cleft, surviving skybridge, high rim |
+### Start the actual existing game
 
-The bosses themselves, AI, telegraphs, combat/VFX, progression rewards and save/loot authority are **not provided in this release**. The monumental sprites are provisional hand-authored pixel art, not the existing native boss assets. Visual polish is **not** approved. The 6 POIs have distinct multi-level spatial layouts, not six fully playable boss encounters.
+```sh
+cd web
+npm ci
+npm run dev
+```
 
-## C03 recovery status — non-authentic
+Open the Vite URL. On the original SOUL OF HERO title screen:
+- **New run** uses **VEYRA · Unified World · 81 canonical POIs** (the one game).
+- **World Map · 81 POIs** opens the built-in Creator Inspection of that same world source. Select a POI, then **Inspect & Play** to explore using normal game controls; that separate QA session never overwrites a real save.
+- In VEYRA gameplay, press **M** for its world map and **E** at real stairs/hatches for authored multi-floor traversal. Do not infer a fully implemented Elder boss encounter from the architectural symbols.
 
-`po_strait`, `po_mere`, `po_southfoot` are placeholders built from verified GOLD identities/positions. They are **NOT** the missing original C03 Breakthrough authored implementation. Do not overwrite or present these as C03 canon; replace with original if recovered.
+### Evidence and limits
 
-## Verified QA and its limits
+- `web/src/veyra05/integrated-world.test.ts`: checks that the actual new-run map loader and 81-POI overview share canonical data and six latest lairs.
+- `web/src/veyra05/arch/elder-lairs.test.ts`: real compiled topology / paths.
+- `web/src/veyra05/integrated-lifecycle.test.ts`: strict save identity checks after window shifts and Elder floor changes.
+- `web/e2e/veyra-unified-smoke.mjs`: launches the **existing** game in Chromium, opens 81-POI inspector, checks six Elder identities, enters an actual playable Creator QA session, exits, then starts a normal U=0.5 VEYRA run. Evidence and exact SHA are retained by the VEYRA branch GitHub Actions run.
+- Run `npm run build` and `npx tsc --noEmit` before claiming code integration PASS.
+- Passing source checks and browser smoke is **not** 81/81 human visual acceptance, every stair's manual playthrough, gameplay-combat integration, or a production Godot port. Art refinement remains pending Creator review.
+- C03 `po_strait`, `po_mere` and `po_southfoot` are **provisional reconstructions**, not recovered original authoring.
 
-- 81 unique canonical IDs in registry; 81 architectural plans compile with **zero `issues` in available plan compiler** (see `EVIDENCE/architecture_all81.json`).
-- All 6 boss areas have 4 levels `[-1,0,1,2]` and 3 defined connections; **12/12 ground-level Elder stair targets reachable by engine's actual pathfinder**, recorded in `EVIDENCE/qa_elder_and_c03_routes.json`.
-- C03 provisional three landings: **3/3 ground-to-upper ladder endpoints** reachable by engine pathfinder.
-- One Necropolis E input test (`0 → -1 → 0`) performed using player keyboard input, not an exhaustive playthrough of all stairs or all POIs.
-- Representative scenes rendered in Chromium, no JS page errors in completed test runs. See `EVIDENCE/VEYRA_SIX_ELDERS_ACTUAL_GAMEPLAY.jpg` and individual scene shots.
-- **Not validated:** full 81 consecutive human walk-throughs, every stair by E, high-end art acceptance, boss combat, true C03, native Godot integration, network deployment, complete lore/loot/enemy systems, and source Vite production rebuild from this R5 patch.
+### No competing release
 
-## Source and reproducible rebuild
+The old `R5_RELEASE_MANIFEST.json`, `build_world_portable.cjs` and `r5/source/` are retained as old distribution records. **Do not build, open, regenerate or judge the current map from those files**. Their referenced standalone ZIP has a different earlier source SHA and cannot stand in for the current game. All future VEYRA Arena refinements must target the existing `web/src/veyra05/` architecture and art inside this **same game**, verify the game UI loads their edits, and preserve GOLD identities.
 
-The source additions live under `SOURCE/`:
-- `rest48_r5.ts`: full REST48 authored site grammar, including six dedicated Elder plans, used by R5.
-- `c03_recovery.ts`: temporary three C03 plans; non-canonical source.
-- `elder-art.js`: independent procedural pixel-sprite factory for the six Elder landmarks.
-- `elder_six.tsfrag`: separately extracted six Elder design code for inspection (already included in `rest48_r5.ts`; **do not insert twice**).
-- `decor-client-reference.ts`: renderer reference from the R5 working patch, for careful transplantation; **not proof of native branch source compile**.
-- `BUILD/build_world_portable.cjs`: optional exact standalone rebuild; requires Node.js and the TypeScript npm module or globally installed TypeScript; consumes bundled `BASE/R4_WORLD_ASSET_BASELINE.html`. From the package root, run `node BUILD/build_world_portable.cjs`. Validate output against `EVIDENCE/R5_RELEASE_MANIFEST.json`.
-
-The embedded browser game is the **playable deliverable**. The source above represents the R5 delta relative to the previous R4 standalone. It is not a standalone native Godot port and should not be merged into production without a reviewed source integration and real Vite build.
-
-## Custody
-
-GitHub workspace branch: `game/veyra-81-poi-art-battle-20261109` of `Khanh-glitch/Soul-of-Hero`. Do not merge to production. The complete big-file standalone and its R4 baseline are attached to this package rather than silently claimed to be built into the repository's current Vite entry point.
-## Source registry and renderer handoff
-
-The isolated branch now also registers **81 authored canonical POI IDs** through `web/src/veyra05/arch/sites.ts` and connects the C01/C02/C04/F03/Elder sprites through `web/src/veyra05/decor-client.ts` and `elder-art.ts`. TypeScript architecture registry check: 81 unique IDs, zero missing, zero `compilePlan` issues. The full branch Vite build remains **UNVERIFIED** here because upstream Vite/@noble modules and geography `?raw` imports were not installed. The browser standalone distributed in the ChatGPT R5 ZIP is the verified playable candidate, not this branch's built output.
-
-
-## Follow-up: six Elder lair topology source patch (after frozen ZIP R5)
-
-The current GitHub branch now contains a source-only Elder lair revision in `web/src/veyra05/arch/rest48.ts`: five underground enclosed boss-symbol cores and Typhon's physically walled roofless pressure rift, all accessed through longer staggered routes. See [ELDER_LAIR_R5_SOURCE_PATCH.md](ELDER_LAIR_R5_SOURCE_PATCH.md). This does **not** modify or recertify the earlier standalone R5 ZIP/manifest. A new browser build and actual scene screenshots are required before any playable/visual acceptance claim for this revision.
+No production merge without Creator approval.
