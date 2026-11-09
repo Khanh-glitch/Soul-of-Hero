@@ -1,0 +1,43 @@
+name: VEYRA R5 — six Elder lair source gates
+
+on:
+  push:
+    branches:
+      - game/veyra-81-poi-art-battle-20261109
+    paths:
+      - 'web/src/veyra05/arch/**'
+      - 'web/src/veyra05/decor-client.ts'
+      - 'web/src/veyra05/elder-art.ts'
+      - 'web/src/veyra05/floors.ts'
+      - 'web/package.json'
+      - 'web/package-lock.json'
+      - '.github/workflows/veyra-elder-lairs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  six-elder-source-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install exact dependencies
+        working-directory: web
+        run: npm ci
+      - name: Six Elder plan/compiler/walkability gates
+        working-directory: web
+        run: npx vitest run src/veyra05/arch/elder-lairs.test.ts
+      - name: Web Vite build (integration smoke)
+        working-directory: web
+        run: npm run build
+      - name: TypeScript diagnostics (do not hide baseline issues)
+        if: always()
+        working-directory: web
+        run: npx tsc --noEmit
