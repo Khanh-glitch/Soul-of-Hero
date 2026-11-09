@@ -5,7 +5,7 @@ import { pfxFromSimEvent } from '../game/pixelfxMap';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { BAL, TILE, WW, VIEW_W, VIEW_H, HOUR, type GameState } from '../game/core';
 import { ITEMS, STRUCTS, ELDERS, CREATURES, STRUCTURE_UPGRADES } from '../game/catalog';
-import { dispatch, phaseOf, runHours, dayTime, weatherAt, weatherSlot, countItem, C, entsAt, cartWeight, cartLimit, effTile, isRagnarok, buildReason, clearWallLine, claimAt, territoryForecast } from '../game/engine';
+import { markDirty, dispatch, phaseOf, runHours, dayTime, weatherAt, weatherSlot, countItem, C, entsAt, cartWeight, cartLimit, effTile, isRagnarok, buildReason, clearWallLine, claimAt, territoryForecast } from '../game/engine';
 import { tick, syncWorld, findInteract, activeStack, SPEED_KEY, rayLen, spiritDestination, type Input, type Interact } from '../game/sim';
 import { draw, consumeFX, cam } from '../game/render';
 import { qaFillPack, qaPrepareFullPack, qaSetSecuredCash } from '../game/qa-fixtures';
