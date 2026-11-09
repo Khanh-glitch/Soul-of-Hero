@@ -5,7 +5,10 @@ on:
     branches:
       - game/veyra-81-poi-art-battle-20261109
     paths:
-      - 'web/src/veyra05/arch/**'
+      - 'web/src/veyra05/**'
+      - 'web/src/game/**'
+      - 'web/src/ui/**'
+      - 'web/src/App.tsx'
       - 'web/src/veyra05/decor-client.ts'
       - 'web/src/veyra05/elder-art.ts'
       - 'web/src/veyra05/floors.ts'
@@ -33,7 +36,7 @@ jobs:
         run: npm ci
       - name: Six Elder plan/compiler/walkability gates
         working-directory: web
-        run: npx vitest run src/veyra05/arch/elder-lairs.test.ts
+        run: npx vitest run src/veyra05/arch/elder-lairs.test.ts src/veyra05/integrated-world.test.ts
       - name: Web Vite build (integration smoke)
         working-directory: web
         run: npm run build
