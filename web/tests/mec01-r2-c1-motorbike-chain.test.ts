@@ -61,7 +61,9 @@ describe('MEC-01 R2 C1: gather-to-kit chain, then a real cargo trip (CRAFTED + F
     const bpi=C(r,'inv').slots.findIndex(s=>s?.key==='blueprint'&&s.meta==='motorbike_kit');
     expect(act(g,'useItem',{slot:bpi},START+31+45700).ok).toBe(true);
     // CRAFTED: gear (2 iron + 2 MP + 1 fastener) -> geared drive; frame (3 iron + 2 MP + 2 spares).
-    let t=START+100;
+    // CHRONOLOGY: research completes at START+31+45500 (stepStations), blueprint moved at +45600 and learned at +45700.
+    // Crafts that depend on the learned recipe chain start only after that learn time.
+    let t=START+45800;
     craftOut(g,bench,'mechanical_gear',t);t+=40000;
     craftOut(g,bench,'vehicle_drive_geared',t);t+=40000;
     craftOut(g,bench,'vehicle_frame',t);t+=40000;

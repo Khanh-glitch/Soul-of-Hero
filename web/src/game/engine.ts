@@ -105,6 +105,16 @@ export function chooseLegalSpawn(r:RunState): {tx:number;ty:number;name:string}|
   for(let k=0;k<count;k++){const i=(start+k*stride)%count,tx=3+i%(WW-6),ty=3+Math.floor(i/(WW-6));if(eligible(tx,ty))return{tx,ty,name:w.veyra?(w.zoneNames?.[0]||'Veyra region'):'the island'};}return null;
 }
 
+// Run ids must be unique per run: seed alone repeats across runs with the same seed, which made
+// profile history and achievement attribution ambiguous. Older saves keep their stored id untouched.
+function runIdFor(gs: GameState, seed: number, now: number): string {
+  const base = 'run_' + seed.toString(36) + '_' + Math.floor(now).toString(36);
+  const used = new Set((gs.profile.history || []).map((h: any) => h.runId));
+  let id = base, k = 1;
+  while (used.has(id)) id = base + '_' + (k++).toString(36);
+  return id;
+}
+
 export function startRun(gs: GameState, character: 'male' | 'female', now: number, region: number | null = null, seedOverride?: number): Result {
   if (gs.run && !gs.run.ended) return { ok: false, reason: 'A run is already active.' };
   if(getActiveLayout()==='shipping')setActiveLayout('shipping_fresh');
@@ -115,7 +125,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   const w = getWorld();
   const seed = seedOverride ?? ((now ^ 0x9e3779b9) >>> 0);
   const r: RunState = {
-    id: 'run_' + seed.toString(36), seed, character, startedAt: now, qaOffset: 0, qaUsed: false, layoutId: getActiveLayout(), sourceLayoutVersion: 3, sourceMap: { id: w.economyMap.id, revision: w.economyMap.revision, seed: w.economyMap.seed, rules: 3, digest: sourceDigest(w.sourceV3), mapDigest: mapDigest(w), ...(w.veyra ? {veyra:w.veyra} : {}) }, spawnRegion: 0, ended: null,
+    id: runIdFor(gs, seed, now), seed, character, startedAt: now, qaOffset: 0, qaUsed: false, layoutId: getActiveLayout(), sourceLayoutVersion: 3, sourceMap: { id: w.economyMap.id, revision: w.economyMap.revision, seed: w.economyMap.seed, rules: 3, digest: sourceDigest(w.sourceV3), mapDigest: mapDigest(w), ...(w.veyra ? {veyra:w.veyra} : {}) }, spawnRegion: 0, ended: null,
     player: null as any, creatures: [], sources: {}, terrain: {}, entities: {}, custody: {}, knowledge: { recipes: Array.from(new Set([...Object.keys(RECIPES).filter(k => RECIPES[k].base), ...ALWAYS_KNOWN_RECIPES])), studied: [] },
     traces: [], discovered: [], poiSeen: [], intel: [], elderStones: [], achievements: [], score: 0, deposited: 0,
     clock: { lastSimAt: now, simMs: 0, respawnAcc: 0, weatherSlot: -1 }, rng: seed, nextId: 1, receipts: [], seenIntents: [], seq: 0,
