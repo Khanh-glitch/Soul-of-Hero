@@ -47,3 +47,6 @@ The embedded browser game is the **playable deliverable**. The source above repr
 ## Custody
 
 GitHub workspace branch: `game/veyra-81-poi-art-battle-20261109` of `Khanh-glitch/Soul-of-Hero`. Do not merge to production. The complete big-file standalone and its R4 baseline are attached to this package rather than silently claimed to be built into the repository's current Vite entry point.
+## Source registry and renderer handoff
+
+The isolated branch now also registers **81 authored canonical POI IDs** through `web/src/veyra05/arch/sites.ts` and connects the C01/C02/C04/F03/Elder sprites through `web/src/veyra05/decor-client.ts` and `elder-art.ts`. TypeScript architecture registry check: 81 unique IDs, zero missing, zero `compilePlan` issues. The full branch Vite build remains **UNVERIFIED** here because upstream Vite/@noble modules and geography `?raw` imports were not installed. The browser standalone distributed in the ChatGPT R5 ZIP is the verified playable candidate, not this branch's built output.
