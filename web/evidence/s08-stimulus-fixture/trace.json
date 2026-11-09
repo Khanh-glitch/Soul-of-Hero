@@ -1,0 +1,107 @@
+{
+  "method": "Production build. Controlled clock, selection of a daytime/clearer seed, a short initial wolf freeze, and relocation of one pre-existing wolf, its home anchor, and player. All other spawned creatures retained; no monster or airdrop loot created by fixture. In-game landing generated the actual stimulus; natural ecology, stealth path and combat not proven.",
+  "seed": 53,
+  "source": {
+    "id": "e7t",
+    "tx": 149,
+    "ty": 116
+  },
+  "wolf": {
+    "id": "m3j",
+    "initial": {
+      "x": 2456,
+      "y": 1864
+    }
+  },
+  "time": {
+    "signalAt": 1793893234419,
+    "descentAt": 1793893354419,
+    "landAt": 1793893414419,
+    "unlockAt": 1793893594419,
+    "expiresAt": 1793898814419
+  },
+  "noticed": {
+    "at": 1793893414436,
+    "x": 2442.767658351024,
+    "y": 1881.7540718584016,
+    "knows": {
+      "kind": "stimulus",
+      "x": 2392,
+      "y": 1864,
+      "at": 1793893414419,
+      "sourceId": "airdrop:0:e7t",
+      "eventIndex": 0,
+      "expiresAt": 1793893438419,
+      "goalX": 2408,
+      "goalY": 1864
+    },
+    "stimuli": [
+      {
+        "version": "world-stimulus-v1",
+        "id": "airdrop:0:e7t:landing",
+        "sourceId": "airdrop:0:e7t",
+        "eventIndex": 0,
+        "kind": "airdrop-landing",
+        "modality": "sound",
+        "eligibility": "audible-landing-v1",
+        "x": 2392,
+        "y": 1864,
+        "at": 1793893414419,
+        "expiresAt": 1793893418419,
+        "range": 160,
+        "strength": 1
+      }
+    ],
+    "player": {
+      "x": 2280,
+      "y": 1784
+    },
+    "receipts": [
+      {
+        "id": "r75",
+        "seq": 75,
+        "at": 1793893414419,
+        "kind": "stimulus.emit",
+        "detail": "airdrop:0:e7t:landing@149,116"
+      },
+      {
+        "id": "r76",
+        "seq": 76,
+        "at": 1793893414420,
+        "kind": "stimulus.notice",
+        "detail": "m3j:airdrop:0:e7t:landing"
+      }
+    ]
+  },
+  "ended": {
+    "at": 1793893415107,
+    "x": 2419.168935121037,
+    "y": 1867.9369310672812,
+    "state": "wander",
+    "knows": null,
+    "receipts": [
+      {
+        "id": "r75",
+        "seq": 75,
+        "at": 1793893414419,
+        "kind": "stimulus.emit",
+        "detail": "airdrop:0:e7t:landing@149,116"
+      },
+      {
+        "id": "r76",
+        "seq": 76,
+        "at": 1793893414420,
+        "kind": "stimulus.notice",
+        "detail": "m3j:airdrop:0:e7t:landing"
+      },
+      {
+        "id": "r77",
+        "seq": 77,
+        "at": 1793893415003,
+        "kind": "stimulus.lost",
+        "detail": "m3j:airdrop:0:e7t:arrived"
+      }
+    ]
+  },
+  "errors": []
+}

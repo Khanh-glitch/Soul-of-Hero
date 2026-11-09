@@ -1,0 +1,637 @@
+{
+  "schema": "cal01-world-calendar-evidence-v1",
+  "generatedFor": "CAL-01 / WO-CLOCK-01 world_calendar_v1",
+  "evidenceLevel": "MECHANICS_FIXTURE — real shipped code on the real Map raster, real build/plant/settle intents; time acceleration uses the existing qaAdvance fixture (LOCAL/UNVERIFIED in the UI). Not natural-play enjoyment evidence, not a 336 h campaign.",
+  "mapGroundTruth": {
+    "note": "Map-owned economyMap biome/temperature/moisture are read only; the calendar applies a bounded seasonal deviation and never writes the arrays back.",
+    "arraysUnchangedAfterClimateSweep": {
+      "temperature": true,
+      "moisture": true,
+      "biome": true
+    },
+    "snowCell": {
+      "tile": [
+        159,
+        17
+      ],
+      "mapTemperature": 0.1,
+      "mapMoisture": 0.45,
+      "biome": "snow"
+    },
+    "warmSandCell": {
+      "tile": [
+        16,
+        117
+      ],
+      "mapTemperature": 0.7,
+      "biome": "sand"
+    },
+    "marshCell": {
+      "tile": [
+        55,
+        128
+      ],
+      "mapMoisture": 0.85,
+      "biome": "marsh"
+    }
+  },
+  "balanceParameters": {
+    "calendar": {
+      "_status": "LOCKED_CANON scope / TUNABLE_BALANCE numbers. Bible §0.1c D-FINAL-02 (CREATOR_LOCKED 2026-11-08): a run is 336 real hours and contains about two in-world years as two Spring->Summer->Autumn->Winter cycles == eight consecutive seasons. The eight equal phases below are the NOMINAL implementation parameter (42 h/season); only the phase LENGTH is provisional. 336 h, the final 72 h Ragnarok window and the season order are fixed and are not tunable here.",
+      "version": "world_calendar_v1",
+      "phaseHours": 42,
+      "years": 2,
+      "_phaseHoursNote": "SOH_PROVISIONAL nominal parameter = maxRunHours / (years x 4). Tunable only against evidence and only inside the fixed 336 h / 72 h run clock."
+    },
+    "seasonClimateV1": {
+      "_status": "SOH_PROVISIONAL / TUNABLE_BALANCE. Climate AMPLITUDE per region is still [CẦN ĐO] per Bible §0.1c; these are bounded global deviations applied to Map-owned temperature/moisture, never new geography. Spring is the neutral reference season (offset 0) so the measured comfortV1 and garden baselines keep their calibration.",
+      "version": "seasonal-climate-v1",
+      "temperatureOffset": {
+        "spring": 0,
+        "summer": 0.1,
+        "autumn": -0.05,
+        "winter": -0.25
+      },
+      "moistureOffset": {
+        "spring": 0,
+        "summer": -0.15,
+        "autumn": 0.08,
+        "winter": 0.02
+      },
+      "snowTemperatureBelow": 0.3,
+      "cold": {
+        "_status": "SOH_PROVISIONAL bounded extra SYS15-C03 exposure points, additive to the legacy snow/water/dark cold parts",
+        "fullDeviation": 0.25,
+        "comfortReference": 0.3,
+        "maxPoints": 7
+      },
+      "heat": {
+        "_status": "SOH_PROVISIONAL water demand from seasonal heat/dryness; the seasonal term is 0 in the neutral season",
+        "temperatureSpan": 0.12,
+        "moistureSpan": 0.15,
+        "dryReference": 0.4,
+        "warmReference": 0.6,
+        "maxThirstBonus": 0.4,
+        "maxEvaporationBonus": 1.5
+      },
+      "growth": {
+        "_status": "SOH_PROVISIONAL competing crops (SYS15-C10): Sunroot peaks in summer, Bitterleaf survives winter",
+        "crop": {
+          "spring": 1,
+          "summer": 1.15,
+          "autumn": 0.9,
+          "winter": 0.55
+        },
+        "herb": {
+          "spring": 1,
+          "summer": 0.9,
+          "autumn": 1.05,
+          "winter": 0.8
+        }
+      },
+      "growthMinFactor": 0.25,
+      "traces": {
+        "_status": "snowfall uses the existing BAL.traces.snowfallSnowMult magnitude: fresh snow buries a print on bare ground faster than rain washes it (rainDecayMult 4), and a print cut into snow/ice divides by snowfallSnowMult so it survives longer",
+        "snowfallDecayMult": 6
+      }
+    },
+    "seasonWeatherWeights": {
+      "_status": "SOH_PROVISIONAL. Bounded relative weights, same five families. Snow is NOT a new weather enum: a cold-region rain slot lands as snow via seasonClimateV1.snowTemperatureBelow.",
+      "spring": {
+        "clear": 5,
+        "cloudy": 3,
+        "rain": 3,
+        "storm": 1,
+        "fog": 2
+      },
+      "summer": {
+        "clear": 8,
+        "cloudy": 3,
+        "rain": 2,
+        "storm": 2,
+        "fog": 1
+      },
+      "autumn": {
+        "clear": 4,
+        "cloudy": 4,
+        "rain": 4,
+        "storm": 2,
+        "fog": 3
+      },
+      "winter": {
+        "clear": 3,
+        "cloudy": 5,
+        "rain": 3,
+        "storm": 2,
+        "fog": 2
+      }
+    }
+  },
+  "boundaryVector": {
+    "contract": {
+      "runHours": 336,
+      "ragnarokFinalHours": 72,
+      "phaseHours": 42,
+      "phaseCount": 8,
+      "productHours": 336,
+      "calendarVersion": "world_calendar_v1",
+      "clampedAt400h": 7
+    },
+    "boundaries": [
+      {
+        "atHours": 0,
+        "year": 1,
+        "season": "spring",
+        "phaseIndex": 0,
+        "phaseInYear": 0,
+        "runClockHours": 0,
+        "ragnarok": false
+      },
+      {
+        "atHours": 42,
+        "year": 1,
+        "season": "summer",
+        "phaseIndex": 1,
+        "phaseInYear": 1,
+        "runClockHours": 42,
+        "ragnarok": false
+      },
+      {
+        "atHours": 84,
+        "year": 1,
+        "season": "autumn",
+        "phaseIndex": 2,
+        "phaseInYear": 2,
+        "runClockHours": 84,
+        "ragnarok": false
+      },
+      {
+        "atHours": 126,
+        "year": 1,
+        "season": "winter",
+        "phaseIndex": 3,
+        "phaseInYear": 3,
+        "runClockHours": 126,
+        "ragnarok": false
+      },
+      {
+        "atHours": 168,
+        "year": 2,
+        "season": "spring",
+        "phaseIndex": 4,
+        "phaseInYear": 0,
+        "runClockHours": 168,
+        "ragnarok": false
+      },
+      {
+        "atHours": 210,
+        "year": 2,
+        "season": "summer",
+        "phaseIndex": 5,
+        "phaseInYear": 1,
+        "runClockHours": 210,
+        "ragnarok": false
+      },
+      {
+        "atHours": 252,
+        "year": 2,
+        "season": "autumn",
+        "phaseIndex": 6,
+        "phaseInYear": 2,
+        "runClockHours": 252,
+        "ragnarok": false
+      },
+      {
+        "atHours": 294,
+        "year": 2,
+        "season": "winter",
+        "phaseIndex": 7,
+        "phaseInYear": 3,
+        "runClockHours": 294,
+        "ragnarok": true
+      },
+      {
+        "atHours": 336,
+        "year": 2,
+        "season": "winter",
+        "phaseIndex": 7,
+        "phaseInYear": 3,
+        "runClockHours": 336,
+        "ragnarok": true
+      }
+    ]
+  },
+  "precipitationPhase": {
+    "winterSnowSlots": 200,
+    "winterRainSlots": 0,
+    "springSnowSlots": 0,
+    "samples": 200
+  },
+  "regionalClimate": [
+    {
+      "region": "snow",
+      "seasonLabel": "spring h10",
+      "season": "spring",
+      "mapTemperature": 0.1,
+      "mapMoisture": 0.45,
+      "localTemperature": 0.1,
+      "coldPointsAdded": 0,
+      "coldReason": null,
+      "thermalTargetC": 19,
+      "thermalColdParts": [
+        "snow_zone:9"
+      ],
+      "thirstMultiplier": 1,
+      "evaporationMultiplier": 1
+    },
+    {
+      "region": "snow",
+      "seasonLabel": "summer h50",
+      "season": "summer",
+      "mapTemperature": 0.1,
+      "mapMoisture": 0.45,
+      "localTemperature": 0.2,
+      "coldPointsAdded": 0,
+      "coldReason": null,
+      "thermalTargetC": 19,
+      "thermalColdParts": [
+        "snow_zone:9"
+      ],
+      "thirstMultiplier": 1.05,
+      "evaporationMultiplier": 1.188
+    },
+    {
+      "region": "snow",
+      "seasonLabel": "winter h128",
+      "season": "winter",
+      "mapTemperature": 0.1,
+      "mapMoisture": 0.45,
+      "localTemperature": 0,
+      "coldPointsAdded": 7,
+      "coldReason": "season_cold_winter_snow",
+      "thermalTargetC": 0,
+      "thermalColdParts": [
+        "snow_zone:9",
+        "season_cold_winter_snow:7"
+      ],
+      "thirstMultiplier": 1,
+      "evaporationMultiplier": 1
+    },
+    {
+      "region": "warm sand",
+      "seasonLabel": "spring h10",
+      "season": "spring",
+      "mapTemperature": 0.7,
+      "mapMoisture": 0.25,
+      "localTemperature": 0.7,
+      "coldPointsAdded": 0,
+      "coldReason": null,
+      "thermalTargetC": 100,
+      "thermalColdParts": [],
+      "thirstMultiplier": 1,
+      "evaporationMultiplier": 1
+    },
+    {
+      "region": "warm sand",
+      "seasonLabel": "summer h50",
+      "season": "summer",
+      "mapTemperature": 0.7,
+      "mapMoisture": 0.25,
+      "localTemperature": 0.8,
+      "coldPointsAdded": 0,
+      "coldReason": null,
+      "thermalTargetC": 100,
+      "thermalColdParts": [],
+      "thirstMultiplier": 1.251,
+      "evaporationMultiplier": 1.941
+    },
+    {
+      "region": "warm sand",
+      "seasonLabel": "winter h128",
+      "season": "winter",
+      "mapTemperature": 0.7,
+      "mapMoisture": 0.25,
+      "localTemperature": 0.45,
+      "coldPointsAdded": 0,
+      "coldReason": null,
+      "thermalTargetC": 100,
+      "thermalColdParts": [],
+      "thirstMultiplier": 1,
+      "evaporationMultiplier": 1
+    },
+    {
+      "region": "marsh",
+      "seasonLabel": "spring h10",
+      "season": "spring",
+      "mapTemperature": 0.77,
+      "mapMoisture": 0.85,
+      "localTemperature": 0.77,
+      "coldPointsAdded": 0,
+      "coldReason": null,
+      "thermalTargetC": 100,
+      "thermalColdParts": [],
+      "thirstMultiplier": 1,
+      "evaporationMultiplier": 1
+    },
+    {
+      "region": "marsh",
+      "seasonLabel": "summer h50",
+      "season": "summer",
+      "mapTemperature": 0.77,
+      "mapMoisture": 0.85,
+      "localTemperature": 0.87,
+      "coldPointsAdded": 0,
+      "coldReason": null,
+      "thermalTargetC": 100,
+      "thermalColdParts": [],
+      "thirstMultiplier": 1.134,
+      "evaporationMultiplier": 1.503
+    },
+    {
+      "region": "marsh",
+      "seasonLabel": "winter h128",
+      "season": "winter",
+      "mapTemperature": 0.77,
+      "mapMoisture": 0.85,
+      "localTemperature": 0.52,
+      "coldPointsAdded": 0,
+      "coldReason": null,
+      "thermalTargetC": 100,
+      "thermalColdParts": [],
+      "thirstMultiplier": 1,
+      "evaporationMultiplier": 1
+    }
+  ],
+  "seasonalGardening": {
+    "at": "Year 1 winter, 2 h after the boundary (T0+128 h)",
+    "exposure": "same seed, same Map cell, 2 h offline settle",
+    "cells": {
+      "coldExposed": {
+        "mapTemperature": 0.1,
+        "envRate": 0.053,
+        "envEvaporation": 1,
+        "envCovered": false,
+        "result": {
+          "growth": 0.1283,
+          "water": 0,
+          "harvestReceipts": 0,
+          "before": {
+            "growth": 0,
+            "water": 3
+          }
+        }
+      },
+      "coldFramed": {
+        "mapTemperature": 0.1,
+        "envRate": 0.466,
+        "envEvaporation": 1,
+        "envCovered": true,
+        "result": {
+          "growth": 1,
+          "water": 0.3202,
+          "harvestReceipts": 0,
+          "before": {
+            "growth": 0,
+            "water": 3
+          }
+        }
+      },
+      "warmExposed": {
+        "mapTemperature": 0.66,
+        "envRate": 0.385,
+        "envEvaporation": 1,
+        "envCovered": false,
+        "result": {
+          "growth": 1,
+          "water": 3,
+          "harvestReceipts": 0,
+          "before": {
+            "growth": 0,
+            "water": 3
+          }
+        }
+      }
+    },
+    "namedCosts": {
+      "gardenBuildDebit": {
+        "wood": 4,
+        "fiber": 4
+      },
+      "coldFrameDebit": {
+        "wood": 4,
+        "fiber": 4,
+        "glass": 1,
+        "herb": 1
+      },
+      "plantingDebit": {
+        "seed": 1
+      },
+      "remainingAfterAllSpend": {
+        "wood": 32,
+        "fiber": 32,
+        "glass": 3,
+        "herb": 3,
+        "seed": 9
+      },
+      "note": "Real catalog costs (STRUCTS.garden, GARDEN_FRAME_COST, GARDEN_CROPS.crop.inputs) debited through dispatch(); nothing was injected into the garden/barrel after planting."
+    }
+  },
+  "waterConsequence": {
+    "cell": {
+      "mapTemperature": 0.66,
+      "biome": "sand"
+    },
+    "spring": {
+      "season": "spring",
+      "waterBefore": 3,
+      "waterAfter": 1.964,
+      "evaporationMultiplier": 1,
+      "gardenRate": 0.7
+    },
+    "summer": {
+      "season": "summer",
+      "waterBefore": 3,
+      "waterAfter": 0.108,
+      "evaporationMultiplier": 1.863,
+      "gardenRate": 0.805
+    },
+    "cropFactorByS": {
+      "summerSunroot": 1.15,
+      "summerBitterleaf": 0.9,
+      "winterSunroot": 0.55,
+      "winterBitterleaf": 0.8
+    }
+  },
+  "offlineEquivalence": {
+    "note": "Continuous vs partitioned vs save/reload across three real season boundaries (spring->summer->autumn->winter->spring). Tolerance is exact for the season ledger and the receipts count; garden growth/hunger use the same minute-sized integration, so they must agree exactly because no boundary is interpolated. A 130 h absence with an empty pack kills the player through the EXISTING hunger/thirst law (CAL-01 adds no damage term); that identical outcome in all three variants is part of the equivalence, and the shorter absence above shows the surviving return.",
+    "shortAbsence": {
+      "from": "h36 (spring)",
+      "to": "h46 (summer)",
+      "crossed": "spring -> summer at h42",
+      "offlineDrains": "EXISTING law: hunger 4.167/h, thirst 6.25/h (BAL.player.offline*); CAL-01 adds only the bounded seasonal thirst multiplier at the player cell.",
+      "before": {
+        "season": "spring",
+        "growth": 0,
+        "water": 3,
+        "hunger": 100,
+        "thirst": 100
+      },
+      "after": {
+        "season": "summer",
+        "growth": 1,
+        "water": 3,
+        "hunger": 58.333,
+        "thirst": 31.75,
+        "hp": 100,
+        "dead": false
+      },
+      "seasonEvents": [
+        "1:summer:1"
+      ],
+      "plantReceipts": 1,
+      "harvestReceipts": 0,
+      "note": "The crop ripened through the season boundary at the summer rate and must still be harvested by a real intent, so the next decision is physical, not granted."
+    },
+    "continuous": {
+      "parts": 1,
+      "reloadedBetween": false,
+      "seasonAtReturn": "winter",
+      "phaseIndex": 3,
+      "seasonEvents": [
+        "1:summer:1",
+        "1:autumn:2",
+        "1:winter:3"
+      ],
+      "calendarLedger": {
+        "version": "world_calendar_v1",
+        "observedPhase": 3,
+        "observedAt": 1767679200000
+      },
+      "gardenGrowth": 1,
+      "gardenWater": 3,
+      "hunger": 95.815,
+      "thirst": 93.7225,
+      "hp": 0,
+      "receipts": 135,
+      "lastSimAtHours": 140
+    },
+    "fourPartitions": {
+      "parts": 4,
+      "reloadedBetween": false,
+      "seasonAtReturn": "winter",
+      "phaseIndex": 3,
+      "seasonEvents": [
+        "1:summer:1",
+        "1:autumn:2",
+        "1:winter:3"
+      ],
+      "calendarLedger": {
+        "version": "world_calendar_v1",
+        "observedPhase": 3,
+        "observedAt": 1767679200000
+      },
+      "gardenGrowth": 1,
+      "gardenWater": 3,
+      "hunger": 95.815,
+      "thirst": 93.7225,
+      "hp": 0,
+      "receipts": 135,
+      "lastSimAtHours": 140
+    },
+    "fourPartitionsWithReload": {
+      "parts": 4,
+      "reloadedBetween": true,
+      "seasonAtReturn": "winter",
+      "phaseIndex": 3,
+      "seasonEvents": [
+        "1:summer:1",
+        "1:autumn:2",
+        "1:winter:3"
+      ],
+      "calendarLedger": {
+        "version": "world_calendar_v1",
+        "observedPhase": 3,
+        "observedAt": 1767679200000
+      },
+      "gardenGrowth": 1,
+      "gardenWater": 3,
+      "hunger": 95.815,
+      "thirst": 93.7225,
+      "hp": 0,
+      "receipts": 135,
+      "lastSimAtHours": 140
+    }
+  },
+  "persistence": {
+    "legacySaveWithoutCalendar": {
+      "accepted": true,
+      "fieldAddedByValidate": false,
+      "runIdPreserved": true,
+      "startedAtPreserved": true
+    },
+    "futureDatedLedger": {
+      "accepted": true,
+      "observedPhaseBefore": 7,
+      "observedPhaseAfter": 4,
+      "observedAtAfterHours": 100.01666666666667,
+      "runIdPreserved": true,
+      "depositedPreserved": true
+    },
+    "wellFormedLedgerKeptVerbatim": {
+      "unchanged": true
+    }
+  },
+  "readModel": {
+    "seasonInfo": {
+      "season": "summer",
+      "year": 1,
+      "phaseIndex": 1,
+      "phaseRemainingMs": 122400000,
+      "ragnarok": false
+    },
+    "calendarView": {
+      "version": "world_calendar_v1",
+      "state": {
+        "version": "world_calendar_v1",
+        "elapsedMs": 180000000,
+        "year": 1,
+        "phaseIndex": 1,
+        "phaseInYear": 1,
+        "season": "summer",
+        "phaseElapsedMs": 28800000,
+        "phaseRemainingMs": 122400000,
+        "phaseStartedAt": 1767196800000,
+        "ragnarok": false
+      },
+      "label": "Year 1 · Summer",
+      "runProgress": 0.1488095238095238,
+      "climate": {
+        "version": "seasonal-climate-v1",
+        "phaseIndex": 1,
+        "year": 1,
+        "season": "summer",
+        "biome": "meadow",
+        "mapTemperature": 0.7319999933242798,
+        "mapMoisture": 0.44999998807907104,
+        "temperature": 0.8319999933242798,
+        "moisture": 0.299999988079071,
+        "weather": "cloudy",
+        "precipitation": "none",
+        "wet": false,
+        "snowing": false,
+        "coldPoints": 0,
+        "coldReason": null,
+        "thirstMultiplier": 1.1660000026226043,
+        "evaporationMultiplier": 1.6225000098347664,
+        "catchMultiplier": 0,
+        "traceDecayMultiplier": 1
+      }
+    }
+  },
+  "weatherFamilyNote": "weatherAt() picks the family from balance.weather.seasonWeights[season] on the same 9-minute slot grid; snow is a local precipitation PHASE of a rain/storm slot, never a new family.",
+  "weatherSample": {
+    "spring": "rain",
+    "summer": "cloudy",
+    "winter": "storm"
+  }
+}

@@ -1,0 +1,16 @@
+== Per-product processing (MODEL) ==
+{'route': 'A furnace (3 oil+1 glass -> 1 can, 18s)', 'oil_per_can': 3.0, 'glass_per_can': 1.0, 'secs_per_can': 18.0, 'cans': 1, 'lube': 0}
+{'route': 'B refinery batch (5+1 -> 2 cans, 22s)', 'oil_per_can': 2.5, 'glass_per_can': 0.5, 'secs_per_can': 11.0, 'cans': 2, 'lube': 0}
+{'route': 'B refinery industrial (6+1 -> 2 cans + 1 lube, 26s)', 'oil_per_can': 3.0, 'glass_per_can': 0.5, 'secs_per_can': 13.0, 'cans': 2, 'lube': 1}
+separate batch+lube = 7 oil / 34s  vs industrial = 6 oil / 26s
+
+== Motorbike maths (MODEL, flat unloaded road) ==
+one can = 2000 px of travel; 1 lube covers 12000 px = 6.0 cans
+lube saves 12.0 HP per 12000 px unloaded road (rough x1.5 -> 18.0; loaded x1.5 more -> 27.0)
+  = 0.24 of one repair (1 Mechanical Part + 1 Fastener), for 2 oil
+  2 oil as furnace fuel = 0.67 cans = 1333 px of unloaded travel
+
+== Oil and money at vendor prices (MODEL) ==
+oil at vendor price 5; vendor stock 4 oil + 3 glass ... finite
+furnace cost per can: 19 money-eq; batch per can: 14.5
+oil saved per can refinery-batch vs furnace: 0.50 oil; over 10 cans: 5.0 oil

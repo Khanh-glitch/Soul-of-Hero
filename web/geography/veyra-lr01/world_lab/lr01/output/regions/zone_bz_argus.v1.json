@@ -1,0 +1,205 @@
+{
+  "schema": "soh.map.lr01.region.v1",
+  "kind": "construction_zone",
+  "id": "bz_argus",
+  "name": "Argus Valley Pasture",
+  "soil": "đất mùn",
+  "water": "suối Argus",
+  "slope": "thoải",
+  "tags": [
+    "ven sông",
+    "bình nguyên"
+  ],
+  "notes": "",
+  "conf": "proposal",
+  "sourceRef": "project.zones[] where id=bz_argus",
+  "status": [
+    "SOURCE_AUTHORED",
+    "DERIVED",
+    "PROPOSED"
+  ],
+  "geometry": {
+    "ringAu": [
+      [
+        848.2451514116588,
+        309.1108636821583
+      ],
+      [
+        849.7130698681442,
+        303.25756538219315
+      ],
+      [
+        854.100137895515,
+        297.7726961465795
+      ],
+      [
+        863.6013306364214,
+        293.92505774063204
+      ],
+      [
+        878.2166480908636,
+        291.7146501643508
+      ],
+      [
+        893.5220421933925,
+        289.80153279744854
+      ],
+      [
+        909.5175129440081,
+        288.1857056399251
+      ],
+      [
+        922.5897764443445,
+        289.66067458914335
+      ],
+      [
+        932.7388326944015,
+        294.22643964510326
+      ],
+      [
+        941.4500909776135,
+        298.88199162981243
+      ],
+      [
+        948.7235512939804,
+        303.6273305432708
+      ],
+      [
+        950.5161127899783,
+        308.8225798395881
+      ],
+      [
+        946.8277754656069,
+        314.46773951876423
+      ],
+      [
+        937.717748327447,
+        318.69932054965125
+      ],
+      [
+        923.1860313754985,
+        321.51732293224904
+      ],
+      [
+        908.222123302228,
+        322.64772660295915
+      ],
+      [
+        892.8260241076357,
+        322.0905315617816
+      ],
+      [
+        876.4514804035693,
+        320.96981421305287
+      ],
+      [
+        859.098492190029,
+        319.28557455677316
+      ],
+      [
+        849.6963825260589,
+        315.332591046475
+      ]
+    ],
+    "ringCount": 1,
+    "areaAu2": 2730.2184,
+    "perimeterAu": 230.372,
+    "bboxAu": [
+      848.2452,
+      288.1857,
+      950.5161,
+      322.6477
+    ],
+    "centroidAu": [
+      898.7867,
+      306.3792
+    ],
+    "outerVertexCount": 20,
+    "holeCount": 0
+  },
+  "rasterCells": {
+    "cells": 42,
+    "areaAu2": 2688,
+    "elevationRawByte": {
+      "min": 45,
+      "max": 58,
+      "mean": 52.4524,
+      "p25": 49,
+      "p50": 53,
+      "p75": 56,
+      "p95": 57,
+      "unit": "UNKNOWN_SOURCE_BYTE__NO_APPROVED_PHYSICAL_SCALE"
+    },
+    "slopeRawDelta": {
+      "min": 1,
+      "max": 4,
+      "mean": 2.3095,
+      "p50": 2,
+      "p95": 4,
+      "unit": "RAW_BYTE_DELTA_PER_8au_CELL__NOT_A_GAMEPLAY_THRESHOLD"
+    },
+    "seaDistanceCellsMean": 20.5714,
+    "freshwaterProximityCellsMean": 9.2143,
+    "clearanceCellsMean": 9.2143,
+    "biomeHistogram": {
+      "0": 28,
+      "1": 14
+    },
+    "roadClassHistogram": {
+      "0": 36,
+      "1": 6
+    },
+    "coastCells": 0,
+    "coastBandLengthAuApprox": 0,
+    "buildableCells": 42,
+    "walkableCells": 42,
+    "waterCells": 0,
+    "cargoCells": 6,
+    "crossingCells": 0
+  },
+  "buildSuitability": {
+    "buildableCells": 42,
+    "buildableFraction": 1,
+    "meanSlopeRaw": 2.3095,
+    "meanFreshwaterProximityCells": 9.2143,
+    "status": "DERIVED",
+    "note": "Geometric suitability only. A0 occupancy, claim legality and Gameplay building rules are NOT asserted."
+  },
+  "loadingSpace": {
+    "cells": 26,
+    "areaAu2": 1664,
+    "bboxAu": [
+      884,
+      292,
+      940,
+      316
+    ],
+    "status": "PROPOSED",
+    "note": "PROPOSED spatial candidate: buildable cells within 3 grid cells (24 au) of a cart-road/cart-bridge/dock cargo candidate. NOT a loading platform or a Gameplay placement grant."
+  },
+  "naturalChokepoints": {
+    "clusterIds": [],
+    "status": "DERIVED",
+    "note": "clearanceCells <= 2 (<=16 au from blocked geometry); geometric narrowness, not a combat chokepoint claim."
+  },
+  "nearestRoads": [
+    {
+      "id": "rd_h",
+      "kind": "cart",
+      "d": 12.0394
+    },
+    {
+      "id": "rd_1e",
+      "kind": "trail",
+      "d": 19.5707
+    },
+    {
+      "id": "rd_i",
+      "kind": "cart",
+      "d": 57.9167
+    }
+  ],
+  "walkableComponentIds": [
+    0
+  ]
+}

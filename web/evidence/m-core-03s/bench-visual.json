@@ -1,0 +1,75 @@
+{
+  "method": "Normal-input respawn and recovery after lava death on a first assisted recovery attempt. Read-only route now avoids ash except near destination and buffers lava.",
+  "errors": [],
+  "respawn": {
+    "p": {
+      "x": 2104,
+      "y": 2072,
+      "vx": 0,
+      "vy": 0,
+      "dir": 1,
+      "aim": 2.7241754263373292,
+      "hp": 60,
+      "stamina": 84.69999999999993,
+      "hunger": 61.87813255996483,
+      "thirst": 43.60505089599646,
+      "warmth": 80.50043563980138,
+      "rad": 0,
+      "active": 0,
+      "action": null,
+      "invuln": 1049.9999999999995,
+      "dead": false,
+      "deadT": 1383.3,
+      "pulling": null,
+      "skills": {
+        "gather": 76,
+        "combat": 2,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 10.312992000000005,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Caldera Wastes",
+      "sheltered": false
+    },
+    "receipts": [
+      {
+        "id": "r282",
+        "seq": 282,
+        "at": 1793773625262,
+        "kind": "offline.settle",
+        "detail": "21s"
+      },
+      {
+        "id": "r283",
+        "seq": 283,
+        "at": 1793773627134,
+        "kind": "death",
+        "detail": "Greyfang Wolf; bag=b1i0"
+      },
+      {
+        "id": "r284",
+        "seq": 284,
+        "at": 1793773774224,
+        "kind": "offline.settle",
+        "detail": "147s"
+      },
+      {
+        "id": "r285",
+        "seq": 285,
+        "at": 1793773789557,
+        "kind": "offline.settle",
+        "detail": "15s"
+      },
+      {
+        "id": "r286",
+        "seq": 286,
+        "at": 1793773791272,
+        "kind": "respawn",
+        "detail": "2104,2072"
+      }
+    ]
+  },
+  "failure": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'tx')\n    at eval (eval at evaluate (:291:30), <anonymous>:1:425)\n    at async <anonymous>:317:30"
+}

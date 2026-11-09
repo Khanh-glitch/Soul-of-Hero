@@ -1,0 +1,194 @@
+{
+ "fixtures": [
+  {
+   "viewport": "640x360",
+   "kind": "player relocated next to motorbike (disclosed visual fixture; no transaction)",
+   "bike": {
+    "id": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "player": {
+    "x": 2260,
+    "y": 1766
+   }
+  },
+  {
+   "viewport": "1280x720",
+   "kind": "player relocated next to motorbike (disclosed visual fixture; no transaction)",
+   "bike": {
+    "id": "e8h",
+    "x": 2296,
+    "y": 1752
+   },
+   "player": {
+    "x": 2260,
+    "y": 1766
+   }
+  }
+ ],
+ "shots": [
+  {
+   "path": "evidence/b05-industrial/refinery-idle-640x360.png",
+   "viewport": "640x360",
+   "target": "refinery",
+   "state": "idle, burn=0, no job",
+   "camera": "follows player; player relocated beside the bike (fixture)"
+  },
+  {
+   "path": "evidence/b05-industrial/refinery-lit-640x360.png",
+   "viewport": "640x360",
+   "target": "refinery",
+   "state": "lit fixture: burn=14 and one queued job (visual state only)",
+   "camera": "follows player; player relocated beside the bike (fixture)"
+  },
+  {
+   "path": "evidence/b05-industrial/bike-right-ok-640x360.png",
+   "viewport": "640x360",
+   "target": "motorbike",
+   "state": "fuel 200, angle 0 (side, facing right)",
+   "camera": "follows player; player relocated beside the bike (fixture)"
+  },
+  {
+   "path": "evidence/b05-industrial/bike-left-ok-640x360.png",
+   "viewport": "640x360",
+   "target": "motorbike",
+   "state": "fuel 200, angle PI (side, facing left)",
+   "camera": "follows player; player relocated beside the bike (fixture)"
+  },
+  {
+   "path": "evidence/b05-industrial/bike-down-ok-640x360.png",
+   "viewport": "640x360",
+   "target": "motorbike",
+   "state": "fuel 200, angle PI/2 (front)",
+   "camera": "follows player; player relocated beside the bike (fixture)"
+  },
+  {
+   "path": "evidence/b05-industrial/bike-up-ok-cargo-640x360.png",
+   "viewport": "640x360",
+   "target": "motorbike",
+   "state": "fuel 200, angle -PI/2 (back), cargo 12 wood + 2 plate (fixture cargo)",
+   "camera": "follows player; player relocated beside the bike (fixture)"
+  },
+  {
+   "path": "evidence/b05-industrial/bike-right-dead-cargo-640x360.png",
+   "viewport": "640x360",
+   "target": "motorbike",
+   "state": "fuel 0 (depleted), cargo fixture",
+   "camera": "follows player; player relocated beside the bike (fixture)"
+  },
+  {
+   "path": "evidence/b05-industrial/inventory-lubricant-640x360.png",
+   "viewport": "640x360",
+   "target": "inventory",
+   "state": "lubricant fixture slot",
+   "camera": "follows player; player relocated beside the bike (fixture)"
+  },
+  {
+   "path": "evidence/b05-industrial/refinery-idle-1280x720.png",
+   "viewport": "1280x720",
+   "target": "refinery",
+   "state": "idle, burn=0, no job",
+   "camera": "follows player; player relocated beside the bike (fixture)"
+  },
+  {
+   "path": "evidence/b05-industrial/refinery-lit-1280x720.png",
+   "viewport": "1280x720",
+   "target": "refinery",
+   "state": "lit fixture: burn=14 and one queued job (visual state only)",
+   "camera": "follows player; player relocated beside the bike (fixture)"
+  },
+  {
+   "path": "evidence/b05-industrial/bike-right-ok-1280x720.png",
+   "viewport": "1280x720",
+   "target": "motorbike",
+   "state": "fuel 200, angle 0 (side, facing right)",
+   "camera": "follows player; player relocated beside the bike (fixture)"
+  },
+  {
+   "path": "evidence/b05-industrial/bike-left-ok-1280x720.png",
+   "viewport": "1280x720",
+   "target": "motorbike",
+   "state": "fuel 200, angle PI (side, facing left)",
+   "camera": "follows player; player relocated beside the bike (fixture)"
+  },
+  {
+   "path": "evidence/b05-industrial/bike-down-ok-1280x720.png",
+   "viewport": "1280x720",
+   "target": "motorbike",
+   "state": "fuel 200, angle PI/2 (front)",
+   "camera": "follows player; player relocated beside the bike (fixture)"
+  },
+  {
+   "path": "evidence/b05-industrial/bike-up-ok-cargo-1280x720.png",
+   "viewport": "1280x720",
+   "target": "motorbike",
+   "state": "fuel 200, angle -PI/2 (back), cargo 12 wood + 2 plate (fixture cargo)",
+   "camera": "follows player; player relocated beside the bike (fixture)"
+  },
+  {
+   "path": "evidence/b05-industrial/bike-right-dead-cargo-1280x720.png",
+   "viewport": "1280x720",
+   "target": "motorbike",
+   "state": "fuel 0 (depleted), cargo fixture",
+   "camera": "follows player; player relocated beside the bike (fixture)"
+  },
+  {
+   "path": "evidence/b05-industrial/inventory-lubricant-1280x720.png",
+   "viewport": "1280x720",
+   "target": "inventory",
+   "state": "lubricant fixture slot",
+   "camera": "follows player; player relocated beside the bike (fixture)"
+  }
+ ],
+ "errors": [],
+ "notCaptured": [
+  "cart: no cart entity exists in the W08-M3 fixture save and placeCart is not driven here; cart silhouette and cart-vs-bike comparison NOT captured"
+ ],
+ "initial.640x360": {
+  "bike": {
+   "x": 2296,
+   "y": 1752,
+   "fuel": 0,
+   "hp": 200
+  },
+  "refinery": {
+   "tx": 150,
+   "ty": 115,
+   "burn": 0,
+   "queue": 0
+  },
+  "player": {
+   "x": 2392,
+   "y": 1864
+  }
+ },
+ "bike.640x360": {
+  "fuel": 0,
+  "angle": 0,
+  "cargoSlots": 2
+ },
+ "initial.1280x720": {
+  "bike": {
+   "x": 2296,
+   "y": 1752,
+   "fuel": 0,
+   "hp": 200
+  },
+  "refinery": {
+   "tx": 150,
+   "ty": 115,
+   "burn": 0,
+   "queue": 0
+  },
+  "player": {
+   "x": 2392,
+   "y": 1864
+  }
+ },
+ "bike.1280x720": {
+  "fuel": 0,
+  "angle": 0,
+  "cargoSlots": 2
+ }
+}

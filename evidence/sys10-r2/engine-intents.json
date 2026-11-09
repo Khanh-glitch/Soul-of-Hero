@@ -1,0 +1,21 @@
+{
+  "seed": 77,
+  "disclosure": "controlled fixture: L2 workbench, refinery placed by real build intent (no cabinet), 6 oil + 3 glass + 3 wood injected",
+  "refineryId": "e80",
+  "intents": [
+    {
+      "intent": "build",
+      "id": "r2-build",
+      "ok": true,
+      "reason": null,
+      "receipt": "r72"
+    },
+    {
+      "intent": "craft",
+      "id": "r2-craft",
+      "ok": true,
+      "reason": null,
+      "receipt": "r73"
+    }
+  ]
+}

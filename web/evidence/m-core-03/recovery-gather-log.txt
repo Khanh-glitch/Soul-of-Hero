@@ -1,0 +1,57 @@
+source {"mat":"wood","plan":{"path":[19947],"target":19946,"key":"oak"},"before":6,"after":0,"inventory":{"wood":6,"stone":0,"fiber":0,"damaged_drive":0},"receipts":[{"id":"r2","seq":2,"at":1793766887871,"kind":"harvest","detail":"wreck@117,108 -1"},{"id":"r6","seq":6,"at":1793766889091,"kind":"harvest","detail":"wreck@117,108 -1"},{"id":"r16","seq":16,"at":1793767180762,"kind":"harvest","detail":"oak@146,99 -1"},{"id":"r18","seq":18,"at":1793767181676,"kind":"harvest","detail":"oak@146,99 -1"},{"id":"r20","seq":20,"at":1793767182593,"kind":"harvest","detail":"oak@146,99 -1"},{"id":"r22","seq":22,"at":1793767183492,"kind":"harvest","detail":"oak@146,99 -1"},{"id":"r24","seq":24,"at":1793767184409,"kind":"harvest","detail":"oak@146,99 -1"},{"id":"r26","seq":26,"at":1793767185309,"kind":"harvest","detail":"oak@146,99 -1"}]}
+source {"mat":"wood","plan":{"path":[19947,20147,20146,20145,20144],"target":19944,"key":"oak"},"before":6,"after":0,"inventory":{"wood":12,"stone":0,"fiber":0,"damaged_drive":0},"receipts":[{"id":"r24","seq":24,"at":1793767184409,"kind":"harvest","detail":"oak@146,99 -1"},{"id":"r26","seq":26,"at":1793767185309,"kind":"harvest","detail":"oak@146,99 -1"},{"id":"r28","seq":28,"at":1793767188476,"kind":"harvest","detail":"oak@144,99 -1"},{"id":"r31","seq":31,"at":1793767189409,"kind":"harvest","detail":"oak@144,99 -1"},{"id":"r34","seq":34,"at":1793767190313,"kind":"harvest","detail":"oak@144,99 -1"},{"id":"r36","seq":36,"at":1793767191242,"kind":"harvest","detail":"oak@144,99 -1"},{"id":"r38","seq":38,"at":1793767192159,"kind":"harvest","detail":"oak@144,99 -1"},{"id":"r41","seq":41,"at":1793767193060,"kind":"harvest","detail":"oak@144,99 -1"}]}
+source {"mat":"wood","plan":{"path":[20144,20143],"target":20142,"key":"oak"},"before":6,"after":0,"inventory":{"wood":18,"stone":0,"fiber":0,"damaged_drive":0},"receipts":[{"id":"r38","seq":38,"at":1793767192159,"kind":"harvest","detail":"oak@144,99 -1"},{"id":"r41","seq":41,"at":1793767193060,"kind":"harvest","detail":"oak@144,99 -1"},{"id":"r43","seq":43,"at":1793767195309,"kind":"harvest","detail":"oak@142,100 -1"},{"id":"r45","seq":45,"at":1793767196225,"kind":"harvest","detail":"oak@142,100 -1"},{"id":"r47","seq":47,"at":1793767197142,"kind":"harvest","detail":"oak@142,100 -1"},{"id":"r49","seq":49,"at":1793767198042,"kind":"harvest","detail":"oak@142,100 -1"},{"id":"r52","seq":52,"at":1793767198975,"kind":"harvest","detail":"oak@142,100 -1"},{"id":"r55","seq":55,"at":1793767199875,"kind":"harvest","detail":"oak@142,100 -1"}]}
+source {"mat":"wood","plan":{"path":[20143,20343,20342,20341],"target":20541,"key":"oak"},"before":6,"after":0,"inventory":{"wood":24,"stone":0,"fiber":0,"damaged_drive":0},"receipts":[{"id":"r52","seq":52,"at":1793767198975,"kind":"harvest","detail":"oak@142,100 -1"},{"id":"r55","seq":55,"at":1793767199875,"kind":"harvest","detail":"oak@142,100 -1"},{"id":"r57","seq":57,"at":1793767202542,"kind":"harvest","detail":"oak@141,102 -1"},{"id":"r59","seq":59,"at":1793767203458,"kind":"harvest","detail":"oak@141,102 -1"},{"id":"r61","seq":61,"at":1793767204375,"kind":"harvest","detail":"oak@141,102 -1"},{"id":"r63","seq":63,"at":1793767205291,"kind":"harvest","detail":"oak@141,102 -1"},{"id":"r66","seq":66,"at":1793767206191,"kind":"harvest","detail":"oak@141,102 -1"},{"id":"r68","seq":68,"at":1793767207125,"kind":"harvest","detail":"oak@141,102 -1"}]}
+source {"mat":"stone","plan":{"path":[20341,20141],"target":19941,"key":"rock"},"before":6,"after":0,"inventory":{"wood":24,"stone":6,"fiber":0,"damaged_drive":0},"receipts":[{"id":"r66","seq":66,"at":1793767206191,"kind":"harvest","detail":"oak@141,102 -1"},{"id":"r68","seq":68,"at":1793767207125,"kind":"harvest","detail":"oak@141,102 -1"},{"id":"r71","seq":71,"at":1793767209275,"kind":"harvest","detail":"rock@141,99 -1"},{"id":"r73","seq":73,"at":1793767210191,"kind":"harvest","detail":"rock@141,99 -1"},{"id":"r75","seq":75,"at":1793767211096,"kind":"harvest","detail":"rock@141,99 -1"},{"id":"r77","seq":77,"at":1793767212008,"kind":"harvest","detail":"rock@141,99 -1"},{"id":"r79","seq":79,"at":1793767212908,"kind":"harvest","detail":"rock@141,99 -1"},{"id":"r81","seq":81,"at":1793767213858,"kind":"harvest","detail":"rock@141,99 -1"}]}
+source {"mat":"stone","plan":{"path":[20141,20140,19940,19740,19741],"target":19742,"key":"rock"},"before":6,"after":6,"inventory":{"wood":24,"stone":6,"fiber":0,"damaged_drive":0},"receipts":[{"id":"r66","seq":66,"at":1793767206191,"kind":"harvest","detail":"oak@141,102 -1"},{"id":"r68","seq":68,"at":1793767207125,"kind":"harvest","detail":"oak@141,102 -1"},{"id":"r71","seq":71,"at":1793767209275,"kind":"harvest","detail":"rock@141,99 -1"},{"id":"r73","seq":73,"at":1793767210191,"kind":"harvest","detail":"rock@141,99 -1"},{"id":"r75","seq":75,"at":1793767211096,"kind":"harvest","detail":"rock@141,99 -1"},{"id":"r77","seq":77,"at":1793767212008,"kind":"harvest","detail":"rock@141,99 -1"},{"id":"r79","seq":79,"at":1793767212908,"kind":"harvest","detail":"rock@141,99 -1"},{"id":"r81","seq":81,"at":1793767213858,"kind":"harvest","detail":"rock@141,99 -1"}]}
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: real source damage
+    at file:///home/user/Soul-of-Hero/web/e2e/m-core-03-natural-recovery.mjs:9:1448 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v22.22.3
+
+--- Continued process ---
+source {"mat":"stone","plan":{"path":[19741],"target":19742,"key":"rock"},"before":6,"after":6,"inventory":{"wood":24,"stone":6,"fiber":0,"damaged_drive":0},"receipts":[{"id":"r66","seq":66,"at":1793767206191,"kind":"harvest","detail":"oak@141,102 -1"},{"id":"r68","seq":68,"at":1793767207125,"kind":"harvest","detail":"oak@141,102 -1"},{"id":"r71","seq":71,"at":1793767209275,"kind":"harvest","detail":"rock@141,99 -1"},{"id":"r73","seq":73,"at":1793767210191,"kind":"harvest","detail":"rock@141,99 -1"},{"id":"r75","seq":75,"at":1793767211096,"kind":"harvest","detail":"rock@141,99 -1"},{"id":"r77","seq":77,"at":1793767212008,"kind":"harvest","detail":"rock@141,99 -1"},{"id":"r79","seq":79,"at":1793767212908,"kind":"harvest","detail":"rock@141,99 -1"},{"id":"r81","seq":81,"at":1793767213858,"kind":"harvest","detail":"rock@141,99 -1"}]}
+source {"mat":"stone","plan":{"path":[19741,19740,19540,19340,19140,18940,18740,18540,18340,18140,17940,17740,17540,17340],"target":17140,"key":"rock"},"before":6,"after":0,"inventory":{"wood":24,"stone":12,"fiber":0,"damaged_drive":0},"receipts":[{"id":"r79","seq":79,"at":1793767212908,"kind":"harvest","detail":"rock@141,99 -1"},{"id":"r81","seq":81,"at":1793767213858,"kind":"harvest","detail":"rock@141,99 -1"},{"id":"r85","seq":85,"at":1793767299771,"kind":"harvest","detail":"rock@140,85 -1"},{"id":"r87","seq":87,"at":1793767300688,"kind":"harvest","detail":"rock@140,85 -1"},{"id":"r89","seq":89,"at":1793767301588,"kind":"harvest","detail":"rock@140,85 -1"},{"id":"r91","seq":91,"at":1793767302504,"kind":"harvest","detail":"rock@140,85 -1"},{"id":"r93","seq":93,"at":1793767303406,"kind":"harvest","detail":"rock@140,85 -1"},{"id":"r95","seq":95,"at":1793767304348,"kind":"harvest","detail":"rock@140,85 -1"}]}
+source {"mat":"scrap","plan":{"path":[17340,17341,17541,17741,17941,18141],"target":18341,"key":"wreck"},"before":8,"after":6,"inventory":{"wood":24,"stone":12,"fiber":0,"damaged_drive":1},"receipts":[{"id":"r85","seq":85,"at":1793767299771,"kind":"harvest","detail":"rock@140,85 -1"},{"id":"r87","seq":87,"at":1793767300688,"kind":"harvest","detail":"rock@140,85 -1"},{"id":"r89","seq":89,"at":1793767301588,"kind":"harvest","detail":"rock@140,85 -1"},{"id":"r91","seq":91,"at":1793767302504,"kind":"harvest","detail":"rock@140,85 -1"},{"id":"r93","seq":93,"at":1793767303406,"kind":"harvest","detail":"rock@140,85 -1"},{"id":"r95","seq":95,"at":1793767304348,"kind":"harvest","detail":"rock@140,85 -1"},{"id":"r97","seq":97,"at":1793767307804,"kind":"harvest","detail":"wreck@141,91 -1"},{"id":"r100","seq":100,"at":1793767309022,"kind":"harvest","detail":"wreck@141,91 -1"}]}
+build {"site":{"x":139,"y":86},"result":{"entities":[{"id":"ef5","kind":"struct","type":"claim","tx":139,"ty":86,"x":2232,"y":1384,"hp":200,"maxHp":200,"born":1793767310495}],"inv":[{"uid":"s1","key":"knife","qty":1,"dur":172},{"uid":"s2","key":"water_flask","qty":1,"charge":2},{"uid":"s3","key":"berries","qty":3},{"uid":"s7h","key":"scrap","qty":4},{"uid":"s7i","key":"fasteners","qty":1},{"uid":"s9n","key":"spares","qty":3},{"uid":"sa0","key":"wood","qty":14},{"uid":"sar","key":"seed","qty":7},{"uid":"sd0","key":"stone","qty":7},{"uid":"sf3","key":"damaged_drive","qty":1}],"receipts":[{"id":"r104","seq":104,"at":1793767310495,"kind":"build","detail":"claim@139,86"}]}}
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for getByRole('button', { name: /Workbench/ })
+
+    at /home/user/Soul-of-Hero/web/e2e/m-core-03-natural-recovery.mjs:13:109 {
+  name: 'TimeoutError'
+}
+
+Node.js v22.22.3
+
+--- Failed assisted utility attempt (continued successfully in a later process) ---
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: reachable crate for iron_ingot
+    at file:///home/user/Soul-of-Hero/web/e2e/m-core-03-utility.mjs:7:100 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: null,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v22.22.3

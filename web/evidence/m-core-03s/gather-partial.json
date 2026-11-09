@@ -1,0 +1,312 @@
+{
+  "events": [
+    {
+      "mat": "wood",
+      "plan": {
+        "path": [
+          9743,
+          9742
+        ],
+        "target": 9942,
+        "key": "oak"
+      },
+      "before": 6,
+      "after": 0,
+      "inventory": {
+        "wood": 6,
+        "stone": 0,
+        "fiber": 0,
+        "damaged_drive": 0,
+        "spares": 0
+      },
+      "receipts": [
+        {
+          "id": "r4",
+          "seq": 4,
+          "at": 1793772674956,
+          "kind": "harvest",
+          "detail": "oak@142,49 -1"
+        },
+        {
+          "id": "r6",
+          "seq": 6,
+          "at": 1793772675856,
+          "kind": "harvest",
+          "detail": "oak@142,49 -1"
+        },
+        {
+          "id": "r8",
+          "seq": 8,
+          "at": 1793772676789,
+          "kind": "harvest",
+          "detail": "oak@142,49 -1"
+        },
+        {
+          "id": "r10",
+          "seq": 10,
+          "at": 1793772677706,
+          "kind": "harvest",
+          "detail": "oak@142,49 -1"
+        },
+        {
+          "id": "r12",
+          "seq": 12,
+          "at": 1793772678622,
+          "kind": "harvest",
+          "detail": "oak@142,49 -1"
+        },
+        {
+          "id": "r14",
+          "seq": 14,
+          "at": 1793772679539,
+          "kind": "harvest",
+          "detail": "oak@142,49 -1"
+        }
+      ]
+    },
+    {
+      "mat": "stone",
+      "plan": {
+        "path": [
+          9742,
+          9741,
+          9740,
+          9739,
+          9738
+        ],
+        "target": 9938,
+        "key": "rock"
+      },
+      "before": 6,
+      "after": 0,
+      "inventory": {
+        "wood": 6,
+        "stone": 6,
+        "fiber": 0,
+        "damaged_drive": 0,
+        "spares": 0
+      },
+      "receipts": [
+        {
+          "id": "r12",
+          "seq": 12,
+          "at": 1793772678622,
+          "kind": "harvest",
+          "detail": "oak@142,49 -1"
+        },
+        {
+          "id": "r14",
+          "seq": 14,
+          "at": 1793772679539,
+          "kind": "harvest",
+          "detail": "oak@142,49 -1"
+        },
+        {
+          "id": "r16",
+          "seq": 16,
+          "at": 1793772682305,
+          "kind": "harvest",
+          "detail": "rock@138,49 -1"
+        },
+        {
+          "id": "r18",
+          "seq": 18,
+          "at": 1793772683205,
+          "kind": "harvest",
+          "detail": "rock@138,49 -1"
+        },
+        {
+          "id": "r20",
+          "seq": 20,
+          "at": 1793772684122,
+          "kind": "harvest",
+          "detail": "rock@138,49 -1"
+        },
+        {
+          "id": "r22",
+          "seq": 22,
+          "at": 1793772685055,
+          "kind": "harvest",
+          "detail": "rock@138,49 -1"
+        },
+        {
+          "id": "r24",
+          "seq": 24,
+          "at": 1793772685972,
+          "kind": "harvest",
+          "detail": "rock@138,49 -1"
+        },
+        {
+          "id": "r26",
+          "seq": 26,
+          "at": 1793772686872,
+          "kind": "harvest",
+          "detail": "rock@138,49 -1"
+        }
+      ]
+    },
+    {
+      "mat": "plant",
+      "plan": {
+        "path": [
+          9738,
+          9739
+        ],
+        "target": 9740,
+        "key": "grass"
+      },
+      "before": 2,
+      "after": 0,
+      "inventory": {
+        "wood": 6,
+        "stone": 6,
+        "fiber": 2,
+        "damaged_drive": 0,
+        "spares": 0
+      },
+      "receipts": [
+        {
+          "id": "r14",
+          "seq": 14,
+          "at": 1793772679539,
+          "kind": "harvest",
+          "detail": "oak@142,49 -1"
+        },
+        {
+          "id": "r16",
+          "seq": 16,
+          "at": 1793772682305,
+          "kind": "harvest",
+          "detail": "rock@138,49 -1"
+        },
+        {
+          "id": "r18",
+          "seq": 18,
+          "at": 1793772683205,
+          "kind": "harvest",
+          "detail": "rock@138,49 -1"
+        },
+        {
+          "id": "r20",
+          "seq": 20,
+          "at": 1793772684122,
+          "kind": "harvest",
+          "detail": "rock@138,49 -1"
+        },
+        {
+          "id": "r22",
+          "seq": 22,
+          "at": 1793772685055,
+          "kind": "harvest",
+          "detail": "rock@138,49 -1"
+        },
+        {
+          "id": "r24",
+          "seq": 24,
+          "at": 1793772685972,
+          "kind": "harvest",
+          "detail": "rock@138,49 -1"
+        },
+        {
+          "id": "r26",
+          "seq": 26,
+          "at": 1793772686872,
+          "kind": "harvest",
+          "detail": "rock@138,49 -1"
+        },
+        {
+          "id": "r28",
+          "seq": 28,
+          "at": 1793772688322,
+          "kind": "harvest",
+          "detail": "grass@140,48 -2"
+        }
+      ]
+    },
+    {
+      "mat": "plant",
+      "plan": {
+        "path": [
+          9739,
+          9939
+        ],
+        "target": 9940,
+        "key": "grass"
+      },
+      "before": 2,
+      "after": 0,
+      "inventory": {
+        "wood": 6,
+        "stone": 6,
+        "fiber": 4,
+        "damaged_drive": 0,
+        "spares": 0
+      },
+      "receipts": [
+        {
+          "id": "r16",
+          "seq": 16,
+          "at": 1793772682305,
+          "kind": "harvest",
+          "detail": "rock@138,49 -1"
+        },
+        {
+          "id": "r18",
+          "seq": 18,
+          "at": 1793772683205,
+          "kind": "harvest",
+          "detail": "rock@138,49 -1"
+        },
+        {
+          "id": "r20",
+          "seq": 20,
+          "at": 1793772684122,
+          "kind": "harvest",
+          "detail": "rock@138,49 -1"
+        },
+        {
+          "id": "r22",
+          "seq": 22,
+          "at": 1793772685055,
+          "kind": "harvest",
+          "detail": "rock@138,49 -1"
+        },
+        {
+          "id": "r24",
+          "seq": 24,
+          "at": 1793772685972,
+          "kind": "harvest",
+          "detail": "rock@138,49 -1"
+        },
+        {
+          "id": "r26",
+          "seq": 26,
+          "at": 1793772686872,
+          "kind": "harvest",
+          "detail": "rock@138,49 -1"
+        },
+        {
+          "id": "r28",
+          "seq": 28,
+          "at": 1793772688322,
+          "kind": "harvest",
+          "detail": "grass@140,48 -2"
+        },
+        {
+          "id": "r31",
+          "seq": 31,
+          "at": 1793772689755,
+          "kind": "harvest",
+          "detail": "grass@140,49 -2"
+        }
+      ]
+    }
+  ],
+  "inventory": {
+    "wood": 6,
+    "stone": 6,
+    "fiber": 4,
+    "damaged_drive": 0,
+    "spares": 0
+  }
+}

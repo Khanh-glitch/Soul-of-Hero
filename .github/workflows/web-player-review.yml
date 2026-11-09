@@ -1,0 +1,55 @@
+name: SOH Web player-review build
+
+# Builds the standalone Web distribution for this branch and publishes it as a downloadable artifact.
+# Not a deployment: no Pages or external hosting is touched.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/d4bfcfff-soul-of-hero]
+    paths:
+      - 'web/src/**'
+      - 'web/public/**'
+      - 'web/index.html'
+      - 'web/package.json'
+      - 'web/package-lock.json'
+      - 'web/vite.http.config.ts'
+      - 'web/player-review/**'
+      - '.github/workflows/web-player-review.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build-player-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        working-directory: web
+        run: npm ci
+      - name: Build standalone Web distribution (HTTP config)
+        working-directory: web
+        run: npx vite build --config vite.http.config.ts
+      - name: Assemble player-review package
+        run: |
+          set -euo pipefail
+          STAGE=player-review-package
+          rm -rf "$STAGE" && mkdir -p "$STAGE"
+          cp -r web/dist-http/. "$STAGE"/
+          cp web/player-review/fixture-intel-save.json "$STAGE"/
+          cp web/player-review/README.md "$STAGE"/README-PLAYER-REVIEW.md
+          mkdir -p "$STAGE"/screenshots && cp web/player-review/screenshots/*.png "$STAGE"/screenshots/
+          test -f "$STAGE"/index.html
+          echo "Commit ${GITHUB_SHA}" > "$STAGE"/BUILD-INFO.txt
+      - name: Upload player-review artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: soh-web-player-review-${{ github.sha }}
+          path: player-review-package/
+          if-no-files-found: error
+          retention-days: 90

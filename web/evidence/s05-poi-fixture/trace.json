@@ -1,0 +1,108 @@
+{
+  "method": "Controlled player proximity and granted card/fuel, creatures suppressed. Real E and W browser input; no natural acquisition or route claim.",
+  "report": [
+    {
+      "mode": "card",
+      "result": {
+        "entity": {
+          "open": true,
+          "locked": "keycard",
+          "poiDoor": {
+            "version": "poi-access-v1",
+            "closeAt": 1793888372272,
+            "scans": 1,
+            "lastCardUid": "s7s"
+          }
+        },
+        "inventory": [
+          {
+            "uid": "s1",
+            "key": "knife",
+            "qty": 1,
+            "dur": 300
+          },
+          {
+            "uid": "s2",
+            "key": "water_flask",
+            "qty": 1,
+            "charge": 2
+          },
+          {
+            "uid": "s3",
+            "key": "berries",
+            "qty": 3
+          },
+          {
+            "uid": "s7s",
+            "key": "keycard",
+            "qty": 1,
+            "charge": 2
+          }
+        ],
+        "player": {
+          "x": 2568,
+          "y": 1612
+        },
+        "receipt": {
+          "id": "r73",
+          "seq": 73,
+          "at": 1793888357272,
+          "kind": "poi.card.scan",
+          "detail": "ez:s7s:remaining=2"
+        },
+        "afterWalk": {
+          "x": 2568,
+          "y": 1581.8802399999993
+        }
+      },
+      "errors": []
+    },
+    {
+      "mode": "generator",
+      "result": {
+        "entity": {
+          "power": 1,
+          "poiPower": {
+            "version": "poi-access-v1",
+            "fueledAt": 1793888367235,
+            "expiresAt": 1793888547235,
+            "budgetMs": 180000,
+            "runAt": 1793888367235,
+            "runMs": 180000
+          }
+        },
+        "inventory": [
+          {
+            "uid": "s1",
+            "key": "knife",
+            "qty": 1,
+            "dur": 300
+          },
+          {
+            "uid": "s2",
+            "key": "water_flask",
+            "qty": 1,
+            "charge": 2
+          },
+          {
+            "uid": "s3",
+            "key": "berries",
+            "qty": 3
+          }
+        ],
+        "player": {
+          "x": 520,
+          "y": 2888
+        },
+        "receipt": {
+          "id": "r72",
+          "seq": 72,
+          "at": 1793888367235,
+          "kind": "poi.power.fuel",
+          "detail": "e1x:fuel_can:s7s:until=1793888547235"
+        }
+      },
+      "errors": []
+    }
+  ]
+}

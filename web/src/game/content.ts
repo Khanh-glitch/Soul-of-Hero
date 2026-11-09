@@ -15,6 +15,8 @@ export interface TerrainRect { x: number; y: number; width: number; height: numb
 export interface MapContentPackV1 {
   schemaVersion: 1; id: LayoutId; title: string; description: string;
   pois: PoiDef[]; terrain: TerrainRect[]; roadLinks: [string, string][];
+  /** Authored infrastructure; economy may place suitable exterior salvage nearby. */
+  infrastructure: { buildingId: string; kind: 'industrial'; radius: number }[];
 }
 
 const relay = (tx: number, ty: number): PoiDef => ({
@@ -33,7 +35,7 @@ export const MAP_CONTENT_PACKS: Record<LayoutId, MapContentPackV1> = {
   shipping: {
     schemaVersion: 1, id: 'shipping', title: 'Shipping Island',
     description: 'Canonical production geography; no development terrain overlays.',
-    pois: [], terrain: [], roadLinks: [],
+    pois: [], terrain: [], roadLinks: [], infrastructure: [{ buildingId: 'b_fa', kind: 'industrial', radius: 8 }],
   },
   dev_delta: {
     schemaVersion: 1, id: 'dev_delta', title: 'Delta Ridge (development)',
@@ -44,7 +46,7 @@ export const MAP_CONTENT_PACKS: Record<LayoutId, MapContentPackV1> = {
       { x: 155, y: 74, width: 1, height: 3, terrain: 'hill' },
       { x: 155, y: 94, width: 1, height: 3, terrain: 'hill' },
     ],
-    roadLinks: [['s1', 'delta_relay'], ['s3', 'delta_relay']],
+    roadLinks: [['s1', 'delta_relay'], ['s3', 'delta_relay']], infrastructure: [{ buildingId: 'b_fa', kind: 'industrial', radius: 8 }],
   },
 };
 
@@ -105,6 +107,8 @@ export function validateContentPack(value: unknown): string[] {
   else for (const link of p.roadLinks) {
     if (!Array.isArray(link) || link.length !== 2 || !link.some(id => poiIds.has(id)) || link.some(id => typeof id !== 'string')) errors.push('each road link must connect a declared POI to a map place');
   }
+  if (!Array.isArray(p.infrastructure)) errors.push('infrastructure must be an array (empty if none)');
+  else for (const site of p.infrastructure) if (!site || typeof site.buildingId !== 'string' || site.kind !== 'industrial' || !Number.isFinite(site.radius) || site.radius < 0 || site.radius > 30) errors.push('invalid infrastructure tag');
   return errors;
 }
 

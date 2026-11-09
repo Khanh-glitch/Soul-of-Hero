@@ -1,0 +1,201 @@
+{
+  "method": "Production build. Controlled Date.now and player relocation after legitimate landing; creatures removed. No items granted. E locked denial, E open and right-click withdrawal are real inputs; not a natural travel or risk demonstration.",
+  "event": "e7t",
+  "site": {
+    "tx": 59,
+    "ty": 42
+  },
+  "spawn": {
+    "x": 114,
+    "y": 89,
+    "contract": "seeded-geographic-v1"
+  },
+  "sourceMap": {
+    "id": "shipping_fresh",
+    "revision": 1,
+    "seed": 20721,
+    "rules": 3,
+    "digest": "b3b37f89",
+    "mapDigest": "9bc19563"
+  },
+  "landingMask": {
+    "walkable": 1,
+    "buildable": 1,
+    "protected": 0,
+    "road": 0,
+    "slope": 0.08433598279953003,
+    "neighbours": [
+      {
+        "walkable": 1,
+        "protected": 0,
+        "road": 0,
+        "corridor": 0,
+        "source": null
+      },
+      {
+        "walkable": 1,
+        "protected": 0,
+        "road": 0,
+        "corridor": 0,
+        "source": null
+      },
+      {
+        "walkable": 1,
+        "protected": 0,
+        "road": 0,
+        "corridor": 0,
+        "source": null
+      },
+      {
+        "walkable": 1,
+        "protected": 0,
+        "road": 0,
+        "corridor": 0,
+        "source": null
+      },
+      {
+        "walkable": 1,
+        "protected": 0,
+        "road": 0,
+        "corridor": 0,
+        "source": null
+      },
+      {
+        "walkable": 1,
+        "protected": 0,
+        "road": 0,
+        "corridor": 0,
+        "source": null
+      },
+      {
+        "walkable": 1,
+        "protected": 0,
+        "road": 0,
+        "corridor": 0,
+        "source": null
+      },
+      {
+        "walkable": 1,
+        "protected": 0,
+        "road": 0,
+        "corridor": 0,
+        "source": null
+      },
+      {
+        "walkable": 1,
+        "protected": 0,
+        "road": 0,
+        "corridor": 0,
+        "source": null
+      }
+    ]
+  },
+  "times": {
+    "signalAt": 1793891214374,
+    "descentAt": 1793891334374,
+    "landAt": 1793891394374,
+    "unlockAt": 1793891574374,
+    "expiresAt": 1793896794374
+  },
+  "generated": [
+    {
+      "uid": "s7u",
+      "key": "mechanical_parts",
+      "qty": 2
+    },
+    {
+      "uid": "s7v",
+      "key": "fasteners",
+      "qty": 2
+    },
+    {
+      "uid": "s7w",
+      "key": "energy_refined",
+      "qty": 2
+    }
+  ],
+  "result": {
+    "phase": "partial",
+    "stock": [
+      {
+        "uid": "s7v",
+        "key": "fasteners",
+        "qty": 2
+      },
+      {
+        "uid": "s7w",
+        "key": "energy_refined",
+        "qty": 2
+      }
+    ],
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 300
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7u",
+        "key": "mechanical_parts",
+        "qty": 2
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r72",
+        "seq": 72,
+        "at": 1793891214374,
+        "kind": "airdrop.signal",
+        "detail": "0:northwest sector"
+      },
+      {
+        "id": "r73",
+        "seq": 73,
+        "at": 1793891334374,
+        "kind": "airdrop.descent",
+        "detail": "0"
+      },
+      {
+        "id": "r74",
+        "seq": 74,
+        "at": 1793891394374,
+        "kind": "airdrop.landed",
+        "detail": "0"
+      },
+      {
+        "id": "r75",
+        "seq": 75,
+        "at": 1793891574374,
+        "kind": "airdrop.accessible",
+        "detail": "0"
+      },
+      {
+        "id": "r76",
+        "seq": 76,
+        "at": 1793891582708,
+        "kind": "airdrop.open",
+        "detail": "0"
+      },
+      {
+        "id": "r78",
+        "seq": 78,
+        "at": 1793891583636,
+        "kind": "airdrop.partial",
+        "detail": "0"
+      }
+    ]
+  },
+  "errors": []
+}

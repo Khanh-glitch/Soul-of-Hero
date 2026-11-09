@@ -1,0 +1,371 @@
+{
+  "method": "Retreat west then south from an adjacent real Cinder Beetle; normal movement, no creature or damage changes.",
+  "start": {
+    "p": {
+      "x": 1880.9634399999975,
+      "y": 2568.5717920000648,
+      "vx": 0,
+      "vy": 0,
+      "dir": 1,
+      "aim": 2.6046973966082776,
+      "hp": 66,
+      "stamina": 100,
+      "hunger": 34.61108000000356,
+      "thirst": 56.0094523999988,
+      "warmth": 78.38377227763277,
+      "rad": 0,
+      "active": 1,
+      "action": null,
+      "invuln": 0,
+      "dead": false,
+      "deadT": 1549.9,
+      "pulling": null,
+      "skills": {
+        "gather": 88,
+        "combat": 2,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 1.1951999999999607,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Caldera Wastes",
+      "sheltered": false
+    },
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 89
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7c",
+        "key": "wood",
+        "qty": 19
+      },
+      {
+        "uid": "s81",
+        "key": "stone",
+        "qty": 5
+      },
+      {
+        "uid": "s8o",
+        "key": "fiber",
+        "qty": 1
+      },
+      {
+        "uid": "s9t",
+        "key": "crystal",
+        "qty": 3
+      },
+      {
+        "uid": "s8x",
+        "key": "stone_pick",
+        "qty": 1,
+        "dur": 170
+      },
+      {
+        "uid": "s1t",
+        "key": "spares",
+        "qty": 1
+      },
+      {
+        "uid": "sj5",
+        "key": "seed",
+        "qty": 12
+      },
+      {
+        "uid": "sls",
+        "key": "charcoal",
+        "qty": 3
+      },
+      {
+        "uid": "sm8",
+        "key": "chitin",
+        "qty": 2
+      },
+      {
+        "uid": "sm9",
+        "key": "sulfur",
+        "qty": 1
+      }
+    ],
+    "near": [
+      {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1879.4009535762125,
+        "y": 2568.361321375844,
+        "state": "chase"
+      },
+      {
+        "id": "m57",
+        "type": "beetle",
+        "x": 1979.553639391723,
+        "y": 2518.534425828244,
+        "state": "wander"
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r339",
+        "seq": 339,
+        "at": 1793778399335,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r340",
+        "seq": 340,
+        "at": 1793778414459,
+        "kind": "offline.settle",
+        "detail": "15s"
+      },
+      {
+        "id": "r341",
+        "seq": 341,
+        "at": 1793778415709,
+        "kind": "consume",
+        "detail": "herb"
+      },
+      {
+        "id": "r342",
+        "seq": 342,
+        "at": 1793778415791,
+        "kind": "consume",
+        "detail": "herb"
+      },
+      {
+        "id": "r343",
+        "seq": 343,
+        "at": 1793778415842,
+        "kind": "consume",
+        "detail": "herb"
+      },
+      {
+        "id": "r344",
+        "seq": 344,
+        "at": 1793778415927,
+        "kind": "consume",
+        "detail": "herb"
+      },
+      {
+        "id": "r345",
+        "seq": 345,
+        "at": 1793778444276,
+        "kind": "offline.settle",
+        "detail": "28s"
+      },
+      {
+        "id": "r346",
+        "seq": 346,
+        "at": 1793778470125,
+        "kind": "offline.settle",
+        "detail": "25s"
+      }
+    ]
+  },
+  "end": {
+    "p": {
+      "x": 1822.168239999999,
+      "y": 2685.3595360000713,
+      "vx": 0,
+      "vy": 72,
+      "dir": 1,
+      "aim": 2.6421346916069046,
+      "hp": 66,
+      "stamina": 100,
+      "hunger": 34.50721600000373,
+      "thirst": 55.83565279999876,
+      "warmth": 79.82305915974963,
+      "rad": 0,
+      "active": 1,
+      "action": null,
+      "invuln": 0,
+      "dead": false,
+      "deadT": 1549.9,
+      "pulling": null,
+      "skills": {
+        "gather": 88,
+        "combat": 2,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 3.592799999999974,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Wreck Coast",
+      "sheltered": false
+    },
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 89
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7c",
+        "key": "wood",
+        "qty": 19
+      },
+      {
+        "uid": "s81",
+        "key": "stone",
+        "qty": 5
+      },
+      {
+        "uid": "s8o",
+        "key": "fiber",
+        "qty": 1
+      },
+      {
+        "uid": "s9t",
+        "key": "crystal",
+        "qty": 3
+      },
+      {
+        "uid": "s8x",
+        "key": "stone_pick",
+        "qty": 1,
+        "dur": 170
+      },
+      {
+        "uid": "s1t",
+        "key": "spares",
+        "qty": 1
+      },
+      {
+        "uid": "sj5",
+        "key": "seed",
+        "qty": 12
+      },
+      {
+        "uid": "sls",
+        "key": "charcoal",
+        "qty": 3
+      },
+      {
+        "uid": "sm8",
+        "key": "chitin",
+        "qty": 2
+      },
+      {
+        "uid": "sm9",
+        "key": "sulfur",
+        "qty": 1
+      }
+    ],
+    "near": [
+      {
+        "id": "m3o",
+        "type": "boar",
+        "x": 1713.6672969144447,
+        "y": 2756.236334727003,
+        "state": "wander"
+      },
+      {
+        "id": "m40",
+        "type": "beetle",
+        "x": 1826.0070980982623,
+        "y": 2568.5712343467358,
+        "state": "attack"
+      },
+      {
+        "id": "m4l",
+        "type": "boar",
+        "x": 1881.0773585908626,
+        "y": 2774.9276006369187,
+        "state": "wander"
+      },
+      {
+        "id": "m4m",
+        "type": "boar",
+        "x": 1948.968093199974,
+        "y": 2728.5258792394184,
+        "state": "wander"
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r339",
+        "seq": 339,
+        "at": 1793778399335,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r340",
+        "seq": 340,
+        "at": 1793778414459,
+        "kind": "offline.settle",
+        "detail": "15s"
+      },
+      {
+        "id": "r341",
+        "seq": 341,
+        "at": 1793778415709,
+        "kind": "consume",
+        "detail": "herb"
+      },
+      {
+        "id": "r342",
+        "seq": 342,
+        "at": 1793778415791,
+        "kind": "consume",
+        "detail": "herb"
+      },
+      {
+        "id": "r343",
+        "seq": 343,
+        "at": 1793778415842,
+        "kind": "consume",
+        "detail": "herb"
+      },
+      {
+        "id": "r344",
+        "seq": 344,
+        "at": 1793778415927,
+        "kind": "consume",
+        "detail": "herb"
+      },
+      {
+        "id": "r345",
+        "seq": 345,
+        "at": 1793778444276,
+        "kind": "offline.settle",
+        "detail": "28s"
+      },
+      {
+        "id": "r346",
+        "seq": 346,
+        "at": 1793778470125,
+        "kind": "offline.settle",
+        "detail": "25s"
+      }
+    ]
+  }
+}

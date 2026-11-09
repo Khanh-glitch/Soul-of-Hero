@@ -1,0 +1,236 @@
+{
+  "method": "Real keyboard/mouse, read-only BFS, NPCs and weather active; no injected state.",
+  "wrecks": [
+    {
+      "pathSteps": 12,
+      "target": 21717,
+      "before": {
+        "stock": 8,
+        "hp": 30,
+        "player": {
+          "x": 1882.3952000000006,
+          "y": 1751.8135039999988,
+          "hp": 100
+        },
+        "cam": {
+          "x": 1562.3952000000006,
+          "y": 1565.8135039999988
+        }
+      },
+      "after": {
+        "stock": 6,
+        "player": {
+          "x": 1882.3952000000006,
+          "y": 1751.8135039999988,
+          "hp": 100
+        },
+        "inv": [
+          {
+            "uid": "s1",
+            "key": "knife",
+            "qty": 1,
+            "dur": 290
+          },
+          {
+            "uid": "s2",
+            "key": "water_flask",
+            "qty": 1,
+            "charge": 2
+          },
+          {
+            "uid": "s3",
+            "key": "berries",
+            "qty": 3
+          },
+          {
+            "uid": "s7h",
+            "key": "scrap",
+            "qty": 2
+          },
+          {
+            "uid": "s7i",
+            "key": "fasteners",
+            "qty": 1
+          },
+          {
+            "uid": "s7n",
+            "key": "damaged_drive",
+            "qty": 1
+          }
+        ],
+        "receipts": [
+          {
+            "id": "r2",
+            "seq": 2,
+            "at": 1793766887871,
+            "kind": "harvest",
+            "detail": "wreck@117,108 -1"
+          },
+          {
+            "id": "r3",
+            "seq": 3,
+            "at": 1793766888254,
+            "kind": "pickup",
+            "detail": "scrapx1"
+          },
+          {
+            "id": "r4",
+            "seq": 4,
+            "at": 1793766888305,
+            "kind": "pickup",
+            "detail": "fastenersx1"
+          },
+          {
+            "id": "r5",
+            "seq": 5,
+            "at": 1793766889091,
+            "kind": "harvest.component",
+            "detail": "wreck@117,108:s7n"
+          },
+          {
+            "id": "r6",
+            "seq": 6,
+            "at": 1793766889091,
+            "kind": "harvest",
+            "detail": "wreck@117,108 -1"
+          },
+          {
+            "id": "r7",
+            "seq": 7,
+            "at": 1793766889488,
+            "kind": "pickup",
+            "detail": "scrapx1"
+          },
+          {
+            "id": "r8",
+            "seq": 8,
+            "at": 1793766889556,
+            "kind": "pickup",
+            "detail": "damaged_drivex1"
+          }
+        ]
+      }
+    }
+  ],
+  "completed": {
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 290
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7h",
+        "key": "scrap",
+        "qty": 2
+      },
+      {
+        "uid": "s7i",
+        "key": "fasteners",
+        "qty": 1
+      },
+      {
+        "uid": "s9n",
+        "key": "spares",
+        "qty": 2
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r9",
+        "seq": 9,
+        "at": 1793766902320,
+        "kind": "recycle.start",
+        "detail": "s7n@e2g"
+      },
+      {
+        "id": "r10",
+        "seq": 10,
+        "at": 1793766914320,
+        "kind": "job.done",
+        "detail": "X:drive"
+      },
+      {
+        "id": "r11",
+        "seq": 11,
+        "at": 1793766916137,
+        "kind": "move",
+        "detail": "sparesx2 c2i->inv"
+      }
+    ]
+  },
+  "failure": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for getByRole('button', { name: 'Save & quit to title' })\n",
+  "errors": [],
+  "relaunched": {
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 290
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7h",
+        "key": "scrap",
+        "qty": 2
+      },
+      {
+        "uid": "s7i",
+        "key": "fasteners",
+        "qty": 1
+      },
+      {
+        "uid": "s9n",
+        "key": "spares",
+        "qty": 2
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r9",
+        "seq": 9,
+        "at": 1793766902320,
+        "kind": "recycle.start",
+        "detail": "s7n@e2g"
+      },
+      {
+        "id": "r10",
+        "seq": 10,
+        "at": 1793766914320,
+        "kind": "job.done",
+        "detail": "X:drive"
+      },
+      {
+        "id": "r11",
+        "seq": 11,
+        "at": 1793766916137,
+        "kind": "move",
+        "detail": "sparesx2 c2i->inv"
+      }
+    ]
+  },
+  "relaunchMethod": "Fresh Node and Chromium process, existing browser-profile autosave; prior explicit pause failed because Escape first closed machine panel."
+}

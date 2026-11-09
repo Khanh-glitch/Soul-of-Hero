@@ -1,0 +1,2500 @@
+{
+  "note": "Read-only snapshot; normal inputs generated all receipts. The earlier documented rollback and subsequent assisted routing still apply.",
+  "layoutId": "shipping_fresh",
+  "wreckEconomy": "recycler-v1",
+  "player": {
+    "x": 2524.2969721348068,
+    "y": 1704.7117599999983,
+    "vx": 0,
+    "vy": 0,
+    "dir": 3,
+    "aim": -1.6227426564917926,
+    "hp": 47,
+    "stamina": 100,
+    "hunger": 56.73376719997227,
+    "thirst": 42.60065079999331,
+    "warmth": 79.04178408669839,
+    "rad": 42.61565916666649,
+    "active": 0,
+    "action": null,
+    "invuln": 0,
+    "dead": false,
+    "deadT": 28232.2,
+    "pulling": null,
+    "skills": {
+      "gather": 73,
+      "combat": 2,
+      "craft": 0,
+      "survival": 0
+    },
+    "stepAcc": 12.31063199999999,
+    "lastTraceX": 0,
+    "lastTraceY": 0,
+    "regionName": "Dead Foundry",
+    "sheltered": false
+  },
+  "custody": {
+    "inv": {
+      "id": "inv",
+      "kind": "inv",
+      "slots": [
+        {
+          "uid": "s1",
+          "key": "knife",
+          "qty": 1,
+          "dur": 300
+        },
+        {
+          "uid": "s2",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 2
+        },
+        {
+          "uid": "s3",
+          "key": "berries",
+          "qty": 3
+        },
+        {
+          "uid": "s7k",
+          "key": "wood",
+          "qty": 4
+        },
+        {
+          "uid": "s7l",
+          "key": "seed",
+          "qty": 4
+        },
+        {
+          "uid": "s88",
+          "key": "scrap",
+          "qty": 23
+        },
+        {
+          "uid": "s8f",
+          "key": "fasteners",
+          "qty": 2
+        },
+        {
+          "uid": "sew",
+          "key": "meat",
+          "qty": 1
+        },
+        {
+          "uid": "sex",
+          "key": "fur",
+          "qty": 2
+        },
+        {
+          "uid": "sid",
+          "key": "stone",
+          "qty": 3
+        },
+        {
+          "uid": "smm",
+          "key": "damaged_drive",
+          "qty": 1
+        },
+        {
+          "uid": "smw",
+          "key": "damaged_drive",
+          "qty": 1
+        },
+        {
+          "uid": "snj",
+          "key": "damaged_drive",
+          "qty": 1
+        },
+        {
+          "uid": "srh",
+          "key": "mechanical_parts",
+          "qty": 1
+        },
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "eq": {
+      "id": "eq",
+      "kind": "eq",
+      "slots": [
+        null,
+        null,
+        null
+      ]
+    },
+    "c6": {
+      "id": "c6",
+      "kind": "cash",
+      "slots": [
+        null,
+        null
+      ]
+    },
+    "c8": {
+      "id": "c8",
+      "kind": "loot",
+      "slots": [
+        {
+          "uid": "s9",
+          "key": "rope",
+          "qty": 3
+        },
+        {
+          "uid": "sa",
+          "key": "cloth",
+          "qty": 2
+        },
+        {
+          "uid": "sb",
+          "key": "blueprint",
+          "qty": 1,
+          "meta": "bow"
+        },
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "cd": {
+      "id": "cd",
+      "kind": "loot",
+      "slots": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "ch": {
+      "id": "ch",
+      "kind": "loot",
+      "slots": [
+        {
+          "uid": "si",
+          "key": "seed",
+          "qty": 6
+        },
+        {
+          "uid": "sj",
+          "key": "blueprint",
+          "qty": 1,
+          "meta": "stew"
+        },
+        {
+          "uid": "sk",
+          "key": "crop",
+          "qty": 2
+        },
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "cm": {
+      "id": "cm",
+      "kind": "loot",
+      "slots": [
+        {
+          "uid": "sn",
+          "key": "leather",
+          "qty": 2
+        },
+        {
+          "uid": "so",
+          "key": "blueprint",
+          "qty": 1,
+          "meta": "brick"
+        },
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "cq": {
+      "id": "cq",
+      "kind": "cash",
+      "slots": [
+        null,
+        null
+      ]
+    },
+    "ct": {
+      "id": "ct",
+      "kind": "loot",
+      "slots": [
+        {
+          "uid": "su",
+          "key": "core_fire",
+          "qty": 1,
+          "charge": 3
+        },
+        {
+          "uid": "sv",
+          "key": "blueprint",
+          "qty": 1,
+          "meta": "core_earth"
+        },
+        {
+          "uid": "sw",
+          "key": "spares",
+          "qty": 6
+        },
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "cy": {
+      "id": "cy",
+      "kind": "loot",
+      "slots": [
+        {
+          "uid": "sz",
+          "key": "blueprint",
+          "qty": 1,
+          "meta": "gas_mask"
+        },
+        {
+          "uid": "s10",
+          "key": "iron_ingot",
+          "qty": 4
+        },
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "c12": {
+      "id": "c12",
+      "kind": "cash",
+      "slots": [
+        null,
+        null
+      ]
+    },
+    "c14": {
+      "id": "c14",
+      "kind": "loot",
+      "slots": [
+        {
+          "uid": "s15",
+          "key": "scrap",
+          "qty": 6
+        },
+        null,
+        {
+          "uid": "s17",
+          "key": "iron_sword",
+          "qty": 1,
+          "dur": 350
+        },
+        {
+          "uid": "s18",
+          "key": "mechanical_parts",
+          "qty": 2
+        },
+        {
+          "uid": "s19",
+          "key": "fasteners",
+          "qty": 3
+        },
+        null,
+        null,
+        null
+      ]
+    },
+    "c1b": {
+      "id": "c1b",
+      "kind": "loot",
+      "slots": [
+        {
+          "uid": "s1c",
+          "key": "iron_ore",
+          "qty": 4
+        },
+        {
+          "uid": "s1d",
+          "key": "coal",
+          "qty": 3
+        },
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "c1h": {
+      "id": "c1h",
+      "kind": "loot",
+      "slots": [
+        {
+          "uid": "s1i",
+          "key": "core_storm",
+          "qty": 1,
+          "charge": 4
+        },
+        {
+          "uid": "s1j",
+          "key": "blueprint",
+          "qty": 1,
+          "meta": "leather_armor"
+        },
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "c1l": {
+      "id": "c1l",
+      "kind": "cash",
+      "slots": [
+        null,
+        null
+      ]
+    },
+    "c1n": {
+      "id": "c1n",
+      "kind": "loot",
+      "slots": [
+        {
+          "uid": "s1o",
+          "key": "fuel_can",
+          "qty": 1
+        },
+        {
+          "uid": "s1p",
+          "key": "rope",
+          "qty": 2
+        },
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "c1r": {
+      "id": "c1r",
+      "kind": "loot",
+      "slots": [
+        {
+          "uid": "s1s",
+          "key": "core_frost",
+          "qty": 1,
+          "charge": 3
+        },
+        {
+          "uid": "s1t",
+          "key": "spares",
+          "qty": 4
+        },
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "c1v": {
+      "id": "c1v",
+      "kind": "loot",
+      "slots": [
+        {
+          "uid": "s1w",
+          "key": "cloth",
+          "qty": 3
+        },
+        {
+          "uid": "s1x",
+          "key": "fuel_can",
+          "qty": 1
+        },
+        {
+          "uid": "s1y",
+          "key": "blueprint",
+          "qty": 1,
+          "meta": "arrow"
+        },
+        {
+          "uid": "s1z",
+          "key": "treated_canvas",
+          "qty": 2
+        },
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "c21": {
+      "id": "c21",
+      "kind": "cash",
+      "slots": [
+        null,
+        null
+      ]
+    },
+    "c23": {
+      "id": "c23",
+      "kind": "loot",
+      "slots": [
+        {
+          "uid": "s24",
+          "key": "keycard",
+          "qty": 1
+        },
+        {
+          "uid": "s25",
+          "key": "blueprint",
+          "qty": 1,
+          "meta": "fur_cloak"
+        },
+        {
+          "uid": "s26",
+          "key": "torch",
+          "qty": 2,
+          "dur": 120
+        },
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "c28": {
+      "id": "c28",
+      "kind": "cash",
+      "slots": [
+        null,
+        null
+      ]
+    },
+    "c2b": {
+      "id": "c2b",
+      "kind": "cash",
+      "slots": [
+        null,
+        null
+      ]
+    },
+    "c2d": {
+      "id": "c2d",
+      "kind": "loot",
+      "slots": [
+        {
+          "uid": "s2e",
+          "key": "medkit",
+          "qty": 1
+        },
+        {
+          "uid": "s2f",
+          "key": "water_flask",
+          "qty": 1,
+          "charge": 4
+        },
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "c2h": {
+      "id": "c2h",
+      "kind": "fuel",
+      "slots": []
+    },
+    "c2i": {
+      "id": "c2i",
+      "kind": "out",
+      "slots": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "coo": {
+      "id": "coo",
+      "kind": "bag",
+      "slots": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "cr8": {
+      "id": "cr8",
+      "kind": "fuel",
+      "slots": [
+        null,
+        null,
+        null
+      ]
+    },
+    "cr9": {
+      "id": "cr9",
+      "kind": "out",
+      "slots": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "crb": {
+      "id": "crb",
+      "kind": "fuel",
+      "slots": []
+    },
+    "crc": {
+      "id": "crc",
+      "kind": "out",
+      "slots": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "crk": {
+      "id": "crk",
+      "kind": "bag",
+      "slots": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "ctr": {
+      "id": "ctr",
+      "kind": "drop",
+      "slots": [
+        {
+          "uid": "sts",
+          "key": "wood",
+          "qty": 1
+        }
+      ]
+    },
+    "cue": {
+      "id": "cue",
+      "kind": "bag",
+      "slots": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    }
+  },
+  "entities": [
+    {
+      "id": "e2g",
+      "kind": "recycler",
+      "x": 2424,
+      "y": 1656,
+      "tx": 151,
+      "ty": 103,
+      "poi": "factory",
+      "label": "Foundry Recycler",
+      "station": {
+        "queue": [],
+        "burn": 0,
+        "fuelC": "c2h",
+        "outC": "c2i"
+      }
+    },
+    {
+      "id": "bop",
+      "kind": "bag",
+      "x": 2473.2792855838247,
+      "y": 1731.7831578643525,
+      "c": "coo",
+      "label": "Your bag",
+      "born": 1793769891598
+    },
+    {
+      "id": "er7",
+      "kind": "struct",
+      "type": "workbench",
+      "tx": 158,
+      "ty": 107,
+      "x": 2536,
+      "y": 1720,
+      "hp": 160,
+      "maxHp": 160,
+      "born": 1793770102672,
+      "station": {
+        "queue": [],
+        "burn": 0,
+        "fuelC": "cr8",
+        "outC": "cr9"
+      },
+      "claim": "er6"
+    },
+    {
+      "id": "era",
+      "kind": "struct",
+      "type": "research",
+      "tx": 159,
+      "ty": 107,
+      "x": 2552,
+      "y": 1720,
+      "hp": 160,
+      "maxHp": 160,
+      "born": 1793770103515,
+      "station": {
+        "queue": [],
+        "burn": 0,
+        "fuelC": "crb",
+        "outC": "crc"
+      },
+      "claim": "er6"
+    },
+    {
+      "id": "brl",
+      "kind": "bag",
+      "x": 2552.86479876444,
+      "y": 1700.1535626472112,
+      "c": "crk",
+      "label": "Your bag",
+      "born": 1793770271432
+    },
+    {
+      "id": "buf",
+      "kind": "bag",
+      "x": 2523.664557690855,
+      "y": 1701.233481894567,
+      "c": "cue",
+      "label": "Your bag",
+      "born": 1793770393112
+    }
+  ],
+  "receipts": [
+    {
+      "id": "r51",
+      "seq": 51,
+      "at": 1793769633871,
+      "kind": "move",
+      "detail": "sparesx2 c2i->inv"
+    },
+    {
+      "id": "r52",
+      "seq": 52,
+      "at": 1793769644786,
+      "kind": "offline.settle",
+      "detail": "10s"
+    },
+    {
+      "id": "r53",
+      "seq": 53,
+      "at": 1793769659551,
+      "kind": "offline.settle",
+      "detail": "15s"
+    },
+    {
+      "id": "r54",
+      "seq": 54,
+      "at": 1793769684968,
+      "kind": "offline.settle",
+      "detail": "25s"
+    },
+    {
+      "id": "r55",
+      "seq": 55,
+      "at": 1793769687615,
+      "kind": "move",
+      "detail": "sparesx3 c14->inv"
+    },
+    {
+      "id": "r56",
+      "seq": 56,
+      "at": 1793769705355,
+      "kind": "move",
+      "detail": "iron_ingotx1 cd->inv"
+    },
+    {
+      "id": "r57",
+      "seq": 57,
+      "at": 1793769705432,
+      "kind": "move",
+      "detail": "woodx8 cd->inv"
+    },
+    {
+      "id": "r58",
+      "seq": 58,
+      "at": 1793769723999,
+      "kind": "offline.settle",
+      "detail": "18s"
+    },
+    {
+      "id": "r59",
+      "seq": 59,
+      "at": 1793769727104,
+      "kind": "harvest",
+      "detail": "grass@108,116 -2"
+    },
+    {
+      "id": "r60",
+      "seq": 60,
+      "at": 1793769727504,
+      "kind": "pickup",
+      "detail": "fiberx1"
+    },
+    {
+      "id": "r61",
+      "seq": 61,
+      "at": 1793769727504,
+      "kind": "pickup",
+      "detail": "fiberx1"
+    },
+    {
+      "id": "r62",
+      "seq": 62,
+      "at": 1793769734471,
+      "kind": "pickup",
+      "detail": "meatx1"
+    },
+    {
+      "id": "r63",
+      "seq": 63,
+      "at": 1793769734471,
+      "kind": "pickup",
+      "detail": "furx2"
+    },
+    {
+      "id": "r64",
+      "seq": 64,
+      "at": 1793769734754,
+      "kind": "harvest",
+      "detail": "oak@107,115 -1"
+    },
+    {
+      "id": "r65",
+      "seq": 65,
+      "at": 1793769735204,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r66",
+      "seq": 66,
+      "at": 1793769735671,
+      "kind": "harvest",
+      "detail": "oak@107,115 -1"
+    },
+    {
+      "id": "r67",
+      "seq": 67,
+      "at": 1793769736137,
+      "kind": "pickup",
+      "detail": "seedx1"
+    },
+    {
+      "id": "r68",
+      "seq": 68,
+      "at": 1793769736154,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r69",
+      "seq": 69,
+      "at": 1793769736604,
+      "kind": "harvest",
+      "detail": "oak@107,115 -1"
+    },
+    {
+      "id": "r70",
+      "seq": 70,
+      "at": 1793769737071,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r71",
+      "seq": 71,
+      "at": 1793769738687,
+      "kind": "harvest",
+      "detail": "oak@107,115 -1"
+    },
+    {
+      "id": "r72",
+      "seq": 72,
+      "at": 1793769739137,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r73",
+      "seq": 73,
+      "at": 1793769739587,
+      "kind": "harvest",
+      "detail": "oak@107,115 -1"
+    },
+    {
+      "id": "r74",
+      "seq": 74,
+      "at": 1793769740020,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r75",
+      "seq": 75,
+      "at": 1793769740520,
+      "kind": "harvest",
+      "detail": "oak@107,115 -1"
+    },
+    {
+      "id": "r76",
+      "seq": 76,
+      "at": 1793769740970,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r77",
+      "seq": 77,
+      "at": 1793769744373,
+      "kind": "harvest",
+      "detail": "oak@114,120 -1"
+    },
+    {
+      "id": "r78",
+      "seq": 78,
+      "at": 1793769744754,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r79",
+      "seq": 79,
+      "at": 1793769745270,
+      "kind": "harvest",
+      "detail": "oak@114,120 -1"
+    },
+    {
+      "id": "r80",
+      "seq": 80,
+      "at": 1793769745670,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r81",
+      "seq": 81,
+      "at": 1793769746187,
+      "kind": "harvest",
+      "detail": "oak@114,120 -1"
+    },
+    {
+      "id": "r82",
+      "seq": 82,
+      "at": 1793769746570,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r83",
+      "seq": 83,
+      "at": 1793769747087,
+      "kind": "harvest",
+      "detail": "oak@114,120 -1"
+    },
+    {
+      "id": "r84",
+      "seq": 84,
+      "at": 1793769747553,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r85",
+      "seq": 85,
+      "at": 1793769747987,
+      "kind": "harvest",
+      "detail": "oak@114,120 -1"
+    },
+    {
+      "id": "r86",
+      "seq": 86,
+      "at": 1793769748453,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r87",
+      "seq": 87,
+      "at": 1793769748904,
+      "kind": "harvest",
+      "detail": "oak@114,120 -1"
+    },
+    {
+      "id": "r88",
+      "seq": 88,
+      "at": 1793769749337,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r89",
+      "seq": 89,
+      "at": 1793769749337,
+      "kind": "pickup",
+      "detail": "seedx1"
+    },
+    {
+      "id": "r90",
+      "seq": 90,
+      "at": 1793769752837,
+      "kind": "harvest",
+      "detail": "oak@115,112 -1"
+    },
+    {
+      "id": "r91",
+      "seq": 91,
+      "at": 1793769753270,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r92",
+      "seq": 92,
+      "at": 1793769753770,
+      "kind": "harvest",
+      "detail": "oak@115,112 -1"
+    },
+    {
+      "id": "r93",
+      "seq": 93,
+      "at": 1793769754220,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r94",
+      "seq": 94,
+      "at": 1793769754686,
+      "kind": "harvest",
+      "detail": "oak@115,112 -1"
+    },
+    {
+      "id": "r95",
+      "seq": 95,
+      "at": 1793769755070,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r96",
+      "seq": 96,
+      "at": 1793769755620,
+      "kind": "harvest",
+      "detail": "oak@115,112 -1"
+    },
+    {
+      "id": "r97",
+      "seq": 97,
+      "at": 1793769756039,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r98",
+      "seq": 98,
+      "at": 1793769756520,
+      "kind": "harvest",
+      "detail": "oak@115,112 -1"
+    },
+    {
+      "id": "r99",
+      "seq": 99,
+      "at": 1793769756903,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r100",
+      "seq": 100,
+      "at": 1793769757453,
+      "kind": "harvest",
+      "detail": "oak@115,112 -1"
+    },
+    {
+      "id": "r101",
+      "seq": 101,
+      "at": 1793769757886,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r102",
+      "seq": 102,
+      "at": 1793769760203,
+      "kind": "harvest",
+      "detail": "oak@120,113 -1"
+    },
+    {
+      "id": "r103",
+      "seq": 103,
+      "at": 1793769760586,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r104",
+      "seq": 104,
+      "at": 1793769761120,
+      "kind": "harvest",
+      "detail": "oak@120,113 -1"
+    },
+    {
+      "id": "r105",
+      "seq": 105,
+      "at": 1793769761570,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r106",
+      "seq": 106,
+      "at": 1793769762036,
+      "kind": "harvest",
+      "detail": "oak@120,113 -1"
+    },
+    {
+      "id": "r107",
+      "seq": 107,
+      "at": 1793769762436,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r108",
+      "seq": 108,
+      "at": 1793769762953,
+      "kind": "harvest",
+      "detail": "oak@120,113 -1"
+    },
+    {
+      "id": "r109",
+      "seq": 109,
+      "at": 1793769763369,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r110",
+      "seq": 110,
+      "at": 1793769763870,
+      "kind": "harvest",
+      "detail": "oak@120,113 -1"
+    },
+    {
+      "id": "r111",
+      "seq": 111,
+      "at": 1793769764320,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r112",
+      "seq": 112,
+      "at": 1793769764786,
+      "kind": "harvest",
+      "detail": "oak@120,113 -1"
+    },
+    {
+      "id": "r113",
+      "seq": 113,
+      "at": 1793769765236,
+      "kind": "pickup",
+      "detail": "woodx1"
+    },
+    {
+      "id": "r114",
+      "seq": 114,
+      "at": 1793769767519,
+      "kind": "harvest",
+      "detail": "rock@122,115 -1"
+    },
+    {
+      "id": "r115",
+      "seq": 115,
+      "at": 1793769767953,
+      "kind": "pickup",
+      "detail": "stonex1"
+    },
+    {
+      "id": "r116",
+      "seq": 116,
+      "at": 1793769768436,
+      "kind": "harvest",
+      "detail": "rock@122,115 -1"
+    },
+    {
+      "id": "r117",
+      "seq": 117,
+      "at": 1793769768819,
+      "kind": "pickup",
+      "detail": "stonex1"
+    },
+    {
+      "id": "r118",
+      "seq": 118,
+      "at": 1793769769352,
+      "kind": "harvest",
+      "detail": "rock@122,115 -1"
+    },
+    {
+      "id": "r119",
+      "seq": 119,
+      "at": 1793769769736,
+      "kind": "pickup",
+      "detail": "stonex1"
+    },
+    {
+      "id": "r120",
+      "seq": 120,
+      "at": 1793769770269,
+      "kind": "harvest",
+      "detail": "rock@122,115 -1"
+    },
+    {
+      "id": "r121",
+      "seq": 121,
+      "at": 1793769770719,
+      "kind": "pickup",
+      "detail": "stonex1"
+    },
+    {
+      "id": "r122",
+      "seq": 122,
+      "at": 1793769771186,
+      "kind": "harvest",
+      "detail": "rock@122,115 -1"
+    },
+    {
+      "id": "r123",
+      "seq": 123,
+      "at": 1793769771569,
+      "kind": "pickup",
+      "detail": "stonex1"
+    },
+    {
+      "id": "r124",
+      "seq": 124,
+      "at": 1793769772086,
+      "kind": "harvest",
+      "detail": "rock@122,115 -1"
+    },
+    {
+      "id": "r125",
+      "seq": 125,
+      "at": 1793769772536,
+      "kind": "pickup",
+      "detail": "stonex1"
+    },
+    {
+      "id": "r126",
+      "seq": 126,
+      "at": 1793769775902,
+      "kind": "harvest",
+      "detail": "rock@122,123 -1"
+    },
+    {
+      "id": "r127",
+      "seq": 127,
+      "at": 1793769776352,
+      "kind": "pickup",
+      "detail": "stonex1"
+    },
+    {
+      "id": "r128",
+      "seq": 128,
+      "at": 1793769776835,
+      "kind": "harvest",
+      "detail": "rock@122,123 -1"
+    },
+    {
+      "id": "r129",
+      "seq": 129,
+      "at": 1793769777286,
+      "kind": "pickup",
+      "detail": "stonex1"
+    },
+    {
+      "id": "r130",
+      "seq": 130,
+      "at": 1793769777735,
+      "kind": "harvest",
+      "detail": "rock@122,123 -1"
+    },
+    {
+      "id": "r131",
+      "seq": 131,
+      "at": 1793769778186,
+      "kind": "pickup",
+      "detail": "stonex1"
+    },
+    {
+      "id": "r132",
+      "seq": 132,
+      "at": 1793769778652,
+      "kind": "harvest",
+      "detail": "rock@122,123 -1"
+    },
+    {
+      "id": "r133",
+      "seq": 133,
+      "at": 1793769779102,
+      "kind": "pickup",
+      "detail": "stonex1"
+    },
+    {
+      "id": "r134",
+      "seq": 134,
+      "at": 1793769779569,
+      "kind": "harvest",
+      "detail": "rock@122,123 -1"
+    },
+    {
+      "id": "r135",
+      "seq": 135,
+      "at": 1793769780002,
+      "kind": "pickup",
+      "detail": "stonex1"
+    },
+    {
+      "id": "r136",
+      "seq": 136,
+      "at": 1793769780469,
+      "kind": "harvest",
+      "detail": "rock@122,123 -1"
+    },
+    {
+      "id": "r137",
+      "seq": 137,
+      "at": 1793769780902,
+      "kind": "pickup",
+      "detail": "stonex1"
+    },
+    {
+      "id": "r138",
+      "seq": 138,
+      "at": 1793769781769,
+      "kind": "harvest",
+      "detail": "grass@123,122 -2"
+    },
+    {
+      "id": "r139",
+      "seq": 139,
+      "at": 1793769782152,
+      "kind": "pickup",
+      "detail": "fiberx1"
+    },
+    {
+      "id": "r140",
+      "seq": 140,
+      "at": 1793769782219,
+      "kind": "pickup",
+      "detail": "fiberx1"
+    },
+    {
+      "id": "r141",
+      "seq": 141,
+      "at": 1793769783502,
+      "kind": "harvest",
+      "detail": "grass@120,121 -2"
+    },
+    {
+      "id": "r142",
+      "seq": 142,
+      "at": 1793769783935,
+      "kind": "pickup",
+      "detail": "fiberx1"
+    },
+    {
+      "id": "r143",
+      "seq": 143,
+      "at": 1793769783935,
+      "kind": "pickup",
+      "detail": "fiberx1"
+    },
+    {
+      "id": "r144",
+      "seq": 144,
+      "at": 1793769797968,
+      "kind": "harvest",
+      "detail": "wreck@152,109 -1"
+    },
+    {
+      "id": "r145",
+      "seq": 145,
+      "at": 1793769798351,
+      "kind": "pickup",
+      "detail": "sparesx1"
+    },
+    {
+      "id": "r146",
+      "seq": 146,
+      "at": 1793769798401,
+      "kind": "pickup",
+      "detail": "scrapx1"
+    },
+    {
+      "id": "r147",
+      "seq": 147,
+      "at": 1793769799185,
+      "kind": "harvest",
+      "detail": "wreck@152,109 -1"
+    },
+    {
+      "id": "r148",
+      "seq": 148,
+      "at": 1793769799568,
+      "kind": "pickup",
+      "detail": "scrapx1"
+    },
+    {
+      "id": "r149",
+      "seq": 149,
+      "at": 1793769800435,
+      "kind": "harvest",
+      "detail": "wreck@152,109 -1"
+    },
+    {
+      "id": "r150",
+      "seq": 150,
+      "at": 1793769800851,
+      "kind": "pickup",
+      "detail": "scrapx1"
+    },
+    {
+      "id": "r151",
+      "seq": 151,
+      "at": 1793769801351,
+      "kind": "harvest",
+      "detail": "wreck@152,109 -1"
+    },
+    {
+      "id": "r152",
+      "seq": 152,
+      "at": 1793769801752,
+      "kind": "pickup",
+      "detail": "scrapx1"
+    },
+    {
+      "id": "r153",
+      "seq": 153,
+      "at": 1793769802585,
+      "kind": "harvest",
+      "detail": "wreck@152,109 -1"
+    },
+    {
+      "id": "r154",
+      "seq": 154,
+      "at": 1793769803018,
+      "kind": "pickup",
+      "detail": "scrapx1"
+    },
+    {
+      "id": "r155",
+      "seq": 155,
+      "at": 1793769803801,
+      "kind": "harvest.component",
+      "detail": "wreck@152,109:smm"
+    },
+    {
+      "id": "r156",
+      "seq": 156,
+      "at": 1793769803801,
+      "kind": "harvest",
+      "detail": "wreck@152,109 -1"
+    },
+    {
+      "id": "r157",
+      "seq": 157,
+      "at": 1793769804185,
+      "kind": "pickup",
+      "detail": "sparesx1"
+    },
+    {
+      "id": "r158",
+      "seq": 158,
+      "at": 1793769804185,
+      "kind": "pickup",
+      "detail": "field_repair_kitx1"
+    },
+    {
+      "id": "r159",
+      "seq": 159,
+      "at": 1793769804218,
+      "kind": "pickup",
+      "detail": "damaged_drivex1"
+    },
+    {
+      "id": "r160",
+      "seq": 160,
+      "at": 1793769804251,
+      "kind": "pickup",
+      "detail": "scrapx1"
+    },
+    {
+      "id": "r161",
+      "seq": 161,
+      "at": 1793769805001,
+      "kind": "harvest.component",
+      "detail": "wreck@152,109:smw"
+    },
+    {
+      "id": "r162",
+      "seq": 162,
+      "at": 1793769805001,
+      "kind": "harvest",
+      "detail": "wreck@152,109 -1"
+    },
+    {
+      "id": "r163",
+      "seq": 163,
+      "at": 1793769805401,
+      "kind": "pickup",
+      "detail": "damaged_drivex1"
+    },
+    {
+      "id": "r164",
+      "seq": 164,
+      "at": 1793769805451,
+      "kind": "pickup",
+      "detail": "scrapx1"
+    },
+    {
+      "id": "r165",
+      "seq": 165,
+      "at": 1793769805935,
+      "kind": "harvest",
+      "detail": "wreck@152,109 -1"
+    },
+    {
+      "id": "r166",
+      "seq": 166,
+      "at": 1793769806318,
+      "kind": "pickup",
+      "detail": "sparesx1"
+    },
+    {
+      "id": "r167",
+      "seq": 167,
+      "at": 1793769806401,
+      "kind": "pickup",
+      "detail": "scrapx1"
+    },
+    {
+      "id": "r168",
+      "seq": 168,
+      "at": 1793769810218,
+      "kind": "harvest",
+      "detail": "wreck@155,107 -1"
+    },
+    {
+      "id": "r169",
+      "seq": 169,
+      "at": 1793769810634,
+      "kind": "pickup",
+      "detail": "scrapx1"
+    },
+    {
+      "id": "r170",
+      "seq": 170,
+      "at": 1793769811584,
+      "kind": "harvest.component",
+      "detail": "wreck@155,107:snj"
+    },
+    {
+      "id": "r171",
+      "seq": 171,
+      "at": 1793769811584,
+      "kind": "harvest",
+      "detail": "wreck@155,107 -1"
+    },
+    {
+      "id": "r172",
+      "seq": 172,
+      "at": 1793769811968,
+      "kind": "pickup",
+      "detail": "damaged_drivex1"
+    },
+    {
+      "id": "r173",
+      "seq": 173,
+      "at": 1793769811984,
+      "kind": "pickup",
+      "detail": "scrapx1"
+    },
+    {
+      "id": "r174",
+      "seq": 174,
+      "at": 1793769812801,
+      "kind": "harvest",
+      "detail": "wreck@155,107 -1"
+    },
+    {
+      "id": "r175",
+      "seq": 175,
+      "at": 1793769813184,
+      "kind": "pickup",
+      "detail": "scrapx1"
+    },
+    {
+      "id": "r176",
+      "seq": 176,
+      "at": 1793769813934,
+      "kind": "harvest",
+      "detail": "wreck@155,107 -1"
+    },
+    {
+      "id": "r177",
+      "seq": 177,
+      "at": 1793769814318,
+      "kind": "pickup",
+      "detail": "scrapx1"
+    },
+    {
+      "id": "r178",
+      "seq": 178,
+      "at": 1793769814318,
+      "kind": "pickup",
+      "detail": "fastenersx1"
+    },
+    {
+      "id": "r179",
+      "seq": 179,
+      "at": 1793769815434,
+      "kind": "harvest",
+      "detail": "wreck@155,107 -1"
+    },
+    {
+      "id": "r180",
+      "seq": 180,
+      "at": 1793769815834,
+      "kind": "pickup",
+      "detail": "scrapx1"
+    },
+    {
+      "id": "r181",
+      "seq": 181,
+      "at": 1793769816634,
+      "kind": "harvest.component",
+      "detail": "wreck@155,107:so4"
+    },
+    {
+      "id": "r182",
+      "seq": 182,
+      "at": 1793769816634,
+      "kind": "harvest",
+      "detail": "wreck@155,107 -1"
+    },
+    {
+      "id": "r183",
+      "seq": 183,
+      "at": 1793769817034,
+      "kind": "pickup",
+      "detail": "sparesx1"
+    },
+    {
+      "id": "r184",
+      "seq": 184,
+      "at": 1793769817051,
+      "kind": "pickup",
+      "detail": "scrapx1"
+    },
+    {
+      "id": "r185",
+      "seq": 185,
+      "at": 1793769817068,
+      "kind": "pickup",
+      "detail": "damaged_drivex1"
+    },
+    {
+      "id": "r186",
+      "seq": 186,
+      "at": 1793769818151,
+      "kind": "harvest",
+      "detail": "wreck@155,107 -1"
+    },
+    {
+      "id": "r187",
+      "seq": 187,
+      "at": 1793769818534,
+      "kind": "pickup",
+      "detail": "scrapx1"
+    },
+    {
+      "id": "r188",
+      "seq": 188,
+      "at": 1793769818534,
+      "kind": "pickup",
+      "detail": "sparesx1"
+    },
+    {
+      "id": "r189",
+      "seq": 189,
+      "at": 1793769819067,
+      "kind": "harvest",
+      "detail": "wreck@155,107 -1"
+    },
+    {
+      "id": "r190",
+      "seq": 190,
+      "at": 1793769819451,
+      "kind": "pickup",
+      "detail": "field_repair_kitx1"
+    },
+    {
+      "id": "r191",
+      "seq": 191,
+      "at": 1793769819467,
+      "kind": "pickup",
+      "detail": "scrapx1"
+    },
+    {
+      "id": "r192",
+      "seq": 192,
+      "at": 1793769819484,
+      "kind": "pickup",
+      "detail": "sparesx1"
+    },
+    {
+      "id": "r193",
+      "seq": 193,
+      "at": 1793769819484,
+      "kind": "pickup",
+      "detail": "fastenersx1"
+    },
+    {
+      "id": "r194",
+      "seq": 194,
+      "at": 1793769830825,
+      "kind": "offline.settle",
+      "detail": "11s"
+    },
+    {
+      "id": "r195",
+      "seq": 195,
+      "at": 1793769888726,
+      "kind": "offline.settle",
+      "detail": "58s"
+    },
+    {
+      "id": "r196",
+      "seq": 196,
+      "at": 1793769891598,
+      "kind": "death",
+      "detail": "projectile; bag=bop"
+    },
+    {
+      "id": "r197",
+      "seq": 197,
+      "at": 1793769905033,
+      "kind": "offline.settle",
+      "detail": "13s"
+    },
+    {
+      "id": "r198",
+      "seq": 198,
+      "at": 1793769940191,
+      "kind": "offline.settle",
+      "detail": "35s"
+    },
+    {
+      "id": "r199",
+      "seq": 199,
+      "at": 1793769980180,
+      "kind": "offline.settle",
+      "detail": "10s"
+    },
+    {
+      "id": "r200",
+      "seq": 200,
+      "at": 1793769981543,
+      "kind": "respawn",
+      "detail": "2552,1288"
+    },
+    {
+      "id": "r201",
+      "seq": 201,
+      "at": 1793769995305,
+      "kind": "move",
+      "detail": "knifex1 coo->inv"
+    },
+    {
+      "id": "r202",
+      "seq": 202,
+      "at": 1793770013190,
+      "kind": "offline.settle",
+      "detail": "18s"
+    },
+    {
+      "id": "r203",
+      "seq": 203,
+      "at": 1793770014668,
+      "kind": "move",
+      "detail": "water_flaskx1 coo->inv"
+    },
+    {
+      "id": "r204",
+      "seq": 204,
+      "at": 1793770014788,
+      "kind": "move",
+      "detail": "berriesx3 coo->inv"
+    },
+    {
+      "id": "r205",
+      "seq": 205,
+      "at": 1793770014920,
+      "kind": "move",
+      "detail": "woodx38 coo->inv"
+    },
+    {
+      "id": "r206",
+      "seq": 206,
+      "at": 1793770015035,
+      "kind": "move",
+      "detail": "seedx4 coo->inv"
+    },
+    {
+      "id": "r207",
+      "seq": 207,
+      "at": 1793770015135,
+      "kind": "move",
+      "detail": "scrapx24 coo->inv"
+    },
+    {
+      "id": "r208",
+      "seq": 208,
+      "at": 1793770015253,
+      "kind": "move",
+      "detail": "fastenersx4 coo->inv"
+    },
+    {
+      "id": "r209",
+      "seq": 209,
+      "at": 1793770015373,
+      "kind": "move",
+      "detail": "sparesx13 coo->inv"
+    },
+    {
+      "id": "r210",
+      "seq": 210,
+      "at": 1793770015500,
+      "kind": "move",
+      "detail": "iron_ingotx1 coo->inv"
+    },
+    {
+      "id": "r211",
+      "seq": 211,
+      "at": 1793770015616,
+      "kind": "move",
+      "detail": "damaged_drivex1 coo->inv"
+    },
+    {
+      "id": "r212",
+      "seq": 212,
+      "at": 1793770015735,
+      "kind": "move",
+      "detail": "fiberx6 coo->inv"
+    },
+    {
+      "id": "r213",
+      "seq": 213,
+      "at": 1793770015850,
+      "kind": "move",
+      "detail": "meatx1 coo->inv"
+    },
+    {
+      "id": "r214",
+      "seq": 214,
+      "at": 1793770015937,
+      "kind": "move",
+      "detail": "furx2 coo->inv"
+    },
+    {
+      "id": "r215",
+      "seq": 215,
+      "at": 1793770016053,
+      "kind": "move",
+      "detail": "stonex12 coo->inv"
+    },
+    {
+      "id": "r216",
+      "seq": 216,
+      "at": 1793770016201,
+      "kind": "move",
+      "detail": "field_repair_kitx2 coo->inv"
+    },
+    {
+      "id": "r217",
+      "seq": 217,
+      "at": 1793770016334,
+      "kind": "move",
+      "detail": "damaged_drivex1 coo->inv"
+    },
+    {
+      "id": "r218",
+      "seq": 218,
+      "at": 1793770016450,
+      "kind": "move",
+      "detail": "damaged_drivex1 coo->inv"
+    },
+    {
+      "id": "r219",
+      "seq": 219,
+      "at": 1793770016552,
+      "kind": "move",
+      "detail": "damaged_drivex1 coo->inv"
+    },
+    {
+      "id": "r220",
+      "seq": 220,
+      "at": 1793770016684,
+      "kind": "move",
+      "detail": "damaged_drivex1 coo->inv"
+    },
+    {
+      "id": "r221",
+      "seq": 221,
+      "at": 1793770034768,
+      "kind": "offline.settle",
+      "detail": "17s"
+    },
+    {
+      "id": "r222",
+      "seq": 222,
+      "at": 1793770043320,
+      "kind": "recycle.start",
+      "detail": "s90@e2g"
+    },
+    {
+      "id": "r223",
+      "seq": 223,
+      "at": 1793770055320,
+      "kind": "job.done",
+      "detail": "X:drive"
+    },
+    {
+      "id": "r224",
+      "seq": 224,
+      "at": 1793770061733,
+      "kind": "offline.settle",
+      "detail": "18s"
+    },
+    {
+      "id": "r225",
+      "seq": 225,
+      "at": 1793770063604,
+      "kind": "move",
+      "detail": "sparesx2 c2i->inv"
+    },
+    {
+      "id": "r226",
+      "seq": 226,
+      "at": 1793770095381,
+      "kind": "offline.settle",
+      "detail": "31s"
+    },
+    {
+      "id": "r227",
+      "seq": 227,
+      "at": 1793770101818,
+      "kind": "build",
+      "detail": "claim@157,107"
+    },
+    {
+      "id": "r228",
+      "seq": 228,
+      "at": 1793770102672,
+      "kind": "build",
+      "detail": "workbench@158,107"
+    },
+    {
+      "id": "r229",
+      "seq": 229,
+      "at": 1793770103515,
+      "kind": "build",
+      "detail": "research@159,107"
+    },
+    {
+      "id": "r230",
+      "seq": 230,
+      "at": 1793770133184,
+      "kind": "offline.settle",
+      "detail": "29s"
+    },
+    {
+      "id": "r231",
+      "seq": 231,
+      "at": 1793770135397,
+      "kind": "research.directed",
+      "detail": "field_repair_kit"
+    },
+    {
+      "id": "r232",
+      "seq": 232,
+      "at": 1793770137173,
+      "kind": "job.queue",
+      "detail": "recover_drive@er7"
+    },
+    {
+      "id": "r233",
+      "seq": 233,
+      "at": 1793770149173,
+      "kind": "job.done",
+      "detail": "recover_drive"
+    },
+    {
+      "id": "r234",
+      "seq": 234,
+      "at": 1793770180397,
+      "kind": "achievement",
+      "detail": "first_research"
+    },
+    {
+      "id": "r235",
+      "seq": 235,
+      "at": 1793770180397,
+      "kind": "job.done",
+      "detail": "R:field_repair_kit"
+    },
+    {
+      "id": "r236",
+      "seq": 236,
+      "at": 1793770189561,
+      "kind": "offline.settle",
+      "detail": "52s"
+    },
+    {
+      "id": "r237",
+      "seq": 237,
+      "at": 1793770191493,
+      "kind": "move",
+      "detail": "blueprintx1 crc->inv"
+    },
+    {
+      "id": "r238",
+      "seq": 238,
+      "at": 1793770191910,
+      "kind": "learn.blueprint",
+      "detail": "field_repair_kit"
+    },
+    {
+      "id": "r239",
+      "seq": 239,
+      "at": 1793770216960,
+      "kind": "offline.settle",
+      "detail": "22s"
+    },
+    {
+      "id": "r240",
+      "seq": 240,
+      "at": 1793770232610,
+      "kind": "offline.settle",
+      "detail": "10s"
+    },
+    {
+      "id": "r241",
+      "seq": 241,
+      "at": 1793770245144,
+      "kind": "offline.settle",
+      "detail": "13s"
+    },
+    {
+      "id": "r242",
+      "seq": 242,
+      "at": 1793770267608,
+      "kind": "offline.settle",
+      "detail": "22s"
+    },
+    {
+      "id": "r243",
+      "seq": 243,
+      "at": 1793770271432,
+      "kind": "death",
+      "detail": "projectile; bag=brl"
+    },
+    {
+      "id": "r244",
+      "seq": 244,
+      "at": 1793770279277,
+      "kind": "offline.settle",
+      "detail": "6s"
+    },
+    {
+      "id": "r245",
+      "seq": 245,
+      "at": 1793770289497,
+      "kind": "offline.settle",
+      "detail": "10s"
+    },
+    {
+      "id": "r246",
+      "seq": 246,
+      "at": 1793770290928,
+      "kind": "respawn",
+      "detail": "1624,1736"
+    },
+    {
+      "id": "r247",
+      "seq": 247,
+      "at": 1793770302298,
+      "kind": "harvest",
+      "detail": "oak@144,106 -1"
+    },
+    {
+      "id": "r248",
+      "seq": 248,
+      "at": 1793770305507,
+      "kind": "move",
+      "detail": "knifex1 crk->inv"
+    },
+    {
+      "id": "r249",
+      "seq": 249,
+      "at": 1793770305590,
+      "kind": "move",
+      "detail": "water_flaskx1 crk->inv"
+    },
+    {
+      "id": "r250",
+      "seq": 250,
+      "at": 1793770305671,
+      "kind": "move",
+      "detail": "berriesx3 crk->inv"
+    },
+    {
+      "id": "r251",
+      "seq": 251,
+      "at": 1793770305741,
+      "kind": "move",
+      "detail": "woodx4 crk->inv"
+    },
+    {
+      "id": "r252",
+      "seq": 252,
+      "at": 1793770305805,
+      "kind": "move",
+      "detail": "seedx4 crk->inv"
+    },
+    {
+      "id": "r253",
+      "seq": 253,
+      "at": 1793770305873,
+      "kind": "move",
+      "detail": "scrapx23 crk->inv"
+    },
+    {
+      "id": "r254",
+      "seq": 254,
+      "at": 1793770305943,
+      "kind": "move",
+      "detail": "fastenersx4 crk->inv"
+    },
+    {
+      "id": "r255",
+      "seq": 255,
+      "at": 1793770306039,
+      "kind": "move",
+      "detail": "fiberx6 crk->inv"
+    },
+    {
+      "id": "r256",
+      "seq": 256,
+      "at": 1793770306122,
+      "kind": "move",
+      "detail": "meatx1 crk->inv"
+    },
+    {
+      "id": "r257",
+      "seq": 257,
+      "at": 1793770306190,
+      "kind": "move",
+      "detail": "furx2 crk->inv"
+    },
+    {
+      "id": "r258",
+      "seq": 258,
+      "at": 1793770306255,
+      "kind": "move",
+      "detail": "stonex3 crk->inv"
+    },
+    {
+      "id": "r259",
+      "seq": 259,
+      "at": 1793770306338,
+      "kind": "move",
+      "detail": "field_repair_kitx2 crk->inv"
+    },
+    {
+      "id": "r260",
+      "seq": 260,
+      "at": 1793770306425,
+      "kind": "move",
+      "detail": "damaged_drivex1 crk->inv"
+    },
+    {
+      "id": "r261",
+      "seq": 261,
+      "at": 1793770306534,
+      "kind": "move",
+      "detail": "damaged_drivex1 crk->inv"
+    },
+    {
+      "id": "r262",
+      "seq": 262,
+      "at": 1793770306607,
+      "kind": "move",
+      "detail": "damaged_drivex1 crk->inv"
+    },
+    {
+      "id": "r263",
+      "seq": 263,
+      "at": 1793770331694,
+      "kind": "offline.settle",
+      "detail": "25s"
+    },
+    {
+      "id": "r264",
+      "seq": 264,
+      "at": 1793770333855,
+      "kind": "move",
+      "detail": "mechanical_partsx1 cr9->inv"
+    },
+    {
+      "id": "r265",
+      "seq": 265,
+      "at": 1793770333955,
+      "kind": "job.queue",
+      "detail": "cloth@er7"
+    },
+    {
+      "id": "r266",
+      "seq": 266,
+      "at": 1793770341955,
+      "kind": "job.done",
+      "detail": "cloth"
+    },
+    {
+      "id": "r267",
+      "seq": 267,
+      "at": 1793770351675,
+      "kind": "offline.settle",
+      "detail": "17s"
+    },
+    {
+      "id": "r268",
+      "seq": 268,
+      "at": 1793770368392,
+      "kind": "offline.settle",
+      "detail": "11s"
+    },
+    {
+      "id": "r269",
+      "seq": 269,
+      "at": 1793770389707,
+      "kind": "offline.settle",
+      "detail": "21s"
+    },
+    {
+      "id": "r270",
+      "seq": 270,
+      "at": 1793770391923,
+      "kind": "move",
+      "detail": "clothx1 cr9->inv"
+    },
+    {
+      "id": "r271",
+      "seq": 271,
+      "at": 1793770392202,
+      "kind": "item.fieldRepair",
+      "detail": "s1:78->178"
+    },
+    {
+      "id": "r272",
+      "seq": 272,
+      "at": 1793770392453,
+      "kind": "item.fieldRepair",
+      "detail": "s1:178->278"
+    },
+    {
+      "id": "r273",
+      "seq": 273,
+      "at": 1793770392769,
+      "kind": "job.queue",
+      "detail": "field_repair_kit@er7"
+    },
+    {
+      "id": "r274",
+      "seq": 274,
+      "at": 1793770393112,
+      "kind": "death",
+      "detail": "projectile; bag=buf"
+    },
+    {
+      "id": "r275",
+      "seq": 275,
+      "at": 1793770404769,
+      "kind": "job.done",
+      "detail": "field_repair_kit"
+    },
+    {
+      "id": "r276",
+      "seq": 276,
+      "at": 1793770434875,
+      "kind": "offline.settle",
+      "detail": "15s"
+    },
+    {
+      "id": "r277",
+      "seq": 277,
+      "at": 1793770436351,
+      "kind": "respawn",
+      "detail": "1720,1816"
+    },
+    {
+      "id": "r278",
+      "seq": 278,
+      "at": 1793770450968,
+      "kind": "move",
+      "detail": "knifex1 cue->inv"
+    },
+    {
+      "id": "r279",
+      "seq": 279,
+      "at": 1793770451033,
+      "kind": "move",
+      "detail": "water_flaskx1 cue->inv"
+    },
+    {
+      "id": "r280",
+      "seq": 280,
+      "at": 1793770451116,
+      "kind": "move",
+      "detail": "berriesx3 cue->inv"
+    },
+    {
+      "id": "r281",
+      "seq": 281,
+      "at": 1793770451184,
+      "kind": "move",
+      "detail": "woodx4 cue->inv"
+    },
+    {
+      "id": "r282",
+      "seq": 282,
+      "at": 1793770451250,
+      "kind": "move",
+      "detail": "seedx4 cue->inv"
+    },
+    {
+      "id": "r283",
+      "seq": 283,
+      "at": 1793770451333,
+      "kind": "move",
+      "detail": "scrapx23 cue->inv"
+    },
+    {
+      "id": "r284",
+      "seq": 284,
+      "at": 1793770451424,
+      "kind": "move",
+      "detail": "fastenersx2 cue->inv"
+    },
+    {
+      "id": "r285",
+      "seq": 285,
+      "at": 1793770451516,
+      "kind": "move",
+      "detail": "meatx1 cue->inv"
+    },
+    {
+      "id": "r286",
+      "seq": 286,
+      "at": 1793770451583,
+      "kind": "move",
+      "detail": "furx2 cue->inv"
+    },
+    {
+      "id": "r287",
+      "seq": 287,
+      "at": 1793770451666,
+      "kind": "move",
+      "detail": "stonex3 cue->inv"
+    },
+    {
+      "id": "r288",
+      "seq": 288,
+      "at": 1793770451732,
+      "kind": "move",
+      "detail": "damaged_drivex1 cue->inv"
+    },
+    {
+      "id": "r289",
+      "seq": 289,
+      "at": 1793770451799,
+      "kind": "move",
+      "detail": "damaged_drivex1 cue->inv"
+    },
+    {
+      "id": "r290",
+      "seq": 290,
+      "at": 1793770451899,
+      "kind": "move",
+      "detail": "damaged_drivex1 cue->inv"
+    },
+    {
+      "id": "r291",
+      "seq": 291,
+      "at": 1793770451968,
+      "kind": "move",
+      "detail": "mechanical_partsx1 cue->inv"
+    },
+    {
+      "id": "r292",
+      "seq": 292,
+      "at": 1793770470682,
+      "kind": "offline.settle",
+      "detail": "18s"
+    },
+    {
+      "id": "r293",
+      "seq": 293,
+      "at": 1793770480794,
+      "kind": "offline.settle",
+      "detail": "10s"
+    },
+    {
+      "id": "r294",
+      "seq": 294,
+      "at": 1793770537117,
+      "kind": "offline.settle",
+      "detail": "56s"
+    },
+    {
+      "id": "r295",
+      "seq": 295,
+      "at": 1793770568547,
+      "kind": "offline.settle",
+      "detail": "31s"
+    },
+    {
+      "id": "r296",
+      "seq": 296,
+      "at": 1793770587447,
+      "kind": "offline.settle",
+      "detail": "19s"
+    },
+    {
+      "id": "r297",
+      "seq": 297,
+      "at": 1793770600232,
+      "kind": "offline.settle",
+      "detail": "13s"
+    },
+    {
+      "id": "r298",
+      "seq": 298,
+      "at": 1793770602516,
+      "kind": "move",
+      "detail": "field_repair_kitx1 cr9->inv"
+    },
+    {
+      "id": "r299",
+      "seq": 299,
+      "at": 1793770603110,
+      "kind": "item.fieldRepair",
+      "detail": "s1:278->300"
+    },
+    {
+      "id": "r300",
+      "seq": 300,
+      "at": 1793771077769,
+      "kind": "offline.settle",
+      "detail": "474s"
+    }
+  ]
+}

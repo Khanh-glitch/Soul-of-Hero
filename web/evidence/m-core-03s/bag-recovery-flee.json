@@ -1,0 +1,338 @@
+{
+  "method": "Normal-input respawn and recovery after lava death on a first assisted recovery attempt. Read-only route now avoids ash except near destination and buffers lava.",
+  "errors": [],
+  "respawn": {
+    "p": {
+      "x": 2040,
+      "y": 1928,
+      "vx": 0,
+      "vy": 0,
+      "dir": 1,
+      "aim": 2.9863306596826833,
+      "hp": 60,
+      "stamina": 86.43159999999989,
+      "hunger": 63.056978559963454,
+      "thirst": 46.08249109599749,
+      "warmth": 79.93311759409445,
+      "rad": 0,
+      "active": 0,
+      "action": null,
+      "invuln": 983.4000000000001,
+      "dead": false,
+      "deadT": 1399.9,
+      "pulling": null,
+      "skills": {
+        "gather": 76,
+        "combat": 2,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 8.395200000000026,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Heartland",
+      "sheltered": false
+    },
+    "receipts": [
+      {
+        "id": "r253",
+        "seq": 253,
+        "at": 1793773581995,
+        "kind": "offline.settle",
+        "detail": "16s"
+      },
+      {
+        "id": "r254",
+        "seq": 254,
+        "at": 1793773583536,
+        "kind": "struct.hit",
+        "detail": "eq4:boar:13"
+      },
+      {
+        "id": "r255",
+        "seq": 255,
+        "at": 1793773583732,
+        "kind": "respawn",
+        "detail": "2040,1928"
+      },
+      {
+        "id": "r256",
+        "seq": 256,
+        "at": 1793773584437,
+        "kind": "struct.hit",
+        "detail": "eq4:boar:13"
+      },
+      {
+        "id": "r257",
+        "seq": 257,
+        "at": 1793773584437,
+        "kind": "struct.hit",
+        "detail": "eq4:boar:13"
+      }
+    ]
+  },
+  "routeSteps": 71,
+  "after": {
+    "p": {
+      "x": 1988.5441067389193,
+      "y": 2695.5365613518134,
+      "vx": -66.24000000000001,
+      "vy": 0,
+      "dir": 1,
+      "aim": -2.7543076309947883,
+      "hp": 12,
+      "stamina": 100,
+      "hunger": 62.28966455996488,
+      "thirst": 44.3753470959966,
+      "warmth": 84.35436457335256,
+      "rad": 0,
+      "active": 0,
+      "action": null,
+      "invuln": 3.400000000001455,
+      "dead": false,
+      "deadT": 1399.9,
+      "pulling": null,
+      "skills": {
+        "gather": 76,
+        "combat": 2,
+        "craft": 2,
+        "survival": 0
+      },
+      "stepAcc": 5.517791999999952,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Caldera Wastes",
+      "sheltered": false
+    },
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 107
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7c",
+        "key": "wood",
+        "qty": 13
+      },
+      {
+        "uid": "s81",
+        "key": "stone",
+        "qty": 5
+      },
+      {
+        "uid": "s8o",
+        "key": "fiber",
+        "qty": 1
+      },
+      {
+        "uid": "s9t",
+        "key": "crystal",
+        "qty": 3
+      },
+      {
+        "uid": "s8x",
+        "key": "stone_pick",
+        "qty": 1,
+        "dur": 170
+      },
+      {
+        "uid": "s1t",
+        "key": "spares",
+        "qty": 1
+      },
+      {
+        "uid": "sj5",
+        "key": "seed",
+        "qty": 9
+      },
+      {
+        "uid": "sls",
+        "key": "charcoal",
+        "qty": 3
+      },
+      {
+        "uid": "sm8",
+        "key": "chitin",
+        "qty": 2
+      },
+      {
+        "uid": "sm9",
+        "key": "sulfur",
+        "qty": 1
+      }
+    ],
+    "bags": [
+      {
+        "id": "bz3",
+        "slots": []
+      },
+      {
+        "id": "b13r",
+        "slots": []
+      },
+      {
+        "id": "b18n",
+        "slots": []
+      },
+      {
+        "id": "b1ez",
+        "slots": []
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r262",
+        "seq": 262,
+        "at": 1793773586253,
+        "kind": "struct.hit",
+        "detail": "eq4:boar:13"
+      },
+      {
+        "id": "r263",
+        "seq": 263,
+        "at": 1793773586253,
+        "kind": "struct.hit",
+        "detail": "eq4:boar:13"
+      },
+      {
+        "id": "r264",
+        "seq": 264,
+        "at": 1793773586586,
+        "kind": "struct.hit",
+        "detail": "eq4:boar:13"
+      },
+      {
+        "id": "r265",
+        "seq": 265,
+        "at": 1793773587169,
+        "kind": "struct.hit",
+        "detail": "eq4:boar:13"
+      },
+      {
+        "id": "r266",
+        "seq": 266,
+        "at": 1793773587169,
+        "kind": "struct.hit",
+        "detail": "eq4:boar:13"
+      },
+      {
+        "id": "r267",
+        "seq": 267,
+        "at": 1793773587503,
+        "kind": "struct.hit",
+        "detail": "eq4:boar:4"
+      },
+      {
+        "id": "r268",
+        "seq": 268,
+        "at": 1793773587503,
+        "kind": "struct.destroyed",
+        "detail": "workbench by boar"
+      },
+      {
+        "id": "r269",
+        "seq": 269,
+        "at": 1793773602337,
+        "kind": "move",
+        "detail": "knifex1 c1ey->inv"
+      },
+      {
+        "id": "r270",
+        "seq": 270,
+        "at": 1793773602337,
+        "kind": "move",
+        "detail": "water_flaskx1 c1ey->inv"
+      },
+      {
+        "id": "r271",
+        "seq": 271,
+        "at": 1793773602338,
+        "kind": "move",
+        "detail": "berriesx3 c1ey->inv"
+      },
+      {
+        "id": "r272",
+        "seq": 272,
+        "at": 1793773602338,
+        "kind": "move",
+        "detail": "woodx13 c1ey->inv"
+      },
+      {
+        "id": "r273",
+        "seq": 273,
+        "at": 1793773602338,
+        "kind": "move",
+        "detail": "stonex5 c1ey->inv"
+      },
+      {
+        "id": "r274",
+        "seq": 274,
+        "at": 1793773602338,
+        "kind": "move",
+        "detail": "fiberx1 c1ey->inv"
+      },
+      {
+        "id": "r275",
+        "seq": 275,
+        "at": 1793773602338,
+        "kind": "move",
+        "detail": "crystalx3 c1ey->inv"
+      },
+      {
+        "id": "r276",
+        "seq": 276,
+        "at": 1793773602338,
+        "kind": "move",
+        "detail": "stone_pickx1 c1ey->inv"
+      },
+      {
+        "id": "r277",
+        "seq": 277,
+        "at": 1793773602338,
+        "kind": "move",
+        "detail": "sparesx1 c1ey->inv"
+      },
+      {
+        "id": "r278",
+        "seq": 278,
+        "at": 1793773602338,
+        "kind": "move",
+        "detail": "seedx9 c1ey->inv"
+      },
+      {
+        "id": "r279",
+        "seq": 279,
+        "at": 1793773602338,
+        "kind": "move",
+        "detail": "charcoalx3 c1ey->inv"
+      },
+      {
+        "id": "r280",
+        "seq": 280,
+        "at": 1793773602338,
+        "kind": "move",
+        "detail": "chitinx2 c1ey->inv"
+      },
+      {
+        "id": "r281",
+        "seq": 281,
+        "at": 1793773602338,
+        "kind": "move",
+        "detail": "sulfurx1 c1ey->inv"
+      }
+    ]
+  }
+}

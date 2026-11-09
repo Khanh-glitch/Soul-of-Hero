@@ -1,4 +1,5 @@
 // Original pixel art for Soul of Hero, painted pixel-by-pixel into offscreen canvases at boot.
+import { drawParcel, drawVehicleSide, drawVehicleFront, drawVehicleBack, drawVehicleCrate, drawRefinery, drawLubricantJug, drawOilPump, drawCrudeDrum } from './industrial-art';
 // (GOLD_SOURCE_NOT_AVAILABLE — these are original replacements; no third-party sprites used.)
 import { hash2 } from './core';
 import { ITEMS } from './catalog';
@@ -265,16 +266,98 @@ export function buildStructs() {
   S.spikes = mk(16, 16, g => { for (let k = 0; k < 5; k++) { const x = 2 + k * 3; R(g, x, 9, 1, 5, '#8a6a3e'); P(g, x, 8, '#d0d0d8'); } R(g, 1, 13, 14, 1, '#5a3a22'); });
   S.barricade = mk(16, 16, g => { for (const [x1, x2] of [[1, 14], [14, 1]]) for (let k = 0; k < 14; k++) R(g, x1 + (x2 - x1) * k / 13, 4 + k * 0.7, 2, 2, '#7a5232'); R(g, 1, 11, 14, 2, '#6a4426'); P(g, 2, 4, '#d0d0d8'); P(g, 13, 4, '#d0d0d8'); });
   S.torch_post = mk(16, 24, g => { R(g, 7, 8, 2, 15, '#6a4426'); R(g, 6, 6, 4, 3, '#4a4e56'); });
-  S.claim = mk(16, 32, g => { R(g, 7, 6, 3, 26, '#7a5232'); for (let y = 8; y < 30; y += 5) R(g, 6, y, 5, 1, '#c08a50'); R(g, 6, 4, 5, 3, '#e2c25a'); R(g, 10, 7, 6, 5, '#b4532a'); R(g, 10, 8, 6, 1, '#ffd040'); });
+  S.claim = mk(16, 32, g => { R(g, 1, 9, 14, 22, '#34251f'); R(g, 2, 10, 12, 20, '#805538'); R(g, 3, 11, 10, 18, '#ac7950'); R(g, 4, 12, 8, 16, '#694432'); R(g, 7, 12, 1, 16, '#cfa46c'); R(g, 5, 19, 1, 2, '#f7d66a'); R(g, 9, 19, 1, 2, '#f7d66a'); R(g, 1, 8, 14, 2, '#d5ae70'); R(g, 2, 30, 12, 2, '#39271f'); });
   S.vendor = mk(16, 24, g => { R(g, 4, 10, 8, 9, '#6a3a8a'); R(g, 4, 15, 8, 1, '#ffd040'); R(g, 5, 19, 2, 4, '#33304a'); R(g, 9, 19, 2, 4, '#33304a'); ell(g, 8, 7, 3.5, 3.5, '#e0b090'); R(g, 3, 3, 10, 2, '#4a2a1a'); R(g, 5, 1, 6, 3, '#4a2a1a'); R(g, 5, 3, 6, 1, '#ffd040'); P(g, 7, 7, '#2a1a2a'); P(g, 9, 7, '#2a1a2a'); R(g, 6, 9, 4, 1, '#8a6a5a'); R(g, 12, 12, 3, 4, '#c08a50'); });
+  S.base_generator = mk(16, 16, g => { R(g,1,5,14,10,'#404a48'); R(g,2,6,12,7,'#798a62'); R(g,3,8,5,4,'#283331'); R(g,10,7,3,2,'#e3bb53'); R(g,2,14,3,1,'#242323'); R(g,11,14,3,1,'#242323'); R(g,11,2,2,4,'#59635a'); });
+  S.arrow_turret = mk(16, 16, g => { R(g,3,12,10,3,'#59412f'); R(g,5,10,6,3,'#8d6944'); R(g,3,6,10,4,'#727d79'); R(g,5,5,6,2,'#bcc2a6'); R(g,2,7,2,2,'#3a4743'); R(g,12,7,2,2,'#3a4743'); });
   S.gen = mk(16, 16, g => { R(g, 1, 5, 14, 9, '#6a7a3a'); R(g, 1, 5, 14, 2, '#8a9a4a'); R(g, 3, 8, 4, 4, '#2a2e34'); R(g, 9, 8, 4, 2, '#c0a040'); R(g, 12, 2, 2, 4, '#4a4e56'); });
   S.evac = mk(16, 40, g => { R(g, 7, 6, 2, 34, '#8a8a90'); for (let y = 10; y < 38; y += 6) { R(g, 5, y, 6, 1, '#6a6a72'); } R(g, 4, 2, 8, 5, '#c03a2a'); R(g, 5, 3, 6, 3, '#ffd0a0'); R(g, 3, 37, 10, 3, '#5a5a62'); });
+  S.parcel = mk(16, 16, g => drawParcel(g));
   S.bag = mk(16, 16, g => { ell(g, 8, 10, 5, 4.5, shade('#8a5a32', '#b07a4a', '#5a3a22', 80)); R(g, 6, 4, 4, 3, '#7a4a2a'); R(g, 5, 6, 6, 1, '#d0a050'); });
   S.cart = mk(28, 22, g => { R(g, 3, 4, 20, 10, '#8a5a32'); R(g, 3, 4, 20, 2, '#b07a4a'); for (let x = 5; x < 23; x += 4) R(g, x, 6, 1, 8, '#5a3a22'); ell(g, 7, 16, 4, 4, '#4a2e1a'); ell(g, 7, 16, 2, 2, '#8a8a90'); ell(g, 19, 16, 4, 4, '#4a2e1a'); ell(g, 19, 16, 2, 2, '#8a8a90'); R(g, 23, 8, 5, 1, '#6a4426'); });
   S.cargo = mk(28, 22, g => { R(g, 5, 0, 7, 5, '#a07040'); R(g, 12, 1, 6, 4, '#7d8088'); R(g, 17, 0, 5, 5, '#c9935a'); P(g, 8, 2, '#5a3a22'); }, null);
   S.icepillar = mk(16, 24, g => { for (let y = 0; y < 22; y++) { const w = 6 + Math.round(Math.sin(y * 0.7) * 1.5); R(g, 8 - w / 2, y + 1, w, 1, y < 4 ? '#ffffff' : y % 5 ? '#9ad8ff' : '#c8f0ff'); } R(g, 5, 4, 1, 14, '#e0ffff'); });
   S.rootwall = mk(16, 24, g => { for (let k = 0; k < 4; k++) for (let y = 4; y < 23; y++) P(g, 3 + k * 3 + Math.round(Math.sin(y * 0.5 + k) * 1.2), y, k % 2 ? '#5a3a22' : '#7a5232'); P(g, 6, 4, '#7ad070'); P(g, 10, 5, '#7ad070'); });
+  // B04-P4 bear trap: four physical states plus a live spring-snap frame (drawn for 0.4 s after a hit).
+  for (const mode of ['unarmed', 'armed', 'spent', 'worn', 'snap'] as const) S['bear_trap_' + mode] = mk(16, 16, g => bearTrapArt(g, mode), null);
+  S.bear_trap = S.bear_trap_unarmed;
+  // B04-P4 infrared sensor: off, unpowered/no cable, ready (watching), detecting, blocked by a wall.
+  S.ir_sensor_off = mk(16, 16, g => irSensorArt(g, '#2a2a30', true, 'none'), null);
+  S.ir_sensor_unpowered = mk(16, 16, g => irSensorArt(g, '#c08a2a', false, 'none'), null);
+  S.ir_sensor_ready = mk(16, 16, g => irSensorArt(g, '#57d07a', true, 'none'), null);
+  S.ir_sensor_detect = mk(16, 16, g => irSensorArt(g, '#ff3a2a', true, 'beam'), null);
+  S.ir_sensor_blocked = mk(16, 16, g => irSensorArt(g, '#e0a030', true, 'wall'), null);
+  S.ir_sensor = S.ir_sensor_off;
+  // B04-P4 airdrop crate: dedicated sprite for the drop (locked = padlocked, open = lid propped, contents visible).
+  S.airdrop_locked = mk(16, 16, g => airdropCrateArt(g, false), null);
+  S.airdrop_open = mk(16, 16, g => airdropCrateArt(g, true), null);
+  // B04-P4 cache families: four physically distinct containers (not one chest with a different label).
+  S.loot_toolbox = mk(16, 16, g => { R(g, 2, 7, 12, 7, '#5a6068'); R(g, 2, 7, 12, 2, '#b03a2a'); R(g, 6, 3, 1, 4, '#9aa0a8'); R(g, 9, 3, 1, 4, '#9aa0a8'); R(g, 6, 3, 4, 1, '#9aa0a8'); R(g, 2, 11, 12, 1, '#3a3e46'); R(g, 7, 9, 2, 2, '#d0d4da'); P(g, 3, 12, '#9aa0a8'); P(g, 12, 12, '#9aa0a8'); }, null);
+  S.loot_supply = mk(16, 16, g => { R(g, 2, 8, 12, 6, '#b8864a'); for (let y = 8; y < 14; y += 2) R(g, 2, y, 12, 1, '#8a5e30'); for (let x = 3; x < 14; x += 3) R(g, x, 8, 1, 6, '#8a5e30'); R(g, 2, 6, 12, 2, '#e8e0c8'); P(g, 5, 4, '#3f7a32'); P(g, 9, 3, '#3f7a32'); P(g, 7, 5, '#c03a2a'); P(g, 11, 5, '#c03a2a'); }, null);
+  S.loot_military = mk(16, 16, g => { R(g, 2, 6, 12, 8, '#5a6a3a'); R(g, 2, 6, 12, 1, '#7a8a52'); R(g, 2, 11, 12, 1, '#2e3a22'); R(g, 5, 8, 6, 2, '#e8e0c8'); P(g, 5, 8, '#2e3a22'); P(g, 10, 8, '#2e3a22'); R(g, 2, 13, 12, 1, '#c03a2a'); R(g, 7, 6, 2, 1, '#d0a040'); P(g, 3, 7, '#2e3a22'); P(g, 12, 7, '#2e3a22'); }, null);
+  S.loot_advanced = mk(16, 16, g => { R(g, 2, 6, 12, 8, '#2a3038'); R(g, 2, 6, 12, 1, '#5a6a7a'); R(g, 2, 13, 12, 1, '#16191e'); R(g, 6, 8, 4, 3, '#1a2a3a'); R(g, 7, 9, 2, 1, '#4fc3ff'); P(g, 7, 8, '#bff0ff'); R(g, 3, 4, 10, 1, '#8a9aaa'); P(g, 3, 9, '#9aa0a8'); P(g, 12, 9, '#9aa0a8'); }, null);
+  // B05 oil refinery: idle column, and lit (burning fuel for a queued job). Previously unregistered → invisible station.
+  S.refinery = mk(16, 24, g => drawRefinery(g, 'idle'));
+  S.refinery_lit = mk(16, 24, g => drawRefinery(g, 'lit'));
+  // B05 motorbike: three views × ok/dead (lamp, tank, rust), plus the strapped cargo crate. Left-facing uses a mirrored side sprite.
+  for (const st of ['ok', 'dead'] as const) {
+    for (const v of ['ok', 'empty', 'broken'] as const) for (const rider of [false, true]) {
+      const k = `${v}${rider ? '_rider' : ''}`;
+      S[`vehicle_side_${k}`] = mk(24, 16, g => drawVehicleSide(g, v, rider));
+      S[`vehicle_front_${k}`] = mk(12, 22, g => drawVehicleFront(g, v, rider));
+      S[`vehicle_back_${k}`] = mk(12, 22, g => drawVehicleBack(g, v, rider));
+    }
+  }
+  S.vehicle_crate = mk(7, 5, g => drawVehicleCrate(g));
+  // B05-R oil pump: idle, dry (empty source), and two frames of the running beam.
+  S.oil_pump_idle = mk(20, 24, g => drawOilPump(g, 'idle'));
+  S.oil_pump_dry = mk(20, 24, g => drawOilPump(g, 'dry'));
+  S.oil_pump_run_0 = mk(20, 24, g => drawOilPump(g, 'run', 0));
+  S.oil_pump_run_1 = mk(20, 24, g => drawOilPump(g, 'run', 1));
   return S;
+}
+
+function bearTrapArt(g: G, mode: 'unarmed' | 'armed' | 'spent' | 'worn' | 'snap') {
+  const steel = mode === 'worn' ? '#7a4a2a' : '#8a9099', tooth = mode === 'worn' ? '#5a3a22' : '#e8ecf0';
+  R(g, 1, 12, 14, 2, '#3e4248'); R(g, 2, 11, 12, 1, '#55595f'); P(g, 2, 12, '#9aa0a8'); P(g, 13, 12, '#9aa0a8');
+  // pressure pan: bright brass only while armed (the trigger is live); dull steel otherwise
+  R(g, 6, 11, 4, 1, mode === 'armed' ? '#e0b848' : '#5a5e66');
+  if (mode === 'unarmed' || mode === 'armed') {
+    const yj = mode === 'armed' ? 4 : 6;           // armed = jaws cocked up; unarmed = jaws lying open
+    R(g, 1, yj, 5, 2, steel); R(g, 1, yj + 2, 2, 3, steel); P(g, 1, yj - 1, tooth); P(g, 3, yj - 1, tooth);
+    R(g, 10, yj, 5, 2, steel); R(g, 13, yj + 2, 2, 3, steel); P(g, 12, yj - 1, tooth); P(g, 14, yj - 1, tooth);
+    if (mode === 'armed') { R(g, 7, 8, 2, 3, '#e0c060'); P(g, 7, 8, '#fff0a0'); } else R(g, 7, 9, 2, 2, '#5a5e66');
+  } else {
+    // closed jaws (spent: dull red arming pip; worn: rusted, one tooth broken off)
+    R(g, 3, 8, 5, 2, steel); R(g, 8, 8, 5, 2, steel); R(g, 3, 10, 2, 1, steel); R(g, 11, 10, 2, 1, mode === 'worn' ? '#7a4a2a' : steel);
+    P(g, 3, 7, tooth); P(g, 5, 7, tooth); P(g, 10, 7, tooth); P(g, 12, 7, tooth);
+    if (mode === 'spent') P(g, 7, 6, '#a03030');
+    if (mode === 'worn') { P(g, 1, 10, '#5a5e66'); P(g, 14, 9, '#5a5e66'); R(g, 1, 9, 2, 1, '#5a5e66'); }
+    if (mode === 'snap') { P(g, 1, 5, '#fff0a0'); P(g, 14, 5, '#fff0a0'); P(g, 8, 3, '#ffe070'); P(g, 4, 4, '#ffe070'); P(g, 12, 4, '#ffe070'); R(g, 7, 6, 2, 2, '#ffd040'); }
+  }
+}
+
+function irSensorArt(g: G, lens: string, cable: boolean, cue: 'none' | 'beam' | 'wall') {
+  R(g, 5, 10, 6, 4, '#3a3e46'); R(g, 6, 6, 4, 4, '#4a4e56'); R(g, 3, 3, 10, 4, '#5a6068'); R(g, 3, 6, 10, 1, '#3a3e46');
+  R(g, 6, 4, 4, 2, lens); if (lens !== '#2a2a30') P(g, 6, 4, '#ffffff');
+  if (cable) R(g, 1, 13, 14, 1, '#d99a38');                        // copper run to the generator network
+  else { R(g, 1, 13, 3, 1, '#d99a38'); P(g, 4, 13, '#8a8a90'); P(g, 11, 13, '#8a8a90'); }   // cut/unplugged: no path
+  if (cue === 'beam') { P(g, 12, 3, '#ff8a6a'); P(g, 14, 4, '#ff8a6a'); P(g, 14, 2, '#ff8a6a'); P(g, 13, 1, '#ff8a6a'); }
+  if (cue === 'wall') { R(g, 11, 4, 5, 10, '#8a8a90'); R(g, 11, 4, 5, 1, '#c0c0c8'); R(g, 11, 9, 5, 1, '#5e5e66'); R(g, 11, 13, 5, 1, '#5e5e66'); R(g, 12, 6, 3, 1, '#4a4e56'); P(g, 13, 7, '#ff3a2a'); P(g, 14, 12, '#ff3a2a'); }
+  if (cue === 'none' && lens === '#57d07a') { R(g, 8, 0, 1, 3, '#8a9099'); P(g, 8, 0, '#57d07a'); }   // ready: lit antenna mast, no obstacle
+}
+
+function airdropCrateArt(g: G, open: boolean) {
+  if (!open) {
+    R(g, 2, 6, 12, 8, '#5a6a3a'); R(g, 2, 6, 12, 1, '#7a8a52'); R(g, 2, 13, 12, 1, '#2e3a22');
+    R(g, 2, 9, 12, 1, '#3a3e46'); R(g, 5, 6, 1, 8, '#3a3e46'); R(g, 10, 6, 1, 8, '#3a3e46');
+    R(g, 2, 11, 12, 1, '#c03a2a'); P(g, 3, 7, '#e8e0c8'); P(g, 12, 12, '#e8e0c8');
+    R(g, 7, 7, 3, 3, '#e0c060'); P(g, 8, 8, '#2e3a22'); R(g, 7, 5, 1, 2, '#c0c0c8'); R(g, 9, 5, 1, 2, '#c0c0c8'); R(g, 7, 4, 3, 1, '#c0c0c8');
+  } else {
+    R(g, 2, 8, 12, 6, '#2e3a22'); R(g, 3, 9, 10, 4, '#1a1a20');
+    R(g, 1, 3, 14, 3, '#5a6a3a'); R(g, 1, 3, 14, 1, '#7a8a52'); R(g, 1, 5, 14, 1, '#c03a2a');
+    R(g, 5, 10, 2, 2, '#ffd040'); R(g, 9, 11, 2, 2, '#ffd040'); P(g, 8, 9, '#fff0a0'); P(g, 4, 9, '#fff0a0'); P(g, 11, 13, '#ffe070');
+  }
 }
 
 // ===================== ITEM ICONS (16x16) =====================
@@ -287,6 +370,13 @@ function icon(g: G, kind: string, c1: string, c2: string) {
     case 'gem': for (let y = 0; y < 8; y++) R(g, 8 - (y < 4 ? y : 8 - y), 4 + y, (y < 4 ? y : 8 - y) * 2 + 1, 1, y < 3 ? c2 : c1); break;
     case 'scrap': R(g, 3, 6, 9, 6, c1); R(g, 6, 4, 6, 3, c2); P(g, 4, 7, '#d0d0d8'); break;
     case 'gear': ell(g, 8, 8, 5, 5, c1); for (let k = 0; k < 8; k++) { const a = k / 8 * Math.PI * 2; P(g, 8 + Math.cos(a) * 6, 8 + Math.sin(a) * 6, c1); } ell(g, 8, 8, 2, 2, c2); break;
+    case 'fasteners': R(g, 3, 5, 9, 2, c1); R(g, 4, 4, 2, 4, c2); R(g, 5, 10, 8, 2, c1); R(g, 11, 9, 2, 4, c2); break;
+    case 'canvas': icon(g, 'cloth', c1, c2); R(g, 5, 6, 6, 1, '#4d5b42'); break;
+    case 'repairkit': R(g, 3, 5, 10, 8, c1); R(g, 6, 3, 4, 2, c2); R(g, 6, 8, 5, 1, c2); P(g, 10, 7, c2); break;
+    case 'pack': R(g, 3, 4, 10, 10, c1); R(g, 5, 3, 6, 2, c2); R(g, 5, 8, 6, 4, c2); P(g, 8, 9, c1); break;
+    case 'canteen': icon(g, 'flask', c1, c2); R(g, 4, 8, 8, 2, '#c5ae75'); break;
+    case 'briquette': R(g, 3, 5, 10, 7, c1); R(g, 3, 7, 10, 1, c2); R(g, 3, 10, 10, 1, c2); break;
+    case 'parts': icon(g, 'gear', c1, c2); R(g, 11, 11, 3, 2, '#d5bb80'); P(g, 12, 10, '#d5bb80'); break;
     case 'ingot': for (let y = 0; y < 5; y++) R(g, 3 + (4 - y) * 0.5, 6 + y, 10 - (4 - y), 1, y === 0 ? c2 : c1); break;
     case 'rope': for (let k = 0; k < 4; k++) ell(g, 8, 5 + k * 2.4, 4, 1.4, k % 2 ? c1 : c2); break;
     case 'hide': ell(g, 8, 8, 6, 5, c1); P(g, 2, 4, c1); P(g, 13, 4, c1); P(g, 2, 12, c1); P(g, 13, 12, c1); ell(g, 7, 7, 2, 1.5, c2); break;
@@ -304,6 +394,8 @@ function icon(g: G, kind: string, c1: string, c2: string) {
     case 'knife': for (let k = 0; k < 7; k++) R(g, 5 + k, 10 - k, 2, 1, c1); P(g, 11, 4, '#ffffff'); R(g, 3, 11, 3, 2, c2); break;
     case 'axe': for (let k = 0; k < 10; k++) P(g, 4 + k * 0.8, 13 - k, c2); R(g, 9, 2, 4, 5, c1); P(g, 12, 2, '#ffffff'); break;
     case 'pick': for (let k = 0; k < 10; k++) P(g, 5 + k * 0.6, 13 - k, c2); for (let k = 0; k < 11; k++) P(g, 3 + k, 4 + Math.abs(k - 5) * 0.4, c1); break;
+    case 'salvage_pick': icon(g, 'pick', c1, c2); R(g, 5, 7, 3, 2, '#deb967'); P(g, 6, 7, '#60472a'); break;
+    case 'salvage_axe': icon(g, 'axe', c1, c2); R(g, 6, 8, 3, 2, '#deb967'); P(g, 7, 8, '#60472a'); break;
     case 'spear': for (let k = 0; k < 12; k++) P(g, 2 + k, 14 - k, c1); R(g, 12, 2, 2, 2, c2); P(g, 14, 1, '#ffffff'); break;
     case 'sword': for (let k = 0; k < 9; k++) R(g, 6 + k, 10 - k, 1, 2, c1); P(g, 14, 2, '#ffffff'); R(g, 4, 9, 4, 1, '#a0a0a8'); R(g, 3, 11, 3, 3, c2); break;
     case 'bow': for (let k = 0; k < 12; k++) P(g, 4 + Math.sin(k / 11 * Math.PI) * 5, 2 + k, c1); R(g, 4, 2, 1, 12, c2); break;
@@ -318,10 +410,17 @@ function icon(g: G, kind: string, c1: string, c2: string) {
     case 'scroll': R(g, 3, 4, 10, 8, '#e8e0c8'); R(g, 2, 3, 2, 10, c1); R(g, 12, 3, 2, 10, c1); for (let y = 6; y < 11; y += 2) R(g, 5, y, 6, 1, c1); break;
     case 'fang': for (let y = 0; y < 10; y++) R(g, 6 + y * 0.2, 3 + y, 4 - y * 0.35, 1, y < 2 ? c2 : c1); break;
     case 'card': R(g, 3, 4, 10, 8, c1); R(g, 3, 6, 10, 2, '#1a1a20'); R(g, 4, 9, 4, 2, c2); break;
+    case 'jug': drawLubricantJug(g, c1, c2); break;
+    case 'drum': drawCrudeDrum(g, c1, c2); break;
     case 'can': R(g, 4, 3, 8, 11, c1); R(g, 5, 4, 2, 9, c2); R(g, 9, 1, 3, 3, '#4a4e56'); break;
     case 'coin': ell(g, 8, 8, 5, 5, c1); ell(g, 8, 8, 3.5, 3.5, c2); R(g, 7, 6, 2, 4, c1); break;
     case 'chest': R(g, 2, 5, 12, 8, c1); R(g, 2, 5, 12, 2, c2); R(g, 7, 7, 2, 3, c2); break;
     case 'cart': R(g, 2, 5, 12, 5, c1); ell(g, 5, 11, 2, 2, '#4a2e1a'); ell(g, 11, 11, 2, 2, '#4a2e1a'); break;
+    case 'pipe': R(g, 2, 7, 12, 3, c2); R(g, 1, 6, 2, 5, c1); R(g, 13, 6, 2, 5, c1); R(g, 3, 7, 10, 1, '#e8f0f4'); R(g, 6, 5, 4, 7, c1); break;
+    case 'plate': R(g, 2, 6, 12, 3, c2); R(g, 2, 9, 12, 3, c1); R(g, 2, 11, 12, 1, '#2a3038'); for (const [x, y] of [[4, 7], [11, 7], [4, 10], [11, 10]]) P(g, x, y, '#2a3038'); break;
+    case 'blade': for (let k = 0; k < 10; k++) R(g, 3 + k, 12 - k, 3, 2, c1); for (let k = 0; k < 9; k++) P(g, 4 + k, 11 - k, c2); P(g, 4, 11, '#ffffff'); R(g, 2, 12, 3, 2, c2); P(g, 9, 6, '#3a424c'); break;
+    case 'mgear': ell(g, 8, 8, 4.5, 4.5, c1); for (let k = 0; k < 6; k++) { const a = k / 6 * Math.PI * 2; R(g, 8 + Math.cos(a) * 6 - 1, 8 + Math.sin(a) * 6 - 1, 2, 2, c1); } ell(g, 8, 8, 2, 2, c2); P(g, 8, 8, '#3a3e46'); break;
+    case 'rfingot': R(g, 2, 9, 12, 4, c1); R(g, 3, 6, 10, 3, c2); R(g, 2, 12, 12, 1, '#4a5868'); P(g, 5, 7, '#ffffff'); P(g, 9, 7, '#ffffff'); P(g, 11, 10, '#ffffff'); break;
     default: R(g, 4, 4, 8, 8, c1);
   }
 }

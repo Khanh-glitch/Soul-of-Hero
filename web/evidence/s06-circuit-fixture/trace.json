@@ -1,0 +1,238 @@
+{
+  "method": "Granted build materials and fuel; paid dispatch builds, cleared local tiles, suppressed creatures and repositioned player. Real mouse aiming, E and A/D movement after Continue. Controlled, not natural acquisition or Map acceptance.",
+  "ids": {
+    "gen": "e7w",
+    "cable": "e80",
+    "sw": "e84",
+    "door": "e89"
+  },
+  "afterSwitch": {
+    "player": {
+      "x": 1304,
+      "y": 1304
+    },
+    "switch": {
+      "version": "wire-v1",
+      "on": true
+    },
+    "door": {
+      "open": false
+    },
+    "generator": {
+      "enabled": true,
+      "energy": 9670,
+      "network": "wire-v1"
+    },
+    "receipts": [
+      {
+        "id": "r71",
+        "seq": 71,
+        "at": 1793890086492,
+        "kind": "run.start",
+        "detail": "female@the island"
+      },
+      {
+        "id": "r72",
+        "seq": 72,
+        "at": 1793890086492,
+        "kind": "build",
+        "detail": "base_generator@79,80"
+      },
+      {
+        "id": "r73",
+        "seq": 73,
+        "at": 1793890086492,
+        "kind": "build",
+        "detail": "power_cable@80,80"
+      },
+      {
+        "id": "r74",
+        "seq": 74,
+        "at": 1793890086492,
+        "kind": "build",
+        "detail": "power_switch@81,80"
+      },
+      {
+        "id": "r75",
+        "seq": 75,
+        "at": 1793890086492,
+        "kind": "build",
+        "detail": "door_powered@82,80"
+      },
+      {
+        "id": "r76",
+        "seq": 76,
+        "at": 1793890086492,
+        "kind": "power.toggle",
+        "detail": "e7w:true"
+      },
+      {
+        "id": "r77",
+        "seq": 77,
+        "at": 1793890086492,
+        "kind": "power.fuel",
+        "detail": "e7w:wood"
+      },
+      {
+        "id": "r78",
+        "seq": 78,
+        "at": 1793890096490,
+        "kind": "circuit.switch",
+        "detail": "e84:on"
+      }
+    ]
+  },
+  "afterDoor": {
+    "player": {
+      "x": 1320.8048000000006,
+      "y": 1304
+    },
+    "switch": {
+      "version": "wire-v1",
+      "on": true
+    },
+    "door": {
+      "open": true
+    },
+    "generator": {
+      "enabled": true,
+      "energy": 8470,
+      "network": "wire-v1"
+    },
+    "receipts": [
+      {
+        "id": "r72",
+        "seq": 72,
+        "at": 1793890086492,
+        "kind": "build",
+        "detail": "base_generator@79,80"
+      },
+      {
+        "id": "r73",
+        "seq": 73,
+        "at": 1793890086492,
+        "kind": "build",
+        "detail": "power_cable@80,80"
+      },
+      {
+        "id": "r74",
+        "seq": 74,
+        "at": 1793890086492,
+        "kind": "build",
+        "detail": "power_switch@81,80"
+      },
+      {
+        "id": "r75",
+        "seq": 75,
+        "at": 1793890086492,
+        "kind": "build",
+        "detail": "door_powered@82,80"
+      },
+      {
+        "id": "r76",
+        "seq": 76,
+        "at": 1793890086492,
+        "kind": "power.toggle",
+        "detail": "e7w:true"
+      },
+      {
+        "id": "r77",
+        "seq": 77,
+        "at": 1793890086492,
+        "kind": "power.fuel",
+        "detail": "e7w:wood"
+      },
+      {
+        "id": "r78",
+        "seq": 78,
+        "at": 1793890096490,
+        "kind": "circuit.switch",
+        "detail": "e84:on"
+      },
+      {
+        "id": "r79",
+        "seq": 79,
+        "at": 1793890097689,
+        "kind": "circuit.door",
+        "detail": "e89:powered"
+      }
+    ]
+  },
+  "afterOff": {
+    "player": {
+      "x": 1304.0072,
+      "y": 1304
+    },
+    "switch": {
+      "version": "wire-v1",
+      "on": false
+    },
+    "door": {
+      "open": false
+    },
+    "generator": {
+      "enabled": true,
+      "energy": 7085,
+      "network": "wire-v1"
+    },
+    "receipts": [
+      {
+        "id": "r74",
+        "seq": 74,
+        "at": 1793890086492,
+        "kind": "build",
+        "detail": "power_switch@81,80"
+      },
+      {
+        "id": "r75",
+        "seq": 75,
+        "at": 1793890086492,
+        "kind": "build",
+        "detail": "door_powered@82,80"
+      },
+      {
+        "id": "r76",
+        "seq": 76,
+        "at": 1793890086492,
+        "kind": "power.toggle",
+        "detail": "e7w:true"
+      },
+      {
+        "id": "r77",
+        "seq": 77,
+        "at": 1793890086492,
+        "kind": "power.fuel",
+        "detail": "e7w:wood"
+      },
+      {
+        "id": "r78",
+        "seq": 78,
+        "at": 1793890096490,
+        "kind": "circuit.switch",
+        "detail": "e84:on"
+      },
+      {
+        "id": "r79",
+        "seq": 79,
+        "at": 1793890097689,
+        "kind": "circuit.door",
+        "detail": "e89:powered"
+      },
+      {
+        "id": "r80",
+        "seq": 80,
+        "at": 1793890098988,
+        "kind": "circuit.switch",
+        "detail": "e84:off"
+      },
+      {
+        "id": "r81",
+        "seq": 81,
+        "at": 1793890098988,
+        "kind": "circuit.door.close",
+        "detail": "e89"
+      }
+    ]
+  },
+  "errors": []
+}

@@ -1,0 +1,386 @@
+{
+  "note": "Return report dismissed with a real Continue click before HUD capture.",
+  "disclosure": "controlled fixture below S3: home placed by real build intents; cabinet stock injected for funded case; run start shifted for day/night; Continue and E are real input",
+  "cases": {
+    "night-unfunded": {
+      "statusModel": {
+        "cabinets": [
+          {
+            "id": "e88",
+            "tx": 115,
+            "ty": 83,
+            "state": "unfunded",
+            "hours": 0,
+            "funded": false,
+            "count": 8,
+            "per24h": {
+              "wood": 10,
+              "fiber": 1.25,
+              "stone": 1.25
+            },
+            "stock": {},
+            "prepaid": {}
+          }
+        ],
+        "structures": [
+          {
+            "id": "e81",
+            "type": "floor_wood",
+            "name": "Wood Floor",
+            "tx": 112,
+            "ty": 85,
+            "hp": 120,
+            "maxHp": 120,
+            "damaged": false,
+            "state": "unfunded",
+            "cabinetId": "e88",
+            "hoursToCollapse": 12,
+            "repairCost": [
+              [
+                "wood",
+                1
+              ]
+            ]
+          },
+          {
+            "id": "e82",
+            "type": "roof_thatch",
+            "name": "Thatch Roof",
+            "tx": 112,
+            "ty": 85,
+            "hp": 80,
+            "maxHp": 80,
+            "damaged": false,
+            "state": "unfunded",
+            "cabinetId": "e88",
+            "hoursToCollapse": 12,
+            "repairCost": [
+              [
+                "wood",
+                1
+              ],
+              [
+                "fiber",
+                2
+              ]
+            ]
+          },
+          {
+            "id": "e83",
+            "type": "wall_wood",
+            "name": "Wood Wall",
+            "tx": 112,
+            "ty": 84,
+            "hp": 160,
+            "maxHp": 160,
+            "damaged": false,
+            "state": "unfunded",
+            "cabinetId": "e88",
+            "hoursToCollapse": 12,
+            "repairCost": [
+              [
+                "wood",
+                2
+              ]
+            ]
+          },
+          {
+            "id": "e84",
+            "type": "wall_wood",
+            "name": "Wood Wall",
+            "tx": 113,
+            "ty": 85,
+            "hp": 160,
+            "maxHp": 160,
+            "damaged": false,
+            "state": "unfunded",
+            "cabinetId": "e88",
+            "hoursToCollapse": 12,
+            "repairCost": [
+              [
+                "wood",
+                2
+              ]
+            ]
+          },
+          {
+            "id": "e85",
+            "type": "wall_wood",
+            "name": "Wood Wall",
+            "tx": 111,
+            "ty": 85,
+            "hp": 160,
+            "maxHp": 160,
+            "damaged": false,
+            "state": "unfunded",
+            "cabinetId": "e88",
+            "hoursToCollapse": 12,
+            "repairCost": [
+              [
+                "wood",
+                2
+              ]
+            ]
+          },
+          {
+            "id": "e86",
+            "type": "wall_wood",
+            "name": "Wood Wall",
+            "tx": 112,
+            "ty": 86,
+            "hp": 160,
+            "maxHp": 160,
+            "damaged": false,
+            "state": "unfunded",
+            "cabinetId": "e88",
+            "hoursToCollapse": 12,
+            "repairCost": [
+              [
+                "wood",
+                2
+              ]
+            ]
+          },
+          {
+            "id": "e87",
+            "type": "floor_wood",
+            "name": "Wood Floor",
+            "tx": 115,
+            "ty": 83,
+            "hp": 120,
+            "maxHp": 120,
+            "damaged": false,
+            "state": "unfunded",
+            "cabinetId": "e88",
+            "hoursToCollapse": 12,
+            "repairCost": [
+              [
+                "wood",
+                1
+              ]
+            ]
+          },
+          {
+            "id": "e88",
+            "type": "claim",
+            "name": "Territory Cabinet",
+            "tx": 115,
+            "ty": 83,
+            "hp": 200,
+            "maxHp": 200,
+            "damaged": false,
+            "state": "unfunded",
+            "cabinetId": "e88",
+            "hoursToCollapse": 12,
+            "repairCost": [
+              [
+                "wood",
+                3
+              ],
+              [
+                "stone",
+                2
+              ]
+            ]
+          }
+        ],
+        "uncoveredCount": 0
+      },
+      "hudText": "(hud not visible)",
+      "cabinetText": "UNFUNDED · 8 covered · coverage 25 tiles, nearest Cabinet wins\nPhysical stock: none\nPrepaid credit: none\nUpkeep per 24h: 10.00 Wood · 1.25 Plant Fiber · 1.25 Stone\nThatch Roof\n79/80\nunfunded · 11.7 h\nWood Wall\n157/160\nunfunded · 11.7 h\nWood Wall\n157/160\nunfunded · 11.7 h\nWood Wall\n157/160\nunfunded · 11.7 h\nWood Wall\n157/160\nunfunded · 11.7 h\nWood Floor\n118/120\nunfunded · 11.7 h\nWood Floor\n118/120\nunfunded · 11.7 h\nTerritory Cabinet\n196/200\nunfunded · 11.7 h\nProtection stops decay but does not repair. Repairs cost cabinet materials and restore a quarter of max HP.\nCabinet HP 196 · upkeep 25% of each covered build cost per 24h.\nDeposit wood, stone or fiber into the cabinet to fund upkeep.",
+      "url": "http://localhost:8765/index.html"
+    },
+    "day-funded": {
+      "statusModel": {
+        "cabinets": [
+          {
+            "id": "e88",
+            "tx": 115,
+            "ty": 83,
+            "state": "funded",
+            "hours": 144,
+            "funded": true,
+            "count": 8,
+            "per24h": {
+              "wood": 10,
+              "fiber": 1.25,
+              "stone": 1.25
+            },
+            "stock": {
+              "wood": 60,
+              "stone": 20,
+              "fiber": 10
+            },
+            "prepaid": {}
+          }
+        ],
+        "structures": [
+          {
+            "id": "e81",
+            "type": "floor_wood",
+            "name": "Wood Floor",
+            "tx": 112,
+            "ty": 85,
+            "hp": 120,
+            "maxHp": 120,
+            "damaged": false,
+            "state": "funded",
+            "cabinetId": "e88",
+            "hoursToCollapse": null,
+            "repairCost": [
+              [
+                "wood",
+                1
+              ]
+            ]
+          },
+          {
+            "id": "e82",
+            "type": "roof_thatch",
+            "name": "Thatch Roof",
+            "tx": 112,
+            "ty": 85,
+            "hp": 80,
+            "maxHp": 80,
+            "damaged": false,
+            "state": "funded",
+            "cabinetId": "e88",
+            "hoursToCollapse": null,
+            "repairCost": [
+              [
+                "wood",
+                1
+              ],
+              [
+                "fiber",
+                2
+              ]
+            ]
+          },
+          {
+            "id": "e83",
+            "type": "wall_wood",
+            "name": "Wood Wall",
+            "tx": 112,
+            "ty": 84,
+            "hp": 160,
+            "maxHp": 160,
+            "damaged": false,
+            "state": "funded",
+            "cabinetId": "e88",
+            "hoursToCollapse": null,
+            "repairCost": [
+              [
+                "wood",
+                2
+              ]
+            ]
+          },
+          {
+            "id": "e84",
+            "type": "wall_wood",
+            "name": "Wood Wall",
+            "tx": 113,
+            "ty": 85,
+            "hp": 60,
+            "maxHp": 160,
+            "damaged": true,
+            "state": "funded",
+            "cabinetId": "e88",
+            "hoursToCollapse": null,
+            "repairCost": [
+              [
+                "wood",
+                2
+              ]
+            ]
+          },
+          {
+            "id": "e85",
+            "type": "wall_wood",
+            "name": "Wood Wall",
+            "tx": 111,
+            "ty": 85,
+            "hp": 160,
+            "maxHp": 160,
+            "damaged": false,
+            "state": "funded",
+            "cabinetId": "e88",
+            "hoursToCollapse": null,
+            "repairCost": [
+              [
+                "wood",
+                2
+              ]
+            ]
+          },
+          {
+            "id": "e86",
+            "type": "wall_wood",
+            "name": "Wood Wall",
+            "tx": 112,
+            "ty": 86,
+            "hp": 160,
+            "maxHp": 160,
+            "damaged": false,
+            "state": "funded",
+            "cabinetId": "e88",
+            "hoursToCollapse": null,
+            "repairCost": [
+              [
+                "wood",
+                2
+              ]
+            ]
+          },
+          {
+            "id": "e87",
+            "type": "floor_wood",
+            "name": "Wood Floor",
+            "tx": 115,
+            "ty": 83,
+            "hp": 120,
+            "maxHp": 120,
+            "damaged": false,
+            "state": "funded",
+            "cabinetId": "e88",
+            "hoursToCollapse": null,
+            "repairCost": [
+              [
+                "wood",
+                1
+              ]
+            ]
+          },
+          {
+            "id": "e88",
+            "type": "claim",
+            "name": "Territory Cabinet",
+            "tx": 115,
+            "ty": 83,
+            "hp": 200,
+            "maxHp": 200,
+            "damaged": false,
+            "state": "funded",
+            "cabinetId": "e88",
+            "hoursToCollapse": null,
+            "repairCost": [
+              [
+                "wood",
+                3
+              ],
+              [
+                "stone",
+                2
+              ]
+            ]
+          }
+        ],
+        "uncoveredCount": 0
+      },
+      "hudText": "(hud not visible)",
+      "cabinetText": "Funded · 8 covered · coverage 25 tiles, nearest Cabinet wins\nPhysical stock: 59 Wood, 19 Stone, 9 Plant Fiber\nPrepaid credit: 0.96 Wood, 1 Plant Fiber, 1 Stone\nUpkeep per 24h: 10.00 Wood · 1.25 Plant Fiber · 1.25 Stone · lasts 143.9 h\nWood Floor\n120/120\nfunded\nThatch Roof\n80/80\nfunded\nWood Wall\n160/160\nfunded\nWood Wall\n60/160\nfunded · damaged\nWood Wall\n160/160\nfunded\nWood Wall\n160/160\nfunded\nWood Floor\n120/120\nfunded\nTerritory Cabinet\n200/200\nfunded\nProtection stops decay but does not repair. Repairs cost cabinet materials and restore a quarter of max HP.\nCabinet HP 200 · upkeep 25% of each covered build cost per 24h.",
+      "url": "http://localhost:8765/index.html"
+    }
+  }
+}

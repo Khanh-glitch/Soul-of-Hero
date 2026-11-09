@@ -1,0 +1,167 @@
+{
+ "base": "http://127.0.0.1:4430",
+ "shots": [
+  {
+   "path": "evidence/c4-motorbike/motorbike-out-of-fuel-1280x720.png",
+   "viewport": "1280x720",
+   "state": "out-of-fuel",
+   "fixture": null,
+   "mountAction": null,
+   "state_after": {
+    "fuel": 0,
+    "hp": 200,
+    "mounted": false
+   },
+   "bikeAt": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752,
+    "fuel": 0,
+    "hp": 200
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike/motorbike-ready-1280x720.png",
+   "viewport": "1280x720",
+   "state": "ready",
+   "fixture": "fuel120",
+   "mountAction": null,
+   "state_after": {
+    "fuel": 120,
+    "hp": 200,
+    "mounted": false
+   },
+   "bikeAt": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752,
+    "fuel": 120,
+    "hp": 200
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike/motorbike-ready-mounted-1280x720.png",
+   "viewport": "1280x720",
+   "state": "ready-mounted",
+   "fixture": "fuel120",
+   "mountAction": {
+    "ok": true,
+    "receipt": "r108",
+    "msg": "WASD to drive; F to exit."
+   },
+   "state_after": {
+    "fuel": 120,
+    "hp": 200,
+    "mounted": true
+   },
+   "bikeAt": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752,
+    "fuel": 120,
+    "hp": 200
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike/motorbike-broken-1280x720.png",
+   "viewport": "1280x720",
+   "state": "broken",
+   "fixture": "hp0",
+   "mountAction": null,
+   "state_after": {
+    "fuel": 0,
+    "hp": 0,
+    "mounted": false
+   },
+   "bikeAt": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752,
+    "fuel": 0,
+    "hp": 0
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike/motorbike-out-of-fuel-640x360.png",
+   "viewport": "640x360",
+   "state": "out-of-fuel",
+   "fixture": null,
+   "mountAction": null,
+   "state_after": {
+    "fuel": 0,
+    "hp": 200,
+    "mounted": false
+   },
+   "bikeAt": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752,
+    "fuel": 0,
+    "hp": 200
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike/motorbike-ready-640x360.png",
+   "viewport": "640x360",
+   "state": "ready",
+   "fixture": "fuel120",
+   "mountAction": null,
+   "state_after": {
+    "fuel": 120,
+    "hp": 200,
+    "mounted": false
+   },
+   "bikeAt": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752,
+    "fuel": 120,
+    "hp": 200
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike/motorbike-ready-mounted-640x360.png",
+   "viewport": "640x360",
+   "state": "ready-mounted",
+   "fixture": "fuel120",
+   "mountAction": {
+    "ok": true,
+    "receipt": "r108",
+    "msg": "WASD to drive; F to exit."
+   },
+   "state_after": {
+    "fuel": 120,
+    "hp": 200,
+    "mounted": true
+   },
+   "bikeAt": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752,
+    "fuel": 120,
+    "hp": 200
+   }
+  },
+  {
+   "path": "evidence/c4-motorbike/motorbike-broken-640x360.png",
+   "viewport": "640x360",
+   "state": "broken",
+   "fixture": "hp0",
+   "mountAction": null,
+   "state_after": {
+    "fuel": 0,
+    "hp": 0,
+    "mounted": false
+   },
+   "bikeAt": {
+    "bike": "e8h",
+    "x": 2296,
+    "y": 1752,
+    "fuel": 0,
+    "hp": 0
+   }
+  }
+ ],
+ "fixtures": [],
+ "errors": []
+}

@@ -1,0 +1,288 @@
+{
+  "method": "Continued real-input play after blind attempt; read-only route and crate contents inspection, no state injection.",
+  "routes": [],
+  "errors": [],
+  "before": {
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 300
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r1",
+        "seq": 1,
+        "at": 1793804719802,
+        "kind": "run.start",
+        "detail": "female@the island"
+      },
+      {
+        "id": "r2",
+        "seq": 2,
+        "at": 1793804737937,
+        "kind": "offline.settle",
+        "detail": "14s"
+      }
+    ]
+  },
+  "plan": {
+    "steps": 28,
+    "id": "el",
+    "x": 2024,
+    "y": 1576
+  },
+  "beforeCrate": {
+    "e": {
+      "id": "el",
+      "kind": "loot",
+      "x": 2024,
+      "y": 1576,
+      "tx": 126,
+      "ty": 98,
+      "poi": "mill",
+      "c": "cm"
+    },
+    "slots": [
+      {
+        "uid": "sn",
+        "key": "leather",
+        "qty": 2
+      },
+      {
+        "uid": "so",
+        "key": "blueprint",
+        "qty": 1,
+        "meta": "brick"
+      }
+    ],
+    "p": {
+      "x": 2024.3903999999973,
+      "y": 1558.245039999997,
+      "vx": 0,
+      "vy": 0,
+      "dir": 0,
+      "aim": 1.5927810060693655,
+      "hp": 100,
+      "stamina": 100,
+      "hunger": 84.31566799999825,
+      "thirst": 83.97350199999997,
+      "warmth": 100,
+      "rad": 0,
+      "active": 0,
+      "action": null,
+      "invuln": 0,
+      "dead": false,
+      "deadT": 0,
+      "pulling": null,
+      "skills": {
+        "gather": 0,
+        "combat": 0,
+        "craft": 0,
+        "survival": 0
+      },
+      "stepAcc": 7.92792000000003,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Old Mill",
+      "sheltered": false
+    }
+  },
+  "partial": {
+    "e": {
+      "id": "el",
+      "kind": "loot",
+      "x": 2024,
+      "y": 1576,
+      "tx": 126,
+      "ty": 98,
+      "poi": "mill",
+      "c": "cm"
+    },
+    "slots": [
+      {
+        "uid": "so",
+        "key": "blueprint",
+        "qty": 1,
+        "meta": "brick"
+      }
+    ],
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 300
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "sn",
+        "key": "leather",
+        "qty": 2
+      }
+    ]
+  },
+  "empty": {
+    "e": null,
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 300
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "sn",
+        "key": "leather",
+        "qty": 2
+      },
+      {
+        "uid": "so",
+        "key": "blueprint",
+        "qty": 1,
+        "meta": "brick"
+      }
+    ],
+    "depleted": [
+      19726
+    ],
+    "receipts": [
+      {
+        "id": "r1",
+        "seq": 1,
+        "at": 1793804719802,
+        "kind": "run.start",
+        "detail": "female@the island"
+      },
+      {
+        "id": "r2",
+        "seq": 2,
+        "at": 1793804737937,
+        "kind": "offline.settle",
+        "detail": "14s"
+      },
+      {
+        "id": "r3",
+        "seq": 3,
+        "at": 1793804746569,
+        "kind": "move",
+        "detail": "leatherx2 cm->inv"
+      },
+      {
+        "id": "r4",
+        "seq": 4,
+        "at": 1793804746919,
+        "kind": "move",
+        "detail": "blueprintx1 cm->inv"
+      },
+      {
+        "id": "r5",
+        "seq": 5,
+        "at": 1793804746919,
+        "kind": "loot.depleted",
+        "detail": "19726:el"
+      }
+    ],
+    "p": {
+      "x": 2024.3903999999973,
+      "y": 1558.245039999997,
+      "vx": 0,
+      "vy": 0,
+      "dir": 1,
+      "aim": -2.842121929250576,
+      "hp": 100,
+      "stamina": 100,
+      "hunger": 84.26833999999805,
+      "thirst": 83.90250999999996,
+      "warmth": 100,
+      "rad": 0,
+      "active": 0,
+      "action": null,
+      "invuln": 0,
+      "dead": false,
+      "deadT": 0,
+      "pulling": null,
+      "skills": {
+        "gather": 0,
+        "combat": 0,
+        "craft": 0,
+        "survival": 0
+      },
+      "stepAcc": 7.92792000000003,
+      "lastTraceX": 0,
+      "lastTraceY": 0,
+      "regionName": "Old Mill",
+      "sheltered": false
+    }
+  },
+  "relaunch": {
+    "entity": null,
+    "depleted": [
+      19726
+    ],
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 300
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "sn",
+        "key": "leather",
+        "qty": 2
+      },
+      {
+        "uid": "so",
+        "key": "blueprint",
+        "qty": 1,
+        "meta": "brick"
+      }
+    ]
+  }
+}

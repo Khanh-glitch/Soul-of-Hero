@@ -1,0 +1,582 @@
+{
+  "schema": "soh.map.lr01.poi_example.v1",
+  "reason": "linear open deck with berth-side fit sockets",
+  "layout": {
+    "schema": "soh.map.lr01.poi_layout.v1",
+    "poiId": "po_mere",
+    "name": "Hook Mere Pier",
+    "arche": "pier",
+    "atAu": [
+      1250,
+      368
+    ],
+    "rot": -0.1773014256730676,
+    "scale": 1,
+    "sourceRef": "project.pois[] where id=po_mere",
+    "status": "PROPOSED_INTERIOR_AND_CIRCULATION__CANONICAL_FOOTPRINT_ONLY",
+    "ownership": "MAP owns static layout / portals / sockets; GAMEPLAY owns dynamic door states, destruction, construction, devices, locks, power, loot, recipes, quests and machines.",
+    "enclosureClass": "OPEN_AIR_YARD",
+    "enclosureClassificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+    "canonical": {
+      "footPolygonAu": [
+        [
+          1241.1554,
+          363.9972
+        ],
+        [
+          1256.9045,
+          361.1752
+        ],
+        [
+          1258.8446,
+          372.0028
+        ],
+        [
+          1243.0955,
+          374.8248
+        ]
+      ],
+      "footAreaAu2": 176,
+      "minEdgeAu": 11,
+      "deepPolygonAu": null,
+      "gate": "none",
+      "links": [],
+      "accessText": "Đường mòn + thủy lộ",
+      "conf": "proposal"
+    },
+    "template": {
+      "archetype": "pier",
+      "family": "open",
+      "grid": [
+        1,
+        1
+      ],
+      "roof": 0.1,
+      "sockets": 4,
+      "pattern": "linear_deck",
+      "note": "linear deck with berth-side sockets",
+      "instantiatedRows": 1,
+      "instantiatedCols": 1
+    },
+    "context": {
+      "landId": "ld_veyra",
+      "biomeCode": 4,
+      "zoneId": null,
+      "elderGeometryId": null,
+      "seaDistanceCells": 12,
+      "clearanceCells": 1,
+      "nearestRoad": {
+        "id": "rd_1n",
+        "kind": "trail",
+        "distanceAu": 0
+      },
+      "nearestDock": {
+        "id": "dk_mere",
+        "d": 14.1094
+      },
+      "status": "DERIVED"
+    },
+    "contextModifiers": [],
+    "levels": [
+      {
+        "id": "level.po_mere.0",
+        "parentPoiId": "po_mere",
+        "index": 0,
+        "name": "GROUND",
+        "polygonAu": [
+          [
+            1241.1554,
+            363.9972
+          ],
+          [
+            1256.9045,
+            361.1752
+          ],
+          [
+            1258.8446,
+            372.0028
+          ],
+          [
+            1243.0955,
+            374.8248
+          ]
+        ],
+        "areaAu2": 176,
+        "status": [
+          "SOURCE_AUTHORED",
+          "DERIVED"
+        ]
+      }
+    ],
+    "footprint": {
+      "obb": {
+        "centre": [
+          1250,
+          368
+        ],
+        "ux": [
+          0.9843,
+          -0.1764
+        ],
+        "uy": [
+          0.1764,
+          0.9843
+        ],
+        "wAu": 16,
+        "hAu": 11,
+        "angleRad": -0.1773,
+        "edgeLengthsAu": [
+          16,
+          11,
+          16,
+          11
+        ],
+        "quadEdge2Au": 11
+      },
+      "widthAu": 16,
+      "heightAu": 11.0003,
+      "wallThicknessAu": 0.88,
+      "wallThicknessStatus": "PROPOSED"
+    },
+    "walls": [
+      {
+        "id": "wall.po_mere.1",
+        "parentPoiId": "po_mere",
+        "kind": "EXTERIOR",
+        "aAu": [
+          1241.1554,
+          363.9972
+        ],
+        "bAu": [
+          1256.9045,
+          361.1752
+        ],
+        "lengthAu": 16,
+        "thicknessAu": 0.88,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_mere :: foot edge 1 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_mere.2",
+        "parentPoiId": "po_mere",
+        "kind": "EXTERIOR",
+        "aAu": [
+          1256.9045,
+          361.1752
+        ],
+        "bAu": [
+          1258.8446,
+          372.0028
+        ],
+        "lengthAu": 11,
+        "thicknessAu": 0.88,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_mere :: foot edge 2 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_mere.3",
+        "parentPoiId": "po_mere",
+        "kind": "EXTERIOR",
+        "aAu": [
+          1258.8446,
+          372.0028
+        ],
+        "bAu": [
+          1243.0955,
+          374.8248
+        ],
+        "lengthAu": 16,
+        "thicknessAu": 0.88,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_mere :: foot edge 3 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      },
+      {
+        "id": "wall.po_mere.4",
+        "parentPoiId": "po_mere",
+        "kind": "EXTERIOR",
+        "aAu": [
+          1243.0955,
+          374.8248
+        ],
+        "bAu": [
+          1241.1554,
+          363.9972
+        ],
+        "lengthAu": 11,
+        "thicknessAu": 0.88,
+        "thicknessStatus": "PROPOSED",
+        "sourceRef": "project.pois[] where id=po_mere :: foot edge 4 (geometry SOURCE_AUTHORED, thickness PROPOSED)",
+        "status": "PROPOSED",
+        "opaqueSight": true,
+        "note": "Map-authors static wall geometry; Gameplay owns dynamic collision/destruction."
+      }
+    ],
+    "rooms": [
+      {
+        "id": "room.po_mere.1.1",
+        "parentPoiId": "po_mere",
+        "levelId": "level.po_mere.0",
+        "row": 1,
+        "col": 1,
+        "pattern": "linear_deck",
+        "enclosureClass": "OPEN_AIR_YARD",
+        "polygonAu": [
+          [
+            1241.6661,
+            364.3529
+          ],
+          [
+            1256.5487,
+            361.6857
+          ],
+          [
+            1258.3339,
+            371.6471
+          ],
+          [
+            1243.4513,
+            374.3143
+          ]
+        ],
+        "centroidAu": [
+          1250,
+          368
+        ],
+        "areaAu2": 153.013,
+        "bboxAu": [
+          1241.6661,
+          361.6857,
+          1258.3339,
+          374.3143
+        ],
+        "floor": {
+          "polygonAu": [
+            [
+              1241.6661,
+              364.3529
+            ],
+            [
+              1256.5487,
+              361.6857
+            ],
+            [
+              1258.3339,
+              371.6471
+            ],
+            [
+              1243.4513,
+              374.3143
+            ]
+          ],
+          "status": "PROPOSED",
+          "floorLevelId": "floor.po_mere.1.1"
+        },
+        "roof": {
+          "covered": false,
+          "coverageFractionOfRoom": 0,
+          "canopyOnly": true,
+          "status": "PROPOSED",
+          "note": "Partial canopy over an open yard cell; NOT an enclosed room."
+        },
+        "surface": "YARD_OR_OPEN_CELL",
+        "status": "PROPOSED"
+      }
+    ],
+    "floors": [
+      {
+        "polygonAu": [
+          [
+            1241.6661,
+            364.3529
+          ],
+          [
+            1256.5487,
+            361.6857
+          ],
+          [
+            1258.3339,
+            371.6471
+          ],
+          [
+            1243.4513,
+            374.3143
+          ]
+        ],
+        "status": "PROPOSED",
+        "floorLevelId": "floor.po_mere.1.1"
+      }
+    ],
+    "entrance": {
+      "id": "entrance.po_mere.1",
+      "parentPoiId": "po_mere",
+      "kind": "PRIMARY_ENTRANCE",
+      "onWallId": "wall.po_mere.3",
+      "atAu": [
+        1250.9701,
+        373.4138
+      ],
+      "openingAu": 4.48,
+      "openingStatus": "PROPOSED",
+      "sourceRef": "project.pois[] where id=po_mere :: no authored entrance; edge 3 chosen by nearest road",
+      "capacityUpperBoundAu": 16,
+      "doorStateOwner": "GAMEPLAY",
+      "lockedState": "UNKNOWN",
+      "powerRequirement": "UNKNOWN",
+      "note": "STATIC opening geometry only. No lock, key, power, quest or device rule is authored."
+    },
+    "portals": [
+      {
+        "id": "portal.po_mere.entrance",
+        "parentPoiId": "po_mere",
+        "kind": "EXTERIOR_PORTAL",
+        "fromRoomId": null,
+        "toRoomId": "room.po_mere.1.1",
+        "atAu": [
+          1250.9701,
+          373.4138
+        ],
+        "openingAu": 4.48,
+        "openingStatus": "PROPOSED",
+        "status": "PROPOSED",
+        "doorStateOwner": "GAMEPLAY",
+        "lockedState": "UNKNOWN",
+        "powerRequirement": "UNKNOWN",
+        "note": "Static entrance portal. NO door rule, lock, key or power requirement."
+      }
+    ],
+    "circulation": {
+      "entranceRoomId": "room.po_mere.1.1",
+      "reachableRooms": 1,
+      "totalRooms": 1,
+      "maxDepth": 0,
+      "depthByRoomId": {
+        "room.po_mere.1.1": 0
+      },
+      "interiorDepthAu": 5.5,
+      "status": "DERIVED"
+    },
+    "retreat": {
+      "status": "UNRESOLVED",
+      "pathAu": null,
+      "lengthAu": null,
+      "exitAtAu": null,
+      "note": "No authored retreat polyline. An exit is NOT invented; Gameplay may route through static portals."
+    },
+    "sockets": [
+      {
+        "id": "socket.po_mere.1",
+        "parentPoiId": "po_mere",
+        "parentRoomId": "room.po_mere.1.1",
+        "levelId": "level.po_mere.0",
+        "atAu": [
+          1248.4678,
+          366.9335
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 5.5001,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "YARD_OR_DECK",
+        "kind": "OPEN_YARD_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_mere.2",
+        "parentPoiId": "po_mere",
+        "parentRoomId": "room.po_mere.1.1",
+        "levelId": "level.po_mere.0",
+        "atAu": [
+          1251.5322,
+          369.0665
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 5.5001,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "YARD_OR_DECK",
+        "kind": "OPEN_YARD_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_mere.3",
+        "parentPoiId": "po_mere",
+        "parentRoomId": "room.po_mere.1.1",
+        "levelId": "level.po_mere.0",
+        "atAu": [
+          1248.9335,
+          369.5322
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 5.5001,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "YARD_OR_DECK",
+        "kind": "OPEN_YARD_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      },
+      {
+        "id": "socket.po_mere.4",
+        "parentPoiId": "po_mere",
+        "parentRoomId": "room.po_mere.1.1",
+        "levelId": "level.po_mere.0",
+        "atAu": [
+          1251.0665,
+          366.4678
+        ],
+        "fitEnvelopeAu": {
+          "w": 6,
+          "h": 5.5001,
+          "height": null
+        },
+        "heightStatus": "UNRESOLVED",
+        "surface": "YARD_OR_DECK",
+        "kind": "OPEN_YARD_FIT",
+        "gameplayObject": null,
+        "purpose": "SPATIAL_FIT_ONLY",
+        "status": "PROPOSED",
+        "note": "A socket says where something could fit. It does NOT assert a generator, loot chest, lock, vendor, machine, recipe or quest."
+      }
+    ],
+    "roofCoverage": {
+      "coveredRoomCount": 0,
+      "totalRoomCount": 1,
+      "roofAreaAu2": 0,
+      "footAreaAu2": 176,
+      "roofAreaToFootAreaRatioAcrossLevels": 0,
+      "fractionOfFoot": 0,
+      "status": "DERIVED",
+      "note": "Measured over PROPOSED room/canopy polygons weighted by coverageFractionOfRoom. The across-levels ratio can exceed 1 when a DEEP level adds roofed area; it is NOT a single-plane coverage fraction."
+    },
+    "geometryAdapters": {
+      "collision": {
+        "staticWalls": [
+          "wall.po_mere.1",
+          "wall.po_mere.2",
+          "wall.po_mere.3",
+          "wall.po_mere.4"
+        ],
+        "staticWallCount": 4,
+        "wallThicknessAu": 0.88,
+        "thicknessStatus": "PROPOSED",
+        "dynamicCollisionOwner": "GAMEPLAY",
+        "destructionOwner": "GAMEPLAY",
+        "status": "PROPOSED_STATIC_COLLISION_GEOMETRY__NOT_RUNTIME_COLLISION_DATA"
+      },
+      "enclosure": {
+        "enclosedAreaAu2": 0,
+        "footAreaAu2": 176,
+        "enclosureFraction": 0,
+        "enclosureClass": "OPEN_AIR_YARD",
+        "classificationStatus": "DERIVED_HEURISTIC__NOT_CANONICAL",
+        "status": "DERIVED"
+      },
+      "reach": {
+        "maxInteriorDistanceAu": 5.5,
+        "nearestRoadAu": 0,
+        "approachLengthAu": 5.5,
+        "minPortalOpeningAu": 4.48,
+        "status": "DERIVED",
+        "note": "Geometric reach only. Interaction radius / Gameplay reach rules are NOT asserted."
+      },
+      "lineOfSight": {
+        "opaqueWallIds": [
+          "wall.po_mere.1",
+          "wall.po_mere.2",
+          "wall.po_mere.3",
+          "wall.po_mere.4"
+        ],
+        "transparentPortalIds": [
+          "portal.po_mere.entrance"
+        ],
+        "portalSightOwner": "GAMEPLAY",
+        "status": "PROPOSED",
+        "note": "Static opaque walls + portal gaps. Dynamic door opacity is Gameplay-owned."
+      },
+      "roofCoverage": {
+        "coveredRoomCount": 0,
+        "totalRoomCount": 1,
+        "roofAreaAu2": 0,
+        "footAreaAu2": 176,
+        "roofAreaToFootAreaRatioAcrossLevels": 0,
+        "fractionOfFoot": 0,
+        "status": "DERIVED",
+        "note": "Measured over PROPOSED room/canopy polygons weighted by coverageFractionOfRoom. The across-levels ratio can exceed 1 when a DEEP level adds roofed area; it is NOT a single-plane coverage fraction."
+      },
+      "portalPassability": {
+        "portals": [
+          {
+            "id": "portal.po_mere.entrance",
+            "openingAu": 4.48,
+            "kind": "EXTERIOR_PORTAL"
+          }
+        ],
+        "passabilityRuleOwner": "GAMEPLAY",
+        "status": "UNKNOWN__DYNAMIC_DOOR_STATE_DESTRUCTION_AND_DEVICES_OWNED_BY_GAMEPLAY",
+        "note": "Map asserts only that a geometric opening exists. No lock, power, key, weight or vehicle rule."
+      }
+    },
+    "stableIds": {
+      "rooms": [
+        "room.po_mere.1.1"
+      ],
+      "walls": [
+        "wall.po_mere.1",
+        "wall.po_mere.2",
+        "wall.po_mere.3",
+        "wall.po_mere.4"
+      ],
+      "entrances": [
+        "entrance.po_mere.1"
+      ],
+      "portals": [
+        "portal.po_mere.entrance"
+      ],
+      "sockets": [
+        "socket.po_mere.1",
+        "socket.po_mere.2",
+        "socket.po_mere.3",
+        "socket.po_mere.4"
+      ],
+      "levels": [
+        "level.po_mere.0"
+      ],
+      "floors": [
+        "floor.po_mere.1.1"
+      ]
+    },
+    "noClaims": [
+      "NO loot, loot table, chest contents or reward",
+      "NO locked-door rule, key, card or power requirement",
+      "NO generator, machine, recipe, quest, vendor inventory or economy",
+      "NO dynamic door state or destruction",
+      "NO authored entrance in source (all openings PROPOSED)",
+      "NO approved vertical unit or stair geometry",
+      "NO runtime collision data (static geometry only)",
+      "NO playable survival acceptance"
+    ]
+  }
+}

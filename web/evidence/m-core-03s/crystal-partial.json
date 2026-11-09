@@ -1,0 +1,109 @@
+{
+  "events": [
+    {
+      "mat": "ore",
+      "plan": {
+        "path": [
+          9939,
+          9940,
+          9941,
+          9942,
+          9943,
+          9944,
+          9744,
+          9544,
+          9344,
+          9144,
+          8944,
+          8744,
+          8544,
+          8344,
+          8144,
+          7944,
+          7744,
+          7544,
+          7344,
+          7144
+        ],
+        "target": 6944,
+        "key": "crystal"
+      },
+      "before": 3,
+      "after": 0,
+      "inventory": {
+        "wood": 3,
+        "stone": 2,
+        "fiber": 1,
+        "damaged_drive": 0,
+        "spares": 0,
+        "crystal": 3
+      },
+      "receipts": [
+        {
+          "id": "r22",
+          "seq": 22,
+          "at": 1793772685055,
+          "kind": "harvest",
+          "detail": "rock@138,49 -1"
+        },
+        {
+          "id": "r24",
+          "seq": 24,
+          "at": 1793772685972,
+          "kind": "harvest",
+          "detail": "rock@138,49 -1"
+        },
+        {
+          "id": "r26",
+          "seq": 26,
+          "at": 1793772686872,
+          "kind": "harvest",
+          "detail": "rock@138,49 -1"
+        },
+        {
+          "id": "r28",
+          "seq": 28,
+          "at": 1793772688322,
+          "kind": "harvest",
+          "detail": "grass@140,48 -2"
+        },
+        {
+          "id": "r31",
+          "seq": 31,
+          "at": 1793772689755,
+          "kind": "harvest",
+          "detail": "grass@140,49 -2"
+        },
+        {
+          "id": "r40",
+          "seq": 40,
+          "at": 1793772742320,
+          "kind": "harvest",
+          "detail": "crystal@144,34 -1"
+        },
+        {
+          "id": "r42",
+          "seq": 42,
+          "at": 1793772743686,
+          "kind": "harvest",
+          "detail": "crystal@144,34 -1"
+        },
+        {
+          "id": "r44",
+          "seq": 44,
+          "at": 1793772745053,
+          "kind": "harvest",
+          "detail": "crystal@144,34 -1"
+        }
+      ]
+    }
+  ],
+  "inventory": {
+    "wood": 3,
+    "stone": 2,
+    "fiber": 1,
+    "damaged_drive": 0,
+    "spares": 0,
+    "crystal": 3
+  }
+}

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { VIEW_W, VIEW_H, type GameState } from '../game/core';
 import { getArt } from '../game/art';
 import { getMapCanvas, resetRenderCaches } from '../game/render';
-import { getWorld, getActiveLayout, setActiveLayout } from '../game/world';
+import { getWorld, getActiveLayout, setActiveLayout, listLayouts, mapPackageErrors } from '../game/world';
 import { ACHIEVEMENTS } from '../game/catalog';
 import { initAudio, sfx } from '../game/audio';
 
@@ -33,9 +33,9 @@ function HeroPreview({ female, active }: { female: boolean; active: boolean }) {
 
 export default function Title({ gs, onContinue, onStart, note, summary, clearSummary }: { gs: GameState; onContinue: () => void; onStart: (c: 'male' | 'female', region: number | null) => void; note?: string; summary: GameState['profile']['history'][number] | null; clearSummary: () => void }) {
   const s = useScale(); const [mode, setMode] = useState<'menu' | 'select' | 'history'>('menu'); const [hero, setHero] = useState<'male' | 'female'>('female'); const [region, setRegion] = useState<number | null>(null); const [layout, setLayout] = useState(getActiveLayout());
-  const chooseLayout = (id: 'shipping' | 'dev_delta') => { if (setActiveLayout(id)) { resetRenderCaches(); setLayout(id); } };
-  const starts = getWorld().starts; const pf = gs.profile; const run = gs.run;
-  const REG = ['Meadow Bay — sheltered western inlet, farm fields, river; close to the Crossroads.', "Fisher's Point — warm south beaches, palms, crabs and wrecks; the lighthouse spit nearby.", 'Pinewatch — cool pine woods under the ridge; the pass watchtower and northern frost beyond.', 'Eastcove — salvage coast by the Dead Foundry; scrap-rich, wood-poor, harbor road north.'];
+  const chooseLayout = (id: string) => { if (setActiveLayout(id)) { resetRenderCaches(); setLayout(id); } };
+  const pf = gs.profile; const run = gs.run;
+  const isVeyra = !!getWorld().veyra;
   const click = () => { initAudio(); sfx({ type: 'ui' }); };
   return <div style={{ position: 'fixed', inset: 0, background: '#05040a' }}>
     <div className="stage" style={{ transform: `translate(${s.x}px, ${s.y}px) scale(${s.k})` }}>
@@ -48,30 +48,29 @@ export default function Title({ gs, onContinue, onStart, note, summary, clearSum
         <button className="btn gold" style={{ marginTop: 8 }} onClick={() => { click(); clearSummary(); }}>Return</button>
       </div> : <>
         <div className="absolute" style={{ left: 0, right: 0, top: 18, textAlign: 'center' }}>
-          <div className="title-font" style={{ fontSize: 44, fontWeight: 700, color: '#ffe8b0', letterSpacing: 3, textShadow: '0 3px 0 #6a2a0a, 0 5px 0 #2a0a04, 0 0 18px #ff7a2a' }}>SOUL OF HERO</div>
+          {import.meta.env.VITE_FX_TEST === '1' && <div style={{color:'#ffdf7b',fontSize:12}}>VFX TEST — 10 mỗi Core, đầy năng lượng · lưu riêng</div>}<div className="title-font" style={{ fontSize: 44, fontWeight: 700, color: '#ffe8b0', letterSpacing: 3, textShadow: '0 3px 0 #6a2a0a, 0 5px 0 #2a0a04, 0 0 18px #ff7a2a' }}>SOUL OF HERO</div>
           <div style={{ fontSize: 13, color: '#e0c8a8', marginTop: -2, textShadow: '1px 1px 0 #000' }}>fourteen days · one island · the end of the world</div>
         </div>
         {mode === 'menu' && <div className="absolute flex flex-col gap-2 items-center fadein" style={{ left: 0, right: 0, top: 150 }}>
           {run && <button className="btn gold" style={{ fontSize: 16, width: 180 }} onClick={() => { click(); onContinue(); }}>Continue — {run.character === 'female' ? 'Adventurer ♀' : 'Adventurer ♂'}</button>}
-          <button className="btn" style={{ fontSize: 16, width: 180 }} disabled={!!run} title={run ? 'Finish (evacuate/abandon) your current run first' : ''} onClick={() => { click(); setMode('select'); }}>New run</button>
+          <button className="btn" style={{ fontSize: 16, width: 180 }} disabled={!!run} title={run ? 'Finish (evacuate/abandon) your current run first' : ''} onClick={() => { click(); if (layout === 'shipping' || layout === 'dev_delta') chooseLayout(layout + '_fresh'); else if (layout === 'veyra-greywater-u16' || layout === 'veyra-greywater-u20') chooseLayout(layout.replace('greywater-', 'greywater-lr02-')); else if (layout === 'veyra-oasis-u20') chooseLayout('veyra-oasis-lr02-u20'); setMode('select'); }}>New run</button>
           <button className="btn" style={{ fontSize: 16, width: 180 }} onClick={() => { click(); setMode('history'); }}>Profile & history</button>
           <div style={{ fontSize: 11, color: '#cfc2dc', marginTop: 6, textShadow: '1px 1px 0 #000' }}>Secured Ragnarok cash: <b style={{ color: '#9ae0ff' }}>{pf.securedCash}</b> · Runs: {pf.history.length}</div>
           {note && <div style={{ fontSize: 10, color: '#ffb08a', maxWidth: 380, textAlign: 'center' }}>{note}</div>}
           <div style={{ fontSize: 9, color: '#7a6a8a', position: 'absolute', top: 186 }}>Offline · single-player · saves locally in this browser (LOCAL/UNVERIFIED)</div>
         </div>}
-        {mode === 'select' && <div className="panel absolute fadein" style={{ left: 90, top: 88, width: 460, padding: 8 }}>
+        {mode === 'select' && <div className="panel absolute fadein" style={{ left: 90, top: 26, width: 460, padding: 8 }}>
           <div className="panel-h" style={{ marginBottom: 4 }}>Choose your Adventurer</div>
           <div className="flex gap-2">{(['female', 'male'] as const).map(h => <button key={h} className={`btn ${hero === h ? 'gold' : 'ghost'}`} style={{ flex: 1, padding: 4, textAlign: 'left' }} onClick={() => { click(); setHero(h); }}>
             <div className="flex items-center gap-2"><HeroPreview female={h === 'female'} active={hero === h} /><div style={{ fontSize: 11, lineHeight: 1.15 }}><div className="title-font" style={{ fontSize: 13 }}>{h === 'female' ? 'Adventurer ♀' : 'Adventurer ♂'}</div><div>Survival knife, a half-full flask, a few berries. No Core, no map, no orders.</div></div></div></button>)}</div>
           <div style={{ fontSize: 11, marginTop: 5, color: '#ffd98a' }}>Map layout</div>
-          <div className="flex gap-1" style={{ marginTop: 2 }}>
-            <button data-testid="layout-shipping" className={`btn ${layout === 'shipping' ? 'gold' : 'ghost'}`} onClick={() => chooseLayout('shipping')}>Shipping Island</button>
-            <button data-testid="layout-dev-delta" className={`btn ${layout === 'dev_delta' ? 'gold' : 'ghost'}`} onClick={() => chooseLayout('dev_delta')}>Delta Ridge · Dev</button>
+          <div className="flex flex-wrap gap-1" style={{ marginTop: 2, maxHeight: 50, overflowY: 'auto' }}>
+            {listLayouts().map(m => <button key={m.id} data-testid={`layout-${m.id.replace('_','-')}`} className={`btn ${layout === m.id ? 'gold' : 'ghost'}`} onClick={() => { chooseLayout(m.id); setRegion(null); }}>{m.title}</button>)}
           </div>
-          <div style={{ fontSize: 9, color: '#cfc2dc', marginTop: 1 }}>{layout === 'shipping' ? 'Canonical island with the existing production POIs and routes.' : 'Development layout; a ridge leaves two passable route choices.'}</div>
+          <div style={{ fontSize: 9, color: '#cfc2dc', marginTop: 1 }}>{listLayouts().find(m => m.id === layout)?.description}{mapPackageErrors().length > 0 && ` · ${mapPackageErrors().length} invalid map package(s): ${mapPackageErrors().join('; ')}`}</div>
           <div style={{ fontSize: 11, marginTop: 4, color: '#ffd98a' }}>Landing</div>
-          <div className="flex flex-wrap gap-1" style={{ marginTop: 2 }}><button className={`btn ${region === null ? 'gold' : 'ghost'}`} onClick={() => setRegion(null)}>Random safe shore (canon)</button>{starts.map((st, i) => <button key={st.id} className={`btn ${region === i ? 'gold' : 'ghost'}`} title={REG[i]} onClick={() => setRegion(i)}>{st.name}</button>)}</div>
-          <div style={{ fontSize: 10, color: '#cfc2dc', minHeight: 24, marginTop: 2 }}>{region === null ? 'You wash up on one of four safe shores. Every one has wood, stone, food and several routes onward.' : REG[region] + ' (choosing a landing is a PROPOSED convenience)'}</div>
+          <div className="flex flex-wrap gap-1" style={{ marginTop: 2 }}><button className="btn gold" onClick={() => setRegion(null)}>Seeded safe region</button></div>
+          <div style={{ fontSize: 10, color: '#cfc2dc', minHeight: 24, marginTop: 2 }}>{isVeyra ? 'Seeded legal location in this bounded Veyra region. No starter shelter.' : 'Seeded safe location; no starter compound or crate.'}</div>
           <div className="flex justify-between items-center" style={{ marginTop: 4 }}><button className="btn ghost" onClick={() => setMode('menu')}>Back</button><button className="btn gold" style={{ fontSize: 16, padding: '4px 16px' }} onClick={() => { click(); onStart(hero, region); }}>Begin the 14 days</button></div>
         </div>}
         {mode === 'history' && <div className="panel absolute fadein" style={{ left: 100, top: 96, width: 440, padding: 8 }}>

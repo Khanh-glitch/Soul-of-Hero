@@ -1,0 +1,282 @@
+{
+  "method": "Real mouse/keyboard and paid construction; read-only path/site inspection after blind attempt. The earlier unpersisted death rollback is disclosed.",
+  "events": [
+    {
+      "type": "claim",
+      "site": {
+        "x": 125,
+        "y": 170
+      },
+      "state": {
+        "entities": [
+          {
+            "id": "eq3",
+            "kind": "struct",
+            "type": "claim",
+            "tx": 125,
+            "ty": 170,
+            "x": 2008,
+            "y": 2728,
+            "hp": 200,
+            "maxHp": 200,
+            "born": 1793773060843
+          }
+        ],
+        "inv": [
+          {
+            "uid": "s1",
+            "key": "knife",
+            "qty": 1,
+            "dur": 107
+          },
+          {
+            "uid": "s2",
+            "key": "water_flask",
+            "qty": 1,
+            "charge": 2
+          },
+          {
+            "uid": "s3",
+            "key": "berries",
+            "qty": 3
+          },
+          {
+            "uid": "s7c",
+            "key": "wood",
+            "qty": 29
+          },
+          {
+            "uid": "s81",
+            "key": "stone",
+            "qty": 9
+          },
+          {
+            "uid": "s8o",
+            "key": "fiber",
+            "qty": 1
+          },
+          {
+            "uid": "s1s",
+            "key": "core_frost",
+            "qty": 1,
+            "charge": 2
+          },
+          {
+            "uid": "s9t",
+            "key": "crystal",
+            "qty": 3
+          },
+          {
+            "uid": "s8x",
+            "key": "stone_pick",
+            "qty": 1,
+            "dur": 170
+          },
+          {
+            "uid": "s1t",
+            "key": "spares",
+            "qty": 4
+          },
+          {
+            "uid": "sj5",
+            "key": "seed",
+            "qty": 9
+          },
+          {
+            "uid": "sls",
+            "key": "charcoal",
+            "qty": 3
+          },
+          {
+            "uid": "sm8",
+            "key": "chitin",
+            "qty": 2
+          },
+          {
+            "uid": "sm9",
+            "key": "sulfur",
+            "qty": 1
+          },
+          {
+            "uid": "sma",
+            "key": "beetle_horn",
+            "qty": 1
+          }
+        ],
+        "receipts": [
+          {
+            "id": "r186",
+            "seq": 186,
+            "at": 1793773039058,
+            "kind": "harvest",
+            "detail": "rock@125,172 -1"
+          },
+          {
+            "id": "r187",
+            "seq": 187,
+            "at": 1793773039491,
+            "kind": "pickup",
+            "detail": "stonex1"
+          },
+          {
+            "id": "r188",
+            "seq": 188,
+            "at": 1793773059185,
+            "kind": "offline.settle",
+            "detail": "19s"
+          },
+          {
+            "id": "r189",
+            "seq": 189,
+            "at": 1793773060843,
+            "kind": "build",
+            "detail": "claim@125,170"
+          }
+        ],
+        "hp": 44.55993888000075
+      }
+    },
+    {
+      "type": "workbench",
+      "site": {
+        "x": 124,
+        "y": 170
+      },
+      "state": {
+        "entities": [
+          {
+            "id": "eq4",
+            "kind": "struct",
+            "type": "workbench",
+            "tx": 124,
+            "ty": 170,
+            "x": 1992,
+            "y": 2728,
+            "hp": 160,
+            "maxHp": 160,
+            "born": 1793773061740,
+            "station": {
+              "queue": [],
+              "burn": 0,
+              "fuelC": "cq5",
+              "outC": "cq6"
+            },
+            "claim": "eq3"
+          }
+        ],
+        "inv": [
+          {
+            "uid": "s1",
+            "key": "knife",
+            "qty": 1,
+            "dur": 107
+          },
+          {
+            "uid": "s2",
+            "key": "water_flask",
+            "qty": 1,
+            "charge": 2
+          },
+          {
+            "uid": "s3",
+            "key": "berries",
+            "qty": 3
+          },
+          {
+            "uid": "s7c",
+            "key": "wood",
+            "qty": 15
+          },
+          {
+            "uid": "s81",
+            "key": "stone",
+            "qty": 5
+          },
+          {
+            "uid": "s8o",
+            "key": "fiber",
+            "qty": 1
+          },
+          {
+            "uid": "s1s",
+            "key": "core_frost",
+            "qty": 1,
+            "charge": 2
+          },
+          {
+            "uid": "s9t",
+            "key": "crystal",
+            "qty": 3
+          },
+          {
+            "uid": "s8x",
+            "key": "stone_pick",
+            "qty": 1,
+            "dur": 170
+          },
+          {
+            "uid": "s1t",
+            "key": "spares",
+            "qty": 4
+          },
+          {
+            "uid": "sj5",
+            "key": "seed",
+            "qty": 9
+          },
+          {
+            "uid": "sls",
+            "key": "charcoal",
+            "qty": 3
+          },
+          {
+            "uid": "sm8",
+            "key": "chitin",
+            "qty": 2
+          },
+          {
+            "uid": "sm9",
+            "key": "sulfur",
+            "qty": 1
+          },
+          {
+            "uid": "sma",
+            "key": "beetle_horn",
+            "qty": 1
+          }
+        ],
+        "receipts": [
+          {
+            "id": "r187",
+            "seq": 187,
+            "at": 1793773039491,
+            "kind": "pickup",
+            "detail": "stonex1"
+          },
+          {
+            "id": "r188",
+            "seq": 188,
+            "at": 1793773059185,
+            "kind": "offline.settle",
+            "detail": "19s"
+          },
+          {
+            "id": "r189",
+            "seq": 189,
+            "at": 1793773060843,
+            "kind": "build",
+            "detail": "claim@125,170"
+          },
+          {
+            "id": "r190",
+            "seq": 190,
+            "at": 1793773061740,
+            "kind": "build",
+            "detail": "workbench@124,170"
+          }
+        ],
+        "hp": 44.630602880000836
+      }
+    }
+  ]
+}

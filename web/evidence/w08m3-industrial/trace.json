@@ -1,0 +1,367 @@
+{
+  "labelled": "CONTROLLED FIXTURE: material grants + real build/upgrade/place intents; refinery fuel (3 wood) pre-loaded; creatures cleared at setup",
+  "uid": "s7s",
+  "inputs": [
+    "click Continue (title) — real",
+    "click overlay Continue — real",
+    "keyboard e (near refinery)",
+    "click Queue on the 2 Fuel Canister + 1 Machine Lubricant row",
+    "keyboard Escape (close)",
+    "wait real game time (3 s polls) until batch completes",
+    "keyboard e (reopen refinery)",
+    "shift-click output slot \"Fuel Canister\"",
+    "shift-click output slot \"Machine Lubricant\"",
+    "keyboard Escape",
+    "walk (held WASD) to motorbike",
+    "mouse hover bike screen (315,166)",
+    "keyboard e (motorbike)",
+    "click Add 1 Fuel Canister",
+    "click Lubricate: 1 Lubricant",
+    "click Enter and drive",
+    "hold d 2.5 s (drive)",
+    "keyboard f (exit)",
+    "keyboard Escape (open/close menu)",
+    "click Save & quit to title",
+    "click Continue (reopen)"
+  ],
+  "observations": {
+    "REFINERY_BEFORE": {
+      "queue": [],
+      "burn": 0,
+      "fuel": [
+        {
+          "uid": "s8d",
+          "key": "wood",
+          "qty": 3
+        }
+      ],
+      "out": []
+    },
+    "E_ATTEMPT_0": [
+      "HP\n100\nST\n100\nFD\n84\nH₂O\n84\nWRM",
+      "CALM Day 1/14\nrun 0h07m / 336h",
+      "Oil Refinery\nHP 277/280\nNo Cab",
+      "1\n2\n2⚡\n3\n3\n4\n60\n5\n46\n6\n56\n7\n60",
+      "prompt:[F/E] Use Oil Refinery · HP 277/280"
+    ],
+    "REFINERY_RECIPE_ROWS": [
+      "Queue",
+      "Fuel Canister\n6/3\n4/1\n14s\nQueue",
+      "Fuel Canister ×2\n6/5\n4/1\n22s\nQueue",
+      "2 Fuel Canister + 1 Machine Lubricant\n6/6\n4/1\n26s\nQueue",
+      "Machine Lubricant\n6/2\n12s\nQueue"
+    ],
+    "REFINERY_PANEL_TEXT": "Oil Refinery\n✕\nIndustrial batch: 6 Salvaged Oil + 1 Glass → 2 Fuel Canister + 1 Machine Lubricant, 26s, one job. Needs fuel to run; both products wait in Output until there is room for the whole batch. Lubricant halves motorbike wear for 750 tiles.\nFuel · cold (burns only while working)\n3\nQueue\nIdle.\nOutput\nRecipes\nRed cost = missing · queue holds up to 6.\nFuel Canister\n6/3\n4/1\n14s\nQueue\nFuel Canister ×2\n6/5\n4/1\n22s\nQueue\n2 Fuel Canister + 1 Machine Lubricant\n6/6\n4/1\n26s\nQueue\nMachine Lubricant\n6/2\n12s\nQueue\nHP 277/280 Reclaim",
+    "PANEL_TITLES": [
+      "HP\n100\nST\n100\nFD\n84\nH₂O\n84\nWRM\n97\nSerpen",
+      "CALM Day 1/14\nrun 0h07m / 336h LOCAL\n☼ 1",
+      "1\n2\n2⚡\n3\n3\n4\n60\n5\n46\n6\n56\n7\n60\n8\n20\nSurv",
+      "Oil Refinery\n✕\nIndustrial batch: 6 Salva",
+      "Inventory\n✕\nhead\nbody\nback\nArmor 0% · Wa"
+    ],
+    "AFTER_QUEUE": {
+      "queue": [
+        {
+          "recipe": "refinery_industrial",
+          "left": 25576,
+          "total": 26000
+        }
+      ],
+      "burn": 19576,
+      "fuel": [
+        {
+          "uid": "s8d",
+          "key": "wood",
+          "qty": 2
+        }
+      ],
+      "out": []
+    },
+    "AFTER_BATCH": {
+      "queue": [],
+      "burn": 14000,
+      "fuel": [
+        {
+          "uid": "s8d",
+          "key": "wood",
+          "qty": 1
+        }
+      ],
+      "out": [
+        {
+          "uid": "s8g",
+          "key": "fuel_can",
+          "qty": 2
+        },
+        {
+          "uid": "s8h",
+          "key": "lubricant",
+          "qty": 1
+        }
+      ]
+    },
+    "COLLECTED_INVENTORY": [
+      {
+        "uid": "s8g",
+        "key": "fuel_can",
+        "qty": 2
+      },
+      {
+        "uid": "s8h",
+        "key": "lubricant",
+        "qty": 1
+      }
+    ],
+    "ROUTE": {
+      "len": 14,
+      "reachedDist": 0,
+      "start": [
+        149,
+        116
+      ],
+      "goal": [
+        143,
+        109
+      ]
+    },
+    "BLOCK_DIAG": {
+      "tile": [
+        144,
+        112
+      ],
+      "cells": [
+        "0 0 0 0 0",
+        "0 0 2Soak 0Sscrap 0Sbush",
+        "0Sgrass 0 0 0Sscrap 0",
+        "0 2Srock 0 0 0",
+        "0Sbush 0 0 0 0Sbush"
+      ],
+      "ents": [],
+      "vehicle": null
+    },
+    "AT_BIKE": {
+      "bx": 2296,
+      "by": 1752,
+      "px": 2300.8692400000164,
+      "py": 1771.5966399999943,
+      "fuel": 0,
+      "lube": 0,
+      "odo": 0,
+      "hp": 200,
+      "uid": "s7s"
+    },
+    "BIKE_E_ATTEMPT_0": "no-prompt",
+    "AFTER_REFUEL_LUBE": {
+      "bx": 2296,
+      "by": 1752,
+      "px": 2300.8692400000164,
+      "py": 1771.5966399999943,
+      "fuel": 100,
+      "lube": 12000,
+      "odo": 0,
+      "hp": 200,
+      "uid": "s7s"
+    },
+    "DRIVE": {
+      "before": {
+        "bx": 2296,
+        "by": 1752,
+        "px": 2296,
+        "py": 1752,
+        "fuel": 100,
+        "lube": 12000,
+        "odo": 0,
+        "hp": 200,
+        "uid": "s7s"
+      },
+      "after": {
+        "bx": 2425.4433999999974,
+        "by": 1752,
+        "px": 2425.4433999999974,
+        "py": 1752,
+        "fuel": 93.52782999999997,
+        "lube": 11870.556599999998,
+        "odo": 129.44339999999738,
+        "hp": 199.87055660000036,
+        "uid": "s7s"
+      }
+    },
+    "PARKED": {
+      "bx": 2425.4433999999974,
+      "by": 1752,
+      "px": 2425.4433999999974,
+      "py": 1768,
+      "fuel": 93.52782999999997,
+      "lube": 11870.556599999998,
+      "odo": 129.44339999999738,
+      "hp": 199.87055660000036,
+      "uid": "s7s"
+    },
+    "REOPENED_BIKE": {
+      "bx": 2425.4433999999974,
+      "by": 1752,
+      "px": 2425.4433999999974,
+      "py": 1768,
+      "fuel": 93.52782999999997,
+      "lube": 11870.556599999998,
+      "odo": 129.44339999999738,
+      "hp": 199.87055660000036,
+      "uid": "s7s"
+    },
+    "INV_BEFORE_SAVE": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7v",
+        "key": "wood",
+        "qty": 60
+      },
+      {
+        "uid": "s7w",
+        "key": "wood",
+        "qty": 46
+      },
+      {
+        "uid": "s7x",
+        "key": "stone",
+        "qty": 56
+      },
+      {
+        "uid": "s7y",
+        "key": "fiber",
+        "qty": 60
+      },
+      {
+        "uid": "s7z",
+        "key": "rope",
+        "qty": 20
+      },
+      {
+        "uid": "s80",
+        "key": "iron_ingot",
+        "qty": 35
+      },
+      {
+        "uid": "s81",
+        "key": "mechanical_parts",
+        "qty": 15
+      },
+      {
+        "uid": "s82",
+        "key": "spares",
+        "qty": 25
+      },
+      {
+        "uid": "s83",
+        "key": "brick",
+        "qty": 14
+      },
+      {
+        "uid": "s84",
+        "key": "glass",
+        "qty": 3
+      },
+      {
+        "uid": "s85",
+        "key": "fasteners",
+        "qty": 20
+      },
+      {
+        "uid": "s8g",
+        "key": "fuel_can",
+        "qty": 1
+      }
+    ],
+    "INV_AFTER_REOPEN": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7v",
+        "key": "wood",
+        "qty": 60
+      },
+      {
+        "uid": "s7w",
+        "key": "wood",
+        "qty": 46
+      },
+      {
+        "uid": "s7x",
+        "key": "stone",
+        "qty": 56
+      },
+      {
+        "uid": "s7y",
+        "key": "fiber",
+        "qty": 60
+      },
+      {
+        "uid": "s7z",
+        "key": "rope",
+        "qty": 20
+      },
+      {
+        "uid": "s80",
+        "key": "iron_ingot",
+        "qty": 35
+      },
+      {
+        "uid": "s81",
+        "key": "mechanical_parts",
+        "qty": 15
+      },
+      {
+        "uid": "s82",
+        "key": "spares",
+        "qty": 25
+      },
+      {
+        "uid": "s83",
+        "key": "brick",
+        "qty": 14
+      },
+      {
+        "uid": "s84",
+        "key": "glass",
+        "qty": 3
+      },
+      {
+        "uid": "s85",
+        "key": "fasteners",
+        "qty": 20
+      },
+      {
+        "uid": "s8g",
+        "key": "fuel_can",
+        "qty": 1
+      }
+    ]
+  },
+  "errors": []
+}

@@ -1,0 +1,617 @@
+{
+ "base": "http://127.0.0.1:4430",
+ "fixtures": [
+  {
+   "viewport": "1280x720",
+   "F2": "secured cash set to 20",
+   "F3": "legal full pack (cart_kit + stone at ITEMS.stone.max 60)",
+   "packFill": {
+    "filled": 24,
+    "total": 24
+   }
+  },
+  {
+   "viewport": "1280x720",
+   "F1": "stand tile beside Mirela; accepted only when the real Trade prompt resolved",
+   "tried": [
+    {
+     "dx": 24,
+     "dy": 24,
+     "target": "vendor",
+     "label": "Trade with Mirela the Trader"
+    }
+   ],
+   "stand": {
+    "dx": 24,
+    "dy": 24
+   }
+  },
+  {
+   "viewport": "1280x720",
+   "F4": "cart deployed by real placeCart (QA passthrough to the same dispatch)",
+   "placed": {
+    "ok": true,
+    "dx": 26,
+    "dy": 0
+   }
+  },
+  {
+   "viewport": "1280x720",
+   "F4b": "freed pack slot refilled with a legal Stone stack",
+   "refill": {
+    "filled": 24,
+    "total": 24
+   }
+  },
+  {
+   "viewport": "640x360",
+   "F2": "secured cash set to 20",
+   "F3": "legal full pack (cart_kit + stone at ITEMS.stone.max 60)",
+   "packFill": {
+    "filled": 24,
+    "total": 24
+   }
+  },
+  {
+   "viewport": "640x360",
+   "F1": "stand tile beside Mirela; accepted only when the real Trade prompt resolved",
+   "tried": [
+    {
+     "dx": 24,
+     "dy": 24,
+     "target": "vendor",
+     "label": "Trade with Mirela the Trader"
+    }
+   ],
+   "stand": {
+    "dx": 24,
+    "dy": 24
+   }
+  },
+  {
+   "viewport": "640x360",
+   "F4": "cart deployed by real placeCart (QA passthrough to the same dispatch)",
+   "placed": {
+    "ok": true,
+    "dx": 26,
+    "dy": 0
+   }
+  },
+  {
+   "viewport": "640x360",
+   "F4b": "freed pack slot refilled with a legal Stone stack",
+   "refill": {
+    "filled": 24,
+    "total": 24
+   }
+  }
+ ],
+ "milestones": [
+  {
+   "viewport": "1280x720",
+   "milestone": "M1 full pack + cash, menu Save",
+   "lastSave": {
+    "ok": true,
+    "category": "ok",
+    "revision": 8,
+    "localStatus": "ok",
+    "idbStatus": "ok"
+   },
+   "storage": {
+    "localStorage": {
+     "revision": 8,
+     "parcels": 0,
+     "securedCash": 20
+    },
+    "idb": {
+     "revision": 8,
+     "parcels": 0,
+     "securedCash": 20
+    }
+   },
+   "live": {
+    "securedCash": 20,
+    "medkitStock": 4,
+    "receipts": 0,
+    "parcels": [],
+    "packMedkit": 0,
+    "packFilled": 24,
+    "carts": []
+   }
+  },
+  {
+   "viewport": "1280x720",
+   "milestone": "M2 real Parcel purchase",
+   "before": {
+    "securedCash": 20,
+    "medkitStock": 4,
+    "receipts": 0
+   },
+   "after": {
+    "securedCash": 16,
+    "medkitStock": 3,
+    "receipts": 1,
+    "parcels": [
+     {
+      "purchaseId": "parcel-1794031337823-medkit",
+      "item": "medkit",
+      "uid": "s9i"
+     }
+    ],
+    "packMedkit": 0,
+    "packFilled": 24,
+    "carts": []
+   },
+   "debitedOnce": true
+  },
+  {
+   "viewport": "1280x720",
+   "milestone": "M3 menu Save after purchase",
+   "lastSave": {
+    "ok": true,
+    "category": "ok",
+    "revision": 12,
+    "localStatus": "ok",
+    "idbStatus": "ok"
+   },
+   "storage": {
+    "localStorage": {
+     "revision": 12,
+     "parcels": 1,
+     "securedCash": 16
+    },
+    "idb": {
+     "revision": 12,
+     "parcels": 1,
+     "securedCash": 16
+    }
+   }
+  },
+  {
+   "viewport": "1280x720",
+   "milestone": "M3 after reload #1",
+   "live": {
+    "securedCash": 16,
+    "medkitStock": 3,
+    "receipts": 1,
+    "parcels": [
+     {
+      "purchaseId": "parcel-1794031337823-medkit",
+      "item": "medkit",
+      "uid": "s9i"
+     }
+    ],
+    "packMedkit": 0,
+    "packFilled": 24,
+    "carts": []
+   },
+   "storage": {
+    "localStorage": {
+     "revision": 15,
+     "parcels": 1,
+     "securedCash": 16
+    },
+    "idb": {
+     "revision": 15,
+     "parcels": 1,
+     "securedCash": 16
+    }
+   },
+   "survived": true
+  },
+  {
+   "viewport": "1280x720",
+   "milestone": "M4 real Load into this cart",
+   "live": {
+    "securedCash": 16,
+    "medkitStock": 3,
+    "receipts": 1,
+    "parcels": [],
+    "packMedkit": 0,
+    "packFilled": 24,
+    "carts": [
+     {
+      "id": "cart9l",
+      "cargo": [
+       {
+        "key": "medkit",
+        "qty": 1,
+        "uid": "s9i"
+       }
+      ]
+     }
+    ]
+   },
+   "uidPreserved": true,
+   "parcelGone": true,
+   "packFull": true
+  },
+  {
+   "viewport": "1280x720",
+   "milestone": "M5 menu Save after cart load",
+   "lastSave": {
+    "ok": true,
+    "category": "ok",
+    "revision": 20,
+    "localStatus": "ok",
+    "idbStatus": "ok"
+   },
+   "storage": {
+    "localStorage": {
+     "revision": 21,
+     "parcels": 0,
+     "securedCash": 16
+    },
+    "idb": {
+     "revision": 21,
+     "parcels": 0,
+     "securedCash": 16
+    }
+   }
+  },
+  {
+   "viewport": "1280x720",
+   "milestone": "M5 after reload #2",
+   "live": {
+    "securedCash": 16,
+    "medkitStock": 3,
+    "receipts": 1,
+    "parcels": [],
+    "packMedkit": 0,
+    "packFilled": 24,
+    "carts": [
+     {
+      "id": "cart9l",
+      "cargo": [
+       {
+        "key": "medkit",
+        "qty": 1,
+        "uid": "s9i"
+       }
+      ]
+     }
+    ]
+   },
+   "storage": {
+    "localStorage": {
+     "revision": 24,
+     "parcels": 0,
+     "securedCash": 16
+    },
+    "idb": {
+     "revision": 24,
+     "parcels": 0,
+     "securedCash": 16
+    }
+   },
+   "survivedNoDuplicate": true
+  },
+  {
+   "viewport": "1280x720",
+   "milestone": "M5 after reload #3",
+   "live": {
+    "securedCash": 16,
+    "medkitStock": 3,
+    "receipts": 1,
+    "parcels": [],
+    "packMedkit": 0,
+    "packFilled": 24,
+    "carts": [
+     {
+      "id": "cart9l",
+      "cargo": [
+       {
+        "key": "medkit",
+        "qty": 1,
+        "uid": "s9i"
+       }
+      ]
+     }
+    ]
+   },
+   "storage": {
+    "localStorage": {
+     "revision": 27,
+     "parcels": 0,
+     "securedCash": 16
+    },
+    "idb": {
+     "revision": 27,
+     "parcels": 0,
+     "securedCash": 16
+    }
+   },
+   "survivedNoDuplicate": true
+  },
+  {
+   "viewport": "640x360",
+   "milestone": "M1 full pack + cash, menu Save",
+   "lastSave": {
+    "ok": true,
+    "category": "ok",
+    "revision": 8,
+    "localStatus": "ok",
+    "idbStatus": "ok"
+   },
+   "storage": {
+    "localStorage": {
+     "revision": 8,
+     "parcels": 0,
+     "securedCash": 20
+    },
+    "idb": {
+     "revision": 8,
+     "parcels": 0,
+     "securedCash": 20
+    }
+   },
+   "live": {
+    "securedCash": 20,
+    "medkitStock": 4,
+    "receipts": 0,
+    "parcels": [],
+    "packMedkit": 0,
+    "packFilled": 24,
+    "carts": []
+   }
+  },
+  {
+   "viewport": "640x360",
+   "milestone": "M2 real Parcel purchase",
+   "before": {
+    "securedCash": 20,
+    "medkitStock": 4,
+    "receipts": 0
+   },
+   "after": {
+    "securedCash": 16,
+    "medkitStock": 3,
+    "receipts": 1,
+    "parcels": [
+     {
+      "purchaseId": "parcel-1794031432068-medkit",
+      "item": "medkit",
+      "uid": "s9i"
+     }
+    ],
+    "packMedkit": 0,
+    "packFilled": 24,
+    "carts": []
+   },
+   "debitedOnce": true
+  },
+  {
+   "viewport": "640x360",
+   "milestone": "M3 menu Save after purchase",
+   "lastSave": {
+    "ok": true,
+    "category": "ok",
+    "revision": 12,
+    "localStatus": "ok",
+    "idbStatus": "ok"
+   },
+   "storage": {
+    "localStorage": {
+     "revision": 12,
+     "parcels": 1,
+     "securedCash": 16
+    },
+    "idb": {
+     "revision": 12,
+     "parcels": 1,
+     "securedCash": 16
+    }
+   }
+  },
+  {
+   "viewport": "640x360",
+   "milestone": "M3 after reload #1",
+   "live": {
+    "securedCash": 16,
+    "medkitStock": 3,
+    "receipts": 1,
+    "parcels": [
+     {
+      "purchaseId": "parcel-1794031432068-medkit",
+      "item": "medkit",
+      "uid": "s9i"
+     }
+    ],
+    "packMedkit": 0,
+    "packFilled": 24,
+    "carts": []
+   },
+   "storage": {
+    "localStorage": {
+     "revision": 15,
+     "parcels": 1,
+     "securedCash": 16
+    },
+    "idb": {
+     "revision": 15,
+     "parcels": 1,
+     "securedCash": 16
+    }
+   },
+   "survived": true
+  },
+  {
+   "viewport": "640x360",
+   "milestone": "M4 real Load into this cart",
+   "live": {
+    "securedCash": 16,
+    "medkitStock": 3,
+    "receipts": 1,
+    "parcels": [],
+    "packMedkit": 0,
+    "packFilled": 24,
+    "carts": [
+     {
+      "id": "cart9l",
+      "cargo": [
+       {
+        "key": "medkit",
+        "qty": 1,
+        "uid": "s9i"
+       }
+      ]
+     }
+    ]
+   },
+   "uidPreserved": true,
+   "parcelGone": true,
+   "packFull": true
+  },
+  {
+   "viewport": "640x360",
+   "milestone": "M5 menu Save after cart load",
+   "lastSave": {
+    "ok": true,
+    "category": "ok",
+    "revision": 20,
+    "localStatus": "ok",
+    "idbStatus": "ok"
+   },
+   "storage": {
+    "localStorage": {
+     "revision": 21,
+     "parcels": 0,
+     "securedCash": 16
+    },
+    "idb": {
+     "revision": 21,
+     "parcels": 0,
+     "securedCash": 16
+    }
+   }
+  },
+  {
+   "viewport": "640x360",
+   "milestone": "M5 after reload #2",
+   "live": {
+    "securedCash": 16,
+    "medkitStock": 3,
+    "receipts": 1,
+    "parcels": [],
+    "packMedkit": 0,
+    "packFilled": 24,
+    "carts": [
+     {
+      "id": "cart9l",
+      "cargo": [
+       {
+        "key": "medkit",
+        "qty": 1,
+        "uid": "s9i"
+       }
+      ]
+     }
+    ]
+   },
+   "storage": {
+    "localStorage": {
+     "revision": 24,
+     "parcels": 0,
+     "securedCash": 16
+    },
+    "idb": {
+     "revision": 24,
+     "parcels": 0,
+     "securedCash": 16
+    }
+   },
+   "survivedNoDuplicate": true
+  },
+  {
+   "viewport": "640x360",
+   "milestone": "M5 after reload #3",
+   "live": {
+    "securedCash": 16,
+    "medkitStock": 3,
+    "receipts": 1,
+    "parcels": [],
+    "packMedkit": 0,
+    "packFilled": 24,
+    "carts": [
+     {
+      "id": "cart9l",
+      "cargo": [
+       {
+        "key": "medkit",
+        "qty": 1,
+        "uid": "s9i"
+       }
+      ]
+     }
+    ]
+   },
+   "storage": {
+    "localStorage": {
+     "revision": 27,
+     "parcels": 0,
+     "securedCash": 16
+    },
+    "idb": {
+     "revision": 27,
+     "parcels": 0,
+     "securedCash": 16
+    }
+   },
+   "survivedNoDuplicate": true
+  }
+ ],
+ "shots": [
+  {
+   "path": "evidence/b05-vendor-freight/vendor-panel-1280x720.png",
+   "viewport": "1280x720",
+   "what": "VendorPanel opened by real E"
+  },
+  {
+   "path": "evidence/b05-vendor-freight/parcel-at-trader-1280x720.png",
+   "viewport": "1280x720",
+   "what": "purchased parcel beside Mirela"
+  },
+  {
+   "path": "evidence/b05-vendor-freight/parcel-panel-1280x720.png",
+   "viewport": "1280x720",
+   "what": "Paid parcel panel (Load into this cart)"
+  },
+  {
+   "path": "evidence/b05-vendor-freight/cart-with-cargo-1280x720.png",
+   "viewport": "1280x720",
+   "what": "cart with medkit; pack still full"
+  },
+  {
+   "path": "evidence/b05-vendor-freight/after-reload-cart-1280x720.png",
+   "viewport": "1280x720",
+   "what": "cart after two reloads"
+  },
+  {
+   "path": "evidence/b05-vendor-freight/vendor-panel-640x360.png",
+   "viewport": "640x360",
+   "what": "VendorPanel opened by real E"
+  },
+  {
+   "path": "evidence/b05-vendor-freight/parcel-at-trader-640x360.png",
+   "viewport": "640x360",
+   "what": "purchased parcel beside Mirela"
+  },
+  {
+   "path": "evidence/b05-vendor-freight/parcel-panel-640x360.png",
+   "viewport": "640x360",
+   "what": "Paid parcel panel (Load into this cart)"
+  },
+  {
+   "path": "evidence/b05-vendor-freight/cart-with-cargo-640x360.png",
+   "viewport": "640x360",
+   "what": "cart with medkit; pack still full"
+  },
+  {
+   "path": "evidence/b05-vendor-freight/after-reload-cart-640x360.png",
+   "viewport": "640x360",
+   "what": "cart after two reloads"
+  }
+ ],
+ "errors": [],
+ "failure": null
+}

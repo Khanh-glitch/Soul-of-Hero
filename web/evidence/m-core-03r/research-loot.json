@@ -1,0 +1,670 @@
+{
+  "method": "Continued real-input play after blind attempt; read-only route and crate contents inspection, no state injection.",
+  "routes": [
+    {
+      "item": "spares",
+      "id": "e13",
+      "steps": 2,
+      "after": {
+        "inv": [
+          {
+            "uid": "s1",
+            "key": "knife",
+            "qty": 1,
+            "dur": 252
+          },
+          {
+            "uid": "s2",
+            "key": "water_flask",
+            "qty": 1,
+            "charge": 2
+          },
+          {
+            "uid": "s3",
+            "key": "berries",
+            "qty": 3
+          },
+          {
+            "uid": "s7k",
+            "key": "wood",
+            "qty": 6
+          },
+          {
+            "uid": "s7l",
+            "key": "seed",
+            "qty": 2
+          },
+          {
+            "uid": "s88",
+            "key": "scrap",
+            "qty": 8
+          },
+          {
+            "uid": "s8f",
+            "key": "fasteners",
+            "qty": 2
+          },
+          {
+            "uid": "s8s",
+            "key": "spares",
+            "qty": 7
+          },
+          {
+            "uid": "s90",
+            "key": "damaged_drive",
+            "qty": 1
+          }
+        ],
+        "receipts": [
+          {
+            "id": "r48",
+            "seq": 48,
+            "at": 1793769612758,
+            "kind": "recycle.start",
+            "detail": "s8n@e2g"
+          },
+          {
+            "id": "r49",
+            "seq": 49,
+            "at": 1793769624758,
+            "kind": "job.done",
+            "detail": "X:drive"
+          },
+          {
+            "id": "r50",
+            "seq": 50,
+            "at": 1793769632035,
+            "kind": "offline.settle",
+            "detail": "18s"
+          },
+          {
+            "id": "r51",
+            "seq": 51,
+            "at": 1793769633871,
+            "kind": "move",
+            "detail": "sparesx2 c2i->inv"
+          },
+          {
+            "id": "r52",
+            "seq": 52,
+            "at": 1793769644786,
+            "kind": "offline.settle",
+            "detail": "10s"
+          },
+          {
+            "id": "r53",
+            "seq": 53,
+            "at": 1793769659551,
+            "kind": "offline.settle",
+            "detail": "15s"
+          },
+          {
+            "id": "r54",
+            "seq": 54,
+            "at": 1793769684968,
+            "kind": "offline.settle",
+            "detail": "25s"
+          },
+          {
+            "id": "r55",
+            "seq": 55,
+            "at": 1793769687615,
+            "kind": "move",
+            "detail": "sparesx3 c14->inv"
+          }
+        ]
+      }
+    },
+    {
+      "item": "iron_ingot",
+      "id": "ec",
+      "steps": 68,
+      "after": {
+        "inv": [
+          {
+            "uid": "s1",
+            "key": "knife",
+            "qty": 1,
+            "dur": 252
+          },
+          {
+            "uid": "s2",
+            "key": "water_flask",
+            "qty": 1,
+            "charge": 2
+          },
+          {
+            "uid": "s3",
+            "key": "berries",
+            "qty": 3
+          },
+          {
+            "uid": "s7k",
+            "key": "wood",
+            "qty": 14
+          },
+          {
+            "uid": "s7l",
+            "key": "seed",
+            "qty": 2
+          },
+          {
+            "uid": "s88",
+            "key": "scrap",
+            "qty": 8
+          },
+          {
+            "uid": "s8f",
+            "key": "fasteners",
+            "qty": 2
+          },
+          {
+            "uid": "s8s",
+            "key": "spares",
+            "qty": 7
+          },
+          {
+            "uid": "sf",
+            "key": "iron_ingot",
+            "qty": 1
+          },
+          {
+            "uid": "s90",
+            "key": "damaged_drive",
+            "qty": 1
+          }
+        ],
+        "receipts": [
+          {
+            "id": "r50",
+            "seq": 50,
+            "at": 1793769632035,
+            "kind": "offline.settle",
+            "detail": "18s"
+          },
+          {
+            "id": "r51",
+            "seq": 51,
+            "at": 1793769633871,
+            "kind": "move",
+            "detail": "sparesx2 c2i->inv"
+          },
+          {
+            "id": "r52",
+            "seq": 52,
+            "at": 1793769644786,
+            "kind": "offline.settle",
+            "detail": "10s"
+          },
+          {
+            "id": "r53",
+            "seq": 53,
+            "at": 1793769659551,
+            "kind": "offline.settle",
+            "detail": "15s"
+          },
+          {
+            "id": "r54",
+            "seq": 54,
+            "at": 1793769684968,
+            "kind": "offline.settle",
+            "detail": "25s"
+          },
+          {
+            "id": "r55",
+            "seq": 55,
+            "at": 1793769687615,
+            "kind": "move",
+            "detail": "sparesx3 c14->inv"
+          },
+          {
+            "id": "r56",
+            "seq": 56,
+            "at": 1793769705355,
+            "kind": "move",
+            "detail": "iron_ingotx1 cd->inv"
+          },
+          {
+            "id": "r57",
+            "seq": 57,
+            "at": 1793769705432,
+            "kind": "move",
+            "detail": "woodx8 cd->inv"
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [],
+  "before": {
+    "inv": [
+      {
+        "uid": "s1",
+        "key": "knife",
+        "qty": 1,
+        "dur": 252
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      {
+        "uid": "s7k",
+        "key": "wood",
+        "qty": 6
+      },
+      {
+        "uid": "s7l",
+        "key": "seed",
+        "qty": 2
+      },
+      {
+        "uid": "s88",
+        "key": "scrap",
+        "qty": 8
+      },
+      {
+        "uid": "s8f",
+        "key": "fasteners",
+        "qty": 2
+      },
+      {
+        "uid": "s8s",
+        "key": "spares",
+        "qty": 4
+      },
+      {
+        "uid": "s90",
+        "key": "damaged_drive",
+        "qty": 1
+      }
+    ],
+    "receipts": [
+      {
+        "id": "r1",
+        "seq": 1,
+        "at": 1793769440558,
+        "kind": "run.start",
+        "detail": "female@the island"
+      },
+      {
+        "id": "r2",
+        "seq": 2,
+        "at": 1793769455944,
+        "kind": "offline.settle",
+        "detail": "12s"
+      },
+      {
+        "id": "r3",
+        "seq": 3,
+        "at": 1793769469541,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r4",
+        "seq": 4,
+        "at": 1793769481860,
+        "kind": "offline.settle",
+        "detail": "8s"
+      },
+      {
+        "id": "r5",
+        "seq": 5,
+        "at": 1793769497075,
+        "kind": "offline.settle",
+        "detail": "12s"
+      },
+      {
+        "id": "r6",
+        "seq": 6,
+        "at": 1793769499113,
+        "kind": "harvest",
+        "detail": "oak@116,107 -1"
+      },
+      {
+        "id": "r7",
+        "seq": 7,
+        "at": 1793769499497,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r8",
+        "seq": 8,
+        "at": 1793769499514,
+        "kind": "pickup",
+        "detail": "seedx1"
+      },
+      {
+        "id": "r9",
+        "seq": 9,
+        "at": 1793769500047,
+        "kind": "harvest",
+        "detail": "oak@116,107 -1"
+      },
+      {
+        "id": "r10",
+        "seq": 10,
+        "at": 1793769500430,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r11",
+        "seq": 11,
+        "at": 1793769500947,
+        "kind": "harvest",
+        "detail": "oak@116,107 -1"
+      },
+      {
+        "id": "r12",
+        "seq": 12,
+        "at": 1793769501330,
+        "kind": "pickup",
+        "detail": "seedx1"
+      },
+      {
+        "id": "r13",
+        "seq": 13,
+        "at": 1793769501380,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r14",
+        "seq": 14,
+        "at": 1793769501863,
+        "kind": "harvest",
+        "detail": "oak@116,107 -1"
+      },
+      {
+        "id": "r15",
+        "seq": 15,
+        "at": 1793769502313,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r16",
+        "seq": 16,
+        "at": 1793769502780,
+        "kind": "harvest",
+        "detail": "oak@116,107 -1"
+      },
+      {
+        "id": "r17",
+        "seq": 17,
+        "at": 1793769503213,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r18",
+        "seq": 18,
+        "at": 1793769503697,
+        "kind": "harvest",
+        "detail": "oak@116,107 -1"
+      },
+      {
+        "id": "r19",
+        "seq": 19,
+        "at": 1793769504130,
+        "kind": "pickup",
+        "detail": "woodx1"
+      },
+      {
+        "id": "r20",
+        "seq": 20,
+        "at": 1793769530776,
+        "kind": "offline.settle",
+        "detail": "16s"
+      },
+      {
+        "id": "r21",
+        "seq": 21,
+        "at": 1793769542855,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r22",
+        "seq": 22,
+        "at": 1793769545162,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r23",
+        "seq": 23,
+        "at": 1793769545628,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r24",
+        "seq": 24,
+        "at": 1793769546378,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r25",
+        "seq": 25,
+        "at": 1793769546812,
+        "kind": "pickup",
+        "detail": "fastenersx1"
+      },
+      {
+        "id": "r26",
+        "seq": 26,
+        "at": 1793769546845,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r27",
+        "seq": 27,
+        "at": 1793769547595,
+        "kind": "harvest.component",
+        "detail": "wreck@117,108:s8n"
+      },
+      {
+        "id": "r28",
+        "seq": 28,
+        "at": 1793769547595,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r29",
+        "seq": 29,
+        "at": 1793769547978,
+        "kind": "pickup",
+        "detail": "fastenersx1"
+      },
+      {
+        "id": "r30",
+        "seq": 30,
+        "at": 1793769548045,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r31",
+        "seq": 31,
+        "at": 1793769548045,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r32",
+        "seq": 32,
+        "at": 1793769548045,
+        "kind": "pickup",
+        "detail": "damaged_drivex1"
+      },
+      {
+        "id": "r33",
+        "seq": 33,
+        "at": 1793769548529,
+        "kind": "harvest.component",
+        "detail": "wreck@117,108:s90"
+      },
+      {
+        "id": "r34",
+        "seq": 34,
+        "at": 1793769548529,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r35",
+        "seq": 35,
+        "at": 1793769548911,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r36",
+        "seq": 36,
+        "at": 1793769548945,
+        "kind": "pickup",
+        "detail": "sparesx1"
+      },
+      {
+        "id": "r37",
+        "seq": 37,
+        "at": 1793769548978,
+        "kind": "pickup",
+        "detail": "damaged_drivex1"
+      },
+      {
+        "id": "r38",
+        "seq": 38,
+        "at": 1793769549745,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r39",
+        "seq": 39,
+        "at": 1793769550212,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r40",
+        "seq": 40,
+        "at": 1793769550945,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r41",
+        "seq": 41,
+        "at": 1793769551345,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r42",
+        "seq": 42,
+        "at": 1793769552161,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r43",
+        "seq": 43,
+        "at": 1793769552595,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r44",
+        "seq": 44,
+        "at": 1793769553095,
+        "kind": "harvest",
+        "detail": "wreck@117,108 -1"
+      },
+      {
+        "id": "r45",
+        "seq": 45,
+        "at": 1793769553528,
+        "kind": "pickup",
+        "detail": "scrapx1"
+      },
+      {
+        "id": "r46",
+        "seq": 46,
+        "at": 1793769570819,
+        "kind": "offline.settle",
+        "detail": "12s"
+      },
+      {
+        "id": "r47",
+        "seq": 47,
+        "at": 1793769600340,
+        "kind": "offline.settle",
+        "detail": "27s"
+      },
+      {
+        "id": "r48",
+        "seq": 48,
+        "at": 1793769612758,
+        "kind": "recycle.start",
+        "detail": "s8n@e2g"
+      },
+      {
+        "id": "r49",
+        "seq": 49,
+        "at": 1793769624758,
+        "kind": "job.done",
+        "detail": "X:drive"
+      },
+      {
+        "id": "r50",
+        "seq": 50,
+        "at": 1793769632035,
+        "kind": "offline.settle",
+        "detail": "18s"
+      },
+      {
+        "id": "r51",
+        "seq": 51,
+        "at": 1793769633871,
+        "kind": "move",
+        "detail": "sparesx2 c2i->inv"
+      },
+      {
+        "id": "r52",
+        "seq": 52,
+        "at": 1793769644786,
+        "kind": "offline.settle",
+        "detail": "10s"
+      },
+      {
+        "id": "r53",
+        "seq": 53,
+        "at": 1793769659551,
+        "kind": "offline.settle",
+        "detail": "15s"
+      },
+      {
+        "id": "r54",
+        "seq": 54,
+        "at": 1793769684968,
+        "kind": "offline.settle",
+        "detail": "25s"
+      }
+    ]
+  }
+}

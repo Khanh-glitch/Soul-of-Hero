@@ -1,0 +1,54 @@
+{
+  "method": "injected Core/ammo and nearby wolf; real Q keyboard input",
+  "fixture": {
+    "ok": true,
+    "id": "m72",
+    "angle": 0,
+    "x": 1906,
+    "y": 1096,
+    "camX": 1496,
+    "camY": 910,
+    "hp": 100
+  },
+  "result": {
+    "hp": 20,
+    "state": "chase",
+    "knows": {
+      "kind": "sight",
+      "x": 1816,
+      "y": 1096,
+      "at": 1793842881213
+    },
+    "receipts": [
+      {
+        "id": "r1",
+        "seq": 1,
+        "at": 1793842876635,
+        "kind": "run.start",
+        "detail": "female@the island"
+      },
+      {
+        "id": "r2",
+        "seq": 2,
+        "at": 1793842877939,
+        "kind": "core.load",
+        "detail": "s70:refined+5"
+      },
+      {
+        "id": "r3",
+        "seq": 3,
+        "at": 1793842878580,
+        "kind": "core.commit",
+        "detail": "s70:refined:4"
+      },
+      {
+        "id": "r4",
+        "seq": 4,
+        "at": 1793842878580,
+        "kind": "achievement",
+        "detail": "first_core"
+      }
+    ]
+  },
+  "errors": []
+}

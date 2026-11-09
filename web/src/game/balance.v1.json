@@ -1,7 +1,7 @@
 {
   "_meta": {
     "version": 1,
-    "status_legend": "LOCKED_CANON = Bible [CHỐT] law; TUNABLE_BALANCE = editable number; PROPOSED_MECHANISM = reversible design choice ([ĐỀ XUẤT])",
+    "status_legend": "LOCKED_CANON = Bible [CH\u1ed0T] law; TUNABLE_BALANCE = editable number; PROPOSED_MECHANISM = reversible design choice ([\u0110\u1ec0 XU\u1ea4T])",
     "note": "All numbers here are TUNABLE_BALANCE unless marked. Edit and rebuild."
   },
   "run": {
@@ -26,32 +26,67 @@
     "rollMs": 260,
     "staminaRegen": 26,
     "carryLimit": 60,
+    "fieldRepairDurability": 100,
     "hungerDrainPerMin": 2.4,
     "thirstDrainPerMin": 3.6,
     "offlineDrainFactor": 0.35,
+    "offlineHungerPerHour": 4.166666666666667,
+    "offlineThirstPerHour": 6.25,
+    "offlineFireHitMs": 900,
+    "offlineFireHitDamage": 6,
+    "_offlineRates": "Hunger: LI 2020-08-26 100 points/24h baseline, SOH adaptation. Thirst: SOH_NEW_TUNED provisional 1.5x hunger, not a sourced LI rate. Damage/environment retain SOH offline factor; active source-fire damage is approximated continuously from existing 6 HP/900ms tick with armor, no movement replay.",
     "starveDamagePerMin": 4,
     "coldDamagePerMin": 6,
     "radDamagePerMinOver50": 5
   },
   "terrainSpeed": {
     "_status": "TUNABLE_BALANCE",
-    "road": 1.28, "bridge": 1.28, "floor": 1.1, "grass": 1.0, "meadow": 1.0, "forest": 0.86, "sand": 0.88,
-    "marsh": 0.62, "shallow": 0.5, "snow": 0.78, "hill": 0.9, "ash": 0.92, "toxic": 0.95, "burnt": 1.0, "ice": 1.05
+    "road": 1.28,
+    "bridge": 1.28,
+    "floor": 1.1,
+    "grass": 1.0,
+    "meadow": 1.0,
+    "forest": 0.86,
+    "sand": 0.88,
+    "marsh": 0.62,
+    "shallow": 0.5,
+    "snow": 0.78,
+    "hill": 0.9,
+    "ash": 0.92,
+    "toxic": 0.95,
+    "burnt": 1.0,
+    "ice": 1.05
   },
   "cart": {
     "_status": "PROPOSED_MECHANISM (cart custody/weight) + TUNABLE_BALANCE numbers",
     "slots": 24,
     "maxWeight": 240,
-    "speedOnRoad": 1.05,
-    "speedOffRoad": 0.55,
-    "speedRough": 0.32,
+    "freightSlots": 32,
+    "freightMaxWeight": 360,
+    "speedOnRoad": 1.36,
+    "speedOffRoad": 0.72,
+    "speedRough": 0.42,
     "weightPenaltyPer100": 0.18
   },
   "traces": {
     "_status": "TUNABLE_BALANCE seconds of footprint life by surface; rain multiplies decay",
-    "snow": 900, "marsh": 600, "sand": 260, "ash": 420, "grass": 180, "meadow": 180, "forest": 140, "hill": 120,
-    "road": 40, "bridge": 20, "floor": 60, "burnt": 300, "toxic": 200, "ice": 300,
-    "rainDecayMult": 4, "stormDecayMult": 9, "snowfallSnowMult": 6
+    "snow": 900,
+    "marsh": 600,
+    "sand": 260,
+    "ash": 420,
+    "grass": 180,
+    "meadow": 180,
+    "forest": 140,
+    "hill": 120,
+    "road": 40,
+    "bridge": 20,
+    "floor": 60,
+    "burnt": 300,
+    "toxic": 200,
+    "ice": 300,
+    "rainDecayMult": 4,
+    "stormDecayMult": 9,
+    "snowfallSnowMult": 6
   },
   "ai": {
     "_status": "TUNABLE_BALANCE",
@@ -62,22 +97,97 @@
     "respawnIntervalSec": 150,
     "ragnarokCapMult": 1.6
   },
+  "industrialPower": {
+    "_status": "SOH_NEW_TUNED provisional: optional powered workbench; not historical LI values",
+    "workSpeedMultiplier": 2,
+    "connectionTiles": 3
+  },
   "fuel": {
     "_status": "TUNABLE_BALANCE fuel seconds per item",
-    "wood": 20, "charcoal": 55, "coal": 80, "fiber": 4
+    "wood": 20,
+    "charcoal": 55,
+    "coal": 80,
+    "fiber": 4,
+    "linedFurnaceFuelMultiplier": 0.8
+  },
+  "fire": {
+    "spreadDelayMs": 3000,
+    "maxSpreadDepth": 2,
+    "spreadChancePercent": 55
+  },
+  "comfortV1": {
+    "_status": "SOH_PROVISIONAL physical thermal rules. LI historical comfort (2020-01-08) stacks to 40 points in ITS OWN score units; liHistoricalCap is recorded for provenance only and is NOT 40 SOH Warmth units. No fictional season multiplier.",
+    "liHistoricalCap": 40,
+    "liHistoricalProvenance": "LI 2020-01-08 comfort stacking, original mode (score units)",
+    "scoreCap": 40,
+    "scoreCapProvenance": "Equals liHistoricalCap numerically; SOH cap on stacked heat score (SOH_PROVISIONAL)",
+    "targetPerScore": 0.75,
+    "targetMaxBonus": 30,
+    "warmthRatePerMin": 1.6,
+    "coldThreshold": 8,
+    "sources": {
+      "campfireBurning": {
+        "score": 18,
+        "radiusPx": 52,
+        "requires": "alive, owned, paid burn or fuel present, LOS or same room",
+        "provenance": "SOH_PROVISIONAL"
+      },
+      "furnaceBurning": {
+        "score": 12,
+        "radiusPx": 52,
+        "requires": "alive, owned, job running and paid burn or fuel present, LOS or same room",
+        "provenance": "SOH_PROVISIONAL"
+      },
+      "enclosedShelter": {
+        "score": 8,
+        "requires": "roofed and enclosed room at the player tile",
+        "provenance": "SOH_PROVISIONAL"
+      }
+    }
   },
   "garden": {
     "_status": "TUNABLE_BALANCE",
     "growSeconds": 300,
-    "waterSecondsPerUnit": 240
+    "herbGrowSeconds": 600,
+    "waterSecondsPerUnit": 240,
+    "coldFrameWarming": 0.24,
+    "coldFrameSoilBonus": 0.2,
+    "wetCooling": 0.04,
+    "scorchedSoilMultiplier": 0.55,
+    "tenderPlantEnergySeconds": 8,
+    "tenderPumpEnergySeconds": 4,
+    "tenderHarvestEnergySeconds": 8,
+    "tenderLinkTiles": 3
   },
   "economy": {
     "_status": "PROPOSED_MECHANISM vendor/price/ownership; LOCKED_CANON cash-only escrow purchase",
     "escrowChestPrice": 30,
-    "claimRadius": 6,
+    "claimRadius": 25,
+    "claimSpawnExclusionTiles": 12,
+    "_claimRadius": "SOH spatial adaptation: 25 gameplay tiles, inspired by LI 25m; tiles are not metres.",
     "maxClaims": 2,
     "claimMinDistFromPoi": 10,
     "reclaimRefund": 0.5
+  },
+  "territory": {
+    "_status": "SOH_PROVISIONAL_REVERSIBLE: not historical LI numeric parity",
+    "unprotectedCollapseHours": 12,
+    "unfundedCollapseHours": 12,
+    "upkeepFractionPerDay": 0.25,
+    "materials": [
+      "wood",
+      "stone",
+      "fiber",
+      "rope",
+      "brick",
+      "iron_ingot",
+      "scrap",
+      "glass",
+      "spares",
+      "mechanical_parts",
+      "fasteners"
+    ],
+    "_tuning": "W08 2026-11-06 SOH_PROVISIONAL: unprotectedCollapseHours and unfundedCollapseHours 2 -> 12 (reversible). Evidence: evidence/sys07-w08/absence-benchmark.json. 2h removed every uncovered/unfunded structure before an 8h overnight; 12h keeps a full-HP shelter through 8h (~47-48 HP mean) and still collapses it by 24h. upkeepFractionPerDay 0.25 UNCHANGED: real acquisition rates not measured. Before: 2/2/0.25."
   },
   "research": {
     "_status": "TUNABLE_BALANCE",
@@ -88,9 +198,984 @@
     "specimenSeconds": 30
   },
   "weather": {
-    "_status": "PROPOSED_MECHANISM seeded schedule; TUNABLE weights",
+    "_status": "PROPOSED_MECHANISM seeded schedule; TUNABLE weights. seasonWeights[season] (SOH_PROVISIONAL) replaces the flat weights per season; spring repeats the existing flat weights so the neutral season is unchanged.",
     "slotMinutes": 9,
-    "weights": { "clear": 5, "cloudy": 3, "rain": 3, "storm": 1, "fog": 2 },
-    "forecastSlots": 1
+    "weights": {
+      "clear": 5,
+      "cloudy": 3,
+      "rain": 3,
+      "storm": 1,
+      "fog": 2
+    },
+    "forecastSlots": 1,
+    "seasonWeights": {
+      "_status": "SOH_PROVISIONAL. Bounded relative weights, same five families. Snow is NOT a new weather enum: a cold-region rain slot lands as snow via seasonClimateV1.snowTemperatureBelow.",
+      "spring": {
+        "clear": 5,
+        "cloudy": 3,
+        "rain": 3,
+        "storm": 1,
+        "fog": 2
+      },
+      "summer": {
+        "clear": 8,
+        "cloudy": 3,
+        "rain": 2,
+        "storm": 2,
+        "fog": 1
+      },
+      "autumn": {
+        "clear": 4,
+        "cloudy": 4,
+        "rain": 4,
+        "storm": 2,
+        "fog": 3
+      },
+      "winter": {
+        "clear": 3,
+        "cloudy": 5,
+        "rain": 3,
+        "storm": 2,
+        "fog": 2
+      }
+    }
+  },
+  "lootRespawn": {
+    "_status": "SOH_NEW_TUNED provisional v1: ordinary authored loot only; never cash, cores, credentials or blueprints",
+    "supplyHours": 12,
+    "industrialHours": 24,
+    "otherHours": 18
+  },
+  "creatorCoreBlast": {
+    "_status": "SOH_NEW_TUNED v1; provisional, not historical LI",
+    "basicDamage": 7,
+    "basicSpeed": 240,
+    "basicLife": 0.8,
+    "spreadRadians": 0.18,
+    "bombDamage": 20,
+    "bombSeconds": 1.2,
+    "fragmentCount": 8,
+    "fragmentDamage": 8,
+    "signatureDamage": 70,
+    "signatureBurnDamage": 4,
+    "signatureBurnMs": 3000,
+    "signatureSpeed": 170,
+    "signatureLife": 1.15
+  },
+  "creatorCoreMeteor": {
+    "_status": "SOH_NEW_TUNED v1; count is CREATOR_LOCKED",
+    "fireballDamage": 22,
+    "targetDamage": 35,
+    "stormDamage": 22,
+    "radius": 20,
+    "targetRange": 180,
+    "tellMs": 750,
+    "stormCount": 10,
+    "staggerMs": 160,
+    "burnDamage": 4,
+    "burnMs": 3500
+  },
+  "creatorCoreDragon": {
+    "_status": "SOH_NEW_TUNED v1 except impactFraction CREATOR_LOCKED",
+    "flameDamage": 5,
+    "flameLength": 100,
+    "flameWidth": 24,
+    "tornadoSpeed": 45,
+    "tornadoSeconds": 3.5,
+    "tornadoRadius": 32,
+    "tornadoDamage": 4,
+    "collectMs": 1200,
+    "impactFraction": 0.2,
+    "firstDamage": 12,
+    "traverseSpeed": 350,
+    "diveMs": 300
+  },
+  "creatorCoreElsa": {
+    "_status": "SOH_NEW_TUNED v1 except selfMs CREATOR_LOCKED",
+    "shardDamage": 14,
+    "shardSpeed": 180,
+    "shardLife": 0.7,
+    "freezeChance": 0.4,
+    "enemyMs": 3000,
+    "selfMs": 1000,
+    "auraRadius": 32,
+    "terrainMs": 90000
+  },
+  "creatorCoreEarthmother": {
+    "_status": "SOH_NEW_TUNED v1; tree count, tree duration and grass duration CREATOR_LOCKED",
+    "rockDamage": 20,
+    "rockRadius": 24,
+    "rockSpeed": 180,
+    "rockLife": 0.8,
+    "treeCount": 10,
+    "treeMs": 3000,
+    "woodPerTree": 1,
+    "groveRange": 130,
+    "rootRange": 55,
+    "rootMs": 10000,
+    "rootDamage": 4,
+    "rootTickMs": 1000
+  },
+  "creatorCoreMjolnir": {
+    "_status": "SOH_NEW_TUNED v1; strikeCount CREATOR_LOCKED",
+    "punchDamage": 25,
+    "chainDamage": 12,
+    "punchRange": 28,
+    "chainRange": 70,
+    "strikeDamage": 18,
+    "strikeCount": 5,
+    "strikeIntervalMs": 300,
+    "strikeRadius": 26,
+    "targetRange": 140,
+    "attractRadius": 65,
+    "attractMs": 2000,
+    "attractSpeed": 32,
+    "burstDamage": 35,
+    "wetMultiplier": 1.5
+  },
+  "creatorCoreDemon": {
+    "_status": "SOH_NEW_TUNED v2; controlled live-AI comparison, player balance not accepted",
+    "rayDamage": 16,
+    "raySpeed": 240,
+    "rayLife": 0.8,
+    "beamDamage": 10,
+    "beamRange": 130,
+    "beamWidth": 12,
+    "beamMs": 2000,
+    "beamTickMs": 250,
+    "teleportMs": 600
+  },
+  "motorbike": {
+    "_status": "SOH_PROVISIONAL v1; ORIGINAL_UNKNOWN handling/fuel/wear/capacity",
+    "slots": 12,
+    "maxWeight": 80,
+    "maxHp": 200,
+    "tank": 300,
+    "canFuel": 100,
+    "roadSpeed": 125,
+    "groundSpeed": 52,
+    "roughSpeed": 35,
+    "fuelPerPixel": 0.05,
+    "roughFuelMultiplier": 1.5,
+    "loadFuelMultiplier": 0.5,
+    "wearPerPixel": 0.002,
+    "maxSlope": 0.6,
+    "radius": 6,
+    "repairHp": 50
+  },
+  "oilRefineryV1": {
+    "_status": "SOH_PROVISIONAL oil-refinery-v1. LI version/mode-specific refinery rates, cost, batch ratio and lubricant effect are ORIGINAL_UNKNOWN; see docs/survival/gameplay-depth/SYS10_VIRTUAL_RESOURCE_PROCESSING.md",
+    "version": "oil-refinery-v1",
+    "hp": 280,
+    "need": "any",
+    "cost": [
+      [
+        "iron_ingot",
+        4
+      ],
+      [
+        "mechanical_parts",
+        3
+      ],
+      [
+        "spares",
+        5
+      ],
+      [
+        "brick",
+        6
+      ],
+      [
+        "glass",
+        2
+      ]
+    ],
+    "requiresWorkbenchLevel": 2,
+    "recipes": {
+      "single": {
+        "ins": [
+          [
+            "salvaged_oil",
+            3
+          ],
+          [
+            "glass",
+            1
+          ]
+        ],
+        "outs": [
+          [
+            "fuel_can",
+            1
+          ]
+        ],
+        "secs": 14
+      },
+      "batch": {
+        "ins": [
+          [
+            "salvaged_oil",
+            5
+          ],
+          [
+            "glass",
+            1
+          ]
+        ],
+        "outs": [
+          [
+            "fuel_can",
+            2
+          ]
+        ],
+        "secs": 22
+      },
+      "industrial": {
+        "ins": [
+          [
+            "salvaged_oil",
+            6
+          ],
+          [
+            "glass",
+            1
+          ]
+        ],
+        "outs": [
+          [
+            "fuel_can",
+            2
+          ],
+          [
+            "lubricant",
+            1
+          ]
+        ],
+        "secs": 26
+      },
+      "lube": {
+        "ins": [
+          [
+            "salvaged_oil",
+            2
+          ]
+        ],
+        "outs": [
+          [
+            "lubricant",
+            1
+          ]
+        ],
+        "secs": 12
+      },
+      "crude": {
+        "ins": [
+          [
+            "crude_petroleum",
+            4
+          ],
+          [
+            "glass",
+            1
+          ]
+        ],
+        "outs": [
+          [
+            "fuel_can",
+            1
+          ]
+        ],
+        "secs": 16
+      }
+    },
+    "lubricantWearReduction": 0.5,
+    "lubricantDistancePx": 12000,
+    "lubricantOverCapFactor": 1.5
+  },
+  "poiAccess": {
+    "_status": "SOH_PROVISIONAL v1; ORIGINAL_UNKNOWN card uses and POI fuel runtime",
+    "cardUses": 3,
+    "fuelRuntimeMs": 180000,
+    "doorOpenMs": 15000
+  },
+  "homeCircuit": {
+    "_status": "SOH_PROVISIONAL wire-v1; ORIGINAL_UNKNOWN costs, capacity and timing",
+    "cableCost": [
+      [
+        "iron_ingot",
+        1
+      ],
+      [
+        "fiber",
+        1
+      ]
+    ],
+    "switchCost": [
+      [
+        "iron_ingot",
+        1
+      ],
+      [
+        "fasteners",
+        1
+      ],
+      [
+        "spares",
+        1
+      ]
+    ],
+    "plateCost": [
+      [
+        "iron_ingot",
+        1
+      ],
+      [
+        "mechanical_parts",
+        1
+      ],
+      [
+        "fasteners",
+        1
+      ]
+    ],
+    "doorCost": [
+      [
+        "iron_ingot",
+        4
+      ],
+      [
+        "mechanical_parts",
+        2
+      ],
+      [
+        "fasteners",
+        3
+      ],
+      [
+        "spares",
+        3
+      ]
+    ],
+    "cableHp": 60,
+    "switchHp": 100,
+    "plateHp": 100,
+    "doorHp": 350,
+    "plateRadius": 7,
+    "interiorDepthTiles": 0.35,
+    "interiorHalfWidthTiles": 0.75,
+    "emergencyReleaseMs": 4000
+  },
+  "recyclerV1": {
+    "_status": "SOH_PROVISIONAL; ORIGINAL_UNKNOWN per-item returns, condition tiers and times; v1 jobs must remain immutable",
+    "midCondition": 0.25,
+    "highCondition": 0.75,
+    "seconds": 15,
+    "rules": {
+      "iron_pick": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "wood",
+            1
+          ]
+        ]
+      },
+      "iron_axe": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "wood",
+            1
+          ]
+        ]
+      },
+      "iron_sword": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "leather",
+            1
+          ]
+        ]
+      },
+      "industrial_pick": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "mechanical_parts",
+            1
+          ]
+        ]
+      },
+      "industrial_axe": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "mechanical_parts",
+            1
+          ]
+        ]
+      },
+      "reinforced_spear": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "mechanical_parts",
+            1
+          ]
+        ]
+      }
+    }
+  },
+  "recyclerV2": {
+    "_status": "SOH_PROVISIONAL B01. v2 supersedes v1 only for NEW jobs (recipe X:recover-v2). Queued X:recover-v1 jobs keep v1 outputs forever. Thresholds reuse recyclerV1 midCondition/highCondition. Historical LI Pipe salvage (v4): parts+refined iron, exact per-item yield and condition curve ORIGINAL_UNKNOWN.",
+    "seconds": 15,
+    "rules": {
+      "iron_sword": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "iron_ingot",
+            1
+          ],
+          [
+            "metal_blade",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "leather",
+            1
+          ],
+          [
+            "metal_blade",
+            1
+          ]
+        ]
+      },
+      "iron_pick": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "metal_pipe",
+            1
+          ],
+          [
+            "iron_ingot",
+            1
+          ]
+        ]
+      },
+      "iron_axe": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "iron_plate",
+            1
+          ],
+          [
+            "mechanical_parts",
+            1
+          ]
+        ]
+      },
+      "industrial_axe": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "mechanical_parts",
+            1
+          ],
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "mechanical_gear",
+            1
+          ],
+          [
+            "mechanical_parts",
+            1
+          ]
+        ]
+      }
+    }
+  },
+  "recyclerV3": {
+    "_status": "SOH_PROVISIONAL MEC-01 P1: recyclerV3 supersedes recyclerV2 ONLY for NEW jobs (X:recover-v3) and ONLY for the four keys listed (each v2 entry over-returned vs its craft under the cumulative-tier recovery proof, see web/src/game/industrial-proof.ts). Queued/saved X:recover-v2 jobs keep v2 outputs forever. Other v2 keys stay on v2 (proved OK). Thresholds reuse recyclerV1 midCondition/highCondition.",
+    "seconds": 15,
+    "rules": {
+      "iron_sword": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "iron_ingot",
+            1
+          ],
+          [
+            "leather",
+            1
+          ]
+        ]
+      },
+      "iron_pick": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ]
+      },
+      "iron_axe": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "mechanical_parts",
+            1
+          ]
+        ]
+      },
+      "industrial_axe": {
+        "base": [
+          [
+            "scrap",
+            1
+          ]
+        ],
+        "mid": [
+          [
+            "mechanical_parts",
+            1
+          ],
+          [
+            "iron_ingot",
+            1
+          ]
+        ],
+        "high": [
+          [
+            "mechanical_parts",
+            1
+          ]
+        ]
+      }
+    }
+  },
+  "recyclerV4": {
+    "_status": "SOH_PROVISIONAL MEC-01 R2 A1/A2 DOCUMENTATION MIRROR. Runtime rules are immutable constants in recycler.ts (COMPONENT_RULES); a test asserts equality. New jobs only: X:gear-v1 (gear->2 MP+1 ingot, 15s), X:pipe-v2 (pipe->1 refined+1 MP, 12s), X:blade-v1 (blade->2 ingot+1 MP, 14s). X:pipe-v1 (pipe->1 refined, 10s) stays in code for stored jobs. Returns are below craft cost (no loop). LI per-item yields: ORIGINAL_UNKNOWN.",
+    "seconds": 15,
+    "components": {
+      "mechanical_gear": {
+        "recipe": "X:gear-v1",
+        "seconds": 15,
+        "outputs": [
+          [
+            "mechanical_parts",
+            2
+          ],
+          [
+            "iron_ingot",
+            1
+          ]
+        ]
+      },
+      "metal_pipe": {
+        "recipe": "X:pipe-v2",
+        "seconds": 12,
+        "outputs": [
+          [
+            "refined_iron_ingot",
+            1
+          ],
+          [
+            "mechanical_parts",
+            1
+          ]
+        ]
+      },
+      "metal_blade": {
+        "recipe": "X:blade-v1",
+        "seconds": 14,
+        "outputs": [
+          [
+            "iron_ingot",
+            2
+          ],
+          [
+            "mechanical_parts",
+            1
+          ]
+        ]
+      }
+    }
+  },
+  "airdropV1": {
+    "_status": "SOH_PROVISIONAL; ORIGINAL_UNKNOWN historical cadence, quantities, delays and weights",
+    "firstHours": 8,
+    "cadenceHours": 24,
+    "jitterMinutes": 20,
+    "maxEvents": 14,
+    "warningSeconds": 120,
+    "descentSeconds": 60,
+    "lockSeconds": 180,
+    "lifetimeSeconds": 5400,
+    "clearanceTiles": 1,
+    "maxSlope": 0.35,
+    "fixed": [
+      [
+        "mechanical_parts",
+        2
+      ],
+      [
+        "fasteners",
+        2
+      ]
+    ],
+    "weights": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "options": [
+      [
+        "fuel_can",
+        1
+      ],
+      [
+        "energy_refined",
+        2
+      ],
+      [
+        "iron_ingot",
+        2
+      ],
+      [
+        "iron_sword",
+        1
+      ]
+    ]
+  },
+  "worldStimulusV1": {
+    "_status": "SOH_PROVISIONAL; ORIGINAL_UNKNOWN sensory ranges, duration and species sensitivity. W09: no home-proximity exclusion (Creator-approved). signature 320 px (10 tiles) is provisional and stays well inside BAL.ai.activeRadiusTiles (30 tiles) so the creature consumer can process it.",
+    "landingSoundRange": 160,
+    "signalMs": 4000,
+    "memoryMs": 24000,
+    "arrivalPixels": 10,
+    "speedMultiplier": 0.7,
+    "hearing": {
+      "wolf": 1,
+      "crawler": 0.8,
+      "toad": 0.55,
+      "beetle": 0.7,
+      "boar": 0,
+      "crab": 0
+    },
+    "combatSoundRanges": {
+      "ranged": 150,
+      "melee": 36,
+      "signature": 320
+    },
+    "combatSignalCap": 32
+  },
+  "restV1": {
+    "_status": "SOH_PROVISIONAL_REVERSIBLE: physically supplied bed rest. No LI parity claim. Rates reuse player.offlineHungerPerHour / offlineThirstPerHour.",
+    "triggerStat": 25,
+    "durationsHours": [
+      1,
+      8,
+      24
+    ],
+    "reserveSlots": 12,
+    "bedChestRadiusTiles": 3,
+    "wakeRadiusTiles": 4
+  },
+  "ironPlatePatchV1": {
+    "_status": "SOH_PROVISIONAL B01-R1. One paid Iron Plate patches at most ceil(maxHp*fraction) HP on an eligible damaged wall-layer structure (walls and doors), capped at maxHp. Matches the normal repair rate of 25% per action. Not a permanent max-HP reinforcement. LI historical iron_plate: ORIGINAL_UNKNOWN for repair value.",
+    "fraction": 0.25
+  },
+  "irSensorV1": {
+    "_status": "SOH_PROVISIONAL B02-P1. Version ir-v1. ORIGINAL_UNKNOWN for historical LI detector radius, power draw and cost. Single source of numbers for the infrared sensor.",
+    "rangeTiles": 6,
+    "hp": 90,
+    "capacitySlots": 1,
+    "targets": [
+      "player",
+      "hostile-aggro-awake"
+    ],
+    "offlineCreatures": "excluded (no synthetic offline detection)",
+    "lineOfSight": "clearPhysicalLine, walls and solid blocks stop detection",
+    "cost": [
+      [
+        "mechanical_gear",
+        1
+      ],
+      [
+        "iron_ingot",
+        1
+      ],
+      [
+        "fasteners",
+        2
+      ]
+    ]
+  },
+  "bearTrapV1": {
+    "_status": "SOH_PROVISIONAL B02-P1-B (trap-v1). ORIGINAL_UNKNOWN for historical LI bear trap damage, durability and cost; the LI-v5 example (50 iron ingot + 1 gear) is historical context only, not an SOH default.",
+    "cost": [
+      [
+        "mechanical_gear",
+        1
+      ],
+      [
+        "iron_ingot",
+        2
+      ],
+      [
+        "fasteners",
+        2
+      ]
+    ],
+    "armCost": [
+      [
+        "iron_plate",
+        1
+      ]
+    ],
+    "rearmCost": [
+      [
+        "iron_plate",
+        1
+      ]
+    ],
+    "damage": 16,
+    "stunMs": 1500,
+    "uses": 3,
+    "wearPerTrigger": 10,
+    "hp": 60,
+    "offline": "never triggers during offline settlement"
+  },
+  "oilPumpV1": {
+    "_status": "SOH_PROVISIONAL oil-pump-v1. Physical extraction adapter. LI pump rate, power and crude yield are ORIGINAL_UNKNOWN. Production placement is DISABLED: a pump needs an authorized oil site (Map owner); the only accepted source authority today is the labelled test fixture.",
+    "version": "oil-pump-v1",
+    "hp": 160,
+    "need": "any",
+    "cost": [
+      [
+        "iron_ingot",
+        3
+      ],
+      [
+        "mechanical_parts",
+        2
+      ],
+      [
+        "spares",
+        2
+      ],
+      [
+        "brick",
+        2
+      ]
+    ],
+    "requiresWorkbenchLevel": 2,
+    "secs": 12,
+    "fixtureAuthority": "test-fixture-v1",
+    "maxSourceStock": 200
+  },
+  "calendar": {
+    "_status": "LOCKED_CANON scope / TUNABLE_BALANCE numbers. Bible \u00a70.1c D-FINAL-02 (CREATOR_LOCKED 2026-11-08): a run is 336 real hours and contains about two in-world years as two Spring->Summer->Autumn->Winter cycles == eight consecutive seasons. The eight equal phases below are the NOMINAL implementation parameter (42 h/season); only the phase LENGTH is provisional. 336 h, the final 72 h Ragnarok window and the season order are fixed and are not tunable here.",
+    "version": "world_calendar_v1",
+    "phaseHours": 42,
+    "years": 2,
+    "_phaseHoursNote": "SOH_PROVISIONAL nominal parameter = maxRunHours / (years x 4). Tunable only against evidence and only inside the fixed 336 h / 72 h run clock."
+  },
+  "seasonClimateV1": {
+    "_status": "SOH_PROVISIONAL / TUNABLE_BALANCE. Climate AMPLITUDE per region is still [C\u1ea6N \u0110O] per Bible \u00a70.1c; these are bounded global deviations applied to Map-owned temperature/moisture, never new geography. Spring is the neutral reference season (offset 0) so the measured comfortV1 and garden baselines keep their calibration.",
+    "version": "seasonal-climate-v1",
+    "temperatureOffset": {
+      "spring": 0,
+      "summer": 0.1,
+      "autumn": -0.05,
+      "winter": -0.25
+    },
+    "moistureOffset": {
+      "spring": 0,
+      "summer": -0.15,
+      "autumn": 0.08,
+      "winter": 0.02
+    },
+    "snowTemperatureBelow": 0.3,
+    "cold": {
+      "_status": "SOH_PROVISIONAL bounded extra SYS15-C03 exposure points, additive to the legacy snow/water/dark cold parts",
+      "fullDeviation": 0.25,
+      "comfortReference": 0.3,
+      "maxPoints": 7
+    },
+    "heat": {
+      "_status": "SOH_PROVISIONAL water demand from seasonal heat/dryness; the seasonal term is 0 in the neutral season",
+      "temperatureSpan": 0.12,
+      "moistureSpan": 0.15,
+      "dryReference": 0.4,
+      "warmReference": 0.6,
+      "maxThirstBonus": 0.4,
+      "maxEvaporationBonus": 1.5
+    },
+    "growth": {
+      "_status": "SOH_PROVISIONAL competing crops (SYS15-C10): Sunroot peaks in summer, Bitterleaf survives winter",
+      "crop": {
+        "spring": 1,
+        "summer": 1.15,
+        "autumn": 0.9,
+        "winter": 0.55
+      },
+      "herb": {
+        "spring": 1,
+        "summer": 0.9,
+        "autumn": 1.05,
+        "winter": 0.8
+      }
+    },
+    "growthMinFactor": 0.25,
+    "traces": {
+      "_status": "snowfall uses the existing BAL.traces.snowfallSnowMult magnitude: fresh snow buries a print on bare ground faster than rain washes it (rainDecayMult 4), and a print cut into snow/ice divides by snowfallSnowMult so it survives longer",
+      "snowfallDecayMult": 6
+    }
   }
 }

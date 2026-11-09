@@ -1,0 +1,140 @@
+{
+  "note": "C1 PAID CHAIN, real intents end to end. Timing is SIM_FIXTURE_MEASUREMENT (stepStations with catalog recipe times). Fixtures labelled; crate high-grade roll left untouched (gear/pipe CRAFTED).",
+  "seed": 4242,
+  "route": "factory crate -> furnace -> workbench L2 -> paid L3 -> research table -> motorbike_kit -> placeMotorbike -> vehicleRefuel -> vehicleMount -> scrap cargo in bike -> save/reload UID check",
+  "grants_fixture_intent": {
+    "iron_ingot": 20,
+    "coal": 2,
+    "wood": 30,
+    "stone": 22,
+    "mechanical_parts": 11,
+    "fasteners": 10,
+    "spares": 26
+  },
+  "taken_from_crate_real_moves": {
+    "mechanical_parts": 2,
+    "fasteners": 3,
+    "spares": 5,
+    "scrap": 3
+  },
+  "intermediates": {
+    "refined_iron_ingot": 2,
+    "mechanical_gear": 1,
+    "metal_pipe": 1,
+    "vehicle_frame": 1,
+    "vehicle_drive": 1,
+    "motorbike_kit": 1,
+    "blueprint": 1
+  },
+  "uiDs": {
+    "refined": "s8o",
+    "gear": "s8w",
+    "pipe": "s8z",
+    "frame": "s94",
+    "drive": "s99",
+    "kit": "s9g",
+    "bike": "e9i",
+    "bikeDeployed": "s9g",
+    "cargoScrap": "s8d"
+  },
+  "costs": {
+    "furnaceBuild": {
+      "stone": 18,
+      "wood": 4
+    },
+    "workbenchBuild": {
+      "wood": 14,
+      "stone": 4
+    },
+    "workbenchL2": {
+      "mechanical_parts": 2,
+      "iron_ingot": 1
+    },
+    "refinedIron": {
+      "iron_ingot": 3,
+      "coal": 1
+    },
+    "mechanical_gear": {
+      "iron_ingot": 2,
+      "mechanical_parts": 2,
+      "fasteners": 1
+    },
+    "metal_pipe": {
+      "refined_iron_ingot": 2,
+      "mechanical_parts": 1
+    },
+    "vehicle_frame_piped": {
+      "metal_pipe": 1,
+      "iron_ingot": 2,
+      "mechanical_parts": 2,
+      "spares": 2
+    },
+    "vehicle_drive_geared": {
+      "mechanical_gear": 1,
+      "iron_ingot": 1,
+      "fasteners": 2,
+      "spares": 2
+    },
+    "workbenchL3_PAID": {
+      "mechanical_parts": 6,
+      "iron_ingot": 8,
+      "fasteners": 8,
+      "spares": 12
+    },
+    "researchTable": {
+      "wood": 10,
+      "spares": 6,
+      "iron_ingot": 1
+    },
+    "directedResearch_motorbike_kit": {
+      "spares": 9
+    },
+    "motorbike_kit": {
+      "vehicle_frame": 1,
+      "vehicle_drive": 1,
+      "iron_ingot": 2,
+      "fasteners": 2
+    },
+    "vehicleRefuel": {
+      "fuel_can": 1
+    }
+  },
+  "net_consumed_after_grants": {
+    "iron_ingot": 20,
+    "refined_iron_ingot": 0,
+    "mechanical_parts": 13,
+    "fasteners": 13,
+    "spares": 31,
+    "wood": 28,
+    "stone": 22,
+    "coal": 2,
+    "scrap": 3,
+    "fuel_can": 0
+  },
+  "saveReload": {
+    "midChainBenchLevel": 3,
+    "reloadedBikeIdMatches": true,
+    "reloadedCargoUidMatches": true,
+    "reloadedPlayerVehicleMatches": true,
+    "reloadedKnowledgeHasKit": true
+  },
+  "crate_kept_high_grade_roll": true,
+  "ordinary_survival_without_chain": "covered by the sibling test in this file",
+  "labels": {
+    "natural": [
+      "crate takes",
+      "furnace build/feed/craft",
+      "workbench build/upgrade/craft",
+      "research build/directed/learn",
+      "kit craft",
+      "motorbike place/refuel/mount",
+      "cargo move"
+    ],
+    "fixture": [
+      "player placement at the ends",
+      "raw material grants",
+      "fuel canister",
+      "creatures cleared at start"
+    ]
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "method": "Controlled proximity fixtures; authentic site stock, normal browser keyboard and mouse, not natural travel or lock access.",
+  "report": [
+    {
+      "kind": "toolbox",
+      "site": "tp 96,114",
+      "initial": 5,
+      "after": {
+        "remaining": 4,
+        "inventory": [
+          [
+            "knife",
+            1
+          ],
+          [
+            "water_flask",
+            1
+          ],
+          [
+            "berries",
+            3
+          ],
+          [
+            "spares",
+            2
+          ]
+        ]
+      },
+      "ui": "Toolbox\n✕\nParts for repairs, machinery and research. · Crossroads Trading Post (96,114)\nWithdraw only · 5 stacks remain. Partial stock stays. After empty: ordinary stock returns in 24h; rare finds do not.\n3\n2\n2\n2\nTake all"
+    },
+    {
+      "kind": "supply",
+      "site": "tp 107,121",
+      "initial": 4,
+      "after": {
+        "remaining": 3,
+        "inventory": [
+          [
+            "knife",
+            1
+          ],
+          [
+            "water_flask",
+            1
+          ],
+          [
+            "berries",
+            3
+          ],
+          [
+            "bandage",
+            1
+          ]
+        ]
+      },
+      "ui": "Supply cache\n✕\nFood, healing and useful expedition supplies. · Crossroads Trading Post (107,121)\nWithdraw only · 4 stacks remain. Partial stock stays. After empty: ordinary stock returns in 12h; rare finds do not.\n8\n2\nTake all"
+    },
+    {
+      "kind": "military",
+      "site": "wreck 129,181",
+      "initial": 5,
+      "after": {
+        "remaining": 4,
+        "inventory": [
+          [
+            "knife",
+            1
+          ],
+          [
+            "water_flask",
+            1
+          ],
+          [
+            "berries",
+            3
+          ],
+          [
+            "energy_basic",
+            4
+          ]
+        ]
+      },
+      "ui": "Military cache\n✕\nCombat ammunition or materials, in riskier sites. · Wreck of the Halcyon (129,181)\nWithdraw only · 5 stacks remain. Partial stock stays. After empty: ordinary stock returns in 24h; rare finds do not.\n3⚡\n4\n4\n4\nTake all"
+    },
+    {
+      "kind": "advanced",
+      "site": "factory_vault 160,96",
+      "initial": 6,
+      "after": {
+        "remaining": 5,
+        "inventory": [
+          [
+            "knife",
+            1
+          ],
+          [
+            "water_flask",
+            1
+          ],
+          [
+            "berries",
+            3
+          ],
+          [
+            "energy_refined",
+            1
+          ]
+        ]
+      },
+      "ui": "Advanced military cache\n✕\nDeeper-site energy and components; exceptional finds are finite. · Dead Foundry Works (160,96)\nWithdraw only · 6 stacks remain. Partial stock stays. After empty: ordinary stock returns in 48h; rare finds do not.\n3⚡\n6\n2\nTake all"
+    }
+  ]
+}

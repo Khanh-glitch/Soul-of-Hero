@@ -1,0 +1,4 @@
+{
+  "method": "Normal inputs; location from prior assisted player run.",
+  "failure": "TimeoutError: locator.waitFor: Timeout 3000ms exceeded.\nCall log:\n  - waiting for locator('.panel').filter({ has: locator('.panel-h').getByText('Workbench', { exact: true }) }).first() to be visible\n"
+}

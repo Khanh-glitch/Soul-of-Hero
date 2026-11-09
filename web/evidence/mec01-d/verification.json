@@ -1,0 +1,29 @@
+{
+  "label": "CHECK_EVIDENCE / SIM_FIXTURE_MEASUREMENT",
+  "note": "Verification receipt for MEC-01 R2 phase D (bounded economy + environment verification). Command outputs are real; no browser run was performed (see browserRun.status). The five-chain benchmark numbers are SIM_FIXTURE_MEASUREMENT over the live registry + shipping_fresh world, never NATURAL_INPUT.",
+  "date": "2026-11-08",
+  "branch": "arena/d4bfcfff-soul-of-hero (pushed from arena/a9d7aa20-soul-of-hero)",
+  "node": "v22.22.3",
+  "vitest": "4.1.12",
+  "tsc": "5.9.3",
+  "commands": [
+    { "cmd": "npx tsc --noEmit -p .", "result": "PASS (no errors), 13.6s" },
+    { "cmd": "npx vitest run tests/mec01-five-chain-benchmark.test.ts", "result": "PASS (1/1, 1202ms); regenerated web/reports/mec01-five-chain-benchmark.{json,md} (version mec01-five-chain-benchmark-v2)" },
+    { "cmd": "npm test  (= vitest run --testTimeout=120000)", "result": "PASS: Test Files 99 passed | 1 skipped (100); Tests 721 passed | 1 skipped (722); Duration 440.83s. Effective timeout 120000ms (project script), NOT the vitest default. The 1 skip is tests/mec01-c3-offline-child.test.ts without an on-disk save (by design; it is exercised as a separate OS child by tests/mec01-c3-offline-resume.test.ts, which passed)." },
+    { "cmd": "npx vite build --config vite.http.config.ts", "result": "PASS in 6.49s; dist-http (23 MB, 71 asset files, index 397 B + hashed chunks, entry JS 3.86 MB min; chunk-size warning only). Single-file OOM (exit 137) is NOT inherited by the multi-file HTTP artifact." },
+    { "cmd": "python3 -m http.server 41730 --bind 0.0.0.0 --directory dist-http (then curl)", "result": "GET / -> 200 text/html (397 B, references /assets/index-CgBSWD8i.js + index-B9Rk6Zft.css); GET entry JS -> 200 text/javascript 3858603 B; GET css -> 200 text/css; GET /game -> 404 (plain static server has no SPA fallback; the HTTP artifact is rooted at /)." }
+  ],
+  "browserRun": {
+    "status": "BLOCKED",
+    "reason": "No browser available in this sandbox: no system chromium/chrome/firefox on PATH; playwright 1.55.1 (devDependency) requires a browser download from cdn.playwright.dev which is outside the sandbox outbound allowlist — npx playwright install chromium failed with ECONNRESET ('Client network socket disconnected before secure TLS connection was established').",
+    "required": "A runner/owner machine with network access to playwright's CDN (or a preinstalled chromium) to serve dist-http and capture 640x360 and 1280x720 gameplay evidence.",
+    "notDone": ["640x360 capture", "1280x720 capture"]
+  },
+  "benchmarkModel": {
+    "b05Eligibility": "renewable sources (shipping.factory.exterior.industrial-toolbox, shipping.tp.bow-cache.standard-toolbox) may underwrite repeatable route claims; the vault (shipping.factory.vault.advanced-keycard, finite) never does. Rule exported as B05_REPEATABLE_RULE and shared with the test assertions.",
+    "stockClasses": "every source hit tagged stockClass (renewable | finite | world-node | unknown) + eligibleForRepeatableLoop + stockClock + cooldownHours + probabilityPerRoll (grammar fixed = 1; grammar pool = 1/poolSize; authored cache = deterministic).",
+    "integerBatchRoutes": "per route (whole crafts only, exact authored inputs consumed, surplus outputs reported) and per chain via recursive integerTree (no fractional crafts at any node); both reported alongside the legacy amortized per-unit model as an alternative cost model.",
+    "separatedChannels": ["source probability (probabilityPerRoll)", "stock clocks (stockClass/stockClock/cooldownHours)", "player travel (ORIGINAL_UNKNOWN: no travel-cost model in shipping Web)", "unpriced nonmetals (coal/wood/stone/leather/spares/crystal compared per material; numeraire only iron_ingot=iron_ore=3xscrap)", "historical LI figures (context only; version/mode/confidence; never a balance input)"],
+    "unknownToken": "ORIGINAL_UNKNOWN everywhere (was bare UNKNOWN); zero bare UNKNOWN remains in unknowns/travel/furnaceFuel/kit/research/route-row fallbacks."
+  }
+}

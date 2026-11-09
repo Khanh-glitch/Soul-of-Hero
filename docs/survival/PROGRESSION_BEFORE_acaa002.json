@@ -1,0 +1,5230 @@
+{
+  "revision": "catalog snapshot (see git commit)",
+  "method": "Source definitions and statics only: edges are candidates, not proof of geometry, unlock reachability, renewable stock or player experience.",
+  "counts": {
+    "items": 70,
+    "sources": 19,
+    "recipes": 34,
+    "distinctOutputs": 33,
+    "structures": 23,
+    "maxRecipeDepth": 2
+  },
+  "items": {
+    "wood": {
+      "definition": {
+        "name": "Wood",
+        "cat": "res",
+        "icon": "log",
+        "c1": "#8a5a32",
+        "c2": "#c9935a",
+        "w": 1,
+        "max": 60,
+        "desc": "Split timber. Fuel, tools, walls.",
+        "fuel": 20
+      },
+      "obtained": {
+        "sources": [
+          "oak",
+          "pine",
+          "snowpine",
+          "palm",
+          "willow"
+        ],
+        "poi": [
+          "shipping:tp@107,121",
+          "dev_delta:tp@107,121"
+        ],
+        "drops": [],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [
+          "torch",
+          "stone_axe",
+          "stone_pick",
+          "wood_spear",
+          "charcoal",
+          "arrow",
+          "bow",
+          "iron_axe",
+          "iron_pick",
+          "cart_kit"
+        ],
+        "structures": [
+          "claim",
+          "floor_wood",
+          "wall_wood",
+          "wall_stone",
+          "door_wood",
+          "roof_thatch",
+          "bed_straw",
+          "chest_small",
+          "chest_large",
+          "campfire",
+          "furnace",
+          "workbench",
+          "research",
+          "garden",
+          "barrel",
+          "spikes",
+          "barricade",
+          "torch_post"
+        ],
+        "fuel": true,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "stone": {
+      "definition": {
+        "name": "Stone",
+        "cat": "res",
+        "icon": "stone",
+        "c1": "#7d8088",
+        "c2": "#b9bcc4",
+        "w": 1.2,
+        "max": 60,
+        "desc": "Rough stone. Foundations, furnaces, tools."
+      },
+      "obtained": {
+        "sources": [
+          "rock",
+          "iron"
+        ],
+        "poi": [
+          "shipping:s2@80,77",
+          "dev_delta:s2@80,77"
+        ],
+        "drops": [],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [
+          "stone_axe",
+          "stone_pick",
+          "brick",
+          "glass",
+          "arrow"
+        ],
+        "structures": [
+          "claim",
+          "floor_stone",
+          "wall_stone",
+          "campfire",
+          "furnace",
+          "workbench"
+        ],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "fiber": {
+      "definition": {
+        "name": "Plant Fiber",
+        "cat": "res",
+        "icon": "fiber",
+        "c1": "#5d8a3a",
+        "c2": "#a5d65e",
+        "w": 0.2,
+        "max": 80,
+        "desc": "Grass and reed fiber. Rope, thatch, bandages.",
+        "fuel": 4
+      },
+      "obtained": {
+        "sources": [
+          "palm",
+          "willow",
+          "grass",
+          "reed"
+        ],
+        "poi": [
+          "shipping:s0@38,105",
+          "dev_delta:s0@38,105"
+        ],
+        "drops": [],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [
+          "rope",
+          "torch",
+          "bandage",
+          "cloth",
+          "arrow"
+        ],
+        "structures": [
+          "roof_thatch",
+          "bed_straw",
+          "garden"
+        ],
+        "fuel": true,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "iron_ore": {
+      "definition": {
+        "name": "Iron Ore",
+        "cat": "res",
+        "icon": "ore",
+        "c1": "#6b5a52",
+        "c2": "#d08a5a",
+        "w": 2,
+        "max": 40,
+        "desc": "Smelt in a fueled furnace."
+      },
+      "obtained": {
+        "sources": [
+          "iron"
+        ],
+        "poi": [
+          "shipping:factory@154,96",
+          "dev_delta:factory@154,96"
+        ],
+        "drops": [],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [
+          "iron_ingot"
+        ],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "coal": {
+      "definition": {
+        "name": "Coal",
+        "cat": "res",
+        "icon": "ore",
+        "c1": "#25252c",
+        "c2": "#55556a",
+        "w": 1,
+        "max": 40,
+        "desc": "Dense fuel. Burns long.",
+        "fuel": 80
+      },
+      "obtained": {
+        "sources": [
+          "coalv"
+        ],
+        "poi": [
+          "shipping:factory@154,96",
+          "dev_delta:factory@154,96"
+        ],
+        "drops": [],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": true,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "charcoal": {
+      "definition": {
+        "name": "Charcoal",
+        "cat": "res",
+        "icon": "ore",
+        "c1": "#2b2420",
+        "c2": "#6e5a4c",
+        "w": 0.5,
+        "max": 60,
+        "desc": "Fuel made from burnt wood.",
+        "fuel": 55
+      },
+      "obtained": {
+        "sources": [
+          "deadtree"
+        ],
+        "poi": [],
+        "drops": [],
+        "recipes": [
+          "charcoal"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": true,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "crystal": {
+      "definition": {
+        "name": "Frost Crystal",
+        "cat": "res",
+        "icon": "gem",
+        "c1": "#4fa6d8",
+        "c2": "#c8f0ff",
+        "w": 0.5,
+        "max": 30,
+        "desc": "Cold-grown crystal from the north. Core synthesis."
+      },
+      "obtained": {
+        "sources": [
+          "crystal"
+        ],
+        "poi": [],
+        "drops": [],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [
+          "glass",
+          "core_fire",
+          "core_earth",
+          "core_storm",
+          "core_frost"
+        ],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "raw_salt": {
+      "definition": {
+        "name": "Raw Salt",
+        "cat": "res",
+        "icon": "gem",
+        "c1": "#9bb8b2",
+        "c2": "#f2fff0",
+        "w": 0.25,
+        "max": 40,
+        "desc": "Mineral crust chipped from coastal salt shale. A small addition preserves cooked provisions."
+      },
+      "obtained": {
+        "sources": [
+          "salt_shale"
+        ],
+        "poi": [],
+        "drops": [],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [
+          "salted_meat"
+        ],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "salted_meat": {
+      "definition": {
+        "name": "Salted Roast",
+        "cat": "food",
+        "icon": "meat",
+        "c1": "#9a5638",
+        "c2": "#f0bb76",
+        "w": 0.45,
+        "max": 20,
+        "desc": "Roast meat seasoned with gathered salt; a hearty field meal.",
+        "food": {
+          "hunger": 42,
+          "hp": 8,
+          "warmth": 8
+        }
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [
+          "salted_meat"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "food"
+        ]
+      }
+    },
+    "sulfur": {
+      "definition": {
+        "name": "Sulfur",
+        "cat": "res",
+        "icon": "ore",
+        "c1": "#b59a1e",
+        "c2": "#f2e05a",
+        "w": 0.5,
+        "max": 40,
+        "desc": "Volcanic sulfur. Volatile."
+      },
+      "obtained": {
+        "sources": [
+          "sulfur"
+        ],
+        "poi": [],
+        "drops": [
+          "beetle"
+        ],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [
+          "core_fire"
+        ],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "scrap": {
+      "definition": {
+        "name": "Scrap Metal",
+        "cat": "res",
+        "icon": "scrap",
+        "c1": "#6f7378",
+        "c2": "#c0a07a",
+        "w": 1,
+        "max": 60,
+        "desc": "Salvage from wrecks. Melts into iron."
+      },
+      "obtained": {
+        "sources": [
+          "scrap",
+          "wreck"
+        ],
+        "poi": [
+          "shipping:s3@164,75",
+          "shipping:factory@150,103",
+          "dev_delta:s3@164,75",
+          "dev_delta:factory@150,103"
+        ],
+        "drops": [
+          "crawler"
+        ],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [
+          "scrap_ingot",
+          "scrap_helm"
+        ],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "spares": {
+      "definition": {
+        "name": "Spares",
+        "cat": "res",
+        "icon": "gear",
+        "c1": "#8a8f96",
+        "c2": "#e2c25a",
+        "w": 0.3,
+        "max": 60,
+        "desc": "Run-local components. Research currency and advanced parts."
+      },
+      "obtained": {
+        "sources": [
+          "scrap",
+          "wreck"
+        ],
+        "poi": [
+          "shipping:s3@164,75",
+          "shipping:factory_vault@160,96",
+          "shipping:factory@150,103",
+          "shipping:wreck@129,181",
+          "dev_delta:s3@164,75",
+          "dev_delta:factory_vault@160,96",
+          "dev_delta:factory@150,103",
+          "dev_delta:wreck@129,181",
+          "dev_delta:delta_relay@150,81"
+        ],
+        "drops": [
+          "crawler"
+        ],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [
+          "gas_mask",
+          "core_fire",
+          "core_earth",
+          "core_storm",
+          "core_frost"
+        ],
+        "structures": [
+          "research"
+        ],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "iron_ingot": {
+      "definition": {
+        "name": "Iron Ingot",
+        "cat": "res",
+        "icon": "ingot",
+        "c1": "#7a8696",
+        "c2": "#dfe6ee",
+        "w": 1,
+        "max": 40,
+        "desc": "Smelted iron."
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [
+          "shipping:tp@107,121",
+          "shipping:factory_vault@162,96",
+          "dev_delta:tp@107,121",
+          "dev_delta:factory_vault@162,96",
+          "dev_delta:delta_relay@150,81"
+        ],
+        "drops": [],
+        "recipes": [
+          "iron_ingot",
+          "scrap_ingot"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [
+          "iron_axe",
+          "iron_pick",
+          "iron_sword",
+          "cart_kit",
+          "core_earth"
+        ],
+        "structures": [
+          "door_iron",
+          "chest_large",
+          "research"
+        ],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "rope": {
+      "definition": {
+        "name": "Rope",
+        "cat": "res",
+        "icon": "rope",
+        "c1": "#9a7a44",
+        "c2": "#d8bb78",
+        "w": 0.3,
+        "max": 30,
+        "desc": "Twisted fiber."
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [
+          "shipping:s0@38,105",
+          "shipping:s1@81,168",
+          "shipping:tp@96,114",
+          "shipping:light@31,175",
+          "dev_delta:s0@38,105",
+          "dev_delta:s1@81,168",
+          "dev_delta:tp@96,114",
+          "dev_delta:light@31,175"
+        ],
+        "drops": [],
+        "recipes": [
+          "rope"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [
+          "stone_axe",
+          "stone_pick",
+          "wood_spear",
+          "water_flask",
+          "bow",
+          "leather_armor",
+          "fur_cloak",
+          "cart_kit"
+        ],
+        "structures": [
+          "door_wood",
+          "barrel"
+        ],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "hide": {
+      "definition": {
+        "name": "Raw Hide",
+        "cat": "res",
+        "icon": "hide",
+        "c1": "#7a4e34",
+        "c2": "#b88a62",
+        "w": 0.8,
+        "max": 30,
+        "desc": "Cure at a workbench into leather."
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [
+          "boar"
+        ],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [
+          "water_flask",
+          "leather"
+        ],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "leather": {
+      "definition": {
+        "name": "Leather",
+        "cat": "res",
+        "icon": "hide",
+        "c1": "#5a3a22",
+        "c2": "#9c6a3e",
+        "w": 0.6,
+        "max": 30,
+        "desc": "Cured leather."
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [
+          "shipping:mill@126,98",
+          "dev_delta:mill@126,98"
+        ],
+        "drops": [],
+        "recipes": [
+          "leather"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [
+          "iron_axe",
+          "iron_pick",
+          "iron_sword",
+          "leather_armor",
+          "chitin_armor",
+          "scrap_helm"
+        ],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "fur": {
+      "definition": {
+        "name": "Wolf Fur",
+        "cat": "res",
+        "icon": "hide",
+        "c1": "#8e95a0",
+        "c2": "#e1e6ee",
+        "w": 0.6,
+        "max": 30,
+        "desc": "Warm pelt."
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [
+          "wolf"
+        ],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [
+          "fur_cloak"
+        ],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "chitin": {
+      "definition": {
+        "name": "Ash Chitin",
+        "cat": "res",
+        "icon": "shell",
+        "c1": "#3a2a2a",
+        "c2": "#c0503a",
+        "w": 0.8,
+        "max": 30,
+        "desc": "Heat-hardened shell plate."
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [
+          "beetle"
+        ],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [
+          "chitin_armor"
+        ],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "shell": {
+      "definition": {
+        "name": "Crab Shell",
+        "cat": "res",
+        "icon": "shell",
+        "c1": "#b4502e",
+        "c2": "#f0a070",
+        "w": 0.5,
+        "max": 30,
+        "desc": "Curved shell."
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [
+          "crab"
+        ],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "gland": {
+      "definition": {
+        "name": "Mire Gland",
+        "cat": "res",
+        "icon": "berry",
+        "c1": "#5a7a2a",
+        "c2": "#c8e070",
+        "w": 0.2,
+        "max": 20,
+        "desc": "Toad gland. Purges toxins."
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [
+          "toad"
+        ],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [
+          "antirad"
+        ],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "brick": {
+      "definition": {
+        "name": "Brick",
+        "cat": "res",
+        "icon": "ingot",
+        "c1": "#8e4a36",
+        "c2": "#d48466",
+        "w": 1,
+        "max": 40,
+        "desc": "Fired stone brick."
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [
+          "brick"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [
+          "wall_brick",
+          "roof_tile"
+        ],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "cloth": {
+      "definition": {
+        "name": "Cloth",
+        "cat": "res",
+        "icon": "cloth",
+        "c1": "#7a6e9a",
+        "c2": "#c8c0e0",
+        "w": 0.3,
+        "max": 30,
+        "desc": "Woven fiber cloth."
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [
+          "shipping:tp@96,114",
+          "shipping:wreck@133,180",
+          "dev_delta:tp@96,114",
+          "dev_delta:wreck@133,180"
+        ],
+        "drops": [],
+        "recipes": [
+          "cloth"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [
+          "gas_mask"
+        ],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "glass": {
+      "definition": {
+        "name": "Glass",
+        "cat": "res",
+        "icon": "gem",
+        "c1": "#6fb0a8",
+        "c2": "#e0fff8",
+        "w": 0.4,
+        "max": 30,
+        "desc": "Fused crystal and sand-glass."
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [
+          "glass"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [
+          "gas_mask",
+          "core_storm"
+        ],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "seed": {
+      "definition": {
+        "name": "Wild Seeds",
+        "cat": "res",
+        "icon": "seed",
+        "c1": "#7a6a3a",
+        "c2": "#d8c070",
+        "w": 0.05,
+        "max": 40,
+        "desc": "Plant in a garden plot."
+      },
+      "obtained": {
+        "sources": [
+          "oak",
+          "bush"
+        ],
+        "poi": [
+          "shipping:mill@120,88",
+          "dev_delta:mill@120,88"
+        ],
+        "drops": [],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "berries": {
+      "definition": {
+        "name": "Berries",
+        "cat": "food",
+        "icon": "berry",
+        "c1": "#7a1e3a",
+        "c2": "#e05a7a",
+        "w": 0.1,
+        "max": 30,
+        "desc": "Sweet and watery.",
+        "food": {
+          "hunger": 8,
+          "thirst": 4
+        }
+      },
+      "obtained": {
+        "sources": [
+          "bush"
+        ],
+        "poi": [
+          "shipping:s0@38,105",
+          "dev_delta:s0@38,105"
+        ],
+        "drops": [],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": true
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "food"
+        ]
+      }
+    },
+    "meat": {
+      "definition": {
+        "name": "Raw Meat",
+        "cat": "food",
+        "icon": "meat",
+        "c1": "#8e2a2a",
+        "c2": "#e07a7a",
+        "w": 0.5,
+        "max": 20,
+        "desc": "Risky raw. Cook at a campfire.",
+        "food": {
+          "hunger": 12,
+          "hp": -6
+        }
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [
+          "shipping:s1@81,168",
+          "dev_delta:s1@81,168"
+        ],
+        "drops": [
+          "boar",
+          "wolf",
+          "toad",
+          "crab"
+        ],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [
+          "cooked_meat",
+          "salted_meat",
+          "stew"
+        ],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "food"
+        ]
+      }
+    },
+    "cooked_meat": {
+      "definition": {
+        "name": "Roast Meat",
+        "cat": "food",
+        "icon": "meat",
+        "c1": "#6a3a1e",
+        "c2": "#d0904a",
+        "w": 0.4,
+        "max": 20,
+        "desc": "Hearty and warm.",
+        "food": {
+          "hunger": 34,
+          "hp": 6,
+          "warmth": 8
+        }
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [
+          "cooked_meat"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "food"
+        ]
+      }
+    },
+    "mushroom": {
+      "definition": {
+        "name": "Marsh Cap",
+        "cat": "food",
+        "icon": "mush",
+        "c1": "#6a4a8a",
+        "c2": "#d0a0f0",
+        "w": 0.1,
+        "max": 20,
+        "desc": "Edible. Slightly toxic raw.",
+        "food": {
+          "hunger": 6,
+          "rad": 4
+        }
+      },
+      "obtained": {
+        "sources": [
+          "mushroom"
+        ],
+        "poi": [],
+        "drops": [],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "food"
+        ]
+      }
+    },
+    "herb": {
+      "definition": {
+        "name": "Bitterleaf",
+        "cat": "food",
+        "icon": "herb",
+        "c1": "#2e6a3a",
+        "c2": "#7ad08a",
+        "w": 0.1,
+        "max": 30,
+        "desc": "Medicinal herb.",
+        "food": {
+          "hp": 6,
+          "rad": -6
+        }
+      },
+      "obtained": {
+        "sources": [
+          "herb"
+        ],
+        "poi": [],
+        "drops": [],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [
+          "stew",
+          "medkit",
+          "antirad"
+        ],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "food"
+        ]
+      }
+    },
+    "crop": {
+      "definition": {
+        "name": "Sunroot",
+        "cat": "food",
+        "icon": "crop",
+        "c1": "#b0601e",
+        "c2": "#f0b050",
+        "w": 0.3,
+        "max": 30,
+        "desc": "Garden-grown tuber.",
+        "food": {
+          "hunger": 22,
+          "thirst": 6
+        }
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [
+          "shipping:mill@120,88",
+          "dev_delta:mill@120,88"
+        ],
+        "drops": [],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [
+          "stew"
+        ],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "food"
+        ]
+      }
+    },
+    "stew": {
+      "definition": {
+        "name": "Root Stew",
+        "cat": "food",
+        "icon": "bowl",
+        "c1": "#6a3a1e",
+        "c2": "#e0a050",
+        "w": 0.5,
+        "max": 10,
+        "desc": "Hot stew. Warms and feeds.",
+        "food": {
+          "hunger": 45,
+          "thirst": 20,
+          "hp": 10,
+          "warmth": 25
+        }
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [
+          "stew"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "food"
+        ]
+      }
+    },
+    "water_flask": {
+      "definition": {
+        "name": "Water Flask",
+        "cat": "food",
+        "icon": "flask",
+        "c1": "#3a6aa0",
+        "c2": "#9ad0ff",
+        "w": 0.6,
+        "max": 1,
+        "desc": "Holds 4 drinks. Refill at fresh water or a rain barrel.",
+        "food": {
+          "thirst": 30
+        },
+        "charge": 4
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [
+          "shipping:s3@164,75",
+          "shipping:evac@172,24",
+          "dev_delta:s3@164,75",
+          "dev_delta:evac@172,24"
+        ],
+        "drops": [],
+        "recipes": [
+          "water_flask"
+        ],
+        "elder": [],
+        "vendor": true,
+        "starter": true
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "food",
+          "charge"
+        ]
+      }
+    },
+    "bandage": {
+      "definition": {
+        "name": "Bandage",
+        "cat": "food",
+        "icon": "cloth",
+        "c1": "#c0b8a8",
+        "c2": "#fff8e8",
+        "w": 0.1,
+        "max": 20,
+        "desc": "Stops bleeding.",
+        "food": {
+          "hp": 18
+        }
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [
+          "shipping:s1@81,168",
+          "shipping:s2@80,77",
+          "dev_delta:s1@81,168",
+          "dev_delta:s2@80,77",
+          "dev_delta:delta_relay@140,87"
+        ],
+        "drops": [],
+        "recipes": [
+          "bandage"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [
+          "medkit"
+        ],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "food"
+        ]
+      }
+    },
+    "medkit": {
+      "definition": {
+        "name": "Field Medkit",
+        "cat": "food",
+        "icon": "kit",
+        "c1": "#a03030",
+        "c2": "#f0e0e0",
+        "w": 0.4,
+        "max": 10,
+        "desc": "Herbal dressing.",
+        "food": {
+          "hp": 45
+        }
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [
+          "shipping:evac@172,24",
+          "dev_delta:evac@172,24",
+          "dev_delta:delta_relay@150,81"
+        ],
+        "drops": [],
+        "recipes": [
+          "medkit"
+        ],
+        "elder": [],
+        "vendor": true,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "food"
+        ]
+      }
+    },
+    "antirad": {
+      "definition": {
+        "name": "Purge Tonic",
+        "cat": "food",
+        "icon": "flask",
+        "c1": "#4a7a1e",
+        "c2": "#c8f070",
+        "w": 0.3,
+        "max": 10,
+        "desc": "Flushes radiation.",
+        "food": {
+          "rad": -45,
+          "thirst": 5
+        }
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [
+          "antirad"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "food"
+        ]
+      }
+    },
+    "knife": {
+      "definition": {
+        "name": "Survival Knife",
+        "cat": "tool",
+        "icon": "knife",
+        "c1": "#9aa4b0",
+        "c2": "#5a3a22",
+        "w": 0.5,
+        "max": 1,
+        "desc": "Humble but honest. Cuts fiber and flesh; slow on wood.",
+        "power": {
+          "wood": 1,
+          "plant": 3,
+          "scrap": 1
+        },
+        "dmg": 9,
+        "reach": 20,
+        "arc": 1.3,
+        "swing": 300,
+        "dur": 300
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": true
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "dmg",
+          "power"
+        ]
+      }
+    },
+    "stone_axe": {
+      "definition": {
+        "name": "Stone Axe",
+        "cat": "tool",
+        "icon": "axe",
+        "c1": "#8a8a90",
+        "c2": "#7a5a32",
+        "w": 1.4,
+        "max": 1,
+        "desc": "Fells trees. Clumsy weapon.",
+        "power": {
+          "wood": 3,
+          "plant": 1,
+          "scrap": 1
+        },
+        "dmg": 11,
+        "reach": 22,
+        "arc": 1.5,
+        "swing": 420,
+        "dur": 180
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [
+          "stone_axe"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "dmg",
+          "power"
+        ]
+      }
+    },
+    "stone_pick": {
+      "definition": {
+        "name": "Stone Pickaxe",
+        "cat": "tool",
+        "icon": "pick",
+        "c1": "#8a8a90",
+        "c2": "#7a5a32",
+        "w": 1.5,
+        "max": 1,
+        "desc": "Breaks stone and ore. Pries scrap.",
+        "power": {
+          "stone": 3,
+          "ore": 2,
+          "scrap": 2
+        },
+        "dmg": 10,
+        "reach": 22,
+        "arc": 1.2,
+        "swing": 450,
+        "dur": 180
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [
+          "stone_pick"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "dmg",
+          "power"
+        ]
+      }
+    },
+    "iron_axe": {
+      "definition": {
+        "name": "Iron Axe",
+        "cat": "tool",
+        "icon": "axe",
+        "c1": "#c8d0dc",
+        "c2": "#5a3a22",
+        "w": 1.6,
+        "max": 1,
+        "desc": "Bites deep into timber.",
+        "power": {
+          "wood": 6,
+          "plant": 2,
+          "scrap": 2
+        },
+        "dmg": 17,
+        "reach": 23,
+        "arc": 1.5,
+        "swing": 400,
+        "dur": 400
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [
+          "iron_axe"
+        ],
+        "elder": [],
+        "vendor": true,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "dmg",
+          "power"
+        ]
+      }
+    },
+    "iron_pick": {
+      "definition": {
+        "name": "Iron Pickaxe",
+        "cat": "tool",
+        "icon": "pick",
+        "c1": "#c8d0dc",
+        "c2": "#5a3a22",
+        "w": 1.7,
+        "max": 1,
+        "desc": "Shatters rock and veins.",
+        "power": {
+          "stone": 6,
+          "ore": 5,
+          "scrap": 4
+        },
+        "dmg": 15,
+        "reach": 23,
+        "arc": 1.2,
+        "swing": 430,
+        "dur": 400
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [
+          "iron_pick"
+        ],
+        "elder": [],
+        "vendor": true,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "dmg",
+          "power"
+        ]
+      }
+    },
+    "wood_spear": {
+      "definition": {
+        "name": "Fire-hardened Spear",
+        "cat": "weapon",
+        "icon": "spear",
+        "c1": "#c9935a",
+        "c2": "#e0e0e0",
+        "w": 1,
+        "max": 1,
+        "desc": "Long reach, narrow thrust.",
+        "power": {
+          "plant": 1
+        },
+        "dmg": 15,
+        "reach": 34,
+        "arc": 0.45,
+        "swing": 380,
+        "dur": 150
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [
+          "wood_spear"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "dmg",
+          "power"
+        ]
+      }
+    },
+    "iron_sword": {
+      "definition": {
+        "name": "Iron Sword",
+        "cat": "weapon",
+        "icon": "sword",
+        "c1": "#dfe6ee",
+        "c2": "#7a4a2a",
+        "w": 1.4,
+        "max": 1,
+        "desc": "Fast, wide cuts.",
+        "power": {
+          "plant": 2
+        },
+        "dmg": 24,
+        "reach": 26,
+        "arc": 1.7,
+        "swing": 330,
+        "dur": 350
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [
+          "iron_sword"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "dmg",
+          "power"
+        ]
+      }
+    },
+    "bow": {
+      "definition": {
+        "name": "Hunting Bow",
+        "cat": "weapon",
+        "icon": "bow",
+        "c1": "#8a5a32",
+        "c2": "#e0d8c0",
+        "w": 0.8,
+        "max": 1,
+        "desc": "Fires arrows toward the cursor.",
+        "dmg": 16,
+        "reach": 220,
+        "swing": 520,
+        "dur": 200,
+        "ranged": "arrow"
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [
+          "bow"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "dmg"
+        ]
+      }
+    },
+    "arrow": {
+      "definition": {
+        "name": "Arrow",
+        "cat": "res",
+        "icon": "arrow",
+        "c1": "#8a5a32",
+        "c2": "#c0c0c8",
+        "w": 0.05,
+        "max": 60,
+        "desc": "Ammunition for bows."
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [
+          "arrow"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "torch": {
+      "definition": {
+        "name": "Torch",
+        "cat": "tool",
+        "icon": "torch",
+        "c1": "#7a5a32",
+        "c2": "#ffb040",
+        "w": 0.4,
+        "max": 10,
+        "desc": "Light in the dark. Weak weapon; can ignite.",
+        "dmg": 6,
+        "reach": 18,
+        "arc": 1.2,
+        "swing": 320,
+        "dur": 120,
+        "light": 72
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [
+          "shipping:s2@80,77",
+          "shipping:watch@86,57",
+          "dev_delta:s2@80,77",
+          "dev_delta:watch@86,57"
+        ],
+        "drops": [],
+        "recipes": [
+          "torch"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [
+          "torch_post"
+        ],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "dmg"
+        ]
+      }
+    },
+    "leather_armor": {
+      "definition": {
+        "name": "Leather Jerkin",
+        "cat": "armor",
+        "icon": "armor",
+        "c1": "#6a4226",
+        "c2": "#a8764a",
+        "w": 2,
+        "max": 1,
+        "desc": "-20% damage.",
+        "slot": "body",
+        "armor": 0.2,
+        "cold": 4
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [
+          "leather_armor"
+        ],
+        "elder": [],
+        "vendor": true,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "slot"
+        ]
+      }
+    },
+    "chitin_armor": {
+      "definition": {
+        "name": "Chitin Plate",
+        "cat": "armor",
+        "icon": "armor",
+        "c1": "#3a2a2a",
+        "c2": "#c0503a",
+        "w": 3,
+        "max": 1,
+        "desc": "-35% damage. Resists heat.",
+        "slot": "body",
+        "armor": 0.35
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [
+          "chitin_armor"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "slot"
+        ]
+      }
+    },
+    "fur_cloak": {
+      "definition": {
+        "name": "Fur Cloak",
+        "cat": "armor",
+        "icon": "cloak",
+        "c1": "#8e95a0",
+        "c2": "#e1e6ee",
+        "w": 1.2,
+        "max": 1,
+        "desc": "Keeps the cold out.",
+        "slot": "back",
+        "cold": 18
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [
+          "fur_cloak"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "slot"
+        ]
+      }
+    },
+    "gas_mask": {
+      "definition": {
+        "name": "Filter Mask",
+        "cat": "armor",
+        "icon": "mask",
+        "c1": "#4a5a4a",
+        "c2": "#a0b0a0",
+        "w": 0.8,
+        "max": 1,
+        "desc": "Blocks most radiation and toxic gas.",
+        "slot": "head",
+        "mask": true
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [
+          "gas_mask"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "slot"
+        ]
+      }
+    },
+    "scrap_helm": {
+      "definition": {
+        "name": "Scrap Helm",
+        "cat": "armor",
+        "icon": "helm",
+        "c1": "#6f7378",
+        "c2": "#c0a07a",
+        "w": 1,
+        "max": 1,
+        "desc": "-10% damage.",
+        "slot": "head",
+        "armor": 0.1
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [
+          "scrap_helm"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "slot"
+        ]
+      }
+    },
+    "core_fire": {
+      "definition": {
+        "name": "Ember Core",
+        "cat": "core",
+        "icon": "core",
+        "c1": "#c0381e",
+        "c2": "#ffd070",
+        "w": 0.3,
+        "max": 1,
+        "desc": "Hurls a fireball that ignites trees and grass. Charge spent on release.",
+        "core": "fire",
+        "charge": 3
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [
+          "shipping:factory_vault@160,96",
+          "dev_delta:factory_vault@160,96"
+        ],
+        "drops": [],
+        "recipes": [
+          "core_fire"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": "core_fire",
+        "capabilities": [
+          "core",
+          "charge"
+        ]
+      }
+    },
+    "core_earth": {
+      "definition": {
+        "name": "Quake Core",
+        "cat": "core",
+        "icon": "core",
+        "c1": "#7a5a32",
+        "c2": "#e0c080",
+        "w": 0.3,
+        "max": 1,
+        "desc": "Raises a spike line that shatters rocks into yield.",
+        "core": "earth",
+        "charge": 3
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [
+          "core_earth"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": "core_earth",
+        "capabilities": [
+          "core",
+          "charge"
+        ]
+      }
+    },
+    "core_storm": {
+      "definition": {
+        "name": "Storm Core",
+        "cat": "core",
+        "icon": "core",
+        "c1": "#3a4ac0",
+        "c2": "#c0e0ff",
+        "w": 0.3,
+        "max": 1,
+        "desc": "Chain lightning. Stronger in rain.",
+        "core": "storm",
+        "charge": 4
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [
+          "shipping:light_top@27,176",
+          "dev_delta:light_top@27,176"
+        ],
+        "drops": [],
+        "recipes": [
+          "core_storm"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": "core_storm",
+        "capabilities": [
+          "core",
+          "charge"
+        ]
+      }
+    },
+    "core_frost": {
+      "definition": {
+        "name": "Rime Core",
+        "cat": "core",
+        "icon": "core",
+        "c1": "#2a8ab0",
+        "c2": "#e0ffff",
+        "w": 0.3,
+        "max": 1,
+        "desc": "Frost nova; freezes shallow water into walkable ice for a while.",
+        "core": "frost",
+        "charge": 3
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [
+          "shipping:wreck@129,181",
+          "dev_delta:wreck@129,181"
+        ],
+        "drops": [],
+        "recipes": [
+          "core_frost"
+        ],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": "core_frost",
+        "capabilities": [
+          "core",
+          "charge"
+        ]
+      }
+    },
+    "blueprint": {
+      "definition": {
+        "name": "Blueprint",
+        "cat": "bp",
+        "icon": "scroll",
+        "c1": "#3a5a8a",
+        "c2": "#e0e8f0",
+        "w": 0.05,
+        "max": 1,
+        "desc": "Use to learn the recipe it describes. Consumed once."
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [
+          "shipping:tp@96,114",
+          "shipping:mill@120,88",
+          "shipping:mill@126,98",
+          "shipping:factory_vault@160,96",
+          "shipping:factory_vault@162,96",
+          "shipping:light_top@27,176",
+          "shipping:wreck@133,180",
+          "shipping:watch@86,57",
+          "dev_delta:tp@96,114",
+          "dev_delta:mill@120,88",
+          "dev_delta:mill@126,98",
+          "dev_delta:factory_vault@160,96",
+          "dev_delta:factory_vault@162,96",
+          "dev_delta:light_top@27,176",
+          "dev_delta:wreck@133,180",
+          "dev_delta:watch@86,57"
+        ],
+        "drops": [],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "wolf_fang": {
+      "definition": {
+        "name": "Wolf Fang (specimen)",
+        "cat": "res",
+        "icon": "fang",
+        "c1": "#d0c8b0",
+        "c2": "#fff",
+        "w": 0.1,
+        "max": 10,
+        "desc": "Study at a research table.",
+        "specimen": "fur_cloak"
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [
+          "wolf"
+        ],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": "fur_cloak",
+        "capabilities": []
+      }
+    },
+    "crawler_optic": {
+      "definition": {
+        "name": "Crawler Optic (specimen)",
+        "cat": "res",
+        "icon": "gem",
+        "c1": "#a01e1e",
+        "c2": "#ff8a6a",
+        "w": 0.1,
+        "max": 10,
+        "desc": "Study at a research table.",
+        "specimen": "gas_mask"
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [
+          "crawler"
+        ],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": "gas_mask",
+        "capabilities": []
+      }
+    },
+    "boar_tusk": {
+      "definition": {
+        "name": "Boar Tusk (specimen)",
+        "cat": "res",
+        "icon": "fang",
+        "c1": "#c0a070",
+        "c2": "#fff0d0",
+        "w": 0.1,
+        "max": 10,
+        "desc": "Study at a research table.",
+        "specimen": "iron_sword"
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [
+          "boar"
+        ],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": "iron_sword",
+        "capabilities": []
+      }
+    },
+    "beetle_horn": {
+      "definition": {
+        "name": "Beetle Horn (specimen)",
+        "cat": "res",
+        "icon": "fang",
+        "c1": "#5a2a1e",
+        "c2": "#e06a3a",
+        "w": 0.1,
+        "max": 10,
+        "desc": "Study at a research table.",
+        "specimen": "chitin_armor"
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [
+          "beetle"
+        ],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": "chitin_armor",
+        "capabilities": []
+      }
+    },
+    "keycard": {
+      "definition": {
+        "name": "Vault Keycard",
+        "cat": "misc",
+        "icon": "card",
+        "c1": "#2a6a5a",
+        "c2": "#a0f0d0",
+        "w": 0.05,
+        "max": 5,
+        "desc": "Opens a sealed industrial door. Consumed."
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [
+          "shipping:watch@86,57",
+          "dev_delta:watch@86,57",
+          "dev_delta:delta_relay@140,87"
+        ],
+        "drops": [],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "fuel_can": {
+      "definition": {
+        "name": "Fuel Canister",
+        "cat": "misc",
+        "icon": "can",
+        "c1": "#a03a1e",
+        "c2": "#f0c060",
+        "w": 1.5,
+        "max": 5,
+        "desc": "Powers generators.",
+        "fuel": 60
+      },
+      "obtained": {
+        "sources": [
+          "wreck"
+        ],
+        "poi": [
+          "shipping:light@31,175",
+          "shipping:wreck@133,180",
+          "dev_delta:light@31,175",
+          "dev_delta:wreck@133,180",
+          "dev_delta:delta_relay@140,87"
+        ],
+        "drops": [],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": true,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "rcash": {
+      "definition": {
+        "name": "Ragnarok Cash",
+        "cat": "cash",
+        "icon": "coin",
+        "c1": "#b07a1e",
+        "c2": "#ffe27a",
+        "w": 0.01,
+        "max": 999,
+        "desc": "Physical, unsecured. Can be lost. Deposit in an owned Rương ký gửi."
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [],
+        "elder": [],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "escrow_chest": {
+      "definition": {
+        "name": "Rương ký gửi",
+        "cat": "kit",
+        "icon": "chest",
+        "c1": "#5a3a7a",
+        "c2": "#ffd040",
+        "w": 4,
+        "max": 1,
+        "desc": "Escrow chest. Place on owned land, then deposit physical Ragnarok cash into your profile.",
+        "place": "escrow"
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [],
+        "elder": [],
+        "vendor": true,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [
+          "escrow"
+        ],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "place"
+        ]
+      }
+    },
+    "cart_kit": {
+      "definition": {
+        "name": "Hand Cart (packed)",
+        "cat": "kit",
+        "icon": "cart",
+        "c1": "#7a5a32",
+        "c2": "#c0c8d0",
+        "w": 6,
+        "max": 1,
+        "desc": "Place to unpack a cargo cart.",
+        "place": "cart"
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [
+          "cart_kit"
+        ],
+        "elder": [],
+        "vendor": true,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": [
+          "place"
+        ]
+      }
+    },
+    "stone_frost": {
+      "definition": {
+        "name": "Stone of Rime",
+        "cat": "stone",
+        "icon": "relic",
+        "c1": "#3a8ad0",
+        "c2": "#e0ffff",
+        "w": 1,
+        "max": 1,
+        "desc": "Taken from the Glacier Matron."
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [],
+        "elder": [
+          "frost"
+        ],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "stone_magma": {
+      "definition": {
+        "name": "Stone of Cinder",
+        "cat": "stone",
+        "icon": "relic",
+        "c1": "#c03a1e",
+        "c2": "#ffd070",
+        "w": 1,
+        "max": 1,
+        "desc": "Taken from the Caldera Titan."
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [],
+        "elder": [
+          "magma"
+        ],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "stone_bog": {
+      "definition": {
+        "name": "Stone of Mire",
+        "cat": "stone",
+        "icon": "relic",
+        "c1": "#4a7a2a",
+        "c2": "#d0f080",
+        "w": 1,
+        "max": 1,
+        "desc": "Taken from the Mire Mother."
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [],
+        "elder": [
+          "bog"
+        ],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "stone_grove": {
+      "definition": {
+        "name": "Stone of Roots",
+        "cat": "stone",
+        "icon": "relic",
+        "c1": "#2a6a2a",
+        "c2": "#a0e070",
+        "w": 1,
+        "max": 1,
+        "desc": "Taken from the Elder Treant."
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [],
+        "elder": [
+          "grove"
+        ],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "stone_tide": {
+      "definition": {
+        "name": "Stone of Tides",
+        "cat": "stone",
+        "icon": "relic",
+        "c1": "#1e5a9a",
+        "c2": "#80e0ff",
+        "w": 1,
+        "max": 1,
+        "desc": "Taken from the Tide Serpent."
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [],
+        "elder": [
+          "tide"
+        ],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    },
+    "stone_rust": {
+      "definition": {
+        "name": "Stone of Rust",
+        "cat": "stone",
+        "icon": "relic",
+        "c1": "#8a4a1e",
+        "c2": "#f0a050",
+        "w": 1,
+        "max": 1,
+        "desc": "Taken from the Rust Colossus."
+      },
+      "obtained": {
+        "sources": [],
+        "poi": [],
+        "drops": [],
+        "recipes": [],
+        "elder": [
+          "rust"
+        ],
+        "vendor": false,
+        "starter": false
+      },
+      "uses": {
+        "ingredients": [],
+        "structures": [],
+        "fuel": false,
+        "study": null,
+        "capabilities": []
+      }
+    }
+  },
+  "recipes": {
+    "rope": {
+      "out": "rope",
+      "qty": 1,
+      "ins": [
+        [
+          "fiber",
+          3
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0,
+      "depth": 1,
+      "learn": "base"
+    },
+    "torch": {
+      "out": "torch",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          1
+        ],
+        [
+          "fiber",
+          2
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0,
+      "depth": 1,
+      "learn": "base"
+    },
+    "stone_axe": {
+      "out": "stone_axe",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          3
+        ],
+        [
+          "stone",
+          3
+        ],
+        [
+          "rope",
+          1
+        ]
+      ],
+      "station": null,
+      "secs": 2,
+      "base": true,
+      "tier": 0,
+      "depth": 2,
+      "learn": "base"
+    },
+    "stone_pick": {
+      "out": "stone_pick",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          3
+        ],
+        [
+          "stone",
+          4
+        ],
+        [
+          "rope",
+          1
+        ]
+      ],
+      "station": null,
+      "secs": 2,
+      "base": true,
+      "tier": 0,
+      "depth": 2,
+      "learn": "base"
+    },
+    "wood_spear": {
+      "out": "wood_spear",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          4
+        ],
+        [
+          "rope",
+          1
+        ]
+      ],
+      "station": null,
+      "secs": 2,
+      "base": true,
+      "tier": 0,
+      "depth": 2,
+      "learn": "base"
+    },
+    "bandage": {
+      "out": "bandage",
+      "qty": 1,
+      "ins": [
+        [
+          "fiber",
+          4
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0,
+      "depth": 1,
+      "learn": "base"
+    },
+    "water_flask": {
+      "out": "water_flask",
+      "qty": 1,
+      "ins": [
+        [
+          "hide",
+          2
+        ],
+        [
+          "rope",
+          1
+        ]
+      ],
+      "station": null,
+      "secs": 2,
+      "base": true,
+      "tier": 0,
+      "depth": 2,
+      "learn": "base"
+    },
+    "cooked_meat": {
+      "out": "cooked_meat",
+      "qty": 1,
+      "ins": [
+        [
+          "meat",
+          1
+        ]
+      ],
+      "station": "campfire",
+      "secs": 8,
+      "base": true,
+      "tier": 0,
+      "depth": 1,
+      "learn": "base"
+    },
+    "salted_meat": {
+      "out": "salted_meat",
+      "qty": 1,
+      "ins": [
+        [
+          "meat",
+          1
+        ],
+        [
+          "raw_salt",
+          1
+        ]
+      ],
+      "station": "campfire",
+      "secs": 10,
+      "base": true,
+      "tier": 0,
+      "depth": 1,
+      "learn": "base"
+    },
+    "charcoal": {
+      "out": "charcoal",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          2
+        ]
+      ],
+      "station": "campfire",
+      "secs": 12,
+      "base": true,
+      "tier": 0,
+      "depth": 1,
+      "learn": "base"
+    },
+    "stew": {
+      "out": "stew",
+      "qty": 1,
+      "ins": [
+        [
+          "crop",
+          2
+        ],
+        [
+          "meat",
+          1
+        ],
+        [
+          "herb",
+          1
+        ]
+      ],
+      "station": "campfire",
+      "secs": 14,
+      "tier": 1,
+      "depth": 1,
+      "learn": "blueprint/research/specimen if eligible"
+    },
+    "iron_ingot": {
+      "out": "iron_ingot",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ore",
+          1
+        ]
+      ],
+      "station": "furnace",
+      "secs": 10,
+      "base": true,
+      "tier": 0,
+      "depth": 1,
+      "learn": "base"
+    },
+    "scrap_ingot": {
+      "out": "iron_ingot",
+      "qty": 1,
+      "ins": [
+        [
+          "scrap",
+          3
+        ]
+      ],
+      "station": "furnace",
+      "secs": 12,
+      "base": true,
+      "tier": 0,
+      "depth": 1,
+      "learn": "base"
+    },
+    "brick": {
+      "out": "brick",
+      "qty": 2,
+      "ins": [
+        [
+          "stone",
+          3
+        ]
+      ],
+      "station": "furnace",
+      "secs": 10,
+      "tier": 1,
+      "depth": 1,
+      "learn": "blueprint/research/specimen if eligible"
+    },
+    "glass": {
+      "out": "glass",
+      "qty": 1,
+      "ins": [
+        [
+          "crystal",
+          1
+        ],
+        [
+          "stone",
+          1
+        ]
+      ],
+      "station": "furnace",
+      "secs": 14,
+      "tier": 2,
+      "depth": 1,
+      "learn": "blueprint/research/specimen if eligible"
+    },
+    "leather": {
+      "out": "leather",
+      "qty": 1,
+      "ins": [
+        [
+          "hide",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 8,
+      "base": true,
+      "tier": 0,
+      "depth": 1,
+      "learn": "base"
+    },
+    "cloth": {
+      "out": "cloth",
+      "qty": 1,
+      "ins": [
+        [
+          "fiber",
+          6
+        ]
+      ],
+      "station": "workbench",
+      "secs": 8,
+      "base": true,
+      "tier": 0,
+      "depth": 1,
+      "learn": "base"
+    },
+    "arrow": {
+      "out": "arrow",
+      "qty": 6,
+      "ins": [
+        [
+          "wood",
+          1
+        ],
+        [
+          "stone",
+          1
+        ],
+        [
+          "fiber",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 5,
+      "tier": 1,
+      "depth": 1,
+      "learn": "blueprint/research/specimen if eligible"
+    },
+    "bow": {
+      "out": "bow",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          5
+        ],
+        [
+          "rope",
+          3
+        ]
+      ],
+      "station": "workbench",
+      "secs": 12,
+      "tier": 1,
+      "depth": 2,
+      "learn": "blueprint/research/specimen if eligible"
+    },
+    "iron_axe": {
+      "out": "iron_axe",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          3
+        ],
+        [
+          "wood",
+          2
+        ],
+        [
+          "leather",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 15,
+      "base": true,
+      "tier": 1,
+      "depth": 2,
+      "learn": "base"
+    },
+    "iron_pick": {
+      "out": "iron_pick",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          3
+        ],
+        [
+          "wood",
+          2
+        ],
+        [
+          "leather",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 15,
+      "base": true,
+      "tier": 1,
+      "depth": 2,
+      "learn": "base"
+    },
+    "iron_sword": {
+      "out": "iron_sword",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          5
+        ],
+        [
+          "leather",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 18,
+      "tier": 2,
+      "depth": 2,
+      "learn": "blueprint/research/specimen if eligible"
+    },
+    "leather_armor": {
+      "out": "leather_armor",
+      "qty": 1,
+      "ins": [
+        [
+          "leather",
+          5
+        ],
+        [
+          "rope",
+          2
+        ]
+      ],
+      "station": "workbench",
+      "secs": 15,
+      "tier": 1,
+      "depth": 2,
+      "learn": "blueprint/research/specimen if eligible"
+    },
+    "chitin_armor": {
+      "out": "chitin_armor",
+      "qty": 1,
+      "ins": [
+        [
+          "chitin",
+          6
+        ],
+        [
+          "leather",
+          2
+        ]
+      ],
+      "station": "workbench",
+      "secs": 20,
+      "tier": 3,
+      "depth": 2,
+      "learn": "blueprint/research/specimen if eligible"
+    },
+    "fur_cloak": {
+      "out": "fur_cloak",
+      "qty": 1,
+      "ins": [
+        [
+          "fur",
+          4
+        ],
+        [
+          "rope",
+          2
+        ]
+      ],
+      "station": "workbench",
+      "secs": 14,
+      "tier": 2,
+      "depth": 2,
+      "learn": "blueprint/research/specimen if eligible"
+    },
+    "gas_mask": {
+      "out": "gas_mask",
+      "qty": 1,
+      "ins": [
+        [
+          "glass",
+          1
+        ],
+        [
+          "cloth",
+          2
+        ],
+        [
+          "spares",
+          3
+        ]
+      ],
+      "station": "workbench",
+      "secs": 16,
+      "tier": 2,
+      "depth": 2,
+      "learn": "blueprint/research/specimen if eligible"
+    },
+    "scrap_helm": {
+      "out": "scrap_helm",
+      "qty": 1,
+      "ins": [
+        [
+          "scrap",
+          6
+        ],
+        [
+          "leather",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 12,
+      "tier": 1,
+      "depth": 2,
+      "learn": "blueprint/research/specimen if eligible"
+    },
+    "medkit": {
+      "out": "medkit",
+      "qty": 1,
+      "ins": [
+        [
+          "bandage",
+          2
+        ],
+        [
+          "herb",
+          2
+        ]
+      ],
+      "station": "workbench",
+      "secs": 8,
+      "tier": 1,
+      "depth": 2,
+      "learn": "blueprint/research/specimen if eligible"
+    },
+    "antirad": {
+      "out": "antirad",
+      "qty": 1,
+      "ins": [
+        [
+          "gland",
+          1
+        ],
+        [
+          "herb",
+          2
+        ]
+      ],
+      "station": "workbench",
+      "secs": 10,
+      "tier": 2,
+      "depth": 1,
+      "learn": "blueprint/research/specimen if eligible"
+    },
+    "cart_kit": {
+      "out": "cart_kit",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          24
+        ],
+        [
+          "iron_ingot",
+          3
+        ],
+        [
+          "rope",
+          4
+        ]
+      ],
+      "station": "workbench",
+      "secs": 25,
+      "tier": 1,
+      "depth": 2,
+      "learn": "blueprint/research/specimen if eligible"
+    },
+    "core_fire": {
+      "out": "core_fire",
+      "qty": 1,
+      "ins": [
+        [
+          "sulfur",
+          3
+        ],
+        [
+          "spares",
+          8
+        ],
+        [
+          "crystal",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 40,
+      "tier": 3,
+      "depth": 1,
+      "learn": "blueprint/research/specimen if eligible"
+    },
+    "core_earth": {
+      "out": "core_earth",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          3
+        ],
+        [
+          "spares",
+          8
+        ],
+        [
+          "crystal",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 40,
+      "tier": 3,
+      "depth": 2,
+      "learn": "blueprint/research/specimen if eligible"
+    },
+    "core_storm": {
+      "out": "core_storm",
+      "qty": 1,
+      "ins": [
+        [
+          "glass",
+          2
+        ],
+        [
+          "spares",
+          10
+        ],
+        [
+          "crystal",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 40,
+      "tier": 3,
+      "depth": 2,
+      "learn": "blueprint/research/specimen if eligible"
+    },
+    "core_frost": {
+      "out": "core_frost",
+      "qty": 1,
+      "ins": [
+        [
+          "crystal",
+          3
+        ],
+        [
+          "spares",
+          8
+        ]
+      ],
+      "station": "workbench",
+      "secs": 40,
+      "tier": 3,
+      "depth": 1,
+      "learn": "blueprint/research/specimen if eligible"
+    }
+  },
+  "sources": {
+    "oak": {
+      "name": "Oak",
+      "mat": "wood",
+      "hp": 18,
+      "stock": 6,
+      "yields": [
+        [
+          "wood",
+          1
+        ]
+      ],
+      "bonus": [
+        [
+          "seed",
+          0.25
+        ]
+      ],
+      "block": true,
+      "art": "oak",
+      "tall": true
+    },
+    "pine": {
+      "name": "Pine",
+      "mat": "wood",
+      "hp": 16,
+      "stock": 5,
+      "yields": [
+        [
+          "wood",
+          1
+        ]
+      ],
+      "block": true,
+      "art": "pine",
+      "tall": true
+    },
+    "snowpine": {
+      "name": "Snow Pine",
+      "mat": "wood",
+      "hp": 16,
+      "stock": 5,
+      "yields": [
+        [
+          "wood",
+          1
+        ]
+      ],
+      "block": true,
+      "art": "snowpine",
+      "tall": true
+    },
+    "palm": {
+      "name": "Palm",
+      "mat": "wood",
+      "hp": 12,
+      "stock": 4,
+      "yields": [
+        [
+          "wood",
+          1
+        ]
+      ],
+      "bonus": [
+        [
+          "fiber",
+          0.5
+        ]
+      ],
+      "block": true,
+      "art": "palm",
+      "tall": true
+    },
+    "willow": {
+      "name": "Mire Willow",
+      "mat": "wood",
+      "hp": 14,
+      "stock": 4,
+      "yields": [
+        [
+          "wood",
+          1
+        ]
+      ],
+      "bonus": [
+        [
+          "fiber",
+          0.4
+        ]
+      ],
+      "block": true,
+      "art": "willow",
+      "tall": true
+    },
+    "deadtree": {
+      "name": "Charred Tree",
+      "mat": "wood",
+      "hp": 8,
+      "stock": 3,
+      "yields": [
+        [
+          "charcoal",
+          1
+        ]
+      ],
+      "block": true,
+      "art": "dead",
+      "tall": true
+    },
+    "rock": {
+      "name": "Boulder",
+      "mat": "stone",
+      "hp": 18,
+      "stock": 6,
+      "yields": [
+        [
+          "stone",
+          1
+        ]
+      ],
+      "block": true,
+      "art": "rock"
+    },
+    "iron": {
+      "name": "Iron Vein",
+      "mat": "ore",
+      "hp": 24,
+      "stock": 5,
+      "yields": [
+        [
+          "iron_ore",
+          1
+        ]
+      ],
+      "bonus": [
+        [
+          "stone",
+          0.5
+        ]
+      ],
+      "block": true,
+      "art": "iron"
+    },
+    "coalv": {
+      "name": "Coal Seam",
+      "mat": "ore",
+      "hp": 20,
+      "stock": 5,
+      "yields": [
+        [
+          "coal",
+          1
+        ]
+      ],
+      "block": true,
+      "art": "coal"
+    },
+    "crystal": {
+      "name": "Frost Crystal",
+      "mat": "ore",
+      "hp": 20,
+      "stock": 3,
+      "yields": [
+        [
+          "crystal",
+          1
+        ]
+      ],
+      "block": true,
+      "art": "crystal"
+    },
+    "salt_shale": {
+      "name": "Salt Shale",
+      "mat": "ore",
+      "hp": 12,
+      "stock": 4,
+      "yields": [
+        [
+          "raw_salt",
+          1
+        ]
+      ],
+      "block": true,
+      "art": "crystal",
+      "placement": [
+        {
+          "terrain": "sand",
+          "chance": 0.24
+        }
+      ]
+    },
+    "sulfur": {
+      "name": "Sulfur Vent",
+      "mat": "ore",
+      "hp": 14,
+      "stock": 3,
+      "yields": [
+        [
+          "sulfur",
+          1
+        ]
+      ],
+      "block": true,
+      "art": "sulfur"
+    },
+    "bush": {
+      "name": "Berry Bush",
+      "mat": "plant",
+      "hp": 6,
+      "stock": 3,
+      "yields": [
+        [
+          "berries",
+          1
+        ]
+      ],
+      "bonus": [
+        [
+          "seed",
+          0.3
+        ]
+      ],
+      "block": false,
+      "regrow": 420,
+      "art": "bush"
+    },
+    "grass": {
+      "name": "Tall Grass",
+      "mat": "plant",
+      "hp": 3,
+      "stock": 2,
+      "yields": [
+        [
+          "fiber",
+          1
+        ]
+      ],
+      "block": false,
+      "regrow": 300,
+      "art": "grass"
+    },
+    "reed": {
+      "name": "Reeds",
+      "mat": "plant",
+      "hp": 4,
+      "stock": 3,
+      "yields": [
+        [
+          "fiber",
+          1
+        ]
+      ],
+      "block": false,
+      "regrow": 360,
+      "art": "reed"
+    },
+    "herb": {
+      "name": "Bitterleaf",
+      "mat": "plant",
+      "hp": 3,
+      "stock": 2,
+      "yields": [
+        [
+          "herb",
+          1
+        ]
+      ],
+      "block": false,
+      "regrow": 600,
+      "art": "herb"
+    },
+    "mushroom": {
+      "name": "Marsh Caps",
+      "mat": "plant",
+      "hp": 3,
+      "stock": 2,
+      "yields": [
+        [
+          "mushroom",
+          1
+        ]
+      ],
+      "block": false,
+      "regrow": 600,
+      "art": "mush"
+    },
+    "scrap": {
+      "name": "Roadside Scrap",
+      "mat": "scrap",
+      "hp": 8,
+      "stock": 4,
+      "yields": [
+        [
+          "scrap",
+          1
+        ]
+      ],
+      "bonus": [
+        [
+          "spares",
+          0.55
+        ]
+      ],
+      "block": false,
+      "art": "scrap"
+    },
+    "wreck": {
+      "name": "Car Wreck",
+      "mat": "scrap",
+      "hp": 30,
+      "stock": 8,
+      "yields": [
+        [
+          "scrap",
+          1
+        ]
+      ],
+      "bonus": [
+        [
+          "spares",
+          0.7
+        ],
+        [
+          "fuel_can",
+          0.06
+        ]
+      ],
+      "block": true,
+      "art": "wreck"
+    }
+  },
+  "structures": {
+    "claim": {
+      "name": "Claim Totem",
+      "cost": [
+        [
+          "wood",
+          10
+        ],
+        [
+          "stone",
+          5
+        ]
+      ],
+      "hp": 200,
+      "need": "free",
+      "block": true,
+      "layer": "obj",
+      "desc": "Claims land (radius 6) as your home plot. PROPOSED ownership mechanism."
+    },
+    "floor_wood": {
+      "name": "Wood Floor",
+      "cost": [
+        [
+          "wood",
+          4
+        ]
+      ],
+      "hp": 120,
+      "need": "claim",
+      "block": false,
+      "layer": "floor",
+      "desc": "Foundation tile. Roofs need it."
+    },
+    "floor_stone": {
+      "name": "Stone Floor",
+      "cost": [
+        [
+          "stone",
+          6
+        ]
+      ],
+      "hp": 260,
+      "need": "claim",
+      "block": false,
+      "layer": "floor",
+      "desc": "Sturdy foundation."
+    },
+    "wall_wood": {
+      "name": "Wood Wall",
+      "cost": [
+        [
+          "wood",
+          5
+        ]
+      ],
+      "hp": 160,
+      "need": "claim",
+      "block": true,
+      "layer": "wall",
+      "desc": "Blocks movement and paths."
+    },
+    "wall_stone": {
+      "name": "Stone Wall",
+      "cost": [
+        [
+          "stone",
+          8
+        ],
+        [
+          "wood",
+          1
+        ]
+      ],
+      "hp": 380,
+      "need": "claim",
+      "block": true,
+      "layer": "wall",
+      "desc": "Heavy wall."
+    },
+    "wall_brick": {
+      "name": "Brick Wall",
+      "cost": [
+        [
+          "brick",
+          6
+        ]
+      ],
+      "hp": 600,
+      "need": "claim",
+      "block": true,
+      "layer": "wall",
+      "desc": "Fired brick. Strongest wall."
+    },
+    "door_wood": {
+      "name": "Wood Door",
+      "cost": [
+        [
+          "wood",
+          6
+        ],
+        [
+          "rope",
+          1
+        ]
+      ],
+      "hp": 140,
+      "need": "claim",
+      "block": true,
+      "layer": "wall",
+      "desc": "E to open/close. Creatures cannot open doors."
+    },
+    "door_iron": {
+      "name": "Iron Door",
+      "cost": [
+        [
+          "iron_ingot",
+          4
+        ]
+      ],
+      "hp": 420,
+      "need": "claim",
+      "block": true,
+      "layer": "wall",
+      "desc": "Reinforced door."
+    },
+    "roof_thatch": {
+      "name": "Thatch Roof",
+      "cost": [
+        [
+          "wood",
+          2
+        ],
+        [
+          "fiber",
+          5
+        ]
+      ],
+      "hp": 80,
+      "need": "claim",
+      "block": false,
+      "layer": "roof",
+      "desc": "Over a floor. Enclosed + roofed = shelter.",
+      "shelter": true
+    },
+    "roof_tile": {
+      "name": "Tile Roof",
+      "cost": [
+        [
+          "brick",
+          3
+        ]
+      ],
+      "hp": 200,
+      "need": "claim",
+      "block": false,
+      "layer": "roof",
+      "desc": "Durable roof.",
+      "shelter": true
+    },
+    "bed_straw": {
+      "name": "Straw Bed",
+      "cost": [
+        [
+          "fiber",
+          10
+        ],
+        [
+          "wood",
+          2
+        ]
+      ],
+      "hp": 60,
+      "need": "claim",
+      "block": false,
+      "layer": "obj",
+      "desc": "Respawn point within this run."
+    },
+    "chest_small": {
+      "name": "Wood Chest",
+      "cost": [
+        [
+          "wood",
+          8
+        ]
+      ],
+      "hp": 100,
+      "need": "claim",
+      "block": true,
+      "layer": "obj",
+      "slots": 12,
+      "desc": "12-slot storage."
+    },
+    "chest_large": {
+      "name": "Iron-bound Chest",
+      "cost": [
+        [
+          "wood",
+          12
+        ],
+        [
+          "iron_ingot",
+          2
+        ]
+      ],
+      "hp": 220,
+      "need": "claim",
+      "block": true,
+      "layer": "obj",
+      "slots": 24,
+      "desc": "24-slot storage."
+    },
+    "campfire": {
+      "name": "Campfire",
+      "cost": [
+        [
+          "wood",
+          5
+        ],
+        [
+          "stone",
+          3
+        ]
+      ],
+      "hp": 60,
+      "need": "any",
+      "block": true,
+      "layer": "obj",
+      "station": "campfire",
+      "light": 90,
+      "warmth": 1,
+      "desc": "Cooks with fuel. Warmth + light while burning."
+    },
+    "furnace": {
+      "name": "Furnace",
+      "cost": [
+        [
+          "stone",
+          18
+        ],
+        [
+          "wood",
+          4
+        ]
+      ],
+      "hp": 300,
+      "need": "claim",
+      "block": true,
+      "layer": "obj",
+      "station": "furnace",
+      "light": 50,
+      "warmth": 1,
+      "desc": "Smelts with fuel. Output waits in its slots."
+    },
+    "workbench": {
+      "name": "Workbench",
+      "cost": [
+        [
+          "wood",
+          14
+        ],
+        [
+          "stone",
+          4
+        ]
+      ],
+      "hp": 160,
+      "need": "claim",
+      "block": true,
+      "layer": "obj",
+      "station": "workbench",
+      "desc": "Timed crafting for tools, armor and parts."
+    },
+    "research": {
+      "name": "Research Table",
+      "cost": [
+        [
+          "wood",
+          10
+        ],
+        [
+          "spares",
+          6
+        ],
+        [
+          "iron_ingot",
+          1
+        ]
+      ],
+      "hp": 160,
+      "need": "claim",
+      "block": true,
+      "layer": "obj",
+      "station": "research",
+      "desc": "Spend Spares or study specimens to unlock recipes."
+    },
+    "garden": {
+      "name": "Garden Plot",
+      "cost": [
+        [
+          "wood",
+          4
+        ],
+        [
+          "fiber",
+          4
+        ]
+      ],
+      "hp": 60,
+      "need": "claim",
+      "block": false,
+      "layer": "obj",
+      "desc": "Plant seeds; grows only while watered (rain counts)."
+    },
+    "barrel": {
+      "name": "Rain Barrel",
+      "cost": [
+        [
+          "wood",
+          8
+        ],
+        [
+          "rope",
+          1
+        ]
+      ],
+      "hp": 80,
+      "need": "claim",
+      "block": true,
+      "layer": "obj",
+      "desc": "Collects rainwater; refill flasks."
+    },
+    "spikes": {
+      "name": "Spike Trap",
+      "cost": [
+        [
+          "wood",
+          6
+        ]
+      ],
+      "hp": 90,
+      "need": "claim",
+      "block": false,
+      "layer": "obj",
+      "desc": "Hurts creatures that walk over it."
+    },
+    "barricade": {
+      "name": "Barricade",
+      "cost": [
+        [
+          "wood",
+          8
+        ]
+      ],
+      "hp": 220,
+      "need": "claim",
+      "block": true,
+      "layer": "obj",
+      "desc": "Cheap blocking defense."
+    },
+    "torch_post": {
+      "name": "Torch Post",
+      "cost": [
+        [
+          "wood",
+          2
+        ],
+        [
+          "torch",
+          1
+        ]
+      ],
+      "hp": 40,
+      "need": "claim",
+      "block": true,
+      "layer": "obj",
+      "light": 80,
+      "desc": "Permanent light."
+    },
+    "escrow": {
+      "name": "Rương ký gửi",
+      "cost": [
+        [
+          "escrow_chest",
+          1
+        ]
+      ],
+      "hp": 400,
+      "need": "claim",
+      "block": true,
+      "layer": "obj",
+      "desc": "Deposit physical Ragnarok cash into profile-secured cash.",
+      "item": "escrow_chest"
+    }
+  },
+  "pois": [
+    {
+      "layout": "shipping",
+      "statics": [
+        {
+          "kind": "loot",
+          "tx": 38,
+          "ty": 105,
+          "poi": "s0",
+          "loot": [
+            [
+              "berries",
+              3
+            ],
+            [
+              "fiber",
+              6
+            ],
+            [
+              "rope",
+              1
+            ]
+          ]
+        },
+        {
+          "kind": "loot",
+          "tx": 81,
+          "ty": 168,
+          "poi": "s1",
+          "loot": [
+            [
+              "meat",
+              2
+            ],
+            [
+              "rope",
+              2
+            ],
+            [
+              "bandage",
+              1
+            ]
+          ]
+        },
+        {
+          "kind": "loot",
+          "tx": 80,
+          "ty": 77,
+          "poi": "s2",
+          "loot": [
+            [
+              "torch",
+              2
+            ],
+            [
+              "stone",
+              4
+            ],
+            [
+              "bandage",
+              1
+            ]
+          ]
+        },
+        {
+          "kind": "loot",
+          "tx": 164,
+          "ty": 75,
+          "poi": "s3",
+          "loot": [
+            [
+              "scrap",
+              4
+            ],
+            [
+              "spares",
+              2
+            ],
+            [
+              "water_flask",
+              1
+            ]
+          ]
+        },
+        {
+          "kind": "vendor",
+          "tx": 100,
+          "ty": 115,
+          "poi": "tp",
+          "label": "Mirela the Trader"
+        },
+        {
+          "kind": "cash",
+          "tx": 104,
+          "ty": 114,
+          "poi": "tp",
+          "cash": 36
+        },
+        {
+          "kind": "loot",
+          "tx": 96,
+          "ty": 114,
+          "poi": "tp",
+          "loot": [
+            [
+              "rope",
+              3
+            ],
+            [
+              "cloth",
+              2
+            ],
+            [
+              "blueprint:bow",
+              1
+            ]
+          ]
+        },
+        {
+          "kind": "loot",
+          "tx": 107,
+          "ty": 121,
+          "poi": "tp",
+          "loot": [
+            [
+              "wood",
+              8
+            ],
+            [
+              "iron_ingot",
+              1
+            ]
+          ]
+        },
+        {
+          "kind": "loot",
+          "tx": 120,
+          "ty": 88,
+          "poi": "mill",
+          "loot": [
+            [
+              "seed",
+              6
+            ],
+            [
+              "blueprint:stew",
+              1
+            ],
+            [
+              "crop",
+              2
+            ]
+          ]
+        },
+        {
+          "kind": "loot",
+          "tx": 126,
+          "ty": 98,
+          "poi": "mill",
+          "loot": [
+            [
+              "leather",
+              2
+            ],
+            [
+              "blueprint:brick",
+              1
+            ]
+          ]
+        },
+        {
+          "kind": "cash",
+          "tx": 130,
+          "ty": 88,
+          "poi": "mill",
+          "cash": 40
+        },
+        {
+          "kind": "door",
+          "tx": 160,
+          "ty": 99,
+          "poi": "factory",
+          "locked": "keycard",
+          "label": "Vault Door"
+        },
+        {
+          "kind": "loot",
+          "tx": 160,
+          "ty": 96,
+          "poi": "factory_vault",
+          "loot": [
+            [
+              "core_fire",
+              1
+            ],
+            [
+              "blueprint:core_earth",
+              1
+            ],
+            [
+              "spares",
+              6
+            ]
+          ]
+        },
+        {
+          "kind": "loot",
+          "tx": 162,
+          "ty": 96,
+          "poi": "factory_vault",
+          "loot": [
+            [
+              "blueprint:gas_mask",
+              1
+            ],
+            [
+              "iron_ingot",
+              4
+            ]
+          ]
+        },
+        {
+          "kind": "cash",
+          "tx": 161,
+          "ty": 97,
+          "poi": "factory_vault",
+          "cash": 80
+        },
+        {
+          "kind": "loot",
+          "tx": 150,
+          "ty": 103,
+          "poi": "factory",
+          "loot": [
+            [
+              "scrap",
+              6
+            ],
+            [
+              "spares",
+              3
+            ]
+          ]
+        },
+        {
+          "kind": "loot",
+          "tx": 154,
+          "ty": 96,
+          "poi": "factory",
+          "loot": [
+            [
+              "iron_ore",
+              4
+            ],
+            [
+              "coal",
+              3
+            ]
+          ]
+        },
+        {
+          "kind": "door",
+          "tx": 28,
+          "ty": 179,
+          "poi": "light",
+          "locked": "power",
+          "label": "Lighthouse Door"
+        },
+        {
+          "kind": "gen",
+          "tx": 31,
+          "ty": 180,
+          "poi": "light",
+          "label": "Generator"
+        },
+        {
+          "kind": "loot",
+          "tx": 27,
+          "ty": 176,
+          "poi": "light_top",
+          "loot": [
+            [
+              "core_storm",
+              1
+            ],
+            [
+              "blueprint:leather_armor",
+              1
+            ]
+          ]
+        },
+        {
+          "kind": "cash",
+          "tx": 29,
+          "ty": 176,
+          "poi": "light_top",
+          "cash": 60
+        },
+        {
+          "kind": "loot",
+          "tx": 31,
+          "ty": 175,
+          "poi": "light",
+          "loot": [
+            [
+              "fuel_can",
+              1
+            ],
+            [
+              "rope",
+              2
+            ]
+          ]
+        },
+        {
+          "kind": "loot",
+          "tx": 129,
+          "ty": 181,
+          "poi": "wreck",
+          "loot": [
+            [
+              "core_frost",
+              1
+            ],
+            [
+              "spares",
+              4
+            ]
+          ]
+        },
+        {
+          "kind": "loot",
+          "tx": 133,
+          "ty": 180,
+          "poi": "wreck",
+          "loot": [
+            [
+              "cloth",
+              3
+            ],
+            [
+              "fuel_can",
+              1
+            ],
+            [
+              "blueprint:arrow",
+              1
+            ]
+          ]
+        },
+        {
+          "kind": "cash",
+          "tx": 131,
+          "ty": 182,
+          "poi": "wreck",
+          "cash": 45
+        },
+        {
+          "kind": "loot",
+          "tx": 86,
+          "ty": 57,
+          "poi": "watch",
+          "loot": [
+            [
+              "keycard",
+              1
+            ],
+            [
+              "blueprint:fur_cloak",
+              1
+            ],
+            [
+              "torch",
+              2
+            ]
+          ]
+        },
+        {
+          "kind": "cash",
+          "tx": 88,
+          "ty": 57,
+          "poi": "watch",
+          "cash": 34
+        },
+        {
+          "kind": "evac",
+          "tx": 175,
+          "ty": 14,
+          "poi": "evac",
+          "label": "Evacuation Beacon"
+        },
+        {
+          "kind": "cash",
+          "tx": 170,
+          "ty": 24,
+          "poi": "evac",
+          "cash": 30
+        },
+        {
+          "kind": "loot",
+          "tx": 172,
+          "ty": 24,
+          "poi": "evac",
+          "loot": [
+            [
+              "medkit",
+              1
+            ],
+            [
+              "water_flask",
+              1
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "layout": "dev_delta",
+      "statics": [
+        {
+          "kind": "loot",
+          "tx": 38,
+          "ty": 105,
+          "poi": "s0",
+          "loot": [
+            [
+              "berries",
+              3
+            ],
+            [
+              "fiber",
+              6
+            ],
+            [
+              "rope",
+              1
+            ]
+          ]
+        },
+        {
+          "kind": "loot",
+          "tx": 81,
+          "ty": 168,
+          "poi": "s1",
+          "loot": [
+            [
+              "meat",
+              2
+            ],
+            [
+              "rope",
+              2
+            ],
+            [
+              "bandage",
+              1
+            ]
+          ]
+        },
+        {
+          "kind": "loot",
+          "tx": 80,
+          "ty": 77,
+          "poi": "s2",
+          "loot": [
+            [
+              "torch",
+              2
+            ],
+            [
+              "stone",
+              4
+            ],
+            [
+              "bandage",
+              1
+            ]
+          ]
+        },
+        {
+          "kind": "loot",
+          "tx": 164,
+          "ty": 75,
+          "poi": "s3",
+          "loot": [
+            [
+              "scrap",
+              4
+            ],
+            [
+              "spares",
+              2
+            ],
+            [
+              "water_flask",
+              1
+            ]
+          ]
+        },
+        {
+          "kind": "vendor",
+          "tx": 100,
+          "ty": 115,
+          "poi": "tp",
+          "label": "Mirela the Trader"
+        },
+        {
+          "kind": "cash",
+          "tx": 104,
+          "ty": 114,
+          "poi": "tp",
+          "cash": 36
+        },
+        {
+          "kind": "loot",
+          "tx": 96,
+          "ty": 114,
+          "poi": "tp",
+          "loot": [
+            [
+              "rope",
+              3
+            ],
+            [
+              "cloth",
+              2
+            ],
+            [
+              "blueprint:bow",
+              1
+            ]
+          ]
+        },
+        {
+          "kind": "loot",
+          "tx": 107,
+          "ty": 121,
+          "poi": "tp",
+          "loot": [
+            [
+              "wood",
+              8
+            ],
+            [
+              "iron_ingot",
+              1
+            ]
+          ]
+        },
+        {
+          "kind": "loot",
+          "tx": 120,
+          "ty": 88,
+          "poi": "mill",
+          "loot": [
+            [
+              "seed",
+              6
+            ],
+            [
+              "blueprint:stew",
+              1
+            ],
+            [
+              "crop",
+              2
+            ]
+          ]
+        },
+        {
+          "kind": "loot",
+          "tx": 126,
+          "ty": 98,
+          "poi": "mill",
+          "loot": [
+            [
+              "leather",
+              2
+            ],
+            [
+              "blueprint:brick",
+              1
+            ]
+          ]
+        },
+        {
+          "kind": "cash",
+          "tx": 130,
+          "ty": 88,
+          "poi": "mill",
+          "cash": 40
+        },
+        {
+          "kind": "door",
+          "tx": 160,
+          "ty": 99,
+          "poi": "factory",
+          "locked": "keycard",
+          "label": "Vault Door"
+        },
+        {
+          "kind": "loot",
+          "tx": 160,
+          "ty": 96,
+          "poi": "factory_vault",
+          "loot": [
+            [
+              "core_fire",
+              1
+            ],
+            [
+              "blueprint:core_earth",
+              1
+            ],
+            [
+              "spares",
+              6
+            ]
+          ]
+        },
+        {
+          "kind": "loot",
+          "tx": 162,
+          "ty": 96,
+          "poi": "factory_vault",
+          "loot": [
+            [
+              "blueprint:gas_mask",
+              1
+            ],
+            [
+              "iron_ingot",
+              4
+            ]
+          ]
+        },
+        {
+          "kind": "cash",
+          "tx": 161,
+          "ty": 97,
+          "poi": "factory_vault",
+          "cash": 80
+        },
+        {
+          "kind": "loot",
+          "tx": 150,
+          "ty": 103,
+          "poi": "factory",
+          "loot": [
+            [
+              "scrap",
+              6
+            ],
+            [
+              "spares",
+              3
+            ]
+          ]
+        },
+        {
+          "kind": "loot",
+          "tx": 154,
+          "ty": 96,
+          "poi": "factory",
+          "loot": [
+            [
+              "iron_ore",
+              4
+            ],
+            [
+              "coal",
+              3
+            ]
+          ]
+        },
+        {
+          "kind": "door",
+          "tx": 28,
+          "ty": 179,
+          "poi": "light",
+          "locked": "power",
+          "label": "Lighthouse Door"
+        },
+        {
+          "kind": "gen",
+          "tx": 31,
+          "ty": 180,
+          "poi": "light",
+          "label": "Generator"
+        },
+        {
+          "kind": "loot",
+          "tx": 27,
+          "ty": 176,
+          "poi": "light_top",
+          "loot": [
+            [
+              "core_storm",
+              1
+            ],
+            [
+              "blueprint:leather_armor",
+              1
+            ]
+          ]
+        },
+        {
+          "kind": "cash",
+          "tx": 29,
+          "ty": 176,
+          "poi": "light_top",
+          "cash": 60
+        },
+        {
+          "kind": "loot",
+          "tx": 31,
+          "ty": 175,
+          "poi": "light",
+          "loot": [
+            [
+              "fuel_can",
+              1
+            ],
+            [
+              "rope",
+              2
+            ]
+          ]
+        },
+        {
+          "kind": "loot",
+          "tx": 129,
+          "ty": 181,
+          "poi": "wreck",
+          "loot": [
+            [
+              "core_frost",
+              1
+            ],
+            [
+              "spares",
+              4
+            ]
+          ]
+        },
+        {
+          "kind": "loot",
+          "tx": 133,
+          "ty": 180,
+          "poi": "wreck",
+          "loot": [
+            [
+              "cloth",
+              3
+            ],
+            [
+              "fuel_can",
+              1
+            ],
+            [
+              "blueprint:arrow",
+              1
+            ]
+          ]
+        },
+        {
+          "kind": "cash",
+          "tx": 131,
+          "ty": 182,
+          "poi": "wreck",
+          "cash": 45
+        },
+        {
+          "kind": "loot",
+          "tx": 86,
+          "ty": 57,
+          "poi": "watch",
+          "loot": [
+            [
+              "keycard",
+              1
+            ],
+            [
+              "blueprint:fur_cloak",
+              1
+            ],
+            [
+              "torch",
+              2
+            ]
+          ]
+        },
+        {
+          "kind": "cash",
+          "tx": 88,
+          "ty": 57,
+          "poi": "watch",
+          "cash": 34
+        },
+        {
+          "kind": "evac",
+          "tx": 175,
+          "ty": 14,
+          "poi": "evac",
+          "label": "Evacuation Beacon"
+        },
+        {
+          "kind": "cash",
+          "tx": 170,
+          "ty": 24,
+          "poi": "evac",
+          "cash": 30
+        },
+        {
+          "kind": "loot",
+          "tx": 172,
+          "ty": 24,
+          "poi": "evac",
+          "loot": [
+            [
+              "medkit",
+              1
+            ],
+            [
+              "water_flask",
+              1
+            ]
+          ]
+        },
+        {
+          "kind": "door",
+          "tx": 145,
+          "ty": 89,
+          "poi": "delta_relay",
+          "label": "Delta Relay Station Entry"
+        },
+        {
+          "kind": "door",
+          "tx": 145,
+          "ty": 84,
+          "poi": "delta_relay",
+          "locked": "keycard",
+          "label": "Keycard Reader"
+        },
+        {
+          "kind": "door",
+          "tx": 148,
+          "ty": 82,
+          "poi": "delta_relay",
+          "locked": "power",
+          "label": "Power Gate"
+        },
+        {
+          "kind": "gen",
+          "tx": 142,
+          "ty": 81,
+          "poi": "delta_relay",
+          "label": "Delta Relay Station Generator"
+        },
+        {
+          "kind": "loot",
+          "tx": 140,
+          "ty": 87,
+          "poi": "delta_relay",
+          "label": "Maintenance Cache",
+          "loot": [
+            [
+              "keycard",
+              1
+            ],
+            [
+              "fuel_can",
+              1
+            ],
+            [
+              "bandage",
+              1
+            ]
+          ]
+        },
+        {
+          "kind": "loot",
+          "tx": 150,
+          "ty": 81,
+          "poi": "delta_relay",
+          "label": "Relay Vault Cache",
+          "loot": [
+            [
+              "iron_ingot",
+              4
+            ],
+            [
+              "medkit",
+              1
+            ],
+            [
+              "spares",
+              6
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "creatures": {
+    "boar": {
+      "name": "Bristleback Boar",
+      "hp": 40,
+      "dmg": 13,
+      "speed": 46,
+      "r": 6,
+      "sight": 90,
+      "drops": [
+        [
+          "meat",
+          2,
+          1
+        ],
+        [
+          "hide",
+          1,
+          1
+        ],
+        [
+          "boar_tusk",
+          1,
+          0.3
+        ]
+      ],
+      "biome": "meadow",
+      "style": "charge",
+      "tell": 650,
+      "aggro": false
+    },
+    "wolf": {
+      "name": "Greyfang Wolf",
+      "hp": 30,
+      "dmg": 9,
+      "speed": 74,
+      "r": 6,
+      "sight": 120,
+      "drops": [
+        [
+          "meat",
+          1,
+          1
+        ],
+        [
+          "fur",
+          2,
+          1
+        ],
+        [
+          "wolf_fang",
+          1,
+          0.4
+        ]
+      ],
+      "biome": "forest",
+      "style": "lunge",
+      "tell": 380,
+      "aggro": true
+    },
+    "toad": {
+      "name": "Mire Toad",
+      "hp": 30,
+      "dmg": 10,
+      "speed": 30,
+      "r": 6,
+      "sight": 90,
+      "drops": [
+        [
+          "gland",
+          1,
+          1
+        ],
+        [
+          "meat",
+          1,
+          0.6
+        ]
+      ],
+      "biome": "marsh",
+      "style": "tongue",
+      "tell": 700,
+      "aggro": true
+    },
+    "crawler": {
+      "name": "Scrap Crawler",
+      "hp": 44,
+      "dmg": 8,
+      "speed": 40,
+      "r": 6,
+      "sight": 130,
+      "drops": [
+        [
+          "spares",
+          2,
+          1
+        ],
+        [
+          "scrap",
+          2,
+          1
+        ],
+        [
+          "crawler_optic",
+          1,
+          0.35
+        ]
+      ],
+      "biome": "toxic",
+      "style": "shoot",
+      "tell": 600,
+      "aggro": true
+    },
+    "beetle": {
+      "name": "Cinder Beetle",
+      "hp": 52,
+      "dmg": 15,
+      "speed": 36,
+      "r": 7,
+      "sight": 100,
+      "drops": [
+        [
+          "chitin",
+          2,
+          1
+        ],
+        [
+          "sulfur",
+          1,
+          0.6
+        ],
+        [
+          "beetle_horn",
+          1,
+          0.3
+        ]
+      ],
+      "biome": "ash",
+      "style": "burrow",
+      "tell": 900,
+      "aggro": true
+    },
+    "crab": {
+      "name": "Shore Crab",
+      "hp": 24,
+      "dmg": 7,
+      "speed": 42,
+      "r": 5,
+      "sight": 70,
+      "drops": [
+        [
+          "shell",
+          1,
+          1
+        ],
+        [
+          "meat",
+          1,
+          0.8
+        ]
+      ],
+      "biome": "sand",
+      "style": "pinch",
+      "tell": 420,
+      "aggro": false
+    }
+  },
+  "elders": {
+    "frost": {
+      "name": "Glacier Matron",
+      "title": "Elder of the White Crown",
+      "hpLatent": 320,
+      "hpAwake": 620,
+      "stone": "stone_frost",
+      "r": 14,
+      "size": 40,
+      "color": "#9ad8ff",
+      "region": "Frostcrown Peaks",
+      "dmg": 18,
+      "speed": 30,
+      "patterns": [
+        "shardFan",
+        "frostRing"
+      ],
+      "awakePatterns": [
+        "shardFan",
+        "frostRing",
+        "icePillars",
+        "shardSpiral"
+      ]
+    },
+    "magma": {
+      "name": "Caldera Titan",
+      "title": "Elder of the Burning Throat",
+      "hpLatent": 380,
+      "hpAwake": 700,
+      "stone": "stone_magma",
+      "r": 16,
+      "size": 44,
+      "color": "#ff7a3a",
+      "region": "Caldera Wastes",
+      "dmg": 22,
+      "speed": 24,
+      "patterns": [
+        "fissure",
+        "slam"
+      ],
+      "awakePatterns": [
+        "fissure",
+        "slam",
+        "meteors",
+        "fissureTriple"
+      ]
+    },
+    "bog": {
+      "name": "Mire Mother",
+      "title": "Elder of Still Water",
+      "hpLatent": 300,
+      "hpAwake": 560,
+      "stone": "stone_bog",
+      "r": 15,
+      "size": 40,
+      "color": "#9ad050",
+      "region": "Drowned Fen",
+      "dmg": 16,
+      "speed": 26,
+      "patterns": [
+        "spitPools",
+        "brood"
+      ],
+      "awakePatterns": [
+        "spitPools",
+        "brood",
+        "submerge",
+        "tongueSweep"
+      ]
+    },
+    "grove": {
+      "name": "Elder Treant",
+      "title": "Elder of the First Wood",
+      "hpLatent": 360,
+      "hpAwake": 640,
+      "stone": "stone_grove",
+      "r": 15,
+      "size": 44,
+      "color": "#7ad070",
+      "region": "Oldgrowth",
+      "dmg": 18,
+      "speed": 20,
+      "patterns": [
+        "rootLine",
+        "seedBombs"
+      ],
+      "awakePatterns": [
+        "rootLine",
+        "seedBombs",
+        "rootCage",
+        "drainTrees"
+      ]
+    },
+    "tide": {
+      "name": "Tide Serpent",
+      "title": "Elder of the Breaking Shore",
+      "hpLatent": 300,
+      "hpAwake": 580,
+      "stone": "stone_tide",
+      "r": 13,
+      "size": 40,
+      "color": "#5ac8f0",
+      "region": "Serpent Strand",
+      "dmg": 18,
+      "speed": 50,
+      "patterns": [
+        "spit",
+        "wave"
+      ],
+      "awakePatterns": [
+        "spit",
+        "wave",
+        "dive",
+        "whirl"
+      ]
+    },
+    "rust": {
+      "name": "Rust Colossus",
+      "title": "Elder of the Dead Foundry",
+      "hpLatent": 400,
+      "hpAwake": 720,
+      "stone": "stone_rust",
+      "r": 15,
+      "size": 44,
+      "color": "#f0a050",
+      "region": "Dead Foundry",
+      "dmg": 20,
+      "speed": 22,
+      "patterns": [
+        "beam",
+        "mines"
+      ],
+      "awakePatterns": [
+        "beam",
+        "mines",
+        "beamSweep",
+        "overload"
+      ]
+    }
+  },
+  "study": {
+    "core_fire": "core_fire",
+    "core_earth": "core_earth",
+    "core_storm": "core_storm",
+    "core_frost": "core_frost"
+  }
+}
