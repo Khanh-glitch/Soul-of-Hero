@@ -4,6 +4,10 @@ import * as comp from './compositor';
 import { BAL, TILE, WW, WH, VIEW_W, VIEW_H, T, hash2, clamp, type GameState, type RunState, type Creature, type Entity } from './core';
 import { STRUCTS, ELDERS, CREATURES, ITEMS } from './catalog';
 import { getWorld, SRC_KEYS, fbm } from './world';
+import { isVeyra05Layout } from '../veyra05/scenes';
+import { observeVeyraDecor } from '../veyra05/decor-client';
+import { drawArchitecturalBuilding } from '../veyra05/building-art';
+import { onVeyraWindowShift } from '../veyra05/continuity';
 import { effTile, sourceAt, darkness, weatherAt, isRagnarok, entsAt, buildReason, C, roofRoom, clearPhysicalLine, irSensorVisual } from './engine';
 import { airdropView } from './airdrop';
 import { lootSpriteKey } from './loot-ecology';
@@ -166,6 +170,10 @@ function pixLine(g: CanvasRenderingContext2D, x0: number, y0: number, x1: number
 
 // ---------- camera ----------
 export const cam = { x: 0, y: 0, init: false };
+onVeyraWindowShift((dx,dy) => {
+  cam.x -= dx * TILE; cam.y -= dy * TILE;
+  resetRenderCaches();
+});
 let mapCanvas: HTMLCanvasElement | null = null; let mapSourceVersion = 0;
 export function getMapCanvas(run?: RunState) {
   const version = run?.sourceLayoutVersion ?? 1;
@@ -178,6 +186,7 @@ export interface RenderOpts { buildType: string | null; reclaim: boolean; mouseX
 // ---------- main draw ----------
 export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dtMs: number, o: RenderOpts) {
   const r = gs.run!; const A = getArt(); const w = getWorld(); const p = r.player; const time = o.time;
+  observeVeyraDecor(gs);
   syncTerrain(r, now);
   // camera
   const tx0 = clamp(p.x - VIEW_W / 2, 0, WW * TILE - VIEW_W), ty0 = clamp(p.y - VIEW_H / 2 - 6, 0, WH * TILE - VIEW_H);
@@ -243,12 +252,24 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   for (const k in r.terrain) { const m: any = r.terrain[+k]; if (!m.until || m.t !== T.PWALL) continue; const i = +k; const X = (i % WW) * 16, Y = ((i / WW) | 0) * 16; if (X < cx - 20 || X > cx + VIEW_W || Y < cy - 30 || Y > cy + VIEW_H) continue; g.drawImage(m.by === 'grove' ? A.st.rootwall : A.st.icepillar, X, Y - 8); }
   // projectiles
   for (const pr of PROJ) { if (pr.delay && pr.delay > 0) continue; const visual=pr.kind==='spirit_ray'?'arcane/arcane-orb':pr.kind==='fireball'?'fire/fireball':pr.kind==='fire_tornado'?'fire/fire-tornado':pr.kind==='elsa_shard'?'ice/ice-lance':null; if(!visual || !pfx.ready(visual))drawProj(g, pr, time); }
-  // roofs
+  // roofs — existing game geometry with VEYRA's already authored 2.5D painter.
   const room = roofRoom(r, p.x, p.y);
-  for (const b of w.buildings) { if ((b.x + b.w) * 16 < cx || b.x * 16 > cx + VIEW_W || (b.y + b.h) * 16 < cy - 16 || b.y * 16 > cy + VIEW_H) continue;
-    const spr = A.st['roof_' + b.roof] || A.st.roof_wood;
-    for (let y = 0; y < b.h; y++) for (let x = 0; x < b.w; x++) { g.globalAlpha = room.cells.has((b.y + y) * WW + b.x + x) ? 0.12 : 1; g.drawImage(spr, (b.x + x) * 16, (b.y + y) * 16 - 10); }
-    g.globalAlpha = 1;
+  const isCanonicalVeyra = !!r.layoutId && isVeyra05Layout(r.layoutId);
+  const doorSet = isCanonicalVeyra
+    ? new Set(w.statics.filter(q => q.kind === 'door').map(q => q.ty * WW + q.tx))
+    : null;
+  for (const b of w.buildings) {
+    if ((b.x + b.w) * 16 < cx || b.x * 16 > cx + VIEW_W || (b.y + b.h) * 16 < cy - 16 || b.y * 16 > cy + VIEW_H) continue;
+    if (isCanonicalVeyra) {
+      drawArchitecturalBuilding({g,b,art:A,roomCells:room.cells,darknessAlpha:darkness(r,now),stoneZone:w.zone,doorSet:doorSet!});
+    } else {
+      const spr = A.st['roof_' + b.roof] || A.st.roof_wood;
+      for (let y = 0; y < b.h; y++) for (let x = 0; x < b.w; x++) {
+        g.globalAlpha = room.cells.has((b.y + y) * WW + b.x + x) ? 0.12 : 1;
+        g.drawImage(spr, (b.x + x) * 16, (b.y + y) * 16 - 10);
+      }
+      g.globalAlpha = 1;
+    }
   }
   for (const e of ents) { if (e.kind !== 'struct' || STRUCTS[e.type!].layer !== 'roof') continue; if (e.x < cx - 20 || e.x > cx + VIEW_W + 20 || e.y < cy - 20 || e.y > cy + VIEW_H + 30) continue; g.globalAlpha = room.cells.has(e.ty! * WW + e.tx!) ? 0.15 : 1; g.drawImage(A.st[e.type!], e.x - 8, e.y - 18); if (!entsAt(r, e.tx!, e.ty! + 1).some(o => o.kind === 'struct' && STRUCTS[o.type!].layer === 'roof')) { g.fillStyle = 'rgba(0,0,0,0.3)'; g.fillRect(e.x - 8, e.y - 3, 16, 2); } g.globalAlpha = 1; }
   // particles & arcs

@@ -1,5 +1,7 @@
 import { combatStimulus, pushCombatStimulus, type CombatKind } from './stimulus';
 import { airdropBoundary, stepAirdrops } from './engine';
+import { maybeSlideVeyraWindow } from '../veyra05/continuity';
+import { activeFloor } from '../veyra05/floors';
 import { airdropView } from './airdrop';
 import { advancePoiAccess, poiDoorLabel, poiGenLabel } from './poi-access';
 import { vehicleClear, vehicleExitPoint } from './motorbike';
@@ -1021,6 +1023,7 @@ export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   const slot = Math.floor((now - r.startedAt + r.qaOffset) / (BAL.weather.slotMinutes * 60000));
   if (slot !== r.clock.weatherSlot) { r.clock.weatherSlot = slot; fx('weather', { w: weather }); }
   tickPlayer(gs, inp, dtMs, now);
+  if (activeFloor(r) === 0) maybeSlideVeyraWindow(gs, markDirty);
   tickCreatures(gs, dtMs, now);
   tickDragonDive(gs, dtMs, now);
   tickTurrets(gs, dtMs, now);

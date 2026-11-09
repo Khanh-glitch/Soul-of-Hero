@@ -85,7 +85,7 @@ export function chooseLegalSpawn(r:RunState): {tx:number;ty:number;name:string}|
   for(let k=0;k<count;k++){const i=(start+k*stride)%count,tx=3+i%(WW-6),ty=3+Math.floor(i/(WW-6));if(eligible(tx,ty))return{tx,ty,name:w.veyra?(w.zoneNames?.[0]||'Veyra region'):'the island'};}return null;
 }
 
-export function startRun(gs: GameState, character: 'male' | 'female', now: number, region: number | null = null, seedOverride?: number): Result {
+export function startRun(gs: GameState, character: 'male' | 'female', now: number, region: number | null = null, seedOverride?: number, inspectAt?: {tx:number;ty:number}): Result {
   if (gs.run && !gs.run.ended) return { ok: false, reason: 'A run is already active.' };
   if(getActiveLayout()==='shipping')setActiveLayout('shipping_fresh');
   if(getActiveLayout()==='dev_delta')setActiveLayout('dev_delta_fresh');
@@ -105,7 +105,17 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   r.poiAccessVersion='poi-access-v1';
   r.poiAccessDigest=poiContractDigest(w);
   if (getActiveLayout()==='shipping_fresh' || getActiveLayout()==='dev_delta_fresh') { r.creatorLootV1=true; r.lootEcology={version:LOOT_ECOLOGY_VERSION,cycles:{},grammar:LOOT_GRAMMAR_CURRENT}; }
-  const reg = 0; r.spawnRegion = reg; const sp = chooseLegalSpawn(r); if(!sp)return {ok:false,reason:'No safe, resource-accessible spawn in this region.'}; r.spawnChoice={x:sp.tx,y:sp.ty,contract:'seeded-geographic-v1'};
+  const reg = 0; r.spawnRegion = reg;
+  // Inspection is non-authoritative QA. Normal players use seeded survival placement.
+  const inspectTile = inspectAt && Number.isInteger(inspectAt.tx) && Number.isInteger(inspectAt.ty)
+    && inspectAt.tx > 1 && inspectAt.ty > 1 && inspectAt.tx < WW-2 && inspectAt.ty < WH-2
+    && w.economyMap.walkable[inspectAt.ty*WW+inspectAt.tx]
+    ? {tx:inspectAt.tx,ty:inspectAt.ty,name:'Creator Inspection (QA only)'} : null;
+  if (inspectAt && !inspectTile) return {ok:false,reason:'Creator inspection landing is blocked by actual map collision.'};
+  const sp = inspectTile ?? chooseLegalSpawn(r);
+  if(!sp)return {ok:false,reason:'No safe, resource-accessible spawn in this region.'};
+  if(inspectAt) r.qaUsed=true;
+  r.spawnChoice={x:sp.tx,y:sp.ty,contract:'seeded-geographic-v1'};
   r.custody.inv = { id: 'inv', kind: 'inv', slots: Array(24).fill(null) };
   r.custody.eq = { id: 'eq', kind: 'eq', slots: [null, null, null] };
   r.custody.inv.slots[0] = mkStack(r, 'knife', 1);
