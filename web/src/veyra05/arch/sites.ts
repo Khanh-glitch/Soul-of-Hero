@@ -303,6 +303,18 @@ export function ironholmFoundry(): ArchPlan {
   return b.build();
 }
 
+
+// VEYRA R5 world: staged in the isolated browser branch, never production.
+import { straitLandingRecovery, hookMerePierRecovery, southfootLandingRecovery } from './c03_recovery';
+import { westbankLanding, drownedPier, ternHutPier } from './c04';
+import { gulfheadHarbor, westmouthHarbor, saltwickHarbor } from './c01';
+import { ironholmIndustrialHarbor, emberIndustrialHarbor, sandgateIndustrialHarbor } from './c02';
+import { fallsPowerhouse, greywaterPumphouse, oldPumpingPlant, aionEdgeSawmill,
+ mossbrookMill, verdantTimberyard, fractureQuarry, greybackQuarry, obsidianQuarry,
+ charcoalKilns, slagworksFoundry, sulfurWorks, grainSiloComplex, deltaFilterStation,
+ geothermalStation } from './f03';
+import { REST48_IDS, makeRest48Plan } from './rest48';
+
 export const AUTHORED_SITES: Record<string, () => ArchPlan> = {
   po_greywater: greywaterHamlet,
   po_academy: argusAcademy,
@@ -310,7 +322,41 @@ export const AUTHORED_SITES: Record<string, () => ArchPlan> = {
   po_hook: hookVillage,
   po_oasis: mirageCamp,
   po_cindercamp: cinderCamp,
+  po_strait: straitLandingRecovery, // PROVISIONAL C03 — NOT actual Breakthrough
+  po_mere: hookMerePierRecovery,
+  po_southfoot: southfootLandingRecovery,
+  po_westbank: westbankLanding,
+  po_dpier: drownedPier,
+  po_gullpier: ternHutPier,
+  po_gulfhead: gulfheadHarbor,
+  po_westmouth: westmouthHarbor,
+  po_saltharbor: saltwickHarbor,
+  po_ironharbor: ironholmIndustrialHarbor,
+  po_ember: emberIndustrialHarbor,
+  po_sandgate: sandgateIndustrialHarbor,
+  po_falls: fallsPowerhouse,
+  po_pumphouse: greywaterPumphouse,
+  po_oldpump: oldPumpingPlant,
+  po_sawaion: aionEdgeSawmill,
+  po_mill: mossbrookMill,
+  po_timberyard: verdantTimberyard,
+  po_fracquarry: fractureQuarry,
+  po_greyquarry: greybackQuarry,
+  po_obsq: obsidianQuarry,
+  po_kilns: charcoalKilns,
+  po_slag: slagworksFoundry,
+  po_sulfur: sulfurWorks,
+  po_siloc: grainSiloComplex,
+  po_filter: deltaFilterStation,
+  po_geo: geothermalStation,
 };
+// 48 remaining sites, including the six distinct Elder sanctuaries.
+// Keep this explicit generator registry keyed by the 81 canonical GOLD IDs.
+for(const id of REST48_IDS) {
+  if (AUTHORED_SITES[id]) throw new Error('Duplicate VEYRA canonical POI id '+id);
+  AUTHORED_SITES[id] = () => makeRest48Plan(id);
+}
+
 
 /* ════════════════════════════════════════════════════════════════════════════
  * H01 · F01 — RESIDENTIAL SETTLEMENTS & LIVELIHOODS

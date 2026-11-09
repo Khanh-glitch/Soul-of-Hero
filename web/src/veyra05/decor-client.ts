@@ -1,3 +1,4 @@
+import {makeUrbanHarborSprites,drawUrbanHarborDeckTile} from './c01-art';
 /**
  * VEYRA05 DECOR & ARCHITECTURAL PROP CLIENT — draws biome decor, non-solid
  * POI landmark props (stone village well, street lanterns, astrolabe sundial,
@@ -16,6 +17,10 @@ import { getWindowWorld } from './window';
 import { cellAtGlobal } from './chunks';
 import { decorKit } from './art-nature';
 import { activeFloor } from './floors';
+import {makeWaterfrontSprites,drawWaterfrontDeckTile} from './c04-art';
+import {makeIndustrialHarborSprites,drawIndustrialHarborTile} from './c02-art';
+import {makeF03Sprites,drawF03DeckTile} from './f03-art';
+import {makeElderSprites} from './elder-art';
 
 let state: GameState | null = null;
 let enabled = true;
@@ -109,7 +114,7 @@ function landmarkSprites(): Record<string, Sprite> {
   const rug = px(22, 16, g => { g.fillStyle = '#7a3a4a'; g.fillRect(1, 2, 20, 12); g.fillStyle = '#9a5a5a'; g.fillRect(3, 4, 16, 8); g.fillStyle = '#c8a060'; g.fillRect(5, 6, 12, 4); g.fillStyle = '#5a2a34'; for (let x = 1; x < 21; x += 2) { g.fillRect(x, 1, 1, 1); g.fillRect(x, 14, 1, 1); } });
   const floor_wear = px(16, 16, g => { g.fillStyle = 'rgba(30,22,16,0.20)'; g.fillRect(2, 6, 11, 5); g.fillStyle = 'rgba(255,240,210,0.07)'; g.fillRect(4, 3, 7, 2); }, );
   const pier_shadow = px(16, 12, g => { g.fillStyle = 'rgba(8,6,14,0.35)'; g.beginPath(); g.ellipse(8, 5, 7, 4, 0, 0, 6.3); g.fill(); });
-  LANDMARK_SPRITES = { rug, floor_wear, pier_shadow, well, lantern, sundial, forge, ore_cart, bench, bollard, bed, table, shelf, bookshelf, barrel_stack, crate_stack, hearth, furnace_big, anvil, desk, safe, rubble, bones, pipes, coal_pile, ore_pile, ingot_stack, chain_hoist, crane_controls, screen_mesh, pump, water_pool, smoke_rack, net_rack, boat_hull, grain_sack, market_stall, lookout, banner, lectern, orrery, telescope, map_table, cart_broken, stair_up, stair_down };
+  LANDMARK_SPRITES = { ...makeElderSprites(mk), ...makeF03Sprites(mk), ...makeIndustrialHarborSprites(mk), ...makeWaterfrontSprites(mk), ...makeUrbanHarborSprites(mk), rug, floor_wear, pier_shadow, well, lantern, sundial, forge, ore_cart, bench, bollard, bed, table, shelf, bookshelf, barrel_stack, crate_stack, hearth, furnace_big, anvil, desk, safe, rubble, bones, pipes, coal_pile, ore_pile, ingot_stack, chain_hoist, crane_controls, screen_mesh, pump, water_pool, smoke_rack, net_rack, boat_hull, grain_sack, market_stall, lookout, banner, lectern, orrery, telescope, map_table, cart_broken, stair_up, stair_down };
   return LANDMARK_SPRITES;
 }
 
@@ -175,6 +180,58 @@ function items(g: CanvasRenderingContext2D): comp.DepthItem[] {
   const vFloor = activeFloor(r);
   const layer = ww.floors.layers.get(vFloor);
   if (layer) {
+    // Authored C04 piles, elevated galleries and ruined platforms. This is a
+    // separate physical surface over GOLD water, not a geography rewrite.
+    if (vFloor >= 0) {
+      const deckCells = new Map<number,string>();
+      for (const rr of layer.rooms) if (rr.open && rr.carve && /^po_(westbank|dpier|gullpier)\./.test(rr.id)) {
+        for (const [ax,ay,aw,ah] of rr.rects) for(let dy=ay;dy<ay+ah;dy++) for(let dx=ax;dx<ax+aw;dx++) deckCells.set(dy*WW+dx,rr.id);
+      }
+      for (const [key,pid] of deckCells){
+        const tx=key%WW,ty=(key/WW)|0;
+        if(tx<vx0||tx>vx1||ty<vy0||ty>vy1||w.tiles[key]!==T.FLOOR)continue;
+        const edgeMask=(deckCells.has((ty-1)*WW+tx)?0:1)|(deckCells.has((ty+1)*WW+tx)?0:2)|(deckCells.has(ty*WW+tx-1)?0:4)|(deckCells.has(ty*WW+tx+1)?0:8);
+        out.push({y:ty*TILE-2,f:()=>{drawWaterfrontDeckTile(g,tx,ty,pid,edgeMask);drawn++;}});
+      }
+    }
+    // C01 physically authored urban quays & elevated stone/wood skywalks.
+    if (vFloor >= 0) {
+      const urbanDecks = new Map<number,string>();
+      for (const rr of layer.rooms) if (rr.open && rr.carve && /^po_(gulfhead|westmouth|saltharbor)\./.test(rr.id)) {
+        for (const [ax,ay,aw,ah] of rr.rects) for (let yy=ay;yy<ay+ah;yy++) for (let xx=ax;xx<ax+aw;xx++) urbanDecks.set(yy*WW+xx,rr.id);
+      }
+      for (const [key,pid] of urbanDecks) {
+        const tx=key%WW,ty=(key/WW)|0;
+        if (tx<vx0||tx>vx1||ty<vy0||ty>vy1||w.tiles[key]!==T.FLOOR) continue;
+        const edgeMask=(urbanDecks.has((ty-1)*WW+tx)?0:1)|(urbanDecks.has((ty+1)*WW+tx)?0:2)|(urbanDecks.has(ty*WW+tx-1)?0:4)|(urbanDecks.has(ty*WW+tx+1)?0:8);
+        out.push({y:ty*TILE-2,f:()=>{drawUrbanHarborDeckTile(g,tx,ty,pid,edgeMask);drawn++;}});
+      }
+    }
+
+    // R5 independent world: paint C02 industrial quays and F03 industrial yards.
+    // Only established authored open floor cells are repainted; never alter GOLD terrain,
+    // walkability, collision or floor stack.  Keep water/unwalkable cells untouched.
+    if (vFloor >= 0) {
+      const familyPatches: [RegExp, typeof drawF03DeckTile][] = [
+        [/^po_(ironharbor|ember|sandgate)\./,drawIndustrialHarborTile],
+        [/^po_(falls|pumphouse|oldpump|sawaion|mill|timberyard|fracquarry|greyquarry|obsq|kilns|slag|sulfur|siloc|filter|geo)\./,drawF03DeckTile],
+      ];
+      for(const [pattern,painter] of familyPatches){
+        const cells = new Map<number,string>();
+        for(const room of layer.rooms) if(room.open && room.carve && pattern.test(room.id)) {
+          for(const [ax,ay,aw,ah] of room.rects){
+            const x0=Math.max(0,ax),y0=Math.max(0,ay),x1=Math.min(WW,ax+aw),y1=Math.min(WH,ay+ah);
+            for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++)cells.set(y*WW+x,room.id);
+          }
+        }
+        for(const [key,pid] of cells){
+          const tx=key%WW,ty=(key/WW)|0;
+          if(tx<vx0||tx>vx1||ty<vy0||ty>vy1||w.tiles[key]!==T.FLOOR)continue;
+          const edgeMask=(cells.has((ty-1)*WW+tx)?0:1)|(cells.has((ty+1)*WW+tx)?0:2)|(cells.has(ty*WW+tx-1)?0:4)|(cells.has(ty*WW+tx+1)?0:8);
+          out.push({y:ty*TILE-2,f:()=>{painter(g,tx,ty,pid,edgeMask);drawn++;}});
+        }
+      }
+    }
     for (const p of layer.props) {
       if (p.x < vx0 || p.x > vx1 || p.y < vy0 || p.y > vy1) continue;
       const spr = lmSprites[p.kind]; if (!spr) continue;

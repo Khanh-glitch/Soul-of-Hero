@@ -119,7 +119,7 @@ export function emberIndustrialHarbor():ArchPlan {
  mass(p,'chimney_watch','Separated Stack Control Pod',2,
   [[2510,1656,8,8],[2514,1663,9,7]],'light','stone');
  truss(p,'stack_rail','Exposed Heat Shield Rail',2,
-  [[2500,1656,13,5],[2506,1653,8,5],[2515,1663,14,5]],'wood');
+  [[2500,1656,13,5],[2506,1653,8,5],[2515,1663,14,5]]);
  p.door(2513,1659,2,'chimney_watch','Stack deck safety passage','arch');
  p.door(2510,1658,2,'chimney_watch','Stack western inspection hatch','arch');
  p.door(2522,1665,2,'chimney_watch','Stack eastern platform door','arch');
@@ -169,7 +169,7 @@ export function sandgateIndustrialHarbor():ArchPlan {
  truss(p,'gatewalk','Above-current Tidal Gate Walk',1,
   [[1390,2236,10,25],[1397,2258,13,6],[1404,2259,20,5],[1416,2256,12,11],[1424,2255,19,5]]);
  mass(p,'warehouse_bridge','Grain Ledger Gallery',1,[[1423,2222,15,9],[1428,2230,11,11]],'tin','stone');
- truss(p,'transit_bridge','Sky Freight Slips',1,[[1425,2237,8,22],[1426,2255,11,4]],'wood');
+ truss(p,'transit_bridge','Sky Freight Slips',1,[[1425,2237,8,22],[1426,2255,11,4]]);
  p.door(1428,2239,1,'warehouse_bridge','High freight window arch','arch');
  p.stair(1394,2244,0,1,1394,2244,'Gate counterweight stair','exterior');
  p.stair(1429,2239,0,1,1429,2239,'Upper grain warehouse stair','interior');
