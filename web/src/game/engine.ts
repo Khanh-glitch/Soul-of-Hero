@@ -4,7 +4,7 @@ import { recoveryPlan, recoveryPlanFor, recoveryFits, COMPONENT_RECIPES } from '
 import { recordIntel, gateKey, placeOfPoi } from './expedition-intel';
 import { poiPowerMissingReason, poiDoorContract, poiGeneratorContract, poiGenerator, poiPowered, interiorRelease, doorwayOccupied, advancePoiAccess, poiContractDigest } from './poi-access';
 import { vehicleClear, vehicleExitPoint } from './motorbike';
-import { LOOT_ECOLOGY_VERSION, LOOT_GRAMMAR_CURRENT, lootSlots, LOOT_CLASSES, lootClass, lootRoll, lootSiteIndex, lootSourceId } from './loot-ecology';
+import { LOOT_ECOLOGY_VERSION, LOOT_GRAMMAR_CURRENT, lootSlots, LOOT_CLASSES, lootClass, lootRoll, lootSiteIndex, lootSourceId, lootSiteFinite, deferredLootGrammar } from './loot-ecology';
 import { buildLootSourceContract, specForSite, type PhysicalAccess } from './loot-source-spec';
 import { creatorLootV1 } from './creator-loot';
 // Authoritative game engine: GameState + dispatch(intent) → committed state + receipt | rejection.
@@ -906,7 +906,31 @@ export function lootCooldown(site: StaticEnt, r?:RunState): number {
 }
 /** Ordinary replenishment is the old authored renewable stock plus a bounded W06 roll. */
 /** W06 class renewal is pinned and unchanged. B05 'finite' stock governs only the grammar pool (see lootGrammarRoll). */
-export function renewableStock(r:RunState,site:StaticEnt,cycle:number):[string,number][] {return [...renewableLoot(site),...lootRoll(r,site,cycle)];}
+export function renewableStock(r:RunState,site:StaticEnt,cycle:number):[string,number][] {
+  // Finite sources (advanced/Vault class or a finite B05 spec) are never recreated by the ordinary timer.
+  if (lootSiteFinite(r, site)) return [];
+  return [...renewableLoot(site),...lootRoll(r,site,cycle)];
+}
+/** B05 door-gated sources: on a legal physical opening, if the source is now reachable, draw its one-time stock exactly once. */
+function rollDeferredSealedLoot(r: RunState, now: number) {
+  if (r.lootEcology?.grammar !== LOOT_GRAMMAR_CURRENT) return;
+  for (const site of getWorld(r.layoutId || 'shipping').statics) {
+    if (site.kind !== 'loot') continue;
+    const spec = specForSite(site); if (!spec || spec.access.kind !== 'poi-door') continue;
+    const stacks = deferredLootGrammar(r, site); if (!stacks.length) continue;
+    if (lootSiteAccess(r, site) !== 'open') continue;
+    const e = Object.values(r.entities).find(v => v.kind === 'loot' && v.tx === site.tx && v.ty === site.ty);
+    if (!e?.c || !r.custody[e.c]) continue;
+    const c = r.custody[e.c];
+    for (const [key, qty] of stacks) {
+      const i = c.slots.findIndex(v => !v); if (i < 0) break;
+      const st = mkStack(r, key, qty); c.slots[i] = st;
+      receipt(r, now, 'loot.roll', `${spec.sourceId}:${LOOT_GRAMMAR_CURRENT}:door-open:slot${i}:${key}x${qty}:${st.uid}`);
+    }
+    (r.lootEcology!.deferredLoot ??= []).push(spec.sourceId);
+    markDirty();
+  }
+}
 /** Retire an authored public loot instance only after an actual final withdrawal. */
 function retireEmptyLoot(r: RunState, cid: string, now: number) {
   const e = Object.values(r.entities).find(v => v.kind === 'loot' && v.c === cid);
@@ -1756,7 +1780,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
         }
         r.poiAccessDigest=poiContractDigest(getWorld(r.layoutId||'shipping'));
         e.poiDoor={version:'poi-access-v1',closeAt:now+BAL.poiAccess.doorOpenMs,scans:(e.poiDoor?.scans||0)+(cardUid?1:0),...(cardUid?{lastCardUid:cardUid}:e.poiDoor?.lastCardUid?{lastCardUid:e.poiDoor.lastCardUid}:{})};
-        e.open=true;markDirty();
+        e.open=true;markDirty();rollDeferredSealedLoot(r,now);
         return ok(cardUid?'poi.card.scan':'poi.door.open',`${e.id}:${exit?'interior-release':cardUid?`${cardUid}:remaining=${remaining}`:'powered'}`,cardUid?`${(d.cardClass??'vault')[0].toUpperCase()+(d.cardClass??'vault').slice(1)} card scanned; ${remaining} uses remain.`:exit?'Interior release opened the door.':'Powered gate opened.');
       }
       e.open=true;markDirty();return ok('door',`${e.id}:open`);

@@ -12,6 +12,9 @@ function start(){setActiveLayout('shipping_fresh');const g=newGame();expect(disp
 function act(g:GameState,type:string,p:object={},at=T+1,id=`s05-${++n}`){return dispatch(g,{id,type,...p},at);}
 function snap(g:GameState){return JSON.parse(JSON.parse(serializeSnapshot(g)).payload) as GameState;}
 function site(g:GameState,kind:'door'|'gen',poi:string){return Object.values(g.run!.entities).find(e=>e.kind===kind&&e.poi===poi)!;}
+// WEC-01 P0-2: the first legal scan of the Foundry door draws the Vault's one-time B05 stock (2 refined ingots + 1 medkit) exactly once.
+// Every authored stack keeps its physical UID; nothing else is added.
+const vaultOneTime=(r:any,v:any,before:any[])=>{const now=C(r,v.c!).slots.filter(Boolean) as any[];return before.filter(Boolean).every((b:any)=>now.some(a=>a.uid===b.uid))&&now.filter(a=>a.key==='refined_iron_ingot').reduce((k,a)=>k+a.qty,0)===2&&now.filter(a=>a.key==='medkit').length===1;};
 const move=(g:GameState,x:number,y:number)=>{g.run!.player.x=x;g.run!.player.y=y;}; // explicit proximity fixture
 const input:Input={up:true,down:false,left:false,right:false,mx:0,my:0,attack:false,attackPressed:false,roll:false,cancel:false};
 afterEach(()=>setActiveLayout('shipping'));
@@ -20,8 +23,8 @@ describe('S05 local physical POI access',()=>{
   const g=start(),r=g.run!,watch=Object.values(r.entities).find(e=>e.kind==='loot'&&e.poi==='watch'&&C(r,e.c!).slots.some(s=>s?.key==='keycard'))!,loot=C(r,watch.c!);move(g,watch.x,watch.y+16);const slot=loot.slots.findIndex(s=>s?.key==='keycard'),uid=loot.slots[slot]!.uid;expect(act(g,'move',{from:loot.id,fs:slot,to:'inv'}).ok).toBe(true);
   const door=site(g,'door','factory'),vault=Object.values(r.entities).find(e=>e.kind==='loot'&&e.poi==='factory_vault')!,before=structuredClone(C(r,vault.c!).slots);move(g,door.x,door.y+16);expect(blockGrid(r)[door.ty!*WW+door.tx!]).toBe(3);
   const id='card-scan';expect(act(g,'door',{eid:door.id},T+2,id).ok).toBe(true);expect(door.locked).toBe('keycard');expect(C(r,'inv').slots.find(s=>s?.uid===uid)?.charge).toBe(2);expect(act(g,'door',{eid:door.id},T+2,id)).toMatchObject({ok:false,dup:true});expect(blockGrid(r)[door.ty!*WW+door.tx!]).toBe(0);
-  for(let i=1;i<=12;i++)tick(g,input,40,T+2+i*40);expect(r.player.y).toBeLessThan(door.y);expect(C(r,vault.c!).slots).toEqual(before);
-  move(g,door.x,door.y-20);settle(g,T+16003,true);expect(door.open).toBe(false);expect(act(g,'door',{eid:door.id},T+16004).ok).toBe(true);expect(C(r,'inv').slots.find(s=>s?.uid===uid)?.charge).toBe(2);expect(door.poiDoor?.scans).toBe(1);expect(C(r,vault.c!).slots).toEqual(before);expect(validate(snap(g))).toBeTruthy();
+  for(let i=1;i<=12;i++)tick(g,input,40,T+2+i*40);expect(r.player.y).toBeLessThan(door.y);expect(vaultOneTime(r,vault,before)).toBe(true);
+  move(g,door.x,door.y-20);settle(g,T+16003,true);expect(door.open).toBe(false);expect(act(g,'door',{eid:door.id},T+16004).ok).toBe(true);expect(C(r,'inv').slots.find(s=>s?.uid===uid)?.charge).toBe(2);expect(door.poiDoor?.scans).toBe(1);expect(vaultOneTime(r,vault,before)).toBe(true);expect(validate(snap(g))).toBeTruthy();
  });
  it('keeps each newly spawned card in an independent physical UID with bounded charges',()=>{
   const g=start(),r=g.run!;spawnDrop(r,'keycard',2,r.player.x,r.player.y,T+1,undefined,false);const cards=Object.values(r.entities).filter(e=>e.kind==='drop').flatMap(e=>C(r,e.c!).slots).filter(s=>s?.key==='keycard');expect(cards).toHaveLength(2);expect(new Set(cards.map(s=>s!.uid)).size).toBe(2);expect(cards.every(s=>s!.qty===1&&s!.charge===3)).toBe(true);expect(validate(snap(g))).toBeTruthy();

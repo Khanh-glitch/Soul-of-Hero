@@ -2,8 +2,8 @@ import {supportsAirdrops, airdropTimes, airdropRewards, airdropStaticEligible} f
 import { recoveryPlanFor, COMPONENT_RECIPES } from './recycler';
 import { combatKindOf } from './stimulus';
 import { poiContractDigest } from './poi-access';
-import { LOOT_ECOLOGY_VERSION, LOOT_GRAMMAR_CURRENT, isKnownLootGrammar, lootClass, lootRoll, lootSiteIndex } from './loot-ecology';
-import { validLootSourceContract } from './loot-source-spec';
+import { LOOT_ECOLOGY_VERSION, LOOT_GRAMMAR_CURRENT, isKnownLootGrammar, lootClass, lootRoll, lootSiteIndex, deferredLootSourceIds, deferredLootTable } from './loot-ecology';
+import { validLootSourceContract, specForSite } from './loot-source-spec';
 import { creatorLootV1 } from './creator-loot';
 import { validIntel } from './expedition-intel';
 // Local-first snapshots: one serialized profile + run + receipts per write.
@@ -267,6 +267,8 @@ export function validate(raw: any): GameState | null {
     if(!obj(policy) || policy.version!==LOOT_ECOLOGY_VERSION || !obj(policy.cycles) || (policy.grammar!==undefined && !isKnownLootGrammar(policy.grammar)) || !r.creatorLootV1 || !['shipping_fresh','dev_delta_fresh'].includes(r.layoutId))return null;
     // B05: the recorded physical source contract must match the current versioned spec (digest + every access). Other grammars carry none.
     if (policy.grammar===LOOT_GRAMMAR_CURRENT ? !validLootSourceContract(policy.sourceContract) : policy.sourceContract!==undefined) return null;
+    // B05 one-time door-gated draws: only door-gated sourceIds, only under the B05 grammar, no duplicates.
+    if (policy.deferredLoot !== undefined && (policy.grammar !== LOOT_GRAMMAR_CURRENT || !Array.isArray(policy.deferredLoot) || new Set(policy.deferredLoot).size !== policy.deferredLoot.length || policy.deferredLoot.some((id: any) => !deferredLootSourceIds().includes(id)))) return null;
     for(const [key,value] of Object.entries(policy.cycles)) {
       if(!/^(0|[1-9][0-9]*)$/.test(key) || !Number.isSafeInteger(value) || (value as number)<1) return null;
       const site=world.statics.find(s=>s.kind==='loot' && lootSiteIndex(s)===Number(key));
@@ -296,7 +298,7 @@ export function validate(raw: any): GameState | null {
       } else {
         const cycle=r.lootEcology?.cycles[lootSiteIndex(site)] || 0;
         const base=r.lootEcology && lootClass(site) && cycle>0 ? renewableLoot(site) : site.loot || [];
-        const available = new Map<string,number>(); for(const [k,q] of [...base,...lootRoll(r,site,cycle)]) available.set(k,(available.get(k)||0)+q); const unique=r.creatorLootV1 && !r.renewedLootSites?.includes(site.ty*WW+site.tx) && creatorLootV1(site);if(unique)available.set(unique,1);
+        const drawn = r.lootEcology?.grammar===LOOT_GRAMMAR_CURRENT && r.lootEcology?.deferredLoot?.includes(specForSite(site)?.sourceId ?? '') ? deferredLootTable(site) : []; const available = new Map<string,number>(); for(const [k,q] of [...base,...lootRoll(r,site,cycle),...drawn]) available.set(k,(available.get(k)||0)+q); const unique=r.creatorLootV1 && !r.renewedLootSites?.includes(site.ty*WW+site.tx) && creatorLootV1(site);if(unique)available.set(unique,1);
         for(const stack of slots){if(!stack)continue;const key=stack.key==='blueprint'?`blueprint:${stack.meta}`:stack.key;const left=(available.get(key)||0)-stack.qty;if(left<0)return null;available.set(key,left);}
       }
     }

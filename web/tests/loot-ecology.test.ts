@@ -29,13 +29,13 @@ describe('W06 pinned authored cache ecology',()=>{
   const forged=structuredClone(before);forged.run!.lootEcology!.cycles['0']=1;expect(validate(forged)).toBeNull();
   const inflated=structuredClone(before);inflated.run!.custody[c.id].slots.find(s=>s?.key==='energy_refined')!.qty=100;expect(validate(inflated)).toBeNull();
   nearby(g,e);for(let i=0;i<c.slots.length;i++)if(c.slots[i])expect(act(g,'drop',{c:c.id,slot:i}).ok).toBe(true);
-  const due=r.lootRespawnAt![index];expect(due).toBe(T+1+48*HOUR);stepLootRespawn(r,due-1);expect(r.entities[e.id]).toBeUndefined();stepLootRespawn(r,due);
-  const replacement=Object.values(r.entities).find(x=>x.kind==='loot'&&x.tx===site.tx&&x.ty===site.ty)!;expect(r.lootEcology!.cycles[index]).toBe(1);expect(C(r,replacement.c!).slots.filter(Boolean).map(s=>[s!.key,s!.qty])).toEqual(renewableStock(r,site,1));
-  expect(C(r,replacement.c!).slots.every(s=>!s||(!s.key.startsWith('core_')&&s.key!=='blueprint'&&s.key!=='keycard'&&s.key!=='rcash'))).toBe(true);expect(validate(snap(g))).toBeTruthy();
-  const rare=structuredClone(g),slot=rare.run!.custody[replacement.c!].slots.findIndex(x=>!x);rare.run!.custody[replacement.c!].slots[slot]=structuredClone(before.run!.custody[c.id].slots.find(s=>s?.key.startsWith('core_'))!);expect(validate(rare)).toBeNull();
+  // WEC-01 P0-3: advanced (Vault / deep) caches are FINITE. An emptied one schedules no ordinary respawn and is never recreated.
+  expect(r.lootRespawnAt?.[index]).toBeUndefined();expect(renewableStock(r,site,1)).toEqual([]);
+  stepLootRespawn(r,T+1+500*HOUR);expect(Object.values(r.entities).some(x=>x.kind==='loot'&&x.tx===site.tx&&x.ty===site.ty)).toBe(false);
+  expect(r.lootEcology!.cycles[index]).toBeUndefined();expect(validate(snap(g))).toBeTruthy();
  });
  it('has bounded repeatable stock, distinct physical UIDs, no partial refill, and exact class cooldowns across cycles',()=>{
-  for(const kind of ['toolbox','supply','military','advanced'] as const){const g=start(),r=g.run!,{site}=target(g,kind),seen=new Set<string>();let at=T+1;
+  for(const kind of ['toolbox','supply','military'] as const){const g=start(),r=g.run!,{site}=target(g,kind),seen=new Set<string>();let at=T+1;
    for(let cycle=0;cycle<4;cycle++){const e=Object.values(r.entities).find(x=>x.kind==='loot'&&x.tx===site.tx&&x.ty===site.ty)!,c=C(r,e.c!);nearby(g,e);const original=c.slots.filter(Boolean);for(const s of original){expect(seen.has(s!.uid)).toBe(false);seen.add(s!.uid);}const first=c.slots.findIndex(Boolean);expect(act(g,'drop',{c:c.id,slot:first},at).ok).toBe(true);stepLootRespawn(r,at+100*HOUR);expect(r.entities[e.id]).toBeTruthy();
     for(let i=0;i<c.slots.length;i++)if(c.slots[i])expect(act(g,'drop',{c:c.id,slot:i},at).ok).toBe(true);const due=r.lootRespawnAt![lootSiteIndex(site)];expect(due).toBe(at+LOOT_CLASSES[kind].hours*HOUR);stepLootRespawn(r,due);expect(r.lootEcology!.cycles[lootSiteIndex(site)]).toBe(cycle+1);expect(validate(snap(g))).toBeTruthy();at=due+1;
    }

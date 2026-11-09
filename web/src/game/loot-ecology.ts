@@ -1,6 +1,6 @@
 import { WW, type RunState } from './core';
 import { type StaticEnt } from './world';
-import { specForSite, validLootSourceContract, type SpecGrade } from './loot-source-spec';
+import { specForSite, validLootSourceContract, SHIPPING_LOOT_SOURCES, type SpecGrade } from './loot-source-spec';
 import { ITEMS } from './catalog';
 
 /** W06 SOH_NEW_TUNED v1, not historical LI percentages or timer parity.
@@ -89,6 +89,31 @@ function hashPick(input: string): number {
   let h = 2166136261; for (let i = 0; i < input.length; i++) h = Math.imul(h ^ input.charCodeAt(i), 16777619) >>> 0;
   h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b); h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35); return (h ^ (h >>> 16)) >>> 0;
 }
+/** B05 advanced one-time grade (SOH_PROVISIONAL): the existing B01 advanced role, drawn ONCE on the first legal opening of its gate.
+ * No pool: a finite, door-gated cache has no repeat roll. */
+export const LOOT_B05_ADVANCED_ONCE: readonly (readonly [string, number])[] = [['refined_iron_ingot', 2], ['medkit', 1]];
+/** Finite sources: a B05 spec with stock 'finite', or any advanced-class cache (its own W06 comment already says exceptional finds are finite). */
+export function lootSiteFinite(r: RunState, site: StaticEnt): boolean {
+  const spec = r.lootEcology?.grammar === LOOT_GRAMMAR_CURRENT ? specForSite(site) : null;
+  if (spec) return spec.stock === 'finite';
+  return lootClass(site) === 'advanced';
+}
+/** One-time door-gated grammar stock. Fail closed on any invalid contract, a non-door spec, a repeat, or a non-finite spec.
+ * The caller must already have measured that the source is physically reachable now. Never consumes world RNG. */
+export function deferredLootGrammar(r: RunState, site: StaticEnt): [string, number][] {
+  if (r.lootEcology?.grammar !== LOOT_GRAMMAR_CURRENT) return [];
+  const spec = specForSite(site); if (!spec || spec.access.kind !== 'poi-door' || spec.stock !== 'finite' || spec.role !== 'advanced') return [];
+  const c = r.lootEcology?.sourceContract; if (!c || !validLootSourceContract(c)) return [];
+  if (r.lootEcology?.deferredLoot?.includes(spec.sourceId)) return [];
+  return deferredLootTable(site);
+}
+/** The one-time table a door-gated spec draws (state-independent; used by the roll and by save validation). */
+export function deferredLootTable(site: StaticEnt): [string, number][] {
+  const spec = specForSite(site); if (!spec || spec.access.kind !== 'poi-door') return [];
+  return LOOT_B05_ADVANCED_ONCE.filter(([k]) => !!ITEMS[k] && !LOOT_B01_FORBIDDEN.has(k)).slice(0, spec.capacity).map(([k, q]) => [k, q]);
+}
+/** The door-gated source ids a run may have already rolled (persisted). */
+export function deferredLootSourceIds(): string[] { return SHIPPING_LOOT_SOURCES.filter(s => s.access.kind === 'poi-door').map(s => s.sourceId); }
 /** Items a grammar role may never emit: cash, blueprints, keycards, unique tools and fuel/energy cores. */
 const LOOT_B01_FORBIDDEN = new Set(['rcash', 'blueprint', 'keycard', 'damaged_drive', 'energy_basic', 'energy_refined', 'core_blast', 'core_earthmother', 'iron_pick', 'iron_axe', 'iron_sword']);
 /** Deterministic per run/source/cycle. Each class receives only its own role; no cross-role overlay. */
@@ -100,8 +125,11 @@ export function lootGrammarRoll(r: RunState, site: StaticEnt, cycle: number): [s
     if (spec) {
       // Fail closed: the run must carry a valid, digest-pinned contract and this source must be physically open.
       const c = r.lootEcology?.sourceContract;
-      if (!c || !validLootSourceContract(c) || c.sites[spec.sourceId]?.access !== 'open') return [];
-      if (spec.role !== 'toolbox') return [];                 // no source-authorized pool for this role yet: optional rolls stay off
+      if (!c || !validLootSourceContract(c)) return [];
+      // Door-gated sources are never rolled at spawn: their one-time grammar stock is drawn by deferredLootGrammar() on the physical opening.
+      if (spec.access.kind === 'poi-door') return [];
+      if (c.sites[spec.sourceId]?.access !== 'open') return [];
+      if (spec.role !== 'toolbox') return [];                 // open sources with no authorized pool yet: optional rolls stay off
       if (spec.stock === 'finite' && cycle > 0) return [];    // finite stock is not renewed
       const tbl = LOOT_B05_TOOLBOX_GRADE[spec.grade];
       const base = `${g}|${r.seed}|${lootSourceId(r, site)}|${cycle}|${spec.id}|${spec.grade}`;

@@ -168,7 +168,7 @@ export interface RunState {
   creatorLootV1?: true;
   renewedLootSites?: number[];
   /** New-run pinned authored-site economy; old runs retain their original tables. */
-  lootEcology?: { version: 'w06-v1'; cycles: Record<string,number>; /** B01 family×grade grammar; absent on pre-B01 runs (no reroll). */ grammar?: 'b01-v1' | 'b04-v1' | 'b05-v1'; /** B05 only: digest-pinned physical source contract measured at run start. */ sourceContract?: import('./loot-source-spec').LootSourceContract };
+  lootEcology?: { version: 'w06-v1'; cycles: Record<string,number>; /** B01 family×grade grammar; absent on pre-B01 runs (no reroll). */ grammar?: 'b01-v1' | 'b04-v1' | 'b05-v1'; /** B05 only: digest-pinned physical source contract measured at run start. */ sourceContract?: import('./loot-source-spec').LootSourceContract; /** B05 only: door-gated sources whose one-time grammar stock was already drawn (sourceIds). */ deferredLoot?: string[] };
   poiAccessVersion?: 'poi-access-v1';
   poiAccessDigest?: string;
   natureTrees?: {tx:number;ty:number;until:number}[];
