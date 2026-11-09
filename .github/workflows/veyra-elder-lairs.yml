@@ -44,3 +44,22 @@ jobs:
         if: always()
         working-directory: web
         run: npx tsc --noEmit
+      - name: Install actual Chromium browser
+        working-directory: web
+        run: npx playwright install --with-deps chromium
+      - name: Real game, 81 POI and new-run browser smoke
+        working-directory: web
+        env:
+          VITE_SOH_QA: '1'
+        run: |
+          npm run dev -- --host 127.0.0.1 --port 4191 > /tmp/veyra-unified-vite.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          node e2e/veyra-unified-smoke.mjs
+      - name: Preserve genuine game captures even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: veyra-r5-single-game-browser
+          path: web/evidence/veyra-r5-single-game/
+          if-no-files-found: warn

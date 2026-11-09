@@ -107,10 +107,25 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   if (getActiveLayout()==='shipping_fresh' || getActiveLayout()==='dev_delta_fresh') { r.creatorLootV1=true; r.lootEcology={version:LOOT_ECOLOGY_VERSION,cycles:{},grammar:LOOT_GRAMMAR_CURRENT}; }
   const reg = 0; r.spawnRegion = reg;
   // Inspection is non-authoritative QA. Normal players use seeded survival placement.
-  const inspectTile = inspectAt && Number.isInteger(inspectAt.tx) && Number.isInteger(inspectAt.ty)
-    && inspectAt.tx > 1 && inspectAt.ty > 1 && inspectAt.tx < WW-2 && inspectAt.ty < WH-2
-    && w.economyMap.walkable[inspectAt.ty*WW+inspectAt.tx]
-    ? {tx:inspectAt.tx,ty:inspectAt.ty,name:'Creator Inspection (QA only)'} : null;
+  // A POI's visual anchor may itself be a pillar or closed door. Find the
+  // nearest truly walkable footprint without teleporting ordinary gameplay.
+  let inspectTile: {tx:number;ty:number;name:string} | null = null;
+  if (inspectAt && Number.isInteger(inspectAt.tx) && Number.isInteger(inspectAt.ty)) {
+    for (let radius=0; radius<=20 && !inspectTile; radius++) {
+      for (let dy=-radius; dy<=radius && !inspectTile; dy++) {
+        for (let dx=-radius; dx<=radius; dx++) {
+          if (Math.max(Math.abs(dx),Math.abs(dy)) !== radius) continue;
+          const tx=inspectAt.tx+dx, ty=inspectAt.ty+dy;
+          if (tx<=2 || ty<=2 || tx>=WW-3 || ty>=WH-3) continue;
+          const i=ty*WW+tx;
+          if (w.economyMap.walkable[i] && ![T.DEEP,T.SHALLOW,T.RIVER,T.CLIFF,T.PWALL,T.LAVA].includes(w.tiles[i])) {
+            inspectTile={tx,ty,name:'Creator Inspection (QA only)'};
+            break;
+          }
+        }
+      }
+    }
+  }
   if (inspectAt && !inspectTile) return {ok:false,reason:'Creator inspection landing is blocked by actual map collision.'};
   const sp = inspectTile ?? chooseLegalSpawn(r);
   if(!sp)return {ok:false,reason:'No safe, resource-accessible spawn in this region.'};

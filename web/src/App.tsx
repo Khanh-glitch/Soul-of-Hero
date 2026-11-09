@@ -41,6 +41,7 @@ export default function App() {
     setScreen('inspector');
   };
   const closeInspector = () => {
+    setInspectionGs(null);
     setActiveLayout(savedGs.run?.layoutId || U05_WORLD_LAYOUT_ID);
     if (savedGs.run && !savedGs.run.ended) {
       const ww = isVeyra05Layout(savedGs.run.layoutId || '') ? getWindowWorld(savedGs.run.layoutId!) : null;
